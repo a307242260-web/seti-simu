@@ -7,7 +7,19 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div class="app-wrap log-collapsed" id="app-wrap">
+  <div class="app-wrap debug-collapsed log-collapsed" id="app-wrap">
+    <aside class="debug-dock" id="debug-dock">
+      <button class="debug-toggle" type="button" id="debug-toggle" aria-controls="debug-panel" aria-expanded="false">调试</button>
+      <div class="debug-panel" id="debug-panel">
+        <div class="debug-actions">
+          <button class="debug-action-button" type="button" id="debug-rotate-button">旋转</button>
+          <button class="debug-action-button" type="button" id="debug-launch-button">发射</button>
+          <button class="debug-action-button" type="button" id="debug-save-button">保存坐标</button>
+        </div>
+        <output class="debug-readout" id="debug-readout" aria-live="polite"></output>
+      </div>
+    </aside>
+
     <main class="board-column">
       <div class="board-shell" id="board-shell">
         <div class="wheel-wrap" id="wheel-wrap">
@@ -30,6 +42,7 @@
           <div class="sector-wrap" id="sector-wrap-4"></div>
 
           <div class="sun" aria-hidden="true"></div>
+          <div class="token-layer" id="token-layer" aria-label="已发射火箭"></div>
         </div>
       </div>
 
@@ -45,8 +58,8 @@
     </aside>
   </div>
 
-  <script src="./solar-system/layout.js?v=base-layout-1"></script>
-  <script src="./solar-system/core.js?v=base-layout-1"></script>
-  <script src="./app.js?v=base-layout-1"></script>
+  <script src="./solar-system/layout.js?v=rocket-debug-1"></script>
+  <script src="./solar-system/core.js?v=rocket-debug-1"></script>
+  <script src="./app.js?v=rocket-debug-1"></script>
 </body>
 </html>

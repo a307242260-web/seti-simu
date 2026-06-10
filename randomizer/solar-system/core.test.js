@@ -50,6 +50,13 @@ assert.deepEqual(snapshot.statistics.visibleMeaningfulContentCounts, {
   星云: 8,
 });
 
+assert.equal(solar.GLOBAL_COORDINATE_SYSTEM.size, 1000);
+assert.deepEqual(solar.solarGridToGlobalPoint(0, 0), { x: 500, y: 500 });
+const topRightGlobal = solar.solarGridToGlobalPoint(0, 1);
+assert.ok(topRightGlobal.x > 500);
+assert.ok(topRightGlobal.y < 500);
+assert.deepEqual(solar.solarGridToGlobalPoint(5, 1), { x: 375.28, y: 551.66 });
+
 let rotation = solar.normalizeRotationState([0, 0, 0, 0, 0], 0);
 assert.deepEqual(solar.getNextOrbitWheelIds(rotation.rotationCount), [1]);
 rotation = solar.applySolarOrbitRotation(rotation);

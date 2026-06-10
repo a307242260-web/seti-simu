@@ -26,6 +26,18 @@
   )));
   const MOVING_WHEEL_IDS = Object.freeze([1, 2, 3]);
   const BOARD_RING_IDS = Object.freeze([1, 2, 3, 4, 5]);
+  const GLOBAL_COORDINATE_SYSTEM = Object.freeze({
+    size: 1000,
+    center: 500,
+    ringRadii: Object.freeze({
+      0: 0,
+      1: 135,
+      2: 230,
+      3: 310,
+      4: 415,
+      5: 485,
+    }),
+  });
   const COUNTED_CONTENT_KINDS = new Set([
     layout.CONTENT_KIND.PLANET,
     layout.CONTENT_KIND.ASTEROID,
@@ -41,6 +53,10 @@
 
   function mod8(n) {
     return ((Number(n) % 8) + 8) % 8;
+  }
+
+  function roundGlobalCoordinate(value) {
+    return Math.round(Number(value) * 100) / 100;
   }
 
   function deepClone(value) {
@@ -143,6 +159,29 @@
 
   function toBaseX(displayX, wheelId, rotation) {
     return mod8(displayX - getWheelStep(rotation, wheelId));
+  }
+
+  function solarGridToGlobalPoint(displayX, y) {
+    const ring = Number(y);
+    const radius = GLOBAL_COORDINATE_SYSTEM.ringRadii[ring];
+
+    if (radius === undefined) {
+      throw new Error(`Unknown solar ring: ${y}`);
+    }
+
+    if (ring === 0) {
+      return {
+        x: GLOBAL_COORDINATE_SYSTEM.center,
+        y: GLOBAL_COORDINATE_SYSTEM.center,
+      };
+    }
+
+    const angle = (-67.5 + mod8(displayX) * 45) * (Math.PI / 180);
+
+    return {
+      x: roundGlobalCoordinate(GLOBAL_COORDINATE_SYSTEM.center + Math.cos(angle) * radius),
+      y: roundGlobalCoordinate(GLOBAL_COORDINATE_SYSTEM.center + Math.sin(angle) * radius),
+    };
   }
 
   function getBaseWheelCell(wheelId, baseX, y) {
@@ -614,6 +653,7 @@
     VISIBLE_WHEEL_IDS,
     MOVING_WHEEL_IDS,
     BOARD_RING_IDS,
+    GLOBAL_COORDINATE_SYSTEM,
     mod8,
     normalizeRotationState,
     normalizeSolarInput,
@@ -624,6 +664,7 @@
     getNormalizedWheelStep,
     toDisplayX,
     toBaseX,
+    solarGridToGlobalPoint,
     getBaseWheelCell,
     getWheelCellAtDisplayCoordinate,
     resolveVisibleContent,
