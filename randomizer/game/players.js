@@ -16,6 +16,8 @@
       id: "blue",
       label: "蓝色",
       rocketAsset: "../assets/tokens/rocket-blue.png",
+      satelliteAsset: "../assets/tokens/satellite-blue.png",
+      landdingAsset: "../assets/tokens/landding-blue.png",
       uiColor: "#4da3ff",
       glowColor: "rgba(77, 163, 255, 0.72)",
     }),
@@ -23,6 +25,8 @@
       id: "green",
       label: "绿色",
       rocketAsset: "../assets/tokens/rocket-green.png",
+      satelliteAsset: "../assets/tokens/satellite-green.png",
+      landdingAsset: "../assets/tokens/landding-green.png",
       uiColor: "#56d37a",
       glowColor: "rgba(86, 211, 122, 0.72)",
     }),
@@ -30,6 +34,8 @@
       id: "brown",
       label: "棕色",
       rocketAsset: "../assets/tokens/rocket-brown.png",
+      satelliteAsset: "../assets/tokens/satellite-brown.png",
+      landdingAsset: "../assets/tokens/landding-brown.png",
       uiColor: "#b2845a",
       glowColor: "rgba(178, 132, 90, 0.7)",
     }),
@@ -37,6 +43,8 @@
       id: "white",
       label: "白色",
       rocketAsset: "../assets/tokens/rocket-white.png",
+      satelliteAsset: "../assets/tokens/satellite-white.png",
+      landdingAsset: "../assets/tokens/landding-white.png",
       uiColor: "#f3f5ef",
       glowColor: "rgba(243, 245, 239, 0.74)",
     }),
@@ -141,6 +149,20 @@
     const reward = gain || {};
     if (reward.credits != null) player.resources.credits += reward.credits;
     if (reward.energy != null) player.resources.energy += reward.energy;
+    if (reward.publicity != null) {
+      player.resources.publicity = clamp(
+        player.resources.publicity + reward.publicity,
+        0,
+        RESOURCE_LIMITS.publicity,
+      );
+    }
+    if (reward.availableData != null) {
+      player.resources.availableData = clamp(
+        player.resources.availableData + reward.availableData,
+        0,
+        RESOURCE_LIMITS.availableData,
+      );
+    }
     if (reward.handSize != null) player.resources.handSize += reward.handSize;
     return player;
   }

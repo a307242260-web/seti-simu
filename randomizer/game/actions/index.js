@@ -43,10 +43,15 @@
     return action.canExecute(context);
   }
 
-  function execute(actionId, context) {
+  function execute(actionId, context, options) {
     const action = getAction(actionId);
     if (!action) return { ok: false, actionId, message: `未知行动: ${actionId}` };
+    if (actionId === "land") return action.execute(context, options);
     return action.execute(context);
+  }
+
+  function getLandOptions(context) {
+    return land.getLandOptions(context);
   }
 
   return Object.freeze({
@@ -56,5 +61,6 @@
     listActions,
     canExecute,
     execute,
+    getLandOptions,
   });
 });

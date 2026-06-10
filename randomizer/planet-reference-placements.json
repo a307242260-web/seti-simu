@@ -1,0 +1,1489 @@
+{
+  "version": 1,
+  "imageSize": {
+    "width": 1672,
+    "height": 941
+  },
+  "rotationCount": 5,
+  "rotationStepDegrees": {
+    "orbit": 19,
+    "land": 44
+  },
+  "rotationStepOverrides": {},
+  "explicitPlacements": [
+    {
+      "planetId": "venus",
+      "planetName": "金星",
+      "kind": "orbit",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 155.33,
+          "y": 207.96,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 206.32,
+          "y": 190.08,
+          "angleOffsetDegrees": 19
+        },
+        {
+          "sequence": 3,
+          "x": 263.34,
+          "y": 182.46,
+          "angleOffsetDegrees": 38
+        },
+        {
+          "sequence": 4,
+          "x": 314.67,
+          "y": 199.59,
+          "angleOffsetDegrees": 57
+        },
+        {
+          "sequence": 5,
+          "x": 356.47,
+          "y": 239.58,
+          "angleOffsetDegrees": 76
+        }
+      ]
+    },
+    {
+      "planetId": "venus",
+      "planetName": "金星",
+      "kind": "land",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 201.64,
+          "y": 335.18,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 192.58,
+          "y": 293.25,
+          "angleOffsetDegrees": 44
+        },
+        {
+          "sequence": 3,
+          "x": 215.19,
+          "y": 256.79,
+          "angleOffsetDegrees": 88
+        },
+        {
+          "sequence": 4,
+          "x": 256.78,
+          "y": 246.27,
+          "angleOffsetDegrees": 132
+        },
+        {
+          "sequence": 5,
+          "x": 294.0,
+          "y": 267.59,
+          "angleOffsetDegrees": 176
+        }
+      ]
+    },
+    {
+      "planetId": "jupiter",
+      "planetName": "木星",
+      "kind": "orbit",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 575.34,
+          "y": 131.18,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 630.51,
+          "y": 98.81,
+          "angleOffsetDegrees": 19
+        },
+        {
+          "sequence": 3,
+          "x": 693.21,
+          "y": 85.44,
+          "angleOffsetDegrees": 38
+        },
+        {
+          "sequence": 4,
+          "x": 761.76,
+          "y": 91.18,
+          "angleOffsetDegrees": 57
+        },
+        {
+          "sequence": 5,
+          "x": 816.94,
+          "y": 119.7,
+          "angleOffsetDegrees": 76
+        }
+      ]
+    },
+    {
+      "planetId": "jupiter",
+      "planetName": "木星",
+      "kind": "land",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 644.22,
+          "y": 295.47,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 641.68,
+          "y": 234.82,
+          "angleOffsetDegrees": 44
+        },
+        {
+          "sequence": 3,
+          "x": 681.98,
+          "y": 189.43,
+          "angleOffsetDegrees": 88
+        },
+        {
+          "sequence": 4,
+          "x": 742.5,
+          "y": 184.77,
+          "angleOffsetDegrees": 132
+        },
+        {
+          "sequence": 5,
+          "x": 789.27,
+          "y": 223.46,
+          "angleOffsetDegrees": 176
+        }
+      ]
+    },
+    {
+      "planetId": "saturn",
+      "planetName": "土星",
+      "kind": "orbit",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 1095.16,
+          "y": 158.75,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 1147.83,
+          "y": 136.82,
+          "angleOffsetDegrees": 19
+        },
+        {
+          "sequence": 3,
+          "x": 1204.84,
+          "y": 134.94,
+          "angleOffsetDegrees": 38
+        },
+        {
+          "sequence": 4,
+          "x": 1258.18,
+          "y": 150.18,
+          "angleOffsetDegrees": 57
+        },
+        {
+          "sequence": 5,
+          "x": 1299.98,
+          "y": 178.7,
+          "angleOffsetDegrees": 76
+        }
+      ]
+    },
+    {
+      "planetId": "saturn",
+      "planetName": "土星",
+      "kind": "land",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 1141.14,
+          "y": 303.1,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 1126.98,
+          "y": 261.94,
+          "angleOffsetDegrees": 44
+        },
+        {
+          "sequence": 3,
+          "x": 1145.39,
+          "y": 222.5,
+          "angleOffsetDegrees": 88
+        },
+        {
+          "sequence": 4,
+          "x": 1186.03,
+          "y": 206.91,
+          "angleOffsetDegrees": 132
+        },
+        {
+          "sequence": 5,
+          "x": 1226.1,
+          "y": 223.93,
+          "angleOffsetDegrees": 176
+        }
+      ]
+    },
+    {
+      "planetId": "mercury",
+      "planetName": "水星",
+      "kind": "orbit",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 126.4,
+          "y": 606.66,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 177.73,
+          "y": 585.77,
+          "angleOffsetDegrees": 23
+        },
+        {
+          "sequence": 3,
+          "x": 231.07,
+          "y": 587.65,
+          "angleOffsetDegrees": 46
+        },
+        {
+          "sequence": 4,
+          "x": 278.56,
+          "y": 620.02,
+          "angleOffsetDegrees": 69
+        },
+        {
+          "sequence": 5,
+          "x": 307.15,
+          "y": 667.55,
+          "angleOffsetDegrees": 92
+        }
+      ]
+    },
+    {
+      "planetId": "mercury",
+      "planetName": "水星",
+      "kind": "land",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 166.36,
+          "y": 718.92,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 162.52,
+          "y": 661.81,
+          "angleOffsetDegrees": 45
+        },
+        {
+          "sequence": 3,
+          "x": 215.86,
+          "y": 640.92,
+          "angleOffsetDegrees": 90
+        },
+        {
+          "sequence": 4,
+          "x": 253.81,
+          "y": 682.79,
+          "angleOffsetDegrees": 135
+        },
+        {
+          "sequence": 5,
+          "x": 229.06,
+          "y": 734.17,
+          "angleOffsetDegrees": 180
+        }
+      ]
+    },
+    {
+      "planetId": "mars",
+      "planetName": "火星",
+      "kind": "orbit",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 419.5,
+          "y": 619.93,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 464.98,
+          "y": 591.51,
+          "angleOffsetDegrees": 19
+        },
+        {
+          "sequence": 3,
+          "x": 520.16,
+          "y": 583.89,
+          "angleOffsetDegrees": 38
+        },
+        {
+          "sequence": 4,
+          "x": 571.49,
+          "y": 604.78,
+          "angleOffsetDegrees": 57
+        },
+        {
+          "sequence": 5,
+          "x": 615.3,
+          "y": 640.92,
+          "angleOffsetDegrees": 76
+        }
+      ]
+    },
+    {
+      "planetId": "mars",
+      "planetName": "火星",
+      "kind": "land",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 489.73,
+          "y": 749.32,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 464.98,
+          "y": 705.56,
+          "angleOffsetDegrees": 44
+        },
+        {
+          "sequence": 3,
+          "x": 497.25,
+          "y": 656.16,
+          "angleOffsetDegrees": 88
+        },
+        {
+          "sequence": 4,
+          "x": 558.11,
+          "y": 658.04,
+          "angleOffsetDegrees": 132
+        },
+        {
+          "sequence": 5,
+          "x": 561.96,
+          "y": 743.67,
+          "angleOffsetDegrees": 176
+        }
+      ]
+    },
+    {
+      "planetId": "uranus",
+      "planetName": "天王星",
+      "kind": "orbit",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 928.63,
+          "y": 607.89,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 982.3,
+          "y": 589.54,
+          "angleOffsetDegrees": 19
+        },
+        {
+          "sequence": 3,
+          "x": 1037.48,
+          "y": 593.39,
+          "angleOffsetDegrees": 38
+        },
+        {
+          "sequence": 4,
+          "x": 1088.81,
+          "y": 608.54,
+          "angleOffsetDegrees": 57
+        },
+        {
+          "sequence": 5,
+          "x": 1134.45,
+          "y": 644.77,
+          "angleOffsetDegrees": 76
+        }
+      ]
+    },
+    {
+      "planetId": "uranus",
+      "planetName": "天王星",
+      "kind": "land",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 963.41,
+          "y": 734.17,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 1033.63,
+          "y": 745.55,
+          "angleOffsetDegrees": 44
+        },
+        {
+          "sequence": 3,
+          "x": 963.41,
+          "y": 677.05,
+          "angleOffsetDegrees": 88
+        },
+        {
+          "sequence": 4,
+          "x": 1014.74,
+          "y": 650.42,
+          "angleOffsetDegrees": 132
+        },
+        {
+          "sequence": 5,
+          "x": 1062.22,
+          "y": 680.91,
+          "angleOffsetDegrees": 176
+        }
+      ]
+    },
+    {
+      "planetId": "neptune",
+      "planetName": "海王星",
+      "kind": "orbit",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 1311.68,
+          "y": 607.89,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 1368.53,
+          "y": 589.54,
+          "angleOffsetDegrees": 19
+        },
+        {
+          "sequence": 3,
+          "x": 1427.39,
+          "y": 589.54,
+          "angleOffsetDegrees": 38
+        },
+        {
+          "sequence": 4,
+          "x": 1478.88,
+          "y": 612.4,
+          "angleOffsetDegrees": 57
+        },
+        {
+          "sequence": 5,
+          "x": 1526.37,
+          "y": 646.66,
+          "angleOffsetDegrees": 76
+        }
+      ]
+    },
+    {
+      "planetId": "neptune",
+      "planetName": "海王星",
+      "kind": "land",
+      "points": [
+        {
+          "sequence": 1,
+          "x": 1357.66,
+          "y": 736.14,
+          "angleOffsetDegrees": 0
+        },
+        {
+          "sequence": 2,
+          "x": 1353.32,
+          "y": 673.29,
+          "angleOffsetDegrees": 44
+        },
+        {
+          "sequence": 3,
+          "x": 1408.49,
+          "y": 652.3,
+          "angleOffsetDegrees": 88
+        },
+        {
+          "sequence": 4,
+          "x": 1455.98,
+          "y": 698.03,
+          "angleOffsetDegrees": 132
+        },
+        {
+          "sequence": 5,
+          "x": 1421.7,
+          "y": 747.44,
+          "angleOffsetDegrees": 176
+        }
+      ]
+    }
+  ],
+  "centers": {
+    "venus": {
+      "x": 249,
+      "y": 303
+    },
+    "jupiter": {
+      "x": 718,
+      "y": 262
+    },
+    "saturn": {
+      "x": 1185,
+      "y": 265
+    },
+    "mercury": {
+      "x": 175,
+      "y": 666
+    },
+    "mars": {
+      "x": 532,
+      "y": 688
+    },
+    "uranus": {
+      "x": 1017,
+      "y": 693
+    },
+    "neptune": {
+      "x": 1407,
+      "y": 692
+    }
+  },
+  "planets": [
+    {
+      "planetId": "venus",
+      "planetName": "金星",
+      "center": {
+        "x": 249,
+        "y": 303
+      },
+      "orbit": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 155.33,
+            "y": 207.96
+          },
+          "x": 155.33,
+          "y": 207.96,
+          "percentX": 9.29,
+          "percentY": 22.1
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 19,
+          "anchor": {
+            "x": 155.33,
+            "y": 207.96
+          },
+          "x": 206.32,
+          "y": 190.08,
+          "percentX": 12.34,
+          "percentY": 20.2
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 38,
+          "anchor": {
+            "x": 155.33,
+            "y": 207.96
+          },
+          "x": 263.34,
+          "y": 182.46,
+          "percentX": 15.75,
+          "percentY": 19.39
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 57,
+          "anchor": {
+            "x": 155.33,
+            "y": 207.96
+          },
+          "x": 314.67,
+          "y": 199.59,
+          "percentX": 18.82,
+          "percentY": 21.21
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 76,
+          "anchor": {
+            "x": 155.33,
+            "y": 207.96
+          },
+          "x": 356.47,
+          "y": 239.58,
+          "percentX": 21.32,
+          "percentY": 25.46
+        }
+      ],
+      "land": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 201.64,
+            "y": 335.18
+          },
+          "x": 201.64,
+          "y": 335.18,
+          "percentX": 12.06,
+          "percentY": 35.62
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 44,
+          "anchor": {
+            "x": 201.64,
+            "y": 335.18
+          },
+          "x": 192.58,
+          "y": 293.25,
+          "percentX": 11.52,
+          "percentY": 31.16
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 88,
+          "anchor": {
+            "x": 201.64,
+            "y": 335.18
+          },
+          "x": 215.19,
+          "y": 256.79,
+          "percentX": 12.87,
+          "percentY": 27.29
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 132,
+          "anchor": {
+            "x": 201.64,
+            "y": 335.18
+          },
+          "x": 256.78,
+          "y": 246.27,
+          "percentX": 15.36,
+          "percentY": 26.17
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 176,
+          "anchor": {
+            "x": 201.64,
+            "y": 335.18
+          },
+          "x": 294.0,
+          "y": 267.59,
+          "percentX": 17.58,
+          "percentY": 28.44
+        }
+      ]
+    },
+    {
+      "planetId": "jupiter",
+      "planetName": "木星",
+      "center": {
+        "x": 718,
+        "y": 262
+      },
+      "orbit": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 575.34,
+            "y": 131.18
+          },
+          "x": 575.34,
+          "y": 131.18,
+          "percentX": 34.41,
+          "percentY": 13.94
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 19,
+          "anchor": {
+            "x": 575.34,
+            "y": 131.18
+          },
+          "x": 630.51,
+          "y": 98.81,
+          "percentX": 37.71,
+          "percentY": 10.5
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 38,
+          "anchor": {
+            "x": 575.34,
+            "y": 131.18
+          },
+          "x": 693.21,
+          "y": 85.44,
+          "percentX": 41.46,
+          "percentY": 9.08
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 57,
+          "anchor": {
+            "x": 575.34,
+            "y": 131.18
+          },
+          "x": 761.76,
+          "y": 91.18,
+          "percentX": 45.56,
+          "percentY": 9.69
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 76,
+          "anchor": {
+            "x": 575.34,
+            "y": 131.18
+          },
+          "x": 816.94,
+          "y": 119.7,
+          "percentX": 48.86,
+          "percentY": 12.72
+        }
+      ],
+      "land": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 644.22,
+            "y": 295.47
+          },
+          "x": 644.22,
+          "y": 295.47,
+          "percentX": 38.53,
+          "percentY": 31.4
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 44,
+          "anchor": {
+            "x": 644.22,
+            "y": 295.47
+          },
+          "x": 641.68,
+          "y": 234.82,
+          "percentX": 38.38,
+          "percentY": 24.95
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 88,
+          "anchor": {
+            "x": 644.22,
+            "y": 295.47
+          },
+          "x": 681.98,
+          "y": 189.43,
+          "percentX": 40.79,
+          "percentY": 20.13
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 132,
+          "anchor": {
+            "x": 644.22,
+            "y": 295.47
+          },
+          "x": 742.5,
+          "y": 184.77,
+          "percentX": 44.41,
+          "percentY": 19.64
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 176,
+          "anchor": {
+            "x": 644.22,
+            "y": 295.47
+          },
+          "x": 789.27,
+          "y": 223.46,
+          "percentX": 47.21,
+          "percentY": 23.75
+        }
+      ]
+    },
+    {
+      "planetId": "saturn",
+      "planetName": "土星",
+      "center": {
+        "x": 1185,
+        "y": 265
+      },
+      "orbit": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 1095.16,
+            "y": 158.75
+          },
+          "x": 1095.16,
+          "y": 158.75,
+          "percentX": 65.5,
+          "percentY": 16.87
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 19,
+          "anchor": {
+            "x": 1095.16,
+            "y": 158.75
+          },
+          "x": 1147.83,
+          "y": 136.82,
+          "percentX": 68.65,
+          "percentY": 14.54
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 38,
+          "anchor": {
+            "x": 1095.16,
+            "y": 158.75
+          },
+          "x": 1204.84,
+          "y": 134.94,
+          "percentX": 72.06,
+          "percentY": 14.34
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 57,
+          "anchor": {
+            "x": 1095.16,
+            "y": 158.75
+          },
+          "x": 1258.18,
+          "y": 150.18,
+          "percentX": 75.25,
+          "percentY": 15.96
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 76,
+          "anchor": {
+            "x": 1095.16,
+            "y": 158.75
+          },
+          "x": 1299.98,
+          "y": 178.7,
+          "percentX": 77.75,
+          "percentY": 18.99
+        }
+      ],
+      "land": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 1141.14,
+            "y": 303.1
+          },
+          "x": 1141.14,
+          "y": 303.1,
+          "percentX": 68.25,
+          "percentY": 32.21
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 44,
+          "anchor": {
+            "x": 1141.14,
+            "y": 303.1
+          },
+          "x": 1126.98,
+          "y": 261.94,
+          "percentX": 67.4,
+          "percentY": 27.84
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 88,
+          "anchor": {
+            "x": 1141.14,
+            "y": 303.1
+          },
+          "x": 1145.39,
+          "y": 222.5,
+          "percentX": 68.5,
+          "percentY": 23.65
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 132,
+          "anchor": {
+            "x": 1141.14,
+            "y": 303.1
+          },
+          "x": 1186.03,
+          "y": 206.91,
+          "percentX": 70.93,
+          "percentY": 21.99
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 176,
+          "anchor": {
+            "x": 1141.14,
+            "y": 303.1
+          },
+          "x": 1226.1,
+          "y": 223.93,
+          "percentX": 73.33,
+          "percentY": 23.8
+        }
+      ]
+    },
+    {
+      "planetId": "mercury",
+      "planetName": "水星",
+      "center": {
+        "x": 175,
+        "y": 666
+      },
+      "orbit": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 126.4,
+            "y": 606.66
+          },
+          "x": 126.4,
+          "y": 606.66,
+          "percentX": 7.56,
+          "percentY": 64.47
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 23,
+          "anchor": {
+            "x": 126.4,
+            "y": 606.66
+          },
+          "x": 177.73,
+          "y": 585.77,
+          "percentX": 10.63,
+          "percentY": 62.25
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 46,
+          "anchor": {
+            "x": 126.4,
+            "y": 606.66
+          },
+          "x": 231.07,
+          "y": 587.65,
+          "percentX": 13.82,
+          "percentY": 62.45
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 69,
+          "anchor": {
+            "x": 126.4,
+            "y": 606.66
+          },
+          "x": 278.56,
+          "y": 620.02,
+          "percentX": 16.66,
+          "percentY": 65.89
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 92,
+          "anchor": {
+            "x": 126.4,
+            "y": 606.66
+          },
+          "x": 307.15,
+          "y": 667.55,
+          "percentX": 18.37,
+          "percentY": 70.94
+        }
+      ],
+      "land": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 166.36,
+            "y": 718.92
+          },
+          "x": 166.36,
+          "y": 718.92,
+          "percentX": 9.95,
+          "percentY": 76.4
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 45,
+          "anchor": {
+            "x": 166.36,
+            "y": 718.92
+          },
+          "x": 162.52,
+          "y": 661.81,
+          "percentX": 9.72,
+          "percentY": 70.33
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 90,
+          "anchor": {
+            "x": 166.36,
+            "y": 718.92
+          },
+          "x": 215.86,
+          "y": 640.92,
+          "percentX": 12.91,
+          "percentY": 68.11
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 135,
+          "anchor": {
+            "x": 166.36,
+            "y": 718.92
+          },
+          "x": 253.81,
+          "y": 682.79,
+          "percentX": 15.18,
+          "percentY": 72.56
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 180,
+          "anchor": {
+            "x": 166.36,
+            "y": 718.92
+          },
+          "x": 229.06,
+          "y": 734.17,
+          "percentX": 13.7,
+          "percentY": 78.02
+        }
+      ]
+    },
+    {
+      "planetId": "mars",
+      "planetName": "火星",
+      "center": {
+        "x": 532,
+        "y": 688
+      },
+      "orbit": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 419.5,
+            "y": 619.93
+          },
+          "x": 419.5,
+          "y": 619.93,
+          "percentX": 25.09,
+          "percentY": 65.88
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 19,
+          "anchor": {
+            "x": 419.5,
+            "y": 619.93
+          },
+          "x": 464.98,
+          "y": 591.51,
+          "percentX": 27.81,
+          "percentY": 62.86
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 38,
+          "anchor": {
+            "x": 419.5,
+            "y": 619.93
+          },
+          "x": 520.16,
+          "y": 583.89,
+          "percentX": 31.11,
+          "percentY": 62.05
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 57,
+          "anchor": {
+            "x": 419.5,
+            "y": 619.93
+          },
+          "x": 571.49,
+          "y": 604.78,
+          "percentX": 34.18,
+          "percentY": 64.27
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 76,
+          "anchor": {
+            "x": 419.5,
+            "y": 619.93
+          },
+          "x": 615.3,
+          "y": 640.92,
+          "percentX": 36.8,
+          "percentY": 68.11
+        }
+      ],
+      "land": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 489.73,
+            "y": 749.32
+          },
+          "x": 489.73,
+          "y": 749.32,
+          "percentX": 29.29,
+          "percentY": 79.63
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 44,
+          "anchor": {
+            "x": 489.73,
+            "y": 749.32
+          },
+          "x": 464.98,
+          "y": 705.56,
+          "percentX": 27.81,
+          "percentY": 74.98
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 88,
+          "anchor": {
+            "x": 489.73,
+            "y": 749.32
+          },
+          "x": 497.25,
+          "y": 656.16,
+          "percentX": 29.74,
+          "percentY": 69.73
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 132,
+          "anchor": {
+            "x": 489.73,
+            "y": 749.32
+          },
+          "x": 558.11,
+          "y": 658.04,
+          "percentX": 33.38,
+          "percentY": 69.93
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 176,
+          "anchor": {
+            "x": 489.73,
+            "y": 749.32
+          },
+          "x": 561.96,
+          "y": 743.67,
+          "percentX": 33.61,
+          "percentY": 79.03
+        }
+      ]
+    },
+    {
+      "planetId": "uranus",
+      "planetName": "天王星",
+      "center": {
+        "x": 1017,
+        "y": 693
+      },
+      "orbit": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 928.63,
+            "y": 607.89
+          },
+          "x": 928.63,
+          "y": 607.89,
+          "percentX": 55.54,
+          "percentY": 64.6
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 19,
+          "anchor": {
+            "x": 928.63,
+            "y": 607.89
+          },
+          "x": 982.3,
+          "y": 589.54,
+          "percentX": 58.75,
+          "percentY": 62.65
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 38,
+          "anchor": {
+            "x": 928.63,
+            "y": 607.89
+          },
+          "x": 1037.48,
+          "y": 593.39,
+          "percentX": 62.05,
+          "percentY": 63.06
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 57,
+          "anchor": {
+            "x": 928.63,
+            "y": 607.89
+          },
+          "x": 1088.81,
+          "y": 608.54,
+          "percentX": 65.12,
+          "percentY": 64.67
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 76,
+          "anchor": {
+            "x": 928.63,
+            "y": 607.89
+          },
+          "x": 1134.45,
+          "y": 644.77,
+          "percentX": 67.85,
+          "percentY": 68.52
+        }
+      ],
+      "land": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 963.41,
+            "y": 734.17
+          },
+          "x": 963.41,
+          "y": 734.17,
+          "percentX": 57.62,
+          "percentY": 78.02
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 44,
+          "anchor": {
+            "x": 963.41,
+            "y": 734.17
+          },
+          "x": 1033.63,
+          "y": 745.55,
+          "percentX": 61.82,
+          "percentY": 79.23
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 88,
+          "anchor": {
+            "x": 963.41,
+            "y": 734.17
+          },
+          "x": 963.41,
+          "y": 677.05,
+          "percentX": 57.62,
+          "percentY": 71.95
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 132,
+          "anchor": {
+            "x": 963.41,
+            "y": 734.17
+          },
+          "x": 1014.74,
+          "y": 650.42,
+          "percentX": 60.69,
+          "percentY": 69.12
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 176,
+          "anchor": {
+            "x": 963.41,
+            "y": 734.17
+          },
+          "x": 1062.22,
+          "y": 680.91,
+          "percentX": 63.53,
+          "percentY": 72.36
+        }
+      ]
+    },
+    {
+      "planetId": "neptune",
+      "planetName": "海王星",
+      "center": {
+        "x": 1407,
+        "y": 692
+      },
+      "orbit": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 1311.68,
+            "y": 607.89
+          },
+          "x": 1311.68,
+          "y": 607.89,
+          "percentX": 78.45,
+          "percentY": 64.6
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 19,
+          "anchor": {
+            "x": 1311.68,
+            "y": 607.89
+          },
+          "x": 1368.53,
+          "y": 589.54,
+          "percentX": 81.85,
+          "percentY": 62.65
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 38,
+          "anchor": {
+            "x": 1311.68,
+            "y": 607.89
+          },
+          "x": 1427.39,
+          "y": 589.54,
+          "percentX": 85.37,
+          "percentY": 62.65
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 57,
+          "anchor": {
+            "x": 1311.68,
+            "y": 607.89
+          },
+          "x": 1478.88,
+          "y": 612.4,
+          "percentX": 88.45,
+          "percentY": 65.08
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 76,
+          "anchor": {
+            "x": 1311.68,
+            "y": 607.89
+          },
+          "x": 1526.37,
+          "y": 646.66,
+          "percentX": 91.29,
+          "percentY": 68.72
+        }
+      ],
+      "land": [
+        {
+          "sequence": 1,
+          "angleOffsetDegrees": 0,
+          "anchor": {
+            "x": 1357.66,
+            "y": 736.14
+          },
+          "x": 1357.66,
+          "y": 736.14,
+          "percentX": 81.2,
+          "percentY": 78.23
+        },
+        {
+          "sequence": 2,
+          "angleOffsetDegrees": 44,
+          "anchor": {
+            "x": 1357.66,
+            "y": 736.14
+          },
+          "x": 1353.32,
+          "y": 673.29,
+          "percentX": 80.94,
+          "percentY": 71.55
+        },
+        {
+          "sequence": 3,
+          "angleOffsetDegrees": 88,
+          "anchor": {
+            "x": 1357.66,
+            "y": 736.14
+          },
+          "x": 1408.49,
+          "y": 652.3,
+          "percentX": 84.24,
+          "percentY": 69.32
+        },
+        {
+          "sequence": 4,
+          "angleOffsetDegrees": 132,
+          "anchor": {
+            "x": 1357.66,
+            "y": 736.14
+          },
+          "x": 1455.98,
+          "y": 698.03,
+          "percentX": 87.08,
+          "percentY": 74.18
+        },
+        {
+          "sequence": 5,
+          "angleOffsetDegrees": 176,
+          "anchor": {
+            "x": 1357.66,
+            "y": 736.14
+          },
+          "x": 1421.7,
+          "y": 747.44,
+          "percentX": 85.03,
+          "percentY": 79.43
+        }
+      ]
+    }
+  ]
+}

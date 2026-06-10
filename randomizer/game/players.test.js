@@ -31,6 +31,8 @@ assert.equal(currentPlayer.resources.handSize, 5);
 assert.equal(currentPlayer.resources.score, 12);
 assert.equal(currentPlayer.orbitCount, 0);
 assert.equal(players.getPlayerColorDefinition("green").rocketAsset, "../assets/tokens/rocket-green.png");
+assert.equal(players.getPlayerColorDefinition("green").satelliteAsset, "../assets/tokens/satellite-green.png");
+assert.equal(players.getPlayerColorDefinition("green").landdingAsset, "../assets/tokens/landding-green.png");
 
 const spender = players.createPlayer({ resources: { credits: 5, energy: 4 } });
 assert.equal(players.canAfford(spender, { credits: 2, energy: 1 }), true);
@@ -39,5 +41,19 @@ assert.equal(spent.ok, true);
 assert.equal(spender.resources.credits, 3);
 assert.equal(spender.resources.energy, 3);
 assert.equal(players.spendResources(spender, { credits: 99 }).ok, false);
+
+const receiver = players.createPlayer({
+  resources: { credits: 1, energy: 2, publicity: 3, availableData: 4 },
+});
+players.gainResources(receiver, {
+  credits: 100,
+  energy: 100,
+  publicity: 10,
+  availableData: 6,
+});
+assert.equal(receiver.resources.credits, 101);
+assert.equal(receiver.resources.energy, 102);
+assert.equal(receiver.resources.publicity, players.RESOURCE_LIMITS.publicity);
+assert.equal(receiver.resources.availableData, players.RESOURCE_LIMITS.availableData);
 
 console.log("player tests passed");

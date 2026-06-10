@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SETI 太阳系随机器</title>
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./style.css?v=planet-tokens-11">
 </head>
 <body>
-  <div class="app-wrap debug-collapsed log-collapsed" id="app-wrap">
+  <div class="app-wrap debug-collapsed" id="app-wrap">
     <aside class="table-column table-column-left" aria-label="左侧游戏区域">
       <section class="round-status-panel" aria-label="轮次和旋转状态">
         <div class="round-status-circle">
@@ -40,6 +40,18 @@
         </div>
       </section>
     </aside>
+
+    <div class="land-target-overlay" id="land-target-overlay" hidden>
+      <div class="land-target-dialog" role="dialog" aria-modal="true" aria-labelledby="land-target-title">
+        <p class="land-target-title" id="land-target-title">选择登陆目标</p>
+        <label class="land-target-label" for="land-target-select">登陆到</label>
+        <select class="land-target-select" id="land-target-select"></select>
+        <div class="land-target-actions">
+          <button class="land-target-button land-target-button-primary" type="button" id="land-target-confirm">确认登陆</button>
+          <button class="land-target-button" type="button" id="land-target-cancel">取消</button>
+        </div>
+      </div>
+    </div>
 
     <main class="board-column">
       <section class="player-command" id="player-command" aria-label="当前玩家">
@@ -107,8 +119,9 @@
         </div>
       </div>
 
-      <div class="planets-reference" id="planets-reference" aria-hidden="true">
-        <img src="../assets/core/background/planets.png" alt="" width="1672" height="941" decoding="async">
+      <div class="planets-reference" id="planets-reference" aria-label="星球位置参考贴图">
+        <img src="../assets/core/background/planets.png" alt="星球位置参考贴图" width="1672" height="941" decoding="async">
+        <div class="planets-token-layer" id="planets-token-layer" aria-label="手动放置在星球贴图上的标记"></div>
       </div>
 
       <div class="button-wrap" id="button-wrap">
@@ -158,6 +171,7 @@
         <div class="debug-actions">
           <button class="debug-action-button" type="button" id="debug-rotate-button">旋转</button>
           <button class="debug-action-button" type="button" id="debug-launch-button">发射</button>
+          <button class="debug-action-button" type="button" id="debug-income-button">收入</button>
         </div>
         <div class="debug-move-pad" id="debug-move-pad" aria-label="移动当前火箭">
           <button class="debug-action-button debug-move-button" type="button" id="debug-move-up" data-move-x="0" data-move-y="1">外</button>
@@ -169,22 +183,23 @@
     </aside>
 
     <aside class="report-dock" id="report-dock">
-      <button class="log-toggle" type="button" id="log-toggle" aria-controls="state-readout" aria-expanded="false">日志</button>
+      <button class="log-toggle" type="button" id="log-toggle" aria-controls="state-readout" aria-expanded="true">日志</button>
       <output class="state-readout" id="state-readout" aria-live="polite"></output>
     </aside>
   </div>
 
   <script src="./solar-system/layout.js?v=player-actions-4"></script>
   <script src="./solar-system/core.js?v=player-actions-4"></script>
-  <script src="./game/players.js?v=player-actions-4"></script>
-  <script src="./game/rockets.js?v=player-actions-4"></script>
-  <script src="./game/planet-stats.js?v=player-actions-4"></script>
-  <script src="./game/actions/shared.js?v=player-actions-4"></script>
-  <script src="./game/actions/launch.js?v=player-actions-4"></script>
-  <script src="./game/actions/orbit.js?v=player-actions-4"></script>
-  <script src="./game/actions/land.js?v=player-actions-4"></script>
-  <script src="./game/actions/index.js?v=player-actions-4"></script>
-  <script src="./game/actions/quick-trades.js?v=player-actions-4"></script>
-  <script src="./app.js?v=player-actions-4"></script>
+  <script src="./game/players.js?v=planet-tokens-1"></script>
+  <script src="./game/rockets.js?v=planet-tokens-11"></script>
+  <script src="./game/planet-reference-layout.js?v=planet-tokens-11"></script>
+  <script src="./game/planet-stats.js?v=planet-tokens-11"></script>
+  <script src="./game/actions/shared.js?v=planet-tokens-11"></script>
+  <script src="./game/actions/launch.js?v=planet-tokens-11"></script>
+  <script src="./game/actions/orbit.js?v=planet-tokens-11"></script>
+  <script src="./game/actions/land.js?v=planet-tokens-11"></script>
+  <script src="./game/actions/index.js?v=planet-tokens-11"></script>
+  <script src="./game/actions/quick-trades.js?v=planet-tokens-11"></script>
+  <script src="./app.js?v=planet-tokens-11"></script>
 </body>
 </html>

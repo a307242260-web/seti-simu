@@ -3,6 +3,7 @@ require("../../solar-system/layout");
 require("../../solar-system/core");
 require("../players");
 require("../rockets");
+require("../planet-reference-layout");
 require("../planet-stats");
 require("./shared");
 require("./launch");
@@ -59,12 +60,25 @@ function launchToPlanet(context, planetId) {
 const context = createContext();
 const launchResult = actions.execute("launch", context);
 assert.equal(launchResult.ok, true);
+assert.equal(launchResult.rocket.playerSequence, 1);
 assert.equal(players.getCurrentPlayer(context.playerState).resources.credits, 8);
 
 const noRocketContext = createContext();
 const blockedOrbit = actions.execute("orbit", noRocketContext);
 assert.equal(blockedOrbit.ok, false);
 assert.match(blockedOrbit.message, /当前火箭/);
+
+const referenceContext = createContext();
+actions.execute("launch", referenceContext);
+rockets.placeRocketAtPlanetsReferencePoint(referenceContext.rocketState, 1, {
+  x: 836,
+  y: 470.5,
+  width: 1672,
+  height: 941,
+});
+const referenceOrbit = actions.execute("orbit", referenceContext);
+assert.equal(referenceOrbit.ok, false);
+assert.match(referenceOrbit.message, /行星格/);
 
 const marsContext = createContext();
 launchToPlanet(marsContext, "mars");
@@ -87,10 +101,28 @@ const discountedLandContext = createContext();
 launchToPlanet(discountedLandContext, "jupiter");
 actions.execute("orbit", discountedLandContext);
 launchToPlanet(discountedLandContext, "jupiter");
-const discountedLand = actions.execute("land", discountedLandContext);
+const discountedLand = actions.execute("land", discountedLandContext, { target: { type: "planet" } });
 assert.equal(discountedLand.ok, true);
 assert.equal(discountedLand.cost.energy, 2);
 assert.equal(planetStats.getPlanetLandingCount(discountedLandContext.planetStatsState, "jupiter"), 1);
+
+const marsSatelliteContext = createContext();
+launchToPlanet(marsSatelliteContext, "mars");
+const marsSatelliteLand = actions.execute("land", marsSatelliteContext, {
+  target: { type: "satellite", satelliteId: "phobos-deimos" },
+});
+assert.equal(marsSatelliteLand.ok, true);
+assert.equal(marsSatelliteLand.markerKind, "satellite");
+assert.equal(planetStats.getSatelliteLandingMarkers(marsSatelliteContext.planetStatsState, "mars").length, 1);
+assert.equal(marsSatelliteContext.rocketState.rockets.length, 0);
+
+const orbitReuseContext = createContext();
+actions.execute("launch", orbitReuseContext);
+const firstRocketSequence = orbitReuseContext.rocketState.rockets[0].playerSequence;
+launchToPlanet(orbitReuseContext, "venus");
+actions.execute("orbit", orbitReuseContext);
+actions.execute("launch", orbitReuseContext);
+assert.equal(orbitReuseContext.rocketState.rockets[0].playerSequence, firstRocketSequence);
 
 const poorContext = createContext({
   playerState: players.createPlayerState({

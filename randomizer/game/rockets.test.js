@@ -10,6 +10,7 @@ const launched = rockets.launchRocketAtSector(rocketState, { x: 5, y: 1 }, {
 
 assert.equal(launched.ok, true);
 assert.equal(launched.rocket.id, 1);
+assert.equal(launched.rocket.playerSequence, 1);
 assert.equal(launched.rocket.playerId, "player-white");
 assert.equal(launched.rocket.color, "white");
 assert.equal(rocketState.activeRocketId, 1);
@@ -45,5 +46,17 @@ assert.equal(blocked.ok, false);
 assert.equal(fullSectorState.rockets.length, 9);
 assert.equal(fullSectorState.nextRocketId, 10);
 assert.match(blocked.message, /已满/);
+
+const reuseState = rockets.createRocketState();
+const firstLaunch = rockets.launchRocketAtSector(reuseState, { x: 5, y: 1 }, {
+  playerId: "player-white",
+  color: "white",
+});
+rockets.removeRocket(reuseState, firstLaunch.rocket.id);
+const secondLaunch = rockets.launchRocketAtSector(reuseState, { x: 5, y: 1 }, {
+  playerId: "player-white",
+  color: "white",
+});
+assert.equal(secondLaunch.rocket.playerSequence, 1);
 
 console.log("rocket action tests passed");

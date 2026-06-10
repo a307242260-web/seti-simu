@@ -5,13 +5,27 @@
   const players = window.SetiPlayers;
   const rocketActions = window.SetiRocketActions;
   const planetStats = window.SetiPlanetStats;
+  const planetReferenceLayout = window.SetiPlanetReferenceLayout;
   const actions = window.SetiActions;
   const quickTrades = window.SetiQuickTrades;
 
   /** 与官网 main.js 一致的每层转盘随机偏移基数 */
   const WHEEL_OFFSETS = [0, 0, 20, 11, 4];
-  const ROCKET_IMAGE_SCALE = 0.08;
-
+  const ROCKET_IMAGE_SCALE = 0.104;
+  const REFERENCE_ORBIT_IMAGE_SCALE = 0.0286;
+  const REFERENCE_LANDDING_IMAGE_SCALE = 0.0338;
+  const tokenWidths = {
+    rocket: null,
+    orbit: null,
+    landding: null,
+  };
+  const ROCKET_SURFACE = rocketActions.ROCKET_SURFACE;
+  const PLANETS_REFERENCE_SIZE = planetReferenceLayout.PLANETS_REFERENCE_SIZE;
+  const REFERENCE_PLACEMENT_KIND_LABELS = Object.freeze({
+    orbit: "环绕",
+    land: "登陆",
+    satellite: "卫星",
+  });
   const solarState = solar.createBaselineState();
   const playerState = players.createPlayerState({
     currentPlayer: { color: players.DEFAULT_PLAYER_COLOR },
@@ -39,6 +53,7 @@
     buttonWrap: document.getElementById("button-wrap"),
     planetsReference: document.getElementById("planets-reference"),
     planetsReferenceImage: document.querySelector(".planets-reference img"),
+    planetsTokenLayer: document.getElementById("planets-token-layer"),
     wheels: {
       1: document.getElementById("wheel-1"),
       2: document.getElementById("wheel-2"),
@@ -55,9 +70,15 @@
     debugToggle: document.getElementById("debug-toggle"),
     debugRotateButton: document.getElementById("debug-rotate-button"),
     debugLaunchButton: document.getElementById("debug-launch-button"),
+    debugIncomeButton: document.getElementById("debug-income-button"),
     debugMovePad: document.getElementById("debug-move-pad"),
     logToggle: document.getElementById("log-toggle"),
     stateReadout: document.getElementById("state-readout"),
+    landTargetOverlay: document.getElementById("land-target-overlay"),
+    landTargetTitle: document.getElementById("land-target-title"),
+    landTargetSelect: document.getElementById("land-target-select"),
+    landTargetConfirm: document.getElementById("land-target-confirm"),
+    landTargetCancel: document.getElementById("land-target-cancel"),
   };
 
   function resize() {
@@ -105,6 +126,27 @@
     return players.getCurrentPlayer(playerState);
   }
 
+  function getReferencePlacementKindLabel(kind) {
+    return REFERENCE_PLACEMENT_KIND_LABELS[kind] || kind || "贴图";
+  }
+
+  function getReferencePlacementName(placement) {
+    if (!placement) return null;
+    if (placement.kind === "satellite") {
+      return `${placement.parentPlanetName} ${placement.satelliteName}`;
+    }
+    const index = placement.sequence ? placement.sequence : "";
+    return `${placement.planetName} ${getReferencePlacementKindLabel(placement.kind)}${index}`;
+  }
+
+  function buildPlanetOrbitLandReferenceData() {
+    return planetReferenceLayout.buildReferenceData();
+  }
+
+  function isPlanetMarkerRocket(rocket) {
+    return Boolean(rocket?.referencePlacement?.isPlanetMarker);
+  }
+
   function getBoardPointFromClientPosition(clientX, clientY) {
     const rect = els.wheelWrap.getBoundingClientRect();
     const size = solar.GLOBAL_COORDINATE_SYSTEM.size;
@@ -115,7 +157,46 @@
     });
   }
 
+  function getPlanetsReferenceDimensions() {
+    const width = els.planetsReferenceImage.naturalWidth
+      || Number(els.planetsReferenceImage.getAttribute("width"))
+      || PLANETS_REFERENCE_SIZE.width;
+    const height = els.planetsReferenceImage.naturalHeight
+      || Number(els.planetsReferenceImage.getAttribute("height"))
+      || PLANETS_REFERENCE_SIZE.height;
+
+    return { width, height };
+  }
+
+  function isPointInsideRect(clientX, clientY, rect) {
+    return clientX >= rect.left
+      && clientX <= rect.right
+      && clientY >= rect.top
+      && clientY <= rect.bottom;
+  }
+
+  function isClientPositionInsidePlanetsReference(clientX, clientY) {
+    if (!els.planetsReferenceImage) return false;
+    const rect = els.planetsReferenceImage.getBoundingClientRect();
+    return isPointInsideRect(clientX, clientY, rect);
+  }
+
+  function getPlanetsReferencePointFromClientPosition(clientX, clientY) {
+    const rect = els.planetsReferenceImage.getBoundingClientRect();
+    const dimensions = getPlanetsReferenceDimensions();
+    const percentX = ((clientX - rect.left) / rect.width) * 100;
+    const percentY = ((clientY - rect.top) / rect.height) * 100;
+
+    return rocketActions.normalizePlanetsReferencePoint({
+      percentX,
+      percentY,
+      width: dimensions.width,
+      height: dimensions.height,
+    });
+  }
+
   function formatBoardPoint(point) {
+    if (!point) return "无";
     return `[${point.x.toFixed(2)},${point.y.toFixed(2)}]`;
   }
 
@@ -132,12 +213,122 @@
   }
 
   function formatPolarPoint(point) {
+    if (!point) return "无";
     return `[r=${point.radius.toFixed(2)},a=${point.angleDegrees.toFixed(2)}]`;
   }
 
   function formatSectorCoordinate(resolution) {
     if (!resolution?.sectorCoordinate) return "无";
     return `[${resolution.sectorCoordinate.x},${resolution.sectorCoordinate.y}]`;
+  }
+
+  function formatPlanetsReferencePoint(point) {
+    if (!point) return "planets贴图 无";
+    return `planets贴图[${point.x.toFixed(2)},${point.y.toFixed(2)}] ${point.percentX.toFixed(2)}%,${point.percentY.toFixed(2)}%`;
+  }
+
+  function isRocketOnPlanetsReference(rocket) {
+    return (rocket?.surface || ROCKET_SURFACE.SOLAR) === ROCKET_SURFACE.PLANETS_REFERENCE;
+  }
+
+  function createDefaultReferencePlacementInput(placement) {
+    return {
+      x: placement.x,
+      y: placement.y,
+      width: PLANETS_REFERENCE_SIZE.width,
+      height: PLANETS_REFERENCE_SIZE.height,
+    };
+  }
+
+  function createPlanetMarkerPlacement(slot, markerState) {
+    if (slot.satelliteId) {
+      return {
+        parentPlanetId: slot.parentPlanetId,
+        parentPlanetName: slot.parentPlanetName,
+        satelliteId: slot.satelliteId,
+        satelliteName: slot.satelliteName,
+        kind: "satellite",
+        x: slot.x,
+        y: slot.y,
+        isPlanetMarker: true,
+        playerId: markerState.playerId,
+        color: markerState.color,
+      };
+    }
+
+    return {
+      planetId: slot.planetId,
+      planetName: slot.planetName,
+      kind: slot.kind,
+      sequence: slot.sequence,
+      angleOffsetDegrees: slot.angleOffsetDegrees,
+      center: slot.center,
+      x: slot.x,
+      y: slot.y,
+      isPlanetMarker: true,
+      playerId: markerState.playerId,
+      color: markerState.color,
+    };
+  }
+
+  function createPlanetMarkerRocket(slot, markerState) {
+    const placement = createPlanetMarkerPlacement(slot, markerState);
+    const rocket = {
+      id: rocketState.nextRocketId,
+      playerId: markerState.playerId,
+      color: markerState.color,
+      referencePlacement: placement,
+    };
+
+    rocketState.nextRocketId += 1;
+    rocketState.rockets.push(rocket);
+    rocketActions.placeRocketAtPlanetsReferencePoint(
+      rocketState,
+      rocket.id,
+      createDefaultReferencePlacementInput(placement),
+    );
+    return rocket;
+  }
+
+  function removePlanetMarkerRockets() {
+    const markerRockets = rocketState.rockets.filter(isPlanetMarkerRocket);
+    markerRockets.forEach((rocket) => {
+      rocketActions.removeRocket(rocketState, rocket.id);
+      removeRocketElement(rocket.id);
+    });
+  }
+
+  function syncPlanetOrbitLandMarkers() {
+    removePlanetMarkerRockets();
+
+    for (const planetId of planetReferenceLayout.PLANET_ORDER) {
+      for (const markerState of planetStats.getPlanetOrbitMarkers(planetStatsState, planetId)) {
+        const slot = planetReferenceLayout.getPlanetSlot(planetId, "orbit", markerState.sequence);
+        if (slot) createPlanetMarkerRocket(slot, markerState);
+      }
+      for (const markerState of planetStats.getPlanetLandingMarkers(planetStatsState, planetId)) {
+        const slot = planetReferenceLayout.getPlanetSlot(planetId, "land", markerState.sequence);
+        if (slot) createPlanetMarkerRocket(slot, markerState);
+      }
+      for (const markerState of planetStats.getSatelliteLandingMarkers(planetStatsState, planetId)) {
+        const slot = planetReferenceLayout.getSatellitePlacement(planetId, markerState.satelliteId);
+        if (slot) createPlanetMarkerRocket(slot, markerState);
+      }
+    }
+
+    renderRockets();
+  }
+
+  function seedDefaultReferenceRockets() {
+    if (rocketState.rockets.length) return;
+
+    rocketState.activeRocketId = null;
+    rocketState.statusNote = null;
+    syncPlanetOrbitLandMarkers();
+  }
+
+  function formatRocketLabel(rocket) {
+    return rocketActions.formatRocketLabel(rocket);
   }
 
   function createRocketSnapshot(rocket) {
@@ -155,19 +346,89 @@
     return { x: earth.x, y: earth.y };
   }
 
-  function setRocketAssetSize() {
+  function loadTokenWidth(asset, scale, fallbackNaturalWidth, onLoad) {
     const image = new Image();
+    const resolveWidth = (naturalWidth) => {
+      onLoad(Math.max(1, Math.round(naturalWidth * scale)));
+    };
+    image.addEventListener("load", () => {
+      resolveWidth(image.naturalWidth || fallbackNaturalWidth);
+    });
+    image.addEventListener("error", () => {
+      resolveWidth(fallbackNaturalWidth);
+    });
+    image.src = asset;
+  }
+
+  function setTokenAssetSizes() {
     const currentPlayer = getCurrentPlayer();
     const color = players.getPlayerColorDefinition(currentPlayer.color);
-    image.addEventListener("load", () => {
-      const width = Math.max(1, Math.round(image.naturalWidth * ROCKET_IMAGE_SCALE));
+    let pendingLoads = 3;
+    const finalizeTokenSizes = () => {
+      pendingLoads -= 1;
+      if (pendingLoads === 0) renderRockets();
+    };
+
+    loadTokenWidth(color.rocketAsset, ROCKET_IMAGE_SCALE, 205, (width) => {
+      tokenWidths.rocket = width;
       els.tokenLayer.style.setProperty("--rocket-width", `${width}px`);
+      els.planetsTokenLayer.style.setProperty("--rocket-width", `${width}px`);
+      finalizeTokenSizes();
     });
-    image.src = color.rocketAsset;
+    loadTokenWidth(color.satelliteAsset, REFERENCE_ORBIT_IMAGE_SCALE, 927, (width) => {
+      tokenWidths.orbit = width;
+      els.planetsTokenLayer.style.setProperty("--reference-orbit-width", `${width}px`);
+      finalizeTokenSizes();
+    });
+    loadTokenWidth(color.landdingAsset, REFERENCE_LANDDING_IMAGE_SCALE, 927, (width) => {
+      tokenWidths.landding = width;
+      els.planetsTokenLayer.style.setProperty("--reference-land-width", `${width}px`);
+      finalizeTokenSizes();
+    });
+  }
+
+  function applyTokenWidth(element, rocket) {
+    if (!isRocketOnPlanetsReference(rocket)) {
+      element.style.removeProperty("width");
+      return;
+    }
+
+    const kind = rocket.referencePlacement?.kind;
+    if (kind === "orbit" && tokenWidths.orbit) {
+      element.style.width = `${tokenWidths.orbit}px`;
+      return;
+    }
+    if ((kind === "land" || kind === "satellite") && tokenWidths.landding) {
+      element.style.width = `${tokenWidths.landding}px`;
+      return;
+    }
+    if (tokenWidths.rocket) {
+      element.style.width = `${tokenWidths.rocket}px`;
+      return;
+    }
+    element.style.removeProperty("width");
   }
 
   function getRocketColorDefinition(rocket) {
     return players.getPlayerColorDefinition(rocket.color || players.DEFAULT_PLAYER_COLOR);
+  }
+
+  function getTokenAssetForRocket(rocket, color) {
+    if (!isRocketOnPlanetsReference(rocket)) return color.rocketAsset;
+
+    const kind = rocket.referencePlacement?.kind;
+    if (kind === "orbit") return color.satelliteAsset;
+    if (kind === "land" || kind === "satellite") return color.landdingAsset;
+    return color.rocketAsset;
+  }
+
+  function getTokenTypeLabel(rocket) {
+    if (!isRocketOnPlanetsReference(rocket)) return "火箭";
+
+    const kind = rocket.referencePlacement?.kind;
+    if (kind === "orbit") return "卫星";
+    if (kind === "land") return "登陆";
+    return "火箭";
   }
 
   function renderRocketElement(rocket) {
@@ -180,18 +441,55 @@
       element.id = `rocket-${rocket.id}`;
       element.draggable = false;
       element.dataset.rocketId = String(rocket.id);
+      element.addEventListener("pointerdown", handleRocketPointerDown);
       els.tokenLayer.appendChild(element);
     }
 
-    element.src = color.rocketAsset;
-    element.alt = `${color.label}火箭 ${rocket.id}`;
+    const layer = isRocketOnPlanetsReference(rocket) ? els.planetsTokenLayer : els.tokenLayer;
+    if (layer && element.parentElement !== layer) layer.appendChild(element);
+
+    const referencePlacement = rocket.referencePlacement || null;
+    const referenceLabel = getReferencePlacementName(referencePlacement);
+    const tokenTypeLabel = getTokenTypeLabel(rocket);
+    element.src = getTokenAssetForRocket(rocket, color);
+    const rocketLabel = formatRocketLabel(rocket);
+    element.alt = referenceLabel
+      ? `${referenceLabel} ${color.label}${tokenTypeLabel} ${rocketLabel}`
+      : `${color.label}${tokenTypeLabel} ${rocketLabel}`;
     element.dataset.playerId = rocket.playerId || "";
     element.dataset.playerColor = color.id;
+    element.dataset.referencePlanet = referencePlacement?.planetId || "";
+    element.dataset.referenceParentPlanet = referencePlacement?.parentPlanetId || "";
+    element.dataset.referenceSatellite = referencePlacement?.satelliteId || "";
+    element.dataset.referenceKind = referencePlacement?.kind || "";
     element.style.setProperty("--rocket-glow", color.glowColor);
+    element.classList.toggle("is-dragging", rocketState.draggingRocketId === rocket.id);
+    element.classList.toggle("is-reference-placed", isRocketOnPlanetsReference(rocket));
+    element.classList.toggle("is-default-reference", Boolean(referencePlacement?.isDefault));
+    element.classList.toggle("is-reference-orbit", referencePlacement?.kind === "orbit");
+    element.classList.toggle("is-reference-land", referencePlacement?.kind === "land");
+    element.classList.toggle("is-reference-satellite", referencePlacement?.kind === "satellite");
+    element.classList.toggle("is-planet-marker", Boolean(referencePlacement?.isPlanetMarker));
+
+    if (isRocketOnPlanetsReference(rocket)) {
+      applyTokenWidth(element, rocket);
+      const referencePoint = rocket.planetsReference || { percentX: 50, percentY: 50 };
+      element.style.left = `${referencePoint.percentX}%`;
+      element.style.top = `${referencePoint.percentY}%`;
+      element.title = referenceLabel
+        ? `${referenceLabel} ${rocketLabel} ${formatPlanetsReferencePoint(referencePoint)}`
+        : formatPlanetsReferencePoint(referencePoint);
+      return;
+    }
+
+    applyTokenWidth(element, rocket);
 
     const boardPoint = getBoardPointFromPolarPoint(rocket);
     element.style.left = `${boardPoint.x / 10}%`;
     element.style.top = `${boardPoint.y / 10}%`;
+    element.title = referenceLabel
+      ? `${referenceLabel} ${rocketLabel} ${formatPolarPoint(rocket)} ${formatBoardPoint(boardPoint)}`
+      : `${formatPolarPoint(rocket)} ${formatBoardPoint(boardPoint)}`;
   }
 
   function renderRockets() {
@@ -309,6 +607,8 @@
     setActionButtonState(els.actionLaunchButton, launchCheck.ok, launchCheck.message);
     setActionButtonState(els.actionOrbitButton, orbitCheck.ok, orbitCheck.message);
     setActionButtonState(els.actionLandButton, landCheck.ok, landCheck.message);
+    renderQuickMoveRocketOptions();
+    updateQuickMoveControls();
     updateQuickPanel();
   }
 
@@ -339,7 +639,7 @@
     const options = rocketsForPlayer.map((rocket) => {
       const option = document.createElement("option");
       option.value = String(rocket.id);
-      option.textContent = `R${rocket.id}`;
+      option.textContent = formatRocketLabel(rocket);
       return option;
     });
 
@@ -401,11 +701,16 @@
     return result;
   }
 
-  function runAction(actionId) {
-    const result = actions.execute(actionId, createActionContext());
+  function runAction(actionId, actionOptions) {
+    const result = actions.execute(actionId, createActionContext(), actionOptions);
 
-    if (result.rocket) renderRocketElement(result.rocket);
-    if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);
+    if (result.ok && result.markerKind) {
+      if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);
+      syncPlanetOrbitLandMarkers();
+    } else {
+      if (result.rocket) renderRocketElement(result.rocket);
+      if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);
+    }
 
     renderPlayerStats();
     updateActionButtons();
@@ -415,23 +720,21 @@
 
   function getRocketCoordinateReadoutLines() {
     const activeRocket = rocketState.rockets.find((rocket) => rocket.id === rocketState.activeRocketId);
-    const rocketLines = rocketState.rockets.length
-      ? rocketState.rockets.map((rocket) => {
-        const marker = rocket.id === rocketState.activeRocketId ? "*" : " ";
-        const snapshot = createRocketSnapshot(rocket);
-        const color = getRocketColorDefinition(rocket);
-        const slot = snapshot.slotSectorCoordinate
-          ? ` 扇区[${snapshot.slotSectorCoordinate.x},${snapshot.slotSectorCoordinate.y}]#${snapshot.slotIndex}`
-          : "";
-        return `${marker}R${rocket.id} ${color.label} ${formatPolarPoint(snapshot.polar)} ${formatBoardPoint(snapshot.board)}${slot}`;
-      })
-      : ["无"];
-    const sectorLines = rocketState.rockets.length
-      ? rocketState.rockets.map((rocket) => {
-        const snapshot = createRocketSnapshot(rocket);
-        return `R${rocket.id} 中心${formatBoardPoint(snapshot.board)} -> ${formatSectorCoordinate(snapshot)}`;
-      })
-      : ["无"];
+    const formatRocketLine = (rocket) => {
+      const marker = rocket.id === rocketState.activeRocketId ? "*" : " ";
+      const snapshot = createRocketSnapshot(rocket);
+      const color = getRocketColorDefinition(rocket);
+      if (snapshot.surface === ROCKET_SURFACE.PLANETS_REFERENCE) {
+        return `${marker}${formatRocketLabel(rocket)} ${color.label} ${formatPlanetsReferencePoint(snapshot.planetsReference)}`;
+      }
+
+      const slot = snapshot.slotSectorCoordinate
+        ? ` 扇区[${snapshot.slotSectorCoordinate.x},${snapshot.slotSectorCoordinate.y}]#${snapshot.slotIndex}`
+        : snapshot.sectorCoordinate
+          ? ` -> ${formatSectorCoordinate(snapshot)}`
+        : "";
+      return `${marker}${formatRocketLabel(rocket)} ${color.label} ${formatPolarPoint(snapshot.polar)} ${formatBoardPoint(snapshot.board)}${slot}`;
+    };
     const occupancy = rocketActions.getSectorOccupancy(rocketState);
     const occupancyLines = occupancy.size
       ? [...occupancy.entries()]
@@ -445,20 +748,124 @@
     return [
       "火箭坐标",
       `火箭坐标系 polar board-${solar.GLOBAL_COORDINATE_SYSTEM.size}`,
-      activeRocket
-        ? `当前 R${activeRocket.id} ${formatPolarPoint(activeRocket)} ${formatBoardPoint(getBoardPointFromPolarPoint(activeRocket))} -> ${formatSectorCoordinate(createRocketSnapshot(activeRocket))}`
-        : "当前 无",
+      activeRocket ? `当前 ${formatRocketLine(activeRocket).replace(/^[* ]/, "")}` : "当前 无",
       rocketState.statusNote ? `提示 ${rocketState.statusNote}` : "提示 无",
-      "",
-      "已发射",
-      ...rocketLines,
       "",
       "扇区占用",
       ...occupancyLines,
-      "",
-      "位置判定",
-      ...sectorLines,
     ];
+  }
+
+  function getDefaultPlanetReferencePlacementLines() {
+    const slots = planetReferenceLayout.listAllOrbitLandSlots();
+    if (!slots.length) {
+      return [
+        "星球环绕/登陆槽位",
+        "无",
+      ];
+    }
+
+    const visibleMarkers = new Map();
+    for (const planetId of planetReferenceLayout.PLANET_ORDER) {
+      for (const marker of planetStats.getPlanetOrbitMarkers(planetStatsState, planetId)) {
+        visibleMarkers.set(`${planetId}:orbit:${marker.sequence}`, marker);
+      }
+      for (const marker of planetStats.getPlanetLandingMarkers(planetStatsState, planetId)) {
+        visibleMarkers.set(`${planetId}:land:${marker.sequence}`, marker);
+      }
+    }
+
+    return [
+      "星球环绕/登陆槽位",
+      ...slots.map((slot) => {
+        const reference = rocketActions.normalizePlanetsReferencePoint({
+          x: slot.x,
+          y: slot.y,
+          width: PLANETS_REFERENCE_SIZE.width,
+          height: PLANETS_REFERENCE_SIZE.height,
+        });
+        const angle = slot.angleOffsetDegrees == null ? "" : ` +${slot.angleOffsetDegrees}°`;
+        const marker = visibleMarkers.get(`${slot.planetId}:${slot.kind}:${slot.sequence}`);
+        const status = marker
+          ? `已显示 ${players.getPlayerColorDefinition(marker.color).label}`
+          : "未显示";
+        return `${planetReferenceLayout.formatSlotLabel(slot)}${angle} ${formatPlanetsReferencePoint(reference)} ${status}`;
+      }),
+    ];
+  }
+
+  function getDefaultSatelliteReferencePlacementLines() {
+    const satellites = planetReferenceLayout.SATELLITE_PLACEMENTS;
+    if (!satellites.length) {
+      return [
+        "卫星登陆槽位",
+        "无",
+      ];
+    }
+
+    const landedMarkers = new Map();
+    for (const planetId of planetReferenceLayout.PLANETS_WITH_SATELLITES) {
+      for (const marker of planetStats.getSatelliteLandingMarkers(planetStatsState, planetId)) {
+        landedMarkers.set(`${planetId}:${marker.satelliteId}`, marker);
+      }
+    }
+
+    return [
+      "卫星登陆槽位",
+      ...satellites.map((satellite) => {
+        const reference = rocketActions.normalizePlanetsReferencePoint({
+          x: satellite.x,
+          y: satellite.y,
+          width: PLANETS_REFERENCE_SIZE.width,
+          height: PLANETS_REFERENCE_SIZE.height,
+        });
+        const marker = landedMarkers.get(`${satellite.parentPlanetId}:${satellite.satelliteId}`);
+        const status = marker
+          ? `已显示 ${players.getPlayerColorDefinition(marker.color).label}`
+          : "未显示";
+        return `${planetReferenceLayout.formatSatelliteLabel(satellite)} ${formatPlanetsReferencePoint(reference)} ${status}`;
+      }),
+    ];
+  }
+
+  function closeLandTargetPicker() {
+    if (!els.landTargetOverlay) return;
+    els.landTargetOverlay.hidden = true;
+    delete els.landTargetOverlay.dataset.planetId;
+  }
+
+  function openLandTargetPicker(options) {
+    if (!els.landTargetOverlay || !els.landTargetSelect) {
+      runAction("land", { target: options.defaultTarget || options.choices[0].target });
+      return;
+    }
+
+    els.landTargetTitle.textContent = `选择登陆目标：${options.planet.name}`;
+    els.landTargetSelect.replaceChildren(...options.choices.map((choice, index) => {
+      const option = document.createElement("option");
+      option.value = String(index);
+      option.textContent = choice.label;
+      return option;
+    }));
+    els.landTargetOverlay.dataset.planetId = options.planet.planetId;
+    els.landTargetOverlay.hidden = false;
+    els.landTargetSelect.focus();
+  }
+
+  function confirmLandTargetPicker() {
+    const planetId = els.landTargetOverlay?.dataset.planetId;
+    const choiceIndex = Number(els.landTargetSelect?.value);
+    const options = actions.getLandOptions(createActionContext());
+    if (!options.ok || !options.choices?.length) {
+      closeLandTargetPicker();
+      rocketState.statusNote = options.message || "登陆目标已失效";
+      renderStateReadout();
+      return;
+    }
+
+    const choice = options.choices[choiceIndex] || options.choices[0];
+    closeLandTargetPicker();
+    runAction("land", { target: choice.target });
   }
 
   function launchRocketForCurrentPlayer() {
@@ -470,7 +877,46 @@
   }
 
   function landForCurrentPlayer() {
-    runAction("land");
+    const context = createActionContext();
+    const check = actions.canExecute("land", context);
+    if (!check.ok) {
+      rocketState.statusNote = check.message;
+      renderPlayerStats();
+      updateActionButtons();
+      renderStateReadout();
+      return { ok: false, message: check.message };
+    }
+
+    const options = actions.getLandOptions(context);
+    if (!options.ok) {
+      rocketState.statusNote = options.message;
+      renderPlayerStats();
+      updateActionButtons();
+      renderStateReadout();
+      return { ok: false, message: options.message };
+    }
+
+    if (options.needsChoice) {
+      openLandTargetPicker(options);
+      return { ok: true, pendingChoice: true, planetId: options.planet.planetId };
+    }
+
+    return runAction("land", { target: options.defaultTarget });
+  }
+
+  function addDebugIncome() {
+    const currentPlayer = getCurrentPlayer();
+    players.gainResources(currentPlayer, {
+      credits: 100,
+      energy: 100,
+      publicity: 10,
+      availableData: 6,
+    });
+    rocketState.statusNote = "调试收入 +100信用点 +100能量 +10宣传 +6数据";
+    renderPlayerStats();
+    updateActionButtons();
+    renderStateReadout();
+    return { ok: true, player: currentPlayer, message: rocketState.statusNote };
   }
 
   function moveRocket(deltaX, deltaY, rocketId) {
@@ -490,6 +936,67 @@
 
   function moveActiveRocket(deltaX, deltaY) {
     return moveRocket(deltaX, deltaY, rocketState.activeRocketId);
+  }
+
+  function placeRocketAtClientPosition(rocketId, clientX, clientY) {
+    const result = isClientPositionInsidePlanetsReference(clientX, clientY)
+      ? rocketActions.placeRocketAtPlanetsReferencePoint(
+        rocketState,
+        rocketId,
+        getPlanetsReferencePointFromClientPosition(clientX, clientY),
+      )
+      : rocketActions.placeRocketAtBoardPoint(
+        rocketState,
+        rocketId,
+        getBoardPointFromClientPosition(clientX, clientY),
+      );
+
+    if (result.rocket) renderRocketElement(result.rocket);
+    updateActionButtons();
+    renderStateReadout();
+    return result;
+  }
+
+  function handleRocketPointerDown(event) {
+    const rocketId = Number(event.currentTarget.dataset.rocketId);
+    if (!Number.isInteger(rocketId)) return;
+
+    const rocket = rocketState.rockets.find((item) => item.id === rocketId);
+    if (!rocket || isPlanetMarkerRocket(rocket)) return;
+
+    rocketState.activeRocketId = rocketId;
+    rocketState.draggingRocketId = rocketId;
+    rocketState.draggingRocketElement = event.currentTarget;
+    if (event.currentTarget.setPointerCapture) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
+    placeRocketAtClientPosition(rocketId, event.clientX, event.clientY);
+    event.preventDefault();
+  }
+
+  function handleRocketPointerMove(event) {
+    if (!rocketState.draggingRocketId) return;
+    placeRocketAtClientPosition(rocketState.draggingRocketId, event.clientX, event.clientY);
+  }
+
+  function handleRocketPointerUp(event) {
+    const rocketId = rocketState.draggingRocketId;
+    if (!rocketId) return;
+
+    if (rocketState.draggingRocketElement?.releasePointerCapture) {
+      try {
+        rocketState.draggingRocketElement.releasePointerCapture(event.pointerId);
+      } catch (error) {
+        // Pointer capture may already be released by the browser.
+      }
+    }
+
+    rocketState.draggingRocketId = null;
+    rocketState.draggingRocketElement = null;
+    const rocket = rocketState.rockets.find((item) => item.id === rocketId);
+    if (rocket) renderRocketElement(rocket);
+    renderStateReadout();
   }
 
   function stepsToTransform(steps) {
@@ -544,6 +1051,10 @@
       "",
       "可见坐标",
       formatVisibleCoordinateGroups(snapshot.visibleCoordinateGroups),
+      "",
+      ...getDefaultPlanetReferencePlacementLines(),
+      "",
+      ...getDefaultSatelliteReferencePlacementLines(),
       "",
       ...getRocketCoordinateReadoutLines(),
     ].join("\n");
@@ -611,6 +1122,11 @@
   els.actionLaunchButton.addEventListener("click", launchRocketForCurrentPlayer);
   els.actionOrbitButton.addEventListener("click", orbitForCurrentPlayer);
   els.actionLandButton.addEventListener("click", landForCurrentPlayer);
+  els.landTargetConfirm?.addEventListener("click", confirmLandTargetPicker);
+  els.landTargetCancel?.addEventListener("click", closeLandTargetPicker);
+  els.landTargetOverlay?.addEventListener("click", (event) => {
+    if (event.target === els.landTargetOverlay) closeLandTargetPicker();
+  });
   els.actionQuickButton.addEventListener("click", toggleQuickPanel);
   els.quickActionsTrades.addEventListener("click", (event) => {
     const button = event.target.closest("[data-quick-trade]");
@@ -635,6 +1151,7 @@
     rotateSolarOrbit(1);
   });
   els.debugLaunchButton.addEventListener("click", launchRocketForCurrentPlayer);
+  els.debugIncomeButton.addEventListener("click", addDebugIncome);
   els.debugMovePad.addEventListener("click", (event) => {
     const button = event.target.closest("[data-move-x]");
     if (!button) return;
@@ -644,8 +1161,12 @@
     setLogOpen(els.appWrap.classList.contains("log-collapsed"));
   });
   window.addEventListener("resize", resize);
+  window.addEventListener("pointermove", handleRocketPointerMove);
+  window.addEventListener("pointerup", handleRocketPointerUp);
+  window.addEventListener("pointercancel", handleRocketPointerUp);
 
-  setRocketAssetSize();
+  setTokenAssetSizes();
+  seedDefaultReferenceRockets();
   renderPlayerStats();
   updateActionButtons();
   resize();
@@ -660,6 +1181,7 @@
     launchRocket: launchRocketForCurrentPlayer,
     orbitRocket: orbitForCurrentPlayer,
     landRocket: landForCurrentPlayer,
+    addDebugIncome,
     runAction,
     runQuickTrade,
     toggleQuickPanel,
@@ -686,6 +1208,54 @@
     getVisibleCoordinateReport: () => solar.collectVisibleCoordinateReport(solarState),
     getVisibleCoordinateGroups: () => solar.collectVisibleCoordinateGroups(solarState),
     getRocketCoordinates: () => structuredClone(rocketState.rockets.map(createRocketSnapshot)),
+    getPlanetReferenceCenters: () => structuredClone(planetReferenceLayout.PLANET_REFERENCE_CENTERS),
+    getPlanetOrbitLandReferenceData: () => structuredClone(buildPlanetOrbitLandReferenceData()),
+    getGeneratedPlanetReferencePlacements: () => structuredClone(planetReferenceLayout.listAllOrbitLandSlots()),
+    getPlanetOrbitLandMarkers: () => structuredClone(
+      planetReferenceLayout.PLANET_ORDER.flatMap((planetId) => {
+        const orbitMarkers = planetStats.getPlanetOrbitMarkers(planetStatsState, planetId).map((marker) => ({
+          planetId,
+          kind: "orbit",
+          ...marker,
+        }));
+        const landingMarkers = planetStats.getPlanetLandingMarkers(planetStatsState, planetId).map((marker) => ({
+          planetId,
+          kind: "land",
+          ...marker,
+        }));
+        return [...orbitMarkers, ...landingMarkers];
+      }),
+    ),
+    syncPlanetOrbitLandMarkers,
+    getSatelliteLandingMarkers: () => structuredClone(
+      planetReferenceLayout.PLANETS_WITH_SATELLITES.flatMap((planetId) => (
+        planetStats.getSatelliteLandingMarkers(planetStatsState, planetId).map((marker) => ({
+          planetId,
+          ...marker,
+        }))
+      )),
+    ),
+    getLandOptions: () => structuredClone(actions.getLandOptions(createActionContext())),
+    clientToPlanetsReferencePoint: (clientX, clientY) => getPlanetsReferencePointFromClientPosition(clientX, clientY),
+    placeRocketAtBoardPoint: (rocketId, x, y) => {
+      const result = rocketActions.placeRocketAtBoardPoint(rocketState, rocketId, { x, y });
+      if (result.rocket) renderRocketElement(result.rocket);
+      updateActionButtons();
+      renderStateReadout();
+      return result;
+    },
+    placeRocketAtPlanetsReferencePoint: (rocketId, x, y) => {
+      const dimensions = getPlanetsReferenceDimensions();
+      const result = rocketActions.placeRocketAtPlanetsReferencePoint(rocketState, rocketId, {
+        x,
+        y,
+        ...dimensions,
+      });
+      if (result.rocket) renderRocketElement(result.rocket);
+      updateActionButtons();
+      renderStateReadout();
+      return result;
+    },
     getPlayerState: () => structuredClone(playerState),
     getPlanetStatsState: () => structuredClone(planetStatsState),
     getCurrentPlayer: () => structuredClone(getCurrentPlayer()),

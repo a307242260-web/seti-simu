@@ -2,28 +2,41 @@
   "use strict";
 
   let layout = root.SetiSolarLayout;
-  if (!layout && typeof require === "function") {
-    layout = require("../solar-system/layout");
+  let planetReferenceLayout = root.SetiPlanetReferenceLayout;
+
+  if (typeof require === "function") {
+    layout = layout || require("../solar-system/layout");
+    planetReferenceLayout = planetReferenceLayout || require("./planet-reference-layout");
   }
 
-  const api = factory(layout);
+  const api = factory(layout, planetReferenceLayout);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiPlanetStats = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (layout) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (layout, planetReferenceLayout) {
   "use strict";
 
   if (!layout) {
     throw new Error("SetiSolarLayout is required before SetiPlanetStats");
   }
 
+  if (!planetReferenceLayout) {
+    throw new Error("SetiPlanetReferenceLayout is required before SetiPlanetStats");
+  }
+
   const PLANET_IDS = Object.freeze(Object.keys(layout.PLANETS));
 
   function createEmptyPlanetRecord() {
-    return { orbits: 0, landings: 0 };
+    return {
+      orbits: 0,
+      landings: 0,
+      orbitMarkers: [],
+      landingMarkers: [],
+      satelliteLandings: [],
+    };
   }
 
   function createPlanetStatsState() {
@@ -37,6 +50,62 @@
   function getPlanetRecord(state, planetId) {
     if (!state?.planets || !planetId) return null;
     return state.planets[planetId] || null;
+  }
+
+  function normalizePlayer(player) {
+    if (!player) return null;
+    return {
+      id: player.id,
+      color: player.color,
+    };
+  }
+
+  function canAddOrbitMarker(state, planetId) {
+    const record = getPlanetRecord(state, planetId);
+    if (!record) return false;
+    const maxSlots = planetReferenceLayout.getPlanetSlotCount(planetId, "orbit");
+    return maxSlots > 0 && record.orbits < maxSlots;
+  }
+
+  function canAddLandingMarker(state, planetId) {
+    const record = getPlanetRecord(state, planetId);
+    if (!record) return false;
+    const maxSlots = planetReferenceLayout.getPlanetSlotCount(planetId, "land");
+    return maxSlots > 0 && record.landings < maxSlots;
+  }
+
+  function addPlanetOrbitMarker(state, planetId, player) {
+    if (!canAddOrbitMarker(state, planetId)) {
+      return { ok: false, marker: null, message: "环绕槽位已满或星球不支持环绕标记" };
+    }
+
+    const record = getPlanetRecord(state, planetId);
+    const normalizedPlayer = normalizePlayer(player);
+    record.orbits += 1;
+    const marker = {
+      sequence: record.orbits,
+      playerId: normalizedPlayer.id,
+      color: normalizedPlayer.color,
+    };
+    record.orbitMarkers.push(marker);
+    return { ok: true, marker, message: null };
+  }
+
+  function addPlanetLandingMarker(state, planetId, player) {
+    if (!canAddLandingMarker(state, planetId)) {
+      return { ok: false, marker: null, message: "登陆槽位已满或星球不支持登陆标记" };
+    }
+
+    const record = getPlanetRecord(state, planetId);
+    const normalizedPlayer = normalizePlayer(player);
+    record.landings += 1;
+    const marker = {
+      sequence: record.landings,
+      playerId: normalizedPlayer.id,
+      color: normalizedPlayer.color,
+    };
+    record.landingMarkers.push(marker);
+    return { ok: true, marker, message: null };
   }
 
   function incrementPlanetOrbits(state, planetId) {
@@ -61,12 +130,61 @@
     return getPlanetRecord(state, planetId)?.landings || 0;
   }
 
+  function getPlanetOrbitMarkers(state, planetId) {
+    return [...(getPlanetRecord(state, planetId)?.orbitMarkers || [])];
+  }
+
+  function getPlanetLandingMarkers(state, planetId) {
+    return [...(getPlanetRecord(state, planetId)?.landingMarkers || [])];
+  }
+
+  function isSatelliteLanded(state, planetId, satelliteId) {
+    const record = getPlanetRecord(state, planetId);
+    if (!record) return false;
+    return record.satelliteLandings.some((marker) => marker.satelliteId === satelliteId);
+  }
+
+  function getAvailableSatellitesForLanding(state, planetId) {
+    if (!planetReferenceLayout.hasSatellites(planetId)) return [];
+    return planetReferenceLayout.getSatellitesForPlanet(planetId)
+      .filter((satellite) => !isSatelliteLanded(state, planetId, satellite.satelliteId));
+  }
+
+  function canLandOnSatellite(state, planetId, satelliteId) {
+    if (!planetReferenceLayout.getSatellitePlacement(planetId, satelliteId)) return false;
+    return !isSatelliteLanded(state, planetId, satelliteId);
+  }
+
+  function addSatelliteLandingMarker(state, planetId, satelliteId, player) {
+    if (!canLandOnSatellite(state, planetId, satelliteId)) {
+      return { ok: false, marker: null, message: "该卫星已被登陆或不存在" };
+    }
+
+    const satellite = planetReferenceLayout.getSatellitePlacement(planetId, satelliteId);
+    const record = getPlanetRecord(state, planetId);
+    const normalizedPlayer = normalizePlayer(player);
+    const marker = {
+      satelliteId,
+      satelliteName: satellite.satelliteName,
+      playerId: normalizedPlayer.id,
+      color: normalizedPlayer.color,
+    };
+    record.satelliteLandings.push(marker);
+    return { ok: true, marker, message: null };
+  }
+
+  function getSatelliteLandingMarkers(state, planetId) {
+    return [...(getPlanetRecord(state, planetId)?.satelliteLandings || [])];
+  }
+
   function formatPlanetStatsLines(state) {
     return PLANET_IDS.map((planetId) => {
       const planet = layout.PLANETS[planetId];
       const record = getPlanetRecord(state, planetId) || createEmptyPlanetRecord();
       const name = planet?.name || planetId;
-      return `${name} 环绕=${record.orbits} 登陆=${record.landings}`;
+      const satelliteCount = record.satelliteLandings.length;
+      const satelliteText = satelliteCount ? ` 卫星登陆=${satelliteCount}` : "";
+      return `${name} 环绕=${record.orbits} 登陆=${record.landings}${satelliteText}`;
     });
   }
 
@@ -74,10 +192,21 @@
     PLANET_IDS,
     createPlanetStatsState,
     getPlanetRecord,
+    canAddOrbitMarker,
+    canAddLandingMarker,
+    addPlanetOrbitMarker,
+    addPlanetLandingMarker,
     incrementPlanetOrbits,
     incrementPlanetLandings,
     getPlanetOrbitCount,
     getPlanetLandingCount,
+    getPlanetOrbitMarkers,
+    getPlanetLandingMarkers,
+    isSatelliteLanded,
+    getAvailableSatellitesForLanding,
+    canLandOnSatellite,
+    addSatelliteLandingMarker,
+    getSatelliteLandingMarkers,
     formatPlanetStatsLines,
   });
 });

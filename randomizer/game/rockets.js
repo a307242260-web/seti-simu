@@ -22,14 +22,57 @@
 
   const SECTOR_RING_MIN = 1;
   const SECTOR_RING_MAX = 4;
+  const ROCKET_SURFACE = Object.freeze({
+    SOLAR: "solar-board",
+    PLANETS_REFERENCE: "planets-reference",
+  });
 
   function createRocketState() {
     return {
       nextRocketId: 1,
       activeRocketId: null,
       rockets: [],
+      playerRocketSequences: {},
       statusNote: null,
     };
+  }
+
+  function getPlayerRocketSequenceSet(rocketState, playerId) {
+    if (!playerId) return null;
+    if (!rocketState.playerRocketSequences[playerId]) {
+      rocketState.playerRocketSequences[playerId] = new Set();
+    }
+    return rocketState.playerRocketSequences[playerId];
+  }
+
+  function allocatePlayerRocketSequence(rocketState, playerId) {
+    const used = getPlayerRocketSequenceSet(rocketState, playerId);
+    if (!used) return null;
+
+    let sequence = 1;
+    while (used.has(sequence)) sequence += 1;
+    used.add(sequence);
+    return sequence;
+  }
+
+  function releasePlayerRocketSequence(rocketState, playerId, sequence) {
+    const used = rocketState.playerRocketSequences?.[playerId];
+    if (!used || !Number.isInteger(sequence)) return;
+    used.delete(sequence);
+  }
+
+  function isControllablePlayerRocket(rocket) {
+    if (!rocket?.playerId) return false;
+    if (getRocketSurface(rocket) !== ROCKET_SURFACE.SOLAR) return false;
+    if (rocket.referencePlacement?.isPlanetMarker) return false;
+    return true;
+  }
+
+  function formatRocketLabel(rocket) {
+    if (Number.isInteger(rocket?.playerSequence)) {
+      return `R${rocket.playerSequence}`;
+    }
+    return `R${rocket?.id ?? "?"}`;
   }
 
   function clamp(value, min, max) {
@@ -38,6 +81,14 @@
 
   function roundBoardCoordinate(value) {
     return Math.round(Number(value) * 100) / 100;
+  }
+
+  function getRocketSurface(rocket) {
+    return rocket?.surface || ROCKET_SURFACE.SOLAR;
+  }
+
+  function hasPolarPoint(point) {
+    return Number.isFinite(Number(point?.radius)) && Number.isFinite(Number(point?.angleDegrees));
   }
 
   function normalizeBoardPoint(point) {
@@ -64,29 +115,66 @@
     return normalizeBoardPoint(solar.polarToGlobalPoint(point.radius, point.angleDegrees));
   }
 
+  function normalizePlanetsReferencePoint(point) {
+    const width = Math.max(1, roundBoardCoordinate(Number(point.width || point.assetWidth || 1)));
+    const height = Math.max(1, roundBoardCoordinate(Number(point.height || point.assetHeight || 1)));
+    const percentX = point.percentX == null
+      ? (Number(point.x || 0) / width) * 100
+      : Number(point.percentX);
+    const percentY = point.percentY == null
+      ? (Number(point.y || 0) / height) * 100
+      : Number(point.percentY);
+    const normalizedPercentX = roundBoardCoordinate(clamp(percentX, 0, 100));
+    const normalizedPercentY = roundBoardCoordinate(clamp(percentY, 0, 100));
+    const x = point.x == null
+      ? (normalizedPercentX / 100) * width
+      : Number(point.x);
+    const y = point.y == null
+      ? (normalizedPercentY / 100) * height
+      : Number(point.y);
+
+    return {
+      x: roundBoardCoordinate(clamp(x, 0, width)),
+      y: roundBoardCoordinate(clamp(y, 0, height)),
+      percentX: normalizedPercentX,
+      percentY: normalizedPercentY,
+      width,
+      height,
+    };
+  }
+
   function sectorKey(sectorX, sectorY) {
     return `${sectorX},${sectorY}`;
   }
 
   function createRocketSnapshot(rocket) {
-    const polar = normalizePolarPoint(rocket);
-    const board = getBoardPointFromPolarPoint(polar);
-    const sectorResolution = solar.resolveSectorCoordinateFromGlobalPoint(board);
+    const surface = getRocketSurface(rocket);
+    const polar = hasPolarPoint(rocket) ? normalizePolarPoint(rocket) : null;
+    const board = polar ? getBoardPointFromPolarPoint(polar) : null;
+    const sectorResolution = surface === ROCKET_SURFACE.SOLAR && board
+      ? solar.resolveSectorCoordinateFromGlobalPoint(board)
+      : { sectorCoordinate: null, reason: surface === ROCKET_SURFACE.SOLAR ? "missing-polar" : "reference-surface" };
 
     return {
       id: rocket.id,
       playerId: rocket.playerId || null,
+      playerSequence: Number.isInteger(rocket.playerSequence) ? rocket.playerSequence : null,
       color: rocket.color || null,
+      surface,
       polar,
       board,
       sectorCoordinate: sectorResolution.sectorCoordinate,
       sectorReason: sectorResolution.reason || null,
       slotIndex: Number.isInteger(rocket.slotIndex) ? rocket.slotIndex : null,
-      slotSectorCoordinate: Number.isInteger(rocket.sectorX) && Number.isInteger(rocket.sectorY)
+      slotSectorCoordinate: surface === ROCKET_SURFACE.SOLAR
+      && Number.isInteger(rocket.sectorX)
+      && Number.isInteger(rocket.sectorY)
+      && Number.isInteger(rocket.slotIndex)
         ? { x: rocket.sectorX, y: rocket.sectorY }
         : null,
       launchGrid: rocket.launchGrid ? { ...rocket.launchGrid } : null,
       launchSectorCoordinate: rocket.launchSectorCoordinate ? { ...rocket.launchSectorCoordinate } : null,
+      planetsReference: rocket.planetsReference ? { ...rocket.planetsReference } : null,
     };
   }
 
@@ -120,11 +208,49 @@
 
   function assignRocketToSlot(rocket, sectorX, sectorY, slotIndex) {
     const slot = solar.getSectorLaunchSlot(sectorX, sectorY, slotIndex);
+    rocket.surface = ROCKET_SURFACE.SOLAR;
+    rocket.planetsReference = null;
     rocket.sectorX = sectorX;
     rocket.sectorY = sectorY;
     rocket.slotIndex = slot.slotIndex;
     rocket.radius = slot.radius;
     rocket.angleDegrees = slot.angleDegrees;
+    return rocket;
+  }
+
+  function clearRocketSectorSlot(rocket) {
+    rocket.sectorX = null;
+    rocket.sectorY = null;
+    rocket.slotIndex = null;
+  }
+
+  function assignRocketToBoardPoint(rocket, boardPoint) {
+    const board = normalizeBoardPoint(boardPoint);
+    const polar = getPolarPointFromBoardPoint(board);
+    const resolution = solar.resolveSectorCoordinateFromGlobalPoint(board);
+
+    rocket.surface = ROCKET_SURFACE.SOLAR;
+    rocket.planetsReference = null;
+    rocket.radius = polar.radius;
+    rocket.angleDegrees = polar.angleDegrees;
+    rocket.slotIndex = null;
+
+    if (resolution.sectorCoordinate) {
+      rocket.sectorX = resolution.sectorCoordinate.x;
+      rocket.sectorY = resolution.sectorCoordinate.y;
+    } else {
+      clearRocketSectorSlot(rocket);
+    }
+
+    return rocket;
+  }
+
+  function assignRocketToPlanetsReferencePoint(rocket, point) {
+    rocket.surface = ROCKET_SURFACE.PLANETS_REFERENCE;
+    rocket.planetsReference = normalizePlanetsReferencePoint(point);
+    rocket.radius = null;
+    rocket.angleDegrees = null;
+    clearRocketSectorSlot(rocket);
     return rocket;
   }
 
@@ -137,9 +263,11 @@
   }
 
   function getRocketSectorCoordinate(rocket) {
+    if (getRocketSurface(rocket) !== ROCKET_SURFACE.SOLAR) return null;
     if (Number.isInteger(rocket.sectorX) && Number.isInteger(rocket.sectorY)) {
       return { x: rocket.sectorX, y: rocket.sectorY };
     }
+    if (!hasPolarPoint(rocket)) return null;
     const resolution = solar.resolveSectorCoordinateFromGlobalPoint(getBoardPointFromPolarPoint(rocket));
     return resolution.sectorCoordinate || { x: 0, y: SECTOR_RING_MIN };
   }
@@ -162,11 +290,12 @@
 
     rocket.launchGrid = { x: sectorX, y: sectorY };
     rocket.launchSectorCoordinate = { x: sectorX, y: sectorY };
+    rocket.playerSequence = allocatePlayerRocketSequence(rocketState, rocket.playerId);
     rocketState.nextRocketId += 1;
     rocketState.activeRocketId = rocket.id;
     rocketState.rockets.push(rocket);
 
-    const message = `发射 R${rocket.id} -> 扇区[${rocket.sectorX},${rocket.sectorY}]#${rocket.slotIndex}`;
+    const message = `发射 ${formatRocketLabel(rocket)} -> 扇区[${rocket.sectorX},${rocket.sectorY}]#${rocket.slotIndex}`;
     rocketState.statusNote = message;
     return { ok: true, rocket, message };
   }
@@ -184,8 +313,10 @@
   }
 
   function getRocketsForPlayer(rocketState, playerId) {
-    if (!playerId) return [...rocketState.rockets];
-    return rocketState.rockets.filter((rocket) => rocket.playerId === playerId);
+    return rocketState.rockets
+      .filter(isControllablePlayerRocket)
+      .filter((rocket) => !playerId || rocket.playerId === playerId)
+      .sort((left, right) => left.playerSequence - right.playerSequence);
   }
 
   function moveRocket(rocketState, rocketId, deltaX, deltaY) {
@@ -203,6 +334,11 @@
     }
 
     const current = getRocketSectorCoordinate(rocket);
+    if (!current) {
+      const message = `R${rocket.id} 不在主盘扇区内，无法用快捷按钮移动`;
+      rocketState.statusNote = message;
+      return { ok: false, rocket, message };
+    }
     const sectorX = solar.mod8(current.x + Number(deltaX || 0));
     const sectorY = clamp(current.y + Number(deltaY || 0), SECTOR_RING_MIN, SECTOR_RING_MAX);
 
@@ -223,6 +359,31 @@
     return { ok: true, rocket, message };
   }
 
+  function placeRocketAtBoardPoint(rocketState, rocketId, boardPoint) {
+    const activation = setActiveRocket(rocketState, rocketId);
+    if (!activation.ok) return activation;
+
+    assignRocketToBoardPoint(activation.rocket, boardPoint);
+    const snapshot = createRocketSnapshot(activation.rocket);
+    const sectorText = snapshot.sectorCoordinate
+      ? ` -> 扇区[${snapshot.sectorCoordinate.x},${snapshot.sectorCoordinate.y}]`
+      : " -> 主盘扇区外";
+    const message = `手动放置 R${activation.rocket.id} 主盘[${snapshot.board.x},${snapshot.board.y}]${sectorText}`;
+    rocketState.statusNote = message;
+    return { ok: true, rocket: activation.rocket, message };
+  }
+
+  function placeRocketAtPlanetsReferencePoint(rocketState, rocketId, point) {
+    const activation = setActiveRocket(rocketState, rocketId);
+    if (!activation.ok) return activation;
+
+    assignRocketToPlanetsReferencePoint(activation.rocket, point);
+    const reference = activation.rocket.planetsReference;
+    const message = `手动放置 R${activation.rocket.id} planets贴图[${reference.x},${reference.y}] (${reference.percentX}%,${reference.percentY}%)`;
+    rocketState.statusNote = message;
+    return { ok: true, rocket: activation.rocket, message };
+  }
+
   function getActiveRocket(rocketState) {
     if (!rocketState?.activeRocketId) return null;
     return rocketState.rockets.find((rocket) => rocket.id === rocketState.activeRocketId) || null;
@@ -234,6 +395,15 @@
       const message = `火箭 R${rocketId} 不存在`;
       rocketState.statusNote = message;
       return { ok: false, rocketId, message };
+    }
+
+    const removedRocket = rocketState.rockets[index];
+    if (isControllablePlayerRocket(removedRocket)) {
+      releasePlayerRocketSequence(
+        rocketState,
+        removedRocket.playerId,
+        removedRocket.playerSequence,
+      );
     }
 
     rocketState.rockets.splice(index, 1);
@@ -259,9 +429,12 @@
   return Object.freeze({
     SECTOR_RING_MIN,
     SECTOR_RING_MAX,
+    ROCKET_SURFACE,
     createRocketState,
     normalizeBoardPoint,
     normalizePolarPoint,
+    normalizePlanetsReferencePoint,
+    getRocketSurface,
     getPolarPointFromBoardPoint,
     getBoardPointFromPolarPoint,
     createRocketSnapshot,
@@ -274,7 +447,11 @@
     getActiveRocket,
     setActiveRocket,
     getRocketsForPlayer,
+    isControllablePlayerRocket,
+    formatRocketLabel,
     removeRocket,
+    placeRocketAtBoardPoint,
+    placeRocketAtPlanetsReferencePoint,
     launchRocketAtSector,
     moveRocket,
     moveActiveRocket,
