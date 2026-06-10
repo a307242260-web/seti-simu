@@ -77,17 +77,35 @@ body {
 }
 
 .round-status-panel {
-  display: flex;
-  justify-content: center;
-  padding-block: 2px 0;
+  width: 100%;
+  padding-block: 0;
+}
+
+.round-status-frame {
+  position: relative;
+  width: 100%;
+  line-height: 0;
+}
+
+.round-status-bg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 7px 10px rgba(0, 0, 0, 0.38));
 }
 
 .round-status-circle {
-  width: clamp(126px, 9.8vw, 188px);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 26%;
+  min-width: 72px;
+  max-width: 118px;
   aspect-ratio: 1;
   display: grid;
   place-content: center;
-  gap: 6px;
+  gap: 4px;
   text-align: center;
   border: 2px solid rgba(236, 91, 54, 0.86);
   border-radius: 50%;
@@ -97,17 +115,16 @@ body {
   box-shadow: 0 0 22px rgba(232, 78, 48, 0.22), inset 0 0 18px rgba(255, 255, 255, 0.06);
 }
 
-.round-status-title,
-.round-status-subtitle {
+.round-status-title {
   color: rgba(255, 255, 255, 0.68);
-  font-size: 13px;
+  font-size: clamp(10px, 2.2vw, 13px);
   font-weight: 700;
   line-height: 1;
 }
 
 .round-status-value {
   color: #fff7df;
-  font-size: 22px;
+  font-size: clamp(14px, 3.6vw, 22px);
   font-weight: 800;
   line-height: 1;
 }
@@ -1118,7 +1135,8 @@ button.spin-button:hover {
   }
 
   .round-status-circle {
-    width: 150px;
+    width: 24%;
+    max-width: 108px;
   }
 
   .alien-stack {
@@ -1217,7 +1235,9 @@ button.spin-button:hover {
   }
 
   .round-status-circle {
-    width: 132px;
+    width: 28%;
+    min-width: 68px;
+    max-width: 96px;
   }
 
   .tech-row {
