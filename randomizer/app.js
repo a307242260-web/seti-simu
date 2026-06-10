@@ -11,6 +11,7 @@
 
   /** 与官网 main.js 一致的每层转盘随机偏移基数 */
   const WHEEL_OFFSETS = [0, 0, 20, 11, 4];
+  const FINAL_SCORE_IDS = ["a", "b", "c", "d"];
   const ROCKET_IMAGE_SCALE = 0.104;
   const REFERENCE_ORBIT_IMAGE_SCALE = 0.0286;
   const REFERENCE_LANDDING_IMAGE_SCALE = 0.0338;
@@ -47,6 +48,7 @@
     quickMoveRocketSelect: document.getElementById("quick-move-rocket-select"),
     quickMovePad: document.getElementById("quick-move-pad"),
     alienPanels: document.querySelectorAll(".alien-panel"),
+    finalScoreTiles: document.querySelectorAll(".final-score-tile"),
     reportDock: document.getElementById("report-dock"),
     wheelWrap: document.getElementById("wheel-wrap"),
     tokenLayer: document.getElementById("token-layer"),
@@ -1098,10 +1100,22 @@
     renderSectors();
   }
 
+  /** 终局计分：a/b/c/d 各自独立随机 1 或 2 */
+  function randomizeFinalScores() {
+    els.finalScoreTiles.forEach((img) => {
+      const id = img.dataset.finalId;
+      if (!id) return;
+      const variant = Math.random() < 0.5 ? 1 : 2;
+      img.src = `../assets/final/final_${id}${variant}.png`;
+      img.alt = `终局计分 ${id.toUpperCase()}${variant}`;
+    });
+  }
+
   function randomizeAll() {
     els.spinButton.classList.remove("pulsin");
     randomizeWheels();
     randomizeSectors();
+    randomizeFinalScores();
     updateActionButtons();
     renderStateReadout();
   }
@@ -1172,6 +1186,7 @@
   resize();
   renderWheels();
   renderSectors();
+  randomizeFinalScores();
   renderStateReadout();
   renderRockets();
 

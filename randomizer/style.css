@@ -113,40 +113,62 @@ body {
 }
 
 .public-card-panel {
+  width: 100%;
   padding-bottom: 12px;
+}
+
+.final-score-panel {
+  width: 100%;
+  padding-bottom: 12px;
+}
+
+.final-score-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(8px, 0.8vw, 12px);
+  padding: 12px;
+}
+
+.final-score-tile {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 7px 10px rgba(0, 0, 0, 0.38));
 }
 
 .public-card-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(7px, 0.75vw, 12px);
+  gap: clamp(10px, 1vw, 16px);
   padding: 12px;
 }
 
 .public-card {
   display: block;
-  width: min(30%, 78px);
+  flex: 1 1 0;
+  width: 0;
+  max-width: none;
   height: auto;
   filter: drop-shadow(0 7px 10px rgba(0, 0, 0, 0.38));
 }
 
 .alien-panel {
-  width: min(78%, 210px);
+  width: min(78%, 362px);
   min-height: var(--alien-panel-min-height, 0);
   align-self: center;
-  padding: clamp(8px, 0.75vw, 12px);
+  padding: clamp(14px, 1.29vw, 21px);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .alien-stack {
-  width: min(100%, 174px);
+  width: min(100%, 300px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 14px;
 }
 
 .alien-back,
@@ -195,9 +217,9 @@ body {
 }
 
 .opponent-stat-grid {
-  height: clamp(410px, 52vh, 760px);
+  height: clamp(520px, 58vh, 820px);
   display: grid;
-  grid-template-rows: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
   margin: 12px;
   border: 1px solid rgba(224, 231, 220, 0.24);
   border-radius: 6px;
@@ -1088,6 +1110,7 @@ button.spin-button:hover {
   }
 
   .round-status-panel,
+  .final-score-panel,
   .public-card-panel,
   .tech-panel,
   .opponents-panel {
@@ -1099,7 +1122,7 @@ button.spin-button:hover {
   }
 
   .alien-stack {
-    width: min(100%, 150px);
+    width: min(100%, 259px);
   }
 
   .alien-panel {
@@ -1108,7 +1131,7 @@ button.spin-button:hover {
   }
 
   .opponent-stat-grid {
-    height: 360px;
+    height: 480px;
   }
 }
 
@@ -1143,12 +1166,13 @@ button.spin-button:hover {
     gap: 5px;
   }
 
-  .public-card {
-    width: min(30%, 72px);
+  .public-card-row {
+    padding: 10px;
+    gap: 8px;
   }
 
   .alien-stack {
-    width: min(100%, 140px);
+    width: min(100%, 242px);
   }
 
   .alien-panel {
