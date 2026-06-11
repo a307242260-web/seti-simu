@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SETI 太阳系随机器</title>
-  <link rel="stylesheet" href="./style.css?v=player-hand-5">
+  <link rel="stylesheet" href="./style.css?v=card-deck-1">
 </head>
 <body>
   <div class="app-wrap debug-collapsed log-collapsed" id="app-wrap">
@@ -64,6 +64,8 @@
     </div>
 
     <div class="tech-selection-backdrop" id="tech-selection-backdrop" hidden aria-hidden="true"></div>
+    <div class="card-selection-backdrop" id="card-selection-backdrop" hidden aria-hidden="true"></div>
+    <div class="discard-selection-backdrop" id="discard-selection-backdrop" hidden aria-hidden="true"></div>
 
     <div class="land-target-overlay" id="land-target-overlay" hidden>
       <div class="land-target-dialog" role="dialog" aria-modal="true" aria-labelledby="land-target-title">
@@ -120,7 +122,10 @@
           </div>
         </div>
         <section class="table-panel player-hand-panel" id="player-hand-panel" aria-label="玩家手牌区">
-          <div class="panel-title">玩家手牌区</div>
+          <div class="player-hand-panel-header">
+            <div class="panel-title" id="player-hand-panel-title">玩家手牌区</div>
+            <button class="discard-selection-cancel" type="button" id="discard-selection-cancel" hidden>取消</button>
+          </div>
           <div class="player-hand-fan" id="player-hand-fan"></div>
         </section>
       </section>
@@ -285,13 +290,13 @@
         </div>
       </section>
 
-      <section class="table-panel public-card-panel" aria-label="公共牌区">
-        <div class="panel-title">公共牌区</div>
-        <div class="public-card-row">
-          <img class="public-card" src="../assets/cards/card_back.png" alt="公共牌背面 1" width="747" height="1040" decoding="async">
-          <img class="public-card" src="../assets/cards/card_back.png" alt="公共牌背面 2" width="747" height="1040" decoding="async">
-          <img class="public-card" src="../assets/cards/card_back.png" alt="公共牌背面 3" width="747" height="1040" decoding="async">
+      <section class="table-panel public-card-panel" id="public-card-panel" aria-label="公共牌区">
+        <div class="public-card-panel-header">
+          <div class="panel-title">公共牌区</div>
+          <button class="public-blind-draw-button" type="button" id="public-blind-draw-button" disabled>盲抽</button>
+          <button class="card-selection-cancel" type="button" id="card-selection-cancel" hidden>取消</button>
         </div>
+        <div class="public-card-row" id="public-card-row"></div>
       </section>
 
       <section class="table-panel opponents-panel" aria-label="玩家信息统计">
@@ -310,17 +315,10 @@
       <div class="debug-panel" id="debug-panel">
         <div class="debug-actions">
           <button class="debug-action-button" type="button" id="debug-rotate-button">旋转</button>
-          <button class="debug-action-button" type="button" id="debug-launch-button">发射</button>
           <button class="debug-action-button" type="button" id="debug-income-button">收入</button>
-          <button class="debug-action-button" type="button" id="debug-draw-card-button">摸牌</button>
+          <button class="debug-action-button" type="button" id="debug-pick-card-button">精选</button>
           <button class="debug-action-button" type="button" id="debug-discard-card-button">弃牌</button>
           <button class="debug-action-button" type="button" id="debug-cheat-button" aria-pressed="false">作弊</button>
-        </div>
-        <div class="debug-move-pad" id="debug-move-pad" aria-label="移动当前火箭">
-          <button class="debug-action-button debug-move-button" type="button" id="debug-move-up" data-move-x="0" data-move-y="1">外</button>
-          <button class="debug-action-button debug-move-button" type="button" id="debug-move-left" data-move-x="-1" data-move-y="0">逆</button>
-          <button class="debug-action-button debug-move-button" type="button" id="debug-move-right" data-move-x="1" data-move-y="0">顺</button>
-          <button class="debug-action-button debug-move-button" type="button" id="debug-move-down" data-move-x="0" data-move-y="-1">内</button>
         </div>
       </div>
     </aside>
@@ -333,7 +331,9 @@
 
   <script src="./solar-system/layout.js?v=player-actions-4"></script>
   <script src="./solar-system/core.js?v=player-actions-4"></script>
-  <script src="./game/basic-cards.js?v=player-hand-3"></script>
+  <script src="./game/card-catalog.js?v=card-deck-1"></script>
+  <script src="./game/cards/deck.js?v=card-deck-1"></script>
+  <script src="./game/basic-cards.js?v=card-deck-1"></script>
   <script src="./game/players.js?v=player-hand-1"></script>
   <script src="./game/rockets.js?v=planet-tokens-11"></script>
   <script src="./game/planet-reference-layout.js?v=planet-tokens-11"></script>
@@ -353,6 +353,6 @@
   <script src="./game/actions/research-tech.js?v=tech-module-1"></script>
   <script src="./game/actions/index.js?v=tech-module-1"></script>
   <script src="./game/actions/quick-trades.js?v=planet-tokens-11"></script>
-  <script src="./app.js?v=tech-module-1"></script>
+  <script src="./app.js?v=card-deck-1"></script>
 </body>
 </html>

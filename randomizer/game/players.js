@@ -96,6 +96,9 @@
       src: source.src || CARD_BACK_SRC,
       faceUp: Boolean(source.faceUp),
     };
+    if (source.cardId) normalized.cardId = source.cardId;
+    if (source.set) normalized.set = source.set;
+    if (source.cardName) normalized.cardName = source.cardName;
     if (Number.isInteger(source.cardIndex)) {
       normalized.cardIndex = source.cardIndex;
     }
