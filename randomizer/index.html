@@ -54,6 +54,15 @@
       </section>
     </aside>
 
+    <div class="tech-blue-slot-overlay" id="tech-blue-slot-overlay" hidden>
+      <div class="tech-blue-slot-dialog" role="dialog" aria-modal="true" aria-labelledby="tech-blue-slot-title">
+        <p class="tech-blue-slot-title" id="tech-blue-slot-title">选择蓝色科技放置位置</p>
+        <p class="tech-blue-slot-subtitle" id="tech-blue-slot-subtitle"></p>
+        <div class="tech-blue-slot-actions" id="tech-blue-slot-actions"></div>
+        <button class="tech-blue-slot-cancel" type="button" id="tech-blue-slot-cancel">取消</button>
+      </div>
+    </div>
+
     <div class="land-target-overlay" id="land-target-overlay" hidden>
       <div class="land-target-dialog" role="dialog" aria-modal="true" aria-labelledby="land-target-title">
         <p class="land-target-title" id="land-target-title">选择登陆目标</p>
@@ -102,8 +111,11 @@
             </div>
           </div>
         </div>
-        <div class="player-board-panel" aria-label="玩家版图">
-          <img src="../assets/core/player_board.png" alt="玩家版图" width="960" height="329" decoding="async">
+        <div class="player-board-panel" id="player-board-panel" aria-label="玩家版图">
+          <div class="player-board-stage" id="player-board-stage">
+            <img class="player-board-image" src="../assets/core/player_board.png" alt="玩家版图" width="960" height="329" decoding="async">
+            <div class="player-board-tech-layer" id="player-board-tech-layer" aria-hidden="true"></div>
+          </div>
         </div>
         <section class="table-panel player-hand-panel" id="player-hand-panel" aria-label="玩家手牌区">
           <div class="panel-title">玩家手牌区</div>
@@ -150,24 +162,120 @@
     <aside class="table-column table-column-right" aria-label="右侧游戏区域">
       <section class="table-panel tech-panel" aria-label="待拿取科技信息">
         <div class="panel-title">待拿取科技信息</div>
-        <div class="tech-rows">
-          <div class="tech-row">
-            <img class="tech-tile" src="../assets/tech_tile/blue1.png" alt="蓝色科技 1" width="175" height="246" decoding="async">
-            <img class="tech-tile" src="../assets/tech_tile/blue2.png" alt="蓝色科技 2" width="175" height="246" decoding="async">
-            <img class="tech-tile" src="../assets/tech_tile/blue3.png" alt="蓝色科技 3" width="175" height="246" decoding="async">
-            <img class="tech-tile" src="../assets/tech_tile/blue4.png" alt="蓝色科技 4" width="175" height="246" decoding="async">
+        <div class="tech-stage" id="tech-stage">
+          <div class="tech-row tech-row-blue">
+            <div class="tech-slot" data-tech-slot="blue1">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="blue1">
+                  <img class="tech-tile" data-tech-id="blue1" src="../assets/tech_tile/blue1.png" alt="蓝色科技 1" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="blue1" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="blue1" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
+            <div class="tech-slot" data-tech-slot="blue2">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="blue2">
+                  <img class="tech-tile" data-tech-id="blue2" src="../assets/tech_tile/blue2.png" alt="蓝色科技 2" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="blue2" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="blue2" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
+            <div class="tech-slot" data-tech-slot="blue3">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="blue3">
+                  <img class="tech-tile" data-tech-id="blue3" src="../assets/tech_tile/blue3.png" alt="蓝色科技 3" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="blue3" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="blue3" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
+            <div class="tech-slot" data-tech-slot="blue4">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="blue4">
+                  <img class="tech-tile" data-tech-id="blue4" src="../assets/tech_tile/blue4.png" alt="蓝色科技 4" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="blue4" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="blue4" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
           </div>
-          <div class="tech-row">
-            <img class="tech-tile" src="../assets/tech_tile/orange1.png" alt="橙色科技 1" width="175" height="246" decoding="async">
-            <img class="tech-tile" src="../assets/tech_tile/orange2.png" alt="橙色科技 2" width="175" height="246" decoding="async">
-            <img class="tech-tile" src="../assets/tech_tile/orange3.png" alt="橙色科技 3" width="175" height="246" decoding="async">
-            <img class="tech-tile" src="../assets/tech_tile/orange4.png" alt="橙色科技 4" width="175" height="246" decoding="async">
+          <div class="tech-row tech-row-orange">
+            <div class="tech-slot" data-tech-slot="orange1">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="orange1">
+                  <img class="tech-tile" data-tech-id="orange1" src="../assets/tech_tile/orange1.png" alt="橙色科技 1" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="orange1" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="orange1" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
+            <div class="tech-slot" data-tech-slot="orange2">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="orange2">
+                  <img class="tech-tile" data-tech-id="orange2" src="../assets/tech_tile/orange2.png" alt="橙色科技 2" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="orange2" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="orange2" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
+            <div class="tech-slot" data-tech-slot="orange3">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="orange3">
+                  <img class="tech-tile" data-tech-id="orange3" src="../assets/tech_tile/orange3.png" alt="橙色科技 3" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="orange3" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="orange3" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
+            <div class="tech-slot" data-tech-slot="orange4">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="orange4">
+                  <img class="tech-tile" data-tech-id="orange4" src="../assets/tech_tile/orange4.png" alt="橙色科技 4" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="orange4" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="orange4" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
           </div>
-          <div class="tech-row">
-            <img class="tech-tile" src="../assets/tech_tile/purple1.png" alt="紫色科技 1" width="175" height="246" decoding="async">
-            <img class="tech-tile" src="../assets/tech_tile/purple2.png" alt="紫色科技 2" width="175" height="246" decoding="async">
-            <img class="tech-tile" src="../assets/tech_tile/purple3.png" alt="紫色科技 3" width="175" height="246" decoding="async">
-            <img class="tech-tile" src="../assets/tech_tile/purple4.png" alt="紫色科技 4" width="175" height="246" decoding="async">
+          <div class="tech-row tech-row-purple">
+            <div class="tech-slot" data-tech-slot="purple1">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="purple1">
+                  <img class="tech-tile" data-tech-id="purple1" src="../assets/tech_tile/purple1.png" alt="紫色科技 1" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="purple1" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="purple1" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
+            <div class="tech-slot" data-tech-slot="purple2">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="purple2">
+                  <img class="tech-tile" data-tech-id="purple2" src="../assets/tech_tile/purple2.png" alt="紫色科技 2" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="purple2" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="purple2" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
+            <div class="tech-slot" data-tech-slot="purple3">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="purple3">
+                  <img class="tech-tile" data-tech-id="purple3" src="../assets/tech_tile/purple3.png" alt="紫色科技 3" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="purple3" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="purple3" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
+            <div class="tech-slot" data-tech-slot="purple4">
+              <div class="tech-slot-stack">
+                <div class="tech-tile-wrap" data-tech-wrap-for="purple4">
+                  <img class="tech-tile" data-tech-id="purple4" src="../assets/tech_tile/purple4.png" alt="紫色科技 4" width="175" height="246" decoding="async">
+                  <img class="tech-first-take-overlay" data-tech-overlay-for="purple4" src="../assets/tech_tile/2vp.png" alt="" width="175" height="246" decoding="async" aria-hidden="true">
+                </div>
+                <img class="tech-bonus" data-tech-bonus-for="purple4" alt="" width="128" height="128" decoding="async" hidden>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -201,6 +309,7 @@
           <button class="debug-action-button" type="button" id="debug-income-button">收入</button>
           <button class="debug-action-button" type="button" id="debug-draw-card-button">摸牌</button>
           <button class="debug-action-button" type="button" id="debug-discard-card-button">弃牌</button>
+          <button class="debug-action-button" type="button" id="debug-take-tech-button" aria-pressed="false">拿取科技</button>
         </div>
         <div class="debug-move-pad" id="debug-move-pad" aria-label="移动当前火箭">
           <button class="debug-action-button debug-move-button" type="button" id="debug-move-up" data-move-x="0" data-move-y="1">外</button>
@@ -230,6 +339,7 @@
   <script src="./game/actions/land.js?v=planet-tokens-11"></script>
   <script src="./game/actions/index.js?v=planet-tokens-11"></script>
   <script src="./game/actions/quick-trades.js?v=planet-tokens-11"></script>
-  <script src="./app.js?v=player-hand-5"></script>
+  <script src="./game/tech.js?v=take-tech-3"></script>
+  <script src="./app.js?v=take-tech-3"></script>
 </body>
 </html>

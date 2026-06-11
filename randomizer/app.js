@@ -9,6 +9,7 @@
   const actions = window.SetiActions;
   const quickTrades = window.SetiQuickTrades;
   const basicCards = window.SetiBasicCards;
+  const tech = window.SetiTech;
 
   /** 与官网 main.js 一致的每层转盘随机偏移基数 */
   const WHEEL_OFFSETS = [0, 0, 20, 11, 4];
@@ -39,6 +40,12 @@
   });
   const rocketState = rocketActions.createRocketState();
   const planetStatsState = planetStats.createPlanetStatsState();
+  const techState = tech.createState();
+  const techRenderContext = {
+    supplyStage: null,
+    supplySlots: {},
+    playerBoardTechLayer: null,
+  };
 
   const els = {
     appWrap: document.querySelector(".app-wrap"),
@@ -84,6 +91,14 @@
     debugDrawCardButton: document.getElementById("debug-draw-card-button"),
     debugDiscardCardButton: document.getElementById("debug-discard-card-button"),
     debugMovePad: document.getElementById("debug-move-pad"),
+    debugTakeTechButton: document.getElementById("debug-take-tech-button"),
+    techStage: document.getElementById("tech-stage"),
+    playerBoardTechLayer: document.getElementById("player-board-tech-layer"),
+    techTiles: [...document.querySelectorAll(".tech-tile[data-tech-id]")],
+    techBlueSlotOverlay: document.getElementById("tech-blue-slot-overlay"),
+    techBlueSlotSubtitle: document.getElementById("tech-blue-slot-subtitle"),
+    techBlueSlotActions: document.getElementById("tech-blue-slot-actions"),
+    techBlueSlotCancel: document.getElementById("tech-blue-slot-cancel"),
     logToggle: document.getElementById("log-toggle"),
     stateReadout: document.getElementById("state-readout"),
     landTargetOverlay: document.getElementById("land-target-overlay"),
@@ -169,6 +184,18 @@
     els.buttonWrap.style.width = `${boardSize}px`;
     layoutPlayerHandFan();
     alignAlienPanelsToPlanets();
+    tech.renderAll(techState, techRenderContext, els.techTiles);
+  }
+
+  function syncTechRenderContext() {
+    techRenderContext.supplyStage = els.techStage;
+    techRenderContext.playerBoardTechLayer = els.playerBoardTechLayer;
+    techRenderContext.supplySlots = Object.fromEntries(
+      [...document.querySelectorAll(".tech-slot[data-tech-slot]")].map((slot) => [
+        slot.dataset.techSlot,
+        slot,
+      ]),
+    );
   }
 
   function alignAlienPanelsToPlanets() {
@@ -197,6 +224,57 @@
     els.appWrap.classList.toggle("debug-collapsed", !open);
     els.debugToggle.setAttribute("aria-expanded", String(open));
     resize();
+  }
+
+  function closeTechBlueSlotPicker() {
+    if (!els.techBlueSlotOverlay) return;
+    tech.cancelBlueSlotChoice(techState);
+    els.techBlueSlotOverlay.hidden = true;
+    delete els.techBlueSlotOverlay.dataset.tileId;
+    tech.renderAll(techState, techRenderContext, els.techTiles);
+  }
+
+  function openTechBlueSlotPicker(request) {
+    if (!els.techBlueSlotOverlay || !els.techBlueSlotActions || !els.techBlueSlotSubtitle) return;
+
+    els.techBlueSlotSubtitle.textContent = `将 ${request.tileId} 放到蓝色科技位置`;
+    els.techBlueSlotActions.replaceChildren(...request.availableSlots.map((slot) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "tech-blue-slot-button";
+      button.dataset.blueSlot = String(slot);
+      button.textContent = String(slot);
+      return button;
+    }));
+    els.techBlueSlotOverlay.dataset.tileId = request.tileId;
+    els.techBlueSlotOverlay.hidden = false;
+    tech.renderAll(techState, techRenderContext, els.techTiles);
+  }
+
+  function confirmTechBlueSlotChoice(blueSlot) {
+    const tileId = els.techBlueSlotOverlay?.dataset.tileId;
+    if (!tileId) return { ok: false, message: "没有待放置的蓝色科技" };
+
+    const result = tech.confirmBlueSlotChoice(techState, tileId, blueSlot);
+    if (result.ok) {
+      closeTechBlueSlotPicker();
+      tech.renderAll(techState, techRenderContext, els.techTiles);
+      renderStateReadout();
+    }
+    return result;
+  }
+
+  function setTakeTechDebugOpen(open) {
+    syncTechRenderContext();
+    if (!open) closeTechBlueSlotPicker();
+    tech.setTakeTechDebugEnabled(techState, open);
+    els.debugTakeTechButton?.setAttribute("aria-pressed", String(open));
+    tech.renderAll(techState, techRenderContext, els.techTiles);
+    renderStateReadout();
+  }
+
+  function toggleTakeTechDebug() {
+    setTakeTechDebugOpen(!techState.takeTechDebugEnabled);
   }
 
   function getCurrentPlayer() {
@@ -1188,6 +1266,8 @@
       ...getDefaultSatelliteReferencePlacementLines(),
       "",
       ...getRocketCoordinateReadoutLines(),
+      "",
+      ...tech.getReadoutLines(techState),
     ].join("\n");
   }
 
@@ -1245,6 +1325,8 @@
     randomizeWheels();
     randomizeSectors();
     randomizeFinalScores();
+    tech.randomizeSupplyBonuses(techState);
+    tech.renderAll(techState, techRenderContext, els.techTiles);
     updateActionButtons();
     renderStateReadout();
   }
@@ -1311,6 +1393,32 @@
   els.debugIncomeButton.addEventListener("click", addDebugIncome);
   els.debugDrawCardButton?.addEventListener("click", drawCardForCurrentPlayer);
   els.debugDiscardCardButton?.addEventListener("click", discardCardFromCurrentPlayer);
+  els.debugTakeTechButton?.addEventListener("click", toggleTakeTechDebug);
+  els.techBlueSlotActions?.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-blue-slot]");
+    if (!button) return;
+    confirmTechBlueSlotChoice(Number(button.dataset.blueSlot));
+  });
+  els.techBlueSlotCancel?.addEventListener("click", () => {
+    closeTechBlueSlotPicker();
+    renderStateReadout();
+  });
+  els.techBlueSlotOverlay?.addEventListener("click", (event) => {
+    if (event.target === els.techBlueSlotOverlay) {
+      closeTechBlueSlotPicker();
+      renderStateReadout();
+    }
+  });
+  syncTechRenderContext();
+  tech.bindSupplyTileClicks(techState, techRenderContext, els.techTiles, {
+    onBlueSlotChoiceRequested: openTechBlueSlotPicker,
+    onChange: (result) => {
+      if (result?.ok && !result.needsBlueSlotChoice) {
+        tech.renderAll(techState, techRenderContext, els.techTiles);
+      }
+      renderStateReadout();
+    },
+  });
   els.debugMovePad.addEventListener("click", (event) => {
     const button = event.target.closest("[data-move-x]");
     if (!button) return;
@@ -1336,6 +1444,7 @@
   randomizeFinalScores();
   renderStateReadout();
   renderRockets();
+  tech.renderAll(techState, techRenderContext, els.techTiles);
 
   window.SetiRandomizer = {
     randomize: randomizeAll,
@@ -1433,5 +1542,17 @@
       solarSystem: solar.createSolarSnapshot(solarState),
     }),
     getSetupState,
+    toggleTakeTechDebug,
+    getTechSnapshot: () => tech.getSnapshot(techState),
+    takeTechTile: (tileId, blueSlot) => {
+      const result = blueSlot == null
+        ? tech.requestTakeTech(techState, tileId)
+        : tech.confirmBlueSlotChoice(techState, tileId, blueSlot);
+      if (result.ok) {
+        tech.renderAll(techState, techRenderContext, els.techTiles);
+        renderStateReadout();
+      }
+      return result;
+    },
   };
 })();

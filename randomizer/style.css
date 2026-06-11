@@ -218,7 +218,7 @@ body {
   padding-bottom: 8px;
 }
 
-.tech-rows {
+.tech-stage {
   padding: 8px 10px 0;
 }
 
@@ -234,6 +234,89 @@ body {
   border-top: 1px solid rgba(224, 231, 220, 0.32);
 }
 
+.tech-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(72px * 246 / 175 + 34px);
+}
+
+.tech-slot-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  width: 100%;
+}
+
+.tech-tile-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 72px;
+  margin: 0 auto;
+}
+
+.tech-tile-wrap .tech-tile {
+  margin: 0;
+}
+
+.tech-first-take-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  opacity: 0.7;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+}
+
+.tech-first-take-overlay:not([hidden]) {
+  display: block;
+}
+
+.tech-first-take-overlay[hidden] {
+  display: none;
+}
+
+.tech-bonus {
+  width: 100%;
+  max-width: 44px;
+  height: auto;
+  margin: 0 auto;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.34));
+  pointer-events: none;
+  user-select: none;
+}
+
+.tech-bonus:not([hidden]) {
+  display: block;
+}
+
+.tech-bonus[hidden] {
+  display: none;
+}
+
+.tech-slot.is-taken .tech-slot-stack {
+  visibility: hidden;
+}
+
+.tech-stage.take-tech-debug-active .tech-tile.is-takable {
+  cursor: pointer;
+}
+
+.tech-stage.take-tech-debug-active .tech-tile.is-takable:hover {
+  outline: 2px solid rgba(154, 218, 255, 0.72);
+  outline-offset: 2px;
+}
+
+.tech-stage.take-tech-debug-active .tech-tile.is-pending-blue {
+  outline: 2px solid rgba(255, 214, 102, 0.92);
+  outline-offset: 2px;
+}
+
 .tech-tile {
   display: block;
   width: 100%;
@@ -241,6 +324,38 @@ body {
   height: auto;
   margin: 0 auto;
   filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.36));
+}
+
+.tech-tile.tech-tile-positioned {
+  width: 175px;
+  max-width: none;
+  margin: 0;
+  cursor: grab;
+  touch-action: none;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+.tech-tile.tech-tile-positioned.is-active {
+  outline: 2px solid rgba(154, 218, 255, 0.88);
+  outline-offset: 2px;
+  z-index: 2;
+}
+
+.tech-tile.tech-tile-positioned.is-dragging {
+  cursor: grabbing;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.48));
+  z-index: 920;
+}
+
+.player-board-tech-layer .tech-tile.tech-tile-positioned {
+  z-index: 3;
+}
+
+.debug-action-button[aria-pressed="true"] {
+  border-color: rgba(154, 218, 255, 0.82);
+  background: rgba(58, 142, 196, 0.82);
+  color: #fff;
 }
 
 .opponents-panel {
@@ -378,12 +493,94 @@ body {
   box-shadow: 0 0 16px rgba(255, 255, 255, 0.06);
 }
 
-.player-board-panel img {
+.player-board-stage {
+  position: relative;
+  width: 100%;
+}
+
+.player-board-image {
   display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 960 / 329;
   object-fit: contain;
+}
+
+.player-board-tech-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.tech-blue-slot-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(6, 10, 18, 0.62);
+  backdrop-filter: blur(2px);
+}
+
+.tech-blue-slot-overlay[hidden] {
+  display: none;
+}
+
+.tech-blue-slot-dialog {
+  width: min(360px, 100%);
+  padding: 20px 22px;
+  border: 1px solid rgba(120, 170, 255, 0.35);
+  border-radius: 14px;
+  background: rgba(14, 22, 36, 0.88);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  color: #e8eef8;
+}
+
+.tech-blue-slot-title {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.tech-blue-slot-subtitle {
+  margin: 0 0 16px;
+  font-size: 0.92rem;
+  color: rgba(232, 238, 248, 0.78);
+}
+
+.tech-blue-slot-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.tech-blue-slot-button {
+  min-height: 44px;
+  border: 1px solid rgba(134, 202, 255, 0.42);
+  border-radius: 8px;
+  background: rgba(28, 95, 139, 0.58);
+  color: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  font: 700 16px/1 "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+.tech-blue-slot-button:hover {
+  border-color: rgba(154, 218, 255, 0.72);
+  background: rgba(44, 122, 171, 0.72);
+}
+
+.tech-blue-slot-cancel {
+  width: 100%;
+  min-height: 36px;
+  border: 1px solid rgba(134, 202, 255, 0.28);
+  border-radius: 8px;
+  background: rgba(18, 34, 52, 0.72);
+  color: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  font: 600 13px/1 "Microsoft YaHei", "PingFang SC", sans-serif;
 }
 
 .player-hand-panel {

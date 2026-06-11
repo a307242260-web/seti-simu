@@ -18,6 +18,14 @@ HEADERS = [
     "右下及底部线条颜色",
 ]
 
+NAME_CORRECTIONS = {
+    "dlc_13.png": "詹姆斯·克拉克·麦克斯韦望远镜",
+    "dlc_21.png": "轨道加注",
+    "dlc_26.png": "新型AI模型",
+    "dlc_36.png": "大耳朵射电望远镜",
+    "dlc_41.png": "系外行星巡天",
+}
+
 
 def numeric_key(path: Path) -> int:
     match = re.search(r"\d+", path.stem)
@@ -73,12 +81,15 @@ def classify_top_right(image: Image.Image) -> str:
 
 
 def classify_bottom_line(image: Image.Image) -> str:
+    width, height = image.size
     votes = [
-        classify_basic_color(patch_hsv(image, 600, 1020)),
-        classify_basic_color(patch_hsv(image, 500, 1025)),
-        classify_basic_color(patch_hsv(image, 80, 1025)),
+        classify_basic_color(patch_hsv(image, width - 150, height - 25)),
+        classify_basic_color(patch_hsv(image, width - 100, height - 55)),
+        classify_basic_color(patch_hsv(image, width - 60, height - 75)),
+        classify_basic_color(patch_hsv(image, width - 40, height - 35)),
     ]
-    color = majority(votes)
+    colored_votes = [vote for vote in votes if vote in {"黄", "绿"}]
+    color = majority(colored_votes) if colored_votes else "灰"
     return color if color in {"黄", "绿"} else "灰"
 
 
@@ -91,16 +102,20 @@ def read_text(reader: easyocr.Reader, image: Image.Image, box: tuple[int, int, i
 
 def read_price(reader: easyocr.Reader, image: Image.Image) -> str:
     crop = image.crop((0, 430, 80, 520))
-    crop = crop.resize((crop.width * 4, crop.height * 4))
-    result = reader.readtext(np.array(crop), detail=0, paragraph=False, allowlist="01234")
-    joined = "".join(result)
-    match = re.search(r"[0-4]", joined)
-    return match.group(0) if match else ""
+    for scale in (4, 3, 5, 6):
+        scaled = crop.resize((crop.width * scale, crop.height * scale))
+        result = reader.readtext(np.array(scaled), detail=0, paragraph=False, allowlist="01234")
+        joined = "".join(result)
+        match = re.search(r"[0-4]", joined)
+        if match:
+            return match.group(0)
+    return ""
 
 
 def analyze_card(reader: easyocr.Reader, path: Path) -> dict[str, str]:
     image = Image.open(path).convert("RGB")
     name = read_text(reader, image, (290, 455, 747, 540))
+    name = NAME_CORRECTIONS.get(path.name, name)
     return {
         "卡牌编号": path.name,
         "卡牌名称": name,
@@ -129,7 +144,11 @@ def main() -> None:
     parser.add_argument("--skip", type=int, default=0, help="Number of sorted cards to skip before processing.")
     args = parser.parse_args()
 
-    files = sorted(args.input_dir.glob("*.webp"), key=numeric_key)
+    image_extensions = {".webp", ".png", ".jpg", ".jpeg"}
+    files = sorted(
+        [path for path in args.input_dir.iterdir() if path.suffix.lower() in image_extensions],
+        key=numeric_key,
+    )
     if args.skip:
         files = files[args.skip :]
     if args.limit:
