@@ -107,7 +107,7 @@
           <button class="action-button" type="button" id="action-analyze-button" aria-label="分析">
             <img class="action-button-icon" src="../assets/symbol/split/seti-icons/seti-icons_r04_c00.webp" alt="" aria-hidden="true">
           </button>
-          <button class="action-button" type="button" disabled aria-label="打牌">
+          <button class="action-button" type="button" id="action-play-card-button" aria-label="打牌">
             <img class="action-button-icon" src="../assets/symbol/split/seti-icons/play_card.png" alt="" aria-hidden="true">
           </button>
           <button class="action-button" type="button" id="action-research-tech-button" aria-label="科技">
@@ -184,9 +184,16 @@
         <section class="table-panel player-hand-panel" id="player-hand-panel" aria-label="玩家手牌区">
           <div class="player-hand-panel-header">
             <div class="panel-title" id="player-hand-panel-title">玩家手牌区</div>
+            <button class="play-card-action-button" type="button" id="play-card-action-button" hidden>打出</button>
             <button class="discard-selection-cancel" type="button" id="discard-selection-cancel" hidden>取消</button>
           </div>
           <div class="player-hand-fan" id="player-hand-fan"></div>
+        </section>
+        <section class="table-panel reserved-card-panel is-empty" id="reserved-card-panel" aria-label="保留牌区">
+          <div class="reserved-card-panel-header">
+            <div class="panel-title">保留牌区</div>
+          </div>
+          <div class="reserved-card-fan" id="reserved-card-fan"></div>
         </section>
       </section>
 

@@ -40,6 +40,12 @@ const claimed = cards.collectClaimedCardIds(cardState, playerState);
 assert.equal(claimed.size, cards.PUBLIC_CARD_COUNT + 5);
 assert.equal(cards.getAvailablePool(cardState, playerState).length, cards.getCatalogSize() - claimed.size);
 
+player.reservedCards = [cards.createCardInstance(cards.CARD_CATALOG[8], 8)];
+const claimedWithReserved = cards.collectClaimedCardIds(cardState, playerState);
+assert.equal(claimedWithReserved.size, claimed.size + 1);
+assert.equal(claimedWithReserved.has(cards.CARD_CATALOG[8].card_id), true);
+player.reservedCards = [];
+
 const blindResult = cards.blindDraw(cardState, playerState, player, () => 0);
 assert.equal(blindResult.ok, true);
 assert.equal(player.hand.length, 6);

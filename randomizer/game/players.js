@@ -106,6 +106,8 @@
     if (source.cardId) normalized.cardId = source.cardId;
     if (source.set) normalized.set = source.set;
     if (source.cardName) normalized.cardName = source.cardName;
+    if (Number.isInteger(source.price)) normalized.price = source.price;
+    if (Number.isInteger(source.cardTypeCode)) normalized.cardTypeCode = source.cardTypeCode;
     if (Number.isInteger(source.discardActionCode)) normalized.discardActionCode = source.discardActionCode;
     if (Number.isInteger(source.scanActionCode)) normalized.scanActionCode = source.scanActionCode;
     if (Number.isInteger(source.incomeCode)) normalized.incomeCode = source.incomeCode;
@@ -200,6 +202,9 @@
     const resources = normalizeResources(source.resources);
     const income = normalizeIncome(source.income);
     const hand = normalizeHand(source.hand, resources.handSize);
+    const reservedCards = Array.isArray(source.reservedCards)
+      ? source.reservedCards.map(normalizeHandCard)
+      : [];
 
     resources.handSize = hand.length;
 
@@ -211,6 +216,7 @@
       resources,
       income,
       hand,
+      reservedCards,
       techState: normalizePlayerTechState(source.techState),
       orbitCount: Number.isInteger(orbitCount) ? orbitCount : Math.round(orbitCount),
     };

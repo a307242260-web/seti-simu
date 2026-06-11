@@ -79,19 +79,22 @@
         selectionActive: false,
         discardSelectionActive: false,
         discardRemaining: 0,
+        playCardSelectionActive: false,
       },
     };
   }
 
-  function collectHandCardIds(playerState) {
+  function collectPlayerCardIds(playerState) {
     const ids = new Set();
     if (!playerState || !Array.isArray(playerState.players)) return ids;
 
     for (const player of playerState.players) {
-      if (!Array.isArray(player.hand)) continue;
-      for (const card of player.hand) {
-        if (card?.cardId) ids.add(card.cardId);
-        else if (Number.isInteger(card?.cardIndex)) ids.add(`b_${card.cardIndex}.webp`);
+      for (const cardList of [player.hand, player.reservedCards]) {
+        if (!Array.isArray(cardList)) continue;
+        for (const card of cardList) {
+          if (card?.cardId) ids.add(card.cardId);
+          else if (Number.isInteger(card?.cardIndex)) ids.add(`b_${card.cardIndex}.webp`);
+        }
       }
     }
 
@@ -99,7 +102,7 @@
   }
 
   function collectClaimedCardIds(cardState, playerState) {
-    const ids = collectHandCardIds(playerState);
+    const ids = collectPlayerCardIds(playerState);
 
     if (cardState?.publicCards) {
       for (const card of cardState.publicCards) {
@@ -271,6 +274,15 @@
     return Boolean(cardState?.ui?.discardSelectionActive);
   }
 
+  function setPlayCardSelectionActive(cardState, active) {
+    cardState.ui.playCardSelectionActive = Boolean(active);
+    return cardState.ui.playCardSelectionActive;
+  }
+
+  function isPlayCardSelectionActive(cardState) {
+    return Boolean(cardState?.ui?.playCardSelectionActive);
+  }
+
   function getDiscardRemaining(cardState) {
     return Math.max(0, Math.round(cardState?.ui?.discardRemaining || 0));
   }
@@ -330,6 +342,8 @@
     isSelectionActive,
     setDiscardSelectionActive,
     isDiscardSelectionActive,
+    setPlayCardSelectionActive,
+    isPlayCardSelectionActive,
     getDiscardRemaining,
     decrementDiscardRemaining,
     initializeDeck,

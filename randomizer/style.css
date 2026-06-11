@@ -302,12 +302,14 @@ body {
     0 18px 42px rgba(0, 0, 0, 0.48);
 }
 
-.app-wrap.discard-selection-active .board-column {
+.app-wrap.discard-selection-active .board-column,
+.app-wrap.play-card-selection-active .board-column {
   position: relative;
   z-index: 1250;
 }
 
-.app-wrap.discard-selection-active .player-hand-panel.player-hand-panel-focused {
+.app-wrap.discard-selection-active .player-hand-panel.player-hand-panel-focused,
+.app-wrap.play-card-selection-active .player-hand-panel.player-hand-panel-focused {
   position: relative;
   z-index: 1260;
   border-color: rgba(120, 210, 255, 0.58);
@@ -995,24 +997,28 @@ body {
   font: 600 13px/1 "Microsoft YaHei", "PingFang SC", sans-serif;
 }
 
-.player-hand-panel {
+.player-hand-panel,
+.reserved-card-panel {
   width: 100%;
-  padding-bottom: 12px;
+  padding-bottom: 8px;
 }
 
-.player-hand-panel-header {
+.player-hand-panel-header,
+.reserved-card-panel-header {
   display: flex;
   align-items: center;
   gap: 10px;
   padding-right: 12px;
 }
 
-.player-hand-panel-header .panel-title {
+.player-hand-panel-header .panel-title,
+.reserved-card-panel-header .panel-title {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-.discard-selection-cancel {
+.discard-selection-cancel,
+.play-card-action-button {
   flex: 0 0 auto;
   margin-top: 6px;
   padding: 4px 12px;
@@ -1026,12 +1032,19 @@ body {
   cursor: pointer;
 }
 
-.discard-selection-cancel:hover {
+.discard-selection-cancel:hover,
+.play-card-action-button:hover:not(:disabled) {
   border-color: rgba(154, 218, 255, 0.72);
   background: rgba(36, 58, 82, 0.96);
 }
 
-.discard-selection-cancel[hidden] {
+.play-card-action-button {
+  border-color: rgba(98, 219, 255, 0.72);
+  box-shadow: 0 0 12px rgba(98, 219, 255, 0.22);
+}
+
+.discard-selection-cancel[hidden],
+.play-card-action-button[hidden] {
   display: none;
 }
 
@@ -1050,6 +1063,28 @@ body {
   filter:
     drop-shadow(0 0 16px rgba(120, 230, 255, 0.72))
     drop-shadow(0 5px 8px rgba(0, 0, 0, 0.36));
+}
+
+.player-hand-panel.play-card-selection-active .player-hand-card-button.is-playable {
+  cursor: pointer;
+  outline: 2px solid rgba(110, 236, 169, 0.94);
+  outline-offset: 3px;
+  filter:
+    drop-shadow(0 0 12px rgba(110, 236, 169, 0.46))
+    drop-shadow(0 5px 8px rgba(0, 0, 0, 0.36));
+  animation: tech-tile-highlight-pulse 1.8s ease-in-out infinite;
+}
+
+.player-hand-panel.play-card-selection-active .player-hand-card-button.is-playable:hover {
+  outline-color: rgba(190, 255, 222, 0.98);
+  filter:
+    drop-shadow(0 0 16px rgba(110, 236, 169, 0.62))
+    drop-shadow(0 5px 8px rgba(0, 0, 0, 0.36));
+}
+
+.player-hand-panel.play-card-selection-active .player-hand-card-button.is-unaffordable {
+  cursor: not-allowed;
+  opacity: 0.58;
 }
 
 .player-hand-card-button {
@@ -1113,7 +1148,8 @@ body {
   filter: drop-shadow(0 16px 22px rgba(0, 0, 0, 0.54));
 }
 
-.player-hand-fan {
+.player-hand-fan,
+.reserved-card-fan {
   --card-height: 166px;
   --card-width: calc(var(--card-height) * 747 / 1040);
   --card-step: 31px;
@@ -1122,15 +1158,17 @@ body {
   justify-content: center;
   flex-wrap: nowrap;
   gap: 0;
-  padding: 12px;
+  padding: 2px 12px 8px;
   overflow: visible;
 }
 
-.player-hand-fan.is-spread {
+.player-hand-fan.is-spread,
+.reserved-card-fan.is-spread {
   justify-content: flex-start;
 }
 
-.player-hand-panel.is-empty .player-hand-fan::after {
+.player-hand-panel.is-empty .player-hand-fan::after,
+.reserved-card-panel.is-empty .reserved-card-fan::after {
   content: "暂无手牌";
   display: flex;
   align-items: center;
@@ -1140,6 +1178,10 @@ body {
   color: rgba(255, 255, 255, 0.42);
   font-size: 13px;
   font-weight: 600;
+}
+
+.reserved-card-panel.is-empty .reserved-card-fan::after {
+  content: "暂无保留牌";
 }
 
 

@@ -78,10 +78,13 @@
     playerStats: document.getElementById("player-stats"),
     playerHandPanel: document.getElementById("player-hand-panel"),
     playerHandFan: document.getElementById("player-hand-fan"),
+    reservedCardPanel: document.getElementById("reserved-card-panel"),
+    reservedCardFan: document.getElementById("reserved-card-fan"),
     actionLaunchButton: document.getElementById("action-launch-button"),
     actionOrbitButton: document.getElementById("action-orbit-button"),
     actionLandButton: document.getElementById("action-land-button"),
     actionAnalyzeButton: document.getElementById("action-analyze-button"),
+    actionPlayCardButton: document.getElementById("action-play-card-button"),
     actionResearchTechButton: document.getElementById("action-research-tech-button"),
     actionQuickButton: document.getElementById("action-quick-button"),
     quickActionsPanel: document.getElementById("quick-actions-panel"),
@@ -151,6 +154,7 @@
     cardSelectionCancel: document.getElementById("card-selection-cancel"),
     discardSelectionBackdrop: document.getElementById("discard-selection-backdrop"),
     discardSelectionCancel: document.getElementById("discard-selection-cancel"),
+    playCardActionButton: document.getElementById("play-card-action-button"),
     playerHandPanelTitle: document.getElementById("player-hand-panel-title"),
   };
 
@@ -175,10 +179,12 @@
     if (!currentPlayer) return;
 
     currentPlayer.hand = [];
+    currentPlayer.reservedCards = [];
     currentPlayer.resources.handSize = 0;
     cardState.publicCards = Array.from({ length: cards.PUBLIC_CARD_COUNT }, () => null);
     cardState.discardPile = [];
     cards.setSelectionActive(cardState, false);
+    cards.setPlayCardSelectionActive(cardState, false);
     cards.initializeDeck(cardState, playerState, {
       player: currentPlayer,
       handCount,
@@ -192,6 +198,10 @@
 
   function isDiscardSelectionActive() {
     return cards.isDiscardSelectionActive(cardState);
+  }
+
+  function isPlayCardSelectionActive() {
+    return cards.isPlayCardSelectionActive(cardState);
   }
 
   function allowsBlindDrawInSelection() {
@@ -237,12 +247,34 @@
     renderPlayerHand();
   }
 
+  function syncPlayCardSelectionChrome() {
+    const active = isPlayCardSelectionActive();
+    els.appWrap?.classList.toggle("play-card-selection-active", active);
+    els.playerHandPanel?.classList.toggle("play-card-selection-active", active);
+    els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
+    if (els.playCardActionButton) {
+      els.playCardActionButton.hidden = !active;
+      els.playCardActionButton.disabled = !active;
+      els.playCardActionButton.title = active ? "点击卡牌打出，或点击此处取消" : "";
+    }
+    if (els.playerHandPanelTitle && !isDiscardSelectionActive()) {
+      els.playerHandPanelTitle.textContent = active
+        ? "玩家手牌区（点击要打出的牌）"
+        : "玩家手牌区";
+    }
+    if (active) setQuickPanelOpen(false);
+    renderPlayerHand();
+  }
+
   function beginDiscardSelection(count, pendingAction = null) {
     if (isTechActionSelectionActive()) {
       return { ok: false, message: "请先完成科技选择" };
     }
     if (isCardSelectionActive()) {
       return { ok: false, message: "请先完成精选" };
+    }
+    if (isPlayCardSelectionActive()) {
+      return { ok: false, message: "请先完成打牌" };
     }
 
     const discardCount = Math.max(0, Math.round(count));
@@ -363,12 +395,121 @@
     return { ok: true, card: discardResult.card, remaining };
   }
 
+  function getCardPrice(card) {
+    const price = Number(card?.price);
+    return Number.isFinite(price) ? Math.max(0, Math.round(price)) : 0;
+  }
+
+  function getCardTypeCode(card) {
+    const typeCode = Number(card?.cardTypeCode);
+    return Number.isFinite(typeCode) ? Math.round(typeCode) : 0;
+  }
+
+  function beginPlayCardSelection() {
+    if (isTechActionSelectionActive()) {
+      return { ok: false, message: "请先完成科技选择" };
+    }
+    if (isCardSelectionActive()) {
+      return { ok: false, message: "请先完成精选" };
+    }
+    if (isDiscardSelectionActive()) {
+      return { ok: false, message: "请先完成弃牌" };
+    }
+
+    const currentPlayer = getCurrentPlayer();
+    if (!currentPlayer?.hand?.length) {
+      rocketState.statusNote = "没有手牌可打出";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    cards.setPlayCardSelectionActive(cardState, true);
+    rocketState.statusNote = "打牌：请选择一张手牌";
+    syncPlayCardSelectionChrome();
+    updateActionButtons();
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
+  function cancelPlayCardSelection() {
+    if (!isPlayCardSelectionActive()) return;
+
+    cards.setPlayCardSelectionActive(cardState, false);
+    rocketState.statusNote = "已取消打牌";
+    syncPlayCardSelectionChrome();
+    updateActionButtons();
+    renderStateReadout();
+  }
+
+  function handleHandCardPlay(handIndex) {
+    if (!isPlayCardSelectionActive()) return;
+
+    const currentPlayer = getCurrentPlayer();
+    const removeIndex = Math.round(handIndex);
+    const card = currentPlayer?.hand?.[removeIndex];
+    if (!card) {
+      rocketState.statusNote = "无效的手牌位置";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const price = getCardPrice(card);
+    if ((currentPlayer.resources?.credits || 0) < price) {
+      rocketState.statusNote = `信用点不足：${cards.getCardLabel(card)} 需要 ${price} 信用点`;
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const spendResult = players.spendResources(currentPlayer, { credits: price });
+    if (!spendResult.ok) {
+      rocketState.statusNote = spendResult.message;
+      renderStateReadout();
+      return spendResult;
+    }
+
+    const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
+    if (!removeResult.ok) {
+      players.gainResources(currentPlayer, { credits: price });
+      rocketState.statusNote = removeResult.message;
+      renderStateReadout();
+      return removeResult;
+    }
+
+    const playedCard = removeResult.card;
+    const typeCode = getCardTypeCode(playedCard);
+    const shouldReserve = [1, 2, 3].includes(typeCode);
+    if (shouldReserve) {
+      if (!Array.isArray(currentPlayer.reservedCards)) currentPlayer.reservedCards = [];
+      currentPlayer.reservedCards.push(playedCard);
+    } else {
+      cards.addToDiscardPile(cardState, playedCard);
+    }
+
+    cards.setPlayCardSelectionActive(cardState, false);
+    rocketState.statusNote = shouldReserve
+      ? `打出：${cards.getCardLabel(playedCard)}，支付 ${price} 信用点，进入保留牌区`
+      : `打出：${cards.getCardLabel(playedCard)}，支付 ${price} 信用点，已弃掉`;
+    syncPlayCardSelectionChrome();
+    renderPlayerStats();
+    updateActionButtons();
+    renderStateReadout();
+    return {
+      ok: true,
+      card: playedCard,
+      reserved: shouldReserve,
+      message: rocketState.statusNote,
+    };
+  }
+
   function beginCardSelection(pendingAction = null) {
     if (isTechActionSelectionActive()) {
       return { ok: false, message: "请先完成科技选择" };
     }
     if (isDiscardSelectionActive()) {
       return { ok: false, message: "请先完成弃牌" };
+    }
+    if (isPlayCardSelectionActive()) {
+      return { ok: false, message: "请先完成打牌" };
     }
 
     pendingCardSelectionAction = pendingAction;
@@ -1287,14 +1428,12 @@
     return item;
   }
 
-  function layoutPlayerHandFan(cardCount) {
-    const fan = els.playerHandFan;
+  function layoutCardFan(fan, cardCount) {
     if (!fan) return;
 
     const cardHeight = getPublicCardHeight() || 166;
     const cardWidth = cardHeight * (747 / 1040);
-    const fanPadding = 36;
-    const hoverRoom = Math.ceil(cardHeight * 0.3) + 18;
+    const fanPadding = 14;
     const minStackStep = Math.round(cardWidth * 0.26);
     const count = Number.isInteger(cardCount)
       ? cardCount
@@ -1302,7 +1441,7 @@
 
     fan.style.setProperty("--card-height", `${cardHeight}px`);
     fan.style.setProperty("--card-width", `${cardWidth}px`);
-    fan.style.minHeight = `${cardHeight + fanPadding + hoverRoom}px`;
+    fan.style.minHeight = `${cardHeight + fanPadding}px`;
     fan.classList.toggle("is-spread", count > 1);
 
     if (!count) {
@@ -1322,26 +1461,46 @@
     fan.style.setProperty("--card-step", `${step}px`);
   }
 
+  function layoutPlayerHandFan(cardCount) {
+    layoutCardFan(els.playerHandFan, cardCount);
+  }
+
+  function layoutReservedCardFan(cardCount) {
+    layoutCardFan(els.reservedCardFan, cardCount);
+  }
+
   function renderPlayerHand() {
     if (!els.playerHandFan || !els.playerHandPanel) return;
 
     const currentPlayer = getCurrentPlayer();
     const hand = Array.isArray(currentPlayer.hand) ? currentPlayer.hand : [];
     const discardActive = isDiscardSelectionActive();
+    const playActive = isPlayCardSelectionActive();
+    const currentCredits = Number(currentPlayer.resources?.credits) || 0;
 
     els.playerHandPanel.classList.toggle("is-empty", hand.length === 0);
     layoutPlayerHandFan(hand.length);
     els.playerHandFan.replaceChildren(...hand.map((card, index) => {
       const label = card.cardName || (card.faceUp ? `手牌 ${index + 1}` : `手牌背面 ${index + 1}`);
 
-      if (discardActive) {
+      if (discardActive || playActive) {
+        const price = getCardPrice(card);
+        const affordable = currentCredits >= price;
         const button = document.createElement("button");
         button.type = "button";
         button.className = "player-hand-card-button";
         button.style.setProperty("--card-index", String(index + 1));
         button.dataset.handIndex = String(index);
-        button.classList.add("is-selectable");
-        button.setAttribute("aria-label", label);
+        if (discardActive) {
+          button.classList.add("is-selectable");
+          button.setAttribute("aria-label", label);
+        } else {
+          button.classList.add(affordable ? "is-playable" : "is-unaffordable");
+          button.setAttribute("aria-label", `${label}，费用 ${price} 信用点`);
+          button.title = affordable
+            ? `打出 ${label}，支付 ${price} 信用点`
+            : `信用点不足，需要 ${price}`;
+        }
 
         const image = document.createElement("img");
         image.src = card.src || players.CARD_BACK_SRC;
@@ -1358,6 +1517,26 @@
       image.className = "player-hand-card";
       image.src = card.src || players.CARD_BACK_SRC;
       image.alt = label;
+      image.width = 747;
+      image.height = 1040;
+      image.decoding = "async";
+      image.style.setProperty("--card-index", String(index + 1));
+      return image;
+    }));
+  }
+
+  function renderReservedCards() {
+    if (!els.reservedCardFan || !els.reservedCardPanel) return;
+
+    const currentPlayer = getCurrentPlayer();
+    const reservedCards = Array.isArray(currentPlayer.reservedCards) ? currentPlayer.reservedCards : [];
+    els.reservedCardPanel.classList.toggle("is-empty", reservedCards.length === 0);
+    layoutReservedCardFan(reservedCards.length);
+    els.reservedCardFan.replaceChildren(...reservedCards.map((card, index) => {
+      const image = document.createElement("img");
+      image.className = "player-hand-card reserved-card";
+      image.src = card.src || players.CARD_BACK_SRC;
+      image.alt = card.cardName || `保留牌 ${index + 1}`;
       image.width = 747;
       image.height = 1040;
       image.decoding = "async";
@@ -1395,6 +1574,7 @@
 
     els.playerStats.replaceChildren(...stats);
     renderPlayerHand();
+    renderReservedCards();
     renderPlayerDataBoard();
   }
 
@@ -1403,10 +1583,11 @@
     const resources = currentPlayer.resources;
     const income = currentPlayer.income || players.DEFAULT_INCOME;
     const limits = players.RESOURCE_LIMITS;
+    const reservedCount = Array.isArray(currentPlayer.reservedCards) ? currentPlayer.reservedCards.length : 0;
 
     return [
       "玩家状态",
-      `${currentPlayer.name}(${currentPlayer.color}) 信用点=${resources.credits} 能量=${resources.energy} 宣传=${resources.publicity}/${limits.publicity} 可用数据=${resources.availableData}/${limits.availableData} 手牌=${resources.handSize} 分数=${resources.score} 环绕=${currentPlayer.orbitCount}`,
+      `${currentPlayer.name}(${currentPlayer.color}) 信用点=${resources.credits} 能量=${resources.energy} 宣传=${resources.publicity}/${limits.publicity} 可用数据=${resources.availableData}/${limits.availableData} 手牌=${resources.handSize} 保留=${reservedCount} 分数=${resources.score} 环绕=${currentPlayer.orbitCount}`,
       `收入 信用点=${income.credits || 0} 能量=${income.energy || 0} 手牌=${income.handSize || 0} 宣传=${income.publicity || 0} 数据=${income.availableData || 0}`,
     ];
   }
@@ -1451,6 +1632,7 @@
   }
 
   function setActionButtonState(button, enabled, reason) {
+    if (!button) return;
     button.disabled = !enabled;
     button.classList.toggle("action-button-ready", enabled);
     button.title = enabled ? "" : (reason || "当前无法执行此行动");
@@ -1468,17 +1650,21 @@
     const techSelectionLocked = isTechActionSelectionActive();
     const cardSelectionLocked = isCardSelectionActive();
     const discardSelectionLocked = isDiscardSelectionActive();
+    const playCardSelectionLocked = isPlayCardSelectionActive();
     const selectionBlockReason = techSelectionLocked
       ? "请先拿取科技或点击取消"
-      : discardSelectionLocked
-        ? "请先完成弃牌或点击取消"
-        : "请先完成精选或点击取消";
+      : playCardSelectionLocked
+        ? "请先完成打牌或点击打出取消"
+        : discardSelectionLocked
+          ? "请先完成弃牌或点击取消"
+          : "请先完成精选或点击取消";
 
-    if (techSelectionLocked || cardSelectionLocked || discardSelectionLocked) {
+    if (techSelectionLocked || cardSelectionLocked || discardSelectionLocked || playCardSelectionLocked) {
       setActionButtonState(els.actionLaunchButton, false, selectionBlockReason);
       setActionButtonState(els.actionOrbitButton, false, selectionBlockReason);
       setActionButtonState(els.actionLandButton, false, selectionBlockReason);
       setActionButtonState(els.actionAnalyzeButton, false, selectionBlockReason);
+      setActionButtonState(els.actionPlayCardButton, false, selectionBlockReason);
       setActionButtonState(els.actionResearchTechButton, false, selectionBlockReason);
       setQuickActionButtonEnabled(false, selectionBlockReason);
       renderQuickMoveRocketOptions();
@@ -1492,11 +1678,14 @@
     const landCheck = actions.canExecute("land", context);
     const researchTechCheck = actions.canExecute("researchTech", context);
     const analyzeCheck = data.canAnalyzeData(getCurrentPlayer());
+    const currentPlayer = getCurrentPlayer();
+    const canPlayCard = Boolean(currentPlayer?.hand?.length);
 
     setActionButtonState(els.actionLaunchButton, launchCheck.ok, launchCheck.message);
     setActionButtonState(els.actionOrbitButton, orbitCheck.ok, orbitCheck.message);
     setActionButtonState(els.actionLandButton, landCheck.ok, landCheck.message);
     setActionButtonState(els.actionAnalyzeButton, analyzeCheck.ok, analyzeCheck.message);
+    setActionButtonState(els.actionPlayCardButton, canPlayCard, canPlayCard ? "" : "没有手牌可打出");
     setActionButtonState(els.actionResearchTechButton, researchTechCheck.ok, researchTechCheck.message);
     setQuickActionButtonEnabled(true);
     renderQuickMoveRocketOptions();
@@ -2248,6 +2437,7 @@
   els.actionOrbitButton.addEventListener("click", orbitForCurrentPlayer);
   els.actionLandButton.addEventListener("click", landForCurrentPlayer);
   els.actionAnalyzeButton?.addEventListener("click", analyzeDataForCurrentPlayer);
+  els.actionPlayCardButton?.addEventListener("click", beginPlayCardSelection);
   els.actionResearchTechButton?.addEventListener("click", researchTechForCurrentPlayer);
   els.techSelectionCancel?.addEventListener("click", cancelTechSelection);
   els.landTargetConfirm?.addEventListener("click", confirmLandTargetPicker);
@@ -2309,10 +2499,17 @@
   els.cardSelectionBackdrop?.addEventListener("click", cancelCardSelection);
   els.discardSelectionCancel?.addEventListener("click", cancelDiscardSelection);
   els.discardSelectionBackdrop?.addEventListener("click", cancelDiscardSelection);
+  els.playCardActionButton?.addEventListener("click", cancelPlayCardSelection);
   els.playerHandFan?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-hand-index]");
     if (!button) return;
-    handleHandCardDiscard(Number(button.dataset.handIndex));
+    if (isDiscardSelectionActive()) {
+      handleHandCardDiscard(Number(button.dataset.handIndex));
+      return;
+    }
+    if (isPlayCardSelectionActive()) {
+      handleHandCardPlay(Number(button.dataset.handIndex));
+    }
   });
   els.debugDiscardCardButton?.addEventListener("click", discardCardFromCurrentPlayer);
   els.debugCheatButton?.addEventListener("click", toggleCheatMode);
@@ -2397,11 +2594,15 @@
     blindDrawCardForPlayer,
     beginCardSelection,
     beginDiscardSelection,
+    beginPlayCardSelection,
     beginIncomeForCurrentPlayer,
     cancelCardSelection,
     cancelDiscardSelection,
+    cancelPlayCardSelection,
     pickPublicCardForCurrentPlayer,
+    playHandCard: handleHandCardPlay,
     discardCardFromCurrentPlayer,
+    playerState,
     cardState,
     runAction,
     runQuickTrade,

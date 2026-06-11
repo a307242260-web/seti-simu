@@ -1,6 +1,6 @@
 ﻿card_id,card_name,price,card_type_code,set,discard_action_code,scan_action_code,income_code
-b_1.webp,观测天门增四,2,2,basic,2,2,2
-b_2.webp,商级导航系统,1,1,basic,0,2,2
+b_1.webp,观测室女座,2,2,basic,2,2,2
+b_2.webp,高级导航系统,1,1,basic,0,2,2
 b_3.webp,阿尔冈金射电天文台,1,0,basic,1,1,1
 b_4.webp,大型离子对撞机实验,3,2,basic,2,2,0
 b_5.webp,艾伦望远锐阵,2,0,basic,0,1,2
@@ -43,7 +43,7 @@ b_41.webp,建造燃料箱,1,0,basic,1,2,2
 b_42.webp,聚娈反应堆,3,0,basic,0,1,2
 b_43.webp,未来环形对撞机,4,0,basic,2,0,2
 b_44.webp,伽利略号任务,0,1,basic,2,1,2
-b_45.webp,巨麦哲伦望远锐,0,3,basic,0,1,2
+b_45.webp,巨麦哲伦望远镜,1,3,basic,0,1,2
 b_46.webp,建造大型米波射电望远锐,3,2,basic,0,0,2
 b_47.webp,政府资助,3,0,basic,0,0,2
 b_48.webp,拨款,1,0,basic,0,0,2

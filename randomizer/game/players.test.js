@@ -30,6 +30,7 @@ assert.equal(currentPlayer.resources.availableData, players.RESOURCE_LIMITS.avai
 assert.equal(currentPlayer.resources.handSize, 5);
 assert.equal(currentPlayer.hand.length, 5);
 assert.equal(currentPlayer.hand[0].src, players.CARD_BACK_SRC);
+assert.deepEqual(currentPlayer.reservedCards, []);
 assert.equal(currentPlayer.resources.score, 12);
 assert.deepEqual(currentPlayer.income, players.DEFAULT_INCOME);
 assert.equal(currentPlayer.orbitCount, 0);
@@ -44,6 +45,13 @@ assert.equal(spent.ok, true);
 assert.equal(spender.resources.credits, 3);
 assert.equal(spender.resources.energy, 3);
 assert.equal(players.spendResources(spender, { credits: 99 }).ok, false);
+
+const reservedPlayer = players.createPlayer({
+  reservedCards: [{ id: "reserved-1", cardId: "b_1.webp", price: 2, cardTypeCode: 1 }],
+});
+assert.equal(reservedPlayer.reservedCards.length, 1);
+assert.equal(reservedPlayer.reservedCards[0].price, 2);
+assert.equal(reservedPlayer.reservedCards[0].cardTypeCode, 1);
 
 const receiver = players.createPlayer({
   resources: { credits: 1, energy: 2, publicity: 3, availableData: 4 },
