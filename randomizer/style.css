@@ -102,18 +102,10 @@ body {
   height: auto;
   transform: translate(-50%, -50%);
   transform-origin: center center;
-  pointer-events: auto;
-  cursor: grab;
-  touch-action: none;
-  user-select: none;
+  pointer-events: none;
   z-index: 2;
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.45));
   transition: left 0.28s ease, top 0.28s ease;
-}
-
-.round-status-token.is-dragging {
-  cursor: grabbing;
-  transition: none;
 }
 
 .round-status-circle {

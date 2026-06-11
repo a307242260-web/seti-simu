@@ -28,22 +28,11 @@
     land: "登陆",
     satellite: "卫星",
   });
-  const ROTATE_DISK_SIZE = Object.freeze({ width: 1984, height: 2122 });
-  const ROTATE_TOKEN_WIDTH_PERCENT = 27;
   const ROTATE_STATE_SLOTS = Object.freeze([
     Object.freeze({ id: "top-left", percentX: 34.81, percentY: 27.3 }),
     Object.freeze({ id: "bottom-left", percentX: 34.15, percentY: 71.18 }),
     Object.freeze({ id: "right-middle", percentX: 76.68, percentY: 49.96 }),
   ]);
-  const rotateTokenLayout = {
-    slotId: ROTATE_STATE_SLOTS[0].id,
-    percentX: ROTATE_STATE_SLOTS[0].percentX,
-    percentY: ROTATE_STATE_SLOTS[0].percentY,
-  };
-  const rotateTokenDragState = {
-    isDragging: false,
-    element: null,
-  };
   const solarState = solar.createBaselineState();
   const playerState = players.createPlayerState({
     currentPlayer: { color: players.DEFAULT_PLAYER_COLOR },
@@ -102,7 +91,6 @@
     landTargetSelect: document.getElementById("land-target-select"),
     landTargetConfirm: document.getElementById("land-target-confirm"),
     landTargetCancel: document.getElementById("land-target-cancel"),
-    roundStatusFrame: document.querySelector(".round-status-frame"),
     roundStatusToken: document.getElementById("round-status-token"),
     publicCardReference: document.querySelector(".public-card"),
   };
@@ -1118,102 +1106,12 @@
     event.preventDefault();
   }
 
-  function roundRotateTokenPercent(value) {
-    return Math.round(Number(value) * 100) / 100;
-  }
-
-  function clampRotateTokenPercent(value) {
-    return roundRotateTokenPercent(Math.min(100, Math.max(0, Number(value))));
-  }
-
-  function applyRotateTokenPosition(percentX, percentY) {
-    rotateTokenLayout.percentX = clampRotateTokenPercent(percentX);
-    rotateTokenLayout.percentY = clampRotateTokenPercent(percentY);
-    if (!els.roundStatusToken) return;
-
-    els.roundStatusToken.style.setProperty("--rotate-token-x", `${rotateTokenLayout.percentX}%`);
-    els.roundStatusToken.style.setProperty("--rotate-token-y", `${rotateTokenLayout.percentY}%`);
-  }
-
-  function getRotateTokenImagePoint() {
-    return {
-      x: Math.round((rotateTokenLayout.percentX / 100) * ROTATE_DISK_SIZE.width),
-      y: Math.round((rotateTokenLayout.percentY / 100) * ROTATE_DISK_SIZE.height),
-    };
-  }
-
-  function getRotateStateTokenReadoutLines() {
-    const imagePoint = getRotateTokenImagePoint();
-    return [
-      `公转标记 [${rotateTokenLayout.slotId}] percentX=${rotateTokenLayout.percentX} percentY=${rotateTokenLayout.percentY} imageX=${imagePoint.x} imageY=${imagePoint.y} width=${ROTATE_TOKEN_WIDTH_PERCENT}%`,
-      `公转标记配置 Object.freeze({ id: "${rotateTokenLayout.slotId}", percentX: ${rotateTokenLayout.percentX}, percentY: ${rotateTokenLayout.percentY} }),`,
-    ];
-  }
-
-  function placeRotateTokenAtClientPosition(clientX, clientY) {
-    if (!els.roundStatusFrame) return;
-
-    const frame = els.roundStatusFrame.getBoundingClientRect();
-    if (!frame.width || !frame.height) return;
-
-    const percentX = ((clientX - frame.left) / frame.width) * 100;
-    const percentY = ((clientY - frame.top) / frame.height) * 100;
-    applyRotateTokenPosition(percentX, percentY);
-    renderStateReadout();
-  }
-
-  function handleRotateTokenPointerDown(event) {
-    if (!els.roundStatusToken) return;
-
-    rotateTokenDragState.isDragging = true;
-    rotateTokenDragState.element = event.currentTarget;
-    els.roundStatusToken.classList.add("is-dragging");
-    if (event.currentTarget.setPointerCapture) {
-      event.currentTarget.setPointerCapture(event.pointerId);
-    }
-
-    placeRotateTokenAtClientPosition(event.clientX, event.clientY);
-    event.preventDefault();
-    event.stopPropagation();
-  }
-
-  function handleRotateTokenPointerMove(event) {
-    if (!rotateTokenDragState.isDragging) return;
-    placeRotateTokenAtClientPosition(event.clientX, event.clientY);
-  }
-
-  function handleRotateTokenPointerUp(event) {
-    if (!rotateTokenDragState.isDragging) return;
-
-    if (rotateTokenDragState.element?.releasePointerCapture) {
-      try {
-        rotateTokenDragState.element.releasePointerCapture(event.pointerId);
-      } catch (error) {
-        // Pointer capture may already be released by the browser.
-      }
-    }
-
-    rotateTokenDragState.isDragging = false;
-    rotateTokenDragState.element = null;
-    els.roundStatusToken?.classList.remove("is-dragging");
-    renderStateReadout();
-  }
-
   function handleRocketPointerMove(event) {
-    if (rotateTokenDragState.isDragging) {
-      handleRotateTokenPointerMove(event);
-      return;
-    }
     if (!rocketState.draggingRocketId) return;
     placeRocketAtClientPosition(rocketState.draggingRocketId, event.clientX, event.clientY);
   }
 
   function handleRocketPointerUp(event) {
-    if (rotateTokenDragState.isDragging) {
-      handleRotateTokenPointerUp(event);
-      return;
-    }
-
     const rocketId = rocketState.draggingRocketId;
     if (!rocketId) return;
 
@@ -1272,8 +1170,6 @@
       .map(([label, count]) => `${label}=${count}`)
       .join("  ");
     els.stateReadout.textContent = [
-      ...getRotateStateTokenReadoutLines(),
-      "",
       axisLine,
       `版图位置 ${wheelLine}`,
       `行星 ${planetLine}`,
@@ -1365,8 +1261,8 @@
     if (!els.roundStatusToken) return;
 
     const slot = ROTATE_STATE_SLOTS[getRotateStateSlotIndex(solarState.rotation.rotationCount)];
-    rotateTokenLayout.slotId = slot.id;
-    applyRotateTokenPosition(slot.percentX, slot.percentY);
+    els.roundStatusToken.style.setProperty("--rotate-token-x", `${slot.percentX}%`);
+    els.roundStatusToken.style.setProperty("--rotate-token-y", `${slot.percentY}%`);
     els.roundStatusToken.dataset.slotId = slot.id;
   }
 
@@ -1427,7 +1323,6 @@
   window.addEventListener("pointermove", handleRocketPointerMove);
   window.addEventListener("pointerup", handleRocketPointerUp);
   window.addEventListener("pointercancel", handleRocketPointerUp);
-  els.roundStatusToken?.addEventListener("pointerdown", handleRotateTokenPointerDown);
 
   setTokenAssetSizes();
   seedPlayerHand(10);
