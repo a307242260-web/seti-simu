@@ -698,7 +698,8 @@ body {
   cursor: not-allowed;
 }
 
-.tech-stage.tech-selection-active .tech-tile.is-selected-tech {
+.tech-stage.tech-selection-active .tech-tile.is-selected-tech,
+.tech-tile.is-selected-tech {
   outline: 3px solid rgba(255, 214, 102, 0.98);
   outline-offset: 4px;
   filter:
@@ -1132,6 +1133,34 @@ body {
   pointer-events: none;
   cursor: default;
   z-index: 5;
+}
+
+.player-board-data-layer .data-blue-bonus-drop-zone {
+  position: absolute;
+  width: 8.5%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 2px dashed rgba(120, 210, 255, 0.82);
+  border-radius: 999px;
+  background: rgba(58, 142, 196, 0.22);
+  box-shadow: 0 0 10px rgba(98, 219, 255, 0.35);
+  pointer-events: auto;
+  cursor: pointer;
+  z-index: 6;
+}
+
+.player-board-data-layer .data-blue-bonus-drop-zone:hover:not(:disabled) {
+  border-color: rgba(180, 236, 255, 0.96);
+  background: rgba(58, 142, 196, 0.36);
+  box-shadow: 0 0 14px rgba(120, 230, 255, 0.55);
+}
+
+.player-board-data-layer .data-blue-bonus-drop-zone:disabled {
+  border-color: rgba(180, 190, 200, 0.42);
+  background: rgba(40, 48, 58, 0.18);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.72;
 }
 
 .data-place-overlay,

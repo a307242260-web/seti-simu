@@ -41,18 +41,46 @@
     Object.keys(COMPUTER_DATA_SLOTS).map(Number).sort((a, b) => a - b),
   );
 
+  /** 计算机第一排放置位额外奖励：2 号位 +1 宣传，4 号位获得 1 次收入。 */
+  const COMPUTER_SLOT_BONUSES = Object.freeze({
+    2: Object.freeze({ type: "publicity", publicity: 1 }),
+    4: Object.freeze({ type: "income" }),
+  });
+
   /**
-   * 蓝色科技版图槽位 → 第一排必须先放置的数据位。
-   * 仅位置 2/3/4 有附加放置位；位置 1 无附加位。
+   * 蓝色科技版图槽位 → 对应第一排数据位。
+   * 位置 1 仅第一排；位置 2/3/4 另有科技下方附加位。
    */
-  const BLUE_BONUS_REQUIRED_COMPUTER_SLOT = Object.freeze({
+  const BLUE_BOARD_SLOT_TO_COMPUTER_SLOT = Object.freeze({
+    1: 1,
     2: 3,
     3: 5,
     4: 6,
   });
 
-  /** 蓝色科技下方附加数据放置位（键为蓝色科技版图槽位 2/3/4） */
+  /**
+   * 蓝色科技版图槽位 → 第一排必须先放置的数据位（附加位前置条件）。
+   */
+  const BLUE_BONUS_REQUIRED_COMPUTER_SLOT = Object.freeze({
+    1: 1,
+    2: 3,
+    3: 5,
+    4: 6,
+  });
+
+  /** 蓝色科技片 id → 其下方附加数据放置奖励 */
+  const BLUE_TILE_DATA_BONUSES = Object.freeze({
+    blue1: Object.freeze({ type: "credits", credits: 1 }),
+    blue2: Object.freeze({ type: "energy", energy: 1 }),
+    blue3: Object.freeze({ type: "choose_card" }),
+    blue4: Object.freeze({ type: "publicity", publicity: 2 }),
+  });
+
+  const BLUE_COLUMN_SCORE_BONUS = Object.freeze({ type: "score", score: 2 });
+
+  /** 蓝色科技下方附加数据放置位（键为蓝色科技版图槽位 1–4） */
   const BLUE_BONUS_DATA_SLOTS = Object.freeze({
+    1: Object.freeze({ percentX: 34.69, percentY: 80.2, scalePercent: 11.8 }),
     2: Object.freeze({ percentX: 49.12, percentY: 80.14, scalePercent: 11.8 }),
     3: Object.freeze({ percentX: 63.88, percentY: 81.29, scalePercent: 11.8 }),
     4: Object.freeze({ percentX: 72.05, percentY: 81, scalePercent: 11.8 }),
@@ -70,6 +98,11 @@
     return COMPUTER_DATA_SLOTS[Number(placementSlot)] || null;
   }
 
+  function getComputerSlotBonus(placementSlot) {
+    const bonus = COMPUTER_SLOT_BONUSES[Number(placementSlot)];
+    return bonus ? { ...bonus } : null;
+  }
+
   function getBlueBonusDataSlotLayout(blueSlot) {
     return BLUE_BONUS_DATA_SLOTS[Number(blueSlot)] || null;
   }
@@ -78,18 +111,48 @@
     return BLUE_BONUS_REQUIRED_COMPUTER_SLOT[Number(blueSlot)] ?? null;
   }
 
+  function getComputerSlotForBlueBoardSlot(blueBoardSlot) {
+    return BLUE_BOARD_SLOT_TO_COMPUTER_SLOT[Number(blueBoardSlot)] ?? null;
+  }
+
+  function getBlueBoardSlotForComputerSlot(placementSlot) {
+    const slot = Number(placementSlot);
+    for (const [blueBoardSlot, computerSlot] of Object.entries(BLUE_BOARD_SLOT_TO_COMPUTER_SLOT)) {
+      if (computerSlot === slot) return Number(blueBoardSlot);
+    }
+    return null;
+  }
+
+  function getBlueTileDataBonus(tileId) {
+    const bonus = BLUE_TILE_DATA_BONUSES[tileId];
+    return bonus ? { ...bonus } : null;
+  }
+
+  function getBlueColumnScoreBonus() {
+    return { ...BLUE_COLUMN_SCORE_BONUS };
+  }
+
   return Object.freeze({
     DATA_TOKEN_DISPLAY_SCALE,
     DATA_POOL_SLOTS,
     DATA_POOL_SLOT_IDS,
     COMPUTER_DATA_SLOTS,
     COMPUTER_DATA_SLOT_IDS,
+    COMPUTER_SLOT_BONUSES,
+    BLUE_BOARD_SLOT_TO_COMPUTER_SLOT,
     BLUE_BONUS_REQUIRED_COMPUTER_SLOT,
+    BLUE_TILE_DATA_BONUSES,
+    BLUE_COLUMN_SCORE_BONUS,
     BLUE_BONUS_DATA_SLOTS,
     BLUE_BONUS_DATA_SLOT_IDS,
     getDataPoolSlotLayout,
     getComputerDataSlotLayout,
+    getComputerSlotBonus,
     getBlueBonusDataSlotLayout,
     getRequiredComputerSlotForBlueBonus,
+    getComputerSlotForBlueBoardSlot,
+    getBlueBoardSlotForComputerSlot,
+    getBlueTileDataBonus,
+    getBlueColumnScoreBonus,
   });
 });

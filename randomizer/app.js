@@ -92,6 +92,7 @@
   let pendingPublicScanQueue = null;
   let pendingHandScanAction = null;
   let pendingAlienTraceAction = null;
+  let alienTracePickerState = null;
   let pendingActionExecuted = false;
   let pendingActionEffectFlow = null;
   let pendingActionHasIrreversibleCardGain = false;
@@ -476,7 +477,7 @@
     const blocked = blockIncompatiblePendingQuickAction("move");
     if (blocked) return blocked;
 
-    if (isTechActionSelectionActive()) {
+    if (isTechTilePickingActive()) {
       return { ok: false, message: "请先完成科技选择" };
     }
     if (isCardSelectionActive()) {
@@ -665,7 +666,7 @@
   }
 
   function beginDiscardSelection(count, pendingAction = null) {
-    if (isTechActionSelectionActive()) {
+    if (isTechTilePickingActive()) {
       return { ok: false, message: "请先完成科技选择" };
     }
     if (isCardSelectionActive()) {
@@ -698,7 +699,7 @@
       selectedIndexes: [],
     };
     cards.setDiscardSelectionActive(cardState, true, discardCount);
-    rocketState.statusNote = pendingAction?.type === "income" || pendingAction?.type === "planet_reward_income"
+    rocketState.statusNote = isIncomeDiscardActionType(pendingAction?.type)
       ? `收入：请选择 ${discardCount} 张手牌弃掉`
       : `弃牌：请选择 ${discardCount} 张手牌`;
     syncDiscardSelectionChrome();
@@ -713,7 +714,10 @@
     const pending = pendingDiscardAction;
     pendingDiscardAction = null;
     cards.setDiscardSelectionActive(cardState, false, 0);
-    rocketState.statusNote = pending?.type === "income" || pending?.type === "planet_reward_income" ? "已取消收入" : "已取消弃牌";
+    if (pending?.type === "place_data_income") {
+      completeQuickActionStep();
+    }
+    rocketState.statusNote = isIncomeDiscardActionType(pending?.type) ? "已取消收入" : "已取消弃牌";
     syncDiscardSelectionChrome();
     updateActionButtons();
     renderStateReadout();
@@ -747,14 +751,11 @@
       return tradeResult;
     }
 
-    if (pending?.type === "income" || pending?.type === "planet_reward_income") {
+    if (isIncomeDiscardActionType(pending?.type)) {
       const incomeResult = applyIncomeFromCard(
         pending.player || getCurrentPlayer(),
         discardedCards[0],
       );
-      rocketState.statusNote = incomeResult.ok
-        ? incomeResult.message
-        : (incomeResult.message || "收入失败");
       if (pending.type === "planet_reward_income" && incomeResult.ok) {
         const player = pending.player || getCurrentPlayer();
         beginEffectHistoryStep(pending.effectLabel || "收入奖励");
@@ -777,6 +778,29 @@
           };
         }
         completeCurrentActionEffect();
+        rocketState.statusNote = incomeResult.message;
+      } else if (pending.type === "place_data_income") {
+        if (incomeResult.ok) {
+          const player = pending.player || getCurrentPlayer();
+          recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
+            player,
+            pending.beforePlayerState,
+            "恢复放置数据收入奖励前玩家状态",
+          ));
+          recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+            cardState,
+            pending.beforeCardState,
+            "恢复放置数据收入奖励前牌区",
+          ));
+        }
+        completeQuickActionStep();
+        rocketState.statusNote = incomeResult.ok
+          ? incomeResult.message
+          : (incomeResult.message || "收入失败");
+      } else {
+        rocketState.statusNote = incomeResult.ok
+          ? incomeResult.message
+          : (incomeResult.message || "收入失败");
       }
       renderPlayerStats();
       renderPublicCards();
@@ -840,7 +864,7 @@
       renderPlayerHand();
       rocketState.statusNote = selected.length > 0
         ? `弃牌：已选 ${selected.length}/${needed} 张`
-        : (pendingDiscardAction.type === "income" || pendingDiscardAction.type === "planet_reward_income"
+        : (isIncomeDiscardActionType(pendingDiscardAction.type)
           ? "收入：请选择手牌弃掉"
           : `弃牌：请选择 ${needed} 张手牌`);
       renderStateReadout();
@@ -875,7 +899,7 @@
   }
 
   function beginPlayCardSelection() {
-    if (isTechActionSelectionActive()) {
+    if (isTechTilePickingActive()) {
       return { ok: false, message: "请先完成科技选择" };
     }
     if (isCardSelectionActive()) {
@@ -978,7 +1002,7 @@
   }
 
   function beginCardSelection(pendingAction = null) {
-    if (isTechActionSelectionActive()) {
+    if (isTechTilePickingActive()) {
       return { ok: false, message: "请先完成科技选择" };
     }
     if (isDiscardSelectionActive()) {
@@ -1000,6 +1024,8 @@
       ? (pendingAction.maxSelectable ?? 1) > 1
         ? `公共牌区扫描：最多选择 ${pendingAction.maxSelectable} 张公共牌，确认后依次扫描`
         : "公共牌区扫描：请选择一张亮明的公共牌（不能盲抽）"
+      : pendingAction?.type === "place_data_choose_card"
+        ? "放置数据：精选一张公共牌，或点击盲抽"
       : allowsBlindDrawInSelection()
       ? "精选：从公共牌区选一张牌，或点击盲抽"
       : "精选：从公共牌区选一张牌";
@@ -1057,6 +1083,9 @@
       rocketState.statusNote = `已取消精选，已退回 ${players.formatResourceCost(pending.refundCost)}`;
     } else if (pending?.type === "public_scan") {
       rocketState.statusNote = "已取消公共牌区扫描";
+    } else if (pending?.type === "place_data_choose_card") {
+      completeQuickActionStep();
+      rocketState.statusNote = "已取消放置数据精选";
     } else {
       rocketState.statusNote = "";
     }
@@ -1100,6 +1129,19 @@
         };
       }
       completeCurrentActionEffect();
+    }
+    if (pending?.type === "place_data_choose_card") {
+      recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
+        pending.player || getCurrentPlayer(),
+        pending.beforePlayerState,
+        "恢复放置数据精选奖励前玩家状态",
+      ));
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        cardState,
+        pending.beforeCardState,
+        "恢复放置数据精选奖励前牌区",
+      ));
+      completeQuickActionStep();
     }
     cards.ensurePublicCardsFilled(cardState, playerState);
     syncCardSelectionChrome();
@@ -1552,7 +1594,7 @@
   }
 
   function beginSectorScan() {
-    if (isCardSelectionActive() || isDiscardSelectionActive() || isPlayCardSelectionActive() || isTechActionSelectionActive()) {
+    if (isCardSelectionActive() || isDiscardSelectionActive() || isPlayCardSelectionActive() || isTechTilePickingActive()) {
       rocketState.statusNote = "请先完成当前选择";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
@@ -1791,7 +1833,7 @@
   }
 
   function beginHandScan() {
-    if (isTechActionSelectionActive()) {
+    if (isTechTilePickingActive()) {
       rocketState.statusNote = "请先完成科技选择";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
@@ -2000,10 +2042,125 @@
     return true;
   }
 
+  function isIncomeDiscardActionType(type) {
+    return type === "income" || type === "planet_reward_income" || type === "place_data_income";
+  }
+
+  function getPlaceDataSlotBonuses(placeResult) {
+    if (placeResult?.slotBonuses?.length) return placeResult.slotBonuses;
+    return placeResult?.slotBonus ? [placeResult.slotBonus] : [];
+  }
+
+  function applyAutomaticPlaceDataBonus(player, bonus) {
+    const beforePlayer = structuredClone(player);
+    if (bonus.type === "publicity") {
+      players.gainResources(player, { publicity: bonus.publicity });
+      recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
+        player,
+        beforePlayer,
+        "恢复放置数据宣传奖励",
+      ));
+      return { ok: true, message: `获得 ${bonus.publicity} 宣传` };
+    }
+    if (bonus.type === "score") {
+      players.gainResources(player, { score: bonus.score });
+      recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
+        player,
+        beforePlayer,
+        "恢复放置数据分数奖励",
+      ));
+      return { ok: true, message: `获得 ${bonus.score} 分` };
+    }
+    if (bonus.type === "credits") {
+      players.gainResources(player, { credits: bonus.credits });
+      recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
+        player,
+        beforePlayer,
+        "恢复放置数据信用点奖励",
+      ));
+      return { ok: true, message: `获得 ${bonus.credits} 信用点` };
+    }
+    if (bonus.type === "energy") {
+      players.gainResources(player, { energy: bonus.energy });
+      recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
+        player,
+        beforePlayer,
+        "恢复放置数据能量奖励",
+      ));
+      return { ok: true, message: `获得 ${bonus.energy} 能量` };
+    }
+    return { ok: true, message: null };
+  }
+
+  function applyPendingPlaceDataBonus(player, bonus) {
+    if (bonus.type === "income") {
+      const incomeStart = beginDiscardSelection(1, {
+        type: "place_data_income",
+        player,
+        beforePlayerState: structuredClone(player),
+        beforeCardState: structuredClone(cardState),
+        effectLabel: "放置数据：收入奖励",
+      });
+      if (!incomeStart.ok) {
+        completeQuickActionStep();
+        return { ok: false, pendingIncome: false, message: incomeStart.message };
+      }
+      return { ok: true, pendingIncome: true };
+    }
+
+    if (bonus.type === "choose_card") {
+      const selectionStart = beginCardSelection({
+        type: "place_data_choose_card",
+        player,
+        beforePlayerState: structuredClone(player),
+        beforeCardState: structuredClone(cardState),
+      });
+      if (!selectionStart.ok) {
+        completeQuickActionStep();
+        return { ok: false, pendingIncome: false, message: selectionStart.message };
+      }
+      return { ok: true, pendingIncome: false, pendingCardSelection: true };
+    }
+
+    return { ok: true, pendingIncome: false };
+  }
+
+  function applyPlaceDataSlotBonus(player, placeResult) {
+    const bonuses = getPlaceDataSlotBonuses(placeResult);
+    if (!bonuses.length) {
+      completeQuickActionStep();
+      return { ok: true, pendingIncome: false };
+    }
+
+    const autoMessages = [];
+    for (const bonus of bonuses) {
+      if (bonus.type === "income" || bonus.type === "choose_card") {
+        const pendingResult = applyPendingPlaceDataBonus(player, bonus);
+        if (pendingResult.message && !pendingResult.pendingIncome && !pendingResult.pendingCardSelection) {
+          return pendingResult;
+        }
+        if (pendingResult.pendingIncome || pendingResult.pendingCardSelection) {
+          return pendingResult;
+        }
+        continue;
+      }
+
+      const autoResult = applyAutomaticPlaceDataBonus(player, bonus);
+      if (autoResult.message) autoMessages.push(autoResult.message);
+    }
+
+    completeQuickActionStep();
+    return {
+      ok: true,
+      pendingIncome: false,
+      message: autoMessages.length ? autoMessages.join("；") : null,
+    };
+  }
+
   function recordPlaceDataActionHistory(player, placeResult) {
     beginQuickActionStep("place-data", "放置数据");
-    recordQuickHistoryCommand(historyCommands.createPlaceDataCommand(player, placeResult));
-    completeQuickActionStep();
+    recordAbilityCommands(placeResult, quickActionHistory);
+    return applyPlaceDataSlotBonus(player, placeResult);
   }
 
   function recordMoveActionHistory(moveResult, paymentCommand = null) {
@@ -2736,7 +2893,7 @@
     if (isActionEffectFlowActive()) {
       return { ok: false, message: "请先完成当前行动的效果" };
     }
-    if (isTechActionSelectionActive()) {
+    if (isTechTilePickingActive()) {
       rocketState.statusNote = "请先完成科技选择";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
@@ -2860,42 +3017,132 @@
   function closeAlienTracePicker() {
     if (!els.alienTraceOverlay) return;
     els.alienTraceOverlay.hidden = true;
+    alienTracePickerState = null;
     pendingAlienTraceAction = null;
   }
 
-  function buildAlienTracePickerChoice(alienSlotId, traceType) {
+  function getAlienTracePlacementPreview(alienSlotId, traceType) {
     const alienSlot = aliens.getAlienSlot(alienGameState, alienSlotId);
     const traceSlot = alienSlot?.traces?.[traceType];
-    const firstLayout = aliens.getAlienTraceMarkerLayout(alienSlotId, traceType);
-    const extraLayout = aliens.getAlienExtraTraceMarkerLayout(alienSlotId, traceType);
-    const slotLabel = aliens.getAlienSlotLabel(alienSlotId);
     const traceLabel = aliens.getTraceTypeLabel(traceType);
-    const extraCount = traceSlot?.extraCount || 0;
 
-    let description;
     if (!traceSlot?.firstPlaced) {
-      description = firstLayout
-        ? `放置首标记 ${firstLayout.percentX}%, ${firstLayout.percentY}%`
-        : "放置首标记";
-    } else {
-      description = extraLayout
-        ? `放置额外痕迹 ${extraLayout.percentX}%, ${extraLayout.percentY}%`
-        : "放置额外痕迹";
-      if (extraCount > 0) {
-        description += `（已有 ${extraCount} 个额外）`;
+      if (alienSlot?.revealed) {
+        return {
+          canPlace: false,
+          description: "已揭示，无法补首标记",
+          title: "该外星人已揭示，无法再放置首标记",
+        };
       }
+      return {
+        canPlace: true,
+        description: `放置${traceLabel}首标记`,
+        title: "",
+      };
     }
 
-    const cannotPlaceFirstOnRevealed = Boolean(alienSlot?.revealed && !traceSlot?.firstPlaced);
-
+    const extraCount = traceSlot.extraCount || 0;
     return {
-      alienSlotId,
-      traceType,
-      label: `${slotLabel} ${traceLabel}`,
-      description,
-      disabled: cannotPlaceFirstOnRevealed,
-      title: cannotPlaceFirstOnRevealed ? "该外星人已揭示，无法再放置首标记" : "",
+      canPlace: true,
+      description: extraCount > 0
+        ? `追加${traceLabel}额外痕迹（已有 ${extraCount} 个）`
+        : `追加${traceLabel}额外痕迹`,
+      title: "",
     };
+  }
+
+  function describeAlienSlotPickerStatus(alienSlotId) {
+    const alienSlot = aliens.getAlienSlot(alienGameState, alienSlotId);
+    if (!alienSlot) return "无状态";
+    if (alienSlot.revealed) {
+      return alienSlot.alienId ? `已揭示（${alienSlot.alienId}）` : "已揭示";
+    }
+    const placedCount = aliens.countPlacedFirstTraces(alienSlot);
+    return `未揭示，首标记 ${placedCount}/3`;
+  }
+
+  function renderAlienTracePickerButtons(choices, pickerStep) {
+    els.alienTraceActions.replaceChildren(...choices.map((choice) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "scan-target-option-button";
+      button.dataset.alienPickerStep = pickerStep;
+      button.dataset.alienSlot = String(choice.alienSlotId);
+      if (choice.traceType) {
+        button.dataset.traceType = choice.traceType;
+      }
+      button.disabled = Boolean(choice.disabled);
+      button.title = choice.title || "";
+      button.innerHTML = `${choice.label}<small>${choice.description}</small>`;
+      return button;
+    }));
+  }
+
+  function renderAlienTracePickerAlienStep() {
+    const currentPlayer = getCurrentPlayer();
+    const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
+    const singleTraceType = allowedTraceTypes.length === 1 ? allowedTraceTypes[0] : null;
+
+    if (els.alienTraceSubtitle) {
+      const traceHint = singleTraceType
+        ? `获得${aliens.getTraceTypeLabel(singleTraceType)}，`
+        : "";
+      els.alienTraceSubtitle.textContent = (
+        `当前玩家：${currentPlayer.colorLabel}。${traceHint}请选择要放置标记的外星人；`
+        + "该颜色尚无首标记时自动放首标记，否则追加到额外痕迹位。"
+      );
+    }
+
+    const choices = aliens.ALIEN_SLOT_IDS.map((alienSlotId) => {
+      const slotLabel = aliens.getAlienSlotLabel(alienSlotId);
+      const status = describeAlienSlotPickerStatus(alienSlotId);
+      if (singleTraceType) {
+        const preview = getAlienTracePlacementPreview(alienSlotId, singleTraceType);
+        return {
+          alienSlotId,
+          label: slotLabel,
+          description: `${status} · ${preview.description}`,
+          disabled: !preview.canPlace,
+          title: preview.title,
+        };
+      }
+      return {
+        alienSlotId,
+        label: slotLabel,
+        description: status,
+        disabled: false,
+        title: "",
+      };
+    });
+
+    renderAlienTracePickerButtons(choices, "alien");
+  }
+
+  function renderAlienTracePickerColorStep(alienSlotId) {
+    const currentPlayer = getCurrentPlayer();
+    const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
+    const slotLabel = aliens.getAlienSlotLabel(alienSlotId);
+
+    if (els.alienTraceSubtitle) {
+      els.alienTraceSubtitle.textContent = (
+        `当前玩家：${currentPlayer.colorLabel}。${slotLabel}：请选择痕迹颜色；`
+        + "尚无首标记时自动放首标记，否则追加到额外痕迹位。"
+      );
+    }
+
+    const choices = allowedTraceTypes.map((traceType) => {
+      const preview = getAlienTracePlacementPreview(alienSlotId, traceType);
+      return {
+        alienSlotId,
+        traceType,
+        label: aliens.getTraceTypeLabel(traceType),
+        description: preview.description,
+        disabled: !preview.canPlace,
+        title: preview.title,
+      };
+    });
+
+    renderAlienTracePickerButtons(choices, "color");
   }
 
   function openAlienTracePicker(options = {}) {
@@ -2903,35 +3150,14 @@
       return { ok: false, message: "无法打开外星人标记选择" };
     }
 
-    const currentPlayer = getCurrentPlayer();
-    if (els.alienTraceSubtitle) {
-      const traceText = options.allowedTraceTypes?.length === 1
-        ? `仅可选择${aliens.getTraceTypeLabel(options.allowedTraceTypes[0])}。`
-        : "可选择任意痕迹颜色。";
-      els.alienTraceSubtitle.textContent = `当前玩家：${currentPlayer.colorLabel}。${traceText}未放置首标记时放在首标记位，已放置则放在额外痕迹位。`;
-    }
-
-    const allowedTraceTypes = options.allowedTraceTypes?.length
-      ? options.allowedTraceTypes
-      : aliens.TRACE_TYPES;
-    const choices = aliens.ALIEN_SLOT_IDS.flatMap((alienSlotId) => (
-      allowedTraceTypes.map((traceType) => buildAlienTracePickerChoice(alienSlotId, traceType))
-    ));
-
-    els.alienTraceActions.replaceChildren(...choices.map((choice) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "scan-target-option-button";
-      button.dataset.alienSlot = String(choice.alienSlotId);
-      button.dataset.traceType = choice.traceType;
-      button.disabled = Boolean(choice.disabled);
-      button.title = choice.title || "";
-      button.innerHTML = `${choice.label}<small>${choice.description}</small>`;
-      return button;
-    }));
-
+    alienTracePickerState = {
+      allowedTraceTypes: options.allowedTraceTypes?.length
+        ? options.allowedTraceTypes
+        : aliens.TRACE_TYPES,
+    };
+    renderAlienTracePickerAlienStep();
     els.alienTraceOverlay.hidden = false;
-    return { ok: true, message: "请选择外星人痕迹位置" };
+    return { ok: true, message: "请选择外星人" };
   }
 
   function confirmAlienTracePlacement(alienSlotId, traceType) {
@@ -3002,8 +3228,25 @@
     return Boolean(techGameState.ui.techSelectionActive);
   }
 
+  function isTechTilePickingActive() {
+    const ui = techGameState.ui;
+    return Boolean(ui.techSelectionActive && (!ui.selectedTileId || ui.pendingTileId));
+  }
+
+  function isTechAwaitingConfirm() {
+    const ui = techGameState.ui;
+    return Boolean(ui.techSelectionActive && ui.selectedTileId && !ui.pendingTileId);
+  }
+
+  function onTechTileSelected() {
+    markActionPending();
+    syncTechSelectionChrome();
+    renderTechBoard();
+    updateActionButtons();
+  }
+
   function syncTechSelectionChrome() {
-    const active = isTechActionSelectionActive();
+    const active = isTechTilePickingActive();
     els.appWrap?.classList.toggle("tech-selection-active", active);
     if (els.techSelectionBackdrop) {
       els.techSelectionBackdrop.hidden = !active;
@@ -3026,6 +3269,7 @@
     closeTechBlueSlotPicker();
     techGameState.ui.statusNote = "";
     rocketState.statusNote = "";
+    clearActionPending();
     syncTechSelectionChrome();
     renderTechBoard();
     updateActionButtons();
@@ -3102,8 +3346,12 @@
     closeTechBlueSlotPicker();
     const result = abilities.executeAbility("researchTechSelect", createActionContext(), { tileId, blueSlot });
     rocketState.statusNote = result.message;
-    renderTechBoard();
-    updateActionButtons();
+    if (result.ok && !result.needsBlueSlotChoice) {
+      onTechTileSelected();
+    } else {
+      renderTechBoard();
+      updateActionButtons();
+    }
     renderStateReadout();
     return result;
   }
@@ -3143,8 +3391,7 @@
     }
 
     rocketState.statusNote = result.message;
-    renderTechBoard();
-    updateActionButtons();
+    onTechTileSelected();
     renderStateReadout();
     return result;
   }
@@ -3185,6 +3432,11 @@
 
     rocketState.statusNote = result.message;
     finalizeTechTakeResult(result);
+    clearActionPending();
+    if (actionHistory.hasSession()) {
+      actionHistory.commitSession();
+      clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
+    }
     return result;
   }
 
@@ -3934,9 +4186,34 @@
     }));
   }
 
+  function placeDataToBlueSlot(blueSlot) {
+    const blocked = blockIncompatiblePendingQuickAction("place-data");
+    if (blocked) return blocked;
+
+    const player = getCurrentPlayer();
+    if (!data.listPoolTokens(player).length) {
+      rocketState.statusNote = "数据池没有可放置的数据";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const check = data.canPlaceDataToBlueBonus(player, blueSlot);
+    if (!check.ok) {
+      rocketState.statusNote = check.message;
+      renderStateReadout();
+      return check;
+    }
+
+    return confirmDataPlacement(data.PLACEMENT_KIND_BLUE_BONUS, blueSlot);
+  }
+
   function renderPlayerDataBoard() {
     const currentPlayer = getCurrentPlayer();
-    data.renderPlayerDataTokens(currentPlayer, els.playerBoardDataLayer);
+    data.renderPlayerDataTokens(currentPlayer, els.playerBoardDataLayer, {
+      onPlace: (blueSlot) => {
+        placeDataToBlueSlot(blueSlot);
+      },
+    });
   }
 
   function renderPlayerStats() {
@@ -4055,7 +4332,7 @@
   }
 
   function confirmPendingAction() {
-    if (isTechActionSelectionActive()) {
+    if (isTechAwaitingConfirm()) {
       commitSelectedResearchTech();
       return;
     }
@@ -4355,12 +4632,11 @@
     const pendingBlockedReason = "请先确认或撤销当前行动";
     const effectBlockedReason = "请先完成当前行动的效果";
 
-    if (isTechActionSelectionActive()) {
-      const hasSelection = Boolean(techGameState.ui.selectedTileId && !techGameState.ui.pendingTileId);
+    if (isTechTilePickingActive()) {
       setTurnActionButtonState(els.actionPassButton, false);
-      setTurnActionButtonState(els.actionConfirmButton, hasSelection, hasSelection);
+      setTurnActionButtonState(els.actionConfirmButton, false);
       setTurnActionButtonState(els.actionUndoButton, true, false);
-      return hasSelection ? "请确认或取消科技选择" : "请先选择科技或点击取消";
+      return "请先选择科技或点击取消";
     }
 
     if (isActionEffectFlowActive()) {
@@ -4393,7 +4669,7 @@
 
   function updateActionButtons() {
     const context = createActionContext();
-    const techSelectionLocked = isTechActionSelectionActive();
+    const techSelectionLocked = isTechTilePickingActive();
     const cardSelectionLocked = isCardSelectionActive();
     const discardSelectionLocked = isDiscardSelectionActive();
     const playCardSelectionLocked = isPlayCardSelectionActive();
@@ -4401,7 +4677,7 @@
     const handScanLocked = isHandScanSelectionActive();
     const effectFlowLocked = isActionEffectFlowActive();
     const selectionBlockReason = techSelectionLocked
-      ? "请先拿取科技或点击取消"
+      ? "请先选择科技或点击取消"
       : handScanLocked
         ? "请先完成手牌扫描或点击取消"
         : movePaymentLocked
@@ -4508,19 +4784,23 @@
     els.dataPlaceOverlay.hidden = true;
   }
 
+  function shouldPromptDataPlaceChoice(choices) {
+    return abilities.data.needsPlacementChoice(choices);
+  }
+
   function openDataPlacePicker() {
     if (!els.dataPlaceOverlay || !els.dataPlaceActions) return;
 
     const player = getCurrentPlayer();
-    const check = data.canPlaceAnyData(player);
-    if (!check.ok) {
-      rocketState.statusNote = check.message;
+    const choiceResult = abilities.data.listPlacementChoices(player);
+    if (!choiceResult.ok) {
+      rocketState.statusNote = choiceResult.message;
       renderStateReadout();
       return;
     }
 
-    const choices = check.choices || data.listPlaceDataChoices(player);
-    if (choices.length === 1) {
+    const choices = choiceResult.choices;
+    if (!shouldPromptDataPlaceChoice(choices)) {
       const [choice] = choices;
       confirmDataPlacement(choice.target, choice.blueSlot);
       return;
@@ -4550,13 +4830,20 @@
     const blocked = blockIncompatiblePendingQuickAction("place-data");
     if (blocked) return blocked;
     const player = getCurrentPlayer();
-    const options = target === data.PLACEMENT_KIND_BLUE_BONUS
-      ? { target, blueSlot: Number(blueSlot) }
-      : { target: data.PLACEMENT_KIND_COMPUTER };
-    const result = data.placeDataToComputer(player, options);
+    const result = abilities.executeAbility("placeData", createActionContext(), {
+      target,
+      blueSlot,
+    });
     rocketState.statusNote = result.message;
     if (result.ok) {
-      recordPlaceDataActionHistory(player, result);
+      const bonusResult = recordPlaceDataActionHistory(player, result);
+      if (bonusResult?.message && !bonusResult.pendingIncome) {
+        rocketState.statusNote = `${result.message}（${bonusResult.message}）`;
+      } else if (bonusResult?.pendingIncome) {
+        rocketState.statusNote = `${result.message}，请选择 1 张手牌获得收入`;
+      } else if (bonusResult?.ok === false && bonusResult.message) {
+        rocketState.statusNote = `${result.message}（${bonusResult.message}）`;
+      }
     }
     renderPlayerStats();
     updateActionButtons();
@@ -4573,7 +4860,7 @@
     const blocked = blockIncompatiblePendingQuickAction("place-data");
     if (blocked) return blocked;
 
-    if (isTechActionSelectionActive()) {
+    if (isTechTilePickingActive()) {
       rocketState.statusNote = "请先完成科技选择";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
@@ -5291,9 +5578,26 @@
     }
   });
   els.alienTraceActions?.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-alien-slot][data-trace-type]");
+    const button = event.target.closest("[data-alien-picker-step][data-alien-slot]");
     if (!button || button.disabled) return;
-    confirmAlienTracePlacement(Number(button.dataset.alienSlot), button.dataset.traceType);
+
+    const alienSlotId = Number(button.dataset.alienSlot);
+    const pickerStep = button.dataset.alienPickerStep;
+    const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
+
+    if (pickerStep === "alien") {
+      if (allowedTraceTypes.length === 1) {
+        confirmAlienTracePlacement(alienSlotId, allowedTraceTypes[0]);
+        return;
+      }
+      alienTracePickerState = { ...alienTracePickerState, selectedAlienSlotId: alienSlotId };
+      renderAlienTracePickerColorStep(alienSlotId);
+      return;
+    }
+
+    if (pickerStep === "color" && button.dataset.traceType) {
+      confirmAlienTracePlacement(alienSlotId, button.dataset.traceType);
+    }
   });
   els.alienTraceCancel?.addEventListener("click", closeAlienTracePicker);
   els.alienTraceOverlay?.addEventListener("click", (event) => {

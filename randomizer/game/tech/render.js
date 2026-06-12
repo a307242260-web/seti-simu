@@ -165,7 +165,7 @@
   }
 
   function isSupplySelectionActive(ui) {
-    return Boolean(ui.techSelectionActive);
+    return Boolean(ui.techSelectionActive && (!ui.selectedTileId || ui.pendingTileId));
   }
 
   function renderAll(gameState, context, tileElements, options = {}) {
@@ -177,7 +177,7 @@
     if (!supplyStage || !playerBoardTechLayer || !board) return;
 
     const selectionActive = isSupplySelectionActive(ui);
-    supplyStage.classList.toggle("tech-selection-active", Boolean(ui.techSelectionActive));
+    supplyStage.classList.toggle("tech-selection-active", selectionActive);
 
     for (const element of tileElements) {
       const tileId = element.dataset.techId;
@@ -194,9 +194,12 @@
           if (ui.selectedTileId === tileId) {
             element.classList.add("is-selected-tech");
           }
-        } else if (ui.techSelectionActive) {
+        } else if (selectionActive) {
           element.classList.add("is-muted");
           element.title = "当前不可研究";
+        } else if (ui.selectedTileId === tileId) {
+          element.classList.add("is-selected-tech");
+          element.title = `已选择 ${tileId}，点击确认后结算`;
         }
         continue;
       }

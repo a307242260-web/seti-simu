@@ -39,6 +39,7 @@
     moveProbe: rocketAbility.moveProbe,
     orbitProbe: planetAbility.orbitProbe,
     landProbe: planetAbility.landProbe,
+    placeData: dataAbility.placeData,
     analyzeData: dataAbility.analyzeData,
     researchTechPrepare: techAbility.researchTechPrepare,
     researchTechSelect: techAbility.researchTechSelect,

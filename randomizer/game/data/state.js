@@ -154,14 +154,56 @@
     return [...dataState.poolTokens].sort((a, b) => a.slotIndex - b.slotIndex)[0] || null;
   }
 
-  function hasBlueTechInBoardSlot(player, blueSlot) {
+  function getBlueTechTileInBoardSlot(player, blueSlot) {
     const techState = ensurePlayerTechState(player);
     const slot = Number(blueSlot);
     for (const tileId of catalog.TILE_IDS_BY_TYPE.blue) {
       if (!playerTech.playerOwnsTile(techState, tileId)) continue;
-      if (playerTech.getBlueBoardSlot(techState, tileId) === slot) return true;
+      if (playerTech.getBlueBoardSlot(techState, tileId) === slot) return tileId;
     }
-    return false;
+    return null;
+  }
+
+  function hasBlueTechInBoardSlot(player, blueSlot) {
+    return Boolean(getBlueTechTileInBoardSlot(player, blueSlot));
+  }
+
+  function getComputerSlotBlueColumnBonus(player, placementSlot) {
+    const blueBoardSlot = placement.getBlueBoardSlotForComputerSlot(placementSlot);
+    if (!blueBoardSlot) return null;
+    if (!hasBlueTechInBoardSlot(player, blueBoardSlot)) return null;
+    return placement.getBlueColumnScoreBonus();
+  }
+
+  function getBlueBonusPlacementReward(player, blueBoardSlot) {
+    const tileId = getBlueTechTileInBoardSlot(player, blueBoardSlot);
+    if (!tileId) return null;
+    return placement.getBlueTileDataBonus(tileId);
+  }
+
+  function collectComputerPlacementBonuses(player, placementSlot) {
+    const slotBonuses = [];
+    const computerSlotBonus = placement.getComputerSlotBonus(placementSlot);
+    if (computerSlotBonus) slotBonuses.push(computerSlotBonus);
+    const columnBonus = getComputerSlotBlueColumnBonus(player, placementSlot);
+    if (columnBonus) slotBonuses.push(columnBonus);
+    return slotBonuses;
+  }
+
+  function describeSlotBonus(bonus) {
+    if (!bonus) return "";
+    if (bonus.type === "publicity") return `额外获得 ${bonus.publicity} 宣传`;
+    if (bonus.type === "income") return "额外获得 1 次收入";
+    if (bonus.type === "score") return `额外获得 ${bonus.score} 分`;
+    if (bonus.type === "credits") return `额外获得 ${bonus.credits} 信用点`;
+    if (bonus.type === "energy") return `额外获得 ${bonus.energy} 能量`;
+    if (bonus.type === "choose_card") return "额外精选 1 张牌";
+    return "";
+  }
+
+  function describePlacementBonuses(bonuses) {
+    const labels = (bonuses || []).map(describeSlotBonus).filter(Boolean);
+    return labels.length ? `，${labels.join("，")}` : "";
   }
 
   function isComputerSlotOccupied(player, placementSlot) {
@@ -185,6 +227,16 @@
 
   function listEligibleBlueBonusSlots(player) {
     return placement.BLUE_BONUS_DATA_SLOT_IDS.filter((blueSlot) => isBlueBonusSlotEligible(player, blueSlot));
+  }
+
+  function describeComputerSlotBonus(player, placementSlot) {
+    return describePlacementBonuses(collectComputerPlacementBonuses(player, placementSlot));
+  }
+
+  function describeBlueBonusPlacementReward(player, blueBoardSlot) {
+    const tileId = getBlueTechTileInBoardSlot(player, blueBoardSlot);
+    if (!tileId) return "";
+    return describePlacementBonuses([placement.getBlueTileDataBonus(tileId)]);
   }
 
   function hasBlueBonusPlaceOptions(player) {
@@ -285,19 +337,25 @@
         target: PLACEMENT_KIND_COMPUTER,
         placementSlot: computerCheck.placementSlot,
         label: `第一排放置位 ${computerCheck.placementSlot}`,
-        description: `按从左到右放入第一排第 ${computerCheck.placementSlot} 位`,
+        description:
+          `按从左到右放入第一排第 ${computerCheck.placementSlot} 位`
+          + describeComputerSlotBonus(player, computerCheck.placementSlot),
       });
     }
 
     for (const blueSlot of listEligibleBlueBonusSlots(player)) {
       const requiredComputerSlot = placement.getRequiredComputerSlotForBlueBonus(blueSlot);
       const layout = placement.getBlueBonusDataSlotLayout(blueSlot);
+      const tileId = getBlueTechTileInBoardSlot(player, blueSlot);
       choices.push({
         target: PLACEMENT_KIND_BLUE_BONUS,
         blueSlot,
+        blueTileId: tileId,
         requiredComputerSlot,
-        label: `位置${blueSlot}蓝色科技`,
-        description: `放入蓝色科技 ${blueSlot} 下方（第一排第 ${requiredComputerSlot} 位下方）`,
+        label: tileId ? `${tileId} 下方` : `位置${blueSlot}蓝色科技`,
+        description:
+          `放入蓝色科技 ${blueSlot} 下方（第一排第 ${requiredComputerSlot} 位下方）`
+          + describeBlueBonusPlacementReward(player, blueSlot),
         layout,
       });
     }
@@ -393,6 +451,10 @@
         return { ok: false, message: "蓝色科技附加放置位不可用" };
       }
 
+      const blueTileId = getBlueTechTileInBoardSlot(player, blueSlot);
+      const slotBonus = getBlueBonusPlacementReward(player, blueSlot);
+      const slotBonuses = slotBonus ? [slotBonus] : [];
+
       const placedToken = normalizePlacedToken({
         id: poolToken.id,
         index: poolToken.index,
@@ -409,10 +471,14 @@
         poolToken,
         placementKind: PLACEMENT_KIND_BLUE_BONUS,
         blueSlot,
+        blueTileId,
+        slotBonus,
+        slotBonuses,
         layout,
         message:
           `放置数据：序号 ${poolToken.index} 自数据池槽位${poolToken.slotIndex}`
-          + ` → 位置${blueSlot}蓝色科技 (${layout.percentX}%,${layout.percentY}%)`,
+          + ` → ${blueTileId || `位置${blueSlot}蓝色科技`} 下方 (${layout.percentX}%,${layout.percentY}%)`
+          + describePlacementBonuses(slotBonuses),
       };
     }
 
@@ -433,16 +499,23 @@
     dataState.placedTokens.push(placedToken);
     syncAvailableDataCount(player);
 
+    const slotBonuses = collectComputerPlacementBonuses(player, placementSlot);
+    const slotBonus = slotBonuses[0] ?? null;
+    const message =
+      `放置数据：序号 ${poolToken.index} 自数据池槽位${poolToken.slotIndex}`
+      + ` → 第一排放置位${placementSlot} (${layout.percentX}%,${layout.percentY}%)`
+      + describePlacementBonuses(slotBonuses);
+
     return {
       ok: true,
       token: placedToken,
       poolToken,
       placementKind: PLACEMENT_KIND_COMPUTER,
       placementSlot,
+      slotBonus,
+      slotBonuses,
       layout,
-      message:
-        `放置数据：序号 ${poolToken.index} 自数据池槽位${poolToken.slotIndex}`
-        + ` → 第一排放置位${placementSlot} (${layout.percentX}%,${layout.percentY}%)`,
+      message,
     };
   }
 
@@ -462,6 +535,10 @@
     listBlueBonusPlacedTokens,
     listDataTokens,
     listEligibleBlueBonusSlots,
+    hasBlueTechInBoardSlot,
+    getBlueTechTileInBoardSlot,
+    getComputerSlotBlueColumnBonus,
+    getBlueBonusPlacementReward,
     hasBlueBonusPlaceOptions,
     gainData,
     canPlaceAnyData,

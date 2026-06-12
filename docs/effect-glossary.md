@@ -13,7 +13,7 @@
 | 黄色星云扫描 | 在两个黄色星云中选择一个星云扫描。 | `assets/symbol/effect/yellow_scan.webp` |
 | 公共牌区扫描 | 弃除公共牌区中的一张牌，并按该牌角标选择星云扫描。 | `assets/symbol/action/scan/public_card_scan.webp` |
 | 手牌扫描 | 弃除一张手牌，并按该牌角标选择星云扫描。 | `assets/symbol/action/scan/private_card_scan.webp` |
-| 发射/移动 | 紫4扫描效果：选择发射或移动；发射消耗 1 能量，移动免费。 | `assets/symbol/action/scan/scan_action_4.png` |
+| 紫4 | 紫4扫描效果：选择发射或移动；发射消耗 1 能量，移动免费。 | `assets/symbol/action/scan/scan_action_4.png` |
 | 弃牌 | 从手牌或公共牌区移除一张牌，通常作为扫描、收入或其他效果的前置选择。 | `assets/symbol/effect/discard.jpg` |
 | 盲抽 | 从牌库随机抽取指定数量卡牌加入手牌；获取后不可撤销。 | `assets/symbol/effect/blind_card.webp` |
 | 精选 | 从公共牌区选择 1 张卡牌加入手牌；获取后不可撤销。 | `assets/symbol/effect/choose_card.webp` |
@@ -23,6 +23,8 @@
 | 能量 | 增加玩家能量。 | `assets/symbol/effect/energy.webp` |
 | 宣传 | 增加玩家宣传，受宣传上限限制。 | `assets/symbol/effect/publicity.webp` |
 | 数据 | 获得指定数量数据，进入玩家数据池；数据池满时改为弃置计数。 | `assets/symbol/effect/data.webp` |
+| 移动 | 给予火箭一点移动力。如果没有橙2科技，移动出小行星需要2点移动力，其余场景均为1点 | `assets/symbol/effect/movement.webp` |
+| 额外弃牌扫描 | 获得该功能标记时，为资源记录；当使用扫描行动中的公共牌区扫描时，可额外使用该标记来额外弃除公共牌区增加扫描的扇区。 | `assets/tokens/additional_public_scan.webp` |
 | 任意外星人标记 | 玩家选择外星人槽位，并在黄色、粉色、蓝色痕迹中任选一种放置标记。 | `assets/symbol/effect/alien_any.webp` |
 | 黄色外星人标记 | 玩家选择外星人槽位，放置黄色痕迹标记。 | `assets/symbol/effect/alien_yellow.webp` |
 | 粉色外星人标记 | 玩家选择外星人槽位，放置粉色痕迹标记。 | `assets/symbol/effect/alien_pink.webp` |

@@ -232,7 +232,63 @@
     }
   }
 
-  function renderPlayerDataTokens(player, layer) {
+  function applyDropZoneStyle(element, layout) {
+    element.classList.add("data-blue-bonus-drop-zone");
+    element.style.position = "absolute";
+    element.style.left = `${layout.percentX}%`;
+    element.style.top = `${layout.percentY}%`;
+    const scale = (layout.scalePercent / 100) * placement.DATA_TOKEN_DISPLAY_SCALE;
+    element.style.setProperty("--data-scale", String(scale));
+    element.style.transform = "translate(-50%, -50%) scale(var(--data-scale, 1))";
+    element.style.transformOrigin = "center center";
+  }
+
+  function renderBlueBonusDropZones(player, layer, options = {}) {
+    if (!layer) return;
+
+    for (const element of layer.querySelectorAll(".data-blue-bonus-drop-zone")) {
+      element.remove();
+    }
+
+    const eligible = new Set(state.listEligibleBlueBonusSlots(player));
+    const hasPoolData = state.listPoolTokens(player).length > 0;
+
+    for (const blueSlot of placement.BLUE_BONUS_DATA_SLOT_IDS) {
+      if (!state.hasBlueTechInBoardSlot(player, blueSlot)) continue;
+      if (state.listBlueBonusPlacedTokens(player).some((token) => token.blueSlot === blueSlot)) continue;
+
+      const layout = placement.getBlueBonusDataSlotLayout(blueSlot);
+      if (!layout) continue;
+
+      const tileId = state.getBlueTechTileInBoardSlot(player, blueSlot);
+      const requiredComputerSlot = placement.getRequiredComputerSlotForBlueBonus(blueSlot);
+      const canPlace = eligible.has(blueSlot) && hasPoolData;
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "data-blue-bonus-drop-zone";
+      button.dataset.blueSlot = String(blueSlot);
+      button.disabled = !canPlace;
+      applyDropZoneStyle(button, layout);
+      button.title = canPlace
+        ? `放置数据到 ${tileId || `位置${blueSlot}蓝色科技`} 下方`
+        : hasPoolData
+          ? `需先在第一排第 ${requiredComputerSlot} 位放置数据`
+          : "数据池没有可放置的数据";
+      button.setAttribute("aria-label", button.title);
+
+      if (canPlace && options.onPlace) {
+        button.addEventListener("click", (event) => {
+          event.stopPropagation();
+          options.onPlace(blueSlot);
+        });
+      }
+
+      layer.appendChild(button);
+    }
+  }
+
+  function renderPlayerDataTokens(player, layer, options = {}) {
     if (!layer) return;
 
     const playerId = player?.id || "player";
@@ -251,6 +307,8 @@
       element.remove();
       tokenElements.delete(key);
     }
+
+    renderBlueBonusDropZones(player, layer, options);
   }
 
   function listSlotLayoutOverrides() {
@@ -277,6 +335,7 @@
     getEffectiveSlotLayout,
     getEffectivePoolSlotLayout,
     listSlotLayoutOverrides,
+    renderBlueBonusDropZones,
     renderPlayerDataTokens,
     resetPlayerDataTokens,
   });
