@@ -1,22 +1,24 @@
 (function (root, factory) {
   "use strict";
 
+  let catalog = root.SetiAlienCatalog;
   let placement = root.SetiAlienPlacement;
   let state = root.SetiAlienState;
 
   if (typeof require === "function") {
+    catalog = catalog || require("./catalog");
     placement = placement || require("./placement");
     state = state || require("./state");
   }
 
-  const api = factory(placement, state);
+  const api = factory(catalog, placement, state);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAlienRender = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (placement, state) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state) {
   "use strict";
 
   const TRACE_KIND_FIRST = "first";
@@ -331,6 +333,35 @@
     }
   }
 
+  function renderAlienBackImage(alienSlotId, backElement, alienState) {
+    if (!backElement) return;
+
+    const alienSlot = state.getAlienSlot(alienState, alienSlotId);
+    const slotLabel = placement.getAlienSlotLabel(alienSlotId);
+
+    if (alienSlot?.revealed && alienSlot.alienId) {
+      const faceSrc = catalog.getAlienFaceSrc(alienSlot.alienId);
+      const alienLabel = catalog.getAlienLabel(alienSlot.alienId);
+      backElement.src = faceSrc;
+      backElement.alt = `${slotLabel} ${alienLabel}`;
+      backElement.classList.add("is-revealed");
+      return;
+    }
+
+    backElement.src = catalog.ALIEN_BACK_SRC;
+    backElement.alt = `${slotLabel} 牌背`;
+    backElement.classList.remove("is-revealed");
+  }
+
+  function renderAllAlienBackImages(getBackImageForSlot, alienState) {
+    for (const alienSlotId of placement.ALIEN_SLOT_IDS) {
+      const backElement = getBackImageForSlot(alienSlotId);
+      if (backElement) {
+        renderAlienBackImage(alienSlotId, backElement, alienState);
+      }
+    }
+  }
+
   function listTraceMarkerLayoutOverrides() {
     return [...firstLayoutOverrides.entries()]
       .map(([key, position]) => {
@@ -387,6 +418,8 @@
     listExtraTraceMarkerLayoutOverrides,
     renderAlienTraceMarkers,
     renderAllAlienTraceMarkers,
+    renderAlienBackImage,
+    renderAllAlienBackImages,
     resetAlienTraceTokens,
   });
 });

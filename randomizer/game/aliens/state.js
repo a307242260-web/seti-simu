@@ -28,6 +28,7 @@
   function createDefaultAlienSlotState() {
     return {
       revealed: false,
+      assignedAlienId: null,
       alienId: null,
       traces: {
         yellow: createDefaultTraceSlot(),
@@ -65,9 +66,6 @@
     if (!alienSlot) {
       return { ok: false, message: `未知外星人槽位 ${alienSlotId}` };
     }
-    if (alienSlot.revealed) {
-      return { ok: false, message: `${placement.getAlienSlotLabel(alienSlotId)} 已揭示` };
-    }
     if (!placement.TRACE_TYPES.includes(traceType)) {
       return { ok: false, message: `未知痕迹类型 ${traceType}` };
     }
@@ -93,9 +91,6 @@
     if (!alienSlot) {
       return { ok: false, message: `未知外星人槽位 ${alienSlotId}` };
     }
-    if (alienSlot.revealed) {
-      return { ok: false, message: `${placement.getAlienSlotLabel(alienSlotId)} 已揭示` };
-    }
     if (!placement.TRACE_TYPES.includes(traceType)) {
       return { ok: false, message: `未知痕迹类型 ${traceType}` };
     }
@@ -107,6 +102,13 @@
         ok: true,
         message: `${placement.getAlienSlotLabel(alienSlotId)} ${placement.getTraceTypeLabel(traceType)} 额外 +1（共 ${traceSlot.extraCount}）`,
         extraOnly: true,
+      };
+    }
+
+    if (alienSlot.revealed) {
+      return {
+        ok: false,
+        message: `${placement.getAlienSlotLabel(alienSlotId)} 已揭示，无法再放置首标记`,
       };
     }
 
@@ -135,12 +137,18 @@
       return { ok: false, message: `${placement.getAlienSlotLabel(alienSlotId)} 尚未集齐三种首标记` };
     }
 
+    const resolvedAlienId = alienId || alienSlot.assignedAlienId || null;
+    if (!resolvedAlienId) {
+      return { ok: false, message: `${placement.getAlienSlotLabel(alienSlotId)} 尚未分配外星人类型` };
+    }
+
     alienSlot.revealed = true;
-    alienSlot.alienId = alienId || null;
+    alienSlot.alienId = resolvedAlienId;
 
     return {
       ok: true,
-      message: `${placement.getAlienSlotLabel(alienSlotId)} 已揭示${alienId ? `（${alienId}）` : ""}`,
+      message: `${placement.getAlienSlotLabel(alienSlotId)} 已揭示（${resolvedAlienId}）`,
+      alienId: resolvedAlienId,
     };
   }
 

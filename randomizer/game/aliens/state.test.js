@@ -19,9 +19,21 @@ result = state.placeFirstTrace(alienState, 1, "pink", "blue");
 result = state.placeFirstTrace(alienState, 1, "blue", "white");
 assert(state.isAlienReadyToReveal(state.getAlienSlot(alienState, 1)), "all first traces placed");
 
-result = state.revealAlien(alienState, 1, "alien-a");
+alienState.aliens[1].assignedAlienId = "虫";
+result = state.revealAlien(alienState, 1);
 assert(result.ok, "reveal should succeed");
 assert(state.getAlienSlot(alienState, 1).revealed, "alien should be revealed");
+assert(state.getAlienSlot(alienState, 1).alienId === "虫", "reveal should use assigned alien");
+
+result = state.addExtraTrace(alienState, 1, "yellow");
+assert(result.ok && result.extraOnly, "extra trace should work after reveal");
+
+const freshState = state.createDefaultAlienState();
+state.placeFirstTrace(freshState, 2, "yellow", "blue");
+state.placeFirstTrace(freshState, 2, "pink", "blue");
+state.placeFirstTrace(freshState, 2, "blue", "white");
+result = state.revealAlien(freshState, 2);
+assert(!result.ok, "reveal without assignment should fail");
 
 assert(placement.TRACE_TYPES.length === 3, "three trace types");
 console.log("aliens/state.test.js ok");

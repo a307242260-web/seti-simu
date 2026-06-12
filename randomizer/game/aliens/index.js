@@ -1,24 +1,28 @@
 (function (root, factory) {
   "use strict";
 
+  let catalog = root.SetiAlienCatalog;
   let placement = root.SetiAlienPlacement;
   let state = root.SetiAlienState;
+  let randomizer = root.SetiAlienRandomizer;
   let render = root.SetiAlienRender;
 
   if (typeof require === "function") {
+    catalog = catalog || require("./catalog");
     placement = placement || require("./placement");
     state = state || require("./state");
+    randomizer = randomizer || require("./randomizer");
     render = render || require("./render");
   }
 
-  const api = factory(placement, state, render);
+  const api = factory(catalog, placement, state, randomizer, render);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAliens = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (placement, state, render) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, randomizer, render) {
   "use strict";
 
   function getReadoutLines(alienState) {
@@ -80,6 +84,9 @@
   }
 
   return Object.freeze({
+    ALIEN_TYPES: catalog.ALIEN_TYPES,
+    ALIEN_TYPE_IDS: catalog.ALIEN_TYPE_IDS,
+    ALIEN_BACK_SRC: catalog.ALIEN_BACK_SRC,
     TRACE_TYPES: placement.TRACE_TYPES,
     ALIEN_SLOT_IDS: placement.ALIEN_SLOT_IDS,
     TRACE_TYPE_LABELS: placement.TRACE_TYPE_LABELS,
@@ -88,6 +95,10 @@
     ALIEN_EXTRA_TRACE_TOKEN_DISPLAY_SCALE: placement.ALIEN_EXTRA_TRACE_TOKEN_DISPLAY_SCALE,
     EXTRA_TRACE_GRID_COLUMNS: placement.EXTRA_TRACE_GRID_COLUMNS,
     createDefaultAlienState: state.createDefaultAlienState,
+    randomizeAlienAssignments: randomizer.randomizeAlienAssignments,
+    getAlienType: catalog.getAlienType,
+    getAlienLabel: catalog.getAlienLabel,
+    getAlienFaceSrc: catalog.getAlienFaceSrc,
     getAlienSlot: state.getAlienSlot,
     countPlacedFirstTraces: state.countPlacedFirstTraces,
     isAlienReadyToReveal: state.isAlienReadyToReveal,
@@ -108,6 +119,8 @@
     bindAlienTraceDragging: render.bindAlienTraceDragging,
     renderAlienTraceMarkers: render.renderAlienTraceMarkers,
     renderAllAlienTraceMarkers: render.renderAllAlienTraceMarkers,
+    renderAlienBackImage: render.renderAlienBackImage,
+    renderAllAlienBackImages: render.renderAllAlienBackImages,
     resetAlienTraceTokens: render.resetAlienTraceTokens,
     getReadoutLines,
   });

@@ -48,10 +48,12 @@
 
 外星人由 `randomizer/game/aliens/` 管理，当前有两个未揭示槽位（外星人 1 / 外星人 2）：
 
+- 牌库共 8 种外星人（见 `catalog.js`：`九折`、`半人马`、`奥陌陌`、`异常点`、`方舟`、`符文族`、`虫`、`阿米巴`）。
+- 开局或点击随机化时，`randomizeAlienAssignments` 会从 8 种中无放回抽取 2 种，分别写入两个槽位的 `assignedAlienId`（未揭示前不显示正面）。
 - 每种外星人需要三种首标记：`yellow`（黄色痕迹）、`pink`（粉色痕迹）、`blue`（蓝色痕迹）。
 - `traces[traceType].firstPlaced` / `ownerPlayerColor` 记录该颜色第一个标记是否已放置及归属玩家。
 - 同颜色后续标记只累加 `extraCount`，不再产生新的版图标记。
-- 三种首标记都放置后，`isAlienReadyToReveal` 为真；`revealAlien` 才会翻开对应外星人。
+- 三种首标记都放置后，`isAlienReadyToReveal` 为真；`revealAlien` 使用 `assignedAlienId` 翻开对应外星人，并把 `.alien-back` 图片替换为 `assets/aliens/<id>/face.png`（宽度保持 100%，高度自适应）。
 
 UI 校准：
 
@@ -60,7 +62,7 @@ UI 校准：
 - 默认坐标在 `randomizer/game/aliens/placement.js` 的 `ALIEN_TRACE_MARKER_SLOTS`，拖动结果保存在渲染层 override 中，供后续固化。
 - 首标记仅在 `firstPlaced` 后显示玩家 token（已校准坐标，`ALIEN_TRACE_TOKEN_DISPLAY_SCALE` 当前为 7），无默认参考图标。
 - 非首标记数量不限；网格锚点为 `ALIEN_EXTRA_TRACE_MARKER_SLOTS`（第二行第二列中心，可拖动），从锚点与 token 尺寸反推第一格中心，再按每行 3 个向右、向下排布；`ALIEN_EXTRA_TRACE_TOKEN_DISPLAY_SCALE` 当前为 5。
-- 调试「获取外星人标记」：未放置首标记时放首标记，已放置则追加非首标记。
+- 调试「获取外星人标记」：未放置首标记时放首标记，已放置则追加非首标记；外星人揭示后仍可继续追加非首标记，但不能再补首标记。
 
 ### 扇区与星云状态
 
@@ -265,6 +267,7 @@ node randomizer/game/data/data.test.js
 node randomizer/game/tech/tech.test.js
 node randomizer/game/aliens/state.test.js
 node randomizer/game/aliens/placement.test.js
+node randomizer/game/aliens/randomizer.test.js
 ```
 
 卡牌源数据转换：

@@ -2528,7 +2528,17 @@
     ) || null;
   }
 
+  function getAlienBackImage(alienSlotId) {
+    return document.querySelector(`.alien-panel[data-alien-slot="${alienSlotId}"] .alien-back`);
+  }
+
+  function maybeRevealAlienAfterTrace(alienSlotId, traceResult) {
+    if (!traceResult?.readyToReveal) return null;
+    return aliens.revealAlien(alienGameState, alienSlotId);
+  }
+
   function renderAlienPanels() {
+    aliens.renderAllAlienBackImages(getAlienBackImage, alienGameState);
     aliens.renderAllAlienTraceMarkers(getAlienTraceLayer, alienGameState, {
       tokenSrc: aliens.ALIEN_TRACE_TOKEN_SRC,
       getPlayerTokenAsset: (playerColor) => (
@@ -2537,6 +2547,13 @@
       ),
       getPlayerLabel: (playerColor) => players.getPlayerColorDefinition(playerColor)?.label || playerColor,
     });
+  }
+
+  function randomizeAliens() {
+    const result = aliens.randomizeAlienAssignments(alienGameState);
+    aliens.resetAlienTraceTokens();
+    renderAlienPanels();
+    return result;
   }
 
   function closeAlienTracePicker() {
@@ -2567,13 +2584,15 @@
       }
     }
 
+    const cannotPlaceFirstOnRevealed = Boolean(alienSlot?.revealed && !traceSlot?.firstPlaced);
+
     return {
       alienSlotId,
       traceType,
       label: `${slotLabel} ${traceLabel}`,
       description,
-      disabled: Boolean(alienSlot?.revealed),
-      title: alienSlot?.revealed ? "该外星人已揭示" : "",
+      disabled: cannotPlaceFirstOnRevealed,
+      title: cannotPlaceFirstOnRevealed ? "该外星人已揭示，无法再放置首标记" : "",
     };
   }
 
@@ -2616,10 +2635,11 @@
       currentPlayer.color,
     );
     closeAlienTracePicker();
-    rocketState.statusNote = result.message;
+    const revealResult = maybeRevealAlienAfterTrace(alienSlotId, result);
+    rocketState.statusNote = revealResult?.message || result.message;
     renderAlienPanels();
     renderStateReadout();
-    return result;
+    return revealResult || result;
   }
 
   function alignAlienPanelsToPlanets() {
@@ -4824,6 +4844,7 @@
     randomizeSectors();
     fillNebulaDataBoard({ source: "setup", replace: true });
     randomizeFinalScores();
+    randomizeAliens();
     tech.setupBoardBonuses(techGameState);
     renderTechBoard();
     updateActionButtons();
@@ -5067,6 +5088,7 @@
   renderSectors();
   fillNebulaDataBoard({ source: "setup", replace: true });
   randomizeFinalScores();
+  randomizeAliens();
   renderStateReadout();
   renderRockets();
   renderTechBoard();
@@ -5102,9 +5124,10 @@
         traceType,
         playerColor || getCurrentPlayer().color,
       );
+      const revealResult = maybeRevealAlienAfterTrace(alienSlotId, result);
       renderAlienPanels();
       renderStateReadout();
-      return result;
+      return revealResult || result;
     },
     placeAlienExtraTrace: (alienSlotId, traceType) => {
       const result = aliens.addExtraTrace(alienGameState, alienSlotId, traceType);
@@ -5114,9 +5137,11 @@
     },
     revealAlien: (alienSlotId, alienId) => {
       const result = aliens.revealAlien(alienGameState, alienSlotId, alienId);
+      renderAlienPanels();
       renderStateReadout();
       return result;
     },
+    randomizeAliens,
     drawCardForCurrentPlayer,
     blindDrawCardForPlayer,
     beginCardSelection,
