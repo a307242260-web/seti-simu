@@ -14,6 +14,7 @@
   const EFFECT_TYPES = Object.freeze({
     GAIN_RESOURCES: "gain_resources",
     GAIN_DATA: "gain_data",
+    LAUNCH: "launch",
     DRAW_CARDS: "draw_cards",
     PICK_CARD: "pick_card",
     INCOME: "income",
@@ -32,6 +33,7 @@
     pick_card: "../assets/symbol/effect/choose_card.webp",
     publicity: "../assets/symbol/effect/publicity.webp",
     data: "../assets/symbol/effect/data.webp",
+    launch: "../assets/symbol/effect/launch.webp",
     income: "../assets/symbol/effect/income.webp",
     scan: "../assets/symbol/effect/normal_scan.webp",
     black_scan: "../assets/symbol/effect/black_scan.webp",
@@ -96,6 +98,19 @@
       label: label || `获得 ${count} 个数据`,
       icon: "data",
       options: { count },
+    };
+  }
+
+  function launchEffect(options = {}) {
+    return {
+      type: EFFECT_TYPES.LAUNCH,
+      label: options.label || "发射",
+      icon: "launch",
+      options: {
+        skipCost: Boolean(options.skipCost),
+        cost: options.cost || {},
+        source: options.source || null,
+      },
     };
   }
 
@@ -344,5 +359,7 @@
     buildSatelliteLandRewardEffects,
     buildLandRewardEffects,
     buildRewardEffectsForAction,
+    dataEffect,
+    launchEffect,
   });
 });

@@ -225,6 +225,13 @@ function launchToPlanet(context, planetId) {
   assert.equal(bonus.ok, true);
   assert.equal(bonus.undoable, false);
   assert.equal(context.techBoardState.stacks.purple1.remaining, 3);
+
+  const dataGain1 = data.gainData(player, { source: "tech" });
+  const dataGain2 = data.gainData(player, { source: "tech" });
+  assert.equal(dataGain1.ok, true);
+  assert.equal(dataGain2.ok, true);
+  assert.equal(data.listPoolTokens(player).length, 2);
+  assert.equal(player.resources.availableData, 2);
 }
 
 {
@@ -234,12 +241,15 @@ function launchToPlanet(context, planetId) {
   const select = abilities.executeAbility("researchTechSelect", context, { tileId: "orange1" });
   assert.equal(select.ok, true);
   assert.equal(context.rocketState.rockets.length, 0);
-  const tileEffect = abilities.executeAbility("researchTechTileEffect", context, { tileId: select.tileId });
-  assert.equal(tileEffect.ok, true);
-  assert.equal(tileEffect.undoable, false);
-  assert.equal(tileEffect.freeLaunch.ok, true);
+  const launch = abilities.executeAbility("launchProbe", context, {
+    skipCost: true,
+    source: "tech",
+    historyLabel: "发射",
+  });
+  assert.equal(launch.ok, true);
+  assert.equal(launch.undoable, true);
   assert.equal(context.rocketState.rockets.length, 1);
-  assert.equal(tileEffect.rocket.id, context.rocketState.rockets[0].id);
+  assert.equal(launch.rocket.id, context.rocketState.rockets[0].id);
 }
 
 {

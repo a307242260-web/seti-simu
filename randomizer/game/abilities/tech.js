@@ -3,15 +3,13 @@
 
   let players = root.SetiPlayers;
   let tech = root.SetiTech;
-  let rocketAbility = root.SetiAbilityRocket;
 
-  if ((!players || !tech || !rocketAbility) && typeof require === "function") {
+  if ((!players || !tech) && typeof require === "function") {
     players = players || require("../players");
     tech = tech || require("../tech");
-    rocketAbility = rocketAbility || require("./rocket");
   }
 
-  const api = factory(players, tech, rocketAbility);
+  const api = factory(players, tech);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -21,7 +19,6 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
   players,
   tech,
-  rocketAbility,
 ) {
   "use strict";
 
@@ -200,38 +197,6 @@
     };
   }
 
-  function researchTechTileEffect(context, options = {}) {
-    const tileId = options.tileId || context.techUiState?.selectedTileId;
-    let freeLaunch = null;
-    let message = `${tileId || "科技"}：无即时效果`;
-    if (tileId === "orange1") {
-      freeLaunch = rocketAbility.launchProbe(context, {
-        skipCost: true,
-        source: "tech",
-        historyLabel: "橙色1：免费发射",
-      });
-      message = freeLaunch.ok
-        ? `橙色1：${freeLaunch.message}`
-        : `橙色1免费发射未执行：${freeLaunch.message}`;
-    }
-
-    return {
-      ok: true,
-      abilityId: "researchTechTileEffect",
-      message,
-      undoable: false,
-      commands: [],
-      cost: {},
-      payload: {
-        tileId,
-        freeLaunch,
-      },
-      events: [],
-      freeLaunch,
-      rocket: freeLaunch?.ok ? freeLaunch.rocket : null,
-    };
-  }
-
   function researchTechBonus(context, options = {}) {
     const result = tech.resolver.applyTechBonus(context, {
       bonusId: options.bonusId,
@@ -257,7 +222,6 @@
     researchTechPrepare,
     researchTechSelect,
     researchTechRotate,
-    researchTechTileEffect,
     researchTechBonus,
   });
 });

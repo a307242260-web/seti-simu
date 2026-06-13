@@ -44,7 +44,6 @@
     researchTechPrepare: techAbility.researchTechPrepare,
     researchTechSelect: techAbility.researchTechSelect,
     researchTechRotate: techAbility.researchTechRotate,
-    researchTechTileEffect: techAbility.researchTechTileEffect,
     researchTechBonus: techAbility.researchTechBonus,
     payScanCost: scanAbility.payScanCost,
     scanSector: scanAbility.scanSector,

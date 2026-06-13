@@ -108,7 +108,7 @@ UI 校准：
 - `scan`：扫描，默认消耗 1 信用点 + 2 能量，生成扫描效果队列。
 - `analyze`：分析数据，消耗 1 能量并清空已放置数据。
 - `playCard`：打牌，打开手牌选择/打出流程。
-- `researchTech`：研究科技，生成科技效果链：选择科技片、旋转、科技自身效果（如橙1）、获取 bonus。
+- `researchTech`：研究科技，生成科技效果链：选择科技片、旋转、即时奖励（如橙1发射、紫1数据）、获取 bonus。
 
 回合与轮次：
 
@@ -128,7 +128,7 @@ UI 校准：
 - “撤销”按最近完成的主/快速步骤回滚；主行动整体仍可通过回滚会话撤销。
 - 行动可以由能力事件链组成；链上每个节点是一个原子能力，能力返回 `undoable` 决定是否进入撤销历史。
 - 任意不可撤销效果结算后，当前主要行动不能再撤销；仍可撤销之后发生的可撤销快速行动。
-- 科技行动采用效果链：选择科技片可撤销；旋转、科技自身效果和科技 bonus 均不可撤销。
+- 科技行动采用效果链：选择科技片可撤销；旋转与科技 bonus 不可撤销；橙1免费发射与紫1获得数据分别按标准「发射」「数据」效果处理且可撤销。
 
 ### 橙色科技效果
 
@@ -182,7 +182,7 @@ UI 校准：
 - 第一个节点始终是 `payScanCost`，点击后才支付 1 信用点 + 2 能量，可撤销。
 - 无紫色科技：支付扫描费用 + 地球所在扇区扫描 + 公共牌区扫描。
 - 公共牌区扫描默认弃 1 张选 2 选 1 星云；玩家每有 1 个 `additionalPublicScan` 可多选 1 张公共牌（最多 2 个，即最多弃 3 张），弃牌后按张数依次弹出多组 2 选 1 星云（可重复）。
-- 紫1：地球扇区扫描升级为“地球及相邻扇区三选一”。
+- 紫1：获得时立刻获得 2 数据；地球扇区扫描升级为“地球及相邻扇区三选一”。
 - 紫2：额外增加水星所在扇区扫描。
 - 紫3：额外增加手牌扫描。
 - 紫4：额外增加“发射/移动”效果；发射消耗 1 能量，移动免费。
@@ -252,7 +252,6 @@ UI 校准：
   - `researchTechPrepare(context, options)`
   - `researchTechSelect(context, options)`
   - `researchTechRotate(context, options)`
-  - `researchTechTileEffect(context, options)`
   - `researchTechBonus(context, options)`
 - `scan.js`：
   - `payScanCost(context, options)`
@@ -300,7 +299,7 @@ UI 校准：
 - 弃移动牌/紫4扫描移动：`moveProbe(context, { cost: {}, movementPoints, rocketId, deltaX, deltaY })`。
 - 扇区扫描：`scanSector(context, { nebulaId })` 或 `scanSector(context, { sectorX })`。
 - 公共/手牌扫描：UI 先选择牌和目标星云，再调用 `scanPublicCard` / `scanHandCard`；能力原子化结算“星云替换 + 获得数据 + 弃除来源牌/补公共牌”，并返回同一组撤销命令。
-- 科技行动：`researchTechPrepare` 进入选择效果链；`researchTechSelect` 支付 6 宣传、拿取并放置科技片，且 `undoable: true`；`researchTechRotate` 执行太阳系旋转，`undoable: false`；`researchTechTileEffect` 结算科技自身即时效果（当前主要是橙1免费发射），`undoable: false`；`researchTechBonus` 结算 bonus 与首拿 +2 分，`undoable: false`。
+- 科技行动：`researchTechPrepare` 进入选择效果链；`researchTechSelect` 支付 6 宣传、拿取并放置科技片，且 `undoable: true`；`researchTechRotate` 执行太阳系旋转，`undoable: false`；橙1/紫1分别追加标准「发射」「数据」效果节点；`researchTechBonus` 结算 bonus 与首拿 +2 分，`undoable: false`。
 
 ## 卡牌模型
 

@@ -2955,10 +2955,11 @@
   function executeGainDataRewardEffect(effect) {
     const currentPlayer = getCurrentPlayer();
     const count = Math.max(0, Math.round(effect.options?.count || 0));
+    const source = effect.options?.source || "planet_reward";
     beginEffectHistoryStep(effect.label);
     const results = [];
     for (let index = 0; index < count; index += 1) {
-      const gainResult = data.gainData(currentPlayer, { source: "planet_reward" });
+      const gainResult = data.gainData(currentPlayer, { source });
       results.push(gainResult);
       recordHistoryCommand(historyCommands.createGainDataCommand(currentPlayer, gainResult));
     }
@@ -2971,6 +2972,30 @@
       message,
       payload: { results },
     });
+  }
+
+  function executeLaunchRewardEffect(effect) {
+    const options = effect.options || {};
+    beginEffectHistoryStep(effect.label);
+    const result = abilities.executeAbility("launchProbe", createActionContext(), {
+      skipCost: Boolean(options.skipCost),
+      cost: options.cost,
+      source: options.source || "reward",
+      historyLabel: effect.label,
+    });
+    if (!result.ok) {
+      endEffectHistoryStep();
+      rocketState.statusNote = result.message;
+      renderStateReadout();
+      return result;
+    }
+    recordAbilityCommands(result);
+    if (result.rocket) renderRocketElement(result.rocket);
+    return finishAutomaticRewardEffect(effect, {
+      ...result,
+      undoable: true,
+      message: `${effect.label}：${result.message}`,
+    }, [renderRockets]);
   }
 
   function executeDrawCardsRewardEffect(effect) {
@@ -3079,6 +3104,8 @@
         return executeGainResourcesRewardEffect(effect);
       case planetRewards.EFFECT_TYPES.GAIN_DATA:
         return executeGainDataRewardEffect(effect);
+      case planetRewards.EFFECT_TYPES.LAUNCH:
+        return executeLaunchRewardEffect(effect);
       case planetRewards.EFFECT_TYPES.DRAW_CARDS:
         return executeDrawCardsRewardEffect(effect);
       case planetRewards.EFFECT_TYPES.PICK_CARD:
@@ -3116,19 +3143,6 @@
         rocketState.statusNote = result.message;
         renderWheels();
         renderRotateStateToken();
-        completeCurrentActionEffect();
-        renderStateReadout();
-        return result;
-      }
-      case "research_tech_tile_effect": {
-        const selection = getResearchTechSelectionPayload();
-        const result = abilities.executeAbility("researchTechTileEffect", createActionContext(), {
-          tileId: effect.options?.tileId || selection?.tileId,
-        });
-        if (result.rocket) renderRocketElement(result.rocket);
-        effect.result = result;
-        rocketState.statusNote = result.message;
-        renderPlayerStats();
         completeCurrentActionEffect();
         renderStateReadout();
         return result;
@@ -3610,14 +3624,10 @@
 
     if (selectResult.tileId === "orange1") {
       followups.push({
-        id: "research-tech-tile-effect",
-        type: "research_tech_tile_effect",
-        abilityId: "researchTechTileEffect",
-        icon: "research_tech",
-        label: "橙色1：免费发射",
+        ...planetRewards.launchEffect({ skipCost: true, source: "tech" }),
+        id: "research-tech-launch",
         status: "pending",
-        undoable: false,
-        options: { tileId: selectResult.tileId },
+        undoable: true,
       });
     }
 
@@ -3635,6 +3645,15 @@
         firstTake: Boolean(selectResult.firstTake),
       },
     });
+
+    if (selectResult.tileId === "purple1") {
+      followups.push({
+        ...planetRewards.dataEffect(2),
+        id: "research-tech-data",
+        status: "pending",
+        undoable: true,
+      });
+    }
 
     pendingActionEffectFlow.effects.push(...followups);
   }
