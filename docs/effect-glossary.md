@@ -16,7 +16,7 @@
 | 手牌扫描 | 弃除一张手牌，并按该牌角标选择星云扫描。 | 可撤销 | `assets/symbol/action/scan/private_card_scan.webp` |
 | 紫4 | 紫4扫描效果：选择发射或移动；发射消耗 1 能量，移动免费。 | 可撤销 | `assets/symbol/action/scan/scan_action_4.png` |
 | 选择科技片 | 支付 6 宣传，拿取科技片并放置到玩家版图；不触发旋转、科技自身效果或 bonus。 | 可撤销 | `assets/symbol/effect/research_tech.webp` |
-| 旋转 | 研究科技后旋转太阳系。 | 不可撤销 | `assets/core/rotate.png` |
+| 旋转 | 研究科技后旋转太阳系。 | 不可撤销 | `assets/tokens/rotate_state.png` |
 | 科技自身效果 | 结算科技片自身即时效果；当前主要是橙1免费发射。 | 不可撤销 | `assets/symbol/effect/research_tech.webp` |
 | 科技 bonus | 结算科技片对应 bonus；首拿同类科技的 +2 分归入此效果。 | 不可撤销；若是精选，确认拿牌后不可撤销。 | 对应 bonus 图标 |
 | 弃牌 | 从手牌或公共牌区移除一张牌，通常作为扫描、收入或其他效果的前置选择。 | 取决于所属效果；扫描类弃牌可撤销，精选拿牌后不可撤销。 | `assets/symbol/effect/discard.jpg` |

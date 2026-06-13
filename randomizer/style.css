@@ -194,7 +194,7 @@ body {
   aspect-ratio: 1;
   display: grid;
   place-content: center;
-  gap: 4px;
+  gap: 5px;
   text-align: center;
   border: 2px solid rgba(236, 91, 54, 0.86);
   border-radius: 50%;
@@ -213,9 +213,13 @@ body {
 
 .round-status-value {
   color: #fff7df;
-  font-size: clamp(14px, 3.6vw, 22px);
+  font-size: clamp(13px, 2.7vw, 18px);
   font-weight: 800;
   line-height: 1;
+}
+
+.round-status-turn {
+  font-size: clamp(12px, 2.35vw, 16px);
 }
 
 .public-card-panel {
