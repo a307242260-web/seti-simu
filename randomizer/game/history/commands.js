@@ -27,6 +27,7 @@
       replacedByPlayerLabel: token.replacedByPlayerLabel || null,
       playerTokenSrc: token.playerTokenSrc || null,
       replacedAt: token.replacedAt || null,
+      replacementOrder: token.replacementOrder || null,
     };
   }
 

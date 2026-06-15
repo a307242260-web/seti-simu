@@ -38,6 +38,44 @@
     return playerTech.getAvailableBlueSlots(playerTechState);
   }
 
+  function normalizeTechType(value) {
+    const raw = String(value || "").trim();
+    const aliases = {
+      blue: "blue",
+      orange: "orange",
+      purple: "purple",
+      蓝: "blue",
+      蓝色: "blue",
+      blueTech: "blue",
+      orangeTech: "orange",
+      橙: "orange",
+      橙色: "orange",
+      purpleTech: "purple",
+      紫: "purple",
+      紫色: "purple",
+    };
+    return aliases[raw] || (catalog.TECH_TYPES.includes(raw) ? raw : null);
+  }
+
+  function normalizeTechTypeFilter(options = {}) {
+    const source = options.techTypes
+      ?? options.techType
+      ?? options.allowedTechTypes
+      ?? options.colors
+      ?? options.color
+      ?? null;
+    const values = Array.isArray(source) ? source : (source == null ? [] : [source]);
+    const types = [...new Set(values.map(normalizeTechType).filter(Boolean))];
+    return types.length ? types : null;
+  }
+
+  function isTechTypeAllowed(tileId, options = {}) {
+    const allowedTypes = normalizeTechTypeFilter(options);
+    if (!allowedTypes) return true;
+    const techType = catalog.getTechType(tileId);
+    return allowedTypes.includes(techType);
+  }
+
   function resolveBlueSlotChoice(playerTechState, tileId, blueSlot = null) {
     const availableSlots = getAvailableBlueSlots(playerTechState);
     if (!availableSlots.length) {
@@ -65,9 +103,12 @@
     return { ok: true, blueSlot: resolvedBlueSlot, availableSlots };
   }
 
-  function canTakeTile(board, playerTechState, tileId) {
+  function canTakeTile(board, playerTechState, tileId, options = {}) {
     const stack = boardState.getStack(board, tileId);
     if (!stack) return { ok: false, message: `未知科技板块 ${tileId}` };
+    if (!isTechTypeAllowed(tileId, options)) {
+      return { ok: false, message: `${tileId} 不在本次可研究科技颜色范围内` };
+    }
     if (!boardState.isInSupply(board, tileId)) {
       return { ok: false, message: `${tileId} 不在待拿取区` };
     }
@@ -116,6 +157,9 @@
       blueSlot = null,
       skipCost = false,
     } = options;
+    const effectiveOptions = normalizeTechTypeFilter(options)
+      ? options
+      : { ...options, allowedTechTypes: context.techUiState?.allowedTechTypes || null };
 
     const board = context.techBoardState;
     const currentPlayer = players.getCurrentPlayer(context.playerState);
@@ -126,7 +170,7 @@
       currentPlayer.techState = playerTech.createPlayerTechState();
     }
 
-    const check = canTakeTile(board, currentPlayer.techState, tileId);
+    const check = canTakeTile(board, currentPlayer.techState, tileId, effectiveOptions);
     if (!check.ok) return check;
 
     let resolvedBlueSlot = null;
@@ -324,8 +368,9 @@
     );
   }
 
-  function listTakeableTiles(board, playerTechState) {
+  function listTakeableTiles(board, playerTechState, options = {}) {
     return catalog.TECH_TILE_IDS.filter((tileId) => {
+      if (!isTechTypeAllowed(tileId, options)) return false;
       if (!boardState.isSlotAvailable(board, tileId)) return false;
       return playerTech.canPlayerTakeTile(playerTechState, tileId);
     });
@@ -337,6 +382,7 @@
 
   return Object.freeze({
     getAvailableBlueSlots,
+    normalizeTechTypeFilter,
     canTakeTile,
     selectTechTile,
     rotateForResearch,

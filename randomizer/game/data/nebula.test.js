@@ -106,6 +106,87 @@ assert.ok(
   data.getNebulaReadoutLines(scanState).some((line) => line.includes("token=blue:2")),
 );
 
+const settlementState = data.createDefaultNebulaDataState();
+const settlementPlayers = [
+  { id: "player-blue", color: "blue", colorLabel: "蓝色" },
+  { id: "player-green", color: "green", colorLabel: "绿色" },
+  { id: "player-white", color: "white", colorLabel: "白色" },
+];
+data.fillNebulaData(settlementState, "sector-1-a", { source: "test" });
+assert.equal(data.isSectorReadyToSettle(settlementState, "sector-1-a"), false);
+
+[
+  settlementPlayers[0],
+  settlementPlayers[0],
+  settlementPlayers[2],
+  settlementPlayers[2],
+  settlementPlayers[1],
+].forEach((player, index) => {
+  data.replaceNextNebulaDataToken(settlementState, "sector-1-a", player, {
+    replacementOrder: index + 1,
+  });
+});
+
+assert.equal(data.isSectorReadyToSettle(settlementState, "sector-1-a"), true);
+const ranking = data.getSectorRanking(settlementState, "sector-1-a");
+assert.equal(ranking[0].playerColor, "white");
+assert.equal(ranking[1].playerColor, "blue");
+assert.equal(ranking[2].playerColor, "green");
+
+const settleResult = data.settleSector(settlementState, "sector-1-a", {
+  players: settlementPlayers,
+  getPlayerTokenSrc: (player) => `token-${player.color}.png`,
+});
+assert.equal(settleResult.ok, true);
+assert.equal(settleResult.winner.playerColor, "white");
+assert.equal(settleResult.second.playerColor, "blue");
+assert.equal(settleResult.participants.length, 3);
+assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"].settlementCount, 1);
+assert.deepEqual(settlementState.sectorSettlements.winsByPlayerId["player-white"], [
+  { sectorId: "sector-1-a", settlementNumber: 1 },
+]);
+assert.equal(data.isSectorReadyToSettle(settlementState, "sector-1-a"), false);
+assert.equal(data.listNebulaTokens(settlementState, "sector-1-a").length, 5);
+const retained = data.listNebulaTokens(settlementState, "sector-1-a")
+  .find((token) => token.slotIndex === 1);
+assert.equal(retained.replacedByPlayerColor, "blue");
+assert.equal(retained.playerTokenSrc, "token-blue.png");
+assert.ok(data.getSectorSettlementReadoutLines(settlementState).some((line) => line.includes("南河三 结算1次")));
+
+data.clearNebulaData(settlementState);
+assert.equal(settlementState.sectorSettlements.sectors["sector-1-a"], undefined);
+
+const extraMarkState = data.createDefaultNebulaDataState();
+data.fillNebulaData(extraMarkState, "sector-1-a", { source: "test" });
+[
+  settlementPlayers[0],
+  settlementPlayers[0],
+  settlementPlayers[1],
+  settlementPlayers[1],
+  settlementPlayers[1],
+].forEach((player, index) => {
+  data.replaceNextNebulaDataToken(extraMarkState, "sector-1-a", player, {
+    replacementOrder: index + 1,
+  });
+});
+assert.equal(data.isSectorReadyToSettle(extraMarkState, "sector-1-a"), true);
+assert.equal(data.getSectorRanking(extraMarkState, "sector-1-a")[0].playerColor, "green");
+const extraMark = data.addSectorExtraMark(extraMarkState, "sector-1-a", settlementPlayers[0], {
+  replacementOrder: 6,
+});
+assert.equal(extraMark.ok, true);
+assert.equal(extraMark.extra, true);
+assert.equal(data.listSectorExtraMarks(extraMarkState, "sector-1-a").length, 1);
+const extraRanking = data.getSectorRanking(extraMarkState, "sector-1-a");
+assert.equal(extraRanking[0].playerColor, "blue");
+assert.equal(extraRanking[0].count, 3);
+assert.equal(extraRanking[1].count, 3);
+const extraSettleResult = data.settleSector(extraMarkState, "sector-1-a");
+assert.equal(extraSettleResult.ok, true);
+assert.equal(extraSettleResult.winner.playerColor, "blue");
+assert.equal(extraSettleResult.second.playerColor, "green");
+assert.equal(data.listSectorExtraMarks(extraMarkState, "sector-1-a").length, 0);
+
 data.updateNebulaTokenPosition(nebulaDataState, "sector-2-a", 1, {
   percentX: 12.34,
   percentY: 56.78,

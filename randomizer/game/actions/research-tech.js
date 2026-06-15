@@ -39,7 +39,12 @@
     return { ok: true, currentPlayer };
   }
 
-  function canExecute(context) {
+  function buildTechTypeOptions(options = {}) {
+    const allowedTechTypes = resolver.normalizeTechTypeFilter(options);
+    return allowedTechTypes ? { techTypes: allowedTechTypes } : {};
+  }
+
+  function canExecute(context, options = {}) {
     const playerResult = getPlayerTechState(context);
     if (!playerResult.ok) return playerResult;
 
@@ -54,23 +59,30 @@
       };
     }
 
-    const takeable = resolver.listTakeableTiles(board, playerResult.currentPlayer.techState);
+    const techTypeOptions = buildTechTypeOptions(options);
+    const takeable = resolver.listTakeableTiles(board, playerResult.currentPlayer.techState, techTypeOptions);
     if (!takeable.length) {
-      return { ok: false, message: "没有可研究的科技板块" };
+      return {
+        ok: false,
+        message: techTypeOptions.techTypes ? "没有符合颜色限制的可研究科技板块" : "没有可研究的科技板块",
+      };
     }
 
-    return { ok: true, message: null, takeable };
+    return { ok: true, message: null, takeable, allowedTechTypes: techTypeOptions.techTypes || null };
   }
 
   function execute(context, options = {}) {
     if (options.tileId) {
+      const techTypeOptions = buildTechTypeOptions(options);
       return resolver.executeTakeTech(context, {
         tileId: options.tileId,
         blueSlot: options.blueSlot,
+        ...techTypeOptions,
       });
     }
 
-    const check = canExecute(context);
+    const techTypeOptions = buildTechTypeOptions(options);
+    const check = canExecute(context, techTypeOptions);
     if (!check.ok) {
       if (context.techUiState) context.techUiState.statusNote = check.message;
       return { ok: false, actionId: ACTION_ID, message: check.message };
@@ -78,6 +90,7 @@
 
     if (context.techUiState) {
       context.techUiState.techSelectionActive = true;
+      context.techUiState.allowedTechTypes = techTypeOptions.techTypes ? [...techTypeOptions.techTypes] : null;
       context.techUiState.statusNote = "请选择要研究的科技板块";
     }
 
@@ -86,6 +99,7 @@
       actionId: ACTION_ID,
       awaitingTileSelection: true,
       takeable: check.takeable,
+      allowedTechTypes: check.allowedTechTypes || null,
       message: "请选择要研究的科技板块",
     };
   }

@@ -236,6 +236,25 @@ function launchToPlanet(context, planetId) {
 
 {
   const context = createContext({ resources: { credits: 10, energy: 10, publicity: 10 } });
+  const prepare = abilities.executeAbility("researchTechPrepare", context, { techType: "purple" });
+  assert.equal(prepare.ok, true);
+  assert.deepEqual(prepare.allowedTechTypes, ["purple"]);
+  assert.ok(prepare.takeable.length > 0);
+  assert.ok(prepare.takeable.every((tileId) => tileId.startsWith("purple")));
+  assert.deepEqual(context.techUiState.allowedTechTypes, ["purple"]);
+
+  const blocked = abilities.executeAbility("researchTechSelect", context, { tileId: "orange1" });
+  assert.equal(blocked.ok, false);
+  assert.match(blocked.message, /颜色范围/);
+
+  const select = abilities.executeAbility("researchTechSelect", context, { tileId: "purple1" });
+  assert.equal(select.ok, true);
+  assert.equal(select.tileId, "purple1");
+  assert.equal(context.techUiState.allowedTechTypes, null);
+}
+
+{
+  const context = createContext({ resources: { credits: 10, energy: 10, publicity: 10 } });
   const prepare = abilities.executeAbility("researchTechPrepare", context);
   assert.equal(prepare.ok, true);
   const select = abilities.executeAbility("researchTechSelect", context, { tileId: "orange1" });
@@ -295,6 +314,31 @@ function launchToPlanet(context, planetId) {
   assert.equal(token.replacedByPlayerId, null);
   assert.equal(currentPlayer(context).dataState.poolTokens.length, 0);
   assert.equal(currentPlayer(context).resources.availableData, 0);
+}
+
+{
+  const context = createContext({ resources: { credits: 10, energy: 10 } });
+  const player = currentPlayer(context);
+  data.fillNebulaData(context.nebulaDataState, "sector-1-b", { source: "test" });
+  const result = abilities.executeAbility("scanSector", context, {
+    nebulaId: "sector-1-b",
+    gainData: false,
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.nebulaId, "sector-1-b");
+  assert.equal(result.replaced.slotIndex, 1);
+  assert.equal(result.gainedData.skipped, true);
+  assert.equal(result.payload.gainData, false);
+  assert.equal(data.listPoolTokens(player).length, 0);
+  assert.equal(player.resources.availableData, 0);
+  assert.equal(result.commands.length, 1);
+
+  result.commands[0].undo();
+  const token = data.listNebulaTokens(context.nebulaDataState, "sector-1-b")[0];
+  assert.equal(token.replacedByPlayerId, null);
+  assert.equal(data.listPoolTokens(player).length, 0);
+  assert.equal(player.resources.availableData, 0);
 }
 
 {

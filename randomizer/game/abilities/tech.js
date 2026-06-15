@@ -38,7 +38,14 @@
     return { ok: true, currentPlayer };
   }
 
-  function researchTechPrepare(context) {
+  function buildTechTypeOptions(context, options = {}) {
+    const allowedTechTypes = tech.resolver.normalizeTechTypeFilter(options)
+      || tech.resolver.normalizeTechTypeFilter(context.techUiState || {})
+      || null;
+    return allowedTechTypes ? { techTypes: allowedTechTypes } : {};
+  }
+
+  function researchTechPrepare(context, options = {}) {
     const playerResult = getPlayerTechState(context);
     if (!playerResult.ok) {
       if (context.techUiState) context.techUiState.statusNote = playerResult.message;
@@ -55,9 +62,12 @@
       return { ok: false, abilityId: "researchTechPrepare", message };
     }
 
-    const takeable = tech.listTakeableTiles(board, playerResult.currentPlayer.techState);
+    const techTypeOptions = buildTechTypeOptions(context, options);
+    const takeable = tech.listTakeableTiles(board, playerResult.currentPlayer.techState, techTypeOptions);
     if (!takeable.length) {
-      const message = "没有可研究的科技板块";
+      const message = techTypeOptions.techTypes
+        ? "没有符合颜色限制的可研究科技板块"
+        : "没有可研究的科技板块";
       if (context.techUiState) context.techUiState.statusNote = message;
       return { ok: false, abilityId: "researchTechPrepare", message };
     }
@@ -67,6 +77,7 @@
       context.techUiState.selectedTileId = null;
       context.techUiState.selectedBlueSlot = null;
       context.techUiState.pendingTileId = null;
+      context.techUiState.allowedTechTypes = techTypeOptions.techTypes ? [...techTypeOptions.techTypes] : null;
       context.techUiState.statusNote = "请选择要研究的科技板块";
     }
 
@@ -77,10 +88,11 @@
       undoable: true,
       commands: [],
       cost: {},
-      payload: { takeable },
+      payload: { takeable, allowedTechTypes: techTypeOptions.techTypes || null },
       events: [],
       awaitingTileSelection: true,
       takeable,
+      allowedTechTypes: techTypeOptions.techTypes || null,
     };
   }
 
@@ -88,10 +100,12 @@
     const tileId = options.tileId;
     const playerResult = getPlayerTechState(context);
     if (!playerResult.ok) return { ok: false, abilityId: "researchTechSelect", message: playerResult.message };
+    const techTypeOptions = buildTechTypeOptions(context, options);
     const canTake = tech.resolver.canTakeTile(
       context.techBoardState,
       playerResult.currentPlayer.techState,
       tileId,
+      techTypeOptions,
     );
     if (!canTake.ok) return { ok: false, abilityId: "researchTechSelect", message: canTake.message };
 
@@ -134,7 +148,7 @@
       snapshots.ui.statusNote = "请选择要研究的科技板块";
     }
     const skipCost = Boolean(context.techUiState?.cheatModeEnabled || options.skipCost);
-    const result = tech.resolver.selectTechTile(context, { tileId, blueSlot, skipCost });
+    const result = tech.resolver.selectTechTile(context, { tileId, blueSlot, skipCost, ...techTypeOptions });
     if (!result.ok || result.needsBlueSlotChoice) {
       restoreObject(playerResult.currentPlayer, snapshots.player);
       restoreObject(context.techBoardState, snapshots.board);
@@ -151,6 +165,7 @@
       context.techUiState.selectedTileId = result.tileId;
       context.techUiState.selectedBlueSlot = result.blueSlot;
       context.techUiState.pendingTileId = null;
+      context.techUiState.allowedTechTypes = null;
       context.techUiState.statusNote = result.message;
     }
 

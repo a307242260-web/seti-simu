@@ -88,11 +88,20 @@ UI 校准：
 - 每个 token 记录 `slotIndex`、坐标，以及是否已被某玩家替换。
 - `fillNebulaData` 会按星云容量填充数据。
 - `replaceNextNebulaDataToken` 会按 `slotIndex` 从小到大替换第一个未替换 token。
+- `replacementOrder` 记录标记顺序，用于扇区结算同标记数时判定后标记者获胜。
+- 机制里的“扇区”是 1/8 外圈区域，即单个具名星云扇区（如 `sector-1-a` / 南河三）；一块外围板子包含两个这样的扇区。
+- `sectorSettlements` 记录每个具名扇区已结算次数、每次赢家，以及每个玩家赢得的扇区结算记录。
+- `sectorExtraMarks[sectorId][]` 记录单个具名扇区数据槽已满后的额外玩家标记；额外标记不占用数据槽、不产生数据，但计入扇区排名和结算平局判定。
+- `settleCompletedSectors` 会检查 8 个具名扇区：若某扇区自身数据槽都已填满且全部数据均被玩家 token 替换，则结算该扇区。
+- 扇区结算时，标记数最多的玩家获胜；标记数相同则比较该玩家在本扇区的最近标记顺序，后标记者获胜。
+- 扇区结算发生在主要行动效果队列全部完成后，结算本身不可撤销；参与本次结算且有标记的玩家各获得 1 宣传。
+- 若存在第二名，第二名会在该具名扇区的 1 号数据槽保留 1 枚标记；随后清空并重新填满该扇区其余数据槽。
+- 调试按钮「快速扫描扇区」会依次选择玩家颜色、具名扇区和替换数量，批量把该扇区未替换数据改成对应玩家 token；若替换数量超过剩余未替换数据，超出部分会写入 `sectorExtraMarks`。该调试动作不获得数据、不写撤销历史，但会立即触发已完成扇区结算。
 - 当前代码会返回第二格 `+2` 分信息，但实际加分尚未完全接入扫描结算。
 
 玩家数据由 `randomizer/game/data/state.js` 管理：
 
-- 扫描获得数据进入 `player.dataState.poolTokens`，上限为 6。
+- 扫描默认获得数据并进入 `player.dataState.poolTokens`，上限为 6；星云扫描能力可传 `gainData: false`，此时仍替换/放置星云 token，但不获得数据。
 - 数据池满时，额外获得的数据会增加 `discardedCount`，不进入数据池。
 - 放置数据会从数据池最左侧 token 移入计算机第一排，或满足条件时移入蓝色科技附加槽。
 - 计算机第一排 2 号位额外获得 1 宣传；4 号位额外触发 1 次收入（弃 1 张手牌并按该牌收入角标增加收入）。
@@ -288,6 +297,8 @@ UI 校准：
 - `options.movementPoints` 表示本次移动实际提供的移动力；未传时按能量成本推导，免费移动默认为 1。
 - `options.source` 标识来源，例如 `scan`、`card`、`tech`、`debug`。
 - `options.historyLabel` 用于生成撤销命令文案。
+- `options.gainData === false` 表示星云扫描只替换/放置 token，不获得数据；未传时默认获得数据。
+- `options.techType` / `options.techTypes` 用于限制科技行动可选颜色；默认不限制，支持 `blue`、`orange`、`purple`，也兼容 `color` / `colors` 别名。
 - 需要玩家选择的流程由 UI 打开 overlay，能力函数只结算已经确定的目标。
 
 行动可以被视为特殊能力编排器：
@@ -298,8 +309,8 @@ UI 校准：
 - 正常快速移动：`moveProbe(context, { cost: { energy: 1 }, movementPoints: 1, rocketId, deltaX, deltaY })`。
 - 弃移动牌/紫4扫描移动：`moveProbe(context, { cost: {}, movementPoints, rocketId, deltaX, deltaY })`。
 - 扇区扫描：`scanSector(context, { nebulaId })` 或 `scanSector(context, { sectorX })`。
-- 公共/手牌扫描：UI 先选择牌和目标星云，再调用 `scanPublicCard` / `scanHandCard`；能力原子化结算“星云替换 + 获得数据 + 弃除来源牌/补公共牌”，并返回同一组撤销命令。
-- 科技行动：`researchTechPrepare` 进入选择效果链；`researchTechSelect` 支付 6 宣传、拿取并放置科技片，且 `undoable: true`；`researchTechRotate` 执行太阳系旋转，`undoable: false`；橙1/紫1分别追加标准「发射」「数据」效果节点；`researchTechBonus` 结算 bonus 与首拿 +2 分，`undoable: false`。
+- 公共/手牌扫描：UI 先选择牌和目标星云，再调用 `scanPublicCard` / `scanHandCard`；能力原子化结算“星云替换 + 可选获得数据 + 弃除来源牌/补公共牌”，并返回同一组撤销命令。
+- 科技行动：`researchTechPrepare` 进入选择效果链，默认允许全部颜色科技，也可传 `techType` / `techTypes` 限制颜色；`researchTechSelect` 支付 6 宣传、拿取并放置科技片，且 `undoable: true`；`researchTechRotate` 执行太阳系旋转，`undoable: false`；橙1/紫1分别追加标准「发射」「数据」效果节点；`researchTechBonus` 结算 bonus 与首拿 +2 分，`undoable: false`。
 
 ## 卡牌模型
 
@@ -309,7 +320,7 @@ UI 校准：
 ## 后续改造方向
 
 - `orbit`、`land`、`analyze`、`researchTech` 已拆成能力函数；后续继续处理 `playCard`，并让卡牌/科技通过 `cost` 参数触发低费或免费版本。
-- 将扫描第二格 +2 分、扇区完成、赢家/第二名、推广和扇区奖励做成 `onSignalMarked` / `onSectorCompleted` 事件能力。
+- 将扫描第二格 +2 分、推广和扇区奖励做成 `onSignalMarked` / `onSectorCompleted` 事件能力。
 - 将 UI 的 overlay 选择与底层 ability 彻底分离，使能力函数可被测试、AI agent 和模拟器复用。
 
 ## 验证命令

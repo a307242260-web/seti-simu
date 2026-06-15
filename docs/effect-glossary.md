@@ -1,25 +1,25 @@
 # SETI 效果术语表
 
+本文档按“原子效果”和“复合效果”两层描述效果系统：
+
+- 原子效果：一次可直接结算的最小能力或资源变更，例如发射、移动、获得数据、扫描某一个确定星云。
+- 复合效果：由多个原子效果组成的行动、科技即时效果或选择型效果，例如扫描行动、紫4、研究科技。
+
+## 原子效果
+
 | 名称 | 效果 | 是否可撤销 | 图标 |
 | --- | --- | --- | --- |
-| 扫描行动 | 执行一次主要扫描行动，并继续触发该行动后续的扫描相关效果。 | 行动开始后，已结算的可撤销效果可撤销；出现不可撤销效果后不可撤销主行动。 | `assets/symbol/effect/scan_action.webp` |
-| 支付扫描费用 | 支付 1 信用点 + 2 能量，作为扫描行动的第一个效果。 | 可撤销 | `assets/symbol/action/scan/earth_scan.png` |
-| 扇区扫描 | 扫描指定扇区内可获得数据的星云。 | 可撤销 | `assets/symbol/action/scan/earth_scan.png` |
-| 强化扇区扫描 | 紫1扫描效果：在地球所在扇区及相邻扇区中选择一个扇区扫描。 | 可撤销 | `assets/symbol/action/scan/earth_scan_improved.png` |
-| 固定星球扇区扫描 | 扫描指定星球当前所在扇区；按钮附带星球名文字角标，如“水星”“火星”。 | 可撤销 | `assets/symbol/effect/normal_scan.webp` |
-| 水星扇区扫描 | 紫2扫描效果：扫描水星当前所在扇区。 | 可撤销 | `assets/symbol/action/scan/mercury_scan.png` |
-| 黑色二选一扫描 | 在织女一 / 绘架座β中选择一个星云扫描。 | 可撤销 | `assets/symbol/effect/black_scan.webp` |
-| 红色星云扫描 | 在两个红色星云中选择一个星云扫描。 | 可撤销 | `assets/symbol/effect/red_scan.webp` |
-| 蓝色星云扫描 | 在两个蓝色星云中选择一个星云扫描。 | 可撤销 | `assets/symbol/effect/blue_scan.webp` |
-| 黄色星云扫描 | 在两个黄色星云中选择一个星云扫描。 | 可撤销 | `assets/symbol/effect/yellow_scan.webp` |
-| 公共牌区扫描 | 弃除公共牌区中的一张牌，并按该牌角标选择星云扫描。 | 可撤销 | `assets/symbol/action/scan/public_card_scan.webp` |
-| 手牌扫描 | 弃除一张手牌，并按该牌角标选择星云扫描。 | 可撤销 | `assets/symbol/action/scan/private_card_scan.webp` |
-| 紫4 | 紫4扫描效果：选择发射或移动；发射消耗 1 能量，移动免费。 | 可撤销 | `assets/symbol/action/scan/scan_action_4.png` |
+| 支付扫描费用 | 支付 1 信用点 + 2 能量，作为扫描行动的第一个结算节点。 | 可撤销 | `assets/symbol/action/scan/earth_scan.png` |
+| 发射 | 在地球所在扇区放置火箭；可通过 `cost` 或 `skipCost` 表示正常发射、科技免费发射、紫4发射等来源。 | 可撤销 | `assets/symbol/effect/launch.webp` |
+| 移动 | 给予火箭指定移动力。没有橙2科技时，移动出小行星需要 2 点移动力，其余场景通常为 1 点。 | 可撤销 | `assets/symbol/effect/movement.webp` |
+| 环绕标记 | 支付环绕成本，移除当前火箭，并在对应星球参考图放置环绕标记。 | 可撤销 | `assets/symbol/effect/orbit.webp` |
+| 主星登陆标记 | 支付登陆成本，移除当前火箭，并在对应主星放置登陆标记。 | 可撤销 | `assets/symbol/effect/land.webp` |
+| 卫星登陆标记 | 拥有橙4后可选；支付登陆成本，移除当前火箭，并在对应卫星放置登陆标记。 | 可撤销 | `assets/symbol/effect/land.webp` |
+| 分析数据 | 消耗 1 能量，要求计算机第一排第 6 位已有数据，清空已放置数据并结算分析。 | 可撤销 | `assets/symbol/effect/data.webp` |
 | 选择科技片 | 支付 6 宣传，拿取科技片并放置到玩家版图；不触发旋转、即时奖励或 bonus。 | 可撤销 | `assets/symbol/effect/research_tech.webp` |
 | 旋转 | 研究科技后旋转太阳系。 | 不可撤销 | `assets/tokens/rotate_state.png` |
-| 发射 | 在地球所在扇区放置火箭；研究橙1时可免费触发。 | 可撤销 | `assets/symbol/effect/launch.webp` |
 | 科技 bonus | 结算科技片对应 bonus；首拿同类科技的 +2 分归入此效果。 | 不可撤销；若是精选，确认拿牌后不可撤销。 | 对应 bonus 图标 |
-| 弃牌 | 从手牌或公共牌区移除一张牌，通常作为扫描、收入或其他效果的前置选择。 | 取决于所属效果；扫描类弃牌可撤销，精选拿牌后不可撤销。 | `assets/symbol/effect/discard.jpg` |
+| 弃牌 | 从手牌或公共牌区移除一张牌，通常作为扫描、收入或其他效果的前置结算。 | 取决于所属效果；扫描类弃牌可撤销，精选拿牌后不可撤销。 | `assets/symbol/effect/discard.jpg` |
 | 盲抽 | 从牌库随机抽取指定数量卡牌加入手牌。 | 不可撤销 | `assets/symbol/effect/blind_card.webp` |
 | 精选 | 从公共牌区选择 1 张卡牌加入手牌。 | 确认拿牌后不可撤销；取消选择前不结算。 | `assets/symbol/effect/choose_card.webp` |
 | 收入 | 弃 1 张手牌，并按该牌收入角标增加玩家收入。 | 可撤销，除非发生在已进入不可撤销阶段之后。 | `assets/symbol/effect/income.webp` |
@@ -28,15 +28,68 @@
 | 能量 | 增加玩家能量。 | 通常可撤销；科技 bonus 阶段不可撤销。 | `assets/symbol/effect/energy.webp` |
 | 宣传 | 增加玩家宣传，受宣传上限限制。 | 通常可撤销；科技 bonus 阶段不可撤销。 | `assets/symbol/effect/publicity.webp` |
 | 数据 | 获得指定数量数据，进入玩家数据池；数据池满时改为弃置计数。 | 可撤销 | `assets/symbol/effect/data.webp` |
-| 移动 | 给予火箭一点移动力。如果没有橙2科技，移动出小行星需要 2 点移动力，其余场景均为 1 点。 | 可撤销，紫4移动也可撤销。 | `assets/symbol/effect/movement.webp` |
-| 额外弃牌扫描 | 获得该功能标记时，为资源记录；当使用扫描行动中的公共牌区扫描时，可额外使用该标记来额外弃除公共牌区增加扫描的扇区。 | 资源获得可撤销；使用后的公共牌区扫描按扫描效果撤销。 | `assets/tokens/additional_public_scan.webp` |
+| 额外弃牌扫描 | 获得该功能标记时，增加玩家 `additionalPublicScan`；使用时让公共牌区扫描额外弃 1 张公共牌并增加 1 组星云二选一。 | 资源获得可撤销；使用后的公共牌区扫描按扫描效果撤销。 | `assets/tokens/additional_public_scan.webp` |
 | 任意外星人标记 | 玩家选择外星人槽位，并在黄色、粉色、蓝色痕迹中任选一种放置标记。 | 可撤销，若触发揭示会一并恢复。 | `assets/symbol/effect/alien_any.webp` |
 | 黄色外星人标记 | 玩家选择外星人槽位，放置黄色痕迹标记。 | 可撤销，若触发揭示会一并恢复。 | `assets/symbol/effect/alien_yellow.webp` |
 | 粉色外星人标记 | 玩家选择外星人槽位，放置粉色痕迹标记。 | 可撤销，若触发揭示会一并恢复。 | `assets/symbol/effect/alien_pink.webp` |
 | 蓝色外星人标记 | 玩家选择外星人槽位，放置蓝色痕迹标记。 | 可撤销，若触发揭示会一并恢复。 | `assets/symbol/effect/alien_blue.webp` |
 
+## 星云扫描原子效果
+
+每个确定星云扫描都是一个原子效果：替换该星云中 `slotIndex` 最小的未替换数据 token。扫描能力支持 `gainData` 参数，默认 `true` 表示替换 token 后获得 1 个数据；显式传入 `gainData: false` 时仍放置 token，但不获得数据。二选一扫描、扇区扫描、公共牌扫描、手牌扫描都应组合这些原子效果，而不是把“颜色选择”本身当作原子效果。
+
+| 名称 | 星云 ID | 颜色/来源 | 效果 | 是否可撤销 | 图标 |
+| --- | --- | --- | --- | --- | --- |
+| 南河三扫描 | `sector-1-a` | 蓝色星云 | 扫描南河三。 | 可撤销 | `assets/symbol/effect/blue_scan.webp` |
+| 天狼星A扫描 | `sector-2-a` | 蓝色星云 | 扫描天狼星A。 | 可撤销 | `assets/symbol/effect/blue_scan.webp` |
+| 巴纳德扫描 | `sector-2-b` | 红色星云 | 扫描巴纳德。 | 可撤销 | `assets/symbol/effect/red_scan.webp` |
+| 比邻星扫描 | `sector-3-b` | 红色星云 | 扫描比邻星。 | 可撤销 | `assets/symbol/effect/red_scan.webp` |
+| 开普勒22扫描 | `sector-3-a` | 黄色星云 | 扫描开普勒22。 | 可撤销 | `assets/symbol/effect/yellow_scan.webp` |
+| 室女座61扫描 | `sector-4-a` | 黄色星云 | 扫描室女座61。 | 可撤销 | `assets/symbol/effect/yellow_scan.webp` |
+| 织女一扫描 | `sector-1-b` | 黑色二选一 | 扫描织女一。 | 可撤销 | `assets/symbol/effect/black_scan.webp` |
+| 绘架座β扫描 | `sector-4-b` | 黑色二选一 | 扫描绘架座β。 | 可撤销 | `assets/symbol/effect/black_scan.webp` |
+
+## 复合效果
+
+| 名称 | 组成 | 说明 | 图标 |
+| --- | --- | --- | --- |
+| 扫描行动 | 支付扫描费用 -> 地球扇区扫描或强化扇区扫描 -> 公共牌区扫描 -> 紫2水星扇区扫描（若有） -> 紫3手牌扫描（若有） -> 紫4发射/移动（若有） | 主要行动。每个节点作为能力链效果逐个结算；节点之间允许快速行动。 | `assets/symbol/effect/scan_action.webp` |
+| 扇区扫描 | 当前扇区上的确定星云扫描 | 通过 `sectorX` 找到外圈星云后，落到对应的星云扫描原子效果。 | `assets/symbol/action/scan/earth_scan.png` |
+| 强化扇区扫描 | 地球所在扇区、左相邻扇区、右相邻扇区三选一 -> 所选扇区的确定星云扫描 | 紫1对扫描行动中地球扇区扫描的升级。 | `assets/symbol/action/scan/earth_scan_improved.png` |
+| 固定星球扇区扫描 | 指定星球当前所在扇区 -> 该扇区的确定星云扫描 | 奖励效果使用；按钮附带星球名文字角标，如“水星”“火星”。 | `assets/symbol/effect/normal_scan.webp` |
+| 水星扇区扫描 | 水星当前所在扇区 -> 该扇区的确定星云扫描 | 紫2扫描行动追加效果。 | `assets/symbol/action/scan/mercury_scan.png` |
+| 黄色星云扫描 | 室女座61扫描 或 开普勒22扫描 | 黄色二选一。两个确定星云复用黄色扫描图标。 | `assets/symbol/effect/yellow_scan.webp` |
+| 红色星云扫描 | 巴纳德扫描 或 比邻星扫描 | 红色二选一。两个确定星云复用红色扫描图标。 | `assets/symbol/effect/red_scan.webp` |
+| 蓝色星云扫描 | 天狼星A扫描 或 南河三扫描 | 蓝色二选一。两个确定星云复用蓝色扫描图标。 | `assets/symbol/effect/blue_scan.webp` |
+| 黑色二选一扫描 | 织女一扫描 或 绘架座β扫描 | 天王星/海王星奖励与黑色扫描牌角标使用。 | `assets/symbol/effect/black_scan.webp` |
+| 公共牌区扫描 | 弃 1 张公共牌 -> 按该牌扫描角标执行对应二选一扫描 -> 补公共牌；每个额外弃牌扫描标记可追加 1 张公共牌和 1 组二选一扫描 | 扫描行动的公共牌区节点。 | `assets/symbol/action/scan/public_card_scan.webp` |
+| 手牌扫描 | 弃 1 张手牌 -> 按该牌扫描角标执行对应二选一扫描 | 紫3扫描行动追加效果。 | `assets/symbol/action/scan/private_card_scan.webp` |
+| 紫4发射/移动 | 发射（成本：1 能量） 或 移动（成本：0，移动力：1） | 紫4不是原子效果，而是扫描行动追加的选择型复合效果。实际结算复用发射或移动原子效果。 | `assets/symbol/action/scan/scan_action_4.png` |
+| 研究科技 | 选择科技片 -> 旋转 -> 橙1免费发射（若选橙1） -> 科技 bonus -> 紫1获得 2 数据（若选紫1） | 主要行动。默认全部颜色科技可选；可传 `techType` / `techTypes` 限制为 `blue`、`orange`、`purple` 中的一个或多个颜色。选择科技片可撤销；旋转与 bonus 不可撤销；橙1发射和紫1数据按各自原子效果结算。 | `assets/symbol/effect/research_tech.webp` |
+| 环绕行动 | 环绕标记 -> 环绕奖励链 | 主要行动。环绕标记负责支付成本、移除火箭和放标记；奖励链由星球与标记序号决定。 | `assets/symbol/effect/orbit.webp` |
+| 登陆行动 | 主星登陆标记或卫星登陆标记 -> 登陆奖励链 | 主要行动。橙3影响主星登陆成本，橙4解锁卫星登陆目标。 | `assets/symbol/effect/land.webp` |
+| 橙1即时效果 | 发射（`skipCost: true`, `source: "tech"`） | 研究橙1后的追加效果；同时玩家火箭上限提高到 2。 | `assets/symbol/effect/launch.webp` |
+| 紫1即时效果 | 数据 x2 | 研究紫1后的追加效果；同时后续扫描行动中的地球扇区扫描升级为强化扇区扫描。 | `assets/symbol/effect/data.webp` |
+| 紫2扫描追加 | 水星扇区扫描 | 拥有紫2后，扫描行动追加该节点。 | `assets/symbol/action/scan/mercury_scan.png` |
+| 紫3扫描追加 | 手牌扫描 | 拥有紫3后，扫描行动追加该节点。 | `assets/symbol/action/scan/private_card_scan.webp` |
+
+## 奖励链组合约定
+
+环绕、登陆主星、登陆卫星的奖励表由 `randomizer/game/actions/planet-rewards.js` 管理。奖励链中的每一项都应引用上方原子效果或复合效果：
+
+- 自动奖励：分数、信用点、能量、宣传、数据、盲抽。
+- 选择型奖励：精选、收入、固定星球扇区扫描、黑色二选一扫描、彩色星云二选一扫描、外星人标记。
+- 彩色星云二选一扫描必须再落到确定星云扫描原子效果，例如“红色星云扫描”最终结算为“巴纳德扫描”或“比邻星扫描”。
+- 若奖励链中出现盲抽、精选确认拿牌、科技 bonus 等不可撤销效果，当前主要行动不可再整体撤销；之后发生的可撤销快速行动仍可单独撤销。
+
+当前解释约定：
+
+- “收入”按现有收入效果处理：玩家弃 1 张手牌，并按该牌收入角标增加收入。
+- “精选”按现有精选处理：从公共牌区拿 1 张牌；是否允许盲抽由触发来源决定，快速交易、3 宣传精选和科技 bonus 精选不允许盲抽。
+- 确定星云扫描如果替换到第二格，会返回第二格 +2 分信息；实际加分接入以当前扫描结算实现为准。
+
 ## 回合相关说明
 
-- 主要行动包括发射、环绕、登陆、扫描、分析、科技、打牌。PASS 属于后续轮次机制，本次暂不实现。
-- 每个回合只能开始一次主要行动。主要行动及其效果全部结算后，可以继续执行次要行动，然后点击“回合结束”。
-- 次要行动包括资源转换、`3 宣传 -> 精选 1 张公共牌`、移动火箭、放置数据。次要行动每回合次数不限。
+- 主要行动包括发射、环绕、登陆、扫描、分析、科技、打牌。PASS 当前也按主要行动处理。
+- 每个回合只能开始一次主要行动。主要行动及其效果全部结算后，可以继续执行快速行动，然后点击“回合结束”。
+- 快速行动包括资源转换、`3 宣传 -> 精选 1 张公共牌`、移动火箭、放置数据。快速行动每回合次数不限。

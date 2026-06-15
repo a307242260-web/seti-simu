@@ -53,6 +53,7 @@
     additionalPublicScan: "额外公共扫描",
   });
   const PUBLIC_SCAN_MAX_BONUS_CARDS = 2;
+  const DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT = 10;
   const PUBLIC_SCAN_TARGETS_BY_CODE = Object.freeze({
     0: Object.freeze(["sector-4-a", "sector-3-a"]),
     1: Object.freeze(["sector-2-b", "sector-3-b"]),
@@ -200,6 +201,7 @@
     debugGainDataButton: document.getElementById("debug-gain-data-button"),
     debugFillNebulaDataButton: document.getElementById("debug-fill-nebula-data-button"),
     debugSectorScanButton: document.getElementById("debug-sector-scan-button"),
+    debugQuickSectorScanButton: document.getElementById("debug-quick-sector-scan-button"),
     debugPublicScanButton: document.getElementById("debug-public-scan-button"),
     debugHandScanButton: document.getElementById("debug-hand-scan-button"),
     debugAlienTraceButton: document.getElementById("debug-alien-trace-button"),
@@ -1854,6 +1856,210 @@
     });
   }
 
+  function getSectorOpenDataCount(sectorId) {
+    return data.listNebulaTokens(nebulaDataState, sectorId)
+      .filter((token) => !token.replacedByPlayerColor && !token.playerColor)
+      .length;
+  }
+
+  function getSectorCapacity(sectorId) {
+    return data.getNebulaCapacity(sectorId);
+  }
+
+  function getSectorReplacedCount(sectorId) {
+    return getSectorCapacity(sectorId) - getSectorOpenDataCount(sectorId);
+  }
+
+  function getSectorExtraMarkCount(sectorId) {
+    return typeof data.listSectorExtraMarks === "function"
+      ? data.listSectorExtraMarks(nebulaDataState, sectorId).length
+      : 0;
+  }
+
+  function getSectorNebulaLabelText(sectorId) {
+    return data.getNebulaLabel(sectorId);
+  }
+
+  function setScanTargetPickerChrome(title, subtitle) {
+    if (els.scanTargetTitle) els.scanTargetTitle.textContent = title || "选择扫描目标";
+    if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = subtitle || "";
+    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+    els.scanTargetOverlay.hidden = false;
+  }
+
+  function makeDebugQuickSectorScanButton(step, label, description, dataset = {}, disabled = false) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "scan-target-option-button";
+    button.dataset.debugSectorScanStep = step;
+    for (const [key, value] of Object.entries(dataset)) {
+      button.dataset[key] = String(value);
+    }
+    button.disabled = Boolean(disabled);
+    button.innerHTML = `${label}<small>${description || ""}</small>`;
+    return button;
+  }
+
+  function renderDebugQuickSectorScanPlayerStep() {
+    setScanTargetPickerChrome("快速扫描扇区", "选择要放置标记的玩家颜色。");
+    els.scanTargetActions.replaceChildren(...playerState.players.map((player) => {
+      const definition = players.getPlayerColorDefinition(player.color);
+      return makeDebugQuickSectorScanButton(
+        "player",
+        `${definition?.label || player.color}玩家`,
+        `后续替换的数据会使用${definition?.label || player.color}普通 token`,
+        { playerId: player.id },
+      );
+    }));
+  }
+
+  function renderDebugQuickSectorScanSectorStep(playerId) {
+    const player = playerState.players.find((item) => item.id === playerId) || null;
+    if (!player) {
+      renderDebugQuickSectorScanPlayerStep();
+      return;
+    }
+
+    setScanTargetPickerChrome(
+      "快速扫描扇区",
+      `当前玩家：${player.colorLabel}。选择要批量扫描的具名扇区。`,
+    );
+    els.scanTargetActions.replaceChildren(...data.NEBULA_IDS.map((sectorId) => {
+      const openCount = getSectorOpenDataCount(sectorId);
+      const capacity = getSectorCapacity(sectorId);
+      const extraCount = getSectorExtraMarkCount(sectorId);
+      return makeDebugQuickSectorScanButton(
+        "sector",
+        getSectorNebulaLabelText(sectorId),
+        `${sectorId}，标记 ${capacity - openCount + extraCount}/${capacity}`
+          + (extraCount ? `（额外${extraCount}）` : ""),
+        { playerId, sectorId },
+      );
+    }));
+  }
+
+  function renderDebugQuickSectorScanCountStep(playerId, sectorId) {
+    const player = playerState.players.find((item) => item.id === playerId) || null;
+    const openCount = getSectorOpenDataCount(sectorId);
+    if (!player) {
+      renderDebugQuickSectorScanSectorStep(playerId);
+      return;
+    }
+
+    setScanTargetPickerChrome(
+      "快速扫描扇区",
+      `${player.colorLabel}玩家 -> ${getSectorNebulaLabelText(sectorId)}。未替换数据 ${openCount} 个；超过后追加额外标记且不获得数据。`,
+    );
+    const maxCount = Math.max(openCount, 0) + DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT;
+    const countButtons = Array.from({ length: maxCount }, (_, index) => {
+      const count = index + 1;
+      const extraCount = Math.max(0, count - openCount);
+      const description = extraCount
+        ? `替换 ${Math.max(openCount, 0)} 个数据，并追加 ${extraCount} 个额外标记`
+        : `替换 ${count} 个未替换数据`;
+      return makeDebugQuickSectorScanButton(
+        "count",
+        count === openCount
+          ? `${count}（填满）`
+          : extraCount
+            ? `${count}（填满+${extraCount}）`
+            : String(count),
+        description,
+        { playerId, sectorId, count },
+      );
+    });
+    els.scanTargetActions.replaceChildren(...countButtons);
+  }
+
+  function replaceNextSectorDataForDebugPlayer(sectorId, player) {
+    const nextToken = data.getNextReplaceableNebulaToken(nebulaDataState, sectorId);
+    if (nextToken) {
+      return data.replaceNextNebulaDataToken(nebulaDataState, sectorId, player, {
+        playerColor: player.color,
+        playerLabel: player.colorLabel,
+        playerTokenSrc: getNormalTokenAssetForPlayer(player),
+        source: "debugQuickSectorScan",
+      });
+    }
+    if (typeof data.addSectorExtraMark === "function") {
+      return data.addSectorExtraMark(nebulaDataState, sectorId, player, {
+        playerColor: player.color,
+        playerLabel: player.colorLabel,
+        playerTokenSrc: getNormalTokenAssetForPlayer(player),
+        source: "debugQuickSectorScan",
+      });
+    }
+    return { ok: false, message: `扇区${sectorId}没有可替换的数据` };
+  }
+
+  function runDebugQuickSectorScan(playerId, sectorId, count) {
+    const player = playerState.players.find((item) => item.id === playerId) || null;
+    const replaceCount = Math.max(0, Math.round(Number(count) || 0));
+    if (!player || !data.getNebulaCapacity(sectorId) || replaceCount <= 0) {
+      rocketState.statusNote = "快速扫描扇区：参数无效";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const results = [];
+    for (let index = 0; index < replaceCount; index += 1) {
+      const result = replaceNextSectorDataForDebugPlayer(sectorId, player);
+      if (!result.ok) break;
+      results.push(result);
+    }
+
+    const settleResult = resolveCompletedSectorSettlements("debugQuickSectorScan", {
+      markMainActionIrreversible: false,
+    });
+    const extraCount = results.filter((result) => result.extra).length;
+    const dataCount = results.length - extraCount;
+    const replacedText = `快速扫描扇区：${player.colorLabel}玩家在${getSectorNebulaLabelText(sectorId)}`
+      + `标记 ${results.length}/${replaceCount} 次（数据${dataCount}，额外${extraCount}）`;
+    rocketState.statusNote = settleResult?.ok
+      ? `${replacedText}；${settleResult.message}；参与结算玩家各获得1宣传`
+      : replacedText;
+    renderSectors();
+    renderPlayerStats();
+    updateActionButtons();
+    renderStateReadout();
+    return {
+      ok: results.length > 0,
+      results,
+      settlement: settleResult,
+      message: rocketState.statusNote,
+    };
+  }
+
+  function handleDebugQuickSectorScanChoice(button) {
+    const step = button.dataset.debugSectorScanStep;
+    const playerId = button.dataset.playerId;
+    if (step === "player") {
+      renderDebugQuickSectorScanSectorStep(playerId);
+      return;
+    }
+    if (step === "sector") {
+      renderDebugQuickSectorScanCountStep(playerId, button.dataset.sectorId);
+      return;
+    }
+    if (step === "count") {
+      closeScanTargetPicker();
+      runDebugQuickSectorScan(playerId, button.dataset.sectorId, Number(button.dataset.count));
+    }
+  }
+
+  function openDebugQuickSectorScanPicker() {
+    if (isCardSelectionActive() || isDiscardSelectionActive() || isPlayCardSelectionActive() || isTechTilePickingActive()) {
+      rocketState.statusNote = "请先完成当前选择";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+    pendingScanTargetAction = { type: "debug_quick_sector_scan" };
+    renderDebugQuickSectorScanPlayerStep();
+    rocketState.statusNote = "快速扫描扇区：请选择玩家颜色";
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
   function getPublicScanChoicesForCard(card) {
     const scanCode = Number(card?.scanActionCode);
     const nebulaIds = PUBLIC_SCAN_TARGETS_BY_CODE[scanCode];
@@ -2693,14 +2899,49 @@
     }
   }
 
+  function resolveCompletedSectorSettlements(actionType, options = {}) {
+    if (typeof data.settleCompletedSectors !== "function") return null;
+
+    const settlementResult = data.settleCompletedSectors(nebulaDataState, {
+      players: playerState.players,
+      getPlayerTokenSrc: getNormalTokenAssetForPlayer,
+      source: actionType || "mainAction",
+    });
+    if (!settlementResult.ok) return null;
+
+    const awarded = new Set();
+    for (const settlement of settlementResult.settlements || []) {
+      for (const participant of settlement.participants || []) {
+        const player = playerState.players.find((item) => item.id === participant.playerId)
+          || playerState.players.find((item) => item.color === participant.playerColor);
+        if (!player) continue;
+        const awardKey = `${settlement.sectorId}:${player.id}`;
+        if (awarded.has(awardKey)) continue;
+        awarded.add(awardKey);
+        players.gainResources(player, { publicity: 1 });
+      }
+    }
+
+    if (options.markMainActionIrreversible !== false) {
+      pendingActionHasIrreversibleCardGain = true;
+    }
+    renderSectorNebulaDataBoard();
+    renderPlayerStats();
+    return settlementResult;
+  }
+
   function finishActionEffectFlow() {
     if (!pendingActionEffectFlow) return;
 
     const actionType = pendingActionEffectFlow.actionType;
     clearActionEffectFlow();
-    rocketState.statusNote = actionType === "scan"
+    const settleResult = resolveCompletedSectorSettlements(actionType);
+    const baseMessage = actionType === "scan"
       ? "扫描效果已全部处理，可继续执行次要行动或回合结束"
       : "效果已全部处理，可继续执行次要行动或回合结束";
+    rocketState.statusNote = settleResult?.ok
+      ? `${baseMessage}；${settleResult.message}；参与结算玩家各获得1宣传`
+      : baseMessage;
     markActionPending();
     renderPlayerStats();
     updateActionButtons();
@@ -3687,6 +3928,7 @@
     tech.cancelPendingTake(techGameState);
     techGameState.ui.selectedTileId = null;
     techGameState.ui.selectedBlueSlot = null;
+    techGameState.ui.allowedTechTypes = null;
     closeTechBlueSlotPicker();
     techGameState.ui.statusNote = "";
     rocketState.statusNote = "";
@@ -3711,7 +3953,12 @@
       canTakeTile: (tileId) => {
         if (!currentPlayer?.techState) return false;
         if (!tech.isSupplySelectionActive(techGameState.ui)) return false;
-        return tech.resolver.canTakeTile(techGameState.board, currentPlayer.techState, tileId).ok;
+        return tech.resolver.canTakeTile(
+          techGameState.board,
+          currentPlayer.techState,
+          tileId,
+          { techTypes: techGameState.ui.allowedTechTypes },
+        ).ok;
       },
     });
     syncTechSelectionChrome();
@@ -3797,6 +4044,7 @@
         techGameState.board,
         currentPlayer.techState,
         tileId,
+        { techTypes: techGameState.ui.allowedTechTypes },
       );
       if (!canTake.ok) {
         techGameState.ui.statusNote = canTake.message;
@@ -5906,6 +6154,8 @@
       "",
       ...data.getNebulaReadoutLines(nebulaDataState),
       "",
+      ...data.getSectorSettlementReadoutLines(nebulaDataState),
+      "",
       ...aliens.getReadoutLines(alienGameState),
       ...(actionHistory.hasSession() ? ["", "行动指令栈", ...actionHistory.getTrace()] : []),
       ...(quickActionHistory.hasSession() ? ["", "快速行动指令栈", ...quickActionHistory.getTrace()] : []),
@@ -6054,6 +6304,12 @@
     }
   });
   els.scanTargetActions?.addEventListener("click", (event) => {
+    const debugSectorButton = event.target.closest("[data-debug-sector-scan-step]");
+    if (debugSectorButton && !debugSectorButton.disabled) {
+      handleDebugQuickSectorScanChoice(debugSectorButton);
+      return;
+    }
+
     const button = event.target.closest("[data-nebula-id]");
     if (!button || button.disabled || !button.dataset.nebulaId) return;
     confirmScanTarget(button.dataset.nebulaId, button.dataset.sectorX);
@@ -6150,6 +6406,7 @@
   els.debugGainDataButton?.addEventListener("click", addDebugData);
   els.debugFillNebulaDataButton?.addEventListener("click", fillDebugNebulaData);
   els.debugSectorScanButton?.addEventListener("click", beginSectorScan);
+  els.debugQuickSectorScanButton?.addEventListener("click", openDebugQuickSectorScanPicker);
   els.debugPublicScanButton?.addEventListener("click", beginPublicDeckScan);
   els.debugHandScanButton?.addEventListener("click", beginHandScan);
   els.debugAlienTraceButton?.addEventListener("click", openAlienTracePicker);
@@ -6252,6 +6509,8 @@
     addDebugData,
     fillDebugNebulaData,
     beginSectorScan,
+    openDebugQuickSectorScanPicker,
+    runDebugQuickSectorScan,
     beginPublicDeckScan,
     beginHandScan,
     replaceNebulaDataForCurrentPlayer,

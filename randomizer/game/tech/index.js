@@ -41,6 +41,7 @@
     return {
       cheatModeEnabled: Boolean(source.cheatModeEnabled ?? source.takeTechDebugEnabled),
       techSelectionActive: false,
+      allowedTechTypes: Array.isArray(source.allowedTechTypes) ? [...source.allowedTechTypes] : null,
       pendingTileId: null,
       selectedTileId: source.selectedTileId || null,
       selectedBlueSlot: source.selectedBlueSlot || null,
@@ -73,6 +74,7 @@
       gameState.ui.pendingTileId = null;
       gameState.ui.selectedTileId = null;
       gameState.ui.selectedBlueSlot = null;
+      gameState.ui.allowedTechTypes = null;
     }
     return active;
   }
@@ -81,6 +83,7 @@
     gameState.ui.pendingTileId = null;
     gameState.ui.selectedTileId = null;
     gameState.ui.selectedBlueSlot = null;
+    gameState.ui.allowedTechTypes = null;
     return { ok: true };
   }
 

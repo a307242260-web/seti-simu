@@ -89,7 +89,10 @@
       };
     }
 
-    const gainResult = data.gainData(currentPlayer, { source: options.source || "scan" });
+    const shouldGainData = options.gainData !== false;
+    const gainResult = shouldGainData
+      ? data.gainData(currentPlayer, { source: options.source || "scan" })
+      : { ok: true, skipped: true, message: "未获得数据" };
     const commands = [
       historyCommands.createNebulaReplaceCommand(
         context.nebulaDataState,
@@ -97,15 +100,20 @@
         replaceResult.token.id,
         tokenBefore,
       ),
-      historyCommands.createGainDataCommand(currentPlayer, gainResult),
     ];
+    if (shouldGainData) {
+      commands.push(historyCommands.createGainDataCommand(currentPlayer, gainResult));
+    }
 
     const label = data.getNebulaLabel(nebulaId);
     const color = players.getPlayerColorDefinition(currentPlayer.color);
     const playerLabel = color?.label || currentPlayer.colorLabel || "当前玩家";
     const prefix = options.prefix || "扫描";
+    const dataMessage = shouldGainData
+      ? (gainResult.ok ? "获得数据" : gainResult.message)
+      : "不获得数据";
     const message = `${prefix}：${label} 槽位${replaceResult.slotIndex}`
-      + ` 替换为${playerLabel}token；${gainResult.ok ? "获得数据" : gainResult.message}`;
+      + ` 替换为${playerLabel}token；${dataMessage}`;
 
     return {
       ok: true,
@@ -118,6 +126,7 @@
         nebulaId,
         replaced: replaceResult,
         gainedData: gainResult,
+        gainData: shouldGainData,
         card: options.card || null,
       },
       events: [{

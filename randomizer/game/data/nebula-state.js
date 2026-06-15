@@ -18,6 +18,7 @@
   "use strict";
 
   let nebulaTokenSequence = 0;
+  let nebulaReplacementSequence = 0;
   const NEBULA_SECOND_SLOT_INDEX = 2;
   const NEBULA_SECOND_SLOT_SCORE = 2;
 
@@ -26,11 +27,76 @@
   }
 
   function createDefaultNebulaDataState() {
-    return { nebulae: {} };
+    return {
+      nebulae: {},
+      sectorExtraMarks: {},
+      sectorSettlements: createDefaultSectorSettlementState(),
+    };
+  }
+
+  function createDefaultSectorSettlementState() {
+    return {
+      sectors: {},
+      winsByPlayerId: {},
+    };
+  }
+
+  function ensureSectorSettlementState(state) {
+    if (!state.sectorSettlements || typeof state.sectorSettlements !== "object") {
+      state.sectorSettlements = createDefaultSectorSettlementState();
+    }
+    if (!state.sectorSettlements.sectors || typeof state.sectorSettlements.sectors !== "object") {
+      state.sectorSettlements.sectors = {};
+    }
+    if (!state.sectorSettlements.winsByPlayerId || typeof state.sectorSettlements.winsByPlayerId !== "object") {
+      state.sectorSettlements.winsByPlayerId = {};
+    }
+    return state.sectorSettlements;
+  }
+
+  function ensureSectorSettlementRecord(state, sectorId) {
+    const settlements = ensureSectorSettlementState(state);
+    const key = normalizeSettlementSectorId(sectorId);
+    if (!settlements.sectors[key]) {
+      settlements.sectors[key] = {
+        sectorId: key,
+        settlementCount: 0,
+        winners: [],
+      };
+    }
+    if (!Array.isArray(settlements.sectors[key].winners)) {
+      settlements.sectors[key].winners = [];
+    }
+    return settlements.sectors[key];
   }
 
   function createEmptyPlayerTokenCounts() {
     return {};
+  }
+
+  function ensureSectorExtraMarkList(state, sectorId) {
+    if (!state.sectorExtraMarks || typeof state.sectorExtraMarks !== "object") {
+      state.sectorExtraMarks = {};
+    }
+    const key = normalizeSettlementSectorId(sectorId);
+    if (!Array.isArray(state.sectorExtraMarks[key])) {
+      state.sectorExtraMarks[key] = [];
+    }
+    return state.sectorExtraMarks[key];
+  }
+
+  function normalizeSettlementSectorId(sectorId) {
+    const key = String(sectorId || "");
+    return nebulaPlacement.getNebulaCapacity(key) ? key : "";
+  }
+
+  function listSettlementSectorIds(sectorIds) {
+    const source = Array.isArray(sectorIds) && sectorIds.length
+      ? sectorIds
+      : nebulaPlacement.NEBULA_IDS;
+    return source
+      .map(normalizeSettlementSectorId)
+      .filter(Boolean);
   }
 
   function getTokenOwnerColor(token) {
@@ -89,6 +155,7 @@
       replacedByPlayerLabel: token?.replacedByPlayerLabel || token?.playerLabel || null,
       playerTokenSrc: token?.playerTokenSrc || token?.tokenSrc || null,
       replacedAt: token?.replacedAt || null,
+      replacementOrder: Number.isFinite(Number(token?.replacementOrder)) ? Number(token.replacementOrder) : null,
     };
   }
 
@@ -103,7 +170,17 @@
         tokens: tokens.map((token, index) => normalizeNebulaToken(token, nebulaId, index)),
       });
     }
-    return { nebulae };
+    const normalized = {
+      nebulae,
+      sectorSettlements: createDefaultSectorSettlementState(),
+    };
+    const sourceSettlements = source?.sectorSettlements;
+    if (sourceSettlements && typeof sourceSettlements === "object") {
+      normalized.sectorSettlements.sectors = structuredClone(sourceSettlements.sectors || {});
+      normalized.sectorSettlements.winsByPlayerId = structuredClone(sourceSettlements.winsByPlayerId || {});
+    }
+    normalized.sectorExtraMarks = structuredClone(source?.sectorExtraMarks || {});
+    return normalized;
   }
 
   function listNebulaTokens(state, nebulaId) {
@@ -215,9 +292,14 @@
         state.nebulae[nebulaId].tokens = [];
         rebuildNebulaStats(state.nebulae[nebulaId]);
       }
+      if (state.sectorExtraMarks?.[nebulaId]) {
+        state.sectorExtraMarks[nebulaId] = [];
+      }
       return;
     }
     state.nebulae = {};
+    state.sectorExtraMarks = {};
+    state.sectorSettlements = createDefaultSectorSettlementState();
   }
 
   function updateNebulaTokenPosition(state, nebulaId, slotIndex, position) {
@@ -254,6 +336,285 @@
       .sort((a, b) => a.slotIndex - b.slotIndex || a.index - b.index)[0] || null;
   }
 
+  function getTokenReplacementRank(token) {
+    if (Number.isFinite(Number(token?.replacementOrder))) return Number(token.replacementOrder);
+    const parsedTime = Date.parse(token?.replacedAt || "");
+    return Number.isFinite(parsedTime) ? parsedTime : 0;
+  }
+
+  function addPlayerCountEntry(countsByPlayer, mark) {
+    const color = mark?.replacedByPlayerColor || mark?.playerColor || null;
+    if (!color) return;
+    const key = mark.replacedByPlayerId || mark.playerId || color;
+    const rank = getTokenReplacementRank(mark);
+    if (!countsByPlayer[key]) {
+      countsByPlayer[key] = {
+        playerKey: key,
+        playerId: mark.replacedByPlayerId || mark.playerId || null,
+        playerColor: color,
+        playerLabel: mark.replacedByPlayerLabel || mark.playerLabel || color,
+        playerTokenSrc: mark.playerTokenSrc || null,
+        count: 0,
+        latestReplacementOrder: rank,
+      };
+    }
+    countsByPlayer[key].count += 1;
+    if (rank >= countsByPlayer[key].latestReplacementOrder) {
+      countsByPlayer[key].latestReplacementOrder = rank;
+      countsByPlayer[key].playerId = mark.replacedByPlayerId || mark.playerId || countsByPlayer[key].playerId;
+      countsByPlayer[key].playerColor = color;
+      countsByPlayer[key].playerLabel = mark.replacedByPlayerLabel || mark.playerLabel || countsByPlayer[key].playerLabel;
+      countsByPlayer[key].playerTokenSrc = mark.playerTokenSrc || countsByPlayer[key].playerTokenSrc;
+    }
+  }
+
+  function listSectorExtraMarks(state, sectorId) {
+    const key = normalizeSettlementSectorId(sectorId);
+    const marks = state?.sectorExtraMarks?.[key];
+    return Array.isArray(marks) ? [...marks] : [];
+  }
+
+  function getSectorTokenStats(state, sectorId) {
+    const countsByPlayer = {};
+    const nebulaId = normalizeSettlementSectorId(sectorId);
+    if (!nebulaId) return countsByPlayer;
+
+    for (const token of listNebulaTokens(state, nebulaId)) {
+      addPlayerCountEntry(countsByPlayer, token);
+    }
+    for (const mark of listSectorExtraMarks(state, nebulaId)) {
+      addPlayerCountEntry(countsByPlayer, mark);
+    }
+
+    return countsByPlayer;
+  }
+
+  function addSectorExtraMark(state, sectorId, player, options = {}) {
+    if (!player) {
+      return { ok: false, message: "没有当前玩家" };
+    }
+    const normalizedSectorId = normalizeSettlementSectorId(sectorId);
+    if (!normalizedSectorId) {
+      return { ok: false, message: `未知扇区 ${sectorId}` };
+    }
+
+    nebulaReplacementSequence += 1;
+    const playerColor = options.playerColor || player.color || null;
+    const playerLabel = options.playerLabel || player.colorLabel || player.name || playerColor || "玩家";
+    const mark = {
+      id: options.id || `sector-extra-mark-${normalizedSectorId}-${nebulaReplacementSequence}`,
+      sectorId: normalizedSectorId,
+      replacedByPlayerId: player.id || null,
+      replacedByPlayerColor: playerColor,
+      replacedByPlayerLabel: playerLabel,
+      playerTokenSrc: options.playerTokenSrc || options.tokenSrc || null,
+      replacedAt: options.replacedAt || new Date().toISOString(),
+      replacementOrder: options.replacementOrder || nebulaReplacementSequence,
+    };
+    ensureSectorExtraMarkList(state, normalizedSectorId).push(mark);
+    return {
+      ok: true,
+      sectorId: normalizedSectorId,
+      extra: true,
+      mark,
+      player,
+      stats: getSectorTokenStats(state, normalizedSectorId),
+      message: `扇区${normalizedSectorId} 额外标记已添加为${playerLabel}token`,
+    };
+  }
+
+  function removeSectorExtraMark(state, sectorId, markId) {
+    const key = normalizeSettlementSectorId(sectorId);
+    const marks = state?.sectorExtraMarks?.[key];
+    if (!Array.isArray(marks)) return { ok: false, message: `扇区${sectorId}没有额外标记` };
+    const index = marks.findIndex((mark) => mark.id === markId);
+    if (index < 0) return { ok: false, message: `未找到额外标记 ${markId}` };
+    const [mark] = marks.splice(index, 1);
+    return { ok: true, sectorId: key, mark };
+  }
+
+  function isSectorReadyToSettle(state, sectorId) {
+    const nebulaId = normalizeSettlementSectorId(sectorId);
+    if (!nebulaId) return false;
+    const capacity = nebulaPlacement.getNebulaCapacity(nebulaId);
+    const tokens = listNebulaTokens(state, nebulaId);
+    if (!capacity || tokens.length !== capacity) return false;
+    if (tokens.some((token) => !getTokenOwnerColor(token))) return false;
+    return true;
+  }
+
+  function findPlayerForSettlement(participant, options = {}) {
+    const allPlayers = Array.isArray(options.players) ? options.players : [];
+    return allPlayers.find((player) => player.id === participant?.playerId)
+      || allPlayers.find((player) => player.color === participant?.playerColor)
+      || null;
+  }
+
+  function getSettlementPlayerTokenSrc(participant, options = {}) {
+    const player = findPlayerForSettlement(participant, options);
+    if (typeof options.getPlayerTokenSrc === "function") {
+      return options.getPlayerTokenSrc(player || participant);
+    }
+    return participant?.playerTokenSrc || player?.playerTokenSrc || null;
+  }
+
+  function createRetainedSectorToken(state, nebulaId, participant, options = {}) {
+    const layout = nebulaPlacement.getNebulaDataSlotLayout(nebulaId, 1);
+    if (!layout || !participant) return null;
+
+    nebulaTokenSequence += 1;
+    return normalizeNebulaToken({
+      id: `nebula-data-${nebulaTokenSequence}`,
+      index: getNextNebulaDataIndex(state),
+      slotIndex: 1,
+      replacedByPlayerId: participant.playerId,
+      replacedByPlayerColor: participant.playerColor,
+      replacedByPlayerLabel: participant.playerLabel,
+      playerTokenSrc: getSettlementPlayerTokenSrc(participant, options),
+      replacedAt: options.settledAt || new Date().toISOString(),
+      replacementOrder: participant.latestReplacementOrder,
+    }, nebulaId, 0);
+  }
+
+  function resetSectorNebulaData(state, sectorId, retainedParticipant, options = {}) {
+    const nebulaId = normalizeSettlementSectorId(sectorId);
+    if (!nebulaId) return [];
+    const bucket = ensureNebulaBucket(state, nebulaId);
+    bucket.tokens = [];
+    rebuildNebulaStats(bucket);
+    if (state.sectorExtraMarks) {
+      state.sectorExtraMarks[nebulaId] = [];
+    }
+
+    if (retainedParticipant) {
+      const token = createRetainedSectorToken(state, nebulaId, retainedParticipant, options);
+      if (token) {
+        bucket.tokens.push(token);
+        rebuildNebulaStats(bucket);
+      }
+    }
+
+    const fillResults = [];
+    const fillResult = fillNebulaData(state, nebulaId, {
+      source: options.source || "sectorSettlement",
+    });
+    if (fillResult.ok) fillResults.push(fillResult);
+    return fillResults;
+  }
+
+  function getSectorRanking(state, sectorId) {
+    return Object.values(getSectorTokenStats(state, sectorId))
+      .sort((a, b) => (
+        b.count - a.count
+        || b.latestReplacementOrder - a.latestReplacementOrder
+        || String(a.playerKey).localeCompare(String(b.playerKey))
+      ));
+  }
+
+  function settleSector(state, sectorId, options = {}) {
+    const normalizedSectorId = normalizeSettlementSectorId(sectorId);
+    if (!isSectorReadyToSettle(state, normalizedSectorId)) {
+      return {
+        ok: false,
+        sectorId: normalizedSectorId || sectorId,
+        message: `扇区${sectorId}尚未满足结算条件`,
+      };
+    }
+
+    const ranking = getSectorRanking(state, normalizedSectorId);
+    const participants = ranking.filter((item) => item.count > 0);
+    const winner = participants[0] || null;
+    const second = participants[1] || null;
+    if (!winner) {
+      return {
+        ok: false,
+        sectorId: normalizedSectorId,
+        message: `扇区${sectorId}没有玩家标记`,
+      };
+    }
+
+    const sectorRecord = ensureSectorSettlementRecord(state, normalizedSectorId);
+    sectorRecord.settlementCount += 1;
+    const settlementNumber = sectorRecord.settlementCount;
+    const winnerRecord = {
+      sectorId: normalizedSectorId,
+      settlementNumber,
+      playerId: winner.playerId,
+      playerColor: winner.playerColor,
+      playerLabel: winner.playerLabel,
+    };
+    sectorRecord.winners.push(winnerRecord);
+    sectorRecord.lastWinner = winnerRecord;
+
+    const winnerKey = winner.playerId || winner.playerColor;
+    const settlements = ensureSectorSettlementState(state);
+    if (!settlements.winsByPlayerId[winnerKey]) settlements.winsByPlayerId[winnerKey] = [];
+    settlements.winsByPlayerId[winnerKey].push({
+      sectorId: normalizedSectorId,
+      settlementNumber,
+    });
+
+    const fillResults = resetSectorNebulaData(state, normalizedSectorId, second, {
+      ...options,
+      settledAt: options.settledAt || new Date().toISOString(),
+    });
+
+    return {
+      ok: true,
+      sectorId: normalizedSectorId,
+      settlementNumber,
+      winner,
+      second,
+      participants,
+      fillResults,
+      message: `${nebulaPlacement.getNebulaLabel(normalizedSectorId)}第${settlementNumber}次结算：${winner.playerLabel}获胜`
+        + (second ? `，${second.playerLabel}保留1枚标记` : "，无第二名保留标记"),
+    };
+  }
+
+  function settleCompletedSectors(state, options = {}) {
+    const settlements = [];
+    for (const sectorId of listSettlementSectorIds(options.sectorIds)) {
+      if (!isSectorReadyToSettle(state, sectorId)) continue;
+      const result = settleSector(state, sectorId, options);
+      if (result.ok) settlements.push(result);
+    }
+
+    return {
+      ok: settlements.length > 0,
+      settlements,
+      message: settlements.length
+        ? settlements.map((item) => item.message).join("；")
+        : "没有需要结算的扇区",
+    };
+  }
+
+  function getSectorSettlementReadoutLines(state) {
+    const settlements = ensureSectorSettlementState(state || createDefaultNebulaDataState());
+    const lines = ["扇区结算"];
+    for (const sectorId of nebulaPlacement.NEBULA_IDS) {
+      const record = settlements.sectors[sectorId];
+      const count = record?.settlementCount || 0;
+      const winners = (record?.winners || [])
+        .map((winner) => `#${winner.settlementNumber}:${winner.playerLabel || winner.playerColor}`)
+        .join(" ");
+      const marks = getSectorRanking(state, sectorId)
+        .map((item) => `${item.playerLabel || item.playerColor}:${item.count}`)
+        .join(" ");
+      const extraCount = listSectorExtraMarks(state, sectorId).length;
+      lines.push(
+        `${nebulaPlacement.getNebulaLabel(sectorId)} 结算${count}次${winners ? ` ${winners}` : ""}`
+        + ` 标记=${marks || "无"}${extraCount ? ` 额外=${extraCount}` : ""}`,
+      );
+    }
+    const playerLines = Object.entries(settlements.winsByPlayerId || {})
+      .map(([playerKey, wins]) => `${playerKey}:${
+        (wins || []).map((win) => `${nebulaPlacement.getNebulaLabel(win.sectorId)}#${win.settlementNumber}`).join(",")
+      }`);
+    lines.push(`玩家胜利 ${playerLines.length ? playerLines.join("  ") : "无"}`);
+    return lines;
+  }
+
   function revertNebulaTokenReplacement(state, nebulaId, tokenId, before = {}) {
     const bucket = state?.nebulae?.[nebulaId];
     if (!bucket) return { ok: false, message: `未知星云 ${nebulaId}` };
@@ -266,6 +627,7 @@
     token.replacedByPlayerLabel = before.replacedByPlayerLabel ?? null;
     token.playerTokenSrc = before.playerTokenSrc ?? null;
     token.replacedAt = before.replacedAt ?? null;
+    token.replacementOrder = before.replacementOrder ?? null;
     rebuildNebulaStats(bucket);
 
     return { ok: true, nebulaId, tokenId, token };
@@ -306,6 +668,8 @@
     token.replacedByPlayerLabel = playerLabel;
     token.playerTokenSrc = tokenSrc;
     token.replacedAt = options.replacedAt || new Date().toISOString();
+    nebulaReplacementSequence += 1;
+    token.replacementOrder = options.replacementOrder || nebulaReplacementSequence;
     rebuildNebulaStats(bucket);
 
     const label = nebulaPlacement.getNebulaLabel(nebulaId);
@@ -328,6 +692,7 @@
     NEBULA_SECOND_SLOT_SCORE,
     getNebulaSecondSlotScoreReward,
     createDefaultNebulaDataState,
+    createDefaultSectorSettlementState,
     normalizeNebulaDataState,
     listNebulaTokens,
     listAllNebulaTokens,
@@ -335,6 +700,15 @@
     fillAllNebulaData,
     clearNebulaData,
     updateNebulaTokenPosition,
+    addSectorExtraMark,
+    removeSectorExtraMark,
+    listSectorExtraMarks,
+    isSectorReadyToSettle,
+    getSectorTokenStats,
+    getSectorRanking,
+    settleSector,
+    settleCompletedSectors,
+    getSectorSettlementReadoutLines,
     getNebulaReplacementStats,
     getNextReplaceableNebulaToken,
     revertNebulaTokenReplacement,
