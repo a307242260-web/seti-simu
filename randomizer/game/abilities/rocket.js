@@ -80,8 +80,185 @@
     return content?.kind === solar?.layout?.CONTENT_KIND?.ASTEROID;
   }
 
+  function isCometContent(content) {
+    return content?.kind === solar?.layout?.CONTENT_KIND?.COMET;
+  }
+
   function isNonEarthPlanetContent(content) {
     return content?.kind === solar?.layout?.CONTENT_KIND?.PLANET && content.planetId !== "earth";
+  }
+
+  function isPassThroughContent(content) {
+    const kind = content?.kind;
+    return kind === solar?.layout?.CONTENT_KIND?.HOLE
+      || kind === solar?.layout?.CONTENT_KIND?.OUTSIDE_WHEEL;
+  }
+
+  function isHoleContent(content) {
+    return content?.kind === solar?.layout?.CONTENT_KIND?.HOLE;
+  }
+
+  function getPlayerById(playerState, playerId) {
+    return (playerState?.players || []).find((player) => player.id === playerId) || null;
+  }
+
+  function buildSolarInputWithRotation(context, rotation) {
+    return {
+      ...(context.solarState || {}),
+      rotation,
+    };
+  }
+
+  function getVisibleContentAtRotation(context, coordinate, rotation) {
+    if (!coordinate || !solar?.resolveVisibleContent) return null;
+    return solar.resolveVisibleContent(
+      coordinate.x,
+      coordinate.y,
+      buildSolarInputWithRotation(context, rotation),
+    );
+  }
+
+  function getRotatingWheelIds(beforeRotation, afterRotation) {
+    return solar.WHEEL_IDS.filter((wheelId) => (
+      solar.getWheelStep(beforeRotation, wheelId) !== solar.getWheelStep(afterRotation, wheelId)
+    ));
+  }
+
+  function getWheelStepDelta(beforeRotation, afterRotation, wheelId) {
+    return solar.getWheelStep(afterRotation, wheelId) - solar.getWheelStep(beforeRotation, wheelId);
+  }
+
+  function resolveRocketRotationPlan(context, rocket, beforeRotation, afterRotation) {
+    const from = rockets.getRocketSectorCoordinate(rocket);
+    if (!from) return null;
+
+    const rotatingWheelIds = getRotatingWheelIds(beforeRotation, afterRotation);
+    if (!rotatingWheelIds.length) return null;
+
+    const beforeVisible = getVisibleContentAtRotation(context, from, beforeRotation);
+    if (
+      beforeVisible?.wheelId
+      && rotatingWheelIds.includes(beforeVisible.wheelId)
+      && !isPassThroughContent(beforeVisible.content)
+    ) {
+      const to = {
+        x: solar.toDisplayX(beforeVisible.baseX, beforeVisible.wheelId, afterRotation),
+        y: from.y,
+      };
+      return {
+        rocket,
+        from,
+        to,
+        reason: "follow",
+        wheelId: beforeVisible.wheelId,
+        content: beforeVisible.content,
+      };
+    }
+
+    for (const wheelId of solar.VISIBLE_WHEEL_IDS) {
+      const beforeCell = solar.getWheelCellAtDisplayCoordinate(
+        wheelId,
+        from.x,
+        from.y,
+        beforeRotation,
+      ).cell;
+      const afterCell = solar.getWheelCellAtDisplayCoordinate(
+        wheelId,
+        from.x,
+        from.y,
+        afterRotation,
+      ).cell;
+
+      if (rotatingWheelIds.includes(wheelId) && isHoleContent(beforeCell) && !isPassThroughContent(afterCell)) {
+        const delta = getWheelStepDelta(beforeRotation, afterRotation, wheelId);
+        return {
+          rocket,
+          from,
+          to: { x: solar.mod8(from.x + delta), y: from.y },
+          reason: "pushed",
+          wheelId,
+          content: afterCell,
+        };
+      }
+
+      if (!isPassThroughContent(beforeCell)) break;
+    }
+
+    return null;
+  }
+
+  function getOccupiedSlotsExcludingMoving(rocketState, movingRocketIds, reservedSlots) {
+    const occupied = new Map();
+    for (const rocket of rocketState.rockets || []) {
+      if (movingRocketIds.has(rocket.id)) continue;
+      if (!Number.isInteger(rocket.sectorX) || !Number.isInteger(rocket.sectorY)) continue;
+      if (!Number.isInteger(rocket.slotIndex)) continue;
+      const key = `${rocket.sectorX},${rocket.sectorY}`;
+      if (!occupied.has(key)) occupied.set(key, new Set());
+      occupied.get(key).add(rocket.slotIndex);
+    }
+    for (const [key, slots] of reservedSlots.entries()) {
+      if (!occupied.has(key)) occupied.set(key, new Set());
+      for (const slotIndex of slots) occupied.get(key).add(slotIndex);
+    }
+    return occupied;
+  }
+
+  function reserveRotationDestinationSlot(rocketState, movingRocketIds, reservedSlots, to) {
+    const key = `${to.x},${to.y}`;
+    const occupied = getOccupiedSlotsExcludingMoving(rocketState, movingRocketIds, reservedSlots);
+    const occupiedSlots = occupied.get(key) || new Set();
+    for (const slotIndex of solar.LAUNCH_SLOT_PRIORITY) {
+      if (occupiedSlots.has(slotIndex)) continue;
+      if (!reservedSlots.has(key)) reservedSlots.set(key, new Set());
+      reservedSlots.get(key).add(slotIndex);
+      return slotIndex;
+    }
+    return null;
+  }
+
+  function applyArrivalRewards(context, player, rocket, content, options = {}) {
+    const rewardNotes = [];
+    const events = [];
+    if (!player || !content) return { rewardNotes, events };
+
+    if (isNonEarthPlanetContent(content)) {
+      players.gainResources(player, { publicity: 1 });
+      rewardNotes.push(`${options.prefix || "到达"}${content.label || "行星"}，宣传+1`);
+      events.push({
+        type: "visitPlanet",
+        planetId: content.planetId,
+        rocketId: rocket.id,
+        playerId: player.id,
+        source: options.source || "move",
+      });
+    }
+
+    if (isCometContent(content)) {
+      players.gainResources(player, { publicity: 1 });
+      rewardNotes.push(`${options.prefix || "到达"}彗星，宣传+1`);
+      events.push({
+        type: "visitComet",
+        rocketId: rocket.id,
+        playerId: player.id,
+        source: options.source || "move",
+      });
+    }
+
+    if (isAsteroidContent(content)) {
+      if (players.playerOwnsTech(player, "orange2")) {
+        players.gainResources(player, { publicity: 1 });
+        rewardNotes.push("橙色2：进入小行星，宣传+1");
+      }
+      events.push({
+        type: "visitAsteroid",
+        rocketId: rocket.id,
+        playerId: player.id,
+        source: options.source || "move",
+      });
+    }
+
+    return { rewardNotes, events };
   }
 
   function resolveMoveGeometry(context, rocketId, deltaX, deltaY) {
@@ -281,29 +458,13 @@
         beforeRocket,
       ));
     }
-    const rewardNotes = [];
-    const events = [];
-    if (isNonEarthPlanetContent(geometry.toContent)) {
-      players.gainResources(currentPlayer, { publicity: 1 });
-      rewardNotes.push("移动到行星，宣传+1");
-      events.push({
-        type: "visitPlanet",
-        planetId: geometry.toContent.planetId,
-        rocketId,
-        playerId: currentPlayer.id,
-      });
-    }
-    if (isAsteroidContent(geometry.toContent) && players.playerOwnsTech(currentPlayer, "orange2")) {
-      players.gainResources(currentPlayer, { publicity: 1 });
-      rewardNotes.push("橙色2：进入小行星，宣传+1");
-    }
-    if (isAsteroidContent(geometry.toContent)) {
-      events.push({
-        type: "visitAsteroid",
-        rocketId,
-        playerId: currentPlayer.id,
-      });
-    }
+    const { rewardNotes, events } = applyArrivalRewards(
+      context,
+      currentPlayer,
+      moveResult.rocket,
+      geometry.toContent,
+      { prefix: "移动到", source: "move" },
+    );
     commands.push(historyCommands.createRestorePlayerCommand(
       currentPlayer,
       beforePlayer,
@@ -337,6 +498,92 @@
     };
   }
 
+  function settleRocketsAfterSolarRotation(context, beforeRotation, afterRotation) {
+    if (!context?.rocketState || !context?.solarState || !context?.playerState) {
+      return {
+        ok: true,
+        abilityId: "settleRocketsAfterSolarRotation",
+        message: "太阳系旋转",
+        moved: [],
+        events: [],
+      };
+    }
+
+    const plans = (context.rocketState.rockets || [])
+      .filter(rockets.isControllablePlayerRocket)
+      .map((rocket) => resolveRocketRotationPlan(context, rocket, beforeRotation, afterRotation))
+      .filter((plan) => plan && (plan.from.x !== plan.to.x || plan.from.y !== plan.to.y));
+
+    if (!plans.length) {
+      return {
+        ok: true,
+        abilityId: "settleRocketsAfterSolarRotation",
+        message: "太阳系旋转，火箭位置不变",
+        moved: [],
+        events: [],
+      };
+    }
+
+    const movingRocketIds = new Set(plans.map((plan) => plan.rocket.id));
+    const reservedSlots = new Map();
+    const moved = [];
+    const allEvents = [];
+    const notes = [];
+
+    for (const plan of plans) {
+      const slotIndex = reserveRotationDestinationSlot(
+        context.rocketState,
+        movingRocketIds,
+        reservedSlots,
+        plan.to,
+      );
+      if (slotIndex === null) {
+        notes.push(`R${plan.rocket.id} 目标扇区[${plan.to.x},${plan.to.y}]已满`);
+        continue;
+      }
+
+      const player = getPlayerById(context.playerState, plan.rocket.playerId);
+      const beforeRocket = structuredClone(plan.rocket);
+      const beforePlayer = player ? structuredClone(player) : null;
+      rockets.assignRocketToSlot(plan.rocket, plan.to.x, plan.to.y, slotIndex);
+
+      const afterVisible = getVisibleContentAtRotation(context, plan.to, afterRotation);
+      const rewardResult = plan.reason === "pushed"
+        ? applyArrivalRewards(context, player, plan.rocket, afterVisible?.content, {
+          prefix: "推动到",
+          source: "rotation",
+        })
+        : { rewardNotes: [], events: [] };
+      allEvents.push(...rewardResult.events);
+
+      moved.push({
+        rocketId: plan.rocket.id,
+        playerId: plan.rocket.playerId || null,
+        from: plan.from,
+        to: { ...plan.to, slotIndex },
+        reason: plan.reason,
+        wheelId: plan.wheelId,
+        beforeRocket,
+        beforePlayer,
+        afterContent: afterVisible?.content || null,
+        rewards: rewardResult.rewardNotes,
+      });
+      const reasonText = plan.reason === "pushed" ? "镂空推动" : "随盘旋转";
+      const rewardText = rewardResult.rewardNotes.length ? `（${rewardResult.rewardNotes.join("，")}）` : "";
+      notes.push(`R${plan.rocket.id}${reasonText}->[${plan.to.x},${plan.to.y}]#${slotIndex}${rewardText}`);
+    }
+
+    const message = notes.length ? `太阳系旋转：${notes.join("；")}` : "太阳系旋转";
+    context.rocketState.statusNote = message;
+    return {
+      ok: true,
+      abilityId: "settleRocketsAfterSolarRotation",
+      message,
+      moved,
+      events: allEvents,
+    };
+  }
+
   return Object.freeze({
     DEFAULT_LAUNCH_COST,
     DEFAULT_MOVE_COST,
@@ -347,5 +594,6 @@
     getRequiredMovePoints,
     launchProbe,
     moveProbe,
+    settleRocketsAfterSolarRotation,
   });
 });

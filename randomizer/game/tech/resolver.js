@@ -254,8 +254,14 @@
     if (typeof context.rotateSolarOrbit !== "function") {
       return { ok: false, message: "无法执行研究科技的太阳系旋转" };
     }
-    context.rotateSolarOrbit(count);
-    return { ok: true, message: "太阳系旋转" };
+    const rotateResult = context.rotateSolarOrbit(count);
+    if (rotateResult && rotateResult.ok === false) return rotateResult;
+    return {
+      ok: true,
+      message: rotateResult?.message || "太阳系旋转",
+      payload: rotateResult?.payload || {},
+      events: rotateResult?.events || [],
+    };
   }
 
   function applyTechBonus(context, options = {}) {

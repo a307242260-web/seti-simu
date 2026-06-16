@@ -54,6 +54,18 @@ function currentPlayer(context) {
   return players.getCurrentPlayer(context.playerState);
 }
 
+function setContextRotation(context, rotation) {
+  context.solarState.rotation = rotation;
+  context.solarState.wheelSteps = solar.rotationToWheelSteps(rotation);
+}
+
+function rotateContextOnce(context) {
+  const beforeRotation = structuredClone(context.solarState.rotation);
+  const afterRotation = solar.applySolarOrbitRotation(beforeRotation, 1);
+  setContextRotation(context, afterRotation);
+  return abilities.rocket.settleRocketsAfterSolarRotation(context, beforeRotation, afterRotation);
+}
+
 {
   const context = createContext({ resources: { credits: 10, energy: 10 } });
   const result = abilities.executeAbility("launchProbe", context);
@@ -477,6 +489,49 @@ function launchToPlanet(context, planetId) {
   });
   assert.equal(move.ok, true, move.message);
   assert.equal(currentPlayer(context).resources.publicity, 1);
+}
+
+{
+  const context = createContext({ resources: { credits: 10, energy: 10, publicity: 0 } });
+  const launch = abilities.executeAbility("launchProbe", context, { skipCost: true });
+  assert.equal(launch.ok, true);
+  rockets.assignRocketToSlot(launch.rocket, 1, 1, 4);
+
+  const result = rotateContextOnce(context);
+  assert.equal(result.ok, true);
+  assert.equal(result.moved[0].reason, "follow");
+  assert.deepEqual(rockets.getRocketSectorCoordinate(launch.rocket), { x: 0, y: 1 });
+  assert.equal(currentPlayer(context).resources.publicity, 0);
+}
+
+{
+  const context = createContext({ resources: { credits: 10, energy: 10, publicity: 0 } });
+  setContextRotation(context, solar.applySolarOrbitRotation(context.solarState.rotation, 1));
+  const launch = abilities.executeAbility("launchProbe", context, { skipCost: true });
+  assert.equal(launch.ok, true);
+  rockets.assignRocketToSlot(launch.rocket, 1, 2, 4);
+
+  const result = rotateContextOnce(context);
+  assert.equal(result.ok, true, result.message);
+  assert.equal(result.moved[0].reason, "pushed");
+  assert.deepEqual(rockets.getRocketSectorCoordinate(launch.rocket), { x: 0, y: 2 });
+  assert.equal(currentPlayer(context).resources.publicity, 1);
+  assert.ok(result.events.some((event) => event.type === "visitComet"));
+}
+
+{
+  const context = createContext({ resources: { credits: 10, energy: 10, publicity: 0 } });
+  currentPlayer(context).techState.ownedTiles.orange2 = true;
+  const launch = abilities.executeAbility("launchProbe", context, { skipCost: true });
+  assert.equal(launch.ok, true);
+  rockets.assignRocketToSlot(launch.rocket, 0, 1, 4);
+
+  const result = rotateContextOnce(context);
+  assert.equal(result.ok, true, result.message);
+  assert.equal(result.moved[0].reason, "pushed");
+  assert.deepEqual(rockets.getRocketSectorCoordinate(launch.rocket), { x: 7, y: 1 });
+  assert.equal(currentPlayer(context).resources.publicity, 1);
+  assert.ok(result.events.some((event) => event.type === "visitAsteroid"));
 }
 
 console.log("abilities.test.js: all tests passed");

@@ -3,13 +3,15 @@
 
   let players = root.SetiPlayers;
   let tech = root.SetiTech;
+  let rocketAbility = root.SetiAbilityRocket;
 
-  if ((!players || !tech) && typeof require === "function") {
+  if ((!players || !tech || !rocketAbility) && typeof require === "function") {
     players = players || require("../players");
     tech = tech || require("../tech");
+    rocketAbility = rocketAbility || require("./rocket");
   }
 
-  const api = factory(players, tech);
+  const api = factory(players, tech, rocketAbility);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -19,6 +21,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (
   players,
   tech,
+  rocketAbility,
 ) {
   "use strict";
 
@@ -199,16 +202,38 @@
   }
 
   function researchTechRotate(context) {
+    let beforeRotation = null;
+    if (context?.solarState?.rotation) {
+      beforeRotation = structuredClone(context.solarState.rotation);
+    }
     const result = tech.resolver.rotateForResearch(context, 1);
+    let rotationSettlement = null;
+    if (
+      result.ok
+      && beforeRotation
+      && !result.payload?.rotationSettlement
+      && !result.payload?.rotationSettlements
+      && rocketAbility?.settleRocketsAfterSolarRotation
+      && context?.solarState?.rotation
+    ) {
+      rotationSettlement = rocketAbility.settleRocketsAfterSolarRotation(
+        context,
+        beforeRotation,
+        context.solarState.rotation,
+      );
+    }
     return {
       ok: result.ok,
       abilityId: "researchTechRotate",
-      message: result.message,
+      message: rotationSettlement?.message || result.message,
       undoable: false,
       commands: [],
       cost: {},
-      payload: {},
-      events: [],
+      payload: {
+        ...(result.payload || {}),
+        rotationSettlement: rotationSettlement || result.payload?.rotationSettlement || null,
+      },
+      events: rotationSettlement?.events || result.events || [],
     };
   }
 

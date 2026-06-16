@@ -11,13 +11,13 @@
 | --- | --- | --- | --- |
 | 支付扫描费用 | 支付 1 信用点 + 2 能量，作为扫描行动的第一个结算节点。 | 可撤销 | `assets/symbol/action/scan/earth_scan.png` |
 | 发射 | 在地球所在扇区放置火箭；可通过 `cost` 或 `skipCost` 表示正常发射、科技免费发射、紫4发射等来源。 | 可撤销 | `assets/symbol/effect/launch.webp` |
-| 移动 | 给予火箭指定移动力。没有橙2科技时，移动出小行星需要 2 点移动力，其余场景通常为 1 点。 | 可撤销 | `assets/symbol/effect/movement.webp` |
+| 移动 | 给予火箭指定移动力。没有橙2科技时，移动出小行星需要 2 点移动力，其余场景通常为 1 点；进入非地球行星或彗星获得 1 宣传，橙2进入小行星也获得 1 宣传。 | 可撤销 | `assets/symbol/effect/movement.webp` |
 | 环绕标记 | 支付环绕成本，移除当前火箭，并在对应星球参考图放置环绕标记。 | 可撤销 | `assets/symbol/effect/orbit.webp` |
 | 主星登陆标记 | 支付登陆成本，移除当前火箭，并在对应主星放置登陆标记。 | 可撤销 | `assets/symbol/effect/land.webp` |
 | 卫星登陆标记 | 拥有橙4后可选；支付登陆成本，移除当前火箭，并在对应卫星放置登陆标记。 | 可撤销 | `assets/symbol/effect/land.webp` |
 | 分析数据 | 消耗 1 能量，要求计算机第一排第 6 位已有数据，清空已放置数据并结算分析。 | 可撤销 | `assets/symbol/effect/data.webp` |
 | 选择科技片 | 支付 6 宣传，拿取科技片并放置到玩家版图；不触发旋转、即时奖励或 bonus。 | 可撤销 | `assets/symbol/effect/research_tech.webp` |
-| 旋转 | 研究科技后旋转太阳系。 | 不可撤销 | `assets/tokens/rotate_state.png` |
+| 旋转 | 研究科技后旋转太阳系，并结算主盘火箭随版图旋转或被镂空推动；推动抵达非地球行星/彗星/橙2小行星时获得宣传。 | 不可撤销 | `assets/tokens/rotate_state.png` |
 | 科技 bonus | 结算科技片对应 bonus；首拿同类科技的 +2 分归入此效果。 | 不可撤销；若是精选，确认拿牌后不可撤销。 | 对应 bonus 图标 |
 | 弃牌 | 从手牌或公共牌区移除一张牌，通常作为扫描、收入或其他效果的前置结算。 | 取决于所属效果；扫描类弃牌可撤销，精选拿牌后不可撤销。 | `assets/symbol/effect/discard.jpg` |
 | 盲抽 | 从牌库随机抽取指定数量卡牌加入手牌。 | 不可撤销 | `assets/symbol/effect/blind_card.webp` |

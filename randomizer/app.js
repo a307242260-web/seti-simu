@@ -3983,8 +3983,11 @@
         effect.result = result;
         rocketState.statusNote = result.message;
         renderWheels();
+        renderRockets();
         renderRotateStateToken();
+        renderPlayerStats();
         completeCurrentActionEffect();
+        handleCardTriggerEvents(result.events);
         renderStateReadout();
         return result;
       }
@@ -6903,12 +6906,38 @@
   }
 
   function rotateSolarOrbit(count) {
-    solarState.rotation = solar.applySolarOrbitRotation(solarState.rotation, count || 1);
-    solarState.wheelSteps = solar.rotationToWheelSteps(solarState.rotation);
+    const iterations = Math.max(1, Math.round(Number(count || 1)));
+    const rotationSettlements = [];
+    const events = [];
+
+    for (let index = 0; index < iterations; index += 1) {
+      const beforeRotation = structuredClone(solarState.rotation);
+      solarState.rotation = solar.applySolarOrbitRotation(solarState.rotation, 1);
+      solarState.wheelSteps = solar.rotationToWheelSteps(solarState.rotation);
+      const settlement = abilities.rocket.settleRocketsAfterSolarRotation(
+        { solarState, playerState, rocketState },
+        beforeRotation,
+        solarState.rotation,
+      );
+      if (settlement) {
+        rotationSettlements.push(settlement);
+        events.push(...(settlement.events || []));
+      }
+    }
+
+    const lastSettlement = rotationSettlements[rotationSettlements.length - 1];
     renderWheels();
+    renderRockets();
     renderRotateStateToken();
+    renderPlayerStats();
     updateActionButtons();
     renderStateReadout();
+    return {
+      ok: true,
+      message: lastSettlement?.message || "太阳系旋转",
+      payload: { rotationSettlements },
+      events,
+    };
   }
 
   els.spinButton.addEventListener("click", randomizeAll);
@@ -7074,7 +7103,8 @@
     switchCurrentPlayerColor(button.dataset.playerColor);
   });
   els.debugRotateButton.addEventListener("click", () => {
-    rotateSolarOrbit(1);
+    const result = rotateSolarOrbit(1);
+    handleCardTriggerEvents(result.events);
   });
   els.debugIncomeButton.addEventListener("click", addDebugIncome);
   els.debugIncomeEffectButton?.addEventListener("click", () => beginIncomeForCurrentPlayer({ source: "debug" }));
