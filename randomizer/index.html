@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SETI 太阳系随机器</title>
-  <link rel="stylesheet" href="./style.css?v=ability-chain-1">
+  <link rel="stylesheet" href="./style.css?v=final-scoring-1">
 </head>
 <body>
   <div class="app-wrap debug-collapsed log-collapsed" id="app-wrap">
@@ -31,11 +31,23 @@
 
       <section class="table-panel final-score-panel" aria-label="终局计分">
         <div class="panel-title">终局计分</div>
-        <div class="final-score-grid">
-          <img class="final-score-tile" data-final-id="a" src="../assets/final/final_a1.png" alt="终局计分 A1" width="747" height="1040" decoding="async">
-          <img class="final-score-tile" data-final-id="b" src="../assets/final/final_b1.png" alt="终局计分 B1" width="747" height="1040" decoding="async">
-          <img class="final-score-tile" data-final-id="c" src="../assets/final/final_c1.png" alt="终局计分 C1" width="747" height="1040" decoding="async">
-          <img class="final-score-tile" data-final-id="d" src="../assets/final/final_d1.png" alt="终局计分 D1" width="747" height="1040" decoding="async">
+        <div class="final-score-grid" id="final-score-grid">
+          <button class="final-score-tile-wrap" type="button" data-final-id="a" aria-label="终局计分 A">
+            <img class="final-score-tile" data-final-id="a" src="../assets/final/final_a1.png" alt="终局计分 A1" width="747" height="1040" decoding="async">
+            <span class="final-score-token-layer" aria-hidden="true"></span>
+          </button>
+          <button class="final-score-tile-wrap" type="button" data-final-id="b" aria-label="终局计分 B">
+            <img class="final-score-tile" data-final-id="b" src="../assets/final/final_b1.png" alt="终局计分 B1" width="747" height="1040" decoding="async">
+            <span class="final-score-token-layer" aria-hidden="true"></span>
+          </button>
+          <button class="final-score-tile-wrap" type="button" data-final-id="c" aria-label="终局计分 C">
+            <img class="final-score-tile" data-final-id="c" src="../assets/final/final_c1.png" alt="终局计分 C1" width="747" height="1040" decoding="async">
+            <span class="final-score-token-layer" aria-hidden="true"></span>
+          </button>
+          <button class="final-score-tile-wrap" type="button" data-final-id="d" aria-label="终局计分 D">
+            <img class="final-score-tile" data-final-id="d" src="../assets/final/final_d1.png" alt="终局计分 D1" width="747" height="1040" decoding="async">
+            <span class="final-score-token-layer" aria-hidden="true"></span>
+          </button>
         </div>
       </section>
 
@@ -422,6 +434,7 @@
         <div class="debug-actions">
           <button class="debug-action-button debug-player-switch-button" type="button" id="debug-player-switch-button" aria-controls="debug-player-menu" aria-expanded="false">玩家：白色</button>
           <div class="debug-player-menu" id="debug-player-menu" hidden></div>
+          <button class="debug-action-button" type="button" id="debug-score-button">+20分</button>
           <button class="debug-action-button" type="button" id="debug-rotate-button">旋转</button>
           <button class="debug-action-button" type="button" id="debug-income-button">收入</button>
           <button class="debug-action-button" type="button" id="debug-income-effect-button">收入效果</button>
@@ -453,6 +466,7 @@
   <script src="./game/cards/effects.js?v=card-effects-1"></script>
   <script src="./game/basic-cards.js?v=card-deck-1"></script>
   <script src="./game/players.js?v=scan-effects-1"></script>
+  <script src="./game/final-scoring.js?v=final-scoring-1"></script>
   <script src="./game/rockets.js?v=planet-tokens-11"></script>
   <script src="./game/planet-reference-layout.js?v=planet-tokens-11"></script>
   <script src="./game/planet-stats.js?v=planet-tokens-11"></script>
@@ -495,6 +509,6 @@
   <script src="./game/aliens/randomizer.js?v=aliens-2"></script>
   <script src="./game/aliens/render.js?v=aliens-2"></script>
   <script src="./game/aliens/index.js?v=aliens-2"></script>
-  <script src="./app.js?v=ability-chain-1"></script>
+  <script src="./app.js?v=final-scoring-1"></script>
 </body>
 </html>

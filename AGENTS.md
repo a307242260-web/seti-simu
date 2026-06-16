@@ -25,6 +25,16 @@
 - `gainResources(player, gain)`：获得资源，并处理宣传/数据上限。
 - `gainIncome(player, gain)`：增加收入。
 
+### 终局计分状态
+
+终局计分由 `randomizer/game/final-scoring.js` 管理，并由 `randomizer/app.js` 渲染到左侧终局计分板块：
+
+- 门槛为 25 / 50 / 70 分；玩家分数达到或超过门槛时，会生成一个待标记终局计分机会。
+- 玩家每次待标记机会可以选择 1 个终局计分板块放置自己的 `normal_token`。
+- 同一玩家在同一终局计分板块上只能标记 1 次。
+- 每个板块从左到右是 1 / 2 / 3 号位置：1 号和 2 号位置各只能被占用 1 次；之后的标记都会进入 3 号位置，3 号位置支持多个标记。
+- 调试按钮「+20分」会给当前玩家增加 20 分，用于快速触发 25 / 50 / 70 分门槛标记流程。
+
 ### 火箭状态
 
 火箭由 `randomizer/game/rockets.js` 管理：
@@ -340,6 +350,7 @@ UI 校准：
 ```powershell
 node randomizer/game/abilities/abilities.test.js
 node randomizer/game/abilities/chain.test.js
+node randomizer/game/final-scoring.test.js
 node randomizer/game/actions/scan-effects.test.js
 node randomizer/game/actions/planet-rewards.test.js
 node randomizer/game/actions/quick-trades.test.js

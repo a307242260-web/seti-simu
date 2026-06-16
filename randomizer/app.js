@@ -9,6 +9,7 @@
   const actions = window.SetiActions;
   const scanEffects = window.SetiScanEffects;
   const planetRewards = window.SetiPlanetRewards;
+  const finalScoring = window.SetiFinalScoring;
   const actionHistoryModule = window.SetiActionHistory;
   const historyCommands = window.SetiHistoryCommands;
   const abilities = window.SetiAbilities;
@@ -23,6 +24,11 @@
   /** 与官网 main.js 一致的每层转盘随机偏移基数 */
   const WHEEL_OFFSETS = [0, 0, 20, 11, 4];
   const FINAL_SCORE_IDS = ["a", "b", "c", "d"];
+  const FINAL_SCORE_SLOT_POINTS = Object.freeze({
+    1: Object.freeze({ x: 18.5, y: 54.4 }),
+    2: Object.freeze({ x: 40.4, y: 54.4 }),
+    3: Object.freeze({ x: 66, y: 54.4, stepX: 8.5, stepY: 9.5, columns: 3 }),
+  });
   const ROCKET_IMAGE_SCALE = 0.104;
   const REFERENCE_ORBIT_IMAGE_SCALE = 0.0286;
   const REFERENCE_LANDDING_IMAGE_SCALE = 0.0338;
@@ -99,6 +105,7 @@
   const solarState = solar.createBaselineState();
   const nebulaDataState = data.createDefaultNebulaDataState();
   const alienGameState = aliens.createDefaultAlienState();
+  const finalScoringState = finalScoring.createFinalScoringState(FINAL_SCORE_IDS);
   const sectorElements = {};
   const playerState = players.createPlayerState({
     players: players.PLAYER_COLOR_IDS.map((color) => ({ color })),
@@ -134,6 +141,7 @@
   let effectStepActive = false;
   let moveHighlightRocketId = null;
   let pendingMovePayment = null;
+  let stateReadoutRenderFrame = 0;
   const MOVE_DISCARD_ACTION_CODE = 2;
   const MOVE_ENERGY_COST = 1;
   const techRenderContext = {
@@ -183,6 +191,8 @@
     moveArrowLayer: document.getElementById("move-arrow-layer"),
     alienPanels: document.querySelectorAll(".alien-panel"),
     alienTraceLayers: document.querySelectorAll(".alien-trace-layer"),
+    finalScoreGrid: document.getElementById("final-score-grid"),
+    finalScoreTileWraps: document.querySelectorAll(".final-score-tile-wrap"),
     finalScoreTiles: document.querySelectorAll(".final-score-tile"),
     reportDock: document.getElementById("report-dock"),
     wheelWrap: document.getElementById("wheel-wrap"),
@@ -214,6 +224,7 @@
     debugPickCardButton: document.getElementById("debug-pick-card-button"),
     debugDiscardCardButton: document.getElementById("debug-discard-card-button"),
     debugGainDataButton: document.getElementById("debug-gain-data-button"),
+    debugScoreButton: document.getElementById("debug-score-button"),
     debugFillNebulaDataButton: document.getElementById("debug-fill-nebula-data-button"),
     debugSectorScanButton: document.getElementById("debug-sector-scan-button"),
     debugQuickSectorScanButton: document.getElementById("debug-quick-sector-scan-button"),
@@ -1579,6 +1590,85 @@
   function getNormalTokenAssetForPlayer(player) {
     return players.getPlayerColorDefinition(player?.color)?.normalTokenAsset
       || "../assets/tokens/normal_token.png";
+  }
+
+  function syncFinalScorePendingMarks() {
+    const result = finalScoring.syncPendingMarks(finalScoringState, playerState.players);
+    const currentPlayer = getCurrentPlayer();
+    const currentAdded = (result.added || []).filter((pending) => pending.playerId === currentPlayer?.id);
+    if (currentAdded.length) {
+      const thresholds = currentAdded.map((pending) => `${pending.threshold}分`).join("、");
+      rocketState.statusNote = `${currentPlayer.colorLabel}玩家达到 ${thresholds}，请选择终局计分板块标记`;
+    }
+    return result;
+  }
+
+  function getFinalScoreTokenPoint(mark) {
+    const slotIndex = Number(mark?.slotIndex) || 3;
+    const slot = FINAL_SCORE_SLOT_POINTS[slotIndex] || FINAL_SCORE_SLOT_POINTS[3];
+    if (slotIndex !== 3) return slot;
+
+    const order = Math.max(1, Number(mark?.slot3Order) || 1) - 1;
+    const columns = Math.max(1, Number(slot.columns) || 1);
+    return {
+      x: slot.x + (order % columns) * slot.stepX,
+      y: slot.y + Math.floor(order / columns) * slot.stepY,
+    };
+  }
+
+  function createFinalScoreTokenElement(mark) {
+    const image = document.createElement("img");
+    const point = getFinalScoreTokenPoint(mark);
+    image.className = "final-score-token";
+    image.dataset.finalSlot = String(mark.slotIndex);
+    image.dataset.playerColor = mark.playerColor || "";
+    image.src = mark.tokenSrc || "../assets/tokens/normal_token.png";
+    image.alt = "";
+    image.width = 296;
+    image.height = 296;
+    image.decoding = "async";
+    image.setAttribute("aria-hidden", "true");
+    image.style.setProperty("--final-token-x", `${point.x}%`);
+    image.style.setProperty("--final-token-y", `${point.y}%`);
+    return image;
+  }
+
+  function renderFinalScoreBoard() {
+    const currentPlayer = getCurrentPlayer();
+    const pending = finalScoring.getNextPendingMarkForPlayer(finalScoringState, currentPlayer?.id);
+
+    els.finalScoreTileWraps.forEach((wrap) => {
+      const tileId = wrap.dataset.finalId;
+      const tile = finalScoringState.tiles?.[tileId];
+      const layer = wrap.querySelector(".final-score-token-layer");
+      const canMark = pending
+        ? finalScoring.canMarkTile(finalScoringState, tileId, currentPlayer)
+        : { ok: false };
+
+      wrap.disabled = !canMark.ok;
+      wrap.classList.toggle("is-selectable", canMark.ok);
+      wrap.title = canMark.ok
+        ? `${currentPlayer.colorLabel}玩家标记 ${pending.threshold} 分门槛`
+        : "";
+
+      if (layer) {
+        layer.replaceChildren(...(tile?.marks || []).map(createFinalScoreTokenElement));
+      }
+    });
+  }
+
+  function handleFinalScoreTileClick(tileId) {
+    const currentPlayer = getCurrentPlayer();
+    syncFinalScorePendingMarks();
+
+    const result = finalScoring.markTile(finalScoringState, tileId, currentPlayer, {
+      tokenSrc: getNormalTokenAssetForPlayer(currentPlayer),
+    });
+
+    rocketState.statusNote = result.message;
+    renderFinalScoreBoard();
+    queueStateReadoutRender();
+    return result;
   }
 
   function replaceNebulaDataForCurrentPlayer(nebulaId, options = {}) {
@@ -5541,6 +5631,10 @@
     const resources = currentPlayer.resources;
     const income = currentPlayer.income || players.DEFAULT_INCOME;
     const limits = players.RESOURCE_LIMITS;
+
+    syncFinalScorePendingMarks();
+    renderFinalScoreBoard();
+
     const stats = [
       createPlayerNameStat(currentPlayer, resources.score),
       createStatSeparator(),
@@ -5585,6 +5679,14 @@
       "星球统计",
       ...planetStats.formatPlanetStatsLines(planetStatsState),
     ];
+  }
+
+  function queueStateReadoutRender() {
+    if (stateReadoutRenderFrame) return;
+    stateReadoutRenderFrame = window.requestAnimationFrame(() => {
+      stateReadoutRenderFrame = 0;
+      renderStateReadout();
+    });
   }
 
   function createActionContext() {
@@ -6642,6 +6744,16 @@
     return result;
   }
 
+  function addDebugScore() {
+    const currentPlayer = getCurrentPlayer();
+    players.gainResources(currentPlayer, { score: 20 });
+    rocketState.statusNote = `${currentPlayer.colorLabel}玩家调试分数 +20`;
+    renderPlayerStats();
+    updateActionButtons();
+    renderStateReadout();
+    return { ok: true, player: currentPlayer, message: rocketState.statusNote };
+  }
+
   function fillNebulaDataBoard(options = {}) {
     const { replace = false, source = "debug", log = false } = options;
     if (replace) {
@@ -6800,6 +6912,8 @@
       "",
       ...getPlayerReadoutLines(),
       "",
+      ...finalScoring.getReadoutLines(finalScoringState),
+      "",
       ...getPlanetStatsReadoutLines(),
       "",
       "可见坐标",
@@ -6882,6 +6996,7 @@
     renderTechBoard();
     renderRoundStatus();
     renderDebugPlayerSwitch();
+    renderFinalScoreBoard();
     renderPlayerStats();
     renderRockets();
     updateActionButtons();
@@ -7091,6 +7206,11 @@
     moveRocket(Number(button.dataset.moveX), Number(button.dataset.moveY), moveHighlightRocketId);
   });
   els.wheelWrap.addEventListener("pointerdown", handleBoardPointerDown);
+  els.finalScoreGrid?.addEventListener("click", (event) => {
+    const tile = event.target.closest(".final-score-tile-wrap[data-final-id]");
+    if (!tile || tile.disabled) return;
+    handleFinalScoreTileClick(tile.dataset.finalId);
+  });
   els.debugToggle.addEventListener("click", () => {
     setDebugOpen(els.appWrap.classList.contains("debug-collapsed"));
   });
@@ -7110,6 +7230,7 @@
   els.debugIncomeEffectButton?.addEventListener("click", () => beginIncomeForCurrentPlayer({ source: "debug" }));
   els.debugResolveIncomeButton?.addEventListener("click", executeIncomeForCurrentPlayer);
   els.debugGainDataButton?.addEventListener("click", addDebugData);
+  els.debugScoreButton?.addEventListener("click", addDebugScore);
   els.debugFillNebulaDataButton?.addEventListener("click", fillDebugNebulaData);
   els.debugSectorScanButton?.addEventListener("click", beginSectorScan);
   els.debugQuickSectorScanButton?.addEventListener("click", openDebugQuickSectorScanPicker);
@@ -7198,6 +7319,7 @@
   seedDefaultReferenceRockets();
   renderRoundStatus();
   renderRotateStateToken();
+  renderFinalScoreBoard();
   renderPlayerStats();
   updateActionButtons();
   resize();
@@ -7218,6 +7340,7 @@
     orbitRocket: orbitForCurrentPlayer,
     landRocket: landForCurrentPlayer,
     addDebugIncome,
+    addDebugScore,
     executeIncomeForCurrentPlayer,
     addDebugData,
     fillDebugNebulaData,
@@ -7235,6 +7358,8 @@
     getAlienTraceLayoutOverrides: () => structuredClone(aliens.listTraceMarkerLayoutOverrides()),
     getAlienExtraTraceLayoutOverrides: () => structuredClone(aliens.listExtraTraceMarkerLayoutOverrides()),
     getAlienState: () => structuredClone(alienGameState),
+    getFinalScoringState: () => structuredClone(finalScoringState),
+    markFinalScoreTile: handleFinalScoreTileClick,
     openAlienTracePicker,
     placeAlienFirstTrace: (alienSlotId, traceType, playerColor) => {
       const result = aliens.placeFirstTrace(
