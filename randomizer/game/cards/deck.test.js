@@ -37,6 +37,56 @@ assert.deepEqual(
   { handSize: 1 },
 );
 
+function cardWithDiscardActionCode(code) {
+  const entry = cards.CARD_CATALOG.find((item) => item.discard_action_code === code);
+  return entry
+    ? cards.createCardInstance(entry, code)
+    : { id: `synthetic-discard-${code}`, cardId: `synthetic-${code}.webp`, discardActionCode: code };
+}
+
+assert.deepEqual(cards.getDiscardActionRewardForCard(cardWithDiscardActionCode(0)), {
+  code: 0,
+  label: "弃牌换1宣传",
+  gain: { publicity: 1 },
+  dataCount: 0,
+});
+assert.deepEqual(cards.getDiscardActionRewardForCard(cardWithDiscardActionCode(1)), {
+  code: 1,
+  label: "弃牌换1数据",
+  gain: {},
+  dataCount: 1,
+});
+assert.deepEqual(cards.getDiscardActionRewardForCard(cardWithDiscardActionCode(3)), {
+  code: 3,
+  label: "弃牌换2宣传",
+  gain: { publicity: 2 },
+  dataCount: 0,
+});
+assert.deepEqual(cards.getDiscardActionRewardForCard(cardWithDiscardActionCode(4)), {
+  code: 4,
+  label: "弃牌换1数据+1分",
+  gain: { score: 1 },
+  dataCount: 1,
+});
+assert.equal(cards.getDiscardActionRewardForCard(cardWithDiscardActionCode(2)), null);
+assert.equal(cards.getDiscardActionRewardForCard(cardWithDiscardActionCode(5)), null);
+assert.deepEqual(cards.getDiscardActionMoveRewardForCard(cardWithDiscardActionCode(2)), {
+  code: 2,
+  label: "弃牌移动1",
+  movementPoints: 1,
+  gain: {},
+});
+assert.deepEqual(cards.getDiscardActionMoveRewardForCard(cardWithDiscardActionCode(5)), {
+  code: 5,
+  label: "弃牌移动1+1分",
+  movementPoints: 1,
+  gain: { score: 1 },
+});
+assert.equal(cards.getDiscardActionMoveRewardForCard(cardWithDiscardActionCode(0)), null);
+const clonedReward = cards.getDiscardActionRewardForCard(cardWithDiscardActionCode(0));
+clonedReward.gain.publicity = 99;
+assert.deepEqual(cards.getDiscardActionRewardForCard(cardWithDiscardActionCode(0)).gain, { publicity: 1 });
+
 const claimed = cards.collectClaimedCardIds(cardState, playerState);
 assert.equal(claimed.size, cards.PUBLIC_CARD_COUNT + 5);
 assert.equal(cards.getAvailablePool(cardState, playerState).length, cards.getCatalogSize() - claimed.size);

@@ -122,17 +122,17 @@
   const DEFAULT_ACTIVE_PLAYER_COUNT = 1;
   const DEFAULT_INITIAL_PLAYER_COLOR = players.DEFAULT_PLAYER_COLOR;
   const INDUSTRY_CARD_FILES = Object.freeze([
-    "层云核心.jpg",
-    "芬威克研究中心.jpg",
-    "赫利昂联合体.jpg",
+    "层云核心.png",
+    "芬威克研究中心.png",
+    "赫利昂联合体.png",
     "寰宇动力.png",
-    "任务中继站.jpg",
-    "哨兵探测网络.jpg",
-    "深空探测.jpg",
-    "图灵系统.jpg",
-    "未来跨度研究所.jpg",
-    "异屋实验室.png",
-    "宇宙战略集团.jpg",
+    "任务中继站.png",
+    "哨兵探测网络.png",
+    "深空探测.png",
+    "图灵系统.png",
+    "未来跨度研究所.png",
+    "异星实验室.png",
+    "宇宙战略集团.png",
   ]);
   const INITIAL_CARD_COUNT = initialCards?.INITIAL_CARD_COUNT || 21;
   const INITIAL_SELECTION_REQUIRED = Object.freeze({
@@ -190,6 +190,7 @@
   let effectStepActive = false;
   let moveHighlightRocketId = null;
   let pendingMovePayment = null;
+  let pendingCardCornerQuickAction = null;
   let stateReadoutRenderFrame = 0;
   const setupSelectionState = {
     phase: "selecting",
@@ -325,6 +326,7 @@
     discardSelectionBackdrop: document.getElementById("discard-selection-backdrop"),
     discardSelectionCancel: document.getElementById("discard-selection-cancel"),
     playCardActionButton: document.getElementById("play-card-action-button"),
+    cardCornerActionButton: document.getElementById("card-corner-action-button"),
     movePaymentConfirm: document.getElementById("move-payment-confirm"),
     movePaymentCancel: document.getElementById("move-payment-cancel"),
     handScanCancel: document.getElementById("hand-scan-cancel"),
@@ -349,6 +351,10 @@
     }
     if (isPlayCardSelectionActive()) {
       return "（点击要打出的牌）";
+    }
+    const cornerAction = getPendingCardCornerQuickAction();
+    if (cornerAction) {
+      return `（已选择 ${cards.getCardLabel(cornerAction.card)}）`;
     }
     return "";
   }
@@ -847,6 +853,9 @@
   }
 
   function startActionLogDraft(actionType, label, options = {}) {
+    if (options.source === HISTORY_SOURCE_MAIN) {
+      cancelCardCornerQuickAction({ silent: true });
+    }
     return ensureActionLogDraft({
       ...options,
       actionType,
@@ -1232,6 +1241,7 @@
 
   function syncCardSelectionChrome() {
     const active = isCardSelectionActive();
+    if (active) cancelCardCornerQuickAction({ silent: true });
     els.appWrap?.classList.toggle("card-selection-active", active);
     els.publicCardPanel?.classList.toggle("card-selection-active", active);
     els.publicCardPanel?.classList.toggle("public-card-panel-focused", active);
@@ -1250,6 +1260,7 @@
 
   function syncDiscardSelectionChrome() {
     const active = isDiscardSelectionActive();
+    if (active) cancelCardCornerQuickAction({ silent: true });
     els.appWrap?.classList.toggle("discard-selection-active", active);
     els.playerHandPanel?.classList.toggle("discard-selection-active", active);
     els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
@@ -1271,6 +1282,7 @@
 
   function syncHandScanSelectionChrome() {
     const active = isHandScanSelectionActive();
+    if (active) cancelCardCornerQuickAction({ silent: true });
     els.appWrap?.classList.toggle("hand-scan-selection-active", active);
     els.playerHandPanel?.classList.toggle("hand-scan-selection-active", active);
     els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
@@ -1298,7 +1310,8 @@
   }
 
   function isMovePaymentCard(card) {
-    return Number(card?.discardActionCode) === MOVE_DISCARD_ACTION_CODE;
+    return Number(card?.discardActionCode) === MOVE_DISCARD_ACTION_CODE
+      || Boolean(cards.getDiscardActionMoveRewardForCard?.(card));
   }
 
   function playerHasMovePaymentCard(player) {
@@ -1338,6 +1351,7 @@
 
   function syncMovePaymentChrome() {
     const active = isMovePaymentSelectionActive();
+    if (active) cancelCardCornerQuickAction({ silent: true });
     els.appWrap?.classList.toggle("move-payment-selection-active", active);
     els.playerHandPanel?.classList.toggle("move-payment-selection-active", active);
     els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
@@ -1552,6 +1566,7 @@
 
   function syncPlayCardSelectionChrome() {
     const active = isPlayCardSelectionActive();
+    if (active) cancelCardCornerQuickAction({ silent: true });
     els.appWrap?.classList.toggle("play-card-selection-active", active);
     els.playerHandPanel?.classList.toggle("play-card-selection-active", active);
     els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
@@ -1563,6 +1578,192 @@
     updatePlayerHandPanelTitle();
     if (active) setQuickPanelOpen(false);
     renderPlayerHand();
+  }
+
+  function getPendingCardCornerQuickAction() {
+    if (!pendingCardCornerQuickAction) return null;
+
+    const currentPlayer = getCurrentPlayer();
+    const hand = Array.isArray(currentPlayer?.hand) ? currentPlayer.hand : [];
+    let handIndex = Number(pendingCardCornerQuickAction.handIndex);
+    let card = Number.isInteger(handIndex) ? hand[handIndex] : null;
+
+    if (!card || card.id !== pendingCardCornerQuickAction.cardId) {
+      handIndex = hand.findIndex((item) => item.id === pendingCardCornerQuickAction.cardId);
+      card = handIndex >= 0 ? hand[handIndex] : null;
+    }
+
+    const reward = cards.getDiscardActionRewardForCard(card);
+    if (!card || !reward) {
+      pendingCardCornerQuickAction = null;
+      return null;
+    }
+
+    pendingCardCornerQuickAction = {
+      handIndex,
+      cardId: card.id,
+      reward,
+    };
+    return { ...pendingCardCornerQuickAction, card };
+  }
+
+  function canUseCardCornerQuickAction() {
+    return !isInitialSelectionActive()
+      && !isTechTilePickingActive()
+      && !isCardSelectionActive()
+      && !isDiscardSelectionActive()
+      && !isPlayCardSelectionActive()
+      && !isHandScanSelectionActive()
+      && !isMovePaymentSelectionActive()
+      && !hasActivePendingSubFlow();
+  }
+
+  function syncCardCornerQuickActionChrome() {
+    const action = canUseCardCornerQuickAction() ? getPendingCardCornerQuickAction() : null;
+    const active = Boolean(action);
+
+    els.appWrap?.classList.toggle("card-corner-action-active", active);
+    els.playerHandPanel?.classList.toggle("card-corner-action-active", active);
+    els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
+    if (els.cardCornerActionButton) {
+      els.cardCornerActionButton.hidden = !active;
+      els.cardCornerActionButton.disabled = !active;
+      els.cardCornerActionButton.textContent = action?.reward?.label || "弃牌换资源";
+      els.cardCornerActionButton.title = active
+        ? `${action.reward.label}：弃除 ${cards.getCardLabel(action.card)}`
+        : "";
+    }
+    updatePlayerHandPanelTitle();
+    renderPlayerHand();
+  }
+
+  function cancelCardCornerQuickAction(options = {}) {
+    if (!pendingCardCornerQuickAction) return;
+    pendingCardCornerQuickAction = null;
+    if (!options.silent) {
+      rocketState.statusNote = "已取消卡牌快速行动";
+    }
+    syncCardCornerQuickActionChrome();
+    if (!options.silent) renderStateReadout();
+  }
+
+  function handleHandCardCornerQuickAction(handIndex) {
+    if (!canUseCardCornerQuickAction()) return { ok: false, message: "当前无法使用卡牌快速行动" };
+
+    const currentPlayer = getCurrentPlayer();
+    const index = Math.round(handIndex);
+    const card = currentPlayer?.hand?.[index];
+    const reward = cards.getDiscardActionRewardForCard(card);
+    if (!card || !reward) {
+      rocketState.statusNote = card && isMovePaymentCard(card)
+        ? "移动牌只能用于移动支付，不能直接弃除换资源"
+        : "这张牌没有可用的弃牌资源角标";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const current = getPendingCardCornerQuickAction();
+    if (current?.card?.id === card.id) {
+      cancelCardCornerQuickAction();
+      return { ok: true, cancelled: true, message: rocketState.statusNote };
+    }
+
+    pendingCardCornerQuickAction = {
+      handIndex: index,
+      cardId: card.id,
+      reward,
+    };
+    setQuickPanelOpen(false);
+    rocketState.statusNote = `${reward.label}：点击手牌区上方按钮确认弃除 ${cards.getCardLabel(card)}`;
+    syncCardCornerQuickActionChrome();
+    updateActionButtons();
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
+  function formatCardCornerRewardMessage(reward, dataResults) {
+    const parts = [];
+    if (reward?.gain?.publicity) parts.push(`宣传+${reward.gain.publicity}`);
+    if (reward?.gain?.score) parts.push(`分数+${reward.gain.score}`);
+    const dataCount = Math.max(0, Math.round(reward?.dataCount || 0));
+    if (dataCount) {
+      const gained = dataResults.filter((item) => item.ok).length;
+      const discarded = dataResults.filter((item) => item.discarded).length;
+      parts.push(discarded ? `数据+${gained}/${dataCount}（弃置${discarded}）` : `数据+${gained}`);
+    }
+    return parts.join("、");
+  }
+
+  function confirmCardCornerQuickAction() {
+    if (!canUseCardCornerQuickAction()) {
+      return { ok: false, message: "当前无法使用卡牌快速行动" };
+    }
+
+    const action = getPendingCardCornerQuickAction();
+    const currentPlayer = getCurrentPlayer();
+    if (!action || !currentPlayer) {
+      rocketState.statusNote = "没有待确认的卡牌快速行动";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const beforePlayer = structuredClone(currentPlayer);
+    const beforeCardState = {
+      publicCards: cardState.publicCards.slice(),
+      discardPile: (cardState.discardPile || []).slice(),
+    };
+
+    beginQuickActionStep("card-corner", `卡牌快速行动：${action.reward.label}`);
+    const discardResult = cards.discardFromHandAtIndex(currentPlayer, action.handIndex);
+    if (!discardResult.ok) {
+      quickActionHistory.undoLastStep();
+      if (!quickActionHistory.hasUndoableStep()) {
+        quickActionHistory.commitSession();
+        clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
+      }
+      rocketState.statusNote = discardResult.message;
+      syncCardCornerQuickActionChrome();
+      renderStateReadout();
+      return discardResult;
+    }
+
+    cards.addToDiscardPile(cardState, discardResult.card);
+    if (Object.keys(action.reward.gain || {}).length) {
+      players.gainResources(currentPlayer, action.reward.gain);
+    }
+    const dataResults = [];
+    const dataCount = Math.max(0, Math.round(action.reward.dataCount || 0));
+    for (let index = 0; index < dataCount; index += 1) {
+      dataResults.push(data.gainData(currentPlayer, { source: "card_corner" }));
+    }
+
+    recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
+      currentPlayer,
+      beforePlayer,
+      "恢复卡牌快速行动前玩家状态",
+    ));
+    recordQuickHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+      cardState,
+      beforeCardState.publicCards,
+      beforeCardState.discardPile,
+    ));
+    completeQuickActionStep();
+
+    pendingCardCornerQuickAction = null;
+    const rewardText = formatCardCornerRewardMessage(action.reward, dataResults);
+    rocketState.statusNote = `卡牌快速行动：弃除 ${cards.getCardLabel(discardResult.card)}，${rewardText}`;
+    renderPlayerStats();
+    renderPublicCards();
+    updatePublicCardControls();
+    updateActionButtons();
+    renderStateReadout();
+    return {
+      ok: true,
+      card: discardResult.card,
+      reward: action.reward,
+      dataResults,
+      message: rocketState.statusNote,
+    };
   }
 
   function beginDiscardSelection(count, pendingAction = null) {
@@ -1806,7 +2007,10 @@
 
   function getCardTypeCode(card) {
     const typeCode = Number(card?.cardTypeCode);
-    return Number.isFinite(typeCode) ? Math.round(typeCode) : 0;
+    const fallbackTypeCode = Number.isFinite(typeCode) ? Math.round(typeCode) : 0;
+    return cardEffects?.getRuntimeCardTypeCode
+      ? cardEffects.getRuntimeCardTypeCode(card, fallbackTypeCode)
+      : fallbackTypeCode;
   }
 
   function beginPlayCardSelection() {
@@ -2623,6 +2827,10 @@
         return result;
       }
       recordAbilityCommands(result);
+      if (pending.irreversibleDraw) {
+        result.undoable = false;
+        pendingActionHasIrreversibleCardGain = true;
+      }
       rocketState.statusNote = result.message;
       renderSectors();
       renderPlayerStats();
@@ -3262,6 +3470,9 @@
   }
 
   function blockIncompatiblePendingQuickAction(actionType) {
+    if (actionType !== "card-corner" && pendingCardCornerQuickAction) {
+      cancelCardCornerQuickAction({ silent: true });
+    }
     return null;
   }
 
@@ -3312,6 +3523,7 @@
     return {
       nebulaDataState,
       alienGameState,
+      planetStatsState,
     };
   }
 
@@ -3888,6 +4100,7 @@
       || pendingCardTriggerFreeMove
       || (els.scanAction4Overlay && !els.scanAction4Overlay.hidden)
       || (els.alienTraceOverlay && !els.alienTraceOverlay.hidden)
+      || pendingActionEffectFlow?.cardMoveEffect
       || pendingActionEffectFlow?.freeMoveMode,
     );
   }
@@ -3983,6 +4196,10 @@
 
     if (pendingActionEffectFlow?.freeMoveMode) {
       pendingActionEffectFlow.freeMoveMode = false;
+      deactivateMoveMode();
+    }
+    if (pendingActionEffectFlow?.cardMoveEffect) {
+      pendingActionEffectFlow.cardMoveEffect = null;
       deactivateMoveMode();
     }
     pendingCardTriggerAction = null;
@@ -4171,6 +4388,7 @@
     const current = getCurrentActionEffect();
     if (current) current.result = result;
     completeCurrentActionEffect();
+    handleCardTriggerEvents(result.events);
   }
 
   function closeScanAction4Picker() {
@@ -4319,6 +4537,134 @@
     return result;
   }
 
+  function beginCardMoveEffect(effect) {
+    const currentPlayer = getCurrentPlayer();
+    const rocketsForPlayer = rocketActions.getRocketsForPlayer(rocketState, currentPlayer?.id);
+    if (!rocketsForPlayer.length) {
+      rocketState.statusNote = "没有可移动的飞船";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    pendingActionEffectFlow.cardMoveEffect = { effect };
+    rocketState.statusNote = rocketsForPlayer.length > 1
+      ? `${effect.label}：请点击要移动的飞船`
+      : `${effect.label}：使用方向键移动飞船`;
+    if (rocketsForPlayer.length === 1) {
+      activateMoveMode(rocketsForPlayer[0].id);
+    } else {
+      selectDefaultRocketForCurrentPlayer();
+    }
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
+  function applyCardMoveRewardEffect(rewardEffect, messageParts) {
+    const currentPlayer = getCurrentPlayer();
+    if (!currentPlayer || !rewardEffect) return null;
+
+    if (rewardEffect.type === "gain_resources") {
+      const gain = rewardEffect.options?.gain || {};
+      players.gainResources(currentPlayer, gain);
+      messageParts.push(`${rewardEffect.label}：${formatPlanetRewardGain(gain)}`);
+      return { ok: true, effect: rewardEffect, gain };
+    }
+
+    if (rewardEffect.type === "gain_data") {
+      const count = Math.max(0, Math.round(rewardEffect.options?.count || 0));
+      const results = [];
+      for (let index = 0; index < count; index += 1) {
+        results.push(data.gainData(currentPlayer, { source: "card_move" }));
+      }
+      const gained = results.filter((item) => item.ok).length;
+      const discarded = results.filter((item) => item.discarded).length;
+      messageParts.push(`${rewardEffect.label}：获得 ${gained}/${count} 数据${discarded ? `，弃置${discarded}` : ""}`);
+      return { ok: true, effect: rewardEffect, results };
+    }
+
+    messageParts.push(`暂不支持的移动后奖励：${rewardEffect.type}`);
+    return { ok: false, effect: rewardEffect };
+  }
+
+  function applyCardMoveAfterEventRewards(effect, moveResult, messageParts) {
+    const rewards = effect.options?.afterEventRewards || [];
+    if (!rewards.length || !moveResult?.events?.length) return [];
+
+    if (!pendingActionEffectFlow.cardEventRewardKeys) {
+      pendingActionEffectFlow.cardEventRewardKeys = [];
+    }
+    const usedKeys = new Set(pendingActionEffectFlow.cardEventRewardKeys);
+    const applied = [];
+
+    for (const reward of rewards) {
+      if (!moveResult.events.some((event) => event.type === reward.eventType)) continue;
+      if (reward.onceKey && usedKeys.has(reward.onceKey)) continue;
+      const appliedReward = applyCardMoveRewardEffect(reward.effect, messageParts);
+      if (!appliedReward?.ok) continue;
+      applied.push(appliedReward);
+      if (reward.onceKey) {
+        usedKeys.add(reward.onceKey);
+        pendingActionEffectFlow.cardEventRewardKeys.push(reward.onceKey);
+      }
+    }
+
+    return applied;
+  }
+
+  function executeCardMoveForEffect(deltaX, deltaY, rocketId) {
+    const pending = pendingActionEffectFlow?.cardMoveEffect;
+    const effect = pending?.effect || getCurrentActionEffect();
+    if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
+
+    const moveCheck = rocketActions.canMoveRocket(rocketState, rocketId, deltaX, deltaY);
+    if (!moveCheck.ok) {
+      rocketState.statusNote = moveCheck.message;
+      renderStateReadout();
+      return moveCheck;
+    }
+
+    beginEffectHistoryStep(effect.label);
+
+    const result = abilities.executeAbility("moveProbe", createActionContext(), {
+      cost: {},
+      movementPoints: effect.options?.movementPoints || 1,
+      rocketId,
+      deltaX,
+      deltaY,
+      source: "card",
+      historyLabel: effect.options?.historyLabel || effect.label,
+    });
+    if (result.rocket) renderRocketElement(result.rocket);
+    if (!result.ok) {
+      endEffectHistoryStep();
+      rocketState.statusNote = result.message;
+      renderStateReadout();
+      return result;
+    }
+
+    recordAbilityCommands(result);
+    const messageParts = [];
+    const appliedRewards = applyCardMoveAfterEventRewards(effect, result, messageParts);
+    const rewardText = messageParts.length ? `；${messageParts.join("；")}` : "";
+
+    pendingActionEffectFlow.cardMoveEffect = null;
+    deactivateMoveMode();
+    effect.result = {
+      ...result,
+      message: `${result.message}${rewardText}`,
+      payload: {
+        ...(result.payload || {}),
+        appliedRewards,
+      },
+    };
+    rocketState.statusNote = `${effect.label}：${effect.result.message}`;
+    renderPlayerStats();
+    completeCurrentActionEffect();
+    handleCardTriggerEvents(result.events);
+    renderStateReadout();
+    return effect.result;
+  }
+
   function executeSectorScanAtPlanet(planetId, prefixLabel) {
     const sector = getPlanetSectorCoordinate(planetId);
     const nebula = solar.getNebulaAtCoordinate(sector.x, 5, solarState.sectorBySlot);
@@ -4361,6 +4707,7 @@
       if (result.ok) {
         renderPlayerStats();
         completeCurrentActionEffect();
+        handleCardTriggerEvents(result.events);
       }
       renderStateReadout();
       return result;
@@ -4451,11 +4798,13 @@
     }
     recordAbilityCommands(result);
     if (result.rocket) renderRocketElement(result.rocket);
-    return finishAutomaticRewardEffect(effect, {
+    const finished = finishAutomaticRewardEffect(effect, {
       ...result,
       undoable: true,
       message: `${effect.label}：${result.message}`,
     }, [renderRockets]);
+    handleCardTriggerEvents(result.events);
+    return finished;
   }
 
   function executeDrawCardsRewardEffect(effect) {
@@ -4626,6 +4975,98 @@
     });
   }
 
+  function executeCardDrawThenDiscardActionEffect(effect) {
+    const currentPlayer = getCurrentPlayer();
+    if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
+
+    const beforePlayer = structuredClone(currentPlayer);
+    const beforeCardState = {
+      publicCards: cardState.publicCards.slice(),
+      discardPile: (cardState.discardPile || []).slice(),
+    };
+
+    beginEffectHistoryStep(effect.label);
+    const drawResult = cards.blindDraw(cardState, playerState, currentPlayer);
+    if (!drawResult.ok) {
+      endEffectHistoryStep();
+      rocketState.statusNote = drawResult.message;
+      renderStateReadout();
+      return drawResult;
+    }
+
+    pendingActionHasIrreversibleCardGain = true;
+    const drawnCard = drawResult.card;
+    const drawnIndex = currentPlayer.hand.findIndex((item) => item.id === drawnCard.id);
+    const discardResult = cards.discardFromHandAtIndex(currentPlayer, drawnIndex);
+    if (!discardResult.ok) {
+      endEffectHistoryStep();
+      rocketState.statusNote = discardResult.message;
+      renderPlayerHand();
+      renderStateReadout();
+      return discardResult;
+    }
+    cards.addToDiscardPile(cardState, discardResult.card);
+
+    const resourceReward = cards.getDiscardActionRewardForCard(discardResult.card);
+    const moveReward = cards.getDiscardActionMoveRewardForCard?.(discardResult.card);
+    const dataResults = [];
+
+    if (resourceReward) {
+      if (Object.keys(resourceReward.gain || {}).length) {
+        players.gainResources(currentPlayer, resourceReward.gain);
+      }
+      const dataCount = Math.max(0, Math.round(resourceReward.dataCount || 0));
+      for (let index = 0; index < dataCount; index += 1) {
+        dataResults.push(data.gainData(currentPlayer, { source: "card_corner" }));
+      }
+    }
+
+    if (moveReward?.gain && Object.keys(moveReward.gain).length) {
+      players.gainResources(currentPlayer, moveReward.gain);
+    }
+
+    if (moveReward) {
+      insertActionEffectsAfterCurrent([{
+        id: `${effect.id || "card-corner"}-move-${discardResult.card.id}`,
+        type: cardEffects.EFFECT_TYPES.CARD_MOVE,
+        label: `${cards.getCardLabel(discardResult.card)}：${moveReward.label}`,
+        icon: "movement",
+        options: {
+          movementPoints: moveReward.movementPoints || 1,
+          historyLabel: moveReward.label,
+        },
+      }]);
+    }
+
+    recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      currentPlayer,
+      beforePlayer,
+      "恢复盲抽角标结算前玩家状态",
+    ));
+    recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+      cardState,
+      beforeCardState.publicCards,
+      beforeCardState.discardPile,
+    ));
+
+    const rewardText = resourceReward
+      ? formatCardCornerRewardMessage(resourceReward, dataResults)
+      : moveReward
+        ? `${formatPlanetRewardGain(moveReward.gain || {})}${moveReward.gain?.score ? "，" : ""}${moveReward.label}`
+        : "无可结算角标";
+    return finishAutomaticRewardEffect(effect, {
+      ok: true,
+      undoable: false,
+      message: `${effect.label}：抽到并弃除 ${cards.getCardLabel(discardResult.card)}，${rewardText}`,
+      payload: {
+        card: discardResult.card,
+        resourceReward,
+        moveReward,
+        dataResults,
+      },
+    }, [renderPlayerHand]);
+  }
+
   function executeCardEffect(effect) {
     const types = cardEffects.EFFECT_TYPES;
     switch (effect.type) {
@@ -4641,8 +5082,12 @@
         return expandCardScanActionEffect(effect);
       case types.RESEARCH_TECH:
         return executeCardResearchTechEffect(effect);
+      case types.CARD_MOVE:
+        return beginCardMoveEffect(effect);
       case types.DRAW_THEN_SCAN:
         return openCardDrawThenScanEffect(effect);
+      case types.DRAW_THEN_DISCARD_ACTION:
+        return executeCardDrawThenDiscardActionEffect(effect);
       default:
         return null;
     }
@@ -6165,14 +6610,22 @@
     const playActive = isPlayCardSelectionActive();
     const movePaymentActive = isMovePaymentSelectionActive();
     const handScanActive = isHandScanSelectionActive();
+    const cardCornerAction = getPendingCardCornerQuickAction();
+    const cardCornerActionEnabled = canUseCardCornerQuickAction();
     const handScanPickIndex = pendingScanTargetAction?.type === "hand_scan"
       && Number.isInteger(Number(pendingScanTargetAction.handIndex))
       ? Number(pendingScanTargetAction.handIndex)
       : null;
-    const handPickActive = discardActive || playActive || movePaymentActive || handScanActive || handScanPickIndex != null;
+    const handPickActive = discardActive
+      || playActive
+      || movePaymentActive
+      || handScanActive
+      || handScanPickIndex != null
+      || cardCornerActionEnabled;
     const currentCredits = Number(currentPlayer.resources?.credits) || 0;
 
     els.playerHandPanel.classList.toggle("is-empty", hand.length === 0);
+    els.playerHandPanel.classList.toggle("card-corner-action-ready", cardCornerActionEnabled);
     layoutPlayerHandFan(hand.length);
     els.playerHandFan.replaceChildren(...hand.map((card, index) => {
       const label = card.cardName || (card.faceUp ? `手牌 ${index + 1}` : `手牌背面 ${index + 1}`);
@@ -6219,6 +6672,24 @@
             button.classList.add("is-move-card-muted");
             button.disabled = true;
             button.setAttribute("aria-label", label);
+          }
+        } else if (cardCornerActionEnabled) {
+          const reward = cards.getDiscardActionRewardForCard(card);
+          const selected = cardCornerAction?.card?.id === card.id;
+          if (reward) {
+            button.classList.add("is-corner-action-card");
+            if (selected) button.classList.add("is-selected");
+            button.setAttribute("aria-label", `${label}（${reward.label}）`);
+            button.title = selected
+              ? `${reward.label}：点击上方按钮确认，或再次点击取消`
+              : `${reward.label}：点击选择`;
+          } else {
+            button.classList.add("is-corner-action-card-muted");
+            button.disabled = true;
+            button.setAttribute("aria-label", label);
+            button.title = isMovePaymentCard(card)
+              ? "移动牌用于移动支付，不能直接弃除换资源"
+              : "这张牌没有可用的弃牌资源角标";
           }
         } else {
           button.classList.add(affordable ? "is-playable" : "is-unaffordable");
@@ -7174,6 +7645,7 @@
   }
 
   function setQuickPanelOpen(open) {
+    if (open) cancelCardCornerQuickAction({ silent: true });
     els.quickActionsPanel.hidden = !open;
     els.actionQuickButton.setAttribute("aria-expanded", String(open));
     els.actionQuickButton.classList.add("action-button-ready");
@@ -7405,6 +7877,7 @@
       } else {
         markActionPending();
       }
+      handleCardTriggerEvents(result.events);
     }
 
     renderPlayerStats();
@@ -7787,7 +8260,7 @@
     if (event.button !== 0) return;
     if (event.target.closest(".rocket-token") || event.target.closest(".move-arrow-button")) return;
     if (moveHighlightRocketId == null) return;
-    if (pendingActionEffectFlow?.freeMoveMode) return;
+    if (pendingActionEffectFlow?.freeMoveMode || pendingActionEffectFlow?.cardMoveEffect) return;
     deactivateMoveMode();
     renderStateReadout();
   }
@@ -8146,6 +8619,14 @@
       );
       return;
     }
+    if (pendingActionEffectFlow?.cardMoveEffect) {
+      executeCardMoveForEffect(
+        Number(button.dataset.moveX),
+        Number(button.dataset.moveY),
+        moveHighlightRocketId,
+      );
+      return;
+    }
     moveRocket(Number(button.dataset.moveX), Number(button.dataset.moveY), moveHighlightRocketId);
   });
   els.wheelWrap.addEventListener("pointerdown", handleBoardPointerDown);
@@ -8193,6 +8674,7 @@
   els.discardSelectionCancel?.addEventListener("click", cancelDiscardSelection);
   els.discardSelectionBackdrop?.addEventListener("click", cancelDiscardSelection);
   els.playCardActionButton?.addEventListener("click", cancelPlayCardSelection);
+  els.cardCornerActionButton?.addEventListener("click", confirmCardCornerQuickAction);
   els.handScanCancel?.addEventListener("click", cancelHandScanSelection);
   els.reservedCardFan?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-reserved-index]");
@@ -8220,7 +8702,9 @@
     }
     if (isPlayCardSelectionActive()) {
       handleHandCardPlay(Number(button.dataset.handIndex));
+      return;
     }
+    handleHandCardCornerQuickAction(Number(button.dataset.handIndex));
   });
   els.debugDiscardCardButton?.addEventListener("click", discardCardFromCurrentPlayer);
   els.debugCheatButton?.addEventListener("click", toggleCheatMode);

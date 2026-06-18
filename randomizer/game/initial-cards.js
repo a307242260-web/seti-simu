@@ -110,7 +110,7 @@
   const INDUSTRY_EFFECTS = Object.freeze({
     "层云核心": Object.freeze({
       label: "层云核心",
-      resources: Object.freeze({ publicity: 3, credits: 4, energy: 2 }),
+      resources: Object.freeze({ publicity: 3, credits: 3, energy: 2 }),
       blindDraw: 1,
       incomeIncreaseCount: 3,
       baseIncome: Object.freeze({ credits: 2, energy: 1, handSize: 1 }),
@@ -165,13 +165,6 @@
       resources: Object.freeze({ publicity: 3, credits: 3, energy: 3 }),
       blindDraw: 1,
       incomeIncreaseCount: 2,
-      baseIncome: Object.freeze({ credits: 2, energy: 1, handSize: 1 }),
-    }),
-    "异屋实验室": Object.freeze({
-      label: "异屋实验室",
-      resources: Object.freeze({ publicity: 1, credits: 2, energy: 2 }),
-      blindDraw: 1,
-      incomeIncreaseCount: 3,
       baseIncome: Object.freeze({ credits: 2, energy: 1, handSize: 1 }),
     }),
     "异星实验室": Object.freeze({

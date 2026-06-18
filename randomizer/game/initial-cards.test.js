@@ -83,7 +83,7 @@ function initialCard(number) {
   const result = initialCards.resolveIndustryEffect(context, player, { label: "层云核心" });
 
   assert.equal(result.ok, true);
-  assert.equal(player.resources.credits, 4);
+  assert.equal(player.resources.credits, 3);
   assert.equal(player.resources.energy, 2);
   assert.equal(player.resources.publicity, 3);
   assert.equal(player.resources.handSize, 1);
@@ -95,6 +95,20 @@ function initialCard(number) {
     availableData: 0,
     additionalPublicScan: 0,
   });
+  assert.equal(result.incomeIncreaseCount, 3);
+}
+
+{
+  const context = createContext();
+  const player = currentPlayer(context);
+
+  const result = initialCards.resolveIndustryEffect(context, player, { label: "异星实验室" });
+
+  assert.equal(result.ok, true);
+  assert.equal(player.resources.publicity, 1);
+  assert.equal(player.resources.credits, 2);
+  assert.equal(player.resources.energy, 2);
+  assert.equal(player.resources.handSize, 1);
   assert.equal(result.incomeIncreaseCount, 3);
 }
 

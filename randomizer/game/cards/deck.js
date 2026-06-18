@@ -28,6 +28,46 @@
     1: Object.freeze({ energy: 1 }),
     2: Object.freeze({ handSize: 1 }),
   });
+  const DISCARD_ACTION_REWARDS = Object.freeze({
+    0: Object.freeze({
+      code: 0,
+      label: "弃牌换1宣传",
+      gain: Object.freeze({ publicity: 1 }),
+      dataCount: 0,
+    }),
+    1: Object.freeze({
+      code: 1,
+      label: "弃牌换1数据",
+      gain: Object.freeze({}),
+      dataCount: 1,
+    }),
+    3: Object.freeze({
+      code: 3,
+      label: "弃牌换2宣传",
+      gain: Object.freeze({ publicity: 2 }),
+      dataCount: 0,
+    }),
+    4: Object.freeze({
+      code: 4,
+      label: "弃牌换1数据+1分",
+      gain: Object.freeze({ score: 1 }),
+      dataCount: 1,
+    }),
+  });
+  const DISCARD_ACTION_MOVE_REWARDS = Object.freeze({
+    2: Object.freeze({
+      code: 2,
+      label: "弃牌移动1",
+      movementPoints: 1,
+      gain: Object.freeze({}),
+    }),
+    5: Object.freeze({
+      code: 5,
+      label: "弃牌移动1+1分",
+      movementPoints: 1,
+      gain: Object.freeze({ score: 1 }),
+    }),
+  });
 
   let cardInstanceSequence = 0;
 
@@ -69,6 +109,36 @@
     const incomeCode = getIncomeCodeForCard(card);
     const gain = INCOME_CODE_GAINS[incomeCode];
     return gain ? { ...gain } : null;
+  }
+
+  function getDiscardActionCodeForCard(card) {
+    if (Number.isInteger(card?.discardActionCode)) return card.discardActionCode;
+    const entry = getCatalogEntryForCard(card);
+    return Number.isInteger(entry?.discard_action_code) ? entry.discard_action_code : null;
+  }
+
+  function getDiscardActionRewardForCard(card) {
+    const actionCode = getDiscardActionCodeForCard(card);
+    const reward = DISCARD_ACTION_REWARDS[actionCode];
+    if (!reward) return null;
+    return {
+      code: reward.code,
+      label: reward.label,
+      gain: { ...reward.gain },
+      dataCount: reward.dataCount,
+    };
+  }
+
+  function getDiscardActionMoveRewardForCard(card) {
+    const actionCode = getDiscardActionCodeForCard(card);
+    const reward = DISCARD_ACTION_MOVE_REWARDS[actionCode];
+    if (!reward) return null;
+    return {
+      code: reward.code,
+      label: reward.label,
+      movementPoints: reward.movementPoints,
+      gain: { ...reward.gain },
+    };
   }
 
   function createCardState() {
@@ -320,11 +390,16 @@
     PUBLIC_CARD_COUNT,
     CARD_BASE_PATH,
     INCOME_CODE_GAINS,
+    DISCARD_ACTION_REWARDS,
+    DISCARD_ACTION_MOVE_REWARDS,
     getCardSrc,
     createCardInstance,
     getCatalogEntryForCard,
     getIncomeCodeForCard,
     getIncomeGainForCard,
+    getDiscardActionCodeForCard,
+    getDiscardActionRewardForCard,
+    getDiscardActionMoveRewardForCard,
     createCardState,
     collectClaimedCardIds,
     getAvailablePool,

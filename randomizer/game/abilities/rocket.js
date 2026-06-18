@@ -385,7 +385,12 @@
       payload: {
         rocket: launchResult.rocket,
       },
-      events: [],
+      events: [{
+        type: "launch",
+        rocketId: launchResult.rocket.id,
+        playerId: currentPlayer.id,
+        source: options.source || "launch",
+      }],
       rocket: launchResult.rocket,
     };
   }
@@ -463,7 +468,7 @@
       currentPlayer,
       moveResult.rocket,
       geometry.toContent,
-      { prefix: "移动到", source: "move" },
+      { prefix: "移动到", source: options.source || "move" },
     );
     commands.push(historyCommands.createRestorePlayerCommand(
       currentPlayer,
