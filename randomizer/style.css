@@ -699,7 +699,8 @@ body {
   gap: 14px;
 }
 
-.alien-jiuzhe-thresholds {
+.alien-jiuzhe-thresholds,
+.alien-banrenma-scoremarks {
   flex: 0 0 auto;
   display: flex;
   flex-direction: row;
@@ -709,11 +710,13 @@ body {
   width: 100%;
 }
 
-.alien-jiuzhe-thresholds[hidden] {
+.alien-jiuzhe-thresholds[hidden],
+.alien-banrenma-scoremarks[hidden] {
   display: none;
 }
 
-.alien-jiuzhe-threshold {
+.alien-jiuzhe-threshold,
+.alien-banrenma-scoremark {
   display: grid;
   justify-items: center;
   gap: 3px;
@@ -725,7 +728,8 @@ body {
   box-shadow: 0 0 10px rgba(255, 210, 104, 0.12);
 }
 
-.alien-jiuzhe-threshold-icon {
+.alien-jiuzhe-threshold-icon,
+.alien-banrenma-scoremark-icon {
   display: block;
   width: 60px;
   height: 60px;
@@ -733,7 +737,8 @@ body {
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
 }
 
-.alien-jiuzhe-threshold-score {
+.alien-jiuzhe-threshold-score,
+.alien-banrenma-scoremark-score {
   font: 700 19.5px/1 "Microsoft YaHei", "PingFang SC", sans-serif;
   color: rgba(255, 244, 196, 0.94);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
@@ -831,6 +836,7 @@ body {
 .alien-jiuzhe-slot,
 .alien-yichangdian-slot,
 .alien-fangzhou-slot,
+.alien-banrenma-slot,
 .alien-state-trace-slot {
   position: absolute;
   width: 14%;
@@ -849,6 +855,7 @@ body {
 .alien-jiuzhe-slot[data-trace-type="pink"],
 .alien-yichangdian-slot[data-trace-type="pink"],
 .alien-fangzhou-slot[data-trace-type="pink"],
+.alien-banrenma-slot[data-trace-type="pink"],
 .alien-state-trace-slot[data-trace-type="pink"] {
   border-color: rgba(232, 120, 168, 0.75);
   box-shadow: 0 0 14px rgba(232, 120, 168, 0.2);
@@ -857,6 +864,7 @@ body {
 .alien-jiuzhe-slot[data-trace-type="yellow"],
 .alien-yichangdian-slot[data-trace-type="yellow"],
 .alien-fangzhou-slot[data-trace-type="yellow"],
+.alien-banrenma-slot[data-trace-type="yellow"],
 .alien-state-trace-slot[data-trace-type="yellow"] {
   border-color: rgba(232, 196, 72, 0.78);
   box-shadow: 0 0 14px rgba(232, 196, 72, 0.2);
@@ -865,6 +873,7 @@ body {
 .alien-jiuzhe-slot[data-trace-type="blue"],
 .alien-yichangdian-slot[data-trace-type="blue"],
 .alien-fangzhou-slot[data-trace-type="blue"],
+.alien-banrenma-slot[data-trace-type="blue"],
 .alien-state-trace-slot[data-trace-type="blue"] {
   border-color: rgba(88, 190, 232, 0.78);
   box-shadow: 0 0 14px rgba(88, 190, 232, 0.2);
@@ -873,6 +882,7 @@ body {
 .alien-jiuzhe-slot:not(.is-placeable),
 .alien-yichangdian-slot:not(.is-placeable),
 .alien-fangzhou-slot:not(.is-placeable),
+.alien-banrenma-slot:not(.is-placeable),
 .alien-state-trace-slot:not(.is-placeable) {
   cursor: default;
   opacity: 0.42;
@@ -884,6 +894,8 @@ body {
 .alien-yichangdian-slot.is-placeable:focus-visible,
 .alien-fangzhou-slot.is-placeable:hover,
 .alien-fangzhou-slot.is-placeable:focus-visible,
+.alien-banrenma-slot.is-placeable:hover,
+.alien-banrenma-slot.is-placeable:focus-visible,
 .alien-state-trace-slot.is-placeable:hover,
 .alien-state-trace-slot.is-placeable:focus-visible {
   background: rgba(255, 246, 177, 0.16);
@@ -892,7 +904,8 @@ body {
 }
 
 .alien-yichangdian-slot-stack-hotzone,
-.alien-fangzhou-slot-stack-hotzone {
+.alien-fangzhou-slot-stack-hotzone,
+.alien-banrenma-slot-stack-hotzone {
   border-radius: 999px;
   background: rgba(8, 23, 34, 0.04);
 }
@@ -904,14 +917,22 @@ body {
 }
 
 .alien-trace-token-yichangdian,
-.alien-trace-token-fangzhou {
+.alien-trace-token-fangzhou,
+.alien-trace-token-banrenma {
   border-radius: 50%;
   outline: 2px solid rgba(126, 229, 255, 0.46);
   outline-offset: 1px;
 }
 
+.alien-trace-token-banrenma-bonus {
+  border-radius: 50%;
+  outline: 2px solid rgba(255, 246, 177, 0.52);
+  outline-offset: 1px;
+}
+
 .alien-yichangdian-card-area,
-.alien-fangzhou-card-area {
+.alien-fangzhou-card-area,
+.alien-banrenma-card-area {
   display: grid;
   justify-items: center;
   gap: 6px;
@@ -923,18 +944,21 @@ body {
 }
 
 .alien-yichangdian-card-area[hidden],
-.alien-fangzhou-card-area[hidden] {
+.alien-fangzhou-card-area[hidden],
+.alien-banrenma-card-area[hidden] {
   display: none;
 }
 
 .alien-yichangdian-card-title,
-.alien-fangzhou-card-title {
+.alien-fangzhou-card-title,
+.alien-banrenma-card-title {
   color: rgba(222, 246, 255, 0.86);
   font: 700 12px/1.2 "Microsoft YaHei", "PingFang SC", sans-serif;
 }
 
 .alien-yichangdian-card-image,
-.alien-fangzhou-card-image {
+.alien-fangzhou-card-image,
+.alien-banrenma-card-image {
   display: block;
   width: 100%;
   height: auto;
@@ -2110,7 +2134,8 @@ body {
 }
 
 .reserved-card-task-badge,
-.reserved-card-trigger-badge {
+.reserved-card-trigger-badge,
+.reserved-card-banrenma-threshold-badge {
   position: absolute;
   left: 50%;
   z-index: 1002;
@@ -2138,6 +2163,35 @@ body {
   bottom: -10px;
   border: 1px solid rgba(255, 215, 124, 0.72);
   background: rgba(93, 70, 24, 0.94);
+}
+
+.reserved-card-banrenma-threshold-badge {
+  top: -14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 46px;
+  border: 1px solid rgba(169, 255, 176, 0.72);
+  background: rgba(24, 82, 42, 0.94);
+  box-shadow: 0 0 12px rgba(99, 230, 124, 0.32);
+}
+
+.reserved-card-banrenma-threshold-icon {
+  display: block;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+.reserved-card-button-banrenma.is-banrenma-threshold-ready {
+  cursor: pointer;
+  filter: drop-shadow(0 0 12px rgba(116, 255, 151, 0.5));
+}
+
+.reserved-card-button-banrenma.is-banrenma-threshold-ready .reserved-card {
+  outline: 3px solid rgba(129, 255, 152, 0.88);
+  outline-offset: 3px;
 }
 
 .reserved-card-content {

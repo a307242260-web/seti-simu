@@ -7,6 +7,7 @@
   let jiuzhe = root.SetiAlienJiuzhe;
   let yichangdian = root.SetiAlienYichangdian;
   let fangzhou = root.SetiAlienFangzhou;
+  let banrenma = root.SetiAlienBanrenma;
 
   if (typeof require === "function") {
     catalog = catalog || require("./catalog");
@@ -15,16 +16,17 @@
     jiuzhe = jiuzhe || require("./jiuzhe");
     yichangdian = yichangdian || require("./yichangdian");
     fangzhou = fangzhou || require("./fangzhou");
+    banrenma = banrenma || require("./banrenma");
   }
 
-  const api = factory(catalog, placement, state, jiuzhe, yichangdian, fangzhou);
+  const api = factory(catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAlienRender = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, jiuzhe, yichangdian, fangzhou) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma) {
   "use strict";
 
   const TRACE_KIND_FIRST = "first";
@@ -32,6 +34,7 @@
   const TRACE_KIND_JIUZHE = "jiuzhe";
   const TRACE_KIND_YICHANGDIAN = "yichangdian";
   const TRACE_KIND_FANGZHOU = "fangzhou";
+  const TRACE_KIND_BANRENMA = "banrenma";
   const YICHANGDIAN_SLOT_DISPLAY_SCALE = 0.5;
 
   const tokenElements = new Map();
@@ -39,11 +42,13 @@
   const jiuzheSlotElements = new Map();
   const yichangdianSlotElements = new Map();
   const fangzhouSlotElements = new Map();
+  const banrenmaSlotElements = new Map();
   const firstLayoutOverrides = new Map();
   const extraLayoutOverrides = new Map();
   const jiuzheLayoutOverrides = new Map();
   const yichangdianLayoutOverrides = new Map();
   const fangzhouLayoutOverrides = new Map();
+  const banrenmaLayoutOverrides = new Map();
   let dragState = null;
   let dragHandlers = {};
   let dragListenersBound = false;
@@ -70,6 +75,10 @@
 
   function getFangzhouOverrideKey(alienSlotId, traceType, position) {
     return `fangzhou:${alienSlotId}:${traceType}:${position}`;
+  }
+
+  function getBanrenmaOverrideKey(alienSlotId, traceType, position) {
+    return `banrenma:${alienSlotId}:${traceType}:${position}`;
   }
 
   function getEffectiveTraceMarkerLayout(alienSlotId, traceType) {
@@ -140,6 +149,20 @@
     };
   }
 
+  function getEffectiveBanrenmaTraceMarkerLayout(alienSlotId, traceType, position, stackIndex = 0) {
+    const base = placement.getBanrenmaTraceMarkerLayout?.(alienSlotId, traceType, position);
+    if (!base) return null;
+
+    const override = banrenmaLayoutOverrides.get(getBanrenmaOverrideKey(alienSlotId, traceType, position));
+    const effectiveBase = {
+      ...base,
+      percentX: override?.percentX ?? base.percentX,
+      percentY: override?.percentY ?? base.percentY,
+    };
+    if (Number(position) !== 1) return effectiveBase;
+    return placement.getBanrenmaStackTraceMarkerLayout?.(effectiveBase, stackIndex) || effectiveBase;
+  }
+
   function clientToAlienStatePercent(wrap, clientX, clientY) {
     const rect = wrap.getBoundingClientRect();
     const localX = clientX - rect.left;
@@ -172,6 +195,7 @@
       || traceKind === TRACE_KIND_JIUZHE
       || traceKind === TRACE_KIND_YICHANGDIAN
       || traceKind === TRACE_KIND_FANGZHOU
+      || traceKind === TRACE_KIND_BANRENMA
     ) {
       return `${traceKind}:${alienSlotId}:${traceType}:${extraIndex}`;
     }
@@ -185,6 +209,7 @@
 
   function handleTraceTokenPointerDown(event) {
     if (event.button !== 0) return;
+    if (event.type === "mousedown" && dragState) return;
 
     const element = event.target.closest(".alien-trace-token.alien-trace-token-positioned");
     if (!element) return;
@@ -207,17 +232,22 @@
       yichangdianStackIndex: Number(element.dataset.yichangdianStackIndex || 0),
       fangzhouPosition: Number(element.dataset.fangzhouPosition || 0),
       fangzhouStackIndex: Number(element.dataset.fangzhouStackIndex || 0),
-      pointerId: event.pointerId,
+      banrenmaPosition: Number(element.dataset.banrenmaPosition || 0),
+      banrenmaStackIndex: Number(element.dataset.banrenmaStackIndex || 0),
+      pointerId: typeof event.pointerId === "number" ? event.pointerId : null,
     };
 
     setDraggingElement(element, true);
-    if (element.setPointerCapture) {
+    if (element.setPointerCapture && dragState.pointerId != null) {
       element.setPointerCapture(event.pointerId);
     }
   }
 
   function handleTraceTokenPointerMove(event) {
-    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    if (!dragState) return;
+    const eventPointerId = typeof event.pointerId === "number" ? event.pointerId : null;
+    if (dragState.pointerId != null && eventPointerId != null && eventPointerId !== dragState.pointerId) return;
+    if (dragState.pointerId != null && eventPointerId == null && event.type === "mousemove") return;
 
     const position = clientToAlienStatePercent(dragState.wrap, event.clientX, event.clientY);
     dragState.element.style.left = `${position.percentX}%`;
@@ -227,12 +257,15 @@
   }
 
   function handleTraceTokenPointerUp(event) {
-    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    if (!dragState) return;
+    const eventPointerId = typeof event.pointerId === "number" ? event.pointerId : null;
+    if (dragState.pointerId != null && eventPointerId != null && eventPointerId !== dragState.pointerId) return;
+    if (dragState.pointerId != null && eventPointerId == null && event.type === "mouseup") return;
 
     const { element, wrap, alienSlotId, traceType, traceKind } = dragState;
     const position = clientToAlienStatePercent(wrap, event.clientX, event.clientY);
 
-    if (element.releasePointerCapture) {
+    if (element.releasePointerCapture && dragState.pointerId != null) {
       try {
         element.releasePointerCapture(event.pointerId);
       } catch {
@@ -262,6 +295,16 @@
           getFangzhouOverrideKey(alienSlotId, traceType, positionIndex),
           position,
         );
+      } else if (traceKind === TRACE_KIND_BANRENMA) {
+        const positionIndex = Number(element.dataset.banrenmaPosition || 0);
+        const stackIndex = Number(element.dataset.banrenmaStackIndex || 0);
+        const basePosition = positionIndex === 1
+          ? placement.getBanrenmaBaseFromStackTraceMarkerLayout?.(position, stackIndex) || position
+          : position;
+        banrenmaLayoutOverrides.set(
+          getBanrenmaOverrideKey(alienSlotId, traceType, positionIndex),
+          basePosition,
+        );
       } else if (traceKind === TRACE_KIND_EXTRA) {
         const anchorLayout = getEffectiveExtraTraceAnchorLayout(alienSlotId, traceType);
         const extraIndex = Number(element.dataset.extraIndex || 0);
@@ -282,6 +325,8 @@
         ? `异常点${Number(element.dataset.yichangdianPosition || 0)}号位`
       : traceKind === TRACE_KIND_FANGZHOU
         ? `方舟${Number(element.dataset.fangzhouPosition || 0)}号位`
+      : traceKind === TRACE_KIND_BANRENMA
+        ? `半人马${Number(element.dataset.banrenmaPosition || 0)}号位`
       : traceKind === TRACE_KIND_EXTRA
         ? "非首标记网格锚点"
         : "首标记";
@@ -295,6 +340,8 @@
       yichangdianStackIndex: traceKind === TRACE_KIND_YICHANGDIAN ? Number(element.dataset.yichangdianStackIndex || 0) : null,
       fangzhouPosition: traceKind === TRACE_KIND_FANGZHOU ? Number(element.dataset.fangzhouPosition || 0) : null,
       fangzhouStackIndex: traceKind === TRACE_KIND_FANGZHOU ? Number(element.dataset.fangzhouStackIndex || 0) : null,
+      banrenmaPosition: traceKind === TRACE_KIND_BANRENMA ? Number(element.dataset.banrenmaPosition || 0) : null,
+      banrenmaStackIndex: traceKind === TRACE_KIND_BANRENMA ? Number(element.dataset.banrenmaStackIndex || 0) : null,
       percentX: position.percentX,
       percentY: position.percentY,
       message: traceKind === TRACE_KIND_EXTRA
@@ -307,6 +354,10 @@
             + ` 拖动至 ${position.percentX}%,${position.percentY}%`
         : traceKind === TRACE_KIND_FANGZHOU
           ? `${label} ${traceLabel} 方舟${Number(element.dataset.fangzhouPosition || 0)}号位`
+            + ` 拖动至 ${position.percentX}%,${position.percentY}%`
+        : traceKind === TRACE_KIND_BANRENMA
+          ? `${label} ${traceLabel} 半人马${Number(element.dataset.banrenmaPosition || 0)}号位`
+            + `${Number(element.dataset.banrenmaPosition || 0) === 1 ? `#${Number(element.dataset.banrenmaStackIndex || 0) + 1}` : ""}`
             + ` 拖动至 ${position.percentX}%,${position.percentY}%`
         : `${label} ${traceLabel} ${kindLabel} 拖动至 ${position.percentX}%,${position.percentY}%`,
     };
@@ -326,6 +377,9 @@
     window.addEventListener("pointermove", handleTraceTokenPointerMove);
     window.addEventListener("pointerup", handleTraceTokenPointerUp);
     window.addEventListener("pointercancel", handleTraceTokenPointerUp);
+    document.addEventListener("mousedown", handleTraceTokenPointerDown);
+    window.addEventListener("mousemove", handleTraceTokenPointerMove);
+    window.addEventListener("mouseup", handleTraceTokenPointerUp);
     dragListenersBound = true;
   }
 
@@ -961,6 +1015,179 @@
     }
   }
 
+  function getBanrenmaSlotElementKey(alienSlotId, traceType, position) {
+    return `banrenma-slot:${alienSlotId}:${traceType}:${position}`;
+  }
+
+  function getBanrenmaTokenKey(alienSlotId, traceType, position, stackIndex = 0) {
+    return getTokenElementKey(
+      TRACE_KIND_BANRENMA,
+      alienSlotId,
+      traceType,
+      Number(position) === 1 ? `1-${stackIndex}` : position,
+    );
+  }
+
+  function applyBanrenmaTraceSlotStyle(slot, layout, position) {
+    if (Number(position) !== 1) {
+      applyTraceTokenStyle(slot, layout, placement.BANRENMA_TRACE_TOKEN_DISPLAY_SCALE || 1);
+      slot.classList.remove("alien-banrenma-slot-stack-hotzone");
+      slot.style.removeProperty("width");
+      slot.style.removeProperty("height");
+      slot.style.removeProperty("aspect-ratio");
+      slot.style.removeProperty("border-radius");
+      delete slot.dataset.hotzoneTopPercent;
+      delete slot.dataset.hotzoneBottomPercent;
+      return;
+    }
+
+    const slotDisplayScale = (placement.BANRENMA_TRACE_TOKEN_DISPLAY_SCALE || 1) * YICHANGDIAN_SLOT_DISPLAY_SCALE;
+    applyTraceTokenStyle(slot, layout, slotDisplayScale);
+    const tokenSize = placement.getBanrenmaTraceTokenSize?.(layout);
+    if (!tokenSize) return;
+    const stackStepY = placement.getBanrenmaStackStepY?.(layout) || tokenSize.radiusXPercent;
+    const hotzoneHeight = stackStepY * 7;
+    const hotzoneCenterY = layout.percentY - stackStepY * 2.5;
+    slot.classList.add("alien-banrenma-slot-stack-hotzone");
+    slot.style.left = `${layout.percentX}%`;
+    slot.style.top = `${hotzoneCenterY}%`;
+    slot.style.width = `${tokenSize.widthPercent * YICHANGDIAN_SLOT_DISPLAY_SCALE}%`;
+    slot.style.height = `${hotzoneHeight}%`;
+    slot.style.aspectRatio = "auto";
+    slot.style.transform = "translate(-50%, -50%)";
+    slot.dataset.hotzoneTopPercent = String(Math.round((layout.percentY - stackStepY * 6) * 100) / 100);
+    slot.dataset.hotzoneBottomPercent = String(Math.round((layout.percentY + stackStepY) * 100) / 100);
+  }
+
+  function mountBanrenmaTraceToken(alienSlotId, traceType, position, stackIndex, entry, layer, options, activeKeys) {
+    const key = getBanrenmaTokenKey(alienSlotId, traceType, position, stackIndex);
+    activeKeys.add(key);
+
+    let element = tokenElements.get(key);
+    if (!element) {
+      element = document.createElement("img");
+      element.className = "alien-trace-token alien-trace-token-positioned alien-trace-token-banrenma";
+      element.draggable = false;
+      tokenElements.set(key, element);
+      layer.appendChild(element);
+    }
+
+    const layout = getEffectiveBanrenmaTraceMarkerLayout(alienSlotId, traceType, position, stackIndex);
+    if (!layout || dragState?.element === element) return;
+
+    applyTraceTokenStyle(element, layout, placement.BANRENMA_TRACE_TOKEN_DISPLAY_SCALE || 1);
+    element.src = resolvePlayerTokenAsset(entry.playerColor, options);
+    element.alt = `${banrenma?.formatTraceLabel?.(traceType, position, stackIndex) || traceType}`;
+    element.dataset.alienSlot = String(alienSlotId);
+    element.dataset.traceType = traceType;
+    element.dataset.traceKind = TRACE_KIND_BANRENMA;
+    element.dataset.banrenmaPosition = String(position);
+    element.dataset.banrenmaStackIndex = String(stackIndex);
+    element.classList.toggle(
+      "is-placeable",
+      Number(position) === 1 && options.canPlaceBanrenmaTrace?.(alienSlotId, traceType, position) !== false,
+    );
+    if (Number(position) === 1) {
+      element.dataset.banrenmaTraceSlot = "true";
+    } else {
+      delete element.dataset.banrenmaTraceSlot;
+    }
+    delete element.dataset.extraIndex;
+    delete element.dataset.jiuzhePosition;
+    delete element.dataset.yichangdianPosition;
+    delete element.dataset.fangzhouPosition;
+    element.title = `${placement.getAlienSlotLabel(alienSlotId)} ${banrenma?.formatTraceLabel?.(traceType, position, stackIndex) || traceType}`
+      + ` ${options.getPlayerLabel?.(entry.playerColor) || entry.playerColor || "未知"}`
+      + ` @(${layout.percentX}%,${layout.percentY}%)`;
+  }
+
+  function mountBanrenmaTraceSlot(alienSlotId, traceType, position, layer, alienState, options, activeKeys) {
+    const grid = banrenma?.getTraceGrid?.(alienState, alienSlotId);
+    const entries = banrenma?.getTraceEntries?.(grid, traceType, position) || [];
+    const slotKey = getBanrenmaSlotElementKey(alienSlotId, traceType, position);
+    const visible = Boolean(entries.length)
+      || Boolean(banrenma?.isBanrenmaRevealedSlot?.(alienState, alienSlotId));
+    if (!visible) {
+      const existingSlot = banrenmaSlotElements.get(slotKey);
+      if (existingSlot) {
+        existingSlot.remove();
+        banrenmaSlotElements.delete(slotKey);
+      }
+      return;
+    }
+
+    entries.forEach((entry, stackIndex) => {
+      mountBanrenmaTraceToken(alienSlotId, traceType, position, stackIndex, entry, layer, options, activeKeys);
+    });
+
+    const canPlace = options.canPlaceBanrenmaTrace?.(alienSlotId, traceType, position) !== false;
+    const shouldShowSlot = !entries.length || Number(position) === 1;
+    if (!shouldShowSlot) {
+      const existingSlot = banrenmaSlotElements.get(slotKey);
+      if (existingSlot) {
+        existingSlot.remove();
+        banrenmaSlotElements.delete(slotKey);
+      }
+      return;
+    }
+
+    activeKeys.add(slotKey);
+    let slot = banrenmaSlotElements.get(slotKey);
+    if (!slot) {
+      slot = document.createElement("button");
+      slot.type = "button";
+      slot.className = "alien-banrenma-slot alien-trace-token-positioned";
+      banrenmaSlotElements.set(slotKey, slot);
+      layer.appendChild(slot);
+    }
+
+    const layout = getEffectiveBanrenmaTraceMarkerLayout(alienSlotId, traceType, position, 0);
+    if (!layout) return;
+    applyBanrenmaTraceSlotStyle(slot, layout, position);
+    slot.dataset.alienSlot = String(alienSlotId);
+    slot.dataset.traceType = traceType;
+    slot.dataset.banrenmaPosition = String(position);
+    slot.dataset.banrenmaTraceSlot = "true";
+    slot.classList.toggle("is-placeable", canPlace);
+    slot.title = `${banrenma?.formatTraceLabel?.(traceType, position) || traceType} @(${layout.percentX}%,${layout.percentY}%)`;
+    slot.setAttribute("aria-label", `${placement.getAlienSlotLabel(alienSlotId)} ${slot.title}`);
+  }
+
+  function renderBanrenmaTraceMarkers(alienSlotId, layer, alienState, options = {}) {
+    if (!layer || !banrenma) return;
+    const activeKeys = new Set();
+
+    for (const traceType of banrenma.TRACE_TYPES) {
+      for (const position of banrenma.TRACE_POSITIONS) {
+        mountBanrenmaTraceSlot(alienSlotId, traceType, position, layer, alienState, options, activeKeys);
+      }
+    }
+
+    for (const [key, element] of tokenElements.entries()) {
+      const parts = key.split(":");
+      if (parts[0] !== TRACE_KIND_BANRENMA) continue;
+      const slotId = Number(parts[1]);
+      if (slotId !== alienSlotId || activeKeys.has(key)) continue;
+      element.remove();
+      tokenElements.delete(key);
+    }
+    for (const [key, element] of banrenmaSlotElements.entries()) {
+      const parts = key.split(":");
+      const slotId = Number(parts[1]);
+      if (slotId !== alienSlotId || activeKeys.has(key)) continue;
+      element.remove();
+      banrenmaSlotElements.delete(key);
+    }
+  }
+
+  function renderAllBanrenmaTraceMarkers(getLayerForSlot, alienState, options = {}) {
+    if (!banrenma) return;
+    for (const alienSlotId of placement.ALIEN_SLOT_IDS) {
+      const layer = getLayerForSlot(alienSlotId);
+      if (layer) renderBanrenmaTraceMarkers(alienSlotId, layer, alienState, options);
+    }
+  }
+
   function renderAlienBackImage(alienSlotId, backElement, alienState) {
     if (!backElement) return;
 
@@ -1092,6 +1319,28 @@
       });
   }
 
+  function listBanrenmaTraceMarkerLayoutOverrides() {
+    return [...banrenmaLayoutOverrides.entries()]
+      .map(([key, position]) => {
+        const [, alienSlotId, traceType, tracePosition] = key.split(":");
+        return {
+          traceKind: TRACE_KIND_BANRENMA,
+          alienSlotId: Number(alienSlotId),
+          traceType,
+          position: Number(tracePosition),
+          percentX: position.percentX,
+          percentY: position.percentY,
+        };
+      })
+      .sort((a, b) => {
+        if (a.alienSlotId !== b.alienSlotId) return a.alienSlotId - b.alienSlotId;
+        const typeDiff = (banrenma?.TRACE_TYPES || placement.TRACE_TYPES).indexOf(a.traceType)
+          - (banrenma?.TRACE_TYPES || placement.TRACE_TYPES).indexOf(b.traceType);
+        if (typeDiff !== 0) return typeDiff;
+        return a.position - b.position;
+      });
+  }
+
   function resetAlienTraceTokens() {
     for (const element of tokenElements.values()) {
       element.remove();
@@ -1108,16 +1357,21 @@
     for (const element of fangzhouSlotElements.values()) {
       element.remove();
     }
+    for (const element of banrenmaSlotElements.values()) {
+      element.remove();
+    }
     tokenElements.clear();
     stateTraceSlotElements.clear();
     jiuzheSlotElements.clear();
     yichangdianSlotElements.clear();
     fangzhouSlotElements.clear();
+    banrenmaSlotElements.clear();
     firstLayoutOverrides.clear();
     extraLayoutOverrides.clear();
     jiuzheLayoutOverrides.clear();
     yichangdianLayoutOverrides.clear();
     fangzhouLayoutOverrides.clear();
+    banrenmaLayoutOverrides.clear();
     dragState = null;
   }
 
@@ -1130,11 +1384,13 @@
     getEffectiveJiuzheTraceMarkerLayout,
     getEffectiveYichangdianTraceMarkerLayout,
     getEffectiveFangzhouTraceMarkerLayout,
+    getEffectiveBanrenmaTraceMarkerLayout,
     listTraceMarkerLayoutOverrides,
     listExtraTraceMarkerLayoutOverrides,
     listJiuzheTraceMarkerLayoutOverrides,
     listYichangdianTraceMarkerLayoutOverrides,
     listFangzhouTraceMarkerLayoutOverrides,
+    listBanrenmaTraceMarkerLayoutOverrides,
     renderAlienTraceMarkers,
     renderAllAlienTraceMarkers,
     renderJiuzheTraceMarkers,
@@ -1143,6 +1399,8 @@
     renderAllYichangdianTraceMarkers,
     renderFangzhouTraceMarkers,
     renderAllFangzhouTraceMarkers,
+    renderBanrenmaTraceMarkers,
+    renderAllBanrenmaTraceMarkers,
     renderAlienBackImage,
     renderAllAlienBackImages,
     resetAlienTraceTokens,

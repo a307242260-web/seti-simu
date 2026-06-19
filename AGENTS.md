@@ -139,6 +139,16 @@ UI 布局：
 - 调试按钮「异常点调试」会强制在外星人 2 展示异常点，生成三个异常标记，且在 3×5 正面格铺满当前玩家 token（每色 1 号位只放 1 个，不结算奖励）。
 - 异常点揭示后面板下方展示一张异常点牌；痕迹奖励产生“外星人牌”时可确认拿展示牌、盲抽异常点牌或取消。异常点牌进入手牌并保留 `price`、`cardTypeCode`、`discardActionCode`、`scanActionCode`、`incomeCode`，打牌效果由 `randomizer/game/cards/effects.js` 中 `yichangdian_0.webp` 到 `yichangdian_9.webp` 模型驱动。
 
+半人马专属机制：
+
+- `randomizer/game/aliens/banrenma.js` 管理半人马状态，挂在 `alienGameState.banrenma`。字段包括 `revealedSlotId`、`traceSlotsByAlienSlotId`、`displayedCardIndex`、`cardDeck`、`scoreMarks`、`bonusSlots`。
+- 半人马揭示后使用正面 3×5 痕迹格（粉/黄/蓝各 1–5 号位）。1 号位是数组，可无限向上追加；2–5 号位单占用。痕迹坐标在 `placement.js` 的 `BANRENMA_TRACE_MARKER_SLOTS`，1 号位叠放偏移由 `BANRENMA_POSITION1_STACK_STEP_Y` 推算。
+- 痕迹奖励见 `assets/aliens/半人马/face_detail.md`：1 号位失去 1 数据得 6 分，2 号位失去 3 数据得 15 分，3 号位 5 分，4 号位 3 分 + 1 外星人牌，5 号位 5 分 + 1 外星人牌。外星人牌可拿当前展示牌、盲抽或取消。
+- 半人马揭示时，在外星人面板上方为每名启用玩家记录 1 个分数标记，阈值为该玩家当前分数 +15。玩家达到阈值后可选择一个尚未使用的顶部奖励位：1 任意外星人痕迹，2 外星人牌 +1 能量，3 得 3 宣传，4 得 8 分；奖励位会放置对应玩家颜色的半人马 `mark_*.png` 并全局占用，显示尺寸由 `BANRENMA_BONUS_TOKEN_DISPLAY_SCALE` 控制。
+- 半人马牌打出消耗能量而不是信用点，打出后进入保留区第二排，不视为 1/2 型任务牌。每张打出的半人马牌会额外记录一个当前分数 +15 的阈值；玩家达到阈值时可任选一张已达成的半人马保留牌，弃掉该牌并结算其条件效果。
+- 半人马卡牌模型由 `banrenma.js` 定义，使用 `assets/aliens/半人马/cards/0.webp`–`9.webp`。立即效果包括盲抽、资源、科技、精选、双扇区扫描和发射；条件效果包括指定/任意外星人痕迹、资源和收入增加。
+- 调试按钮「半人马调试」会强制在外星人 2 展示半人马、初始化展示牌和分数标记，并在 3×5 正面格铺满当前玩家 token（每色 1 号位只放 1 枚，不结算奖励）。当前半人马痕迹坐标已固化在 `BANRENMA_TRACE_MARKER_SLOTS`，奖励位坐标已固化在 `BANRENMA_BONUS_MARKER_SLOTS`；痕迹 token 和奖励 mark 均不再开启可拖动校准。
+
 方舟专属机制：
 
 - `randomizer/game/aliens/fangzhou.js` 管理方舟状态，挂在 `alienGameState.fangzhou`。揭示后使用正面 3×4 痕迹格（粉/黄/蓝各 1–4 号位）；1 号位单占用，2–4 号位需玩家 `unlockCount` 达到 1/2/3 才可放置。
@@ -448,6 +458,7 @@ node randomizer/game/data/nebula.test.js
 node randomizer/game/data/data.test.js
 node randomizer/game/tech/tech.test.js
 node randomizer/game/aliens/state.test.js
+node randomizer/game/aliens/banrenma.test.js
 node randomizer/game/aliens/yichangdian.test.js
 node randomizer/game/aliens/fangzhou.test.js
 node randomizer/game/aliens/fangzhou-card1-queue.test.js

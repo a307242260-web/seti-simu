@@ -30,7 +30,10 @@
   const JIUZHE_TRACE_TOKEN_DISPLAY_SCALE = 1.44;
   const YICHANGDIAN_TRACE_TOKEN_DISPLAY_SCALE = 1.44;
   const FANGZHOU_TRACE_TOKEN_DISPLAY_SCALE = 1.44;
+  const BANRENMA_TRACE_TOKEN_DISPLAY_SCALE = 1.44;
+  const BANRENMA_BONUS_TOKEN_DISPLAY_SCALE = 3.0;
   const FANGZHOU_POSITION1_STACK_STEP_Y = 14.5;
+  const BANRENMA_POSITION1_STACK_STEP_Y = 14.5;
   const YICHANGDIAN_ANOMALY_MARKER_SCALE_PERCENT = 6.5;
   const YICHANGDIAN_ANOMALY_EDGE_RADIAL_FRACTION = 0.92;
   const YICHANGDIAN_ANOMALY_EDGE_ANGULAR_FRACTIONS = Object.freeze({
@@ -164,6 +167,70 @@
     }),
   });
 
+  const BANRENMA_TRACE_MARKER_SLOTS = Object.freeze({
+    1: Object.freeze({
+      pink: Object.freeze({
+        1: Object.freeze({ percentX: 18.26, percentY: 35.85, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 18.26, percentY: 50.28, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 18.26, percentY: 61.28, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 18.26, percentY: 72.48, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 18.26, percentY: 83.48, scalePercent: 62 }),
+      }),
+      yellow: Object.freeze({
+        1: Object.freeze({ percentX: 49.75, percentY: 41.17, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 49.75, percentY: 55.4, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 49.75, percentY: 66.4, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 49.75, percentY: 77.6, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 49.75, percentY: 88.61, scalePercent: 62 }),
+      }),
+      blue: Object.freeze({
+        1: Object.freeze({ percentX: 80.89, percentY: 36.23, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 80.89, percentY: 50.09, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 80.89, percentY: 61.47, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 80.89, percentY: 72.29, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 80.89, percentY: 83.67, scalePercent: 62 }),
+      }),
+    }),
+    2: Object.freeze({
+      pink: Object.freeze({
+        1: Object.freeze({ percentX: 18.26, percentY: 35.85, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 18.26, percentY: 50.28, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 18.26, percentY: 61.28, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 18.26, percentY: 72.48, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 18.26, percentY: 83.48, scalePercent: 62 }),
+      }),
+      yellow: Object.freeze({
+        1: Object.freeze({ percentX: 49.75, percentY: 41.17, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 49.75, percentY: 55.4, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 49.75, percentY: 66.4, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 49.75, percentY: 77.6, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 49.75, percentY: 88.61, scalePercent: 62 }),
+      }),
+      blue: Object.freeze({
+        1: Object.freeze({ percentX: 80.89, percentY: 36.23, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 80.89, percentY: 50.09, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 80.89, percentY: 61.47, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 80.89, percentY: 72.29, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 80.89, percentY: 83.67, scalePercent: 62 }),
+      }),
+    }),
+  });
+
+  const BANRENMA_BONUS_MARKER_SLOTS = Object.freeze({
+    1: Object.freeze({
+      1: Object.freeze({ percentX: 29.6, percentY: 9.7, scalePercent: 52 }),
+      2: Object.freeze({ percentX: 43.5, percentY: 9.7, scalePercent: 52 }),
+      3: Object.freeze({ percentX: 58.0, percentY: 9.7, scalePercent: 52 }),
+      4: Object.freeze({ percentX: 72.0, percentY: 9.7, scalePercent: 52 }),
+    }),
+    2: Object.freeze({
+      1: Object.freeze({ percentX: 29.6, percentY: 9.7, scalePercent: 52 }),
+      2: Object.freeze({ percentX: 43.5, percentY: 9.7, scalePercent: 52 }),
+      3: Object.freeze({ percentX: 58.0, percentY: 9.7, scalePercent: 52 }),
+      4: Object.freeze({ percentX: 72.0, percentY: 9.7, scalePercent: 52 }),
+    }),
+  });
+
   const YICHANGDIAN_TRACE_MARKER_SLOTS = Object.freeze({
     1: Object.freeze({
       pink: Object.freeze({
@@ -243,6 +310,51 @@
 
   function getFangzhouTraceMarkerLayout(alienSlotId, traceType, position) {
     return FANGZHOU_TRACE_MARKER_SLOTS[alienSlotId]?.[traceType]?.[position] || null;
+  }
+
+  function getBanrenmaTraceMarkerLayout(alienSlotId, traceType, position) {
+    return BANRENMA_TRACE_MARKER_SLOTS[alienSlotId]?.[traceType]?.[position] || null;
+  }
+
+  function getBanrenmaBonusMarkerLayout(alienSlotId, position) {
+    return BANRENMA_BONUS_MARKER_SLOTS[alienSlotId]?.[position] || null;
+  }
+
+  function getBanrenmaTraceTokenSize(layout) {
+    if (!layout) return null;
+    const visualScale = getTraceTokenVisualScale(layout, BANRENMA_TRACE_TOKEN_DISPLAY_SCALE);
+    const widthPercent = ALIEN_TRACE_TOKEN_BASE_WIDTH_PERCENT * visualScale;
+    const heightPercent = widthPercent * (ALIEN_STATE_REFERENCE_WIDTH / ALIEN_STATE_REFERENCE_HEIGHT);
+    return {
+      widthPercent: roundPercent(widthPercent),
+      heightPercent: roundPercent(heightPercent),
+      radiusXPercent: roundPercent(widthPercent / 2),
+      radiusYPercent: roundPercent(heightPercent / 2),
+    };
+  }
+
+  function getBanrenmaStackStepY(layout) {
+    return getBanrenmaTraceTokenSize(layout)?.radiusXPercent || BANRENMA_POSITION1_STACK_STEP_Y;
+  }
+
+  function getBanrenmaStackTraceMarkerLayout(baseLayout, stackIndex = 0) {
+    if (!baseLayout) return null;
+    const index = Math.max(0, Math.round(Number(stackIndex) || 0));
+    const stepY = getBanrenmaStackStepY(baseLayout);
+    return {
+      ...baseLayout,
+      percentY: roundPercent(baseLayout.percentY - index * stepY),
+    };
+  }
+
+  function getBanrenmaBaseFromStackTraceMarkerLayout(stackLayout, stackIndex = 0) {
+    if (!stackLayout) return null;
+    const index = Math.max(0, Math.round(Number(stackIndex) || 0));
+    const stepY = getBanrenmaStackStepY(stackLayout);
+    return {
+      percentX: roundPercent(stackLayout.percentX),
+      percentY: roundPercent(stackLayout.percentY + index * stepY),
+    };
   }
 
   function getFangzhouTraceTokenSize(layout) {
@@ -408,7 +520,10 @@
     JIUZHE_TRACE_TOKEN_DISPLAY_SCALE,
     YICHANGDIAN_TRACE_TOKEN_DISPLAY_SCALE,
     FANGZHOU_TRACE_TOKEN_DISPLAY_SCALE,
+    BANRENMA_TRACE_TOKEN_DISPLAY_SCALE,
+    BANRENMA_BONUS_TOKEN_DISPLAY_SCALE,
     FANGZHOU_POSITION1_STACK_STEP_Y,
+    BANRENMA_POSITION1_STACK_STEP_Y,
     YICHANGDIAN_ANOMALY_MARKER_SCALE_PERCENT,
     YICHANGDIAN_POSITION1_STACK_STEP_Y,
     EXTRA_TRACE_GRID_COLUMNS,
@@ -418,6 +533,8 @@
     ALIEN_EXTRA_TRACE_MARKER_SLOTS,
     JIUZHE_TRACE_MARKER_SLOTS,
     FANGZHOU_TRACE_MARKER_SLOTS,
+    BANRENMA_TRACE_MARKER_SLOTS,
+    BANRENMA_BONUS_MARKER_SLOTS,
     YICHANGDIAN_TRACE_MARKER_SLOTS,
     getAlienSlotLabel,
     getTraceTypeLabel,
@@ -425,6 +542,12 @@
     getAlienExtraTraceMarkerLayout,
     getJiuzheTraceMarkerLayout,
     getFangzhouTraceMarkerLayout,
+    getBanrenmaTraceMarkerLayout,
+    getBanrenmaBonusMarkerLayout,
+    getBanrenmaTraceTokenSize,
+    getBanrenmaStackStepY,
+    getBanrenmaStackTraceMarkerLayout,
+    getBanrenmaBaseFromStackTraceMarkerLayout,
     getFangzhouTraceTokenSize,
     getFangzhouStackStepY,
     getFangzhouStackTraceMarkerLayout,

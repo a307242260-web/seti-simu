@@ -4,6 +4,8 @@ const catalog = require("./catalog");
 const state = require("./state");
 const jiuzhe = require("./jiuzhe");
 const yichangdian = require("./yichangdian");
+const fangzhou = require("./fangzhou");
+const banrenma = require("./banrenma");
 const randomizer = require("./randomizer");
 
 function assert(condition, message) {
@@ -22,11 +24,16 @@ const result = randomizer.randomizeAlienAssignments(alienState, random);
 assert(result.ok, "randomize should succeed");
 assert(Object.keys(result.assignments).length === 2, "two slot assignments");
 assert(result.assignments[1] === jiuzhe.ALIEN_ID, "slot 1 should be fixed to Jiuzhe");
-assert(result.assignments[2] === yichangdian.ALIEN_ID, "slot 2 should be fixed to Yichangdian");
+assert(result.assignments[2] === fangzhou.ALIEN_ID, "slot 2 should be fixed to Fangzhou");
 assert(alienState.yichangdian, "randomize should initialize Yichangdian state");
 assert(
   JSON.stringify(alienState.yichangdian.cardDeck) === JSON.stringify(yichangdian.CARD_DEFINITIONS.map((card) => card.index)),
   "Yichangdian deck should reset on randomize",
+);
+assert(alienState.banrenma, "randomize should initialize Banrenma state");
+assert(
+  JSON.stringify(alienState.banrenma.cardDeck) === JSON.stringify(banrenma.CARD_DEFINITIONS.map((card) => card.index)),
+  "Banrenma deck should reset on randomize",
 );
 
 const assignedIds = Object.values(result.assignments);

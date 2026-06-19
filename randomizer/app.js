@@ -25,6 +25,7 @@
   const jiuzhe = aliens.jiuzhe;
   const yichangdian = aliens.yichangdian;
   const fangzhou = aliens.fangzhou;
+  const banrenma = aliens.banrenma;
   const initialCards = window.SetiInitialCards;
   const industry = window.SetiIndustry;
 
@@ -63,6 +64,8 @@
     jiuzheTimeFree: "../assets/aliens/九折/time_1.png",
     jiuzheTimePaid: "../assets/aliens/九折/time_2.png",
     yichangdianCard: aliens.YICHANGDIAN_CARD_BACK_SRC || "../assets/aliens/异常点/cards/back.png",
+    banrenmaCard: aliens.BANRENMA_CARD_BACK_SRC || "../assets/aliens/半人马/cards/back.png",
+    banrenmaToken: aliens.BANRENMA_TOKEN_SRC || "../assets/aliens/半人马/token.webp",
   });
   const OPPONENT_SECTOR_WIN_STATS = Object.freeze([
     Object.freeze({ color: "yellow", label: "黄色完成扇区", iconKey: "yellowFinishScan" }),
@@ -220,7 +223,11 @@
   let jiuzheOpportunityQueue = [];
   let pendingYichangdianCardGain = null;
   let pendingYichangdianCornerAction = null;
+  let pendingBanrenmaCardGain = null;
+  let pendingBanrenmaOpportunity = null;
+  let banrenmaOpportunityQueue = [];
   const yichangdianAnomalyMarkerElements = new Map();
+  const banrenmaBonusMarkerElements = new Map();
   const cardTaskState = cardTaskStateModule.createTaskState();
   let alienTracePickerState = null;
   let debugAlienTraceModeActive = false;
@@ -310,6 +317,8 @@
     alienJiuzheThresholds: document.querySelectorAll(".alien-jiuzhe-thresholds"),
     alienYichangdianCardAreas: document.querySelectorAll(".alien-yichangdian-card-area"),
     alienFangzhouCardAreas: document.querySelectorAll(".alien-fangzhou-card-area"),
+    alienBanrenmaCardAreas: document.querySelectorAll(".alien-banrenma-card-area"),
+    alienBanrenmaScoremarks: document.querySelectorAll(".alien-banrenma-scoremarks"),
     finalScoreGrid: document.getElementById("final-score-grid"),
     finalScoreTileWraps: document.querySelectorAll(".final-score-tile-wrap"),
     finalScoreTiles: document.querySelectorAll(".final-score-tile"),
@@ -353,6 +362,7 @@
     debugJiuzheButton: document.getElementById("debug-jiuzhe-button"),
     debugYichangdianButton: document.getElementById("debug-yichangdian-button"),
     debugFangzhouButton: document.getElementById("debug-fangzhou-button"),
+    debugBanrenmaButton: document.getElementById("debug-banrenma-button"),
     debugCheatButton: document.getElementById("debug-cheat-button"),
     alienTraceOverlay: document.getElementById("alien-trace-overlay"),
     alienTraceSubtitle: document.getElementById("alien-trace-subtitle"),
@@ -1961,9 +1971,9 @@
       return { ok: false, message: rocketState.statusNote };
     }
 
-    const price = getCardPrice(card);
-    if ((currentPlayer.resources?.credits || 0) < price) {
-      rocketState.statusNote = `信用点不足：${cards.getCardLabel(card)} 需要 ${price} 信用点`;
+    const cost = getCardPlayCost(card);
+    if (!players.canAfford(currentPlayer, cost)) {
+      rocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
@@ -2569,6 +2579,19 @@
     return Number.isFinite(price) ? Math.max(0, Math.round(price)) : 0;
   }
 
+  function getCardPlayCost(card) {
+    const price = getCardPrice(card);
+    if (banrenma?.isBanrenmaCard?.(card)) {
+      return price > 0 ? { energy: price } : {};
+    }
+    return price > 0 ? { credits: price } : {};
+  }
+
+  function formatCardPlayCost(cost) {
+    const text = players.formatResourceCost(cost);
+    return text && text !== "无" ? text : "0";
+  }
+
   function getCardTypeCode(card) {
     const typeCode = Number(card?.cardTypeCode);
     const fallbackTypeCode = Number.isFinite(typeCode) ? Math.round(typeCode) : 0;
@@ -2641,10 +2664,14 @@
     if (fangzhou?.isFangzhouCard2?.(card)) {
       return handleFangzhouCard2Play(removeIndex);
     }
+    if (banrenma?.isBanrenmaCard?.(card)) {
+      return handleBanrenmaCardPlay(removeIndex);
+    }
 
     const price = getCardPrice(card);
-    if ((currentPlayer.resources?.credits || 0) < price) {
-      rocketState.statusNote = `信用点不足：${cards.getCardLabel(card)} 需要 ${price} 信用点`;
+    const cost = getCardPlayCost(card);
+    if (!players.canAfford(currentPlayer, cost)) {
+      rocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
@@ -2654,7 +2681,7 @@
       publicCards: cardState.publicCards.slice(),
       discardPile: (cardState.discardPile || []).slice(),
     };
-    const spendResult = players.spendResources(currentPlayer, { credits: price });
+    const spendResult = players.spendResources(currentPlayer, cost);
     if (!spendResult.ok) {
       rocketState.statusNote = spendResult.message;
       renderStateReadout();
@@ -2663,7 +2690,7 @@
 
     const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
     if (!removeResult.ok) {
-      players.gainResources(currentPlayer, { credits: price });
+      players.gainResources(currentPlayer, cost);
       rocketState.statusNote = removeResult.message;
       renderStateReadout();
       return removeResult;
@@ -2693,8 +2720,8 @@
     cards.setPlayCardSelectionActive(cardState, false);
     pendingPlayCardSelection = null;
     rocketState.statusNote = shouldReserve
-      ? `打出：${cards.getCardLabel(playedCard)}，支付 ${price} 信用点，进入保留牌区`
-      : `打出：${cards.getCardLabel(playedCard)}，支付 ${price} 信用点，已弃掉`;
+      ? `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`
+      : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
     applyIndustryPlayCardPassives(playedCard, typeCode);
     syncPlayCardSelectionChrome();
     renderPlayerStats();
@@ -2715,6 +2742,96 @@
       ok: true,
       card: playedCard,
       reserved: shouldReserve,
+      message: rocketState.statusNote,
+    };
+  }
+
+  function handleBanrenmaCardPlay(handIndex) {
+    if (!banrenma) return { ok: false, message: "半人马模块未加载" };
+    const currentPlayer = getCurrentPlayer();
+    const removeIndex = Math.round(handIndex);
+    const card = currentPlayer?.hand?.[removeIndex];
+    if (!card) {
+      rocketState.statusNote = "无效的手牌位置";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const cost = getCardPlayCost(card);
+    if (!players.canAfford(currentPlayer, cost)) {
+      rocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const beforePlayer = structuredClone(currentPlayer);
+    const beforeAlienState = structuredClone(alienGameState);
+    const beforeCardState = {
+      publicCards: cardState.publicCards.slice(),
+      discardPile: (cardState.discardPile || []).slice(),
+    };
+    const spendResult = players.spendResources(currentPlayer, cost);
+    if (!spendResult.ok) {
+      rocketState.statusNote = spendResult.message;
+      renderStateReadout();
+      return spendResult;
+    }
+
+    const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
+    if (!removeResult.ok) {
+      players.gainResources(currentPlayer, cost);
+      rocketState.statusNote = removeResult.message;
+      renderStateReadout();
+      return removeResult;
+    }
+
+    const playedCard = removeResult.card;
+    if (!Array.isArray(currentPlayer.reservedCards)) currentPlayer.reservedCards = [];
+    cardEffects.ensureCardEffectState(playedCard);
+    const threshold = (Number(currentPlayer.resources?.score) || 0) + banrenma.SCORE_MARK_DELTA;
+    const scoreMark = banrenma.addScoreMark(alienGameState, currentPlayer, threshold, "card", {
+      cardInstanceId: playedCard.id,
+      cardIndex: playedCard.alienCardId ?? banrenma.getCardDefinition(playedCard)?.index ?? null,
+    });
+    playedCard.banrenmaCard = true;
+    playedCard.banrenmaThreshold = threshold;
+    playedCard.banrenmaScoreMarkId = scoreMark?.id || null;
+    currentPlayer.reservedCards.push(playedCard);
+
+    const playEffects = banrenma.buildImmediateEffects(playedCard);
+    const sentinelEffects = industry?.buildSentinelPlayCornerEffectNodes?.(
+      cards,
+      currentPlayer,
+      turnState.roundNumber,
+      turnState.turnNumber,
+      playedCard,
+    ) || [];
+    const allPlayEffects = [...playEffects, ...sentinelEffects];
+
+    cards.setPlayCardSelectionActive(cardState, false);
+    pendingPlayCardSelection = null;
+    rocketState.statusNote = `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`;
+    applyIndustryPlayCardPassives(playedCard, getCardTypeCode(playedCard));
+    syncPlayCardSelectionChrome();
+    renderPlayerStats();
+    renderReservedCardsFromTaskState();
+    recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
+    if (allPlayEffects.length) {
+      startCardEffectFlow("banrenma-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, allPlayEffects, {
+        actionType: "playCard",
+        card: playedCard,
+        temporaryTasks: [],
+        industryPlayedCard: playedCard,
+      });
+    } else {
+      markActionPending();
+      updateActionButtons();
+      renderStateReadout();
+    }
+    return {
+      ok: true,
+      card: playedCard,
+      reserved: true,
       message: rocketState.statusNote,
     };
   }
@@ -4267,7 +4384,7 @@
     return true;
   }
 
-  function recordPlayCardStart(player, card, beforePlayer, beforeCardState) {
+  function recordPlayCardStart(player, card, beforePlayer, beforeCardState, beforeAlienState = null) {
     startActionLogDraft("playCard", "打牌行动", { source: HISTORY_SOURCE_MAIN, player });
     actionHistory.beginSession("playCard", "打牌行动");
     actionHistory.beginStep({
@@ -4286,6 +4403,13 @@
       beforeCardState.publicCards,
       beforeCardState.discardPile,
     ));
+    if (beforeAlienState) {
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复打牌前外星人状态",
+      ));
+    }
     endEffectHistoryStep();
   }
 
@@ -4374,9 +4498,12 @@
 
     const taskCards = [];
     const finalTaskCards = [];
+    const banrenmaCards = [];
     reservedCards.forEach((card, index) => {
       const entry = { card, index };
-      if (getCardTypeCode(card) === 3) {
+      if (banrenma?.isBanrenmaCard?.(card)) {
+        banrenmaCards.push(entry);
+      } else if (getCardTypeCode(card) === 3) {
         finalTaskCards.push(entry);
       } else {
         taskCards.push(entry);
@@ -4390,12 +4517,21 @@
 
     const jiuzheButton = createJiuzheReservedButton(currentPlayer);
     const fangzhouCards = createFangzhouReservedButtons(currentPlayer);
-    const finalRow = createReservedCardRow("final", "3型终局计分牌与九折/方舟牌");
+    const banrenmaButtons = banrenmaCards.map((entry, rowIndex) => (
+      createBanrenmaReservedButton(entry.card, entry.index, rowIndex + (jiuzheButton ? 1 : 0) + fangzhouCards.length)
+    ));
+    const finalRow = createReservedCardRow("final", "3型终局计分牌与九折/方舟/半人马牌");
     finalRow.replaceChildren(
       ...(jiuzheButton ? [jiuzheButton] : []),
       ...fangzhouCards,
+      ...banrenmaButtons,
       ...finalTaskCards.map((entry, rowIndex) => (
-      createReservedCardButton(entry.card, entry.index, rowIndex + (jiuzheButton ? 1 : 0) + fangzhouCards.length, readyByCardId)
+      createReservedCardButton(
+        entry.card,
+        entry.index,
+        rowIndex + (jiuzheButton ? 1 : 0) + fangzhouCards.length + banrenmaButtons.length,
+        readyByCardId,
+      )
       )),
     );
 
@@ -6394,6 +6530,32 @@
     return result;
   }
 
+  function executeBanrenmaGainIncomeEffect(effect) {
+    const currentPlayer = getCurrentPlayer();
+    const gain = effect.options?.gain || {};
+    const beforePlayer = structuredClone(currentPlayer);
+    beginEffectHistoryStep(effect.label);
+    players.gainIncome(currentPlayer, gain, {
+      blindDraw: (targetPlayer) => blindDrawCardForPlayer(targetPlayer),
+      gainData: (targetPlayer) => data.gainData(targetPlayer, { source: "banrenma-income" }),
+    });
+    recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      currentPlayer,
+      beforePlayer,
+      "恢复半人马收入前玩家状态",
+    ));
+    effect.result = {
+      ok: true,
+      undoable: true,
+      message: `收入增加：${formatIncomeGain(gain)}`,
+    };
+    rocketState.statusNote = effect.result.message;
+    renderPlayerStats();
+    completeCurrentActionEffect();
+    renderStateReadout();
+    return effect.result;
+  }
+
   function openNebulaChoiceRewardEffect(effect) {
     const nebulaIds = effect.options?.nebulaIds || [];
     rocketState.statusNote = `${effect.label}：请选择 1 个星云`;
@@ -6516,6 +6678,10 @@
 
     const rewardResult = planetRewards?.EFFECT_TYPES ? executePlanetRewardEffect(effect) : null;
     if (rewardResult) return rewardResult;
+
+    if (banrenma && effect.type === banrenma.EFFECT_GAIN_INCOME) {
+      return executeBanrenmaGainIncomeEffect(effect);
+    }
 
     switch (effect.type) {
       case "industry_sentinel_corner":
@@ -6746,8 +6912,20 @@
     ) || null;
   }
 
+  function getAlienBanrenmaCardArea(alienSlotId) {
+    return [...els.alienBanrenmaCardAreas].find(
+      (element) => Number(element.dataset.alienSlot) === alienSlotId,
+    ) || null;
+  }
+
   function getAlienJiuzheThresholdElement(alienSlotId) {
     return [...els.alienJiuzheThresholds].find(
+      (element) => Number(element.dataset.alienSlot) === alienSlotId,
+    ) || null;
+  }
+
+  function getAlienBanrenmaScoremarkElement(alienSlotId) {
+    return [...els.alienBanrenmaScoremarks].find(
       (element) => Number(element.dataset.alienSlot) === alienSlotId,
     ) || null;
   }
@@ -6848,6 +7026,12 @@
         && Number.isInteger(Number(alienTracePickerState.selectedAlienSlotId)));
   }
 
+  function isBanrenmaTracePlacementMode() {
+    return isDebugAlienTraceMode()
+      || (alienTracePickerState?.mode === "banrenma-grid"
+        && Number.isInteger(Number(alienTracePickerState.selectedAlienSlotId)));
+  }
+
   function canPlaceJiuzheTrace(alienSlotId, traceType, position) {
     if (!isJiuzheTracePlacementMode()) return false;
     if (!isDebugAlienTraceMode()
@@ -6885,6 +7069,17 @@
       position,
       currentPlayer,
     )?.ok;
+  }
+
+  function canPlaceBanrenmaTrace(alienSlotId, traceType, position) {
+    if (!isBanrenmaTracePlacementMode()) return false;
+    if (!isDebugAlienTraceMode()
+      && Number(alienTracePickerState.selectedAlienSlotId) !== Number(alienSlotId)) return false;
+    const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
+    if (!allowedTraceTypes.includes(traceType)) return false;
+    if (!banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)) return false;
+    const grid = banrenma?.getTraceGrid?.(alienGameState, alienSlotId);
+    return Number(position) === 1 || !grid?.[traceType]?.[position];
   }
 
   function canPlaceStateTrace(alienSlotId, traceType, kind) {
@@ -6928,6 +7123,109 @@
     }
   }
 
+  function renderBanrenmaScoremarks() {
+    for (const alienSlotId of aliens.ALIEN_SLOT_IDS) {
+      const container = getAlienBanrenmaScoremarkElement(alienSlotId);
+      if (!container) continue;
+      const visible = Boolean(banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId));
+      if (!visible) {
+        container.hidden = true;
+        container.replaceChildren();
+        continue;
+      }
+      const marks = playerState.players.flatMap((player) => (
+        banrenma.getPlayerScoreMarks(alienGameState, player)
+          .filter((mark) => mark.source === "panel")
+          .map((mark) => ({ player, mark }))
+      ));
+      container.hidden = !marks.length;
+      container.replaceChildren(...marks.map(({ player, mark }) => {
+        const item = document.createElement("div");
+        item.className = "alien-banrenma-scoremark";
+        const icon = document.createElement("img");
+        icon.className = "alien-banrenma-scoremark-icon";
+        icon.src = banrenma.getPlayerMarkSrc(player.color);
+        icon.alt = "";
+        icon.decoding = "async";
+        icon.setAttribute("aria-hidden", "true");
+        const score = document.createElement("span");
+        score.className = "alien-banrenma-scoremark-score";
+        score.textContent = String(mark.threshold);
+        item.title = `${player.colorLabel}玩家达到 ${mark.threshold} 分：选择一个半人马顶部奖励`;
+        item.append(icon, score);
+        return item;
+      }));
+    }
+  }
+
+  function renderBanrenmaCardDisplays() {
+    for (const alienSlotId of aliens.ALIEN_SLOT_IDS) {
+      const area = getAlienBanrenmaCardArea(alienSlotId);
+      if (!area) continue;
+      const visible = Boolean(banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId));
+      const state = alienGameState.banrenma || {};
+      const cardIndex = state.displayedCardIndex;
+      if (!visible) {
+        area.hidden = true;
+        area.replaceChildren();
+        continue;
+      }
+      area.hidden = false;
+      const title = document.createElement("div");
+      title.className = "alien-banrenma-card-title";
+      title.textContent = "半人马展示牌";
+      const image = document.createElement("img");
+      image.className = "alien-banrenma-card-image";
+      image.src = cardIndex == null ? banrenma.CARD_BACK_SRC : banrenma.getCardSrc(cardIndex);
+      image.alt = cardIndex == null ? "半人马牌背" : `半人马牌 ${cardIndex}`;
+      image.width = 747;
+      image.height = 1040;
+      image.decoding = "async";
+      area.replaceChildren(title, image);
+    }
+  }
+
+  function renderBanrenmaBonusMarkers() {
+    const activeKeys = new Set();
+    const state = banrenma?.ensureBanrenmaState?.(alienGameState);
+    const alienSlotId = Number(state?.revealedSlotId || 0);
+    const layer = alienSlotId ? getAlienJiuzheTraceLayer(alienSlotId) : null;
+    if (layer && banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)) {
+      for (const [position, slot] of Object.entries(state.bonusSlots || {})) {
+        const layout = window.SetiAlienPlacement?.getBanrenmaBonusMarkerLayout?.(alienSlotId, Number(position));
+        if (!layout || !slot) continue;
+        const key = `banrenma-bonus:${alienSlotId}:${position}`;
+        activeKeys.add(key);
+        let element = banrenmaBonusMarkerElements.get(key);
+        if (!element) {
+          element = document.createElement("img");
+          element.className = "alien-trace-token alien-trace-token-positioned alien-trace-token-banrenma-bonus";
+          element.draggable = false;
+          banrenmaBonusMarkerElements.set(key, element);
+          layer.appendChild(element);
+        }
+        const scale = ((layout.scalePercent || 52) / 100)
+          * (window.SetiAlienPlacement?.BANRENMA_BONUS_TOKEN_DISPLAY_SCALE || 1.18);
+        element.style.position = "absolute";
+        element.style.left = `${layout.percentX}%`;
+        element.style.top = `${layout.percentY}%`;
+        element.style.setProperty("--alien-trace-scale", String(scale));
+        element.style.transform = "translate(-50%, -50%) scale(var(--alien-trace-scale, 1))";
+        element.style.transformOrigin = "center center";
+        element.src = banrenma.getPlayerMarkSrc?.(slot.playerColor) || aliens.ALIEN_TRACE_TOKEN_SRC;
+        element.alt = `半人马顶部奖励${position}`;
+        element.dataset.alienSlot = String(alienSlotId);
+        element.dataset.banrenmaBonusPosition = String(position);
+        element.title = `半人马顶部奖励${position}：${slot.playerLabel || slot.playerColor || "已使用"} @(${layout.percentX}%,${layout.percentY}%)`;
+      }
+    }
+    for (const [key, element] of banrenmaBonusMarkerElements.entries()) {
+      if (activeKeys.has(key)) continue;
+      element.remove();
+      banrenmaBonusMarkerElements.delete(key);
+    }
+  }
+
   function renderAlienPanels() {
     aliens.renderAllAlienBackImages(getAlienBackImage, alienGameState);
     aliens.renderAllAlienTraceMarkers(getAlienTraceLayer, alienGameState, {
@@ -6968,9 +7266,21 @@
       ),
       getPlayerLabel: (playerColor) => players.getPlayerColorDefinition(playerColor)?.label || playerColor,
     });
+    aliens.renderAllBanrenmaTraceMarkers?.(getAlienJiuzheTraceLayer, alienGameState, {
+      tokenSrc: aliens.ALIEN_TRACE_TOKEN_SRC,
+      canPlaceBanrenmaTrace,
+      getPlayerTokenAsset: (playerColor) => (
+        players.getPlayerColorDefinition(playerColor)?.normalTokenAsset
+        || aliens.ALIEN_TRACE_TOKEN_SRC
+      ),
+      getPlayerLabel: (playerColor) => players.getPlayerColorDefinition(playerColor)?.label || playerColor,
+    });
     renderJiuzheThresholds();
+    renderBanrenmaScoremarks();
     renderYichangdianCardDisplays();
     renderFangzhouCardDisplays();
+    renderBanrenmaCardDisplays();
+    renderBanrenmaBonusMarkers();
   }
 
   function randomizeAliens() {
@@ -6980,6 +7290,10 @@
       element.remove();
     }
     yichangdianAnomalyMarkerElements.clear();
+    for (const element of banrenmaBonusMarkerElements.values()) {
+      element.remove();
+    }
+    banrenmaBonusMarkerElements.clear();
     renderAlienPanels();
     renderRockets();
     return result;
@@ -7189,6 +7503,26 @@
       ? aliens.getTraceTypeLabel(allowedTraceTypes[0])
       : "对应颜色";
     rocketState.statusNote = `方舟：请在正面牌图点击可放置的${traceLabel}痕迹位`;
+    renderAlienPanels();
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
+  function beginBanrenmaTraceGridPlacement(alienSlotId) {
+    const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes?.length
+      ? alienTracePickerState.allowedTraceTypes
+      : aliens.TRACE_TYPES;
+    alienTracePickerState = {
+      ...alienTracePickerState,
+      mode: "banrenma-grid",
+      selectedAlienSlotId: Number(alienSlotId),
+      allowedTraceTypes,
+    };
+    if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = true;
+    const traceLabel = allowedTraceTypes.length === 1
+      ? aliens.getTraceTypeLabel(allowedTraceTypes[0])
+      : "对应颜色";
+    rocketState.statusNote = `半人马：请在正面牌图点击可放置的${traceLabel}痕迹位`;
     renderAlienPanels();
     renderStateReadout();
     return { ok: true, message: rocketState.statusNote };
@@ -7789,6 +8123,57 @@
     };
   }
 
+  function getAvailableDataTokenCount(player) {
+    return data.ensurePlayerDataState(player).poolTokens.length;
+  }
+
+  function spendAvailableDataTokens(player, count) {
+    const needed = Math.max(0, Math.round(Number(count) || 0));
+    if (needed <= 0) return { ok: true, removedTokens: [], message: "无需支付数据" };
+    const dataState = data.ensurePlayerDataState(player);
+    if (dataState.poolTokens.length < needed) {
+      return {
+        ok: false,
+        message: `数据不足：需要 ${needed} 数据`,
+      };
+    }
+    const removedTokens = [];
+    for (let index = 0; index < needed; index += 1) {
+      const sorted = [...dataState.poolTokens].sort((a, b) => a.slotIndex - b.slotIndex);
+      const token = sorted[0];
+      const poolIndex = dataState.poolTokens.findIndex((item) => item.id === token.id);
+      if (poolIndex >= 0) {
+        removedTokens.push(...dataState.poolTokens.splice(poolIndex, 1));
+      }
+    }
+    player.resources.availableData = dataState.poolTokens.length;
+    return {
+      ok: true,
+      removedTokens,
+      message: `支付 ${needed} 数据`,
+    };
+  }
+
+  function applyBanrenmaRewardToPlayer(player, reward, label = "半人马奖励") {
+    if (!player || !reward) return { ok: false, message: "没有可结算的半人马奖励" };
+    const messages = [];
+    if (reward.payData) {
+      const spendResult = spendAvailableDataTokens(player, reward.payData);
+      if (!spendResult.ok) return spendResult;
+      messages.push(spendResult.message);
+    }
+    if (Object.keys(reward.gain || {}).length) {
+      players.gainResources(player, reward.gain);
+      messages.push(players.formatResourceCost(reward.gain));
+    }
+    if (reward.pickAlienCard) messages.push("外星人牌");
+    if (reward.alienTrace) messages.push("任意外星人痕迹");
+    return {
+      ok: true,
+      message: `${label}：${messages.join("、") || "无奖励"}`,
+    };
+  }
+
   function closeYichangdianCardGainDialog() {
     pendingYichangdianCardGain = null;
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
@@ -7905,6 +8290,122 @@
       completeQuickActionStep();
     }
     return finishYichangdianCardGain(result.message, result);
+  }
+
+  function closeBanrenmaCardGainDialog() {
+    pendingBanrenmaCardGain = null;
+    if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+  }
+
+  function openBanrenmaCardGainDialog(options = {}) {
+    if (!banrenma || !els.scanTargetOverlay || !els.scanTargetActions) {
+      return { ok: false, message: "无法打开半人马牌窗口" };
+    }
+    const player = options.player || getCurrentPlayer();
+    if (!player) return { ok: false, message: "没有当前玩家" };
+    pendingBanrenmaCardGain = {
+      playerId: player.id,
+      fromEffectFlow: Boolean(options.fromEffectFlow),
+      effectLabel: options.effectLabel || "半人马外星人牌",
+      beforePlayerState: options.beforePlayerState || null,
+      beforeAlienState: options.beforeAlienState || null,
+    };
+
+    const displayedIndex = alienGameState.banrenma?.displayedCardIndex;
+    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "半人马外星人牌";
+    if (els.scanTargetSubtitle) {
+      els.scanTargetSubtitle.textContent = `${player.colorLabel}玩家可以拿取当前展示牌，或盲抽一张半人马牌。`;
+    }
+    if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
+
+    const displayed = document.createElement("button");
+    displayed.type = "button";
+    displayed.className = "scan-target-option-button jiuzhe-card-option banrenma-card-option";
+    displayed.dataset.banrenmaCardGain = "displayed";
+    displayed.disabled = displayedIndex == null;
+    displayed.innerHTML = displayedIndex == null
+      ? "确认<small>当前没有展示牌</small>"
+      : `<img class="jiuzhe-card-option-image" src="${banrenma.getCardSrc(displayedIndex)}" alt="" aria-hidden="true"><small>确认拿取展示牌</small>`;
+
+    const blind = document.createElement("button");
+    blind.type = "button";
+    blind.className = "scan-target-option-button";
+    blind.dataset.banrenmaCardGain = "blind";
+    blind.innerHTML = "盲抽<small>从半人马牌堆随机获得 1 张</small>";
+
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "scan-target-option-button";
+    cancel.dataset.banrenmaCardGain = "cancel";
+    cancel.innerHTML = "取消<small>不获得外星人牌</small>";
+
+    els.scanTargetActions.replaceChildren(displayed, blind, cancel);
+    els.scanTargetOverlay.hidden = false;
+    return { ok: true, message: "半人马牌窗口已打开" };
+  }
+
+  function finishBanrenmaCardGain(message, result = null) {
+    const pending = pendingBanrenmaCardGain;
+    closeBanrenmaCardGainDialog();
+    rocketState.statusNote = message;
+    if (pending?.fromEffectFlow && getCurrentActionEffect()) {
+      getCurrentActionEffect().result = {
+        ok: true,
+        undoable: true,
+        message,
+        payload: { banrenmaCard: result?.card || null },
+      };
+      completeCurrentActionEffect();
+    }
+    renderAlienPanels();
+    renderRockets();
+    renderPlayerStats();
+    renderPlayerHand();
+    renderReservedCardsFromTaskState();
+    updateActionButtons();
+    maybeOpenQueuedBanrenmaOpportunity();
+    renderStateReadout();
+    return result || { ok: true, message };
+  }
+
+  function handleBanrenmaCardGainChoice(choice) {
+    if (!pendingBanrenmaCardGain) return { ok: false, message: "没有半人马牌获取流程" };
+    const pending = pendingBanrenmaCardGain;
+    const player = getPlayerById(pending.playerId) || getCurrentPlayer();
+    if (!player) return { ok: false, message: "找不到半人马牌玩家" };
+
+    if (choice === "cancel") {
+      return finishBanrenmaCardGain("已取消半人马外星人牌");
+    }
+
+    const beforePlayerState = pending.beforePlayerState || structuredClone(playerState);
+    const beforeAlienState = pending.beforeAlienState || structuredClone(alienGameState);
+    const result = choice === "blind"
+      ? banrenma.blindDrawCard(alienGameState)
+      : banrenma.takeDisplayedCard(alienGameState);
+    if (!result.ok || !result.card) {
+      rocketState.statusNote = result.message;
+      renderStateReadout();
+      return result;
+    }
+
+    player.hand.push(result.card);
+    player.resources.handSize = player.hand.length;
+    if (!pending.fromEffectFlow) {
+      beginQuickActionStep("banrenma-card", pending.effectLabel || "半人马外星人牌");
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        playerState,
+        beforePlayerState,
+        "恢复半人马拿牌前玩家状态",
+      ));
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复半人马拿牌前外星人状态",
+      ));
+      completeQuickActionStep();
+    }
+    return finishBanrenmaCardGain(result.message, result);
   }
 
   function enqueueJiuzheOpportunity(player, opportunity) {
@@ -8094,6 +8595,263 @@
     return null;
   }
 
+  function getReadyBanrenmaCards(player) {
+    if (!banrenma || !player) return [];
+    const score = Number(player.resources?.score) || 0;
+    return (player.reservedCards || [])
+      .map((card, index) => ({ card, index }))
+      .filter(({ card }) => {
+        if (!banrenma.isBanrenmaCard(card)) return false;
+        const mark = banrenma.getPlayerScoreMarks(alienGameState, player)
+          .find((item) => item.id === card.banrenmaScoreMarkId || item.cardInstanceId === card.id);
+        return mark && score >= Number(mark.threshold || 0);
+      });
+  }
+
+  function enqueueBanrenmaOpportunity(player, opportunity) {
+    if (!player || !opportunity) return;
+    const key = `${opportunity.type}:${opportunity.markId || "any"}`;
+    const exists = banrenmaOpportunityQueue.some((item) => (
+      item.playerId === player.id && `${item.type}:${item.markId || "any"}` === key
+    ));
+    if (exists) return;
+    banrenmaOpportunityQueue.push({
+      playerId: player.id,
+      type: opportunity.type,
+      markId: opportunity.markId || null,
+      label: opportunity.label,
+    });
+  }
+
+  function queueBanrenmaOpportunitiesForPlayer(player) {
+    if (!banrenma || !player || !banrenma.isBanrenmaRevealedSlot?.(alienGameState, alienGameState.banrenma?.revealedSlotId)) return;
+    const panelMark = banrenma.getPendingPanelMark(alienGameState, player);
+    if (panelMark && banrenma.getAvailableBonusPositions(alienGameState).length) {
+      enqueueBanrenmaOpportunity(player, {
+        type: "panel",
+        markId: panelMark.id,
+        label: "半人马顶部奖励",
+      });
+    }
+    for (const { card } of getReadyBanrenmaCards(player)) {
+      const markId = card.banrenmaScoreMarkId || null;
+      enqueueBanrenmaOpportunity(player, {
+        type: "card",
+        markId,
+        label: "半人马条件效果",
+      });
+    }
+  }
+
+  function closeBanrenmaOpportunityDialog() {
+    pendingBanrenmaOpportunity = null;
+    if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+  }
+
+  function getBanrenmaCardConditionLabel(card) {
+    const effects = banrenma?.buildConditionEffects?.(card) || [];
+    return effects.map((effect) => effect.label).join("；") || "无条件效果";
+  }
+
+  function openBanrenmaOpportunityDialog(player, opportunity) {
+    if (!banrenma || !player || !opportunity || !els.scanTargetOverlay || !els.scanTargetActions) {
+      return { ok: false, message: "无法打开半人马奖励窗口" };
+    }
+    pendingBanrenmaOpportunity = {
+      playerId: player.id,
+      type: opportunity.type,
+      markId: opportunity.markId || null,
+    };
+    if (opportunity.type === "panel") {
+      const mark = banrenma.getPlayerScoreMarks(alienGameState, player)
+        .find((item) => item.id === opportunity.markId);
+      if (els.scanTargetTitle) els.scanTargetTitle.textContent = "半人马顶部奖励";
+      if (els.scanTargetSubtitle) {
+        els.scanTargetSubtitle.textContent = `${player.colorLabel}玩家达到 ${mark?.threshold ?? "阈值"} 分，选择一个未使用的顶部奖励位。`;
+      }
+      if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
+      const nodes = banrenma.BONUS_POSITIONS.map((position) => {
+        const reward = banrenma.getBonusReward(position);
+        const used = Boolean(alienGameState.banrenma?.bonusSlots?.[position]);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "scan-target-option-button";
+        button.dataset.banrenmaBonusChoice = String(position);
+        button.disabled = used;
+        button.innerHTML = `${position}号奖励<small>${reward?.label || ""}${used ? " · 已使用" : ""}</small>`;
+        return button;
+      });
+      els.scanTargetActions.replaceChildren(...nodes);
+    } else {
+      const readyCards = getReadyBanrenmaCards(player);
+      if (els.scanTargetTitle) els.scanTargetTitle.textContent = "半人马条件效果";
+      if (els.scanTargetSubtitle) {
+        els.scanTargetSubtitle.textContent = `${player.colorLabel}玩家可选择 1 张已打出的半人马牌结算条件效果，之后弃掉该牌并清除一个阈值标记。`;
+      }
+      if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
+      const nodes = readyCards.map(({ card }) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "scan-target-option-button jiuzhe-card-option banrenma-card-option";
+        button.dataset.banrenmaCardChoice = card.id;
+        button.innerHTML = `
+          <img class="jiuzhe-card-option-image" src="${card.src || banrenma.getCardSrc(card.alienCardId)}" alt="" aria-hidden="true">
+          <small>${cards.getCardLabel(card)} · ${getBanrenmaCardConditionLabel(card)}</small>
+        `;
+        return button;
+      });
+      els.scanTargetActions.replaceChildren(...nodes);
+    }
+    els.scanTargetOverlay.hidden = false;
+    return { ok: true, message: "半人马奖励窗口已打开" };
+  }
+
+  function maybeOpenQueuedBanrenmaOpportunity() {
+    if (pendingBanrenmaOpportunity || pendingBanrenmaCardGain) return null;
+    if (hasActivePendingSubFlow()) return null;
+    if (els.scanTargetOverlay && !els.scanTargetOverlay.hidden) return null;
+    while (banrenmaOpportunityQueue.length) {
+      const next = banrenmaOpportunityQueue.shift();
+      const player = getPlayerById(next.playerId);
+      if (!player) continue;
+      if (next.type === "panel") {
+        const latest = banrenma.getPendingPanelMark(alienGameState, player);
+        if (!latest || latest.id !== next.markId || !banrenma.getAvailableBonusPositions(alienGameState).length) continue;
+        return openBanrenmaOpportunityDialog(player, next);
+      }
+      if (!getReadyBanrenmaCards(player).length) continue;
+      return openBanrenmaOpportunityDialog(player, next);
+    }
+    return null;
+  }
+
+  function completeBanrenmaOpportunityStep(player, beforePlayerState, beforeAlienState, beforeCardState, label) {
+    beginQuickActionStep("banrenma-opportunity", label || "半人马奖励");
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      playerState,
+      beforePlayerState,
+      "恢复半人马奖励前玩家状态",
+    ));
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      alienGameState,
+      beforeAlienState,
+      "恢复半人马奖励前外星人状态",
+    ));
+    if (beforeCardState) {
+      recordQuickHistoryCommand(historyCommands.createRestorePublicCardsCommand(
+        cardState,
+        beforeCardState.publicCards,
+        beforeCardState.discardPile,
+      ));
+    }
+    completeQuickActionStep();
+  }
+
+  function handleBanrenmaBonusChoice(position) {
+    if (!pendingBanrenmaOpportunity || pendingBanrenmaOpportunity.type !== "panel") {
+      return { ok: false, message: "没有半人马顶部奖励机会" };
+    }
+    const player = getPlayerById(pendingBanrenmaOpportunity.playerId);
+    if (!player) return { ok: false, message: "找不到半人马玩家" };
+    const beforePlayerState = structuredClone(playerState);
+    const beforeAlienState = structuredClone(alienGameState);
+    const markResult = banrenma.markBonusSlotUsed(
+      alienGameState,
+      player,
+      Number(position),
+      pendingBanrenmaOpportunity.markId,
+    );
+    if (!markResult.ok) {
+      rocketState.statusNote = markResult.message;
+      renderStateReadout();
+      return markResult;
+    }
+    banrenma.resolveScoreMark(alienGameState, player, pendingBanrenmaOpportunity.markId);
+    const rewardResult = applyBanrenmaRewardToPlayer(player, markResult.reward, markResult.message);
+    completeBanrenmaOpportunityStep(player, beforePlayerState, beforeAlienState, null, markResult.message);
+    closeBanrenmaOpportunityDialog();
+    rocketState.statusNote = rewardResult.message || markResult.message;
+    renderAlienPanels();
+    renderPlayerStats();
+    updateActionButtons();
+    renderStateReadout();
+    if (markResult.reward?.pickAlienCard) {
+      openBanrenmaCardGainDialog({
+        player,
+        effectLabel: "半人马顶部奖励外星人牌",
+      });
+    } else if (markResult.reward?.alienTrace) {
+      pendingAlienTraceAction = {
+        type: "banrenma_bonus_alien_trace",
+        beforeAlienState: structuredClone(alienGameState),
+        beforePlayerState: structuredClone(playerState),
+        effectLabel: "半人马顶部奖励外星人痕迹",
+      };
+      openAlienTracePicker({ allowedTraceTypes: aliens.TRACE_TYPES });
+    } else {
+      queueBanrenmaOpportunitiesForPlayer(player);
+      maybeOpenQueuedBanrenmaOpportunity();
+    }
+    return markResult;
+  }
+
+  function handleBanrenmaCardConditionChoice(cardId) {
+    if (!pendingBanrenmaOpportunity || pendingBanrenmaOpportunity.type !== "card") {
+      return { ok: false, message: "没有半人马条件效果机会" };
+    }
+    const player = getPlayerById(pendingBanrenmaOpportunity.playerId);
+    if (!player) return { ok: false, message: "找不到半人马玩家" };
+    const cardIndex = player.reservedCards?.findIndex((card) => card.id === cardId) ?? -1;
+    const card = cardIndex >= 0 ? player.reservedCards[cardIndex] : null;
+    if (!card || !banrenma.isBanrenmaCard(card)) {
+      rocketState.statusNote = "找不到可结算的半人马牌";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+    const beforePlayerState = structuredClone(playerState);
+    const beforeAlienState = structuredClone(alienGameState);
+    const beforeCardState = {
+      publicCards: cardState.publicCards.slice(),
+      discardPile: (cardState.discardPile || []).slice(),
+    };
+    const mark = banrenma.getPlayerScoreMarks(alienGameState, player)
+      .find((item) => item.id === card.banrenmaScoreMarkId || item.cardInstanceId === card.id);
+    if (!mark || Number(player.resources?.score || 0) < Number(mark.threshold || 0)) {
+      rocketState.statusNote = "这张半人马牌尚未达到阈值";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+    const [removedCard] = player.reservedCards.splice(cardIndex, 1);
+    cards.addToDiscardPile(cardState, removedCard);
+    banrenma.resolveScoreMark(alienGameState, player, mark.id);
+    const effects = banrenma.buildConditionEffects(removedCard);
+    completeBanrenmaOpportunityStep(
+      player,
+      beforePlayerState,
+      beforeAlienState,
+      beforeCardState,
+      `半人马条件：${cards.getCardLabel(removedCard)}`,
+    );
+    closeBanrenmaOpportunityDialog();
+    rocketState.statusNote = `半人马条件：弃掉 ${cards.getCardLabel(removedCard)}`;
+    renderPlayerStats();
+    renderPlayerHand();
+    renderReservedCardsFromTaskState();
+    renderAlienPanels();
+    updateActionButtons();
+    renderStateReadout();
+    if (effects.length) {
+      startCardEffectFlow("banrenma-condition-effects", `半人马条件：${cards.getCardLabel(removedCard)}`, effects, {
+        actionType: "banrenmaCondition",
+        card: removedCard,
+      });
+    } else {
+      queueBanrenmaOpportunitiesForPlayer(player);
+      maybeOpenQueuedBanrenmaOpportunity();
+    }
+    return { ok: true, card: removedCard, effects, message: rocketState.statusNote };
+  }
+
   function handleJiuzheRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
     if (!jiuzhe || !revealResult?.ok || revealResult.alienId !== jiuzhe.ALIEN_ID) return null;
     const initResult = jiuzhe.initializeJiuzheReveal(
@@ -8121,6 +8879,24 @@
       triggerPlayer,
       earth.x,
     );
+    return {
+      ...initResult,
+      rewardMessages: [],
+      message: initResult.message,
+    };
+  }
+
+  function handleBanrenmaRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
+    if (!banrenma || !revealResult?.ok || revealResult.alienId !== banrenma.ALIEN_ID) return null;
+    const initResult = banrenma.initializeBanrenmaReveal(
+      alienGameState,
+      alienSlotId,
+      triggerPlayer,
+      getActivePlayers(),
+    );
+    for (const player of getActivePlayers()) {
+      queueBanrenmaOpportunitiesForPlayer(player);
+    }
     return {
       ...initResult,
       rewardMessages: [],
@@ -8199,7 +8975,8 @@
     const revealResult = maybeRevealAlienAfterTrace(alienSlotId, result);
     const revealSideEffect = handleJiuzheRevealSideEffects(alienSlotId, revealResult, currentPlayer)
       || handleYichangdianRevealSideEffects(alienSlotId, revealResult, currentPlayer)
-      || handleFangzhouRevealSideEffects(alienSlotId, revealResult, currentPlayer);
+      || handleFangzhouRevealSideEffects(alienSlotId, revealResult, currentPlayer)
+      || handleBanrenmaRevealSideEffects(alienSlotId, revealResult, currentPlayer);
     rocketState.statusNote = revealSideEffect?.message || revealResult?.message || result.message;
     if (pending?.type === "planet_reward_alien_trace" && result.ok) {
       beginEffectHistoryStep(pending.effectLabel || "外星人标记奖励");
@@ -8222,12 +8999,26 @@
         };
       }
       completeCurrentActionEffect();
+    } else if (pending?.type === "banrenma_bonus_alien_trace" && result.ok) {
+      beginQuickActionStep("banrenma-alien-trace", pending.effectLabel || "半人马外星人痕迹");
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复半人马痕迹奖励前外星人状态",
+      ));
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        playerState,
+        beforePlayerState,
+        "恢复半人马痕迹奖励前玩家状态",
+      ));
+      completeQuickActionStep();
     } else if (result.ok) {
       settleCardTasksAfterEffect({ skipType1: true, render: true });
     }
     renderAlienPanels();
     renderPlayerStats();
     maybeOpenQueuedJiuzheOpportunity();
+    maybeOpenQueuedBanrenmaOpportunity();
     renderStateReadout();
     return revealResult || result;
   }
@@ -8417,6 +9208,138 @@
       completeCurrentActionEffect();
     }
     updateActionButtons();
+    renderStateReadout();
+    return result;
+  }
+
+  function confirmBanrenmaTracePlacement(alienSlotId, traceType, position) {
+    const inDebugMode = isDebugAlienTraceMode();
+    if (!banrenma || (!isBanrenmaTracePlacementMode() && !inDebugMode)) {
+      rocketState.statusNote = "请先通过获取外星人标记进入半人马放置模式";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+    if (!canPlaceBanrenmaTrace(alienSlotId, traceType, position)) {
+      rocketState.statusNote = "该半人马痕迹位不可放置";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const currentPlayer = getCurrentPlayer();
+    const rewardPreview = banrenma.getTraceReward(traceType, Number(position));
+    if (!inDebugMode && rewardPreview?.payData && getAvailableDataTokenCount(currentPlayer) < rewardPreview.payData) {
+      rocketState.statusNote = `数据不足：该位置需要 ${rewardPreview.payData} 数据`;
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const pending = pendingAlienTraceAction;
+    const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
+    const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
+    if (!inDebugMode) {
+      pendingAlienTraceAction = null;
+      if (alienTracePickerState?.mode === "banrenma-grid") {
+        alienTracePickerState = null;
+      }
+    }
+
+    const result = banrenma.placeBanrenmaTrace(
+      alienGameState,
+      alienSlotId,
+      traceType,
+      position,
+      currentPlayer,
+      { debugOnly: inDebugMode },
+    );
+    if (!result.ok) {
+      rocketState.statusNote = result.message;
+      renderAlienPanels();
+      renderStateReadout();
+      return result;
+    }
+
+    const rewardResult = inDebugMode
+      ? { ok: true, message: result.message }
+      : applyBanrenmaRewardToPlayer(
+        currentPlayer,
+        result.reward,
+        `半人马${banrenma.formatTraceLabel(traceType, Number(position))}`,
+      );
+    rocketState.statusNote = rewardResult.ok ? rewardResult.message : result.message;
+
+    if (pending?.type === "planet_reward_alien_trace") {
+      beginEffectHistoryStep(pending.effectLabel || "半人马痕迹奖励");
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复半人马痕迹奖励前外星人状态",
+      ));
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        playerState,
+        beforePlayerState,
+        "恢复半人马痕迹奖励前玩家状态",
+      ));
+      if (getCurrentActionEffect()) {
+        getCurrentActionEffect().result = {
+          ok: true,
+          undoable: true,
+          message: rocketState.statusNote,
+          payload: { alienSlotId, traceType, position, reward: result.reward || null },
+        };
+      }
+    } else if (pending?.type === "banrenma_bonus_alien_trace") {
+      beginQuickActionStep("banrenma-trace", pending.effectLabel || "半人马痕迹奖励");
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复半人马痕迹奖励前外星人状态",
+      ));
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        playerState,
+        beforePlayerState,
+        "恢复半人马痕迹奖励前玩家状态",
+      ));
+      completeQuickActionStep();
+    } else if (!inDebugMode) {
+      beginQuickActionStep("banrenma-trace", rocketState.statusNote);
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复半人马痕迹放置前外星人状态",
+      ));
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        playerState,
+        beforePlayerState,
+        "恢复半人马痕迹放置前玩家状态",
+      ));
+      completeQuickActionStep();
+      settleCardTasksAfterEffect({ skipType1: true, render: false });
+    }
+
+    renderAlienPanels();
+    renderPlayerStats();
+    renderPlayerHand();
+    renderReservedCardsFromTaskState();
+
+    if (!inDebugMode && result.reward?.pickAlienCard) {
+      const openResult = openBanrenmaCardGainDialog({
+        player: currentPlayer,
+        fromEffectFlow: pending?.type === "planet_reward_alien_trace",
+        effectLabel: pending?.effectLabel || "半人马外星人牌",
+        beforeAlienState,
+        beforePlayerState,
+      });
+      if (!openResult.ok && pending?.type === "planet_reward_alien_trace") {
+        completeCurrentActionEffect();
+      }
+      return result;
+    }
+
+    if (pending?.type === "planet_reward_alien_trace") {
+      completeCurrentActionEffect();
+    }
+    updateActionButtons();
+    maybeOpenQueuedBanrenmaOpportunity();
     renderStateReadout();
     return result;
   }
@@ -9799,8 +10722,6 @@
       || isIndustryHandSelectionActive()
       || handScanPickIndex != null
       || cardCornerActionEnabled;
-    const currentCredits = Number(currentPlayer.resources?.credits) || 0;
-
     els.playerHandPanel.classList.toggle("is-empty", hand.length === 0);
     els.playerHandPanel.classList.toggle("card-corner-action-ready", Boolean(cardCornerAction));
     layoutPlayerHandFan(hand.length);
@@ -9808,8 +10729,9 @@
       const label = card.cardName || (card.faceUp ? `手牌 ${index + 1}` : `手牌背面 ${index + 1}`);
 
       if (handPickActive && !(handScanPickIndex != null && index !== handScanPickIndex)) {
-        const price = getCardPrice(card);
-        const affordable = currentCredits >= price;
+        const playCost = getCardPlayCost(card);
+        const formattedPlayCost = formatCardPlayCost(playCost);
+        const affordable = players.canAfford(currentPlayer, playCost);
         const button = document.createElement("button");
         button.type = "button";
         button.className = "player-hand-card-button";
@@ -9871,12 +10793,12 @@
           const selected = getPendingPlayCardSelection()?.handIndex === index;
           button.classList.add(affordable ? "is-playable" : "is-unaffordable");
           if (selected) button.classList.add("is-selected");
-          button.setAttribute("aria-label", `${label}，费用 ${price} 信用点`);
+          button.setAttribute("aria-label", `${label}，费用 ${formattedPlayCost}`);
           button.title = affordable
             ? selected
               ? `已选择 ${label}，点击上方「打出」确认，或再次点击取消选择`
-              : `选择 ${label}，费用 ${price} 信用点`
-            : `信用点不足，需要 ${price}`;
+              : `选择 ${label}，费用 ${formattedPlayCost}`
+            : `资源不足，需要 ${formattedPlayCost}`;
         } else {
           button.setAttribute("aria-label", label);
         }
@@ -9941,6 +10863,48 @@
     badge.className = "reserved-card-trigger-badge";
     badge.textContent = String(playedCount);
     button.append(badge);
+    return button;
+  }
+
+  function createBanrenmaReservedButton(card, originalIndex, rowIndex) {
+    const currentPlayer = getCurrentPlayer();
+    const mark = banrenma?.getPlayerScoreMarks?.(alienGameState, currentPlayer)
+      ?.find((item) => item.id === card.banrenmaScoreMarkId || item.cardInstanceId === card.id);
+    const threshold = mark?.threshold ?? card.banrenmaThreshold ?? "-";
+    const ready = Number(currentPlayer?.resources?.score || 0) >= Number(threshold);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "reserved-card-button reserved-card-button-banrenma";
+    button.dataset.banrenmaReservedIndex = String(originalIndex);
+    button.disabled = !ready;
+    button.style.setProperty("--card-index", String(rowIndex + 1));
+    button.classList.toggle("is-banrenma-threshold-ready", ready);
+    button.title = ready
+      ? `半人马条件已达成：${cards.getCardLabel(card)}`
+      : `半人马阈值：达到 ${threshold} 分后可结算条件效果`;
+
+    const image = document.createElement("img");
+    image.className = "player-hand-card reserved-card";
+    image.src = card.src || banrenma?.getCardSrc?.(card.alienCardId) || RESOURCE_ICON_SRC.banrenmaCard;
+    image.alt = cards.getCardLabel(card);
+    image.width = 747;
+    image.height = 1040;
+    image.decoding = "async";
+    image.setAttribute("aria-hidden", "true");
+
+    const badge = document.createElement("span");
+    badge.className = "reserved-card-banrenma-threshold-badge";
+    const icon = document.createElement("img");
+    icon.className = "reserved-card-banrenma-threshold-icon";
+    icon.src = RESOURCE_ICON_SRC.banrenmaToken;
+    icon.alt = "";
+    icon.decoding = "async";
+    icon.setAttribute("aria-hidden", "true");
+    const value = document.createElement("span");
+    value.textContent = String(threshold);
+    badge.append(icon, value);
+
+    button.append(image, badge);
     return button;
   }
 
@@ -11140,6 +12104,8 @@
     if (!isInitialSelectionActive()) {
       queueJiuzheOpportunitiesForPlayer(currentPlayer);
       maybeOpenQueuedJiuzheOpportunity();
+      queueBanrenmaOpportunitiesForPlayer(currentPlayer);
+      maybeOpenQueuedBanrenmaOpportunity();
     }
   }
 
@@ -12416,6 +13382,33 @@
     return { ok: true, message: rocketState.statusNote };
   }
 
+  function revealBanrenmaForDebug() {
+    if (!banrenma) return { ok: false, message: "半人马模块未加载" };
+    const currentPlayer = getCurrentPlayer();
+    const alienSlotId = 2;
+    const slot = aliens.getAlienSlot(alienGameState, alienSlotId);
+    if (!slot) return { ok: false, message: "找不到外星人 2" };
+
+    slot.assignedAlienId = banrenma.ALIEN_ID;
+    slot.alienId = banrenma.ALIEN_ID;
+    slot.revealed = true;
+    alienGameState.banrenma = banrenma.createBanrenmaState();
+    banrenma.initializeBanrenmaReveal(
+      alienGameState,
+      alienSlotId,
+      currentPlayer,
+      getActivePlayers(),
+    );
+    banrenma.seedDebugTraceGrid(alienGameState, alienSlotId, currentPlayer);
+
+    rocketState.statusNote = "半人马调试：已展示半人马并铺满当前玩家 token（1号位只放1枚，不结算奖励）";
+    renderAlienPanels();
+    renderPlayerStats();
+    renderReservedCardsFromTaskState();
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
   function focusFangzhouDebugCalibration(alienSlotId = 2) {
     setDebugOpen(false);
     window.requestAnimationFrame(() => {
@@ -12425,6 +13418,14 @@
   }
 
   function focusYichangdianDebugCalibration(alienSlotId = 2) {
+    setDebugOpen(false);
+    window.requestAnimationFrame(() => {
+      const target = els.alienPanels?.[alienSlotId - 1] || getAlienJiuzheTraceLayer(alienSlotId);
+      target?.scrollIntoView?.({ behavior: "smooth", block: "center", inline: "nearest" });
+    });
+  }
+
+  function focusBanrenmaDebugCalibration(alienSlotId = 2) {
     setDebugOpen(false);
     window.requestAnimationFrame(() => {
       const target = els.alienPanels?.[alienSlotId - 1] || getAlienJiuzheTraceLayer(alienSlotId);
@@ -12679,6 +13680,9 @@
     pendingJiuzheCardPlay = null;
     pendingJiuzheOpportunityOpen = false;
     jiuzheOpportunityQueue = [];
+    pendingBanrenmaCardGain = null;
+    pendingBanrenmaOpportunity = null;
+    banrenmaOpportunityQueue = [];
     industry?.resetAllIndustryActionMarks?.(playerState.players);
     cancelIndustryAbilityFlow({ silent: true });
     randomizePlayerTurnOrder();
@@ -12832,6 +13836,24 @@
       return;
     }
 
+    const banrenmaGain = event.target.closest("[data-banrenma-card-gain]");
+    if (banrenmaGain && !banrenmaGain.disabled) {
+      handleBanrenmaCardGainChoice(banrenmaGain.dataset.banrenmaCardGain);
+      return;
+    }
+
+    const banrenmaBonus = event.target.closest("[data-banrenma-bonus-choice]");
+    if (banrenmaBonus && !banrenmaBonus.disabled) {
+      handleBanrenmaBonusChoice(banrenmaBonus.dataset.banrenmaBonusChoice);
+      return;
+    }
+
+    const banrenmaCard = event.target.closest("[data-banrenma-card-choice]");
+    if (banrenmaCard && !banrenmaCard.disabled) {
+      handleBanrenmaCardConditionChoice(banrenmaCard.dataset.banrenmaCardChoice);
+      return;
+    }
+
     const yichangdianCorner = event.target.closest("[data-yichangdian-corner-card-id]");
     if (yichangdianCorner && !yichangdianCorner.disabled) {
       handleYichangdianCornerChoice(yichangdianCorner.dataset.yichangdianCornerCardId);
@@ -12855,6 +13877,14 @@
     confirmScanTarget(button.dataset.nebulaId, button.dataset.sectorX);
   });
   els.scanTargetCancel?.addEventListener("click", () => {
+    if (pendingBanrenmaCardGain) {
+      handleBanrenmaCardGainChoice("cancel");
+      return;
+    }
+    if (pendingBanrenmaOpportunity) {
+      closeBanrenmaOpportunityDialog();
+      return;
+    }
     if (pendingYichangdianCardGain) {
       handleYichangdianCardGainChoice("cancel");
       return;
@@ -12867,6 +13897,14 @@
   });
   els.scanTargetOverlay?.addEventListener("click", (event) => {
     if (event.target === els.scanTargetOverlay) {
+      if (pendingBanrenmaCardGain) {
+        handleBanrenmaCardGainChoice("cancel");
+        return;
+      }
+      if (pendingBanrenmaOpportunity) {
+        closeBanrenmaOpportunityDialog();
+        return;
+      }
       if (pendingYichangdianCardGain) {
         handleYichangdianCardGainChoice("cancel");
         return;
@@ -12892,10 +13930,16 @@
       || (alienSlot?.revealed && alienSlot.alienId === aliens.YICHANGDIAN_ALIEN_ID);
     const useFangzhouGrid = fangzhou?.isFangzhouRevealedSlot?.(alienGameState, alienSlotId)
       || (alienSlot?.revealed && alienSlot.alienId === aliens.FANGZHOU_ALIEN_ID);
+    const useBanrenmaGrid = banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)
+      || (alienSlot?.revealed && alienSlot.alienId === aliens.BANRENMA_ALIEN_ID);
 
     if (pickerStep === "alien") {
       if (useJiuzheGrid) {
         beginJiuzheTraceGridPlacement(alienSlotId);
+        return;
+      }
+      if (useBanrenmaGrid) {
+        beginBanrenmaTraceGridPlacement(alienSlotId);
         return;
       }
       if (useFangzhouGrid) {
@@ -12951,6 +13995,15 @@
   });
   els.alienJiuzheTraceLayers?.forEach((layer) => {
     layer.addEventListener("click", (event) => {
+      const banrenmaButton = event.target.closest("[data-banrenma-trace-slot]");
+      if (banrenmaButton && !banrenmaButton.disabled && banrenmaButton.classList.contains("is-placeable")) {
+        confirmBanrenmaTracePlacement(
+          Number(banrenmaButton.dataset.alienSlot),
+          banrenmaButton.dataset.traceType,
+          Number(banrenmaButton.dataset.banrenmaPosition),
+        );
+        return;
+      }
       const yichangdianButton = event.target.closest("[data-yichangdian-trace-slot]");
       if (yichangdianButton && !yichangdianButton.disabled && yichangdianButton.classList.contains("is-placeable")) {
         confirmYichangdianTracePlacement(
@@ -13098,6 +14151,10 @@
     const result = revealFangzhouForDebug();
     if (result?.ok) focusFangzhouDebugCalibration(2);
   });
+  els.debugBanrenmaButton?.addEventListener("click", () => {
+    const result = revealBanrenmaForDebug();
+    if (result?.ok) focusBanrenmaDebugCalibration(2);
+  });
   document.addEventListener("click", (event) => {
     const viewButton = event.target.closest("[data-fangzhou-card-view]");
     if (!viewButton) return;
@@ -13229,6 +14286,7 @@
     revealJiuzheForDebug,
     revealYichangdianForDebug,
     revealFangzhouForDebug,
+    revealBanrenmaForDebug,
     getFinalScoringState: () => structuredClone(finalScoringState),
     markFinalScoreTile: handleFinalScoreTileClick,
     openAlienTracePicker,
@@ -13242,7 +14300,8 @@
       const revealResult = maybeRevealAlienAfterTrace(alienSlotId, result);
       const sideEffect = handleJiuzheRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
         || handleYichangdianRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
-        || handleFangzhouRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer());
+        || handleFangzhouRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
+        || handleBanrenmaRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer());
       if (sideEffect?.message) {
         rocketState.statusNote = sideEffect.message;
       }
@@ -13262,7 +14321,8 @@
       const result = aliens.revealAlien(alienGameState, alienSlotId, alienId);
       const sideEffect = handleJiuzheRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
         || handleYichangdianRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
-        || handleFangzhouRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer());
+        || handleFangzhouRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
+        || handleBanrenmaRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer());
       if (sideEffect?.message) result.message = sideEffect.message;
       renderAlienPanels();
       renderRockets();
