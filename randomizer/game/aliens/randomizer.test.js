@@ -2,6 +2,7 @@
 
 const catalog = require("./catalog");
 const state = require("./state");
+const jiuzhe = require("./jiuzhe");
 const randomizer = require("./randomizer");
 
 function assert(condition, message) {
@@ -19,6 +20,7 @@ const result = randomizer.randomizeAlienAssignments(alienState, random);
 
 assert(result.ok, "randomize should succeed");
 assert(Object.keys(result.assignments).length === 2, "two slot assignments");
+assert(result.assignments[1] === jiuzhe.ALIEN_ID, "slot 1 should be fixed to Jiuzhe");
 
 const assignedIds = Object.values(result.assignments);
 assert(new Set(assignedIds).size === 2, "assigned aliens should be distinct");

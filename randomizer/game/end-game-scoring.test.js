@@ -2,6 +2,7 @@ const assert = require("node:assert/strict");
 const finalScoring = require("./final-scoring");
 const endGameScoring = require("./end-game-scoring");
 const cardEffects = require("./cards/effects");
+const jiuzhe = require("./aliens/jiuzhe");
 
 function player(overrides = {}) {
   return {
@@ -125,6 +126,51 @@ const finalScore = endGameScoring.computePlayerFinalScore({
 assert.equal(finalScore.baseScore, 10);
 assert.equal(finalScore.cardScore, 2);
 assert.equal(finalScore.totalScore, 12);
+
+const jiuzheState = {
+  aliens: {
+    1: {
+      revealed: true,
+      alienId: jiuzhe.ALIEN_ID,
+      traces: { yellow: {}, pink: {}, blue: {} },
+    },
+  },
+};
+jiuzhe.ensureJiuzheState(jiuzheState).revealedSlotId = 1;
+const threatPlayerA = player({
+  id: "player-a",
+  color: "white",
+  resources: { score: 100 },
+  completedTaskCount: 5,
+});
+const threatPlayerB = player({
+  id: "player-b",
+  color: "blue",
+  resources: { score: 80 },
+});
+jiuzhe.dealJiuzheCards(jiuzheState, [threatPlayerA, threatPlayerB], () => 0);
+jiuzhe.getPlayerJiuzheCards(jiuzheState, threatPlayerA)[0] = {
+  index: 13,
+  threat: 4,
+  score: 12,
+  label: "完成5张任务牌",
+  played: true,
+};
+jiuzhe.addThreat(jiuzheState, threatPlayerA, 4);
+jiuzhe.addThreat(jiuzheState, threatPlayerB, 4);
+const jiuzheFinal = endGameScoring.computePlayerFinalScore({
+  currentPlayer: threatPlayerA,
+  players: [threatPlayerA, threatPlayerB],
+  finalScoringState: finalScoring.createFinalScoringState(),
+  nebulaDataState: { sectorSettlements: { winsByPlayerId: {} }, nebulae: {}, sectorExtraMarks: {} },
+  alienGameState: jiuzheState,
+  planetStatsState: { planets: {} },
+  cardEffects,
+  getCardTypeCode: (card) => cardEffects.getRuntimeCardTypeCode(card, 0),
+});
+assert.equal(jiuzheFinal.jiuzheCardScore, 12);
+assert.equal(jiuzheFinal.jiuzhePenaltyApplied, true);
+assert.equal(jiuzheFinal.totalScore, Math.ceil(112 * 0.9));
 
 assert.equal(finalScoring.getTileVariant(state, "a"), 1);
 assert.equal(finalScoring.getTileVariant(state, "b"), 2);

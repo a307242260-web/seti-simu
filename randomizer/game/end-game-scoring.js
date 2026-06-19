@@ -2,18 +2,20 @@
   "use strict";
 
   let finalScoringModule = root.SetiFinalScoring;
+  let jiuzheModule = root.SetiAlienJiuzhe;
   if (typeof require === "function") {
     finalScoringModule = finalScoringModule || require("./final-scoring");
+    jiuzheModule = jiuzheModule || require("./aliens/jiuzhe");
   }
 
-  const api = factory(finalScoringModule);
+  const api = factory(finalScoringModule, jiuzheModule);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiEndGameScoring = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (finalScoring) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (finalScoring, jiuzhe) {
   "use strict";
 
   const NEBULA_IDS_BY_COLOR = Object.freeze({
@@ -42,6 +44,23 @@
     "b_63.webp": Object.freeze({ kind: "sectorWinsByColor", color: "yellow", scorePer: 3 }),
     "b_34.webp": Object.freeze({ kind: "planetOrbitOrLand", planetId: "jupiter", scorePer: 3 }),
   });
+
+  function getJiuzheModule() {
+    if (jiuzhe) return jiuzhe;
+    if (typeof globalThis !== "undefined" && globalThis.SetiAlienJiuzhe) {
+      jiuzhe = globalThis.SetiAlienJiuzhe;
+      return jiuzhe;
+    }
+    if (typeof require === "function") {
+      try {
+        jiuzhe = require("./aliens/jiuzhe");
+        return jiuzhe;
+      } catch (_error) {
+        return null;
+      }
+    }
+    return null;
+  }
 
   function getPlayerKeys(player) {
     return new Set([player?.id, player?.color].filter(Boolean));
@@ -83,7 +102,17 @@
   function countTraceMarkers(player, alienGameState, traceType) {
     const playerKeys = getPlayerKeys(player);
     let count = 0;
-    for (const slot of Object.values(alienGameState?.aliens || {})) {
+    const jiuzheModule = getJiuzheModule();
+    const jiuzheSlotId = alienGameState?.jiuzhe?.revealedSlotId;
+    for (const [slotId, slot] of Object.entries(alienGameState?.aliens || {})) {
+      if (jiuzheModule && jiuzheSlotId != null && Number(slotId) === Number(jiuzheSlotId)) {
+        const grid = jiuzheModule.getTraceGrid(alienGameState, jiuzheSlotId);
+        for (const position of jiuzheModule.TRACE_POSITIONS || []) {
+          const entry = grid?.[traceType]?.[position];
+          if (entry && markerBelongsToPlayer(entry, playerKeys)) count += 1;
+        }
+        continue;
+      }
       const traceSlot = slot?.traces?.[traceType];
       if (!traceSlot?.firstPlaced || !playerKeys.has(traceSlot.ownerPlayerColor)) continue;
       count += 1 + Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
@@ -104,7 +133,7 @@
   }
 
   function markerBelongsToPlayer(marker, playerKeys) {
-    return playerKeys.has(marker?.playerId) || playerKeys.has(marker?.color);
+    return playerKeys.has(marker?.playerId) || playerKeys.has(marker?.color) || playerKeys.has(marker?.playerColor);
   }
 
   function countPlanetOrbitOrLand(player, planetStatsState, planetId) {
@@ -316,22 +345,48 @@
     return { total, cards };
   }
 
+  function computePlayerJiuzheScore(player, context = {}) {
+    const jiuzheModule = getJiuzheModule();
+    if (!jiuzheModule || !context.alienGameState) return { total: 0, cards: [] };
+    return jiuzheModule.scorePlayedCards(context.alienGameState, player, context);
+  }
+
+  function shouldApplyJiuzheThreatPenalty(player, context = {}) {
+    const jiuzheModule = getJiuzheModule();
+    if (!jiuzheModule || !context.alienGameState) return false;
+    const allPlayers = context.players || context.playerState?.players || [player];
+    return jiuzheModule.shouldApplyThreatPenalty(context.alienGameState, player, allPlayers);
+  }
+
   function computePlayerFinalScore(context = {}, player = context.currentPlayer) {
     const baseScore = getBaseScore(player);
     const tileResult = computePlayerTileScore(context.finalScoringState, player, context);
     const cardResult = computePlayerCardScore(player, context);
+    const jiuzheResult = computePlayerJiuzheScore(player, context);
     const tileScore = tileResult.total;
     const cardScore = cardResult.total;
-    const totalScore = baseScore + tileScore + cardScore;
+    const jiuzheCardScore = jiuzheResult.total;
+    const prePenaltyTotalScore = baseScore + tileScore + cardScore + jiuzheCardScore;
+    const jiuzheModule = getJiuzheModule();
+    const jiuzheThreat = jiuzheModule?.getThreat?.(context.alienGameState, player) || 0;
+    const jiuzhePenaltyApplied = shouldApplyJiuzheThreatPenalty(player, context);
+    const totalScore = jiuzhePenaltyApplied
+      ? Math.ceil(prePenaltyTotalScore * 0.9)
+      : prePenaltyTotalScore;
 
     return {
       playerId: getPlayerId(player),
       baseScore,
       tileScore,
       cardScore,
+      jiuzheCardScore,
+      jiuzheThreat,
+      jiuzhePenaltyApplied,
+      prePenaltyTotalScore,
       totalScore,
       tiles: tileResult.tiles,
       cards: cardResult.cards,
+      jiuzheCards: jiuzheResult.cards,
     };
   }
 
@@ -356,6 +411,8 @@
     scoreCardEndGameRule,
     computePlayerTileScore,
     computePlayerCardScore,
+    computePlayerJiuzheScore,
+    shouldApplyJiuzheThreatPenalty,
     computePlayerFinalScore,
   });
 });

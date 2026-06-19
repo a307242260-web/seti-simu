@@ -680,13 +680,15 @@ body {
 }
 
 .alien-panel {
-  width: min(78%, 362px);
+  width: min(88%, 420px);
   min-height: var(--alien-panel-min-height, 0);
   align-self: center;
   padding: clamp(14px, 1.29vw, 21px);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 10px;
 }
 
 .alien-stack {
@@ -697,12 +699,57 @@ body {
   gap: 14px;
 }
 
+.alien-jiuzhe-thresholds {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.alien-jiuzhe-thresholds[hidden] {
+  display: none;
+}
+
+.alien-jiuzhe-threshold {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  min-width: 42px;
+  padding: 5px 4px;
+  border: 1px solid rgba(255, 222, 126, 0.36);
+  border-radius: 6px;
+  background: rgba(3, 12, 20, 0.48);
+  box-shadow: 0 0 10px rgba(255, 210, 104, 0.12);
+}
+
+.alien-jiuzhe-threshold-icon {
+  display: block;
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+}
+
+.alien-jiuzhe-threshold-score {
+  font: 700 19.5px/1 "Microsoft YaHei", "PingFang SC", sans-serif;
+  color: rgba(255, 244, 196, 0.94);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.65);
+}
+
 .alien-back,
 .alien-state {
   display: block;
   width: 100%;
   height: auto;
   filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.42));
+}
+
+.alien-face-wrap {
+  position: relative;
+  width: 100%;
 }
 
 .alien-state-wrap {
@@ -723,7 +770,14 @@ body {
   pointer-events: none;
 }
 
-.alien-trace-layer .alien-trace-token.alien-trace-token-positioned {
+.alien-jiuzhe-trace-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.alien-trace-layer .alien-trace-token.alien-trace-token-positioned,
+.alien-jiuzhe-trace-layer .alien-trace-token.alien-trace-token-positioned {
   position: absolute;
   width: 14%;
   height: auto;
@@ -736,7 +790,12 @@ body {
   filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.42));
 }
 
-.alien-trace-layer .alien-trace-token.alien-trace-token-positioned.is-dragging {
+.alien-jiuzhe-trace-layer .alien-trace-token.alien-trace-token-positioned {
+  z-index: 8;
+}
+
+.alien-trace-layer .alien-trace-token.alien-trace-token-positioned.is-dragging,
+.alien-jiuzhe-trace-layer .alien-trace-token.alien-trace-token-positioned.is-dragging {
   cursor: grabbing;
   z-index: 12;
   filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
@@ -769,6 +828,54 @@ body {
   outline: 1px dashed rgba(232, 238, 248, 0.45);
   outline-offset: 1px;
   border-radius: 50%;
+}
+
+.alien-jiuzhe-slot {
+  position: absolute;
+  width: 14%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 2px dashed rgba(255, 246, 177, 0.58);
+  border-radius: 50%;
+  background: rgba(8, 23, 34, 0.1);
+  box-shadow: inset 0 0 0 999px rgba(255, 255, 255, 0.02), 0 0 12px rgba(255, 215, 98, 0.18);
+  cursor: pointer;
+  pointer-events: auto;
+  touch-action: manipulation;
+  z-index: 6;
+}
+
+.alien-jiuzhe-slot[data-trace-type="pink"] {
+  border-color: rgba(232, 120, 168, 0.75);
+  box-shadow: 0 0 14px rgba(232, 120, 168, 0.2);
+}
+
+.alien-jiuzhe-slot[data-trace-type="yellow"] {
+  border-color: rgba(232, 196, 72, 0.78);
+  box-shadow: 0 0 14px rgba(232, 196, 72, 0.2);
+}
+
+.alien-jiuzhe-slot[data-trace-type="blue"] {
+  border-color: rgba(88, 190, 232, 0.78);
+  box-shadow: 0 0 14px rgba(88, 190, 232, 0.2);
+}
+
+.alien-jiuzhe-slot:not(.is-placeable) {
+  cursor: default;
+  opacity: 0.42;
+}
+
+.alien-jiuzhe-slot.is-placeable:hover,
+.alien-jiuzhe-slot.is-placeable:focus-visible {
+  background: rgba(255, 246, 177, 0.16);
+  outline: 2px solid rgba(255, 246, 177, 0.75);
+  outline-offset: 2px;
+}
+
+.alien-trace-token-jiuzhe {
+  border-radius: 50%;
+  outline: 2px solid rgba(255, 246, 177, 0.42);
+  outline-offset: 1px;
 }
 
 .tech-panel {
@@ -3098,6 +3205,33 @@ button.spin-button:hover {
   background: rgba(98, 219, 255, 0.14);
 }
 
+.jiuzhe-card-option {
+  min-width: min(32vw, 150px);
+  max-width: 190px;
+  padding: 8px;
+  display: grid;
+  gap: 6px;
+}
+
+.jiuzhe-card-option-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 2px solid rgba(154, 218, 255, 0.22);
+}
+
+.jiuzhe-card-option.is-played .jiuzhe-card-option-image {
+  border-width: 4px;
+  border-color: rgba(92, 203, 255, 0.96);
+  box-shadow: 0 0 14px rgba(92, 203, 255, 0.42);
+}
+
+.jiuzhe-card-option.is-achieved .jiuzhe-card-option-image {
+  border-color: rgba(255, 215, 98, 0.96);
+  box-shadow: 0 0 16px rgba(255, 215, 98, 0.42);
+}
+
 .debug-dock {
   position: fixed;
   left: 10px;
@@ -3324,6 +3458,17 @@ button.spin-button:hover {
   .alien-panel {
     width: 100%;
     min-height: 0;
+    gap: 8px;
+  }
+
+  .alien-jiuzhe-threshold {
+    min-width: 36px;
+    padding: 4px 3px;
+  }
+
+  .alien-jiuzhe-threshold-icon {
+    width: 52px;
+    height: 52px;
   }
 
   .opponent-stat-grid {
@@ -3383,6 +3528,16 @@ button.spin-button:hover {
   .alien-panel {
     width: 100%;
     min-height: 0;
+    gap: 7px;
+  }
+
+  .alien-jiuzhe-threshold {
+    min-width: 34px;
+  }
+
+  .alien-jiuzhe-threshold-icon {
+    width: 48px;
+    height: 48px;
   }
 
   .tech-tile {

@@ -23,4 +23,21 @@ assert(rebuiltAnchor.percentX === anchor.percentX && rebuiltAnchor.percentY === 
 
 assert(second.percentX > first.percentX, "second extra should be to the right of first");
 
+for (const traceType of ["pink", "yellow", "blue"]) {
+  for (let position = 1; position <= 5; position += 1) {
+    const layout = placement.getJiuzheTraceMarkerLayout(1, traceType, position);
+    assert(layout && Number.isFinite(layout.percentX) && Number.isFinite(layout.percentY),
+      `Jiuzhe ${traceType} ${position} should have a layout`);
+  }
+}
+
+assert(placement.JIUZHE_TRACE_TOKEN_DISPLAY_SCALE === 1.8,
+  "Jiuzhe token scale should be 1.8x");
+assert(placement.getJiuzheTraceMarkerLayout(1, "pink", 1).percentX === 18.43,
+  "Jiuzhe pink column should use aligned X");
+assert(placement.getJiuzheTraceMarkerLayout(1, "yellow", 5).percentY === 89.46,
+  "Jiuzhe yellow fifth marker should use calibrated Y");
+assert(placement.getJiuzheTraceMarkerLayout(1, "blue", 4).percentX === 81.14,
+  "Jiuzhe blue column should use aligned X");
+
 console.log("aliens/placement.test.js ok");

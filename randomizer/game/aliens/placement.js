@@ -27,6 +27,7 @@
 
   const ALIEN_TRACE_TOKEN_DISPLAY_SCALE = 7;
   const ALIEN_EXTRA_TRACE_TOKEN_DISPLAY_SCALE = 5;
+  const JIUZHE_TRACE_TOKEN_DISPLAY_SCALE = 1.8;
 
   /** 非首标记网格：每行 3 个；校准锚点为第二行第二列（0-based: row=1, col=1） */
   const EXTRA_TRACE_GRID_COLUMNS = 3;
@@ -60,6 +61,55 @@
     }),
   });
 
+  const JIUZHE_TRACE_MARKER_SLOTS = Object.freeze({
+    1: Object.freeze({
+      pink: Object.freeze({
+        1: Object.freeze({ percentX: 18.43, percentY: 36.19, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 18.43, percentY: 48.85, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 18.43, percentY: 59.55, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 18.43, percentY: 72.21, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 18.43, percentY: 84, scalePercent: 62 }),
+      }),
+      yellow: Object.freeze({
+        1: Object.freeze({ percentX: 49.74, percentY: 40.12, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 49.74, percentY: 52.78, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 49.74, percentY: 64.13, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 49.74, percentY: 76.58, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 49.74, percentY: 89.46, scalePercent: 62 }),
+      }),
+      blue: Object.freeze({
+        1: Object.freeze({ percentX: 81.14, percentY: 36.19, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 81.14, percentY: 49.07, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 81.14, percentY: 59.99, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 81.14, percentY: 73.3, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 81.14, percentY: 84, scalePercent: 62 }),
+      }),
+    }),
+    2: Object.freeze({
+      pink: Object.freeze({
+        1: Object.freeze({ percentX: 18.43, percentY: 36.19, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 18.43, percentY: 48.85, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 18.43, percentY: 59.55, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 18.43, percentY: 72.21, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 18.43, percentY: 84, scalePercent: 62 }),
+      }),
+      yellow: Object.freeze({
+        1: Object.freeze({ percentX: 49.74, percentY: 40.12, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 49.74, percentY: 52.78, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 49.74, percentY: 64.13, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 49.74, percentY: 76.58, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 49.74, percentY: 89.46, scalePercent: 62 }),
+      }),
+      blue: Object.freeze({
+        1: Object.freeze({ percentX: 81.14, percentY: 36.19, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 81.14, percentY: 49.07, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 81.14, percentY: 59.99, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 81.14, percentY: 73.3, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 81.14, percentY: 84, scalePercent: 62 }),
+      }),
+    }),
+  });
+
   function roundPercent(value) {
     return Math.round(value * 100) / 100;
   }
@@ -78,6 +128,10 @@
 
   function getAlienExtraTraceMarkerLayout(alienSlotId, traceType) {
     return ALIEN_EXTRA_TRACE_MARKER_SLOTS[alienSlotId]?.[traceType] || null;
+  }
+
+  function getJiuzheTraceMarkerLayout(alienSlotId, traceType, position) {
+    return JIUZHE_TRACE_MARKER_SLOTS[alienSlotId]?.[traceType]?.[position] || null;
   }
 
   function getTraceTokenVisualScale(layout, displayScale) {
@@ -154,15 +208,18 @@
     ALIEN_TRACE_TOKEN_BASE_WIDTH_PERCENT,
     ALIEN_TRACE_TOKEN_DISPLAY_SCALE,
     ALIEN_EXTRA_TRACE_TOKEN_DISPLAY_SCALE,
+    JIUZHE_TRACE_TOKEN_DISPLAY_SCALE,
     EXTRA_TRACE_GRID_COLUMNS,
     EXTRA_TRACE_GRID_ANCHOR_ROW,
     EXTRA_TRACE_GRID_ANCHOR_COL,
     ALIEN_TRACE_MARKER_SLOTS,
     ALIEN_EXTRA_TRACE_MARKER_SLOTS,
+    JIUZHE_TRACE_MARKER_SLOTS,
     getAlienSlotLabel,
     getTraceTypeLabel,
     getAlienTraceMarkerLayout,
     getAlienExtraTraceMarkerLayout,
+    getJiuzheTraceMarkerLayout,
     getExtraTraceCellSize,
     getExtraTraceGridOriginCenter,
     getExtraTraceGridCenter,

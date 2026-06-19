@@ -6,23 +6,25 @@
   let state = root.SetiAlienState;
   let randomizer = root.SetiAlienRandomizer;
   let render = root.SetiAlienRender;
+  let jiuzhe = root.SetiAlienJiuzhe;
 
   if (typeof require === "function") {
     catalog = catalog || require("./catalog");
     placement = placement || require("./placement");
     state = state || require("./state");
+    jiuzhe = jiuzhe || require("./jiuzhe");
     randomizer = randomizer || require("./randomizer");
     render = render || require("./render");
   }
 
-  const api = factory(catalog, placement, state, randomizer, render);
+  const api = factory(catalog, placement, state, randomizer, render, jiuzhe);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAliens = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, randomizer, render) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, randomizer, render, jiuzhe) {
   "use strict";
 
   function getReadoutLines(alienState) {
@@ -80,6 +82,36 @@
       }
     }
 
+    if (jiuzhe?.ensureJiuzheState) {
+      const jiuzheState = jiuzhe.ensureJiuzheState(source);
+      lines.push("[九折]");
+      lines.push(
+        `揭示槽位=${jiuzheState.revealedSlotId || "无"} `
+        + `免费阈值=${jiuzheState.freeScoreThreshold ?? "无"} `
+        + `1信用点阈值=${jiuzheState.paidScoreThreshold ?? "无"}`,
+      );
+      const grid = jiuzheState.revealedSlotId
+        ? jiuzhe.getTraceGrid(source, jiuzheState.revealedSlotId)
+        : null;
+      if (grid) {
+        for (const traceType of jiuzhe.TRACE_TYPES) {
+          for (const position of jiuzhe.TRACE_POSITIONS) {
+            const entry = grid?.[traceType]?.[position];
+            const layout = render.getEffectiveJiuzheTraceMarkerLayout?.(
+              jiuzheState.revealedSlotId,
+              traceType,
+              position,
+            );
+            lines.push(
+              `  ${jiuzhe.formatTraceLabel(traceType, position)} `
+              + `${entry ? (entry.playerColor || entry.playerId || "已放置") : "空"}`
+              + `${layout ? ` @ ${layout.percentX}%,${layout.percentY}%` : ""}`,
+            );
+          }
+        }
+      }
+    }
+
     return lines;
   }
 
@@ -94,6 +126,10 @@
     ALIEN_TRACE_TOKEN_DISPLAY_SCALE: placement.ALIEN_TRACE_TOKEN_DISPLAY_SCALE,
     ALIEN_EXTRA_TRACE_TOKEN_DISPLAY_SCALE: placement.ALIEN_EXTRA_TRACE_TOKEN_DISPLAY_SCALE,
     EXTRA_TRACE_GRID_COLUMNS: placement.EXTRA_TRACE_GRID_COLUMNS,
+    jiuzhe,
+    JIUZHE_ALIEN_ID: jiuzhe?.ALIEN_ID || "九折",
+    JIUZHE_CARD_BACK_SRC: jiuzhe?.CARD_BACK_SRC,
+    JIUZHE_THREAT_ICON_SRC: jiuzhe?.THREAT_ICON_SRC,
     createDefaultAlienState: state.createDefaultAlienState,
     randomizeAlienAssignments: randomizer.randomizeAlienAssignments,
     getAlienType: catalog.getAlienType,
@@ -116,9 +152,13 @@
     getEffectiveExtraTraceGridLayout: render.getEffectiveExtraTraceGridLayout,
     listTraceMarkerLayoutOverrides: render.listTraceMarkerLayoutOverrides,
     listExtraTraceMarkerLayoutOverrides: render.listExtraTraceMarkerLayoutOverrides,
+    getEffectiveJiuzheTraceMarkerLayout: render.getEffectiveJiuzheTraceMarkerLayout,
+    listJiuzheTraceMarkerLayoutOverrides: render.listJiuzheTraceMarkerLayoutOverrides,
     bindAlienTraceDragging: render.bindAlienTraceDragging,
     renderAlienTraceMarkers: render.renderAlienTraceMarkers,
     renderAllAlienTraceMarkers: render.renderAllAlienTraceMarkers,
+    renderJiuzheTraceMarkers: render.renderJiuzheTraceMarkers,
+    renderAllJiuzheTraceMarkers: render.renderAllJiuzheTraceMarkers,
     renderAlienBackImage: render.renderAlienBackImage,
     renderAllAlienBackImages: render.renderAllAlienBackImages,
     resetAlienTraceTokens: render.resetAlienTraceTokens,

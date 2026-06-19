@@ -22,6 +22,7 @@
   const tech = window.SetiTech;
   const data = window.SetiData;
   const aliens = window.SetiAliens;
+  const jiuzhe = aliens.jiuzhe;
   const initialCards = window.SetiInitialCards;
   const industry = window.SetiIndustry;
 
@@ -55,6 +56,10 @@
     alienYellow: "../assets/symbol/effect/alien_yellow.webp",
     alienPink: "../assets/symbol/effect/alien_pink.webp",
     alienBlue: "../assets/symbol/effect/alien_blue.webp",
+    jiuzheCard: aliens.JIUZHE_CARD_BACK_SRC || "../assets/aliens/九折/cards/back.png",
+    jiuzheThreat: aliens.JIUZHE_THREAT_ICON_SRC || "../assets/aliens/九折/Threat.webp",
+    jiuzheTimeFree: "../assets/aliens/九折/time_1.png",
+    jiuzheTimePaid: "../assets/aliens/九折/time_2.png",
   });
   const OPPONENT_SECTOR_WIN_STATS = Object.freeze([
     Object.freeze({ color: "yellow", label: "黄色完成扇区", iconKey: "yellowFinishScan" }),
@@ -192,6 +197,9 @@
   let pendingCardTriggerAction = null;
   let pendingCardTriggerFreeMove = null;
   let pendingCardTaskCompletion = null;
+  let pendingJiuzheCardPlay = null;
+  let pendingJiuzheOpportunityOpen = false;
+  let jiuzheOpportunityQueue = [];
   const cardTaskState = cardTaskStateModule.createTaskState();
   let alienTracePickerState = null;
   let pendingActionExecuted = false;
@@ -276,6 +284,8 @@
     moveArrowLayer: document.getElementById("move-arrow-layer"),
     alienPanels: document.querySelectorAll(".alien-panel"),
     alienTraceLayers: document.querySelectorAll(".alien-trace-layer"),
+    alienJiuzheTraceLayers: document.querySelectorAll(".alien-jiuzhe-trace-layer"),
+    alienJiuzheThresholds: document.querySelectorAll(".alien-jiuzhe-thresholds"),
     finalScoreGrid: document.getElementById("final-score-grid"),
     finalScoreTileWraps: document.querySelectorAll(".final-score-tile-wrap"),
     finalScoreTiles: document.querySelectorAll(".final-score-tile"),
@@ -316,6 +326,7 @@
     debugPublicScanButton: document.getElementById("debug-public-scan-button"),
     debugHandScanButton: document.getElementById("debug-hand-scan-button"),
     debugAlienTraceButton: document.getElementById("debug-alien-trace-button"),
+    debugJiuzheButton: document.getElementById("debug-jiuzhe-button"),
     debugCheatButton: document.getElementById("debug-cheat-button"),
     alienTraceOverlay: document.getElementById("alien-trace-overlay"),
     alienTraceSubtitle: document.getElementById("alien-trace-subtitle"),
@@ -817,6 +828,11 @@
 
   function getPlayerById(playerId) {
     return playerState.players.find((player) => player.id === playerId) || null;
+  }
+
+  function getActivePlayers() {
+    const activeIds = new Set(turnState.activePlayerIds || []);
+    return playerState.players.filter((player) => activeIds.has(player.id));
   }
 
   function getPlayerLabelById(playerId) {
@@ -2474,6 +2490,8 @@
         ? "放置数据：精选一张公共牌，或点击盲抽"
       : pendingAction?.type === "tech_bonus_pick_card"
         ? "科技奖励：精选一张公共牌"
+      : pendingAction?.type === "jiuzhe_trace_pick"
+        ? "九折痕迹：精选一张公共牌"
       : pendingAction?.type === "industry_stratus_corner"
         ? `层云核心：请点击公共牌结算弃牌角标（剩余 ${pendingAction.remaining ?? 0} 张）`
       : pendingAction?.type === "industry_mission_pick"
@@ -2549,6 +2567,16 @@
       rocketState.statusNote = "已取消放置数据精选";
     } else if (pending?.type === "tech_bonus_pick_card") {
       rocketState.statusNote = "已取消科技奖励精选";
+    } else if (pending?.type === "jiuzhe_trace_pick") {
+      rocketState.statusNote = "已取消九折痕迹精选";
+      if (pending.fromEffectFlow && getCurrentActionEffect()) {
+        getCurrentActionEffect().result = {
+          ok: true,
+          undoable: true,
+          message: rocketState.statusNote,
+        };
+        completeCurrentActionEffect();
+      }
     } else if (pending?.type?.startsWith?.("industry_")) {
       if (pending.refundCost && pending.player) {
         players.gainResources(pending.player, pending.refundCost);
@@ -2628,6 +2656,21 @@
       appendActionLogStep(HISTORY_SOURCE_QUICK, "放置数据", rocketState.statusNote);
       clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
       if (quickActionHistory.hasSession()) quickActionHistory.commitSession();
+    }
+    if (pending?.type === "jiuzhe_trace_pick") {
+      rocketState.statusNote = `九折痕迹精选：${cards.getCardLabel(result.card)}`;
+      if (pending.fromEffectFlow) {
+        pendingActionHasIrreversibleCardGain = true;
+        if (getCurrentActionEffect()) {
+          getCurrentActionEffect().result = {
+            ok: true,
+            undoable: false,
+            message: rocketState.statusNote,
+            payload: { card: result.card, replenished: result.replenished || null },
+          };
+        }
+        completeCurrentActionEffect();
+      }
     }
     if (pending?.type === "industry_mission_pick") {
       const player = pending.player || getCurrentPlayer();
@@ -4017,6 +4060,7 @@
       "is-empty",
       !isInitialSelectionActive()
         && reservedCards.length === 0
+        && !(jiuzhe?.getPlayerJiuzheCards?.(alienGameState, currentPlayer)?.length)
         && getCurrentInitialSelectionCards(currentPlayer).length === 0,
     );
 
@@ -4041,10 +4085,14 @@
       createReservedCardButton(entry.card, entry.index, rowIndex, readyByCardId)
     )));
 
-    const finalRow = createReservedCardRow("final", "3型终局计分牌");
-    finalRow.replaceChildren(...finalTaskCards.map((entry, rowIndex) => (
-      createReservedCardButton(entry.card, entry.index, rowIndex, readyByCardId)
-    )));
+    const jiuzheButton = createJiuzheReservedButton(currentPlayer);
+    const finalRow = createReservedCardRow("final", "3型终局计分牌与九折牌");
+    finalRow.replaceChildren(
+      ...(jiuzheButton ? [jiuzheButton] : []),
+      ...finalTaskCards.map((entry, rowIndex) => (
+      createReservedCardButton(entry.card, entry.index, rowIndex + (jiuzheButton ? 1 : 0), readyByCardId)
+      )),
+    );
 
     els.reservedCardFan.replaceChildren(taskRow, finalRow);
     layoutReservedCardRows();
@@ -5775,6 +5823,7 @@
     pendingAlienTraceAction = {
       type: "planet_reward_alien_trace",
       beforeAlienState: structuredClone(alienGameState),
+      beforePlayerState: structuredClone(playerState),
       effectLabel: effect.label,
     };
     return openAlienTracePicker({
@@ -6036,13 +6085,78 @@
     ) || null;
   }
 
+  function getAlienJiuzheTraceLayer(alienSlotId) {
+    return [...els.alienJiuzheTraceLayers].find(
+      (layer) => Number(layer.dataset.alienSlot) === alienSlotId,
+    ) || null;
+  }
+
+  function getAlienJiuzheThresholdElement(alienSlotId) {
+    return [...els.alienJiuzheThresholds].find(
+      (element) => Number(element.dataset.alienSlot) === alienSlotId,
+    ) || null;
+  }
+
   function getAlienBackImage(alienSlotId) {
     return document.querySelector(`.alien-panel[data-alien-slot="${alienSlotId}"] .alien-back`);
+  }
+
+  function createJiuzheThresholdNode(kind, iconSrc, score) {
+    const item = document.createElement("div");
+    const icon = document.createElement("img");
+    const scoreEl = document.createElement("span");
+    item.className = "alien-jiuzhe-threshold";
+    item.dataset.jiuzheThreshold = kind;
+    icon.className = "alien-jiuzhe-threshold-icon";
+    icon.src = iconSrc;
+    icon.alt = "";
+    icon.decoding = "async";
+    icon.setAttribute("aria-hidden", "true");
+    scoreEl.className = "alien-jiuzhe-threshold-score";
+    scoreEl.textContent = score == null ? "-" : String(score);
+    item.title = kind === "free"
+      ? `达到 ${score} 分：免费打出九折牌`
+      : `达到 ${score} 分：支付 1 信用点打出九折牌`;
+    item.append(icon, scoreEl);
+    return item;
+  }
+
+  function renderJiuzheThresholds() {
+    for (const alienSlotId of aliens.ALIEN_SLOT_IDS) {
+      const container = getAlienJiuzheThresholdElement(alienSlotId);
+      if (!container) continue;
+      const visible = Boolean(jiuzhe?.isJiuzheRevealedSlot?.(alienGameState, alienSlotId));
+      const state = alienGameState.jiuzhe || {};
+      if (!visible) {
+        container.hidden = true;
+        container.replaceChildren();
+        continue;
+      }
+      container.hidden = false;
+      container.replaceChildren(
+        createJiuzheThresholdNode("free", RESOURCE_ICON_SRC.jiuzheTimeFree, state.freeScoreThreshold),
+        createJiuzheThresholdNode("paid", RESOURCE_ICON_SRC.jiuzheTimePaid, state.paidScoreThreshold),
+      );
+    }
   }
 
   function maybeRevealAlienAfterTrace(alienSlotId, traceResult) {
     if (!traceResult?.readyToReveal) return null;
     return aliens.revealAlien(alienGameState, alienSlotId);
+  }
+
+  function isJiuzheTracePlacementMode() {
+    return alienTracePickerState?.mode === "jiuzhe-grid"
+      && Number.isInteger(Number(alienTracePickerState.selectedAlienSlotId));
+  }
+
+  function canPlaceJiuzheTrace(alienSlotId, traceType, position) {
+    if (!isJiuzheTracePlacementMode()) return false;
+    if (Number(alienTracePickerState.selectedAlienSlotId) !== Number(alienSlotId)) return false;
+    const allowedTraceTypes = alienTracePickerState.allowedTraceTypes || aliens.TRACE_TYPES;
+    if (!allowedTraceTypes.includes(traceType)) return false;
+    const grid = jiuzhe?.getTraceGrid?.(alienGameState, alienSlotId);
+    return !grid?.[traceType]?.[position];
   }
 
   function renderAlienPanels() {
@@ -6055,6 +6169,17 @@
       ),
       getPlayerLabel: (playerColor) => players.getPlayerColorDefinition(playerColor)?.label || playerColor,
     });
+    aliens.renderAllJiuzheTraceMarkers?.(getAlienJiuzheTraceLayer, alienGameState, {
+      tokenSrc: aliens.ALIEN_TRACE_TOKEN_SRC,
+      showJiuzheSlots: false,
+      canPlaceJiuzheTrace,
+      getPlayerTokenAsset: (playerColor) => (
+        players.getPlayerColorDefinition(playerColor)?.normalTokenAsset
+        || aliens.ALIEN_TRACE_TOKEN_SRC
+      ),
+      getPlayerLabel: (playerColor) => players.getPlayerColorDefinition(playerColor)?.label || playerColor,
+    });
+    renderJiuzheThresholds();
   }
 
   function randomizeAliens() {
@@ -6210,10 +6335,271 @@
     return { ok: true, message: "请选择外星人" };
   }
 
+  function beginJiuzheTraceGridPlacement(alienSlotId) {
+    const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes?.length
+      ? alienTracePickerState.allowedTraceTypes
+      : aliens.TRACE_TYPES;
+    alienTracePickerState = {
+      ...alienTracePickerState,
+      mode: "jiuzhe-grid",
+      selectedAlienSlotId: Number(alienSlotId),
+      allowedTraceTypes,
+    };
+    if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = true;
+    const traceLabel = allowedTraceTypes.length === 1
+      ? aliens.getTraceTypeLabel(allowedTraceTypes[0])
+      : "对应颜色";
+    rocketState.statusNote = `九折：请在正面牌图点击可放置的${traceLabel}痕迹位`;
+    renderAlienPanels();
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
+  function findPlayerForJiuzheEntry(entry) {
+    if (!entry) return null;
+    return getPlayerById(entry.playerId)
+      || getPlayerByColor(entry.playerColor)
+      || null;
+  }
+
+  function applyJiuzheRewardToPlayer(player, reward, label = "九折痕迹") {
+    if (!player || !reward) return { ok: false, message: "没有可结算的九折奖励" };
+    const messages = [];
+    if (Object.keys(reward.gain || {}).length) {
+      players.gainResources(player, reward.gain);
+      messages.push(players.formatResourceCost(reward.gain));
+    }
+    const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+    if (dataCount > 0) {
+      let gained = 0;
+      for (let index = 0; index < dataCount; index += 1) {
+        const result = data.gainData(player, { source: "jiuzhe" });
+        if (result.ok) gained += 1;
+      }
+      messages.push(`${gained}/${dataCount}数据`);
+    }
+    if (reward.threat) {
+      messages.push(`威胁度+${reward.threat}`);
+    }
+    if (reward.pickCard) {
+      messages.push("精选1张牌");
+    }
+    return {
+      ok: true,
+      message: `${label}：${messages.join("、") || "无奖励"}`,
+    };
+  }
+
+  function enqueueJiuzheOpportunity(player, opportunity) {
+    if (!player || !opportunity) return;
+    const exists = jiuzheOpportunityQueue.some((item) => (
+      item.playerId === player.id && item.reason === opportunity.reason
+    ));
+    if (exists) return;
+    jiuzheOpportunityQueue.push({
+      playerId: player.id,
+      reason: opportunity.reason,
+      label: opportunity.label,
+      cost: opportunity.cost || {},
+    });
+  }
+
+  function queueJiuzheOpportunitiesForPlayer(player) {
+    if (!jiuzhe || !player) return;
+    const opportunity = jiuzhe.getPendingOpportunity(alienGameState, player);
+    enqueueJiuzheOpportunity(player, opportunity);
+  }
+
+  function getJiuzheCardConditionLabel(card, player) {
+    const achieved = jiuzhe?.isCardConditionMet?.(card, player, {
+      alienGameState,
+      planetStatsState,
+      nebulaDataState,
+    });
+    return {
+      achieved,
+      label: `${card.label || `九折牌 ${card.index}`} · ${card.score || 0}分 · 威胁${card.threat || 0}`,
+    };
+  }
+
+  function closeJiuzheCardDialog() {
+    pendingJiuzheCardPlay = null;
+    pendingJiuzheOpportunityOpen = false;
+    if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+  }
+
+  function buildJiuzheOpportunitySubtitle(player, opportunity) {
+    const remaining = Math.max(0, Math.round(Number(opportunity?.remaining) || 0));
+    if (opportunity?.reason === "reveal" && remaining > 1) {
+      return `${player.colorLabel}玩家拥有 ${remaining} 次免费打出机会，本次可选择 1 张未打出的九折牌，或放弃本次机会。`;
+    }
+    return `${player.colorLabel}玩家可以选择 1 张未打出的九折牌，或放弃本次机会。`;
+  }
+
+  function openJiuzheCardDialog(player, opportunity = null) {
+    if (!jiuzhe || !player || !els.scanTargetOverlay || !els.scanTargetActions) {
+      return { ok: false, message: "无法打开九折牌窗口" };
+    }
+    const cardsForPlayer = jiuzhe.getPlayerJiuzheCards(alienGameState, player);
+    if (!cardsForPlayer.length) return { ok: false, message: "该玩家没有九折牌" };
+
+    pendingJiuzheCardPlay = opportunity
+      ? { playerId: player.id, ...opportunity }
+      : { playerId: player.id, reason: "view", cost: {}, label: "查看九折牌" };
+    pendingJiuzheOpportunityOpen = Boolean(opportunity);
+
+    if (els.scanTargetTitle) els.scanTargetTitle.textContent = opportunity ? opportunity.label : "九折牌";
+    if (els.scanTargetSubtitle) {
+      els.scanTargetSubtitle.textContent = opportunity
+        ? buildJiuzheOpportunitySubtitle(player, opportunity)
+        : `${player.colorLabel}玩家的九折牌。蓝框=已打出，金框=条件已达成。`;
+    }
+    if (els.scanTargetCancel) els.scanTargetCancel.hidden = Boolean(opportunity);
+
+    const nodes = cardsForPlayer.map((card) => {
+      const status = getJiuzheCardConditionLabel(card, player);
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "scan-target-option-button jiuzhe-card-option";
+      button.dataset.jiuzheCardChoice = String(card.index);
+      button.disabled = !opportunity || card.played;
+      button.classList.toggle("is-played", Boolean(card.played));
+      button.classList.toggle("is-achieved", Boolean(status.achieved));
+      button.innerHTML = `
+        <img class="jiuzhe-card-option-image" src="${card.src}" alt="" aria-hidden="true">
+        <small>${status.label}${card.played ? " · 已打出" : ""}</small>
+      `;
+      return button;
+    });
+
+    if (opportunity) {
+      const skip = document.createElement("button");
+      skip.type = "button";
+      skip.className = "scan-target-option-button";
+      skip.dataset.jiuzheOpportunitySkip = "true";
+      skip.innerHTML = "放弃本次机会<small>不会打出九折牌</small>";
+      nodes.push(skip);
+    }
+
+    els.scanTargetActions.replaceChildren(...nodes);
+    els.scanTargetOverlay.hidden = false;
+    return { ok: true, message: "九折牌窗口已打开" };
+  }
+
+  function handleJiuzheCardChoice(cardIndex) {
+    if (!jiuzhe || !pendingJiuzheCardPlay) return { ok: false, message: "没有九折打出机会" };
+    const player = getPlayerById(pendingJiuzheCardPlay.playerId);
+    if (!player) return { ok: false, message: "找不到九折牌玩家" };
+    if (pendingJiuzheCardPlay.reason === "view") return { ok: false, message: "当前只是查看九折牌" };
+
+    const beforePlayerState = structuredClone(playerState);
+    const beforeAlienState = structuredClone(alienGameState);
+    const cost = pendingJiuzheCardPlay.cost || {};
+    if (Object.keys(cost).length && !players.canAfford(player, cost)) {
+      rocketState.statusNote = `资源不足，需要 ${players.formatResourceCost(cost)}`;
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    if (Object.keys(cost).length) {
+      players.spendResources(player, cost);
+    }
+    const result = jiuzhe.playJiuzheCard(alienGameState, player, cardIndex, {
+      reason: pendingJiuzheCardPlay.reason,
+    });
+    if (!result.ok) {
+      if (Object.keys(cost).length) players.gainResources(player, cost);
+      rocketState.statusNote = result.message;
+      renderStateReadout();
+      return result;
+    }
+
+    beginQuickActionStep("jiuzhe-card", pendingJiuzheCardPlay.label || "九折打出");
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      playerState,
+      beforePlayerState,
+      "恢复九折打出前玩家状态",
+    ));
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      alienGameState,
+      beforeAlienState,
+      "恢复九折打出前外星人状态",
+    ));
+    completeQuickActionStep();
+
+    rocketState.statusNote = `${pendingJiuzheCardPlay.label}：${result.message}`;
+    queueJiuzheOpportunitiesForPlayer(player);
+    closeJiuzheCardDialog();
+    renderPlayerStats();
+    renderAlienPanels();
+    updateActionButtons();
+    renderStateReadout();
+    maybeOpenQueuedJiuzheOpportunity();
+    return result;
+  }
+
+  function handleJiuzheOpportunitySkip() {
+    if (!jiuzhe || !pendingJiuzheCardPlay) return { ok: false, message: "没有九折打出机会" };
+    const player = getPlayerById(pendingJiuzheCardPlay.playerId);
+    const beforeAlienState = structuredClone(alienGameState);
+    const result = jiuzhe.declineOpportunity(alienGameState, player, pendingJiuzheCardPlay.reason);
+    if (result.ok) {
+      beginQuickActionStep("jiuzhe-card-skip", pendingJiuzheCardPlay.label || "九折放弃");
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复九折放弃前外星人状态",
+      ));
+      completeQuickActionStep();
+    }
+    rocketState.statusNote = result.message;
+    queueJiuzheOpportunitiesForPlayer(player);
+    closeJiuzheCardDialog();
+    renderPlayerStats();
+    updateActionButtons();
+    renderStateReadout();
+    maybeOpenQueuedJiuzheOpportunity();
+    return result;
+  }
+
+  function maybeOpenQueuedJiuzheOpportunity() {
+    if (pendingJiuzheOpportunityOpen || pendingJiuzheCardPlay) return null;
+    if (hasActivePendingSubFlow()) return null;
+    if (els.scanTargetOverlay && !els.scanTargetOverlay.hidden) return null;
+    while (jiuzheOpportunityQueue.length) {
+      const next = jiuzheOpportunityQueue.shift();
+      const player = getPlayerById(next.playerId);
+      if (!player) continue;
+      const latest = jiuzhe.getPendingOpportunity(alienGameState, player);
+      if (!latest || latest.reason !== next.reason) continue;
+      return openJiuzheCardDialog(player, latest);
+    }
+    return null;
+  }
+
+  function handleJiuzheRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
+    if (!jiuzhe || !revealResult?.ok || revealResult.alienId !== jiuzhe.ALIEN_ID) return null;
+    const initResult = jiuzhe.initializeJiuzheReveal(
+      alienGameState,
+      alienSlotId,
+      triggerPlayer,
+      getActivePlayers(),
+    );
+    for (const player of getActivePlayers()) {
+      queueJiuzheOpportunitiesForPlayer(player);
+    }
+    return {
+      ...initResult,
+      rewardMessages: [],
+      message: initResult.message,
+    };
+  }
+
   function confirmAlienTracePlacement(alienSlotId, traceType) {
     const currentPlayer = getCurrentPlayer();
     const pending = pendingAlienTraceAction;
     const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
+    const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
     pendingAlienTraceAction = null;
     const result = aliens.placeFirstTrace(
       alienGameState,
@@ -6223,13 +6609,19 @@
     );
     closeAlienTracePicker();
     const revealResult = maybeRevealAlienAfterTrace(alienSlotId, result);
-    rocketState.statusNote = revealResult?.message || result.message;
+    const revealSideEffect = handleJiuzheRevealSideEffects(alienSlotId, revealResult, currentPlayer);
+    rocketState.statusNote = revealSideEffect?.message || revealResult?.message || result.message;
     if (pending?.type === "planet_reward_alien_trace" && result.ok) {
       beginEffectHistoryStep(pending.effectLabel || "外星人标记奖励");
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
         "恢复外星人标记奖励前状态",
+      ));
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        playerState,
+        beforePlayerState,
+        "恢复外星人标记奖励前玩家状态",
       ));
       if (getCurrentActionEffect()) {
         getCurrentActionEffect().result = {
@@ -6244,8 +6636,98 @@
       settleCardTasksAfterEffect({ skipType1: true, render: true });
     }
     renderAlienPanels();
+    renderPlayerStats();
+    maybeOpenQueuedJiuzheOpportunity();
     renderStateReadout();
     return revealResult || result;
+  }
+
+  function confirmJiuzheTracePlacement(alienSlotId, traceType, position) {
+    if (!jiuzhe || !isJiuzheTracePlacementMode()) {
+      rocketState.statusNote = "请先通过获取外星人标记进入九折放置模式";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+    if (!canPlaceJiuzheTrace(alienSlotId, traceType, position)) {
+      rocketState.statusNote = "该九折痕迹位不可放置";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const currentPlayer = getCurrentPlayer();
+    const pending = pendingAlienTraceAction;
+    const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
+    const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
+    pendingAlienTraceAction = null;
+    alienTracePickerState = null;
+
+    const result = jiuzhe.placeJiuzheTrace(
+      alienGameState,
+      alienSlotId,
+      traceType,
+      position,
+      currentPlayer,
+    );
+    if (!result.ok) {
+      rocketState.statusNote = result.message;
+      renderAlienPanels();
+      renderStateReadout();
+      return result;
+    }
+
+    const rewardResult = applyJiuzheRewardToPlayer(
+      currentPlayer,
+      result.reward,
+      `九折${jiuzhe.formatTraceLabel(traceType, Number(position))}`,
+    );
+    rocketState.statusNote = rewardResult.ok ? rewardResult.message : result.message;
+
+    if (pending?.type === "planet_reward_alien_trace") {
+      beginEffectHistoryStep(pending.effectLabel || "九折痕迹奖励");
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复九折痕迹奖励前外星人状态",
+      ));
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        playerState,
+        beforePlayerState,
+        "恢复九折痕迹奖励前玩家状态",
+      ));
+      if (getCurrentActionEffect()) {
+        getCurrentActionEffect().result = {
+          ok: true,
+          undoable: true,
+          message: rocketState.statusNote,
+          payload: { alienSlotId, traceType, position, reward: result.reward || null },
+        };
+      }
+    } else {
+      settleCardTasksAfterEffect({ skipType1: true, render: false });
+    }
+
+    renderAlienPanels();
+    renderPlayerStats();
+
+    if (result.reward?.pickCard) {
+      const pickResult = beginCardSelection({
+        type: "jiuzhe_trace_pick",
+        player: currentPlayer,
+        fromEffectFlow: pending?.type === "planet_reward_alien_trace",
+        effectLabel: pending?.effectLabel || "九折痕迹精选",
+      });
+      if (!pickResult.ok && pending?.type === "planet_reward_alien_trace") {
+        completeCurrentActionEffect();
+      }
+      return result;
+    }
+
+    if (pending?.type === "planet_reward_alien_trace") {
+      completeCurrentActionEffect();
+    }
+    updateActionButtons();
+    renderStateReadout();
+    return result;
   }
 
   function alignAlienPanelsToPlanets() {
@@ -6274,6 +6756,14 @@
     els.appWrap.classList.toggle("debug-collapsed", !open);
     els.debugToggle.setAttribute("aria-expanded", String(open));
     resize();
+  }
+
+  function focusJiuzheDebugCalibration(alienSlotId = 1) {
+    setDebugOpen(false);
+    window.requestAnimationFrame(() => {
+      const target = els.alienPanels?.[alienSlotId - 1] || getAlienJiuzheTraceLayer(alienSlotId);
+      target?.scrollIntoView?.({ behavior: "smooth", block: "center", inline: "nearest" });
+    });
   }
 
   function isTechActionSelectionActive() {
@@ -7235,6 +7725,7 @@
       ? endGameScoring.computePlayerFinalScore({
         currentPlayer: player,
         finalScoringState,
+        playerState,
         nebulaDataState,
         alienGameState,
         planetStatsState,
@@ -7339,6 +7830,21 @@
     return row;
   }
 
+  function createOpponentJiuzheRow(player) {
+    const cardsForPlayer = jiuzhe?.getPlayerJiuzheCards?.(alienGameState, player) || [];
+    const playedCount = jiuzhe?.countPlayedCards?.(alienGameState, player) || 0;
+    const threat = jiuzhe?.getPanelThreat?.(alienGameState, player) || 0;
+    const revealed = Boolean(alienGameState.jiuzhe?.revealedSlotId);
+    if (!revealed && !cardsForPlayer.length && !playedCount && !threat) return null;
+
+    const row = createOpponentStatRow("opponent-stat-row-jiuzhe");
+    row.append(
+      createStatIcon("已打出九折牌", playedCount, RESOURCE_ICON_SRC.jiuzheCard),
+      createStatIcon("九折威胁度", threat, RESOURCE_ICON_SRC.jiuzheThreat),
+    );
+    return row;
+  }
+
   function renderOpponentStats() {
     if (!els.opponentStatGrid) return;
 
@@ -7359,11 +7865,13 @@
 
       const incomeRow = createOpponentStatRow("opponent-stat-row-income");
       incomeRow.append(...buildPlayerIncomeStatNodes(player));
+      const jiuzheRow = createOpponentJiuzheRow(player);
 
       card.append(
         createOpponentPlayerHeaderRow(player, player.resources.score, finalScoreBreakdown.totalScore),
         resourcesRow,
         incomeRow,
+        ...(jiuzheRow ? [jiuzheRow] : []),
         ...OPPONENT_TECH_TYPES.map(({ type, prefix, color: techColor }) => (
           createOpponentTechRow(player, type, prefix, techColor)
         )),
@@ -7561,6 +8069,34 @@
     row.dataset.reservedRow = rowType;
     row.setAttribute("aria-label", label);
     return row;
+  }
+
+  function createJiuzheReservedButton(player) {
+    const cardsForPlayer = jiuzhe?.getPlayerJiuzheCards?.(alienGameState, player) || [];
+    if (!cardsForPlayer.length) return null;
+    const playedCount = jiuzhe.countPlayedCards(alienGameState, player);
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "reserved-card-button reserved-card-button-jiuzhe";
+    button.dataset.jiuzheCards = "true";
+    button.style.setProperty("--card-index", "1");
+    button.title = "查看九折牌";
+
+    const image = document.createElement("img");
+    image.className = "player-hand-card reserved-card";
+    image.src = jiuzhe.CARD_BACK_SRC;
+    image.alt = "九折牌";
+    image.width = 747;
+    image.height = 1040;
+    image.decoding = "async";
+    image.setAttribute("aria-hidden", "true");
+    button.append(image);
+
+    const badge = document.createElement("span");
+    badge.className = "reserved-card-trigger-badge";
+    badge.textContent = String(playedCount);
+    button.append(badge);
+    return button;
   }
 
   function createReservedCardButton(card, originalIndex, rowIndex, readyByCardId) {
@@ -8596,6 +9132,10 @@
     renderPlayerHand();
     renderReservedCards();
     renderPlayerDataBoard();
+    if (!isInitialSelectionActive()) {
+      queueJiuzheOpportunitiesForPlayer(currentPlayer);
+      maybeOpenQueuedJiuzheOpportunity();
+    }
   }
 
   function getPlayerReadoutLines() {
@@ -8608,6 +9148,7 @@
       ? endGameScoring.computePlayerFinalScore({
         currentPlayer,
         finalScoringState,
+        playerState,
         nebulaDataState,
         alienGameState,
         planetStatsState,
@@ -8619,7 +9160,7 @@
     return [
       "玩家状态",
       `${currentPlayer.name}(${currentPlayer.color}) 信用点=${resources.credits} 能量=${resources.energy} 宣传=${resources.publicity}/${limits.publicity} 可用数据=${resources.availableData}/${limits.availableData} 额外公共扫描=${resources.additionalPublicScan || 0} 手牌=${resources.handSize} 保留=${reservedCount} 完成任务=${currentPlayer.completedTaskCount || 0} 分数=${resources.score} 环绕=${currentPlayer.orbitCount}`,
-      `终局总分=${finalScoreBreakdown.totalScore}（板块=${finalScoreBreakdown.tileScore || 0} 卡牌=${finalScoreBreakdown.cardScore || 0}）`,
+      `终局总分=${finalScoreBreakdown.totalScore}（板块=${finalScoreBreakdown.tileScore || 0} 卡牌=${finalScoreBreakdown.cardScore || 0} 九折=${finalScoreBreakdown.jiuzheCardScore || 0} 威胁=${finalScoreBreakdown.jiuzheThreat || 0}${finalScoreBreakdown.jiuzhePenaltyApplied ? " 已0.9修正" : ""}）`,
       `收入 信用点=${income.credits || 0} 能量=${income.energy || 0} 手牌=${income.handSize || 0} 宣传=${income.publicity || 0} 数据=${income.availableData || 0}`,
     ];
   }
@@ -9792,6 +10333,32 @@
     return { ok: true, player: currentPlayer, message: rocketState.statusNote };
   }
 
+  function revealJiuzheForDebug() {
+    if (!jiuzhe) return { ok: false, message: "九折模块未加载" };
+    const currentPlayer = getCurrentPlayer();
+    const alienSlotId = 1;
+    const slot = aliens.getAlienSlot(alienGameState, alienSlotId);
+    if (!slot) return { ok: false, message: "找不到外星人 1" };
+
+    slot.assignedAlienId = jiuzhe.ALIEN_ID;
+    slot.alienId = jiuzhe.ALIEN_ID;
+    slot.revealed = true;
+    jiuzhe.ensureJiuzheState(alienGameState);
+    alienGameState.jiuzhe.revealedSlotId = alienSlotId;
+    alienGameState.jiuzhe.revealedByPlayerId = currentPlayer.id;
+    alienGameState.jiuzhe.revealedByPlayerColor = currentPlayer.color;
+    alienGameState.jiuzhe.freeScoreThreshold = (Number(currentPlayer.resources?.score) || 0) + 20;
+    alienGameState.jiuzhe.paidScoreThreshold = (Number(currentPlayer.resources?.score) || 0) + 40;
+    delete alienGameState.jiuzhe.traceSlotsByAlienSlotId[String(alienSlotId)];
+    jiuzhe.seedDebugTraceGrid(alienGameState, alienSlotId, currentPlayer);
+
+    rocketState.statusNote = "九折调试：已展示九折并铺满当前玩家 token（不结算奖励）";
+    renderAlienPanels();
+    renderPlayerStats();
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
   function fillNebulaDataBoard(options = {}) {
     const { replace = false, source = "debug", log = false } = options;
     if (replace) {
@@ -10034,6 +10601,9 @@
   function randomizeAll() {
     els.spinButton?.classList.remove("pulsin");
     resetActionLog();
+    pendingJiuzheCardPlay = null;
+    pendingJiuzheOpportunityOpen = false;
+    jiuzheOpportunityQueue = [];
     industry?.resetAllIndustryActionMarks?.(playerState.players);
     cancelIndustryAbilityFlow({ silent: true });
     randomizePlayerTurnOrder();
@@ -10161,6 +10731,18 @@
       return;
     }
 
+    const jiuzheChoice = event.target.closest("[data-jiuzhe-card-choice]");
+    if (jiuzheChoice && !jiuzheChoice.disabled) {
+      handleJiuzheCardChoice(jiuzheChoice.dataset.jiuzheCardChoice);
+      return;
+    }
+
+    const jiuzheSkip = event.target.closest("[data-jiuzhe-opportunity-skip]");
+    if (jiuzheSkip && !jiuzheSkip.disabled) {
+      handleJiuzheOpportunitySkip();
+      return;
+    }
+
     const cardTriggerButton = event.target.closest("[data-card-trigger-choice]");
     if (cardTriggerButton && !cardTriggerButton.disabled) {
       handleCardTriggerChoice(cardTriggerButton.dataset.cardTriggerChoice);
@@ -10177,9 +10759,19 @@
     if (!button || button.disabled || !button.dataset.nebulaId) return;
     confirmScanTarget(button.dataset.nebulaId, button.dataset.sectorX);
   });
-  els.scanTargetCancel?.addEventListener("click", closeScanTargetPicker);
+  els.scanTargetCancel?.addEventListener("click", () => {
+    if (pendingJiuzheCardPlay?.reason === "view") {
+      closeJiuzheCardDialog();
+      return;
+    }
+    closeScanTargetPicker();
+  });
   els.scanTargetOverlay?.addEventListener("click", (event) => {
     if (event.target === els.scanTargetOverlay) {
+      if (pendingJiuzheCardPlay?.reason === "view") {
+        closeJiuzheCardDialog();
+        return;
+      }
       closeScanTargetPicker();
     }
   });
@@ -10190,8 +10782,15 @@
     const alienSlotId = Number(button.dataset.alienSlot);
     const pickerStep = button.dataset.alienPickerStep;
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
+    const alienSlot = aliens.getAlienSlot(alienGameState, alienSlotId);
+    const useJiuzheGrid = jiuzhe?.isJiuzheRevealedSlot?.(alienGameState, alienSlotId)
+      || (alienSlot?.revealed && alienSlot.alienId === aliens.JIUZHE_ALIEN_ID);
 
     if (pickerStep === "alien") {
+      if (useJiuzheGrid) {
+        beginJiuzheTraceGridPlacement(alienSlotId);
+        return;
+      }
       if (allowedTraceTypes.length === 1) {
         confirmAlienTracePlacement(alienSlotId, allowedTraceTypes[0]);
         return;
@@ -10210,6 +10809,17 @@
     if (event.target === els.alienTraceOverlay) {
       closeAlienTracePicker();
     }
+  });
+  els.alienJiuzheTraceLayers?.forEach((layer) => {
+    layer.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-jiuzhe-trace-slot]");
+      if (!button || button.disabled || !button.classList.contains("is-placeable")) return;
+      confirmJiuzheTracePlacement(
+        Number(button.dataset.alienSlot),
+        button.dataset.traceType,
+        Number(button.dataset.jiuzhePosition),
+      );
+    });
   });
   els.scanAction4Actions?.addEventListener("click", (event) => {
     const button = event.target.closest("[data-scan-action4-choice]");
@@ -10312,6 +10922,10 @@
   els.debugPublicScanButton?.addEventListener("click", beginPublicDeckScan);
   els.debugHandScanButton?.addEventListener("click", beginHandScan);
   els.debugAlienTraceButton?.addEventListener("click", openAlienTracePicker);
+  els.debugJiuzheButton?.addEventListener("click", () => {
+    const result = revealJiuzheForDebug();
+    if (result?.ok) focusJiuzheDebugCalibration(1);
+  });
   els.debugPickCardButton?.addEventListener("click", beginCardSelection);
   els.publicBlindDrawButton?.addEventListener("click", handlePublicBlindDrawClick);
   els.publicCardRow?.addEventListener("click", (event) => {
@@ -10329,6 +10943,11 @@
   els.cardCornerActionButton?.addEventListener("click", confirmCardCornerQuickAction);
   els.handScanCancel?.addEventListener("click", cancelHandScanSelection);
   els.reservedCardFan?.addEventListener("click", (event) => {
+    const jiuzheButton = event.target.closest("[data-jiuzhe-cards]");
+    if (jiuzheButton) {
+      openJiuzheCardDialog(getCurrentPlayer());
+      return;
+    }
     const button = event.target.closest("[data-reserved-index]");
     if (!button || button.disabled) return;
     const currentPlayer = getCurrentPlayer();
@@ -10433,7 +11052,9 @@
     getDataSlotLayoutOverrides: () => structuredClone(data.listSlotLayoutOverrides()),
     getAlienTraceLayoutOverrides: () => structuredClone(aliens.listTraceMarkerLayoutOverrides()),
     getAlienExtraTraceLayoutOverrides: () => structuredClone(aliens.listExtraTraceMarkerLayoutOverrides()),
+    getJiuzheTraceLayoutOverrides: () => structuredClone(aliens.listJiuzheTraceMarkerLayoutOverrides?.() || []),
     getAlienState: () => structuredClone(alienGameState),
+    revealJiuzheForDebug,
     getFinalScoringState: () => structuredClone(finalScoringState),
     markFinalScoreTile: handleFinalScoreTileClick,
     openAlienTracePicker,
@@ -10445,7 +11066,12 @@
         playerColor || getCurrentPlayer().color,
       );
       const revealResult = maybeRevealAlienAfterTrace(alienSlotId, result);
+      const sideEffect = handleJiuzheRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer());
+      if (sideEffect?.message) {
+        rocketState.statusNote = sideEffect.message;
+      }
       renderAlienPanels();
+      renderPlayerStats();
       renderStateReadout();
       return revealResult || result;
     },
@@ -10457,7 +11083,10 @@
     },
     revealAlien: (alienSlotId, alienId) => {
       const result = aliens.revealAlien(alienGameState, alienSlotId, alienId);
+      const sideEffect = handleJiuzheRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer());
+      if (sideEffect?.message) result.message = sideEffect.message;
       renderAlienPanels();
+      renderPlayerStats();
       renderStateReadout();
       return result;
     },
