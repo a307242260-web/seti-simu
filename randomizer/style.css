@@ -837,6 +837,7 @@ body {
 .alien-yichangdian-slot,
 .alien-fangzhou-slot,
 .alien-banrenma-slot,
+.alien-chong-slot,
 .alien-state-trace-slot {
   position: absolute;
   width: 14%;
@@ -856,6 +857,7 @@ body {
 .alien-yichangdian-slot[data-trace-type="pink"],
 .alien-fangzhou-slot[data-trace-type="pink"],
 .alien-banrenma-slot[data-trace-type="pink"],
+.alien-chong-slot[data-trace-type="pink"],
 .alien-state-trace-slot[data-trace-type="pink"] {
   border-color: rgba(232, 120, 168, 0.75);
   box-shadow: 0 0 14px rgba(232, 120, 168, 0.2);
@@ -865,6 +867,7 @@ body {
 .alien-yichangdian-slot[data-trace-type="yellow"],
 .alien-fangzhou-slot[data-trace-type="yellow"],
 .alien-banrenma-slot[data-trace-type="yellow"],
+.alien-chong-slot[data-trace-type="yellow"],
 .alien-state-trace-slot[data-trace-type="yellow"] {
   border-color: rgba(232, 196, 72, 0.78);
   box-shadow: 0 0 14px rgba(232, 196, 72, 0.2);
@@ -874,6 +877,7 @@ body {
 .alien-yichangdian-slot[data-trace-type="blue"],
 .alien-fangzhou-slot[data-trace-type="blue"],
 .alien-banrenma-slot[data-trace-type="blue"],
+.alien-chong-slot[data-trace-type="blue"],
 .alien-state-trace-slot[data-trace-type="blue"] {
   border-color: rgba(88, 190, 232, 0.78);
   box-shadow: 0 0 14px rgba(88, 190, 232, 0.2);
@@ -883,6 +887,7 @@ body {
 .alien-yichangdian-slot:not(.is-placeable),
 .alien-fangzhou-slot:not(.is-placeable),
 .alien-banrenma-slot:not(.is-placeable),
+.alien-chong-slot:not(.is-placeable),
 .alien-state-trace-slot:not(.is-placeable) {
   cursor: default;
   opacity: 0.42;
@@ -896,6 +901,8 @@ body {
 .alien-fangzhou-slot.is-placeable:focus-visible,
 .alien-banrenma-slot.is-placeable:hover,
 .alien-banrenma-slot.is-placeable:focus-visible,
+.alien-chong-slot.is-placeable:hover,
+.alien-chong-slot.is-placeable:focus-visible,
 .alien-state-trace-slot.is-placeable:hover,
 .alien-state-trace-slot.is-placeable:focus-visible {
   background: rgba(255, 246, 177, 0.16);
@@ -918,10 +925,22 @@ body {
 
 .alien-trace-token-yichangdian,
 .alien-trace-token-fangzhou,
-.alien-trace-token-banrenma {
+.alien-trace-token-banrenma,
+.alien-trace-token-chong {
   border-radius: 50%;
   outline: 2px solid rgba(126, 229, 255, 0.46);
   outline-offset: 1px;
+}
+
+.alien-jiuzhe-trace-layer .alien-chong-fossil-marker {
+  width: 14%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  z-index: 7;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
 }
 
 .alien-trace-token-banrenma-bonus {
@@ -932,7 +951,8 @@ body {
 
 .alien-yichangdian-card-area,
 .alien-fangzhou-card-area,
-.alien-banrenma-card-area {
+.alien-banrenma-card-area,
+.alien-chong-card-area {
   display: grid;
   justify-items: center;
   gap: 6px;
@@ -945,20 +965,23 @@ body {
 
 .alien-yichangdian-card-area[hidden],
 .alien-fangzhou-card-area[hidden],
-.alien-banrenma-card-area[hidden] {
+.alien-banrenma-card-area[hidden],
+.alien-chong-card-area[hidden] {
   display: none;
 }
 
 .alien-yichangdian-card-title,
 .alien-fangzhou-card-title,
-.alien-banrenma-card-title {
+.alien-banrenma-card-title,
+.alien-chong-card-title {
   color: rgba(222, 246, 255, 0.86);
   font: 700 12px/1.2 "Microsoft YaHei", "PingFang SC", sans-serif;
 }
 
 .alien-yichangdian-card-image,
 .alien-fangzhou-card-image,
-.alien-banrenma-card-image {
+.alien-banrenma-card-image,
+.alien-chong-card-image {
   display: block;
   width: 100%;
   height: auto;
@@ -1689,6 +1712,29 @@ body {
   margin-top: 2px;
   color: rgba(232, 238, 248, 0.68);
   font: 500 11px/1.3 "Microsoft YaHei", "PingFang SC", sans-serif;
+}
+
+.scan-target-option-button.chong-fossil-choice-button {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: 72px;
+}
+
+.chong-fossil-choice-image {
+  display: block;
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 7px rgba(126, 229, 255, 0.42));
+}
+
+.scan-target-option-button.chong-fossil-choice-button small {
+  margin-top: 0;
+  font-size: 12px;
+  color: rgba(232, 238, 248, 0.82);
 }
 
 .data-place-cancel,
@@ -2984,8 +3030,54 @@ body {
   filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 16px rgba(126, 229, 255, 0.9));
 }
 
+.chong-planet-fossil-marker {
+  position: absolute;
+  width: 3.1%;
+  height: auto;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  z-index: 432;
+  pointer-events: none;
+  user-select: none;
+  border-radius: 50%;
+  filter: drop-shadow(0 0 7px rgba(126, 229, 255, 0.62)) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.58));
+}
+
 .rocket-token.is-move-selectable {
   cursor: pointer;
+}
+
+.rocket-token.is-chong-fossil {
+  width: calc(var(--rocket-width, 41px) * 1.2);
+  border-radius: 50%;
+  padding: 1px;
+  background: rgba(7, 18, 32, 0.55);
+  outline: 2px solid rgba(126, 229, 255, 0.6);
+  outline-offset: 1px;
+}
+
+.rocket-token.is-chong-fossil.is-move-target {
+  transform: translate(-50%, -50%);
+}
+
+.rocket-token.is-chong-fossil.is-chong-delivered {
+  cursor: default;
+  outline-color: rgba(148, 255, 185, 0.9);
+  filter: drop-shadow(0 0 8px rgba(148, 255, 185, 0.65)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.chong-fossil-owner-token {
+  position: absolute;
+  width: 1.74%;
+  min-width: 16px;
+  max-width: 26px;
+  height: auto;
+  transform: translate(-50%, -50%);
+  transform-origin: center center;
+  z-index: 486;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.9)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55));
 }
 
 .rocket-token.is-dragging {

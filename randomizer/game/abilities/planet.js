@@ -75,8 +75,8 @@
     return Math.max(0, BASE_LAND_ENERGY_COST - orbitDiscount - techDiscount);
   }
 
-  function canLandOnSatellites(player) {
-    return players.playerOwnsTech(player, "orange4");
+  function canLandOnSatellites(player, options = {}) {
+    return Boolean(options.allowSatelliteWithoutTech) || players.playerOwnsTech(player, "orange4");
   }
 
   function normalizeLandTarget(target) {
@@ -87,7 +87,7 @@
     return null;
   }
 
-  function getLandOptions(context) {
+  function getLandOptions(context, options = {}) {
     const placement = shared.getRocketPlanet(context);
     if (!placement.ok) return { ok: false, message: placement.message };
 
@@ -99,7 +99,7 @@
         label: `登陆${placement.planet.name}（主星）`,
       });
     }
-    if (canLandOnSatellites(placement.currentPlayer)) {
+    if (canLandOnSatellites(placement.currentPlayer, options)) {
       for (const satellite of planetStats.getAvailableSatellitesForLanding(context.planetStatsState, planetId)) {
         choices.push({
           target: { type: "satellite", satelliteId: satellite.satelliteId },
@@ -191,7 +191,7 @@
   }
 
   function landProbe(context, options = {}) {
-    const landOptions = getLandOptions(context);
+    const landOptions = getLandOptions(context, options);
     if (!landOptions.ok) return { ok: false, abilityId: "landProbe", message: landOptions.message };
 
     const placement = shared.getRocketPlanet(context);
@@ -215,7 +215,7 @@
     if (target.type === "satellite" && !planetStats.canLandOnSatellite(context.planetStatsState, planetId, target.satelliteId)) {
       return { ok: false, abilityId: "landProbe", message: `${placement.planet.name} 的该卫星不可登陆` };
     }
-    if (target.type === "satellite" && !canLandOnSatellites(currentPlayer)) {
+    if (target.type === "satellite" && !canLandOnSatellites(currentPlayer, options)) {
       return { ok: false, abilityId: "landProbe", message: "需要橙色4号科技才能登陆卫星" };
     }
 

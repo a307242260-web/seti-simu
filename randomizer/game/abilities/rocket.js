@@ -93,6 +93,10 @@
     return content?.kind === solar?.layout?.CONTENT_KIND?.PLANET && content.planetId !== "earth";
   }
 
+  function isPlanetContent(content) {
+    return content?.kind === solar?.layout?.CONTENT_KIND?.PLANET;
+  }
+
   function isPassThroughContent(content) {
     const kind = content?.kind;
     return kind === solar?.layout?.CONTENT_KIND?.HOLE
@@ -227,13 +231,17 @@
     const events = [];
     if (!player || !content) return { rewardNotes, events };
 
-    if (isNonEarthPlanetContent(content)) {
-      players.gainResources(player, { publicity: 1 });
-      rewardNotes.push(`${options.prefix || "到达"}${content.label || "行星"}，宣传+1`);
+    if (isPlanetContent(content)) {
+      if (isNonEarthPlanetContent(content)) {
+        players.gainResources(player, { publicity: 1 });
+        rewardNotes.push(`${options.prefix || "到达"}${content.label || "行星"}，宣传+1`);
+      }
       events.push({
         type: "visitPlanet",
         planetId: content.planetId,
         rocketId: rocket.id,
+        tokenKind: rocket.kind || "standard",
+        fossilId: rocket.fossilId || null,
         playerId: player.id,
         source: options.source || "move",
       });
@@ -245,6 +253,8 @@
       events.push({
         type: "visitComet",
         rocketId: rocket.id,
+        tokenKind: rocket.kind || "standard",
+        fossilId: rocket.fossilId || null,
         playerId: player.id,
         source: options.source || "move",
       });
@@ -258,6 +268,8 @@
       events.push({
         type: "visitAsteroid",
         rocketId: rocket.id,
+        tokenKind: rocket.kind || "standard",
+        fossilId: rocket.fossilId || null,
         playerId: player.id,
         source: options.source || "move",
       });
@@ -522,7 +534,7 @@
     }
 
     const plans = (context.rocketState.rockets || [])
-      .filter(rockets.isControllablePlayerRocket)
+      .filter(rockets.isMovablePlayerToken || rockets.isControllablePlayerRocket)
       .map((rocket) => resolveRocketRotationPlan(context, rocket, beforeRotation, afterRotation))
       .filter((plan) => plan && (plan.from.x !== plan.to.x || plan.from.y !== plan.to.y));
 

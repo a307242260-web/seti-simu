@@ -4,20 +4,22 @@
   let finalScoringModule = root.SetiFinalScoring;
   let jiuzheModule = root.SetiAlienJiuzhe;
   let yichangdianModule = root.SetiAlienYichangdian;
+  let chongModule = root.SetiAlienChong;
   if (typeof require === "function") {
     finalScoringModule = finalScoringModule || require("./final-scoring");
     jiuzheModule = jiuzheModule || require("./aliens/jiuzhe");
     yichangdianModule = yichangdianModule || require("./aliens/yichangdian");
+    chongModule = chongModule || require("./aliens/chong");
   }
 
-  const api = factory(finalScoringModule, jiuzheModule, yichangdianModule);
+  const api = factory(finalScoringModule, jiuzheModule, yichangdianModule, chongModule);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiEndGameScoring = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (finalScoring, jiuzhe, yichangdian) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (finalScoring, jiuzhe, yichangdian, chong) {
   "use strict";
 
   const NEBULA_IDS_BY_COLOR = Object.freeze({
@@ -81,6 +83,23 @@
     return null;
   }
 
+  function getChongModule() {
+    if (chong) return chong;
+    if (typeof globalThis !== "undefined" && globalThis.SetiAlienChong) {
+      chong = globalThis.SetiAlienChong;
+      return chong;
+    }
+    if (typeof require === "function") {
+      try {
+        chong = require("./aliens/chong");
+        return chong;
+      } catch (_error) {
+        return null;
+      }
+    }
+    return null;
+  }
+
   function getPlayerKeys(player) {
     return new Set([player?.id, player?.color].filter(Boolean));
   }
@@ -125,6 +144,8 @@
     const jiuzheSlotId = alienGameState?.jiuzhe?.revealedSlotId;
     const yichangdianModule = getYichangdianModule();
     const yichangdianSlotId = alienGameState?.yichangdian?.revealedSlotId;
+    const chongModule = getChongModule();
+    const chongSlotId = alienGameState?.chong?.revealedSlotId;
     for (const [slotId, slot] of Object.entries(alienGameState?.aliens || {})) {
       if (jiuzheModule && jiuzheSlotId != null && Number(slotId) === Number(jiuzheSlotId)) {
         const grid = jiuzheModule.getTraceGrid(alienGameState, jiuzheSlotId);
@@ -136,6 +157,11 @@
       }
       if (yichangdianModule && yichangdianSlotId != null && Number(slotId) === Number(yichangdianSlotId)) {
         const entries = yichangdianModule.listTraceEntries(alienGameState, yichangdianSlotId, traceType);
+        count += entries.filter((entry) => markerBelongsToPlayer(entry, playerKeys)).length;
+        continue;
+      }
+      if (chongModule && chongSlotId != null && Number(slotId) === Number(chongSlotId)) {
+        const entries = chongModule.listTraceEntries(alienGameState, chongSlotId, traceType);
         count += entries.filter((entry) => markerBelongsToPlayer(entry, playerKeys)).length;
         continue;
       }
@@ -284,9 +310,19 @@
     return card?.cardId || card?.image || card?.id || null;
   }
 
+  function isChongEcosystemStudyCard(card) {
+    return Boolean(
+      card?.chongCard
+      && (Number(card.alienCardId) === 2 || getCardId(card) === "chong_2.webp")
+    );
+  }
+
   function resolveCardEndGameRule(card, cardEffects) {
     const cardId = getCardId(card);
     if (!cardId) return null;
+    if (isChongEcosystemStudyCard(card)) {
+      return { kind: "chongTraceCount", scorePer: 1 };
+    }
     const model = cardEffects?.getCardModel?.(card);
     if (model?.endGameScoring) return model.endGameScoring;
     const deferred = cardEffects?.getDeferredCardModel?.(card);
@@ -310,6 +346,11 @@
         return scorePer * countDistinctSignalSectors(player, context.nebulaDataState);
       case "planetOrbitOrLand":
         return scorePer * countPlanetOrbitOrLand(player, context.planetStatsState, rule.planetId);
+      case "chongTraceCount": {
+        const chongModule = getChongModule();
+        if (!chongModule || !context.alienGameState) return 0;
+        return scorePer * chongModule.countTraceMarkers(context.alienGameState, player, null);
+      }
       default:
         return 0;
     }

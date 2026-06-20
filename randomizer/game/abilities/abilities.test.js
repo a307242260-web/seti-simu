@@ -134,6 +134,24 @@ function launchToPlanet(context, planetId) {
 }
 
 {
+  const context = createContext({ resources: { credits: 10, energy: 10, publicity: 0 } });
+  const launch = abilities.executeAbility("launchProbe", context, { skipCost: true });
+  assert.equal(launch.ok, true);
+  const earth = context.getEarthSectorCoordinate();
+  rockets.assignRocketToSlot(launch.rocket, solar.mod8(earth.x - 1), earth.y, 4);
+  const result = abilities.executeAbility("moveProbe", context, {
+    cost: {},
+    movementPoints: 1,
+    rocketId: launch.rocket.id,
+    deltaX: 1,
+    deltaY: 0,
+  });
+  assert.equal(result.ok, true);
+  assert.equal(currentPlayer(context).resources.publicity, 0);
+  assert.ok(result.events.some((event) => event.type === "visitPlanet" && event.planetId === "earth"));
+}
+
+{
   const context = createContext({ resources: { credits: 10, energy: 10 } });
   launchToPlanet(context, "venus");
   const result = abilities.executeAbility("landProbe", context, { target: { type: "planet" } });
@@ -159,6 +177,28 @@ function launchToPlanet(context, planetId) {
   assert.equal(result.ok, true);
   assert.equal(result.cost.energy, 2);
   assert.equal(currentPlayer(context).resources.energy, 8);
+}
+
+{
+  const context = createContext({ resources: { credits: 10, energy: 10 } });
+  launchToPlanet(context, "jupiter");
+  const satelliteTarget = { type: "satellite", satelliteId: "io" };
+  const blocked = abilities.executeAbility("landProbe", context, { target: satelliteTarget, skipCost: true });
+  assert.equal(blocked.ok, false);
+  assert.match(blocked.message, /橙色4/);
+
+  const options = abilities.planet.getLandOptions(context, { allowSatelliteWithoutTech: true });
+  assert.equal(options.ok, true);
+  assert.equal(options.choices.some((choice) => choice.target.satelliteId === "io"), true);
+
+  const result = abilities.executeAbility("landProbe", context, {
+    target: satelliteTarget,
+    skipCost: true,
+    allowSatelliteWithoutTech: true,
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.markerKind, "satellite");
+  assert.equal(result.satelliteId, "io");
 }
 
 {

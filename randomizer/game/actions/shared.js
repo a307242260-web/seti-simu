@@ -46,6 +46,12 @@
     if (rocket.playerId && currentPlayer && rocket.playerId !== currentPlayer.id) {
       return { ok: false, rocket, message: "当前火箭不属于本玩家" };
     }
+    if (!rockets.isControllablePlayerRocket(rocket)) {
+      if ((rocket.kind || rockets.ROCKET_KIND.STANDARD) === rockets.ROCKET_KIND.STANDARD) {
+        return { ok: false, rocket, message: "当前火箭不在行星格上" };
+      }
+      return { ok: false, rocket, message: "当前棋子不是可环绕/登陆的火箭" };
+    }
 
     return { ok: true, rocket, message: null, currentPlayer };
   }

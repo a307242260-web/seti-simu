@@ -31,6 +31,7 @@
   const YICHANGDIAN_TRACE_TOKEN_DISPLAY_SCALE = 1.44;
   const FANGZHOU_TRACE_TOKEN_DISPLAY_SCALE = 1.44;
   const BANRENMA_TRACE_TOKEN_DISPLAY_SCALE = 1.44;
+  const CHONG_TRACE_TOKEN_DISPLAY_SCALE = 1.44;
   const BANRENMA_BONUS_TOKEN_DISPLAY_SCALE = 3.0;
   const FANGZHOU_POSITION1_STACK_STEP_Y = 14.5;
   const BANRENMA_POSITION1_STACK_STEP_Y = 14.5;
@@ -231,6 +232,59 @@
     }),
   });
 
+  const CHONG_TRACE_MARKER_SLOTS = Object.freeze({
+    1: Object.freeze({
+      pink: Object.freeze({
+        1: Object.freeze({ percentX: 18.4, percentY: 50.64, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 18.4, percentY: 61.77, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 18.3, percentY: 72.5, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 18.3, percentY: 83.6, scalePercent: 62 }),
+      }),
+      yellow: Object.freeze({
+        1: Object.freeze({ percentX: 49.87, percentY: 55.62, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 49.81, percentY: 66.71, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 49.6, percentY: 78.0, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 49.6, percentY: 89.0, scalePercent: 62 }),
+      }),
+      blue: Object.freeze({
+        1: Object.freeze({ percentX: 80.89, percentY: 27.67, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 62.68, percentY: 32.83, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 44.47, percentY: 38.3, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 80.89, percentY: 39.08, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 62.68, percentY: 44.2, scalePercent: 62 }),
+        6: Object.freeze({ percentX: 80.82, percentY: 50.49, scalePercent: 62 }),
+        7: Object.freeze({ percentX: 80.89, percentY: 61.77, scalePercent: 62 }),
+        8: Object.freeze({ percentX: 80.6, percentY: 72.6, scalePercent: 62 }),
+        9: Object.freeze({ percentX: 80.8, percentY: 83.8, scalePercent: 62 }),
+      }),
+    }),
+    2: Object.freeze({
+      pink: Object.freeze({
+        1: Object.freeze({ percentX: 18.4, percentY: 50.64, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 18.4, percentY: 61.77, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 18.3, percentY: 72.5, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 18.3, percentY: 83.6, scalePercent: 62 }),
+      }),
+      yellow: Object.freeze({
+        1: Object.freeze({ percentX: 49.87, percentY: 55.62, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 49.81, percentY: 66.71, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 49.6, percentY: 78.0, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 49.6, percentY: 89.0, scalePercent: 62 }),
+      }),
+      blue: Object.freeze({
+        1: Object.freeze({ percentX: 80.89, percentY: 27.67, scalePercent: 62 }),
+        2: Object.freeze({ percentX: 62.68, percentY: 32.83, scalePercent: 62 }),
+        3: Object.freeze({ percentX: 44.47, percentY: 38.3, scalePercent: 62 }),
+        4: Object.freeze({ percentX: 80.89, percentY: 39.08, scalePercent: 62 }),
+        5: Object.freeze({ percentX: 62.68, percentY: 44.2, scalePercent: 62 }),
+        6: Object.freeze({ percentX: 80.82, percentY: 50.49, scalePercent: 62 }),
+        7: Object.freeze({ percentX: 80.89, percentY: 61.77, scalePercent: 62 }),
+        8: Object.freeze({ percentX: 80.6, percentY: 72.6, scalePercent: 62 }),
+        9: Object.freeze({ percentX: 80.8, percentY: 83.8, scalePercent: 62 }),
+      }),
+    }),
+  });
+
   const YICHANGDIAN_TRACE_MARKER_SLOTS = Object.freeze({
     1: Object.freeze({
       pink: Object.freeze({
@@ -318,6 +372,10 @@
 
   function getBanrenmaBonusMarkerLayout(alienSlotId, position) {
     return BANRENMA_BONUS_MARKER_SLOTS[alienSlotId]?.[position] || null;
+  }
+
+  function getChongTraceMarkerLayout(alienSlotId, traceType, position) {
+    return CHONG_TRACE_MARKER_SLOTS[alienSlotId]?.[traceType]?.[position] || null;
   }
 
   function getBanrenmaTraceTokenSize(layout) {
@@ -521,6 +579,7 @@
     YICHANGDIAN_TRACE_TOKEN_DISPLAY_SCALE,
     FANGZHOU_TRACE_TOKEN_DISPLAY_SCALE,
     BANRENMA_TRACE_TOKEN_DISPLAY_SCALE,
+    CHONG_TRACE_TOKEN_DISPLAY_SCALE,
     BANRENMA_BONUS_TOKEN_DISPLAY_SCALE,
     FANGZHOU_POSITION1_STACK_STEP_Y,
     BANRENMA_POSITION1_STACK_STEP_Y,
@@ -535,6 +594,7 @@
     FANGZHOU_TRACE_MARKER_SLOTS,
     BANRENMA_TRACE_MARKER_SLOTS,
     BANRENMA_BONUS_MARKER_SLOTS,
+    CHONG_TRACE_MARKER_SLOTS,
     YICHANGDIAN_TRACE_MARKER_SLOTS,
     getAlienSlotLabel,
     getTraceTypeLabel,
@@ -544,6 +604,7 @@
     getFangzhouTraceMarkerLayout,
     getBanrenmaTraceMarkerLayout,
     getBanrenmaBonusMarkerLayout,
+    getChongTraceMarkerLayout,
     getBanrenmaTraceTokenSize,
     getBanrenmaStackStepY,
     getBanrenmaStackTraceMarkerLayout,

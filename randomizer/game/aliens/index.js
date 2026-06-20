@@ -10,6 +10,7 @@
   let yichangdian = root.SetiAlienYichangdian;
   let fangzhou = root.SetiAlienFangzhou;
   let banrenma = root.SetiAlienBanrenma;
+  let chong = root.SetiAlienChong;
   let fangzhouCard1Queue = root.SetiFangzhouCard1Queue;
 
   if (typeof require === "function") {
@@ -20,19 +21,20 @@
     yichangdian = yichangdian || require("./yichangdian");
     fangzhou = fangzhou || require("./fangzhou");
     banrenma = banrenma || require("./banrenma");
+    chong = chong || require("./chong");
     fangzhouCard1Queue = fangzhouCard1Queue || require("./fangzhou-card1-queue");
     randomizer = randomizer || require("./randomizer");
     render = render || require("./render");
   }
 
-  const api = factory(catalog, placement, state, randomizer, render, jiuzhe, yichangdian, fangzhou, banrenma, fangzhouCard1Queue);
+  const api = factory(catalog, placement, state, randomizer, render, jiuzhe, yichangdian, fangzhou, banrenma, chong, fangzhouCard1Queue);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAliens = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, randomizer, render, jiuzhe, yichangdian, fangzhou, banrenma, fangzhouCard1Queue) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, randomizer, render, jiuzhe, yichangdian, fangzhou, banrenma, chong, fangzhouCard1Queue) {
   "use strict";
 
   function getReadoutLines(alienState) {
@@ -276,6 +278,66 @@
       }
     }
 
+    if (chong?.ensureChongState) {
+      const cState = chong.ensureChongState(source);
+      lines.push("[虫族]");
+      lines.push(
+        `揭示槽位=${cState.revealedSlotId || "无"} `
+        + `展示牌=${cState.displayedCardIndex ?? "无"} `
+        + `牌堆剩余=${cState.cardDeck?.length ?? 0} `
+        + `蓝色已解锁=${(cState.unlockedBluePositions || []).join("/") || "无"}`,
+      );
+      for (const planetId of ["jupiter", "saturn"]) {
+        const fossilIds = cState.planetFossilIds?.[planetId] || [];
+        lines.push(
+          `  ${planetId === "jupiter" ? "木星" : "土星"}化石 `
+          + (fossilIds.map((fossilId) => {
+            const fossil = cState.fossilsById?.[fossilId];
+            return `${fossilId}:${fossil?.status || "?"}`;
+          }).join(" / ") || "无"),
+        );
+      }
+      for (const [position, fossilId] of Object.entries(cState.panelFossilSlots || {})) {
+        lines.push(`  面板化石 蓝${position}: ${fossilId}`);
+      }
+      for (const [rocketId, task] of Object.entries(cState.transportTasksByRocketId || {})) {
+        lines.push(`  搬运 R${rocketId}: ${task.fossilId} -> ${task.destinationPlanetId || "无"}`);
+      }
+      const grid = cState.revealedSlotId
+        ? chong.getTraceGrid(source, cState.revealedSlotId)
+        : null;
+      if (grid) {
+        for (const traceType of chong.TRACE_TYPES) {
+          for (const position of chong.getPositionsForTraceType(traceType)) {
+            const entries = chong.getTraceEntries(grid, traceType, position);
+            const layout = render.getEffectiveChongTraceMarkerLayout?.(
+              cState.revealedSlotId,
+              traceType,
+              position,
+            );
+            const ownerText = entries.length
+              ? entries.map((entry) => entry.playerColor || entry.playerId || "已放置").join("/")
+              : "空";
+            lines.push(
+              `  ${chong.formatTraceLabel(traceType, position)} `
+              + `${ownerText}${layout ? ` @ ${layout.percentX}%,${layout.percentY}%` : ""}`,
+            );
+          }
+        }
+      }
+
+      const cOverrides = render.listChongTraceMarkerLayoutOverrides?.() || [];
+      if (cOverrides.length) {
+        lines.push("[虫族痕迹拖动校准]");
+        for (const item of cOverrides) {
+          lines.push(
+            `${placement.getAlienSlotLabel(item.alienSlotId)} ${placement.getTraceTypeLabel(item.traceType)}`
+            + ` ${item.position}号位 → ${item.percentX}%,${item.percentY}%`,
+          );
+        }
+      }
+    }
+
     return lines;
   }
 
@@ -296,6 +358,7 @@
     yichangdian,
     fangzhou,
     banrenma,
+    chong,
     fangzhouCard1Queue,
     JIUZHE_ALIEN_ID: jiuzhe?.ALIEN_ID || "九折",
     JIUZHE_CARD_BACK_SRC: jiuzhe?.CARD_BACK_SRC,
@@ -307,6 +370,9 @@
     BANRENMA_ALIEN_ID: banrenma?.ALIEN_ID || "半人马",
     BANRENMA_CARD_BACK_SRC: banrenma?.CARD_BACK_SRC,
     BANRENMA_TOKEN_SRC: banrenma?.TOKEN_SRC,
+    CHONG_ALIEN_ID: chong?.ALIEN_ID || "虫",
+    CHONG_CARD_BACK_SRC: chong?.CARD_BACK_SRC,
+    CHONG_FOSSIL_BACK_SRC: chong?.FOSSIL_BACK_SRC,
     createDefaultAlienState: state.createDefaultAlienState,
     randomizeAlienAssignments: randomizer.randomizeAlienAssignments,
     getAlienType: catalog.getAlienType,
@@ -338,6 +404,8 @@
     listFangzhouTraceMarkerLayoutOverrides: render.listFangzhouTraceMarkerLayoutOverrides,
     getEffectiveBanrenmaTraceMarkerLayout: render.getEffectiveBanrenmaTraceMarkerLayout,
     listBanrenmaTraceMarkerLayoutOverrides: render.listBanrenmaTraceMarkerLayoutOverrides,
+    getEffectiveChongTraceMarkerLayout: render.getEffectiveChongTraceMarkerLayout,
+    listChongTraceMarkerLayoutOverrides: render.listChongTraceMarkerLayoutOverrides,
     bindAlienTraceDragging: render.bindAlienTraceDragging,
     renderAlienTraceMarkers: render.renderAlienTraceMarkers,
     renderAllAlienTraceMarkers: render.renderAllAlienTraceMarkers,
@@ -349,6 +417,8 @@
     renderAllFangzhouTraceMarkers: render.renderAllFangzhouTraceMarkers,
     renderBanrenmaTraceMarkers: render.renderBanrenmaTraceMarkers,
     renderAllBanrenmaTraceMarkers: render.renderAllBanrenmaTraceMarkers,
+    renderChongTraceMarkers: render.renderChongTraceMarkers,
+    renderAllChongTraceMarkers: render.renderAllChongTraceMarkers,
     renderAlienBackImage: render.renderAlienBackImage,
     renderAllAlienBackImages: render.renderAllAlienBackImages,
     resetAlienTraceTokens: render.resetAlienTraceTokens,

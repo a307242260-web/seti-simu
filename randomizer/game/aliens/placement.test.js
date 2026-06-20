@@ -69,4 +69,18 @@ assert(placement.getFangzhouTraceMarkerLayout(2, "yellow", 2).percentX === 50.44
 assert(placement.getFangzhouTraceMarkerLayout(2, "blue", 4).percentX === 79.51,
   "Fangzhou blue column should use aligned X");
 
+for (const traceType of ["pink", "yellow"]) {
+  for (let position = 1; position <= 4; position += 1) {
+    const layout = placement.getChongTraceMarkerLayout(2, traceType, position);
+    assert(layout && Number.isFinite(layout.percentX) && Number.isFinite(layout.percentY),
+      `Chong ${traceType} ${position} should have a layout`);
+  }
+}
+for (let position = 1; position <= 9; position += 1) {
+  const layout = placement.getChongTraceMarkerLayout(2, "blue", position);
+  assert(layout && Number.isFinite(layout.percentX) && Number.isFinite(layout.percentY),
+    `Chong blue ${position} should have a layout`);
+}
+assert(placement.CHONG_TRACE_TOKEN_DISPLAY_SCALE > 0, "Chong token scale should be positive");
+
 console.log("aliens/placement.test.js ok");

@@ -59,4 +59,25 @@ const secondLaunch = rockets.launchRocketAtSector(reuseState, { x: 5, y: 1 }, {
 });
 assert.equal(secondLaunch.rocket.playerSequence, 1);
 
+const fossilState = rockets.createRocketState();
+const standard = rockets.launchRocketAtSector(fossilState, { x: 5, y: 1 }, {
+  playerId: "player-white",
+  color: "white",
+});
+const fossil = rockets.createMovableTokenAtSector(fossilState, { x: 5, y: 1 }, {
+  kind: rockets.ROCKET_KIND.CHONG_FOSSIL,
+  playerId: "player-white",
+  color: "white",
+  fossilId: "fossil_01",
+});
+assert.equal(standard.ok, true);
+assert.equal(fossil.ok, true);
+assert.equal(rockets.getRocketsForPlayer(fossilState, "player-white").length, 1);
+assert.equal(rockets.getMovableTokensForPlayer(fossilState, "player-white").length, 2);
+assert.equal(rockets.isControllablePlayerRocket(fossil.rocket), false);
+assert.equal(rockets.isMovablePlayerToken(fossil.rocket), true);
+fossil.rocket.movementLocked = true;
+assert.equal(rockets.isMovablePlayerToken(fossil.rocket), false);
+assert.equal(rockets.getMovableTokensForPlayer(fossilState, "player-white").length, 1);
+
 console.log("rocket action tests passed");

@@ -26,6 +26,7 @@
   const yichangdian = aliens.yichangdian;
   const fangzhou = aliens.fangzhou;
   const banrenma = aliens.banrenma;
+  const chong = aliens.chong;
   const initialCards = window.SetiInitialCards;
   const industry = window.SetiIndustry;
 
@@ -66,6 +67,8 @@
     yichangdianCard: aliens.YICHANGDIAN_CARD_BACK_SRC || "../assets/aliens/异常点/cards/back.png",
     banrenmaCard: aliens.BANRENMA_CARD_BACK_SRC || "../assets/aliens/半人马/cards/back.png",
     banrenmaToken: aliens.BANRENMA_TOKEN_SRC || "../assets/aliens/半人马/token.webp",
+    chongCard: aliens.CHONG_CARD_BACK_SRC || "../assets/aliens/虫/cards/back.png",
+    chongFossil: aliens.CHONG_FOSSIL_BACK_SRC || "../assets/aliens/虫/fossil_back.webp",
   });
   const OPPONENT_SECTOR_WIN_STATS = Object.freeze([
     Object.freeze({ color: "yellow", label: "黄色完成扇区", iconKey: "yellowFinishScan" }),
@@ -111,6 +114,10 @@
     scan_action: "../assets/symbol/effect/scan_action.webp",
     research_tech: "../assets/symbol/effect/research_tech.webp",
     movement: "../assets/symbol/effect/movement.webp",
+    land: "../assets/symbol/effect/land.webp",
+    orbitOrLand: "../assets/symbol/effect/orbit or land.webp",
+    chongFossilBack: "../assets/aliens/虫/fossil_back.webp",
+    chongFossilOk: "../assets/aliens/虫/fossil_ok.webp",
   });
   const INCOME_GAIN_LABELS = Object.freeze({
     credits: "信用点",
@@ -215,6 +222,7 @@
   let pendingPublicScanQueue = null;
   let pendingHandScanAction = null;
   let pendingAlienTraceAction = null;
+  let pendingLandTargetAction = null;
   let pendingCardTriggerAction = null;
   let pendingCardTriggerFreeMove = null;
   let pendingCardTaskCompletion = null;
@@ -226,7 +234,12 @@
   let pendingBanrenmaCardGain = null;
   let pendingBanrenmaOpportunity = null;
   let banrenmaOpportunityQueue = [];
+  let pendingChongCardGain = null;
+  let pendingChongFossilChoice = null;
+  let pendingChongTaskCompletion = null;
   const yichangdianAnomalyMarkerElements = new Map();
+  const chongPlanetFossilMarkerElements = new Map();
+  const chongFossilOwnerTokenElements = new Map();
   const banrenmaBonusMarkerElements = new Map();
   const cardTaskState = cardTaskStateModule.createTaskState();
   let alienTracePickerState = null;
@@ -318,6 +331,7 @@
     alienYichangdianCardAreas: document.querySelectorAll(".alien-yichangdian-card-area"),
     alienFangzhouCardAreas: document.querySelectorAll(".alien-fangzhou-card-area"),
     alienBanrenmaCardAreas: document.querySelectorAll(".alien-banrenma-card-area"),
+    alienChongCardAreas: document.querySelectorAll(".alien-chong-card-area"),
     alienBanrenmaScoremarks: document.querySelectorAll(".alien-banrenma-scoremarks"),
     finalScoreGrid: document.getElementById("final-score-grid"),
     finalScoreTileWraps: document.querySelectorAll(".final-score-tile-wrap"),
@@ -363,6 +377,7 @@
     debugYichangdianButton: document.getElementById("debug-yichangdian-button"),
     debugFangzhouButton: document.getElementById("debug-fangzhou-button"),
     debugBanrenmaButton: document.getElementById("debug-banrenma-button"),
+    debugChongButton: document.getElementById("debug-chong-button"),
     debugCheatButton: document.getElementById("debug-cheat-button"),
     alienTraceOverlay: document.getElementById("alien-trace-overlay"),
     alienTraceSubtitle: document.getElementById("alien-trace-subtitle"),
@@ -1412,7 +1427,7 @@
   function canSelectRocketForMoveInteraction(rocket) {
     const player = getCurrentPlayer();
     if (rocket.playerId !== player?.id) return false;
-    if (!rocketActions.isControllablePlayerRocket(rocket)) return false;
+    if (!(rocketActions.isMovablePlayerToken?.(rocket) || rocketActions.isControllablePlayerRocket(rocket))) return false;
     if (isRocketOnPlanetsReference(rocket)) return false;
     if (industryFreeMoveState?.movedRocketIds?.includes(rocket.id)) return false;
     return true;
@@ -1807,10 +1822,22 @@
 
     const messageParts = [];
     const appliedRewards = applyCardMoveAfterEventRewards(effect, result, messageParts);
+    const arrivalSettlement = settleCardTasksAfterEffect({ events: result.events, skipType1: true, render: false });
+    const completedTransportForMovedToken = (arrivalSettlement?.chongCompletions || [])
+      .some((item) => Number(item.event?.rocketId) === Number(rocketId));
+    if (completedTransportForMovedToken) {
+      const transportMessages = (arrivalSettlement.chongCompletions || [])
+        .filter((item) => Number(item.event?.rocketId) === Number(rocketId))
+        .map((item) => item.message)
+        .filter(Boolean);
+      if (transportMessages.length) messageParts.push(...transportMessages);
+    }
     const rewardText = messageParts.length ? `；${messageParts.join("；")}` : "";
 
     if (ctx) {
-      ctx.poolRemaining = Math.max(0, ctx.poolRemaining - poolUsed);
+      ctx.poolRemaining = completedTransportForMovedToken
+        ? 0
+        : Math.max(0, ctx.poolRemaining - poolUsed);
       effect.badge = String(ctx.poolRemaining);
     }
 
@@ -1820,7 +1847,7 @@
     if (ctx && ctx.poolRemaining > 0) {
       pendingActionEffectFlow.cardMoveEffect = ctx;
       const currentPlayer = getCurrentPlayer();
-      const rocketsForPlayer = rocketActions.getRocketsForPlayer(rocketState, currentPlayer?.id);
+      const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
       rocketState.statusNote = `${effect.label}：剩余 ${ctx.poolRemaining} 点移动力`;
       if (rocketsForPlayer.length === 1) {
         activateMoveMode(rocketsForPlayer[0].id);
@@ -2150,7 +2177,7 @@
 
   function canStartCardCornerFreeMove() {
     const currentPlayer = getCurrentPlayer();
-    const rocketsForPlayer = rocketActions.getRocketsForPlayer(rocketState, currentPlayer?.id);
+    const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
     if (rocketsForPlayer.length > 0) return { ok: true, rocketsForPlayer };
     return { ok: false, rocketsForPlayer, message: "没有可移动的飞船" };
   }
@@ -2667,6 +2694,9 @@
     if (banrenma?.isBanrenmaCard?.(card)) {
       return handleBanrenmaCardPlay(removeIndex);
     }
+    if (chong?.isChongCard?.(card)) {
+      return handleChongCardPlay(removeIndex);
+    }
 
     const price = getCardPrice(card);
     const cost = getCardPlayCost(card);
@@ -2742,6 +2772,90 @@
       ok: true,
       card: playedCard,
       reserved: shouldReserve,
+      message: rocketState.statusNote,
+    };
+  }
+
+  function handleChongCardPlay(handIndex) {
+    if (!chong) return { ok: false, message: "虫族模块未加载" };
+    const currentPlayer = getCurrentPlayer();
+    const removeIndex = Math.round(handIndex);
+    const card = currentPlayer?.hand?.[removeIndex];
+    if (!card) {
+      rocketState.statusNote = "无效的手牌位置";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const cost = getCardPlayCost(card);
+    if (!players.canAfford(currentPlayer, cost)) {
+      rocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const beforePlayer = structuredClone(currentPlayer);
+    const beforeAlienState = structuredClone(alienGameState);
+    const beforeCardState = {
+      publicCards: cardState.publicCards.slice(),
+      discardPile: (cardState.discardPile || []).slice(),
+    };
+    const spendResult = players.spendResources(currentPlayer, cost);
+    if (!spendResult.ok) {
+      rocketState.statusNote = spendResult.message;
+      renderStateReadout();
+      return spendResult;
+    }
+
+    const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
+    if (!removeResult.ok) {
+      players.gainResources(currentPlayer, cost);
+      rocketState.statusNote = removeResult.message;
+      renderStateReadout();
+      return removeResult;
+    }
+
+    const playedCard = removeResult.card;
+    playedCard.chongCard = true;
+    playedCard.chongTask = playedCard.chongTask || chong.getCardTask(playedCard);
+    if (!Array.isArray(currentPlayer.reservedCards)) currentPlayer.reservedCards = [];
+    cardEffects.ensureCardEffectState(playedCard);
+    currentPlayer.reservedCards.push(playedCard);
+
+    const playEffects = chong.buildImmediateEffects(playedCard);
+    const sentinelEffects = industry?.buildSentinelPlayCornerEffectNodes?.(
+      cards,
+      currentPlayer,
+      turnState.roundNumber,
+      turnState.turnNumber,
+      playedCard,
+    ) || [];
+    const allPlayEffects = [...playEffects, ...sentinelEffects];
+
+    cards.setPlayCardSelectionActive(cardState, false);
+    pendingPlayCardSelection = null;
+    rocketState.statusNote = `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`;
+    applyIndustryPlayCardPassives(playedCard, getCardTypeCode(playedCard));
+    syncPlayCardSelectionChrome();
+    renderPlayerStats();
+    renderReservedCardsFromTaskState();
+    recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
+    if (allPlayEffects.length) {
+      startCardEffectFlow("chong-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, allPlayEffects, {
+        actionType: "playCard",
+        card: playedCard,
+        temporaryTasks: [],
+        industryPlayedCard: playedCard,
+      });
+    } else {
+      markActionPending();
+      updateActionButtons();
+      renderStateReadout();
+    }
+    return {
+      ok: true,
+      card: playedCard,
+      reserved: true,
       message: rocketState.statusNote,
     };
   }
@@ -2964,6 +3078,16 @@
         };
         completeCurrentActionEffect();
       }
+    } else if (pending?.type === "chong_pick_card") {
+      rocketState.statusNote = "已取消虫族奖励精选";
+      if (pending.fromEffectFlow && getCurrentActionEffect()) {
+        getCurrentActionEffect().result = {
+          ok: true,
+          undoable: true,
+          message: rocketState.statusNote,
+        };
+        completeCurrentActionEffect();
+      }
     } else if (pending?.type === "card_trigger_pick") {
       rocketState.statusNote = "已取消卡牌触发精选";
     } else if (pending?.type?.startsWith?.("industry_")) {
@@ -3069,6 +3193,21 @@
     }
     if (pending?.type === "yichangdian_anomaly_pick") {
       rocketState.statusNote = `异常奖励精选：${cards.getCardLabel(result.card)}`;
+      if (pending.fromEffectFlow) {
+        pendingActionHasIrreversibleCardGain = true;
+        if (getCurrentActionEffect()) {
+          getCurrentActionEffect().result = {
+            ok: true,
+            undoable: false,
+            message: rocketState.statusNote,
+            payload: { card: result.card, replenished: result.replenished || null },
+          };
+        }
+        completeCurrentActionEffect();
+      }
+    }
+    if (pending?.type === "chong_pick_card") {
+      rocketState.statusNote = `虫族奖励精选：${cards.getCardLabel(result.card)}`;
       if (pending.fromEffectFlow) {
         pendingActionHasIrreversibleCardGain = true;
         if (getCurrentActionEffect()) {
@@ -3519,6 +3658,7 @@
     }
     pendingCardTriggerAction = null;
     pendingCardTaskCompletion = null;
+    pendingChongTaskCompletion = null;
     pendingScanTargetAction = null;
     els.scanTargetOverlay.hidden = true;
     if (els.scanTargetCancel) {
@@ -4299,11 +4439,11 @@
     markActionPending();
   }
 
-  function completeQuickActionStep() {
+  function completeQuickActionStep(detail = null) {
     const step = quickActionHistory.endStep();
     if (step) {
       rememberHistoryStep(HISTORY_SOURCE_QUICK);
-      appendActionLogStep(HISTORY_SOURCE_QUICK, step.label);
+      appendActionLogStep(HISTORY_SOURCE_QUICK, step.label, detail);
     }
   }
 
@@ -4474,6 +4614,11 @@
       cardEffects,
     );
     const readyByCardId = cardTaskState.readyType2ByCardId;
+    const effectiveReadyByCardId = { ...(readyByCardId || {}) };
+    for (const card of reservedCards) {
+      const readyChongTask = getReadyChongTaskForReservedCard(card, currentPlayer);
+      if (readyChongTask) effectiveReadyByCardId[card.id] = readyChongTask;
+    }
     const title = els.reservedCardPanel.querySelector(".panel-title");
     if (title) {
       title.textContent = isInitialSelectionActive()
@@ -4512,7 +4657,7 @@
 
     const taskRow = createReservedCardRow("task", "1、2型任务牌");
     taskRow.replaceChildren(...taskCards.map((entry, rowIndex) => (
-      createReservedCardButton(entry.card, entry.index, rowIndex, readyByCardId)
+      createReservedCardButton(entry.card, entry.index, rowIndex, effectiveReadyByCardId)
     )));
 
     const jiuzheButton = createJiuzheReservedButton(currentPlayer);
@@ -4530,7 +4675,7 @@
         entry.card,
         entry.index,
         rowIndex + (jiuzheButton ? 1 : 0) + fangzhouCards.length + banrenmaButtons.length,
-        readyByCardId,
+        effectiveReadyByCardId,
       )
       )),
     );
@@ -4549,16 +4694,96 @@
     return matches.length === 1 ? applyCardTriggerMatch(matches[0]) : openCardTriggerPicker(matches);
   }
 
+  function processChongTransportArrivalEvents(events = []) {
+    if (!chong || !events?.length) return [];
+    const delivered = [];
+    for (const event of events) {
+      if (event?.type !== "visitPlanet") continue;
+      if ((event.tokenKind || "") !== rocketActions.ROCKET_KIND.CHONG_FOSSIL) continue;
+      const task = chong.getTransportTaskForRocket(alienGameState, event.rocketId);
+      if (!task || task.destinationPlanetId !== event.planetId) continue;
+      const beforeAlienState = structuredClone(alienGameState);
+      const beforeRocketState = structuredClone(rocketState);
+      const result = chong.markTransportedFossilDelivered(alienGameState, event.rocketId, event.planetId);
+      if (!result.ok) continue;
+      if (result.alreadyDelivered) continue;
+      const rocket = rocketState.rockets.find((item) => item.id === event.rocketId);
+      if (rocket) {
+        rocket.movementLocked = true;
+        rocket.chongDelivered = true;
+        if (rocket.cargo) rocket.cargo.delivered = true;
+      }
+      const alienRestore = historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复虫族化石送达前外星人状态",
+      );
+      const rocketRestore = historyCommands.createRestoreRocketStateCommand(
+        rocketState,
+        beforeRocketState,
+        "恢复虫族化石送达前棋子状态",
+      );
+      if (quickActionHistory.hasSession() && !actionHistory.hasSession()) {
+        recordQuickHistoryCommand(alienRestore);
+        recordQuickHistoryCommand(rocketRestore);
+      } else {
+        recordHistoryCommand(alienRestore);
+        recordHistoryCommand(rocketRestore);
+      }
+      delivered.push({ event, result, message: result.message });
+    }
+    if (delivered.length) {
+      rocketState.statusNote = delivered.map((item) => item.message).join("；");
+      renderAlienPanels();
+      renderRockets();
+      renderPlayerStats();
+      renderPlayerHand();
+      renderReservedCardsFromTaskState();
+      renderStateReadout();
+    }
+    return delivered;
+  }
+
   function settleCardTasksAfterEffect(options = {}) {
     const { events, skipType1 = false, render = true } = options;
+    const chongCompletions = processChongTransportArrivalEvents(events || []);
     refreshCardTaskState({ render });
-    if (skipType1 || !events?.length) return null;
-    return applyType1TriggerMatches(events);
+    const type1Result = skipType1 || !events?.length ? null : applyType1TriggerMatches(events);
+    return {
+      chongCompletions,
+      type1Result,
+    };
   }
 
   function getReadyTaskForReservedCard(card) {
     refreshCardTaskState({ render: false });
     return cardTaskStateModule.getReadyType2ForCard(cardTaskState, card?.id) || null;
+  }
+
+  function getReadyChongTaskForReservedCard(card, player = getCurrentPlayer()) {
+    if (!chong?.isChongCard?.(card)) return null;
+    if (card?.chongTaskCompleted) return null;
+    const task = card.chongTask || chong.getCardTask(card);
+    if (!task) return null;
+    if (task.kind === "transport") {
+      const deliveredTransport = chong.getDeliveredTransportForCard(alienGameState, card.id);
+      if (!deliveredTransport) return null;
+      return {
+        chongTask: true,
+        card,
+        task,
+        deliveredTransport,
+        effects: [],
+      };
+    }
+    if (task.kind !== "trace") return null;
+    if (!chong.isTraceTaskReady(alienGameState, player, task)) return null;
+    return {
+      chongTask: true,
+      card,
+      task,
+      effects: [],
+    };
   }
 
   function incrementCompletedTaskCount(player) {
@@ -4740,7 +4965,7 @@
 
   function beginCardTriggerFreeMove(match) {
     const currentPlayer = getCurrentPlayer();
-    const rocketsForPlayer = rocketActions.getRocketsForPlayer(rocketState, currentPlayer?.id);
+    const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
     if (!rocketsForPlayer.length) {
       return { ok: false, message: "没有可移动的飞船" };
     }
@@ -5163,9 +5388,11 @@
       || (isCardSelectionActive() && pendingActionEffectFlow)
       || pendingCardTriggerAction
       || pendingCardTaskCompletion
+      || pendingChongTaskCompletion
       || pendingCardTriggerFreeMove
       || pendingCardCornerFreeMove
       || (els.scanAction4Overlay && !els.scanAction4Overlay.hidden)
+      || (els.landTargetOverlay && !els.landTargetOverlay.hidden)
       || (els.alienTraceOverlay && !els.alienTraceOverlay.hidden)
       || pendingActionEffectFlow?.cardMoveEffect
       || pendingActionEffectFlow?.freeMoveMode,
@@ -5246,6 +5473,7 @@
 
   function clearActionEffectFlow() {
     pendingActionEffectFlow = null;
+    closeLandTargetPicker();
     closeScanAction4Picker();
     renderActionEffectBar();
     els.appWrap?.classList.toggle("action-effect-flow-active", false);
@@ -5254,6 +5482,9 @@
   function cancelActiveEffectSubFlows() {
     if (!pendingPublicScanQueue) {
       closeScanTargetPicker();
+    }
+    if (els.landTargetOverlay && !els.landTargetOverlay.hidden) {
+      cancelLandTargetPicker();
     }
     closeScanAction4Picker();
     closeAlienTracePicker();
@@ -5283,6 +5514,9 @@
     pendingCardTriggerFreeMove = null;
     pendingCardCornerFreeMove = null;
     pendingYichangdianCornerAction = null;
+    pendingChongCardGain = null;
+    pendingChongFossilChoice = null;
+    pendingChongTaskCompletion = null;
   }
 
   function skipCurrentActionEffect() {
@@ -5503,7 +5737,7 @@
     }
 
     const currentPlayer = getCurrentPlayer();
-    const rocketsForPlayer = rocketActions.getRocketsForPlayer(rocketState, currentPlayer?.id);
+    const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
     const hasRocket = rocketsForPlayer.length > 0;
     const canLaunch = players.canAfford(currentPlayer, { energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY });
     const choices = [];
@@ -5578,7 +5812,7 @@
 
   function beginScanAction4FreeMove() {
     const currentPlayer = getCurrentPlayer();
-    const rocketsForPlayer = rocketActions.getRocketsForPlayer(rocketState, currentPlayer?.id);
+    const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
     if (!rocketsForPlayer.length) {
       rocketState.statusNote = "没有可移动的飞船";
       renderStateReadout();
@@ -5638,7 +5872,7 @@
 
   function beginCardMoveEffect(effect) {
     const currentPlayer = getCurrentPlayer();
-    const rocketsForPlayer = rocketActions.getRocketsForPlayer(rocketState, currentPlayer?.id);
+    const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
     if (!rocketsForPlayer.length) {
       rocketState.statusNote = "没有可移动的飞船";
       renderStateReadout();
@@ -6413,6 +6647,230 @@
     });
   }
 
+  function findChongProbeFossilPlanet() {
+    const currentPlayer = getCurrentPlayer();
+    if (!currentPlayer) return null;
+    const planetLocations = solar.createSolarSnapshot(solarState).planetLocations;
+    const active = rocketActions.getActiveRocket(rocketState);
+    const candidates = [
+      ...(active ? [active] : []),
+      ...rocketActions.getRocketsForPlayer(rocketState, currentPlayer.id),
+    ];
+    const seen = new Set();
+    for (const rocket of candidates) {
+      if (!rocket || seen.has(rocket.id)) continue;
+      seen.add(rocket.id);
+      if (!rocketActions.isControllablePlayerRocket(rocket)) continue;
+      if (rocket.playerId !== currentPlayer.id) continue;
+      const sector = rocketActions.getRocketSectorCoordinate(rocket);
+      const planet = planetLocations.find((item) => item.x === sector?.x && item.y === sector?.y);
+      if (planet?.planetId === "jupiter" || planet?.planetId === "saturn") {
+        return { rocket, planetId: planet.planetId, planet };
+      }
+    }
+    return null;
+  }
+
+  function getChongLandProbeOptions(effect, target) {
+    return {
+      skipCost: true,
+      target: target || { type: "planet" },
+      historyLabel: effect.label,
+      allowSatelliteWithoutTech: Boolean(effect.options?.allowSatellite),
+    };
+  }
+
+  function getChongLandOptions(effect) {
+    return abilities.planet.getLandOptions(createActionContext(), {
+      allowSatelliteWithoutTech: Boolean(effect.options?.allowSatellite),
+    });
+  }
+
+  function openChongLandTargetPicker(effect) {
+    const options = getChongLandOptions(effect);
+    if (!options.ok) {
+      rocketState.statusNote = options.message || "无法登陆";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    if (options.choices.length <= 1) {
+      return executeChongTravelForPickupWithLandTarget(effect, options.defaultTarget || options.choices[0].target);
+    }
+
+    openLandTargetPicker({
+      ...options,
+      getOptions: () => getChongLandOptions(effect),
+      onConfirm: (choice) => executeChongTravelForPickupWithLandTarget(effect, choice.target),
+      onCancel: () => {
+        rocketState.statusNote = "已取消虫族登陆目标选择";
+        renderStateReadout();
+      },
+    });
+    rocketState.statusNote = `${effect.label}：请选择登陆主星或卫星`;
+    renderStateReadout();
+    return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
+  }
+
+  function executeChongTravelForPickupEffect(effect) {
+    if (
+      effect?.type === chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP
+      && effect.options?.allowSatellite
+    ) {
+      return openChongLandTargetPicker(effect);
+    }
+    return executeChongTravelForPickupWithLandTarget(effect, { type: "planet" });
+  }
+
+  function executeChongTravelForPickupWithLandTarget(effect, landTarget = { type: "planet" }) {
+    if (!chong) return null;
+    if (pendingActionEffectFlow) pendingActionEffectFlow.chongPickupContext = null;
+
+    beginEffectHistoryStep(effect.label);
+    let result = null;
+    if (effect.type === chong.EFFECT_TYPES.CHONG_ORBIT_OR_LAND_FOR_PICKUP) {
+      result = abilities.executeAbility("orbitProbe", createActionContext(), {
+        skipCost: true,
+        historyLabel: effect.label,
+      });
+      if (!result.ok) {
+        result = abilities.executeAbility("landProbe", createActionContext(), {
+          ...getChongLandProbeOptions(effect, landTarget),
+        });
+      }
+    } else {
+      result = abilities.executeAbility("landProbe", createActionContext(), {
+        ...getChongLandProbeOptions(effect, landTarget),
+      });
+    }
+
+    if (!result.ok) {
+      endEffectHistoryStep();
+      rocketState.statusNote = result.message;
+      renderStateReadout();
+      return result;
+    }
+
+    recordAbilityCommands(result);
+    if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);
+    syncPlanetOrbitLandMarkers();
+    renderRockets();
+    renderPlayerStats();
+
+    if (pendingActionEffectFlow) {
+      pendingActionEffectFlow.chongPickupContext = {
+        planetId: result.planetId || null,
+        actionEffectId: effect.id,
+        cardId: pendingActionEffectFlow.card?.id || null,
+        cardIndex: effect.options?.cardIndex ?? null,
+      };
+    }
+    effect.result = {
+      ...result,
+      payload: {
+        ...(result.payload || {}),
+        chongPickupPlanetId: result.planetId || null,
+      },
+    };
+    rocketState.statusNote = result.message;
+    completeCurrentActionEffect();
+    renderStateReadout();
+    return effect.result;
+  }
+
+  function executeChongPickupFossilEffect(effect) {
+    if (!chong) return null;
+    const currentPlayer = getCurrentPlayer();
+    const card = pendingActionEffectFlow?.card || null;
+    const task = card?.chongTask || chong.getCardTask(effect.options?.cardIndex);
+    const beforeAlienState = structuredClone(alienGameState);
+    const planetId = pendingActionEffectFlow?.chongPickupContext?.planetId || null;
+
+    if (!planetId) {
+      return finishChongFossilEffect(`${effect.label}：没有上一段登陆/环绕结果`, { planetId: null });
+    }
+
+    if (planetId !== "jupiter" && planetId !== "saturn") {
+      return finishChongFossilEffect(`${effect.label}：不在木星/土星，不能拾取化石`, { planetId });
+    }
+
+    const available = chong.getAvailablePlanetFossils(alienGameState, planetId);
+    if (!available.length) {
+      return finishChongFossilEffect(`${effect.label}：${getChongPlanetLabel(planetId)}没有可拾取化石`, { planetId });
+    }
+
+    return openChongFossilChoiceDialog({
+      mode: "pickup",
+      player: currentPlayer,
+      planetId,
+      card,
+      task,
+      fromEffectFlow: true,
+      effectLabel: effect.label,
+      title: "拾取虫族化石",
+      subtitle: `${getChongPlanetLabel(planetId)}化石已查看。选择 1 枚作为可移动棋子放到太阳系。`,
+      beforeAlienState,
+      beforePlayerState: structuredClone(playerState),
+      beforeCardState: structuredClone(cardState),
+    });
+  }
+
+  function executeChongProbePlanetFossilRewardEffect(effect) {
+    if (!chong) return null;
+    const placement = findChongProbeFossilPlanet();
+    if (!placement) {
+      return finishAutomaticRewardEffect(effect, {
+        ok: true,
+        undoable: true,
+        message: "虫族化石：当前没有标准探测器停在木星/土星",
+      });
+    }
+    const fossils = chong.getAvailablePlanetFossils(alienGameState, placement.planetId);
+    if (!fossils.length) {
+      return finishAutomaticRewardEffect(effect, {
+        ok: true,
+        undoable: true,
+        message: `${getChongPlanetLabel(placement.planetId)}没有可结算化石`,
+      });
+    }
+    return openChongFossilChoiceDialog({
+      mode: "reward",
+      player: getCurrentPlayer(),
+      planetId: placement.planetId,
+      fromEffectFlow: true,
+      effectLabel: effect.label,
+      title: "查看并结算化石",
+      subtitle: `${getChongPlanetLabel(placement.planetId)}化石已查看。选择 1 枚只结算奖励，不移除化石。`,
+      beforeAlienState: structuredClone(alienGameState),
+      beforePlayerState: structuredClone(playerState),
+      beforeCardState: structuredClone(cardState),
+    });
+  }
+
+  function executeChongChoosePlanetFossilRewardEffect(effect) {
+    if (!chong) return null;
+    const fossils = chong.getAvailablePlanetFossils(alienGameState);
+    if (!fossils.length) {
+      return finishAutomaticRewardEffect(effect, {
+        ok: true,
+        undoable: true,
+        message: "木星/土星没有可结算化石",
+      });
+    }
+    return openChongFossilChoiceDialog({
+      mode: "reward",
+      player: getCurrentPlayer(),
+      planetIds: ["jupiter", "saturn"],
+      fromEffectFlow: true,
+      effectLabel: effect.label,
+      title: "选择星球化石奖励",
+      subtitle: "选择木星或土星 1 枚化石，只结算奖励，不移除化石。",
+      beforeAlienState: structuredClone(alienGameState),
+      beforePlayerState: structuredClone(playerState),
+      beforeCardState: structuredClone(cardState),
+    });
+  }
+
   function executeCardEffect(effect) {
     const types = cardEffects.EFFECT_TYPES;
     switch (effect.type) {
@@ -6449,6 +6907,15 @@
         return executeYichangdianNextAnomalyScanEffect(effect);
       case types.YICHANGDIAN_LAUNCH_ANOMALY_MOVE:
         return executeYichangdianLaunchAnomalyMoveEffect(effect);
+      case chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP:
+      case chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP:
+        return executeChongTravelForPickupEffect(effect);
+      case chong?.EFFECT_TYPES?.CHONG_PICKUP_FOSSIL:
+        return executeChongPickupFossilEffect(effect);
+      case chong?.EFFECT_TYPES?.CHONG_PROBE_PLANET_FOSSIL_REWARD:
+        return executeChongProbePlanetFossilRewardEffect(effect);
+      case chong?.EFFECT_TYPES?.CHONG_CHOOSE_PLANET_FOSSIL_REWARD:
+        return executeChongChoosePlanetFossilRewardEffect(effect);
       default:
         return null;
     }
@@ -6918,6 +7385,12 @@
     ) || null;
   }
 
+  function getAlienChongCardArea(alienSlotId) {
+    return [...els.alienChongCardAreas].find(
+      (element) => Number(element.dataset.alienSlot) === alienSlotId,
+    ) || null;
+  }
+
   function getAlienJiuzheThresholdElement(alienSlotId) {
     return [...els.alienJiuzheThresholds].find(
       (element) => Number(element.dataset.alienSlot) === alienSlotId,
@@ -6982,20 +7455,21 @@
     return Boolean(debugAlienTraceModeActive);
   }
 
-  function toggleDebugAlienTraceMode() {
-    debugAlienTraceModeActive = !debugAlienTraceModeActive;
+  function setDebugAlienTraceModeActive(active, message = null) {
+    debugAlienTraceModeActive = Boolean(active);
     if (debugAlienTraceModeActive) {
+      closeAlienTracePicker();
       alienTracePickerState = {
         mode: "debug-direct",
         allowedTraceTypes: aliens.TRACE_TYPES,
       };
-      closeAlienTracePicker();
-      rocketState.statusNote = "调试：未揭示外星人请点击 state 面板痕迹位；已揭示请点击正面痕迹位或方舟保留牌解锁";
+      rocketState.statusNote = message
+        || "调试：未揭示外星人请点击 state 面板痕迹位；已揭示请点击正面痕迹位或方舟保留牌解锁";
     } else {
       if (alienTracePickerState?.mode === "debug-direct") {
         alienTracePickerState = null;
       }
-      rocketState.statusNote = "已退出调试获取外星人痕迹模式";
+      rocketState.statusNote = message || "已退出调试获取外星人痕迹模式";
     }
     els.debugAlienTraceButton?.classList.toggle("is-active", debugAlienTraceModeActive);
     if (els.debugAlienTraceButton) {
@@ -7006,6 +7480,14 @@
     updateActionButtons();
     renderStateReadout();
     return { ok: true, active: debugAlienTraceModeActive, message: rocketState.statusNote };
+  }
+
+  function toggleDebugAlienTraceMode() {
+    return setDebugAlienTraceModeActive(!debugAlienTraceModeActive);
+  }
+
+  function enableDebugAlienTraceModeForReveal(message) {
+    return setDebugAlienTraceModeActive(true, message);
   }
 
   function isJiuzheTracePlacementMode() {
@@ -7029,6 +7511,12 @@
   function isBanrenmaTracePlacementMode() {
     return isDebugAlienTraceMode()
       || (alienTracePickerState?.mode === "banrenma-grid"
+        && Number.isInteger(Number(alienTracePickerState.selectedAlienSlotId)));
+  }
+
+  function isChongTracePlacementMode() {
+    return isDebugAlienTraceMode()
+      || (alienTracePickerState?.mode === "chong-grid"
         && Number.isInteger(Number(alienTracePickerState.selectedAlienSlotId)));
   }
 
@@ -7080,6 +7568,23 @@
     if (!banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)) return false;
     const grid = banrenma?.getTraceGrid?.(alienGameState, alienSlotId);
     return Number(position) === 1 || !grid?.[traceType]?.[position];
+  }
+
+  function canPlaceChongTrace(alienSlotId, traceType, position) {
+    if (!isChongTracePlacementMode()) return false;
+    if (!isDebugAlienTraceMode()
+      && Number(alienTracePickerState.selectedAlienSlotId) !== Number(alienSlotId)) return false;
+    const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
+    if (!allowedTraceTypes.includes(traceType)) return false;
+    if (!chong?.isChongRevealedSlot?.(alienGameState, alienSlotId)) return false;
+    const currentPlayer = getCurrentPlayer();
+    return chong?.canPlaceChongTrace?.(
+      alienGameState,
+      alienSlotId,
+      traceType,
+      position,
+      currentPlayer,
+    )?.ok;
   }
 
   function canPlaceStateTrace(alienSlotId, traceType, kind) {
@@ -7185,6 +7690,34 @@
     }
   }
 
+  function renderChongCardDisplays() {
+    for (const alienSlotId of aliens.ALIEN_SLOT_IDS) {
+      const area = getAlienChongCardArea(alienSlotId);
+      if (!area) continue;
+      const visible = Boolean(chong?.isChongRevealedSlot?.(alienGameState, alienSlotId));
+      const state = alienGameState.chong || {};
+      const cardIndex = state.displayedCardIndex;
+      if (!visible) {
+        area.hidden = true;
+        area.replaceChildren();
+        continue;
+      }
+      area.hidden = false;
+      const title = document.createElement("div");
+      title.className = "alien-chong-card-title";
+      title.textContent = "虫族展示牌";
+      const image = document.createElement("img");
+      image.className = "alien-chong-card-image";
+      image.src = cardIndex == null ? chong.CARD_BACK_SRC : chong.getCardSrc(cardIndex);
+      image.alt = cardIndex == null ? "虫族牌背" : `虫族牌 ${cardIndex}`;
+      image.width = 747;
+      image.height = 1040;
+      image.decoding = "async";
+
+      area.replaceChildren(title, image);
+    }
+  }
+
   function renderBanrenmaBonusMarkers() {
     const activeKeys = new Set();
     const state = banrenma?.ensureBanrenmaState?.(alienGameState);
@@ -7275,11 +7808,21 @@
       ),
       getPlayerLabel: (playerColor) => players.getPlayerColorDefinition(playerColor)?.label || playerColor,
     });
+    aliens.renderAllChongTraceMarkers?.(getAlienJiuzheTraceLayer, alienGameState, {
+      tokenSrc: aliens.ALIEN_TRACE_TOKEN_SRC,
+      canPlaceChongTrace,
+      getPlayerTokenAsset: (playerColor) => (
+        players.getPlayerColorDefinition(playerColor)?.normalTokenAsset
+        || aliens.ALIEN_TRACE_TOKEN_SRC
+      ),
+      getPlayerLabel: (playerColor) => players.getPlayerColorDefinition(playerColor)?.label || playerColor,
+    });
     renderJiuzheThresholds();
     renderBanrenmaScoremarks();
     renderYichangdianCardDisplays();
     renderFangzhouCardDisplays();
     renderBanrenmaCardDisplays();
+    renderChongCardDisplays();
     renderBanrenmaBonusMarkers();
   }
 
@@ -7523,6 +8066,26 @@
       ? aliens.getTraceTypeLabel(allowedTraceTypes[0])
       : "对应颜色";
     rocketState.statusNote = `半人马：请在正面牌图点击可放置的${traceLabel}痕迹位`;
+    renderAlienPanels();
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
+  function beginChongTraceGridPlacement(alienSlotId) {
+    const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes?.length
+      ? alienTracePickerState.allowedTraceTypes
+      : aliens.TRACE_TYPES;
+    alienTracePickerState = {
+      ...alienTracePickerState,
+      mode: "chong-grid",
+      selectedAlienSlotId: Number(alienSlotId),
+      allowedTraceTypes,
+    };
+    if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = true;
+    const traceLabel = allowedTraceTypes.length === 1
+      ? aliens.getTraceTypeLabel(allowedTraceTypes[0])
+      : "对应颜色";
+    rocketState.statusNote = `虫族：请在正面牌图点击可放置的${traceLabel}痕迹位`;
     renderAlienPanels();
     renderStateReadout();
     return { ok: true, message: rocketState.statusNote };
@@ -8174,6 +8737,64 @@
     };
   }
 
+  function applyChongRewardToPlayer(player, reward, label = "虫族奖励") {
+    if (!player || !reward) return { ok: false, message: "没有可结算的虫族奖励" };
+    const messages = [];
+    if (Object.keys(reward.gain || {}).length) {
+      players.gainResources(player, reward.gain);
+      messages.push(formatChongGain(reward.gain));
+    }
+    const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
+    if (dataCount > 0) {
+      let gained = 0;
+      for (let index = 0; index < dataCount; index += 1) {
+        const result = data.gainData(player, { source: "chong" });
+        if (result.ok) gained += 1;
+      }
+      messages.push(`${gained}/${dataCount}数据`);
+    }
+    const drawCount = Math.max(0, Math.round(Number(reward.drawCards) || 0));
+    if (drawCount > 0) {
+      let drawn = 0;
+      for (let index = 0; index < drawCount; index += 1) {
+        const result = blindDrawCardForPlayer(player);
+        if (result.ok) drawn += 1;
+      }
+      messages.push(`${drawn}/${drawCount}盲抽`);
+    }
+    if (reward.pickAlienCard) messages.push("外星人牌");
+    if (reward.pickCard) messages.push("精选1张牌");
+    if (reward.fossilId) {
+      const fossilReward = reward.fossilPanel ? chong?.getFossilReward?.(reward.fossilId) : null;
+      if (fossilReward) {
+        const fossilResult = applyChongRewardToPlayer(player, fossilReward, `${label} ${reward.fossilId}`);
+        if (fossilResult.message) messages.push(fossilResult.message);
+      } else {
+        messages.push(`化石 ${reward.fossilId}`);
+      }
+    }
+    return {
+      ok: true,
+      message: `${label}：${messages.join("、") || "无奖励"}`,
+    };
+  }
+
+  function applyChongFossilRewardToPlayer(player, fossilId, label = "虫族化石", repeat = 1) {
+    const total = Math.max(1, Math.round(Number(repeat) || 1));
+    const reward = chong?.getFossilReward?.(fossilId);
+    if (!reward) return { ok: false, message: `找不到化石奖励 ${fossilId}` };
+    const messages = [];
+    for (let index = 0; index < total; index += 1) {
+      const result = applyChongRewardToPlayer(player, reward, `${label}${total > 1 ? ` ${index + 1}/${total}` : ""}`);
+      if (result.message) messages.push(result.message);
+    }
+    return {
+      ok: true,
+      reward,
+      message: messages.join("；"),
+    };
+  }
+
   function closeYichangdianCardGainDialog() {
     pendingYichangdianCardGain = null;
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
@@ -8406,6 +9027,572 @@
       completeQuickActionStep();
     }
     return finishBanrenmaCardGain(result.message, result);
+  }
+
+  function closeChongCardGainDialog() {
+    pendingChongCardGain = null;
+    if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+  }
+
+  function openChongCardGainDialog(options = {}) {
+    if (!chong || !els.scanTargetOverlay || !els.scanTargetActions) {
+      return { ok: false, message: "无法打开虫族牌获取窗口" };
+    }
+    const state = chong.ensureChongState(alienGameState);
+    if (state.displayedCardIndex == null) chong.drawDisplayedCardIndex(alienGameState);
+    pendingChongCardGain = {
+      playerId: options.player?.id || getCurrentPlayer()?.id || null,
+      fromEffectFlow: Boolean(options.fromEffectFlow),
+      effectLabel: options.effectLabel || "虫族外星人牌",
+      beforeAlienState: options.beforeAlienState || structuredClone(alienGameState),
+      beforePlayerState: options.beforePlayerState || structuredClone(playerState),
+    };
+    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "获得虫族牌";
+    if (els.scanTargetSubtitle) {
+      els.scanTargetSubtitle.textContent = "选择当前展示牌、盲抽虫族牌，或取消。";
+    }
+    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+
+    const cardIndex = alienGameState.chong?.displayedCardIndex;
+    const confirm = document.createElement("button");
+    confirm.type = "button";
+    confirm.className = "scan-target-option-button";
+    confirm.dataset.chongCardGain = "displayed";
+    confirm.innerHTML = `确认<small>获得展示牌 ${cardIndex ?? "-"}</small>`;
+
+    const blind = document.createElement("button");
+    blind.type = "button";
+    blind.className = "scan-target-option-button";
+    blind.dataset.chongCardGain = "blind";
+    blind.innerHTML = "盲抽<small>从虫族牌堆随机获得 1 张</small>";
+
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "scan-target-option-button";
+    cancel.dataset.chongCardGain = "cancel";
+    cancel.innerHTML = "取消<small>不获得虫族牌</small>";
+
+    els.scanTargetActions.replaceChildren(confirm, blind, cancel);
+    els.scanTargetOverlay.hidden = false;
+    rocketState.statusNote = "虫族牌：请选择获取方式";
+    renderStateReadout();
+    return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
+  }
+
+  function finishChongCardGain(message, result = null) {
+    const pending = pendingChongCardGain;
+    closeChongCardGainDialog();
+    if (pending?.fromEffectFlow && getCurrentActionEffect()) {
+      if (!effectStepActive) beginEffectHistoryStep(pending.effectLabel);
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        pending.beforeAlienState,
+        "恢复虫族牌获取前外星人状态",
+      ));
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        playerState,
+        pending.beforePlayerState,
+        "恢复虫族牌获取前玩家状态",
+      ));
+      getCurrentActionEffect().result = {
+        ok: true,
+        undoable: false,
+        message,
+        payload: result,
+      };
+      rocketState.statusNote = message;
+      renderAlienPanels();
+      renderPlayerHand();
+      renderPlayerStats();
+      completeCurrentActionEffect();
+      renderStateReadout();
+      return getCurrentActionEffect()?.result || { ok: true, message };
+    }
+    rocketState.statusNote = message;
+    renderAlienPanels();
+    renderPlayerHand();
+    renderPlayerStats();
+    updateActionButtons();
+    renderStateReadout();
+    return { ok: true, message, result };
+  }
+
+  function handleChongCardGainChoice(choice) {
+    if (!pendingChongCardGain) return { ok: false, message: "没有虫族牌获取流程" };
+    const pending = pendingChongCardGain;
+    const player = getPlayerById(pending.playerId) || getCurrentPlayer();
+    if (!player) return { ok: false, message: "找不到虫族牌获取玩家" };
+    if (choice === "cancel") {
+      return finishChongCardGain("已取消虫族外星人牌");
+    }
+    const result = choice === "blind"
+      ? chong.blindDrawCard(alienGameState)
+      : chong.takeDisplayedCard(alienGameState);
+    if (!result.ok || !result.card) {
+      return finishChongCardGain(result.message || "虫族牌获取失败", result);
+    }
+    player.hand.push(result.card);
+    player.resources.handSize = player.hand.length;
+    return finishChongCardGain(result.message, result);
+  }
+
+  function getChongPlanetLabel(planetId) {
+    const labels = {
+      earth: "地球",
+      mars: "火星",
+      jupiter: "木星",
+      saturn: "土星",
+    };
+    return planetRewards?.PLANET_NAMES?.[planetId] || labels[planetId] || planetId || "星球";
+  }
+
+  function formatChongGain(gain = {}) {
+    const parts = [];
+    if (gain.score != null) parts.push(`${gain.score}分`);
+    if (gain.credits != null) parts.push(`${gain.credits}信用点`);
+    if (gain.energy != null) parts.push(`${gain.energy}能量`);
+    if (gain.publicity != null) parts.push(`${gain.publicity}宣传`);
+    if (gain.additionalPublicScan != null) parts.push(`${gain.additionalPublicScan}额外公共扫描`);
+    if (gain.handSize != null) parts.push(`${gain.handSize}张牌`);
+    if (gain.availableData != null) parts.push(`${gain.availableData}数据`);
+    return parts.join(" + ");
+  }
+
+  function formatChongFossilRewardSummary(fossilId) {
+    const reward = chong?.getFossilReward?.(fossilId);
+    if (!reward) return "未知奖励";
+    const parts = [];
+    if (Object.keys(reward.gain || {}).length) parts.push(formatChongGain(reward.gain));
+    if (reward.dataCount) parts.push(`${reward.dataCount}数据`);
+    if (reward.drawCards) parts.push(`${reward.drawCards}盲抽`);
+    if (reward.pickCard) parts.push("精选1张牌");
+    if (reward.pickAlienCard) parts.push("外星人牌");
+    return parts.join(" + ") || "无奖励";
+  }
+
+  function restoreMutableObject(target, snapshot) {
+    if (!target || !snapshot) return;
+    for (const key of Object.keys(target)) delete target[key];
+    Object.assign(target, structuredClone(snapshot));
+  }
+
+  function closeChongFossilChoiceDialog() {
+    pendingChongFossilChoice = null;
+    if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+  }
+
+  function closeChongTaskCompletionDialog() {
+    pendingChongTaskCompletion = null;
+    if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+  }
+
+  function openChongFossilChoiceDialog(options = {}) {
+    if (!chong || !els.scanTargetOverlay || !els.scanTargetActions) {
+      return { ok: false, message: "无法打开虫族化石选择窗口" };
+    }
+    const player = options.player || getCurrentPlayer();
+    if (!player) return { ok: false, message: "没有当前玩家" };
+
+    const planetIds = options.planetIds?.length
+      ? options.planetIds
+      : options.planetId
+        ? [options.planetId]
+        : ["jupiter", "saturn"];
+    for (const planetId of planetIds) {
+      chong.revealPlanetFossilsToPlayer(alienGameState, planetId, player);
+    }
+    const fossils = planetIds.flatMap((planetId) => chong.getAvailablePlanetFossils(alienGameState, planetId));
+    pendingChongFossilChoice = {
+      mode: options.mode || "reward",
+      playerId: player.id,
+      planetIds,
+      planetId: options.planetId || null,
+      task: options.task || null,
+      card: options.card || null,
+      fromEffectFlow: Boolean(options.fromEffectFlow),
+      effectLabel: options.effectLabel || "虫族化石",
+      beforePlayerState: options.beforePlayerState || structuredClone(playerState),
+      beforeAlienState: options.beforeAlienState || structuredClone(alienGameState),
+      beforeCardState: options.beforeCardState || structuredClone(cardState),
+    };
+
+    if (els.scanTargetTitle) els.scanTargetTitle.textContent = options.title || "选择虫族化石";
+    if (els.scanTargetSubtitle) {
+      const planetText = planetIds.map(getChongPlanetLabel).join(" / ");
+      els.scanTargetSubtitle.textContent = options.subtitle || `${planetText} 的化石已查看。选择 1 枚继续。`;
+    }
+    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+
+    const nodes = fossils.map((fossil) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "scan-target-option-button chong-fossil-choice-button";
+      button.dataset.chongFossilChoice = fossil.fossilId;
+      const summary = formatChongFossilRewardSummary(fossil.fossilId);
+      button.setAttribute("aria-label", `${getChongPlanetLabel(fossil.planetId)} ${fossil.fossilId}：${summary}`);
+      button.title = `${getChongPlanetLabel(fossil.planetId)} ${fossil.fossilId}：${summary}`;
+
+      const image = document.createElement("img");
+      image.className = "chong-fossil-choice-image";
+      image.src = chong.getFossilSrc(fossil.fossilId);
+      image.alt = `${getChongPlanetLabel(fossil.planetId)} ${fossil.fossilId}`;
+      image.width = 128;
+      image.height = 128;
+      image.decoding = "async";
+
+      const meta = document.createElement("small");
+      meta.textContent = summary;
+      button.append(image, meta);
+      return button;
+    });
+    if (!nodes.length) {
+      const empty = document.createElement("p");
+      empty.textContent = "没有可用化石。";
+      nodes.push(empty);
+    }
+    els.scanTargetActions.replaceChildren(...nodes);
+    els.scanTargetOverlay.hidden = false;
+    rocketState.statusNote = "虫族化石：请选择 1 枚化石";
+    renderAlienPanels();
+    renderStateReadout();
+    return { ok: true, awaitingChoice: true, fossils, message: rocketState.statusNote };
+  }
+
+  function createChongTransportTokenForFossil(fossil, player) {
+    const sector = getPlanetSectorCoordinate(fossil.planetId);
+    const tokenResult = rocketActions.createMovableTokenAtSector(rocketState, sector, {
+      kind: rocketActions.ROCKET_KIND.CHONG_FOSSIL,
+      playerId: player.id,
+      color: player.color,
+      tokenSrc: chong.FOSSIL_BACK_SRC,
+      fossilId: fossil.fossilId,
+      label: fossil.fossilId,
+      cargo: {
+        alien: "chong",
+        fossilId: fossil.fossilId,
+      },
+    });
+    if (!tokenResult.ok) return tokenResult;
+    chong.attachTransportRocket(alienGameState, fossil.fossilId, tokenResult.rocket.id);
+    return tokenResult;
+  }
+
+  function openChongPickCardFollowUp(player, fromEffectFlow, effectLabel) {
+    return beginCardSelection({
+      type: "chong_pick_card",
+      player,
+      allowBlindDraw: true,
+      fromEffectFlow,
+      effectLabel,
+    });
+  }
+
+  function finishChongFossilEffect(message, payload = {}, options = {}) {
+    const currentEffect = getCurrentActionEffect();
+    if (currentEffect && options.completeEffect !== false) {
+      currentEffect.result = {
+        ok: true,
+        undoable: options.undoable !== false,
+        message,
+        payload,
+      };
+      rocketState.statusNote = message;
+      renderAlienPanels();
+      renderRockets();
+      renderPlayerStats();
+      renderPlayerHand();
+      renderReservedCardsFromTaskState();
+      completeCurrentActionEffect();
+      renderStateReadout();
+    } else {
+      rocketState.statusNote = message;
+      renderAlienPanels();
+      renderRockets();
+      renderPlayerStats();
+      renderPlayerHand();
+      renderReservedCardsFromTaskState();
+      updateActionButtons();
+      renderStateReadout();
+    }
+    return { ok: true, message, payload };
+  }
+
+  function completeChongTraceTaskWithFossil(pending, fossilId, player) {
+    const card = pending.card;
+    const task = pending.task || card?.chongTask;
+    const rewardResult = applyChongFossilRewardToPlayer(
+      player,
+      fossilId,
+      `完成 ${cards.getCardLabel(card)}：${fossilId}`,
+    );
+    card.chongTaskCompleted = true;
+    removeReservedCardToDiscard(player, card);
+    incrementCompletedTaskCount(player);
+
+    beginQuickActionStep("chong-trace-task", `完成虫族任务：${cards.getCardLabel(card)}`);
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      playerState,
+      pending.beforePlayerState,
+      "恢复虫族任务前玩家状态",
+    ));
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      alienGameState,
+      pending.beforeAlienState,
+      "恢复虫族任务前外星人状态",
+    ));
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      cardState,
+      pending.beforeCardState,
+      "恢复虫族任务前牌区状态",
+    ));
+
+    const message = `${rewardResult.message || "虫族任务完成"}；${task?.traceType ? "按痕迹任务结算化石奖励" : ""}`;
+    completeQuickActionStep(message);
+    closeChongFossilChoiceDialog();
+    if (rewardResult.reward?.pickCard) {
+      openChongPickCardFollowUp(player, false, `完成 ${cards.getCardLabel(card)}`);
+    }
+    rocketState.statusNote = message;
+    renderAlienPanels();
+    renderPlayerStats();
+    renderPlayerHand();
+    renderReservedCardsFromTaskState();
+    updateActionButtons();
+    renderStateReadout();
+    return { ok: true, message };
+  }
+
+  function completeChongTransportTask(pending, player) {
+    const card = pending.card;
+    const ready = pending.ready || getReadyChongTaskForReservedCard(card, player);
+    const delivered = ready?.deliveredTransport;
+    const rocketId = delivered?.rocketId;
+    if (!ready || !Number.isInteger(rocketId)) {
+      return { ok: false, message: "没有已送达的虫族化石任务" };
+    }
+
+    const beforePlayerState = pending.beforePlayerState || structuredClone(playerState);
+    const beforeAlienState = pending.beforeAlienState || structuredClone(alienGameState);
+    const beforeRocketState = pending.beforeRocketState || structuredClone(rocketState);
+    const beforeCardState = pending.beforeCardState || structuredClone(cardState);
+    const result = chong.completeTransportedFossil(alienGameState, rocketId);
+    if (!result.ok) {
+      rocketState.statusNote = result.message;
+      renderStateReadout();
+      return result;
+    }
+
+    rocketActions.removeRocket(rocketState, rocketId);
+    card.chongTaskCompleted = true;
+    removeReservedCardToDiscard(player, card);
+    incrementCompletedTaskCount(player);
+
+    beginQuickActionStep("chong-transport-task", `完成虫族任务：${cards.getCardLabel(card)}`);
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      playerState,
+      beforePlayerState,
+      "恢复虫族任务前玩家状态",
+    ));
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      alienGameState,
+      beforeAlienState,
+      "恢复虫族任务前外星人状态",
+    ));
+    recordQuickHistoryCommand(historyCommands.createRestoreRocketStateCommand(
+      rocketState,
+      beforeRocketState,
+      "恢复虫族任务前棋子状态",
+    ));
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      cardState,
+      beforeCardState,
+      "恢复虫族任务前牌区状态",
+    ));
+
+    const messages = [result.message, `完成任务：${cards.getCardLabel(card)}`];
+    let shouldOpenPickCard = Boolean(result.task?.pickCard);
+    if (result.task?.fossilRewardRepeat) {
+      const fossilReward = applyChongFossilRewardToPlayer(
+        player,
+        result.fossil.fossilId,
+        `完成 ${cards.getCardLabel(card)}：${result.fossil.fossilId}`,
+        result.task.fossilRewardRepeat,
+      );
+      if (fossilReward.message) messages.push(fossilReward.message);
+      if (fossilReward.reward?.pickCard) shouldOpenPickCard = true;
+    }
+    const taskReward = applyChongRewardToPlayer(player, result.task || {}, "虫族搬运任务");
+    if (taskReward.message && !/无奖励$/.test(taskReward.message)) messages.push(taskReward.message);
+    const message = messages.join("；");
+    completeQuickActionStep(message);
+    closeChongTaskCompletionDialog();
+
+    if (shouldOpenPickCard) {
+      openChongPickCardFollowUp(player, false, `完成 ${cards.getCardLabel(card)}`);
+    }
+    rocketState.statusNote = message;
+    renderAlienPanels();
+    renderRockets();
+    renderPlayerStats();
+    renderPlayerHand();
+    renderReservedCardsFromTaskState();
+    updateActionButtons();
+    renderStateReadout();
+    return { ok: true, message };
+  }
+
+  function handleChongTaskCompletionChoice(choice) {
+    const pending = pendingChongTaskCompletion;
+    if (!pending) return { ok: false, message: "没有虫族任务完成流程" };
+    const player = getPlayerById(pending.playerId) || getCurrentPlayer();
+    if (!player) return { ok: false, message: "找不到虫族任务玩家" };
+    if (choice === "cancel") {
+      closeChongTaskCompletionDialog();
+      rocketState.statusNote = "已取消虫族任务完成";
+      renderStateReadout();
+      return { ok: true, message: rocketState.statusNote };
+    }
+    return completeChongTransportTask(pending, player);
+  }
+
+  function handleChongFossilChoice(choice) {
+    const pending = pendingChongFossilChoice;
+    if (!pending) return { ok: false, message: "没有虫族化石选择流程" };
+    const player = getPlayerById(pending.playerId) || getCurrentPlayer();
+    if (!player) return { ok: false, message: "找不到虫族化石玩家" };
+
+    if (choice === "cancel") {
+      closeChongFossilChoiceDialog();
+      const message = "已取消虫族化石选择";
+      if (pending.fromEffectFlow) {
+        return finishChongFossilEffect(message, { cancelled: true });
+      }
+      rocketState.statusNote = message;
+      renderStateReadout();
+      return { ok: true, message };
+    }
+
+    const fossilId = String(choice || "");
+    const beforeAlienState = pending.beforeAlienState;
+    const beforePlayerState = pending.beforePlayerState;
+    if (pending.fromEffectFlow && !effectStepActive) {
+      beginEffectHistoryStep(pending.effectLabel || "虫族化石");
+    }
+    if (pending.fromEffectFlow || pending.mode === "pickup" || pending.mode === "reward") {
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复虫族化石前外星人状态",
+      ));
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        playerState,
+        beforePlayerState,
+        "恢复虫族化石前玩家状态",
+      ));
+    }
+
+    if (pending.mode === "pickup") {
+      const pickup = chong.pickUpFossil(alienGameState, fossilId, player, pending.task || {}, {
+        cardId: pending.card?.id || null,
+        cardLabel: pending.card ? cards.getCardLabel(pending.card) : null,
+      });
+      if (!pickup.ok) {
+        restoreMutableObject(alienGameState, beforeAlienState);
+        rocketState.statusNote = pickup.message;
+        renderStateReadout();
+        return pickup;
+      }
+      const tokenResult = createChongTransportTokenForFossil(pickup.fossil, player);
+      if (!tokenResult.ok) {
+        restoreMutableObject(alienGameState, beforeAlienState);
+        rocketState.statusNote = tokenResult.message;
+        renderStateReadout();
+        return tokenResult;
+      }
+      closeChongFossilChoiceDialog();
+      const message = `${pickup.message}；${tokenResult.message}`;
+      return finishChongFossilEffect(message, {
+        fossilId,
+        rocketId: tokenResult.rocket.id,
+        task: pending.task || null,
+      });
+    }
+
+    if (pending.mode === "trace-task") {
+      return completeChongTraceTaskWithFossil(pending, fossilId, player);
+    }
+
+    const rewardResult = applyChongFossilRewardToPlayer(player, fossilId, `${pending.effectLabel} ${fossilId}`);
+    closeChongFossilChoiceDialog();
+    if (rewardResult.reward?.pickCard) {
+      const pickResult = openChongPickCardFollowUp(player, pending.fromEffectFlow, pending.effectLabel);
+      if (pickResult.ok) {
+        rocketState.statusNote = `${rewardResult.message}；请选择公共牌`;
+        renderPlayerStats();
+        renderStateReadout();
+        return { ok: true, message: rocketState.statusNote };
+      }
+    }
+    if (pending.fromEffectFlow) {
+      return finishChongFossilEffect(rewardResult.message, { fossilId, reward: rewardResult.reward || null });
+    }
+    rocketState.statusNote = rewardResult.message;
+    renderPlayerStats();
+    renderStateReadout();
+    return rewardResult;
+  }
+
+  function openChongTraceTaskCompletionPicker(card) {
+    const player = getCurrentPlayer();
+    const ready = getReadyChongTaskForReservedCard(card, player);
+    if (!ready) return { ok: false, message: "这张虫族任务尚未满足条件" };
+    if (ready.task?.kind === "transport") {
+      if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开虫族任务确认窗口" };
+      pendingChongTaskCompletion = {
+        ready,
+        card,
+        playerId: player.id,
+        beforePlayerState: structuredClone(playerState),
+        beforeAlienState: structuredClone(alienGameState),
+        beforeRocketState: structuredClone(rocketState),
+        beforeCardState: structuredClone(cardState),
+      };
+      const fossilId = ready.deliveredTransport?.fossil?.fossilId || "化石";
+      const destination = getChongPlanetLabel(ready.task.destinationPlanetId);
+      const rewardSummary = [
+        ready.task.fossilRewardRepeat
+          ? `${fossilId}奖励 ×${ready.task.fossilRewardRepeat}`
+          : null,
+        formatChongRewardSummary(ready.task),
+      ].filter((part) => part && part !== "无奖励").join("；") || "无额外奖励";
+      if (els.scanTargetTitle) els.scanTargetTitle.textContent = "完成虫族任务";
+      if (els.scanTargetSubtitle) {
+        els.scanTargetSubtitle.textContent = `${cards.getCardLabel(card)} 的 ${fossilId} 已送达${destination}。确认后移除太阳系化石、放回面板并结算奖励。`;
+      }
+      if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+      const confirmButton = document.createElement("button");
+      confirmButton.type = "button";
+      confirmButton.className = "scan-target-option-button";
+      confirmButton.dataset.chongTaskComplete = "confirm";
+      confirmButton.innerHTML = `确认完成任务<small>${rewardSummary}</small>`;
+      els.scanTargetActions.replaceChildren(confirmButton);
+      els.scanTargetOverlay.hidden = false;
+      rocketState.statusNote = "虫族任务已满足：点击确认完成任务";
+      renderStateReadout();
+      return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
+    }
+    return openChongFossilChoiceDialog({
+      mode: "trace-task",
+      player,
+      card,
+      task: ready.task,
+      title: "完成虫族任务",
+      subtitle: `${cards.getCardLabel(card)} 已满足条件。选择木星/土星 1 枚化石，只结算奖励，不移除化石。`,
+      effectLabel: `完成 ${cards.getCardLabel(card)}`,
+      beforePlayerState: structuredClone(playerState),
+      beforeAlienState: structuredClone(alienGameState),
+      beforeCardState: structuredClone(cardState),
+    });
   }
 
   function enqueueJiuzheOpportunity(player, opportunity) {
@@ -8904,6 +10091,20 @@
     };
   }
 
+  function handleChongRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
+    if (!chong || !revealResult?.ok || revealResult.alienId !== chong.ALIEN_ID) return null;
+    const initResult = chong.initializeChongReveal(
+      alienGameState,
+      alienSlotId,
+      triggerPlayer,
+    );
+    return {
+      ...initResult,
+      rewardMessages: [],
+      message: initResult.message,
+    };
+  }
+
   function triggerYichangdianAnomalyForEarthX(earthX) {
     if (!yichangdian || !alienGameState.yichangdian?.revealInitialized) return null;
     const yState = alienGameState.yichangdian;
@@ -8976,7 +10177,8 @@
     const revealSideEffect = handleJiuzheRevealSideEffects(alienSlotId, revealResult, currentPlayer)
       || handleYichangdianRevealSideEffects(alienSlotId, revealResult, currentPlayer)
       || handleFangzhouRevealSideEffects(alienSlotId, revealResult, currentPlayer)
-      || handleBanrenmaRevealSideEffects(alienSlotId, revealResult, currentPlayer);
+      || handleBanrenmaRevealSideEffects(alienSlotId, revealResult, currentPlayer)
+      || handleChongRevealSideEffects(alienSlotId, revealResult, currentPlayer);
     rocketState.statusNote = revealSideEffect?.message || revealResult?.message || result.message;
     if (pending?.type === "planet_reward_alien_trace" && result.ok) {
       beginEffectHistoryStep(pending.effectLabel || "外星人标记奖励");
@@ -9016,6 +10218,9 @@
       settleCardTasksAfterEffect({ skipType1: true, render: true });
     }
     renderAlienPanels();
+    if (revealResult?.alienId === chong?.ALIEN_ID) {
+      renderRockets();
+    }
     renderPlayerStats();
     maybeOpenQueuedJiuzheOpportunity();
     maybeOpenQueuedBanrenmaOpportunity();
@@ -9227,7 +10432,7 @@
 
     const currentPlayer = getCurrentPlayer();
     const rewardPreview = banrenma.getTraceReward(traceType, Number(position));
-    if (!inDebugMode && rewardPreview?.payData && getAvailableDataTokenCount(currentPlayer) < rewardPreview.payData) {
+    if (rewardPreview?.payData && getAvailableDataTokenCount(currentPlayer) < rewardPreview.payData) {
       rocketState.statusNote = `数据不足：该位置需要 ${rewardPreview.payData} 数据`;
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
@@ -9249,7 +10454,6 @@
       traceType,
       position,
       currentPlayer,
-      { debugOnly: inDebugMode },
     );
     if (!result.ok) {
       rocketState.statusNote = result.message;
@@ -9258,13 +10462,11 @@
       return result;
     }
 
-    const rewardResult = inDebugMode
-      ? { ok: true, message: result.message }
-      : applyBanrenmaRewardToPlayer(
-        currentPlayer,
-        result.reward,
-        `半人马${banrenma.formatTraceLabel(traceType, Number(position))}`,
-      );
+    const rewardResult = applyBanrenmaRewardToPlayer(
+      currentPlayer,
+      result.reward,
+      `半人马${banrenma.formatTraceLabel(traceType, Number(position))}`,
+    );
     rocketState.statusNote = rewardResult.ok ? rewardResult.message : result.message;
 
     if (pending?.type === "planet_reward_alien_trace") {
@@ -9300,7 +10502,7 @@
         "恢复半人马痕迹奖励前玩家状态",
       ));
       completeQuickActionStep();
-    } else if (!inDebugMode) {
+    } else {
       beginQuickActionStep("banrenma-trace", rocketState.statusNote);
       recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
         alienGameState,
@@ -9321,7 +10523,7 @@
     renderPlayerHand();
     renderReservedCardsFromTaskState();
 
-    if (!inDebugMode && result.reward?.pickAlienCard) {
+    if (result.reward?.pickAlienCard) {
       const openResult = openBanrenmaCardGainDialog({
         player: currentPlayer,
         fromEffectFlow: pending?.type === "planet_reward_alien_trace",
@@ -9340,6 +10542,131 @@
     }
     updateActionButtons();
     maybeOpenQueuedBanrenmaOpportunity();
+    renderStateReadout();
+    return result;
+  }
+
+  function openChongRewardFollowUps(result, currentPlayer, pending, beforeAlienState, beforePlayerState) {
+    if (!result?.reward) return false;
+    if (result.reward.pickAlienCard) {
+      const openResult = openChongCardGainDialog({
+        player: currentPlayer,
+        fromEffectFlow: pending?.type === "planet_reward_alien_trace",
+        effectLabel: pending?.effectLabel || "虫族外星人牌",
+        beforeAlienState,
+        beforePlayerState,
+      });
+      return Boolean(openResult.ok);
+    }
+    if (result.reward.pickCard) {
+      beginCardSelection({
+        type: "chong_pick_card",
+        player: currentPlayer,
+        allowBlindDraw: true,
+        fromEffectFlow: pending?.type === "planet_reward_alien_trace",
+      });
+      return true;
+    }
+    return false;
+  }
+
+  function confirmChongTracePlacement(alienSlotId, traceType, position) {
+    const inDebugMode = isDebugAlienTraceMode();
+    if (!chong || (!isChongTracePlacementMode() && !inDebugMode)) {
+      rocketState.statusNote = "请先通过获取外星人标记进入虫族放置模式";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+    if (!canPlaceChongTrace(alienSlotId, traceType, position)) {
+      rocketState.statusNote = "该虫族痕迹位不可放置";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const currentPlayer = getCurrentPlayer();
+    const pending = pendingAlienTraceAction;
+    const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
+    const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
+    if (!inDebugMode) {
+      pendingAlienTraceAction = null;
+      if (alienTracePickerState?.mode === "chong-grid") {
+        alienTracePickerState = null;
+      }
+    }
+
+    const result = chong.placeChongTrace(
+      alienGameState,
+      alienSlotId,
+      traceType,
+      position,
+      currentPlayer,
+    );
+    if (!result.ok) {
+      rocketState.statusNote = result.message;
+      renderAlienPanels();
+      renderStateReadout();
+      return result;
+    }
+
+    const rewardResult = applyChongRewardToPlayer(
+      currentPlayer,
+      result.reward,
+      `虫族${chong.formatTraceLabel(traceType, Number(position))}`,
+    );
+    rocketState.statusNote = rewardResult.ok ? rewardResult.message : result.message;
+
+    if (pending?.type === "planet_reward_alien_trace") {
+      beginEffectHistoryStep(pending.effectLabel || "虫族痕迹奖励");
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复虫族痕迹奖励前外星人状态",
+      ));
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        playerState,
+        beforePlayerState,
+        "恢复虫族痕迹奖励前玩家状态",
+      ));
+      if (getCurrentActionEffect()) {
+        getCurrentActionEffect().result = {
+          ok: true,
+          undoable: true,
+          message: rocketState.statusNote,
+          payload: { alienSlotId, traceType, position, reward: result.reward || null },
+        };
+      }
+    } else {
+      beginQuickActionStep("chong-trace", rocketState.statusNote);
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        alienGameState,
+        beforeAlienState,
+        "恢复虫族痕迹放置前外星人状态",
+      ));
+      recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+        playerState,
+        beforePlayerState,
+        "恢复虫族痕迹放置前玩家状态",
+      ));
+      completeQuickActionStep();
+      settleCardTasksAfterEffect({ skipType1: true, render: false });
+    }
+
+    renderAlienPanels();
+    renderPlayerStats();
+    renderPlayerHand();
+    renderReservedCardsFromTaskState();
+
+    const openedFollowUp = openChongRewardFollowUps(
+      result,
+      currentPlayer,
+      pending,
+      beforeAlienState,
+      beforePlayerState,
+    );
+    if (!openedFollowUp && pending?.type === "planet_reward_alien_trace") {
+      completeCurrentActionEffect();
+    }
+    updateActionButtons();
     renderStateReadout();
     return result;
   }
@@ -9870,7 +11197,7 @@
       return currentRocket;
     }
 
-    const rocketsForPlayer = rocketActions.getRocketsForPlayer(rocketState, currentPlayer?.id);
+    const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
     const fallbackRocket = rocketsForPlayer[rocketsForPlayer.length - 1] || null;
     rocketState.activeRocketId = fallbackRocket ? fallbackRocket.id : null;
     clearMoveRocketHighlight();
@@ -10115,6 +11442,12 @@
     return rocketActions.formatRocketLabel(rocket);
   }
 
+  function getMovableTokensForPlayer(playerId) {
+    return rocketActions.getMovableTokensForPlayer
+      ? rocketActions.getMovableTokensForPlayer(rocketState, playerId)
+      : rocketActions.getRocketsForPlayer(rocketState, playerId);
+  }
+
   function createRocketSnapshot(rocket) {
     return rocketActions.createRocketSnapshot(rocket);
   }
@@ -10198,6 +11531,7 @@
   }
 
   function getTokenAssetForRocket(rocket, color) {
+    if (rocket.tokenSrc) return rocket.tokenSrc;
     if (!isRocketOnPlanetsReference(rocket)) return color.rocketAsset;
 
     const kind = rocket.referencePlacement?.kind;
@@ -10206,7 +11540,14 @@
     return color.rocketAsset;
   }
 
+  function isChongFossilToken(rocket) {
+    return (rocket?.kind || rocketActions.ROCKET_KIND?.STANDARD) === rocketActions.ROCKET_KIND?.CHONG_FOSSIL;
+  }
+
   function getTokenTypeLabel(rocket) {
+    if (isChongFossilToken(rocket)) {
+      return "化石";
+    }
     if (!isRocketOnPlanetsReference(rocket)) return "火箭";
 
     const kind = rocket.referencePlacement?.kind;
@@ -10254,13 +11595,15 @@
     element.classList.toggle("is-reference-land", referencePlacement?.kind === "land");
     element.classList.toggle("is-reference-satellite", referencePlacement?.kind === "satellite");
     element.classList.toggle("is-planet-marker", Boolean(referencePlacement?.isPlanetMarker));
+    element.classList.toggle("is-chong-fossil", isChongFossilToken(rocket));
+    element.classList.toggle("is-chong-delivered", Boolean(rocket.chongDelivered || rocket.cargo?.delivered));
     element.classList.toggle("is-move-target", rocket.id === moveHighlightRocketId);
     element.classList.toggle("is-move-candidate", isRocketMoveCandidate(rocket));
     element.classList.toggle("is-move-muted", isRocketMoveMuted(rocket));
     element.classList.toggle(
       "is-move-selectable",
       rocket.playerId === getCurrentPlayer().id
-        && rocketActions.isControllablePlayerRocket(rocket),
+        && (rocketActions.isMovablePlayerToken?.(rocket) || rocketActions.isControllablePlayerRocket(rocket)),
     );
 
     if (isRocketOnPlanetsReference(rocket)) {
@@ -10282,6 +11625,51 @@
     element.title = referenceLabel
       ? `${referenceLabel} ${rocketLabel} ${formatPolarPoint(rocket)} ${formatBoardPoint(boardPoint)}`
       : `${formatPolarPoint(rocket)} ${formatBoardPoint(boardPoint)}`;
+    if (isChongFossilToken(rocket) && (rocket.chongDelivered || rocket.cargo?.delivered)) {
+      element.title = `${element.title} · 已送达，点击对应虫族任务牌完成`;
+    }
+    if (isChongFossilToken(rocket)) renderChongFossilOwnerTokenForRocket(rocket);
+  }
+
+  function renderChongFossilOwnerTokenForRocket(rocket, activeKeys = null) {
+    if (!els.tokenLayer || !isChongFossilToken(rocket) || isRocketOnPlanetsReference(rocket)) return null;
+
+    const key = String(rocket.id);
+    if (activeKeys) activeKeys.add(key);
+    let element = chongFossilOwnerTokenElements.get(key);
+    if (!element) {
+      element = document.createElement("img");
+      element.className = "chong-fossil-owner-token";
+      element.draggable = false;
+      element.dataset.chongFossilOwnerToken = key;
+      element.dataset.rocketId = key;
+      chongFossilOwnerTokenElements.set(key, element);
+      els.tokenLayer.appendChild(element);
+    }
+    if (element.parentElement !== els.tokenLayer) els.tokenLayer.appendChild(element);
+
+    const player = getPlayerById(rocket.playerId) || { color: rocket.color };
+    const color = getRocketColorDefinition(rocket);
+    const boardPoint = getBoardPointFromPolarPoint(rocket);
+    element.src = getNormalTokenAssetForPlayer(player);
+    element.alt = `${color.label}化石归属标记 ${formatRocketLabel(rocket)}`;
+    element.title = element.alt;
+    element.style.left = `${boardPoint.x / 10}%`;
+    element.style.top = `${boardPoint.y / 10}%`;
+    return element;
+  }
+
+  function renderChongFossilOwnerTokens() {
+    if (!els.tokenLayer) return;
+    const activeKeys = new Set();
+    for (const rocket of rocketState.rockets) {
+      renderChongFossilOwnerTokenForRocket(rocket, activeKeys);
+    }
+    for (const [key, element] of chongFossilOwnerTokenElements.entries()) {
+      if (activeKeys.has(key)) continue;
+      element.remove();
+      chongFossilOwnerTokenElements.delete(key);
+    }
   }
 
   function renderRockets() {
@@ -10296,6 +11684,8 @@
     });
     rocketState.rockets.forEach(renderRocketElement);
     renderYichangdianAnomalyMarkers();
+    renderChongPlanetFossilMarkers();
+    renderChongFossilOwnerTokens();
   }
 
   function getYichangdianAnomalyKey(anomaly) {
@@ -10342,6 +11732,68 @@
       if (activeKeys.has(key)) continue;
       element.remove();
       yichangdianAnomalyMarkerElements.delete(key);
+    }
+  }
+
+  function getChongPlanetFossilMarkerKey(planetId) {
+    return `planet:${planetId}`;
+  }
+
+  function getChongPlanetFossilPoint(planetLocation) {
+    const boundary = solar.getSectorCoordinateBoundary(planetLocation.x, planetLocation.y);
+    const polar = boundary.polarBoundary || {};
+    if (
+      Number.isFinite(polar.innerRadius)
+      && Number.isFinite(polar.outerRadius)
+      && Number.isFinite(polar.startAngleDegrees)
+      && Number.isFinite(polar.endAngleDegrees)
+    ) {
+      const radius = polar.innerRadius + (polar.outerRadius - polar.innerRadius) * 0.78;
+      const angle = polar.startAngleDegrees + (polar.endAngleDegrees - polar.startAngleDegrees) * 0.72;
+      return solar.polarToGlobalPoint(radius, angle);
+    }
+    return boundary.boardCenter || solar.solarGridToGlobalPoint(planetLocation.x, planetLocation.y);
+  }
+
+  function renderChongPlanetFossilMarkers() {
+    if (!els.tokenLayer || !chong) return;
+    const cState = alienGameState.chong;
+    const activeKeys = new Set();
+    const revealed = Boolean(cState?.revealInitialized && cState.revealedSlotId);
+    const planetLocations = revealed
+      ? solar.createSolarSnapshot(solarState).planetLocations
+      : [];
+
+    for (const planetId of ["jupiter", "saturn"]) {
+      const planetLocation = planetLocations.find((planet) => planet.planetId === planetId);
+      if (!planetLocation) continue;
+      const fossils = chong.getAvailablePlanetFossils(alienGameState, planetId);
+      if (!fossils.length) continue;
+      const key = getChongPlanetFossilMarkerKey(planetId);
+      activeKeys.add(key);
+      let element = chongPlanetFossilMarkerElements.get(key);
+      if (!element) {
+        element = document.createElement("img");
+        element.className = "chong-planet-fossil-marker";
+        element.draggable = false;
+        chongPlanetFossilMarkerElements.set(key, element);
+        els.tokenLayer.appendChild(element);
+      }
+      if (element.parentElement !== els.tokenLayer) els.tokenLayer.appendChild(element);
+      const point = getChongPlanetFossilPoint(planetLocation);
+      element.style.left = `${point.x / 10}%`;
+      element.style.top = `${point.y / 10}%`;
+      element.src = chong.FOSSIL_BACK_SRC;
+      element.alt = `${getChongPlanetLabel(planetId)}化石背面`;
+      element.dataset.chongPlanetId = planetId;
+      element.dataset.chongPlanetFossilCount = String(fossils.length);
+      element.title = `${getChongPlanetLabel(planetId)}化石背面 x${fossils.length}`;
+    }
+
+    for (const [key, element] of chongPlanetFossilMarkerElements.entries()) {
+      if (activeKeys.has(key)) continue;
+      element.remove();
+      chongPlanetFossilMarkerElements.delete(key);
     }
   }
 
@@ -11248,7 +12700,7 @@
     };
     player.industryHuanyuFreeMovesLeft = industryFreeMoveState.movesLeft;
     player.industryHuanyuFreeMoveTurn = turnState.turnNumber;
-    const rocketsForPlayer = rocketActions.getRocketsForPlayer(rocketState, player.id);
+    const rocketsForPlayer = getMovableTokensForPlayer(player.id);
     rocketState.statusNote = rocketsForPlayer.length
       ? `${flow.message}（剩余 ${industryFreeMoveState.movesLeft} 次）`
       : `${flow.message}：当前没有可移动火箭`;
@@ -12217,6 +13669,11 @@
   function removeRocketElement(rocketId) {
     const element = document.getElementById(`rocket-${rocketId}`);
     if (element) element.remove();
+    const chongOwnerToken = chongFossilOwnerTokenElements.get(String(rocketId));
+    if (chongOwnerToken) {
+      chongOwnerToken.remove();
+      chongFossilOwnerTokenElements.delete(String(rocketId));
+    }
   }
 
   function setActionButtonState(button, enabled, reason) {
@@ -12537,7 +13994,7 @@
     }
 
     const rocket = rocketState.rockets.find((item) => item.id === moveHighlightRocketId);
-    if (!rocket || !rocketActions.isControllablePlayerRocket(rocket)) {
+    if (!rocket || !(rocketActions.isMovablePlayerToken?.(rocket) || rocketActions.isControllablePlayerRocket(rocket))) {
       deactivateMoveMode();
       return;
     }
@@ -12592,7 +14049,7 @@
     if (!Number.isInteger(rocketId) || rocketId <= 0) return false;
 
     const currentPlayer = getCurrentPlayer();
-    const rocketsForPlayer = rocketActions.getRocketsForPlayer(rocketState, currentPlayer.id);
+    const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer.id);
     if (!rocketsForPlayer.some((rocket) => rocket.id === rocketId)) return false;
 
     rocketActions.setActiveRocket(rocketState, rocketId);
@@ -13139,17 +14596,37 @@
   }
 
   function closeLandTargetPicker() {
+    pendingLandTargetAction = null;
     if (!els.landTargetOverlay) return;
     els.landTargetOverlay.hidden = true;
     delete els.landTargetOverlay.dataset.planetId;
   }
 
+  function cancelLandTargetPicker() {
+    const pending = pendingLandTargetAction;
+    closeLandTargetPicker();
+    if (typeof pending?.onCancel === "function") {
+      pending.onCancel();
+    }
+  }
+
   function openLandTargetPicker(options) {
     if (!els.landTargetOverlay || !els.landTargetSelect) {
-      runAction("land", { target: options.defaultTarget || options.choices[0].target });
+      const choice = options.choices?.[0] || { target: options.defaultTarget };
+      if (typeof options.onConfirm === "function") {
+        return options.onConfirm(choice, options);
+      }
+      runAction("land", { target: choice.target });
       return;
     }
 
+    pendingLandTargetAction = typeof options.onConfirm === "function"
+      ? {
+        getOptions: options.getOptions,
+        onConfirm: options.onConfirm,
+        onCancel: options.onCancel,
+      }
+      : null;
     els.landTargetTitle.textContent = `选择登陆目标：${options.planet.name}`;
     els.landTargetSelect.replaceChildren(...options.choices.map((choice, index) => {
       const option = document.createElement("option");
@@ -13163,9 +14640,11 @@
   }
 
   function confirmLandTargetPicker() {
-    const planetId = els.landTargetOverlay?.dataset.planetId;
+    const pending = pendingLandTargetAction;
     const choiceIndex = Number(els.landTargetSelect?.value);
-    const options = actions.getLandOptions(createActionContext());
+    const options = typeof pending?.getOptions === "function"
+      ? pending.getOptions()
+      : actions.getLandOptions(createActionContext());
     if (!options.ok || !options.choices?.length) {
       closeLandTargetPicker();
       rocketState.statusNote = options.message || "登陆目标已失效";
@@ -13175,6 +14654,9 @@
 
     const choice = options.choices[choiceIndex] || options.choices[0];
     closeLandTargetPicker();
+    if (typeof pending?.onConfirm === "function") {
+      return pending.onConfirm(choice, options);
+    }
     runAction("land", { target: choice.target });
   }
 
@@ -13325,9 +14807,8 @@
     alienGameState.jiuzhe.freeScoreThreshold = (Number(currentPlayer.resources?.score) || 0) + 20;
     alienGameState.jiuzhe.paidScoreThreshold = (Number(currentPlayer.resources?.score) || 0) + 40;
     delete alienGameState.jiuzhe.traceSlotsByAlienSlotId[String(alienSlotId)];
-    jiuzhe.seedDebugTraceGrid(alienGameState, alienSlotId, currentPlayer);
 
-    rocketState.statusNote = "九折调试：已展示九折并铺满当前玩家 token（不结算奖励）";
+    enableDebugAlienTraceModeForReveal("九折调试：已在外星人 1 揭示九折（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励");
     renderAlienPanels();
     renderPlayerStats();
     renderStateReadout();
@@ -13337,9 +14818,9 @@
   function revealYichangdianForDebug() {
     if (!yichangdian) return { ok: false, message: "异常点模块未加载" };
     const currentPlayer = getCurrentPlayer();
-    const alienSlotId = 2;
+    const alienSlotId = 1;
     const slot = aliens.getAlienSlot(alienGameState, alienSlotId);
-    if (!slot) return { ok: false, message: "找不到外星人 2" };
+    if (!slot) return { ok: false, message: "找不到外星人 1" };
 
     slot.assignedAlienId = yichangdian.ALIEN_ID;
     slot.alienId = yichangdian.ALIEN_ID;
@@ -13347,9 +14828,8 @@
     alienGameState.yichangdian = yichangdian.createYichangdianState();
     const earth = getEarthSectorCoordinate();
     yichangdian.initializeYichangdianReveal(alienGameState, alienSlotId, currentPlayer, earth.x);
-    yichangdian.seedDebugTraceGrid(alienGameState, alienSlotId, currentPlayer);
 
-    rocketState.statusNote = "异常点调试：已展示异常点、生成异常标记并铺满当前玩家 token（不结算奖励）";
+    enableDebugAlienTraceModeForReveal("异常点调试：已在外星人 1 揭示异常点并生成异常标记（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励");
     renderAlienPanels();
     renderRockets();
     renderPlayerStats();
@@ -13360,22 +14840,22 @@
   function revealFangzhouForDebug() {
     if (!fangzhou) return { ok: false, message: "方舟模块未加载" };
     const currentPlayer = getCurrentPlayer();
-    const alienSlotId = 2;
+    const alienSlotId = 1;
     const slot = aliens.getAlienSlot(alienGameState, alienSlotId);
-    if (!slot) return { ok: false, message: "找不到外星人 2" };
+    if (!slot) return { ok: false, message: "找不到外星人 1" };
 
     slot.assignedAlienId = fangzhou.ALIEN_ID;
     slot.alienId = fangzhou.ALIEN_ID;
     slot.revealed = true;
     alienGameState.fangzhou = fangzhou.createFangzhouState();
-    alienGameState.fangzhou.revealedSlotId = alienSlotId;
-    alienGameState.fangzhou.revealedByPlayerId = currentPlayer.id;
-    alienGameState.fangzhou.revealedByPlayerColor = currentPlayer.color;
-    alienGameState.fangzhou.revealInitialized = true;
-    delete alienGameState.fangzhou.traceSlotsByAlienSlotId[String(alienSlotId)];
-    fangzhou.seedDebugTraceGrid(alienGameState, alienSlotId, currentPlayer);
+    fangzhou.initializeFangzhouReveal(
+      alienGameState,
+      alienSlotId,
+      currentPlayer,
+      getActivePlayers(),
+    );
 
-    rocketState.statusNote = "方舟调试：已展示方舟并铺满当前玩家 token（不结算奖励）";
+    enableDebugAlienTraceModeForReveal("方舟调试：已在外星人 1 揭示方舟（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位或解锁牌会按正式规则结算奖励");
     renderAlienPanels();
     renderPlayerStats();
     renderStateReadout();
@@ -13385,9 +14865,9 @@
   function revealBanrenmaForDebug() {
     if (!banrenma) return { ok: false, message: "半人马模块未加载" };
     const currentPlayer = getCurrentPlayer();
-    const alienSlotId = 2;
+    const alienSlotId = 1;
     const slot = aliens.getAlienSlot(alienGameState, alienSlotId);
-    if (!slot) return { ok: false, message: "找不到外星人 2" };
+    if (!slot) return { ok: false, message: "找不到外星人 1" };
 
     slot.assignedAlienId = banrenma.ALIEN_ID;
     slot.alienId = banrenma.ALIEN_ID;
@@ -13399,9 +14879,8 @@
       currentPlayer,
       getActivePlayers(),
     );
-    banrenma.seedDebugTraceGrid(alienGameState, alienSlotId, currentPlayer);
 
-    rocketState.statusNote = "半人马调试：已展示半人马并铺满当前玩家 token（1号位只放1枚，不结算奖励）";
+    enableDebugAlienTraceModeForReveal("半人马调试：已在外星人 1 揭示半人马（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励");
     renderAlienPanels();
     renderPlayerStats();
     renderReservedCardsFromTaskState();
@@ -13409,7 +14888,33 @@
     return { ok: true, message: rocketState.statusNote };
   }
 
-  function focusFangzhouDebugCalibration(alienSlotId = 2) {
+  function revealChongForDebug() {
+    if (!chong) return { ok: false, message: "虫族模块未加载" };
+    const currentPlayer = getCurrentPlayer();
+    const alienSlotId = 1;
+    const slot = aliens.getAlienSlot(alienGameState, alienSlotId);
+    if (!slot) return { ok: false, message: "找不到外星人 1" };
+
+    slot.assignedAlienId = chong.ALIEN_ID;
+    slot.alienId = chong.ALIEN_ID;
+    slot.revealed = true;
+    alienGameState.chong = chong.createChongState();
+    chong.initializeChongReveal(
+      alienGameState,
+      alienSlotId,
+      currentPlayer,
+    );
+
+    enableDebugAlienTraceModeForReveal("虫族调试：已在外星人 1 揭示虫族，按揭示阶段放置化石（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励");
+    renderAlienPanels();
+    renderRockets();
+    renderPlayerStats();
+    renderReservedCardsFromTaskState();
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
+  function focusFangzhouDebugCalibration(alienSlotId = 1) {
     setDebugOpen(false);
     window.requestAnimationFrame(() => {
       const target = els.alienPanels?.[alienSlotId - 1] || getAlienJiuzheTraceLayer(alienSlotId);
@@ -13417,7 +14922,7 @@
     });
   }
 
-  function focusYichangdianDebugCalibration(alienSlotId = 2) {
+  function focusYichangdianDebugCalibration(alienSlotId = 1) {
     setDebugOpen(false);
     window.requestAnimationFrame(() => {
       const target = els.alienPanels?.[alienSlotId - 1] || getAlienJiuzheTraceLayer(alienSlotId);
@@ -13425,7 +14930,15 @@
     });
   }
 
-  function focusBanrenmaDebugCalibration(alienSlotId = 2) {
+  function focusBanrenmaDebugCalibration(alienSlotId = 1) {
+    setDebugOpen(false);
+    window.requestAnimationFrame(() => {
+      const target = els.alienPanels?.[alienSlotId - 1] || getAlienJiuzheTraceLayer(alienSlotId);
+      target?.scrollIntoView?.({ behavior: "smooth", block: "center", inline: "nearest" });
+    });
+  }
+
+  function focusChongDebugCalibration(alienSlotId = 1) {
     setDebugOpen(false);
     window.requestAnimationFrame(() => {
       const target = els.alienPanels?.[alienSlotId - 1] || getAlienJiuzheTraceLayer(alienSlotId);
@@ -13773,9 +15286,9 @@
   els.actionResearchTechButton?.addEventListener("click", researchTechForCurrentPlayer);
   els.techSelectionCancel?.addEventListener("click", cancelTechSelection);
   els.landTargetConfirm?.addEventListener("click", confirmLandTargetPicker);
-  els.landTargetCancel?.addEventListener("click", closeLandTargetPicker);
+  els.landTargetCancel?.addEventListener("click", cancelLandTargetPicker);
   els.landTargetOverlay?.addEventListener("click", (event) => {
-    if (event.target === els.landTargetOverlay) closeLandTargetPicker();
+    if (event.target === els.landTargetOverlay) cancelLandTargetPicker();
   });
   els.actionQuickButton.addEventListener("click", toggleQuickPanel);
   els.actionPassButton?.addEventListener("click", () => {
@@ -13842,6 +15355,24 @@
       return;
     }
 
+    const chongGain = event.target.closest("[data-chong-card-gain]");
+    if (chongGain && !chongGain.disabled) {
+      handleChongCardGainChoice(chongGain.dataset.chongCardGain);
+      return;
+    }
+
+    const chongFossil = event.target.closest("[data-chong-fossil-choice]");
+    if (chongFossil && !chongFossil.disabled) {
+      handleChongFossilChoice(chongFossil.dataset.chongFossilChoice);
+      return;
+    }
+
+    const chongTask = event.target.closest("[data-chong-task-complete]");
+    if (chongTask && !chongTask.disabled) {
+      handleChongTaskCompletionChoice(chongTask.dataset.chongTaskComplete);
+      return;
+    }
+
     const banrenmaBonus = event.target.closest("[data-banrenma-bonus-choice]");
     if (banrenmaBonus && !banrenmaBonus.disabled) {
       handleBanrenmaBonusChoice(banrenmaBonus.dataset.banrenmaBonusChoice);
@@ -13877,6 +15408,18 @@
     confirmScanTarget(button.dataset.nebulaId, button.dataset.sectorX);
   });
   els.scanTargetCancel?.addEventListener("click", () => {
+    if (pendingChongTaskCompletion) {
+      handleChongTaskCompletionChoice("cancel");
+      return;
+    }
+    if (pendingChongFossilChoice) {
+      handleChongFossilChoice("cancel");
+      return;
+    }
+    if (pendingChongCardGain) {
+      handleChongCardGainChoice("cancel");
+      return;
+    }
     if (pendingBanrenmaCardGain) {
       handleBanrenmaCardGainChoice("cancel");
       return;
@@ -13897,6 +15440,18 @@
   });
   els.scanTargetOverlay?.addEventListener("click", (event) => {
     if (event.target === els.scanTargetOverlay) {
+      if (pendingChongTaskCompletion) {
+        handleChongTaskCompletionChoice("cancel");
+        return;
+      }
+      if (pendingChongFossilChoice) {
+        handleChongFossilChoice("cancel");
+        return;
+      }
+      if (pendingChongCardGain) {
+        handleChongCardGainChoice("cancel");
+        return;
+      }
       if (pendingBanrenmaCardGain) {
         handleBanrenmaCardGainChoice("cancel");
         return;
@@ -13932,6 +15487,8 @@
       || (alienSlot?.revealed && alienSlot.alienId === aliens.FANGZHOU_ALIEN_ID);
     const useBanrenmaGrid = banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)
       || (alienSlot?.revealed && alienSlot.alienId === aliens.BANRENMA_ALIEN_ID);
+    const useChongGrid = chong?.isChongRevealedSlot?.(alienGameState, alienSlotId)
+      || (alienSlot?.revealed && alienSlot.alienId === aliens.CHONG_ALIEN_ID);
 
     if (pickerStep === "alien") {
       if (useJiuzheGrid) {
@@ -13944,6 +15501,10 @@
       }
       if (useFangzhouGrid) {
         routeFangzhouAlienTraceGain(alienSlotId);
+        return;
+      }
+      if (useChongGrid) {
+        beginChongTraceGridPlacement(alienSlotId);
         return;
       }
       if (useYichangdianGrid) {
@@ -14019,6 +15580,15 @@
           Number(fangzhouButton.dataset.alienSlot),
           fangzhouButton.dataset.traceType,
           Number(fangzhouButton.dataset.fangzhouPosition),
+        );
+        return;
+      }
+      const chongButton = event.target.closest("[data-chong-trace-slot]");
+      if (chongButton && !chongButton.disabled && chongButton.classList.contains("is-placeable")) {
+        confirmChongTracePlacement(
+          Number(chongButton.dataset.alienSlot),
+          chongButton.dataset.traceType,
+          Number(chongButton.dataset.chongPosition),
         );
         return;
       }
@@ -14145,15 +15715,19 @@
   });
   els.debugYichangdianButton?.addEventListener("click", () => {
     const result = revealYichangdianForDebug();
-    if (result?.ok) focusYichangdianDebugCalibration(2);
+    if (result?.ok) focusYichangdianDebugCalibration(1);
   });
   els.debugFangzhouButton?.addEventListener("click", () => {
     const result = revealFangzhouForDebug();
-    if (result?.ok) focusFangzhouDebugCalibration(2);
+    if (result?.ok) focusFangzhouDebugCalibration(1);
   });
   els.debugBanrenmaButton?.addEventListener("click", () => {
     const result = revealBanrenmaForDebug();
-    if (result?.ok) focusBanrenmaDebugCalibration(2);
+    if (result?.ok) focusBanrenmaDebugCalibration(1);
+  });
+  els.debugChongButton?.addEventListener("click", () => {
+    const result = revealChongForDebug();
+    if (result?.ok) focusChongDebugCalibration(1);
   });
   document.addEventListener("click", (event) => {
     const viewButton = event.target.closest("[data-fangzhou-card-view]");
@@ -14186,7 +15760,13 @@
     if (!button || button.disabled) return;
     const currentPlayer = getCurrentPlayer();
     const card = currentPlayer?.reservedCards?.[Number(button.dataset.reservedIndex)];
-    if (card) openCardTaskCompletionPicker(card);
+    if (card) {
+      if (getReadyChongTaskForReservedCard(card, currentPlayer)) {
+        openChongTraceTaskCompletionPicker(card);
+      } else {
+        openCardTaskCompletionPicker(card);
+      }
+    }
   });
   els.movePaymentConfirm?.addEventListener("click", confirmMovePayment);
   els.movePaymentCancel?.addEventListener("click", cancelMovePaymentSelection);
@@ -14282,11 +15862,13 @@
     getJiuzheTraceLayoutOverrides: () => structuredClone(aliens.listJiuzheTraceMarkerLayoutOverrides?.() || []),
     getYichangdianTraceLayoutOverrides: () => structuredClone(aliens.listYichangdianTraceMarkerLayoutOverrides?.() || []),
     getFangzhouTraceLayoutOverrides: () => structuredClone(aliens.listFangzhouTraceMarkerLayoutOverrides?.() || []),
+    getChongTraceLayoutOverrides: () => structuredClone(aliens.listChongTraceMarkerLayoutOverrides?.() || []),
     getAlienState: () => structuredClone(alienGameState),
     revealJiuzheForDebug,
     revealYichangdianForDebug,
     revealFangzhouForDebug,
     revealBanrenmaForDebug,
+    revealChongForDebug,
     getFinalScoringState: () => structuredClone(finalScoringState),
     markFinalScoreTile: handleFinalScoreTileClick,
     openAlienTracePicker,
@@ -14301,7 +15883,8 @@
       const sideEffect = handleJiuzheRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
         || handleYichangdianRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
         || handleFangzhouRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
-        || handleBanrenmaRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer());
+        || handleBanrenmaRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
+        || handleChongRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer());
       if (sideEffect?.message) {
         rocketState.statusNote = sideEffect.message;
       }
@@ -14322,7 +15905,8 @@
       const sideEffect = handleJiuzheRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
         || handleYichangdianRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
         || handleFangzhouRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
-        || handleBanrenmaRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer());
+        || handleBanrenmaRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
+        || handleChongRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer());
       if (sideEffect?.message) result.message = sideEffect.message;
       renderAlienPanels();
       renderRockets();

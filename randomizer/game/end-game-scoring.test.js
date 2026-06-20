@@ -3,6 +3,7 @@ const finalScoring = require("./final-scoring");
 const endGameScoring = require("./end-game-scoring");
 const cardEffects = require("./cards/effects");
 const jiuzhe = require("./aliens/jiuzhe");
+const chong = require("./aliens/chong");
 
 function player(overrides = {}) {
   return {
@@ -181,5 +182,30 @@ assert.equal(randomized.b, 2);
 assert.equal(cardEffects.getCardMigrationStatus("b_14.webp"), "implemented");
 assert.equal(cardEffects.getCardModel("b_14.webp").endGameScoring.scorePer, 3);
 assert.equal(cardEffects.getDeferredCardModel("b_34.webp").endGameScoring.planetId, "jupiter");
+
+const chongState = {
+  aliens: {
+    2: {
+      revealed: true,
+      alienId: chong.ALIEN_ID,
+      traces: { yellow: {}, pink: {}, blue: {} },
+    },
+  },
+  chong: chong.createChongState(),
+};
+chong.initializeChongReveal(chongState, 2, white, () => 0);
+chong.placeChongTrace(chongState, 2, "pink", 1, white);
+chong.placeChongTrace(chongState, 2, "yellow", 1, white);
+chong.placeChongTrace(chongState, 2, "blue", 7, white);
+const chongPlayer = player({
+  reservedCards: [chong.createAlienCard(2, 1)],
+});
+const chongScore = endGameScoring.computePlayerCardScore(chongPlayer, {
+  ...tileContext,
+  currentPlayer: chongPlayer,
+  alienGameState: chongState,
+  getCardTypeCode: (card) => card.cardTypeCode,
+});
+assert.equal(chongScore.total, 3, "生态系统研究 should score 1 per owned Chong trace");
 
 console.log("end-game-scoring tests passed");

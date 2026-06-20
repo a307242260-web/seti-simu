@@ -26,6 +26,10 @@
     SOLAR: "solar-board",
     PLANETS_REFERENCE: "planets-reference",
   });
+  const ROCKET_KIND = Object.freeze({
+    STANDARD: "standard",
+    CHONG_FOSSIL: "chong-fossil",
+  });
 
   function createRocketState() {
     return {
@@ -65,10 +69,22 @@
     if (!rocket?.playerId) return false;
     if (getRocketSurface(rocket) !== ROCKET_SURFACE.SOLAR) return false;
     if (rocket.referencePlacement?.isPlanetMarker) return false;
+    if ((rocket.kind || ROCKET_KIND.STANDARD) !== ROCKET_KIND.STANDARD) return false;
+    return true;
+  }
+
+  function isMovablePlayerToken(rocket) {
+    if (!rocket?.playerId) return false;
+    if (getRocketSurface(rocket) !== ROCKET_SURFACE.SOLAR) return false;
+    if (rocket.referencePlacement?.isPlanetMarker) return false;
+    if (rocket.movementLocked) return false;
     return true;
   }
 
   function formatRocketLabel(rocket) {
+    if ((rocket?.kind || ROCKET_KIND.STANDARD) === ROCKET_KIND.CHONG_FOSSIL) {
+      return `F${rocket?.id ?? "?"}`;
+    }
     if (Number.isInteger(rocket?.playerSequence)) {
       return `R${rocket.playerSequence}`;
     }
@@ -157,6 +173,9 @@
 
     return {
       id: rocket.id,
+      kind: rocket.kind || ROCKET_KIND.STANDARD,
+      fossilId: rocket.fossilId || null,
+      tokenSrc: rocket.tokenSrc || null,
       playerId: rocket.playerId || null,
       playerSequence: Number.isInteger(rocket.playerSequence) ? rocket.playerSequence : null,
       color: rocket.color || null,
@@ -300,6 +319,37 @@
     return { ok: true, rocket, message };
   }
 
+  function createMovableTokenAtSector(rocketState, sectorCoordinate, input = {}) {
+    const sectorX = solar.mod8(sectorCoordinate.x);
+    const sectorY = clamp(Number(sectorCoordinate.y), SECTOR_RING_MIN, SECTOR_RING_MAX);
+    const rocket = {
+      id: rocketState.nextRocketId,
+      kind: input.kind || ROCKET_KIND.CHONG_FOSSIL,
+      playerId: input.playerId || null,
+      color: input.color || null,
+      tokenSrc: input.tokenSrc || null,
+      fossilId: input.fossilId || null,
+      label: input.label || null,
+      cargo: input.cargo ? { ...input.cargo } : null,
+    };
+
+    if (!placeRocketByPriority(rocketState, rocket, sectorX, sectorY)) {
+      const message = `扇区[${sectorX},${sectorY}]已满，无法放置移动棋子`;
+      rocketState.statusNote = message;
+      return { ok: false, rocket: null, message };
+    }
+
+    rocket.launchGrid = { x: sectorX, y: sectorY };
+    rocket.launchSectorCoordinate = { x: sectorX, y: sectorY };
+    rocketState.nextRocketId += 1;
+    rocketState.activeRocketId = rocket.id;
+    rocketState.rockets.push(rocket);
+
+    const message = `放置 ${formatRocketLabel(rocket)} -> 扇区[${rocket.sectorX},${rocket.sectorY}]#${rocket.slotIndex}`;
+    rocketState.statusNote = message;
+    return { ok: true, rocket, message };
+  }
+
   function setActiveRocket(rocketState, rocketId) {
     const rocket = rocketState.rockets.find((item) => item.id === rocketId);
     if (!rocket) {
@@ -317,6 +367,17 @@
       .filter(isControllablePlayerRocket)
       .filter((rocket) => !playerId || rocket.playerId === playerId)
       .sort((left, right) => left.playerSequence - right.playerSequence);
+  }
+
+  function getMovableTokensForPlayer(rocketState, playerId) {
+    return rocketState.rockets
+      .filter(isMovablePlayerToken)
+      .filter((rocket) => !playerId || rocket.playerId === playerId)
+      .sort((left, right) => {
+        const leftSequence = Number.isInteger(left.playerSequence) ? left.playerSequence : 999 + left.id;
+        const rightSequence = Number.isInteger(right.playerSequence) ? right.playerSequence : 999 + right.id;
+        return leftSequence - rightSequence;
+      });
   }
 
   function canMoveRocket(rocketState, rocketId, deltaX, deltaY) {
@@ -383,7 +444,7 @@
       return { ok: false, rocket, message };
     }
 
-    const message = `R${rocket.id} -> 扇区[${rocket.sectorX},${rocket.sectorY}]#${rocket.slotIndex}`;
+    const message = `${formatRocketLabel(rocket)} -> 扇区[${rocket.sectorX},${rocket.sectorY}]#${rocket.slotIndex}`;
     rocketState.statusNote = message;
     return { ok: true, rocket, message };
   }
@@ -459,6 +520,7 @@
     SECTOR_RING_MIN,
     SECTOR_RING_MAX,
     ROCKET_SURFACE,
+    ROCKET_KIND,
     createRocketState,
     normalizeBoardPoint,
     normalizePolarPoint,
@@ -476,12 +538,15 @@
     getActiveRocket,
     setActiveRocket,
     getRocketsForPlayer,
+    getMovableTokensForPlayer,
     isControllablePlayerRocket,
+    isMovablePlayerToken,
     formatRocketLabel,
     removeRocket,
     placeRocketAtBoardPoint,
     placeRocketAtPlanetsReferencePoint,
     launchRocketAtSector,
+    createMovableTokenAtSector,
     canMoveRocket,
     moveRocket,
     moveActiveRocket,

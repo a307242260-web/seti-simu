@@ -8,6 +8,7 @@
   let yichangdian = root.SetiAlienYichangdian;
   let fangzhou = root.SetiAlienFangzhou;
   let banrenma = root.SetiAlienBanrenma;
+  let chong = root.SetiAlienChong;
 
   if (typeof require === "function") {
     catalog = catalog || require("./catalog");
@@ -17,16 +18,17 @@
     yichangdian = yichangdian || require("./yichangdian");
     fangzhou = fangzhou || require("./fangzhou");
     banrenma = banrenma || require("./banrenma");
+    chong = chong || require("./chong");
   }
 
-  const api = factory(catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma);
+  const api = factory(catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma, chong);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAlienRender = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma, chong) {
   "use strict";
 
   const TRACE_KIND_FIRST = "first";
@@ -35,7 +37,9 @@
   const TRACE_KIND_YICHANGDIAN = "yichangdian";
   const TRACE_KIND_FANGZHOU = "fangzhou";
   const TRACE_KIND_BANRENMA = "banrenma";
+  const TRACE_KIND_CHONG = "chong";
   const YICHANGDIAN_SLOT_DISPLAY_SCALE = 0.5;
+  const CHONG_FOSSIL_MARKER_DISPLAY_SCALE = 1.75;
 
   const tokenElements = new Map();
   const stateTraceSlotElements = new Map();
@@ -43,12 +47,15 @@
   const yichangdianSlotElements = new Map();
   const fangzhouSlotElements = new Map();
   const banrenmaSlotElements = new Map();
+  const chongSlotElements = new Map();
+  const chongFossilElements = new Map();
   const firstLayoutOverrides = new Map();
   const extraLayoutOverrides = new Map();
   const jiuzheLayoutOverrides = new Map();
   const yichangdianLayoutOverrides = new Map();
   const fangzhouLayoutOverrides = new Map();
   const banrenmaLayoutOverrides = new Map();
+  const chongLayoutOverrides = new Map();
   let dragState = null;
   let dragHandlers = {};
   let dragListenersBound = false;
@@ -79,6 +86,10 @@
 
   function getBanrenmaOverrideKey(alienSlotId, traceType, position) {
     return `banrenma:${alienSlotId}:${traceType}:${position}`;
+  }
+
+  function getChongOverrideKey(alienSlotId, traceType, position) {
+    return `chong:${alienSlotId}:${traceType}:${position}`;
   }
 
   function getEffectiveTraceMarkerLayout(alienSlotId, traceType) {
@@ -163,6 +174,18 @@
     return placement.getBanrenmaStackTraceMarkerLayout?.(effectiveBase, stackIndex) || effectiveBase;
   }
 
+  function getEffectiveChongTraceMarkerLayout(alienSlotId, traceType, position) {
+    const base = placement.getChongTraceMarkerLayout?.(alienSlotId, traceType, position);
+    if (!base) return null;
+
+    const override = chongLayoutOverrides.get(getChongOverrideKey(alienSlotId, traceType, position));
+    return {
+      ...base,
+      percentX: override?.percentX ?? base.percentX,
+      percentY: override?.percentY ?? base.percentY,
+    };
+  }
+
   function clientToAlienStatePercent(wrap, clientX, clientY) {
     const rect = wrap.getBoundingClientRect();
     const localX = clientX - rect.left;
@@ -196,6 +219,7 @@
       || traceKind === TRACE_KIND_YICHANGDIAN
       || traceKind === TRACE_KIND_FANGZHOU
       || traceKind === TRACE_KIND_BANRENMA
+      || traceKind === TRACE_KIND_CHONG
     ) {
       return `${traceKind}:${alienSlotId}:${traceType}:${extraIndex}`;
     }
@@ -234,6 +258,7 @@
       fangzhouStackIndex: Number(element.dataset.fangzhouStackIndex || 0),
       banrenmaPosition: Number(element.dataset.banrenmaPosition || 0),
       banrenmaStackIndex: Number(element.dataset.banrenmaStackIndex || 0),
+      chongPosition: Number(element.dataset.chongPosition || 0),
       pointerId: typeof event.pointerId === "number" ? event.pointerId : null,
     };
 
@@ -305,6 +330,12 @@
           getBanrenmaOverrideKey(alienSlotId, traceType, positionIndex),
           basePosition,
         );
+      } else if (traceKind === TRACE_KIND_CHONG) {
+        const positionIndex = Number(element.dataset.chongPosition || 0);
+        chongLayoutOverrides.set(
+          getChongOverrideKey(alienSlotId, traceType, positionIndex),
+          position,
+        );
       } else if (traceKind === TRACE_KIND_EXTRA) {
         const anchorLayout = getEffectiveExtraTraceAnchorLayout(alienSlotId, traceType);
         const extraIndex = Number(element.dataset.extraIndex || 0);
@@ -327,6 +358,8 @@
         ? `方舟${Number(element.dataset.fangzhouPosition || 0)}号位`
       : traceKind === TRACE_KIND_BANRENMA
         ? `半人马${Number(element.dataset.banrenmaPosition || 0)}号位`
+      : traceKind === TRACE_KIND_CHONG
+        ? `虫族${Number(element.dataset.chongPosition || 0)}号位`
       : traceKind === TRACE_KIND_EXTRA
         ? "非首标记网格锚点"
         : "首标记";
@@ -342,6 +375,7 @@
       fangzhouStackIndex: traceKind === TRACE_KIND_FANGZHOU ? Number(element.dataset.fangzhouStackIndex || 0) : null,
       banrenmaPosition: traceKind === TRACE_KIND_BANRENMA ? Number(element.dataset.banrenmaPosition || 0) : null,
       banrenmaStackIndex: traceKind === TRACE_KIND_BANRENMA ? Number(element.dataset.banrenmaStackIndex || 0) : null,
+      chongPosition: traceKind === TRACE_KIND_CHONG ? Number(element.dataset.chongPosition || 0) : null,
       percentX: position.percentX,
       percentY: position.percentY,
       message: traceKind === TRACE_KIND_EXTRA
@@ -358,6 +392,9 @@
         : traceKind === TRACE_KIND_BANRENMA
           ? `${label} ${traceLabel} 半人马${Number(element.dataset.banrenmaPosition || 0)}号位`
             + `${Number(element.dataset.banrenmaPosition || 0) === 1 ? `#${Number(element.dataset.banrenmaStackIndex || 0) + 1}` : ""}`
+            + ` 拖动至 ${position.percentX}%,${position.percentY}%`
+        : traceKind === TRACE_KIND_CHONG
+          ? `${label} ${traceLabel} 虫族${Number(element.dataset.chongPosition || 0)}号位`
             + ` 拖动至 ${position.percentX}%,${position.percentY}%`
         : `${label} ${traceLabel} ${kindLabel} 拖动至 ${position.percentX}%,${position.percentY}%`,
     };
@@ -1188,6 +1225,187 @@
     }
   }
 
+  function getChongSlotElementKey(alienSlotId, traceType, position) {
+    return `chong-slot:${alienSlotId}:${traceType}:${position}`;
+  }
+
+  function getChongTokenKey(alienSlotId, traceType, position) {
+    return getTokenElementKey(TRACE_KIND_CHONG, alienSlotId, traceType, position);
+  }
+
+  function getChongFossilKey(alienSlotId, position) {
+    return `chong-fossil:${alienSlotId}:${position}`;
+  }
+
+  function applyChongTraceSlotStyle(slot, layout) {
+    applyTraceTokenStyle(slot, layout, placement.CHONG_TRACE_TOKEN_DISPLAY_SCALE || 1);
+  }
+
+  function mountChongFossilMarker(alienSlotId, position, fossilId, layer, activeKeys) {
+    const key = getChongFossilKey(alienSlotId, position);
+    activeKeys.add(key);
+
+    let element = chongFossilElements.get(key);
+    if (!element) {
+      element = document.createElement("img");
+      element.className = "alien-trace-token-positioned alien-chong-fossil-marker";
+      element.draggable = false;
+      chongFossilElements.set(key, element);
+      layer.appendChild(element);
+    }
+
+    const layout = getEffectiveChongTraceMarkerLayout(alienSlotId, "blue", position);
+    if (!layout) return;
+    applyTraceTokenStyle(element, layout, CHONG_FOSSIL_MARKER_DISPLAY_SCALE);
+    element.src = chong.getFossilSrc(fossilId);
+    element.alt = `虫族化石 ${fossilId}`;
+    element.dataset.alienSlot = String(alienSlotId);
+    element.dataset.chongFossilPosition = String(position);
+    element.dataset.chongFossilId = fossilId;
+    element.title = `${placement.getAlienSlotLabel(alienSlotId)} 虫族化石 ${fossilId} @蓝${position}`;
+  }
+
+  function mountChongFossilMarkers(alienSlotId, layer, alienState, activeKeys) {
+    const slot = state.getAlienSlot(alienState, alienSlotId);
+    if (!slot?.revealed || slot.alienId !== chong?.ALIEN_ID) return;
+    const fossilSlots = alienState?.chong?.panelFossilSlots || {};
+    for (const [position, fossilId] of Object.entries(fossilSlots)) {
+      if (!fossilId) continue;
+      mountChongFossilMarker(alienSlotId, Number(position), fossilId, layer, activeKeys);
+    }
+  }
+
+  function mountChongTraceToken(alienSlotId, traceType, position, entry, layer, options, activeKeys) {
+    const key = getChongTokenKey(alienSlotId, traceType, position);
+    activeKeys.add(key);
+
+    let element = tokenElements.get(key);
+    if (!element) {
+      element = document.createElement("img");
+      element.className = "alien-trace-token alien-trace-token-positioned alien-trace-token-chong";
+      element.draggable = false;
+      tokenElements.set(key, element);
+      layer.appendChild(element);
+    }
+
+    const layout = getEffectiveChongTraceMarkerLayout(alienSlotId, traceType, position);
+    if (!layout || dragState?.element === element) return;
+
+    applyTraceTokenStyle(element, layout, placement.CHONG_TRACE_TOKEN_DISPLAY_SCALE || 1);
+    element.src = resolvePlayerTokenAsset(entry.playerColor, options);
+    element.alt = `${chong?.formatTraceLabel?.(traceType, position) || traceType}`;
+    element.dataset.alienSlot = String(alienSlotId);
+    element.dataset.traceType = traceType;
+    element.dataset.traceKind = TRACE_KIND_CHONG;
+    element.dataset.chongPosition = String(position);
+    element.classList.remove("is-placeable");
+    delete element.dataset.chongTraceSlot;
+    delete element.dataset.extraIndex;
+    delete element.dataset.jiuzhePosition;
+    delete element.dataset.yichangdianPosition;
+    delete element.dataset.fangzhouPosition;
+    delete element.dataset.banrenmaPosition;
+    element.title = `${placement.getAlienSlotLabel(alienSlotId)} ${chong?.formatTraceLabel?.(traceType, position) || traceType}`
+      + ` ${options.getPlayerLabel?.(entry.playerColor) || entry.playerColor || "未知"}`
+      + ` @(${layout.percentX}%,${layout.percentY}%)`;
+  }
+
+  function mountChongTraceSlot(alienSlotId, traceType, position, layer, alienState, options, activeKeys) {
+    const grid = chong?.getTraceGrid?.(alienState, alienSlotId);
+    const entries = chong?.getTraceEntries?.(grid, traceType, position) || [];
+    const slotKey = getChongSlotElementKey(alienSlotId, traceType, position);
+    const visible = Boolean(entries.length)
+      || Boolean(chong?.isChongRevealedSlot?.(alienState, alienSlotId));
+    if (!visible) {
+      const existingSlot = chongSlotElements.get(slotKey);
+      if (existingSlot) {
+        existingSlot.remove();
+        chongSlotElements.delete(slotKey);
+      }
+      return;
+    }
+
+    entries.forEach((entry) => {
+      mountChongTraceToken(alienSlotId, traceType, position, entry, layer, options, activeKeys);
+    });
+
+    const canPlace = options.canPlaceChongTrace?.(alienSlotId, traceType, position) !== false;
+    const shouldShowSlot = !entries.length;
+    if (!shouldShowSlot) {
+      const existingSlot = chongSlotElements.get(slotKey);
+      if (existingSlot) {
+        existingSlot.remove();
+        chongSlotElements.delete(slotKey);
+      }
+      return;
+    }
+
+    activeKeys.add(slotKey);
+    let slot = chongSlotElements.get(slotKey);
+    if (!slot) {
+      slot = document.createElement("button");
+      slot.type = "button";
+      slot.className = "alien-chong-slot alien-trace-token-positioned";
+      chongSlotElements.set(slotKey, slot);
+      layer.appendChild(slot);
+    }
+
+    const layout = getEffectiveChongTraceMarkerLayout(alienSlotId, traceType, position);
+    if (!layout) return;
+    applyChongTraceSlotStyle(slot, layout);
+    slot.dataset.alienSlot = String(alienSlotId);
+    slot.dataset.traceType = traceType;
+    slot.dataset.chongPosition = String(position);
+    slot.dataset.chongTraceSlot = "true";
+    slot.classList.toggle("is-placeable", canPlace);
+    slot.title = `${chong?.formatTraceLabel?.(traceType, position) || traceType} @(${layout.percentX}%,${layout.percentY}%)`;
+    slot.setAttribute("aria-label", `${placement.getAlienSlotLabel(alienSlotId)} ${slot.title}`);
+  }
+
+  function renderChongTraceMarkers(alienSlotId, layer, alienState, options = {}) {
+    if (!layer || !chong) return;
+    const activeKeys = new Set();
+
+    mountChongFossilMarkers(alienSlotId, layer, alienState, activeKeys);
+
+    for (const traceType of chong.TRACE_TYPES) {
+      for (const position of chong.getPositionsForTraceType(traceType)) {
+        mountChongTraceSlot(alienSlotId, traceType, position, layer, alienState, options, activeKeys);
+      }
+    }
+
+    for (const [key, element] of tokenElements.entries()) {
+      const parts = key.split(":");
+      if (parts[0] !== TRACE_KIND_CHONG) continue;
+      const slotId = Number(parts[1]);
+      if (slotId !== alienSlotId || activeKeys.has(key)) continue;
+      element.remove();
+      tokenElements.delete(key);
+    }
+    for (const [key, element] of chongSlotElements.entries()) {
+      const parts = key.split(":");
+      const slotId = Number(parts[1]);
+      if (slotId !== alienSlotId || activeKeys.has(key)) continue;
+      element.remove();
+      chongSlotElements.delete(key);
+    }
+    for (const [key, element] of chongFossilElements.entries()) {
+      const parts = key.split(":");
+      const slotId = Number(parts[1]);
+      if (slotId !== alienSlotId || activeKeys.has(key)) continue;
+      element.remove();
+      chongFossilElements.delete(key);
+    }
+  }
+
+  function renderAllChongTraceMarkers(getLayerForSlot, alienState, options = {}) {
+    if (!chong) return;
+    for (const alienSlotId of placement.ALIEN_SLOT_IDS) {
+      const layer = getLayerForSlot(alienSlotId);
+      if (layer) renderChongTraceMarkers(alienSlotId, layer, alienState, options);
+    }
+  }
+
   function renderAlienBackImage(alienSlotId, backElement, alienState) {
     if (!backElement) return;
 
@@ -1341,6 +1559,28 @@
       });
   }
 
+  function listChongTraceMarkerLayoutOverrides() {
+    return [...chongLayoutOverrides.entries()]
+      .map(([key, position]) => {
+        const [, alienSlotId, traceType, tracePosition] = key.split(":");
+        return {
+          traceKind: TRACE_KIND_CHONG,
+          alienSlotId: Number(alienSlotId),
+          traceType,
+          position: Number(tracePosition),
+          percentX: position.percentX,
+          percentY: position.percentY,
+        };
+      })
+      .sort((a, b) => {
+        if (a.alienSlotId !== b.alienSlotId) return a.alienSlotId - b.alienSlotId;
+        const typeDiff = (chong?.TRACE_TYPES || placement.TRACE_TYPES).indexOf(a.traceType)
+          - (chong?.TRACE_TYPES || placement.TRACE_TYPES).indexOf(b.traceType);
+        if (typeDiff !== 0) return typeDiff;
+        return a.position - b.position;
+      });
+  }
+
   function resetAlienTraceTokens() {
     for (const element of tokenElements.values()) {
       element.remove();
@@ -1360,18 +1600,27 @@
     for (const element of banrenmaSlotElements.values()) {
       element.remove();
     }
+    for (const element of chongSlotElements.values()) {
+      element.remove();
+    }
+    for (const element of chongFossilElements.values()) {
+      element.remove();
+    }
     tokenElements.clear();
     stateTraceSlotElements.clear();
     jiuzheSlotElements.clear();
     yichangdianSlotElements.clear();
     fangzhouSlotElements.clear();
     banrenmaSlotElements.clear();
+    chongSlotElements.clear();
+    chongFossilElements.clear();
     firstLayoutOverrides.clear();
     extraLayoutOverrides.clear();
     jiuzheLayoutOverrides.clear();
     yichangdianLayoutOverrides.clear();
     fangzhouLayoutOverrides.clear();
     banrenmaLayoutOverrides.clear();
+    chongLayoutOverrides.clear();
     dragState = null;
   }
 
@@ -1385,12 +1634,14 @@
     getEffectiveYichangdianTraceMarkerLayout,
     getEffectiveFangzhouTraceMarkerLayout,
     getEffectiveBanrenmaTraceMarkerLayout,
+    getEffectiveChongTraceMarkerLayout,
     listTraceMarkerLayoutOverrides,
     listExtraTraceMarkerLayoutOverrides,
     listJiuzheTraceMarkerLayoutOverrides,
     listYichangdianTraceMarkerLayoutOverrides,
     listFangzhouTraceMarkerLayoutOverrides,
     listBanrenmaTraceMarkerLayoutOverrides,
+    listChongTraceMarkerLayoutOverrides,
     renderAlienTraceMarkers,
     renderAllAlienTraceMarkers,
     renderJiuzheTraceMarkers,
@@ -1401,6 +1652,8 @@
     renderAllFangzhouTraceMarkers,
     renderBanrenmaTraceMarkers,
     renderAllBanrenmaTraceMarkers,
+    renderChongTraceMarkers,
+    renderAllChongTraceMarkers,
     renderAlienBackImage,
     renderAllAlienBackImages,
     resetAlienTraceTokens,
