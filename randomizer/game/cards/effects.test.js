@@ -1,5 +1,6 @@
 const assert = require("node:assert/strict");
 const cardEffects = require("./effects");
+const aomomo = require("../aliens/aomomo");
 
 const b1 = { id: "card-b1", cardId: "b_1.webp" };
 assert.equal(cardEffects.getCardModel(b1).cardType, 2);
@@ -254,6 +255,89 @@ assert.equal(cardEffects.collectMatchingTriggers(signalTriggerPlayer, {
   type: "signalMarked",
   nebulaId: "sector-1-b",
 }).length, 0);
+
+const aomomo1 = { id: "card-aomomo-1", cardId: "aomomo_1.webp", aomomoCard: true };
+const aomomoTriggerPlayer = { id: "p1", color: "white", reservedCards: [aomomo1] };
+cardEffects.ensureCardEffectState(aomomo1);
+const aomomoTraceMatches = cardEffects.collectMatchingTriggers(aomomoTriggerPlayer, {
+  type: "alienTrace",
+  alienId: "aomomo",
+  traceType: "pink",
+});
+assert.equal(aomomoTraceMatches.length, 3);
+assert.deepEqual(aomomoTraceMatches.map((match) => match.trigger.id), [
+  "aomomo1-trace-data",
+  "aomomo1-trace-publicity",
+  "aomomo1-trace-score",
+]);
+
+function createAomomoAlienState(triggerPlayer) {
+  const alienGameState = {
+    aliens: {
+      1: { revealed: true, alienId: aomomo.ALIEN_ID, assignedAlienId: aomomo.ALIEN_ID },
+    },
+    aomomo: aomomo.createAomomoState(),
+  };
+  const result = aomomo.initializeAomomoReveal(alienGameState, 1, triggerPlayer, () => 0);
+  assert.equal(result.ok, true);
+  return alienGameState;
+}
+
+function collectAomomoReadyTaskIds(player, alienGameState) {
+  return cardEffects.collectReadyTasks(player, {
+    nebulaDataState: {},
+    alienGameState,
+    planetStatsState: {},
+  }).map((readyTask) => readyTask.task.id);
+}
+
+const aomomo0 = { id: "card-aomomo-0", cardId: "aomomo_0.webp", aomomoCard: true };
+const aomomoLandingPlayer = {
+  id: "p1",
+  color: "white",
+  resources: { aomomoFossils: 0 },
+  reservedCards: [aomomo0],
+};
+const aomomoLandingState = createAomomoAlienState(aomomoLandingPlayer);
+assert.equal(collectAomomoReadyTaskIds(aomomoLandingPlayer, aomomoLandingState).length, 0);
+assert.equal(aomomo.addLandingMarker(aomomoLandingState, aomomoLandingPlayer).ok, true);
+assert.deepEqual(collectAomomoReadyTaskIds(aomomoLandingPlayer, aomomoLandingState), ["aomomo0-land"]);
+
+const aomomo2 = { id: "card-aomomo-2", cardId: "aomomo_2.webp", aomomoCard: true };
+const aomomoFossilPlayer = {
+  id: "p1",
+  color: "white",
+  resources: { aomomoFossils: 2 },
+  reservedCards: [aomomo2],
+};
+assert.equal(collectAomomoReadyTaskIds(aomomoFossilPlayer, {}).length, 0);
+aomomoFossilPlayer.resources.aomomoFossils = 3;
+assert.deepEqual(collectAomomoReadyTaskIds(aomomoFossilPlayer, {}), ["aomomo2-fossils-score"]);
+
+const aomomo3 = { id: "card-aomomo-3", cardId: "aomomo_3.webp", aomomoCard: true };
+const aomomoTraceSetPlayer = {
+  id: "p1",
+  color: "white",
+  resources: { aomomoFossils: 0 },
+  reservedCards: [aomomo3],
+};
+const aomomoTraceSetState = createAomomoAlienState(aomomoTraceSetPlayer);
+assert.equal(aomomo.placeAomomoTrace(aomomoTraceSetState, 1, "pink", 2, aomomoTraceSetPlayer).ok, true);
+assert.equal(aomomo.placeAomomoTrace(aomomoTraceSetState, 1, "yellow", 3, aomomoTraceSetPlayer).ok, true);
+assert.equal(aomomo.placeAomomoTrace(aomomoTraceSetState, 1, "blue", 4, aomomoTraceSetPlayer).ok, true);
+assert.deepEqual(collectAomomoReadyTaskIds(aomomoTraceSetPlayer, aomomoTraceSetState), ["aomomo3-all-trace-types"]);
+
+const aomomo9 = { id: "card-aomomo-9", cardId: "aomomo_9.webp", aomomoCard: true };
+const aomomoFossilTracePlayer = {
+  id: "p1",
+  color: "white",
+  resources: { aomomoFossils: 0 },
+  reservedCards: [aomomo9],
+};
+const aomomoFossilTraceState = createAomomoAlienState(aomomoFossilTracePlayer);
+assert.equal(collectAomomoReadyTaskIds(aomomoFossilTracePlayer, aomomoFossilTraceState).length, 0);
+assert.equal(aomomo.placeAomomoTrace(aomomoFossilTraceState, 1, "pink", 1, aomomoFossilTracePlayer).ok, true);
+assert.deepEqual(collectAomomoReadyTaskIds(aomomoFossilTracePlayer, aomomoFossilTraceState), ["aomomo9-fossil-spending-trace"]);
 
 const b31Effects = cardEffects.buildPlayEffects({ cardId: "b_31.webp" });
 assert.equal(b31Effects.length, 2);

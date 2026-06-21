@@ -11219,6 +11219,7 @@
       effectLabel: options.effectLabel || "奥陌陌外星人牌",
       beforeAlienState: options.beforeAlienState || structuredClone(alienGameState),
       beforePlayerState: options.beforePlayerState || structuredClone(playerState),
+      deferredEvents: Array.isArray(options.deferredEvents) ? options.deferredEvents : [],
     };
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = "获得奥陌陌牌";
     if (els.scanTargetSubtitle) {
@@ -11306,9 +11307,13 @@
       });
     }
     rocketState.statusNote = message;
+    if (pending?.deferredEvents?.length) {
+      settleCardTasksAfterEffect({ events: pending.deferredEvents, render: false });
+    }
     renderAlienPanels();
     renderPlayerHand();
     renderPlayerStats();
+    renderReservedCardsFromTaskState();
     updateActionButtons();
     renderStateReadout();
     return { ok: true, message, result };
@@ -13596,7 +13601,9 @@
         "恢复奥陌陌痕迹放置前玩家状态",
       ));
       completeQuickActionStep();
-      settleCardTasksAfterEffect({ events: traceEvents, render: false });
+      if (!result.reward?.pickAlienCard) {
+        settleCardTasksAfterEffect({ events: traceEvents, render: false });
+      }
     }
 
     renderAlienPanels();
@@ -13611,6 +13618,7 @@
         effectLabel: pending?.effectLabel || "奥陌陌外星人牌",
         beforeAlienState,
         beforePlayerState,
+        deferredEvents: pending?.type === "planet_reward_alien_trace" ? [] : traceEvents,
       });
       if (!openResult.ok && pending?.type === "planet_reward_alien_trace") {
         completeCurrentActionEffect();
