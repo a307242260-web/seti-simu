@@ -34,6 +34,10 @@
     Object.assign(target, structuredClone(snapshot));
   }
 
+  function getIndustryPassives() {
+    return industryPassives || (typeof globalThis !== "undefined" ? globalThis.SetiIndustryPassives : null);
+  }
+
   function getPlayerTechState(context) {
     const currentPlayer = players.getCurrentPlayer(context.playerState);
     if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
@@ -62,7 +66,7 @@
     if (!board) return { ok: false, abilityId: "researchTechPrepare", message: "科技版图状态未初始化" };
 
     const skipCost = Boolean(context.techUiState?.cheatModeEnabled || options.skipCost);
-    const researchCost = industryPassives?.getResearchPublicityCost?.(
+    const researchCost = getIndustryPassives()?.getResearchPublicityCost?.(
       playerResult.currentPlayer,
       tech.RESEARCH_PUBLICITY_COST,
     ) ?? tech.RESEARCH_PUBLICITY_COST;
@@ -158,7 +162,7 @@
       snapshots.ui.statusNote = "请选择要研究的科技板块";
     }
     const skipCost = Boolean(context.techUiState?.cheatModeEnabled || options.skipCost);
-    const researchCost = industryPassives?.getResearchPublicityCost?.(
+    const researchCost = getIndustryPassives()?.getResearchPublicityCost?.(
       playerResult.currentPlayer,
       tech.RESEARCH_PUBLICITY_COST,
     ) ?? tech.RESEARCH_PUBLICITY_COST;

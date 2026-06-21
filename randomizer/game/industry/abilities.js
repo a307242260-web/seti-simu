@@ -234,6 +234,24 @@
           label: prepared.label,
           message: `${prepared.label}：请选择 1 张手牌，再选择 1 张公共牌交换`,
         };
+      case "future_span_pick_advance": {
+        const futureState = player?.industryFutureSpan;
+        const targetScore = Number(futureState?.targetScore);
+        const currentScore = Number(player?.resources?.score || 0);
+        if (!futureState?.card || futureState.playing || !Number.isFinite(targetScore)) {
+          return { ok: false, message: `${prepared.label}：没有使用专属标记，暂无可前移的目标分` };
+        }
+        if (currentScore >= targetScore) {
+          return { ok: false, message: `${prepared.label}：目标牌已可打出，不能再前移目标分` };
+        }
+        return {
+          ok: true,
+          abilityId,
+          flowType: "future_span_pick",
+          label: prepared.label,
+          message: `${prepared.label}：精选 1 张公共牌，并将专属标记目标分前移 3 格`,
+        };
+      }
       case "strategy_pick_card":
         return {
           ok: true,

@@ -52,6 +52,10 @@
     return Object.keys(cost || {}).length > 0;
   }
 
+  function getIndustryPassives() {
+    return industryPassives || (typeof globalThis !== "undefined" ? globalThis.SetiIndustryPassives : null);
+  }
+
   function spendCost(player, cost) {
     if (!hasCost(cost)) return { ok: true, message: null };
     return players.spendResources(player, cost);
@@ -68,7 +72,7 @@
 
   function getRocketLimitForPlayer(player) {
     const baseLimit = players.playerOwnsTech(player, "orange1") ? ORANGE1_ROCKET_LIMIT : BASE_ROCKET_LIMIT;
-    const bonus = industryPassives?.getRocketLimitBonus?.(player) || 0;
+    const bonus = getIndustryPassives()?.getRocketLimitBonus?.(player) || 0;
     return baseLimit + bonus;
   }
 
@@ -323,7 +327,9 @@
       return { ok: false, abilityId: "launchProbe", message: "没有当前玩家" };
     }
 
-    const cost = resolveCost(options, DEFAULT_LAUNCH_COST);
+    const defaultLaunchCost = getIndustryPassives()?.getStandardLaunchCost?.(currentPlayer, DEFAULT_LAUNCH_COST)
+      || DEFAULT_LAUNCH_COST;
+    const cost = resolveCost(options, defaultLaunchCost);
     const rocketLimit = getRocketLimitForPlayer(currentPlayer);
     const activeRocketCount = getActiveRocketCountForPlayer(context.rocketState, currentPlayer.id);
     if (!options.ignoreRocketLimit && activeRocketCount >= rocketLimit) {

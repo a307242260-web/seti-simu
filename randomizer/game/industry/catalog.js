@@ -11,7 +11,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const SKIPPED_ACTIVE_LABELS = Object.freeze(["未来跨度研究所", "异星实验室"]);
+  const SKIPPED_ACTIVE_LABELS = Object.freeze(["异星实验室"]);
 
   const INDUSTRY_DEFINITIONS = Object.freeze({
     "层云核心": Object.freeze({
@@ -53,6 +53,16 @@
       label: "深空探测",
       activeAbilityId: "deepspace_swap_cards",
       passiveIds: Object.freeze(["deepspace_free_analyze"]),
+    }),
+    "未来跨度研究所": Object.freeze({
+      label: "未来跨度研究所",
+      activeAbilityId: "future_span_pick_advance",
+      passiveIds: Object.freeze(["future_span_parking"]),
+    }),
+    "异星实验室": Object.freeze({
+      label: "异星实验室",
+      activeAbilityId: null,
+      passiveIds: Object.freeze(["alien_lab_panels"]),
     }),
     "宇宙战略集团": Object.freeze({
       label: "宇宙战略集团",

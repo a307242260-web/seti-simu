@@ -180,6 +180,38 @@ assert.equal(aomomoThird.slotIndex, 3);
 assert.equal(aomomoThird.scoreAwarded, 2);
 assert.equal(aomomoPlayer.resources.score, 3);
 
+const aomomoSettlementState = data.createDefaultNebulaDataState();
+const aomomoSettlementBlue = {
+  id: "player-blue",
+  color: "blue",
+  colorLabel: "蓝色",
+  resources: { score: 0 },
+};
+const aomomoSettlementWhite = {
+  id: "player-white",
+  color: "white",
+  colorLabel: "白色",
+  resources: { score: 0 },
+};
+data.fillNebulaData(aomomoSettlementState, "aomomo", { source: "test" });
+data.replaceNextNebulaDataToken(aomomoSettlementState, "aomomo", aomomoSettlementWhite, { replacementOrder: 1 });
+data.replaceNextNebulaDataToken(aomomoSettlementState, "aomomo", aomomoSettlementWhite, { replacementOrder: 2 });
+data.replaceNextNebulaDataToken(aomomoSettlementState, "aomomo", aomomoSettlementBlue, { replacementOrder: 3 });
+assert.equal(data.isSectorReadyToSettle(aomomoSettlementState, "aomomo"), true);
+const aomomoSettleResult = data.settleSector(aomomoSettlementState, "aomomo");
+assert.equal(aomomoSettleResult.ok, true);
+assert.equal(aomomoSettleResult.winner, null);
+assert.equal(aomomoSettleResult.second, null);
+assert.equal(aomomoSettleResult.participants.length, 2);
+assert.equal(aomomoSettlementState.sectorSettlements.sectors.aomomo.settlementCount, 1);
+assert.equal(aomomoSettlementState.sectorSettlements.sectors.aomomo.winners.length, 0);
+assert.deepEqual(aomomoSettlementState.sectorSettlements.winsByPlayerId, {});
+assert.equal(data.listNebulaTokens(aomomoSettlementState, "aomomo").length, 3);
+assert.equal(
+  data.listNebulaTokens(aomomoSettlementState, "aomomo").some((token) => token.replacedByPlayerColor),
+  false,
+);
+
 const secondReplace = data.replaceNextNebulaDataToken(scanState, "sector-1-a", scanPlayer, {
   playerTokenSrc: "../assets/tokens/normal_token-blue.png",
 });

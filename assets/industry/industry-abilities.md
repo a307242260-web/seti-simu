@@ -9,7 +9,7 @@
 | `randomizer/game/industry/catalog.js` | 公司目录：`activeAbilityId`、`passiveIds`、是否已实现 1x |
 | `randomizer/game/industry/abilities.js` | 主动能力：`buildActiveAbilityFlow`、角标/收入结算、哨兵效果节点 |
 | `randomizer/game/industry/passives.js` | 被动钩子查询（火箭上限、研究费用、分析免能等） |
-| `randomizer/game/industry/state.js` | 每轮 1x 标记、`industryRoundMarkRound` / `industryRoundMarkTurn`、轮内运行时字段重置 |
+| `randomizer/game/industry/state.js` | 每轮 1x 标记、异星实验室板块、未来跨度专属标记、轮内运行时字段重置 |
 | `randomizer/game/industry/placement.js` | 公司牌左下角「1x」圆标百分比坐标 |
 | `randomizer/game/industry/index.js` | 聚合为 `window.SetiIndustry` |
 | `randomizer/app.js` | UI：标记点击、能力流、被动触发、交互聚焦、撤销 |
@@ -28,7 +28,7 @@
 
 ### 2. 正常对局（每轮一次 1x）
 
-- 除 **异星实验室**、**未来跨度研究所** 外，公司牌左下角有 1x 圆标（`placement.js`）。
+- 除 **异星实验室** 外，公司牌左下角有 1x 圆标（`placement.js`）；**未来跨度研究所** 既有普通每轮 1x 圆标，也有独立的 `wlkd_token` 专属快速行动标记。
 - 每**轮**（`turnState.roundNumber` 轮号）每玩家最多放置 1 次 `normal_token`；`player.industryRoundMarkRound === turnState.roundNumber` 表示本轮已用。`player.industryRoundMarkTurn` 只记录标记发生的回合号，不参与刷新判定。
 - 未放置时牌面蓝色高亮（`is-action-marker-pending`）；放置后启动该公司 `buildActiveAbilityFlow`。
 - 新轮开始时（所有玩家都 PASS 后）`resetAllRoundIndustryRuntimeState` 清空借用/武装等，**不**清零 `industryRoundMarkRound` / `industryRoundMarkTurn`（靠轮号比较判定可否再标记）。
@@ -42,6 +42,8 @@
 | `industrySentinelArmedRound` / `industrySentinelArmedTurn` | 哨兵：本轮已武装「打牌后弃牌角标」；Turn 只记录发生回合 |
 | `industryHuanyuFreeMoveRound` / `industryHuanyuFreeMoveTurn` / `industryHuanyuFreeMovesLeft` / `industryHuanyuMovedRocketIds` | 寰宇：免费移动所在轮、发生回合、剩余次数、已移动火箭 |
 | `industryPlayedCardThisRound` / `industryLastPlayedCardThisRound` | 本轮是否已打牌及牌快照（哨兵补注入队） |
+| `industryAlienLabPanels` / `industryAlienLabInitialized` | 异星实验室三色板块正反面；蓝=发射、黄=扫描、粉=科技 |
+| `industryFutureSpan` / `industryFutureSpanInitialized` | 未来跨度专属标记状态：扣下的牌、目标分、是否正在打出 |
 
 撤销 1x 标记时调用 `resetRoundIndustryRuntimeState` 并 `cancelIndustryAbilityFlow`。
 
@@ -60,8 +62,15 @@
 | 芬威克研究中心 | `fenwick_publicity_pick_corner` | `fenwick_publicity_pick` | 消耗 2 宣传精选 1 张牌，获得**弃牌角标**（不弃牌） |
 | 深空探测 | `deepspace_swap_cards` | `deepspace_swap` | 选手牌 1 张再选公共牌 1 张交换 |
 | 宇宙战略集团 | `strategy_pick_card` | `strategy_pick` | 精选 1 张公共牌（无额外资源） |
-| 未来跨度研究所 | — | — | **暂不处理，无 1x 圆标**（`EXCLUDED_INDUSTRY_LABELS` / `SKIPPED_ACTIVE_LABELS`） |
+| 未来跨度研究所 | `future_span_pick_advance` | `future_span_pick` | 若专属标记已有未达成目标牌：精选 1 张公共牌，并将目标分提高 3 |
 | 异星实验室 | — | — | **无 1x 圆标**（`EXCLUDED_INDUSTRY_LABELS`） |
+
+### 未来跨度研究所
+
+- 公司牌上的 `wlkd_token` 是独立快速行动：选择 1 张费用为信用点的手牌（半人马等能量费用牌不可选），将其从手牌移到公司牌下方，并设置目标分为当前分数 + 15/25/35/45（对应牌费 1/2/3/4）。
+- 已有目标牌时不能再次使用专属标记；扣下的牌不在手牌、保留牌或弃牌堆中，但会计入牌库占用，避免被重新抽到。
+- 当玩家分数达到目标分后，专属标记显示在目标牌上方；玩家可用标准“打牌”主行动免费打出该牌。打牌效果与临时任务奖励全部完成后，专属标记回到公司牌。
+- 底部普通 1x 只能在已有未达成目标牌时使用；精选并补牌后不可撤销，随后 `industryFutureSpan.targetScore += 3`。
 
 ### 共享能力函数（`abilities.js`）
 
@@ -90,6 +99,8 @@
 | `mission_startup_final_mark` | 任务中继站 | 开局终局 c 板块 3 号位标记 | `applyIndustryStartupPassives` |
 | `fenwick_research_cost` | 芬威克研究中心 | 研究科技宣传 5（默认 6） | `tech/resolver.js`、`abilities/tech.js` |
 | `deepspace_free_analyze` | 深空探测 | 分析数据不耗能量 | `abilities/data.js` |
+| `future_span_parking` | 未来跨度研究所 | 专属标记扣牌、目标分、达标后免费打出 | `app.js` 公司牌叠层与打牌流程 |
+| `alien_lab_panels` | 异星实验室 | 三色板块折扣：发射 1 信用点、扫描 2 能量、研究科技 4 宣传；对应标准主行动后翻背，同色外星痕迹翻回正面 | `launch.js` / `scan-effects.js` / `tech/resolver.js` / `app.js` |
 
 图灵借用：`players.playerOwnsTech` 在拥有板块之外，若 `industryBorrowedTechTileId === tileId` 且借用轮有效，也视为拥有；新轮开始会清空借用运行时状态。
 
@@ -104,6 +115,7 @@
 | `helios_remove_tech` | 扫描式科技选择 → 弃牌收入 `industry_helios_income` |
 | `mission_publicity_pick` / `fenwick_publicity_pick` | 消耗宣传 + 公共牌精选 |
 | `deepspace_swap` | 手牌选择 → 公共牌选择交换 |
+| `future_span_pick` | 公共牌精选 → 目标分 +3 |
 | `strategy_pick` | 公共牌精选 |
 
 交互聚焦（`data-interaction-focus`）：仅在**进行中**的精选/手牌/科技/移动流程时暗化其它区域；公司 1x 可放置时**不**自动全屏聚焦，仅用牌面高亮。
@@ -119,9 +131,10 @@
 | 赫利昂 | 是 | 移除科技 + 收入各记录撤销 |
 | 深空交换 | 是 | 交换手牌与公共牌快照 |
 | 哨兵打牌角标 | 是 | 主行动效果队列内 `industry_sentinel_corner` |
-| 任务中继站 / 芬威克 / 宇宙战略 | 否 | 精选并拿走/刷新公共牌；确认拿牌后提交快速行动历史，之前的快速行动也不再可撤销 |
+| 未来跨度专属标记 | 是 | 扣下手牌与目标分快照 |
+| 任务中继站 / 芬威克 / 未来跨度普通 1x / 宇宙战略 | 否 | 精选并拿走/刷新公共牌；确认拿牌后提交快速行动历史，之前的快速行动也不再可撤销 |
 
-`isIndustryIrreversibleFlow`：`mission_publicity_pick`、`fenwick_publicity_pick`、`strategy_pick`。
+`isIndustryIrreversibleFlow`：`mission_publicity_pick`、`fenwick_publicity_pick`、`future_span_pick`、`strategy_pick`。
 
 ## 与初始牌/公司开局效果的关系
 

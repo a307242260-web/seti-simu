@@ -166,6 +166,9 @@
           else if (Number.isInteger(card?.cardIndex)) ids.add(`b_${card.cardIndex}.webp`);
         }
       }
+      const futureSpanCard = player.industryFutureSpan?.card;
+      if (futureSpanCard?.cardId) ids.add(futureSpanCard.cardId);
+      else if (Number.isInteger(futureSpanCard?.cardIndex)) ids.add(`b_${futureSpanCard.cardIndex}.webp`);
     }
 
     return ids;

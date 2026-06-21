@@ -385,6 +385,12 @@ body {
   pointer-events: auto;
 }
 
+.app-wrap[data-interaction-focus="hand-cards"].has-future-span-ready-card .table-column-left {
+  opacity: 1;
+  filter: none;
+  pointer-events: auto;
+}
+
 .app-wrap[data-interaction-focus="tech-panel"] .table-column-left,
 .app-wrap[data-interaction-focus="tech-panel"] .board-column,
 .app-wrap[data-interaction-focus="tech-panel"] .public-card-panel {
@@ -2167,6 +2173,12 @@ body {
     drop-shadow(0 5px 8px rgba(0, 0, 0, 0.36));
 }
 
+.player-hand-panel.industry-hand-selection-active .player-hand-card-button.is-industry-hand-card-muted {
+  cursor: not-allowed;
+  opacity: 0.46;
+  filter: grayscale(0.45) brightness(0.78);
+}
+
 .player-hand-panel.play-card-selection-active .player-hand-card-button.is-unaffordable {
   cursor: not-allowed;
   opacity: 0.58;
@@ -2737,6 +2749,131 @@ body {
   object-fit: contain;
   pointer-events: none;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.45));
+}
+
+.company-alien-lab-panel-strip {
+  position: absolute;
+  left: 5.6%;
+  top: 30.2%;
+  z-index: 5;
+  display: flex;
+  gap: 1.6%;
+  width: 37.5%;
+  pointer-events: none;
+}
+
+.company-alien-lab-tile {
+  flex: 1 1 0;
+  min-width: 0;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.44));
+}
+
+.company-future-span-layer {
+  position: absolute;
+  left: 4.8%;
+  top: 39%;
+  z-index: 6;
+  width: 37.5%;
+  height: 54%;
+  pointer-events: none;
+}
+
+.company-future-span-token-button {
+  position: absolute;
+  left: 5%;
+  bottom: 6%;
+  width: 18%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.48));
+}
+
+.company-future-span-token-button:disabled {
+  cursor: default;
+  opacity: 0.62;
+  pointer-events: none;
+}
+
+.company-future-span-token-button:not(:disabled):hover,
+.company-future-span-token-button:not(:disabled):focus-visible {
+  outline: 2px solid rgba(120, 210, 255, 0.92);
+  outline-offset: 2px;
+  box-shadow: 0 0 14px rgba(120, 210, 255, 0.42);
+}
+
+.company-future-span-token,
+.company-future-span-ready-token {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.company-future-span-card {
+  position: absolute;
+  left: 6%;
+  bottom: 5%;
+  width: 30%;
+  aspect-ratio: 747 / 1040;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.52));
+}
+
+.company-future-span-card:disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+.company-future-span-layer.is-ready .company-future-span-card:not(:disabled) {
+  outline: 2px solid rgba(110, 236, 169, 0.94);
+  outline-offset: 2px;
+  animation: tech-tile-highlight-pulse 1.8s ease-in-out infinite;
+}
+
+.company-future-span-card-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  object-fit: contain;
+}
+
+.company-future-span-target {
+  position: absolute;
+  right: -14%;
+  top: -8%;
+  display: grid;
+  min-width: 22px;
+  height: 22px;
+  place-items: center;
+  padding: 0 5px;
+  border: 1px solid rgba(255, 246, 216, 0.82);
+  border-radius: 999px;
+  background: rgba(16, 24, 34, 0.92);
+  color: rgba(255, 246, 216, 0.98);
+  font: 800 11px/1 "Microsoft YaHei", "PingFang SC", sans-serif;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.42);
+}
+
+.company-future-span-ready-token {
+  position: absolute;
+  right: -18%;
+  top: -12%;
+  width: 38%;
+  height: auto;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.52));
 }
 
 .initial-selection-empty {
@@ -3471,14 +3608,9 @@ button.spin-button:hover {
 }
 
 .aomomo-nebula-data-layer .aomomo-nebula-data-token.nebula-data-token-positioned {
-  cursor: grab;
-  touch-action: none;
-}
-
-.aomomo-nebula-data-layer .aomomo-nebula-data-token.nebula-data-token-positioned.is-dragging {
-  cursor: grabbing;
-  z-index: 480;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.55));
+  cursor: default;
+  pointer-events: none;
+  touch-action: auto;
 }
 
 #sector-wrap-1 {

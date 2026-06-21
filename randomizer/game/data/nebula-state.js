@@ -543,6 +543,29 @@
       };
     }
 
+    if (normalizedSectorId === AOMOMO_NEBULA_ID) {
+      const sectorRecord = ensureSectorSettlementRecord(state, normalizedSectorId);
+      sectorRecord.settlementCount += 1;
+      const settlementNumber = sectorRecord.settlementCount;
+      sectorRecord.lastWinner = null;
+
+      const fillResults = resetSectorNebulaData(state, normalizedSectorId, null, {
+        ...options,
+        settledAt: options.settledAt || new Date().toISOString(),
+      });
+
+      return {
+        ok: true,
+        sectorId: normalizedSectorId,
+        settlementNumber,
+        winner: null,
+        second: null,
+        participants,
+        fillResults,
+        message: `${nebulaPlacement.getNebulaLabel(normalizedSectorId)}第${settlementNumber}次结算：参与玩家各获得1化石`,
+      };
+    }
+
     const sectorRecord = ensureSectorSettlementRecord(state, normalizedSectorId);
     sectorRecord.settlementCount += 1;
     const settlementNumber = sectorRecord.settlementCount;

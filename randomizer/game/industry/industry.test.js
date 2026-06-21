@@ -10,8 +10,8 @@ const player = { id: "white", color: "white", industryRoundMarkRound: 0 };
 assert.equal(placement.hasIndustryActionMarker({ label: "层云核心" }), true);
 assert.equal(placement.hasIndustryActionMarker({ label: "异星实验室" }), false);
 assert.equal(placement.getIndustryActionMarkerLayout("寰宇动力").percentY, 78.3);
-assert.equal(placement.hasIndustryActionMarker({ label: "未来跨度研究所" }), false);
-assert.equal(placement.getIndustryActionMarkerLayout("未来跨度研究所"), null);
+assert.equal(placement.hasIndustryActionMarker({ label: "未来跨度研究所" }), true);
+assert.equal(placement.getIndustryActionMarkerLayout("未来跨度研究所").percentY, 84.0);
 
 let check = state.canMarkIndustryAction(player, 2, { turnNumber: 1 });
 assert.equal(check.ok, true);
@@ -43,9 +43,19 @@ const passives = require("./passives");
 const abilities = require("./abilities");
 
 assert.equal(catalog.hasImplementedActiveAbility("层云核心"), true);
-assert.equal(catalog.hasImplementedActiveAbility("未来跨度研究所"), false);
+assert.equal(catalog.hasImplementedActiveAbility("未来跨度研究所"), true);
 assert.equal(passives.getRocketLimitBonus({ initialSelection: { industry: { label: "寰宇动力" } } }), 1);
 assert.equal(passives.getResearchPublicityCost({ initialSelection: { industry: { label: "芬威克研究中心" } } }), 5);
+const alienLabPlayer = { initialSelection: { industry: { label: "异星实验室" } }, resources: { score: 0 } };
+assert.equal(passives.getStandardLaunchCost(alienLabPlayer).credits, 1);
+assert.equal(passives.getStandardScanCost(alienLabPlayer).energy, 2);
+assert.equal(passives.getStandardScanCost(alienLabPlayer).credits, undefined);
+assert.equal(passives.getResearchPublicityCost(alienLabPlayer), 4);
+state.initializeAlienLabPanels(alienLabPlayer);
+assert.equal(state.consumeAlienLabPanel(alienLabPlayer, "blue").changed, true);
+assert.equal(passives.getStandardLaunchCost(alienLabPlayer).credits, 2);
+assert.equal(state.restoreAlienLabPanelForTrace(alienLabPlayer, "blue").changed, true);
+assert.equal(passives.getStandardLaunchCost(alienLabPlayer).credits, 1);
 
 const strategyPlayer = {
   id: "white",
@@ -103,5 +113,28 @@ const nodes = abilities.buildSentinelPlayCornerEffectNodes(cardsStub, sentinelPl
 assert.equal(nodes.length, 1);
 assert.equal(nodes[0].type, "industry_sentinel_corner");
 assert.equal(abilities.shouldAppendSentinelPlayCornerEffect(cardsStub, sentinelPlayer, 1, 1, { src: "aliens/x/face.png" }), false);
+
+const futurePlayer = {
+  id: "white",
+  resources: { score: 10 },
+  initialSelection: { industry: { label: "未来跨度研究所" } },
+  hand: [{ id: "future-card", cardId: "b_1.webp", price: 2, src: "../assets/cards/base/split/b_1.webp" }],
+};
+assert.equal(passives.shouldShowFutureSpanPanel(futurePlayer), true);
+state.initializeFutureSpanState(futurePlayer);
+assert.equal(state.canParkFutureSpanCard(futurePlayer).ok, true);
+const park = state.parkFutureSpanCard(futurePlayer, futurePlayer.hand[0], 35);
+assert.equal(park.ok, true);
+assert.equal(state.isFutureSpanCardReady(futurePlayer), false);
+const futureFlow = abilities.buildActiveAbilityFlow(futurePlayer, "未来跨度研究所", 1);
+assert.equal(futureFlow.ok, true);
+assert.equal(futureFlow.flowType, "future_span_pick");
+assert.equal(state.advanceFutureSpanTarget(futurePlayer, 3).targetScore, 38);
+futurePlayer.resources.score = 38;
+assert.equal(state.isFutureSpanCardReady(futurePlayer), true);
+assert.equal(abilities.buildActiveAbilityFlow(futurePlayer, "未来跨度研究所", 1).ok, false);
+state.markFutureSpanPlaying(futurePlayer);
+state.clearFutureSpanState(futurePlayer);
+assert.equal(state.hasFutureSpanCard(futurePlayer), false);
 
 console.log("industry.test.js: all tests passed");

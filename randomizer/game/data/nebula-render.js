@@ -231,6 +231,7 @@
 
     const element = event.target.closest(".nebula-data-token-positioned");
     if (!element) return;
+    if (element.dataset.dataKind === "aomomo-nebula") return;
 
     const layer = element.closest(".nebula-data-layer, .aomomo-nebula-data-layer");
     if (!layer) return;
@@ -412,7 +413,7 @@
     element.style.transform = "translate(-50%, -50%)";
     element.style.transformOrigin = "center center";
     element.style.zIndex = "470";
-    element.style.pointerEvents = "auto";
+    element.style.pointerEvents = "none";
     element.dataset.dataPercentX = String(layout.percentX);
     element.dataset.dataPercentY = String(layout.percentY);
     element.dataset.boardX = String(layout.boardX);

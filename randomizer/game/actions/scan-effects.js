@@ -3,20 +3,22 @@
 
   let players = root.SetiPlayers;
   let playerTech = root.SetiPlayerTech;
+  let industryPassives = root.SetiIndustryPassives;
 
-  if ((!players || !playerTech) && typeof require === "function") {
+  if ((!players || !playerTech || !industryPassives) && typeof require === "function") {
     players = players || require("../players");
     playerTech = playerTech || require("../tech/player-tech");
+    industryPassives = industryPassives || require("../industry/passives");
   }
 
-  const api = factory(players, playerTech);
+  const api = factory(players, playerTech, industryPassives);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiScanEffects = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (players, playerTech) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (players, playerTech, industryPassives) {
   "use strict";
 
   const SCAN_COST = Object.freeze({ credits: 1, energy: 2 });
@@ -46,21 +48,33 @@
     return playerTech.playerHasActiveTile(player?.techState, `purple${level}`);
   }
 
-  function canExecuteScan(player) {
+  function getIndustryPassives() {
+    return industryPassives || (typeof globalThis !== "undefined" ? globalThis.SetiIndustryPassives : null);
+  }
+
+  function getStandardScanCost(player, defaultCost = SCAN_COST) {
+    return getIndustryPassives()?.getStandardScanCost?.(player, defaultCost) || { ...defaultCost };
+  }
+
+  function canExecuteScan(player, options = {}) {
     if (!player) return { ok: false, message: "没有当前玩家" };
-    if (!players.canAfford(player, SCAN_COST)) {
-      return { ok: false, message: "资源不足，扫描需要 1 信用点 + 2 能量" };
+    const cost = options.cost || (options.standardAction === false ? SCAN_COST : getStandardScanCost(player));
+    if (!players.canAfford(player, cost)) {
+      return { ok: false, message: `资源不足，扫描需要 ${players.formatResourceCost(cost)}` };
     }
     return { ok: true, message: null };
   }
 
-  function buildScanEffectQueue(player) {
+  function buildScanEffectQueue(player, options = {}) {
+    const standardAction = options.standardAction !== false;
+    const cost = options.cost || (standardAction ? getStandardScanCost(player) : SCAN_COST);
     const effects = [{
       type: EFFECT_TYPES.PAY_SCAN_COST,
       abilityId: "payScanCost",
       icon: "scan_cost",
       label: "支付扫描费用",
       undoable: true,
+      options: { cost, standardAction },
     }];
 
     if (playerOwnsPurpleTech(player, 1)) {
@@ -126,6 +140,7 @@
     EFFECT_ICONS,
     EFFECT_TYPES,
     playerOwnsPurpleTech,
+    getStandardScanCost,
     canExecuteScan,
     buildScanEffectQueue,
   });

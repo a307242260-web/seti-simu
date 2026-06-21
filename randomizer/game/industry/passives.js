@@ -18,6 +18,9 @@
   "use strict";
 
   const FENWICK_RESEARCH_COST = 5;
+  const ALIEN_LAB_RESEARCH_COST = 4;
+  const ALIEN_LAB_LAUNCH_COST = Object.freeze({ credits: 1 });
+  const ALIEN_LAB_SCAN_COST = Object.freeze({ energy: 2 });
   const HUANYU_ROCKET_LIMIT_BONUS = 1;
   const MISSION_PLAY_PUBLICITY_GAIN = 1;
   const TURING_BLUE_TECH_PUBLICITY_GAIN = 1;
@@ -32,7 +35,28 @@
   }
 
   function getResearchPublicityCost(player, defaultCost = 6) {
+    if (playerHasPassive(player, "alien_lab_panels") && player?.industryAlienLabPanels?.pink !== false) {
+      return ALIEN_LAB_RESEARCH_COST;
+    }
     return playerHasPassive(player, "fenwick_research_cost") ? FENWICK_RESEARCH_COST : defaultCost;
+  }
+
+  function cloneCost(cost) {
+    return Object.assign({}, cost || {});
+  }
+
+  function getStandardLaunchCost(player, defaultCost = { credits: 2 }) {
+    if (playerHasPassive(player, "alien_lab_panels") && player?.industryAlienLabPanels?.blue !== false) {
+      return cloneCost(ALIEN_LAB_LAUNCH_COST);
+    }
+    return cloneCost(defaultCost);
+  }
+
+  function getStandardScanCost(player, defaultCost = { credits: 1, energy: 2 }) {
+    if (playerHasPassive(player, "alien_lab_panels") && player?.industryAlienLabPanels?.yellow !== false) {
+      return cloneCost(ALIEN_LAB_SCAN_COST);
+    }
+    return cloneCost(defaultCost);
   }
 
   function canAnalyzeWithoutEnergy(player) {
@@ -84,6 +108,26 @@
     return !player?.industryHeliosPassiveInitialized;
   }
 
+  function shouldShowAlienLabPanels(player) {
+    if (!playerHasPassive(player, "alien_lab_panels")) return false;
+    return Boolean(player?.initialSelection?.industry);
+  }
+
+  function shouldInitializeAlienLabPanels(player) {
+    if (!shouldShowAlienLabPanels(player)) return false;
+    return !player?.industryAlienLabInitialized;
+  }
+
+  function shouldShowFutureSpanPanel(player) {
+    if (!playerHasPassive(player, "future_span_parking")) return false;
+    return Boolean(player?.initialSelection?.industry);
+  }
+
+  function shouldInitializeFutureSpan(player) {
+    if (!shouldShowFutureSpanPanel(player)) return false;
+    return !player?.industryFutureSpanInitialized;
+  }
+
   function normalizeRoundNumber(roundNumber) {
     return Math.max(0, Math.round(Number(roundNumber) || 0));
   }
@@ -116,9 +160,14 @@
 
   return Object.freeze({
     FENWICK_RESEARCH_COST,
+    ALIEN_LAB_RESEARCH_COST,
+    ALIEN_LAB_LAUNCH_COST,
+    ALIEN_LAB_SCAN_COST,
     HUANYU_ROCKET_LIMIT_BONUS,
     getRocketLimitBonus,
     getResearchPublicityCost,
+    getStandardLaunchCost,
+    getStandardScanCost,
     canAnalyzeWithoutEnergy,
     shouldScanEarthOnLaunch,
     shouldGainPublicityOnType12Play,
@@ -130,6 +179,10 @@
     shouldInitializeStrategyPassiveMarkers,
     shouldShowHeliosPassiveMarkers,
     shouldInitializeHeliosPassiveMarkers,
+    shouldShowAlienLabPanels,
+    shouldInitializeAlienLabPanels,
+    shouldShowFutureSpanPanel,
+    shouldInitializeFutureSpan,
     isSentinelCornerArmed,
     getBorrowedTechTileId,
     playerHasTechEffect,

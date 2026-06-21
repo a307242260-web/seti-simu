@@ -284,6 +284,7 @@
   let moveHighlightRocketId = null;
   let pendingMovePayment = null;
   let pendingPlayCardSelection = null;
+  let pendingFutureSpanPlayBeforePlayer = null;
   let pendingCardCornerQuickAction = null;
   let pendingCardCornerFreeMove = null;
   let pendingIndustryAbility = null;
@@ -736,6 +737,12 @@
     }
     if (industry?.shouldInitializeHeliosPassiveMarkers?.(player)) {
       industry.initializeHeliosPassiveMarkers(player);
+    }
+    if (industry?.shouldInitializeAlienLabPanels?.(player)) {
+      industry.initializeAlienLabPanels(player);
+    }
+    if (industry?.shouldInitializeFutureSpan?.(player)) {
+      industry.initializeFutureSpanState(player);
     }
 
     const remainingPlayerId = getInitialSelectionPlayerIds()
@@ -1730,6 +1737,7 @@
     const mode = getInteractionFocusMode();
     if (!els.appWrap) return;
     els.appWrap.dataset.interactionFocus = mode || "";
+    els.appWrap.classList.toggle("has-future-span-ready-card", hasPlayableFutureSpanCard(getCurrentPlayer()));
     els.boardShell?.classList.toggle("board-shell-focused", mode === INTERACTION_FOCUS.BOARD_ROCKETS);
   }
 
@@ -1745,6 +1753,7 @@
     }
     updatePlayerHandPanelTitle();
     renderPlayerHand();
+    renderInitialSelectionArea();
     syncInteractionFocusChrome();
   }
 
@@ -1786,6 +1795,7 @@
     updatePlayerHandPanelTitle();
     if (active) setQuickPanelOpen(false);
     renderPlayerHand();
+    renderInitialSelectionArea();
     syncInteractionFocusChrome();
   }
 
@@ -2292,6 +2302,15 @@
     if (!pendingPlayCardSelection || !isPlayCardSelectionActive()) return null;
 
     const currentPlayer = getCurrentPlayer();
+    if (pendingPlayCardSelection.source === "future_span") {
+      const card = industry?.getFutureSpanCard?.(currentPlayer);
+      if (!card || card.id !== pendingPlayCardSelection.cardId || !hasPlayableFutureSpanCard(currentPlayer)) {
+        pendingPlayCardSelection = null;
+        return null;
+      }
+      return { source: "future_span", card };
+    }
+
     const hand = Array.isArray(currentPlayer?.hand) ? currentPlayer.hand : [];
     let handIndex = Number(pendingPlayCardSelection.handIndex);
     let card = Number.isInteger(handIndex) ? hand[handIndex] : null;
@@ -2306,8 +2325,8 @@
       return null;
     }
 
-    pendingPlayCardSelection = { handIndex, cardId: card.id };
-    return { handIndex, card };
+    pendingPlayCardSelection = { source: "hand", handIndex, cardId: card.id };
+    return { source: "hand", handIndex, card };
   }
 
   function handlePlayCardSelect(handIndex) {
@@ -2334,7 +2353,7 @@
       pendingPlayCardSelection = null;
       rocketState.statusNote = "打牌：请选择一张手牌";
     } else {
-      pendingPlayCardSelection = { handIndex: index, cardId: card.id };
+      pendingPlayCardSelection = { source: "hand", handIndex: index, cardId: card.id };
       rocketState.statusNote = `打牌：已选择 ${cards.getCardLabel(card)}，点击「打出」确认`;
     }
 
@@ -2350,6 +2369,9 @@
       rocketState.statusNote = "请先选择要打出的手牌";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
+    }
+    if (pending.source === "future_span") {
+      return handleFutureSpanCardPlay();
     }
     return handleHandCardPlay(pending.handIndex);
   }
@@ -2995,11 +3017,61 @@
   }
 
   function getCardPlayCost(card) {
+    if (card?.futureSpanFreePlay) {
+      return {};
+    }
     const price = getCardPrice(card);
     if (banrenma?.isBanrenmaCard?.(card)) {
       return price > 0 ? { energy: price } : {};
     }
     return price > 0 ? { credits: price } : {};
+  }
+
+  function getPlayCardBeforePlayerSnapshot(currentPlayer) {
+    return pendingFutureSpanPlayBeforePlayer
+      ? structuredClone(pendingFutureSpanPlayBeforePlayer)
+      : structuredClone(currentPlayer);
+  }
+
+  function restoreObjectSnapshot(target, snapshot) {
+    if (!target || !snapshot) return;
+    for (const key of Object.keys(target)) delete target[key];
+    Object.assign(target, structuredClone(snapshot));
+  }
+
+  function getFutureSpanCreditPriceForCard(card) {
+    if (fangzhou?.isFangzhouCard2?.(card)) {
+      const credits = Number(fangzhou.CARD2_PLAY_COST?.credits);
+      return Number.isFinite(credits) ? Math.max(0, Math.round(credits)) : 0;
+    }
+    const cost = getCardPlayCost(card);
+    const credits = Number(cost.credits);
+    return Number.isFinite(credits) ? Math.max(0, Math.round(credits)) : 0;
+  }
+
+  function getFutureSpanDeltaForCard(card) {
+    const price = getFutureSpanCreditPriceForCard(card);
+    const deltas = industry?.FUTURE_SPAN_DELTAS_BY_COST || {};
+    return Number.isFinite(Number(deltas[price])) ? Number(deltas[price]) : null;
+  }
+
+  function isFutureSpanEligibleHandCard(card) {
+    if (!card) return false;
+    const price = getFutureSpanCreditPriceForCard(card);
+    const cost = fangzhou?.isFangzhouCard2?.(card) ? fangzhou.CARD2_PLAY_COST : getCardPlayCost(card);
+    return price > 0
+      && price <= 4
+      && Number(cost.credits || 0) > 0
+      && !Number(cost.energy || 0)
+      && Number.isFinite(Number(getFutureSpanDeltaForCard(card)));
+  }
+
+  function hasFutureSpanEligibleHandCard(player = getCurrentPlayer()) {
+    return (player?.hand || []).some(isFutureSpanEligibleHandCard);
+  }
+
+  function hasPlayableFutureSpanCard(player = getCurrentPlayer()) {
+    return industry?.isFutureSpanCardReady?.(player) === true;
   }
 
   function formatCardPlayCost(cost) {
@@ -3038,7 +3110,7 @@
     }
 
     const currentPlayer = getCurrentPlayer();
-    if (!currentPlayer?.hand?.length) {
+    if (!currentPlayer?.hand?.length && !hasPlayableFutureSpanCard(currentPlayer)) {
       rocketState.statusNote = "没有手牌可打出";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
@@ -3046,7 +3118,9 @@
 
     cards.setPlayCardSelectionActive(cardState, true);
     pendingPlayCardSelection = null;
-    rocketState.statusNote = "打牌：请选择一张手牌";
+    rocketState.statusNote = hasPlayableFutureSpanCard(currentPlayer)
+      ? "打牌：请选择一张手牌或未来跨度目标牌"
+      : "打牌：请选择一张手牌";
     syncPlayCardSelectionChrome();
     updateActionButtons();
     renderStateReadout();
@@ -3062,6 +3136,56 @@
     syncPlayCardSelectionChrome();
     updateActionButtons();
     renderStateReadout();
+  }
+
+  function handleFutureSpanCardPlay() {
+    if (!isPlayCardSelectionActive()) return;
+
+    const currentPlayer = getCurrentPlayer();
+    const card = industry?.getFutureSpanCard?.(currentPlayer);
+    if (!card || !hasPlayableFutureSpanCard(currentPlayer)) {
+      rocketState.statusNote = "未来跨度目标牌尚未达成";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+    const beforePlayer = structuredClone(currentPlayer);
+    const playStart = industry.markFutureSpanPlaying?.(currentPlayer);
+    if (!playStart?.ok) {
+      rocketState.statusNote = playStart?.message || "未来跨度目标牌无法打出";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const playedCard = industry.getFutureSpanCard(currentPlayer);
+    playedCard.futureSpanFreePlay = true;
+    if (!Array.isArray(currentPlayer.hand)) currentPlayer.hand = [];
+    currentPlayer.hand.push(playedCard);
+    currentPlayer.resources.handSize = currentPlayer.hand.length;
+    const handIndex = currentPlayer.hand.length - 1;
+    pendingFutureSpanPlayBeforePlayer = beforePlayer;
+
+    let result = null;
+    try {
+      result = handleHandCardPlay(handIndex);
+    } finally {
+      pendingFutureSpanPlayBeforePlayer = null;
+      delete playedCard.futureSpanFreePlay;
+    }
+
+    if (!result?.ok) {
+      restoreObjectSnapshot(currentPlayer, beforePlayer);
+      renderPlayerHand();
+      renderInitialSelectionArea();
+      return result;
+    }
+
+    if (!pendingActionEffectFlow?.futureSpanPlayedCard) {
+      releaseFutureSpanAfterPlayWithHistory();
+      markActionPending();
+      updateActionButtons();
+      renderStateReadout();
+    }
+    return result;
   }
 
   function handleHandCardPlay(handIndex) {
@@ -3103,7 +3227,7 @@
       return { ok: false, message: rocketState.statusNote };
     }
 
-    const beforePlayer = structuredClone(currentPlayer);
+    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
     const beforeCardState = {
       publicCards: cardState.publicCards.slice(),
       discardPile: (cardState.discardPile || []).slice(),
@@ -3191,7 +3315,7 @@
       return { ok: false, message: rocketState.statusNote };
     }
 
-    const beforePlayer = structuredClone(currentPlayer);
+    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
     const beforeAlienState = structuredClone(alienGameState);
     const beforeCardState = {
       publicCards: cardState.publicCards.slice(),
@@ -3275,7 +3399,7 @@
       return { ok: false, message: rocketState.statusNote };
     }
 
-    const beforePlayer = structuredClone(currentPlayer);
+    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
     const beforeAlienState = structuredClone(alienGameState);
     const beforeCardState = {
       publicCards: cardState.publicCards.slice(),
@@ -3367,7 +3491,7 @@
       return { ok: false, message: rocketState.statusNote };
     }
 
-    const beforePlayer = structuredClone(currentPlayer);
+    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
     const beforeAlienState = structuredClone(alienGameState);
     const beforeCardState = {
       publicCards: cardState.publicCards.slice(),
@@ -3458,7 +3582,7 @@
       return { ok: false, message: rocketState.statusNote };
     }
 
-    const beforePlayer = structuredClone(currentPlayer);
+    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
     const beforeAlienState = structuredClone(alienGameState);
     const beforeCardState = {
       publicCards: cardState.publicCards.slice(),
@@ -3550,7 +3674,7 @@
       return { ok: false, message: rocketState.statusNote };
     }
 
-    const beforePlayer = structuredClone(currentPlayer);
+    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
     const beforeAlienState = structuredClone(alienGameState);
     const beforeCardState = {
       publicCards: cardState.publicCards.slice(),
@@ -3663,6 +3787,8 @@
         ? "芬威克研究中心：精选 1 张公共牌并获得弃牌角标"
       : pendingAction?.type === "industry_strategy_pick"
         ? "宇宙战略集团：精选 1 张公共牌"
+      : pendingAction?.type === "industry_future_pick"
+        ? "未来跨度研究所：精选 1 张公共牌，并提高目标分"
       : pendingAction?.type === "industry_deepspace_public"
         ? "深空探测：请选择 1 张公共牌完成交换"
       : allowsBlindDrawInSelection()
@@ -3985,6 +4111,15 @@
       rocketState.statusNote = `宇宙战略集团：精选 ${cards.getCardLabel(result.card)}`;
       finishIndustryAbilityFlow(rocketState.statusNote);
       commitIrreversibleIndustryQuickAction("宇宙战略集团：精选", rocketState.statusNote);
+    }
+    if (pending?.type === "industry_future_pick") {
+      const player = pending.player || getCurrentPlayer();
+      const advanceResult = industry.advanceFutureSpanTarget?.(player, 3);
+      rocketState.statusNote = advanceResult?.ok
+        ? `未来跨度研究所：精选 ${cards.getCardLabel(result.card)}，目标提高到 ${advanceResult.targetScore} 分`
+        : (advanceResult?.message || "未来跨度目标分更新失败");
+      finishIndustryAbilityFlow(rocketState.statusNote);
+      commitIrreversibleIndustryQuickAction("未来跨度研究所：精选", rocketState.statusNote);
     }
     cards.ensurePublicCardsFilled(cardState, playerState);
     syncCardSelectionChrome();
@@ -5344,6 +5479,7 @@
     pendingActionEffectFlow.card = options.card || null;
     pendingActionEffectFlow.cardTemporaryTasks = options.temporaryTasks || [];
     pendingActionEffectFlow.industryPlayedCard = options.industryPlayedCard || options.card || null;
+    pendingActionEffectFlow.futureSpanPlayedCard = Boolean(options.futureSpanPlayedCard || pendingFutureSpanPlayBeforePlayer);
     pendingActionEffectFlow.historySource = options.historySource || HISTORY_SOURCE_MAIN;
     pendingActionEffectFlow.consumesMainAction = options.consumesMainAction !== false;
     if (pendingActionEffectFlow.historySource === HISTORY_SOURCE_QUICK && !quickActionHistory.hasSession()) {
@@ -5386,6 +5522,42 @@
     endEffectHistoryStep();
   }
 
+  function releaseFutureSpanAfterPlayWithHistory(label = "未来跨度研究所：收回专属标记") {
+    const player = getCurrentPlayer();
+    const futureState = industry?.ensureFutureSpanState?.(player);
+    if (!player || !futureState?.playing) return false;
+
+    const beforePlayer = structuredClone(player);
+    if (actionHistory.hasSession()) {
+      actionHistory.beginStep({
+        source: HISTORY_SOURCE_MAIN,
+        type: "future_span_release",
+        label,
+        effectIndex: pendingActionEffectFlow?.currentIndex ?? null,
+      });
+      industry.clearFutureSpanState?.(player);
+      actionHistory.record(historyCommands.createRestorePlayerCommand(
+        player,
+        beforePlayer,
+        "恢复未来跨度专属标记收回前状态",
+      ));
+      const step = actionHistory.endStep();
+      if (step) {
+        rememberHistoryStep(HISTORY_SOURCE_MAIN, step.id);
+        appendActionLogStep(
+          HISTORY_SOURCE_MAIN,
+          label,
+          "目标牌结算完毕，专属标记回到公司牌",
+          actionLogOptionsFromHistoryStep(step),
+        );
+      }
+    } else {
+      industry.clearFutureSpanState?.(player);
+    }
+    renderInitialSelectionArea();
+    return true;
+  }
+
   function buildCardTaskContext() {
     return {
       nebulaDataState,
@@ -5394,14 +5566,14 @@
     };
   }
 
-  function startTemporaryCardTaskRewardFlow(tasks, settlementResult) {
+  function startTemporaryCardTaskRewardFlow(tasks, settlementResult, options = {}) {
     const effects = cardEffects.collectTemporaryTaskRewards(tasks, settlementResult);
     if (!effects.length) return false;
     return startCardEffectFlow(
       "card-temporary-task-rewards",
       "卡牌临时任务奖励",
       effects,
-      { actionType: "cardTask" },
+      { actionType: "cardTask", futureSpanPlayedCard: Boolean(options.futureSpanPlayedCard) },
     );
   }
 
@@ -6796,8 +6968,13 @@
     const settleResult = shouldCheckCompletedSectorsAfterFlow(finishedFlow)
       ? resolveCompletedSectorSettlements(actionType, { historySource: finishedFlow.historySource || HISTORY_SOURCE_MAIN })
       : null;
-    if (startTemporaryCardTaskRewardFlow(finishedFlow.cardTemporaryTasks, settleResult)) {
+    if (startTemporaryCardTaskRewardFlow(finishedFlow.cardTemporaryTasks, settleResult, {
+      futureSpanPlayedCard: finishedFlow.futureSpanPlayedCard,
+    })) {
       return;
+    }
+    if (finishedFlow.futureSpanPlayedCard) {
+      releaseFutureSpanAfterPlayWithHistory();
     }
     const baseMessage = actionType === "scan"
       ? "扫描效果已全部处理，可继续执行次要行动或回合结束"
@@ -8502,6 +8679,8 @@
         effect.result = result;
         rocketState.statusNote = result.message;
         renderWheels();
+        renderSectorNebulaDataBoard();
+        renderRunezuBoardSymbols();
         renderRockets();
         renderRotateStateToken();
         renderPlayerStats();
@@ -8618,13 +8797,16 @@
       case scanEffects.EFFECT_TYPES.PAY_SCAN_COST: {
         beginEffectHistoryStep(effect.label);
         const result = abilities.executeAbility("payScanCost", createActionContext(), {
-          cost: scanEffects.SCAN_COST,
+          cost: effect.options?.cost || scanEffects.SCAN_COST,
         });
         if (!result.ok) {
           endEffectHistoryStep();
           rocketState.statusNote = result.message;
           renderStateReadout();
           return result;
+        }
+        if (effect.options?.standardAction !== false) {
+          maybeConsumeAlienLabPanelForMainAction("scan", result);
         }
         recordAbilityCommands(result);
         effect.result = result;
@@ -8718,7 +8900,7 @@
       return { ok: false, message: rocketState.statusNote };
     }
     const currentPlayer = getCurrentPlayer();
-    const check = scanEffects.canExecuteScan(currentPlayer);
+    const check = scanEffects.canExecuteScan(currentPlayer, { standardAction: true });
     if (!check.ok) {
       rocketState.statusNote = check.message;
       renderStateReadout();
@@ -8730,7 +8912,7 @@
     pendingActionEffectFlow = abilities.chain.startAbilityChain(
       "scan",
       "扫描行动",
-      scanEffects.buildScanEffectQueue(currentPlayer),
+      scanEffects.buildScanEffectQueue(currentPlayer, { standardAction: true }),
     );
     pendingActionEffectFlow.playerId = currentPlayer.id;
 
@@ -9683,6 +9865,31 @@
     return { ok: true, message: rocketState.statusNote };
   }
 
+  function handleFutureSpanPlayCardSelect() {
+    if (!isPlayCardSelectionActive()) return;
+    const currentPlayer = getCurrentPlayer();
+    const card = industry?.getFutureSpanCard?.(currentPlayer);
+    if (!card || !hasPlayableFutureSpanCard(currentPlayer)) {
+      rocketState.statusNote = "未来跨度目标牌尚未达成";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const current = getPendingPlayCardSelection();
+    if (current?.source === "future_span") {
+      pendingPlayCardSelection = null;
+      rocketState.statusNote = "打牌：请选择一张手牌或未来跨度目标牌";
+    } else {
+      pendingPlayCardSelection = { source: "future_span", cardId: card.id };
+      rocketState.statusNote = `打牌：已选择未来跨度目标牌 ${cards.getCardLabel(card)}，点击「打出」确认`;
+    }
+
+    syncPlayCardSelectionChrome();
+    updateActionButtons();
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
   function beginBanrenmaTraceGridPlacement(alienSlotId) {
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes?.length
       ? alienTracePickerState.allowedTraceTypes
@@ -10267,21 +10474,22 @@
 
   function handleFangzhouCard2Play(handIndex) {
     const currentPlayer = getCurrentPlayer();
-    const cost = fangzhou.CARD2_PLAY_COST;
-    if (!players.canAfford(currentPlayer, cost)) {
+    const futureSpanFreePlay = Boolean(currentPlayer?.hand?.[handIndex]?.futureSpanFreePlay);
+    const cost = futureSpanFreePlay ? {} : fangzhou.CARD2_PLAY_COST;
+    if (Object.keys(cost).length && !players.canAfford(currentPlayer, cost)) {
       rocketState.statusNote = `信用点不足：方舟牌需要 ${cost.credits} 信用点`;
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
 
-    const beforePlayer = structuredClone(currentPlayer);
+    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
     const beforeAlienState = structuredClone(alienGameState);
-    const spendResult = players.spendResources(currentPlayer, cost);
+    const spendResult = Object.keys(cost).length ? players.spendResources(currentPlayer, cost) : { ok: true };
     if (!spendResult.ok) return spendResult;
 
     const removeResult = cards.discardFromHandAtIndex(currentPlayer, handIndex);
     if (!removeResult.ok) {
-      players.gainResources(currentPlayer, cost);
+      if (Object.keys(cost).length) players.gainResources(currentPlayer, cost);
       return removeResult;
     }
 
@@ -10308,7 +10516,9 @@
       `打出 ${cards.getCardLabel(removeResult.card)}`,
     );
     actionHistory.endStep();
-    actionHistory.commitSession();
+    if (!futureSpanFreePlay) {
+      actionHistory.commitSession();
+    }
 
     rocketState.statusNote = rewardResult.message || "方舟高级奖励已结算";
     renderAlienPanels();
@@ -12821,6 +13031,10 @@
     const traceEvents = result.ok && !inDebugMode
       ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, revealResult?.alienId || null)]
       : [];
+    const alienLabRestore = result.ok ? maybeRestoreAlienLabPanelForTrace(currentPlayer, traceType) : null;
+    if (alienLabRestore?.changed) {
+      rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
+    }
     if (pending?.type === "planet_reward_alien_trace" && result.ok) {
       beginEffectHistoryStep(pending.effectLabel || "外星人标记奖励");
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
@@ -12921,6 +13135,10 @@
     const traceEvents = !inDebugMode
       ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, yichangdian.ALIEN_ID)]
       : [];
+    const alienLabRestore = maybeRestoreAlienLabPanelForTrace(currentPlayer, traceType);
+    if (alienLabRestore?.changed) {
+      rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
+    }
 
     if (pending?.type === "planet_reward_alien_trace") {
       beginEffectHistoryStep(pending.effectLabel || "异常点痕迹奖励");
@@ -13020,6 +13238,10 @@
     const traceEvents = !inDebugMode
       ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, fangzhou.ALIEN_ID)]
       : [];
+    const alienLabRestore = maybeRestoreAlienLabPanelForTrace(currentPlayer, traceType);
+    if (alienLabRestore?.changed) {
+      rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
+    }
 
     if (pending?.type === "planet_reward_alien_trace") {
       beginEffectHistoryStep(pending.effectLabel || "方舟痕迹奖励");
@@ -13129,6 +13351,10 @@
     const traceEvents = !inDebugMode
       ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, banrenma.ALIEN_ID)]
       : [];
+    const alienLabRestore = maybeRestoreAlienLabPanelForTrace(currentPlayer, traceType);
+    if (alienLabRestore?.changed) {
+      rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
+    }
 
     if (pending?.type === "planet_reward_alien_trace") {
       beginEffectHistoryStep(pending.effectLabel || "半人马痕迹奖励");
@@ -13264,6 +13490,10 @@
     const traceEvents = !inDebugMode
       ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, aomomo.ALIEN_ID)]
       : [];
+    const alienLabRestore = maybeRestoreAlienLabPanelForTrace(currentPlayer, traceType);
+    if (alienLabRestore?.changed) {
+      rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
+    }
 
     if (pending?.type === "planet_reward_alien_trace") {
       beginEffectHistoryStep(pending.effectLabel || "奥陌陌痕迹奖励");
@@ -13667,6 +13897,10 @@
     const traceEvents = !inDebugMode
       ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, chong.ALIEN_ID)]
       : [];
+    const alienLabRestore = maybeRestoreAlienLabPanelForTrace(currentPlayer, traceType);
+    if (alienLabRestore?.changed) {
+      rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
+    }
 
     if (pending?.type === "planet_reward_alien_trace") {
       beginEffectHistoryStep(pending.effectLabel || "虫族痕迹奖励");
@@ -13776,6 +14010,10 @@
     const traceEvents = !inDebugMode
       ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, amiba.ALIEN_ID)]
       : [];
+    const alienLabRestore = maybeRestoreAlienLabPanelForTrace(currentPlayer, traceType);
+    if (alienLabRestore?.changed) {
+      rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
+    }
 
     if (pending?.type === "planet_reward_alien_trace") {
       beginEffectHistoryStep(pending.effectLabel || "阿米巴痕迹奖励");
@@ -13884,6 +14122,10 @@
     const traceEvents = !inDebugMode
       ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, runezu.ALIEN_ID)]
       : [];
+    const alienLabRestore = maybeRestoreAlienLabPanelForTrace(currentPlayer, traceType);
+    if (alienLabRestore?.changed) {
+      rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
+    }
 
     if (pending?.type === "planet_reward_alien_trace") {
       beginEffectHistoryStep(pending.effectLabel || "符文族痕迹奖励");
@@ -13993,6 +14235,10 @@
     const traceEvents = !inDebugMode
       ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, jiuzhe.ALIEN_ID)]
       : [];
+    const alienLabRestore = maybeRestoreAlienLabPanelForTrace(currentPlayer, traceType);
+    if (alienLabRestore?.changed) {
+      rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
+    }
 
     if (pending?.type === "planet_reward_alien_trace") {
       beginEffectHistoryStep(pending.effectLabel || "九折痕迹奖励");
@@ -14298,6 +14544,8 @@
     closeTechBlueSlotPicker();
     syncTechSelectionChrome();
     renderWheels();
+    renderSectorNebulaDataBoard();
+    renderRunezuBoardSymbols();
     renderRotateStateToken();
     if (result.freeLaunch?.rocket) renderRocketElement(result.freeLaunch.rocket);
     renderPlayerStats();
@@ -14327,6 +14575,9 @@
     });
     rocketState.statusNote = result.message;
     if (result.ok && !result.needsBlueSlotChoice) {
+      if (!shouldSkipCurrentResearchTechCost()) {
+        maybeConsumeAlienLabPanelForMainAction("researchTech", result);
+      }
       beginEffectHistoryStep(result.message || "选择科技片", { effectType: "research_tech_select" });
       recordAbilityCommands(result);
       if (result.firstTake) {
@@ -14393,6 +14644,9 @@
     }
 
     rocketState.statusNote = result.message;
+    if (!shouldSkipCurrentResearchTechCost()) {
+      maybeConsumeAlienLabPanelForMainAction("researchTech", result);
+    }
     beginEffectHistoryStep(result.message || "选择科技片", { effectType: "research_tech_select" });
     recordAbilityCommands(result);
     if (result.firstTake) {
@@ -15664,6 +15918,19 @@
           button.classList.add("is-scan-card", "is-selected");
           button.disabled = true;
           button.setAttribute("aria-label", `${label}（扫描中）`);
+        } else if (isIndustryFutureSpanHandSelectionActive()) {
+          const eligible = isFutureSpanEligibleHandCard(card);
+          if (eligible) {
+            const targetDelta = getFutureSpanDeltaForCard(card);
+            button.classList.add("is-industry-hand-card");
+            button.setAttribute("aria-label", `${label}（未来跨度：扣下并设置目标分）`);
+            button.title = `未来跨度：目标分 +${targetDelta}`;
+          } else {
+            button.classList.add("is-industry-hand-card-muted");
+            button.disabled = true;
+            button.setAttribute("aria-label", label);
+            button.title = "未来跨度只能选择费用为信用点的手牌";
+          }
         } else if (isIndustryHandSelectionActive()) {
           button.classList.add("is-industry-hand-card");
           button.setAttribute("aria-label", `${label}（深空探测：选择交换手牌）`);
@@ -15891,6 +16158,12 @@
       if (industry?.shouldInitializeHeliosPassiveMarkers?.(player)) {
         industry.initializeHeliosPassiveMarkers(player);
       }
+      if (industry?.shouldInitializeAlienLabPanels?.(player)) {
+        industry.initializeAlienLabPanels(player);
+      }
+      if (industry?.shouldInitializeFutureSpan?.(player)) {
+        industry.initializeFutureSpanState(player);
+      }
       if (!industry?.shouldPlaceMissionStartupFinalMark?.(player)) continue;
       const markResult = finalScoring.placeDirectMarkAtSlot(finalScoringState, "c", player, 3, {
         tokenSrc: getNormalTokenAssetForPlayer(player),
@@ -15904,7 +16177,12 @@
   }
 
   function isIndustryHandSelectionActive() {
-    return pendingCardSelectionAction?.type === "industry_deepspace_hand";
+    return pendingCardSelectionAction?.type === "industry_deepspace_hand"
+      || pendingCardSelectionAction?.type === "industry_future_hand";
+  }
+
+  function isIndustryFutureSpanHandSelectionActive() {
+    return pendingCardSelectionAction?.type === "industry_future_hand";
   }
 
   function isIndustryFreeMoveActive() {
@@ -16007,6 +16285,15 @@
         };
         rocketState.statusNote = flow.message;
         syncIndustryHandSelectionChrome();
+        renderStateReadout();
+        return true;
+      case "future_span_pick":
+        beginCardSelection({
+          type: "industry_future_pick",
+          player: getCurrentPlayer(),
+          allowBlindDraw: false,
+        });
+        rocketState.statusNote = flow.message;
         renderStateReadout();
         return true;
       case "strategy_pick":
@@ -16255,6 +16542,102 @@
     return result;
   }
 
+  function canBeginIndustryFutureSpanHandSelection(player = getCurrentPlayer()) {
+    if (!industry?.shouldShowFutureSpanPanel?.(player)) {
+      return { ok: false, message: "当前玩家没有未来跨度研究所" };
+    }
+    const parkCheck = industry.canParkFutureSpanCard?.(player);
+    if (!parkCheck?.ok) return { ok: false, message: parkCheck?.message || "未来跨度专属标记不可用" };
+    if (isActionEffectFlowActive()
+      || isCardSelectionActive()
+      || isDiscardSelectionActive()
+      || isPlayCardSelectionActive()
+      || isTechTilePickingActive()
+      || isHandScanSelectionActive()
+      || isMovePaymentSelectionActive()
+      || pendingIndustryAbility
+      || industryFreeMoveState
+      || isIndustryHandSelectionActive()) {
+      return { ok: false, message: "请先完成或取消当前流程" };
+    }
+    if (!hasFutureSpanEligibleHandCard(player)) {
+      return { ok: false, message: "没有可用的信用点费用手牌" };
+    }
+    return { ok: true, message: "可以放置未来跨度专属标记" };
+  }
+
+  function beginIndustryFutureSpanHandSelection() {
+    const player = getCurrentPlayer();
+    const check = canBeginIndustryFutureSpanHandSelection(player);
+    if (!check.ok) {
+      rocketState.statusNote = check.message;
+      renderStateReadout();
+      return check;
+    }
+    pendingCardSelectionAction = {
+      type: "industry_future_hand",
+      player,
+      allowBlindDraw: false,
+    };
+    rocketState.statusNote = "未来跨度研究所：选择一张费用为信用点的手牌，扣下并设置目标分";
+    syncIndustryHandSelectionChrome();
+    renderInitialSelectionArea();
+    renderStateReadout();
+    return { ok: true, message: rocketState.statusNote };
+  }
+
+  function handleIndustryFutureSpanHandClick(handIndex) {
+    if (!isIndustryFutureSpanHandSelectionActive()) return;
+    const player = getCurrentPlayer();
+    const index = Math.round(handIndex);
+    const card = player?.hand?.[index];
+    if (!card || !isFutureSpanEligibleHandCard(card)) {
+      rocketState.statusNote = "未来跨度只能选择费用为信用点的手牌";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const targetDelta = getFutureSpanDeltaForCard(card);
+    const targetScore = Number(player.resources?.score || 0) + targetDelta;
+    const beforePlayer = structuredClone(player);
+    const removeResult = cards.discardFromHandAtIndex(player, index);
+    if (!removeResult.ok) {
+      rocketState.statusNote = removeResult.message;
+      renderStateReadout();
+      return removeResult;
+    }
+    const parkResult = industry.parkFutureSpanCard?.(player, removeResult.card, targetScore);
+    if (!parkResult?.ok) {
+      restoreObjectSnapshot(player, beforePlayer);
+      rocketState.statusNote = parkResult?.message || "未来跨度专属标记放置失败";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    beginQuickActionStep("industry-future-span-token", "未来跨度研究所：放置专属标记");
+    recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
+      player,
+      beforePlayer,
+      "恢复未来跨度专属标记前玩家状态",
+    ));
+    completeQuickActionStep();
+
+    pendingCardSelectionAction = null;
+    cards.setSelectionActive(cardState, false);
+    rocketState.statusNote = `未来跨度研究所：扣下 ${cards.getCardLabel(removeResult.card)}，目标 ${targetScore} 分`;
+    syncIndustryHandSelectionChrome();
+    renderPlayerStats();
+    renderInitialSelectionArea();
+    updateActionButtons();
+    renderStateReadout();
+    return {
+      ok: true,
+      card: removeResult.card,
+      targetScore,
+      message: rocketState.statusNote,
+    };
+  }
+
   function handleIndustryStratusPublicClick(slotIndex) {
     const pending = pendingCardSelectionAction;
     const player = getCurrentPlayer();
@@ -16399,6 +16782,53 @@
     return { ok: true, message: rocketState.statusNote };
   }
 
+  const ALIEN_LAB_MAIN_ACTION_PANEL = Object.freeze({
+    launch: "blue",
+    scan: "yellow",
+    researchTech: "pink",
+  });
+
+  function createAlienLabRestoreCommand(player, snapshot, label) {
+    return {
+      label: label || "恢复异星实验室板块",
+      undo() {
+        industry?.restoreAlienLabPanelSnapshot?.(player, snapshot);
+      },
+    };
+  }
+
+  function maybeConsumeAlienLabPanelForMainAction(actionId, result, player = getCurrentPlayer()) {
+    const panelId = ALIEN_LAB_MAIN_ACTION_PANEL[actionId];
+    if (!result?.ok || !player || !panelId) return result;
+    if (!industry?.shouldShowAlienLabPanels?.(player)) return result;
+    if (industry?.isAlienLabPanelFaceUp?.(player, panelId) !== true) return result;
+
+    const beforePanels = industry.createAlienLabPanelSnapshot?.(player);
+    const consumeResult = industry.consumeAlienLabPanel?.(player, panelId);
+    if (!consumeResult?.changed) return result;
+
+    result.commands = [
+      createAlienLabRestoreCommand(player, beforePanels, "恢复异星实验室板块状态"),
+      ...(result.commands || []),
+    ];
+    result.message = `${result.message}；${consumeResult.message}`;
+    result.payload = {
+      ...(result.payload || {}),
+      alienLabPanel: panelId,
+    };
+    renderInitialSelectionArea();
+    return result;
+  }
+
+  function maybeRestoreAlienLabPanelForTrace(player, traceType) {
+    if (!player || !industry?.shouldShowAlienLabPanels?.(player)) return null;
+    const restoreResult = industry.restoreAlienLabPanelForTrace?.(player, traceType);
+    if (restoreResult?.changed) {
+      renderInitialSelectionArea();
+    }
+    return restoreResult;
+  }
+
   function maybeApplyIndustryLaunchScan(result) {
     const player = getCurrentPlayer();
     if (!result?.ok || !industry?.shouldScanEarthOnLaunch?.(player)) return result;
@@ -16445,6 +16875,7 @@
   function isIndustryIrreversibleFlow(flowType) {
     return flowType === "mission_publicity_pick"
       || flowType === "fenwick_publicity_pick"
+      || flowType === "future_span_pick"
       || flowType === "strategy_pick";
   }
 
@@ -16665,6 +17096,21 @@
     if (player && industry?.shouldShowHeliosPassiveMarkers?.(player)) {
       industry.mountHeliosPassiveLayer(wrap, player, {
         getPlayerTokenAsset: getNormalTokenAssetForPlayer,
+      });
+    }
+
+    if (player && industry?.shouldShowAlienLabPanels?.(player)) {
+      industry.mountAlienLabLayer(wrap, player);
+    }
+
+    if (player && industry?.shouldShowFutureSpanPanel?.(player)) {
+      const futureCheck = canBeginIndustryFutureSpanHandSelection(player);
+      industry.mountFutureSpanLayer(wrap, player, {
+        tokenEnabled: futureCheck.ok,
+        tokenTitle: futureCheck.ok ? "点击扣下一张手牌并设置目标分" : futureCheck.message,
+        cardSelectable: isPlayCardSelectionActive(),
+        onTokenClick: () => beginIndustryFutureSpanHandSelection(),
+        onCardClick: () => handleFutureSpanPlayCardSelect(),
       });
     }
 
@@ -17739,9 +18185,9 @@
     const landCheck = actions.canExecute("land", context);
     const researchTechCheck = actions.canExecute("researchTech", context);
     const analyzeCheck = data.canAnalyzeData(getCurrentPlayer());
-    const scanCheck = scanEffects.canExecuteScan(getCurrentPlayer());
+    const scanCheck = scanEffects.canExecuteScan(getCurrentPlayer(), { standardAction: true });
     const currentPlayer = getCurrentPlayer();
-    const canPlayCard = Boolean(currentPlayer?.hand?.length);
+    const canPlayCard = Boolean(currentPlayer?.hand?.length) || hasPlayableFutureSpanCard(currentPlayer);
 
     setActionButtonState(els.actionLaunchButton, launchCheck.ok, launchCheck.message);
     setActionButtonState(els.actionOrbitButton, orbitCheck.ok, orbitCheck.message);
@@ -18005,6 +18451,8 @@
     if (result.ok && !result.awaitingTileSelection && !startedRewardFlow) {
       if (actionId === "launch") {
         maybeApplyIndustryLaunchScan(result);
+        maybeConsumeAlienLabPanelForMainAction("launch", result);
+        rocketState.statusNote = result.message;
       }
       if (abilityId && result.undoable !== false) {
         recordAtomicActionHistory(actionId, result.message || actionId, result);
@@ -18507,7 +18955,7 @@
     activateAomomoBoard({ source: "aomomo_debug", replaceData: true });
 
     enableDebugAlienTraceModeForReveal(
-      "奥陌陌调试：已揭示奥陌陌、替换第3轮盘并启用奥陌陌星球；星球弧形槽位放入3个数据token，可拖动校准；外星人面板不预放痕迹/环绕/登陆token",
+      "奥陌陌调试：已揭示奥陌陌、替换第3轮盘并启用奥陌陌星球；星球弧形槽位放入3个数据token，随wheel3旋转；外星人面板不预放痕迹/环绕/登陆token",
     );
     renderWheels();
     renderSectorNebulaDataBoard();
@@ -18933,6 +19381,8 @@
     const lastSettlement = rotationSettlements[rotationSettlements.length - 1];
     const lastAnomaly = anomalyTriggers[anomalyTriggers.length - 1];
     renderWheels();
+    renderSectorNebulaDataBoard();
+    renderRunezuBoardSymbols();
     renderRockets();
     renderRotateStateToken();
     renderPlayerStats();
@@ -19615,6 +20065,10 @@
     }
     if (isHandScanSelectionActive()) {
       handleHandScanCardClick(Number(button.dataset.handIndex));
+      return;
+    }
+    if (isIndustryFutureSpanHandSelectionActive()) {
+      handleIndustryFutureSpanHandClick(Number(button.dataset.handIndex));
       return;
     }
     if (isIndustryHandSelectionActive()) {

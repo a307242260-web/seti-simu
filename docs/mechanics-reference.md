@@ -42,7 +42,7 @@
 - 3 选 2 初始牌在确认前始终保留显示，已选初始牌显示加粗金色边框；确认按钮要求已选择 1 张公司和 2 张初始牌，确认后这 2 张初始牌移出游戏且不再显示。
 - 玩家确认后，选择结果写入该玩家 `initialSelection`；全部启用玩家确认后，`randomizer/game/initial-cards.js` 会按所有玩家选定的公司牌和初始牌统一结算，之后初始选择阶段结束并解锁正常行动。
 - 初始选择结束后，任务/保留牌区最左侧固定显示当前玩家已选公司牌左半幅（可见宽约普通保留牌 1.38 倍，即半幅基准 1.15 倍再放大 20%），初始牌不再显示。
-- 除异星实验室与未来跨度研究所外，公司牌左下角「1x」圆标位置由 `randomizer/game/industry/placement.js` 的 `INDUSTRY_ACTION_MARKER_SLOTS` 定义（百分比坐标）；未放置标记时公司牌外框蓝色高亮，放置后取消高亮。玩家可在该区域点击放置 `normal_token` 标记，每轮（`turnState.roundNumber` 轮号）每玩家仅可触发一次，状态写入 `player.industryRoundMarkRound`；`player.industryRoundMarkTurn` 只记录标记发生的回合号，不参与刷新判定。放置作为快速行动记录，可通过撤销按钮撤回。放置成功后立即启动该公司对应的 1x 主动能力流程。
+- 除异星实验室外，公司牌左下角「1x」圆标位置由 `randomizer/game/industry/placement.js` 的 `INDUSTRY_ACTION_MARKER_SLOTS` 定义（百分比坐标）；未放置标记时公司牌外框蓝色高亮，放置后取消高亮。玩家可在该区域点击放置 `normal_token` 标记，每轮（`turnState.roundNumber` 轮号）每玩家仅可触发一次，状态写入 `player.industryRoundMarkRound`；`player.industryRoundMarkTurn` 只记录标记发生的回合号，不参与刷新判定。放置作为快速行动记录，可通过撤销按钮撤回。放置成功后立即启动该公司对应的 1x 主动能力流程。
 - 公司 1x 主动/被动能力由 `randomizer/game/industry/` 管理（`catalog.js` 定义、`abilities.js` 构建流程、`passives.js` 钩子、`index.js` 聚合为 `SetiIndustry`）；设计与建模详见 `assets/industry/industry-abilities.md`。
   - 层云核心：点击公共牌逐张结算弃牌角标（不弃牌、不移除公共牌），最多 3 张；每次点击与标记均可撤销。
   - 图灵系统：借用一项供应区科技本轮效果（不获得板块/bonus）；被动：获取蓝色科技 +1 宣传。
@@ -53,8 +53,10 @@
   - 芬威克研究中心：2 宣传精选 + 弃牌角标（不弃牌）；被动：研究科技 5 宣传。
   - 深空探测：手牌与公共牌交换；被动：分析不耗能量。
   - 宇宙战略集团：精选 1 张牌；1x 开始时清除左上黄/红/蓝 3 个被动奖励槽 token。被动：打牌后按扫描角标在公司牌虚线圆交互放置 token 并领奖（黄=1 信用点，红=1 宣传，蓝=1 数据，可撤销）；若回合结束前未完成交互，点击「回合结束」会取消本次虚线交互（已放置 token 保留，下次打牌可再次触发）。
-- 玩家运行时字段：`industryBorrowedTechTileId` / `industryBorrowedTechRound` / `industryBorrowedTechTurn`（图灵借用，Round 判定本轮有效，Turn 仅记录发生回合）、`industrySentinelArmedRound` / `industrySentinelArmedTurn`（哨兵武装）、`industryHuanyuFreeMoveRound` / `industryHuanyuFreeMoveTurn` / `industryHuanyuFreeMovesLeft` / `industryHuanyuMovedRocketIds`（寰宇免费移动）、`industryPlayedCardThisRound` / `industryLastPlayedCardThisRound`（本轮已打牌快照）。新轮开始时（所有玩家都 PASS 后）`resetAllRoundIndustryRuntimeState` 清空借用/武装等轮内状态，不重置 `industryRoundMarkRound` / `industryRoundMarkTurn`（靠轮号比较判定可否再标记）。
-- 公司 1x 标记与能力撤销：除涉及精选并拿走/刷新公共牌的能力（任务中继站、芬威克、宇宙战略）外，标记与层云核心、图灵借用、寰宇移动、赫利昂移除+收入、深空交换等步骤写入 `quickActionHistory` 可撤销；层云核心只结算弃牌角标不弃牌、不移除公共牌。任务中继站、芬威克、宇宙战略确认拿牌后会提交快速行动历史，之前的快速行动也不再可撤销。撤销标记会 `resetRoundIndustryRuntimeState` 并取消进行中的公司能力流。
+- 未来跨度研究所：公司牌上额外显示 `wlkd_token` 专属标记。点击后作为快速行动选择一张费用为信用点的手牌（半人马等能量费用牌不可选），移到公司牌下方并设定目标分（当前分 + 15/25/35/45，对应费用 1/2/3/4）；达成目标分后可用标准“打牌”主行动免费打出，所有效果完成后专属标记回到公司。底部普通 1x 只能在已有未达成目标牌时使用：精选 1 张公共牌并把目标分提高 3，确认补牌后不可撤销。
+- 异星实验室：公司牌上显示蓝/黄/粉三块专属板块。正面时分别把标准发射改为 1 信用点、标准扫描改为 2 能量、标准研究科技改为 4 宣传；执行对应标准主行动后该板块翻背。获得同色外星痕迹时对应板块翻回正面。该公司没有普通 1x 圆标。
+- 玩家运行时字段：`industryBorrowedTechTileId` / `industryBorrowedTechRound` / `industryBorrowedTechTurn`（图灵借用，Round 判定本轮有效，Turn 仅记录发生回合）、`industrySentinelArmedRound` / `industrySentinelArmedTurn`（哨兵武装）、`industryHuanyuFreeMoveRound` / `industryHuanyuFreeMoveTurn` / `industryHuanyuFreeMovesLeft` / `industryHuanyuMovedRocketIds`（寰宇免费移动）、`industryPlayedCardThisRound` / `industryLastPlayedCardThisRound`（本轮已打牌快照）、`industryAlienLabPanels`（异星实验室三色板块）、`industryFutureSpan`（未来跨度扣下的牌、目标分与打出状态）。新轮开始时（所有玩家都 PASS 后）`resetAllRoundIndustryRuntimeState` 清空借用/武装等轮内状态，不重置 `industryRoundMarkRound` / `industryRoundMarkTurn`（靠轮号比较判定可否再标记），也不清空未来跨度目标牌或异星实验室板块。
+- 公司 1x 标记与能力撤销：除涉及精选并拿走/刷新公共牌的能力（任务中继站、芬威克、未来跨度普通 1x、宇宙战略）外，标记与层云核心、图灵借用、寰宇移动、赫利昂移除+收入、深空交换、未来跨度专属标记等步骤写入 `quickActionHistory` 可撤销；层云核心只结算弃牌角标不弃牌、不移除公共牌。任务中继站、芬威克、未来跨度普通 1x、宇宙战略确认拿牌后会提交快速行动历史，之前的快速行动也不再可撤销。撤销标记会 `resetRoundIndustryRuntimeState` 并取消进行中的公司能力流。
 - 交互聚焦：`app.js` 的 `syncInteractionFocusChrome()` 根据进行中的流程在 `#app-wrap` 上设置 `data-interaction-focus`（`public-cards` / `hand-cards` / `tech-panel` / `board-rockets`）；`style.css` 会暗化非目标区域。`hand-cards` 聚焦时不能暗化或禁用 `.player-command` 父容器，需只暗化手牌区的兄弟控件，保证收入弃牌、打牌选牌、移动弃牌支付、手牌扫描等流程中手牌区保持高亮可点。公司牌 1x 可放置时仅用牌面蓝色高亮（`is-action-marker-pending`），不自动进入全屏聚焦以免遮挡行动按钮。
 - 选择公司后，保留牌区右侧分两行显示：第一行放 1 / 2 型任务牌，并按手牌区方式在牌多时部分覆盖；第二行暂时只放 3 型终局计分牌。
 
@@ -135,7 +137,7 @@ UI 布局：
 - 符文族机制由 `randomizer/game/aliens/runezu.js` 管理：揭示时给星球、具名星云扇区、带 2 分首取 bonus 的科技板块和正面白色圆框放置 symbol；玩家通过对应访问/结算/科技首取获得 symbol。揭示后的三色痕迹各有 1-4 号位，1 号位可叠放并拿取/补充白色圆框 symbol，后续 token 向上紧密叠放且已有 token 后热区纵向扩大，2/3 号位给分和符文族牌，4 号位给 7 分和 symbol。玩家可将持有 symbol 放入正面 7 个黑圈，遵守依赖关系并领取对应奖励；未放入黑圈的持有 symbol 按最大不同集合参与终局计分。
 - 调试「符文族调试」会直接揭示符文族并按揭示机制放置 6 个白色圆框 symbol，不自动放置痕迹 token，也不显示黑圈占位；会自动进入「获取外星人标记」模式，点击符文族正面痕迹位会按正式规则放置当前玩家 token 并触发对应奖励。
 - 奥陌陌机制由 `randomizer/game/aliens/aomomo.js` 管理：揭示后替换第 3 轮盘贴图，启用第 3 轮盘基础坐标 `x=5, y=3` 的奥陌陌星球和 `aomomo` 星云；玩家资源新增 `aomomoFossils`。奥陌陌三色痕迹各有 1-5 号位，1 号位可无限堆叠，1/5 号位消耗化石得分，2/4 号位获得化石，3/4 号位获得奥陌陌牌。环绕和登陆标记写入奥陌陌面板的 1 个环绕槽和 3 个登陆槽。
-- 调试「奥陌陌调试」会直接揭示奥陌陌、替换 wheel，并在奥陌陌星球弧形空档的 3 个数据槽放入普通数据 token；外星人面板不预放痕迹、环绕或登陆 token，也不提供这些面板 token 的拖动校准。奥陌陌星球数据 token 可拖动校准，落点会反算为相对奥陌陌当前扇区的 `radialFraction` / `angularFraction`，因此仍随第 3 轮盘旋转移动；扫描奥陌陌时再把对应数据替换为玩家 token，控制台日志会输出当前数据槽盘面坐标与相对坐标。
+- 调试「奥陌陌调试」会直接揭示奥陌陌、替换 wheel，并在奥陌陌星球弧形空档的 3 个数据槽放入普通数据 token；外星人面板不预放痕迹、环绕或登陆 token，也不提供这些面板 token 的拖动校准。奥陌陌星球数据 token 不可拖动，使用相对第 3 轮盘的 `radialFraction` / `angularFraction` 坐标；普通数据 token 和扫描替换后的玩家 token 都会随 wheel3 旋转移动，控制台日志会输出当前数据槽盘面坐标与相对坐标。
 
 物种专属机制文档：
 
@@ -167,12 +169,13 @@ UI 布局：
 - `replaceNextNebulaDataToken` 会按 `slotIndex` 从小到大替换第一个未替换 token。
 - `replacementOrder` 记录标记顺序，用于扇区结算同标记数时判定后标记者获胜。
 - 机制里的“扇区”是 1/8 外圈区域，即单个具名星云扇区（如 `sector-1-a` / 南河三）；一块外围板子包含两个这样的扇区。
-- 奥陌陌揭示后额外启用 `aomomo` 星云，容量为 3，绘制在奥陌陌星球板块弧形空档中的短椭圆数据槽；这些槽位以奥陌陌星球在第 3 轮盘上的基础坐标计算，会随轮盘旋转保持相对位置。扫描奥陌陌当前 `x` 对应的外圈星云时会额外提供扫描奥陌陌选项，直接扫描奥陌陌星球时扫描 `aomomo`。
+- 奥陌陌揭示后额外启用 `aomomo` 星云，容量为 3，绘制在奥陌陌星球板块弧形空档中的短椭圆数据槽；这些槽位以奥陌陌星球在第 3 轮盘上的基础坐标计算，会随 wheel3 旋转保持相对位置。扫描奥陌陌当前 `x` 对应的外圈星云时会额外提供扫描奥陌陌选项，直接扫描奥陌陌星球时扫描 `aomomo`。
 - `sectorSettlements` 记录每个具名扇区已结算次数、每次赢家，以及每个玩家赢得的扇区结算记录。
 - `sectorExtraMarks[sectorId][]` 记录单个具名扇区数据槽已满后的额外玩家标记；额外标记不占用数据槽、不产生数据，但计入扇区排名和结算平局判定。
 - `settleCompletedSectors` 会检查 8 个具名扇区：若某扇区自身数据槽都已填满且全部数据均被玩家 token 替换，则结算该扇区。
 - 扇区结算时，标记数最多的玩家获胜；标记数相同则比较该玩家在本扇区的最近标记顺序，后标记者获胜。
-- 扇区结算发生在主要行动效果队列全部完成后；结算本身不随机，会以 `nebulaDataState + playerState` 快照写入可撤销步骤，参与本次结算且有标记的玩家各获得 1 宣传。奥陌陌 `aomomo` 扇区完成时改为参与玩家各获得 1 化石。若后续奖励产生翻牌/盲抽等新信息，再由后续步骤写入不可撤销屏障。
+- 奥陌陌 `aomomo` 扇区完成时不统计赢家、不写入玩家赢得扇区记录、不保留第二名标记；所有参与扫描的玩家各获得 1 化石，然后重新填满 3 个奥陌陌数据槽。
+- 扇区结算发生在主要行动效果队列全部完成后；结算本身不随机，会以 `nebulaDataState + playerState` 快照写入可撤销步骤，普通扇区参与本次结算且有标记的玩家各获得 1 宣传。若后续奖励产生翻牌/盲抽等新信息，再由后续步骤写入不可撤销屏障。
 - 若存在第二名，第二名会在该具名扇区的 1 号数据槽保留 1 枚标记；随后清空并重新填满该扇区其余数据槽。
 - 调试按钮「快速扫描扇区」会依次选择玩家颜色、具名扇区和替换数量，批量把该扇区未替换数据改成对应玩家 token；若替换数量超过剩余未替换数据，超出部分会写入 `sectorExtraMarks`。该调试动作不获得数据、不写撤销历史，但会立即触发已完成扇区结算。
 - 每个具名星云的 2 号数据槽被玩家扫描标记时，玩家立即获得 2 分；奥陌陌 `aomomo` 星云的 1 号槽得 1 分、3 号槽得 2 分；可撤销扫描会同步回滚这些分数。
@@ -189,13 +192,13 @@ UI 布局：
 
 当前主行动包括：
 
-- `launch`：发射，默认消耗 2 信用点，在地球所在扇区放置火箭；若玩家已达到火箭数量上限则不可执行。
+- `launch`：发射，默认消耗 2 信用点，在地球所在扇区放置火箭；若玩家已达到火箭数量上限则不可执行。异星实验室蓝色板块正面时，标准发射改为 1 信用点并在成功后翻背。
 - `orbit`：环绕，要求当前火箭在非地球星球格，消耗 1 信用点 + 1 能量，移除火箭并放置环绕标记。
 - `land`：登陆，要求当前火箭在非地球星球格，消耗 1/2/3 能量，移除火箭并放置主星/卫星登陆标记；卫星登陆需要橙色 4 号科技。
-- `scan`：扫描，默认消耗 1 信用点 + 2 能量，生成扫描效果队列。
+- `scan`：扫描，默认消耗 1 信用点 + 2 能量，生成扫描效果队列。异星实验室黄色板块正面时，标准扫描改为 2 能量并在支付成功后翻背。
 - `analyze`：分析数据，消耗 1 能量并清空已放置数据。
 - `playCard`：打牌，打开手牌选择/打出流程。
-- `researchTech`：研究科技，生成科技效果链：选择科技片、旋转、即时奖励（如橙1发射、紫1数据）、获取 bonus。
+- `researchTech`：研究科技，生成科技效果链：选择科技片、旋转、即时奖励（如橙1发射、紫1数据）、获取 bonus。异星实验室粉色板块正面时，标准研究费用改为 4 宣传并在选择科技片成功后翻背。
 
 轮与回合：
 
@@ -215,7 +218,7 @@ UI 布局：
 - 主行动效果完成时通过 `endEffectHistoryStep` 或不可撤销效果的补充记录写入 draft；快速行动完成时通过 `completeQuickActionStep` 写入 draft。
 - 日志 step 会记录 `stepId`、`source`、`undoable`、`irreversibleReason`；撤销时按 `stepId` 精确删除 draft 中对应记录，避免主/快速行动交错时删错日志。
 - 撤销快速行动会删除 draft 中最近的快速行动记录；撤销主要行动效果会删除最近的主要行动记录；回滚整个主要行动会删除 draft 中所有主要行动记录但保留尚未撤销的快速行动记录。若最近步骤是不可撤销屏障，只提示原因，不会越过屏障撤销更早步骤。
-- 确认后不可撤销的精选/拿牌效果会写入不可撤销屏障，并在日志中显示原因；公司 1x 中任务中继站、芬威克、宇宙战略等公共牌精选补牌能力也按 quick 日志记录 `不可撤销：公共牌补牌翻出新牌`。
+- 确认后不可撤销的精选/拿牌效果会写入不可撤销屏障，并在日志中显示原因；公司 1x 中任务中继站、芬威克、未来跨度、宇宙战略等公共牌精选补牌能力也按 quick 日志记录 `不可撤销：公共牌补牌翻出新牌`。
 - 每条已确认的稳定行动日志 entry 会附带 `recoverySnapshot`，保存该日志确认后的完整游戏状态切片（含隐藏牌序、外星人状态、火箭、科技、星云、玩家、任务状态等，不递归保存日志本身）。最后一名玩家确认初始选择后若进入“初始收入增加”效果流，该条日志会暂时不暴露恢复快照，直到初始收入全部完成后刷新为稳定恢复点。`window.SetiRandomizer.getActionLogRecoveryPackage()` 可导出含恢复快照的日志包；`window.SetiRandomizer.recoverFromActionLog(logOrPackage, { entryId/index })` 会取对应日志快照恢复局面，并清空所有进行中的 overlay/选择流程。恢复点定位为“某条已确认日志之后”的稳定局面；调试入口仍不保证完整日志语义。
 - `randomizeAll()` 会清空行动日志，避免新开局混入上一局流程；调试入口 `window.SetiRandomizer.getActionLog()` 返回已确认日志快照。
 

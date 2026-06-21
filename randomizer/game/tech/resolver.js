@@ -37,8 +37,12 @@
 ) {
   "use strict";
 
+  function getIndustryPassives() {
+    return industryPassives || (typeof globalThis !== "undefined" ? globalThis.SetiIndustryPassives : null);
+  }
+
   function getResearchPublicityCost(player) {
-    return industryPassives?.getResearchPublicityCost?.(player, catalog.RESEARCH_PUBLICITY_COST)
+    return getIndustryPassives()?.getResearchPublicityCost?.(player, catalog.RESEARCH_PUBLICITY_COST)
       ?? catalog.RESEARCH_PUBLICITY_COST;
   }
 
