@@ -906,6 +906,7 @@
     clearTransientStateForRecovery,
     computePlayerFinalScoreBreakdown,
     confirmCardTaskCompletion,
+    confirmCardCornerQuickAction,
     confirmDataPlacement,
     confirmInitialSelectionForCurrentPlayer,
     confirmLandTargetPicker,
@@ -921,6 +922,7 @@
     endCurrentTurn,
     executeActionEffect,
     executeCardMoveForEffect,
+    executeFreeMoveForCardCorner,
     executeFreeMoveForCardTrigger,
     executeFreeMoveForScanAction4,
     finalizePendingDiscardSelection,
@@ -959,6 +961,7 @@
     handleChongFossilChoice,
     handleChongTaskCompletionChoice,
     handleConditionalSectorChoice,
+    handleHandCardCornerQuickAction,
     handleHandScanCardClick,
     handleJiuzheCardChoice,
     handleJiuzheOpportunitySkip,
@@ -5255,13 +5258,13 @@
       case "b2":
         return 4;
       case "c1":
-        return 4.2;
+        return 5.4;
       case "c2":
-        return 4.4;
+        return 5.8;
       case "d1":
-        return 4.1;
+        return 5.2;
       case "d2":
-        return 3.7;
+        return 5.5;
       default:
         return 2;
     }
@@ -5337,7 +5340,24 @@
     const demandScore = scoreAiFinalScoreFormulaDemand(formulaId, demand);
     const remainingRoundWeight = Math.min(1.6, 0.7 + getAiRemainingRoundWeight() * 0.15);
     const potentialScore = getAiFinalScoreFormulaPotential(formulaId) * remainingRoundWeight;
-    const slotPriorityScore = Math.max(0, 3 - Number(check.slotIndex || 3)) * 1.15
+    const firstSlotPriorityScore = Number(check.slotIndex) === 1
+      ? 14
+      : Number(check.slotIndex) === 2
+        ? 3
+        : 0;
+    const familyPriorityScore = tileId === "c" || tileId === "d" ? 3.5 : 0;
+    const activeOpponentCount = (turnState.activePlayerIds || [])
+      .filter((playerId) => playerId && playerId !== player.id)
+      .length;
+    const competitiveSlotSwingScore = Number(check.slotIndex) === 1
+      ? 8 + activeOpponentCount * 2.5 + Math.min(8, potentialScore * 0.85 + immediateScore * 0.18)
+      : Number(check.slotIndex) === 2
+        ? 2 + activeOpponentCount * 0.8 + Math.min(3.5, potentialScore * 0.35)
+        : 0;
+    const slotPriorityScore = firstSlotPriorityScore
+      + familyPriorityScore
+      + competitiveSlotSwingScore
+      + Math.max(0, 3 - Number(check.slotIndex || 3)) * 1.15
       + multiplier * 0.18;
     const thresholdScore = Math.max(0, aiNumber(pending.threshold)) * 0.015;
     const score = applyAiStrategyWeight(
@@ -5362,6 +5382,9 @@
         demandScore: Math.round(demandScore * 100) / 100,
         potentialScore: Math.round(potentialScore * 100) / 100,
         slotPriorityScore: Math.round(slotPriorityScore * 100) / 100,
+        firstSlotPriorityScore: Math.round(firstSlotPriorityScore * 100) / 100,
+        familyPriorityScore: Math.round(familyPriorityScore * 100) / 100,
+        competitiveSlotSwingScore: Math.round(competitiveSlotSwingScore * 100) / 100,
         thresholdScore: Math.round(thresholdScore * 100) / 100,
       },
     };
@@ -10043,7 +10066,7 @@
 
   function getAvailablePlutoEffectAction(actionType, effect, options = {}) {
     const allowDuplicate = actionType === "land" && Boolean(effect.options?.allowDuplicateLanding);
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
     const card = getPlutoReservedCards(currentPlayer).find((item) => {
       const state = getPlutoActionState(item);
       if (actionType === "orbit") return !state.orbitDone;
@@ -10077,7 +10100,7 @@
   }
 
   function executePlutoCardActionEffect(effect, actionType, available, contextInfo = {}) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
     beginEffectHistoryStep(effect.label);
     const beforePlayer = structuredClone(currentPlayer);
     const beforeRocketState = structuredClone(rocketState);
@@ -10228,14 +10251,16 @@
       choices,
       getOptions: () => ({ ok: true, choices }),
       onConfirm: (choice) => {
-        if (choice.kind === "pluto") {
-          return executePlutoCardActionEffect(effect, actionType, choice.available, {
+        return withEffectExecutionPlayer(effect, () => {
+          if (choice.kind === "pluto") {
+            return executePlutoCardActionEffect(effect, actionType, choice.available, {
+              preOwnLandingMarker: choice.preOwnLandingMarker,
+            });
+          }
+          if (actionType === "orbit") return executeNormalCardOrbitEffect(effect, choice);
+          return executeCardLandTarget(effect, choice.target, {
             preOwnLandingMarker: choice.preOwnLandingMarker,
           });
-        }
-        if (actionType === "orbit") return executeNormalCardOrbitEffect(effect, choice);
-        return executeCardLandTarget(effect, choice.target, {
-          preOwnLandingMarker: choice.preOwnLandingMarker,
         });
       },
     });
@@ -11346,6 +11371,7 @@
   }
 
   function executeRegisterEventBonusEffect(effect) {
+    const owner = getEffectOwnerPlayer(effect);
     const beforeTurnBonuses = structuredClone(turnState.cardTurnEventBonuses || []);
     const flowBonuses = ensureCardFlowEventBonuses();
     const beforeFlowBonuses = structuredClone(flowBonuses);
@@ -11354,7 +11380,7 @@
       ...(effect.options?.bonus || {}),
       id: effect.id,
       label: effect.label,
-      playerId: getCurrentPlayer()?.id || null,
+      playerId: owner?.id || null,
       usedKeys: [],
     };
     if (bonus.duration === "turn") {
@@ -11817,6 +11843,16 @@
       insertActionEffectsAfterCurrent(followups);
       effect.label = `${effect.label} 1/${repeat}`;
       effect.options = { ...(effect.options || {}), repeat: 1, _repeatExpanded: true };
+    }
+    if (!data.getNextReplaceableNebulaToken(nebulaDataState, effect.options?.nebulaId)) {
+      const nebulaLabel = data.getNebulaLabel?.(effect.options?.nebulaId) || "目标星云";
+      return finishAutomaticRewardEffect(effect, {
+        ok: true,
+        undoable: true,
+        skipped: true,
+        message: `${effect.label}：${nebulaLabel}已没有未替换的数据，已跳过`,
+        payload: { nebulaId: effect.options?.nebulaId || null, skipped: true },
+      });
     }
     const result = replaceNebulaDataForCurrentPlayer(effect.options?.nebulaId, {
       prefix: effect.label,
@@ -12737,8 +12773,9 @@
   }
 
   function executeAomomoLandEffect(effect, options = {}) {
+    const currentPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
     beginEffectHistoryStep(effect.label);
-    const beforePlayer = structuredClone(getCurrentPlayer());
+    const beforePlayer = structuredClone(currentPlayer);
     const result = abilities.executeAbility("landProbe", createActionContext(), {
       skipCost: true,
       target: { type: "planet" },
@@ -12754,9 +12791,9 @@
       ? Math.max(0, Math.round(Number(options.scoreIfAomomo ?? effect.options?.score) || 0))
       : 0;
     if (score > 0) {
-      players.gainResources(getCurrentPlayer(), { score });
+      players.gainResources(currentPlayer, { score });
       recordHistoryCommand(historyCommands.createRestorePlayerCommand(
-        getCurrentPlayer(),
+        currentPlayer,
         beforePlayer,
         "恢复奥陌陌登陆得分前玩家状态",
       ));
@@ -12773,7 +12810,7 @@
   }
 
   function executeAomomoFossilMoveAndLandEffect(effect) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
     const cost = Math.max(1, Math.round(Number(effect.options?.cost) || 1));
     if (!players.canAfford(currentPlayer, { aomomoFossils: cost })) {
       if (effect.options?.optional !== false) {
@@ -12799,6 +12836,8 @@
       {
         id: `${effect.id || "aomomo"}-move`,
         type: cardEffects.EFFECT_TYPES.CARD_MOVE,
+        playerId: currentPlayer?.id || null,
+        playerColor: currentPlayer?.color || null,
         label: "奥陌陌：2移动",
         icon: "movement",
         options: { movementPoints: Math.max(1, Math.round(Number(effect.options?.movement) || 2)) },
@@ -12806,6 +12845,8 @@
       {
         id: `${effect.id || "aomomo"}-land`,
         type: "aomomo_land_only",
+        playerId: currentPlayer?.id || null,
+        playerColor: currentPlayer?.color || null,
         label: "奥陌陌：登陆",
         icon: "land",
         options: {},
@@ -13310,7 +13351,12 @@
         return result;
       }
       case "fangzhou_additional_public_scan": {
-        const currentPlayer = getCurrentPlayer();
+        const currentPlayer = getEffectOwnerPlayer(effect);
+        if (!currentPlayer) {
+          rocketState.statusNote = "方舟公共扫描标记缺少目标玩家";
+          renderStateReadout();
+          return { ok: false, message: rocketState.statusNote };
+        }
         const count = Math.max(0, Math.round(Number(effect.options?.count) || 1));
         const beforePlayer = structuredClone(currentPlayer);
         beginEffectHistoryStep(effect.label);
@@ -17798,11 +17844,20 @@
     };
   }
 
-  function getAlienTraceActionPlayer(pending) {
-    return resolvePlayerReference({
+  function getAlienTraceActionPlayer(pending, options = {}) {
+    const player = resolvePlayerReference({
       playerId: pending?.targetPlayerId || alienTracePickerState?.targetPlayerId,
       playerColor: pending?.targetPlayerColor || alienTracePickerState?.targetPlayerColor,
-    }) || getCurrentPlayer();
+    });
+    if (player) return player;
+    if (options.allowFallback || isDebugAlienTraceMode()) return getCurrentPlayer();
+    return null;
+  }
+
+  function failMissingAlienTraceTargetPlayer() {
+    rocketState.statusNote = "外星人痕迹缺少目标玩家，已中止放置";
+    renderStateReadout();
+    return { ok: false, message: rocketState.statusNote };
   }
 
   function formatAlienFirstTraceRewardGain(gain = {}) {
@@ -17862,7 +17917,8 @@
   function confirmAlienTracePlacement(alienSlotId, traceType) {
     const inDebugMode = isDebugAlienTraceMode();
     const pending = pendingAlienTraceAction;
-    const currentPlayer = getAlienTraceActionPlayer(pending);
+    const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
+    if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
     if (!inDebugMode && !isAlienTracePickerChoiceAllowed(alienSlotId, traceType)) {
       rocketState.statusNote = "该外星人痕迹目标不符合当前卡牌限制";
       renderStateReadout();
@@ -17980,7 +18036,8 @@
     }
 
     const pending = pendingAlienTraceAction;
-    const currentPlayer = getAlienTraceActionPlayer(pending);
+    const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
+    if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
     const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
     const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
     if (!inDebugMode) {
@@ -18085,7 +18142,8 @@
     }
 
     const pending = pendingAlienTraceAction;
-    const currentPlayer = getAlienTraceActionPlayer(pending);
+    const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
+    if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
     const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
     const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
     if (!inDebugMode) {
@@ -18196,7 +18254,8 @@
     }
 
     const pending = pendingAlienTraceAction;
-    const currentPlayer = getAlienTraceActionPlayer(pending);
+    const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
+    if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
     const rewardPreview = banrenma.getTraceReward(traceType, Number(position));
     if (rewardPreview?.payData && getAvailableDataTokenCount(currentPlayer) < rewardPreview.payData) {
       rocketState.statusNote = `数据不足：该位置需要 ${rewardPreview.payData} 数据`;
@@ -18338,7 +18397,8 @@
     }
 
     const pending = pendingAlienTraceAction;
-    const currentPlayer = getAlienTraceActionPlayer(pending);
+    const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
+    if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
     const rewardPreview = aomomo.getTraceReward(traceType, Number(position));
     if (rewardPreview?.payFossils && !players.canAfford(currentPlayer, { aomomoFossils: rewardPreview.payFossils })) {
       rocketState.statusNote = `化石不足：该位置需要 ${rewardPreview.payFossils} 化石`;
@@ -18764,7 +18824,8 @@
     }
 
     const pending = pendingAlienTraceAction;
-    const currentPlayer = getAlienTraceActionPlayer(pending);
+    const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
+    if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
     const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
     const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
     if (!inDebugMode) {
@@ -18880,7 +18941,8 @@
     }
 
     const pending = pendingAlienTraceAction;
-    const currentPlayer = getAlienTraceActionPlayer(pending);
+    const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
+    if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
     const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
     const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
     if (!inDebugMode) {
@@ -18995,7 +19057,8 @@
     }
 
     const pending = pendingAlienTraceAction;
-    const currentPlayer = getAlienTraceActionPlayer(pending);
+    const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
+    if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
     const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
     const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
     if (!inDebugMode) {
@@ -19111,7 +19174,8 @@
     }
 
     const pending = pendingAlienTraceAction;
-    const currentPlayer = getAlienTraceActionPlayer(pending);
+    const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
+    if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
     const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
     const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
     if (!inDebugMode) {

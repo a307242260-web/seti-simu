@@ -20,6 +20,7 @@
   const FINAL_ROUND_NUMBER = 4;
   const DEFAULT_CARD_VALUE = 3;
   const DEFAULT_ALIEN_CARD_VALUE = 4;
+  const DEFAULT_LAUNCH_COST = Object.freeze({ credits: 2 });
   const RESOURCE_VALUES = Object.freeze({
     score: 1,
     credits: 3,
@@ -52,6 +53,43 @@
     return Object.entries(resources || {}).reduce((total, [key, value]) => (
       total + numeric(value) * numeric(values[key])
     ), 0);
+  }
+
+  function clonePositiveCost(cost = {}) {
+    return Object.entries(cost || {}).reduce((result, [key, value]) => {
+      const amount = numeric(value);
+      if (amount > 0) result[key] = amount;
+      return result;
+    }, {});
+  }
+
+  function getLaunchPaymentCost(options = {}) {
+    const source = options.options || options;
+    if (source?.skipCost) return {};
+    if (source?.cost && typeof source.cost === "object" && !Array.isArray(source.cost)) {
+      return clonePositiveCost(source.cost);
+    }
+    return { ...DEFAULT_LAUNCH_COST };
+  }
+
+  function getPhaseResourceValues(roundNumber = 1, options = {}) {
+    const values = {
+      ...RESOURCE_VALUES,
+      ...(options.resourceValues || {}),
+    };
+    if (options.useEarlyResourcePremium === false) return values;
+    const round = Math.max(1, Math.round(numeric(roundNumber) || 1));
+    if (round <= 2) {
+      const earlyValues = {
+        credits: 5,
+        energy: 5,
+        ...(options.earlyResourceValues || {}),
+      };
+      for (const [key, value] of Object.entries(earlyValues)) {
+        values[key] = Math.max(numeric(values[key]), numeric(value));
+      }
+    }
+    return values;
   }
 
   function getRemainingIncomeMultiplier(roundNumber = 1, options = {}) {
@@ -100,9 +138,72 @@
     return numeric(options.fallbackDiscardCardValue ?? 0);
   }
 
+  function isMovePaymentCard(card) {
+    return Boolean(
+      card?.movePayment
+      || card?.canPayMove
+      || card?.isMovePaymentCard
+      || Number(card?.discardActionCode) === 2
+      || card?.discardAction?.type === "move"
+      || card?.discardReward?.type === "move"
+      || card?.discardReward?.movementPoints,
+    );
+  }
+
+  function getMovePaymentCost(input = {}) {
+    const requiredMovePoints = Math.max(0, Math.round(numeric(
+      input.requiredMovePoints ?? input.movePoints ?? input.movementPoints ?? 1,
+    )));
+    if (requiredMovePoints <= 0) return 0;
+
+    const values = {
+      ...RESOURCE_VALUES,
+      ...(input.resourceValues || {}),
+    };
+    const energyValue = numeric(values.energy || RESOURCE_VALUES.energy);
+    let availableEnergy = Math.max(0, Math.round(numeric(
+      input.availableEnergy ?? input.player?.resources?.energy,
+    )));
+    const paymentCards = (Array.isArray(input.movePaymentCards)
+      ? input.movePaymentCards
+      : (input.hand || input.player?.hand || []).filter(isMovePaymentCard))
+      .map((card) => getCardValue(card, {
+        ...input,
+        defaultCardValue: numeric(input.defaultMoveCardValue ?? values.handSize ?? DEFAULT_CARD_VALUE),
+      }))
+      .sort((left, right) => left - right);
+
+    let cardIndex = 0;
+    let total = 0;
+    for (let point = 0; point < requiredMovePoints; point += 1) {
+      const canUseEnergy = availableEnergy > 0;
+      const canUseCard = cardIndex < paymentCards.length;
+      if (canUseEnergy && canUseCard) {
+        const cardValue = paymentCards[cardIndex];
+        if (cardValue < energyValue) {
+          total += cardValue;
+          cardIndex += 1;
+        } else {
+          total += energyValue;
+          availableEnergy -= 1;
+        }
+      } else if (canUseCard) {
+        total += paymentCards[cardIndex];
+        cardIndex += 1;
+      } else {
+        total += energyValue;
+        if (canUseEnergy) availableEnergy -= 1;
+      }
+    }
+    return roundValue(total);
+  }
+
   function getIncomeRawValue(income = {}, options = {}) {
     const roundNumber = options.roundNumber ?? 1;
-    return getResourceValue(income, options.resourceValues || RESOURCE_VALUES)
+    const resourceValues = options.usePhaseResourceValues
+      ? getPhaseResourceValues(roundNumber, options)
+      : (options.resourceValues || RESOURCE_VALUES);
+    return getResourceValue(income, resourceValues)
       * getRemainingIncomeMultiplier(roundNumber, options);
   }
 
@@ -121,6 +222,99 @@
       .find((player) => player?.id === playerId)
       || state.currentPlayer
       || null;
+  }
+
+  function getPlayerKeys(player) {
+    return {
+      ids: new Set([player?.id, player?.playerId].filter(Boolean).map(String)),
+      colors: new Set([player?.color, player?.playerColor].filter(Boolean).map(String)),
+    };
+  }
+
+  function markerBelongsToPlayer(marker, player) {
+    const keys = getPlayerKeys(player);
+    return [marker?.ownerPlayerId, marker?.playerId, marker?.id].filter(Boolean)
+      .some((value) => keys.ids.has(String(value)))
+      || [marker?.ownerPlayerColor, marker?.playerColor, marker?.color].filter(Boolean)
+        .some((value) => keys.colors.has(String(value)));
+  }
+
+  function getAlienSlotFromState(alienGameState = {}, alienSlotId = null) {
+    if (alienSlotId == null) return null;
+    return alienGameState?.aliens?.[String(alienSlotId)] || alienGameState?.aliens?.[Number(alienSlotId)] || null;
+  }
+
+  function countPlacedFirstTracesInSlot(slot = {}) {
+    return ["yellow", "pink", "blue"].reduce((total, traceType) => (
+      total + (slot?.traces?.[traceType]?.firstPlaced ? 1 : 0)
+    ), 0);
+  }
+
+  function estimateRevealedTraceValue(input = {}) {
+    const mode = String(input.mode || "");
+    const position = Math.max(0, Math.round(numeric(input.position)));
+    const label = String(input.label || "");
+    let value = 3;
+    if (position === 2) value += 2.5;
+    if (mode.includes("fangzhou") && label.includes("解锁")) value += 5;
+    if (mode.includes("yichangdian") && position === 2) value += 2;
+    if (mode.includes("banrenma") || mode.includes("aomomo")) value += position === 2 ? 2 : 1;
+    if (mode.includes("chong") || mode.includes("amiba") || mode.includes("runezu")) value += position === 2 ? 1.5 : 0.75;
+    if (mode.includes("jiuzhe")) value += position === 2 ? 1 : 0.25;
+    if (label.includes("得分") || label.includes("分数")) value += 2;
+    if (label.includes("精选") || label.includes("牌")) value += DEFAULT_CARD_VALUE;
+    if (label.includes("信用")) value += RESOURCE_VALUES.credits;
+    if (label.includes("数据") || label.includes("扫描")) value += RESOURCE_VALUES.availableData;
+    return value;
+  }
+
+  function estimateAlienTraceValue(input = {}) {
+    const traceType = input.traceType || input.options?.traceType || input.options?.traceTypes?.[0] || null;
+    const alienGameState = input.alienGameState || {};
+    const alienSlotId = input.alienSlotId ?? input.slotId ?? input.options?.alienSlotId ?? null;
+    const slot = input.slot || getAlienSlotFromState(alienGameState, alienSlotId);
+    const player = input.player || null;
+    const mode = String(input.mode || "");
+    const alienId = String(input.alienId || slot?.alienId || slot?.assignedAlienId || "");
+    const revealed = Boolean(input.revealed ?? slot?.revealed ?? mode.endsWith("-grid"));
+
+    if (revealed) {
+      return roundValue(estimateRevealedTraceValue(input));
+    }
+
+    if (!slot?.traces || !traceType) {
+      const baseValue = 5 + RESOURCE_VALUES.publicity + DEFAULT_ALIEN_CARD_VALUE * 0.75;
+      const activeOpponentCount = Math.max(0, Math.round(numeric(input.activeOpponentCount ?? input.opponentCount)));
+      const competitionSwing = input.competition === false
+        ? 0
+        : baseValue * Math.min(1.25, 0.35 + activeOpponentCount * 0.25);
+      return roundValue(baseValue + competitionSwing);
+    }
+
+    const traceSlot = slot.traces[traceType];
+    if (!traceSlot?.firstPlaced) {
+      const placedCount = countPlacedFirstTracesInSlot(slot);
+      let cardExpectation = input.alienCardExpectedValue ?? DEFAULT_ALIEN_CARD_VALUE * 0.85;
+      let speciesRevealValue = 0;
+      if (alienId.includes("jiuzhe")) {
+        cardExpectation = 0;
+        speciesRevealValue = 1 + placedCount * 0.5;
+      } else if (alienId.includes("fangzhou")) {
+        cardExpectation = DEFAULT_ALIEN_CARD_VALUE * 0.45;
+        speciesRevealValue = 2.5;
+      }
+      const revealPressure = placedCount >= 2 ? 5 : placedCount === 1 ? 2 : 0.75;
+      const ownValue = 5 + RESOURCE_VALUES.publicity + cardExpectation + speciesRevealValue + revealPressure;
+      const activeOpponentCount = Math.max(0, Math.round(numeric(input.activeOpponentCount ?? input.opponentCount)));
+      const competitionBase = 5 + RESOURCE_VALUES.publicity + cardExpectation * 0.75 + speciesRevealValue * 0.45;
+      const competitionSwing = input.competition === false
+        ? 0
+        : competitionBase * Math.min(1.35, 0.4 + activeOpponentCount * 0.25);
+      return roundValue(ownValue + competitionSwing);
+    }
+
+    const ownFirst = player && markerBelongsToPlayer(traceSlot, player);
+    return roundValue((ownFirst ? 2.5 : 3) + Math.max(0, numeric(traceSlot.extraCount)) * 0.8);
   }
 
   function getFinalScoreValue(state = {}, player) {
@@ -165,7 +359,7 @@
     if (formulaId === "d1" && actionId === "researchTech") return 0.5;
     if (formulaId === "d2" && actionId === "researchTech") return 0.5;
     if (formulaId === "b1" && (actionId === "alien-trace" || effectTypes.includes("alien_trace"))) return 1;
-    if ((formulaId === "a1" || formulaId === "a2") && actionId === "playCard") return 0.25;
+    if ((formulaId === "a1" || formulaId === "a2") && (actionId === "playCard" || actionId === "cardCorner")) return 0.25;
     return 0;
   }
 
@@ -186,16 +380,21 @@
     RESOURCE_VALUES,
     DEFAULT_CARD_VALUE,
     DEFAULT_ALIEN_CARD_VALUE,
+    DEFAULT_LAUNCH_COST,
     numeric,
     roundValue,
     clamp01,
+    getPhaseResourceValues,
     getResourceValue,
+    getLaunchPaymentCost,
+    getMovePaymentCost,
     getRemainingIncomeMultiplier,
     getCardValue,
     getDiscardedCardValue,
     getIncomeRawValue,
     getIncomeNetValue,
     getIncomeValue,
+    estimateAlienTraceValue,
     evaluatePlayerState,
     estimateFinalMarginalForAction,
   });

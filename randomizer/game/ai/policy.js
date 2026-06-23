@@ -76,6 +76,12 @@
     return Number.isFinite(score) ? score : null;
   }
 
+  function getActionGraphNet(candidate) {
+    const graphNet = getFiniteScore(candidate?.actionGraph?.net);
+    if (graphNet != null) return graphNet;
+    return getFiniteScore(candidate?.net);
+  }
+
   function getBestScore(items = [], scoreFn = () => 0) {
     return (items || []).reduce((best, item) => {
       const score = getFiniteScore(scoreFn(item));
@@ -106,6 +112,11 @@
     return base + valueScore;
   }
 
+  function scoreTurnActionPrimary(candidate) {
+    const graphNet = getActionGraphNet(candidate);
+    return graphNet == null ? scoreTurnAction(candidate) : graphNet;
+  }
+
   function scoreResearchTechCandidate(candidate) {
     const explicitScore = getFiniteScore(candidate?.score);
     if (explicitScore != null) return explicitScore;
@@ -127,27 +138,149 @@
     return (explicitScore ?? 0) + priceTieBreaker;
   }
 
-  function chooseInitialSelection(offer, options = {}) {
-    const industry = chooseBest(offer?.industryOptions || [], (card) => (
-      evaluator.evaluateIndustryCard(card, options)
-    ));
-    const initialCardsByValue = (offer?.initialOptions || [])
-      .map((card) => ({
-        card,
-        score: evaluator.evaluateInitialCard(initialCards?.getInitialCardNumber?.(card) || card, options),
-      }))
-      .sort(byScoreDescending)
-      .map((entry) => entry.card);
+  function getEffectResourcesValue(effect = {}, options = {}) {
+    return evaluator.getResourceValue(effect.resources || {}, options.resourceValues)
+      + Number(effect.blindDraw || 0) * evaluator.RESOURCE_VALUES.handSize
+      + Number(effect.dataGain || 0) * evaluator.RESOURCE_VALUES.availableData
+      + evaluator.getIncomeValue(effect.income || {}, options)
+      + evaluator.getIncomeValue(effect.baseIncome || {}, options);
+  }
+
+  function addOpeningGoal(goals, id, amount = 1) {
+    if (!id) return;
+    goals[id] = (goals[id] || 0) + Math.max(0, Number(amount) || 0);
+  }
+
+  function getOpeningEffects(industry, initialPair = []) {
+    const effects = [];
+    const industryEffect = initialCards?.getIndustryEffect?.(industry);
+    if (industryEffect) effects.push({ source: "industry", effect: industryEffect });
+    for (const card of initialPair) {
+      const effect = initialCards?.getInitialCardEffect?.(initialCards.getInitialCardNumber?.(card) || card);
+      if (effect) effects.push({ source: "initial", effect });
+    }
+    return effects;
+  }
+
+  function scoreOpeningCombination(industry, initialPair = [], options = {}) {
+    const effects = getOpeningEffects(industry, initialPair);
+    const goals = {};
+    let score = evaluator.evaluateIndustryCard(industry, options);
+    for (const card of initialPair) {
+      score += evaluator.evaluateInitialCard(initialCards?.getInitialCardNumber?.(card) || card, options);
+    }
+
+    const combined = effects.reduce((summary, entry) => {
+      const effect = entry.effect || {};
+      summary.resourceScore += Number(effect.resources?.score || 0);
+      summary.credits += Number(effect.resources?.credits || 0) + Number(effect.baseIncome?.credits || 0) + Number(effect.income?.credits || 0);
+      summary.energy += Number(effect.resources?.energy || 0) + Number(effect.baseIncome?.energy || 0) + Number(effect.income?.energy || 0);
+      summary.hand += Number(effect.blindDraw || 0) + Number(effect.baseIncome?.handSize || 0) + Number(effect.income?.handSize || 0);
+      summary.data += Number(effect.dataGain || 0) + Number(effect.baseIncome?.availableData || 0) + Number(effect.income?.availableData || 0);
+      summary.scan += Number(effect.scan?.count || 0) + Number(effect.resources?.additionalPublicScan || 0);
+      summary.incomeIncreases += Number(effect.incomeIncreaseCount || 0);
+      if (effect.alienTrace) summary.traces += 1;
+      if (effect.orbitPlanetId) summary.orbits += 1;
+      summary.rawValue += getEffectResourcesValue(effect, options);
+      return summary;
+    }, {
+      resourceScore: 0,
+      credits: 0,
+      energy: 0,
+      hand: 0,
+      data: 0,
+      scan: 0,
+      incomeIncreases: 0,
+      traces: 0,
+      orbits: 0,
+      rawValue: 0,
+    });
+
+    score += Math.min(8, combined.resourceScore * 0.55);
+    score += combined.credits >= 3 ? 3 : combined.credits >= 2 ? 1.5 : 0;
+    score += combined.incomeIncreases >= 3 ? 7 : combined.incomeIncreases === 2 ? 4.5 : combined.incomeIncreases;
+    score += combined.scan >= 2 ? 6 : combined.scan * 1.8;
+    score += combined.data >= 2 ? 5 : combined.data * 1.7;
+    score += combined.traces * 7;
+    score += combined.orbits * 2.5;
+
+    if (combined.resourceScore >= 8 || combined.traces || combined.scan >= 2) {
+      addOpeningGoal(goals, "FIRST_ROUND_SCORE_25", 1);
+    }
+    if (combined.scan >= 2) addOpeningGoal(goals, "GRAB_TRACE_PINK", combined.scan);
+    if (combined.data >= 1 || combined.scan >= 2) addOpeningGoal(goals, "GRAB_TRACE_BLUE", combined.data + combined.scan * 0.35);
+    if (combined.traces || combined.orbits) addOpeningGoal(goals, "GRAB_TRACE_YELLOW", combined.traces + combined.orbits * 0.35);
+    if (combined.incomeIncreases >= 2 || combined.credits >= 3) addOpeningGoal(goals, "OPENING_INCOME", combined.incomeIncreases + combined.credits * 0.25);
 
     return {
+      score,
+      goals,
+      summary: combined,
       industry,
-      initialCards: initialCardsByValue.slice(0, 2),
+      initialCards: initialPair,
+    };
+  }
+
+  function getInitialPairs(cards = [], count = 2) {
+    if (count <= 1) return (cards || []).map((card) => [card]);
+    const pairs = [];
+    for (let left = 0; left < cards.length; left += 1) {
+      for (let right = left + 1; right < cards.length; right += 1) {
+        pairs.push([cards[left], cards[right]]);
+      }
+    }
+    return pairs;
+  }
+
+  function chooseInitialSelection(offer, options = {}) {
+    const industryOptions = offer?.industryOptions || [];
+    const initialOptions = offer?.initialOptions || [];
+    const initialCount = Math.max(1, Math.round(Number(options.initialCount) || 2));
+    const plans = [];
+    for (const industry of industryOptions) {
+      for (const initialPair of getInitialPairs(initialOptions, initialCount)) {
+        plans.push(scoreOpeningCombination(industry, initialPair, options));
+      }
+    }
+    const bestPlan = plans.sort((left, right) => (
+      Number(right.score || 0) - Number(left.score || 0)
+      || String(left.industry?.id || "").localeCompare(String(right.industry?.id || ""))
+    ))[0];
+
+    if (bestPlan) {
+      return {
+        industry: bestPlan.industry,
+        initialCards: bestPlan.initialCards.slice(0, initialCount),
+        openingPlan: {
+          score: Math.round(bestPlan.score * 100) / 100,
+          goals: bestPlan.goals,
+          summary: bestPlan.summary,
+        },
+      };
+    }
+
+    const industry = chooseBest(industryOptions, (card) => evaluator.evaluateIndustryCard(card, options));
+    return {
+      industry,
+      initialCards: initialOptions.slice(0, initialCount),
+      openingPlan: null,
     };
   }
 
   function chooseTurnAction(candidates = []) {
     const available = candidates.filter((candidate) => candidate?.available !== false);
-    return chooseBest(available, scoreTurnAction);
+    return available
+      .map((candidate, index) => ({
+        candidate,
+        index,
+        primaryScore: scoreTurnActionPrimary(candidate),
+        fallbackScore: scoreTurnAction(candidate),
+      }))
+      .sort((left, right) => (
+        Number(right.primaryScore || 0) - Number(left.primaryScore || 0)
+        || Number(right.fallbackScore || 0) - Number(left.fallbackScore || 0)
+        || left.index - right.index
+      ))[0]?.candidate || null;
   }
 
   const INCOME_DISCARD_TYPES = new Set([

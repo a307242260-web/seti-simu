@@ -7,6 +7,20 @@ const planner = require("./planner");
 const evaluator = require("./evaluator");
 const policy = require("./policy");
 const analytics = require("./battle-analytics");
+const appConstants = require("../../app/constants");
+const players = require("../players");
+const initialCards = require("../initial-cards");
+const rocketActions = require("../rockets");
+const planetReferenceLayout = require("../planet-reference-layout");
+
+const constants = appConstants.createAppConstants({
+  aliens: {},
+  players,
+  rocketActions,
+  planetReferenceLayout,
+  initialCards,
+});
+assert.equal(constants.DEFAULT_ACTIVE_PLAYER_COUNT, 4);
 
 assert.equal(evaluator.getResourceValue({ credits: 1, energy: 1, publicity: 1 }), 7);
 assert.equal(evaluator.getRemainingIncomeMultiplier(1), 4);
@@ -16,6 +30,34 @@ assert.equal(valuation.getIncomeNetValue({ credits: 1 }, {
   roundNumber: 1,
   hand: [{ label: "low" }, { label: "alien:strong", alienCard: true }],
 }), 9);
+assert.equal(valuation.getPhaseResourceValues(1).credits, 5);
+assert.equal(valuation.getPhaseResourceValues(1).energy, 5);
+assert.equal(valuation.getPhaseResourceValues(3).energy, 3);
+assert.equal(valuation.getIncomeNetValue({ credits: 1 }, {
+  roundNumber: 1,
+  usePhaseResourceValues: true,
+  hand: [{ label: "low" }, { label: "alien:strong", alienCard: true }],
+}), 17);
+assert.deepStrictEqual(valuation.getLaunchPaymentCost(), { credits: 2 });
+assert.deepStrictEqual(valuation.getLaunchPaymentCost({ skipCost: true }), {});
+assert.deepStrictEqual(valuation.getLaunchPaymentCost({ cost: { energy: 1, credits: 0 } }), { energy: 1 });
+assert.equal(valuation.getMovePaymentCost({
+  requiredMovePoints: 1,
+  availableEnergy: 1,
+  resourceValues: { energy: 5, handSize: 3 },
+}), 5);
+assert.equal(valuation.getMovePaymentCost({
+  requiredMovePoints: 1,
+  availableEnergy: 1,
+  movePaymentCards: [{ label: "cheap move", movePayment: true, aiValue: 2 }],
+  resourceValues: { energy: 5, handSize: 3 },
+}), 2);
+assert.equal(valuation.getMovePaymentCost({
+  requiredMovePoints: 2,
+  availableEnergy: 1,
+  movePaymentCards: [{ label: "cheap move", movePayment: true, aiValue: 2 }],
+  resourceValues: { energy: 5, handSize: 3 },
+}), 7);
 assert.equal(evaluator.getIncomeValue({ credits: 1 }, { roundNumber: 1 }), 12);
 assert.equal(evaluator.getIncomeValue({ credits: 1 }, { roundNumber: 1, discardedCardValue: 3 }), 9);
 
@@ -36,6 +78,67 @@ assert.equal(graph.length, 1);
 assert.ok(graph[0].finalMarginal > 0);
 assert.ok(graph[0].net > 5);
 assert.equal(graph[0].breakdown.cost, 2);
+const cornerGraph = actionGraph.buildActionGraph([
+  { id: "cardCorner", kind: "quick", available: true, gain: 4, cost: 2 },
+], {}, "p1", {
+  markedFormulas: [{ formulaId: "a1", multiplier: 6 }],
+});
+assert.ok(cornerGraph[0].finalMarginal > 0);
+assert.ok(cornerGraph[0].net > 2);
+
+const hiddenTraceState = {
+  aliens: {
+    1: {
+      revealed: false,
+      traces: {
+        yellow: { firstPlaced: false, ownerPlayerColor: null, extraCount: 0 },
+        pink: { firstPlaced: true, ownerPlayerColor: "blue", extraCount: 0 },
+        blue: { firstPlaced: true, ownerPlayerColor: "green", extraCount: 0 },
+      },
+    },
+    2: {
+      revealed: false,
+      assignedAlienId: "jiuzhe",
+      traces: {
+        yellow: { firstPlaced: false, ownerPlayerColor: null, extraCount: 0 },
+        pink: { firstPlaced: true, ownerPlayerColor: "blue", extraCount: 0 },
+        blue: { firstPlaced: true, ownerPlayerColor: "green", extraCount: 0 },
+      },
+    },
+  },
+};
+const firstTraceValue = valuation.estimateAlienTraceValue({
+  alienGameState: hiddenTraceState,
+  alienSlotId: 1,
+  traceType: "yellow",
+});
+const repeatedTraceValue = valuation.estimateAlienTraceValue({
+  alienGameState: hiddenTraceState,
+  alienSlotId: 1,
+  traceType: "pink",
+  player: { color: "white" },
+});
+const jiuzheTraceValue = valuation.estimateAlienTraceValue({
+  alienGameState: hiddenTraceState,
+  alienSlotId: 2,
+  traceType: "yellow",
+});
+const competitiveTraceValue = valuation.estimateAlienTraceValue({
+  alienGameState: hiddenTraceState,
+  alienSlotId: 1,
+  traceType: "yellow",
+  activeOpponentCount: 3,
+});
+assert.ok(firstTraceValue >= 10);
+assert.ok(firstTraceValue > repeatedTraceValue);
+assert.ok(jiuzheTraceValue < firstTraceValue);
+assert.ok(competitiveTraceValue > firstTraceValue + 4);
+
+const movementGraph = actionGraph.buildActionGraph([
+  { id: "move", kind: "quick", available: true, score: 99, gain: 2, cost: 12 },
+  { id: "move", kind: "quick", available: true, score: 1, gain: 8, cost: 2 },
+], {}, "p1", { goals: [] });
+assert.equal(policy.chooseTurnAction(movementGraph)?.gain, 8);
 
 const planned = planner.chooseTurnPlan([
   { id: "move", kind: "quick", available: true, score: 3 },
@@ -60,7 +163,17 @@ const offer = {
 const decision = policy.chooseInitialSelection(offer, { roundNumber: 1 });
 assert.ok(decision.industry);
 assert.equal(decision.initialCards.length, 2);
+assert.ok(decision.openingPlan);
+assert.ok(Object.keys(decision.openingPlan.goals || {}).length > 0);
 
+assert.equal(policy.chooseTurnAction([
+  { id: "orbit", available: true, score: 20, actionGraph: { net: 2 } },
+  { id: "playCard", available: true, score: 1, actionGraph: { net: 9 } },
+])?.id, "playCard");
+assert.equal(policy.chooseTurnAction([
+  { id: "pass", available: true, score: 0, actionGraph: { net: -1 } },
+  { id: "cardCorner", available: true, score: -2, actionGraph: { net: 4 } },
+])?.id, "cardCorner");
 assert.equal(policy.chooseTurnAction([
   { id: "pass", available: true },
   { id: "launch", available: true },

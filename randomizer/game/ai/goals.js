@@ -27,10 +27,10 @@
 
   const DEFAULT_GOAL_VALUES = Object.freeze({
     FIRST_ROUND_SCORE_25: 6,
-    GRAB_TRACE_YELLOW: 8,
-    GRAB_TRACE_PINK: 7,
-    GRAB_TRACE_BLUE: 7,
-    FINAL_TILE_FOCUS: 8,
+    GRAB_TRACE_YELLOW: 11,
+    GRAB_TRACE_PINK: 10,
+    GRAB_TRACE_BLUE: 10,
+    FINAL_TILE_FOCUS: 10,
   });
 
   function numeric(value) {
@@ -77,10 +77,12 @@
     const roundNumber = numeric(state.turnState?.roundNumber || state.roundNumber || 1);
     const score = numeric(resources.score);
     const goals = [];
+    const openingGoals = player?.openingPlan?.goals || {};
+    const openingWeight = roundNumber <= 2 ? 1 : 0.35;
     if (roundNumber <= 1 && score < 25) {
       goals.push({
         id: GOAL_IDS.FIRST_ROUND_SCORE_25,
-        priority: 1,
+        priority: 1 + numeric(openingGoals.FIRST_ROUND_SCORE_25) * 0.12,
         value: Math.min(DEFAULT_GOAL_VALUES.FIRST_ROUND_SCORE_25, (25 - score) * 0.35),
         progress: score / 25,
       });
@@ -88,19 +90,19 @@
     const dataCount = numeric(resources.availableData || resources.data);
     goals.push({
       id: GOAL_IDS.GRAB_TRACE_BLUE,
-      priority: dataCount >= 3 ? 0.8 : 0.45,
+      priority: (dataCount >= 3 ? 0.8 : 0.45) + numeric(openingGoals.GRAB_TRACE_BLUE) * 0.12 * openingWeight,
       value: DEFAULT_GOAL_VALUES.GRAB_TRACE_BLUE,
       progress: dataCount / 6,
     });
     goals.push({
       id: GOAL_IDS.GRAB_TRACE_YELLOW,
-      priority: 0.65,
+      priority: 0.65 + numeric(openingGoals.GRAB_TRACE_YELLOW) * 0.1 * openingWeight,
       value: DEFAULT_GOAL_VALUES.GRAB_TRACE_YELLOW,
       progress: 0,
     });
     goals.push({
       id: GOAL_IDS.GRAB_TRACE_PINK,
-      priority: 0.55,
+      priority: 0.55 + numeric(openingGoals.GRAB_TRACE_PINK) * 0.1 * openingWeight,
       value: DEFAULT_GOAL_VALUES.GRAB_TRACE_PINK,
       progress: 0,
     });

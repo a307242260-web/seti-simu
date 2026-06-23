@@ -67,7 +67,10 @@
     const goalBonus = goals.scoreCandidateForGoals(candidate, activeGoals, state, playerId, options);
     const feasibility = clamp01(candidate.available === false ? 0 : candidate.feasibility ?? 1);
     const explicitScore = Number.isFinite(Number(candidate.score)) ? numeric(candidate.score) : null;
-    const baseNet = explicitScore == null ? gain - cost : explicitScore;
+    const hasExplicitGainCost = Number.isFinite(Number(candidate.gain))
+      || Number.isFinite(Number(candidate.cost))
+      || Boolean(candidate.costResources);
+    const baseNet = hasExplicitGainCost || explicitScore == null ? gain - cost : explicitScore;
     const net = (baseNet + finalMarginal + goalBonus) * feasibility;
     return {
       ...candidate,

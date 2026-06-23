@@ -51,7 +51,9 @@
   }
 
   function buildTurnPlans(candidates = [], state = {}, playerId = null, options = {}) {
-    const ranked = actionGraph.buildActionGraph(candidates, state, playerId, options).filter(isAvailable);
+    const ranked = actionGraph.buildActionGraph(candidates, state, playerId, options)
+      .filter(isAvailable)
+      .sort((left, right) => numeric(right.net ?? right.score) - numeric(left.net ?? left.score));
     const quick = ranked.filter((candidate) => candidate.kind === "quick");
     const main = ranked.filter((candidate) => candidate.kind === "main");
     const endings = ranked.filter((candidate) => candidate.kind === "pass" || candidate.kind === "end-turn");

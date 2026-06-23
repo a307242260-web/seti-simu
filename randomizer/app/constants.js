@@ -242,7 +242,7 @@
         Object.freeze({ id: "bottom-left", percentX: 34.15, percentY: 71.18 }),
         Object.freeze({ id: "right-middle", percentX: 76.68, percentY: 49.96 }),
       ]),
-      DEFAULT_ACTIVE_PLAYER_COUNT: 2,
+      DEFAULT_ACTIVE_PLAYER_COUNT: 4,
       DEFAULT_INITIAL_PLAYER_COLOR: players.DEFAULT_PLAYER_COLOR,
       DEFAULT_INITIAL_HAND_COUNT: 4,
       INDUSTRY_CARD_FILES: Object.freeze([
