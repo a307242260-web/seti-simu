@@ -94,7 +94,7 @@
 | passiveId | 公司 | 行为 | 钩子位置 |
 |-----------|------|------|----------|
 | `turing_blue_tech_publicity` | 图灵系统 | 获取蓝色科技 +1 宣传 | `app.js` 科技放置后 |
-| `sentinel_launch_scan_earth` | 哨兵探测网络 | 发射后免费扫描地球扇区 | `maybeApplyIndustryLaunchScan` |
+| `sentinel_launch_scan_earth` | 哨兵探测网络 | 发射后免费扫描地球扇区；若完成扇区则进入 `sector_finish_scan` 收尾 | `maybeApplyIndustryLaunchScan` / `startLaunchSectorFinishEffectFlow` |
 | `huanyu_rocket_limit` | 寰宇动力 | 火箭数量上限 +1 | `launch.js` / `rocket.js` |
 | `mission_play_type_publicity` | 任务中继站 | 打出 1/2 型卡 +1 宣传 | `applyIndustryPlayCardPassives` |
 | `mission_startup_final_mark` | 任务中继站 | 开局终局 c 板块 3 号位标记 | `applyIndustryStartupPassives` |

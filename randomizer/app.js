@@ -9005,17 +9005,25 @@
     return settlementResult;
   }
 
+  function getMarkedNebulaIdsFromEvents(events = []) {
+    const marked = new Set();
+    for (const event of events || []) {
+      if (event?.type === "signalMarked" && event.nebulaId) {
+        marked.add(String(event.nebulaId));
+      }
+    }
+    return marked;
+  }
+
   function resultHasSignalMarkedEvent(result) {
-    return (result?.events || []).some((event) => event?.type === "signalMarked");
+    return getMarkedNebulaIdsFromEvents(result?.events).size > 0;
   }
 
   function getFlowMarkedNebulaIds(flow) {
     const marked = new Set();
     for (const effect of flow?.effects || []) {
-      for (const event of effect.result?.events || []) {
-        if (event?.type === "signalMarked" && event.nebulaId) {
-          marked.add(String(event.nebulaId));
-        }
+      for (const nebulaId of getMarkedNebulaIdsFromEvents(effect.result?.events)) {
+        marked.add(nebulaId);
       }
     }
     return marked;
@@ -22431,10 +22439,52 @@
     });
     if (scanResult.ok) {
       result.commands = [...(result.commands || []), ...(scanResult.commands || [])];
+      result.events = [...(result.events || []), ...(scanResult.events || [])];
+      result.payload = {
+        ...(result.payload || {}),
+        industryLaunchScan: scanResult.payload || null,
+      };
       result.message = `${result.message}；${scanResult.message}`;
       renderSectors();
     }
     return result;
+  }
+
+  function startLaunchSectorFinishEffectFlow(result) {
+    if (!result?.ok || !resultHasSignalMarkedEvent(result)) return false;
+
+    const followups = buildReadySectorFinishEffects({
+      nebulaIds: getMarkedNebulaIdsFromEvents(result.events),
+    });
+    if (!followups.length) return false;
+
+    const currentPlayer = getCurrentPlayer();
+    startPendingActionSession("launch", "发射行动");
+    recordAbilityCommands(result);
+    endEffectHistoryStep({
+      result: {
+        ok: true,
+        undoable: result.undoable,
+        irreversible: result.irreversible || null,
+        message: result.message || "发射行动",
+      },
+    });
+
+    pendingActionEffectFlow = abilities.chain.startAbilityChain(
+      "launch-sector-finish",
+      "发射后扇区结算",
+      followups,
+    );
+    pendingActionEffectFlow.actionType = "launch";
+    pendingActionEffectFlow.playerId = currentPlayer?.id || null;
+    assignEffectFlowOwner(pendingActionEffectFlow, pendingActionEffectFlow.playerId);
+    pendingActionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
+    pendingActionEffectFlow.consumesMainAction = true;
+
+    els.appWrap?.classList.toggle("action-effect-flow-active", true);
+    rocketState.statusNote = "发射完成：请处理哨兵扫描触发的扇区结算";
+    activateNextActionEffect();
+    return true;
   }
 
   function applyIndustryPlayCardPassives(playedCard, typeCode) {
@@ -24965,13 +25015,18 @@
         maybeApplyIndustryLaunchScan(result);
         maybeConsumeAlienLabPanelForMainAction("launch", result);
         rocketState.statusNote = result.message;
+        startedRewardFlow = startLaunchSectorFinishEffectFlow(result);
       }
-      if (abilityId && result.undoable !== false) {
-        recordAtomicActionHistory(actionId, result.message || actionId, result);
+      if (startedRewardFlow) {
+        settleCardTasksAfterEffect({ events: result.events, render: false });
       } else {
-        markActionPending();
+        if (abilityId && result.undoable !== false) {
+          recordAtomicActionHistory(actionId, result.message || actionId, result);
+        } else {
+          markActionPending();
+        }
+        settleCardTasksAfterEffect({ events: result.events, render: false });
       }
-      settleCardTasksAfterEffect({ events: result.events, render: false });
     }
 
     renderPlayerStats();
