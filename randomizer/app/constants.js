@@ -42,6 +42,7 @@
         card: "../assets/symbol/effect/card.webp",
         publicity: "../assets/symbol/effect/publicity.webp",
         data: "../assets/symbol/effect/data.webp",
+        analyzeData: "../assets/symbol/effect/analyze_data.webp",
         income: "../assets/symbol/effect/income.webp",
         incomeCard: "../assets/symbol/effect/income_card.webp",
         additionalPublicScan: "../assets/tokens/additional_public_scan.webp",

@@ -417,7 +417,7 @@
     "set": "basic",
     "discard_action_code": 0,
     "scan_action_code": 1,
-    "income_code": 2
+    "income_code": 1
   },
   {
     "card_id": "b_43.webp",
@@ -427,7 +427,7 @@
     "set": "basic",
     "discard_action_code": 2,
     "scan_action_code": 0,
-    "income_code": 2
+    "income_code": 1
   },
   {
     "card_id": "b_44.webp",
@@ -447,7 +447,7 @@
     "set": "basic",
     "discard_action_code": 0,
     "scan_action_code": 1,
-    "income_code": 2
+    "income_code": 1
   },
   {
     "card_id": "b_46.webp",
@@ -467,7 +467,7 @@
     "set": "basic",
     "discard_action_code": 0,
     "scan_action_code": 0,
-    "income_code": 2
+    "income_code": 0
   },
   {
     "card_id": "b_48.webp",
@@ -477,7 +477,7 @@
     "set": "basic",
     "discard_action_code": 0,
     "scan_action_code": 0,
-    "income_code": 2
+    "income_code": 1
   },
   {
     "card_id": "b_49.webp",
@@ -487,7 +487,7 @@
     "set": "basic",
     "discard_action_code": 0,
     "scan_action_code": 0,
-    "income_code": 2
+    "income_code": 0
   },
   {
     "card_id": "b_50.webp",

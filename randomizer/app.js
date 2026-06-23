@@ -373,6 +373,9 @@
       rocketState.statusNote = "请完成初始选择：公司 2 选 1，初始牌 3 选 2。";
     }
 
+    ensurePublicCardsFilledRespectingDelayedRefills();
+    renderReservedCards();
+    renderPublicCards();
     renderDebugPlayerSwitch();
     renderPlayerStats();
     updateActionButtons();
@@ -20592,16 +20595,22 @@
   function buildPlayerResourceStatNodes(player, options = {}) {
     const resources = player.resources || players.DEFAULT_RESOURCES;
     const limits = players.RESOURCE_LIMITS;
+    const dataPlacementProgress = getPlayerDataPlacementProgress(player);
     const nodes = [
       createStatIcon("信用点", resources.credits, RESOURCE_ICON_SRC.credits),
       createStatIcon("能量", resources.energy, RESOURCE_ICON_SRC.energy),
       createStatIcon("宣传", `${resources.publicity}/${limits.publicity}`, RESOURCE_ICON_SRC.publicity),
-      createStatIcon("可用数据", `${resources.availableData}/${limits.availableData}`, RESOURCE_ICON_SRC.data),
+      createStatIcon("可用数据", resources.availableData, RESOURCE_ICON_SRC.data),
       createStatIcon("额外公共扫描", resources.additionalPublicScan || 0, RESOURCE_ICON_SRC.additionalPublicScan),
     ];
     if (shouldShowAomomoFossils(player)) {
       nodes.push(createStatIcon("奥陌陌化石", resources.aomomoFossils || 0, RESOURCE_ICON_SRC.aomomoFossil));
     }
+    nodes.push(createStatIcon(
+      "当前数据放置进展",
+      `${dataPlacementProgress.placed}/${dataPlacementProgress.total}`,
+      RESOURCE_ICON_SRC.analyzeData,
+    ));
 
     if (options.includeHandSize) {
       const handCount = Array.isArray(player.hand) ? player.hand.length : (resources.handSize || 0);
@@ -20615,6 +20624,17 @@
     const number = Number(value);
     if (!Number.isFinite(number)) return 0;
     return Math.max(0, Number.isInteger(number) ? number : Math.round(number * 100) / 100);
+  }
+
+  function getPlayerDataPlacementProgress(player) {
+    const placedCount = typeof data.listComputerPlacedTokens === "function"
+      ? data.listComputerPlacedTokens(player).length
+      : 0;
+    const total = Object.keys(data.COMPUTER_DATA_SLOTS || {}).length || 6;
+    return {
+      placed: Math.min(total, Math.max(0, Math.round(Number(placedCount) || 0))),
+      total,
+    };
   }
 
   function getPlayerIncomeBreakdown(player, incomeKey, normalizedIncome, normalizedCompanyBaseIncome) {
@@ -20634,9 +20654,9 @@
 
   function createIncomeStatIcon(label, player, incomeKey, iconSrc, normalizedIncome, normalizedCompanyBaseIncome) {
     const breakdown = getPlayerIncomeBreakdown(player, incomeKey, normalizedIncome, normalizedCompanyBaseIncome);
-    const value = `${breakdown.total}(${breakdown.base}+${breakdown.increase})`;
+    const value = breakdown.total;
     const item = createStatIcon(label, value, iconSrc);
-    const detail = `${label} ${breakdown.total}（公司默认 ${breakdown.base} + 收入增加 ${breakdown.increase}）`;
+    const detail = `${label} ${breakdown.total}`;
     item.setAttribute("aria-label", detail);
     item.title = detail;
     return item;

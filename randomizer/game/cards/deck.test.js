@@ -1,6 +1,7 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
+const { TextDecoder } = require("node:util");
 require("../card-catalog");
 const cards = require("./deck");
 
@@ -11,6 +12,18 @@ const INTEGER_CARD_MODEL_FIELDS = new Set([
   "scan_action_code",
   "income_code",
 ]);
+
+function decodeCsvFile(filePath) {
+  const data = fs.readFileSync(filePath);
+  for (const encoding of ["utf-8", "gb18030"]) {
+    try {
+      return new TextDecoder(encoding, { fatal: true }).decode(data);
+    } catch (_error) {
+      // Try the next known source encoding.
+    }
+  }
+  throw new Error(`Cannot decode CSV: ${filePath}`);
+}
 
 function parseCsvRows(text) {
   const rows = [];
@@ -62,10 +75,8 @@ function parseCsvRows(text) {
     })));
 }
 
-const csvCatalog = parseCsvRows(fs.readFileSync(
-  path.resolve(__dirname, "../../../assets/cards/card_model.csv"),
-  "utf8",
-));
+const csvModelPath = path.resolve(__dirname, "../../../assets/cards/card_model.csv");
+const csvCatalog = parseCsvRows(decodeCsvFile(csvModelPath));
 assert.deepEqual(cards.CARD_CATALOG, csvCatalog);
 
 const cardState = cards.createCardState();

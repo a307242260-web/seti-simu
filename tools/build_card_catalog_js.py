@@ -1,4 +1,5 @@
 import csv
+import io
 import json
 from pathlib import Path
 
@@ -13,17 +14,34 @@ INTEGER_FIELDS = {
     "scan_action_code",
     "income_code",
 }
+CSV_ENCODINGS = ("utf-8-sig", "gb18030")
+
+
+def read_csv_text() -> str:
+    data = CSV_MODEL.read_bytes()
+    for encoding in CSV_ENCODINGS:
+        try:
+            return data.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    raise UnicodeDecodeError(
+        "csv",
+        data,
+        0,
+        min(len(data), 1),
+        f"expected one of: {', '.join(CSV_ENCODINGS)}",
+    )
 
 
 def read_csv_model() -> list[dict[str, object]]:
-    with CSV_MODEL.open("r", encoding="utf-8-sig", newline="") as input_file:
-        rows = []
-        for row in csv.DictReader(input_file):
-            normalized = {}
-            for key, value in row.items():
-                normalized[key] = int(value) if key in INTEGER_FIELDS else value
-            rows.append(normalized)
-        return rows
+    rows = []
+    input_file = io.StringIO(read_csv_text(), newline="")
+    for row in csv.DictReader(input_file):
+        normalized = {}
+        for key, value in row.items():
+            normalized[key] = int(value) if key in INTEGER_FIELDS else value
+        rows.append(normalized)
+    return rows
 
 
 def write_json_model(catalog: list[dict[str, object]]) -> None:
