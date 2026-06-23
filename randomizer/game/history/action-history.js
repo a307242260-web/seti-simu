@@ -64,6 +64,7 @@
         undoable: meta.undoable !== false && !irreversibleReason,
         irreversibleCode: meta.irreversibleCode || meta.irreversible?.code || null,
         irreversibleReason,
+        logBefore: meta.logBefore || null,
         commands: [],
       };
       return session.currentStep;
