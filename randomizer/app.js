@@ -3332,6 +3332,9 @@
     }
     pendingDiscardAction = null;
     cards.setDiscardSelectionActive(cardState, false, 0);
+    if (pending?.type === "industry_helios_income") {
+      return rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
+    }
     if (pending?.type === "place_data_income") {
       completeQuickActionStep();
     }
@@ -4363,8 +4366,6 @@
         ? "卡牌触发：精选一张公共牌，或点击盲抽"
       : pendingAction?.type === "card_pick_corner_reward"
         ? "精选：选择一张公共牌，并获得其左上角奖励"
-      : pendingAction?.type === "industry_stratus_corner"
-        ? `层云核心：请点击公共牌结算弃牌角标（剩余 ${pendingAction.remaining ?? 0} 张）`
       : pendingAction?.type === "industry_mission_pick"
         ? "任务中继站：精选 1 张公共牌并获得收入资源"
       : pendingAction?.type === "industry_fenwick_pick"
@@ -4559,11 +4560,7 @@
         completeCurrentActionEffect("skipped");
       }
     } else if (pending?.type?.startsWith?.("industry_")) {
-      if (pending.refundCost && pending.player) {
-        players.gainResources(pending.player, pending.refundCost);
-      }
-      cancelIndustryAbilityFlow({ silent: true });
-      rocketState.statusNote = "已取消公司 1x 行动";
+      return rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
     } else {
       rocketState.statusNote = "";
     }
@@ -4987,10 +4984,6 @@
     if (!isCardSelectionActive()) return;
     if (pendingCardSelectionAction?.type === "public_scan") {
       handlePublicScanCardClick(slotIndex);
-      return;
-    }
-    if (pendingCardSelectionAction?.type === "industry_stratus_corner") {
-      handleIndustryStratusPublicClick(slotIndex);
       return;
     }
     if (pendingCardSelectionAction?.type === "industry_deepspace_public") {
@@ -5948,11 +5941,15 @@
     return scanResult;
   }
 
-  function closeScanTargetPicker() {
+  function closeScanTargetPicker(options = {}) {
     if (!els.scanTargetOverlay) return;
     if (pendingPublicScanQueue) {
       rocketState.statusNote = "公共牌区扫描：请完成全部星云选择";
       renderStateReadout();
+      return;
+    }
+    if (!options.preserveIndustryAction && pendingScanTargetAction?.type === "industry_remove_tech") {
+      rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
       return;
     }
     pendingCardTriggerAction = null;
@@ -6109,7 +6106,7 @@
 
   function confirmScanTarget(nebulaId, sectorX) {
     const pending = pendingScanTargetAction;
-    closeScanTargetPicker();
+    closeScanTargetPicker({ preserveIndustryAction: true });
 
     if (pending?.type === "industry_remove_tech") {
       return confirmIndustryHeliosRemoveTech(nebulaId);
@@ -8571,6 +8568,34 @@
   }
 
   function cancelActivePendingSubFlows() {
+    if (pendingScanTargetAction?.type === "industry_remove_tech") {
+      rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
+      return true;
+    }
+    if (pendingCardCornerFreeMove?.finishIndustryFlowAfterMove) {
+      const pending = pendingCardCornerFreeMove;
+      pendingCardCornerFreeMove = null;
+      rocketState.activeRocketId = null;
+      clearMoveRocketHighlight();
+      deactivateMoveMode();
+      const message = `${pending.afterMoveStatus || "公司 1x 行动"}；已取消免费移动`;
+      if (pendingIndustryAbility) {
+        finishIndustryAbilityFlow(message);
+      }
+      if (pending.irreversibleIndustryFlow) {
+        commitIrreversibleIndustryQuickAction(
+          pending.industryLogLabel || pending.action?.label || "公司 1x 行动",
+          message,
+        );
+      }
+      rocketState.statusNote = message;
+      renderPlayerStats();
+      renderPublicCards();
+      renderPlayerHand();
+      updateActionButtons();
+      renderStateReadout();
+      return true;
+    }
     if (hasActiveEffectSubFlow()) {
       cancelActiveEffectSubFlows();
       return true;
@@ -8585,8 +8610,7 @@
       return true;
     }
     if (pendingIndustryAbility || industryFreeMoveState || isIndustryHandSelectionActive()) {
-      cancelIndustryAbilityFlow();
-      rocketState.statusNote = "已取消公司 1x 行动";
+      rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
       return true;
     }
     return false;
@@ -13257,6 +13281,8 @@
         return executePassFirstRotateEffect(effect);
       case "pass_reserve_pick":
         return beginPassReserveSelection(effect);
+      case "industry_stratus_corner":
+        return executeIndustryStratusCornerEffect(effect);
       case "industry_sentinel_corner":
         return executeIndustrySentinelCornerEffect(effect);
       case "industry_helios_passive_reward":
@@ -21601,17 +21627,80 @@
     return Boolean(industryFreeMoveState);
   }
 
-  function recordIndustryActionRestoreCommand(player, beforePlayer, companyLabel) {
-    if (!player || !beforePlayer) return;
-    recordQuickHistoryCommand({
+  function createIndustryActionRestoreCommand(player, beforePlayer, companyLabel, options = {}) {
+    if (!player || !beforePlayer) return null;
+    return {
       label: `撤销公司 1x：${companyLabel || "公司牌"}`,
       describe: `恢复${companyLabel || "公司牌"} 1x 行动前状态`,
       undo() {
         cancelIndustryAbilityFlow({ silent: true });
+        if (options.clearEffectFlow) {
+          clearActionEffectFlow();
+        }
         restoreObjectSnapshot(player, beforePlayer);
         renderInitialSelectionArea();
       },
-    });
+    };
+  }
+
+  function recordIndustryActionRestoreCommand(player, beforePlayer, companyLabel) {
+    const command = createIndustryActionRestoreCommand(player, beforePlayer, companyLabel);
+    if (command) recordQuickHistoryCommand(command);
+  }
+
+  function clearIndustryRollbackUi() {
+    if (pendingScanTargetAction?.type === "industry_remove_tech") {
+      pendingScanTargetAction = null;
+      if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+      if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+    }
+    if (pendingDiscardAction?.type === "industry_helios_income") {
+      pendingDiscardAction = null;
+      cards.setDiscardSelectionActive(cardState, false, 0);
+      syncDiscardSelectionChrome();
+    }
+    if (pendingCardSelectionAction?.type?.startsWith?.("industry_")) {
+      pendingCardSelectionAction = null;
+      cards.setSelectionActive(cardState, false);
+      syncCardSelectionChrome();
+    }
+    if (techGameState?.ui?.industryBorrowMode) {
+      techGameState.ui.industryBorrowMode = false;
+      tech.setTechSelectionActive(techGameState, false);
+      syncTechSelectionChrome();
+    }
+    if (moveHighlightRocketId != null || industryFreeMoveState) {
+      deactivateMoveMode();
+    }
+    pendingIndustryAbility = null;
+    industryFreeMoveState = null;
+    syncIndustryHandSelectionChrome();
+    syncInteractionFocusChrome();
+  }
+
+  function rollbackPendingIndustryQuickAction(message = "已取消公司 1x 行动") {
+    const result = quickActionHistory.hasSession()
+      ? quickActionHistory.undoLastStep()
+      : { ok: false, message: "没有可撤销的公司 1x 行动" };
+    if (result.ok) {
+      effectStepActive = false;
+      forgetLastHistoryStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
+      removeLastActionLogStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
+    }
+    clearIndustryRollbackUi();
+    if (result.ok && !quickActionHistory.hasUndoableStep()) {
+      quickActionHistory.commitSession();
+      clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
+    }
+    rocketState.statusNote = result.ok ? message : (result.message || message);
+    renderPlayerStats();
+    renderPlayerHand();
+    renderPublicCards();
+    renderInitialSelectionArea();
+    renderRockets();
+    updateActionButtons();
+    renderStateReadout();
+    return result;
   }
 
   function cancelIndustryAbilityFlow(options = {}) {
@@ -21664,7 +21753,7 @@
     }
   }
 
-  function startIndustryAbilityFlow(flow) {
+  function startIndustryAbilityFlow(flow, options = {}) {
     if (!flow?.ok) {
       rocketState.statusNote = flow?.message || "公司 1x 行动无法启动";
       renderStateReadout();
@@ -21674,15 +21763,7 @@
     pendingIndustryAbility = { ...flow };
     switch (flow.flowType) {
       case "stratus_public_corners":
-        beginCardSelection({
-          type: "industry_stratus_corner",
-          player: getCurrentPlayer(),
-          allowBlindDraw: false,
-          remaining: flow.remaining ?? industry.STRATUS_PUBLIC_CARD_LIMIT,
-        });
-        rocketState.statusNote = flow.message;
-        renderStateReadout();
-        return true;
+        return startIndustryStratusEffectFlow(flow, options);
       case "turing_borrow_tech":
         return beginIndustryTuringBorrow(flow);
       case "sentinel_arm_play_corner": {
@@ -21738,6 +21819,42 @@
         renderStateReadout();
         return false;
     }
+  }
+
+  function startIndustryStratusEffectFlow(flow, options = {}) {
+    const nodes = industry?.buildStratusPublicCornerEffectNodes?.(cards, cardState.publicCards) || [];
+    pendingIndustryAbility = null;
+    pendingCardSelectionAction = null;
+    cards.setSelectionActive(cardState, false);
+    syncCardSelectionChrome();
+
+    if (!nodes.length) {
+      rocketState.statusNote = "层云核心：公共牌区没有可结算的卡牌";
+      renderStateReadout();
+      return false;
+    }
+
+    const preHistoryCommands = [];
+    if (options.markerRestoreCommand) preHistoryCommands.push(options.markerRestoreCommand);
+    const started = startCardEffectFlow(
+      "industry-stratus-public-corners",
+      flow.label || "层云核心",
+      nodes,
+      {
+        actionType: "industryStratus",
+        historySource: HISTORY_SOURCE_QUICK,
+        consumesMainAction: false,
+        preHistoryCommands,
+      },
+    );
+    if (started) {
+      rocketState.statusNote = flow.message || "层云核心：请按效果栏依次结算公共牌区 3 张牌的弃牌角标";
+      renderPublicCards();
+      renderActionEffectBar();
+      updateActionButtons();
+      renderStateReadout();
+    }
+    return started;
   }
 
   function startIndustryPublicityPick(flow, pendingType) {
@@ -22091,79 +22208,6 @@
     };
   }
 
-  function handleIndustryStratusPublicClick(slotIndex) {
-    const pending = pendingCardSelectionAction;
-    const player = getCurrentPlayer();
-    const card = cardState.publicCards[slotIndex];
-    if (!card) {
-      rocketState.statusNote = "无效的公共牌";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const reward = industry.getCornerReward(cards, card);
-    if (!reward) {
-      rocketState.statusNote = `${cards.getCardLabel(card)} 没有弃牌角标奖励`;
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const beforePlayer = structuredClone(player);
-    const applied = industry.applyCornerReward(players, data, player, reward);
-    if (!applied.ok) {
-      rocketState.statusNote = applied.message;
-      renderStateReadout();
-      return applied;
-    }
-
-    recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
-      player,
-      beforePlayer,
-      "恢复层云核心角标结算前状态",
-    ));
-
-    pending.remaining = Math.max(0, (pending.remaining ?? 1) - 1);
-    rocketState.statusNote = `${applied.message}（剩余 ${pending.remaining} 张）`;
-
-    let waitingForFreeMove = false;
-    if (applied.pendingFreeMove) {
-      const moveCheck = canStartCardCornerFreeMove();
-      if (moveCheck.ok) {
-        waitingForFreeMove = true;
-        pendingCardCornerFreeMove = {
-          action: {
-            label: "层云核心：免费移动",
-            movementPoints: applied.pendingFreeMove.movementPoints || 1,
-          },
-          discardedCardLabel: cards.getCardLabel(card),
-          finishIndustryFlowAfterMove: pending.remaining <= 0,
-          industryQuickStepActive: true,
-          afterMoveStatus: rocketState.statusNote,
-        };
-        rocketState.statusNote = moveCheck.rocketsForPlayer.length > 1
-          ? "层云核心：请点击要免费移动的飞船"
-          : "层云核心：使用方向键免费移动飞船";
-        if (moveCheck.rocketsForPlayer.length === 1) {
-          activateMoveMode(moveCheck.rocketsForPlayer[0].id);
-        } else {
-          selectDefaultRocketForCurrentPlayer();
-        }
-      }
-    }
-
-    if (pending.remaining <= 0 && !waitingForFreeMove) {
-      cards.setSelectionActive(cardState, false);
-      pendingCardSelectionAction = null;
-      syncCardSelectionChrome();
-      finishIndustryAbilityFlow(rocketState.statusNote);
-    } else {
-      renderPlayerStats();
-      renderPublicCards();
-      renderStateReadout();
-    }
-    return applied;
-  }
-
   function handleIndustryDeepspaceHandClick(handIndex) {
     if (!isIndustryHandSelectionActive()) return;
     const player = getCurrentPlayer();
@@ -22429,6 +22473,87 @@
       nodes,
       { actionType: "playCard", industryPlayedCard: playedCard },
     );
+  }
+
+  function createIndustryCardCornerEvent(player, reward, source) {
+    return {
+      type: "cardCorner",
+      cornerKind: reward?.kind === "move"
+        ? "move"
+        : getCardCornerEventKind(reward || null, null),
+      cornerCode: reward?.code ?? null,
+      resourceReward: reward?.kind === "resource" ? reward : null,
+      moveReward: reward?.kind === "move" ? reward : null,
+      playerId: player?.id || null,
+      playerColor: player?.color || null,
+      source,
+    };
+  }
+
+  function executeIndustryStratusCornerEffect(effect) {
+    const currentPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+    const card = effect.options?.card;
+    if (!currentPlayer || !card) {
+      rocketState.statusNote = "层云核心：无效公共牌";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const reward = industry.getCornerReward(cards, card);
+    beginEffectHistoryStep(effect.label);
+    if (!reward) {
+      effect.result = {
+        ok: true,
+        undoable: true,
+        message: `${effect.label}：没有弃牌角标奖励`,
+      };
+      rocketState.statusNote = effect.result.message;
+      completeCurrentActionEffect("skipped");
+      renderStateReadout();
+      return effect.result;
+    }
+
+    const beforePlayer = structuredClone(currentPlayer);
+    const applied = industry.applyCornerReward(players, data, currentPlayer, reward);
+    if (!applied.ok) {
+      endEffectHistoryStep();
+      rocketState.statusNote = applied.message;
+      renderStateReadout();
+      return applied;
+    }
+
+    if (reward.kind === "move") {
+      insertActionEffectsAfterCurrent([{
+        id: `${effect.id || "stratus-corner"}-move`,
+        type: cardEffects.EFFECT_TYPES.CARD_MOVE,
+        label: `${cards.getCardLabel(card)}：${reward.label}`,
+        icon: "movement",
+        options: {
+          movementPoints: reward.movementPoints || 1,
+          historyLabel: reward.label,
+        },
+      }]);
+    }
+
+    recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+      currentPlayer,
+      beforePlayer,
+      "恢复层云核心角标结算前玩家状态",
+    ));
+
+    const rewardText = reward.kind === "resource"
+      ? formatCardCornerRewardMessage(reward, applied.results || [])
+      : [formatPlanetRewardGain(reward.gain || {}), `${reward.movementPoints || 1}移动`]
+        .filter(Boolean)
+        .join("、");
+
+    return finishAutomaticRewardEffect(effect, {
+      ok: true,
+      undoable: true,
+      message: `${effect.label}：${rewardText}`,
+      events: [createIndustryCardCornerEvent(currentPlayer, reward, "industry_stratus")],
+      payload: { card, reward, dataResults: applied.results || [] },
+    });
   }
 
   function executeIndustrySentinelCornerEffect(effect) {
@@ -22808,6 +22933,34 @@
       } else {
         rocketState.statusNote = "该公司 1x 行动暂未处理";
       }
+      renderStateReadout();
+      return;
+    }
+
+    if (abilityFlow.flowType === "stratus_public_corners") {
+      const result = industry.markIndustryAction(player, turnState.roundNumber, {
+        turnNumber: turnState.turnNumber,
+      });
+      if (!result.ok) {
+        restoreObjectSnapshot(player, beforeIndustryPlayer);
+        rocketState.statusNote = result.message;
+        renderStateReadout();
+        return;
+      }
+
+      const markerRestoreCommand = createIndustryActionRestoreCommand(
+        player,
+        beforeIndustryPlayer,
+        companyLabel,
+        { clearEffectFlow: true },
+      );
+      const started = startIndustryAbilityFlow(abilityFlow, { markerRestoreCommand });
+      if (!started) {
+        markerRestoreCommand?.undo();
+      } else {
+        rocketState.statusNote = abilityFlow.message || rocketState.statusNote;
+      }
+      renderInitialSelectionArea();
       renderStateReadout();
       return;
     }
@@ -23983,11 +24136,35 @@
 
     const latestUndoSource = getLatestUndoSource();
 
+    if (
+      !latestUndoSource
+      && pendingActionEffectFlow?.historySource === HISTORY_SOURCE_QUICK
+      && !pendingActionEffectFlow.preHistoryCommandsApplied
+      && pendingActionEffectFlow.preHistoryCommands?.length
+    ) {
+      const flowLabel = pendingActionEffectFlow.label || "快速行动效果";
+      for (let index = pendingActionEffectFlow.preHistoryCommands.length - 1; index >= 0; index -= 1) {
+        pendingActionEffectFlow.preHistoryCommands[index]?.undo?.();
+      }
+      effectStepActive = false;
+      if (quickActionHistory.hasSession() && !quickActionHistory.hasUndoableStep()) {
+        quickActionHistory.commitSession();
+        clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
+      }
+      refreshAfterHistoryChange(`已撤销：${flowLabel}`);
+      return;
+    }
+
     if (latestUndoSource === HISTORY_SOURCE_QUICK) {
+      const undoingQuickEffectFlow = pendingActionEffectFlow?.historySource === HISTORY_SOURCE_QUICK;
       const result = quickActionHistory.undoLastStep();
       if (result.ok) {
+        effectStepActive = false;
         forgetLastHistoryStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
         removeLastActionLogStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
+        if (undoingQuickEffectFlow && pendingActionEffectFlow) {
+          revertEffectFlowAfterUndo(result.step);
+        }
       }
       if (result.ok && !quickActionHistory.hasUndoableStep()) {
         quickActionHistory.commitSession();

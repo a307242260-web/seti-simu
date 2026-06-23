@@ -50,7 +50,7 @@
 - 初始选择结束后，任务/保留牌区最左侧固定显示当前玩家已选公司牌左半幅（可见宽约普通保留牌 1.38 倍，即半幅基准 1.15 倍再放大 20%），初始牌不再显示。
 - 除异星实验室外，公司牌左下角「1x」圆标位置由 `randomizer/game/industry/placement.js` 的 `INDUSTRY_ACTION_MARKER_SLOTS` 定义（百分比坐标）；未放置标记时公司牌外框蓝色高亮，放置后取消高亮。玩家可在该区域点击放置 `normal_token` 标记，每轮（`turnState.roundNumber` 轮号）每玩家仅可触发一次，状态写入 `player.industryRoundMarkRound`；`player.industryRoundMarkTurn` 只记录标记发生的回合号，不参与刷新判定。放置作为快速行动记录，可通过撤销按钮撤回。放置成功后立即启动该公司对应的 1x 主动能力流程。
 - 公司 1x 主动/被动能力由 `randomizer/game/industry/` 管理（`catalog.js` 定义、`abilities.js` 构建流程、`passives.js` 钩子、`index.js` 聚合为 `SetiIndustry`）；设计与建模详见 `assets/industry/industry-abilities.md`。
-  - 层云核心：点击公共牌逐张结算弃牌角标（不弃牌、不移除公共牌），最多 3 张；每次点击与标记均可撤销。
+  - 层云核心：放置 1x 标记后，根据公共牌区 3 张牌的弃牌角标生成快速行动效果序列（不弃牌、不移除公共牌）；玩家按效果栏依次结算，撤销按效果步骤回退，撤销第一个效果会同时回退本次公司标记。
   - 图灵系统：借用一项供应区橙色或紫色科技当前回合效果（不获得板块/bonus；包含紫色科技对扫描行动队列的增强），并在公司牌下方只复制显示该科技图标，回合结束移除；被动：获取蓝色科技 +1 宣传。
   - 哨兵探测网络：1x 标记后武装本轮；打牌时（标记可在打牌前或后）在打牌效果队列末尾追加 `industry_sentinel_corner` 节点，点击后结算打出牌左上角弃牌角标（非外星人，可撤销）；若打牌后才标记且本轮已打牌，会补开哨兵效果队列。被动：发射后扫描地球扇区。
   - 寰宇动力：至多 2 枚火箭各免费移动 1 次；被动：火箭上限 +1。
@@ -62,7 +62,7 @@
 - 未来跨度研究所：公司牌上额外显示 `wlkd_token` 专属标记。点击后作为快速行动选择一张费用为信用点的手牌（半人马等能量费用牌不可选），移到公司牌下方并设定目标分（当前分 + 15/25/35/45，对应费用 1/2/3/4）；达成目标分后目标牌高亮为可打出但不显示专属标记，可用标准“打牌”主行动免费打出，所有效果完成后专属标记回到公司且当轮可再次作为快速行动使用。底部普通 1x 只能在已有未达成目标牌时使用：精选 1 张公共牌并把目标分提高 3，确认补牌后不可撤销。
 - 异星实验室：公司牌上显示蓝/黄/粉三块专属板块。正面时分别把标准发射改为 1 信用点、标准扫描改为 2 能量、标准研究科技改为 4 宣传；正面板块高亮且可点击，点击等同触发对应主要行动。执行对应标准主行动后该板块翻背。获得同色外星痕迹时对应板块翻回正面。该公司没有普通 1x 圆标。
 - 玩家运行时字段：`industryBorrowedTechTileId` / `industryBorrowedTechRound` / `industryBorrowedTechTurn`（图灵借用，Round/Turn 共同判定当前回合有效）、`industrySentinelArmedRound` / `industrySentinelArmedTurn`（哨兵武装）、`industryHuanyuFreeMoveRound` / `industryHuanyuFreeMoveTurn` / `industryHuanyuFreeMovesLeft` / `industryHuanyuMovedRocketIds`（寰宇免费移动）、`industryPlayedCardThisRound` / `industryLastPlayedCardThisRound`（本轮已打牌快照）、`industryAlienLabPanels`（异星实验室三色板块）、`industryFutureSpan`（未来跨度扣下的牌、目标分与打出状态）。回合结束时会清空当前玩家的图灵借用；新轮开始时（所有玩家都 PASS 后）`resetAllRoundIndustryRuntimeState` 清空借用/武装等轮内状态，不重置 `industryRoundMarkRound` / `industryRoundMarkTurn`（靠轮号比较判定可否再标记），也不清空未来跨度目标牌或异星实验室板块。
-- 公司 1x 标记与能力撤销：除涉及精选并拿走/刷新公共牌的能力（任务中继站、芬威克、未来跨度普通 1x、宇宙战略）外，普通 1x 从放置标记到确定性能力结算写入同一个 `quickActionHistory` step；撤销会恢复 1x 前玩家快照、清空轮内公司运行态并取消进行中的公司能力流，避免只撤销奖励但标记仍占用。层云核心只结算弃牌角标不弃牌、不移除公共牌。任务中继站、芬威克、未来跨度普通 1x、宇宙战略确认拿牌后会提交不可撤销快速行动屏障，之前的快速行动也不再可撤销。未来跨度专属标记是独立快速行动，仍单独记录。
+- 公司 1x 标记与能力撤销：除涉及精选并拿走/刷新公共牌的能力（任务中继站、芬威克、未来跨度普通 1x、宇宙战略）外，普通 1x 会写入 `quickActionHistory`；撤销会恢复 1x 前玩家快照、清空轮内公司运行态并取消进行中的公司能力流，避免只撤销奖励但标记仍占用。层云核心只结算弃牌角标不弃牌、不移除公共牌，并按效果步骤撤销；第一个效果步骤同时回退放置公司标记的快速行动。进行中的公司选择/借用/移动流程取消时会回滚当前公司 quick step；但任务中继站、芬威克、未来跨度普通 1x、宇宙战略确认拿牌后会提交不可撤销快速行动屏障，之前的快速行动也不再可撤销。芬威克若精选到移动角标，取消后续免费移动只放弃移动并提交该不可撤销快速行动。未来跨度专属标记是独立快速行动，仍单独记录。
 - 交互聚焦：`app.js` 的 `syncInteractionFocusChrome()` 根据进行中的流程在 `#app-wrap` 上设置 `data-interaction-focus`（`public-cards` / `hand-cards` / `tech-panel` / `board-rockets`）；`style.css` 会暗化非目标区域。`hand-cards` 聚焦时不能暗化或禁用 `.player-command` 父容器，需只暗化手牌区的兄弟控件，保证收入弃牌、打牌选牌、移动弃牌支付、手牌扫描等流程中手牌区保持高亮可点。公司牌 1x 可放置时仅用牌面蓝色高亮（`is-action-marker-pending`），不自动进入全屏聚焦以免遮挡行动按钮。
 - 选择公司后，保留牌区右侧分两行显示：第一行放 1 / 2 型任务牌，并按手牌区方式在牌多时部分覆盖；第二行放 3 型终局计分牌以及声明 `displayRow: "bottom"` 的特殊保留牌（当前为 b139 冥王星）。
 

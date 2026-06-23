@@ -45,7 +45,7 @@
 | `industryAlienLabPanels` / `industryAlienLabInitialized` | 异星实验室三色板块正反面；蓝=发射、黄=扫描、粉=科技 |
 | `industryFutureSpan` / `industryFutureSpanInitialized` | 未来跨度专属标记状态：扣下的牌、目标分、是否正在打出 |
 
-普通 1x 的确定性流程从放置标记到能力结算记录为同一个 `quickActionHistory` step；撤销时恢复 1x 前玩家快照，并调用 `cancelIndustryAbilityFlow` 清掉进行中的选择、移动或借用状态。涉及公共牌精选并补牌/盲抽的新信息流程仍在确认后写入不可撤销屏障。
+普通 1x 的确定性流程从放置标记到能力结算记录到 `quickActionHistory`；撤销时恢复 1x 前玩家快照，并调用 `cancelIndustryAbilityFlow` 清掉进行中的选择、移动或借用状态。层云核心使用快速行动来源的效果队列，放置标记的恢复命令记录在第一个效果步骤中；撤销后续效果只回退对应奖励，撤销第一个效果会同时回退本次公司标记并关闭层云核心效果流。进行中的公司选择/移动/借用流程若被取消，会回滚当前公司 quick step，避免 token 留在牌上但能力未结算。涉及公共牌精选并补牌/盲抽的新信息流程仍在确认后写入不可撤销屏障；芬威克若精选到移动角标，取消后续免费移动只放弃移动并提交该不可撤销快速行动。
 
 ## 主动能力（1x）建模
 
@@ -53,13 +53,13 @@
 
 | 公司 | activeAbilityId | flowType | 规则摘要 |
 |------|-----------------|----------|----------|
-| 层云核心 | `stratus_public_corners` | `stratus_public_corners` | 点击公共牌最多 3 张，逐张结算**左上角弃牌角标**（不弃牌、不移除公共牌） |
+| 层云核心 | `stratus_public_corners` | `stratus_public_corners` | 根据公共牌区 3 张牌生成效果队列，逐个结算**左上角弃牌角标**（不弃牌、不移除公共牌） |
 | 图灵系统 | `turing_borrow_tech` | `turing_borrow_tech` | 选择供应区一项橙色或紫色科技，**当前回合**借用其效果（不获得板块/bonus）；公司牌下方只复制显示该科技图标 |
 | 哨兵探测网络 | `sentinel_arm_play_corner` | `sentinel_arm_play_corner` | 武装本轮；**打牌效果队列末尾**追加 `industry_sentinel_corner` 结算打出牌弃牌角标（非外星人） |
 | 寰宇动力 | `huanyu_free_moves` | `huanyu_free_moves` | 至多 2 枚火箭各免费移动 1 次 |
 | 赫利昂联合体 | `helios_remove_tech_income` | `helios_remove_tech` → 弃牌收入 | 移除一项非蓝科技 + 1 次收入（弃 1 张手牌按收入角标） |
 | 任务中继站 | `mission_publicity_pick_income` | `mission_publicity_pick` | 消耗 2 宣传精选 1 张牌，获得其**收入角标**资源（不支持盲抽收入） |
-| 芬威克研究中心 | `fenwick_publicity_pick_corner` | `fenwick_publicity_pick` | 消耗 2 宣传精选 1 张牌，获得**弃牌角标**（不弃牌） |
+| 芬威克研究中心 | `fenwick_publicity_pick_corner` | `fenwick_publicity_pick` | 消耗 2 宣传精选 1 张牌，获得**弃牌角标**（不弃牌）；若角标是移动，移动选择可取消但精选补牌仍不可撤销 |
 | 深空探测 | `deepspace_swap_cards` | `deepspace_swap` | 选手牌 1 张再选公共牌 1 张交换 |
 | 宇宙战略集团 | `strategy_pick_card` | `strategy_pick` | 精选 1 张公共牌（无额外资源） |
 | 未来跨度研究所 | `future_span_pick_advance` | `future_span_pick` | 若专属标记已有未达成目标牌：精选 1 张公共牌，并将目标分提高 3 |
@@ -77,6 +77,7 @@
 - `getCornerReward(cards, card)`：读左上角弃牌角标 → `{ kind: "resource" \| "move", gain, dataCount?, movementPoints? }`
 - `applyCornerReward(players, data, player, reward)`：结算资源/数据；移动类返回 `pendingFreeMove`
 - `applyIncomeResourcesFromCard`：任务中继站精选后的收入角标（拒绝 `handSize` 盲抽收入）
+- `buildStratusPublicCornerEffectNodes`：生成层云核心快速行动队列节点 `type: "industry_stratus_corner"`
 - `buildSentinelPlayCornerEffectNodes`：生成打牌队列节点 `type: "industry_sentinel_corner"`
 
 ### 哨兵特殊流程
@@ -108,7 +109,7 @@
 
 | flowType | UI 行为 |
 |----------|---------|
-| `stratus_public_corners` | `beginCardSelection(industry_stratus_corner)`，点击公共牌结算 |
+| `stratus_public_corners` | 根据当前 3 张公共牌生成 quick-source effect flow，按效果栏结算 |
 | `turing_borrow_tech` | 科技板借用模式 `industryBorrowMode` |
 | `sentinel_arm_play_corner` | 即时武装；可能补注入队 |
 | `huanyu_free_moves` | `industryFreeMoveState`，棋盘免费移动 |
@@ -124,8 +125,8 @@
 
 | 类型 | 可撤销 | 说明 |
 |------|--------|------|
-| 普通 1x 确定性流程 | 是 | 标记、层云角标、图灵借用、寰宇移动、赫利昂、深空交换等并入同一个 quick step，撤销回到 1x 前 |
-| 层云核心 | 是 | 不弃牌；角标奖励和可能的免费移动随本次公司 1x 一起撤销 |
+| 普通 1x 确定性流程 | 是 | 标记、图灵借用、寰宇移动、赫利昂、深空交换等并入 quick history，撤销回到 1x 前 |
+| 层云核心 | 是 | 不弃牌；角标奖励按效果步骤撤销，第一个效果步骤同时包含公司标记回退 |
 | 图灵借用 | 是 | 恢复借用前玩家快照，撤销后 1x 标记也回到可用 |
 | 寰宇移动 | 是 | 免费移动命令与 1x 标记同事务撤销 |
 | 赫利昂 | 是 | 移除科技、清槽和收入随 1x 前快照恢复 |

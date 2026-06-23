@@ -37,6 +37,39 @@
     return null;
   }
 
+  function getCornerRewardIcon(reward) {
+    if (reward?.kind === "move") return "movement";
+    if (Math.max(0, Math.round(Number(reward?.dataCount) || 0)) > 0) return "data";
+    if (reward?.gain?.score) return "score";
+    if (reward?.gain?.publicity) return "publicity";
+    return "pick_card";
+  }
+
+  function buildStratusPublicCornerEffectNodes(cards, publicCards) {
+    return (publicCards || [])
+      .slice(0, STRATUS_PUBLIC_CARD_LIMIT)
+      .map((card, index) => {
+        if (!card) return null;
+        const reward = getCornerReward(cards, card);
+        const cardLabel = cards?.getCardLabel?.(card) || card.cardName || card.cardId || `公共牌 ${index + 1}`;
+        return {
+          id: `industry-stratus-corner-${index}-${card.id || card.cardId || card.src || "card"}`,
+          type: "industry_stratus_corner",
+          label: reward
+            ? `层云核心：${cardLabel} 弃牌角标`
+            : `层云核心：${cardLabel} 无弃牌角标`,
+          icon: getCornerRewardIcon(reward),
+          status: "pending",
+          undoable: true,
+          options: {
+            publicSlotIndex: index,
+            card: snapshotPlayedCard(card),
+          },
+        };
+      })
+      .filter(Boolean);
+  }
+
   function applyCornerReward(players, data, player, reward) {
     const results = [];
     if (!reward || !player) {
@@ -164,8 +197,7 @@
           abilityId,
           flowType: "stratus_public_corners",
           label: prepared.label,
-          remaining: STRATUS_PUBLIC_CARD_LIMIT,
-          message: `${prepared.label}：请点击公共牌区卡牌，最多结算 ${STRATUS_PUBLIC_CARD_LIMIT} 张弃牌角标（不弃牌）`,
+          message: `${prepared.label}：请按效果栏依次结算公共牌区 ${STRATUS_PUBLIC_CARD_LIMIT} 张牌的弃牌角标（不弃牌）`,
         };
       case "turing_borrow_tech":
         return {
@@ -276,6 +308,8 @@
     return {
       id: card.id,
       src: card.src,
+      cardName: card.cardName,
+      label: card.label,
       cardId: card.cardId,
       discardActionCode: card.discardActionCode,
       incomeActionCode: card.incomeActionCode,
@@ -359,6 +393,7 @@
     STRATUS_PUBLIC_CARD_LIMIT,
     isAlienCard,
     getCornerReward,
+    buildStratusPublicCornerEffectNodes,
     applyCornerReward,
     applyIncomeResourcesFromCard,
     prepareActiveAbility,

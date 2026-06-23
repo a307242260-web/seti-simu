@@ -138,6 +138,27 @@ assert.equal(nodes.length, 1);
 assert.equal(nodes[0].type, "industry_sentinel_corner");
 assert.equal(abilities.shouldAppendSentinelPlayCornerEffect(cardsStub, sentinelPlayer, 1, 1, { src: "aliens/x/face.png" }), false);
 
+const stratusCards = [
+  { id: "public-1", cardId: "b_1.webp", discardActionCode: 0, label: "公共牌1" },
+  { id: "public-2", cardId: "b_2.webp", discardActionCode: 2, label: "公共牌2" },
+  { id: "public-3", cardId: "b_3.webp", discardActionCode: 0, label: "公共牌3" },
+];
+const stratusNodes = abilities.buildStratusPublicCornerEffectNodes({
+  ...cardsStub,
+  getDiscardActionMoveRewardForCard: (card) => (
+    card.discardActionCode === 2 ? { kind: "move", movementPoints: 1, label: "1移动", gain: {} } : null
+  ),
+}, stratusCards);
+assert.equal(stratusNodes.length, 3);
+assert.equal(stratusNodes[0].type, "industry_stratus_corner");
+assert.equal(stratusNodes[0].options.card.cardId, "b_1.webp");
+assert.equal(stratusNodes[1].icon, "movement");
+assert.match(abilities.buildActiveAbilityFlow(
+  { initialSelection: { industry: { label: "层云核心" } } },
+  "层云核心",
+  1,
+).message, /效果栏/);
+
 const futurePlayer = {
   id: "white",
   resources: { score: 10 },
