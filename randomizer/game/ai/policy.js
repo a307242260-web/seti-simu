@@ -36,7 +36,7 @@
     researchTech: 5,
     playCard: 5,
     launch: 4,
-    scan: 1.5,
+    scan: 2.5,
     analyze: 1,
     placeData: 2,
     move: 0,
@@ -150,13 +150,61 @@
     return chooseBest(available, scoreTurnAction);
   }
 
-  function chooseDiscardIndexes(hand = [], count = 1) {
+  const INCOME_DISCARD_TYPES = new Set([
+    "income",
+    "initial_income",
+    "planet_reward_income",
+    "place_data_income",
+    "industry_helios_income",
+    "discard_any_income",
+  ]);
+
+  const INCOME_GAIN_SCORE = Object.freeze({
+    credits: 12,
+    handSize: 7,
+    energy: 5,
+    publicity: 3,
+    availableData: 3,
+    additionalPublicScan: 2,
+  });
+
+  function scoreIncomeGain(gain = null) {
+    if (!gain || typeof gain !== "object") return -Infinity;
+    return Object.entries(gain).reduce((total, [key, value]) => {
+      const amount = Math.max(0, Number(value) || 0);
+      return total + amount * (INCOME_GAIN_SCORE[key] || 1);
+    }, 0);
+  }
+
+  function getCardSortLabel(card) {
+    return String(card?.label || card?.cardName || card?.cardId || card?.id || "");
+  }
+
+  function getIncomeGainByIndex(request, index) {
+    const gains = request?.incomeGainByIndex;
+    if (!gains) return null;
+    if (Array.isArray(gains)) return gains[index] || null;
+    return gains[index] || gains[String(index)] || null;
+  }
+
+  function isIncomeDiscardRequest(request = {}) {
+    const type = String(request?.pendingType || request?.type || request?.discardType || "");
+    return INCOME_DISCARD_TYPES.has(type);
+  }
+
+  function chooseDiscardIndexes(hand = [], count = 1, request = {}) {
     const target = Math.max(0, Math.round(Number(count) || 0));
+    const incomeRequest = isIncomeDiscardRequest(request);
     return hand
       .map((card, index) => ({ index, card }))
       .sort((left, right) => {
-        const leftLabel = String(left.card?.label || left.card?.cardId || "");
-        const rightLabel = String(right.card?.label || right.card?.cardId || "");
+        if (incomeRequest) {
+          const rightIncomeScore = scoreIncomeGain(getIncomeGainByIndex(request, right.index));
+          const leftIncomeScore = scoreIncomeGain(getIncomeGainByIndex(request, left.index));
+          if (rightIncomeScore !== leftIncomeScore) return rightIncomeScore - leftIncomeScore;
+        }
+        const leftLabel = getCardSortLabel(left.card);
+        const rightLabel = getCardSortLabel(right.card);
         return leftLabel.localeCompare(rightLabel, "zh-Hans-CN");
       })
       .slice(0, target)

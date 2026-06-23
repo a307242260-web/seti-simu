@@ -149,6 +149,30 @@ assert.deepEqual(policy.chooseMovePaymentIndexes([
   roundNumber: 3,
 }), []);
 assert.deepEqual(policy.chooseDiscardIndexes([{ label: "b" }, { label: "a" }], 1), [1]);
+assert.deepEqual(policy.chooseDiscardIndexes([
+  { label: "energy income" },
+  { label: "credit income" },
+  { label: "hand income" },
+], 1, {
+  pendingType: "planet_reward_income",
+  incomeGainByIndex: [
+    { energy: 1 },
+    { credits: 1 },
+    { handSize: 1 },
+  ],
+}), [1]);
+assert.deepEqual(policy.chooseDiscardIndexes([
+  { label: "energy income" },
+  { label: "credit income" },
+  { label: "hand income" },
+], 2, {
+  pendingType: "income",
+  incomeGainByIndex: {
+    0: { energy: 1 },
+    1: { credits: 1 },
+    2: { handSize: 1 },
+  },
+}), [1, 2]);
 assert.equal(policy.chooseAlienUseOption([
   { choice: "displayed", disabled: true },
   { choice: "blind" },

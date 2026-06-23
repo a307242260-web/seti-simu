@@ -11139,7 +11139,7 @@
   }
 
   function executeGainDataRewardEffect(effect) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getEffectTargetPlayer(effect);
     const count = Math.max(0, Math.round(effect.options?.count || 0));
     const source = effect.options?.source || "planet_reward";
     beginEffectHistoryStep(effect.label);
@@ -11151,7 +11151,7 @@
     }
     const gained = results.filter((item) => item.ok).length;
     const discarded = results.filter((item) => item.discarded).length;
-    const message = `${effect.label}：获得 ${gained}/${count} 个数据${discarded ? `，弃置 ${discarded} 个溢出数据` : ""}`;
+    const message = `${effect.label}：${currentPlayer?.colorLabel || currentPlayer?.name || "玩家"}获得 ${gained}/${count} 个数据${discarded ? `，弃置 ${discarded} 个溢出数据` : ""}`;
     return finishAutomaticRewardEffect(effect, {
       ok: true,
       undoable: true,
@@ -11187,7 +11187,7 @@
   }
 
   function executeDrawCardsRewardEffect(effect) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getEffectTargetPlayer(effect);
     const count = Math.max(0, Math.round(effect.options?.count || 0));
     const available = cards.getAvailablePool(cardState, playerState).length;
     if (available <= 0) {
@@ -12712,6 +12712,7 @@
       case types.SCAN_NEBULA:
         return executeCardFixedNebulaScanEffect(effect);
       case types.SCAN_COLOR_CHOICE:
+      case "card_color_scan":
         return openCardColorScanEffect(effect);
       case types.PUBLIC_SCAN:
         return openCardPublicScanEffect(effect);
@@ -12911,7 +12912,7 @@
   }
 
   function openIncomeRewardEffect(effect) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getEffectTargetPlayer(effect);
     const result = beginDiscardSelection(1, {
       type: "planet_reward_income",
       player: currentPlayer,
@@ -12927,7 +12928,7 @@
   }
 
   function executeBanrenmaGainIncomeEffect(effect) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getEffectTargetPlayer(effect);
     const gain = effect.options?.gain || {};
     const beforePlayer = structuredClone(currentPlayer);
     beginEffectHistoryStep(effect.label);
@@ -12994,13 +12995,15 @@
       beforeAlienState: structuredClone(alienGameState),
       beforePlayerState: structuredClone(playerState),
       effectLabel: effect.label,
-      targetPlayerId: effect.options?.targetPlayerId || null,
-      targetPlayerColor: effect.options?.targetPlayerColor || null,
+      targetPlayerId: targetPlayer?.id || effect.options?.targetPlayerId || null,
+      targetPlayerColor: targetPlayer?.color || effect.options?.targetPlayerColor || null,
       afterTraceReward: effect.options?.afterTraceReward || null,
     };
     return openAlienTracePicker({
       allowedTraceTypes,
       allowedAlienSlotIds,
+      targetPlayerId: targetPlayer?.id || null,
+      targetPlayerColor: targetPlayer?.color || null,
     });
   }
 
@@ -13580,6 +13583,10 @@
         && Number.isInteger(Number(alienTracePickerState.selectedAlienSlotId)));
   }
 
+  function getAlienTracePickerPlayer() {
+    return getAlienTraceActionPlayer(pendingAlienTraceAction || alienTracePickerState);
+  }
+
   function canPlaceJiuzheTrace(alienSlotId, traceType, position) {
     if (!isJiuzheTracePlacementMode()) return false;
     if (!isDebugAlienTraceMode()
@@ -13609,7 +13616,7 @@
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
     if (!allowedTraceTypes.includes(traceType)) return false;
     if (!fangzhou?.isFangzhouRevealedSlot?.(alienGameState, alienSlotId)) return false;
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getAlienTracePickerPlayer();
     return fangzhou?.canPlaceFangzhouTrace?.(
       alienGameState,
       alienSlotId,
@@ -13637,7 +13644,7 @@
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
     if (!allowedTraceTypes.includes(traceType)) return false;
     if (!chong?.isChongRevealedSlot?.(alienGameState, alienSlotId)) return false;
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getAlienTracePickerPlayer();
     return chong?.canPlaceChongTrace?.(
       alienGameState,
       alienSlotId,
@@ -13654,7 +13661,7 @@
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
     if (!allowedTraceTypes.includes(traceType)) return false;
     if (!amiba?.isAmibaRevealedSlot?.(alienGameState, alienSlotId)) return false;
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getAlienTracePickerPlayer();
     return amiba?.canPlaceAmibaTrace?.(
       alienGameState,
       alienSlotId,
@@ -13671,7 +13678,7 @@
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
     if (!allowedTraceTypes.includes(traceType)) return false;
     if (!aomomo?.isAomomoRevealedSlot?.(alienGameState, alienSlotId)) return false;
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getAlienTracePickerPlayer();
     return aomomo?.canPlaceAomomoTrace?.(
       alienGameState,
       alienSlotId,
@@ -13688,7 +13695,7 @@
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
     if (!allowedTraceTypes.includes(traceType)) return false;
     if (!runezu?.isRunezuRevealedSlot?.(alienGameState, alienSlotId)) return false;
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getAlienTracePickerPlayer();
     return runezu?.canPlaceRunezuTrace?.(
       alienGameState,
       alienSlotId,
@@ -14232,7 +14239,7 @@
   }
 
   function renderAlienTracePickerAlienStep() {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getAlienTracePickerPlayer();
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
     const allowedAlienSlotIds = alienTracePickerState?.allowedAlienSlotIds || null;
     const singleTraceType = allowedTraceTypes.length === 1 ? allowedTraceTypes[0] : null;
@@ -14275,7 +14282,7 @@
   }
 
   function renderAlienTracePickerColorStep(alienSlotId) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getAlienTracePickerPlayer();
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
     const slotLabel = aliens.getAlienSlotLabel(alienSlotId);
 
@@ -14314,6 +14321,8 @@
       allowedAlienSlotIds: options.allowedAlienSlotIds?.length
         ? options.allowedAlienSlotIds.map(Number)
         : null,
+      targetPlayerId: options.targetPlayerId || null,
+      targetPlayerColor: options.targetPlayerColor || null,
     };
     renderAlienTracePickerAlienStep();
     els.alienTraceOverlay.hidden = false;
@@ -14512,7 +14521,7 @@
   }
 
   function renderFangzhouTraceColorStep(alienSlotId) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getAlienTracePickerPlayer();
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
     const slotLabel = aliens.getAlienSlotLabel(alienSlotId);
 
@@ -14548,7 +14557,7 @@
   }
 
   function renderFangzhouTraceUseChoice(alienSlotId, traceType) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getAlienTracePickerPlayer();
     const traceLabel = aliens.getTraceTypeLabel(traceType);
     const canPlace = fangzhou?.canPlaceAnyFangzhouTrace?.(
       alienGameState,
@@ -14604,7 +14613,7 @@
   }
 
   function openFangzhouTraceUseChoice(alienSlotId, traceType) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getAlienTracePickerPlayer();
     const canPlace = fangzhou?.canPlaceAnyFangzhouTrace?.(
       alienGameState,
       alienSlotId,
@@ -14649,7 +14658,7 @@
   }
 
   function confirmFangzhouCard2Unlock(alienSlotId, traceType) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getAlienTracePickerPlayer();
     const inDebugMode = isDebugAlienTraceMode();
     if (!fangzhou?.canUnlockCard2ForTrace?.(alienGameState, currentPlayer, traceType)) {
       rocketState.statusNote = "无法解锁该方舟卡牌";
@@ -17619,8 +17628,8 @@
 
   function getAlienTraceActionPlayer(pending) {
     return resolvePlayerReference({
-      playerId: pending?.targetPlayerId,
-      playerColor: pending?.targetPlayerColor,
+      playerId: pending?.targetPlayerId || alienTracePickerState?.targetPlayerId,
+      playerColor: pending?.targetPlayerColor || alienTracePickerState?.targetPlayerColor,
     }) || getCurrentPlayer();
   }
 

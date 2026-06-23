@@ -209,9 +209,9 @@
     ]);
     const AI_RESOURCE_VALUES = Object.freeze({
       score: 1,
-      credits: 3,
-      energy: 3,
-      handSize: 3,
+      credits: 4.2,
+      energy: 2.8,
+      handSize: 3.4,
       availableData: 1.5,
       publicity: 1.5,
       additionalPublicScan: 1.5,
@@ -219,6 +219,14 @@
     const AI_SCAN_COLORS = Object.freeze(["yellow", "red", "blue", "black"]);
     const AI_TECH_TYPES = Object.freeze(["orange", "purple", "blue"]);
     const AI_TRACE_TYPES = Object.freeze(["yellow", "pink", "blue"]);
+    const AI_INCOME_DISCARD_TYPES = new Set([
+      "income",
+      "initial_income",
+      "planet_reward_income",
+      "place_data_income",
+      "industry_helios_income",
+      "discard_any_income",
+    ]);
     const AI_STRATEGY_WEIGHT_KEYS = Object.freeze([
       "engine",
       "playCard",
@@ -580,6 +588,10 @@
         && getAiAutoBattlePlayerIds().includes(playerId);
     }
 
+    function isAiIncomeDiscardType(type) {
+      return AI_INCOME_DISCARD_TYPES.has(String(type || ""));
+    }
+
     function getPlayerAgentLabel(playerId) {
       return isAiAutoBattlePlayer(playerId) ? "电脑" : "人类";
     }
@@ -834,12 +846,20 @@
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工弃牌` };
       }
       const count = cards.getDiscardRemaining(cardState);
-      const selectedIndexes = ai?.policy?.chooseDiscardIndexes?.(player.hand || [], count)
+      const pendingType = state.pendingDiscardAction.type || null;
+      const incomeGainByIndex = isAiIncomeDiscardType(pendingType)
+        ? (player.hand || []).map((card) => cards.getIncomeGainForCard?.(card) || null)
+        : null;
+      const selectedIndexes = ai?.policy?.chooseDiscardIndexes?.(player.hand || [], count, {
+        pendingType,
+        incomeGainByIndex,
+      })
         || Array.from({ length: count }, (_item, index) => index);
       state.pendingDiscardAction.selectedIndexes = selectedIndexes.slice(0, count);
       recordAiAutoBattleLog("discard", `${player.colorLabel}AI 弃牌 ${state.pendingDiscardAction.selectedIndexes.length} 张`, {
         selectedIndexes: state.pendingDiscardAction.selectedIndexes,
-        pendingType: state.pendingDiscardAction.type || null,
+        pendingType,
+        incomeGainByIndex,
       });
       return finalizePendingDiscardSelection();
     }
@@ -1271,12 +1291,38 @@
       if (round > 3 && pressure < 0.5) return 0;
       const placedComputerCount = Math.max(0, (data.listComputerPlacedTokens?.(player) || []).length);
       const dataRoom = getAiAvailableDataRoom(player);
-      let value = pressure * 4.2;
-      if (placedComputerCount < 4) value += Math.max(0, 4 - placedComputerCount) * 0.75 * pressure;
+      let value = pressure * 5;
+      if (placedComputerCount < 4) value += Math.max(0, 4 - placedComputerCount) * 0.9 * pressure;
       if (dataRoom > 0) value += Math.min(2.5, dataRoom * 0.45) * Math.max(0.6, pressure);
-      if (countAiFinalMarksForPlayer(player) === 0) value += pressure * 1.2;
-      if (placedComputerCount >= 4) value *= round <= 2 ? 0.35 : 0.2;
+      if (countAiFinalMarksForPlayer(player) === 0) value += pressure * 1.4;
+      if (placedComputerCount >= 4) value *= round <= 2 ? 0.4 : 0.24;
       return value;
+    }
+
+    function countAiTraceMarkersForPlayer(player = getCurrentPlayer()) {
+      if (!endGameScoring?.countTraceMarkers || !player) return 0;
+      return AI_TRACE_TYPES.reduce((total, traceType) => (
+        total + Math.max(0, Math.round(aiNumber(endGameScoring.countTraceMarkers(player, alienGameState, traceType))))
+      ), 0);
+    }
+
+    function scoreAiScanPriorityFloor(player = getCurrentPlayer()) {
+      const round = getAiRoundNumber();
+      if (round > 3) return 0;
+      const demand = getAiStrategyDemand(player);
+      const placedComputerCount = Math.max(0, (data.listComputerPlacedTokens?.(player) || []).length);
+      const dataRoom = getAiAvailableDataRoom(player);
+      const traceCount = countAiTraceMarkersForPlayer(player);
+      const scanDemand = getAiMapDemand(demand.actions, "scan")
+        + sumAiDemandMap(demand.scanColors) * 0.35
+        + sumAiDemandMap(demand.traceTypes) * 0.22;
+      let floor = round === 1 ? 5.5 : round === 2 ? 4 : 2.5;
+      if (placedComputerCount < 4) floor += Math.max(0, 4 - placedComputerCount) * 0.55;
+      if (dataRoom > 0) floor += Math.min(1.6, dataRoom * 0.25);
+      if (traceCount === 0) floor += 1.5;
+      else if (traceCount < 2) floor += 0.7;
+      floor += Math.min(2.5, scanDemand * 0.05);
+      return Math.max(0, floor);
     }
 
     function getAiTechCountForPlayer(player = getCurrentPlayer()) {
@@ -1356,6 +1402,7 @@
         case cardEffects.EFFECT_TYPES.SECTOR_X_SCAN:
         case cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN:
         case cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE:
+        case "card_color_scan":
         case cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN:
         case cardEffects.EFFECT_TYPES.CHOOSE_NEBULA_SCAN:
         case cardEffects.EFFECT_TYPES.SCAN_ACTION:
@@ -1682,6 +1729,7 @@
         || type === cardEffects.EFFECT_TYPES.SCAN_NEBULA
         || type === cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN
         || type === cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE
+        || type === "card_color_scan"
       ) {
         addAiActionDemand(demand, "scan", amount);
         if (options.color) addAiMapDemand(demand.scanColors, options.color, amount);
@@ -1895,7 +1943,8 @@
         || type === cardEffects.EFFECT_TYPES.SCAN_ACTION
         || type === cardEffects.EFFECT_TYPES.SCAN_NEBULA
         || type === cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN
-        || type === cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE;
+        || type === cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE
+        || type === "card_color_scan";
     }
 
     function scoreAiCardEndGameExpectedValue(card, model, player = getCurrentPlayer()) {
@@ -2956,8 +3005,11 @@
         }
       }
       const earlyEngineValue = scoreAiEarlyScanEngineValue(player);
+      const demand = getAiStrategyDemand(player);
+      const tracePressure = Math.min(3, sumAiDemandMap(demand.traceTypes) * 0.05);
       const costMultiplier = getAiRoundNumber() <= 2 ? 0.62 : getAiRoundNumber() === 3 ? 0.68 : 0.7;
-      return applyAiStrategyWeight(value + earlyEngineValue * 0.45, "scan", 0.85) - costValue * costMultiplier;
+      return applyAiStrategyWeight(value + earlyEngineValue * 0.55 + tracePressure, "scan", 0.85)
+        - costValue * costMultiplier;
     }
 
     function getAiPlayEffectsForCard(card) {
@@ -3566,7 +3618,14 @@
           turnState,
           currentPlayer,
         }) || candidates[0] || null;
-        if (!selected) return { ok: false, blocked: true, message: "AI 没有可用免费移动路径" };
+        if (!selected) {
+          const message = "AI 没有可用免费移动路径，跳过移动效果";
+          recordAiAutoBattleLog("move-path-skip", `${currentPlayer.colorLabel}${message}`, {
+            reason: "no-free-move-candidates",
+          });
+          skipCurrentActionEffect?.();
+          return { ok: true, progressed: true, skipped: true, message };
+        }
         recordAiAutoBattleLog("move-path", `${currentPlayer.colorLabel}AI 选择免费移动 ${selected.rocketLabel} ${selected.directionLabel}`, {
           selected,
           candidates,
@@ -3588,7 +3647,15 @@
         turnState,
         currentPlayer,
       }) || candidates[0] || null;
-      if (!selected) return { ok: false, blocked: true, message: "AI 没有可用卡牌移动路径" };
+      if (!selected) {
+        const message = "AI 没有可用卡牌移动路径，跳过移动效果";
+        recordAiAutoBattleLog("move-path-skip", `${currentPlayer.colorLabel}${message}`, {
+          effectId: effect?.id || null,
+          reason: "no-card-move-candidates",
+        });
+        skipCurrentActionEffect?.();
+        return { ok: true, progressed: true, skipped: true, message };
+      }
       recordAiAutoBattleLog("move-path", `${currentPlayer.colorLabel}AI 选择卡牌移动 ${selected.rocketLabel} ${selected.directionLabel}`, {
         effectId: effect?.id || null,
         selected,
@@ -3597,14 +3664,19 @@
       return executeCardMoveForEffect(selected.deltaX, selected.deltaY, selected.rocketId);
     }
 
-    function findFirstAiAlienStateTraceButton() {
-      const stateSlot = [...(els.alienTraceLayers || [])]
-        .flatMap((layer) => [...layer.querySelectorAll("[data-state-trace-slot].is-placeable")])
-        .find((button) => !button.disabled);
-      return stateSlot ? { kind: "state-slot", button: stateSlot } : null;
+    function getAiAlienTraceButtons(selector, roots = []) {
+      return [...(roots || [])]
+        .flatMap((root) => [...(root?.querySelectorAll?.(selector) || [])])
+        .filter((button) => button && !button.disabled)
+        .map((button) => button);
     }
 
-    function findFirstAiAlienGridTraceButton() {
+    function listAiAlienStateTraceTargets() {
+      return getAiAlienTraceButtons("[data-state-trace-slot].is-placeable", els.alienTraceLayers || [])
+        .map((button) => ({ kind: "state-slot", button }));
+    }
+
+    function listAiAlienGridTraceTargets() {
       const gridSelectors = [
         "[data-banrenma-trace-slot].is-placeable",
         "[data-yichangdian-trace-slot].is-placeable",
@@ -3616,38 +3688,133 @@
         "[data-runezu-face-symbol-slot].is-placeable",
         "[data-jiuzhe-trace-slot].is-placeable",
       ].join(",");
-      const gridSlot = [...(els.alienJiuzheTraceLayers || [])]
-        .flatMap((layer) => [...layer.querySelectorAll(gridSelectors)])
-        .find((button) => !button.disabled);
-      return gridSlot ? { kind: "grid-slot", button: gridSlot } : null;
+      return getAiAlienTraceButtons(gridSelectors, els.alienJiuzheTraceLayers || [])
+        .map((button) => ({ kind: "grid-slot", button }));
     }
 
-    function findFirstAiAlienPickerButton() {
-      const pickerButton = [...(els.alienTraceActions?.querySelectorAll("[data-alien-picker-step][data-alien-slot]") || [])]
-        .find((button) => !button.disabled);
-      return pickerButton ? { kind: "picker", button: pickerButton } : null;
+    function listAiAlienPickerTargets() {
+      return [...(els.alienTraceActions?.querySelectorAll("[data-alien-picker-step][data-alien-slot]") || [])]
+        .filter((button) => !button.disabled)
+        .map((button) => ({ kind: "picker", button }));
     }
 
-    function findFirstAiAlienTraceButton() {
-      const pickerMode = String(state.alienTracePickerState?.mode || "");
-      if (pickerMode.endsWith("-grid")) {
-        return findFirstAiAlienGridTraceButton()
-          || findFirstAiAlienStateTraceButton()
-          || findFirstAiAlienPickerButton();
+    function getAiAlienTraceTargetTraceType(target) {
+      const button = target?.button;
+      return button?.dataset?.traceType
+        || button?.dataset?.stateTraceType
+        || button?.dataset?.banrenmaTraceType
+        || button?.dataset?.yichangdianTraceType
+        || button?.dataset?.fangzhouTraceType
+        || button?.dataset?.chongTraceType
+        || button?.dataset?.amibaTraceType
+        || button?.dataset?.aomomoTraceType
+        || button?.dataset?.runezuTraceType
+        || button?.dataset?.jiuzheTraceType
+        || state.alienTracePickerState?.selectedTraceType
+        || (state.alienTracePickerState?.allowedTraceTypes?.length === 1
+          ? state.alienTracePickerState.allowedTraceTypes[0]
+          : null);
+    }
+
+    function getAiAlienTraceTargetPosition(target) {
+      const dataset = target?.button?.dataset || {};
+      const raw = dataset.tracePosition
+        || dataset.position
+        || dataset.stateTraceSlot
+        || dataset.banrenmaTraceSlot
+        || dataset.yichangdianTraceSlot
+        || dataset.fangzhouTraceSlot
+        || dataset.chongTraceSlot
+        || dataset.amibaTraceSlot
+        || dataset.aomomoTraceSlot
+        || dataset.runezuTraceSlot
+        || dataset.jiuzheTraceSlot;
+      const match = String(raw || "").match(/\d+/);
+      return match ? Number(match[0]) : null;
+    }
+
+    function scoreAiAlienGridPosition(mode, traceType, position, label) {
+      const trace = String(traceType || "");
+      const pos = Number(position);
+      if (mode === "yichangdian-grid") {
+        const key = `${trace}:${pos}`;
+        return ({
+          "yellow:2": 8,
+          "pink:2": 7,
+          "yellow:1": 5,
+          "blue:1": 4,
+          "blue:2": 4,
+          "pink:1": 3,
+        })[key] || 0;
       }
-      return findFirstAiAlienPickerButton()
-        || findFirstAiAlienStateTraceButton()
-        || findFirstAiAlienGridTraceButton();
+      if (mode === "fangzhou-grid") {
+        if (label.includes("解锁")) return 9;
+        return pos === 2 ? 6 : 4;
+      }
+      if (mode === "banrenma-grid") return pos === 2 ? 7 : 4;
+      if (mode === "aomomo-grid") return pos === 2 ? 7 : 4;
+      if (mode === "chong-grid" || mode === "amiba-grid" || mode === "runezu-grid") return pos === 2 ? 6 : 4;
+      if (mode === "jiuzhe-grid") return pos === 2 ? 5 : 3;
+      return 0;
+    }
+
+    function scoreAiAlienTraceTarget(target, player) {
+      if (!target?.button || target.button.disabled) return -Infinity;
+      const label = String(target.button.textContent || target.button.title || "");
+      const mode = String(state.alienTracePickerState?.mode || "");
+      const traceType = getAiAlienTraceTargetTraceType(target);
+      const position = getAiAlienTraceTargetPosition(target);
+      const demand = getAiStrategyDemand(player);
+      const traceDemand = traceType ? getAiMapDemand(demand.traceTypes, traceType) : 0;
+      let score = 0;
+
+      if (target.kind === "grid-slot") score += 12;
+      if (target.kind === "picker") score += 8;
+      if (target.kind === "state-slot") score += 3;
+      score += traceDemand * 0.45;
+      score += ({ pink: 4, blue: 3.5, yellow: 3 })[traceType] || 0;
+      score += scoreAiAlienGridPosition(mode, traceType, position, label);
+      if (label.includes("首标记 2/3")) score += 10;
+      if (label.includes("首标记 1/3")) score += 4;
+      if (label.includes("未揭示")) score += 3;
+      if (label.includes("得分") || label.includes("分数")) score += 3;
+      if (label.includes("精选") || label.includes("牌")) score += 2.5;
+      if (label.includes("信用")) score += 2;
+      if (label.includes("数据") || label.includes("扫描")) score += 1.5;
+      if (label.includes("解锁")) score += 8;
+
+      const alienSlot = Number(target.button.dataset.alienSlot || state.alienTracePickerState?.selectedAlienSlotId);
+      if (Number.isFinite(alienSlot)) score += (10 - Math.min(10, Math.max(0, alienSlot))) * 0.01;
+      return score;
+    }
+
+    function chooseAiAlienTraceTarget(player) {
+      const pickerMode = String(state.alienTracePickerState?.mode || "");
+      const targets = pickerMode.endsWith("-grid")
+        ? [
+          ...listAiAlienGridTraceTargets(),
+          ...listAiAlienStateTraceTargets(),
+          ...listAiAlienPickerTargets(),
+        ]
+        : [
+          ...listAiAlienPickerTargets(),
+          ...listAiAlienStateTraceTargets(),
+          ...listAiAlienGridTraceTargets(),
+        ];
+      return targets
+        .map((target, index) => ({ ...target, index, score: scoreAiAlienTraceTarget(target, player) }))
+        .filter((target) => Number.isFinite(target.score))
+        .sort((left, right) => right.score - left.score || left.index - right.index)[0] || null;
     }
 
     function runAiAlienTraceDecision() {
       if (!state.pendingAlienTraceAction && (!state.alienTracePickerState || !state.alienTracePickerState.mode)) return null;
-      const player = getAlienTraceActionPlayer(state.pendingAlienTraceAction);
+      const player = getAlienTraceActionPlayer(state.pendingAlienTraceAction || state.alienTracePickerState);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择外星人痕迹` };
       }
 
-      const target = findFirstAiAlienTraceButton();
+      const target = chooseAiAlienTraceTarget(player);
       if (!target?.button) {
         return { ok: false, blocked: true, message: "AI 没有可用外星人痕迹目标" };
       }
@@ -3658,6 +3825,7 @@
         alienSlot: button.dataset.alienSlot || null,
         pickerStep: button.dataset.alienPickerStep || null,
         traceType: button.dataset.traceType || null,
+        score: target.score,
         label: button.textContent || "",
       });
       button.click();
@@ -4092,17 +4260,27 @@
         landCandidate.available ? Number(landCandidate.score || 0) : 0,
       );
       let scanScore = scanCheck.ok ? scoreAiScanAction(currentPlayer) : 0;
+      const scanPriorityFloor = scanCheck.ok ? scoreAiScanPriorityFloor(currentPlayer) : 0;
       if (immediatePlanetActionScore >= 12) {
-        scanScore = Math.min(scanScore, Math.max(0, immediatePlanetActionScore - 7));
+        scanScore = Math.max(
+          scanPriorityFloor,
+          Math.min(scanScore, Math.max(0, immediatePlanetActionScore - 7)),
+        );
       }
       if (getAiRoundNumber() <= 2 && launchCandidate.available && Number(launchCandidate.score || 0) >= 12) {
-        scanScore = Math.min(scanScore, Math.max(0, Number(launchCandidate.score || 0) - 8));
+        scanScore = Math.max(
+          scanPriorityFloor,
+          Math.min(scanScore, Math.max(0, Number(launchCandidate.score || 0) - 8)),
+        );
       }
       const bestEarlyMoveScore = getAiRoundNumber() <= 2
         ? listAiMoveCandidates().reduce((best, candidate) => Math.max(best, Number(candidate?.score || 0)), 0)
         : 0;
       if (bestEarlyMoveScore >= 10) {
-        scanScore = Math.min(scanScore, Math.max(0, bestEarlyMoveScore - 3));
+        scanScore = Math.max(
+          scanPriorityFloor,
+          Math.min(scanScore, Math.max(0, bestEarlyMoveScore - 3)),
+        );
       }
       candidates.push({
         id: "scan",
