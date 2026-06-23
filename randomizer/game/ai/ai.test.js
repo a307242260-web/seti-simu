@@ -126,7 +126,28 @@ assert.deepEqual(policy.chooseMovePaymentIndexes([
   requiredMovePoints: 2,
   availableEnergy: 1,
   moveCardIndexes: [2, 1],
+  preserveEnergy: false,
+  roundNumber: 3,
 }), [1]);
+assert.deepEqual(policy.chooseMovePaymentIndexes([
+  { label: "普通牌" },
+  { label: "移动牌 A" },
+], {
+  requiredMovePoints: 1,
+  availableEnergy: 2,
+  moveCardIndexes: [1],
+  preserveEnergy: true,
+}), [1]);
+assert.deepEqual(policy.chooseMovePaymentIndexes([
+  { label: "普通牌" },
+  { label: "移动牌 A" },
+], {
+  requiredMovePoints: 1,
+  availableEnergy: 3,
+  moveCardIndexes: [1],
+  preserveEnergy: false,
+  roundNumber: 3,
+}), []);
 assert.deepEqual(policy.chooseDiscardIndexes([{ label: "b" }, { label: "a" }], 1), [1]);
 assert.equal(policy.chooseAlienUseOption([
   { choice: "displayed", disabled: true },

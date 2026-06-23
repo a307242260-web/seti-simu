@@ -897,6 +897,7 @@
     canBlindDraw,
     canPayForMove,
     canStartMainAction,
+    cancelTechSelection,
     clearTransientStateForRecovery,
     computePlayerFinalScoreBreakdown,
     confirmCardTaskCompletion,
@@ -9257,7 +9258,7 @@
     return requestCardEffectMove(deltaX, deltaY, rocketId);
   }
 
-  function executeSectorScanAtPlanet(planetId, prefixLabel) {
+  function executeSectorScanAtPlanet(planetId, prefixLabel, effect = null) {
     if (planetId === aomomo?.PLANET_ID) {
       if (getAomomoCurrentX() == null) {
         rocketState.statusNote = "奥陌陌星球尚未启用，无法扫描奥陌陌";
@@ -9276,7 +9277,18 @@
     const choices = buildSectorScanChoicesForX(sector.x).filter((choice) => choice.nebulaId);
     if (!choices.length || choices.every((choice) => choice.disabled)) {
       const planetName = planetId === "earth" ? "地球" : planetId === "mercury" ? "水星" : planetId;
-      rocketState.statusNote = `${planetName}所在扇区没有可扫描星云`;
+      const message = `${planetName}所在扇区没有可扫描星云，已跳过`;
+      const activeEffect = effect || (isActionEffectFlowActive() ? getCurrentActionEffect() : null);
+      if (activeEffect) {
+        return finishAutomaticRewardEffect(activeEffect, {
+          ok: true,
+          undoable: true,
+          skipped: true,
+          message,
+          payload: { planetId, sectorX: sector.x, skipped: true },
+        });
+      }
+      rocketState.statusNote = message;
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
@@ -11693,7 +11705,7 @@
       effect.label = `${effect.label} 1/${repeat}`;
       effect.options = { ...(effect.options || {}), repeat: 1, _repeatExpanded: true };
     }
-    return executeSectorScanAtPlanet(effect.options?.planetId, effect.label);
+    return executeSectorScanAtPlanet(effect.options?.planetId, effect.label, effect);
   }
 
   function openCardColorScanEffect(effect) {
@@ -13007,7 +13019,7 @@
       case planetRewards.EFFECT_TYPES.INCOME:
         return openIncomeRewardEffect(effect);
       case planetRewards.EFFECT_TYPES.SCAN_PLANET_SECTOR:
-        return executeSectorScanAtPlanet(effect.options?.planetId, effect.label);
+        return executeSectorScanAtPlanet(effect.options?.planetId, effect.label, effect);
       case planetRewards.EFFECT_TYPES.CHOOSE_NEBULA_SCAN:
       case planetRewards.EFFECT_TYPES.CHOOSE_COLORED_NEBULA_SCAN:
         return openNebulaChoiceRewardEffect(effect);
@@ -13185,11 +13197,11 @@
         return result;
       }
       case scanEffects.EFFECT_TYPES.EARTH_SECTOR_SCAN:
-        return executeSectorScanAtPlanet("earth");
+        return executeSectorScanAtPlanet("earth", effect.label, effect);
       case scanEffects.EFFECT_TYPES.IMPROVED_SECTOR_SCAN:
         return executeImprovedEarthSectorScanEffect();
       case scanEffects.EFFECT_TYPES.MERCURY_SECTOR_SCAN:
-        return executeSectorScanAtPlanet("mercury");
+        return executeSectorScanAtPlanet("mercury", effect.label, effect);
       case scanEffects.EFFECT_TYPES.PUBLIC_CARD_SCAN: {
         const scanPlayer = getCurrentPlayer();
         const scanRunId = effect.options?.scanRunId || null;

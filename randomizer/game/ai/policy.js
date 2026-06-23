@@ -186,7 +186,13 @@
   function chooseMovePaymentIndexes(hand = [], request = {}) {
     const requiredMovePoints = Math.max(0, Math.round(Number(request.requiredMovePoints) || 0));
     const availableEnergy = Math.max(0, Math.round(Number(request.availableEnergy) || 0));
-    const neededCards = Math.max(0, requiredMovePoints - availableEnergy);
+    const roundNumber = Math.max(1, Math.round(Number(request.roundNumber) || 1));
+    const preserveEnergy = request.preserveEnergy != null
+      ? Boolean(request.preserveEnergy)
+      : roundNumber <= 2 || availableEnergy <= 2;
+    const neededCards = preserveEnergy
+      ? requiredMovePoints
+      : Math.max(0, requiredMovePoints - availableEnergy);
     return (request.moveCardIndexes || [])
       .filter((index) => Number.isInteger(Number(index)) && hand[Number(index)])
       .map((index) => Number(index))
