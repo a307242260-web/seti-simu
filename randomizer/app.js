@@ -13711,7 +13711,7 @@
         ...choice,
         kind: "normal",
         preOwnLandingMarker: effect.options?.rememberPreLandingOwnMarker
-          ? playerHasOwnLandingOnPlanet(currentPlayer, landOptions.planet?.planetId)
+          ? playerHasOwnLandingOnPlanet(currentPlayer, choice.planetId || landOptions.planet?.planetId)
           : false,
       })));
     }
@@ -13825,21 +13825,7 @@
   }
 
   function canExecuteNormalCardOrbit(effect, context) {
-    const placement = getCurrentPlanetActionPlacement(context);
-    if (!placement.ok) return { ok: false, message: placement.message };
-    const cost = effect.options?.skipCost ? {} : abilities.planet.DEFAULT_ORBIT_COST;
-    if (!players.canAfford(placement.currentPlayer, cost)) {
-      return { ok: false, message: `资源不足，需要 ${players.formatResourceCost(cost)}` };
-    }
-    const isAomomoPlanet = placement.planet.planetId === aomomo?.PLANET_ID;
-    if (isAomomoPlanet) {
-      if (!aomomo?.canAddOrbitMarker?.(alienGameState)) {
-        return { ok: false, message: `${placement.planet.name} 环绕槽位已满` };
-      }
-    } else if (!planetStats.canAddOrbitMarker(planetStatsState, placement.planet.planetId)) {
-      return { ok: false, message: `${placement.planet.name} 环绕槽位已满` };
-    }
-    return { ok: true, planet: placement.planet, placement };
+    return abilities.planet.getOrbitOptions(context, effect.options || {});
   }
 
   function buildPlutoRewardEffectsForAction(actionType) {
@@ -13959,10 +13945,11 @@
     return effect.result;
   }
 
-  function executeNormalCardOrbitEffect(effect) {
+  function executeNormalCardOrbitEffect(effect, choice = null) {
     beginEffectHistoryStep(effect.label);
     const result = abilities.executeAbility("orbitProbe", createActionContext(), {
       ...(effect.options || {}),
+      rocketId: choice?.rocketId,
       source: "card",
       historyLabel: effect.label,
     });
@@ -14006,7 +13993,7 @@
             preOwnLandingMarker: choice.preOwnLandingMarker,
           });
         }
-        if (actionType === "orbit") return executeNormalCardOrbitEffect(effect);
+        if (actionType === "orbit") return executeNormalCardOrbitEffect(effect, choice);
         return executeCardLandTarget(effect, choice.target, {
           preOwnLandingMarker: choice.preOwnLandingMarker,
         });
@@ -14020,15 +14007,19 @@
   function executeCardOrbitEffect(effect) {
     const context = createActionContext();
     const normal = canExecuteNormalCardOrbit(effect, context);
-    const preferredRocketId = normal?.placement?.rocket?.id || null;
+    const preferredRocketId = normal?.defaultRocketId || null;
     const pluto = getAvailablePlutoEffectAction("orbit", effect, { preferredRocketId });
-    if (normal.ok && pluto.ok) {
-      return openCardPlutoActionPicker(effect, "orbit", [
-        { kind: "normal", label: `环绕${normal.planet?.name || "当前星球"}` },
-        { kind: "pluto", label: formatPlutoChoiceLabel("orbit", pluto), available: pluto },
-      ]);
+    const choices = [];
+    if (normal.ok) {
+      choices.push(...normal.choices.map((choice) => ({
+        ...choice,
+        kind: "normal",
+      })));
     }
+    if (pluto.ok) choices.push({ kind: "pluto", label: formatPlutoChoiceLabel("orbit", pluto), available: pluto });
+    if (choices.length > 1) return openCardPlutoActionPicker(effect, "orbit", choices);
     if (!normal.ok && pluto.ok) return executePlutoCardActionEffect(effect, "orbit", pluto);
+    if (choices.length === 1 && choices[0].kind === "normal") return executeNormalCardOrbitEffect(effect, choices[0]);
     return executeNormalCardOrbitEffect(effect);
   }
 
@@ -22697,11 +22688,7 @@
     );
     rocketState.statusNote = rewardResult.ok ? rewardResult.message : result.message;
     const traceEvents = !inDebugMode
-      ? [{
-        ...buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, runezu.ALIEN_ID),
-        alienTraceOrigin: runezu.TRACE_EVENT_ORIGIN,
-        tracePosition: Number(position),
-      }]
+      ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, runezu.ALIEN_ID)]
       : [];
     const alienLabRestore = maybeRestoreAlienLabPanelForTrace(currentPlayer, traceType);
     if (alienLabRestore?.changed) {
@@ -26764,20 +26751,22 @@
   function buildPlutoActionChoiceOptions(actionType) {
     const context = createActionContext();
     const actionLabel = getPlutoChoiceActionLabel(actionType);
-    const normalCheck = actions.canExecute(actionType, context);
+    const normalCheck = actionType === "orbit"
+      ? abilities.planet.getOrbitOptions(context)
+      : abilities.planet.getLandOptions(context);
     const placement = getCurrentPlanetActionPlacement(context);
-    const preferredRocketId = placement?.ok ? placement.rocket?.id : null;
+    const preferredRocketId = normalCheck?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
     const plutoCheck = getAvailablePlutoAction(actionType, { preferredRocketId });
     const choices = [];
 
     if (normalCheck.ok) {
       if (actionType === "orbit") {
-        choices.push({
+        choices.push(...normalCheck.choices.map((choice) => ({
+          ...choice,
           kind: "normal",
-          label: `环绕${normalCheck.planet?.name || placement?.planet?.name || "当前星球"}`,
-        });
+        })));
       } else {
-        const landOptions = actions.getLandOptions(context);
+        const landOptions = abilities.planet.getLandOptions(context);
         if (landOptions.ok) {
           choices.push(...landOptions.choices.map((choice) => ({
             ...choice,
@@ -26828,7 +26817,9 @@
       const [choice] = options.choices;
       return choice.kind === "pluto"
         ? executePlutoAction(actionType, { preferredRocketId: choice.preferredRocketId })
-        : runAction(actionType, actionType === "land" ? { target: choice.target } : undefined);
+        : runAction(actionType, actionType === "land"
+          ? { target: choice.target, rocketId: choice.rocketId }
+          : { rocketId: choice.rocketId });
     }
     openLandTargetPicker({
       ...options,
@@ -26836,7 +26827,9 @@
       onConfirm: (choice) => (
         choice.kind === "pluto"
           ? executePlutoAction(actionType, { preferredRocketId: choice.preferredRocketId })
-          : runAction(actionType, actionType === "land" ? { target: choice.target } : undefined)
+          : runAction(actionType, actionType === "land"
+            ? { target: choice.target, rocketId: choice.rocketId }
+            : { rocketId: choice.rocketId })
       ),
     });
     rocketState.statusNote = `请选择${getPlutoChoiceActionLabel(actionType)}目标`;
@@ -27669,8 +27662,8 @@
     }
 
     const launchCheck = actions.canExecute("launch", context);
-    const orbitCheck = actions.canExecute("orbit", context);
-    const landCheck = actions.canExecute("land", context);
+    const orbitCheck = abilities.planet.getOrbitOptions(context);
+    const landCheck = abilities.planet.getLandOptions(context);
     const plutoOrbitCheck = getAvailablePlutoAction("orbit");
     const plutoLandCheck = getAvailablePlutoAction("land");
     const researchTechCheck = actions.canExecute("researchTech", context);
@@ -28122,7 +28115,7 @@
       if (typeof options.onConfirm === "function") {
         return options.onConfirm(choice, options);
       }
-      runAction("land", { target: choice.target });
+      runAction("land", { target: choice.target, rocketId: choice.rocketId });
       return;
     }
 
@@ -28156,7 +28149,7 @@
     const choiceIndex = Number(els.landTargetSelect?.value);
     const options = typeof pending?.getOptions === "function"
       ? pending.getOptions()
-      : actions.getLandOptions(createActionContext());
+      : abilities.planet.getLandOptions(createActionContext());
     if (!options.ok || !options.choices?.length) {
       closeLandTargetPicker();
       rocketState.statusNote = options.message || "登陆目标已失效";
@@ -28169,7 +28162,7 @@
     if (typeof pending?.onConfirm === "function") {
       return pending.onConfirm(choice, options);
     }
-    runAction("land", { target: choice.target });
+    runAction("land", { target: choice.target, rocketId: choice.rocketId });
   }
 
   function launchRocketForCurrentPlayer() {
@@ -28183,9 +28176,9 @@
       return { ok: false, message: rocketState.statusNote };
     }
     const context = createActionContext();
-    const normal = actions.canExecute("orbit", context);
+    const normal = abilities.planet.getOrbitOptions(context);
     const placement = getCurrentPlanetActionPlacement(context);
-    const preferredRocketId = placement?.ok ? placement.rocket?.id : null;
+    const preferredRocketId = normal?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
     const pluto = getAvailablePlutoAction("orbit", { preferredRocketId });
     if (normal.ok && pluto.ok) {
       return openPlutoActionChoicePicker("orbit");
@@ -28193,7 +28186,27 @@
     if (!normal.ok && pluto.ok) {
       return executePlutoAction("orbit", { preferredRocketId });
     }
-    return runAction("orbit");
+    if (!normal.ok) {
+      rocketState.statusNote = normal.message;
+      renderPlayerStats();
+      updateActionButtons();
+      renderStateReadout();
+      return { ok: false, message: normal.message };
+    }
+    if (normal.needsChoice) {
+      openLandTargetPicker({
+        ...normal,
+        title: "选择环绕目标",
+        selectLabel: "环绕到",
+        confirmText: "确认环绕",
+        getOptions: () => abilities.planet.getOrbitOptions(createActionContext()),
+        onConfirm: (choice) => runAction("orbit", { rocketId: choice.rocketId }),
+      });
+      rocketState.statusNote = "请选择环绕目标";
+      renderStateReadout();
+      return { ok: true, pendingChoice: true };
+    }
+    return runAction("orbit", { rocketId: normal.defaultRocketId });
   }
 
   function landForCurrentPlayer() {
@@ -28203,9 +28216,9 @@
       return { ok: false, message: rocketState.statusNote };
     }
     const context = createActionContext();
-    const check = actions.canExecute("land", context);
+    const check = abilities.planet.getLandOptions(context);
     const placement = getCurrentPlanetActionPlacement(context);
-    const preferredRocketId = placement?.ok ? placement.rocket?.id : null;
+    const preferredRocketId = check?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
     const pluto = getAvailablePlutoAction("land", { preferredRocketId });
     if (check.ok && pluto.ok) {
       return openPlutoActionChoicePicker("land");
@@ -28221,7 +28234,7 @@
       return { ok: false, message: check.message };
     }
 
-    const options = actions.getLandOptions(context);
+    const options = check;
     if (!options.ok) {
       rocketState.statusNote = options.message;
       renderPlayerStats();
@@ -28231,11 +28244,15 @@
     }
 
     if (options.needsChoice) {
-      openLandTargetPicker(options);
+      openLandTargetPicker({
+        ...options,
+        getOptions: () => abilities.planet.getLandOptions(createActionContext()),
+        onConfirm: (choice) => runAction("land", { target: choice.target, rocketId: choice.rocketId }),
+      });
       return { ok: true, pendingChoice: true, planetId: options.planet.planetId };
     }
 
-    return runAction("land", { target: options.defaultTarget });
+    return runAction("land", { target: options.defaultTarget, rocketId: options.defaultRocketId });
   }
 
   function addDebugIncome() {
@@ -30190,7 +30207,7 @@
         }))
       )),
     ),
-    getLandOptions: () => structuredClone(actions.getLandOptions(createActionContext())),
+    getLandOptions: () => structuredClone(abilities.planet.getLandOptions(createActionContext())),
     clientToPlanetsReferencePoint: (clientX, clientY) => getPlanetsReferencePointFromClientPosition(clientX, clientY),
     placeRocketAtBoardPoint: (rocketId, x, y) => {
       const result = rocketActions.placeRocketAtBoardPoint(rocketState, rocketId, { x, y });
