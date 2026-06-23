@@ -54,10 +54,14 @@ assert(yStacked.percentY < yBase.percentY, "Yichangdian position 1 stack should 
 const rebuiltYBase = placement.getYichangdianBaseFromStackTraceMarkerLayout(yStacked, 2);
 assert(rebuiltYBase.percentY === yBase.percentY,
   "dragging a stacked Yichangdian marker should rebuild the base coordinate");
-assert(placement.getYichangdianTraceMarkerLayout(1, "pink", 1).percentY === 34.44,
+assert(placement.getYichangdianTraceMarkerLayout(1, "pink", 1).percentX === 18.12,
+  "Yichangdian revealed face pink column should use aligned X");
+assert(placement.getYichangdianTraceMarkerLayout(1, "pink", 1).percentY === 36.6,
   "Yichangdian revealed face pink first slot should keep calibrated Y");
-assert(placement.getYichangdianTraceMarkerLayout(1, "yellow", 5).percentY === 82.3,
+assert(placement.getYichangdianTraceMarkerLayout(1, "yellow", 5).percentY === 88.97,
   "Yichangdian revealed face yellow fifth slot should keep calibrated Y");
+assert(placement.getYichangdianTraceMarkerLayout(1, "blue", 3).percentX === 80.62,
+  "Yichangdian revealed face blue column should use aligned X");
 assert(placement.getYichangdianTraceMarkerLayout(2, "blue", 1).percentX === 80.62,
   "Yichangdian revealed face slot 2 blue column should keep calibrated X");
 assert(placement.getYichangdianTraceMarkerLayout(1, "pink", 1).percentY
@@ -77,6 +81,12 @@ assert(placement.getFangzhouTraceMarkerLayout(2, "yellow", 2).percentX === 50.44
   "Fangzhou yellow column should use aligned X");
 assert(placement.getFangzhouTraceMarkerLayout(2, "blue", 4).percentX === 79.51,
   "Fangzhou blue column should use aligned X");
+assert(placement.getFangzhouTraceMarkerLayout(1, "pink", 1).percentX === 20.43,
+  "Fangzhou slot 1 pink column should use calibrated aligned X");
+assert(placement.getFangzhouTraceMarkerLayout(1, "yellow", 3).percentY === 72.21,
+  "Fangzhou slot 1 yellow third marker should use interpolated calibrated Y");
+assert(placement.getFangzhouTraceMarkerLayout(1, "blue", 4).percentX === 79.28,
+  "Fangzhou slot 1 blue column should use calibrated aligned X");
 
 for (const traceType of ["pink", "yellow"]) {
   for (let position = 1; position <= 4; position += 1) {
