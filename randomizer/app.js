@@ -5471,18 +5471,6 @@
       }));
   }
 
-  function buildDelayedPublicRefillEffects(scanRunId) {
-    const slots = getDelayedPublicRefillSlots(scanRunId);
-    if (!slots.length) return [];
-    return [{
-      type: scanEffects.EFFECT_TYPES.SCAN_PUBLIC_REFILL,
-      icon: "scan_public_refill",
-      label: "补充公共牌区",
-      undoable: false,
-      options: { scanRunId, slots },
-    }];
-  }
-
   function appendSectorSettlementResultToFlow(settlementResult) {
     if (!pendingActionEffectFlow || !settlementResult?.ok) return;
     if (!pendingActionEffectFlow.sectorSettlementResult) {
@@ -5598,7 +5586,6 @@
   function buildScanFinalizeFollowupEffects(scanRunId, flow = pendingActionEffectFlow) {
     return [
       ...buildReadySectorFinishEffects({ nebulaIds: getFlowMarkedNebulaIds(flow) }),
-      ...buildDelayedPublicRefillEffects(scanRunId),
     ];
   }
 
@@ -5613,7 +5600,7 @@
       undoable: true,
       message: followups.length
         ? `扫描收尾：追加 ${followups.length} 个后续效果`
-        : "扫描收尾：没有待处理的扇区或公共牌补牌",
+        : "扫描收尾：没有待处理的扇区结算",
       payload: { inserted: followups.length, scanRunId },
     };
     rocketState.statusNote = effect.result.message;
@@ -5700,30 +5687,35 @@
     return effect.result;
   }
 
-  function executeScanPublicRefillEffect(effect) {
-    const scanRunId = effect.options?.scanRunId || null;
-    const slots = (effect.options?.slots || [])
-      .map((item) => Number(item?.slotIndex))
+  function normalizeDelayedPublicRefillSlotIndexes(slots) {
+    return (slots || [])
+      .map((item) => Number(typeof item === "number" ? item : item?.slotIndex))
       .filter((slotIndex, index, list) => Number.isInteger(slotIndex) && list.indexOf(slotIndex) === index)
       .sort((a, b) => a - b);
-    if (!slots.length) {
-      clearDelayedPublicRefillSlots(scanRunId);
-      effect.result = {
+  }
+
+  function replenishDelayedPublicRefillSlots(scanRunId, slots, options = {}) {
+    const flow = options.flow || pendingActionEffectFlow;
+    const slotIndexes = normalizeDelayedPublicRefillSlotIndexes(slots);
+    if (!slotIndexes.length) {
+      clearDelayedPublicRefillSlots(scanRunId, flow);
+      return {
         ok: true,
         undoable: true,
         message: "公共牌区没有待补牌位",
+        payload: { scanRunId, slots: [] },
       };
-      rocketState.statusNote = effect.result.message;
-      completeCurrentActionEffect();
-      renderStateReadout();
-      return effect.result;
     }
 
     const publicCardsSnapshot = cardState.publicCards.slice();
     const discardPileSnapshot = (cardState.discardPile || []).slice();
-    beginEffectHistoryStep(effect.label, { effectType: scanEffects.EFFECT_TYPES.SCAN_PUBLIC_REFILL });
+    const hasEffectIndex = Object.prototype.hasOwnProperty.call(options, "effectIndex");
+    beginEffectHistoryStep(options.label || "补充公共牌区", {
+      effectIndex: hasEffectIndex ? options.effectIndex : pendingActionEffectFlow?.currentIndex ?? null,
+      effectType: scanEffects.EFFECT_TYPES.SCAN_PUBLIC_REFILL,
+    });
     const replenished = [];
-    for (const slotIndex of slots) {
+    for (const slotIndex of slotIndexes) {
       if (cardState.publicCards?.[slotIndex]) continue;
       const card = cards.replenishPublicSlot(cardState, playerState, slotIndex);
       if (card) replenished.push({ slotIndex, card });
@@ -5733,18 +5725,57 @@
       publicCardsSnapshot,
       discardPileSnapshot,
     ));
-    clearDelayedPublicRefillSlots(scanRunId);
+    clearDelayedPublicRefillSlots(scanRunId, flow);
 
     const labels = replenished
       .map((item) => `${item.slotIndex + 1}:${cards.getCardLabel(item.card)}`)
       .join("、");
-    return finishAutomaticRewardEffect(effect, {
+    return {
       ok: true,
       undoable: false,
       irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
       message: labels ? `公共牌区补牌：${labels}` : "公共牌区补牌：没有空位需要补牌",
-      payload: { scanRunId, slots, replenished },
+      payload: { scanRunId, slots: slotIndexes, replenished },
+    };
+  }
+
+  function executeScanPublicRefillEffect(effect) {
+    const scanRunId = effect.options?.scanRunId || null;
+    const result = replenishDelayedPublicRefillSlots(scanRunId, effect.options?.slots || [], {
+      label: effect.label,
     });
+    if (!normalizeDelayedPublicRefillSlotIndexes(effect.options?.slots || []).length) {
+      effect.result = result;
+      rocketState.statusNote = effect.result.message;
+      completeCurrentActionEffect();
+      renderStateReadout();
+      return effect.result;
+    }
+    return finishAutomaticRewardEffect(effect, result);
+  }
+
+  function settleDelayedPublicRefillsAfterScanFlow(flow) {
+    if (!flow?.scanRunId) return null;
+    const slots = getDelayedPublicRefillSlots(flow.scanRunId, flow);
+    if (!slots.length) {
+      return null;
+    }
+    const syntheticEffect = {
+      type: scanEffects.EFFECT_TYPES.SCAN_PUBLIC_REFILL,
+      label: "补充公共牌区",
+      undoable: false,
+    };
+    const result = replenishDelayedPublicRefillSlots(flow.scanRunId, slots, {
+      flow,
+      label: syntheticEffect.label,
+      effectIndex: null,
+    });
+    syntheticEffect.result = result;
+    endEffectHistoryStep({ effect: syntheticEffect, result });
+    rocketState.statusNote = result.message;
+    renderPublicCards();
+    updatePublicCardControls();
+    return result;
   }
 
   function buildEndOfFlowFollowupEffects(flow) {
@@ -5753,9 +5784,6 @@
     const markedNebulaIds = getFlowMarkedNebulaIds(flow);
     if (markedNebulaIds.size) {
       effects.push(...buildReadySectorFinishEffects({ nebulaIds: markedNebulaIds }));
-    }
-    if (flow.scanRunId) {
-      effects.push(...buildDelayedPublicRefillEffects(flow.scanRunId));
     }
     return effects;
   }
@@ -5771,9 +5799,10 @@
     if (!effects.length) return false;
     flow.endOfFlowSettlementScheduled = true;
     flow.completed = false;
+    const ownerId = flow.playerId || flow.defaultPlayerId || pendingActionEffectFlow?.playerId || null;
     for (const effect of effects) {
       flow.effects.push({
-        ...effect,
+        ...assignEffectOwner({ ...effect }, ownerId),
         id: effect.id || `end-flow-followup-${flow.effects.length}`,
         options: { ...(effect.options || {}) },
         status: "pending",
@@ -8327,11 +8356,12 @@
     );
     if (!history.hasSession() || effectStepActive) return;
     const current = getCurrentActionEffect();
+    const hasEffectIndex = Object.prototype.hasOwnProperty.call(meta, "effectIndex");
     history.beginStep({
       source,
       type: "effect",
       label: label || current?.label || "效果",
-      effectIndex: meta.effectIndex ?? pendingActionEffectFlow?.currentIndex ?? null,
+      effectIndex: hasEffectIndex ? meta.effectIndex : pendingActionEffectFlow?.currentIndex ?? null,
       effectType: meta.effectType ?? current?.type ?? null,
       logBefore: meta.logBefore || createActionLogImpactSnapshot(),
       ...meta,
@@ -8349,20 +8379,21 @@
     }
   }
 
-  function endEffectHistoryStep() {
+  function endEffectHistoryStep(options = {}) {
     if (!effectStepActive) return null;
-    const currentEffect = getCurrentActionEffect();
+    const currentEffect = options.effect || getCurrentActionEffect();
+    const effectResult = options.result || currentEffect?.result || null;
     const source = getEffectHistorySource();
     const history = getHistoryForSource(source);
     const step = history.endStep();
     if (step) {
       const irreversibleReason = getIrreversibleReason(
-        currentEffect?.result,
+        effectResult,
         currentEffect?.label || step.label,
       ) || (currentEffect?.undoable === false ? (currentEffect?.label || step.label) : null);
       if (irreversibleReason) {
         step.undoable = false;
-        step.irreversibleCode = currentEffect?.result?.irreversible?.code || "irreversible_effect";
+        step.irreversibleCode = effectResult?.irreversible?.code || "irreversible_effect";
         step.irreversibleReason = irreversibleReason;
         markCurrentActionIrreversible(irreversibleReason, step.irreversibleCode);
       }
@@ -8370,7 +8401,7 @@
       appendActionLogStep(
         source,
         step.label,
-        composeActionLogDetailWithImpact(currentEffect?.result?.message || null, step),
+        composeActionLogDetailWithImpact(effectResult?.message || null, step),
         actionLogOptionsFromHistoryStep(step),
       );
     }
@@ -8913,6 +8944,9 @@
       return;
     }
     const actionType = finishedFlow.actionType;
+    const delayedPublicRefillResult = actionType === "scan"
+      ? settleDelayedPublicRefillsAfterScanFlow(finishedFlow)
+      : null;
     clearActionEffectFlow();
     if (actionType === "researchTech") {
       tech.setTechSelectionActive(techGameState, false);
@@ -8976,9 +9010,12 @@
       : actionType === "pass"
         ? "PASS 效果已全部处理，可继续执行次要行动或回合结束"
       : "效果已全部处理，可继续执行次要行动或回合结束";
-    rocketState.statusNote = settleResult?.ok
-      ? `${baseMessage}；${settleResult.message}；${settleResult.participantAwardMessage || "参与结算玩家各获得1宣传"}`
-      : baseMessage;
+    const settleMessage = settleResult?.ok
+      ? `${settleResult.message}；${settleResult.participantAwardMessage || "参与结算玩家各获得1宣传"}`
+      : null;
+    rocketState.statusNote = [baseMessage, settleMessage, delayedPublicRefillResult?.message]
+      .filter(Boolean)
+      .join("；");
     if (finishedFlow.consumesMainAction !== false || finishedFlow.resumePendingActionExecuted) {
       markActionPending();
     }
@@ -12937,6 +12974,20 @@
 
   function openIncomeRewardEffect(effect) {
     const currentPlayer = getEffectTargetPlayer(effect);
+    if (!currentPlayer?.hand?.length) {
+      effect.result = {
+        ok: true,
+        undoable: true,
+        skipped: true,
+        message: `${effect.label}：${currentPlayer?.colorLabel || currentPlayer?.name || "玩家"}没有手牌可用于收入，跳过`,
+      };
+      rocketState.statusNote = effect.result.message;
+      renderPlayerStats();
+      renderPlayerHand();
+      completeCurrentActionEffect();
+      renderStateReadout();
+      return effect.result;
+    }
     const result = beginDiscardSelection(1, {
       type: "planet_reward_income",
       player: currentPlayer,
