@@ -17,6 +17,11 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (placement) {
   "use strict";
 
+  const FIRST_TRACE_REWARDS_BY_ALIEN_SLOT_ID = Object.freeze({
+    1: Object.freeze({ gain: Object.freeze({ score: 5, publicity: 1 }) }),
+    2: Object.freeze({ gain: Object.freeze({ score: 3, publicity: 1 }) }),
+  });
+
   function createDefaultTraceSlot() {
     return {
       firstPlaced: false,
@@ -85,6 +90,14 @@
       playerColor: player?.color || player?.playerColor || null,
       count: countFirstTracesForPlayerOnSlot(alienState, alienSlotId, player),
     })).filter((entry) => entry.count > 0);
+  }
+
+  function getFirstTraceRewardForSlot(alienSlotId) {
+    const reward = FIRST_TRACE_REWARDS_BY_ALIEN_SLOT_ID[Number(alienSlotId)] || null;
+    if (!reward) return null;
+    return {
+      gain: { ...(reward.gain || {}) },
+    };
   }
 
   function isAlienReadyToReveal(alienSlot) {
@@ -209,6 +222,7 @@
     countPlacedFirstTraces,
     countFirstTracesForPlayerOnSlot,
     countFirstTracesByPlayerOnSlot,
+    getFirstTraceRewardForSlot,
     isAlienReadyToReveal,
     placeFirstTrace,
     addExtraTrace,

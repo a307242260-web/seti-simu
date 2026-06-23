@@ -6881,7 +6881,7 @@
     effectStepActive = true;
   }
 
-  function beginQuickActionStep(actionType, label) {
+  function beginQuickActionStep(actionType, label, options = {}) {
     ensureActionLogDraft({
       source: HISTORY_SOURCE_QUICK,
       actionType: actionLogState.draft?.actionType || "quick",
@@ -6894,7 +6894,7 @@
       source: HISTORY_SOURCE_QUICK,
       type: actionType,
       label,
-      logBefore: createActionLogImpactSnapshot(),
+      logBefore: options.logBefore || createActionLogImpactSnapshot(),
     });
   }
 
@@ -9059,6 +9059,7 @@
       markActionPending();
     }
     renderPlayerStats();
+    renderAlienPanels();
     updateActionButtons();
     renderStateReadout();
   }
@@ -17775,6 +17776,34 @@
     }) || getCurrentPlayer();
   }
 
+  function formatAlienFirstTraceRewardGain(gain = {}) {
+    const parts = [];
+    if (gain.score != null) parts.push(`${gain.score}分`);
+    if (gain.publicity != null) parts.push(`${gain.publicity}宣传`);
+    if (gain.credits != null) parts.push(`${gain.credits}信用点`);
+    if (gain.energy != null) parts.push(`${gain.energy}能量`);
+    if (gain.availableData != null) parts.push(`${gain.availableData}数据`);
+    if (gain.additionalPublicScan != null) parts.push(`${gain.additionalPublicScan}额外公共扫描`);
+    if (gain.handSize != null) parts.push(`${gain.handSize}手牌`);
+    return parts.join("+");
+  }
+
+  function applyAlienFirstTraceReward(alienSlotId, traceType, player, placementResult) {
+    if (!placementResult?.ok || placementResult.extraOnly) return null;
+    const reward = aliens.getFirstTraceRewardForSlot?.(alienSlotId);
+    const gain = reward?.gain || null;
+    if (!gain || !Object.values(gain).some((value) => Number(value) !== 0)) return null;
+
+    players.gainResources(player, gain);
+    recordAlienTraceScore(player, traceType, gain);
+
+    return {
+      kind: "firstTraceReward",
+      gain: { ...gain },
+      message: `${aliens.getAlienSlotLabel(alienSlotId)}首痕迹奖励：${formatAlienFirstTraceRewardGain(gain) || "无奖励"}`,
+    };
+  }
+
   function applyAlienTraceAfterReward(pending, player, traceType) {
     const reward = pending?.afterTraceReward;
     if (!reward || reward.kind !== "traceCountScore") return null;
@@ -17812,6 +17841,7 @@
     }
     const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
     const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
+    const beforeLogSnapshot = createActionLogImpactSnapshot(currentPlayer);
     pendingAlienTraceAction = null;
     const result = aliens.placeFirstTrace(
       alienGameState,
@@ -17822,6 +17852,9 @@
     if (!inDebugMode) {
       closeAlienTracePicker();
     }
+    const firstTraceReward = result.ok
+      ? applyAlienFirstTraceReward(alienSlotId, traceType, currentPlayer, result)
+      : null;
     const revealResult = maybeRevealAlienAfterTrace(alienSlotId, result);
     const revealIrreversibleReason = revealResult?.ok
       ? "外星人揭示初始化随机内容"
@@ -17834,7 +17867,11 @@
       || handleAmibaRevealSideEffects(alienSlotId, revealResult, currentPlayer)
       || handleAomomoRevealSideEffects(alienSlotId, revealResult, currentPlayer)
       || handleRunezuRevealSideEffects(alienSlotId, revealResult, currentPlayer);
-    rocketState.statusNote = revealSideEffect?.message || revealResult?.message || result.message;
+    rocketState.statusNote = [
+      result.message,
+      firstTraceReward?.message || null,
+      revealSideEffect?.message || revealResult?.message || null,
+    ].filter(Boolean).join("；");
     const traceEvents = result.ok && !inDebugMode
       ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, revealResult?.alienId || null)]
       : [];
@@ -17845,7 +17882,7 @@
     const afterReward = result.ok ? applyAlienTraceAfterReward(pending, currentPlayer, traceType) : null;
     appendAlienTraceAfterRewardMessage(afterReward);
     if (pending?.type === "planet_reward_alien_trace" && result.ok) {
-      beginEffectHistoryStep(pending.effectLabel || "外星人标记奖励");
+      beginEffectHistoryStep(pending.effectLabel || "外星人标记奖励", { logBefore: beforeLogSnapshot });
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
@@ -17865,12 +17902,14 @@
             : null,
           message: rocketState.statusNote,
           events: traceEvents,
-          payload: { alienSlotId, traceType, revealed: revealResult || null, afterReward },
+          payload: { alienSlotId, traceType, revealed: revealResult || null, firstTraceReward, afterReward },
         };
       }
       completeCurrentActionEffect();
     } else if (pending?.type === "banrenma_bonus_alien_trace" && result.ok) {
-      beginQuickActionStep("banrenma-alien-trace", pending.effectLabel || "半人马外星人痕迹");
+      beginQuickActionStep("banrenma-alien-trace", pending.effectLabel || "半人马外星人痕迹", {
+        logBefore: beforeLogSnapshot,
+      });
       recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
@@ -17881,7 +17920,7 @@
         beforePlayerState,
         "恢复半人马痕迹奖励前玩家状态",
       ));
-      completeQuickActionStep();
+      completeQuickActionStep(rocketState.statusNote);
       settleCardTasksAfterEffect({ events: traceEvents, render: true });
     } else if (result.ok) {
       settleCardTasksAfterEffect({ events: traceEvents, render: true });
@@ -19729,6 +19768,7 @@
     syncTechSelectionChrome();
     setTokenAssetSizes();
     renderPlayerStats();
+    renderAlienPanels();
     renderTechBoard();
     renderRockets();
     renderPublicCards();
@@ -23889,6 +23929,7 @@
       ? `${turnAdvanceMessage}；${passIncomeResult.message}`
       : turnAdvanceMessage;
     renderPlayerStats();
+    renderAlienPanels();
     renderTechBoard();
     renderRockets();
     renderPublicCards();

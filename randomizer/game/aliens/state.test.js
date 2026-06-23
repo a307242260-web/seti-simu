@@ -9,6 +9,17 @@ function assert(condition, message) {
 
 const alienState = state.createDefaultAlienState();
 
+assert(state.getFirstTraceRewardForSlot(1).gain.score === 5,
+  "alien slot 1 first trace should award 5 score");
+assert(state.getFirstTraceRewardForSlot(1).gain.publicity === 1,
+  "alien slot 1 first trace should award 1 publicity");
+assert(state.getFirstTraceRewardForSlot(2).gain.score === 3,
+  "alien slot 2 first trace should award 3 score");
+assert(state.getFirstTraceRewardForSlot(2).gain.publicity === 1,
+  "alien slot 2 first trace should award 1 publicity");
+assert(state.getFirstTraceRewardForSlot(3) === null,
+  "unknown alien slots should not have first trace rewards");
+
 let result = state.placeFirstTrace(alienState, 1, "yellow", "blue");
 assert(result.ok && !result.extraOnly, "first yellow trace should place");
 

@@ -41,4 +41,44 @@ const launchResult = runezu.consumeTaskEvents(launchCard, [{ type: "launch" }]);
 assert.equal(launchResult.ok, true);
 assert.deepEqual(launchResult.symbolIds, ["symbol_1"]);
 
+const alienState = { aliens: { 1: { revealed: true, alienId: runezu.ALIEN_ID } } };
+const player = { id: "p1", color: "blue", runezuSymbols: {} };
+runezu.ensureRunezuState(alienState);
+
+assert.equal(runezu.canPlaceFaceSymbol(alienState, 4, player).ok, false);
+runezu.gainPlayerSymbol(player, "symbol_4");
+assert.equal(runezu.canPlaceFaceSymbol(alienState, 4, player).ok, true);
+assert.equal(runezu.canPlaceFaceSymbol(alienState, 1, player).ok, false);
+
+let faceResult = runezu.placePlayerSymbolOnFace(alienState, 4, player, "symbol_4");
+assert.equal(faceResult.ok, true);
+assert.deepEqual(faceResult.reward, {
+  gain: {},
+  dataCount: 0,
+  drawCards: 1,
+  pickCard: false,
+  pickAlienCard: false,
+  panelSymbol: false,
+  refillPanelSymbol: false,
+  panelSymbolSlotId: null,
+  symbolId: null,
+});
+
+runezu.gainPlayerSymbol(player, "symbol_4");
+assert.equal(
+  runezu.listPlaceablePlayerSymbolsForFace(alienState, player).some((choice) => choice.symbolId === "symbol_4"),
+  false,
+);
+
+runezu.gainPlayerSymbol(player, "symbol_5");
+faceResult = runezu.placePlayerSymbolOnFace(alienState, 5, player, "symbol_5");
+assert.equal(faceResult.ok, true);
+assert.deepEqual(faceResult.reward.gain, { publicity: 1 });
+
+runezu.gainPlayerSymbol(player, "symbol_1");
+assert.equal(runezu.canPlaceFaceSymbol(alienState, 1, player).ok, true);
+faceResult = runezu.placePlayerSymbolOnFace(alienState, 1, player, "symbol_1");
+assert.equal(faceResult.ok, true);
+assert.deepEqual(faceResult.reward.gain, { energy: 1 });
+
 console.log("runezu.test.js: all tests passed");

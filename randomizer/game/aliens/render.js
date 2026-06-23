@@ -2256,6 +2256,8 @@
     slot.dataset.alienSlot = String(alienSlotId);
     slot.dataset.runezuFaceSymbolPosition = String(position);
     slot.dataset.runezuFaceSymbolSlot = "true";
+    slot.disabled = !canPlace;
+    slot.setAttribute("aria-disabled", canPlace ? "false" : "true");
     slot.classList.toggle("is-placeable", canPlace);
     slot.title = `${runezu.formatFaceSymbolSlotLabel?.(position) || `黑圈${position}`} @(${layout.percentX}%,${layout.percentY}%)`;
     slot.setAttribute("aria-label", `${placement.getAlienSlotLabel(alienSlotId)} ${slot.title}`);

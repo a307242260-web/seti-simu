@@ -608,6 +608,7 @@
     countPlacedFirstTraces: state.countPlacedFirstTraces,
     countFirstTracesForPlayerOnSlot: state.countFirstTracesForPlayerOnSlot,
     countFirstTracesByPlayerOnSlot: state.countFirstTracesByPlayerOnSlot,
+    getFirstTraceRewardForSlot: state.getFirstTraceRewardForSlot,
     isAlienReadyToReveal: state.isAlienReadyToReveal,
     placeFirstTrace: state.placeFirstTrace,
     addExtraTrace: state.addExtraTrace,

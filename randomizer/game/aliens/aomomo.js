@@ -41,16 +41,16 @@
   const EFFECT_SPEND_FOSSILS_GAIN_SCORE = "aomomo_spend_fossils_gain_score";
 
   const CARD_DEFINITIONS = Object.freeze([
-    Object.freeze({ index: 0, cardId: "aomomo_0.webp", asset: "0.webp", cardName: "奥陌陌 0", price: 1, cardTypeCode: 2, discardActionCode: 3, scanActionCode: 1, incomeCode: 0 }),
-    Object.freeze({ index: 1, cardId: "aomomo_1.webp", asset: "1.webp", cardName: "奥陌陌 1", price: 1, cardTypeCode: 1, discardActionCode: 4, scanActionCode: 0, incomeCode: 0 }),
-    Object.freeze({ index: 2, cardId: "aomomo_2.webp", asset: "2.webp", cardName: "奥陌陌 2", price: 1, cardTypeCode: 2, discardActionCode: 3, scanActionCode: 1, incomeCode: 0 }),
-    Object.freeze({ index: 3, cardId: "aomomo_3.webp", asset: "3.webp", cardName: "奥陌陌 3", price: 1, cardTypeCode: 2, discardActionCode: 5, scanActionCode: 0, incomeCode: 0 }),
-    Object.freeze({ index: 4, cardId: "aomomo_4.webp", asset: "4.webp", cardName: "奥陌陌 4", price: 1, cardTypeCode: 0, discardActionCode: 3, scanActionCode: 0, incomeCode: 0 }),
-    Object.freeze({ index: 5, cardId: "aomomo_5.webp", asset: "5.webp", cardName: "奥陌陌 5", price: 1, cardTypeCode: 0, discardActionCode: 3, scanActionCode: 0, incomeCode: 0 }),
-    Object.freeze({ index: 6, cardId: "aomomo_6.webp", asset: "6.webp", cardName: "奥陌陌 6", price: 1, cardTypeCode: 0, discardActionCode: 3, scanActionCode: 0, incomeCode: 0 }),
-    Object.freeze({ index: 7, cardId: "aomomo_7.webp", asset: "7.webp", cardName: "奥陌陌 7", price: 1, cardTypeCode: 0, discardActionCode: 5, scanActionCode: 0, incomeCode: 0 }),
-    Object.freeze({ index: 8, cardId: "aomomo_8.webp", asset: "8.webp", cardName: "奥陌陌 8", price: 2, cardTypeCode: 3, discardActionCode: 3, scanActionCode: 1, incomeCode: 0 }),
-    Object.freeze({ index: 9, cardId: "aomomo_9.webp", asset: "9.webp", cardName: "奥陌陌 9", price: 1, cardTypeCode: 2, discardActionCode: 3, scanActionCode: 1, incomeCode: 0 }),
+    Object.freeze({ index: 0, cardId: "aomomo_0.webp", asset: "0.webp", cardName: "改变轨迹", price: 2, cardTypeCode: 2, discardActionCode: 5, scanActionCode: 1, incomeCode: 1 }),
+    Object.freeze({ index: 1, cardId: "aomomo_1.webp", asset: "1.webp", cardName: "对照分析", price: 1, cardTypeCode: 1, discardActionCode: 5, scanActionCode: 1, incomeCode: 1 }),
+    Object.freeze({ index: 2, cardId: "aomomo_2.webp", asset: "2.webp", cardName: "外星化石发现", price: 1, cardTypeCode: 2, discardActionCode: 3, scanActionCode: 2, incomeCode: 1 }),
+    Object.freeze({ index: 3, cardId: "aomomo_3.webp", asset: "3.webp", cardName: "挖掘探测车", price: 1, cardTypeCode: 2, discardActionCode: 4, scanActionCode: 3, incomeCode: 2 }),
+    Object.freeze({ index: 4, cardId: "aomomo_4.webp", asset: "4.webp", cardName: "外星化石样本", price: 2, cardTypeCode: 1, discardActionCode: 5, scanActionCode: 2, incomeCode: 2 }),
+    Object.freeze({ index: 5, cardId: "aomomo_5.webp", asset: "5.webp", cardName: "天时地利", price: 2, cardTypeCode: 2, discardActionCode: 4, scanActionCode: 0, incomeCode: 0 }),
+    Object.freeze({ index: 6, cardId: "aomomo_6.webp", asset: "6.webp", cardName: "探测器定制", price: 2, cardTypeCode: 0, discardActionCode: 4, scanActionCode: 2, incomeCode: 0 }),
+    Object.freeze({ index: 7, cardId: "aomomo_7.webp", asset: "7.webp", cardName: "争分夺秒", price: 3, cardTypeCode: 0, discardActionCode: 3, scanActionCode: 1, incomeCode: 1 }),
+    Object.freeze({ index: 8, cardId: "aomomo_8.webp", asset: "8.webp", cardName: "地形测绘", price: 3, cardTypeCode: 3, discardActionCode: 5, scanActionCode: 0, incomeCode: 0 }),
+    Object.freeze({ index: 9, cardId: "aomomo_9.webp", asset: "9.webp", cardName: "天外来客", price: 2, cardTypeCode: 2, discardActionCode: 3, scanActionCode: 2, incomeCode: 2 }),
   ]);
 
   const CARD_BY_INDEX = Object.freeze(Object.fromEntries(CARD_DEFINITIONS.map((card) => [card.index, card])));

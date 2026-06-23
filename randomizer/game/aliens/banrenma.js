@@ -30,16 +30,16 @@
   const EFFECT_GAIN_INCOME = "banrenma_gain_income";
 
   const CARD_DEFINITIONS = Object.freeze([
-    Object.freeze({ index: 0, cardId: "banrenma_0.webp", asset: "0.webp", cardName: "半人马 0", price: 1, cardTypeCode: 4, discardActionCode: 5, scanActionCode: 1, incomeCode: 1 }),
-    Object.freeze({ index: 1, cardId: "banrenma_1.webp", asset: "1.webp", cardName: "半人马 1", price: 1, cardTypeCode: 4, discardActionCode: 4, scanActionCode: 2, incomeCode: 0 }),
-    Object.freeze({ index: 2, cardId: "banrenma_2.webp", asset: "2.webp", cardName: "半人马 2", price: 1, cardTypeCode: 4, discardActionCode: 5, scanActionCode: 1, incomeCode: 3 }),
-    Object.freeze({ index: 3, cardId: "banrenma_3.webp", asset: "3.webp", cardName: "半人马 3", price: 2, cardTypeCode: 4, discardActionCode: 3, scanActionCode: 2, incomeCode: 3 }),
-    Object.freeze({ index: 4, cardId: "banrenma_4.webp", asset: "4.webp", cardName: "半人马 4", price: 1, cardTypeCode: 4, discardActionCode: 3, scanActionCode: 0, incomeCode: 4 }),
-    Object.freeze({ index: 5, cardId: "banrenma_5.webp", asset: "5.webp", cardName: "半人马 5", price: 2, cardTypeCode: 4, discardActionCode: 4, scanActionCode: 3, incomeCode: 1 }),
-    Object.freeze({ index: 6, cardId: "banrenma_6.webp", asset: "6.webp", cardName: "半人马 6", price: 1, cardTypeCode: 4, discardActionCode: 3, scanActionCode: 0, incomeCode: 2 }),
-    Object.freeze({ index: 7, cardId: "banrenma_7.webp", asset: "7.webp", cardName: "半人马 7", price: 2, cardTypeCode: 4, discardActionCode: 5, scanActionCode: 1, incomeCode: 4 }),
-    Object.freeze({ index: 8, cardId: "banrenma_8.webp", asset: "8.webp", cardName: "半人马 8", price: 2, cardTypeCode: 4, discardActionCode: 3, scanActionCode: 0, incomeCode: 3 }),
-    Object.freeze({ index: 9, cardId: "banrenma_9.webp", asset: "9.webp", cardName: "半人马 9", price: 1, cardTypeCode: 4, discardActionCode: 4, scanActionCode: 2, incomeCode: 4 }),
+    Object.freeze({ index: 0, cardId: "banrenma_0.webp", asset: "0.webp", cardName: "半人马卡牌0", price: 1, cardTypeCode: 4, discardActionCode: 5, scanActionCode: 1, incomeCode: 1 }),
+    Object.freeze({ index: 1, cardId: "banrenma_1.webp", asset: "1.webp", cardName: "半人马卡牌1", price: 1, cardTypeCode: 4, discardActionCode: 4, scanActionCode: 2, incomeCode: 0 }),
+    Object.freeze({ index: 2, cardId: "banrenma_2.webp", asset: "2.webp", cardName: "半人马卡牌2", price: 1, cardTypeCode: 4, discardActionCode: 5, scanActionCode: 1, incomeCode: 3 }),
+    Object.freeze({ index: 3, cardId: "banrenma_3.webp", asset: "3.webp", cardName: "半人马卡牌3", price: 2, cardTypeCode: 4, discardActionCode: 3, scanActionCode: 2, incomeCode: 3 }),
+    Object.freeze({ index: 4, cardId: "banrenma_4.webp", asset: "4.webp", cardName: "半人马卡牌4", price: 1, cardTypeCode: 4, discardActionCode: 3, scanActionCode: 0, incomeCode: 4 }),
+    Object.freeze({ index: 5, cardId: "banrenma_5.webp", asset: "5.webp", cardName: "半人马卡牌5", price: 2, cardTypeCode: 4, discardActionCode: 4, scanActionCode: 3, incomeCode: 1 }),
+    Object.freeze({ index: 6, cardId: "banrenma_6.webp", asset: "6.webp", cardName: "半人马卡牌6", price: 1, cardTypeCode: 4, discardActionCode: 3, scanActionCode: 0, incomeCode: 2 }),
+    Object.freeze({ index: 7, cardId: "banrenma_7.webp", asset: "7.webp", cardName: "半人马卡牌7", price: 2, cardTypeCode: 4, discardActionCode: 5, scanActionCode: 1, incomeCode: 4 }),
+    Object.freeze({ index: 8, cardId: "banrenma_8.webp", asset: "8.webp", cardName: "半人马卡牌8", price: 2, cardTypeCode: 4, discardActionCode: 3, scanActionCode: 0, incomeCode: 3 }),
+    Object.freeze({ index: 9, cardId: "banrenma_9.webp", asset: "9.webp", cardName: "半人马卡牌9", price: 1, cardTypeCode: 4, discardActionCode: 4, scanActionCode: 2, incomeCode: 4 }),
   ]);
 
   const CARD_BY_INDEX = Object.freeze(Object.fromEntries(CARD_DEFINITIONS.map((card) => [card.index, card])));

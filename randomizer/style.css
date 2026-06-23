@@ -1132,6 +1132,19 @@ body {
   z-index: 5;
 }
 
+.alien-runezu-face-symbol-slot:not(.is-placeable) {
+  pointer-events: none;
+}
+
+.alien-runezu-face-symbol-slot.is-placeable {
+  border-color: rgba(255, 236, 128, 0.9);
+  background: rgba(255, 224, 94, 0.18);
+  box-shadow:
+    0 0 0 2px rgba(255, 246, 177, 0.42),
+    0 0 18px rgba(255, 215, 98, 0.42);
+  z-index: 22;
+}
+
 .alien-runezu-slot.is-stack-hotzone {
   border-radius: 999px;
 }
