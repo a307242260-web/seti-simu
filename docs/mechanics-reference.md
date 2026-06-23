@@ -57,7 +57,7 @@
 - 未来跨度研究所：公司牌上额外显示 `wlkd_token` 专属标记。点击后作为快速行动选择一张费用为信用点的手牌（半人马等能量费用牌不可选），移到公司牌下方并设定目标分（当前分 + 15/25/35/45，对应费用 1/2/3/4）；达成目标分后目标牌高亮为可打出但不显示专属标记，可用标准“打牌”主行动免费打出，所有效果完成后专属标记回到公司且当轮可再次作为快速行动使用。底部普通 1x 只能在已有未达成目标牌时使用：精选 1 张公共牌并把目标分提高 3，确认补牌后不可撤销。
 - 异星实验室：公司牌上显示蓝/黄/粉三块专属板块。正面时分别把标准发射改为 1 信用点、标准扫描改为 2 能量、标准研究科技改为 4 宣传；正面板块高亮且可点击，点击等同触发对应主要行动。执行对应标准主行动后该板块翻背。获得同色外星痕迹时对应板块翻回正面。该公司没有普通 1x 圆标。
 - 玩家运行时字段：`industryBorrowedTechTileId` / `industryBorrowedTechRound` / `industryBorrowedTechTurn`（图灵借用，Round/Turn 共同判定当前回合有效）、`industrySentinelArmedRound` / `industrySentinelArmedTurn`（哨兵武装）、`industryHuanyuFreeMoveRound` / `industryHuanyuFreeMoveTurn` / `industryHuanyuFreeMovesLeft` / `industryHuanyuMovedRocketIds`（寰宇免费移动）、`industryPlayedCardThisRound` / `industryLastPlayedCardThisRound`（本轮已打牌快照）、`industryAlienLabPanels`（异星实验室三色板块）、`industryFutureSpan`（未来跨度扣下的牌、目标分与打出状态）。回合结束时会清空当前玩家的图灵借用；新轮开始时（所有玩家都 PASS 后）`resetAllRoundIndustryRuntimeState` 清空借用/武装等轮内状态，不重置 `industryRoundMarkRound` / `industryRoundMarkTurn`（靠轮号比较判定可否再标记），也不清空未来跨度目标牌或异星实验室板块。
-- 公司 1x 标记与能力撤销：除涉及精选并拿走/刷新公共牌的能力（任务中继站、芬威克、未来跨度普通 1x、宇宙战略）外，标记与层云核心、图灵借用、寰宇移动、赫利昂移除+收入、深空交换、未来跨度专属标记等步骤写入 `quickActionHistory` 可撤销；层云核心只结算弃牌角标不弃牌、不移除公共牌。任务中继站、芬威克、未来跨度普通 1x、宇宙战略确认拿牌后会提交快速行动历史，之前的快速行动也不再可撤销。撤销标记会 `resetRoundIndustryRuntimeState` 并取消进行中的公司能力流。
+- 公司 1x 标记与能力撤销：除涉及精选并拿走/刷新公共牌的能力（任务中继站、芬威克、未来跨度普通 1x、宇宙战略）外，普通 1x 从放置标记到确定性能力结算写入同一个 `quickActionHistory` step；撤销会恢复 1x 前玩家快照、清空轮内公司运行态并取消进行中的公司能力流，避免只撤销奖励但标记仍占用。层云核心只结算弃牌角标不弃牌、不移除公共牌。任务中继站、芬威克、未来跨度普通 1x、宇宙战略确认拿牌后会提交不可撤销快速行动屏障，之前的快速行动也不再可撤销。未来跨度专属标记是独立快速行动，仍单独记录。
 - 交互聚焦：`app.js` 的 `syncInteractionFocusChrome()` 根据进行中的流程在 `#app-wrap` 上设置 `data-interaction-focus`（`public-cards` / `hand-cards` / `tech-panel` / `board-rockets`）；`style.css` 会暗化非目标区域。`hand-cards` 聚焦时不能暗化或禁用 `.player-command` 父容器，需只暗化手牌区的兄弟控件，保证收入弃牌、打牌选牌、移动弃牌支付、手牌扫描等流程中手牌区保持高亮可点。公司牌 1x 可放置时仅用牌面蓝色高亮（`is-action-marker-pending`），不自动进入全屏聚焦以免遮挡行动按钮。
 - 选择公司后，保留牌区右侧分两行显示：第一行放 1 / 2 型任务牌，并按手牌区方式在牌多时部分覆盖；第二行放 3 型终局计分牌以及声明 `displayRow: "bottom"` 的特殊保留牌（当前为 b139 冥王星）。
 
@@ -233,7 +233,7 @@ UI 布局：
 - 日志按「轮 / 回合 / 玩家 / 行动」生成一条记录；记录内按完成顺序列出主要行动效果与穿插的快速行动。
 - 初始选择确认后也会写入正式日志，标题前缀固定显示为「初始选择」而不是轮/回合；内容记录玩家选择的公司、移出游戏的初始牌，最后一名玩家还会记录统一初始牌结算结果。
 - 当前回合执行中先写入 `actionLogState.draft`，不直接显示到正式日志；玩家点击「回合结束」后，draft 才会固化进 `actionLogState.entries`。
-- 主行动效果完成时通过 `endEffectHistoryStep` 或不可撤销效果的补充记录写入 draft；快速行动完成时通过 `completeQuickActionStep` 写入 draft。
+- 主行动效果完成时通过 `endEffectHistoryStep` 或不可撤销效果的补充记录写入 draft；快速行动完成时通过 `completeQuickActionStep` 写入 draft。step 会比较执行前后的当前玩家资源、收入、手牌数、分数和完成任务数，并把变化追加到日志明细中。
 - 日志 step 会记录 `stepId`、`source`、`undoable`、`irreversibleReason`；撤销时按 `stepId` 精确删除 draft 中对应记录，避免主/快速行动交错时删错日志。
 - 撤销快速行动会删除 draft 中最近的快速行动记录；撤销主要行动效果会删除最近的主要行动记录；回滚整个主要行动会删除 draft 中所有主要行动记录但保留尚未撤销的快速行动记录。若最近步骤是不可撤销屏障，只提示原因，不会越过屏障撤销更早步骤。
 - 确认后不可撤销的精选/拿牌效果会写入不可撤销屏障，并在日志中显示原因；公司 1x 中任务中继站、芬威克、未来跨度、宇宙战略等公共牌精选补牌能力也按 quick 日志记录 `不可撤销：公共牌补牌翻出新牌`。
@@ -435,12 +435,12 @@ UI 布局：
 ## 卡牌模型
 
 - 人工卡牌描述转可执行 DSL 的规范参考：`docs\card-modeling-dsl-spec.md`。后续新增卡牌模型时，先按该文档约束人工描述和 agent 转换，尤其要明确效果节点 `kind`、费用策略、任务类型和队列结束结算时机。
-- 卡牌源数据保持 CSV，方便手工校对和继续补内容。当前 `assets/cards/card_model.csv` 主要承载本仓库资产编号、费用、角标和切图元数据；效果语义按 `D:\code\ender_seti\seti` 参考实现迁移到 `randomizer/game/cards/effects.js`。
+- 卡牌源数据保持 CSV，方便手工校对和继续补内容。当前 `assets/cards/card_model.csv` 主要承载本仓库资产编号、费用、角标和切图元数据；浏览器实际加载的 `randomizer/game/card-catalog.js` 和 Node 回退用的 `assets/cards/card_model.json` 由 `python tools/build_card_catalog_js.py` 从该 CSV 生成，改 CSV 后必须同步生成。效果语义按 `D:\code\ender_seti\seti` 参考实现迁移到 `randomizer/game/cards/effects.js`。
 - `randomizer/game/cards/effects.js` 维护 `CARD_REFERENCE_MAP`、`MODELS` 和 `DEFERRED_CARD_MODELS`：`CARD_REFERENCE_MAP` 固化 `b_N.webp` 与 `dlc_N.png` 的来源资料；`b_1`-`b_70` 主要来自 ender_seti 参考实现，`b_71`-`b_140` 来自本仓库 `assets/cards/cards_71.md` / `card_model.csv`，`dlc_1`-`dlc_42` 来自 `assets/cards/dlc_cards.md` / `card_model.csv`；`MODELS` 是已可执行模型；`DEFERRED_CARD_MODELS` 记录当前原型缺能力而遗留的卡牌、参考类和缺失能力。打牌时通过 `getRuntimeCardTypeCode(card, fallback)` 优先使用模型类型，避免 CSV 类型与参考实现冲突导致误入任务区。
 - `randomizer/game/cards/task-state.js` 维护 1 / 2 型任务统一状态：`refreshTaskState` 汇总当前玩家 2 型可完成任务与 1 型保留牌触发进度；`collectType1TriggerMatches` 聚合事件触发的 1 型匹配。`app.js` 在每次主行动效果结算（`completeCurrentActionEffect`）及快速行动/调试等状态变更后调用 `settleCardTasksAfterEffect`：先刷新 2 型高亮，再按 events 处理 1 型触发（同条件多槽仍只选 1 个）。
 - 当前基础牌 `b_1.webp` 到 `b_70.webp` 已全部建立参考映射并建模为 `implemented`；实现状态以 `randomizer/game/cards/effects.js` 和 `effects.test.js` 为准。已迁移模型遵循：
   - 0 型卡：打出后展开为 `play_effect` 效果队列，复用现有扫描、公共牌扫描、盲抽、科技、发射、卡牌内免费移动等效果执行器。
-  - 1 型卡：打出后进入保留牌区，并在移动等事件完成瞬间检查触发条件；若多个触发槽同时满足，会弹出触发选择，只结算 1 个，也可以取消。已结算的触发槽会在牌面标记序号；全部触发槽结算后，完成任务数 +1 并移除该牌。
+  - 1 型卡：打出后进入保留牌区，并在移动等事件完成瞬间检查触发条件；若多个触发槽同时满足，会弹出触发选择，只结算 1 个，也可以取消。已结算的触发槽会在牌面标记序号；全部触发槽结算后，完成任务数 +1 并移除该牌。触发槽消耗、任务移牌和完成任务数变化会随对应快速/效果历史记录；触发精选或盲抽属于隐藏信息边界，会写入不可撤销 quick step。
   - 2 型卡：打出后进入保留牌区，并注册长期任务；状态条件满足后不自动结算，而是在任务区蓝色高亮。玩家点击该牌确认完成后，完成任务数 +1、移除该牌，并启动任务奖励队列。
 - 3 型卡：打出后进入保留牌区第二行；终局计分由 `end-game-scoring.js` 按卡牌 `endGameScoring` 元数据实时结算。
 - b71-b140 普通卡已接入扫描行动、打牌费用、研究科技、环绕/登陆、信号颜色、按扇区去重、探测器位置、冥王星特殊保留、移除登陆标记、按未标记终局板块计分等通用 DSL 能力。DLC 普通卡继续复用该框架，并新增本卡回手、条件扇区扫描、弃任意手牌按收入结算、支付信用可跳过奖励、移除己方环绕后放置探测器、PASS 触发、本回合访问事件计数、按剩余资源和全局星球标记终局计分等通用能力。卡牌写“公共牌区扫描的标记”时，按获得 `additionalPublicScan` 资源处理，不立刻执行公共牌区扫描。粉色科技按紫色科技处理；公司默认收入按公司模型 `baseIncome` 作为“非默认收入”基准。

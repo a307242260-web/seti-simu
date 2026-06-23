@@ -1,6 +1,72 @@
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 require("../card-catalog");
 const cards = require("./deck");
+
+const INTEGER_CARD_MODEL_FIELDS = new Set([
+  "price",
+  "card_type_code",
+  "discard_action_code",
+  "scan_action_code",
+  "income_code",
+]);
+
+function parseCsvRows(text) {
+  const rows = [];
+  let row = [];
+  let field = "";
+  let inQuotes = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index];
+    if (inQuotes) {
+      if (character === "\"") {
+        if (text[index + 1] === "\"") {
+          field += "\"";
+          index += 1;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        field += character;
+      }
+    } else if (character === "\"") {
+      inQuotes = true;
+    } else if (character === ",") {
+      row.push(field);
+      field = "";
+    } else if (character === "\n") {
+      row.push(field.replace(/\r$/, ""));
+      rows.push(row);
+      row = [];
+      field = "";
+    } else {
+      field += character;
+    }
+  }
+
+  if (field || row.length) {
+    row.push(field.replace(/\r$/, ""));
+    rows.push(row);
+  }
+
+  const header = rows.shift().map((name, index) => (
+    index === 0 ? name.replace(/^\uFEFF/, "") : name
+  ));
+  return rows
+    .filter((fields) => fields.some((value) => value !== ""))
+    .map((fields) => Object.fromEntries(header.map((name, index) => {
+      const value = fields[index] ?? "";
+      return [name, INTEGER_CARD_MODEL_FIELDS.has(name) ? Number(value) : value];
+    })));
+}
+
+const csvCatalog = parseCsvRows(fs.readFileSync(
+  path.resolve(__dirname, "../../../assets/cards/card_model.csv"),
+  "utf8",
+));
+assert.deepEqual(cards.CARD_CATALOG, csvCatalog);
 
 const cardState = cards.createCardState();
 const player = {
@@ -73,6 +139,9 @@ assert.deepEqual(
   cards.getIncomeGainForCard(cards.createCardInstance(cards.CARD_CATALOG.find((entry) => entry.income_code === 2), 2)),
   { handSize: 1 },
 );
+const b59 = cards.CARD_CATALOG.find((entry) => entry.card_id === "b_59.webp");
+assert.equal(b59.income_code, 1);
+assert.deepEqual(cards.getIncomeGainForCard(cards.createCardInstance(b59, 59)), { energy: 1 });
 assert.equal(cards.normalizeBasicCardInput("25"), "b_25.webp");
 assert.equal(cards.normalizeBasicCardInput("b_25"), "b_25.webp");
 assert.equal(cards.normalizeBasicCardInput("b_25.webp"), "b_25.webp");

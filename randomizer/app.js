@@ -139,7 +139,26 @@
     availableData: "数据",
     aomomoFossils: "奥陌陌化石",
     additionalPublicScan: "额外公共扫描",
+    score: "分数",
   });
+  const ACTION_LOG_RESOURCE_KEYS = Object.freeze([
+    "credits",
+    "energy",
+    "publicity",
+    "availableData",
+    "additionalPublicScan",
+    "aomomoFossils",
+    "handSize",
+    "score",
+  ]);
+  const ACTION_LOG_INCOME_KEYS = Object.freeze([
+    "credits",
+    "energy",
+    "publicity",
+    "availableData",
+    "additionalPublicScan",
+    "handSize",
+  ]);
   const ACTION_LOG_SOURCE_LABELS = Object.freeze({
     main: "主要行动",
     quick: "快速行动",
@@ -1445,6 +1464,74 @@
       irreversibleCode: step.irreversibleCode || null,
       irreversibleReason: step.irreversibleReason || null,
     };
+  }
+
+  function pickNumericFields(source = {}, keys = []) {
+    const picked = {};
+    for (const key of keys) {
+      picked[key] = Number(source?.[key]) || 0;
+    }
+    return picked;
+  }
+
+  function createActionLogImpactSnapshot(player = getCurrentPlayer()) {
+    if (!player) return null;
+    return {
+      playerId: player.id || null,
+      resources: pickNumericFields(player.resources || {}, ACTION_LOG_RESOURCE_KEYS),
+      income: pickNumericFields(player.income || {}, ACTION_LOG_INCOME_KEYS),
+      completedTaskCount: Number(player.completedTaskCount) || 0,
+    };
+  }
+
+  function formatSignedDelta(value) {
+    const rounded = Math.round(Number(value) * 100) / 100;
+    return `${rounded > 0 ? "+" : ""}${rounded}`;
+  }
+
+  function formatActionLogDeltaGroup(before = {}, after = {}, keys = [], labels = {}) {
+    const parts = [];
+    for (const key of keys) {
+      const delta = (Number(after?.[key]) || 0) - (Number(before?.[key]) || 0);
+      if (!delta) continue;
+      parts.push(`${labels[key] || key}${formatSignedDelta(delta)}`);
+    }
+    return parts;
+  }
+
+  function formatActionLogImpact(before, after = createActionLogImpactSnapshot()) {
+    if (!before || !after) return "";
+    if (before.playerId && after.playerId && before.playerId !== after.playerId) return "";
+
+    const groups = [];
+    const resourceParts = formatActionLogDeltaGroup(
+      before.resources,
+      after.resources,
+      ACTION_LOG_RESOURCE_KEYS,
+      INCOME_GAIN_LABELS,
+    );
+    if (resourceParts.length) groups.push(`资源：${resourceParts.join("、")}`);
+
+    const incomeParts = formatActionLogDeltaGroup(
+      before.income,
+      after.income,
+      ACTION_LOG_INCOME_KEYS,
+      INCOME_GAIN_LABELS,
+    );
+    if (incomeParts.length) groups.push(`收入：${incomeParts.join("、")}`);
+
+    const taskDelta = (Number(after.completedTaskCount) || 0) - (Number(before.completedTaskCount) || 0);
+    if (taskDelta) groups.push(`完成任务${formatSignedDelta(taskDelta)}`);
+
+    return groups.join("；");
+  }
+
+  function composeActionLogDetailWithImpact(detail, step) {
+    const cleanDetail = normalizeActionLogText(detail);
+    const impact = formatActionLogImpact(step?.logBefore);
+    if (!impact) return cleanDetail || null;
+    if (cleanDetail && cleanDetail.includes(impact)) return cleanDetail;
+    return cleanDetail ? `${cleanDetail}；${impact}` : impact;
   }
 
   function ensureActionLogDraft(options = {}) {
@@ -4815,11 +4902,20 @@
     }
     if (pending?.type === "card_trigger_pick") {
       const match = pending.triggerMatch;
+      beginQuickActionStep("card-trigger-pick", `卡牌触发：${match?.effect?.label || "精选"}`);
       if (match?.card && match?.trigger) {
         cardEffects.consumeTrigger(match.card, match.trigger.id);
         discardReservedCardIfFinished(pending.player || getCurrentPlayer(), match.card);
       }
       rocketState.statusNote = `卡牌触发精选：${cards.getCardLabel(result.card)}`;
+      for (const command of createCardTriggerProgressCommands(pending.triggerSnapshot, "卡牌触发精选")) {
+        recordQuickHistoryCommand(command);
+      }
+      completeQuickActionStep(rocketState.statusNote, {
+        undoable: false,
+        irreversibleCode: "hidden_card_reveal",
+        irreversibleReason: "卡牌触发精选翻出新牌",
+      });
     }
     if (pending?.type === "card_pick_corner_reward") {
       const player = pending.player || getCurrentPlayer();
@@ -6762,7 +6858,12 @@
     }
     startActionLogDraft(actionType, label, { source: HISTORY_SOURCE_MAIN });
     actionHistory.beginSession(actionType, label);
-    actionHistory.beginStep({ source: HISTORY_SOURCE_MAIN, type: "action", label });
+    actionHistory.beginStep({
+      source: HISTORY_SOURCE_MAIN,
+      type: "action",
+      label,
+      logBefore: createActionLogImpactSnapshot(),
+    });
     effectStepActive = true;
   }
 
@@ -6775,7 +6876,12 @@
     if (!quickActionHistory.hasSession()) {
       quickActionHistory.beginSession("quick", "快速行动");
     }
-    quickActionHistory.beginStep({ source: HISTORY_SOURCE_QUICK, type: actionType, label });
+    quickActionHistory.beginStep({
+      source: HISTORY_SOURCE_QUICK,
+      type: actionType,
+      label,
+      logBefore: createActionLogImpactSnapshot(),
+    });
   }
 
   function completePendingActionStep() {
@@ -6796,10 +6902,11 @@
       appendActionLogStep(
         HISTORY_SOURCE_QUICK,
         step.label,
-        detail,
+        composeActionLogDetailWithImpact(detail, step),
         actionLogOptionsFromHistoryStep(step),
       );
     }
+    return step || null;
   }
 
   function rememberHistoryStep(source, stepId = null) {
@@ -6889,6 +6996,10 @@
     pendingActionEffectFlow.futureSpanPlayedCard = Boolean(options.futureSpanPlayedCard || pendingFutureSpanPlayBeforePlayer);
     pendingActionEffectFlow.historySource = options.historySource || HISTORY_SOURCE_MAIN;
     pendingActionEffectFlow.consumesMainAction = options.consumesMainAction !== false;
+    pendingActionEffectFlow.preHistoryCommands = Array.isArray(options.preHistoryCommands)
+      ? options.preHistoryCommands
+      : [];
+    pendingActionEffectFlow.preHistoryCommandsApplied = false;
     if (pendingActionEffectFlow.historySource === HISTORY_SOURCE_QUICK && !quickActionHistory.hasSession()) {
       quickActionHistory.beginSession("quick", "快速行动");
     }
@@ -6907,6 +7018,7 @@
       type: "action_start",
       label: `打出：${cards.getCardLabel(card)}`,
       effectIndex: -1,
+      logBefore: createActionLogImpactSnapshot(beforePlayer),
     });
     effectStepActive = true;
     recordHistoryCommand(historyCommands.createRestorePlayerCommand(
@@ -6941,6 +7053,7 @@
         type: "future_span_release",
         label,
         effectIndex: pendingActionEffectFlow?.currentIndex ?? null,
+        logBefore: createActionLogImpactSnapshot(beforePlayer),
       });
       industry.clearFutureSpanState?.(player);
       actionHistory.record(historyCommands.createRestorePlayerCommand(
@@ -7194,6 +7307,7 @@
       && match.event === matches[0].event
     ));
     if (grouped.length > 1) {
+      const triggerSnapshot = createCardTriggerProgressSnapshot();
       for (const match of grouped) {
         cardEffects.consumeTrigger(match.card, match.trigger.id);
       }
@@ -7206,6 +7320,7 @@
           actionType: "cardTrigger",
           historySource: HISTORY_SOURCE_QUICK,
           consumesMainAction: false,
+          preHistoryCommands: createCardTriggerProgressCommands(triggerSnapshot, "卡牌触发"),
         },
       );
     }
@@ -7308,6 +7423,10 @@
     if (!events?.length) return [];
     const bonuses = getActiveCardEventBonuses();
     if (!bonuses.length) return [];
+    const currentPlayer = getCurrentPlayer();
+    const beforePlayer = currentPlayer ? structuredClone(currentPlayer) : null;
+    const beforeTurnBonuses = structuredClone(turnState.cardTurnEventBonuses || []);
+    const beforeFlowBonuses = structuredClone(pendingActionEffectFlow?.cardFlowEventBonuses || []);
     const messages = [];
     for (const event of events) {
       for (const bonus of bonuses) {
@@ -7335,6 +7454,42 @@
       }
     }
     if (messages.length) {
+      const source = pendingActionEffectFlow?.historySource
+        || (quickActionHistory.hasSession() ? HISTORY_SOURCE_QUICK : HISTORY_SOURCE_MAIN);
+      const history = ensureEffectHistorySession(source, "cardEventBonus", "卡牌事件触发奖励");
+      history.beginStep({
+        source,
+        type: "card_event_bonus",
+        label: "卡牌事件触发奖励",
+        logBefore: createActionLogImpactSnapshot(beforePlayer),
+      });
+      if (beforePlayer && currentPlayer) {
+        history.record(historyCommands.createRestorePlayerCommand(
+          currentPlayer,
+          beforePlayer,
+          "恢复卡牌事件触发奖励前玩家状态",
+        ));
+      }
+      history.record({
+        label: "恢复卡牌事件触发状态",
+        describe: "恢复卡牌事件触发计数",
+        undo() {
+          turnState.cardTurnEventBonuses = structuredClone(beforeTurnBonuses);
+          if (pendingActionEffectFlow) {
+            pendingActionEffectFlow.cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
+          }
+        },
+      });
+      const step = history.endStep();
+      if (step) {
+        rememberHistoryStep(source, step.id);
+        appendActionLogStep(
+          source,
+          step.label,
+          composeActionLogDetailWithImpact(messages.join("；"), step),
+          actionLogOptionsFromHistoryStep(step),
+        );
+      }
       rocketState.statusNote = `${rocketState.statusNote ? `${rocketState.statusNote}；` : ""}${messages.join("；")}`;
       renderPlayerStats();
       renderStateReadout();
@@ -7546,6 +7701,41 @@
     if (!removeReservedCardToDiscard(player, card)) return false;
     incrementCompletedTaskCount(player);
     return true;
+  }
+
+  function createCardTriggerProgressSnapshot() {
+    return {
+      playerState: structuredClone(playerState),
+      cardState: structuredClone(cardState),
+    };
+  }
+
+  function createCardTriggerProgressCommands(snapshot, label = "卡牌触发") {
+    if (!snapshot) return [];
+    return [
+      historyCommands.createRestoreObjectCommand(
+        playerState,
+        snapshot.playerState,
+        `恢复${label}前玩家状态`,
+      ),
+      historyCommands.createRestoreObjectCommand(
+        cardState,
+        snapshot.cardState,
+        `恢复${label}前牌区状态`,
+      ),
+    ];
+  }
+
+  function consumeCardTriggerWithSnapshot(match, player = getCurrentPlayer(), label = "卡牌触发") {
+    const snapshot = createCardTriggerProgressSnapshot();
+    if (match?.card && match?.trigger) {
+      cardEffects.consumeTrigger(match.card, match.trigger.id);
+      discardReservedCardIfFinished(player, match.card);
+    }
+    return {
+      snapshot,
+      commands: createCardTriggerProgressCommands(snapshot, label),
+    };
   }
 
   function openCardTaskCompletionPicker(card) {
@@ -7798,6 +7988,7 @@
         player: getCurrentPlayer(),
         allowBlindDraw: true,
         triggerMatch: match,
+        triggerSnapshot: createCardTriggerProgressSnapshot(),
       });
     }
     if (match?.effect?.type === cardEffects.EFFECT_TYPES.FREE_MOVE) {
@@ -7819,8 +8010,7 @@
     }
     if (String(match?.effect?.type || "").startsWith("card_")) {
       closeCardTriggerPicker();
-      cardEffects.consumeTrigger(match.card, match.trigger.id);
-      discardReservedCardIfFinished(getCurrentPlayer(), match.card);
+      const triggerProgress = consumeCardTriggerWithSnapshot(match, getCurrentPlayer(), "卡牌触发");
       return startCardEffectFlow(
         "card-trigger-effects",
         `卡牌触发：${match.effect.label}`,
@@ -7829,6 +8019,7 @@
           actionType: "cardTrigger",
           historySource: HISTORY_SOURCE_QUICK,
           consumesMainAction: false,
+          preHistoryCommands: triggerProgress.commands,
         },
       );
     }
@@ -7926,9 +8117,14 @@
       return result;
     }
 
-    beginQuickActionStep("card-corner-move", `卡牌快速行动：${pending.action.label}`);
+    const recordInCurrentIndustryStep = Boolean(pending.industryQuickStepActive && pendingIndustryAbility);
+    if (!recordInCurrentIndustryStep) {
+      beginQuickActionStep("card-corner-move", `卡牌快速行动：${pending.action.label}`);
+    }
     recordAbilityCommands(result, quickActionHistory);
-    completeQuickActionStep();
+    if (!recordInCurrentIndustryStep) {
+      completeQuickActionStep();
+    }
 
     pendingCardCornerFreeMove = null;
     rocketState.activeRocketId = null;
@@ -8172,9 +8368,20 @@
       label: label || current?.label || "效果",
       effectIndex: meta.effectIndex ?? pendingActionEffectFlow?.currentIndex ?? null,
       effectType: meta.effectType ?? current?.type ?? null,
+      logBefore: meta.logBefore || createActionLogImpactSnapshot(),
       ...meta,
     });
     effectStepActive = true;
+    if (
+      pendingActionEffectFlow
+      && !pendingActionEffectFlow.preHistoryCommandsApplied
+      && pendingActionEffectFlow.preHistoryCommands?.length
+    ) {
+      for (const command of pendingActionEffectFlow.preHistoryCommands) {
+        history.record(command);
+      }
+      pendingActionEffectFlow.preHistoryCommandsApplied = true;
+    }
   }
 
   function endEffectHistoryStep() {
@@ -8198,7 +8405,7 @@
       appendActionLogStep(
         source,
         step.label,
-        currentEffect?.result?.message || null,
+        composeActionLogDetailWithImpact(currentEffect?.result?.message || null, step),
         actionLogOptionsFromHistoryStep(step),
       );
     }
@@ -10753,6 +10960,10 @@
   }
 
   function executeRegisterEventBonusEffect(effect) {
+    const beforeTurnBonuses = structuredClone(turnState.cardTurnEventBonuses || []);
+    const flowBonuses = ensureCardFlowEventBonuses();
+    const beforeFlowBonuses = structuredClone(flowBonuses);
+    beginEffectHistoryStep(effect.label);
     const bonus = {
       ...(effect.options?.bonus || {}),
       id: effect.id,
@@ -10764,8 +10975,18 @@
       if (!Array.isArray(turnState.cardTurnEventBonuses)) turnState.cardTurnEventBonuses = [];
       turnState.cardTurnEventBonuses.push(bonus);
     } else {
-      ensureCardFlowEventBonuses().push(bonus);
+      flowBonuses.push(bonus);
     }
+    recordHistoryCommand({
+      label: "恢复卡牌事件触发登记",
+      describe: "移除已登记的卡牌事件触发",
+      undo() {
+        turnState.cardTurnEventBonuses = structuredClone(beforeTurnBonuses);
+        if (pendingActionEffectFlow) {
+          pendingActionEffectFlow.cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
+        }
+      },
+    });
     return finishAutomaticRewardEffect(effect, {
       ok: true,
       undoable: true,
@@ -15441,6 +15662,11 @@
         beforePlayerState,
         "恢复阿米巴 symbol 前玩家状态",
       ));
+      recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+        cardState,
+        beforeCardState,
+        "恢复阿米巴 symbol 前牌区状态",
+      ));
     } else {
       beginQuickActionStep("amiba-symbol", pending.effectLabel);
       recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
@@ -15458,6 +15684,10 @@
         beforeCardState,
         "恢复阿米巴 symbol 前牌区状态",
       ));
+      if (pending?.triggerMatch?.card && pending?.triggerMatch?.trigger) {
+        cardEffects.consumeTrigger(pending.triggerMatch.card, pending.triggerMatch.trigger.id);
+        discardReservedCardIfFinished(player, pending.triggerMatch.card);
+      }
       completeQuickActionStep(message, rewardResult.irreversible ? {
         irreversibleCode: rewardResult.irreversible.code,
         irreversibleReason: rewardResult.irreversible.reason,
@@ -15465,6 +15695,7 @@
     }
     return finishAmibaSymbolChoice(message, { symbol: result }, {
       undoable: rewardResult.undoable !== false,
+      consumeTrigger: pending.fromEffectFlow,
     });
   }
 
@@ -20518,6 +20749,19 @@
     return Boolean(industryFreeMoveState);
   }
 
+  function recordIndustryActionRestoreCommand(player, beforePlayer, companyLabel) {
+    if (!player || !beforePlayer) return;
+    recordQuickHistoryCommand({
+      label: `撤销公司 1x：${companyLabel || "公司牌"}`,
+      describe: `恢复${companyLabel || "公司牌"} 1x 行动前状态`,
+      undo() {
+        cancelIndustryAbilityFlow({ silent: true });
+        restoreObjectSnapshot(player, beforePlayer);
+        renderInitialSelectionArea();
+      },
+    });
+  }
+
   function cancelIndustryAbilityFlow(options = {}) {
     if (techGameState?.ui?.industryBorrowMode) {
       techGameState.ui.industryBorrowMode = false;
@@ -20564,7 +20808,7 @@
     syncIndustryHandSelectionChrome();
     syncInteractionFocusChrome();
     if (flowType && !isIndustryIrreversibleFlow(flowType)) {
-      completeIndustryAbilityQuickStep();
+      completeIndustryAbilityQuickStep(message || rocketState.statusNote || null);
     }
   }
 
@@ -20688,7 +20932,6 @@
     tech.setTechSelectionActive(techGameState, false);
     techGameState.ui.industryBorrowMode = false;
     syncTechSelectionChrome();
-    beginQuickActionStep("industry-turing-borrow", `图灵系统：借用 ${tileId}`);
     recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
       player,
       beforePlayer,
@@ -20733,7 +20976,6 @@
     }
     renderTechBoard();
     pendingIndustryAbility = { flowType: "helios_remove_tech", removedTileId: tileId };
-    beginQuickActionStep("industry-helios", `赫利昂联合体：移除 ${tileId}`);
     recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
       player,
       beforePlayer,
@@ -20825,7 +21067,6 @@
       return result;
     }
 
-    beginQuickActionStep("industry-free-move", `${state.label}：免费移动`);
     state.movedRocketIds.push(rocketId);
     state.movesLeft -= 1;
     const player = getCurrentPlayer();
@@ -20857,7 +21098,6 @@
       "恢复公司免费移动前玩家状态",
     ));
     recordAbilityCommands(result, quickActionHistory);
-    completeQuickActionStep();
 
     if (state.movesLeft <= 0) {
       finishIndustryAbilityFlow(`${state.label}：免费移动已完成`);
@@ -20992,13 +21232,11 @@
       return applied;
     }
 
-    beginQuickActionStep("industry-stratus-corner", `层云核心：${cards.getCardLabel(card)}`);
     recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
       player,
       beforePlayer,
       "恢复层云核心角标结算前状态",
     ));
-    completeQuickActionStep();
 
     pending.remaining = Math.max(0, (pending.remaining ?? 1) - 1);
     rocketState.statusNote = `${applied.message}（剩余 ${pending.remaining} 张）`;
@@ -21015,6 +21253,7 @@
           },
           discardedCardLabel: cards.getCardLabel(card),
           finishIndustryFlowAfterMove: pending.remaining <= 0,
+          industryQuickStepActive: true,
           afterMoveStatus: rocketState.statusNote,
         };
         rocketState.statusNote = moveCheck.rocketsForPlayer.length > 1
@@ -21089,7 +21328,6 @@
     player.resources.handSize = player.hand.length;
     cardState.publicCards[slotIndex] = handCard;
 
-    beginQuickActionStep("industry-deepspace-swap", "深空探测：交换手牌与公共牌");
     recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
       player,
       beforePlayer,
@@ -21100,7 +21338,6 @@
       beforePublicCards,
       beforeDiscard,
     ));
-    completeQuickActionStep();
 
     pendingCardSelectionAction = null;
     cards.setSelectionActive(cardState, false);
@@ -21240,18 +21477,24 @@
       || flowType === "strategy_pick";
   }
 
-  function completeIndustryAbilityQuickStep() {
+  function completeIndustryAbilityQuickStep(detail = null) {
     if (quickActionHistory.hasUndoableStep()) {
-      completeQuickActionStep();
+      completeQuickActionStep(detail);
     }
   }
 
   function commitIrreversibleIndustryQuickAction(label, message, options = {}) {
-    appendActionLogStep(HISTORY_SOURCE_QUICK, label || "公司 1x 行动", message || null, {
+    const completeOptions = {
       undoable: false,
       irreversibleCode: options.irreversibleCode || "hidden_card_reveal",
       irreversibleReason: options.irreversibleReason || "公共牌补牌翻出新牌",
-    });
+    };
+    const step = quickActionHistory.hasSession()
+      ? completeQuickActionStep(message || null, completeOptions)
+      : null;
+    if (!step) {
+      appendActionLogStep(HISTORY_SOURCE_QUICK, label || "公司 1x 行动", message || null, completeOptions);
+    }
     clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
     if (quickActionHistory.hasSession()) {
       quickActionHistory.commitSession();
@@ -21666,9 +21909,8 @@
       return;
     }
 
-    const previousRoundMark = player.industryRoundMarkRound ?? 0;
-    const previousTurnMark = player.industryRoundMarkTurn ?? 0;
     const companyLabel = companyCard.label || "公司牌";
+    const beforeIndustryPlayer = structuredClone(player);
     const abilityFlow = industry.buildActiveAbilityFlow(
       player,
       companyLabel,
@@ -21676,6 +21918,7 @@
       turnState.turnNumber,
     );
     if (!abilityFlow?.ok) {
+      restoreObjectSnapshot(player, beforeIndustryPlayer);
       if (abilityFlow?.message && industry.hasImplementedActiveAbility?.(companyCard)) {
         rocketState.statusNote = abilityFlow.message;
       } else {
@@ -21690,7 +21933,7 @@
       turnNumber: turnState.turnNumber,
     });
     if (!result.ok) {
-      industry.resetRoundIndustryRuntimeState(player);
+      restoreObjectSnapshot(player, beforeIndustryPlayer);
       quickActionHistory.undoLastStep();
       if (!quickActionHistory.hasUndoableStep()) {
         quickActionHistory.commitSession();
@@ -21701,20 +21944,23 @@
       return;
     }
 
-    recordQuickHistoryCommand({
-      label: `撤销公司行动标记：${companyLabel}`,
-      undo() {
-        player.industryRoundMarkRound = previousRoundMark;
-        player.industryRoundMarkTurn = previousTurnMark;
-        industry.resetRoundIndustryRuntimeState(player);
-        cancelIndustryAbilityFlow({ silent: true });
-        renderInitialSelectionArea();
-      },
-    });
-    completeQuickActionStep();
+    recordIndustryActionRestoreCommand(player, beforeIndustryPlayer, companyLabel);
 
-    startIndustryAbilityFlow(abilityFlow);
-    rocketState.statusNote = abilityFlow.message || rocketState.statusNote;
+    const started = startIndustryAbilityFlow(abilityFlow);
+    if (!started) {
+      const undoResult = quickActionHistory.undoLastStep();
+      if (undoResult.ok) {
+        forgetLastHistoryStep(HISTORY_SOURCE_QUICK, undoResult.step?.id || null);
+        removeLastActionLogStep(HISTORY_SOURCE_QUICK, undoResult.step?.id || null);
+      }
+      if (undoResult.ok && !quickActionHistory.hasUndoableStep()) {
+        quickActionHistory.commitSession();
+        clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
+      }
+    }
+    if (started) {
+      rocketState.statusNote = abilityFlow.message || rocketState.statusNote;
+    }
     renderInitialSelectionArea();
     renderStateReadout();
   }
@@ -22284,6 +22530,7 @@
       type: "action_start",
       label: `${currentPlayer.colorLabel}玩家 PASS`,
       effectIndex: -1,
+      logBefore: createActionLogImpactSnapshot(currentPlayer),
     });
     effectStepActive = true;
     completePendingActionStep();
