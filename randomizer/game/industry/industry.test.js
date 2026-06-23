@@ -67,6 +67,9 @@ assert.equal(turingPlayer.industryBorrowedTechTileId, null);
 assert.equal(turingPlayer.industryBorrowedTechRound, 0);
 assert.equal(turingPlayer.industryBorrowedTechTurn, 0);
 assert.equal(state.clearTuringBorrowedTech(turingPlayer).cleared, false);
+const turingFlow = abilities.buildActiveAbilityFlow(turingPlayer, "图灵系统", 2, 4);
+assert.equal(turingFlow.ok, true);
+assert.match(turingFlow.message, /橙色或紫色科技/);
 
 assert.equal(passives.getStandardLaunchCost(alienLabPlayer).credits, 1);
 assert.equal(passives.getStandardScanCost(alienLabPlayer).energy, 2);

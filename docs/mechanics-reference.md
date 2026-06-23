@@ -50,7 +50,7 @@
 - 除异星实验室外，公司牌左下角「1x」圆标位置由 `randomizer/game/industry/placement.js` 的 `INDUSTRY_ACTION_MARKER_SLOTS` 定义（百分比坐标）；未放置标记时公司牌外框蓝色高亮，放置后取消高亮。玩家可在该区域点击放置 `normal_token` 标记，每轮（`turnState.roundNumber` 轮号）每玩家仅可触发一次，状态写入 `player.industryRoundMarkRound`；`player.industryRoundMarkTurn` 只记录标记发生的回合号，不参与刷新判定。放置作为快速行动记录，可通过撤销按钮撤回。放置成功后立即启动该公司对应的 1x 主动能力流程。
 - 公司 1x 主动/被动能力由 `randomizer/game/industry/` 管理（`catalog.js` 定义、`abilities.js` 构建流程、`passives.js` 钩子、`index.js` 聚合为 `SetiIndustry`）；设计与建模详见 `assets/industry/industry-abilities.md`。
   - 层云核心：点击公共牌逐张结算弃牌角标（不弃牌、不移除公共牌），最多 3 张；每次点击与标记均可撤销。
-  - 图灵系统：借用一项供应区科技当前回合效果（不获得板块/bonus；包含紫色科技对扫描行动队列的增强），并在公司牌下方只复制显示该科技图标，回合结束移除；被动：获取蓝色科技 +1 宣传。
+  - 图灵系统：借用一项供应区橙色或紫色科技当前回合效果（不获得板块/bonus；包含紫色科技对扫描行动队列的增强），并在公司牌下方只复制显示该科技图标，回合结束移除；被动：获取蓝色科技 +1 宣传。
   - 哨兵探测网络：1x 标记后武装本轮；打牌时（标记可在打牌前或后）在打牌效果队列末尾追加 `industry_sentinel_corner` 节点，点击后结算打出牌左上角弃牌角标（非外星人，可撤销）；若打牌后才标记且本轮已打牌，会补开哨兵效果队列。被动：发射后扫描地球扇区。
   - 寰宇动力：至多 2 枚火箭各免费移动 1 次；被动：火箭上限 +1。
   - 赫利昂联合体：移除一项非蓝科技 + 1 次收入；1x 开始时清除左上 3 个被动奖励槽 token。移除后该科技片保留在玩家版图并灰显（`disabledTiles`），不再提供能力，且不能再次从供应区拿取同编号板块；仍可研究同色其他编号板块。被动：拿取橙/粉紫/蓝科技后，在科技效果队列末尾追加 `industry_helios_passive_reward` 节点，点击后在对应槽放置 token 并领取奖励（橙=1 能量，粉紫=1 公共牌弃牌扫描标记，蓝=1 数据，可撤销）；槽位坐标在 `placement.js` 的 `HELIOS_PASSIVE_MARKER_SLOTS`。

@@ -155,6 +155,7 @@
   const HISTORY_SOURCE_MAIN = "main";
   const HISTORY_SOURCE_QUICK = "quick";
   const HISTORY_SOURCE_SETUP = "setup";
+  const INDUSTRY_TURING_BORROW_TECH_TYPES = Object.freeze(["orange", "purple"]);
   const historyStepOrder = [];
   const actionLogState = {
     entries: [],
@@ -1743,10 +1744,25 @@
     }
   }
 
-  function createActionLogEffectTextNode(step) {
+  function getActionLogEntryMetaText(entry) {
+    const playerLabel = entry.playerLabel || "未知玩家";
+    const actionLabel = entry.actionLabel || "本回合行动";
+    if (entry.actionType === "quick") return `${playerLabel} · 快速行动`;
+    if (entry.actionType === "initialSelection") return `${playerLabel} · ${actionLabel}`;
+    return `${playerLabel} · 主要行动：${actionLabel}`;
+  }
+
+  function getActionLogStepPrefix(step, displayIndex = null) {
+    if (step?.source === HISTORY_SOURCE_MAIN) {
+      return `效果${displayIndex || 1}`;
+    }
+    return ACTION_LOG_SOURCE_LABELS[step?.source] || "行动";
+  }
+
+  function createActionLogEffectTextNode(step, displayIndex = null) {
     const text = document.createElement("span");
     text.className = "action-log-effect-text";
-    const sourceLabel = ACTION_LOG_SOURCE_LABELS[step.source] || "行动";
+    const sourceLabel = getActionLogStepPrefix(step, displayIndex);
     const line = `${sourceLabel}：${step.text}${formatActionLogIrreversibleSuffix(step)}`;
     appendActionLogTextWithPlayedCard(text, line, step.playedCard);
     return text;
@@ -1770,21 +1786,24 @@
 
     const meta = document.createElement("div");
     meta.className = "action-log-entry-meta";
-    meta.textContent = `${entry.playerLabel || "未知玩家"} · ${entry.actionLabel || "本回合行动"}`;
+    meta.textContent = getActionLogEntryMetaText(entry);
 
     header.append(title, sequence, meta);
 
     const list = document.createElement("ol");
     list.className = "action-log-effects";
+    let mainEffectIndex = 0;
     entry.steps.forEach((step, index) => {
       const item = document.createElement("li");
       item.className = `action-log-effect action-log-effect-${step.source || "main"}`;
+      const isMainEffect = step.source === HISTORY_SOURCE_MAIN;
+      const displayIndex = isMainEffect ? (mainEffectIndex += 1) : index + 1;
 
       const indexNode = document.createElement("span");
       indexNode.className = "action-log-effect-index";
       indexNode.textContent = String(index + 1);
 
-      const text = createActionLogEffectTextNode(step);
+      const text = createActionLogEffectTextNode(step, displayIndex);
 
       item.append(indexNode, text);
       list.append(item);
@@ -21505,7 +21524,7 @@
     techGameState.ui.industryBorrowMode = true;
     techGameState.ui.selectedTileId = null;
     techGameState.ui.pendingTileId = null;
-    techGameState.ui.allowedTechTypes = null;
+    techGameState.ui.allowedTechTypes = [...INDUSTRY_TURING_BORROW_TECH_TYPES];
     techGameState.ui.statusNote = flow.message;
     rocketState.statusNote = flow.message;
     syncTechSelectionChrome();
@@ -21514,7 +21533,39 @@
     return true;
   }
 
+  function failIndustryTuringBorrow(message) {
+    techGameState.ui.statusNote = message;
+    rocketState.statusNote = message;
+    renderTechBoard();
+    renderStateReadout();
+    return { ok: false, message };
+  }
+
+  function checkIndustryTuringBorrowTile(tileId) {
+    const techType = tech.getTechType?.(tileId) || null;
+    if (!INDUSTRY_TURING_BORROW_TECH_TYPES.includes(techType)) {
+      return { ok: false, message: "图灵系统只能借用橙色或紫色科技" };
+    }
+
+    const player = getCurrentPlayer();
+    if (!player) return { ok: false, message: "没有当前玩家" };
+    if (!player.techState) player.techState = players.normalizePlayerTechState(null);
+
+    const check = tech.resolver.canTakeTile(
+      techGameState.board,
+      player.techState,
+      tileId,
+      { techTypes: INDUSTRY_TURING_BORROW_TECH_TYPES },
+    );
+    return check.ok ? { ok: true, techType } : check;
+  }
+
   function confirmIndustryTuringBorrow(tileId) {
+    const borrowCheck = checkIndustryTuringBorrowTile(tileId);
+    if (!borrowCheck.ok) {
+      return failIndustryTuringBorrow(borrowCheck.message || "无法借用该科技");
+    }
+
     const player = getCurrentPlayer();
     const beforePlayer = structuredClone(player);
     player.industryBorrowedTechTileId = tileId;

@@ -125,6 +125,23 @@ assert.equal(autoPlayerState.players[0].techState.blueBoardSlots.blue4, 4);
 const takeBlue1Again = tech.resolver.executeTakeTech(context, { tileId: "blue1" });
 assert.equal(takeBlue1Again.ok, false);
 
+const turingBorrowFilterContext = createContext(10);
+const turingBorrowPlayer = players.getCurrentPlayer(turingBorrowFilterContext.playerState);
+turingBorrowFilterContext.ensurePlayerTechState(turingBorrowPlayer);
+const turingBorrowOptions = { techTypes: ["orange", "purple"] };
+assert.equal(
+  tech.resolver.canTakeTile(turingBorrowFilterContext.techGameState.board, turingBorrowPlayer.techState, "blue1", turingBorrowOptions).ok,
+  false,
+);
+assert.equal(
+  tech.resolver.canTakeTile(turingBorrowFilterContext.techGameState.board, turingBorrowPlayer.techState, "orange1", turingBorrowOptions).ok,
+  true,
+);
+assert.equal(
+  tech.resolver.canTakeTile(turingBorrowFilterContext.techGameState.board, turingBorrowPlayer.techState, "purple1", turingBorrowOptions).ok,
+  true,
+);
+
 const depletionBoard = tech.createState().board;
 const orange1Queue = [...depletionBoard.stacks.orange1.bonusQueue];
 for (let index = 0; index < 4; index += 1) {
