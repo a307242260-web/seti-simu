@@ -326,11 +326,20 @@ assert.equal(b24Effects[0].type, cardEffects.EFFECT_TYPES.CARD_MOVE);
 assert.equal(b24Effects[0].options.movementPoints, 2);
 assert.equal(b24Effects[0].options.afterEventRewards[0].onceKey, "b24-comet-score");
 
-const b72Effects = cardEffects.buildPlayEffects({ cardId: "b_72.webp" });
-assert.equal(b72Effects.length, 2);
-assert.equal(b72Effects[0].type, cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN);
-assert.equal(b72Effects[0].options.planetId, "mars");
-assert.equal(b72Effects[0].options.repeat, 1);
+for (const [cardId, planetId] of Object.entries({
+  "b_72.webp": "mars",
+  "b_75.webp": "mercury",
+  "b_107.webp": "saturn",
+  "b_130.webp": "venus",
+})) {
+  const effects = cardEffects.buildPlayEffects({ cardId });
+  assert.equal(effects.length, 2);
+  for (const effect of effects) {
+    assert.equal(effect.type, cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN);
+    assert.equal(effect.options.planetId, planetId);
+    assert.equal(effect.options.repeat, 1);
+  }
+}
 
 const b83 = { id: "card-b83", cardId: "b_83.webp" };
 cardEffects.ensureCardEffectState(b83);

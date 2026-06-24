@@ -78,6 +78,31 @@
     return `${playerId}:${tokenId}`;
   }
 
+  function appendTokenElement(layer, element) {
+    if (!layer || !element || element.parentNode === layer) return;
+    if (element.parentNode) element.remove();
+    layer.appendChild(element);
+  }
+
+  function setTokenElementMode(element, mode, options = {}) {
+    const isPool = mode === "pool";
+    const isBlueBonus = options.isBlueBonus === true;
+    element.className = isPool
+      ? "data-token data-token-positioned data-token-pool"
+      : isBlueBonus
+        ? "data-token data-token-positioned data-token-placed data-token-blue-bonus"
+        : "data-token data-token-positioned data-token-placed";
+    element.draggable = false;
+    element.dataset.dataKind = isPool ? "pool" : "placed";
+
+    if (isPool) {
+      delete element.dataset.dataPlacementSlot;
+      delete element.dataset.dataBlueSlot;
+    } else {
+      delete element.dataset.dataSlotIndex;
+    }
+  }
+
   function setDraggingElement(element, dragging) {
     if (!element) return;
     element.classList.toggle("is-dragging", dragging);
@@ -169,13 +194,11 @@
     let element = tokenElements.get(key);
     if (!element) {
       element = document.createElement("img");
-      element.className = "data-token data-token-positioned data-token-pool";
-      element.draggable = false;
-      element.dataset.dataKind = "pool";
       element.src = state.DATA_TOKEN_SRC;
       tokenElements.set(key, element);
-      layer.appendChild(element);
     }
+    setTokenElementMode(element, "pool");
+    appendTokenElement(layer, element);
 
     const layout = getEffectivePoolSlotLayout(token.slotIndex);
     if (!layout) return;
@@ -205,15 +228,11 @@
     let element = tokenElements.get(key);
     if (!element) {
       element = document.createElement("img");
-      element.className = isBlueBonus
-        ? "data-token data-token-positioned data-token-placed data-token-blue-bonus"
-        : "data-token data-token-positioned data-token-placed";
-      element.draggable = false;
-      element.dataset.dataKind = "placed";
       element.src = state.DATA_TOKEN_SRC;
       tokenElements.set(key, element);
-      layer.appendChild(element);
     }
+    setTokenElementMode(element, "placed", { isBlueBonus });
+    appendTokenElement(layer, element);
 
     const layout = getPlacedTokenLayout(token);
     if (!layout) return;
@@ -303,7 +322,8 @@
     }
 
     for (const [key, element] of tokenElements.entries()) {
-      if (!key.startsWith(`${playerId}:`) || activeKeys.has(key)) continue;
+      if (activeKeys.has(key)) continue;
+      if (element.parentNode && element.parentNode !== layer) continue;
       element.remove();
       tokenElements.delete(key);
     }

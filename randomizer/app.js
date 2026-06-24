@@ -5663,6 +5663,52 @@
     ];
   }
 
+  function isKnownScanEffectType(type) {
+    if (!type) return false;
+    const scanEffectTypes = new Set(Object.values(scanEffects.EFFECT_TYPES || {}));
+    if (scanEffectTypes.has(type)) return true;
+
+    const cardTypes = cardEffects.EFFECT_TYPES || {};
+    const cardScanEffectTypes = [
+      cardTypes.SCAN_NEBULA,
+      cardTypes.SCAN_COLOR_CHOICE,
+      cardTypes.PUBLIC_SCAN,
+      cardTypes.ANY_SECTOR_SCAN,
+      cardTypes.SCAN_ACTION,
+      cardTypes.PROBE_SECTOR_SCAN,
+      cardTypes.PLANET_SECTOR_SCAN,
+      cardTypes.SECTOR_X_SCAN,
+      cardTypes.DRAW_THEN_SCAN,
+      cardTypes.OPTIONAL_DISCARD_SCAN,
+      cardTypes.HAND_SCAN,
+      cardTypes.LANDING_SECTOR_SCAN,
+      cardTypes.CONDITIONAL_SECTOR_SCAN,
+      cardTypes.YICHANGDIAN_NEXT_ANOMALY_SCAN,
+      "card_color_scan",
+    ].filter(Boolean);
+    if (cardScanEffectTypes.includes(type)) return true;
+
+    return [
+      aomomo?.EFFECT_SCAN_AOMOMO_X,
+      aomomo?.EFFECT_SCAN_AOMOMO_X_GAIN_FOSSIL,
+      aomomo?.EFFECT_SCAN_AOMOMO_X_SCORE,
+    ].filter(Boolean).includes(type);
+  }
+
+  function isScanRelatedEffect(effect) {
+    if (!effect) return false;
+    if (isKnownScanEffectType(effect.type)) return true;
+    const abilityId = String(effect.abilityId || "").toLowerCase();
+    return abilityId.includes("scan");
+  }
+
+  function isScanRelatedEffectFlow(flow) {
+    if (!flow) return false;
+    if (flow.actionType === "scan" || flow.scanRunId || flow.scanActionEvent) return true;
+    if (effectFlowMarkedNebula(flow)) return true;
+    return (flow.effects || []).some(isScanRelatedEffect);
+  }
+
   function executeScanActionFinalizeEffect(effect) {
     const scanRunId = effect.options?.scanRunId || pendingActionEffectFlow?.scanRunId || null;
     const followups = buildScanFinalizeFollowupEffects(scanRunId, pendingActionEffectFlow);
@@ -5858,6 +5904,15 @@
     const markedNebulaIds = getFlowMarkedNebulaIds(flow);
     if (markedNebulaIds.size) {
       effects.push(...buildReadySectorFinishEffects({ nebulaIds: markedNebulaIds }));
+    }
+    if (isScanRelatedEffectFlow(flow)) {
+      const queuedSectorIds = new Set(effects.map((effect) => String(effect.options?.sectorId || "")));
+      for (const effect of buildReadySectorFinishEffects()) {
+        const sectorId = String(effect.options?.sectorId || "");
+        if (queuedSectorIds.has(sectorId)) continue;
+        queuedSectorIds.add(sectorId);
+        effects.push(effect);
+      }
     }
     return effects;
   }
@@ -8566,6 +8621,7 @@
     renderPlayerStats();
     renderReservedCards();
     renderInitialSelectionArea();
+    clearStaleFullyUndoneMainActionSession();
     updateActionButtons();
     renderActionEffectBar();
     syncInteractionFocusChrome();
@@ -12309,11 +12365,13 @@
         payload: { nebulaId: nebula.id, sectorX: nextSectorX, skipped: true },
       });
     }
-    return replaceNebulaDataForCurrentPlayer(nebula.id, {
+    const result = replaceNebulaDataForCurrentPlayer(nebula.id, {
       prefix: effect.label,
       source: "card",
       gainData: true,
     });
+    maybeCompleteActionEffectFromScan(result);
+    return result;
   }
 
   function applyYichangdianDiscardActionReward(card, messageParts) {
@@ -20832,24 +20890,40 @@
     return `${breakdown.total}(${breakdown.base}+${breakdown.increase})`;
   }
 
-  function createIncomeStatIcon(label, player, incomeKey, iconSrc, normalizedIncome, normalizedCompanyBaseIncome) {
+  function formatPlayerIncomeStatValue(breakdown, options = {}) {
+    return options.showBasePlusIncrease
+      ? `${breakdown.base}+${breakdown.increase}`
+      : breakdown.total;
+  }
+
+  function createIncomeStatIcon(
+    label,
+    player,
+    incomeKey,
+    iconSrc,
+    normalizedIncome,
+    normalizedCompanyBaseIncome,
+    options = {},
+  ) {
     const breakdown = getPlayerIncomeBreakdown(player, incomeKey, normalizedIncome, normalizedCompanyBaseIncome);
-    const value = breakdown.total;
+    const value = formatPlayerIncomeStatValue(breakdown, options);
     const item = createStatIcon(label, value, iconSrc);
-    const detail = `${label} ${breakdown.total}`;
+    const detail = options.showBasePlusIncrease
+      ? `${label} ${breakdown.base}+${breakdown.increase}（总计 ${breakdown.total}）`
+      : `${label} ${breakdown.total}`;
     item.setAttribute("aria-label", detail);
     item.title = detail;
     return item;
   }
 
-  function buildPlayerIncomeStatNodes(player) {
+  function buildPlayerIncomeStatNodes(player, options = {}) {
     const income = players.normalizeIncome(player?.income || null);
     const companyBaseIncome = getPlayerCompanyBaseIncome(player);
     return [
       createStatIconMarker("收入", RESOURCE_ICON_SRC.income),
-      createIncomeStatIcon("收入信用点", player, "credits", RESOURCE_ICON_SRC.credits, income, companyBaseIncome),
-      createIncomeStatIcon("收入能量", player, "energy", RESOURCE_ICON_SRC.energy, income, companyBaseIncome),
-      createIncomeStatIcon("收入手牌", player, "handSize", RESOURCE_ICON_SRC.incomeCard, income, companyBaseIncome),
+      createIncomeStatIcon("收入信用点", player, "credits", RESOURCE_ICON_SRC.credits, income, companyBaseIncome, options),
+      createIncomeStatIcon("收入能量", player, "energy", RESOURCE_ICON_SRC.energy, income, companyBaseIncome, options),
+      createIncomeStatIcon("收入手牌", player, "handSize", RESOURCE_ICON_SRC.incomeCard, income, companyBaseIncome, options),
       createStatIcon("收入宣传", income.publicity || 0, RESOURCE_ICON_SRC.publicity),
       createStatIcon("收入数据", income.availableData || 0, RESOURCE_ICON_SRC.data),
       createStatIcon("收入额外公共扫描", income.additionalPublicScan || 0, RESOURCE_ICON_SRC.additionalPublicScan),
@@ -23358,7 +23432,7 @@
       createStatSeparator(),
       ...buildPlayerResourceStatNodes(currentPlayer),
       createStatSeparator(),
-      ...buildPlayerIncomeStatNodes(currentPlayer),
+      ...buildPlayerIncomeStatNodes(currentPlayer, { showBasePlusIncrease: true }),
     ];
     const runezuStats = buildPlayerRunezuStatNodes(currentPlayer);
     const statRows = [
@@ -24008,6 +24082,20 @@
     clearActionPending();
     pruneEmptyActionLogDraft();
     renderActionLog();
+  }
+
+  function clearStaleFullyUndoneMainActionSession() {
+    if (!actionHistory.hasSession()
+      || pendingActionExecuted
+      || isActionEffectFlowActive()
+      || pendingActionHasIrreversibleBarrier
+      || actionHistory.hasUndoableStep()) {
+      return false;
+    }
+    const info = actionHistory.getSessionInfo?.();
+    if (!info || info.stepCount !== 0) return false;
+    clearFullyUndoneMainActionSession();
+    return true;
   }
 
   function canUndoCurrentMainAction() {

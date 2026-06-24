@@ -11,6 +11,79 @@ require("./index");
 const data = require("./index");
 const players = require("../players");
 const playerTech = require("../tech/player-tech");
+const historyCommands = require("../history/commands");
+
+class FakeElement {
+  constructor(tagName) {
+    this.tagName = tagName;
+    this.children = [];
+    this.parentNode = null;
+    this.dataset = {};
+    this.style = {
+      setProperty: (name, value) => {
+        this.style[name] = value;
+      },
+    };
+    this._classNames = new Set();
+    this.classList = {
+      add: (...names) => {
+        for (const name of names) this._classNames.add(name);
+      },
+      remove: (...names) => {
+        for (const name of names) this._classNames.delete(name);
+      },
+      contains: (name) => this._classNames.has(name),
+      toggle: (name, force) => {
+        const shouldAdd = force == null ? !this._classNames.has(name) : Boolean(force);
+        if (shouldAdd) this._classNames.add(name);
+        else this._classNames.delete(name);
+        return shouldAdd;
+      },
+    };
+  }
+
+  get className() {
+    return [...this._classNames].join(" ");
+  }
+
+  set className(value) {
+    this._classNames = new Set(String(value || "").split(/\s+/).filter(Boolean));
+  }
+
+  appendChild(child) {
+    if (child.parentNode) child.remove();
+    child.parentNode = this;
+    this.children.push(child);
+    return child;
+  }
+
+  remove() {
+    if (!this.parentNode) return;
+    const index = this.parentNode.children.indexOf(this);
+    if (index >= 0) this.parentNode.children.splice(index, 1);
+    this.parentNode = null;
+  }
+
+  querySelectorAll(selector) {
+    if (!selector.startsWith(".")) return [];
+    const className = selector.slice(1);
+    return this.children.filter((child) => child.classList.contains(className));
+  }
+
+  setAttribute(name, value) {
+    this[name] = String(value);
+  }
+
+  addEventListener() {}
+}
+
+function createFakeLayer() {
+  return new FakeElement("div");
+}
+
+global.document = {
+  createElement: (tagName) => new FakeElement(tagName),
+};
 
 const playerState = players.createPlayerState({
   currentPlayer: {
@@ -237,5 +310,28 @@ assert.equal(data.listPlacedTokens(bluePlayer).length, 0);
 
 const readout = data.getReadoutLines(playerState);
 assert.ok(readout.some((line) => line.includes("已弃置数据 1")));
+
+data.resetPlayerDataTokens();
+const renderUndoPlayer = players.createPlayer({ color: "white" });
+data.gainData(renderUndoPlayer);
+const renderUndoPlace = data.placeDataToComputer(renderUndoPlayer);
+assert.equal(renderUndoPlace.ok, true);
+const renderUndoLayer = createFakeLayer();
+data.renderPlayerDataTokens(renderUndoPlayer, renderUndoLayer);
+assert.equal(renderUndoLayer.querySelectorAll(".data-token-placed").length, 1);
+historyCommands.createPlaceDataCommand(renderUndoPlayer, renderUndoPlace).undo();
+data.renderPlayerDataTokens(renderUndoPlayer, renderUndoLayer);
+assert.equal(renderUndoLayer.querySelectorAll(".data-token-placed").length, 0);
+assert.equal(renderUndoLayer.querySelectorAll(".data-token-pool").length, 1);
+assert.equal(renderUndoLayer.querySelectorAll(".data-token-pool")[0].dataset.dataKind, "pool");
+
+const staleLayer = createFakeLayer();
+const playerWithData = players.createPlayer({ color: "blue" });
+data.gainData(playerWithData);
+data.renderPlayerDataTokens(playerWithData, staleLayer);
+assert.equal(staleLayer.querySelectorAll(".data-token-pool").length, 1);
+const playerWithoutData = players.createPlayer({ color: "green" });
+data.renderPlayerDataTokens(playerWithoutData, staleLayer);
+assert.equal(staleLayer.querySelectorAll(".data-token-pool").length, 0);
 
 console.log("data.test.js: all tests passed");
