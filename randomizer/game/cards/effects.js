@@ -80,6 +80,8 @@
     blue: Object.freeze(["sector-2-a", "sector-1-a"]),
     black: Object.freeze(["sector-1-b", "sector-4-b"]),
   });
+  const ROCKET_REWARD_SOLAR_SURFACE = "solar-board";
+  const ROCKET_REWARD_STANDARD_KIND = "standard";
 
   let endGameScoringModule = null;
   let yichangdianModule = null;
@@ -599,6 +601,8 @@
   function countRocketsRewardEffect(id, label, options = {}) {
     return effect(id, EFFECT_TYPES.COUNT_ROCKETS_REWARD, label || "按探测器数量奖励", options.icon || options.resource || "energy", {
       owner: options.owner || "current",
+      location: options.location || "solar",
+      includeNonStandard: options.includeNonStandard === true,
       resource: options.resource || "energy",
       per: Math.max(0, Number(options.per) || 1),
     });
@@ -2271,7 +2275,7 @@
     }),
     "dlc_27.png": withSource("dlc_27.png", {
       cardType: 0,
-      playEffects: Object.freeze([conditionalRewardEffect("dlc27-zero-energy", "若当前能量为0，按探测器数获得能量", { type: "resourceEquals", resource: "energy", count: 0 }, [countRocketsRewardEffect("dlc27-energy", "每个探测器：1能量", { resource: "energy" })])]),
+      playEffects: Object.freeze([conditionalRewardEffect("dlc27-zero-energy", "若当前能量为0，按己方太阳系探测器数获得能量", { type: "resourceEquals", resource: "energy", count: 0 }, [countRocketsRewardEffect("dlc27-energy", "每个己方太阳系探测器：1能量", { resource: "energy", owner: "current", location: "solar" })])]),
     }),
     "dlc_28.png": withSource("dlc_28.png", {
       cardType: 2,
@@ -2588,6 +2592,27 @@
     return playerKeys.has(rocket?.playerId)
       || playerKeys.has(rocket?.color)
       || playerKeys.has(rocket?.playerColor);
+  }
+
+  function isRocketEligibleForCountReward(rocket, options = {}) {
+    if (!rocket) return false;
+    if ((options.location || "solar") === "solar") {
+      if ((rocket.surface || ROCKET_REWARD_SOLAR_SURFACE) !== ROCKET_REWARD_SOLAR_SURFACE) return false;
+      if (rocket.referencePlacement?.isPlanetMarker) return false;
+    }
+    if (options.includeNonStandard !== true && (rocket.kind || ROCKET_REWARD_STANDARD_KIND) !== ROCKET_REWARD_STANDARD_KIND) {
+      return false;
+    }
+    return true;
+  }
+
+  function countRocketsForReward(rockets, player, options = {}) {
+    const playerKeys = getPlayerKeys(player);
+    return (rockets || []).filter((rocket) => {
+      if (!isRocketEligibleForCountReward(rocket, options)) return false;
+      if (options.owner === "any") return true;
+      return probeBelongsToPlayer(rocket, playerKeys);
+    }).length;
   }
 
   function getProbeStackRewardMatch(rockets, player, options = {}) {
@@ -3060,6 +3085,7 @@
     collectTemporaryTaskRewards,
     countTraceMarkers,
     consolidateCardMoveEffects,
+    countRocketsForReward,
     getProbeStackRewardMatch,
     hasProbeStackReward,
     areAllTriggersConsumed,

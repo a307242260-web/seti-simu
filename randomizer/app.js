@@ -11461,9 +11461,11 @@
 
   function executeCountRocketsRewardEffect(effect) {
     const currentPlayer = getCurrentPlayer();
-    const count = (rocketState.rockets || []).filter((rocket) => (
-      effect.options?.owner === "any" || rocket.playerId === currentPlayer?.id
-    )).length;
+    const count = cardEffects.countRocketsForReward(
+      rocketState.rockets,
+      currentPlayer,
+      effect.options || {},
+    );
     const total = Math.max(0, Math.round(count * Number(effect.options?.per || 1)));
     beginEffectHistoryStep(effect.label);
     const beforePlayer = structuredClone(currentPlayer);

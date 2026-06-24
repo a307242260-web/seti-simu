@@ -168,6 +168,28 @@ const dlc20RepeatCorner = cardEffects.buildPlayEffects({ cardId: "dlc_20.png" })
 assert.equal(dlc20RepeatCorner.options.cornerRepeat, 3);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_22.png" })[0].options.condition.minCount, 3);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_22.png" })[0].options.repeat, 2);
+const dlc27RocketReward = cardEffects.buildPlayEffects({ cardId: "dlc_27.png" })[0].options.rewards[0];
+assert.equal(dlc27RocketReward.type, cardEffects.EFFECT_TYPES.COUNT_ROCKETS_REWARD);
+assert.equal(dlc27RocketReward.options.owner, "current");
+assert.equal(dlc27RocketReward.options.location, "solar");
+const dlc27RocketRewardState = [
+  { id: 1, playerId: "p1", sectorX: 2, sectorY: 3 },
+  { id: 2, color: "red", surface: "solar-board", sectorX: 3, sectorY: 3 },
+  { id: 3, playerId: "p2", surface: "solar-board", sectorX: 4, sectorY: 3 },
+  { id: 4, playerId: "p1", surface: "planets-reference", sectorX: 5, sectorY: 3 },
+  { id: 5, playerId: "p1", referencePlacement: { isPlanetMarker: true }, sectorX: 6, sectorY: 3 },
+  { id: 6, playerId: "p1", kind: "chong-fossil", surface: "solar-board", sectorX: 7, sectorY: 3 },
+];
+assert.equal(cardEffects.countRocketsForReward(
+  dlc27RocketRewardState,
+  { id: "p1", color: "red" },
+  dlc27RocketReward.options,
+), 2);
+assert.equal(cardEffects.countRocketsForReward(
+  dlc27RocketRewardState,
+  { id: "p1", color: "red" },
+  { ...dlc27RocketReward.options, owner: "any" },
+), 3);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_28.png" })[0].type, cardEffects.EFFECT_TYPES.DISCARD_ANY_FOR_INCOME);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_29.png" })[0].type, cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_30.png" })[0].type, cardEffects.EFFECT_TYPES.CARD_ORBIT);
