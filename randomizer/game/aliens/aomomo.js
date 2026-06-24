@@ -47,8 +47,8 @@
     Object.freeze({ index: 3, cardId: "aomomo_3.webp", asset: "3.webp", cardName: "挖掘探测车", price: 1, cardTypeCode: 2, discardActionCode: 4, scanActionCode: 3, incomeCode: 2 }),
     Object.freeze({ index: 4, cardId: "aomomo_4.webp", asset: "4.webp", cardName: "外星化石样本", price: 2, cardTypeCode: 1, discardActionCode: 5, scanActionCode: 2, incomeCode: 2 }),
     Object.freeze({ index: 5, cardId: "aomomo_5.webp", asset: "5.webp", cardName: "天时地利", price: 2, cardTypeCode: 2, discardActionCode: 4, scanActionCode: 0, incomeCode: 0 }),
-    Object.freeze({ index: 6, cardId: "aomomo_6.webp", asset: "6.webp", cardName: "探测器定制", price: 2, cardTypeCode: 0, discardActionCode: 4, scanActionCode: 2, incomeCode: 0 }),
-    Object.freeze({ index: 7, cardId: "aomomo_7.webp", asset: "7.webp", cardName: "争分夺秒", price: 3, cardTypeCode: 0, discardActionCode: 3, scanActionCode: 1, incomeCode: 1 }),
+    Object.freeze({ index: 6, cardId: "aomomo_6.webp", asset: "6.webp", cardName: "探测器定制", price: 1, cardTypeCode: 0, discardActionCode: 4, scanActionCode: 2, incomeCode: 0 }),
+    Object.freeze({ index: 7, cardId: "aomomo_7.webp", asset: "7.webp", cardName: "争分夺秒", price: 1, cardTypeCode: 0, discardActionCode: 3, scanActionCode: 1, incomeCode: 1 }),
     Object.freeze({ index: 8, cardId: "aomomo_8.webp", asset: "8.webp", cardName: "地形测绘", price: 3, cardTypeCode: 3, discardActionCode: 5, scanActionCode: 0, incomeCode: 0 }),
     Object.freeze({ index: 9, cardId: "aomomo_9.webp", asset: "9.webp", cardName: "天外来客", price: 2, cardTypeCode: 2, discardActionCode: 3, scanActionCode: 2, incomeCode: 2 }),
   ]);
