@@ -28,6 +28,7 @@
     "hand-scan",
     "move-payment",
     "data-placement",
+    "scan-action-4",
   ]);
   const POLICY_ACTION_BIAS = Object.freeze({
     land: 7,
@@ -117,6 +118,8 @@
 
   function getCandidatePolicyScore(candidate) {
     if (!candidate) return null;
+    const graphNet = getFiniteScore(candidate.actionGraph?.net ?? candidate.net);
+    if (graphNet != null) return graphNet;
     const actionId = getCandidateId(candidate);
     const explicitScore = getFiniteScore(candidate.score);
     let valueScore = explicitScore ?? 0;

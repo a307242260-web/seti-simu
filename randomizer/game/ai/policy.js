@@ -386,12 +386,18 @@
     const choice = String(option.choice ?? "");
     const explicitScore = getFiniteScore(option.score);
     if (explicitScore != null) return explicitScore;
+    const label = String(option.label || "");
+    const scoreMatch = label.match(/(\d+)\s*分/);
+    const threatMatch = label.match(/威胁\s*(\d+)/);
 
     if (choice === "cancel") return -100;
     if (choice === "skip") return -30;
     if (choice === "displayed") return 50;
     if (choice === "confirm") return 45;
     if (choice === "blind") return 35;
+    if (scoreMatch && threatMatch) {
+      return 40 + Number(scoreMatch[1]) * 2 + Number(threatMatch[1]) * 0.25;
+    }
     if (/^\d+$/.test(choice)) return 30 - Number(choice) * 0.01;
     if (choice.includes(":")) return 28;
     return choice ? 25 : -Infinity;

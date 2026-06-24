@@ -27,6 +27,8 @@
     0: Object.freeze({ credits: 1 }),
     1: Object.freeze({ energy: 1 }),
     2: Object.freeze({ handSize: 1 }),
+    3: Object.freeze({ availableData: 1 }),
+    4: Object.freeze({ publicity: 1 }),
   });
   const DISCARD_ACTION_REWARDS = Object.freeze({
     0: Object.freeze({

@@ -150,6 +150,8 @@ assert.deepEqual(
   cards.getIncomeGainForCard(cards.createCardInstance(cards.CARD_CATALOG.find((entry) => entry.income_code === 2), 2)),
   { handSize: 1 },
 );
+assert.deepEqual(cards.getIncomeGainForCard({ incomeCode: 3 }), { availableData: 1 });
+assert.deepEqual(cards.getIncomeGainForCard({ incomeCode: 4 }), { publicity: 1 });
 const b59 = cards.CARD_CATALOG.find((entry) => entry.card_id === "b_59.webp");
 assert.equal(b59.income_code, 1);
 assert.deepEqual(cards.getIncomeGainForCard(cards.createCardInstance(b59, 59)), { energy: 1 });

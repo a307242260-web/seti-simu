@@ -24,6 +24,11 @@ function parseArgs(argv) {
     single: false,
     out: null,
     chrome: process.env.CHROME_PATH || DEFAULT_CHROME,
+    strategyWeights: null,
+    strategyTuning: null,
+    mergeStrategyWeights: true,
+    resetStrategyWeights: false,
+    timeoutMs: null,
   };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -40,6 +45,7 @@ function parseArgs(argv) {
       case "maxSteps":
       case "stepDelayMs":
       case "maxBugRepeats":
+      case "timeoutMs":
         options[rawKey] = Number(value);
         break;
       case "sequenceWindowTurns":
@@ -47,6 +53,19 @@ function parseArgs(argv) {
         break;
       case "stopOnBlocked":
         options.stopOnBlocked = value !== "false";
+        break;
+      case "strategyWeights":
+        options.strategyWeights = JSON.parse(value);
+        break;
+      case "strategyTuning":
+        options.strategyTuning = JSON.parse(value);
+        break;
+      case "mergeStrategyWeights":
+        options.mergeStrategyWeights = value !== "false";
+        break;
+      case "resetStrategyWeights":
+        options.resetStrategyWeights = true;
+        if (inlineValue == null && value != null && !String(value).startsWith("--")) index -= 1;
         break;
       case "headed":
         options.headless = false;
@@ -233,19 +252,98 @@ async function getPageWebSocket(debugPort) {
   return page.webSocketDebuggerUrl;
 }
 
-function buildBatchExpression(pageOptions) {
-  return `(async () => {
-    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    const started = Date.now();
-    while (!window.SetiRandomizer?.runAiAutoBattleBatch) {
-      if (Date.now() - started > 15000) {
-        throw new Error("SetiRandomizer.runAiAutoBattleBatch not available");
+function buildBatchStartExpression(pageOptions) {
+  return `(() => {
+    window.__setiAiBatchState = {
+      done: false,
+      result: null,
+      error: null,
+      progress: null,
+      startedAt: Date.now(),
+    };
+    window.__setiAiBatchPromise = (async () => {
+      let progressTimer = null;
+      const updateProgress = () => {
+        try {
+          const report = window.SetiRandomizer?.getAiAutoBattleReport?.();
+          window.__setiAiBatchState.progress = report
+            ? {
+              lastSummary: report.lastSummary || null,
+              logCount: Array.isArray(report.logs) ? report.logs.length : 0,
+              bugCount: Array.isArray(report.bugs) ? report.bugs.length : 0,
+              pendingState: report.pendingState || null,
+              tailLogs: Array.isArray(report.logs) ? report.logs.slice(-3) : [],
+            }
+            : null;
+        } catch (error) {
+          window.__setiAiBatchState.progress = {
+            error: error?.message || String(error),
+          };
+        }
+      };
+      try {
+        const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        const started = Date.now();
+        while (!window.SetiRandomizer?.runAiAutoBattleBatch) {
+          if (Date.now() - started > 15000) {
+            throw new Error("SetiRandomizer.runAiAutoBattleBatch not available");
+          }
+          await wait(100);
+        }
+        progressTimer = window.setInterval(updateProgress, 1000);
+        updateProgress();
+        const result = await window.SetiRandomizer.${pageOptions.single ? "startAiAutoBattle" : "runAiAutoBattleBatch"}(${JSON.stringify(pageOptions)});
+        window.__setiAiBatchState.result = JSON.stringify(result);
+      } catch (error) {
+        window.__setiAiBatchState.error = {
+          message: error?.message || String(error),
+          stack: error?.stack || null,
+        };
+      } finally {
+        if (progressTimer != null) window.clearInterval(progressTimer);
+        updateProgress();
+        window.__setiAiBatchState.done = true;
+        window.__setiAiBatchState.finishedAt = Date.now();
       }
-      await wait(100);
-    }
-    const result = await window.SetiRandomizer.${pageOptions.single ? "startAiAutoBattle" : "runAiAutoBattleBatch"}(${JSON.stringify(pageOptions)});
-    return JSON.stringify(result);
+    })();
+    return true;
   })()`;
+}
+
+async function runPageBatch(cdp, batchOptions, timeoutMs) {
+  const started = await cdp.send("Runtime.evaluate", {
+    expression: buildBatchStartExpression(batchOptions),
+    returnByValue: true,
+  });
+  if (started.exceptionDetails) {
+    throw new Error(started.exceptionDetails.text || "Runtime batch start failed");
+  }
+
+  const deadline = Date.now() + timeoutMs;
+  let state = null;
+  while (Date.now() < deadline) {
+    const poll = await cdp.send("Runtime.evaluate", {
+      expression: "JSON.stringify(window.__setiAiBatchState || null)",
+      returnByValue: true,
+    });
+    if (poll.exceptionDetails) {
+      throw new Error(poll.exceptionDetails.text || "Runtime batch poll failed");
+    }
+    state = poll.result?.value ? JSON.parse(poll.result.value) : null;
+    if (state?.done) break;
+    await delay(500);
+  }
+
+  if (!state?.done) {
+    throw new Error(`Timed out waiting for AI auto battle result: ${JSON.stringify(state?.progress || null)}`);
+  }
+  if (state.error) {
+    throw new Error(state.error.stack || state.error.message || "AI auto battle failed");
+  }
+  if (!state.result) {
+    throw new Error("AI auto battle finished without a result");
+  }
+  return JSON.parse(state.result);
 }
 
 function summarizeResult(result) {
@@ -336,19 +434,15 @@ async function main() {
       maxBugRepeats: options.maxBugRepeats,
       sequenceWindowTurns: options.sequenceWindowTurns,
       stopOnBlocked: options.stopOnBlocked,
+      strategyWeights: options.strategyWeights || undefined,
+      strategyTuning: options.strategyTuning || undefined,
+      mergeStrategyWeights: options.strategyWeights ? options.mergeStrategyWeights : undefined,
+      resetStrategyWeights: options.resetStrategyWeights || undefined,
       single: options.single,
       reset: options.single ? true : undefined,
     };
-    const evaluation = await cdp.send("Runtime.evaluate", {
-      expression: buildBatchExpression(batchOptions),
-      awaitPromise: true,
-      returnByValue: true,
-      timeout: Math.max(30000, options.games * options.maxSteps * 20),
-    });
-    if (evaluation.exceptionDetails) {
-      throw new Error(evaluation.exceptionDetails.text || "Runtime evaluation failed");
-    }
-    const result = JSON.parse(evaluation.result.value);
+    const timeoutMs = options.timeoutMs || Math.max(120000, options.games * options.maxSteps * 60);
+    const result = await runPageBatch(cdp, batchOptions, timeoutMs);
     const summary = summarizeResult(result);
     const output = {
       options: batchOptions,

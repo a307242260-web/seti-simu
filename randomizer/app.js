@@ -855,6 +855,7 @@
     planetRewards,
     finalScoring,
     endGameScoring,
+    industry,
     abilities,
     actions,
     scanEffects,
@@ -925,6 +926,7 @@
     executeFreeMoveForCardCorner,
     executeFreeMoveForCardTrigger,
     executeFreeMoveForScanAction4,
+    executeIndustryFreeMove,
     finalizePendingDiscardSelection,
     formatRocketLabel,
     getActivePlayers,
@@ -960,6 +962,7 @@
     handleChongCardGainChoice,
     handleChongFossilChoice,
     handleChongTaskCompletionChoice,
+    handleCompanyActionMarkerClick,
     handleConditionalSectorChoice,
     handleHandCardCornerQuickAction,
     handleHandScanCardClick,
@@ -971,6 +974,7 @@
     handleRunezuCardGainChoice,
     handleRunezuFaceSymbolChoice,
     handleRunezuSymbolBranchChoice,
+    handleScanAction4Choice,
     handleSupplyTechTileClick,
     handleYichangdianCardGainChoice,
     handleYichangdianCornerChoice,
@@ -5344,21 +5348,31 @@
     const immediateScore = baseValue * multiplier;
     const demand = getAiStrategyDemand(player);
     const demandScore = scoreAiFinalScoreFormulaDemand(formulaId, demand);
+    const thresholds = Array.isArray(finalScoringState.thresholds) && finalScoringState.thresholds.length
+      ? finalScoringState.thresholds
+      : finalScoring.FINAL_SCORE_THRESHOLDS || [];
+    const lastThreshold = Math.max(...thresholds.map((threshold) => aiNumber(threshold)));
+    const isLastThreshold = aiNumber(pending.threshold) >= lastThreshold;
+    const isLateMarker = isLastThreshold || aiNumber(turnState.roundNumber) >= 4;
+    const speculationScale = isLateMarker ? 0.35 : 1;
+    const immediateScoreWeight = isLateMarker ? 2.25 : 1;
     const remainingRoundWeight = Math.min(1.6, 0.7 + getAiRemainingRoundWeight() * 0.15);
-    const potentialScore = getAiFinalScoreFormulaPotential(formulaId) * remainingRoundWeight;
+    const formulaPotentialScore = getAiFinalScoreFormulaPotential(formulaId) * remainingRoundWeight * speculationScale;
+    const incomePotentialScore = 0;
+    const potentialScore = formulaPotentialScore + incomePotentialScore;
     const firstSlotPriorityScore = Number(check.slotIndex) === 1
-      ? 14
+      ? 14 * speculationScale
       : Number(check.slotIndex) === 2
-        ? 3
+        ? 3 * Math.max(0.5, speculationScale)
         : 0;
-    const familyPriorityScore = tileId === "c" || tileId === "d" ? 3.5 : 0;
+    const familyPriorityScore = tileId === "c" || tileId === "d" ? 3.5 * speculationScale : 0;
     const activeOpponentCount = (turnState.activePlayerIds || [])
       .filter((playerId) => playerId && playerId !== player.id)
       .length;
     const competitiveSlotSwingScore = Number(check.slotIndex) === 1
-      ? 8 + activeOpponentCount * 2.5 + Math.min(8, potentialScore * 0.85 + immediateScore * 0.18)
+      ? (8 + activeOpponentCount * 2.5 + Math.min(8, potentialScore * 0.85 + immediateScore * 0.18)) * speculationScale
       : Number(check.slotIndex) === 2
-        ? 2 + activeOpponentCount * 0.8 + Math.min(3.5, potentialScore * 0.35)
+        ? (2 + activeOpponentCount * 0.8 + Math.min(3.5, potentialScore * 0.35)) * Math.max(0.5, speculationScale)
         : 0;
     const slotPriorityScore = firstSlotPriorityScore
       + familyPriorityScore
@@ -5367,7 +5381,7 @@
       + multiplier * 0.18;
     const thresholdScore = Math.max(0, aiNumber(pending.threshold)) * 0.015;
     const score = applyAiStrategyWeight(
-      immediateScore + demandScore + potentialScore + slotPriorityScore + thresholdScore,
+      immediateScore * immediateScoreWeight + demandScore + potentialScore + slotPriorityScore + thresholdScore,
       "final",
       0.85,
     );
@@ -5385,8 +5399,11 @@
       score: Math.round(score * 100) / 100,
       scoreBreakdown: {
         immediateScore: Math.round(immediateScore * 100) / 100,
+        immediateScoreWeight: Math.round(immediateScoreWeight * 100) / 100,
         demandScore: Math.round(demandScore * 100) / 100,
         potentialScore: Math.round(potentialScore * 100) / 100,
+        formulaPotentialScore: Math.round(formulaPotentialScore * 100) / 100,
+        incomePotentialScore: Math.round(incomePotentialScore * 100) / 100,
         slotPriorityScore: Math.round(slotPriorityScore * 100) / 100,
         firstSlotPriorityScore: Math.round(firstSlotPriorityScore * 100) / 100,
         familyPriorityScore: Math.round(familyPriorityScore * 100) / 100,
@@ -7506,11 +7523,25 @@
           if (bonus.claimedKeys.includes(onceKey)) continue;
           bonus.claimedKeys.push(onceKey);
         }
-        if (applyMoveReplacementBonus(event, bonus, messages)) continue;
+        let pendingOnceKey = null;
+        if (minCount <= 0 && bonus.onceKey) {
+          if (!Array.isArray(bonus.claimedKeys)) bonus.claimedKeys = [];
+          if (bonus.claimedKeys.includes(bonus.onceKey)) continue;
+          pendingOnceKey = bonus.onceKey;
+        }
+        if (applyMoveReplacementBonus(event, bonus, messages)) {
+          if (pendingOnceKey) bonus.claimedKeys.push(pendingOnceKey);
+          continue;
+        }
+        let appliedReward = false;
         for (const reward of bonus.rewards || []) {
           const result = applyCardEventBonusReward(reward, bonus.label);
-          if (result?.ok) messages.push(result.message);
+          if (result?.ok) {
+            appliedReward = true;
+            messages.push(result.message);
+          }
         }
+        if (appliedReward && pendingOnceKey) bonus.claimedKeys.push(pendingOnceKey);
       }
     }
     if (messages.length) {
@@ -8065,6 +8096,9 @@
         effect: getCardTriggerFreeMoveEffect(match),
       });
     }
+    if (match?.effect?.type === cardEffects.EFFECT_TYPES.CARD_CORNER_EVENT_REWARD) {
+      return applyCardTriggerReward(match);
+    }
     if (String(match?.effect?.type || "").startsWith("card_")) {
       closeCardTriggerPicker();
       const triggerProgress = consumeCardTriggerWithSnapshot(match, getCurrentPlayer(), "卡牌触发");
@@ -8117,6 +8151,17 @@
       return result;
     }
 
+    const moveReward = pending.match.event?.moveReward || null;
+    const moveRewardGain = moveReward?.gain || {};
+    const moveRewardGainText = Object.keys(moveRewardGain).length
+      ? formatPlanetRewardGain(moveRewardGain)
+      : "";
+    if (Object.keys(moveRewardGain).length) {
+      const currentPlayer = getCurrentPlayer();
+      players.gainResources(currentPlayer, moveRewardGain);
+      addScoreSourceFromGain(currentPlayer, SCORE_SOURCE_KEYS.TASK_CARD, moveRewardGain);
+    }
+
     beginQuickActionStep("card-trigger-move", `卡牌触发：${pending.match.effect.label}`);
     recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
       getCurrentPlayer(),
@@ -8137,7 +8182,7 @@
     rocketState.activeRocketId = null;
     clearMoveRocketHighlight();
     deactivateMoveMode();
-    rocketState.statusNote = `卡牌触发：${result.message}`;
+    rocketState.statusNote = `卡牌触发：${[moveRewardGainText, result.message].filter(Boolean).join("，")}`;
     renderPlayerStats();
     renderPublicCards();
     renderPlayerHand();
@@ -10510,7 +10555,7 @@
         type: cardEffects.EFFECT_TYPES.SECTOR_X_SCAN,
         label: `${effect.label}${repeat > 1 ? ` ${index + 1}/${repeat}` : ""}`,
         icon: "scan",
-        options: { sectorX, gainData: effect.options?.gainData },
+        options: { sectorX, gainData: effect.options?.gainData, skipIfNoTarget: true },
       });
     }
     insertActionEffectsAfterCurrent(followups);
@@ -12254,6 +12299,15 @@
       rocketState.statusNote = `异常扇区 ${nextSectorX} 没有星云`;
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
+    }
+    if (!data.getNextReplaceableNebulaToken?.(nebulaDataState, nebula.id)) {
+      return finishAutomaticRewardEffect(effect, {
+        ok: true,
+        undoable: true,
+        skipped: true,
+        message: `${effect.label}：${nebula.label || nebula.id}已没有未替换的数据，已跳过`,
+        payload: { nebulaId: nebula.id, sectorX: nextSectorX, skipped: true },
+      });
     }
     return replaceNebulaDataForCurrentPlayer(nebula.id, {
       prefix: effect.label,
@@ -17584,6 +17638,28 @@
     }
     const player = getPlayerById(pendingBanrenmaOpportunity.playerId);
     if (!player) return { ok: false, message: "找不到半人马玩家" };
+    if (cardId === "cancel" || cardId === "skip") {
+      const beforeAlienState = structuredClone(alienGameState);
+      if (pendingBanrenmaOpportunity.markId) {
+        banrenma.resolveScoreMark(alienGameState, player, pendingBanrenmaOpportunity.markId);
+      }
+      completeBanrenmaOpportunityStep(
+        player,
+        structuredClone(playerState),
+        beforeAlienState,
+        null,
+        "半人马条件：跳过过期机会",
+      );
+      closeBanrenmaOpportunityDialog();
+      rocketState.statusNote = "半人马条件：没有可结算的半人马牌，已跳过";
+      renderAlienPanels();
+      renderPlayerStats();
+      updateActionButtons();
+      renderStateReadout();
+      queueBanrenmaOpportunitiesForPlayer(player);
+      maybeOpenQueuedBanrenmaOpportunity();
+      return { ok: true, skipped: true, message: rocketState.statusNote };
+    }
     const cardIndex = player.reservedCards?.findIndex((card) => card.id === cardId) ?? -1;
     const card = cardIndex >= 0 ? player.reservedCards[cardIndex] : null;
     if (!card || !banrenma.isBanrenmaCard(card)) {

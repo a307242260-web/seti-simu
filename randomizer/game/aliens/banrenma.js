@@ -486,14 +486,14 @@
   function getPendingPanelMark(alienState, player) {
     const score = Number(player?.resources?.score) || 0;
     return getPlayerScoreMarks(alienState, player)
-      .filter((mark) => mark.source === "panel" && score >= Number(mark.threshold || 0))
+      .filter((mark) => !mark.resolved && mark.source === "panel" && score >= Number(mark.threshold || 0))
       .sort((a, b) => a.threshold - b.threshold || String(a.id).localeCompare(String(b.id)))[0] || null;
   }
 
   function getPendingCardMarks(alienState, player) {
     const score = Number(player?.resources?.score) || 0;
     const marks = getPlayerScoreMarks(alienState, player)
-      .filter((mark) => mark.source === "card" && score >= Number(mark.threshold || 0));
+      .filter((mark) => !mark.resolved && mark.source === "card" && score >= Number(mark.threshold || 0));
     return marks.sort((a, b) => a.threshold - b.threshold || String(a.id).localeCompare(String(b.id)));
   }
 

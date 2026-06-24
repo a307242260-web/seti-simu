@@ -1484,6 +1484,7 @@
           eventType: "visitPlanet",
           excludePlanetIds: ["earth"],
           replacePublicityWithMove: true,
+          onceKey: "b49-visit-move-replacement",
           icon: "movement",
         }),
         cardMoveEffect("b49-move", "2移动", { movementPoints: 2 }),

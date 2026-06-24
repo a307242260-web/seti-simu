@@ -28,6 +28,12 @@ assert.equal(banrenma.getPlayerScoreMarks(alienState, white)[0].threshold, 25);
 assert.equal(banrenma.getPlayerScoreMarks(alienState, blue)[0].threshold, 20);
 assert.equal(Number.isInteger(alienState.banrenma.displayedCardIndex), true);
 assert.ok(banrenma.CARD_BY_INDEX[alienState.banrenma.displayedCardIndex]);
+white.resources.score = 25;
+const pendingPanelMark = banrenma.getPendingPanelMark(alienState, white);
+assert.equal(pendingPanelMark.threshold, 25);
+assert.equal(banrenma.resolveScoreMark(alienState, white, pendingPanelMark.id).ok, true);
+assert.equal(banrenma.getPendingPanelMark(alienState, white), null, "resolved panel marks should not queue again");
+white.resources.score = 10;
 
 let result = banrenma.placeBanrenmaTrace(alienState, 2, "pink", 1, white);
 assert.equal(result.ok, true);

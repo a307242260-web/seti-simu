@@ -250,11 +250,37 @@
     ), 0);
   }
 
+  function getHiddenAlienStateRewardValue(alienSlotId = null) {
+    const slotId = Math.round(numeric(alienSlotId));
+    const score = slotId === 1 ? 5 : slotId === 2 ? 3 : 4;
+    return getResourceValue({ score, publicity: 1 });
+  }
+
+  function estimateRewardValue(reward = {}) {
+    if (!reward || typeof reward !== "object") return 0;
+    let value = getResourceValue(reward.gain || {});
+    value += numeric(reward.dataCount) * RESOURCE_VALUES.availableData;
+    value += numeric(reward.drawCards) * DEFAULT_CARD_VALUE;
+    value += numeric(reward.blindDraw) * DEFAULT_CARD_VALUE;
+    value += numeric(reward.basicRewardCount) * 2.25;
+    if (reward.pickCard) value += DEFAULT_CARD_VALUE;
+    if (reward.pickAlienCard) value += DEFAULT_ALIEN_CARD_VALUE;
+    if (reward.fossilPanel || reward.chooseFossilRewardOnly) value += 4;
+    if (reward.panelSymbol) value += 2.5;
+    if (reward.refillPanelSymbol) value += 0.75;
+    if (reward.region) value += 2.5;
+    value -= numeric(reward.payData) * RESOURCE_VALUES.availableData;
+    value -= numeric(reward.payFossils) * 2.5;
+    return value;
+  }
+
   function estimateRevealedTraceValue(input = {}) {
     const mode = String(input.mode || "");
     const position = Math.max(0, Math.round(numeric(input.position)));
     const label = String(input.label || "");
+    const rewardValue = estimateRewardValue(input.reward);
     let value = 3;
+    if (rewardValue > 0 || input.reward) value += rewardValue;
     if (position === 2) value += 2.5;
     if (mode.includes("fangzhou") && label.includes("解锁")) value += 5;
     if (mode.includes("yichangdian") && position === 2) value += 2;
@@ -283,7 +309,7 @@
     }
 
     if (!slot?.traces || !traceType) {
-      const baseValue = 5 + RESOURCE_VALUES.publicity + DEFAULT_ALIEN_CARD_VALUE * 0.75;
+      const baseValue = getHiddenAlienStateRewardValue(alienSlotId) + DEFAULT_ALIEN_CARD_VALUE * 0.75;
       const activeOpponentCount = Math.max(0, Math.round(numeric(input.activeOpponentCount ?? input.opponentCount)));
       const competitionSwing = input.competition === false
         ? 0
@@ -304,9 +330,10 @@
         speciesRevealValue = 2.5;
       }
       const revealPressure = placedCount >= 2 ? 5 : placedCount === 1 ? 2 : 0.75;
-      const ownValue = 5 + RESOURCE_VALUES.publicity + cardExpectation + speciesRevealValue + revealPressure;
+      const stateRewardValue = getHiddenAlienStateRewardValue(alienSlotId);
+      const ownValue = stateRewardValue + cardExpectation + speciesRevealValue + revealPressure;
       const activeOpponentCount = Math.max(0, Math.round(numeric(input.activeOpponentCount ?? input.opponentCount)));
-      const competitionBase = 5 + RESOURCE_VALUES.publicity + cardExpectation * 0.75 + speciesRevealValue * 0.45;
+      const competitionBase = stateRewardValue + cardExpectation * 0.75 + speciesRevealValue * 0.45;
       const competitionSwing = input.competition === false
         ? 0
         : competitionBase * Math.min(1.35, 0.4 + activeOpponentCount * 0.25);

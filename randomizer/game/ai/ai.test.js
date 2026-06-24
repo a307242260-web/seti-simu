@@ -67,6 +67,11 @@ const inferredGoals = goals.inferGoals({
 }, "p1");
 assert.ok(inferredGoals.some((goal) => goal.id === goals.GOAL_IDS.FIRST_ROUND_SCORE_25));
 assert.ok(goals.scoreCandidateForGoals({ id: "scan" }, inferredGoals) > 0);
+assert.equal(policy.chooseAlienUseOption([
+  { choice: "12", label: "拥有3个橙色科技 · 14分 · 威胁6" },
+  { choice: "0", label: "九折有6个痕迹 · 7分 · 威胁0" },
+  { choice: "2", label: "完成2个蓝色扇区 · 12分 · 威胁4" },
+])?.choice, "12");
 
 const graph = actionGraph.buildActionGraph([
   { id: "researchTech", kind: "main", available: true, score: 5, valueBreakdown: { costValue: 2 } },
@@ -133,6 +138,62 @@ assert.ok(firstTraceValue >= 10);
 assert.ok(firstTraceValue > repeatedTraceValue);
 assert.ok(jiuzheTraceValue < firstTraceValue);
 assert.ok(competitiveTraceValue > firstTraceValue + 4);
+
+const neutralHiddenTraceState = {
+  aliens: {
+    1: {
+      revealed: false,
+      traces: {
+        yellow: { firstPlaced: false, ownerPlayerColor: null, extraCount: 0 },
+      },
+    },
+    2: {
+      revealed: false,
+      traces: {
+        yellow: { firstPlaced: false, ownerPlayerColor: null, extraCount: 0 },
+      },
+    },
+  },
+};
+const slot1FirstTraceValue = valuation.estimateAlienTraceValue({
+  alienGameState: neutralHiddenTraceState,
+  alienSlotId: 1,
+  traceType: "yellow",
+  activeOpponentCount: 3,
+});
+const slot2FirstTraceValue = valuation.estimateAlienTraceValue({
+  alienGameState: neutralHiddenTraceState,
+  alienSlotId: 2,
+  traceType: "yellow",
+  activeOpponentCount: 3,
+});
+assert.ok(slot1FirstTraceValue > slot2FirstTraceValue + 1);
+const slot1FallbackTraceValue = valuation.estimateAlienTraceValue({
+  alienGameState: { aliens: { 1: { revealed: false } } },
+  alienSlotId: 1,
+  activeOpponentCount: 3,
+});
+const slot2FallbackTraceValue = valuation.estimateAlienTraceValue({
+  alienGameState: { aliens: { 2: { revealed: false } } },
+  alienSlotId: 2,
+  activeOpponentCount: 3,
+});
+assert.ok(slot1FallbackTraceValue > slot2FallbackTraceValue + 1);
+const highRewardTraceValue = valuation.estimateAlienTraceValue({
+  revealed: true,
+  mode: "banrenma-grid",
+  traceType: "pink",
+  position: 2,
+  reward: { payData: 3, gain: { score: 15 } },
+});
+const lowerRewardTraceValue = valuation.estimateAlienTraceValue({
+  revealed: true,
+  mode: "banrenma-grid",
+  traceType: "pink",
+  position: 4,
+  reward: { gain: { score: 3 }, pickAlienCard: true },
+});
+assert.ok(highRewardTraceValue > lowerRewardTraceValue);
 
 const movementGraph = actionGraph.buildActionGraph([
   { id: "move", kind: "quick", available: true, score: 99, gain: 2, cost: 12 },
@@ -413,6 +474,26 @@ assert.ok(battleAnalysis.strategyTuning.weights.pass < 1);
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "score-pass-opportunity-cost"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-score-gap"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-card-score-gap"));
+
+const actionGraphAlignedAnalysis = analytics.analyzeBattleReport({
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    playerId: "player-white",
+    details: {
+      action: { id: "launch", kind: "main", actionGraph: { net: 9 } },
+      candidates: [
+        { id: "launch", kind: "main", available: true, score: 1, actionGraph: { net: 9 } },
+        { id: "playCard", kind: "main", available: true, score: 20, actionGraph: { net: 4 } },
+      ],
+    },
+  }],
+  bugs: [],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 1 }],
+});
+assert.equal(actionGraphAlignedAnalysis.opportunities.selectedBelowBestScore, 0);
+assert.equal(actionGraphAlignedAnalysis.candidateScoreStats.launch.selected, 1);
+assert.equal(actionGraphAlignedAnalysis.candidateScoreStats.playCard.missedAsBest, 0);
 
 const finalMarkReport = {
   logs: [
