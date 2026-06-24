@@ -371,6 +371,17 @@
     return { ok: true, message: `九折：已给 ${targetPlayers.length} 名玩家各发 3 张牌` };
   }
 
+  function getPlayerScore(player) {
+    const score = Number(player?.resources?.score);
+    return Number.isFinite(score) ? score : 0;
+  }
+
+  function getRevealThresholdBaseScore(activePlayers, fallbackPlayer) {
+    const players = (activePlayers || []).filter(Boolean);
+    if (!players.length) return getPlayerScore(fallbackPlayer);
+    return players.reduce((highest, player) => Math.max(highest, getPlayerScore(player)), 0);
+  }
+
   function initializeJiuzheReveal(alienState, alienSlotId, triggerPlayer, activePlayers, random = Math.random) {
     const jiuzhe = ensureJiuzheState(alienState);
     if (jiuzhe.revealInitialized) {
@@ -387,8 +398,9 @@
     jiuzhe.revealedSlotId = Number(alienSlotId);
     jiuzhe.revealedByPlayerId = triggerPlayer?.id || null;
     jiuzhe.revealedByPlayerColor = getPlayerColor(triggerPlayer);
-    jiuzhe.freeScoreThreshold = (Number(triggerPlayer?.resources?.score) || 0) + 20;
-    jiuzhe.paidScoreThreshold = (Number(triggerPlayer?.resources?.score) || 0) + 40;
+    const thresholdBaseScore = getRevealThresholdBaseScore(activePlayers, triggerPlayer);
+    jiuzhe.freeScoreThreshold = thresholdBaseScore + 20;
+    jiuzhe.paidScoreThreshold = thresholdBaseScore + 40;
     jiuzhe.revealInitialized = true;
     delete jiuzhe.traceSlotsByAlienSlotId[String(alienSlotId)];
 

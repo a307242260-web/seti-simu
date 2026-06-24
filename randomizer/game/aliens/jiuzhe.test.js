@@ -91,6 +91,8 @@ const revealState = {
 const blue = { id: "player-blue", color: "blue", resources: { score: 12 } };
 const revealResult = jiuzhe.initializeJiuzheReveal(revealState, 1, white, [white, blue], () => 0);
 assert.equal(revealResult.ok, true, "Jiuzhe reveal should initialize");
+assert.equal(revealResult.freeScoreThreshold, 32, "free threshold should use the current highest score, not the trigger player's score");
+assert.equal(revealResult.paidScoreThreshold, 52, "paid threshold should use the current highest score, not the trigger player's score");
 assert.equal(jiuzhe.getTraceGrid(revealState, 1), null, "reveal should not prefill Jiuzhe trace grid");
 assert.equal(
   jiuzhe.getPlayerJiuzheState(revealState, white).revealPlaysRemaining,
