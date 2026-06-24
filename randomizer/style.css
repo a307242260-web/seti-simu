@@ -807,7 +807,7 @@ body {
 
 .card-hover-preview {
   position: fixed;
-  z-index: 5000;
+  z-index: 1300;
   display: block;
   padding: 0;
   border-radius: 8px;
@@ -1982,7 +1982,16 @@ body {
   font: 600 12px/1.35 "Microsoft YaHei", "PingFang SC", sans-serif;
 }
 
-.final-result-minimize {
+.final-result-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.final-result-action-button {
   flex: 0 0 auto;
   min-height: 34px;
   padding: 0 14px;
@@ -1994,7 +2003,7 @@ body {
   font: 700 13px/1 "Microsoft YaHei", "PingFang SC", sans-serif;
 }
 
-.final-result-minimize:hover {
+.final-result-action-button:hover {
   border-color: rgba(255, 230, 150, 0.82);
   background: rgba(90, 72, 32, 0.94);
 }
@@ -4757,7 +4766,12 @@ button.spin-button:hover {
   }
 
   .final-result-header {
+    align-items: flex-start;
     padding: 13px 14px 12px;
+  }
+
+  .final-result-actions {
+    justify-content: flex-end;
   }
 
   .final-result-table {

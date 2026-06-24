@@ -39,6 +39,11 @@
     ai,
   } = dependencies;
 
+  const actionLogExport = window.SetiAppActionLogExport;
+  if (!actionLogExport) {
+    throw new Error("Missing SETI app dependency: SetiAppActionLogExport");
+  }
+
   const appConstants = window.SetiAppConstants.createAppConstants(dependencies);
   const {
     WHEEL_OFFSETS,
@@ -1088,6 +1093,10 @@
     cardHoverPreviewListenersBound = true;
     window.addEventListener("resize", () => positionCardHoverPreview(), { passive: true });
     window.addEventListener("scroll", () => positionCardHoverPreview(), { passive: true, capture: true });
+    document.addEventListener("pointerdown", () => hideCardHoverPreview(), { capture: true });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") hideCardHoverPreview();
+    }, { capture: true });
   }
 
   function ensureCardHoverPreview() {
@@ -1511,6 +1520,107 @@
       latestSnapshot: createGameRecoverySnapshot({ label: "当前局面" }),
       entries: getRecoverableActionLog({ includeRecovery: options.includeRecovery !== false }),
     };
+  }
+
+  function countPlayerOwnedTechForActionLogExport(player) {
+    const ownedTiles = player?.techState?.ownedTiles || {};
+    return Object.values(ownedTiles).reduce((total, value) => {
+      if (Array.isArray(value)) return total + value.length;
+      return total + (value ? 1 : 0);
+    }, 0);
+  }
+
+  function buildActionLogExportPlayerResults() {
+    return buildFinalResultPlayerSummaries().map((summary) => {
+      const player = summary.player || {};
+      const breakdown = summary.breakdown || {};
+      return {
+        playerId: player.id || null,
+        playerLabel: player.colorLabel || player.name || player.id || "未知玩家",
+        finalScore: breakdown.totalScore ?? player.resources?.score ?? 0,
+        baseScore: breakdown.baseScore ?? player.resources?.score ?? 0,
+        tileScore: breakdown.tileScore ?? 0,
+        cardScore: breakdown.cardScore ?? 0,
+        completedTaskCount: player.completedTaskCount || 0,
+        techCount: countPlayerOwnedTechForActionLogExport(player),
+        passed: isPlayerPassedThisRound(player.id),
+      };
+    });
+  }
+
+  function buildActionLogMarkdownContext(options = {}) {
+    const generatedAt = options.generatedAt || new Date();
+    return {
+      generatedAt,
+      isGameEnded: isGameEnded(),
+      gameEndReason: turnState.gameEndReason || null,
+      roundNumber: turnState.roundNumber,
+      turnNumber: getDisplayedTurnNumber(),
+      turnState: {
+        ...structuredClone(turnState),
+        displayedTurnNumber: getDisplayedTurnNumber(),
+        currentPlayerId: playerState.currentPlayerId,
+      },
+      entries: getRecoverableActionLog({ includeRecovery: false }),
+      playerResults: buildActionLogExportPlayerResults(),
+    };
+  }
+
+  function getActionLogMarkdown(options = {}) {
+    return actionLogExport.buildActionLogMarkdown(
+      buildActionLogMarkdownContext(options),
+      options,
+    );
+  }
+
+  function createActionLogMarkdownDownload(markdown, filename) {
+    const urlApi = window.URL || window.webkitURL;
+    if (typeof Blob !== "function" || !urlApi?.createObjectURL || !document.body) {
+      return { ok: false, message: "当前浏览器不支持下载行动日志" };
+    }
+    const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
+    const url = urlApi.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.hidden = true;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => urlApi.revokeObjectURL(url), 0);
+    return { ok: true };
+  }
+
+  function downloadActionLogMarkdown(options = {}) {
+    const generatedAt = options.generatedAt || new Date();
+    const context = buildActionLogMarkdownContext({ ...options, generatedAt });
+    const filename = actionLogExport.createActionLogMarkdownFilename(generatedAt);
+    const entryCount = context.entries.length;
+    if (!context.isGameEnded && options.allowIncomplete !== true) {
+      const result = {
+        ok: false,
+        filename,
+        entryCount,
+        message: "游戏尚未结束，终局行动日志需要在游戏结束后下载",
+      };
+      rocketState.statusNote = result.message;
+      renderStateReadout();
+      return result;
+    }
+
+    const markdown = actionLogExport.buildActionLogMarkdown(context, { ...options, generatedAt });
+    const downloadResult = createActionLogMarkdownDownload(markdown, filename);
+    const result = {
+      ok: Boolean(downloadResult.ok),
+      filename,
+      entryCount,
+      message: downloadResult.ok
+        ? `已生成行动日志：${filename}`
+        : downloadResult.message || "行动日志下载失败",
+    };
+    rocketState.statusNote = result.message;
+    renderStateReadout();
+    return result;
   }
 
   function getRecoveryEntriesFromInput(logOrPackage) {
@@ -27568,6 +27678,7 @@
     handleBoardPointerDown,
     handleFinalScoreTileClick,
     openFinalResultDialog,
+    downloadActionLogMarkdown,
     minimizeFinalResultDialog,
     closeFinalResultDialog,
     setDebugOpen,
@@ -27770,6 +27881,8 @@
     getRoundOrderPlayerIds,
     getRecoverableActionLog,
     createActionLogRecoveryPackage,
+    getActionLogMarkdown,
+    downloadActionLogMarkdown,
     createGameRecoverySnapshot,
     applyGameRecoverySnapshot,
     recoverFromActionLog,

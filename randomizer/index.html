@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SETI 太阳系随机器</title>
-  <link rel="stylesheet" href="./style.css?v=amiba-7">
+  <link rel="stylesheet" href="./style.css?v=action-log-export-1">
 </head>
 <body>
   <div class="app-wrap debug-collapsed log-collapsed" id="app-wrap">
@@ -512,7 +512,10 @@
             <h2 class="final-result-title" id="final-result-title">终局结果</h2>
             <p class="final-result-subtitle" id="final-result-subtitle">最终分数统计</p>
           </div>
-          <button class="final-result-minimize" type="button" id="final-result-minimize" aria-label="缩小终局结果">缩小</button>
+          <div class="final-result-actions">
+            <button class="final-result-action-button final-result-download-log" type="button" id="final-result-download-log">下载行动日志</button>
+            <button class="final-result-action-button final-result-minimize" type="button" id="final-result-minimize" aria-label="缩小终局结果">缩小</button>
+          </div>
         </div>
         <div class="final-result-table-wrap">
           <table class="final-result-table" id="final-result-table">
@@ -607,10 +610,11 @@
   <script src="./game/ai/index.js?v=ai-auto-battle-1"></script>
   <script src="./app/dependencies.js?v=app-boundaries-4"></script>
   <script src="./app/constants.js?v=app-boundaries-4"></script>
-  <script src="./app/dom.js?v=app-boundaries-4"></script>
-  <script src="./app/events.js?v=app-boundaries-6"></script>
-  <script src="./app/public-api.js?v=app-boundaries-4"></script>
+  <script src="./app/dom.js?v=app-boundaries-5"></script>
+  <script src="./app/events.js?v=app-boundaries-7"></script>
+  <script src="./app/action-log-export.js?v=action-log-export-1"></script>
+  <script src="./app/public-api.js?v=app-boundaries-5"></script>
   <script src="./app/ai-controller.js?v=app-boundaries-4"></script>
-  <script src="./app.js?v=app-boundaries-8"></script>
+  <script src="./app.js?v=action-log-export-1"></script>
 </body>
 </html>

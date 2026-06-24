@@ -127,6 +127,7 @@
       handleBoardPointerDown,
       handleFinalScoreTileClick,
       openFinalResultDialog,
+      downloadActionLogMarkdown,
       minimizeFinalResultDialog,
       closeFinalResultDialog,
       setDebugOpen,
@@ -228,6 +229,7 @@
       undoPendingAction();
     });
     els.finalResultButton?.addEventListener("click", openFinalResultDialog);
+    els.finalResultDownloadLog?.addEventListener("click", () => downloadActionLogMarkdown());
     els.finalResultMinimize?.addEventListener("click", minimizeFinalResultDialog);
     els.finalResultOverlay?.addEventListener("click", (event) => {
       if (event.target === els.finalResultOverlay) closeFinalResultDialog();

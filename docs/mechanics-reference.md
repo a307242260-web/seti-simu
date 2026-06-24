@@ -252,6 +252,7 @@ UI 布局：
 - 撤销快速行动会删除 draft 中最近的快速行动记录；撤销主要行动效果会删除最近的主要行动记录；回滚整个主要行动会删除 draft 中所有主要行动记录但保留尚未撤销的快速行动记录。若最近步骤是不可撤销屏障，只提示原因，不会越过屏障撤销更早步骤。
 - 确认后不可撤销的精选/拿牌效果会写入不可撤销屏障，并在日志中显示原因；公司 1x 中任务中继站、芬威克、未来跨度、宇宙战略等公共牌精选补牌能力也按 quick 日志记录 `不可撤销：公共牌补牌翻出新牌`。
 - 每条已确认的稳定行动日志 entry 会附带 `recoverySnapshot`，保存该日志确认后的完整游戏状态切片（含隐藏牌序、外星人状态、火箭、科技、星云、玩家、任务状态等，不递归保存日志本身）。最后一名玩家确认初始选择后若进入“初始收入增加”效果流，该条日志会暂时不暴露恢复快照，直到初始收入全部完成后刷新为稳定恢复点。`window.SetiRandomizer.getActionLogRecoveryPackage()` 可导出含恢复快照的日志包；`window.SetiRandomizer.recoverFromActionLog(logOrPackage, { entryId/index })` 会取对应日志快照恢复局面，并清空所有进行中的 overlay/选择流程。恢复点定位为“某条已确认日志之后”的稳定局面；调试入口仍不保证完整日志语义。
+- 游戏结束后「终局结果」弹窗会显示「下载行动日志」按钮，调用 `window.SetiRandomizer.downloadActionLogMarkdown()` 以 Markdown 文件导出终局行动复盘。`window.SetiRandomizer.getActionLogMarkdown()` 返回同一份 Markdown 文本，方便 Playwright/控制台/外部 agent 读取；`downloadActionLogMarkdown()` 默认只允许终局后下载，传 `{ allowIncomplete: true }` 可调试导出当前局面。Markdown 只包含游戏元信息、终局分数、玩家路线摘要和完整行动流水，不包含 `recoverySnapshot`、隐藏牌序或完整恢复状态；需要恢复局面时仍使用 `getActionLogRecoveryPackage()`。
 - `randomizeAll()` 会清空行动日志，避免新开局混入上一局流程；调试入口 `window.SetiRandomizer.getActionLog()` 返回已确认日志快照。
 
 主行动锁定规则：

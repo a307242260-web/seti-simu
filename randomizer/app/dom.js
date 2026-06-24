@@ -153,6 +153,7 @@
       passReserveSelectionConfirm: documentRef.getElementById("pass-reserve-selection-confirm"),
       finalResultOverlay: documentRef.getElementById("final-result-overlay"),
       finalResultSubtitle: documentRef.getElementById("final-result-subtitle"),
+      finalResultDownloadLog: documentRef.getElementById("final-result-download-log"),
       finalResultMinimize: documentRef.getElementById("final-result-minimize"),
       finalResultHead: documentRef.getElementById("final-result-head"),
       finalResultBody: documentRef.getElementById("final-result-body"),
