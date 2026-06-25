@@ -13368,40 +13368,29 @@
   }
 
   function executeAomomoLandEffect(effect, options = {}) {
-    const currentPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
-    beginEffectHistoryStep(effect.label);
-    const beforePlayer = structuredClone(currentPlayer);
-    const result = abilities.executeAbility("landProbe", createActionContext(), {
+    const score = Math.max(0, Math.round(Number(options.scoreIfAomomo ?? effect.options?.score) || 0));
+    const afterLandRewards = Array.isArray(effect.options?.afterLandRewards)
+      ? [...effect.options.afterLandRewards]
+      : [];
+    const scoreRewardId = `${effect.id || "aomomo-land"}-aomomo-score`;
+    if (score > 0 && !afterLandRewards.some((reward) => reward?.effect?.id === scoreRewardId)) {
+      afterLandRewards.push({
+        planetIds: [aomomo?.PLANET_ID || "aomomo"],
+        effect: {
+          id: scoreRewardId,
+          type: "gain_resources",
+          label: `奥陌陌登陆：${score}分`,
+          icon: "score",
+          options: { gain: { score }, scoreSourceKey: SCORE_SOURCE_KEYS.LAND },
+        },
+      });
+    }
+    effect.options = {
+      ...(effect.options || {}),
       skipCost: true,
-      target: { type: "planet" },
-    });
-    if (!result.ok) {
-      endEffectHistoryStep();
-      rocketState.statusNote = result.message;
-      renderStateReadout();
-      return result;
-    }
-    recordAbilityCommands(result);
-    const score = result.planetId === aomomo?.PLANET_ID
-      ? Math.max(0, Math.round(Number(options.scoreIfAomomo ?? effect.options?.score) || 0))
-      : 0;
-    if (score > 0) {
-      players.gainResources(currentPlayer, { score });
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
-        currentPlayer,
-        beforePlayer,
-        "恢复奥陌陌登陆得分前玩家状态",
-      ));
-      result.message = `${result.message}；奥陌陌登陆+${score}分`;
-    }
-    effect.result = result;
-    rocketState.statusNote = result.message;
-    renderRockets();
-    renderAlienPanels();
-    renderPlayerStats();
-    completeCurrentActionEffect();
-    renderStateReadout();
-    return result;
+      ...(afterLandRewards.length ? { afterLandRewards } : {}),
+    };
+    return executeCardLandEffect(effect);
   }
 
   function executeAomomoFossilMoveAndLandEffect(effect) {
@@ -13444,7 +13433,7 @@
         playerColor: currentPlayer?.color || null,
         label: "奥陌陌：登陆",
         icon: "land",
-        options: {},
+        options: { skipCost: true },
       },
     ]);
     effect.result = {
