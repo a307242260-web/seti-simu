@@ -5081,6 +5081,9 @@
     }
     syncCardSelectionChrome();
     renderPlayerStats();
+    if (pending?.type === "card_trigger_pick" && continueAfterCardTriggerResolution()) {
+      return;
+    }
     updateActionButtons();
     maybeContinuePendingTurnEndRevealFlow();
     renderStateReadout();
@@ -5394,6 +5397,9 @@
     syncCardSelectionChrome();
     renderPublicCards();
     renderPlayerStats();
+    if (pending?.type === "card_trigger_pick" && continueAfterCardTriggerResolution()) {
+      return result;
+    }
     updateActionButtons();
     maybeContinuePendingTurnEndRevealFlow();
     renderStateReadout();
@@ -8372,6 +8378,30 @@
     return null;
   }
 
+  function continueAfterCardTriggerResolution() {
+    const type1Result = applyType1TriggerMatches([]);
+    if (type1Result || hasActiveCardTriggerResolution() || isCardTriggerRewardFlowBusy()) {
+      updateActionButtons();
+      renderStateReadout();
+      return Boolean(type1Result);
+    }
+    if (pendingActionEffectFlow?.completed) {
+      finishActionEffectFlow();
+      return true;
+    }
+    updateActionButtons();
+    renderStateReadout();
+    return false;
+  }
+
+  function cancelCardTriggerChoice() {
+    if (!pendingCardTriggerAction) return false;
+    closeCardTriggerPicker();
+    rocketState.statusNote = "已取消卡牌触发";
+    continueAfterCardTriggerResolution();
+    return true;
+  }
+
   function buildAlienTraceEvent(alienSlotId, traceType, player, alienIdOverride = null) {
     const slot = aliens.getAlienSlot(alienGameState, Number(alienSlotId));
     return {
@@ -9250,10 +9280,11 @@
     renderPlayerStats();
     renderPublicCards();
     renderPlayerHand();
-    updateActionButtons();
-    renderStateReadout();
     if (result.ok) {
-      applyType1TriggerMatches([]);
+      continueAfterCardTriggerResolution();
+    } else {
+      updateActionButtons();
+      renderStateReadout();
     }
     return result;
   }
@@ -9421,6 +9452,7 @@
     updateActionButtons();
     renderStateReadout();
     settleCardTasksAfterEffect({ events: result.events, render: false });
+    continueAfterCardTriggerResolution();
     return result;
   }
 
@@ -29539,6 +29571,7 @@
     handleBanrenmaCardConditionChoice,
     handleYichangdianCornerChoice,
     handleCardTriggerChoice,
+    cancelCardTriggerChoice,
     confirmCardTaskCompletion,
     handleProbeSectorScanChoice,
     confirmProbeSectorScanSelection,
