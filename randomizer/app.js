@@ -18563,6 +18563,9 @@
     renderPlayerStats();
     renderPlayerHand();
     renderReservedCardsFromTaskState();
+    if (pending?.triggerMatch && continueAfterCardTriggerResolution()) {
+      return { ok: true, message, payload };
+    }
     updateActionButtons();
     renderStateReadout();
     return { ok: true, message, payload };
