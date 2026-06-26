@@ -125,6 +125,7 @@
   let pendingLandTargetAction = null;
   let pendingCardTriggerAction = null;
   let pendingCardTriggerFreeMove = null;
+  let pendingType1TriggerEvents = [];
   let pendingCardTaskCompletion = null;
   let pendingJiuzheCardPlay = null;
   let pendingJiuzheOpportunityOpen = false;
@@ -1680,6 +1681,7 @@
     pendingLandTargetAction = null;
     pendingCardTriggerAction = null;
     pendingCardTriggerFreeMove = null;
+    pendingType1TriggerEvents = [];
     pendingCardTaskCompletion = null;
     pendingJiuzheCardPlay = null;
     pendingJiuzheOpportunityOpen = false;
@@ -2614,9 +2616,64 @@
     return { ok: false, message: `移动力不足，需要 ${requiredMovePoints} 点移动力` };
   }
 
+  function beginSupplementalMovePayment(options = {}) {
+    const currentPlayer = getCurrentPlayer();
+    const deltaX = Number(options.deltaX || 0);
+    const deltaY = Number(options.deltaY || 0);
+    const rocketId = Number(options.rocketId);
+    const terrainRequired = Number.isFinite(Number(options.terrainRequired))
+      ? Math.max(1, Math.round(Number(options.terrainRequired)))
+      : getRequiredMovePointsForUi(currentPlayer, rocketId, deltaX, deltaY, options.moveOptions || {});
+    const providedMovePoints = Math.max(0, Math.round(Number(options.providedMovePoints) || 0));
+    const paymentRequired = Math.max(0, terrainRequired - providedMovePoints);
+
+    if (paymentRequired <= 0) {
+      return {
+        ok: true,
+        needsPayment: false,
+        terrainRequired,
+        providedMovePoints,
+      };
+    }
+
+    const payCheck = canPayForMove(currentPlayer, paymentRequired);
+    if (!payCheck.ok) {
+      rocketState.statusNote = payCheck.message;
+      renderStateReadout();
+      return payCheck;
+    }
+
+    pendingMovePayment = {
+      player: currentPlayer,
+      deltaX,
+      deltaY,
+      rocketId,
+      requiredMovePoints: paymentRequired,
+      totalRequiredMovePoints: terrainRequired,
+      providedMovePoints,
+      selectedHandIndices: [],
+      supplementalMoveContext: options.context || null,
+    };
+    rocketState.statusNote = options.message
+      || `移动：已有 ${providedMovePoints} 点移动力，还需 ${paymentRequired} 点（可弃移动牌或用能量）`;
+    syncMovePaymentChrome();
+    scrollToPlayerHandPanel();
+    updateActionButtons();
+    renderStateReadout();
+    return {
+      ok: true,
+      needsPayment: true,
+      terrainRequired,
+      providedMovePoints,
+      paymentRequired,
+      message: rocketState.statusNote,
+    };
+  }
+
   function syncMovePaymentChrome() {
     const active = isMovePaymentSelectionActive();
-    if (active) cancelCardCornerQuickAction({ silent: true });
+    const preservesCardCornerMove = pendingMovePayment?.supplementalMoveContext?.type === "card_corner_free_move";
+    if (active && !preservesCardCornerMove) cancelCardCornerQuickAction({ silent: true });
     els.appWrap?.classList.toggle("move-payment-selection-active", active);
     els.playerHandPanel?.classList.toggle("move-payment-selection-active", active);
     els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
@@ -2804,14 +2861,17 @@
         ? `${paymentNote}，消耗 ${energyCost} 能量`
         : `消耗 ${energyCost} 能量`;
     }
+    const providedMovePoints = Math.max(0, Math.round(Number(pendingMovePayment.providedMovePoints) || 0));
+    const totalMovementPoints = providedMovePoints + selectedMoveCards.length + energyCost;
     const moveOptions = {
       cost: energyCost > 0 ? { energy: energyCost } : {},
-      movementPoints: selectedMoveCards.length + energyCost,
+      movementPoints: totalMovementPoints,
       historyLabel: `移动消耗 ${selectedMoveCards.length ? `${selectedMoveCards.length} 张移动牌` : ""}${selectedMoveCards.length && energyCost ? " + " : ""}${energyCost ? `${energyCost} 能量` : ""}`,
     };
 
     const pending = pendingMovePayment;
     const cardMoveEffectContext = pending.cardMoveEffectContext || null;
+    const supplementalMoveContext = pending.supplementalMoveContext || null;
     pendingMovePayment = null;
     syncMovePaymentChrome();
 
@@ -2825,6 +2885,66 @@
           poolUsed: cardMoveEffectContext.poolUsed,
           energyCost,
           discardCommand,
+        },
+      );
+    }
+
+    if (supplementalMoveContext?.type === "scan_action_4") {
+      return executeFreeMoveForScanAction4(
+        pending.deltaX,
+        pending.deltaY,
+        pending.rocketId,
+        {
+          terrainRequired: supplementalMoveContext.terrainRequired,
+          providedMovePoints,
+          energyCost,
+          discardCommand,
+          fromMovePayment: true,
+        },
+      );
+    }
+
+    if (supplementalMoveContext?.type === "card_corner_free_move") {
+      return executeFreeMoveForCardCorner(
+        pending.deltaX,
+        pending.deltaY,
+        pending.rocketId,
+        {
+          terrainRequired: supplementalMoveContext.terrainRequired,
+          providedMovePoints,
+          energyCost,
+          discardCommand,
+          fromMovePayment: true,
+        },
+      );
+    }
+
+    if (supplementalMoveContext?.type === "card_trigger_free_move") {
+      return executeFreeMoveForCardTrigger(
+        pending.deltaX,
+        pending.deltaY,
+        pending.rocketId,
+        {
+          terrainRequired: supplementalMoveContext.terrainRequired,
+          providedMovePoints,
+          energyCost,
+          discardCommand,
+          fromMovePayment: true,
+        },
+      );
+    }
+
+    if (supplementalMoveContext?.type === "industry_free_move") {
+      return executeIndustryFreeMove(
+        pending.deltaX,
+        pending.deltaY,
+        pending.rocketId,
+        {
+          terrainRequired: supplementalMoveContext.terrainRequired,
+          providedMovePoints,
+          energyCost,
+          discardCommand,
+          fromMovePayment: true,
         },
       );
     }
@@ -6639,20 +6759,27 @@
     syncInteractionFocusChrome();
   }
 
+  function nebulaHasScannableData(nebulaId) {
+    return (data.listNebulaTokens(nebulaDataState, nebulaId) || []).length > 0;
+  }
+
   function buildNebulaScanChoice(nebulaId, extra = {}) {
     const nextToken = data.getNextReplaceableNebulaToken(nebulaDataState, nebulaId);
     const tokens = data.listNebulaTokens(nebulaDataState, nebulaId);
     const label = data.getNebulaLabel(nebulaId);
+    const canScan = Boolean(nextToken || tokens.length);
     return {
       nebulaId,
       label: extra.label || label,
       description: extra.description || (nextToken
         ? `下一次替换槽位 ${nextToken.slotIndex}`
         : tokens.length
-          ? "该星云已无未替换数据"
+          ? "已无未替换数据：继续扫描会追加计数，不获得数据"
           : "该星云没有已填充数据"),
-      disabled: !nextToken,
-      title: nextToken ? "" : "需要先填充星云数据，且仍有未替换数据",
+      disabled: !canScan,
+      title: canScan
+        ? (nextToken ? "" : "继续扫描会追加计数标记，不获得数据")
+        : "需要先填充星云数据",
       ...extra,
     };
   }
@@ -6949,7 +7076,7 @@
     return openScanTargetPicker({
       type: "sector_scan",
       title: "扇区扫描",
-      subtitle: "选择当前 0-7 号扇区中的一个星云，按槽位顺序替换未替换的数据。",
+      subtitle: "选择当前 0-7 号扇区中的一个星云；无可替换数据时追加扫描计数且不获得数据。",
       choices,
     });
   }
@@ -8185,19 +8312,46 @@
     layoutReservedCardRows();
   }
 
-  function applyType1TriggerMatches(events) {
-    const currentPlayer = getCurrentPlayer();
-    if (!currentPlayer || !events?.length) return null;
-    if (pendingCardTriggerAction || pendingCardTriggerFreeMove || pendingCardCornerFreeMove) return null;
+  function cloneType1TriggerEvent(event) {
+    return event && typeof event === "object" ? { ...event } : event;
+  }
 
-    const matches = cardTaskStateModule
-      .collectType1TriggerMatches(currentPlayer, events, cardEffects)
+  function enqueueType1TriggerEvents(events) {
+    const normalized = (events || []).filter(Boolean).map(cloneType1TriggerEvent);
+    if (normalized.length) pendingType1TriggerEvents.push(...normalized);
+  }
+
+  function hasActiveCardTriggerResolution() {
+    return Boolean(pendingCardTriggerAction || pendingCardTriggerFreeMove || pendingCardCornerFreeMove);
+  }
+
+  function isCardTriggerRewardFlowBusy() {
+    return pendingActionEffectFlow?.actionType === "cardTrigger"
+      && !pendingActionEffectFlow.completed;
+  }
+
+  function getType1TriggerMatchesForEvent(player, event) {
+    return cardTaskStateModule
+      .collectType1TriggerMatches(player, [event], cardEffects)
       .filter((match) => (
         !cardTriggerNeedsFreeMove(match)
         || listCardTriggerFreeMoveCandidates(match).length > 0
       ));
-    if (!matches.length) return null;
-    return matches.length === 1 ? applyCardTriggerMatch(matches[0]) : openCardTriggerPicker(matches);
+  }
+
+  function applyType1TriggerMatches(events = []) {
+    const currentPlayer = getCurrentPlayer();
+    if (!currentPlayer) return null;
+    enqueueType1TriggerEvents(events);
+    if (hasActiveCardTriggerResolution() || isCardTriggerRewardFlowBusy()) return null;
+
+    while (pendingType1TriggerEvents.length) {
+      const event = pendingType1TriggerEvents.shift();
+      const matches = getType1TriggerMatchesForEvent(currentPlayer, event);
+      if (!matches.length) continue;
+      return matches.length === 1 ? applyCardTriggerMatch(matches[0]) : openCardTriggerPicker(matches);
+    }
+    return null;
   }
 
   function buildAlienTraceEvent(alienSlotId, traceType, player, alienIdOverride = null) {
@@ -8515,7 +8669,7 @@
     const chongCompletions = processChongTransportArrivalEvents(normalizedEvents);
     const runezuCompletions = processRunezuTaskEvents(normalizedEvents);
     refreshCardTaskState({ render });
-    const type1Result = skipType1 || !normalizedEvents.length ? null : applyType1TriggerMatches(normalizedEvents);
+    const type1Result = skipType1 ? null : applyType1TriggerMatches(normalizedEvents);
     return {
       cardEventBonuses,
       chongCompletions,
@@ -8799,6 +8953,54 @@
     return triggerProgress;
   }
 
+  function prepareCardTriggerRewardEffects(match, effects, label) {
+    const rewardEffects = (effects || []).filter(Boolean);
+    if (!rewardEffects.length) return [];
+    const triggerProgress = consumeCardTriggerWithSnapshot(match, getCurrentPlayer(), label);
+    const prepared = rewardEffects.map((effect, index) => ({
+      ...effect,
+      id: effect.id || `${match?.trigger?.id || "card-trigger"}-effect-${index + 1}`,
+      options: { ...(effect.options || {}) },
+      preHistoryCommands: index === 0 ? triggerProgress.commands : [],
+      preHistoryCommandsApplied: false,
+      status: "pending",
+    }));
+    return prepared;
+  }
+
+  function queueCardTriggerRewardEffects(match, effects = [match?.effect]) {
+    if (!match?.card || !match?.trigger) return { ok: false, message: "没有可结算的卡牌触发" };
+    const label = `卡牌触发：${match.effect?.label || "任务奖励"}`;
+    const preparedEffects = prepareCardTriggerRewardEffects(match, effects, label);
+    if (!preparedEffects.length) return { ok: false, message: "卡牌触发没有可执行奖励" };
+
+    closeCardTriggerPicker();
+    renderReservedCardsFromTaskState();
+
+    if (pendingActionEffectFlow) {
+      insertActionEffectsBeforeCurrent(preparedEffects);
+      rocketState.statusNote = `${label}：已加入效果队列`;
+      renderActionEffectBar();
+      updateActionButtons();
+      renderStateReadout();
+      return { ok: true, queued: true, message: rocketState.statusNote };
+    }
+
+    const started = startCardEffectFlow(
+      "card-trigger-effects",
+      label,
+      preparedEffects,
+      {
+        actionType: "cardTrigger",
+        historySource: HISTORY_SOURCE_QUICK,
+        consumesMainAction: false,
+      },
+    );
+    return started
+      ? { ok: true, queued: true, message: rocketState.statusNote }
+      : { ok: false, message: "无法启动卡牌触发奖励队列" };
+  }
+
   function getCardTaskCompletionBlockReason() {
     if (isActionEffectFlowActive()) return "请先完成当前行动的效果";
     if (hasActivePendingSubFlow()) return "请先完成或取消当前流程";
@@ -9032,6 +9234,9 @@
     renderPlayerHand();
     updateActionButtons();
     renderStateReadout();
+    if (result.ok) {
+      applyType1TriggerMatches([]);
+    }
     return result;
   }
 
@@ -9085,7 +9290,7 @@
       });
     }
     if (match?.effect?.type === cardEffects.EFFECT_TYPES.FREE_MOVE) {
-      return beginCardTriggerFreeMove(match);
+      return queueCardTriggerRewardEffects(match, [match.effect]);
     }
     if (match?.effect?.type === cardEffects.EFFECT_TYPES.CARD_CORNER_EVENT_REWARD
       && match.event?.moveReward) {
@@ -9098,18 +9303,7 @@
       return applyCardTriggerReward(match);
     }
     if (String(match?.effect?.type || "").startsWith("card_")) {
-      closeCardTriggerPicker();
-      confirmCardTriggerProgress(match, getCurrentPlayer(), `卡牌触发：${match.effect.label}`);
-      return startCardEffectFlow(
-        "card-trigger-effects",
-        `卡牌触发：${match.effect.label}`,
-        [match.effect],
-        {
-          actionType: "cardTrigger",
-          historySource: HISTORY_SOURCE_QUICK,
-          consumesMainAction: false,
-        },
-      );
+      return queueCardTriggerRewardEffects(match, [match.effect]);
     }
     return applyCardTriggerReward(match);
   }
@@ -9122,7 +9316,7 @@
     return applyCardTriggerMatch(match);
   }
 
-  function executeFreeMoveForCardTrigger(deltaX, deltaY, rocketId) {
+  function executeFreeMoveForCardTrigger(deltaX, deltaY, rocketId, payment = {}) {
     const pending = pendingCardTriggerFreeMove;
     if (!pending) return { ok: false, message: "没有待结算的卡牌免费移动" };
 
@@ -9133,9 +9327,30 @@
       return moveCheck;
     }
 
+    const currentPlayer = getCurrentPlayer();
+    const providedMovePoints = Math.max(
+      0,
+      Math.round(Number(payment.providedMovePoints ?? pending.match.effect.options?.movementPoints ?? 1) || 0),
+    );
+    const terrainRequired = Number.isFinite(Number(payment.terrainRequired))
+      ? Math.max(1, Math.round(Number(payment.terrainRequired)))
+      : getRequiredMovePointsForUi(currentPlayer, rocketId, deltaX, deltaY, pending.match.effect.options || {});
+    if (!payment.fromMovePayment && providedMovePoints < terrainRequired) {
+      return beginSupplementalMovePayment({
+        deltaX,
+        deltaY,
+        rocketId,
+        terrainRequired,
+        providedMovePoints,
+        context: { type: "card_trigger_free_move", terrainRequired },
+        message: `${pending.match.effect.label}：已有 ${providedMovePoints} 点移动力，还需 ${terrainRequired - providedMovePoints} 点（可弃移动牌或用能量）`,
+      });
+    }
+
+    const energyCost = Math.max(0, Math.round(Number(payment.energyCost) || 0));
     const result = abilities.executeAbility("moveProbe", createActionContext(), {
-      cost: {},
-      movementPoints: pending.match.effect.options?.movementPoints || 1,
+      cost: energyCost > 0 ? { energy: energyCost } : {},
+      movementPoints: Math.max(terrainRequired, providedMovePoints + energyCost),
       rocketId,
       deltaX,
       deltaY,
@@ -9143,6 +9358,7 @@
     });
     if (result.rocket) renderRocketElement(result.rocket);
     if (!result.ok) {
+      if (payment.discardCommand) payment.discardCommand.undo();
       rocketState.statusNote = result.message;
       renderStateReadout();
       return result;
@@ -9170,6 +9386,7 @@
       pending.beforeCardState.publicCards,
       pending.beforeCardState.discardPile,
     ));
+    if (payment.discardCommand) recordQuickHistoryCommand(payment.discardCommand);
     recordAbilityCommands(result, quickActionHistory);
     cardEffects.consumeTrigger(pending.match.card, pending.match.trigger.id);
     discardReservedCardIfFinished(getCurrentPlayer(), pending.match.card);
@@ -9189,7 +9406,7 @@
     return result;
   }
 
-  function executeFreeMoveForCardCorner(deltaX, deltaY, rocketId) {
+  function executeFreeMoveForCardCorner(deltaX, deltaY, rocketId, payment = {}) {
     const pending = pendingCardCornerFreeMove;
     if (!pending) return { ok: false, message: "没有待结算的弃牌移动" };
 
@@ -9200,9 +9417,35 @@
       return moveCheck;
     }
 
+    const currentPlayer = getCurrentPlayer();
+    const providedMovePoints = Math.max(
+      0,
+      Math.round(Number(
+        payment.providedMovePoints
+          ?? pending.action.moveReward?.movementPoints
+          ?? pending.action.movementPoints
+          ?? 1,
+      ) || 0),
+    );
+    const terrainRequired = Number.isFinite(Number(payment.terrainRequired))
+      ? Math.max(1, Math.round(Number(payment.terrainRequired)))
+      : getRequiredMovePointsForUi(currentPlayer, rocketId, deltaX, deltaY);
+    if (!payment.fromMovePayment && providedMovePoints < terrainRequired) {
+      return beginSupplementalMovePayment({
+        deltaX,
+        deltaY,
+        rocketId,
+        terrainRequired,
+        providedMovePoints,
+        context: { type: "card_corner_free_move", terrainRequired },
+        message: `${pending.action.label}：已有 ${providedMovePoints} 点移动力，还需 ${terrainRequired - providedMovePoints} 点（可弃移动牌或用能量）`,
+      });
+    }
+
+    const energyCost = Math.max(0, Math.round(Number(payment.energyCost) || 0));
     const result = abilities.executeAbility("moveProbe", createActionContext(), {
-      cost: {},
-      movementPoints: pending.action.moveReward?.movementPoints || pending.action.movementPoints || 1,
+      cost: energyCost > 0 ? { energy: energyCost } : {},
+      movementPoints: Math.max(terrainRequired, providedMovePoints + energyCost),
       rocketId,
       deltaX,
       deltaY,
@@ -9211,6 +9454,7 @@
     });
     if (result.rocket) renderRocketElement(result.rocket);
     if (!result.ok) {
+      if (payment.discardCommand) payment.discardCommand.undo();
       rocketState.statusNote = result.message;
       renderStateReadout();
       return result;
@@ -9220,6 +9464,7 @@
     if (!recordInCurrentIndustryStep) {
       beginQuickActionStep("card-corner-move", `卡牌快速行动：${pending.action.label}`);
     }
+    if (payment.discardCommand) recordQuickHistoryCommand(payment.discardCommand);
     recordAbilityCommands(result, quickActionHistory);
     if (!recordInCurrentIndustryStep) {
       completeQuickActionStep();
@@ -9477,6 +9722,12 @@
       ...meta,
     });
     effectStepActive = true;
+    if (current && !current.preHistoryCommandsApplied && current.preHistoryCommands?.length) {
+      for (const command of current.preHistoryCommands) {
+        history.record(command);
+      }
+      current.preHistoryCommandsApplied = true;
+    }
     if (
       pendingActionEffectFlow
       && !pendingActionEffectFlow.preHistoryCommandsApplied
@@ -9589,11 +9840,13 @@
 
     pendingActionEffectFlow.completed = false;
     effect.status = "active";
+    effect.preHistoryCommandsApplied = false;
     pendingActionEffectFlow.currentIndex = step.effectIndex;
     for (let index = step.effectIndex + 1; index < effects.length; index += 1) {
       if (effects[index].status !== "pending") {
         effects[index].status = "pending";
       }
+      effects[index].preHistoryCommandsApplied = false;
     }
     cancelActiveEffectSubFlows();
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
@@ -9834,6 +10087,7 @@
     pendingCardTriggerAction = null;
     pendingCardTaskCompletion = null;
     pendingCardTriggerFreeMove = null;
+    pendingType1TriggerEvents = [];
     pendingCardCornerFreeMove = null;
     pendingYichangdianCornerAction = null;
     pendingChongCardGain = null;
@@ -10025,6 +10279,15 @@
     const flowCompleted = pendingActionEffectFlow?.completed;
     if (flowCompleted) {
       settleCardTasksAfterEffect({ events: effectEvents, render: false });
+      if (
+        (pendingActionEffectFlow && !pendingActionEffectFlow.completed)
+        || hasActiveCardTriggerResolution()
+      ) {
+        renderActionEffectBar();
+        updateActionButtons();
+        renderStateReadout();
+        return;
+      }
       finishActionEffectFlow();
       return;
     }
@@ -10221,6 +10484,17 @@
     if (finishedFlow.scanActionEvent) {
       settleCardTasksAfterEffect({ events: [finishedFlow.scanActionEvent], render: false });
     }
+    const queuedType1Result = applyType1TriggerMatches([]);
+    if (queuedType1Result || hasActiveCardTriggerResolution() || isActionEffectFlowActive()) {
+      rocketState.statusNote = queuedType1Result?.message || "卡牌触发：请先完成触发效果";
+      if (finishedFlow.consumesMainAction !== false || finishedFlow.resumePendingActionExecuted) {
+        markActionPending();
+      }
+      renderPlayerStats();
+      updateActionButtons();
+      renderStateReadout();
+      return;
+    }
     if (actionType === "pass") {
       const passPlayer = getPlayerById(finishedFlow.playerId) || getCurrentPlayer();
       const passSettlement = settleCardTasksAfterEffect({
@@ -10378,7 +10652,7 @@
     return { ok: true, message: rocketState.statusNote };
   }
 
-  function executeFreeMoveForScanAction4(deltaX, deltaY, rocketId) {
+  function executeFreeMoveForScanAction4(deltaX, deltaY, rocketId, payment = {}) {
     const moveCheck = rocketActions.canMoveRocket(rocketState, rocketId, deltaX, deltaY);
     if (!moveCheck.ok) {
       rocketState.statusNote = moveCheck.message;
@@ -10386,23 +10660,44 @@
       return moveCheck;
     }
 
+    const currentPlayer = getCurrentPlayer();
+    const providedMovePoints = Math.max(0, Math.round(Number(payment.providedMovePoints ?? 1) || 0));
+    const terrainRequired = Number.isFinite(Number(payment.terrainRequired))
+      ? Math.max(1, Math.round(Number(payment.terrainRequired)))
+      : getRequiredMovePointsForUi(currentPlayer, rocketId, deltaX, deltaY);
+    if (!payment.fromMovePayment && providedMovePoints < terrainRequired) {
+      return beginSupplementalMovePayment({
+        deltaX,
+        deltaY,
+        rocketId,
+        terrainRequired,
+        providedMovePoints,
+        context: { type: "scan_action_4", terrainRequired },
+        message: `发射/移动：已有 ${providedMovePoints} 点移动力，还需 ${terrainRequired - providedMovePoints} 点（可弃移动牌或用能量）`,
+      });
+    }
+
+    const energyCost = Math.max(0, Math.round(Number(payment.energyCost) || 0));
     beginEffectHistoryStep("发射/移动");
 
     const result = abilities.executeAbility("scanAction4", createActionContext(), {
       choice: "move",
-      cost: {},
+      cost: energyCost > 0 ? { energy: energyCost } : {},
+      movementPoints: Math.max(terrainRequired, providedMovePoints + energyCost),
       rocketId,
       deltaX,
       deltaY,
     });
     if (result.rocket) renderRocketElement(result.rocket);
     if (!result.ok) {
+      if (payment.discardCommand) payment.discardCommand.undo();
       endEffectHistoryStep();
       rocketState.statusNote = result.message;
       renderStateReadout();
       return result;
     }
 
+    if (payment.discardCommand) recordHistoryCommand(payment.discardCommand);
     recordAbilityCommands(result);
 
     pendingActionEffectFlow.freeMoveMode = false;
@@ -10605,7 +10900,7 @@
         effect,
         cost,
         title: prefixLabel || "扇区扫描",
-        subtitle: "该 x 坐标同时存在外圈星云与奥陌陌，选择一个目标。",
+        subtitle: "该 x 坐标同时存在外圈星云与奥陌陌，选择一个目标；满星云会追加扫描计数。",
         choices,
       });
     }
@@ -10642,7 +10937,7 @@
         type: "sector_scan",
         fromEffectFlow: true,
         title: effect.label || `扇区${sectorX}扫描`,
-        subtitle: "该 x 坐标同时存在外圈星云与奥陌陌，选择一个目标。",
+        subtitle: "该 x 坐标同时存在外圈星云与奥陌陌，选择一个目标；满星云会追加扫描计数。",
         gainData: effect.options?.gainData,
         returnToHandIfSignalCount: effect.options?.returnToHandIfSignalCount,
         choices,
@@ -11173,7 +11468,7 @@
       type: "sector_scan",
       fromEffectFlow: true,
       title: "扇区扫描",
-      subtitle: "地球及左右相邻扇区三选一，按槽位顺序替换未替换的数据。",
+      subtitle: "地球及左右相邻扇区三选一；无可替换数据时追加扫描计数且不获得数据。",
       choices,
     });
   }
@@ -12826,6 +13121,17 @@
     return result;
   }
 
+  function normalizeInsertedActionEffect(effect, ownerId, fallbackId) {
+    return {
+      ...assignEffectOwner({ ...effect }, ownerId),
+      id: effect.id || fallbackId,
+      options: { ...(effect.options || {}) },
+      preHistoryCommands: Array.isArray(effect.preHistoryCommands) ? [...effect.preHistoryCommands] : [],
+      preHistoryCommandsApplied: false,
+      status: "pending",
+    };
+  }
+
   function insertActionEffectsAfterCurrent(effects) {
     if (!pendingActionEffectFlow || !effects?.length) return;
     const insertedEffects = effects.filter(Boolean);
@@ -12838,13 +13144,37 @@
       || pendingActionEffectFlow.defaultPlayerId
       || pendingActionEffectFlow.playerId
       || null;
-    pendingActionEffectFlow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => ({
-      ...assignEffectOwner({ ...effect }, ownerId),
-      id: effect.id || `inserted-card-effect-${insertIndex}-${index}`,
-      options: { ...(effect.options || {}) },
-      status: "pending",
-    })));
+    pendingActionEffectFlow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => (
+      normalizeInsertedActionEffect(effect, ownerId, `inserted-card-effect-${insertIndex}-${index}`)
+    )));
     pendingActionEffectFlow.completed = false;
+  }
+
+  function insertActionEffectsBeforeCurrent(effects) {
+    if (!pendingActionEffectFlow || !effects?.length) return false;
+    const insertedEffects = effects.filter(Boolean);
+    if (!insertedEffects.length) return false;
+    const flow = pendingActionEffectFlow;
+    const current = getCurrentActionEffect();
+    const insertIndex = flow.completed
+      ? Math.min(flow.effects.length, Math.max(0, flow.currentIndex + 1))
+      : Math.max(0, flow.currentIndex);
+    if (current?.status === "active") {
+      current.status = "pending";
+    }
+    const ownerId = getEffectOwnerPlayer(current)?.id
+      || flow.activePlayerId
+      || flow.defaultPlayerId
+      || flow.playerId
+      || getCurrentPlayer()?.id
+      || null;
+    flow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => (
+      normalizeInsertedActionEffect(effect, ownerId, `inserted-card-trigger-effect-${insertIndex}-${index}`)
+    )));
+    flow.currentIndex = insertIndex;
+    flow.completed = false;
+    activateNextActionEffect();
+    return true;
   }
 
   function executeConditionalRewardEffect(effect) {
@@ -13122,13 +13452,13 @@
       effect.label = `${effect.label} 1/${repeat}`;
       effect.options = { ...(effect.options || {}), repeat: 1, _repeatExpanded: true };
     }
-    if (!data.getNextReplaceableNebulaToken(nebulaDataState, effect.options?.nebulaId)) {
+    if (!nebulaHasScannableData(effect.options?.nebulaId)) {
       const nebulaLabel = data.getNebulaLabel?.(effect.options?.nebulaId) || "目标星云";
       return finishAutomaticRewardEffect(effect, {
         ok: true,
         undoable: true,
         skipped: true,
-        message: `${effect.label}：${nebulaLabel}已没有未替换的数据，已跳过`,
+        message: `${effect.label}：${nebulaLabel}没有可扫描数据，已跳过`,
         payload: { nebulaId: effect.options?.nebulaId || null, skipped: true },
       });
     }
@@ -13173,7 +13503,7 @@
       type: "sector_scan",
       fromEffectFlow: true,
       title: effect.label,
-      subtitle: "按槽位顺序替换未替换的数据。",
+      subtitle: "按槽位顺序替换未替换的数据；无可替换数据时追加扫描计数且不获得数据。",
       gainData: effect.options?.gainData,
       choices: expandScanChoicesWithAomomoTargets(nebulaIds.map((nebulaId) => buildNebulaScanChoice(nebulaId))),
     });
@@ -13187,7 +13517,7 @@
       type: "sector_scan",
       fromEffectFlow: true,
       title: effect.label,
-      subtitle: "选择任意外圈扇区中的一个星云，按槽位顺序替换未替换的数据。",
+      subtitle: "选择任意外圈扇区中的一个星云；无可替换数据时追加扫描计数且不获得数据。",
       gainData: effect.options?.gainData,
       choices,
     });
@@ -13533,12 +13863,12 @@
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
-    if (!data.getNextReplaceableNebulaToken?.(nebulaDataState, nebula.id)) {
+    if (!nebulaHasScannableData(nebula.id)) {
       return finishAutomaticRewardEffect(effect, {
         ok: true,
         undoable: true,
         skipped: true,
-        message: `${effect.label}：${nebula.label || nebula.id}已没有未替换的数据，已跳过`,
+        message: `${effect.label}：${nebula.label || nebula.id}没有可扫描数据，已跳过`,
         payload: { nebulaId: nebula.id, sectorX: nextSectorX, skipped: true },
       });
     }
@@ -14186,7 +14516,7 @@
       type: "sector_scan",
       fromEffectFlow: true,
       title: effect.label,
-      subtitle: "选择外圈星云或奥陌陌星球，按槽位顺序替换未替换的数据。",
+      subtitle: "选择外圈星云或奥陌陌星球；无可替换数据时追加扫描计数且不获得数据。",
       gainData: effect.options?.gainData,
       aomomoScanBonus: bonus,
       choices: buildSectorScanChoicesForX(currentX),
@@ -14681,7 +15011,7 @@
       type: "sector_scan",
       fromEffectFlow: true,
       title: effect.label,
-      subtitle: "按槽位顺序替换未替换的数据。",
+      subtitle: "按槽位顺序替换未替换的数据；无可替换数据时追加扫描计数且不获得数据。",
       choices: expandScanChoicesWithAomomoTargets(nebulaIds.map((nebulaId) => buildNebulaScanChoice(nebulaId))),
     });
   }
@@ -24216,7 +24546,7 @@
     return true;
   }
 
-  function executeIndustryFreeMove(deltaX, deltaY, rocketId) {
+  function executeIndustryFreeMove(deltaX, deltaY, rocketId, payment = {}) {
     const state = industryFreeMoveState;
     if (!state) return { ok: false, message: "没有待结算的公司免费移动" };
     if (state.movedRocketIds.includes(rocketId)) {
@@ -24232,15 +24562,33 @@
       return moveCheck;
     }
 
+    const currentPlayer = getCurrentPlayer();
+    const providedMovePoints = Math.max(0, Math.round(Number(payment.providedMovePoints ?? 1) || 0));
+    const terrainRequired = Number.isFinite(Number(payment.terrainRequired))
+      ? Math.max(1, Math.round(Number(payment.terrainRequired)))
+      : getRequiredMovePointsForUi(currentPlayer, rocketId, deltaX, deltaY);
+    if (!payment.fromMovePayment && providedMovePoints < terrainRequired) {
+      return beginSupplementalMovePayment({
+        deltaX,
+        deltaY,
+        rocketId,
+        terrainRequired,
+        providedMovePoints,
+        context: { type: "industry_free_move", terrainRequired },
+        message: `${state.label}：已有 ${providedMovePoints} 点移动力，还需 ${terrainRequired - providedMovePoints} 点（可弃移动牌或用能量）`,
+      });
+    }
+
     const playerBeforeMove = structuredClone(getCurrentPlayer());
     const freeMoveStateBefore = {
       movesLeft: state.movesLeft,
       movedRocketIds: [...state.movedRocketIds],
       label: state.label,
     };
+    const energyCost = Math.max(0, Math.round(Number(payment.energyCost) || 0));
     const result = abilities.executeAbility("moveProbe", createActionContext(), {
-      cost: {},
-      movementPoints: 1,
+      cost: energyCost > 0 ? { energy: energyCost } : {},
+      movementPoints: Math.max(terrainRequired, providedMovePoints + energyCost),
       rocketId,
       deltaX,
       deltaY,
@@ -24249,6 +24597,7 @@
     });
     if (result.rocket) renderRocketElement(result.rocket);
     if (!result.ok) {
+      if (payment.discardCommand) payment.discardCommand.undo();
       rocketState.statusNote = result.message;
       renderStateReadout();
       return result;
@@ -24279,6 +24628,7 @@
         }
       },
     });
+    if (payment.discardCommand) recordQuickHistoryCommand(payment.discardCommand);
     recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
       player,
       playerBeforeMove,

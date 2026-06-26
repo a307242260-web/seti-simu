@@ -32,6 +32,19 @@ const restored = nebulaState.getNextReplaceableNebulaToken(nebulaDataState, "sec
 assert.equal(restored?.id, replace.token.id);
 assert.equal(restored?.replacedByPlayerColor, null);
 
+const extraMark = nebulaState.addSectorExtraMark(nebulaDataState, "sector-1-a", player, {
+  playerColor: player.color,
+  playerLabel: player.colorLabel,
+});
+assert.equal(extraMark.ok, true);
+assert.equal(nebulaState.listSectorExtraMarks(nebulaDataState, "sector-1-a").length, 1);
+commands.createSectorExtraMarkCommand(
+  nebulaDataState,
+  "sector-1-a",
+  extraMark.mark.id,
+).undo();
+assert.equal(nebulaState.listSectorExtraMarks(nebulaDataState, "sector-1-a").length, 0);
+
 const spend = commands.createResourceSpendCommand(player, { credits: 2, energy: 1 }, "测试消耗");
 player.resources.credits = 5;
 player.resources.energy = 3;

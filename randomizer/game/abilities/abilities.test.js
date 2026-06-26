@@ -516,6 +516,69 @@ function launchToPlanet(context, planetId) {
 }
 
 {
+  const context = createContext({ resources: { credits: 10, energy: 10, score: 0 } });
+  const player = currentPlayer(context);
+  const opponent = players.createPlayer({ color: "green" });
+  data.fillNebulaData(context.nebulaDataState, "sector-3-a", { source: "test" });
+  [
+    opponent,
+    opponent,
+    opponent,
+    player,
+    player,
+  ].forEach((scanPlayer, index) => {
+    const replace = data.replaceNextNebulaDataToken(context.nebulaDataState, "sector-3-a", scanPlayer, {
+      replacementOrder: index + 1,
+    });
+    assert.equal(replace.ok, true);
+  });
+  assert.equal(data.getNextReplaceableNebulaToken(context.nebulaDataState, "sector-3-a"), null);
+  assert.equal(data.getSectorRanking(context.nebulaDataState, "sector-3-a")[0].playerColor, "green");
+
+  const result = abilities.executeAbility("scanSector", context, {
+    nebulaId: "sector-3-a",
+    prefix: "满扇区扫描",
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.replaced, null);
+  assert.equal(result.extraMark.ok, true);
+  assert.equal(result.gainedData.skipped, true);
+  assert.equal(result.payload.gainData, false);
+  assert.equal(data.listPoolTokens(player).length, 0);
+  assert.equal(player.resources.availableData, 0);
+  assert.equal(data.listSectorExtraMarks(context.nebulaDataState, "sector-3-a").length, 1);
+  assert.equal(data.getSectorRanking(context.nebulaDataState, "sector-3-a")[0].playerColor, "blue");
+  assert.ok(result.events.some((event) => event.type === "signalMarked" && event.extra));
+  assert.match(result.message, /不获得数据/);
+
+  result.commands[0].undo();
+  assert.equal(data.listSectorExtraMarks(context.nebulaDataState, "sector-3-a").length, 0);
+  assert.equal(data.getSectorRanking(context.nebulaDataState, "sector-3-a")[0].playerColor, "green");
+
+  const publicCard = { id: "public-yellow-scan", cardName: "黄牌" };
+  context.cardState = { publicCards: [publicCard], discardPile: [] };
+  const publicResult = abilities.executeAbility("scanPublicCard", context, {
+    nebulaId: "sector-3-a",
+    publicSlotIndex: 0,
+    card: publicCard,
+  });
+  assert.equal(publicResult.ok, true);
+  assert.equal(publicResult.extraMark.ok, true);
+  assert.equal(publicResult.gainedData.skipped, true);
+  assert.equal(context.cardState.publicCards[0], null);
+  assert.equal(context.cardState.discardPile[0], publicCard);
+  assert.equal(data.listSectorExtraMarks(context.nebulaDataState, "sector-3-a").length, 1);
+
+  for (let index = publicResult.commands.length - 1; index >= 0; index -= 1) {
+    publicResult.commands[index].undo();
+  }
+  assert.equal(context.cardState.publicCards[0], publicCard);
+  assert.equal(context.cardState.discardPile.length, 0);
+  assert.equal(data.listSectorExtraMarks(context.nebulaDataState, "sector-3-a").length, 0);
+}
+
+{
   const context = createContext({ resources: { credits: 10, energy: 10 } });
   const player = currentPlayer(context);
   data.ensurePlayerDataState(player);

@@ -99,6 +99,16 @@
     };
   }
 
+  function createSectorExtraMarkCommand(nebulaDataState, sectorId, markId) {
+    return {
+      label: `扇区 ${sectorId} 额外扫描标记`,
+      describe: `移除扇区 ${sectorId} 额外扫描标记`,
+      undo() {
+        nebulaState.removeSectorExtraMark(nebulaDataState, sectorId, markId);
+      },
+    };
+  }
+
   function createGainDataCommand(player, gainResult) {
     const discarded = Boolean(gainResult?.discarded);
     const tokenId = gainResult?.token?.id || null;
@@ -335,6 +345,7 @@
     createResourceSpendCommand,
     createResourceGainCommand,
     createNebulaReplaceCommand,
+    createSectorExtraMarkCommand,
     createGainDataCommand,
     createRestorePublicCardsCommand,
     createDiscardHandCardCommand,

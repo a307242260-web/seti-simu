@@ -16,6 +16,14 @@ const ownerFlow = chain.startAbilityChain("owner", "归属", [
 assert.equal(ownerFlow.effects[0].playerId, "player-brown");
 assert.equal(ownerFlow.effects[1].playerId, "player-white");
 
+const preHistoryCommand = { label: "触发进度", undo() {} };
+const metadataFlow = chain.startAbilityChain("metadata", "节点元数据", [
+  { abilityId: "reward", preHistoryCommands: [preHistoryCommand] },
+]);
+assert.equal(metadataFlow.effects[0].preHistoryCommands.length, 1);
+assert.equal(metadataFlow.effects[0].preHistoryCommands[0], preHistoryCommand);
+assert.equal(metadataFlow.effects[0].preHistoryCommandsApplied, false);
+
 assert.equal(flow.effects.length, 3);
 assert.equal(chain.getCurrentChainNode(flow).status, "pending");
 

@@ -30,6 +30,27 @@ assert.equal(cardEffects.collectMatchingTriggers(player, {
   planetId: "mars",
 }).length, 2);
 
+const b25ScanTriggerCard = { id: "card-b25-scan-trigger", cardId: "b_25.webp" };
+const scanTriggerPlayer = { id: "p1", color: "red", reservedCards: [b25ScanTriggerCard] };
+cardEffects.ensureCardEffectState(b25ScanTriggerCard);
+const yellowScanMatches = cardEffects.collectMatchingTriggers(scanTriggerPlayer, {
+  type: "signalMarked",
+  nebulaId: "sector-3-a",
+});
+assert.equal(yellowScanMatches.length, 1);
+assert.equal(yellowScanMatches[0].trigger.id, "b25-yellow-scan-move");
+cardEffects.consumeTrigger(b25ScanTriggerCard, yellowScanMatches[0].trigger.id);
+assert.equal(cardEffects.collectMatchingTriggers(scanTriggerPlayer, {
+  type: "signalMarked",
+  nebulaId: "sector-3-a",
+}).length, 0);
+const redScanMatches = cardEffects.collectMatchingTriggers(scanTriggerPlayer, {
+  type: "signalMarked",
+  nebulaId: "sector-2-b",
+});
+assert.equal(redScanMatches.length, 1);
+assert.equal(redScanMatches[0].trigger.id, "b25-red-scan-move");
+
 const b10 = { id: "card-b10", cardId: "b_10.webp" };
 const asteroidPlayer = { id: "p1", color: "red", reservedCards: [b10] };
 cardEffects.ensureCardEffectState(b10);

@@ -23,6 +23,8 @@
       playerId: node.playerId || node.options?.playerId || null,
       playerColor: node.playerColor || node.options?.playerColor || null,
       options: { ...(node.options || {}) },
+      preHistoryCommands: Array.isArray(node.preHistoryCommands) ? [...node.preHistoryCommands] : [],
+      preHistoryCommandsApplied: Boolean(node.preHistoryCommandsApplied),
       needsUserChoice: Boolean(node.needsUserChoice),
       result: node.result || null,
     };

@@ -59,6 +59,10 @@
     return null;
   }
 
+  function hasScannableNebulaData(context, nebulaId) {
+    return (data.listNebulaTokens?.(context.nebulaDataState, nebulaId) || []).length > 0;
+  }
+
   function scanNebula(context, options = {}) {
     const currentPlayer = getCurrentPlayer(context);
     const nebulaId = resolveNebulaId(context, options);
@@ -74,12 +78,77 @@
     }
 
     const nextToken = data.getNextReplaceableNebulaToken(context.nebulaDataState, nebulaId);
-    const tokenBefore = historyCommands.snapshotNebulaToken(nextToken);
-    const replaceResult = data.replaceNextNebulaDataToken(context.nebulaDataState, nebulaId, currentPlayer, {
+    const scanOptions = {
       playerColor: options.playerColor || currentPlayer.color,
       playerLabel: options.playerLabel || currentPlayer.colorLabel,
       playerTokenSrc: getPlayerTokenSrc(context, currentPlayer, options),
-    });
+    };
+
+    if (!nextToken) {
+      const label = data.getNebulaLabel(nebulaId);
+      if (!hasScannableNebulaData(context, nebulaId) || typeof data.addSectorExtraMark !== "function") {
+        return {
+          ok: false,
+          abilityId: "scanNebula",
+          message: `${label} 没有可扫描数据`,
+        };
+      }
+
+      const extraResult = data.addSectorExtraMark(context.nebulaDataState, nebulaId, currentPlayer, scanOptions);
+      if (!extraResult.ok) {
+        return {
+          ok: false,
+          abilityId: "scanNebula",
+          message: extraResult.message,
+        };
+      }
+
+      const color = players.getPlayerColorDefinition(currentPlayer.color);
+      const playerLabel = color?.label || currentPlayer.colorLabel || "当前玩家";
+      const prefix = options.prefix || "扫描";
+      const gainedData = { ok: true, skipped: true, message: "无可替换数据，未获得数据" };
+      return {
+        ok: true,
+        abilityId: "scanNebula",
+        message: `${prefix}：${label} 已无未替换数据，追加${playerLabel}扫描计数；不获得数据`,
+        undoable: true,
+        commands: [
+          historyCommands.createSectorExtraMarkCommand(
+            context.nebulaDataState,
+            nebulaId,
+            extraResult.mark.id,
+          ),
+        ],
+        cost: {},
+        payload: {
+          nebulaId,
+          replaced: null,
+          extraMark: extraResult,
+          gainedData,
+          gainData: false,
+          card: options.card || null,
+        },
+        events: [{
+          type: "signalMarked",
+          nebulaId,
+          playerId: currentPlayer.id,
+          extra: true,
+          markId: extraResult.mark.id,
+        }],
+        nebulaId,
+        replaced: null,
+        extraMark: extraResult,
+        gainedData,
+      };
+    }
+
+    const tokenBefore = historyCommands.snapshotNebulaToken(nextToken);
+    const replaceResult = data.replaceNextNebulaDataToken(
+      context.nebulaDataState,
+      nebulaId,
+      currentPlayer,
+      scanOptions,
+    );
 
     if (!replaceResult.ok) {
       return {
