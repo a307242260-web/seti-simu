@@ -149,6 +149,11 @@ assert.equal(b7Effects[0].options.count, 3);
 assert.equal(b7Effects[0].icon, "blind_card");
 assert.equal(cardEffects.getTemporaryTasks({ cardId: "b_7.webp" }).length, 0);
 
+const y8Effects = cardEffects.buildPlayEffects({ cardId: "yichangdian_8.webp" });
+assert.equal(y8Effects.length, 1);
+assert.equal(y8Effects[0].type, cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS);
+assert.equal(y8Effects[0].options.skippable, false);
+
 const b9Effects = cardEffects.buildPlayEffects({ cardId: "b_9.webp" });
 assert.equal(cardEffects.getCardModel({ cardId: "b_9.webp" }).cardType, 0);
 assert.equal(b9Effects[0].type, cardEffects.EFFECT_TYPES.SCAN_ACTION);

@@ -40,7 +40,7 @@
 | `industryRoundMarkRound` / `industryRoundMarkTurn` | 已放置 1x 标记的轮号与发生回合号（刷新只看轮号） |
 | `industryBorrowedTechTileId` / `industryBorrowedTechRound` / `industryBorrowedTechTurn` | 图灵系统：当前回合借用的科技片 id；带行动上下文时按 Round/Turn 精确判定；无显式上下文的同回合长链路按未清空的借用态生效 |
 | `industrySentinelArmedRound` / `industrySentinelArmedTurn` | 哨兵：本轮已武装「打牌后弃牌角标」；Turn 只记录发生回合 |
-| `industryHuanyuFreeMoveRound` / `industryHuanyuFreeMoveTurn` / `industryHuanyuFreeMovesLeft` / `industryHuanyuMovedRocketIds` | 寰宇：免费移动所在轮、发生回合、剩余次数、已移动火箭 |
+| `industryHuanyuFreeMoveRound` / `industryHuanyuFreeMoveTurn` / `industryHuanyuFreeMovesLeft` / `industryHuanyuMovedRocketIds` | 旧寰宇免费移动运行时字段；当前主动效果改走快速行动效果队列，不再依赖这些字段 |
 | `industryPlayedCardThisRound` / `industryLastPlayedCardThisRound` | 本轮是否已打牌及牌快照（哨兵补注入队） |
 | `industryAlienLabPanels` / `industryAlienLabInitialized` | 异星实验室三色板块正反面；蓝=发射、黄=扫描、粉=科技 |
 | `industryFutureSpan` / `industryFutureSpanInitialized` | 未来跨度专属标记状态：扣下的牌、目标分、是否正在打出 |
@@ -56,7 +56,7 @@
 | 层云核心 | `stratus_public_corners` | `stratus_public_corners` | 根据公共牌区 3 张牌生成效果队列，逐个结算**左上角弃牌角标**（不弃牌、不移除公共牌） |
 | 图灵系统 | `turing_borrow_tech` | `turing_borrow_tech` | 选择供应区一项橙色或紫色科技，**当前回合**借用其效果（不获得板块/bonus）；公司牌下方只复制显示该科技图标 |
 | 哨兵探测网络 | `sentinel_arm_play_corner` | `sentinel_arm_play_corner` | 武装本轮；**打牌效果队列末尾**追加 `industry_sentinel_corner` 结算打出牌弃牌角标（非外星人） |
-| 寰宇动力 | `huanyu_free_moves` | `huanyu_free_moves` | 至多 2 枚火箭各免费移动 1 次 |
+| 寰宇动力 | `huanyu_free_moves` | `huanyu_free_moves` | 启动 2 个移动效果队列节点；每个节点提供 1 点移动力，已结算节点的火箭不能作为后续寰宇节点目标，可跳过任一节点 |
 | 赫利昂联合体 | `helios_remove_tech_income` | `helios_remove_tech` → 弃牌收入 | 移除一项非蓝科技 + 1 次收入（弃 1 张手牌按收入角标） |
 | 任务中继站 | `mission_publicity_pick_income` | `mission_publicity_pick` | 消耗 2 宣传精选 1 张牌，获得其**收入角标**奖励（盲抽角标会盲抽 1 张） |
 | 芬威克研究中心 | `fenwick_publicity_pick_corner` | `fenwick_publicity_pick` | 消耗 1 宣传精选 1 张牌，获得**弃牌角标**（不弃牌）；若角标是移动，移动选择可取消但精选补牌仍不可撤销 |
@@ -113,7 +113,7 @@
 | `stratus_public_corners` | 根据当前 3 张公共牌生成 quick-source effect flow，按效果栏结算 |
 | `turing_borrow_tech` | 科技板借用模式 `industryBorrowMode` |
 | `sentinel_arm_play_corner` | 即时武装；可能补注入队 |
-| `huanyu_free_moves` | `industryFreeMoveState`，棋盘免费移动 |
+| `huanyu_free_moves` | 快速行动效果队列：2 个 `card_move` 节点，节点内可补移动牌/能量满足地形移动力 |
 | `helios_remove_tech` | 扫描式科技选择 → 弃牌收入 `industry_helios_income` |
 | `mission_publicity_pick` / `fenwick_publicity_pick` | 消耗宣传 + 公共牌精选 |
 | `deepspace_swap` | 手牌选择 → 公共牌选择交换 |
@@ -126,10 +126,10 @@
 
 | 类型 | 可撤销 | 说明 |
 |------|--------|------|
-| 普通 1x 确定性流程 | 是 | 标记、图灵借用、寰宇移动、赫利昂、深空交换等并入 quick history，撤销回到 1x 前 |
+| 普通 1x 确定性流程 | 是 | 标记、图灵借用、赫利昂、深空交换等并入 quick history，撤销回到 1x 前 |
 | 层云核心 | 是 | 不弃牌；角标奖励按效果步骤撤销，第一个效果步骤同时包含公司标记回退 |
 | 图灵借用 | 是 | 恢复借用前玩家快照，撤销后 1x 标记也回到可用 |
-| 寰宇移动 | 是 | 免费移动命令与 1x 标记同事务撤销 |
+| 寰宇移动 | 是 | 2 个快速行动效果队列节点逐个撤销；1x 标记通过队列预置撤销命令同事务恢复 |
 | 赫利昂 | 是 | 移除科技、清槽和收入随 1x 前快照恢复 |
 | 深空交换 | 是 | 交换手牌与公共牌快照随 1x 前快照恢复 |
 | 哨兵打牌角标 | 是 | 主行动效果队列内 `industry_sentinel_corner` |

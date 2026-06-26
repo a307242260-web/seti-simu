@@ -22,6 +22,7 @@
   const PUBLICITY_PICK_COST = 2;
   const FENWICK_PUBLICITY_PICK_COST = 1;
   const STRATUS_PUBLIC_CARD_LIMIT = 3;
+  const HUANYU_FREE_MOVE_COUNT = 2;
 
   function isAlienCard(card) {
     const cardId = String(card?.cardId || card?.id || "");
@@ -69,6 +70,34 @@
         };
       })
       .filter(Boolean);
+  }
+
+  function buildHuanyuFreeMoveEffectNodes(options = {}) {
+    const label = options.label || "寰宇动力";
+    const count = Math.max(0, Math.round(Number(options.count ?? HUANYU_FREE_MOVE_COUNT) || 0));
+    const groupId = options.groupId || "industry-huanyu-free-moves";
+    const nodes = [];
+    for (let index = 0; index < count; index += 1) {
+      const moveNumber = index + 1;
+      nodes.push({
+        id: `${groupId}-move-${moveNumber}`,
+        type: "card_move",
+        label: `${label}：移动 ${moveNumber}/${count}`,
+        icon: "movement",
+        status: "pending",
+        undoable: true,
+        options: {
+          movementPoints: 1,
+          historyLabel: `${label}：移动 ${moveNumber}/${count}`,
+          source: "industry",
+          industryHuanyuMoveGroupId: groupId,
+          industryHuanyuMoveIndex: moveNumber,
+          industryHuanyuMoveCount: count,
+          requireDifferentRocketInGroup: true,
+        },
+      });
+    }
+    return nodes;
   }
 
   function applyCornerReward(players, data, player, reward) {
@@ -194,9 +223,9 @@
       player.industrySentinelArmedTurn = turn;
     }
     if (abilityId === "huanyu_free_moves") {
-      player.industryHuanyuFreeMoveRound = round;
-      player.industryHuanyuFreeMoveTurn = turn;
-      player.industryHuanyuFreeMovesLeft = 2;
+      player.industryHuanyuFreeMoveRound = 0;
+      player.industryHuanyuFreeMoveTurn = 0;
+      player.industryHuanyuFreeMovesLeft = 0;
       player.industryHuanyuMovedRocketIds = [];
     }
     if (abilityId === "turing_borrow_tech") {
@@ -244,8 +273,8 @@
           abilityId,
           flowType: "huanyu_free_moves",
           label: prepared.label,
-          movesLeft: 2,
-          message: `${prepared.label}：请移动最多 2 枚火箭，各免费移动 1 次`,
+          movesLeft: HUANYU_FREE_MOVE_COUNT,
+          message: `${prepared.label}：请按效果栏结算 2 次移动；每次提供 1 点移动力，且必须选择不同火箭`,
         };
       case "helios_remove_tech_income":
         return {
@@ -415,9 +444,11 @@
     PUBLICITY_PICK_COST,
     FENWICK_PUBLICITY_PICK_COST,
     STRATUS_PUBLIC_CARD_LIMIT,
+    HUANYU_FREE_MOVE_COUNT,
     isAlienCard,
     getCornerReward,
     buildStratusPublicCornerEffectNodes,
+    buildHuanyuFreeMoveEffectNodes,
     applyCornerReward,
     applyIncomeResourcesFromCard,
     prepareActiveAbility,

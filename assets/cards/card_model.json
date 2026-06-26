@@ -1617,7 +1617,7 @@
     "set": "space-agency",
     "discard_action_code": 0,
     "scan_action_code": 0,
-    "income_code": 1
+    "income_code": 0
   },
   {
     "card_id": "dlc_23.png",

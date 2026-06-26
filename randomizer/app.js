@@ -160,7 +160,7 @@
   let pendingActionExecuted = false;
   let pendingPassPlayerId = null;
   let pendingActionEffectFlow = null;
-  let completedQuickEffectFlowForUndo = null;
+  let completedEffectFlowsForUndo = {};
   let finalResultAutoOpened = false;
   let effectExecutionPlayerId = null;
   let pendingActionHasIrreversibleBarrier = false;
@@ -1726,6 +1726,7 @@
     pendingActionExecuted = false;
     pendingPassPlayerId = null;
     pendingActionEffectFlow = null;
+    clearCompletedEffectFlowForUndo();
     pendingActionHasIrreversibleBarrier = false;
     pendingActionIrreversibleReason = null;
     effectStepActive = false;
@@ -3013,10 +3014,81 @@
     effect.badge = String(movementPoints);
   }
 
+  function isIndustryHuanyuMoveEffect(effect) {
+    return Boolean(
+      effect?.options?.industryHuanyuMoveGroupId
+      && effect.options?.requireDifferentRocketInGroup,
+    );
+  }
+
+  function getEffectResultRocketId(effect) {
+    const rocketId = effect?.result?.payload?.rocketId
+      ?? effect?.result?.rocket?.id
+      ?? effect?.result?.rocketId;
+    const normalized = Math.round(Number(rocketId));
+    return Number.isInteger(normalized) ? normalized : null;
+  }
+
+  function getCompletedIndustryHuanyuMoveRocketIds(effect) {
+    const groupId = effect?.options?.industryHuanyuMoveGroupId || null;
+    if (!groupId || !pendingActionEffectFlow?.effects?.length) return new Set();
+    const used = new Set();
+    for (const candidate of pendingActionEffectFlow.effects) {
+      if (!candidate || candidate === effect || candidate.id === effect.id) continue;
+      if (candidate.options?.industryHuanyuMoveGroupId !== groupId) continue;
+      if (candidate.status !== "completed" || candidate.result?.skipped) continue;
+      const rocketId = getEffectResultRocketId(candidate);
+      if (rocketId != null) used.add(rocketId);
+    }
+    return used;
+  }
+
+  function validateIndustryHuanyuMoveRocket(effect, rocketId) {
+    if (!isIndustryHuanyuMoveEffect(effect)) return { ok: true };
+    const normalizedRocketId = Math.round(Number(rocketId));
+    if (!Number.isInteger(normalizedRocketId)) {
+      return { ok: false, message: `${effect.label || "寰宇动力"}：请选择要移动的火箭` };
+    }
+    if (getCompletedIndustryHuanyuMoveRocketIds(effect).has(normalizedRocketId)) {
+      return {
+        ok: false,
+        message: `${effect.label || "寰宇动力"}：该火箭已经结算过寰宇移动，请选择另一枚火箭或跳过本次移动`,
+      };
+    }
+    return { ok: true };
+  }
+
+  function getMovableTokensForCardMoveEffect(effect, playerId) {
+    const rocketsForPlayer = getMovableTokensForPlayer(playerId);
+    if (!isIndustryHuanyuMoveEffect(effect)) return rocketsForPlayer;
+    const usedRocketIds = getCompletedIndustryHuanyuMoveRocketIds(effect);
+    return rocketsForPlayer.filter((rocket) => !usedRocketIds.has(Number(rocket.id)));
+  }
+
+  function selectDefaultRocketFromCandidates(rocketsForPlayer) {
+    const currentRocket = rocketActions.getActiveRocket(rocketState);
+    if (rocketsForPlayer.some((rocket) => rocket.id === currentRocket?.id)) {
+      return currentRocket;
+    }
+    const fallbackRocket = rocketsForPlayer[rocketsForPlayer.length - 1] || null;
+    rocketState.activeRocketId = fallbackRocket ? fallbackRocket.id : null;
+    clearMoveRocketHighlight();
+    return fallbackRocket;
+  }
+
   function executeCardEffectMove(deltaX, deltaY, rocketId, payment = {}) {
     const ctx = pendingActionEffectFlow?.cardMoveEffect;
     const effect = ctx?.effect || getCurrentActionEffect();
     if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
+
+    const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(effect, rocketId);
+    if (!huanyuRocketCheck.ok) {
+      if (payment.discardCommand) payment.discardCommand.undo();
+      rocketState.statusNote = huanyuRocketCheck.message;
+      renderPlayerHand();
+      renderStateReadout();
+      return huanyuRocketCheck;
+    }
 
     const terrainRequired = payment.terrainRequired
       || getRequiredMovePointsForUi(getCurrentPlayer(), rocketId, deltaX, deltaY, effect.options || {});
@@ -3033,7 +3105,7 @@
       rocketId,
       deltaX,
       deltaY,
-      source: "card",
+      source: effect.options?.source || "card",
       historyLabel: effect.options?.historyLabel || effect.label,
       suppressArrivalRewards: Boolean(effect.options?.suppressArrivalRewards),
       ignoreAsteroidRestriction: Boolean(effect.options?.ignoreAsteroidRestriction),
@@ -3177,6 +3249,13 @@
     const ctx = pendingActionEffectFlow?.cardMoveEffect;
     const effect = ctx?.effect || getCurrentActionEffect();
     if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
+
+    const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(effect, rocketId);
+    if (!huanyuRocketCheck.ok) {
+      rocketState.statusNote = huanyuRocketCheck.message;
+      renderStateReadout();
+      return huanyuRocketCheck;
+    }
 
     const moveCheck = rocketActions.canMoveRocket(rocketState, rocketId, deltaX, deltaY);
     if (!moveCheck.ok) {
@@ -6802,11 +6881,24 @@
     return scanResult;
   }
 
+  function restoreYichangdianCornerPickerIfPending() {
+    if (!pendingYichangdianCornerAction) return false;
+    const result = openYichangdianCornerPicker();
+    if (!result?.ok) {
+      rocketState.statusNote = result?.message || "异常点：请完成角标选择";
+      renderStateReadout();
+    }
+    return true;
+  }
+
   function closeScanTargetPicker(options = {}) {
     if (!els.scanTargetOverlay) return;
     if (pendingPublicScanQueue) {
       rocketState.statusNote = "公共牌区扫描：请完成全部星云选择";
       renderStateReadout();
+      return;
+    }
+    if (!options.forceYichangdianCornerClose && restoreYichangdianCornerPickerIfPending()) {
       return;
     }
     if (!options.preserveIndustryAction && pendingScanTargetAction?.type === "industry_remove_tech") {
@@ -7944,7 +8036,7 @@
   }
 
   function beginQuickActionStep(actionType, label, options = {}) {
-    completedQuickEffectFlowForUndo = null;
+    clearCompletedEffectFlowForUndo(HISTORY_SOURCE_QUICK);
     ensureActionLogDraft({
       source: HISTORY_SOURCE_QUICK,
       actionType: actionLogState.draft?.actionType || "quick",
@@ -8068,7 +8160,7 @@
   }
 
   function startCardEffectFlow(chainId, label, effects, options = {}) {
-    completedQuickEffectFlowForUndo = null;
+    clearCompletedEffectFlowForUndo(options.historySource || HISTORY_SOURCE_MAIN);
     const deferredEndEffects = Array.isArray(options.deferredEndEffects)
       ? options.deferredEndEffects.filter(Boolean)
       : [];
@@ -10223,25 +10315,44 @@
     renderReservedCardsFromTaskState();
   }
 
-  function rememberCompletedQuickEffectFlowForUndo(flow) {
-    completedQuickEffectFlowForUndo = flow?.historySource === HISTORY_SOURCE_QUICK
+  function shouldRememberCompletedEffectFlowForUndo(flow) {
+    if (!flow?.historySource) return false;
+    if (flow.historySource === HISTORY_SOURCE_QUICK) return true;
+    if (flow.historySource === HISTORY_SOURCE_MAIN) {
+      return Boolean(pendingActionHasIrreversibleBarrier && actionHistory.hasUndoableStep());
+    }
+    return false;
+  }
+
+  function clearCompletedEffectFlowForUndo(source = null) {
+    if (!source) {
+      completedEffectFlowsForUndo = {};
+      return;
+    }
+    completedEffectFlowsForUndo[source] = null;
+  }
+
+  function rememberCompletedEffectFlowForUndo(flow) {
+    const source = flow?.historySource || null;
+    if (!source) return;
+    completedEffectFlowsForUndo[source] = shouldRememberCompletedEffectFlowForUndo(flow)
       ? flow
       : null;
   }
 
-  function takeCompletedQuickEffectFlowForUndo(step) {
-    const flow = completedQuickEffectFlowForUndo;
+  function takeCompletedEffectFlowForUndo(step, source) {
+    const flow = completedEffectFlowsForUndo[source];
     const effectIndex = step?.effectIndex;
     const effect = Number.isInteger(effectIndex) ? flow?.effects?.[effectIndex] : null;
-    if (!flow || flow.historySource !== HISTORY_SOURCE_QUICK || !effect) return null;
+    if (!flow || flow.historySource !== source || !effect) return null;
     if (step.effectType && effect.type !== step.effectType) return null;
-    completedQuickEffectFlowForUndo = null;
+    clearCompletedEffectFlowForUndo(source);
     return flow;
   }
 
   function cancelActiveEffectSubFlows() {
     if (!pendingPublicScanQueue) {
-      closeScanTargetPicker();
+      closeScanTargetPicker({ forceYichangdianCornerClose: true });
     }
     if (els.landTargetOverlay && !els.landTargetOverlay.hidden) {
       cancelLandTargetPicker();
@@ -10328,6 +10439,13 @@
 
     const current = getCurrentActionEffect();
     if (!current || current.status !== "active") return;
+    if (
+      pendingYichangdianCornerAction
+      && current.type === cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS
+    ) {
+      openYichangdianCornerPicker();
+      return;
+    }
     if (finishCurrentCardMoveEffectEarly()) return;
     if (current.options?.skippable === false || current.required) {
       rocketState.statusNote = `${current.label} 必须完成，不能跳过`;
@@ -10690,7 +10808,7 @@
     const delayedPublicRefillResult = transferDelayedPublicRefills
       ? null
       : settleDelayedPublicRefillsAfterScanFlow(finishedFlow);
-    rememberCompletedQuickEffectFlowForUndo(finishedFlow);
+    rememberCompletedEffectFlowForUndo(finishedFlow);
     clearActionEffectFlow();
     if (actionType === "researchTech") {
       tech.setTechSelectionActive(techGameState, false);
@@ -10966,9 +11084,13 @@
 
   function beginCardMoveEffect(effect) {
     const currentPlayer = getCurrentPlayer();
-    const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
+    const rocketsForPlayer = getMovableTokensForCardMoveEffect(effect, currentPlayer?.id);
     if (!rocketsForPlayer.length) {
-      rocketState.statusNote = "没有可移动的飞船";
+      rocketState.statusNote = isIndustryHuanyuMoveEffect(effect)
+        ? `${effect.label}：没有可移动的另一枚火箭，可点击跳过`
+        : "没有可移动的飞船";
+      deactivateMoveMode();
+      renderActionEffectBar();
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
@@ -10990,7 +11112,7 @@
     if (rocketsForPlayer.length === 1) {
       activateMoveMode(rocketsForPlayer[0].id);
     } else {
-      selectDefaultRocketForCurrentPlayer();
+      selectDefaultRocketFromCandidates(rocketsForPlayer);
     }
     renderStateReadout();
     return { ok: true, message: rocketState.statusNote };
@@ -14162,7 +14284,12 @@
   }
 
   function executeYichangdianDrawThenTwoCornersEffect(effect) {
+    if (pendingYichangdianCornerAction) {
+      return openYichangdianCornerPicker();
+    }
+
     const currentPlayer = getCurrentPlayer();
+    if (effect?.options) effect.options.skippable = false;
     beginEffectHistoryStep(effect.label);
     const beforePlayerState = structuredClone(playerState);
     const beforeCardState = structuredClone(cardState);
@@ -14197,6 +14324,18 @@
       .filter((card) => card && !usedIds.has(card.id));
   }
 
+  function formatYichangdianCornerChoiceReward(card, phase) {
+    if (phase === "discard") {
+      const resourceReward = cards.getDiscardActionRewardForCard(card);
+      const moveReward = cards.getDiscardActionMoveRewardForCard?.(card);
+      return `结算左上角：${resourceReward?.label || moveReward?.label || "无可结算奖励"}`;
+    }
+
+    const gain = cards.getIncomeGainForCard(card);
+    const rewardText = gain ? formatIncomeGain(gain) : "";
+    return `结算收入角标：${rewardText || "无可结算收入"}`;
+  }
+
   function openYichangdianCornerPicker() {
     const pending = pendingYichangdianCornerAction;
     if (!pending || !els.scanTargetOverlay || !els.scanTargetActions) {
@@ -14215,11 +14354,16 @@
       button.type = "button";
       button.className = "scan-target-option-button";
       button.dataset.yichangdianCornerCardId = card.id;
-      button.innerHTML = `${cards.getCardLabel(card)}<small>${pending.phase === "discard" ? "结算左上角" : "结算收入角标"}</small>`;
+      button.append(document.createTextNode(cards.getCardLabel(card)));
+      const detail = document.createElement("small");
+      detail.textContent = formatYichangdianCornerChoiceReward(card, pending.phase);
+      button.appendChild(detail);
       return button;
     }));
     els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = pending.phase === "discard" ? "异常点：请选择左上角奖励牌" : "异常点：请选择收入奖励牌";
+    renderActionEffectBar();
+    updateActionButtons();
     renderStateReadout();
     return { ok: true, message: rocketState.statusNote };
   }
@@ -24731,7 +24875,7 @@
         return true;
       }
       case "huanyu_free_moves":
-        return beginIndustryHuanyuFreeMoves(flow);
+        return startIndustryHuanyuMoveEffectFlow(flow, options);
       case "helios_remove_tech":
         industry?.clearHeliosPassiveSlots?.(getCurrentPlayer());
         renderInitialSelectionArea();
@@ -24955,6 +25099,51 @@
     renderPlayerStats();
     renderStateReadout();
     return removeResult;
+  }
+
+  function startIndustryHuanyuMoveEffectFlow(flow, options = {}) {
+    const groupId = `industry-huanyu-${turnState.roundNumber}-${turnState.turnNumber}`;
+    const nodes = industry?.buildHuanyuFreeMoveEffectNodes?.({
+      label: flow.label || "寰宇动力",
+      count: flow.movesLeft ?? industry?.HUANYU_FREE_MOVE_COUNT ?? 2,
+      groupId,
+    }) || [];
+    pendingIndustryAbility = null;
+    pendingCardSelectionAction = null;
+    industryFreeMoveState = null;
+    cards.setSelectionActive(cardState, false);
+    syncCardSelectionChrome();
+
+    if (!nodes.length) {
+      rocketState.statusNote = "寰宇动力：没有可结算的移动效果";
+      renderStateReadout();
+      return false;
+    }
+
+    const preHistoryCommands = [];
+    if (options.markerRestoreCommand) preHistoryCommands.push(options.markerRestoreCommand);
+    const started = startCardEffectFlow(
+      "industry-huanyu-free-moves",
+      flow.label || "寰宇动力",
+      nodes,
+      {
+        actionType: "industryHuanyu",
+        historySource: HISTORY_SOURCE_QUICK,
+        consumesMainAction: false,
+        preHistoryCommands,
+      },
+    );
+    if (started) {
+      const movableCount = getMovableTokensForPlayer(getCurrentPlayer()?.id).length;
+      rocketState.statusNote = movableCount
+        ? (flow.message || "寰宇动力：请按效果栏依次结算 2 次移动")
+        : "寰宇动力：当前没有可移动火箭，可跳过移动节点";
+      renderRockets();
+      renderActionEffectBar();
+      updateActionButtons();
+      renderStateReadout();
+    }
+    return started;
   }
 
   function beginIndustryHuanyuFreeMoves(flow) {
@@ -26246,7 +26435,8 @@
       return;
     }
 
-    if (abilityFlow.flowType === "stratus_public_corners") {
+    if (abilityFlow.flowType === "stratus_public_corners"
+      || abilityFlow.flowType === "huanyu_free_moves") {
       const result = industry.markIndustryAction(player, turnState.roundNumber, {
         turnNumber: turnState.turnNumber,
       });
@@ -27085,6 +27275,7 @@
   function clearActionPending() {
     pendingActionExecuted = false;
     pendingPassPlayerId = null;
+    clearCompletedEffectFlowForUndo(HISTORY_SOURCE_MAIN);
     pendingActionHasIrreversibleBarrier = false;
     pendingActionIrreversibleReason = null;
   }
@@ -27635,7 +27826,7 @@
         forgetLastHistoryStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
         removeLastActionLogStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
         const completedQuickEffectFlow = !pendingActionEffectFlow
-          ? takeCompletedQuickEffectFlowForUndo(result.step)
+          ? takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_QUICK)
           : null;
         if (completedQuickEffectFlow) {
           pendingActionEffectFlow = completedQuickEffectFlow;
@@ -27688,6 +27879,13 @@
         effectStepActive = false;
         forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
         removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
+        const completedMainEffectFlow = !pendingActionEffectFlow
+          ? takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_MAIN)
+          : null;
+        if (completedMainEffectFlow) {
+          pendingActionEffectFlow = completedMainEffectFlow;
+          els.appWrap?.classList.toggle("action-effect-flow-active", true);
+        }
         revertEffectFlowAfterUndo(result.step);
       }
       refreshAfterHistoryChange(result.ok ? result.message : result.message || "当前行动不能撤销");
@@ -27919,6 +28117,14 @@
     const currentPlayer = getCurrentPlayer();
     const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer.id);
     if (!rocketsForPlayer.some((rocket) => rocket.id === rocketId)) return false;
+
+    const cardMoveEffect = pendingActionEffectFlow?.cardMoveEffect?.effect || null;
+    const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(cardMoveEffect, rocketId);
+    if (!huanyuRocketCheck.ok) {
+      rocketState.statusNote = huanyuRocketCheck.message;
+      renderStateReadout();
+      return false;
+    }
 
     rocketActions.setActiveRocket(rocketState, rocketId);
     updateMoveRocketHighlight(rocketId);

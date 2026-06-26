@@ -254,6 +254,22 @@ assert.equal(
 );
 assert.equal(abilities.shouldAppendSentinelPlayCornerEffect(cardsStub, sentinelPlayer, 1, 1, { src: "aliens/x/face.png" }), false);
 
+const huanyuMoveNodes = abilities.buildHuanyuFreeMoveEffectNodes({
+  label: "寰宇动力",
+  groupId: "test-huanyu",
+});
+assert.equal(huanyuMoveNodes.length, 2);
+assert.deepEqual(huanyuMoveNodes.map((node) => node.type), ["card_move", "card_move"]);
+assert.deepEqual(huanyuMoveNodes.map((node) => node.options.movementPoints), [1, 1]);
+assert.equal(huanyuMoveNodes[0].options.industryHuanyuMoveGroupId, "test-huanyu");
+assert.equal(huanyuMoveNodes[1].options.requireDifferentRocketInGroup, true);
+assert.equal(huanyuMoveNodes[1].options.source, "industry");
+assert.match(abilities.buildActiveAbilityFlow(
+  { initialSelection: { industry: { label: "寰宇动力" } } },
+  "寰宇动力",
+  1,
+).message, /效果栏/);
+
 const stratusCards = [
   { id: "public-1", cardId: "b_1.webp", discardActionCode: 0, label: "公共牌1" },
   { id: "public-2", cardId: "b_2.webp", discardActionCode: 2, label: "公共牌2" },

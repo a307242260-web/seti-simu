@@ -906,7 +906,9 @@
     "yichangdian_8.webp": withSource("yichangdian_8.webp", {
       cardType: 0,
       playEffects: Object.freeze([
-        effect("y8-draw-corners", EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS, "盲抽3张并结算两张角标", "blind_card"),
+        effect("y8-draw-corners", EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS, "盲抽3张并结算两张角标", "blind_card", {
+          skippable: false,
+        }),
       ]),
     }),
     "yichangdian_9.webp": withSource("yichangdian_9.webp", {
