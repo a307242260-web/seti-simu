@@ -81,6 +81,14 @@ assert.equal(completed.ok, true);
 assert.equal(completed.bluePosition, 1);
 assert.equal(transportState.chong.panelFossilSlots[1], fossil.fossilId);
 assert.equal(transportState.chong.unlockedBluePositions.includes(1), true);
+const completedFossilReward = chong.getFossilReward(fossil.fossilId);
+const completedBlueReward = chong.getTraceReward(transportState, "blue", 1);
+assert.equal(completedBlueReward.fossilId, fossil.fossilId);
+assert.equal(completedBlueReward.fossilPanel, false);
+assert.deepEqual(completedBlueReward.gain, completedFossilReward.gain || {});
+assert.equal(completedBlueReward.dataCount, completedFossilReward.dataCount || 0);
+assert.equal(completedBlueReward.drawCards, completedFossilReward.drawCards || 0);
+assert.equal(completedBlueReward.pickCard, Boolean(completedFossilReward.pickCard));
 
 assert.equal(chong.getFossilReward("fossil_01").gain.publicity, 3);
 assert.equal(chong.getFossilReward("fossil_04").drawCards, 2);

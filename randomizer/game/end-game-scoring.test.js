@@ -237,6 +237,31 @@ assert.equal(
   "revealed alien trace count should include state first, state extra, and face markers",
 );
 
+const splitExtraOwnerTraceState = {
+  aliens: {
+    1: {
+      traces: {
+        pink: {
+          firstPlaced: true,
+          ownerPlayerColor: "green",
+          extraCount: 1,
+          extraMarkers: [{ ownerPlayerColor: "white" }],
+        },
+      },
+    },
+  },
+};
+assert.equal(
+  endGameScoring.countTraceMarkers({ id: "p-white", color: "white" }, splitExtraOwnerTraceState, "pink"),
+  1,
+  "extra state trace should score for the gaining player",
+);
+assert.equal(
+  endGameScoring.countTraceMarkers({ id: "p-green", color: "green" }, splitExtraOwnerTraceState, "pink"),
+  1,
+  "first state trace should score for the first owner",
+);
+
 assert.equal(finalScoring.getTileVariant(state, "a"), 1);
 assert.equal(finalScoring.getTileVariant(state, "b"), 2);
 const randomized = finalScoring.randomizeTileVariants(finalScoring.createFinalScoringState(), ["a", "b"], () => 0.9);

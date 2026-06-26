@@ -610,6 +610,8 @@
     countFirstTracesByPlayerOnSlot: state.countFirstTracesByPlayerOnSlot,
     getFirstTraceRewardForSlot: state.getFirstTraceRewardForSlot,
     isAlienReadyToReveal: state.isAlienReadyToReveal,
+    getExtraTraceMarker: state.getExtraTraceMarker,
+    getExtraTraceOwnerColor: state.getExtraTraceOwnerColor,
     placeFirstTrace: state.placeFirstTrace,
     addExtraTrace: state.addExtraTrace,
     revealAlien: state.revealAlien,

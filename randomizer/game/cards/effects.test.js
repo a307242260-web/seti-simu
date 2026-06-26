@@ -865,6 +865,31 @@ assert.deepEqual(collectReadyTaskIds(
   { alienGameState: singleAlienTraceState },
 ), ["b67-three-traces-task"]);
 
+const splitExtraOwnerTraceState = {
+  aliens: {
+    1: {
+      traces: {
+        yellow: {
+          firstPlaced: true,
+          ownerPlayerColor: "green",
+          extraCount: 1,
+          extraMarkers: [{ ownerPlayerColor: "white" }],
+        },
+      },
+    },
+  },
+};
+assert.equal(
+  cardEffects.countTraceMarkers({ id: "p-white", color: "white" }, splitExtraOwnerTraceState, "yellow"),
+  1,
+  "extra state trace should count for the gaining player",
+);
+assert.equal(
+  cardEffects.countTraceMarkers({ id: "p-green", color: "green" }, splitExtraOwnerTraceState, "yellow"),
+  1,
+  "first state trace should remain with the first owner",
+);
+
 const mixedSingleAlienTracePlayer = { id: "p1", color: "red", reservedCards: [{ id: "card-b67-mixed", cardId: "b_67.webp" }] };
 const mixedSingleAlienTraceState = createAomomoAlienState(mixedSingleAlienTracePlayer);
 mixedSingleAlienTraceState.aliens[1].traces = {

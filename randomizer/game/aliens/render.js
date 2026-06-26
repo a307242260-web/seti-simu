@@ -865,8 +865,11 @@
     if (dragState?.element === element) return;
 
     const { row, col } = placement.getExtraTraceGridCellIndex(extraIndex);
+    const ownerColor = state.getExtraTraceOwnerColor?.(traceSlot, extraIndex)
+      || traceSlot.ownerPlayerColor
+      || null;
     applyTraceTokenStyle(element, layout, placement.ALIEN_EXTRA_TRACE_TOKEN_DISPLAY_SCALE);
-    element.src = resolvePlayerTokenAsset(traceSlot.ownerPlayerColor, options);
+    element.src = resolvePlayerTokenAsset(ownerColor, options);
     element.alt = `${placement.getAlienSlotLabel(alienSlotId)} ${placement.getTraceTypeLabel(traceType)} 非首标记`;
     element.dataset.alienSlot = String(alienSlotId);
     element.dataset.traceType = traceType;

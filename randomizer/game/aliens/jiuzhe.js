@@ -150,7 +150,7 @@
   }
 
   function getPlayerKeys(player) {
-    return new Set([player?.id, player?.color].filter(Boolean));
+    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
   }
 
   function getPlayerJiuzheState(alienState, player, create = true) {
@@ -528,7 +528,16 @@
   }
 
   function markerBelongsToPlayer(marker, playerKeys) {
-    return playerKeys.has(marker?.playerId) || playerKeys.has(marker?.color) || playerKeys.has(marker?.playerColor);
+    return playerKeys.has(marker?.playerId)
+      || playerKeys.has(marker?.ownerPlayerId)
+      || playerKeys.has(marker?.color)
+      || playerKeys.has(marker?.playerColor)
+      || playerKeys.has(marker?.ownerPlayerColor);
+  }
+
+  function getStateExtraTraceMarker(traceSlot, extraIndex) {
+    const markers = Array.isArray(traceSlot?.extraMarkers) ? traceSlot.extraMarkers : [];
+    return markers[extraIndex] || { ownerPlayerColor: traceSlot?.ownerPlayerColor || null };
   }
 
   function countSectorWinsByColor(player, nebulaDataState, color) {
@@ -631,8 +640,14 @@
     for (const [slotId, slot] of Object.entries(alienGameState?.aliens || {})) {
       if (options.excludeSlotId != null && Number(slotId) === Number(options.excludeSlotId)) continue;
       const traceSlot = slot?.traces?.[traceType];
-      if (!traceSlot?.firstPlaced || !playerKeys.has(traceSlot.ownerPlayerColor)) continue;
-      count += 1 + Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
+      if (!traceSlot?.firstPlaced) continue;
+      if (markerBelongsToPlayer(traceSlot, playerKeys)) count += 1;
+      const extraCount = Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
+      for (let index = 0; index < extraCount; index += 1) {
+        if (markerBelongsToPlayer(getStateExtraTraceMarker(traceSlot, index), playerKeys)) {
+          count += 1;
+        }
+      }
     }
     return count;
   }

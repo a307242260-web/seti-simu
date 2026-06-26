@@ -27,6 +27,7 @@
       firstPlaced: false,
       ownerPlayerColor: null,
       extraCount: 0,
+      extraMarkers: [],
     };
   }
 
@@ -92,8 +93,13 @@
     let count = 0;
     for (const type of traceTypes) {
       const traceSlot = alienSlot.traces[type];
-      if (!firstTraceBelongsToPlayer(traceSlot, player)) continue;
-      count += 1 + Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
+      if (!traceSlot?.firstPlaced) continue;
+      if (firstTraceBelongsToPlayer(traceSlot, player)) count += 1;
+      const extraCount = Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
+      for (let index = 0; index < extraCount; index += 1) {
+        const marker = getExtraTraceMarker(traceSlot, index);
+        if (markerBelongsToPlayer(marker, player)) count += 1;
+      }
     }
     return count;
   }
@@ -120,7 +126,44 @@
     return countPlacedFirstTraces(alienSlot) >= placement.TRACE_TYPES.length;
   }
 
-  function addExtraTrace(alienState, alienSlotId, traceType) {
+  function markerBelongsToPlayer(marker, player) {
+    if (!marker || !player) return false;
+    const playerIds = new Set([player.id, player.playerId].filter(Boolean).map(String));
+    const playerColors = new Set([player.color, player.playerColor].filter(Boolean).map(String));
+    return (
+      [marker.ownerPlayerId, marker.playerId].filter(Boolean).some((value) => playerIds.has(String(value)))
+      || [marker.ownerPlayerColor, marker.playerColor, marker.color].filter(Boolean).some((value) => playerColors.has(String(value)))
+    );
+  }
+
+  function normalizeExtraTraceMarkers(traceSlot) {
+    if (!traceSlot) return [];
+    if (!Array.isArray(traceSlot.extraMarkers)) traceSlot.extraMarkers = [];
+    const extraCount = Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
+    while (traceSlot.extraMarkers.length < extraCount) {
+      traceSlot.extraMarkers.push({
+        ownerPlayerColor: traceSlot.ownerPlayerColor || null,
+      });
+    }
+    if (traceSlot.extraMarkers.length > extraCount) {
+      traceSlot.extraMarkers.length = extraCount;
+    }
+    return traceSlot.extraMarkers;
+  }
+
+  function getExtraTraceMarker(traceSlot, extraIndex) {
+    if (!traceSlot || extraIndex == null) return null;
+    const markers = normalizeExtraTraceMarkers(traceSlot);
+    return markers[Number(extraIndex)] || null;
+  }
+
+  function getExtraTraceOwnerColor(traceSlot, extraIndex) {
+    return getExtraTraceMarker(traceSlot, extraIndex)?.ownerPlayerColor
+      || traceSlot?.ownerPlayerColor
+      || null;
+  }
+
+  function addExtraTrace(alienState, alienSlotId, traceType, playerColor = null) {
     const alienSlot = getAlienSlot(alienState, alienSlotId);
     if (!alienSlot) {
       return { ok: false, message: `未知外星人槽位 ${alienSlotId}` };
@@ -138,6 +181,10 @@
     }
 
     traceSlot.extraCount += 1;
+    normalizeExtraTraceMarkers(traceSlot);
+    traceSlot.extraMarkers[traceSlot.extraCount - 1] = {
+      ownerPlayerColor: playerColor || traceSlot.ownerPlayerColor || null,
+    };
     return {
       ok: true,
       message: `${placement.getAlienSlotLabel(alienSlotId)} ${placement.getTraceTypeLabel(traceType)} 额外 +1（共 ${traceSlot.extraCount}）`,
@@ -156,12 +203,7 @@
 
     const traceSlot = alienSlot.traces[traceType];
     if (traceSlot.firstPlaced) {
-      traceSlot.extraCount += 1;
-      return {
-        ok: true,
-        message: `${placement.getAlienSlotLabel(alienSlotId)} ${placement.getTraceTypeLabel(traceType)} 额外 +1（共 ${traceSlot.extraCount}）`,
-        extraOnly: true,
-      };
+      return addExtraTrace(alienState, alienSlotId, traceType, playerColor);
     }
 
     if (alienSlot.revealed) {
@@ -240,6 +282,8 @@
     countFirstTracesByPlayerOnSlot,
     getFirstTraceRewardForSlot,
     isAlienReadyToReveal,
+    getExtraTraceMarker,
+    getExtraTraceOwnerColor,
     placeFirstTrace,
     addExtraTrace,
     revealAlien,

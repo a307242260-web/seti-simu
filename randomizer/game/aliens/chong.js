@@ -373,7 +373,7 @@
     const normalizedPosition = normalizePosition(traceType, position);
     if (traceType === "blue" && LOCKED_BLUE_POSITIONS.includes(normalizedPosition)) {
       const fossilId = alienState?.chong?.panelFossilSlots?.[normalizedPosition];
-      return fossilId ? { ...getFossilReward(fossilId), fossilId, fossilPanel: true } : null;
+      return fossilId ? { ...getFossilReward(fossilId), fossilId, fossilPanel: false } : null;
     }
     const reward = cloneReward(TRACE_REWARDS[traceType]?.[normalizedPosition]);
     if (reward?.fossilPanel) {

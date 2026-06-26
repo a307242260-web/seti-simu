@@ -15025,6 +15025,19 @@
       playerId: effect.options?.targetPlayerId,
       playerColor: effect.options?.targetPlayerColor,
     }) || getEffectOwnerPlayer(effect) || getCurrentPlayer();
+    if (targetPlayer?.id && isPlayerPassedThisRound(targetPlayer.id)) {
+      const playerLabel = targetPlayer.colorLabel || targetPlayer.name || targetPlayer.color || "目标玩家";
+      return skipActionEffectWithMessage(
+        effect,
+        `${effect.label}：${playerLabel}已 PASS，忽略外星人痕迹`,
+        {
+          reason: "target_player_passed",
+          targetPlayerId: targetPlayer.id,
+          targetPlayerColor: targetPlayer.color || null,
+          traceTypes: allowedTraceTypes,
+        },
+      );
+    }
     const allowedAlienSlotIds = getEligibleAlienSlotIdsForTraceEffect(effect, targetPlayer, allowedTraceTypes);
     const hasLegalTarget = !allowedAlienSlotIds
       || allowedAlienSlotIds.some((alienSlotId) => allowedTraceTypes.some((item) => {
@@ -16378,7 +16391,7 @@
   }
 
   function getAlienTracePlayerKeys(player) {
-    return new Set([player?.id, player?.color].filter(Boolean));
+    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
   }
 
   function alienTraceMarkerBelongsToPlayer(marker, playerKeys) {
@@ -16426,6 +16439,7 @@
 
   function alienSlotHasPlayerTrace(alienSlotId, traceType, player) {
     const playerKeys = getAlienTracePlayerKeys(player);
+    if (countStateTraceMarkersForSlot(alienSlotId, traceType, playerKeys) > 0) return true;
     return listAlienTraceEntriesForSlot(alienSlotId, traceType)
       .some((entry) => alienTraceMarkerBelongsToPlayer(entry, playerKeys));
   }
@@ -16436,8 +16450,15 @@
 
   function countStateTraceMarkersForSlot(alienSlotId, traceType, playerKeys) {
     const traceSlot = aliens.getAlienSlot(alienGameState, Number(alienSlotId))?.traces?.[traceType];
-    if (!traceSlot?.firstPlaced || !alienTraceMarkerBelongsToPlayer(traceSlot, playerKeys)) return 0;
-    return 1 + Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
+    if (!traceSlot?.firstPlaced) return 0;
+    let count = alienTraceMarkerBelongsToPlayer(traceSlot, playerKeys) ? 1 : 0;
+    const extraCount = Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
+    for (let index = 0; index < extraCount; index += 1) {
+      const marker = aliens.getExtraTraceMarker?.(traceSlot, index)
+        || { ownerPlayerColor: traceSlot.ownerPlayerColor || null };
+      if (alienTraceMarkerBelongsToPlayer(marker, playerKeys)) count += 1;
+    }
+    return count;
   }
 
   function countAlienTraceMarkersForSlot(alienSlotId, player, traceTypes = null) {
@@ -17781,7 +17802,9 @@
     if (!player || !reward) return { ok: false, message: "没有可结算的虫族奖励" };
     const messages = [];
     let irreversible = null;
-    if (Object.keys(reward.gain || {}).length) {
+    const gain = reward.gain || {};
+    const hasGain = Object.keys(gain).length > 0;
+    if (hasGain) {
       players.gainResources(player, reward.gain);
       messages.push(formatChongGain(reward.gain));
     }
@@ -17806,13 +17829,18 @@
     }
     if (reward.pickAlienCard) messages.push("外星人牌");
     if (reward.pickCard) messages.push("精选1张牌");
+    const hasDirectReward = hasGain
+      || dataCount > 0
+      || drawCount > 0
+      || reward.pickAlienCard
+      || reward.pickCard;
     if (reward.fossilId) {
       const fossilReward = reward.fossilPanel ? chong?.getFossilReward?.(reward.fossilId) : null;
       if (fossilReward) {
         const fossilResult = applyChongRewardToPlayer(player, fossilReward, `${label} ${reward.fossilId}`);
         if (fossilResult.message) messages.push(fossilResult.message);
         if (fossilResult.irreversible) irreversible = fossilResult.irreversible;
-      } else {
+      } else if (!hasDirectReward) {
         messages.push(`化石 ${reward.fossilId}`);
       }
     }
@@ -27199,7 +27227,7 @@
           const effectIndex = result.step?.effectIndex;
           const hasRevertibleEffectStep = Number.isInteger(effectIndex)
             && Boolean(pendingActionEffectFlow.effects?.[effectIndex]);
-          if (hasRevertibleEffectStep || quickActionHistory.hasUndoableStep()) {
+          if (hasRevertibleEffectStep) {
             revertEffectFlowAfterUndo(result.step);
           } else {
             clearActionEffectFlow();

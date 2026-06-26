@@ -188,7 +188,7 @@
   }
 
   function getPlayerKeys(player) {
-    return new Set([player?.id, player?.color].filter(Boolean));
+    return new Set([player?.id, player?.playerId, player?.color, player?.playerColor].filter(Boolean));
   }
 
   function getPlayerId(player) {
@@ -234,8 +234,15 @@
 
   function countStateTraceMarkersForPlayer(slot, traceType, playerKeys) {
     const traceSlot = slot?.traces?.[traceType];
-    if (!traceSlot?.firstPlaced || !stateTraceBelongsToPlayer(traceSlot, playerKeys)) return 0;
-    return 1 + Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
+    if (!traceSlot?.firstPlaced) return 0;
+    let count = stateTraceBelongsToPlayer(traceSlot, playerKeys) ? 1 : 0;
+    const extraCount = Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
+    const markers = Array.isArray(traceSlot.extraMarkers) ? traceSlot.extraMarkers : [];
+    for (let index = 0; index < extraCount; index += 1) {
+      const marker = markers[index] || { ownerPlayerColor: traceSlot.ownerPlayerColor || null };
+      if (stateTraceBelongsToPlayer(marker, playerKeys)) count += 1;
+    }
+    return count;
   }
 
   function countTraceMarkers(player, alienGameState, traceType) {

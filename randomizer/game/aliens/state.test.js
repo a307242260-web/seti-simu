@@ -60,6 +60,25 @@ assert(
   state.countTraceMarkersForPlayerOnSlot(freshState, 2, { color: "blue" }) === 3,
   "state trace marker count should include all owned trace colors",
 );
+
+const splitOwnerState = state.createDefaultAlienState();
+state.placeFirstTrace(splitOwnerState, 1, "pink", "green");
+result = state.placeFirstTrace(splitOwnerState, 1, "pink", "white");
+assert(result.ok && result.extraOnly, "same-color trace should become an extra marker");
+const splitPinkTrace = state.getAlienSlot(splitOwnerState, 1).traces.pink;
+assert(splitPinkTrace.extraCount === 1, "extra marker should increment extraCount");
+assert(
+  state.getExtraTraceOwnerColor(splitPinkTrace, 0) === "white",
+  "extra marker should keep the gaining player's color",
+);
+assert(
+  state.countTraceMarkersForPlayerOnSlot(splitOwnerState, 1, { color: "green" }, "pink") === 1,
+  "first owner should only count the first marker",
+);
+assert(
+  state.countTraceMarkersForPlayerOnSlot(splitOwnerState, 1, { color: "white" }, "pink") === 1,
+  "extra marker owner should count the extra marker",
+);
 result = state.revealAlien(freshState, 2);
 assert(!result.ok, "reveal without assignment should fail");
 

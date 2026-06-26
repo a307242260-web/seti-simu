@@ -2813,7 +2813,11 @@
   }
 
   function markerBelongsToPlayer(marker, playerKeys) {
-    return playerKeys.has(marker?.playerId) || playerKeys.has(marker?.color) || playerKeys.has(marker?.playerColor);
+    return playerKeys.has(marker?.playerId)
+      || playerKeys.has(marker?.ownerPlayerId)
+      || playerKeys.has(marker?.color)
+      || playerKeys.has(marker?.playerColor)
+      || playerKeys.has(marker?.ownerPlayerColor);
   }
 
   function traceBelongsToPlayer(traceSlot, playerKeys) {
@@ -2866,6 +2870,7 @@
   }
 
   function alienSlotHasPlayerTrace(alienGameState, alienSlotId, slot, playerKeys, traceType) {
+    if (countStateTraceMarkersForPlayer(slot, traceType, playerKeys) > 0) return true;
     if (traceBelongsToPlayer(slot?.traces?.[traceType], playerKeys)) return true;
     return listRevealedFaceTraceEntries(alienGameState, alienSlotId, traceType)
       .some((entry) => markerBelongsToPlayer(entry, playerKeys));
@@ -2873,8 +2878,15 @@
 
   function countStateTraceMarkersForPlayer(slot, traceType, playerKeys) {
     const traceSlot = slot?.traces?.[traceType];
-    if (!traceBelongsToPlayer(traceSlot, playerKeys)) return 0;
-    return 1 + Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
+    if (!traceSlot?.firstPlaced) return 0;
+    let count = traceBelongsToPlayer(traceSlot, playerKeys) ? 1 : 0;
+    const extraCount = Math.max(0, Math.round(Number(traceSlot.extraCount) || 0));
+    const markers = Array.isArray(traceSlot.extraMarkers) ? traceSlot.extraMarkers : [];
+    for (let index = 0; index < extraCount; index += 1) {
+      const marker = markers[index] || { ownerPlayerColor: traceSlot.ownerPlayerColor || null };
+      if (markerBelongsToPlayer(marker, playerKeys)) count += 1;
+    }
+    return count;
   }
 
   function countAlienSlotTraceMarkersForPlayer(alienGameState, alienSlotId, slot, playerKeys, traceTypes = null) {
