@@ -264,17 +264,56 @@
     };
   }
 
+  function getStableObjectKey(item) {
+    if (!item || typeof item !== "object") return null;
+    return item.id || item.playerId || item.color || item.playerColor || null;
+  }
+
+  function restoreObjectInPlace(target, snapshot) {
+    if (!target || snapshot == null) return;
+    for (const key of Object.keys(target)) {
+      if (!Object.prototype.hasOwnProperty.call(snapshot, key)) {
+        delete target[key];
+      }
+    }
+    for (const [key, value] of Object.entries(snapshot)) {
+      if (key === "players" && Array.isArray(target[key]) && Array.isArray(value)) {
+        restoreStableObjectArray(target[key], value);
+      } else {
+        target[key] = structuredClone(value);
+      }
+    }
+  }
+
+  function restoreStableObjectArray(targetArray, snapshotArray) {
+    const existingByKey = new Map();
+    for (const item of targetArray) {
+      const key = getStableObjectKey(item);
+      if (key != null && !existingByKey.has(String(key))) {
+        existingByKey.set(String(key), item);
+      }
+    }
+
+    targetArray.length = 0;
+    for (const itemSnapshot of snapshotArray) {
+      const key = getStableObjectKey(itemSnapshot);
+      const existing = key == null ? null : existingByKey.get(String(key));
+      if (existing && typeof existing === "object") {
+        restoreObjectInPlace(existing, itemSnapshot);
+        targetArray.push(existing);
+      } else {
+        targetArray.push(structuredClone(itemSnapshot));
+      }
+    }
+  }
+
   function createRestoreObjectCommand(target, snapshot, label) {
     const saved = structuredClone(snapshot);
     return {
       label: label || "状态恢复",
       describe: label || "恢复状态快照",
       undo() {
-        if (!target || !saved) return;
-        for (const key of Object.keys(target)) {
-          delete target[key];
-        }
-        Object.assign(target, structuredClone(saved));
+        restoreObjectInPlace(target, saved);
       },
     };
   }

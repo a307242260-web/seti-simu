@@ -59,6 +59,7 @@ for (const [tileId, expectedType] of borrowedPurpleCases) {
   borrowedPlayer.industryBorrowedTechRound = 3;
   borrowedPlayer.industryBorrowedTechTurn = 2;
   const level = Number(tileId.replace("purple", ""));
+  assert.equal(scanEffects.playerOwnsPurpleTech(borrowedPlayer, level), true);
   assert.equal(scanEffects.playerOwnsPurpleTech(borrowedPlayer, level, { roundNumber: 3, turnNumber: 2 }), true);
   assert.equal(scanEffects.playerOwnsPurpleTech(borrowedPlayer, level, { roundNumber: 3, turnNumber: 3 }), false);
   assert.equal(

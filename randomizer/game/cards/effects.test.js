@@ -819,6 +819,16 @@ assert.deepEqual(collectReadyTaskIds(
   { probeLocations: { p1: ["asteroid"] } },
 ), []);
 
+const b105Effects = cardEffects.buildPlayEffects({ cardId: "b_105.webp" });
+assert.equal(b105Effects.length, 1);
+assert.equal(b105Effects[0].type, "launch");
+assert.equal(b105Effects[0].options.skipCost, true);
+assert.equal(b105Effects[0].options.source, "card");
+assert.deepEqual(collectReadyTaskIds(
+  { id: "p1", color: "red", reservedCards: [{ id: "card-b105", cardId: "b_105.webp" }] },
+  { probeLocations: { p1: ["comet"] } },
+), ["b105-comet-task"]);
+
 const singleAlienTraceState = {
   aliens: {
     1: {

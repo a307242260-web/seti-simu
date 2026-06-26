@@ -142,7 +142,13 @@
       && player?.industrySentinelArmedRound === round;
   }
 
-  function getBorrowedTechTileId(player, roundNumber, turnNumber = 0) {
+  function getBorrowedTechTileId(player, roundNumber = null, turnNumber = null) {
+    if (roundNumber == null && turnNumber == null) {
+      return (Number(player?.industryBorrowedTechRound) || 0) > 0
+        && (Number(player?.industryBorrowedTechTurn) || 0) > 0
+        ? (player?.industryBorrowedTechTileId || null)
+        : null;
+    }
     const round = normalizeRoundNumber(roundNumber);
     const turn = normalizeTurnNumber(turnNumber);
     if (round <= 0 || turn <= 0) return null;
@@ -151,7 +157,7 @@
     return player?.industryBorrowedTechTileId || null;
   }
 
-  function playerHasTechEffect(player, tileId, roundNumber, turnNumber = 0) {
+  function playerHasTechEffect(player, tileId, roundNumber = null, turnNumber = null) {
     if (!tileId) return false;
     if (player?.techState?.ownedTiles?.[tileId] && !player?.techState?.disabledTiles?.[tileId]) return true;
     return getBorrowedTechTileId(player, roundNumber, turnNumber) === tileId;

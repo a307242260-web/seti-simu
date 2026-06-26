@@ -430,14 +430,24 @@
     const source = options?.turnState && typeof options.turnState === "object"
       ? options.turnState
       : options;
+    const hasRoundNumber = source?.roundNumber != null;
+    const hasTurnNumber = source?.turnNumber != null;
     const roundNumber = Math.max(0, Math.round(Number(source?.roundNumber) || 0));
     const turnNumber = Math.max(0, Math.round(Number(source?.turnNumber) || 0));
-    return { roundNumber, turnNumber };
+    return {
+      roundNumber,
+      turnNumber,
+      hasTurnContext: hasRoundNumber || hasTurnNumber,
+    };
   }
 
   function isBorrowedTechActive(player, tileId, options = {}) {
     if (!tileId || player?.industryBorrowedTechTileId !== tileId) return false;
-    const { roundNumber, turnNumber } = normalizeTurnContext(options);
+    const { roundNumber, turnNumber, hasTurnContext } = normalizeTurnContext(options);
+    if (!hasTurnContext) {
+      return (Number(player?.industryBorrowedTechRound) || 0) > 0
+        && (Number(player?.industryBorrowedTechTurn) || 0) > 0;
+    }
     return roundNumber > 0
       && turnNumber > 0
       && player?.industryBorrowedTechRound === roundNumber

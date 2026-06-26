@@ -38,7 +38,7 @@
 | 字段 | 含义 |
 |------|------|
 | `industryRoundMarkRound` / `industryRoundMarkTurn` | 已放置 1x 标记的轮号与发生回合号（刷新只看轮号） |
-| `industryBorrowedTechTileId` / `industryBorrowedTechRound` / `industryBorrowedTechTurn` | 图灵系统：当前回合借用的科技片 id；Round/Turn 共同判定有效期 |
+| `industryBorrowedTechTileId` / `industryBorrowedTechRound` / `industryBorrowedTechTurn` | 图灵系统：当前回合借用的科技片 id；带行动上下文时按 Round/Turn 精确判定；无显式上下文的同回合长链路按未清空的借用态生效 |
 | `industrySentinelArmedRound` / `industrySentinelArmedTurn` | 哨兵：本轮已武装「打牌后弃牌角标」；Turn 只记录发生回合 |
 | `industryHuanyuFreeMoveRound` / `industryHuanyuFreeMoveTurn` / `industryHuanyuFreeMovesLeft` / `industryHuanyuMovedRocketIds` | 寰宇：免费移动所在轮、发生回合、剩余次数、已移动火箭 |
 | `industryPlayedCardThisRound` / `industryLastPlayedCardThisRound` | 本轮是否已打牌及牌快照（哨兵补注入队） |
@@ -104,7 +104,7 @@
 | `future_span_parking` | 未来跨度研究所 | 专属标记扣牌、目标分、达标后免费打出 | `app.js` 公司牌叠层与打牌流程 |
 | `alien_lab_panels` | 异星实验室 | 三色板块折扣：发射 1 信用点、扫描 2 能量、研究科技 4 宣传；正面板块可点击并等同触发对应主要行动；对应标准主行动后翻背，同色外星痕迹翻回正面 | `launch.js` / `scan-effects.js` / `tech/resolver.js` / `app.js` |
 
-图灵借用：只能选择供应区橙色或紫色科技。科技效果查询在拥有板块之外，只有当 `industryBorrowedTechTileId === tileId` 且借用的 Round/Turn 都等于当前行动上下文时，才视为拥有；橙色科技经 `players.playerOwnsTech` 生效，紫色扫描科技经 `scan-effects.js` 的扫描队列构建生效。UI 会在公司牌下方复制显示对应科技图标用于提示，不从供应区拿走科技片，也不获得 bonus；回合结束会清空当前玩家借用状态并移除显示图标，新轮开始也会清空所有轮内借用状态。
+图灵借用：只能选择供应区橙色或紫色科技。科技效果查询在拥有板块之外，带行动上下文时要求 `industryBorrowedTechTileId === tileId` 且借用的 Round/Turn 都等于当前行动上下文；无显式上下文的同回合长链路会按玩家身上未清空的借用态生效，直到回合结束清空。橙色科技经 `players.playerOwnsTech` 生效，紫色扫描科技经 `scan-effects.js` 的扫描队列构建生效。UI 会在公司牌下方复制显示对应科技图标用于提示，不从供应区拿走科技片，也不获得 bonus；回合结束会清空当前玩家借用状态并移除显示图标，新轮开始也会清空所有轮内借用状态。
 
 ## UI 与 `flowType` 映射（`app.js`）
 

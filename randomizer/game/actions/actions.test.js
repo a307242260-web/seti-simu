@@ -5,6 +5,7 @@ require("../players");
 require("../rockets");
 require("../planet-reference-layout");
 require("../planet-stats");
+require("../aliens/aomomo");
 require("./shared");
 require("./launch");
 require("./orbit");
@@ -25,6 +26,7 @@ const players = require("../players");
 const basicCards = require("../basic-cards");
 const rockets = require("../rockets");
 const planetStats = require("../planet-stats");
+const aomomo = require("../aliens/aomomo");
 const actions = require("./index");
 
 function createContext(overrides) {
@@ -83,6 +85,33 @@ function launchToPlanet(context, planetId) {
   const moveResult = rockets.moveActiveRocket(context.rocketState, planet.x - launch.rocket.sectorX, planet.y - launch.rocket.sectorY);
   assert.equal(moveResult.ok, true, moveResult.message);
   return { launch, planet, rocket: moveResult.rocket };
+}
+
+function createAomomoVisibleContextWithStalePlanetList() {
+  const context = createContext({
+    alienGameState: {
+      aliens: {
+        1: { revealed: true, alienId: aomomo.ALIEN_ID, assignedAlienId: aomomo.ALIEN_ID },
+      },
+      aomomo: aomomo.createAomomoState(),
+    },
+  });
+  context.solarState.aomomoActive = true;
+  const currentPlayer = players.getCurrentPlayer(context.playerState);
+  aomomo.initializeAomomoReveal(context.alienGameState, 1, currentPlayer);
+  const planet = solar.createSolarSnapshot(context.solarState)
+    .planetLocations
+    .find((item) => item.planetId === aomomo.PLANET_ID);
+  assert.ok(planet, "aomomo planet should be visible in the solar snapshot");
+  const launch = rockets.launchRocketAtSector(context.rocketState, planet, {
+    playerId: currentPlayer.id,
+    color: currentPlayer.color,
+  });
+  assert.equal(launch.ok, true, launch.message);
+  context.getPlanetLocations = () => solar.createSolarSnapshot(context.solarState)
+    .planetLocations
+    .filter((item) => item.planetId !== aomomo.PLANET_ID);
+  return context;
 }
 
 const context = createContext();
@@ -150,6 +179,16 @@ assert.equal(planetStats.getPlanetOrbitCount(multiOrbitContext.planetStatsState,
 assert.equal(planetStats.getPlanetOrbitCount(multiOrbitContext.planetStatsState, "venus"), 0);
 assert.equal(multiOrbitContext.rocketState.rockets.some((rocket) => rocket.id === multiOrbitVenus.id), true);
 
+const aomomoOrbitContext = createAomomoVisibleContextWithStalePlanetList();
+const aomomoOrbitOptions = actions.getOrbitOptions(aomomoOrbitContext);
+assert.equal(aomomoOrbitOptions.ok, true, aomomoOrbitOptions.message);
+assert.equal(aomomoOrbitOptions.defaultRocketId, aomomoOrbitContext.rocketState.rockets[0].id);
+assert.equal(aomomoOrbitOptions.choices[0].planetId, aomomo.PLANET_ID);
+const aomomoOrbitResult = actions.execute("orbit", aomomoOrbitContext);
+assert.equal(aomomoOrbitResult.ok, true, aomomoOrbitResult.message);
+assert.equal(aomomoOrbitResult.markerKind, "aomomo-orbit");
+assert.equal(aomomo.countOrbitMarkers(aomomoOrbitContext.alienGameState), 1);
+
 const landContext = createContext();
 launchToPlanet(landContext, "venus");
 const landWithoutOrbit = actions.execute("land", landContext);
@@ -181,6 +220,16 @@ assert.equal(selectedLand.removedRocketId, multiLandMars.id);
 assert.equal(planetStats.getPlanetLandingCount(multiLandContext.planetStatsState, "mars"), 1);
 assert.equal(planetStats.getPlanetLandingCount(multiLandContext.planetStatsState, "venus"), 0);
 assert.equal(multiLandContext.rocketState.rockets.some((rocket) => rocket.id === multiLandVenus.id), true);
+
+const aomomoLandContext = createAomomoVisibleContextWithStalePlanetList();
+const aomomoLandOptions = actions.getLandOptions(aomomoLandContext);
+assert.equal(aomomoLandOptions.ok, true, aomomoLandOptions.message);
+assert.equal(aomomoLandOptions.defaultTarget.rocketId, aomomoLandContext.rocketState.rockets[0].id);
+assert.equal(aomomoLandOptions.choices[0].planetId, aomomo.PLANET_ID);
+const aomomoLandResult = actions.execute("land", aomomoLandContext);
+assert.equal(aomomoLandResult.ok, true, aomomoLandResult.message);
+assert.equal(aomomoLandResult.markerKind, "aomomo-land");
+assert.equal(aomomo.countLandingMarkers(aomomoLandContext.alienGameState), 1);
 
 const discountedLandContext = createContext();
 launchToPlanet(discountedLandContext, "jupiter");

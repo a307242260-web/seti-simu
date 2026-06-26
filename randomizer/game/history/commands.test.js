@@ -108,4 +108,35 @@ assert.equal(sliceContext.alienGameState.slots[0].revealed, false);
 assert.equal(sliceContext.rocketState.rockets[0].x, 0);
 assert.equal(sliceContext.nebulaDataState.nebulae["sector-1-a"].tokens.length, 1);
 
+const analyzePlayerState = {
+  players: [{
+    id: "player-white",
+    color: "white",
+    resources: { energy: 1, availableData: 0 },
+    dataState: {
+      poolTokens: [],
+      placedTokens: [{ id: "placed-before-analyze", placementSlot: 3 }],
+    },
+  }],
+  currentPlayerId: "player-white",
+};
+const analyzePlayerRef = analyzePlayerState.players[0];
+const beforeAnalyzePlayer = structuredClone(analyzePlayerRef);
+analyzePlayerRef.resources.energy = 0;
+analyzePlayerRef.dataState.placedTokens = [];
+const afterAnalyzePlayerState = structuredClone(analyzePlayerState);
+const restoreAfterTraceReward = commands.createRestoreObjectCommand(
+  analyzePlayerState,
+  afterAnalyzePlayerState,
+  "恢复痕迹奖励前玩家状态",
+);
+analyzePlayerRef.resources.availableData = 1;
+analyzePlayerRef.dataState.poolTokens.push({ id: "data-refunded-by-trace-undo" });
+restoreAfterTraceReward.undo();
+assert.equal(analyzePlayerState.players[0], analyzePlayerRef, "playerState restore should preserve player object refs");
+commands.createRestorePlayerCommand(analyzePlayerRef, beforeAnalyzePlayer, "恢复分析前玩家状态").undo();
+assert.equal(analyzePlayerState.players[0].resources.energy, 1);
+assert.equal(analyzePlayerState.players[0].dataState.placedTokens.length, 1);
+assert.equal(analyzePlayerState.players[0].dataState.placedTokens[0].id, "placed-before-analyze");
+
 console.log("commands.test.js: all tests passed");

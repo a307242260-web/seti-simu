@@ -36,6 +36,26 @@
     return planetLocations.find((planet) => planet.x === sectorX && planet.y === sectorY) || null;
   }
 
+  function getVisiblePlanetAtSector(context, sectorCoordinate) {
+    if (!sectorCoordinate || typeof solar.resolveVisibleContent !== "function") return null;
+    const sectorX = solar.mod8(sectorCoordinate.x);
+    const sectorY = Number(sectorCoordinate.y);
+    const visible = solar.resolveVisibleContent(sectorX, sectorY, context?.solarState);
+    const content = visible?.content || {};
+    if (content.kind !== solar.layout.CONTENT_KIND.PLANET) return null;
+    const planet = solar.layout.PLANETS[content.planetId] || {};
+    return {
+      planetId: content.planetId,
+      label: content.label,
+      name: planet.name || content.label,
+      wheelId: visible.wheelId,
+      baseX: visible.baseX,
+      x: sectorX,
+      y: sectorY,
+      fixedAfterSetup: Boolean(planet.fixedAfterSetup),
+    };
+  }
+
   function getActiveRocketForPlayer(context) {
     const rocket = rockets.getActiveRocket(context.rocketState);
     if (!rocket) {
@@ -75,7 +95,8 @@
     }
 
     const sectorCoordinate = rockets.getRocketSectorCoordinate(rocket);
-    const planet = findPlanetAtSector(context.getPlanetLocations(), sectorCoordinate);
+    const planet = getVisiblePlanetAtSector(context, sectorCoordinate)
+      || findPlanetAtSector(context.getPlanetLocations(), sectorCoordinate);
     if (!planet) {
       return { ok: false, rocket, currentPlayer, message: "当前火箭不在行星格上" };
     }
@@ -159,6 +180,7 @@
   return Object.freeze({
     NON_EARTH_PLANET_IDS,
     findPlanetAtSector,
+    getVisiblePlanetAtSector,
     getActiveRocketForPlayer,
     listPlayerRocketPlanetPlacements,
     getRocketPlanet,

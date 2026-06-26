@@ -55,10 +55,12 @@ const turingPlayer = {
   industryBorrowedTechRound: 2,
   industryBorrowedTechTurn: 4,
 };
+assert.equal(passives.getBorrowedTechTileId(turingPlayer), "orange2");
 assert.equal(passives.getBorrowedTechTileId(turingPlayer, 2, 4), "orange2");
 assert.equal(passives.getBorrowedTechTileId(turingPlayer, 2, 5), null);
 assert.equal(passives.getBorrowedTechTileId(turingPlayer, 3, 4), null);
 assert.equal(passives.getBorrowedTechTileId(turingPlayer, 2), null);
+assert.equal(passives.playerHasTechEffect(turingPlayer, "orange2"), true);
 assert.equal(passives.playerHasTechEffect(turingPlayer, "orange2", 2, 4), true);
 assert.equal(passives.playerHasTechEffect(turingPlayer, "orange2", 2, 5), false);
 const turingClear = state.clearTuringBorrowedTech(turingPlayer);

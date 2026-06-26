@@ -7704,7 +7704,7 @@
     }
   }
 
-  function startPendingActionSession(actionType, label) {
+  function startPendingActionSession(actionType, label, options = {}) {
     if (actionHistory.hasSession()) {
       actionHistory.rollbackSession();
       clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
@@ -7715,9 +7715,10 @@
     actionHistory.beginSession(actionType, label);
     actionHistory.beginStep({
       source: HISTORY_SOURCE_MAIN,
-      type: "action",
+      type: "action_start",
       label,
-      logBefore: createActionLogImpactSnapshot(),
+      effectIndex: -1,
+      logBefore: options.logBefore || createActionLogImpactSnapshot(),
     });
     effectStepActive = true;
   }
@@ -7832,8 +7833,8 @@
     return null;
   }
 
-  function recordAtomicActionHistory(actionType, label, result) {
-    startPendingActionSession(actionType, label);
+  function recordAtomicActionHistory(actionType, label, result, options = {}) {
+    startPendingActionSession(actionType, label, options);
     recordAbilityCommands(result);
     completePendingActionStep();
   }
@@ -7885,6 +7886,7 @@
     }
 
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
+    renderReservedCardsFromTaskState();
     rocketState.statusNote = `${label}：请依次点击效果`;
     activateNextActionEffect();
     return true;
@@ -8796,7 +8798,20 @@
     return triggerProgress;
   }
 
+  function getCardTaskCompletionBlockReason() {
+    if (isActionEffectFlowActive()) return "请先完成当前行动的效果";
+    if (hasActivePendingSubFlow()) return "请先完成或取消当前流程";
+    return null;
+  }
+
   function openCardTaskCompletionPicker(card) {
+    const blockReason = getCardTaskCompletionBlockReason();
+    if (blockReason) {
+      rocketState.statusNote = blockReason;
+      renderStateReadout();
+      return { ok: false, message: blockReason };
+    }
+
     const ready = getReadyTaskForReservedCard(card);
     if (!ready) return { ok: false, message: "这张任务卡尚未满足完成条件" };
     if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开任务确认窗口" };
@@ -8827,6 +8842,11 @@
   function confirmCardTaskCompletion() {
     const pending = pendingCardTaskCompletion;
     if (!pending?.ready) return { ok: false, message: "没有待完成的任务" };
+    if (isActionEffectFlowActive()) {
+      rocketState.statusNote = "请先完成当前行动的效果";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
     const currentPlayer = getCurrentPlayer();
     const ready = pending.ready;
     closeCardTaskCompletionPicker();
@@ -9537,9 +9557,11 @@
     renderSectorNebulaDataBoard();
     renderRockets();
     syncPlanetOrbitLandMarkers();
+    renderAlienPanels();
     renderPublicCards();
     updatePublicCardControls();
     renderPlayerStats();
+    renderPlayerHand();
     renderReservedCards();
     renderInitialSelectionArea();
     clearStaleFullyUndoneMainActionSession();
@@ -9751,6 +9773,7 @@
     closeScanAction4Picker();
     renderActionEffectBar();
     els.appWrap?.classList.toggle("action-effect-flow-active", false);
+    renderReservedCardsFromTaskState();
   }
 
   function rememberCompletedQuickEffectFlowForUndo(flow) {
@@ -23461,15 +23484,16 @@
     const ready = readyByCardId instanceof Map
       ? readyByCardId.get(card.id)
       : readyByCardId?.[card.id];
+    const taskBlockReason = ready ? getCardTaskCompletionBlockReason() : null;
     const completedTriggerIndexes = cardEffects.getConsumedTriggerIndexes(card);
     const button = document.createElement("button");
     button.type = "button";
     button.className = "reserved-card-button";
     button.dataset.reservedIndex = String(originalIndex);
-    button.disabled = !ready;
+    button.disabled = !ready || Boolean(taskBlockReason);
     button.style.setProperty("--card-index", String(rowIndex + 1));
     button.classList.toggle("is-task-ready", Boolean(ready));
-    button.title = ready ? "任务已满足，点击确认完成" : "";
+    button.title = ready ? (taskBlockReason || "任务已满足，点击确认完成") : "";
 
     const image = document.createElement("img");
     image.className = "player-hand-card reserved-card";
@@ -27535,6 +27559,7 @@
       analyze: "analyzeData",
     };
     const abilityId = abilityByAction[actionId];
+    const actionLogBefore = createActionLogImpactSnapshot();
     const result = abilityId
       ? abilities.executeAbility(abilityId, createActionContext(), actionOptions)
       : actionId === "researchTech"
@@ -27573,7 +27598,9 @@
     }
 
     if (result.ok && actionId === "analyze") {
-      recordAtomicActionHistory(actionId, result.message || "分析数据", result);
+      recordAtomicActionHistory(actionId, ACTION_LOG_DEFAULT_LABELS.analyze, result, {
+        logBefore: actionLogBefore,
+      });
       startedRewardFlow = startAnalyzeDataRewardFlow();
       if (startedRewardFlow) {
         executeActionEffect(getCurrentActionEffect());
@@ -27596,7 +27623,9 @@
         settleCardTasksAfterEffect({ events: result.events, render: false });
       } else {
         if (abilityId && result.undoable !== false) {
-          recordAtomicActionHistory(actionId, result.message || actionId, result);
+          recordAtomicActionHistory(actionId, result.message || actionId, result, {
+            logBefore: actionLogBefore,
+          });
         } else {
           markActionPending();
         }

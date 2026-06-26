@@ -666,6 +666,33 @@ function launchToPlanet(context, planetId) {
 
 {
   const context = createContext({ resources: { credits: 10, energy: 10, publicity: 0 } });
+  const player = currentPlayer(context);
+  player.industryBorrowedTechTileId = "orange2";
+  player.industryBorrowedTechRound = 2;
+  player.industryBorrowedTechTurn = 4;
+  const launch = abilities.executeAbility("launchProbe", context, { skipCost: true });
+  assert.equal(launch.ok, true);
+  const asteroid = solar.collectVisibleCoordinateGroups(context.solarState).asteroids[0];
+  const placed = rockets.moveRocket(
+    context.rocketState,
+    launch.rocket.id,
+    asteroid.x - launch.rocket.sectorX,
+    asteroid.y - launch.rocket.sectorY,
+  );
+  assert.equal(placed.ok, true, placed.message);
+  const move = abilities.executeAbility("moveProbe", context, {
+    rocketId: launch.rocket.id,
+    deltaX: 1,
+    deltaY: 0,
+    cost: {},
+    movementPoints: 1,
+  });
+  assert.equal(move.ok, true, move.message);
+  assert.equal(move.payload.requiredMovePoints, 1);
+}
+
+{
+  const context = createContext({ resources: { credits: 10, energy: 10, publicity: 0 } });
   const launch = abilities.executeAbility("launchProbe", context, { skipCost: true });
   assert.equal(launch.ok, true);
   rockets.assignRocketToSlot(launch.rocket, 1, 1, 4);
