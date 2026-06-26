@@ -69,6 +69,7 @@
       handleBanrenmaCardConditionChoice,
       handleYichangdianCornerChoice,
       handleCardTriggerChoice,
+      cancelCardTriggerChoice,
       confirmCardTaskCompletion,
       handleProbeSectorScanChoice,
       confirmProbeSectorScanSelection,
@@ -532,6 +533,10 @@
         cancelStrategyPassiveSlotChoice();
         return;
       }
+      if (state.pendingCardTriggerAction) {
+        cancelCardTriggerChoice();
+        return;
+      }
       closeScanTargetPicker();
     });
     els.scanTargetOverlay?.addEventListener("click", (event) => {
@@ -594,6 +599,10 @@
         }
         if (state.pendingStrategyPassiveSlotChoice) {
           cancelStrategyPassiveSlotChoice();
+          return;
+        }
+        if (state.pendingCardTriggerAction) {
+          cancelCardTriggerChoice();
           return;
         }
         closeScanTargetPicker();
