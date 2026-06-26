@@ -3,7 +3,7 @@
 const assert = require("node:assert/strict");
 const { createAiController } = require("./ai-controller");
 
-function createAiControllerHarness(pendingPlayerColor) {
+function createAiControllerHarness(pendingPlayerColor, options = {}) {
   const white = {
     id: "player-white",
     color: "white",
@@ -41,6 +41,9 @@ function createAiControllerHarness(pendingPlayerColor) {
 
   const state = {
     get pendingJiuzheCardPlay() { return pendingJiuzheCardPlay; },
+    get pendingDiscardAction() {
+      return options.currentPlayerDiscardPending ? { player: white, selectedIndexes: [] } : null;
+    },
     get pendingActionExecuted() { return false; },
     get pendingActionEffectFlow() { return null; },
   };
@@ -67,7 +70,10 @@ function createAiControllerHarness(pendingPlayerColor) {
     cardState: {},
     cardTaskState: {},
     historyStepOrder: {},
-    els: { scanTargetActions: { querySelectorAll: () => [] } },
+    els: {
+      scanTargetOverlay: { hidden: false },
+      scanTargetActions: { querySelectorAll: () => [] },
+    },
     DEFAULT_ACTIVE_PLAYER_COUNT: allPlayers.length,
     DEFAULT_INITIAL_HAND_COUNT: 5,
     DEFAULT_INITIAL_PLAYER_COLOR: "white",
@@ -210,6 +216,9 @@ function createAiControllerHarness(pendingPlayerColor) {
     "sectorXHasAvailableScanTarget",
   ];
   for (const name of falseNames) context[name] = () => false;
+  if (options.currentPlayerDiscardPending) {
+    context.isDiscardSelectionActive = () => true;
+  }
 
   const emptyArrayNames = [
     "buildSectorScanChoicesForX",
@@ -231,7 +240,7 @@ function createAiControllerHarness(pendingPlayerColor) {
 }
 
 {
-  const harness = createAiControllerHarness("blue");
+  const harness = createAiControllerHarness("blue", { currentPlayerDiscardPending: true });
   assert.equal(
     harness.controller.configureAiAutoBattle({
       playerIds: [harness.blue.id],
@@ -241,7 +250,7 @@ function createAiControllerHarness(pendingPlayerColor) {
   );
 
   const result = harness.controller.runAiAutomationStep();
-  assert.equal(result.ok, true, "color-owned Jiuzhe pending should be handled by that AI player");
+  assert.equal(result.ok, true, "color-owned Jiuzhe pending should be handled before current-player subflows");
   assert.deepEqual(harness.getHandled(), { type: "skip" });
 }
 

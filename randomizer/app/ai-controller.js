@@ -7696,11 +7696,14 @@
 
     function runAiScanTargetDecision() {
       if (!els.scanTargetOverlay || els.scanTargetOverlay.hidden) return null;
+      const pendingType = state.pendingScanTargetAction?.type || null;
+      if (!["optional_hand_scan", "conditional_sector_scan", "sector_scan", "public_scan", "hand_scan"].includes(pendingType)) {
+        return null;
+      }
       const currentPlayer = getCurrentPlayer();
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择扫描目标` };
       }
-      const pendingType = state.pendingScanTargetAction?.type || null;
       if (pendingType === "optional_hand_scan") {
         const hasScannableHandCard = (currentPlayer?.hand || [])
           .some((card) => card && getPublicScanChoicesForCard(card).ok);
@@ -9781,6 +9784,12 @@
         if (!ai?.policy) return { ok: false, blocked: true, message: "SetiAI 未加载" };
         if (isGameEnded()) return { ok: true, done: true, message: "游戏已结束" };
 
+        const earlyAlienUseResult = runAiAlienUseDecision();
+        if (earlyAlienUseResult) return earlyAlienUseResult;
+
+        const earlyAlienTraceResult = runAiAlienTraceDecision();
+        if (earlyAlienTraceResult) return earlyAlienTraceResult;
+
         const initialResult = chooseInitialSelectionForAiPlayer();
         if (initialResult) return initialResult;
 
@@ -9843,12 +9852,6 @@
 
         const cardTaskResult = runAiCardTaskCompletionDecision();
         if (cardTaskResult) return cardTaskResult;
-
-        const alienUseResult = runAiAlienUseDecision();
-        if (alienUseResult) return alienUseResult;
-
-        const alienTraceResult = runAiAlienTraceDecision();
-        if (alienTraceResult) return alienTraceResult;
 
         const effectResult = runAiActionEffectStep();
         if (effectResult) return effectResult;
