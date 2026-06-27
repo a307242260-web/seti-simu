@@ -499,9 +499,18 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   assert.equal(result.ok, true, "valid AI control snapshot should restore");
   assert.equal(restored.controller.isAiAutoBattlePlayer(restored.blue.id), true);
   assert.equal(restored.controller.isAiAutoBattlePlayer(restored.white.id), false);
-  assert.equal(restored.controller.isAiAutomationPaused(), true);
+  assert.equal(restored.controller.isAiAutomationPaused(), false);
+  assert.equal(result.clearedPausedOnBug, true);
   assert.equal(restored.controller.getAiStrategyWeights().scan, 1.3);
   assert.equal(restored.controller.getAiAutoBattleReport().running, false, "running state is never restored");
+
+  const pausedRestore = createAiControllerHarness(null);
+  const pausedResult = pausedRestore.controller.restoreAiControlSnapshot({
+    ...snapshot,
+    pausedOnBug: true,
+  }, { restorePausedOnBug: true });
+  assert.equal(pausedResult.ok, true);
+  assert.equal(pausedRestore.controller.isAiAutomationPaused(), true);
 }
 
 {
@@ -516,8 +525,17 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
 
   const missing = harness.controller.restoreAiControlSnapshot(null);
   assert.equal(missing.ok, true);
-  assert.equal(missing.disabled, true);
+  assert.equal(missing.defaulted, true);
   assert.equal(missing.missing, true);
+  assert.equal(harness.controller.isAiAutoBattlePlayer(harness.blue.id), true);
+  assert.equal(harness.controller.isAiAutoBattlePlayer(harness.white.id), false);
+
+  const manual = harness.controller.restoreAiControlSnapshot({
+    enabled: false,
+    playerIds: [],
+  });
+  assert.equal(manual.ok, true);
+  assert.equal(manual.disabled, true);
   assert.equal(harness.controller.isAiAutoBattlePlayer(harness.blue.id), false);
 
   const invalid = harness.controller.restoreAiControlSnapshot({
@@ -525,8 +543,10 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     playerIds: ["missing-player"],
   });
   assert.equal(invalid.ok, true);
-  assert.equal(invalid.disabled, true);
-  assert.equal(harness.controller.isAiAutoBattlePlayer(harness.blue.id), false);
+  assert.equal(invalid.defaulted, true);
+  assert.equal(invalid.invalidPlayerIds, true);
+  assert.equal(harness.controller.isAiAutoBattlePlayer(harness.blue.id), true);
+  assert.equal(harness.controller.isAiAutoBattlePlayer(harness.white.id), false);
 }
 
 console.log("app/ai-controller.test.js ok");

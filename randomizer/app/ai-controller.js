@@ -712,12 +712,31 @@
       };
     }
 
+    function restoreDefaultAiControlForRecovery(message = "旧存档未包含电脑配置，已按默认人机对局恢复") {
+      const result = configureDefaultAiOpponent();
+      if (!result?.ok) {
+        return {
+          ...disableAiControlForRecovery(result?.message || "默认电脑配置不可用，已按全手动恢复"),
+          defaulted: true,
+        };
+      }
+      return {
+        ok: true,
+        enabled: true,
+        defaulted: true,
+        playerIds: [...result.playerIds],
+        pausedOnBug: false,
+        message,
+      };
+    }
+
     function createAiControlSnapshot() {
       return {
         version: 1,
         enabled: Boolean(aiAutoBattleState.enabled),
         playerIds: getAiAutoBattlePlayerIds(),
-        pausedOnBug: Boolean(aiAutoStepPausedOnBug),
+        pausedOnBug: false,
+        lastPausedOnBug: Boolean(aiAutoStepPausedOnBug),
         stepDelayMs: Math.max(0, Math.round(Number(aiAutoBattleState.stepDelayMs) || 0)),
         maxBugRepeats: Math.max(1, Math.round(Number(aiAutoBattleState.maxBugRepeats) || 1)),
         maxMovesPerTurn: Math.max(0, Math.round(Number(aiAutoBattleState.maxMovesPerTurn) || 0)),
@@ -733,7 +752,9 @@
 
       if (!snapshot || typeof snapshot !== "object") {
         return {
-          ...disableAiControlForRecovery(options.missingMessage || "恢复快照未包含电脑配置，已按全手动恢复"),
+          ...restoreDefaultAiControlForRecovery(
+            options.missingMessage || "恢复快照未包含电脑配置，已按默认人机对局恢复",
+          ),
           missing: true,
         };
       }
@@ -759,18 +780,25 @@
         ? [...new Set(snapshot.playerIds.map((playerId) => getPlayerById(playerId)?.id).filter(Boolean))]
         : [];
       if (!playerIds.length) {
-        return disableAiControlForRecovery("恢复快照中的电脑玩家无效，已按全手动恢复");
+        return {
+          ...restoreDefaultAiControlForRecovery("恢复快照中的电脑玩家无效，已按默认人机对局恢复"),
+          invalidPlayerIds: true,
+        };
       }
 
       aiAutoBattleState.enabled = true;
       aiAutoBattleState.playerIds = playerIds;
-      aiAutoStepPausedOnBug = Boolean(snapshot.pausedOnBug);
+      aiAutoStepPausedOnBug = options.restorePausedOnBug === true
+        ? Boolean(snapshot.pausedOnBug)
+        : false;
+      const clearedPausedOnBug = Boolean(snapshot.pausedOnBug) && !aiAutoStepPausedOnBug;
       return {
         ok: true,
         enabled: true,
         playerIds: [...playerIds],
         pausedOnBug: aiAutoStepPausedOnBug,
-        message: "电脑配置已恢复",
+        clearedPausedOnBug,
+        message: clearedPausedOnBug ? "电脑配置已恢复，已清除旧阻塞暂停" : "电脑配置已恢复",
       };
     }
 

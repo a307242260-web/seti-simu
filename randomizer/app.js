@@ -2007,10 +2007,12 @@
     }
     clearTransientStateForRecovery();
     const aiControlResult = restoreAiControlSnapshot(snapshot?.runtime?.aiControl || null, {
-      missingMessage: "旧存档未包含电脑配置，已按全手动恢复",
+      missingMessage: "旧存档未包含电脑配置，已按默认人机对局恢复",
     });
     const baseMessage = options.message || "已从行动日志恢复局面";
     const recoveryMessage = aiControlResult?.missing
+      || aiControlResult?.invalidPlayerIds
+      || aiControlResult?.clearedPausedOnBug
       ? `${baseMessage}；${aiControlResult.message}`
       : baseMessage;
     refreshAfterGameRecovery(recoveryMessage);
