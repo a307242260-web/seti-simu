@@ -134,6 +134,13 @@
       incomeIncreaseCount: 2,
       baseIncome: Object.freeze({ credits: 3, energy: 1, handSize: 1 }),
     }),
+    "寰宇超动力": Object.freeze({
+      label: "寰宇超动力",
+      resources: Object.freeze({ publicity: 3, credits: 2, energy: 2 }),
+      launchCount: 2,
+      incomeIncreaseCount: 2,
+      baseIncome: Object.freeze({ credits: 3, energy: 1, handSize: 1 }),
+    }),
     "任务中继站": Object.freeze({
       label: "任务中继站",
       resources: Object.freeze({ publicity: 2, credits: 3, energy: 2 }),

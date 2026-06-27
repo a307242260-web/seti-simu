@@ -34,6 +34,15 @@
       activeAbilityId: "huanyu_free_moves",
       passiveIds: Object.freeze(["huanyu_rocket_limit"]),
     }),
+    "寰宇超动力": Object.freeze({
+      label: "寰宇超动力",
+      activeAbilityId: "huanyu_free_moves",
+      passiveIds: Object.freeze([
+        "huanyu_rocket_limit",
+        "huanyu_superdrive_round_start",
+        "huanyu_superdrive_pass_launch",
+      ]),
+    }),
     "赫利昂联合体": Object.freeze({
       label: "赫利昂联合体",
       activeAbilityId: "helios_remove_tech_income",
@@ -67,7 +76,7 @@
     "作弊实验室": Object.freeze({
       label: "作弊实验室",
       activeAbilityId: null,
-      passiveIds: Object.freeze(["alien_lab_panels", "cheat_lab_permanent_panels"]),
+      passiveIds: Object.freeze(["alien_lab_panels", "cheat_lab_permanent_panels", "cheat_lab_round_start"]),
     }),
     "宇宙战略集团": Object.freeze({
       label: "宇宙战略集团",

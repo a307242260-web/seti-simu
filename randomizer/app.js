@@ -556,7 +556,19 @@
       setupSelectionState.currentPlayerId = null;
       playerState.currentPlayerId = turnState.startPlayerId || playerState.currentPlayerId;
       const initialResult = resolveInitialSelectionEffects();
-      recordInitialSelectionActionLog(player, selectedIndustry, selectedInitialCards, initialResult);
+      const roundStartResult = applyIndustryRoundStartBonuses(turnState.roundNumber, { appendLog: false });
+      const initialLogResult = roundStartResult.results.length
+        ? {
+          ...(initialResult || { ok: roundStartResult.ok, results: [], message: "" }),
+          ok: Boolean((initialResult?.ok ?? true) && roundStartResult.ok),
+          results: [
+            ...(initialResult?.results || []),
+            ...roundStartResult.results,
+          ],
+          message: [initialResult?.message, roundStartResult.message].filter(Boolean).join("；"),
+        }
+        : initialResult;
+      recordInitialSelectionActionLog(player, selectedIndustry, selectedInitialCards, initialLogResult);
       const incomeStarted = startInitialIncomeEffectFlow(initialResult?.pendingIncomeIncreases || []);
       applyIndustryStartupPassives();
       if (!incomeStarted) {
@@ -5372,6 +5384,110 @@
       drawError,
       summary,
       message,
+    };
+  }
+
+  function hasHuanyuSuperdriveRoundStartPending(player, roundNumber = turnState.roundNumber) {
+    if (!player || !industry?.hasHuanyuSuperdriveRoundStart?.(player)) return false;
+    const round = Math.max(1, Math.round(Number(roundNumber) || 1));
+    return player.industryHuanyuSuperdriveRoundStartRound !== round;
+  }
+
+  function applyHuanyuSuperdriveRoundStartForPlayer(player, roundNumber = turnState.roundNumber) {
+    if (!hasHuanyuSuperdriveRoundStartPending(player, roundNumber)) return null;
+    const round = Math.max(1, Math.round(Number(roundNumber) || 1));
+    const resourceGain = { energy: 2, publicity: 2 };
+    players.gainResources(player, resourceGain);
+    const drawResult = blindDrawCardForPlayer(player);
+    player.industryHuanyuSuperdriveRoundStartRound = round;
+    const drawnCount = drawResult?.ok && drawResult.card ? 1 : 0;
+    const message = drawResult?.ok
+      ? `第${round}轮开始：获得 2能量、2宣传；盲抽 ${drawnCount}/1 张`
+      : `第${round}轮开始：获得 2能量、2宣传；盲抽失败：${drawResult?.message || "未知错误"}`;
+    return {
+      ok: Boolean(drawResult?.ok),
+      playerId: player.id,
+      playerColorLabel: player.colorLabel || player.name || player.color || null,
+      effect: { label: "寰宇超动力" },
+      message,
+      drawnCards: drawResult?.card ? [drawResult.card] : [],
+      irreversible: drawnCount > 0
+        ? { code: "hidden_card_reveal", reason: "盲抽翻出新牌" }
+        : null,
+      results: [{ message }],
+    };
+  }
+
+  function hasCheatLabRoundStartPending(player, roundNumber = turnState.roundNumber) {
+    if (!player || !industry?.hasCheatLabRoundStart?.(player)) return false;
+    const round = Math.max(1, Math.round(Number(roundNumber) || 1));
+    return player.industryCheatLabRoundStartRound !== round;
+  }
+
+  function applyCheatLabRoundStartForPlayer(player, roundNumber = turnState.roundNumber) {
+    if (!hasCheatLabRoundStartPending(player, roundNumber)) return null;
+    const round = Math.max(1, Math.round(Number(roundNumber) || 1));
+    players.gainResources(player, { energy: 1 });
+    const drawResult = blindDrawCardForPlayer(player);
+    player.industryCheatLabRoundStartRound = round;
+    const drawnCount = drawResult?.ok && drawResult.card ? 1 : 0;
+    const message = drawResult?.ok
+      ? `第${round}轮开始：获得 1能量；盲抽 ${drawnCount}/1 张`
+      : `第${round}轮开始：获得 1能量；盲抽失败：${drawResult?.message || "未知错误"}`;
+    return {
+      ok: Boolean(drawResult?.ok),
+      playerId: player.id,
+      playerColorLabel: player.colorLabel || player.name || player.color || null,
+      effect: { label: "作弊实验室" },
+      message,
+      drawnCards: drawResult?.card ? [drawResult.card] : [],
+      irreversible: drawnCount > 0
+        ? { code: "hidden_card_reveal", reason: "盲抽翻出新牌" }
+        : null,
+      results: [{ message }],
+    };
+  }
+
+  function appendIndustryRoundStartLog(result, roundNumber = turnState.roundNumber) {
+    if (!result) return null;
+    const player = getPlayerById(result.playerId);
+    const effectLabel = result.effect?.label || "公司";
+    return appendConfirmedActionLogEntry({
+      title: `第${roundNumber}轮开始`,
+      player,
+      actionType: "roundStart",
+      actionLabel: "轮开始",
+      roundNumber,
+      rawTurnNumber: turnState.turnNumber,
+      steps: [{
+        source: HISTORY_SOURCE_SETUP,
+        text: `${effectLabel}：${result.message}`,
+        undoable: false,
+        irreversibleCode: result.irreversible?.code || null,
+        irreversibleReason: result.irreversible?.reason || null,
+      }],
+    });
+  }
+
+  function applyIndustryRoundStartBonuses(roundNumber = turnState.roundNumber, options = {}) {
+    const results = getActivePlayers()
+      .flatMap((player) => [
+        applyHuanyuSuperdriveRoundStartForPlayer(player, roundNumber),
+        applyCheatLabRoundStartForPlayer(player, roundNumber),
+      ])
+      .filter(Boolean);
+    if (options.appendLog) {
+      for (const result of results) appendIndustryRoundStartLog(result, roundNumber);
+    }
+    if (results.length) {
+      renderPlayerStats();
+      renderPlayerHand();
+      renderStateReadout();
+    }
+    return {
+      ok: results.every((result) => result.ok),
+      results,
+      message: results.map((result) => `${getPlayerLabelById(result.playerId)} ${result.message}`).join("；"),
     };
   }
 
@@ -13827,6 +13943,37 @@
     return finished;
   }
 
+  function executeHuanyuSuperdrivePassLaunchEffect(effect) {
+    const options = effect.options || {};
+    beginEffectHistoryStep(effect.label);
+    const result = abilities.executeAbility("launchProbe", createActionContext(), {
+      skipCost: options.skipCost !== false,
+      ignoreRocketLimit: options.ignoreRocketLimit !== false,
+      source: "industry_huanyu_superdrive",
+      historyLabel: effect.label,
+    });
+    if (!result.ok) {
+      endEffectHistoryStep();
+      rocketState.statusNote = result.message;
+      renderStateReadout();
+      return result;
+    }
+    recordAbilityCommands(result);
+    settleCardTasksAfterEffect({ events: result.events, render: false });
+    if (result.rocket) renderRocketElement(result.rocket);
+    effect.result = {
+      ...result,
+      undoable: true,
+      message: `${effect.label}：${result.message}`,
+    };
+    rocketState.statusNote = effect.result.message;
+    completeCurrentActionEffect();
+    renderRockets();
+    renderPlayerStats();
+    renderStateReadout();
+    return effect.result;
+  }
+
   function executeDrawCardsRewardEffect(effect) {
     const currentPlayer = getEffectTargetPlayer(effect);
     const count = Math.max(0, Math.round(effect.options?.count || 0));
@@ -16154,6 +16301,8 @@
         return executePassFirstRotateEffect(effect);
       case "pass_reserve_pick":
         return beginPassReserveSelection(effect);
+      case "industry_huanyu_superdrive_launch":
+        return executeHuanyuSuperdrivePassLaunchEffect(effect);
       case "industry_stratus_corner":
         return executeIndustryStratusCornerEffect(effect);
       case "industry_sentinel_corner":
@@ -27991,6 +28140,19 @@
 
   function buildPassEffectQueue(player) {
     const effects = [];
+    if (industry?.shouldLaunchAfterPassWithHuanyuSuperdrive?.(player)) {
+      effects.push(createRequiredPassEffect({
+        id: "pass-huanyu-superdrive-launch",
+        type: "industry_huanyu_superdrive_launch",
+        icon: "launch",
+        label: "寰宇超动力：PASS 后额外发射",
+        options: {
+          skipCost: true,
+          ignoreRocketLimit: true,
+        },
+      }));
+    }
+
     if (isFinalRound()) return effects;
 
     const handCount = Array.isArray(player?.hand) ? player.hand.length : 0;
@@ -28361,6 +28523,9 @@
     clearActionEffectFlow();
     clearActionPending();
     const advanceResult = advanceTurnAfterPlayerAction(endingPlayerId, { passed: didPass });
+    const roundStartResult = advanceResult.roundAdvanced
+      ? applyIndustryRoundStartBonuses(turnState.roundNumber, { appendLog: true })
+      : null;
     const nextPlayer = getCurrentPlayer();
     selectDefaultRocketForCurrentPlayer();
     renderDebugPlayerSwitch();
@@ -28376,6 +28541,7 @@
     rocketState.statusNote = [
       turnAdvanceMessage,
       passIncomeResult?.message || null,
+      roundStartResult?.message || null,
       turnEndReveal?.message || null,
     ].filter(Boolean).join("；");
     renderPlayerStats();

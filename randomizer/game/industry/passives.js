@@ -25,6 +25,9 @@
   const MISSION_PLAY_PUBLICITY_GAIN = 1;
   const TURING_BLUE_TECH_PUBLICITY_GAIN = 1;
   const CHEAT_LAB_PERMANENT_PASSIVE_ID = "cheat_lab_permanent_panels";
+  const CHEAT_LAB_ROUND_START_PASSIVE_ID = "cheat_lab_round_start";
+  const HUANYU_SUPERDRIVE_ROUND_START_PASSIVE_ID = "huanyu_superdrive_round_start";
+  const HUANYU_SUPERDRIVE_PASS_LAUNCH_PASSIVE_ID = "huanyu_superdrive_pass_launch";
 
   function playerHasPassive(player, passiveId) {
     const definition = catalog.getPlayerIndustryDefinition(player);
@@ -33,6 +36,18 @@
 
   function getRocketLimitBonus(player) {
     return playerHasPassive(player, "huanyu_rocket_limit") ? HUANYU_ROCKET_LIMIT_BONUS : 0;
+  }
+
+  function hasHuanyuSuperdriveRoundStart(player) {
+    return playerHasPassive(player, HUANYU_SUPERDRIVE_ROUND_START_PASSIVE_ID);
+  }
+
+  function shouldLaunchAfterPassWithHuanyuSuperdrive(player) {
+    return playerHasPassive(player, HUANYU_SUPERDRIVE_PASS_LAUNCH_PASSIVE_ID);
+  }
+
+  function hasCheatLabRoundStart(player) {
+    return playerHasPassive(player, CHEAT_LAB_ROUND_START_PASSIVE_ID);
   }
 
   function hasPermanentAlienLabPanels(player) {
@@ -191,6 +206,9 @@
     ALIEN_LAB_SCAN_COST,
     HUANYU_ROCKET_LIMIT_BONUS,
     getRocketLimitBonus,
+    hasHuanyuSuperdriveRoundStart,
+    shouldLaunchAfterPassWithHuanyuSuperdrive,
+    hasCheatLabRoundStart,
     getResearchPublicityCost,
     getStandardLaunchCost,
     getStandardScanCost,

@@ -288,6 +288,11 @@
     const AI_CHEAT_LAB_INDUSTRY_LABEL = "作弊实验室";
     const AI_CHEAT_LAB_INDUSTRY_ID = "industry:作弊实验室";
     const AI_CHEAT_LAB_INDUSTRY_SRC = "../assets/industry/异星实验室.png";
+    const AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL = "寰宇超动力";
+    const AI_HUANYU_SUPERDRIVE_INDUSTRY_ID = "industry:寰宇超动力";
+    const AI_HUANYU_SUPERDRIVE_INDUSTRY_SRC = "../assets/industry/寰宇动力.png";
+    const AI_STYLE_IDS = Object.freeze(["scanner", "route", "task", "tech", "balanced"]);
+    const AI_STYLE_SEAT_ORDER = Object.freeze(["route", "scanner", "task", "tech", "balanced"]);
     let aiStrategyWeights = { ...AI_STRATEGY_WEIGHT_DEFAULTS };
     let aiStrategyDemandCache = null;
 
@@ -960,6 +965,80 @@
       }
     }
 
+    function getOrderedAiAutoBattlePlayerIds() {
+      const aiIds = new Set(getAiAutoBattlePlayerIds());
+      const ordered = (turnState.activePlayerIds || []).filter((playerId) => aiIds.has(playerId));
+      for (const playerId of aiIds) {
+        if (!ordered.includes(playerId)) ordered.push(playerId);
+      }
+      return ordered;
+    }
+
+    function shouldForceAiHuanyuSuperdrivePlayer(playerId) {
+      const orderedAiIds = getOrderedAiAutoBattlePlayerIds();
+      return orderedAiIds.length > 0 && orderedAiIds[0] === playerId;
+    }
+
+    function getAiStyleFallbackIndex(playerId) {
+      const orderedAiIds = getOrderedAiAutoBattlePlayerIds();
+      const index = orderedAiIds.indexOf(playerId);
+      return index >= 0 ? index : 0;
+    }
+
+    function getAiSeatStyle(playerId) {
+      const index = getAiStyleFallbackIndex(playerId);
+      return AI_STYLE_SEAT_ORDER[index % AI_STYLE_SEAT_ORDER.length] || "balanced";
+    }
+
+    function inferAiStyleFromOpening(openingPlan = null, industryCard = null, player = null) {
+      const industryLabel = String(industryCard?.label || "");
+      if (industryLabel === AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL) return "route";
+
+      const summary = openingPlan?.summary || {};
+      const goals = openingPlan?.goals || {};
+      const scanScore = aiNumber(summary.scan) * 1.2 + aiNumber(summary.data) * 0.5 + aiNumber(goals.GRAB_TRACE_PINK);
+      const routeScore = aiNumber(summary.orbits) * 1.5 + aiNumber(summary.traces) + aiNumber(goals.GRAB_TRACE_YELLOW);
+      const taskScore = aiNumber(summary.hand) * 0.45 + aiNumber(summary.incomeIncreases) * 0.35 + aiNumber(goals.OPENING_INCOME) * 0.35;
+      const techScore = aiNumber(summary.credits) * 0.22 + aiNumber(summary.energy) * 0.18;
+      const scoredStyles = [
+        { id: "scanner", score: scanScore },
+        { id: "route", score: routeScore },
+        { id: "task", score: taskScore },
+        { id: "tech", score: techScore },
+      ].sort((left, right) => right.score - left.score);
+      if (scoredStyles[0]?.score >= 2.2 && scoredStyles[0].score >= scoredStyles[1]?.score + 0.45) {
+        return scoredStyles[0].id;
+      }
+      const fallback = getAiSeatStyle(player?.id);
+      return fallback || "balanced";
+    }
+
+    function createAiHuanyuSuperdriveIndustryCard(offer) {
+      const template = Array.isArray(offer?.industryOptions) ? offer.industryOptions[0] : null;
+      return {
+        id: AI_HUANYU_SUPERDRIVE_INDUSTRY_ID,
+        kind: "industry",
+        label: AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL,
+        src: AI_HUANYU_SUPERDRIVE_INDUSTRY_SRC,
+        width: template?.width || 1382,
+        height: template?.height || 1054,
+        aiOnly: true,
+      };
+    }
+
+    function ensureAiHuanyuSuperdriveIndustryOffer(offer) {
+      if (!offer) return null;
+      if (!Array.isArray(offer.industryOptions)) offer.industryOptions = [];
+      const existing = offer.industryOptions.find((card) => (
+        card?.label === AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL
+        || card?.id === AI_HUANYU_SUPERDRIVE_INDUSTRY_ID
+      ));
+      if (existing) return existing;
+      const card = createAiHuanyuSuperdriveIndustryCard(offer);
+      offer.industryOptions.push(card);
+      return card;
+    }
+
     function chooseInitialSelectionForAiPlayer() {
       if (!isInitialSelectionActive()) return null;
       const playerId = playerState.currentPlayerId;
@@ -968,9 +1047,11 @@
       }
       const offer = getInitialSelectionOffer(playerId);
       if (!offer || offer.confirmed) return { ok: false, message: "没有可用初始选择" };
-      const cheatLabCard = ensureAiCheatLabIndustryOffer(offer);
+      const forcedIndustryCard = shouldForceAiHuanyuSuperdrivePlayer(playerId)
+        ? ensureAiHuanyuSuperdriveIndustryOffer(offer)
+        : ensureAiCheatLabIndustryOffer(offer);
       const decision = ai?.policy?.chooseInitialSelection?.(offer, { roundNumber: turnState.roundNumber }) || {};
-      const industryCard = cheatLabCard || decision.industry || offer.industryOptions?.[0] || null;
+      const industryCard = forcedIndustryCard || decision.industry || offer.industryOptions?.[0] || null;
       const initialSelection = decision.initialCards?.length
         ? decision.initialCards
         : (offer.initialOptions || []).slice(0, INITIAL_SELECTION_REQUIRED.initial);
@@ -979,10 +1060,15 @@
       }
       const player = getPlayerById(playerId);
       const openingPlan = decision.openingPlan || null;
+      const aiStyle = inferAiStyleFromOpening(openingPlan, industryCard, player);
+      if (player) {
+        player.aiStyle = aiStyle;
+      }
       if (player && openingPlan) {
         player.openingPlan = {
           ...structuredClone(openingPlan),
-          forcedIndustryLabel: AI_CHEAT_LAB_INDUSTRY_LABEL,
+          forcedIndustryLabel: industryCard.label || industryCard.id || null,
+          aiStyle,
         };
       }
       offer.selectedIndustryId = industryCard.id;
@@ -996,6 +1082,7 @@
           industryCard,
           initialCards: initialSelection,
           openingPlan,
+          aiStyle,
         },
       );
       confirmInitialSelectionForCurrentPlayer();
@@ -2448,9 +2535,12 @@
           threshold: getAiNextMissingFinalScoreThreshold(player),
         })
         : 0;
-      if (finalRoundPassPenalty > 0) return -Math.max(finalRoundPassPenalty, 12);
-      if (round >= FINAL_ROUND_NUMBER && finalMarks < 3 && deficit > 0) return deficit > 25 ? -12 : -8;
-      if (round >= 3 && finalMarks < 3 && deficit > 0) return deficit > 25 ? -8 : -5;
+      const missingThreshold = getAiNextMissingFinalScoreThreshold(player);
+      if (finalRoundPassPenalty > 0) return -Math.max(finalRoundPassPenalty, finalMarks <= 1 ? 18 : 15);
+      if (round >= FINAL_ROUND_NUMBER && finalMarks < 3 && (deficit > 0 || missingThreshold)) {
+        return finalMarks <= 1 ? -18 : (deficit > 25 ? -16 : -12);
+      }
+      if (round >= 3 && finalMarks < 3 && (deficit > 0 || missingThreshold)) return deficit > 25 ? -10 : -7;
       if (round <= FINAL_ROUND_NUMBER && deficit > 25) return -4;
       if (round <= FINAL_ROUND_NUMBER && deficit > 10) return -2;
       return -0.5;
@@ -3248,6 +3338,22 @@
         && publicity >= 3
         && handSize <= 4
         && (bestPublicTradeCardScore >= 9 || desperateSecondMarkCardSearch);
+      const closeSecondMarkCardSearch = recoveryThreshold <= 50
+        && finalMarks <= 1
+        && getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && currentScore >= 43
+        && currentScore < 50
+        && (mainActionOpen || canPrepareFinalThresholdAction)
+        && publicity >= 3
+        && handSize <= 2;
+      const secondMarkEnergyCardSearch = recoveryThreshold <= 50
+        && finalMarks <= 1
+        && getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && currentScore >= 43
+        && currentScore < 50
+        && (mainActionOpen || canPrepareFinalThresholdAction)
+        && energy >= 2
+        && handSize <= 1;
       const creditsAfterCardTrade = Math.max(0, credits - 2);
       const creditCardTradeCanPayFollowup = creditsAfterCardTrade >= 1 || publicity >= 3;
       const avoidCloseSecondMarkCreditCardTrap = getAiRoundNumber() >= FINAL_ROUND_NUMBER
@@ -3258,7 +3364,12 @@
         && credits <= 0
         && handSize >= 3
         && (
-          recoveryThreshold <= 50
+          (recoveryThreshold <= 50 && (
+            energy >= scanEnergyCost
+            || canReachAnalyze
+            || bestPublicTradeCardScore >= 9
+            || currentScore >= 48
+          ))
           || currentScore >= 64
           || scoreToNextThreshold <= 8
         );
@@ -3332,6 +3443,15 @@
             : "终局缺标记：弃牌换信用点准备下一轮兑现",
         },
         {
+          tradeId: "energy-for-card",
+          enabled: secondMarkEnergyCardSearch,
+          value: baseValue
+            + 5
+            + Math.min(8, bestPublicTradeCardScore * 0.28)
+            + Math.max(0, 7 - scoreToNextThreshold) * 0.5,
+          reason: "终局第2标记：能量精选寻找得分牌",
+        },
+        {
           tradeId: "energy-for-credit",
           enabled: canScanAfterEnergyForCredit
             || (secondMarkCreditRecovery && !shouldReservePlanetCashoutEnergy)
@@ -3352,12 +3472,15 @@
           enabled: (mainActionOpen || canPrepareFinalThresholdAction) && publicity >= 3 && (
             (handSize <= 1 && hasUsefulPublicTradeCard)
             || secondMarkCardSearch
+            || closeSecondMarkCardSearch
           ),
           value: baseValue
             + (handSize <= 0 ? 4 : 2)
-            + (!secondMarkCardSearch ? Math.min(6, bestPublicTradeCardScore * 0.22) : 0)
-            + (secondMarkCardSearch ? 5 + Math.min(9, bestPublicTradeCardScore * 0.3) : 0),
-          reason: secondMarkCardSearch
+            + (!(secondMarkCardSearch || closeSecondMarkCardSearch) ? Math.min(6, bestPublicTradeCardScore * 0.22) : 0)
+            + ((secondMarkCardSearch || closeSecondMarkCardSearch)
+              ? 5 + Math.min(9, bestPublicTradeCardScore * 0.3)
+              : 0),
+          reason: secondMarkCardSearch || closeSecondMarkCardSearch
             ? "终局第2标记：宣传精选寻找得分牌"
             : "后期落后：宣传换牌恢复行动",
         },
@@ -3398,6 +3521,8 @@
               canPrepareFinalThresholdAction,
               secondMarkCreditRecovery,
               secondMarkCardSearch,
+              closeSecondMarkCardSearch,
+              secondMarkEnergyCardSearch,
               desperateSecondMarkCardSearch,
               thresholdCreditRecovery,
               secondMarkAnalyzeEnergyRecovery,
@@ -3489,6 +3614,152 @@
         return followupDirectScore > 0 ? 0.45 : 1;
       }
       return 1;
+    }
+
+    function getAiPlayerStyle(player = getCurrentPlayer()) {
+      const style = String(player?.aiStyle || "");
+      return AI_STYLE_IDS.includes(style) ? style : "balanced";
+    }
+
+    function getAiCandidateStyleActionId(rawCandidate = {}) {
+      const actionId = String(rawCandidate.id || "");
+      const planAction = String(rawCandidate.plan?.actionId || rawCandidate.followupMainAction?.actionId || "");
+      if (actionId === "move" && planAction) return planAction;
+      if (actionId === "cardCorner" && planAction) return planAction;
+      return actionId;
+    }
+
+    function getAiOpeningStyleMultiplier(rawCandidate = {}, player = getCurrentPlayer()) {
+      const style = getAiPlayerStyle(player);
+      const actionId = getAiCandidateStyleActionId(rawCandidate);
+      const effectTypes = rawCandidate.effectTypes || [];
+      const hasScanEffect = effectTypes.some((type) => isAiCardScanEffectType(type));
+      const hasTaskPlan = rawCandidate.plan?.actionId === "task" || rawCandidate.plan?.type === "card-synergy";
+      const tables = {
+        scanner: {
+          scan: 1.16,
+          analyze: 1.12,
+          placeData: 1.08,
+          playCard: hasScanEffect ? 1.1 : 0.98,
+          researchTech: 0.98,
+          land: 0.96,
+          orbit: 0.96,
+        },
+        route: {
+          launch: 1.14,
+          move: 1.1,
+          land: 1.15,
+          orbit: 1.13,
+          playCard: rawCandidate.plan?.actionId === "launch" || rawCandidate.plan?.actionId === "land" ? 1.08 : 0.98,
+          scan: 0.96,
+        },
+        task: {
+          playCard: 1.16,
+          cardCorner: 1.08,
+          quickTrade: String(rawCandidate.tradeId || "").includes("card") ? 1.08 : 1,
+          researchTech: 1.03,
+          scan: hasScanEffect ? 1.04 : 0.98,
+        },
+        tech: {
+          researchTech: 1.16,
+          playCard: hasTaskPlan ? 1.04 : 1,
+          scan: 0.98,
+          analyze: 1.03,
+          quickTrade: 1.04,
+        },
+        balanced: {
+          playCard: 1.04,
+          researchTech: 1.04,
+          analyze: 1.03,
+          land: 1.02,
+          orbit: 1.02,
+        },
+      };
+      return tables[style]?.[actionId] ?? 1;
+    }
+
+    function getAiFinalFormulaStyleMultiplier(rawCandidate = {}, markedFinalFormulas = []) {
+      if (!Array.isArray(markedFinalFormulas) || !markedFinalFormulas.length) return 1;
+      const actionId = getAiCandidateStyleActionId(rawCandidate);
+      const formulas = new Set(markedFinalFormulas.map((entry) => String(entry?.formulaId || "")));
+      let multiplier = 1;
+      if ((formulas.has("c1") || formulas.has("c2")) && ["playCard", "cardCorner", "quickTrade"].includes(actionId)) {
+        multiplier += actionId === "playCard" ? 0.12 : 0.05;
+      }
+      if ((formulas.has("d1") || formulas.has("d2")) && actionId === "researchTech") {
+        multiplier += 0.12;
+      }
+      if (formulas.has("b2") && ["land", "orbit", "scan", "move"].includes(actionId)) {
+        multiplier += actionId === "scan" ? 0.08 : 0.1;
+      }
+      if (formulas.has("b1") && ["land", "scan", "analyze"].includes(actionId)) {
+        multiplier += 0.07;
+      }
+      if ((formulas.has("a1") || formulas.has("a2")) && ["playCard", "quickTrade", "pass"].includes(actionId)) {
+        multiplier += actionId === "pass" ? 0.04 : 0.06;
+      }
+      return multiplier;
+    }
+
+    function getAiCandidateDirectScoreForFinalMark(rawCandidate = {}) {
+      return Math.max(
+        0,
+        aiNumber(rawCandidate.directScoreGain),
+        aiNumber(rawCandidate.followupMainAction?.directScoreGain),
+        aiNumber(rawCandidate.valueBreakdown?.directScoreGain),
+        aiNumber(rawCandidate.valueBreakdown?.landingDirectScoreGain),
+      );
+    }
+
+    function getAiMissingFinalMarkUrgencyMultiplier(rawCandidate = {}, player = getCurrentPlayer()) {
+      if (!player || getAiRoundNumber() < 3) return 1;
+      const threshold = getAiNextMissingFinalScoreThreshold(player);
+      if (!threshold) return 1;
+      const actionId = getAiCandidateStyleActionId(rawCandidate);
+      if (!["scan", "analyze", "playCard", "researchTech", "land", "orbit", "move"].includes(actionId)) return 1;
+      const directScoreGain = getAiCandidateDirectScoreForFinalMark(rawCandidate);
+      if (directScoreGain <= 0) return 1;
+      const currentScore = Math.max(0, aiNumber(player.resources?.score));
+      const finalMarks = countAiFinalMarksForPlayer(player);
+      let multiplier = 1;
+      if (currentScore < threshold && currentScore + directScoreGain >= threshold) {
+        multiplier += threshold >= 70 ? 0.22 : 0.17;
+      } else if (getAiRoundNumber() >= FINAL_ROUND_NUMBER && currentScore < threshold) {
+        multiplier += Math.min(0.1, directScoreGain * 0.018);
+      }
+      if (threshold >= 70 && finalMarks === 2 && ["land", "orbit", "move"].includes(actionId)) {
+        multiplier += 0.06;
+      }
+      if (threshold <= 50 && finalMarks <= 1 && ["scan", "analyze", "playCard"].includes(actionId)) {
+        multiplier += 0.06;
+      }
+      return multiplier;
+    }
+
+    function adjustAiActionGraphCandidateForStyle(rawCandidate = {}, graphCandidate = {}, player = getCurrentPlayer(), markedFinalFormulas = []) {
+      if (!graphCandidate || rawCandidate.available === false) return graphCandidate;
+      const styleMultiplier = getAiOpeningStyleMultiplier(rawCandidate, player);
+      const finalFormulaMultiplier = getAiFinalFormulaStyleMultiplier(rawCandidate, markedFinalFormulas);
+      const missingFinalMarkMultiplier = getAiMissingFinalMarkUrgencyMultiplier(rawCandidate, player);
+      const multiplier = Math.max(0.86, Math.min(1.36, styleMultiplier * finalFormulaMultiplier * missingFinalMarkMultiplier));
+      if (Math.abs(multiplier - 1) < 0.001) return graphCandidate;
+      const currentNet = aiNumber(graphCandidate.net ?? graphCandidate.breakdown?.net);
+      const adjustedNet = currentNet >= 0
+        ? currentNet * multiplier
+        : currentNet + Math.max(-2, Math.min(2, (multiplier - 1) * 6));
+      return {
+        ...graphCandidate,
+        net: roundAiScore(adjustedNet),
+        breakdown: {
+          ...(graphCandidate.breakdown || {}),
+          aiStyle: getAiPlayerStyle(player),
+          aiStyleMultiplier: roundAiScore(styleMultiplier),
+          finalFormulaStyleMultiplier: roundAiScore(finalFormulaMultiplier),
+          missingFinalMarkMultiplier: roundAiScore(missingFinalMarkMultiplier),
+          netBeforeStyle: roundAiScore(currentNet),
+          net: roundAiScore(adjustedNet),
+        },
+      };
     }
 
     function adjustAiActionGraphCandidate(rawCandidate = {}, graphCandidate = {}, player = getCurrentPlayer()) {
@@ -8567,7 +8838,7 @@
       } else if (abilityId === "sentinel_arm_play_corner") {
         score = scoreAiIndustrySentinelArm(player);
       } else if (abilityId === "huanyu_free_moves") {
-        score = -Infinity;
+        score = scoreAiIndustryHuanyuMoves();
       } else if (abilityId === "mission_publicity_pick_income") {
         score = players.canAfford(player, { publicity: industry.PUBLICITY_PICK_COST || 2 })
           ? scoreAiIndustryPublicPick(player, "industry_mission_pick") - 3
@@ -9067,12 +9338,45 @@
       };
     }
 
+    function isAiIndustryHuanyuMoveEffect(effect) {
+      return Boolean(
+        effect?.options?.industryHuanyuMoveGroupId
+        && effect.options?.requireDifferentRocketInGroup,
+      );
+    }
+
+    function getAiCompletedIndustryHuanyuMoveRocketIds(effect) {
+      const groupId = effect?.options?.industryHuanyuMoveGroupId || null;
+      if (!groupId || !state.pendingActionEffectFlow?.effects?.length) return new Set();
+      const used = new Set();
+      for (const candidate of state.pendingActionEffectFlow.effects) {
+        if (!candidate || candidate === effect || candidate.id === effect.id) continue;
+        if (candidate.options?.industryHuanyuMoveGroupId !== groupId) continue;
+        if (candidate.status !== "completed" || candidate.result?.skipped) continue;
+        const rocketId = Math.round(Number(
+          candidate.result?.payload?.rocketId
+          ?? candidate.result?.rocket?.id
+          ?? candidate.result?.rocketId,
+        ));
+        if (Number.isInteger(rocketId)) used.add(rocketId);
+      }
+      return used;
+    }
+
     function listAiEffectMoveCandidates(options = {}) {
       const currentPlayer = getCurrentPlayer();
       if (!currentPlayer) return [];
+      const effect = options.effect || getCurrentActionEffect?.() || null;
+      const usedHuanyuRocketIds = isAiIndustryHuanyuMoveEffect(effect)
+        ? getAiCompletedIndustryHuanyuMoveRocketIds(effect)
+        : null;
       return getMovableTokensForPlayer(currentPlayer.id)
+        .filter((rocket) => !usedHuanyuRocketIds?.has(Number(rocket.id)))
         .flatMap((rocket, index) => AI_MOVE_DIRECTIONS
-          .map((direction) => buildAiEffectMoveCandidate(rocket, direction, index, options))
+          .map((direction) => buildAiEffectMoveCandidate(rocket, direction, index, {
+            ...options,
+            effect,
+          }))
           .filter(Boolean));
     }
 
@@ -10685,9 +10989,9 @@
           Math.min(scanScore, Math.max(0, bestEarlyMoveScore - 3)),
         );
       }
-      const routeCashoutMoveScore = getAiRoundNumber() === 3
-        && Math.max(0, aiNumber(currentPlayer?.resources?.energy)) <= 2
-        && bestMoveScore >= 20
+      const routeCashoutMoveScore = getAiRoundNumber() >= 3
+        && Math.max(0, aiNumber(currentPlayer?.resources?.energy)) <= 3
+        && bestMoveScore >= 16
         && scanScore <= bestMoveScore + 3
         ? bestMoveScore
         : 0;
@@ -10972,7 +11276,12 @@
         : null;
       const graphAdjustedCandidates = Array.isArray(graphCandidates) && graphCandidates.length === rawCandidates.length
         ? graphCandidates.map((candidate, index) => {
-          const adjustedCandidate = adjustAiActionGraphCandidate(rawCandidates[index], candidate, currentPlayer);
+          const adjustedCandidate = adjustAiActionGraphCandidateForStyle(
+            rawCandidates[index],
+            adjustAiActionGraphCandidate(rawCandidates[index], candidate, currentPlayer),
+            currentPlayer,
+            markedFinalFormulas,
+          );
           return {
             ...rawCandidates[index],
             actionGraph: {

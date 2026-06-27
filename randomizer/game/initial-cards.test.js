@@ -157,6 +157,28 @@ function initialCard(number) {
   const context = createContext();
   const player = currentPlayer(context);
 
+  const result = initialCards.resolveIndustryEffect(context, player, { label: "寰宇超动力" });
+
+  assert.equal(result.ok, true);
+  assert.equal(player.resources.credits, 2);
+  assert.equal(player.resources.energy, 2);
+  assert.equal(player.resources.publicity, 3);
+  assert.equal(context.launches.length, 2);
+  assert.equal(result.incomeIncreaseCount, 2);
+  assert.deepEqual(player.income, {
+    credits: 3,
+    energy: 1,
+    handSize: 1,
+    publicity: 0,
+    availableData: 0,
+    additionalPublicScan: 0,
+  });
+}
+
+{
+  const context = createContext();
+  const player = currentPlayer(context);
+
   const result = initialCards.resolveInitialCardEffect(context, player, initialCard(3));
 
   assert.equal(result.ok, true);
