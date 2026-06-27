@@ -21378,6 +21378,8 @@
       startCardEffectFlow("banrenma-condition-effects", `半人马条件：${cards.getCardLabel(removedCard)}`, effects, {
         actionType: "banrenmaCondition",
         card: removedCard,
+        historySource: HISTORY_SOURCE_QUICK,
+        consumesMainAction: false,
       });
     } else {
       queueBanrenmaOpportunitiesForPlayer(player);
