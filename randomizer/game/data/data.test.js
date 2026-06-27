@@ -334,4 +334,14 @@ const playerWithoutData = players.createPlayer({ color: "green" });
 data.renderPlayerDataTokens(playerWithoutData, staleLayer);
 assert.equal(staleLayer.querySelectorAll(".data-token-pool").length, 0);
 
+const recoveredDataPlayer = players.createPlayer({
+  color: "brown",
+  resources: { availableData: 2 },
+});
+assert.equal(data.listPoolTokens(recoveredDataPlayer).length, 2);
+assert.equal(recoveredDataPlayer.resources.availableData, 2);
+const recoveredLayer = createFakeLayer();
+data.renderPlayerDataTokens(recoveredDataPlayer, recoveredLayer);
+assert.equal(recoveredLayer.querySelectorAll(".data-token-pool").length, 2);
+
 console.log("data.test.js: all tests passed");

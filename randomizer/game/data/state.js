@@ -34,6 +34,12 @@
     return { poolTokens: [], placedTokens: [], discardedCount: 0 };
   }
 
+  function rememberDataTokenSequence(id) {
+    const match = /^data-token-(?:recovered-)?(\d+)$/.exec(String(id || ""));
+    if (!match) return;
+    dataTokenSequence = Math.max(dataTokenSequence, Math.round(Number(match[1])) || 0);
+  }
+
   function getPlacementKind(token) {
     return token?.placementKind === PLACEMENT_KIND_BLUE_BONUS
       ? PLACEMENT_KIND_BLUE_BONUS
@@ -42,6 +48,7 @@
 
   function normalizePoolToken(token, index) {
     const source = token || {};
+    rememberDataTokenSequence(source.id);
     const slotIndex = Number(source.slotIndex);
     const layout = placement.getDataPoolSlotLayout(slotIndex);
     return {
@@ -55,6 +62,7 @@
 
   function normalizePlacedToken(token, index) {
     const source = token || {};
+    rememberDataTokenSequence(source.id);
     const placementKind = getPlacementKind(source);
 
     if (placementKind === PLACEMENT_KIND_BLUE_BONUS) {
@@ -92,11 +100,53 @@
     };
   }
 
+  function getExpectedPoolTokenCount(player) {
+    return Math.max(
+      0,
+      Math.min(
+        players.RESOURCE_LIMITS.availableData,
+        Math.round(Number(player?.resources?.availableData) || 0),
+      ),
+    );
+  }
+
+  function findNextOpenPoolSlotIndexInState(dataState) {
+    const occupied = new Set((dataState.poolTokens || []).map((token) => Number(token.slotIndex)));
+    for (const slotIndex of placement.DATA_POOL_SLOT_IDS) {
+      if (!occupied.has(slotIndex)) return slotIndex;
+    }
+    return null;
+  }
+
+  function createRecoveredPoolToken(dataState, slotIndex) {
+    dataTokenSequence += 1;
+    return normalizePoolToken({
+      id: `data-token-recovered-${dataTokenSequence}`,
+      index: getNextDataIndex(dataState),
+      slotIndex,
+    }, dataState.poolTokens.length);
+  }
+
+  function backfillPoolTokensFromResource(player, dataState) {
+    const targetCount = getExpectedPoolTokenCount(player);
+    while (dataState.poolTokens.length < targetCount) {
+      const slotIndex = findNextOpenPoolSlotIndexInState(dataState);
+      if (!slotIndex) return;
+      dataState.poolTokens.push(createRecoveredPoolToken(dataState, slotIndex));
+    }
+  }
+
   function ensurePlayerDataState(player) {
+    let shouldBackfillFromResource = false;
     if (!player.dataState) {
       player.dataState = createDefaultDataState();
-    } else if (!Array.isArray(player.dataState.poolTokens)) {
+      shouldBackfillFromResource = true;
+    } else if (!Array.isArray(player.dataState.poolTokens) || !Array.isArray(player.dataState.placedTokens)) {
       player.dataState = normalizeDataState(player.dataState);
+      shouldBackfillFromResource = true;
+    }
+    if (shouldBackfillFromResource) {
+      backfillPoolTokensFromResource(player, player.dataState);
     }
     return player.dataState;
   }

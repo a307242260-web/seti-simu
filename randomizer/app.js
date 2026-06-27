@@ -2330,6 +2330,7 @@
     configureDefaultAiOpponent();
     applyStartScreenOptions();
     closeStartScreen();
+    refreshAfterGameRecovery("已恢复上次保存的局面");
     schedulePersistentGameStateSave({ label: "继续后状态" });
   }
 
@@ -20916,6 +20917,7 @@
     }
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = Boolean(opportunity);
 
+    const isRevealOpportunity = opportunity?.reason === "reveal";
     const nodes = cardsForPlayer.map((card) => {
       const status = getJiuzheCardConditionLabel(card, player);
       const button = document.createElement("button");
@@ -20923,6 +20925,7 @@
       button.className = "scan-target-option-button jiuzhe-card-option";
       button.dataset.jiuzheCardChoice = String(card.index);
       button.disabled = !opportunity || card.played;
+      button.classList.toggle("is-reveal-opportunity", Boolean(isRevealOpportunity));
       button.classList.toggle("is-played", Boolean(card.played));
       button.classList.toggle("is-achieved", Boolean(status.achieved));
       button.innerHTML = `

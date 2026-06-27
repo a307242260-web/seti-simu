@@ -538,6 +538,9 @@
         closeJiuzheCardDialog();
         return;
       }
+      if (state.pendingJiuzheCardPlay) {
+        return;
+      }
       if (state.pendingStrategyPassiveSlotChoice) {
         cancelStrategyPassiveSlotChoice();
         return;
@@ -604,6 +607,9 @@
         }
         if (state.pendingJiuzheCardPlay?.reason === "view") {
           closeJiuzheCardDialog();
+          return;
+        }
+        if (state.pendingJiuzheCardPlay) {
           return;
         }
         if (state.pendingStrategyPassiveSlotChoice) {

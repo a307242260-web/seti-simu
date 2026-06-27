@@ -4642,7 +4642,7 @@ button.spin-button:hover {
   opacity: 1;
 }
 
-.jiuzhe-card-option[data-jiuzhe-card-choice]:not(.is-played):not(.is-achieved) .jiuzhe-card-option-image {
+.jiuzhe-card-option[data-jiuzhe-card-choice]:not(.is-reveal-opportunity):not(.is-played):not(.is-achieved) .jiuzhe-card-option-image {
   filter: brightness(0.58) saturate(0.78);
 }
 

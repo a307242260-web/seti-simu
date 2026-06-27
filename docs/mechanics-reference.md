@@ -27,7 +27,7 @@
 - 起始手牌：每名玩家开局从 140 张普通牌和 42 张 DLC 牌组成的牌库中随机盲抽 4 张，不按牌库前几张固定发牌。
 - 公共牌区：进入初始选择时立即补满 3 张公共牌，玩家选择公司和初始牌时即可看到这 3 张牌。
 - `techState`：玩家已拥有科技 `ownedTiles`，以及蓝色科技放置位 `blueBoardSlots`。
-- `dataState`：由数据模块懒初始化，包含 `poolTokens`、`placedTokens`、`discardedCount`。
+- `dataState`：由数据模块懒初始化，包含 `poolTokens`、`placedTokens`、`discardedCount`；恢复旧存档或不完整快照时，若 `resources.availableData` 大于数据池 token 数，会按可用数据数量补齐 `poolTokens` 以保持状态栏和玩家面板一致。
 - `orbitCount`：玩家已完成环绕数量。
 - `initialSelection`：初始选择确认后写入，记录已选公司牌与已移出游戏的初始牌图片信息；保留牌区只展示公司牌。
 
