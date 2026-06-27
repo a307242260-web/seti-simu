@@ -38,6 +38,52 @@ assert.equal(valuation.getIncomeNetValue({ credits: 1 }, {
   usePhaseResourceValues: true,
   hand: [{ label: "low" }, { label: "alien:strong", alienCard: true }],
 }), 12);
+const earlyCreditIncomeFit = valuation.estimateIncomeStrategicAdjustment({ credits: 1 }, {
+  roundNumber: 1,
+  currentIncome: { credits: 2, energy: 1, handSize: 2 },
+  currentResources: { credits: 1, energy: 2, handSize: 3 },
+});
+const earlyExtraHandIncomeFit = valuation.estimateIncomeStrategicAdjustment({ handSize: 1 }, {
+  roundNumber: 1,
+  currentIncome: { credits: 2, energy: 1, handSize: 2 },
+  currentResources: { credits: 1, energy: 2, handSize: 3 },
+});
+const firstHandIncomeFit = valuation.estimateIncomeStrategicAdjustment({ handSize: 1 }, {
+  roundNumber: 1,
+  currentIncome: { credits: 4, energy: 2, handSize: 0 },
+  currentResources: { credits: 4, energy: 2, handSize: 1 },
+});
+assert.ok(earlyCreditIncomeFit > 0);
+assert.ok(earlyExtraHandIncomeFit < 0);
+assert.ok(earlyCreditIncomeFit > earlyExtraHandIncomeFit + 8);
+assert.ok(firstHandIncomeFit > earlyExtraHandIncomeFit + 5);
+const earlyHighCostScorePenalty = valuation.estimateHighCostPointConversionPenalty({
+  roundNumber: 1,
+  currentScore: 10,
+  finalMarkCount: 0,
+  currentResources: { credits: 1, energy: 1, handSize: 2 },
+  directScore: 15,
+  payData: 3,
+});
+const lateHighCostScorePenalty = valuation.estimateHighCostPointConversionPenalty({
+  roundNumber: 4,
+  currentScore: 60,
+  finalMarkCount: 2,
+  currentResources: { credits: 4, energy: 4, handSize: 4 },
+  directScore: 15,
+  payData: 3,
+});
+const crossingHighCostScorePenalty = valuation.estimateHighCostPointConversionPenalty({
+  roundNumber: 3,
+  currentScore: 47,
+  finalMarkCount: 1,
+  currentResources: { credits: 3, energy: 3, handSize: 4 },
+  directScore: 15,
+  payData: 3,
+});
+assert.ok(earlyHighCostScorePenalty > 12);
+assert.equal(lateHighCostScorePenalty, 0);
+assert.ok(crossingHighCostScorePenalty < earlyHighCostScorePenalty);
 assert.deepStrictEqual(valuation.getLaunchPaymentCost(), { credits: 2 });
 assert.deepStrictEqual(valuation.getLaunchPaymentCost({ skipCost: true }), {});
 assert.deepStrictEqual(valuation.getLaunchPaymentCost({ cost: { energy: 1, credits: 0 } }), { energy: 1 });
@@ -666,7 +712,7 @@ assert.deepEqual(policy.chooseDiscardIndexes([
     { credits: 1 },
     { handSize: 1 },
   ],
-}), [2]);
+}), [1]);
 assert.deepEqual(policy.chooseDiscardIndexes([
   { label: "energy income" },
   { label: "credit income" },
@@ -678,7 +724,7 @@ assert.deepEqual(policy.chooseDiscardIndexes([
     1: { credits: 1 },
     2: { handSize: 1 },
   },
-}), [2, 0]);
+}), [1, 0]);
 assert.equal(policy.chooseAlienUseOption([
   { choice: "displayed", disabled: true },
   { choice: "blind" },

@@ -216,6 +216,112 @@
     return getIncomeNetValue(income, options);
   }
 
+  function estimateIncomeStrategicAdjustment(incomeGain = {}, options = {}) {
+    if (!incomeGain || typeof incomeGain !== "object") return 0;
+    const round = Math.max(1, Math.round(numeric(options.roundNumber) || 1));
+    const currentIncome = options.currentIncome || options.income || {};
+    const resources = options.currentResources || options.resources || options.player?.resources || {};
+    const creditIncome = Math.max(0, numeric(currentIncome.credits));
+    const energyIncome = Math.max(0, numeric(currentIncome.energy));
+    const handIncome = Math.max(0, numeric(currentIncome.handSize));
+    const credits = Math.max(0, numeric(resources.credits));
+    const energy = Math.max(0, numeric(resources.energy));
+    const handSize = Math.max(0, numeric(resources.handSize ?? options.player?.hand?.length));
+    const hasIncomeFinalFormula = Boolean(options.hasIncomeFinalFormula);
+    const hasA2FinalFormula = Boolean(options.hasA2FinalFormula);
+    const early = round <= 2;
+    const mid = round === 3;
+    let value = 0;
+
+    const creditGain = Math.max(0, numeric(incomeGain.credits));
+    if (creditGain > 0) {
+      value += creditGain * (early ? 3.2 : mid ? 1.25 : 0.25);
+      value += creditGain * Math.max(0, 4 - creditIncome) * (early ? 1.7 : mid ? 0.65 : 0.2);
+      value += creditGain * Math.max(0, 3 - credits) * (early ? 1.25 : mid ? 0.45 : 0.15);
+    }
+
+    const energyGain = Math.max(0, numeric(incomeGain.energy));
+    if (energyGain > 0) {
+      value += energyGain * (early ? 1.7 : mid ? 0.9 : 0.25);
+      value += energyGain * Math.max(0, 2 - energyIncome) * (early ? 1.45 : mid ? 0.75 : 0.2);
+      value += energyGain * Math.max(0, 2 - energy) * (early ? 1.1 : mid ? 0.45 : 0.15);
+      if (energyIncome >= 3 && early) value -= energyGain * (energyIncome - 2) * 1.35;
+    }
+
+    const handGain = Math.max(0, numeric(incomeGain.handSize));
+    if (handGain > 0) {
+      if (handIncome < 2) {
+        value += handGain * (2 - handIncome) * (early ? 2.1 : mid ? 1.15 : 0.35);
+        value += handGain * Math.max(0, 2 - handSize) * (early ? 0.9 : 0.35);
+      } else {
+        let penalty = handGain * (
+          (early ? 7.5 : mid ? 4 : 1.2)
+          + Math.max(0, handIncome - 2) * (early ? 3 : mid ? 1.4 : 0.5)
+        );
+        if (early) {
+          penalty += handGain * Math.max(0, 3 - creditIncome) * 1.5;
+          penalty += handGain * Math.max(0, 2 - credits) * 1.1;
+        }
+        if (hasA2FinalFormula && handIncome <= Math.min(creditIncome, energyIncome)) {
+          penalty *= 0.45;
+        } else if (hasIncomeFinalFormula) {
+          penalty *= 0.7;
+        }
+        value -= penalty;
+      }
+    }
+
+    return roundValue(value);
+  }
+
+  function estimateHighCostPointConversionPenalty(options = {}) {
+    const directScore = Math.max(0, numeric(options.directScore ?? options.scoreGain));
+    const payData = Math.max(0, numeric(options.payData));
+    const energyCost = Math.max(0, numeric(options.energyCost ?? options.cost?.energy));
+    const creditsCost = Math.max(0, numeric(options.creditsCost ?? options.cost?.credits));
+    const highScoreTarget = Boolean(options.highScoreTarget) || directScore >= 20;
+    if (directScore < 12 && payData < 3 && !highScoreTarget) return 0;
+
+    const round = Math.max(1, Math.round(numeric(options.roundNumber) || 1));
+    const finalRound = Math.max(1, Math.round(numeric(options.finalRoundNumber) || FINAL_ROUND_NUMBER));
+    if (round >= finalRound) return 0;
+
+    const resourceValues = getPhaseResourceValues(round, {
+      resourceValues: options.resourceValues || RESOURCE_VALUES,
+      useEarlyResourcePremium: options.useEarlyResourcePremium,
+      earlyResourceValues: options.earlyResourceValues,
+    });
+    const costValue = payData * numeric(resourceValues.availableData || RESOURCE_VALUES.availableData)
+      + energyCost * numeric(resourceValues.energy || RESOURCE_VALUES.energy)
+      + creditsCost * numeric(resourceValues.credits || RESOURCE_VALUES.credits);
+    const resources = options.currentResources || options.resources || options.player?.resources || {};
+    const credits = Math.max(0, numeric(resources.credits));
+    const energy = Math.max(0, numeric(resources.energy));
+    const handSize = Math.max(0, numeric(resources.handSize ?? options.player?.hand?.length));
+    const currentScore = Math.max(0, numeric(options.currentScore ?? resources.score));
+    const finalMarkCount = Math.max(0, Math.round(numeric(options.finalMarkCount ?? options.player?.finalMarkCount)));
+    const threshold = options.threshold
+      ? Math.max(0, numeric(options.threshold))
+      : getNextMissingFinalScoreThreshold(currentScore, finalMarkCount);
+    const crossesThreshold = Boolean(threshold && currentScore < threshold && currentScore + directScore >= threshold);
+
+    const roundBase = round <= 1 ? 13 : round === 2 ? 10 : 4.5;
+    const costWeight = round <= 1 ? 0.32 : round === 2 ? 0.24 : 0.12;
+    const scoreWeight = directScore >= 20
+      ? (round <= 2 ? 0.22 : 0.08)
+      : (round <= 2 ? 0.12 : 0.04);
+    let penalty = roundBase + costValue * costWeight + Math.max(0, directScore - 12) * scoreWeight;
+
+    if (payData >= 3) penalty += round <= 1 ? 4 : round === 2 ? 3 : 1.2;
+    if (energyCost >= 3) penalty += round <= 1 ? 3.5 : round === 2 ? 2.4 : 1;
+    if (credits <= 2 && energy <= 2 && handSize <= 3) penalty += round <= 2 ? 4 : 1.5;
+    if (crossesThreshold) penalty *= round <= 2 ? 0.58 : 0.35;
+    if (options.engineReward === true) penalty *= 0.7;
+
+    const cap = directScore >= 20 ? (round <= 2 ? 26 : 11) : (round <= 2 ? 22 : 9);
+    return roundValue(Math.min(cap, Math.max(0, penalty)));
+  }
+
   function getPlayerFromState(state = {}, playerId) {
     return (state.playerState?.players || state.players || [])
       .find((player) => player?.id === playerId)
@@ -673,6 +779,8 @@
     getIncomeRawValue,
     getIncomeNetValue,
     getIncomeValue,
+    estimateIncomeStrategicAdjustment,
+    estimateHighCostPointConversionPenalty,
     estimateAlienTraceValue,
     getNextMissingFinalScoreThreshold,
     estimateFinalMarkCashoutValue,

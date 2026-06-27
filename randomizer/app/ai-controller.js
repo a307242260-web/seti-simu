@@ -2548,7 +2548,7 @@
         : Math.max(0, Math.round(aiNumber(routeTarget?.newDistance)));
       if (distance > 1) return false;
       const opportunity = getAiBestSatelliteLandingOpportunity(targetPlanetId, player);
-      if (!opportunity || opportunity.directScore < 10) return false;
+      if (!opportunity || opportunity.directScore < 10 || aiNumber(opportunity.score) <= 0) return false;
       const requiredMovePoints = Math.max(0, Math.round(aiNumber(options.requiredMovePoints ?? MOVE_ENERGY_COST)));
       const currentEnergy = Math.max(0, Math.round(aiNumber(player?.resources?.energy)));
       const energyAfterDefaultPayment = Math.max(0, currentEnergy - Math.min(currentEnergy, requiredMovePoints));
@@ -4381,27 +4381,48 @@
       const incomeUseScale = remainingIncomeUses > 0 ? 1 : 0;
       const earlyPressure = getAiEarlyEnginePressure(player);
       const resources = player?.resources || {};
+      const income = player?.income || {};
+      const incomeFormulaEntries = getAiIncomeFinalFormulaEntries(player);
+      const strategicIncomeFit = ai?.valuation?.estimateIncomeStrategicAdjustment
+        ? ai.valuation.estimateIncomeStrategicAdjustment(gain, {
+          roundNumber: getAiRoundNumber(),
+          finalRoundNumber: FINAL_ROUND_NUMBER,
+          currentIncome: income,
+          currentResources: resources,
+          player,
+          hasIncomeFinalFormula: incomeFormulaEntries.length > 0,
+          hasA2FinalFormula: incomeFormulaEntries.some((entry) => entry.formulaId === "a2"),
+          resourceValues: getAiResourceValuesForRound(),
+        }) * incomeUseScale
+        : 0;
       const creditNeed = aiNumber(gain.credits) > 0
-        ? Math.max(0, 4 - aiNumber(resources.credits)) * (getAiRoundNumber() <= 2 ? 0.9 : 0.35) * incomeUseScale
+        ? (
+          Math.max(0, 5 - aiNumber(resources.credits)) * (getAiRoundNumber() <= 2 ? 1.25 : 0.42)
+          + Math.max(0, 4 - aiNumber(income.credits)) * (getAiRoundNumber() <= 2 ? 1.15 : 0.35)
+        ) * incomeUseScale
         : 0;
       const energyNeed = aiNumber(gain.energy) > 0
-        ? Math.max(0, 4 - aiNumber(resources.energy)) * (getAiRoundNumber() <= 2 ? 1.35 : 0.75) * incomeUseScale
+        ? Math.max(0, 3 - aiNumber(resources.energy)) * (getAiRoundNumber() <= 2 ? 0.95 : 0.7) * incomeUseScale
         : 0;
       const handNeed = aiNumber(gain.handSize) > 0
         ? (
-          Math.max(0, 5 - aiNumber(resources.handSize)) * (getAiRoundNumber() <= 2 ? 1.15 : 0.72)
-          + Math.max(0, 3 - aiNumber(player?.income?.handSize)) * (getAiRoundNumber() <= 2 ? 2.2 : 1.35)
-          + Math.max(0, 2 - (player?.hand || []).length) * 1.1
+          Math.max(0, 4 - aiNumber(resources.handSize)) * (getAiRoundNumber() <= 2 ? 0.75 : 0.55)
+          + Math.max(0, 2 - aiNumber(income.handSize)) * (getAiRoundNumber() <= 2 ? 1.7 : 0.9)
+          + Math.max(0, 2 - (player?.hand || []).length) * 0.9
         ) * incomeUseScale
         : 0;
-      const income = player?.income || {};
       const energyIncomeBalance = aiNumber(gain.energy) > 0
         ? Math.max(0, Math.max(aiNumber(income.credits), aiNumber(income.handSize)) - aiNumber(income.energy))
           * (getAiRoundNumber() <= 2 ? 0.7 : 0.35) * incomeUseScale
         : 0;
       const handIncomeBalance = aiNumber(gain.handSize) > 0
-        ? Math.max(0, Math.max(aiNumber(income.credits), aiNumber(income.energy)) - aiNumber(income.handSize))
-          * (getAiRoundNumber() <= 2 ? 1.25 : 0.8) * incomeUseScale
+        ? Math.max(0, Math.min(2, Math.max(aiNumber(income.credits), aiNumber(income.energy))) - aiNumber(income.handSize))
+          * (getAiRoundNumber() <= 2 ? 0.75 : 0.45) * incomeUseScale
+        : 0;
+      const handIncomeOversupplyPenalty = aiNumber(gain.handSize) > 0
+        ? Math.max(0, aiNumber(income.handSize) - 1)
+          * (getAiRoundNumber() <= 2 ? 5.5 : getAiRoundNumber() === 3 ? 2.4 : 0.8)
+          * incomeUseScale
         : 0;
       const creditSurplusPenalty = aiNumber(gain.credits) > 0
         ? Math.max(
@@ -4427,7 +4448,9 @@
           + handIncomeBalance
           + earlyIncomeTargetBonus
           + markedFinalValue
-          - creditSurplusPenalty,
+          + strategicIncomeFit
+          - creditSurplusPenalty
+          - handIncomeOversupplyPenalty,
       );
     }
 
@@ -6110,6 +6133,55 @@
       return { firstTrace, yellowLandingPressure };
     }
 
+    function scoreAiHighCostPointConversionPenalty(player = getCurrentPlayer(), options = {}) {
+      if (!player || !ai?.valuation?.estimateHighCostPointConversionPenalty) return 0;
+      return ai.valuation.estimateHighCostPointConversionPenalty({
+        ...options,
+        player,
+        currentResources: player.resources || {},
+        currentScore: player.resources?.score,
+        finalMarkCount: countAiFinalMarksForPlayer(player),
+        roundNumber: getAiRoundNumber(),
+        finalRoundNumber: FINAL_ROUND_NUMBER,
+        threshold: getAiNextMissingFinalScoreThreshold(player),
+        resourceValues: getAiResourceValuesForRound(),
+      });
+    }
+
+    function isAiOuterHighScoreSatelliteTarget(planetId, target = {}) {
+      return target?.type === "satellite" && (planetId === "uranus" || planetId === "neptune");
+    }
+
+    function canAiOpponentContestSatelliteNow(opponent, planetId) {
+      if (!opponent || !planetId || !players.playerOwnsTech(opponent, "orange4", createActionContext())) return false;
+      if (!(planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planetId) || []).length) return false;
+      const energyCost = abilities.planet.getLandEnergyCost(createActionContext(), planetId);
+      if (!players.canAfford(opponent, energyCost > 0 ? { energy: energyCost } : {})) return false;
+      return getMovableTokensForPlayer(opponent.id).some((rocket) => {
+        const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
+        return getAiPlanetAtCoordinate(coordinate)?.planetId === planetId;
+      });
+    }
+
+    function getAiOuterSatelliteContestPressure(planetId, player = getCurrentPlayer()) {
+      if (!planetId || !player) return 0;
+      return getAiPrecedingOpponentIds(player).reduce((total, playerId) => {
+        const opponent = (playerState.players || []).find((entry) => String(entry.id) === String(playerId));
+        return total + (canAiOpponentContestSatelliteNow(opponent, planetId) ? 1 : 0);
+      }, 0);
+    }
+
+    function scoreAiOuterSatelliteContestRiskPenalty(planetId, target = {}, player = getCurrentPlayer(), options = {}) {
+      if (!isAiOuterHighScoreSatelliteTarget(planetId, target)) return 0;
+      if (options.immediate === true) return 0;
+      const pressure = getAiOuterSatelliteContestPressure(planetId, player);
+      if (pressure <= 0) return 0;
+      const directScore = Math.max(0, aiNumber(options.directScore));
+      const round = getAiRoundNumber();
+      const base = round <= 2 ? 11 : round === 3 ? 7 : 3.5;
+      return Math.min(24, pressure * base + (directScore >= 20 ? 4 : 0));
+    }
+
     function getAiYellowTraceLandCompetitionPenalty(planetId, target = { type: "planet" }, player = getCurrentPlayer()) {
       const traceTypes = getAiRewardTraceTypes(getAiLandRewardEffectsForTarget(planetId, target));
       if (!traceTypes.includes("yellow")) return 0;
@@ -6236,9 +6308,22 @@
           const effects = planetRewards.buildSatelliteLandRewardEffects?.(satellite.satelliteId) || [];
           const rewardValue = scoreAiRewardEffects(effects, player);
           const directScore = getAiRewardDirectScore(effects, player);
+          const target = { type: "satellite", satelliteId: satellite.satelliteId };
           const highScorePremium = Math.max(0, directScore - 12) * 0.45;
           const pacePremium = Math.min(6, getAiLiveScorePaceDeficit(player) * (getAiRoundNumber() >= 3 ? 0.13 : 0.05));
           const affordability = energyShortfall <= 0 ? 4 : -Math.min(8, energyShortfall * 2.4);
+          const pointConversionPenalty = scoreAiHighCostPointConversionPenalty(player, {
+            actionId: "satelliteLand",
+            planetId,
+            target,
+            directScore,
+            energyCost,
+            highScoreTarget: directScore >= 20,
+          });
+          const contestRiskPenalty = scoreAiOuterSatelliteContestRiskPenalty(planetId, target, player, {
+            directScore,
+            immediate: options.immediate === true,
+          });
           return {
             planetId,
             satelliteId: satellite.satelliteId,
@@ -6247,7 +6332,15 @@
             directScore,
             energyCost,
             energyShortfall,
-            score: rewardValue * 0.55 + directScore * 0.22 + highScorePremium + pacePremium + affordability,
+            pointConversionPenalty,
+            contestRiskPenalty,
+            score: rewardValue * 0.55
+              + directScore * 0.22
+              + highScorePremium
+              + pacePremium
+              + affordability
+              - pointConversionPenalty
+              - contestRiskPenalty,
           };
         })
         .filter((entry) => Number.isFinite(Number(entry.score)) && entry.rewardValue > 0)
@@ -6295,9 +6388,19 @@
     }
 
     function scoreAiBestLandRewardValueForPlanet(planetId, player = getCurrentPlayer()) {
+      const planetRewardValue = scoreAiLandRewardValueForTarget(planetId, { type: "planet" }, player);
+      const satelliteOpportunity = getAiBestSatelliteLandingOpportunity(planetId, player);
+      const satelliteRewardValue = satelliteOpportunity && aiNumber(satelliteOpportunity.score) > 0
+        ? Math.max(
+          0,
+          aiNumber(satelliteOpportunity.rewardValue)
+            - aiNumber(satelliteOpportunity.pointConversionPenalty) * 0.9
+            - aiNumber(satelliteOpportunity.contestRiskPenalty) * 1.15,
+        )
+        : 0;
       return Math.max(
-        scoreAiLandRewardValueForTarget(planetId, { type: "planet" }, player),
-        scoreAiBestSatelliteLandRewardValue(planetId, player),
+        planetRewardValue,
+        satelliteRewardValue,
       );
     }
 
@@ -6371,6 +6474,19 @@
       const yellowTracePenalty = getAiYellowTraceLandCompetitionPenalty(planetId, choice.target, player);
       const deferredTracePenalty = scoreAiDeferredAlienTraceRewardPenalty(rewardEffects, player);
       const reservePenalty = scoreAiResourceReservePenaltyForCost(player, { energy: energyCost }, { actionId: "land" });
+      const directScoreGain = getAiLandDirectScoreGainForTarget(planetId, choice.target, player);
+      const pointConversionPenalty = scoreAiHighCostPointConversionPenalty(player, {
+        actionId: "land",
+        planetId,
+        target: choice.target,
+        directScore: directScoreGain,
+        energyCost,
+        highScoreTarget: choice.target?.type === "satellite" && directScoreGain >= 20,
+      });
+      const contestRiskPenalty = scoreAiOuterSatelliteContestRiskPenalty(planetId, choice.target, player, {
+        directScore: directScoreGain,
+        immediate: true,
+      });
       const markerValue = aiNumber(scoreAiPlanetMarkerEndGameValue(planetId, player, {
           markerKind: choice.target?.type === "satellite" ? "satellite" : "land",
           target: choice.target,
@@ -6383,7 +6499,9 @@
         - energyCost * getAiResourceValuesForRound(player).energy * 0.3
         - yellowTracePenalty
         - deferredTracePenalty
-        - reservePenalty;
+        - reservePenalty
+        - pointConversionPenalty
+        - contestRiskPenalty;
     }
 
     function chooseAiLandChoice(choices = [], player = getCurrentPlayer()) {
@@ -6425,7 +6543,12 @@
         const landRewardValue = scoreAiBestLandRewardValueForPlanet(planet.planetId, player);
         const planetLandDirectScore = getAiLandDirectScoreGainForTarget(planet.planetId, { type: "planet" }, player);
         const satelliteOpportunity = getAiBestSatelliteLandingOpportunity(planet.planetId, player);
-        const bestLandDirectScore = Math.max(planetLandDirectScore, aiNumber(satelliteOpportunity?.directScore));
+        const satelliteDirectScore = satelliteOpportunity && aiNumber(satelliteOpportunity.score) > 0
+          ? aiNumber(satelliteOpportunity.directScore)
+          : 0;
+        const bestLandDirectScore = Math.max(planetLandDirectScore, satelliteDirectScore);
+        const satelliteRoutePenalty = aiNumber(satelliteOpportunity?.pointConversionPenalty) * 0.45
+          + aiNumber(satelliteOpportunity?.contestRiskPenalty) * 0.9;
         const canAffordLand = players.canAfford(player, landEnergyCost > 0 ? { energy: landEnergyCost } : {});
         const energyShortfall = Math.max(0, landEnergyCost - Math.max(0, aiNumber(resources.energy)));
         const landDirectAffordability = canAffordLand ? 1 : Math.max(0.12, 0.55 - energyShortfall * 0.16);
@@ -6435,6 +6558,7 @@
         value += landRewardValue * (round <= 2 ? 0.52 : 0.42);
         if (canAffordLand) value += 3;
         else value -= Math.min(6, energyShortfall * (round >= 3 ? 2 : 1.4));
+        value -= satelliteRoutePenalty;
         value -= getAiYellowTraceLandCompetitionPenalty(planet.planetId, { type: "planet" }, player) * 0.6;
         value -= scoreAiResourceReservePenaltyForCost(player, { energy: landEnergyCost }, { actionId: "land" }) * 0.35;
       }
@@ -7784,6 +7908,14 @@
         directScoreGain,
         currentPlayer,
       ));
+      const pointConversionPenalty = aiNumber(scoreAiHighCostPointConversionPenalty(currentPlayer, {
+        actionId: "land",
+        planetId: candidate.planetId,
+        target: regularBestChoice?.choice?.target || { type: "planet" },
+        directScore: directScoreGain,
+        energyCost,
+        highScoreTarget: regularBestChoice?.choice?.target?.type === "satellite" && directScoreGain >= 20,
+      }));
       const rawScore = 12
         + (candidate.planetId === "mars" || candidate.planetId === "venus" ? 1.5 : 0)
         + rewardValue * rewardWeight
@@ -7798,7 +7930,8 @@
         - energyCost * getAiResourceValuesForRound(currentPlayer).energy * 0.35
         - fallbackReservePenalty
         - fallbackYellowTracePenalty
-        - orbitOpportunityPenalty;
+        - orbitOpportunityPenalty
+        - pointConversionPenalty;
       if (Number.isFinite(Number(rawScore))) return rawScore;
       return 12
         + Math.max(0, aiNumber(directScoreGain)) * (round >= 3 ? 1.1 : 0.8)
@@ -10681,6 +10814,14 @@
       if (reward?.blindDraw) score += Math.max(0, aiNumber(reward.blindDraw)) * 1.4;
       if (target.kind === "grid-slot" || (mode === "fangzhou-use" && fangzhouUseChoice === "place")) {
         const directScore = Math.max(0, aiNumber(reward?.gain?.score));
+        const pointConversionPenalty = scoreAiHighCostPointConversionPenalty(player, {
+          actionId: "alienTrace",
+          directScore,
+          payData: reward?.payData,
+          highScoreTarget: directScore >= 15 && aiNumber(reward?.payData) >= 3,
+          engineReward: Boolean(reward?.pickAlienCard || reward?.drawCards || reward?.blindDraw),
+        });
+        if (pointConversionPenalty > 0) score -= pointConversionPenalty;
         if (directScore > 0) {
           const threshold = getAiNextMissingFinalScoreThreshold(player);
           const currentScore = Math.max(0, aiNumber(player?.resources?.score));
