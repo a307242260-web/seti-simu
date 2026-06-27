@@ -1,10 +1,10 @@
-# AI 电脑玩家架构设计 v2（决策与价值模型）
+# AI 电脑玩家设计（当前版）
 
-本文件是电脑玩家（AI 自动机）的**权威架构与路线文档**，后续开发以本文为准。
+本文件是电脑玩家（AI 自动机）的**当前唯一权威文档**，覆盖控制器接口、价值模型、目标系统、回合规划、自博弈验证和后续路线。旧的接口契约文档与成本收益草稿已经合并进本文，不再单独维护。
 
-- v1（`docs/ai-player-design.md`）固化的是**接口契约层**（GameState 视图、决策总线 `requestDecision`、`PlayerAgent`、`enumerateLegalActions`、回合驱动器、seeded RNG）。这部分**继续有效，不重复**，本文直接引用。
-- v2 重写的是**“大脑”层**：价值模型、目标系统、回合规划器，以及它们如何把“当前可行动内容的实时成本/收益”和“长线达成目标的动态收益”统一成一条决策链路。
-- v2 的核心修正点（相对当前实现）：
+- **控制器接口**：浏览器内由 `randomizer/app/ai-controller.js` 识别电脑玩家、推进 pending 子决策、执行顶层行动，并暴露批跑 / A/B / 调参入口；规则估值层集中在 `randomizer/game/ai/**`。
+- **大脑层**：价值模型、目标系统、回合规划器，以及它们如何把“当前可行动内容的实时成本/收益”和“长线达成目标的动态收益”统一成一条决策链路。
+- **核心规则**：
   1. **收入价值要扣掉丢牌成本**：一次收入提升会弃 1 张手牌，价值 = 资源价值×剩余可享受次数 − 被弃牌价值。
   2. **价值以“动态实时框架单位”计算**：每次决策实时枚举可行动内容并算 `净收益 = 收益 − 成本`；长线收益（完成扇区 / 凑 6 数据分析 / 登陆等）按**当前可达性**动态加权，且因对手行动而实时变更。
   3. **终局板块标记后围绕高价值终局计分行动**：标记 25/50/70 后，凡能推进所标记 a/b/c/d 公式的行动，在原收益上叠加对应位次倍率的终局边际分。
@@ -14,11 +14,11 @@
 
 ---
 
-## 1. 为什么需要 v2
+## 1. 当前版解决的问题
 
 当前 AI 是“单步贪心 + 被动 routeDemand”，主要短板（基于 `game/ai/policy.js`、`evaluator.js` 和 `app.js` 的 `scoreAi*` 链）：
 
-| 短板 | 现状 | v2 对策 |
+| 短板 | 现状 | 当前对策 |
 |------|------|---------|
 | 价值口径分散、常数手写 | 估值散落在 `evaluator.RESOURCE_VALUES` 与十几个 `scoreAi*` | 收口为单一 **行动收益/成本图谱**（§3、§4） |
 | 收入估值偏高 | `getIncomeValue` 只乘剩余轮次，未扣丢牌成本 | **收入净值**公式（§3.3） |
@@ -29,7 +29,7 @@
 
 ---
 
-## 2. 总体架构
+## 2. 总体架构与接口契约
 
 四层，自下而上，每层纯函数化、可单测、可日志化：
 
@@ -47,7 +47,7 @@
 │ L1 价值模型 Valuation        game/ai/valuation.js         │ 单一估值口径
 │   资源折算 / 收入净值 / 终局边际 / 状态估值                 │
 └─────────────────────────────────────────────────────────┘
-        ▲ 复用 v1 接口：GameState 视图 / legal-actions / decision-bus / PlayerAgent
+        ▲ 接入 app/ai-controller.js 的电脑玩家驱动与子决策收口
 ```
 
 数据流（一次决策）：
@@ -57,28 +57,38 @@ GameState 快照
   → L4 给出当前激活目标与权重（含对手影响后的可达性）
   → L2 对每个 legal action 实时算 net（含终局边际、目标加权）
   → policy / L3 优先使用 L2 的 `actionGraph.net` 做选择；旧 `candidate.score` 只作为 fallback 与 tie-breaker
-  → 经 v1 decision-bus 执行，子决策再回到 L2/L4 估值
+  → 经 `app/ai-controller.js` 执行，子决策再回到 L2/L4 估值
   → battle-analytics 记录 breakdown，供调参与路径挖掘
 ```
 
-设计约束（沿用 v1）：估值只读、克隆 `createGameRecoverySnapshot()`（`app.js:1159`）做“试一步→回退”；`irreversible` 步骤不进搜索回退，遇到用启发式即时决策。
+设计约束：估值只读、克隆 `createGameRecoverySnapshot()`（`app.js:1159`）做“试一步→回退”；`irreversible` 步骤不进搜索回退，遇到用启发式即时决策。
+
+### 2.1 当前接口契约
+
+- 电脑玩家判定由 `isAiAutoBattlePlayer(playerId)` 统一处理；默认人机局保留白色人类玩家，其余活跃玩家由 `configureDefaultAiOpponent()` 配置为电脑。
+- 批跑 / A/B / 调参入口走 `configureAiAutoBattle()`、`runAiAutomationStep()`、`runAiAutoBattleBatch()`、`runAiStrategyABTest()`、`runAiStrategyTuningCycle()`；未显式传 `activePlayerCount` 时按 4 人局重置。
+- `runAiAutomationStep()` 是唯一推进器，按“初始选择 / 弃牌 / PASS 预留 / 终局标记 / 公共牌选择 / 科技放置 / 扫描 / 打牌 / 移动支付 / 登陆 / 数据放置 / 外星人 / 效果链 / 顶层行动”的顺序收口 pending 状态。
+- 顶层行动候选仍由现有规则入口判断可用性，策略层优先读取 `actionGraph.net`，旧 `candidate.score` 只作为 fallback 与 tie-breaker。
+- 子决策以 `runAi*Decision()` 族函数处理；每个 AI pending 分支必须返回 `progressed`、`skipped` 或明确 `blocked`，不能把自动批跑永久停在需要人工点击的状态。
+- AI 不直接改规则状态；真正执行仍走人类同路径的 `runAction()`、`beginScanAction()`、`beginPlayCardSelection()`、`researchTechForCurrentPlayer()`、`passForCurrentPlayer()` 等入口。
+- 随机性通过现有 seeded 批跑入口和可注入 `random` 的规则函数复现；不能为了 AI 策略在估值阶段消耗真实随机结果。
 
 ---
 
 ## 3. L1 价值模型（单一估值口径）
 
-集中在 `game/ai/valuation.js`，把 `docs/行动成本和收益.md` 完整编码，替换分散的常量。
+集中在 `game/ai/valuation.js`，把基础价值、行动成本和路线收益统一编码，替换分散的常量。
 
 ### 3.1 资源折算单位
 
-| 资源 | 价值（分） | 来源 |
+| 资源 | 价值（分） | 说明 |
 |------|-----------|------|
-| 1 分 | 1 | — |
-| 1 信用点 / 1 能量 / 1 精选 | 3 | 收益文档 1 |
-| 1 移动 / 1 数据 / 1.5 宣传 | 1.5 | 收益文档 2 |
-| 1 信号（含数据） | 3 | 收益文档 3 |
-| 普通手牌 | ≈ 3（≈ 1 盲抽） | 收益文档 6 |
-| 外星人卡 | ≈ 4 | 收益文档 4 |
+| 1 分 | 1 | 基础分 |
+| 1 信用点 / 1 能量 / 1 精选 | 3 | 资源与精选基础折算 |
+| 1 移动 / 1 数据 / 1.5 宣传 | 1.5 | 移动按真实支付成本重估 |
+| 1 信号（含数据） | 3 | 扫描和数据链基础收益 |
+| 普通手牌 | ≈ 3（≈ 1 盲抽） | 视具体任务、终局牌和角标动态调整 |
+| 外星人卡 | ≈ 4 | 多数外星人卡高于普通牌 |
 
 > 口径统一后，调参从“改十几个魔法数字”变为“改一张表”，且每个候选可输出 `breakdown` 便于解释。
 
@@ -90,25 +100,25 @@ GameState 快照
 
 机制（`mechanics-reference.md`）：一次“收入提升”要**弃 1 张手牌**，按该牌收入角标提升收入档；提升后的收入在之后每个收入结算点都生效。
 
-错误现状：`evaluator.getIncomeValue` 仅 `资源价值 × 剩余倍率`，**未扣丢牌成本**，导致高估收入类行动。
+旧估值问题：`evaluator.getIncomeValue` 仅 `资源价值 × 剩余倍率`，**未扣丢牌成本**，导致高估收入类行动。
 
-v2 公式（评估“获得 +ΔR 收入”这一行为的净值）：
+当前公式（评估“获得 +ΔR 收入”这一行为的净值）：
 
 ```
 incomeNet(ΔR) = resourceValue(ΔR) × remainingIncomeTimes(round) − discardedCardValue
 ```
 
 - `resourceValue(ΔR)`：本次提升的收入资源折算（常规基准如 +1 信用 = 3 分/次；前 2 轮 AI 估值会把信用点/能量抬到约 6，并抬高手牌上限/精选收入；收入选择顺序倾向能量 > 信用点 > 手牌，以反映早期资源比即时分更关键并避免末期能量或手牌断档）。
-- `remainingIncomeTimes(round)`：该收入还能享受几次。第一轮 4 次（获得当次 + 第 2/3/4 轮各一次），逐轮递减（收益文档 5）。注意 PASS 轮的收入结算细节（第 4 轮 PASS 不获得收入，见 `mechanics-reference.md`）要并入次数计算。
-- `discardedCardValue`：被弃手牌价值。估值时取“AI 实际会弃的那张”的价值（通常是当前手里最低价值的牌，但不低于普通牌基准 ≈ 3）。**这是相对 v1 新增的减项。**
+- `remainingIncomeTimes(round)`：该收入还能享受几次。第一轮 4 次（获得当次 + 第 2/3/4 轮各一次），逐轮递减。注意 PASS 轮的收入结算细节（第 4 轮 PASS 不获得收入，见 `mechanics-reference.md`）要并入次数计算。
+- `discardedCardValue`：被弃手牌价值。估值时取“AI 实际会弃的那张”的价值（通常是当前手里最低价值的牌，但不低于普通牌基准 ≈ 3）。这是旧估值缺失的关键减项。
 
 推论：收入在**早轮**且**手牌富余**时才划算；晚轮或手牌紧张（接近上限/缺关键牌）时收入净值可能为负，AI 应少做。
 
 ### 3.4 行动成本要算全链
 
-环绕/登陆的成本 = **发射 + 移动 + 行动本身**（收益文档 7）。普通发射支付成本按 2 信用点；`skipCost` 发射为 0；带 `cost` 的卡牌/科技发射按指定资源。普通移动每点移动力在 1 能量和 1 张可支付移动的手牌之间取较低估值，小行星带离开仍需要 2 点移动力。移动步数过高的星球，收益往往补不回成本。
+环绕/登陆的成本 = **发射 + 移动 + 行动本身**。普通发射支付成本按 2 信用点；`skipCost` 发射为 0；带 `cost` 的卡牌/科技发射按指定资源。普通移动每点移动力在 1 能量和 1 张可支付移动的手牌之间取较低估值，小行星带离开仍需要 2 点移动力。移动步数过高的星球，收益往往补不回成本。
 
-AI 对移动候选必须拆分真实 `paymentCost` 与 `pathPenalty`：卡牌/科技给的免费移动只保留路径质量判断，不额外扣能量或手牌；小行星额外移动、远离目标、无后续主行动的绕路和向内掉头只作为风险/机会成本写入 `pathPenalty`，避免飞船卡在小行星带或为了微弱方向偏置移动过远。无紫科的主行动扫描成本 ≈ 1 信用 + 2 能量 = 9 价值、裸收益仅 2 信号，需依赖 2 号数据位、赢扇区、紫科加成才转正（收益文档 9）。L2 图谱必须把前置链成本并入候选 `cost`。
+AI 对移动候选必须拆分真实 `paymentCost` 与 `pathPenalty`：卡牌/科技给的免费移动只保留路径质量判断，不额外扣能量或手牌；小行星额外移动、远离目标、无后续主行动的绕路和向内掉头只作为风险/机会成本写入 `pathPenalty`，避免飞船卡在小行星带或为了微弱方向偏置移动过远。无紫科的主行动扫描成本 ≈ 1 信用 + 2 能量 = 9 价值、裸收益仅 2 信号，需依赖 2 号数据位、赢扇区、紫科加成才转正。L2 图谱必须把前置链成本并入候选 `cost`。
 
 ---
 
@@ -136,7 +146,7 @@ ActionCandidate = {
 
 ### 4.2 实时枚举
 
-来源沿用 v1 `enumerateLegalActions` 与现有判断（`actions.canExecute`、`scanEffects.canExecuteScan`、`data.canAnalyzeData`、`quickTrades.canExecuteTrade`、`canStartMainAction()` 等）。图谱层只读，不改状态。
+来源沿用现有判断（`actions.canExecute`、`scanEffects.canExecuteScan`、`data.canAnalyzeData`、`quickTrades.canExecuteTrade`、`canStartMainAction()` 等）。图谱层只读，不改状态。
 
 ### 4.3 长线目标的动态收益（★ 受对手影响）
 
@@ -170,7 +180,7 @@ finalMarginal(action) = Σ_overMarkedTiles  positionMultiplier(tile) × marginal
 | d1 | 三色科技最小值 | 研究当前最少颜色的科技 | min 型：补短板 |
 | d2 | 科技总数/2 向下取整 | 研究任意科技 | 每 2 个才 +1 单位 |
 
-关键：**min 型与“除 2 取整”型公式是非线性的**——边际分取决于当前计数，必须用“做完该行动后公式值 − 当前公式值”实时计算，不能用平均常数。位次倍率越高（1 号位）的板块，对应行动越要多做（收益文档 8）。
+关键：**min 型与“除 2 取整”型公式是非线性的**——边际分取决于当前计数，必须用“做完该行动后公式值 − 当前公式值”实时计算，不能用平均常数。位次倍率越高（1 号位）的板块，对应行动越要多做。
 
 ---
 
@@ -192,7 +202,7 @@ Goal = {
 
 ### 5.2 内置目标
 
-- `FIRST_ROUND_SCORE_25`：跟踪实时分与 25 的差距，对“能直接加分/凑分链”的候选加 `goalBonus`；与首痕迹目标协同（首痕迹本身 ≈ 5 分 + 宣传 + 卡，收益文档 10）。
+- `FIRST_ROUND_SCORE_25`：跟踪实时分与 25 的差距，对“能直接加分/凑分链”的候选加 `goalBonus`；与首痕迹目标协同（首痕迹本身通常约 5 分 + 宣传 + 外星人卡或物种揭示收益）。
 - `GRAB_TRACE_YELLOW`（抢登陆）：目标星球登陆链高优先；黄痕迹竞争激烈，`feasibility` 随对手逼近而下降。
 - `GRAB_TRACE_PINK`（赢扇区扫描）：目标“本轮赢一个扇区扫描”，把扫描/数据投放绑定到该扇区。
 - `GRAB_TRACE_BLUE`（6 数据分析）：目标“尽快凑 6 数据并分析”，把数据获取与分析行动连成引擎。
@@ -200,7 +210,7 @@ Goal = {
 
 ### 5.3 开局规划
 
-读公司牌 / 起始牌 / 初始手牌，评估：哪条首痕迹可行（黄/粉/蓝）、第一轮能否摸到 25 分、能否实现“4 数据收入 / 6 数据分析”（收益文档 11）。选定主目标后写入 L4，供后续每回合候选评分叠加。
+读公司牌 / 起始牌 / 初始手牌，评估：哪条首痕迹可行（黄/粉/蓝）、第一轮能否摸到 25 分、能否实现“4 数据收入 / 6 数据分析”。选定主目标后写入 L4，供后续每回合候选评分叠加。
 
 ---
 
@@ -210,7 +220,7 @@ Goal = {
 
 - 枚举一回合内“快速行动 → 主行动 → 后置快速行动 → end-turn/PASS”的组合链，用 L1 `evaluate` 估每条链的终局状态价值，选**整条链净值最优**而非单步最优。当前主链已纳入 `analyze`，快速链已纳入 `placeData`，避免 AI 拿到数据后不投放、不分析。
 - 重点解决“发射 → 移动 → 登陆/环绕”这类需多步兑现的高收益链（当前打不出高分的主因）。
-- `irreversible`（翻外星人牌、随机抽牌）不进回退，用启发式即时决策（v1 §15）。
+- `irreversible`（翻外星人牌、随机抽牌）不进回退，用启发式即时决策。
 - PASS 作为候选显式权衡：轮序、收入净值（§3.3）、剩余主行动机会成本。
 
 ---
@@ -258,18 +268,19 @@ Goal = {
 ## 8. 模块与文件结构
 
 ```
-game/ai/
-├─ valuation.js        # ★新增 L1：资源折算 / 收入净值 / 终局边际 / 状态估值
-├─ action-graph.js     # ★新增 L2：实时候选 {gain,cost,net,breakdown}
-├─ planner.js          # ★新增 L3：回合浅前瞻
-├─ goals.js            # ★新增 L4：目标系统 + 开局规划
-├─ evaluator.js        # 收敛进 valuation 后保留薄封装/兼容层
-├─ policy.js           # 子决策选择改为调用 action-graph/valuation
-├─ battle-analytics.js # 可配置窗口序列挖掘 + 分数构成分桶
-└─ ai.test.js          # 逐项回归
+randomizer/
+├─ app/ai-controller.js # 电脑玩家配置、自动步骤推进、批跑/A/B/调参入口
+└─ game/ai/
+   ├─ valuation.js        # L1：资源折算 / 收入净值 / 终局边际 / 状态估值
+   ├─ action-graph.js     # L2：实时候选 {gain,cost,net,breakdown}
+   ├─ planner.js          # L3：回合浅前瞻
+   ├─ goals.js            # L4：目标系统 + 开局规划
+   ├─ evaluator.js        # 兼容层与轻量状态估值
+   ├─ policy.js           # 顶层行动与子决策选择
+   ├─ battle-analytics.js # 可配置窗口序列挖掘 + 分数构成分桶
+   ├─ index.js            # 浏览器/Node 模块汇总
+   └─ ai.test.js          # 逐项回归
 ```
-
-v1 的 decision-bus / player-agent / legal-actions / controller / seeded RNG **保持不变**，本文不重复其契约（见 `docs/ai-player-design.md` §3~§9）。
 
 ---
 
@@ -316,13 +327,14 @@ node randomizer/game/ai/ai.test.js
 $tests = rg --files randomizer | Where-Object { $_ -match '\.test\.js$' } | Sort-Object; foreach ($test in $tests) { node $test; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } }
 ```
 
-浏览器 smoke 与批跑入口沿用 v1 §13 / `runAiAutoBattleBatch`。
+浏览器 smoke 与批跑入口使用 `runAiAutoBattleBatch`。
 本地浏览器可用 `randomizer/index.html?codexAiBatch=3&seed=codex-ai-batch` 触发受 URL 参数保护的 smoke，结果写入 `#codex-ai-batch-result`；需要复现离散种子时可传 `seeds=codex-ai-batch-wide%3A6`，需要快速出口时可配 `maxSteps=50`、`stopBeforeRound=4` 或 `activePlayerCount=1`。该入口默认跳过状态读数/行动日志 DOM 重绘，并在 `stepDelayMs=0` 时不再每步进入浏览器定时器队列以避开后台标签页节流；长批跑默认每 80 步让出一次事件循环，也可用 `yieldEverySteps=120` 调整诊断可读性。需要观察完整 UI 时传 `renderReadout=1`。
 
 ---
 
-## 12. 与 v1 的关系
+## 12. 文档维护原则
 
-- v1 = 接口契约层（**继续有效**）。v2 = 大脑层（**本文为准**）。
-- v1 §7 估值器与 §14 数据驱动优化路线被本文 §3/§4/§9 取代；其余（§3~§6、§8~§10 收口顺序、§15 风险）继续适用。
-- 后续开发以本文路线图（§10）为准；机制变化同步更新本文与 `AGENTS.md`。
+- 本文是 AI 设计的唯一维护入口；接口契约、价值口径、路线图和验证方式都在本文更新。
+- 若新增 AI 模块、公开 API、批跑指标或默认人机行为，需要同步本文的 §2、§8、§9、§11。
+- 若改变基础价值、终局边际、外星人痕迹或行动成本口径，需要同步本文的 §3、§4、§5，并补充 `randomizer/game/ai/ai.test.js`。
+- `AGENTS.md` 只保留本文作为 AI 入口，避免再拆出临时成本收益或旧版接口文档。
