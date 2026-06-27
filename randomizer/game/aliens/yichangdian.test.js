@@ -42,6 +42,9 @@ assert.deepEqual(
 );
 assert.equal(yichangdian.getAnomalyMarkerSrc("a_2"), "../assets/aliens/异常点/a_2.png");
 assert.equal(revealResult.nextAnomalySectorX, 1, "earth x=4 should next trigger sector 1 while x decreases");
+const nextAnomaly = yichangdian.getAnomalyBySectorX(alienState, revealResult.nextAnomalySectorX);
+assert.equal(nextAnomaly.markerId, "b_1", "earth x matching anomaly x should resolve that anomaly");
+assert.equal(yichangdian.getAnomalyReward(nextAnomaly.markerId).traceType, "yellow");
 
 let result = yichangdian.placeYichangdianTrace(alienState, 2, "pink", 1, white);
 assert.equal(result.ok, true);
@@ -59,6 +62,18 @@ assert.equal(result.ok, true);
 assert.equal(result.reward.pickAlienCard, true);
 result = yichangdian.placeYichangdianTrace(alienState, 2, "yellow", 4, blue);
 assert.equal(result.ok, false, "positions 2-5 cannot be occupied twice");
+result = yichangdian.placeYichangdianTrace(alienState, 2, "yellow", 5, blue);
+assert.equal(result.ok, true);
+assert.equal(
+  yichangdian.getTopTraceEntry(alienState, 2, "yellow").playerColor,
+  "white",
+  "lower-numbered yellow position should be higher than lower board positions",
+);
+assert.equal(
+  yichangdian.getTopTraceEntry(alienState, 2, "blue"),
+  null,
+  "anomaly color without face traces should have no reward owner",
+);
 
 const anomalyReward = yichangdian.getAnomalyReward("b_2");
 assert.equal(anomalyReward.traceType, "yellow");

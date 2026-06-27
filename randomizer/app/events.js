@@ -37,6 +37,7 @@
       techRenderContext,
       alienGameState,
       randomizeAll,
+      startNewGame,
       handleMainActionButtonClick,
       cancelTechSelection,
       confirmLandTargetPicker,
@@ -210,6 +211,11 @@
     }
 
     els.spinButton?.addEventListener("click", randomizeAll);
+    els.gameStartButton?.addEventListener("click", () => {
+      const confirmed = windowRef.confirm("确定重新开始一局新游戏？当前本地保存的进度会被清除。");
+      if (!confirmed) return;
+      startNewGame?.({ clearStorage: true, message: "新游戏已开始，请完成初始选择。" });
+    });
     els.actionBarMain?.addEventListener("click", handleMainActionButtonClick);
     els.techSelectionCancel?.addEventListener("click", cancelTechSelection);
     els.landTargetConfirm?.addEventListener("click", confirmLandTargetPicker);

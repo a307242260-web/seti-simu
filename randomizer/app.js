@@ -196,6 +196,10 @@
     offersByPlayerId: {},
     confirmedPlayerIds: [],
   };
+  const PERSISTENT_GAME_STORAGE_KEY = "seti-randomizer-current-game-v1";
+  const PERSISTENT_GAME_SAVE_DELAY_MS = 120;
+  let persistentGameSaveTimer = 0;
+  let persistentGameSaveSuspended = false;
   const MOVE_DISCARD_ACTION_CODE = 2;
   const MOVE_ENERGY_COST = 1;
   const techRenderContext = {
@@ -398,6 +402,7 @@
     renderPlayerStats();
     updateActionButtons();
     renderStateReadout();
+    schedulePersistentGameStateSave({ label: "初始选择开始" });
   }
 
   function getCardFromInitialOffer(offer, kind, cardId) {
@@ -458,6 +463,7 @@
 
     renderReservedCards();
     renderStateReadout();
+    schedulePersistentGameStateSave({ label: "初始选择更新" });
   }
 
   function recordInitialSelectionActionLog(player, selectedIndustry, selectedInitialCards, initialResult = null) {
@@ -1550,6 +1556,7 @@
     if (!entry) return null;
     attachRecoverySnapshotToActionLogEntry(entry, label);
     renderActionLog();
+    schedulePersistentGameStateSave({ label: label || "行动日志恢复点" });
     return entry.recoverySnapshot;
   }
 
@@ -1572,6 +1579,125 @@
       latestSnapshot: createGameRecoverySnapshot({ label: "当前局面" }),
       entries: getRecoverableActionLog({ includeRecovery: options.includeRecovery !== false }),
     };
+  }
+
+  function getPersistentGameStorage() {
+    try {
+      return window.localStorage || null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function readPersistentGamePackage() {
+    const storage = getPersistentGameStorage();
+    if (!storage) return null;
+    try {
+      const raw = storage.getItem(PERSISTENT_GAME_STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? parsed : null;
+    } catch (error) {
+      storage.removeItem(PERSISTENT_GAME_STORAGE_KEY);
+      return null;
+    }
+  }
+
+  function clearPersistentGameState() {
+    const storage = getPersistentGameStorage();
+    if (!storage) return false;
+    try {
+      storage.removeItem(PERSISTENT_GAME_STORAGE_KEY);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function isPersistentGameStateStable() {
+    if (persistentGameSaveSuspended) return false;
+    return !pendingActionExecuted
+      && !effectStepActive
+      && !pendingActionEffectFlow
+      && !pendingAlienRevealConfirmation
+      && !pendingTurnEndAfterRevealContinuation
+      && !actionLogState.draft
+      && !actionHistory.hasSession()
+      && !quickActionHistory.hasSession()
+      && !isActionEffectFlowActive()
+      && !hasActivePendingSubFlow();
+  }
+
+  function createPersistentGamePackage(label = "本地自动保存") {
+    return {
+      version: GAME_RECOVERY_VERSION,
+      savedAt: new Date().toISOString(),
+      latestSnapshot: createGameRecoverySnapshot({ label }),
+      entries: getRecoverableActionLog({ includeRecovery: false }),
+      activeReportTab: actionLogState.activeReportTab,
+    };
+  }
+
+  function savePersistentGameStateNow(options = {}) {
+    if (!options.force && !isPersistentGameStateStable()) {
+      return { ok: false, skipped: true, message: "当前流程未稳定，保留上一个本地存档" };
+    }
+    const storage = getPersistentGameStorage();
+    if (!storage) return { ok: false, message: "当前浏览器不支持本地保存" };
+    try {
+      storage.setItem(
+        PERSISTENT_GAME_STORAGE_KEY,
+        JSON.stringify(createPersistentGamePackage(options.label)),
+      );
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, message: String(error?.message || error) };
+    }
+  }
+
+  function schedulePersistentGameStateSave(options = {}) {
+    if (persistentGameSaveSuspended) return;
+    if (persistentGameSaveTimer) {
+      window.clearTimeout(persistentGameSaveTimer);
+    }
+    persistentGameSaveTimer = window.setTimeout(() => {
+      persistentGameSaveTimer = 0;
+      savePersistentGameStateNow(options);
+    }, PERSISTENT_GAME_SAVE_DELAY_MS);
+  }
+
+  function restorePersistentGameState() {
+    const saved = readPersistentGamePackage();
+    const snapshot = saved?.latestSnapshot || saved?.snapshot || null;
+    if (!snapshot) return false;
+
+    persistentGameSaveSuspended = true;
+    try {
+      if (Array.isArray(saved.entries)) {
+        importActionLogEntries(saved.entries);
+      }
+      const result = applyGameRecoverySnapshot(snapshot, {
+        message: "已恢复上次保存的局面",
+      });
+      if (!result.ok) {
+        clearPersistentGameState();
+        return false;
+      }
+      const latestEntry = actionLogState.entries[actionLogState.entries.length - 1] || null;
+      if (latestEntry && !latestEntry.recoverySnapshot) {
+        latestEntry.recoverySnapshot = structuredClone(snapshot);
+      }
+      if (saved.activeReportTab) {
+        setReportTab(saved.activeReportTab);
+      }
+      return true;
+    } catch (error) {
+      console.warn("[SETI] 恢复本地存档失败，已清除坏存档", error);
+      clearPersistentGameState();
+      return false;
+    } finally {
+      persistentGameSaveSuspended = false;
+    }
   }
 
   function countPlayerOwnedTechForActionLogExport(player) {
@@ -1707,6 +1833,7 @@
     pendingHandScanAction = null;
     pendingAlienTraceAction = null;
     pendingLandTargetAction = null;
+    pendingProbeLocationRewardAction = null;
     pendingCardTriggerAction = null;
     pendingCardTriggerFreeMove = null;
     pendingType1TriggerEvents = [];
@@ -1743,10 +1870,12 @@
     moveHighlightRocketId = null;
     pendingMovePayment = null;
     pendingPlayCardSelection = null;
+    pendingFutureSpanPlayBeforePlayer = null;
     pendingCardCornerQuickAction = null;
     pendingCardCornerFreeMove = null;
     pendingDataPlaceAction = null;
     pendingIndustryAbility = null;
+    pendingStrategyPassiveSlotChoice = null;
     industryFreeMoveState = null;
     historyStepOrder.length = 0;
     actionHistory.commitSession();
@@ -1919,6 +2048,7 @@
     actionLogState.entries.push(entry);
     actionLogState.draft = null;
     renderActionLog();
+    schedulePersistentGameStateSave({ label: "行动提交后状态" });
     return entry;
   }
 
@@ -1953,6 +2083,7 @@
     actionLogState.nextEntryId += 1;
     actionLogState.entries.push(entry);
     renderActionLog();
+    schedulePersistentGameStateSave({ label: entry.title || "已确认日志后状态" });
     return entry;
   }
 
@@ -21132,14 +21263,14 @@
         reward,
         player: null,
         events: [{ type: "yichangdianAnomalyTriggered", markerId: anomaly.markerId, sectorX: anomaly.sectorX }],
-        message: `异常触发：${yichangdian.formatAnomalyLabel(anomaly)}，对应颜色没有痕迹`,
+        message: `旋转触发异常：${yichangdian.formatAnomalyLabel(anomaly)}，对应颜色没有痕迹`,
       };
     }
 
     const rewardResult = applyYichangdianRewardToPlayer(
       player,
       reward,
-      `异常触发 ${anomaly.markerId}`,
+      `旋转触发异常 ${anomaly.markerId}`,
     );
     if (reward?.pickCard) {
       beginCardSelection({
@@ -30312,6 +30443,63 @@
     });
   }
 
+  function resetGameStateForNewGame(options = {}) {
+    const activePlayerCount = Math.min(
+      Math.max(1, Math.round(Number(options.activePlayerCount) || DEFAULT_ACTIVE_PLAYER_COUNT)),
+      players.PLAYER_COLOR_IDS.length,
+    );
+
+    clearTransientStateForRecovery();
+    restoreMutableObject(solarState, solar.createBaselineState());
+    restoreMutableObject(nebulaDataState, data.createDefaultNebulaDataState());
+    restoreMutableObject(alienGameState, aliens.createDefaultAlienState());
+    restoreMutableObject(finalScoringState, finalScoring.createFinalScoringState(FINAL_SCORE_IDS));
+    restoreMutableObject(playerState, players.createPlayerState({
+      players: players.PLAYER_COLOR_IDS.map((color) => ({ color })),
+      currentPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
+    }));
+    restoreMutableObject(turnState, createTurnState(playerState.players, {
+      activePlayerCount,
+      currentPlayerId: playerState.currentPlayerId,
+    }));
+    restoreMutableObject(rocketState, rocketActions.createRocketState());
+    restoreMutableObject(planetStatsState, planetStats.createPlanetStatsState());
+    restoreMutableObject(techGameState, tech.createState());
+    restoreMutableObject(cardState, cards.createCardState());
+    restoreMutableObject(cardTaskState, cardTaskStateModule.createTaskState());
+    restoreMutableObject(setupSelectionState, {
+      phase: "selecting",
+      currentPlayerId: null,
+      offersByPlayerId: {},
+      confirmedPlayerIds: [],
+    });
+    historyStepOrder.length = 0;
+    resetScanRunSequence();
+    resetActionLog();
+  }
+
+  function startNewGame(options = {}) {
+    persistentGameSaveSuspended = true;
+    try {
+      if (options.clearStorage !== false) {
+        clearPersistentGameState();
+      }
+      resetGameStateForNewGame(options);
+      initializeCardGame(DEFAULT_INITIAL_HAND_COUNT);
+      seedDefaultReferenceRockets();
+      randomizeAll();
+      configureDefaultAiOpponent();
+      startInitialSelection();
+      rocketState.statusNote = options.message || "新游戏已开始，请完成初始选择。";
+      renderStateReadout();
+      resize();
+    } finally {
+      persistentGameSaveSuspended = false;
+    }
+    schedulePersistentGameStateSave({ force: true, label: "新游戏开始" });
+    return { ok: true, message: rocketState.statusNote };
+  }
+
   function randomizeAll() {
     els.spinButton?.classList.remove("pulsin");
     resetActionLog();
@@ -30490,6 +30678,7 @@
     techRenderContext,
     alienGameState,
     randomizeAll,
+    startNewGame,
     handleMainActionButtonClick,
     cancelTechSelection,
     confirmLandTargetPicker,
@@ -30662,12 +30851,16 @@
   setTokenAssetSizes();
   setReportTab("state");
   setLogOpen(false);
-  initializeCardGame(DEFAULT_INITIAL_HAND_COUNT);
-  seedDefaultReferenceRockets();
-  resize();
-  randomizeAll();
-  configureDefaultAiOpponent();
-  startInitialSelection();
+  if (restorePersistentGameState()) {
+    configureDefaultAiOpponent();
+    resize();
+    schedulePersistentGameStateSave({ label: "恢复后状态" });
+  } else {
+    startNewGame({ clearStorage: false, message: "新游戏已开始，请完成初始选择。" });
+  }
+  window.addEventListener("beforeunload", () => {
+    savePersistentGameStateNow({ label: "刷新前状态" });
+  });
 
   function summarizeCodexAiBatchResult(result, options = {}) {
     const samples = Array.isArray(result?.samples) ? result.samples : [];

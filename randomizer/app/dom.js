@@ -91,6 +91,7 @@
         4: documentRef.getElementById("sector-wrap-4"),
       },
       spinButton: documentRef.getElementById("spin-button"),
+      gameStartButton: documentRef.getElementById("game-start-button"),
       debugToggle: documentRef.getElementById("debug-toggle"),
       debugPlayerSwitchButton: documentRef.getElementById("debug-player-switch-button"),
       debugPlayerMenu: documentRef.getElementById("debug-player-menu"),
