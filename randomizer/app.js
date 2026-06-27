@@ -14559,25 +14559,36 @@
     }, [renderPlayerHand]);
   }
 
-  function countEarthSectorOtherPlanetsOrComets() {
+  function getEarthSectorMoveContentKinds(effect) {
+    const kinds = effect?.options?.contentKinds;
+    if (Array.isArray(kinds) && kinds.length) return new Set(kinds);
+    return new Set([solar.layout.CONTENT_KIND.COMET, solar.layout.CONTENT_KIND.ASTEROID]);
+  }
+
+  function isEarthSectorMoveContent(content, contentKinds) {
+    if (!content?.kind || !contentKinds?.has(content.kind)) return false;
+    return content.kind !== solar.layout.CONTENT_KIND.PLANET || content.planetId !== "earth";
+  }
+
+  function countEarthSectorMoveContents(effect) {
     const earth = getEarthSectorCoordinate();
     if (earth?.x == null) return 0;
+    const contentKinds = getEarthSectorMoveContentKinds(effect);
     let count = 0;
     for (let y = rocketActions.SECTOR_RING_MIN; y <= rocketActions.SECTOR_RING_MAX; y += 1) {
       const content = getSectorContentForMove({ x: earth.x, y });
-      if (content?.kind === solar.layout.CONTENT_KIND.COMET) count += 1;
-      if (content?.kind === solar.layout.CONTENT_KIND.PLANET && content.planetId !== "earth") count += 1;
+      if (isEarthSectorMoveContent(content, contentKinds)) count += 1;
     }
     return count;
   }
 
   function executeEarthSectorContentMoveEffect(effect) {
-    const count = countEarthSectorOtherPlanetsOrComets();
+    const count = countEarthSectorMoveContents(effect);
     if (count > 0) {
       insertActionEffectsAfterCurrent([{
         id: `${effect.id || "earth-sector"}-move`,
         type: cardEffects.EFFECT_TYPES.CARD_MOVE,
-        label: `地球扇区内容：${count}移动`,
+        label: `地球扇区彗星/小行星：${count}移动`,
         icon: "movement",
         options: { movementPoints: count, historyLabel: effect.label },
       }]);
