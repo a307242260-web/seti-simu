@@ -6,6 +6,10 @@ function assert(condition, message) {
   if (!condition) throw new Error(message);
 }
 
+function distance(left, right) {
+  return Math.hypot(left.percentX - right.percentX, left.percentY - right.percentY);
+}
+
 const anchor = { percentX: 50, percentY: 72, scalePercent: 14 };
 const origin = placement.getExtraTraceGridOriginCenter(anchor);
 const anchorAgain = placement.getExtraTraceGridCenter(anchor, 4);
@@ -140,5 +144,22 @@ assert(placement.getAmibaTraceMarkerLayout(1, "yellow", 2).percentX === 49.4,
   "Amiba yellow trace markers should be vertically aligned");
 assert(placement.getAmibaTraceMarkerLayout(1, "blue", 3).percentX === 80.0,
   "Amiba blue trace markers should be vertically aligned");
+
+const aomomoOrbit = placement.getAomomoOrbitMarkerLayout(1, 1);
+assert(aomomoOrbit && aomomoOrbit.percentX === 16.53 && aomomoOrbit.percentY === 19.71,
+  "Aomomo orbit marker should align to the upper-left orbit slot");
+for (let position = 1; position <= 3; position += 1) {
+  const layout = placement.getAomomoLandingMarkerLayout(1, position);
+  assert(layout && Number.isFinite(layout.percentX) && Number.isFinite(layout.percentY),
+    `Aomomo landing ${position} should have a layout`);
+}
+assert(placement.getAomomoLandingMarkerLayout(1, 1).percentX === 38.33,
+  "Aomomo first landing marker should align with the upper yellow landing slot");
+assert(placement.getAomomoLandingMarkerLayout(1, 2).percentY === 25.21,
+  "Aomomo second landing marker should align with the middle yellow landing slot");
+assert(placement.getAomomoLandingMarkerLayout(1, 3).percentY === 32.23,
+  "Aomomo third landing marker should align with the lower yellow landing slot");
+assert(distance(aomomoOrbit, placement.getAomomoLandingMarkerLayout(1, 1)) > 20,
+  "Aomomo orbit marker should not overlap landing marker slots");
 
 console.log("aliens/placement.test.js ok");

@@ -16650,6 +16650,16 @@
     });
   }
 
+  function openAomomoCardRewardEffect(effect) {
+    return openAomomoCardGainDialog({
+      player: getEffectTargetPlayer(effect),
+      fromEffectFlow: true,
+      effectLabel: effect.label || "奥陌陌外星人牌",
+      beforeAlienState: structuredClone(alienGameState),
+      beforePlayerState: structuredClone(playerState),
+    });
+  }
+
   function executePlanetRewardEffect(effect) {
     switch (effect.type) {
       case planetRewards.EFFECT_TYPES.GAIN_RESOURCES:
@@ -16671,6 +16681,8 @@
         return openNebulaChoiceRewardEffect(effect);
       case planetRewards.EFFECT_TYPES.ALIEN_TRACE:
         return openAlienTraceRewardEffect(effect);
+      case planetRewards.EFFECT_TYPES.AOMOMO_CARD:
+        return openAomomoCardRewardEffect(effect);
       default:
         return null;
     }

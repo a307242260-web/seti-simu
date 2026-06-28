@@ -22,7 +22,10 @@
     CHOOSE_NEBULA_SCAN: "choose_nebula_scan",
     CHOOSE_COLORED_NEBULA_SCAN: "choose_colored_nebula_scan",
     ALIEN_TRACE: "alien_trace",
+    AOMOMO_CARD: "aomomo_card",
   });
+
+  const AOMOMO_PLANET_ID = "aomomo";
 
   const EFFECT_ICONS = Object.freeze({
     score: "../assets/symbol/effect/score.webp",
@@ -45,6 +48,7 @@
     alien_blue: "../assets/symbol/effect/alien_blue.webp",
     alien_pink: "../assets/symbol/effect/alien_pink.webp",
     alien_yellow: "../assets/symbol/effect/alien_yellow.webp",
+    aomomoCard: "../assets/aliens/奥陌陌/cards/back.png",
   });
 
   const PLANET_NAMES = Object.freeze({
@@ -55,6 +59,7 @@
     saturn: "土星",
     uranus: "天王星",
     neptune: "海王星",
+    aomomo: "奥陌陌",
   });
 
   const NEBULA_CHOICES = Object.freeze({
@@ -186,7 +191,25 @@
     }));
   }
 
+  function aomomoCardEffect(label) {
+    return {
+      type: EFFECT_TYPES.AOMOMO_CARD,
+      label: label || "获得 1 张奥陌陌牌",
+      icon: "aomomoCard",
+      needsUserChoice: true,
+      options: { count: 1 },
+    };
+  }
+
+  function aomomoFossilScoreEffect(score, fossils, label) {
+    return resourceEffect(label, { score, aomomoFossils: fossils }, "score");
+  }
+
   const ORBIT_REWARDS = Object.freeze({
+    aomomo: Object.freeze([
+      aomomoFossilScoreEffect(10, 1, "奥陌陌环绕：10分+1化石"),
+      scanPlanetSectorEffect(AOMOMO_PLANET_ID, "奥陌陌扇区扫描"),
+    ]),
     venus: Object.freeze([
       scoreEffect(6, "获得 6 分"),
       ...incomeEffects(1, "获得 1 次收入"),
@@ -225,6 +248,14 @@
   });
 
   const PLANET_LAND_REWARDS = Object.freeze({
+    aomomo: Object.freeze({
+      always: Object.freeze([aomomoFossilScoreEffect(9, 2, "奥陌陌登陆：9分+2化石")]),
+      dataByLanding: Object.freeze({
+        1: Object.freeze([dataEffect(3, "奥陌陌第1次登陆：额外获得 3 个数据")]),
+        2: Object.freeze([dataEffect(2, "奥陌陌第2次登陆：额外获得 2 个数据")]),
+        3: Object.freeze([dataEffect(1, "奥陌陌第3次登陆：额外获得 1 个数据")]),
+      }),
+    }),
     venus: Object.freeze({
       firstLanding: Object.freeze([dataEffect(2, "首次登陆：额外获得 2 个数据")]),
       always: Object.freeze([scoreEffect(5, "获得 5 分"), ...alienTraceEffects(1, "yellow", "获得 1 个黄色外星人标记")]),
@@ -343,6 +374,13 @@
 
   function buildOrbitRewardEffects(planetId, markerSequence) {
     const effects = [];
+    if (planetId === AOMOMO_PLANET_ID) {
+      if (Number(markerSequence) === 1) {
+        effects.push(aomomoCardEffect("奥陌陌首次环绕：获得 1 张奥陌陌牌"));
+      }
+      effects.push(...(ORBIT_REWARDS[planetId] || []));
+      return effects.map(cloneEffect);
+    }
     if (Number(markerSequence) === 1) {
       effects.push(scoreEffect(3, "首次环绕：额外获得 3 分"));
     }
@@ -355,6 +393,11 @@
     if (!config) return [];
     const sequence = Number(markerSequence);
     const effects = [];
+    if (planetId === AOMOMO_PLANET_ID) {
+      effects.push(...(config.always || []));
+      effects.push(...(config.dataByLanding?.[sequence] || []));
+      return effects.map(cloneEffect);
+    }
     if (sequence === 1) effects.push(...(config.firstLanding || []));
     if (sequence === 2) effects.push(...(config.secondLanding || []));
     effects.push(...(config.always || []));
