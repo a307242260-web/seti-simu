@@ -6500,6 +6500,93 @@
     return value;
   }
 
+  function getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand = {}) {
+    if (!player || (formulaId !== "c1" && formulaId !== "c2")) return null;
+    const countOpenTasks = (card) => {
+      const model = cardEffects?.getCardModel?.(card) || null;
+      const completed = new Set(card?.cardEffectState?.completedTaskIds || []);
+      return (model?.tasks || []).filter((task) => task?.id && !completed.has(task.id)).length;
+    };
+    const reservedCards = Array.isArray(player.reservedCards) ? player.reservedCards : [];
+    const hand = Array.isArray(player.hand) ? player.hand : [];
+    const reservedTaskCount = reservedCards.reduce((total, card) => total + countOpenTasks(card), 0);
+    const handTaskCount = hand.reduce((total, card) => total + countOpenTasks(card), 0);
+    const type3Reserved = endGameScoring?.countType3Cards
+      ? Math.max(0, Math.round(aiNumber(endGameScoring.countType3Cards(player, getCardTypeCode))))
+      : reservedCards.reduce((total, card) => total + (Math.round(aiNumber(getCardTypeCode(card))) === 3 ? 1 : 0), 0);
+    const type3InHand = hand.reduce((total, card) => (
+      total + (Math.round(aiNumber(getCardTypeCode(card))) === 3 ? 1 : 0)
+    ), 0);
+    const currentBase = Math.max(0, Math.round(aiNumber(baseValue)));
+    const completedTaskCount = Math.max(0, aiNumber(player.completedTaskCount));
+    const roundNumber = Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1));
+    const taskDemand = aiNumber(demand.task) + getAiMapDemand(demand.actions, "playCard") * 0.8;
+    const visibleTaskPipeline = reservedTaskCount + handTaskCount * 0.35;
+    const visibleType3Pipeline = type3Reserved + type3InHand * 0.45;
+    const cPipeline = formulaId === "c1"
+      ? visibleTaskPipeline
+      : visibleTaskPipeline + visibleType3Pipeline;
+    const demandPipeline = Math.max(0, taskDemand) * (formulaId === "c1" ? 0.018 : 0.026);
+    const pipelineScale = Math.min(1, Math.max(0, (cPipeline + demandPipeline) / (formulaId === "c1" ? 2.5 : 2)));
+    const rawActionWindow = roundNumber >= FINAL_ROUND_NUMBER
+      ? (formulaId === "c1" ? 0.35 : 0.85)
+      : roundNumber === 3
+        ? (formulaId === "c1" ? 0.75 : 1.45)
+        : (formulaId === "c1" ? 1.15 : 2.1);
+    const actionWindow = rawActionWindow * pipelineScale;
+    const expectedNewTasks = Math.min(
+      7,
+      reservedTaskCount * (formulaId === "c1" ? 0.48 : 0.78)
+        + handTaskCount * (formulaId === "c1" ? 0.18 : 0.34)
+        + Math.max(0, taskDemand) * (formulaId === "c1" ? 0.018 : 0.034)
+        + actionWindow,
+    );
+    const expectedNewType3 = formulaId === "c2"
+      ? Math.min(
+        4,
+        type3InHand * (roundNumber >= FINAL_ROUND_NUMBER ? 0.42 : 0.68)
+          + Math.max(0, taskDemand) * 0.012,
+      )
+      : 0;
+
+    let projectedBase = currentBase;
+    if (formulaId === "c1") {
+      projectedBase = Math.max(
+        currentBase,
+        Math.floor(completedTaskCount + expectedNewTasks),
+      );
+    } else {
+      projectedBase = Math.max(
+        currentBase,
+        Math.floor((
+          completedTaskCount
+          + type3Reserved
+          + expectedNewTasks
+          + expectedNewType3
+        ) / 2),
+      );
+    }
+
+    return {
+      currentBase,
+      completedTaskCount,
+      reservedTaskCount,
+      handTaskCount,
+      type3Reserved,
+      type3InHand,
+      taskDemand,
+      visibleTaskPipeline,
+      visibleType3Pipeline,
+      cPipeline,
+      demandPipeline,
+      pipelineScale,
+      actionWindow,
+      expectedNewTasks,
+      expectedNewType3,
+      projectedBase,
+    };
+  }
+
   function scoreAiFinalScoreFormulaGrowth(formulaId, player, slotIndex, baseValue, demand = {}) {
     if (!player || !endGameScoring?.getSlotMultiplier) return 0;
     if (!["c1", "c2", "d1", "d2"].includes(formulaId)) return 0;
@@ -6510,70 +6597,17 @@
     const currentBase = Math.max(0, Math.round(aiNumber(baseValue)));
 
     if (formulaId === "c1" || formulaId === "c2") {
-      const countOpenTasks = (card) => {
-        const model = cardEffects?.getCardModel?.(card) || null;
-        const completed = new Set(card?.cardEffectState?.completedTaskIds || []);
-        return (model?.tasks || []).filter((task) => task?.id && !completed.has(task.id)).length;
-      };
-      const reservedCards = Array.isArray(player.reservedCards) ? player.reservedCards : [];
-      const hand = Array.isArray(player.hand) ? player.hand : [];
-      const reservedTaskCount = reservedCards.reduce((total, card) => total + countOpenTasks(card), 0);
-      const handTaskCount = hand.reduce((total, card) => total + countOpenTasks(card), 0);
-      const type3Reserved = endGameScoring?.countType3Cards
-        ? Math.max(0, Math.round(aiNumber(endGameScoring.countType3Cards(player, getCardTypeCode))))
-        : reservedCards.reduce((total, card) => total + (Math.round(aiNumber(getCardTypeCode(card))) === 3 ? 1 : 0), 0);
-      const type3InHand = hand.reduce((total, card) => (
-        total + (Math.round(aiNumber(getCardTypeCode(card))) === 3 ? 1 : 0)
-      ), 0);
-      const taskDemand = aiNumber(demand.task) + getAiMapDemand(demand.actions, "playCard") * 0.8;
-      const visibleTaskPipeline = reservedTaskCount + handTaskCount * 0.35;
-      const visibleType3Pipeline = type3Reserved + type3InHand * 0.45;
-      const cPipeline = formulaId === "c1"
-        ? visibleTaskPipeline
-        : visibleTaskPipeline + visibleType3Pipeline;
-      const demandPipeline = Math.max(0, taskDemand) * (formulaId === "c1" ? 0.018 : 0.026);
-      const pipelineScale = Math.min(1, Math.max(0, (cPipeline + demandPipeline) / (formulaId === "c1" ? 2.5 : 2)));
+      const cPipelineState = getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand);
+      if (!cPipelineState) return 0;
+      const {
+        currentBase: pipelineCurrentBase,
+        pipelineScale,
+        expectedNewTasks,
+        expectedNewType3,
+        projectedBase,
+      } = cPipelineState;
       if (currentBase <= 0 && pipelineScale < 0.12) return 0;
-      const rawActionWindow = roundNumber >= FINAL_ROUND_NUMBER
-        ? (formulaId === "c1" ? 0.35 : 0.85)
-        : roundNumber === 3
-          ? (formulaId === "c1" ? 0.75 : 1.45)
-          : (formulaId === "c1" ? 1.15 : 2.1);
-      const actionWindow = rawActionWindow * pipelineScale;
-      const expectedNewTasks = Math.min(
-        7,
-        reservedTaskCount * (formulaId === "c1" ? 0.48 : 0.78)
-          + handTaskCount * (formulaId === "c1" ? 0.18 : 0.34)
-          + Math.max(0, taskDemand) * (formulaId === "c1" ? 0.018 : 0.034)
-          + actionWindow,
-      );
-      const expectedNewType3 = formulaId === "c2"
-        ? Math.min(
-          4,
-          type3InHand * (roundNumber >= FINAL_ROUND_NUMBER ? 0.42 : 0.68)
-            + Math.max(0, taskDemand) * 0.012,
-        )
-        : 0;
-
-      let projectedBase = currentBase;
-      if (formulaId === "c1") {
-        projectedBase = Math.max(
-          currentBase,
-          Math.floor(Math.max(0, aiNumber(player.completedTaskCount)) + expectedNewTasks),
-        );
-      } else {
-        projectedBase = Math.max(
-          currentBase,
-          Math.floor((
-            Math.max(0, aiNumber(player.completedTaskCount))
-            + type3Reserved
-            + expectedNewTasks
-            + expectedNewType3
-          ) / 2),
-        );
-      }
-
-      const baseGain = Math.max(0, projectedBase - currentBase);
+      const baseGain = Math.max(0, projectedBase - pipelineCurrentBase);
       if (baseGain <= 0 && currentBase > 0) return 0;
       const multiplier = Math.max(0, aiNumber(endGameScoring.getSlotMultiplier(formulaId, slot)));
       const growthValue = baseGain * multiplier;
@@ -6638,6 +6672,62 @@
       ? Math.min(4.5, expectedNewTech * (formulaId === "d2" ? 0.9 : 0.65))
       : 0;
     return Math.min(22, growthValue * 0.74 + firstSlotPremium + zeroBaseFloor);
+  }
+
+  function scoreAiWeakCFinalFormulaPenalty(formulaId, player, slotIndex, thresholdValue, baseValue, growthPotentialScore, demand = {}) {
+    if (formulaId !== "c1" && formulaId !== "c2") return 0;
+    const roundNumber = Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1));
+    const threshold = Math.max(0, aiNumber(thresholdValue));
+    if (threshold < 50 && roundNumber <= 2) return 0;
+
+    const cPipelineState = getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand);
+    if (!cPipelineState) return 0;
+    const slot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
+    const currentBase = Math.max(0, cPipelineState.currentBase);
+    const projectedBase = Math.max(currentBase, aiNumber(cPipelineState.projectedBase));
+    const pipelineStrength = Math.max(0, cPipelineState.cPipeline + cPipelineState.demandPipeline);
+    const finalWindow = threshold >= 70 || roundNumber >= FINAL_ROUND_NUMBER;
+    const lateWindowScale = finalWindow ? 1 : threshold >= 50 || roundNumber >= 3 ? 0.72 : 0.38;
+    if (lateWindowScale <= 0) return 0;
+
+    const targetBase = formulaId === "c1"
+      ? (slot === 1
+        ? (finalWindow ? 4.5 : 4)
+        : slot === 2
+          ? (finalWindow ? 3.5 : 3)
+          : (finalWindow ? 3 : 2.5))
+      : (slot === 1
+        ? (finalWindow ? 3.5 : 3)
+        : slot === 2
+          ? (finalWindow ? 3 : 2.5)
+          : (finalWindow ? 2.4 : 2));
+    const realizedTarget = formulaId === "c1"
+      ? (finalWindow ? 3 : 2.5)
+      : (finalWindow ? 2.2 : 1.8);
+    const shortfall = Math.max(0, targetBase - projectedBase);
+    const realizedShortfall = Math.max(0, realizedTarget - currentBase);
+    if (shortfall <= 0 && realizedShortfall <= 0) return 0;
+
+    const weakPipelineLimit = formulaId === "c1"
+      ? (finalWindow ? 1.8 : 1.35)
+      : (finalWindow ? 1.45 : 1.1);
+    let penalty = shortfall * (formulaId === "c1" ? 5.4 : 4.2) * lateWindowScale;
+    penalty += realizedShortfall * (formulaId === "c1" ? 2.4 : 1.8) * lateWindowScale;
+
+    if (pipelineStrength < weakPipelineLimit && currentBase < realizedTarget) {
+      penalty += (formulaId === "c1" ? 5 : 3.5) * lateWindowScale;
+    }
+    if (finalWindow && currentBase <= (formulaId === "c1" ? 2 : 1) && projectedBase < targetBase) {
+      penalty += (formulaId === "c1" ? 4 : 3) * lateWindowScale;
+    }
+
+    const growthValue = Math.max(0, aiNumber(growthPotentialScore));
+    if (growthValue >= 6) penalty *= 0.48;
+    else if (growthValue >= 4) penalty *= 0.65;
+    else if (growthValue >= 2.5) penalty *= 0.82;
+
+    if (slot >= 3) penalty *= 0.86;
+    return Math.min(finalWindow ? 26 : 20, Math.max(0, penalty));
   }
 
   function hasAiPlayerClaimedFinalThreshold(playerId, threshold) {
@@ -6820,6 +6910,15 @@
     )
       ? (isLateMarker ? 18 : thresholdValue >= 50 ? 14 : 8)
       : 0;
+    const weakCFormulaPenalty = scoreAiWeakCFinalFormulaPenalty(
+      formulaId,
+      player,
+      check.slotIndex,
+      thresholdValue,
+      baseValue,
+      growthPotentialScore,
+      demand,
+    );
     const score = applyAiStrategyWeight(
       immediateScore * immediateScoreWeight
         + demandScore
@@ -6828,7 +6927,8 @@
         + opponentCompetitionScore
         + thresholdScore
         - zeroBaseLatePenalty
-        - unsupportedCFormulaPenalty,
+        - unsupportedCFormulaPenalty
+        - weakCFormulaPenalty,
       "final",
       0.85,
     );
@@ -6864,6 +6964,7 @@
         rawZeroBaseLatePenalty: Math.round(rawZeroBaseLatePenalty * 100) / 100,
         zeroBaseLatePenalty: Math.round(zeroBaseLatePenalty * 100) / 100,
         unsupportedCFormulaPenalty: Math.round(unsupportedCFormulaPenalty * 100) / 100,
+        weakCFormulaPenalty: Math.round(weakCFormulaPenalty * 100) / 100,
       },
     };
   }
