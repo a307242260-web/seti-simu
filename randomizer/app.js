@@ -16404,6 +16404,36 @@
         rocketState.statusNote = "科技：请选择要研究的科技片";
         renderStateReadout();
         return { ok: true, message: rocketState.statusNote };
+      case "research_tech_take": {
+        beginEffectHistoryStep(effect.label, { effectType: "research_tech_take" });
+        const result = abilities.executeAbility("researchTechTake", createActionContext(), effect.options || {});
+        if (!result.ok) {
+          endEffectHistoryStep();
+          rocketState.statusNote = result.message;
+          renderStateReadout();
+          return result;
+        }
+        if (!shouldSkipCurrentResearchTechCost()) {
+          maybeConsumeAlienLabPanelForMainAction("researchTech", result);
+        }
+        recordAbilityCommands(result);
+        if (result.firstTake) {
+          const claim = claimRunezuSourceSymbolWithHistory(
+            "tech",
+            result.tileId,
+            getCurrentPlayer(),
+            "研究科技获得符文族symbol",
+          );
+          if (claim?.ok) result.message = `${result.message}；${claim.message}`;
+        }
+        effect.result = result;
+        rocketState.statusNote = result.message;
+        onTechTileTaken(result);
+        renderPlayerStats();
+        completeCurrentActionEffect();
+        renderStateReadout();
+        return result;
+      }
       case "research_tech_rotate": {
         const result = abilities.executeAbility("researchTechRotate", createActionContext());
         if (!result.ok) {
@@ -18251,13 +18281,13 @@
         destination: "unlock",
         traceType,
         label: `解锁${aliens.getTraceTypeLabel(traceType)}方舟牌`,
-        description: "消耗本次痕迹解锁保留区卡牌并加入手牌",
+        description: "追加到 state 额外痕迹位，获得3分，并解锁卡牌加入手牌",
       });
     } else if (unlockableTraceTypes.length > 1) {
       choices.push({
         destination: "unlock",
         label: "解锁方舟牌",
-        description: "下一步选择要解锁的方舟牌颜色",
+        description: "下一步选择要追加并解锁的方舟牌颜色",
       });
     }
 
@@ -18281,7 +18311,7 @@
     if (els.alienTraceTitle) els.alienTraceTitle.textContent = "解锁方舟牌";
     if (els.alienTraceSubtitle) {
       const playerText = currentPlayer?.colorLabel ? `${currentPlayer.colorLabel}玩家` : "当前玩家";
-      els.alienTraceSubtitle.textContent = `${playerText}：选择要消耗本次痕迹解锁的方舟牌。`;
+      els.alienTraceSubtitle.textContent = `${playerText}：选择本次痕迹要追加并解锁的方舟牌。`;
     }
     if (els.alienTraceCancel) els.alienTraceCancel.hidden = false;
     alienTracePickerState = {
@@ -18298,7 +18328,7 @@
       button.dataset.alienSlot = String(alienSlotId);
       button.dataset.traceType = traceType;
       button.dataset.fangzhouUse = "unlock";
-      button.innerHTML = `解锁${aliens.getTraceTypeLabel(traceType)}方舟牌<small>卡牌进入手牌</small>`;
+      button.innerHTML = `解锁${aliens.getTraceTypeLabel(traceType)}方舟牌<small>追加 state 额外痕迹，获得3分，卡牌进入手牌</small>`;
       return button;
     }));
     if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = false;
@@ -18431,7 +18461,7 @@
     if (els.alienTraceSubtitle) {
       els.alienTraceSubtitle.textContent = (
         `当前玩家：${currentPlayer.colorLabel}。${traceLabel}外星人痕迹：`
-        + "选择放置到方舟正面，或消耗痕迹解锁对应卡牌（解锁后卡牌进入手牌）。"
+        + "选择放置到方舟正面，或追加到 state 额外位并解锁对应卡牌。"
       );
     }
 
@@ -18457,7 +18487,7 @@
         alienSlotId,
         traceType,
         label: `解锁${traceLabel}方舟牌`,
-        description: "消耗本次痕迹解锁保留区卡牌并加入手牌",
+        description: "追加到 state 额外痕迹位，获得3分，并解锁保留区卡牌加入手牌",
         disabled: false,
         fangzhouUse: "unlock",
       });
@@ -18537,18 +18567,42 @@
     return confirmFangzhouTracePlacement(alienSlotId, traceType, position);
   }
 
+  function applyFangzhouUnlockStateTraceReward(player, traceType) {
+    const reward = fangzhou?.getCard2UnlockTraceReward?.();
+    const gain = reward?.gain || null;
+    if (!gain || !Object.values(gain).some((value) => Number(value) !== 0)) {
+      return { ok: true, reward: null, gain: null, message: null };
+    }
+
+    players.gainResources(player, gain);
+    recordAlienTraceScore(player, traceType, gain);
+    return {
+      ok: true,
+      reward,
+      gain: { ...gain },
+      message: `state额外痕迹奖励：${formatAlienFirstTraceRewardGain(gain) || "无奖励"}`,
+    };
+  }
+
   function confirmFangzhouCard2Unlock(alienSlotId, traceType) {
-    const currentPlayer = getAlienTracePickerPlayer();
+    const pending = pendingAlienTraceAction;
     const inDebugMode = isDebugAlienTraceMode();
+    const currentPlayer = getAlienTraceActionPlayer(pending || alienTracePickerState, { allowFallback: inDebugMode });
+    if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
     if (!fangzhou?.canUnlockCard2ForTrace?.(alienGameState, currentPlayer, traceType)) {
       rocketState.statusNote = "无法解锁该方舟卡牌";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
+    if (!canPlaceAnyStateExtraTrace(alienSlotId, traceType)) {
+      rocketState.statusNote = "无法将该痕迹追加到方舟 state 额外位";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
 
-    const pending = pendingAlienTraceAction;
     const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
     const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
+    const beforeLogSnapshot = createActionLogImpactSnapshot(currentPlayer);
     if (!inDebugMode) {
       pendingAlienTraceAction = null;
       if (alienTracePickerState?.mode !== "debug-direct") {
@@ -18563,14 +18617,34 @@
       renderStateReadout();
       return unlockResult;
     }
+    const stateTraceResult = aliens.addExtraTrace(alienGameState, alienSlotId, traceType, currentPlayer.color);
+    if (!stateTraceResult.ok) {
+      rocketState.statusNote = stateTraceResult.message;
+      renderStateReadout();
+      return stateTraceResult;
+    }
     if (unlockResult.handCard) {
       currentPlayer.hand.push(unlockResult.handCard);
     }
 
-    rocketState.statusNote = unlockResult.message;
+    const stateTraceReward = applyFangzhouUnlockStateTraceReward(currentPlayer, traceType);
+    rocketState.statusNote = [
+      unlockResult.message,
+      stateTraceResult.message,
+      stateTraceReward.message,
+    ].filter(Boolean).join("；");
+    const traceEvents = !inDebugMode
+      ? [buildAlienTraceEvent(alienSlotId, traceType, currentPlayer, fangzhou.ALIEN_ID)]
+      : [];
+    const alienLabRestore = maybeRestoreAlienLabPanelForTrace(currentPlayer, traceType);
+    if (alienLabRestore?.changed) {
+      rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
+    }
+    const afterReward = applyAlienTraceAfterReward(pending, currentPlayer, traceType);
+    appendAlienTraceAfterRewardMessage(afterReward);
 
     if (pending?.type === "planet_reward_alien_trace") {
-      beginEffectHistoryStep(pending.effectLabel || "方舟解锁卡牌");
+      beginEffectHistoryStep(pending.effectLabel || "方舟解锁卡牌", { logBefore: beforeLogSnapshot });
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
@@ -18586,12 +18660,20 @@
           ok: true,
           undoable: true,
           message: rocketState.statusNote,
-          payload: { alienSlotId, traceType, unlocked: true },
+          events: traceEvents,
+          payload: {
+            alienSlotId,
+            traceType,
+            unlocked: true,
+            stateTrace: stateTraceResult,
+            reward: stateTraceReward.reward || null,
+            afterReward,
+          },
         };
       }
       completeCurrentActionEffect();
     } else {
-      beginQuickActionStep("fangzhou-unlock", rocketState.statusNote);
+      beginQuickActionStep("fangzhou-unlock", rocketState.statusNote, { logBefore: beforeLogSnapshot });
       recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
@@ -18603,7 +18685,7 @@
         "恢复方舟解锁卡牌前玩家状态",
       ));
       completeQuickActionStep();
-      settleCardTasksAfterEffect({ skipType1: true, render: false });
+      settleCardTasksAfterEffect({ events: traceEvents, render: false });
     }
 
     renderAlienPanels();
@@ -18612,7 +18694,14 @@
     renderReservedCardsFromTaskState();
     updateActionButtons();
     renderStateReadout();
-    return unlockResult;
+    return {
+      ...unlockResult,
+      message: rocketState.statusNote,
+      stateTrace: stateTraceResult,
+      reward: stateTraceReward.reward || null,
+      events: traceEvents,
+      afterReward,
+    };
   }
 
   function getAlienFangzhouCardArea(alienSlotId) {
@@ -18636,7 +18725,7 @@
       }
       button.style.setProperty("--card-index", String(index + 1));
       button.title = debugUnlockMode
-        ? `${card.label}（点击消耗痕迹解锁）`
+        ? `${card.label}（点击追加 state 额外痕迹并解锁）`
         : `${card.label}（未解锁）`;
       button.disabled = !debugUnlockMode;
 
@@ -23355,9 +23444,18 @@
     if (effect.options?.generatedByResearchTech) return true;
     if (String(effect.id || "").startsWith("research-tech-")) return true;
     return [
+      "research_tech_take",
       "research_tech_rotate",
       "research_tech_bonus",
     ].includes(effect.type);
+  }
+
+  function countOwnedTechByTypeAfterSelection(player, techType, selectResult) {
+    const currentCount = countOwnedTechByType(player, techType);
+    const tileId = selectResult?.tileId || selectResult?.payload?.tileId || null;
+    if (!tileId || player?.techState?.ownedTiles?.[tileId]) return currentCount;
+    if (techType && !String(tileId).startsWith(techType)) return currentCount;
+    return currentCount + 1;
   }
 
   function appendResearchTechFollowupEffects(selectResult) {
@@ -23382,9 +23480,29 @@
       pendingActionEffectFlow.effects.splice(selectIndex + 1);
     }
 
-    const bonusId = selectResult.bonusId;
+    const bonusId = selectResult.bonusId ?? selectResult.payload?.bonusId;
     const bonusLabel = tech.BONUS_LABELS[bonusId] || bonusId || "奖励";
     const followups = [];
+    const tileId = selectResult.tileId || selectResult.payload?.tileId;
+    const techType = selectResult.techType || selectResult.payload?.techType;
+
+    followups.push({
+      id: "research-tech-take",
+      type: "research_tech_take",
+      ...ownerFields,
+      abilityId: "researchTechTake",
+      icon: "research_tech",
+      label: `获得科技片：${tileId}`,
+      status: "pending",
+      undoable: false,
+      options: {
+        tileId,
+        techType,
+        bonusId,
+        blueSlot: selectResult.blueSlot ?? selectResult.payload?.blueSlot ?? null,
+        firstTake: Boolean(selectResult.firstTake ?? selectResult.payload?.firstTake),
+      },
+    });
 
     if (!selectionOptions.skipRotate) {
       followups.push({
@@ -23457,9 +23575,8 @@
 
     if (selectionOptions.afterResearchReward?.kind === "techTypeCountScore") {
       const currentPlayer = getCurrentPlayer();
-      const techType = selectResult.techType || selectResult.payload?.techType;
       const scorePer = Math.max(0, Math.round(Number(selectionOptions.afterResearchReward.scorePer) || 1));
-      const count = countOwnedTechByType(currentPlayer, techType);
+      const count = countOwnedTechByTypeAfterSelection(currentPlayer, techType, selectResult);
       followups.push({
         id: "research-tech-type-score",
         type: planetRewards.EFFECT_TYPES.GAIN_RESOURCES,
@@ -23502,7 +23619,6 @@
       });
     }
 
-    const techType = selectResult.techType || selectResult.payload?.techType;
     const heliosEffect = industry?.buildHeliosPassiveRewardEffect?.(
       getCurrentPlayer(),
       techType,
@@ -23527,9 +23643,18 @@
   }
 
   function onTechTileSelected(result) {
+    appendResearchTechFollowupEffects(result);
+    syncTechSelectionChrome();
+    renderTechBoard();
+    renderActionEffectBar();
+    updateActionButtons();
+  }
+
+  function onTechTileTaken(result) {
     const player = getCurrentPlayer();
     if (industry?.shouldApplyTuringBlueTechPublicity?.(player, result.tileId)) {
       players.gainResources(player, { publicity: industry.getTuringBlueTechPublicityGain() });
+      result.message = `${result.message}；图灵系统蓝色科技 +${industry.getTuringBlueTechPublicityGain()} 宣传`;
     }
     const techType = result.techType || result.payload?.techType || String(result.tileId || "").match(/^(orange|purple|blue)/)?.[1] || null;
     const techEvent = techType
@@ -23544,7 +23669,6 @@
     if (techEvent) {
       result.events = [...(result.events || []), techEvent];
     }
-    appendResearchTechFollowupEffects(result);
     syncTechSelectionChrome();
     renderTechBoard();
     renderActionEffectBar();
@@ -23724,20 +23848,8 @@
   function commitResearchTechSelectionResult(result) {
     if (!result?.ok || result.needsBlueSlotChoice) return result;
     rocketState.statusNote = result.message;
-    if (!shouldSkipCurrentResearchTechCost()) {
-      maybeConsumeAlienLabPanelForMainAction("researchTech", result);
-    }
     beginEffectHistoryStep(result.message || "选择科技片", { effectType: "research_tech_select" });
     recordAbilityCommands(result);
-    if (result.firstTake) {
-      const claim = claimRunezuSourceSymbolWithHistory(
-        "tech",
-        result.tileId,
-        getCurrentPlayer(),
-        "研究科技获得符文族symbol",
-      );
-      if (claim?.ok) result.message = `${result.message}；${claim.message}`;
-    }
     rocketState.statusNote = result.message;
     const current = getCurrentActionEffect();
     if (current) current.result = result;
