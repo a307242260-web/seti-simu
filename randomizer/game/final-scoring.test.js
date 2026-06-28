@@ -1,5 +1,7 @@
 const assert = require("node:assert/strict");
 const finalScoring = require("./final-scoring");
+const actionHistory = require("./history/action-history");
+const historyCommands = require("./history/commands");
 
 function player(color, score) {
   return {
@@ -65,5 +67,31 @@ const startup = finalScoring.placeDirectMarkAtSlot(state, "c", white, 3, { token
 assert.equal(startup.ok, true);
 assert.equal(startup.mark.slotIndex, 3);
 assert.equal(startup.mark.source, "direct");
+
+const undoState = finalScoring.createFinalScoringState(["a", "b"]);
+const undoPlayer = player("undo", 25);
+finalScoring.syncPendingMarks(undoState, [undoPlayer]);
+const beforeUndoableMark = structuredClone(undoState);
+const undoHistory = actionHistory.createActionHistory();
+undoHistory.beginSession("quick", "快速行动");
+undoHistory.beginStep({ source: "quick", type: "final_score_mark", label: "标记终局" });
+const undoableMark = finalScoring.markTile(undoState, "a", undoPlayer, { tokenSrc: "undo.png" });
+assert.equal(undoableMark.ok, true);
+undoHistory.record(historyCommands.createRestoreObjectCommand(
+  undoState,
+  beforeUndoableMark,
+  "恢复终局标记前状态",
+));
+undoHistory.endStep();
+assert.equal(undoHistory.hasUndoableStep(), true);
+assert.equal(undoState.tiles.a.marks.length, 1);
+assert.equal(finalScoring.getPendingMarksForPlayer(undoState, undoPlayer.id).length, 0);
+const undoResult = undoHistory.undoLastStep();
+assert.equal(undoResult.ok, true);
+assert.equal(undoState.tiles.a.marks.length, 0);
+assert.deepEqual(
+  finalScoring.getPendingMarksForPlayer(undoState, undoPlayer.id).map((item) => item.threshold),
+  [25],
+);
 
 console.log("final-scoring tests passed");

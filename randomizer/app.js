@@ -747,6 +747,11 @@
     return rotatePlayerIds(activeOrderedIds, startPlayerId);
   }
 
+  function getPlayerRoundOrderNumber(playerId) {
+    const index = getRoundOrderPlayerIds().indexOf(playerId);
+    return index >= 0 ? index + 1 : null;
+  }
+
   function getPlayerById(playerId) {
     return playerState.players.find((player) => player.id === playerId) || null;
   }
@@ -6432,61 +6437,56 @@
   }
 
   function getFinalScoreMarkLogSource() {
-    if (pendingActionEffectFlow?.historySource) return pendingActionEffectFlow.historySource;
-    if (quickActionHistory.hasSession()) return HISTORY_SOURCE_QUICK;
-    return HISTORY_SOURCE_MAIN;
+    return HISTORY_SOURCE_QUICK;
   }
 
-  function recordFinalScoreMarkActionLog(result, player) {
+  function recordFinalScoreMarkActionLog(result, player, beforeFinalScoringState) {
     if (!result?.ok) return null;
 
     const source = getFinalScoreMarkLogSource();
     const history = getHistoryForSource(source);
     const label = "标记终局";
-    const reason = "终局计分标记已放置";
-    const code = "final_score_mark";
     let step = null;
 
-    if (history.hasSession()) {
-      history.beginStep({
-        source,
-        type: "final_score_mark",
-        label,
-        effectIndex: null,
-        undoable: false,
-        irreversibleCode: code,
-        irreversibleReason: reason,
-        logBefore: createActionLogImpactSnapshot(player),
-      });
-      step = history.endStep();
-      if (step) {
-        rememberHistoryStep(source, step.id);
-        appendActionLogStep(source, step.label, result.message, actionLogOptionsFromHistoryStep(step));
-      }
-    } else {
-      appendActionLogStep(source, label, result.message, {
-        player,
-        undoable: false,
-        irreversibleCode: code,
-        irreversibleReason: reason,
-      });
+    if (!history.hasSession()) {
+      history.beginSession("quick", "快速行动");
     }
-
-    markCurrentActionIrreversibleForSource(source, reason, code);
+    history.beginStep({
+      source,
+      type: "final_score_mark",
+      label,
+      effectIndex: null,
+      logBefore: createActionLogImpactSnapshot(player),
+    });
+    if (beforeFinalScoringState) {
+      history.record(historyCommands.createRestoreObjectCommand(
+        finalScoringState,
+        beforeFinalScoringState,
+        "恢复终局标记前状态",
+      ));
+    }
+    step = history.endStep();
+    if (step) {
+      rememberHistoryStep(source, step.id);
+      appendActionLogStep(source, step.label, result.message, actionLogOptionsFromHistoryStep(step));
+    }
     return step;
   }
 
   function handleFinalScoreTileClick(tileId) {
     const currentPlayer = getCurrentPlayer();
     syncFinalScorePendingMarks();
+    const beforeFinalScoringState = structuredClone(finalScoringState);
 
     const result = finalScoring.markTile(finalScoringState, tileId, currentPlayer, {
       tokenSrc: getNormalTokenAssetForPlayer(currentPlayer),
     });
 
     rocketState.statusNote = result.message;
-    if (result.ok) recordFinalScoreMarkActionLog(result, currentPlayer);
+    if (result.ok) recordFinalScoreMarkActionLog(result, currentPlayer, beforeFinalScoringState);
     renderFinalScoreBoard();
+    renderPlayerStats();
+    updateActionButtons();
     queueStateReadoutRender();
     return result;
   }
@@ -25749,12 +25749,19 @@
   function createOpponentPlayerHeaderRow(player, score, finalTotalScore) {
     const color = players.getPlayerColorDefinition(player.color);
     const row = createOpponentStatRow("opponent-stat-row-header");
+    const roundOrderNumber = getPlayerRoundOrderNumber(player?.id);
 
     const idEl = document.createElement("span");
     idEl.className = "opponent-stat-id player-stat-value";
     idEl.classList.toggle("is-player-passed", isPlayerPassedThisRound(player?.id));
     idEl.textContent = getPlayerDisplayLabel(player);
     idEl.title = idEl.textContent;
+
+    const orderEl = document.createElement("span");
+    orderEl.className = "player-turn-order-number";
+    orderEl.textContent = roundOrderNumber == null ? "-" : String(roundOrderNumber);
+    orderEl.title = roundOrderNumber == null ? "不在本轮顺位中" : `本轮顺位 ${roundOrderNumber}`;
+    orderEl.setAttribute("aria-label", orderEl.title);
 
     const marker = document.createElement("span");
     marker.className = "player-color-marker";
@@ -25763,6 +25770,7 @@
 
     row.append(
       idEl,
+      orderEl,
       marker,
       createInlineIconValue("分数", score, RESOURCE_ICON_SRC.score, "player-stat-score"),
       createInlineIconValue("终局总分", finalTotalScore, RESOURCE_ICON_SRC.finalScore, "player-stat-final-score"),
