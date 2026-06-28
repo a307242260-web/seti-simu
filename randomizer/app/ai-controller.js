@@ -6641,6 +6641,47 @@
       return target?.type === "satellite" && (planetId === "uranus" || planetId === "neptune");
     }
 
+    function scoreAiOuterSatelliteCashoutPremium(planetId, target = {}, player = getCurrentPlayer(), options = {}) {
+      if (!isAiOuterHighScoreSatelliteTarget(planetId, target) || !player) return 0;
+      const directScore = Math.max(0, aiNumber(options.directScore));
+      if (directScore < 20) return 0;
+      const round = getAiRoundNumber();
+      if (round <= 2) return 0;
+
+      const currentScore = Math.max(0, aiNumber(player.resources?.score));
+      const threshold = getAiNextMissingFinalScoreThreshold(player);
+      const crossesThreshold = Boolean(threshold && currentScore < threshold && currentScore + directScore >= threshold);
+      const finalMarks = countAiFinalMarksForPlayer(player);
+      const energyShortfall = Math.max(0, Math.round(aiNumber(options.energyShortfall)));
+      const routeDistance = options.routeDistance == null
+        ? null
+        : Math.max(0, Math.round(aiNumber(options.routeDistance)));
+      const isCloseRoute = routeDistance == null || routeDistance <= 3;
+
+      if (round === 3) {
+        if (!crossesThreshold && energyShortfall > 0 && !isCloseRoute) return 0;
+        let premium = 2.2 + Math.max(0, directScore - 18) * 0.34;
+        if (crossesThreshold) premium += 5.5;
+        if (energyShortfall <= 0) premium += 2.2;
+        if (routeDistance != null && routeDistance <= 3) premium += Math.max(0, 3.5 - routeDistance);
+        return roundAiScore(Math.min(13, Math.max(0, premium)));
+      }
+
+      let premium = 8.5
+        + Math.max(0, directScore - 20) * 0.62
+        + Math.min(6, getAiLiveScorePaceDeficit(player) * 0.1);
+      if (crossesThreshold) premium += 5.5;
+      if (finalMarks < 3) premium += 2.5;
+      if (energyShortfall <= 0) premium += 2.5;
+      else premium -= Math.min(5.5, energyShortfall * 1.8);
+      if (routeDistance != null) {
+        if (routeDistance <= 3) premium += Math.max(0, 4.5 - routeDistance);
+        else premium -= Math.min(5, (routeDistance - 3) * 1.15);
+      }
+      if (options.immediate === true) premium += 2;
+      return roundAiScore(Math.min(24, Math.max(0, premium)));
+    }
+
     function canAiOpponentContestSatelliteNow(opponent, planetId) {
       if (!opponent || !planetId || !players.playerOwnsTech(opponent, "orange4", createActionContext())) return false;
       if (!(planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planetId) || []).length) return false;
@@ -6813,6 +6854,13 @@
             directScore,
             immediate: options.immediate === true,
           });
+          const cashoutPremium = scoreAiOuterSatelliteCashoutPremium(planetId, target, player, {
+            directScore,
+            energyCost,
+            energyShortfall,
+            immediate: options.immediate === true,
+            routeDistance: options.routeDistance,
+          });
           return {
             planetId,
             satelliteId: satellite.satelliteId,
@@ -6823,11 +6871,13 @@
             energyShortfall,
             pointConversionPenalty,
             contestRiskPenalty,
+            cashoutPremium,
             score: rewardValue * 0.55
               + directScore * 0.22
               + highScorePremium
               + pacePremium
               + affordability
+              + cashoutPremium
               - pointConversionPenalty
               - contestRiskPenalty,
           };
@@ -6976,6 +7026,13 @@
         directScore: directScoreGain,
         immediate: true,
       });
+      const outerSatelliteCashoutPremium = scoreAiOuterSatelliteCashoutPremium(planetId, choice.target, player, {
+        directScore: directScoreGain,
+        energyCost,
+        energyShortfall: 0,
+        immediate: true,
+        routeDistance: 0,
+      });
       const markerValue = aiNumber(scoreAiPlanetMarkerEndGameValue(planetId, player, {
           markerKind: choice.target?.type === "satellite" ? "satellite" : "land",
           target: choice.target,
@@ -6985,6 +7042,7 @@
         + planetDemand * 0.7 * getAiStrategyWeight("route")
         + getAiMapDemand(demand.actions, "land") * 0.26 * getAiStrategyWeight("orbitLand")
         + satelliteBonus
+        + outerSatelliteCashoutPremium
         - energyCost * getAiResourceValuesForRound(player).energy * 0.3
         - yellowTracePenalty
         - deferredTracePenalty
@@ -7037,8 +7095,19 @@
           ? aiNumber(satelliteOpportunity.directScore)
           : 0;
         const bestLandDirectScore = Math.max(planetLandDirectScore, satelliteDirectScore);
+        const satelliteTarget = satelliteOpportunity
+          ? { type: "satellite", satelliteId: satelliteOpportunity.satelliteId }
+          : null;
+        const outerSatelliteCashoutPremium = satelliteTarget
+          ? scoreAiOuterSatelliteCashoutPremium(planet.planetId, satelliteTarget, player, {
+            directScore: satelliteDirectScore,
+            energyCost: satelliteOpportunity.energyCost,
+            energyShortfall: satelliteOpportunity.energyShortfall,
+          })
+          : 0;
         const satelliteRoutePenalty = aiNumber(satelliteOpportunity?.pointConversionPenalty) * 0.45
-          + aiNumber(satelliteOpportunity?.contestRiskPenalty) * 0.9;
+          + aiNumber(satelliteOpportunity?.contestRiskPenalty) * 0.9
+          - outerSatelliteCashoutPremium * (round >= FINAL_ROUND_NUMBER ? 0.35 : 0.18);
         const canAffordLand = players.canAfford(player, landEnergyCost > 0 ? { energy: landEnergyCost } : {});
         const energyShortfall = Math.max(0, landEnergyCost - Math.max(0, aiNumber(resources.energy)));
         const landDirectAffordability = canAffordLand ? 1 : Math.max(0.12, 0.55 - energyShortfall * 0.16);
@@ -7046,6 +7115,7 @@
         if (canAffordLand) bestCashoutDirectScore = Math.max(bestCashoutDirectScore, bestLandDirectScore);
         value += 11 - Math.min(4, landEnergyCost);
         value += landRewardValue * (round <= 2 ? 0.52 : 0.42);
+        value += outerSatelliteCashoutPremium * (round >= FINAL_ROUND_NUMBER ? 0.65 : 0.38);
         if (canAffordLand) value += 3;
         else value -= Math.min(6, energyShortfall * (round >= 3 ? 2 : 1.4));
         value -= satelliteRoutePenalty;
@@ -7358,13 +7428,17 @@
       const routeWeight = getAiStrategyWeight("route");
       const targets = solar.createSolarSnapshot(solarState).planetLocations
         .filter((planet) => planet.planetId !== "earth")
-        .map((planet) => ({
-          id: planet.planetId,
-          label: planet.name || planet.planetId,
-          kind: "planet",
-          coordinate: { x: planet.x, y: planet.y },
-          value: scoreAiPlanetTarget(planet, player),
-        }))
+        .map((planet) => {
+          const satelliteOpportunity = getAiBestSatelliteLandingOpportunity(planet.planetId, player);
+          return {
+            id: planet.planetId,
+            label: planet.name || planet.planetId,
+            kind: "planet",
+            coordinate: { x: planet.x, y: planet.y },
+            value: scoreAiPlanetTarget(planet, player),
+            satelliteOpportunity,
+          };
+        })
         .filter((target) => target.value > 0);
       const groups = solar.collectVisibleCoordinateGroups(solarState);
       const addLocationTargets = (coordinates, locationType, baseValue) => {
@@ -7444,6 +7518,21 @@
           if (urgentCatchup && newDistance > 1) {
             score -= Math.min(14, (newDistance - 1) * 7);
             if ((target.id === "uranus" || target.id === "neptune") && oldDistance > 1) score -= 5;
+          }
+          if (target.satelliteOpportunity && newDistance <= 3) {
+            const satelliteTarget = {
+              type: "satellite",
+              satelliteId: target.satelliteOpportunity.satelliteId,
+            };
+            const satelliteCashoutPremium = scoreAiOuterSatelliteCashoutPremium(target.id, satelliteTarget, player, {
+              directScore: target.satelliteOpportunity.directScore,
+              energyCost: target.satelliteOpportunity.energyCost,
+              energyShortfall: target.satelliteOpportunity.energyShortfall,
+              routeDistance: newDistance,
+              immediate: newDistance === 0,
+            });
+            const distanceScale = newDistance === 0 ? 0.75 : newDistance === 1 ? 0.62 : 0.42;
+            score += satelliteCashoutPremium * distanceScale;
           }
         }
         if (oldDistance === 0 && newDistance > 0) score -= target.value;
@@ -8000,7 +8089,22 @@
             planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planet.planetId) || []
           ).reduce((innerBest, satellite) => Math.max(
             innerBest,
-            scoreAiRewardEffects(planetRewards.buildSatelliteLandRewardEffects?.(satellite.satelliteId) || [], player),
+            scoreAiRewardEffects(planetRewards.buildSatelliteLandRewardEffects?.(satellite.satelliteId) || [], player)
+              + scoreAiOuterSatelliteCashoutPremium(planet.planetId, {
+                type: "satellite",
+                satelliteId: satellite.satelliteId,
+              }, player, {
+                directScore: getAiRewardDirectScore(
+                  planetRewards.buildSatelliteLandRewardEffects?.(satellite.satelliteId) || [],
+                  player,
+                ),
+                energyCost: getAiApproxLandEnergyCostForPlayer(player, planet.planetId),
+                energyShortfall: Math.max(
+                  0,
+                  getAiApproxLandEnergyCostForPlayer(player, planet.planetId)
+                    - Math.max(0, aiNumber(resources.energy)),
+                ),
+              }),
           ), 0)), 0);
         const energyCapacity = Math.max(
           aiNumber(resources.energy),
