@@ -3920,13 +3920,24 @@
       const scanEnergyCost = Math.max(0, aiNumber(scanCost.energy));
       const analyzeEnergyCost = Math.max(1, aiNumber(data.ANALYZE_ENERGY_COST || 1));
       const hasImmediateRouteRecovery = bestLaunchMoveRecoveryScore > 0 || bestPlanetCashoutRecoveryScore > 0;
-      if (!recoveryThreshold && !hasImmediateRouteRecovery) return [];
+      const finalLowHandRefillWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && mainActionOpen
+        && currentScore < 120
+        && handSize <= 1
+        && publicity >= 3;
+      if (!recoveryThreshold && !hasImmediateRouteRecovery && !finalLowHandRefillWindow) return [];
       const scoreToNextThreshold = recoveryThreshold ? Math.max(1, recoveryThreshold - currentScore) : 0;
       const closeThirdMarkScanSetup = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && nextThreshold === 70
         && finalMarks === 2
         && currentScore >= 64;
-      if (paceDeficit <= 8 && finalMarks >= 2 && !closeThirdMarkScanSetup && !hasImmediateRouteRecovery) return [];
+      if (
+        paceDeficit <= 8
+        && finalMarks >= 2
+        && !closeThirdMarkScanSetup
+        && !hasImmediateRouteRecovery
+        && !finalLowHandRefillWindow
+      ) return [];
       const closeScanCashoutWindow = recoveryThreshold <= 50 ? 10 : 8;
       const closeScanDirectScoreGain = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         ? Math.max(0, aiNumber(getAiScanDirectScoreGain(player)))
@@ -3991,6 +4002,7 @@
         : 0;
       const usefulPublicTradeThreshold = recoveryThreshold <= 50 && scoreToNextThreshold <= 3 ? 8 : 4;
       const hasUsefulPublicTradeCard = bestPublicTradeCardScore >= usefulPublicTradeThreshold;
+      const finalLowHandPublicRefill = finalLowHandRefillWindow && bestPublicTradeCardScore >= 0;
       const secondMarkCreditRecovery = recoveryThreshold <= 50
         && finalMarks <= 1
         && credits <= 0
@@ -4151,17 +4163,23 @@
           tradeId: "publicity-for-card",
           enabled: (mainActionOpen || canPrepareFinalThresholdAction) && publicity >= 3 && (
             (handSize <= 1 && hasUsefulPublicTradeCard)
+            || finalLowHandPublicRefill
             || secondMarkCardSearch
             || closeSecondMarkCardSearch
           ),
           value: baseValue
             + (handSize <= 0 ? 4 : 2)
             + (!(secondMarkCardSearch || closeSecondMarkCardSearch) ? Math.min(6, bestPublicTradeCardScore * 0.22) : 0)
+            + (finalLowHandPublicRefill
+              ? 4 + Math.min(8, bestPublicTradeCardScore * 0.35) + Math.max(0, 120 - currentScore) * 0.05
+              : 0)
             + ((secondMarkCardSearch || closeSecondMarkCardSearch)
               ? 5 + Math.min(9, bestPublicTradeCardScore * 0.3)
               : 0),
           reason: secondMarkCardSearch || closeSecondMarkCardSearch
             ? "终局第2标记：宣传精选寻找得分牌"
+            : finalLowHandPublicRefill
+              ? "终局低手牌：宣传精选恢复打牌"
             : "后期落后：宣传换牌恢复行动",
         },
       ];
@@ -4202,6 +4220,7 @@
               secondMarkCreditRecovery,
               secondMarkCardSearch,
               closeSecondMarkCardSearch,
+              finalLowHandPublicRefill,
               secondMarkEnergyCardSearch,
               desperateSecondMarkCardSearch,
               thresholdCreditRecovery,
@@ -6083,6 +6102,39 @@
         if (type === "research_tech_select" || type === cardEffects.EFFECT_TYPES.RESEARCH_TECH) return total + 3;
         return total;
       }, 0);
+    }
+
+    function scoreAiUnplayedTaskCardPreserveValue(card, model = null, playCandidate = null, player = getCurrentPlayer()) {
+      const cardModel = model || cardEffects.getCardModel?.(card) || null;
+      const tasks = cardModel?.tasks || [];
+      if (!card || !player || !tasks.length) return 0;
+      const round = getAiRoundNumber();
+      const completedTaskCount = Math.max(0, Math.round(aiNumber(player.completedTaskCount)));
+      const handSize = Math.max(0, (player.hand || []).length);
+      const routeValue = tasks.reduce((total, task) => (
+        total + Math.max(0, scoreAiTaskRouteCompletionValue(task, player))
+      ), 0);
+      const directScore = tasks.reduce((total, task) => (
+        total + Math.max(0, getAiTaskDirectScoreReward(task, player))
+      ), 0);
+      const cFinalProgress = Math.max(0, scoreAiCFinalTaskProgressValue(player, tasks.length));
+      const playableScore = Math.max(0, aiNumber(playCandidate?.score));
+      const lowTaskPressure = completedTaskCount <= 0
+        ? round <= 2 ? 7.5 : round === 3 ? 8.5 : 6
+        : completedTaskCount === 1
+          ? round <= 3 ? 5 : 3.5
+          : 1.5;
+      let value = 2.5
+        + Math.min(16, routeValue * 0.72)
+        + Math.min(7, cFinalProgress * 1.25)
+        + Math.min(5, directScore * 0.28)
+        + Math.min(5, playableScore * 0.2)
+        + lowTaskPressure;
+      if (round >= FINAL_ROUND_NUMBER && directScore <= 0 && cFinalProgress <= 0) value *= 0.7;
+      if (handSize >= 8) value *= 0.6;
+      else if (handSize >= 7) value *= 0.75;
+      else if (handSize >= 6) value *= 0.88;
+      return roundAiScore(Math.min(28, Math.max(0, value)));
     }
 
     function scoreAiPlayCardValue(card, details = {}) {
@@ -9503,29 +9555,6 @@
       const endGameExpectedScore = playCandidate?.valueBreakdown?.endGameExpectedScore
         ?? scoreAiCardEndGameExpectedValue(card, model, currentPlayer);
       const alienCard = isAiAlienMainPlayCard(card);
-      const finalCardPreservePenalty = (
-        getAiRoundNumber() >= 3
-        && (typeCode === 3 || model?.endGameScoring)
-      )
-        ? Math.min(
-          14,
-          2
-            + Math.max(0, aiNumber(c2Type3ProgressValue)) * 0.55
-            + Math.max(0, aiNumber(endGameExpectedScore)) * 0.45
-            + Math.max(0, aiNumber(playCandidate?.score)) * 0.12,
-        )
-        : 0;
-      const taskCardPreservePenalty = model?.tasks?.length && getAiRoundNumber() >= 2
-        ? Math.min(
-          14,
-          3
-            + Math.max(0, aiNumber(cFinalTaskProgressValue)) * 0.75
-            + Math.max(0, aiNumber(playCandidate?.score)) * 0.12,
-        )
-        : 0;
-      const alienCardPreservePenalty = alienCard && getAiRoundNumber() >= 2
-        ? Math.min(12, 4 + Math.max(0, aiNumber(playCandidate?.score)) * 0.18)
-        : 0;
       const moveFollowupMainAction = reward.bestMove?.to
         ? scoreAiFollowupMainActionAfterMove(reward.bestMove.to, currentPlayer, {
           ignoreMainActionUsed: !canStartMainAction(),
@@ -9538,6 +9567,38 @@
         aiNumber(reward.bestMove?.valueBreakdown?.landingDirectScoreGain),
       );
       const moveHasCashout = !reward.moveReward || moveFollowupScore > 0 || moveFollowupDirectScore > 0;
+      const taskPreserveCashoutMultiplier = reward.moveReward && moveHasCashout
+        ? moveFollowupDirectScore > 0 ? 0.25 : 0.45
+        : 1;
+      const finalCardPreservePenalty = (
+        getAiRoundNumber() >= 3
+        && (typeCode === 3 || model?.endGameScoring)
+      )
+        ? Math.min(
+          14,
+          2
+            + Math.max(0, aiNumber(c2Type3ProgressValue)) * 0.55
+            + Math.max(0, aiNumber(endGameExpectedScore)) * 0.45
+            + Math.max(0, aiNumber(playCandidate?.score)) * 0.12,
+        )
+        : 0;
+      const taskCardPreservePenalty = model?.tasks?.length
+        ? Math.max(
+          scoreAiUnplayedTaskCardPreserveValue(card, model, playCandidate, currentPlayer)
+            * taskPreserveCashoutMultiplier,
+          getAiRoundNumber() >= 2
+            ? Math.min(
+              14,
+              3
+                + Math.max(0, aiNumber(cFinalTaskProgressValue)) * 0.75
+                + Math.max(0, aiNumber(playCandidate?.score)) * 0.12,
+            )
+            : 0,
+        )
+        : 0;
+      const alienCardPreservePenalty = alienCard && getAiRoundNumber() >= 2
+        ? Math.min(12, 4 + Math.max(0, aiNumber(playCandidate?.score)) * 0.18)
+        : 0;
       const valuableDiscardedCard = Boolean(model?.tasks?.length || typeCode === 3 || model?.endGameScoring || alienCard);
       const noCashoutMovePenalty = reward.moveReward && !moveHasCashout
         ? Math.min(
