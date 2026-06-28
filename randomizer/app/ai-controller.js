@@ -3678,15 +3678,29 @@
       ) return [];
       const needsAnalyzeEnergy = canReachAnalyze && energy < (data.ANALYZE_ENERGY_COST || 1);
       const needsLaunchMoveEnergy = energy <= 1 && bestLaunchMoveRecoveryScore > 0;
-      const canUseExtraEnergy = energy <= 0 || needsAnalyzeEnergy || needsLaunchMoveEnergy;
+      const needsPlanetCashoutEnergy = energy <= 1 && bestPlanetCashoutRecoveryScore > 0;
+      const scanEnergyShortfall = Math.max(0, scanEnergyCost - energy);
+      const canScanAfterOneEnergyTradeForThirdMark = mainActionOpen
+        && distance <= 4
+        && scanCreditShortfall <= 0
+        && scanEnergyShortfall === 1
+        && currentScore + Math.max(0, aiNumber(getAiScanDirectScoreGain(player))) >= 70;
+      const canUseExtraEnergy = needsAnalyzeEnergy
+        || needsLaunchMoveEnergy
+        || needsPlanetCashoutEnergy
+        || canScanAfterOneEnergyTradeForThirdMark;
       const launchMoveRecoveryValue = bestLaunchMoveRecoveryScore > 0
         ? Math.min(18, 8 + bestLaunchMoveRecoveryScore * 0.8)
+        : 0;
+      const planetCashoutRecoveryValue = bestPlanetCashoutRecoveryScore > 0
+        ? Math.min(18, 8 + bestPlanetCashoutRecoveryScore * 0.75)
         : 0;
       const baseValue = 20
         + Math.max(0, 16 - distance) * 0.45
         + (canReachAnalyze ? 4 : 0)
         + launchMoveRecoveryValue
-        + (energy <= 0 ? 3 : 0);
+        + planetCashoutRecoveryValue
+        + (canScanAfterOneEnergyTradeForThirdMark ? 5 : 0);
       const tradeSpecs = [
         {
           tradeId: "credits-for-energy",
@@ -3774,6 +3788,10 @@
               canEnergyCardSearchForThirdMark,
               canEnergyCreditScanForThirdMark,
               canEnergyCreditRecoveryForThirdMark,
+              needsAnalyzeEnergy,
+              needsLaunchMoveEnergy,
+              needsPlanetCashoutEnergy,
+              canScanAfterOneEnergyTradeForThirdMark,
               bestHandPlayScoreAfterEnergyCredit: roundAiScore(bestHandPlayScoreAfterEnergyCredit),
               canScanNowForThirdMark,
               canScanCashOutThirdMarkNow,
@@ -4051,6 +4069,30 @@
             + Math.max(0, 3 - finalMarks) * 2,
         )
         : 0;
+      const closeThirdMarkScanProgress = closeThirdMarkScanSetup
+        && mainActionOpen
+        && scoreToNextThreshold <= 6
+        && closeScanDirectScoreGain > 0
+        && scanCreditShortfall <= 0
+        && scanEnergyCost > 0;
+      const canScanProgressAfterCardsForEnergy = closeThirdMarkScanProgress
+        && scanEnergyShortfall === 1
+        && handSize >= 2;
+      const canScanProgressAfterCreditsForEnergy = closeThirdMarkScanProgress
+        && scanEnergyShortfall === 1
+        && credits >= scanCreditCost + 2;
+      const scanProgressTradeValue = (
+        canScanProgressAfterCardsForEnergy
+        || canScanProgressAfterCreditsForEnergy
+      )
+        ? Math.min(
+          11,
+          5
+            + closeScanDirectScoreGain * 1.1
+            + Math.max(0, 6 - scoreToNextThreshold) * 0.7
+            + Math.max(0, 3 - finalMarks) * 1.5,
+        )
+        : 0;
       if (
         nextThreshold === 70
         && currentScore < 64
@@ -4162,16 +4204,20 @@
           enabled: canSpendEnergyForRecovery && credits >= 2 && (
             energy <= 0
             || canScanAfterCreditsForEnergy
+            || canScanProgressAfterCreditsForEnergy
             || aiNumber(planetCashoutRecoveryByTrade["credits-for-energy"]?.score) > 0
           ),
           value: baseValue + 3 + (handSize > 0 ? 1.5 : 0)
             + Math.min(7, aiNumber(launchMoveRecoveryByTrade["credits-for-energy"]?.score) * 0.4)
             + Math.min(18, aiNumber(planetCashoutRecoveryByTrade["credits-for-energy"]?.score) * 0.55)
-            + (canScanAfterCreditsForEnergy ? scanCashoutTradeValue : 0),
+            + (canScanAfterCreditsForEnergy ? scanCashoutTradeValue : 0)
+            + (canScanProgressAfterCreditsForEnergy ? scanProgressTradeValue : 0),
           reason: aiNumber(planetCashoutRecoveryByTrade["credits-for-energy"]?.score) > 0
             ? "路线兑现：信用点换能量准备环绕/登陆"
             : canScanAfterCreditsForEnergy
               ? "终局临门：信用点换能量准备扫描"
+              : canScanProgressAfterCreditsForEnergy
+                ? "终局第3标记：信用点换能量推进扫描找分"
               : "后期落后：信用点换能量恢复移动/分析",
         },
         {
@@ -4180,17 +4226,21 @@
             (handSize >= 4 && energy <= 0)
             || secondMarkAnalyzeEnergyRecovery
             || canScanAfterCardsForEnergy
+            || canScanProgressAfterCardsForEnergy
             || aiNumber(planetCashoutRecoveryByTrade["cards-for-energy"]?.score) > 0
           ),
           value: baseValue + 1.5 + (credits <= 0 ? 1 : 0)
             + Math.min(7, aiNumber(launchMoveRecoveryByTrade["cards-for-energy"]?.score) * 0.4)
             + Math.min(15, aiNumber(planetCashoutRecoveryByTrade["cards-for-energy"]?.score) * 0.45)
             + (secondMarkAnalyzeEnergyRecovery ? Math.min(18, 12 + Math.max(0, 8 - scoreToNextThreshold) * 0.75) : 0)
-            + (canScanAfterCardsForEnergy ? scanCashoutTradeValue : 0),
+            + (canScanAfterCardsForEnergy ? scanCashoutTradeValue : 0)
+            + (canScanProgressAfterCardsForEnergy ? scanProgressTradeValue : 0),
           reason: aiNumber(planetCashoutRecoveryByTrade["cards-for-energy"]?.score) > 0
             ? "路线兑现：弃牌换能量准备环绕/登陆"
             : canScanAfterCardsForEnergy
               ? "终局临门：弃牌换能量准备扫描"
+              : canScanProgressAfterCardsForEnergy
+                ? "终局第3标记：弃牌换能量推进扫描找分"
               : secondMarkAnalyzeEnergyRecovery
                 ? "终局第2标记：弃牌换能量准备分析"
                 : "后期落后：弃牌换能量恢复移动/分析",
@@ -4299,6 +4349,8 @@
               secondMarkAnalyzeEnergyRecovery,
               thirdMarkCreditRecovery,
               closeThirdMarkScanSetup,
+              closeThirdMarkScanProgress,
+              scanProgressTradeValue,
               launchMoveRecoveryScore: aiNumber(launchMoveRecoveryByTrade[spec.tradeId]?.score),
               planetCashoutRecoveryScore: aiNumber(planetCashoutRecoveryByTrade[spec.tradeId]?.score),
               planetCashoutRecoveryPlan: planetCashoutRecoveryByTrade[spec.tradeId]?.plan || null,
@@ -5112,6 +5164,42 @@
       return { met: false, multiplier: 0.18 };
     }
 
+    function isAiIncomeRewardEffect(effect) {
+      return effect?.type === planetRewards.EFFECT_TYPES?.INCOME || effect?.type === "income";
+    }
+
+    function scoreAiIncomeRewardOpportunityValue(player = getCurrentPlayer(), effectOptions = {}, usedCardIndexes = null) {
+      if (!player) return 0;
+      const fixedGain = effectOptions?.gain || effectOptions?.income || null;
+      if (fixedGain && typeof fixedGain === "object") {
+        return scoreAiIncomeOpportunityValue(player, fixedGain);
+      }
+
+      const candidates = (player.hand || [])
+        .map((card, index) => {
+          if (usedCardIndexes?.has(index)) return null;
+          const gain = cards.getIncomeGainForCard?.(card) || null;
+          if (!gain) return null;
+          const incomeScore = scoreAiIncomeOpportunityValue(player, gain);
+          const finalFormulaFit = scoreAiIncomeDiscardFinalFormulaFit(player, gain);
+          const routeEnergyFit = scoreAiIncomeDiscardRouteEnergyFit(player, gain);
+          const playValue = ai?.valuation?.getCardValue
+            ? Math.max(0, aiNumber(ai.valuation.getCardValue(card)))
+            : AI_RESOURCE_VALUES.handSize;
+          return {
+            index,
+            gain,
+            score: incomeScore + finalFormulaFit + routeEnergyFit - Math.min(8, playValue * 0.12),
+          };
+        })
+        .filter(Boolean)
+        .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
+      const selected = candidates[0] || null;
+      if (!selected) return 0;
+      if (usedCardIndexes) usedCardIndexes.add(selected.index);
+      return Math.max(0, aiNumber(selected.score));
+    }
+
     function scoreAiEffectValue(effect, options = {}) {
       if (!effect) return 0;
       const type = effect.type;
@@ -5131,10 +5219,7 @@
         }
         case planetRewards.EFFECT_TYPES?.INCOME:
         case "income":
-          return scoreAiIncomeOpportunityValue(
-            player,
-            effectOptions.gain || effectOptions.income || { credits: 1 },
-          );
+          return scoreAiIncomeRewardOpportunityValue(player, effectOptions);
         case planetRewards.EFFECT_TYPES?.ALIEN_TRACE:
         case "alien_trace":
           return scoreAiAlienTraceValue({
@@ -6410,9 +6495,17 @@
     }
 
     function scoreAiRewardEffects(effects = [], player = getCurrentPlayer()) {
-      return (effects || []).reduce((total, effect) => (
-        total + aiNumber(scoreAiEffectValue(effect, { player }))
-      ), 0);
+      const usedIncomeCardIndexes = new Set();
+      return (effects || []).reduce((total, effect) => {
+        if (isAiIncomeRewardEffect(effect)) {
+          return total + scoreAiIncomeRewardOpportunityValue(
+            player,
+            effect?.options || {},
+            usedIncomeCardIndexes,
+          );
+        }
+        return total + aiNumber(scoreAiEffectValue(effect, { player }));
+      }, 0);
     }
 
     function scoreAiOrbitRewardValue(planetId, player = getCurrentPlayer()) {
@@ -9200,10 +9293,10 @@
           return total + Math.max(0, aiNumber(entry?.directScoreGain));
         }
         if (effect.type === scanEffects.EFFECT_TYPES.PUBLIC_CARD_SCAN) {
-          return total + Math.max(0, aiNumber(getAiBestPublicScanSlots(player, { maxSelectable: 1 })[0]?.directScoreGain));
+          return total;
         }
         if (effect.type === scanEffects.EFFECT_TYPES.HAND_SCAN) {
-          return total + Math.max(0, aiNumber(getAiBestHandScanIndex(player)?.directScoreGain));
+          return total;
         }
         return total;
       }, 0);
@@ -10446,8 +10539,13 @@
       const candidates = listAiIndustryHuanyuMoveCandidates()
         .sort((left, right) => Number(right.score || 0) - Number(left.score || 0));
       if (!candidates.length) return -Infinity;
+      const firstMove = candidates[0] || null;
+      const secondMove = firstMove
+        ? candidates.find((candidate) => String(candidate.rocketId) !== String(firstMove.rocketId)) || null
+        : null;
+      const plannedMoves = [firstMove, secondMove].filter(Boolean);
       const ownsOrange2 = players.playerOwnsTech(getCurrentPlayer(), "orange2", createActionContext());
-      const asteroidStops = [candidates[0], candidates[1]].filter((candidate) => (
+      const asteroidStops = plannedMoves.filter((candidate) => (
         candidate
         && isAiAsteroidCoordinate(candidate.to)
         && Math.max(0, aiNumber(candidate.valueBreakdown?.landingDirectScoreGain)) <= 0
@@ -10456,8 +10554,8 @@
         ? 0
         : asteroidStops >= 2 ? 24 : asteroidStops === 1 ? 8 : 0;
       return 3
-        + Math.max(0, Number(candidates[0]?.score || 0))
-        + Math.max(0, Number(candidates[1]?.score || 0)) * 0.45
+        + Math.max(0, Number(firstMove?.score || 0))
+        + Math.max(0, Number(secondMove?.score || 0)) * 0.45
         - asteroidStrandingPenalty;
     }
 
