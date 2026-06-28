@@ -15702,16 +15702,19 @@
     return ["jupiter", "saturn"];
   }
 
-  function filterChongPickupChoices(choices) {
-    const planetIds = new Set(getChongPickupPlanetIds());
-    return (choices || []).filter((choice) => planetIds.has(choice.planetId));
+  function isChongPickupPlanetId(planetId) {
+    return getChongPickupPlanetIds().includes(planetId);
+  }
+
+  function listChongTravelChoices(choices) {
+    return (choices || []).filter(Boolean);
   }
 
   function normalizeChongChoiceOptions(baseOptions, choices, message) {
     if (!choices.length) {
       return {
         ok: false,
-        message: message || "当前没有可拾取虫族化石的木星/土星目标",
+        message: message || "当前没有可执行虫族行动的目标",
       };
     }
     return {
@@ -15719,7 +15722,7 @@
       ok: true,
       planet: choices.length === 1
         ? choices[0].planet
-        : { planetId: "multi-chong-pickup", name: "虫族化石目标" },
+        : { planetId: "multi-chong-travel", name: "虫族行动目标" },
       choices,
       needsChoice: choices.length > 1,
       defaultTarget: choices[0].target,
@@ -15735,8 +15738,8 @@
       allowSatelliteWithoutTech: Boolean(effect.options?.allowSatellite),
     });
     if (!baseOptions.ok) return baseOptions;
-    const choices = filterChongPickupChoices(baseOptions.choices);
-    return normalizeChongChoiceOptions(baseOptions, choices, "当前没有可登陆木星/土星并拾取化石的火箭");
+    const choices = listChongTravelChoices(baseOptions.choices);
+    return normalizeChongChoiceOptions(baseOptions, choices, "当前没有可登陆目标");
   }
 
   function getChongOrbitOrLandOptions(effect) {
@@ -15748,13 +15751,13 @@
     });
     const choices = [];
     if (orbitOptions.ok) {
-      choices.push(...filterChongPickupChoices(orbitOptions.choices).map((choice) => ({
+      choices.push(...listChongTravelChoices(orbitOptions.choices).map((choice) => ({
         ...choice,
         kind: "orbit",
       })));
     }
     if (landOptions.ok) {
-      choices.push(...filterChongPickupChoices(landOptions.choices).map((choice) => ({
+      choices.push(...listChongTravelChoices(landOptions.choices).map((choice) => ({
         ...choice,
         kind: "land",
       })));
@@ -15767,7 +15770,7 @@
         confirmText: "确认",
       },
       choices,
-      orbitOptions.message || landOptions.message || "当前没有可环绕或登陆木星/土星并拾取化石的火箭",
+      orbitOptions.message || landOptions.message || "当前没有可环绕或登陆目标",
     );
   }
 
@@ -15799,7 +15802,7 @@
         renderStateReadout();
       },
     });
-    rocketState.statusNote = `${effect.label}：请选择木星/土星登陆目标`;
+    rocketState.statusNote = `${effect.label}：请选择登陆目标（木星/土星可拾取化石）`;
     renderStateReadout();
     return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
   }
@@ -15824,7 +15827,7 @@
         renderStateReadout();
       },
     });
-    rocketState.statusNote = `${effect.label}：请选择木星/土星环绕或登陆目标`;
+    rocketState.statusNote = `${effect.label}：请选择环绕或登陆目标（木星/土星可拾取化石）`;
     renderStateReadout();
     return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
   }
@@ -15928,7 +15931,7 @@
       return finishChongFossilEffect(`${effect.label}：没有上一段登陆/环绕结果`, { planetId: null });
     }
 
-    if (planetId !== "jupiter" && planetId !== "saturn") {
+    if (!isChongPickupPlanetId(planetId)) {
       return finishChongFossilEffect(`${effect.label}：不在木星/土星，不能拾取化石`, { planetId });
     }
 

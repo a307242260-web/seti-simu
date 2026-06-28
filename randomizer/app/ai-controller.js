@@ -2543,6 +2543,51 @@
       ), 0);
     }
 
+    function listAiChongFossilRewardValues(player = getCurrentPlayer()) {
+      if (!chong?.FOSSIL_IDS?.length || !chong?.getFossilReward) return [];
+      return chong.FOSSIL_IDS
+        .map((fossilId) => scoreAiAlienRewardBundle(chong.getFossilReward(fossilId), player))
+        .filter((value) => Number.isFinite(Number(value)) && value > 0);
+    }
+
+    function scoreAiAverageChongFossilRewardValue(player = getCurrentPlayer()) {
+      const values = listAiChongFossilRewardValues(player);
+      if (!values.length) return 0;
+      return values.reduce((total, value) => total + value, 0) / values.length;
+    }
+
+    function hasAiPlayerSeenChongFossil(fossil, player = getCurrentPlayer()) {
+      if (!fossil || !player) return false;
+      const visible = fossil.visibleToPlayerIds || [];
+      return visible.includes(player.id)
+        || visible.includes(player.color)
+        || fossil.carriedByPlayerId === player.id
+        || fossil.carriedByPlayerColor === player.color;
+    }
+
+    function scoreAiExpectedChongPlanetFossilRewardValue(planetId, player = getCurrentPlayer()) {
+      if (!chong?.getAvailablePlanetFossils) return 0;
+      const available = planetId
+        ? chong.getAvailablePlanetFossils(alienGameState, planetId)
+        : [];
+      if (planetId && !available.length) return 0;
+      const visibleValues = available
+        .filter((fossil) => hasAiPlayerSeenChongFossil(fossil, player))
+        .map((fossil) => scoreAiAlienRewardBundle(chong.getFossilReward?.(fossil.fossilId), player))
+        .filter((value) => Number.isFinite(Number(value)) && value > 0);
+      if (available.length > 0 && visibleValues.length === available.length) {
+        return Math.max(0, ...visibleValues);
+      }
+      const average = scoreAiAverageChongFossilRewardValue(player);
+      const best = scoreAiBestChongFossilRewardValue(player);
+      const choiceCount = Math.max(1, available.length || 2);
+      const hiddenChoicePremium = Math.max(0, choiceCount - 1) * 1.15;
+      return Math.max(
+        visibleValues.length ? Math.max(...visibleValues) : 0,
+        Math.min(best, average + hiddenChoicePremium),
+      );
+    }
+
     function scoreAiChongPanelUnlockValue(player = getCurrentPlayer()) {
       if (!player || !chong?.LOCKED_BLUE_POSITIONS?.length) return 0;
       const panelSlots = alienGameState?.chong?.panelFossilSlots || {};
@@ -2590,6 +2635,213 @@
       return roundAiScore(Math.min(24, Math.max(0, value)));
     }
 
+    function getAiPlanetCoordinateById(planetId) {
+      if (!planetId) return null;
+      const coordinate = getPlanetSectorCoordinate?.(planetId);
+      if (coordinate) return { x: coordinate.x, y: coordinate.y };
+      if (planetId === "earth") {
+        const earth = getEarthSectorCoordinate?.();
+        return earth ? { x: earth.x, y: earth.y } : null;
+      }
+      const planet = solar.createSolarSnapshot(solarState).planetLocations
+        .find((item) => item.planetId === planetId);
+      return planet ? { x: planet.x, y: planet.y } : null;
+    }
+
+    function scoreAiChongTransportDeliveryCost(fromPlanetId, task = {}, player = getCurrentPlayer()) {
+      const destinationPlanetId = task?.destinationPlanetId || null;
+      if (!fromPlanetId || !destinationPlanetId) return 3.5;
+      const from = getAiPlanetCoordinateById(fromPlanetId);
+      const destination = getAiPlanetCoordinateById(destinationPlanetId);
+      if (!from || !destination) return 5;
+      const distance = Math.max(0, getAiSectorDistance(from, destination));
+      const round = getAiRoundNumber();
+      const moveUnitCost = AI_RESOURCE_VALUES.movement * (round <= 2 ? 0.85 : round === 3 ? 1 : 1.15);
+      const farOuterPenalty = (fromPlanetId === "saturn" || fromPlanetId === "jupiter")
+        && destinationPlanetId === "earth"
+        ? 1.5
+        : 0;
+      const destinationPremium = destinationPlanetId === "earth" ? 0.5 : 0;
+      return roundAiScore(Math.min(20, distance * moveUnitCost + farOuterPenalty + destinationPremium));
+    }
+
+    function scoreAiChongTransportCompletionValue(task = {}, player = getCurrentPlayer(), options = {}) {
+      if (!task || !player) return 0;
+      const fossilRewardRepeat = Math.max(0, Math.round(aiNumber(task.fossilRewardRepeat)));
+      const fossilRewardValue = options.fossilId
+        ? scoreAiAlienRewardBundle(chong?.getFossilReward?.(options.fossilId), player)
+        : options.planetId
+          ? scoreAiExpectedChongPlanetFossilRewardValue(options.planetId, player)
+          : scoreAiAverageChongFossilRewardValue(player);
+      const dataCount = Math.max(0, Math.round(aiNumber(task.dataCount)));
+      let value = 0;
+      if (task.gain) value += scoreAiCountedResourceGain(task.gain, player);
+      if (dataCount > 0) {
+        value += dataCount * AI_RESOURCE_VALUES.availableData;
+        value += scoreAiMidgameResourceContinuationValue({ availableData: dataCount }, player, { scale: 0.78 });
+      }
+      if (task.pickCard) {
+        value += AI_RESOURCE_VALUES.handSize * 0.9;
+        value += scoreAiMidgameResourceContinuationValue(
+          { handSize: 1, cardSelection: 1 },
+          player,
+          { scale: 0.42 },
+        );
+      }
+      if (fossilRewardRepeat > 0) {
+        value += fossilRewardRepeat * fossilRewardValue * 0.92;
+        value += scoreAiChongPanelUnlockValue(player) * 0.85;
+      }
+      value += Math.min(9, scoreAiCFinalTaskProgressValue(player, 1) * 0.95);
+      if (task.destinationPlanetId === "earth") value += 2.2;
+      else if (task.destinationPlanetId) value += 1.2;
+      return roundAiScore(Math.min(34, Math.max(0, value)));
+    }
+
+    function scoreAiChongCardPlayAffordability(card, player = getCurrentPlayer()) {
+      if (!card || !player) return 1;
+      const cost = getCardPlayCost(card) || {};
+      if (!Object.keys(cost).length || players.canAfford(player, cost)) return 1;
+      const resources = player.resources || {};
+      const creditShortfall = Math.max(0, aiNumber(cost.credits) - aiNumber(resources.credits));
+      const energyShortfall = Math.max(0, aiNumber(cost.energy) - aiNumber(resources.energy));
+      const shortfallValue = creditShortfall * AI_RESOURCE_VALUES.credits
+        + energyShortfall * AI_RESOURCE_VALUES.energy;
+      return Math.max(0.18, 0.68 - shortfallValue * 0.055);
+    }
+
+    function scoreAiChongPickupTaskValue(task = {}, player = getCurrentPlayer(), planetId = null, options = {}) {
+      if (!task || task.kind !== "transport" || !player) return 0;
+      if (planetId && !isAiChongPickupPlanetId(planetId)) return 0;
+      if (planetId && !(chong?.getAvailablePlanetFossils?.(alienGameState, planetId) || []).length) return 0;
+      if (!planetId) {
+        const availableAny = (chong?.getAvailablePlanetFossils?.(alienGameState, "jupiter") || []).length
+          + (chong?.getAvailablePlanetFossils?.(alienGameState, "saturn") || []).length;
+        if (availableAny <= 0) return 0;
+      }
+      const round = getAiRoundNumber();
+      const completionValue = scoreAiChongTransportCompletionValue(task, player, {
+        planetId,
+        fossilId: options.fossilId || null,
+      });
+      const futureScale = options.immediate
+        ? round <= 2 ? 0.92 : round === 3 ? 0.78 : 0.56
+        : round <= 2 ? 0.7 : round === 3 ? 0.58 : 0.36;
+      const deliveryCost = planetId
+        ? scoreAiChongTransportDeliveryCost(planetId, task, player)
+        : 4;
+      const card = options.card || null;
+      const includePlayCost = options.includePlayCost !== false && Boolean(card);
+      const cardCost = includePlayCost ? scoreAiResourceBundle(getCardPlayCost(card) || {}) : 0;
+      const affordability = includePlayCost ? scoreAiChongCardPlayAffordability(card, player) : 1;
+      const immediateBonus = options.immediate ? 2.5 : 0;
+      return roundAiScore(Math.min(
+        36,
+        Math.max(0, completionValue * futureScale * affordability + immediateBonus - deliveryCost - cardCost * 0.35),
+      ));
+    }
+
+    function listAiPlayableChongTransportCards(player = getCurrentPlayer()) {
+      if (!player || !chong?.isChongCard || !chong?.getCardTask) return [];
+      return (player.hand || [])
+        .filter((card) => chong.isChongCard(card))
+        .map((card) => ({ card, task: chong.getCardTask(card) }))
+        .filter((entry) => entry.task?.kind === "transport");
+    }
+
+    function scoreAiChongPickupRouteValue(planetId, player = getCurrentPlayer(), options = {}) {
+      if (planetId && !isAiChongPickupPlanetId(planetId)) return 0;
+      if (planetId && !(chong?.getAvailablePlanetFossils?.(alienGameState, planetId) || []).length) return 0;
+      if (Object.prototype.hasOwnProperty.call(options, "task")) {
+        if (!options.task) return 0;
+        return scoreAiChongPickupTaskValue(options.task, player, planetId, options);
+      }
+      return listAiPlayableChongTransportCards(player)
+        .reduce((best, entry) => Math.max(
+          best,
+          scoreAiChongPickupTaskValue(entry.task, player, planetId, {
+            ...options,
+            card: entry.card,
+          }),
+        ), 0);
+    }
+
+    function getAiChongTaskForEffect(effect) {
+      if (!isAiChongTravelEffect(effect)) return null;
+      const card = state.pendingActionEffectFlow?.card || null;
+      return card?.chongTask || chong?.getCardTask?.(effect.options?.cardIndex) || null;
+    }
+
+    function scoreAiChongTravelChoiceBonus(effect, choice, player = getCurrentPlayer()) {
+      if (!isAiChongTravelEffect(effect)) return 0;
+      const planetId = choice?.planet?.planetId || choice?.target?.planetId || null;
+      if (!isAiChongPickupPlanetId(planetId)) return 0;
+      return scoreAiChongPickupRouteValue(planetId, player, {
+        task: getAiChongTaskForEffect(effect),
+        includePlayCost: false,
+        immediate: true,
+      });
+    }
+
+    function scoreAiChongTravelEffectPlanetValue(effect, planetId, player = getCurrentPlayer()) {
+      if (!isAiChongTravelEffect(effect) || !isAiChongPickupPlanetId(planetId)) return 0;
+      return scoreAiChongPickupRouteValue(planetId, player, {
+        task: getAiChongTaskForEffect(effect),
+        includePlayCost: false,
+        immediate: true,
+      });
+    }
+
+    function scoreAiChongTravelEffectImmediateValue(effect, player = getCurrentPlayer()) {
+      if (!isAiChongTravelEffect(effect)) return 0;
+      const options = effect.type === chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP
+        ? getAiChongOrbitOrLandOptions(effect)
+        : getAiChongLandOptions(effect);
+      if (!options?.ok || !options.choices?.length) return 0;
+      return options.choices.reduce((best, choice) => {
+        const score = scoreAiLandChoice(choice, player, { chongEffect: effect });
+        return Math.max(best, Number.isFinite(Number(score)) ? score : 0);
+      }, 0);
+    }
+
+    function isAiChongFossilToken(rocket) {
+      return (rocket?.kind || rocketActions.ROCKET_KIND?.STANDARD) === rocketActions.ROCKET_KIND?.CHONG_FOSSIL;
+    }
+
+    function getAiChongTransportTaskForRocket(rocket) {
+      if (!rocket || !chong?.getTransportTaskForRocket) return null;
+      const rawTask = chong.getTransportTaskForRocket(alienGameState, rocket.id);
+      if (!rawTask) return null;
+      const fossil = alienGameState?.chong?.fossilsById?.[rawTask.fossilId] || null;
+      return {
+        destinationPlanetId: fossil?.destinationPlanetId || rawTask.destinationPlanetId || null,
+        fossilRewardRepeat: Math.max(0, Math.round(aiNumber(fossil?.fossilRewardRepeat ?? rawTask.fossilRewardRepeat))),
+        gain: { ...(fossil?.taskGain || rawTask.gain || {}) },
+        dataCount: Math.max(0, Math.round(aiNumber(fossil?.taskDataCount ?? rawTask.dataCount))),
+        pickCard: Boolean(fossil?.taskPickCard || rawTask.pickCard),
+        fossilId: fossil?.fossilId || rawTask.fossilId || null,
+      };
+    }
+
+    function getAiChongTransportDeliveryRouteTarget(rocket, player = getCurrentPlayer()) {
+      if (!isAiChongFossilToken(rocket)) return null;
+      const task = getAiChongTransportTaskForRocket(rocket);
+      if (!task?.destinationPlanetId) return null;
+      const coordinate = getAiPlanetCoordinateById(task.destinationPlanetId);
+      if (!coordinate) return null;
+      const value = scoreAiChongTransportCompletionValue(task, player, {
+        fossilId: task.fossilId,
+      });
+      return {
+        id: `chong-transport:${rocket.id}:${task.destinationPlanetId}`,
+        label: `运送虫族化石到${task.destinationPlanetId}`,
+        kind: "planet",
+        chongTransport: true,
+        coordinate,
+        value: Math.min(38, 8 + value * 0.85),
+      };
+    }
+
     function scoreAiChongTraceTaskProgressValue(task = {}, player = getCurrentPlayer()) {
       if (!task || !player || !task.traceType) return 0;
       const required = Math.max(1, Math.round(aiNumber(task.count || 1)));
@@ -2606,10 +2858,16 @@
       if (!player || !chong?.isChongCard?.(card) || !chong?.getCardTask) return 0;
       const task = chong.getCardTask(card);
       if (!task) return 0;
+      const round = getAiRoundNumber();
       const taskValue = task.kind === "trace"
         ? scoreAiChongTraceTaskProgressValue(task, player)
-        : scoreAiChongTaskRewardValue(task, player);
-      const round = getAiRoundNumber();
+        : Math.max(
+          scoreAiChongTaskRewardValue(task, player),
+          scoreAiChongPickupTaskValue(task, player, null, {
+            card,
+            includePlayCost: false,
+          }),
+        );
       const scale = task.kind === "transport"
         ? round <= 2 ? 0.72 : round === 3 ? 0.64 : 0.46
         : round <= 2 ? 0.62 : round === 3 ? 0.78 : 0.9;
@@ -5318,7 +5576,11 @@
           return scoreAiRunezuSymbolBranchValue(effectOptions.branches || [], player);
         case chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP:
         case chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP:
-          return 10 + scoreAiBestChongFossilRewardValue(player) * 0.3;
+          return Math.max(
+            5,
+            scoreAiChongTravelEffectImmediateValue(effect, player),
+            6 + scoreAiAverageChongFossilRewardValue(player) * 0.25,
+          );
         case chong?.EFFECT_TYPES?.CHONG_PICKUP_FOSSIL:
         case chong?.EFFECT_TYPES?.CHONG_PROBE_PLANET_FOSSIL_REWARD:
         case chong?.EFFECT_TYPES?.CHONG_CHOOSE_PLANET_FOSSIL_REWARD:
@@ -6156,6 +6418,23 @@
               + routeDemand * 0.05,
             { effectType: type },
           );
+        } else if (isAiChongTravelEffect(effect)) {
+          const chongTravelValue = scoreAiChongTravelEffectImmediateValue(effect, player);
+          const task = chong.getCardTask?.(card);
+          const routeValue = task?.kind === "transport"
+            ? scoreAiChongPickupTaskValue(task, player, null, {
+              card,
+              includePlayCost: false,
+            })
+            : 0;
+          addPlan(
+            "land",
+            "打牌执行虫族化石路线",
+            Math.max(chongTravelValue, routeValue * 0.72)
+              + getAiMapDemand(demand.actions, "land") * 0.18
+              + routeDemand * 0.05,
+            { effectType: type, chongTask: Boolean(task) },
+          );
         } else if (type === "research_tech_select" || type === cardEffects.EFFECT_TYPES.RESEARCH_TECH) {
           const techTypes = options.techTypes || options.allowedTechTypes || AI_TECH_TYPES;
           const bestTechDemand = techTypes.length
@@ -6242,6 +6521,9 @@
           const standardCost = scoreAiResourceBundle({ energy: abilities.planet?.BASE_LAND_ENERGY_COST || 3 });
           const actualCost = effect?.options?.cost ? scoreAiResourceBundle(effect.options.cost) : 0;
           return total + Math.max(4, Math.max(0, standardCost - actualCost) + scoreAiLandAction({ available: true }) * 0.18);
+        }
+        if (isAiChongTravelEffect(effect)) {
+          return total + Math.max(3.5, scoreAiChongTravelEffectImmediateValue(effect, player) * 0.28);
         }
         if (
           type === cardEffects.EFFECT_TYPES.PUBLIC_SCAN
@@ -7094,8 +7376,29 @@
       return value;
     }
 
-    function scoreAiLandChoice(choice, player = getCurrentPlayer()) {
+    function scoreAiOrbitChoice(choice, player = getCurrentPlayer(), options = {}) {
       if (!choice) return -Infinity;
+      const planetId = choice.planet?.planetId || choice.target?.planetId || null;
+      if (!planetId) return -Infinity;
+      const demand = getAiStrategyDemand(player);
+      const rewardValue = scoreAiOrbitRewardValue(planetId, player);
+      const directScoreGain = getAiOrbitDirectScoreGain(planetId, player);
+      const chongEffect = options.chongEffect || state.pendingLandTargetAction?.effect || getCurrentActionEffect?.() || null;
+      const chongBonus = scoreAiChongTravelChoiceBonus(chongEffect, choice, player);
+      return 9
+        + rewardValue * 0.72
+        + directScoreGain * 0.42
+        + scoreAiPaceValueForDirectScore(directScoreGain, player, { baseWeight: 0.3, pressureWeight: 0.14 })
+        + scoreAiPlanetMarkerEndGameValue(planetId, player, { markerKind: "orbit" }) * getAiStrategyWeight("final")
+        + getAiMapDemand(demand.planetIds, planetId) * 0.65 * getAiStrategyWeight("route")
+        + getAiMapDemand(demand.actions, "orbit") * 0.26 * getAiStrategyWeight("orbitLand")
+        + chongBonus
+        - (isAiChongTravelEffect(chongEffect) ? 0 : scoreAiResourceBundle(abilities.planet.DEFAULT_ORBIT_COST) * 0.25);
+    }
+
+    function scoreAiLandChoice(choice, player = getCurrentPlayer(), options = {}) {
+      if (!choice) return -Infinity;
+      if (choice.kind === "orbit") return scoreAiOrbitChoice(choice, player, options);
       const planetId = choice.planet?.planetId || choice.target?.planetId || null;
       const rewardEffects = getAiLandRewardEffectsForTarget(planetId, choice.target);
       const rewardValue = aiNumber(scoreAiLandResolvedRewardValueForTarget(planetId, choice.target, player));
@@ -7130,12 +7433,15 @@
           markerKind: choice.target?.type === "satellite" ? "satellite" : "land",
           target: choice.target,
         }));
+      const chongEffect = options.chongEffect || state.pendingLandTargetAction?.effect || getCurrentActionEffect?.() || null;
+      const chongBonus = scoreAiChongTravelChoiceBonus(chongEffect, choice, player);
       return rewardValue
         + markerValue * getAiStrategyWeight("final")
         + planetDemand * 0.7 * getAiStrategyWeight("route")
         + getAiMapDemand(demand.actions, "land") * 0.26 * getAiStrategyWeight("orbitLand")
         + satelliteBonus
         + outerSatelliteCashoutPremium
+        + chongBonus
         - energyCost * getAiResourceValuesForRound(player).energy * 0.3
         - yellowTracePenalty
         - deferredTracePenalty
@@ -7161,6 +7467,7 @@
       const demand = getAiStrategyDemand(player);
       const planetDemand = getAiMapDemand(demand.planetIds, planet.planetId);
       const taskRouteCashout = getAiPendingPlanetTaskRouteCashout(planet.planetId, player);
+      const chongPickupRouteValue = scoreAiChongPickupRouteValue(planet.planetId, player);
       const round = getAiRoundNumber();
       const resources = player?.resources || {};
       let bestRouteDirectScore = 0;
@@ -7220,6 +7527,11 @@
         value += taskValue * (round <= 2 ? 0.92 : round === 3 ? 1 : 0.74) * getAiStrategyWeight("task");
         bestRouteDirectScore = Math.max(bestRouteDirectScore, aiNumber(taskRouteCashout.directScore));
         bestCashoutDirectScore = Math.max(bestCashoutDirectScore, aiNumber(taskRouteCashout.directScore));
+      }
+      if (chongPickupRouteValue > 0) {
+        value += chongPickupRouteValue
+          * (round <= 2 ? 0.95 : round === 3 ? 0.82 : 0.56)
+          * getAiStrategyWeight("task");
       }
       const paceDirectScore = bestCashoutDirectScore || bestRouteDirectScore;
       if (paceDirectScore > 0) {
@@ -7435,9 +7747,6 @@
       if (planet.planetId === aomomo?.PLANET_ID && effect?.type !== "aomomo_land_only") {
         return { ok: false, score: -Infinity, planet };
       }
-      if (isAiChongTravelEffect(effect) && !isAiChongPickupPlanetId(planet.planetId)) {
-        return { ok: false, score: -Infinity, planet };
-      }
       if (!canAiPlanetAcceptLanding(planet.planetId, player)) {
         return { ok: false, score: -Infinity, planet };
       }
@@ -7451,7 +7760,10 @@
         ok: true,
         planet,
         directScoreGain,
-        score: 14 + scoreAiPlanetTarget(planet, player) - scoreAiResourceBundle(cost) * 0.25,
+        score: 14
+          + scoreAiPlanetTarget(planet, player)
+          + scoreAiChongTravelEffectPlanetValue(effect, planet.planetId, player)
+          - scoreAiResourceBundle(cost) * 0.25,
       };
     }
 
@@ -7516,7 +7828,7 @@
       });
     }
 
-    function getAiRouteTargets(player = getCurrentPlayer()) {
+    function getAiRouteTargets(player = getCurrentPlayer(), options = {}) {
       const demand = getAiStrategyDemand(player);
       const routeWeight = getAiStrategyWeight("route");
       const targets = solar.createSolarSnapshot(solarState).planetLocations
@@ -7533,6 +7845,8 @@
           };
         })
         .filter((target) => target.value > 0);
+      const chongTransportTarget = getAiChongTransportDeliveryRouteTarget(options.rocket, player);
+      if (chongTransportTarget?.value > 0) targets.push(chongTransportTarget);
       const groups = solar.collectVisibleCoordinateGroups(solarState);
       const addLocationTargets = (coordinates, locationType, baseValue) => {
         const locationDemand = getAiMapDemand(demand.locationTypes, locationType);
@@ -7585,7 +7899,7 @@
     }
 
     function scoreAiMoveTowardTargets(from, to, player = getCurrentPlayer(), options = {}) {
-      const targets = getAiRouteTargets(player);
+      const targets = getAiRouteTargets(player, options);
       if (!from || !to || !targets.length) return { score: 0, target: null };
       const mainActionAlreadyUsed = options.mainActionAlreadyUsed ?? Boolean(state.pendingActionExecuted);
       const round = getAiRoundNumber();
@@ -9090,6 +9404,19 @@
         }
       }
 
+      const chongPickupPlayValue = scoreAiChongPickupRouteValue(planet.planetId, player, {
+        immediate: true,
+      });
+      if (chongPickupPlayValue > 0) {
+        actionOptions.push({
+          actionId: "playCard",
+          planetId: planet.planetId,
+          planetName: planet.name || planet.planetId,
+          directScoreGain: 0,
+          score: chongPickupPlayValue + getAiMapDemand(getAiStrategyDemand(player).actions, "playCard") * 0.16,
+        });
+      }
+
       return actionOptions
         .filter((option) => Number.isFinite(Number(option.score)))
         .sort((left, right) => right.score - left.score)[0]
@@ -9573,8 +9900,8 @@
       return true;
     }
 
-    function listAiChongPickupChoicesForOptions(options) {
-      return (options?.choices || []).filter((choice) => isAiChongPickupPlanetId(choice?.planetId));
+    function listAiChongTravelChoicesForOptions(options) {
+      return (options?.choices || []).filter(Boolean);
     }
 
     function getAiChongLandOptions(effect) {
@@ -9583,10 +9910,10 @@
         allowSatelliteWithoutTech: Boolean(effect?.options?.allowSatellite),
       });
       if (!baseOptions?.ok) return baseOptions || { ok: false, message: "当前不能登陆" };
-      const choices = listAiChongPickupChoicesForOptions(baseOptions);
+      const choices = listAiChongTravelChoicesForOptions(baseOptions);
       return choices.length
         ? { ...baseOptions, choices }
-        : { ok: false, message: "当前没有可登陆木星/土星并拾取化石的火箭" };
+        : { ok: false, message: "当前没有可登陆目标" };
     }
 
     function getAiChongOrbitOrLandOptions(effect) {
@@ -9594,7 +9921,7 @@
       const choices = [];
       const orbitOptions = abilities.planet?.getOrbitOptions?.(context, { skipCost: true });
       if (orbitOptions?.ok) {
-        choices.push(...listAiChongPickupChoicesForOptions(orbitOptions).map((choice) => ({
+        choices.push(...listAiChongTravelChoicesForOptions(orbitOptions).map((choice) => ({
           ...choice,
           kind: "orbit",
         })));
@@ -9604,14 +9931,14 @@
         allowSatelliteWithoutTech: Boolean(effect?.options?.allowSatellite),
       });
       if (landOptions?.ok) {
-        choices.push(...listAiChongPickupChoicesForOptions(landOptions).map((choice) => ({
+        choices.push(...listAiChongTravelChoicesForOptions(landOptions).map((choice) => ({
           ...choice,
           kind: "land",
         })));
       }
       return choices.length
         ? { ok: true, choices }
-        : { ok: false, message: "当前没有可环绕或登陆木星/土星并拾取化石的火箭" };
+        : { ok: false, message: "当前没有可环绕或登陆目标" };
     }
 
     function canAiResolveChongTravelEffect(effect, previousEffect) {
@@ -10291,7 +10618,7 @@
           ),
         }
         : null;
-      const routeScore = scoreAiMoveTowardTargets(from, to, currentPlayer);
+      const routeScore = scoreAiMoveTowardTargets(from, to, currentPlayer, { rocket });
       const preserveEnergyForRouteCashout = shouldAiPreserveEnergyForRouteCashout(currentPlayer, to, {
         routeTarget: routeScore.target,
         requiredMovePoints,
@@ -10974,7 +11301,11 @@
           ),
         }
         : null;
-      const routeScore = scoreAiMoveTowardTargets(from, to, currentPlayer);
+      const routeScore = scoreAiMoveTowardTargets(from, to, currentPlayer, {
+        rocket,
+        effect,
+        nextEffect,
+      });
       const preserveEnergyForRouteCashout = shouldAiPreserveEnergyForRouteCashout(currentPlayer, to, {
         routeTarget: routeScore.target,
         requiredMovePoints,
@@ -11349,7 +11680,11 @@
         ? scoreAiLandingAfterMove(to, nextEffect, currentPlayer)
         : { ok: true, score: 0, planet: null };
       if (!landingScore.ok) return null;
-      const routeScore = scoreAiMoveTowardTargets(from, to, currentPlayer);
+      const routeScore = scoreAiMoveTowardTargets(from, to, currentPlayer, {
+        rocket,
+        effect,
+        nextEffect,
+      });
       const finalSecondMarkNoDirectSetupPenalty = scoreAiFinalSecondMarkNoDirectSetupPenalty(currentPlayer, {
         actionId: options.id || "effectMove",
         directScoreGain: 0,
