@@ -8553,12 +8553,36 @@
       const demand = getAiStrategyDemand(player);
       const blueTraceDemand = getAiMapDemand(demand.traceTypes, "blue");
       const lateRoundPressure = Math.max(0, turnState.roundNumber - 1) * 1.5;
-      const fullComputerBonus = placedCount >= (data.ANALYZE_REQUIRED_COMPUTER_SLOT || 6) ? 8 : 0;
+      const requiredSlot = data.ANALYZE_REQUIRED_COMPUTER_SLOT || 6;
+      const fullComputerBonus = placedCount >= requiredSlot ? 8 : 0;
       const finalMarks = countAiFinalMarksForPlayer(player);
       const currentScore = Math.max(0, aiNumber(player?.resources?.score));
       const firstThresholdCatchupBonus = Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1)) >= FINAL_ROUND_NUMBER
         && currentScore < 25
         ? 8
+        : 0;
+      const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
+      const scoreToNextThreshold = nextThreshold ? Math.max(0, nextThreshold - currentScore) : 0;
+      const bestBlueTraceScore = Math.max(0, aiNumber(getAiBestRevealedAlienTraceDirectScore(player, "blue")));
+      const availableData = Math.max(0, aiNumber(player?.resources?.availableData));
+      const thresholdCashoutPressure = nextThreshold && currentScore < nextThreshold
+        ? Math.min(
+          7,
+          Math.max(0, 12 - scoreToNextThreshold) * 0.42
+            + Math.min(4, bestBlueTraceScore * 0.5)
+            + (currentScore + bestBlueTraceScore >= nextThreshold ? 3 : 0),
+        )
+        : 0;
+      const readyAnalyzeWindowValue = placedCount >= requiredSlot
+        ? Math.min(
+          16,
+          4.5
+            + Math.min(4, availableData * 0.45)
+            + Math.min(5, bestBlueTraceScore * 0.5)
+            + thresholdCashoutPressure
+            + Math.min(4, getAiLiveScorePaceDeficit(player) * 0.08)
+            + (finalMarks < 3 ? 2.2 : 0),
+        )
         : 0;
       const postSecondFinalMarkPenalty = finalMarks >= 2 && dataRoom <= 1 && blueTraceDemand < 1
         ? 5
@@ -8572,6 +8596,7 @@
           + getAiMapDemand(demand.actions, "analyze") * 0.2 * getAiStrategyWeight("engine")
           + lateRoundPressure
           + firstThresholdCatchupBonus
+          + readyAnalyzeWindowValue
           - (data.ANALYZE_ENERGY_COST || 1) * getAiResourceValuesForRound(player).energy * 0.35
           - postSecondFinalMarkPenalty,
         "task",
