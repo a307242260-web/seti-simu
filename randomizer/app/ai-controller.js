@@ -4095,14 +4095,24 @@
       const cardsRemaining = hand.length - handCost + Math.max(0, Math.round(aiNumber(trade.gain?.handSize)));
       if (cardsRemaining <= 0) return null;
       const currentCredits = Math.max(0, aiNumber(player.resources?.credits));
-      if (currentCredits > 0) return null;
-      const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
-      if (!simulatedPlayer) return null;
+      const currentScore = Math.max(0, aiNumber(player.resources?.score));
       const currentPlayable = playCardCandidates || listAiPlayCardCandidates(player);
       const currentPlayableByIndex = new Map((currentPlayable || []).map((candidate) => [candidate.handIndex, candidate]));
       const currentBestScore = (currentPlayable || []).reduce((best, candidate) => (
         Math.max(best, aiNumber(candidate?.score))
       ), 0);
+      const finalLowTailOneCreditUnlock = (
+        tradeId === "cards-for-credit"
+        && currentCredits === 1
+        && getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && currentScore >= 70
+        && currentScore < 80
+        && hand.length >= 6
+        && currentPlayable.length <= 0
+      );
+      if (currentCredits > 0 && !finalLowTailOneCreditUnlock) return null;
+      const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
+      if (!simulatedPlayer) return null;
       const postTradeCandidates = hand
         .map((card, handIndex) => buildAiPlayCardCandidate(card, handIndex, simulatedPlayer))
         .filter(Boolean)
@@ -4151,7 +4161,6 @@
       if (finalMarks >= 3 && concreteFinalValue <= 0 && aiNumber(bestPlay.score) < 12) return null;
       const discardCost = estimateAiTradeDiscardOpportunityCost(player, trade, bestPlay.handIndex);
       if (!Number.isFinite(discardCost)) return null;
-      const currentScore = Math.max(0, aiNumber(player.resources?.score));
       const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
       const thresholdBonus = nextThreshold && currentScore < nextThreshold && currentScore + directScoreGain >= nextThreshold
         ? (nextThreshold >= 70 ? 9 : 7)
@@ -4190,6 +4199,7 @@
           nextFinalMarkThreshold: nextThreshold || null,
           thresholdBonus,
           concreteFinalValue: roundAiScore(concreteFinalValue),
+          finalLowTailOneCreditUnlock,
         },
       };
     }
