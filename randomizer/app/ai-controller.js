@@ -6621,6 +6621,60 @@
         .find((planet) => planet.x === x && planet.y === y && planet.planetId !== "earth") || null;
     }
 
+    function isAiAsteroidCoordinate(coordinate) {
+      return Boolean(coordinate && isAsteroidContent(getSectorContentForMove(coordinate)));
+    }
+
+    function getAiThreeRotationDistanceSwingForPlanet(planetId) {
+      if (planetId === "uranus" || planetId === "neptune") return 3;
+      if (planetId === "jupiter" || planetId === "saturn") return 2;
+      if (planetId === "mars" || planetId === "mercury" || planetId === "venus") return 1;
+      return 0;
+    }
+
+    function getAiNearestActionablePlanetRoute(coordinate, player = getCurrentPlayer()) {
+      if (!coordinate || !player) return null;
+      return solar.createSolarSnapshot(solarState).planetLocations
+        .filter((planet) => (
+          planet?.planetId
+          && planet.planetId !== "earth"
+          && (canAiPlanetAcceptOrbit(planet.planetId) || canAiPlanetAcceptLanding(planet.planetId, player))
+        ))
+        .map((planet) => ({
+          planetId: planet.planetId,
+          planetName: planet.name || planet.planetId,
+          distance: getAiSectorDistance(coordinate, planet),
+          optimalRange: getAiPlanetOptimalMoveRange(planet.planetId),
+        }))
+        .filter((entry) => Number.isFinite(Number(entry.distance)))
+        .sort((left, right) => left.distance - right.distance)[0] || null;
+    }
+
+    function countAiPlayerRocketsOnAsteroids(player = getCurrentPlayer()) {
+      if (!player) return 0;
+      return (rocketActions.getRocketsForPlayer?.(rocketState, player.id) || [])
+        .reduce((total, rocket) => {
+          const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
+          return total + (isAiAsteroidCoordinate(coordinate) ? 1 : 0);
+        }, 0);
+    }
+
+    function scoreAiOrange2MobilityNeed(player = getCurrentPlayer()) {
+      if (!player || players.playerOwnsTech(player, "orange2", createActionContext())) return 0;
+      const demand = getAiStrategyDemand(player);
+      const activeRocketCount = (rocketActions.getRocketsForPlayer?.(rocketState, player.id) || []).length;
+      const asteroidRocketCount = countAiPlayerRocketsOnAsteroids(player);
+      const asteroidDemand = getAiMapDemand(demand.locationTypes, "asteroid")
+        + getAiMapDemand(demand.locationTypes, "earthAdjacentAsteroid");
+      if (activeRocketCount <= 0 && asteroidDemand <= 0) return 0;
+      return Math.min(
+        16,
+        asteroidRocketCount * 5.5
+          + Math.max(0, activeRocketCount - 1) * 1.8
+          + asteroidDemand * 0.7,
+      );
+    }
+
     function isAiLandingEffect(effect) {
       return effect?.type === cardEffects.EFFECT_TYPES.CARD_LAND
         || effect?.type === "aomomo_land_only"
@@ -7048,6 +7102,18 @@
         penalty += (requiredMovePoints - 1) * (getAiRoundNumber() <= 2 ? 1.25 : 0.75);
       }
 
+      penalty += scoreAiRotationTimingMovePenalty({
+        ...options,
+        routeTarget,
+        followupScore,
+      });
+      penalty += scoreAiAsteroidTrapMovePenalty({
+        ...options,
+        routeTarget,
+        followupScore,
+        requiredMovePoints,
+      });
+
       if (!routeTarget && followupScore <= 0) {
         penalty += getAiRoundNumber() >= 3 ? 6 : 3;
       }
@@ -7081,6 +7147,51 @@
       }
 
       return Math.max(0, penalty);
+    }
+
+    function scoreAiRotationTimingMovePenalty(options = {}) {
+      const player = options.player || getCurrentPlayer();
+      const routeTarget = options.routeTarget || null;
+      if (!player || routeTarget?.kind !== "planet") return 0;
+      if (Math.max(0, aiNumber(options.followupScore)) > 0) return 0;
+      const range = getAiPlanetOptimalMoveRange(routeTarget.id);
+      if (!range) return 0;
+      const newDistance = Math.max(0, Math.round(aiNumber(routeTarget.newDistance)));
+      const oldDistance = Math.max(0, Math.round(aiNumber(routeTarget.oldDistance)));
+      const excess = Math.max(0, newDistance - range.max);
+      if (excess <= 0) return 0;
+      const swing = getAiThreeRotationDistanceSwingForPlanet(routeTarget.id);
+      if (swing <= 0) return 0;
+      const waitableExcess = Math.min(excess, swing);
+      const round = getAiRoundNumber();
+      let penalty = waitableExcess * (round <= 2 ? 2.3 : round === 3 ? 1.8 : 1.25)
+        + Math.max(0, excess - swing) * 0.9;
+      if (newDistance >= oldDistance) penalty += 2;
+      if (isAiAsteroidCoordinate(options.to) && !players.playerOwnsTech(player, "orange2", createActionContext())) {
+        penalty *= 1.35;
+      }
+      return roundAiScore(Math.min(16, Math.max(0, penalty)));
+    }
+
+    function scoreAiAsteroidTrapMovePenalty(options = {}) {
+      const player = options.player || getCurrentPlayer();
+      if (!player || !isAiAsteroidCoordinate(options.to)) return 0;
+      const ownsOrange2 = players.playerOwnsTech(player, "orange2", createActionContext());
+      if (ownsOrange2) return 0;
+      const fromAsteroid = isAiAsteroidCoordinate(options.from);
+      const currentAsteroidCount = countAiPlayerRocketsOnAsteroids(player);
+      const asteroidCountAfter = Math.max(0, currentAsteroidCount + (fromAsteroid ? 0 : 1));
+      const nearestPlanet = getAiNearestActionablePlanetRoute(options.to, player);
+      const range = nearestPlanet?.optimalRange || null;
+      const distanceExcess = range
+        ? Math.max(0, Math.round(aiNumber(nearestPlanet.distance)) - range.max)
+        : 0;
+      const followupScore = Math.max(0, aiNumber(options.followupScore));
+      let penalty = 3.5 + Math.max(0, asteroidCountAfter - 1) * 5;
+      if (followupScore <= 0) penalty += 4 + distanceExcess * 1.6;
+      if (asteroidCountAfter >= 2) penalty += 5;
+      if (Math.max(0, Math.round(aiNumber(options.requiredMovePoints))) <= 1) penalty += 1.5;
+      return roundAiScore(Math.min(24, Math.max(0, penalty)));
     }
 
     function scoreAiTechBonus(bonusId, player = getCurrentPlayer()) {
@@ -7151,6 +7262,7 @@
       const planetDemand = sumAiDemandMap(demand.planetIds);
       const asteroidDemand = getAiMapDemand(demand.locationTypes, "asteroid")
         + getAiMapDemand(demand.locationTypes, "earthAdjacentAsteroid");
+      const orange2MobilityNeed = scoreAiOrange2MobilityNeed(player);
       const moveDemand = getAiMapDemand(demand.actions, "move");
       const landDemand = getAiMapDemand(demand.actions, "land");
       const scanDemand = getAiMapDemand(demand.actions, "scan") + sumAiDemandMap(demand.scanColors) * 0.35;
@@ -7168,7 +7280,10 @@
         addPlan(
           "move",
           tileId === "orange2" ? "橙2降低小行星移动阻力" : "橙科支持移动/登陆路线",
-          moveDemand * 0.18 + asteroidDemand * 0.45 + routeDemand * 0.05,
+          moveDemand * 0.18
+            + asteroidDemand * 0.45
+            + routeDemand * 0.05
+            + (tileId === "orange2" ? orange2MobilityNeed * 0.55 : orange2MobilityNeed * 0.16),
           { tileId, techType },
         );
       }
@@ -7252,6 +7367,7 @@
       if (techType === "purple") value += 2 + (resources.additionalPublicScan || 0) * 0.75;
       if (techType === "blue") value += 1.5;
       if (candidate?.tileId === "orange1") value += (getMovableTokensForPlayer(player?.id).length ? 1 : 4);
+      if (candidate?.tileId === "orange2") value += scoreAiOrange2MobilityNeed(player) * 0.75;
       if (candidate?.tileId === "orange3") value += 4.8 + getAiMapDemand(demand.actions, "land") * 0.05;
       if (candidate?.tileId === "orange4") {
         const satellitePotential = (solar.createSolarSnapshot(solarState).planetLocations || [])
