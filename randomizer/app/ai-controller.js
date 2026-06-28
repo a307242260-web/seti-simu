@@ -7377,23 +7377,50 @@
 
     function scoreAiAsteroidTrapMovePenalty(options = {}) {
       const player = options.player || getCurrentPlayer();
-      if (!player || !isAiAsteroidCoordinate(options.to)) return 0;
+      const routeTarget = options.routeTarget || options.routeScore?.target || null;
+      const routeIsAsteroidTarget = routeTarget?.kind === "probe-location"
+        && (routeTarget.locationType === "asteroid" || routeTarget.locationType === "earthAdjacentAsteroid");
+      const toMatchesAsteroidRouteTarget = routeIsAsteroidTarget
+        && Number(routeTarget.coordinate?.x) === Number(options.to?.x)
+        && Number(routeTarget.coordinate?.y) === Number(options.to?.y);
+      const toIsAsteroidStop = isAiAsteroidCoordinate(options.to) || toMatchesAsteroidRouteTarget;
+      if (!player || !toIsAsteroidStop) return 0;
       const ownsOrange2 = players.playerOwnsTech(player, "orange2", createActionContext());
-      if (ownsOrange2) return 0;
       const fromAsteroid = isAiAsteroidCoordinate(options.from);
       const currentAsteroidCount = countAiPlayerRocketsOnAsteroids(player);
       const asteroidCountAfter = Math.max(0, currentAsteroidCount + (fromAsteroid ? 0 : 1));
       const nearestPlanet = getAiNearestActionablePlanetRoute(options.to, player);
       const range = nearestPlanet?.optimalRange || null;
+      const nearestDistance = Math.max(0, Math.round(aiNumber(nearestPlanet?.distance)));
       const distanceExcess = range
-        ? Math.max(0, Math.round(aiNumber(nearestPlanet.distance)) - range.max)
+        ? Math.max(0, nearestDistance - range.max)
         : 0;
       const followupScore = Math.max(0, aiNumber(options.followupScore));
+      const canContinueSameMove = Math.max(0, Math.round(aiNumber(options.remainingPoolAfterStep))) > 0
+        && !isAiIndustryHuanyuMoveEffect(options.effect);
+      const routeCanCashOut = followupScore > 0 || (routeTarget?.kind === "planet" && Math.max(0, aiNumber(routeTarget.newDistance)) <= 0);
+      const swing = nearestPlanet?.planetId ? getAiThreeRotationDistanceSwingForPlanet(nearestPlanet.planetId) : 0;
+      const waitableExcess = Math.min(distanceExcess, swing);
+      const round = getAiRoundNumber();
+      if (ownsOrange2) return 0;
       let penalty = 3.5 + Math.max(0, asteroidCountAfter - 1) * 5;
       if (followupScore <= 0) penalty += 4 + distanceExcess * 1.6;
       if (asteroidCountAfter >= 2) penalty += 5;
       if (Math.max(0, Math.round(aiNumber(options.requiredMovePoints))) <= 1) penalty += 1.5;
-      return roundAiScore(Math.min(24, Math.max(0, penalty)));
+      if (routeIsAsteroidTarget && !routeCanCashOut) {
+        penalty += round <= 2 ? 7 : round === 3 ? 9 : 10;
+        if (!canContinueSameMove) penalty += 5;
+      }
+      if (distanceExcess > 0 && !routeCanCashOut) {
+        penalty += Math.min(12, 3 + distanceExcess * 2.8 + waitableExcess * 1.6);
+      }
+      if (isAiIndustryHuanyuMoveEffect(options.effect) && asteroidCountAfter >= 2 && !routeCanCashOut) {
+        penalty += 8;
+      }
+      if (nearestDistance >= 4 && !routeCanCashOut) {
+        penalty += Math.min(8, nearestDistance * 1.2);
+      }
+      return roundAiScore(Math.min(42, Math.max(0, penalty)));
     }
 
     function scoreAiBlueTechDataEngineValue(player = getCurrentPlayer()) {
@@ -10339,12 +10366,15 @@
         : 0;
       const pathPenalty = scoreAiMovementPathPenalty({
         player: currentPlayer,
+        effect,
+        nextEffect,
         from,
         to,
         direction,
         requiredMovePoints: terrainRequired,
         routeScore,
         followupScore: landingScore.score,
+        remainingPoolAfterStep,
       });
       const movementCost = paymentCost + pathPenalty + finalSecondMarkNoDirectSetupPenalty;
       return {
