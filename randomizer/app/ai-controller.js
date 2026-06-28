@@ -140,6 +140,7 @@
       handleBanrenmaCardConditionChoice,
       handleBanrenmaCardGainChoice,
       handleCardTriggerChoice,
+      cancelCardTriggerChoice,
       handleChongCardGainChoice,
       handleChongFossilChoice,
       handleChongTaskCompletionChoice,
@@ -1928,6 +1929,28 @@
       });
     }
 
+    function getAiLaunchTriggerResolution(effect, player = getCurrentPlayer()) {
+      if (effect?.options?.ignoreRocketLimit !== true) {
+        const context = createActionContext();
+        const rocketLimit = abilities.rocket.getRocketLimitForPlayer(player, context);
+        const activeRocketCount = rocketActions.getRocketsForPlayer(rocketState, player?.id).length;
+        if (activeRocketCount >= rocketLimit) {
+          return {
+            ok: false,
+            message: `火箭数量已达上限（${activeRocketCount}/${rocketLimit}）`,
+          };
+        }
+      }
+      const cost = getAiLaunchPaymentCost(effect?.options || {});
+      if (!players.canAfford(player, cost)) {
+        return {
+          ok: false,
+          message: `发射资源不足，需要 ${players.formatResourceCost(cost)}`,
+        };
+      }
+      return { ok: true };
+    }
+
     function canAiResolveCardTriggerMatch(match) {
       const type = match?.effect?.type || null;
       if (!type) return false;
@@ -1939,11 +1962,13 @@
       if (String(type).startsWith("card_")) {
         return canAiResolvePlayCardEffects([match.effect]).ok;
       }
+      if (type === "launch") {
+        return getAiLaunchTriggerResolution(match.effect).ok;
+      }
       return [
         "gain_resources",
         "gain_data",
         "draw_cards",
-        "launch",
         cardEffects.EFFECT_TYPES.CARD_CORNER_EVENT_REWARD,
       ].includes(type);
     }
@@ -1958,15 +1983,27 @@
       const matches = state.pendingCardTriggerAction.matches || [];
       const selectedIndex = matches.findIndex((match) => canAiResolveCardTriggerMatch(match));
       if (selectedIndex < 0) {
+        const reasons = matches.map((match) => ({
+          cardLabel: cards.getCardLabel(match?.card),
+          effectType: match?.effect?.type || null,
+          effectLabel: match?.effect?.label || null,
+          reason: match?.effect?.type === "launch"
+            ? getAiLaunchTriggerResolution(match.effect, currentPlayer).message || null
+            : null,
+        }));
+        const message = "AI 取消本次不可发动的卡牌触发";
+        recordAiAutoBattleLog("card-trigger-skip", `${currentPlayer.colorLabel}${message}`, {
+          matches: reasons,
+        });
+        if (typeof cancelCardTriggerChoice === "function") {
+          cancelCardTriggerChoice();
+          return { ok: true, progressed: true, skipped: true, message, matches: reasons };
+        }
         return {
           ok: false,
           blocked: true,
           message: "AI 没有可处理的卡牌触发",
-          matches: matches.map((match) => ({
-            cardLabel: cards.getCardLabel(match?.card),
-            effectType: match?.effect?.type || null,
-            effectLabel: match?.effect?.label || null,
-          })),
+          matches: reasons,
         };
       }
 
