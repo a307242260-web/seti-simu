@@ -788,14 +788,48 @@
     }
   }
 
-  function getEffectOwnerPlayer(effect) {
+  function getExplicitEffectOwnerPlayer(effect) {
     return resolvePlayerReference({
       playerId: effect?.options?.targetPlayerId || effect?.playerId || effect?.options?.playerId,
       playerColor: effect?.options?.targetPlayerColor || effect?.playerColor || effect?.options?.playerColor,
-    })
+    });
+  }
+
+  function getEffectOwnerPlayer(effect) {
+    return getExplicitEffectOwnerPlayer(effect)
       || getPlayerById(pendingActionEffectFlow?.defaultPlayerId)
       || getPlayerById(pendingActionEffectFlow?.playerId)
       || players.getCurrentPlayer(playerState);
+  }
+
+  function getPendingOwnerFields(effect = null, player = null) {
+    const owner = player || getExplicitEffectOwnerPlayer(effect) || getCurrentPlayer();
+    return {
+      playerId: owner?.id || null,
+      playerColor: owner?.color || null,
+    };
+  }
+
+  function getPendingOwnerPlayer(pending = null, fallbackEffect = null) {
+    const effect = fallbackEffect || pending?.effect || null;
+    return resolvePlayerReference({
+      playerId: pending?.playerId || pending?.targetPlayerId,
+      playerColor: pending?.playerColor || pending?.targetPlayerColor,
+    })
+      || getExplicitEffectOwnerPlayer(effect)
+      || (effect ? getEffectOwnerPlayer(effect) : null)
+      || getCurrentPlayer();
+  }
+
+  function withPendingOwnerPlayer(pending, callback) {
+    const owner = getPendingOwnerPlayer(pending);
+    const previousPlayerId = effectExecutionPlayerId;
+    effectExecutionPlayerId = owner?.id || previousPlayerId;
+    try {
+      return callback(owner);
+    } finally {
+      effectExecutionPlayerId = previousPlayerId;
+    }
   }
 
   function setActiveEffectFlowOwner(effect) {
@@ -880,10 +914,13 @@
     get pendingCardSelectionAction() { return pendingCardSelectionAction; },
     get pendingPassReserveSelection() { return pendingPassReserveSelection; },
     get pendingScanTargetAction() { return pendingScanTargetAction; },
+    get pendingProbeSectorScanAction() { return pendingProbeSectorScanAction; },
+    get pendingProbeLocationRewardAction() { return pendingProbeLocationRewardAction; },
     get pendingPublicScanQueue() { return pendingPublicScanQueue; },
     get pendingHandScanAction() { return pendingHandScanAction; },
     get pendingAlienTraceAction() { return pendingAlienTraceAction; },
     get pendingLandTargetAction() { return pendingLandTargetAction; },
+    get pendingDataPlaceAction() { return pendingDataPlaceAction; },
     get pendingJiuzheCardPlay() { return pendingJiuzheCardPlay; },
     get pendingYichangdianCardGain() { return pendingYichangdianCardGain; },
     get pendingYichangdianCornerAction() { return pendingYichangdianCornerAction; },
@@ -985,11 +1022,13 @@
     confirmCardTaskCompletion,
     confirmCardCornerQuickAction,
     confirmDataPlacement,
+    confirmDiscardAnyForIncome,
     confirmInitialSelectionForCurrentPlayer,
     confirmLandTargetPicker,
     confirmMovePayment,
     confirmPassReserveSelection,
     confirmPlayCardSelection,
+    confirmProbeSectorScanSelection,
     confirmPublicScanSelection,
     confirmScanTarget,
     confirmStrategyPassiveSlotChoice,
@@ -1044,15 +1083,24 @@
     handleChongTaskCompletionChoice,
     handleCompanyActionMarkerClick,
     handleConditionalSectorChoice,
+    handleDiscardCornerRepeatChoice,
+    handleDiscardIncomeCardChoice,
     handleHandCardCornerQuickAction,
+    handleHandCornerChoice,
     handleHandScanCardClick,
     handleJiuzheCardChoice,
     handleJiuzheOpportunitySkip,
     handleOptionalHandScanChoice,
+    handlePayCreditChoice,
     handlePlayCardSelect,
+    handleProbeLocationRewardChoice,
+    handleProbeSectorScanChoice,
     handlePublicCornerDiscardCardClick,
     handlePublicCardClick,
     handlePublicScanCardClick,
+    handleRemoveOrbitToProbeChoice,
+    handleRemovePlanetMarkerChoice,
+    handleReturnUnfinishedTaskChoice,
     handleIndustryDeepspaceHandClick,
     handleRunezuCardGainChoice,
     handleRunezuFaceSymbolChoice,
@@ -8002,7 +8050,11 @@
   function openScanTargetPicker(config) {
     if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开扫描目标选择" };
 
-    pendingScanTargetAction = config || {};
+    config = config || {};
+    pendingScanTargetAction = {
+      ...getPendingOwnerFields(config.effect || null),
+      ...config,
+    };
     if (els.scanTargetTitle) {
       els.scanTargetTitle.textContent = config.title || "选择扫描目标";
     }
@@ -8032,6 +8084,7 @@
 
   function confirmScanTarget(nebulaId, sectorX) {
     const pending = pendingScanTargetAction;
+    return withPendingOwnerPlayer(pending, () => {
     closeScanTargetPicker({ preserveIndustryAction: true });
 
     if (pending?.type === "industry_remove_tech") {
@@ -8194,6 +8247,7 @@
     }
 
     return { ok: false, message: "没有待确认的扫描目标" };
+    });
   }
 
   function beginSectorScan() {
@@ -11131,6 +11185,8 @@
   function hasActiveEffectSubFlow() {
     return Boolean(
       pendingScanTargetAction
+      || pendingProbeSectorScanAction
+      || pendingProbeLocationRewardAction
       || pendingPublicScanQueue
       || pendingHandScanAction
       || pendingPassReserveSelection
@@ -12465,6 +12521,7 @@
       return { ok: false, message: "无法打开探测器扫描选择" };
     }
     pendingProbeSectorScanAction = {
+      ...getPendingOwnerFields(effect),
       effect,
       choices,
       selectedRocketIds: [],
@@ -12506,7 +12563,7 @@
     if (maxTargets === 1) {
       const effect = pending.effect;
       closeScanTargetPicker();
-      return queueProbeSectorScanEffects(effect, [choice.rocket]);
+      return withPendingOwnerPlayer(pending, () => queueProbeSectorScanEffects(effect, [choice.rocket]));
     }
     const selected = pending.selectedRocketIds || [];
     const existingIndex = selected.indexOf(choice.rocket.id);
@@ -12529,7 +12586,7 @@
       .map((choice) => choice.rocket);
     const effect = pending.effect;
     closeScanTargetPicker();
-    return queueProbeSectorScanEffects(effect, rockets);
+    return withPendingOwnerPlayer(pending, () => queueProbeSectorScanEffects(effect, rockets));
   }
 
   function getPlanetName(planetId) {
@@ -12685,6 +12742,7 @@
       return { ok: false, message: "无法打开标记移除选择" };
     }
     pendingScanTargetAction = {
+      ...getPendingOwnerFields(effect),
       type: "remove_planet_marker",
       effect,
       choices,
@@ -12715,7 +12773,7 @@
     const effect = pending.effect;
     closeScanTargetPicker();
     if (!choice || !effect) return { ok: false, message: "无效标记选择" };
-    return executeRemovePlanetMarkerChoice(effect, choice);
+    return withPendingOwnerPlayer(pending, () => executeRemovePlanetMarkerChoice(effect, choice));
   }
 
   function executeCardLandTarget(effect, target, contextInfo = {}) {
@@ -13111,6 +13169,7 @@
 
   function openCardPlutoActionPicker(effect, actionType, choices, options = {}) {
     openLandTargetPicker({
+      effect,
       title: `选择${getPlutoChoiceActionLabel(actionType)}目标`,
       selectLabel: `${getPlutoChoiceActionLabel(actionType)}到`,
       confirmText: `确认${getPlutoChoiceActionLabel(actionType)}`,
@@ -13280,7 +13339,7 @@
     if (!els.scanTargetOverlay || !els.scanTargetActions) {
       return applyHandCornerChoice(effect, "publicity");
     }
-    pendingScanTargetAction = { type: "hand_corner_reward", effect, counts };
+    pendingScanTargetAction = { ...getPendingOwnerFields(effect), type: "hand_corner_reward", effect, counts };
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一种左上角快速行动类别，按当前手牌数量获得对应奖励。";
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -13349,7 +13408,7 @@
     if (pending?.type !== "hand_corner_reward") return { ok: false, message: "没有待处理的手牌角标奖励" };
     const effect = pending.effect;
     closeScanTargetPicker();
-    return applyHandCornerChoice(effect, choice);
+    return withPendingOwnerPlayer(pending, () => applyHandCornerChoice(effect, choice));
   }
 
   function executeLandingSectorScanEffect(effect) {
@@ -13467,7 +13526,7 @@
         payload: { sectorX: xs[0] },
       });
     }
-    pendingScanTargetAction = { type: "conditional_sector_scan", effect, sectorXs: xs };
+    pendingScanTargetAction = { ...getPendingOwnerFields(effect), type: "conditional_sector_scan", effect, sectorXs: xs };
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = `选择一个符合条件的扇区，随后扫描 ${repeat} 次。`;
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -13491,6 +13550,7 @@
     const effect = pending.effect;
     const sectorX = solar.mod8(Number(sectorXValue) || 0);
     closeScanTargetPicker();
+    return withPendingOwnerPlayer(pending, () => {
     const repeat = Math.max(1, Math.round(Number(effect.options?.repeat || 1)));
     const followups = [];
     for (let index = 0; index < repeat; index += 1) {
@@ -13509,13 +13569,14 @@
       message: `${effect.label}：已追加 ${followups.length} 次扫描`,
       payload: { sectorX },
     });
+    });
   }
 
   function renderDiscardIncomePicker() {
     const pending = pendingScanTargetAction;
     if (pending?.type !== "discard_any_income" || !els.scanTargetActions) return;
     const selected = new Set(pending.selectedCardIds || []);
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getPendingOwnerPlayer(pending, pending.effect);
     const buttons = (currentPlayer?.hand || []).map((card) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -13544,7 +13605,7 @@
         message: `${effect.label}：没有手牌可弃，已跳过`,
       });
     }
-    pendingScanTargetAction = { type: "discard_any_income", effect, selectedCardIds: [] };
+    pendingScanTargetAction = { ...getPendingOwnerFields(effect), type: "discard_any_income", effect, selectedCardIds: [] };
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择任意数量手牌，确认后弃掉并逐张结算收入图标。";
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -13570,10 +13631,11 @@
   function confirmDiscardAnyForIncome() {
     const pending = pendingScanTargetAction;
     if (pending?.type !== "discard_any_income") return { ok: false, message: "没有待确认的收入弃牌" };
-    const currentPlayer = getCurrentPlayer();
     const effect = pending.effect;
     const selected = new Set(pending.selectedCardIds || []);
     closeScanTargetPicker();
+    return withPendingOwnerPlayer(pending, () => {
+    const currentPlayer = getCurrentPlayer();
     beginEffectHistoryStep(effect.label);
     const beforePlayer = structuredClone(currentPlayer);
     const beforeCardState = {
@@ -13609,6 +13671,7 @@
       message: `${effect.label}：弃掉 ${discarded.length} 张手牌`,
       payload: { discardedCount: discarded.length },
     }, [renderPlayerHand]);
+    });
   }
 
   function expandPayCreditsForRewardEffect(effect) {
@@ -13649,7 +13712,7 @@
         message: `${effect.label}：信用不足，已跳过`,
       });
     }
-    pendingScanTargetAction = { type: "pay_credit_reward", effect };
+    pendingScanTargetAction = { ...getPendingOwnerFields(effect), type: "pay_credit_reward", effect };
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "可以支付 1 信用获得奖励，也可以跳过剩余支付节点。";
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -13675,6 +13738,7 @@
     if (pending?.type !== "pay_credit_reward") return { ok: false, message: "没有待处理的信用支付" };
     const effect = pending.effect;
     closeScanTargetPicker();
+    return withPendingOwnerPlayer(pending, () => {
     if (choice === "skip") {
       if (pendingActionEffectFlow) {
         const groupId = effect.options?.groupId;
@@ -13714,6 +13778,7 @@
       undoable: true,
       message: `${effect.label}：支付1信用，${reward?.label || "获得奖励"}`,
     });
+    });
   }
 
   function isAlienFamilyCard(card) {
@@ -13732,7 +13797,7 @@
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
-    pendingScanTargetAction = { type: "discard_corner_repeat", effect, choices };
+    pendingScanTargetAction = { ...getPendingOwnerFields(effect), type: "discard_corner_repeat", effect, choices };
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一张非外星人手牌弃掉，并重复结算其左上角奖励。";
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -13753,10 +13818,11 @@
   function handleDiscardCornerRepeatChoice(cardId) {
     const pending = pendingScanTargetAction;
     if (pending?.type !== "discard_corner_repeat") return { ok: false, message: "没有待处理的角标重复弃牌" };
-    const currentPlayer = getCurrentPlayer();
     const effect = pending.effect;
-    const handIndex = (currentPlayer?.hand || []).findIndex((card) => card.id === cardId);
     closeScanTargetPicker();
+    return withPendingOwnerPlayer(pending, () => {
+    const currentPlayer = getCurrentPlayer();
+    const handIndex = (currentPlayer?.hand || []).findIndex((card) => card.id === cardId);
     if (handIndex < 0) return { ok: false, message: "无效手牌" };
     beginEffectHistoryStep(effect.label);
     const beforePlayer = structuredClone(currentPlayer);
@@ -13805,6 +13871,7 @@
       message: `${effect.label}：弃掉 ${cards.getCardLabel(discard.card)}；${messages.join("；")}`,
       payload: { cardId: discard.card.id, repeat },
     }, [renderPlayerHand]);
+    });
   }
 
   function buildOwnOrbitChoices() {
@@ -13841,7 +13908,7 @@
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
-    pendingScanTargetAction = { type: "remove_orbit_to_probe", effect, choices };
+    pendingScanTargetAction = { ...getPendingOwnerFields(effect), type: "remove_orbit_to_probe", effect, choices };
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一个己方环绕标记，移除后在该星球当前扇区放置探测器。";
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -13866,6 +13933,7 @@
     const effect = pending.effect;
     closeScanTargetPicker();
     if (!choice) return { ok: false, message: "无效环绕标记" };
+    return withPendingOwnerPlayer(pending, () => {
     const currentPlayer = getCurrentPlayer();
     beginEffectHistoryStep(effect.label);
     const isPlutoChoice = choice.kind === "plutoOrbit";
@@ -13929,6 +13997,7 @@
       message: `${effect.label}：${choice.label} -> ${place.message}`,
       payload: { choice, rocketId: place.rocket?.id || null },
     }, [renderReservedCardsFromTaskState]);
+    });
   }
 
   function isChongTransportStartedForCard(card) {
@@ -13951,7 +14020,7 @@
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
-    pendingScanTargetAction = { type: "return_unfinished_task", effect, choices };
+    pendingScanTargetAction = { ...getPendingOwnerFields(effect), type: "return_unfinished_task", effect, choices };
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一张未完成的 1/2 型保留任务卡返回手牌。";
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -13972,9 +14041,10 @@
   function handleReturnUnfinishedTaskChoice(cardId) {
     const pending = pendingScanTargetAction;
     if (pending?.type !== "return_unfinished_task") return { ok: false, message: "没有待处理的任务卡回手" };
-    const currentPlayer = getCurrentPlayer();
     const effect = pending.effect;
     closeScanTargetPicker();
+    return withPendingOwnerPlayer(pending, () => {
+    const currentPlayer = getCurrentPlayer();
     const index = (currentPlayer?.reservedCards || []).findIndex((card) => card.id === cardId);
     if (index < 0) return { ok: false, message: "无效任务卡" };
     if (!isReservedTaskCardUnfinished(currentPlayer.reservedCards[index], effect)) {
@@ -13997,6 +14067,7 @@
       message: `${effect.label}：${cards.getCardLabel(card)} 返回手牌`,
       payload: { cardId: card.id },
     }, [renderPlayerHand, renderReservedCardsFromTaskState]);
+    });
   }
 
   function countOwnedTechByType(player, techType) {
@@ -14691,7 +14762,7 @@
     skip.dataset.optionalHandScan = "skip";
     skip.innerHTML = "跳过<small>不执行这次弃牌扫描</small>";
     els.scanTargetActions.replaceChildren(start, skip);
-    pendingScanTargetAction = { type: "optional_hand_scan", effect };
+    pendingScanTargetAction = { ...getPendingOwnerFields(effect), type: "optional_hand_scan", effect };
     els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = `${effect.label}：选择手牌或跳过`;
     renderStateReadout();
@@ -14703,6 +14774,7 @@
     if (pending?.type !== "optional_hand_scan") return { ok: false, message: "没有待处理的可选手牌扫描" };
     const effect = pending.effect;
     closeScanTargetPicker();
+    return withPendingOwnerPlayer(pending, () => {
     if (choice === "skip") {
       effect.result = { ok: true, skipped: true, message: `${effect.label}：已跳过` };
       rocketState.statusNote = effect.result.message;
@@ -14711,6 +14783,7 @@
       return effect.result;
     }
     return startHandScanFromCardEffect({ ...effect, options: { ...(effect.options || {}), optional: true } });
+    });
   }
 
   function executeOptionalDiscardScanEffect(effect) {
@@ -14818,7 +14891,7 @@
   }
 
   function finishProbeLocationReward(effect, rocket) {
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getExplicitEffectOwnerPlayer(effect) || getCurrentPlayer();
     const reward = computeProbeLocationReward(effect, rocket);
     beginEffectHistoryStep(effect.label);
     const results = [];
@@ -14839,7 +14912,7 @@
     if (!els.scanTargetOverlay || !els.scanTargetActions) {
       return finishProbeLocationReward(effect, choices[0]?.rocket);
     }
-    pendingProbeLocationRewardAction = { effect, choices };
+    pendingProbeLocationRewardAction = { ...getPendingOwnerFields(effect), effect, choices };
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一个己方探测器结算小行星位置奖励。";
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -14884,7 +14957,7 @@
     pendingProbeLocationRewardAction = null;
     closeScanTargetPicker();
     if (!rocket) return { ok: false, message: "无效探测器" };
-    return finishProbeLocationReward(effect, rocket);
+    return withPendingOwnerPlayer(pending, () => finishProbeLocationReward(effect, rocket));
   }
 
   function executePlutoReserveEffect(effect) {
@@ -15660,12 +15733,16 @@
     }
 
     openLandTargetPicker({
+      effect,
       title: "选择虫族登陆目标",
       selectLabel: "登陆到",
       confirmText: "确认登陆",
       ...options,
       getOptions: () => getChongLandOptions(effect),
-      onConfirm: (choice) => executeChongTravelForPickupChoice(effect, { ...choice, kind: "land" }),
+      onConfirm: (choice) => withEffectExecutionPlayer(
+        effect,
+        () => executeChongTravelForPickupChoice(effect, { ...choice, kind: "land" }),
+      ),
       onCancel: () => {
         rocketState.statusNote = "已取消虫族登陆目标选择";
         renderStateReadout();
@@ -15687,9 +15764,10 @@
       return executeChongTravelForPickupChoice(effect, options.choices[0]);
     }
     openLandTargetPicker({
+      effect,
       ...options,
       getOptions: () => getChongOrbitOrLandOptions(effect),
-      onConfirm: (choice) => executeChongTravelForPickupChoice(effect, choice),
+      onConfirm: (choice) => withEffectExecutionPlayer(effect, () => executeChongTravelForPickupChoice(effect, choice)),
       onCancel: () => {
         rocketState.statusNote = "已取消虫族环绕/登陆目标选择";
         renderStateReadout();
@@ -29940,7 +30018,12 @@
 
     const choices = choiceResult.choices;
     const forcePrompt = Boolean(options.forcePrompt);
-    pendingDataPlaceAction = options.pendingAction || null;
+    pendingDataPlaceAction = options.pendingAction
+      ? {
+        ...getPendingOwnerFields(options.pendingAction.effect || null, player),
+        ...options.pendingAction,
+      }
+      : null;
     if (!forcePrompt && !shouldPromptDataPlaceChoice(choices)) {
       const [choice] = choices;
       confirmDataPlacement(choice.target, choice.blueSlot);
@@ -30010,11 +30093,7 @@
   }
 
   function getPendingDataPlacementPlayer(pending = pendingDataPlaceAction) {
-    if (!pending) return getCurrentPlayer();
-    return getPlayerById(pending.playerId)
-      || getPlayerByColor(pending.playerColor)
-      || getEffectOwnerPlayer(pending.effect)
-      || getCurrentPlayer();
+    return getPendingOwnerPlayer(pending, pending?.effect || null);
   }
 
   function ensurePendingDataPlacementEffectStep(pending, player) {
@@ -30106,6 +30185,7 @@
     const pending = pendingDataPlaceAction;
     const player = getPendingDataPlacementPlayer(pending);
     closeDataPlacePicker({ keepPending: true });
+    return withPendingOwnerPlayer(pending, () => {
     ensurePendingDataPlacementEffectStep(pending, player);
 
     const result = abilities.executeAbility("placeData", createActionContext(), {
@@ -30132,6 +30212,7 @@
     renderPlayerStats();
     renderInitialSelectionArea();
     return continuePendingDataPlacementAfterBonus();
+    });
   }
 
   function skipPendingDataPlacement() {
@@ -30532,7 +30613,10 @@
     if (!els.landTargetOverlay || !els.landTargetSelect) {
       const choice = options.choices?.[0] || { target: options.defaultTarget };
       if (typeof options.onConfirm === "function") {
-        return options.onConfirm(choice, options);
+        return withPendingOwnerPlayer({
+          ...getPendingOwnerFields(options.effect || null, options.player || null),
+          effect: options.effect || null,
+        }, () => options.onConfirm(choice, options));
       }
       runAction("land", { target: choice.target, rocketId: choice.rocketId });
       return;
@@ -30540,6 +30624,8 @@
 
     pendingLandTargetAction = typeof options.onConfirm === "function"
       ? {
+        ...getPendingOwnerFields(options.effect || null, options.player || null),
+        effect: options.effect || null,
         getOptions: options.getOptions,
         onConfirm: options.onConfirm,
         onCancel: options.onCancel,
@@ -30565,6 +30651,7 @@
 
   function confirmLandTargetPicker() {
     const pending = pendingLandTargetAction;
+    return withPendingOwnerPlayer(pending, () => {
     const choiceIndex = Number(els.landTargetSelect?.value);
     const options = typeof pending?.getOptions === "function"
       ? pending.getOptions()
@@ -30582,6 +30669,7 @@
       return pending.onConfirm(choice, options);
     }
     runAction("land", { target: choice.target, rocketId: choice.rocketId });
+    });
   }
 
   function launchRocketForCurrentPlayer() {

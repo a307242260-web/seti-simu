@@ -6,6 +6,32 @@ const chong = require("../game/aliens/chong");
 const fangzhou = require("../game/aliens/fangzhou");
 const runezu = require("../game/aliens/runezu");
 
+function datasetKeyForSelector(selector) {
+  const match = String(selector || "").match(/\[data-([a-z0-9-]+)\]/i);
+  if (!match) return null;
+  return match[1].replace(/-([a-z0-9])/g, (_all, char) => char.toUpperCase());
+}
+
+function makeButton(dataset = {}, textContent = "", disabled = false) {
+  return {
+    dataset,
+    textContent,
+    disabled,
+    className: "scan-target-option-button",
+  };
+}
+
+function makeActionList(buttons = []) {
+  return {
+    querySelectorAll: (selector) => {
+      if (selector === ".scan-target-option-button") return buttons;
+      const key = datasetKeyForSelector(selector);
+      if (!key) return [];
+      return buttons.filter((button) => Object.prototype.hasOwnProperty.call(button.dataset || {}, key));
+    },
+  };
+}
+
 function createAiControllerHarness(pendingPlayerColor, options = {}) {
   const white = {
     id: "player-white",
@@ -45,9 +71,19 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     }
     : null;
   let handled = null;
+  const handledEvents = [];
+  const noteHandled = (event) => {
+    handled = event;
+    handledEvents.push(event);
+  };
 
   const state = {
     get pendingJiuzheCardPlay() { return pendingJiuzheCardPlay; },
+    get pendingScanTargetAction() { return options.scanTargetPending || null; },
+    get pendingProbeSectorScanAction() { return options.probeSectorPending || null; },
+    get pendingProbeLocationRewardAction() { return options.probeLocationPending || null; },
+    get pendingLandTargetAction() { return options.landTargetPending || null; },
+    get pendingDataPlaceAction() { return options.dataPlacePending || null; },
     get pendingDiscardAction() {
       return options.currentPlayerDiscardPending ? { player: white, selectedIndexes: [] } : null;
     },
@@ -91,6 +127,9 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     cards: {
       getCardLabel: (card) => card?.cardName || card?.label || card?.cardId || card?.id || "card",
       getIncomeCodeForCard: (card) => card?.incomeCode ?? null,
+      getIncomeGainForCard: (card) => card?.incomeGain || null,
+      getDiscardActionMoveRewardForCard: (card) => card?.moveReward || null,
+      getDiscardActionRewardForCard: (card) => card?.resourceReward || null,
     },
     data: {},
     ai: {
@@ -131,8 +170,19 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     cardTaskState: {},
     historyStepOrder: {},
     els: {
-      scanTargetOverlay: { hidden: false },
-      scanTargetActions: { querySelectorAll: () => [] },
+      scanTargetOverlay: { hidden: options.scanTargetHidden ?? false },
+      scanTargetActions: makeActionList(options.scanTargetButtons || []),
+      landTargetOverlay: {
+        hidden: !options.landTargetPending,
+        dataset: options.landTargetDataset || { planetId: "mars" },
+      },
+      landTargetSelect: {
+        options: options.landTargetSelectOptions || [{}, {}],
+        value: String(options.landTargetSelectedIndex || 0),
+        focus: () => null,
+      },
+      dataPlaceOverlay: { hidden: !options.dataPlacePending },
+      dataPlaceActions: makeActionList(options.dataPlaceButtons || []),
     },
     DEFAULT_ACTIVE_PLAYER_COUNT: allPlayers.length,
     DEFAULT_INITIAL_HAND_COUNT: 5,
@@ -150,10 +200,19 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     getCardPlayCost: (card) => (card?.price ? { credits: card.price } : {}),
     getCardPrice: (card) => card?.price || 0,
     getCardTypeCode: () => 1,
-    getCurrentActionEffect: () => null,
+    getCurrentActionEffect: () => options.currentActionEffect || null,
     getCurrentPlayer: () => currentPlayer,
     getEarthSectorCoordinate: () => ({ x: 1, y: 1 }),
-    getEffectOwnerPlayer: () => null,
+    getEffectOwnerPlayer: (effect) => {
+      if (effect?.playerId) return allPlayers.find((player) => player.id === effect.playerId) || null;
+      if (effect?.playerColor) return allPlayers.find((player) => player.color === effect.playerColor) || null;
+      if (effect?.options?.playerId) return allPlayers.find((player) => player.id === effect.options.playerId) || null;
+      if (effect?.options?.playerColor) return allPlayers.find((player) => player.color === effect.options.playerColor) || null;
+      if (effect?.options?.targetPlayerId) return allPlayers.find((player) => player.id === effect.options.targetPlayerId) || null;
+      if (effect?.options?.targetPlayerColor) return allPlayers.find((player) => player.color === effect.options.targetPlayerColor) || null;
+      if (options.effectOwnerColor) return allPlayers.find((player) => player.color === options.effectOwnerColor) || null;
+      return null;
+    },
     getInitialSelectionOffer: () => null,
     getPendingPlayCardSelection: () => null,
     getPlanetSectorCoordinate: () => ({ x: 1, y: 1 }),
@@ -163,30 +222,37 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     getRequiredMovePointsForUi: () => 1,
     getSectorContentForMove: () => null,
     handleJiuzheCardChoice: (choice) => {
-      handled = { type: "card", choice };
+      noteHandled({ type: "card", choice });
       return { ok: true, progressed: true };
     },
     handleJiuzheOpportunitySkip: () => {
-      handled = { type: "skip" };
+      noteHandled({ type: "skip" });
       pendingJiuzheCardPlay = null;
       return { ok: true, progressed: true };
     },
-    hasActivePendingSubFlow: () => Boolean(pendingJiuzheCardPlay),
+    hasActivePendingSubFlow: () => Boolean(
+      pendingJiuzheCardPlay
+      || options.scanTargetPending
+      || options.probeSectorPending
+      || options.probeLocationPending
+      || options.landTargetPending
+      || options.dataPlacePending
+    ),
     openBanrenmaReadyOpportunityForPlayer: (player, openOptions = {}) => {
       if (!options.readyBanrenmaPlayerColor || player?.color !== options.readyBanrenmaPlayerColor) return null;
-      handled = {
+      noteHandled({
         type: "banrenma-ready",
         playerColor: player.color,
         includeCards: openOptions.includeCards,
-      };
+      });
       return { ok: true, message: "opened banrenma opportunity" };
     },
     openRunezuFaceSymbolPlacement: (alienSlotId, position) => {
-      handled = {
+      noteHandled({
         type: "runezu-face-symbol-open",
         alienSlotId: Number(alienSlotId),
         position: Number(position),
-      };
+      });
       return { ok: true, progressed: true, awaitingChoice: true };
     },
   };
@@ -272,6 +338,59 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   ];
   for (const name of noopNames) context[name] = () => null;
 
+  context.confirmDataPlacement = (target, blueSlot) => {
+    noteHandled({ type: "data-placement", target, blueSlot });
+    return { ok: true, progressed: true };
+  };
+  context.confirmLandTargetPicker = () => {
+    noteHandled({ type: "land-target", selectedIndex: Number(context.els.landTargetSelect.value) });
+    return { ok: true, progressed: true };
+  };
+  context.handlePayCreditChoice = (choice) => {
+    noteHandled({ type: "pay-credit", choice });
+    return { ok: true, progressed: true };
+  };
+  context.handleDiscardIncomeCardChoice = (cardId) => {
+    noteHandled({ type: "discard-income-card", cardId });
+    return { ok: true, progressed: true };
+  };
+  context.confirmDiscardAnyForIncome = () => {
+    noteHandled({ type: "discard-income-confirm" });
+    return { ok: true, progressed: true };
+  };
+  context.handleRemoveOrbitToProbeChoice = (choiceId) => {
+    noteHandled({ type: "remove-orbit-to-probe", choiceId });
+    return { ok: true, progressed: true };
+  };
+  context.handleReturnUnfinishedTaskChoice = (cardId) => {
+    noteHandled({ type: "return-task", cardId });
+    return { ok: true, progressed: true };
+  };
+  context.handleDiscardCornerRepeatChoice = (cardId) => {
+    noteHandled({ type: "discard-corner-repeat", cardId });
+    return { ok: true, progressed: true };
+  };
+  context.handleProbeSectorScanChoice = (rocketId) => {
+    noteHandled({ type: "probe-sector-choice", rocketId: Number(rocketId) });
+    return { ok: true, progressed: true };
+  };
+  context.confirmProbeSectorScanSelection = () => {
+    noteHandled({ type: "probe-sector-confirm" });
+    return { ok: true, progressed: true };
+  };
+  context.handleProbeLocationRewardChoice = (rocketId) => {
+    noteHandled({ type: "probe-location", rocketId: Number(rocketId) });
+    return { ok: true, progressed: true };
+  };
+  context.handleRemovePlanetMarkerChoice = (choiceId) => {
+    noteHandled({ type: "remove-marker", choiceId });
+    return { ok: true, progressed: true };
+  };
+  context.handleHandCornerChoice = (choice) => {
+    noteHandled({ type: "hand-corner", choice });
+    return { ok: true, progressed: true };
+  };
+
   const falseNames = [
     "canBlindDraw",
     "canPayForMove",
@@ -299,11 +418,11 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   if (options.playCardSelectionActive) {
     context.isPlayCardSelectionActive = () => true;
     context.handlePlayCardSelect = (handIndex) => {
-      handled = { type: "play-card", handIndex: Number(handIndex), confirmed: false };
+      noteHandled({ type: "play-card", handIndex: Number(handIndex), confirmed: false });
       return { ok: true, progressed: true };
     };
     context.confirmPlayCardSelection = () => {
-      handled = { ...(handled || { type: "play-card" }), confirmed: true };
+      noteHandled({ ...(handled || { type: "play-card" }), confirmed: true });
       return { ok: true, progressed: true };
     };
   }
@@ -325,6 +444,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     blue,
     controller: createAiController(context),
     getHandled: () => handled,
+    getHandledEvents: () => handledEvents.slice(),
   };
 }
 
@@ -356,6 +476,221 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   const result = harness.controller.runAiAutomationStep();
   assert.equal(result.blocked, true, "human-owned Jiuzhe pending should not be handled by AI");
   assert.equal(harness.getHandled(), null);
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    scanTargetPending: {
+      type: "pay_credit_reward",
+      playerColor: "blue",
+      effect: {
+        id: "pay-credit-test",
+        options: { reward: { type: "gain_resources", options: { gain: { score: 2, publicity: 2 } } } },
+      },
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI-owned pay-credit pending should resolve even when current player is human");
+  assert.deepEqual(harness.getHandled(), { type: "pay-credit", choice: "pay" });
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    scanTargetPending: {
+      type: "pay_credit_reward",
+      playerColor: "white",
+      effect: {
+        id: "human-pay-credit-test",
+        options: { reward: { type: "gain_resources", options: { gain: { score: 2, publicity: 2 } } } },
+      },
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.blocked, true, "human-owned rare pending should wait for the human player");
+  assert.equal(harness.getHandled(), null);
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    blueHand: [
+      { id: "income-card", incomeGain: { credits: 1 } },
+      { id: "blank-card" },
+    ],
+    scanTargetPending: {
+      type: "discard_any_income",
+      playerColor: "blue",
+      effect: { id: "discard-income-test" },
+      selectedCardIds: [],
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI-owned discard-income pending should confirm safely");
+  assert.equal(harness.getHandled().type, "discard-income-confirm");
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    scanTargetPending: {
+      type: "remove_orbit_to_probe",
+      playerColor: "blue",
+      effect: { id: "remove-orbit-test" },
+      choices: [{ id: "mars:1" }],
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI-owned remove-orbit pending should pick a legal choice");
+  assert.deepEqual(harness.getHandled(), { type: "remove-orbit-to-probe", choiceId: "mars:1" });
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    scanTargetPending: {
+      type: "return_unfinished_task",
+      playerColor: "blue",
+      effect: { id: "return-task-test" },
+      choices: [{ id: "task-expensive", price: 4 }, { id: "task-cheap", price: 1 }],
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI-owned return-task pending should pick a legal task");
+  assert.deepEqual(harness.getHandled(), { type: "return-task", cardId: "task-cheap" });
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    probeSectorPending: {
+      playerColor: "blue",
+      effect: { id: "probe-sector-test", options: { maxTargets: 2 } },
+      choices: [
+        { rocket: { id: 1 }, sector: { x: 2, y: 3 } },
+        { rocket: { id: 2 }, sector: { x: 4, y: 3 } },
+      ],
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI-owned probe-sector pending should select legal rockets and confirm");
+  assert.deepEqual(harness.getHandledEvents().map((event) => event.type), [
+    "probe-sector-choice",
+    "probe-sector-choice",
+    "probe-sector-confirm",
+  ]);
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    probeLocationPending: {
+      playerColor: "blue",
+      effect: { id: "probe-location-test" },
+      choices: [{ rocket: { id: 1 } }, { rocket: { id: 2 } }],
+    },
+    scanTargetButtons: [
+      makeButton({ probeLocationRewardRocketId: "1" }, "R1 0 数据"),
+      makeButton({ probeLocationRewardRocketId: "2" }, "R2 3 数据"),
+    ],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI-owned probe-location pending should select the best legal rocket");
+  assert.deepEqual(harness.getHandled(), { type: "probe-location", rocketId: 2 });
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    landTargetPending: {
+      playerColor: "blue",
+      getOptions: () => ({ ok: false, message: "skip scoring in harness" }),
+    },
+    landTargetSelectOptions: [{}, {}],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI-owned land-target pending should resolve while current player is human");
+  assert.deepEqual(harness.getHandled(), { type: "land-target", selectedIndex: 0 });
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    dataPlacePending: {
+      playerColor: "blue",
+      effect: { id: "data-place-test" },
+    },
+    dataPlaceButtons: [
+      makeButton({ placeTarget: "computer" }, "放置位 2"),
+    ],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI-owned data placement should resolve while current player is human");
+  assert.deepEqual(harness.getHandled(), { type: "data-placement", target: "computer", blueSlot: null });
 }
 
 {

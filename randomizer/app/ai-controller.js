@@ -84,11 +84,13 @@
       confirmCardTaskCompletion,
       confirmCardCornerQuickAction,
       confirmDataPlacement,
+      confirmDiscardAnyForIncome,
       confirmInitialSelectionForCurrentPlayer,
       confirmLandTargetPicker,
       confirmMovePayment,
       confirmPassReserveSelection,
       confirmPlayCardSelection,
+      confirmProbeSectorScanSelection,
       confirmPublicScanSelection,
       confirmScanTarget,
       confirmStrategyPassiveSlotChoice,
@@ -143,15 +145,24 @@
       handleChongTaskCompletionChoice,
       handleConditionalSectorChoice,
       handleCompanyActionMarkerClick,
+      handleDiscardCornerRepeatChoice,
+      handleDiscardIncomeCardChoice,
       handleHandCardCornerQuickAction,
+      handleHandCornerChoice,
       handleHandScanCardClick,
       handleJiuzheCardChoice,
       handleJiuzheOpportunitySkip,
       handleOptionalHandScanChoice,
+      handlePayCreditChoice,
       handlePlayCardSelect,
+      handleProbeLocationRewardChoice,
+      handleProbeSectorScanChoice,
       handlePublicCornerDiscardCardClick,
       handlePublicCardClick,
       handlePublicScanCardClick,
+      handleRemoveOrbitToProbeChoice,
+      handleRemovePlanetMarkerChoice,
+      handleReturnUnfinishedTaskChoice,
       handleIndustryDeepspaceHandClick,
       handleRunezuCardGainChoice,
       handleRunezuFaceSymbolChoice,
@@ -892,6 +903,17 @@
       return playerColor ? getPlayerByColor(playerColor)?.id || null : null;
     }
 
+    function getEffectOwnerPlayerSafe(effect) {
+      return effect ? getEffectOwnerPlayer(effect) : null;
+    }
+
+    function getPendingOwnerPlayer(pending, fallbackEffect = null) {
+      const pendingPlayerId = getPendingPlayerId(pending);
+      if (pendingPlayerId) return getPlayerById(pendingPlayerId) || null;
+      return getEffectOwnerPlayerSafe(pending?.effect || fallbackEffect)
+        || getCurrentPlayer();
+    }
+
     function getPendingAlienAutomationPlayerId() {
       const pendingEntries = [
         state.pendingAlienTraceAction,
@@ -924,6 +946,19 @@
       if (state.pendingPassReserveSelection?.playerId) return state.pendingPassReserveSelection.playerId;
       if (state.pendingHandScanAction?.player?.id) return state.pendingHandScanAction.player.id;
       if (state.pendingMovePayment?.player?.id) return state.pendingMovePayment.player.id;
+      const sharedPendingEntries = [
+        state.pendingScanTargetAction,
+        state.pendingProbeSectorScanAction,
+        state.pendingProbeLocationRewardAction,
+        state.pendingLandTargetAction,
+        state.pendingDataPlaceAction,
+      ];
+      for (const pending of sharedPendingEntries) {
+        const playerId = getPendingPlayerId(pending);
+        if (playerId) return playerId;
+        const effectOwner = getEffectOwnerPlayerSafe(pending?.effect);
+        if (effectOwner?.id) return effectOwner.id;
+      }
       const alienPendingPlayerId = getPendingAlienAutomationPlayerId();
       if (alienPendingPlayerId) return alienPendingPlayerId;
       const effectOwner = getCurrentActionEffect()
@@ -10418,20 +10453,131 @@
         .sort((left, right) => right.score - left.score || left.index - right.index)[0] || null;
     }
 
+    function getAiPendingDecisionPlayer(pending = null) {
+      return getPendingOwnerPlayer(pending, pending?.effect || getCurrentActionEffect?.() || null);
+    }
+
+    function queryAiButtons(selector) {
+      return [...(els.scanTargetActions?.querySelectorAll(selector) || [])]
+        .filter((button) => button && !button.disabled);
+    }
+
+    function chooseFirstAiButton(selector) {
+      return queryAiButtons(selector)[0] || null;
+    }
+
+    function scoreAiHandCornerChoice(choice, counts = {}) {
+      if (choice === "move") return aiNumber(counts.move) * AI_RESOURCE_VALUES.movement;
+      if (choice === "data") return aiNumber(counts.data) * AI_RESOURCE_VALUES.availableData;
+      if (choice === "publicity") return aiNumber(counts.publicity) * AI_RESOURCE_VALUES.publicity;
+      return -Infinity;
+    }
+
+    function chooseAiHandCornerChoice(pending) {
+      return queryAiButtons("[data-hand-corner-choice]")
+        .map((button, index) => ({
+          button,
+          choice: button.dataset.handCornerChoice,
+          index,
+          score: scoreAiHandCornerChoice(button.dataset.handCornerChoice, pending?.counts || {}),
+        }))
+        .filter((entry) => Number.isFinite(entry.score))
+        .sort((left, right) => right.score - left.score || left.index - right.index)[0] || null;
+    }
+
+    function getAiIncomeGainValue(card) {
+      const gain = cards.getIncomeGainForCard?.(card) || null;
+      if (!gain) return 0;
+      return scoreAiResourceBundle(gain);
+    }
+
+    function chooseAiDiscardAnyIncomeCards(pending, player) {
+      const pendingChoices = new Set((pending?.choices || []).map((card) => card?.id).filter(Boolean));
+      const hand = (player?.hand || []).filter((card) => !pendingChoices.size || pendingChoices.has(card.id));
+      return hand
+        .map((card, index) => ({
+          card,
+          index,
+          score: getAiIncomeGainValue(card) - Math.max(0, scoreAiCardCornerOpportunity(card)) * 0.15,
+        }))
+        .filter((entry) => entry.card?.id && entry.score > 0)
+        .sort((left, right) => right.score - left.score || left.index - right.index)
+        .map((entry) => entry.card);
+    }
+
+    function scoreAiPayCreditReward(effect, player) {
+      const reward = effect?.options?.reward || null;
+      if (!reward) return 0;
+      if (reward.type === "gain_resources") {
+        return scoreAiResourceBundle(reward.options?.gain || {});
+      }
+      return 0;
+    }
+
+    function chooseAiDiscardCornerRepeatCard(pending, player) {
+      return (pending?.choices || player?.hand || [])
+        .map((card, index) => ({
+          card,
+          index,
+          score: scoreAiCardCornerOpportunity(card) - Math.max(0, getCardPrice(card)) * 0.1,
+        }))
+        .filter((entry) => entry.card?.id && Number.isFinite(entry.score))
+        .sort((left, right) => right.score - left.score || left.index - right.index)[0]?.card || null;
+    }
+
+    function chooseAiProbeSectorScanChoices(pending) {
+      const maxTargets = Math.max(1, Math.round(aiNumber(pending?.effect?.options?.maxTargets || 1)));
+      return (pending?.choices || [])
+        .map((choice, index) => {
+          const sectorX = choice?.sector?.x;
+          const scanScore = sectorX == null
+            ? 0
+            : getBestAiNebulaChoiceScore(buildSectorScanChoicesForX(sectorX), {
+              player: getAiPendingDecisionPlayer(pending),
+              pendingType: "probe_sector_scan",
+              gainData: pending?.effect?.options?.gainData,
+            });
+          return {
+            choice,
+            index,
+            score: Number.isFinite(scanScore) ? scanScore : 0,
+          };
+        })
+        .filter((entry) => entry.choice?.rocket?.id != null)
+        .sort((left, right) => right.score - left.score || left.index - right.index)
+        .slice(0, maxTargets)
+        .map((entry) => entry.choice);
+    }
+
+    function chooseAiProbeLocationRewardButton() {
+      return queryAiButtons("[data-probe-location-reward-rocket-id]")
+        .map((button, index) => {
+          const dataMatch = String(button.textContent || "").match(/(\d+)\s*数据/);
+          return {
+            button,
+            index,
+            score: dataMatch ? Number(dataMatch[1]) * AI_RESOURCE_VALUES.availableData : 0,
+          };
+        })
+        .sort((left, right) => right.score - left.score || left.index - right.index)[0]?.button || null;
+    }
+
     function runAiDataPlacementDecision() {
       if (!els.dataPlaceOverlay || els.dataPlaceOverlay.hidden) return null;
-      const currentPlayer = getCurrentPlayer();
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择数据放置` };
+      const pending = state.pendingDataPlaceAction || null;
+      const player = getAiPendingDecisionPlayer(pending);
+      if (!isAiAutoBattlePlayer(player?.id)) {
+        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择数据放置` };
       }
       const selected = chooseAiDataPlacementOptionFromButtons(
         els.dataPlaceActions?.querySelectorAll("[data-place-target]") || [],
-        currentPlayer,
+        player,
       );
       if (!selected) {
         return { ok: false, blocked: true, message: "AI 没有可用数据放置目标" };
       }
-      recordAiAutoBattleLog("data-placement", `${currentPlayer.colorLabel}AI 放置数据`, {
+      recordAiAutoBattleLog("data-placement", `${player.colorLabel}AI 放置数据`, {
+        logPlayerId: player.id,
         selected: {
           target: selected.target,
           blueSlot: selected.blueSlot,
@@ -10538,27 +10684,28 @@
 
     function runAiLandTargetDecision() {
       if (!els.landTargetOverlay || els.landTargetOverlay.hidden) return null;
-      const currentPlayer = getCurrentPlayer();
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择登陆目标` };
+      const pending = state.pendingLandTargetAction || null;
+      const player = getAiPendingDecisionPlayer(pending);
+      if (!isAiAutoBattlePlayer(player?.id)) {
+        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择登陆目标` };
       }
       const optionCount = els.landTargetSelect?.options?.length || 0;
       if (optionCount <= 0) {
         return { ok: false, blocked: true, message: "AI 没有可选登陆目标" };
       }
-      const pending = state.pendingLandTargetAction || null;
       const options = typeof pending?.getOptions === "function"
         ? pending.getOptions()
         : abilities.planet.getLandOptions(createActionContext());
       const selected = options?.ok
-        ? chooseAiLandChoice(options.choices || [], currentPlayer)
+        ? chooseAiLandChoice(options.choices || [], player)
         : null;
       const selectedIndex = Math.min(
         optionCount - 1,
         Math.max(0, selected?.index ?? 0),
       );
       els.landTargetSelect.value = String(selectedIndex);
-      recordAiAutoBattleLog("land-target", `${currentPlayer.colorLabel}AI 选择登陆目标 ${selectedIndex + 1}`, {
+      recordAiAutoBattleLog("land-target", `${player.colorLabel}AI 选择登陆目标 ${selectedIndex + 1}`, {
+        logPlayerId: player.id,
         optionCount,
         planetId: els.landTargetOverlay.dataset.planetId || null,
         selectedIndex,
@@ -10574,61 +10721,215 @@
       return result || { ok: true, progressed: true, message: "AI 已选择登陆目标" };
     }
 
+    function runAiProbeSectorScanDecision() {
+      const pending = state.pendingProbeSectorScanAction || null;
+      if (!pending) return null;
+      const player = getAiPendingDecisionPlayer(pending);
+      if (!isAiAutoBattlePlayer(player?.id)) {
+        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择探测器扇区扫描` };
+      }
+      const selectedChoices = chooseAiProbeSectorScanChoices(pending);
+      if (!selectedChoices.length) {
+        return { ok: false, blocked: true, message: "AI 没有可选探测器扇区扫描目标" };
+      }
+      const maxTargets = Math.max(1, Math.round(aiNumber(pending.effect?.options?.maxTargets || 1)));
+      recordAiAutoBattleLog("probe-sector-scan", `${player.colorLabel}AI 选择探测器扇区扫描`, {
+        logPlayerId: player.id,
+        selectedRocketIds: selectedChoices.map((choice) => choice.rocket?.id),
+        maxTargets,
+      });
+      let result = null;
+      for (const choice of selectedChoices) {
+        result = handleProbeSectorScanChoice(choice.rocket.id);
+        if (maxTargets === 1) return result;
+        if (result?.ok === false) return result;
+      }
+      return confirmProbeSectorScanSelection();
+    }
+
+    function runAiProbeLocationRewardDecision() {
+      const pending = state.pendingProbeLocationRewardAction || null;
+      if (!pending) return null;
+      const player = getAiPendingDecisionPlayer(pending);
+      if (!isAiAutoBattlePlayer(player?.id)) {
+        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择探测器位置奖励` };
+      }
+      const button = chooseAiProbeLocationRewardButton();
+      const rocketId = button?.dataset?.probeLocationRewardRocketId
+        || pending.choices?.[0]?.rocket?.id
+        || null;
+      if (rocketId == null) {
+        return { ok: false, blocked: true, message: "AI 没有可选探测器位置奖励目标" };
+      }
+      recordAiAutoBattleLog("probe-location-reward", `${player.colorLabel}AI 选择探测器位置奖励`, {
+        logPlayerId: player.id,
+        rocketId,
+        label: button?.textContent || "",
+      });
+      return handleProbeLocationRewardChoice(rocketId);
+    }
+
+    function runAiRareScanTargetDecision(pending, player) {
+      const pendingType = pending?.type || null;
+      if (pendingType === "remove_planet_marker") {
+        const button = chooseFirstAiButton("[data-planet-marker-choice]");
+        const choiceId = button?.dataset?.planetMarkerChoice || pending.choices?.[0]?.id || null;
+        if (!choiceId) return { ok: false, blocked: true, message: "AI 没有可移除的星球标记" };
+        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 移除星球标记`, {
+          logPlayerId: player.id,
+          choiceId,
+          label: button?.textContent || "",
+        });
+        return handleRemovePlanetMarkerChoice(choiceId);
+      }
+
+      if (pendingType === "hand_corner_reward") {
+        const selected = chooseAiHandCornerChoice(pending);
+        const choice = selected?.choice || null;
+        if (!choice) return { ok: false, blocked: true, message: "AI 没有可选手牌角标奖励" };
+        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 选择手牌角标奖励`, {
+          logPlayerId: player.id,
+          choice,
+          score: selected.score,
+        });
+        return handleHandCornerChoice(choice);
+      }
+
+      if (pendingType === "discard_any_income") {
+        const selectedCards = chooseAiDiscardAnyIncomeCards(pending, player);
+        for (const card of selectedCards) {
+          const result = handleDiscardIncomeCardChoice(card.id);
+          if (result?.ok === false) return result;
+        }
+        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 确认收入弃牌`, {
+          logPlayerId: player.id,
+          selectedCardIds: selectedCards.map((card) => card.id),
+        });
+        return confirmDiscardAnyForIncome();
+      }
+
+      if (pendingType === "pay_credit_reward") {
+        const rewardValue = scoreAiPayCreditReward(pending.effect, player);
+        const canPay = typeof players.canAfford === "function"
+          ? players.canAfford(player, { credits: 1 })
+          : aiNumber(player?.resources?.credits) > 0;
+        const choice = canPay && rewardValue >= AI_RESOURCE_VALUES.credits * 0.85 ? "pay" : "skip";
+        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI ${choice === "pay" ? "支付信用" : "跳过信用支付"}`, {
+          logPlayerId: player.id,
+          rewardValue,
+          creditValue: AI_RESOURCE_VALUES.credits,
+          choice,
+        });
+        return handlePayCreditChoice(choice);
+      }
+
+      if (pendingType === "discard_corner_repeat") {
+        const selectedCard = chooseAiDiscardCornerRepeatCard(pending, player);
+        const cardId = selectedCard?.id || chooseFirstAiButton("[data-discard-corner-card-id]")?.dataset?.discardCornerCardId || null;
+        if (!cardId) return { ok: false, blocked: true, message: "AI 没有可重复角标的弃牌" };
+        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 选择重复角标弃牌`, {
+          logPlayerId: player.id,
+          cardId,
+        });
+        return handleDiscardCornerRepeatChoice(cardId);
+      }
+
+      if (pendingType === "remove_orbit_to_probe") {
+        const button = chooseFirstAiButton("[data-remove-orbit-to-probe]");
+        const choiceId = button?.dataset?.removeOrbitToProbe || pending.choices?.[0]?.id || null;
+        if (!choiceId) return { ok: false, blocked: true, message: "AI 没有可移除的环绕标记" };
+        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 移除环绕放置探测器`, {
+          logPlayerId: player.id,
+          choiceId,
+          label: button?.textContent || "",
+        });
+        return handleRemoveOrbitToProbeChoice(choiceId);
+      }
+
+      if (pendingType === "return_unfinished_task") {
+        const selected = (pending.choices || [])
+          .map((card, index) => ({ card, index, price: getCardPrice(card) }))
+          .sort((left, right) => aiNumber(left.price) - aiNumber(right.price) || left.index - right.index)[0]?.card || null;
+        const cardId = selected?.id || chooseFirstAiButton("[data-return-task-card-id]")?.dataset?.returnTaskCardId || null;
+        if (!cardId) return { ok: false, blocked: true, message: "AI 没有可返回手牌的任务卡" };
+        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 返回未完成任务卡`, {
+          logPlayerId: player.id,
+          cardId,
+        });
+        return handleReturnUnfinishedTaskChoice(cardId);
+      }
+
+      return null;
+    }
+
     function runAiScanTargetDecision() {
       if (!els.scanTargetOverlay || els.scanTargetOverlay.hidden) return null;
-      const pendingType = state.pendingScanTargetAction?.type || null;
-      if (!["optional_hand_scan", "conditional_sector_scan", "sector_scan", "public_scan", "hand_scan"].includes(pendingType)) {
-        return null;
+      const probeSectorResult = runAiProbeSectorScanDecision();
+      if (probeSectorResult) return probeSectorResult;
+      const probeLocationResult = runAiProbeLocationRewardDecision();
+      if (probeLocationResult) return probeLocationResult;
+
+      const pending = state.pendingScanTargetAction || null;
+      const pendingType = pending?.type || null;
+      if (!pendingType) return null;
+      const player = getAiPendingDecisionPlayer(pending);
+      if (!isAiAutoBattlePlayer(player?.id)) {
+        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择扫描目标` };
       }
-      const currentPlayer = getCurrentPlayer();
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择扫描目标` };
-      }
+
       if (pendingType === "optional_hand_scan") {
-        const hasScannableHandCard = (currentPlayer?.hand || [])
+        const hasScannableHandCard = (player?.hand || [])
           .some((card) => card && getPublicScanChoicesForCard(card).ok);
         const choice = hasScannableHandCard ? "start" : "skip";
-        recordAiAutoBattleLog("hand-scan", `${currentPlayer.colorLabel}AI ${choice === "start" ? "开始" : "跳过"}可选手牌扫描`, {
+        recordAiAutoBattleLog("hand-scan", `${player.colorLabel}AI ${choice === "start" ? "开始" : "跳过"}可选手牌扫描`, {
+          logPlayerId: player.id,
           choice,
-          effectId: state.pendingScanTargetAction?.effect?.id || null,
+          effectId: pending.effect?.id || null,
         });
         return handleOptionalHandScanChoice(choice);
       }
+
       if (pendingType === "conditional_sector_scan") {
         const button = chooseAiScanTargetButton(
-          [...(els.scanTargetActions?.querySelectorAll("[data-conditional-sector-x]") || [])],
+          queryAiButtons("[data-conditional-sector-x]"),
           {
-            player: currentPlayer,
+            player,
             pendingType,
-            gainData: state.pendingScanTargetAction?.effect?.options?.gainData,
+            gainData: pending.effect?.options?.gainData,
           },
         );
         if (!button) {
           return { ok: false, blocked: true, message: "AI 没有可选条件扇区" };
         }
-        recordAiAutoBattleLog("scan-target", `${currentPlayer.colorLabel}AI 选择条件扇区扫描`, {
+        recordAiAutoBattleLog("scan-target", `${player.colorLabel}AI 选择条件扇区扫描`, {
+          logPlayerId: player.id,
           pendingType,
           sectorX: button.dataset.conditionalSectorX || null,
           label: button.textContent || "",
         });
         return handleConditionalSectorChoice(button.dataset.conditionalSectorX);
       }
+
+      const rareResult = runAiRareScanTargetDecision(pending, player);
+      if (rareResult) return rareResult;
+
       if (!["sector_scan", "public_scan", "hand_scan"].includes(pendingType)) {
         return null;
       }
       const button = chooseAiScanTargetButton(
-        [...(els.scanTargetActions?.querySelectorAll(".scan-target-option-button") || [])]
+        queryAiButtons(".scan-target-option-button")
           .filter((item) => item.dataset.nebulaId != null),
         {
-          player: currentPlayer,
+          player,
           pendingType,
-          gainData: state.pendingScanTargetAction?.gainData,
+          gainData: pending.gainData,
         },
       );
       if (!button) {
         if (isActionEffectFlowActive()) {
           const effect = getCurrentActionEffect?.() || null;
-          recordAiAutoBattleLog("scan-target", `${currentPlayer.colorLabel}AI 跳过无目标扫描`, {
+          recordAiAutoBattleLog("scan-target", `${player.colorLabel}AI 跳过无目标扫描`, {
+            logPlayerId: player.id,
             pendingType,
             effectId: effect?.id || null,
             effectType: effect?.type || null,
@@ -10642,7 +10943,8 @@
         }
         return { ok: false, blocked: true, message: "AI 没有可选扫描目标" };
       }
-      recordAiAutoBattleLog("scan-target", `${currentPlayer.colorLabel}AI 选择扫描目标`, {
+      recordAiAutoBattleLog("scan-target", `${player.colorLabel}AI 选择扫描目标`, {
+        logPlayerId: player.id,
         pendingType,
         nebulaId: button.dataset.nebulaId || null,
         sectorX: button.dataset.sectorX || null,
