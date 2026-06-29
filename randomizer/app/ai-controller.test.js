@@ -87,6 +87,14 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       label: "Jiuzhe reveal",
     }
     : null;
+  const pendingDiscardAction = options.pendingDiscardAction
+    || (options.currentPlayerDiscardPending
+      ? {
+        player: white,
+        selectedIndexes: [],
+        type: options.pendingDiscardType || null,
+      }
+      : null);
   let handled = null;
   const handledEvents = [];
   const noteHandled = (event) => {
@@ -102,9 +110,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     get pendingProbeLocationRewardAction() { return options.probeLocationPending || null; },
     get pendingLandTargetAction() { return options.landTargetPending || null; },
     get pendingDataPlaceAction() { return options.dataPlacePending || null; },
-    get pendingDiscardAction() {
-      return options.currentPlayerDiscardPending ? { player: white, selectedIndexes: [] } : null;
-    },
+    get pendingDiscardAction() { return pendingDiscardAction; },
     get pendingMovePayment() { return options.pendingMovePayment || null; },
     get pendingActionExecuted() { return Boolean(options.pendingActionExecuted); },
     get pendingActionEffectFlow() { return options.pendingActionEffectFlow || null; },
@@ -186,6 +192,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     yichangdian,
     cards: {
       getCardLabel: (card) => card?.cardName || card?.label || card?.cardId || card?.id || "card",
+      getDiscardRemaining: () => Math.max(0, Math.round(Number(options.discardCount ?? pendingDiscardAction?.count ?? 1) || 0)),
       getIncomeCodeForCard: (card) => card?.incomeCode ?? null,
       getIncomeGainForCard: (card) => card?.incomeGain || null,
       getDiscardActionMoveRewardForCard: (card) => card?.moveReward || null,
@@ -423,6 +430,15 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   ];
   for (const name of noopNames) context[name] = () => null;
 
+  context.finalizePendingDiscardSelection = () => {
+    noteHandled({
+      type: "discard",
+      pendingType: pendingDiscardAction?.type || null,
+      selectedIndexes: [...(pendingDiscardAction?.selectedIndexes || [])],
+    });
+    return { ok: true, progressed: true };
+  };
+
   context.confirmDataPlacement = (target, blueSlot) => {
     noteHandled({ type: "data-placement", target, blueSlot });
     return { ok: true, progressed: true };
@@ -497,7 +513,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     "sectorXHasAvailableScanTarget",
   ];
   for (const name of falseNames) context[name] = () => false;
-  if (options.currentPlayerDiscardPending) {
+  if (options.currentPlayerDiscardPending || options.pendingDiscardAction) {
     context.isDiscardSelectionActive = () => true;
   }
   if (options.playCardSelectionActive) {
@@ -734,6 +750,51 @@ function makeBanrenmaAlienState() {
   const result = harness.controller.runAiAutomationStep();
   assert.equal(result.ok, true, "AI-owned discard-income pending should confirm safely");
   assert.equal(harness.getHandled().type, "discard-income-confirm");
+}
+
+{
+  const pendingDiscardAction = { type: "initial_income", selectedIndexes: [] };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    pendingDiscardAction,
+    discardCount: 4,
+    blueResources: { credits: 2, energy: 1, handSize: 6, score: 0 },
+    blueIncome: { credits: 2, energy: 1, handSize: 1 },
+    blueHand: [
+      { id: "credit-income-1", incomeGain: { credits: 1 } },
+      { id: "credit-income-2", incomeGain: { credits: 1 } },
+      { id: "credit-income-3", incomeGain: { credits: 1 } },
+      { id: "credit-income-4", incomeGain: { credits: 1 } },
+      { id: "energy-income", incomeGain: { energy: 1 } },
+      { id: "hand-income", incomeGain: { handSize: 1 } },
+    ],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should resolve multi-income discard selection");
+  const selectedGains = pendingDiscardAction.selectedIndexes
+    .map((index) => harness.blue.hand[index]?.incomeGain || {});
+  assert.equal(
+    selectedGains.some((gain) => Number(gain.energy || 0) > 0),
+    true,
+    "multi-income selection should include energy after simulating earlier credit gains",
+  );
+  assert.equal(
+    selectedGains.some((gain) => Number(gain.handSize || 0) > 0),
+    true,
+    "multi-income selection should include hand income after simulating earlier gains",
+  );
+  assert.ok(
+    selectedGains.filter((gain) => Number(gain.credits || 0) > 0).length <= 2,
+    "multi-income selection should not spend all four choices on credit income",
+  );
 }
 
 {

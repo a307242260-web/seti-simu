@@ -1389,21 +1389,34 @@
       const target = Math.max(0, Math.round(aiNumber(count)));
       const hand = player?.hand || [];
       if (!target || !hand.length) return null;
-      const ranked = hand
+      const selected = [];
+      const selectedSet = new Set();
+      const simulatedPlayer = {
+        ...player,
+        resources: { ...(player.resources || {}) },
+        income: { ...(player.income || {}) },
+        hand: hand.slice(),
+      };
+      const rankIncomeOptions = () => hand
         .map((card, index) => {
+          if (selectedSet.has(index)) return null;
           const gain = incomeGainByIndex[index] || null;
           if (!gain) return null;
-          const incomeScore = scoreAiIncomeOpportunityValue(player, gain);
-          const finalFormulaFit = scoreAiIncomeDiscardFinalFormulaFit(player, gain, incomeFormulaEntries);
-          const routeEnergyFit = scoreAiIncomeDiscardRouteEnergyFit(player, gain);
-          const playValue = Math.max(0, scoreAiPlayCardValue(card));
+          const incomeScore = scoreAiIncomeOpportunityValue(simulatedPlayer, gain);
+          const finalFormulaFit = scoreAiIncomeDiscardFinalFormulaFit(simulatedPlayer, gain, incomeFormulaEntries);
+          const routeEnergyFit = scoreAiIncomeDiscardRouteEnergyFit(simulatedPlayer, gain);
+          const sequenceFit = target > 1
+            ? scoreAiMultiIncomeSequenceFit(simulatedPlayer, gain, target - selected.length)
+            : 0;
+          const playValue = Math.max(0, scoreAiPlayCardValue(card, { player: simulatedPlayer }));
           return {
             index,
             incomeScore,
             finalFormulaFit,
             routeEnergyFit,
+            sequenceFit,
             playValue,
-            score: incomeScore + finalFormulaFit + routeEnergyFit - Math.min(8, playValue * 0.12),
+            score: incomeScore + finalFormulaFit + routeEnergyFit + sequenceFit - Math.min(8, playValue * 0.12),
           };
         })
         .filter((entry) => entry && Number.isFinite(entry.score))
@@ -1411,12 +1424,46 @@
           right.score - left.score
           || right.routeEnergyFit - left.routeEnergyFit
           || right.finalFormulaFit - left.finalFormulaFit
+          || right.sequenceFit - left.sequenceFit
           || right.incomeScore - left.incomeScore
           || left.playValue - right.playValue
           || left.index - right.index
         ));
-      if (ranked.length < target) return null;
-      return ranked.slice(0, target).map((entry) => entry.index);
+      while (selected.length < target) {
+        const ranked = rankIncomeOptions();
+        const best = ranked[0] || null;
+        if (!best) return null;
+        selected.push(best.index);
+        selectedSet.add(best.index);
+        simulatedPlayer.income = addAiIncomeGain(simulatedPlayer.income, incomeGainByIndex[best.index] || {});
+        simulatedPlayer.hand = hand.filter((_card, index) => !selectedSet.has(index));
+        simulatedPlayer.resources = {
+          ...(simulatedPlayer.resources || {}),
+          handSize: simulatedPlayer.hand.length,
+        };
+      }
+      return selected;
+    }
+
+    function scoreAiMultiIncomeSequenceFit(player = getCurrentPlayer(), incomeGain = {}, remainingSelections = 1) {
+      if (!player || !incomeGain || typeof incomeGain !== "object" || remainingSelections <= 1) return 0;
+      const income = player.income || {};
+      const keys = ["credits", "energy", "handSize"];
+      const gainedKeys = keys.filter((key) => aiNumber(incomeGain[key]) > 0);
+      if (!gainedKeys.length) return 0;
+      const round = getAiRoundNumber();
+      const minIncome = Math.min(...keys.map((key) => aiNumber(income[key])));
+      const liftedLowest = gainedKeys.filter((key) => aiNumber(income[key]) <= minIncome);
+      let value = liftedLowest.length
+        ? (round <= 2 ? 5.4 : round === 3 ? 2.8 : 1.2) * Math.min(1, liftedLowest.length)
+        : 0;
+      const afterIncome = addAiIncomeGain(income, incomeGain);
+      for (const key of gainedKeys) {
+        const otherMax = Math.max(...keys.filter((item) => item !== key).map((item) => aiNumber(afterIncome[item])));
+        const surplus = Math.max(0, aiNumber(afterIncome[key]) - otherMax - 1);
+        if (surplus > 0) value -= surplus * (round <= 2 ? 3.4 : 1.4);
+      }
+      return value;
     }
 
     function scoreAiIncomeDiscardRouteEnergyFit(player = getCurrentPlayer(), incomeGain = {}) {
