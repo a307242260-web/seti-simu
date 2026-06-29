@@ -5785,6 +5785,41 @@
       }, 0);
     }
 
+    function scoreAiHandIncomeEngineBacklogValue(player = getCurrentPlayer(), incomeGain = {}) {
+      if (!player || aiNumber(incomeGain?.handSize) <= 0) return 0;
+      const round = getAiRoundNumber();
+      const income = player.income || {};
+      const resources = player.resources || {};
+      const currentHandIncome = Math.max(0, aiNumber(income.handSize));
+      if (currentHandIncome >= 4) return 0;
+
+      const handCount = Math.max(0, (player.hand || []).length);
+      const handEngineCards = countAiHandEngineCards(player);
+      const handTaskCards = countAiHandTaskCards(player);
+      const uncompletedTaskCount = listAiUncompletedCardTasksForPlayer(player).length;
+      const completedTasks = Math.max(0, Math.round(aiNumber(player.completedTaskCount)));
+      const cEntries = getAiPlanningFinalFormulaEntries(player, ["c1", "c2"]);
+      const dEntries = getAiPlanningFinalFormulaEntries(player, ["d1", "d2"]);
+      const techCount = countAiPlayerTech(player);
+      const hasEngineBacklog = handEngineCards >= 2
+        || handTaskCards > 0
+        || uncompletedTaskCount > 0
+        || (cEntries.length > 0 && completedTasks <= 2)
+        || (dEntries.length > 0 && techCount < 9);
+      if (!hasEngineBacklog) return 0;
+
+      let value = 0;
+      value += Math.max(0, 3 - currentHandIncome) * (round <= 2 ? 1.7 : round === 3 ? 1.15 : 0.55);
+      value += Math.max(0, 3 - handCount) * (round <= 2 ? 0.95 : 0.6);
+      value += Math.min(4.5, handEngineCards * 0.72 + handTaskCards * 1.05 + uncompletedTaskCount * 0.8);
+      if (cEntries.length && completedTasks <= 1) value += round >= 3 ? 1.8 : 1.2;
+      if (dEntries.length && techCount < 8) value += Math.min(2.5, Math.max(0, 8 - techCount) * 0.45);
+      if (round <= 2 && Math.max(0, aiNumber(resources.score)) < 25) value += 0.9;
+      if (currentHandIncome >= 3) value *= 0.45;
+      if (round >= FINAL_ROUND_NUMBER) value *= 0.55;
+      return roundAiScore(Math.min(7.5, Math.max(0, value)));
+    }
+
     function scoreAiIncomeOpportunityValue(player = getCurrentPlayer(), incomeGain = { credits: 1 }) {
       const gain = incomeGain && typeof incomeGain === "object" ? incomeGain : { credits: 1 };
       const netValue = ai?.valuation?.getIncomeNetValue
@@ -5839,11 +5874,16 @@
         ? Math.max(0, Math.min(2, Math.max(aiNumber(income.credits), aiNumber(income.energy))) - aiNumber(income.handSize))
           * (getAiRoundNumber() <= 2 ? 0.75 : 0.45) * incomeUseScale
         : 0;
-      const handIncomeOversupplyPenalty = aiNumber(gain.handSize) > 0
+      const handIncomeEngineBacklogValue = scoreAiHandIncomeEngineBacklogValue(player, gain) * incomeUseScale;
+      const rawHandIncomeOversupplyPenalty = aiNumber(gain.handSize) > 0
         ? Math.max(0, aiNumber(income.handSize) - 1)
           * (getAiRoundNumber() <= 2 ? 5.5 : getAiRoundNumber() === 3 ? 2.4 : 0.8)
           * incomeUseScale
         : 0;
+      const handIncomeOversupplyPenalty = Math.max(
+        0,
+        rawHandIncomeOversupplyPenalty - handIncomeEngineBacklogValue * 0.72,
+      );
       const creditSurplusPenalty = aiNumber(gain.credits) > 0
         ? Math.max(
           Math.max(0, aiNumber(resources.credits) - Math.max(aiNumber(resources.energy), aiNumber(resources.handSize)) - 3)
@@ -5867,6 +5907,7 @@
           + handNeed
           + energyIncomeBalance
           + handIncomeBalance
+          + handIncomeEngineBacklogValue
           + earlyIncomeTargetBonus
           + banrenmaEnergyPlanValue
           + markedFinalValue

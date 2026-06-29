@@ -240,8 +240,8 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
         FREE_MOVE: "free_move",
         RESEARCH_TECH: "card_research_tech",
       },
-      buildPlayEffects: () => [],
-      getCardModel: () => null,
+      buildPlayEffects: (card) => card?.playEffects || [],
+      getCardModel: (card) => card?.model || null,
       ensureCardEffectState: () => null,
     },
     finalScoring: {
@@ -806,6 +806,46 @@ function makeBanrenmaAlienState() {
   assert.ok(
     selectedGains.filter((gain) => Number(gain.credits || 0) > 0).length <= 2,
     "multi-income selection should not spend all four choices on credit income",
+  );
+}
+
+{
+  const pendingDiscardAction = { type: "initial_income", selectedIndexes: [] };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 2,
+    pendingDiscardAction,
+    discardCount: 2,
+    blueResources: { credits: 1, energy: 2, handSize: 1, score: 18 },
+    blueIncome: { credits: 5, energy: 3, handSize: 2 },
+    blueHand: [
+      { id: "credit-income-surplus-1", incomeGain: { credits: 1 } },
+      { id: "credit-income-surplus-2", incomeGain: { credits: 1 } },
+      { id: "hand-income-engine", incomeGain: { handSize: 1 } },
+      { id: "task-engine-card", model: { tasks: [{ id: "task-a", rewards: [{ type: "gain_resources", options: { gain: { score: 6 } } }] }] } },
+      { id: "tech-engine-card", playEffects: [{ type: "card_research_tech", options: { techTypes: ["orange"] } }] },
+    ],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should resolve engine-aware income discard selection");
+  const selectedGains = pendingDiscardAction.selectedIndexes
+    .map((index) => harness.blue.hand[index]?.incomeGain || {});
+  assert.equal(
+    selectedGains.some((gain) => Number(gain.handSize || 0) > 0),
+    true,
+    "hand income should stay valuable at income 2 when a task/card engine needs fuel",
+  );
+  assert.ok(
+    selectedGains.filter((gain) => Number(gain.credits || 0) > 0).length <= 1,
+    "engine backlog should not spend both choices on surplus credit income",
   );
 }
 
