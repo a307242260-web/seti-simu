@@ -22,6 +22,8 @@
       startDebugToggleText: documentRef.getElementById("start-debug-toggle-text"),
       startAlienOptions: documentRef.getElementById("start-alien-options"),
       startAlienCheckboxes: documentRef.querySelectorAll("[data-start-alien-id]"),
+      startIndustryOptions: documentRef.getElementById("start-industry-options"),
+      startIndustryCheckboxes: documentRef.querySelectorAll("[data-start-industry-label]"),
       boardShell: documentRef.getElementById("board-shell"),
       playerCommand: documentRef.getElementById("player-command"),
       playerStats: documentRef.getElementById("player-stats"),

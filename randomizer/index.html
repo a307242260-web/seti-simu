@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SETI 太阳系随机器</title>
-  <link rel="stylesheet" href="./style.css?v=start-screen-4">
+  <link rel="stylesheet" href="./style.css?v=start-screen-company-1">
 </head>
 <body>
   <div class="start-screen" id="start-screen" aria-label="开始界面">
     <div class="start-screen-panel">
       <div class="start-screen-actions" aria-label="游戏入口">
         <button class="start-screen-start-button" type="button" id="start-screen-start-button">开始游戏</button>
-        <button class="start-screen-continue-button" type="button" id="start-screen-continue-button" disabled aria-disabled="true">继续游戏(beta)</button>
+        <button class="start-screen-continue-button" type="button" id="start-screen-continue-button" disabled aria-disabled="true" hidden>继续游戏(beta)</button>
       </div>
       <div class="start-screen-options" aria-label="开始选项">
         <label class="start-screen-option" for="start-ai-difficulty">
@@ -27,7 +27,7 @@
         </label>
         <fieldset class="start-screen-alien-option" aria-label="外星人">
           <legend class="start-screen-option-label start-screen-option-title">外星人</legend>
-          <div class="start-screen-alien-grid" id="start-alien-options">
+          <div class="start-screen-choice-grid start-screen-alien-grid" id="start-alien-options">
             <label class="start-screen-alien-choice" for="start-alien-jiuzhe">
               <input class="start-screen-checkbox" type="checkbox" id="start-alien-jiuzhe" data-start-alien-id="九折" checked>
               <span>九折</span>
@@ -59,6 +59,55 @@
             <label class="start-screen-alien-choice" for="start-alien-amiba">
               <input class="start-screen-checkbox" type="checkbox" id="start-alien-amiba" data-start-alien-id="阿米巴" checked>
               <span>阿米巴</span>
+            </label>
+          </div>
+        </fieldset>
+        <fieldset class="start-screen-alien-option start-screen-company-option" aria-label="公司">
+          <legend class="start-screen-option-label start-screen-option-title">公司</legend>
+          <div class="start-screen-choice-grid start-screen-company-grid" id="start-industry-options">
+            <label class="start-screen-alien-choice start-screen-company-choice" for="start-industry-stratus">
+              <input class="start-screen-checkbox" type="checkbox" id="start-industry-stratus" data-start-industry-label="层云核心" checked>
+              <span>层云核心</span>
+            </label>
+            <label class="start-screen-alien-choice start-screen-company-choice" for="start-industry-fenwick">
+              <input class="start-screen-checkbox" type="checkbox" id="start-industry-fenwick" data-start-industry-label="芬威克研究中心" checked>
+              <span>芬威克研究中心</span>
+            </label>
+            <label class="start-screen-alien-choice start-screen-company-choice" for="start-industry-helios">
+              <input class="start-screen-checkbox" type="checkbox" id="start-industry-helios" data-start-industry-label="赫利昂联合体" checked>
+              <span>赫利昂联合体</span>
+            </label>
+            <label class="start-screen-alien-choice start-screen-company-choice" for="start-industry-huanyu">
+              <input class="start-screen-checkbox" type="checkbox" id="start-industry-huanyu" data-start-industry-label="寰宇动力" checked>
+              <span>寰宇动力</span>
+            </label>
+            <label class="start-screen-alien-choice start-screen-company-choice" for="start-industry-mission">
+              <input class="start-screen-checkbox" type="checkbox" id="start-industry-mission" data-start-industry-label="任务中继站" checked>
+              <span>任务中继站</span>
+            </label>
+            <label class="start-screen-alien-choice start-screen-company-choice" for="start-industry-sentinel">
+              <input class="start-screen-checkbox" type="checkbox" id="start-industry-sentinel" data-start-industry-label="哨兵探测网络" checked>
+              <span>哨兵探测网络</span>
+            </label>
+            <label class="start-screen-alien-choice start-screen-company-choice" for="start-industry-deepspace">
+              <input class="start-screen-checkbox" type="checkbox" id="start-industry-deepspace" data-start-industry-label="深空探测" checked>
+              <span>深空探测</span>
+            </label>
+            <label class="start-screen-alien-choice start-screen-company-choice" for="start-industry-turing">
+              <input class="start-screen-checkbox" type="checkbox" id="start-industry-turing" data-start-industry-label="图灵系统" checked>
+              <span>图灵系统</span>
+            </label>
+            <label class="start-screen-alien-choice start-screen-company-choice" for="start-industry-future-span">
+              <input class="start-screen-checkbox" type="checkbox" id="start-industry-future-span" data-start-industry-label="未来跨度研究所" checked>
+              <span>未来跨度研究所</span>
+            </label>
+            <label class="start-screen-alien-choice start-screen-company-choice" for="start-industry-alien-lab">
+              <input class="start-screen-checkbox" type="checkbox" id="start-industry-alien-lab" data-start-industry-label="异星实验室" checked>
+              <span>异星实验室</span>
+            </label>
+            <label class="start-screen-alien-choice start-screen-company-choice" for="start-industry-strategy">
+              <input class="start-screen-checkbox" type="checkbox" id="start-industry-strategy" data-start-industry-label="宇宙战略集团" checked>
+              <span>宇宙战略集团</span>
             </label>
           </div>
         </fieldset>
@@ -670,11 +719,11 @@
   <script src="./game/ai/index.js?v=ai-auto-battle-1"></script>
   <script src="./app/dependencies.js?v=app-boundaries-5"></script>
   <script src="./app/constants.js?v=app-boundaries-4"></script>
-  <script src="./app/dom.js?v=start-screen-3"></script>
-  <script src="./app/events.js?v=start-alien-options-1"></script>
+  <script src="./app/dom.js?v=start-screen-company-1"></script>
+  <script src="./app/events.js?v=start-screen-company-1"></script>
   <script src="./app/action-log-export.js?v=action-log-export-1"></script>
   <script src="./app/public-api.js?v=app-boundaries-5"></script>
   <script src="./app/ai-controller.js?v=deepspace-analyze-1"></script>
-  <script src="./app.js?v=deepspace-analyze-2"></script>
+  <script src="./app.js?v=start-screen-company-1"></script>
 </body>
 </html>

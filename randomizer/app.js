@@ -174,6 +174,9 @@
   const HISTORY_SOURCE_MAIN = "main";
   const HISTORY_SOURCE_QUICK = "quick";
   const HISTORY_SOURCE_SETUP = "setup";
+  const START_SCREEN_CONTINUE_ENABLED = false;
+  const MIN_START_INDUSTRY_POOL_SIZE = 2;
+  const INITIAL_SELECTION_INDUSTRY_OPTION_COUNT = 2;
   const INDUSTRY_TURING_BORROW_TECH_TYPES = Object.freeze(["orange", "purple"]);
   const AOMOMO_AUTO_REWARD_EFFECT_TYPES = new Set([
     planetRewards.EFFECT_TYPES.GAIN_RESOURCES,
@@ -192,6 +195,7 @@
     aiDifficulty: "laughable",
     debugToolsEnabled: false,
     selectedAlienIds: [...(aliens.ALIEN_TYPE_IDS || [])],
+    selectedIndustryLabels: INDUSTRY_CARD_FILES.map(stripAssetExtension),
     continueAvailable: false,
     entered: false,
   };
@@ -384,7 +388,7 @@
 
   function startInitialSelection() {
     const playerIds = getInitialSelectionPlayerIds();
-    const industryDeck = shuffleList(INDUSTRY_CARD_FILES.map(createIndustrySelectionCard));
+    const industryOffersByPlayerId = createIndustrySelectionOffers(playerIds);
     const initialDeck = shuffleList(
       Array.from({ length: INITIAL_CARD_COUNT }, (_item, index) => createInitialSelectionCard(index + 1)),
     );
@@ -399,7 +403,7 @@
       if (player) player.initialSelection = null;
       setupSelectionState.offersByPlayerId[playerId] = {
         playerId,
-        industryOptions: industryDeck.slice(index * 2, index * 2 + 2),
+        industryOptions: industryOffersByPlayerId[playerId] || [],
         initialOptions: initialDeck.slice(index * 3, index * 3 + 3),
         selectedIndustryId: null,
         selectedInitialIds: [],
@@ -420,6 +424,40 @@
     updateActionButtons();
     renderStateReadout();
     schedulePersistentGameStateSave({ label: "初始选择开始" });
+  }
+
+  function normalizeStartIndustryLabels(industryLabels) {
+    const allLabels = INDUSTRY_CARD_FILES.map(stripAssetExtension);
+    if (!Array.isArray(industryLabels)) return allLabels;
+    const requested = new Set(industryLabels.map((label) => String(label)));
+    const selectedLabels = allLabels.filter((label) => requested.has(label));
+    return selectedLabels.length >= MIN_START_INDUSTRY_POOL_SIZE ? selectedLabels : allLabels;
+  }
+
+  function getSelectedStartIndustryCardFiles() {
+    const selectedLabels = new Set(normalizeStartIndustryLabels(startScreenState.selectedIndustryLabels));
+    return INDUSTRY_CARD_FILES.filter((fileName) => selectedLabels.has(stripAssetExtension(fileName)));
+  }
+
+  function createIndustrySelectionOffers(playerIds = []) {
+    const poolFiles = getSelectedStartIndustryCardFiles();
+    const requiredCount = playerIds.length * INITIAL_SELECTION_INDUSTRY_OPTION_COUNT;
+    const sharedDeck = poolFiles.length >= requiredCount
+      ? shuffleList(poolFiles).slice(0, requiredCount)
+      : null;
+    const offersByPlayerId = {};
+
+    playerIds.forEach((playerId, index) => {
+      const optionFiles = sharedDeck
+        ? sharedDeck.slice(
+          index * INITIAL_SELECTION_INDUSTRY_OPTION_COUNT,
+          index * INITIAL_SELECTION_INDUSTRY_OPTION_COUNT + INITIAL_SELECTION_INDUSTRY_OPTION_COUNT,
+        )
+        : shuffleList(poolFiles).slice(0, INITIAL_SELECTION_INDUSTRY_OPTION_COUNT);
+      offersByPlayerId[playerId] = optionFiles.map(createIndustrySelectionCard);
+    });
+
+    return offersByPlayerId;
   }
 
   function getCardFromInitialOffer(offer, kind, cardId) {
@@ -2390,10 +2428,50 @@
     syncStartScreenAlienOptions();
   }
 
+  function getStartIndustryCheckboxes() {
+    return [...(els.startIndustryCheckboxes || [])];
+  }
+
+  function getSelectedStartIndustryLabels() {
+    const selected = new Set(getStartIndustryCheckboxes()
+      .filter((checkbox) => checkbox.checked)
+      .map((checkbox) => checkbox.dataset.startIndustryLabel)
+      .filter(Boolean));
+    const industryLabels = INDUSTRY_CARD_FILES
+      .map(stripAssetExtension)
+      .filter((label) => selected.has(label));
+    return industryLabels.length >= MIN_START_INDUSTRY_POOL_SIZE
+      ? industryLabels
+      : INDUSTRY_CARD_FILES.map(stripAssetExtension);
+  }
+
+  function syncStartScreenIndustryOptions() {
+    const checkboxes = getStartIndustryCheckboxes();
+    const checkedCount = checkboxes.filter((checkbox) => checkbox.checked).length;
+    for (const checkbox of checkboxes) {
+      const locked = checkbox.checked && checkedCount <= MIN_START_INDUSTRY_POOL_SIZE;
+      checkbox.disabled = locked;
+      checkbox.closest(".start-screen-company-choice")?.classList.toggle("is-locked", locked);
+    }
+    startScreenState.selectedIndustryLabels = getSelectedStartIndustryLabels();
+  }
+
+  function handleStartIndustryOptionChange(event) {
+    const checkbox = event?.target?.closest?.("[data-start-industry-label]");
+    if (!checkbox) return;
+    const checkedCount = getStartIndustryCheckboxes().filter((item) => item.checked).length;
+    if (checkedCount < MIN_START_INDUSTRY_POOL_SIZE) {
+      checkbox.checked = true;
+    }
+    syncStartScreenIndustryOptions();
+  }
+
   function updateStartScreenContinueButton() {
-    const canContinue = hasPersistentGameState();
+    const canContinue = START_SCREEN_CONTINUE_ENABLED && hasPersistentGameState();
     startScreenState.continueAvailable = canContinue;
     if (els.startScreenContinueButton) {
+      els.startScreenContinueButton.hidden = !START_SCREEN_CONTINUE_ENABLED;
+      els.startScreenContinueButton.setAttribute("aria-hidden", String(!START_SCREEN_CONTINUE_ENABLED));
       els.startScreenContinueButton.disabled = !canContinue;
       els.startScreenContinueButton.setAttribute("aria-disabled", String(!canContinue));
     }
@@ -2417,6 +2495,7 @@
 
   function applyStartScreenOptions() {
     syncStartScreenAlienOptions();
+    syncStartScreenIndustryOptions();
     startScreenState.aiDifficulty = els.startAiDifficulty?.value || "laughable";
     setDebugToolsEnabled(Boolean(els.startDebugEnabled?.checked));
   }
@@ -32248,6 +32327,7 @@
     continueGameFromStartScreen,
     syncStartScreenDebugOption,
     handleStartAlienOptionChange,
+    handleStartIndustryOptionChange,
     handleMainActionButtonClick,
     cancelTechSelection,
     confirmLandTargetPicker,
@@ -32423,6 +32503,7 @@
   setTokenAssetSizes();
   syncStartScreenDebugOption();
   syncStartScreenAlienOptions();
+  syncStartScreenIndustryOptions();
   setDebugToolsEnabled(false);
   setReportTab("action");
   setLogOpen(false);

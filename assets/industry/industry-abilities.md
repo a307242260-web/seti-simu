@@ -20,7 +20,7 @@
 
 ### 1. 初始选择（Setup）
 
-- 每位启用玩家：公司 2 选 1（`assets/industry`）、初始牌 3 选 2。
+- 每位启用玩家：从开始界面“公司”勾选池中随机获得公司 2 选 1（默认 11 张全选，至少 2 张；池较小时不同玩家之间可重复）、初始牌 3 选 2。
 - 结果写入 `player.initialSelection`（`industry` + `removedInitialCards`）。
 - 全部确认后 `initial-cards.js` → `resolveInitialSelections` 结算公司/初始牌即时效果。
 - 若公司有「收入增加」次数，进入 **初始收入增加** 效果队列（`actionType: initialIncome`）。
