@@ -20,6 +20,8 @@
       startAiDifficulty: documentRef.getElementById("start-ai-difficulty"),
       startDebugEnabled: documentRef.getElementById("start-debug-enabled"),
       startDebugToggleText: documentRef.getElementById("start-debug-toggle-text"),
+      startAlienOptions: documentRef.getElementById("start-alien-options"),
+      startAlienCheckboxes: documentRef.querySelectorAll("[data-start-alien-id]"),
       boardShell: documentRef.getElementById("board-shell"),
       playerCommand: documentRef.getElementById("player-command"),
       playerStats: documentRef.getElementById("player-stats"),

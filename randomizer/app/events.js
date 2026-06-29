@@ -40,6 +40,7 @@
       startNewGameFromStartScreen,
       continueGameFromStartScreen,
       syncStartScreenDebugOption,
+      handleStartAlienOptionChange,
       handleMainActionButtonClick,
       cancelTechSelection,
       confirmLandTargetPicker,
@@ -221,6 +222,7 @@
       continueGameFromStartScreen();
     });
     els.startDebugEnabled?.addEventListener("change", syncStartScreenDebugOption);
+    els.startAlienOptions?.addEventListener("change", handleStartAlienOptionChange);
     els.spinButton?.addEventListener("click", randomizeAll);
     els.actionBarMain?.addEventListener("click", handleMainActionButtonClick);
     els.techSelectionCancel?.addEventListener("click", cancelTechSelection);

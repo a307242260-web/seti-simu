@@ -36,6 +36,7 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  overflow-y: auto;
   padding: clamp(20px, 5vw, 56px);
   background-color: #030711;
   background-image: url("../assets/core/start.png");
@@ -143,11 +144,64 @@ body {
   grid-template-columns: minmax(92px, auto) auto auto;
 }
 
+.start-screen-alien-option {
+  display: grid;
+  gap: 8px;
+  min-inline-size: 0;
+  min-height: 44px;
+  margin: 0;
+  padding: 10px 12px 12px;
+  border: 1px solid rgba(154, 218, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(5, 13, 24, 0.64);
+  -webkit-backdrop-filter: blur(6px) saturate(1.1);
+  backdrop-filter: blur(6px) saturate(1.1);
+}
+
 .start-screen-option-label {
   color: rgba(240, 248, 255, 0.86);
   font-size: 14px;
   font-weight: 800;
   line-height: 1.2;
+}
+
+.start-screen-option-title {
+  padding: 0 4px;
+}
+
+.start-screen-alien-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px 6px;
+}
+
+.start-screen-alien-choice {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  color: rgba(240, 248, 255, 0.9);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.start-screen-alien-choice span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.start-screen-alien-choice.is-locked {
+  color: rgba(240, 248, 255, 0.54);
+  cursor: not-allowed;
+}
+
+.start-screen-alien-choice .start-screen-checkbox {
+  width: 16px;
+  height: 16px;
 }
 
 .start-screen-select {
@@ -164,9 +218,14 @@ body {
 .start-screen-checkbox {
   width: 20px;
   height: 20px;
+  flex: 0 0 auto;
   margin: 0;
   accent-color: #d1973e;
   cursor: pointer;
+}
+
+.start-screen-checkbox:disabled {
+  cursor: not-allowed;
 }
 
 .start-screen-toggle-text {

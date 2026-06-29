@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SETI 太阳系随机器</title>
-  <link rel="stylesheet" href="./style.css?v=start-screen-2">
+  <link rel="stylesheet" href="./style.css?v=start-screen-4">
 </head>
 <body>
   <div class="start-screen" id="start-screen" aria-label="开始界面">
@@ -25,6 +25,43 @@
           <input class="start-screen-checkbox" type="checkbox" id="start-debug-enabled">
           <span class="start-screen-toggle-text" id="start-debug-toggle-text" aria-hidden="true">关闭</span>
         </label>
+        <fieldset class="start-screen-alien-option" aria-label="外星人">
+          <legend class="start-screen-option-label start-screen-option-title">外星人</legend>
+          <div class="start-screen-alien-grid" id="start-alien-options">
+            <label class="start-screen-alien-choice" for="start-alien-jiuzhe">
+              <input class="start-screen-checkbox" type="checkbox" id="start-alien-jiuzhe" data-start-alien-id="九折" checked>
+              <span>九折</span>
+            </label>
+            <label class="start-screen-alien-choice" for="start-alien-banrenma">
+              <input class="start-screen-checkbox" type="checkbox" id="start-alien-banrenma" data-start-alien-id="半人马" checked>
+              <span>半人马</span>
+            </label>
+            <label class="start-screen-alien-choice" for="start-alien-aomomo">
+              <input class="start-screen-checkbox" type="checkbox" id="start-alien-aomomo" data-start-alien-id="奥陌陌" checked>
+              <span>奥陌陌</span>
+            </label>
+            <label class="start-screen-alien-choice" for="start-alien-yichangdian">
+              <input class="start-screen-checkbox" type="checkbox" id="start-alien-yichangdian" data-start-alien-id="异常点" checked>
+              <span>异常点</span>
+            </label>
+            <label class="start-screen-alien-choice" for="start-alien-fangzhou">
+              <input class="start-screen-checkbox" type="checkbox" id="start-alien-fangzhou" data-start-alien-id="方舟" checked>
+              <span>方舟</span>
+            </label>
+            <label class="start-screen-alien-choice" for="start-alien-runezu">
+              <input class="start-screen-checkbox" type="checkbox" id="start-alien-runezu" data-start-alien-id="符文族" checked>
+              <span>符文族</span>
+            </label>
+            <label class="start-screen-alien-choice" for="start-alien-chong">
+              <input class="start-screen-checkbox" type="checkbox" id="start-alien-chong" data-start-alien-id="虫" checked>
+              <span>虫</span>
+            </label>
+            <label class="start-screen-alien-choice" for="start-alien-amiba">
+              <input class="start-screen-checkbox" type="checkbox" id="start-alien-amiba" data-start-alien-id="阿米巴" checked>
+              <span>阿米巴</span>
+            </label>
+          </div>
+        </fieldset>
       </div>
     </div>
   </div>
@@ -599,7 +636,7 @@
   <script src="./game/abilities/index.js?v=abilities-2"></script>
   <script src="./game/aliens/placement.js?v=aliens-placement-2"></script>
   <script src="./game/aliens/catalog.js?v=aliens-2"></script>
-  <script src="./game/aliens/state.js?v=aliens-state-trace-owner-1"></script>
+  <script src="./game/aliens/state.js?v=alien-state-pool-1"></script>
   <script src="./game/aliens/jiuzhe.js?v=aliens-jiuzhe-4"></script>
   <script src="./game/aliens/yichangdian.js?v=aliens-yichangdian-trace-1"></script>
   <script src="./game/aliens/fangzhou.js?v=aliens-fangzhou-unlock-state-1"></script>
@@ -610,7 +647,7 @@
   <script src="./game/aliens/runezu.js?v=runezu-trace-1"></script>
   <script src="./game/aliens/fangzhou-card1-queue.js?v=aliens-fangzhou-1"></script>
   <script src="./game/aliens/reveal-card-grants.js?v=alien-reveal-card-grants-1"></script>
-  <script src="./game/aliens/randomizer.js?v=amiba-1"></script>
+  <script src="./game/aliens/randomizer.js?v=alien-pool-1"></script>
   <script src="./game/aliens/render.js?v=aliens-render-3"></script>
   <script src="./game/aliens/index.js?v=aliens-index-2"></script>
   <script src="./game/initial-cards.js?v=initial-cards-1"></script>
@@ -633,11 +670,11 @@
   <script src="./game/ai/index.js?v=ai-auto-battle-1"></script>
   <script src="./app/dependencies.js?v=app-boundaries-5"></script>
   <script src="./app/constants.js?v=app-boundaries-4"></script>
-  <script src="./app/dom.js?v=start-screen-2"></script>
-  <script src="./app/events.js?v=ai-move-payment-lock-1"></script>
+  <script src="./app/dom.js?v=start-screen-3"></script>
+  <script src="./app/events.js?v=start-alien-options-1"></script>
   <script src="./app/action-log-export.js?v=action-log-export-1"></script>
   <script src="./app/public-api.js?v=app-boundaries-5"></script>
   <script src="./app/ai-controller.js?v=ai-move-payment-lock-1"></script>
-  <script src="./app.js?v=aomomo-planet-markers-1"></script>
+  <script src="./app.js?v=start-alien-pool-1"></script>
 </body>
 </html>

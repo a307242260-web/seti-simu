@@ -46,6 +46,7 @@
 
   function createDefaultAlienState() {
     return {
+      revealPoolAlienIds: null,
       aliens: {
         1: createDefaultAlienSlotState(),
         2: createDefaultAlienSlotState(),

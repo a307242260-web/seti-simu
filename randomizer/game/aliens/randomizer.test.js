@@ -7,6 +7,7 @@ const yichangdian = require("./yichangdian");
 const fangzhou = require("./fangzhou");
 const banrenma = require("./banrenma");
 const chong = require("./chong");
+const amiba = require("./amiba");
 const runezu = require("./runezu");
 const randomizer = require("./randomizer");
 
@@ -71,5 +72,32 @@ assert(
   "second revealed alien should come from catalog",
 );
 assert(secondReveal.alienId === banrenma.ALIEN_ID, "second reveal pool should exclude already revealed Jiuzhe");
+
+const filteredState = state.createDefaultAlienState();
+const filteredSetup = randomizer.randomizeAlienAssignments(filteredState, {
+  alienPoolIds: [fangzhou.ALIEN_ID, amiba.ALIEN_ID],
+});
+assert(filteredSetup.ok, "filtered randomize should succeed with two aliens");
+assert(
+  JSON.stringify(filteredSetup.alienPoolIds) === JSON.stringify([fangzhou.ALIEN_ID, amiba.ALIEN_ID]),
+  "filtered pool should keep selected catalog aliens",
+);
+for (const traceType of ["yellow", "pink", "blue"]) {
+  state.placeFirstTrace(filteredState, 1, traceType, "white");
+}
+const filteredFirstReveal = randomizer.revealRandomAlien(filteredState, 1, () => 0);
+assert(filteredFirstReveal.ok, "first filtered reveal should succeed");
+assert(filteredFirstReveal.alienId === fangzhou.ALIEN_ID, "filtered reveal should use selected pool");
+for (const traceType of ["yellow", "pink", "blue"]) {
+  state.placeFirstTrace(filteredState, 2, traceType, "blue");
+}
+const filteredSecondReveal = randomizer.revealRandomAlien(filteredState, 2, () => 0);
+assert(filteredSecondReveal.ok, "second filtered reveal should succeed");
+assert(filteredSecondReveal.alienId === amiba.ALIEN_ID, "second filtered reveal should use remaining selected alien");
+
+const invalidPool = randomizer.randomizeAlienAssignments(state.createDefaultAlienState(), {
+  alienPoolIds: [runezu.ALIEN_ID],
+});
+assert(!invalidPool.ok, "filtered randomize should reject fewer than two aliens");
 
 console.log("aliens/randomizer.test.js ok");

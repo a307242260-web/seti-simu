@@ -37,6 +37,52 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu) {
   "use strict";
 
+  const MIN_ALIEN_REVEAL_POOL_SIZE = Math.max(2, placement.ALIEN_SLOT_IDS.length);
+
+  function normalizeAlienRevealPool(alienIds) {
+    if (!Array.isArray(alienIds)) return [...catalog.ALIEN_TYPE_IDS];
+    const requested = new Set(alienIds.map((alienId) => String(alienId)));
+    return catalog.ALIEN_TYPE_IDS.filter((alienId) => requested.has(alienId));
+  }
+
+  function getDefaultAlienRevealPool() {
+    return [...catalog.ALIEN_TYPE_IDS];
+  }
+
+  function getAlienRevealPool(alienState) {
+    const pool = normalizeAlienRevealPool(alienState?.revealPoolAlienIds);
+    return pool.length >= MIN_ALIEN_REVEAL_POOL_SIZE ? pool : getDefaultAlienRevealPool();
+  }
+
+  function setAlienRevealPool(alienState, alienIds) {
+    if (!alienState) {
+      return { ok: false, message: "缺少外星人状态" };
+    }
+    const pool = normalizeAlienRevealPool(alienIds);
+    if (pool.length < MIN_ALIEN_REVEAL_POOL_SIZE) {
+      return {
+        ok: false,
+        message: `至少需要选择 ${MIN_ALIEN_REVEAL_POOL_SIZE} 个外星人`,
+        alienPoolIds: getAlienRevealPool(alienState),
+      };
+    }
+    alienState.revealPoolAlienIds = [...pool];
+    return {
+      ok: true,
+      alienPoolIds: [...alienState.revealPoolAlienIds],
+      message: `外星人揭示池：${pool.join("、")}`,
+    };
+  }
+
+  function ensureAlienRevealPool(alienState) {
+    if (!alienState) {
+      return { ok: false, message: "缺少外星人状态" };
+    }
+    const pool = getAlienRevealPool(alienState);
+    alienState.revealPoolAlienIds = [...pool];
+    return { ok: true, alienPoolIds: [...alienState.revealPoolAlienIds] };
+  }
+
   function resetAlienSpecificStates(alienState) {
     if (jiuzhe?.createJiuzheState) {
       alienState.jiuzhe = jiuzhe.createJiuzheState();
@@ -64,7 +110,13 @@
     }
   }
 
-  function randomizeAlienAssignments(alienState) {
+  function randomizeAlienAssignments(alienState, options = {}) {
+    const hasExplicitAlienPool = Object.prototype.hasOwnProperty.call(options, "alienPoolIds");
+    const poolResult = hasExplicitAlienPool
+      ? setAlienRevealPool(alienState, options.alienPoolIds)
+      : ensureAlienRevealPool(alienState);
+    if (!poolResult.ok) return poolResult;
+
     const assignments = {};
 
     for (const alienSlotId of placement.ALIEN_SLOT_IDS) {
@@ -76,7 +128,8 @@
     return {
       ok: true,
       assignments,
-      message: "外星人槽位已重置；主动发现时随机揭示，两个外星人不会重复",
+      alienPoolIds: poolResult.alienPoolIds,
+      message: "外星人槽位已重置；主动发现时从已选外星人中随机揭示，两个外星人不会重复",
     };
   }
 
@@ -105,7 +158,8 @@
     }
 
     const unavailable = getUnavailableAlienIdsForReveal(alienState, alienSlotId);
-    const pool = catalog.ALIEN_TYPE_IDS.filter((alienId) => !unavailable.has(alienId));
+    const configuredPool = getAlienRevealPool(alienState);
+    const pool = configuredPool.filter((alienId) => !unavailable.has(alienId));
     if (!pool.length) {
       return { ok: false, message: "外星人池不足以揭示不重复物种" };
     }
@@ -127,6 +181,9 @@
   }
 
   return Object.freeze({
+    MIN_ALIEN_REVEAL_POOL_SIZE,
+    getAlienRevealPool,
+    setAlienRevealPool,
     randomizeAlienAssignments,
     pickRandomAlienIdForReveal,
     revealRandomAlien,

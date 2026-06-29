@@ -191,6 +191,7 @@
   const startScreenState = {
     aiDifficulty: "laughable",
     debugToolsEnabled: false,
+    selectedAlienIds: [...(aliens.ALIEN_TYPE_IDS || [])],
     continueAvailable: false,
     entered: false,
   };
@@ -2351,6 +2352,44 @@
     }
   }
 
+  function getStartAlienCheckboxes() {
+    return [...(els.startAlienCheckboxes || [])];
+  }
+
+  function getSelectedStartAlienIds() {
+    const selected = new Set(getStartAlienCheckboxes()
+      .filter((checkbox) => checkbox.checked)
+      .map((checkbox) => checkbox.dataset.startAlienId)
+      .filter(Boolean));
+    const alienIds = (aliens.ALIEN_TYPE_IDS || []).filter((alienId) => selected.has(alienId));
+    return alienIds.length >= (aliens.MIN_ALIEN_REVEAL_POOL_SIZE || 2)
+      ? alienIds
+      : [...(aliens.ALIEN_TYPE_IDS || [])];
+  }
+
+  function syncStartScreenAlienOptions() {
+    const checkboxes = getStartAlienCheckboxes();
+    const minSelected = aliens.MIN_ALIEN_REVEAL_POOL_SIZE || 2;
+    const checkedCount = checkboxes.filter((checkbox) => checkbox.checked).length;
+    for (const checkbox of checkboxes) {
+      const locked = checkbox.checked && checkedCount <= minSelected;
+      checkbox.disabled = locked;
+      checkbox.closest(".start-screen-alien-choice")?.classList.toggle("is-locked", locked);
+    }
+    startScreenState.selectedAlienIds = getSelectedStartAlienIds();
+  }
+
+  function handleStartAlienOptionChange(event) {
+    const checkbox = event?.target?.closest?.("[data-start-alien-id]");
+    if (!checkbox) return;
+    const minSelected = aliens.MIN_ALIEN_REVEAL_POOL_SIZE || 2;
+    const checkedCount = getStartAlienCheckboxes().filter((item) => item.checked).length;
+    if (checkedCount < minSelected) {
+      checkbox.checked = true;
+    }
+    syncStartScreenAlienOptions();
+  }
+
   function updateStartScreenContinueButton() {
     const canContinue = hasPersistentGameState();
     startScreenState.continueAvailable = canContinue;
@@ -2377,6 +2416,7 @@
   }
 
   function applyStartScreenOptions() {
+    syncStartScreenAlienOptions();
     startScreenState.aiDifficulty = els.startAiDifficulty?.value || "laughable";
     setDebugToolsEnabled(Boolean(els.startDebugEnabled?.checked));
   }
@@ -2392,8 +2432,8 @@
 
   function startNewGameFromStartScreen() {
     startScreenState.entered = true;
-    startNewGame({ clearStorage: true, message: "新游戏已开始，请完成初始选择。" });
     applyStartScreenOptions();
+    startNewGame({ clearStorage: true, message: "新游戏已开始，请完成初始选择。" });
     closeStartScreen();
   }
 
@@ -17921,7 +17961,10 @@
   }
 
   function randomizeAliens() {
-    const result = aliens.randomizeAlienAssignments(alienGameState);
+    const result = aliens.randomizeAlienAssignments(alienGameState, {
+      alienPoolIds: startScreenState.selectedAlienIds,
+    });
+    if (!result.ok) return result;
     aliens.resetAlienTraceTokens();
     for (const element of yichangdianAnomalyMarkerElements.values()) {
       element.remove();
@@ -32100,6 +32143,7 @@
     startNewGameFromStartScreen,
     continueGameFromStartScreen,
     syncStartScreenDebugOption,
+    handleStartAlienOptionChange,
     handleMainActionButtonClick,
     cancelTechSelection,
     confirmLandTargetPicker,
@@ -32274,6 +32318,7 @@
   });
   setTokenAssetSizes();
   syncStartScreenDebugOption();
+  syncStartScreenAlienOptions();
   setDebugToolsEnabled(false);
   setReportTab("action");
   setLogOpen(false);
