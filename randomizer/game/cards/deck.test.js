@@ -75,6 +75,40 @@ function parseCsvRows(text) {
     })));
 }
 
+function collectCardZoneIds(cardState, playerState) {
+  const ids = [];
+  for (const card of cardState.publicCards || []) {
+    if (card?.cardId) ids.push(card.cardId);
+  }
+  for (const card of cardState.discardPile || []) {
+    if (card?.cardId) ids.push(card.cardId);
+  }
+  for (const cardId of cardState.drawPileCardIds || []) {
+    if (cardId) ids.push(cardId);
+  }
+  for (const pile of Object.values(cardState.passReservePiles || {})) {
+    for (const card of pile || []) {
+      if (card?.cardId) ids.push(card.cardId);
+    }
+  }
+  for (const player of playerState.players || []) {
+    for (const card of player.hand || []) {
+      if (card?.cardId) ids.push(card.cardId);
+    }
+    for (const card of player.reservedCards || []) {
+      if (card?.cardId) ids.push(card.cardId);
+    }
+    const futureSpanCardId = player.industryFutureSpan?.card?.cardId;
+    if (futureSpanCardId) ids.push(futureSpanCardId);
+  }
+  return ids;
+}
+
+function assertUniqueCardZoneIds(cardState, playerState, label) {
+  const ids = collectCardZoneIds(cardState, playerState);
+  assert.equal(new Set(ids).size, ids.length, label);
+}
+
 const csvModelPath = path.resolve(__dirname, "../../../assets/cards/card_model.csv");
 const csvCatalog = parseCsvRows(decodeCsvFile(csvModelPath));
 assert.deepEqual(cards.CARD_CATALOG, csvCatalog);
@@ -99,6 +133,7 @@ cards.initializeDeck(cardState, playerState, {
 
 assert.equal(cardState.publicCards.filter(Boolean).length, cards.PUBLIC_CARD_COUNT);
 assert.equal(player.hand.length, 5);
+assertUniqueCardZoneIds(cardState, playerState, "opening hand and public cards must not duplicate");
 assert.equal(player.hand[0].incomeCode, cards.CARD_CATALOG[0].income_code);
 assert.equal(cards.getIncomeCodeForCard(player.hand[0]), cards.CARD_CATALOG[0].income_code);
 
@@ -130,6 +165,7 @@ const openingCardIds = openingHandPlayers.flatMap((openingPlayer) => (
   openingPlayer.hand.map((card) => card.cardId)
 ));
 assert.equal(new Set(openingCardIds).size, openingCardIds.length);
+assertUniqueCardZoneIds(openingHandState, openingHandPlayerState, "all opening hands must share one deck");
 assert.ok(openingCardIds.some((cardId) => cardId.startsWith("dlc_")));
 assert.notDeepEqual(openingHandPlayers[0].hand.map((card) => card.cardId), [
   "b_1.webp",
@@ -396,8 +432,11 @@ assert.deepEqual(Object.keys(passReserveState.passReservePiles).sort(), ["1", "2
 assert.equal(cards.getPassReservePile(passReserveState, 1).length, 3);
 assert.equal(cards.getPassReservePile(passReserveState, 2).length, 3);
 assert.equal(cards.getPassReservePile(passReserveState, 3).length, 3);
+assertUniqueCardZoneIds(passReserveState, passReservePlayerState, "PASS reserve piles and public cards must not duplicate");
 
-const reserveCardIds = new Set(Object.values(passReserveState.passReservePiles).flat().map((card) => card.cardId));
+const reserveCards = Object.values(passReserveState.passReservePiles).flat();
+const reserveCardIds = new Set(reserveCards.map((card) => card.cardId));
+assert.equal(reserveCardIds.size, reserveCards.length);
 const availableAfterReserve = cards.getAvailablePool(passReserveState, passReservePlayerState);
 assert.equal(availableAfterReserve.some((entry) => reserveCardIds.has(entry.card_id)), false);
 
@@ -413,6 +452,7 @@ assert.equal(discardReserveResult.ok, true);
 assert.equal(discardReserveResult.cards.length, 2);
 assert.equal(cards.getPassReservePile(passReserveState, 1).length, 0);
 assert.equal(passReserveState.discardPile.length, 2);
+assertUniqueCardZoneIds(passReserveState, passReservePlayerState, "PASS pick and leftover discard must preserve card uniqueness");
 
 cards.setDiscardSelectionActive(cardState, true, 1);
 assert.equal(cards.isDiscardSelectionActive(cardState), true);

@@ -475,12 +475,12 @@
 
     for (const roundNumber of rounds) {
       const pile = [];
+      piles[String(roundNumber)] = pile;
       for (let index = 0; index < cardsPerPile; index += 1) {
         const result = takeRandomEntryForDraw(cardState, playerState, random);
         if (!result?.entry) break;
         pile.push(createCardInstance(result.entry, `pass-${roundNumber}-${index + 1}`));
       }
-      piles[String(roundNumber)] = pile;
     }
 
     return {
