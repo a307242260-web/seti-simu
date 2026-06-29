@@ -62,6 +62,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     reservedCards: [],
     resources: { credits: 5, energy: 5, ...(options.blueResources || {}) },
     income: { ...(options.blueIncome || {}) },
+    companyBaseIncome: options.blueCompanyBaseIncome || null,
     techState: options.blueTechState || { ownedTiles: { ...(options.blueOwnedTechTiles || {}) } },
     techCounts: { ...(options.blueTechCounts || {}) },
     runezuSymbols: options.blueRunezuSymbols || {},
@@ -88,6 +89,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       label: "Jiuzhe reveal",
     }
     : null;
+  let pendingPassReserveSelection = options.pendingPassReserveSelection || null;
   const pendingDiscardAction = options.pendingDiscardAction
     || (options.currentPlayerDiscardPending
       ? {
@@ -149,6 +151,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     get pendingLandTargetAction() { return options.landTargetPending || null; },
     get pendingDataPlaceAction() { return options.dataPlacePending || null; },
     get pendingDiscardAction() { return pendingDiscardAction; },
+    get pendingPassReserveSelection() { return pendingPassReserveSelection; },
     get pendingMovePayment() { return options.pendingMovePayment || null; },
     get pendingActionExecuted() { return Boolean(options.pendingActionExecuted); },
     get pendingActionEffectFlow() { return options.pendingActionEffectFlow || null; },
@@ -432,7 +435,9 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     },
     getCardPlayCost: (card) => (card?.price ? { credits: card.price } : {}),
     getCardPrice: (card) => card?.price || 0,
-    getCardTypeCode: () => 1,
+    getCardTypeCode: (card) => (typeof options.getCardTypeCode === "function"
+      ? options.getCardTypeCode(card)
+      : (card?.typeCode || 1)),
     getCurrentActionEffect: () => options.currentActionEffect || null,
     getCurrentPlayer: () => currentPlayer,
     getEarthSectorCoordinate: () => options.earthCoordinate || { x: 1, y: 1 },
@@ -661,6 +666,9 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   if (options.techTilePickingActive) {
     context.isTechTilePickingActive = () => true;
   }
+  if (options.actionEffectFlowActive) {
+    context.isActionEffectFlowActive = () => true;
+  }
   if (options.currentPlayerDiscardPending || options.pendingDiscardAction) {
     context.isDiscardSelectionActive = () => true;
   }
@@ -714,6 +722,12 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       return { ok: true, progressed: true };
     };
   }
+  if (options.recordSupplyTechSelection) {
+    context.handleSupplyTechTileClick = (tileId) => {
+      noteHandled({ type: "supply-tech", tileId });
+      return { ok: true, progressed: true };
+    };
+  }
   if (options.recordAnalyze) {
     context.analyzeDataForCurrentPlayer = () => {
       noteHandled({ type: "analyze" });
@@ -726,9 +740,25 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       return { ok: true, progressed: true };
     };
   }
+  if (options.recordExecuteActionEffect) {
+    context.executeActionEffect = (effect) => {
+      noteHandled({
+        type: "effect",
+        effectId: effect?.id || null,
+        effectType: effect?.type || null,
+      });
+      return { ok: true, progressed: true };
+    };
+  }
   if (options.recordBeginPlayCard) {
     context.beginPlayCardSelection = () => {
       noteHandled({ type: "begin-play-card" });
+      return { ok: true, progressed: true };
+    };
+  }
+  if (options.recordOpenCardTask) {
+    context.openCardTaskCompletionPicker = (card) => {
+      noteHandled({ type: "open-card-task", cardId: card?.id || null });
       return { ok: true, progressed: true };
     };
   }
@@ -744,6 +774,22 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     "getSectorXsMatchingCondition",
   ];
   for (const name of emptyArrayNames) context[name] = () => [];
+  if (options.readyCardTasks) {
+    context.getReadyCardTasks = () => options.readyCardTasks;
+  }
+  if (options.passReserveCards) {
+    context.getPassReserveSelectionCards = () => options.passReserveCards;
+    context.selectPassReserveCard = (cardId) => {
+      if (pendingPassReserveSelection) pendingPassReserveSelection.selectedCardId = cardId;
+      noteHandled({ type: "pass-reserve-select", cardId });
+    };
+    context.confirmPassReserveSelection = () => {
+      const cardId = pendingPassReserveSelection?.selectedCardId || null;
+      noteHandled({ type: "pass-reserve", cardId });
+      pendingPassReserveSelection = null;
+      return { ok: true, progressed: true, cardId };
+    };
+  }
   context.getMovableTokensForPlayer = (playerId) => (options.movableTokens || [])
     .filter((token) => !playerId || token.playerId === playerId);
   if (options.recordMove) {
@@ -967,6 +1013,48 @@ function makeBanrenmaAlienState() {
   assert.ok(
     selectedGains.filter((gain) => Number(gain.credits || 0) > 0).length <= 2,
     "multi-income selection should not spend all four choices on credit income",
+  );
+}
+
+{
+  const pendingDiscardAction = { type: "initial_income", selectedIndexes: [] };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    pendingDiscardAction,
+    discardCount: 1,
+    blueResources: { credits: 0, energy: 5, handSize: 6, score: 52 },
+    blueIncome: { credits: 2, energy: 1, handSize: 1 },
+    blueCompanyBaseIncome: { credits: 2, energy: 1, handSize: 1 },
+    blueHand: [
+      { id: "credit-after-base", incomeGain: { credits: 1 } },
+      { id: "hand-after-base", incomeGain: { handSize: 1 } },
+    ],
+    finalScoringState: {
+      tiles: {
+        a: {
+          id: "a",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+      },
+    },
+    finalTileVariants: { a: 2 },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should resolve income discard with company base income excluded from final scoring");
+  const [selectedIndex] = pendingDiscardAction.selectedIndexes;
+  assert.equal(
+    harness.blue.hand[selectedIndex]?.id,
+    "credit-after-base",
+    "a2 income-final fit should use income increases, not company base income",
   );
 }
 
@@ -1982,6 +2070,253 @@ function makeBanrenmaAlienState() {
     Number(analyzeCandidate.score || 0) <= 8,
     "final low-value analyze should be capped instead of scoring like a high-value cashout",
   );
+}
+
+{
+  const passCards = [
+    {
+      id: "reserve-low",
+      cardName: "Reserve low",
+      typeCode: 1,
+      price: 1,
+    },
+    {
+      id: "reserve-type3",
+      cardName: "Reserve type 3",
+      typeCode: 3,
+      price: 2,
+    },
+  ];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 2,
+    blueResources: { score: 39, credits: 1, energy: 0, publicity: 1, availableData: 0, handSize: 4 },
+    pendingPassReserveSelection: {
+      playerId: "player-blue",
+      roundNumber: 2,
+      effectId: "pass-reserve-pick",
+      selectedCardId: null,
+    },
+    passReserveCards: passCards,
+    finalScoringState: {
+      tiles: {
+        final_c2: {
+          id: "final_c2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_c2: "c2",
+    },
+    finalSlotMultipliers: {
+      c2: { 1: 6 },
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should resolve PASS reserve selection without entering full action scoring");
+  assert.deepEqual(harness.getHandled(), { type: "pass-reserve", cardId: "reserve-type3" });
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    actionEffectFlowActive: true,
+    recordExecuteActionEffect: true,
+    currentActionEffect: {
+      id: "research-tech-bonus",
+      type: "research_tech_bonus",
+      label: "获取3 分",
+      status: "active",
+      playerId: "player-blue",
+    },
+    pendingActionEffectFlow: {
+      playerId: "player-blue",
+      currentIndex: 0,
+      effects: [],
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should execute active research tech bonus before optional opportunity scans");
+  assert.deepEqual(harness.getHandled(), {
+    type: "effect",
+    effectId: "research-tech-bonus",
+    effectType: "research_tech_bonus",
+  });
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    readyBanrenmaPlayerColor: "blue",
+    actionEffectFlowActive: true,
+    recordExecuteActionEffect: true,
+    currentActionEffect: {
+      id: "research-tech-bonus",
+      type: "research_tech_bonus",
+      label: "获取1 能量",
+      status: "active",
+      playerId: "player-blue",
+    },
+    pendingActionEffectFlow: {
+      playerId: "player-blue",
+      currentIndex: 0,
+      effects: [],
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should execute active effects before opening ready Banrenma opportunities");
+  assert.deepEqual(harness.getHandled(), {
+    type: "effect",
+    effectId: "research-tech-bonus",
+    effectType: "research_tech_bonus",
+  });
+}
+
+{
+  const purpleTechEffect = {
+    id: "b31-purple-tech",
+    type: "card_research_tech",
+    label: "科技（只能选择紫色）",
+    status: "active",
+    playerId: "player-blue",
+    options: { techTypes: ["purple"], skipCost: true },
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    actionEffectFlowActive: true,
+    recordSupplyTechSelection: true,
+    currentActionEffect: purpleTechEffect,
+    pendingActionEffectFlow: {
+      playerId: "player-blue",
+      currentIndex: 0,
+      effects: [purpleTechEffect],
+    },
+    takeableTechIds: ["orange2", "purple2", "blue3"],
+    techStacks: {
+      orange2: { techType: "orange", stackIndex: 2 },
+      purple2: { techType: "purple", stackIndex: 2 },
+      blue3: { techType: "blue", stackIndex: 3 },
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should choose a tile for active card research-tech effects");
+  assert.deepEqual(harness.getHandled(), { type: "supply-tech", tileId: "purple2" });
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    pendingActionExecuted: true,
+    blueResources: { score: 50, credits: 1, energy: 0, publicity: 2, availableData: 1, handSize: 1 },
+    data: {
+      PLACEMENT_KIND_COMPUTER: "computer",
+      PLACEMENT_KIND_BLUE_BONUS: "blueBonus",
+      canPlaceAnyData: () => ({
+        ok: true,
+        choices: [{
+          target: "computer",
+          placementSlot: 4,
+          label: "第一排放置位 4",
+          description: "按从左到右放入第一排第 4 位",
+        }],
+      }),
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should directly confirm data placement quick candidates");
+  assert.deepEqual(harness.getHandled(), {
+    type: "data-placement",
+    target: "computer",
+    blueSlot: null,
+  });
+}
+
+{
+  const chongTransportTask = {
+    kind: "transport",
+    destinationPlanetId: "earth",
+    fossilRewardRepeat: 1,
+    gain: { score: 3 },
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    recordOpenCardTask: true,
+    readyCardTasks: [
+      {
+        card: { id: "normal-ready", cardName: "Normal ready" },
+        task: { id: "normal-task" },
+        effects: [{ type: "gain_resources", options: { gain: { score: 1 } } }],
+      },
+      {
+        chongTask: true,
+        card: {
+          id: "chong-ready",
+          cardName: "Chong ready",
+          chongCard: true,
+          chongTask: chongTransportTask,
+        },
+        task: chongTransportTask,
+        deliveredTransport: {
+          rocketId: 77,
+          fossil: { fossilId: "fossil_02" },
+          task: { fossilId: "fossil_02" },
+        },
+        effects: [],
+      },
+    ],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should open delivered Chong transport tasks aggressively");
+  assert.deepEqual(harness.getHandled(), { type: "open-card-task", cardId: "chong-ready" });
 }
 
 {
