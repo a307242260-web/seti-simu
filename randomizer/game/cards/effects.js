@@ -739,13 +739,14 @@
     "aomomo_0.webp": withSource("aomomo_0.webp", {
       cardType: 2,
       playEffects: Object.freeze([
-        aomomoSignalBonusEffect(
-          "aomomo0-aomomo-signal-fossil",
-          "奥陌陌0：本次扫描行动扫到奥陌陌得1化石",
-          [aomomoFossilRewardEffect("aomomo0-fossil", "扫描奥陌陌：1化石", 1)],
-          { onceKey: "aomomo0-aomomo-signal-fossil" },
-        ),
         effect("aomomo0-scan-action", EFFECT_TYPES.SCAN_ACTION, "奥陌陌0：扫描行动", "scan_action", { skipCost: true }),
+        conditionalRewardEffect(
+          "aomomo0-aomomo-scan-fossil",
+          "奥陌陌0：若本次扫描行动扫到奥陌陌得1化石",
+          { type: "flowMarkedNebula", nebulaIds: ["aomomo"] },
+          [aomomoFossilRewardEffect("aomomo0-fossil", "扫描奥陌陌：1化石", 1)],
+          { icon: "aomomoFossil" },
+        ),
       ]),
       tasks: Object.freeze([{
         id: "aomomo0-land",

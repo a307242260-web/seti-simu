@@ -86,6 +86,13 @@
     return effect(id, "gain_resources", label, "score", { gain: { score } });
   }
 
+  function flowMarkedAomomoRewardEffect(id, label, rewardEffect) {
+    return effect(id, "card_conditional_reward", label, rewardEffect.icon || "aomomoFossil", {
+      condition: { type: "flowMarkedNebula", nebulaIds: [NEBULA_ID] },
+      rewards: [rewardEffect],
+    });
+  }
+
   function aomomoSignalBonusEffect(id, label, rewardEffect, options = {}) {
     return effect(id, "card_register_event_bonus", label, rewardEffect.icon || "aomomoFossil", {
       bonus: {
@@ -550,13 +557,12 @@
     switch (index) {
       case 0:
         return [
-          aomomoSignalBonusEffect(
-            "aomomo-0-aomomo-signal-fossil",
-            "奥陌陌0：本次扫描行动扫到奥陌陌得1化石",
-            aomomoFossilRewardEffect("aomomo-0-fossil", "扫描奥陌陌：1化石", 1),
-            { onceKey: "aomomo-0-aomomo-signal-fossil" },
-          ),
           scanActionEffect("aomomo-0-scan-action", "奥陌陌0：扫描行动"),
+          flowMarkedAomomoRewardEffect(
+            "aomomo-0-aomomo-scan-fossil",
+            "奥陌陌0：若本次扫描行动扫到奥陌陌得1化石",
+            aomomoFossilRewardEffect("aomomo-0-fossil", "扫描奥陌陌：1化石", 1),
+          ),
         ];
       case 1:
         return [gainFossilEffect("aomomo-1-fossil", "奥陌陌1：1化石", 1)];

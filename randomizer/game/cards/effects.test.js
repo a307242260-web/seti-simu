@@ -1130,11 +1130,10 @@ assert.deepEqual(aomomoTraceMatches.map((match) => match.trigger.id), [
 
 const aomomo0Effects = cardEffects.buildPlayEffects({ cardId: "aomomo_0.webp" });
 assert.equal(aomomo0Effects.length, 2);
-assert.equal(aomomo0Effects[0].type, cardEffects.EFFECT_TYPES.REGISTER_EVENT_BONUS);
-assert.equal(aomomo0Effects[0].options.bonus.eventType, "signalMarked");
-assert.deepEqual(aomomo0Effects[0].options.bonus.nebulaIds, ["aomomo"]);
-assert.equal(aomomo0Effects[0].options.bonus.onceKey, "aomomo0-aomomo-signal-fossil");
-assert.equal(aomomo0Effects[1].type, cardEffects.EFFECT_TYPES.SCAN_ACTION);
+assert.equal(aomomo0Effects[0].type, cardEffects.EFFECT_TYPES.SCAN_ACTION);
+assert.equal(aomomo0Effects[1].type, cardEffects.EFFECT_TYPES.CONDITIONAL_REWARD);
+assert.equal(aomomo0Effects[1].options.condition.type, "flowMarkedNebula");
+assert.deepEqual(aomomo0Effects[1].options.condition.nebulaIds, ["aomomo"]);
 
 const aomomo5Effects = cardEffects.buildPlayEffects({ cardId: "aomomo_5.webp" });
 assert.equal(cardEffects.getRuntimeCardTypeCode({ cardId: "aomomo_5.webp", cardTypeCode: 2 }, 2), 2);

@@ -14012,6 +14012,11 @@
     if (condition.type === "lastLandingHadOwnMarker") {
       return Boolean(pendingActionEffectFlow?.lastLanding?.hadOwnLandingMarker);
     }
+    if (condition.type === "flowMarkedNebula") {
+      const markedNebulaIds = getFlowMarkedNebulaIds(pendingActionEffectFlow);
+      const requiredNebulaIds = condition.nebulaIds || condition.includeNebulaIds || [condition.nebulaId];
+      return requiredNebulaIds.filter(Boolean).some((nebulaId) => markedNebulaIds.has(String(nebulaId)));
+    }
     if (condition.type === "probeAdjacentEarth") {
       return runtimeProbeAdjacentEarth(currentPlayer);
     }
