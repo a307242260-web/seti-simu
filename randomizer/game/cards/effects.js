@@ -24,6 +24,7 @@
     PROBE_SECTOR_SCAN: "card_probe_sector_scan",
     PLANET_SECTOR_SCAN: "card_planet_sector_scan",
     SECTOR_X_SCAN: "card_sector_x_scan",
+    INCOME: "card_income",
     COUNT_HAND_INCOME_RESOURCE: "card_count_hand_income_resource",
     COUNT_CURRENT_INCOME_RESOURCE: "card_count_current_income_resource",
     COUNT_ALIENS_RESOURCE: "card_count_aliens_resource",
@@ -476,6 +477,10 @@
 
   function tuckPlayedCardToIncomeEffect(id, label) {
     return effect(id, EFFECT_TYPES.TUCK_PLAYED_CARD_TO_INCOME, label || "将本卡放入收入区", "income", {});
+  }
+
+  function incomeEffect(id, label) {
+    return effect(id, EFFECT_TYPES.INCOME, label || "收入", "income", {});
   }
 
   function probeSectorScanEffect(id, label, options = {}) {
@@ -2363,7 +2368,7 @@
     }),
     "dlc_34.png": withSource("dlc_34.png", {
       cardType: 0,
-      playEffects: Object.freeze([countTechTypesRewardEffect("dlc34-max-tech-draw", "按最多科技类型数量盲抽", { reward: "draw", icon: "blind_card" }), tuckPlayedCardToIncomeEffect("dlc34-income", "将本卡放入收入区")]),
+      playEffects: Object.freeze([incomeEffect("dlc34-income", "增加一次收入"), countTechTypesRewardEffect("dlc34-max-tech-draw", "按最多科技类型数量盲抽", { reward: "draw", icon: "blind_card" })]),
     }),
     "dlc_35.png": withSource("dlc_35.png", {
       cardType: 2,

@@ -4598,6 +4598,14 @@
       }
       completeQuickActionStep();
     }
+    if (pending?.type === "card_income" && pending.fromEffectFlow && getCurrentActionEffect()) {
+      getCurrentActionEffect().result = {
+        ok: true,
+        undoable: true,
+        message: "已取消收入",
+      };
+      completeCurrentActionEffect("skipped");
+    }
     rocketState.statusNote = isIncomeDiscardActionType(pending?.type) ? "已取消收入" : "已取消弃牌";
     syncDiscardSelectionChrome();
     updateActionButtons();
@@ -4707,6 +4715,38 @@
             irreversible: incomeResult.irreversible || null,
             message: incomeResult.message,
             payload: { gain: incomeResult.gain, card: discardedCards[0] },
+          };
+          completeCurrentActionEffect();
+        }
+        rocketState.statusNote = incomeResult.ok
+          ? incomeResult.message
+          : (incomeResult.message || "收入失败");
+      } else if (pending.type === "card_income") {
+        if (incomeResult.ok && pending.fromEffectFlow && getCurrentActionEffect()) {
+          const player = pending.player || getCurrentPlayer();
+          beginEffectHistoryStep(pending.effectLabel || "卡牌收入");
+          recordHistoryCommand(historyCommands.createRestorePlayerCommand(
+            player,
+            pending.beforePlayerState,
+            "恢复卡牌收入前玩家状态",
+          ));
+          recordHistoryCommand(historyCommands.createRestoreObjectCommand(
+            cardState,
+            pending.beforeCardState,
+            "恢复卡牌收入前牌区",
+          ));
+          getCurrentActionEffect().result = {
+            ok: true,
+            undoable: incomeResult.undoable !== false,
+            irreversible: incomeResult.irreversible || null,
+            message: incomeResult.message,
+            payload: {
+              gain: incomeResult.gain,
+              card: discardedCards[0],
+              drawnCards: incomeResult.drawnCards || [],
+              dataResults: incomeResult.dataResults || [],
+              taskCompletion: incomeResult.taskCompletion || null,
+            },
           };
           completeCurrentActionEffect();
         }
@@ -11530,6 +11570,7 @@
       || type === "planet_reward_income"
       || type === "place_data_income"
       || type === "initial_income"
+      || type === "card_income"
       || type === "industry_helios_income"
       || type === "industry_fundamentalism_income";
   }
@@ -17262,6 +17303,8 @@
         return executePlanetSectorScanEffect(effect);
       case types.SECTOR_X_SCAN:
         return executeSectorXScanEffect(effect);
+      case types.INCOME:
+        return openCardIncomeEffect(effect);
       case types.REGISTER_EVENT_BONUS:
         return executeRegisterEventBonusEffect(effect);
       case types.COUNT_HAND_INCOME_RESOURCE:
@@ -17440,6 +17483,25 @@
       rocketState.statusNote = result.message;
       renderStateReadout();
       effect.result = { ok: false, undoable: false, message: result.message };
+      completeCurrentActionEffect("skipped");
+    }
+    return result;
+  }
+
+  function openCardIncomeEffect(effect) {
+    const incomePlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+    const result = beginDiscardSelection(1, {
+      type: "card_income",
+      player: incomePlayer,
+      fromEffectFlow: true,
+      effectLabel: effect.label,
+      beforePlayerState: structuredClone(incomePlayer),
+      beforeCardState: structuredClone(cardState),
+    });
+    if (!result.ok) {
+      rocketState.statusNote = result.message;
+      renderStateReadout();
+      effect.result = { ok: false, undoable: true, message: result.message };
       completeCurrentActionEffect("skipped");
     }
     return result;

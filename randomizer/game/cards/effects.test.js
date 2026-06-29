@@ -304,7 +304,11 @@ assert.equal(cardEffects.isReturnUnfinishedTaskTarget(
   { isChongTransportStarted: () => true },
 ), false);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_30.png" })[0].type, cardEffects.EFFECT_TYPES.CARD_ORBIT);
-assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_34.png" })[1].type, cardEffects.EFFECT_TYPES.TUCK_PLAYED_CARD_TO_INCOME);
+const dlc34Effects = cardEffects.buildPlayEffects({ cardId: "dlc_34.png" });
+assert.equal(dlc34Effects.length, 2);
+assert.equal(dlc34Effects[0].type, cardEffects.EFFECT_TYPES.INCOME);
+assert.equal(dlc34Effects[1].type, cardEffects.EFFECT_TYPES.COUNT_TECH_TYPES_REWARD);
+assert.equal(dlc34Effects[1].options.reward, "draw");
 assert.deepEqual(cardEffects.buildPlayEffects({ cardId: "dlc_35.png" })[0].options.gain, { additionalPublicScan: 1 });
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_37.png" })[0].options.allMatching, true);
 const dlc38StackReward = cardEffects.buildPlayEffects({ cardId: "dlc_38.png" })[2];
