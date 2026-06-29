@@ -38,7 +38,7 @@ body {
   min-height: 100vh;
   overflow-y: auto;
   padding: clamp(20px, 5vw, 56px);
-  padding-top: clamp(150px, 31vh, 330px);
+  padding-top: clamp(360px, 71vh, 660px);
   background-color: #030711;
   background-image: url("../assets/core/start.png");
   background-position: center;
