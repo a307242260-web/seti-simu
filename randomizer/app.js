@@ -12332,6 +12332,18 @@
     renderStateReadout();
   }
 
+  function activateNextActionEffectIfIdle() {
+    if (!pendingActionEffectFlow || pendingActionEffectFlow.completed) return false;
+    const current = getCurrentActionEffect();
+    if (current?.status === "active") return false;
+    const next = abilities.chain.activateNext
+      ? abilities.chain.activateNext(pendingActionEffectFlow)
+      : null;
+    if (!next) return false;
+    setActiveEffectFlowOwner(next);
+    return true;
+  }
+
   function completeCurrentActionEffect(status = "completed") {
     if (!pendingActionEffectFlow) return;
 
@@ -12378,6 +12390,9 @@
       settleCardTasksAfterEffect({ events: effectEvents, render: false });
       if (deferredType1Events.length) {
         settleCardTasksAfterEffect({ events: deferredType1Events, type1Only: true, render: false });
+      }
+      if (!hasActiveCardTriggerResolution()) {
+        activateNextActionEffectIfIdle();
       }
       if (
         (pendingActionEffectFlow && !pendingActionEffectFlow.completed)
