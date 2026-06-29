@@ -6,7 +6,7 @@
   let historyCommands = root.SetiHistoryCommands;
   let industryPassives = root.SetiIndustryPassives;
 
-  if ((!players || !data || !historyCommands) && typeof require === "function") {
+  if ((!players || !data || !historyCommands || !industryPassives) && typeof require === "function") {
     players = players || require("../players");
     data = data || require("../data");
     historyCommands = historyCommands || require("../history/commands");
@@ -130,11 +130,7 @@
     if (!player) return { ok: false, abilityId: "analyzeData", message: "没有当前玩家" };
 
     const freeEnergy = Boolean(options.skipCost) || Boolean(industryPassives?.canAnalyzeWithoutEnergy?.(player));
-    const check = freeEnergy
-      ? (data.isAnalyzeReady(player)
-        ? { ok: true, message: null }
-        : data.canAnalyzeData(player))
-      : data.canAnalyzeData(player);
+    const check = data.canAnalyzeData(player, { skipEnergyCost: freeEnergy });
     if (!check.ok) return { ok: false, abilityId: "analyzeData", message: check.message };
 
     const snapshot = structuredClone(player);

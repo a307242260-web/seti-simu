@@ -160,7 +160,11 @@ assert.equal(place6.placementSlot, 6);
 assert.equal(data.canAnalyzeData(player).ok, true);
 assert.equal(data.canPlaceDataToComputer(player).ok, false);
 
+player.resources.energy = 0;
+assert.equal(data.canAnalyzeData(player).ok, false);
+assert.equal(data.canAnalyzeData(player, { skipEnergyCost: true }).ok, true);
 player.resources.energy = 1;
+
 const analyze = data.analyzeData(player);
 assert.equal(analyze.ok, true);
 assert.equal(analyze.clearedCount, 6);

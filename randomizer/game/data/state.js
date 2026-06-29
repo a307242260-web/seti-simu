@@ -433,7 +433,7 @@
     );
   }
 
-  function canAnalyzeData(player) {
+  function canAnalyzeData(player, options = {}) {
     if (!player) {
       return { ok: false, message: "未找到当前玩家" };
     }
@@ -443,7 +443,7 @@
         message: `需在计算机第 ${ANALYZE_REQUIRED_COMPUTER_SLOT} 放置位放置数据`,
       };
     }
-    if (player.resources.energy < ANALYZE_ENERGY_COST) {
+    if (!options.skipEnergyCost && player.resources.energy < ANALYZE_ENERGY_COST) {
       return { ok: false, message: `能量不足，分析需要 ${ANALYZE_ENERGY_COST} 能量` };
     }
     return { ok: true, message: null };

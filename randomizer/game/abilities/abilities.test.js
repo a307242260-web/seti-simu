@@ -527,6 +527,29 @@ function launchToPlanet(context, planetId) {
 }
 
 {
+  const context = createContext({
+    resources: { credits: 10, energy: 0 },
+  });
+  const player = currentPlayer(context);
+  player.initialSelection = { industry: { label: "深空探测" } };
+  data.ensurePlayerDataState(player);
+  for (let index = 0; index < 6; index += 1) {
+    data.gainData(player, { source: "test" });
+    data.placeDataToComputer(player);
+  }
+
+  const result = abilities.executeAbility("analyzeData", context);
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.cost, {});
+  assert.equal(player.resources.energy, 0);
+  assert.equal(player.dataState.placedTokens.length, 0);
+
+  result.commands[0].undo();
+  assert.equal(player.dataState.placedTokens.length, 6);
+  assert.equal(player.resources.energy, 0);
+}
+
+{
   const context = createContext({ resources: { credits: 10, energy: 10, publicity: 10 } });
   const player = currentPlayer(context);
   const beforeRotation = context.solarState.rotation.rotationCount;

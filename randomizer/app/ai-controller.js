@@ -2461,8 +2461,8 @@
         }
 
         if (energyGain > 0) {
-          const couldAnalyzeBefore = data.canAnalyzeData?.(player)?.ok;
-          const canAnalyzeAfter = data.canAnalyzeData?.(simulatedPlayer)?.ok;
+          const couldAnalyzeBefore = canAiAnalyzeData(player).ok;
+          const canAnalyzeAfter = canAiAnalyzeData(simulatedPlayer).ok;
           if (!couldAnalyzeBefore && canAnalyzeAfter) {
             const analyzeScore = Math.max(0, aiNumber(scoreAiAnalyzeAction(simulatedPlayer)));
             const blueTraceScore = getAiBestRevealedAlienTraceDirectScore(player, "blue");
@@ -3601,7 +3601,7 @@
       const creditsAfter = credits - creditCost;
       const energyAfter = energy - energyCost;
       const finalMarks = countAiFinalMarksForPlayer(player);
-      const analyzeCost = Math.max(1, aiNumber(data.ANALYZE_ENERGY_COST || 1));
+      const analyzeCost = getAiAnalyzeEnergyCost(player);
       const scanCost = scanEffects?.getStandardScanCost?.(player) || scanEffects?.SCAN_COST || { energy: 2 };
       const scanEnergyCost = Math.max(0, aiNumber(scanCost.energy));
 
@@ -3650,6 +3650,18 @@
         .some((token) => Number(token?.placementSlot) === requiredSlot);
     }
 
+    function getAiAnalyzeEnergyCost(player = getCurrentPlayer()) {
+      if (industry?.canAnalyzeWithoutEnergy?.(player)) return 0;
+      return Math.max(1, aiNumber(data.ANALYZE_ENERGY_COST || 1));
+    }
+
+    function canAiAnalyzeData(player = getCurrentPlayer()) {
+      if (!data?.canAnalyzeData) return { ok: false, message: "数据模块不可用" };
+      return data.canAnalyzeData(player, {
+        skipEnergyCost: getAiAnalyzeEnergyCost(player) <= 0,
+      });
+    }
+
     function canAiFangzhouTracePlacementScoreAtLeast(player, traceType, minScore) {
       if (!player || !fangzhou?.isFangzhouRevealedSlot) return false;
       const neededScore = Math.max(1, aiNumber(minScore));
@@ -3689,6 +3701,7 @@
         return [];
       }
       const resources = player.resources || {};
+      if (getAiAnalyzeEnergyCost(player) <= 0) return [];
       const currentScore = Math.max(0, aiNumber(resources.score));
       const credits = aiNumber(resources.credits);
       const scoreToSecondMark = Math.max(1, 50 - currentScore);
@@ -3713,7 +3726,7 @@
           energy: aiNumber(resources.energy),
           credits,
           handSize: aiNumber(resources.handSize),
-          analyzeEnergyCost: data.ANALYZE_ENERGY_COST || 1,
+          analyzeEnergyCost: getAiAnalyzeEnergyCost(player),
           roundNumber: getAiRoundNumber(),
           finalRoundNumber: FINAL_ROUND_NUMBER,
           turnNumber: turnState.turnNumber,
@@ -3769,7 +3782,8 @@
       }
 
       const resources = player.resources || {};
-      const analyzeEnergyCost = Math.max(1, aiNumber(data.ANALYZE_ENERGY_COST || 1));
+      const analyzeEnergyCost = getAiAnalyzeEnergyCost(player);
+      if (analyzeEnergyCost <= 0) return [];
       if (aiNumber(resources.energy) >= analyzeEnergyCost) return [];
       if (!hasAiAnalyzeReadyDataSlot(player)) return [];
 
@@ -3779,7 +3793,7 @@
           const check = quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false };
           if (!trade || !check.ok || aiNumber(trade.gain?.energy) <= 0) return null;
           const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
-          if (!simulatedPlayer || !data.canAnalyzeData?.(simulatedPlayer)?.ok) return null;
+          if (!simulatedPlayer || !canAiAnalyzeData(simulatedPlayer).ok) return null;
           const analyzeScore = Math.max(0, aiNumber(scoreAiAnalyzeAction(simulatedPlayer)));
           if (analyzeScore < 10) return null;
           const bestBlueTraceScore = getAiBestRevealedAlienTraceDirectScore(player, "blue");
@@ -3934,7 +3948,7 @@
         && !canEnergyCreditScanForThirdMark
         && !canEnergyCreditRecoveryForThirdMark
       ) return [];
-      const needsAnalyzeEnergy = canReachAnalyze && energy < (data.ANALYZE_ENERGY_COST || 1);
+      const needsAnalyzeEnergy = canReachAnalyze && energy < getAiAnalyzeEnergyCost(player);
       const needsLaunchMoveEnergy = energy <= 1 && bestLaunchMoveRecoveryScore > 0;
       const needsPlanetCashoutEnergy = energy <= 1 && bestPlanetCashoutRecoveryScore > 0;
       const scanEnergyShortfall = Math.max(0, scanEnergyCost - energy);
@@ -4276,14 +4290,70 @@
       const scanCost = scanEffects?.getStandardScanCost?.(player) || scanEffects?.SCAN_COST || { credits: 1, energy: 2 };
       const scanCreditCost = Math.max(0, aiNumber(scanCost.credits));
       const scanEnergyCost = Math.max(0, aiNumber(scanCost.energy));
-      const analyzeEnergyCost = Math.max(1, aiNumber(data.ANALYZE_ENERGY_COST || 1));
+      const analyzeEnergyCost = getAiAnalyzeEnergyCost(player);
       const hasImmediateRouteRecovery = bestLaunchMoveRecoveryScore > 0 || bestPlanetCashoutRecoveryScore > 0;
       const finalLowHandRefillWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && mainActionOpen
         && currentScore < 150
         && handSize <= 1
         && (credits >= 2 || energy >= 2 || publicity >= 3);
-      if (!recoveryThreshold && !hasImmediateRouteRecovery && !finalLowHandRefillWindow) return [];
+      const finalLowScoreMainUnlockWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && (!recoveryThreshold || finalMarks >= 3)
+        && currentScore >= 70
+        && currentScore < 150
+        && credits < scanCreditCost
+        && !(turnState.passedPlayerIds || []).includes(player.id);
+      const scoreFinalLowScoreScanUnlockTrade = (tradeId) => {
+        if (!finalLowScoreMainUnlockWindow) return 0;
+        const trade = quickTrades.getTradeAction(tradeId);
+        if (!trade) return 0;
+        const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
+        if (!simulatedPlayer) return 0;
+        const simulatedCredits = Math.max(0, aiNumber(simulatedPlayer.resources?.credits));
+        const simulatedEnergy = Math.max(0, aiNumber(simulatedPlayer.resources?.energy));
+        if (simulatedCredits < scanCreditCost || simulatedEnergy < scanEnergyCost) return 0;
+        const canScanAfterTrade = scanEffects?.canExecuteScan?.(simulatedPlayer, { standardAction: true })?.ok;
+        const tradeCost = estimateAiTradeDiscardOpportunityCost(player, trade);
+        if (!Number.isFinite(tradeCost)) return 0;
+        const effectiveTradeCost = finalLowScoreMainUnlockWindow && handSize >= 5
+          ? Math.min(tradeCost, 18)
+          : tradeCost;
+        const scanScore = canScanAfterTrade ? Math.max(0, aiNumber(scoreAiScanAction(simulatedPlayer))) : 0;
+        const directScoreGain = canScanAfterTrade ? Math.max(0, aiNumber(getAiScanDirectScoreGain(simulatedPlayer))) : 0;
+        const lowScorePressure = Math.max(0, 150 - currentScore) * 0.045;
+        const handBuffer = Math.max(0, handSize - Math.max(0, aiNumber(trade.cost?.handSize))) >= 3 ? 1.5 : 0;
+        const scanUnlockBaseValue = canScanAfterTrade
+          ? 7
+          : state.pendingActionExecuted
+            ? 8.5
+            : 0;
+        const preparedScanValue = scanUnlockBaseValue > 0
+          ? scanUnlockBaseValue + lowScorePressure + handBuffer
+          : 0;
+        return Math.max(
+          0,
+          scanScore * 0.68
+            + directScoreGain * 0.8
+            + lowScorePressure
+            + handBuffer
+            + preparedScanValue
+            - effectiveTradeCost * 0.18,
+        );
+      };
+      const finalLowScoreScanUnlockByTrade = {
+        "cards-for-credit": scoreFinalLowScoreScanUnlockTrade("cards-for-credit"),
+        "energy-for-credit": scoreFinalLowScoreScanUnlockTrade("energy-for-credit"),
+      };
+      const finalLowScoreCardsForCreditScanPrepare = finalLowScoreMainUnlockWindow
+        && handSize >= 4
+        && scanCreditCost > 0
+        && scanCreditCost - credits === 1
+        && energy >= scanEnergyCost;
+      const finalLowScoreCardsForCreditScanUnlock = finalLowScoreScanUnlockByTrade["cards-for-credit"] >= 3.5
+        || finalLowScoreCardsForCreditScanPrepare;
+      const finalLowScoreEnergyForCreditScanUnlock = finalLowScoreScanUnlockByTrade["energy-for-credit"] >= 3.5;
+      const finalLowScoreScanUnlock = finalLowScoreCardsForCreditScanUnlock || finalLowScoreEnergyForCreditScanUnlock;
+      if (!recoveryThreshold && !hasImmediateRouteRecovery && !finalLowHandRefillWindow && !finalLowScoreScanUnlock) return [];
       const scoreToNextThreshold = recoveryThreshold ? Math.max(1, recoveryThreshold - currentScore) : 0;
       const closeThirdMarkScanSetup = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && nextThreshold === 70
@@ -4295,6 +4365,7 @@
         && !closeThirdMarkScanSetup
         && !hasImmediateRouteRecovery
         && !finalLowHandRefillWindow
+        && !finalLowScoreScanUnlock
       ) return [];
       const closeScanCashoutWindow = recoveryThreshold <= 50 ? 10 : 8;
       const closeScanDirectScoreGain = getAiRoundNumber() >= FINAL_ROUND_NUMBER
@@ -4520,14 +4591,22 @@
         },
         {
           tradeId: "cards-for-credit",
-          enabled: canScanAfterCardsForCredit || thresholdCreditRecovery,
+          enabled: canScanAfterCardsForCredit || thresholdCreditRecovery || finalLowScoreCardsForCreditScanUnlock,
           value: baseValue
             + (canScanAfterCardsForCredit ? scanCashoutTradeValue : 0)
             + (thresholdCreditRecovery ? Math.min(10, 5 + Math.max(0, 8 - scoreToNextThreshold) * 0.55) : 0)
+            + (finalLowScoreCardsForCreditScanUnlock
+              ? Math.max(
+                finalLowScoreScanUnlockByTrade["cards-for-credit"],
+                8 + Math.max(0, 150 - currentScore) * 0.05,
+              )
+              : 0)
             + (energy >= scanEnergyCost + 1 ? 1 : 0),
           reason: canScanAfterCardsForCredit
             ? "终局临门：弃牌换信用点准备扫描"
-            : "终局缺标记：弃牌换信用点准备下一轮兑现",
+            : finalLowScoreCardsForCreditScanUnlock
+              ? "终局低分：弃牌换信用点解锁扫描"
+              : "终局缺标记：弃牌换信用点准备下一轮兑现",
         },
         {
           tradeId: "energy-for-card",
@@ -4545,17 +4624,21 @@
           tradeId: "energy-for-credit",
           enabled: canScanAfterEnergyForCredit
             || (secondMarkCreditRecovery && !shouldReservePlanetCashoutEnergy)
-            || thirdMarkCreditRecovery,
+            || thirdMarkCreditRecovery
+            || finalLowScoreEnergyForCreditScanUnlock,
           value: baseValue
             + (recoveryThreshold <= 50 ? 8 : 4)
             + (canScanAfterEnergyForCredit ? scanCashoutTradeValue : 0)
             + (secondMarkCreditRecovery ? Math.min(8, scoreToNextThreshold * 0.28) : 0)
-            + (thirdMarkCreditRecovery ? Math.min(10, 4 + Math.max(0, 22 - scoreToNextThreshold) * 0.25 + (handSize > 0 ? 2 : 0)) : 0),
+            + (thirdMarkCreditRecovery ? Math.min(10, 4 + Math.max(0, 22 - scoreToNextThreshold) * 0.25 + (handSize > 0 ? 2 : 0)) : 0)
+            + (finalLowScoreEnergyForCreditScanUnlock ? finalLowScoreScanUnlockByTrade["energy-for-credit"] : 0),
           reason: canScanAfterEnergyForCredit
             ? "终局临门：能量换信用点准备扫描"
-            : thirdMarkCreditRecovery
-              ? "终局第3标记：能量换信用点恢复打牌/扫描"
-              : "后期落后：能量换信用点恢复打牌/扫描",
+            : finalLowScoreEnergyForCreditScanUnlock
+              ? "终局低分：能量换信用点解锁扫描"
+              : thirdMarkCreditRecovery
+                ? "终局第3标记：能量换信用点恢复打牌/扫描"
+                : "后期落后：能量换信用点恢复打牌/扫描",
         },
         {
           tradeId: "publicity-for-card",
@@ -4624,6 +4707,12 @@
               secondMarkEnergyCardSearch,
               desperateSecondMarkCardSearch,
               thresholdCreditRecovery,
+              finalLowScoreScanUnlock,
+              finalLowScoreCardsForCreditScanPrepare,
+              finalLowScoreScanUnlockByTrade: {
+                "cards-for-credit": roundAiScore(finalLowScoreScanUnlockByTrade["cards-for-credit"]),
+                "energy-for-credit": roundAiScore(finalLowScoreScanUnlockByTrade["energy-for-credit"]),
+              },
               secondMarkAnalyzeEnergyRecovery,
               thirdMarkCreditRecovery,
               closeThirdMarkScanSetup,
@@ -5244,7 +5333,7 @@
       if (slot <= requiredSlot) {
         const resources = player?.resources || {};
         const demand = getAiStrategyDemand(player);
-        const canPayAnalyze = aiNumber(resources.energy) >= (data.ANALYZE_ENERGY_COST || 1);
+        const canPayAnalyze = aiNumber(resources.energy) >= getAiAnalyzeEnergyCost(player);
         const rawCloseAnalyzeBonus = Math.min(
           5.5,
           (slot === requiredSlot ? 2.8 : 1.4)
@@ -9592,7 +9681,7 @@
     }
 
     function scoreAiAnalyzeAction(player = getCurrentPlayer()) {
-      const check = data.canAnalyzeData?.(player);
+      const check = canAiAnalyzeData(player);
       if (!check?.ok) return 0;
       const placedCount = Math.max(0, (data.listComputerPlacedTokens?.(player) || []).length);
       const dataRoom = getAiAvailableDataRoom(player);
@@ -9643,7 +9732,7 @@
           + lateRoundPressure
           + firstThresholdCatchupBonus
           + readyAnalyzeWindowValue
-          - (data.ANALYZE_ENERGY_COST || 1) * getAiResourceValuesForRound(player).energy * 0.35
+          - getAiAnalyzeEnergyCost(player) * getAiResourceValuesForRound(player).energy * 0.35
           - postSecondFinalMarkPenalty,
         "task",
         0.5,
@@ -11323,7 +11412,7 @@
       if (!player || getAiRoundNumber() < FINAL_ROUND_NUMBER) return 0;
       const currentScore = Math.max(0, aiNumber(player.resources?.score));
       if (currentScore < 45 || currentScore >= 50 || countAiFinalMarksForPlayer(player) !== 1) return 0;
-      if (aiNumber(player.resources?.energy) < (data.ANALYZE_ENERGY_COST || 1)) return 0;
+      if (aiNumber(player.resources?.energy) < getAiAnalyzeEnergyCost(player)) return 0;
       const requiredSlot = data.ANALYZE_REQUIRED_COMPUTER_SLOT || 6;
       const placedCount = Math.max(0, (data.listComputerPlacedTokens?.(player) || []).length);
       const availableData = Math.max(0, Math.round(aiNumber(player.resources?.availableData)));
@@ -13837,7 +13926,7 @@
         aiNumber(candidate?.score) > aiNumber(best?.score) ? candidate : best
       ), null);
       const bestMoveScore = Math.max(0, aiNumber(bestMoveCandidate?.score));
-      const analyzeCheck = data.canAnalyzeData?.(currentPlayer) || { ok: false, message: "数据模块不可用" };
+      const analyzeCheck = canAiAnalyzeData(currentPlayer);
       const analyzeScore = analyzeCheck.ok ? scoreAiAnalyzeAction(currentPlayer) : 0;
       const immediatePlanetActionScore = Math.max(
         orbitCandidate.available ? Number(orbitCandidate.score || 0) : 0,
