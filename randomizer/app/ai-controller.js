@@ -2914,6 +2914,7 @@
       if (!task?.destinationPlanetId) return null;
       const destination = getAiPlanetCoordinateById(task.destinationPlanetId);
       if (!destination) return null;
+      if (task.destinationPlanetId === "earth" && aiNumber(to.y) > aiNumber(from.y)) return null;
 
       const oldDistance = getAiSectorDistance(from, destination);
       const newDistance = getAiSectorDistance(to, destination);

@@ -105,7 +105,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     },
     get pendingMovePayment() { return options.pendingMovePayment || null; },
     get pendingActionExecuted() { return Boolean(options.pendingActionExecuted); },
-    get pendingActionEffectFlow() { return null; },
+    get pendingActionEffectFlow() { return options.pendingActionEffectFlow || null; },
     get pendingRunezuFaceSymbolPlacement() { return null; },
     alienTracePickerState: options.alienTracePickerState || null,
   };
@@ -141,6 +141,13 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       canMoveRocket: (_rocketState, rocketId, deltaX, deltaY) => {
         const rocket = (options.movableTokens || []).find((item) => Number(item.id) === Number(rocketId));
         if (!rocket) return { ok: false, message: "rocket not found" };
+        if (Array.isArray(options.allowedMoveDeltas)
+          && !options.allowedMoveDeltas.some((delta) => (
+            Number(delta?.deltaX || 0) === Number(deltaX || 0)
+            && Number(delta?.deltaY || 0) === Number(deltaY || 0)
+          ))) {
+          return { ok: false, message: "move direction disabled by test" };
+        }
         const sector = rocket.sector || null;
         if (!sector) return { ok: false, message: "rocket has no sector" };
         const y = sector.y + Number(deltaY || 0);
@@ -515,6 +522,23 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   if (options.canPayForMove) {
     context.canPayForMove = () => ({ ok: true });
   }
+  if (options.recordEffectMove) {
+    context.executeCardMoveForEffect = (deltaX, deltaY, rocketId) => {
+      noteHandled({
+        type: "effect-move",
+        deltaX: Number(deltaX),
+        deltaY: Number(deltaY),
+        rocketId: Number(rocketId),
+      });
+      return { ok: true, progressed: true };
+    };
+  }
+  if (options.recordSkipCurrentActionEffect) {
+    context.skipCurrentActionEffect = () => {
+      noteHandled({ type: "skip-effect" });
+      return { ok: true, progressed: true, skipped: true };
+    };
+  }
 
   const emptyArrayNames = [
     "buildSectorScanChoicesForX",
@@ -562,6 +586,34 @@ function makeHiddenAlienSlot(traceOwners = {}) {
     };
   }
   return { revealed: false, traces };
+}
+
+function makeChongTransportAlienState(options = {}) {
+  const rocketId = String(options.rocketId || 77);
+  const fossilId = options.fossilId || "fossil_02";
+  const destinationPlanetId = options.destinationPlanetId || "earth";
+  const chongState = chong.createChongState();
+  chongState.fossilsById[fossilId] = {
+    fossilId,
+    status: "transported",
+    location: "transported",
+    destinationPlanetId,
+    fossilRewardRepeat: options.fossilRewardRepeat ?? 1,
+    taskGain: { ...(options.taskGain || {}) },
+    taskDataCount: options.taskDataCount || 0,
+    taskPickCard: Boolean(options.taskPickCard),
+  };
+  chongState.transportTasksByRocketId[rocketId] = {
+    fossilId,
+    destinationPlanetId,
+    cardId: options.cardId || "chong-test",
+  };
+  return {
+    aliens: {
+      1: { revealed: true, alienId: chong.ALIEN_ID, assignedAlienId: chong.ALIEN_ID },
+    },
+    chong: chongState,
+  };
 }
 
 {
@@ -1055,22 +1107,6 @@ function makeHiddenAlienSlot(traceOwners = {}) {
 
 {
   const turnChoices = [];
-  const chongState = chong.createChongState();
-  chongState.fossilsById.fossil_02 = {
-    fossilId: "fossil_02",
-    status: "transported",
-    location: "transported",
-    destinationPlanetId: "earth",
-    fossilRewardRepeat: 1,
-    taskGain: {},
-    taskDataCount: 0,
-    taskPickCard: false,
-  };
-  chongState.transportTasksByRocketId["77"] = {
-    fossilId: "fossil_02",
-    destinationPlanetId: "earth",
-    cardId: "chong-test",
-  };
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
     pendingActionExecuted: true,
@@ -1082,12 +1118,7 @@ function makeHiddenAlienSlot(traceOwners = {}) {
       .filter((candidate) => candidate.available !== false)
       .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
     earthCoordinate: { x: 1, y: 1 },
-    alienGameState: {
-      aliens: {
-        1: { revealed: true, alienId: chong.ALIEN_ID, assignedAlienId: chong.ALIEN_ID },
-      },
-      chong: chongState,
-    },
+    alienGameState: makeChongTransportAlienState({ rocketId: 77 }),
     movableTokens: [
       {
         id: 77,
@@ -1118,6 +1149,94 @@ function makeHiddenAlienSlot(traceOwners = {}) {
     harness.getHandled(),
     { type: "move", deltaX: 0, deltaY: -1, rocketId: 77 },
     "AI should move transported Chong fossils only closer to Earth",
+  );
+}
+
+{
+  const moveEffect = { id: "test-chong-card-move", type: "card_move", options: { movementPoints: 1 } };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    recordEffectMove: true,
+    canPayForMove: true,
+    allowedMoveDeltas: [{ deltaX: 0, deltaY: -1 }],
+    earthCoordinate: { x: 1, y: 1 },
+    pendingActionEffectFlow: {
+      currentIndex: 0,
+      effects: [moveEffect],
+      cardMoveEffect: { effect: moveEffect, poolRemaining: 1 },
+    },
+    alienGameState: makeChongTransportAlienState({ rocketId: 77 }),
+    movableTokens: [
+      {
+        id: 77,
+        kind: "chong-fossil",
+        playerId: "player-blue",
+        color: "blue",
+        sector: { x: 1, y: 3 },
+        sectorX: 1,
+        sectorY: 3,
+      },
+    ],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should move Chong fossil during card movement when the step gets closer");
+  assert.deepEqual(
+    harness.getHandled(),
+    { type: "effect-move", deltaX: 0, deltaY: -1, rocketId: 77 },
+    "AI card movement should move transported Chong fossils only inward toward Earth",
+  );
+}
+
+{
+  const moveEffect = { id: "test-chong-card-move-away", type: "card_move", options: { movementPoints: 1 } };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    recordEffectMove: true,
+    recordSkipCurrentActionEffect: true,
+    canPayForMove: true,
+    allowedMoveDeltas: [{ deltaX: 0, deltaY: 1 }],
+    earthCoordinate: { x: 1, y: 1 },
+    pendingActionEffectFlow: {
+      currentIndex: 0,
+      effects: [moveEffect],
+      cardMoveEffect: { effect: moveEffect, poolRemaining: 1 },
+    },
+    alienGameState: makeChongTransportAlienState({ rocketId: 77 }),
+    movableTokens: [
+      {
+        id: 77,
+        kind: "chong-fossil",
+        playerId: "player-blue",
+        color: "blue",
+        sector: { x: 1, y: 3 },
+        sectorX: 1,
+        sectorY: 3,
+      },
+    ],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should skip Chong fossil card movement when every legal step moves away from Earth");
+  assert.equal(result.skipped, true, "away-from-Earth Chong fossil effect movement should be skipped");
+  assert.deepEqual(
+    harness.getHandled(),
+    { type: "skip-effect" },
+    "AI should not spend card movement pushing transported Chong fossils outward",
   );
 }
 
