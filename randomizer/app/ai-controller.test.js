@@ -145,6 +145,12 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     data: {},
     ai: {
       policy: {
+        choosePlayCard: (candidates) => (
+          candidates
+            .slice()
+            .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0]
+          || null
+        ),
         chooseTurnAction: (candidates) => (
           candidates.find((candidate) => candidate.id === "runezuFaceSymbol")
           || candidates.find((candidate) => candidate.available !== false)
@@ -860,6 +866,34 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   const result = harness.controller.runAiAutomationStep();
   assert.equal(result.ok, true, "AI should select a playable Fangzhou card2 from hand");
   assert.deepEqual(harness.getHandled(), { type: "play-card", handIndex: 0, confirmed: true });
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    playCardSelectionActive: true,
+    blueHand: [
+      { id: "low-value-blank", cardName: "低价值空牌", price: 0 },
+      {
+        ...fangzhou.createCard2Definition("blue", 4),
+        id: "fangzhou-card2-priority-test",
+        faceUp: true,
+        fangzhouCard2: true,
+        fangzhouTraceType: "blue",
+      },
+    ],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should prefer Fangzhou card2 advanced reward over a low-value blank card");
+  assert.deepEqual(harness.getHandled(), { type: "play-card", handIndex: 1, confirmed: true });
 }
 
 {

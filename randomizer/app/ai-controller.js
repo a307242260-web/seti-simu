@@ -3139,6 +3139,183 @@
       return reward;
     }
 
+    function getAiFangzhouUnlockCount(player = getCurrentPlayer()) {
+      if (!player || !fangzhou?.getUnlockCount) return 0;
+      return Math.max(0, Math.round(aiNumber(fangzhou.getUnlockCount(alienGameState, player))));
+    }
+
+    function getAiFangzhouRequiredUnlockForPosition(position) {
+      const pos = Math.max(0, Math.round(aiNumber(position)));
+      if (pos <= 1) return 0;
+      if (pos === 2) return 1;
+      if (pos === 3) return 2;
+      if (pos >= 4) return 3;
+      return 0;
+    }
+
+    function countAiFangzhouCard2InHand(player = getCurrentPlayer()) {
+      if (!player || !fangzhou?.isFangzhouCard2) return 0;
+      return (player.hand || []).filter((card) => fangzhou.isFangzhouCard2(card)).length;
+    }
+
+    function scoreAiFangzhouCreditReadiness(player = getCurrentPlayer()) {
+      if (!player) return 0;
+      const cost = Math.max(1, aiNumber(fangzhou?.CARD2_PLAY_COST?.credits || 2));
+      const credits = Math.max(0, aiNumber(player.resources?.credits));
+      if (credits >= cost + 1) return 5.2;
+      if (credits >= cost) return 4.2;
+      const shortfall = cost - credits;
+      const creditIncome = Math.max(0, aiNumber(player.income?.credits));
+      if (shortfall <= 1) return 1.4 + Math.min(1.4, creditIncome * 0.35);
+      return -Math.min(5, 1.8 + shortfall * 1.2);
+    }
+
+    function scoreAiFangzhouPlacementPotentialAtUnlockCount(player = getCurrentPlayer(), unlockCount = 0) {
+      if (!player || !fangzhou?.isFangzhouRevealedSlot || !fangzhou?.getTraceGrid) return 0;
+      const allowedUnlockCount = Math.max(0, Math.round(aiNumber(unlockCount)));
+      const candidates = [];
+      for (const alienSlotId of aliens.ALIEN_SLOT_IDS || []) {
+        if (!fangzhou.isFangzhouRevealedSlot(alienGameState, alienSlotId)) continue;
+        const grid = fangzhou.getTraceGrid(alienGameState, alienSlotId);
+        for (const traceType of fangzhou.TRACE_TYPES || AI_TRACE_TYPES) {
+          for (const rawPosition of fangzhou.TRACE_POSITIONS || []) {
+            const position = Number(rawPosition);
+            if (getAiFangzhouRequiredUnlockForPosition(position) > allowedUnlockCount) continue;
+            if (grid?.[traceType]?.[position]) continue;
+            const rawReward = fangzhou.getTraceReward?.(traceType, position);
+            const reward = getAiAlienTraceRewardForValuation("fangzhou-grid", rawReward, player);
+            const directScore = Math.max(0, aiNumber(reward?.gain?.score));
+            const value = scoreAiAlienTraceValue({
+              player,
+              traceType,
+              alienSlotId,
+              mode: "fangzhou-grid",
+              position,
+              reward,
+            })
+              + scoreAiAlienGridPosition("fangzhou-grid", traceType, position, "")
+              + scoreAiPaceValueForDirectScore(directScore, player, {
+                baseWeight: getAiRoundNumber() >= 3 ? 0.55 : 0.28,
+                pressureWeight: getAiRoundNumber() >= 3 ? 0.22 : 0.12,
+              });
+            candidates.push(value);
+          }
+        }
+      }
+      candidates.sort((left, right) => right - left);
+      return roundAiScore(Math.max(0, aiNumber(candidates[0])) + Math.max(0, aiNumber(candidates[1])) * 0.35);
+    }
+
+    function scoreAiFangzhouUnlockChoiceValue(player = getCurrentPlayer(), traceType = null) {
+      if (!player || !fangzhou?.canUnlockCard2ForTrace) return 0;
+      if (traceType && !fangzhou.canUnlockCard2ForTrace(alienGameState, player, traceType)) return -Infinity;
+      const unlockCount = getAiFangzhouUnlockCount(player);
+      if (unlockCount >= 3) return 0;
+      const nextUnlockCount = Math.min(3, unlockCount + 1);
+      const currentPotential = scoreAiFangzhouPlacementPotentialAtUnlockCount(player, unlockCount);
+      const nextPotential = scoreAiFangzhouPlacementPotentialAtUnlockCount(player, nextUnlockCount);
+      const openedPlacementValue = Math.max(0, nextPotential - currentPotential);
+      const creditReadiness = scoreAiFangzhouCreditReadiness(player);
+      const cardBacklog = Math.max(0, countAiFangzhouCard2InHand(player) - 1);
+      const round = getAiRoundNumber();
+      let value = 0;
+      if (unlockCount <= 0) value += 9.5;
+      else if (unlockCount === 1) value += 7.2;
+      else value += round <= 2 ? 3.4 : 4.8;
+      value += openedPlacementValue * (unlockCount <= 1 ? 0.65 : 0.48);
+      value += creditReadiness;
+      value -= cardBacklog * (creditReadiness < 2 ? 2.2 : 0.8);
+      if (round >= FINAL_ROUND_NUMBER && openedPlacementValue < 4) value -= 2;
+      return roundAiScore(Math.max(-6, Math.min(24, value)));
+    }
+
+    function getAiFangzhouCard1RewardIndexes() {
+      if (!fangzhou?.getCard1Effect) return [];
+      const fallbackIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+      const state = alienGameState?.fangzhou || {};
+      const revealedSinceShuffle = Math.max(0, Math.round(aiNumber(state.card1RevealedSinceShuffle)));
+      const threshold = Math.max(1, Math.round(aiNumber(fangzhou.CARD1_RESHUFFLE_THRESHOLD || 5)));
+      if (revealedSinceShuffle >= threshold) return fallbackIndexes;
+      const deck = Array.isArray(state.card1Deck)
+        ? state.card1Deck
+          .map((index) => Math.round(Number(index)))
+          .filter((index) => fangzhou.getCard1Effect(index, "advanced"))
+        : [];
+      return deck.length ? deck : fallbackIndexes;
+    }
+
+    function getAiSafePositiveScore(callback, fallback = 0) {
+      if (typeof callback !== "function") return fallback;
+      try {
+        const value = callback();
+        return Number.isFinite(Number(value)) ? Math.max(0, Number(value)) : fallback;
+      } catch (_error) {
+        return fallback;
+      }
+    }
+
+    function scoreAiFangzhouCard1EffectValue(effect = {}, player = getCurrentPlayer(), options = {}) {
+      if (!effect || typeof effect !== "object") return 0;
+      let value = 0;
+      const gain = effect.gain || {};
+      if (gain && Object.keys(gain).length) {
+        value += scoreAiResourceBundle(gain);
+        value += scoreAiThresholdPressureForScoreGain(gain.score, player) * 0.7;
+        value += scoreAiMidgameResourceContinuationValue(gain, player, { scale: 0.45 });
+      }
+      const dataCount = Math.max(0, Math.round(aiNumber(effect.dataCount)));
+      if (dataCount > 0) {
+        value += dataCount * AI_RESOURCE_VALUES.availableData;
+        value += scoreAiMidgameResourceContinuationValue({ availableData: dataCount }, player, { scale: 0.55 });
+      }
+      value += Math.max(0, Math.round(aiNumber(effect.blindDraw))) * AI_RESOURCE_VALUES.handSize;
+      if (effect.pickCard) value += 4.2;
+      value += Math.max(0, Math.round(aiNumber(effect.additionalPublicScan))) * AI_RESOURCE_VALUES.additionalPublicScan * 2.2;
+      if (effect.alienTrace) {
+        value += Math.max(7.5, scoreAiFangzhouPlacementPotentialAtUnlockCount(player, getAiFangzhouUnlockCount(player)) * 0.42);
+      }
+      if (effect.scanAction) {
+        const scanScore = getAiSafePositiveScore(() => (
+          scanEffects?.buildScanEffectQueue ? scoreAiScanAction(player) : 0
+        ));
+        value += Math.max(8, scanScore * 0.5 + scoreAiScanPriorityFloor(player) * 0.6);
+      }
+      const sectorScanCount = Array.isArray(effect.sectorScans) ? effect.sectorScans.length : 0;
+      if (sectorScanCount > 0) {
+        value += sectorScanCount * 4.1 + scoreAiScanPriorityFloor(player) * 0.35;
+      }
+      if (effect.extraSectorScan) value += 3.8;
+      if (effect.techAction) {
+        const bestTechScore = getAiSafePositiveScore(() => (listAiResearchTechCandidates() || [])[0]?.score);
+        value += Math.max(8.5, bestTechScore * 0.42);
+      }
+      if (effect.launchIgnoreLimit) {
+        const launchScore = getAiSafePositiveScore(() => scoreAiLaunchAction(player));
+        value += Math.max(5, launchScore * 0.45);
+      }
+      const freeMoves = Math.max(0, Math.round(aiNumber(effect.freeMoves)));
+      if (freeMoves > 0) {
+        const bestMoveScore = getAiSafePositiveScore(() => (listAiMoveCandidates() || [])[0]?.score);
+        value += freeMoves * AI_RESOURCE_VALUES.movement + bestMoveScore * 0.22;
+      }
+      const cap = Math.max(8, aiNumber(options.cap || 32));
+      return roundAiScore(Math.max(0, Math.min(cap, value)));
+    }
+
+    function scoreAiFangzhouCard2AdvancedRewardValue(player = getCurrentPlayer()) {
+      const indexes = getAiFangzhouCard1RewardIndexes();
+      if (!indexes.length) return 16;
+      const values = indexes
+        .map((index) => fangzhou?.getCard1Effect?.(index, "advanced"))
+        .map((effect) => scoreAiFangzhouCard1EffectValue(effect, player, { cap: 34 }))
+        .filter((value) => Number.isFinite(Number(value)));
+      if (!values.length) return 16;
+      const average = values.reduce((total, value) => total + value, 0) / values.length;
+      const best = Math.max(...values);
+      const creditReadiness = scoreAiFangzhouCreditReadiness(player) * 0.32;
+      return roundAiScore(Math.min(34, average * 0.78 + best * 0.22 + creditReadiness));
+    }
+
     function scoreAiBanrenmaTraceTimingValue(mode, reward, player = getCurrentPlayer(), position = null) {
       if (mode !== "banrenma-grid" || !reward || !player) return 0;
       const pos = Number(position);
@@ -5797,7 +5974,7 @@
         case chong?.EFFECT_TYPES?.CHONG_TASK_CLEANUP:
           return 1.5;
         case AI_FANGZHOU_CARD2_REWARD_EFFECT_TYPE:
-          return 16;
+          return scoreAiFangzhouCard2AdvancedRewardValue(player);
         case aomomo?.EFFECT_GAIN_FOSSILS:
           return Math.max(1, Math.round(aiNumber(effectOptions.count || 1))) * 3;
         case aomomo?.EFFECT_SCAN_AOMOMO_X:
@@ -12952,10 +13129,13 @@
       const traceType = getAiAlienTraceTargetTraceType(target);
       const position = getAiAlienTraceTargetPosition(target);
       const fangzhouUseChoice = target.button.dataset.fangzhouUse || null;
+      const isFangzhouUnlockChoice = mode === "fangzhou-use" && fangzhouUseChoice === "unlock";
       const scoringMode = mode === "fangzhou-use" && fangzhouUseChoice === "place" && position != null
         ? "fangzhou-grid"
         : mode;
-      const rawReward = getAiAlienTraceTargetReward(scoringMode, traceType, position);
+      const rawReward = isFangzhouUnlockChoice
+        ? fangzhou?.getCard2UnlockTraceReward?.()
+        : getAiAlienTraceTargetReward(scoringMode, traceType, position);
       const reward = getAiAlienTraceRewardForValuation(scoringMode, rawReward, player);
       const demand = getAiStrategyDemand(player);
       const traceDemand = traceType ? getAiMapDemand(demand.traceTypes, traceType) : 0;
@@ -13053,8 +13233,9 @@
       if (reward?.pickAlienCard) score += 4;
       if (reward?.drawCards) score += Math.max(0, aiNumber(reward.drawCards)) * 1.8;
       if (reward?.blindDraw) score += Math.max(0, aiNumber(reward.blindDraw)) * 1.4;
+      if (isFangzhouUnlockChoice) score += scoreAiFangzhouUnlockChoiceValue(player, traceType);
       score += scoreAiBanrenmaTraceTimingValue(scoringMode, reward, player, position);
-      if (target.kind === "grid-slot" || (mode === "fangzhou-use" && fangzhouUseChoice === "place")) {
+      if (target.kind === "grid-slot" || (mode === "fangzhou-use" && fangzhouUseChoice === "place") || isFangzhouUnlockChoice) {
         const directScore = Math.max(0, aiNumber(reward?.gain?.score));
         const pointConversionPenalty = scoreAiHighCostPointConversionPenalty(player, {
           actionId: "alienTrace",
@@ -13080,10 +13261,11 @@
           score += scoreAiThirdFinalMarkCashoutValue(directScore, player, { weight: 0.85 });
         }
       }
-      if (mode === "fangzhou-use" && fangzhouUseChoice === "unlock") {
+      if (isFangzhouUnlockChoice) {
         const threshold = getAiNextMissingFinalScoreThreshold(player);
         const currentScore = Math.max(0, aiNumber(player?.resources?.score));
-        if (threshold && threshold <= 50 && currentScore >= 45 && currentScore < threshold) {
+        const directScore = Math.max(0, aiNumber(reward?.gain?.score));
+        if (threshold && threshold <= 50 && currentScore >= 45 && currentScore < threshold && currentScore + directScore < threshold) {
           score -= 5;
         }
       }
