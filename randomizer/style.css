@@ -43,7 +43,7 @@ body {
   background-image: url("../assets/core/start.png");
   background-position: center;
   background-repeat: no-repeat;
-  background-size: auto min(88vh, 940px);
+  background-size: auto min(101.2vh, 1081px);
 }
 
 .start-screen[hidden] {
@@ -263,7 +263,7 @@ body {
 
 @media (max-aspect-ratio: 1501 / 1048) {
   .start-screen {
-    background-size: min(94vw, 1320px) auto;
+    background-size: min(108.1vw, 1518px) auto;
   }
 }
 
