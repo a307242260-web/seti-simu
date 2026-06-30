@@ -863,7 +863,7 @@ body {
 
 .app-wrap[data-interaction-focus="board-rockets"] .rocket-token.is-move-muted {
   opacity: 0.26;
-  filter: grayscale(0.5) brightness(0.72);
+  filter: var(--rocket-edge-filter) grayscale(0.5) brightness(0.72);
   pointer-events: none;
 }
 
@@ -4073,6 +4073,14 @@ body {
 }
 
 .rocket-token {
+  --rocket-edge-dark: rgba(5, 10, 18, 0.9);
+  --rocket-edge-light: rgba(255, 255, 255, 0.5);
+  --rocket-edge-filter:
+    drop-shadow(0 1px 0 var(--rocket-edge-dark))
+    drop-shadow(1px 0 0 var(--rocket-edge-dark))
+    drop-shadow(0 -1px 0 var(--rocket-edge-dark))
+    drop-shadow(-1px 0 0 var(--rocket-edge-dark))
+    drop-shadow(0 0 2px var(--rocket-edge-light));
   position: absolute;
   width: var(--rocket-width, 41px);
   height: auto;
@@ -4083,7 +4091,27 @@ body {
   pointer-events: auto;
   touch-action: auto;
   user-select: none;
-  filter: drop-shadow(0 0 5px var(--rocket-glow, rgba(77, 209, 255, 0.7)));
+  filter: var(--rocket-edge-filter) drop-shadow(0 0 5px var(--rocket-glow, rgba(77, 209, 255, 0.7)));
+}
+
+.rocket-token[data-player-color="blue"] {
+  --rocket-edge-dark: rgba(3, 14, 38, 0.94);
+  --rocket-edge-light: rgba(218, 242, 255, 0.62);
+}
+
+.rocket-token[data-player-color="green"] {
+  --rocket-edge-dark: rgba(2, 31, 18, 0.94);
+  --rocket-edge-light: rgba(225, 255, 232, 0.58);
+}
+
+.rocket-token[data-player-color="brown"] {
+  --rocket-edge-dark: rgba(35, 17, 6, 0.92);
+  --rocket-edge-light: rgba(255, 225, 180, 0.76);
+}
+
+.rocket-token[data-player-color="white"] {
+  --rocket-edge-dark: rgba(3, 9, 18, 0.98);
+  --rocket-edge-light: rgba(255, 255, 255, 0.44);
 }
 
 .yichangdian-anomaly-marker {
@@ -4183,17 +4211,17 @@ body {
 .rocket-token.is-dragging {
   z-index: 510;
   cursor: grabbing;
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.92));
+  filter: var(--rocket-edge-filter) drop-shadow(0 0 8px rgba(255, 255, 255, 0.92));
 }
 
 .rocket-token.is-move-target {
   z-index: 500;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 14px var(--rocket-glow, rgba(77, 209, 255, 0.9)));
+  filter: var(--rocket-edge-filter) drop-shadow(0 0 10px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 14px var(--rocket-glow, rgba(77, 209, 255, 0.9)));
   transform: translate(-50%, -50%) scale(1.2);
 }
 
 .rocket-token.is-reference-placed {
-  filter: drop-shadow(0 0 6px var(--rocket-glow, rgba(77, 209, 255, 0.7))) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.55));
+  filter: var(--rocket-edge-filter) drop-shadow(0 0 6px var(--rocket-glow, rgba(77, 209, 255, 0.7))) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.55));
 }
 
 .rocket-token.is-reference-placed.is-reference-offset {
@@ -4210,15 +4238,15 @@ body {
 }
 
 .rocket-token.is-default-reference.is-reference-orbit {
-  filter: drop-shadow(0 0 6px var(--rocket-glow, rgba(98, 219, 255, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  filter: var(--rocket-edge-filter) drop-shadow(0 0 6px var(--rocket-glow, rgba(98, 219, 255, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .rocket-token.is-default-reference.is-reference-land {
-  filter: drop-shadow(0 0 6px var(--rocket-glow, rgba(255, 210, 86, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  filter: var(--rocket-edge-filter) drop-shadow(0 0 6px var(--rocket-glow, rgba(255, 210, 86, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .rocket-token.is-default-reference.is-reference-satellite {
-  filter: drop-shadow(0 0 6px var(--rocket-glow, rgba(188, 242, 142, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  filter: var(--rocket-edge-filter) drop-shadow(0 0 6px var(--rocket-glow, rgba(188, 242, 142, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .rocket-token.is-planet-marker {
@@ -4227,15 +4255,15 @@ body {
 }
 
 .rocket-token.is-planet-marker.is-reference-orbit {
-  filter: drop-shadow(0 0 6px var(--rocket-glow, rgba(98, 219, 255, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  filter: var(--rocket-edge-filter) drop-shadow(0 0 6px var(--rocket-glow, rgba(98, 219, 255, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .rocket-token.is-planet-marker.is-reference-land {
-  filter: drop-shadow(0 0 6px var(--rocket-glow, rgba(255, 210, 86, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  filter: var(--rocket-edge-filter) drop-shadow(0 0 6px var(--rocket-glow, rgba(255, 210, 86, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .rocket-token.is-planet-marker.is-reference-satellite {
-  filter: drop-shadow(0 0 6px var(--rocket-glow, rgba(188, 242, 142, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  filter: var(--rocket-edge-filter) drop-shadow(0 0 6px var(--rocket-glow, rgba(188, 242, 142, 0.88))) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
 }
 
 .land-target-overlay {
