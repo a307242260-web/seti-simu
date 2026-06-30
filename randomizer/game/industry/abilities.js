@@ -410,7 +410,7 @@
         id: `industry-pirates-raid-marker-${key}`,
         type: "industry_pirates_raid_marker",
         label: "星际海盗：放置掠夺标记",
-        icon: "publicity",
+        icon: "piratesRaidMarker",
         status: "pending",
         undoable: true,
         required: true,

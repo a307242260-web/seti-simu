@@ -47,6 +47,7 @@
         analyzeData: "../assets/symbol/effect/analyze_data.webp",
         income: "../assets/symbol/effect/income.webp",
         incomeCard: "../assets/symbol/effect/income_card.webp",
+        piratesRaidMarker: "../assets/industry/掠夺标记.png",
         additionalPublicScan: "../assets/tokens/additional_public_scan.webp",
         orbitOrLand: "../assets/symbol/effect/orbit or land.webp",
         yellowFinishScan: "../assets/symbol/effect/yellow_finish_scan.webp",

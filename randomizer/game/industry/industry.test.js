@@ -213,6 +213,8 @@ assert.deepEqual(piratesNodes.map((node) => node.type), [
   "industry_pirates_raid_marker",
   "industry_pirates_raid_publicity",
 ]);
+assert.equal(piratesNodes[0].icon, "piratesRaidMarker");
+assert.equal(piratesNodes[1].icon, "publicity");
 assert.equal(piratesNodes[0].required, true);
 assert.equal(piratesNodes[0].options.skippable, false);
 const piratesPlace = state.placePiratesRaidMarker(piratesPlayer, "orange2", "mars");
