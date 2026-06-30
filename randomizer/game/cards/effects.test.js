@@ -417,7 +417,11 @@ assert.equal(cardEffects.collectReadyTasks(blackSectorPlayer, {
   alienGameState: {},
 }).length, 0);
 
-for (const cardId of ["b_16.webp", "b_17.webp", "b_18.webp"]) {
+for (const { cardId, color, icon, label } of [
+  { cardId: "b_16.webp", color: "blue", icon: "blue_scan", label: "蓝色扇区扫描" },
+  { cardId: "b_17.webp", color: "red", icon: "red_scan", label: "红色扇区扫描" },
+  { cardId: "b_18.webp", color: "yellow", icon: "yellow_scan", label: "黄色扇区扫描" },
+]) {
   const effects = cardEffects.buildPlayEffects({ cardId });
   const model = cardEffects.getCardModel({ cardId });
   assert.equal(model.cardType, 0);
@@ -426,6 +430,11 @@ for (const cardId of ["b_16.webp", "b_17.webp", "b_18.webp"]) {
   assert.equal(cardEffects.getTemporaryTasks({ cardId }).length, 0);
   assert.equal(effects[0].type, cardEffects.EFFECT_TYPES.CARD_MOVE);
   assert.equal(effects[1].type, cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE);
+  assert.equal(effects[1].label, label);
+  assert.equal(effects[1].icon, icon);
+  assert.equal(effects[1].options.color, color);
+  assert.equal(effects[1].options.gainData, true);
+  assert.equal(effects[1].options.repeat, 1);
 }
 
 assert.equal(cardEffects.getRuntimeCardTypeCode({ cardId: "b_18.webp", cardTypeCode: 0 }, 0), 0);

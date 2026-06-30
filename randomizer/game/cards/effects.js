@@ -1226,8 +1226,8 @@
       cardType: 0,
       playEffects: Object.freeze([
         cardMoveEffect("b18-move", "1移动"),
-        effect("b18-red-scan", EFFECT_TYPES.SCAN_COLOR_CHOICE, "红色扇区扫描", "red_scan", {
-          color: "red",
+        effect("b18-yellow-scan", EFFECT_TYPES.SCAN_COLOR_CHOICE, "黄色扇区扫描", "yellow_scan", {
+          color: "yellow",
           gainData: true,
         }),
       ]),
