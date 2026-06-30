@@ -21,18 +21,20 @@
     } = dependencies;
 
     const FINAL_SCORE_IDS = ["a", "b", "c", "d"];
+    const BOARD_VISUAL_SCALE = 1.15;
 
     return {
       WHEEL_OFFSETS: [0, 0, 20, 11, 4],
+      BOARD_VISUAL_SCALE,
       FINAL_SCORE_IDS,
       FINAL_SCORE_SLOT_POINTS: Object.freeze({
         1: Object.freeze({ x: 18.5, y: 54.4 }),
         2: Object.freeze({ x: 40.4, y: 54.4 }),
         3: Object.freeze({ x: 66, y: 54.4, stepX: 8.5, stepY: 9.5, columns: 3 }),
       }),
-      ROCKET_IMAGE_SCALE: 0.104,
-      REFERENCE_ORBIT_IMAGE_SCALE: 0.0286,
-      REFERENCE_LANDDING_IMAGE_SCALE: 0.0338,
+      ROCKET_IMAGE_SCALE: 0.104 * BOARD_VISUAL_SCALE,
+      REFERENCE_ORBIT_IMAGE_SCALE: 0.0286 * BOARD_VISUAL_SCALE,
+      REFERENCE_LANDDING_IMAGE_SCALE: 0.0338 * BOARD_VISUAL_SCALE,
       RESOURCE_ICON_SRC: Object.freeze({
         cost: "../assets/symbol/effect/cost.webp",
         score: "../assets/symbol/effect/score.webp",

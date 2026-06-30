@@ -268,13 +268,14 @@ body {
 }
 
 .app-wrap {
+  --board-visual-scale: 1.15;
   position: relative;
   margin: 0 auto;
   width: 100%;
-  max-width: 1760px;
+  max-width: 2024px;
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(200px, 0.72fr) minmax(520px, 1.58fr) minmax(300px, 0.88fr);
+  grid-template-columns: minmax(190px, 0.58fr) minmax(598px, 2.2fr) minmax(300px, 0.72fr);
   grid-template-areas: "left center right";
   align-items: start;
   justify-content: center;
@@ -1802,7 +1803,7 @@ body {
 .player-command {
   flex: 0 0 auto;
   width: 100%;
-  max-width: 100%;
+  max-width: none;
   display: grid;
   gap: 8px;
   margin-bottom: clamp(12px, 1.2vw, 20px);
@@ -4043,8 +4044,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: calc(30px * var(--board-visual-scale, 1));
+  height: calc(30px * var(--board-visual-scale, 1));
   margin: 0;
   padding: 0;
   border: 1px solid rgba(154, 218, 255, 0.72);
@@ -4070,9 +4071,9 @@ body {
   display: block;
   width: 0;
   height: 0;
-  border-top: 6px solid transparent;
-  border-bottom: 6px solid transparent;
-  border-left: 11px solid rgba(220, 242, 255, 0.96);
+  border-top: calc(6px * var(--board-visual-scale, 1)) solid transparent;
+  border-bottom: calc(6px * var(--board-visual-scale, 1)) solid transparent;
+  border-left: calc(11px * var(--board-visual-scale, 1)) solid rgba(220, 242, 255, 0.96);
   transform: rotate(var(--move-arrow-rotation, 0deg));
   transform-origin: 35% 50%;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
@@ -4203,8 +4204,8 @@ body {
 .chong-fossil-owner-token {
   position: absolute;
   width: 1.74%;
-  min-width: 16px;
-  max-width: 26px;
+  min-width: calc(16px * var(--board-visual-scale, 1));
+  max-width: calc(26px * var(--board-visual-scale, 1));
   height: auto;
   transform: translate(-50%, -50%);
   transform-origin: center center;
@@ -5067,7 +5068,7 @@ button.spin-button:hover {
 
 @media (max-width: 1180px) {
   .app-wrap {
-    max-width: 920px;
+    max-width: 1058px;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "center"

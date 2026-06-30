@@ -48,6 +48,7 @@
   const appConstants = window.SetiAppConstants.createAppConstants(dependencies);
   const {
     WHEEL_OFFSETS,
+    BOARD_VISUAL_SCALE,
     FINAL_SCORE_IDS,
     FINAL_SCORE_SLOT_POINTS,
     ROCKET_IMAGE_SCALE,
@@ -18463,7 +18464,9 @@
     const h = window.innerHeight;
     const boardWidth = els.boardShell.clientWidth || window.innerWidth;
     const boardHeight = h - 160;
-    const boardSize = Math.floor(Math.max(220, Math.min(boardWidth, boardHeight)));
+    const baseBoardSize = Math.max(220, Math.min(boardWidth, boardHeight));
+    const compactWidthCap = window.innerWidth <= 760 ? Math.max(220, window.innerWidth - 16) : Infinity;
+    const boardSize = Math.floor(Math.min(baseBoardSize * BOARD_VISUAL_SCALE, compactWidthCap));
     els.playerCommand.style.width = `${boardSize}px`;
     els.wheelWrap.style.width = `${boardSize}px`;
     els.wheelWrap.style.height = `${boardSize}px`;
