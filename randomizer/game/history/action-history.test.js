@@ -165,4 +165,51 @@ assert.equal(blockedFangzhouPlayUndo.ok, false);
 assert.equal(blockedFangzhouPlayUndo.blockedBy.id, fangzhouBarrier.id);
 assert.deepEqual(fangzhouLikeState, { cardInHand: false, credits: 0, launched: false });
 
+const futureSpanLikeHistory = actionHistory.createActionHistory();
+const futureSpanLikeState = {
+  futureSpan: { card: { id: "future-card" }, targetScore: 30, playing: false },
+  cardResolved: false,
+};
+const beforeFutureSpanPlay = structuredClone(futureSpanLikeState);
+futureSpanLikeHistory.beginSession("playCard", "打牌行动");
+futureSpanLikeHistory.beginStep({ source: "main", type: "action_start", label: "打出未来跨度目标牌" });
+futureSpanLikeHistory.record({
+  label: "恢复打牌前状态",
+  undo() {
+    Object.assign(futureSpanLikeState, structuredClone(beforeFutureSpanPlay));
+  },
+});
+futureSpanLikeHistory.endStep();
+futureSpanLikeState.futureSpan.playing = true;
+futureSpanLikeHistory.beginStep({
+  source: "main",
+  type: "irreversible",
+  label: "未来跨度目标牌翻出新信息",
+  undoable: false,
+  irreversibleCode: "hidden_card_reveal",
+  irreversibleReason: "翻出新牌",
+});
+const futureSpanBarrier = futureSpanLikeHistory.endStep();
+futureSpanLikeState.futureSpan = { card: null, targetScore: null, playing: false };
+futureSpanLikeState.cardResolved = true;
+futureSpanLikeHistory.beginStep({ source: "main", type: "effect", label: "屏障后奖励" });
+futureSpanLikeHistory.record({
+  label: "撤销屏障后奖励",
+  undo() {
+    futureSpanLikeState.cardResolved = false;
+  },
+});
+futureSpanLikeHistory.endStep();
+assert.equal(futureSpanLikeHistory.hasUndoableStep(), true);
+const undoFutureSpanReward = futureSpanLikeHistory.undoLastStep();
+assert.equal(undoFutureSpanReward.ok, true);
+assert.deepEqual(
+  futureSpanLikeState.futureSpan,
+  { card: null, targetScore: null, playing: false },
+  "Future Span release should stay complete when only post-barrier effects are undone",
+);
+const blockedFutureSpanPlayUndo = futureSpanLikeHistory.undoLastStep();
+assert.equal(blockedFutureSpanPlayUndo.ok, false);
+assert.equal(blockedFutureSpanPlayUndo.blockedBy.id, futureSpanBarrier.id);
+
 console.log("action-history.test.js: all tests passed");

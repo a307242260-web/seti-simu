@@ -174,10 +174,11 @@ assert.equal(b6Rewards[0].type, "draw_cards");
 
 const b7Effects = cardEffects.buildPlayEffects({ cardId: "b_7.webp" });
 assert.equal(cardEffects.getCardModel({ cardId: "b_7.webp" }).cardType, 0);
-assert.equal(b7Effects.length, 1);
-assert.equal(b7Effects[0].type, "draw_cards");
-assert.equal(b7Effects[0].options.count, 3);
-assert.equal(b7Effects[0].icon, "blind_card");
+assert.equal(b7Effects.length, 3);
+assert.equal(b7Effects[0].type, cardEffects.EFFECT_TYPES.DRAW_THEN_SCAN);
+assert.equal(b7Effects[0].options.discardDrawnOnSkip, true);
+assert.equal(b7Effects[0].options.repeat, 1);
+assert.equal(b7Effects[2].label, "盲抽并弃牌扫描 3/3");
 assert.equal(cardEffects.getTemporaryTasks({ cardId: "b_7.webp" }).length, 0);
 
 const y8Effects = cardEffects.buildPlayEffects({ cardId: "yichangdian_8.webp" });
@@ -236,9 +237,9 @@ for (let index = 1; index <= 42; index += 1) {
 
 const dlc1Effects = cardEffects.buildPlayEffects({ cardId: "dlc_1.png" });
 assert.equal(dlc1Effects[0].type, cardEffects.EFFECT_TYPES.CARD_LAND);
-assert.equal(dlc1Effects[0].options.rememberPreLandingOwnMarker, true);
+assert.equal(dlc1Effects[0].options.rememberPreLandingMarker, true);
 assert.equal(dlc1Effects[1].type, cardEffects.EFFECT_TYPES.RETURN_PLAYED_CARD_TO_HAND_IF);
-assert.equal(dlc1Effects[1].options.condition.type, "lastLandingHadOwnMarker");
+assert.equal(dlc1Effects[1].options.condition.type, "lastLandingHadAnyMarker");
 
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_2.png" })[0].type, cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD);
 assert.deepEqual(cardEffects.buildPlayEffects({ cardId: "dlc_3.png" })[0].options.gain, { additionalPublicScan: 3 });
@@ -416,7 +417,11 @@ assert.equal(cardEffects.collectReadyTasks(blackSectorPlayer, {
   alienGameState: {},
 }).length, 0);
 
-for (const cardId of ["b_16.webp", "b_17.webp", "b_18.webp"]) {
+for (const { cardId, color, icon, label } of [
+  { cardId: "b_16.webp", color: "blue", icon: "blue_scan", label: "蓝色扇区扫描" },
+  { cardId: "b_17.webp", color: "red", icon: "red_scan", label: "红色扇区扫描" },
+  { cardId: "b_18.webp", color: "yellow", icon: "yellow_scan", label: "黄色扇区扫描" },
+]) {
   const effects = cardEffects.buildPlayEffects({ cardId });
   const model = cardEffects.getCardModel({ cardId });
   assert.equal(model.cardType, 0);
@@ -425,6 +430,11 @@ for (const cardId of ["b_16.webp", "b_17.webp", "b_18.webp"]) {
   assert.equal(cardEffects.getTemporaryTasks({ cardId }).length, 0);
   assert.equal(effects[0].type, cardEffects.EFFECT_TYPES.CARD_MOVE);
   assert.equal(effects[1].type, cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE);
+  assert.equal(effects[1].label, label);
+  assert.equal(effects[1].icon, icon);
+  assert.equal(effects[1].options.color, color);
+  assert.equal(effects[1].options.gainData, true);
+  assert.equal(effects[1].options.repeat, 1);
 }
 
 assert.equal(cardEffects.getRuntimeCardTypeCode({ cardId: "b_18.webp", cardTypeCode: 0 }, 0), 0);
@@ -765,6 +775,11 @@ assert.equal(b28Effects[0].options.bonus.color, "yellow");
 assert.equal(b28Effects[1].type, cardEffects.EFFECT_TYPES.SCAN_ACTION);
 
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.allowDuplicateLanding, true);
+assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.allowDuplicateSatelliteLanding, true);
+assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.allowSatelliteWithoutTech, true);
+assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.forceFirstLandingReward, true);
+assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.displayLandingSlot, 1);
+assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.referenceOffsetTokenWidths, 0.5);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_34.webp" })[0].options.allowSatelliteWithoutTech, true);
 assert.deepEqual(cardEffects.buildPlayEffects({ cardId: "b_36.webp" })[0].options.afterTraceReward, {
   kind: "traceCountScore",

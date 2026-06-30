@@ -175,6 +175,12 @@
   const HISTORY_SOURCE_MAIN = "main";
   const HISTORY_SOURCE_QUICK = "quick";
   const HISTORY_SOURCE_SETUP = "setup";
+  const SCAN_TARGET_ACTION_LAYOUT_CLASSES = Object.freeze([
+    "jiuzhe-card-grid",
+    "fangzhou-card-grid",
+    "runezu-face-symbol-choice-grid",
+    "runezu-symbol-branch-choice-grid",
+  ]);
   const START_SCREEN_CONTINUE_ENABLED = false;
   const MIN_START_INDUSTRY_POOL_SIZE = 2;
   const INITIAL_SELECTION_INDUSTRY_OPTION_COUNT = 2;
@@ -8627,6 +8633,12 @@
     return true;
   }
 
+  function setScanTargetActionLayout(layoutClass = null) {
+    if (!els.scanTargetActions) return;
+    els.scanTargetActions.classList.remove(...SCAN_TARGET_ACTION_LAYOUT_CLASSES);
+    if (layoutClass) els.scanTargetActions.classList.add(layoutClass);
+  }
+
   function closeScanTargetPicker(options = {}) {
     if (!els.scanTargetOverlay) return;
     if (pendingPublicScanQueue) {
@@ -8656,7 +8668,7 @@
     pendingRunezuSymbolBranch = null;
     pendingRunezuFaceSymbolPlacement = null;
     pendingStrategyPassiveSlotChoice = null;
-    els.scanTargetActions?.classList.remove("runezu-face-symbol-choice-grid", "runezu-symbol-branch-choice-grid");
+    setScanTargetActionLayout();
     pendingScanTargetAction = null;
     pendingProbeSectorScanAction = null;
     pendingProbeLocationRewardAction = null;
@@ -8795,7 +8807,7 @@
       els.scanTargetSubtitle.textContent = config.subtitle || "";
     }
 
-    els.scanTargetActions.replaceChildren(...(config.choices || []).map((choice) => {
+    const choiceNodes = (config.choices || []).map((choice) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "scan-target-option-button";
@@ -8805,10 +8817,19 @@
       button.title = choice.title || "";
       button.innerHTML = `${choice.label}<small>${choice.description || ""}</small>`;
       return button;
-    }));
+    });
+    if (config.discardDrawnOnSkip) {
+      const skipButton = document.createElement("button");
+      skipButton.type = "button";
+      skipButton.className = "scan-target-option-button";
+      skipButton.dataset.drawnHandScanSkip = "true";
+      skipButton.innerHTML = "跳过<small>弃掉这张刚抽到的牌，不执行扫描。</small>";
+      choiceNodes.push(skipButton);
+    }
+    els.scanTargetActions.replaceChildren(...choiceNodes);
 
     if (els.scanTargetCancel) {
-      els.scanTargetCancel.hidden = Boolean(config.queueMode);
+      els.scanTargetCancel.hidden = Boolean(config.queueMode || config.hideCancel);
     }
     els.scanTargetOverlay.hidden = false;
     renderPlayerHand();
@@ -8981,6 +9002,72 @@
 
     return { ok: false, message: "没有待确认的扫描目标" };
     });
+  }
+
+  function findPendingHandScanCardIndex(player, pending) {
+    const requestedIndex = Math.round(Number(pending?.handIndex));
+    const cardId = pending?.card?.id;
+    if (
+      Number.isInteger(requestedIndex)
+      && requestedIndex >= 0
+      && player?.hand?.[requestedIndex]
+      && (!cardId || player.hand[requestedIndex].id === cardId)
+    ) {
+      return requestedIndex;
+    }
+    if (!cardId) return -1;
+    return player?.hand?.findIndex((card) => card.id === cardId) ?? -1;
+  }
+
+  function handleDrawnHandScanSkip() {
+    const pending = pendingScanTargetAction;
+    if (pending?.type !== "hand_scan" || !pending.discardDrawnOnSkip) {
+      return { ok: false, message: "没有可跳过的盲抽弃牌扫描" };
+    }
+    const player = pending.player || getCurrentPlayer();
+    const handIndex = findPendingHandScanCardIndex(player, pending);
+    if (handIndex < 0) {
+      rocketState.statusNote = "找不到刚抽到的卡牌，无法跳过";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const effect = pending.effect || getCurrentActionEffect();
+    closeScanTargetPicker();
+    beginEffectHistoryStep(effect?.label || "跳过盲抽弃牌扫描");
+    const discardResult = cards.discardFromHandAtIndex(player, handIndex);
+    if (!discardResult.ok) {
+      endEffectHistoryStep();
+      rocketState.statusNote = discardResult.message;
+      renderPlayerHand();
+      renderStateReadout();
+      return discardResult;
+    }
+    cards.addToDiscardPile(cardState, discardResult.card);
+    markCurrentActionIrreversible("盲抽翻出新牌", "hidden_card_reveal");
+    const message = `${effect?.label || "盲抽并弃牌扫描"}：跳过扫描，弃掉 ${cards.getCardLabel(discardResult.card)}`;
+    const result = {
+      ok: true,
+      undoable: false,
+      skipped: true,
+      irreversible: { code: "hidden_card_reveal", reason: "盲抽翻出新牌" },
+      message,
+      payload: {
+        cardId: discardResult.card.cardId || null,
+        instanceId: discardResult.card.id || null,
+        skipped: true,
+      },
+    };
+    if (effect) effect.result = result;
+    rocketState.statusNote = message;
+    renderPlayerStats();
+    renderPlayerHand();
+    renderPublicCards();
+    updatePublicCardControls();
+    updateActionButtons();
+    completeCurrentActionEffect();
+    renderStateReadout();
+    return result;
   }
 
   function beginSectorScan() {
@@ -9222,6 +9309,21 @@
       scanLabel: PUBLIC_SCAN_CODE_LABELS[scanCode] || `扫描${scanCode}`,
       choices: expandScanChoicesWithAomomoTargets(nebulaIds.map((nebulaId) => buildNebulaScanChoice(nebulaId))),
     };
+  }
+
+  function getPublicScanIconForScanCode(scanCode) {
+    switch (Number(scanCode)) {
+      case 0:
+        return "yellow_scan";
+      case 1:
+        return "red_scan";
+      case 2:
+        return "blue_scan";
+      case 3:
+        return "black_scan";
+      default:
+        return "scan";
+    }
   }
 
   function createPublicScanPendingAction(player, fromEffectFlow = false, options = {}) {
@@ -10031,33 +10133,11 @@
     const futureState = industry?.ensureFutureSpanState?.(player);
     if (!player || !futureState?.playing) return false;
 
-    const beforePlayer = structuredClone(player);
+    industry.clearFutureSpanState?.(player);
     if (actionHistory.hasSession()) {
-      actionHistory.beginStep({
-        source: HISTORY_SOURCE_MAIN,
-        type: "future_span_release",
-        label,
-        effectIndex: pendingActionEffectFlow?.currentIndex ?? null,
-        logBefore: createActionLogImpactSnapshot(beforePlayer),
+      appendActionLogStep(HISTORY_SOURCE_MAIN, label, "目标牌结算完毕，专属标记回到公司牌", {
+        undoable: false,
       });
-      industry.clearFutureSpanState?.(player);
-      actionHistory.record(historyCommands.createRestorePlayerCommand(
-        player,
-        beforePlayer,
-        "恢复未来跨度专属标记收回前状态",
-      ));
-      const step = actionHistory.endStep();
-      if (step) {
-        rememberHistoryStep(HISTORY_SOURCE_MAIN, step.id);
-        appendActionLogStep(
-          HISTORY_SOURCE_MAIN,
-          label,
-          "目标牌结算完毕，专属标记回到公司牌",
-          actionLogOptionsFromHistoryStep(step),
-        );
-      }
-    } else {
-      industry.clearFutureSpanState?.(player);
     }
     renderInitialSelectionArea();
     return true;
@@ -10571,49 +10651,18 @@
 
   function processChongTransportArrivalEvents(events = []) {
     if (!chong || !events?.length) return [];
-    const delivered = [];
-    const recordArrivalCommands = (alienRestore, rocketRestore, message) => {
-      if (effectStepActive) {
-        recordHistoryCommand(alienRestore);
-        recordHistoryCommand(rocketRestore);
-        return;
-      }
-      beginQuickActionStep("chong-transport-arrival", "虫族化石送达");
-      recordQuickHistoryCommand(alienRestore);
-      recordQuickHistoryCommand(rocketRestore);
-      completeQuickActionStep(message || "虫族化石已送达");
-    };
+    const arrivals = [];
     for (const event of events) {
       if (event?.type !== "visitPlanet") continue;
       if ((event.tokenKind || "") !== rocketActions.ROCKET_KIND.CHONG_FOSSIL) continue;
       const task = chong.getTransportTaskForRocket(alienGameState, event.rocketId);
-      if (!task || task.destinationPlanetId !== event.planetId) continue;
-      const beforeAlienState = structuredClone(alienGameState);
-      const beforeRocketState = structuredClone(rocketState);
-      const result = chong.markTransportedFossilDelivered(alienGameState, event.rocketId, event.planetId);
-      if (!result.ok) continue;
-      if (result.alreadyDelivered) continue;
-      const rocket = rocketState.rockets.find((item) => item.id === event.rocketId);
-      if (rocket) {
-        rocket.movementLocked = true;
-        rocket.chongDelivered = true;
-        if (rocket.cargo) rocket.cargo.delivered = true;
-      }
-      const alienRestore = historyCommands.createRestoreObjectCommand(
-        alienGameState,
-        beforeAlienState,
-        "恢复虫族化石送达前外星人状态",
-      );
-      const rocketRestore = historyCommands.createRestoreRocketStateCommand(
-        rocketState,
-        beforeRocketState,
-        "恢复虫族化石送达前棋子状态",
-      );
-      recordArrivalCommands(alienRestore, rocketRestore, result.message);
-      delivered.push({ event, result, message: result.message });
+      if (!task) continue;
+      const fossil = alienGameState.chong?.fossilsById?.[task.fossilId] || null;
+      const message = `${fossil?.fossilId || "虫族化石"} 到达 ${getChongPlanetLabel(event.planetId)}，若有匹配虫族任务可点击保留牌完成`;
+      arrivals.push({ event, fossil, task, message });
     }
-    if (delivered.length) {
-      rocketState.statusNote = delivered.map((item) => item.message).join("；");
+    if (arrivals.length) {
+      rocketState.statusNote = arrivals.map((item) => item.message).join("；");
       renderAlienPanels();
       renderRockets();
       renderPlayerStats();
@@ -10621,7 +10670,7 @@
       renderReservedCardsFromTaskState();
       renderStateReadout();
     }
-    return delivered;
+    return arrivals;
   }
 
   function getChongTransportDestinationCoordinate(planetId) {
@@ -10831,7 +10880,7 @@
     return effects;
   }
 
-  function buildChongTransportCleanupEffect(card, deliveredTransport) {
+  function buildChongTransportCleanupEffect(card, deliveredTransport, task = null) {
     const rocketId = Math.round(Number(deliveredTransport?.rocketId));
     const fossilId = deliveredTransport?.fossil?.fossilId || deliveredTransport?.task?.fossilId || null;
     return createChongTaskEffect(
@@ -10843,10 +10892,14 @@
         cardId: card?.id || null,
         rocketId,
         fossilId,
-        destinationPlanetId: deliveredTransport?.task?.destinationPlanetId
+        destinationPlanetId: task?.destinationPlanetId
+          || deliveredTransport?.completionTask?.destinationPlanetId
+          || deliveredTransport?.task?.destinationPlanetId
           || deliveredTransport?.fossil?.destinationPlanetId
           || null,
+        task,
       },
+      { required: true },
     );
   }
 
@@ -10866,7 +10919,7 @@
         ));
       }
       effects.push(...buildChongRewardQueueEffects(task, `${prefix}-extra`, `${cardLabel}：任务奖励`));
-      effects.push(buildChongTransportCleanupEffect(card, deliveredTransport));
+      effects.push(buildChongTransportCleanupEffect(card, deliveredTransport, task));
       return effects;
     }
 
@@ -10905,13 +10958,15 @@
     const task = card.chongTask || chong.getCardTask(card);
     if (!task) return null;
     if (task.kind === "transport") {
-      const deliveredTransport = chong.getDeliveredTransportForCard(alienGameState, card.id);
+      const deliveredTransports = listReadyChongTransportCandidates(player, task);
+      const deliveredTransport = deliveredTransports[0] || null;
       if (!deliveredTransport) return null;
       return {
         chongTask: true,
         card,
         task,
         deliveredTransport,
+        deliveredTransports,
         effects: buildChongTaskCompletionEffects(card, task, deliveredTransport),
       };
     }
@@ -10944,6 +10999,11 @@
   function getReadyRunezuTaskForReservedCard(card, player = getCurrentPlayer()) {
     if (!runezu?.isRunezuCard?.(card)) return null;
     return runezu.getReadyThreeTraceTask?.(card, alienGameState, player) || null;
+  }
+
+  function getRunezuTaskProgressIndexes(card) {
+    if (!runezu?.isRunezuCard?.(card)) return [];
+    return runezu.getTaskProgressIndexes?.(card) || [];
   }
 
   function incrementCompletedTaskCount(player) {
@@ -11087,12 +11147,37 @@
       els.scanTargetSubtitle.textContent = `${cards.getCardLabel(ready.card)} 已满足条件，确认后结算奖励并移除。`;
     }
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-    const confirmButton = document.createElement("button");
-    confirmButton.type = "button";
-    confirmButton.className = "scan-target-option-button";
-    confirmButton.dataset.cardTaskComplete = "confirm";
-    confirmButton.innerHTML = `确认完成任务<small>${ready.effects.map((item) => item.label).join("；")}</small>`;
-    els.scanTargetActions.replaceChildren(confirmButton);
+    if (ready.chongTask && ready.task?.kind === "transport" && (ready.deliveredTransports || []).length > 1) {
+      const nodes = ready.deliveredTransports.map((transport) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "scan-target-option-button chong-fossil-choice-button";
+        button.dataset.cardTaskComplete = String(transport.rocketId);
+        const fossilId = transport.fossil?.fossilId || "化石";
+        const summary = formatChongFossilRewardSummary(fossilId);
+        const image = document.createElement("img");
+        image.className = "chong-fossil-choice-image";
+        image.src = chong.getFossilSrc(fossilId);
+        image.alt = fossilId;
+        image.width = 128;
+        image.height = 128;
+        image.decoding = "async";
+        const meta = document.createElement("small");
+        meta.textContent = `${getChongPlanetLabel(transport.currentPlanetId)} · ${summary}`;
+        button.append(image, meta);
+        return button;
+      });
+      els.scanTargetActions.replaceChildren(...nodes);
+    } else {
+      const confirmButton = document.createElement("button");
+      confirmButton.type = "button";
+      confirmButton.className = "scan-target-option-button";
+      confirmButton.dataset.cardTaskComplete = ready.deliveredTransport?.rocketId != null
+        ? String(ready.deliveredTransport.rocketId)
+        : "confirm";
+      confirmButton.innerHTML = `确认完成任务<small>${ready.effects.map((item) => item.label).join("；")}</small>`;
+      els.scanTargetActions.replaceChildren(confirmButton);
+    }
     els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = "任务已满足：点击确认完成任务";
     renderStateReadout();
@@ -11104,7 +11189,7 @@
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
-  function confirmCardTaskCompletion() {
+  function confirmCardTaskCompletion(choice = "confirm") {
     const pending = pendingCardTaskCompletion;
     if (!pending?.ready) return { ok: false, message: "没有待完成的任务" };
     if (isActionEffectFlowActive()) {
@@ -11113,7 +11198,21 @@
       return { ok: false, message: rocketState.statusNote };
     }
     const currentPlayer = getPendingOwnerPlayer(pending);
-    const ready = pending.ready;
+    let ready = pending.ready;
+    if (ready.chongTask && ready.task?.kind === "transport" && choice !== "confirm") {
+      const selectedTransport = (ready.deliveredTransports || [])
+        .find((transport) => String(transport.rocketId) === String(choice));
+      if (!selectedTransport) {
+        rocketState.statusNote = "没有选择有效的虫族搬运化石";
+        renderStateReadout();
+        return { ok: false, message: rocketState.statusNote };
+      }
+      ready = {
+        ...ready,
+        deliveredTransport: selectedTransport,
+        effects: buildChongTaskCompletionEffects(ready.card, ready.task, selectedTransport),
+      };
+    }
     closeCardTaskCompletionPicker();
 
     const beforePlayer = structuredClone(currentPlayer);
@@ -12188,6 +12287,35 @@
     return { x: planet.x, y: planet.y };
   }
 
+  function getRocketCurrentPlanetId(rocketId) {
+    const rocket = rocketState.rockets.find((item) => Number(item.id) === Number(rocketId));
+    const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
+    if (!coordinate) return null;
+    const snapshot = solar.createSolarSnapshot(solarState);
+    const planet = snapshot.planetLocations.find((item) => (
+      Number(item.x) === Number(coordinate.x) && Number(item.y) === Number(coordinate.y)
+    ));
+    return planet?.planetId || null;
+  }
+
+  function listReadyChongTransportCandidates(player, task) {
+    if (!chong?.listActiveTransports || task?.kind !== "transport") return [];
+    return chong.listActiveTransports(alienGameState, player)
+      .map((transport) => {
+        const currentPlanetId = getRocketCurrentPlanetId(transport.rocketId);
+        return {
+          ...transport,
+          currentPlanetId,
+          task: {
+            ...(transport.task || {}),
+            destinationPlanetId: task.destinationPlanetId,
+          },
+          completionTask: task,
+        };
+      })
+      .filter((transport) => transport.currentPlanetId === task.destinationPlanetId);
+  }
+
   function buildSectorScanChoicesForXs(sectorXs) {
     return (sectorXs || []).flatMap((x) => buildSectorScanChoicesForX(x));
   }
@@ -12326,6 +12454,10 @@
     if (current.options?.skippable === false || current.required) {
       rocketState.statusNote = `${current.label} 必须完成，不能跳过`;
       renderStateReadout();
+      return;
+    }
+    if (pendingScanTargetAction?.type === "hand_scan" && pendingScanTargetAction.discardDrawnOnSkip) {
+      handleDrawnHandScanSkip();
       return;
     }
 
@@ -13261,10 +13393,10 @@
     const targetCount = effect.options?.returnToHandIfSignalCount;
     if (!Number.isFinite(Number(targetCount))) return false;
     if (countMarkedSignalsInSectorX(sectorX) !== Number(targetCount)) return false;
-    const currentPlayer = getCurrentPlayer();
-    const playedCard = pendingActionEffectFlow?.card;
-    if (!currentPlayer || !playedCard) return false;
-    const discardIndex = (cardState.discardPile || []).findIndex((card) => card.id === playedCard.id);
+    const returnTarget = resolvePlayedCardReturnTarget(effect);
+    const currentPlayer = returnTarget.player;
+    if (!currentPlayer || !returnTarget.playedCard) return false;
+    const discardIndex = returnTarget.discardIndex;
     if (discardIndex < 0) return false;
     const beforePlayer = structuredClone(currentPlayer);
     const beforeCardState = {
@@ -13667,6 +13799,7 @@
         planetId: result.planetId,
         sectorX: sector.x,
         hadOwnLandingMarker: Boolean(contextInfo.preOwnLandingMarker),
+        hadAnyLandingMarker: Boolean(contextInfo.preAnyLandingMarker),
       };
     }
     if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);
@@ -13726,6 +13859,9 @@
         preOwnLandingMarker: effect.options?.rememberPreLandingOwnMarker
           ? playerHasOwnLandingOnPlanet(currentPlayer, choice.planetId || landOptions.planet?.planetId)
           : false,
+        preAnyLandingMarker: effect.options?.rememberPreLandingMarker
+          ? planetHasAnyLandingOnPlanet(choice.planetId || landOptions.planet?.planetId)
+          : false,
       })));
     }
     if (pluto.ok) {
@@ -13736,6 +13872,9 @@
         preOwnLandingMarker: effect.options?.rememberPreLandingOwnMarker
           ? playerHasOwnLandingOnPlanet(currentPlayer, "pluto")
           : false,
+        preAnyLandingMarker: effect.options?.rememberPreLandingMarker
+          ? planetHasAnyLandingOnPlanet("pluto")
+          : false,
       });
     }
     if (choices.length > 1) {
@@ -13745,10 +13884,12 @@
     if (choice?.kind === "pluto") {
       return executePlutoCardActionEffect(effect, "land", choice.available, {
         preOwnLandingMarker: choice.preOwnLandingMarker,
+        preAnyLandingMarker: choice.preAnyLandingMarker,
       });
     }
     return executeCardLandTarget(effect, choice.target, {
       preOwnLandingMarker: choice.preOwnLandingMarker,
+      preAnyLandingMarker: choice.preAnyLandingMarker,
     });
   }
 
@@ -13819,6 +13960,13 @@
     if (planetId === "pluto") return playerHasOwnPlutoLanding(player);
     return planetStats.getPlanetLandingMarkers(planetStatsState, planetId)
       .some((marker) => markerBelongsToPlayer(marker, player));
+  }
+
+  function planetHasAnyLandingOnPlanet(planetId) {
+    if (planetId === "pluto") {
+      return collectPlutoMarkers().some((marker) => marker.kind === "land");
+    }
+    return planetStats.getPlanetLandingMarkers(planetStatsState, planetId).length > 0;
   }
 
   function getPlutoEffectCost(actionType, card, effect) {
@@ -13950,6 +14098,7 @@
         planetId: "pluto",
         sectorX: markerResult.marker.sectorX,
         hadOwnLandingMarker: Boolean(contextInfo.preOwnLandingMarker),
+        hadAnyLandingMarker: Boolean(contextInfo.preAnyLandingMarker),
       };
     }
     removeRocketElement(available.rocket.id);
@@ -14085,13 +14234,33 @@
   }
 
   function returnPlayedCardToHandFromDiscard(effect) {
-    const currentPlayer = getCurrentPlayer();
-    const playedCard = pendingActionEffectFlow?.card;
+    const returnTarget = resolvePlayedCardReturnTarget(effect);
+    const currentPlayer = returnTarget.player;
+    const playedCard = returnTarget.playedCard;
     if (!currentPlayer || !playedCard) {
-      return { ok: false, message: "没有可回手的当前卡牌" };
+      return finishAutomaticRewardEffect(effect, {
+        ok: true,
+        undoable: true,
+        skipped: true,
+        message: `${effect.label}：没有可回手的当前卡牌`,
+        payload: { conditionMet: true, returned: false },
+      });
     }
-    const discardIndex = (cardState.discardPile || []).findIndex((card) => card.id === playedCard.id);
-    if (discardIndex < 0) return { ok: false, message: "当前卡牌不在弃牌堆，无法回手" };
+    const discardIndex = returnTarget.discardIndex;
+    if (discardIndex < 0) {
+      return finishAutomaticRewardEffect(effect, {
+        ok: true,
+        undoable: true,
+        skipped: true,
+        message: `${effect.label}：当前卡牌不在弃牌堆，无法回手`,
+        payload: {
+          conditionMet: true,
+          returned: false,
+          cardId: returnTarget.sourceCardId,
+          instanceId: returnTarget.sourceInstanceId,
+        },
+      });
+    }
     const beforePlayer = structuredClone(currentPlayer);
     const beforeCardState = {
       publicCards: cardState.publicCards.slice(),
@@ -14114,8 +14283,41 @@
       ok: true,
       undoable: true,
       message: `${effect.label}：${cards.getCardLabel(card)} 返回手牌`,
-      payload: { cardId: card.id },
+      payload: { cardId: card.cardId || returnTarget.sourceCardId, instanceId: card.id },
     }, [renderPlayerHand]);
+  }
+
+  function resolvePlayedCardReturnTarget(effect) {
+    const flow = pendingActionEffectFlow || {};
+    const playedCard = flow.card || null;
+    const sourceInstanceId = playedCard?.id || flow.playCardEvent?.sourceCardInstanceId || null;
+    const sourceCardId = playedCard?.cardId || flow.playCardEvent?.cardId || null;
+    const discardPile = cardState.discardPile || [];
+    let discardIndex = -1;
+
+    if (sourceInstanceId) {
+      discardIndex = discardPile.findIndex((card) => card?.id === sourceInstanceId);
+    }
+    if (discardIndex < 0 && playedCard) {
+      discardIndex = discardPile.findIndex((card) => card === playedCard);
+    }
+    if (discardIndex < 0 && sourceCardId) {
+      for (let index = discardPile.length - 1; index >= 0; index -= 1) {
+        if (discardPile[index]?.cardId === sourceCardId) {
+          discardIndex = index;
+          break;
+        }
+      }
+    }
+    const resolvedPlayedCard = playedCard || (discardIndex >= 0 ? discardPile[discardIndex] : null);
+
+    return {
+      player: getEffectOwnerPlayer(effect),
+      playedCard: resolvedPlayedCard,
+      discardIndex,
+      sourceInstanceId,
+      sourceCardId,
+    };
   }
 
   function runtimeProbeAdjacentEarth(player) {
@@ -14158,6 +14360,9 @@
     }
     if (condition.type === "lastLandingHadOwnMarker") {
       return Boolean(pendingActionEffectFlow?.lastLanding?.hadOwnLandingMarker);
+    }
+    if (condition.type === "lastLandingHadAnyMarker") {
+      return Boolean(pendingActionEffectFlow?.lastLanding?.hadAnyLandingMarker);
     }
     if (condition.type === "flowMarkedNebula") {
       const markedNebulaIds = getFlowMarkedNebulaIds(pendingActionEffectFlow);
@@ -15100,6 +15305,15 @@
   }
 
   function isReservedTaskCardUnfinished(card, effect = null) {
+    if (runezu?.isRunezuCard?.(card)) {
+      const cardTypes = new Set(
+        (effect?.options?.cardTypes || [1, 2])
+          .map((typeCode) => Math.round(Number(typeCode)))
+          .filter((typeCode) => Number.isFinite(typeCode)),
+      );
+      if (!cardTypes.has(getCardTypeCode(card))) return false;
+      return Boolean(runezu.isTaskUnfinished?.(card));
+    }
     return cardEffects.isReturnUnfinishedTaskTarget(card, {
       cardTypes: effect?.options?.cardTypes || [1, 2],
       isBanrenmaCard: (candidate) => Boolean(banrenma?.isBanrenmaCard?.(candidate)),
@@ -16266,6 +16480,8 @@
       return { ...scanChoices, drawnCard };
     }
 
+    effect.icon = getPublicScanIconForScanCode(scanChoices.scanCode);
+    renderActionEffectBar();
     rocketState.statusNote = `${effect.label}：${cards.getCardLabel(drawnCard)}，请选择${scanChoices.scanLabel}目标`;
     renderPlayerStats();
     renderPlayerHand();
@@ -16275,11 +16491,16 @@
       card: drawnCard,
       handIndex,
       player: currentPlayer,
+      effect,
       scanCode: scanChoices.scanCode,
       fromEffectFlow: true,
       irreversibleDraw: true,
+      discardDrawnOnSkip: Boolean(effect.options?.discardDrawnOnSkip),
+      hideCancel: Boolean(effect.options?.discardDrawnOnSkip),
       title: effect.label,
-      subtitle: `${cards.getCardLabel(drawnCard)}：${scanChoices.scanLabel}，请选择 2 选 1 星云。确认后弃除这张牌。`,
+      subtitle: effect.options?.discardDrawnOnSkip
+        ? `${cards.getCardLabel(drawnCard)}：${scanChoices.scanLabel}，请选择 2 选 1 星云。确认或跳过都会弃除这张牌。`
+        : `${cards.getCardLabel(drawnCard)}：${scanChoices.scanLabel}，请选择 2 选 1 星云。确认后弃除这张牌。`,
       choices: scanChoices.choices,
     });
   }
@@ -17106,7 +17327,11 @@
       }, [renderAlienPanels, renderRockets, renderReservedCardsFromTaskState]);
     }
 
-    const result = chong.completeTransportedFossil(alienGameState, rocketId);
+    const result = chong.completeTransportedFossil(alienGameState, rocketId, {
+      cardId: effect.options?.cardId || null,
+      destinationPlanetId: effect.options?.destinationPlanetId || null,
+      task: effect.options?.task || null,
+    });
     if (!result.ok) {
       return finishAutomaticRewardEffect(effect, {
         ok: true,
@@ -20479,6 +20704,7 @@
         : "尚未翻开任何方舟奖励牌。";
     }
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+    setScanTargetActionLayout("fangzhou-card-grid");
     els.scanTargetActions.replaceChildren(...revealed.map((index) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -22300,7 +22526,11 @@
     const beforeAlienState = pending.beforeAlienState || structuredClone(alienGameState);
     const beforeRocketState = pending.beforeRocketState || structuredClone(rocketState);
     const beforeCardState = pending.beforeCardState || structuredClone(cardState);
-    const result = chong.completeTransportedFossil(alienGameState, rocketId);
+    const result = chong.completeTransportedFossil(alienGameState, rocketId, {
+      cardId: card?.id || null,
+      destinationPlanetId: ready?.task?.destinationPlanetId || null,
+      task: ready?.task || null,
+    });
     if (!result.ok) {
       closeChongTaskCompletionDialog();
       return failChongTaskCompletion(result.message);
@@ -22581,6 +22811,7 @@
   function closeJiuzheCardDialog() {
     pendingJiuzheCardPlay = null;
     pendingJiuzheOpportunityOpen = false;
+    setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -22611,6 +22842,7 @@
         : `${player.colorLabel}玩家的九折牌。蓝框=已打出，金框=条件已达成。`;
     }
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = Boolean(opportunity);
+    setScanTargetActionLayout("jiuzhe-card-grid");
 
     const isRevealOpportunity = opportunity?.reason === "reveal";
     const nodes = cardsForPlayer.map((card) => {
@@ -24299,7 +24531,7 @@
 
   function closeRunezuFaceSymbolPlacement() {
     pendingRunezuFaceSymbolPlacement = null;
-    els.scanTargetActions?.classList.remove("runezu-face-symbol-choice-grid");
+    setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -24326,8 +24558,7 @@
       els.scanTargetSubtitle.textContent = `选择 1 个 symbol 放入${runezu.formatFaceSymbolSlotLabel(check.position)}并结算奖励。`;
     }
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-    els.scanTargetActions.classList.remove("runezu-symbol-branch-choice-grid");
-    els.scanTargetActions.classList.add("runezu-face-symbol-choice-grid");
+    setScanTargetActionLayout("runezu-face-symbol-choice-grid");
     const nodes = check.choices.map((choice) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -24422,7 +24653,7 @@
 
   function closeRunezuSymbolBranchDialog() {
     pendingRunezuSymbolBranch = null;
-    els.scanTargetActions?.classList.remove("runezu-symbol-branch-choice-grid");
+    setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -24441,8 +24672,7 @@
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = "符文族符文奖励";
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一组 symbol，按黑圈映射依次结算奖励。";
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-    els.scanTargetActions.classList.remove("runezu-face-symbol-choice-grid");
-    els.scanTargetActions.classList.add("runezu-symbol-branch-choice-grid");
+    setScanTargetActionLayout("runezu-symbol-branch-choice-grid");
     const nodes = branches.map((branch, index) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -25803,6 +26033,7 @@
         isPlanetMarker: true,
         playerId: markerState.playerId,
         color: markerState.color,
+        referenceOffsetTokenWidths: markerState.referenceOffsetTokenWidths || 0,
       };
     }
 
@@ -25818,6 +26049,7 @@
       isPlanetMarker: true,
       playerId: markerState.playerId,
       color: markerState.color,
+      referenceOffsetTokenWidths: markerState.referenceOffsetTokenWidths || 0,
     };
   }
 
@@ -25857,7 +26089,11 @@
         if (slot) createPlanetMarkerRocket(slot, markerState);
       }
       for (const markerState of planetStats.getPlanetLandingMarkers(planetStatsState, planetId)) {
-        const slot = planetReferenceLayout.getPlanetSlot(planetId, "land", markerState.sequence);
+        const slot = planetReferenceLayout.getPlanetSlot(
+          planetId,
+          "land",
+          markerState.displaySlot || markerState.sequence,
+        );
         if (slot) createPlanetMarkerRocket(slot, markerState);
       }
       for (const markerState of planetStats.getSatelliteLandingMarkers(planetStatsState, planetId)) {
@@ -26037,6 +26273,13 @@
     element.classList.toggle("is-reference-land", referencePlacement?.kind === "land");
     element.classList.toggle("is-reference-satellite", referencePlacement?.kind === "satellite");
     element.classList.toggle("is-planet-marker", Boolean(referencePlacement?.isPlanetMarker));
+    const referenceOffset = Number(referencePlacement?.referenceOffsetTokenWidths) || 0;
+    element.classList.toggle("is-reference-offset", Boolean(referenceOffset));
+    if (referenceOffset) {
+      element.style.setProperty("--reference-offset-token-widths", String(referenceOffset));
+    } else {
+      element.style.removeProperty("--reference-offset-token-widths");
+    }
     element.classList.toggle("is-chong-fossil", isChongFossilToken(rocket));
     element.classList.toggle("is-chong-delivered", Boolean(rocket.chongDelivered || rocket.cargo?.delivered));
     element.classList.toggle("is-move-target", rocket.id === moveHighlightRocketId);
@@ -27515,6 +27758,10 @@
       : readyByCardId?.[card.id];
     const taskBlockReason = ready ? getCardTaskCompletionBlockReason() : null;
     const completedTriggerIndexes = cardEffects.getConsumedTriggerIndexes(card);
+    const runezuTaskProgressIndexes = getRunezuTaskProgressIndexes(card);
+    const completedProgressIndexes = completedTriggerIndexes.length
+      ? completedTriggerIndexes
+      : runezuTaskProgressIndexes;
     const button = document.createElement("button");
     button.type = "button";
     button.className = "reserved-card-button";
@@ -27535,10 +27782,10 @@
     button.append(image);
     attachCardHoverPreview(button, image.src, image.alt);
 
-    if (completedTriggerIndexes.length) {
+    if (completedProgressIndexes.length) {
       const badge = document.createElement("span");
       badge.className = "reserved-card-trigger-badge";
-      badge.textContent = `已完成 ${completedTriggerIndexes.join("/")}`;
+      badge.textContent = `已完成 ${completedProgressIndexes.join("/")}`;
       button.append(badge);
     }
 
@@ -33222,6 +33469,7 @@
     get industryFreeMoveState() { return industryFreeMoveState; },
     get pendingCardCornerFreeMove() { return pendingCardCornerFreeMove; },
     get pendingActionEffectFlow() { return pendingActionEffectFlow; },
+    get pendingScanTargetAction() { return pendingScanTargetAction; },
   };
 
   window.SetiAppEvents.bindAppEvents({
@@ -33288,6 +33536,7 @@
     confirmProbeSectorScanSelection,
     handleProbeLocationRewardChoice,
     handleOptionalHandScanChoice,
+    handleDrawnHandScanSkip,
     handleRemovePlanetMarkerChoice,
     handleHandCornerChoice,
     handleConditionalSectorChoice,

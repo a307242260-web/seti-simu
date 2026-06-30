@@ -358,20 +358,51 @@
     };
   }
 
-  function dealJiuzheCards(alienState, players, random = Math.random) {
+  function getExtraDealCountForPlayer(extraCardsByPlayer, player) {
+    const counts = extraCardsByPlayer || {};
+    for (const key of getPlayerKeys(player)) {
+      const value = Number(counts[key]);
+      if (Number.isFinite(value)) return Math.max(0, Math.round(value));
+    }
+    return 0;
+  }
+
+  function dealJiuzheCards(alienState, players, random = Math.random, options = {}) {
     const jiuzhe = ensureJiuzheState(alienState);
     if (jiuzhe.cardsDealt) {
       return { ok: true, alreadyDealt: true, message: "九折牌已经发放" };
     }
 
     const targetPlayers = (players || []).filter((player) => getPlayerKey(player));
+    const baseCardsPerPlayer = Number.isFinite(Number(options.baseCardsPerPlayer))
+      ? Math.max(0, Math.round(Number(options.baseCardsPerPlayer)))
+      : 3;
+    const extraCardsByPlayer = options.extraCardsByPlayer || options.revealOpportunityCounts || {};
+    const cardCountsByPlayer = {};
     const deck = shuffle(CARD_DEFINITIONS.map((card) => card.index), random);
     for (const player of targetPlayers) {
       const playerState = getPlayerJiuzheState(alienState, player, true);
-      playerState.cards = deck.splice(0, 3).map(createPlayerCard);
+      const playerKey = getPlayerKey(player);
+      const extraCount = getExtraDealCountForPlayer(extraCardsByPlayer, player);
+      const dealCount = baseCardsPerPlayer + extraCount;
+      playerState.cards = deck.splice(0, dealCount).map(createPlayerCard);
+      cardCountsByPlayer[playerKey] = playerState.cards.length;
     }
     jiuzhe.cardsDealt = true;
-    return { ok: true, message: `九折：已给 ${targetPlayers.length} 名玩家各发 3 张牌` };
+    const extraTotal = targetPlayers.reduce(
+      (total, player) => total + getExtraDealCountForPlayer(extraCardsByPlayer, player),
+      0,
+    );
+    const message = extraTotal > 0
+      ? `九折：已给 ${targetPlayers.length} 名玩家各发 ${baseCardsPerPlayer} 张牌，并按首痕迹额外发 ${extraTotal} 张`
+      : `九折：已给 ${targetPlayers.length} 名玩家各发 ${baseCardsPerPlayer} 张牌`;
+    return {
+      ok: true,
+      cardCountsByPlayer,
+      baseCardsPerPlayer,
+      extraCardsByPlayer: { ...extraCardsByPlayer },
+      message,
+    };
   }
 
   function getPlayerScore(player) {
@@ -408,7 +439,9 @@
     delete jiuzhe.traceSlotsByAlienSlotId[String(alienSlotId)];
 
     const revealOpportunityCounts = countRevealOpportunitiesByPlayer(alienState, alienSlotId, activePlayers || []);
-    const dealResult = dealJiuzheCards(alienState, activePlayers, random);
+    const dealResult = dealJiuzheCards(alienState, activePlayers, random, {
+      revealOpportunityCounts,
+    });
 
     for (const player of activePlayers || []) {
       const playerId = getPlayerKey(player);
