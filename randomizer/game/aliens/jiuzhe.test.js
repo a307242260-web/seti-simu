@@ -129,6 +129,24 @@ assert.equal(revealResult.freeScoreThreshold, 32, "free threshold should use the
 assert.equal(revealResult.paidScoreThreshold, 52, "paid threshold should use the current highest score, not the trigger player's score");
 assert.equal(jiuzhe.getTraceGrid(revealState, 1), null, "reveal should not prefill Jiuzhe trace grid");
 assert.equal(
+  jiuzhe.getPlayerJiuzheCards(revealState, white).length,
+  5,
+  "white should receive 3 base Jiuzhe cards plus 2 first-trace cards",
+);
+assert.equal(
+  jiuzhe.getPlayerJiuzheCards(revealState, blue).length,
+  4,
+  "blue should receive 3 base Jiuzhe cards plus 1 first-trace card",
+);
+assert.equal(
+  new Set([
+    ...jiuzhe.getPlayerJiuzheCards(revealState, white),
+    ...jiuzhe.getPlayerJiuzheCards(revealState, blue),
+  ].map((card) => card.index)).size,
+  9,
+  "Jiuzhe reveal deal should not duplicate dealt cards",
+);
+assert.equal(
   jiuzhe.getPlayerJiuzheState(revealState, white).revealPlaysRemaining,
   2,
   "white should get one reveal play per owned first trace",

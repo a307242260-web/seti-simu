@@ -2500,6 +2500,12 @@ body {
   gap: 10px;
 }
 
+.scan-target-actions.jiuzhe-card-grid,
+.scan-target-actions.fangzhou-card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+}
+
 .scan-target-option-button.runezu-face-symbol-choice-button {
   display: grid;
   place-items: center;
@@ -4764,6 +4770,19 @@ button.spin-button:hover {
   gap: 6px;
 }
 
+.scan-target-actions.jiuzhe-card-grid .jiuzhe-card-option,
+.scan-target-actions.fangzhou-card-grid .fangzhou-card-option {
+  min-width: 0;
+  max-width: none;
+}
+
+.scan-target-actions.jiuzhe-card-grid .scan-target-option-button:not(.jiuzhe-card-option) {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: min(100%, 220px);
+  text-align: center;
+}
+
 .jiuzhe-card-option-image {
   display: block;
   width: 100%;
@@ -4798,6 +4817,13 @@ button.spin-button:hover {
   border-color: rgba(255, 215, 98, 0.96);
   box-shadow: 0 0 16px rgba(255, 215, 98, 0.42);
   filter: none;
+}
+
+@media (max-width: 560px) {
+  .scan-target-actions.jiuzhe-card-grid,
+  .scan-target-actions.fangzhou-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .debug-dock {

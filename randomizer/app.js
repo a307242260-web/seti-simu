@@ -175,6 +175,12 @@
   const HISTORY_SOURCE_MAIN = "main";
   const HISTORY_SOURCE_QUICK = "quick";
   const HISTORY_SOURCE_SETUP = "setup";
+  const SCAN_TARGET_ACTION_LAYOUT_CLASSES = Object.freeze([
+    "jiuzhe-card-grid",
+    "fangzhou-card-grid",
+    "runezu-face-symbol-choice-grid",
+    "runezu-symbol-branch-choice-grid",
+  ]);
   const START_SCREEN_CONTINUE_ENABLED = false;
   const MIN_START_INDUSTRY_POOL_SIZE = 2;
   const INITIAL_SELECTION_INDUSTRY_OPTION_COUNT = 2;
@@ -8627,6 +8633,12 @@
     return true;
   }
 
+  function setScanTargetActionLayout(layoutClass = null) {
+    if (!els.scanTargetActions) return;
+    els.scanTargetActions.classList.remove(...SCAN_TARGET_ACTION_LAYOUT_CLASSES);
+    if (layoutClass) els.scanTargetActions.classList.add(layoutClass);
+  }
+
   function closeScanTargetPicker(options = {}) {
     if (!els.scanTargetOverlay) return;
     if (pendingPublicScanQueue) {
@@ -8656,7 +8668,7 @@
     pendingRunezuSymbolBranch = null;
     pendingRunezuFaceSymbolPlacement = null;
     pendingStrategyPassiveSlotChoice = null;
-    els.scanTargetActions?.classList.remove("runezu-face-symbol-choice-grid", "runezu-symbol-branch-choice-grid");
+    setScanTargetActionLayout();
     pendingScanTargetAction = null;
     pendingProbeSectorScanAction = null;
     pendingProbeLocationRewardAction = null;
@@ -10121,33 +10133,11 @@
     const futureState = industry?.ensureFutureSpanState?.(player);
     if (!player || !futureState?.playing) return false;
 
-    const beforePlayer = structuredClone(player);
+    industry.clearFutureSpanState?.(player);
     if (actionHistory.hasSession()) {
-      actionHistory.beginStep({
-        source: HISTORY_SOURCE_MAIN,
-        type: "future_span_release",
-        label,
-        effectIndex: pendingActionEffectFlow?.currentIndex ?? null,
-        logBefore: createActionLogImpactSnapshot(beforePlayer),
+      appendActionLogStep(HISTORY_SOURCE_MAIN, label, "目标牌结算完毕，专属标记回到公司牌", {
+        undoable: false,
       });
-      industry.clearFutureSpanState?.(player);
-      actionHistory.record(historyCommands.createRestorePlayerCommand(
-        player,
-        beforePlayer,
-        "恢复未来跨度专属标记收回前状态",
-      ));
-      const step = actionHistory.endStep();
-      if (step) {
-        rememberHistoryStep(HISTORY_SOURCE_MAIN, step.id);
-        appendActionLogStep(
-          HISTORY_SOURCE_MAIN,
-          label,
-          "目标牌结算完毕，专属标记回到公司牌",
-          actionLogOptionsFromHistoryStep(step),
-        );
-      }
-    } else {
-      industry.clearFutureSpanState?.(player);
     }
     renderInitialSelectionArea();
     return true;
@@ -20714,6 +20704,7 @@
         : "尚未翻开任何方舟奖励牌。";
     }
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
+    setScanTargetActionLayout("fangzhou-card-grid");
     els.scanTargetActions.replaceChildren(...revealed.map((index) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -22820,6 +22811,7 @@
   function closeJiuzheCardDialog() {
     pendingJiuzheCardPlay = null;
     pendingJiuzheOpportunityOpen = false;
+    setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -22850,6 +22842,7 @@
         : `${player.colorLabel}玩家的九折牌。蓝框=已打出，金框=条件已达成。`;
     }
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = Boolean(opportunity);
+    setScanTargetActionLayout("jiuzhe-card-grid");
 
     const isRevealOpportunity = opportunity?.reason === "reveal";
     const nodes = cardsForPlayer.map((card) => {
@@ -24538,7 +24531,7 @@
 
   function closeRunezuFaceSymbolPlacement() {
     pendingRunezuFaceSymbolPlacement = null;
-    els.scanTargetActions?.classList.remove("runezu-face-symbol-choice-grid");
+    setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -24565,8 +24558,7 @@
       els.scanTargetSubtitle.textContent = `选择 1 个 symbol 放入${runezu.formatFaceSymbolSlotLabel(check.position)}并结算奖励。`;
     }
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-    els.scanTargetActions.classList.remove("runezu-symbol-branch-choice-grid");
-    els.scanTargetActions.classList.add("runezu-face-symbol-choice-grid");
+    setScanTargetActionLayout("runezu-face-symbol-choice-grid");
     const nodes = check.choices.map((choice) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -24661,7 +24653,7 @@
 
   function closeRunezuSymbolBranchDialog() {
     pendingRunezuSymbolBranch = null;
-    els.scanTargetActions?.classList.remove("runezu-symbol-branch-choice-grid");
+    setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -24680,8 +24672,7 @@
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = "符文族符文奖励";
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一组 symbol，按黑圈映射依次结算奖励。";
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-    els.scanTargetActions.classList.remove("runezu-face-symbol-choice-grid");
-    els.scanTargetActions.classList.add("runezu-symbol-branch-choice-grid");
+    setScanTargetActionLayout("runezu-symbol-branch-choice-grid");
     const nodes = branches.map((branch, index) => {
       const button = document.createElement("button");
       button.type = "button";
