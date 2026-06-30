@@ -141,6 +141,7 @@
       downloadActionLogMarkdown,
       minimizeFinalResultDialog,
       closeFinalResultDialog,
+      blockManualAiSharedOverlayInputIfNeeded,
       setDebugOpen,
       setDebugPlayerMenuOpen,
       switchCurrentPlayerColor,
@@ -181,6 +182,7 @@
       confirmCardCornerQuickAction,
       cancelHandScanSelection,
       getCurrentPlayer,
+      getInterfacePlayer,
       isAiAutomationInputLocked,
       blockManualAiAutomationInput,
       openJiuzheCardDialog,
@@ -281,6 +283,8 @@
       }
     });
     els.scanTargetActions?.addEventListener("click", (event) => {
+      if (blockManualAiSharedOverlayInputIfNeeded?.()) return;
+
       const debugSectorButton = event.target.closest("[data-debug-sector-scan-step]");
       if (debugSectorButton && !debugSectorButton.disabled) {
         handleDebugQuickSectorScanChoice(debugSectorButton);
@@ -502,6 +506,8 @@
       confirmScanTarget(button.dataset.nebulaId, button.dataset.sectorX);
     });
     els.scanTargetCancel?.addEventListener("click", () => {
+      if (blockManualAiSharedOverlayInputIfNeeded?.()) return;
+
       if (state.pendingChongTaskCompletion) {
         handleChongTaskCompletionChoice("cancel");
         return;
@@ -577,6 +583,8 @@
     });
     els.scanTargetOverlay?.addEventListener("click", (event) => {
       if (event.target === els.scanTargetOverlay) {
+        if (blockManualAiSharedOverlayInputIfNeeded?.()) return;
+
         if (state.pendingChongTaskCompletion) {
           handleChongTaskCompletionChoice("cancel");
           return;
@@ -1043,21 +1051,36 @@
     els.reservedCardFan?.addEventListener("click", (event) => {
       const jiuzheButton = event.target.closest("[data-jiuzhe-cards]");
       if (jiuzheButton) {
-        openJiuzheCardDialog(getCurrentPlayer());
+        const currentPlayer = getCurrentPlayer();
+        if (isAiAutomationInputLocked?.(currentPlayer)) {
+          blockManualAiAutomationInput?.("电脑玩家自动行动中", currentPlayer);
+          return;
+        }
+        openJiuzheCardDialog(getInterfacePlayer?.() || currentPlayer);
         return;
       }
       const banrenmaButton = event.target.closest("[data-banrenma-reserved-index]");
       if (banrenmaButton && !banrenmaButton.disabled) {
         const currentPlayer = getCurrentPlayer();
-        const card = currentPlayer?.reservedCards?.[Number(banrenmaButton.dataset.banrenmaReservedIndex)];
-        if (card) openBanrenmaCardConditionCompletionPicker(card);
+        if (isAiAutomationInputLocked?.(currentPlayer)) {
+          blockManualAiAutomationInput?.("电脑玩家自动行动中", currentPlayer);
+          return;
+        }
+        const interfacePlayer = getInterfacePlayer?.() || currentPlayer;
+        const card = interfacePlayer?.reservedCards?.[Number(banrenmaButton.dataset.banrenmaReservedIndex)];
+        if (card) openBanrenmaCardConditionCompletionPicker(card, { player: interfacePlayer });
         return;
       }
       const button = event.target.closest("[data-reserved-index]");
       if (!button || button.disabled) return;
       const currentPlayer = getCurrentPlayer();
-      const card = currentPlayer?.reservedCards?.[Number(button.dataset.reservedIndex)];
-      if (card) openCardTaskCompletionPicker(card);
+      if (isAiAutomationInputLocked?.(currentPlayer)) {
+        blockManualAiAutomationInput?.("电脑玩家自动行动中", currentPlayer);
+        return;
+      }
+      const interfacePlayer = getInterfacePlayer?.() || currentPlayer;
+      const card = interfacePlayer?.reservedCards?.[Number(button.dataset.reservedIndex)];
+      if (card) openCardTaskCompletionPicker(card, { player: interfacePlayer });
     });
     els.movePaymentConfirm?.addEventListener("click", confirmMovePayment);
     els.movePaymentCancel?.addEventListener("click", cancelMovePaymentSelection);

@@ -469,12 +469,12 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     getPlayerLabelById: (id) => allPlayers.find((player) => player.id === id)?.colorLabel || id,
     getRequiredMovePointsForUi: () => 1,
     getSectorContentForMove: () => null,
-    handleJiuzheCardChoice: (choice) => {
-      noteHandled({ type: "card", choice });
+    handleJiuzheCardChoice: (choice, handlerOptions = {}) => {
+      noteHandled({ type: "card", choice, automated: handlerOptions.automated === true });
       return { ok: true, progressed: true };
     },
-    handleJiuzheOpportunitySkip: () => {
-      noteHandled({ type: "skip" });
+    handleJiuzheOpportunitySkip: (handlerOptions = {}) => {
+      noteHandled({ type: "skip", automated: handlerOptions.automated === true });
       pendingJiuzheCardPlay = null;
       return { ok: true, progressed: true };
     },
@@ -940,7 +940,7 @@ function makeYichangdianAlienState(options = {}) {
 
   const result = harness.controller.runAiAutomationStep();
   assert.equal(result.ok, true, "color-owned Jiuzhe pending should be handled before current-player subflows");
-  assert.deepEqual(harness.getHandled(), { type: "skip" });
+  assert.deepEqual(harness.getHandled(), { type: "skip", automated: true });
 }
 
 {

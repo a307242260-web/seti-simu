@@ -3071,11 +3071,29 @@
     return Boolean(player?.id && isAiAutoBattlePlayer(player.id) && !isAiAutomationPaused());
   }
 
+  function isPendingLockedForAiAutomation(pending = null, fallbackEffect = null) {
+    const player = getPendingOwnerPlayer(pending, fallbackEffect);
+    return Boolean(player?.id && isAiAutoBattlePlayer(player.id) && !isAiAutomationPaused());
+  }
+
   function blockManualAiAutomationInput(message = null, player = getCurrentPlayer()) {
     rocketState.statusNote = message || `${player?.colorLabel || "电脑玩家"}AI 正在自动行动`;
     scheduleAiAutoStepIfNeeded();
     renderStateReadout();
     return { ok: false, blocked: true, message: rocketState.statusNote };
+  }
+
+  function blockManualAiPendingInput(pending = null, label = "待处理操作", fallbackEffect = null) {
+    const player = getPendingOwnerPlayer(pending, fallbackEffect);
+    return blockManualAiAutomationInput(
+      `${player?.colorLabel || "电脑玩家"}AI 正在处理${label}`,
+      player,
+    );
+  }
+
+  function blockManualAiPendingInputIfNeeded(pending = null, options = {}, label = "待处理操作", fallbackEffect = null) {
+    if (options.automated === true || !isPendingLockedForAiAutomation(pending, fallbackEffect)) return null;
+    return blockManualAiPendingInput(pending, label, fallbackEffect);
   }
 
   function blockManualAiMovePayment(message = null) {
@@ -10939,13 +10957,18 @@
     return effects;
   }
 
-  function getReadyTaskForReservedCard(card) {
-    refreshCardTaskState({ render: false });
-    const readyChongTask = getReadyChongTaskForReservedCard(card, getCurrentPlayer());
+  function getReadyTaskForReservedCard(card, player = getCurrentPlayer()) {
+    cardTaskStateModule.refreshTaskState(
+      cardTaskState,
+      player,
+      buildCardTaskContext(),
+      cardEffects,
+    );
+    const readyChongTask = getReadyChongTaskForReservedCard(card, player);
     if (readyChongTask) return readyChongTask;
-    const readyAmibaTask = getReadyAmibaTaskForReservedCard(card, getCurrentPlayer());
+    const readyAmibaTask = getReadyAmibaTaskForReservedCard(card, player);
     if (readyAmibaTask) return readyAmibaTask;
-    const readyRunezuTask = getReadyRunezuTaskForReservedCard(card, getCurrentPlayer());
+    const readyRunezuTask = getReadyRunezuTaskForReservedCard(card, player);
     if (readyRunezuTask) return readyRunezuTask;
     return cardTaskStateModule.getReadyType2ForCard(cardTaskState, card?.id) || null;
   }
@@ -11124,7 +11147,13 @@
     return null;
   }
 
-  function openCardTaskCompletionPicker(card) {
+  function openCardTaskCompletionPicker(card, options = {}) {
+    const player = options.player
+      || resolvePlayerReference({
+        playerId: options.playerId,
+        playerColor: options.playerColor,
+      })
+      || getCurrentPlayer();
     const blockReason = getCardTaskCompletionBlockReason();
     if (blockReason) {
       rocketState.statusNote = blockReason;
@@ -11132,12 +11161,12 @@
       return { ok: false, message: blockReason };
     }
 
-    const ready = getReadyTaskForReservedCard(card);
+    const ready = getReadyTaskForReservedCard(card, player);
     if (!ready) return { ok: false, message: "这张任务卡尚未满足完成条件" };
     if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开任务确认窗口" };
 
     pendingCardTaskCompletion = {
-      ...getPendingOwnerFields(null, getCurrentPlayer()),
+      ...getPendingOwnerFields(null, player),
       ready,
     };
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = "完成任务";
@@ -11187,9 +11216,11 @@
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
-  function confirmCardTaskCompletion(choice = "confirm") {
+  function confirmCardTaskCompletion(choice = "confirm", options = {}) {
     const pending = pendingCardTaskCompletion;
     if (!pending?.ready) return { ok: false, message: "没有待完成的任务" };
+    const blocked = blockManualAiPendingInputIfNeeded(pending, options, "任务完成");
+    if (blocked) return blocked;
     if (isActionEffectFlowActive()) {
       rocketState.statusNote = "请先完成当前行动的效果";
       renderStateReadout();
@@ -22876,9 +22907,11 @@
     return { ok: true, message: "九折牌窗口已打开" };
   }
 
-  function handleJiuzheCardChoice(cardIndex) {
+  function handleJiuzheCardChoice(cardIndex, options = {}) {
     const pending = pendingJiuzheCardPlay;
     if (!jiuzhe || !pending) return { ok: false, message: "没有九折打出机会" };
+    const blocked = blockManualAiPendingInputIfNeeded(pending, options, "九折牌");
+    if (blocked) return blocked;
     const player = resolvePlayerReference(pending);
     if (!player) return { ok: false, message: "找不到九折牌玩家" };
     if (pending.reason === "view") return { ok: false, message: "当前只是查看九折牌" };
@@ -22961,9 +22994,11 @@
     return { ...result, message: effectResult.message };
   }
 
-  function handleJiuzheOpportunitySkip() {
+  function handleJiuzheOpportunitySkip(options = {}) {
     const pending = pendingJiuzheCardPlay;
     if (!jiuzhe || !pending) return { ok: false, message: "没有九折打出机会" };
+    const blocked = blockManualAiPendingInputIfNeeded(pending, options, "九折牌");
+    if (blocked) return blocked;
     const player = resolvePlayerReference(pending);
     if (!player) return { ok: false, message: "找不到九折牌玩家" };
     const beforeAlienState = structuredClone(alienGameState);
@@ -23031,6 +23066,36 @@
       if (openResult?.ok) return openResult;
     }
     return null;
+  }
+
+  function getActiveAlienSharedOverlayPendingForManualGuard() {
+    const pendingEntries = [
+      pendingCardTaskCompletion ? { pending: pendingCardTaskCompletion, label: "任务完成" } : null,
+      pendingJiuzheCardPlay?.reason === "view"
+        ? null
+        : { pending: pendingJiuzheCardPlay, label: "九折牌" },
+      pendingYichangdianCardGain ? { pending: pendingYichangdianCardGain, label: "异常点外星人牌" } : null,
+      pendingYichangdianCornerAction ? { pending: pendingYichangdianCornerAction, label: "异常点角标" } : null,
+      pendingBanrenmaCardGain ? { pending: pendingBanrenmaCardGain, label: "半人马外星人牌" } : null,
+      pendingBanrenmaOpportunity ? { pending: pendingBanrenmaOpportunity, label: "半人马奖励" } : null,
+      pendingChongCardGain ? { pending: pendingChongCardGain, label: "虫族外星人牌" } : null,
+      pendingChongFossilChoice ? { pending: pendingChongFossilChoice, label: "虫族化石" } : null,
+      pendingChongTaskCompletion ? { pending: pendingChongTaskCompletion, label: "虫族任务" } : null,
+      pendingAmibaCardGain ? { pending: pendingAmibaCardGain, label: "阿米巴外星人牌" } : null,
+      pendingAmibaSymbolChoice ? { pending: pendingAmibaSymbolChoice, label: "阿米巴 symbol" } : null,
+      pendingAmibaTraceRemoval ? { pending: pendingAmibaTraceRemoval, label: "阿米巴痕迹移除" } : null,
+      pendingAomomoCardGain ? { pending: pendingAomomoCardGain, label: "奥陌陌外星人牌" } : null,
+      pendingRunezuCardGain ? { pending: pendingRunezuCardGain, label: "符文族外星人牌" } : null,
+      pendingRunezuFaceSymbolPlacement ? { pending: pendingRunezuFaceSymbolPlacement, label: "符文族黑圈" } : null,
+      pendingRunezuSymbolBranch ? { pending: pendingRunezuSymbolBranch, label: "符文族符文奖励" } : null,
+    ];
+    return pendingEntries.find((entry) => entry?.pending && isPendingLockedForAiAutomation(entry.pending)) || null;
+  }
+
+  function blockManualAiSharedOverlayInputIfNeeded() {
+    const entry = getActiveAlienSharedOverlayPendingForManualGuard();
+    if (!entry) return null;
+    return blockManualAiPendingInput(entry.pending, entry.label);
   }
 
   function getReadyBanrenmaCards(player) {
@@ -27685,6 +27750,8 @@
     button.type = "button";
     button.className = "reserved-card-button reserved-card-button-jiuzhe";
     button.dataset.jiuzheCards = "true";
+    button.dataset.playerId = player?.id || "";
+    button.dataset.playerColor = player?.color || "";
     button.style.setProperty("--card-index", "1");
     button.title = "查看九折牌";
 
@@ -33598,6 +33665,7 @@
     downloadActionLogMarkdown,
     minimizeFinalResultDialog,
     closeFinalResultDialog,
+    blockManualAiSharedOverlayInputIfNeeded,
     setDebugOpen,
     setDebugPlayerMenuOpen,
     switchCurrentPlayerColor,
@@ -33638,6 +33706,7 @@
     confirmCardCornerQuickAction,
     cancelHandScanSelection,
     getCurrentPlayer,
+    getInterfacePlayer,
     isAiAutomationInputLocked,
     blockManualAiAutomationInput,
     openJiuzheCardDialog,

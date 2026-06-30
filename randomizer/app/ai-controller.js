@@ -2137,7 +2137,7 @@
         cardLabel: cards.getCardLabel(ready?.card),
         effectTypes: (ready?.effects || []).map((effect) => effect?.type || null).filter(Boolean),
       });
-      return confirmCardTaskCompletion();
+      return confirmCardTaskCompletion("confirm", { automated: true });
     }
 
     function scoreAiReadyCardTask(ready, player = getCurrentPlayer()) {
@@ -2183,7 +2183,7 @@
         score: selected.score,
         effectTypes: (selected.ready.effects || []).map((effect) => effect?.type || null).filter(Boolean),
       });
-      return openCardTaskCompletionPicker(selected.ready.card);
+      return openCardTaskCompletionPicker(selected.ready.card, { player: currentPlayer });
     }
 
     function getAiBanrenmaOpportunityPlayers() {
@@ -14456,7 +14456,11 @@
           state.pendingJiuzheCardPlay?.reason === "view" ? null : state.pendingJiuzheCardPlay,
           "[data-jiuzhe-card-choice], [data-jiuzhe-opportunity-skip]",
           null,
-          (choice) => (choice === "skip" ? handleJiuzheOpportunitySkip?.() : handleJiuzheCardChoice?.(choice)),
+          (choice, handlerOptions = {}) => (
+            choice === "skip"
+              ? handleJiuzheOpportunitySkip?.(handlerOptions)
+              : handleJiuzheCardChoice?.(choice, handlerOptions)
+          ),
           {
             getChoice: (button) => (button?.dataset?.jiuzheOpportunitySkip ? "skip" : button?.dataset?.jiuzheCardChoice),
           },
@@ -14849,7 +14853,7 @@
       });
 
       if (typeof flow.handleChoice === "function") {
-        return flow.handleChoice(selected.choice);
+        return flow.handleChoice(selected.choice, { automated: true });
       }
       selected.button?.click();
       return { ok: true, progressed: true, message: `AI 已处理${flow.label}` };
