@@ -7,17 +7,21 @@
   let planetStats = root.SetiPlanetStats;
   let aliens = root.SetiAliens;
   let rockets = root.SetiRocketActions;
+  let techBoardState = root.SetiTechBoardState;
+  let playerTech = root.SetiPlayerTech;
 
-  if ((!players || !cards || !data || !planetStats || !aliens || !rockets) && typeof require === "function") {
+  if ((!players || !cards || !data || !planetStats || !aliens || !rockets || !techBoardState || !playerTech) && typeof require === "function") {
     players = players || require("./players");
     cards = cards || require("./cards/deck");
     data = data || require("./data");
     planetStats = planetStats || require("./planet-stats");
     aliens = aliens || require("./aliens");
     rockets = rockets || require("./rockets");
+    techBoardState = techBoardState || require("./tech/board-state");
+    playerTech = playerTech || require("./tech/player-tech");
   }
 
-  const api = factory(players, cards, data, planetStats, aliens, rockets);
+  const api = factory(players, cards, data, planetStats, aliens, rockets, techBoardState, playerTech);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
@@ -31,6 +35,8 @@
   planetStats,
   aliens,
   rockets,
+  techBoardState,
+  playerTech,
 ) {
   "use strict";
 
@@ -202,6 +208,15 @@
       blindDraw: 3,
       incomeIncreaseCount: 2,
       baseIncome: Object.freeze({ credits: 2, energy: 2 }),
+    }),
+    "星际海盗": Object.freeze({
+      label: "星际海盗",
+      resources: Object.freeze({ credits: 3, energy: 2 }),
+      blindDraw: 1,
+      startupTechTileId: "orange1",
+      launchCount: 1,
+      incomeIncreaseCount: 3,
+      baseIncome: Object.freeze({ credits: 2, energy: 2, handSize: 1 }),
     }),
   });
 
@@ -409,6 +424,45 @@
     }
   }
 
+  function ensurePlayerTechState(context, player) {
+    if (!player) return null;
+    if (typeof context?.ensurePlayerTechState === "function") {
+      context.ensurePlayerTechState(player);
+      return player.techState;
+    }
+    player.techState = playerTech.createPlayerTechState(player.techState || {});
+    return player.techState;
+  }
+
+  function applyStartupTech(context, player, tileId, results) {
+    if (!tileId) return;
+    const techState = ensurePlayerTechState(context, player);
+    if (!techState) {
+      pushResult(results, { ok: false, type: "startupTech", tileId, message: "缺少玩家科技状态" });
+      return;
+    }
+
+    const board = context?.techBoardState || context?.techGameState?.board;
+    const supplyResult = board && techBoardState?.consumeStartupTileWithoutRewards
+      ? techBoardState.consumeStartupTileWithoutRewards(board, tileId)
+      : { ok: true, skippedBonusId: null, message: "未连接科技供应" };
+    if (!supplyResult.ok) {
+      pushResult(results, { ...supplyResult, type: "startupTech" });
+      return;
+    }
+
+    const takeResult = playerTech.recordPlayerTake(techState, tileId, null);
+    pushResult(results, {
+      ok: takeResult.ok,
+      type: "startupTech",
+      tileId,
+      supply: supplyResult,
+      message: takeResult.ok
+        ? `开局获得 ${tileId}（不获得 bonus、不领取首拿分、不旋转）`
+        : takeResult.message,
+    });
+  }
+
   function replaceNextSectorData(context, player, nebulaId) {
     const nextToken = data.getNextReplaceableNebulaToken(context.nebulaDataState, nebulaId);
     const options = {
@@ -559,6 +613,7 @@
 
     resetPlayerStartingResources(player);
     setBaseIncome(player, effect.baseIncome, results);
+    applyStartupTech(context, player, effect.startupTechTileId, results);
     applyResources(player, effect.resources, results);
     applyDataGain(player, effect.dataGain, results);
     applyBlindDraw(context, player, effect.blindDraw, results);

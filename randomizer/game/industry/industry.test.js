@@ -50,8 +50,10 @@ assert.equal(catalog.hasImplementedActiveAbility("未来跨度研究所"), true)
 assert.equal(catalog.hasImplementedActiveAbility("作弊实验室"), false);
 assert.equal(catalog.hasImplementedActiveAbility("寰宇超动力"), true);
 assert.equal(catalog.hasImplementedActiveAbility("原教旨主义"), true);
+assert.equal(catalog.hasImplementedActiveAbility("星际海盗"), true);
 assert.equal(placement.hasIndustryActionMarker({ label: "原教旨主义" }), true);
 assert.equal(placement.getIndustryActionMarkerLayout("原教旨主义").percentY, 73.4);
+assert.equal(placement.hasIndustryActionMarker({ label: "星际海盗" }), true);
 assert.equal(passives.getRocketLimitBonus({ initialSelection: { industry: { label: "寰宇动力" } } }), 1);
 const huanyuSuperdrivePlayer = { initialSelection: { industry: { label: "寰宇超动力" } } };
 assert.equal(passives.getRocketLimitBonus(huanyuSuperdrivePlayer), 1);
@@ -178,6 +180,56 @@ assert.equal(fundamentalismStartup.resources.publicity, 2);
 assert.equal(fundamentalismStartup.blindDraw, 3);
 assert.equal(fundamentalismStartup.incomeIncreaseCount, 2);
 assert.deepEqual(fundamentalismStartup.baseIncome, { credits: 2, energy: 2 });
+
+const piratesPlayer = {
+  id: "pirates",
+  color: "blue",
+  resources: { credits: 1, publicity: 0 },
+  initialSelection: { industry: { label: "星际海盗" } },
+};
+assert.equal(passives.shouldShowPiratesRaidMarkers(piratesPlayer), true);
+assert.equal(passives.shouldInitializePiratesRaidMarkers(piratesPlayer), true);
+const piratesInit = state.initializePiratesRaidMarkers(piratesPlayer);
+assert.equal(piratesInit.ok, true);
+assert.deepEqual(state.listPiratesRaidBlockedTechTiles(piratesPlayer), [
+  "orange2",
+  "orange3",
+  "orange4",
+  "purple1",
+  "purple2",
+  "purple3",
+  "purple4",
+]);
+assert.equal(passives.isTechBlockedByPirates(piratesPlayer, "orange2"), true);
+assert.equal(passives.isTechBlockedByPirates(piratesPlayer, "orange1"), false);
+assert.equal(passives.shouldQueuePiratesRaidForPlanet(piratesPlayer, "mars"), true);
+const piratesNodes = abilities.buildPiratesRaidMarkerEffectNodes(piratesPlayer, "mars", "land");
+assert.equal(piratesNodes.length, 2);
+assert.deepEqual(piratesNodes.map((node) => node.type), [
+  "industry_pirates_raid_marker",
+  "industry_pirates_raid_publicity",
+]);
+assert.equal(piratesNodes[0].required, true);
+assert.equal(piratesNodes[0].options.skippable, false);
+const piratesPlace = state.placePiratesRaidMarker(piratesPlayer, "orange2", "mars");
+assert.equal(piratesPlace.ok, true);
+assert.equal(passives.isTechBlockedByPirates(piratesPlayer, "orange2"), false);
+assert.equal(state.hasPiratesRaidPlanetMarker(piratesPlayer, "mars"), true);
+assert.equal(passives.shouldQueuePiratesRaidForPlanet(piratesPlayer, "mars"), false);
+const piratesFlow = abilities.buildActiveAbilityFlow(piratesPlayer, "星际海盗", 2);
+assert.equal(piratesFlow.ok, true);
+assert.equal(piratesFlow.flowType, "pirates_raid_launch");
+assert.deepEqual(piratesFlow.cost, { credits: 1 });
+const piratesLaunchNodes = abilities.buildPiratesRaidLaunchEffectNodes(piratesFlow, { groupId: "test-pirates" });
+assert.equal(piratesLaunchNodes.length, 1);
+assert.equal(piratesLaunchNodes[0].type, "industry_pirates_raid_launch");
+assert.equal(piratesLaunchNodes[0].required, true);
+const poorPiratesFlow = abilities.buildActiveAbilityFlow(
+  { ...piratesPlayer, resources: { credits: 0 } },
+  "星际海盗",
+  2,
+);
+assert.equal(poorPiratesFlow.ok, false);
 
 const fenwickPlayer = {
   id: "white",

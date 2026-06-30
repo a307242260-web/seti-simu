@@ -261,6 +261,7 @@
         "异星实验室.png",
         "宇宙战略集团.png",
         "原教旨主义.png",
+        "星际海盗.png",
       ]),
       INITIAL_CARD_COUNT: initialCards?.INITIAL_CARD_COUNT || 21,
       INITIAL_SELECTION_REQUIRED: Object.freeze({

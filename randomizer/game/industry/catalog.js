@@ -93,6 +93,11 @@
         "fundamentalism_income_task_completion",
       ]),
     }),
+    "星际海盗": Object.freeze({
+      label: "星际海盗",
+      activeAbilityId: "pirates_raid_launch",
+      passiveIds: Object.freeze(["pirates_raid_markers"]),
+    }),
   });
 
   function normalizeIndustryLabel(cardOrLabel) {

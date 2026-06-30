@@ -90,7 +90,9 @@
       handleFundamentalismExchangeChoice,
       handleDiscardCornerRepeatChoice,
       handleRemoveOrbitToProbeChoice,
+      handlePiratesRaidLaunchChoice,
       handleReturnUnfinishedTaskChoice,
+      handlePiratesRaidTechMarkerClick,
       confirmStrategyPassiveSlotChoice,
       cancelStrategyPassiveSlotChoice,
       confirmScanTarget,
@@ -265,6 +267,11 @@
       const token = event.target.closest(".data-token-pool");
       if (!token) return;
       runPlaceDataToComputer();
+    });
+    els.playerBoardTechLayer?.addEventListener("click", (event) => {
+      const marker = event.target.closest("[data-pirates-raid-tech]");
+      if (!marker || marker.disabled) return;
+      handlePiratesRaidTechMarkerClick(marker.dataset.piratesRaidTech);
     });
     els.dataPlaceActions?.addEventListener("click", (event) => {
       const skipButton = event.target.closest("[data-place-skip]");
@@ -486,6 +493,12 @@
       const removeOrbitToProbe = event.target.closest("[data-remove-orbit-to-probe]");
       if (removeOrbitToProbe && !removeOrbitToProbe.disabled) {
         handleRemoveOrbitToProbeChoice(removeOrbitToProbe.dataset.removeOrbitToProbe);
+        return;
+      }
+
+      const piratesRaidLaunch = event.target.closest("[data-pirates-raid-launch-choice]");
+      if (piratesRaidLaunch && !piratesRaidLaunch.disabled) {
+        handlePiratesRaidLaunchChoice(piratesRaidLaunch.dataset.piratesRaidLaunchChoice);
         return;
       }
 

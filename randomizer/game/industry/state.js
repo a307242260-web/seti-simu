@@ -28,6 +28,16 @@
     3: 35,
     4: 45,
   });
+  const PIRATES_RAID_TECH_TILE_IDS = Object.freeze([
+    "orange2",
+    "orange3",
+    "orange4",
+    "purple1",
+    "purple2",
+    "purple3",
+    "purple4",
+  ]);
+  const PIRATES_RAID_MARKER_SRC = "../assets/industry/掠夺标记.png";
 
   function cloneIndustryValue(value) {
     if (value == null) return value;
@@ -50,6 +60,13 @@
       card: null,
       targetScore: null,
       playing: false,
+    };
+  }
+
+  function createPiratesRaidState() {
+    return {
+      blockedTechTileIds: [...PIRATES_RAID_TECH_TILE_IDS],
+      planetMarkers: [],
     };
   }
 
@@ -285,6 +302,116 @@
     return player;
   }
 
+  function normalizePiratesRaidMarker(marker, player) {
+    const tileId = String(marker?.tileId || "");
+    const planetId = String(marker?.planetId || "");
+    if (!PIRATES_RAID_TECH_TILE_IDS.includes(tileId) || !planetId) return null;
+    return {
+      tileId,
+      planetId,
+      playerId: marker?.playerId || player?.id || null,
+      playerColor: marker?.playerColor || player?.color || null,
+    };
+  }
+
+  function ensurePiratesRaidState(player) {
+    if (!player) return null;
+    if (!player.industryPiratesRaid || typeof player.industryPiratesRaid !== "object") {
+      player.industryPiratesRaid = createPiratesRaidState();
+    }
+    const markerTileIds = new Set();
+    const markers = [];
+    for (const marker of player.industryPiratesRaid.planetMarkers || []) {
+      const normalized = normalizePiratesRaidMarker(marker, player);
+      if (!normalized || markerTileIds.has(normalized.tileId)) continue;
+      markerTileIds.add(normalized.tileId);
+      markers.push(normalized);
+    }
+    const blocked = new Set();
+    for (const tileId of player.industryPiratesRaid.blockedTechTileIds || []) {
+      if (PIRATES_RAID_TECH_TILE_IDS.includes(tileId) && !markerTileIds.has(tileId)) {
+        blocked.add(tileId);
+      }
+    }
+    for (const tileId of PIRATES_RAID_TECH_TILE_IDS) {
+      if (!markerTileIds.has(tileId) && !blocked.has(tileId)) blocked.add(tileId);
+    }
+    player.industryPiratesRaid.blockedTechTileIds = PIRATES_RAID_TECH_TILE_IDS.filter((tileId) => blocked.has(tileId));
+    player.industryPiratesRaid.planetMarkers = markers;
+    return player.industryPiratesRaid;
+  }
+
+  function initializePiratesRaidMarkers(player) {
+    const raidState = ensurePiratesRaidState(player);
+    if (!raidState) {
+      return { ok: false, message: "没有玩家" };
+    }
+    player.industryPiratesRaidInitialized = true;
+    return {
+      ok: true,
+      player,
+      message: "已初始化星际海盗掠夺标记",
+    };
+  }
+
+  function listPiratesRaidBlockedTechTiles(player) {
+    return [...(ensurePiratesRaidState(player)?.blockedTechTileIds || [])];
+  }
+
+  function isPiratesRaidTechBlocked(player, tileId) {
+    return listPiratesRaidBlockedTechTiles(player).includes(tileId);
+  }
+
+  function listPiratesRaidPlanetMarkers(player) {
+    return [...(ensurePiratesRaidState(player)?.planetMarkers || [])];
+  }
+
+  function hasPiratesRaidPlanetMarker(player, planetId) {
+    const targetPlanetId = String(planetId || "");
+    if (!targetPlanetId) return false;
+    return listPiratesRaidPlanetMarkers(player).some((marker) => marker.planetId === targetPlanetId);
+  }
+
+  function canPlacePiratesRaidMarker(player, tileId, planetId) {
+    if (!player) return { ok: false, message: "没有玩家" };
+    const normalizedTileId = String(tileId || "");
+    const normalizedPlanetId = String(planetId || "");
+    if (!PIRATES_RAID_TECH_TILE_IDS.includes(normalizedTileId)) {
+      return { ok: false, message: "未知掠夺标记" };
+    }
+    if (!normalizedPlanetId) {
+      return { ok: false, message: "未知星球" };
+    }
+    if (!isPiratesRaidTechBlocked(player, normalizedTileId)) {
+      return { ok: false, message: "该掠夺标记已移除" };
+    }
+    if (hasPiratesRaidPlanetMarker(player, normalizedPlanetId)) {
+      return { ok: false, message: "该星球已有掠夺标记" };
+    }
+    return { ok: true, message: "可以放置掠夺标记" };
+  }
+
+  function placePiratesRaidMarker(player, tileId, planetId) {
+    const check = canPlacePiratesRaidMarker(player, tileId, planetId);
+    if (!check.ok) return { ...check, player };
+    const raidState = ensurePiratesRaidState(player);
+    const normalizedTileId = String(tileId);
+    const marker = {
+      tileId: normalizedTileId,
+      planetId: String(planetId),
+      playerId: player.id || null,
+      playerColor: player.color || null,
+    };
+    raidState.blockedTechTileIds = raidState.blockedTechTileIds.filter((item) => item !== normalizedTileId);
+    raidState.planetMarkers.push(marker);
+    return {
+      ok: true,
+      player,
+      marker,
+      message: "已放置星际海盗掠夺标记",
+    };
+  }
+
   function initializeStrategyPassiveMarkers(player) {
     const state = ensurePlayerIndustryState(player);
     if (!state) {
@@ -463,8 +590,11 @@
     ALIEN_LAB_TRACE_TO_PANEL,
     ALIEN_LAB_PANEL_LABELS,
     FUTURE_SPAN_DELTAS_BY_COST,
+    PIRATES_RAID_TECH_TILE_IDS,
+    PIRATES_RAID_MARKER_SRC,
     createAlienLabPanels,
     createFutureSpanState,
+    createPiratesRaidState,
     ensurePlayerIndustryState,
     isIndustryActionMarkedThisRound,
     canMarkIndustryAction,
@@ -500,5 +630,13 @@
     advanceFutureSpanTarget,
     markFutureSpanPlaying,
     clearFutureSpanState,
+    ensurePiratesRaidState,
+    initializePiratesRaidMarkers,
+    listPiratesRaidBlockedTechTiles,
+    isPiratesRaidTechBlocked,
+    listPiratesRaidPlanetMarkers,
+    hasPiratesRaidPlanetMarker,
+    canPlacePiratesRaidMarker,
+    placePiratesRaidMarker,
   });
 });

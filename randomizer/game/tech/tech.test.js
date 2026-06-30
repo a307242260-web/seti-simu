@@ -178,6 +178,16 @@ for (let index = 0; index < 4; index += 1) {
 assert.equal(tech.getRemainingForSlot(depletionBoard, "orange1"), 0);
 assert.equal(tech.isSlotAvailable(depletionBoard, "orange2"), true);
 
+const startupBoard = tech.createState().board;
+const startupBonus = startupBoard.stacks.orange1.bonusId;
+const startupTake = tech.boardState.consumeStartupTileWithoutRewards(startupBoard, "orange1");
+assert.equal(startupTake.ok, true);
+assert.equal(startupTake.skippedBonusId, startupBonus);
+assert.equal(startupTake.firstTake, false);
+assert.equal(startupBoard.stacks.orange1.remaining, tech.PIECES_PER_SLOT - 1);
+assert.equal(startupBoard.stacks.orange1.firstTakeClaimedBy, null);
+assert.equal(tech.boardState.isFirstTakeAvailable(startupBoard, "orange1"), true);
+
 const context3 = createContext(10);
 const player3 = players.getCurrentPlayer(context3.playerState);
 context3.ensurePlayerTechState(player3);

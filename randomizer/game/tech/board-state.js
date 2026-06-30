@@ -160,6 +160,41 @@
     };
   }
 
+  function consumeStartupTileWithoutRewards(boardState, tileId) {
+    const stack = getStack(boardState, tileId);
+    if (!stack) return { ok: false, message: `未知科技板块 ${tileId}` };
+    if (!isSlotAvailable(boardState, tileId)) {
+      return { ok: false, message: `${tileId} 已取完` };
+    }
+
+    const techType = stack.techType;
+    const skippedBonusId = getCurrentBonusId(stack);
+    if (!skippedBonusId) {
+      return { ok: false, message: `${tileId} 无可用奖励` };
+    }
+
+    stack.remaining -= 1;
+
+    if (stack.remaining > 0) {
+      stack.bonusIndex += 1;
+      syncCurrentBonus(stack);
+    } else {
+      stack.depleted = true;
+      stack.bonusId = null;
+    }
+
+    return {
+      ok: true,
+      tileId,
+      techType,
+      skippedBonusId,
+      firstTake: false,
+      remainingForSlot: stack.remaining,
+      remainingForType: getRemainingForType(boardState, techType),
+      stack: structuredClone(getStack(boardState, tileId)),
+    };
+  }
+
   function getSnapshot(boardState) {
     return structuredClone(boardState);
   }
@@ -178,6 +213,7 @@
     listSupplyStacksByType,
     isFirstTakeAvailable,
     consumeFromSupplySlot,
+    consumeStartupTileWithoutRewards,
     getSnapshot,
   });
 });

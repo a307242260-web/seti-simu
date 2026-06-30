@@ -816,6 +816,33 @@ body {
   pointer-events: auto;
 }
 
+.app-wrap[data-interaction-focus="player-board"] .table-column-left,
+.app-wrap[data-interaction-focus="player-board"] .table-column-right,
+.app-wrap[data-interaction-focus="player-board"] .board-shell,
+.app-wrap[data-interaction-focus="player-board"] .planets-reference,
+.app-wrap[data-interaction-focus="player-board"] .player-hand-panel,
+.app-wrap[data-interaction-focus="player-board"] .reserved-card-panel {
+  opacity: 0.34;
+  filter: saturate(0.7) brightness(0.86);
+  pointer-events: none;
+}
+
+.app-wrap[data-interaction-focus="player-board"] .player-board-panel,
+.app-wrap[data-interaction-focus="player-board"] .action-effect-bar {
+  position: relative;
+  z-index: 1270;
+  opacity: 1;
+  filter: none;
+  pointer-events: auto;
+}
+
+.app-wrap[data-interaction-focus="player-board"] .player-board-panel {
+  border-color: rgba(120, 210, 255, 0.58);
+  box-shadow:
+    0 0 0 1px rgba(120, 210, 255, 0.28),
+    0 18px 42px rgba(0, 0, 0, 0.48);
+}
+
 .app-wrap[data-interaction-focus="board-rockets"] .table-column-left,
 .app-wrap[data-interaction-focus="board-rockets"] .table-column-right,
 .app-wrap[data-interaction-focus="board-rockets"] .player-stats,
@@ -2195,6 +2222,40 @@ body {
   border-color: rgba(180, 236, 255, 0.96);
   background: rgba(58, 142, 196, 0.36);
   box-shadow: 0 0 14px rgba(120, 230, 255, 0.55);
+}
+
+.pirates-raid-tech-marker-button {
+  position: absolute;
+  width: calc(175px * var(--pirates-raid-tech-scale, 0.36) * 0.82);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  z-index: 11;
+  pointer-events: auto;
+  cursor: default;
+}
+
+.pirates-raid-tech-marker-button:disabled {
+  pointer-events: none;
+}
+
+.pirates-raid-tech-marker-button.is-placeable {
+  cursor: pointer;
+  filter:
+    drop-shadow(0 0 8px rgba(255, 219, 98, 0.92))
+    drop-shadow(0 3px 7px rgba(0, 0, 0, 0.5));
+  animation: tech-tile-highlight-pulse 1.8s ease-in-out infinite;
+}
+
+.pirates-raid-tech-marker {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  filter: drop-shadow(0 3px 7px rgba(0, 0, 0, 0.48));
 }
 
 .player-board-data-layer .data-blue-bonus-drop-zone:disabled {
@@ -4432,6 +4493,20 @@ button.spin-button:hover {
   inset: 0;
   z-index: 2;
   pointer-events: none;
+}
+
+.pirates-raid-planet-marker {
+  position: absolute;
+  width: 3.2%;
+  min-width: 24px;
+  max-width: 38px;
+  height: auto;
+  transform: translate(-50%, -50%);
+  z-index: 9;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 0 7px rgba(255, 219, 98, 0.58))
+    drop-shadow(0 3px 7px rgba(0, 0, 0, 0.5));
 }
 
 .button-wrap {

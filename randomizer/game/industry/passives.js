@@ -2,19 +2,21 @@
   "use strict";
 
   let catalog = root.SetiIndustryCatalog;
+  let state = root.SetiIndustryState;
 
   if (typeof require === "function") {
     catalog = catalog || require("./catalog");
+    state = state || require("./state");
   }
 
-  const api = factory(catalog);
+  const api = factory(catalog, state);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiIndustryPassives = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, state) {
   "use strict";
 
   const FENWICK_RESEARCH_COST = 5;
@@ -32,6 +34,7 @@
   const FUNDAMENTALISM_DISABLE_PLAY_CARD_PASSIVE_ID = "fundamentalism_disable_play_card_action";
   const FUNDAMENTALISM_DOUBLE_DISCARD_CORNER_PASSIVE_ID = "fundamentalism_double_discard_corner";
   const FUNDAMENTALISM_INCOME_TASK_COMPLETION_PASSIVE_ID = "fundamentalism_income_task_completion";
+  const PIRATES_RAID_PASSIVE_ID = "pirates_raid_markers";
 
   function playerHasPassive(player, passiveId) {
     const definition = catalog.getPlayerIndustryDefinition(player);
@@ -174,6 +177,31 @@
     return !player?.industryFutureSpanInitialized;
   }
 
+  function hasPiratesRaidMarkers(player) {
+    return playerHasPassive(player, PIRATES_RAID_PASSIVE_ID);
+  }
+
+  function shouldShowPiratesRaidMarkers(player) {
+    if (!hasPiratesRaidMarkers(player)) return false;
+    return Boolean(player?.initialSelection?.industry);
+  }
+
+  function shouldInitializePiratesRaidMarkers(player) {
+    if (!shouldShowPiratesRaidMarkers(player)) return false;
+    return !player?.industryPiratesRaidInitialized;
+  }
+
+  function isTechBlockedByPirates(player, tileId) {
+    if (!hasPiratesRaidMarkers(player)) return false;
+    return Boolean(state?.isPiratesRaidTechBlocked?.(player, tileId));
+  }
+
+  function shouldQueuePiratesRaidForPlanet(player, planetId) {
+    if (!hasPiratesRaidMarkers(player)) return false;
+    if (!planetId || state?.hasPiratesRaidPlanetMarker?.(player, planetId)) return false;
+    return (state?.listPiratesRaidBlockedTechTiles?.(player) || []).length > 0;
+  }
+
   function normalizeRoundNumber(roundNumber) {
     return Math.max(0, Math.round(Number(roundNumber) || 0));
   }
@@ -225,6 +253,7 @@
     ALIEN_LAB_LAUNCH_COST,
     ALIEN_LAB_SCAN_COST,
     HUANYU_ROCKET_LIMIT_BONUS,
+    PIRATES_RAID_PASSIVE_ID,
     getRocketLimitBonus,
     hasHuanyuSuperdriveRoundStart,
     shouldLaunchAfterPassWithHuanyuSuperdrive,
@@ -253,6 +282,11 @@
     shouldInitializeAlienLabPanels,
     shouldShowFutureSpanPanel,
     shouldInitializeFutureSpan,
+    hasPiratesRaidMarkers,
+    shouldShowPiratesRaidMarkers,
+    shouldInitializePiratesRaidMarkers,
+    isTechBlockedByPirates,
+    shouldQueuePiratesRaidForPlanet,
     isSentinelCornerArmed,
     getBorrowedTechTileId,
     playerHasTechEffect,

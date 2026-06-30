@@ -24,6 +24,8 @@
   const STRATUS_PUBLIC_CARD_LIMIT = 3;
   const HUANYU_FREE_MOVE_COUNT = 2;
   const FUNDAMENTALISM_EXCHANGE_COUNT = 3;
+  const PIRATES_RAID_PUBLICITY_GAIN = 3;
+  const PIRATES_RAID_ACTIVE_COST = Object.freeze({ credits: 1 });
 
   function isAlienCard(card) {
     const cardId = String(card?.cardId || card?.id || "");
@@ -378,9 +380,78 @@
           exchangeCount: FUNDAMENTALISM_EXCHANGE_COUNT,
           message: `${prepared.label}：请按效果栏结算 ${FUNDAMENTALISM_EXCHANGE_COUNT} 次分数/资源兑换`,
         };
+      case "pirates_raid_launch":
+        if (!player?.resources || Number(player.resources.credits || 0) < PIRATES_RAID_ACTIVE_COST.credits) {
+          return { ok: false, message: `信用点不足，需要 ${PIRATES_RAID_ACTIVE_COST.credits} 信用点` };
+        }
+        return {
+          ok: true,
+          abilityId,
+          flowType: "pirates_raid_launch",
+          label: prepared.label,
+          cost: { ...PIRATES_RAID_ACTIVE_COST },
+          message: `${prepared.label}：请选择一个己方环绕或登陆标记，消耗 1 信用点并在该星球免费发射`,
+        };
       default:
         return { ok: false, message: `未实现的公司 1x 行动：${abilityId}` };
     }
+  }
+
+  function buildPiratesRaidMarkerEffectNodes(player, planetId, actionType = null) {
+    if (!passives.shouldQueuePiratesRaidForPlanet?.(player, planetId)) return [];
+    const playerId = player?.id || null;
+    const playerColor = player?.color || null;
+    const key = `${playerId || "player"}-${planetId}-${actionType || "planet"}`;
+    return [
+      {
+        id: `industry-pirates-raid-marker-${key}`,
+        type: "industry_pirates_raid_marker",
+        label: "星际海盗：放置掠夺标记",
+        icon: "publicity",
+        status: "pending",
+        undoable: true,
+        required: true,
+        playerId,
+        playerColor,
+        options: {
+          planetId,
+          actionType,
+          skippable: false,
+        },
+      },
+      {
+        id: `industry-pirates-raid-publicity-${key}`,
+        type: "industry_pirates_raid_publicity",
+        label: `星际海盗：获得${PIRATES_RAID_PUBLICITY_GAIN}宣传`,
+        icon: "publicity",
+        status: "pending",
+        undoable: true,
+        required: true,
+        playerId,
+        playerColor,
+        options: {
+          gain: { publicity: PIRATES_RAID_PUBLICITY_GAIN },
+          skippable: false,
+        },
+      },
+    ];
+  }
+
+  function buildPiratesRaidLaunchEffectNodes(flow, options = {}) {
+    const groupId = options.groupId || "industry-pirates-raid-launch";
+    return [{
+      id: `${groupId}-launch`,
+      type: "industry_pirates_raid_launch",
+      label: `${flow?.label || "星际海盗"}：掠夺发射`,
+      icon: "publicity",
+      status: "pending",
+      undoable: true,
+      required: true,
+      options: {
+        cost: { ...(flow?.cost || PIRATES_RAID_ACTIVE_COST) },
+        skippable: false,
+      },
+    }];
   }
 
   function isSentinelPlayCornerReady(player, roundNumber, turnNumber = 1) {
@@ -484,11 +555,15 @@
     STRATUS_PUBLIC_CARD_LIMIT,
     HUANYU_FREE_MOVE_COUNT,
     FUNDAMENTALISM_EXCHANGE_COUNT,
+    PIRATES_RAID_PUBLICITY_GAIN,
+    PIRATES_RAID_ACTIVE_COST,
     isAlienCard,
     getCornerReward,
     buildStratusPublicCornerEffectNodes,
     buildHuanyuFreeMoveEffectNodes,
     buildFundamentalismScoreExchangeEffectNodes,
+    buildPiratesRaidMarkerEffectNodes,
+    buildPiratesRaidLaunchEffectNodes,
     applyCornerReward,
     applyIncomeResourcesFromCard,
     prepareActiveAbility,

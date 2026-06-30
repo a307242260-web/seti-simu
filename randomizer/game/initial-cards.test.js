@@ -5,6 +5,7 @@ const cards = require("./cards/deck");
 const data = require("./data");
 const planetStats = require("./planet-stats");
 const aliens = require("./aliens");
+const tech = require("./tech");
 const initialCards = require("./initial-cards");
 
 function createContext(playerInputs = [{ color: "blue" }]) {
@@ -15,6 +16,7 @@ function createContext(playerInputs = [{ color: "blue" }]) {
   return {
     playerState,
     cardState: cards.createCardState(),
+    techGameState: tech.createState(),
     nebulaDataState: data.createDefaultNebulaDataState(),
     planetStatsState: planetStats.createPlanetStatsState(),
     alienGameState: aliens.createDefaultAlienState(),
@@ -187,6 +189,39 @@ function initialCard(number) {
     availableData: 0,
     additionalPublicScan: 0,
   });
+}
+
+{
+  const context = createContext();
+  context.techBoardState = context.techGameState.board;
+  const player = currentPlayer(context);
+  const beforeBonus = context.techGameState.board.stacks.orange1.bonusId;
+
+  const result = initialCards.resolveIndustryEffect(context, player, { label: "星际海盗" });
+
+  assert.equal(result.ok, true);
+  assert.equal(player.resources.credits, 3);
+  assert.equal(player.resources.energy, 2);
+  assert.equal(player.resources.publicity, 0);
+  assert.equal(player.resources.handSize, 1);
+  assert.equal(context.launches.length, 1);
+  assert.equal(result.incomeIncreaseCount, 3);
+  assert.deepEqual(player.income, {
+    credits: 2,
+    energy: 2,
+    handSize: 1,
+    publicity: 0,
+    availableData: 0,
+    additionalPublicScan: 0,
+  });
+  assert.equal(tech.playerTech.playerOwnsTile(player.techState, "orange1"), true);
+  assert.equal(context.techGameState.board.stacks.orange1.remaining, tech.PIECES_PER_SLOT - 1);
+  assert.equal(context.techGameState.board.stacks.orange1.firstTakeClaimedBy, null);
+  assert.notEqual(context.techGameState.board.stacks.orange1.bonusId, beforeBonus);
+  assert.equal(
+    tech.boardState.isFirstTakeAvailable(context.techGameState.board, "orange1"),
+    true,
+  );
 }
 
 {
