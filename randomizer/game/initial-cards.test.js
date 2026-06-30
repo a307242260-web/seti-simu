@@ -265,6 +265,32 @@ function initialCard(number) {
   assert.equal(traceResult.ok, true);
   assert.equal(aliens.getAlienSlot(context.alienGameState, 2).traces.yellow.firstPlaced, true);
   assert.equal(aliens.getAlienSlot(context.alienGameState, 2).traces.yellow.ownerPlayerColor, player.color);
+  assert.equal(player.resources.score, 3, "initial alien trace should resolve the state first-trace score reward");
+  assert.equal(player.resources.publicity, 1, "initial alien trace should resolve the state first-trace publicity reward");
+  assert.equal(
+    traceResult.results.find((entry) => entry.type === "alienTraceReward")?.rewardKind,
+    "firstTrace",
+  );
+}
+
+{
+  const context = createContext([{ color: "blue" }, { color: "white" }]);
+  const [blue, white] = context.playerState.players;
+
+  const firstTrace = initialCards.resolveInitialCardEffect(context, blue, initialCard(10));
+  const extraTrace = initialCards.resolveInitialCardEffect(context, white, initialCard(10));
+
+  assert.equal(firstTrace.ok, true);
+  assert.equal(extraTrace.ok, true);
+  const yellowTrace = aliens.getAlienSlot(context.alienGameState, 2).traces.yellow;
+  assert.equal(yellowTrace.extraCount, 1);
+  assert.equal(yellowTrace.extraMarkers[0].ownerPlayerColor, white.color);
+  assert.equal(white.resources.score, 3, "initial repeated alien trace should resolve the state extra 3-score reward");
+  assert.equal(white.resources.publicity, 0, "state extra trace should not repeat the first-trace publicity reward");
+  assert.equal(
+    extraTrace.results.find((entry) => entry.type === "alienTraceReward")?.rewardKind,
+    "stateExtraTrace",
+  );
 }
 
 {

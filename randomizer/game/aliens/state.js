@@ -21,6 +21,7 @@
     1: Object.freeze({ gain: Object.freeze({ score: 5, publicity: 1 }) }),
     2: Object.freeze({ gain: Object.freeze({ score: 3, publicity: 1 }) }),
   });
+  const EXTRA_TRACE_REWARD = Object.freeze({ gain: Object.freeze({ score: 3 }) });
 
   function createDefaultTraceSlot() {
     return {
@@ -119,6 +120,12 @@
     if (!reward) return null;
     return {
       gain: { ...(reward.gain || {}) },
+    };
+  }
+
+  function getExtraTraceReward() {
+    return {
+      gain: { ...(EXTRA_TRACE_REWARD.gain || {}) },
     };
   }
 
@@ -282,6 +289,7 @@
     countTraceMarkersForPlayerOnSlot,
     countFirstTracesByPlayerOnSlot,
     getFirstTraceRewardForSlot,
+    getExtraTraceReward,
     isAlienReadyToReveal,
     getExtraTraceMarker,
     getExtraTraceOwnerColor,

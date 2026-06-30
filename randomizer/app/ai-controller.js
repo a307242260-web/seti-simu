@@ -14217,11 +14217,15 @@
       const position = getAiAlienTraceTargetPosition(target);
       const fangzhouUseChoice = target.button.dataset.fangzhouUse || null;
       const isFangzhouUnlockChoice = mode === "fangzhou-use" && fangzhouUseChoice === "unlock";
+      const isStateExtraTraceTarget = target.kind === "state-slot"
+        && target.button.dataset.stateTraceKind === "extra";
       const scoringMode = mode === "fangzhou-use" && fangzhouUseChoice === "place" && position != null
         ? "fangzhou-grid"
         : mode;
       const rawReward = isFangzhouUnlockChoice
         ? fangzhou?.getCard2UnlockTraceReward?.()
+        : isStateExtraTraceTarget
+          ? aliens?.getExtraTraceReward?.()
         : getAiAlienTraceTargetReward(scoringMode, traceType, position);
       const reward = getAiAlienTraceRewardForValuation(scoringMode, rawReward, player);
       const demand = getAiStrategyDemand(player);
@@ -14329,7 +14333,7 @@
       score += scoreAiAomomoTraceTimingValue(scoringMode, reward, player, position);
       score += scoreAiYichangdianAlienCardTracePriorityValue(scoringMode, reward, player, position);
       score += scoreAiYichangdianTraceTimingValue(scoringMode, reward, player, position, traceType, alienSlot);
-      if (target.kind === "grid-slot" || (mode === "fangzhou-use" && fangzhouUseChoice === "place") || isFangzhouUnlockChoice) {
+      if (target.kind === "grid-slot" || target.kind === "state-slot" || (mode === "fangzhou-use" && fangzhouUseChoice === "place") || isFangzhouUnlockChoice) {
         const directScore = Math.max(0, aiNumber(reward?.gain?.score));
         const pointConversionPenalty = scoreAiHighCostPointConversionPenalty(player, {
           actionId: "alienTrace",

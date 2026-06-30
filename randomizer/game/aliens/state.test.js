@@ -19,6 +19,12 @@ assert(state.getFirstTraceRewardForSlot(2).gain.publicity === 1,
   "alien slot 2 first trace should award 1 publicity");
 assert(state.getFirstTraceRewardForSlot(3) === null,
   "unknown alien slots should not have first trace rewards");
+assert(state.getExtraTraceReward().gain.score === 3,
+  "state extra trace should award 3 score");
+const copiedExtraTraceReward = state.getExtraTraceReward();
+copiedExtraTraceReward.gain.score = 99;
+assert(state.getExtraTraceReward().gain.score === 3,
+  "state extra trace reward should be returned as a defensive copy");
 
 let result = state.placeFirstTrace(alienState, 1, "yellow", "blue");
 assert(result.ok && !result.extraOnly, "first yellow trace should place");

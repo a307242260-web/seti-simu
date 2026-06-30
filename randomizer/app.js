@@ -20315,21 +20315,8 @@
     return confirmFangzhouTracePlacement(alienSlotId, traceType, position);
   }
 
-  function applyFangzhouUnlockStateTraceReward(player, traceType) {
-    const reward = fangzhou?.getCard2UnlockTraceReward?.();
-    const gain = reward?.gain || null;
-    if (!gain || !Object.values(gain).some((value) => Number(value) !== 0)) {
-      return { ok: true, reward: null, gain: null, message: null };
-    }
-
-    players.gainResources(player, gain);
-    recordAlienTraceScore(player, traceType, gain);
-    return {
-      ok: true,
-      reward,
-      gain: { ...gain },
-      message: `state额外痕迹奖励：${formatAlienFirstTraceRewardGain(gain) || "无奖励"}`,
-    };
+  function applyFangzhouUnlockStateTraceReward(alienSlotId, player, traceType, placementResult) {
+    return applyAlienStateExtraTraceReward(alienSlotId, traceType, player, placementResult);
   }
 
   function confirmFangzhouCard2Unlock(alienSlotId, traceType) {
@@ -20375,7 +20362,7 @@
       currentPlayer.hand.push(unlockResult.handCard);
     }
 
-    const stateTraceReward = applyFangzhouUnlockStateTraceReward(currentPlayer, traceType);
+    const stateTraceReward = applyFangzhouUnlockStateTraceReward(alienSlotId, currentPlayer, traceType, stateTraceResult);
     rocketState.statusNote = [
       unlockResult.message,
       stateTraceResult.message,
@@ -23931,6 +23918,23 @@
     };
   }
 
+  function applyAlienStateExtraTraceReward(alienSlotId, traceType, player, placementResult) {
+    if (!placementResult?.ok || !placementResult.extraOnly) return null;
+    const reward = aliens.getExtraTraceReward?.(alienSlotId, traceType);
+    const gain = reward?.gain || null;
+    if (!gain || !Object.values(gain).some((value) => Number(value) !== 0)) return null;
+
+    players.gainResources(player, gain);
+    recordAlienTraceScore(player, traceType, gain);
+
+    return {
+      kind: "stateExtraTraceReward",
+      reward,
+      gain: { ...gain },
+      message: `${aliens.getAlienSlotLabel(alienSlotId)} state额外痕迹奖励：${formatAlienFirstTraceRewardGain(gain) || "无奖励"}`,
+    };
+  }
+
   function applyAlienTraceAfterReward(pending, player, traceType) {
     const reward = pending?.afterTraceReward;
     if (!reward || reward.kind !== "traceCountScore") return null;
@@ -23983,6 +23987,9 @@
     const firstTraceReward = result.ok
       ? applyAlienFirstTraceReward(alienSlotId, traceType, currentPlayer, result)
       : null;
+    const stateExtraTraceReward = result.ok
+      ? applyAlienStateExtraTraceReward(alienSlotId, traceType, currentPlayer, result)
+      : null;
     const revealResult = maybeRevealAlienAfterTrace(alienSlotId, result, { immediate: inDebugMode });
     const immediateRevealResult = revealResult?.delayed ? null : revealResult;
     const revealIrreversibleReason = immediateRevealResult?.ok
@@ -23993,6 +24000,7 @@
     rocketState.statusNote = [
       result.message,
       firstTraceReward?.message || null,
+      stateExtraTraceReward?.message || null,
       revealSideEffect?.message || revealResult?.message || null,
     ].filter(Boolean).join("；");
     const traceEvents = result.ok && !inDebugMode
@@ -24023,7 +24031,7 @@
           irreversible: revealIrreversible,
           message: rocketState.statusNote,
           events: traceEvents,
-          payload: { alienSlotId, traceType, revealed: immediateRevealResult || null, revealPending: revealResult?.delayed || false, firstTraceReward, afterReward },
+          payload: { alienSlotId, traceType, revealed: immediateRevealResult || null, revealPending: revealResult?.delayed || false, firstTraceReward, stateExtraTraceReward, afterReward },
         };
       }
       completeCurrentActionEffect();
@@ -27647,6 +27655,8 @@
       for (const item of entry?.results || []) {
         if (item?.type === "resources") {
           addScoreSourceFromGain(player, SCORE_SOURCE_KEYS.INITIAL, item.gain);
+        } else if (item?.type === "alienTraceReward") {
+          recordAlienTraceScore(player, item.trace?.traceType, item.gain);
         } else if (item?.type === "scan") {
           recordScanScoreSource(player, item);
         }

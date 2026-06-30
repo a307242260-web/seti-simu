@@ -52,6 +52,15 @@
     kepler22: "sector-3-a",
   });
   const INITIAL_TURN_ORDER_SCORES = Object.freeze([1, 2, 3, 4]);
+  const RESOURCE_GAIN_LABELS = Object.freeze({
+    score: "分",
+    credits: "信用点",
+    energy: "能量",
+    publicity: "宣传",
+    availableData: "数据",
+    additionalPublicScan: "额外公共扫描",
+    handSize: "手牌",
+  });
 
   const INITIAL_CARD_EFFECTS = Object.freeze({
     1: Object.freeze({ label: "天狼星A扫描两次", scan: Object.freeze({ nebulaId: NEBULA_BY_KEY.siriusA, count: 2 }) }),
@@ -278,25 +287,24 @@
     return result;
   }
 
+  function hasNonZeroGain(gain) {
+    return Boolean(gain && Object.values(gain).some((value) => Number(value) !== 0));
+  }
+
+  function formatResourceGain(gain) {
+    return Object.entries(gain || {})
+      .map(([key, value]) => `${value}${RESOURCE_GAIN_LABELS[key] || key}`)
+      .join("、");
+  }
+
   function applyResources(player, gain, results) {
     if (!gain || !Object.keys(gain).length) return;
     players.gainResources(player, gain);
-    const labels = {
-      score: "分",
-      credits: "信用点",
-      energy: "能量",
-      publicity: "宣传",
-      availableData: "数据",
-      additionalPublicScan: "额外公共扫描",
-      handSize: "手牌",
-    };
     pushResult(results, {
       ok: true,
       type: "resources",
       gain: { ...gain },
-      message: `获得 ${
-        Object.entries(gain).map(([key, value]) => `${value}${labels[key] || key}`).join("、")
-      }`,
+      message: `获得 ${formatResourceGain(gain)}`,
     });
   }
 
@@ -528,6 +536,25 @@
     });
   }
 
+  function applyAlienStateTraceReward(player, trace, placementResult, results) {
+    if (!placementResult?.ok) return null;
+    const reward = placementResult.extraOnly
+      ? aliens.getExtraTraceReward?.(trace.alienSlotId, trace.traceType)
+      : aliens.getFirstTraceRewardForSlot?.(trace.alienSlotId);
+    const gain = reward?.gain || null;
+    if (!hasNonZeroGain(gain)) return null;
+
+    players.gainResources(player, gain);
+    return pushResult(results, {
+      ok: true,
+      type: "alienTraceReward",
+      rewardKind: placementResult.extraOnly ? "stateExtraTrace" : "firstTrace",
+      trace: { ...trace },
+      gain: { ...gain },
+      message: `state${placementResult.extraOnly ? "额外" : "首"}痕迹奖励：${formatResourceGain(gain)}`,
+    });
+  }
+
   function applyAlienTrace(context, player, trace, results, events) {
     if (!trace || !context.alienGameState) return;
     const result = aliens.placeFirstTrace(
@@ -547,12 +574,14 @@
       revealed: revealResult || null,
       message: revealResult?.ok ? `${result.message}；${revealResult.message}` : result.message,
     });
+    const stateReward = applyAlienStateTraceReward(player, trace, result, results);
     if (result.ok) {
       events.push({
         type: "alienTracePlaced",
         alienSlotId: trace.alienSlotId,
         traceType: trace.traceType,
         playerId: player.id,
+        reward: stateReward?.gain || null,
       });
     }
   }
