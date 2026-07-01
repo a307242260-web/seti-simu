@@ -24,6 +24,14 @@ assert.equal(metadataFlow.effects[0].preHistoryCommands.length, 1);
 assert.equal(metadataFlow.effects[0].preHistoryCommands[0], preHistoryCommand);
 assert.equal(metadataFlow.effects[0].preHistoryCommandsApplied, false);
 
+const requiredFlow = chain.startAbilityChain("required", "必须节点", [
+  { abilityId: "finishSector", required: true, options: { skippable: false } },
+  { abilityId: "requiredOption", options: { required: true } },
+]);
+assert.equal(requiredFlow.effects[0].required, true);
+assert.equal(requiredFlow.effects[0].options.skippable, false);
+assert.equal(requiredFlow.effects[1].required, true);
+
 assert.equal(flow.effects.length, 3);
 assert.equal(chain.getCurrentChainNode(flow).status, "pending");
 

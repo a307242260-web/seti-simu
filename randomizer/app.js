@@ -8191,9 +8191,12 @@
           type: scanEffects.EFFECT_TYPES.SECTOR_FINISH_SCAN,
           icon: getSectorFinishIcon(sectorId),
           label: `完成扇区：${data.getNebulaLabel(sectorId)}`,
+          required: true,
           undoable: true,
           options: {
             sectorId,
+            required: true,
+            skippable: false,
             targetPlayerId: target?.playerId || null,
             targetPlayerColor: target?.playerColor || null,
             winnerPlayerId: target?.playerId || null,
@@ -14105,6 +14108,10 @@
 
   function playerHasOwnLandingOnPlanet(player, planetId) {
     if (planetId === "pluto") return playerHasOwnPlutoLanding(player);
+    if (planetId === (aomomo?.PLANET_ID || "aomomo") && aomomo?.listLandingMarkers) {
+      return aomomo.listLandingMarkers(alienGameState)
+        .some((marker) => markerBelongsToPlayer(marker, player));
+    }
     return planetStats.getPlanetLandingMarkers(planetStatsState, planetId)
       .some((marker) => markerBelongsToPlayer(marker, player));
   }
@@ -14112,6 +14119,9 @@
   function planetHasAnyLandingOnPlanet(planetId) {
     if (planetId === "pluto") {
       return collectPlutoMarkers().some((marker) => marker.kind === "land");
+    }
+    if (planetId === (aomomo?.PLANET_ID || "aomomo") && aomomo?.listLandingMarkers) {
+      return aomomo.listLandingMarkers(alienGameState).length > 0;
     }
     return planetStats.getPlanetLandingMarkers(planetStatsState, planetId).length > 0;
   }
