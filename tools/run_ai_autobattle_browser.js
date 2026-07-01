@@ -34,6 +34,7 @@ function parseArgs(argv) {
     resetStrategyWeights: false,
     includeState: false,
     timeoutMs: null,
+    tmpRoot: process.env.SETI_AI_TMP_ROOT || os.tmpdir(),
   };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -94,6 +95,9 @@ function parseArgs(argv) {
         break;
       case "out":
         options.out = value;
+        break;
+      case "tmpRoot":
+        options.tmpRoot = value;
         break;
       default:
         throw new Error(`Unknown option --${rawKey}`);
@@ -461,7 +465,9 @@ function summarizeResult(result) {
 async function main() {
   const options = parseArgs(process.argv.slice(2));
   const debugPort = 10000 + Math.floor(Math.random() * 30000);
-  const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), "seti-ai-chrome-"));
+  const tmpRoot = path.resolve(options.tmpRoot || os.tmpdir());
+  fs.mkdirSync(tmpRoot, { recursive: true });
+  const userDataDir = fs.mkdtempSync(path.join(tmpRoot, "seti-ai-chrome-"));
   const { server, port: httpPort } = await startStaticServer(REPO_ROOT);
   const chrome = await launchChrome(options.chrome, debugPort, userDataDir, options.headless);
   let cdp = null;
@@ -513,7 +519,7 @@ async function main() {
       single: options.single,
       reset: options.single ? true : undefined,
     };
-    const timeoutMs = options.timeoutMs || Math.max(120000, options.games * options.maxSteps * 60);
+    const timeoutMs = options.timeoutMs || Math.max(300000, options.games * options.maxSteps * 180);
     const result = await runPageBatch(cdp, batchOptions, timeoutMs);
     const debugState = options.includeState ? await getPageAiDebugState(cdp) : null;
     const summary = summarizeResult(result);
