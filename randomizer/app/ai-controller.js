@@ -5148,6 +5148,7 @@
         Math.max(best, aiNumber(candidate?.score))
       ), 0);
       const currentFinalMarks = countAiFinalMarksForPlayer(player);
+      const highScorePushProfile = getAiHighScorePushProfile(player);
       const finalLowTailOneCreditUnlock = (
         tradeId === "cards-for-credit"
         && currentCredits === 1
@@ -5159,7 +5160,19 @@
         && hand.length >= 3
         && currentBestScore < 8
       );
-      if (currentCredits > 0 && !finalLowTailOneCreditUnlock) return null;
+      const finalHighScoreOneCreditUnlock = (
+        tradeId === "cards-for-credit"
+        && currentCredits === 1
+        && getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && currentFinalMarks >= 3
+        && !getAiNextMissingFinalScoreThreshold(player)
+        && highScorePushProfile.active
+        && highScorePushProfile.projectedScore >= 290
+        && highScorePushProfile.projectedScore < 305
+        && hand.length >= 3
+        && currentBestScore < 8
+      );
+      if (currentCredits > 0 && !(finalLowTailOneCreditUnlock || finalHighScoreOneCreditUnlock)) return null;
       const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
       if (!simulatedPlayer) return null;
       const postTradeCandidates = hand
@@ -5252,6 +5265,8 @@
           thresholdBonus,
           concreteFinalValue: roundAiScore(concreteFinalValue),
           finalLowTailOneCreditUnlock,
+          finalHighScoreOneCreditUnlock,
+          highScoreProjectedScore: roundAiScore(highScorePushProfile.projectedScore),
         },
       };
     }
@@ -5670,6 +5685,51 @@
           || energy >= scanEnergyCost + 2
           || currentScore >= 60
         );
+      const cardsForEnergyTrade = quickTrades.getTradeAction("cards-for-energy");
+      const cardsForEnergyHandDrainPenalty = (() => {
+        if (!cardsForEnergyTrade) return 0;
+        const highScoreProfile = getAiHighScorePushProfile(player);
+        if (highScoreProfile.active && highScoreProfile.projectedScore >= 260) return 0;
+        const handCost = Math.max(0, Math.round(aiNumber(cardsForEnergyTrade.cost?.handSize)));
+        if (handCost <= 0 || handSize < handCost) return 0;
+        const handAfterTrade = Math.max(0, handSize - handCost);
+        const discardCost = estimateAiTradeDiscardOpportunityCost(player, cardsForEnergyTrade);
+        const genericCost = scoreAiResourceBundle(cardsForEnergyTrade.cost || {});
+        let penalty = Number.isFinite(discardCost)
+          ? Math.max(0, discardCost - genericCost) * 0.18
+          : 0;
+        const planetPlan = planetCashoutRecoveryByTrade["cards-for-energy"]?.plan || null;
+        const directCashout = Math.max(0, aiNumber(planetPlan?.directScore));
+        const rewardCashout = Math.max(0, aiNumber(planetPlan?.rewardValue));
+        const reachesThreshold = Boolean(planetPlan?.reachesNextThreshold)
+          || (
+            recoveryThreshold
+            && currentScore < recoveryThreshold
+            && currentScore + directCashout >= recoveryThreshold
+          );
+        const lowScoreHandDrain = getAiRoundNumber() >= 3
+          && !reachesThreshold
+          && finalMarks >= 3
+          && !recoveryThreshold
+          && currentScore < 165
+          && handAfterTrade <= 1
+          && directCashout < 12
+          && rewardCashout < 36;
+        if (lowScoreHandDrain) {
+          penalty += 5.5
+            + Math.max(0, 165 - currentScore) * 0.045
+            + (handAfterTrade <= 0 ? 3 : 1.5);
+        }
+        const midgameHandDrain = getAiRoundNumber() === 3
+          && !recoveryThreshold
+          && currentScore < 120
+          && handAfterTrade <= 1
+          && directCashout < 10;
+        if (midgameHandDrain) {
+          penalty += 2.5 + Math.max(0, 120 - currentScore) * 0.035;
+        }
+        return roundAiScore(Math.min(22, Math.max(0, penalty)));
+      })();
       const tradeSpecs = [
         {
           tradeId: "credits-for-card",
@@ -5729,7 +5789,8 @@
             + (secondMarkAnalyzeEnergyRecovery ? Math.min(18, 12 + Math.max(0, 8 - scoreToNextThreshold) * 0.75) : 0)
             + (canScanAfterCardsForEnergy ? scanCashoutTradeValue : 0)
             + (canScanProgressAfterCardsForEnergy ? scanProgressTradeValue : 0)
-            + Math.min(24, aiNumber(b2SectorScanUnlockByTrade["cards-for-energy"])),
+            + Math.min(24, aiNumber(b2SectorScanUnlockByTrade["cards-for-energy"]))
+            - cardsForEnergyHandDrainPenalty,
           reason: aiNumber(planetCashoutRecoveryByTrade["cards-for-energy"]?.score) > 0
             ? "路线兑现：弃牌换能量准备环绕/登陆"
             : aiNumber(b2SectorScanUnlockByTrade["cards-for-energy"]) > 0
@@ -5898,6 +5959,9 @@
               closeThirdMarkScanSetup,
               closeThirdMarkScanProgress,
               scanProgressTradeValue,
+              cardsForEnergyHandDrainPenalty: spec.tradeId === "cards-for-energy"
+                ? cardsForEnergyHandDrainPenalty
+                : 0,
               launchMoveRecoveryScore: aiNumber(launchMoveRecoveryByTrade[spec.tradeId]?.score),
               planetCashoutRecoveryScore: aiNumber(planetCashoutRecoveryByTrade[spec.tradeId]?.score),
               planetCashoutRecoveryPlan: planetCashoutRecoveryByTrade[spec.tradeId]?.plan || null,

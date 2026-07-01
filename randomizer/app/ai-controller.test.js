@@ -236,7 +236,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       SECTOR_RING_MIN: 1,
       SECTOR_RING_MAX: 4,
     },
-    planetRewards: {
+    planetRewards: options.planetRewards || {
       EFFECT_TYPES: {
         GAIN_RESOURCES: "gain_resources",
         GAIN_DATA: "gain_data",
@@ -3306,6 +3306,184 @@ function makeYichangdianAlienState(options = {}) {
   assert.ok(
     Number(tradeCandidate.valueBreakdown?.concreteFinalValue || 0) > 0,
     "tail unlock trade should still require concrete score/final value",
+  );
+}
+
+{
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 5,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    enableQuickTrades: true,
+    recordQuickTrade: true,
+    blueResources: { score: 296, credits: 1, energy: 0, publicity: 0, availableData: 0, handSize: 3 },
+    blueHand: [
+      {
+        id: "final-push-score-card",
+        cardName: "Final push score card",
+        price: 2,
+        playEffects: [{ type: "gain_resources", options: { gain: { score: 12 } } }],
+      },
+      { id: "high-filler-a", cardName: "High filler A", price: 4 },
+      { id: "high-filler-b", cardName: "High filler B", price: 4 },
+    ],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b2: "b2",
+      final_d2: "d2",
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should trade cards for credit to unlock a 300-point push card");
+  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "cards-for-credit" });
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-credit");
+  assert.equal(
+    tradeCandidate?.valueBreakdown?.finalHighScoreOneCreditUnlock,
+    true,
+    "high-score one-credit unlock should be explicitly marked",
+  );
+}
+
+{
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    turnNumber: 3,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "cards-for-energy": {
+        id: "cards-for-energy",
+        label: "2 cards -> 1 energy",
+        cost: { handSize: 2 },
+        gain: { energy: 1 },
+      },
+    },
+    movableTokens: [
+      { id: 1, playerId: "player-blue", sector: { x: 2, y: 2 } },
+    ],
+    planetLocations: [
+      { planetId: "mars", name: "Mars", x: 2, y: 2 },
+    ],
+    planetStats: {
+      canAddLandingMarker: () => true,
+      canAddOrbitMarker: () => false,
+      getAvailableSatellitesForLanding: () => [],
+      getPlanetLandingCount: () => 0,
+      getPlanetOrbitCount: () => 0,
+    },
+    abilities: {
+      planet: {
+        DEFAULT_ORBIT_COST: { credits: 1, energy: 1 },
+        BASE_LAND_ENERGY_COST: 2,
+        getLandEnergyCost: () => 2,
+        getLandOptions: () => ({ ok: false, message: "land disabled in harness" }),
+        getOrbitOptions: () => ({ ok: false, message: "orbit disabled in harness" }),
+      },
+      rocket: {
+        ORANGE1_ROCKET_LIMIT: 4,
+        getRocketLimitForPlayer: () => 3,
+      },
+    },
+    planetRewards: {
+      EFFECT_TYPES: {
+        GAIN_RESOURCES: "gain_resources",
+        GAIN_DATA: "gain_data",
+        ALIEN_TRACE: "alien_trace",
+        DRAW_CARDS: "draw_cards",
+        PICK_CARD: "pick_card",
+        INCOME: "income",
+      },
+      buildPlanetLandRewardEffects: () => [
+        { type: "gain_resources", options: { gain: { score: 6 } } },
+      ],
+      buildOrbitRewardEffects: () => [],
+      buildSatelliteLandRewardEffects: () => [],
+    },
+    blueResources: { score: 120, credits: 0, energy: 1, publicity: 0, availableData: 0, handSize: 3 },
+    blueHand: [
+      { id: "engine-a", cardName: "Engine A", price: 0, playEffects: [{ type: "gain_resources", options: { gain: { score: 10 } } }] },
+      { id: "engine-b", cardName: "Engine B", price: 0, playEffects: [{ type: "gain_resources", options: { gain: { score: 9 } } }] },
+      { id: "engine-c", cardName: "Engine C", price: 0, playEffects: [{ type: "gain_resources", options: { gain: { score: 8 } } }] },
+    ],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b1: {
+          id: "final_b1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d1: {
+          id: "final_d1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b1: "b1",
+      final_d1: "d1",
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-energy")
+      || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should evaluate the route cashout trade without blocking");
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-energy");
+  assert.ok(tradeCandidate, "cards-for-energy planet cashout candidate should still be enumerated");
+  assert.ok(
+    Number(tradeCandidate.valueBreakdown?.cardsForEnergyHandDrainPenalty || 0) >= 8,
+    "low-score three-mark players should price the hand drain before trading two cards for energy",
   );
 }
 
