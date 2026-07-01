@@ -3789,6 +3789,75 @@ function makeYichangdianAlienState(options = {}) {
 {
   const turnChoices = [];
   const publicFillerCard = {
+    id: "public-low-tail-filler",
+    cardName: "Public low tail filler",
+    price: 2,
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 5,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "publicity-for-card": {
+        id: "publicity-for-card",
+        label: "3 publicity -> public card",
+        cost: { publicity: 3 },
+        gain: { handSize: 1 },
+      },
+    },
+    publicCards: [publicFillerCard],
+    blueResources: { score: 119, credits: 0, energy: 1, publicity: 4, availableData: 0, handSize: 1 },
+    blueHand: [{ id: "unpayable-low-tail", cardName: "Unpayable low tail", price: 2 }],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b2: "b2",
+      final_d2: "d2",
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "publicity-for-card")
+      || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  harness.controller.runAiAutomationStep();
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "publicity-for-card");
+  assert.equal(
+    tradeCandidate,
+    undefined,
+    "low-score public refill should require a concrete playable public-card score",
+  );
+}
+
+{
+  const turnChoices = [];
+  const publicFillerCard = {
     id: "public-payable-filler",
     cardName: "Public payable filler",
     price: 2,

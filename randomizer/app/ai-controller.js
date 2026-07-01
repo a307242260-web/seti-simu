@@ -5707,7 +5707,7 @@
       const hasUsefulPublicTradeCard = bestPublicTradeCardScore >= usefulPublicTradeThreshold;
       const finalLowHandPublicRefill = finalLowHandRefillWindow && (
         currentScore < 150
-          ? bestPublicTradeCardScore >= 0
+          ? bestPublicTradeCardScore >= 4
           : bestPublicTradeCardScore >= 10
       );
       const finalLowStaleHandPublicRefill = finalLowStaleHandRefillBaseWindow
