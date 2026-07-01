@@ -344,6 +344,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
         CARD_MOVE: "card_move",
         FREE_MOVE: "free_move",
         RESEARCH_TECH: "card_research_tech",
+        PAY_CREDITS_FOR_REWARD: "card_pay_credits_for_reward",
       },
       buildPlayEffects: (card) => card?.playEffects || [],
       getCardModel: (card) => card?.model || null,
@@ -2407,6 +2408,80 @@ function makeYichangdianAlienState(options = {}) {
   const result = harness.controller.runAiAutomationStep();
   assert.equal(result.ok, true, "AI should prefer Fangzhou card2 advanced reward over a low-value blank card");
   assert.deepEqual(harness.getHandled(), { type: "play-card", handIndex: 1, confirmed: true });
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    playCardSelectionActive: true,
+    realisticCanAfford: true,
+    blueResources: { score: 189, credits: 1, energy: 0, publicity: 7, handSize: 1 },
+    blueHand: [{
+      id: "pay-credit-score",
+      cardName: "Pay credit score",
+      price: 0,
+      playEffects: [{
+        type: "card_pay_credits_for_reward",
+        label: "每支付1信用获得2分2宣传",
+        options: {
+          reward: {
+            type: "gain_resources",
+            label: "支付1信用：2分+2宣传",
+            options: { gain: { score: 2, publicity: 2 } },
+          },
+        },
+      }],
+    }],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should play supported pay-credit reward cards");
+  assert.deepEqual(harness.getHandled(), { type: "play-card", handIndex: 0, confirmed: true });
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    playCardSelectionActive: true,
+    realisticCanAfford: true,
+    blueResources: { score: 189, credits: 1, energy: 2, publicity: 7, handSize: 1 },
+    blueHand: [{
+      id: "pay-credit-score-with-energy",
+      cardName: "Pay credit score with energy",
+      price: 0,
+      playEffects: [{
+        type: "card_pay_credits_for_reward",
+        label: "每支付1信用获得2分2宣传",
+        options: {
+          reward: {
+            type: "gain_resources",
+            label: "支付1信用：2分+2宣传",
+            options: { gain: { score: 2, publicity: 2 } },
+          },
+        },
+      }],
+    }],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, false, "AI should keep pay-credit cards out of active play while energy remains");
+  assert.equal(harness.getHandled(), null);
 }
 
 {

@@ -6993,6 +6993,18 @@
           const gain = effectOptions.gain || {};
           return scoreAiCountedResourceGain(gain, player);
         }
+        case cardEffects.EFFECT_TYPES.PAY_CREDITS_FOR_REWARD: {
+          const fallbackCardEffectValue = 2;
+          if (getAiRoundNumber() < FINAL_ROUND_NUMBER) return fallbackCardEffectValue;
+          const credits = Math.max(0, Math.round(aiNumber(player?.resources?.credits)));
+          const energy = Math.max(0, Math.round(aiNumber(player?.resources?.energy)));
+          if (credits <= 0) return fallbackCardEffectValue;
+          if (energy > 1) return fallbackCardEffectValue;
+          const rewardValue = scoreAiPayCreditReward(effect, player);
+          const creditCost = scoreAiResourceBundle({ credits: 1 });
+          const netPerPayment = Math.max(0, rewardValue - creditCost);
+          return Math.max(fallbackCardEffectValue, Math.min(credits, 3) * netPerPayment);
+        }
         case planetRewards.EFFECT_TYPES?.GAIN_DATA:
         case "gain_data": {
           const count = Math.max(0, Math.round(aiNumber(effectOptions.count || 1)));
@@ -12087,7 +12099,6 @@
         cardEffects.EFFECT_TYPES.CHOOSE_HAND_CORNER_REWARD,
         cardEffects.EFFECT_TYPES.DRAW_THEN_DISCARD_ACTION,
         cardEffects.EFFECT_TYPES.DISCARD_ANY_FOR_INCOME,
-        cardEffects.EFFECT_TYPES.PAY_CREDITS_FOR_REWARD,
         cardEffects.EFFECT_TYPES.DISCARD_CARD_CORNER_REPEAT,
         cardEffects.EFFECT_TYPES.REMOVE_ORBIT_TO_PROBE,
         cardEffects.EFFECT_TYPES.RETURN_UNFINISHED_TASK_TO_HAND,
@@ -12102,6 +12113,20 @@
         if (effect?.type === AI_FANGZHOU_CARD2_REWARD_EFFECT_TYPE) continue;
         if (unsupportedTypes.has(effect?.type)) {
           return { ok: false, message: `AI 暂不支持打出效果 ${effect.type}` };
+        }
+        if (
+          effect?.type === cardEffects.EFFECT_TYPES.PAY_CREDITS_FOR_REWARD
+        ) {
+          const currentPlayer = getCurrentPlayer();
+          if (getAiRoundNumber() < FINAL_ROUND_NUMBER) {
+            return { ok: false, message: `${effect.label || "支付信用奖励"}：保留到终局资源滚动` };
+          }
+          if (!players.canAfford(currentPlayer, { credits: 1 })) {
+            return { ok: false, message: `${effect.label || "支付信用奖励"}：信用不足` };
+          }
+          if (Math.max(0, Math.round(aiNumber(currentPlayer?.resources?.energy))) > 1) {
+            return { ok: false, message: `${effect.label || "支付信用奖励"}：仍保留能量优先兑现主引擎` };
+          }
         }
         if (isAiChongTravelEffect(effect)) {
           const chongCheck = canAiResolveChongTravelEffect(effect, previousEffect);
