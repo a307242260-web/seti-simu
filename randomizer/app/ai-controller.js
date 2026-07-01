@@ -5359,6 +5359,24 @@
         && currentScore < finalLowHandScoreCeiling
         && handSize <= 1
         && (credits >= 2 || energy >= 2 || publicity >= 3);
+      const finalLowStaleHandRefillBaseWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && mainActionOpen
+        && finalMarks >= 3
+        && !recoveryThreshold
+        && currentScore >= 120
+        && currentScore < 170
+        && handSize >= 2
+        && handSize <= 4
+        && publicity >= 3
+        && credits <= 1
+        && energy <= 1
+        && !(turnState.passedPlayerIds || []).includes(player.id);
+      const finalLowStaleHandPlayableScore = finalLowStaleHandRefillBaseWindow
+        ? (player.hand || []).reduce((best, card, handIndex) => {
+          const candidate = buildAiPlayCardCandidate(card, handIndex, player);
+          return Math.max(best, aiNumber(candidate?.score));
+        }, 0)
+        : 0;
       const finalHighScoreRefillBaseWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && mainActionOpen
         && finalMarks >= 3
@@ -5474,6 +5492,7 @@
         !recoveryThreshold
         && !hasImmediateRouteRecovery
         && !finalLowHandRefillWindow
+        && !finalLowStaleHandRefillBaseWindow
         && !finalHighScoreHandRefillWindow
         && !finalLowScoreScanUnlock
         && !b2SectorScanUnlock
@@ -5489,6 +5508,7 @@
         && !closeThirdMarkScanSetup
         && !hasImmediateRouteRecovery
         && !finalLowHandRefillWindow
+        && !finalLowStaleHandRefillBaseWindow
         && !finalHighScoreHandRefillWindow
         && !finalLowScoreScanUnlock
       ) return [];
@@ -5595,6 +5615,9 @@
           ? bestPublicTradeCardScore >= 0
           : bestPublicTradeCardScore >= 10
       );
+      const finalLowStaleHandPublicRefill = finalLowStaleHandRefillBaseWindow
+        && finalLowStaleHandPlayableScore < 7
+        && bestPublicTradeCardScore >= 8;
       const highScoreGapTo300 = Math.max(0, 300 - highScorePushProfile.projectedScore);
       const finalHighScorePublicRefill = finalHighScoreHandRefillWindow
         && bestPublicTradeCardScore >= (highScoreGapTo300 <= 10 ? 0 : 5);
@@ -5872,6 +5895,7 @@
           enabled: (mainActionOpen || canPrepareFinalThresholdAction) && publicity >= 3 && (
             (handSize <= 1 && hasUsefulPublicTradeCard)
             || finalLowHandPublicRefill
+            || finalLowStaleHandPublicRefill
             || finalHighScorePublicRefill
             || secondMarkCardSearch
             || closeSecondMarkCardSearch
@@ -5882,6 +5906,9 @@
             + (finalLowHandPublicRefill
               ? 4 + Math.min(8, bestPublicTradeCardScore * 0.35) + finalLowHandPressure * 0.035
               : 0)
+            + (finalLowStaleHandPublicRefill
+              ? 3 + Math.min(7, bestPublicTradeCardScore * 0.28) + Math.max(0, 170 - currentScore) * 0.02
+              : 0)
             + (finalHighScorePublicRefill ? finalHighScoreRefillValue : 0)
             + ((secondMarkCardSearch || closeSecondMarkCardSearch)
               ? 5 + Math.min(9, bestPublicTradeCardScore * 0.3)
@@ -5890,9 +5917,11 @@
             ? "终局第2标记：宣传精选寻找得分牌"
             : finalLowHandPublicRefill
               ? "终局低手牌：宣传精选恢复打牌"
-            : finalHighScorePublicRefill
-              ? "高分冲刺：宣传精选找最后得分牌"
-            : "后期落后：宣传换牌恢复行动",
+              : finalLowStaleHandPublicRefill
+                ? "终局资源断档：宣传精选找可打牌"
+                : finalHighScorePublicRefill
+                  ? "高分冲刺：宣传精选找最后得分牌"
+                  : "后期落后：宣传换牌恢复行动",
         },
       ];
 
@@ -5933,6 +5962,9 @@
               secondMarkCardSearch,
               closeSecondMarkCardSearch,
               finalLowHandPublicRefill,
+              finalLowStaleHandRefillBaseWindow,
+              finalLowStaleHandPublicRefill,
+              finalLowStaleHandPlayableScore: roundAiScore(finalLowStaleHandPlayableScore),
               finalHighScoreNeedsCardRefill,
               finalHighScorePublicRefill,
               finalHighScoreRefillValue: roundAiScore(finalHighScoreRefillValue),
