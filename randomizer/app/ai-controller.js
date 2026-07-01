@@ -5342,16 +5342,26 @@
         && currentScore < finalLowHandScoreCeiling
         && handSize <= 1
         && (credits >= 2 || energy >= 2 || publicity >= 3);
-      const finalHighScoreHandRefillWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
+      const finalHighScoreRefillBaseWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && mainActionOpen
         && finalMarks >= 3
         && !recoveryThreshold
         && highScorePushProfile.active
         && highScorePushProfile.projectedScore >= 260
         && highScorePushProfile.projectedScore < 305
-        && handSize <= 1
         && (credits >= 2 || energy >= 2 || publicity >= 3)
         && !(turnState.passedPlayerIds || []).includes(player.id);
+      const highScorePlayableHandScore = finalHighScoreRefillBaseWindow && handSize <= 2
+        ? (player.hand || []).reduce((best, card, handIndex) => {
+          const candidate = buildAiPlayCardCandidate(card, handIndex, player);
+          return Math.max(best, aiNumber(candidate?.score));
+        }, 0)
+        : 0;
+      const finalHighScoreNeedsCardRefill = finalHighScoreRefillBaseWindow && (
+        handSize <= 1
+        || (handSize <= 2 && highScorePlayableHandScore < 8)
+      );
+      const finalHighScoreHandRefillWindow = finalHighScoreNeedsCardRefill;
       const finalLowScoreMainUnlockWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && (!recoveryThreshold || finalMarks >= 3)
         && currentScore >= 70
@@ -5530,6 +5540,16 @@
             + Math.max(0, 3 - finalMarks) * 1.5,
         )
         : 0;
+      const finalHighScoreAvoidCreditEnergyTrap = finalHighScoreHandRefillWindow
+        && credits <= 2
+        && publicity >= 3
+        && energy <= 0
+        && !canReachAnalyze
+        && bestLaunchMoveRecoveryScore <= 0
+        && bestPlanetCashoutRecoveryScore <= 0
+        && !canScanAfterCreditsForEnergy
+        && !canScanProgressAfterCreditsForEnergy
+        && aiNumber(b2SectorScanUnlockByTrade["credits-for-energy"]) <= 0;
       if (
         nextThreshold === 70
         && currentScore < 64
@@ -5569,7 +5589,12 @@
         : 0;
       const finalLowHandCreditRefill = finalLowHandPublicRefill && credits >= 2;
       const finalLowHandEnergyRefill = finalLowHandPublicRefill && energy >= 2;
-      const finalHighScoreCreditRefill = finalHighScorePublicRefill && credits >= 2;
+      const finalHighScorePreserveLastCredits = finalHighScorePublicRefill
+        && publicity >= 3
+        && credits <= 2;
+      const finalHighScoreCreditRefill = finalHighScorePublicRefill
+        && credits >= 2
+        && !finalHighScorePreserveLastCredits;
       const finalHighScoreEnergyRefill = finalHighScorePublicRefill && energy >= 2;
       const secondMarkCreditRecovery = recoveryThreshold <= 50
         && finalMarks <= 1
@@ -5648,7 +5673,7 @@
           tradeId: "credits-for-card",
           enabled: (mainActionOpen || canPrepareFinalThresholdAction)
             && credits >= 2
-            && handSize <= 1
+            && (handSize <= 1 || finalHighScoreCreditRefill)
             && !avoidCloseSecondMarkCreditCardTrap
             && (recoveryThreshold || finalLowHandCreditRefill || finalHighScoreCreditRefill),
           value: baseValue
@@ -5663,7 +5688,7 @@
         },
         {
           tradeId: "credits-for-energy",
-          enabled: canSpendEnergyForRecovery && credits >= 2 && (
+          enabled: canSpendEnergyForRecovery && credits >= 2 && !finalHighScoreAvoidCreditEnergyTrap && (
             energy <= 0
             || canScanAfterCreditsForEnergy
             || canScanProgressAfterCreditsForEnergy
@@ -5845,12 +5870,16 @@
               secondMarkCardSearch,
               closeSecondMarkCardSearch,
               finalLowHandPublicRefill,
+              finalHighScoreNeedsCardRefill,
               finalHighScorePublicRefill,
               finalHighScoreRefillValue: roundAiScore(finalHighScoreRefillValue),
               highScoreProjectedScore: roundAiScore(highScorePushProfile.projectedScore),
               highScoreGapTo300: roundAiScore(highScoreGapTo300),
+              highScorePlayableHandScore: roundAiScore(highScorePlayableHandScore),
+              finalHighScoreAvoidCreditEnergyTrap,
               finalLowHandCreditRefill,
               finalLowHandEnergyRefill,
+              finalHighScorePreserveLastCredits,
               finalHighScoreCreditRefill,
               finalHighScoreEnergyRefill,
               secondMarkEnergyCardSearch,
