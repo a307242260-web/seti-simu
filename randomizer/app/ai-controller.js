@@ -5540,6 +5540,47 @@
       };
       const b2SectorScanUnlock = Object.values(b2SectorScanUnlockByTrade)
         .some((score) => aiNumber(score) >= 5);
+      const availableDataForAnalyzeUnlock = Math.max(0, Math.round(aiNumber(resources.availableData)));
+      const hasMarkedD1Final = getAiMarkedFinalFormulaEntries(player)
+        .some((entry) => entry.formulaId === "d1");
+      const midgameAnalyzeUnlockWindow = getAiRoundNumber() === 3
+        && mainActionOpen
+        && !state.pendingActionExecuted
+        && !recoveryThreshold
+        && finalMarks >= 3
+        && hasMarkedD1Final
+        && currentScore >= 80
+        && availableDataForAnalyzeUnlock >= (data.ANALYZE_REQUIRED_COMPUTER_SLOT || 6)
+        && analyzeEnergyCost > 0
+        && energy < analyzeEnergyCost
+        && hasAiAnalyzeReadyDataSlot(player)
+        && !(turnState.passedPlayerIds || []).includes(player.id);
+      const scoreMidgameAnalyzeUnlockTrade = (tradeId) => {
+        if (!midgameAnalyzeUnlockWindow) return 0;
+        const trade = quickTrades.getTradeAction(tradeId);
+        if (!trade || aiNumber(trade.gain?.energy) <= 0) return 0;
+        const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
+        if (!simulatedPlayer || !canAiAnalyzeData(simulatedPlayer).ok) return 0;
+        const tradeCost = estimateAiTradeDiscardOpportunityCost(player, trade);
+        if (!Number.isFinite(tradeCost)) return 0;
+        const analyzeScore = Math.max(0, aiNumber(scoreAiAnalyzeAction(simulatedPlayer)));
+        if (analyzeScore < 14) return 0;
+        const handAfterTrade = Math.max(0, handSize - Math.max(0, aiNumber(trade.cost?.handSize)));
+        const handBuffer = handAfterTrade >= 2 ? 1.5 : handAfterTrade >= 1 ? 0.5 : -2.5;
+        return Math.max(
+          0,
+          analyzeScore * 0.82
+            + Math.min(5, getAiLiveScorePaceDeficit(player) * 0.07)
+            + handBuffer
+            - tradeCost * 0.24,
+        );
+      };
+      const midgameAnalyzeUnlockByTrade = {
+        "credits-for-energy": scoreMidgameAnalyzeUnlockTrade("credits-for-energy"),
+        "cards-for-energy": scoreMidgameAnalyzeUnlockTrade("cards-for-energy"),
+      };
+      const midgameAnalyzeUnlock = Object.values(midgameAnalyzeUnlockByTrade)
+        .some((score) => aiNumber(score) >= 7.5);
       if (
         !recoveryThreshold
         && !hasImmediateRouteRecovery
@@ -5548,6 +5589,7 @@
         && !finalHighScoreHandRefillWindow
         && !finalLowScoreScanUnlock
         && !b2SectorScanUnlock
+        && !midgameAnalyzeUnlock
       ) return [];
       const scoreToNextThreshold = recoveryThreshold ? Math.max(1, recoveryThreshold - currentScore) : 0;
       const closeThirdMarkScanSetup = getAiRoundNumber() >= FINAL_ROUND_NUMBER
@@ -5563,6 +5605,7 @@
         && !finalLowStaleHandRefillBaseWindow
         && !finalHighScoreHandRefillWindow
         && !finalLowScoreScanUnlock
+        && !midgameAnalyzeUnlock
       ) return [];
       const closeScanCashoutWindow = recoveryThreshold <= 50 ? 10 : 8;
       const closeScanDirectScoreGain = getAiRoundNumber() >= FINAL_ROUND_NUMBER
@@ -5831,17 +5874,21 @@
             || canScanProgressAfterCreditsForEnergy
             || aiNumber(planetCashoutRecoveryByTrade["credits-for-energy"]?.score) > 0
             || aiNumber(b2SectorScanUnlockByTrade["credits-for-energy"]) > 0
+            || aiNumber(midgameAnalyzeUnlockByTrade["credits-for-energy"]) > 0
           ),
           value: baseValue + 3 + (handSize > 0 ? 1.5 : 0)
             + Math.min(7, aiNumber(launchMoveRecoveryByTrade["credits-for-energy"]?.score) * 0.4)
             + Math.min(18, aiNumber(planetCashoutRecoveryByTrade["credits-for-energy"]?.score) * 0.55)
             + (canScanAfterCreditsForEnergy ? scanCashoutTradeValue : 0)
             + (canScanProgressAfterCreditsForEnergy ? scanProgressTradeValue : 0)
-            + Math.min(28, aiNumber(b2SectorScanUnlockByTrade["credits-for-energy"])),
+            + Math.min(28, aiNumber(b2SectorScanUnlockByTrade["credits-for-energy"]))
+            + Math.min(18, aiNumber(midgameAnalyzeUnlockByTrade["credits-for-energy"])),
           reason: aiNumber(planetCashoutRecoveryByTrade["credits-for-energy"]?.score) > 0
             ? "路线兑现：信用点换能量准备环绕/登陆"
             : aiNumber(b2SectorScanUnlockByTrade["credits-for-energy"]) > 0
               ? "B2兑现：信用点换能量准备完成扇区"
+              : aiNumber(midgameAnalyzeUnlockByTrade["credits-for-energy"]) > 0
+                ? "中期引擎：信用点换能量解锁分析"
               : canScanAfterCreditsForEnergy
               ? "终局临门：信用点换能量准备扫描"
               : canScanProgressAfterCreditsForEnergy
@@ -5857,6 +5904,7 @@
             || canScanProgressAfterCardsForEnergy
             || aiNumber(planetCashoutRecoveryByTrade["cards-for-energy"]?.score) > 0
             || aiNumber(b2SectorScanUnlockByTrade["cards-for-energy"]) > 0
+            || aiNumber(midgameAnalyzeUnlockByTrade["cards-for-energy"]) > 0
           ),
           value: baseValue + 1.5 + (credits <= 0 ? 1 : 0)
             + Math.min(7, aiNumber(launchMoveRecoveryByTrade["cards-for-energy"]?.score) * 0.4)
@@ -5865,11 +5913,14 @@
             + (canScanAfterCardsForEnergy ? scanCashoutTradeValue : 0)
             + (canScanProgressAfterCardsForEnergy ? scanProgressTradeValue : 0)
             + Math.min(24, aiNumber(b2SectorScanUnlockByTrade["cards-for-energy"]))
+            + Math.min(16, aiNumber(midgameAnalyzeUnlockByTrade["cards-for-energy"]))
             - cardsForEnergyHandDrainPenalty,
           reason: aiNumber(planetCashoutRecoveryByTrade["cards-for-energy"]?.score) > 0
             ? "路线兑现：弃牌换能量准备环绕/登陆"
             : aiNumber(b2SectorScanUnlockByTrade["cards-for-energy"]) > 0
               ? "B2兑现：弃牌换能量准备完成扇区"
+              : aiNumber(midgameAnalyzeUnlockByTrade["cards-for-energy"]) > 0
+                ? "中期引擎：弃牌换能量解锁分析"
               : canScanAfterCardsForEnergy
               ? "终局临门：弃牌换能量准备扫描"
               : canScanProgressAfterCardsForEnergy
@@ -6037,6 +6088,10 @@
               finalLowScoreScanUnlockByTrade: {
                 "cards-for-credit": roundAiScore(finalLowScoreScanUnlockByTrade["cards-for-credit"]),
                 "energy-for-credit": roundAiScore(finalLowScoreScanUnlockByTrade["energy-for-credit"]),
+              },
+              midgameAnalyzeUnlockByTrade: {
+                "credits-for-energy": roundAiScore(midgameAnalyzeUnlockByTrade["credits-for-energy"]),
+                "cards-for-energy": roundAiScore(midgameAnalyzeUnlockByTrade["cards-for-energy"]),
               },
               secondMarkAnalyzeEnergyRecovery,
               thirdMarkCreditRecovery,
