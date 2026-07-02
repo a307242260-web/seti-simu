@@ -992,6 +992,47 @@ assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].unavailableMain
 const passResourceLockSummary = analytics.summarizeBattleReports([passResourceLockReport]);
 assert.equal(passResourceLockSummary.passResourceLockSamples[0].playCard.reason, "没有资源可支付的普通手牌");
 
+const negativeCardCornerGraphLiftReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 2,
+    turnNumber: 7,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 56, credits: 2, energy: 1, publicity: 2, handSize: 6 },
+    details: {
+      action: {
+        id: "cardCorner",
+        kind: "quick",
+        score: -3.25,
+        cardId: "b_90.webp",
+        cardInstanceId: "card-b90",
+        cardLabel: "MUREP创意竞赛",
+        actionKind: "resource",
+        actionGraph: { gain: -2.4, cost: 3, finalMarginal: 2, goalBonus: 11.2, net: 8.8 },
+        breakdown: {
+          rewardValue: -2.4,
+          discardCost: 3,
+          handPressure: 1.1,
+          followupMainActionScore: 0,
+          moveFollowupScore: 0,
+          noCashoutMovePenalty: 0,
+        },
+      },
+      candidates: [],
+    },
+  }],
+  playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 56 }],
+};
+const negativeCardCornerGraphLiftAnalysis = analytics.analyzeBattleReport(negativeCardCornerGraphLiftReport);
+assert.equal(negativeCardCornerGraphLiftAnalysis.opportunities.negativeCardCornerGraphLift, 1);
+assert.equal(negativeCardCornerGraphLiftAnalysis.negativeCardCornerGraphLiftSamples[0].rawScore, -3.25);
+assert.equal(negativeCardCornerGraphLiftAnalysis.negativeCardCornerGraphLiftSamples[0].graphNet, 8.8);
+assert.equal(negativeCardCornerGraphLiftAnalysis.negativeCardCornerGraphLiftSamples[0].goalBonus, 11.2);
+const negativeCardCornerGraphLiftSummary = analytics.summarizeBattleReports([negativeCardCornerGraphLiftReport]);
+assert.equal(negativeCardCornerGraphLiftSummary.negativeCardCornerGraphLiftSamples[0].cardId, "b_90.webp");
+
 const compoundTechCardReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{

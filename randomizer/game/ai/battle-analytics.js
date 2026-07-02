@@ -270,6 +270,45 @@
     };
   }
 
+  function isNegativeCardCornerGraphLift(entry) {
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "cardCorner") return false;
+    const rawScore = getFiniteScore(action?.score);
+    const graphNet = getFiniteScore(action?.actionGraph?.net ?? action?.net);
+    return rawScore != null && rawScore < 0 && graphNet != null && graphNet > rawScore;
+  }
+
+  function buildNegativeCardCornerGraphLiftSample(entry) {
+    const action = getSelectedAction(entry) || {};
+    const graph = action.actionGraph || {};
+    const breakdown = action.breakdown || action.valueBreakdown || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(action),
+      cardId: action.cardId || null,
+      cardInstanceId: action.cardInstanceId || null,
+      cardLabel: action.cardLabel || action.label || null,
+      actionKind: action.actionKind || null,
+      rawScore: roundRatio(action.score),
+      policyScore: roundRatio(getCandidatePolicyScore(action)),
+      graphNet: roundRatio(graph.net),
+      graphGain: roundRatio(graph.gain),
+      graphCost: roundRatio(graph.cost),
+      finalMarginal: roundRatio(graph.finalMarginal),
+      goalBonus: roundRatio(graph.goalBonus),
+      rewardValue: roundRatio(breakdown.rewardValue),
+      discardCost: roundRatio(breakdown.discardCost),
+      handPressure: roundRatio(breakdown.handPressure),
+      followupMainActionScore: roundRatio(breakdown.followupMainActionScore),
+      moveFollowupScore: roundRatio(breakdown.moveFollowupScore),
+      noCashoutMovePenalty: roundRatio(breakdown.noCashoutMovePenalty),
+    };
+  }
+
   function isResearchTechEffectType(type) {
     return type === "card_research_tech" || type === "research_tech_select" || type === "research_tech";
   }
@@ -1804,6 +1843,7 @@
     const opportunities = {
       passWithAvailableMain: 0,
       passWithResourceLockedHand: 0,
+      negativeCardCornerGraphLift: 0,
       endTurnWithAvailableMove: 0,
       researchTechOverCompoundTechCard: 0,
       selectedUnavailableCandidate: 0,
@@ -1811,6 +1851,7 @@
     };
     const passOpportunitySamples = [];
     const passResourceLockSamples = [];
+    const negativeCardCornerGraphLiftSamples = [];
     const endTurnMoveOpportunitySamples = [];
     const researchTechCompoundCardSamples = [];
     const scoreOpportunities = {
@@ -1871,6 +1912,12 @@
           opportunities.passWithResourceLockedHand += 1;
           if (passResourceLockSamples.length < 12) {
             passResourceLockSamples.push(buildPassResourceLockSample(entry, candidates));
+          }
+        }
+        if (isNegativeCardCornerGraphLift(entry)) {
+          opportunities.negativeCardCornerGraphLift += 1;
+          if (negativeCardCornerGraphLiftSamples.length < 12) {
+            negativeCardCornerGraphLiftSamples.push(buildNegativeCardCornerGraphLiftSample(entry));
           }
         }
         if (actionId === "end-turn" && hasAvailableAction(candidates, "move")) {
@@ -1994,6 +2041,7 @@
       opportunities,
       passOpportunitySamples,
       passResourceLockSamples,
+      negativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
       scoreOpportunities: {
@@ -2034,6 +2082,7 @@
     };
     const mergedPassOpportunitySamples = [];
     const mergedPassResourceLockSamples = [];
+    const mergedNegativeCardCornerGraphLiftSamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
     const mergedResearchTechCompoundCardSamples = [];
     const mergedMovePayment = {
@@ -2083,6 +2132,14 @@
       if (mergedPassResourceLockSamples.length < 12 && Array.isArray(analysis.passResourceLockSamples)) {
         mergedPassResourceLockSamples.push(
           ...analysis.passResourceLockSamples.slice(0, 12 - mergedPassResourceLockSamples.length),
+        );
+      }
+      if (
+        mergedNegativeCardCornerGraphLiftSamples.length < 12
+        && Array.isArray(analysis.negativeCardCornerGraphLiftSamples)
+      ) {
+        mergedNegativeCardCornerGraphLiftSamples.push(
+          ...analysis.negativeCardCornerGraphLiftSamples.slice(0, 12 - mergedNegativeCardCornerGraphLiftSamples.length),
         );
       }
       if (mergedEndTurnMoveOpportunitySamples.length < 12 && Array.isArray(analysis.endTurnMoveOpportunitySamples)) {
@@ -2188,6 +2245,7 @@
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
       passResourceLockSamples: mergedPassResourceLockSamples,
+      negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       scoreOpportunities: {

@@ -17084,6 +17084,7 @@
             opportunities: analysis.opportunities,
             passOpportunitySamples: analysis.passOpportunitySamples,
             passResourceLockSamples: analysis.passResourceLockSamples,
+            negativeCardCornerGraphLiftSamples: analysis.negativeCardCornerGraphLiftSamples,
             endTurnMoveOpportunitySamples: analysis.endTurnMoveOpportunitySamples,
             researchTechCompoundCardSamples: analysis.researchTechCompoundCardSamples,
             scoreOpportunities: analysis.scoreOpportunities,
