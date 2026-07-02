@@ -1582,10 +1582,14 @@
       }
       const pile = getPassReserveSelectionCards();
       const currentHandSize = Math.max(0, aiNumber(player?.resources?.handSize ?? (player?.hand || []).length));
+      const runezuLowEnginePassReserve = currentHandSize <= 1
+        && getAiLowEngineCatchupProfile(player).active
+        && hasAiRunezuPassReservePressure(player, pile);
       const shouldRankPassReserve = getAiMarkedFinalFormulaEntries(player)
         .some((entry) => entry.formulaId === "c2")
         || (pile || []).some((card) => getCardTypeCode(card) === 3)
-        || currentHandSize <= 0;
+        || currentHandSize <= 0
+        || runezuLowEnginePassReserve;
       const ranked = shouldRankPassReserve
         ? (pile || [])
           .map((card) => ({ card, score: scoreAiPassReserveCard(card, player) }))
@@ -1597,6 +1601,7 @@
       selectPassReserveCard(card.id);
       recordAiAutoBattleLog("pass-reserve", `${player.colorLabel}AI 选择 PASS 预留牌`, {
         card,
+        runezuLowEnginePassReserve,
         selectedScore: ranked.find((entry) => entry.card === card)?.score ?? null,
         candidates: ranked.slice(0, 5).map((entry) => ({
           cardId: entry.card.cardId || entry.card.id || null,
@@ -1613,6 +1618,23 @@
         return Math.max(0, Math.round(aiNumber(endGameScoring.countType3Cards(player, getCardTypeCode))));
       }
       return (player?.reservedCards || []).reduce((total, card) => total + (getCardTypeCode(card) === 3 ? 1 : 0), 0);
+    }
+
+    function hasAiRunezuPassReservePressure(player = getCurrentPlayer(), pile = []) {
+      if (!runezu?.isRunezuCard) return false;
+      const cardsToCheck = [
+        ...(player?.hand || []),
+        ...(player?.reservedCards || []),
+        ...(pile || []),
+      ];
+      return cardsToCheck.some((card) => (
+        runezu.isRunezuCard(card)
+        && (
+          runezu.isTaskUnfinished?.(card)
+          || Boolean(runezu.getFinalCardRule?.(card))
+          || !card?.runezuTaskCompleted
+        )
+      ));
     }
 
     function scoreAiC2Type3ProgressValue(player = getCurrentPlayer()) {
