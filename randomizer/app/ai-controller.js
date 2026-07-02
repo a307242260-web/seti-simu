@@ -17083,6 +17083,7 @@
             actionCategoryRatios: analysis.actionCategoryRatios,
             opportunities: analysis.opportunities,
             passOpportunitySamples: analysis.passOpportunitySamples,
+            passResourceLockSamples: analysis.passResourceLockSamples,
             endTurnMoveOpportunitySamples: analysis.endTurnMoveOpportunitySamples,
             researchTechCompoundCardSamples: analysis.researchTechCompoundCardSamples,
             scoreOpportunities: analysis.scoreOpportunities,

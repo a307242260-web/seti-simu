@@ -230,6 +230,46 @@
     };
   }
 
+  function getPlayCardCandidate(candidates = []) {
+    return (candidates || []).find((candidate) => getCandidateId(candidate) === "playCard") || null;
+  }
+
+  function isPassResourceLockedPlayCard(entry, candidates = []) {
+    if (getSelectedActionId(entry) !== "pass") return false;
+    const playCardCandidate = getPlayCardCandidate(candidates);
+    if (!playCardCandidate || isCandidateAvailable(playCardCandidate)) return false;
+    const reason = String(playCardCandidate.reason || "");
+    if (!reason.includes("没有资源可支付")) return false;
+    return numeric(entry?.playerResources?.handSize) >= 2;
+  }
+
+  function buildPassResourceLockSample(entry, candidates = [], limit = 4) {
+    const playCardCandidate = getPlayCardCandidate(candidates);
+    const availableCandidates = (candidates || []).filter(isCandidateAvailable);
+    const topCandidates = availableCandidates
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ))
+      .slice(0, limit)
+      .map(summarizeOpportunityCandidate);
+    const unavailableMain = (candidates || [])
+      .filter((candidate) => candidate.kind === "main" && !isCandidateAvailable(candidate))
+      .slice(0, limit)
+      .map(summarizeOpportunityCandidate);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      playCard: playCardCandidate ? summarizeOpportunityCandidate(playCardCandidate) : null,
+      unavailableMain,
+      topCandidates,
+    };
+  }
+
   function isResearchTechEffectType(type) {
     return type === "card_research_tech" || type === "research_tech_select" || type === "research_tech";
   }
@@ -1763,12 +1803,14 @@
     const bugCounts = {};
     const opportunities = {
       passWithAvailableMain: 0,
+      passWithResourceLockedHand: 0,
       endTurnWithAvailableMove: 0,
       researchTechOverCompoundTechCard: 0,
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
     };
     const passOpportunitySamples = [];
+    const passResourceLockSamples = [];
     const endTurnMoveOpportunitySamples = [];
     const researchTechCompoundCardSamples = [];
     const scoreOpportunities = {
@@ -1823,6 +1865,12 @@
           opportunities.passWithAvailableMain += 1;
           if (passOpportunitySamples.length < 12) {
             passOpportunitySamples.push(buildPassOpportunitySample(entry, candidates));
+          }
+        }
+        if (isPassResourceLockedPlayCard(entry, candidates)) {
+          opportunities.passWithResourceLockedHand += 1;
+          if (passResourceLockSamples.length < 12) {
+            passResourceLockSamples.push(buildPassResourceLockSample(entry, candidates));
           }
         }
         if (actionId === "end-turn" && hasAvailableAction(candidates, "move")) {
@@ -1945,6 +1993,7 @@
       movePayment,
       opportunities,
       passOpportunitySamples,
+      passResourceLockSamples,
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
       scoreOpportunities: {
@@ -1984,6 +2033,7 @@
       maxGap: 0,
     };
     const mergedPassOpportunitySamples = [];
+    const mergedPassResourceLockSamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
     const mergedResearchTechCompoundCardSamples = [];
     const mergedMovePayment = {
@@ -2029,6 +2079,11 @@
       for (const [key, count] of Object.entries(analysis.opportunities || {})) increment(mergedOpportunities, key, count);
       if (mergedPassOpportunitySamples.length < 12 && Array.isArray(analysis.passOpportunitySamples)) {
         mergedPassOpportunitySamples.push(...analysis.passOpportunitySamples.slice(0, 12 - mergedPassOpportunitySamples.length));
+      }
+      if (mergedPassResourceLockSamples.length < 12 && Array.isArray(analysis.passResourceLockSamples)) {
+        mergedPassResourceLockSamples.push(
+          ...analysis.passResourceLockSamples.slice(0, 12 - mergedPassResourceLockSamples.length),
+        );
       }
       if (mergedEndTurnMoveOpportunitySamples.length < 12 && Array.isArray(analysis.endTurnMoveOpportunitySamples)) {
         mergedEndTurnMoveOpportunitySamples.push(
@@ -2132,6 +2187,7 @@
       topMissedCandidates,
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
+      passResourceLockSamples: mergedPassResourceLockSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       scoreOpportunities: {

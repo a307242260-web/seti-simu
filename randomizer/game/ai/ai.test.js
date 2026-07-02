@@ -962,6 +962,36 @@ assert.equal(endTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].resources.ener
 const endTurnMoveSummary = analytics.summarizeBattleReports([endTurnMoveReport]);
 assert.equal(endTurnMoveSummary.endTurnMoveOpportunitySamples[0].bestMove.score, 7.25);
 
+const passResourceLockReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 6,
+    playerId: "player-green",
+    playerLabel: "绿色",
+    playerResources: { score: 132, credits: 0, energy: 1, publicity: 4, handSize: 4 },
+    details: {
+      action: { id: "pass", kind: "main", score: -3 },
+      candidates: [
+        { id: "pass", kind: "main", available: true, score: -3 },
+        { id: "playCard", kind: "main", available: false, score: 0, reason: "没有资源可支付的普通手牌" },
+        { id: "researchTech", kind: "main", available: false, score: 0, reason: "宣传不足" },
+        { id: "launch", kind: "main", available: false, score: 0, reason: "信用点不足" },
+        { id: "publicity-for-card", kind: "quick", available: true, score: 1.25 },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-green", playerLabel: "绿色", finalScore: 132 }],
+};
+const passResourceLockAnalysis = analytics.analyzeBattleReport(passResourceLockReport);
+assert.equal(passResourceLockAnalysis.opportunities.passWithResourceLockedHand, 1);
+assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].playCard.reason, "没有资源可支付的普通手牌");
+assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].resources.handSize, 4);
+assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].unavailableMain.length, 3);
+const passResourceLockSummary = analytics.summarizeBattleReports([passResourceLockReport]);
+assert.equal(passResourceLockSummary.passResourceLockSamples[0].playCard.reason, "没有资源可支付的普通手牌");
+
 const compoundTechCardReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{
