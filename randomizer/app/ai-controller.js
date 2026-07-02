@@ -756,6 +756,9 @@
       if (ai?.analytics?.analyzeBattleReport) {
         report.analysis = ai.analytics.analyzeBattleReport(report);
       }
+      const lowMarkPlayerDiagnosticsList = buildAiLowMarkPlayerDiagnostics(report);
+      report.lowMarkPlayerDiagnostics = lowMarkPlayerDiagnosticsList[0] || null;
+      report.lowMarkPlayerDiagnosticsList = lowMarkPlayerDiagnosticsList;
       return report;
     }
 
