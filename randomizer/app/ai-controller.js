@@ -12449,7 +12449,7 @@
         handIndex,
         cardId: card.cardId || card.id || null,
         cardInstanceId: card.id || null,
-        cardLabel: cards.getCardLabel(card),
+        cardLabel: getAiCardDisplayLabel({ card, cardId: card.cardId || card.id || null }, currentPlayer),
         alienCard: isAiAlienMainPlayCard(card),
         price,
         cost,
@@ -12793,7 +12793,7 @@
         handIndex,
         cardId: card.cardId || card.id || null,
         cardInstanceId: card.id || null,
-        cardLabel: cards.getCardLabel(card),
+        cardLabel: getAiCardDisplayLabel({ card, cardId: card.cardId || card.id || null }, currentPlayer),
         actionKind: reward.moveReward ? "move" : "resource",
         reward: reward.resourceReward || null,
         moveReward: reward.moveReward || null,
@@ -12896,8 +12896,10 @@
       if (!selected) {
         return { ok: false, blocked: true, message: "AI 没有可打出的普通手牌" };
       }
-      recordAiAutoBattleLog("play-card", `${currentPlayer.colorLabel}AI 选择打出 ${selected.cardLabel}`, {
+      const selectedLabel = getAiCardDisplayLabel(selected, currentPlayer) || selected.cardLabel || "未知卡牌";
+      recordAiAutoBattleLog("play-card", `${currentPlayer.colorLabel}AI 选择打出 ${selectedLabel}`, {
         selected,
+        selectedLabel,
         candidates,
       });
       const selectResult = handlePlayCardSelect(selected.handIndex);
@@ -16102,6 +16104,9 @@
           ? null
           : "没有资源可支付的普通手牌",
         playableCards: playCardCandidates,
+        cardId: bestPlayCardCandidate?.cardId || null,
+        cardInstanceId: bestPlayCardCandidate?.cardInstanceId || null,
+        cardLabel: getAiCardDisplayLabel(bestPlayCardCandidate, currentPlayer),
         plan: bestPlayCardCandidate?.plan || null,
         effectTypes: bestPlayCardCandidate?.effectTypes || [],
         finalFormulaDeltas: bestPlayCardCandidate?.finalFormulaDeltas || null,
@@ -16824,6 +16829,44 @@
       return Number.isFinite(explicitScore) ? explicitScore : 0;
     }
 
+    function normalizeAiKnownCardId(value) {
+      const text = String(value ?? "").trim();
+      if (!text) return null;
+      if (/^\d+$/.test(text)) {
+        const index = Number(text);
+        if (Number.isInteger(index) && index >= 1 && index <= 140) return `b_${index}.webp`;
+      }
+      return text;
+    }
+
+    function normalizeAiReadableCardLabel(value) {
+      const text = String(value ?? "").trim();
+      if (!text || /^\d+$/.test(text)) return null;
+      return text;
+    }
+
+    function getAiCardDisplayLabel(candidate = {}, player = null) {
+      const handIndex = Number(candidate?.handIndex);
+      const handCard = player && Number.isInteger(handIndex) ? player.hand?.[handIndex] : null;
+      const card = candidate?.card || handCard || null;
+      const directLabel = normalizeAiReadableCardLabel(candidate?.cardLabel);
+      if (directLabel) return directLabel;
+      const catalogLabel = normalizeAiReadableCardLabel(cards.getCatalogEntryForCard?.(card)?.card_name);
+      if (catalogLabel) return catalogLabel;
+      const cardLabel = normalizeAiReadableCardLabel(cards.getCardLabel?.(card));
+      if (cardLabel) return cardLabel;
+      const cardId = normalizeAiKnownCardId(candidate?.cardId || card?.cardId || card?.id);
+      const catalogByIdLabel = cardId
+        ? normalizeAiReadableCardLabel(cards.getCatalogEntryForCard?.({ cardId })?.card_name)
+        : null;
+      if (catalogByIdLabel) return catalogByIdLabel;
+      const referenceLabel = cardId
+        ? normalizeAiReadableCardLabel(cardEffects.getCardReference?.(cardId)?.referenceName)
+        : null;
+      if (referenceLabel) return referenceLabel;
+      return cardId || null;
+    }
+
     function summarizeAiTurnActionCandidate(candidate = {}) {
       const breakdown = candidate.breakdown || candidate.valueBreakdown || null;
       const compactBreakdown = breakdown
@@ -16837,7 +16880,9 @@
       return {
         id: candidate.id || null,
         tradeId: candidate.tradeId || null,
-        label: candidate.label || candidate.cardLabel || candidate.planetName || null,
+        label: candidate.label || getAiCardDisplayLabel(candidate) || candidate.planetName || null,
+        cardId: candidate.cardId || null,
+        cardInstanceId: candidate.cardInstanceId || null,
         score: roundAiScore(getAiCandidateRankScore(candidate)),
         directScoreGain: roundAiScore(candidate.directScoreGain || 0),
         finalMarginal: roundAiScore(candidate.actionGraph?.finalMarginal ?? candidate.finalMarginal ?? 0),
