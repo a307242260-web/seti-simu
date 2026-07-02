@@ -359,7 +359,8 @@ UI 布局：
 - `record(command)`：记录命令，命令必须有 `undo()`。
 - `endStep()`：结束当前步骤。
 - `undoLastStep()`：撤销当前会话最后一步。
-- `rollbackSession()`：撤销整个当前行动。
+- `rollbackSession()`：撤销整个当前行动；若会话中已有不可撤销屏障则直接失败，不会先撤掉屏障之后的步骤再返回失败。
+- `hasIrreversibleBarrier()`：查询当前会话是否已经记录不可撤销屏障，用于 app 层决定只能单步撤销屏障之后的效果，不能整段回滚。
 - `commitSession()`：确认或结束会话，清空当前会话。
 
 回合结束会 `commitSession()` 主行动的 `actionHistory`，并清空快速行动历史。快速行动没有确认按钮；当快速行动步骤都被撤销后，`quickActionHistory` 会自动提交清空。精选/盲抽/补牌等确认产生新信息后写入不可撤销屏障。

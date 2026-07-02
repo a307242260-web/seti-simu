@@ -30,6 +30,12 @@
     return Boolean(step) && step.undoable !== false && !step.irreversibleReason;
   }
 
+  function formatBlockedUndoMessage(step) {
+    return step?.irreversibleReason
+      ? `不可撤销：${step.irreversibleReason}`
+      : `不可撤销：${step?.label || "该步骤"}`;
+  }
+
   function findLastBarrierIndex(steps) {
     for (let index = steps.length - 1; index >= 0; index -= 1) {
       if (!isStepUndoable(steps[index])) return index;
@@ -117,9 +123,7 @@
             ok: false,
             step,
             blockedBy: step,
-            message: step.irreversibleReason
-              ? `不可撤销：${step.irreversibleReason}`
-              : `不可撤销：${step.label}`,
+            message: formatBlockedUndoMessage(step),
           };
         }
         undoCommands(step);
@@ -137,9 +141,7 @@
         return {
           ok: false,
           blockedBy,
-          message: blockedBy.irreversibleReason
-            ? `不可撤销：${blockedBy.irreversibleReason}`
-            : `不可撤销：${blockedBy.label}`,
+          message: formatBlockedUndoMessage(blockedBy),
         };
       }
 
@@ -170,11 +172,23 @@
             ok: false,
             undone,
             blockedBy,
-            message: blockedBy.irreversibleReason
-              ? `不可撤销：${blockedBy.irreversibleReason}`
-              : `不可撤销：${blockedBy.label}`,
+            message: formatBlockedUndoMessage(blockedBy),
           };
         }
+      }
+
+      const barrierIndex = findLastBarrierIndex(session.steps);
+      if (barrierIndex >= 0) {
+        const blockedBy = session.steps[barrierIndex];
+        return {
+          ok: false,
+          undone,
+          blockedBy,
+          message: formatBlockedUndoMessage(blockedBy),
+        };
+      }
+
+      if (session.currentStep) {
         undoCommands(session.currentStep);
         undone.push(session.currentStep);
         session.currentStep = null;
@@ -187,9 +201,7 @@
             ok: false,
             undone,
             blockedBy: latest,
-            message: latest.irreversibleReason
-              ? `不可撤销：${latest.irreversibleReason}`
-              : `不可撤销：${latest.label}`,
+            message: formatBlockedUndoMessage(latest),
           };
         }
         const step = session.steps.pop();
@@ -227,6 +239,12 @@
         if (isStepUndoable(session.steps[index])) return true;
       }
       return false;
+    }
+
+    function hasIrreversibleBarrier() {
+      if (!session) return false;
+      if (session.currentStep && !isStepUndoable(session.currentStep)) return true;
+      return findLastBarrierIndex(session.steps) >= 0;
     }
 
     function getTrace() {
@@ -283,6 +301,7 @@
       hasSession,
       getSessionInfo,
       hasUndoableStep,
+      hasIrreversibleBarrier,
       getTrace,
       listSteps,
     });

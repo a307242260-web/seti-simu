@@ -12488,7 +12488,7 @@
     if (!flow?.historySource) return false;
     if (flow.historySource === HISTORY_SOURCE_QUICK) return true;
     if (flow.historySource === HISTORY_SOURCE_MAIN) {
-      return Boolean(pendingActionHasIrreversibleBarrier && actionHistory.hasUndoableStep());
+      return Boolean(hasCurrentMainActionIrreversibleBarrier() && actionHistory.hasUndoableStep());
     }
     return false;
   }
@@ -31456,8 +31456,15 @@
 
   function canUndoCurrentMainAction() {
     if (actionHistory.hasUndoableStep()) return true;
-    if (pendingActionHasIrreversibleBarrier) return false;
+    if (hasCurrentMainActionIrreversibleBarrier()) return false;
     return Boolean(pendingActionExecuted || isActionEffectFlowActive());
+  }
+
+  function hasCurrentMainActionIrreversibleBarrier() {
+    return Boolean(
+      pendingActionHasIrreversibleBarrier
+      || actionHistory.hasIrreversibleBarrier?.(),
+    );
   }
 
   function getMainActionStartBlockReason() {
@@ -32024,7 +32031,9 @@
       return;
     }
 
-    if (!latestUndoSource && pendingActionHasIrreversibleBarrier) {
+    const mainActionHasIrreversibleBarrier = hasCurrentMainActionIrreversibleBarrier();
+
+    if (!latestUndoSource && mainActionHasIrreversibleBarrier) {
       rocketState.statusNote = pendingActionIrreversibleReason
         ? `不可撤销：${pendingActionIrreversibleReason}`
         : "当前行动已有不可撤销影响";
@@ -32033,7 +32042,7 @@
       return;
     }
 
-    if (pendingActionHasIrreversibleBarrier && !actionHistory.hasUndoableStep()) {
+    if (mainActionHasIrreversibleBarrier && !actionHistory.hasUndoableStep()) {
       rocketState.statusNote = pendingActionIrreversibleReason
         ? `不可撤销：${pendingActionIrreversibleReason}`
         : "当前行动已有不可撤销影响";
@@ -32044,7 +32053,7 @@
 
     if (
       latestUndoSource === HISTORY_SOURCE_MAIN
-      && pendingActionHasIrreversibleBarrier
+      && mainActionHasIrreversibleBarrier
       && actionHistory.hasUndoableStep()
     ) {
       const result = actionHistory.undoLastStep();
@@ -32343,12 +32352,13 @@
     }
 
     if (pendingActionExecuted) {
+      const mainActionHasIrreversibleBarrier = hasCurrentMainActionIrreversibleBarrier();
       setTurnActionButtonState(els.actionPassButton, false);
       setTurnActionButtonState(els.actionConfirmButton, true, true);
       setTurnActionButtonState(
         els.actionUndoButton,
         quickActionHistory.hasUndoableStep() || canUndoCurrentMainAction(),
-        !pendingActionHasIrreversibleBarrier,
+        !mainActionHasIrreversibleBarrier,
       );
       return pendingBlockedReason;
     }

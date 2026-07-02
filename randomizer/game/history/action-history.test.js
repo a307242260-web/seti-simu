@@ -96,6 +96,7 @@ barrierHistory.beginStep({
 });
 const barrierStep = barrierHistory.endStep();
 assert.equal(barrierStep.undoable, false);
+assert.equal(barrierHistory.hasIrreversibleBarrier(), true);
 assert.equal(barrierHistory.hasUndoableStep(), false, "barrier blocks previous undoable steps");
 const blockedUndo = barrierHistory.undoLastStep();
 assert.equal(blockedUndo.ok, false);
@@ -120,6 +121,45 @@ assert.equal(barrierHistory.hasUndoableStep(), false);
 const rollbackBlocked = barrierHistory.rollbackSession();
 assert.equal(rollbackBlocked.ok, false);
 assert.equal(rollbackBlocked.blockedBy.id, barrierStep.id);
+
+const atomicRollbackHistory = actionHistory.createActionHistory();
+let atomicValue = 0;
+atomicRollbackHistory.beginSession("orbit", "火星环绕");
+atomicRollbackHistory.beginStep({ source: "main", type: "action_start", label: "环绕火星" });
+atomicRollbackHistory.record({
+  label: "撤销环绕",
+  undo() {
+    atomicValue -= 100;
+  },
+});
+atomicRollbackHistory.endStep();
+atomicRollbackHistory.beginStep({
+  source: "main",
+  type: "irreversible",
+  label: "精选 1 张卡牌",
+  undoable: false,
+  irreversibleCode: "hidden_card_reveal",
+  irreversibleReason: "公共牌补牌翻出新牌",
+});
+const atomicBarrier = atomicRollbackHistory.endStep();
+atomicRollbackHistory.beginStep({ source: "main", type: "effect", label: "获得 1 次收入" });
+atomicRollbackHistory.record({
+  label: "撤销收入",
+  undo() {
+    atomicValue += 1;
+  },
+});
+const atomicIncome = atomicRollbackHistory.endStep();
+assert.equal(atomicRollbackHistory.hasIrreversibleBarrier(), true);
+assert.equal(atomicRollbackHistory.hasUndoableStep(), true);
+const atomicRollback = atomicRollbackHistory.rollbackSession();
+assert.equal(atomicRollback.ok, false);
+assert.equal(atomicRollback.blockedBy.id, atomicBarrier.id);
+assert.equal(atomicValue, 0, "rollback must not partially undo steps after a barrier");
+const atomicIncomeUndo = atomicRollbackHistory.undoLastStep();
+assert.equal(atomicIncomeUndo.ok, true);
+assert.equal(atomicIncomeUndo.step.id, atomicIncome.id);
+assert.equal(atomicValue, 1);
 
 const fangzhouLikeHistory = actionHistory.createActionHistory();
 const fangzhouLikeState = {
