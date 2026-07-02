@@ -273,6 +273,39 @@
     };
   }
 
+  function buildFinalLowHandPassRecoverySample(entry) {
+    const diagnostic = entry?.details?.finalLowHandPassRecoveryDiagnostic || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      currentScore: roundRatio(diagnostic.currentScore),
+      finalMarkCount: numeric(diagnostic.finalMarkCount),
+      nextFinalMarkThreshold: diagnostic.nextFinalMarkThreshold ?? null,
+      handSize: numeric(diagnostic.handSize),
+      bestPublicTradeCardScore: roundRatio(diagnostic.bestPublicTradeCardScore),
+      topPublicTradeCards: Array.isArray(diagnostic.topPublicTradeCards)
+        ? diagnostic.topPublicTradeCards.slice(0, 5)
+        : [],
+      tradeChecks: Array.isArray(diagnostic.tradeChecks)
+        ? diagnostic.tradeChecks.slice(0, 8)
+        : [],
+      lateRecoveryGate: diagnostic.lateRecoveryGate || null,
+      availableQuick: Array.isArray(diagnostic.availableQuick)
+        ? diagnostic.availableQuick.slice(0, 5)
+        : [],
+      lateRecoveryPreviewCandidates: Array.isArray(diagnostic.lateRecoveryPreviewCandidates)
+        ? diagnostic.lateRecoveryPreviewCandidates.slice(0, 5)
+        : [],
+      unavailableMain: Array.isArray(diagnostic.unavailableMain)
+        ? diagnostic.unavailableMain.slice(0, 6)
+        : [],
+    };
+  }
+
   function isNegativeCardCornerGraphLift(entry) {
     const action = getSelectedAction(entry);
     if (getCandidateId(action) !== "cardCorner") return false;
@@ -1904,6 +1937,7 @@
     const opportunities = {
       passWithAvailableMain: 0,
       passWithResourceLockedHand: 0,
+      finalLowHandPassNoRecovery: 0,
       negativeCardCornerGraphLift: 0,
       endTurnWithAvailableMove: 0,
       researchTechOverCompoundTechCard: 0,
@@ -1913,6 +1947,7 @@
     };
     const passOpportunitySamples = [];
     const passResourceLockSamples = [];
+    const finalLowHandPassRecoverySamples = [];
     const negativeCardCornerGraphLiftSamples = [];
     const endTurnMoveOpportunitySamples = [];
     const researchTechCompoundCardSamples = [];
@@ -1975,6 +2010,12 @@
           opportunities.passWithResourceLockedHand += 1;
           if (passResourceLockSamples.length < 12) {
             passResourceLockSamples.push(buildPassResourceLockSample(entry, candidates));
+          }
+        }
+        if (entry.details?.finalLowHandPassRecoveryDiagnostic) {
+          opportunities.finalLowHandPassNoRecovery += 1;
+          if (finalLowHandPassRecoverySamples.length < 12) {
+            finalLowHandPassRecoverySamples.push(buildFinalLowHandPassRecoverySample(entry));
           }
         }
         if (isNegativeCardCornerGraphLift(entry)) {
@@ -2110,6 +2151,7 @@
       opportunities,
       passOpportunitySamples,
       passResourceLockSamples,
+      finalLowHandPassRecoverySamples,
       negativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
@@ -2152,6 +2194,7 @@
     };
     const mergedPassOpportunitySamples = [];
     const mergedPassResourceLockSamples = [];
+    const mergedFinalLowHandPassRecoverySamples = [];
     const mergedNegativeCardCornerGraphLiftSamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
     const mergedResearchTechCompoundCardSamples = [];
@@ -2203,6 +2246,14 @@
       if (mergedPassResourceLockSamples.length < 12 && Array.isArray(analysis.passResourceLockSamples)) {
         mergedPassResourceLockSamples.push(
           ...analysis.passResourceLockSamples.slice(0, 12 - mergedPassResourceLockSamples.length),
+        );
+      }
+      if (
+        mergedFinalLowHandPassRecoverySamples.length < 12
+        && Array.isArray(analysis.finalLowHandPassRecoverySamples)
+      ) {
+        mergedFinalLowHandPassRecoverySamples.push(
+          ...analysis.finalLowHandPassRecoverySamples.slice(0, 12 - mergedFinalLowHandPassRecoverySamples.length),
         );
       }
       if (
@@ -2321,6 +2372,7 @@
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
       passResourceLockSamples: mergedPassResourceLockSamples,
+      finalLowHandPassRecoverySamples: mergedFinalLowHandPassRecoverySamples,
       negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,

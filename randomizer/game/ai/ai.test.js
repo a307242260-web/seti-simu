@@ -1021,6 +1021,39 @@ const passResourceLockSummary = analytics.summarizeBattleReports([passResourceLo
 assert.equal(passResourceLockSummary.passResourceLockSamples[0].playCard.reason, "没有资源可支付的普通手牌");
 assert.equal(passResourceLockSummary.passResourceLockSamples[0].resourceLockTradePreviews[0].bestAction.cardId, "b_135.webp");
 
+const finalLowHandPassRecoveryReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 7,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 115, credits: 0, energy: 1, publicity: 4, handSize: 1 },
+    details: {
+      action: { id: "pass", kind: "pass", score: -2.3 },
+      finalLowHandPassRecoveryDiagnostic: {
+        currentScore: 115,
+        finalMarkCount: 3,
+        nextFinalMarkThreshold: null,
+        handSize: 1,
+        bestPublicTradeCardScore: 1.75,
+        topPublicTradeCards: [{ cardId: "b_87.webp", cardLabel: "引力弹弓", tradeScore: 1.75 }],
+        tradeChecks: [{ tradeId: "publicity-for-card", ok: true }],
+        availableQuick: [],
+        unavailableMain: [{ id: "playCard", reason: "没有资源可支付的普通手牌" }],
+      },
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 163 }],
+};
+const finalLowHandPassRecoveryAnalysis = analytics.analyzeBattleReport(finalLowHandPassRecoveryReport);
+assert.equal(finalLowHandPassRecoveryAnalysis.opportunities.finalLowHandPassNoRecovery, 1);
+assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].bestPublicTradeCardScore, 1.75);
+assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].topPublicTradeCards[0].cardId, "b_87.webp");
+const finalLowHandPassRecoverySummary = analytics.summarizeBattleReports([finalLowHandPassRecoveryReport]);
+assert.equal(finalLowHandPassRecoverySummary.finalLowHandPassRecoverySamples[0].tradeChecks[0].tradeId, "publicity-for-card");
+
 const negativeCardCornerGraphLiftReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{

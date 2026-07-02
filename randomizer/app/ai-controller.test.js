@@ -3857,6 +3857,80 @@ function makeYichangdianAlienState(options = {}) {
 
 {
   const turnChoices = [];
+  const publicScoreCard = {
+    id: "public-three-mark-tail-score",
+    cardName: "Public three mark tail score",
+    price: 1,
+    playEffects: [{ type: "gain_resources", options: { gain: { score: 14 } } }],
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "credits-for-card": {
+        id: "credits-for-card",
+        label: "2 credits -> public card",
+        cost: { credits: 2 },
+        gain: { handSize: 1 },
+      },
+    },
+    publicCards: [publicScoreCard],
+    blueResources: { score: 132, credits: 2, energy: 1, publicity: 1, availableData: 0, handSize: 1 },
+    blueHand: [{ id: "unpayable-tail", cardName: "Unpayable tail", price: 3 }],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b2: "b2",
+      final_d2: "d2",
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should use credits to refill after all three final marks are already claimed");
+  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "credits-for-card" });
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "credits-for-card");
+  assert.ok(tradeCandidate, "three-mark low-tail credit refill candidate should be enumerated");
+  assert.equal(
+    tradeCandidate.valueBreakdown?.avoidCloseSecondMarkCreditCardTrap,
+    false,
+    "missing-threshold trap should not apply after all three final marks are claimed",
+  );
+}
+
+{
+  const turnChoices = [];
   const publicFillerCard = {
     id: "public-payable-filler",
     cardName: "Public payable filler",

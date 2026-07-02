@@ -5823,7 +5823,7 @@
           Math.max(best, scoreAiPublicPickCard(card, player, "trade"))
         ), 0)
         : 0;
-      const usefulPublicTradeThreshold = recoveryThreshold <= 50 && scoreToNextThreshold <= 3 ? 8 : 4;
+      const usefulPublicTradeThreshold = recoveryThreshold && recoveryThreshold <= 50 && scoreToNextThreshold <= 3 ? 8 : 4;
       const hasUsefulPublicTradeCard = bestPublicTradeCardScore >= usefulPublicTradeThreshold;
       const finalLowHandPublicRefill = finalLowHandRefillWindow && (
         currentScore < 150
@@ -5897,8 +5897,10 @@
       const creditsAfterCardTrade = Math.max(0, credits - 2);
       const creditCardTradeCanPayFollowup = creditsAfterCardTrade >= 1 || publicity >= 3;
       const avoidCloseSecondMarkCreditCardTrap = getAiRoundNumber() >= FINAL_ROUND_NUMBER
-        && recoveryThreshold <= 50
-        && scoreToNextThreshold <= 3
+        && (
+          (Boolean(recoveryThreshold) && recoveryThreshold <= 50 && scoreToNextThreshold <= 3)
+          || (!recoveryThreshold && finalHighScoreCreditRefill)
+        )
         && !creditCardTradeCanPayFollowup;
       const thresholdCreditRecovery = canPrepareFinalThresholdAction
         && credits <= 0
@@ -16503,6 +16505,124 @@
       }).filter(Boolean);
     }
 
+    function buildAiFinalLowHandPassRecoveryDiagnostic(player = getCurrentPlayer(), candidates = []) {
+      if (
+        !player
+        || getAiRoundNumber() < FINAL_ROUND_NUMBER
+        || state.pendingActionExecuted
+        || !canStartMainAction()
+      ) {
+        return null;
+      }
+      const resources = player.resources || {};
+      const currentScore = Math.max(0, aiNumber(resources.score));
+      const handSize = Math.max(0, Math.round(aiNumber(resources.handSize ?? (player.hand || []).length)));
+      if (currentScore >= 170 || handSize > 4) return null;
+
+      const publicTradeCards = (cardState.publicCards || [])
+        .map((card, slotIndex) => {
+          const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+          return {
+            slotIndex,
+            cardId: card.cardId || card.id || null,
+            cardLabel: cards.getCardLabel?.(card) || card.cardName || card.label || null,
+            price: getCardPrice(card),
+            typeCode: getCardTypeCode(card),
+            tradeScore: roundAiScore(scoreAiPublicPickCard(card, player, "trade")),
+            playScore: playCandidate ? roundAiScore(playCandidate.score) : null,
+            directScoreGain: playCandidate ? roundAiScore(playCandidate.directScoreGain) : 0,
+          };
+        })
+        .sort((left, right) => aiNumber(right.tradeScore) - aiNumber(left.tradeScore))
+        .slice(0, 5);
+      const finalMarks = countAiFinalMarksForPlayer(player);
+      const nextThreshold = getAiNextMissingFinalScoreThreshold(player) || null;
+      const bestPublicTradeCardScore = publicTradeCards[0]?.tradeScore ?? 0;
+      const finalLowHandRefillWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && canStartMainAction()
+        && currentScore < 165
+        && handSize <= 1
+        && (
+          aiNumber(resources.credits) >= 2
+          || aiNumber(resources.energy) >= 2
+          || aiNumber(resources.publicity) >= 3
+        );
+      const finalLowHandPublicRefill = finalLowHandRefillWindow && (
+        currentScore < 150
+          ? bestPublicTradeCardScore >= 4
+          : bestPublicTradeCardScore >= 10
+      );
+      const tradeChecks = ["credits-for-card", "energy-for-card", "publicity-for-card", "cards-for-credit", "cards-for-energy", "energy-for-credit"]
+        .map((tradeId) => {
+          const trade = quickTrades?.getTradeAction?.(tradeId);
+          const check = trade ? (quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false }) : { ok: false };
+          return {
+            tradeId,
+            ok: Boolean(check.ok),
+            reason: check.ok ? null : (check.reason || check.message || null),
+            cost: trade?.cost ? { ...trade.cost } : null,
+            gain: trade?.gain ? { ...trade.gain } : null,
+          };
+        });
+      const availableQuick = (candidates || [])
+        .filter((candidate) => candidate?.kind === "quick" && candidate.available !== false)
+        .sort((left, right) => aiNumber(right.score) - aiNumber(left.score))
+        .slice(0, 5)
+        .map((candidate) => ({
+          id: candidate.id || null,
+          tradeId: candidate.tradeId || null,
+          label: candidate.label || null,
+          score: roundAiScore(candidate.score),
+          reason: candidate.reason || null,
+        }));
+      const lateRecoveryPreviewCandidates = listAiLateResourceRecoveryTradeCandidates(player)
+        .slice(0, 5)
+        .map((candidate) => ({
+          id: candidate.id || null,
+          tradeId: candidate.tradeId || null,
+          label: candidate.label || null,
+          score: roundAiScore(candidate.score),
+          reason: candidate.reason || null,
+          valueBreakdown: candidate.valueBreakdown || null,
+        }));
+      const unavailableMain = (candidates || [])
+        .filter((candidate) => candidate?.kind === "main" && candidate.available === false)
+        .slice(0, 6)
+        .map((candidate) => ({
+          id: candidate.id || null,
+          score: roundAiScore(candidate.score),
+          reason: candidate.reason || null,
+        }));
+
+      return {
+        currentScore,
+        finalMarkCount: finalMarks,
+        nextFinalMarkThreshold: nextThreshold,
+        handSize,
+        credits: roundAiScore(resources.credits),
+        energy: roundAiScore(resources.energy),
+        publicity: roundAiScore(resources.publicity),
+        bestPublicTradeCardScore,
+        topPublicTradeCards: publicTradeCards,
+        tradeChecks,
+        lateRecoveryGate: {
+          hasQuickTrades: Boolean(quickTrades?.getTradeAction),
+          hasRunQuickTrade: typeof runQuickTrade === "function",
+          mainActionOpen: canStartMainAction(),
+          pendingActionExecuted: Boolean(state.pendingActionExecuted),
+          passed: Boolean((turnState.passedPlayerIds || []).includes(player.id)),
+          finalLowHandRefillWindow,
+          finalLowHandPublicRefill,
+          finalLowHandCreditRefill: finalLowHandPublicRefill && aiNumber(resources.credits) >= 2,
+          finalLowHandEnergyRefill: finalLowHandPublicRefill && aiNumber(resources.energy) >= 2,
+          usefulPublicTradeThreshold: nextThreshold && nextThreshold <= 50 ? 8 : 4,
+        },
+        availableQuick,
+        lateRecoveryPreviewCandidates,
+        unavailableMain,
+      };
+    }
+
     function executeAiTurnAction(action, currentPlayer = getCurrentPlayer()) {
       if (action.id === "end-turn") {
         endCurrentTurn();
@@ -16660,10 +16780,14 @@
         const resourceLockTradePreviews = action.id === "pass"
           ? buildAiResourceLockTradePreviews(currentPlayer, selectableCandidates)
           : [];
+        const finalLowHandPassRecoveryDiagnostic = action.id === "pass"
+          ? buildAiFinalLowHandPassRecoveryDiagnostic(currentPlayer, selectableCandidates)
+          : null;
         recordAiAutoBattleLog("turn-action", `${currentPlayer.colorLabel}AI 执行 ${action.id}`, {
           action,
           candidates: selectableCandidates,
           ...(resourceLockTradePreviews.length ? { resourceLockTradePreviews } : {}),
+          ...(finalLowHandPassRecoveryDiagnostic ? { finalLowHandPassRecoveryDiagnostic } : {}),
         });
         const result = executeAiTurnAction(action, currentPlayer);
         if (shouldRetryAiTurnAction(action, result)) {
@@ -17289,6 +17413,7 @@
             opportunities: analysis.opportunities,
             passOpportunitySamples: analysis.passOpportunitySamples,
             passResourceLockSamples: analysis.passResourceLockSamples,
+            finalLowHandPassRecoverySamples: analysis.finalLowHandPassRecoverySamples,
             negativeCardCornerGraphLiftSamples: analysis.negativeCardCornerGraphLiftSamples,
             endTurnMoveOpportunitySamples: analysis.endTurnMoveOpportunitySamples,
             researchTechCompoundCardSamples: analysis.researchTechCompoundCardSamples,
