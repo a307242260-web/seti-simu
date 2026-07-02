@@ -1002,10 +1002,39 @@ const endTurnMoveReport = {
 };
 const endTurnMoveAnalysis = analytics.analyzeBattleReport(endTurnMoveReport);
 assert.equal(endTurnMoveAnalysis.opportunities.endTurnWithAvailableMove, 1);
+assert.equal(endTurnMoveAnalysis.opportunities.endTurnWithPositiveMove, 1);
 assert.equal(endTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].bestMove.score, 7.25);
+assert.equal(endTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].bestMovePositive, true);
 assert.equal(endTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].resources.energy, 1);
 const endTurnMoveSummary = analytics.summarizeBattleReports([endTurnMoveReport]);
 assert.equal(endTurnMoveSummary.endTurnMoveOpportunitySamples[0].bestMove.score, 7.25);
+assert.equal(endTurnMoveSummary.opportunities.endTurnWithPositiveMove, 1);
+
+const negativeEndTurnMoveReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 11,
+    playerId: "player-green",
+    playerLabel: "绿色",
+    playerResources: { score: 151, credits: 0, energy: 1, handSize: 2 },
+    details: {
+      action: { id: "end-turn", kind: "quick", score: -0.5 },
+      candidates: [
+        { id: "end-turn", kind: "quick", available: true, score: -0.5 },
+        { id: "move", kind: "quick", available: true, score: -3.25, direction: "inward" },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-green", playerLabel: "绿色", finalScore: 151 }],
+};
+const negativeEndTurnMoveAnalysis = analytics.analyzeBattleReport(negativeEndTurnMoveReport);
+assert.equal(negativeEndTurnMoveAnalysis.opportunities.endTurnWithAvailableMove, 1);
+assert.equal(negativeEndTurnMoveAnalysis.opportunities.endTurnWithPositiveMove, 0);
+assert.equal(negativeEndTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].bestMovePositive, false);
+assert.ok(!negativeEndTurnMoveAnalysis.recommendations.some((entry) => entry.id === "targeted-post-action-move"));
+assert.ok(negativeEndTurnMoveAnalysis.recommendations.some((entry) => entry.id === "classify-negative-end-turn-move"));
 
 const passResourceLockReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },

@@ -226,6 +226,7 @@
       resources: entry.playerResources || null,
       selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
       bestMove: availableMoves[0] ? summarizeOpportunityCandidate(availableMoves[0]) : null,
+      bestMovePositive: numeric(availableMoves[0]?.score) > 0,
       topCandidates,
     };
   }
@@ -1876,11 +1877,17 @@
         });
       }
     }
-    if (opportunities.endTurnWithAvailableMove > 0) {
+    if (opportunities.endTurnWithPositiveMove > 0) {
       recommendations.push({
         id: "targeted-post-action-move",
         priority: "medium",
-        message: "出现结束回合时仍有可用移动的局面，移动评分应绑定星球、星云、任务牌或终局目标距离。",
+        message: "出现结束回合时仍有正收益移动的局面，移动评分应绑定星球、星云、任务牌或终局目标距离。",
+      });
+    } else if (opportunities.endTurnWithAvailableMove > 0) {
+      recommendations.push({
+        id: "classify-negative-end-turn-move",
+        priority: "low",
+        message: "结束回合时虽有移动候选，但最高移动为非正收益；后续应先验证是否存在真实兑现链，而不是直接放宽移动。",
       });
     }
     if (opportunities.selectedBelowBestScore > 0) {
@@ -2043,6 +2050,7 @@
       finalLowHandPassNoRecovery: 0,
       negativeCardCornerGraphLift: 0,
       endTurnWithAvailableMove: 0,
+      endTurnWithPositiveMove: 0,
       researchTechOverCompoundTechCard: 0,
       mainUnlockLowConcretePlay: 0,
       nonPositivePublicRefill: 0,
@@ -2133,8 +2141,12 @@
         }
         if (actionId === "end-turn" && hasAvailableAction(candidates, "move")) {
           opportunities.endTurnWithAvailableMove += 1;
+          const endTurnMoveSample = buildEndTurnMoveOpportunitySample(entry, candidates);
+          if (endTurnMoveSample.bestMovePositive) {
+            opportunities.endTurnWithPositiveMove += 1;
+          }
           if (endTurnMoveOpportunitySamples.length < 12) {
-            endTurnMoveOpportunitySamples.push(buildEndTurnMoveOpportunitySample(entry, candidates));
+            endTurnMoveOpportunitySamples.push(endTurnMoveSample);
           }
         }
         if (actionId === "researchTech" && getCompoundResearchTechCards(candidates).length) {
