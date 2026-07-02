@@ -1617,6 +1617,43 @@
       }, 0);
     }
 
+    function getAiPassReserveResourcePressure(player = getCurrentPlayer(), pile = [], currentHandSizeOverride = null) {
+      if (!player || !(pile || []).length) return { active: false, reasons: [], score: 0 };
+      const round = getAiRoundNumber();
+      if (round !== 2) return { active: false, reasons: [], score: 0 };
+      const resources = player.resources || {};
+      const income = player.income || {};
+      const currentHandSize = currentHandSizeOverride == null
+        ? Math.max(0, aiNumber(resources.handSize ?? (player.hand || []).length))
+        : Math.max(0, aiNumber(currentHandSizeOverride));
+      const credits = Math.max(0, aiNumber(resources.credits));
+      const energy = Math.max(0, aiNumber(resources.energy));
+      const reasons = [];
+      if (credits <= 0 && aiNumber(income.credits) <= 4) reasons.push("credits");
+      if (energy <= 0 && aiNumber(income.energy) <= 3) reasons.push("energy");
+      if (currentHandSize <= 1 && aiNumber(income.handSize) <= 3) reasons.push("hand");
+      if (!reasons.length) return { active: false, reasons: [], score: 0 };
+      const hasPressureIncomeCandidate = (pile || []).some((card) => {
+        if (!card) return false;
+        const gain = cards.getIncomeGainForCard?.(card);
+        if (!gain) return false;
+        return (reasons.includes("credits") && aiNumber(gain.credits) > 0)
+          || (reasons.includes("energy") && aiNumber(gain.energy) > 0)
+          || (reasons.includes("hand") && aiNumber(gain.handSize) > 0);
+      });
+      if (!hasPressureIncomeCandidate) return { active: false, reasons: [], score: 0 };
+      return {
+        active: true,
+        reasons,
+        score: roundAiScore(
+          reasons.length
+            + Math.max(0, 2 - credits) * 0.25
+            + Math.max(0, 2 - energy) * 0.25
+            + Math.max(0, 2 - currentHandSize) * 0.2,
+        ),
+      };
+    }
+
     function runAiPassReserveDecision() {
       if (!state.pendingPassReserveSelection) return null;
       const player = getPlayerById(state.pendingPassReserveSelection.playerId) || getCurrentPlayer();
@@ -1628,11 +1665,13 @@
       const runezuLowEnginePassReserve = currentHandSize <= 1
         && getAiLowEngineCatchupProfile(player).active
         && hasAiRunezuPassReservePressure(player, pile);
+      const passReserveResourcePressure = getAiPassReserveResourcePressure(player, pile, currentHandSize);
       const shouldRankPassReserve = getAiMarkedFinalFormulaEntries(player)
         .some((entry) => entry.formulaId === "c2")
         || (pile || []).some((card) => getCardTypeCode(card) === 3)
         || currentHandSize <= 0
-        || runezuLowEnginePassReserve;
+        || runezuLowEnginePassReserve
+        || passReserveResourcePressure.active;
       const ranked = shouldRankPassReserve
         ? (pile || [])
           .map((card) => ({ card, score: scoreAiPassReserveCard(card, player) }))
@@ -1645,6 +1684,7 @@
       recordAiAutoBattleLog("pass-reserve", `${player.colorLabel}AI 选择 PASS 预留牌`, {
         card,
         runezuLowEnginePassReserve,
+        passReserveResourcePressure,
         selectedScore: ranked.find((entry) => entry.card === card)?.score ?? null,
         candidates: ranked.slice(0, 5).map((entry) => ({
           cardId: entry.card.cardId || entry.card.id || null,
