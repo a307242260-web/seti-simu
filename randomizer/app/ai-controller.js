@@ -624,6 +624,7 @@
           ? rocketActions.getRocketsForPlayer(rocketState, player.id)
           : [];
         const finalMarks = getAiMarkedFinalFormulaEntries(player);
+        const finalFormulaProgress = getAiFinalFormulaProgressForPlayer(player, finalMarks);
         return {
           playerId: player.id,
           playerLabel: player.colorLabel || player.name || player.id,
@@ -647,6 +648,8 @@
           techCount: countAiPlayerTech(player),
           finalMarkCount: finalMarks.length,
           finalFormulas: finalMarks.map((entry) => entry.formulaId),
+          finalFormulaProgress,
+          b2Progress: finalFormulaProgress.b2,
           rocketCount: rocketsForPlayer.length,
           passed: (turnState.passedPlayerIds || []).includes(player.id),
         };
@@ -4184,6 +4187,61 @@
             threshold: mark.threshold,
           }));
       });
+    }
+
+    function getAiFinalFormulaProgressForPlayer(player = getCurrentPlayer(), entries = null) {
+      const markedEntries = Array.isArray(entries) ? entries : getAiMarkedFinalFormulaEntries(player);
+      if (!player || !markedEntries.length || !endGameScoring?.getFormulaBaseValue) {
+        return { entries: [], b2: null };
+      }
+      const context = createActionContext();
+      const progressEntries = markedEntries.map((entry) => {
+        const baseValue = Math.max(0, aiNumber(endGameScoring.getFormulaBaseValue(
+          entry.formulaId,
+          player,
+          context,
+          { getCardTypeCode },
+        )));
+        const multiplier = Math.max(0, aiNumber(entry.multiplier));
+        return {
+          tileId: entry.tileId,
+          variant: entry.variant,
+          formulaId: entry.formulaId,
+          slotIndex: entry.slotIndex,
+          multiplier,
+          threshold: entry.threshold,
+          baseValue: roundAiScore(baseValue),
+          score: roundAiScore(baseValue * multiplier),
+        };
+      });
+      let b2 = null;
+      const b2Entries = progressEntries.filter((entry) => entry.formulaId === "b2");
+      if (b2Entries.length && endGameScoring?.countSectorWins && endGameScoring?.countOrbitOrLandMarkers) {
+        const sectorWins = Math.max(0, Math.round(aiNumber(endGameScoring.countSectorWins(player, nebulaDataState))));
+        const orbitLandCount = Math.max(0, Math.round(aiNumber(
+          endGameScoring.countOrbitOrLandMarkers(player, planetStatsState, context),
+        )));
+        const baseValue = Math.min(sectorWins, orbitLandCount);
+        const multiplier = Math.min(10, b2Entries.reduce((total, entry) => total + Math.max(0, aiNumber(entry.multiplier)), 0));
+        b2 = {
+          sectorWins,
+          orbitLandCount,
+          baseValue,
+          multiplier: roundAiScore(multiplier),
+          score: roundAiScore(baseValue * multiplier),
+          sectorWinDeficit: Math.max(0, orbitLandCount - sectorWins),
+          orbitLandDeficit: Math.max(0, sectorWins - orbitLandCount),
+          bottleneck: sectorWins < orbitLandCount
+            ? "sectorWins"
+            : orbitLandCount < sectorWins
+              ? "orbitLand"
+              : "balanced",
+        };
+      }
+      return {
+        entries: progressEntries,
+        b2,
+      };
     }
 
     function getAiNextFinalTileSlotIndex(tile) {
@@ -17046,6 +17104,8 @@
           cardScore: lowPlayer.cardScore,
           finalMarkCount: lowPlayer.finalMarkCount,
           finalFormulas: lowPlayer.finalFormulas || [],
+          finalFormulaProgress: lowPlayer.finalFormulaProgress || null,
+          b2Progress: lowPlayer.b2Progress || null,
           completedTaskCount: lowPlayer.completedTaskCount,
           techCount: lowPlayer.techCount,
           handSize: lowPlayer.handSize,
