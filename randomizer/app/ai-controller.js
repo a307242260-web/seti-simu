@@ -617,6 +617,32 @@
       }, {});
     }
 
+    function summarizeAiResultCard(card, player = null) {
+      if (!card) return null;
+      const cardId = card.cardId || card.id || null;
+      const model = cardEffects?.getCardModel?.(card) || null;
+      const playEffects = getAiPlayEffectsForCard(card);
+      return {
+        id: card.id || null,
+        cardId,
+        label: getAiCardDisplayLabel({ card, cardId }, player),
+        price: Math.max(0, aiNumber(card.price)),
+        typeCode: getCardTypeCode(card),
+        discardActionCode: card.discardActionCode ?? null,
+        scanActionCode: card.scanActionCode ?? null,
+        incomeCode: card.incomeCode ?? null,
+        taskCount: Array.isArray(model?.tasks) ? model.tasks.length : 0,
+        endGameScoring: Boolean(model?.endGameScoring),
+        effectTypes: playEffects.map((effect) => effect?.type || null).filter(Boolean),
+      };
+    }
+
+    function summarizeAiResultCards(cardList = [], player = null) {
+      return Array.isArray(cardList)
+        ? cardList.map((card) => summarizeAiResultCard(card, player)).filter(Boolean)
+        : [];
+    }
+
     function getAiAutoBattlePlayerResults() {
       return getActivePlayers().map((player) => {
         const finalScoreBreakdown = computePlayerFinalScoreBreakdown(player);
@@ -645,6 +671,8 @@
           completedTaskCount: player.completedTaskCount || 0,
           reservedCount: Array.isArray(player.reservedCards) ? player.reservedCards.length : 0,
           handSize: Array.isArray(player.hand) ? player.hand.length : player.resources?.handSize || 0,
+          handCards: summarizeAiResultCards(player.hand, player),
+          reservedCards: summarizeAiResultCards(player.reservedCards, player),
           techCount: countAiPlayerTech(player),
           finalMarkCount: finalMarks.length,
           finalFormulas: finalMarks.map((entry) => entry.formulaId),
