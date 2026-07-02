@@ -17532,6 +17532,7 @@
             endTurnMoveOpportunitySamples: analysis.endTurnMoveOpportunitySamples,
             researchTechCompoundCardSamples: analysis.researchTechCompoundCardSamples,
             mainUnlockLowConcretePlaySamples: analysis.mainUnlockLowConcretePlaySamples,
+            negativeThirdFinalMarkSamples: analysis.negativeThirdFinalMarkSamples,
             scoreOpportunities: analysis.scoreOpportunities,
             topScoreGaps: analysis.topScoreGaps,
             movePayment: analysis.movePayment,

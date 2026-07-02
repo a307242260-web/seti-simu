@@ -1288,6 +1288,75 @@ const finalMarkSummary = analytics.summarizeBattleReports([finalMarkReport]);
 assert.equal(finalMarkSummary.finalScoreMarks[0].key, "c:c1");
 assert.equal(finalMarkSummary.finalScoreFormulas[0].key, "c1");
 
+const negativeThirdFinalMarkReport = {
+  logs: [{
+    type: "final-score-mark",
+    roundNumber: 3,
+    turnNumber: 1,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 72, credits: 5, energy: 4, publicity: 5, handSize: 2 },
+    details: {
+      pending: { threshold: 70 },
+      selected: {
+        tileId: "b",
+        formulaId: "b2",
+        threshold: 70,
+        baseValue: 0,
+        multiplier: 4,
+        immediateScore: 0,
+        score: -23.26,
+        scoreBreakdown: {
+          zeroBaseLatePenalty: 8.32,
+          b2FeasibilityPenalty: 13.39,
+          b2OrbitLandCount: 4,
+          b2SectorWins: 0,
+        },
+      },
+      candidates: [
+        {
+          tileId: "b",
+          formulaId: "b2",
+          available: true,
+          threshold: 70,
+          baseValue: 0,
+          multiplier: 4,
+          immediateScore: 0,
+          score: -23.26,
+          scoreBreakdown: {
+            zeroBaseLatePenalty: 8.32,
+            b2FeasibilityPenalty: 13.39,
+            b2OrbitLandCount: 4,
+            b2SectorWins: 0,
+          },
+        },
+        {
+          tileId: "c",
+          formulaId: "c1",
+          available: true,
+          threshold: 70,
+          baseValue: 0,
+          multiplier: 2,
+          immediateScore: 0,
+          score: -55.85,
+          scoreBreakdown: {
+            zeroBaseLatePenalty: 8.24,
+            weakCFormulaPenalty: 26,
+          },
+        },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 185 }],
+};
+const negativeThirdFinalMarkAnalysis = analytics.analyzeBattleReport(negativeThirdFinalMarkReport);
+assert.equal(negativeThirdFinalMarkAnalysis.opportunities.negativeThirdFinalMark, 1);
+assert.equal(negativeThirdFinalMarkAnalysis.negativeThirdFinalMarkSamples[0].selected.formulaId, "b2");
+assert.equal(negativeThirdFinalMarkAnalysis.negativeThirdFinalMarkSamples[0].selected.b2FeasibilityPenalty, 13.39);
+assert.equal(negativeThirdFinalMarkAnalysis.negativeThirdFinalMarkSamples[0].candidates[1].weakCFormulaPenalty, 26);
+const negativeThirdFinalMarkSummary = analytics.summarizeBattleReports([negativeThirdFinalMarkReport]);
+assert.equal(negativeThirdFinalMarkSummary.negativeThirdFinalMarkSamples[0].selected.tileId, "b");
+
 const sequenceLogs = Array.from({ length: 7 }, (_item, index) => ({
   type: "turn-action",
   roundNumber: 1,

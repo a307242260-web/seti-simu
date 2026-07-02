@@ -521,6 +521,56 @@
     return `${tileId}:${formulaId}`;
   }
 
+  function getAvailableFinalScoreMarkCandidates(entry) {
+    const candidates = Array.isArray(entry?.details?.candidates) ? entry.details.candidates : [];
+    return candidates.filter((candidate) => candidate && candidate.available !== false);
+  }
+
+  function isNegativeThirdFinalMark(entry) {
+    if (entry?.type !== "final-score-mark") return false;
+    const selected = getFinalScoreMarkSelection(entry);
+    const selectedScore = getFiniteScore(selected?.score);
+    if (selectedScore == null || selectedScore >= 0) return false;
+    const threshold = numeric(selected?.threshold ?? entry?.details?.pending?.threshold);
+    if (threshold < 70) return false;
+    const availableCandidates = getAvailableFinalScoreMarkCandidates(entry);
+    if (!availableCandidates.length) return false;
+    return availableCandidates.every((candidate) => numeric(candidate.score) <= 0);
+  }
+
+  function summarizeFinalScoreMarkCandidate(candidate = {}) {
+    const breakdown = candidate.scoreBreakdown || {};
+    return {
+      tileId: candidate.tileId || null,
+      formulaId: candidate.formulaId || null,
+      threshold: numeric(candidate.threshold),
+      baseValue: roundRatio(candidate.baseValue),
+      multiplier: roundRatio(candidate.multiplier),
+      immediateScore: roundRatio(candidate.immediateScore),
+      score: roundRatio(candidate.score),
+      zeroBaseLatePenalty: roundRatio(breakdown.zeroBaseLatePenalty),
+      weakCFormulaPenalty: roundRatio(breakdown.weakCFormulaPenalty),
+      b1FeasibilityPenalty: roundRatio(breakdown.b1FeasibilityPenalty),
+      b2FeasibilityPenalty: roundRatio(breakdown.b2FeasibilityPenalty),
+      b2OrbitLandCount: roundRatio(breakdown.b2OrbitLandCount),
+      b2SectorWins: roundRatio(breakdown.b2SectorWins),
+    };
+  }
+
+  function buildNegativeThirdFinalMarkSample(entry) {
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeFinalScoreMarkCandidate(getFinalScoreMarkSelection(entry) || {}),
+      candidates: getAvailableFinalScoreMarkCandidates(entry)
+        .slice(0, 6)
+        .map(summarizeFinalScoreMarkCandidate),
+    };
+  }
+
   function ensurePlayerProfile(profiles, playerId, playerLabel) {
     const key = playerId || playerLabel || "unknown";
     if (!profiles[key]) {
@@ -1970,6 +2020,7 @@
       researchTechOverCompoundTechCard: 0,
       mainUnlockLowConcretePlay: 0,
       nonPositivePublicRefill: 0,
+      negativeThirdFinalMark: 0,
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
     };
@@ -1981,6 +2032,7 @@
     const researchTechCompoundCardSamples = [];
     const mainUnlockLowConcretePlaySamples = [];
     const nonPositivePublicRefillSamples = [];
+    const negativeThirdFinalMarkSamples = [];
     const scoreOpportunities = {
       selectedBelowBest: 0,
       totalGap: 0,
@@ -2123,6 +2175,12 @@
         increment(finalScoreMarks, markKey);
         increment(finalScoreFormulas, selected.formulaId || "unknown");
         incrementNested(decisionTargets, entry.type, markKey);
+        if (isNegativeThirdFinalMark(entry)) {
+          opportunities.negativeThirdFinalMark += 1;
+          if (negativeThirdFinalMarkSamples.length < 12) {
+            negativeThirdFinalMarkSamples.push(buildNegativeThirdFinalMarkSample(entry));
+          }
+        }
       } else if (["discard", "pass-reserve", "pick-card", "hand-scan", "land-target", "alien-trace"].includes(entry.type)) {
         incrementNested(decisionTargets, entry.type, entry.details?.pendingType || entry.details?.kind || entry.details?.label || "unknown");
       }
@@ -2191,6 +2249,7 @@
       researchTechCompoundCardSamples,
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
+      negativeThirdFinalMarkSamples,
       scoreOpportunities: {
         selectedBelowBest: scoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(scoreOpportunities.totalGap),
@@ -2235,6 +2294,7 @@
     const mergedResearchTechCompoundCardSamples = [];
     const mergedMainUnlockLowConcretePlaySamples = [];
     const mergedNonPositivePublicRefillSamples = [];
+    const mergedNegativeThirdFinalMarkSamples = [];
     const mergedMovePayment = {
       count: 0,
       requiredMovePoints: 0,
@@ -2318,6 +2378,11 @@
       if (mergedNonPositivePublicRefillSamples.length < 12 && Array.isArray(analysis.nonPositivePublicRefillSamples)) {
         mergedNonPositivePublicRefillSamples.push(
           ...analysis.nonPositivePublicRefillSamples.slice(0, 12 - mergedNonPositivePublicRefillSamples.length),
+        );
+      }
+      if (mergedNegativeThirdFinalMarkSamples.length < 12 && Array.isArray(analysis.negativeThirdFinalMarkSamples)) {
+        mergedNegativeThirdFinalMarkSamples.push(
+          ...analysis.negativeThirdFinalMarkSamples.slice(0, 12 - mergedNegativeThirdFinalMarkSamples.length),
         );
       }
       mergedScoreOpportunities.selectedBelowBest += numeric(analysis.scoreOpportunities?.selectedBelowBest);
@@ -2419,6 +2484,7 @@
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
+      negativeThirdFinalMarkSamples: mergedNegativeThirdFinalMarkSamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(mergedScoreOpportunities.totalGap),
