@@ -1000,6 +1000,12 @@ const passResourceLockReport = {
         { id: "launch", kind: "main", available: false, score: 0, reason: "信用点不足" },
         { id: "publicity-for-card", kind: "quick", available: true, score: 1.25 },
       ],
+      resourceLockTradePreviews: [{
+        tradeId: "cards-for-credit",
+        label: "2张牌 → 1信用点",
+        bestAction: { actionId: "playCard", score: 11.5, cardId: "b_135.webp" },
+        unlockedActions: [{ actionId: "playCard", score: 11.5, cardId: "b_135.webp" }],
+      }],
     },
   }],
   playerResults: [{ playerId: "player-green", playerLabel: "绿色", finalScore: 132 }],
@@ -1009,8 +1015,11 @@ assert.equal(passResourceLockAnalysis.opportunities.passWithResourceLockedHand, 
 assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].playCard.reason, "没有资源可支付的普通手牌");
 assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].resources.handSize, 4);
 assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].unavailableMain.length, 3);
+assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].resourceLockTradePreviews[0].tradeId, "cards-for-credit");
+assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].resourceLockTradePreviews[0].bestAction.actionId, "playCard");
 const passResourceLockSummary = analytics.summarizeBattleReports([passResourceLockReport]);
 assert.equal(passResourceLockSummary.passResourceLockSamples[0].playCard.reason, "没有资源可支付的普通手牌");
+assert.equal(passResourceLockSummary.passResourceLockSamples[0].resourceLockTradePreviews[0].bestAction.cardId, "b_135.webp");
 
 const negativeCardCornerGraphLiftReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },

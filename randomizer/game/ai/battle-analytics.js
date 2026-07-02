@@ -266,6 +266,9 @@
       selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
       playCard: playCardCandidate ? summarizeOpportunityCandidate(playCardCandidate) : null,
       unavailableMain,
+      resourceLockTradePreviews: Array.isArray(entry.details?.resourceLockTradePreviews)
+        ? entry.details.resourceLockTradePreviews.slice(0, limit)
+        : [],
       topCandidates,
     };
   }

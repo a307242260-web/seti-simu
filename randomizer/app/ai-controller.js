@@ -16402,6 +16402,107 @@
       });
     }
 
+    function buildAiResourceLockTradePreviews(player = getCurrentPlayer(), candidates = []) {
+      if (
+        !player
+        || !quickTrades?.getTradeAction
+        || state.pendingActionExecuted
+        || !canStartMainAction()
+        || (turnState.passedPlayerIds || []).includes(player.id)
+      ) {
+        return [];
+      }
+      const playCardCandidate = (candidates || []).find((candidate) => candidate?.id === "playCard");
+      if (!playCardCandidate || playCardCandidate.available !== false) return [];
+      if (!String(playCardCandidate.reason || "").includes("没有资源可支付")) return [];
+
+      const tradeIds = ["cards-for-credit", "cards-for-energy", "energy-for-credit", "credits-for-energy"];
+      return tradeIds.map((tradeId) => {
+        const trade = quickTrades.getTradeAction(tradeId);
+        const check = quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false };
+        if (!trade || !check.ok) return null;
+        const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
+        if (!simulatedPlayer) return null;
+        const handCost = Math.max(0, Math.round(aiNumber(trade.cost?.handSize)));
+        const handAfterTrade = Math.max(
+          0,
+          Math.round(aiNumber(player.resources?.handSize ?? (player.hand || []).length)) - handCost
+            + Math.max(0, Math.round(aiNumber(trade.gain?.handSize))),
+        );
+
+        const playableCards = handAfterTrade > 0
+          ? (player.hand || [])
+            .map((card, handIndex) => buildAiPlayCardCandidate(card, handIndex, simulatedPlayer))
+            .filter(Boolean)
+            .sort((left, right) => aiNumber(right.score) - aiNumber(left.score))
+          : [];
+        const bestPlay = playableCards[0] || null;
+
+        const scanCheck = scanEffects?.canExecuteScan?.(simulatedPlayer, { standardAction: true }) || { ok: false };
+        const scanScore = scanCheck.ok ? scoreAiScanAction(simulatedPlayer) : 0;
+        const analyzeCheck = canAiAnalyzeData(simulatedPlayer);
+        const analyzeScore = analyzeCheck.ok ? scoreAiAnalyzeAction(simulatedPlayer) : 0;
+
+        const activeRocketCount = rocketActions.getRocketsForPlayer
+          ? rocketActions.getRocketsForPlayer(rocketState, player.id).length
+          : 0;
+        const rocketLimit = abilities.rocket?.getRocketLimitForPlayer
+          ? abilities.rocket.getRocketLimitForPlayer(player, createActionContext())
+          : activeRocketCount;
+        const canLaunchAfterTrade = activeRocketCount < rocketLimit
+          && players.canAfford(simulatedPlayer, getAiLaunchPaymentCost());
+        const launchPlan = canLaunchAfterTrade ? scoreAiPostLaunchMovePlan(simulatedPlayer) : null;
+        const launchScore = canLaunchAfterTrade
+          ? scoreAiLaunchAction(simulatedPlayer) + Math.max(0, aiNumber(launchPlan?.score)) * 0.35
+          : 0;
+
+        const options = [
+          bestPlay ? {
+            actionId: "playCard",
+            score: aiNumber(bestPlay.score),
+            cardId: bestPlay.cardId || null,
+            cardLabel: bestPlay.cardLabel || null,
+            directScoreGain: Math.max(0, aiNumber(bestPlay.directScoreGain)),
+          } : null,
+          scanCheck.ok ? {
+            actionId: "scan",
+            score: aiNumber(scanScore),
+            directScoreGain: Math.max(0, aiNumber(getAiScanDirectScoreGain(simulatedPlayer))),
+          } : null,
+          analyzeCheck.ok ? {
+            actionId: "analyze",
+            score: aiNumber(analyzeScore),
+          } : null,
+          canLaunchAfterTrade ? {
+            actionId: "launch",
+            score: aiNumber(launchScore),
+            planScore: aiNumber(launchPlan?.score),
+          } : null,
+        ].filter(Boolean).sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
+
+        return {
+          tradeId,
+          label: trade.label || tradeId,
+          cost: { ...(trade.cost || {}) },
+          gain: { ...(trade.gain || {}) },
+          resourcesAfterTrade: {
+            credits: roundAiScore(simulatedPlayer.resources?.credits),
+            energy: roundAiScore(simulatedPlayer.resources?.energy),
+            publicity: roundAiScore(simulatedPlayer.resources?.publicity),
+            handSize: handAfterTrade,
+          },
+          bestAction: options[0] ? {
+            ...options[0],
+            score: roundAiScore(options[0].score),
+          } : null,
+          unlockedActions: options.slice(0, 4).map((option) => ({
+            ...option,
+            score: roundAiScore(option.score),
+          })),
+        };
+      }).filter(Boolean);
+    }
+
     function executeAiTurnAction(action, currentPlayer = getCurrentPlayer()) {
       if (action.id === "end-turn") {
         endCurrentTurn();
@@ -16556,9 +16657,13 @@
             rejectedActions,
           };
         }
+        const resourceLockTradePreviews = action.id === "pass"
+          ? buildAiResourceLockTradePreviews(currentPlayer, selectableCandidates)
+          : [];
         recordAiAutoBattleLog("turn-action", `${currentPlayer.colorLabel}AI 执行 ${action.id}`, {
           action,
           candidates: selectableCandidates,
+          ...(resourceLockTradePreviews.length ? { resourceLockTradePreviews } : {}),
         });
         const result = executeAiTurnAction(action, currentPlayer);
         if (shouldRetryAiTurnAction(action, result)) {
