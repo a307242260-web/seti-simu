@@ -3714,6 +3714,159 @@ function makeYichangdianAlienState(options = {}) {
 
 {
   const turnChoices = [];
+  const placedTokens = Array.from({ length: 6 }, (_item, index) => ({ placementSlot: index + 1 }));
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "cards-for-energy": {
+        id: "cards-for-energy",
+        label: "2 cards -> 1 energy",
+        cost: { handSize: 2 },
+        gain: { energy: 1 },
+      },
+    },
+    blueResources: { score: 82, credits: 0, energy: 0, publicity: 2, availableData: 6, handSize: 3 },
+    blueHand: [
+      { id: "locked-a", cardName: "Locked A", price: 2 },
+      { id: "locked-b", cardName: "Locked B", price: 2 },
+      { id: "locked-c", cardName: "Locked C", price: 2 },
+    ],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d1: {
+          id: "final_d1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b2: "b2",
+      final_d1: "d1",
+    },
+    data: {
+      ANALYZE_REQUIRED_COMPUTER_SLOT: 6,
+      ANALYZE_ENERGY_COST: 1,
+      canAnalyzeData: (player) => (
+        Number(player?.resources?.energy || 0) >= 1
+          ? { ok: true }
+          : { ok: false, message: "energy missing" }
+      ),
+      listComputerPlacedTokens: () => placedTokens,
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "resource-locked AI should trade cards for energy before a high-value analyze");
+  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "cards-for-energy" });
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-energy");
+  assert.ok(tradeCandidate, "resource-lock analyze unlock trade should be enumerated");
+  assert.equal(tradeCandidate.reason, "资源锁：弃牌换能量解锁分析");
+  assert.equal(
+    tradeCandidate.valueBreakdown?.resourceLockMainUnlockTrade,
+    true,
+    "resource-lock trade should expose its specific diagnostic marker",
+  );
+  assert.equal(
+    tradeCandidate.valueBreakdown?.unlockedMainAction?.actionId,
+    "analyze",
+    "resource-lock trade should identify analyze as the unlocked main action",
+  );
+}
+
+{
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "cards-for-energy": {
+        id: "cards-for-energy",
+        label: "2 cards -> 1 energy",
+        cost: { handSize: 2 },
+        gain: { energy: 1 },
+      },
+    },
+    blueResources: { score: 82, credits: 0, energy: 1, publicity: 2, availableData: 0, handSize: 3 },
+    blueHand: [
+      { id: "locked-low-a", cardName: "Locked Low A", price: 2 },
+      { id: "locked-low-b", cardName: "Locked Low B", price: 2 },
+      { id: "locked-low-c", cardName: "Locked Low C", price: 2 },
+    ],
+    scanEffects: {
+      EFFECT_TYPES: {
+        EARTH_SECTOR_SCAN: "earth_sector_scan",
+        IMPROVED_SECTOR_SCAN: "improved_sector_scan",
+        MERCURY_SECTOR_SCAN: "mercury_sector_scan",
+        PUBLIC_CARD_SCAN: "public_card_scan",
+        HAND_SCAN: "hand_scan",
+        SCAN_ACTION_4: "scan_action_4",
+      },
+      SCAN_COST: { credits: 0, energy: 2 },
+      getStandardScanCost: () => ({ credits: 0, energy: 2 }),
+      buildScanEffectQueue: () => [],
+      canExecuteScan: (player) => (
+        Number(player?.resources?.energy || 0) >= 2
+          ? { ok: true }
+          : { ok: false, message: "energy missing" }
+      ),
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  harness.controller.runAiAutomationStep();
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-energy");
+  assert.equal(
+    tradeCandidate,
+    undefined,
+    "resource-lock trade should not spend two cards for a low-value scan",
+  );
+}
+
+{
+  const turnChoices = [];
   const publicScoreCard = {
     id: "public-tail-score-card",
     cardName: "Public tail score card",

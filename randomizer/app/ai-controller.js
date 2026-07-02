@@ -5461,6 +5461,119 @@
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
     }
 
+    function buildAiResourceLockMainUnlockTradeCandidate(player = getCurrentPlayer(), tradeId = null, candidates = []) {
+      if (
+        !player
+        || !tradeId
+        || !quickTrades?.getTradeAction
+        || typeof runQuickTrade !== "function"
+        || getAiRoundNumber() < 2
+        || state.pendingActionExecuted
+        || !canStartMainAction()
+        || (turnState.passedPlayerIds || []).includes(player.id)
+      ) {
+        return null;
+      }
+      const resources = player.resources || {};
+      const currentScore = Math.max(0, aiNumber(resources.score));
+      if (currentScore < 50) return null;
+      const handSize = Math.max(0, Math.round(aiNumber(resources.handSize ?? (player.hand || []).length)));
+      if (handSize < 2) return null;
+      const playCardCandidate = (candidates || []).find((candidate) => candidate?.id === "playCard");
+      if (!playCardCandidate || playCardCandidate.available !== false) return null;
+      if (!String(playCardCandidate.reason || "").includes("没有资源可支付")) return null;
+
+      const bestExistingScore = (candidates || [])
+        .filter((candidate) => (
+          candidate?.available !== false
+          && candidate.id !== "pass"
+          && candidate.id !== "end-turn"
+          && candidate.id !== "quickTrade"
+        ))
+        .reduce((best, candidate) => Math.max(best, aiNumber(candidate.score)), -Infinity);
+      if (bestExistingScore >= 12) return null;
+
+      const trade = quickTrades.getTradeAction(tradeId);
+      const check = trade ? (quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false }) : { ok: false };
+      if (!trade || !check.ok) return null;
+      const handCost = Math.max(0, Math.round(aiNumber(trade.cost?.handSize)));
+      const handGain = Math.max(0, Math.round(aiNumber(trade.gain?.handSize)));
+      const handAfterTrade = handSize - handCost + handGain;
+      if (handCost < 2 || handAfterTrade < 0) return null;
+      const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
+      if (!simulatedPlayer) return null;
+
+      const currentAnalyzeCheck = canAiAnalyzeData(player);
+      const analyzeCheck = canAiAnalyzeData(simulatedPlayer);
+      const currentAnalyzeScore = currentAnalyzeCheck?.ok ? scoreAiAnalyzeAction(player) : 0;
+      const analyzeScore = analyzeCheck?.ok ? scoreAiAnalyzeAction(simulatedPlayer) : 0;
+      const postTradeMainActions = [
+        analyzeCheck?.ok && analyzeScore > currentAnalyzeScore + 1
+          ? {
+            actionId: "analyze",
+            score: analyzeScore,
+            currentScore: currentAnalyzeScore,
+            directScoreGain: 0,
+          }
+          : null,
+      ].filter(Boolean).sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
+      const bestAction = postTradeMainActions[0] || null;
+      if (!bestAction) return null;
+      const minPostTradeScore = getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 16 : 18;
+      if (aiNumber(bestAction.score) < minPostTradeScore) return null;
+      if (handAfterTrade <= 0 && aiNumber(bestAction.score) < 35) return null;
+
+      const discardCost = estimateAiTradeDiscardOpportunityCost(player, trade);
+      if (!Number.isFinite(discardCost)) return null;
+      const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
+      const thresholdBonus = nextThreshold
+        && currentScore < nextThreshold
+        && currentScore + bestAction.directScoreGain >= nextThreshold
+          ? (nextThreshold >= 70 ? 7 : 5)
+          : 0;
+      const analyzeBonus = bestAction.actionId === "analyze" ? 2.5 : 0;
+      const handBufferBonus = handAfterTrade >= 1 ? 1.5 : 0;
+      const score = bestAction.score * 0.52
+        + bestAction.directScoreGain * 0.7
+        + thresholdBonus
+        + analyzeBonus
+        + handBufferBonus
+        - discardCost * 0.34;
+      if (score < 7) return null;
+      return {
+        id: "quickTrade",
+        kind: "quick",
+        available: true,
+        tradeId: trade.id,
+        label: trade.label || trade.id,
+        reason: "资源锁：弃牌换能量解锁分析",
+        score: roundAiScore(Math.min(42, score)),
+        valueBreakdown: {
+          resourceLockMainUnlockTrade: true,
+          unlockedMainAction: {
+            actionId: bestAction.actionId,
+            score: roundAiScore(bestAction.score),
+            currentScore: roundAiScore(bestAction.currentScore),
+            directScoreGain: bestAction.directScoreGain,
+          },
+          currentScore,
+          handSize,
+          handAfterTrade,
+          discardCost: roundAiScore(discardCost),
+          nextFinalMarkThreshold: nextThreshold || null,
+          thresholdBonus,
+          bestExistingScore: Number.isFinite(bestExistingScore) ? roundAiScore(bestExistingScore) : null,
+        },
+      };
+    }
+
+    function listAiResourceLockMainUnlockTradeCandidates(player = getCurrentPlayer(), candidates = []) {
+      return ["cards-for-energy"]
+        .map((tradeId) => buildAiResourceLockMainUnlockTradeCandidate(player, tradeId, candidates))
+        .filter(Boolean)
+        .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
+    }
+
     function listAiLateResourceRecoveryTradeCandidates(player = getCurrentPlayer()) {
       if (
         !player
@@ -16314,6 +16427,7 @@
       candidates.push(...listAiFinalAnalyzeEnergyTradeCandidates(currentPlayer));
       candidates.push(...listAiThirdFinalMarkResourceTradeCandidates(currentPlayer));
       candidates.push(...listAiMainUnlockTradeCandidates(currentPlayer, playCardCandidates));
+      candidates.push(...listAiResourceLockMainUnlockTradeCandidates(currentPlayer, candidates));
       candidates.push(...listAiLateResourceRecoveryTradeCandidates(currentPlayer));
       candidates.push(...listAiDataPlacementCandidates(currentPlayer));
       candidates.push(...listAiRunezuFaceSymbolQuickCandidates(currentPlayer));
