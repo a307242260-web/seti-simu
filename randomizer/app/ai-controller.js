@@ -17084,6 +17084,7 @@
             opportunities: analysis.opportunities,
             passOpportunitySamples: analysis.passOpportunitySamples,
             endTurnMoveOpportunitySamples: analysis.endTurnMoveOpportunitySamples,
+            researchTechCompoundCardSamples: analysis.researchTechCompoundCardSamples,
             scoreOpportunities: analysis.scoreOpportunities,
             topScoreGaps: analysis.topScoreGaps,
             movePayment: analysis.movePayment,

@@ -230,6 +230,82 @@
     };
   }
 
+  function isResearchTechEffectType(type) {
+    return type === "card_research_tech" || type === "research_tech_select" || type === "research_tech";
+  }
+
+  function getCompoundResearchTechCards(candidates = []) {
+    const playCardCandidate = (candidates || [])
+      .filter(isCandidateAvailable)
+      .find((candidate) => getCandidateId(candidate) === "playCard");
+    const playableCards = Array.isArray(playCardCandidate?.playableCards)
+      ? playCardCandidate.playableCards
+      : [];
+    return playableCards
+      .filter((card) => {
+        if (!isCandidateAvailable(card)) return false;
+        const effectTypes = Array.isArray(card.effectTypes) ? card.effectTypes : [];
+        const hasResearchTech = effectTypes.some(isResearchTechEffectType);
+        if (!hasResearchTech) return false;
+        const breakdown = card.valueBreakdown || card.breakdown || {};
+        return Number(card.typeCode) === 2
+          || Number(card.typeCode) === 3
+          || numeric(breakdown.cFinalTaskProgressValue) > 0
+          || numeric(breakdown.endGameExpectedScore) > 0
+          || numeric(breakdown.lateCardEnginePressure) > 0;
+      })
+      .sort((left, right) => (
+        numeric(POLICY_ACTION_BIAS.playCard + scoreNestedPlayCardCandidate(right))
+          - numeric(POLICY_ACTION_BIAS.playCard + scoreNestedPlayCardCandidate(left))
+        || String(left.cardId || "").localeCompare(String(right.cardId || ""))
+      ));
+  }
+
+  function buildResearchTechCompoundCardSample(entry, candidates = []) {
+    const availableCandidates = (candidates || []).filter(isCandidateAvailable);
+    const researchTech = availableCandidates
+      .filter((candidate) => getCandidateId(candidate) === "researchTech")
+      .sort((left, right) => numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left)))[0] || null;
+    const compoundCard = getCompoundResearchTechCards(availableCandidates)[0] || null;
+    const bestTechTile = (researchTech?.takeable || [])
+      .filter(isCandidateAvailable)
+      .sort((left, right) => numeric(right.score) - numeric(left.score))[0] || null;
+    const compoundPolicyScore = compoundCard
+      ? POLICY_ACTION_BIAS.playCard + scoreNestedPlayCardCandidate(compoundCard)
+      : null;
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      researchTech: researchTech ? summarizeOpportunityCandidate(researchTech) : null,
+      bestTechTile: bestTechTile
+        ? {
+          tileId: bestTechTile.tileId || null,
+          techType: bestTechTile.techType || null,
+          score: roundRatio(bestTechTile.score),
+          directScoreGain: roundRatio(bestTechTile.directScoreGain),
+        }
+        : null,
+      compoundCard: compoundCard
+        ? {
+          cardId: compoundCard.cardId || null,
+          cardInstanceId: compoundCard.cardInstanceId || null,
+          label: compoundCard.cardLabel || compoundCard.label || null,
+          price: numeric(compoundCard.price),
+          typeCode: numeric(compoundCard.typeCode),
+          score: roundRatio(compoundCard.score),
+          policyScore: roundRatio(compoundPolicyScore),
+          directScoreGain: roundRatio(compoundCard.directScoreGain),
+          effectTypes: compoundCard.effectTypes || [],
+        }
+        : null,
+      policyScoreGap: roundRatio(numeric(getCandidatePolicyScore(researchTech)) - numeric(compoundPolicyScore)),
+    };
+  }
+
   function getPlayerKey(entry) {
     return entry?.playerId || entry?.playerLabel || "unknown";
   }
@@ -1688,11 +1764,13 @@
     const opportunities = {
       passWithAvailableMain: 0,
       endTurnWithAvailableMove: 0,
+      researchTechOverCompoundTechCard: 0,
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
     };
     const passOpportunitySamples = [];
     const endTurnMoveOpportunitySamples = [];
+    const researchTechCompoundCardSamples = [];
     const scoreOpportunities = {
       selectedBelowBest: 0,
       totalGap: 0,
@@ -1751,6 +1829,12 @@
           opportunities.endTurnWithAvailableMove += 1;
           if (endTurnMoveOpportunitySamples.length < 12) {
             endTurnMoveOpportunitySamples.push(buildEndTurnMoveOpportunitySample(entry, candidates));
+          }
+        }
+        if (actionId === "researchTech" && getCompoundResearchTechCards(candidates).length) {
+          opportunities.researchTechOverCompoundTechCard += 1;
+          if (researchTechCompoundCardSamples.length < 12) {
+            researchTechCompoundCardSamples.push(buildResearchTechCompoundCardSample(entry, candidates));
           }
         }
         if (candidates.length && action && candidates.some((candidate) => candidateMatchesAction(candidate, action) && !isCandidateAvailable(candidate))) {
@@ -1862,6 +1946,7 @@
       opportunities,
       passOpportunitySamples,
       endTurnMoveOpportunitySamples,
+      researchTechCompoundCardSamples,
       scoreOpportunities: {
         selectedBelowBest: scoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(scoreOpportunities.totalGap),
@@ -1900,6 +1985,7 @@
     };
     const mergedPassOpportunitySamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
+    const mergedResearchTechCompoundCardSamples = [];
     const mergedMovePayment = {
       count: 0,
       requiredMovePoints: 0,
@@ -1947,6 +2033,11 @@
       if (mergedEndTurnMoveOpportunitySamples.length < 12 && Array.isArray(analysis.endTurnMoveOpportunitySamples)) {
         mergedEndTurnMoveOpportunitySamples.push(
           ...analysis.endTurnMoveOpportunitySamples.slice(0, 12 - mergedEndTurnMoveOpportunitySamples.length),
+        );
+      }
+      if (mergedResearchTechCompoundCardSamples.length < 12 && Array.isArray(analysis.researchTechCompoundCardSamples)) {
+        mergedResearchTechCompoundCardSamples.push(
+          ...analysis.researchTechCompoundCardSamples.slice(0, 12 - mergedResearchTechCompoundCardSamples.length),
         );
       }
       mergedScoreOpportunities.selectedBelowBest += numeric(analysis.scoreOpportunities?.selectedBelowBest);
@@ -2042,6 +2133,7 @@
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
+      researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(mergedScoreOpportunities.totalGap),

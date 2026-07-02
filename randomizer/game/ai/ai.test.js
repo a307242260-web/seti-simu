@@ -962,6 +962,57 @@ assert.equal(endTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].resources.ener
 const endTurnMoveSummary = analytics.summarizeBattleReports([endTurnMoveReport]);
 assert.equal(endTurnMoveSummary.endTurnMoveOpportunitySamples[0].bestMove.score, 7.25);
 
+const compoundTechCardReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 2,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 114, credits: 3, energy: 6, publicity: 6, handSize: 6 },
+    details: {
+      action: { id: "researchTech", kind: "main", score: 109 },
+      candidates: [
+        {
+          id: "researchTech",
+          kind: "main",
+          available: true,
+          score: 109,
+          takeable: [{ tileId: "purple1", techType: "purple", score: 71, directScoreGain: 3 }],
+        },
+        {
+          id: "playCard",
+          kind: "main",
+          available: true,
+          score: 79,
+          playableCards: [{
+            id: "playCard",
+            kind: "main",
+            available: true,
+            cardId: "b_135.webp",
+            cardInstanceId: "card-b135",
+            cardLabel: "韦断特v克综合孔径射电|远锐",
+            price: 3,
+            typeCode: 2,
+            score: 79,
+            directScoreGain: 3,
+            effectTypes: ["card_research_tech"],
+            valueBreakdown: { cFinalTaskProgressValue: 0, lateCardEnginePressure: 8 },
+          }],
+        },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 185 }],
+};
+const compoundTechCardAnalysis = analytics.analyzeBattleReport(compoundTechCardReport);
+assert.equal(compoundTechCardAnalysis.opportunities.researchTechOverCompoundTechCard, 1);
+assert.equal(compoundTechCardAnalysis.researchTechCompoundCardSamples[0].compoundCard.cardId, "b_135.webp");
+assert.equal(compoundTechCardAnalysis.researchTechCompoundCardSamples[0].bestTechTile.tileId, "purple1");
+const compoundTechCardSummary = analytics.summarizeBattleReports([compoundTechCardReport]);
+assert.equal(compoundTechCardSummary.researchTechCompoundCardSamples[0].compoundCard.cardId, "b_135.webp");
+
 const actionGraphAlignedAnalysis = analytics.analyzeBattleReport({
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{
