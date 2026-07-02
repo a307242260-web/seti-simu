@@ -289,4 +289,38 @@ assertRunezuTaskRewardEffect(migratedThreeTraceTask, ["symbol_6", "symbol_3"]);
 assertRunezuCardTaskCanonical(staleThreeTraceCard);
 assert.equal(runezu.isTaskUnfinished(staleThreeTraceCard), true);
 
+const sourceSymbolAlienState = {
+  aliens: {
+    1: {
+      revealed: true,
+      alienId: runezu.ALIEN_ID,
+      assignedAlienId: runezu.ALIEN_ID,
+    },
+  },
+};
+const sourceSymbolPlayer = { id: "p-source-symbol", color: "green", runezuSymbols: {} };
+const revealResult = runezu.initializeRunezuReveal(sourceSymbolAlienState, 1, sourceSymbolPlayer, {
+  random: () => 0,
+  techTileIds: [],
+});
+assert.equal(revealResult.ok, true);
+const mercurySourceSymbol = runezu.listSourceSymbols(sourceSymbolAlienState, "planet")
+  .find((slot) => slot.sourceId === "mercury");
+assert.ok(mercurySourceSymbol, "runezu reveal should place a source symbol on Mercury");
+const mercuryClaim = runezu.claimPlanetSymbol(sourceSymbolAlienState, "mercury", sourceSymbolPlayer);
+assert.equal(mercuryClaim.ok, true);
+assert.equal(mercuryClaim.sourceType, "planet");
+assert.equal(mercuryClaim.sourceId, "mercury");
+assert.equal(
+  runezu.getPlayerSymbolCounts(sourceSymbolPlayer)[mercuryClaim.symbolId],
+  1,
+);
+const claimedMercurySourceSymbol = runezu.listSourceSymbols(sourceSymbolAlienState, "planet")
+  .find((slot) => slot.sourceId === "mercury");
+assert.equal(claimedMercurySourceSymbol.claimedByPlayerId, sourceSymbolPlayer.id);
+assert.equal(claimedMercurySourceSymbol.claimedByPlayerColor, sourceSymbolPlayer.color);
+const duplicateMercuryClaim = runezu.claimPlanetSymbol(sourceSymbolAlienState, "mercury", sourceSymbolPlayer);
+assert.equal(duplicateMercuryClaim.ok, false);
+assert.equal(duplicateMercuryClaim.alreadyClaimed, true);
+
 console.log("runezu.test.js: all tests passed");

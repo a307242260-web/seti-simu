@@ -11816,8 +11816,42 @@
     ];
   }
 
+  function getActionResultOwnerPlayer(result, fallbackPlayer = null) {
+    const ownerEvent = (result?.events || []).find((event) => event?.playerId || event?.playerColor) || null;
+    return resolvePlayerReference({
+      playerId: result?.playerId || result?.payload?.playerId || ownerEvent?.playerId || null,
+      playerColor: result?.playerColor || result?.payload?.playerColor || ownerEvent?.playerColor || null,
+    }) || fallbackPlayer || getCurrentPlayer();
+  }
+
+  function claimRunezuPlanetSymbolForTravelResult(actionType, result, fallbackPlayer = null) {
+    if (actionType !== "orbit" && actionType !== "land") return null;
+    const planetId = result?.planetId || result?.payload?.planetId || null;
+    if (!planetId) return null;
+    const actionLabel = actionType === "orbit" ? "环绕" : "登陆";
+    const claim = claimRunezuSourceSymbolWithHistory(
+      "planet",
+      planetId,
+      getActionResultOwnerPlayer(result, fallbackPlayer),
+      `${actionLabel}获得符文族symbol`,
+    );
+    if (claim?.ok) {
+      result.message = `${result.message || actionLabel}；${claim.message}`;
+      result.runezuSymbolClaim = claim;
+      if (result.payload && typeof result.payload === "object") {
+        result.payload.runezuSymbolClaim = {
+          sourceType: claim.sourceType,
+          sourceId: claim.sourceId,
+          symbolId: claim.symbolId,
+        };
+      }
+    }
+    return claim;
+  }
+
   function startPlanetRewardEffectFlow(actionType, result) {
-    const rewardEffects = buildPlanetRewardEffectsWithIndustry(actionType, result);
+    const actionOwner = getActionResultOwnerPlayer(result);
+    const rewardEffects = buildPlanetRewardEffectsWithIndustry(actionType, result, { player: actionOwner });
     if (!rewardEffects.length) return false;
 
     const actionLabel = actionType === "orbit" ? "环绕" : "登陆";
@@ -11832,15 +11866,8 @@
     });
     effectStepActive = true;
     recordAbilityCommands(result);
-    const runezuClaim = claimRunezuSourceSymbolWithHistory(
-      "planet",
-      result.planetId,
-      getCurrentPlayer(),
-      `${actionLabel}获得符文族symbol`,
-    );
-    if (runezuClaim?.ok) {
-      result.message = `${result.message}；${runezuClaim.message}`;
-    }
+    const runezuClaim = claimRunezuPlanetSymbolForTravelResult(actionType, result, actionOwner);
+    if (runezuClaim?.ok) renderRunezuBoardSymbols();
     endEffectHistoryStep();
 
     pendingActionEffectFlow = abilities.chain.startAbilityChain(
@@ -11849,7 +11876,7 @@
       rewardEffects,
     );
     pendingActionEffectFlow.actionType = actionType;
-    pendingActionEffectFlow.playerId = getCurrentPlayer()?.id || null;
+    pendingActionEffectFlow.playerId = actionOwner?.id || null;
     assignEffectFlowOwner(pendingActionEffectFlow, pendingActionEffectFlow.playerId);
     pendingActionEffectFlow.consumesMainAction = true;
     pendingActionEffectFlow.autoExecuteAomomoRewards = isAomomoRewardFlow;
@@ -13952,6 +13979,8 @@
       return result;
     }
     recordAbilityCommands(result);
+    const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(effect));
+    claimRunezuPlanetSymbolForTravelResult("land", result, actionOwner);
     if (pendingActionEffectFlow) {
       const sector = getPlanetSectorCoordinate(result.planetId);
       pendingActionEffectFlow.lastLanding = {
@@ -13967,6 +13996,7 @@
     const rewardEffects = effect.options?.grantRewards === false
       ? []
       : buildPlanetRewardEffectsWithIndustry("land", result, {
+        player: actionOwner,
         scoreSourceKey: SCORE_SOURCE_KEYS.LAND,
       });
     const afterLandRewards = (effect.options?.afterLandRewards || [])
@@ -14329,11 +14359,14 @@
       return result;
     }
     recordAbilityCommands(result);
+    const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(effect));
+    claimRunezuPlanetSymbolForTravelResult("orbit", result, actionOwner);
     if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);
     syncPlanetOrbitLandMarkers();
     const rewardEffects = effect.options?.grantRewards === false
       ? []
       : buildPlanetRewardEffectsWithIndustry("orbit", result, {
+        player: actionOwner,
         scoreSourceKey: SCORE_SOURCE_KEYS.ORBIT,
       });
     if (rewardEffects.length) insertActionEffectsAfterCurrent(rewardEffects);
@@ -17338,19 +17371,25 @@
       return result;
     }
 
-    recordAbilityCommands(result);
-    if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);
-    syncPlanetOrbitLandMarkers();
-    renderRockets();
-    renderPlayerStats();
-
     const travelActionType = result.abilityId === "orbitProbe"
       ? "orbit"
       : result.abilityId === "landProbe"
         ? "land"
         : null;
+    const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(effect));
+
+    recordAbilityCommands(result);
+    if (travelActionType) {
+      claimRunezuPlanetSymbolForTravelResult(travelActionType, result, actionOwner);
+    }
+    if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);
+    syncPlanetOrbitLandMarkers();
+    renderRockets();
+    renderPlayerStats();
+
     const rewardEffects = travelActionType
       ? buildPlanetRewardEffectsWithIndustry(travelActionType, result, {
+        player: actionOwner,
         scoreSourceKey: travelActionType === "orbit" ? SCORE_SOURCE_KEYS.ORBIT : SCORE_SOURCE_KEYS.LAND,
       })
       : [];
