@@ -11804,11 +11804,20 @@
     return result;
   }
 
-  function startPlanetRewardEffectFlow(actionType, result) {
-    const rewardEffects = [
-      ...(planetRewards?.buildRewardEffectsForAction?.(actionType, result) || []),
-      ...(industry?.buildPiratesRaidMarkerEffectNodes?.(getCurrentPlayer(), result?.planetId, actionType, result) || []),
+  function buildPlanetRewardEffectsWithIndustry(actionType, result, options = {}) {
+    const planetEffects = planetRewards?.buildRewardEffectsForAction?.(actionType, result) || [];
+    const scoredPlanetEffects = options.scoreSourceKey
+      ? attachScoreSourceToEffects(planetEffects, options.scoreSourceKey)
+      : planetEffects;
+    const player = options.player || getCurrentPlayer();
+    return [
+      ...scoredPlanetEffects,
+      ...(industry?.buildPiratesRaidMarkerEffectNodes?.(player, result?.planetId, actionType, result) || []),
     ];
+  }
+
+  function startPlanetRewardEffectFlow(actionType, result) {
+    const rewardEffects = buildPlanetRewardEffectsWithIndustry(actionType, result);
     if (!rewardEffects.length) return false;
 
     const actionLabel = actionType === "orbit" ? "环绕" : "登陆";
@@ -13957,10 +13966,9 @@
     renderAlienPanels();
     const rewardEffects = effect.options?.grantRewards === false
       ? []
-      : attachScoreSourceToEffects(
-        planetRewards?.buildRewardEffectsForAction?.("land", result) || [],
-        SCORE_SOURCE_KEYS.LAND,
-      );
+      : buildPlanetRewardEffectsWithIndustry("land", result, {
+        scoreSourceKey: SCORE_SOURCE_KEYS.LAND,
+      });
     const afterLandRewards = (effect.options?.afterLandRewards || [])
       .filter((reward) => {
         const planetIds = reward.planetIds || [];
@@ -14325,10 +14333,9 @@
     syncPlanetOrbitLandMarkers();
     const rewardEffects = effect.options?.grantRewards === false
       ? []
-      : attachScoreSourceToEffects(
-        planetRewards?.buildRewardEffectsForAction?.("orbit", result) || [],
-        SCORE_SOURCE_KEYS.ORBIT,
-      );
+      : buildPlanetRewardEffectsWithIndustry("orbit", result, {
+        scoreSourceKey: SCORE_SOURCE_KEYS.ORBIT,
+      });
     if (rewardEffects.length) insertActionEffectsAfterCurrent(rewardEffects);
     effect.result = {
       ...result,
@@ -17343,10 +17350,9 @@
         ? "land"
         : null;
     const rewardEffects = travelActionType
-      ? attachScoreSourceToEffects(
-        planetRewards?.buildRewardEffectsForAction?.(travelActionType, result) || [],
-        travelActionType === "orbit" ? SCORE_SOURCE_KEYS.ORBIT : SCORE_SOURCE_KEYS.LAND,
-      )
+      ? buildPlanetRewardEffectsWithIndustry(travelActionType, result, {
+        scoreSourceKey: travelActionType === "orbit" ? SCORE_SOURCE_KEYS.ORBIT : SCORE_SOURCE_KEYS.LAND,
+      })
       : [];
     if (rewardEffects.length) insertActionEffectsAfterCurrent(rewardEffects);
 

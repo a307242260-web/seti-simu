@@ -118,7 +118,7 @@
 | `fundamentalism_disable_play_card_action` | 原教旨主义 | 不能使用标准“打牌”主要行动；九折等外星机制自己的打牌入口不受影响 | `beginPlayCardSelection` / `updateActionButtons` |
 | `fundamentalism_double_discard_corner` | 原教旨主义 | 手牌左上角弃牌快速行动的资源/数据/移动奖励翻倍；移动翻倍会启动一个快速行动效果队列节点，作为单个 2 移动力池由玩家分配；方舟 card2 与符文族符文角标等外星人专属弃牌奖励重复结算 2 次 | `getCardCornerQuickActionForCard` / `confirmCardCornerQuickAction` |
 | `fundamentalism_income_task_completion` | 原教旨主义 | 作为收入选择的 1/2 型任务牌视为完成任务，`completedTaskCount +1`，不额外获得分数；该任务可参与 final_c | `applyIncomeFromCard` |
-| `pirates_raid_markers` | 星际海盗 | 开局在 orange2-4、purple1-4 对应玩家科技板位置放掠夺标记并封锁这些科技；玩家环绕/登陆未掠夺主星后，必须选择一个掠夺标记移到该星球左侧，然后获得 3 宣传；卫星登陆不会触发；移走标记后该科技恢复可研究 | `renderPiratesRaidTechMarkers` / `startPlanetRewardEffectFlow` / `industry_pirates_raid_marker` |
+| `pirates_raid_markers` | 星际海盗 | 开局在 orange2-4、purple1-4 对应玩家科技板位置放掠夺标记并封锁这些科技；玩家环绕/登陆未掠夺主星后，必须选择一个掠夺标记移到该星球左侧，然后获得 3 宣传；卫星登陆不会触发；移走标记后该科技恢复可研究 | `renderPiratesRaidTechMarkers` / `buildPlanetRewardEffectsWithIndustry` / `industry_pirates_raid_marker` |
 | `alien_lab_panels` | 异星实验室 | 三色板块折扣：发射 1 信用点、扫描 2 能量、研究科技 4 宣传；正面板块可点击并等同触发对应主要行动；对应标准主行动后翻背，同色外星痕迹翻回正面 | `launch.js` / `scan-effects.js` / `tech/resolver.js` / `app.js` |
 | `cheat_lab_permanent_panels` | 作弊实验室 | AI 专用异星实验室强化：蓝/黄/粉三色板块永久按正面计费和渲染，执行发射/扫描/研究科技后不翻背 | `passives.js` / `render.js` / `app.js` / `ai-controller.js` |
 | `cheat_lab_round_start` | 作弊实验室 | 每轮开始获得 1 能量和 1 盲抽；包括第一轮初始选择结算后。开局公司即时效果另有 5 张盲抽和 5 次收入增加 | `applyIndustryRoundStartBonuses` |
