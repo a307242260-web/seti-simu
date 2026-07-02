@@ -726,8 +726,9 @@ assert.equal(b108Effects[0].options.afterEventRewards[0].onceKey, "b108-saturn-s
 const b87Effects = cardEffects.buildPlayEffects({ cardId: "b_87.webp" });
 assert.equal(b87Effects.length, 2);
 assert.equal(b87Effects[1].type, cardEffects.EFFECT_TYPES.EARTH_SECTOR_CONTENT_MOVE);
-assert.equal(b87Effects[1].label, "地球扇区每个彗星或小行星：1移动");
-assert.deepEqual(b87Effects[1].options.contentKinds, ["comet", "asteroid"]);
+assert.equal(b87Effects[1].label, "地球扇区每个行星或彗星：1移动");
+assert.deepEqual(b87Effects[1].options.contentKinds, ["planet", "comet"]);
+assert.equal(b87Effects[1].options.contentKinds.includes("asteroid"), false);
 
 const b25 = { id: "card-b25", cardId: "b_25.webp" };
 const signalTriggerPlayer = { id: "p1", color: "red", reservedCards: [b25] };

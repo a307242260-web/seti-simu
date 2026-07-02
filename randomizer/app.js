@@ -16302,7 +16302,7 @@
   function getEarthSectorMoveContentKinds(effect) {
     const kinds = effect?.options?.contentKinds;
     if (Array.isArray(kinds) && kinds.length) return new Set(kinds);
-    return new Set([solar.layout.CONTENT_KIND.COMET, solar.layout.CONTENT_KIND.ASTEROID]);
+    return new Set([solar.layout.CONTENT_KIND.PLANET, solar.layout.CONTENT_KIND.COMET]);
   }
 
   function isEarthSectorMoveContent(content, contentKinds) {
@@ -16328,7 +16328,7 @@
       insertActionEffectsAfterCurrent([{
         id: `${effect.id || "earth-sector"}-move`,
         type: cardEffects.EFFECT_TYPES.CARD_MOVE,
-        label: `地球扇区彗星/小行星：${count}移动`,
+        label: `地球扇区行星/彗星：${count}移动`,
         icon: "movement",
         options: { movementPoints: count, historyLabel: effect.label },
       }]);

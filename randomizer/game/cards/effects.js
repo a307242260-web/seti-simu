@@ -595,8 +595,8 @@
   function earthSectorContentMoveEffect(id, label, options = {}) {
     const contentKinds = options.contentKinds?.length
       ? options.contentKinds
-      : ["comet", "asteroid"];
-    return effect(id, EFFECT_TYPES.EARTH_SECTOR_CONTENT_MOVE, label || "地球扇区每个彗星或小行星：1移动", "movement", {
+      : ["planet", "comet"];
+    return effect(id, EFFECT_TYPES.EARTH_SECTOR_CONTENT_MOVE, label || "地球扇区每个行星或彗星：1移动", "movement", {
       contentKinds: Object.freeze([...contentKinds]),
     });
   }
@@ -1889,7 +1889,7 @@
     }),
     "b_87.webp": withSource("b_87.webp", {
       cardType: 0,
-      playEffects: Object.freeze([launchEffect("b87-launch", "发射"), earthSectorContentMoveEffect("b87-earth-sector-move", "地球扇区每个彗星或小行星：1移动")]),
+      playEffects: Object.freeze([launchEffect("b87-launch", "发射"), earthSectorContentMoveEffect("b87-earth-sector-move", "地球扇区每个行星或彗星：1移动")]),
     }),
     "b_88.webp": withSource("b_88.webp", {
       cardType: 0,
