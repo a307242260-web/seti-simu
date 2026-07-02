@@ -233,7 +233,8 @@
   }
 
   function chooseInitialSelection(offer, options = {}) {
-    const industryOptions = offer?.industryOptions || [];
+    const forcedIndustry = options.forcedIndustryCard || options.forcedIndustry || null;
+    const industryOptions = forcedIndustry ? [forcedIndustry] : (offer?.industryOptions || []);
     const initialOptions = offer?.initialOptions || [];
     const initialCount = Math.max(1, Math.round(Number(options.initialCount) || 2));
     const plans = [];

@@ -1214,6 +1214,15 @@
       const routeScore = aiNumber(summary.orbits) * 1.5 + aiNumber(summary.traces) + aiNumber(goals.GRAB_TRACE_YELLOW);
       const taskScore = aiNumber(summary.hand) * 0.45 + aiNumber(summary.incomeIncreases) * 0.35 + aiNumber(goals.OPENING_INCOME) * 0.35;
       const techScore = aiNumber(summary.credits) * 0.22 + aiNumber(summary.energy) * 0.18;
+      if (
+        aiNumber(summary.scan) >= 2
+        && aiNumber(summary.orbits) >= 1
+        && aiNumber(summary.credits) <= 4
+        && scanScore >= routeScore + 2
+        && taskScore > scanScore
+      ) {
+        return "scanner";
+      }
       const scoredStyles = [
         { id: "scanner", score: scanScore },
         { id: "route", score: routeScore },
@@ -1264,7 +1273,10 @@
       const forcedIndustryCard = shouldForceAiHuanyuSuperdrivePlayer(playerId)
         ? ensureAiHuanyuSuperdriveIndustryOffer(offer)
         : ensureAiCheatLabIndustryOffer(offer);
-      const decision = ai?.policy?.chooseInitialSelection?.(offer, { roundNumber: turnState.roundNumber }) || {};
+      const decision = ai?.policy?.chooseInitialSelection?.(offer, {
+        roundNumber: turnState.roundNumber,
+        forcedIndustryCard,
+      }) || {};
       const industryCard = forcedIndustryCard || decision.industry || offer.industryOptions?.[0] || null;
       const initialSelection = decision.initialCards?.length
         ? decision.initialCards

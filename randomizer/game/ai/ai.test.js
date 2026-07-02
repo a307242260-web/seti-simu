@@ -688,6 +688,26 @@ assert.equal(decision.initialCards.length, 2);
 assert.ok(decision.openingPlan);
 assert.ok(Object.keys(decision.openingPlan.goals || {}).length > 0);
 
+const forcedIndustryOffer = {
+  industryOptions: [
+    { id: "industry:turing.png", label: "图灵系统" },
+    { id: "industry:cheat.png", label: "作弊实验室" },
+  ],
+  initialOptions: [
+    { id: "initial:5", label: "初始牌 5" },
+    { id: "initial:20", label: "初始牌 20" },
+  ],
+};
+const unforcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, { roundNumber: 1 });
+assert.equal(unforcedOpening.industry.label, "图灵系统");
+const forcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
+  roundNumber: 1,
+  forcedIndustryCard: forcedIndustryOffer.industryOptions[1],
+});
+assert.equal(forcedOpening.industry.label, "作弊实验室");
+assert.equal(forcedOpening.openingPlan.summary.hand, 6);
+assert.ok(forcedOpening.openingPlan.topPlans.every((plan) => plan.industryLabel === "作弊实验室"));
+
 assert.equal(policy.chooseTurnAction([
   { id: "orbit", available: true, score: 20, actionGraph: { net: 2 } },
   { id: "playCard", available: true, score: 1, actionGraph: { net: 9 } },
