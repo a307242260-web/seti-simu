@@ -16515,8 +16515,42 @@
       return candidates;
     }
 
+    function isRawNegativeResourceCardCornerAction(action = {}) {
+      return action?.id === "cardCorner"
+        && action.actionKind === "resource"
+        && aiNumber(action.score) < 0;
+    }
+
+    function countAiRepeatedNegativeResourceCardCornersThisTurn(playerId = getCurrentPlayer()?.id) {
+      if (!playerId) return 0;
+      return (aiAutoBattleState.logs || []).filter((entry) => (
+        entry?.type === "turn-action"
+        && entry.roundNumber === turnState.roundNumber
+        && entry.rawTurnNumber === turnState.turnNumber
+        && entry.playerId === playerId
+        && isRawNegativeResourceCardCornerAction(entry.details?.action)
+      )).length;
+    }
+
+    function shouldCapRepeatedNegativeResourceCardCorner(candidate = {}, priorCount = 0) {
+      if (priorCount <= 0 || !isRawNegativeResourceCardCornerAction(candidate)) return false;
+      const breakdown = candidate.valueBreakdown || {};
+      const graph = candidate.actionGraph || {};
+      const directScoreGain = Math.max(0, aiNumber(candidate.directScoreGain));
+      const followupMainActionScore = Math.max(0, aiNumber(breakdown.followupMainActionScore));
+      const stagedTechSetupScore = Math.max(0, aiNumber(breakdown.stagedTechSetupScore));
+      const moveFollowupScore = Math.max(0, aiNumber(breakdown.moveFollowupScore));
+      const graphFinalMarginal = Math.max(0, aiNumber(graph.finalMarginal));
+      if (directScoreGain > 0) return false;
+      if (followupMainActionScore > 0 || stagedTechSetupScore > 0 || moveFollowupScore > 0) return false;
+      return graphFinalMarginal <= 4;
+    }
+
     function applyAiTurnActionSelectionPressure(candidates = []) {
       const round = getAiRoundNumber();
+      const repeatedNegativeResourceCardCorners = countAiRepeatedNegativeResourceCardCornersThisTurn(
+        getCurrentPlayer()?.id,
+      );
       const bestContinuation = (candidates || [])
         .filter((candidate) => (
           candidate?.available !== false
@@ -16538,6 +16572,31 @@
         let adjusted = candidate;
         const explicitScore = aiNumber(candidate.score);
         const graphNet = Number(candidate.actionGraph?.net);
+        if (shouldCapRepeatedNegativeResourceCardCorner(candidate, repeatedNegativeResourceCardCorners)) {
+          const cappedScore = Math.min(explicitScore, -0.5);
+          const currentNet = Number.isFinite(graphNet) ? graphNet : explicitScore;
+          adjusted = {
+            ...adjusted,
+            score: cappedScore,
+            actionGraph: adjusted.actionGraph
+              ? {
+                ...adjusted.actionGraph,
+                uncappedNet: adjusted.actionGraph.net,
+                net: Math.min(currentNet, -0.5),
+              }
+              : adjusted.actionGraph,
+            selectionAdjustment: {
+              ...(adjusted.selectionAdjustment || {}),
+              repeatedNegativeResourceCardCornerCap: repeatedNegativeResourceCardCorners,
+              originalScore: Math.round(explicitScore * 100) / 100,
+              originalNet: Number.isFinite(graphNet) ? Math.round(graphNet * 100) / 100 : null,
+            },
+            valueBreakdown: {
+              ...(adjusted.valueBreakdown || {}),
+              repeatedNegativeResourceCardCornerCap: repeatedNegativeResourceCardCorners,
+            },
+          };
+        }
         if (
           candidate.kind === "quick"
           && Number.isFinite(explicitScore)

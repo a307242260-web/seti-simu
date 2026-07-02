@@ -339,6 +339,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
           return selected;
         },
       },
+      ...(options.actionGraph ? { actionGraph: options.actionGraph } : {}),
     },
     cardEffects: {
       EFFECT_TYPES: {
@@ -2932,6 +2933,106 @@ function makeYichangdianAlienState(options = {}) {
     Number(cornerCandidate.valueBreakdown?.followupMainActionScore || 0),
     0,
     "staged setup should be separate from the immediate research unlock score",
+  );
+}
+
+{
+  const turnChoices = [];
+  const selectedActions = [];
+  const scoreForChoice = (candidate) => {
+    const graphNet = Number(candidate?.actionGraph?.net);
+    if (Number.isFinite(graphNet)) return graphNet;
+    return Number(candidate?.score || 0);
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 2,
+    pendingActionExecuted: true,
+    recordCardCorner: true,
+    blueResources: { score: 30, credits: 1, energy: 0, publicity: 0, availableData: 0, handSize: 6 },
+    blueHand: Array.from({ length: 6 }, (_value, index) => ({
+      id: `repeat-corner-${index}`,
+      cardName: `Repeat corner ${index}`,
+      price: 4,
+      resourceReward: { gain: {} },
+      incomeGain: { credits: 4, energy: 4, handSize: 2 },
+    })),
+    actionGraph: {
+      buildActionGraph: (candidates) => candidates.map((candidate) => {
+        if (candidate.id === "cardCorner") {
+          return {
+            ...candidate,
+            gain: 6,
+            cost: 0,
+            finalMarginal: 2,
+            goalBonus: 8,
+            feasibility: 1,
+            net: 6,
+          };
+        }
+        if (candidate.id === "end-turn") {
+          return {
+            ...candidate,
+            gain: 0,
+            cost: 0,
+            finalMarginal: 0,
+            goalBonus: 0,
+            feasibility: 1,
+            net: 0,
+          };
+        }
+        return {
+          ...candidate,
+          gain: Number(candidate.gain || candidate.score || 0),
+          cost: Number(candidate.cost || 0),
+          finalMarginal: 0,
+          goalBonus: 0,
+          feasibility: 1,
+          net: Number(candidate.score || 0),
+        };
+      }),
+    },
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => scoreForChoice(right) - scoreForChoice(left))[0] || null,
+    onChooseTurnAction: (candidates, selected) => {
+      turnChoices.push(candidates);
+      selectedActions.push(selected);
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const firstResult = harness.controller.runAiAutomationStep();
+  assert.equal(firstResult.ok, true, "AI should allow the first raw-negative resource corner as setup");
+  assert.equal(selectedActions[0]?.id, "cardCorner");
+  assert.ok(Number(selectedActions[0]?.score) < 0, "fixture should exercise a raw-negative card corner");
+  assert.equal(
+    selectedActions[0]?.selectionAdjustment?.repeatedNegativeResourceCardCornerCap,
+    undefined,
+    "the first raw-negative resource corner in a turn should not be capped",
+  );
+
+  const secondResult = harness.controller.runAiAutomationStep();
+  assert.equal(secondResult.ok, true, "AI should end the turn after the repeated no-cashout corner is capped");
+  assert.equal(selectedActions[1]?.id, "end-turn");
+  const repeatedCorner = turnChoices[1].find((candidate) => candidate.id === "cardCorner");
+  assert.ok(repeatedCorner, "repeated raw-negative resource corner should still be visible for diagnostics");
+  assert.equal(
+    repeatedCorner.selectionAdjustment?.repeatedNegativeResourceCardCornerCap,
+    1,
+    "second same-turn raw-negative resource corner should be capped",
+  );
+  assert.equal(
+    repeatedCorner.actionGraph?.net,
+    -0.5,
+    "cap should lower graph net below the normal end-turn candidate",
   );
 }
 
