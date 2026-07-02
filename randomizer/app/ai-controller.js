@@ -16847,20 +16847,55 @@
       };
     }
 
+    function getAiLowTailDiagnosticsReasons(player = {}) {
+      const reasons = [];
+      const finalMarkCount = aiNumber(player.finalMarkCount);
+      const finalScore = aiNumber(player.finalScore);
+      const baseScore = aiNumber(player.baseScore);
+      const techCount = aiNumber(player.techCount);
+      const completedTaskCount = aiNumber(player.completedTaskCount);
+      if (Number.isFinite(Number(player.finalMarkCount)) && finalMarkCount < 3) {
+        reasons.push("missing-final-marks");
+      }
+      if (Number.isFinite(Number(player.finalScore)) && finalScore < 230) {
+        reasons.push("low-final-score");
+      }
+      if (Number.isFinite(Number(player.baseScore)) && baseScore < 150) {
+        reasons.push("low-base-score");
+      }
+      if (Number.isFinite(Number(player.techCount)) && techCount < 9) {
+        reasons.push("low-tech-count");
+      }
+      if (
+        Number.isFinite(Number(player.completedTaskCount))
+        && completedTaskCount <= 1
+        && finalScore < 230
+      ) {
+        reasons.push("low-task-count");
+      }
+      return reasons;
+    }
+
     function buildAiLowMarkPlayerDiagnostics(report = {}) {
       const players = Array.isArray(report.playerResults) ? report.playerResults : [];
       const logs = Array.isArray(report.logs) ? report.logs : [];
       const lowPlayers = [...players]
-        .filter((player) => (
-          Number.isFinite(Number(player.finalMarkCount))
-          && (aiNumber(player.finalMarkCount) < 3 || aiNumber(player.baseScore) < 70)
-        ))
-        .sort((left, right) => (
-          aiNumber(left.finalMarkCount) - aiNumber(right.finalMarkCount)
-          || aiNumber(left.baseScore) - aiNumber(right.baseScore)
-          || aiNumber(left.finalScore) - aiNumber(right.finalScore)
-        ));
-      return lowPlayers.map((lowPlayer) => {
+        .map((player) => ({
+          player,
+          lowTailReasons: getAiLowTailDiagnosticsReasons(player),
+        }))
+        .filter((entry) => entry.lowTailReasons.length > 0)
+        .sort((leftEntry, rightEntry) => {
+          const left = leftEntry.player;
+          const right = rightEntry.player;
+          return (
+            aiNumber(left.finalMarkCount) - aiNumber(right.finalMarkCount)
+            || aiNumber(left.finalScore) - aiNumber(right.finalScore)
+            || aiNumber(left.baseScore) - aiNumber(right.baseScore)
+            || aiNumber(left.techCount) - aiNumber(right.techCount)
+          );
+        });
+      return lowPlayers.map(({ player: lowPlayer, lowTailReasons }) => {
         const lowLogs = logs.filter((entry) => (
           String(entry.playerId || "") === String(lowPlayer.playerId || "")
           || (lowPlayer.playerLabel && String(entry.message || "").includes(lowPlayer.playerLabel))
@@ -16909,8 +16944,14 @@
           finalScore: lowPlayer.finalScore,
           baseScore: lowPlayer.baseScore,
           tileScore: lowPlayer.tileScore,
+          cardScore: lowPlayer.cardScore,
           finalMarkCount: lowPlayer.finalMarkCount,
           finalFormulas: lowPlayer.finalFormulas || [],
+          completedTaskCount: lowPlayer.completedTaskCount,
+          techCount: lowPlayer.techCount,
+          handSize: lowPlayer.handSize,
+          reservedCount: lowPlayer.reservedCount,
+          lowTailReasons,
           resources: lowPlayer.resources || null,
           income: lowPlayer.income || null,
           actionCounts,
