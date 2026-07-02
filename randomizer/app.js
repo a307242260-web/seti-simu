@@ -25844,6 +25844,16 @@
       renderStateReadout();
       return;
     }
+    if (pendingActionEffectFlow?.actionType === "researchTech" && hasCurrentMainActionIrreversibleBarrier()) {
+      rocketState.statusNote = pendingActionIrreversibleReason
+        ? `不可撤销：${pendingActionIrreversibleReason}`
+        : "当前科技行动已有不可撤销影响";
+      syncTechSelectionChrome();
+      renderTechBoard();
+      updateActionButtons();
+      renderStateReadout();
+      return;
+    }
     tech.setTechSelectionActive(techGameState, false);
     tech.cancelPendingTake(techGameState);
     techGameState.ui.selectedTileId = null;
@@ -25853,7 +25863,15 @@
     techGameState.ui.statusNote = "";
     rocketState.statusNote = "";
     if (pendingActionEffectFlow?.actionType === "researchTech") {
-      actionHistory.rollbackSession();
+      const rollbackResult = actionHistory.rollbackSession();
+      if (!rollbackResult.ok) {
+        rocketState.statusNote = rollbackResult.message || "当前科技行动不能取消";
+        syncTechSelectionChrome();
+        renderTechBoard();
+        updateActionButtons();
+        renderStateReadout();
+        return;
+      }
       clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
       removeActionLogStepsBySource(HISTORY_SOURCE_MAIN);
       effectStepActive = false;
@@ -31953,7 +31971,9 @@
   function undoPendingAction() {
     if (isTechActionSelectionActive()) {
       const isResearchTechFlow = pendingActionEffectFlow?.actionType === "researchTech";
-      if (isResearchTechFlow && actionHistory.hasUndoableStep()) {
+      const shouldUseHistoryUndo = isResearchTechFlow
+        && (actionHistory.hasUndoableStep() || hasCurrentMainActionIrreversibleBarrier());
+      if (shouldUseHistoryUndo) {
         if (techGameState.ui.pendingTileId) {
           cancelPendingResearchTechTileChoice();
           return;
