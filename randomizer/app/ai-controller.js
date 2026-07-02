@@ -5708,7 +5708,7 @@
         && !recoveryThreshold
         && highScorePushProfile.active
         && highScorePushProfile.projectedScore >= 260
-        && highScorePushProfile.projectedScore < 305
+        && highScorePushProfile.projectedScore < 340
         && (credits >= 2 || energy >= 2 || publicity >= 3)
         && !(turnState.passedPlayerIds || []).includes(player.id);
       const highScorePlayableHandScore = finalHighScoreRefillBaseWindow && handSize <= 2
@@ -5988,7 +5988,9 @@
         && bestPublicTradeCardScore >= 8;
       const highScoreGapTo300 = Math.max(0, 300 - highScorePushProfile.projectedScore);
       const finalHighScorePublicRefill = finalHighScoreHandRefillWindow
-        && bestPublicTradeCardScore >= (highScoreGapTo300 <= 10 ? 0 : 5);
+        && bestPublicTradeCardScore >= (highScorePushProfile.projectedScore >= 305
+          ? 8
+          : highScoreGapTo300 <= 10 ? 0 : 5);
       const finalHighScoreRefillValue = finalHighScorePublicRefill
         ? 8
           + Math.max(0, 18 - highScoreGapTo300) * 0.45
