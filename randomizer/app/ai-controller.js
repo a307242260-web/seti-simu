@@ -12717,6 +12717,24 @@
         chongTaskChainValue,
         banrenmaThresholdSetupValue,
       });
+      const finalNoThresholdDeadPlay = getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && countAiFinalMarksForPlayer(currentPlayer) >= 3
+        && !getAiNextMissingFinalScoreThreshold(currentPlayer)
+        && score < 0
+        && directScoreGain <= 0
+        && Math.max(0, scoreAiFinalFormulaDeltaValue(finalFormulaDeltas, currentPlayer, {
+          includePotential: true,
+          potentialScale: 0.45,
+        })) <= 0
+        && c2Type3ProgressValue <= 0
+        && cFinalTaskProgressValue <= 0
+        && chongTaskChainValue <= 0
+        && banrenmaThresholdSetupValue <= 0
+        && endGameExpectedScore <= 0
+        && playCardConversionPressure <= 0
+        && standardActionPremium <= 0
+        && Math.max(0, aiNumber(plan?.score)) <= 0;
+      if (finalNoThresholdDeadPlay) return null;
       return {
         id: "playCard",
         kind: "main",
