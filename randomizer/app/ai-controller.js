@@ -11960,6 +11960,17 @@
       return roundAiScore(Math.min(options.cap ?? 34, Math.max(0, base * markedScale)));
     }
 
+    function shouldAiProtectB2SectorScanFromPlanetCap(player = getCurrentPlayer()) {
+      if (!player || getAiRoundNumber() < FINAL_ROUND_NUMBER) return false;
+      const bottleneck = getAiB2SectorBottleneck(player, { requireMarked: true });
+      if (!bottleneck.active || !bottleneck.marked) return false;
+      if (bottleneck.deficit < 5 || bottleneck.orbitLandCount < 3) return false;
+      return scoreAiB2SectorScanRecoveryValue(player, {
+        requireMarked: true,
+        mainAction: true,
+      }) >= 10;
+    }
+
     function scoreAiB2SectorScanFocus(nebulaId, counts, player = getCurrentPlayer()) {
       if (!nebulaId || !counts || !player || !endGameScoring?.countSectorWins || !endGameScoring?.countOrbitOrLandMarkers) {
         return 0;
@@ -16283,7 +16294,9 @@
         && scanCurrentScore < scanNextThreshold
         && scanScoreToThreshold <= 3
         && scanCurrentScore + scanDirectScoreGain < scanNextThreshold;
-      if (immediatePlanetActionScore >= 12) {
+      const protectB2SectorScanFromPlanetCap = scanCheck.ok
+        && shouldAiProtectB2SectorScanFromPlanetCap(currentPlayer);
+      if (immediatePlanetActionScore >= 12 && !protectB2SectorScanFromPlanetCap) {
         scanScore = Math.max(
           scanPriorityFloor,
           Math.min(scanScore, Math.max(0, immediatePlanetActionScore - 7)),
@@ -16345,7 +16358,7 @@
       }
       const scanScoreCapReason = scanFinalThresholdMiss
         ? "终局临门扫描直接分不足"
-        : scanCheck.ok && immediatePlanetActionScore >= 12
+        : scanCheck.ok && immediatePlanetActionScore >= 12 && !protectB2SectorScanFromPlanetCap
         ? "优先兑现当前位置的环绕/登陆"
           : scanCheck.ok && getAiRoundNumber() <= 2 && launchCandidate.available && Number(launchCandidate.score || 0) >= 12
             ? "优先建立火箭数量"

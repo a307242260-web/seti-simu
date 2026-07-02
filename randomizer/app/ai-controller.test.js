@@ -368,6 +368,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
         ?? options.finalSlotMultipliers?.[formulaId]
         ?? 1
       ),
+      ...(options.endGameScoring || {}),
     },
     tech: options.tech || {
       getStack: (_board, tileId) => getTechStack(tileId),
@@ -3963,6 +3964,76 @@ function makeYichangdianAlienState(options = {}) {
     playCardCandidate?.available,
     false,
     "final three-mark AI should not spend resources on a negative no-cashout card just to beat pass",
+  );
+}
+
+{
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    blueResources: { score: 120, credits: 5, energy: 5, publicity: 0, availableData: 0, handSize: 2 },
+    finalScoringState: {
+      tiles: {
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: { final_b2: "b2" },
+    finalSlotMultipliers: { b2: { 1: 8 } },
+    endGameScoring: {
+      countSectorWins: () => 1,
+      countOrbitOrLandMarkers: () => 6,
+    },
+    actionChecks: {
+      land: { ok: true, planet: { planetId: "mars", name: "火星" }, energyCost: 0, choices: [] },
+    },
+    scanEffects: {
+      EFFECT_TYPES: {
+        EARTH_SECTOR_SCAN: "earth_sector_scan",
+        IMPROVED_SECTOR_SCAN: "improved_sector_scan",
+        MERCURY_SECTOR_SCAN: "mercury_sector_scan",
+        PUBLIC_CARD_SCAN: "public_card_scan",
+        HAND_SCAN: "hand_scan",
+        SCAN_ACTION_4: "scan_action_4",
+      },
+      SCAN_COST: { credits: 0, energy: 0 },
+      getStandardScanCost: () => ({ credits: 0, energy: 0 }),
+      buildScanEffectQueue: () => [],
+      canExecuteScan: () => ({ ok: true }),
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  harness.controller.runAiAutomationStep();
+  const candidates = turnChoices.flat();
+  const scanCandidate = candidates.find((candidate) => candidate.id === "scan");
+  const landCandidate = candidates.find((candidate) => candidate.id === "land");
+  assert.ok(scanCandidate, "B2 bottleneck scenario should expose scan candidate");
+  assert.ok(landCandidate, "B2 bottleneck scenario should expose land candidate");
+  assert.equal(
+    scanCandidate.scoreCapReason,
+    null,
+    "marked B2 sector bottleneck should not label scan as capped by planet cashout",
+  );
+  assert.ok(
+    Number(scanCandidate.score) > Math.max(0, Number(landCandidate.score || 0) - 7),
+    "marked B2 sector bottleneck should preserve scan above the planet cashout cap",
   );
 }
 
