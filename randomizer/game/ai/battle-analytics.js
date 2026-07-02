@@ -163,6 +163,46 @@
     return String(getSelectedAction(entry)?.id || "unknown");
   }
 
+  function summarizeOpportunityCandidate(candidate = {}) {
+    return {
+      id: getCandidateId(candidate),
+      kind: candidate.kind || null,
+      tradeId: candidate.tradeId || null,
+      label: candidate.label || candidate.planetName || candidate.cardLabel || null,
+      score: roundRatio(candidate.score),
+      policyScore: roundRatio(getCandidatePolicyScore(candidate)),
+      directScoreGain: roundRatio(candidate.directScoreGain),
+      reason: candidate.reason || null,
+    };
+  }
+
+  function buildPassOpportunitySample(entry, candidates = [], limit = 3) {
+    const availableCandidates = (candidates || []).filter(isCandidateAvailable);
+    const availableMain = availableCandidates
+      .filter((candidate) => candidate.kind === "main")
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ));
+    const topCandidates = availableCandidates
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ))
+      .slice(0, limit)
+      .map(summarizeOpportunityCandidate);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      bestMain: availableMain[0] ? summarizeOpportunityCandidate(availableMain[0]) : null,
+      topCandidates,
+    };
+  }
+
   function getPlayerKey(entry) {
     return entry?.playerId || entry?.playerLabel || "unknown";
   }
@@ -1624,6 +1664,7 @@
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
     };
+    const passOpportunitySamples = [];
     const scoreOpportunities = {
       selectedBelowBest: 0,
       totalGap: 0,
@@ -1674,6 +1715,9 @@
         }
         if (actionId === "pass" && hasAvailableKind(candidates, "main")) {
           opportunities.passWithAvailableMain += 1;
+          if (passOpportunitySamples.length < 12) {
+            passOpportunitySamples.push(buildPassOpportunitySample(entry, candidates));
+          }
         }
         if (actionId === "end-turn" && hasAvailableAction(candidates, "move")) {
           opportunities.endTurnWithAvailableMove += 1;
@@ -1785,6 +1829,7 @@
       decisionTargets,
       movePayment,
       opportunities,
+      passOpportunitySamples,
       scoreOpportunities: {
         selectedBelowBest: scoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(scoreOpportunities.totalGap),
@@ -1821,6 +1866,7 @@
       totalGap: 0,
       maxGap: 0,
     };
+    const mergedPassOpportunitySamples = [];
     const mergedMovePayment = {
       count: 0,
       requiredMovePoints: 0,
@@ -1862,6 +1908,9 @@
       }
       mergeCandidateScoreStats(mergedCandidateScoreStats, analysis.candidateScoreStats || {});
       for (const [key, count] of Object.entries(analysis.opportunities || {})) increment(mergedOpportunities, key, count);
+      if (mergedPassOpportunitySamples.length < 12 && Array.isArray(analysis.passOpportunitySamples)) {
+        mergedPassOpportunitySamples.push(...analysis.passOpportunitySamples.slice(0, 12 - mergedPassOpportunitySamples.length));
+      }
       mergedScoreOpportunities.selectedBelowBest += numeric(analysis.scoreOpportunities?.selectedBelowBest);
       mergedScoreOpportunities.totalGap += numeric(analysis.scoreOpportunities?.totalGap);
       mergedScoreOpportunities.maxGap = Math.max(mergedScoreOpportunities.maxGap, numeric(analysis.scoreOpportunities?.maxGap));
@@ -1953,6 +2002,7 @@
       topScoreGaps: buildTopScoreGaps(mergedCandidateScoreStats),
       topMissedCandidates,
       opportunities: mergedOpportunities,
+      passOpportunitySamples: mergedPassOpportunitySamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(mergedScoreOpportunities.totalGap),

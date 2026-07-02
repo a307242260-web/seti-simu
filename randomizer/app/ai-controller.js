@@ -17048,6 +17048,7 @@
             actionCounts: analysis.actionCounts,
             actionCategoryRatios: analysis.actionCategoryRatios,
             opportunities: analysis.opportunities,
+            passOpportunitySamples: analysis.passOpportunitySamples,
             scoreOpportunities: analysis.scoreOpportunities,
             topScoreGaps: analysis.topScoreGaps,
             movePayment: analysis.movePayment,
