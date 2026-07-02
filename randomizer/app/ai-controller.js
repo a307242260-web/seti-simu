@@ -16943,6 +16943,37 @@
       return reasons;
     }
 
+    function summarizeAiDiagnosticCard(card) {
+      if (!card) return null;
+      const model = cardEffects.getCardModel?.(card) || null;
+      const completedTaskIds = new Set(card.cardEffectState?.completedTaskIds || []);
+      const consumedTriggerIds = new Set(card.cardEffectState?.consumedTriggerIds || []);
+      const tasks = model?.tasks || [];
+      const triggers = model?.triggers || [];
+      return {
+        cardId: card.cardId || card.id || null,
+        cardInstanceId: card.id || null,
+        cardName: card.cardName || card.name || cards.getCardLabel?.(card) || null,
+        price: getCardPrice(card),
+        typeCode: getCardTypeCode(card),
+        discardActionCode: card.discardActionCode ?? null,
+        scanActionCode: card.scanActionCode ?? null,
+        incomeCode: card.incomeCode ?? null,
+        taskCount: tasks.length,
+        remainingTaskCount: tasks.filter((task) => !completedTaskIds.has(task.id)).length,
+        triggerCount: triggers.length,
+        remainingTriggerCount: triggers.filter((trigger) => !consumedTriggerIds.has(trigger.id)).length,
+        endGameScoring: Boolean(model?.endGameScoring),
+      };
+    }
+
+    function summarizeAiDiagnosticCards(cardList = [], limit = 8) {
+      return (cardList || [])
+        .slice(0, limit)
+        .map(summarizeAiDiagnosticCard)
+        .filter(Boolean);
+    }
+
     function buildAiLowMarkPlayerDiagnostics(report = {}) {
       const players = Array.isArray(report.playerResults) ? report.playerResults : [];
       const logs = Array.isArray(report.logs) ? report.logs : [];
@@ -17004,6 +17035,7 @@
             topCandidates: candidates,
           };
         });
+        const livePlayer = getPlayerById(lowPlayer.playerId);
 
         return {
           playerId: lowPlayer.playerId || null,
@@ -17021,6 +17053,8 @@
           lowTailReasons,
           resources: lowPlayer.resources || null,
           income: lowPlayer.income || null,
+          handCards: summarizeAiDiagnosticCards(livePlayer?.hand || [], 8),
+          reservedCards: summarizeAiDiagnosticCards(livePlayer?.reservedCards || [], 10),
           actionCounts,
           passCount: actionCounts.pass || 0,
           selectedActionTail,
