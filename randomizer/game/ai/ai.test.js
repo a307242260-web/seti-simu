@@ -956,6 +956,31 @@ assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "score-pas
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-score-gap"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-card-score-gap"));
 
+const negativePassOpportunityReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 9,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 126, credits: 1, energy: 0, publicity: 2, handSize: 1 },
+    details: {
+      action: { id: "pass", kind: "pass", score: -2.3 },
+      candidates: [
+        { id: "pass", kind: "pass", available: true, score: -2.3 },
+        { id: "launch", kind: "main", available: true, score: -10.5 },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 126 }],
+};
+const negativePassOpportunityAnalysis = analytics.analyzeBattleReport(negativePassOpportunityReport);
+assert.equal(negativePassOpportunityAnalysis.opportunities.passWithAvailableMain, 1);
+assert.equal(negativePassOpportunityAnalysis.passOpportunitySamples[0].bestMain.policyScore, -6.5);
+assert.ok(!negativePassOpportunityAnalysis.recommendations.some((entry) => entry.id === "score-pass-opportunity-cost"));
+assert.ok(negativePassOpportunityAnalysis.recommendations.some((entry) => entry.id === "classify-negative-pass-opportunity"));
+
 const endTurnMoveReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{

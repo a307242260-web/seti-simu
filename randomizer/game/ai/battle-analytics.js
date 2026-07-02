@@ -1828,6 +1828,21 @@
       .sort((left, right) => right.finalScore - left.finalScore || left.playerLabel.localeCompare(right.playerLabel));
   }
 
+  function getPassOpportunityBestMainScore(sample = {}) {
+    const bestMain = sample?.bestMain || {};
+    const policyScore = getFiniteScore(bestMain.policyScore);
+    if (policyScore != null) return policyScore;
+    const score = getFiniteScore(bestMain.score);
+    return score == null ? null : score;
+  }
+
+  function hasPositivePassOpportunitySample(samples = []) {
+    return (samples || []).some((sample) => {
+      const bestMainScore = getPassOpportunityBestMainScore(sample);
+      return bestMainScore != null && bestMainScore > 0;
+    });
+  }
+
   function buildRecommendations(analysis) {
     const recommendations = [];
     const actionTotal = analysis.turnActionCount || 0;
@@ -1835,6 +1850,9 @@
     const opportunities = analysis.opportunities || {};
     const candidateStats = analysis.candidateStats || {};
     const candidateScoreStats = analysis.candidateScoreStats || {};
+    const passOpportunitySamples = Array.isArray(analysis.passOpportunitySamples)
+      ? analysis.passOpportunitySamples
+      : [];
 
     if (actionTotal >= 10 && ratios.basicMain >= 0.45 && ratios.engine < 0.25) {
       recommendations.push({
@@ -1844,11 +1862,19 @@
       });
     }
     if (opportunities.passWithAvailableMain > 0) {
-      recommendations.push({
-        id: "score-pass-opportunity-cost",
-        priority: "high",
-        message: "出现 PASS 时仍有可用主行动的局面，需要显式计算 PASS 收入/轮序收益与剩余行动机会成本。",
-      });
+      if (!passOpportunitySamples.length || hasPositivePassOpportunitySample(passOpportunitySamples)) {
+        recommendations.push({
+          id: "score-pass-opportunity-cost",
+          priority: "high",
+          message: "出现 PASS 时仍有正收益主行动的局面，需要显式计算 PASS 收入/轮序收益与剩余行动机会成本。",
+        });
+      } else {
+        recommendations.push({
+          id: "classify-negative-pass-opportunity",
+          priority: "medium",
+          message: "PASS 样本里的最高主行动均为非正收益，后续应先按样本确认是否为合理 PASS，而不是直接放宽行动阈值。",
+        });
+      }
     }
     if (opportunities.endTurnWithAvailableMove > 0) {
       recommendations.push({
