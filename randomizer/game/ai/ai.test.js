@@ -1084,6 +1084,59 @@ assert.equal(compoundTechCardAnalysis.researchTechCompoundCardSamples[0].bestTec
 const compoundTechCardSummary = analytics.summarizeBattleReports([compoundTechCardReport]);
 assert.equal(compoundTechCardSummary.researchTechCompoundCardSamples[0].compoundCard.cardId, "b_135.webp");
 
+const mainUnlockLowConcretePlayReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 7,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 139, credits: 2, energy: 1, publicity: 1, handSize: 3 },
+    details: {
+      action: {
+        id: "quickTrade",
+        kind: "quick",
+        tradeId: "cards-for-credit",
+        score: 15.975,
+        reason: "主行动前：交易信用点解锁高价值打牌",
+        valueBreakdown: {
+          mainUnlockTrade: true,
+          bestPlayCard: {
+            handIndex: 0,
+            cardId: "b_135.webp",
+            cardLabel: "韦断特v克综合孔径射电|远锐",
+            score: 22.121,
+            continuationValue: 22.121,
+            directScoreGain: 0,
+            finalDeltaValue: 0,
+            c2Type3ProgressValue: 0,
+            cFinalTaskProgressValue: 0,
+            endGameExpectedScore: 0,
+          },
+          currentBestPlayScore: 4.92,
+          concreteFinalValue: 18.675,
+          discardCost: 3,
+          finalMarkCount: 3,
+          nextFinalMarkThreshold: null,
+          thresholdBonus: 0,
+          finalLowTailOneCreditUnlock: true,
+          finalHighScoreOneCreditUnlock: false,
+          highScoreProjectedScore: 194,
+        },
+      },
+      candidates: [],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 187 }],
+};
+const mainUnlockLowConcretePlayAnalysis = analytics.analyzeBattleReport(mainUnlockLowConcretePlayReport);
+assert.equal(mainUnlockLowConcretePlayAnalysis.opportunities.mainUnlockLowConcretePlay, 1);
+assert.equal(mainUnlockLowConcretePlayAnalysis.mainUnlockLowConcretePlaySamples[0].bestPlayCard.cardId, "b_135.webp");
+assert.equal(mainUnlockLowConcretePlayAnalysis.mainUnlockLowConcretePlaySamples[0].concreteFinalValue, 18.675);
+const mainUnlockLowConcretePlaySummary = analytics.summarizeBattleReports([mainUnlockLowConcretePlayReport]);
+assert.equal(mainUnlockLowConcretePlaySummary.mainUnlockLowConcretePlaySamples[0].bestPlayCard.cardId, "b_135.webp");
+
 const actionGraphAlignedAnalysis = analytics.analyzeBattleReport({
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{

@@ -385,6 +385,64 @@
     };
   }
 
+  function getMainUnlockBestPlayCard(action = {}) {
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    return breakdown.bestPlayCard || null;
+  }
+
+  function isMainUnlockLowConcretePlay(entry) {
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "quickTrade") return false;
+    const breakdown = action?.valueBreakdown || action?.breakdown || {};
+    if (!breakdown.mainUnlockTrade) return false;
+    const bestPlay = getMainUnlockBestPlayCard(action);
+    if (!bestPlay) return false;
+    const concreteSignals = [
+      bestPlay.directScoreGain,
+      bestPlay.finalDeltaValue,
+      bestPlay.c2Type3ProgressValue,
+      bestPlay.cFinalTaskProgressValue,
+      bestPlay.endGameExpectedScore,
+    ];
+    return concreteSignals.every((value) => numeric(value) <= 0);
+  }
+
+  function buildMainUnlockLowConcretePlaySample(entry) {
+    const action = getSelectedAction(entry) || {};
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    const bestPlay = getMainUnlockBestPlayCard(action) || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(action),
+      tradeId: action.tradeId || null,
+      bestPlayCard: {
+        handIndex: Number.isFinite(Number(bestPlay.handIndex)) ? Number(bestPlay.handIndex) : null,
+        cardId: bestPlay.cardId || null,
+        cardLabel: bestPlay.cardLabel || null,
+        score: roundRatio(bestPlay.score),
+        continuationValue: roundRatio(bestPlay.continuationValue),
+        directScoreGain: roundRatio(bestPlay.directScoreGain),
+        finalDeltaValue: roundRatio(bestPlay.finalDeltaValue),
+        c2Type3ProgressValue: roundRatio(bestPlay.c2Type3ProgressValue),
+        cFinalTaskProgressValue: roundRatio(bestPlay.cFinalTaskProgressValue),
+        endGameExpectedScore: roundRatio(bestPlay.endGameExpectedScore),
+      },
+      currentBestPlayScore: roundRatio(breakdown.currentBestPlayScore),
+      concreteFinalValue: roundRatio(breakdown.concreteFinalValue),
+      discardCost: roundRatio(breakdown.discardCost),
+      finalMarkCount: roundRatio(breakdown.finalMarkCount),
+      nextFinalMarkThreshold: breakdown.nextFinalMarkThreshold || null,
+      thresholdBonus: roundRatio(breakdown.thresholdBonus),
+      finalLowTailOneCreditUnlock: Boolean(breakdown.finalLowTailOneCreditUnlock),
+      finalHighScoreOneCreditUnlock: Boolean(breakdown.finalHighScoreOneCreditUnlock),
+      highScoreProjectedScore: roundRatio(breakdown.highScoreProjectedScore),
+    };
+  }
+
   function getPlayerKey(entry) {
     return entry?.playerId || entry?.playerLabel || "unknown";
   }
@@ -1846,6 +1904,7 @@
       negativeCardCornerGraphLift: 0,
       endTurnWithAvailableMove: 0,
       researchTechOverCompoundTechCard: 0,
+      mainUnlockLowConcretePlay: 0,
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
     };
@@ -1854,6 +1913,7 @@
     const negativeCardCornerGraphLiftSamples = [];
     const endTurnMoveOpportunitySamples = [];
     const researchTechCompoundCardSamples = [];
+    const mainUnlockLowConcretePlaySamples = [];
     const scoreOpportunities = {
       selectedBelowBest: 0,
       totalGap: 0,
@@ -1930,6 +1990,12 @@
           opportunities.researchTechOverCompoundTechCard += 1;
           if (researchTechCompoundCardSamples.length < 12) {
             researchTechCompoundCardSamples.push(buildResearchTechCompoundCardSample(entry, candidates));
+          }
+        }
+        if (isMainUnlockLowConcretePlay(entry)) {
+          opportunities.mainUnlockLowConcretePlay += 1;
+          if (mainUnlockLowConcretePlaySamples.length < 12) {
+            mainUnlockLowConcretePlaySamples.push(buildMainUnlockLowConcretePlaySample(entry));
           }
         }
         if (candidates.length && action && candidates.some((candidate) => candidateMatchesAction(candidate, action) && !isCandidateAvailable(candidate))) {
@@ -2044,6 +2110,7 @@
       negativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
+      mainUnlockLowConcretePlaySamples,
       scoreOpportunities: {
         selectedBelowBest: scoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(scoreOpportunities.totalGap),
@@ -2085,6 +2152,7 @@
     const mergedNegativeCardCornerGraphLiftSamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
     const mergedResearchTechCompoundCardSamples = [];
+    const mergedMainUnlockLowConcretePlaySamples = [];
     const mergedMovePayment = {
       count: 0,
       requiredMovePoints: 0,
@@ -2150,6 +2218,11 @@
       if (mergedResearchTechCompoundCardSamples.length < 12 && Array.isArray(analysis.researchTechCompoundCardSamples)) {
         mergedResearchTechCompoundCardSamples.push(
           ...analysis.researchTechCompoundCardSamples.slice(0, 12 - mergedResearchTechCompoundCardSamples.length),
+        );
+      }
+      if (mergedMainUnlockLowConcretePlaySamples.length < 12 && Array.isArray(analysis.mainUnlockLowConcretePlaySamples)) {
+        mergedMainUnlockLowConcretePlaySamples.push(
+          ...analysis.mainUnlockLowConcretePlaySamples.slice(0, 12 - mergedMainUnlockLowConcretePlaySamples.length),
         );
       }
       mergedScoreOpportunities.selectedBelowBest += numeric(analysis.scoreOpportunities?.selectedBelowBest);
@@ -2248,6 +2321,7 @@
       negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
+      mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(mergedScoreOpportunities.totalGap),

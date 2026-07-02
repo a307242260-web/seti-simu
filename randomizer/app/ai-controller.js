@@ -17087,6 +17087,7 @@
             negativeCardCornerGraphLiftSamples: analysis.negativeCardCornerGraphLiftSamples,
             endTurnMoveOpportunitySamples: analysis.endTurnMoveOpportunitySamples,
             researchTechCompoundCardSamples: analysis.researchTechCompoundCardSamples,
+            mainUnlockLowConcretePlaySamples: analysis.mainUnlockLowConcretePlaySamples,
             scoreOpportunities: analysis.scoreOpportunities,
             topScoreGaps: analysis.topScoreGaps,
             movePayment: analysis.movePayment,
