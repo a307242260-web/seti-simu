@@ -1612,7 +1612,7 @@
   {
     "card_id": "dlc_22.png",
     "card_name": "新任务",
-    "price": 2,
+    "price": 0,
     "card_type_code": 0,
     "set": "space-agency",
     "discard_action_code": 0,
