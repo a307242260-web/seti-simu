@@ -16598,6 +16598,8 @@
         const scanScore = scanCheck.ok ? scoreAiScanAction(simulatedPlayer) : 0;
         const analyzeCheck = canAiAnalyzeData(simulatedPlayer);
         const analyzeScore = analyzeCheck.ok ? scoreAiAnalyzeAction(simulatedPlayer) : 0;
+        const planetCashoutRecovery = scoreAiEnergyTradePlanetCashoutRecovery(player, tradeId);
+        const planetCashoutPlan = planetCashoutRecovery?.plan || null;
 
         const activeRocketCount = rocketActions.getRocketsForPlayer
           ? rocketActions.getRocketsForPlayer(rocketState, player.id).length
@@ -16628,6 +16630,17 @@
           analyzeCheck.ok ? {
             actionId: "analyze",
             score: aiNumber(analyzeScore),
+          } : null,
+          planetCashoutPlan ? {
+            actionId: planetCashoutPlan.kind || "planetCashout",
+            score: aiNumber(planetCashoutRecovery.score),
+            planetId: planetCashoutPlan.planetId || null,
+            planetName: planetCashoutPlan.planetName || null,
+            directScoreGain: Math.max(0, aiNumber(planetCashoutPlan.directScore)),
+            rewardValue: Math.max(0, aiNumber(planetCashoutPlan.rewardValue)),
+            targetEnergy: Math.max(0, aiNumber(planetCashoutPlan.targetEnergy)),
+            energyAfterTrade: Math.max(0, aiNumber(planetCashoutPlan.energyAfterTrade)),
+            afterTradeGap: Math.max(0, aiNumber(planetCashoutPlan.afterTradeGap)),
           } : null,
           canLaunchAfterTrade ? {
             actionId: "launch",
