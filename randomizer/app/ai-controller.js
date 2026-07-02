@@ -16044,9 +16044,7 @@
     }
 
     function runAiResearchTechSelectionDecision(effect) {
-      const isResearchSelectionEffect = effect?.type === "research_tech_select"
-        || effect?.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH;
-      if (!isResearchSelectionEffect && !isTechTilePickingActive()) return null;
+      if (!isTechTilePickingActive()) return null;
       const currentPlayer = getCurrentPlayer();
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择科技片` };
@@ -17235,8 +17233,10 @@
         const cardSelectionResult = runAiCardSelectionDecision();
         if (cardSelectionResult) return cardSelectionResult;
 
-        const techSelectionResult = runAiResearchTechSelectionDecision();
-        if (techSelectionResult) return techSelectionResult;
+        if (!isActionEffectFlowActive()) {
+          const techSelectionResult = runAiResearchTechSelectionDecision();
+          if (techSelectionResult) return techSelectionResult;
+        }
 
         const handScanResult = runAiHandScanDecision();
         if (handScanResult) return handScanResult;

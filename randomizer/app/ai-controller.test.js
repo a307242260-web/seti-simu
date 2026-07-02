@@ -3296,6 +3296,51 @@ function makeYichangdianAlienState(options = {}) {
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
     actionEffectFlowActive: true,
+    recordExecuteActionEffect: true,
+    recordSupplyTechSelection: true,
+    currentActionEffect: purpleTechEffect,
+    pendingActionEffectFlow: {
+      playerId: "player-blue",
+      currentIndex: 0,
+      effects: [purpleTechEffect],
+    },
+    takeableTechIds: ["orange2", "purple2", "blue3"],
+    techStacks: {
+      orange2: { techType: "orange", stackIndex: 2 },
+      purple2: { techType: "purple", stackIndex: 2 },
+      blue3: { techType: "blue", stackIndex: 3 },
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should execute card research-tech effects before choosing a tile");
+  assert.deepEqual(harness.getHandled(), {
+    type: "effect",
+    effectId: "b31-purple-tech",
+    effectType: "card_research_tech",
+  });
+}
+
+{
+  const purpleTechEffect = {
+    id: "b31-purple-tech",
+    type: "card_research_tech",
+    label: "科技（只能选择紫色）",
+    status: "active",
+    playerId: "player-blue",
+    options: { techTypes: ["purple"], skipCost: true },
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    actionEffectFlowActive: true,
+    techTilePickingActive: true,
     recordSupplyTechSelection: true,
     currentActionEffect: purpleTechEffect,
     pendingActionEffectFlow: {
