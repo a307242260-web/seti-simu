@@ -479,6 +479,33 @@
     };
   }
 
+  function isNonPositivePublicRefillPick(entry) {
+    if (entry?.type !== "pick-card") return false;
+    if (entry.details?.pendingType !== "trade") return false;
+    const score = getFiniteScore(entry.details?.score);
+    return score != null && score <= 0;
+  }
+
+  function buildNonPositivePublicRefillSample(entry) {
+    const card = entry.details?.card || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      slotIndex: Number.isFinite(Number(entry.details?.slotIndex)) ? Number(entry.details.slotIndex) : null,
+      score: roundRatio(entry.details?.score),
+      cardId: card.cardId || card.id || null,
+      cardLabel: card.cardName || card.label || entry.details?.cardLabel || null,
+      price: roundRatio(card.price),
+      typeCode: Number.isFinite(Number(card.cardTypeCode)) ? Number(card.cardTypeCode) : null,
+      discardActionCode: card.discardActionCode ?? null,
+      scanActionCode: card.scanActionCode ?? null,
+      incomeCode: card.incomeCode ?? null,
+    };
+  }
+
   function getPlayerKey(entry) {
     return entry?.playerId || entry?.playerLabel || "unknown";
   }
@@ -1942,6 +1969,7 @@
       endTurnWithAvailableMove: 0,
       researchTechOverCompoundTechCard: 0,
       mainUnlockLowConcretePlay: 0,
+      nonPositivePublicRefill: 0,
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
     };
@@ -1952,6 +1980,7 @@
     const endTurnMoveOpportunitySamples = [];
     const researchTechCompoundCardSamples = [];
     const mainUnlockLowConcretePlaySamples = [];
+    const nonPositivePublicRefillSamples = [];
     const scoreOpportunities = {
       selectedBelowBest: 0,
       totalGap: 0,
@@ -2056,6 +2085,11 @@
           increment(turnPlanTypes, turnPlan?.type || "unknown");
           increment(turnPlanActions, getTurnPlanActionId(turnPlan));
         }
+      } else if (isNonPositivePublicRefillPick(entry)) {
+        opportunities.nonPositivePublicRefill += 1;
+        if (nonPositivePublicRefillSamples.length < 12) {
+          nonPositivePublicRefillSamples.push(buildNonPositivePublicRefillSample(entry));
+        }
       } else if (entry.type === "play-card") {
         const card = entry.details?.selected || entry.details?.card || {};
         increment(playCards, card.cardLabel || card.cardId || card.cardInstanceId || "unknown");
@@ -2156,6 +2190,7 @@
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
       mainUnlockLowConcretePlaySamples,
+      nonPositivePublicRefillSamples,
       scoreOpportunities: {
         selectedBelowBest: scoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(scoreOpportunities.totalGap),
@@ -2199,6 +2234,7 @@
     const mergedEndTurnMoveOpportunitySamples = [];
     const mergedResearchTechCompoundCardSamples = [];
     const mergedMainUnlockLowConcretePlaySamples = [];
+    const mergedNonPositivePublicRefillSamples = [];
     const mergedMovePayment = {
       count: 0,
       requiredMovePoints: 0,
@@ -2277,6 +2313,11 @@
       if (mergedMainUnlockLowConcretePlaySamples.length < 12 && Array.isArray(analysis.mainUnlockLowConcretePlaySamples)) {
         mergedMainUnlockLowConcretePlaySamples.push(
           ...analysis.mainUnlockLowConcretePlaySamples.slice(0, 12 - mergedMainUnlockLowConcretePlaySamples.length),
+        );
+      }
+      if (mergedNonPositivePublicRefillSamples.length < 12 && Array.isArray(analysis.nonPositivePublicRefillSamples)) {
+        mergedNonPositivePublicRefillSamples.push(
+          ...analysis.nonPositivePublicRefillSamples.slice(0, 12 - mergedNonPositivePublicRefillSamples.length),
         );
       }
       mergedScoreOpportunities.selectedBelowBest += numeric(analysis.scoreOpportunities?.selectedBelowBest);
@@ -2377,6 +2418,7 @@
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
+      nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(mergedScoreOpportunities.totalGap),

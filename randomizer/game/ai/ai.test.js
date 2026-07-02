@@ -1095,6 +1095,40 @@ assert.equal(negativeCardCornerGraphLiftAnalysis.negativeCardCornerGraphLiftSamp
 const negativeCardCornerGraphLiftSummary = analytics.summarizeBattleReports([negativeCardCornerGraphLiftReport]);
 assert.equal(negativeCardCornerGraphLiftSummary.negativeCardCornerGraphLiftSamples[0].cardId, "b_90.webp");
 
+const nonPositivePublicRefillReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "pick-card",
+    roundNumber: 4,
+    turnNumber: 10,
+    playerId: "player-brown",
+    playerLabel: "棕色",
+    playerResources: { score: 149, credits: 0, energy: 1, publicity: 6, handSize: 2 },
+    details: {
+      pendingType: "trade",
+      slotIndex: 1,
+      score: -11.96,
+      card: {
+        id: "card-163-0",
+        cardId: "dlc_2.png",
+        cardName: "跟踪与数据中继卫星",
+        price: 1,
+        cardTypeCode: 0,
+        discardActionCode: 1,
+        scanActionCode: 1,
+        incomeCode: 2,
+      },
+    },
+  }],
+  playerResults: [{ playerId: "player-brown", playerLabel: "棕色", finalScore: 290 }],
+};
+const nonPositivePublicRefillAnalysis = analytics.analyzeBattleReport(nonPositivePublicRefillReport);
+assert.equal(nonPositivePublicRefillAnalysis.opportunities.nonPositivePublicRefill, 1);
+assert.equal(nonPositivePublicRefillAnalysis.nonPositivePublicRefillSamples[0].score, -11.96);
+assert.equal(nonPositivePublicRefillAnalysis.nonPositivePublicRefillSamples[0].cardId, "dlc_2.png");
+const nonPositivePublicRefillSummary = analytics.summarizeBattleReports([nonPositivePublicRefillReport]);
+assert.equal(nonPositivePublicRefillSummary.nonPositivePublicRefillSamples[0].cardLabel, "跟踪与数据中继卫星");
+
 const compoundTechCardReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{
