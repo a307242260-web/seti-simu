@@ -203,6 +203,33 @@
     };
   }
 
+  function buildEndTurnMoveOpportunitySample(entry, candidates = [], limit = 3) {
+    const availableCandidates = (candidates || []).filter(isCandidateAvailable);
+    const availableMoves = availableCandidates
+      .filter((candidate) => getCandidateId(candidate) === "move")
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ));
+    const topCandidates = availableCandidates
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ))
+      .slice(0, limit)
+      .map(summarizeOpportunityCandidate);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      bestMove: availableMoves[0] ? summarizeOpportunityCandidate(availableMoves[0]) : null,
+      topCandidates,
+    };
+  }
+
   function getPlayerKey(entry) {
     return entry?.playerId || entry?.playerLabel || "unknown";
   }
@@ -1665,6 +1692,7 @@
       selectedBelowBestScore: 0,
     };
     const passOpportunitySamples = [];
+    const endTurnMoveOpportunitySamples = [];
     const scoreOpportunities = {
       selectedBelowBest: 0,
       totalGap: 0,
@@ -1721,6 +1749,9 @@
         }
         if (actionId === "end-turn" && hasAvailableAction(candidates, "move")) {
           opportunities.endTurnWithAvailableMove += 1;
+          if (endTurnMoveOpportunitySamples.length < 12) {
+            endTurnMoveOpportunitySamples.push(buildEndTurnMoveOpportunitySample(entry, candidates));
+          }
         }
         if (candidates.length && action && candidates.some((candidate) => candidateMatchesAction(candidate, action) && !isCandidateAvailable(candidate))) {
           opportunities.selectedUnavailableCandidate += 1;
@@ -1830,6 +1861,7 @@
       movePayment,
       opportunities,
       passOpportunitySamples,
+      endTurnMoveOpportunitySamples,
       scoreOpportunities: {
         selectedBelowBest: scoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(scoreOpportunities.totalGap),
@@ -1867,6 +1899,7 @@
       maxGap: 0,
     };
     const mergedPassOpportunitySamples = [];
+    const mergedEndTurnMoveOpportunitySamples = [];
     const mergedMovePayment = {
       count: 0,
       requiredMovePoints: 0,
@@ -1910,6 +1943,11 @@
       for (const [key, count] of Object.entries(analysis.opportunities || {})) increment(mergedOpportunities, key, count);
       if (mergedPassOpportunitySamples.length < 12 && Array.isArray(analysis.passOpportunitySamples)) {
         mergedPassOpportunitySamples.push(...analysis.passOpportunitySamples.slice(0, 12 - mergedPassOpportunitySamples.length));
+      }
+      if (mergedEndTurnMoveOpportunitySamples.length < 12 && Array.isArray(analysis.endTurnMoveOpportunitySamples)) {
+        mergedEndTurnMoveOpportunitySamples.push(
+          ...analysis.endTurnMoveOpportunitySamples.slice(0, 12 - mergedEndTurnMoveOpportunitySamples.length),
+        );
       }
       mergedScoreOpportunities.selectedBelowBest += numeric(analysis.scoreOpportunities?.selectedBelowBest);
       mergedScoreOpportunities.totalGap += numeric(analysis.scoreOpportunities?.totalGap);
@@ -2003,6 +2041,7 @@
       topMissedCandidates,
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
+      endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(mergedScoreOpportunities.totalGap),

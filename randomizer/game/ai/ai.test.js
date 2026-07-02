@@ -936,6 +936,32 @@ assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "score-pas
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-score-gap"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-card-score-gap"));
 
+const endTurnMoveReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 5,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 90, credits: 1, energy: 1, handSize: 2 },
+    details: {
+      action: { id: "end-turn", kind: "quick", score: -0.5 },
+      candidates: [
+        { id: "end-turn", kind: "quick", available: true, score: -0.5 },
+        { id: "move", kind: "quick", available: true, score: 7.25, direction: "clockwise", directScoreGain: 0 },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 90 }],
+};
+const endTurnMoveAnalysis = analytics.analyzeBattleReport(endTurnMoveReport);
+assert.equal(endTurnMoveAnalysis.opportunities.endTurnWithAvailableMove, 1);
+assert.equal(endTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].bestMove.score, 7.25);
+assert.equal(endTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].resources.energy, 1);
+const endTurnMoveSummary = analytics.summarizeBattleReports([endTurnMoveReport]);
+assert.equal(endTurnMoveSummary.endTurnMoveOpportunitySamples[0].bestMove.score, 7.25);
+
 const actionGraphAlignedAnalysis = analytics.analyzeBattleReport({
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{
