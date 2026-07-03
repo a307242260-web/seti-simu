@@ -3296,9 +3296,10 @@
     const counts = normalizeTechTypeCounts();
     for (const entry of logs || []) {
       if (entry?.type !== "tech-placement" || !matchesPlayerResult(entry, result)) continue;
-      const selected = entry.details?.selected || {};
-      const tileId = selected.tileId || entry.details?.tileId || null;
-      const techType = selected.techType || entry.details?.techType || getTechTypeFromTile(tileId);
+      const selected = entry.details?.selected || null;
+      if (!selected?.tileId && Array.isArray(entry.details?.availableSlots)) continue;
+      const tileId = selected?.tileId || entry.details?.tileId || null;
+      const techType = selected?.techType || entry.details?.techType || getTechTypeFromTile(tileId);
       if (D1_TECH_TYPES.includes(techType)) counts[techType] += 1;
     }
     return counts;
@@ -3737,7 +3738,9 @@
         if (followupKey) increment(profile.moveFollowupCounts, followupKey);
         recordProfileTurnPlan(profile, entry);
       } else if (entry.type === "tech-placement") {
-        const tileId = entry.details?.tileId || entry.details?.selected?.tileId || "unknown";
+        const selected = entry.details?.selected || null;
+        if (!selected?.tileId && Array.isArray(entry.details?.availableSlots)) continue;
+        const tileId = selected?.tileId || entry.details?.tileId || "unknown";
         const techType = getTechTypeFromTile(tileId);
         increment(profile.techTypeCounts, techType || "unknown");
         addProfileMetric(profile, "techPlacementCount", 1);
