@@ -5617,6 +5617,240 @@
       return plan.ok && Number.isFinite(Number(plan.totalCost)) ? Number(plan.totalCost) : Infinity;
     }
 
+    function summarizeAiRepeatedCardsForCreditDiscardPlan(player = getCurrentPlayer(), preserveHandIndex = null, tradeCount = 1) {
+      const count = Math.max(0, Math.round(aiNumber(tradeCount)));
+      const trade = quickTrades?.getTradeAction?.("cards-for-credit") || null;
+      if (!player || !trade || count <= 0) {
+        return {
+          ok: false,
+          reason: "missing-player-or-trade",
+          tradeCount: count,
+          handCost: 0,
+          totalHandCost: 0,
+          totalCost: null,
+          selectedCards: [],
+          candidateCards: [],
+          candidateCount: 0,
+        };
+      }
+
+      const handCost = Math.max(0, Math.round(aiNumber(trade.cost?.handSize)));
+      const totalHandCost = handCost * count;
+      const costEntries = buildAiTradeDiscardCostEntries(player, preserveHandIndex);
+      const selectedEntries = costEntries.slice(0, totalHandCost);
+      const hasEnoughCards = totalHandCost > 0 && selectedEntries.length >= totalHandCost;
+      const totalCost = hasEnoughCards
+        ? selectedEntries.reduce((total, entry) => total + Math.max(0, aiNumber(entry.opportunityCost)), 0)
+        : Infinity;
+      return {
+        ok: hasEnoughCards,
+        reason: hasEnoughCards ? null : "insufficient-discard-cards",
+        tradeCount: count,
+        handCost,
+        totalHandCost,
+        totalCost: Number.isFinite(totalCost) ? roundAiScore(totalCost) : null,
+        selectedCards: selectedEntries.map(summarizeAiTradeDiscardCardEntry),
+        candidateCards: costEntries
+          .slice(0, Math.max(4, totalHandCost + 2))
+          .map(summarizeAiTradeDiscardCardEntry),
+        candidateCount: costEntries.length,
+      };
+    }
+
+    function createAiPlayerAfterRepeatedQuickTrade(player = getCurrentPlayer(), trade = null, tradeCount = 1) {
+      let simulatedPlayer = player;
+      const count = Math.max(0, Math.round(aiNumber(tradeCount)));
+      for (let index = 0; index < count; index += 1) {
+        simulatedPlayer = createAiPlayerAfterQuickTrade(simulatedPlayer, trade);
+        if (!simulatedPlayer) return null;
+      }
+      return simulatedPlayer;
+    }
+
+    function getAiFinalReadyTaskCreditChainProfile(player = getCurrentPlayer(), options = {}) {
+      if (
+        !player
+        || !quickTrades?.getTradeAction
+        || getAiRoundNumber() < FINAL_ROUND_NUMBER
+        || state.pendingActionExecuted
+        || countAiFinalMarksForPlayer(player) < 3
+        || getAiNextMissingFinalScoreThreshold(player)
+        || (turnState.passedPlayerIds || []).includes(player.id)
+      ) {
+        return null;
+      }
+      if (options.requireMainActionOpen !== false && !canStartMainAction()) return null;
+
+      const resources = player.resources || {};
+      const currentScore = Math.max(0, aiNumber(resources.score));
+      if (currentScore < 100 || currentScore >= 170) return null;
+
+      const hand = player.hand || [];
+      const actualHandSize = hand.length;
+      const hasResourceHandSize = Number.isFinite(Number(resources.handSize));
+      const resourceHandSize = hasResourceHandSize
+        ? Math.max(0, Math.round(aiNumber(resources.handSize)))
+        : actualHandSize;
+      const handSize = hasResourceHandSize
+        ? Math.min(actualHandSize, resourceHandSize)
+        : actualHandSize;
+      const credits = Math.max(0, aiNumber(resources.credits));
+      if (credits < 1 || handSize < 3) return null;
+
+      const trade = quickTrades.getTradeAction("cards-for-credit");
+      const handCost = Math.max(0, Math.round(aiNumber(trade?.cost?.handSize)));
+      const creditGain = Math.max(0, aiNumber(trade?.gain?.credits));
+      if (!trade || handCost < 2 || creditGain <= 0) return null;
+
+      const currentBestPlayScore = hand.reduce((best, card, handIndex) => {
+        const candidate = buildAiPlayCardCandidate(card, handIndex, player);
+        return Math.max(best, aiNumber(candidate?.score));
+      }, 0);
+
+      const targets = hand
+        .map((card, handIndex) => {
+          const model = cardEffects.getCardModel?.(card) || null;
+          const readyTaskCashout = getAiReadyHandTaskCashout(card, model, player);
+          const price = getCardPrice(card);
+          const creditsMissing = Math.max(0, aiNumber(price) - credits);
+          const tradesNeeded = Math.ceil(creditsMissing / creditGain);
+          const totalHandCost = tradesNeeded * handCost;
+          if (
+            aiNumber(price) < 3
+            || aiNumber(readyTaskCashout.directScore) <= 0
+            || creditsMissing <= 0
+            || tradesNeeded < 1
+            || tradesNeeded > 2
+            || handSize - 1 < totalHandCost
+          ) {
+            return null;
+          }
+
+          const discardPlan = summarizeAiRepeatedCardsForCreditDiscardPlan(player, handIndex, tradesNeeded);
+          if (!discardPlan.ok) return null;
+          const simulatedPlayer = createAiPlayerAfterRepeatedQuickTrade(player, trade, tradesNeeded);
+          if (!simulatedPlayer || !players.canAfford(simulatedPlayer, getCardPlayCost(card))) return null;
+          const playCandidate = buildAiPlayCardCandidate(card, handIndex, simulatedPlayer);
+          if (!playCandidate) return null;
+          const breakdown = playCandidate.valueBreakdown || {};
+          const finalDeltaValue = Math.max(
+            0,
+            scoreAiFinalFormulaDeltaValue(playCandidate.finalFormulaDeltas || {}, player, {
+              includePotential: true,
+              potentialScale: 0.45,
+            }),
+          );
+          const concreteFinalValue = Math.max(0, aiNumber(playCandidate.directScoreGain))
+            + Math.max(0, aiNumber(breakdown.readyTaskCashoutValue))
+            + Math.max(0, aiNumber(breakdown.cFinalTaskProgressValue))
+            + Math.max(0, aiNumber(breakdown.c2Type3ProgressValue))
+            + Math.max(0, aiNumber(breakdown.endGameExpectedScore))
+            + finalDeltaValue;
+          if (concreteFinalValue < 7) return null;
+          if (currentBestPlayScore >= Math.max(18, aiNumber(playCandidate.score) - 1)) return null;
+
+          const discardCost = Math.max(0, aiNumber(discardPlan.totalCost));
+          const lowTailPressure = Math.max(0, 170 - currentScore) * 0.08;
+          const repeatedTradePenalty = Math.max(0, tradesNeeded - 1) * 1.5;
+          const score = 17
+            + Math.max(0, aiNumber(breakdown.readyTaskCashoutValue))
+            + Math.max(0, aiNumber(playCandidate.directScoreGain)) * 1.35
+            + Math.max(0, aiNumber(breakdown.cFinalTaskProgressValue)) * 0.65
+            + Math.max(0, finalDeltaValue) * 0.45
+            + lowTailPressure
+            - discardCost * 0.18
+            - repeatedTradePenalty;
+
+          return {
+            handIndex,
+            cardId: playCandidate.cardId || card?.cardId || card?.id || null,
+            cardInstanceId: playCandidate.cardInstanceId || card?.id || null,
+            cardLabel: playCandidate.cardLabel || getAiCardDisplayLabel({ card, handIndex }, player),
+            price,
+            creditsMissing: roundAiScore(creditsMissing),
+            tradesNeeded,
+            playCandidate,
+            readyTaskCashout,
+            concreteFinalValue: roundAiScore(concreteFinalValue),
+            finalDeltaValue: roundAiScore(finalDeltaValue),
+            discardCost: roundAiScore(discardCost),
+            discardPlan,
+            score: roundAiScore(Math.min(38, Math.max(0, score))),
+          };
+        })
+        .filter(Boolean)
+        .sort((left, right) => (
+          aiNumber(right.score) - aiNumber(left.score)
+          || aiNumber(right.concreteFinalValue) - aiNumber(left.concreteFinalValue)
+          || aiNumber(left.tradesNeeded) - aiNumber(right.tradesNeeded)
+        ));
+
+      const target = targets[0] || null;
+      if (!target || aiNumber(target.score) < 14) return null;
+      return {
+        tradeId: "cards-for-credit",
+        target,
+        currentScore,
+        credits,
+        handSize,
+        currentBestPlayScore: roundAiScore(currentBestPlayScore),
+      };
+    }
+
+    function listAiFinalReadyTaskCreditChainTradeCandidates(player = getCurrentPlayer()) {
+      if (
+        !player
+        || !quickTrades?.getTradeAction
+        || state.pendingActionExecuted
+        || !canStartMainAction()
+      ) {
+        return [];
+      }
+      const profile = getAiFinalReadyTaskCreditChainProfile(player);
+      if (!profile) return [];
+      const trade = quickTrades.getTradeAction(profile.tradeId);
+      const check = quickTrades.canExecuteTrade?.(profile.tradeId, createActionContext()) || { ok: false };
+      if (!trade || !check.ok) return [];
+      const target = profile.target || {};
+      return [{
+        id: "quickTrade",
+        kind: "quick",
+        available: false,
+        tradeId: trade.id,
+        label: trade.label || trade.id,
+        reason: target.tradesNeeded > 1
+          ? "终局已完成任务：连续弃牌补信用点"
+          : "终局已完成任务：弃牌补信用点",
+        unavailableReason: "诊断-only：需证明替代链优于当前主行动后再放行",
+        score: target.score,
+        valueBreakdown: {
+          finalReadyTaskCreditChainTrade: true,
+          diagnosticOnly: true,
+          currentScore: profile.currentScore,
+          credits: profile.credits,
+          handSize: profile.handSize,
+          currentBestPlayScore: profile.currentBestPlayScore,
+          targetCard: {
+            handIndex: target.handIndex,
+            cardId: target.cardId || null,
+            cardLabel: target.cardLabel || null,
+            price: target.price,
+            creditsMissing: target.creditsMissing,
+            tradesNeeded: target.tradesNeeded,
+            playScore: roundAiScore(target.playCandidate?.score),
+            directScoreGain: roundAiScore(target.playCandidate?.directScoreGain),
+            readyTaskCashoutValue: roundAiScore(target.readyTaskCashout?.value),
+            readyTaskCashoutDirectScore: roundAiScore(target.readyTaskCashout?.directScore),
+            readyTaskCashoutCount: roundAiScore(target.readyTaskCashout?.count),
+            concreteFinalValue: target.concreteFinalValue,
+            finalDeltaValue: target.finalDeltaValue,
+          },
+          discardCost: target.discardCost,
+          discardPlan: target.discardPlan,
+        },
+      }];
+    }
+
     function buildAiMainUnlockTradeCandidate(player = getCurrentPlayer(), tradeId = null, playCardCandidates = null) {
       if (!player || !tradeId || !quickTrades?.getTradeAction) return null;
       const trade = quickTrades.getTradeAction(tradeId);
@@ -16959,6 +17193,7 @@
       candidates.push(...listAiFinalAnalyzeEnergyTradeCandidates(currentPlayer));
       candidates.push(...listAiThirdFinalMarkResourceTradeCandidates(currentPlayer));
       candidates.push(...listAiMainUnlockTradeCandidates(currentPlayer, playCardCandidates));
+      candidates.push(...listAiFinalReadyTaskCreditChainTradeCandidates(currentPlayer));
       candidates.push(...listAiResourceLockMainUnlockTradeCandidates(currentPlayer, candidates));
       candidates.push(...listAiLateResourceRecoveryTradeCandidates(currentPlayer));
       candidates.push(...listAiDataPlacementCandidates(currentPlayer));
