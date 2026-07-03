@@ -12377,19 +12377,43 @@
       }, options);
     }
 
-    function chooseAiScanTargetButton(buttons = [], options = {}) {
-      const ranked = [...(buttons || [])]
-        .map((button, index) => ({
-          button,
-          index,
-          score: scoreAiScanTargetButton(button, options),
-        }))
-        .filter((entry) => Number.isFinite(entry.score))
-        .sort((left, right) => right.score - left.score || left.index - right.index);
-      return ranked[0]?.button || null;
+    function buildAiScanTargetChoiceB2Summary(choice = {}, player = getCurrentPlayer()) {
+      const nebulaId = choice?.nebulaId || null;
+      if (!nebulaId || !player) return null;
+      const counts = getAiNebulaSignalCounts(nebulaId, player);
+      const bottleneck = getAiB2SectorBottleneck(player);
+      const b2Focus = scoreAiB2SectorScanFocus(nebulaId, counts, player);
+      if (!bottleneck.active && !bottleneck.marked && b2Focus <= 0) return null;
+      const ownAfterScan = counts.ownCount + 1;
+      return {
+        focus: roundAiScore(b2Focus),
+        active: Boolean(bottleneck.active),
+        marked: Boolean(bottleneck.marked),
+        sectorWins: Math.max(0, Math.round(aiNumber(bottleneck.sectorWins))),
+        orbitLandCount: Math.max(0, Math.round(aiNumber(bottleneck.orbitLandCount))),
+        deficit: Math.max(0, Math.round(aiNumber(bottleneck.deficit))),
+        multiplier: Math.max(0, Math.round(aiNumber(bottleneck.multiplier))),
+        ownCount: Math.max(0, Math.round(aiNumber(counts.ownCount))),
+        openCount: Math.max(0, Math.round(aiNumber(counts.openCount))),
+        markedCount: Math.max(0, Math.round(aiNumber(counts.markedCount))),
+        maxOtherCount: Math.max(0, Math.round(aiNumber(counts.maxOtherCount))),
+        winsAfterScan: ownAfterScan > counts.maxOtherCount,
+      };
     }
 
-    function chooseAiScanTargetChoice(choices = [], options = {}) {
+    function summarizeAiScanTargetChoiceEntry(entry = {}, player = getCurrentPlayer()) {
+      const choice = entry.choice || {};
+      return {
+        nebulaId: choice.nebulaId || null,
+        sectorX: choice.sectorX ?? null,
+        label: choice.label || null,
+        score: roundAiScore(entry.score),
+        directScoreGain: roundAiScore(entry.directScoreGain),
+        b2: buildAiScanTargetChoiceB2Summary(choice, player),
+      };
+    }
+
+    function rankAiScanTargetChoices(choices = [], options = {}) {
       return (choices || [])
         .map((choice, index) => ({
           choice,
@@ -12402,7 +12426,52 @@
           right.score - left.score
           || right.directScoreGain - left.directScoreGain
           || left.index - right.index
-        ))[0]?.choice || null;
+        ));
+    }
+
+    function rankAiScanTargetButtons(buttons = [], options = {}) {
+      return [...(buttons || [])]
+        .map((button, index) => {
+          if (button?.dataset?.conditionalSectorX != null) {
+            const sectorX = solar.mod8(Number(button.dataset.conditionalSectorX));
+            const bestEntry = rankAiScanTargetChoices(buildSectorScanChoicesForX(sectorX), options)[0] || null;
+            return {
+              button,
+              index,
+              score: bestEntry?.score ?? -Infinity,
+              directScoreGain: bestEntry?.directScoreGain ?? 0,
+              choice: bestEntry?.choice || { sectorX },
+            };
+          }
+          const choice = {
+            nebulaId: button?.dataset?.nebulaId || null,
+            sectorX: button?.dataset?.sectorX,
+            label: button?.textContent || "",
+            disabled: button?.disabled,
+          };
+          return {
+            button,
+            index,
+            choice,
+            score: scoreAiNebulaScanChoice(choice, options),
+            directScoreGain: getAiNebulaScanChoiceDirectScore(choice),
+          };
+        })
+        .filter((entry) => Number.isFinite(entry.score))
+        .sort((left, right) => (
+          right.score - left.score
+          || right.directScoreGain - left.directScoreGain
+          || left.index - right.index
+        ));
+    }
+
+    function chooseAiScanTargetButton(buttons = [], options = {}) {
+      const ranked = rankAiScanTargetButtons(buttons, options);
+      return ranked[0]?.button || null;
+    }
+
+    function chooseAiScanTargetChoice(choices = [], options = {}) {
+      return rankAiScanTargetChoices(choices, options)[0]?.choice || null;
     }
 
     function scoreAiScanEnergyReservationPenalty(player = getCurrentPlayer()) {
@@ -14408,14 +14477,16 @@
       }
 
       if (pendingType === "conditional_sector_scan") {
-        const button = chooseAiScanTargetButton(
+        const scanTargetOptions = {
+          player,
+          pendingType,
+          gainData: pending.effect?.options?.gainData,
+        };
+        const rankedButtons = rankAiScanTargetButtons(
           queryAiButtons("[data-conditional-sector-x]"),
-          {
-            player,
-            pendingType,
-            gainData: pending.effect?.options?.gainData,
-          },
+          scanTargetOptions,
         );
+        const button = rankedButtons[0]?.button || null;
         if (!button) {
           return { ok: false, blocked: true, message: "AI 没有可选条件扇区" };
         }
@@ -14424,6 +14495,10 @@
           pendingType,
           sectorX: button.dataset.conditionalSectorX || null,
           label: button.textContent || "",
+          selectedScore: roundAiScore(rankedButtons[0]?.score),
+          topChoices: rankedButtons
+            .slice(0, 6)
+            .map((entry) => summarizeAiScanTargetChoiceEntry(entry, player)),
         });
         return handleConditionalSectorChoice(button.dataset.conditionalSectorX);
       }
@@ -14434,26 +14509,30 @@
       if (!["sector_scan", "public_scan", "hand_scan"].includes(pendingType)) {
         return null;
       }
-      const button = chooseAiScanTargetButton(
+      const scanTargetOptions = {
+        player,
+        pendingType,
+        gainData: pending.gainData,
+      };
+      const rankedButtons = rankAiScanTargetButtons(
         queryAiButtons(".scan-target-option-button")
           .filter((item) => item.dataset.nebulaId != null),
-        {
-          player,
-          pendingType,
-          gainData: pending.gainData,
-        },
+        scanTargetOptions,
       );
+      const button = rankedButtons[0]?.button || null;
       if (!button) {
         let fallbackChoices = pending.choices || [];
         if (!fallbackChoices.length && (pendingType === "public_scan" || pendingType === "hand_scan") && pending.card) {
           const scanChoices = getPublicScanChoicesForCard(pending.card);
           fallbackChoices = scanChoices?.ok ? (scanChoices.choices || []) : [];
         }
-        const choice = chooseAiScanTargetChoice(fallbackChoices, {
+        const rankedChoices = rankAiScanTargetChoices(fallbackChoices, {
           player,
           pendingType,
           gainData: pending.gainData,
         });
+        const choiceEntry = rankedChoices[0] || null;
+        const choice = choiceEntry?.choice || null;
         if (choice) {
           recordAiAutoBattleLog("scan-target", `${player.colorLabel}AI 选择扫描目标`, {
             logPlayerId: player.id,
@@ -14462,6 +14541,10 @@
             sectorX: choice.sectorX ?? null,
             label: choice.label || "",
             source: "pending-choice-fallback",
+            selectedScore: roundAiScore(choiceEntry?.score),
+            topChoices: rankedChoices
+              .slice(0, 6)
+              .map((entry) => summarizeAiScanTargetChoiceEntry(entry, player)),
           });
           return confirmScanTarget(choice.nebulaId, choice.sectorX);
         }
@@ -14488,6 +14571,10 @@
         nebulaId: button.dataset.nebulaId || null,
         sectorX: button.dataset.sectorX || null,
         label: button.textContent || "",
+        selectedScore: roundAiScore(rankedButtons[0]?.score),
+        topChoices: rankedButtons
+          .slice(0, 6)
+          .map((entry) => summarizeAiScanTargetChoiceEntry(entry, player)),
       });
       return confirmScanTarget(button.dataset.nebulaId, button.dataset.sectorX);
     }
