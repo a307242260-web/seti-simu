@@ -1199,7 +1199,21 @@ const earlyPassReport = {
       playerId: "player-white",
       playerLabel: "白色",
       playerResources: { score: 12, credits: 0, energy: 0, publicity: 1, handSize: 2 },
-      details: { action: { id: "pass", kind: "pass", score: -2 }, candidates: [] },
+      details: {
+        action: { id: "pass", kind: "pass", score: -2 },
+        candidates: [
+          { id: "pass", kind: "pass", available: true, score: -2 },
+          { id: "launch", kind: "main", available: false, score: 0, reason: "信用点不足" },
+          { id: "scan", kind: "main", available: false, score: 0, reason: "能量不足" },
+          { id: "playCard", kind: "main", available: false, score: 0, reason: "没有资源可支付的普通手牌" },
+        ],
+        resourceLockTradePreviews: [{
+          tradeId: "cards-for-credit",
+          label: "2张牌 → 1信用点",
+          bestAction: { actionId: "playCard", score: 9.5, cardId: "b_19.webp" },
+          unlockedActions: [{ actionId: "playCard", score: 9.5, cardId: "b_19.webp" }],
+        }],
+      },
     },
     {
       type: "turn-action",
@@ -1219,7 +1233,14 @@ const earlyPassReport = {
       playerId: "player-white",
       playerLabel: "白色",
       playerResources: { score: 18, credits: 0, energy: 1, publicity: 1, handSize: 1 },
-      details: { action: { id: "pass", kind: "pass", score: -2 }, candidates: [] },
+      details: {
+        action: { id: "pass", kind: "pass", score: -2 },
+        candidates: [
+          { id: "pass", kind: "pass", available: true, score: -2 },
+          { id: "researchTech", kind: "main", available: true, score: -8 },
+          { id: "launch", kind: "main", available: false, score: 0, reason: "信用点不足" },
+        ],
+      },
     },
   ],
   playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 88 }],
@@ -1227,7 +1248,12 @@ const earlyPassReport = {
 const earlyPassAnalysis = analytics.analyzeBattleReport(earlyPassReport);
 assert.equal(earlyPassAnalysis.opportunities.earlyPassNoMain, 2);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].rawTurnNumber, 2);
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].reasonTag, "resource-trade-unlocks-main");
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].candidateProfile.unavailableMainCount, 3);
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].candidateProfile.bestResourceLockTrade.tradeId, "cards-for-credit");
 assert.deepEqual(earlyPassAnalysis.earlyPassNoMainSamples[1].actionIds, ["cardCorner", "pass"]);
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[1].reasonTag, "negative-main-only");
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[1].candidateProfile.bestMain.id, "researchTech");
 
 function appendRepeatedTurnActions(logs, playerId, playerLabel, counts) {
   for (const [actionId, count] of Object.entries(counts || {})) {

@@ -17,6 +17,7 @@
   const PACE_QUICK_ACTIONS = Object.freeze(["move", "placeData", "cardCorner", "quickTrade", "industry"]);
   const PACE_MAIN_ACTIONS = Object.freeze([...BASIC_MAIN_ACTIONS, ...ENGINE_ACTIONS]);
   const PASS_ACTIONS = Object.freeze(["pass", "end-turn"]);
+  const MEANINGFUL_RESOURCE_UNLOCK_SCORE = 8;
   const LOW_PLAYER_CANDIDATE_ACTIONS = Object.freeze([
     "playCard",
     "researchTech",
@@ -308,6 +309,70 @@
     };
   }
 
+  function sortByCandidatePolicy(candidates = []) {
+    return [...(candidates || [])].sort((left, right) => (
+      numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+      || getCandidateId(left).localeCompare(getCandidateId(right))
+    ));
+  }
+
+  function getBestResourceLockTradePreview(previews = []) {
+    return [...(previews || [])]
+      .filter((preview) => preview && getFiniteScore(preview.bestAction?.score) != null)
+      .sort((left, right) => (
+        numeric(right.bestAction?.score) - numeric(left.bestAction?.score)
+        || String(left.tradeId || "").localeCompare(String(right.tradeId || ""))
+      ))[0] || null;
+  }
+
+  function classifyEarlyPassNoMain(profile = {}) {
+    if (!profile.candidateCount) return "missing-pass-candidates";
+    if (numeric(profile.bestMain?.policyScore) > 0) return "positive-main-available";
+    const bestTradeScore = numeric(profile.bestResourceLockTrade?.bestAction?.score);
+    if (bestTradeScore >= MEANINGFUL_RESOURCE_UNLOCK_SCORE) return "resource-trade-unlocks-main";
+    if (bestTradeScore > 0) return "resource-trade-unlocks-low-main";
+    if (profile.availableMainCount > 0) return "negative-main-only";
+    const playCardReason = String(profile.playCard?.reason || "");
+    if (playCardReason.includes("没有资源可支付")) {
+      return numeric(profile.resources?.handSize) >= 2 ? "resource-locked-hand" : "low-hand-resource-lock";
+    }
+    if (profile.unavailableMainCount > 0) return "no-main-available";
+    return "no-main-candidate";
+  }
+
+  function buildEarlyPassCandidateProfile(entry, candidates = [], limit = 5) {
+    const availableCandidates = (candidates || []).filter(isCandidateAvailable);
+    const availableMain = sortByCandidatePolicy(
+      availableCandidates.filter((candidate) => candidate.kind === "main"),
+    );
+    const unavailableMain = (candidates || [])
+      .filter((candidate) => candidate.kind === "main" && !isCandidateAvailable(candidate));
+    const resourceLockTradePreviews = Array.isArray(entry.details?.resourceLockTradePreviews)
+      ? entry.details.resourceLockTradePreviews.slice(0, limit)
+      : [];
+    const playCardCandidate = getPlayCardCandidate(candidates);
+    const profile = {
+      resources: entry.playerResources || null,
+      candidateCount: (candidates || []).length,
+      availableMainCount: availableMain.length,
+      unavailableMainCount: unavailableMain.length,
+      bestMain: availableMain[0] ? summarizeOpportunityCandidate(availableMain[0]) : null,
+      topCandidates: sortByCandidatePolicy(availableCandidates)
+        .slice(0, limit)
+        .map(summarizeOpportunityCandidate),
+      unavailableMain: unavailableMain
+        .slice(0, limit)
+        .map(summarizeOpportunityCandidate),
+      playCard: playCardCandidate ? summarizeOpportunityCandidate(playCardCandidate) : null,
+      resourceLockTradePreviews,
+      bestResourceLockTrade: getBestResourceLockTradePreview(resourceLockTradePreviews),
+    };
+    return {
+      ...profile,
+      reasonTag: classifyEarlyPassNoMain(profile),
+    };
+  }
+
   function getTurnGroupKey(entry = {}) {
     return [
       entry.playerId || entry.playerLabel || "unknown",
@@ -344,17 +409,23 @@
           turnNumber: entry.turnNumber ?? null,
           rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
           resources: entry.playerResources || null,
+          passResources: null,
           actions: [],
           mainActionCount: 0,
           quickStepCount: 0,
           passed: false,
+          passCandidateProfile: null,
         });
       }
       const group = groups.get(key);
       const pace = getActionPaceCategory(actionId, action);
       if (pace === "main") group.mainActionCount += 1;
       if (pace === "quick") group.quickStepCount += 1;
-      if (actionId === "pass") group.passed = true;
+      if (actionId === "pass") {
+        group.passed = true;
+        group.passResources = entry.playerResources || group.passResources;
+        group.passCandidateProfile = buildEarlyPassCandidateProfile(entry, entry.details?.candidates || []);
+      }
       group.actions.push(summarizeGroupedTurnAction(action));
       group.resources = entry.playerResources || group.resources;
     }
@@ -362,7 +433,7 @@
       .filter((group) => group.passed && group.mainActionCount <= 0)
       .map((group) => {
         const result = playerResultById.get(group.playerId) || {};
-        const resources = group.resources || {};
+        const resources = group.passResources || group.resources || {};
         return {
           playerId: group.playerId,
           playerLabel: group.playerLabel,
@@ -372,6 +443,8 @@
           rawTurnNumber: group.rawTurnNumber,
           resources,
           quickStepCount: group.quickStepCount,
+          reasonTag: group.passCandidateProfile?.reasonTag || null,
+          candidateProfile: group.passCandidateProfile || null,
           actionIds: group.actions.map((action) => action.tradeId ? `${action.id}:${action.tradeId}` : action.id),
           actions: group.actions,
           resourceProfile: {
