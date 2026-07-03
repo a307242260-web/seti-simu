@@ -5638,7 +5638,7 @@
       }
       const resources = player.resources || {};
       const currentScore = Math.max(0, aiNumber(resources.score));
-      if (currentScore < 50) return null;
+      if (currentScore < 35) return null;
       const handSize = Math.max(0, Math.round(aiNumber(resources.handSize ?? (player.hand || []).length)));
       if (handSize < 2) return null;
       const playCardCandidate = (candidates || []).find((candidate) => candidate?.id === "playCard");
