@@ -1755,18 +1755,28 @@
       if (energy <= 0 && aiNumber(income.energy) <= 3) reasons.push("energy");
       if (currentHandSize <= 1 && aiNumber(income.handSize) <= 3) reasons.push("hand");
       if (!reasons.length) return { active: false, reasons: [], score: 0 };
-      const hasPressureIncomeCandidate = (pile || []).some((card) => {
+      const matchingIncomeCandidates = (pile || []).map((card) => {
         if (!card) return false;
         const gain = cards.getIncomeGainForCard?.(card);
-        if (!gain) return false;
-        return (reasons.includes("credits") && aiNumber(gain.credits) > 0)
+        if (!gain) return null;
+        const matches = (reasons.includes("credits") && aiNumber(gain.credits) > 0)
           || (reasons.includes("energy") && aiNumber(gain.energy) > 0)
           || (reasons.includes("hand") && aiNumber(gain.handSize) > 0);
+        if (!matches) return null;
+        return {
+          cardId: card.cardId || card.id || null,
+          cardLabel: cards.getCardLabel?.(card) || card.cardName || card.label || null,
+          typeCode: getCardTypeCode(card),
+          price: aiNumber(getCardPrice(card)),
+          incomeGain: gain,
+        };
       });
-      if (!hasPressureIncomeCandidate) return { active: false, reasons: [], score: 0 };
+      const incomeCandidates = matchingIncomeCandidates.filter(Boolean);
+      if (!incomeCandidates.length) return { active: false, reasons: [], score: 0 };
       return {
         active: true,
         reasons,
+        incomeCandidates: incomeCandidates.slice(0, 6),
         score: roundAiScore(
           reasons.length
             + Math.max(0, 2 - credits) * 0.25

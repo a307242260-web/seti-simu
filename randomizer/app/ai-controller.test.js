@@ -3318,6 +3318,10 @@ function makeYichangdianAlienState(options = {}) {
   assert.equal(passReserveLog?.details?.passReserveResourcePressure?.active, false);
   assert.equal(passReserveLog?.details?.passReserveResourcePressurePreview?.active, true);
   assert.equal(passReserveLog?.details?.passReserveResourcePressureMiss, true);
+  assert.deepEqual(
+    passReserveLog?.details?.passReserveResourcePressurePreview?.incomeCandidates?.map((entry) => entry.cardId),
+    ["reserve-energy-income"],
+  );
 }
 
 {

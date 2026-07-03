@@ -77,7 +77,7 @@ GameState 快照
 - 共用 overlay 的 rare 效果也要有 AI 收口路径。`scanTargetOverlay` 除普通扫描外还承载移除标记、手牌角标奖励、任意弃牌收入、支付信用、重复角标、移除环绕放探测器、任务回手、探测器扇区扫描和探测器位置奖励；这些 pending 即使仍不作为 AI 主动打牌候选，也必须在被强制或触发进入时能自动选择、跳过或确认，不能停在弹窗上。
 - 1 类任务卡触发只在当前事件窗口内可选；AI 若因火箭上限、资源不足或无合法目标无法发动某个触发，应取消本次触发选择并等待下次同类事件，不得消耗触发槽，也不得把自动批跑阻塞在不可执行触发上。
 - PASS 预留牌默认仍保持原顺序；只有第 2 轮出现 0 信用点、0 能量或 1 手牌以内的硬资源锁，且预留牌堆里有能补对应短板的收入牌时，才启用 `scoreAiPassReserveCard` 排序，避免早期资源滚动被随机牌序截断。
-- PASS 预留日志现在额外记录 `passReserveResourcePressurePreview` 与 `passReserveResourcePressureMiss`：前者忽略“仅第 2 轮启用”的行为门槛，用来识别第 1/3/4 轮是否也存在 0 信用点、0 能量或低手牌且牌堆有对应收入牌的窗口；后者表示该窗口当前只被记录、未用于排序。批跑分析会输出 `passReserveResourcePressureMissSamples`，用于后续筛更窄的可验证窗口，不能直接把 PASS 预留排序扩到所有轮次。
+- PASS 预留日志现在额外记录 `passReserveResourcePressurePreview` 与 `passReserveResourcePressureMiss`：前者忽略“仅第 2 轮启用”的行为门槛，用来识别第 1/3/4 轮是否也存在 0 信用点、0 能量或低手牌且牌堆有对应收入牌的窗口，并列出最多 6 张能补短板的收入候选；后者表示该窗口当前只被记录、未用于排序。批跑分析会输出 `passReserveResourcePressureMissSamples`，用于后续筛更窄的可验证窗口，不能直接把 PASS 预留排序扩到所有轮次。
 - AI 不直接改规则状态；真正执行仍走人类同路径的 `runAction()`、`beginScanAction()`、`beginPlayCardSelection()`、`researchTechForCurrentPlayer()`、`passForCurrentPlayer()` 等入口。
 - 随机性通过现有 seeded 批跑入口和可注入 `random` 的规则函数复现；不能为了 AI 策略在估值阶段消耗真实随机结果。
 

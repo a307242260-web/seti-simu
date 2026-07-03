@@ -4707,6 +4707,9 @@
           resources: entry.playerResources || null,
           selectedCard: summarizePassReserveCard(details.card || {}),
           previewReasons: Array.isArray(preview.reasons) ? preview.reasons : [],
+          previewIncomeCandidates: Array.isArray(preview.incomeCandidates)
+            ? preview.incomeCandidates.slice(0, 6)
+            : [],
           previewScore: roundRatio(preview.score),
           selectedScore: details.selectedScore == null ? null : roundRatio(details.selectedScore),
           rankedCandidateCount: Array.isArray(details.candidates) ? details.candidates.length : 0,

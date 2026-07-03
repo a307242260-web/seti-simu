@@ -1026,7 +1026,14 @@ const sampleBattleReport = {
       details: {
         card: { id: "reserve-low", cardId: "b_1.webp", cardName: "低续航牌", price: 1, cardTypeCode: 1 },
         passReserveResourcePressure: { active: false, reasons: [], score: 0 },
-        passReserveResourcePressurePreview: { active: true, reasons: ["energy"], score: 1.5 },
+        passReserveResourcePressurePreview: {
+          active: true,
+          reasons: ["energy"],
+          score: 1.5,
+          incomeCandidates: [
+            { cardId: "b_2.webp", cardLabel: "补能量牌", incomeGain: { energy: 1 } },
+          ],
+        },
         passReserveResourcePressureMiss: true,
         selectedScore: null,
         candidates: [],
@@ -1087,6 +1094,7 @@ assert.equal(battleAnalysis.openingPlanConversionSamples[0].earlyWindow.actual.s
 assert.equal(battleAnalysis.opportunities.passReserveResourcePressureMiss, 1);
 assert.equal(battleAnalysis.passReserveResourcePressureMissSamples[0].playerId, "player-blue");
 assert.deepEqual(battleAnalysis.passReserveResourcePressureMissSamples[0].previewReasons, ["energy"]);
+assert.equal(battleAnalysis.passReserveResourcePressureMissSamples[0].previewIncomeCandidates[0].cardId, "b_2.webp");
 assert.equal(battleAnalysis.opportunities.selectedBelowBestScore, 2);
 assert.equal(battleAnalysis.scoreOpportunities.selectedBelowBest, 2);
 assert.equal(battleAnalysis.scoreOpportunities.averageGap, 10.75);
