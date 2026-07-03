@@ -1829,6 +1829,105 @@ assert.equal(playCardNearMissSummary.lowPlayerCandidateStats[0].topMissedCandida
 assert.equal(playCardNearMissSummary.lowUnplayedCardSamples[0].cards[0].tasks[0].rewardDirectScore, 9);
 assert.equal(playCardNearMissSummary.lowUnplayedCardSamples[0].cards[1].endGameScoring, true);
 
+const b2ScanNearMissReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 10,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 142, credits: 4, energy: 3, publicity: 2, handSize: 2 },
+    details: {
+      action: { id: "researchTech", kind: "main", score: 105.6, actionGraph: { net: 105.6 } },
+      candidates: [
+        { id: "researchTech", kind: "main", available: true, score: 105.6, actionGraph: { net: 105.6 } },
+        {
+          id: "scan",
+          kind: "main",
+          available: true,
+          score: 54.5,
+          directScoreGain: 2,
+          scoreCapReason: "优先兑现数据分析",
+          actionGraph: { net: 54.5 },
+          targetPreview: {
+            effectCount: 1,
+            effects: [{
+              effectType: "earth_sector_scan",
+              pendingType: "sector_scan",
+              topChoices: [{
+                effectType: "earth_sector_scan",
+                pendingType: "sector_scan",
+                nebulaId: "sector-3-a",
+                sectorX: 3,
+                score: 22.7,
+                directScoreGain: 2,
+                b2: {
+                  focus: 12.4,
+                  active: true,
+                  marked: true,
+                  sectorWins: 2,
+                  orbitLandCount: 8,
+                  deficit: 6,
+                  multiplier: 4,
+                  ownCount: 1,
+                  openCount: 1,
+                  markedCount: 3,
+                  maxOtherCount: 1,
+                  winsAfterScan: true,
+                },
+              }],
+            }],
+            topChoices: [{
+              effectType: "earth_sector_scan",
+              pendingType: "sector_scan",
+              nebulaId: "sector-3-a",
+              sectorX: 3,
+              score: 22.7,
+              directScoreGain: 2,
+              b2: {
+                focus: 12.4,
+                active: true,
+                marked: true,
+                sectorWins: 2,
+                orbitLandCount: 8,
+                deficit: 6,
+                multiplier: 4,
+                ownCount: 1,
+                openCount: 1,
+                markedCount: 3,
+                maxOtherCount: 1,
+                winsAfterScan: true,
+              },
+            }],
+          },
+        },
+      ],
+    },
+  }],
+  playerResults: [{
+    playerId: "player-white",
+    playerLabel: "白色",
+    finalScore: 184,
+    b2Progress: {
+      formulaId: "b2",
+      sectorWins: 2,
+      orbitLandCount: 8,
+      deficit: 6,
+      bottleneck: "sectorWins",
+    },
+  }],
+};
+const b2ScanNearMissAnalysis = analytics.analyzeBattleReport(b2ScanNearMissReport);
+assert.equal(b2ScanNearMissAnalysis.opportunities.b2ScanNearMiss, 1);
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].finalScore, 184);
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].selected.id, "researchTech");
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].scan.scoreCapReason, "优先兑现数据分析");
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].topChoices[0].b2.winsAfterScan, true);
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].b2Progress.bottleneck, "sectorWins");
+const b2ScanNearMissSummary = analytics.summarizeBattleReports([b2ScanNearMissReport]);
+assert.equal(b2ScanNearMissSummary.b2ScanNearMissSamples[0].topChoices[0].nebulaId, "sector-3-a");
+
 const mainUnlockLowConcretePlayReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{

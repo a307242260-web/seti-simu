@@ -1042,6 +1042,143 @@
     };
   }
 
+  function getScanCandidate(candidates = []) {
+    return (candidates || []).find((candidate) => getCandidateId(candidate) === "scan") || null;
+  }
+
+  function scanPreviewChoiceHasB2Value(choice = {}) {
+    const b2 = choice?.b2 || null;
+    if (!b2) return false;
+    return Boolean(
+      b2.active
+      || b2.marked
+      || b2.winsAfterScan
+      || numeric(b2.focus) > 0
+      || numeric(b2.deficit) > 0
+    );
+  }
+
+  function summarizeB2ScanPreviewChoice(choice = {}) {
+    const b2 = choice.b2 || {};
+    return {
+      effectType: choice.effectType || null,
+      pendingType: choice.pendingType || null,
+      nebulaId: choice.nebulaId || null,
+      sectorX: choice.sectorX ?? null,
+      label: choice.label || null,
+      score: roundRatio(choice.score),
+      directScoreGain: roundRatio(choice.directScoreGain),
+      b2: {
+        focus: roundRatio(b2.focus),
+        active: Boolean(b2.active),
+        marked: Boolean(b2.marked),
+        sectorWins: numeric(b2.sectorWins),
+        orbitLandCount: numeric(b2.orbitLandCount),
+        deficit: numeric(b2.deficit),
+        multiplier: numeric(b2.multiplier),
+        ownCount: numeric(b2.ownCount),
+        openCount: numeric(b2.openCount),
+        markedCount: numeric(b2.markedCount),
+        maxOtherCount: numeric(b2.maxOtherCount),
+        winsAfterScan: Boolean(b2.winsAfterScan),
+      },
+    };
+  }
+
+  function getB2ScanPreviewChoices(scanCandidate = {}, limit = 6) {
+    const preview = scanCandidate?.targetPreview || {};
+    const effectChoices = (preview.effects || []).flatMap((effect) => (
+      (effect.topChoices || []).map((choice) => ({
+        ...choice,
+        effectType: choice.effectType || effect.effectType || null,
+        pendingType: choice.pendingType || effect.pendingType || null,
+      }))
+    ));
+    const sourceChoices = Array.isArray(preview.topChoices) && preview.topChoices.length
+      ? preview.topChoices
+      : effectChoices;
+    const seen = new Set();
+    return (sourceChoices || [])
+      .filter(scanPreviewChoiceHasB2Value)
+      .map(summarizeB2ScanPreviewChoice)
+      .filter((choice) => {
+        const key = [
+          choice.effectType || "effect",
+          choice.pendingType || "scan",
+          choice.nebulaId || "nebula",
+          choice.sectorX ?? "x",
+        ].join(":");
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .sort((left, right) => (
+        numeric(right.b2?.winsAfterScan) - numeric(left.b2?.winsAfterScan)
+        || numeric(right.b2?.deficit) - numeric(left.b2?.deficit)
+        || numeric(right.score) - numeric(left.score)
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function isB2ScanNearMiss(entry, candidates = []) {
+    if (getSelectedActionId(entry) === "scan") return false;
+    const scanCandidate = getScanCandidate(candidates);
+    if (!isCandidateAvailable(scanCandidate)) return false;
+    return getB2ScanPreviewChoices(scanCandidate, 1).length > 0;
+  }
+
+  function getB2ScanNearMissUrgency(sample = {}) {
+    const bestChoice = sample.topChoices?.[0] || {};
+    const b2 = bestChoice.b2 || {};
+    return numeric(b2.deficit) + (b2.winsAfterScan ? 3 : 0) + Math.max(0, numeric(b2.focus)) * 0.1;
+  }
+
+  function sortB2ScanNearMissSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        (getFiniteScore(left.finalScore) ?? Infinity) - (getFiniteScore(right.finalScore) ?? Infinity)
+        || getB2ScanNearMissUrgency(right) - getB2ScanNearMissUrgency(left)
+        || numeric(left.policyScoreGap) - numeric(right.policyScoreGap)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.turnNumber) - numeric(right.turnNumber)
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function buildB2ScanNearMissSample(entry, candidates = [], playerResultById = new Map()) {
+    const scanCandidate = getScanCandidate(candidates);
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const selectedPolicyScore = getFiniteScore(getCandidatePolicyScore(selectedCandidate));
+    const scanPolicyScore = getFiniteScore(getCandidatePolicyScore(scanCandidate));
+    const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
+    const scanGraphNet = getCandidateActionGraphNet(scanCandidate);
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      finalScore: roundRatio(result.finalScore),
+      resources: entry.playerResources || null,
+      b2Progress: result.b2Progress || null,
+      selected: summarizeOpportunityCandidate(selectedCandidate || {}),
+      scan: scanCandidate
+        ? {
+          ...summarizeOpportunityCandidate(scanCandidate),
+          scoreCapReason: scanCandidate.scoreCapReason || null,
+          valueBreakdown: scanCandidate.valueBreakdown || null,
+        }
+        : null,
+      policyScoreGap: selectedPolicyScore == null || scanPolicyScore == null
+        ? null
+        : roundRatio(selectedPolicyScore - scanPolicyScore),
+      actionGraphNetGap: selectedGraphNet == null || scanGraphNet == null
+        ? null
+        : roundRatio(selectedGraphNet - scanGraphNet),
+      topChoices: getB2ScanPreviewChoices(scanCandidate, 6),
+    };
+  }
+
   function getCompoundResearchTechCards(candidates = []) {
     const playCardCandidate = (candidates || [])
       .filter(isCandidateAvailable)
@@ -3584,6 +3721,7 @@
       endTurnWithPositiveMove: 0,
       researchTechOverCompoundTechCard: 0,
       playCardNearMiss: 0,
+      b2ScanNearMiss: 0,
       mainUnlockLowConcretePlay: 0,
       nonPositivePublicRefill: 0,
       highHandDrainEnergyTrade: 0,
@@ -3604,6 +3742,7 @@
     const endTurnMoveOpportunitySamples = [];
     const researchTechCompoundCardSamples = [];
     const playCardNearMissSamples = [];
+    const b2ScanNearMissSamples = [];
     const mainUnlockLowConcretePlaySamples = [];
     const nonPositivePublicRefillSamples = [];
     const highHandDrainEnergyTradeSamples = [];
@@ -3700,6 +3839,10 @@
         if (isPlayCardNearMiss(entry, candidates)) {
           opportunities.playCardNearMiss += 1;
           playCardNearMissSamples.push(buildPlayCardNearMissSample(entry, candidates, playerResultById));
+        }
+        if (isB2ScanNearMiss(entry, candidates)) {
+          opportunities.b2ScanNearMiss += 1;
+          b2ScanNearMissSamples.push(buildB2ScanNearMissSample(entry, candidates, playerResultById));
         }
         if (isMainUnlockLowConcretePlay(entry)) {
           opportunities.mainUnlockLowConcretePlay += 1;
@@ -3876,6 +4019,7 @@
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
       playCardNearMissSamples: sortPlayCardNearMissSamples(playCardNearMissSamples),
+      b2ScanNearMissSamples: sortB2ScanNearMissSamples(b2ScanNearMissSamples),
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples,
@@ -3937,6 +4081,7 @@
     const mergedEndTurnMoveOpportunitySamples = [];
     const mergedResearchTechCompoundCardSamples = [];
     const mergedPlayCardNearMissSamples = [];
+    const mergedB2ScanNearMissSamples = [];
     const mergedMainUnlockLowConcretePlaySamples = [];
     const mergedNonPositivePublicRefillSamples = [];
     const mergedHighHandDrainEnergyTradeSamples = [];
@@ -4045,6 +4190,9 @@
       }
       if (Array.isArray(analysis.playCardNearMissSamples)) {
         mergedPlayCardNearMissSamples.push(...analysis.playCardNearMissSamples);
+      }
+      if (Array.isArray(analysis.b2ScanNearMissSamples)) {
+        mergedB2ScanNearMissSamples.push(...analysis.b2ScanNearMissSamples);
       }
       if (mergedMainUnlockLowConcretePlaySamples.length < 12 && Array.isArray(analysis.mainUnlockLowConcretePlaySamples)) {
         mergedMainUnlockLowConcretePlaySamples.push(
@@ -4188,6 +4336,7 @@
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       playCardNearMissSamples: sortPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
+      b2ScanNearMissSamples: sortB2ScanNearMissSamples(mergedB2ScanNearMissSamples),
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples: mergedHighHandDrainEnergyTradeSamples,

@@ -12429,6 +12429,48 @@
         ));
     }
 
+    function buildAiScanActionTargetPreview(player = getCurrentPlayer()) {
+      const effects = scanEffects.buildScanEffectQueue(player, {
+        fullScanAction: true,
+        turnState,
+        roundNumber: turnState.roundNumber,
+        turnNumber: turnState.turnNumber,
+      });
+      const previewEffects = [];
+      const topChoices = [];
+      for (const effect of effects) {
+        const sectorChoices = getAiSectorScanChoicesForEffect(effect.type, player);
+        if (!sectorChoices.length) continue;
+        const rankedChoices = rankAiScanTargetChoices(
+          sectorChoices,
+          { player, pendingType: "sector_scan" },
+        );
+        if (!rankedChoices.length) continue;
+        const summarizedChoices = rankedChoices.slice(0, 6).map((entry) => ({
+          ...summarizeAiScanTargetChoiceEntry(entry, player),
+          effectType: effect.type,
+          pendingType: "sector_scan",
+        }));
+        previewEffects.push({
+          effectType: effect.type,
+          pendingType: "sector_scan",
+          topChoices: summarizedChoices,
+        });
+        topChoices.push(...summarizedChoices);
+      }
+      return {
+        effectCount: effects.length,
+        effects: previewEffects,
+        topChoices: topChoices
+          .sort((left, right) => (
+            aiNumber(right.score) - aiNumber(left.score)
+            || aiNumber(right.directScoreGain) - aiNumber(left.directScoreGain)
+            || String(left.nebulaId || "").localeCompare(String(right.nebulaId || ""))
+          ))
+          .slice(0, 6),
+      };
+    }
+
     function rankAiScanTargetButtons(buttons = [], options = {}) {
       return [...(buttons || [])]
         .map((button, index) => {
@@ -16651,6 +16693,7 @@
         score: scanScore,
         directScoreGain: scanDirectScoreGain,
         scoreCapReason: scanScoreCapReason,
+        targetPreview: scanCheck.ok ? buildAiScanActionTargetPreview(currentPlayer) : null,
         valueBreakdown: {
           directScoreGain: scanDirectScoreGain,
           scanEnergyReservationPenalty,
