@@ -1250,6 +1250,7 @@ const earlyPassReport = {
 };
 const earlyPassAnalysis = analytics.analyzeBattleReport(earlyPassReport);
 assert.equal(earlyPassAnalysis.opportunities.earlyPassNoMain, 2);
+assert.equal(earlyPassAnalysis.opportunities.resourceLockMainUnlock, 1);
 assert.equal(earlyPassAnalysis.opportunities.quickBeforePassNoMain, 1);
 assert.equal(earlyPassAnalysis.opportunities.preNoMainPassResourceDrain, 1);
 assert.equal(earlyPassAnalysis.opportunities.postPassQuickNoMain, 0);
@@ -1257,6 +1258,8 @@ assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].rawTurnNumber, 2);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].reasonTag, "resource-trade-unlocks-main");
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].candidateProfile.unavailableMainCount, 3);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].candidateProfile.bestResourceLockTrade.tradeId, "cards-for-credit");
+assert.equal(earlyPassAnalysis.resourceLockMainUnlockSamples[0].bestResourceLockTrade.tradeId, "cards-for-credit");
+assert.equal(earlyPassAnalysis.resourceLockMainUnlockSamples[0].bestResourceLockTrade.bestAction.cardId, "b_19.webp");
 assert.deepEqual(earlyPassAnalysis.earlyPassNoMainSamples[1].actionIds, ["cardCorner", "pass"]);
 assert.deepEqual(earlyPassAnalysis.quickBeforePassNoMainSamples[0].actionIds, ["cardCorner", "pass"]);
 assert.equal(earlyPassAnalysis.quickBeforePassNoMainSamples[0].quickBeforePassCount, 1);
@@ -1272,8 +1275,11 @@ assert.deepEqual(earlyPassAnalysis.earlyPassNoMainReasonCounts, {
 });
 const earlyPassSummary = analytics.summarizeBattleReports([earlyPassReport]);
 assert.deepEqual(earlyPassSummary.earlyPassNoMainReasonCounts, earlyPassAnalysis.earlyPassNoMainReasonCounts);
+assert.equal(earlyPassSummary.opportunities.resourceLockMainUnlock, 1);
 assert.equal(earlyPassSummary.opportunities.quickBeforePassNoMain, 1);
+assert.equal(earlyPassSummary.resourceLockMainUnlockSamples[0].bestResourceLockTrade.tradeId, "cards-for-credit");
 assert.equal(earlyPassSummary.preNoMainPassResourceDrainSamples[0].previousAction.id, "playCard");
+assert.ok(earlyPassSummary.recommendations.some((entry) => entry.id === "inspect-resource-lock-main-unlock"));
 assert.ok(earlyPassSummary.recommendations.some((entry) => entry.id === "inspect-quick-before-pass-no-main"));
 assert.ok(earlyPassSummary.recommendations.some((entry) => entry.id === "inspect-pre-no-main-resource-drain"));
 

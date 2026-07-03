@@ -477,6 +477,52 @@
       .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
   }
 
+  function getResourceLockMainUnlockScore(sample = {}) {
+    return numeric(
+      sample?.bestResourceLockTrade?.bestAction?.score
+      ?? sample?.candidateProfile?.bestResourceLockTrade?.bestAction?.score,
+    );
+  }
+
+  function sortResourceLockMainUnlockSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || getResourceLockMainUnlockScore(right) - getResourceLockMainUnlockScore(left)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildResourceLockMainUnlockSamples(earlyPassSamples = [], limit = 12) {
+    const samples = (earlyPassSamples || [])
+      .filter((sample) => getResourceLockMainUnlockScore(sample) >= MEANINGFUL_RESOURCE_UNLOCK_SCORE)
+      .map((sample) => ({
+        playerId: sample.playerId || null,
+        playerLabel: sample.playerLabel || null,
+        finalScore: roundRatio(sample.finalScore),
+        roundNumber: sample.roundNumber ?? null,
+        turnNumber: sample.turnNumber ?? null,
+        rawTurnNumber: sample.rawTurnNumber ?? null,
+        resources: sample.resources || null,
+        resourceProfile: sample.resourceProfile || null,
+        quickStepCount: numeric(sample.quickStepCount),
+        quickBeforePassCount: numeric(sample.quickBeforePassCount),
+        quickAfterPassCount: numeric(sample.quickAfterPassCount),
+        reasonTag: sample.reasonTag || null,
+        bestResourceLockTrade: sample.candidateProfile?.bestResourceLockTrade || null,
+        resourceLockTradePreviews: sample.candidateProfile?.resourceLockTradePreviews || [],
+        bestMain: sample.candidateProfile?.bestMain || null,
+        playCard: sample.candidateProfile?.playCard || null,
+        topCandidates: sample.candidateProfile?.topCandidates || [],
+        unavailableMain: sample.candidateProfile?.unavailableMain || [],
+        actionIds: sample.actionIds || [],
+        actions: sample.actions || [],
+      }));
+    return sortResourceLockMainUnlockSamples(samples, limit);
+  }
+
   function countEarlyPassNoMainReasons(samples = []) {
     const counts = {};
     for (const sample of samples || []) {
@@ -3062,6 +3108,13 @@
         message: "存在无主行动即 PASS 的回合，应按样本区分资源锁、公共牌/交易不可转化和已验证负收益的强开行动。",
       });
     }
+    if (numeric(opportunities.resourceLockMainUnlock) > 0) {
+      recommendations.push({
+        id: "inspect-resource-lock-main-unlock",
+        priority: "medium",
+        message: "无主行动 PASS 样本里存在资源交易后可打开较高分主行动的窗口，应按具体 seed 验证是否会扰动共享牌流和高分席位后再放行为。",
+      });
+    }
     if (numeric(opportunities.quickBeforePassNoMain) > 0) {
       recommendations.push({
         id: "inspect-quick-before-pass-no-main",
@@ -3281,6 +3334,7 @@
       passWithAvailableMain: 0,
       passWithResourceLockedHand: 0,
       earlyPassNoMain: 0,
+      resourceLockMainUnlock: 0,
       quickBeforePassNoMain: 0,
       preNoMainPassResourceDrain: 0,
       postPassQuickNoMain: 0,
@@ -3304,6 +3358,7 @@
     const passOpportunitySamples = [];
     const passResourceLockSamples = [];
     const earlyPassNoMainSamples = [];
+    const resourceLockMainUnlockSamples = [];
     const quickBeforePassNoMainSamples = [];
     const preNoMainPassResourceDrainSamples = [];
     const postPassQuickNoMainSamples = [];
@@ -3507,6 +3562,9 @@
     const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
     earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
     opportunities.earlyPassNoMain = allEarlyPassNoMainSamples.length;
+    const allResourceLockMainUnlockSamples = buildResourceLockMainUnlockSamples(allEarlyPassNoMainSamples, Infinity);
+    resourceLockMainUnlockSamples.push(...allResourceLockMainUnlockSamples.slice(0, 12));
+    opportunities.resourceLockMainUnlock = allResourceLockMainUnlockSamples.length;
     const allQuickBeforePassNoMainSamples = allEarlyPassNoMainSamples
       .filter((sample) => numeric(sample.quickBeforePassCount) > 0);
     quickBeforePassNoMainSamples.push(...allQuickBeforePassNoMainSamples.slice(0, 12));
@@ -3569,6 +3627,7 @@
       passOpportunitySamples,
       passResourceLockSamples,
       earlyPassNoMainSamples,
+      resourceLockMainUnlockSamples,
       earlyPassNoMainReasonCounts,
       quickBeforePassNoMainSamples,
       preNoMainPassResourceDrainSamples,
@@ -3627,6 +3686,7 @@
     const mergedPassOpportunitySamples = [];
     const mergedPassResourceLockSamples = [];
     const mergedEarlyPassNoMainSamples = [];
+    const mergedResourceLockMainUnlockSamples = [];
     const mergedEarlyPassNoMainReasonCounts = {};
     const mergedQuickBeforePassNoMainSamples = [];
     const mergedPreNoMainPassResourceDrainSamples = [];
@@ -3696,6 +3756,9 @@
       }
       if (Array.isArray(analysis.earlyPassNoMainSamples)) {
         mergedEarlyPassNoMainSamples.push(...analysis.earlyPassNoMainSamples);
+      }
+      if (Array.isArray(analysis.resourceLockMainUnlockSamples)) {
+        mergedResourceLockMainUnlockSamples.push(...analysis.resourceLockMainUnlockSamples);
       }
       for (const [key, count] of Object.entries(analysis.earlyPassNoMainReasonCounts || {})) {
         increment(mergedEarlyPassNoMainReasonCounts, key, count);
@@ -3826,6 +3889,7 @@
       topScoreGaps: buildTopScoreGaps(mergedCandidateScoreStats),
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
+      resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
       quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
       preNoMainPassResourceDrainSamples: mergedPreNoMainPassResourceDrainSamples,
       postPassQuickNoMainSamples: mergedPostPassQuickNoMainSamples,
@@ -3868,6 +3932,7 @@
       passOpportunitySamples: mergedPassOpportunitySamples,
       passResourceLockSamples: mergedPassResourceLockSamples,
       earlyPassNoMainSamples: sortEarlyPassNoMainSamples(mergedEarlyPassNoMainSamples),
+      resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
       earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
       quickBeforePassNoMainSamples: sortEarlyPassNoMainSamples(mergedQuickBeforePassNoMainSamples),
       preNoMainPassResourceDrainSamples: sortPreNoMainPassResourceDrainSamples(mergedPreNoMainPassResourceDrainSamples),
