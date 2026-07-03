@@ -1687,6 +1687,150 @@ assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].dTechPlan.d2Ne
 assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].dTechSetupWindows[0].bestSetupQuick.id, "cardCorner");
 assert.ok(highScoreNearMissSummary.recommendations.some((entry) => entry.id === "inspect-high-score-near-miss"));
 
+const d1TechBalanceReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [
+    {
+      type: "tech-placement",
+      roundNumber: 1,
+      turnNumber: 1,
+      rawTurnNumber: 1,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: { selected: { tileId: "orange4", techType: "orange", score: 42 } },
+    },
+    {
+      type: "tech-placement",
+      roundNumber: 2,
+      turnNumber: 3,
+      rawTurnNumber: 7,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: { selected: { tileId: "blue1", techType: "blue", score: 38 } },
+    },
+    {
+      type: "tech-placement",
+      roundNumber: 2,
+      turnNumber: 6,
+      rawTurnNumber: 10,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: { selected: { tileId: "purple1", techType: "purple", score: 35 } },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 5,
+      rawTurnNumber: 13,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      playerResources: { score: 92, credits: 3, energy: 2, publicity: 6, handSize: 4 },
+      details: {
+        action: { id: "researchTech", kind: "main", score: 76 },
+        candidates: [{
+          id: "researchTech",
+          kind: "main",
+          available: true,
+          score: 76,
+          techType: "orange",
+          takeable: [
+            { tileId: "orange2", techType: "orange", score: 76, directScoreGain: 2 },
+            { tileId: "blue2", techType: "blue", score: 67, directScoreGain: 2 },
+            { tileId: "purple2", techType: "purple", score: 66, directScoreGain: 2 },
+          ],
+        }],
+      },
+    },
+    {
+      type: "tech-placement",
+      roundNumber: 3,
+      turnNumber: 5,
+      rawTurnNumber: 13,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: {
+        selected: { tileId: "orange2", techType: "orange", score: 76 },
+        candidates: [
+          { tileId: "orange2", techType: "orange", score: 76, directScoreGain: 2 },
+          { tileId: "blue2", techType: "blue", score: 67, directScoreGain: 2 },
+          { tileId: "purple2", techType: "purple", score: 66, directScoreGain: 2 },
+        ],
+      },
+    },
+    {
+      type: "tech-placement",
+      roundNumber: 4,
+      turnNumber: 2,
+      rawTurnNumber: 18,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: { selected: { tileId: "purple3", techType: "purple", score: 58 } },
+    },
+    {
+      type: "tech-placement",
+      roundNumber: 4,
+      turnNumber: 6,
+      rawTurnNumber: 22,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: { selected: { tileId: "orange1", techType: "orange", score: 54 } },
+    },
+  ],
+  playerResults: [
+    {
+      playerId: "winner",
+      playerLabel: "Winner",
+      finalScore: 320,
+      baseScore: 210,
+      tileScore: 90,
+      cardScore: 20,
+      techCount: 11,
+      completedTaskCount: 5,
+      finalMarkCount: 3,
+    },
+    {
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      finalScore: 184,
+      baseScore: 125,
+      tileScore: 26,
+      cardScore: 9,
+      techCount: 6,
+      completedTaskCount: 3,
+      finalMarkCount: 3,
+      finalFormulas: ["a1", "c1", "d1"],
+      finalFormulaProgress: {
+        entries: [
+          { formulaId: "d1", multiplier: 5, baseValue: 1, score: 5, slotIndex: 3 },
+        ],
+      },
+      resources: { credits: 0, energy: 0, publicity: 6, handSize: 1 },
+      handCards: [{
+        id: "tech-card-1",
+        cardId: "b_135.webp",
+        label: "Tech route",
+        price: 3,
+        typeCode: 2,
+        effectTypes: ["card_research_tech"],
+      }],
+      reservedCards: [],
+    },
+  ],
+};
+const d1TechBalanceAnalysis = analytics.analyzeBattleReport(d1TechBalanceReport);
+assert.equal(d1TechBalanceAnalysis.opportunities.d1TechBalanceBottleneck, 1);
+assert.deepEqual(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].techTypeCounts, { orange: 3, blue: 1, purple: 2 });
+assert.deepEqual(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].missingTechTypesForNextD1, ["blue"]);
+assert.equal(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].nextD1StepScore, 5);
+assert.equal(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].techCardOptions[0].researchTechEffect, true);
+assert.equal(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].researchTechChoices[3].missingTypeCandidates[0].techType, "blue");
+assert.equal(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].researchTechWindows[0].researchTech.bestByType.blue.tileId, "blue2");
+assert.ok(d1TechBalanceAnalysis.recommendations.some((entry) => entry.id === "inspect-d1-tech-chain-closure"));
+const d1TechBalanceSummary = analytics.summarizeBattleReports([d1TechBalanceReport]);
+assert.equal(d1TechBalanceSummary.d1TechBalanceBottleneckSamples[0].playerId, "low-d1");
+assert.equal(d1TechBalanceSummary.opportunities.d1TechBalanceBottleneck, 1);
+assert.ok(d1TechBalanceSummary.recommendations.some((entry) => entry.id === "inspect-d1-tech-chain-closure"));
+
 const highHandDrainEnergyTradeReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [

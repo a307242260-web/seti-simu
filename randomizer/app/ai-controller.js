@@ -18164,6 +18164,7 @@
             endTurnMoveOpportunitySamples: analysis.endTurnMoveOpportunitySamples,
             lowEngineThroughputSamples: analysis.lowEngineThroughputSamples,
             highScoreNearMissSamples: analysis.highScoreNearMissSamples,
+            d1TechBalanceBottleneckSamples: analysis.d1TechBalanceBottleneckSamples,
             researchTechCompoundCardSamples: analysis.researchTechCompoundCardSamples,
             playCardNearMissSamples: analysis.playCardNearMissSamples,
             b2ScanNearMissSamples: analysis.b2ScanNearMissSamples,

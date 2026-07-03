@@ -36,6 +36,7 @@
   const DEFAULT_SEQUENCE_WINDOW_TURNS = 6;
   const HIGH_SCORE_NEAR_MISS_TARGET = 300;
   const HIGH_SCORE_NEAR_MISS_MIN = 280;
+  const D1_TECH_TYPES = Object.freeze(["orange", "blue", "purple"]);
   const HIGH_SCORE_NEAR_MISS_REFERENCE_METRICS = Object.freeze([
     "baseScore",
     "tileScore",
@@ -1811,6 +1812,17 @@
     return match ? match[1] : null;
   }
 
+  function normalizeTechTypeCounts(counts = {}) {
+    return Object.fromEntries(D1_TECH_TYPES.map((type) => [
+      type,
+      Math.max(0, Math.round(numeric(counts?.[type]))),
+    ]));
+  }
+
+  function getTechTypeCountsTotal(counts = {}) {
+    return D1_TECH_TYPES.reduce((total, type) => total + numeric(counts?.[type]), 0);
+  }
+
   function getRouteTargetKey(routeTarget) {
     if (!routeTarget) return null;
     return [
@@ -3179,6 +3191,310 @@
       });
   }
 
+  function getD1FormulaEntries(result = {}) {
+    const entries = Array.isArray(result.finalFormulaProgress?.entries)
+      ? result.finalFormulaProgress.entries
+      : [];
+    return entries.filter((entry) => entry?.formulaId === "d1");
+  }
+
+  function getProfileForResult(result = {}, profileById = new Map(), profileByLabel = new Map()) {
+    const playerId = result.playerId == null ? null : String(result.playerId);
+    const playerLabel = result.playerLabel == null ? null : String(result.playerLabel);
+    return (playerId && profileById.get(playerId))
+      || (playerLabel && profileByLabel.get(playerLabel))
+      || null;
+  }
+
+  function buildLogTechTypeCounts(logs = [], result = {}) {
+    const counts = normalizeTechTypeCounts();
+    for (const entry of logs || []) {
+      if (entry?.type !== "tech-placement" || !matchesPlayerResult(entry, result)) continue;
+      const selected = entry.details?.selected || {};
+      const tileId = selected.tileId || entry.details?.tileId || null;
+      const techType = selected.techType || entry.details?.techType || getTechTypeFromTile(tileId);
+      if (D1_TECH_TYPES.includes(techType)) counts[techType] += 1;
+    }
+    return counts;
+  }
+
+  function getD1TechTypeCounts(logs = [], result = {}, profile = null) {
+    const profileCounts = normalizeTechTypeCounts(profile?.techTypeCounts || {});
+    if (getTechTypeCountsTotal(profileCounts) > 0) return profileCounts;
+    const logCounts = buildLogTechTypeCounts(logs, result);
+    if (getTechTypeCountsTotal(logCounts) > 0) return logCounts;
+    return normalizeTechTypeCounts(result.techTypeCounts || {});
+  }
+
+  function summarizeD1FormulaEntries(entries = []) {
+    return (entries || []).map((entry) => ({
+      tileId: entry.tileId || null,
+      slotIndex: entry.slotIndex ?? null,
+      multiplier: roundRatio(entry.multiplier),
+      baseValue: roundRatio(entry.baseValue),
+      score: roundRatio(entry.score),
+    }));
+  }
+
+  function summarizeD1TechCardOption(card = {}, zone = "hand") {
+    if (!card) return null;
+    const effectTypes = Array.isArray(card.effectTypes) ? card.effectTypes.filter(Boolean) : [];
+    const hasResearchTechEffect = effectTypes.includes("card_research_tech");
+    const endGameScoring = Boolean(card.endGameScoring);
+    const taskCount = Math.max(0, Math.round(numeric(card.taskCount)));
+    const remainingTaskCount = Number.isFinite(Number(card.remainingTaskCount))
+      ? Math.max(0, Math.round(Number(card.remainingTaskCount)))
+      : taskCount;
+    if (!hasResearchTechEffect && !endGameScoring && !taskCount) return null;
+    return {
+      zone,
+      cardId: card.cardId || card.id || null,
+      cardInstanceId: card.id || null,
+      label: card.label || card.cardName || card.cardLabel || null,
+      price: roundRatio(card.price),
+      typeCode: card.typeCode ?? card.cardTypeCode ?? null,
+      taskCount,
+      remainingTaskCount,
+      endGameScoring,
+      effectTypes,
+      discardActionCode: card.discardActionCode ?? null,
+      scanActionCode: card.scanActionCode ?? null,
+      incomeCode: card.incomeCode ?? null,
+      researchTechEffect: hasResearchTechEffect,
+    };
+  }
+
+  function buildD1TechCardOptions(result = {}) {
+    return [
+      ...(result.handCards || []).map((card) => summarizeD1TechCardOption(card, "hand")),
+      ...(result.reservedCards || []).map((card) => summarizeD1TechCardOption(card, "reserved")),
+    ].filter((card) => card && (card.researchTechEffect || card.endGameScoring || numeric(card.remainingTaskCount) > 0));
+  }
+
+  function summarizeD1TechPlan(plan = null) {
+    if (!plan) return null;
+    return {
+      type: plan.type || null,
+      mainActionId: plan.mainActionId || null,
+      actionId: plan.actionId || plan.quickActionId || null,
+      label: plan.label || null,
+      score: roundRatio(plan.score),
+      tileId: plan.tileId || null,
+      techType: plan.techType || null,
+    };
+  }
+
+  function summarizeD1TechTileCandidate(candidate = {}) {
+    if (!candidate) return null;
+    const tileId = candidate.tileId || null;
+    const techType = candidate.techType || getTechTypeFromTile(tileId);
+    if (!D1_TECH_TYPES.includes(techType)) return null;
+    return {
+      tileId,
+      techType,
+      bonusId: candidate.bonusId || null,
+      available: candidate.available !== false,
+      score: roundRatio(candidate.score),
+      directScoreGain: roundRatio(candidate.directScoreGain),
+      finalFormulaDeltas: candidate.finalFormulaDeltas || null,
+      plan: summarizeD1TechPlan(candidate.plan),
+    };
+  }
+
+  function sortD1TechTileCandidates(candidates = []) {
+    return (candidates || [])
+      .map(summarizeD1TechTileCandidate)
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(right.score) - numeric(left.score)
+        || String(left.tileId || "").localeCompare(String(right.tileId || ""))
+      ));
+  }
+
+  function buildD1BestTechCandidateByType(candidates = []) {
+    const bestByType = {};
+    for (const type of D1_TECH_TYPES) {
+      bestByType[type] = (candidates || []).find((candidate) => candidate.techType === type) || null;
+    }
+    return bestByType;
+  }
+
+  function summarizeD1ResearchTechActionCandidate(candidate = null) {
+    if (!candidate) return null;
+    const topTechCandidates = sortD1TechTileCandidates(candidate.takeable || []);
+    const summary = summarizeOpportunityCandidate(candidate);
+    const bestTechType = candidate.techType
+      || candidate.valueBreakdown?.bestTechType
+      || topTechCandidates[0]?.techType
+      || null;
+    return {
+      ...summary,
+      available: candidate.available !== false,
+      techType: bestTechType,
+      bestTechTileId: candidate.valueBreakdown?.bestTechTileId || topTechCandidates[0]?.tileId || null,
+      bestTechType,
+      finalFormulaDeltas: candidate.finalFormulaDeltas || null,
+      topTechCandidates: topTechCandidates.slice(0, 6),
+      bestByType: buildD1BestTechCandidateByType(topTechCandidates),
+    };
+  }
+
+  function buildD1ResearchTechChoices(logs = [], result = {}, missingTechTypes = [], limit = 8) {
+    const missingSet = new Set(missingTechTypes || []);
+    return (logs || [])
+      .filter((entry) => entry?.type === "tech-placement" && matchesPlayerResult(entry, result))
+      .map((entry) => {
+        const candidates = sortD1TechTileCandidates(entry.details?.candidates || []);
+        const selected = summarizeD1TechTileCandidate(entry.details?.selected || {});
+        const bestByType = buildD1BestTechCandidateByType(candidates);
+        const missingTypeCandidates = D1_TECH_TYPES
+          .filter((type) => missingSet.has(type))
+          .map((type) => bestByType[type])
+          .filter(Boolean);
+        const bestMissingScore = missingTypeCandidates.reduce((best, candidate) => Math.max(best, numeric(candidate.score)), -Infinity);
+        return {
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          selected,
+          bestCandidate: candidates[0] || null,
+          bestByType,
+          missingTypeCandidates,
+          selectedVsBestMissingGap: Number.isFinite(bestMissingScore)
+            ? roundRatio(numeric(selected?.score) - bestMissingScore)
+            : null,
+        };
+      })
+      .filter((entry) => entry.selected || entry.bestCandidate)
+      .slice(-Math.max(0, Math.round(numeric(limit) || 0)));
+  }
+
+  function buildD1ResearchTechWindows(logs = [], result = {}, missingTechTypes = [], limit = 8) {
+    const missingSet = new Set(missingTechTypes || []);
+    return (logs || [])
+      .filter((entry) => {
+        if (entry?.type !== "turn-action" || !matchesPlayerResult(entry, result)) return false;
+        if (numeric(entry.roundNumber) < 3) return false;
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        return getSelectedActionId(entry) === "researchTech"
+          || candidates.some((candidate) => getCandidateId(candidate) === "researchTech");
+      })
+      .map((entry) => {
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        const availableCandidates = sortByCandidatePolicy(candidates.filter(isCandidateAvailable));
+        const researchTechCandidate = candidates.find((candidate) => getCandidateId(candidate) === "researchTech") || null;
+        const researchTech = summarizeD1ResearchTechActionCandidate(researchTechCandidate);
+        const bestMain = availableCandidates.find((candidate) => candidate.kind === "main") || null;
+        const missingTypeCandidates = D1_TECH_TYPES
+          .filter((type) => missingSet.has(type))
+          .map((type) => researchTech?.bestByType?.[type])
+          .filter(Boolean);
+        return {
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+          researchTech,
+          missingTypeCandidates,
+          bestMain: bestMain ? summarizeOpportunityCandidate(bestMain) : null,
+          topCandidates: availableCandidates.slice(0, 5).map(summarizeOpportunityCandidate),
+        };
+      })
+      .slice(-Math.max(0, Math.round(numeric(limit) || 0)));
+  }
+
+  function buildD1TechBalanceReasons(sample = {}) {
+    const reasons = [];
+    if (numeric(sample.minTechTypeCount) <= 1) reasons.push("low-d1-base");
+    if ((sample.missingTechTypesForNextD1 || []).length > 1) reasons.push("multi-color-shortfall");
+    if (numeric(sample.finalScore) <= 230) reasons.push("low-final-score");
+    if (numeric(sample.techCount) <= 7) reasons.push("low-tech-count");
+    if ((sample.techCardOptions || []).some((card) => card.researchTechEffect)) reasons.push("has-tech-card-option");
+    if (!(sample.techCardOptions || []).some((card) => card.researchTechEffect)) reasons.push("no-tech-card-option");
+    if ((sample.researchTechWindows || []).some((window) => window.researchTech && window.researchTech.available === false)) {
+      reasons.push("late-tech-resource-lock");
+    }
+    return reasons;
+  }
+
+  function sortD1TechBalanceBottleneckSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.minTechTypeCount) - numeric(right.minTechTypeCount)
+        || numeric(right.techsToNextD1Step) - numeric(left.techsToNextD1Step)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""))
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildD1TechBalanceBottleneckSamples(logs = [], playerResults = [], playerProfiles = [], options = {}) {
+    const profileById = new Map((playerProfiles || [])
+      .filter((profile) => profile?.playerId != null)
+      .map((profile) => [String(profile.playerId), profile]));
+    const profileByLabel = new Map((playerProfiles || [])
+      .filter((profile) => profile?.playerLabel != null)
+      .map((profile) => [String(profile.playerLabel), profile]));
+
+    const samples = getLowPlayerResults(playerResults, options)
+      .map((result) => {
+        const d1Entries = getD1FormulaEntries(result);
+        if (!d1Entries.length) return null;
+        const profile = getProfileForResult(result, profileById, profileByLabel);
+        const techTypeCounts = getD1TechTypeCounts(logs, result, profile);
+        const counts = D1_TECH_TYPES.map((type) => numeric(techTypeCounts[type]));
+        const minTechTypeCount = Math.min(...counts);
+        const maxTechTypeCount = Math.max(...counts);
+        const d1BaseValue = Math.min(...d1Entries.map((entry) => numeric(entry.baseValue)));
+        const weakD1 = d1BaseValue <= 1
+          || minTechTypeCount <= 1
+          || maxTechTypeCount - minTechTypeCount >= 2;
+        const lowScoreContext = numeric(result.finalScore) <= 240
+          || (result.finalMarkCount != null && numeric(result.finalMarkCount) < 3)
+          || numeric(result.baseScore) < 160;
+        if (!weakD1 && !lowScoreContext) return null;
+
+        const missingTechTypesForNextD1 = D1_TECH_TYPES.filter((type) => numeric(techTypeCounts[type]) === minTechTypeCount);
+        const d1MultiplierTotal = d1Entries.reduce((total, entry) => total + Math.max(0, numeric(entry.multiplier)), 0);
+        const techCardOptions = buildD1TechCardOptions(result).slice(0, 10);
+        const sample = {
+          playerId: result.playerId || null,
+          playerLabel: result.playerLabel || result.playerId || "unknown",
+          finalScore: roundRatio(result.finalScore),
+          baseScore: roundRatio(result.baseScore),
+          tileScore: roundRatio(result.tileScore),
+          cardScore: roundRatio(result.cardScore),
+          finalMarkCount: result.finalMarkCount == null ? null : roundRatio(result.finalMarkCount),
+          techCount: roundRatio(Math.max(numeric(result.techCount), getTechTypeCountsTotal(techTypeCounts))),
+          completedTaskCount: roundRatio(result.completedTaskCount),
+          resources: result.resources || null,
+          d1: {
+            entries: summarizeD1FormulaEntries(d1Entries),
+            multiplierTotal: roundRatio(d1MultiplierTotal),
+            baseValue: roundRatio(d1BaseValue),
+            score: roundRatio(d1Entries.reduce((total, entry) => total + numeric(entry.score), 0)),
+          },
+          techTypeCounts,
+          minTechTypeCount: roundRatio(minTechTypeCount),
+          maxTechTypeCount: roundRatio(maxTechTypeCount),
+          missingTechTypesForNextD1,
+          techsToNextD1Step: missingTechTypesForNextD1.length,
+          nextD1StepScore: roundRatio(d1MultiplierTotal),
+          techCardOptions,
+          researchTechChoices: buildD1ResearchTechChoices(logs, result, missingTechTypesForNextD1, 8),
+          researchTechWindows: buildD1ResearchTechWindows(logs, result, missingTechTypesForNextD1, 8),
+        };
+        sample.reasons = buildD1TechBalanceReasons(sample);
+        return sample;
+      })
+      .filter(Boolean);
+
+    return sortD1TechBalanceBottleneckSamples(samples, options.d1TechBalanceBottleneckLimit ?? 12);
+  }
+
   function sortHighScoreNearMissSamples(samples = [], limit = 12) {
     const normalizedLimit = Math.max(0, Math.round(limit == null ? 12 : numeric(limit)));
     if (!normalizedLimit) return [];
@@ -3979,6 +4295,7 @@
         handCards: Array.isArray(player.handCards) ? player.handCards : [],
         reservedCards: Array.isArray(player.reservedCards) ? player.reservedCards : [],
         techCount: numeric(player.techCount),
+        techTypeCounts: normalizeTechTypeCounts(player.techTypeCounts || {}),
         rocketCount: numeric(player.rocketCount),
         finalMarkCount: player.finalMarkCount != null && Number.isFinite(Number(player.finalMarkCount))
           ? numeric(player.finalMarkCount)
@@ -4104,6 +4421,9 @@
     const highScoreNearMissSamples = Array.isArray(analysis.highScoreNearMissSamples)
       ? analysis.highScoreNearMissSamples
       : [];
+    const d1TechBalanceBottleneckSamples = Array.isArray(analysis.d1TechBalanceBottleneckSamples)
+      ? analysis.d1TechBalanceBottleneckSamples
+      : [];
 
     if (actionTotal >= 10 && ratios.basicMain >= 0.45 && ratios.engine < 0.25) {
       recommendations.push({
@@ -4194,6 +4514,13 @@
         id: "inspect-high-score-near-miss",
         priority: "medium",
         message: "存在 280-299 分的高分近失席位，应按样本拆解终局板、B2、行动吞吐和未兑现手牌缺口，优先提高 300+ 命中率。",
+      });
+    }
+    if (d1TechBalanceBottleneckSamples.length) {
+      recommendations.push({
+        id: "inspect-d1-tech-chain-closure",
+        priority: "medium",
+        message: "低分 D1 样本存在三色科技短板，应结合研究科技候选、科技牌和剩余主行动窗口验证闭环，不能只按颜色平衡硬改科技选择。",
       });
     }
     if ((candidateStats.playCard?.availableNotSelected || 0) > (candidateStats.playCard?.selected || 0) * 2) {
@@ -4395,6 +4722,7 @@
       highHandDrainEnergyTrade: 0,
       lastCardPreserveEnergyMove: 0,
       negativeThirdFinalMark: 0,
+      d1TechBalanceBottleneck: 0,
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
     };
@@ -4652,6 +4980,13 @@
     opportunities.postPassThinHandNoFollowupMove = postPassQuickAnalysis.counts.postPassThinHandNoFollowupMove;
     const lowPlayerCandidateStats = buildLowPlayerCandidateStats(logs, playerResults, options);
     const lowUnplayedCardSamples = buildLowUnplayedCardSamples(playerResults, options);
+    const d1TechBalanceBottleneckSamples = buildD1TechBalanceBottleneckSamples(
+      logs,
+      playerResults,
+      playerProfiles,
+      options,
+    );
+    opportunities.d1TechBalanceBottleneck = d1TechBalanceBottleneckSamples.length;
     const actionSequences = buildActionSequences(logs, playerResults, options);
     const scoreBuckets = buildScoreBuckets(playerResults, logs);
     const analysis = {
@@ -4734,6 +5069,7 @@
       highScoreNearMissSamples,
       lowPlayerCandidateStats,
       lowUnplayedCardSamples,
+      d1TechBalanceBottleneckSamples,
       sequenceWindowTurns: actionSequences.windowTurns,
       actionSequences,
       scoreBuckets,
@@ -4780,6 +5116,7 @@
     const mergedNegativeThirdFinalMarkSamples = [];
     const mergedLowPlayerCandidateStats = [];
     const mergedLowUnplayedCardSamples = [];
+    const mergedD1TechBalanceBottleneckSamples = [];
     const mergedHighScoreNearMissSamples = [];
     const mergedLowRoundActionTailSamples = [];
     const mergedMovePayment = {
@@ -4928,6 +5265,11 @@
           ...analysis.lowUnplayedCardSamples.slice(0, 16 - mergedLowUnplayedCardSamples.length),
         );
       }
+      if (mergedD1TechBalanceBottleneckSamples.length < 16 && Array.isArray(analysis.d1TechBalanceBottleneckSamples)) {
+        mergedD1TechBalanceBottleneckSamples.push(
+          ...analysis.d1TechBalanceBottleneckSamples.slice(0, 16 - mergedD1TechBalanceBottleneckSamples.length),
+        );
+      }
       if (Array.isArray(analysis.highScoreNearMissSamples)) {
         mergedHighScoreNearMissSamples.push(...analysis.highScoreNearMissSamples);
       }
@@ -4979,6 +5321,10 @@
       mergedHighScoreNearMissSamples,
       options.highScoreNearMissLimit ?? 12,
     );
+    const d1TechBalanceBottleneckSamples = sortD1TechBalanceBottleneckSamples(
+      mergedD1TechBalanceBottleneckSamples,
+      options.d1TechBalanceBottleneckLimit ?? 12,
+    );
     const summaryForRecommendations = {
       turnActionCount,
       actionCategoryRatios,
@@ -4988,6 +5334,7 @@
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
       highScoreNearMissSamples,
+      d1TechBalanceBottleneckSamples,
       resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
       quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
       preNoMainPassResourceDrainSamples: mergedPreNoMainPassResourceDrainSamples,
@@ -5083,6 +5430,7 @@
       highScoreNearMissSamples,
       lowPlayerCandidateStats: mergedLowPlayerCandidateStats,
       lowUnplayedCardSamples: mergedLowUnplayedCardSamples,
+      d1TechBalanceBottleneckSamples,
       averageWinnerProfile,
       averageNonWinnerProfile,
       winnerProfileDeltas,
