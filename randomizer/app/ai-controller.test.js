@@ -4237,7 +4237,13 @@ function makeYichangdianAlienState(options = {}) {
     preview.discardPlan?.selectedCards?.map((card) => card.handIndex),
     [1, 2],
   );
+  assert.deepEqual(
+    preview.discardPlan?.executionSelectedIndexes,
+    [1, 2],
+  );
   assert.equal(preview.bestActionDiscardRisk?.costPlanDiscards, false);
+  assert.equal(preview.bestActionDiscardRisk?.executionPlanDiscards, false);
+  assert.equal(preview.bestActionDiscardRisk?.executionMatchesCostPlan, true);
 }
 
 {

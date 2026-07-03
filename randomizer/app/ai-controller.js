@@ -1544,6 +1544,19 @@
       const bestPostTradePlay = [...postTradeCandidates.values()]
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score))[0] || null;
       const preserveIndexes = new Set();
+      const explicitPreserveHandIndex = pending.preserveHandIndex === null
+        || pending.preserveHandIndex === undefined
+        || pending.preserveHandIndex === ""
+        ? null
+        : Number(pending.preserveHandIndex);
+      if (
+        Number.isInteger(explicitPreserveHandIndex)
+        && explicitPreserveHandIndex >= 0
+        && explicitPreserveHandIndex < hand.length
+        && hand.length > target
+      ) {
+        preserveIndexes.add(explicitPreserveHandIndex);
+      }
       if (
         bestPostTradePlay
         && aiNumber(bestPostTradePlay.score) >= 8
@@ -5571,7 +5584,7 @@
       if (options.includeExecutionPlan && handCost > 0) {
         const tradeId = options.tradeId || trade.id || null;
         const executionIndexes = tradeId
-          ? chooseAiTradeDiscardIndexes(player, handCost, { tradeId }) || []
+          ? chooseAiTradeDiscardIndexes(player, handCost, { tradeId, preserveHandIndex: preservedIndex }) || []
           : [];
         const costEntryByIndex = new Map(costEntries.map((entry) => [Number(entry.handIndex), entry]));
         const selectedIndexSet = new Set(selectedEntries.map((entry) => Number(entry.handIndex)));
