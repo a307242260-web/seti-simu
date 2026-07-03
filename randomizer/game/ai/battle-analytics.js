@@ -1046,12 +1046,21 @@
     return (candidates || []).find((candidate) => getCandidateId(candidate) === "scan") || null;
   }
 
-  function scanPreviewChoiceHasB2Value(choice = {}) {
+  function resultHasB2SectorBottleneck(result = {}) {
+    const progress = result?.b2Progress || null;
+    if (!progress) return false;
+    if (String(progress.bottleneck || "") === "sectorWins") return true;
+    const sectorWins = numeric(progress.sectorWins);
+    const orbitLandCount = numeric(progress.orbitLandCount);
+    return numeric(progress.deficit) > 0 && sectorWins < orbitLandCount;
+  }
+
+  function scanPreviewChoiceHasB2Value(choice = {}, options = {}) {
     const b2 = choice?.b2 || null;
     if (!b2) return false;
+    if (options.requireCommittedB2 && !b2.marked && !options.finalB2SectorBottleneck) return false;
     return Boolean(
-      b2.active
-      || b2.marked
+      b2.marked
       || b2.winsAfterScan
       || numeric(b2.focus) > 0
       || numeric(b2.deficit) > 0
@@ -1085,7 +1094,7 @@
     };
   }
 
-  function getB2ScanPreviewChoices(scanCandidate = {}, limit = 6) {
+  function getB2ScanPreviewChoices(scanCandidate = {}, limit = 6, options = {}) {
     const preview = scanCandidate?.targetPreview || {};
     const effectChoices = (preview.effects || []).flatMap((effect) => (
       (effect.topChoices || []).map((choice) => ({
@@ -1099,7 +1108,7 @@
       : effectChoices;
     const seen = new Set();
     return (sourceChoices || [])
-      .filter(scanPreviewChoiceHasB2Value)
+      .filter((choice) => scanPreviewChoiceHasB2Value(choice, options))
       .map(summarizeB2ScanPreviewChoice)
       .filter((choice) => {
         const key = [
@@ -1120,11 +1129,15 @@
       .slice(0, Math.max(0, Number(limit) || 0));
   }
 
-  function isB2ScanNearMiss(entry, candidates = []) {
+  function isB2ScanNearMiss(entry, candidates = [], playerResultById = new Map()) {
     if (getSelectedActionId(entry) === "scan") return false;
     const scanCandidate = getScanCandidate(candidates);
     if (!isCandidateAvailable(scanCandidate)) return false;
-    return getB2ScanPreviewChoices(scanCandidate, 1).length > 0;
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    return getB2ScanPreviewChoices(scanCandidate, 1, {
+      requireCommittedB2: true,
+      finalB2SectorBottleneck: numeric(entry.roundNumber) >= 3 && resultHasB2SectorBottleneck(result),
+    }).length > 0;
   }
 
   function getB2ScanNearMissUrgency(sample = {}) {
@@ -1153,6 +1166,7 @@
     const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
     const scanGraphNet = getCandidateActionGraphNet(scanCandidate);
     const result = playerResultById?.get?.(entry.playerId) || {};
+    const finalB2SectorBottleneck = numeric(entry.roundNumber) >= 3 && resultHasB2SectorBottleneck(result);
     return {
       roundNumber: entry.roundNumber ?? null,
       turnNumber: entry.turnNumber ?? null,
@@ -1175,7 +1189,10 @@
       actionGraphNetGap: selectedGraphNet == null || scanGraphNet == null
         ? null
         : roundRatio(selectedGraphNet - scanGraphNet),
-      topChoices: getB2ScanPreviewChoices(scanCandidate, 6),
+      topChoices: getB2ScanPreviewChoices(scanCandidate, 6, {
+        requireCommittedB2: true,
+        finalB2SectorBottleneck,
+      }),
     };
   }
 
@@ -3840,7 +3857,7 @@
           opportunities.playCardNearMiss += 1;
           playCardNearMissSamples.push(buildPlayCardNearMissSample(entry, candidates, playerResultById));
         }
-        if (isB2ScanNearMiss(entry, candidates)) {
+        if (isB2ScanNearMiss(entry, candidates, playerResultById)) {
           opportunities.b2ScanNearMiss += 1;
           b2ScanNearMissSamples.push(buildB2ScanNearMissSample(entry, candidates, playerResultById));
         }
