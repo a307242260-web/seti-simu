@@ -472,6 +472,162 @@
     return counts;
   }
 
+  function getMovePaymentAfterEntry(entries = [], startIndex = 0) {
+    for (let index = startIndex + 1; index < entries.length; index += 1) {
+      const entry = entries[index];
+      if (entry?.type === "move-payment") return entry;
+      if (entry?.type === "turn-action") return null;
+    }
+    return null;
+  }
+
+  function summarizePostPassQuickAction(entry = {}, entries = [], entryIndex = 0) {
+    const action = getSelectedAction(entry) || {};
+    const actionId = getSelectedActionId(entry);
+    const valueBreakdown = action.valueBreakdown || {};
+    const movePayment = actionId === "move" ? getMovePaymentAfterEntry(entries, entryIndex) : null;
+    const selectedHandIndices = Array.isArray(movePayment?.details?.selectedHandIndices)
+      ? movePayment.details.selectedHandIndices
+      : null;
+    const moveCardSpent = selectedHandIndices
+      ? selectedHandIndices.length
+      : Math.max(0, numeric(valueBreakdown.moveCardSpent));
+    const moveEnergySpent = movePayment?.details?.energyCost != null
+      ? Math.max(0, numeric(movePayment.details.energyCost))
+      : Math.max(0, numeric(valueBreakdown.moveEnergySpent));
+    const followupMainAction = action.followupMainAction || null;
+    const followupScore = numeric(followupMainAction?.score ?? valueBreakdown.followupScore);
+    const resources = entry.playerResources || {};
+    const handSize = Math.max(0, numeric(resources.handSize));
+    const handAfterMovePayment = Math.max(0, handSize - moveCardSpent);
+    const routeTarget = action.routeTarget || null;
+    const routeTargetDistance = Math.max(0, Math.round(numeric(routeTarget?.newDistance)));
+    const isPaidMoveNoFollowup = actionId === "move"
+      && (moveCardSpent > 0 || moveEnergySpent > 0)
+      && followupScore <= 0;
+    const isThinHandNoFollowupMove = isPaidMoveNoFollowup
+      && moveCardSpent > 0
+      && Math.max(0, numeric(resources.energy)) <= 0
+      && handAfterMovePayment <= 1
+      && routeTarget?.kind === "planet"
+      && routeTargetDistance <= 1;
+    return {
+      action: summarizeGroupedTurnAction(action),
+      resources,
+      payment: actionId === "move"
+        ? {
+          requiredMovePoints: roundRatio(valueBreakdown.requiredMovePoints ?? movePayment?.details?.requiredMovePoints),
+          moveCardSpent: roundRatio(moveCardSpent),
+          moveEnergySpent: roundRatio(moveEnergySpent),
+          handAfterMovePayment: roundRatio(handAfterMovePayment),
+        }
+        : null,
+      routeTarget: routeTarget
+        ? {
+          kind: routeTarget.kind || null,
+          id: routeTarget.id || routeTarget.planetId || null,
+          planetId: routeTarget.planetId || routeTarget.id || null,
+          newDistance: roundRatio(routeTarget.newDistance),
+        }
+        : null,
+      followupMainAction: followupMainAction
+        ? {
+          actionId: followupMainAction.actionId || null,
+          timing: followupMainAction.timing || null,
+          planetId: followupMainAction.planetId || null,
+          score: roundRatio(followupMainAction.score),
+          directScoreGain: roundRatio(followupMainAction.directScoreGain),
+        }
+        : null,
+      flags: {
+        paidMoveNoFollowup: isPaidMoveNoFollowup,
+        thinHandNoFollowupMove: isThinHandNoFollowupMove,
+      },
+      valueBreakdown: actionId === "move"
+        ? {
+          routeScore: roundRatio(valueBreakdown.routeScore),
+          routeScoreForGain: roundRatio(valueBreakdown.routeScoreForGain),
+          followupScore: roundRatio(valueBreakdown.followupScore),
+          followupTiming: valueBreakdown.followupTiming || null,
+          paymentCost: roundRatio(valueBreakdown.paymentCost),
+          movementCost: roundRatio(valueBreakdown.movementCost),
+        }
+        : null,
+    };
+  }
+
+  function buildPostPassQuickAnalysis(logs = [], playerResults = [], limit = Infinity) {
+    const playerResultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const groups = new Map();
+    for (const entry of logs || []) {
+      if (!["turn-action", "move-payment"].includes(entry.type)) continue;
+      const key = getTurnGroupKey(entry);
+      if (!groups.has(key)) {
+        groups.set(key, {
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || entry.playerId || "unknown",
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          entries: [],
+        });
+      }
+      groups.get(key).entries.push(entry);
+    }
+
+    const counts = {
+      postPassQuickAfterPass: 0,
+      postPassPaidMoveNoFollowup: 0,
+      postPassThinHandNoFollowupMove: 0,
+    };
+    const samples = [];
+    for (const group of groups.values()) {
+      let seenPass = false;
+      const turnActions = group.entries.filter((entry) => entry.type === "turn-action");
+      const actionIds = turnActions.map((entry) => {
+        const action = getSelectedAction(entry) || {};
+        return action.tradeId ? `${getSelectedActionId(entry)}:${action.tradeId}` : getSelectedActionId(entry);
+      });
+      for (let index = 0; index < group.entries.length; index += 1) {
+        const entry = group.entries[index];
+        if (entry.type !== "turn-action") continue;
+        const actionId = getSelectedActionId(entry);
+        const action = getSelectedAction(entry) || {};
+        if (actionId === "pass") {
+          seenPass = true;
+          continue;
+        }
+        if (!seenPass || getActionPaceCategory(actionId, action) !== "quick") continue;
+        counts.postPassQuickAfterPass += 1;
+        const postAction = summarizePostPassQuickAction(entry, group.entries, index);
+        if (postAction.flags.paidMoveNoFollowup) counts.postPassPaidMoveNoFollowup += 1;
+        if (postAction.flags.thinHandNoFollowupMove) counts.postPassThinHandNoFollowupMove += 1;
+        if (samples.length < limit) {
+          const result = playerResultById.get(group.playerId) || {};
+          samples.push({
+            playerId: group.playerId,
+            playerLabel: group.playerLabel,
+            finalScore: roundRatio(result.finalScore),
+            roundNumber: group.roundNumber,
+            turnNumber: group.turnNumber,
+            rawTurnNumber: group.rawTurnNumber,
+            actionIds,
+            postAction,
+          });
+        }
+      }
+    }
+    samples.sort((left, right) => (
+      numeric(left.finalScore) - numeric(right.finalScore)
+      || numeric(left.roundNumber) - numeric(right.roundNumber)
+      || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+    ));
+    return {
+      counts,
+      samples: samples.slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined),
+    };
+  }
+
   function buildFinalLowHandPassRecoverySample(entry) {
     const diagnostic = entry?.details?.finalLowHandPassRecoveryDiagnostic || {};
     return {
@@ -2910,6 +3066,9 @@
       passWithAvailableMain: 0,
       passWithResourceLockedHand: 0,
       earlyPassNoMain: 0,
+      postPassQuickAfterPass: 0,
+      postPassPaidMoveNoFollowup: 0,
+      postPassThinHandNoFollowupMove: 0,
       finalLowHandPassNoRecovery: 0,
       negativeCardCornerGraphLift: 0,
       endTurnWithAvailableMove: 0,
@@ -3130,6 +3289,10 @@
     const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
     earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
     opportunities.earlyPassNoMain = allEarlyPassNoMainSamples.length;
+    const postPassQuickAnalysis = buildPostPassQuickAnalysis(logs, playerResults);
+    opportunities.postPassQuickAfterPass = postPassQuickAnalysis.counts.postPassQuickAfterPass;
+    opportunities.postPassPaidMoveNoFollowup = postPassQuickAnalysis.counts.postPassPaidMoveNoFollowup;
+    opportunities.postPassThinHandNoFollowupMove = postPassQuickAnalysis.counts.postPassThinHandNoFollowupMove;
     const lowPlayerCandidateStats = buildLowPlayerCandidateStats(logs, playerResults, options);
     const lowUnplayedCardSamples = buildLowUnplayedCardSamples(playerResults, options);
     const actionSequences = buildActionSequences(logs, playerResults, options);
@@ -3174,6 +3337,7 @@
       passResourceLockSamples,
       earlyPassNoMainSamples,
       earlyPassNoMainReasonCounts,
+      postPassQuickSamples: postPassQuickAnalysis.samples.slice(0, 12),
       finalLowHandPassRecoverySamples,
       negativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples,
@@ -3228,6 +3392,7 @@
     const mergedPassResourceLockSamples = [];
     const mergedEarlyPassNoMainSamples = [];
     const mergedEarlyPassNoMainReasonCounts = {};
+    const mergedPostPassQuickSamples = [];
     const mergedFinalLowHandPassRecoverySamples = [];
     const mergedNegativeCardCornerGraphLiftSamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
@@ -3297,6 +3462,11 @@
       }
       for (const [key, count] of Object.entries(analysis.earlyPassNoMainReasonCounts || {})) {
         increment(mergedEarlyPassNoMainReasonCounts, key, count);
+      }
+      if (mergedPostPassQuickSamples.length < 12 && Array.isArray(analysis.postPassQuickSamples)) {
+        mergedPostPassQuickSamples.push(
+          ...analysis.postPassQuickSamples.slice(0, 12 - mergedPostPassQuickSamples.length),
+        );
       }
       if (
         mergedFinalLowHandPassRecoverySamples.length < 12
@@ -3451,6 +3621,11 @@
       passResourceLockSamples: mergedPassResourceLockSamples,
       earlyPassNoMainSamples: mergedEarlyPassNoMainSamples,
       earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
+      postPassQuickSamples: [...mergedPostPassQuickSamples].sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      )),
       finalLowHandPassRecoverySamples: mergedFinalLowHandPassRecoverySamples,
       negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,

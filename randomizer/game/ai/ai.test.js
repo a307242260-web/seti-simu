@@ -1261,6 +1261,83 @@ assert.deepEqual(earlyPassAnalysis.earlyPassNoMainReasonCounts, {
 const earlyPassSummary = analytics.summarizeBattleReports([earlyPassReport]);
 assert.deepEqual(earlyPassSummary.earlyPassNoMainReasonCounts, earlyPassAnalysis.earlyPassNoMainReasonCounts);
 
+const postPassQuickReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 6,
+      rawTurnNumber: 24,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 25, credits: 0, energy: 0, publicity: 4, handSize: 1 },
+      details: { action: { id: "pass", kind: "pass", score: -2.3 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 6,
+      rawTurnNumber: 24,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 25, credits: 0, energy: 0, publicity: 4, handSize: 2 },
+      details: {
+        action: {
+          id: "move",
+          kind: "quick",
+          score: 5.6,
+          routeTarget: { kind: "planet", id: "mars", planetId: "mars", newDistance: 0 },
+          valueBreakdown: {
+            requiredMovePoints: 1,
+            moveCardSpent: 1,
+            moveEnergySpent: 0,
+            followupScore: 0,
+            routeScore: 25.2,
+            routeScoreForGain: 14,
+            paymentCost: 5.4,
+            movementCost: 5.4,
+          },
+        },
+        candidates: [],
+      },
+    },
+    {
+      type: "move-payment",
+      roundNumber: 2,
+      turnNumber: 6,
+      rawTurnNumber: 24,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: {
+        requiredMovePoints: 1,
+        selectedHandIndices: [1],
+        energyCost: 0,
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 6,
+      rawTurnNumber: 24,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 25, credits: 0, energy: 0, publicity: 5, handSize: 1 },
+      details: { action: { id: "end-turn", kind: "end-turn", score: -0.5 }, candidates: [] },
+    },
+  ],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 184 }],
+};
+const postPassQuickAnalysis = analytics.analyzeBattleReport(postPassQuickReport);
+assert.equal(postPassQuickAnalysis.opportunities.postPassQuickAfterPass, 1);
+assert.equal(postPassQuickAnalysis.opportunities.postPassPaidMoveNoFollowup, 1);
+assert.equal(postPassQuickAnalysis.opportunities.postPassThinHandNoFollowupMove, 1);
+assert.equal(postPassQuickAnalysis.postPassQuickSamples[0].postAction.payment.handAfterMovePayment, 1);
+assert.equal(postPassQuickAnalysis.postPassQuickSamples[0].postAction.routeTarget.planetId, "mars");
+assert.equal(postPassQuickAnalysis.postPassQuickSamples[0].postAction.flags.thinHandNoFollowupMove, true);
+const postPassQuickSummary = analytics.summarizeBattleReports([postPassQuickReport]);
+assert.equal(postPassQuickSummary.postPassQuickSamples[0].postAction.flags.paidMoveNoFollowup, true);
+
 function appendRepeatedTurnActions(logs, playerId, playerLabel, counts) {
   for (const [actionId, count] of Object.entries(counts || {})) {
     for (let index = 0; index < count; index += 1) {
