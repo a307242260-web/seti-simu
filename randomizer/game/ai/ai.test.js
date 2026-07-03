@@ -984,6 +984,9 @@ assert.equal(negativePassOpportunityAnalysis.opportunities.passWithAvailableMain
 assert.equal(negativePassOpportunityAnalysis.passOpportunitySamples[0].bestMain.policyScore, -6.5);
 assert.ok(!negativePassOpportunityAnalysis.recommendations.some((entry) => entry.id === "score-pass-opportunity-cost"));
 assert.ok(negativePassOpportunityAnalysis.recommendations.some((entry) => entry.id === "classify-negative-pass-opportunity"));
+const negativePassOpportunitySummary = analytics.summarizeBattleReports([negativePassOpportunityReport]);
+assert.ok(!negativePassOpportunitySummary.recommendations.some((entry) => entry.id === "score-pass-opportunity-cost"));
+assert.ok(negativePassOpportunitySummary.recommendations.some((entry) => entry.id === "classify-negative-pass-opportunity"));
 
 const endTurnMoveReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },

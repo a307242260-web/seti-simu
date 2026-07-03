@@ -3581,6 +3581,7 @@
       candidateScoreStats: finalizeCandidateScoreStats(mergedCandidateScoreStats),
       topScoreGaps: buildTopScoreGaps(mergedCandidateScoreStats),
       opportunities: mergedOpportunities,
+      passOpportunitySamples: mergedPassOpportunitySamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(mergedScoreOpportunities.totalGap),
