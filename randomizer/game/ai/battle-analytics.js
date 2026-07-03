@@ -2912,6 +2912,68 @@
     return reasons;
   }
 
+  function buildDTechNearMissPlan(result = {}, profile = {}) {
+    const entries = Array.isArray(result.finalFormulaProgress?.entries)
+      ? result.finalFormulaProgress.entries
+      : [];
+    const dEntries = entries.filter((entry) => entry?.formulaId === "d1" || entry?.formulaId === "d2");
+    if (!dEntries.length) return null;
+    const techCount = Math.max(0, Math.round(numeric(result.techCount ?? profile.techCount)));
+    const d2Entries = dEntries.filter((entry) => entry.formulaId === "d2");
+    const d2Multiplier = d2Entries.reduce((total, entry) => total + Math.max(0, numeric(entry.multiplier)), 0);
+    const currentD2Base = Math.floor(techCount / 2);
+    const nextTechD2Base = Math.floor((techCount + 1) / 2);
+    const nextTwoTechD2Base = Math.floor((techCount + 2) / 2);
+    return {
+      techCount: roundRatio(techCount),
+      formulas: dEntries.map((entry) => ({
+        formulaId: entry.formulaId || null,
+        multiplier: roundRatio(entry.multiplier),
+        baseValue: roundRatio(entry.baseValue),
+        score: roundRatio(entry.score),
+      })),
+      hasD2: d2Entries.length > 0,
+      d2Multiplier: roundRatio(d2Multiplier),
+      d2CurrentBase: roundRatio(currentD2Base),
+      d2NextTechScore: roundRatio(Math.max(0, nextTechD2Base - currentD2Base) * d2Multiplier),
+      d2NextTwoTechScore: roundRatio(Math.max(0, nextTwoTechD2Base - currentD2Base) * d2Multiplier),
+      techsToNextD2Step: d2Entries.length ? (techCount % 2 === 0 ? 2 : 1) : null,
+    };
+  }
+
+  function buildRecentHighScoreTurnTail(logs = [], result = {}, limit = 8) {
+    const turnActionLogs = (logs || []).filter((entry) => (
+      entry?.type === "turn-action"
+      && matchesPlayerResult(entry, result)
+    ));
+    return turnActionLogs
+      .slice(-Math.max(0, Math.round(numeric(limit) || 0)))
+      .map((entry) => {
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        const availableCandidates = candidates
+          .filter(isCandidateAvailable)
+          .sort((left, right) => (
+            numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+            || getCandidateId(left).localeCompare(getCandidateId(right))
+          ));
+        const availableMain = availableCandidates
+          .filter((candidate) => candidate.kind === "main");
+        const researchTechCandidate = candidates.find((candidate) => getCandidateId(candidate) === "researchTech");
+        const playCardCandidate = candidates.find((candidate) => getCandidateId(candidate) === "playCard");
+        return {
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+          bestMain: availableMain[0] ? summarizeOpportunityCandidate(availableMain[0]) : null,
+          researchTech: researchTechCandidate ? summarizeOpportunityCandidate(researchTechCandidate) : null,
+          playCard: playCardCandidate ? summarizeOpportunityCandidate(playCardCandidate) : null,
+          topCandidates: availableCandidates.slice(0, 4).map(summarizeOpportunityCandidate),
+        };
+      });
+  }
+
   function sortHighScoreNearMissSamples(samples = [], limit = 12) {
     const normalizedLimit = Math.max(0, Math.round(limit == null ? 12 : numeric(limit)));
     if (!normalizedLimit) return [];
@@ -2926,7 +2988,7 @@
       .slice(0, normalizedLimit);
   }
 
-  function buildHighScoreNearMissSamples(playerProfiles = [], playerResults = [], options = {}) {
+  function buildHighScoreNearMissSamples(playerProfiles = [], playerResults = [], options = {}, logs = []) {
     const profiles = (playerProfiles || []).filter(Boolean);
     if (!profiles.length) return [];
 
@@ -2983,6 +3045,8 @@
           referenceGaps,
           referenceGapScore: getHighScoreNearMissGapScore(referenceGaps),
           cards,
+          dTechPlan: buildDTechNearMissPlan(result, profile),
+          recentTurnTail: buildRecentHighScoreTurnTail(logs, result, 8),
         };
         sample.reasons = buildHighScoreNearMissReasons(sample, referenceGaps);
         return sample;
@@ -4258,7 +4322,7 @@
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
     const roundPaceSummary = buildRoundPaceSummary(playerProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
-    const highScoreNearMissSamples = buildHighScoreNearMissSamples(playerProfiles, playerResults, options);
+    const highScoreNearMissSamples = buildHighScoreNearMissSamples(playerProfiles, playerResults, options, logs);
     const allEarlyPassNoMainSamples = buildEarlyPassNoMainSamples(logs, playerResults);
     const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
     earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));

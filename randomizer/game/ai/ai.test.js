@@ -1461,6 +1461,23 @@ appendRepeatedTurnActions(highScoreNearMissLogs, "near", "Near", {
   quickTrade: 2,
   pass: 4,
 });
+highScoreNearMissLogs.push({
+  type: "turn-action",
+  roundNumber: 4,
+  turnNumber: 9,
+  rawTurnNumber: 31,
+  playerId: "near",
+  playerLabel: "Near",
+  playerResources: { score: 188, credits: 1, energy: 1, publicity: 6, handSize: 1 },
+  details: {
+    action: { id: "end-turn", kind: "quick", score: -0.5 },
+    candidates: [
+      { id: "researchTech", kind: "main", available: true, score: 12, directScoreGain: 0 },
+      { id: "pass", kind: "pass", available: true, score: -2 },
+      { id: "end-turn", kind: "quick", available: true, score: -0.5 },
+    ],
+  },
+});
 const highScoreNearMissReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: highScoreNearMissLogs,
@@ -1486,7 +1503,14 @@ const highScoreNearMissReport = {
       techCount: 10,
       completedTaskCount: 3,
       finalMarkCount: 3,
-      finalFormulas: ["a1", "b2", "d1"],
+      finalFormulas: ["a1", "b2", "d2"],
+      finalFormulaProgress: {
+        entries: [
+          { formulaId: "a1", multiplier: 4, baseValue: 3, score: 12 },
+          { formulaId: "b2", multiplier: 6, baseValue: 2, score: 12 },
+          { formulaId: "d2", multiplier: 7, baseValue: 5, score: 35 },
+        ],
+      },
       b2Progress: { sectorWins: 2, orbitLandCount: 5, sectorWinDeficit: 2, orbitLandDeficit: 0, bottleneck: "sectorWins" },
       resources: { credits: 0, energy: 1, publicity: 4, handSize: 2 },
       handCards: [
@@ -1506,10 +1530,16 @@ assert.ok(highScoreNearMissAnalysis.highScoreNearMissSamples[0].reasons.includes
 assert.ok(highScoreNearMissAnalysis.highScoreNearMissSamples[0].reasons.includes("card-score-gap"));
 assert.ok(highScoreNearMissAnalysis.highScoreNearMissSamples[0].referenceGaps.cardScore >= 14);
 assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].cards[0].cardId, "near-task.webp");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechPlan.hasD2, true);
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechPlan.d2NextTwoTechScore, 7);
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechPlan.techsToNextD2Step, 2);
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].recentTurnTail.at(-1).selected.id, "end-turn");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].recentTurnTail.at(-1).bestMain.id, "researchTech");
 assert.ok(highScoreNearMissAnalysis.recommendations.some((entry) => entry.id === "inspect-high-score-near-miss"));
 const highScoreNearMissSummary = analytics.summarizeBattleReports([highScoreNearMissReport]);
 assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].playerId, "near");
 assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].cards[1].zone, "reserved");
+assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].dTechPlan.d2NextTwoTechScore, 7);
 assert.ok(highScoreNearMissSummary.recommendations.some((entry) => entry.id === "inspect-high-score-near-miss"));
 
 const highHandDrainEnergyTradeReport = {
