@@ -4636,6 +4636,7 @@
         const conversionGapScore = getOpeningPlanConversionGapScore(selectedSummary, earlyActual, finalScore);
         const playerKey = entry.playerId || entry.playerLabel;
         const lowPlayer = finalScore <= lowScoreCutoff || lowKeys.has(playerKey);
+        if (!reasons.length && conversionGapScore <= 0) return null;
         if (!lowPlayer && !reasons.length) return null;
         if (!lowPlayer && conversionGapScore < 2) return null;
         return {
