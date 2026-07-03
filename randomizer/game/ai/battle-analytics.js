@@ -14,6 +14,8 @@
   const BASIC_MAIN_ACTIONS = Object.freeze(["launch", "orbit", "land", "scan", "analyze"]);
   const ENGINE_ACTIONS = Object.freeze(["playCard", "researchTech"]);
   const QUICK_ACTIONS = Object.freeze(["move", "placeData"]);
+  const PACE_QUICK_ACTIONS = Object.freeze(["move", "placeData", "cardCorner", "quickTrade"]);
+  const PACE_MAIN_ACTIONS = Object.freeze(["industry", ...BASIC_MAIN_ACTIONS, ...ENGINE_ACTIONS]);
   const PASS_ACTIONS = Object.freeze(["pass", "end-turn"]);
   const DEFAULT_SEQUENCE_WINDOW_TURNS = 6;
   const KEY_SEQUENCE_DECISIONS = Object.freeze([
@@ -77,6 +79,14 @@
     if (ENGINE_ACTIONS.includes(actionId)) return "engine";
     if (QUICK_ACTIONS.includes(actionId)) return "quick";
     if (PASS_ACTIONS.includes(actionId)) return "pass";
+    return "other";
+  }
+
+  function getActionPaceCategory(actionId, action = {}) {
+    const id = String(actionId || "");
+    if (PASS_ACTIONS.includes(id)) return "idle";
+    if (PACE_QUICK_ACTIONS.includes(id) || action.kind === "quick") return "quick";
+    if (PACE_MAIN_ACTIONS.includes(id) || action.kind === "main") return "main";
     return "other";
   }
 
@@ -591,6 +601,7 @@
         actionCounts: {},
         actionCategoryCounts: {},
         actionCategoryRatios: {},
+        paceCounts: {},
         techTypeCounts: {},
         scanTargetCounts: {},
         routeTargetCounts: {},
@@ -1149,6 +1160,58 @@
     addProfileMetric(profile, "rocketCount", profile.rocketCount);
   }
 
+  function summarizePaceProfile(profile = {}) {
+    const metrics = profile.metrics || {};
+    return {
+      playerId: profile.playerId || null,
+      playerLabel: profile.playerLabel || profile.playerId || "unknown",
+      finalScore: roundRatio(profile.finalScore),
+      mainActionCount: roundRatio(metrics.mainActionCount),
+      quickStepCount: roundRatio(metrics.quickStepCount),
+      resourceQuickStepCount: roundRatio(metrics.resourceQuickStepCount),
+      productiveActionCount: roundRatio(metrics.productiveActionCount),
+      idleTurnCount: roundRatio(metrics.idleTurnCount),
+      quickToMainRatio: roundRatio(metrics.quickToMainRatio),
+      idleTurnRatio: roundRatio(metrics.idleTurnRatio),
+      playCardCount: roundRatio(metrics.playCardCount),
+      researchTechCount: roundRatio(metrics.researchTechCount),
+      techCount: roundRatio(metrics.techCount),
+      completedTaskCount: roundRatio(metrics.completedTaskCount),
+    };
+  }
+
+  function buildPaceSummary(playerProfiles = []) {
+    const profiles = (playerProfiles || []).filter(Boolean);
+    const average = averageProfileMetrics(profiles);
+    const scoreLeaders = [...profiles]
+      .sort((left, right) => numeric(right.finalScore) - numeric(left.finalScore) || left.playerLabel.localeCompare(right.playerLabel));
+    const lowTailPlayers = [...profiles]
+      .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore) || left.playerLabel.localeCompare(right.playerLabel))
+      .slice(0, 3)
+      .map(summarizePaceProfile);
+    const quickStepLeaders = [...profiles]
+      .sort((left, right) => (
+        numeric(right.metrics?.quickStepCount) - numeric(left.metrics?.quickStepCount)
+        || numeric(right.finalScore) - numeric(left.finalScore)
+        || left.playerLabel.localeCompare(right.playerLabel)
+      ))
+      .slice(0, 3)
+      .map(summarizePaceProfile);
+    return {
+      playerCount: profiles.length,
+      averageMainActionCount: roundRatio(average.mainActionCount),
+      averageQuickStepCount: roundRatio(average.quickStepCount),
+      averageResourceQuickStepCount: roundRatio(average.resourceQuickStepCount),
+      averageProductiveActionCount: roundRatio(average.productiveActionCount),
+      averageQuickToMainRatio: roundRatio(average.quickToMainRatio),
+      averageIdleTurnRatio: roundRatio(average.idleTurnRatio),
+      winner: scoreLeaders[0] ? summarizePaceProfile(scoreLeaders[0]) : null,
+      lowTail: lowTailPlayers[0] || null,
+      lowTailPlayers,
+      quickStepLeaders,
+    };
+  }
+
   function finalizePlayerProfile(profile) {
     for (const [category, count] of Object.entries(profile.actionCategoryCounts || {})) {
       profile.actionCategoryRatios[category] = profile.turnActionCount
@@ -1159,10 +1222,30 @@
     profile.metrics.engineRatio = profile.actionCategoryRatios.engine || 0;
     profile.metrics.quickRatio = profile.actionCategoryRatios.quick || 0;
     profile.metrics.passRatio = profile.actionCategoryRatios.pass || 0;
+    profile.metrics.mainActionCount = numeric(profile.paceCounts.main);
+    profile.metrics.quickStepCount = numeric(profile.paceCounts.quick);
+    profile.metrics.idleTurnCount = numeric(profile.paceCounts.idle);
+    profile.metrics.otherTurnActionCount = numeric(profile.paceCounts.other);
+    profile.metrics.productiveActionCount = profile.metrics.mainActionCount + profile.metrics.quickStepCount;
+    profile.metrics.quickToMainRatio = profile.metrics.mainActionCount
+      ? roundRatio(profile.metrics.quickStepCount / profile.metrics.mainActionCount)
+      : 0;
+    profile.metrics.productiveActionRatio = profile.turnActionCount
+      ? roundRatio(profile.metrics.productiveActionCount / profile.turnActionCount)
+      : 0;
+    profile.metrics.idleTurnRatio = profile.turnActionCount
+      ? roundRatio(profile.metrics.idleTurnCount / profile.turnActionCount)
+      : 0;
     profile.metrics.scanCount = numeric(profile.actionCounts.scan);
     profile.metrics.playCardCount = numeric(profile.actionCounts.playCard);
     profile.metrics.researchTechCount = numeric(profile.actionCounts.researchTech);
     profile.metrics.moveCount = numeric(profile.actionCounts.move);
+    profile.metrics.placeDataCount = numeric(profile.actionCounts.placeData);
+    profile.metrics.cardCornerCount = numeric(profile.actionCounts.cardCorner);
+    profile.metrics.quickTradeCount = numeric(profile.actionCounts.quickTrade);
+    profile.metrics.resourceQuickStepCount = profile.metrics.placeDataCount
+      + profile.metrics.cardCornerCount
+      + profile.metrics.quickTradeCount;
     profile.metrics.orbitLandCount = numeric(profile.actionCounts.orbit) + numeric(profile.actionCounts.land);
     profile.metrics.passCount = numeric(profile.actionCounts.pass);
     profile.metrics.routeTargetCount = Object.values(profile.routeTargetCounts || {})
@@ -1185,9 +1268,11 @@
       const profile = ensurePlayerProfile(profiles, entry.playerId, entry.playerLabel);
       if (entry.type === "turn-action") {
         const actionId = getSelectedActionId(entry);
+        const action = getSelectedAction(entry);
         const category = getActionCategory(actionId);
         increment(profile.actionCounts, actionId);
         increment(profile.actionCategoryCounts, category);
+        increment(profile.paceCounts, getActionPaceCategory(actionId, action));
         profile.turnActionCount += 1;
         const routeTargetKey = getRouteTargetKey(getRouteTargetFromEntry(entry));
         if (routeTargetKey) increment(profile.routeTargetCounts, routeTargetKey);
@@ -1233,6 +1318,18 @@
     "completedTaskCount",
     "techCount",
     "rocketCount",
+    "mainActionCount",
+    "quickStepCount",
+    "resourceQuickStepCount",
+    "productiveActionCount",
+    "idleTurnCount",
+    "otherTurnActionCount",
+    "quickToMainRatio",
+    "productiveActionRatio",
+    "idleTurnRatio",
+    "placeDataCount",
+    "cardCornerCount",
+    "quickTradeCount",
     "basicMainRatio",
     "engineRatio",
     "quickRatio",
@@ -2302,6 +2399,7 @@
       winnerProfileComparison,
       winnerProfileDeltas: winnerProfileComparison?.delta || {},
       winner: playerResults[0] || null,
+      paceSummary: buildPaceSummary(playerProfiles),
       sequenceWindowTurns: actionSequences.windowTurns,
       actionSequences,
       scoreBuckets,
@@ -2350,6 +2448,7 @@
     const mergedSequenceCounts = {};
     const mergedScoreBuckets = {};
     const winnerCounts = {};
+    const allProfiles = [];
     const winnerProfiles = [];
     const nonWinnerProfiles = [];
     let totalSteps = 0;
@@ -2445,6 +2544,7 @@
       }
       const profiles = analysis.playerProfiles || [];
       if (profiles.length) {
+        allProfiles.push(...profiles);
         winnerProfiles.push(profiles[0]);
         nonWinnerProfiles.push(...profiles.slice(1));
       }
@@ -2491,6 +2591,7 @@
     const averageWinnerProfile = averageProfileMetrics(winnerProfiles);
     const averageNonWinnerProfile = averageProfileMetrics(nonWinnerProfiles);
     const winnerProfileDeltas = diffProfileMetrics(averageWinnerProfile, averageNonWinnerProfile);
+    const paceSummary = buildPaceSummary(allProfiles);
     const sequenceWindowTurns = normalizeSequenceWindowTurns(
       options.sequenceWindowTurns
       ?? validAnalyses.find((analysis) => analysis?.sequenceWindowTurns != null)?.sequenceWindowTurns
@@ -2543,6 +2644,7 @@
       actionSequences,
       scoreBuckets: finalizeScoreBuckets(mergedScoreBuckets),
       winnerCounts,
+      paceSummary,
       averageWinnerProfile,
       averageNonWinnerProfile,
       winnerProfileDeltas,

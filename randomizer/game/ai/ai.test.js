@@ -947,6 +947,10 @@ assert.equal(battleAnalysis.playerProfiles[0].metrics.planMoveCount, 1);
 assert.equal(battleAnalysis.winner.playerId, "player-white");
 assert.equal(battleAnalysis.playerProfiles.length, 2);
 assert.equal(battleAnalysis.playerProfiles[0].playerId, "player-white");
+assert.equal(battleAnalysis.playerProfiles[0].metrics.mainActionCount, 1);
+assert.equal(battleAnalysis.playerProfiles[0].metrics.idleTurnCount, 0);
+assert.equal(battleAnalysis.playerProfiles[1].metrics.idleTurnCount, 1);
+assert.equal(battleAnalysis.paceSummary.lowTail.playerId, "player-blue");
 assert.equal(battleAnalysis.playerProfiles[0].metrics.engineRatio, 0);
 assert.equal(battleAnalysis.winnerProfileDeltas.finalScore, 5);
 assert.ok(battleAnalysis.strategyTuning.weights.tech > 1);
@@ -1107,6 +1111,65 @@ assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0]
 assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].topPublicTradeCards[0].cardId, "b_87.webp");
 const finalLowHandPassRecoverySummary = analytics.summarizeBattleReports([finalLowHandPassRecoveryReport]);
 assert.equal(finalLowHandPassRecoverySummary.finalLowHandPassRecoverySamples[0].tradeChecks[0].tradeId, "publicity-for-card");
+
+const paceReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 5 },
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: { action: { id: "playCard", kind: "main", score: 20 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: { action: { id: "cardCorner", kind: "quick", score: 4 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: { action: { id: "quickTrade", kind: "quick", tradeId: "cards-for-energy", score: 6 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: { action: { id: "placeData", kind: "quick", score: 3 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: { action: { id: "end-turn", kind: "quick", score: -0.5 }, candidates: [] },
+    },
+  ],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 120 }],
+};
+const paceAnalysis = analytics.analyzeBattleReport(paceReport);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.mainActionCount, 1);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.quickStepCount, 3);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.resourceQuickStepCount, 3);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.idleTurnCount, 1);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.quickToMainRatio, 3);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.productiveActionRatio, 0.8);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.idleTurnRatio, 0.2);
+assert.equal(paceAnalysis.paceSummary.averageQuickStepCount, 3);
+const paceSummary = analytics.summarizeBattleReports([paceReport]);
+assert.equal(paceSummary.paceSummary.averageMainActionCount, 1);
+assert.equal(paceSummary.paceSummary.lowTail.quickStepCount, 3);
 
 const negativeCardCornerGraphLiftReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
