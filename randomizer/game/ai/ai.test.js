@@ -846,6 +846,40 @@ const sampleBattleReport = {
   lastSummary: { ok: false, blocked: true, gameEnded: false, steps: 4, message: "sample" },
   logs: [
     {
+      type: "initial-selection",
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: {
+        aiStyle: "route",
+        industryCard: { label: "寰宇超动力" },
+        initialCards: [
+          { id: "initial:18", label: "初始牌 18" },
+          { id: "initial:11", label: "初始牌 11" },
+        ],
+        openingPlan: {
+          score: 100.5,
+          summary: { scan: 2, traces: 1, orbits: 0, data: 0 },
+          goals: { GRAB_TRACE_PINK: 2 },
+          topPlans: [
+            {
+              score: 100.5,
+              industryLabel: "寰宇超动力",
+              initialNumbers: [18, 11],
+              summary: { scan: 2, traces: 1, orbits: 0, data: 0 },
+              goals: { GRAB_TRACE_PINK: 2 },
+            },
+            {
+              score: 100.2,
+              industryLabel: "寰宇超动力",
+              initialNumbers: [7, 11],
+              summary: { scan: 0, traces: 1, orbits: 1, data: 1 },
+              goals: { GRAB_TRACE_YELLOW: 1.35 },
+            },
+          ],
+        },
+      },
+    },
+    {
       type: "turn-action",
       playerId: "player-white",
       details: {
@@ -925,6 +959,9 @@ assert.equal(battleAnalysis.actionCounts.launch, 1);
 assert.equal(battleAnalysis.actionCounts.pass, 1);
 assert.equal(battleAnalysis.candidateStats.playCard.availableNotSelected, 1);
 assert.equal(battleAnalysis.opportunities.passWithAvailableMain, 1);
+assert.equal(battleAnalysis.opportunities.openingPlanNearMiss, 1);
+assert.equal(battleAnalysis.openingPlanNearMissSamples[0].bestAlternativeGap, 0.3);
+assert.deepEqual(battleAnalysis.openingPlanNearMissSamples[0].alternatives[0].initialNumbers, [7, 11]);
 assert.equal(battleAnalysis.opportunities.selectedBelowBestScore, 2);
 assert.equal(battleAnalysis.scoreOpportunities.selectedBelowBest, 2);
 assert.equal(battleAnalysis.scoreOpportunities.averageGap, 10.75);
@@ -959,6 +996,8 @@ assert.ok(battleAnalysis.strategyTuning.weights.pass < 1);
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "score-pass-opportunity-cost"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-score-gap"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-card-score-gap"));
+const sampleBattleSummary = analytics.summarizeBattleReports([sampleBattleReport]);
+assert.equal(sampleBattleSummary.openingPlanNearMissSamples[0].playerLabel, "白色");
 
 const negativePassOpportunityReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },

@@ -3847,6 +3847,89 @@
       .sort((left, right) => right.finalScore - left.finalScore || left.playerLabel.localeCompare(right.playerLabel));
   }
 
+  function normalizeInitialNumbers(numbers = []) {
+    return (numbers || [])
+      .map((number) => Number(number))
+      .filter((number) => Number.isFinite(number))
+      .sort((left, right) => left - right);
+  }
+
+  function getInitialNumbersKey(numbers = []) {
+    return normalizeInitialNumbers(numbers).join(",");
+  }
+
+  function getOpeningLogInitialNumbers(entry = {}) {
+    return (entry.details?.initialCards || [])
+      .map((card) => {
+        const idMatch = String(card?.id || "").match(/initial:(\d+)/);
+        if (idMatch) return Number(idMatch[1]);
+        const labelMatch = String(card?.label || "").match(/(\d+)/);
+        return labelMatch ? Number(labelMatch[1]) : null;
+      })
+      .filter((number) => Number.isFinite(number));
+  }
+
+  function summarizeOpeningPlan(plan = {}, selectedScore = 0) {
+    const score = roundRatio(plan.score);
+    return {
+      score,
+      scoreGap: roundRatio(numeric(selectedScore) - score),
+      industryLabel: plan.industryLabel || null,
+      initialNumbers: normalizeInitialNumbers(plan.initialNumbers || []),
+      summary: plan.summary || null,
+      goals: plan.goals || null,
+    };
+  }
+
+  function sortOpeningPlanNearMissSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.bestAlternativeGap) - numeric(right.bestAlternativeGap)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""), "zh-Hans-CN")
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildOpeningPlanNearMissSamples(logs = [], playerResults = [], limit = 12) {
+    const resultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const samples = (logs || [])
+      .filter((entry) => entry?.type === "initial-selection")
+      .map((entry) => {
+        const openingPlan = entry.details?.openingPlan || {};
+        const topPlans = Array.isArray(openingPlan.topPlans) ? openingPlan.topPlans : [];
+        if (topPlans.length < 2) return null;
+        const selectedNumbers = getOpeningLogInitialNumbers(entry);
+        const selectedKey = getInitialNumbersKey(selectedNumbers);
+        const selectedScore = numeric(openingPlan.score ?? topPlans[0]?.score);
+        const alternatives = topPlans
+          .filter((plan) => getInitialNumbersKey(plan.initialNumbers || []) !== selectedKey)
+          .slice(0, 4)
+          .map((plan) => summarizeOpeningPlan(plan, selectedScore));
+        if (!alternatives.length) return null;
+        const player = resultById.get(entry.playerId) || {};
+        const bestAlternativeGap = roundRatio(alternatives[0].scoreGap);
+        if (bestAlternativeGap > 1.5 && numeric(player.finalScore) > 240) return null;
+        return {
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || player.playerLabel || null,
+          finalScore: roundRatio(player.finalScore),
+          industryLabel: entry.details?.industryCard?.label || null,
+          aiStyle: entry.details?.aiStyle || null,
+          selected: {
+            score: roundRatio(selectedScore),
+            initialNumbers: normalizeInitialNumbers(selectedNumbers),
+            summary: openingPlan.summary || null,
+            goals: openingPlan.goals || null,
+          },
+          bestAlternativeGap,
+          alternatives,
+        };
+      })
+      .filter(Boolean);
+    return sortOpeningPlanNearMissSamples(samples, limit);
+  }
+
   function getPassOpportunityBestMainScore(sample = {}) {
     const bestMain = sample?.bestMain || {};
     const policyScore = getFiniteScore(bestMain.policyScore);
@@ -4147,6 +4230,7 @@
     const opportunities = {
       passWithAvailableMain: 0,
       passWithResourceLockedHand: 0,
+      openingPlanNearMiss: 0,
       earlyPassNoMain: 0,
       resourceLockMainUnlock: 0,
       quickBeforePassNoMain: 0,
@@ -4173,6 +4257,7 @@
     };
     const passOpportunitySamples = [];
     const passResourceLockSamples = [];
+    const openingPlanNearMissSamples = [];
     const earlyPassNoMainSamples = [];
     const resourceLockMainUnlockSamples = [];
     const quickBeforePassNoMainSamples = [];
@@ -4386,6 +4471,9 @@
     const roundPaceSummary = buildRoundPaceSummary(playerProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
     const highScoreNearMissSamples = buildHighScoreNearMissSamples(playerProfiles, playerResults, options, logs);
+    const allOpeningPlanNearMissSamples = buildOpeningPlanNearMissSamples(logs, playerResults, Infinity);
+    openingPlanNearMissSamples.push(...allOpeningPlanNearMissSamples.slice(0, 12));
+    opportunities.openingPlanNearMiss = allOpeningPlanNearMissSamples.length;
     const allEarlyPassNoMainSamples = buildEarlyPassNoMainSamples(logs, playerResults);
     const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
     earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
@@ -4454,6 +4542,7 @@
       opportunities,
       passOpportunitySamples,
       passResourceLockSamples,
+      openingPlanNearMissSamples,
       earlyPassNoMainSamples,
       resourceLockMainUnlockSamples,
       earlyPassNoMainReasonCounts,
@@ -4518,6 +4607,7 @@
     };
     const mergedPassOpportunitySamples = [];
     const mergedPassResourceLockSamples = [];
+    const mergedOpeningPlanNearMissSamples = [];
     const mergedEarlyPassNoMainSamples = [];
     const mergedResourceLockMainUnlockSamples = [];
     const mergedEarlyPassNoMainReasonCounts = {};
@@ -4589,6 +4679,9 @@
         mergedPassResourceLockSamples.push(
           ...analysis.passResourceLockSamples.slice(0, 12 - mergedPassResourceLockSamples.length),
         );
+      }
+      if (Array.isArray(analysis.openingPlanNearMissSamples)) {
+        mergedOpeningPlanNearMissSamples.push(...analysis.openingPlanNearMissSamples);
       }
       if (Array.isArray(analysis.earlyPassNoMainSamples)) {
         mergedEarlyPassNoMainSamples.push(...analysis.earlyPassNoMainSamples);
@@ -4782,6 +4875,7 @@
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
       passResourceLockSamples: mergedPassResourceLockSamples,
+      openingPlanNearMissSamples: sortOpeningPlanNearMissSamples(mergedOpeningPlanNearMissSamples),
       earlyPassNoMainSamples: sortEarlyPassNoMainSamples(mergedEarlyPassNoMainSamples),
       resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
       earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,

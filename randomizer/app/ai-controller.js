@@ -18152,6 +18152,7 @@
             opportunities: analysis.opportunities,
             passOpportunitySamples: analysis.passOpportunitySamples,
             passResourceLockSamples: analysis.passResourceLockSamples,
+            openingPlanNearMissSamples: analysis.openingPlanNearMissSamples,
             finalLowHandPassRecoverySamples: analysis.finalLowHandPassRecoverySamples,
             earlyPassNoMainSamples: analysis.earlyPassNoMainSamples,
             quickBeforePassNoMainSamples: analysis.quickBeforePassNoMainSamples,
