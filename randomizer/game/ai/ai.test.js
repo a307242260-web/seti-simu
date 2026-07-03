@@ -1251,12 +1251,15 @@ const earlyPassReport = {
 const earlyPassAnalysis = analytics.analyzeBattleReport(earlyPassReport);
 assert.equal(earlyPassAnalysis.opportunities.earlyPassNoMain, 2);
 assert.equal(earlyPassAnalysis.opportunities.quickBeforePassNoMain, 1);
+assert.equal(earlyPassAnalysis.opportunities.postPassQuickNoMain, 0);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].rawTurnNumber, 2);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].reasonTag, "resource-trade-unlocks-main");
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].candidateProfile.unavailableMainCount, 3);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].candidateProfile.bestResourceLockTrade.tradeId, "cards-for-credit");
 assert.deepEqual(earlyPassAnalysis.earlyPassNoMainSamples[1].actionIds, ["cardCorner", "pass"]);
 assert.deepEqual(earlyPassAnalysis.quickBeforePassNoMainSamples[0].actionIds, ["cardCorner", "pass"]);
+assert.equal(earlyPassAnalysis.quickBeforePassNoMainSamples[0].quickBeforePassCount, 1);
+assert.equal(earlyPassAnalysis.quickBeforePassNoMainSamples[0].quickAfterPassCount, 0);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[1].reasonTag, "negative-main-only");
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[1].candidateProfile.bestMain.id, "researchTech");
 assert.deepEqual(earlyPassAnalysis.earlyPassNoMainReasonCounts, {
@@ -1336,6 +1339,8 @@ const postPassQuickReport = {
   playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 184 }],
 };
 const postPassQuickAnalysis = analytics.analyzeBattleReport(postPassQuickReport);
+assert.equal(postPassQuickAnalysis.opportunities.quickBeforePassNoMain, 0);
+assert.equal(postPassQuickAnalysis.opportunities.postPassQuickNoMain, 1);
 assert.equal(postPassQuickAnalysis.opportunities.postPassQuickAfterPass, 1);
 assert.equal(postPassQuickAnalysis.opportunities.postPassPaidMoveNoFollowup, 1);
 assert.equal(postPassQuickAnalysis.opportunities.postPassThinHandNoFollowupMove, 1);
@@ -1343,7 +1348,9 @@ assert.equal(postPassQuickAnalysis.postPassQuickSamples[0].postAction.payment.ha
 assert.equal(postPassQuickAnalysis.postPassQuickSamples[0].postAction.routeTarget.planetId, "mars");
 assert.equal(postPassQuickAnalysis.postPassQuickSamples[0].postAction.flags.thinHandNoFollowupMove, true);
 const postPassQuickSummary = analytics.summarizeBattleReports([postPassQuickReport]);
+assert.equal(postPassQuickSummary.postPassQuickNoMainSamples[0].quickAfterPassCount, 1);
 assert.equal(postPassQuickSummary.postPassQuickSamples[0].postAction.flags.paidMoveNoFollowup, true);
+assert.ok(postPassQuickSummary.recommendations.some((entry) => entry.id === "inspect-post-pass-quick-no-main"));
 assert.ok(postPassQuickSummary.recommendations.some((entry) => entry.id === "classify-route-payment-risk"));
 assert.ok(!postPassQuickSummary.recommendations.some((entry) => entry.id === "route-planner"));
 

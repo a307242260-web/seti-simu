@@ -413,6 +413,8 @@
           actions: [],
           mainActionCount: 0,
           quickStepCount: 0,
+          quickBeforePassCount: 0,
+          quickAfterPassCount: 0,
           passed: false,
           passCandidateProfile: null,
         });
@@ -420,7 +422,11 @@
       const group = groups.get(key);
       const pace = getActionPaceCategory(actionId, action);
       if (pace === "main") group.mainActionCount += 1;
-      if (pace === "quick") group.quickStepCount += 1;
+      if (pace === "quick") {
+        group.quickStepCount += 1;
+        if (group.passed) group.quickAfterPassCount += 1;
+        else group.quickBeforePassCount += 1;
+      }
       if (actionId === "pass") {
         group.passed = true;
         group.passResources = entry.playerResources || group.passResources;
@@ -429,7 +435,7 @@
       group.actions.push(summarizeGroupedTurnAction(action));
       group.resources = entry.playerResources || group.resources;
     }
-    return [...groups.values()]
+    const samples = [...groups.values()]
       .filter((group) => group.passed && group.mainActionCount <= 0)
       .map((group) => {
         const result = playerResultById.get(group.playerId) || {};
@@ -443,6 +449,8 @@
           rawTurnNumber: group.rawTurnNumber,
           resources,
           quickStepCount: group.quickStepCount,
+          quickBeforePassCount: group.quickBeforePassCount,
+          quickAfterPassCount: group.quickAfterPassCount,
           reasonTag: group.passCandidateProfile?.reasonTag || null,
           candidateProfile: group.passCandidateProfile || null,
           actionIds: group.actions.map((action) => action.tradeId ? `${action.id}:${action.tradeId}` : action.id),
@@ -455,7 +463,12 @@
             availableData: roundRatio(resources.availableData),
           },
         };
-      })
+      });
+    return sortEarlyPassNoMainSamples(samples, limit);
+  }
+
+  function sortEarlyPassNoMainSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
       .sort((left, right) => (
         numeric(left.finalScore) - numeric(right.finalScore)
         || numeric(left.roundNumber) - numeric(right.roundNumber)
@@ -2916,6 +2929,13 @@
         message: "存在已执行快速行动但仍未接上主行动即 PASS 的回合，应检查资源滚动是否只消耗了手牌/资源而没有打开有效主行动。",
       });
     }
+    if (numeric(opportunities.postPassQuickNoMain) > 0) {
+      recommendations.push({
+        id: "inspect-post-pass-quick-no-main",
+        priority: "medium",
+        message: "存在 PASS 后继续快速行动但没有后续主行动的回合，应区分有效路线铺垫和消耗手牌/资源的尾随动作。",
+      });
+    }
     if (opportunities.endTurnWithPositiveMove > 0) {
       recommendations.push({
         id: "targeted-post-action-move",
@@ -3115,6 +3135,7 @@
       passWithResourceLockedHand: 0,
       earlyPassNoMain: 0,
       quickBeforePassNoMain: 0,
+      postPassQuickNoMain: 0,
       postPassQuickAfterPass: 0,
       postPassPaidMoveNoFollowup: 0,
       postPassThinHandNoFollowupMove: 0,
@@ -3136,6 +3157,7 @@
     const passResourceLockSamples = [];
     const earlyPassNoMainSamples = [];
     const quickBeforePassNoMainSamples = [];
+    const postPassQuickNoMainSamples = [];
     const finalLowHandPassRecoverySamples = [];
     const negativeCardCornerGraphLiftSamples = [];
     const endTurnMoveOpportunitySamples = [];
@@ -3337,9 +3359,13 @@
     earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
     opportunities.earlyPassNoMain = allEarlyPassNoMainSamples.length;
     const allQuickBeforePassNoMainSamples = allEarlyPassNoMainSamples
-      .filter((sample) => numeric(sample.quickStepCount) > 0);
+      .filter((sample) => numeric(sample.quickBeforePassCount) > 0);
     quickBeforePassNoMainSamples.push(...allQuickBeforePassNoMainSamples.slice(0, 12));
     opportunities.quickBeforePassNoMain = allQuickBeforePassNoMainSamples.length;
+    const allPostPassQuickNoMainSamples = allEarlyPassNoMainSamples
+      .filter((sample) => numeric(sample.quickAfterPassCount) > 0);
+    postPassQuickNoMainSamples.push(...allPostPassQuickNoMainSamples.slice(0, 12));
+    opportunities.postPassQuickNoMain = allPostPassQuickNoMainSamples.length;
     const postPassQuickAnalysis = buildPostPassQuickAnalysis(logs, playerResults);
     opportunities.postPassQuickAfterPass = postPassQuickAnalysis.counts.postPassQuickAfterPass;
     opportunities.postPassPaidMoveNoFollowup = postPassQuickAnalysis.counts.postPassPaidMoveNoFollowup;
@@ -3389,6 +3415,7 @@
       earlyPassNoMainSamples,
       earlyPassNoMainReasonCounts,
       quickBeforePassNoMainSamples,
+      postPassQuickNoMainSamples,
       postPassQuickSamples: postPassQuickAnalysis.samples.slice(0, 12),
       finalLowHandPassRecoverySamples,
       negativeCardCornerGraphLiftSamples,
@@ -3445,6 +3472,7 @@
     const mergedEarlyPassNoMainSamples = [];
     const mergedEarlyPassNoMainReasonCounts = {};
     const mergedQuickBeforePassNoMainSamples = [];
+    const mergedPostPassQuickNoMainSamples = [];
     const mergedPostPassQuickSamples = [];
     const mergedFinalLowHandPassRecoverySamples = [];
     const mergedNegativeCardCornerGraphLiftSamples = [];
@@ -3508,21 +3536,17 @@
           ...analysis.passResourceLockSamples.slice(0, 12 - mergedPassResourceLockSamples.length),
         );
       }
-      if (mergedEarlyPassNoMainSamples.length < 12 && Array.isArray(analysis.earlyPassNoMainSamples)) {
-        mergedEarlyPassNoMainSamples.push(
-          ...analysis.earlyPassNoMainSamples.slice(0, 12 - mergedEarlyPassNoMainSamples.length),
-        );
+      if (Array.isArray(analysis.earlyPassNoMainSamples)) {
+        mergedEarlyPassNoMainSamples.push(...analysis.earlyPassNoMainSamples);
       }
       for (const [key, count] of Object.entries(analysis.earlyPassNoMainReasonCounts || {})) {
         increment(mergedEarlyPassNoMainReasonCounts, key, count);
       }
-      if (
-        mergedQuickBeforePassNoMainSamples.length < 12
-        && Array.isArray(analysis.quickBeforePassNoMainSamples)
-      ) {
-        mergedQuickBeforePassNoMainSamples.push(
-          ...analysis.quickBeforePassNoMainSamples.slice(0, 12 - mergedQuickBeforePassNoMainSamples.length),
-        );
+      if (Array.isArray(analysis.quickBeforePassNoMainSamples)) {
+        mergedQuickBeforePassNoMainSamples.push(...analysis.quickBeforePassNoMainSamples);
+      }
+      if (Array.isArray(analysis.postPassQuickNoMainSamples)) {
+        mergedPostPassQuickNoMainSamples.push(...analysis.postPassQuickNoMainSamples);
       }
       if (mergedPostPassQuickSamples.length < 12 && Array.isArray(analysis.postPassQuickSamples)) {
         mergedPostPassQuickSamples.push(
@@ -3642,6 +3666,7 @@
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
       quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
+      postPassQuickNoMainSamples: mergedPostPassQuickNoMainSamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(mergedScoreOpportunities.totalGap),
@@ -3680,9 +3705,10 @@
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
       passResourceLockSamples: mergedPassResourceLockSamples,
-      earlyPassNoMainSamples: mergedEarlyPassNoMainSamples,
+      earlyPassNoMainSamples: sortEarlyPassNoMainSamples(mergedEarlyPassNoMainSamples),
       earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
-      quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
+      quickBeforePassNoMainSamples: sortEarlyPassNoMainSamples(mergedQuickBeforePassNoMainSamples),
+      postPassQuickNoMainSamples: sortEarlyPassNoMainSamples(mergedPostPassQuickNoMainSamples),
       postPassQuickSamples: [...mergedPostPassQuickSamples].sort((left, right) => (
         numeric(left.finalScore) - numeric(right.finalScore)
         || numeric(left.roundNumber) - numeric(right.roundNumber)
