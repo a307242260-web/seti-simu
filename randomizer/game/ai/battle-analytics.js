@@ -1313,6 +1313,103 @@
     };
   }
 
+  function getProfileMetric(profile = {}, key) {
+    return numeric(profile.metrics?.[key] ?? profile[key]);
+  }
+
+  function buildLowEngineThroughputSamples(playerProfiles = []) {
+    const profiles = (playerProfiles || []).filter(Boolean);
+    if (!profiles.length) return [];
+
+    const scoreSorted = [...profiles]
+      .sort((left, right) => numeric(right.finalScore) - numeric(left.finalScore) || left.playerLabel.localeCompare(right.playerLabel));
+    const highProfiles = scoreSorted.filter((profile) => numeric(profile.finalScore) >= 300);
+    const referenceProfiles = highProfiles.length
+      ? highProfiles
+      : scoreSorted.slice(0, Math.max(1, Math.ceil(scoreSorted.length * 0.25)));
+    const reference = averageProfileMetrics(referenceProfiles);
+    const average = averageProfileMetrics(profiles);
+
+    const buildGap = (profile, key) => roundRatio(Math.max(0, numeric(reference[key]) - getProfileMetric(profile, key)));
+    const lowScoreCutoff = Math.min(230, numeric(average.finalScore) - 25);
+    const samples = profiles
+      .map((profile) => {
+        const placeDataGap = buildGap(profile, "placeDataCount");
+        const scanGap = buildGap(profile, "scanCount");
+        const analyzeGap = buildGap(profile, "analyzeCount");
+        const playGap = buildGap(profile, "playCardCount");
+        const techActionGap = buildGap(profile, "researchTechCount");
+        const techCountGap = buildGap(profile, "techCount");
+        const taskGap = buildGap(profile, "completedTaskCount");
+        const baseScoreGap = roundRatio(Math.max(0, numeric(reference.baseScore) - numeric(profile.baseScore)));
+        const reasons = [];
+        if (placeDataGap >= 8) reasons.push("low-place-data");
+        if (scanGap >= 2) reasons.push("low-scan");
+        if (analyzeGap >= 1.5) reasons.push("low-analyze");
+        if (playGap >= 2) reasons.push("low-play-card");
+        if (techActionGap >= 1.5 || techCountGap >= 2) reasons.push("low-tech");
+        if (taskGap >= 1.5) reasons.push("low-task");
+        if (baseScoreGap >= 35) reasons.push("low-base-score");
+        if (getProfileMetric(profile, "idleTurnRatio") > numeric(reference.idleTurnRatio) + 0.04) reasons.push("high-idle");
+
+        const score = numeric(profile.finalScore);
+        const throughputGap = roundRatio(
+          placeDataGap * 0.35
+          + scanGap * 2
+          + analyzeGap * 2.5
+          + playGap * 1.5
+          + techActionGap * 1.5
+          + techCountGap * 1.2
+          + taskGap * 2,
+        );
+        const shouldKeep = score <= lowScoreCutoff
+          || (score < numeric(average.finalScore) - 35 && throughputGap >= 10)
+          || (score < 260 && reasons.length >= 4);
+        if (!shouldKeep || !reasons.length) return null;
+
+        return {
+          playerId: profile.playerId || null,
+          playerLabel: profile.playerLabel || profile.playerId || "unknown",
+          finalScore: roundRatio(score),
+          baseScore: roundRatio(profile.baseScore),
+          tileScore: roundRatio(profile.tileScore),
+          cardScore: roundRatio(profile.cardScore),
+          techCount: roundRatio(profile.techCount),
+          completedTaskCount: roundRatio(profile.completedTaskCount),
+          throughputGap,
+          reasons,
+          counts: {
+            playCard: roundRatio(getProfileMetric(profile, "playCardCount")),
+            researchTech: roundRatio(getProfileMetric(profile, "researchTechCount")),
+            scan: roundRatio(getProfileMetric(profile, "scanCount")),
+            analyze: roundRatio(getProfileMetric(profile, "analyzeCount")),
+            placeData: roundRatio(getProfileMetric(profile, "placeDataCount")),
+            cardCorner: roundRatio(getProfileMetric(profile, "cardCornerCount")),
+            quickTrade: roundRatio(getProfileMetric(profile, "quickTradeCount")),
+            mainAction: roundRatio(getProfileMetric(profile, "mainActionCount")),
+            quickStep: roundRatio(getProfileMetric(profile, "quickStepCount")),
+            resourceQuickStep: roundRatio(getProfileMetric(profile, "resourceQuickStepCount")),
+            idleTurnRatio: roundRatio(getProfileMetric(profile, "idleTurnRatio")),
+          },
+          referenceGaps: {
+            baseScore: baseScoreGap,
+            playCard: playGap,
+            researchTech: techActionGap,
+            techCount: techCountGap,
+            scan: scanGap,
+            analyze: analyzeGap,
+            placeData: placeDataGap,
+            completedTask: taskGap,
+          },
+        };
+      })
+      .filter(Boolean)
+      .sort((left, right) => right.throughputGap - left.throughputGap || numeric(left.finalScore) - numeric(right.finalScore))
+      .slice(0, 8);
+
+    return samples;
+  }
+
   function finalizePlayerProfile(profile) {
     for (const [category, count] of Object.entries(profile.actionCategoryCounts || {})) {
       profile.actionCategoryRatios[category] = profile.turnActionCount
@@ -1338,6 +1435,7 @@
       ? roundRatio(profile.metrics.idleTurnCount / profile.turnActionCount)
       : 0;
     profile.metrics.scanCount = numeric(profile.actionCounts.scan);
+    profile.metrics.analyzeCount = numeric(profile.actionCounts.analyze);
     profile.metrics.playCardCount = numeric(profile.actionCounts.playCard);
     profile.metrics.researchTechCount = numeric(profile.actionCounts.researchTech);
     profile.metrics.moveCount = numeric(profile.actionCounts.move);
@@ -1436,6 +1534,7 @@
     "quickRatio",
     "passRatio",
     "scanCount",
+    "analyzeCount",
     "playCardCount",
     "researchTechCount",
     "moveCount",
@@ -2052,6 +2151,9 @@
     const passOpportunitySamples = Array.isArray(analysis.passOpportunitySamples)
       ? analysis.passOpportunitySamples
       : [];
+    const lowEngineThroughputSamples = Array.isArray(analysis.lowEngineThroughputSamples)
+      ? analysis.lowEngineThroughputSamples
+      : [];
 
     if (actionTotal >= 10 && ratios.basicMain >= 0.45 && ratios.engine < 0.25) {
       recommendations.push({
@@ -2093,6 +2195,13 @@
         id: "inspect-score-gap",
         priority: "high",
         message: "出现实际选择低于最高分可用候选的局面，需要检查行动基础偏置、候选 score 和策略选择函数是否一致。",
+      });
+    }
+    if (lowEngineThroughputSamples.length) {
+      recommendations.push({
+        id: "inspect-low-engine-throughput",
+        priority: "medium",
+        message: "低分玩家的数据/扫描/分析/科技或打牌吞吐明显落后，应优先定位可闭合的资源滚动链，而不是单独放宽补牌或移动。",
       });
     }
     if ((candidateStats.playCard?.availableNotSelected || 0) > (candidateStats.playCard?.selected || 0) * 2) {
@@ -2451,6 +2560,7 @@
     const playerResults = normalizePlayerResults(report.playerResults || []);
     const playerProfiles = buildPlayerProfiles(logs, playerResults);
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
+    const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
     const actionSequences = buildActionSequences(logs, playerResults, options);
     const scoreBuckets = buildScoreBuckets(playerResults, logs);
     const analysis = {
@@ -2519,6 +2629,7 @@
       winnerProfileDeltas: winnerProfileComparison?.delta || {},
       winner: playerResults[0] || null,
       paceSummary: buildPaceSummary(playerProfiles),
+      lowEngineThroughputSamples,
       sequenceWindowTurns: actionSequences.windowTurns,
       actionSequences,
       scoreBuckets,
@@ -2697,6 +2808,11 @@
       .filter((entry) => entry.availableNotSelected > 0)
       .sort((left, right) => right.availableNotSelected - left.availableNotSelected || left.actionId.localeCompare(right.actionId))
       .slice(0, 8);
+    const averageWinnerProfile = averageProfileMetrics(winnerProfiles);
+    const averageNonWinnerProfile = averageProfileMetrics(nonWinnerProfiles);
+    const winnerProfileDeltas = diffProfileMetrics(averageWinnerProfile, averageNonWinnerProfile);
+    const paceSummary = buildPaceSummary(allProfiles);
+    const lowEngineThroughputSamples = buildLowEngineThroughputSamples(allProfiles);
     const summaryForRecommendations = {
       turnActionCount,
       actionCategoryRatios,
@@ -2714,15 +2830,9 @@
       },
       movePayment: mergedMovePayment,
       bugs: rankCounts(mergedBugCounts),
-      winnerProfileDeltas: diffProfileMetrics(
-        averageProfileMetrics(winnerProfiles),
-        averageProfileMetrics(nonWinnerProfiles),
-      ),
+      winnerProfileDeltas,
+      lowEngineThroughputSamples,
     };
-    const averageWinnerProfile = averageProfileMetrics(winnerProfiles);
-    const averageNonWinnerProfile = averageProfileMetrics(nonWinnerProfiles);
-    const winnerProfileDeltas = diffProfileMetrics(averageWinnerProfile, averageNonWinnerProfile);
-    const paceSummary = buildPaceSummary(allProfiles);
     const sequenceWindowTurns = normalizeSequenceWindowTurns(
       options.sequenceWindowTurns
       ?? validAnalyses.find((analysis) => analysis?.sequenceWindowTurns != null)?.sequenceWindowTurns
@@ -2778,6 +2888,7 @@
       scoreBuckets: finalizeScoreBuckets(mergedScoreBuckets),
       winnerCounts,
       paceSummary,
+      lowEngineThroughputSamples,
       averageWinnerProfile,
       averageNonWinnerProfile,
       winnerProfileDeltas,

@@ -1179,6 +1179,60 @@ const paceSummary = analytics.summarizeBattleReports([paceReport]);
 assert.equal(paceSummary.paceSummary.averageMainActionCount, 2);
 assert.equal(paceSummary.paceSummary.lowTail.quickStepCount, 3);
 
+function appendRepeatedTurnActions(logs, playerId, playerLabel, counts) {
+  for (const [actionId, count] of Object.entries(counts || {})) {
+    for (let index = 0; index < count; index += 1) {
+      logs.push({
+        type: "turn-action",
+        playerId,
+        playerLabel,
+        details: { action: { id: actionId, score: 1 } },
+      });
+    }
+  }
+}
+
+const lowEngineLogs = [];
+appendRepeatedTurnActions(lowEngineLogs, "winner", "Winner", {
+  playCard: 13,
+  researchTech: 11,
+  scan: 9,
+  analyze: 6,
+  placeData: 48,
+  cardCorner: 5,
+  quickTrade: 4,
+  pass: 4,
+});
+appendRepeatedTurnActions(lowEngineLogs, "low", "Low", {
+  playCard: 5,
+  researchTech: 4,
+  scan: 2,
+  analyze: 1,
+  placeData: 14,
+  cardCorner: 4,
+  quickTrade: 1,
+  pass: 4,
+});
+const lowEngineReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: lowEngineLogs,
+  playerResults: [
+    { playerId: "winner", playerLabel: "Winner", finalScore: 320, baseScore: 205, techCount: 12, completedTaskCount: 5 },
+    { playerId: "low", playerLabel: "Low", finalScore: 190, baseScore: 120, techCount: 6, completedTaskCount: 1 },
+  ],
+};
+const lowEngineAnalysis = analytics.analyzeBattleReport(lowEngineReport);
+assert.equal(lowEngineAnalysis.lowEngineThroughputSamples[0].playerId, "low");
+assert.ok(lowEngineAnalysis.lowEngineThroughputSamples[0].reasons.includes("low-place-data"));
+assert.ok(lowEngineAnalysis.lowEngineThroughputSamples[0].reasons.includes("low-scan"));
+assert.ok(lowEngineAnalysis.lowEngineThroughputSamples[0].reasons.includes("low-analyze"));
+assert.ok(lowEngineAnalysis.lowEngineThroughputSamples[0].reasons.includes("low-tech"));
+assert.ok(lowEngineAnalysis.lowEngineThroughputSamples[0].referenceGaps.placeData >= 30);
+assert.ok(lowEngineAnalysis.recommendations.some((entry) => entry.id === "inspect-low-engine-throughput"));
+const lowEngineSummary = analytics.summarizeBattleReports([lowEngineReport]);
+assert.equal(lowEngineSummary.lowEngineThroughputSamples[0].playerId, "low");
+assert.ok(lowEngineSummary.recommendations.some((entry) => entry.id === "inspect-low-engine-throughput"));
+
 const highHandDrainEnergyTradeReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{
