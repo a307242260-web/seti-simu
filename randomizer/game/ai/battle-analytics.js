@@ -570,6 +570,21 @@
     );
   }
 
+  function getResourceLockBestAction(sample = {}) {
+    return sample?.bestResourceLockTrade?.bestAction
+      || sample?.candidateProfile?.bestResourceLockTrade?.bestAction
+      || null;
+  }
+
+  function isResourceLockWeakLaunchUnlock(sample = {}) {
+    if (getResourceLockMainUnlockScore(sample) < MEANINGFUL_RESOURCE_UNLOCK_SCORE) return false;
+    const bestAction = getResourceLockBestAction(sample);
+    if (bestAction?.actionId !== "launch") return false;
+    const planScore = getFiniteScore(bestAction.planScore);
+    const directScoreGain = numeric(bestAction.directScoreGain);
+    return (planScore == null || planScore <= 0) && directScoreGain <= 0;
+  }
+
   function sortResourceLockMainUnlockSamples(samples = [], limit = 12) {
     return [...(samples || [])]
       .sort((left, right) => (
@@ -602,6 +617,31 @@
         bestMain: sample.candidateProfile?.bestMain || null,
         playCard: sample.candidateProfile?.playCard || null,
         topCandidates: sample.candidateProfile?.topCandidates || [],
+        unavailableMain: sample.candidateProfile?.unavailableMain || [],
+        actionIds: sample.actionIds || [],
+        actions: sample.actions || [],
+      }));
+    return sortResourceLockMainUnlockSamples(samples, limit);
+  }
+
+  function buildResourceLockWeakLaunchUnlockSamples(earlyPassSamples = [], limit = 12) {
+    const samples = (earlyPassSamples || [])
+      .filter(isResourceLockWeakLaunchUnlock)
+      .map((sample) => ({
+        playerId: sample.playerId || null,
+        playerLabel: sample.playerLabel || null,
+        finalScore: roundRatio(sample.finalScore),
+        roundNumber: sample.roundNumber ?? null,
+        turnNumber: sample.turnNumber ?? null,
+        rawTurnNumber: sample.rawTurnNumber ?? null,
+        resources: sample.resources || null,
+        resourceProfile: sample.resourceProfile || null,
+        quickStepCount: numeric(sample.quickStepCount),
+        quickBeforePassCount: numeric(sample.quickBeforePassCount),
+        quickAfterPassCount: numeric(sample.quickAfterPassCount),
+        reasonTag: sample.reasonTag || null,
+        bestResourceLockTrade: sample.candidateProfile?.bestResourceLockTrade || null,
+        bestMain: sample.candidateProfile?.bestMain || null,
         unavailableMain: sample.candidateProfile?.unavailableMain || [],
         actionIds: sample.actionIds || [],
         actions: sample.actions || [],
@@ -4902,6 +4942,13 @@
         message: "无主行动 PASS 样本里存在资源交易后可打开较高分主行动的窗口，应按具体 seed 验证是否会扰动共享牌流和高分席位后再放行为。",
       });
     }
+    if (numeric(opportunities.resourceLockWeakLaunchUnlock) > 0) {
+      recommendations.push({
+        id: "classify-resource-lock-weak-launch",
+        priority: "medium",
+        message: "资源锁预览里存在只打开发射、且没有正计划分或直接分的窗口，应先验证后续路线是否闭合，不要把它当作可直接放行的资源滚动。",
+      });
+    }
     if (numeric(opportunities.finalPublicRefillShortfall) > 0) {
       recommendations.push({
         id: "inspect-final-public-refill-shortfall",
@@ -5167,6 +5214,7 @@
       passReserveResourcePressureMiss: 0,
       earlyPassNoMain: 0,
       resourceLockMainUnlock: 0,
+      resourceLockWeakLaunchUnlock: 0,
       quickBeforePassNoMain: 0,
       preNoMainPassResourceDrain: 0,
       postPassQuickNoMain: 0,
@@ -5198,6 +5246,7 @@
     const passReserveResourcePressureMissSamples = [];
     const earlyPassNoMainSamples = [];
     const resourceLockMainUnlockSamples = [];
+    const resourceLockWeakLaunchUnlockSamples = [];
     const quickBeforePassNoMainSamples = [];
     const preNoMainPassResourceDrainSamples = [];
     const postPassQuickNoMainSamples = [];
@@ -5441,6 +5490,12 @@
     const allResourceLockMainUnlockSamples = buildResourceLockMainUnlockSamples(allEarlyPassNoMainSamples, Infinity);
     resourceLockMainUnlockSamples.push(...allResourceLockMainUnlockSamples.slice(0, 12));
     opportunities.resourceLockMainUnlock = allResourceLockMainUnlockSamples.length;
+    const allResourceLockWeakLaunchUnlockSamples = buildResourceLockWeakLaunchUnlockSamples(
+      allEarlyPassNoMainSamples,
+      Infinity,
+    );
+    resourceLockWeakLaunchUnlockSamples.push(...allResourceLockWeakLaunchUnlockSamples.slice(0, 12));
+    opportunities.resourceLockWeakLaunchUnlock = allResourceLockWeakLaunchUnlockSamples.length;
     const allQuickBeforePassNoMainSamples = allEarlyPassNoMainSamples
       .filter((sample) => numeric(sample.quickBeforePassCount) > 0);
     quickBeforePassNoMainSamples.push(...allQuickBeforePassNoMainSamples.slice(0, 12));
@@ -5521,6 +5576,7 @@
       passReserveResourcePressureMissSamples,
       earlyPassNoMainSamples,
       resourceLockMainUnlockSamples,
+      resourceLockWeakLaunchUnlockSamples,
       earlyPassNoMainReasonCounts,
       quickBeforePassNoMainSamples,
       preNoMainPassResourceDrainSamples,
@@ -5591,6 +5647,7 @@
     const mergedPassReserveResourcePressureMissSamples = [];
     const mergedEarlyPassNoMainSamples = [];
     const mergedResourceLockMainUnlockSamples = [];
+    const mergedResourceLockWeakLaunchUnlockSamples = [];
     const mergedEarlyPassNoMainReasonCounts = {};
     const mergedQuickBeforePassNoMainSamples = [];
     const mergedPreNoMainPassResourceDrainSamples = [];
@@ -5678,6 +5735,17 @@
       }
       if (Array.isArray(analysis.resourceLockMainUnlockSamples)) {
         mergedResourceLockMainUnlockSamples.push(...analysis.resourceLockMainUnlockSamples);
+      }
+      if (
+        mergedResourceLockWeakLaunchUnlockSamples.length < 12
+        && Array.isArray(analysis.resourceLockWeakLaunchUnlockSamples)
+      ) {
+        mergedResourceLockWeakLaunchUnlockSamples.push(
+          ...analysis.resourceLockWeakLaunchUnlockSamples.slice(
+            0,
+            12 - mergedResourceLockWeakLaunchUnlockSamples.length,
+          ),
+        );
       }
       for (const [key, count] of Object.entries(analysis.earlyPassNoMainReasonCounts || {})) {
         increment(mergedEarlyPassNoMainReasonCounts, key, count);
@@ -5848,6 +5916,7 @@
       highScoreNearMissSamples,
       d1TechBalanceBottleneckSamples,
       resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
+      resourceLockWeakLaunchUnlockSamples: mergedResourceLockWeakLaunchUnlockSamples,
       quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
       preNoMainPassResourceDrainSamples: mergedPreNoMainPassResourceDrainSamples,
       postPassQuickNoMainSamples: mergedPostPassQuickNoMainSamples,
@@ -5897,6 +5966,7 @@
       ),
       earlyPassNoMainSamples: sortEarlyPassNoMainSamples(mergedEarlyPassNoMainSamples),
       resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
+      resourceLockWeakLaunchUnlockSamples: mergedResourceLockWeakLaunchUnlockSamples,
       earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
       quickBeforePassNoMainSamples: sortEarlyPassNoMainSamples(mergedQuickBeforePassNoMainSamples),
       preNoMainPassResourceDrainSamples: sortPreNoMainPassResourceDrainSamples(mergedPreNoMainPassResourceDrainSamples),

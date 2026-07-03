@@ -1537,6 +1537,7 @@ const earlyPassReport = {
 const earlyPassAnalysis = analytics.analyzeBattleReport(earlyPassReport);
 assert.equal(earlyPassAnalysis.opportunities.earlyPassNoMain, 2);
 assert.equal(earlyPassAnalysis.opportunities.resourceLockMainUnlock, 1);
+assert.equal(earlyPassAnalysis.opportunities.resourceLockWeakLaunchUnlock, 0);
 assert.equal(earlyPassAnalysis.opportunities.quickBeforePassNoMain, 1);
 assert.equal(earlyPassAnalysis.opportunities.preNoMainPassResourceDrain, 1);
 assert.equal(earlyPassAnalysis.opportunities.postPassQuickNoMain, 0);
@@ -1568,6 +1569,41 @@ assert.equal(earlyPassSummary.preNoMainPassResourceDrainSamples[0].previousActio
 assert.ok(earlyPassSummary.recommendations.some((entry) => entry.id === "inspect-resource-lock-main-unlock"));
 assert.ok(earlyPassSummary.recommendations.some((entry) => entry.id === "inspect-quick-before-pass-no-main"));
 assert.ok(earlyPassSummary.recommendations.some((entry) => entry.id === "inspect-pre-no-main-resource-drain"));
+
+const resourceLockWeakLaunchReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 9,
+    rawTurnNumber: 36,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 143, credits: 1, energy: 0, publicity: 3, handSize: 2 },
+    details: {
+      action: { id: "pass", kind: "pass", score: -2.3 },
+      candidates: [
+        { id: "pass", kind: "pass", available: true, score: -2.3 },
+        { id: "launch", kind: "main", available: false, score: 0, reason: "信用点不足" },
+      ],
+      resourceLockTradePreviews: [{
+        tradeId: "cards-for-credit",
+        label: "2张牌 → 1信用点",
+        bestAction: { actionId: "launch", score: 27.5, planScore: 0, directScoreGain: 0 },
+        unlockedActions: [{ actionId: "launch", score: 27.5, planScore: 0, directScoreGain: 0 }],
+      }],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 233 }],
+};
+const resourceLockWeakLaunchAnalysis = analytics.analyzeBattleReport(resourceLockWeakLaunchReport);
+assert.equal(resourceLockWeakLaunchAnalysis.opportunities.resourceLockMainUnlock, 1);
+assert.equal(resourceLockWeakLaunchAnalysis.opportunities.resourceLockWeakLaunchUnlock, 1);
+assert.equal(resourceLockWeakLaunchAnalysis.resourceLockWeakLaunchUnlockSamples[0].bestResourceLockTrade.bestAction.actionId, "launch");
+assert(resourceLockWeakLaunchAnalysis.recommendations.some((entry) => entry.id === "classify-resource-lock-weak-launch"));
+const resourceLockWeakLaunchSummary = analytics.summarizeBattleReports([resourceLockWeakLaunchReport]);
+assert.equal(resourceLockWeakLaunchSummary.resourceLockWeakLaunchUnlockSamples[0].bestResourceLockTrade.tradeId, "cards-for-credit");
+assert.equal(resourceLockWeakLaunchSummary.opportunities.resourceLockWeakLaunchUnlock, 1);
 
 const postPassQuickReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
