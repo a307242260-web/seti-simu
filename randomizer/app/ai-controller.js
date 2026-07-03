@@ -17566,6 +17566,117 @@
       }).filter(Boolean);
     }
 
+    function buildAiPublicRefillTradePreview(player = getCurrentPlayer()) {
+      if (!player) return null;
+      const resources = player.resources || {};
+      const handSize = Math.max(0, Math.round(aiNumber(resources.handSize ?? (player.hand || []).length)));
+      const publicTradeCards = (cardState.publicCards || [])
+        .map((card, slotIndex) => {
+          const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+          return {
+            slotIndex,
+            cardId: card?.cardId || card?.id || null,
+            cardLabel: cards.getCardLabel?.(card) || card?.cardName || card?.label || null,
+            price: getCardPrice(card),
+            typeCode: getCardTypeCode(card),
+            tradeScore: roundAiScore(scoreAiPublicPickCard(card, player, "trade")),
+            playScore: playCandidate ? roundAiScore(playCandidate.score) : null,
+            directScoreGain: playCandidate ? roundAiScore(playCandidate.directScoreGain) : 0,
+          };
+        })
+        .sort((left, right) => aiNumber(right.tradeScore) - aiNumber(left.tradeScore))
+        .slice(0, 5);
+      const bestPublicTradeCardScore = publicTradeCards[0]?.tradeScore ?? 0;
+      const cardsForPickCardTrade = quickTrades?.getTradeAction?.("cards-for-pick-card");
+      const cardsForPickCardCheck = cardsForPickCardTrade
+        ? (quickTrades.canExecuteTrade?.("cards-for-pick-card", createActionContext()) || { ok: false })
+        : { ok: false };
+      const cardsForPickCardHandCost = Math.max(0, Math.round(aiNumber(cardsForPickCardTrade?.cost?.handSize)));
+      const cardsForPickCardDiscardPlan = cardsForPickCardTrade && cardsForPickCardCheck.ok
+        ? summarizeAiTradeDiscardPlan(player, cardsForPickCardTrade, null, {
+          includeExecutionPlan: true,
+          tradeId: "cards-for-pick-card",
+        })
+        : null;
+      const cardsForPickCardDiscardCost = cardsForPickCardDiscardPlan?.ok
+        ? Number(cardsForPickCardDiscardPlan.totalCost)
+        : Infinity;
+      const cardsForPickCardPreview = cardsForPickCardTrade
+        ? {
+          ok: Boolean(cardsForPickCardCheck.ok),
+          reason: cardsForPickCardCheck.ok ? null : (cardsForPickCardCheck.reason || cardsForPickCardCheck.message || null),
+          handCost: cardsForPickCardHandCost,
+          handAfterTrade: Math.max(
+            0,
+            handSize
+              - cardsForPickCardHandCost
+              + Math.max(0, Math.round(aiNumber(cardsForPickCardTrade.gain?.handSize))),
+          ),
+          discardCost: Number.isFinite(cardsForPickCardDiscardCost)
+            ? roundAiScore(cardsForPickCardDiscardCost)
+            : null,
+          discardPlan: cardsForPickCardDiscardPlan,
+          bestPublicTradeCardScore: roundAiScore(bestPublicTradeCardScore),
+          bestPublicTradeCard: publicTradeCards[0] || null,
+          net: Number.isFinite(cardsForPickCardDiscardCost)
+            ? roundAiScore(bestPublicTradeCardScore * 0.58 - cardsForPickCardDiscardCost * 0.34)
+            : null,
+        }
+        : null;
+      const tradeChecks = ["credits-for-card", "energy-for-card", "publicity-for-card", "cards-for-pick-card"]
+        .map((tradeId) => {
+          const trade = quickTrades?.getTradeAction?.(tradeId);
+          const check = trade ? (quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false }) : { ok: false };
+          return {
+            tradeId,
+            ok: Boolean(check.ok),
+            reason: check.ok ? null : (check.reason || check.message || null),
+            cost: trade?.cost ? { ...trade.cost } : null,
+            gain: trade?.gain ? { ...trade.gain } : null,
+          };
+        });
+      return {
+        credits: roundAiScore(resources.credits),
+        energy: roundAiScore(resources.energy),
+        publicity: roundAiScore(resources.publicity),
+        handSize,
+        bestPublicTradeCardScore,
+        topPublicTradeCards: publicTradeCards,
+        cardsForPickCardPreview,
+        tradeChecks,
+      };
+    }
+
+    function buildAiEarlyNoMainPublicRefillDiagnostic(player = getCurrentPlayer(), candidates = []) {
+      if (
+        !player
+        || state.pendingActionExecuted
+        || !canStartMainAction()
+        || getAiRoundNumber() >= FINAL_ROUND_NUMBER
+      ) {
+        return null;
+      }
+      const availableMainCount = (candidates || [])
+        .filter((candidate) => candidate?.kind === "main" && candidate.available !== false)
+        .length;
+      if (availableMainCount > 0) return null;
+      const resources = player.resources || {};
+      const handSize = Math.max(0, Math.round(aiNumber(resources.handSize ?? (player.hand || []).length)));
+      if (
+        handSize > 3
+        && aiNumber(resources.credits) < 2
+        && aiNumber(resources.energy) < 2
+        && aiNumber(resources.publicity) < 3
+      ) {
+        return null;
+      }
+      return {
+        roundNumber: getAiRoundNumber(),
+        availableMainCount,
+        ...buildAiPublicRefillTradePreview(player),
+      };
+    }
+
     function buildAiFinalLowHandPassRecoveryDiagnostic(player = getCurrentPlayer(), candidates = []) {
       if (
         !player
@@ -17878,6 +17989,9 @@
         const resourceLockTradePreviews = action.id === "pass"
           ? buildAiResourceLockTradePreviews(currentPlayer, selectableCandidates)
           : [];
+        const earlyNoMainPublicRefillDiagnostic = action.id === "pass"
+          ? buildAiEarlyNoMainPublicRefillDiagnostic(currentPlayer, selectableCandidates)
+          : null;
         const finalLowHandPassRecoveryDiagnostic = action.id === "pass"
           ? buildAiFinalLowHandPassRecoveryDiagnostic(currentPlayer, selectableCandidates)
           : null;
@@ -17885,6 +17999,7 @@
           action,
           candidates: selectableCandidates,
           ...(resourceLockTradePreviews.length ? { resourceLockTradePreviews } : {}),
+          ...(earlyNoMainPublicRefillDiagnostic ? { earlyNoMainPublicRefillDiagnostic } : {}),
           ...(finalLowHandPassRecoveryDiagnostic ? { finalLowHandPassRecoveryDiagnostic } : {}),
         });
         const result = executeAiTurnAction(action, currentPlayer);

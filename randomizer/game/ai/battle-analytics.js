@@ -392,6 +392,7 @@
       playCard: playCardCandidate ? summarizeOpportunityCandidate(playCardCandidate) : null,
       resourceLockTradePreviews,
       bestResourceLockTrade: getBestResourceLockTradePreview(resourceLockTradePreviews),
+      publicRefillPreview: entry.details?.earlyNoMainPublicRefillDiagnostic || null,
     };
     return {
       ...profile,
