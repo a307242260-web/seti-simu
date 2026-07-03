@@ -2278,6 +2278,12 @@
       ? Number(card.typeCode ?? card.cardTypeCode)
       : null;
     const taskCount = Math.max(0, Math.round(numeric(card.taskCount)));
+    const tasks = Array.isArray(card.tasks) ? card.tasks.filter(Boolean) : [];
+    const remainingTaskCount = Number.isFinite(Number(card.remainingTaskCount))
+      ? Math.max(0, Math.round(Number(card.remainingTaskCount)))
+      : tasks.length
+        ? tasks.filter((task) => !task.completed).length
+        : taskCount;
     const endGameScoring = Boolean(card.endGameScoring);
     const effectTypes = Array.isArray(card.effectTypes) ? card.effectTypes.filter(Boolean) : [];
     if (!taskCount && !endGameScoring && typeCode !== 3) return null;
@@ -2289,6 +2295,8 @@
       price: roundRatio(card.price),
       typeCode,
       taskCount,
+      remainingTaskCount,
+      tasks,
       endGameScoring,
       effectTypes,
       discardActionCode: card.discardActionCode ?? null,

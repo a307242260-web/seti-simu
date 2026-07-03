@@ -617,11 +617,128 @@
       }, {});
     }
 
+    function getAiTaskConditionCurrentCount(condition = {}, player = null) {
+      if (!condition || !player) return null;
+      const type = condition.type || null;
+      const nebulaIdsByColor = cardEffects?.NEBULA_IDS_BY_COLOR || endGameScoring?.NEBULA_IDS_BY_COLOR || {};
+      if (type === "resourceThreshold" || type === "resourceEquals") {
+        return aiNumber(player.resources?.[condition.resource]);
+      }
+      if (type === "techCount") return aiNumber(endGameScoring?.countOwnedTech?.(player, condition.techType));
+      if (type === "traceCount") {
+        return condition.traceType
+          ? aiNumber(endGameScoring?.countTraceMarkers?.(player, alienGameState, condition.traceType))
+          : countAiTraceMarkersForPlayer(player);
+      }
+      if (type === "dataTotal") return aiNumber(player.resources?.availableData);
+      if (type === "planetOrbitOrLand") {
+        return aiNumber(endGameScoring?.countPlanetOrbitOrLand?.(player, planetStatsState, condition.planetId));
+      }
+      if (type === "planetOrbitOrLandAll") {
+        return (condition.planetIds || []).reduce((total, planetId) => (
+          total + (endGameScoring?.countPlanetOrbitOrLand?.(player, planetStatsState, planetId) > 0 ? 1 : 0)
+        ), 0);
+      }
+      if (type === "orbitCount" || type === "orbitOrLandCount") {
+        return aiNumber(endGameScoring?.countOrbitOrLandMarkers?.(player, planetStatsState, createActionContext()));
+      }
+      if (type === "landingCount") return countAiLandingMarkers(player);
+      if (type === "completedSectorsByColor") {
+        return aiNumber(endGameScoring?.countSectorWinsByColor?.(player, nebulaDataState, condition.color));
+      }
+      if (type === "completedSectors") {
+        return aiNumber(endGameScoring?.countSectorWins?.(player, nebulaDataState));
+      }
+      if (type === "completedSameSectorColor") {
+        return Math.max(
+          0,
+          ...["yellow", "red", "blue", "black"].map((color) => (
+            aiNumber(endGameScoring?.countSectorWinsByColor?.(player, nebulaDataState, color))
+          )),
+        );
+      }
+      if (type === "distinctSignalSectors") {
+        return aiNumber(endGameScoring?.countDistinctSignalSectors?.(player, nebulaDataState));
+      }
+      if (type === "signalsInAllColors") {
+        return Object.entries(nebulaIdsByColor).filter(([, nebulaIds]) => (
+          (nebulaIds || []).some((nebulaId) => getAiNebulaSignalCounts(nebulaId, player).ownCount > 0)
+        )).length;
+      }
+      if (type === "signalsOrWinsInAllSectors") {
+        const playerKeys = new Set([player.id, player.playerId, player.color, player.playerColor].filter(Boolean));
+        const wins = nebulaDataState?.sectorSettlements?.winsByPlayerId || {};
+        const wonSectors = new Set();
+        for (const key of playerKeys) {
+          for (const win of wins[key] || []) {
+            if (win?.sectorId) wonSectors.add(win.sectorId);
+          }
+        }
+        return Object.values(nebulaIdsByColor).flat().filter((nebulaId) => (
+          wonSectors.has(nebulaId) || getAiNebulaSignalCounts(nebulaId, player).ownCount > 0
+        )).length;
+      }
+      if (type === "aomomoSignalCount") {
+        return getAiNebulaSignalCounts(aomomo?.NEBULA_ID || "aomomo", player).ownCount;
+      }
+      if (type === "aomomoFossils") return aiNumber(player.resources?.aomomoFossils);
+      return null;
+    }
+
+    function summarizeAiTaskCondition(condition = {}, player = null) {
+      if (!condition || typeof condition !== "object") return null;
+      const nebulaIdsByColor = cardEffects?.NEBULA_IDS_BY_COLOR || endGameScoring?.NEBULA_IDS_BY_COLOR || {};
+      const targetCount = Math.max(
+        1,
+        Math.round(aiNumber(
+          condition.count
+          ?? (condition.type === "signalsInAllColors" ? Object.keys(nebulaIdsByColor).length : null)
+          ?? (condition.type === "signalsOrWinsInAllSectors" ? Object.values(nebulaIdsByColor).flat().length : null)
+          ?? (condition.type === "planetOrbitOrLandAll" ? (condition.planetIds || []).length : 1),
+        ) || 1),
+      );
+      const currentCount = getAiTaskConditionCurrentCount(condition, player);
+      const met = currentCount == null
+        ? false
+        : (condition.type === "resourceEquals"
+          ? aiNumber(currentCount) === aiNumber(condition.count)
+          : aiNumber(currentCount) >= targetCount);
+      return {
+        type: condition.type || null,
+        targetCount,
+        currentCount: currentCount == null ? null : roundAiScore(currentCount),
+        missingCount: currentCount == null ? null : (met ? 0 : roundAiScore(Math.max(0, targetCount - aiNumber(currentCount)))),
+        met,
+        resource: condition.resource || null,
+        planetId: condition.planetId || null,
+        planetIds: Array.isArray(condition.planetIds) ? condition.planetIds.slice() : undefined,
+        color: condition.color || null,
+        traceType: condition.traceType || null,
+        locationType: condition.locationType || null,
+      };
+    }
+
+    function summarizeAiResultCardTask(task = {}, card = null, player = null) {
+      if (!task?.id) return null;
+      const completedTaskIds = new Set(card?.cardEffectState?.completedTaskIds || []);
+      const rewards = Array.isArray(task.rewards) ? task.rewards : [];
+      return {
+        id: task.id,
+        completed: completedTaskIds.has(task.id),
+        condition: summarizeAiTaskCondition(task.condition || {}, player),
+        rewardDirectScore: roundAiScore(getAiRewardDirectScore(rewards, player)),
+        rewardValue: roundAiScore(rewards.reduce((total, reward) => total + scoreAiEffectValue(reward, { player }), 0)),
+      };
+    }
+
     function summarizeAiResultCard(card, player = null) {
       if (!card) return null;
       const cardId = card.cardId || card.id || null;
       const model = cardEffects?.getCardModel?.(card) || null;
       const playEffects = getAiPlayEffectsForCard(card);
+      const tasks = Array.isArray(model?.tasks)
+        ? model.tasks.map((task) => summarizeAiResultCardTask(task, card, player)).filter(Boolean)
+        : [];
       return {
         id: card.id || null,
         cardId,
@@ -631,7 +748,9 @@
         discardActionCode: card.discardActionCode ?? null,
         scanActionCode: card.scanActionCode ?? null,
         incomeCode: card.incomeCode ?? null,
-        taskCount: Array.isArray(model?.tasks) ? model.tasks.length : 0,
+        taskCount: tasks.length,
+        remainingTaskCount: tasks.filter((task) => !task.completed).length,
+        tasks,
         endGameScoring: Boolean(model?.endGameScoring),
         effectTypes: playEffects.map((effect) => effect?.type || null).filter(Boolean),
       };
