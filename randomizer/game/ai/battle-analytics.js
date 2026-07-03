@@ -128,7 +128,7 @@
 
   function getCandidatePolicyScore(candidate) {
     if (!candidate) return null;
-    const graphNet = getFiniteScore(candidate.actionGraph?.net ?? candidate.net);
+    const graphNet = getCandidateActionGraphNet(candidate);
     if (graphNet != null) return graphNet;
     const actionId = getCandidateId(candidate);
     const explicitScore = getFiniteScore(candidate.score);
@@ -141,6 +141,10 @@
       if (Number.isFinite(bestCardScore)) valueScore = Math.max(valueScore, bestCardScore);
     }
     return (POLICY_ACTION_BIAS[actionId] ?? 0) + valueScore;
+  }
+
+  function getCandidateActionGraphNet(candidate) {
+    return getFiniteScore(candidate?.actionGraph?.net ?? candidate?.net);
   }
 
   function isCandidateAvailable(candidate) {
@@ -243,6 +247,11 @@
 
   function getPlayCardCandidate(candidates = []) {
     return (candidates || []).find((candidate) => getCandidateId(candidate) === "playCard") || null;
+  }
+
+  function getSelectedCandidate(entry, candidates = []) {
+    const action = getSelectedAction(entry);
+    return (candidates || []).find((candidate) => candidateMatchesAction(candidate, action)) || action || null;
   }
 
   function isPassResourceLockedPlayCard(entry, candidates = []) {
@@ -360,6 +369,99 @@
     return type === "card_research_tech" || type === "research_tech_select" || type === "research_tech";
   }
 
+  function getNestedPlayCardPolicyScore(card) {
+    return POLICY_ACTION_BIAS.playCard + scoreNestedPlayCardCandidate(card);
+  }
+
+  function getBestPlayableCard(playCardCandidate = {}) {
+    const playableCards = Array.isArray(playCardCandidate?.playableCards)
+      ? playCardCandidate.playableCards
+      : [];
+    return playableCards
+      .filter(isCandidateAvailable)
+      .sort((left, right) => (
+        numeric(getNestedPlayCardPolicyScore(right)) - numeric(getNestedPlayCardPolicyScore(left))
+        || String(left.cardId || left.cardInstanceId || "").localeCompare(String(right.cardId || right.cardInstanceId || ""))
+      ))[0] || null;
+  }
+
+  function isPlayCardNearMiss(entry, candidates = []) {
+    if (getSelectedActionId(entry) === "playCard") return false;
+    const playCardCandidate = getPlayCardCandidate(candidates);
+    if (!isCandidateAvailable(playCardCandidate)) return false;
+    if (!getBestPlayableCard(playCardCandidate)) return false;
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const playPolicyScore = getFiniteScore(getCandidatePolicyScore(playCardCandidate));
+    const selectedPolicyScore = getFiniteScore(getCandidatePolicyScore(selectedCandidate));
+    if (playPolicyScore == null || selectedPolicyScore == null) return false;
+    const policyScoreGap = selectedPolicyScore - playPolicyScore;
+    if (playPolicyScore >= 20 && policyScoreGap <= 18) return true;
+    if (playPolicyScore >= 45) return true;
+    const playGraphNet = getCandidateActionGraphNet(playCardCandidate);
+    const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
+    return playGraphNet != null && selectedGraphNet != null && playGraphNet >= selectedGraphNet - 12;
+  }
+
+  function summarizePlayCardPlan(plan = null) {
+    if (!plan) return null;
+    return {
+      type: plan.type || null,
+      actionId: plan.actionId || null,
+      score: roundRatio(plan.score),
+      label: plan.label || plan.targetLabel || plan.planetName || null,
+    };
+  }
+
+  function summarizePlayCardValueBreakdown(card = {}) {
+    const breakdown = card.valueBreakdown || card.breakdown || {};
+    return {
+      planScore: roundRatio(breakdown.planScore ?? card.plan?.score),
+      lateCardEnginePressure: roundRatio(breakdown.lateCardEnginePressure),
+      playCardConversionPressure: roundRatio(breakdown.playCardConversionPressure),
+      cFinalTaskProgressValue: roundRatio(breakdown.cFinalTaskProgressValue),
+      c2Type3ProgressValue: roundRatio(breakdown.c2Type3ProgressValue),
+      endGameExpectedScore: roundRatio(breakdown.endGameExpectedScore),
+      standardActionPremium: roundRatio(breakdown.standardActionPremium),
+      finalSecondMarkNoDirectSetupPenalty: roundRatio(breakdown.finalSecondMarkNoDirectSetupPenalty),
+    };
+  }
+
+  function buildPlayCardNearMissSample(entry, candidates = []) {
+    const playCardCandidate = getPlayCardCandidate(candidates);
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const bestCard = getBestPlayableCard(playCardCandidate);
+    const playGraphNet = getCandidateActionGraphNet(playCardCandidate);
+    const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(selectedCandidate || {}),
+      playCard: playCardCandidate ? summarizeOpportunityCandidate(playCardCandidate) : null,
+      policyScoreGap: roundRatio(numeric(getCandidatePolicyScore(selectedCandidate)) - numeric(getCandidatePolicyScore(playCardCandidate))),
+      actionGraphNetGap: selectedGraphNet == null || playGraphNet == null
+        ? null
+        : roundRatio(selectedGraphNet - playGraphNet),
+      bestCard: bestCard
+        ? {
+          cardId: bestCard.cardId || null,
+          cardInstanceId: bestCard.cardInstanceId || null,
+          label: bestCard.cardLabel || bestCard.label || null,
+          price: numeric(bestCard.price),
+          typeCode: numeric(bestCard.typeCode),
+          score: roundRatio(bestCard.score),
+          policyScore: roundRatio(getNestedPlayCardPolicyScore(bestCard)),
+          directScoreGain: roundRatio(bestCard.directScoreGain),
+          effectTypes: bestCard.effectTypes || [],
+          plan: summarizePlayCardPlan(bestCard.plan),
+          valueBreakdown: summarizePlayCardValueBreakdown(bestCard),
+        }
+        : null,
+    };
+  }
+
   function getCompoundResearchTechCards(candidates = []) {
     const playCardCandidate = (candidates || [])
       .filter(isCandidateAvailable)
@@ -381,8 +483,7 @@
           || numeric(breakdown.lateCardEnginePressure) > 0;
       })
       .sort((left, right) => (
-        numeric(POLICY_ACTION_BIAS.playCard + scoreNestedPlayCardCandidate(right))
-          - numeric(POLICY_ACTION_BIAS.playCard + scoreNestedPlayCardCandidate(left))
+        numeric(getNestedPlayCardPolicyScore(right)) - numeric(getNestedPlayCardPolicyScore(left))
         || String(left.cardId || "").localeCompare(String(right.cardId || ""))
       ));
   }
@@ -397,7 +498,7 @@
       .filter(isCandidateAvailable)
       .sort((left, right) => numeric(right.score) - numeric(left.score))[0] || null;
     const compoundPolicyScore = compoundCard
-      ? POLICY_ACTION_BIAS.playCard + scoreNestedPlayCardCandidate(compoundCard)
+      ? getNestedPlayCardPolicyScore(compoundCard)
       : null;
     return {
       roundNumber: entry.roundNumber ?? null,
@@ -2218,6 +2319,13 @@
         message: "打牌曾是最高分候选但未被选择，应检查打牌候选分与顶层行动偏置是否被其他行动压过。",
       });
     }
+    if (numeric(opportunities.playCardNearMiss) > 0) {
+      recommendations.push({
+        id: "inspect-play-card-near-miss",
+        priority: "medium",
+        message: "打牌候选多次接近实际行动分值但被跳过，应按样本确认具体牌链是否能闭合任务、科技、终局或资源滚动。",
+      });
+    }
     if ((candidateStats.researchTech?.availableNotSelected || 0) > (candidateStats.researchTech?.selected || 0) * 2) {
       recommendations.push({
         id: "contextual-tech-value",
@@ -2359,6 +2467,7 @@
       endTurnWithAvailableMove: 0,
       endTurnWithPositiveMove: 0,
       researchTechOverCompoundTechCard: 0,
+      playCardNearMiss: 0,
       mainUnlockLowConcretePlay: 0,
       nonPositivePublicRefill: 0,
       highHandDrainEnergyTrade: 0,
@@ -2373,6 +2482,7 @@
     const negativeCardCornerGraphLiftSamples = [];
     const endTurnMoveOpportunitySamples = [];
     const researchTechCompoundCardSamples = [];
+    const playCardNearMissSamples = [];
     const mainUnlockLowConcretePlaySamples = [];
     const nonPositivePublicRefillSamples = [];
     const highHandDrainEnergyTradeSamples = [];
@@ -2464,6 +2574,12 @@
           opportunities.researchTechOverCompoundTechCard += 1;
           if (researchTechCompoundCardSamples.length < 12) {
             researchTechCompoundCardSamples.push(buildResearchTechCompoundCardSample(entry, candidates));
+          }
+        }
+        if (isPlayCardNearMiss(entry, candidates)) {
+          opportunities.playCardNearMiss += 1;
+          if (playCardNearMissSamples.length < 12) {
+            playCardNearMissSamples.push(buildPlayCardNearMissSample(entry, candidates));
           }
         }
         if (isMainUnlockLowConcretePlay(entry)) {
@@ -2609,6 +2725,7 @@
       negativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
+      playCardNearMissSamples,
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples,
@@ -2658,6 +2775,7 @@
     const mergedNegativeCardCornerGraphLiftSamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
     const mergedResearchTechCompoundCardSamples = [];
+    const mergedPlayCardNearMissSamples = [];
     const mergedMainUnlockLowConcretePlaySamples = [];
     const mergedNonPositivePublicRefillSamples = [];
     const mergedHighHandDrainEnergyTradeSamples = [];
@@ -2737,6 +2855,11 @@
       if (mergedResearchTechCompoundCardSamples.length < 12 && Array.isArray(analysis.researchTechCompoundCardSamples)) {
         mergedResearchTechCompoundCardSamples.push(
           ...analysis.researchTechCompoundCardSamples.slice(0, 12 - mergedResearchTechCompoundCardSamples.length),
+        );
+      }
+      if (mergedPlayCardNearMissSamples.length < 12 && Array.isArray(analysis.playCardNearMissSamples)) {
+        mergedPlayCardNearMissSamples.push(
+          ...analysis.playCardNearMissSamples.slice(0, 12 - mergedPlayCardNearMissSamples.length),
         );
       }
       if (mergedMainUnlockLowConcretePlaySamples.length < 12 && Array.isArray(analysis.mainUnlockLowConcretePlaySamples)) {
@@ -2862,6 +2985,7 @@
       negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
+      playCardNearMissSamples: mergedPlayCardNearMissSamples,
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples: mergedHighHandDrainEnergyTradeSamples,

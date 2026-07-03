@@ -1457,6 +1457,63 @@ assert.equal(compoundTechCardAnalysis.researchTechCompoundCardSamples[0].bestTec
 const compoundTechCardSummary = analytics.summarizeBattleReports([compoundTechCardReport]);
 assert.equal(compoundTechCardSummary.researchTechCompoundCardSamples[0].compoundCard.cardId, "b_135.webp");
 
+const playCardNearMissReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 5,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 101, credits: 3, energy: 4, publicity: 6, handSize: 5 },
+    details: {
+      action: { id: "land", kind: "main", score: 80, actionGraph: { net: 80 } },
+      candidates: [
+        { id: "land", kind: "main", available: true, score: 80, actionGraph: { net: 80 } },
+        {
+          id: "playCard",
+          kind: "main",
+          available: true,
+          score: 68,
+          actionGraph: { net: 72 },
+          playableCards: [{
+            id: "playCard",
+            kind: "main",
+            available: true,
+            cardId: "b_135.webp",
+            cardInstanceId: "card-b135",
+            cardLabel: "韦断特v克综合孔径射电|远锐",
+            price: 3,
+            typeCode: 2,
+            score: 64,
+            directScoreGain: 3,
+            effectTypes: ["card_research_tech"],
+            plan: { type: "card-route", actionId: "researchTech", score: 21, label: "紫色科技" },
+            valueBreakdown: {
+              planScore: 21,
+              lateCardEnginePressure: 8,
+              playCardConversionPressure: 9,
+              cFinalTaskProgressValue: 4,
+              c2Type3ProgressValue: 0,
+              endGameExpectedScore: 3,
+              standardActionPremium: 6,
+              finalSecondMarkNoDirectSetupPenalty: -2,
+            },
+          }],
+        },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 185 }],
+};
+const playCardNearMissAnalysis = analytics.analyzeBattleReport(playCardNearMissReport);
+assert.equal(playCardNearMissAnalysis.opportunities.playCardNearMiss, 1);
+assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].bestCard.cardId, "b_135.webp");
+assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].policyScoreGap, 8);
+assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].bestCard.valueBreakdown.playCardConversionPressure, 9);
+const playCardNearMissSummary = analytics.summarizeBattleReports([playCardNearMissReport]);
+assert.equal(playCardNearMissSummary.playCardNearMissSamples[0].bestCard.cardId, "b_135.webp");
+
 const mainUnlockLowConcretePlayReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{
