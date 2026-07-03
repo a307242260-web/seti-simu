@@ -1680,6 +1680,7 @@ const playCardNearMissAnalysis = analytics.analyzeBattleReport(playCardNearMissR
 assert.equal(playCardNearMissAnalysis.opportunities.playCardNearMiss, 1);
 assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].bestCard.cardId, "b_135.webp");
 assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].policyScoreGap, 8);
+assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].finalScore, 185);
 assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].bestCard.valueBreakdown.playCardConversionPressure, 9);
 assert.equal(playCardNearMissAnalysis.lowPlayerCandidateStats[0].playerId, "player-white");
 assert.equal(

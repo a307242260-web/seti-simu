@@ -761,17 +761,45 @@
     };
   }
 
-  function buildPlayCardNearMissSample(entry, candidates = []) {
+  function getPlayCardNearMissConcreteValue(sample = {}) {
+    const breakdown = sample.bestCard?.valueBreakdown || {};
+    return [
+      sample.bestCard?.directScoreGain,
+      breakdown.planScore,
+      breakdown.lateCardEnginePressure,
+      breakdown.playCardConversionPressure,
+      breakdown.cFinalTaskProgressValue,
+      breakdown.c2Type3ProgressValue,
+      breakdown.endGameExpectedScore,
+      breakdown.standardActionPremium,
+    ].reduce((total, value) => total + Math.max(0, numeric(value)), 0);
+  }
+
+  function sortPlayCardNearMissSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        (getFiniteScore(left.finalScore) ?? Infinity) - (getFiniteScore(right.finalScore) ?? Infinity)
+        || numeric(left.policyScoreGap) - numeric(right.policyScoreGap)
+        || getPlayCardNearMissConcreteValue(right) - getPlayCardNearMissConcreteValue(left)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.turnNumber) - numeric(right.turnNumber)
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function buildPlayCardNearMissSample(entry, candidates = [], playerResultById = new Map()) {
     const playCardCandidate = getPlayCardCandidate(candidates);
     const selectedCandidate = getSelectedCandidate(entry, candidates);
     const bestCard = getBestPlayableCard(playCardCandidate);
     const playGraphNet = getCandidateActionGraphNet(playCardCandidate);
     const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
+    const result = playerResultById?.get?.(entry.playerId) || {};
     return {
       roundNumber: entry.roundNumber ?? null,
       turnNumber: entry.turnNumber ?? null,
       playerId: entry.playerId || null,
       playerLabel: entry.playerLabel || null,
+      finalScore: roundRatio(result.finalScore),
       resources: entry.playerResources || null,
       selected: summarizeOpportunityCandidate(selectedCandidate || {}),
       playCard: playCardCandidate ? summarizeOpportunityCandidate(playCardCandidate) : null,
@@ -3053,6 +3081,8 @@
   function analyzeBattleReport(report = {}, options = {}) {
     const logs = Array.isArray(report.logs) ? report.logs : [];
     const bugs = Array.isArray(report.bugs) ? report.bugs : [];
+    const playerResults = normalizePlayerResults(report.playerResults || []);
+    const playerResultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
     const typeCounts = {};
     const actionCounts = {};
     const actionCategoryCounts = {};
@@ -3197,9 +3227,7 @@
         }
         if (isPlayCardNearMiss(entry, candidates)) {
           opportunities.playCardNearMiss += 1;
-          if (playCardNearMissSamples.length < 12) {
-            playCardNearMissSamples.push(buildPlayCardNearMissSample(entry, candidates));
-          }
+          playCardNearMissSamples.push(buildPlayCardNearMissSample(entry, candidates, playerResultById));
         }
         if (isMainUnlockLowConcretePlay(entry)) {
           opportunities.mainUnlockLowConcretePlay += 1;
@@ -3292,7 +3320,6 @@
       actionCategoryRatios[category] = turnActionCount ? roundRatio(count / turnActionCount) : 0;
     }
 
-    const playerResults = normalizePlayerResults(report.playerResults || []);
     const playerProfiles = buildPlayerProfiles(logs, playerResults);
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
@@ -3353,7 +3380,7 @@
       negativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
-      playCardNearMissSamples,
+      playCardNearMissSamples: sortPlayCardNearMissSamples(playCardNearMissSamples),
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples,
@@ -3505,10 +3532,8 @@
           ...analysis.researchTechCompoundCardSamples.slice(0, 12 - mergedResearchTechCompoundCardSamples.length),
         );
       }
-      if (mergedPlayCardNearMissSamples.length < 12 && Array.isArray(analysis.playCardNearMissSamples)) {
-        mergedPlayCardNearMissSamples.push(
-          ...analysis.playCardNearMissSamples.slice(0, 12 - mergedPlayCardNearMissSamples.length),
-        );
+      if (Array.isArray(analysis.playCardNearMissSamples)) {
+        mergedPlayCardNearMissSamples.push(...analysis.playCardNearMissSamples);
       }
       if (mergedMainUnlockLowConcretePlaySamples.length < 12 && Array.isArray(analysis.mainUnlockLowConcretePlaySamples)) {
         mergedMainUnlockLowConcretePlaySamples.push(
@@ -3642,7 +3667,7 @@
       negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
-      playCardNearMissSamples: mergedPlayCardNearMissSamples,
+      playCardNearMissSamples: sortPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples: mergedHighHandDrainEnergyTradeSamples,
