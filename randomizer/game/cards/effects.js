@@ -408,6 +408,10 @@
     });
   }
 
+  function runezuSymbolRewardEffect(id, label, symbolId) {
+    return effect(id, "runezu_symbol_reward", label, symbolId, { symbolId });
+  }
+
   function researchTechEffect(id, label, techTypes = null) {
     const options = { skipCost: true };
     if (techTypes?.length) options.techTypes = Object.freeze([...techTypes]);
@@ -1003,6 +1007,44 @@
           event: Object.freeze({ type: "alienTrace", traceType: "blue" }),
           effect: gainDataEffect("amiba9-blue-data-2", "低重力研究：获得蓝色外星人痕迹，1数据", 1),
         },
+      ]),
+    }),
+    "runezu_2.webp": withSource("runezu_2.webp", {
+      cardType: 1,
+      triggers: Object.freeze([
+        { id: "runezu2-orbit-land-s4", event: Object.freeze({ types: ["orbit", "land"] }), effect: runezuSymbolRewardEffect("runezu2-s4", "符文族2：环绕或登陆，符文4奖励", "symbol_4") },
+        { id: "runezu2-orbit-land-s5", event: Object.freeze({ types: ["orbit", "land"] }), effect: runezuSymbolRewardEffect("runezu2-s5", "符文族2：环绕或登陆，符文5奖励", "symbol_5") },
+        { id: "runezu2-orbit-land-s3", event: Object.freeze({ types: ["orbit", "land"] }), effect: runezuSymbolRewardEffect("runezu2-s3", "符文族2：环绕或登陆，符文3奖励", "symbol_3") },
+      ]),
+    }),
+    "runezu_3.webp": withSource("runezu_3.webp", {
+      cardType: 1,
+      triggers: Object.freeze([
+        { id: "runezu3-orange-tech-s4", event: Object.freeze({ type: "researchTech", techType: "orange" }), effect: runezuSymbolRewardEffect("runezu3-s4", "符文族3：橙色科技，符文4奖励", "symbol_4") },
+        { id: "runezu3-purple-tech-s1", event: Object.freeze({ type: "researchTech", techType: "purple" }), effect: runezuSymbolRewardEffect("runezu3-s1", "符文族3：粉紫科技，符文1奖励", "symbol_1") },
+        { id: "runezu3-blue-tech-s6", event: Object.freeze({ type: "researchTech", techType: "blue" }), effect: runezuSymbolRewardEffect("runezu3-s6", "符文族3：蓝色科技，符文6奖励", "symbol_6") },
+      ]),
+    }),
+    "runezu_4.webp": withSource("runezu_4.webp", {
+      cardType: 1,
+      triggers: Object.freeze([
+        { id: "runezu4-scan-s4", event: Object.freeze({ type: "scanAction" }), effect: runezuSymbolRewardEffect("runezu4-s4", "符文族4：扫描行动，符文4奖励", "symbol_4") },
+        { id: "runezu4-scan-s2", event: Object.freeze({ type: "scanAction" }), effect: runezuSymbolRewardEffect("runezu4-s2", "符文族4：扫描行动，符文2奖励", "symbol_2") },
+      ]),
+    }),
+    "runezu_5.webp": withSource("runezu_5.webp", {
+      cardType: 1,
+      triggers: Object.freeze([
+        { id: "runezu5-trace-s6", event: Object.freeze({ type: "alienTrace" }), effect: runezuSymbolRewardEffect("runezu5-s6", "符文族5：外星人痕迹，符文6奖励", "symbol_6") },
+        { id: "runezu5-trace-s5", event: Object.freeze({ type: "alienTrace" }), effect: runezuSymbolRewardEffect("runezu5-s5", "符文族5：外星人痕迹，符文5奖励", "symbol_5") },
+        { id: "runezu5-trace-s2", event: Object.freeze({ type: "alienTrace" }), effect: runezuSymbolRewardEffect("runezu5-s2", "符文族5：外星人痕迹，符文2奖励", "symbol_2") },
+      ]),
+    }),
+    "runezu_6.webp": withSource("runezu_6.webp", {
+      cardType: 1,
+      triggers: Object.freeze([
+        { id: "runezu6-launch-s1", event: Object.freeze({ type: "launch" }), effect: runezuSymbolRewardEffect("runezu6-s1", "符文族6：发射，符文1奖励", "symbol_1") },
+        { id: "runezu6-launch-s7", event: Object.freeze({ type: "launch" }), effect: runezuSymbolRewardEffect("runezu6-s7", "符文族6：发射，符文7奖励", "symbol_7") },
       ]),
     }),
     "b_1.webp": withSource("b_1.webp", {
@@ -2566,13 +2608,32 @@
     if (!card.cardEffectState || card.cardEffectState.modelCardId !== getCardId(card)) {
       card.cardEffectState = {
         modelCardId: getCardId(card),
-        consumedTriggerIds: [],
+        consumedTriggerIds: getLegacyConsumedTriggerIds(card, model),
         completedTaskIds: [],
       };
     }
     if (!Array.isArray(card.cardEffectState.consumedTriggerIds)) card.cardEffectState.consumedTriggerIds = [];
     if (!Array.isArray(card.cardEffectState.completedTaskIds)) card.cardEffectState.completedTaskIds = [];
+    for (const triggerId of getLegacyConsumedTriggerIds(card, model)) {
+      if (!card.cardEffectState.consumedTriggerIds.includes(triggerId)) {
+        card.cardEffectState.consumedTriggerIds.push(triggerId);
+      }
+    }
     return card.cardEffectState;
+  }
+
+  function getLegacyConsumedTriggerIds(card, model) {
+    if (!card || !model?.triggers?.length) return [];
+    const cardId = getCardId(card) || "";
+    if (!String(cardId).startsWith("runezu_")) return [];
+    const progressCount = card.runezuTaskCompleted
+      ? model.triggers.length
+      : Array.isArray(card.runezuTaskProgress)
+        ? card.runezuTaskProgress.length
+        : 0;
+    return model.triggers
+      .slice(0, Math.max(0, Math.min(model.triggers.length, progressCount)))
+      .map((trigger) => trigger.id);
   }
 
   function isTriggerConsumed(card, triggerId) {

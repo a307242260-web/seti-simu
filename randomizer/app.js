@@ -10984,60 +10984,6 @@
     });
   }
 
-  function processRunezuTaskEvents(events = []) {
-    if (!runezu || !events?.length) return [];
-    const currentPlayer = getCurrentPlayer();
-    if (!currentPlayer?.reservedCards?.length) return [];
-    const results = [];
-    for (const card of [...currentPlayer.reservedCards]) {
-      if (!runezu.isRunezuCard?.(card)) continue;
-      const beforePlayer = structuredClone(currentPlayer);
-      const result = runezu.consumeTaskEvents?.(card, events);
-      if (!result?.ok || !result.effects?.length) continue;
-      if (result.completed) {
-        removeReservedCardToDiscard(currentPlayer, card);
-        incrementCompletedTaskCount(currentPlayer);
-      }
-      if (actionHistory.hasSession()) {
-        recordHistoryCommand(historyCommands.createRestorePlayerCommand(
-          currentPlayer,
-          beforePlayer,
-          "恢复符文族任务进度前玩家状态",
-        ));
-      } else {
-        beginQuickActionStep("runezu-task-progress", `符文族任务：${cards.getCardLabel(card)}`);
-        recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
-          currentPlayer,
-          beforePlayer,
-          "恢复符文族任务进度前玩家状态",
-        ));
-        completeQuickActionStep();
-      }
-      results.push(result);
-      if (pendingActionEffectFlow) {
-        insertActionEffectsAfterCurrent(result.effects);
-      } else {
-        startCardEffectFlow(
-          "runezu-task-rewards",
-          `符文族任务：${cards.getCardLabel(card)}`,
-          result.effects,
-          {
-            actionType: "cardTask",
-            historySource: HISTORY_SOURCE_QUICK,
-            consumesMainAction: false,
-          },
-        );
-      }
-      break;
-    }
-    if (results.length) {
-      renderReservedCardsFromTaskState();
-      renderPlayerStats();
-      renderStateReadout();
-    }
-    return results;
-  }
-
   function settleCardTasksAfterEffect(options = {}) {
     const { events, skipType1 = false, type1Only = false, render = true } = options;
     const currentPlayer = getCurrentPlayer();
@@ -11051,7 +10997,7 @@
       ? []
       : [...normalizedEvents, ...buildChongPositionArrivalEvents(normalizedEvents)];
     const chongCompletions = type1Only ? [] : processChongTransportArrivalEvents(chongEvents);
-    const runezuCompletions = type1Only ? [] : processRunezuTaskEvents(normalizedEvents);
+    const runezuCompletions = [];
     refreshCardTaskState({ render });
     const type1Result = skipType1 ? null : applyType1TriggerMatches(normalizedEvents);
     if (!hasActiveCardTriggerResolution()) {
@@ -11761,6 +11707,12 @@
     }
     if (match?.effect?.type === cardEffects.EFFECT_TYPES.CARD_CORNER_EVENT_REWARD) {
       return applyCardTriggerReward(match);
+    }
+    if (
+      match?.effect?.type === runezu?.EFFECT_TYPES?.SYMBOL_REWARD
+      || match?.effect?.type === runezu?.EFFECT_TYPES?.SYMBOL_BRANCH
+    ) {
+      return queueCardTriggerRewardEffects(match, [match.effect]);
     }
     if (String(match?.effect?.type || "").startsWith("card_")) {
       return queueCardTriggerRewardEffects(match, [match.effect]);
@@ -15653,6 +15605,13 @@
 
   function isReservedTaskCardUnfinished(card, effect = null) {
     if (runezu?.isRunezuCard?.(card)) {
+      if (cardEffects.getCardModel?.(card)?.triggers?.length) {
+        return cardEffects.isReturnUnfinishedTaskTarget(card, {
+          cardTypes: effect?.options?.cardTypes || [1, 2],
+          isBanrenmaCard: (candidate) => Boolean(banrenma?.isBanrenmaCard?.(candidate)),
+          isChongTransportStarted: isChongTransportStartedForCard,
+        });
+      }
       const cardTypes = new Set(
         (effect?.options?.cardTypes || [1, 2])
           .map((typeCode) => Math.round(Number(typeCode)))

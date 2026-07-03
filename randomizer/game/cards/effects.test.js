@@ -913,6 +913,49 @@ for (const [cardId, techType, expectedType] of [
   );
 }
 
+const runezuTechCard = { id: "runezu-tech-card", cardId: "runezu_3.webp" };
+for (const [techType, symbolId] of [
+  ["orange", "symbol_4"],
+  ["purple", "symbol_1"],
+  ["blue", "symbol_6"],
+]) {
+  const matches = cardEffects.collectMatchingTriggers(
+    { id: "p1", color: "red", reservedCards: [runezuTechCard] },
+    { type: "researchTech", techType },
+  );
+  assert.equal(matches.length, 1, `Runezu 3 should trigger from ${techType} tech`);
+  assert.equal(matches[0].effect.type, "runezu_symbol_reward");
+  assert.equal(matches[0].effect.options.symbolId, symbolId);
+  cardEffects.consumeTrigger(runezuTechCard, matches[0].trigger.id);
+}
+assert.equal(cardEffects.areAllTriggersConsumed(runezuTechCard), true);
+
+const legacyRunezuTechCard = {
+  id: "legacy-runezu-tech-card",
+  cardId: "runezu_3.webp",
+  runezuTaskProgress: [{ event: "researchTech", symbolId: "symbol_4" }],
+};
+cardEffects.ensureCardEffectState(legacyRunezuTechCard);
+assert.deepEqual(
+  cardEffects.getConsumedTriggerIndexes(legacyRunezuTechCard),
+  [1],
+  "legacy Runezu task progress should migrate to generic consumed trigger state",
+);
+assert.equal(
+  cardEffects.collectMatchingTriggers(
+    { id: "p1", color: "red", reservedCards: [legacyRunezuTechCard] },
+    { type: "researchTech", techType: "orange" },
+  ).length,
+  0,
+);
+assert.equal(
+  cardEffects.collectMatchingTriggers(
+    { id: "p1", color: "red", reservedCards: [legacyRunezuTechCard] },
+    { type: "researchTech", techType: "purple" },
+  ).length,
+  1,
+);
+
 const batchConsumedTriggers = Object.entries(cardEffects.MODELS).flatMap(([cardId, model]) => (
   (model.triggers || [])
     .filter((trigger) => trigger.event?.consumeAllMatches)
