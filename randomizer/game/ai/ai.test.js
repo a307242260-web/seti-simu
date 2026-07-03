@@ -1463,6 +1463,24 @@ appendRepeatedTurnActions(highScoreNearMissLogs, "near", "Near", {
 });
 highScoreNearMissLogs.push({
   type: "turn-action",
+  roundNumber: 3,
+  turnNumber: 7,
+  rawTurnNumber: 25,
+  playerId: "near",
+  playerLabel: "Near",
+  playerResources: { score: 132, credits: 2, energy: 1, publicity: 5, handSize: 3 },
+  details: {
+    action: { id: "cardCorner", kind: "quick", score: 8 },
+    candidates: [
+      { id: "researchTech", kind: "main", available: false, score: 0, reason: "宣传不足，研究科技需要 6 宣传" },
+      { id: "cardCorner", kind: "quick", available: true, score: 8, directScoreGain: 0 },
+      { id: "move", kind: "quick", available: true, score: 5, directScoreGain: 0 },
+      { id: "pass", kind: "pass", available: true, score: -2 },
+    ],
+  },
+});
+highScoreNearMissLogs.push({
+  type: "turn-action",
   roundNumber: 4,
   turnNumber: 9,
   rawTurnNumber: 31,
@@ -1535,11 +1553,15 @@ assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechPlan.d2N
 assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechPlan.techsToNextD2Step, 2);
 assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].recentTurnTail.at(-1).selected.id, "end-turn");
 assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].recentTurnTail.at(-1).bestMain.id, "researchTech");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechSetupWindows[0].researchTech.reason, "宣传不足，研究科技需要 6 宣传");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechSetupWindows[0].bestSetupQuick.id, "cardCorner");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechSetupWindows.at(-1).selected.id, "end-turn");
 assert.ok(highScoreNearMissAnalysis.recommendations.some((entry) => entry.id === "inspect-high-score-near-miss"));
 const highScoreNearMissSummary = analytics.summarizeBattleReports([highScoreNearMissReport]);
 assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].playerId, "near");
 assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].cards[1].zone, "reserved");
 assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].dTechPlan.d2NextTwoTechScore, 7);
+assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].dTechSetupWindows[0].bestSetupQuick.id, "cardCorner");
 assert.ok(highScoreNearMissSummary.recommendations.some((entry) => entry.id === "inspect-high-score-near-miss"));
 
 const highHandDrainEnergyTradeReport = {

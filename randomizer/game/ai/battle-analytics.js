@@ -2974,6 +2974,68 @@
       });
   }
 
+  function buildDTechSetupWindowTail(logs = [], result = {}, limit = 16) {
+    const formulas = new Set((result.finalFormulas || []).map((formulaId) => String(formulaId || "")));
+    const entries = Array.isArray(result.finalFormulaProgress?.entries)
+      ? result.finalFormulaProgress.entries
+      : [];
+    const hasDTechPlan = formulas.has("d1")
+      || formulas.has("d2")
+      || entries.some((entry) => entry?.formulaId === "d1" || entry?.formulaId === "d2");
+    if (!hasDTechPlan) return [];
+
+    const normalizedLimit = Math.max(0, Math.round(numeric(limit) || 0));
+    if (!normalizedLimit) return [];
+
+    return (logs || [])
+      .filter((entry) => {
+        if (entry?.type !== "turn-action" || !matchesPlayerResult(entry, result)) return false;
+        if (numeric(entry.roundNumber) < 3) return false;
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        const selected = getSelectedAction(entry) || {};
+        const selectedId = getCandidateId(selected);
+        const researchTechCandidate = candidates.find((candidate) => getCandidateId(candidate) === "researchTech");
+        if (selectedId === "researchTech") return true;
+        if (!researchTechCandidate) return false;
+        const resources = entry.playerResources || {};
+        const reason = String(researchTechCandidate.reason || researchTechCandidate.message || "");
+        return (
+          reason.includes("宣传")
+          || numeric(resources.publicity) >= 3
+          || numeric(getCandidatePolicyScore(researchTechCandidate)) > 0
+        );
+      })
+      .slice(-normalizedLimit)
+      .map((entry) => {
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        const availableCandidates = candidates
+          .filter(isCandidateAvailable)
+          .sort((left, right) => (
+            numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+            || getCandidateId(left).localeCompare(getCandidateId(right))
+          ));
+        const researchTechCandidate = candidates.find((candidate) => getCandidateId(candidate) === "researchTech");
+        const bestMain = availableCandidates.find((candidate) => candidate.kind === "main") || null;
+        const bestQuick = availableCandidates.find((candidate) => candidate.kind === "quick") || null;
+        const bestSetupQuick = availableCandidates.find((candidate) => (
+          candidate.kind === "quick"
+          && ["cardCorner", "quickTrade", "move", "placeData"].includes(getCandidateId(candidate))
+        )) || null;
+        return {
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+          researchTech: researchTechCandidate ? summarizeOpportunityCandidate(researchTechCandidate) : null,
+          bestMain: bestMain ? summarizeOpportunityCandidate(bestMain) : null,
+          bestQuick: bestQuick ? summarizeOpportunityCandidate(bestQuick) : null,
+          bestSetupQuick: bestSetupQuick ? summarizeOpportunityCandidate(bestSetupQuick) : null,
+          topCandidates: availableCandidates.slice(0, 5).map(summarizeOpportunityCandidate),
+        };
+      });
+  }
+
   function sortHighScoreNearMissSamples(samples = [], limit = 12) {
     const normalizedLimit = Math.max(0, Math.round(limit == null ? 12 : numeric(limit)));
     if (!normalizedLimit) return [];
@@ -3047,6 +3109,7 @@
           cards,
           dTechPlan: buildDTechNearMissPlan(result, profile),
           recentTurnTail: buildRecentHighScoreTurnTail(logs, result, 8),
+          dTechSetupWindows: buildDTechSetupWindowTail(logs, result, 16),
         };
         sample.reasons = buildHighScoreNearMissReasons(sample, referenceGaps);
         return sample;
