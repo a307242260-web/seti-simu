@@ -1062,6 +1062,11 @@ assert.equal(battleAnalysis.opportunities.passWithAvailableMain, 1);
 assert.equal(battleAnalysis.opportunities.openingPlanNearMiss, 1);
 assert.equal(battleAnalysis.openingPlanNearMissSamples[0].bestAlternativeGap, 0.3);
 assert.deepEqual(battleAnalysis.openingPlanNearMissSamples[0].alternatives[0].initialNumbers, [7, 11]);
+assert.equal(battleAnalysis.opportunities.openingPlanConversionGap, 1);
+assert.equal(battleAnalysis.openingPlanConversionSamples[0].playerId, "player-white");
+assert.ok(battleAnalysis.openingPlanConversionSamples[0].reasons.includes("scan-plan-unconverted"));
+assert.ok(battleAnalysis.openingPlanConversionSamples[0].reasons.includes("trace-plan-unconverted"));
+assert.equal(battleAnalysis.openingPlanConversionSamples[0].earlyWindow.actual.scanCount, 0);
 assert.equal(battleAnalysis.opportunities.selectedBelowBestScore, 2);
 assert.equal(battleAnalysis.scoreOpportunities.selectedBelowBest, 2);
 assert.equal(battleAnalysis.scoreOpportunities.averageGap, 10.75);
@@ -1096,8 +1101,10 @@ assert.ok(battleAnalysis.strategyTuning.weights.pass < 1);
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "score-pass-opportunity-cost"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-score-gap"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-card-score-gap"));
+assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-opening-plan-conversion"));
 const sampleBattleSummary = analytics.summarizeBattleReports([sampleBattleReport]);
 assert.equal(sampleBattleSummary.openingPlanNearMissSamples[0].playerLabel, "白色");
+assert.equal(sampleBattleSummary.openingPlanConversionSamples[0].playerLabel, "白色");
 
 const negativePassOpportunityReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },

@@ -4476,6 +4476,192 @@
     return sortOpeningPlanNearMissSamples(samples, limit);
   }
 
+  function getOpeningPlanEarlyActionWindow(logs = [], playerId, maxRoundNumber = 2) {
+    const actual = {
+      turnActionCount: 0,
+      mainActionCount: 0,
+      quickStepCount: 0,
+      resourceQuickStepCount: 0,
+      idleTurnCount: 0,
+      playCardCount: 0,
+      researchTechCount: 0,
+      scanCount: 0,
+      analyzeCount: 0,
+      placeDataCount: 0,
+      cardCornerCount: 0,
+      quickTradeCount: 0,
+      moveCount: 0,
+      launchCount: 0,
+      orbitCount: 0,
+      landCount: 0,
+      orbitLandCount: 0,
+      scanTargetCount: 0,
+      alienTraceCount: 0,
+      dataPlacementCount: 0,
+      firstResources: null,
+      lastResources: null,
+      actionCounts: {},
+    };
+    for (const entry of logs || []) {
+      if ((entry.playerId || null) !== playerId) continue;
+      const roundNumber = Number(entry.roundNumber);
+      if (!Number.isFinite(roundNumber) || roundNumber > maxRoundNumber) continue;
+      if (entry.playerResources) {
+        if (!actual.firstResources) actual.firstResources = entry.playerResources;
+        actual.lastResources = entry.playerResources;
+      }
+      if (entry.type === "turn-action") {
+        const action = getSelectedAction(entry);
+        const actionId = getSelectedActionId(entry);
+        const pace = getActionPaceCategory(actionId, action);
+        actual.turnActionCount += 1;
+        increment(actual.actionCounts, actionId);
+        if (pace === "main") actual.mainActionCount += 1;
+        else if (pace === "quick") actual.quickStepCount += 1;
+        else if (pace === "idle") actual.idleTurnCount += 1;
+        if (["placeData", "cardCorner", "quickTrade"].includes(actionId)) actual.resourceQuickStepCount += 1;
+        if (actionId === "playCard") actual.playCardCount += 1;
+        else if (actionId === "researchTech") actual.researchTechCount += 1;
+        else if (actionId === "scan") actual.scanCount += 1;
+        else if (actionId === "analyze") actual.analyzeCount += 1;
+        else if (actionId === "placeData") actual.placeDataCount += 1;
+        else if (actionId === "cardCorner") actual.cardCornerCount += 1;
+        else if (actionId === "quickTrade") actual.quickTradeCount += 1;
+        else if (actionId === "move") actual.moveCount += 1;
+        else if (actionId === "launch") actual.launchCount += 1;
+        else if (actionId === "orbit") actual.orbitCount += 1;
+        else if (actionId === "land") actual.landCount += 1;
+      } else if (entry.type === "scan-target") {
+        actual.scanTargetCount += 1;
+      } else if (entry.type === "alien-trace") {
+        actual.alienTraceCount += 1;
+      } else if (entry.type === "data-placement") {
+        actual.dataPlacementCount += 1;
+      }
+    }
+    actual.orbitLandCount = actual.orbitCount + actual.landCount;
+    return actual;
+  }
+
+  function getOpeningPlanSummaryValue(summary = {}, key) {
+    return roundRatio(summary?.[key]);
+  }
+
+  function buildOpeningPlanConversionReasons(selectedSummary = {}, earlyActual = {}, finalScore = 0) {
+    const reasons = [];
+    const plannedScan = getOpeningPlanSummaryValue(selectedSummary, "scan");
+    const plannedData = getOpeningPlanSummaryValue(selectedSummary, "data");
+    const plannedTraces = getOpeningPlanSummaryValue(selectedSummary, "traces");
+    const plannedOrbits = getOpeningPlanSummaryValue(selectedSummary, "orbits");
+    const earlyScanProgress = numeric(earlyActual.scanCount) + numeric(earlyActual.scanTargetCount);
+    const earlyDataProgress = numeric(earlyActual.analyzeCount) + numeric(earlyActual.placeDataCount) + numeric(earlyActual.dataPlacementCount);
+    const earlyTraceProgress = numeric(earlyActual.alienTraceCount);
+    const engineActionCount = numeric(earlyActual.playCardCount) + numeric(earlyActual.researchTechCount);
+    const routeActionCount = numeric(earlyActual.launchCount) + numeric(earlyActual.moveCount) + numeric(earlyActual.orbitLandCount);
+    if (plannedScan >= 2 && earlyScanProgress <= 0) reasons.push("scan-plan-unconverted");
+    else if (plannedScan >= 2 && earlyScanProgress < plannedScan) reasons.push("scan-plan-underconverted");
+    if (plannedTraces >= 1 && earlyTraceProgress <= 0) reasons.push("trace-plan-unconverted");
+    else if (plannedTraces >= 1 && earlyTraceProgress < plannedTraces) reasons.push("trace-plan-underconverted");
+    if (plannedData >= 1 && earlyDataProgress <= 0) reasons.push("data-plan-unconverted");
+    else if (plannedData >= 1 && earlyDataProgress < plannedData) reasons.push("data-plan-underconverted");
+    if (plannedOrbits >= 1 && numeric(earlyActual.orbitLandCount) <= 0) reasons.push("orbit-plan-unconverted");
+    else if (plannedOrbits >= 1 && numeric(earlyActual.orbitLandCount) < plannedOrbits) reasons.push("orbit-plan-underconverted");
+    if (numeric(finalScore) < 245 && engineActionCount <= 1) reasons.push("early-engine-thin");
+    if (numeric(finalScore) < 245 && numeric(earlyActual.mainActionCount) <= 8) reasons.push("low-early-main-throughput");
+    if (
+      routeActionCount >= 4
+      && plannedScan + plannedData + plannedTraces >= 2
+      && earlyScanProgress + numeric(earlyActual.analyzeCount) <= 1
+    ) {
+      reasons.push("route-only-before-engine");
+    }
+    if (numeric(earlyActual.resourceQuickStepCount) >= 4 && engineActionCount <= 1) {
+      reasons.push("resource-roll-without-engine");
+    }
+    return reasons;
+  }
+
+  function getOpeningPlanConversionGapScore(selectedSummary = {}, earlyActual = {}, finalScore = 0) {
+    const plannedScan = getOpeningPlanSummaryValue(selectedSummary, "scan");
+    const plannedData = getOpeningPlanSummaryValue(selectedSummary, "data");
+    const plannedTraces = getOpeningPlanSummaryValue(selectedSummary, "traces");
+    const plannedOrbits = getOpeningPlanSummaryValue(selectedSummary, "orbits");
+    const earlyScanProgress = numeric(earlyActual.scanCount) + numeric(earlyActual.scanTargetCount);
+    const earlyDataProgress = numeric(earlyActual.analyzeCount) + numeric(earlyActual.placeDataCount) + numeric(earlyActual.dataPlacementCount);
+    const earlyTraceProgress = numeric(earlyActual.alienTraceCount);
+    const engineActionCount = numeric(earlyActual.playCardCount) + numeric(earlyActual.researchTechCount);
+    let gap = 0;
+    gap += Math.max(0, plannedScan - earlyScanProgress) * 3;
+    gap += Math.max(0, plannedTraces - earlyTraceProgress) * 3;
+    gap += Math.max(0, plannedData - earlyDataProgress) * 2;
+    gap += Math.max(0, plannedOrbits - numeric(earlyActual.orbitLandCount)) * 1.5;
+    if (numeric(finalScore) < 245 && numeric(earlyActual.mainActionCount) <= 8) gap += 2;
+    if (numeric(finalScore) < 245 && engineActionCount <= 1) gap += 1.5;
+    return roundRatio(gap);
+  }
+
+  function sortOpeningPlanConversionSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(right.conversionGapScore) - numeric(left.conversionGapScore)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""), "zh-Hans-CN")
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildOpeningPlanConversionSamples(logs = [], playerResults = [], playerProfiles = [], limit = 12) {
+    const resultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const profiles = (playerProfiles || []).filter(Boolean);
+    const averageScore = profiles.length
+      ? profiles.reduce((total, profile) => total + numeric(profile.finalScore), 0) / profiles.length
+      : 0;
+    const lowScoreCutoff = Math.min(245, averageScore ? averageScore - 15 : 245);
+    const lowKeys = new Set(
+      [...profiles]
+        .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore) || left.playerLabel.localeCompare(right.playerLabel))
+        .slice(0, Math.max(1, Math.ceil(Math.max(1, profiles.length) * 0.35)))
+        .map((profile) => profile.playerId || profile.playerLabel),
+    );
+    const samples = (logs || [])
+      .filter((entry) => entry?.type === "initial-selection")
+      .map((entry) => {
+        const openingPlan = entry.details?.openingPlan || {};
+        const selectedSummary = openingPlan.summary || null;
+        if (!selectedSummary) return null;
+        const player = resultById.get(entry.playerId) || {};
+        const finalScore = numeric(player.finalScore);
+        const earlyActual = getOpeningPlanEarlyActionWindow(logs, entry.playerId, 2);
+        const reasons = buildOpeningPlanConversionReasons(selectedSummary, earlyActual, finalScore);
+        const conversionGapScore = getOpeningPlanConversionGapScore(selectedSummary, earlyActual, finalScore);
+        const playerKey = entry.playerId || entry.playerLabel;
+        const lowPlayer = finalScore <= lowScoreCutoff || lowKeys.has(playerKey);
+        if (!lowPlayer && !reasons.length) return null;
+        if (!lowPlayer && conversionGapScore < 2) return null;
+        return {
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || player.playerLabel || null,
+          finalScore: roundRatio(finalScore),
+          industryLabel: entry.details?.industryCard?.label || null,
+          aiStyle: entry.details?.aiStyle || null,
+          selected: {
+            score: roundRatio(openingPlan.score),
+            initialNumbers: normalizeInitialNumbers(getOpeningLogInitialNumbers(entry)),
+            summary: selectedSummary,
+            goals: openingPlan.goals || null,
+          },
+          earlyWindow: {
+            rounds: 2,
+            actual: earlyActual,
+          },
+          conversionGapScore,
+          reasons,
+        };
+      })
+      .filter(Boolean);
+    return sortOpeningPlanConversionSamples(samples, limit);
+  }
+
   function getPassOpportunityBestMainScore(sample = {}) {
     const bestMain = sample?.bestMain || {};
     const policyScore = getFiniteScore(bestMain.policyScore);
@@ -4600,6 +4786,13 @@
         id: "inspect-high-score-near-miss",
         priority: "medium",
         message: "存在 280-299 分的高分近失席位，应按样本拆解终局板、B2、行动吞吐和未兑现手牌缺口，优先提高 300+ 命中率。",
+      });
+    }
+    if (numeric(opportunities.openingPlanConversionGap) > 0) {
+      recommendations.push({
+        id: "inspect-opening-plan-conversion",
+        priority: "medium",
+        message: "低分玩家存在开局计划未兑现到前两轮行动的样本，应先定位扫描、数据、痕迹或科技/打牌链断点，再调整开局偏置。",
       });
     }
     if (d1TechBalanceBottleneckSamples.length) {
@@ -4787,6 +4980,7 @@
       passWithAvailableMain: 0,
       passWithResourceLockedHand: 0,
       openingPlanNearMiss: 0,
+      openingPlanConversionGap: 0,
       earlyPassNoMain: 0,
       resourceLockMainUnlock: 0,
       quickBeforePassNoMain: 0,
@@ -4815,6 +5009,7 @@
     const passOpportunitySamples = [];
     const passResourceLockSamples = [];
     const openingPlanNearMissSamples = [];
+    const openingPlanConversionSamples = [];
     const earlyPassNoMainSamples = [];
     const resourceLockMainUnlockSamples = [];
     const quickBeforePassNoMainSamples = [];
@@ -5031,6 +5226,14 @@
     const allOpeningPlanNearMissSamples = buildOpeningPlanNearMissSamples(logs, playerResults, Infinity);
     openingPlanNearMissSamples.push(...allOpeningPlanNearMissSamples.slice(0, 12));
     opportunities.openingPlanNearMiss = allOpeningPlanNearMissSamples.length;
+    const allOpeningPlanConversionSamples = buildOpeningPlanConversionSamples(
+      logs,
+      playerResults,
+      playerProfiles,
+      Infinity,
+    );
+    openingPlanConversionSamples.push(...allOpeningPlanConversionSamples.slice(0, 12));
+    opportunities.openingPlanConversionGap = allOpeningPlanConversionSamples.length;
     const allEarlyPassNoMainSamples = buildEarlyPassNoMainSamples(logs, playerResults);
     const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
     earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
@@ -5114,6 +5317,7 @@
       passOpportunitySamples,
       passResourceLockSamples,
       openingPlanNearMissSamples,
+      openingPlanConversionSamples,
       earlyPassNoMainSamples,
       resourceLockMainUnlockSamples,
       earlyPassNoMainReasonCounts,
@@ -5181,6 +5385,7 @@
     const mergedPassOpportunitySamples = [];
     const mergedPassResourceLockSamples = [];
     const mergedOpeningPlanNearMissSamples = [];
+    const mergedOpeningPlanConversionSamples = [];
     const mergedEarlyPassNoMainSamples = [];
     const mergedResourceLockMainUnlockSamples = [];
     const mergedEarlyPassNoMainReasonCounts = {};
@@ -5257,6 +5462,9 @@
       }
       if (Array.isArray(analysis.openingPlanNearMissSamples)) {
         mergedOpeningPlanNearMissSamples.push(...analysis.openingPlanNearMissSamples);
+      }
+      if (Array.isArray(analysis.openingPlanConversionSamples)) {
+        mergedOpeningPlanConversionSamples.push(...analysis.openingPlanConversionSamples);
       }
       if (Array.isArray(analysis.earlyPassNoMainSamples)) {
         mergedEarlyPassNoMainSamples.push(...analysis.earlyPassNoMainSamples);
@@ -5465,6 +5673,7 @@
       passOpportunitySamples: mergedPassOpportunitySamples,
       passResourceLockSamples: mergedPassResourceLockSamples,
       openingPlanNearMissSamples: sortOpeningPlanNearMissSamples(mergedOpeningPlanNearMissSamples),
+      openingPlanConversionSamples: sortOpeningPlanConversionSamples(mergedOpeningPlanConversionSamples),
       earlyPassNoMainSamples: sortEarlyPassNoMainSamples(mergedEarlyPassNoMainSamples),
       resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
       earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
