@@ -10049,6 +10049,10 @@
     };
   }
 
+  function hasHandScanTargetCard(player) {
+    return (player?.hand || []).some((card) => card && getPublicScanChoicesForCard(card).ok);
+  }
+
   function getPublicScanIconForScanCode(scanCode) {
     switch (Number(scanCode)) {
       case 0:
@@ -19165,6 +19169,13 @@
         const currentPlayer = getCurrentPlayer();
         if (!currentPlayer?.hand?.length) {
           effect.result = { ok: true, skipped: true, message: `${effect.label || "手牌扫描"}：没有手牌，跳过` };
+          rocketState.statusNote = effect.result.message;
+          completeCurrentActionEffect("skipped");
+          renderStateReadout();
+          return effect.result;
+        }
+        if (!hasHandScanTargetCard(currentPlayer)) {
+          effect.result = { ok: true, skipped: true, message: `${effect.label || "手牌扫描"}：没有可扫描角标的手牌，跳过` };
           rocketState.statusNote = effect.result.message;
           completeCurrentActionEffect("skipped");
           renderStateReadout();

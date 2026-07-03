@@ -75,6 +75,7 @@ GameState 快照
 - 任何跨弹窗延迟结算的 pending 都必须带 `playerId/playerColor` 或可解析 `effect`；AI 分发和确认 handler 均按 `pending owner -> effect owner -> current player` 解析执行玩家。若 pending owner 是人类玩家，AI 必须返回 `blocked` 等待人工处理；若 pending owner 是电脑玩家，人工入口必须拒绝并重新调度 AI，AI 调用确认 handler 时显式传入 `{ automated: true }`。不能因为当前可见玩家是人类而让人类控制 AI pending，也不能因为当前可见玩家是 AI 而代处理人类 pending。
 - 左侧兜底控制只用于恢复异常状态：`AI接管` 会把当前电脑 pending 或可恢复的电脑回合交回自动机并清除旧阻塞暂停，不清空现场 pending；`强制跳过` 会清理当前 pending UI 并把目标玩家标记为本回合已完成但不标记 PASS，用于脱离无法继续的执行卡死。
 - 共用 overlay 的 rare 效果也要有 AI 收口路径。`scanTargetOverlay` 除普通扫描外还承载移除标记、手牌角标奖励、任意弃牌收入、支付信用、重复角标、移除环绕放探测器、任务回手、探测器扇区扫描和探测器位置奖励；这些 pending 即使仍不作为 AI 主动打牌候选，也必须在被强制或触发进入时能自动选择、跳过或确认，不能停在弹窗上。
+- 手牌扫描效果只有在当前手牌存在可扫描角标时才打开 pending；若自动机选中的手牌无法继续展开扫描目标，会记录 `hand-scan-recovery` 并跳过当前效果节点，避免批跑停在 `pendingHandScanAction`。
 - 1 类任务卡触发只在当前事件窗口内可选；AI 若因火箭上限、资源不足或无合法目标无法发动某个触发，应取消本次触发选择并等待下次同类事件，不得消耗触发槽，也不得把自动批跑阻塞在不可执行触发上。
 - PASS 预留牌默认仍保持原顺序；只有第 2 轮出现 0 信用点、0 能量或 1 手牌以内的硬资源锁，且预留牌堆里有能补对应短板的收入牌时，才启用 `scoreAiPassReserveCard` 排序，避免早期资源滚动被随机牌序截断。
 - PASS 预留日志现在额外记录 `passReserveResourcePressurePreview` 与 `passReserveResourcePressureMiss`：前者忽略“仅第 2 轮启用”的行为门槛，用来识别第 1/3/4 轮是否也存在 0 信用点、0 能量或低手牌且牌堆有对应收入牌的窗口，并列出最多 6 张能补短板的收入候选；后者表示该窗口当前只被记录、未用于排序，且选中牌本身也不是预览收入候选。批跑分析会输出 `passReserveResourcePressureMissSamples`，用于后续筛更窄的可验证窗口，不能直接把 PASS 预留排序扩到所有轮次。

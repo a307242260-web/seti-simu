@@ -2359,7 +2359,29 @@
         score: selected.score,
         card: selected.card,
       });
-      return handleHandScanCardClick(selected.handIndex);
+      const result = handleHandScanCardClick(selected.handIndex);
+      if (
+        (pending.fromEffectFlow || isActionEffectFlowActive())
+        && (
+          !result
+          || result.ok === false
+          || state.pendingHandScanAction
+          || !state.pendingScanTargetAction
+        )
+      ) {
+        recordAiAutoBattleLog("hand-scan-recovery", `${player.colorLabel}AI 跳过无法展开目标的手牌扫描`, {
+          handIndex: selected.handIndex,
+          card: selected.card,
+          result: result ? {
+            ok: result.ok ?? null,
+            message: result.message || null,
+          } : null,
+          pendingState: getAiAutoBattlePendingState(),
+        });
+        skipCurrentActionEffect();
+        return { ok: true, progressed: true, skipped: true, message: "AI 跳过无法展开目标的手牌扫描" };
+      }
+      return result;
     }
 
     function cardTriggerNeedsFreeMove(match) {
