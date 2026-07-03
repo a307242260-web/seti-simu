@@ -326,6 +326,7 @@ Goal = {
 - 批跑分析新增 `lowEngineThroughputSamples`：按高分席位均值对低分玩家输出 `placeData/scan/analyze/playCard/researchTech/tech/task` 缺口和原因标签。当前 5 种子重算会把两个白色低尾 `184/185` 排在最前，分别暴露约 `30/27` 个数据放置缺口、`7.25/5.25` 次扫描缺口和 `3.75/2.75` 次分析缺口；后续调参优先围绕“数据/扫描/分析/科技/打牌”闭合链定位。
 
 - 批跑分析新增 `lowPlayerCandidateStats`：对低分/低终局标记玩家单独统计每类候选的 `available/selected/availableNotSelected`、最高分候选缺口和样本，避免全局 `candidateStats` 被高分座位稀释。后续资源滚动优化先用这个字段判断低尾是缺少扫描/分析/打牌入口，还是入口存在但被行星兑现、移动或其它 quick 行动压过，再决定是否做窄行为窗口。
+- 批跑分析新增 `lowUnplayedCardSamples`：对低分玩家最终手牌和保留区中仍未兑现的任务牌、3 型牌和终局计分牌列样本，标出所在区域、价格、类型、任务数、终局模型和效果类型。低尾 `184/185` 分样本都留下任务牌或 3 型/终局牌；后续行为优化应按这个字段追溯具体牌链是否资源不足、任务不可达或估值被更高分行星/科技压过，而不是泛用提高任务牌权重。
 - 批跑分析新增 `playCardNearMissSamples`：当 AI 实际没有打牌、但可打出的 `playCard` 候选与被选行动的 policy/action graph 分差很近，或打牌本身已是较高分候选时，记录被选行动、打牌候选、最佳可打牌、路线计划和 `planScore/lateCardEnginePressure/playCardConversionPressure/任务/终局` 等 breakdown。该诊断用于从参考日志里提炼可复用的“打牌 -> 科技/扫描/任务/终局”闭合链，后续行为优化必须先看样本证明具体牌链能现金化，不能再按泛用打牌权重粗调。
 - B2 扇区胜利缺口保护不能只下调触发门槛：把终局已标 B2 的标准扫描压帽保护从 `sectorWinDeficit >= 5` 放宽到 `>= 3`，在 `codex-runezu-income-full:1` 上仍完全复现基线 `302/274/301/185`、`bugCount=0`。该低尾虽然最终 B2 缺口为 3，但瓶颈没有被这个压帽条件触发解决；后续要查具体扫描候选、资源窗口或扇区竞争，而不是继续只调保护阈值。
 

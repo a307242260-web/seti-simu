@@ -1630,7 +1630,7 @@
     const lowResults = results
       .filter((result) => (
         numeric(result.finalScore) <= lowCutoff
-        || (Number.isFinite(Number(result.finalMarkCount)) && numeric(result.finalMarkCount) < 3)
+        || (result.finalMarkCount != null && Number.isFinite(Number(result.finalMarkCount)) && numeric(result.finalMarkCount) < 3)
       ))
       .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore) || String(left.playerLabel || "").localeCompare(String(right.playerLabel || "")))
       .slice(0, Math.max(1, Math.round(numeric(options.lowPlayerCandidateLimit) || 6)));
@@ -1690,7 +1690,7 @@
         baseScore: roundRatio(result.baseScore),
         tileScore: roundRatio(result.tileScore),
         cardScore: roundRatio(result.cardScore),
-        finalMarkCount: numeric(result.finalMarkCount),
+        finalMarkCount: result.finalMarkCount == null ? null : numeric(result.finalMarkCount),
         completedTaskCount: numeric(result.completedTaskCount),
         techCount: numeric(result.techCount),
         turnActionCount: turnActionLogs.length,
@@ -1709,6 +1709,74 @@
         topGapSamples,
       };
     });
+  }
+
+  function getLowPlayerResults(playerResults = [], options = {}) {
+    const results = (playerResults || []).filter(Boolean);
+    if (!results.length) return [];
+    const averageFinalScore = results.reduce((total, result) => total + numeric(result.finalScore), 0) / results.length;
+    const lowCutoff = Math.max(230, averageFinalScore - 25);
+    return results
+      .filter((result) => (
+        numeric(result.finalScore) <= lowCutoff
+        || (result.finalMarkCount != null && Number.isFinite(Number(result.finalMarkCount)) && numeric(result.finalMarkCount) < 3)
+      ))
+      .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore) || String(left.playerLabel || "").localeCompare(String(right.playerLabel || "")))
+      .slice(0, Math.max(1, Math.round(numeric(options.lowPlayerCandidateLimit) || 6)));
+  }
+
+  function summarizeUnplayedCard(card = {}, zone = "hand") {
+    if (!card) return null;
+    const typeCode = Number.isFinite(Number(card.typeCode ?? card.cardTypeCode))
+      ? Number(card.typeCode ?? card.cardTypeCode)
+      : null;
+    const taskCount = Math.max(0, Math.round(numeric(card.taskCount)));
+    const endGameScoring = Boolean(card.endGameScoring);
+    const effectTypes = Array.isArray(card.effectTypes) ? card.effectTypes.filter(Boolean) : [];
+    if (!taskCount && !endGameScoring && typeCode !== 3) return null;
+    return {
+      zone,
+      cardId: card.cardId || card.id || null,
+      cardInstanceId: card.id || null,
+      label: card.label || card.cardName || card.cardLabel || null,
+      price: roundRatio(card.price),
+      typeCode,
+      taskCount,
+      endGameScoring,
+      effectTypes,
+      discardActionCode: card.discardActionCode ?? null,
+      scanActionCode: card.scanActionCode ?? null,
+      incomeCode: card.incomeCode ?? null,
+    };
+  }
+
+  function buildLowUnplayedCardSamples(playerResults = [], options = {}) {
+    return getLowPlayerResults(playerResults, options)
+      .map((result) => {
+        const cards = [
+          ...(result.handCards || []).map((card) => summarizeUnplayedCard(card, "hand")),
+          ...(result.reservedCards || []).map((card) => summarizeUnplayedCard(card, "reserved")),
+        ].filter(Boolean);
+        if (!cards.length) return null;
+        return {
+          playerId: result.playerId || null,
+          playerLabel: result.playerLabel || result.playerId || "unknown",
+          finalScore: roundRatio(result.finalScore),
+          baseScore: roundRatio(result.baseScore),
+          tileScore: roundRatio(result.tileScore),
+          cardScore: roundRatio(result.cardScore),
+          completedTaskCount: numeric(result.completedTaskCount),
+          techCount: numeric(result.techCount),
+          finalMarkCount: result.finalMarkCount == null ? null : numeric(result.finalMarkCount),
+          finalFormulas: result.finalFormulas || [],
+          b2Progress: result.b2Progress || null,
+          handSize: numeric(result.handSize),
+          reservedCount: numeric(result.reservedCount),
+          cards: cards.slice(0, 12),
+        };
+      })
+      .filter(Boolean)
+      .slice(0, 12);
   }
 
   function finalizePlayerProfile(profile) {
@@ -2421,8 +2489,16 @@
         completedTaskCount: numeric(player.completedTaskCount),
         reservedCount: numeric(player.reservedCount),
         handSize: numeric(player.handSize ?? player.resources?.handSize),
+        handCards: Array.isArray(player.handCards) ? player.handCards : [],
+        reservedCards: Array.isArray(player.reservedCards) ? player.reservedCards : [],
         techCount: numeric(player.techCount),
         rocketCount: numeric(player.rocketCount),
+        finalMarkCount: player.finalMarkCount != null && Number.isFinite(Number(player.finalMarkCount))
+          ? numeric(player.finalMarkCount)
+          : null,
+        finalFormulas: Array.isArray(player.finalFormulas) ? player.finalFormulas : [],
+        finalFormulaProgress: player.finalFormulaProgress || null,
+        b2Progress: player.b2Progress || null,
       }))
       .sort((left, right) => right.finalScore - left.finalScore || left.playerLabel.localeCompare(right.playerLabel));
   }
@@ -2878,6 +2954,7 @@
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
     const lowPlayerCandidateStats = buildLowPlayerCandidateStats(logs, playerResults, options);
+    const lowUnplayedCardSamples = buildLowUnplayedCardSamples(playerResults, options);
     const actionSequences = buildActionSequences(logs, playerResults, options);
     const scoreBuckets = buildScoreBuckets(playerResults, logs);
     const analysis = {
@@ -2945,6 +3022,7 @@
       paceSummary: buildPaceSummary(playerProfiles),
       lowEngineThroughputSamples,
       lowPlayerCandidateStats,
+      lowUnplayedCardSamples,
       sequenceWindowTurns: actionSequences.windowTurns,
       actionSequences,
       scoreBuckets,
@@ -2980,6 +3058,7 @@
     const mergedLastCardPreserveEnergyMoveSamples = [];
     const mergedNegativeThirdFinalMarkSamples = [];
     const mergedLowPlayerCandidateStats = [];
+    const mergedLowUnplayedCardSamples = [];
     const mergedMovePayment = {
       count: 0,
       requiredMovePoints: 0,
@@ -3089,6 +3168,11 @@
       if (mergedLowPlayerCandidateStats.length < 16 && Array.isArray(analysis.lowPlayerCandidateStats)) {
         mergedLowPlayerCandidateStats.push(
           ...analysis.lowPlayerCandidateStats.slice(0, 16 - mergedLowPlayerCandidateStats.length),
+        );
+      }
+      if (mergedLowUnplayedCardSamples.length < 16 && Array.isArray(analysis.lowUnplayedCardSamples)) {
+        mergedLowUnplayedCardSamples.push(
+          ...analysis.lowUnplayedCardSamples.slice(0, 16 - mergedLowUnplayedCardSamples.length),
         );
       }
       mergedScoreOpportunities.selectedBelowBest += numeric(analysis.scoreOpportunities?.selectedBelowBest);
@@ -3209,6 +3293,7 @@
       paceSummary,
       lowEngineThroughputSamples,
       lowPlayerCandidateStats: mergedLowPlayerCandidateStats,
+      lowUnplayedCardSamples: mergedLowUnplayedCardSamples,
       averageWinnerProfile,
       averageNonWinnerProfile,
       winnerProfileDeltas,

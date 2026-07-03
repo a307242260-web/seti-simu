@@ -17685,6 +17685,7 @@
             mainUnlockLowConcretePlaySamples: analysis.mainUnlockLowConcretePlaySamples,
             negativeThirdFinalMarkSamples: analysis.negativeThirdFinalMarkSamples,
             lowPlayerCandidateStats: analysis.lowPlayerCandidateStats,
+            lowUnplayedCardSamples: analysis.lowUnplayedCardSamples,
             scoreOpportunities: analysis.scoreOpportunities,
             topScoreGaps: analysis.topScoreGaps,
             movePayment: analysis.movePayment,

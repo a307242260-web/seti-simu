@@ -1504,7 +1504,13 @@ const playCardNearMissReport = {
       ],
     },
   }],
-  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 185 }],
+  playerResults: [{
+    playerId: "player-white",
+    playerLabel: "白色",
+    finalScore: 185,
+    handCards: [{ id: "card-b135", cardId: "b_135.webp", label: "韦断特v克综合孔径射电|远锐", price: 3, typeCode: 2, taskCount: 1, effectTypes: ["card_research_tech"] }],
+    reservedCards: [{ id: "card-b30", cardId: "b_30.webp", label: "深部地下中微子实验", price: 3, typeCode: 3, taskCount: 0, endGameScoring: true }],
+  }],
 };
 const playCardNearMissAnalysis = analytics.analyzeBattleReport(playCardNearMissReport);
 assert.equal(playCardNearMissAnalysis.opportunities.playCardNearMiss, 1);
@@ -1516,9 +1522,12 @@ assert.equal(
   playCardNearMissAnalysis.lowPlayerCandidateStats[0].focusedCandidateRows.find((row) => row.actionId === "playCard").availableNotSelected,
   1,
 );
+assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[0].cardId, "b_135.webp");
+assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[1].zone, "reserved");
 const playCardNearMissSummary = analytics.summarizeBattleReports([playCardNearMissReport]);
 assert.equal(playCardNearMissSummary.playCardNearMissSamples[0].bestCard.cardId, "b_135.webp");
 assert.equal(playCardNearMissSummary.lowPlayerCandidateStats[0].topMissedCandidates[0].actionId, "playCard");
+assert.equal(playCardNearMissSummary.lowUnplayedCardSamples[0].cards[1].endGameScoring, true);
 
 const mainUnlockLowConcretePlayReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
