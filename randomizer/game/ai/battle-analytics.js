@@ -2470,6 +2470,149 @@
       .slice(0, limit);
   }
 
+  function getLowRoundSamplePlayerKey(sample = {}) {
+    return sample.playerId || sample.playerLabel || "unknown";
+  }
+
+  function getLowRoundSampleKey(sample = {}) {
+    return [
+      getLowRoundSamplePlayerKey(sample),
+      getRoundPaceKey(sample.roundNumber),
+    ].join("|");
+  }
+
+  function summarizeLowRoundTailAction(entry = {}, limit = 4) {
+    const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+    const availableCandidates = sortByCandidatePolicy(candidates.filter(isCandidateAvailable));
+    const availableMain = availableCandidates.filter((candidate) => candidate.kind === "main");
+    const availableQuick = availableCandidates.filter((candidate) => candidate.kind === "quick");
+    const selected = getSelectedAction(entry) || {};
+    const selectedId = getSelectedActionId(entry);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(selected),
+      pace: getActionPaceCategory(selectedId, selected),
+      bestMain: availableMain[0] ? summarizeOpportunityCandidate(availableMain[0]) : null,
+      bestQuick: availableQuick[0] ? summarizeOpportunityCandidate(availableQuick[0]) : null,
+      topCandidates: availableCandidates
+        .slice(0, limit)
+        .map(summarizeOpportunityCandidate),
+    };
+  }
+
+  function sortLowRoundActionTailSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.mainActionCount) - numeric(right.mainActionCount)
+        || numeric(right.mainActionGap) - numeric(left.mainActionGap)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""))
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildLowRoundActionTailSamples(
+    logs = [],
+    playerResults = [],
+    lowRoundPaceSamples = [],
+    earlyPassNoMainSamples = [],
+    preNoMainPassResourceDrainSamples = [],
+    limit = 12,
+  ) {
+    const targetSamples = sortLowRoundActionTailSamples(lowRoundPaceSamples, limit);
+    if (!targetSamples.length) return [];
+
+    const targetKeys = new Set(targetSamples.map(getLowRoundSampleKey));
+    const turnEntriesByRound = new Map();
+    for (const entry of logs || []) {
+      if (entry?.type !== "turn-action") continue;
+      const key = [
+        entry.playerId || entry.playerLabel || "unknown",
+        getRoundPaceKey(entry.roundNumber),
+      ].join("|");
+      if (!targetKeys.has(key)) continue;
+      if (!turnEntriesByRound.has(key)) turnEntriesByRound.set(key, []);
+      turnEntriesByRound.get(key).push(entry);
+    }
+
+    const passSamplesByRound = new Map();
+    for (const sample of earlyPassNoMainSamples || []) {
+      const key = getLowRoundSampleKey(sample);
+      if (!targetKeys.has(key)) continue;
+      if (!passSamplesByRound.has(key)) passSamplesByRound.set(key, []);
+      passSamplesByRound.get(key).push(sample);
+    }
+
+    const drainSamplesByRound = new Map();
+    for (const sample of preNoMainPassResourceDrainSamples || []) {
+      const key = getLowRoundSampleKey(sample);
+      if (!targetKeys.has(key)) continue;
+      if (!drainSamplesByRound.has(key)) drainSamplesByRound.set(key, []);
+      drainSamplesByRound.get(key).push(sample);
+    }
+
+    const playerResultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const samples = targetSamples.map((roundSample) => {
+      const key = getLowRoundSampleKey(roundSample);
+      const turnEntries = turnEntriesByRound.get(key) || [];
+      const passEntries = turnEntries.filter((entry) => getSelectedActionId(entry) === "pass");
+      const lastPass = passEntries[passEntries.length - 1] || null;
+      const result = playerResultById.get(roundSample.playerId) || {};
+      const tailEntries = turnEntries.slice(-8);
+      return {
+        playerId: roundSample.playerId || null,
+        playerLabel: roundSample.playerLabel || roundSample.playerId || "unknown",
+        finalScore: roundRatio(result.finalScore ?? roundSample.finalScore),
+        roundNumber: roundSample.roundNumber ?? null,
+        mainActionCount: roundRatio(roundSample.mainActionCount),
+        quickStepCount: roundRatio(roundSample.quickStepCount),
+        resourceQuickStepCount: roundRatio(roundSample.resourceQuickStepCount),
+        idleTurnCount: roundRatio(roundSample.idleTurnCount),
+        passCount: roundRatio(roundSample.passCount),
+        referenceMainActionCount: roundRatio(roundSample.referenceMainActionCount),
+        averageMainActionCount: roundRatio(roundSample.averageMainActionCount),
+        mainActionGap: roundRatio(roundSample.mainActionGap),
+        actionCounts: roundSample.actionCounts || {},
+        roundActionCount: turnEntries.length,
+        firstResources: turnEntries[0]?.playerResources || null,
+        lastResources: turnEntries[turnEntries.length - 1]?.playerResources || null,
+        actionTail: tailEntries.map((entry) => summarizeLowRoundTailAction(entry, 4)),
+        lastPassCandidateProfile: lastPass
+          ? buildEarlyPassCandidateProfile(lastPass, lastPass.details?.candidates || [], 5)
+          : null,
+        noMainPassSamples: (passSamplesByRound.get(key) || [])
+          .slice(-3)
+          .map((sample) => ({
+            rawTurnNumber: sample.rawTurnNumber ?? null,
+            resources: sample.resources || null,
+            reasonTag: sample.reasonTag || null,
+            quickStepCount: numeric(sample.quickStepCount),
+            quickBeforePassCount: numeric(sample.quickBeforePassCount),
+            quickAfterPassCount: numeric(sample.quickAfterPassCount),
+            actionIds: sample.actionIds || [],
+            candidateProfile: sample.candidateProfile || null,
+          })),
+        resourceDrainSamples: (drainSamplesByRound.get(key) || [])
+          .slice(-3)
+          .map((sample) => ({
+            rawTurnNumber: sample.rawTurnNumber ?? null,
+            reasonTag: sample.reasonTag || null,
+            previousAction: sample.previousAction || null,
+            resourceDeltaToPass: sample.resourceDeltaToPass || null,
+            passActionIds: sample.passActionIds || [],
+            candidateProfile: sample.candidateProfile || null,
+          })),
+      };
+    });
+
+    return sortLowRoundActionTailSamples(samples, limit);
+  }
+
   function buildRoundPaceSummary(playerProfiles = []) {
     const profiles = (playerProfiles || []).filter(Boolean);
     const roundAverages = buildRoundPaceAverageMap(profiles);
@@ -4492,6 +4635,13 @@
     );
     preNoMainPassResourceDrainSamples.push(...allPreNoMainPassResourceDrainSamples.slice(0, 12));
     opportunities.preNoMainPassResourceDrain = allPreNoMainPassResourceDrainSamples.length;
+    const lowRoundActionTailSamples = buildLowRoundActionTailSamples(
+      logs,
+      playerResults,
+      roundPaceSummary.lowRoundPaceSamples,
+      allEarlyPassNoMainSamples,
+      allPreNoMainPassResourceDrainSamples,
+    );
     const allPostPassQuickNoMainSamples = allEarlyPassNoMainSamples
       .filter((sample) => numeric(sample.quickAfterPassCount) > 0);
     postPassQuickNoMainSamples.push(...allPostPassQuickNoMainSamples.slice(0, 12));
@@ -4579,6 +4729,7 @@
       paceSummary: buildPaceSummary(playerProfiles),
       roundPaceSummary,
       lowRoundPaceSamples: roundPaceSummary.lowRoundPaceSamples,
+      lowRoundActionTailSamples,
       lowEngineThroughputSamples,
       highScoreNearMissSamples,
       lowPlayerCandidateStats,
@@ -4630,6 +4781,7 @@
     const mergedLowPlayerCandidateStats = [];
     const mergedLowUnplayedCardSamples = [];
     const mergedHighScoreNearMissSamples = [];
+    const mergedLowRoundActionTailSamples = [];
     const mergedMovePayment = {
       count: 0,
       requiredMovePoints: 0,
@@ -4779,6 +4931,9 @@
       if (Array.isArray(analysis.highScoreNearMissSamples)) {
         mergedHighScoreNearMissSamples.push(...analysis.highScoreNearMissSamples);
       }
+      if (Array.isArray(analysis.lowRoundActionTailSamples)) {
+        mergedLowRoundActionTailSamples.push(...analysis.lowRoundActionTailSamples);
+      }
       mergedScoreOpportunities.selectedBelowBest += numeric(analysis.scoreOpportunities?.selectedBelowBest);
       mergedScoreOpportunities.totalGap += numeric(analysis.scoreOpportunities?.totalGap);
       mergedScoreOpportunities.maxGap = Math.max(mergedScoreOpportunities.maxGap, numeric(analysis.scoreOpportunities?.maxGap));
@@ -4849,6 +5004,7 @@
       bugs: rankCounts(mergedBugCounts),
       winnerProfileDeltas,
       lowEngineThroughputSamples,
+      lowRoundActionTailSamples: sortLowRoundActionTailSamples(mergedLowRoundActionTailSamples),
     };
     const sequenceWindowTurns = normalizeSequenceWindowTurns(
       options.sequenceWindowTurns
@@ -4922,6 +5078,7 @@
       paceSummary,
       roundPaceSummary,
       lowRoundPaceSamples: roundPaceSummary.lowRoundPaceSamples,
+      lowRoundActionTailSamples: sortLowRoundActionTailSamples(mergedLowRoundActionTailSamples),
       lowEngineThroughputSamples,
       highScoreNearMissSamples,
       lowPlayerCandidateStats: mergedLowPlayerCandidateStats,

@@ -18199,6 +18199,7 @@
             topMissedCandidates: analysis.topMissedCandidates,
             paceSummary: analysis.paceSummary,
             roundPaceSummary: analysis.roundPaceSummary,
+            lowRoundActionTailSamples: analysis.lowRoundActionTailSamples,
             winnerProfileDeltas: analysis.winnerProfileDeltas,
             winner: analysis.winner,
             strategyTuning: analysis.strategyTuning,

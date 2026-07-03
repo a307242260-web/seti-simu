@@ -22,6 +22,90 @@ const constants = appConstants.createAppConstants({
 });
 assert.equal(constants.DEFAULT_ACTIVE_PLAYER_COUNT, 4);
 
+const lowRoundTailDiagnostic = analytics.analyzeBattleReport({
+  lastSummary: { gameEnded: true, steps: 6 },
+  playerResults: [
+    { playerId: "p-low", playerLabel: "低分", finalScore: 120 },
+    { playerId: "p-high", playerLabel: "高分", finalScore: 320 },
+  ],
+  logs: [
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 1,
+      turnNumber: 1,
+      rawTurnNumber: 1,
+      playerResources: { credits: 0, energy: 0, publicity: 0, handSize: 2, availableData: 0 },
+      details: {
+        action: { id: "cardCorner", kind: "quick", score: 1, label: "整理资源" },
+        candidates: [
+          { id: "cardCorner", kind: "quick", available: true, score: 1, label: "整理资源" },
+          { id: "pass", kind: "pass", available: true, score: -2 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 1,
+      turnNumber: 2,
+      rawTurnNumber: 2,
+      playerResources: { credits: 0, energy: 0, publicity: 0, handSize: 2, availableData: 0 },
+      details: {
+        action: { id: "pass", kind: "pass", score: -2 },
+        candidates: [
+          { id: "playCard", kind: "main", available: false, score: 12, reason: "没有资源可支付" },
+          { id: "scan", kind: "main", available: false, score: 8, reason: "能量不足" },
+          { id: "pass", kind: "pass", available: true, score: -2 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-high",
+      playerLabel: "高分",
+      roundNumber: 1,
+      turnNumber: 1,
+      rawTurnNumber: 1,
+      playerResources: { credits: 3, energy: 3, publicity: 2, handSize: 4, availableData: 2 },
+      details: {
+        action: { id: "researchTech", kind: "main", score: 40 },
+        candidates: [
+          { id: "researchTech", kind: "main", available: true, score: 40 },
+          { id: "pass", kind: "pass", available: true, score: -2 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-high",
+      playerLabel: "高分",
+      roundNumber: 1,
+      turnNumber: 2,
+      rawTurnNumber: 2,
+      playerResources: { credits: 2, energy: 2, publicity: 1, handSize: 4, availableData: 4 },
+      details: {
+        action: { id: "scan", kind: "main", score: 35 },
+        candidates: [
+          { id: "scan", kind: "main", available: true, score: 35 },
+          { id: "pass", kind: "pass", available: true, score: -2 },
+        ],
+      },
+    },
+  ],
+});
+const lowRoundTailSample = lowRoundTailDiagnostic.lowRoundActionTailSamples.find((sample) => sample.playerId === "p-low");
+assert.ok(lowRoundTailSample, "low-round tail diagnostic should include the low-score player");
+assert.equal(lowRoundTailSample.mainActionCount, 0);
+assert.equal(lowRoundTailSample.actionTail.at(-1).selected.id, "pass");
+assert.equal(lowRoundTailSample.lastPassCandidateProfile.reasonTag, "resource-locked-hand");
+assert.equal(
+  analytics.summarizeBattleAnalyses([lowRoundTailDiagnostic]).lowRoundActionTailSamples[0].playerId,
+  "p-low",
+);
+
 assert.equal(evaluator.getResourceValue({ credits: 1, energy: 1, publicity: 1 }), 7);
 assert.equal(evaluator.getRemainingIncomeMultiplier(1), 3);
 assert.equal(evaluator.getRemainingIncomeMultiplier(4), 0);
