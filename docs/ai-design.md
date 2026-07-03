@@ -410,6 +410,7 @@ Goal = {
 - `analyze` 与 `placeData` 已进入候选集合，优先服务“6 数据分析”和扇区扫描路线。
 - 固定种子调参时，`passReserveResourcePressureMiss` 与 D2 高分近失误都是有效诊断，但目前不应直接改成行为权重：把 PASS 预留资源压力从第 2 轮扩到第 1/3 轮并对匹配收入牌加权，会让 `codex-runezu-income-single:1` 低尾 `184→189` 但总分 `1119→1118`，且让 `codex-continuation-baseline:1` 从 `310/246/207/233` 退到 `306/222/196/235`；第 4 轮已标 D2、科技数低于 10 时提高“角标补宣传后研究科技”的阶段价值，在 `codex-chong-continuation-current-single:1` 中保持 `227/302/223/280` 完全不变。后续要先定位前序信用点/能量/宣传消耗和真实后续行动，而不是继续扩大这两类局部权重。
 - 批跑诊断把终局已满足任务的信用点缺口拆成两类：`finalReadyTaskCreditShortfall` 表示即使保护目标牌并用其它手牌换信用点也仍不够，通常要回溯更早的信用点保留；`finalReadyTaskTradeUnlockMiss` 表示低分玩家手里有已满足任务牌，且一笔或多笔 `2牌→1信用点` 理论上能支付。交易执行层现在支持把目标手牌索引写入弃牌 pending，供后续交易链保护目标牌复用；但最窄尾局放行实验不保留：第 4 轮、3 终局标记、135-169 分、只需 1 次 `2牌→1信用点`、目标任务直接奖励至少 9 分、弃牌成本不超过 6 的窗口在 `codex-runezu-income-full:1` 中能让白色低尾 `185→187`，但总分 `1062→1052`，第一名 `302→290`，说明兑现链闭合但收益不足以覆盖被抢掉的后续节奏。该候选继续保持 diagnostic-only，并额外标记 `finalReadyTaskTradeUnlockEligible` 方便后续找更安全的触发条件。
+- 参考日志里的高分路线会在第 3/4 轮继续打出带发射、移动、登陆、扇区扫描或科技的复合牌，但不能把 `playCardNearMiss` 直接变成通用打牌补分。给第 3/4 轮、70 分以上、`standardActionPremium`/`playCardConversionPressure`/`lateCardEnginePressure` 较高的复合牌最多 6 分补偿后，`codex-chong-continuation-current-single:1` 可从 `227/302/223/280` 变成 `308/243/227/254`，最低分和最高分略升但总分不变；`codex-continuation-baseline:1` 与 `codex-runezu-income-single:1` 完全复现；`codex-huanyu-varied-v3:1` 则从 `325/251/326/223` 退到 `329/285/278/176`。说明复合牌时机需要结合具体路线闭环和后续扫描/科技预算，不能按单牌近失或参考日志频率直接加权。
 
 ---
 
