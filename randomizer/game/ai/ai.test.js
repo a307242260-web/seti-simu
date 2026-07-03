@@ -101,9 +101,25 @@ assert.ok(lowRoundTailSample, "low-round tail diagnostic should include the low-
 assert.equal(lowRoundTailSample.mainActionCount, 0);
 assert.equal(lowRoundTailSample.actionTail.at(-1).selected.id, "pass");
 assert.equal(lowRoundTailSample.lastPassCandidateProfile.reasonTag, "resource-locked-hand");
+assert.deepStrictEqual(lowRoundTailSample.tailResourceDelta, {
+  score: 0,
+  credits: 0,
+  energy: 0,
+  publicity: 0,
+  availableData: 0,
+  handSize: 0,
+});
+assert.ok(lowRoundTailSample.tailTags.includes("zero-credit-tail"));
+assert.ok(lowRoundTailSample.tailTags.includes("zero-energy-tail"));
+assert.ok(lowRoundTailSample.tailTags.includes("zero-data-tail"));
+assert.ok(lowRoundTailSample.tailTags.includes("pass-resource-locked-hand"));
+assert.ok(lowRoundTailSample.tailTags.includes("play-card-resource-lock"));
 assert.equal(
   analytics.summarizeBattleAnalyses([lowRoundTailDiagnostic]).lowRoundActionTailSamples[0].playerId,
   "p-low",
+);
+assert.ok(
+  analytics.summarizeBattleAnalyses([lowRoundTailDiagnostic]).lowRoundActionTailSamples[0].tailTags.includes("zero-credit-tail"),
 );
 
 assert.equal(evaluator.getResourceValue({ credits: 1, energy: 1, publicity: 1 }), 7);

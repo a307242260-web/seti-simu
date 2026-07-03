@@ -2515,6 +2515,87 @@
     };
   }
 
+  function getResourceCount(resources = {}, key) {
+    return numeric(resources?.[key]);
+  }
+
+  function summarizeLowRoundTailResourceDelta(firstResources = null, lastResources = null) {
+    if (!firstResources || !lastResources) return null;
+    return {
+      score: roundRatio(getResourceCount(lastResources, "score") - getResourceCount(firstResources, "score")),
+      credits: roundRatio(getResourceCount(lastResources, "credits") - getResourceCount(firstResources, "credits")),
+      energy: roundRatio(getResourceCount(lastResources, "energy") - getResourceCount(firstResources, "energy")),
+      publicity: roundRatio(getResourceCount(lastResources, "publicity") - getResourceCount(firstResources, "publicity")),
+      availableData: roundRatio(getResourceCount(lastResources, "availableData") - getResourceCount(firstResources, "availableData")),
+      handSize: roundRatio(getResourceCount(lastResources, "handSize") - getResourceCount(firstResources, "handSize")),
+    };
+  }
+
+  function buildLowRoundTailTags(tailEntries = [], lastPassCandidateProfile = null, firstResources = null, lastResources = null) {
+    const tags = [];
+    const add = (tag) => {
+      if (tag && !tags.includes(tag)) tags.push(tag);
+    };
+    const selectedActions = (tailEntries || [])
+      .map((entry) => getSelectedAction(entry) || {})
+      .filter(Boolean);
+    const quickTradeCounts = {};
+    for (const action of selectedActions) {
+      if (getCandidateId(action) !== "quickTrade") continue;
+      increment(quickTradeCounts, action.tradeId || "unknown");
+    }
+    for (const [tradeId, count] of Object.entries(quickTradeCounts)) {
+      if (numeric(count) >= 2) add(`repeated-${tradeId}`);
+    }
+
+    const firstHand = getResourceCount(firstResources, "handSize");
+    const lastHand = getResourceCount(lastResources, "handSize");
+    if (firstHand >= 4 && lastHand <= 1) add("hand-drain-tail");
+    if (getResourceCount(lastResources, "credits") <= 0) add("zero-credit-tail");
+    if (getResourceCount(lastResources, "energy") <= 0) add("zero-energy-tail");
+    if (getResourceCount(lastResources, "availableData") <= 0) add("zero-data-tail");
+    if (lastHand <= 1 && getResourceCount(lastResources, "credits") <= 0) add("low-hand-credit-tail");
+
+    for (let index = 1; index < tailEntries.length; index += 1) {
+      const entry = tailEntries[index];
+      const action = getSelectedAction(entry) || {};
+      const actionId = getCandidateId(action);
+      if (getActionPaceCategory(actionId, action) !== "main") continue;
+      const previousResources = tailEntries[index - 1]?.playerResources || {};
+      const previousHand = getResourceCount(previousResources, "handSize");
+      const previousCredits = getResourceCount(previousResources, "credits");
+      const previousEnergy = getResourceCount(previousResources, "energy");
+      if (previousHand <= 1 || previousCredits <= 0 || previousEnergy <= 0) {
+        add(`cashout-after-resource-drain:${actionId}`);
+      }
+    }
+
+    const reasonTag = lastPassCandidateProfile?.reasonTag || null;
+    if (reasonTag) add(`pass-${reasonTag}`);
+    const bestTrade = lastPassCandidateProfile?.bestResourceLockTrade || null;
+    const bestTradeActionId = bestTrade?.bestAction?.actionId || bestTrade?.bestAction?.id || null;
+    if (bestTrade?.tradeId && bestTradeActionId) {
+      add(`pass-${bestTrade.tradeId}-unlocks-${bestTradeActionId}`);
+      const resourcesAfterTrade = bestTrade.resourcesAfterTrade || {};
+      if (getResourceCount(resourcesAfterTrade, "handSize") <= 0) add("pass-trade-unlock-no-hand");
+    }
+
+    const unavailableReasons = (lastPassCandidateProfile?.unavailableMain || [])
+      .map((candidate) => String(candidate?.reason || ""));
+    if (unavailableReasons.some((reason) => reason.includes("扫描") && reason.includes("能量"))) add("scan-energy-lock");
+    if (unavailableReasons.some((reason) => reason.includes("研究科技") && reason.includes("宣传"))) add("tech-publicity-lock");
+    const playCardReason = String(lastPassCandidateProfile?.playCard?.reason || "");
+    if (
+      unavailableReasons.some((reason) => reason.includes("打牌") || reason.includes("普通手牌"))
+      || playCardReason.includes("普通手牌")
+      || playCardReason.includes("资源")
+    ) {
+      add("play-card-resource-lock");
+    }
+
+    return tags;
+  }
+
   function sortLowRoundActionTailSamples(samples = [], limit = 12) {
     return [...(samples || [])]
       .filter(Boolean)
@@ -2576,6 +2657,11 @@
       const lastPass = passEntries[passEntries.length - 1] || null;
       const result = playerResultById.get(roundSample.playerId) || {};
       const tailEntries = turnEntries.slice(-8);
+      const firstResources = turnEntries[0]?.playerResources || null;
+      const lastResources = turnEntries[turnEntries.length - 1]?.playerResources || null;
+      const lastPassCandidateProfile = lastPass
+        ? buildEarlyPassCandidateProfile(lastPass, lastPass.details?.candidates || [], 5)
+        : null;
       return {
         playerId: roundSample.playerId || null,
         playerLabel: roundSample.playerLabel || roundSample.playerId || "unknown",
@@ -2591,12 +2677,12 @@
         mainActionGap: roundRatio(roundSample.mainActionGap),
         actionCounts: roundSample.actionCounts || {},
         roundActionCount: turnEntries.length,
-        firstResources: turnEntries[0]?.playerResources || null,
-        lastResources: turnEntries[turnEntries.length - 1]?.playerResources || null,
+        firstResources,
+        lastResources,
+        tailResourceDelta: summarizeLowRoundTailResourceDelta(firstResources, lastResources),
+        tailTags: buildLowRoundTailTags(tailEntries, lastPassCandidateProfile, firstResources, lastResources),
         actionTail: tailEntries.map((entry) => summarizeLowRoundTailAction(entry, 4)),
-        lastPassCandidateProfile: lastPass
-          ? buildEarlyPassCandidateProfile(lastPass, lastPass.details?.candidates || [], 5)
-          : null,
+        lastPassCandidateProfile,
         noMainPassSamples: (passSamplesByRound.get(key) || [])
           .slice(-3)
           .map((sample) => ({
