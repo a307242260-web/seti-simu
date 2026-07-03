@@ -1520,13 +1520,78 @@
       })
         || Array.from({ length: count }, (_item, index) => index);
       state.pendingDiscardAction.selectedIndexes = selectedIndexes.slice(0, count);
+      const incomeDiscardPreview = incomeGainByIndex
+        ? getAiIncomeDiscardPreview(player, count, pendingType, incomeGainByIndex, incomePlanningEntries, selectedIndexes)
+        : null;
       recordAiAutoBattleLog("discard", `${player.colorLabel}AI 弃牌 ${state.pendingDiscardAction.selectedIndexes.length} 张`, {
         selectedIndexes: state.pendingDiscardAction.selectedIndexes,
         pendingType,
         incomeGainByIndex,
+        incomeDiscardPreview,
         tradeId: state.pendingDiscardAction.tradeId || null,
       });
       return finalizePendingDiscardSelection();
+    }
+
+    function getAiIncomeDiscardPreview(
+      player,
+      count,
+      pendingType,
+      incomeGainByIndex = [],
+      incomeFormulaEntries = null,
+      selectedIndexes = [],
+    ) {
+      if (pendingType !== "place_data_income" || !player?.hand?.length) return null;
+      const target = Math.max(0, Math.round(aiNumber(count)));
+      const handSize = Math.max(0, Math.round(aiNumber(player.resources?.handSize ?? player.hand.length)));
+      const handScarcityCost = handSize <= 1 ? 10 : handSize === 2 ? 6 : handSize === 3 ? 2.5 : 0;
+      const selectedSet = new Set((selectedIndexes || []).map((index) => Number(index)));
+      const options = (player.hand || [])
+        .map((card, index) => {
+          const gain = incomeGainByIndex[index] || null;
+          if (!gain) return null;
+          const incomeScore = scoreAiIncomeOpportunityValue(player, gain);
+          const finalFormulaFit = scoreAiIncomeDiscardFinalFormulaFit(player, gain, incomeFormulaEntries);
+          const routeEnergyFit = scoreAiIncomeDiscardRouteEnergyFit(player, gain);
+          const playCandidate = buildAiPlayCardCandidate(card, index, player);
+          const playValue = Math.max(0, scoreAiPlayCardValue(card, { player }));
+          const discardOpportunityCost = getAiDiscardedCardOpportunityCost(card, playCandidate);
+          const value = incomeScore + finalFormulaFit + routeEnergyFit;
+          return {
+            index,
+            selected: selectedSet.has(index),
+            cardId: card.cardId || card.id || null,
+            cardLabel: getAiCardDisplayLabel({ card, cardId: card.cardId || card.id || null }, player),
+            incomeGain: gain,
+            incomeScore: roundAiScore(incomeScore),
+            finalFormulaFit: roundAiScore(finalFormulaFit),
+            routeEnergyFit: roundAiScore(routeEnergyFit),
+            playValue: roundAiScore(playValue),
+            discardOpportunityCost: roundAiScore(discardOpportunityCost),
+            handScarcityCost: roundAiScore(handScarcityCost),
+            netAfterDiscard: roundAiScore(value - discardOpportunityCost - handScarcityCost),
+          };
+        })
+        .filter(Boolean)
+        .sort((left, right) => (
+          Number(right.selected) - Number(left.selected)
+          || right.netAfterDiscard - left.netAfterDiscard
+          || right.incomeScore - left.incomeScore
+          || left.index - right.index
+        ));
+      return {
+        pendingType,
+        count: target,
+        handSize,
+        resources: {
+          score: aiNumber(player.resources?.score),
+          credits: aiNumber(player.resources?.credits),
+          energy: aiNumber(player.resources?.energy),
+          publicity: aiNumber(player.resources?.publicity),
+          availableData: aiNumber(player.resources?.availableData),
+        },
+        options,
+      };
     }
 
     function chooseAiTradeDiscardIndexes(player, count, pending = {}) {
