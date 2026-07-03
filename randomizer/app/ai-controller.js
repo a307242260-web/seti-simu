@@ -8861,6 +8861,53 @@
       return roundAiScore(Math.min(28, Math.max(0, value)));
     }
 
+    function getAiReadyHandTaskCashout(card, model = null, player = getCurrentPlayer()) {
+      const cardModel = model || cardEffects.getCardModel?.(card) || null;
+      const tasks = cardModel?.tasks || [];
+      if (!card || !player || !tasks.length) return { count: 0, directScore: 0, rewardValue: 0, value: 0, taskIds: [] };
+      const completedTaskIds = new Set(card?.cardEffectState?.completedTaskIds || []);
+      const readyTasks = tasks.filter((task) => {
+        if (!task?.id || completedTaskIds.has(task.id)) return false;
+        return summarizeAiTaskCondition(task.condition || {}, player)?.met === true;
+      });
+      if (!readyTasks.length) return { count: 0, directScore: 0, rewardValue: 0, value: 0, taskIds: [] };
+      const directScore = readyTasks.reduce((total, task) => total + Math.max(0, getAiTaskDirectScoreReward(task, player)), 0);
+      const rewardValue = readyTasks.reduce((total, task) => total + Math.max(0, getAiTaskRewardValue(task, player)), 0);
+      if (directScore <= 0) {
+        return { count: readyTasks.length, directScore: 0, rewardValue: roundAiScore(rewardValue), value: 0, taskIds: readyTasks.map((task) => task.id) };
+      }
+      const value = Math.min(
+        32,
+        rewardValue * 1.05
+          + directScore * (getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 1 : 0.65)
+          + scoreAiThresholdPressureForScoreGain(directScore, player) * 0.45,
+      );
+      return {
+        count: readyTasks.length,
+        directScore: roundAiScore(directScore),
+        rewardValue: roundAiScore(rewardValue),
+        value: roundAiScore(value),
+        taskIds: readyTasks.map((task) => task.id),
+      };
+    }
+
+    function scoreAiReadyTaskTechReplacementValue(playEffects = [], readyTaskCashout = null, player = getCurrentPlayer()) {
+      if (!player || !readyTaskCashout || aiNumber(readyTaskCashout.directScore) < 9) return 0;
+      if (getAiRoundNumber() < 3) return 0;
+      const techEffects = (playEffects || []).filter((effect) => (
+        effect?.type === "research_tech_select"
+        || effect?.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH
+      ));
+      if (!techEffects.length) return 0;
+      const bestTechScore = techEffects.reduce((best, effect) => {
+        const candidates = listAiResearchTechCandidates(effect.options || null);
+        return Math.max(best, ...candidates.map((candidate) => Math.max(0, aiNumber(candidate.score))));
+      }, 0);
+      if (bestTechScore <= 0) return 0;
+      const scale = getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 0.46 : 0.36;
+      return roundAiScore(Math.min(46, bestTechScore * scale));
+    }
+
     function scoreAiPlayCardValue(card, details = {}) {
       const player = details.player || getCurrentPlayer();
       const model = details.model || cardEffects.getCardModel?.(card) || null;
@@ -12785,10 +12832,16 @@
         typeCode,
         reservesAfterPlay,
       });
+      const readyTaskCashout = getAiReadyHandTaskCashout(card, model, currentPlayer);
       const endGameExpectedScore = scoreAiCardEndGameExpectedValue(card, model, currentPlayer);
       const plan = scoreAiPlayCardRoutePlan(card, model, playEffects, currentPlayer);
       const directScoreGain = getAiRewardDirectScore(playEffects, currentPlayer);
       const standardActionPremium = scoreAiCardStandardActionPremium(playEffects, currentPlayer);
+      const readyTaskTechReplacementValue = scoreAiReadyTaskTechReplacementValue(
+        playEffects,
+        readyTaskCashout,
+        currentPlayer,
+      );
       const lateCardEnginePressure = scoreAiLatePlayCardEnginePressure(card, {
         player: currentPlayer,
         model,
@@ -12895,6 +12948,10 @@
           effectValue: playEffects.reduce((total, effect) => total + scoreAiEffectValue(effect), 0),
           c2Type3ProgressValue,
           cFinalTaskProgressValue,
+          readyTaskCashoutValue: readyTaskCashout.value,
+          readyTaskCashoutDirectScore: readyTaskCashout.directScore,
+          readyTaskCashoutCount: readyTaskCashout.count,
+          readyTaskTechReplacementValue,
           chongTaskChainValue,
           banrenmaThresholdSetupValue,
           playCardConversionPressure,

@@ -2864,6 +2864,66 @@ function makeYichangdianAlienState(options = {}) {
     currentPlayerColor: "blue",
     roundNumber: 4,
     canStartMainAction: true,
+    realisticCanAfford: true,
+    recordBeginPlayCard: true,
+    takeableTechIds: ["purple1"],
+    blueResources: { score: 118, credits: 3, energy: 1, publicity: 8, availableData: 0, handSize: 1 },
+    blueHand: [{
+      id: "ready-tech-task",
+      cardName: "Ready tech task",
+      price: 3,
+      typeCode: 2,
+      playEffects: [{
+        type: "card_research_tech",
+        options: { skipCost: true, techTypes: ["purple"] },
+      }],
+      model: {
+        tasks: [{
+          id: "ready-publicity-score",
+          condition: { type: "resourceThreshold", resource: "publicity", count: 8 },
+          rewards: [{ type: "gain_resources", options: { gain: { score: 9 } } }],
+        }],
+      },
+    }],
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "playCard") || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should enumerate the ready task research card");
+  const playCardCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "playCard");
+  const readyTaskCandidate = playCardCandidate?.playableCards?.[0] || null;
+  assert.ok(readyTaskCandidate, "ready task research card should be a playable candidate");
+  assert.ok(
+    Number(readyTaskCandidate.valueBreakdown?.readyTaskCashoutValue || 0) >= 15,
+    "met hand task should contribute immediate cashout value",
+  );
+  assert.equal(
+    Number(readyTaskCandidate.valueBreakdown?.readyTaskCashoutDirectScore || 0),
+    9,
+    "ready task cashout should record the direct score reward",
+  );
+  assert.ok(
+    Number(readyTaskCandidate.valueBreakdown?.readyTaskTechReplacementValue || 0) > 0,
+    "ready task research card should reuse a bounded research-tech replacement value",
+  );
+}
+
+{
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    canStartMainAction: true,
     recordCardCorner: true,
     blueResources: { score: 108, credits: 0, energy: 0, publicity: 4, availableData: 0, handSize: 1 },
     blueHand: [{
