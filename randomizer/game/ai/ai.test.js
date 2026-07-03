@@ -1226,6 +1226,57 @@ assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].planetPlan
 const highHandDrainSummary = analytics.summarizeBattleReports([highHandDrainEnergyTradeReport]);
 assert.equal(highHandDrainSummary.highHandDrainEnergyTradeSamples[0].planetPlan.score, 32);
 
+const lastCardPreserveEnergyMoveReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 4,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 96, credits: 0, energy: 2, publicity: 4, handSize: 1 },
+    details: {
+      action: {
+        id: "move",
+        kind: "quick",
+        score: 12.2,
+        routeTarget: { kind: "planet", id: "mars", planetId: "mars", newDistance: 0, score: 24 },
+        followupMainAction: {
+          actionId: "land",
+          planetId: "mars",
+          timing: "next_turn",
+          score: 33.3,
+          directScoreGain: 6,
+          rewardValue: 24,
+          energyCost: 2,
+        },
+        valueBreakdown: {
+          preserveEnergyForRouteCashout: true,
+          requiredMovePoints: 1,
+          moveCardSpent: 1,
+          moveEnergySpent: 0,
+          energyAfterMovePayment: 2,
+          paymentCost: 3,
+          pathPenalty: 1.5,
+          routeScore: 24,
+          routeScoreForGain: 9.12,
+          followupScore: 33.3,
+          followupTiming: "next_turn",
+        },
+      },
+      candidates: [],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 184 }],
+};
+const lastCardMoveAnalysis = analytics.analyzeBattleReport(lastCardPreserveEnergyMoveReport);
+assert.equal(lastCardMoveAnalysis.opportunities.lastCardPreserveEnergyMove, 1);
+assert.equal(lastCardMoveAnalysis.lastCardPreserveEnergyMoveSamples[0].moveCardSpent, 1);
+assert.equal(lastCardMoveAnalysis.lastCardPreserveEnergyMoveSamples[0].routeTarget.planetId, "mars");
+assert.equal(lastCardMoveAnalysis.lastCardPreserveEnergyMoveSamples[0].followupMainAction.actionId, "land");
+const lastCardMoveSummary = analytics.summarizeBattleReports([lastCardPreserveEnergyMoveReport]);
+assert.equal(lastCardMoveSummary.lastCardPreserveEnergyMoveSamples[0].followupTiming, "next_turn");
+
 const negativeCardCornerGraphLiftReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{

@@ -558,6 +558,66 @@
     };
   }
 
+  function isLastCardPreserveEnergyMove(entry) {
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "move") return false;
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    if (!breakdown.preserveEnergyForRouteCashout) return false;
+    const handSize = numeric(entry?.playerResources?.handSize);
+    const moveCardSpent = numeric(breakdown.moveCardSpent);
+    return handSize > 0 && moveCardSpent > 0 && moveCardSpent >= handSize;
+  }
+
+  function summarizeRouteTarget(target = {}) {
+    if (!target) return null;
+    return {
+      kind: target.kind || null,
+      id: target.id || target.planetId || target.locationType || null,
+      planetId: target.planetId || target.id || null,
+      newDistance: target.newDistance == null ? null : roundRatio(target.newDistance),
+      distance: target.distance == null ? null : roundRatio(target.distance),
+      score: target.score == null ? null : roundRatio(target.score),
+    };
+  }
+
+  function summarizeFollowupMainAction(followup = {}) {
+    if (!followup) return null;
+    return {
+      actionId: followup.actionId || null,
+      planetId: followup.planetId || null,
+      timing: followup.timing || null,
+      score: roundRatio(followup.score),
+      directScoreGain: roundRatio(followup.directScoreGain),
+      rewardValue: roundRatio(followup.rewardValue),
+      energyCost: roundRatio(followup.energyCost),
+    };
+  }
+
+  function buildLastCardPreserveEnergyMoveSample(entry) {
+    const action = getSelectedAction(entry) || {};
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(action),
+      requiredMovePoints: roundRatio(breakdown.requiredMovePoints),
+      moveCardSpent: roundRatio(breakdown.moveCardSpent),
+      moveEnergySpent: roundRatio(breakdown.moveEnergySpent),
+      energyAfterMovePayment: roundRatio(breakdown.energyAfterMovePayment),
+      paymentCost: roundRatio(breakdown.paymentCost),
+      pathPenalty: roundRatio(breakdown.pathPenalty),
+      routeScore: roundRatio(breakdown.routeScore),
+      routeScoreForGain: roundRatio(breakdown.routeScoreForGain),
+      followupScore: roundRatio(breakdown.followupScore),
+      followupTiming: breakdown.followupTiming || null,
+      routeTarget: summarizeRouteTarget(action.routeTarget),
+      followupMainAction: summarizeFollowupMainAction(action.followupMainAction),
+    };
+  }
+
   function getPlayerKey(entry) {
     return entry?.playerId || entry?.playerLabel || "unknown";
   }
@@ -2193,6 +2253,7 @@
       mainUnlockLowConcretePlay: 0,
       nonPositivePublicRefill: 0,
       highHandDrainEnergyTrade: 0,
+      lastCardPreserveEnergyMove: 0,
       negativeThirdFinalMark: 0,
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
@@ -2206,6 +2267,7 @@
     const mainUnlockLowConcretePlaySamples = [];
     const nonPositivePublicRefillSamples = [];
     const highHandDrainEnergyTradeSamples = [];
+    const lastCardPreserveEnergyMoveSamples = [];
     const negativeThirdFinalMarkSamples = [];
     const scoreOpportunities = {
       selectedBelowBest: 0,
@@ -2305,6 +2367,12 @@
           opportunities.highHandDrainEnergyTrade += 1;
           if (highHandDrainEnergyTradeSamples.length < 12) {
             highHandDrainEnergyTradeSamples.push(buildHighHandDrainEnergyTradeSample(entry));
+          }
+        }
+        if (isLastCardPreserveEnergyMove(entry)) {
+          opportunities.lastCardPreserveEnergyMove += 1;
+          if (lastCardPreserveEnergyMoveSamples.length < 12) {
+            lastCardPreserveEnergyMoveSamples.push(buildLastCardPreserveEnergyMoveSample(entry));
           }
         }
         if (candidates.length && action && candidates.some((candidate) => candidateMatchesAction(candidate, action) && !isCandidateAvailable(candidate))) {
@@ -2434,6 +2502,7 @@
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples,
+      lastCardPreserveEnergyMoveSamples,
       negativeThirdFinalMarkSamples,
       scoreOpportunities: {
         selectedBelowBest: scoreOpportunities.selectedBelowBest,
@@ -2481,6 +2550,7 @@
     const mergedMainUnlockLowConcretePlaySamples = [];
     const mergedNonPositivePublicRefillSamples = [];
     const mergedHighHandDrainEnergyTradeSamples = [];
+    const mergedLastCardPreserveEnergyMoveSamples = [];
     const mergedNegativeThirdFinalMarkSamples = [];
     const mergedMovePayment = {
       count: 0,
@@ -2571,6 +2641,11 @@
       if (mergedHighHandDrainEnergyTradeSamples.length < 12 && Array.isArray(analysis.highHandDrainEnergyTradeSamples)) {
         mergedHighHandDrainEnergyTradeSamples.push(
           ...analysis.highHandDrainEnergyTradeSamples.slice(0, 12 - mergedHighHandDrainEnergyTradeSamples.length),
+        );
+      }
+      if (mergedLastCardPreserveEnergyMoveSamples.length < 12 && Array.isArray(analysis.lastCardPreserveEnergyMoveSamples)) {
+        mergedLastCardPreserveEnergyMoveSamples.push(
+          ...analysis.lastCardPreserveEnergyMoveSamples.slice(0, 12 - mergedLastCardPreserveEnergyMoveSamples.length),
         );
       }
       if (mergedNegativeThirdFinalMarkSamples.length < 12 && Array.isArray(analysis.negativeThirdFinalMarkSamples)) {
@@ -2680,6 +2755,7 @@
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples: mergedHighHandDrainEnergyTradeSamples,
+      lastCardPreserveEnergyMoveSamples: mergedLastCardPreserveEnergyMoveSamples,
       negativeThirdFinalMarkSamples: mergedNegativeThirdFinalMarkSamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
