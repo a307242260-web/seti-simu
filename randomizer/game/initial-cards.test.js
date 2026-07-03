@@ -131,6 +131,21 @@ function initialCard(number) {
 {
   const context = createContext();
   const player = currentPlayer(context);
+  player.aiDifficulty = "weak_start";
+
+  const result = initialCards.resolveIndustryEffect(context, player, { label: "作弊实验室" });
+
+  assert.equal(result.ok, true);
+  assert.equal(player.resources.publicity, 1);
+  assert.equal(player.resources.credits, 2);
+  assert.equal(player.resources.energy, 2);
+  assert.equal(player.resources.handSize, 5);
+  assert.equal(result.incomeIncreaseCount, 4);
+}
+
+{
+  const context = createContext();
+  const player = currentPlayer(context);
 
   const result = initialCards.resolveIndustryEffect(context, player, { label: "原教旨主义" });
 

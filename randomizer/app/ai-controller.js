@@ -216,10 +216,17 @@
 
     const AI_STRATEGY_TUNING_HISTORY_STORAGE_KEY = "seti-ai-strategy-tuning-history-v1";
     const AI_MAX_CARD_CORNER_MOVES_PER_TURN = 1;
+    const AI_DIFFICULTY_LAUGHABLE = "laughable";
+    const AI_DIFFICULTY_WEAK_START = "weak_start";
+    const AI_DIFFICULTY_LABELS = Object.freeze({
+      [AI_DIFFICULTY_LAUGHABLE]: "令人发笑的",
+      [AI_DIFFICULTY_WEAK_START]: "开始弱小的",
+    });
     const aiAutoBattleState = {
       enabled: false,
       running: false,
       playerIds: [],
+      aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
       logs: [],
       bugs: [],
       bugCounts: {},
@@ -237,6 +244,33 @@
     let aiAutoStepInProgress = false;
     let aiAutoStepPausedOnBug = false;
     let aiAutoStepSuspended = false;
+
+    function normalizeAiDifficulty(value) {
+      return String(value || "") === AI_DIFFICULTY_WEAK_START
+        ? AI_DIFFICULTY_WEAK_START
+        : AI_DIFFICULTY_LAUGHABLE;
+    }
+
+    function getAiDifficultyLabel(value = aiAutoBattleState.aiDifficulty) {
+      const difficulty = normalizeAiDifficulty(value);
+      return AI_DIFFICULTY_LABELS[difficulty] || AI_DIFFICULTY_LABELS[AI_DIFFICULTY_LAUGHABLE];
+    }
+
+    function applyAiDifficultyToPlayer(player, difficulty = aiAutoBattleState.aiDifficulty) {
+      if (!player) return;
+      const normalized = normalizeAiDifficulty(difficulty);
+      player.aiDifficulty = normalized;
+      player.aiDifficultyLabel = getAiDifficultyLabel(normalized);
+    }
+
+    function applyAiDifficultyToPlayerIds(playerIds = [], difficulty = aiAutoBattleState.aiDifficulty) {
+      const normalized = normalizeAiDifficulty(difficulty);
+      aiAutoBattleState.aiDifficulty = normalized;
+      for (const playerId of playerIds) {
+        applyAiDifficultyToPlayer(getPlayerById(playerId), normalized);
+      }
+      return normalized;
+    }
     const AI_MOVE_DIRECTIONS = Object.freeze([
       Object.freeze({ id: "out", label: "向外", deltaX: 0, deltaY: 1, score: 5 }),
       Object.freeze({ id: "cw", label: "顺时针", deltaX: 1, deltaY: 0, score: 2 }),
@@ -677,6 +711,8 @@
         running: aiAutoBattleState.running,
         pausedOnBug: aiAutoStepPausedOnBug,
         playerIds: aiAutoBattleState.playerIds,
+        aiDifficulty: aiAutoBattleState.aiDifficulty,
+        aiDifficultyLabel: getAiDifficultyLabel(),
         logs: aiAutoBattleState.logs,
         bugs: aiAutoBattleState.bugs,
         lastSummary: aiAutoBattleState.lastSummary,
@@ -756,6 +792,7 @@
         stepDelayMs: Math.max(0, Math.round(Number(aiAutoBattleState.stepDelayMs) || 0)),
         maxBugRepeats: Math.max(1, Math.round(Number(aiAutoBattleState.maxBugRepeats) || 1)),
         maxMovesPerTurn: Math.max(0, Math.round(Number(aiAutoBattleState.maxMovesPerTurn) || 0)),
+        aiDifficulty: aiAutoBattleState.aiDifficulty,
         strategyWeights: getAiStrategyWeights(),
       };
     }
@@ -787,6 +824,7 @@
       if (snapshot.maxMovesPerTurn != null) {
         aiAutoBattleState.maxMovesPerTurn = Math.max(0, Math.round(Number(snapshot.maxMovesPerTurn) || 0));
       }
+      const aiDifficulty = normalizeAiDifficulty(snapshot.aiDifficulty);
 
       if (!snapshot.enabled) {
         return disableAiControlForRecovery("电脑配置已恢复为全手动");
@@ -804,6 +842,7 @@
 
       aiAutoBattleState.enabled = true;
       aiAutoBattleState.playerIds = playerIds;
+      applyAiDifficultyToPlayerIds(playerIds, aiDifficulty);
       aiAutoStepPausedOnBug = options.restorePausedOnBug === true
         ? Boolean(snapshot.pausedOnBug)
         : false;
@@ -844,18 +883,21 @@
         .map((player) => player.id);
     }
 
-    function configureDefaultAiOpponent() {
+    function configureDefaultAiOpponent(options = {}) {
       const aiPlayerIds = getDefaultAiOpponentPlayerIds();
       if (!aiPlayerIds.length) return { ok: false, message: "没有可用的默认电脑玩家" };
+      const aiDifficulty = applyAiDifficultyToPlayerIds(aiPlayerIds, options.aiDifficulty);
       aiAutoBattleState.enabled = true;
       aiAutoBattleState.playerIds = aiPlayerIds;
       aiAutoStepPausedOnBug = false;
-      recordAiAutoBattleLog("config", `默认电脑玩家：${aiPlayerIds.map(getPlayerLabelById).join("、")}`, {
+      recordAiAutoBattleLog("config", `默认电脑玩家：${aiPlayerIds.map(getPlayerLabelById).join("、")}；难度：${getAiDifficultyLabel(aiDifficulty)}`, {
         playerIds: aiPlayerIds,
         humanPlayerId: getDefaultHumanPlayerId(),
+        aiDifficulty,
+        aiDifficultyLabel: getAiDifficultyLabel(aiDifficulty),
         mode: "default-human-vs-ai",
       });
-      return { ok: true, playerIds: [...aiPlayerIds], message: "默认人机对局已配置" };
+      return { ok: true, playerIds: [...aiPlayerIds], aiDifficulty, message: "默认人机对局已配置" };
     }
 
     function resolveAiAutoBattlePlayerIds(options = {}) {
@@ -888,11 +930,16 @@
       if (!playerIds.length) {
         return { ok: false, message: "没有可配置为电脑玩家的玩家" };
       }
+      const aiDifficulty = applyAiDifficultyToPlayerIds(playerIds, options.aiDifficulty);
       aiAutoBattleState.enabled = true;
       aiAutoBattleState.playerIds = playerIds;
       aiAutoStepPausedOnBug = false;
-      recordAiAutoBattleLog("config", `电脑玩家：${playerIds.map(getPlayerLabelById).join("、")}`, { playerIds });
-      return { ok: true, playerIds: [...playerIds], message: "电脑玩家已配置" };
+      recordAiAutoBattleLog("config", `电脑玩家：${playerIds.map(getPlayerLabelById).join("、")}；难度：${getAiDifficultyLabel(aiDifficulty)}`, {
+        playerIds,
+        aiDifficulty,
+        aiDifficultyLabel: getAiDifficultyLabel(aiDifficulty),
+      });
+      return { ok: true, playerIds: [...playerIds], aiDifficulty, message: "电脑玩家已配置" };
     }
 
     function getPendingPlayerId(pending) {
@@ -1226,6 +1273,7 @@
       const openingPlan = decision.openingPlan || null;
       const aiStyle = inferAiStyleFromOpening(openingPlan, industryCard, player);
       if (player) {
+        applyAiDifficultyToPlayer(player);
         player.aiStyle = aiStyle;
       }
       if (player && openingPlan) {
@@ -1233,6 +1281,8 @@
           ...structuredClone(openingPlan),
           forcedIndustryLabel: industryCard.label || industryCard.id || null,
           aiStyle,
+          aiDifficulty: player.aiDifficulty,
+          aiDifficultyLabel: player.aiDifficultyLabel,
         };
       }
       offer.selectedIndustryId = industryCard.id;
@@ -1247,6 +1297,8 @@
           initialCards: initialSelection,
           openingPlan,
           aiStyle,
+          aiDifficulty: player?.aiDifficulty || aiAutoBattleState.aiDifficulty,
+          aiDifficultyLabel: player?.aiDifficultyLabel || getAiDifficultyLabel(),
         },
       );
       confirmInitialSelectionForCurrentPlayer();

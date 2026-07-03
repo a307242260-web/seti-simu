@@ -52,6 +52,7 @@
     kepler22: "sector-3-a",
   });
   const INITIAL_TURN_ORDER_SCORES = Object.freeze([1, 2, 3, 4]);
+  const AI_DIFFICULTY_WEAK_START = "weak_start";
   const RESOURCE_GAIN_LABELS = Object.freeze({
     score: "分",
     credits: "信用点",
@@ -259,6 +260,18 @@
   function getIndustryEffect(cardOrLabel) {
     const label = normalizeIndustryLabel(cardOrLabel);
     return INDUSTRY_EFFECTS[label] || null;
+  }
+
+  function getEffectiveIndustryEffect(cardOrLabel, player) {
+    const effect = getIndustryEffect(cardOrLabel);
+    if (!effect) return null;
+    if (player?.aiDifficulty === AI_DIFFICULTY_WEAK_START && effect.label === "作弊实验室") {
+      return {
+        ...effect,
+        incomeIncreaseCount: 4,
+      };
+    }
+    return effect;
   }
 
   function getPlayerById(context, playerId) {
@@ -622,7 +635,7 @@
   }
 
   function resolveIndustryEffect(context, player, card) {
-    const effect = getIndustryEffect(card);
+    const effect = getEffectiveIndustryEffect(card, player);
     const results = [];
     const events = [];
 

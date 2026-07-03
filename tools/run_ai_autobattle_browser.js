@@ -32,6 +32,7 @@ function parseArgs(argv) {
     strategyTuning: null,
     mergeStrategyWeights: true,
     resetStrategyWeights: false,
+    aiDifficulty: null,
     includeState: false,
     timeoutMs: null,
     tmpRoot: process.env.SETI_AI_TMP_ROOT || os.tmpdir(),
@@ -70,6 +71,9 @@ function parseArgs(argv) {
         break;
       case "strategyTuning":
         options.strategyTuning = JSON.parse(value);
+        break;
+      case "aiDifficulty":
+        options.aiDifficulty = value;
         break;
       case "mergeStrategyWeights":
         options.mergeStrategyWeights = value !== "false";
@@ -504,6 +508,7 @@ async function main() {
       seed: options.seed,
       games: options.games,
       activePlayerCount: options.activePlayerCount,
+      aiDifficulty: options.aiDifficulty || undefined,
       maxSteps: options.maxSteps,
       stopBeforeRound: options.stopBeforeRound || undefined,
       maxMovesPerTurn: options.maxMovesPerTurn || undefined,

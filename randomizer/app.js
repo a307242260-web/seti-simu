@@ -90,6 +90,8 @@
   const BANRENMA_PANEL_BONUS_EFFECT_TYPE = "banrenma_panel_bonus";
   const JIUZHE_THRESHOLD_CARD_EFFECT_TYPE = "jiuzhe_threshold_card";
   const FUNDAMENTALISM_ROUND_START_ROUNDS = Object.freeze([2, 3, 4]);
+  const AI_DIFFICULTY_LAUGHABLE = "laughable";
+  const AI_DIFFICULTY_WEAK_START = "weak_start";
   const tokenWidths = {
     rocket: null,
     orbit: null,
@@ -200,7 +202,7 @@
     activeReportTab: "action",
   };
   const startScreenState = {
-    aiDifficulty: "laughable",
+    aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
     activePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
     debugToolsEnabled: false,
     selectedAlienIds: [...(aliens.ALIEN_TYPE_IDS || [])],
@@ -2513,10 +2515,23 @@
     return count === 3 ? 3 : DEFAULT_ACTIVE_PLAYER_COUNT;
   }
 
+  function normalizeAiDifficulty(value) {
+    return String(value || "") === AI_DIFFICULTY_WEAK_START
+      ? AI_DIFFICULTY_WEAK_START
+      : AI_DIFFICULTY_LAUGHABLE;
+  }
+
+  function isWeakStartAiDifficulty(player) {
+    return player?.aiDifficulty === AI_DIFFICULTY_WEAK_START;
+  }
+
   function applyStartScreenOptions() {
     syncStartScreenAlienOptions();
     syncStartScreenIndustryOptions();
-    startScreenState.aiDifficulty = els.startAiDifficulty?.value || "laughable";
+    startScreenState.aiDifficulty = normalizeAiDifficulty(els.startAiDifficulty?.value);
+    if (els.startAiDifficulty) {
+      els.startAiDifficulty.value = startScreenState.aiDifficulty;
+    }
     startScreenState.activePlayerCount = normalizeStartPlayerCount(els.startPlayerCount?.value);
     if (els.startPlayerCount) {
       els.startPlayerCount.value = String(startScreenState.activePlayerCount);
@@ -2538,6 +2553,7 @@
     applyStartScreenOptions();
     startNewGame({
       activePlayerCount: startScreenState.activePlayerCount,
+      aiDifficulty: startScreenState.aiDifficulty,
       clearStorage: true,
       message: "新游戏已开始，请完成初始选择。",
     });
@@ -5975,12 +5991,15 @@
     const round = Math.max(1, Math.round(Number(roundNumber) || 1));
     const resourceGain = { energy: 1, publicity: 1 };
     players.gainResources(player, resourceGain);
-    const drawResult = blindDrawCardForPlayer(player);
+    const shouldDraw = !isWeakStartAiDifficulty(player);
+    const drawResult = shouldDraw ? blindDrawCardForPlayer(player) : { ok: true, card: null };
     player.industryHuanyuSuperdriveRoundStartRound = round;
     const drawnCount = drawResult?.ok && drawResult.card ? 1 : 0;
-    const message = drawResult?.ok
-      ? `第${round}轮开始：获得 1能量、1宣传；盲抽 ${drawnCount}/1 张`
-      : `第${round}轮开始：获得 1能量、1宣传；盲抽失败：${drawResult?.message || "未知错误"}`;
+    const message = shouldDraw
+      ? (drawResult?.ok
+        ? `第${round}轮开始：获得 1能量、1宣传；盲抽 ${drawnCount}/1 张`
+        : `第${round}轮开始：获得 1能量、1宣传；盲抽失败：${drawResult?.message || "未知错误"}`)
+      : `第${round}轮开始：获得 1能量、1宣传`;
     return {
       ok: Boolean(drawResult?.ok),
       playerId: player.id,
@@ -6005,12 +6024,15 @@
     if (!hasCheatLabRoundStartPending(player, roundNumber)) return null;
     const round = Math.max(1, Math.round(Number(roundNumber) || 1));
     players.gainResources(player, { energy: 1 });
-    const drawResult = blindDrawCardForPlayer(player);
+    const shouldDraw = !isWeakStartAiDifficulty(player);
+    const drawResult = shouldDraw ? blindDrawCardForPlayer(player) : { ok: true, card: null };
     player.industryCheatLabRoundStartRound = round;
     const drawnCount = drawResult?.ok && drawResult.card ? 1 : 0;
-    const message = drawResult?.ok
-      ? `第${round}轮开始：获得 1能量；盲抽 ${drawnCount}/1 张`
-      : `第${round}轮开始：获得 1能量；盲抽失败：${drawResult?.message || "未知错误"}`;
+    const message = shouldDraw
+      ? (drawResult?.ok
+        ? `第${round}轮开始：获得 1能量；盲抽 ${drawnCount}/1 张`
+        : `第${round}轮开始：获得 1能量；盲抽失败：${drawResult?.message || "未知错误"}`)
+      : `第${round}轮开始：获得 1能量`;
     return {
       ok: Boolean(drawResult?.ok),
       playerId: player.id,
@@ -31562,16 +31584,30 @@
   function buildPassEffectQueue(player) {
     const effects = [];
     if (industry?.shouldLaunchAfterPassWithHuanyuSuperdrive?.(player)) {
-      effects.push(createRequiredPassEffect({
-        id: "pass-huanyu-superdrive-launch",
-        type: "industry_huanyu_superdrive_launch",
-        icon: "launch",
-        label: "寰宇超动力：PASS 后额外发射",
-        options: {
-          skipCost: true,
-          ignoreRocketLimit: true,
-        },
-      }));
+      if (isWeakStartAiDifficulty(player)) {
+        effects.push(createRequiredPassEffect({
+          id: "pass-huanyu-superdrive-credit",
+          type: planetRewards.EFFECT_TYPES.GAIN_RESOURCES,
+          icon: "credits",
+          label: "寰宇超动力：PASS 后获得 1 信用点",
+          options: {
+            gain: { credits: 1 },
+            targetPlayerId: player?.id || null,
+            targetPlayerColor: player?.color || null,
+          },
+        }));
+      } else {
+        effects.push(createRequiredPassEffect({
+          id: "pass-huanyu-superdrive-launch",
+          type: "industry_huanyu_superdrive_launch",
+          icon: "launch",
+          label: "寰宇超动力：PASS 后额外发射",
+          options: {
+            skipCost: true,
+            ignoreRocketLimit: true,
+          },
+        }));
+      }
     }
 
     if (isFinalRound()) return effects;
@@ -34243,6 +34279,11 @@
   function startNewGame(options = {}) {
     persistentGameSaveSuspended = true;
     try {
+      const aiDifficulty = normalizeAiDifficulty(options.aiDifficulty ?? startScreenState.aiDifficulty);
+      startScreenState.aiDifficulty = aiDifficulty;
+      if (els.startAiDifficulty) {
+        els.startAiDifficulty.value = aiDifficulty;
+      }
       if (options.clearStorage !== false) {
         clearPersistentGameState();
       }
@@ -34250,7 +34291,7 @@
       seedDefaultReferenceRockets();
       randomizeAll();
       initializeCardGame(DEFAULT_INITIAL_HAND_COUNT);
-      configureDefaultAiOpponent();
+      configureDefaultAiOpponent({ aiDifficulty });
       startInitialSelection();
       rocketState.statusNote = options.message || "新游戏已开始，请完成初始选择。";
       renderStateReadout();
@@ -34729,6 +34770,7 @@
     const yieldEverySteps = Math.max(0, Math.round(Number(params.get("yieldEverySteps")) || 80));
     const stopBeforeRound = Math.max(0, Math.round(Number(params.get("stopBeforeRound")) || 0));
     const activePlayerCount = Math.max(0, Math.round(Number(params.get("activePlayerCount")) || 0));
+    const aiDifficulty = normalizeAiDifficulty(params.get("aiDifficulty") || params.get("ai_difficulty"));
     const seed = params.get("seed") || "codex-ai-batch";
     const explicitSeeds = (params.get("seeds") || "")
       .split(",")
@@ -34751,6 +34793,7 @@
           yieldEverySteps,
           ...(stopBeforeRound > 0 ? { stopBeforeRound } : {}),
           ...(activePlayerCount > 0 ? { activePlayerCount } : {}),
+          aiDifficulty,
           stepDelayMs: 0,
           stopOnBlocked: params.get("stopOnBlocked") !== "false",
           recordStrategyTuning: false,

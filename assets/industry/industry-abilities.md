@@ -60,7 +60,7 @@
 | 图灵系统 | `turing_borrow_tech` | `turing_borrow_tech` | 选择供应区一项橙色或紫色科技，**当前回合**借用其效果（不获得板块/bonus）；公司牌下方只复制显示该科技图标 |
 | 哨兵探测网络 | `sentinel_arm_play_corner` | `sentinel_arm_play_corner` | 武装当前回合；**打牌效果队列末尾**追加 `industry_sentinel_corner` 结算打出牌弃牌角标（非外星人） |
 | 寰宇动力 | `huanyu_free_moves` | `huanyu_free_moves` | 启动 2 个移动效果队列节点；每个节点提供 1 点移动力，已结算节点的火箭不能作为后续寰宇节点目标，可跳过任一节点 |
-| 寰宇超动力 | `huanyu_free_moves` | `huanyu_free_moves` | AI 专用；以寰宇动力为模板，额外每轮开始获得 1 能量、1 盲抽、1 宣传，且 PASS 后追加一次免费发射 |
+| 寰宇超动力 | `huanyu_free_moves` | `huanyu_free_moves` | AI 专用；以寰宇动力为模板。“令人发笑的”难度每轮开始额外获得 1 能量、1 盲抽、1 宣传，且 PASS 后追加一次免费发射；“开始弱小的”难度每轮开始额外获得 1 能量、1 宣传，PASS 后改为获得 1 信用点 |
 | 赫利昂联合体 | `helios_remove_tech_income` | `helios_remove_tech` → 弃牌收入 | 使一项非蓝科技失效 + 1 次收入（弃 1 张手牌按收入角标）；该科技仍视为拥有并参与科技数量计分 |
 | 任务中继站 | `mission_publicity_pick_income` | `mission_publicity_pick` | 消耗 2 宣传精选 1 张牌，获得其**收入角标**奖励（盲抽角标会盲抽 1 张） |
 | 芬威克研究中心 | `fenwick_publicity_pick_corner` | `fenwick_publicity_pick` | 消耗 1 宣传精选 1 张牌，获得**弃牌角标**（不弃牌）；若角标是移动，移动选择可取消但精选补牌仍不可撤销 |
@@ -70,7 +70,7 @@
 | 原教旨主义 | `fundamentalism_score_exchange` | `fundamentalism_score_exchange` | 启动 3 个 `industry_fundamentalism_exchange` 节点；每个节点可跳过、可撤销，可在 3 分与 1 信用/1 能量/1 精选之间兑换，或用 1 信用/1 能量/弃 1 手牌换 3 分 |
 | 星际海盗 | `pirates_raid_launch` | `pirates_raid_launch` | 启动 1 个 `industry_pirates_raid_launch` 节点；选择一个已有掠夺标记主星上的己方环绕/登陆标记，移除并消耗 1 信用点，然后在该星球当前扇区免费发射 |
 | 异星实验室 | — | — | **无 1x 圆标**（`EXCLUDED_INDUSTRY_LABELS`） |
-| 作弊实验室 | — | — | AI 专用；复用异星实验室牌图，开局获得 5 张盲抽和 5 次收入增加，**无 1x 圆标**，三色板块永久正面；每轮开始额外获得 1 能量和 1 盲抽 |
+| 作弊实验室 | — | — | AI 专用；复用异星实验室牌图，开局获得 5 张盲抽。“令人发笑的”难度开局 5 次收入增加、每轮开始额外获得 1 能量和 1 盲抽；“开始弱小的”难度开局 4 次收入增加、每轮开始只额外获得 1 能量；**无 1x 圆标**，三色板块永久正面 |
 
 ### 未来跨度研究所
 
@@ -106,8 +106,8 @@
 | `turing_blue_tech_publicity` | 图灵系统 | 获取蓝色科技 +1 宣传 | `app.js` 科技放置后 |
 | `sentinel_launch_scan_earth` | 哨兵探测网络 | 发射后免费扫描地球扇区；若完成扇区则进入 `sector_finish_scan` 收尾 | `maybeApplyIndustryLaunchScan` / `startLaunchSectorFinishEffectFlow` |
 | `huanyu_rocket_limit` | 寰宇动力 | 火箭数量上限 +1 | `launch.js` / `rocket.js` |
-| `huanyu_superdrive_round_start` | 寰宇超动力 | 每轮开始获得 1 能量、1 盲抽、1 宣传；包括第一轮初始选择结算后 | `applyIndustryRoundStartBonuses` |
-| `huanyu_superdrive_pass_launch` | 寰宇超动力 | PASS 效果队列末尾追加一次免费发射，忽略火箭上限 | `buildPassEffectQueue` / `industry_huanyu_superdrive_launch` |
+| `huanyu_superdrive_round_start` | 寰宇超动力 | “令人发笑的”难度每轮开始获得 1 能量、1 盲抽、1 宣传；“开始弱小的”难度每轮开始获得 1 能量、1 宣传；包括第一轮初始选择结算后 | `applyIndustryRoundStartBonuses` |
+| `huanyu_superdrive_pass_launch` | 寰宇超动力 | “令人发笑的”难度 PASS 效果队列末尾追加一次免费发射，忽略火箭上限；“开始弱小的”难度同位置改为 1 信用点 `gain_resources` 节点 | `buildPassEffectQueue` / `industry_huanyu_superdrive_launch` / `gain_resources` |
 | `mission_play_type_publicity` | 任务中继站 | 本玩家每当打出 1/2 型任务牌 +1 宣传 | `applyIndustryPlayCardPassives` |
 | `mission_startup_final_mark` | 任务中继站 | 开局终局 c 板块 3 号位标记 | `applyIndustryStartupPassives` |
 | `fenwick_research_cost` | 芬威克研究中心 | 研究科技宣传 5（默认 6） | `tech/resolver.js`、`abilities/tech.js` |
@@ -121,7 +121,7 @@
 | `pirates_raid_markers` | 星际海盗 | 开局在 orange2-4、purple1-4 对应玩家科技板位置放掠夺标记并封锁这些科技；玩家环绕/登陆未掠夺主星后，必须选择一个掠夺标记移到该星球左侧，然后获得 3 宣传；卫星登陆不会触发；移走标记后该科技恢复可研究 | `renderPiratesRaidTechMarkers` / `buildPlanetRewardEffectsWithIndustry` / `industry_pirates_raid_marker` |
 | `alien_lab_panels` | 异星实验室 | 三色板块折扣：发射 1 信用点、扫描 2 能量、研究科技 4 宣传；正面板块可点击并等同触发对应主要行动；对应标准主行动后翻背，同色外星痕迹翻回正面 | `launch.js` / `scan-effects.js` / `tech/resolver.js` / `app.js` |
 | `cheat_lab_permanent_panels` | 作弊实验室 | AI 专用异星实验室强化：蓝/黄/粉三色板块永久按正面计费和渲染，执行发射/扫描/研究科技后不翻背 | `passives.js` / `render.js` / `app.js` / `ai-controller.js` |
-| `cheat_lab_round_start` | 作弊实验室 | 每轮开始获得 1 能量和 1 盲抽；包括第一轮初始选择结算后。开局公司即时效果另有 5 张盲抽和 5 次收入增加 | `applyIndustryRoundStartBonuses` |
+| `cheat_lab_round_start` | 作弊实验室 | “令人发笑的”难度每轮开始获得 1 能量和 1 盲抽；“开始弱小的”难度每轮开始只获得 1 能量；包括第一轮初始选择结算后。开局公司即时效果为 5 张盲抽，“令人发笑的”5 次收入增加，“开始弱小的”4 次收入增加 | `applyIndustryRoundStartBonuses` / `initial-cards.js` |
 
 图灵借用：只能选择供应区橙色或紫色科技。科技效果查询在拥有板块之外，带行动上下文时要求 `industryBorrowedTechTileId === tileId` 且借用的 Round/Turn 都等于当前行动上下文；无显式上下文的同回合长链路会按玩家身上未清空的借用态生效，直到回合结束清空。橙色科技经 `players.playerOwnsTech` 生效，紫色扫描科技经 `scan-effects.js` 的扫描队列构建生效。UI 会在公司牌下方复制显示对应科技图标用于提示，不从供应区拿走科技片，也不获得 bonus；回合结束会清空当前玩家借用状态并移除显示图标，新轮开始也会清空所有轮内借用状态。
 
