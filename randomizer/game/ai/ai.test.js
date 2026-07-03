@@ -2489,9 +2489,16 @@ assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskCreditShortfall
 assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskCreditShortfallSamples[0].cards[0].cardId, "b_117.webp");
 assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskCreditShortfallSamples[0].cards[0].creditsMissingAfterCardsForCredit, 1);
 assert(finalReadyTaskCreditShortfallAnalysis.recommendations.some((entry) => entry.id === "inspect-final-ready-task-credit-shortfall"));
+assert.equal(finalReadyTaskCreditShortfallAnalysis.opportunities.finalReadyTaskTradeUnlockMiss, 1);
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskTradeUnlockMissSamples[0].playerId, "player-white");
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskTradeUnlockMissSamples[0].cards[0].cardId, "b_135.webp");
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskTradeUnlockMissSamples[0].cards[0].cardsForCreditTradesNeeded, 1);
+assert(finalReadyTaskCreditShortfallAnalysis.recommendations.some((entry) => entry.id === "inspect-final-ready-task-trade-unlock"));
 const finalReadyTaskCreditShortfallSummary = analytics.summarizeBattleReports([finalReadyTaskCreditShortfallReport]);
 assert.equal(finalReadyTaskCreditShortfallSummary.finalReadyTaskCreditShortfallSamples[0].maxCreditsAfterCardsForCredit, 2);
 assert.equal(finalReadyTaskCreditShortfallSummary.opportunities.finalReadyTaskCreditShortfall, 1);
+assert.equal(finalReadyTaskCreditShortfallSummary.opportunities.finalReadyTaskTradeUnlockMiss, 1);
+assert.equal(finalReadyTaskCreditShortfallSummary.finalReadyTaskTradeUnlockMissSamples[0].cards[0].readyTaskDirectScore, 9);
 
 const b2ScanNearMissReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },

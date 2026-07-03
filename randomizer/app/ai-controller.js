@@ -18656,6 +18656,8 @@
             negativeThirdFinalMarkSamples: analysis.negativeThirdFinalMarkSamples,
             lowPlayerCandidateStats: analysis.lowPlayerCandidateStats,
             lowUnplayedCardSamples: analysis.lowUnplayedCardSamples,
+            finalReadyTaskCreditShortfallSamples: analysis.finalReadyTaskCreditShortfallSamples,
+            finalReadyTaskTradeUnlockMissSamples: analysis.finalReadyTaskTradeUnlockMissSamples,
             scoreOpportunities: analysis.scoreOpportunities,
             topScoreGaps: analysis.topScoreGaps,
             movePayment: analysis.movePayment,
