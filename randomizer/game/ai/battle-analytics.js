@@ -393,6 +393,66 @@
     };
   }
 
+  function getRoundPaceKey(roundNumber) {
+    if (roundNumber == null || roundNumber === "") return "unknown";
+    return String(roundNumber);
+  }
+
+  function ensureRoundPaceBucket(profile, roundNumber) {
+    const key = getRoundPaceKey(roundNumber);
+    if (!profile.roundPaceCounts[key]) {
+      profile.roundPaceCounts[key] = {
+        roundNumber: Number.isFinite(Number(roundNumber)) ? Number(roundNumber) : null,
+        turnActionCount: 0,
+        actionCounts: {},
+        paceCounts: {},
+      };
+    }
+    return profile.roundPaceCounts[key];
+  }
+
+  function summarizeRoundPaceBucket(bucket = {}) {
+    const actionCounts = bucket.actionCounts || {};
+    const paceCounts = bucket.paceCounts || {};
+    const mainActionCount = numeric(paceCounts.main);
+    const quickStepCount = numeric(paceCounts.quick);
+    const idleTurnCount = numeric(paceCounts.idle);
+    const otherTurnActionCount = numeric(paceCounts.other);
+    const turnActionCount = numeric(bucket.turnActionCount);
+    const resourceQuickStepCount = numeric(actionCounts.placeData)
+      + numeric(actionCounts.cardCorner)
+      + numeric(actionCounts.quickTrade);
+    return {
+      roundNumber: bucket.roundNumber ?? null,
+      turnActionCount,
+      mainActionCount,
+      quickStepCount,
+      resourceQuickStepCount,
+      productiveActionCount: mainActionCount + quickStepCount,
+      idleTurnCount,
+      otherTurnActionCount,
+      quickToMainRatio: mainActionCount ? roundRatio(quickStepCount / mainActionCount) : 0,
+      idleTurnRatio: turnActionCount ? roundRatio(idleTurnCount / turnActionCount) : 0,
+      playCardCount: numeric(actionCounts.playCard),
+      researchTechCount: numeric(actionCounts.researchTech),
+      scanCount: numeric(actionCounts.scan),
+      analyzeCount: numeric(actionCounts.analyze),
+      moveCount: numeric(actionCounts.move),
+      placeDataCount: numeric(actionCounts.placeData),
+      cardCornerCount: numeric(actionCounts.cardCorner),
+      quickTradeCount: numeric(actionCounts.quickTrade),
+      passCount: numeric(actionCounts.pass),
+      actionCounts: { ...actionCounts },
+    };
+  }
+
+  function recordRoundPace(profile, entry, actionId, action) {
+    const bucket = ensureRoundPaceBucket(profile, entry.roundNumber);
+    bucket.turnActionCount += 1;
+    increment(bucket.actionCounts, actionId);
+    increment(bucket.paceCounts, getActionPaceCategory(actionId, action));
+  }
+
   function buildEarlyPassNoMainSamples(logs = [], playerResults = [], limit = Infinity) {
     const playerResultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
     const groups = new Map();
@@ -1367,6 +1427,8 @@
         actionCategoryCounts: {},
         actionCategoryRatios: {},
         paceCounts: {},
+        roundPaceCounts: {},
+        roundPace: [],
         techTypeCounts: {},
         scanTargetCounts: {},
         routeTargetCounts: {},
@@ -1993,6 +2055,167 @@
     };
   }
 
+  const ROUND_PACE_METRICS = Object.freeze([
+    "turnActionCount",
+    "mainActionCount",
+    "quickStepCount",
+    "resourceQuickStepCount",
+    "productiveActionCount",
+    "idleTurnCount",
+    "otherTurnActionCount",
+    "playCardCount",
+    "researchTechCount",
+    "scanCount",
+    "analyzeCount",
+    "moveCount",
+    "placeDataCount",
+    "cardCornerCount",
+    "quickTradeCount",
+    "passCount",
+  ]);
+
+  function getAverageRoundPaceKey(metric) {
+    return `average${metric.charAt(0).toUpperCase()}${metric.slice(1)}`;
+  }
+
+  function buildRoundPaceAverageMap(playerProfiles = []) {
+    const byRound = new Map();
+    for (const profile of playerProfiles || []) {
+      for (const round of profile?.roundPace || []) {
+        const key = getRoundPaceKey(round.roundNumber);
+        if (!byRound.has(key)) {
+          const initial = {
+            roundNumber: round.roundNumber ?? null,
+            playerCount: 0,
+            totals: {},
+          };
+          for (const metric of ROUND_PACE_METRICS) initial.totals[metric] = 0;
+          byRound.set(key, initial);
+        }
+        const bucket = byRound.get(key);
+        bucket.playerCount += 1;
+        for (const metric of ROUND_PACE_METRICS) {
+          bucket.totals[metric] += numeric(round[metric]);
+        }
+      }
+    }
+
+    const averaged = new Map();
+    for (const [key, bucket] of byRound.entries()) {
+      const count = Math.max(1, numeric(bucket.playerCount));
+      const roundAverage = {
+        roundNumber: bucket.roundNumber,
+        playerCount: numeric(bucket.playerCount),
+      };
+      for (const metric of ROUND_PACE_METRICS) {
+        roundAverage[metric] = roundRatio(bucket.totals[metric] / count);
+      }
+      averaged.set(key, roundAverage);
+    }
+    return averaged;
+  }
+
+  function summarizeRoundPaceAverage(roundAverage = {}) {
+    const summary = {
+      roundNumber: roundAverage.roundNumber ?? null,
+      playerCount: numeric(roundAverage.playerCount),
+    };
+    for (const metric of ROUND_PACE_METRICS) {
+      summary[getAverageRoundPaceKey(metric)] = roundRatio(roundAverage[metric]);
+    }
+    return summary;
+  }
+
+  function summarizeLowRoundPaceSample(profile = {}, round = {}, averageRound = {}, referenceRound = {}) {
+    const referenceMainActionCount = roundRatio(referenceRound.mainActionCount ?? averageRound.mainActionCount);
+    const averageMainActionCount = roundRatio(averageRound.mainActionCount);
+    const mainActionGap = roundRatio(Math.max(0, referenceMainActionCount - numeric(round.mainActionCount)));
+    return {
+      playerId: profile.playerId || null,
+      playerLabel: profile.playerLabel || profile.playerId || "unknown",
+      finalScore: roundRatio(profile.finalScore),
+      roundNumber: round.roundNumber ?? null,
+      turnActionCount: roundRatio(round.turnActionCount),
+      mainActionCount: roundRatio(round.mainActionCount),
+      quickStepCount: roundRatio(round.quickStepCount),
+      resourceQuickStepCount: roundRatio(round.resourceQuickStepCount),
+      productiveActionCount: roundRatio(round.productiveActionCount),
+      idleTurnCount: roundRatio(round.idleTurnCount),
+      passCount: roundRatio(round.passCount),
+      quickToMainRatio: roundRatio(round.quickToMainRatio),
+      playCardCount: roundRatio(round.playCardCount),
+      researchTechCount: roundRatio(round.researchTechCount),
+      scanCount: roundRatio(round.scanCount),
+      analyzeCount: roundRatio(round.analyzeCount),
+      moveCount: roundRatio(round.moveCount),
+      referenceMainActionCount,
+      averageMainActionCount,
+      mainActionGap,
+      actionCounts: round.actionCounts || {},
+    };
+  }
+
+  function buildLowRoundPaceSamples(playerProfiles = [], roundAverages = buildRoundPaceAverageMap(playerProfiles), limit = 12) {
+    const profiles = (playerProfiles || []).filter(Boolean);
+    if (!profiles.length) return [];
+
+    const average = averageProfileMetrics(profiles);
+    const lowScoreCutoff = Math.min(245, numeric(average.finalScore) - 15);
+    const scoreAscending = [...profiles]
+      .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore) || left.playerLabel.localeCompare(right.playerLabel));
+    const scoreDescending = [...profiles]
+      .sort((left, right) => numeric(right.finalScore) - numeric(left.finalScore) || left.playerLabel.localeCompare(right.playerLabel));
+    const fallbackLowCount = Math.max(1, Math.ceil(profiles.length * 0.35));
+    const highProfiles = scoreDescending.filter((profile) => numeric(profile.finalScore) >= 300);
+    const referenceProfiles = highProfiles.length
+      ? highProfiles
+      : scoreDescending.slice(0, Math.max(1, Math.ceil(profiles.length * 0.25)));
+    const referenceAverages = buildRoundPaceAverageMap(referenceProfiles);
+    const lowKeys = new Set([
+      ...scoreAscending
+        .filter((profile) => numeric(profile.finalScore) <= lowScoreCutoff)
+        .map((profile) => profile.playerId || profile.playerLabel),
+      ...scoreAscending
+        .slice(0, fallbackLowCount)
+        .map((profile) => profile.playerId || profile.playerLabel),
+    ]);
+
+    const samples = [];
+    for (const profile of profiles) {
+      const profileKey = profile.playerId || profile.playerLabel;
+      if (!lowKeys.has(profileKey)) continue;
+      for (const round of profile.roundPace || []) {
+        const key = getRoundPaceKey(round.roundNumber);
+        const averageRound = roundAverages.get(key) || {};
+        const referenceRound = referenceAverages.get(key) || averageRound;
+        const sample = summarizeLowRoundPaceSample(profile, round, averageRound, referenceRound);
+        const lowMainRound = numeric(sample.mainActionCount) <= 5 || numeric(sample.mainActionGap) >= 2;
+        if (!lowMainRound && numeric(sample.finalScore) > lowScoreCutoff) continue;
+        samples.push(sample);
+      }
+    }
+
+    return samples
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.mainActionCount) - numeric(right.mainActionCount)
+        || numeric(right.mainActionGap) - numeric(left.mainActionGap)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+      ))
+      .slice(0, limit);
+  }
+
+  function buildRoundPaceSummary(playerProfiles = []) {
+    const profiles = (playerProfiles || []).filter(Boolean);
+    const roundAverages = buildRoundPaceAverageMap(profiles);
+    return {
+      rounds: [...roundAverages.values()]
+        .map(summarizeRoundPaceAverage)
+        .sort((left, right) => numeric(left.roundNumber) - numeric(right.roundNumber)),
+      lowRoundPaceSamples: buildLowRoundPaceSamples(profiles, roundAverages),
+    };
+  }
+
   function getProfileMetric(profile = {}, key) {
     return numeric(profile.metrics?.[key] ?? profile[key]);
   }
@@ -2378,6 +2601,10 @@
       .reduce((total, count) => total + numeric(count), 0);
     profile.metrics.turnPlanCount = Object.values(profile.turnPlanCounts || {})
       .reduce((total, count) => total + numeric(count), 0);
+    profile.roundPace = Object.values(profile.roundPaceCounts || {})
+      .map(summarizeRoundPaceBucket)
+      .sort((left, right) => numeric(left.roundNumber) - numeric(right.roundNumber));
+    delete profile.roundPaceCounts;
     return profile;
   }
 
@@ -2397,6 +2624,7 @@
         increment(profile.actionCounts, actionId);
         increment(profile.actionCategoryCounts, category);
         increment(profile.paceCounts, getActionPaceCategory(actionId, action));
+        recordRoundPace(profile, entry, actionId, action);
         profile.turnActionCount += 1;
         const routeTargetKey = getRouteTargetKey(getRouteTargetFromEntry(entry));
         if (routeTargetKey) increment(profile.routeTargetCounts, routeTargetKey);
@@ -3566,6 +3794,7 @@
 
     const playerProfiles = buildPlayerProfiles(logs, playerResults);
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
+    const roundPaceSummary = buildRoundPaceSummary(playerProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
     const allEarlyPassNoMainSamples = buildEarlyPassNoMainSamples(logs, playerResults);
     const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
@@ -3667,6 +3896,8 @@
       winnerProfileDeltas: winnerProfileComparison?.delta || {},
       winner: playerResults[0] || null,
       paceSummary: buildPaceSummary(playerProfiles),
+      roundPaceSummary,
+      lowRoundPaceSamples: roundPaceSummary.lowRoundPaceSamples,
       lowEngineThroughputSamples,
       lowPlayerCandidateStats,
       lowUnplayedCardSamples,
@@ -3889,6 +4120,7 @@
     const averageNonWinnerProfile = averageProfileMetrics(nonWinnerProfiles);
     const winnerProfileDeltas = diffProfileMetrics(averageWinnerProfile, averageNonWinnerProfile);
     const paceSummary = buildPaceSummary(allProfiles);
+    const roundPaceSummary = buildRoundPaceSummary(allProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(allProfiles);
     const summaryForRecommendations = {
       turnActionCount,
@@ -3982,6 +4214,8 @@
       scoreBuckets: finalizeScoreBuckets(mergedScoreBuckets),
       winnerCounts,
       paceSummary,
+      roundPaceSummary,
+      lowRoundPaceSamples: roundPaceSummary.lowRoundPaceSamples,
       lowEngineThroughputSamples,
       lowPlayerCandidateStats: mergedLowPlayerCandidateStats,
       lowUnplayedCardSamples: mergedLowUnplayedCardSamples,

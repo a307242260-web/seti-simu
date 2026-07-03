@@ -1188,10 +1188,19 @@ assert.equal(paceAnalysis.playerProfiles[0].metrics.idleTurnCount, 1);
 assert.equal(paceAnalysis.playerProfiles[0].metrics.quickToMainRatio, 4);
 assert.equal(paceAnalysis.playerProfiles[0].metrics.productiveActionRatio, 0.833);
 assert.equal(paceAnalysis.playerProfiles[0].metrics.idleTurnRatio, 0.167);
+assert.equal(paceAnalysis.playerProfiles[0].roundPace[0].roundNumber, 2);
+assert.equal(paceAnalysis.playerProfiles[0].roundPace[0].mainActionCount, 1);
+assert.equal(paceAnalysis.playerProfiles[0].roundPace[0].resourceQuickStepCount, 3);
 assert.equal(paceAnalysis.paceSummary.averageQuickStepCount, 4);
+assert.equal(paceAnalysis.roundPaceSummary.rounds[0].averageMainActionCount, 1);
+assert.equal(paceAnalysis.roundPaceSummary.rounds[0].averageResourceQuickStepCount, 3);
+assert.equal(paceAnalysis.lowRoundPaceSamples[0].roundNumber, 2);
+assert.equal(paceAnalysis.lowRoundPaceSamples[0].mainActionGap, 0);
 const paceSummary = analytics.summarizeBattleReports([paceReport]);
 assert.equal(paceSummary.paceSummary.averageMainActionCount, 1);
 assert.equal(paceSummary.paceSummary.lowTail.quickStepCount, 4);
+assert.equal(paceSummary.roundPaceSummary.lowRoundPaceSamples[0].resourceQuickStepCount, 3);
+assert.equal(paceSummary.lowRoundPaceSamples[0].playCardCount, 1);
 
 const earlyPassReport = {
   logs: [
