@@ -1254,6 +1254,12 @@ assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].candidateProfile.bestRe
 assert.deepEqual(earlyPassAnalysis.earlyPassNoMainSamples[1].actionIds, ["cardCorner", "pass"]);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[1].reasonTag, "negative-main-only");
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[1].candidateProfile.bestMain.id, "researchTech");
+assert.deepEqual(earlyPassAnalysis.earlyPassNoMainReasonCounts, {
+  "resource-trade-unlocks-main": 1,
+  "negative-main-only": 1,
+});
+const earlyPassSummary = analytics.summarizeBattleReports([earlyPassReport]);
+assert.deepEqual(earlyPassSummary.earlyPassNoMainReasonCounts, earlyPassAnalysis.earlyPassNoMainReasonCounts);
 
 function appendRepeatedTurnActions(logs, playerId, playerLabel, counts) {
   for (const [actionId, count] of Object.entries(counts || {})) {

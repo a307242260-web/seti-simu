@@ -464,6 +464,14 @@
       .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
   }
 
+  function countEarlyPassNoMainReasons(samples = []) {
+    const counts = {};
+    for (const sample of samples || []) {
+      increment(counts, sample?.reasonTag || "unknown");
+    }
+    return counts;
+  }
+
   function buildFinalLowHandPassRecoverySample(entry) {
     const diagnostic = entry?.details?.finalLowHandPassRecoveryDiagnostic || {};
     return {
@@ -3119,6 +3127,7 @@
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
     const allEarlyPassNoMainSamples = buildEarlyPassNoMainSamples(logs, playerResults);
+    const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
     earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
     opportunities.earlyPassNoMain = allEarlyPassNoMainSamples.length;
     const lowPlayerCandidateStats = buildLowPlayerCandidateStats(logs, playerResults, options);
@@ -3164,6 +3173,7 @@
       passOpportunitySamples,
       passResourceLockSamples,
       earlyPassNoMainSamples,
+      earlyPassNoMainReasonCounts,
       finalLowHandPassRecoverySamples,
       negativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples,
@@ -3217,6 +3227,7 @@
     const mergedPassOpportunitySamples = [];
     const mergedPassResourceLockSamples = [];
     const mergedEarlyPassNoMainSamples = [];
+    const mergedEarlyPassNoMainReasonCounts = {};
     const mergedFinalLowHandPassRecoverySamples = [];
     const mergedNegativeCardCornerGraphLiftSamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
@@ -3283,6 +3294,9 @@
         mergedEarlyPassNoMainSamples.push(
           ...analysis.earlyPassNoMainSamples.slice(0, 12 - mergedEarlyPassNoMainSamples.length),
         );
+      }
+      for (const [key, count] of Object.entries(analysis.earlyPassNoMainReasonCounts || {})) {
+        increment(mergedEarlyPassNoMainReasonCounts, key, count);
       }
       if (
         mergedFinalLowHandPassRecoverySamples.length < 12
@@ -3436,6 +3450,7 @@
       passOpportunitySamples: mergedPassOpportunitySamples,
       passResourceLockSamples: mergedPassResourceLockSamples,
       earlyPassNoMainSamples: mergedEarlyPassNoMainSamples,
+      earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
       finalLowHandPassRecoverySamples: mergedFinalLowHandPassRecoverySamples,
       negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
