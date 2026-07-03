@@ -1440,6 +1440,78 @@ const lowEngineSummary = analytics.summarizeBattleReports([lowEngineReport]);
 assert.equal(lowEngineSummary.lowEngineThroughputSamples[0].playerId, "low");
 assert.ok(lowEngineSummary.recommendations.some((entry) => entry.id === "inspect-low-engine-throughput"));
 
+const highScoreNearMissLogs = [];
+appendRepeatedTurnActions(highScoreNearMissLogs, "winner", "Winner", {
+  playCard: 15,
+  researchTech: 11,
+  scan: 8,
+  analyze: 5,
+  placeData: 42,
+  cardCorner: 6,
+  quickTrade: 5,
+  pass: 3,
+});
+appendRepeatedTurnActions(highScoreNearMissLogs, "near", "Near", {
+  playCard: 8,
+  researchTech: 7,
+  scan: 5,
+  analyze: 3,
+  placeData: 28,
+  cardCorner: 4,
+  quickTrade: 2,
+  pass: 4,
+});
+const highScoreNearMissReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: highScoreNearMissLogs,
+  playerResults: [
+    {
+      playerId: "winner",
+      playerLabel: "Winner",
+      finalScore: 320,
+      baseScore: 205,
+      tileScore: 95,
+      cardScore: 20,
+      techCount: 12,
+      completedTaskCount: 5,
+      finalMarkCount: 3,
+    },
+    {
+      playerId: "near",
+      playerLabel: "Near",
+      finalScore: 293,
+      baseScore: 206,
+      tileScore: 81,
+      cardScore: 6,
+      techCount: 10,
+      completedTaskCount: 3,
+      finalMarkCount: 3,
+      finalFormulas: ["a1", "b2", "d1"],
+      b2Progress: { sectorWins: 2, orbitLandCount: 5, sectorWinDeficit: 2, orbitLandDeficit: 0, bottleneck: "sectorWins" },
+      resources: { credits: 0, energy: 1, publicity: 4, handSize: 2 },
+      handCards: [
+        { id: "near-task-1", cardId: "near-task.webp", label: "Near task", price: 2, typeCode: 3, taskCount: 1, endGameScoring: true },
+      ],
+      reservedCards: [
+        { id: "near-final-1", cardId: "near-final.webp", label: "Near final", price: 1, typeCode: 2, endGameScoring: true },
+      ],
+    },
+  ],
+};
+const highScoreNearMissAnalysis = analytics.analyzeBattleReport(highScoreNearMissReport);
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].playerId, "near");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].scoreTo300, 7);
+assert.ok(highScoreNearMissAnalysis.highScoreNearMissSamples[0].reasons.includes("near-300"));
+assert.ok(highScoreNearMissAnalysis.highScoreNearMissSamples[0].reasons.includes("b2-sector"));
+assert.ok(highScoreNearMissAnalysis.highScoreNearMissSamples[0].reasons.includes("card-score-gap"));
+assert.ok(highScoreNearMissAnalysis.highScoreNearMissSamples[0].referenceGaps.cardScore >= 14);
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].cards[0].cardId, "near-task.webp");
+assert.ok(highScoreNearMissAnalysis.recommendations.some((entry) => entry.id === "inspect-high-score-near-miss"));
+const highScoreNearMissSummary = analytics.summarizeBattleReports([highScoreNearMissReport]);
+assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].playerId, "near");
+assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].cards[1].zone, "reserved");
+assert.ok(highScoreNearMissSummary.recommendations.some((entry) => entry.id === "inspect-high-score-near-miss"));
+
 const highHandDrainEnergyTradeReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [

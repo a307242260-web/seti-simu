@@ -34,6 +34,23 @@
     "end-turn",
   ]);
   const DEFAULT_SEQUENCE_WINDOW_TURNS = 6;
+  const HIGH_SCORE_NEAR_MISS_TARGET = 300;
+  const HIGH_SCORE_NEAR_MISS_MIN = 280;
+  const HIGH_SCORE_NEAR_MISS_REFERENCE_METRICS = Object.freeze([
+    "baseScore",
+    "tileScore",
+    "cardScore",
+    "mainActionCount",
+    "quickStepCount",
+    "resourceQuickStepCount",
+    "playCardCount",
+    "researchTechCount",
+    "scanCount",
+    "analyzeCount",
+    "placeDataCount",
+    "techCount",
+    "completedTaskCount",
+  ]);
   const KEY_SEQUENCE_DECISIONS = Object.freeze([
     "play-card",
     "tech-placement",
@@ -2725,6 +2742,174 @@
       .slice(0, 12);
   }
 
+  function getPlayerResultForProfile(profile = {}, resultById = new Map(), resultByLabel = new Map()) {
+    const playerId = profile.playerId == null ? null : String(profile.playerId);
+    const playerLabel = profile.playerLabel == null ? null : String(profile.playerLabel);
+    return (playerId && resultById.get(playerId))
+      || (playerLabel && resultByLabel.get(playerLabel))
+      || null;
+  }
+
+  function averageProfilesByMetric(profiles = [], metric) {
+    const rows = (profiles || []).filter(Boolean);
+    if (!rows.length) return 0;
+    return roundRatio(rows.reduce((total, profile) => total + getProfileMetric(profile, metric), 0) / rows.length);
+  }
+
+  function buildHighScoreReferenceMetrics(referenceProfiles = []) {
+    const reference = {};
+    for (const metric of HIGH_SCORE_NEAR_MISS_REFERENCE_METRICS) {
+      reference[metric] = averageProfilesByMetric(referenceProfiles, metric);
+    }
+    return reference;
+  }
+
+  function buildHighScoreNearMissCounts(profile = {}) {
+    return {
+      mainAction: roundRatio(getProfileMetric(profile, "mainActionCount")),
+      quickStep: roundRatio(getProfileMetric(profile, "quickStepCount")),
+      resourceQuickStep: roundRatio(getProfileMetric(profile, "resourceQuickStepCount")),
+      playCard: roundRatio(getProfileMetric(profile, "playCardCount")),
+      researchTech: roundRatio(getProfileMetric(profile, "researchTechCount")),
+      scan: roundRatio(getProfileMetric(profile, "scanCount")),
+      analyze: roundRatio(getProfileMetric(profile, "analyzeCount")),
+      placeData: roundRatio(getProfileMetric(profile, "placeDataCount")),
+      techCount: roundRatio(getProfileMetric(profile, "techCount")),
+      completedTask: roundRatio(getProfileMetric(profile, "completedTaskCount")),
+    };
+  }
+
+  function buildHighScoreNearMissReferenceGaps(profile = {}, reference = {}) {
+    return {
+      baseScore: roundRatio(Math.max(0, numeric(reference.baseScore) - getProfileMetric(profile, "baseScore"))),
+      tileScore: roundRatio(Math.max(0, numeric(reference.tileScore) - getProfileMetric(profile, "tileScore"))),
+      cardScore: roundRatio(Math.max(0, numeric(reference.cardScore) - getProfileMetric(profile, "cardScore"))),
+      mainAction: roundRatio(Math.max(0, numeric(reference.mainActionCount) - getProfileMetric(profile, "mainActionCount"))),
+      quickStep: roundRatio(Math.max(0, numeric(reference.quickStepCount) - getProfileMetric(profile, "quickStepCount"))),
+      resourceQuickStep: roundRatio(Math.max(0, numeric(reference.resourceQuickStepCount) - getProfileMetric(profile, "resourceQuickStepCount"))),
+      playCard: roundRatio(Math.max(0, numeric(reference.playCardCount) - getProfileMetric(profile, "playCardCount"))),
+      researchTech: roundRatio(Math.max(0, numeric(reference.researchTechCount) - getProfileMetric(profile, "researchTechCount"))),
+      scan: roundRatio(Math.max(0, numeric(reference.scanCount) - getProfileMetric(profile, "scanCount"))),
+      analyze: roundRatio(Math.max(0, numeric(reference.analyzeCount) - getProfileMetric(profile, "analyzeCount"))),
+      placeData: roundRatio(Math.max(0, numeric(reference.placeDataCount) - getProfileMetric(profile, "placeDataCount"))),
+      techCount: roundRatio(Math.max(0, numeric(reference.techCount) - getProfileMetric(profile, "techCount"))),
+      completedTask: roundRatio(Math.max(0, numeric(reference.completedTaskCount) - getProfileMetric(profile, "completedTaskCount"))),
+    };
+  }
+
+  function getHighScoreNearMissGapScore(referenceGaps = {}) {
+    return roundRatio(
+      numeric(referenceGaps.cardScore) * 1.2
+      + numeric(referenceGaps.completedTask) * 4
+      + numeric(referenceGaps.techCount) * 2
+      + numeric(referenceGaps.playCard) * 2
+      + numeric(referenceGaps.researchTech) * 1.5
+      + numeric(referenceGaps.scan) * 1.5
+      + numeric(referenceGaps.analyze) * 2
+      + numeric(referenceGaps.resourceQuickStep) * 0.35
+      + numeric(referenceGaps.mainAction) * 1.5,
+    );
+  }
+
+  function buildHighScoreNearMissReasons(sample = {}, referenceGaps = {}) {
+    const reasons = [];
+    if (numeric(sample.scoreTo300) <= 10) reasons.push("near-300");
+    const b2 = sample.b2Progress || {};
+    const b2Bottleneck = String(b2.bottleneck || "");
+    const sectorDeficit = Math.max(0, numeric(b2.sectorWinDeficit ?? b2.sectorWinsDeficit));
+    const orbitLandDeficit = Math.max(0, numeric(b2.orbitLandDeficit));
+    if (sectorDeficit > 0 && (sectorDeficit >= 2 || b2Bottleneck.includes("sector"))) reasons.push("b2-sector");
+    if (orbitLandDeficit > 0 && (orbitLandDeficit >= 2 || b2Bottleneck.includes("orbit"))) reasons.push("b2-orbit-land");
+    if (sample.finalMarkCount != null && numeric(sample.finalMarkCount) < 3) reasons.push("missing-final-mark");
+    if (numeric(referenceGaps.cardScore) >= 8) reasons.push("card-score-gap");
+    if (numeric(referenceGaps.playCard) >= 2) reasons.push("play-card-gap");
+    if (numeric(referenceGaps.techCount) >= 2 || numeric(referenceGaps.researchTech) >= 1.5) reasons.push("tech-gap");
+    if (numeric(referenceGaps.scan) >= 2) reasons.push("scan-gap");
+    if (numeric(referenceGaps.analyze) >= 1.5) reasons.push("analyze-gap");
+    if (numeric(referenceGaps.resourceQuickStep) >= 8 || numeric(referenceGaps.mainAction) >= 4) reasons.push("throughput-gap");
+    if ((sample.cards || []).length) reasons.push("unplayed-scoring-card");
+    return reasons;
+  }
+
+  function sortHighScoreNearMissSamples(samples = [], limit = 12) {
+    const normalizedLimit = Math.max(0, Math.round(limit == null ? 12 : numeric(limit)));
+    if (!normalizedLimit) return [];
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(left.scoreTo300) - numeric(right.scoreTo300)
+        || numeric(right.referenceGapScore) - numeric(left.referenceGapScore)
+        || numeric(right.finalScore) - numeric(left.finalScore)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""))
+      ))
+      .slice(0, normalizedLimit);
+  }
+
+  function buildHighScoreNearMissSamples(playerProfiles = [], playerResults = [], options = {}) {
+    const profiles = (playerProfiles || []).filter(Boolean);
+    if (!profiles.length) return [];
+
+    const limit = Math.max(0, Math.round(options.highScoreNearMissLimit == null ? 12 : numeric(options.highScoreNearMissLimit)));
+    if (!limit) return [];
+
+    const scoreSorted = [...profiles]
+      .sort((left, right) => numeric(right.finalScore) - numeric(left.finalScore) || left.playerLabel.localeCompare(right.playerLabel));
+    const highProfiles = scoreSorted.filter((profile) => numeric(profile.finalScore) >= HIGH_SCORE_NEAR_MISS_TARGET);
+    const referenceProfiles = highProfiles.length
+      ? highProfiles
+      : scoreSorted.slice(0, Math.max(1, Math.ceil(scoreSorted.length * 0.25)));
+    const reference = buildHighScoreReferenceMetrics(referenceProfiles);
+    const resultById = new Map((playerResults || [])
+      .filter((result) => result?.playerId != null)
+      .map((result) => [String(result.playerId), result]));
+    const resultByLabel = new Map((playerResults || [])
+      .filter((result) => result?.playerLabel != null)
+      .map((result) => [String(result.playerLabel), result]));
+
+    const samples = scoreSorted
+      .filter((profile) => {
+        const score = numeric(profile.finalScore);
+        return score >= HIGH_SCORE_NEAR_MISS_MIN && score < HIGH_SCORE_NEAR_MISS_TARGET;
+      })
+      .map((profile) => {
+        const result = getPlayerResultForProfile(profile, resultById, resultByLabel) || {};
+        const cards = [
+          ...(result.handCards || []).map((card) => summarizeUnplayedCard(card, "hand")),
+          ...(result.reservedCards || []).map((card) => summarizeUnplayedCard(card, "reserved")),
+        ].filter(Boolean).slice(0, 8);
+        const referenceGaps = buildHighScoreNearMissReferenceGaps(profile, reference);
+        const sample = {
+          playerId: profile.playerId || null,
+          playerLabel: profile.playerLabel || profile.playerId || "unknown",
+          finalScore: roundRatio(profile.finalScore),
+          scoreTo300: roundRatio(HIGH_SCORE_NEAR_MISS_TARGET - numeric(profile.finalScore)),
+          baseScore: roundRatio(profile.baseScore),
+          tileScore: roundRatio(profile.tileScore),
+          cardScore: roundRatio(profile.cardScore),
+          finalMarkCount: result.finalMarkCount == null
+            ? (profile.metrics?.finalScoreMarkCount == null ? null : roundRatio(profile.metrics.finalScoreMarkCount))
+            : roundRatio(result.finalMarkCount),
+          finalFormulas: result.finalFormulas || [],
+          finalFormulaProgress: result.finalFormulaProgress || null,
+          b2Progress: result.b2Progress || null,
+          resources: result.resources || null,
+          handSize: numeric(result.handSize ?? profile.handSize),
+          reservedCount: numeric(result.reservedCount ?? profile.reservedCount),
+          techCount: roundRatio(profile.techCount),
+          completedTaskCount: roundRatio(profile.completedTaskCount),
+          counts: buildHighScoreNearMissCounts(profile),
+          reference,
+          referenceGaps,
+          referenceGapScore: getHighScoreNearMissGapScore(referenceGaps),
+          cards,
+        };
+        sample.reasons = buildHighScoreNearMissReasons(sample, referenceGaps);
+        return sample;
+      });
+
+    return sortHighScoreNearMissSamples(samples, limit);
+  }
+
   function finalizePlayerProfile(profile) {
     for (const [category, count] of Object.entries(profile.actionCategoryCounts || {})) {
       profile.actionCategoryRatios[category] = profile.turnActionCount
@@ -3482,6 +3667,9 @@
     const lowEngineThroughputSamples = Array.isArray(analysis.lowEngineThroughputSamples)
       ? analysis.lowEngineThroughputSamples
       : [];
+    const highScoreNearMissSamples = Array.isArray(analysis.highScoreNearMissSamples)
+      ? analysis.highScoreNearMissSamples
+      : [];
 
     if (actionTotal >= 10 && ratios.basicMain >= 0.45 && ratios.engine < 0.25) {
       recommendations.push({
@@ -3565,6 +3753,13 @@
         id: "inspect-low-engine-throughput",
         priority: "medium",
         message: "低分玩家的数据/扫描/分析/科技或打牌吞吐明显落后，应优先定位可闭合的资源滚动链，而不是单独放宽补牌或移动。",
+      });
+    }
+    if (highScoreNearMissSamples.length) {
+      recommendations.push({
+        id: "inspect-high-score-near-miss",
+        priority: "medium",
+        message: "存在 280-299 分的高分近失席位，应按样本拆解终局板、B2、行动吞吐和未兑现手牌缺口，优先提高 300+ 命中率。",
       });
     }
     if ((candidateStats.playCard?.availableNotSelected || 0) > (candidateStats.playCard?.selected || 0) * 2) {
@@ -3969,6 +4164,7 @@
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
     const roundPaceSummary = buildRoundPaceSummary(playerProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
+    const highScoreNearMissSamples = buildHighScoreNearMissSamples(playerProfiles, playerResults, options);
     const allEarlyPassNoMainSamples = buildEarlyPassNoMainSamples(logs, playerResults);
     const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
     earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
@@ -4073,6 +4269,7 @@
       roundPaceSummary,
       lowRoundPaceSamples: roundPaceSummary.lowRoundPaceSamples,
       lowEngineThroughputSamples,
+      highScoreNearMissSamples,
       lowPlayerCandidateStats,
       lowUnplayedCardSamples,
       sequenceWindowTurns: actionSequences.windowTurns,
@@ -4119,6 +4316,7 @@
     const mergedNegativeThirdFinalMarkSamples = [];
     const mergedLowPlayerCandidateStats = [];
     const mergedLowUnplayedCardSamples = [];
+    const mergedHighScoreNearMissSamples = [];
     const mergedMovePayment = {
       count: 0,
       requiredMovePoints: 0,
@@ -4259,6 +4457,9 @@
           ...analysis.lowUnplayedCardSamples.slice(0, 16 - mergedLowUnplayedCardSamples.length),
         );
       }
+      if (Array.isArray(analysis.highScoreNearMissSamples)) {
+        mergedHighScoreNearMissSamples.push(...analysis.highScoreNearMissSamples);
+      }
       mergedScoreOpportunities.selectedBelowBest += numeric(analysis.scoreOpportunities?.selectedBelowBest);
       mergedScoreOpportunities.totalGap += numeric(analysis.scoreOpportunities?.totalGap);
       mergedScoreOpportunities.maxGap = Math.max(mergedScoreOpportunities.maxGap, numeric(analysis.scoreOpportunities?.maxGap));
@@ -4300,6 +4501,10 @@
     const paceSummary = buildPaceSummary(allProfiles);
     const roundPaceSummary = buildRoundPaceSummary(allProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(allProfiles);
+    const highScoreNearMissSamples = sortHighScoreNearMissSamples(
+      mergedHighScoreNearMissSamples,
+      options.highScoreNearMissLimit ?? 12,
+    );
     const summaryForRecommendations = {
       turnActionCount,
       actionCategoryRatios,
@@ -4308,6 +4513,7 @@
       topScoreGaps: buildTopScoreGaps(mergedCandidateScoreStats),
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
+      highScoreNearMissSamples,
       resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
       quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
       preNoMainPassResourceDrainSamples: mergedPreNoMainPassResourceDrainSamples,
@@ -4396,6 +4602,7 @@
       roundPaceSummary,
       lowRoundPaceSamples: roundPaceSummary.lowRoundPaceSamples,
       lowEngineThroughputSamples,
+      highScoreNearMissSamples,
       lowPlayerCandidateStats: mergedLowPlayerCandidateStats,
       lowUnplayedCardSamples: mergedLowUnplayedCardSamples,
       averageWinnerProfile,
