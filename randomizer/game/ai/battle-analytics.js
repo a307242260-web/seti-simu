@@ -3204,6 +3204,89 @@
       .slice(0, 12);
   }
 
+  function isReadyTask(task = {}) {
+    return Boolean(task.completed || task.condition?.met);
+  }
+
+  function summarizeReadyTask(task = {}) {
+    const condition = task.condition || {};
+    return {
+      id: task.id || null,
+      type: condition.type || null,
+      resource: condition.resource || null,
+      targetCount: condition.targetCount ?? null,
+      currentCount: condition.currentCount ?? null,
+      missingCount: condition.missingCount ?? null,
+      rewardDirectScore: roundRatio(task.rewardDirectScore),
+      rewardValue: roundRatio(task.rewardValue),
+    };
+  }
+
+  function buildFinalReadyTaskCreditShortfallSamples(playerResults = [], options = {}) {
+    const samples = [];
+    for (const result of getLowPlayerResults(playerResults, options)) {
+      const resources = result.resources || {};
+      const credits = Math.max(0, numeric(resources.credits));
+      const handSize = Math.max(0, numeric(result.handSize ?? resources.handSize ?? result.handCards?.length));
+      const otherHandCardsForTrade = Math.max(0, handSize - 1);
+      const maxCardsForCreditTrades = Math.floor(otherHandCardsForTrade / 2);
+      const maxCreditsAfterCardsForCredit = credits + maxCardsForCreditTrades;
+      const cards = (result.handCards || [])
+        .map((card) => summarizeUnplayedCard(card, "hand"))
+        .filter(Boolean)
+        .map((card) => {
+          const readyTasks = (card.tasks || []).filter(isReadyTask);
+          const price = Math.max(0, numeric(card.price));
+          const creditsMissing = Math.max(0, price - credits);
+          const creditsMissingAfterCardsForCredit = Math.max(0, price - maxCreditsAfterCardsForCredit);
+          if (!readyTasks.length || creditsMissing <= 0 || creditsMissingAfterCardsForCredit <= 0) return null;
+          return {
+            ...card,
+            readyTasks: readyTasks.map(summarizeReadyTask),
+            readyTaskCount: readyTasks.length,
+            readyTaskDirectScore: roundRatio(readyTasks.reduce((total, task) => total + numeric(task.rewardDirectScore), 0)),
+            readyTaskRewardValue: roundRatio(readyTasks.reduce((total, task) => total + numeric(task.rewardValue), 0)),
+            credits,
+            creditsMissing: roundRatio(creditsMissing),
+            maxCardsForCreditTrades,
+            maxCreditsAfterCardsForCredit: roundRatio(maxCreditsAfterCardsForCredit),
+            creditsMissingAfterCardsForCredit: roundRatio(creditsMissingAfterCardsForCredit),
+          };
+        })
+        .filter(Boolean)
+        .sort((left, right) => (
+          numeric(right.readyTaskRewardValue) - numeric(left.readyTaskRewardValue)
+          || numeric(right.readyTaskDirectScore) - numeric(left.readyTaskDirectScore)
+          || numeric(left.creditsMissingAfterCardsForCredit) - numeric(right.creditsMissingAfterCardsForCredit)
+        ));
+      if (!cards.length) continue;
+      samples.push({
+        playerId: result.playerId || null,
+        playerLabel: result.playerLabel || result.playerId || "unknown",
+        finalScore: roundRatio(result.finalScore),
+        baseScore: roundRatio(result.baseScore),
+        tileScore: roundRatio(result.tileScore),
+        cardScore: roundRatio(result.cardScore),
+        completedTaskCount: numeric(result.completedTaskCount),
+        techCount: numeric(result.techCount),
+        finalMarkCount: result.finalMarkCount == null ? null : numeric(result.finalMarkCount),
+        resources: {
+          credits: roundRatio(credits),
+          energy: roundRatio(resources.energy),
+          publicity: roundRatio(resources.publicity),
+          handSize: roundRatio(handSize),
+          availableData: roundRatio(resources.availableData),
+        },
+        maxCardsForCreditTrades,
+        maxCreditsAfterCardsForCredit: roundRatio(maxCreditsAfterCardsForCredit),
+        cards: cards.slice(0, 6),
+      });
+    }
+    return samples
+      .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore))
+      .slice(0, 12);
+  }
+
   function getPlayerResultForProfile(profile = {}, resultById = new Map(), resultByLabel = new Map()) {
     const playerId = profile.playerId == null ? null : String(profile.playerId);
     const playerLabel = profile.playerLabel == null ? null : String(profile.playerLabel);
@@ -5032,6 +5115,13 @@
         message: "低分 D1 样本存在三色科技短板，应结合研究科技候选、科技牌和剩余主行动窗口验证闭环，不能只按颜色平衡硬改科技选择。",
       });
     }
+    if (numeric(opportunities.finalReadyTaskCreditShortfall) > 0) {
+      recommendations.push({
+        id: "inspect-final-ready-task-credit-shortfall",
+        priority: "medium",
+        message: "低分玩家终局手里有任务已满足的牌，但信用点即使靠弃其它手牌换信用也不够，应回溯前序信用点保留和低价值资源消耗，而不是只提高已满足任务牌出牌分。",
+      });
+    }
     if ((candidateStats.playCard?.availableNotSelected || 0) > (candidateStats.playCard?.selected || 0) * 2) {
       recommendations.push({
         id: "improve-card-value",
@@ -5236,6 +5326,7 @@
       lastCardPreserveEnergyMove: 0,
       negativeThirdFinalMark: 0,
       d1TechBalanceBottleneck: 0,
+      finalReadyTaskCreditShortfall: 0,
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
     };
@@ -5263,6 +5354,7 @@
     const highHandDrainEnergyTradeSamples = [];
     const lastCardPreserveEnergyMoveSamples = [];
     const negativeThirdFinalMarkSamples = [];
+    const finalReadyTaskCreditShortfallSamples = [];
     const scoreOpportunities = {
       selectedBelowBest: 0,
       totalGap: 0,
@@ -5524,6 +5616,9 @@
     opportunities.postPassThinHandNoFollowupMove = postPassQuickAnalysis.counts.postPassThinHandNoFollowupMove;
     const lowPlayerCandidateStats = buildLowPlayerCandidateStats(logs, playerResults, options);
     const lowUnplayedCardSamples = buildLowUnplayedCardSamples(playerResults, options);
+    const allFinalReadyTaskCreditShortfallSamples = buildFinalReadyTaskCreditShortfallSamples(playerResults, options);
+    finalReadyTaskCreditShortfallSamples.push(...allFinalReadyTaskCreditShortfallSamples.slice(0, 12));
+    opportunities.finalReadyTaskCreditShortfall = allFinalReadyTaskCreditShortfallSamples.length;
     const d1TechBalanceBottleneckSamples = buildD1TechBalanceBottleneckSamples(
       logs,
       playerResults,
@@ -5617,6 +5712,7 @@
       highScoreNearMissSamples,
       lowPlayerCandidateStats,
       lowUnplayedCardSamples,
+      finalReadyTaskCreditShortfallSamples,
       d1TechBalanceBottleneckSamples,
       sequenceWindowTurns: actionSequences.windowTurns,
       actionSequences,
@@ -5668,6 +5764,7 @@
     const mergedNegativeThirdFinalMarkSamples = [];
     const mergedLowPlayerCandidateStats = [];
     const mergedLowUnplayedCardSamples = [];
+    const mergedFinalReadyTaskCreditShortfallSamples = [];
     const mergedD1TechBalanceBottleneckSamples = [];
     const mergedHighScoreNearMissSamples = [];
     const mergedLowRoundActionTailSamples = [];
@@ -5845,6 +5942,17 @@
           ...analysis.lowUnplayedCardSamples.slice(0, 16 - mergedLowUnplayedCardSamples.length),
         );
       }
+      if (
+        mergedFinalReadyTaskCreditShortfallSamples.length < 16
+        && Array.isArray(analysis.finalReadyTaskCreditShortfallSamples)
+      ) {
+        mergedFinalReadyTaskCreditShortfallSamples.push(
+          ...analysis.finalReadyTaskCreditShortfallSamples.slice(
+            0,
+            16 - mergedFinalReadyTaskCreditShortfallSamples.length,
+          ),
+        );
+      }
       if (mergedD1TechBalanceBottleneckSamples.length < 16 && Array.isArray(analysis.d1TechBalanceBottleneckSamples)) {
         mergedD1TechBalanceBottleneckSamples.push(
           ...analysis.d1TechBalanceBottleneckSamples.slice(0, 16 - mergedD1TechBalanceBottleneckSamples.length),
@@ -5932,6 +6040,7 @@
       bugs: rankCounts(mergedBugCounts),
       winnerProfileDeltas,
       lowEngineThroughputSamples,
+      finalReadyTaskCreditShortfallSamples: mergedFinalReadyTaskCreditShortfallSamples,
       lowRoundActionTailSamples: sortLowRoundActionTailSamples(mergedLowRoundActionTailSamples),
     };
     const sequenceWindowTurns = normalizeSequenceWindowTurns(
@@ -6017,6 +6126,7 @@
       highScoreNearMissSamples,
       lowPlayerCandidateStats: mergedLowPlayerCandidateStats,
       lowUnplayedCardSamples: mergedLowUnplayedCardSamples,
+      finalReadyTaskCreditShortfallSamples: mergedFinalReadyTaskCreditShortfallSamples,
       d1TechBalanceBottleneckSamples,
       averageWinnerProfile,
       averageNonWinnerProfile,

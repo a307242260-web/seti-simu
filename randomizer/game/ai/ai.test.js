@@ -2399,6 +2399,100 @@ assert.equal(playCardNearMissSummary.lowPlayerCandidateStats[0].topMissedCandida
 assert.equal(playCardNearMissSummary.lowUnplayedCardSamples[0].cards[0].tasks[0].rewardDirectScore, 9);
 assert.equal(playCardNearMissSummary.lowUnplayedCardSamples[0].cards[1].endGameScoring, true);
 
+const finalReadyTaskCreditShortfallReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [],
+  playerResults: [
+    {
+      playerId: "player-blue",
+      playerLabel: "蓝色",
+      finalScore: 227,
+      baseScore: 143,
+      cardScore: 17,
+      resources: { score: 143, credits: 1, energy: 0, publicity: 3, availableData: 0, handSize: 3 },
+      completedTaskCount: 5,
+      techCount: 12,
+      handSize: 3,
+      handCards: [
+        {
+          id: "card-b117",
+          cardId: "b_117.webp",
+          label: "航天飞机",
+          price: 3,
+          typeCode: 2,
+          taskCount: 1,
+          remainingTaskCount: 1,
+          tasks: [{
+            id: "b117-orbit-land-count-task",
+            completed: false,
+            condition: { type: "orbitOrLandCount", targetCount: 5, currentCount: 6, missingCount: 0, met: true },
+            rewardDirectScore: 3,
+            rewardValue: 7.5,
+          }],
+          effectTypes: ["launch", "gain_resources"],
+        },
+        {
+          id: "card-b12",
+          cardId: "b_12.webp",
+          label: "超环面仪器",
+          price: 3,
+          typeCode: 2,
+          taskCount: 1,
+          remainingTaskCount: 1,
+          tasks: [{
+            id: "b12-blue-trace-task",
+            completed: false,
+            condition: { type: "traceCount", targetCount: 3, currentCount: 5, missingCount: 0, met: true },
+            rewardDirectScore: 3,
+            rewardValue: 4.5,
+          }],
+          effectTypes: ["card_research_tech"],
+        },
+        { id: "card-b68", cardId: "b_68.webp", label: "洛弗尔望远锐", price: 3, typeCode: 2, taskCount: 0, effectTypes: [] },
+      ],
+      reservedCards: [],
+    },
+    {
+      playerId: "player-white",
+      playerLabel: "白色",
+      finalScore: 228,
+      resources: { score: 140, credits: 2, energy: 0, publicity: 1, availableData: 0, handSize: 3 },
+      handSize: 3,
+      handCards: [
+        {
+          id: "card-ready-recoverable",
+          cardId: "b_135.webp",
+          label: "韦断特v克综合孔径射电|远锐",
+          price: 3,
+          typeCode: 2,
+          taskCount: 1,
+          tasks: [{
+            id: "b135-same-color-sectors-task",
+            completed: true,
+            condition: { type: "completedSameSectorColor", targetCount: 2, currentCount: 2, missingCount: 0, met: true },
+            rewardDirectScore: 9,
+            rewardValue: 9,
+          }],
+          effectTypes: ["card_research_tech"],
+        },
+        { id: "card-filler-1", cardId: "b_2.webp", label: "高级导航系统", price: 1, typeCode: 1, taskCount: 0 },
+        { id: "card-filler-2", cardId: "dlc_28.png", label: "重组", price: 1, typeCode: 2, taskCount: 0 },
+      ],
+      reservedCards: [],
+    },
+  ],
+};
+const finalReadyTaskCreditShortfallAnalysis = analytics.analyzeBattleReport(finalReadyTaskCreditShortfallReport);
+assert.equal(finalReadyTaskCreditShortfallAnalysis.opportunities.finalReadyTaskCreditShortfall, 1);
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskCreditShortfallSamples[0].playerId, "player-blue");
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskCreditShortfallSamples[0].cards.length, 2);
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskCreditShortfallSamples[0].cards[0].cardId, "b_117.webp");
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskCreditShortfallSamples[0].cards[0].creditsMissingAfterCardsForCredit, 1);
+assert(finalReadyTaskCreditShortfallAnalysis.recommendations.some((entry) => entry.id === "inspect-final-ready-task-credit-shortfall"));
+const finalReadyTaskCreditShortfallSummary = analytics.summarizeBattleReports([finalReadyTaskCreditShortfallReport]);
+assert.equal(finalReadyTaskCreditShortfallSummary.finalReadyTaskCreditShortfallSamples[0].maxCreditsAfterCardsForCredit, 2);
+assert.equal(finalReadyTaskCreditShortfallSummary.opportunities.finalReadyTaskCreditShortfall, 1);
+
 const b2ScanNearMissReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{
