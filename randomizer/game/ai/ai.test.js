@@ -1167,17 +1167,17 @@ const paceReport = {
   playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 120 }],
 };
 const paceAnalysis = analytics.analyzeBattleReport(paceReport);
-assert.equal(paceAnalysis.playerProfiles[0].metrics.mainActionCount, 2);
-assert.equal(paceAnalysis.playerProfiles[0].metrics.quickStepCount, 3);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.mainActionCount, 1);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.quickStepCount, 4);
 assert.equal(paceAnalysis.playerProfiles[0].metrics.resourceQuickStepCount, 3);
 assert.equal(paceAnalysis.playerProfiles[0].metrics.idleTurnCount, 1);
-assert.equal(paceAnalysis.playerProfiles[0].metrics.quickToMainRatio, 1.5);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.quickToMainRatio, 4);
 assert.equal(paceAnalysis.playerProfiles[0].metrics.productiveActionRatio, 0.833);
 assert.equal(paceAnalysis.playerProfiles[0].metrics.idleTurnRatio, 0.167);
-assert.equal(paceAnalysis.paceSummary.averageQuickStepCount, 3);
+assert.equal(paceAnalysis.paceSummary.averageQuickStepCount, 4);
 const paceSummary = analytics.summarizeBattleReports([paceReport]);
-assert.equal(paceSummary.paceSummary.averageMainActionCount, 2);
-assert.equal(paceSummary.paceSummary.lowTail.quickStepCount, 3);
+assert.equal(paceSummary.paceSummary.averageMainActionCount, 1);
+assert.equal(paceSummary.paceSummary.lowTail.quickStepCount, 4);
 
 function appendRepeatedTurnActions(logs, playerId, playerLabel, counts) {
   for (const [actionId, count] of Object.entries(counts || {})) {

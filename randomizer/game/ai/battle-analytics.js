@@ -14,8 +14,8 @@
   const BASIC_MAIN_ACTIONS = Object.freeze(["launch", "orbit", "land", "scan", "analyze"]);
   const ENGINE_ACTIONS = Object.freeze(["playCard", "researchTech"]);
   const QUICK_ACTIONS = Object.freeze(["move", "placeData"]);
-  const PACE_QUICK_ACTIONS = Object.freeze(["move", "placeData", "cardCorner", "quickTrade"]);
-  const PACE_MAIN_ACTIONS = Object.freeze(["industry", ...BASIC_MAIN_ACTIONS, ...ENGINE_ACTIONS]);
+  const PACE_QUICK_ACTIONS = Object.freeze(["move", "placeData", "cardCorner", "quickTrade", "industry"]);
+  const PACE_MAIN_ACTIONS = Object.freeze([...BASIC_MAIN_ACTIONS, ...ENGINE_ACTIONS]);
   const PASS_ACTIONS = Object.freeze(["pass", "end-turn"]);
   const LOW_PLAYER_CANDIDATE_ACTIONS = Object.freeze([
     "playCard",
