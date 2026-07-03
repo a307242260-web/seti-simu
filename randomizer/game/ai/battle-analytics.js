@@ -17,6 +17,21 @@
   const PACE_QUICK_ACTIONS = Object.freeze(["move", "placeData", "cardCorner", "quickTrade"]);
   const PACE_MAIN_ACTIONS = Object.freeze(["industry", ...BASIC_MAIN_ACTIONS, ...ENGINE_ACTIONS]);
   const PASS_ACTIONS = Object.freeze(["pass", "end-turn"]);
+  const LOW_PLAYER_CANDIDATE_ACTIONS = Object.freeze([
+    "playCard",
+    "researchTech",
+    "scan",
+    "analyze",
+    "placeData",
+    "cardCorner",
+    "quickTrade",
+    "move",
+    "orbit",
+    "land",
+    "launch",
+    "pass",
+    "end-turn",
+  ]);
   const DEFAULT_SEQUENCE_WINDOW_TURNS = 6;
   const KEY_SEQUENCE_DECISIONS = Object.freeze([
     "play-card",
@@ -883,6 +898,22 @@
       .slice(0, limit);
   }
 
+  function buildTopMissedCandidates(candidateStats = {}, limit = 8) {
+    return Object.entries(candidateStats || {})
+      .map(([actionId, stats]) => ({
+        actionId,
+        availableNotSelected: numeric(stats.availableNotSelected),
+        available: numeric(stats.available),
+        selected: numeric(stats.selected),
+      }))
+      .filter((entry) => entry.availableNotSelected > 0)
+      .sort((left, right) => (
+        right.availableNotSelected - left.availableNotSelected
+        || left.actionId.localeCompare(right.actionId)
+      ))
+      .slice(0, limit);
+  }
+
   function mergeCandidateScoreStats(target, source = {}) {
     for (const [actionId, sourceStat] of Object.entries(source || {})) {
       const stat = getCandidateScoreStat(target, actionId);
@@ -1509,6 +1540,175 @@
       .slice(0, 8);
 
     return samples;
+  }
+
+  function matchesPlayerResult(entry = {}, result = {}) {
+    const resultId = result.playerId == null ? null : String(result.playerId);
+    const resultLabel = result.playerLabel == null ? null : String(result.playerLabel);
+    const entryId = entry.playerId == null ? null : String(entry.playerId);
+    const entryLabel = entry.playerLabel == null ? null : String(entry.playerLabel);
+    return Boolean(
+      (resultId && entryId && resultId === entryId)
+      || (resultLabel && entryLabel && resultLabel === entryLabel)
+    );
+  }
+
+  function getBestAvailableCandidate(candidates = []) {
+    return (candidates || [])
+      .filter(isCandidateAvailable)
+      .map((candidate) => ({
+        candidate,
+        score: getCandidatePolicyScore(candidate),
+        actionId: getCandidateId(candidate),
+      }))
+      .filter((entry) => getFiniteScore(entry.score) != null)
+      .sort((left, right) => right.score - left.score || left.actionId.localeCompare(right.actionId))[0]
+      || null;
+  }
+
+  function buildCandidateGapSample(entry, candidates = [], scoreGap = {}) {
+    const bestEntry = getBestAvailableCandidate(candidates);
+    const topCandidates = [...(candidates || [])]
+      .filter(isCandidateAvailable)
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ))
+      .slice(0, 5)
+      .map(summarizeOpportunityCandidate);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedCandidate(entry, candidates) || {}),
+      bestCandidate: bestEntry ? summarizeOpportunityCandidate(bestEntry.candidate) : null,
+      selectedActionId: scoreGap.selectedActionId || null,
+      bestActionId: scoreGap.bestActionId || null,
+      selectedScore: roundRatio(scoreGap.selectedScore),
+      bestScore: roundRatio(scoreGap.bestScore),
+      gap: roundRatio(scoreGap.gap),
+      topCandidates,
+    };
+  }
+
+  function buildFocusedCandidateRows(candidateStats = {}, candidateScoreStats = {}) {
+    const finalizedScoreStats = finalizeCandidateScoreStats(candidateScoreStats);
+    return LOW_PLAYER_CANDIDATE_ACTIONS
+      .map((actionId) => {
+        const stats = candidateStats[actionId] || {};
+        const scoreStats = finalizedScoreStats[actionId] || {};
+        const available = numeric(stats.available);
+        const availableNotSelected = numeric(stats.availableNotSelected);
+        const selected = numeric(stats.selected);
+        if (!available && !selected && !numeric(stats.offered)) return null;
+        return {
+          actionId,
+          offered: numeric(stats.offered),
+          available,
+          selected,
+          availableNotSelected,
+          availableNotSelectedRate: available ? roundRatio(availableNotSelected / available) : 0,
+          bestAvailable: numeric(scoreStats.bestAvailable),
+          missedAsBest: numeric(scoreStats.missedAsBest),
+          averageAvailableScore: roundRatio(scoreStats.averageAvailableScore),
+          averageSelectedScore: roundRatio(scoreStats.averageSelectedScore),
+          averageBestAvailableScore: roundRatio(scoreStats.averageBestAvailableScore),
+          averageMissedGap: roundRatio(scoreStats.averageMissedGap),
+          maxMissedGap: roundRatio(scoreStats.maxMissedGap),
+        };
+      })
+      .filter(Boolean);
+  }
+
+  function buildLowPlayerCandidateStats(logs = [], playerResults = [], options = {}) {
+    const results = (playerResults || []).filter(Boolean);
+    if (!results.length) return [];
+    const averageFinalScore = results.reduce((total, result) => total + numeric(result.finalScore), 0) / results.length;
+    const lowCutoff = Math.max(230, averageFinalScore - 25);
+    const lowResults = results
+      .filter((result) => (
+        numeric(result.finalScore) <= lowCutoff
+        || (Number.isFinite(Number(result.finalMarkCount)) && numeric(result.finalMarkCount) < 3)
+      ))
+      .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore) || String(left.playerLabel || "").localeCompare(String(right.playerLabel || "")))
+      .slice(0, Math.max(1, Math.round(numeric(options.lowPlayerCandidateLimit) || 6)));
+
+    return lowResults.map((result) => {
+      const candidateStats = {};
+      const candidateScoreStats = {};
+      const actionCounts = {};
+      const scoreOpportunities = {
+        selectedBelowBest: 0,
+        totalGap: 0,
+        maxGap: 0,
+      };
+      const topGapSamples = [];
+      const turnActionLogs = (logs || []).filter((entry) => (
+        entry?.type === "turn-action"
+        && matchesPlayerResult(entry, result)
+      ));
+
+      for (const entry of turnActionLogs) {
+        const action = getSelectedAction(entry);
+        const actionId = getSelectedActionId(entry);
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        increment(actionCounts, actionId);
+        const scoreGap = recordTurnCandidateScores(candidateScoreStats, candidates, action);
+        if (scoreGap.gap > 0) {
+          scoreOpportunities.selectedBelowBest += 1;
+          scoreOpportunities.totalGap += scoreGap.gap;
+          scoreOpportunities.maxGap = Math.max(scoreOpportunities.maxGap, scoreGap.gap);
+          if (topGapSamples.length < 8) {
+            topGapSamples.push(buildCandidateGapSample(entry, candidates, scoreGap));
+          }
+        }
+
+        let matchedSelectedCandidate = false;
+        for (const candidate of candidates) {
+          const candidateId = getCandidateId(candidate);
+          const stats = getCandidateStats(candidateStats, candidateId);
+          stats.offered += 1;
+          if (isCandidateAvailable(candidate)) stats.available += 1;
+          if (candidateMatchesAction(candidate, action)) {
+            stats.selected += 1;
+            matchedSelectedCandidate = true;
+          } else if (isCandidateAvailable(candidate)) {
+            stats.availableNotSelected += 1;
+          }
+        }
+        if (!matchedSelectedCandidate) {
+          getCandidateStats(candidateStats, actionId).selected += 1;
+        }
+      }
+
+      return {
+        playerId: result.playerId || null,
+        playerLabel: result.playerLabel || result.playerId || "unknown",
+        finalScore: roundRatio(result.finalScore),
+        baseScore: roundRatio(result.baseScore),
+        tileScore: roundRatio(result.tileScore),
+        cardScore: roundRatio(result.cardScore),
+        finalMarkCount: numeric(result.finalMarkCount),
+        completedTaskCount: numeric(result.completedTaskCount),
+        techCount: numeric(result.techCount),
+        turnActionCount: turnActionLogs.length,
+        actionCounts,
+        focusedCandidateRows: buildFocusedCandidateRows(candidateStats, candidateScoreStats),
+        topMissedCandidates: buildTopMissedCandidates(candidateStats),
+        topScoreGaps: buildTopScoreGaps(candidateScoreStats),
+        scoreOpportunities: {
+          selectedBelowBest: scoreOpportunities.selectedBelowBest,
+          totalGap: roundRatio(scoreOpportunities.totalGap),
+          maxGap: roundRatio(scoreOpportunities.maxGap),
+          averageGap: scoreOpportunities.selectedBelowBest
+            ? roundRatio(scoreOpportunities.totalGap / scoreOpportunities.selectedBelowBest)
+            : 0,
+        },
+        topGapSamples,
+      };
+    });
   }
 
   function finalizePlayerProfile(profile) {
@@ -2677,6 +2877,7 @@
     const playerProfiles = buildPlayerProfiles(logs, playerResults);
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
+    const lowPlayerCandidateStats = buildLowPlayerCandidateStats(logs, playerResults, options);
     const actionSequences = buildActionSequences(logs, playerResults, options);
     const scoreBuckets = buildScoreBuckets(playerResults, logs);
     const analysis = {
@@ -2691,11 +2892,7 @@
       candidateStats,
       candidateScoreStats: finalizeCandidateScoreStats(candidateScoreStats),
       topScoreGaps: buildTopScoreGaps(candidateScoreStats),
-      topMissedCandidates: Object.entries(candidateStats)
-        .map(([actionId, stats]) => ({ actionId, availableNotSelected: stats.availableNotSelected, available: stats.available, selected: stats.selected }))
-        .filter((entry) => entry.availableNotSelected > 0)
-        .sort((left, right) => right.availableNotSelected - left.availableNotSelected || left.actionId.localeCompare(right.actionId))
-        .slice(0, 8),
+      topMissedCandidates: buildTopMissedCandidates(candidateStats),
       effectCounts,
       topEffects: rankCounts(effectCounts),
       playCards: rankCounts(playCards),
@@ -2747,6 +2944,7 @@
       winner: playerResults[0] || null,
       paceSummary: buildPaceSummary(playerProfiles),
       lowEngineThroughputSamples,
+      lowPlayerCandidateStats,
       sequenceWindowTurns: actionSequences.windowTurns,
       actionSequences,
       scoreBuckets,
@@ -2781,6 +2979,7 @@
     const mergedHighHandDrainEnergyTradeSamples = [];
     const mergedLastCardPreserveEnergyMoveSamples = [];
     const mergedNegativeThirdFinalMarkSamples = [];
+    const mergedLowPlayerCandidateStats = [];
     const mergedMovePayment = {
       count: 0,
       requiredMovePoints: 0,
@@ -2887,6 +3086,11 @@
           ...analysis.negativeThirdFinalMarkSamples.slice(0, 12 - mergedNegativeThirdFinalMarkSamples.length),
         );
       }
+      if (mergedLowPlayerCandidateStats.length < 16 && Array.isArray(analysis.lowPlayerCandidateStats)) {
+        mergedLowPlayerCandidateStats.push(
+          ...analysis.lowPlayerCandidateStats.slice(0, 16 - mergedLowPlayerCandidateStats.length),
+        );
+      }
       mergedScoreOpportunities.selectedBelowBest += numeric(analysis.scoreOpportunities?.selectedBelowBest);
       mergedScoreOpportunities.totalGap += numeric(analysis.scoreOpportunities?.totalGap);
       mergedScoreOpportunities.maxGap = Math.max(mergedScoreOpportunities.maxGap, numeric(analysis.scoreOpportunities?.maxGap));
@@ -2921,16 +3125,7 @@
     for (const [category, count] of Object.entries(mergedActionCategoryCounts)) {
       actionCategoryRatios[category] = turnActionCount ? roundRatio(count / turnActionCount) : 0;
     }
-    const topMissedCandidates = Object.entries(mergedCandidateStats)
-      .map(([actionId, stats]) => ({
-        actionId,
-        availableNotSelected: stats.availableNotSelected,
-        available: stats.available,
-        selected: stats.selected,
-      }))
-      .filter((entry) => entry.availableNotSelected > 0)
-      .sort((left, right) => right.availableNotSelected - left.availableNotSelected || left.actionId.localeCompare(right.actionId))
-      .slice(0, 8);
+    const topMissedCandidates = buildTopMissedCandidates(mergedCandidateStats);
     const averageWinnerProfile = averageProfileMetrics(winnerProfiles);
     const averageNonWinnerProfile = averageProfileMetrics(nonWinnerProfiles);
     const winnerProfileDeltas = diffProfileMetrics(averageWinnerProfile, averageNonWinnerProfile);
@@ -3013,6 +3208,7 @@
       winnerCounts,
       paceSummary,
       lowEngineThroughputSamples,
+      lowPlayerCandidateStats: mergedLowPlayerCandidateStats,
       averageWinnerProfile,
       averageNonWinnerProfile,
       winnerProfileDeltas,

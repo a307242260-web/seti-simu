@@ -1511,8 +1511,14 @@ assert.equal(playCardNearMissAnalysis.opportunities.playCardNearMiss, 1);
 assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].bestCard.cardId, "b_135.webp");
 assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].policyScoreGap, 8);
 assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].bestCard.valueBreakdown.playCardConversionPressure, 9);
+assert.equal(playCardNearMissAnalysis.lowPlayerCandidateStats[0].playerId, "player-white");
+assert.equal(
+  playCardNearMissAnalysis.lowPlayerCandidateStats[0].focusedCandidateRows.find((row) => row.actionId === "playCard").availableNotSelected,
+  1,
+);
 const playCardNearMissSummary = analytics.summarizeBattleReports([playCardNearMissReport]);
 assert.equal(playCardNearMissSummary.playCardNearMissSamples[0].bestCard.cardId, "b_135.webp");
+assert.equal(playCardNearMissSummary.lowPlayerCandidateStats[0].topMissedCandidates[0].actionId, "playCard");
 
 const mainUnlockLowConcretePlayReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
