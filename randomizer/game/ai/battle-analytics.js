@@ -517,6 +517,47 @@
     };
   }
 
+  function isHighHandDrainEnergyTrade(entry) {
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "quickTrade") return false;
+    if (action?.tradeId !== "cards-for-energy") return false;
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    return numeric(breakdown.cardsForEnergyHandDrainPenalty) >= 8;
+  }
+
+  function buildHighHandDrainEnergyTradeSample(entry) {
+    const action = getSelectedAction(entry) || {};
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    const planetPlan = breakdown.planetCashoutRecoveryPlan || null;
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(action),
+      handDrainPenalty: roundRatio(breakdown.cardsForEnergyHandDrainPenalty),
+      currentScore: roundRatio(breakdown.currentScore),
+      finalMarkCount: numeric(breakdown.finalMarkCount),
+      canReachAnalyze: Boolean(breakdown.canReachAnalyze),
+      planetCashoutRecoveryScore: roundRatio(breakdown.planetCashoutRecoveryScore),
+      launchMoveRecoveryScore: roundRatio(breakdown.launchMoveRecoveryScore),
+      planetPlan: planetPlan
+        ? {
+          kind: planetPlan.kind || null,
+          planetId: planetPlan.planetId || null,
+          targetEnergy: roundRatio(planetPlan.targetEnergy),
+          directScore: roundRatio(planetPlan.directScore),
+          rewardValue: roundRatio(planetPlan.rewardValue),
+          energyAfterTrade: roundRatio(planetPlan.energyAfterTrade),
+          afterTradeGap: roundRatio(planetPlan.afterTradeGap),
+          reachesNextThreshold: Boolean(planetPlan.reachesNextThreshold),
+          score: roundRatio(planetPlan.score),
+        }
+        : null,
+    };
+  }
+
   function getPlayerKey(entry) {
     return entry?.playerId || entry?.playerLabel || "unknown";
   }
@@ -2151,6 +2192,7 @@
       researchTechOverCompoundTechCard: 0,
       mainUnlockLowConcretePlay: 0,
       nonPositivePublicRefill: 0,
+      highHandDrainEnergyTrade: 0,
       negativeThirdFinalMark: 0,
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
@@ -2163,6 +2205,7 @@
     const researchTechCompoundCardSamples = [];
     const mainUnlockLowConcretePlaySamples = [];
     const nonPositivePublicRefillSamples = [];
+    const highHandDrainEnergyTradeSamples = [];
     const negativeThirdFinalMarkSamples = [];
     const scoreOpportunities = {
       selectedBelowBest: 0,
@@ -2256,6 +2299,12 @@
           opportunities.mainUnlockLowConcretePlay += 1;
           if (mainUnlockLowConcretePlaySamples.length < 12) {
             mainUnlockLowConcretePlaySamples.push(buildMainUnlockLowConcretePlaySample(entry));
+          }
+        }
+        if (isHighHandDrainEnergyTrade(entry)) {
+          opportunities.highHandDrainEnergyTrade += 1;
+          if (highHandDrainEnergyTradeSamples.length < 12) {
+            highHandDrainEnergyTradeSamples.push(buildHighHandDrainEnergyTradeSample(entry));
           }
         }
         if (candidates.length && action && candidates.some((candidate) => candidateMatchesAction(candidate, action) && !isCandidateAvailable(candidate))) {
@@ -2384,6 +2433,7 @@
       researchTechCompoundCardSamples,
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
+      highHandDrainEnergyTradeSamples,
       negativeThirdFinalMarkSamples,
       scoreOpportunities: {
         selectedBelowBest: scoreOpportunities.selectedBelowBest,
@@ -2430,6 +2480,7 @@
     const mergedResearchTechCompoundCardSamples = [];
     const mergedMainUnlockLowConcretePlaySamples = [];
     const mergedNonPositivePublicRefillSamples = [];
+    const mergedHighHandDrainEnergyTradeSamples = [];
     const mergedNegativeThirdFinalMarkSamples = [];
     const mergedMovePayment = {
       count: 0,
@@ -2515,6 +2566,11 @@
       if (mergedNonPositivePublicRefillSamples.length < 12 && Array.isArray(analysis.nonPositivePublicRefillSamples)) {
         mergedNonPositivePublicRefillSamples.push(
           ...analysis.nonPositivePublicRefillSamples.slice(0, 12 - mergedNonPositivePublicRefillSamples.length),
+        );
+      }
+      if (mergedHighHandDrainEnergyTradeSamples.length < 12 && Array.isArray(analysis.highHandDrainEnergyTradeSamples)) {
+        mergedHighHandDrainEnergyTradeSamples.push(
+          ...analysis.highHandDrainEnergyTradeSamples.slice(0, 12 - mergedHighHandDrainEnergyTradeSamples.length),
         );
       }
       if (mergedNegativeThirdFinalMarkSamples.length < 12 && Array.isArray(analysis.negativeThirdFinalMarkSamples)) {
@@ -2623,6 +2679,7 @@
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
+      highHandDrainEnergyTradeSamples: mergedHighHandDrainEnergyTradeSamples,
       negativeThirdFinalMarkSamples: mergedNegativeThirdFinalMarkSamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,

@@ -1179,6 +1179,53 @@ const paceSummary = analytics.summarizeBattleReports([paceReport]);
 assert.equal(paceSummary.paceSummary.averageMainActionCount, 2);
 assert.equal(paceSummary.paceSummary.lowTail.quickStepCount, 3);
 
+const highHandDrainEnergyTradeReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 4,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 96, credits: 0, energy: 1, publicity: 4, handSize: 3 },
+    details: {
+      action: {
+        id: "quickTrade",
+        kind: "quick",
+        tradeId: "cards-for-energy",
+        score: 15.4,
+        valueBreakdown: {
+          cardsForEnergyHandDrainPenalty: 11.5,
+          currentScore: 96,
+          finalMarkCount: 3,
+          canReachAnalyze: false,
+          planetCashoutRecoveryScore: 32,
+          launchMoveRecoveryScore: 0,
+          planetCashoutRecoveryPlan: {
+            kind: "land",
+            planetId: "mars",
+            targetEnergy: 2,
+            directScore: 6,
+            rewardValue: 24,
+            energyAfterTrade: 2,
+            afterTradeGap: 0,
+            reachesNextThreshold: false,
+            score: 32,
+          },
+        },
+      },
+      candidates: [],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 180 }],
+};
+const highHandDrainAnalysis = analytics.analyzeBattleReport(highHandDrainEnergyTradeReport);
+assert.equal(highHandDrainAnalysis.opportunities.highHandDrainEnergyTrade, 1);
+assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].handDrainPenalty, 11.5);
+assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].planetPlan.planetId, "mars");
+const highHandDrainSummary = analytics.summarizeBattleReports([highHandDrainEnergyTradeReport]);
+assert.equal(highHandDrainSummary.highHandDrainEnergyTradeSamples[0].planetPlan.score, 32);
+
 const negativeCardCornerGraphLiftReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{
