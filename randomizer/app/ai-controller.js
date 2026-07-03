@@ -1786,6 +1786,13 @@
       };
     }
 
+    function isAiPassReservePreviewIncomeCandidate(card, preview = null) {
+      if (!card || !preview?.active || !Array.isArray(preview.incomeCandidates)) return false;
+      const selectedIds = [card.cardId, card.id].filter(Boolean).map(String);
+      if (!selectedIds.length) return false;
+      return preview.incomeCandidates.some((entry) => selectedIds.includes(String(entry?.cardId || "")));
+    }
+
     function runAiPassReserveDecision() {
       if (!state.pendingPassReserveSelection) return null;
       const player = getPlayerById(state.pendingPassReserveSelection.playerId) || getCurrentPlayer();
@@ -1824,6 +1831,7 @@
         passReserveResourcePressureMiss: Boolean(
           !passReserveResourcePressure.active
           && passReserveResourcePressurePreview.active
+          && !isAiPassReservePreviewIncomeCandidate(card, passReserveResourcePressurePreview)
         ),
         selectedScore: ranked.find((entry) => entry.card === card)?.score ?? null,
         candidates: ranked.slice(0, 5).map((entry) => ({

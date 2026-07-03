@@ -4676,6 +4676,13 @@
     };
   }
 
+  function isSelectedPassReserveIncomeCandidate(details = {}, preview = {}) {
+    const selected = summarizePassReserveCard(details.card || {});
+    const selectedIds = [selected?.cardId].filter(Boolean).map(String);
+    if (!selectedIds.length || !Array.isArray(preview?.incomeCandidates)) return false;
+    return preview.incomeCandidates.some((entry) => selectedIds.includes(String(entry?.cardId || "")));
+  }
+
   function sortPassReserveResourcePressureMissSamples(samples = [], limit = 12) {
     return [...(samples || [])]
       .sort((left, right) => (
@@ -4696,6 +4703,7 @@
         const actual = details.passReserveResourcePressure || {};
         const preview = details.passReserveResourcePressurePreview || null;
         if (!details.passReserveResourcePressureMiss || actual.active || !preview?.active) return null;
+        if (isSelectedPassReserveIncomeCandidate(details, preview)) return null;
         const result = resultById.get(entry.playerId) || {};
         return {
           playerId: entry.playerId || null,

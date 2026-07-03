@@ -1136,6 +1136,38 @@ assert.equal(sampleBattleSummary.openingPlanNearMissSamples[0].playerLabel, "白
 assert.equal(sampleBattleSummary.openingPlanConversionSamples[0].playerLabel, "白色");
 assert.equal(sampleBattleSummary.passReserveResourcePressureMissSamples[0].playerLabel, "蓝色");
 
+const selectedIncomePassReserveReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "pass-reserve",
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    roundNumber: 1,
+    turnNumber: 3,
+    rawTurnNumber: 7,
+    playerResources: { score: 18, credits: 0, energy: 0, handSize: 1 },
+    details: {
+      card: { id: "b_2.webp", cardId: "b_2.webp", cardName: "补能量牌", price: 1, cardTypeCode: 1 },
+      passReserveResourcePressure: { active: false, reasons: [], score: 0 },
+      passReserveResourcePressurePreview: {
+        active: true,
+        reasons: ["energy", "hand"],
+        score: 2.5,
+        incomeCandidates: [
+          { cardId: "b_2.webp", cardLabel: "补能量牌", incomeGain: { energy: 1 } },
+        ],
+      },
+      passReserveResourcePressureMiss: true,
+      selectedScore: null,
+      candidates: [],
+    },
+  }],
+  playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 19 }],
+};
+const selectedIncomePassReserveAnalysis = analytics.analyzeBattleReport(selectedIncomePassReserveReport);
+assert.equal(selectedIncomePassReserveAnalysis.opportunities.passReserveResourcePressureMiss, 0);
+assert.equal(selectedIncomePassReserveAnalysis.passReserveResourcePressureMissSamples.length, 0);
+
 const negativePassOpportunityReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{
