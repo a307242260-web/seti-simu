@@ -49,6 +49,7 @@ assert.equal(catalog.hasImplementedActiveAbility("层云核心"), true);
 assert.equal(catalog.hasImplementedActiveAbility("未来跨度研究所"), true);
 assert.equal(catalog.hasImplementedActiveAbility("作弊实验室"), false);
 assert.equal(catalog.hasImplementedActiveAbility("寰宇超动力"), true);
+assert.equal(catalog.hasImplementedActiveAbility("宇宙大战略集团"), true);
 assert.equal(catalog.hasImplementedActiveAbility("原教旨主义"), true);
 assert.equal(catalog.hasImplementedActiveAbility("星际海盗"), true);
 assert.equal(placement.hasIndustryActionMarker({ label: "原教旨主义" }), true);
@@ -130,6 +131,19 @@ const yellowPlace = state.placeStrategyPassiveSlot(strategyPlayer, "yellow");
 assert.equal(yellowPlace.ok, true);
 assert.equal(state.isStrategyPassiveSlotMarked(strategyPlayer, "yellow"), true);
 assert.equal(state.placeStrategyPassiveSlot(strategyPlayer, "yellow").ok, false);
+
+const grandStrategyPlayer = {
+  id: "grand-strategy",
+  initialSelection: { industry: { label: "宇宙大战略集团" } },
+};
+assert.equal(passives.shouldShowStrategyPassiveMarkers(grandStrategyPlayer), true);
+assert.equal(passives.hasGrandStrategyRoundStart(grandStrategyPlayer), true);
+assert.equal(placement.hasIndustryActionMarker({ label: "宇宙大战略集团" }), true);
+assert.equal(placement.getIndustryActionMarkerLayout("宇宙大战略集团").percentY, 77.2);
+assert.equal(placement.hasStrategyPassiveMarkerSlots("宇宙大战略集团"), true);
+const grandStrategyFlow = abilities.buildActiveAbilityFlow(grandStrategyPlayer, "宇宙大战略集团", 2);
+assert.equal(grandStrategyFlow.ok, true);
+assert.equal(grandStrategyFlow.flowType, "strategy_pick");
 
 const missionPlayer = {
   id: "white",

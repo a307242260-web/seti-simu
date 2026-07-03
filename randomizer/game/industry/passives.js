@@ -30,6 +30,7 @@
   const CHEAT_LAB_ROUND_START_PASSIVE_ID = "cheat_lab_round_start";
   const HUANYU_SUPERDRIVE_ROUND_START_PASSIVE_ID = "huanyu_superdrive_round_start";
   const HUANYU_SUPERDRIVE_PASS_LAUNCH_PASSIVE_ID = "huanyu_superdrive_pass_launch";
+  const GRAND_STRATEGY_ROUND_START_PASSIVE_ID = "grand_strategy_round_start";
   const FUNDAMENTALISM_ROUND_START_INCOME_PASSIVE_ID = "fundamentalism_round_start_income";
   const FUNDAMENTALISM_DISABLE_PLAY_CARD_PASSIVE_ID = "fundamentalism_disable_play_card_action";
   const FUNDAMENTALISM_DOUBLE_DISCARD_CORNER_PASSIVE_ID = "fundamentalism_double_discard_corner";
@@ -55,6 +56,10 @@
 
   function hasCheatLabRoundStart(player) {
     return playerHasPassive(player, CHEAT_LAB_ROUND_START_PASSIVE_ID);
+  }
+
+  function hasGrandStrategyRoundStart(player) {
+    return playerHasPassive(player, GRAND_STRATEGY_ROUND_START_PASSIVE_ID);
   }
 
   function hasFundamentalismRoundStartIncome(player) {
@@ -268,10 +273,12 @@
     ALIEN_LAB_SCAN_COST,
     HUANYU_ROCKET_LIMIT_BONUS,
     PIRATES_RAID_PASSIVE_ID,
+    GRAND_STRATEGY_ROUND_START_PASSIVE_ID,
     getRocketLimitBonus,
     hasHuanyuSuperdriveRoundStart,
     shouldLaunchAfterPassWithHuanyuSuperdrive,
     hasCheatLabRoundStart,
+    hasGrandStrategyRoundStart,
     hasFundamentalismRoundStartIncome,
     blocksStandardPlayCardAction,
     shouldDoubleDiscardCornerRewards,

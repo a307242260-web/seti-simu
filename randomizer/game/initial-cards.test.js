@@ -131,6 +131,29 @@ function initialCard(number) {
 {
   const context = createContext();
   const player = currentPlayer(context);
+  player.aiDifficulty = "laughable";
+
+  const result = initialCards.resolveIndustryEffect(context, player, { label: "宇宙大战略集团" });
+
+  assert.equal(result.ok, true);
+  assert.equal(player.resources.publicity, 5);
+  assert.equal(player.resources.credits, 4);
+  assert.equal(player.resources.energy, 3);
+  assert.equal(player.resources.handSize, 2);
+  assert.equal(result.incomeIncreaseCount, 3);
+  assert.deepEqual(player.income, {
+    credits: 2,
+    energy: 1,
+    handSize: 1,
+    publicity: 0,
+    availableData: 0,
+    additionalPublicScan: 0,
+  });
+}
+
+{
+  const context = createContext();
+  const player = currentPlayer(context);
   player.aiDifficulty = "weak_start";
 
   const result = initialCards.resolveIndustryEffect(context, player, { label: "作弊实验室" });
@@ -141,6 +164,21 @@ function initialCard(number) {
   assert.equal(player.resources.energy, 2);
   assert.equal(player.resources.handSize, 5);
   assert.equal(result.incomeIncreaseCount, 4);
+}
+
+{
+  const context = createContext();
+  const player = currentPlayer(context);
+  player.aiDifficulty = "weak_start";
+
+  const result = initialCards.resolveIndustryEffect(context, player, { label: "宇宙大战略集团" });
+
+  assert.equal(result.ok, true);
+  assert.equal(player.resources.publicity, 4);
+  assert.equal(player.resources.credits, 4);
+  assert.equal(player.resources.energy, 2);
+  assert.equal(player.resources.handSize, 2);
+  assert.equal(result.incomeIncreaseCount, 3);
 }
 
 {

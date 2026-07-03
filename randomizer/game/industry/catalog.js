@@ -83,6 +83,11 @@
       activeAbilityId: "strategy_pick_card",
       passiveIds: Object.freeze(["strategy_passive_reward_slots"]),
     }),
+    "宇宙大战略集团": Object.freeze({
+      label: "宇宙大战略集团",
+      activeAbilityId: "strategy_pick_card",
+      passiveIds: Object.freeze(["strategy_passive_reward_slots", "grand_strategy_round_start"]),
+    }),
     "原教旨主义": Object.freeze({
       label: "原教旨主义",
       activeAbilityId: "fundamentalism_score_exchange",

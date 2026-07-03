@@ -129,6 +129,19 @@ const zeroScanPlayer = {
 strategyPassive.activateStrategyPlayInteraction(zeroScanPlayer, { scanActionCode: 0 }, 1);
 assert.deepEqual(strategyPassive.getStrategyPlayEligibleSlotIds(zeroScanPlayer, 1), ["yellow"]);
 
+const grandStrategyPlayer = {
+  id: "grand-strategy",
+  initialSelection: { industry: { label: "宇宙大战略集团" } },
+  industryStrategyPassiveSlots: { yellow: false, red: false, blue: false },
+};
+const grandStrategyActivation = strategyPassive.activateStrategyPlayInteraction(
+  grandStrategyPlayer,
+  { scanActionCode: 2 },
+  1,
+);
+assert.equal(grandStrategyActivation.ok, true);
+assert.deepEqual(strategyPassive.getStrategyPlayEligibleSlotIds(grandStrategyPlayer, 1), ["blue"]);
+
 strategyPassive.activateStrategyPlayInteraction(player, { scanActionCode: 0 }, 2);
 assert.equal(strategyPassive.isStrategyPlayInteractionActive(player, 2), true);
 const expired = strategyPassive.expireStrategyPlayInteractionOnTurnEnd(player, 2);

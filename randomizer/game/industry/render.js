@@ -50,6 +50,7 @@
 
   function createStrategyPassiveToken(slotId, layout, player, options) {
     const token = document.createElement("img");
+    const companyLabel = getCardLabel(player?.initialSelection?.industry) || "宇宙战略集团";
     token.className = "company-strategy-passive-token";
     token.src = options.getPlayerTokenAsset?.(player) || options.tokenSrc || "";
     token.alt = "";
@@ -58,7 +59,7 @@
     token.dataset.strategySlot = slotId;
     token.setAttribute(
       "aria-label",
-      `宇宙战略集团 ${placement.getStrategyPassiveSlotLabel(slotId)}奖励槽标记`,
+      `${companyLabel} ${placement.getStrategyPassiveSlotLabel(slotId)}奖励槽标记`,
     );
     token.style.left = `${layout.percentX}%`;
     token.style.top = `${layout.percentY}%`;
@@ -68,11 +69,12 @@
 
   function createStrategyPassiveSlotHit(slotId, layout, player, options) {
     const slotLabel = placement.getStrategyPassiveSlotLabel(slotId);
+    const companyLabel = getCardLabel(player?.initialSelection?.industry) || "宇宙战略集团";
     const hitArea = document.createElement("button");
     hitArea.type = "button";
     hitArea.className = `company-strategy-passive-slot-hit company-strategy-passive-slot-hit--${slotId}`;
     hitArea.dataset.strategySlot = slotId;
-    hitArea.setAttribute("aria-label", `放置宇宙战略集团 ${slotLabel}奖励槽标记`);
+    hitArea.setAttribute("aria-label", `放置${companyLabel} ${slotLabel}奖励槽标记`);
     hitArea.title = `点击放置 ${slotLabel}奖励槽标记`;
     hitArea.style.left = `${layout.percentX}%`;
     hitArea.style.top = `${layout.percentY}%`;

@@ -41,7 +41,7 @@
 | `industryBorrowedTechTileId` / `industryBorrowedTechRound` / `industryBorrowedTechTurn` | 图灵系统：当前回合借用的科技片 id；带行动上下文时按 Round/Turn 精确判定；无显式上下文的同回合长链路按未清空的借用态生效 |
 | `industrySentinelArmedRound` / `industrySentinelArmedTurn` | 哨兵：当前回合已武装「打牌后弃牌角标」；必须与当前 Round/Turn 同时匹配 |
 | `industryHuanyuFreeMoveRound` / `industryHuanyuFreeMoveTurn` / `industryHuanyuFreeMovesLeft` / `industryHuanyuMovedRocketIds` | 旧寰宇免费移动运行时字段；当前主动效果改走快速行动效果队列，不再依赖这些字段 |
-| `industryHuanyuSuperdriveRoundStartRound` / `industryCheatLabRoundStartRound` | AI 专用回合开始奖励的已结算轮号；防止同一轮因重渲染或初始选择/换轮钩子重复发放 |
+| `industryHuanyuSuperdriveRoundStartRound` / `industryCheatLabRoundStartRound` / `industryGrandStrategyRoundStartRound` | AI 专用回合开始奖励/清槽的已结算轮号；防止同一轮因重渲染或初始选择/换轮钩子重复发放 |
 | `industryFundamentalismRoundStartIncomeRound` | 原教旨主义：第 2/3/4 轮玩家开始行动时收入效果的已结算轮号；防止同一轮重复触发 |
 | `industryPlayedCardThisRound` / `industryLastPlayedCardThisRound` / `industryPlayedCardRound` / `industryPlayedCardTurn` | 当前回合已打牌及牌快照（字段名沿用 ThisRound；回合结束清理，仅供哨兵补注入队） |
 | `industryAlienLabPanels` / `industryAlienLabInitialized` | 异星实验室/作弊实验室三色板块正反面；蓝=发射、黄=扫描、粉=科技；作弊实验室按永久正面处理 |
@@ -66,6 +66,7 @@
 | 芬威克研究中心 | `fenwick_publicity_pick_corner` | `fenwick_publicity_pick` | 消耗 1 宣传精选 1 张牌，获得**弃牌角标**（不弃牌）；若角标是移动，移动选择可取消但精选补牌仍不可撤销 |
 | 深空探测 | `deepspace_swap_cards` | `deepspace_swap` | 选手牌 1 张再选公共牌 1 张交换 |
 | 宇宙战略集团 | `strategy_pick_card` | `strategy_pick` | 精选 1 张公共牌（无额外资源）；确认精选后清除 3 个被动奖励槽 token |
+| 宇宙大战略集团 | `strategy_pick_card` | `strategy_pick` | AI 专用，暂不自动分配；以宇宙战略集团为模板，精选 1 张公共牌（无额外资源），确认精选后清除 3 个被动奖励槽 token；每轮开始还会额外清空 3 个被动奖励槽 |
 | 未来跨度研究所 | `future_span_pick_advance` | `future_span_pick` | 若专属标记已有未达成目标牌：精选 1 张公共牌，并将目标分提高 3 |
 | 原教旨主义 | `fundamentalism_score_exchange` | `fundamentalism_score_exchange` | 启动 3 个 `industry_fundamentalism_exchange` 节点；每个节点可跳过、可撤销，可在 3 分与 1 信用/1 能量/1 精选之间兑换，或用 1 信用/1 能量/弃 1 手牌换 3 分 |
 | 星际海盗 | `pirates_raid_launch` | `pirates_raid_launch` | 启动 1 个 `industry_pirates_raid_launch` 节点；选择一个已有掠夺标记主星上的己方环绕/登陆标记，移除并消耗 1 信用点，然后在该星球当前扇区免费发射 |
@@ -113,6 +114,7 @@
 | `fenwick_research_cost` | 芬威克研究中心 | 研究科技宣传 5（默认 6） | `tech/resolver.js`、`abilities/tech.js` |
 | `deepspace_free_analyze` | 深空探测 | 分析数据不耗能量 | `abilities/data.js` |
 | `strategy_passive_reward_slots` | 宇宙战略集团 | 打牌后按扫描角标在打牌流程的动态后续效果全部结束后追加奖励槽节点；确认节点才放 token 并领奖，跳过不占槽；黑色角标多空槽时由玩家选择；已占槽位只能等 1x 快速行动确认精选后清理 | `applyIndustryPlayCardPassives` / `industry_strategy_passive_reward` |
+| `grand_strategy_round_start` | 宇宙大战略集团 | 每轮开始清空 3 个宇宙战略打牌奖励槽；“令人发笑的”难度每轮开始额外盲抽 1 张，“开始弱小的”难度每轮开始额外获得 1 宣传；包括第一轮初始选择结算后 | `applyIndustryRoundStartBonuses` |
 | `future_span_parking` | 未来跨度研究所 | 专属标记扣牌、目标分、达标后免费打出 | `app.js` 公司牌叠层与打牌流程 |
 | `fundamentalism_round_start_income` | 原教旨主义 | 第 2/3/4 轮该玩家开始行动时获得 1 个收入效果（弃 1 张手牌按收入角标增加收入并立即结算） | `maybeStartFundamentalismRoundStartIncomeFlow` / `industry_fundamentalism_income` |
 | `fundamentalism_disable_play_card_action` | 原教旨主义 | 不能使用标准“打牌”主要行动；九折等外星机制自己的打牌入口不受影响 | `beginPlayCardSelection` / `updateActionButtons` |
@@ -166,6 +168,7 @@
 
 - **公司牌即时效果**（资源重设、盲抽、发射、扫描等）：`initial-cards.js` 在 `resolveInitialSelections` 中一次性结算。
 - 星际海盗开局特殊科技：直接消耗供应区 1 块 `orange1` 并放到玩家科技面板，不获得 bonus、不领取首拿 2 分、不旋转；`firstTakeClaimedBy` 保持空，因此对局中第一个正常获得橙色科技的玩家仍能领取首拿 2 分。初始效果为 3 信用点、2 能量、1 盲抽、2 次收入增加，默认收入 2 信用点、2 能量、1 盲抽。
+- 宇宙大战略集团开局以宇宙战略集团为基础模板（1 宣传、4 信用点、2 能量、1 盲抽、2 次收入增加，默认收入 2 信用点、1 能量、1 盲抽）。“令人发笑的”难度额外获得 4 宣传、1 能量、1 盲抽、1 次收入增加；“开始弱小的”难度额外获得 3 宣传、1 盲抽、1 次收入增加。
 - **收入增加**：不即时给资源，而是生成 `pendingIncomeIncreases`，由 `startInitialIncomeEffectFlow` 排队；玩家弃 1 张手牌按该牌**收入角标**提升 `player.income` 并立即按新收入结算资源。
 - 任务中继站被动终局标记在 `applyIndustryStartupPassives` 中调用 `finalScoring.placeDirectMarkAtSlot(..., "c", ..., 3)`。
 

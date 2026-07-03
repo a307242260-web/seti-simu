@@ -6214,6 +6214,59 @@
     };
   }
 
+  function hasGrandStrategyRoundStartPending(player, roundNumber = turnState.roundNumber) {
+    if (!player || !industry?.hasGrandStrategyRoundStart?.(player)) return false;
+    const round = Math.max(1, Math.round(Number(roundNumber) || 1));
+    return player.industryGrandStrategyRoundStartRound !== round;
+  }
+
+  function countStrategyPassiveSlotTokens(player) {
+    return ["yellow", "red", "blue"]
+      .filter((slotId) => Boolean(player?.industryStrategyPassiveSlots?.[slotId]))
+      .length;
+  }
+
+  function applyGrandStrategyRoundStartForPlayer(player, roundNumber = turnState.roundNumber) {
+    if (!hasGrandStrategyRoundStartPending(player, roundNumber)) return null;
+    const round = Math.max(1, Math.round(Number(roundNumber) || 1));
+    const clearedCount = countStrategyPassiveSlotTokens(player);
+    industry?.clearStrategyPassiveSlots?.(player);
+    player.industryGrandStrategyRoundStartRound = round;
+
+    if (isWeakStartAiDifficulty(player)) {
+      players.gainResources(player, { publicity: 1 });
+      const message = `第${round}轮开始：清空奖励槽 ${clearedCount}/3；获得 1宣传`;
+      return {
+        ok: true,
+        playerId: player.id,
+        playerColorLabel: player.colorLabel || player.name || player.color || null,
+        effect: { label: "宇宙大战略集团" },
+        message,
+        drawnCards: [],
+        irreversible: null,
+        results: [{ message }],
+      };
+    }
+
+    const drawResult = blindDrawCardForPlayer(player);
+    const drawnCount = drawResult?.ok && drawResult.card ? 1 : 0;
+    const message = drawResult?.ok
+      ? `第${round}轮开始：清空奖励槽 ${clearedCount}/3；盲抽 ${drawnCount}/1 张`
+      : `第${round}轮开始：清空奖励槽 ${clearedCount}/3；盲抽失败：${drawResult?.message || "未知错误"}`;
+    return {
+      ok: Boolean(drawResult?.ok),
+      playerId: player.id,
+      playerColorLabel: player.colorLabel || player.name || player.color || null,
+      effect: { label: "宇宙大战略集团" },
+      message,
+      drawnCards: drawResult?.card ? [drawResult.card] : [],
+      irreversible: drawnCount > 0
+        ? { code: "hidden_card_reveal", reason: "盲抽翻出新牌" }
+        : null,
+      results: [{ message }],
+    };
+  }
+
   function appendIndustryRoundStartLog(result, roundNumber = turnState.roundNumber) {
     if (!result) return null;
     const player = getPlayerById(result.playerId);
@@ -6240,6 +6293,7 @@
       .flatMap((player) => [
         applyHuanyuSuperdriveRoundStartForPlayer(player, roundNumber),
         applyCheatLabRoundStartForPlayer(player, roundNumber),
+        applyGrandStrategyRoundStartForPlayer(player, roundNumber),
       ])
       .filter(Boolean);
     if (options.appendLog) {
@@ -6248,6 +6302,7 @@
     if (results.length) {
       renderPlayerStats();
       renderPlayerHand();
+      renderInitialSelectionArea();
       renderStateReadout();
     }
     return {

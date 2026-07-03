@@ -24,6 +24,7 @@
     "哨兵探测网络": Object.freeze({ percentX: 10.01, percentY: 74.8, radiusPercent: 4.9 }),
     "图灵系统": Object.freeze({ percentX: 9.01, percentY: 80.3, radiusPercent: 4.9 }),
     "宇宙战略集团": Object.freeze({ percentX: 9.01, percentY: 77.2, radiusPercent: 4.9 }),
+    "宇宙大战略集团": Object.freeze({ percentX: 9.01, percentY: 77.2, radiusPercent: 4.9 }),
     "寰宇动力": Object.freeze({ percentX: 9.01, percentY: 78.3, radiusPercent: 4.9 }),
     "寰宇超动力": Object.freeze({ percentX: 9.01, percentY: 78.3, radiusPercent: 4.9 }),
     "芬威克研究中心": Object.freeze({ percentX: 10.01, percentY: 76.5, radiusPercent: 4.9 }),
@@ -37,6 +38,7 @@
   const EXCLUDED_INDUSTRY_LABELS = Object.freeze(["异星实验室", "作弊实验室"]);
 
   const STRATEGY_PASSIVE_INDUSTRY_LABEL = "宇宙战略集团";
+  const STRATEGY_PASSIVE_INDUSTRY_LABELS = Object.freeze(["宇宙战略集团", "宇宙大战略集团"]);
 
   /** 宇宙战略集团被动：左上 3 个带缺口的圆形奖励槽（黄/红/蓝），相对整牌宽高的百分比 */
   const STRATEGY_PASSIVE_SLOT_IDS = Object.freeze(["yellow", "red", "blue"]);
@@ -93,7 +95,7 @@
   }
 
   function hasStrategyPassiveMarkerSlots(cardOrLabel) {
-    return normalizeIndustryLabel(cardOrLabel) === STRATEGY_PASSIVE_INDUSTRY_LABEL;
+    return STRATEGY_PASSIVE_INDUSTRY_LABELS.includes(normalizeIndustryLabel(cardOrLabel));
   }
 
   function getStrategyPassiveMarkerLayout(slotId) {
@@ -121,6 +123,7 @@
     INDUSTRY_ACTION_MARKER_SLOTS,
     EXCLUDED_INDUSTRY_LABELS,
     STRATEGY_PASSIVE_INDUSTRY_LABEL,
+    STRATEGY_PASSIVE_INDUSTRY_LABELS,
     STRATEGY_PASSIVE_SLOT_IDS,
     STRATEGY_PASSIVE_MARKER_SLOTS,
     STRATEGY_PASSIVE_SLOT_LABELS,
