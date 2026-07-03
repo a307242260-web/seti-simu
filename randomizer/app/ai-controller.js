@@ -17163,14 +17163,14 @@
             planScore: aiNumber(launchPlan?.score),
           } : null,
         ].filter(Boolean).sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
-        const discardPlan = summarizeAiTradeDiscardPlan(player, trade, null, {
-          includeExecutionPlan: true,
-          tradeId,
-        });
         const bestAction = options[0] || null;
         const bestActionHandIndex = Number.isInteger(Number(bestAction?.handIndex))
           ? Number(bestAction.handIndex)
           : null;
+        const discardPlan = summarizeAiTradeDiscardPlan(player, trade, bestActionHandIndex, {
+          includeExecutionPlan: true,
+          tradeId,
+        });
         const bestActionDiscardRisk = bestActionHandIndex === null ? null : {
           handIndex: bestActionHandIndex,
           costPlanDiscards: (discardPlan.selectedCards || [])

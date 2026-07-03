@@ -4132,6 +4132,64 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    quickTrades: {
+      "cards-for-credit": {
+        id: "cards-for-credit",
+        label: "2 cards -> 1 credit",
+        cost: { handSize: 2 },
+        gain: { credits: 1 },
+      },
+    },
+    blueResources: { score: 141, credits: 0, energy: 0, publicity: 1, availableData: 0, handSize: 3 },
+    blueHand: [
+      {
+        id: "locked-premium",
+        cardName: "Locked premium",
+        price: 1,
+        playEffects: [{ type: "gain_resources", options: { gain: { score: 12 } } }],
+      },
+      { id: "locked-filler-a", cardName: "Locked filler A", price: 1 },
+      { id: "locked-filler-b", cardName: "Locked filler B", price: 1 },
+    ],
+    onChooseTurnAction: (candidates) => {
+      assert.ok(candidates.some((candidate) => candidate.id === "pass"));
+    },
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "pass") || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  harness.controller.runAiAutomationStep();
+  const passLog = harness.controller.getAiAutoBattleReport().logs
+    .find((entry) => entry.type === "turn-action" && entry.details?.action?.id === "pass");
+  const preview = passLog?.details?.resourceLockTradePreviews
+    ?.find((entry) => entry.tradeId === "cards-for-credit");
+  assert.ok(preview, "resource-lock preview should include cards-for-credit");
+  assert.equal(preview.bestAction?.actionId, "playCard");
+  assert.equal(preview.bestAction?.handIndex, 0);
+  assert.equal(
+    preview.discardPlan?.preservedHandIndex,
+    0,
+    "resource-lock preview discard plan should preserve the unlocked best play card",
+  );
+  assert.deepEqual(
+    preview.discardPlan?.selectedCards?.map((card) => card.handIndex),
+    [1, 2],
+  );
+  assert.equal(preview.bestActionDiscardRisk?.costPlanDiscards, false);
+}
+
+{
   const turnChoices = [];
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
