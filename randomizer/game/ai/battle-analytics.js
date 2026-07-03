@@ -1076,6 +1076,90 @@
     };
   }
 
+  function getBestNonPlayMainCandidate(candidates = []) {
+    return (candidates || [])
+      .filter((candidate) => (
+        isCandidateAvailable(candidate)
+        && candidate.kind === "main"
+        && getCandidateId(candidate) !== "playCard"
+      ))
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || numeric(right.score) - numeric(left.score)
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ))[0] || null;
+  }
+
+  function getSelectedNestedPlayCard(action = {}) {
+    const cards = Array.isArray(action.playableCards) ? action.playableCards : [];
+    if (!cards.length) return null;
+    if (action.cardInstanceId) {
+      const matched = cards.find((card) => card?.cardInstanceId === action.cardInstanceId);
+      if (matched) return matched;
+    }
+    if (action.cardId) {
+      const matched = cards.find((card) => card?.cardId === action.cardId);
+      if (matched) return matched;
+    }
+    return cards[0] || null;
+  }
+
+  function isNegativePlayCardGraphLift(entry) {
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "playCard") return false;
+    const rawScore = getFiniteScore(action?.score);
+    const graphNet = getFiniteScore(action?.actionGraph?.net ?? action?.net);
+    const goalBonus = numeric(action?.actionGraph?.goalBonus ?? action?.breakdown?.goalBonus);
+    return rawScore != null
+      && rawScore < 0
+      && graphNet != null
+      && graphNet > Math.max(0, rawScore)
+      && goalBonus > 0;
+  }
+
+  function buildNegativePlayCardGraphLiftSample(entry, candidates = []) {
+    const action = getSelectedAction(entry) || {};
+    const graph = action.actionGraph || {};
+    const nested = getSelectedNestedPlayCard(action) || {};
+    const nestedBreakdown = nested.valueBreakdown || nested.breakdown || {};
+    const bestNonPlayMain = getBestNonPlayMainCandidate(candidates);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(action),
+      cardId: action.cardId || nested.cardId || null,
+      cardInstanceId: action.cardInstanceId || nested.cardInstanceId || null,
+      cardLabel: action.cardLabel || action.label || nested.cardLabel || null,
+      price: numeric(nested.price ?? action.price),
+      typeCode: numeric(nested.typeCode ?? action.typeCode),
+      effectTypes: action.effectTypes || nested.effectTypes || [],
+      rawScore: roundRatio(action.score),
+      policyScore: roundRatio(getCandidatePolicyScore(action)),
+      graphNet: roundRatio(graph.net),
+      graphGain: roundRatio(graph.gain),
+      graphCost: roundRatio(graph.cost),
+      finalMarginal: roundRatio(graph.finalMarginal),
+      goalBonus: roundRatio(graph.goalBonus),
+      bestNonPlayMain: bestNonPlayMain ? summarizeOpportunityCandidate(bestNonPlayMain) : null,
+      nestedScore: roundRatio(nested.score),
+      nestedPolicyScore: nested ? roundRatio(getNestedPlayCardPolicyScore(nested)) : null,
+      costValue: roundRatio(nestedBreakdown.costValue),
+      effectValue: roundRatio(nestedBreakdown.effectValue),
+      cornerOpportunity: roundRatio(nestedBreakdown.cornerOpportunity),
+      directScoreGain: roundRatio(nested.directScoreGain ?? action.directScoreGain),
+      c2Type3ProgressValue: roundRatio(nestedBreakdown.c2Type3ProgressValue),
+      cFinalTaskProgressValue: roundRatio(nestedBreakdown.cFinalTaskProgressValue),
+      readyTaskCashoutValue: roundRatio(nestedBreakdown.readyTaskCashoutValue),
+      endGameExpectedScore: roundRatio(nestedBreakdown.endGameExpectedScore),
+      lateCardEnginePressure: roundRatio(nestedBreakdown.lateCardEnginePressure),
+      playCardConversionPressure: roundRatio(nestedBreakdown.playCardConversionPressure),
+    };
+  }
+
   function isResearchTechEffectType(type) {
     return type === "card_research_tech" || type === "research_tech_select" || type === "research_tech";
   }
@@ -5315,6 +5399,7 @@
       finalLowHandPassNoRecovery: 0,
       finalPublicRefillShortfall: 0,
       negativeCardCornerGraphLift: 0,
+      negativePlayCardGraphLift: 0,
       endTurnWithAvailableMove: 0,
       endTurnWithPositiveMove: 0,
       researchTechOverCompoundTechCard: 0,
@@ -5345,6 +5430,7 @@
     const finalLowHandPassRecoverySamples = [];
     const finalPublicRefillShortfallSamples = [];
     const negativeCardCornerGraphLiftSamples = [];
+    const negativePlayCardGraphLiftSamples = [];
     const endTurnMoveOpportunitySamples = [];
     const researchTechCompoundCardSamples = [];
     const playCardNearMissSamples = [];
@@ -5432,6 +5518,12 @@
           opportunities.negativeCardCornerGraphLift += 1;
           if (negativeCardCornerGraphLiftSamples.length < 12) {
             negativeCardCornerGraphLiftSamples.push(buildNegativeCardCornerGraphLiftSample(entry));
+          }
+        }
+        if (isNegativePlayCardGraphLift(entry)) {
+          opportunities.negativePlayCardGraphLift += 1;
+          if (negativePlayCardGraphLiftSamples.length < 12) {
+            negativePlayCardGraphLiftSamples.push(buildNegativePlayCardGraphLiftSample(entry, candidates));
           }
         }
         if (actionId === "end-turn" && hasAvailableAction(candidates, "move")) {
@@ -5681,6 +5773,7 @@
       finalLowHandPassRecoverySamples,
       finalPublicRefillShortfallSamples,
       negativeCardCornerGraphLiftSamples,
+      negativePlayCardGraphLiftSamples,
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
       playCardNearMissSamples: sortPlayCardNearMissSamples(playCardNearMissSamples),
@@ -5753,6 +5846,7 @@
     const mergedFinalLowHandPassRecoverySamples = [];
     const mergedFinalPublicRefillShortfallSamples = [];
     const mergedNegativeCardCornerGraphLiftSamples = [];
+    const mergedNegativePlayCardGraphLiftSamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
     const mergedResearchTechCompoundCardSamples = [];
     const mergedPlayCardNearMissSamples = [];
@@ -5887,6 +5981,14 @@
       ) {
         mergedNegativeCardCornerGraphLiftSamples.push(
           ...analysis.negativeCardCornerGraphLiftSamples.slice(0, 12 - mergedNegativeCardCornerGraphLiftSamples.length),
+        );
+      }
+      if (
+        mergedNegativePlayCardGraphLiftSamples.length < 12
+        && Array.isArray(analysis.negativePlayCardGraphLiftSamples)
+      ) {
+        mergedNegativePlayCardGraphLiftSamples.push(
+          ...analysis.negativePlayCardGraphLiftSamples.slice(0, 12 - mergedNegativePlayCardGraphLiftSamples.length),
         );
       }
       if (mergedEndTurnMoveOpportunitySamples.length < 12 && Array.isArray(analysis.endTurnMoveOpportunitySamples)) {
@@ -6089,6 +6191,7 @@
       finalLowHandPassRecoverySamples: mergedFinalLowHandPassRecoverySamples,
       finalPublicRefillShortfallSamples: mergedFinalPublicRefillShortfallSamples,
       negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
+      negativePlayCardGraphLiftSamples: mergedNegativePlayCardGraphLiftSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       playCardNearMissSamples: sortPlayCardNearMissSamples(mergedPlayCardNearMissSamples),

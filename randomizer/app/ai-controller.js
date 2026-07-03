@@ -18639,6 +18639,7 @@
             postPassQuickNoMainSamples: analysis.postPassQuickNoMainSamples,
             postPassQuickSamples: analysis.postPassQuickSamples,
             negativeCardCornerGraphLiftSamples: analysis.negativeCardCornerGraphLiftSamples,
+            negativePlayCardGraphLiftSamples: analysis.negativePlayCardGraphLiftSamples,
             endTurnMoveOpportunitySamples: analysis.endTurnMoveOpportunitySamples,
             lowEngineThroughputSamples: analysis.lowEngineThroughputSamples,
             highScoreNearMissSamples: analysis.highScoreNearMissSamples,
