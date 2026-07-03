@@ -485,6 +485,103 @@
     return counts;
   }
 
+  function getResourceDelta(fromResources = {}, toResources = {}) {
+    const keys = ["credits", "energy", "handSize", "availableData", "publicity"];
+    const delta = {};
+    for (const key of keys) {
+      delta[key] = roundRatio(numeric(fromResources?.[key]) - numeric(toResources?.[key]));
+    }
+    delta.totalDrain = roundRatio(keys.reduce((total, key) => total + Math.max(0, numeric(delta[key])), 0));
+    return delta;
+  }
+
+  function findPassEntryForEarlyPassSample(turnEntries = [], sample = {}) {
+    return turnEntries.find((entry) => (
+      entry.playerId === sample.playerId
+      && numeric(entry.roundNumber) === numeric(sample.roundNumber)
+      && numeric(entry.rawTurnNumber ?? entry.turnNumber) === numeric(sample.rawTurnNumber)
+      && getSelectedActionId(entry) === "pass"
+    )) || null;
+  }
+
+  function findPreviousNonIdleTurnAction(turnEntries = [], passEntry = null) {
+    if (!passEntry) return null;
+    const passIndex = turnEntries.indexOf(passEntry);
+    for (let index = passIndex - 1; index >= 0; index -= 1) {
+      const entry = turnEntries[index];
+      if (entry.playerId !== passEntry.playerId) continue;
+      if (numeric(entry.roundNumber) !== numeric(passEntry.roundNumber)) continue;
+      if (numeric(entry.rawTurnNumber ?? entry.turnNumber) > numeric(passEntry.rawTurnNumber ?? passEntry.turnNumber)) continue;
+      const actionId = getSelectedActionId(entry);
+      if (actionId === "pass" || actionId === "end-turn") continue;
+      return entry;
+    }
+    return null;
+  }
+
+  function summarizePreNoMainPassResourceDrainAction(entry = {}) {
+    const action = getSelectedAction(entry) || {};
+    return {
+      id: getSelectedActionId(entry),
+      kind: action.kind || null,
+      tradeId: action.tradeId || null,
+      label: action.label || action.cardLabel || action.planetName || null,
+      score: roundRatio(action.score),
+      policyScore: roundRatio(getCandidatePolicyScore(action)),
+      directScoreGain: roundRatio(action.directScoreGain),
+      cardId: action.cardId || null,
+      cardLabel: action.cardLabel || null,
+      routeTarget: action.routeTarget || null,
+      valueBreakdown: action.valueBreakdown || action.breakdown || null,
+    };
+  }
+
+  function buildPreNoMainPassResourceDrainSamples(logs = [], playerResults = [], earlyPassSamples = [], limit = 12) {
+    const playerResultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const turnEntries = (logs || []).filter((entry) => entry.type === "turn-action");
+    const samples = [];
+    for (const passSample of earlyPassSamples || []) {
+      const passEntry = findPassEntryForEarlyPassSample(turnEntries, passSample);
+      const previousEntry = findPreviousNonIdleTurnAction(turnEntries, passEntry);
+      if (!passEntry || !previousEntry) continue;
+      const delta = getResourceDelta(previousEntry.playerResources || {}, passEntry.playerResources || {});
+      if (numeric(delta.totalDrain) <= 0) continue;
+      const result = playerResultById.get(passSample.playerId) || {};
+      samples.push({
+        playerId: passSample.playerId,
+        playerLabel: passSample.playerLabel,
+        finalScore: roundRatio(result.finalScore ?? passSample.finalScore),
+        roundNumber: passSample.roundNumber,
+        rawTurnNumber: passSample.rawTurnNumber,
+        reasonTag: passSample.reasonTag || null,
+        passResources: passEntry.playerResources || null,
+        previousRoundNumber: previousEntry.roundNumber ?? null,
+        previousRawTurnNumber: previousEntry.rawTurnNumber ?? previousEntry.turnNumber ?? null,
+        previousResources: previousEntry.playerResources || null,
+        rawTurnDistance: roundRatio(
+          numeric(passEntry.rawTurnNumber ?? passEntry.turnNumber)
+            - numeric(previousEntry.rawTurnNumber ?? previousEntry.turnNumber),
+        ),
+        previousAction: summarizePreNoMainPassResourceDrainAction(previousEntry),
+        resourceDeltaToPass: delta,
+        passActionIds: passSample.actionIds || [],
+        candidateProfile: passSample.candidateProfile || null,
+      });
+    }
+    return sortPreNoMainPassResourceDrainSamples(samples, limit);
+  }
+
+  function sortPreNoMainPassResourceDrainSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(right.resourceDeltaToPass?.totalDrain) - numeric(left.resourceDeltaToPass?.totalDrain)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
   function getMovePaymentAfterEntry(entries = [], startIndex = 0) {
     for (let index = startIndex + 1; index < entries.length; index += 1) {
       const entry = entries[index];
@@ -2929,6 +3026,13 @@
         message: "存在已执行快速行动但仍未接上主行动即 PASS 的回合，应检查资源滚动是否只消耗了手牌/资源而没有打开有效主行动。",
       });
     }
+    if (numeric(opportunities.preNoMainPassResourceDrain) > 0) {
+      recommendations.push({
+        id: "inspect-pre-no-main-resource-drain",
+        priority: "medium",
+        message: "无主行动 PASS 前存在资源/手牌消耗动作，应按前一动作到 PASS 的资源差定位哪类资源滚动没有接上主行动。",
+      });
+    }
     if (numeric(opportunities.postPassQuickNoMain) > 0) {
       recommendations.push({
         id: "inspect-post-pass-quick-no-main",
@@ -3135,6 +3239,7 @@
       passWithResourceLockedHand: 0,
       earlyPassNoMain: 0,
       quickBeforePassNoMain: 0,
+      preNoMainPassResourceDrain: 0,
       postPassQuickNoMain: 0,
       postPassQuickAfterPass: 0,
       postPassPaidMoveNoFollowup: 0,
@@ -3157,6 +3262,7 @@
     const passResourceLockSamples = [];
     const earlyPassNoMainSamples = [];
     const quickBeforePassNoMainSamples = [];
+    const preNoMainPassResourceDrainSamples = [];
     const postPassQuickNoMainSamples = [];
     const finalLowHandPassRecoverySamples = [];
     const negativeCardCornerGraphLiftSamples = [];
@@ -3362,6 +3468,13 @@
       .filter((sample) => numeric(sample.quickBeforePassCount) > 0);
     quickBeforePassNoMainSamples.push(...allQuickBeforePassNoMainSamples.slice(0, 12));
     opportunities.quickBeforePassNoMain = allQuickBeforePassNoMainSamples.length;
+    const allPreNoMainPassResourceDrainSamples = buildPreNoMainPassResourceDrainSamples(
+      logs,
+      playerResults,
+      allEarlyPassNoMainSamples,
+    );
+    preNoMainPassResourceDrainSamples.push(...allPreNoMainPassResourceDrainSamples.slice(0, 12));
+    opportunities.preNoMainPassResourceDrain = allPreNoMainPassResourceDrainSamples.length;
     const allPostPassQuickNoMainSamples = allEarlyPassNoMainSamples
       .filter((sample) => numeric(sample.quickAfterPassCount) > 0);
     postPassQuickNoMainSamples.push(...allPostPassQuickNoMainSamples.slice(0, 12));
@@ -3415,6 +3528,7 @@
       earlyPassNoMainSamples,
       earlyPassNoMainReasonCounts,
       quickBeforePassNoMainSamples,
+      preNoMainPassResourceDrainSamples,
       postPassQuickNoMainSamples,
       postPassQuickSamples: postPassQuickAnalysis.samples.slice(0, 12),
       finalLowHandPassRecoverySamples,
@@ -3472,6 +3586,7 @@
     const mergedEarlyPassNoMainSamples = [];
     const mergedEarlyPassNoMainReasonCounts = {};
     const mergedQuickBeforePassNoMainSamples = [];
+    const mergedPreNoMainPassResourceDrainSamples = [];
     const mergedPostPassQuickNoMainSamples = [];
     const mergedPostPassQuickSamples = [];
     const mergedFinalLowHandPassRecoverySamples = [];
@@ -3544,6 +3659,9 @@
       }
       if (Array.isArray(analysis.quickBeforePassNoMainSamples)) {
         mergedQuickBeforePassNoMainSamples.push(...analysis.quickBeforePassNoMainSamples);
+      }
+      if (Array.isArray(analysis.preNoMainPassResourceDrainSamples)) {
+        mergedPreNoMainPassResourceDrainSamples.push(...analysis.preNoMainPassResourceDrainSamples);
       }
       if (Array.isArray(analysis.postPassQuickNoMainSamples)) {
         mergedPostPassQuickNoMainSamples.push(...analysis.postPassQuickNoMainSamples);
@@ -3666,6 +3784,7 @@
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
       quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
+      preNoMainPassResourceDrainSamples: mergedPreNoMainPassResourceDrainSamples,
       postPassQuickNoMainSamples: mergedPostPassQuickNoMainSamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
@@ -3708,6 +3827,7 @@
       earlyPassNoMainSamples: sortEarlyPassNoMainSamples(mergedEarlyPassNoMainSamples),
       earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
       quickBeforePassNoMainSamples: sortEarlyPassNoMainSamples(mergedQuickBeforePassNoMainSamples),
+      preNoMainPassResourceDrainSamples: sortPreNoMainPassResourceDrainSamples(mergedPreNoMainPassResourceDrainSamples),
       postPassQuickNoMainSamples: sortEarlyPassNoMainSamples(mergedPostPassQuickNoMainSamples),
       postPassQuickSamples: [...mergedPostPassQuickSamples].sort((left, right) => (
         numeric(left.finalScore) - numeric(right.finalScore)
