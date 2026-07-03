@@ -308,6 +308,89 @@
     };
   }
 
+  function getTurnGroupKey(entry = {}) {
+    return [
+      entry.playerId || entry.playerLabel || "unknown",
+      entry.roundNumber ?? "unknown",
+      entry.rawTurnNumber ?? entry.turnNumber ?? "unknown",
+    ].join("|");
+  }
+
+  function summarizeGroupedTurnAction(action = {}) {
+    const id = String(action?.id || "unknown");
+    return {
+      id,
+      kind: action?.kind || null,
+      tradeId: action?.tradeId || null,
+      label: action?.label || action?.cardLabel || action?.planetName || null,
+      score: roundRatio(action?.score),
+      pace: getActionPaceCategory(id, action),
+    };
+  }
+
+  function buildEarlyPassNoMainSamples(logs = [], playerResults = [], limit = Infinity) {
+    const playerResultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const groups = new Map();
+    for (const entry of logs || []) {
+      if (entry.type !== "turn-action") continue;
+      const action = getSelectedAction(entry) || {};
+      const actionId = getSelectedActionId(entry);
+      const key = getTurnGroupKey(entry);
+      if (!groups.has(key)) {
+        groups.set(key, {
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || entry.playerId || "unknown",
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          actions: [],
+          mainActionCount: 0,
+          quickStepCount: 0,
+          passed: false,
+        });
+      }
+      const group = groups.get(key);
+      const pace = getActionPaceCategory(actionId, action);
+      if (pace === "main") group.mainActionCount += 1;
+      if (pace === "quick") group.quickStepCount += 1;
+      if (actionId === "pass") group.passed = true;
+      group.actions.push(summarizeGroupedTurnAction(action));
+      group.resources = entry.playerResources || group.resources;
+    }
+    return [...groups.values()]
+      .filter((group) => group.passed && group.mainActionCount <= 0)
+      .map((group) => {
+        const result = playerResultById.get(group.playerId) || {};
+        const resources = group.resources || {};
+        return {
+          playerId: group.playerId,
+          playerLabel: group.playerLabel,
+          finalScore: roundRatio(result.finalScore),
+          roundNumber: group.roundNumber,
+          turnNumber: group.turnNumber,
+          rawTurnNumber: group.rawTurnNumber,
+          resources,
+          quickStepCount: group.quickStepCount,
+          actionIds: group.actions.map((action) => action.tradeId ? `${action.id}:${action.tradeId}` : action.id),
+          actions: group.actions,
+          resourceProfile: {
+            credits: roundRatio(resources.credits),
+            energy: roundRatio(resources.energy),
+            publicity: roundRatio(resources.publicity),
+            handSize: roundRatio(resources.handSize),
+            availableData: roundRatio(resources.availableData),
+          },
+        };
+      })
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
   function buildFinalLowHandPassRecoverySample(entry) {
     const diagnostic = entry?.details?.finalLowHandPassRecoveryDiagnostic || {};
     return {
@@ -2554,6 +2637,13 @@
         });
       }
     }
+    if (numeric(opportunities.earlyPassNoMain) > 0) {
+      recommendations.push({
+        id: "inspect-early-pass-no-main",
+        priority: "medium",
+        message: "存在无主行动即 PASS 的回合，应按样本区分资源锁、公共牌/交易不可转化和已验证负收益的强开行动。",
+      });
+    }
     if (opportunities.endTurnWithPositiveMove > 0) {
       recommendations.push({
         id: "targeted-post-action-move",
@@ -2738,6 +2828,7 @@
     const opportunities = {
       passWithAvailableMain: 0,
       passWithResourceLockedHand: 0,
+      earlyPassNoMain: 0,
       finalLowHandPassNoRecovery: 0,
       negativeCardCornerGraphLift: 0,
       endTurnWithAvailableMove: 0,
@@ -2754,6 +2845,7 @@
     };
     const passOpportunitySamples = [];
     const passResourceLockSamples = [];
+    const earlyPassNoMainSamples = [];
     const finalLowHandPassRecoverySamples = [];
     const negativeCardCornerGraphLiftSamples = [];
     const endTurnMoveOpportunitySamples = [];
@@ -2953,6 +3045,9 @@
     const playerProfiles = buildPlayerProfiles(logs, playerResults);
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
+    const allEarlyPassNoMainSamples = buildEarlyPassNoMainSamples(logs, playerResults);
+    earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
+    opportunities.earlyPassNoMain = allEarlyPassNoMainSamples.length;
     const lowPlayerCandidateStats = buildLowPlayerCandidateStats(logs, playerResults, options);
     const lowUnplayedCardSamples = buildLowUnplayedCardSamples(playerResults, options);
     const actionSequences = buildActionSequences(logs, playerResults, options);
@@ -2995,6 +3090,7 @@
       opportunities,
       passOpportunitySamples,
       passResourceLockSamples,
+      earlyPassNoMainSamples,
       finalLowHandPassRecoverySamples,
       negativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples,
@@ -3047,6 +3143,7 @@
     };
     const mergedPassOpportunitySamples = [];
     const mergedPassResourceLockSamples = [];
+    const mergedEarlyPassNoMainSamples = [];
     const mergedFinalLowHandPassRecoverySamples = [];
     const mergedNegativeCardCornerGraphLiftSamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
@@ -3107,6 +3204,11 @@
       if (mergedPassResourceLockSamples.length < 12 && Array.isArray(analysis.passResourceLockSamples)) {
         mergedPassResourceLockSamples.push(
           ...analysis.passResourceLockSamples.slice(0, 12 - mergedPassResourceLockSamples.length),
+        );
+      }
+      if (mergedEarlyPassNoMainSamples.length < 12 && Array.isArray(analysis.earlyPassNoMainSamples)) {
+        mergedEarlyPassNoMainSamples.push(
+          ...analysis.earlyPassNoMainSamples.slice(0, 12 - mergedEarlyPassNoMainSamples.length),
         );
       }
       if (
@@ -3260,6 +3362,7 @@
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
       passResourceLockSamples: mergedPassResourceLockSamples,
+      earlyPassNoMainSamples: mergedEarlyPassNoMainSamples,
       finalLowHandPassRecoverySamples: mergedFinalLowHandPassRecoverySamples,
       negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,

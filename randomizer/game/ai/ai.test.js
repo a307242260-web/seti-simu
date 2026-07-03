@@ -1179,6 +1179,56 @@ const paceSummary = analytics.summarizeBattleReports([paceReport]);
 assert.equal(paceSummary.paceSummary.averageMainActionCount, 1);
 assert.equal(paceSummary.paceSummary.lowTail.quickStepCount, 4);
 
+const earlyPassReport = {
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 1,
+      turnNumber: 1,
+      rawTurnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 8, credits: 1, energy: 0, publicity: 2, handSize: 2 },
+      details: { action: { id: "playCard", kind: "main", score: 12 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 1,
+      turnNumber: 2,
+      rawTurnNumber: 2,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 12, credits: 0, energy: 0, publicity: 1, handSize: 2 },
+      details: { action: { id: "pass", kind: "pass", score: -2 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      rawTurnNumber: 3,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 18, credits: 0, energy: 1, publicity: 1, handSize: 1 },
+      details: { action: { id: "cardCorner", kind: "quick", score: 3 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      rawTurnNumber: 3,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 18, credits: 0, energy: 1, publicity: 1, handSize: 1 },
+      details: { action: { id: "pass", kind: "pass", score: -2 }, candidates: [] },
+    },
+  ],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 88 }],
+};
+const earlyPassAnalysis = analytics.analyzeBattleReport(earlyPassReport);
+assert.equal(earlyPassAnalysis.opportunities.earlyPassNoMain, 2);
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].rawTurnNumber, 2);
+assert.deepEqual(earlyPassAnalysis.earlyPassNoMainSamples[1].actionIds, ["cardCorner", "pass"]);
+
 function appendRepeatedTurnActions(logs, playerId, playerLabel, counts) {
   for (const [actionId, count] of Object.entries(counts || {})) {
     for (let index = 0; index < count; index += 1) {
