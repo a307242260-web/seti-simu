@@ -18131,7 +18131,7 @@
       });
     }
 
-    function compactAiAutoBattleSample(report, gameIndex) {
+    function compactAiAutoBattleSample(report, gameIndex, options = {}) {
       const analysis = report?.analysis || null;
       const lowMarkPlayerDiagnosticsList = buildAiLowMarkPlayerDiagnostics(report);
       return {
@@ -18144,6 +18144,7 @@
         lowMarkPlayerDiagnostics: lowMarkPlayerDiagnosticsList[0] || null,
         lowMarkPlayerDiagnosticsList,
         tailLogs: Array.isArray(report?.logs) ? report.logs.slice(-5) : [],
+        ...(options.includeLogs && Array.isArray(report?.logs) ? { logs: report.logs } : {}),
         analysis: analysis
           ? {
             turnActionCount: analysis.turnActionCount,
@@ -18234,7 +18235,9 @@
           ? ai?.analytics?.analyzeBattleReport?.(report, analysisOptions) || null
           : report.analysis || ai?.analytics?.analyzeBattleReport?.(report, analysisOptions) || null;
         if (analysis) analyses.push(analysis);
-        samples.push(compactAiAutoBattleSample({ ...report, analysis }, index + 1));
+        samples.push(compactAiAutoBattleSample({ ...report, analysis }, index + 1, {
+          includeLogs: options.includeLogs === true,
+        }));
         if (stopOnBlocked && (
           report.lastSummary?.blocked
           || report.lastSummary?.ok === false
