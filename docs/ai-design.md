@@ -331,6 +331,7 @@ Goal = {
 - 批跑分析新增 `lowEngineThroughputSamples`：按高分席位均值对低分玩家输出 `placeData/scan/analyze/playCard/researchTech/tech/task` 缺口和原因标签。当前 5 种子重算会把两个白色低尾 `184/185` 排在最前，分别暴露约 `30/27` 个数据放置缺口、`7.25/5.25` 次扫描缺口和 `3.75/2.75` 次分析缺口；后续调参优先围绕“数据/扫描/分析/科技/打牌”闭合链定位。
 - 批跑分析新增 `highScoreNearMissSamples`：对 `280-299` 分席位输出距 `300` 的缺口、终局公式/B2 进度、资源、未兑现任务/3 型/终局牌，以及相对 `300+` 席位的主行动、资源快速行动、打牌、科技、扫描、分析和卡牌分差。这个诊断专门服务提高 `300+` 命中率，避免只盯最低尾而错过 293/299 这类可冲高分的具体闭合链。
 - 批跑分析新增 `b2TradeNearMissSamples`：当 B2 扫描解锁交易候选存在但被研究科技、分析或其它行动压过时，记录最佳交易、被选行动、最终 B2 进度以及 policy/action graph 分差。`codex-runezu-income-single:1` 的 299 分棕色样本显示 `credits-for-energy` 原始分接近研究科技，但 action graph 净值约 `50` 对 `96`，因此不是简单抬高交易 raw 分能解决的缺口。
+- 浏览器批跑的 compact sample 现在同步透传主要低尾诊断字段，包括 `paceSummary`、`roundPaceSummary`、`lowEngineThroughputSamples`、`highScoreNearMissSamples`、`earlyPassNoMainSamples`、`preNoMainPassResourceDrainSamples`、`b2ScanNearMissSamples` 和 `b2TradeNearMissSamples`。后续单 seed 复盘不需要另取完整 report，就能直接看到低尾动数、资源断档、近 300 缺口和 B2 交易/扫描近失。
 
 - 批跑分析新增 `lowPlayerCandidateStats`：对低分/低终局标记玩家单独统计每类候选的 `available/selected/availableNotSelected`、最高分候选缺口和样本，避免全局 `candidateStats` 被高分座位稀释。后续资源滚动优化先用这个字段判断低尾是缺少扫描/分析/打牌入口，还是入口存在但被行星兑现、移动或其它 quick 行动压过，再决定是否做窄行为窗口。
 - 批跑分析新增 `lowUnplayedCardSamples`：对低分玩家最终手牌和保留区中仍未兑现的任务牌、3 型牌和终局计分牌列样本，标出所在区域、价格、类型、任务数、终局模型和效果类型。卡牌样本现在会携带 `remainingTaskCount` 和任务条件进度，包含 `currentCount/targetCount/missingCount/met` 以及直接分奖励，能区分“任务已满足但未确认结算”和“还差 1 个星球/科技/扇区信号”的具体缺口；无法量化的条件缺口保留为 `null`，避免误读为已不缺。低尾 `184/185` 分样本都留下任务牌或 3 型/终局牌；后续行为优化应按这个字段追溯具体牌链是否资源不足、任务不可达或估值被更高分行星/科技压过，而不是泛用提高任务牌权重。
