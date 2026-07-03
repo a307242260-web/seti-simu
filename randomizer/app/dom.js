@@ -173,6 +173,7 @@
       finalResultBody: documentRef.getElementById("final-result-body"),
       playCardActionButton: documentRef.getElementById("play-card-action-button"),
       playCardSelectionCancel: documentRef.getElementById("play-card-selection-cancel"),
+      handCardPlayActionButton: documentRef.getElementById("hand-card-play-action-button"),
       cardCornerActionButton: documentRef.getElementById("card-corner-action-button"),
       movePaymentConfirm: documentRef.getElementById("move-payment-confirm"),
       movePaymentCancel: documentRef.getElementById("move-payment-cancel"),

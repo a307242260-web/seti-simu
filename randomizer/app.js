@@ -215,6 +215,7 @@
   let pendingMovePayment = null;
   let pendingPlayCardSelection = null;
   let pendingFutureSpanPlayBeforePlayer = null;
+  let pendingHandCardPlayAction = null;
   let pendingCardCornerQuickAction = null;
   let pendingCardCornerFreeMove = null;
   let pendingDataPlaceAction = null;
@@ -264,8 +265,10 @@
         : "（请选择要打出的牌）";
     }
     const cornerAction = getPendingCardCornerQuickAction();
-    if (cornerAction) {
-      return `（已选择 ${cards.getCardLabel(cornerAction.card)}）`;
+    const handPlayAction = getPendingHandCardPlayAction();
+    const selectedHandAction = cornerAction || handPlayAction;
+    if (selectedHandAction) {
+      return `（已选择 ${cards.getCardLabel(selectedHandAction.card)}）`;
     }
     return "";
   }
@@ -1090,6 +1093,7 @@
     confirmCardCornerQuickAction,
     confirmDataPlacement,
     confirmDiscardAnyForIncome,
+    confirmHandCardPlayAction,
     confirmInitialSelectionForCurrentPlayer,
     confirmLandTargetPicker,
     confirmMovePayment,
@@ -1590,7 +1594,7 @@
 
   function startActionLogDraft(actionType, label, options = {}) {
     if (options.source === HISTORY_SOURCE_MAIN) {
-      cancelCardCornerQuickAction({ silent: true });
+      cancelHandCardContextActions({ silent: true });
     }
     return ensureActionLogDraft({
       ...options,
@@ -2022,6 +2026,7 @@
     pendingMovePayment = null;
     pendingPlayCardSelection = null;
     pendingFutureSpanPlayBeforePlayer = null;
+    pendingHandCardPlayAction = null;
     pendingCardCornerQuickAction = null;
     pendingCardCornerFreeMove = null;
     pendingDataPlaceAction = null;
@@ -2053,6 +2058,7 @@
       "move-mode-active",
       "card-selection-active",
       "play-card-selection-active",
+      "card-corner-action-active",
       "discard-selection-active",
       "pass-reserve-selection-active",
       "hand-scan-selection-active",
@@ -2928,7 +2934,7 @@
 
   function syncCardSelectionChrome() {
     const active = isCardSelectionActive();
-    if (active) cancelCardCornerQuickAction({ silent: true });
+    if (active) cancelHandCardContextActions({ silent: true });
     els.appWrap?.classList.toggle("card-selection-active", active);
     els.publicCardPanel?.classList.toggle("card-selection-active", active);
     els.publicCardPanel?.classList.toggle("public-card-panel-focused", active);
@@ -2978,7 +2984,7 @@
     }
     if (pendingPiratesRaidPlacement) return INTERACTION_FOCUS.PLAYER_BOARD;
     if (isBoardRocketInteractionActive()) return INTERACTION_FOCUS.BOARD_ROCKETS;
-    if (canUseCardCornerQuickAction() && getPendingCardCornerQuickAction()) {
+    if ((canUseCardCornerQuickAction() && getPendingCardCornerQuickAction()) || getPendingHandCardPlayAction()) {
       return INTERACTION_FOCUS.HAND_CARDS;
     }
     return null;
@@ -2994,7 +3000,7 @@
 
   function syncIndustryHandSelectionChrome() {
     const active = isIndustryHandSelectionActive();
-    if (active) cancelCardCornerQuickAction({ silent: true });
+    if (active) cancelHandCardContextActions({ silent: true });
     els.appWrap?.classList.toggle("industry-hand-selection-active", active);
     els.playerHandPanel?.classList.toggle("industry-hand-selection-active", active);
     els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
@@ -3032,7 +3038,7 @@
 
   function syncDiscardSelectionChrome() {
     const active = isDiscardSelectionActive();
-    if (active) cancelCardCornerQuickAction({ silent: true });
+    if (active) cancelHandCardContextActions({ silent: true });
     els.appWrap?.classList.toggle("discard-selection-active", active);
     els.playerHandPanel?.classList.toggle("discard-selection-active", active);
     els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
@@ -3056,7 +3062,7 @@
 
   function syncHandScanSelectionChrome() {
     const active = isHandScanSelectionActive();
-    if (active) cancelCardCornerQuickAction({ silent: true });
+    if (active) cancelHandCardContextActions({ silent: true });
     els.appWrap?.classList.toggle("hand-scan-selection-active", active);
     els.playerHandPanel?.classList.toggle("hand-scan-selection-active", active);
     els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
@@ -3242,7 +3248,7 @@
     const lockedForAi = isMovePaymentLockedForAiAutomation();
     const manualActive = active && !lockedForAi;
     const preservesCardCornerMove = pendingMovePayment?.supplementalMoveContext?.type === "card_corner_free_move";
-    if (active && !preservesCardCornerMove) cancelCardCornerQuickAction({ silent: true });
+    if (active && !preservesCardCornerMove) cancelHandCardContextActions({ silent: true });
     els.appWrap?.classList.toggle("move-payment-selection-active", manualActive);
     els.playerHandPanel?.classList.toggle("move-payment-selection-active", manualActive);
     els.playerHandPanel?.classList.toggle("player-hand-panel-focused", manualActive);
@@ -3908,7 +3914,20 @@
 
   function syncPlayCardSelectionChrome() {
     const active = isPlayCardSelectionActive();
-    if (active) cancelCardCornerQuickAction({ silent: true });
+    if (active) {
+      pendingHandCardPlayAction = null;
+      pendingCardCornerQuickAction = null;
+      if (els.handCardPlayActionButton) {
+        els.handCardPlayActionButton.hidden = true;
+        els.handCardPlayActionButton.disabled = true;
+        els.handCardPlayActionButton.title = "";
+      }
+      if (els.cardCornerActionButton) {
+        els.cardCornerActionButton.hidden = true;
+        els.cardCornerActionButton.disabled = true;
+        els.cardCornerActionButton.title = "";
+      }
+    }
     const pending = active ? getPendingPlayCardSelection() : null;
     els.appWrap?.classList.toggle("play-card-selection-active", active);
     els.playerHandPanel?.classList.toggle("play-card-selection-active", active);
@@ -4005,6 +4024,88 @@
       return handleFutureSpanCardPlay();
     }
     return handleHandCardPlay(pending.handIndex);
+  }
+
+  function getPendingHandCardPlayAction() {
+    if (!pendingHandCardPlayAction) return null;
+
+    const currentPlayer = getCurrentPlayer();
+    const hand = Array.isArray(currentPlayer?.hand) ? currentPlayer.hand : [];
+    let handIndex = Number(pendingHandCardPlayAction.handIndex);
+    let card = Number.isInteger(handIndex) ? hand[handIndex] : null;
+
+    if (!card || card.id !== pendingHandCardPlayAction.cardId) {
+      handIndex = hand.findIndex((item) => item.id === pendingHandCardPlayAction.cardId);
+      card = handIndex >= 0 ? hand[handIndex] : null;
+    }
+
+    const action = getHandCardPlayActionForCard(card, currentPlayer);
+    if (!card || !action) {
+      pendingHandCardPlayAction = null;
+      return null;
+    }
+
+    pendingHandCardPlayAction = {
+      handIndex,
+      cardId: card.id,
+      ...action,
+    };
+    return { ...pendingHandCardPlayAction, card };
+  }
+
+  function cancelHandCardPlayAction(options = {}) {
+    if (!pendingHandCardPlayAction) return;
+    pendingHandCardPlayAction = null;
+    if (!options.silent) {
+      rocketState.statusNote = "已取消手牌打出";
+    }
+    syncCardCornerQuickActionChrome();
+    if (!options.silent) renderStateReadout();
+  }
+
+  function clearHandCardContextActions() {
+    const hadAction = Boolean(pendingHandCardPlayAction || pendingCardCornerQuickAction);
+    pendingHandCardPlayAction = null;
+    pendingCardCornerQuickAction = null;
+    return hadAction;
+  }
+
+  function cancelHandCardContextActions(options = {}) {
+    if (!clearHandCardContextActions()) return;
+    if (!options.silent) {
+      rocketState.statusNote = "已取消手牌快捷操作";
+    }
+    syncCardCornerQuickActionChrome();
+    if (!options.silent) renderStateReadout();
+  }
+
+  function confirmHandCardPlayAction() {
+    const action = getPendingHandCardPlayAction();
+    if (!action) {
+      rocketState.statusNote = "没有可打出的手牌";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const cardId = action.card?.id || action.cardId;
+    const startResult = beginPlayCardSelection();
+    if (!startResult?.ok) return startResult;
+
+    const currentPlayer = getCurrentPlayer();
+    const handIndex = (currentPlayer?.hand || []).findIndex((card) => card.id === cardId);
+    if (handIndex < 0) {
+      cancelPlayCardSelection();
+      rocketState.statusNote = "要打出的手牌已不存在";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
+
+    const selectResult = handlePlayCardSelect(handIndex);
+    if (!selectResult?.ok) {
+      cancelPlayCardSelection();
+      return selectResult;
+    }
+    return confirmPlayCardSelection();
   }
 
   function getPendingCardCornerQuickAction() {
@@ -4129,16 +4230,24 @@
 
   function syncCardCornerQuickActionChrome() {
     const action = canUseCardCornerQuickAction() ? getPendingCardCornerQuickAction() : null;
-    const active = Boolean(action);
+    const handPlayAction = getPendingHandCardPlayAction();
+    const active = Boolean(action || handPlayAction);
 
     els.appWrap?.classList.toggle("card-corner-action-active", active);
     els.playerHandPanel?.classList.toggle("card-corner-action-active", active);
     els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
+    if (els.handCardPlayActionButton) {
+      els.handCardPlayActionButton.hidden = !handPlayAction;
+      els.handCardPlayActionButton.disabled = !handPlayAction;
+      els.handCardPlayActionButton.title = handPlayAction
+        ? `打出 ${cards.getCardLabel(handPlayAction.card)}，费用 ${formatCardPlayCost(handPlayAction.cost)}`
+        : "";
+    }
     if (els.cardCornerActionButton) {
-      els.cardCornerActionButton.hidden = !active;
-      els.cardCornerActionButton.disabled = !active;
+      els.cardCornerActionButton.hidden = !action;
+      els.cardCornerActionButton.disabled = !action;
       els.cardCornerActionButton.textContent = action?.label || "弃牌快速行动";
-      els.cardCornerActionButton.title = active
+      els.cardCornerActionButton.title = action
         ? `${action.label}：弃除 ${cards.getCardLabel(action.card)}`
         : "";
     }
@@ -4158,31 +4267,42 @@
   }
 
   function handleHandCardCornerQuickAction(handIndex) {
-    if (!canUseCardCornerQuickAction()) return { ok: false, message: "当前无法使用卡牌快速行动" };
+    if (!canUseCardCornerQuickAction()) return { ok: false, message: "当前无法使用手牌快捷操作" };
 
     const currentPlayer = getCurrentPlayer();
     const index = Math.round(handIndex);
     const card = currentPlayer?.hand?.[index];
-    const action = getCardCornerQuickActionForCard(card);
-    if (!card || !action) {
-      rocketState.statusNote = "这张牌没有可用的左上角快速行动";
+    const cornerAction = getCardCornerQuickActionForCard(card);
+    const playAction = getHandCardPlayActionForCard(card, currentPlayer);
+    if (!card || (!cornerAction && !playAction)) {
+      rocketState.statusNote = "这张牌没有可用的手牌快捷操作";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
 
     const current = getPendingCardCornerQuickAction();
-    if (current?.card?.id === card.id) {
-      cancelCardCornerQuickAction();
+    const currentPlay = getPendingHandCardPlayAction();
+    if (current?.card?.id === card.id || currentPlay?.card?.id === card.id) {
+      cancelHandCardContextActions();
       return { ok: true, cancelled: true, message: rocketState.statusNote };
     }
 
-    pendingCardCornerQuickAction = {
+    pendingCardCornerQuickAction = cornerAction ? {
       handIndex: index,
       cardId: card.id,
-      ...action,
-    };
+      ...cornerAction,
+    } : null;
+    pendingHandCardPlayAction = playAction ? {
+      handIndex: index,
+      cardId: card.id,
+      ...playAction,
+    } : null;
     setQuickPanelOpen(false);
-    rocketState.statusNote = `${action.label}：点击手牌区上方按钮确认弃除 ${cards.getCardLabel(card)}`;
+    const availableActions = [
+      playAction ? `打出（${formatCardPlayCost(playAction.cost)}）` : null,
+      cornerAction ? cornerAction.label : null,
+    ].filter(Boolean).join(" / ");
+    rocketState.statusNote = `${cards.getCardLabel(card)}：可执行 ${availableActions}`;
     syncCardCornerQuickActionChrome();
     updateActionButtons();
     renderStateReadout();
@@ -5127,32 +5247,37 @@
       : fallbackTypeCode;
   }
 
-  function beginPlayCardSelection() {
+  function getPlayCardSelectionBlockReason(player = getCurrentPlayer()) {
     if (!canStartMainAction()) {
-      rocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
     }
-    if (isTechTilePickingActive()) {
-      return { ok: false, message: "请先完成科技选择" };
-    }
-    if (isCardSelectionActive()) {
-      return { ok: false, message: "请先完成精选" };
-    }
-    if (isDiscardSelectionActive()) {
-      return { ok: false, message: "请先完成弃牌" };
-    }
-    if (isHandScanSelectionActive()) {
-      return { ok: false, message: "请先完成手牌扫描" };
-    }
-    if (isMovePaymentSelectionActive()) {
-      return { ok: false, message: "请先完成移动" };
-    }
+    if (isTechTilePickingActive()) return "请先完成科技选择";
+    if (isCardSelectionActive()) return "请先完成精选";
+    if (isDiscardSelectionActive()) return "请先完成弃牌";
+    if (isHandScanSelectionActive()) return "请先完成手牌扫描";
+    if (isMovePaymentSelectionActive()) return "请先完成移动";
+    return getStandardPlayCardActionBlockReason(player);
+  }
 
+  function getHandCardPlayActionForCard(card, player = getCurrentPlayer()) {
+    if (!card) return null;
+    const blockReason = getPlayCardSelectionBlockReason(player);
+    if (blockReason) return null;
+
+    const cost = getCardPlayCost(card);
+    if (!players.canAfford(player, cost)) return null;
+    return {
+      actionKind: "play",
+      label: "打出",
+      cost,
+    };
+  }
+
+  function beginPlayCardSelection() {
     const currentPlayer = getCurrentPlayer();
-    const playCardBlockReason = getStandardPlayCardActionBlockReason(currentPlayer);
-    if (playCardBlockReason) {
-      rocketState.statusNote = playCardBlockReason;
+    const blockReason = getPlayCardSelectionBlockReason(currentPlayer);
+    if (blockReason) {
+      rocketState.statusNote = blockReason;
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
@@ -10177,6 +10302,9 @@
   function blockIncompatiblePendingQuickAction(actionType) {
     if (actionType !== "card-corner" && pendingCardCornerQuickAction) {
       cancelCardCornerQuickAction({ silent: true });
+    }
+    if (pendingHandCardPlayAction) {
+      cancelHandCardPlayAction({ silent: true });
     }
     if (hasActivePendingSubFlow()) {
       rocketState.statusNote = pendingIndustryAbility || industryFreeMoveState || isIndustryHandSelectionActive()
@@ -28487,6 +28615,7 @@
     const movePaymentActive = isMovePaymentSelectionActive() && pendingMovePayment?.player?.id === currentPlayer?.id;
     const handScanActive = isHandScanSelectionActive() && pendingHandScanAction?.player?.id === currentPlayer?.id;
     const cardCornerAction = getPendingCardCornerQuickAction();
+    const handCardPlayAction = getPendingHandCardPlayAction();
     const cardCornerActionEnabled = actualCurrentPlayer?.id === currentPlayer?.id && canUseCardCornerQuickAction();
     const handScanPickIndex = pendingScanTargetAction?.type === "hand_scan"
       && Number.isInteger(Number(pendingScanTargetAction.handIndex))
@@ -28500,7 +28629,7 @@
       || handScanPickIndex != null
       || cardCornerActionEnabled;
     els.playerHandPanel.classList.toggle("is-empty", hand.length === 0);
-    els.playerHandPanel.classList.toggle("card-corner-action-ready", Boolean(cardCornerAction));
+    els.playerHandPanel.classList.toggle("card-corner-action-ready", Boolean(cardCornerAction || handCardPlayAction));
     layoutPlayerHandFan(hand.length);
     els.playerHandFan.replaceChildren(...hand.map((card, index) => {
       const label = card.cardName || (card.faceUp ? `手牌 ${index + 1}` : `手牌背面 ${index + 1}`);
@@ -28568,16 +28697,25 @@
           }
         } else if (cardCornerActionEnabled) {
           const action = getCardCornerQuickActionForCard(card);
-          const selected = cardCornerAction?.card?.id === card.id;
-          if (action) {
+          const playAction = getHandCardPlayActionForCard(card, actualCurrentPlayer);
+          const selected = cardCornerAction?.card?.id === card.id
+            || handCardPlayAction?.card?.id === card.id;
+          if (action || playAction) {
+            if (action) button.classList.add("is-corner-action-card");
+            if (playAction) button.classList.add("is-hand-play-card");
             if (selected) button.classList.add("is-selected");
-            button.setAttribute("aria-label", `${label}（${action.label}）`);
+            const actionLabels = [
+              playAction ? `打出，费用 ${formattedPlayCost}` : null,
+              action ? action.label : null,
+            ].filter(Boolean).join("；");
+            button.setAttribute("aria-label", `${label}（${actionLabels}）`);
             button.title = selected
-              ? `${action.label}：点击上方按钮确认，或再次点击取消`
-              : `${action.label}：点击选择`;
+              ? `${actionLabels}：点击上方按钮确认，或再次点击取消`
+              : `${actionLabels}：点击选择`;
           } else {
+            button.classList.add("is-corner-action-card-muted");
             button.setAttribute("aria-label", label);
-            button.title = "这张牌没有可用的左上角快速行动";
+            button.title = "这张牌没有可用的手牌快捷操作";
           }
         } else if (playActive) {
           const selected = getPendingPlayCardSelection()?.handIndex === index;
@@ -32601,7 +32739,7 @@
 
   function setQuickPanelOpen(open) {
     if (open && getGameplayLockReason()) return;
-    if (open) cancelCardCornerQuickAction({ silent: true });
+    if (open) cancelHandCardContextActions({ silent: true });
     els.quickActionsPanel.hidden = !open;
     els.actionQuickButton.setAttribute("aria-expanded", String(open));
     els.actionQuickButton.classList.add("action-button-ready");
@@ -34629,6 +34767,7 @@
     cancelDiscardSelection,
     confirmPlayCardSelection,
     cancelPlayCardSelection,
+    confirmHandCardPlayAction,
     confirmCardCornerQuickAction,
     cancelHandScanSelection,
     getCurrentPlayer,

@@ -2825,6 +2825,7 @@ body {
 .discard-selection-cancel,
 .play-card-selection-cancel,
 .play-card-action-button,
+.hand-card-play-action-button,
 .card-corner-action-button,
 .move-payment-confirm,
 .move-payment-cancel,
@@ -2845,6 +2846,7 @@ body {
 .discard-selection-cancel:hover,
 .play-card-selection-cancel:hover,
 .play-card-action-button:hover:not(:disabled),
+.hand-card-play-action-button:hover:not(:disabled),
 .card-corner-action-button:hover:not(:disabled),
 .move-payment-confirm:hover:not(:disabled),
 .move-payment-cancel:hover:not(:disabled),
@@ -2854,6 +2856,7 @@ body {
 }
 
 .play-card-action-button,
+.hand-card-play-action-button,
 .card-corner-action-button,
 .move-payment-confirm {
   border-color: rgba(98, 219, 255, 0.72);
@@ -2863,6 +2866,7 @@ body {
 .discard-selection-cancel[hidden],
 .play-card-selection-cancel[hidden],
 .play-card-action-button[hidden],
+.hand-card-play-action-button[hidden],
 .card-corner-action-button[hidden],
 .move-payment-confirm[hidden],
 .move-payment-cancel[hidden],
@@ -2884,6 +2888,23 @@ body {
   outline-color: rgba(255, 235, 170, 0.98);
   filter:
     drop-shadow(0 0 16px rgba(255, 210, 108, 0.68))
+    drop-shadow(0 5px 8px rgba(0, 0, 0, 0.36));
+}
+
+.player-hand-panel.card-corner-action-ready .player-hand-card-button.is-hand-play-card:not(.is-selected) {
+  cursor: pointer;
+  outline: 2px solid rgba(110, 236, 169, 0.94);
+  outline-offset: 3px;
+  filter:
+    drop-shadow(0 0 12px rgba(110, 236, 169, 0.46))
+    drop-shadow(0 5px 8px rgba(0, 0, 0, 0.36));
+  animation: tech-tile-highlight-pulse 1.8s ease-in-out infinite;
+}
+
+.player-hand-panel.card-corner-action-ready .player-hand-card-button.is-hand-play-card:not(.is-selected):hover {
+  outline-color: rgba(190, 255, 222, 0.98);
+  filter:
+    drop-shadow(0 0 16px rgba(110, 236, 169, 0.62))
     drop-shadow(0 5px 8px rgba(0, 0, 0, 0.36));
 }
 

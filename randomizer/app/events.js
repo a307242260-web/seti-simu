@@ -183,6 +183,7 @@
       cancelDiscardSelection,
       confirmPlayCardSelection,
       cancelPlayCardSelection,
+      confirmHandCardPlayAction,
       confirmCardCornerQuickAction,
       cancelHandScanSelection,
       getCurrentPlayer,
@@ -1063,6 +1064,7 @@
     els.discardSelectionBackdrop?.addEventListener("click", cancelDiscardSelection);
     els.playCardActionButton?.addEventListener("click", confirmPlayCardSelection);
     els.playCardSelectionCancel?.addEventListener("click", cancelPlayCardSelection);
+    els.handCardPlayActionButton?.addEventListener("click", confirmHandCardPlayAction);
     els.cardCornerActionButton?.addEventListener("click", confirmCardCornerQuickAction);
     els.handScanCancel?.addEventListener("click", cancelHandScanSelection);
     els.reservedCardFan?.addEventListener("click", (event) => {
