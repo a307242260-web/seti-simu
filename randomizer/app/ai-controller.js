@@ -1739,10 +1739,10 @@
       }, 0);
     }
 
-    function getAiPassReserveResourcePressure(player = getCurrentPlayer(), pile = [], currentHandSizeOverride = null) {
+    function getAiPassReserveResourcePressure(player = getCurrentPlayer(), pile = [], currentHandSizeOverride = null, options = {}) {
       if (!player || !(pile || []).length) return { active: false, reasons: [], score: 0 };
       const round = getAiRoundNumber();
-      if (round !== 2) return { active: false, reasons: [], score: 0 };
+      if (round !== 2 && !options.ignoreRound) return { active: false, reasons: [], score: 0 };
       const resources = player.resources || {};
       const income = player.income || {};
       const currentHandSize = currentHandSizeOverride == null
@@ -1788,6 +1788,9 @@
         && getAiLowEngineCatchupProfile(player).active
         && hasAiRunezuPassReservePressure(player, pile);
       const passReserveResourcePressure = getAiPassReserveResourcePressure(player, pile, currentHandSize);
+      const passReserveResourcePressurePreview = getAiPassReserveResourcePressure(player, pile, currentHandSize, {
+        ignoreRound: true,
+      });
       const shouldRankPassReserve = getAiMarkedFinalFormulaEntries(player)
         .some((entry) => entry.formulaId === "c2")
         || (pile || []).some((card) => getCardTypeCode(card) === 3)
@@ -1807,6 +1810,11 @@
         card,
         runezuLowEnginePassReserve,
         passReserveResourcePressure,
+        passReserveResourcePressurePreview,
+        passReserveResourcePressureMiss: Boolean(
+          !passReserveResourcePressure.active
+          && passReserveResourcePressurePreview.active
+        ),
         selectedScore: ranked.find((entry) => entry.card === card)?.score ?? null,
         candidates: ranked.slice(0, 5).map((entry) => ({
           cardId: entry.card.cardId || entry.card.id || null,
@@ -18155,6 +18163,7 @@
             passResourceLockSamples: analysis.passResourceLockSamples,
             openingPlanNearMissSamples: analysis.openingPlanNearMissSamples,
             openingPlanConversionSamples: analysis.openingPlanConversionSamples,
+            passReserveResourcePressureMissSamples: analysis.passReserveResourcePressureMissSamples,
             finalLowHandPassRecoverySamples: analysis.finalLowHandPassRecoverySamples,
             earlyPassNoMainSamples: analysis.earlyPassNoMainSamples,
             quickBeforePassNoMainSamples: analysis.quickBeforePassNoMainSamples,

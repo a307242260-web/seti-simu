@@ -1016,6 +1016,23 @@ const sampleBattleReport = {
       details: { selected: { cardLabel: "控制中心", cardId: "b_25.webp" } },
     },
     {
+      type: "pass-reserve",
+      playerId: "player-blue",
+      playerLabel: "蓝色",
+      roundNumber: 1,
+      turnNumber: 3,
+      rawTurnNumber: 7,
+      playerResources: { score: 18, credits: 2, energy: 0, handSize: 2 },
+      details: {
+        card: { id: "reserve-low", cardId: "b_1.webp", cardName: "低续航牌", price: 1, cardTypeCode: 1 },
+        passReserveResourcePressure: { active: false, reasons: [], score: 0 },
+        passReserveResourcePressurePreview: { active: true, reasons: ["energy"], score: 1.5 },
+        passReserveResourcePressureMiss: true,
+        selectedScore: null,
+        candidates: [],
+      },
+    },
+    {
       type: "move-payment",
       playerId: "player-white",
       details: { requiredMovePoints: 2, energyCost: 1, selectedHandIndices: [1] },
@@ -1067,6 +1084,9 @@ assert.equal(battleAnalysis.openingPlanConversionSamples[0].playerId, "player-wh
 assert.ok(battleAnalysis.openingPlanConversionSamples[0].reasons.includes("scan-plan-unconverted"));
 assert.ok(battleAnalysis.openingPlanConversionSamples[0].reasons.includes("trace-plan-unconverted"));
 assert.equal(battleAnalysis.openingPlanConversionSamples[0].earlyWindow.actual.scanCount, 0);
+assert.equal(battleAnalysis.opportunities.passReserveResourcePressureMiss, 1);
+assert.equal(battleAnalysis.passReserveResourcePressureMissSamples[0].playerId, "player-blue");
+assert.deepEqual(battleAnalysis.passReserveResourcePressureMissSamples[0].previewReasons, ["energy"]);
 assert.equal(battleAnalysis.opportunities.selectedBelowBestScore, 2);
 assert.equal(battleAnalysis.scoreOpportunities.selectedBelowBest, 2);
 assert.equal(battleAnalysis.scoreOpportunities.averageGap, 10.75);
@@ -1102,9 +1122,11 @@ assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "score-pas
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-score-gap"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-card-score-gap"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-opening-plan-conversion"));
+assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-pass-reserve-resource-pressure"));
 const sampleBattleSummary = analytics.summarizeBattleReports([sampleBattleReport]);
 assert.equal(sampleBattleSummary.openingPlanNearMissSamples[0].playerLabel, "白色");
 assert.equal(sampleBattleSummary.openingPlanConversionSamples[0].playerLabel, "白色");
+assert.equal(sampleBattleSummary.passReserveResourcePressureMissSamples[0].playerLabel, "蓝色");
 
 const negativePassOpportunityReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },

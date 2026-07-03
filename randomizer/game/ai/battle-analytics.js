@@ -4663,6 +4663,60 @@
     return sortOpeningPlanConversionSamples(samples, limit);
   }
 
+  function summarizePassReserveCard(card = {}) {
+    if (!card) return null;
+    return {
+      cardId: card.cardId || card.id || null,
+      cardLabel: card.cardName || card.label || card.name || null,
+      price: numeric(card.price),
+      typeCode: card.cardTypeCode ?? card.typeCode ?? null,
+      discardActionCode: card.discardActionCode ?? null,
+      scanActionCode: card.scanActionCode ?? null,
+      incomeCode: card.incomeCode ?? null,
+    };
+  }
+
+  function sortPassReserveResourcePressureMissSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(right.previewScore) - numeric(left.previewScore)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""), "zh-Hans-CN")
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildPassReserveResourcePressureMissSamples(logs = [], playerResults = [], limit = 12) {
+    const resultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const samples = (logs || [])
+      .filter((entry) => entry?.type === "pass-reserve")
+      .map((entry) => {
+        const details = entry.details || {};
+        const actual = details.passReserveResourcePressure || {};
+        const preview = details.passReserveResourcePressurePreview || null;
+        if (!details.passReserveResourcePressureMiss || actual.active || !preview?.active) return null;
+        const result = resultById.get(entry.playerId) || {};
+        return {
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || result.playerLabel || null,
+          finalScore: roundRatio(result.finalScore),
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          selectedCard: summarizePassReserveCard(details.card || {}),
+          previewReasons: Array.isArray(preview.reasons) ? preview.reasons : [],
+          previewScore: roundRatio(preview.score),
+          selectedScore: details.selectedScore == null ? null : roundRatio(details.selectedScore),
+          rankedCandidateCount: Array.isArray(details.candidates) ? details.candidates.length : 0,
+          rankedCandidates: Array.isArray(details.candidates) ? details.candidates.slice(0, 5) : [],
+        };
+      })
+      .filter(Boolean);
+    return sortPassReserveResourcePressureMissSamples(samples, limit);
+  }
+
   function getPassOpportunityBestMainScore(sample = {}) {
     const bestMain = sample?.bestMain || {};
     const policyScore = getFiniteScore(bestMain.policyScore);
@@ -4794,6 +4848,13 @@
         id: "inspect-opening-plan-conversion",
         priority: "medium",
         message: "低分玩家存在开局计划未兑现到前两轮行动的样本，应先定位扫描、数据、痕迹或科技/打牌链断点，再调整开局偏置。",
+      });
+    }
+    if (numeric(opportunities.passReserveResourcePressureMiss) > 0) {
+      recommendations.push({
+        id: "inspect-pass-reserve-resource-pressure",
+        priority: "medium",
+        message: "存在非第 2 轮 PASS 预留资源压力窗口，应先按样本验证收入牌能否接上下一轮行动，再决定是否放宽预留排序。",
       });
     }
     if (d1TechBalanceBottleneckSamples.length) {
@@ -4982,6 +5043,7 @@
       passWithResourceLockedHand: 0,
       openingPlanNearMiss: 0,
       openingPlanConversionGap: 0,
+      passReserveResourcePressureMiss: 0,
       earlyPassNoMain: 0,
       resourceLockMainUnlock: 0,
       quickBeforePassNoMain: 0,
@@ -5011,6 +5073,7 @@
     const passResourceLockSamples = [];
     const openingPlanNearMissSamples = [];
     const openingPlanConversionSamples = [];
+    const passReserveResourcePressureMissSamples = [];
     const earlyPassNoMainSamples = [];
     const resourceLockMainUnlockSamples = [];
     const quickBeforePassNoMainSamples = [];
@@ -5235,6 +5298,13 @@
     );
     openingPlanConversionSamples.push(...allOpeningPlanConversionSamples.slice(0, 12));
     opportunities.openingPlanConversionGap = allOpeningPlanConversionSamples.length;
+    const allPassReserveResourcePressureMissSamples = buildPassReserveResourcePressureMissSamples(
+      logs,
+      playerResults,
+      Infinity,
+    );
+    passReserveResourcePressureMissSamples.push(...allPassReserveResourcePressureMissSamples.slice(0, 12));
+    opportunities.passReserveResourcePressureMiss = allPassReserveResourcePressureMissSamples.length;
     const allEarlyPassNoMainSamples = buildEarlyPassNoMainSamples(logs, playerResults);
     const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
     earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
@@ -5319,6 +5389,7 @@
       passResourceLockSamples,
       openingPlanNearMissSamples,
       openingPlanConversionSamples,
+      passReserveResourcePressureMissSamples,
       earlyPassNoMainSamples,
       resourceLockMainUnlockSamples,
       earlyPassNoMainReasonCounts,
@@ -5387,6 +5458,7 @@
     const mergedPassResourceLockSamples = [];
     const mergedOpeningPlanNearMissSamples = [];
     const mergedOpeningPlanConversionSamples = [];
+    const mergedPassReserveResourcePressureMissSamples = [];
     const mergedEarlyPassNoMainSamples = [];
     const mergedResourceLockMainUnlockSamples = [];
     const mergedEarlyPassNoMainReasonCounts = {};
@@ -5466,6 +5538,9 @@
       }
       if (Array.isArray(analysis.openingPlanConversionSamples)) {
         mergedOpeningPlanConversionSamples.push(...analysis.openingPlanConversionSamples);
+      }
+      if (Array.isArray(analysis.passReserveResourcePressureMissSamples)) {
+        mergedPassReserveResourcePressureMissSamples.push(...analysis.passReserveResourcePressureMissSamples);
       }
       if (Array.isArray(analysis.earlyPassNoMainSamples)) {
         mergedEarlyPassNoMainSamples.push(...analysis.earlyPassNoMainSamples);
@@ -5675,6 +5750,9 @@
       passResourceLockSamples: mergedPassResourceLockSamples,
       openingPlanNearMissSamples: sortOpeningPlanNearMissSamples(mergedOpeningPlanNearMissSamples),
       openingPlanConversionSamples: sortOpeningPlanConversionSamples(mergedOpeningPlanConversionSamples),
+      passReserveResourcePressureMissSamples: sortPassReserveResourcePressureMissSamples(
+        mergedPassReserveResourcePressureMissSamples,
+      ),
       earlyPassNoMainSamples: sortEarlyPassNoMainSamples(mergedEarlyPassNoMainSamples),
       resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
       earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
