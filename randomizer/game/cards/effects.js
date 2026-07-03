@@ -2095,9 +2095,9 @@
     "b_120.webp": withSource("b_120.webp", {
       cardType: 1,
       triggers: Object.freeze([
-        { id: "b120-price1-score", event: Object.freeze({ type: "playCard", price: 1 }), effect: gainResourcesEffect("b120-price1-score-effect", "打出1费牌：2分", { score: 2 }) },
-        { id: "b120-price2-pick", event: Object.freeze({ type: "playCard", price: 2 }), effect: pickCardEffect("b120-price2-pick-effect", "打出2费牌：精选1张牌") },
-        { id: "b120-price3-publicity", event: Object.freeze({ type: "playCard", price: 3 }), effect: gainResourcesEffect("b120-price3-publicity-effect", "打出3费牌：2宣传", { publicity: 2 }) },
+        { id: "b120-price1-score", event: Object.freeze({ type: "playCard", timing: "after_play_card", price: 1 }), effect: gainResourcesEffect("b120-price1-score-effect", "打出1费牌：2分", { score: 2 }) },
+        { id: "b120-price2-pick", event: Object.freeze({ type: "playCard", timing: "after_play_card", price: 2 }), effect: pickCardEffect("b120-price2-pick-effect", "打出2费牌：精选1张牌") },
+        { id: "b120-price3-publicity", event: Object.freeze({ type: "playCard", timing: "after_play_card", price: 3 }), effect: gainResourcesEffect("b120-price3-publicity-effect", "打出3费牌：2宣传", { publicity: 2 }) },
       ]),
     }),
     "b_121.webp": withSource("b_121.webp", {
@@ -2687,6 +2687,8 @@
       return true;
     }
     if (event.type === "playCard") {
+      if (event.timing != null && trigger.event.timing !== event.timing) return false;
+      if (trigger.event.timing != null && event.timing !== trigger.event.timing) return false;
       if (trigger.event.price != null && Number(trigger.event.price) !== Number(event.price)) return false;
       const included = trigger.event.cardIds || trigger.event.includeCardIds || [];
       if (included.length && !included.includes(event.cardId)) return false;

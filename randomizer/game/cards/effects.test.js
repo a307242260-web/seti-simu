@@ -653,9 +653,14 @@ assert.equal(cardEffects.collectReadyTasks({ id: "p1", color: "red", reservedCar
 const b120 = { id: "card-b120", cardId: "b_120.webp" };
 const strategyPlayer = { id: "p1", color: "red", reservedCards: [b120] };
 cardEffects.ensureCardEffectState(b120);
-assert.equal(cardEffects.collectMatchingTriggers(strategyPlayer, { type: "playCard", price: 2 }).length, 1);
+assert.equal(cardEffects.collectMatchingTriggers(strategyPlayer, { type: "playCard", price: 2 }).length, 0);
+assert.equal(cardEffects.collectMatchingTriggers(strategyPlayer, { type: "playCard", timing: "after_play_card", price: 1 }).length, 1);
+assert.equal(cardEffects.collectMatchingTriggers(strategyPlayer, { type: "playCard", timing: "after_play_card", price: 2 }).length, 1);
+assert.equal(cardEffects.collectMatchingTriggers(strategyPlayer, { type: "playCard", timing: "after_play_card", price: 3 }).length, 1);
+assert.equal(cardEffects.collectMatchingTriggers(strategyPlayer, { type: "playCard", timing: "after_play_card", price: 0 }).length, 0);
 assert.equal(cardEffects.collectMatchingTriggers(strategyPlayer, {
   type: "playCard",
+  timing: "after_play_card",
   price: 2,
   sourceCardInstanceId: "card-b120",
 }).length, 0);
@@ -696,6 +701,7 @@ for (const cardId of ["b_72.webp", "b_73.webp", "b_74.webp", "b_91.webp"]) {
     `${cardId} should trigger both b_140 task slots when played`,
   );
 }
+assert.equal(cardEffects.collectMatchingTriggers(b140Player, { type: "playCard", timing: "after_play_card", cardId: "b_72.webp" }).length, 0);
 assert.equal(cardEffects.collectMatchingTriggers(b140Player, { type: "playCard", cardId: "b_75.webp" }).length, 0);
 assert.equal(cardEffects.collectMatchingTriggers(b140Player, { type: "cardCorner", cardId: "b_72.webp" }).length, 0);
 assert.equal(cardEffects.collectMatchingTriggers(b140Player, { type: "income", cardId: "b_72.webp" }).length, 0);

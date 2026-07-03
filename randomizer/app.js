@@ -5175,6 +5175,27 @@
     return price > 0 ? { credits: price } : {};
   }
 
+  function getCardPlayCreditCost(cost) {
+    const credits = Number(cost?.credits);
+    return Number.isFinite(credits) ? Math.max(0, Math.round(credits)) : 0;
+  }
+
+  function createPlayCardEvent(playedCard, player, cost, options = {}) {
+    const event = {
+      type: "playCard",
+      price: getCardPlayCreditCost(cost),
+      cardId: playedCard?.cardId || null,
+      sourceCardInstanceId: playedCard?.id || null,
+      playerId: player?.id || null,
+    };
+    if (options.timing) event.timing = options.timing;
+    return event;
+  }
+
+  function createImmediatePlayCardEvent(playedCard, player, cost) {
+    return createPlayCardEvent(playedCard, player, cost, { timing: "after_play_card" });
+  }
+
   function getPlayCardBeforePlayerSnapshot(currentPlayer) {
     return pendingFutureSpanPlayBeforePlayer
       ? structuredClone(pendingFutureSpanPlayBeforePlayer)
@@ -5390,7 +5411,6 @@
       return handleRunezuCardPlay(removeIndex);
     }
 
-    const price = getCardPrice(card);
     const cost = getCardPlayCost(card);
     if (!players.canAfford(currentPlayer, cost)) {
       rocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
@@ -5439,33 +5459,25 @@
       : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
     const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode);
     const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
+    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
+    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
     syncPlayCardSelectionChrome();
     renderPlayerStats();
     recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState);
     if (playFlowQueue.effects.length) {
-      startCardEffectFlow("play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
+      startPlayCardEffectFlow("play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
         actionType: "playCard",
         card: playedCard,
         temporaryTasks,
         industryPlayedCard: playedCard,
         deferredEndEffects: playFlowQueue.deferredEndEffects,
-        playCardEvent: {
-          type: "playCard",
-          price,
-          cardId: playedCard.cardId,
-          sourceCardInstanceId: playedCard.id,
-          playerId: currentPlayer.id,
-        },
+        immediatePlayCardEvent,
+        playCardEvent,
       });
     } else {
+      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
       settleCardTasksAfterEffect({
-        events: [{
-          type: "playCard",
-          price,
-          cardId: playedCard.cardId,
-          sourceCardInstanceId: playedCard.id,
-          playerId: currentPlayer.id,
-        }],
+        events: [playCardEvent],
         render: false,
       });
       markActionPending();
@@ -5534,19 +5546,25 @@
     rocketState.statusNote = `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`;
     const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, getCardTypeCode(playedCard));
     const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
+    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
+    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
     syncPlayCardSelectionChrome();
     renderPlayerStats();
     renderReservedCardsFromTaskState();
     recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
     if (playFlowQueue.effects.length) {
-      startCardEffectFlow("chong-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
+      startPlayCardEffectFlow("chong-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
         actionType: "playCard",
         card: playedCard,
         temporaryTasks: [],
         industryPlayedCard: playedCard,
         deferredEndEffects: playFlowQueue.deferredEndEffects,
+        immediatePlayCardEvent,
+        playCardEvent,
       });
     } else {
+      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
+      settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
       markActionPending();
       updateActionButtons();
       renderStateReadout();
@@ -5621,19 +5639,25 @@
       : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
     const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode);
     const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
+    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
+    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
     syncPlayCardSelectionChrome();
     renderPlayerStats();
     renderReservedCardsFromTaskState();
     recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
     if (playFlowQueue.effects.length) {
-      startCardEffectFlow("amiba-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
+      startPlayCardEffectFlow("amiba-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
         actionType: "playCard",
         card: playedCard,
         temporaryTasks: [],
         industryPlayedCard: playedCard,
         deferredEndEffects: playFlowQueue.deferredEndEffects,
+        immediatePlayCardEvent,
+        playCardEvent,
       });
     } else {
+      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
+      settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
       markActionPending();
       updateActionButtons();
       renderStateReadout();
@@ -5707,19 +5731,25 @@
       : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
     const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode);
     const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
+    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
+    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
     syncPlayCardSelectionChrome();
     renderPlayerStats();
     renderReservedCardsFromTaskState();
     recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
     if (playFlowQueue.effects.length) {
-      startCardEffectFlow("aomomo-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
+      startPlayCardEffectFlow("aomomo-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
         actionType: "playCard",
         card: playedCard,
         temporaryTasks: [],
         industryPlayedCard: playedCard,
         deferredEndEffects: playFlowQueue.deferredEndEffects,
+        immediatePlayCardEvent,
+        playCardEvent,
       });
     } else {
+      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
+      settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
       markActionPending();
       updateActionButtons();
       renderStateReadout();
@@ -5794,19 +5824,25 @@
       : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
     const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode);
     const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
+    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
+    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
     syncPlayCardSelectionChrome();
     renderPlayerStats();
     renderReservedCardsFromTaskState();
     recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
     if (playFlowQueue.effects.length) {
-      startCardEffectFlow("runezu-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
+      startPlayCardEffectFlow("runezu-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
         actionType: "playCard",
         card: playedCard,
         temporaryTasks: [],
         industryPlayedCard: playedCard,
         deferredEndEffects: playFlowQueue.deferredEndEffects,
+        immediatePlayCardEvent,
+        playCardEvent,
       });
     } else {
+      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
+      settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
       markActionPending();
       updateActionButtons();
       renderStateReadout();
@@ -5879,19 +5915,25 @@
     rocketState.statusNote = `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`;
     const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, getCardTypeCode(playedCard));
     const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
+    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
+    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
     syncPlayCardSelectionChrome();
     renderPlayerStats();
     renderReservedCardsFromTaskState();
     recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
     if (playFlowQueue.effects.length) {
-      startCardEffectFlow("banrenma-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
+      startPlayCardEffectFlow("banrenma-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
         actionType: "playCard",
         card: playedCard,
         temporaryTasks: [],
         industryPlayedCard: playedCard,
         deferredEndEffects: playFlowQueue.deferredEndEffects,
+        immediatePlayCardEvent,
+        playCardEvent,
       });
     } else {
+      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
+      settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
       markActionPending();
       updateActionButtons();
       renderStateReadout();
@@ -10371,7 +10413,29 @@
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
     renderReservedCardsFromTaskState();
     rocketState.statusNote = `${label}：请依次点击效果`;
-    activateNextActionEffect();
+    if (options.activate !== false) {
+      activateNextActionEffect();
+    }
+    return true;
+  }
+
+  function startPlayCardEffectFlow(chainId, label, effects, options = {}) {
+    const immediatePlayCardEvent = options.immediatePlayCardEvent || null;
+    const started = startCardEffectFlow(chainId, label, effects, {
+      ...options,
+      immediatePlayCardEvent: undefined,
+      activate: false,
+    });
+    if (!started) return false;
+    if (immediatePlayCardEvent) {
+      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
+    }
+    if (!hasActiveCardTriggerResolution() && !isCardTriggerRewardFlowBusy()) {
+      activateNextActionEffectIfIdle();
+    }
+    renderActionEffectBar();
+    updateActionButtons();
+    renderStateReadout();
     return true;
   }
 
@@ -21124,17 +21188,11 @@
       },
     }));
     const typeCode = getCardTypeCode(playedCard);
-    const price = getCardPrice(playedCard);
     rocketState.statusNote = `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
     const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode);
     const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, fangzhouEffects);
-    const playCardEvent = {
-      type: "playCard",
-      price,
-      cardId: playedCard.cardId,
-      sourceCardInstanceId: playedCard.id,
-      playerId: currentPlayer.id,
-    };
+    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
+    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
 
     syncPlayCardSelectionChrome();
     renderAlienPanels();
@@ -21149,15 +21207,17 @@
       "fangzhou_card1_flip",
     );
     if (playFlowQueue.effects.length) {
-      startCardEffectFlow("fangzhou-card2-play-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
+      startPlayCardEffectFlow("fangzhou-card2-play-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
         actionType: "playCard",
         card: playedCard,
         temporaryTasks: [],
         industryPlayedCard: playedCard,
         deferredEndEffects: playFlowQueue.deferredEndEffects,
+        immediatePlayCardEvent,
         playCardEvent,
       });
     } else {
+      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
       settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
       markActionPending();
       updateActionButtons();
