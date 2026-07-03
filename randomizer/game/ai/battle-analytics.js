@@ -36,6 +36,14 @@
   const DEFAULT_SEQUENCE_WINDOW_TURNS = 6;
   const HIGH_SCORE_NEAR_MISS_TARGET = 300;
   const HIGH_SCORE_NEAR_MISS_MIN = 280;
+  const FINAL_PUBLIC_REFILL_SHORTFALL_SCORE = 20;
+  const PUBLIC_REFILL_TRADE_IDS = Object.freeze([
+    "credits-for-card",
+    "energy-for-card",
+    "publicity-for-card",
+    "cards-for-pick-card",
+  ]);
+  const RESOURCE_SHORTFALL_KEYS = Object.freeze(["credits", "energy", "publicity", "handSize"]);
   const D1_TECH_TYPES = Object.freeze(["orange", "blue", "purple"]);
   const HIGH_SCORE_NEAR_MISS_REFERENCE_METRICS = Object.freeze([
     "baseScore",
@@ -890,6 +898,98 @@
       lateRecoveryPreviewCandidates: Array.isArray(diagnostic.lateRecoveryPreviewCandidates)
         ? diagnostic.lateRecoveryPreviewCandidates.slice(0, 5)
         : [],
+      unavailableMain: Array.isArray(diagnostic.unavailableMain)
+        ? diagnostic.unavailableMain.slice(0, 6)
+        : [],
+    };
+  }
+
+  function getFinalPublicRefillResources(entry, diagnostic = {}) {
+    const resources = entry?.playerResources || {};
+    return {
+      credits: numeric(resources.credits ?? diagnostic.credits),
+      energy: numeric(resources.energy ?? diagnostic.energy),
+      publicity: numeric(resources.publicity ?? diagnostic.publicity),
+      handSize: numeric(resources.handSize ?? diagnostic.handSize),
+    };
+  }
+
+  function getBestPublicRefillCard(diagnostic = {}) {
+    if (Array.isArray(diagnostic.topPublicTradeCards) && diagnostic.topPublicTradeCards.length) {
+      return diagnostic.topPublicTradeCards[0];
+    }
+    return diagnostic.cardsForPickCardPreview?.bestPublicTradeCard || null;
+  }
+
+  function getFinalPublicRefillTradeChecks(diagnostic = {}) {
+    return (Array.isArray(diagnostic.tradeChecks) ? diagnostic.tradeChecks : [])
+      .filter((check) => PUBLIC_REFILL_TRADE_IDS.includes(check?.tradeId));
+  }
+
+  function buildResourceShortfallForTrade(check = {}, resources = {}) {
+    const cost = check.cost || {};
+    const missing = [];
+    for (const key of RESOURCE_SHORTFALL_KEYS) {
+      const required = numeric(cost[key]);
+      if (required <= 0) continue;
+      const available = Math.max(0, numeric(resources[key]));
+      if (available >= required) continue;
+      missing.push({
+        resource: key,
+        required: roundRatio(required),
+        available: roundRatio(available),
+        missing: roundRatio(required - available),
+      });
+    }
+    if (!missing.length) return null;
+    return {
+      tradeId: check.tradeId || null,
+      reason: check.reason || null,
+      cost: check.cost || null,
+      missing,
+      totalMissing: roundRatio(missing.reduce((total, item) => total + numeric(item.missing), 0)),
+    };
+  }
+
+  function buildFinalPublicRefillShortfalls(entry) {
+    const diagnostic = entry?.details?.finalLowHandPassRecoveryDiagnostic || {};
+    const resources = getFinalPublicRefillResources(entry, diagnostic);
+    return getFinalPublicRefillTradeChecks(diagnostic)
+      .filter((check) => check && !check.ok)
+      .map((check) => buildResourceShortfallForTrade(check, resources))
+      .filter(Boolean);
+  }
+
+  function isFinalPublicRefillShortfall(entry) {
+    const diagnostic = entry?.details?.finalLowHandPassRecoveryDiagnostic;
+    if (!diagnostic) return false;
+    const bestScore = getFiniteScore(diagnostic.bestPublicTradeCardScore)
+      ?? getFiniteScore(getBestPublicRefillCard(diagnostic)?.tradeScore)
+      ?? getFiniteScore(diagnostic.cardsForPickCardPreview?.bestPublicTradeCardScore);
+    if (bestScore == null || bestScore < FINAL_PUBLIC_REFILL_SHORTFALL_SCORE) return false;
+    const refillChecks = getFinalPublicRefillTradeChecks(diagnostic);
+    if (!refillChecks.length || refillChecks.some((check) => check?.ok)) return false;
+    return buildFinalPublicRefillShortfalls(entry).length > 0;
+  }
+
+  function buildFinalPublicRefillShortfallSample(entry) {
+    const diagnostic = entry?.details?.finalLowHandPassRecoveryDiagnostic || {};
+    const resources = getFinalPublicRefillResources(entry, diagnostic);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      currentScore: roundRatio(diagnostic.currentScore),
+      finalMarkCount: numeric(diagnostic.finalMarkCount),
+      handSize: numeric(diagnostic.handSize),
+      bestPublicTradeCardScore: roundRatio(diagnostic.bestPublicTradeCardScore),
+      bestPublicTradeCard: getBestPublicRefillCard(diagnostic),
+      shortfalls: buildFinalPublicRefillShortfalls(entry),
+      tradeChecks: getFinalPublicRefillTradeChecks(diagnostic),
+      cardsForPickCardPreview: diagnostic.cardsForPickCardPreview || null,
       unavailableMain: Array.isArray(diagnostic.unavailableMain)
         ? diagnostic.unavailableMain.slice(0, 6)
         : [],
@@ -4802,6 +4902,13 @@
         message: "无主行动 PASS 样本里存在资源交易后可打开较高分主行动的窗口，应按具体 seed 验证是否会扰动共享牌流和高分席位后再放行为。",
       });
     }
+    if (numeric(opportunities.finalPublicRefillShortfall) > 0) {
+      recommendations.push({
+        id: "inspect-final-public-refill-shortfall",
+        priority: "medium",
+        message: "终局低手牌 PASS 存在高价值公共牌但缺关键资源的样本，应先按缺口验证前序信用点、能量、宣传或手牌保留链，而不是直接放宽精选行为。",
+      });
+    }
     if (numeric(opportunities.quickBeforePassNoMain) > 0) {
       recommendations.push({
         id: "inspect-quick-before-pass-no-main",
@@ -5067,6 +5174,7 @@
       postPassPaidMoveNoFollowup: 0,
       postPassThinHandNoFollowupMove: 0,
       finalLowHandPassNoRecovery: 0,
+      finalPublicRefillShortfall: 0,
       negativeCardCornerGraphLift: 0,
       endTurnWithAvailableMove: 0,
       endTurnWithPositiveMove: 0,
@@ -5094,6 +5202,7 @@
     const preNoMainPassResourceDrainSamples = [];
     const postPassQuickNoMainSamples = [];
     const finalLowHandPassRecoverySamples = [];
+    const finalPublicRefillShortfallSamples = [];
     const negativeCardCornerGraphLiftSamples = [];
     const endTurnMoveOpportunitySamples = [];
     const researchTechCompoundCardSamples = [];
@@ -5169,6 +5278,12 @@
           opportunities.finalLowHandPassNoRecovery += 1;
           if (finalLowHandPassRecoverySamples.length < 12) {
             finalLowHandPassRecoverySamples.push(buildFinalLowHandPassRecoverySample(entry));
+          }
+          if (isFinalPublicRefillShortfall(entry)) {
+            opportunities.finalPublicRefillShortfall += 1;
+            if (finalPublicRefillShortfallSamples.length < 12) {
+              finalPublicRefillShortfallSamples.push(buildFinalPublicRefillShortfallSample(entry));
+            }
           }
         }
         if (isNegativeCardCornerGraphLift(entry)) {
@@ -5412,6 +5527,7 @@
       postPassQuickNoMainSamples,
       postPassQuickSamples: postPassQuickAnalysis.samples.slice(0, 12),
       finalLowHandPassRecoverySamples,
+      finalPublicRefillShortfallSamples,
       negativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
@@ -5481,6 +5597,7 @@
     const mergedPostPassQuickNoMainSamples = [];
     const mergedPostPassQuickSamples = [];
     const mergedFinalLowHandPassRecoverySamples = [];
+    const mergedFinalPublicRefillShortfallSamples = [];
     const mergedNegativeCardCornerGraphLiftSamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
     const mergedResearchTechCompoundCardSamples = [];
@@ -5585,6 +5702,17 @@
       ) {
         mergedFinalLowHandPassRecoverySamples.push(
           ...analysis.finalLowHandPassRecoverySamples.slice(0, 12 - mergedFinalLowHandPassRecoverySamples.length),
+        );
+      }
+      if (
+        mergedFinalPublicRefillShortfallSamples.length < 12
+        && Array.isArray(analysis.finalPublicRefillShortfallSamples)
+      ) {
+        mergedFinalPublicRefillShortfallSamples.push(
+          ...analysis.finalPublicRefillShortfallSamples.slice(
+            0,
+            12 - mergedFinalPublicRefillShortfallSamples.length,
+          ),
         );
       }
       if (
@@ -5779,6 +5907,7 @@
         || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
       )),
       finalLowHandPassRecoverySamples: mergedFinalLowHandPassRecoverySamples,
+      finalPublicRefillShortfallSamples: mergedFinalPublicRefillShortfallSamples,
       negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,

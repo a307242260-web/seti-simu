@@ -1328,11 +1328,69 @@ const finalLowHandPassRecoveryReport = {
 };
 const finalLowHandPassRecoveryAnalysis = analytics.analyzeBattleReport(finalLowHandPassRecoveryReport);
 assert.equal(finalLowHandPassRecoveryAnalysis.opportunities.finalLowHandPassNoRecovery, 1);
+assert.equal(finalLowHandPassRecoveryAnalysis.opportunities.finalPublicRefillShortfall, 0);
 assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].bestPublicTradeCardScore, 1.75);
 assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].topPublicTradeCards[0].cardId, "b_87.webp");
 assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].cardsForPickCardPreview.handCost, 2);
 const finalLowHandPassRecoverySummary = analytics.summarizeBattleReports([finalLowHandPassRecoveryReport]);
 assert.equal(finalLowHandPassRecoverySummary.finalLowHandPassRecoverySamples[0].tradeChecks[0].tradeId, "publicity-for-card");
+
+const finalPublicRefillShortfallReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 11,
+    playerId: "player-brown",
+    playerLabel: "棕色",
+    playerResources: { score: 137, credits: 1, energy: 0, publicity: 1, handSize: 0 },
+    details: {
+      action: { id: "pass", kind: "pass", score: -4.2 },
+      finalLowHandPassRecoveryDiagnostic: {
+        currentScore: 137,
+        finalMarkCount: 3,
+        nextFinalMarkThreshold: null,
+        handSize: 0,
+        bestPublicTradeCardScore: 40.15,
+        topPublicTradeCards: [{
+          cardId: "b_3.webp",
+          cardLabel: "阿尔冈金射电天文台",
+          tradeScore: 40.15,
+          playScore: 40.04,
+        }],
+        cardsForPickCardPreview: {
+          ok: false,
+          reason: "资源不足，需要 2张牌",
+          handCost: 2,
+          handAfterTrade: 0,
+          discardCost: null,
+          bestPublicTradeCardScore: 40.15,
+          bestPublicTradeCard: { cardId: "b_3.webp", cardLabel: "阿尔冈金射电天文台", tradeScore: 40.15 },
+          net: null,
+        },
+        tradeChecks: [
+          { tradeId: "credits-for-card", ok: false, reason: "资源不足，需要 2信用点", cost: { credits: 2 }, gain: { handSize: 1 } },
+          { tradeId: "energy-for-card", ok: false, reason: "资源不足，需要 2能量", cost: { energy: 2 }, gain: { handSize: 1 } },
+          { tradeId: "publicity-for-card", ok: false, reason: "资源不足，需要 3宣传", cost: { publicity: 3 }, gain: { handSize: 1 } },
+          { tradeId: "cards-for-pick-card", ok: false, reason: "资源不足，需要 2张牌", cost: { handSize: 2 }, gain: { handSize: 1 } },
+        ],
+        availableQuick: [],
+        unavailableMain: [{ id: "playCard", reason: "没有手牌" }],
+      },
+    },
+  }],
+  playerResults: [{ playerId: "player-brown", playerLabel: "棕色", finalScore: 223 }],
+};
+const finalPublicRefillShortfallAnalysis = analytics.analyzeBattleReport(finalPublicRefillShortfallReport);
+assert.equal(finalPublicRefillShortfallAnalysis.opportunities.finalLowHandPassNoRecovery, 1);
+assert.equal(finalPublicRefillShortfallAnalysis.opportunities.finalPublicRefillShortfall, 1);
+assert.equal(finalPublicRefillShortfallAnalysis.finalPublicRefillShortfallSamples[0].bestPublicTradeCard.cardId, "b_3.webp");
+assert.equal(finalPublicRefillShortfallAnalysis.finalPublicRefillShortfallSamples[0].shortfalls[0].tradeId, "credits-for-card");
+assert.equal(finalPublicRefillShortfallAnalysis.finalPublicRefillShortfallSamples[0].shortfalls[0].missing[0].missing, 1);
+assert(finalPublicRefillShortfallAnalysis.recommendations.some((item) => item.id === "inspect-final-public-refill-shortfall"));
+const finalPublicRefillShortfallSummary = analytics.summarizeBattleReports([finalPublicRefillShortfallReport]);
+assert.equal(finalPublicRefillShortfallSummary.finalPublicRefillShortfallSamples[0].shortfalls.length, 4);
+assert.equal(finalPublicRefillShortfallSummary.opportunities.finalPublicRefillShortfall, 1);
 
 const paceReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 5 },
