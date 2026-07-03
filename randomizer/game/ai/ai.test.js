@@ -1340,6 +1340,8 @@ assert.equal(postPassQuickAnalysis.postPassQuickSamples[0].postAction.routeTarge
 assert.equal(postPassQuickAnalysis.postPassQuickSamples[0].postAction.flags.thinHandNoFollowupMove, true);
 const postPassQuickSummary = analytics.summarizeBattleReports([postPassQuickReport]);
 assert.equal(postPassQuickSummary.postPassQuickSamples[0].postAction.flags.paidMoveNoFollowup, true);
+assert.ok(postPassQuickSummary.recommendations.some((entry) => entry.id === "classify-route-payment-risk"));
+assert.ok(!postPassQuickSummary.recommendations.some((entry) => entry.id === "route-planner"));
 
 function appendRepeatedTurnActions(logs, playerId, playerLabel, counts) {
   for (const [actionId, count] of Object.entries(counts || {})) {

@@ -2944,11 +2944,22 @@
       });
     }
     if ((analysis.movePayment?.count || 0) > 0 && ratios.quick > 0.25) {
-      recommendations.push({
-        id: "route-planner",
-        priority: "high",
-        message: "移动占比不低，建议先实现目标导向路线评分，避免只按方向偏好移动。",
-      });
+      const hasMoveRiskWithoutPositiveFollowup = numeric(opportunities.endTurnWithAvailableMove) > 0
+        && numeric(opportunities.endTurnWithPositiveMove) <= 0;
+      const hasPostPassPaidMoveRisk = numeric(opportunities.postPassPaidMoveNoFollowup) > 0;
+      if (hasMoveRiskWithoutPositiveFollowup || hasPostPassPaidMoveRisk) {
+        recommendations.push({
+          id: "classify-route-payment-risk",
+          priority: "medium",
+          message: "移动付费样本存在无跟进或负收益窗口，应先按目标链验证可兑现性，不要直接上调全局路线/移动权重。",
+        });
+      } else {
+        recommendations.push({
+          id: "route-planner",
+          priority: "high",
+          message: "移动占比不低，建议先实现目标导向路线评分，避免只按方向偏好移动。",
+        });
+      }
     }
     if ((analysis.bugs || []).length > 0) {
       recommendations.push({
@@ -2990,7 +3001,7 @@
       recommendations.push({
         id: "winner-targeted-route",
         priority: "medium",
-        message: "胜者移动更常指向明确路线目标，应继续提高 route/move 权重，并扩展任务牌和终局目标识别。",
+        message: "胜者移动更常指向明确路线目标，应继续扩展任务牌和终局目标识别，并用同 seed 验证具体兑现链。",
       });
     }
     if (numeric(routeDelta.moveFollowupCount) >= 1) {
