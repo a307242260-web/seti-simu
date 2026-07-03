@@ -2909,6 +2909,13 @@
         message: "存在无主行动即 PASS 的回合，应按样本区分资源锁、公共牌/交易不可转化和已验证负收益的强开行动。",
       });
     }
+    if (numeric(opportunities.quickBeforePassNoMain) > 0) {
+      recommendations.push({
+        id: "inspect-quick-before-pass-no-main",
+        priority: "medium",
+        message: "存在已执行快速行动但仍未接上主行动即 PASS 的回合，应检查资源滚动是否只消耗了手牌/资源而没有打开有效主行动。",
+      });
+    }
     if (opportunities.endTurnWithPositiveMove > 0) {
       recommendations.push({
         id: "targeted-post-action-move",
@@ -3107,6 +3114,7 @@
       passWithAvailableMain: 0,
       passWithResourceLockedHand: 0,
       earlyPassNoMain: 0,
+      quickBeforePassNoMain: 0,
       postPassQuickAfterPass: 0,
       postPassPaidMoveNoFollowup: 0,
       postPassThinHandNoFollowupMove: 0,
@@ -3127,6 +3135,7 @@
     const passOpportunitySamples = [];
     const passResourceLockSamples = [];
     const earlyPassNoMainSamples = [];
+    const quickBeforePassNoMainSamples = [];
     const finalLowHandPassRecoverySamples = [];
     const negativeCardCornerGraphLiftSamples = [];
     const endTurnMoveOpportunitySamples = [];
@@ -3327,6 +3336,10 @@
     const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
     earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
     opportunities.earlyPassNoMain = allEarlyPassNoMainSamples.length;
+    const allQuickBeforePassNoMainSamples = allEarlyPassNoMainSamples
+      .filter((sample) => numeric(sample.quickStepCount) > 0);
+    quickBeforePassNoMainSamples.push(...allQuickBeforePassNoMainSamples.slice(0, 12));
+    opportunities.quickBeforePassNoMain = allQuickBeforePassNoMainSamples.length;
     const postPassQuickAnalysis = buildPostPassQuickAnalysis(logs, playerResults);
     opportunities.postPassQuickAfterPass = postPassQuickAnalysis.counts.postPassQuickAfterPass;
     opportunities.postPassPaidMoveNoFollowup = postPassQuickAnalysis.counts.postPassPaidMoveNoFollowup;
@@ -3375,6 +3388,7 @@
       passResourceLockSamples,
       earlyPassNoMainSamples,
       earlyPassNoMainReasonCounts,
+      quickBeforePassNoMainSamples,
       postPassQuickSamples: postPassQuickAnalysis.samples.slice(0, 12),
       finalLowHandPassRecoverySamples,
       negativeCardCornerGraphLiftSamples,
@@ -3430,6 +3444,7 @@
     const mergedPassResourceLockSamples = [];
     const mergedEarlyPassNoMainSamples = [];
     const mergedEarlyPassNoMainReasonCounts = {};
+    const mergedQuickBeforePassNoMainSamples = [];
     const mergedPostPassQuickSamples = [];
     const mergedFinalLowHandPassRecoverySamples = [];
     const mergedNegativeCardCornerGraphLiftSamples = [];
@@ -3500,6 +3515,14 @@
       }
       for (const [key, count] of Object.entries(analysis.earlyPassNoMainReasonCounts || {})) {
         increment(mergedEarlyPassNoMainReasonCounts, key, count);
+      }
+      if (
+        mergedQuickBeforePassNoMainSamples.length < 12
+        && Array.isArray(analysis.quickBeforePassNoMainSamples)
+      ) {
+        mergedQuickBeforePassNoMainSamples.push(
+          ...analysis.quickBeforePassNoMainSamples.slice(0, 12 - mergedQuickBeforePassNoMainSamples.length),
+        );
       }
       if (mergedPostPassQuickSamples.length < 12 && Array.isArray(analysis.postPassQuickSamples)) {
         mergedPostPassQuickSamples.push(
@@ -3618,6 +3641,7 @@
       topScoreGaps: buildTopScoreGaps(mergedCandidateScoreStats),
       opportunities: mergedOpportunities,
       passOpportunitySamples: mergedPassOpportunitySamples,
+      quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(mergedScoreOpportunities.totalGap),
@@ -3658,6 +3682,7 @@
       passResourceLockSamples: mergedPassResourceLockSamples,
       earlyPassNoMainSamples: mergedEarlyPassNoMainSamples,
       earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
+      quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
       postPassQuickSamples: [...mergedPostPassQuickSamples].sort((left, right) => (
         numeric(left.finalScore) - numeric(right.finalScore)
         || numeric(left.roundNumber) - numeric(right.roundNumber)

@@ -1250,11 +1250,13 @@ const earlyPassReport = {
 };
 const earlyPassAnalysis = analytics.analyzeBattleReport(earlyPassReport);
 assert.equal(earlyPassAnalysis.opportunities.earlyPassNoMain, 2);
+assert.equal(earlyPassAnalysis.opportunities.quickBeforePassNoMain, 1);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].rawTurnNumber, 2);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].reasonTag, "resource-trade-unlocks-main");
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].candidateProfile.unavailableMainCount, 3);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].candidateProfile.bestResourceLockTrade.tradeId, "cards-for-credit");
 assert.deepEqual(earlyPassAnalysis.earlyPassNoMainSamples[1].actionIds, ["cardCorner", "pass"]);
+assert.deepEqual(earlyPassAnalysis.quickBeforePassNoMainSamples[0].actionIds, ["cardCorner", "pass"]);
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[1].reasonTag, "negative-main-only");
 assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[1].candidateProfile.bestMain.id, "researchTech");
 assert.deepEqual(earlyPassAnalysis.earlyPassNoMainReasonCounts, {
@@ -1263,6 +1265,8 @@ assert.deepEqual(earlyPassAnalysis.earlyPassNoMainReasonCounts, {
 });
 const earlyPassSummary = analytics.summarizeBattleReports([earlyPassReport]);
 assert.deepEqual(earlyPassSummary.earlyPassNoMainReasonCounts, earlyPassAnalysis.earlyPassNoMainReasonCounts);
+assert.equal(earlyPassSummary.opportunities.quickBeforePassNoMain, 1);
+assert.ok(earlyPassSummary.recommendations.some((entry) => entry.id === "inspect-quick-before-pass-no-main"));
 
 const postPassQuickReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
