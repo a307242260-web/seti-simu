@@ -1416,50 +1416,117 @@ assert.ok(lowEngineSummary.recommendations.some((entry) => entry.id === "inspect
 
 const highHandDrainEnergyTradeReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
-  logs: [{
-    type: "turn-action",
-    roundNumber: 3,
-    turnNumber: 4,
-    playerId: "player-white",
-    playerLabel: "白色",
-    playerResources: { score: 96, credits: 0, energy: 1, publicity: 4, handSize: 3 },
-    details: {
-      action: {
-        id: "quickTrade",
-        kind: "quick",
-        tradeId: "cards-for-energy",
-        score: 15.4,
-        valueBreakdown: {
-          cardsForEnergyHandDrainPenalty: 11.5,
-          currentScore: 96,
-          finalMarkCount: 3,
-          canReachAnalyze: false,
-          planetCashoutRecoveryScore: 32,
-          launchMoveRecoveryScore: 0,
-          planetCashoutRecoveryPlan: {
-            kind: "land",
-            planetId: "mars",
-            targetEnergy: 2,
-            directScore: 6,
-            rewardValue: 24,
-            energyAfterTrade: 2,
-            afterTradeGap: 0,
-            reachesNextThreshold: false,
-            score: 32,
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 4,
+      rawTurnNumber: 12,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 96, credits: 0, energy: 0, publicity: 4, handSize: 5 },
+      details: {
+        action: {
+          id: "quickTrade",
+          kind: "quick",
+          tradeId: "cards-for-energy",
+          score: 21.4,
+          valueBreakdown: { cardsForEnergyHandDrainPenalty: 0 },
+        },
+        candidates: [],
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 4,
+      rawTurnNumber: 12,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 96, credits: 0, energy: 1, publicity: 4, handSize: 3 },
+      details: {
+        action: {
+          id: "quickTrade",
+          kind: "quick",
+          tradeId: "cards-for-energy",
+          score: 15.4,
+          valueBreakdown: {
+            cardsForEnergyHandDrainPenalty: 11.5,
+            currentScore: 96,
+            finalMarkCount: 3,
+            canReachAnalyze: false,
+            planetCashoutRecoveryScore: 32,
+            launchMoveRecoveryScore: 0,
+            planetCashoutRecoveryPlan: {
+              kind: "land",
+              planetId: "mars",
+              targetEnergy: 2,
+              directScore: 6,
+              rewardValue: 24,
+              energyAfterTrade: 2,
+              afterTradeGap: 0,
+              reachesNextThreshold: false,
+              score: 32,
+            },
           },
         },
+        candidates: [],
       },
-      candidates: [],
     },
-  }],
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 4,
+      rawTurnNumber: 12,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 96, credits: 0, energy: 2, publicity: 4, handSize: 1 },
+      details: {
+        action: {
+          id: "move",
+          kind: "quick",
+          score: 6.1,
+          routeTarget: { kind: "planet", id: "jupiter", planetId: "jupiter", newDistance: 0 },
+          followupMainAction: {
+            actionId: "land",
+            planetId: "jupiter",
+            timing: "next_turn",
+            score: 33.3,
+            directScoreGain: 10,
+            rewardValue: 0,
+            energyCost: 2,
+          },
+          valueBreakdown: {
+            preserveEnergyForRouteCashout: true,
+            requiredMovePoints: 1,
+            moveCardSpent: 1,
+            moveEnergySpent: 0,
+            energyAfterMovePayment: 2,
+            paymentCost: 4.3,
+            routeScore: 18.01,
+            routeScoreForGain: 5.76,
+            followupScore: 33.3,
+            followupTiming: "next_turn",
+          },
+        },
+        candidates: [],
+      },
+    },
+  ],
   playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 180 }],
 };
 const highHandDrainAnalysis = analytics.analyzeBattleReport(highHandDrainEnergyTradeReport);
 assert.equal(highHandDrainAnalysis.opportunities.highHandDrainEnergyTrade, 1);
 assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].handDrainPenalty, 11.5);
+assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].priorCardsForEnergyThisRawTurn, 1);
 assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].planetPlan.planetId, "mars");
+assert.equal(
+  highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].laterLastCardPreserveEnergyMove.followupMainAction.actionId,
+  "land",
+);
 const highHandDrainSummary = analytics.summarizeBattleReports([highHandDrainEnergyTradeReport]);
 assert.equal(highHandDrainSummary.highHandDrainEnergyTradeSamples[0].planetPlan.score, 32);
+assert.equal(highHandDrainSummary.highHandDrainEnergyTradeSamples[0].priorCardsForEnergyThisRawTurn, 1);
 
 const lastCardPreserveEnergyMoveReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },

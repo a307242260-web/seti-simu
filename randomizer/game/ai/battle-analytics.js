@@ -1099,17 +1099,57 @@
     return numeric(breakdown.cardsForEnergyHandDrainPenalty) >= 8;
   }
 
-  function buildHighHandDrainEnergyTradeSample(entry) {
+  function isSameRawTurnEntry(left = {}, right = {}) {
+    return left.playerId === right.playerId
+      && numeric(left.roundNumber) === numeric(right.roundNumber)
+      && numeric(left.rawTurnNumber ?? left.turnNumber) === numeric(right.rawTurnNumber ?? right.turnNumber);
+  }
+
+  function countPriorSameRawTurnActions(logs = [], entry = {}, predicate = () => false) {
+    const entryIndex = logs.indexOf(entry);
+    const limit = entryIndex >= 0 ? entryIndex : logs.length;
+    let count = 0;
+    for (let index = 0; index < limit; index += 1) {
+      const candidate = logs[index];
+      if (candidate?.type !== "turn-action") continue;
+      if (!isSameRawTurnEntry(candidate, entry)) continue;
+      if (predicate(candidate)) count += 1;
+    }
+    return count;
+  }
+
+  function findLaterSameRawTurnAction(logs = [], entry = {}, predicate = () => false) {
+    const entryIndex = logs.indexOf(entry);
+    const start = entryIndex >= 0 ? entryIndex + 1 : 0;
+    for (let index = start; index < logs.length; index += 1) {
+      const candidate = logs[index];
+      if (candidate?.type !== "turn-action") continue;
+      if (!isSameRawTurnEntry(candidate, entry)) continue;
+      if (predicate(candidate)) return candidate;
+    }
+    return null;
+  }
+
+  function isCardsForEnergyTurnAction(entry = {}) {
+    const action = getSelectedAction(entry);
+    return getCandidateId(action) === "quickTrade" && action?.tradeId === "cards-for-energy";
+  }
+
+  function buildHighHandDrainEnergyTradeSample(entry, logs = []) {
     const action = getSelectedAction(entry) || {};
     const breakdown = action.valueBreakdown || action.breakdown || {};
     const planetPlan = breakdown.planetCashoutRecoveryPlan || null;
+    const priorCardsForEnergyThisRawTurn = countPriorSameRawTurnActions(logs, entry, isCardsForEnergyTurnAction);
+    const laterLastCardMove = findLaterSameRawTurnAction(logs, entry, isLastCardPreserveEnergyMove);
     return {
       roundNumber: entry.roundNumber ?? null,
       turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
       playerId: entry.playerId || null,
       playerLabel: entry.playerLabel || null,
       resources: entry.playerResources || null,
       selected: summarizeOpportunityCandidate(action),
+      priorCardsForEnergyThisRawTurn,
       handDrainPenalty: roundRatio(breakdown.cardsForEnergyHandDrainPenalty),
       currentScore: roundRatio(breakdown.currentScore),
       finalMarkCount: numeric(breakdown.finalMarkCount),
@@ -1128,6 +1168,9 @@
           reachesNextThreshold: Boolean(planetPlan.reachesNextThreshold),
           score: roundRatio(planetPlan.score),
         }
+        : null,
+      laterLastCardPreserveEnergyMove: laterLastCardMove
+        ? buildLastCardPreserveEnergyMoveSample(laterLastCardMove)
         : null,
     };
   }
@@ -3375,7 +3418,7 @@
         if (isHighHandDrainEnergyTrade(entry)) {
           opportunities.highHandDrainEnergyTrade += 1;
           if (highHandDrainEnergyTradeSamples.length < 12) {
-            highHandDrainEnergyTradeSamples.push(buildHighHandDrainEnergyTradeSample(entry));
+            highHandDrainEnergyTradeSamples.push(buildHighHandDrainEnergyTradeSample(entry, logs));
           }
         }
         if (isLastCardPreserveEnergyMove(entry)) {
