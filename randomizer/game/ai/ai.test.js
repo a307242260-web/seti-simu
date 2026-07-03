@@ -1100,6 +1100,16 @@ const finalLowHandPassRecoveryReport = {
         handSize: 1,
         bestPublicTradeCardScore: 1.75,
         topPublicTradeCards: [{ cardId: "b_87.webp", cardLabel: "引力弹弓", tradeScore: 1.75 }],
+        cardsForPickCardPreview: {
+          ok: false,
+          reason: "资源不足，需要 2张牌",
+          handCost: 2,
+          handAfterTrade: 0,
+          discardCost: null,
+          bestPublicTradeCardScore: 1.75,
+          bestPublicTradeCard: { cardId: "b_87.webp", cardLabel: "引力弹弓", tradeScore: 1.75 },
+          net: null,
+        },
         tradeChecks: [{ tradeId: "publicity-for-card", ok: true }],
         availableQuick: [],
         unavailableMain: [{ id: "playCard", reason: "没有资源可支付的普通手牌" }],
@@ -1112,6 +1122,7 @@ const finalLowHandPassRecoveryAnalysis = analytics.analyzeBattleReport(finalLowH
 assert.equal(finalLowHandPassRecoveryAnalysis.opportunities.finalLowHandPassNoRecovery, 1);
 assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].bestPublicTradeCardScore, 1.75);
 assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].topPublicTradeCards[0].cardId, "b_87.webp");
+assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].cardsForPickCardPreview.handCost, 2);
 const finalLowHandPassRecoverySummary = analytics.summarizeBattleReports([finalLowHandPassRecoveryReport]);
 assert.equal(finalLowHandPassRecoverySummary.finalLowHandPassRecoverySamples[0].tradeChecks[0].tradeId, "publicity-for-card");
 

@@ -801,6 +801,7 @@
       topPublicTradeCards: Array.isArray(diagnostic.topPublicTradeCards)
         ? diagnostic.topPublicTradeCards.slice(0, 5)
         : [],
+      cardsForPickCardPreview: diagnostic.cardsForPickCardPreview || null,
       tradeChecks: Array.isArray(diagnostic.tradeChecks)
         ? diagnostic.tradeChecks.slice(0, 8)
         : [],

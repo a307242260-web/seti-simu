@@ -16990,7 +16990,36 @@
           ? bestPublicTradeCardScore >= 4
           : bestPublicTradeCardScore >= 10
       );
-      const tradeChecks = ["credits-for-card", "energy-for-card", "publicity-for-card", "cards-for-credit", "cards-for-energy", "energy-for-credit"]
+      const cardsForPickCardTrade = quickTrades?.getTradeAction?.("cards-for-pick-card");
+      const cardsForPickCardCheck = cardsForPickCardTrade
+        ? (quickTrades.canExecuteTrade?.("cards-for-pick-card", createActionContext()) || { ok: false })
+        : { ok: false };
+      const cardsForPickCardHandCost = Math.max(0, Math.round(aiNumber(cardsForPickCardTrade?.cost?.handSize)));
+      const cardsForPickCardDiscardCost = cardsForPickCardTrade && cardsForPickCardCheck.ok
+        ? estimateAiTradeDiscardOpportunityCost(player, cardsForPickCardTrade)
+        : Infinity;
+      const cardsForPickCardPreview = cardsForPickCardTrade
+        ? {
+          ok: Boolean(cardsForPickCardCheck.ok),
+          reason: cardsForPickCardCheck.ok ? null : (cardsForPickCardCheck.reason || cardsForPickCardCheck.message || null),
+          handCost: cardsForPickCardHandCost,
+          handAfterTrade: Math.max(
+            0,
+            handSize
+              - cardsForPickCardHandCost
+              + Math.max(0, Math.round(aiNumber(cardsForPickCardTrade.gain?.handSize))),
+          ),
+          discardCost: Number.isFinite(cardsForPickCardDiscardCost)
+            ? roundAiScore(cardsForPickCardDiscardCost)
+            : null,
+          bestPublicTradeCardScore: roundAiScore(bestPublicTradeCardScore),
+          bestPublicTradeCard: publicTradeCards[0] || null,
+          net: Number.isFinite(cardsForPickCardDiscardCost)
+            ? roundAiScore(bestPublicTradeCardScore * 0.58 - cardsForPickCardDiscardCost * 0.34)
+            : null,
+        }
+        : null;
+      const tradeChecks = ["credits-for-card", "energy-for-card", "publicity-for-card", "cards-for-credit", "cards-for-energy", "cards-for-pick-card", "energy-for-credit"]
         .map((tradeId) => {
           const trade = quickTrades?.getTradeAction?.(tradeId);
           const check = trade ? (quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false }) : { ok: false };
@@ -17042,6 +17071,7 @@
         publicity: roundAiScore(resources.publicity),
         bestPublicTradeCardScore,
         topPublicTradeCards: publicTradeCards,
+        cardsForPickCardPreview,
         tradeChecks,
         lateRecoveryGate: {
           hasQuickTrades: Boolean(quickTrades?.getTradeAction),
