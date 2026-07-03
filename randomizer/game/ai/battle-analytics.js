@@ -1070,6 +1070,7 @@
   function summarizeB2ScanPreviewChoice(choice = {}) {
     const b2 = choice.b2 || {};
     return {
+      targetRank: choice.targetRank == null ? null : numeric(choice.targetRank),
       effectType: choice.effectType || null,
       pendingType: choice.pendingType || null,
       nebulaId: choice.nebulaId || null,
@@ -1094,6 +1095,20 @@
     };
   }
 
+  function compareB2ScanPreviewUrgency(left = {}, right = {}) {
+    return (
+      numeric(right.b2?.winsAfterScan) - numeric(left.b2?.winsAfterScan)
+      || numeric(right.b2?.deficit) - numeric(left.b2?.deficit)
+      || numeric(right.b2?.focus) - numeric(left.b2?.focus)
+      || numeric(right.score) - numeric(left.score)
+      || numeric(left.targetRank) - numeric(right.targetRank)
+    );
+  }
+
+  function getBestB2ScanPreviewChoice(choices = []) {
+    return [...(choices || [])].sort(compareB2ScanPreviewUrgency)[0] || null;
+  }
+
   function getB2ScanPreviewChoices(scanCandidate = {}, limit = 6, options = {}) {
     const preview = scanCandidate?.targetPreview || {};
     const effectChoices = (preview.effects || []).flatMap((effect) => (
@@ -1108,6 +1123,7 @@
       : effectChoices;
     const seen = new Set();
     return (sourceChoices || [])
+      .map((choice, index) => ({ ...choice, targetRank: index + 1 }))
       .filter((choice) => scanPreviewChoiceHasB2Value(choice, options))
       .map(summarizeB2ScanPreviewChoice)
       .filter((choice) => {
@@ -1121,11 +1137,6 @@
         seen.add(key);
         return true;
       })
-      .sort((left, right) => (
-        numeric(right.b2?.winsAfterScan) - numeric(left.b2?.winsAfterScan)
-        || numeric(right.b2?.deficit) - numeric(left.b2?.deficit)
-        || numeric(right.score) - numeric(left.score)
-      ))
       .slice(0, Math.max(0, Number(limit) || 0));
   }
 
@@ -1141,7 +1152,7 @@
   }
 
   function getB2ScanNearMissUrgency(sample = {}) {
-    const bestChoice = sample.topChoices?.[0] || {};
+    const bestChoice = sample.bestB2Choice || getBestB2ScanPreviewChoice(sample.topChoices || []) || {};
     const b2 = bestChoice.b2 || {};
     return numeric(b2.deficit) + (b2.winsAfterScan ? 3 : 0) + Math.max(0, numeric(b2.focus)) * 0.1;
   }
@@ -1167,6 +1178,10 @@
     const scanGraphNet = getCandidateActionGraphNet(scanCandidate);
     const result = playerResultById?.get?.(entry.playerId) || {};
     const finalB2SectorBottleneck = numeric(entry.roundNumber) >= 3 && resultHasB2SectorBottleneck(result);
+    const topChoices = getB2ScanPreviewChoices(scanCandidate, 6, {
+      requireCommittedB2: true,
+      finalB2SectorBottleneck,
+    });
     return {
       roundNumber: entry.roundNumber ?? null,
       turnNumber: entry.turnNumber ?? null,
@@ -1189,10 +1204,8 @@
       actionGraphNetGap: selectedGraphNet == null || scanGraphNet == null
         ? null
         : roundRatio(selectedGraphNet - scanGraphNet),
-      topChoices: getB2ScanPreviewChoices(scanCandidate, 6, {
-        requireCommittedB2: true,
-        finalB2SectorBottleneck,
-      }),
+      topChoices,
+      bestB2Choice: getBestB2ScanPreviewChoice(topChoices),
     };
   }
 
