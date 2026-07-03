@@ -15,7 +15,7 @@ function parseArgs(argv) {
   const options = {
     seed: "ai-v2-baseline",
     games: 5,
-    activePlayerCount: 2,
+    activePlayerCount: 4,
     maxSteps: 2500,
     stopBeforeRound: null,
     maxMovesPerTurn: null,
