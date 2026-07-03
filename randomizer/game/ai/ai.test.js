@@ -2002,6 +2002,63 @@ assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].b2Progress.bottlene
 const b2ScanNearMissSummary = analytics.summarizeBattleReports([b2ScanNearMissReport]);
 assert.equal(b2ScanNearMissSummary.b2ScanNearMissSamples[0].topChoices[0].nebulaId, "sector-3-a");
 
+const b2TradeNearMissReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 2,
+    playerId: "player-brown",
+    playerLabel: "棕色",
+    playerResources: { score: 172, credits: 6, energy: 3, publicity: 1, handSize: 3 },
+    details: {
+      action: { id: "researchTech", kind: "main", score: 49.547, actionGraph: { net: 95.914 } },
+      candidates: [
+        { id: "researchTech", kind: "main", available: true, score: 49.547, actionGraph: { net: 95.914 } },
+        {
+          id: "quickTrade",
+          kind: "quick",
+          available: true,
+          tradeId: "credits-for-energy",
+          label: "2信用点 -> 1能量",
+          reason: "B2兑现：信用点换能量准备完成扇区",
+          score: 48.51,
+          actionGraph: { net: 51.421 },
+          valueBreakdown: {
+            lateResourceRecoveryTrade: true,
+            b2SectorScanUnlockByTrade: { "credits-for-energy": 24.5 },
+            highScoreProjectedScore: 249,
+            currentScore: 172,
+          },
+        },
+      ],
+    },
+  }],
+  playerResults: [{
+    playerId: "player-brown",
+    playerLabel: "棕色",
+    finalScore: 299,
+    b2Progress: {
+      formulaId: "b2",
+      sectorWins: 6,
+      orbitLandCount: 7,
+      sectorWinDeficit: 1,
+      bottleneck: "sectorWins",
+    },
+  }],
+};
+const b2TradeNearMissAnalysis = analytics.analyzeBattleReport(b2TradeNearMissReport);
+assert.equal(b2TradeNearMissAnalysis.opportunities.b2TradeNearMiss, 1);
+assert.equal(b2TradeNearMissAnalysis.b2TradeNearMissSamples[0].playerId, "player-brown");
+assert.equal(b2TradeNearMissAnalysis.b2TradeNearMissSamples[0].scoreTo300, 1);
+assert.equal(b2TradeNearMissAnalysis.b2TradeNearMissSamples[0].selected.id, "researchTech");
+assert.equal(b2TradeNearMissAnalysis.b2TradeNearMissSamples[0].bestTrade.tradeId, "credits-for-energy");
+assert.equal(b2TradeNearMissAnalysis.b2TradeNearMissSamples[0].actionGraphNetGap, 44.493);
+assert.ok(b2TradeNearMissAnalysis.recommendations.some((entry) => entry.id === "inspect-b2-trade-near-miss"));
+const b2TradeNearMissSummary = analytics.summarizeBattleReports([b2TradeNearMissReport]);
+assert.equal(b2TradeNearMissSummary.b2TradeNearMissSamples[0].bestTrade.tradeId, "credits-for-energy");
+assert.ok(b2TradeNearMissSummary.recommendations.some((entry) => entry.id === "inspect-b2-trade-near-miss"));
+
 const mainUnlockLowConcretePlayReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{

@@ -1226,6 +1226,87 @@
     };
   }
 
+  function getB2TradeCandidates(candidates = []) {
+    return (candidates || [])
+      .filter((candidate) => (
+        isCandidateAvailable(candidate)
+        && getCandidateId(candidate) === "quickTrade"
+        && (
+          String(candidate.reason || "").includes("B2")
+          || String(candidate.label || "").includes("B2")
+          || numeric(candidate.valueBreakdown?.b2SectorScanUnlockByTrade?.[candidate.tradeId]) > 0
+        )
+      ))
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || numeric(right.score) - numeric(left.score)
+        || String(left.tradeId || "").localeCompare(String(right.tradeId || ""))
+      ));
+  }
+
+  function isB2TradeNearMiss(entry, candidates = [], playerResultById = new Map()) {
+    const selected = getSelectedCandidate(entry, candidates);
+    if (getCandidateId(selected) === "quickTrade" && String(selected?.reason || "").includes("B2")) return false;
+    const b2Trades = getB2TradeCandidates(candidates);
+    if (!b2Trades.length) return false;
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    const finalScore = numeric(result.finalScore);
+    return finalScore >= 260
+      || resultHasB2SectorBottleneck(result)
+      || numeric(b2Trades[0].score) >= 35;
+  }
+
+  function sortB2TradeNearMissSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        Math.abs(numeric(left.scoreTo300)) - Math.abs(numeric(right.scoreTo300))
+        || numeric(left.policyScoreGap) - numeric(right.policyScoreGap)
+        || numeric(right.bestTrade?.score) - numeric(left.bestTrade?.score)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.turnNumber) - numeric(right.turnNumber)
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function buildB2TradeNearMissSample(entry, candidates = [], playerResultById = new Map()) {
+    const b2Trades = getB2TradeCandidates(candidates);
+    const bestTrade = b2Trades[0] || null;
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const selectedPolicyScore = getFiniteScore(getCandidatePolicyScore(selectedCandidate));
+    const tradePolicyScore = getFiniteScore(getCandidatePolicyScore(bestTrade));
+    const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
+    const tradeGraphNet = getCandidateActionGraphNet(bestTrade);
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      finalScore: roundRatio(result.finalScore),
+      scoreTo300: roundRatio(300 - numeric(result.finalScore)),
+      resources: entry.playerResources || null,
+      b2Progress: result.b2Progress || null,
+      selected: summarizeOpportunityCandidate(selectedCandidate || {}),
+      bestTrade: bestTrade
+        ? {
+          ...summarizeOpportunityCandidate(bestTrade),
+          valueBreakdown: bestTrade.valueBreakdown || bestTrade.breakdown || null,
+        }
+        : null,
+      policyScoreGap: selectedPolicyScore == null || tradePolicyScore == null
+        ? null
+        : roundRatio(selectedPolicyScore - tradePolicyScore),
+      actionGraphNetGap: selectedGraphNet == null || tradeGraphNet == null
+        ? null
+        : roundRatio(selectedGraphNet - tradeGraphNet),
+      tradeCandidates: b2Trades.slice(0, 4).map((candidate) => ({
+        ...summarizeOpportunityCandidate(candidate),
+        valueBreakdown: candidate.valueBreakdown || candidate.breakdown || null,
+      })),
+    };
+  }
+
   function getCompoundResearchTechCards(candidates = []) {
     const playCardCandidate = (candidates || [])
       .filter(isCandidateAvailable)
@@ -3783,6 +3864,13 @@
         message: "打牌候选多次接近实际行动分值但被跳过，应按样本确认具体牌链是否能闭合任务、科技、终局或资源滚动。",
       });
     }
+    if (numeric(opportunities.b2TradeNearMiss) > 0) {
+      recommendations.push({
+        id: "inspect-b2-trade-near-miss",
+        priority: "medium",
+        message: "B2 扫描解锁交易被其它行动压过，应按样本区分 raw 分接近、action graph 差距过大或扫描后无法闭合。",
+      });
+    }
     if ((candidateStats.researchTech?.availableNotSelected || 0) > (candidateStats.researchTech?.selected || 0) * 2) {
       recommendations.push({
         id: "contextual-tech-value",
@@ -3947,6 +4035,7 @@
       researchTechOverCompoundTechCard: 0,
       playCardNearMiss: 0,
       b2ScanNearMiss: 0,
+      b2TradeNearMiss: 0,
       mainUnlockLowConcretePlay: 0,
       nonPositivePublicRefill: 0,
       highHandDrainEnergyTrade: 0,
@@ -3968,6 +4057,7 @@
     const researchTechCompoundCardSamples = [];
     const playCardNearMissSamples = [];
     const b2ScanNearMissSamples = [];
+    const b2TradeNearMissSamples = [];
     const mainUnlockLowConcretePlaySamples = [];
     const nonPositivePublicRefillSamples = [];
     const highHandDrainEnergyTradeSamples = [];
@@ -4068,6 +4158,10 @@
         if (isB2ScanNearMiss(entry, candidates, playerResultById)) {
           opportunities.b2ScanNearMiss += 1;
           b2ScanNearMissSamples.push(buildB2ScanNearMissSample(entry, candidates, playerResultById));
+        }
+        if (isB2TradeNearMiss(entry, candidates, playerResultById)) {
+          opportunities.b2TradeNearMiss += 1;
+          b2TradeNearMissSamples.push(buildB2TradeNearMissSample(entry, candidates, playerResultById));
         }
         if (isMainUnlockLowConcretePlay(entry)) {
           opportunities.mainUnlockLowConcretePlay += 1;
@@ -4246,6 +4340,7 @@
       researchTechCompoundCardSamples,
       playCardNearMissSamples: sortPlayCardNearMissSamples(playCardNearMissSamples),
       b2ScanNearMissSamples: sortB2ScanNearMissSamples(b2ScanNearMissSamples),
+      b2TradeNearMissSamples: sortB2TradeNearMissSamples(b2TradeNearMissSamples),
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples,
@@ -4309,6 +4404,7 @@
     const mergedResearchTechCompoundCardSamples = [];
     const mergedPlayCardNearMissSamples = [];
     const mergedB2ScanNearMissSamples = [];
+    const mergedB2TradeNearMissSamples = [];
     const mergedMainUnlockLowConcretePlaySamples = [];
     const mergedNonPositivePublicRefillSamples = [];
     const mergedHighHandDrainEnergyTradeSamples = [];
@@ -4421,6 +4517,9 @@
       }
       if (Array.isArray(analysis.b2ScanNearMissSamples)) {
         mergedB2ScanNearMissSamples.push(...analysis.b2ScanNearMissSamples);
+      }
+      if (Array.isArray(analysis.b2TradeNearMissSamples)) {
+        mergedB2TradeNearMissSamples.push(...analysis.b2TradeNearMissSamples);
       }
       if (mergedMainUnlockLowConcretePlaySamples.length < 12 && Array.isArray(analysis.mainUnlockLowConcretePlaySamples)) {
         mergedMainUnlockLowConcretePlaySamples.push(
@@ -4573,6 +4672,7 @@
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       playCardNearMissSamples: sortPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
       b2ScanNearMissSamples: sortB2ScanNearMissSamples(mergedB2ScanNearMissSamples),
+      b2TradeNearMissSamples: sortB2TradeNearMissSamples(mergedB2TradeNearMissSamples),
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples: mergedHighHandDrainEnergyTradeSamples,
