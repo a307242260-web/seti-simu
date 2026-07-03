@@ -5443,26 +5443,139 @@
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
     }
 
-    function estimateAiTradeDiscardOpportunityCost(player = getCurrentPlayer(), trade = null, preserveHandIndex = null) {
-      if (!player || !trade) return Infinity;
+    function summarizeAiTradeDiscardCardEntry(entry = {}) {
+      const card = entry.card || null;
+      const playCandidate = entry.playCandidate || null;
+      return {
+        handIndex: Number.isInteger(Number(entry.handIndex)) ? Number(entry.handIndex) : null,
+        cardId: card?.cardId || card?.id || null,
+        cardInstanceId: card?.id || null,
+        cardLabel: getAiCardDisplayLabel({ card, handIndex: entry.handIndex }, getCurrentPlayer())
+          || card?.cardName
+          || card?.label
+          || null,
+        price: getCardPrice(card),
+        typeCode: getCardTypeCode(card),
+        opportunityCost: roundAiScore(entry.opportunityCost),
+        playScore: playCandidate ? roundAiScore(playCandidate.score) : null,
+        directScoreGain: playCandidate ? roundAiScore(playCandidate.directScoreGain) : 0,
+        effectTypes: Array.isArray(playCandidate?.effectTypes)
+          ? playCandidate.effectTypes.slice(0, 6)
+          : [],
+        valueSignals: playCandidate?.valueBreakdown ? {
+          planScore: roundAiScore(playCandidate.valueBreakdown.planScore),
+          endGameExpectedScore: roundAiScore(playCandidate.valueBreakdown.endGameExpectedScore),
+          c2Type3ProgressValue: roundAiScore(playCandidate.valueBreakdown.c2Type3ProgressValue),
+          cFinalTaskProgressValue: roundAiScore(playCandidate.valueBreakdown.cFinalTaskProgressValue),
+          readyTaskCashoutDirectScore: roundAiScore(playCandidate.valueBreakdown.readyTaskCashoutDirectScore),
+          readyTaskCashoutCount: roundAiScore(playCandidate.valueBreakdown.readyTaskCashoutCount),
+        } : null,
+      };
+    }
+
+    function buildAiTradeDiscardCostEntries(player = getCurrentPlayer(), preserveHandIndex = null) {
+      const explicitPreserveHandIndex = preserveHandIndex === null || preserveHandIndex === undefined || preserveHandIndex === ""
+        ? null
+        : Number(preserveHandIndex);
+      const preservedIndex = Number.isInteger(explicitPreserveHandIndex) ? explicitPreserveHandIndex : null;
+      return (player?.hand || [])
+        .map((card, handIndex) => {
+          if (preservedIndex !== null && Number(handIndex) === preservedIndex) return null;
+          const playCandidate = buildAiPlayCardCandidate(card, handIndex, player);
+          const opportunityCost = getAiDiscardedCardOpportunityCost(card, playCandidate);
+          if (!Number.isFinite(Number(opportunityCost))) return null;
+          return {
+            card,
+            handIndex,
+            playCandidate,
+            opportunityCost: aiNumber(opportunityCost),
+          };
+        })
+        .filter(Boolean)
+        .sort((left, right) => (
+          aiNumber(left.opportunityCost) - aiNumber(right.opportunityCost)
+          || String(getAiCardDisplayLabel({ card: left.card, handIndex: left.handIndex }, player) || "").localeCompare(
+            String(getAiCardDisplayLabel({ card: right.card, handIndex: right.handIndex }, player) || ""),
+            "zh-Hans-CN",
+          )
+          || aiNumber(left.handIndex) - aiNumber(right.handIndex)
+        ));
+    }
+
+    function summarizeAiTradeDiscardPlan(player = getCurrentPlayer(), trade = null, preserveHandIndex = null, options = {}) {
+      if (!player || !trade) {
+        return {
+          ok: false,
+          reason: "missing-player-or-trade",
+          handCost: 0,
+          resourceCostValue: null,
+          totalCost: null,
+          selectedCards: [],
+          candidateCards: [],
+        };
+      }
       const handCost = Math.max(0, Math.round(aiNumber(trade.cost?.handSize)));
       const resourceCost = { ...(trade.cost || {}) };
       delete resourceCost.handSize;
-      let cost = scoreAiResourceBundle(resourceCost);
-      if (handCost <= 0) return cost;
-      const discardCosts = (player.hand || [])
-        .map((card, index) => {
-          if (Number(index) === Number(preserveHandIndex)) return null;
-          const playCandidate = buildAiPlayCardCandidate(card, index, player);
-          return getAiDiscardedCardOpportunityCost(card, playCandidate);
-        })
-        .filter((value) => Number.isFinite(Number(value)))
-        .sort((left, right) => Number(left) - Number(right));
-      if (discardCosts.length < handCost) return Infinity;
-      for (let index = 0; index < handCost; index += 1) {
-        cost += Math.max(0, aiNumber(discardCosts[index]));
+      const resourceCostValue = scoreAiResourceBundle(resourceCost);
+      const explicitPreserveHandIndex = preserveHandIndex === null || preserveHandIndex === undefined || preserveHandIndex === ""
+        ? null
+        : Number(preserveHandIndex);
+      const preservedIndex = Number.isInteger(explicitPreserveHandIndex) ? explicitPreserveHandIndex : null;
+      const costEntries = buildAiTradeDiscardCostEntries(player, preservedIndex);
+      const selectedEntries = costEntries.slice(0, handCost);
+      const hasEnoughCards = selectedEntries.length >= handCost;
+      const totalCost = hasEnoughCards
+        ? resourceCostValue + selectedEntries.reduce((total, entry) => total + Math.max(0, aiNumber(entry.opportunityCost)), 0)
+        : Infinity;
+      const plan = {
+        ok: hasEnoughCards,
+        reason: hasEnoughCards ? null : "insufficient-discard-cards",
+        handCost,
+        preservedHandIndex: preservedIndex,
+        resourceCostValue: roundAiScore(resourceCostValue),
+        totalCost: Number.isFinite(totalCost) ? roundAiScore(totalCost) : null,
+        selectedCards: selectedEntries.map(summarizeAiTradeDiscardCardEntry),
+        candidateCards: costEntries
+          .slice(0, Math.max(4, handCost + 2))
+          .map(summarizeAiTradeDiscardCardEntry),
+        candidateCount: costEntries.length,
+      };
+
+      if (options.includeExecutionPlan && handCost > 0) {
+        const tradeId = options.tradeId || trade.id || null;
+        const executionIndexes = tradeId
+          ? chooseAiTradeDiscardIndexes(player, handCost, { tradeId }) || []
+          : [];
+        const costEntryByIndex = new Map(costEntries.map((entry) => [Number(entry.handIndex), entry]));
+        const selectedIndexSet = new Set(selectedEntries.map((entry) => Number(entry.handIndex)));
+        plan.executionSelectedIndexes = executionIndexes.slice(0, handCost).map((index) => Number(index));
+        plan.executionSelectedCards = plan.executionSelectedIndexes
+          .map((handIndex) => {
+            const entry = costEntryByIndex.get(Number(handIndex));
+            if (entry) return summarizeAiTradeDiscardCardEntry(entry);
+            const card = player.hand?.[handIndex] || null;
+            if (!card) return null;
+            const playCandidate = buildAiPlayCardCandidate(card, handIndex, player);
+            return summarizeAiTradeDiscardCardEntry({
+              card,
+              handIndex,
+              playCandidate,
+              opportunityCost: getAiDiscardedCardOpportunityCost(card, playCandidate),
+            });
+          })
+          .filter(Boolean);
+        plan.executionMatchesCostPlan = (
+          plan.executionSelectedIndexes.length === selectedIndexSet.size
+          && plan.executionSelectedIndexes.every((index) => selectedIndexSet.has(Number(index)))
+        );
       }
-      return cost;
+      return plan;
+    }
+
+    function estimateAiTradeDiscardOpportunityCost(player = getCurrentPlayer(), trade = null, preserveHandIndex = null) {
+      const plan = summarizeAiTradeDiscardPlan(player, trade, preserveHandIndex);
+      return plan.ok && Number.isFinite(Number(plan.totalCost)) ? Number(plan.totalCost) : Infinity;
     }
 
     function buildAiMainUnlockTradeCandidate(player = getCurrentPlayer(), tradeId = null, playCardCandidates = null) {
@@ -17019,6 +17132,7 @@
           bestPlay ? {
             actionId: "playCard",
             score: aiNumber(bestPlay.score),
+            handIndex: Number.isInteger(Number(bestPlay.handIndex)) ? Number(bestPlay.handIndex) : null,
             cardId: bestPlay.cardId || null,
             cardLabel: bestPlay.cardLabel || null,
             directScoreGain: Math.max(0, aiNumber(bestPlay.directScoreGain)),
@@ -17049,21 +17163,39 @@
             planScore: aiNumber(launchPlan?.score),
           } : null,
         ].filter(Boolean).sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
+        const discardPlan = summarizeAiTradeDiscardPlan(player, trade, null, {
+          includeExecutionPlan: true,
+          tradeId,
+        });
+        const bestAction = options[0] || null;
+        const bestActionHandIndex = Number.isInteger(Number(bestAction?.handIndex))
+          ? Number(bestAction.handIndex)
+          : null;
+        const bestActionDiscardRisk = bestActionHandIndex === null ? null : {
+          handIndex: bestActionHandIndex,
+          costPlanDiscards: (discardPlan.selectedCards || [])
+            .some((card) => Number(card.handIndex) === bestActionHandIndex),
+          executionPlanDiscards: (discardPlan.executionSelectedIndexes || [])
+            .some((handIndex) => Number(handIndex) === bestActionHandIndex),
+          executionMatchesCostPlan: Boolean(discardPlan.executionMatchesCostPlan),
+        };
 
         return {
           tradeId,
           label: trade.label || tradeId,
           cost: { ...(trade.cost || {}) },
           gain: { ...(trade.gain || {}) },
+          discardPlan,
+          bestActionDiscardRisk,
           resourcesAfterTrade: {
             credits: roundAiScore(simulatedPlayer.resources?.credits),
             energy: roundAiScore(simulatedPlayer.resources?.energy),
             publicity: roundAiScore(simulatedPlayer.resources?.publicity),
             handSize: handAfterTrade,
           },
-          bestAction: options[0] ? {
-            ...options[0],
-            score: roundAiScore(options[0].score),
+          bestAction: bestAction ? {
+            ...bestAction,
+            score: roundAiScore(bestAction.score),
           } : null,
           unlockedActions: options.slice(0, 4).map((option) => ({
             ...option,
@@ -17125,8 +17257,14 @@
         ? (quickTrades.canExecuteTrade?.("cards-for-pick-card", createActionContext()) || { ok: false })
         : { ok: false };
       const cardsForPickCardHandCost = Math.max(0, Math.round(aiNumber(cardsForPickCardTrade?.cost?.handSize)));
-      const cardsForPickCardDiscardCost = cardsForPickCardTrade && cardsForPickCardCheck.ok
-        ? estimateAiTradeDiscardOpportunityCost(player, cardsForPickCardTrade)
+      const cardsForPickCardDiscardPlan = cardsForPickCardTrade && cardsForPickCardCheck.ok
+        ? summarizeAiTradeDiscardPlan(player, cardsForPickCardTrade, null, {
+          includeExecutionPlan: true,
+          tradeId: "cards-for-pick-card",
+        })
+        : null;
+      const cardsForPickCardDiscardCost = cardsForPickCardDiscardPlan?.ok
+        ? Number(cardsForPickCardDiscardPlan.totalCost)
         : Infinity;
       const cardsForPickCardPreview = cardsForPickCardTrade
         ? {
@@ -17142,6 +17280,7 @@
           discardCost: Number.isFinite(cardsForPickCardDiscardCost)
             ? roundAiScore(cardsForPickCardDiscardCost)
             : null,
+          discardPlan: cardsForPickCardDiscardPlan,
           bestPublicTradeCardScore: roundAiScore(bestPublicTradeCardScore),
           bestPublicTradeCard: publicTradeCards[0] || null,
           net: Number.isFinite(cardsForPickCardDiscardCost)
