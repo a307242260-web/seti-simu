@@ -33612,7 +33612,7 @@
     );
   }
 
-  function runQuickTrade(tradeId) {
+  function runQuickTrade(tradeId, options = {}) {
     const blocked = blockIncompatiblePendingQuickAction("quick-trade");
     if (blocked) return blocked;
 
@@ -33637,6 +33637,16 @@
     if (result.awaitingDiscard) {
       if (pendingDiscardAction) {
         pendingDiscardAction.beforeTradeState = beforeState;
+        if (
+          options.preserveHandIndex !== null
+          && options.preserveHandIndex !== undefined
+          && options.preserveHandIndex !== ""
+        ) {
+          pendingDiscardAction.preserveHandIndex = Number(options.preserveHandIndex);
+        }
+        if (options.aiReason) {
+          pendingDiscardAction.aiReason = options.aiReason;
+        }
       }
       rocketState.statusNote = result.message;
       renderStateReadout();

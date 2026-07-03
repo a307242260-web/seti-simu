@@ -5899,11 +5899,22 @@
       const check = quickTrades.canExecuteTrade?.(profile.tradeId, createActionContext()) || { ok: false };
       if (!trade || !check.ok) return [];
       const target = profile.target || {};
+      const tradeUnlockEligible = (
+        aiNumber(profile.currentScore) >= 135
+        && aiNumber(profile.currentScore) < 170
+        && aiNumber(target.tradesNeeded) === 1
+        && aiNumber(target.creditsMissing) <= 1
+        && aiNumber(target.readyTaskCashout?.directScore) >= 9
+        && aiNumber(target.concreteFinalValue) >= 9
+        && aiNumber(target.discardCost) <= 6
+        && aiNumber(target.playCandidate?.score) >= 18
+      );
       return [{
         id: "quickTrade",
         kind: "quick",
         available: false,
         tradeId: trade.id,
+        preserveHandIndex: target.handIndex,
         label: trade.label || trade.id,
         reason: target.tradesNeeded > 1
           ? "终局已完成任务：连续弃牌补信用点"
@@ -5913,6 +5924,7 @@
         valueBreakdown: {
           finalReadyTaskCreditChainTrade: true,
           diagnosticOnly: true,
+          finalReadyTaskTradeUnlockEligible: tradeUnlockEligible,
           currentScore: profile.currentScore,
           credits: profile.credits,
           handSize: profile.handSize,
@@ -17878,7 +17890,10 @@
         return confirmDataPlacement(action.target, action.blueSlot);
       }
       if (action.id === "quickTrade") {
-        return runQuickTrade(action.tradeId);
+        return runQuickTrade(action.tradeId, {
+          preserveHandIndex: action.preserveHandIndex,
+          aiReason: action.reason || null,
+        });
       }
       if (action.id === "pass") {
         return passForCurrentPlayer();
