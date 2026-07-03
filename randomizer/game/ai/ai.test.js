@@ -1129,6 +1129,14 @@ const paceReport = {
       turnNumber: 1,
       playerId: "player-white",
       playerLabel: "白色",
+      details: { action: { id: "industry", kind: "quick", score: 12 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
       details: { action: { id: "cardCorner", kind: "quick", score: 4 }, candidates: [] },
     },
     {
@@ -1159,16 +1167,16 @@ const paceReport = {
   playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 120 }],
 };
 const paceAnalysis = analytics.analyzeBattleReport(paceReport);
-assert.equal(paceAnalysis.playerProfiles[0].metrics.mainActionCount, 1);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.mainActionCount, 2);
 assert.equal(paceAnalysis.playerProfiles[0].metrics.quickStepCount, 3);
 assert.equal(paceAnalysis.playerProfiles[0].metrics.resourceQuickStepCount, 3);
 assert.equal(paceAnalysis.playerProfiles[0].metrics.idleTurnCount, 1);
-assert.equal(paceAnalysis.playerProfiles[0].metrics.quickToMainRatio, 3);
-assert.equal(paceAnalysis.playerProfiles[0].metrics.productiveActionRatio, 0.8);
-assert.equal(paceAnalysis.playerProfiles[0].metrics.idleTurnRatio, 0.2);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.quickToMainRatio, 1.5);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.productiveActionRatio, 0.833);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.idleTurnRatio, 0.167);
 assert.equal(paceAnalysis.paceSummary.averageQuickStepCount, 3);
 const paceSummary = analytics.summarizeBattleReports([paceReport]);
-assert.equal(paceSummary.paceSummary.averageMainActionCount, 1);
+assert.equal(paceSummary.paceSummary.averageMainActionCount, 2);
 assert.equal(paceSummary.paceSummary.lowTail.quickStepCount, 3);
 
 const negativeCardCornerGraphLiftReport = {

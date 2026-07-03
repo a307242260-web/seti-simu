@@ -85,8 +85,8 @@
   function getActionPaceCategory(actionId, action = {}) {
     const id = String(actionId || "");
     if (PASS_ACTIONS.includes(id)) return "idle";
-    if (PACE_QUICK_ACTIONS.includes(id) || action.kind === "quick") return "quick";
     if (PACE_MAIN_ACTIONS.includes(id) || action.kind === "main") return "main";
+    if (PACE_QUICK_ACTIONS.includes(id) || action.kind === "quick") return "quick";
     return "other";
   }
 
