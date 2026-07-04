@@ -45,6 +45,11 @@
   ]);
   const RESOURCE_SHORTFALL_KEYS = Object.freeze(["credits", "energy", "publicity", "handSize"]);
   const D1_TECH_TYPES = Object.freeze(["orange", "blue", "purple"]);
+  const ENGINE_NEAR_MISS_TARGET_ACTIONS = Object.freeze(["playCard", "researchTech", "scan", "analyze", "placeData"]);
+  const ENGINE_NEAR_MISS_MAX_FINAL_SCORE = 255;
+  const ENGINE_NEAR_MISS_MIN_TARGET_SCORE = 20;
+  const ENGINE_NEAR_MISS_MAX_POLICY_GAP = 15;
+  const ENGINE_NEAR_MISS_MIN_POLICY_GAP = -5;
   const HIGH_SCORE_NEAR_MISS_REFERENCE_METRICS = Object.freeze([
     "baseScore",
     "tileScore",
@@ -1731,6 +1736,283 @@
         || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
       ))
       .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function getBestTakeableTechTile(candidate = {}) {
+    return (candidate.takeable || [])
+      .filter(isCandidateAvailable)
+      .sort((left, right) => (
+        numeric(right.score) - numeric(left.score)
+        || String(left.tileId || "").localeCompare(String(right.tileId || ""))
+      ))[0] || null;
+  }
+
+  function summarizeEngineNearMissBestTech(tile = null) {
+    if (!tile) return null;
+    return {
+      tileId: tile.tileId || null,
+      techType: tile.techType || null,
+      bonusId: tile.bonusId || null,
+      score: roundRatio(tile.score),
+      directScoreGain: roundRatio(tile.directScoreGain),
+    };
+  }
+
+  function summarizeEngineNearMissBestCard(card = null) {
+    if (!card) return null;
+    return {
+      cardId: card.cardId || null,
+      cardInstanceId: card.cardInstanceId || null,
+      label: card.cardLabel || card.label || null,
+      price: numeric(card.price),
+      typeCode: numeric(card.typeCode),
+      score: roundRatio(card.score),
+      policyScore: roundRatio(getNestedPlayCardPolicyScore(card)),
+      directScoreGain: roundRatio(card.directScoreGain),
+      effectTypes: card.effectTypes || [],
+      plan: summarizePlayCardPlan(card.plan),
+      valueBreakdown: summarizePlayCardValueBreakdown(card),
+    };
+  }
+
+  function getEngineNearMissScanTopChoice(candidate = {}) {
+    const preview = candidate.targetPreview || {};
+    const choices = [];
+    if (Array.isArray(preview.topChoices)) choices.push(...preview.topChoices);
+    for (const effect of preview.effects || []) {
+      if (Array.isArray(effect?.topChoices)) choices.push(...effect.topChoices);
+    }
+    return choices
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(right.score) - numeric(left.score)
+        || numeric(right.directScoreGain) - numeric(left.directScoreGain)
+        || String(left.nebulaId || left.sectorX || "").localeCompare(String(right.nebulaId || right.sectorX || ""))
+      ))[0] || null;
+  }
+
+  function summarizeEngineNearMissScanChoice(choice = null) {
+    if (!choice) return null;
+    const b2 = choice.b2 || null;
+    return {
+      effectType: choice.effectType || null,
+      pendingType: choice.pendingType || null,
+      nebulaId: choice.nebulaId || null,
+      sectorX: choice.sectorX ?? null,
+      score: roundRatio(choice.score),
+      directScoreGain: roundRatio(choice.directScoreGain),
+      b2: b2
+        ? {
+          marked: Boolean(b2.marked),
+          sectorWins: roundRatio(b2.sectorWins),
+          orbitLandCount: roundRatio(b2.orbitLandCount),
+          deficit: roundRatio(b2.deficit),
+          focus: roundRatio(b2.focus),
+          winsAfterScan: Boolean(b2.winsAfterScan),
+        }
+        : null,
+    };
+  }
+
+  function summarizeEngineNearMissBreakdown(candidate = {}) {
+    const breakdown = candidate.valueBreakdown || candidate.breakdown || {};
+    return {
+      currentScore: roundRatio(breakdown.currentScore),
+      finalMarkCount: roundRatio(breakdown.finalMarkCount),
+      directScoreGain: roundRatio(candidate.directScoreGain ?? breakdown.directScoreGain),
+      scoreCapReason: candidate.scoreCapReason || breakdown.scoreCapReason || null,
+      cFinalTaskProgressValue: roundRatio(breakdown.cFinalTaskProgressValue),
+      c2Type3ProgressValue: roundRatio(breakdown.c2Type3ProgressValue),
+      endGameExpectedScore: roundRatio(breakdown.endGameExpectedScore),
+      standardActionPremium: roundRatio(breakdown.standardActionPremium),
+      lateCardEnginePressure: roundRatio(breakdown.lateCardEnginePressure),
+      playCardConversionPressure: roundRatio(breakdown.playCardConversionPressure),
+      scanEnergyReservationPenalty: roundRatio(breakdown.scanEnergyReservationPenalty),
+      lateResourceRecoveryTrade: Boolean(breakdown.lateResourceRecoveryTrade),
+      canReachAnalyze: Boolean(breakdown.canReachAnalyze),
+      midgameAnalyzeUnlockByTrade: breakdown.midgameAnalyzeUnlockByTrade || null,
+      finalLowScoreScanUnlockByTrade: breakdown.finalLowScoreScanUnlockByTrade || null,
+      b2SectorScanUnlockByTrade: breakdown.b2SectorScanUnlockByTrade || null,
+    };
+  }
+
+  function summarizeEngineNearMissCandidate(candidate = {}) {
+    const actionId = getCandidateId(candidate);
+    const summary = {
+      ...summarizeCandidateWithGraph(candidate),
+      valueBreakdown: summarizeEngineNearMissBreakdown(candidate),
+    };
+    if (actionId === "playCard") {
+      summary.bestCard = summarizeEngineNearMissBestCard(getBestPlayableCard(candidate));
+    } else if (actionId === "researchTech") {
+      summary.bestTechTile = summarizeEngineNearMissBestTech(getBestTakeableTechTile(candidate));
+    } else if (actionId === "scan") {
+      summary.topScanChoice = summarizeEngineNearMissScanChoice(getEngineNearMissScanTopChoice(candidate));
+    }
+    return summary;
+  }
+
+  function getEngineActionNearMissTargets(entry, candidates = [], playerResultById = new Map()) {
+    if (entry?.type !== "turn-action") return [];
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    const finalScore = getFiniteScore(result.finalScore);
+    if (finalScore == null || finalScore > ENGINE_NEAR_MISS_MAX_FINAL_SCORE) return [];
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const selectedId = getCandidateId(selectedCandidate);
+    const selectedPolicyScore = getFiniteScore(getCandidatePolicyScore(selectedCandidate));
+    if (selectedPolicyScore == null) return [];
+    return (candidates || [])
+      .filter((candidate) => {
+        const targetId = getCandidateId(candidate);
+        if (!ENGINE_NEAR_MISS_TARGET_ACTIONS.includes(targetId)) return false;
+        if (targetId === selectedId) return false;
+        if (!isCandidateAvailable(candidate)) return false;
+        if (targetId === "playCard" && !getBestPlayableCard(candidate)) return false;
+        const targetPolicyScore = getFiniteScore(getCandidatePolicyScore(candidate));
+        if (targetPolicyScore == null || targetPolicyScore < ENGINE_NEAR_MISS_MIN_TARGET_SCORE) return false;
+        const policyGap = selectedPolicyScore - targetPolicyScore;
+        return policyGap <= ENGINE_NEAR_MISS_MAX_POLICY_GAP && policyGap >= ENGINE_NEAR_MISS_MIN_POLICY_GAP;
+      })
+      .sort((left, right) => (
+        (selectedPolicyScore - numeric(getCandidatePolicyScore(left)))
+          - (selectedPolicyScore - numeric(getCandidatePolicyScore(right)))
+        || numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ));
+  }
+
+  function classifyEngineActionNearMissSample(sample = {}) {
+    const tags = [];
+    const selectedId = getCandidateId(sample.selected || {});
+    const targetId = getCandidateId(sample.target || {});
+    const gap = numeric(sample.policyScoreGap);
+    const targetBreakdown = sample.target?.valueBreakdown || {};
+    const bestCardBreakdown = sample.target?.bestCard?.valueBreakdown || {};
+    tags.push(`selected-${selectedId}`);
+    tags.push(`target-${targetId}`);
+    if (gap < 0) tags.push("target-above-selected");
+    else if (gap <= 1) tags.push("tiny-gap");
+    else if (gap <= 3) tags.push("small-gap");
+    else if (gap <= 8) tags.push("medium-gap");
+    if (numeric(sample.finalScore) <= 200) tags.push("low-final-score");
+    if (numeric(sample.roundNumber) >= 4) tags.push("final-round");
+    if (sample.selected?.kind === "quick" && sample.target?.kind === "main") tags.push("quick-over-main-engine");
+    if (sample.selected?.kind === "main" && sample.target?.kind === "quick") tags.push("main-over-quick-engine");
+    if (targetBreakdown.scoreCapReason || sample.target?.scoreCapReason) tags.push("target-score-capped");
+    if (targetId === "playCard") {
+      const routeActionId = sample.target?.bestCard?.plan?.actionId || null;
+      if (routeActionId) tags.push(`route-${routeActionId}`);
+      if (numeric(bestCardBreakdown.playCardConversionPressure) >= 12) tags.push("high-conversion-pressure");
+      if (numeric(bestCardBreakdown.standardActionPremium) >= 12) tags.push("high-standard-action-premium");
+      if (numeric(bestCardBreakdown.lateCardEnginePressure) >= 8) tags.push("late-engine-pressure");
+      if (["land", "orbit", "scan", "researchTech"].includes(selectedId)) tags.push("shared-flow-risk");
+    } else if (targetId === "scan") {
+      if (sample.target?.topScanChoice?.b2?.winsAfterScan) tags.push("b2-wins-after-scan");
+      if (targetBreakdown.scoreCapReason) tags.push("scan-capped");
+    } else if (targetId === "researchTech") {
+      const techType = sample.target?.bestTechTile?.techType || null;
+      if (techType) tags.push(`tech-${techType}`);
+    } else if (targetId === "analyze") {
+      tags.push("data-cashout");
+    } else if (targetId === "placeData") {
+      tags.push("data-placement");
+    }
+    return tags;
+  }
+
+  function buildEngineActionNearMissSample(entry, targetCandidate = {}, candidates = [], playerResultById = new Map()) {
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const selectedPolicyScore = getFiniteScore(getCandidatePolicyScore(selectedCandidate));
+    const targetPolicyScore = getFiniteScore(getCandidatePolicyScore(targetCandidate));
+    const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
+    const targetGraphNet = getCandidateActionGraphNet(targetCandidate);
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    const availableCandidates = (candidates || [])
+      .filter(isCandidateAvailable)
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ));
+    const targetRank = availableCandidates.indexOf(targetCandidate) + 1;
+    const sample = {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      finalScore: roundRatio(result.finalScore),
+      resources: entry.playerResources || null,
+      selected: summarizeEngineNearMissCandidate(selectedCandidate || getSelectedAction(entry) || {}),
+      target: summarizeEngineNearMissCandidate(targetCandidate),
+      targetRank: targetRank > 0 ? targetRank : null,
+      policyScoreGap: selectedPolicyScore == null || targetPolicyScore == null
+        ? null
+        : roundRatio(selectedPolicyScore - targetPolicyScore),
+      actionGraphNetGap: selectedGraphNet == null || targetGraphNet == null
+        ? null
+        : roundRatio(selectedGraphNet - targetGraphNet),
+      topCandidates: availableCandidates.slice(0, 6).map(summarizeCandidateWithGraph),
+    };
+    return {
+      ...sample,
+      nearMissTags: classifyEngineActionNearMissSample(sample),
+    };
+  }
+
+  function sortEngineActionNearMissSamples(samples = [], limit = 16) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.policyScoreGap) - numeric(right.policyScoreGap)
+        || numeric(right.target?.policyScore) - numeric(left.target?.policyScore)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+        || getCandidateId(left.target || {}).localeCompare(getCandidateId(right.target || {}))
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function buildEngineActionNearMissCounts(samples = [], limit = 16) {
+    const targetCounts = {};
+    const transitionCounts = {};
+    const tagCounts = {};
+    for (const sample of samples || []) {
+      const selectedId = getCandidateId(sample.selected || {});
+      const targetId = getCandidateId(sample.target || {});
+      increment(targetCounts, targetId);
+      increment(transitionCounts, `${selectedId}->${targetId}`);
+      for (const tag of sample.nearMissTags || []) increment(tagCounts, tag);
+    }
+    return {
+      byTarget: rankCounts(targetCounts, limit),
+      byTransition: rankCounts(transitionCounts, limit),
+      byTag: rankCounts(tagCounts, limit),
+    };
+  }
+
+  function createEngineActionNearMissCountBuckets() {
+    return {
+      byTarget: {},
+      byTransition: {},
+      byTag: {},
+    };
+  }
+
+  function mergeEngineActionNearMissCounts(target, source = {}) {
+    for (const bucketKey of ["byTarget", "byTransition", "byTag"]) {
+      for (const entry of source[bucketKey] || []) {
+        increment(target[bucketKey], entry.key, numeric(entry.count));
+      }
+    }
+  }
+
+  function rankEngineActionNearMissCountBuckets(buckets = {}, limit = 16) {
+    return {
+      byTarget: rankCounts(buckets.byTarget || {}, limit),
+      byTransition: rankCounts(buckets.byTransition || {}, limit),
+      byTag: rankCounts(buckets.byTag || {}, limit),
+    };
   }
 
   function getCompoundResearchTechCards(candidates = []) {
@@ -5691,6 +5973,7 @@
       b2ScanNearMiss: 0,
       b2TradeNearMiss: 0,
       midgameLowTechRouteEnergyTrade: 0,
+      engineActionNearMiss: 0,
       mainUnlockLowConcretePlay: 0,
       nonPositivePublicRefill: 0,
       highHandDrainEnergyTrade: 0,
@@ -5723,6 +6006,7 @@
     const b2ScanNearMissSamples = [];
     const b2TradeNearMissSamples = [];
     const midgameLowTechRouteEnergyTradeSamples = [];
+    const engineActionNearMissSamples = [];
     const mainUnlockLowConcretePlaySamples = [];
     const nonPositivePublicRefillSamples = [];
     const highHandDrainEnergyTradeSamples = [];
@@ -5847,6 +6131,15 @@
           midgameLowTechRouteEnergyTradeSamples.push(
             buildMidgameLowTechRouteEnergyTradeSample(entry, candidates, playerResultById),
           );
+        }
+        const engineNearMissTargets = getEngineActionNearMissTargets(entry, candidates, playerResultById);
+        if (engineNearMissTargets.length) {
+          opportunities.engineActionNearMiss += engineNearMissTargets.length;
+          for (const targetCandidate of engineNearMissTargets) {
+            engineActionNearMissSamples.push(
+              buildEngineActionNearMissSample(entry, targetCandidate, candidates, playerResultById),
+            );
+          }
         }
         if (isMainUnlockLowConcretePlay(entry)) {
           opportunities.mainUnlockLowConcretePlay += 1;
@@ -6081,6 +6374,8 @@
       midgameLowTechRouteEnergyTradeSamples: sortMidgameLowTechRouteEnergyTradeSamples(
         midgameLowTechRouteEnergyTradeSamples,
       ),
+      engineActionNearMissSamples: sortEngineActionNearMissSamples(engineActionNearMissSamples),
+      engineActionNearMissCounts: buildEngineActionNearMissCounts(engineActionNearMissSamples),
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples,
@@ -6156,6 +6451,8 @@
     const mergedB2ScanNearMissSamples = [];
     const mergedB2TradeNearMissSamples = [];
     const mergedMidgameLowTechRouteEnergyTradeSamples = [];
+    const mergedEngineActionNearMissSamples = [];
+    const mergedEngineActionNearMissCounts = createEngineActionNearMissCountBuckets();
     const mergedMainUnlockLowConcretePlaySamples = [];
     const mergedNonPositivePublicRefillSamples = [];
     const mergedHighHandDrainEnergyTradeSamples = [];
@@ -6318,6 +6615,10 @@
       if (Array.isArray(analysis.midgameLowTechRouteEnergyTradeSamples)) {
         mergedMidgameLowTechRouteEnergyTradeSamples.push(...analysis.midgameLowTechRouteEnergyTradeSamples);
       }
+      if (Array.isArray(analysis.engineActionNearMissSamples)) {
+        mergedEngineActionNearMissSamples.push(...analysis.engineActionNearMissSamples);
+      }
+      mergeEngineActionNearMissCounts(mergedEngineActionNearMissCounts, analysis.engineActionNearMissCounts);
       if (mergedMainUnlockLowConcretePlaySamples.length < 12 && Array.isArray(analysis.mainUnlockLowConcretePlaySamples)) {
         mergedMainUnlockLowConcretePlaySamples.push(
           ...analysis.mainUnlockLowConcretePlaySamples.slice(0, 12 - mergedMainUnlockLowConcretePlaySamples.length),
@@ -6462,6 +6763,8 @@
       bugs: rankCounts(mergedBugCounts),
       winnerProfileDeltas,
       lowEngineThroughputSamples,
+      engineActionNearMissSamples: sortEngineActionNearMissSamples(mergedEngineActionNearMissSamples),
+      engineActionNearMissCounts: rankEngineActionNearMissCountBuckets(mergedEngineActionNearMissCounts),
       finalReadyTaskCreditShortfallSamples: mergedFinalReadyTaskCreditShortfallSamples,
       finalReadyTaskTradeUnlockMissSamples: mergedFinalReadyTaskTradeUnlockMissSamples,
       lowRoundActionTailSamples: sortLowRoundActionTailSamples(mergedLowRoundActionTailSamples),
@@ -6522,6 +6825,8 @@
       midgameLowTechRouteEnergyTradeSamples: sortMidgameLowTechRouteEnergyTradeSamples(
         mergedMidgameLowTechRouteEnergyTradeSamples,
       ),
+      engineActionNearMissSamples: sortEngineActionNearMissSamples(mergedEngineActionNearMissSamples),
+      engineActionNearMissCounts: rankEngineActionNearMissCountBuckets(mergedEngineActionNearMissCounts),
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples: mergedHighHandDrainEnergyTradeSamples,

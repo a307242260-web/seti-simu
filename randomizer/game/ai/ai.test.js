@@ -2416,10 +2416,13 @@ const playCardNearMissReport = {
 };
 const playCardNearMissAnalysis = analytics.analyzeBattleReport(playCardNearMissReport);
 assert.equal(playCardNearMissAnalysis.opportunities.playCardNearMiss, 1);
+assert.equal(playCardNearMissAnalysis.opportunities.engineActionNearMiss, 1);
 assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].bestCard.cardId, "b_135.webp");
 assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].policyScoreGap, 8);
 assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].finalScore, 185);
 assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].bestCard.valueBreakdown.playCardConversionPressure, 9);
+assert.equal(playCardNearMissAnalysis.engineActionNearMissSamples[0].target.id, "playCard");
+assert(playCardNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("target-playCard"));
 assert.equal(playCardNearMissAnalysis.lowPlayerCandidateStats[0].playerId, "player-white");
 assert.equal(
   playCardNearMissAnalysis.lowPlayerCandidateStats[0].focusedCandidateRows.find((row) => row.actionId === "playCard").availableNotSelected,
@@ -2431,9 +2434,64 @@ assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[0].tasks[0
 assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[1].zone, "reserved");
 const playCardNearMissSummary = analytics.summarizeBattleReports([playCardNearMissReport]);
 assert.equal(playCardNearMissSummary.playCardNearMissSamples[0].bestCard.cardId, "b_135.webp");
+assert.equal(playCardNearMissSummary.engineActionNearMissCounts.byTransition[0].key, "land->playCard");
 assert.equal(playCardNearMissSummary.lowPlayerCandidateStats[0].topMissedCandidates[0].actionId, "playCard");
 assert.equal(playCardNearMissSummary.lowUnplayedCardSamples[0].cards[0].tasks[0].rewardDirectScore, 9);
 assert.equal(playCardNearMissSummary.lowUnplayedCardSamples[0].cards[1].endGameScoring, true);
+
+const engineActionNearMissReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 6,
+    rawTurnNumber: 18,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 122, credits: 2, energy: 2, publicity: 4, availableData: 6, handSize: 3 },
+    details: {
+      action: { id: "researchTech", kind: "main", score: 34.5, actionGraph: { net: 34.5 } },
+      candidates: [
+        {
+          id: "researchTech",
+          kind: "main",
+          available: true,
+          score: 34.5,
+          actionGraph: { net: 34.5 },
+          takeable: [{ tileId: "blue2", techType: "blue", bonusId: "bonus_1e", score: 31, directScoreGain: 4 }],
+        },
+        {
+          id: "analyze",
+          kind: "main",
+          available: true,
+          score: 31,
+          directScoreGain: 10,
+          actionGraph: { net: 31 },
+          valueBreakdown: { currentScore: 122, finalMarkCount: 3 },
+        },
+        {
+          id: "placeData",
+          kind: "quick",
+          available: true,
+          score: 25,
+          directScoreGain: 0,
+          actionGraph: { net: 25 },
+          valueBreakdown: { currentScore: 122, canReachAnalyze: true },
+        },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 214 }],
+};
+const engineActionNearMissAnalysis = analytics.analyzeBattleReport(engineActionNearMissReport);
+assert.equal(engineActionNearMissAnalysis.opportunities.engineActionNearMiss, 2);
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.id, "analyze");
+assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("data-cashout"));
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[1].target.id, "placeData");
+assert(engineActionNearMissAnalysis.engineActionNearMissSamples[1].nearMissTags.includes("data-placement"));
+const engineActionNearMissSummary = analytics.summarizeBattleReports([engineActionNearMissReport]);
+assert.equal(engineActionNearMissSummary.engineActionNearMissCounts.byTarget.length, 2);
+assert.equal(engineActionNearMissSummary.engineActionNearMissCounts.byTransition[0].key, "researchTech->analyze");
 
 const finalReadyTaskCreditShortfallReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
