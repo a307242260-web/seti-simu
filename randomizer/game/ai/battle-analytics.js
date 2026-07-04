@@ -3394,6 +3394,96 @@
     return tags;
   }
 
+  function getCompactActionId(action = {}) {
+    const actionId = getCandidateId(action);
+    const tradeId = action?.tradeId || null;
+    return tradeId ? `${actionId}:${tradeId}` : actionId;
+  }
+
+  function summarizeLowRoundResourceLockTrade(preview = null) {
+    if (!preview) return null;
+    return {
+      tradeId: preview.tradeId || null,
+      label: preview.label || null,
+      score: roundRatio(preview.score),
+      bestAction: preview.bestAction
+        ? {
+          actionId: preview.bestAction.actionId || preview.bestAction.id || null,
+          score: roundRatio(preview.bestAction.score),
+          directScoreGain: roundRatio(preview.bestAction.directScoreGain),
+          planScore: roundRatio(preview.bestAction.planScore),
+        }
+        : null,
+      resourcesAfterTrade: preview.resourcesAfterTrade || null,
+      discardCards: Array.isArray(preview.discardPlan?.selectedCards)
+        ? preview.discardPlan.selectedCards.map((card) => ({
+          cardId: card.cardId || null,
+          cardLabel: card.cardLabel || card.label || null,
+          opportunityCost: roundRatio(card.opportunityCost),
+        }))
+        : [],
+    };
+  }
+
+  function summarizeLowRoundPublicRefillPreview(preview = null) {
+    if (!preview) return null;
+    const pickPreview = preview.cardsForPickCardPreview || null;
+    return {
+      bestPublicTradeCardScore: roundRatio(preview.bestPublicTradeCardScore),
+      topPublicTradeCards: (preview.topPublicTradeCards || []).slice(0, 3).map((card) => ({
+        slotIndex: card.slotIndex ?? null,
+        cardId: card.cardId || null,
+        cardLabel: card.cardLabel || null,
+        price: roundRatio(card.price),
+        typeCode: card.typeCode ?? null,
+        tradeScore: roundRatio(card.tradeScore),
+        playScore: card.playScore == null ? null : roundRatio(card.playScore),
+        directScoreGain: roundRatio(card.directScoreGain),
+      })),
+      cardsForPickCard: pickPreview
+        ? {
+          ok: Boolean(pickPreview.ok),
+          reason: pickPreview.reason || null,
+          handCost: roundRatio(pickPreview.handCost),
+          handAfterTrade: roundRatio(pickPreview.handAfterTrade),
+          discardCost: pickPreview.discardCost == null ? null : roundRatio(pickPreview.discardCost),
+          net: pickPreview.net == null ? null : roundRatio(pickPreview.net),
+          bestPublicTradeCard: pickPreview.bestPublicTradeCard || null,
+        }
+        : null,
+      executableTrades: (preview.tradeChecks || [])
+        .filter((trade) => trade?.ok)
+        .map((trade) => trade.tradeId || null)
+        .filter(Boolean),
+    };
+  }
+
+  function buildLowRoundTailSummary(tailEntries = [], lastPassCandidateProfile = null) {
+    const actionIds = (tailEntries || [])
+      .map((entry) => getCompactActionId(getSelectedAction(entry) || {}))
+      .filter(Boolean);
+    const paceCounts = {};
+    for (const entry of tailEntries || []) {
+      const action = getSelectedAction(entry) || {};
+      increment(paceCounts, getActionPaceCategory(getCandidateId(action), action));
+    }
+    const bestResourceLockTrade = lastPassCandidateProfile?.bestResourceLockTrade || null;
+    return {
+      actionIds,
+      paceCounts,
+      lastSelected: actionIds[actionIds.length - 1] || null,
+      lastPassReasonTag: lastPassCandidateProfile?.reasonTag || null,
+      lastPassResources: lastPassCandidateProfile?.resources || null,
+      unavailableMainReasons: (lastPassCandidateProfile?.unavailableMain || []).slice(0, 5).map((candidate) => ({
+        id: getCandidateId(candidate),
+        reason: candidate.reason || null,
+      })),
+      playCardReason: lastPassCandidateProfile?.playCard?.reason || null,
+      bestResourceLockTrade: summarizeLowRoundResourceLockTrade(bestResourceLockTrade),
+      publicRefillPreview: summarizeLowRoundPublicRefillPreview(lastPassCandidateProfile?.publicRefillPreview || null),
+    };
+  }
+
   function sortLowRoundActionTailSamples(samples = [], limit = 12) {
     return [...(samples || [])]
       .filter(Boolean)
@@ -3479,6 +3569,7 @@
         lastResources,
         tailResourceDelta: summarizeLowRoundTailResourceDelta(firstResources, lastResources),
         tailTags: buildLowRoundTailTags(tailEntries, lastPassCandidateProfile, firstResources, lastResources),
+        tailSummary: buildLowRoundTailSummary(tailEntries, lastPassCandidateProfile),
         actionTail: tailEntries.map((entry) => summarizeLowRoundTailAction(entry, 4)),
         lastPassCandidateProfile,
         noMainPassSamples: (passSamplesByRound.get(key) || [])

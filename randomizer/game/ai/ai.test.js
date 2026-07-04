@@ -101,6 +101,9 @@ assert.ok(lowRoundTailSample, "low-round tail diagnostic should include the low-
 assert.equal(lowRoundTailSample.mainActionCount, 0);
 assert.equal(lowRoundTailSample.actionTail.at(-1).selected.id, "pass");
 assert.equal(lowRoundTailSample.lastPassCandidateProfile.reasonTag, "resource-locked-hand");
+assert.deepStrictEqual(lowRoundTailSample.tailSummary.actionIds, ["cardCorner", "pass"]);
+assert.equal(lowRoundTailSample.tailSummary.lastPassReasonTag, "resource-locked-hand");
+assert.equal(lowRoundTailSample.tailSummary.playCardReason, "没有资源可支付");
 assert.deepStrictEqual(lowRoundTailSample.tailResourceDelta, {
   score: 0,
   credits: 0,
@@ -117,6 +120,10 @@ assert.ok(lowRoundTailSample.tailTags.includes("play-card-resource-lock"));
 assert.equal(
   analytics.summarizeBattleAnalyses([lowRoundTailDiagnostic]).lowRoundActionTailSamples[0].playerId,
   "p-low",
+);
+assert.deepStrictEqual(
+  analytics.summarizeBattleAnalyses([lowRoundTailDiagnostic]).lowRoundActionTailSamples[0].tailSummary.actionIds,
+  ["cardCorner", "pass"],
 );
 assert.ok(
   analytics.summarizeBattleAnalyses([lowRoundTailDiagnostic]).lowRoundActionTailSamples[0].tailTags.includes("zero-credit-tail"),
