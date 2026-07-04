@@ -1595,6 +1595,144 @@
     };
   }
 
+  function getEntryScoreboardPlayer(entry = {}) {
+    const scoreboard = Array.isArray(entry.scoreboard) ? entry.scoreboard : [];
+    return scoreboard.find((player) => player?.playerId === entry.playerId) || null;
+  }
+
+  function summarizeCandidateWithGraph(candidate = {}) {
+    return {
+      ...summarizeOpportunityCandidate(candidate),
+      actionGraphNet: roundRatio(getCandidateActionGraphNet(candidate)),
+    };
+  }
+
+  function summarizePlanetCashoutRecoveryPlan(plan = {}) {
+    if (!plan) return null;
+    return {
+      kind: plan.kind || null,
+      planetId: plan.planetId || null,
+      planetName: plan.planetName || null,
+      targetEnergy: roundRatio(plan.targetEnergy),
+      directScore: roundRatio(plan.directScore),
+      rewardValue: roundRatio(plan.rewardValue),
+      energyAfterTrade: roundRatio(plan.energyAfterTrade),
+      afterTradeGap: roundRatio(plan.afterTradeGap),
+      reachesNextThreshold: Boolean(plan.reachesNextThreshold),
+      score: roundRatio(plan.score),
+    };
+  }
+
+  function summarizeMidgameLowTechRouteEnergyTradeBreakdown(breakdown = {}) {
+    return {
+      lateResourceRecoveryTrade: Boolean(breakdown.lateResourceRecoveryTrade),
+      currentScore: roundRatio(breakdown.currentScore),
+      finalMarkCount: roundRatio(breakdown.finalMarkCount),
+      nextFinalMarkThreshold: breakdown.nextFinalMarkThreshold ?? null,
+      canReachAnalyze: Boolean(breakdown.canReachAnalyze),
+      paceDeficit: roundRatio(breakdown.paceDeficit),
+      scoreToNextThreshold: roundRatio(breakdown.scoreToNextThreshold),
+      scanCashoutTrade: Boolean(breakdown.scanCashoutTrade),
+      scanCost: breakdown.scanCost || null,
+      closeScanDirectScoreGain: roundRatio(breakdown.closeScanDirectScoreGain),
+      midgameAnalyzeUnlockByTrade: breakdown.midgameAnalyzeUnlockByTrade || null,
+      finalLowScoreScanUnlockByTrade: breakdown.finalLowScoreScanUnlockByTrade || null,
+      scanProgressTradeValue: roundRatio(breakdown.scanProgressTradeValue),
+      launchMoveRecoveryScore: roundRatio(breakdown.launchMoveRecoveryScore),
+      planetCashoutRecoveryScore: roundRatio(breakdown.planetCashoutRecoveryScore),
+      planetCashoutRecoveryPlan: summarizePlanetCashoutRecoveryPlan(breakdown.planetCashoutRecoveryPlan),
+      reservedPlanetCashoutEnergy: breakdown.reservedPlanetCashoutEnergy ?? null,
+      cardsForEnergyHandDrainPenalty: roundRatio(breakdown.cardsForEnergyHandDrainPenalty),
+    };
+  }
+
+  function isMidgameLowTechRouteEnergyTrade(entry) {
+    if (entry?.type !== "turn-action") return false;
+    if (numeric(entry.roundNumber) !== 3) return false;
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "quickTrade") return false;
+    if (!["credits-for-energy", "cards-for-energy"].includes(action?.tradeId)) return false;
+    if (!String(action.reason || "").includes("路线兑现")) return false;
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    if (!breakdown.lateResourceRecoveryTrade) return false;
+    if (numeric(breakdown.finalMarkCount) < 3) return false;
+    if (breakdown.nextFinalMarkThreshold != null) return false;
+    if (breakdown.canReachAnalyze) return false;
+    const scoreboardPlayer = getEntryScoreboardPlayer(entry);
+    if (!scoreboardPlayer) return false;
+    const techCount = numeric(scoreboardPlayer.techCount);
+    if (techCount > 4) return false;
+    const currentScore = getFiniteScore(breakdown.currentScore ?? scoreboardPlayer.score ?? entry.playerResources?.score);
+    if (currentScore == null || currentScore < 70 || currentScore > 115) return false;
+    return numeric(breakdown.planetCashoutRecoveryScore) > 0 || Boolean(breakdown.planetCashoutRecoveryPlan);
+  }
+
+  function buildMidgameLowTechRouteEnergyTradeSample(entry, candidates = [], playerResultById = new Map()) {
+    const action = getSelectedAction(entry) || {};
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    const scoreboardPlayer = getEntryScoreboardPlayer(entry) || {};
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const availableCandidates = (candidates || [])
+      .filter(isCandidateAvailable)
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || numeric(right.score) - numeric(left.score)
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ));
+    const engineActionIds = new Set(["playCard", "researchTech", "scan", "analyze", "placeData"]);
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      finalScore: roundRatio(result.finalScore),
+      tradeId: action.tradeId || null,
+      reason: action.reason || null,
+      resources: entry.playerResources || null,
+      scoreboard: {
+        score: roundRatio(scoreboardPlayer.score),
+        credits: roundRatio(scoreboardPlayer.credits),
+        energy: roundRatio(scoreboardPlayer.energy),
+        publicity: roundRatio(scoreboardPlayer.publicity),
+        availableData: roundRatio(scoreboardPlayer.availableData),
+        handSize: roundRatio(scoreboardPlayer.handSize),
+        techCount: roundRatio(scoreboardPlayer.techCount),
+        reservedCount: roundRatio(scoreboardPlayer.reservedCount),
+      },
+      selected: summarizeCandidateWithGraph(selectedCandidate || action),
+      valueBreakdown: summarizeMidgameLowTechRouteEnergyTradeBreakdown(breakdown),
+      topCandidates: availableCandidates.slice(0, 6).map(summarizeCandidateWithGraph),
+      topMainCandidates: availableCandidates
+        .filter((candidate) => candidate.kind === "main")
+        .slice(0, 4)
+        .map(summarizeCandidateWithGraph),
+      topQuickCandidates: availableCandidates
+        .filter((candidate) => candidate.kind === "quick")
+        .slice(0, 4)
+        .map(summarizeCandidateWithGraph),
+      engineCandidates: availableCandidates
+        .filter((candidate) => engineActionIds.has(getCandidateId(candidate)))
+        .slice(0, 5)
+        .map(summarizeCandidateWithGraph),
+    };
+  }
+
+  function sortMidgameLowTechRouteEnergyTradeSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.scoreboard?.techCount) - numeric(right.scoreboard?.techCount)
+        || numeric(left.valueBreakdown?.currentScore) - numeric(right.valueBreakdown?.currentScore)
+        || numeric(right.valueBreakdown?.planetCashoutRecoveryScore) - numeric(left.valueBreakdown?.planetCashoutRecoveryScore)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
   function getCompoundResearchTechCards(candidates = []) {
     const playCardCandidate = (candidates || [])
       .filter(isCandidateAvailable)
@@ -5552,6 +5690,7 @@
       playCardNearMiss: 0,
       b2ScanNearMiss: 0,
       b2TradeNearMiss: 0,
+      midgameLowTechRouteEnergyTrade: 0,
       mainUnlockLowConcretePlay: 0,
       nonPositivePublicRefill: 0,
       highHandDrainEnergyTrade: 0,
@@ -5583,6 +5722,7 @@
     const playCardNearMissSamples = [];
     const b2ScanNearMissSamples = [];
     const b2TradeNearMissSamples = [];
+    const midgameLowTechRouteEnergyTradeSamples = [];
     const mainUnlockLowConcretePlaySamples = [];
     const nonPositivePublicRefillSamples = [];
     const highHandDrainEnergyTradeSamples = [];
@@ -5701,6 +5841,12 @@
         if (isB2TradeNearMiss(entry, candidates, playerResultById)) {
           opportunities.b2TradeNearMiss += 1;
           b2TradeNearMissSamples.push(buildB2TradeNearMissSample(entry, candidates, playerResultById));
+        }
+        if (isMidgameLowTechRouteEnergyTrade(entry)) {
+          opportunities.midgameLowTechRouteEnergyTrade += 1;
+          midgameLowTechRouteEnergyTradeSamples.push(
+            buildMidgameLowTechRouteEnergyTradeSample(entry, candidates, playerResultById),
+          );
         }
         if (isMainUnlockLowConcretePlay(entry)) {
           opportunities.mainUnlockLowConcretePlay += 1;
@@ -5932,6 +6078,9 @@
       counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(playCardNearMissSamples),
       b2ScanNearMissSamples: sortB2ScanNearMissSamples(b2ScanNearMissSamples),
       b2TradeNearMissSamples: sortB2TradeNearMissSamples(b2TradeNearMissSamples),
+      midgameLowTechRouteEnergyTradeSamples: sortMidgameLowTechRouteEnergyTradeSamples(
+        midgameLowTechRouteEnergyTradeSamples,
+      ),
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples,
@@ -6006,6 +6155,7 @@
     const mergedPlayCardNearMissSamples = [];
     const mergedB2ScanNearMissSamples = [];
     const mergedB2TradeNearMissSamples = [];
+    const mergedMidgameLowTechRouteEnergyTradeSamples = [];
     const mergedMainUnlockLowConcretePlaySamples = [];
     const mergedNonPositivePublicRefillSamples = [];
     const mergedHighHandDrainEnergyTradeSamples = [];
@@ -6164,6 +6314,9 @@
       }
       if (Array.isArray(analysis.b2TradeNearMissSamples)) {
         mergedB2TradeNearMissSamples.push(...analysis.b2TradeNearMissSamples);
+      }
+      if (Array.isArray(analysis.midgameLowTechRouteEnergyTradeSamples)) {
+        mergedMidgameLowTechRouteEnergyTradeSamples.push(...analysis.midgameLowTechRouteEnergyTradeSamples);
       }
       if (mergedMainUnlockLowConcretePlaySamples.length < 12 && Array.isArray(analysis.mainUnlockLowConcretePlaySamples)) {
         mergedMainUnlockLowConcretePlaySamples.push(
@@ -6366,6 +6519,9 @@
       counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
       b2ScanNearMissSamples: sortB2ScanNearMissSamples(mergedB2ScanNearMissSamples),
       b2TradeNearMissSamples: sortB2TradeNearMissSamples(mergedB2TradeNearMissSamples),
+      midgameLowTechRouteEnergyTradeSamples: sortMidgameLowTechRouteEnergyTradeSamples(
+        mergedMidgameLowTechRouteEnergyTradeSamples,
+      ),
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples: mergedHighHandDrainEnergyTradeSamples,
