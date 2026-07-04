@@ -16833,7 +16833,6 @@
     const followups = scanEffects.buildScanEffectQueue(currentPlayer, {
       includeFinalize: true,
       fullScanAction: true,
-      skipEffectCosts: Boolean(effect.options?.skipEffectCosts),
       scanRunId,
       turnState,
       roundNumber: turnState.roundNumber,

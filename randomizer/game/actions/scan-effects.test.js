@@ -55,17 +55,8 @@ const freeBaseCostPurpleQueue = scanEffects.buildScanEffectQueue(purplePlayer, {
 });
 assert.equal(freeBaseCostPurpleQueue[2].options.skipCost, undefined);
 assert.deepEqual(freeBaseCostPurpleQueue[2].options.cost, { publicity: 1 });
+assert.equal(freeBaseCostPurpleQueue[3].options.skipCost, undefined);
 assert.equal(freeBaseCostPurpleQueue[4].options.skipCost, undefined);
-
-const freeFollowupCostPurpleQueue = scanEffects.buildScanEffectQueue(purplePlayer, {
-  includeFinalize: true,
-  fullScanAction: true,
-  scanRunId: "free-purple-followup-costs-test",
-  skipEffectCosts: true,
-});
-for (const effect of freeFollowupCostPurpleQueue) {
-  assert.equal(effect.options.skipCost, true, "明确免费后续费用的完整扫描行动才继承 skipCost");
-}
 
 const borrowedPurpleCases = [
   ["purple1", scanEffects.EFFECT_TYPES.IMPROVED_SECTOR_SCAN],
