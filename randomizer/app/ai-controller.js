@@ -2177,6 +2177,51 @@
       };
     }
 
+    function getAiPublicPickConcreteProfile(card, player = getCurrentPlayer()) {
+      if (!card || !player) {
+        return {
+          hasConcreteSignal: false,
+          playScore: null,
+          directScoreGain: 0,
+          effectTypes: [],
+          signals: null,
+        };
+      }
+      const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+      const breakdown = playCandidate?.valueBreakdown || null;
+      const effectTypes = Array.isArray(playCandidate?.effectTypes)
+        ? playCandidate.effectTypes.filter(Boolean)
+        : [];
+      const signals = breakdown ? {
+        planScore: roundAiScore(breakdown.planScore),
+        endGameExpectedScore: roundAiScore(breakdown.endGameExpectedScore),
+        c2Type3ProgressValue: roundAiScore(breakdown.c2Type3ProgressValue),
+        cFinalTaskProgressValue: roundAiScore(breakdown.cFinalTaskProgressValue),
+        readyTaskCashoutDirectScore: roundAiScore(breakdown.readyTaskCashoutDirectScore),
+        readyTaskCashoutCount: roundAiScore(breakdown.readyTaskCashoutCount),
+        playCardConversionPressure: roundAiScore(breakdown.playCardConversionPressure),
+        standardActionPremium: roundAiScore(breakdown.standardActionPremium),
+      } : null;
+      const hasConcreteSignal = Boolean(
+        effectTypes.length
+        || Math.max(0, aiNumber(playCandidate?.directScoreGain)) > 0
+        || Math.max(0, aiNumber(breakdown?.planScore)) > 0
+        || Math.max(0, aiNumber(breakdown?.endGameExpectedScore)) > 0
+        || Math.max(0, aiNumber(breakdown?.c2Type3ProgressValue)) > 0
+        || Math.max(0, aiNumber(breakdown?.cFinalTaskProgressValue)) > 0
+        || Math.max(0, aiNumber(breakdown?.readyTaskCashoutDirectScore)) > 0
+        || Math.max(0, aiNumber(breakdown?.readyTaskCashoutCount)) > 0
+        || Math.max(0, aiNumber(breakdown?.standardActionPremium)) > 0
+      );
+      return {
+        hasConcreteSignal,
+        playScore: playCandidate ? roundAiScore(playCandidate.score) : null,
+        directScoreGain: playCandidate ? roundAiScore(playCandidate.directScoreGain) : 0,
+        effectTypes: effectTypes.slice(0, 6),
+        signals,
+      };
+    }
+
     const AI_DEEPSPACE_SWAP_MIN_SCORE = 10;
 
     function scoreAiDeepspaceHandSwapCost(card, player = getCurrentPlayer()) {
@@ -6632,11 +6677,19 @@
       const launchMoveRecoveryValue = Math.min(8, bestLaunchMoveRecoveryScore * 0.35);
       const planetCashoutRecoveryValue = Math.min(12, bestPlanetCashoutRecoveryScore * 0.32);
       const baseValue = (8 + lowEngine + thresholdPressure + Math.max(0, 2 - finalMarks) * 2.5 + launchMoveRecoveryValue + planetCashoutRecoveryValue) * urgency;
-      const bestPublicTradeCardScore = (mainActionOpen || canPrepareFinalThresholdAction)
-        ? (cardState.publicCards || []).reduce((best, card) => (
-          Math.max(best, scoreAiPublicPickCard(card, player, "trade"))
-        ), 0)
-        : 0;
+      const rankedPublicTradeCards = (mainActionOpen || canPrepareFinalThresholdAction)
+        ? (cardState.publicCards || [])
+          .map((card, slotIndex) => ({
+            card,
+            slotIndex,
+            score: scoreAiPublicPickCard(card, player, "trade"),
+          }))
+          .filter((entry) => entry.card && Number.isFinite(Number(entry.score)))
+          .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.slotIndex - right.slotIndex)
+        : [];
+      const bestPublicTradeCard = rankedPublicTradeCards[0] || null;
+      const bestPublicTradeCardScore = bestPublicTradeCard ? aiNumber(bestPublicTradeCard.score) : 0;
+      const bestPublicTradeCardProfile = getAiPublicPickConcreteProfile(bestPublicTradeCard?.card, player);
       const usefulPublicTradeThreshold = recoveryThreshold && recoveryThreshold <= 50 && scoreToNextThreshold <= 3 ? 8 : 4;
       const hasUsefulPublicTradeCard = bestPublicTradeCardScore >= usefulPublicTradeThreshold;
       const finalLowHandPublicRefill = finalLowHandRefillWindow && (
@@ -6648,10 +6701,17 @@
         && finalLowStaleHandPlayableScore < 7
         && bestPublicTradeCardScore >= 8;
       const highScoreGapTo300 = Math.max(0, 300 - highScorePushProfile.projectedScore);
-      const finalHighScorePublicRefill = finalHighScoreHandRefillWindow
+      const finalHighScorePublicRefillBase = finalHighScoreHandRefillWindow
         && bestPublicTradeCardScore >= (highScorePushProfile.projectedScore >= 305
           ? 8
           : highScoreGapTo300 <= 10 ? 0 : 5);
+      const finalHighScoreTerminalNoSignalPublicRefill = finalHighScorePublicRefillBase
+        && handSize <= 0
+        && publicity >= 3
+        && publicity < 6
+        && !bestPublicTradeCardProfile.hasConcreteSignal;
+      const finalHighScorePublicRefill = finalHighScorePublicRefillBase
+        && !finalHighScoreTerminalNoSignalPublicRefill;
       const finalHighScoreRefillValue = finalHighScorePublicRefill
         ? 8
           + Math.max(0, 18 - highScoreGapTo300) * 0.45
@@ -6995,6 +7055,9 @@
               energy,
               handSize,
               bestPublicTradeCardScore: roundAiScore(bestPublicTradeCardScore),
+              bestPublicTradeCard: bestPublicTradeCard ? summarizeAiPublicPickCandidate(bestPublicTradeCard, player) : null,
+              bestPublicTradeCardHasConcreteSignal: Boolean(bestPublicTradeCardProfile.hasConcreteSignal),
+              finalHighScoreTerminalNoSignalPublicRefill,
               usefulPublicTradeThreshold,
               creditCardTradeCanPayFollowup,
               avoidCloseSecondMarkCreditCardTrap,

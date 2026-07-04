@@ -4663,6 +4663,7 @@ function makeYichangdianAlienState(options = {}) {
     id: "public-payable-filler",
     cardName: "Public payable filler",
     price: 2,
+    playEffects: [{ type: "gain_resources", options: { gain: { score: 8 } } }],
   };
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
