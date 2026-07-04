@@ -11,6 +11,27 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  function normalizeInsertionSource(source) {
+    if (!source || typeof source !== "object") return null;
+    const effectIndex = Number.isInteger(source.effectIndex) ? source.effectIndex : null;
+    const normalized = {
+      chainId: source.chainId || null,
+      effectIndex,
+      effectId: source.effectId || null,
+      effectType: source.effectType || null,
+    };
+    return (
+      normalized.effectId
+      || normalized.effectType
+      || normalized.effectIndex !== null
+    ) ? normalized : null;
+  }
+
+  function cloneInsertionSource(source) {
+    const normalized = normalizeInsertionSource(source);
+    return normalized ? { ...normalized } : null;
+  }
+
   function normalizeNode(node, index) {
     return {
       id: node.id || `ability-chain-node-${index}`,
@@ -28,6 +49,7 @@
       preHistoryCommandsApplied: Boolean(node.preHistoryCommandsApplied),
       needsUserChoice: Boolean(node.needsUserChoice),
       result: node.result || null,
+      insertedByEffect: cloneInsertionSource(node.insertedByEffect),
     };
   }
 
@@ -46,6 +68,73 @@
   function getCurrentChainNode(chain) {
     if (!chain || chain.completed) return null;
     return chain.effects[chain.currentIndex] || null;
+  }
+
+  function createInsertionSource(chain, node = null) {
+    const current = node || getCurrentChainNode(chain);
+    if (!chain || !current) return null;
+    return normalizeInsertionSource({
+      chainId: chain.chainId || null,
+      effectIndex: chain.currentIndex,
+      effectId: current.id || null,
+      effectType: current.type || current.abilityId || null,
+    });
+  }
+
+  function markInsertedNode(node, source) {
+    const insertedByEffect = normalizeInsertionSource(source);
+    if (!node || !insertedByEffect) return node;
+    return {
+      ...node,
+      insertedByEffect,
+    };
+  }
+
+  function insertionOriginMatchesSource(origin, source) {
+    const normalizedOrigin = normalizeInsertionSource(origin);
+    const normalizedSource = normalizeInsertionSource(source);
+    if (!normalizedOrigin || !normalizedSource) return false;
+    if (
+      normalizedOrigin.chainId
+      && normalizedSource.chainId
+      && normalizedOrigin.chainId !== normalizedSource.chainId
+    ) return false;
+    if (
+      normalizedOrigin.effectId
+      && normalizedSource.effectId
+      && normalizedOrigin.effectId !== normalizedSource.effectId
+    ) return false;
+    if (
+      normalizedOrigin.effectType
+      && normalizedSource.effectType
+      && normalizedOrigin.effectType !== normalizedSource.effectType
+    ) return false;
+    if (
+      normalizedOrigin.effectIndex !== null
+      && normalizedSource.effectIndex !== null
+      && normalizedOrigin.effectIndex !== normalizedSource.effectIndex
+    ) return false;
+    return Boolean(
+      (normalizedOrigin.effectId && normalizedSource.effectId)
+      || (normalizedOrigin.effectType && normalizedSource.effectType)
+      || (normalizedOrigin.effectIndex !== null && normalizedSource.effectIndex !== null)
+    );
+  }
+
+  function removeInsertedNodesBySource(chain, source) {
+    if (!chain?.effects?.length) return 0;
+    const normalizedSource = normalizeInsertionSource(source);
+    if (!normalizedSource) return 0;
+    let removed = 0;
+    for (let index = chain.effects.length - 1; index >= 0; index -= 1) {
+      if (!insertionOriginMatchesSource(chain.effects[index]?.insertedByEffect, normalizedSource)) continue;
+      chain.effects.splice(index, 1);
+      if (index < chain.currentIndex) {
+        chain.currentIndex = Math.max(0, chain.currentIndex - 1);
+      }
+      removed += 1;
+    }
+    return removed;
   }
 
   function activateNext(chain) {
@@ -115,6 +204,9 @@
 
   return Object.freeze({
     startAbilityChain,
+    createInsertionSource,
+    markInsertedNode,
+    removeInsertedNodesBySource,
     activateNext,
     activateNextIfIdle,
     getCurrentChainNode,

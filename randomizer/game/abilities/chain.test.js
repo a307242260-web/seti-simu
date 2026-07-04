@@ -72,4 +72,31 @@ current = chain.activateNextIfIdle(idleFlow);
 assert.equal(current.abilityId, "insertedReward");
 assert.equal(current.status, "active");
 
+const dynamicFlow = chain.startAbilityChain("dynamic-land", "动态登陆奖励", [
+  { id: "b91-land", type: "card_land", label: "毅力号登陆" },
+  { id: "tail-effect", type: "gain_resources", label: "后续原有效果" },
+]);
+chain.activateNext(dynamicFlow);
+const insertionSource = chain.createInsertionSource(dynamicFlow);
+dynamicFlow.effects.splice(
+  1,
+  0,
+  chain.markInsertedNode({ id: "mercury-data", type: "gain_data", status: "pending" }, insertionSource),
+  chain.markInsertedNode({ id: "mercury-score", type: "gain_resources", status: "pending" }, insertionSource),
+);
+assert.deepEqual(dynamicFlow.effects.map((effect) => effect.id), [
+  "b91-land",
+  "mercury-data",
+  "mercury-score",
+  "tail-effect",
+]);
+const removedDynamicRewards = chain.removeInsertedNodesBySource(dynamicFlow, {
+  chainId: "dynamic-land",
+  effectId: "b91-land",
+  effectIndex: 0,
+  effectType: "card_land",
+});
+assert.equal(removedDynamicRewards, 2);
+assert.deepEqual(dynamicFlow.effects.map((effect) => effect.id), ["b91-land", "tail-effect"]);
+
 console.log("chain.test.js: all tests passed");

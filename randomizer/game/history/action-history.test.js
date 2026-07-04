@@ -17,7 +17,7 @@ history.record({
 });
 history.endStep();
 
-history.beginStep({ label: "扇区扫描", effectIndex: 0, type: "effect" });
+history.beginStep({ label: "扇区扫描", effectId: "scan-sector", effectIndex: 0, type: "effect" });
 history.record({
   label: "替换星云数据",
   describe: "恢复星云数据",
@@ -30,6 +30,7 @@ history.endStep();
 assert.equal(value, 0);
 const undoEffect = history.undoLastStep();
 assert.equal(undoEffect.ok, true);
+assert.equal(undoEffect.step.effectId, "scan-sector");
 assert.equal(value, -10);
 
 const undoCost = history.undoLastStep();

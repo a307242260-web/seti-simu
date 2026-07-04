@@ -12704,10 +12704,12 @@
     if (!history.hasSession() || effectStepActive) return;
     const current = getCurrentActionEffect();
     const hasEffectIndex = Object.prototype.hasOwnProperty.call(meta, "effectIndex");
+    const hasEffectId = Object.prototype.hasOwnProperty.call(meta, "effectId");
     history.beginStep({
       source,
       type: "effect",
       label: label || current?.label || "效果",
+      effectId: hasEffectId ? meta.effectId : current?.id || null,
       effectIndex: hasEffectIndex ? meta.effectIndex : pendingActionEffectFlow?.currentIndex ?? null,
       effectType: meta.effectType ?? current?.type ?? null,
       logBefore: meta.logBefore || createActionLogImpactSnapshot(),
@@ -12780,6 +12782,7 @@
       source,
       type: "irreversible",
       label: effect?.label || "不可撤销效果",
+      effectId: effect?.id || null,
       effectIndex: pendingActionEffectFlow?.currentIndex ?? null,
       effectType: effect?.type || null,
       undoable: false,
@@ -12866,8 +12869,15 @@
     const effect = effects[step.effectIndex];
     if (!effect) return;
 
+    abilities.chain.removeInsertedNodesBySource?.(pendingActionEffectFlow, {
+      chainId: pendingActionEffectFlow.chainId || null,
+      effectId: step.effectId || effect.id || null,
+      effectIndex: step.effectIndex,
+      effectType: step.effectType || effect.type || null,
+    });
     pendingActionEffectFlow.completed = false;
     effect.status = "active";
+    effect.result = null;
     effect.preHistoryCommandsApplied = false;
     pendingActionEffectFlow.currentIndex = step.effectIndex;
     for (let index = step.effectIndex + 1; index < effects.length; index += 1) {
@@ -16781,6 +16791,7 @@
     if (!pendingActionEffectFlow || !effects?.length) return;
     const insertedEffects = effects.filter(Boolean);
     const insertIndex = Math.max(0, pendingActionEffectFlow.currentIndex + 1);
+    const insertionSource = abilities.chain.createInsertionSource?.(pendingActionEffectFlow) || null;
     const currentOwner = getCurrentActionEffect()
       ? getEffectOwnerPlayer(getCurrentActionEffect())
       : null;
@@ -16789,9 +16800,10 @@
       || pendingActionEffectFlow.defaultPlayerId
       || pendingActionEffectFlow.playerId
       || null;
-    pendingActionEffectFlow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => (
-      normalizeInsertedActionEffect(effect, ownerId, `inserted-card-effect-${insertIndex}-${index}`)
-    )));
+    pendingActionEffectFlow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => {
+      const normalized = normalizeInsertedActionEffect(effect, ownerId, `inserted-card-effect-${insertIndex}-${index}`);
+      return abilities.chain.markInsertedNode?.(normalized, insertionSource) || normalized;
+    }));
     pendingActionEffectFlow.completed = false;
   }
 
