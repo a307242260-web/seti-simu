@@ -359,6 +359,8 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
         RESEARCH_TECH: "card_research_tech",
         PAY_CREDITS_FOR_REWARD: "card_pay_credits_for_reward",
         CARD_CORNER_EVENT_REWARD: "card_corner_event_reward",
+        CONDITIONAL_REWARD: "card_conditional_reward",
+        COUNT_ROCKETS_REWARD: "card_count_rockets_reward",
       },
       buildPlayEffects: (card) => card?.playEffects || [],
       getCardModel: (card) => card?.model || null,
@@ -1052,6 +1054,91 @@ function makeYichangdianAlienState(options = {}) {
     assert.equal(selected?.label, expectedLabel);
     assert.equal(selected?.aiOnly, true);
   }
+}
+
+{
+  const makeSolarPanelCard = () => ({
+    id: "dlc_27.png",
+    cardId: "dlc_27.png",
+    cardName: "更优太阳能板",
+    price: 0,
+    typeCode: 0,
+    scanActionCode: 1,
+    playEffects: [{
+      type: "card_conditional_reward",
+      label: "若当前能量为0，按己方太阳系探测器数获得能量",
+      options: {
+        condition: { type: "resourceEquals", resource: "energy", count: 0 },
+        rewards: [{
+          type: "card_count_rockets_reward",
+          label: "每个己方太阳系探测器：1能量",
+          options: { resource: "energy", owner: "current", location: "solar", per: 1 },
+        }],
+      },
+    }],
+  });
+  const noRocketChoices = [];
+  const noRocketHarness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    blueResources: { score: 80, credits: 3, energy: 0, publicity: 0 },
+    blueHand: [makeSolarPanelCard()],
+    onChooseTurnAction: (candidates) => noRocketChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "playCard")
+      || candidates.find((candidate) => candidate.id === "end-turn")
+      || candidates[0]
+      || null,
+  });
+  assert.equal(
+    noRocketHarness.controller.configureAiAutoBattle({
+      playerIds: [noRocketHarness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+  noRocketHarness.controller.runAiAutomationStep();
+  const noRocketPlay = noRocketChoices
+    .flat()
+    .find((candidate) => candidate.id === "playCard");
+  assert.equal(noRocketPlay?.available, false, "zero-rocket solar panel should not be a playable positive candidate");
+  assert.equal(noRocketPlay?.playableCards?.length || 0, 0);
+
+  const twoRocketChoices = [];
+  const twoRocketHarness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordBeginPlayCard: true,
+    blueResources: { score: 80, credits: 3, energy: 0, publicity: 0 },
+    blueHand: [makeSolarPanelCard()],
+    movableTokens: [
+      { id: 1, playerId: "player-blue", color: "blue", kind: "standard", surface: "solar", sector: { x: 1, y: 1 } },
+      { id: 2, playerId: "player-blue", color: "blue", kind: "standard", surface: "solar", sector: { x: 2, y: 1 } },
+    ],
+    onChooseTurnAction: (candidates) => twoRocketChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "playCard") || null,
+  });
+  assert.equal(
+    twoRocketHarness.controller.configureAiAutoBattle({
+      playerIds: [twoRocketHarness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+  const twoRocketResult = twoRocketHarness.controller.runAiAutomationStep();
+  assert.equal(twoRocketResult.ok, true, "two-rocket solar panel play should remain available");
+  const twoRocketPlay = twoRocketChoices
+    .flat()
+    .find((candidate) => candidate.id === "playCard");
+  assert.equal(twoRocketPlay?.cardId, "dlc_27.png");
+  const twoRocketCard = twoRocketPlay?.playableCards?.[0] || twoRocketPlay;
+  assert.ok(
+    Number(twoRocketCard?.valueBreakdown?.effectValue || 0) > 0,
+    "two-rocket solar panel should value the actual energy gain",
+  );
 }
 
 {

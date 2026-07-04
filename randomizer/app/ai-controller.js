@@ -8100,32 +8100,37 @@
       };
     }
 
-    function getAiConditionRewardMultiplier(condition, player = getCurrentPlayer()) {
+    function getAiConditionRewardMultiplier(condition, player = getCurrentPlayer(), options = {}) {
       if (!condition) return { met: true, multiplier: 1 };
       const type = condition.type;
+      const missingMultiplier = (value) => (options.immediate ? 0 : value);
       if (type === "resourceThreshold") {
-        return getAiConditionalProgress(player?.resources?.[condition.resource], condition.count || 1);
+        const progress = getAiConditionalProgress(player?.resources?.[condition.resource], condition.count || 1);
+        return progress.met ? progress : { ...progress, multiplier: missingMultiplier(progress.multiplier) };
       }
       if (type === "resourceEquals") {
         const current = Math.max(0, aiNumber(player?.resources?.[condition.resource]));
         const target = Math.max(0, aiNumber(condition.count));
         if (current === target) return { met: true, multiplier: 1 };
-        return { met: false, multiplier: target === 0 && current <= 1 ? 0.25 : 0.06 };
+        return { met: false, multiplier: missingMultiplier(target === 0 && current <= 1 ? 0.25 : 0.06) };
       }
       if (type === "techCount") {
-        return getAiConditionalProgress(endGameScoring.countOwnedTech(player, condition.techType), condition.count || 1);
+        const progress = getAiConditionalProgress(endGameScoring.countOwnedTech(player, condition.techType), condition.count || 1);
+        return progress.met ? progress : { ...progress, multiplier: missingMultiplier(progress.multiplier) };
       }
       if (type === "traceCount") {
-        return getAiConditionalProgress(countAiTraceMarkersForPlayer(player), condition.count || 1);
+        const progress = getAiConditionalProgress(countAiTraceMarkersForPlayer(player), condition.count || 1);
+        return progress.met ? progress : { ...progress, multiplier: missingMultiplier(progress.multiplier) };
       }
       if (type === "dataTotal") {
-        return getAiConditionalProgress(player?.resources?.availableData, condition.count || 1);
+        const progress = getAiConditionalProgress(player?.resources?.availableData, condition.count || 1);
+        return progress.met ? progress : { ...progress, multiplier: missingMultiplier(progress.multiplier) };
       }
       if (type === "planetOrbitOrLand") {
         const hasMarker = endGameScoring.countPlanetOrbitOrLand?.(player, planetStatsState, condition.planetId) > 0;
-        return hasMarker ? { met: true, multiplier: 1 } : { met: false, multiplier: 0.18 };
+        return hasMarker ? { met: true, multiplier: 1 } : { met: false, multiplier: missingMultiplier(0.18) };
       }
-      return { met: false, multiplier: 0.18 };
+      return { met: false, multiplier: missingMultiplier(0.18) };
     }
 
     function isAiIncomeRewardEffect(effect) {
@@ -8162,6 +8167,42 @@
       if (!selected) return 0;
       if (usedCardIndexes) usedCardIndexes.add(selected.index);
       return Math.max(0, aiNumber(selected.score));
+    }
+
+    function aiRocketMatchesCountRewardOwner(rocket, player, options = {}) {
+      if (options.owner === "any") return true;
+      if (!rocket || !player) return false;
+      const ids = new Set([player.id, player.playerId].filter(Boolean).map(String));
+      const colors = new Set([player.color, player.playerColor].filter(Boolean).map(String));
+      return [rocket.playerId, rocket.ownerPlayerId, rocket.id].filter(Boolean)
+        .some((value) => ids.has(String(value)))
+        || [rocket.color, rocket.playerColor, rocket.ownerPlayerColor].filter(Boolean)
+          .some((value) => colors.has(String(value)));
+    }
+
+    function aiRocketMatchesCountRewardLocation(rocket, options = {}) {
+      if (!rocket) return false;
+      if ((options.location || "solar") === "solar") {
+        if ((rocket.surface || "solar") !== "solar") return false;
+        if (rocket.referencePlacement?.isPlanetMarker) return false;
+      }
+      if (options.includeNonStandard !== true && (rocket.kind || "standard") !== "standard") return false;
+      return true;
+    }
+
+    function countAiRocketsForReward(player = getCurrentPlayer(), rewardOptions = {}) {
+      if (!player) return 0;
+      if (Array.isArray(rocketState.rockets) && typeof cardEffects.countRocketsForReward === "function") {
+        return cardEffects.countRocketsForReward(rocketState.rockets, player, rewardOptions);
+      }
+      const actionRockets = typeof rocketActions.getRocketsForPlayer === "function"
+        ? rocketActions.getRocketsForPlayer(rocketState, player.id) || []
+        : [];
+      const fallbackRockets = actionRockets.length ? actionRockets : (getMovableTokensForPlayer(player.id) || []);
+      return fallbackRockets.filter((rocket) => (
+        aiRocketMatchesCountRewardLocation(rocket, rewardOptions)
+        && aiRocketMatchesCountRewardOwner(rocket, player, rewardOptions)
+      )).length;
     }
 
     function scoreAiEffectValue(effect, options = {}) {
@@ -8279,7 +8320,16 @@
           return (effectOptions.rewards || [])
             .reduce((total, reward) => total + scoreAiEffectValue(reward, options), 0)
             * 0.8
-            * getAiConditionRewardMultiplier(effectOptions.condition, player).multiplier;
+            * getAiConditionRewardMultiplier(effectOptions.condition, player, {
+              immediate: options.immediate === true,
+            }).multiplier;
+        case cardEffects.EFFECT_TYPES.COUNT_ROCKETS_REWARD: {
+          const count = countAiRocketsForReward(player, effectOptions);
+          const total = Math.max(0, Math.round(count * aiNumber(effectOptions.per || 1)));
+          if (total <= 0) return 0;
+          const resource = effectOptions.resource === "data" ? "availableData" : (effectOptions.resource || "energy");
+          return scoreAiCountedResourceGain({ [resource]: total }, player);
+        }
         case "yichangdian_next_anomaly_reward":
           return scoreAiYichangdianNextAnomalyRewardValue(player);
         case "yichangdian_next_anomaly_scan":
@@ -9552,6 +9602,25 @@
       return roundAiScore(Math.min(46, bestTechScore * scale));
     }
 
+    function listAiStrategyPassiveSlotsForCard(card, player = getCurrentPlayer()) {
+      if (!card || !player || !industry?.playerHasStrategyPassive?.(player)) return [];
+      if (card.scanActionCode == null || card.scanActionCode === "") return [];
+      const code = Math.round(aiNumber(card.scanActionCode));
+      if (!Number.isFinite(code) || code < 0 || code > 3) return [];
+      const slotIds = code === 3
+        ? (industry.STRATEGY_PASSIVE_SLOT_IDS || ["yellow", "red", "blue"])
+        : [{ 0: "yellow", 1: "red", 2: "blue" }[code]].filter(Boolean);
+      return slotIds.filter((slotId) => !player.industryStrategyPassiveSlots?.[slotId]);
+    }
+
+    function scoreAiStrategyPassiveCardPlayValue(card, player = getCurrentPlayer()) {
+      const slots = listAiStrategyPassiveSlotsForCard(card, player);
+      if (!slots.length) return 0;
+      return slots.reduce((best, slotId) => (
+        Math.max(best, scoreAiStrategyPassiveSlotChoice(slotId, player))
+      ), 0);
+    }
+
     function scoreAiPlayCardValue(card, details = {}) {
       const player = details.player || getCurrentPlayer();
       const model = details.model || cardEffects.getCardModel?.(card) || null;
@@ -9562,7 +9631,9 @@
       const reservesAfterPlay = details.reservesAfterPlay ?? (
         [1, 2, 3].includes(typeCode) || Boolean(model?.reserveAfterPlay)
       );
-      const effectValue = playEffects.reduce((total, effect) => total + scoreAiEffectValue(effect), 0);
+      const effectValue = details.effectValue ?? playEffects.reduce((total, effect) => (
+        total + scoreAiEffectValue(effect, { player, immediate: true })
+      ), 0);
       const hasPersistentModeledValue = Boolean(
         model?.tasks?.length
         || model?.triggers?.length
@@ -9604,7 +9675,9 @@
         endGameExpectedScore,
         c2Type3ProgressValue,
       );
-      const directScoreGain = details.directScoreGain ?? getAiRewardDirectScore(playEffects, player);
+      const directScoreGain = details.directScoreGain ?? getAiRewardDirectScore(playEffects, player, { immediate: true });
+      const strategyPassivePlayValue = details.strategyPassivePlayValue
+        ?? scoreAiStrategyPassiveCardPlayValue(card, player);
       const firstRound25Pressure = getAiRoundNumber() <= 1
         && Math.max(0, aiNumber(player?.resources?.score)) < 25;
       const directScorePaceValue = scoreAiPaceValueForDirectScore(directScoreGain, player, {
@@ -9668,6 +9741,7 @@
         + applyAiStrategyWeight(Math.min(10, endGameExpectedScore * 0.55), "final", 0.6)
         + applyAiStrategyWeight(Math.max(0, aiNumber(routePlan?.score)), "playCard", 0.35)
         + applyAiStrategyWeight(playCardConversionPressure, "playCard", 0.65)
+        + applyAiStrategyWeight(Math.min(8, Math.max(0, strategyPassivePlayValue)), "playCard", 0.65)
         + scoreAiHighScorePushValue(player, "playCard", { endGameExpectedScore, directScoreGain })
         + scoreAiLowEngineCatchupValue(player, "playCard")
         + Math.max(0, 4 - aiNumber(price)) * 0.5
@@ -10130,7 +10204,7 @@
       return penalty;
     }
 
-    function getAiEffectDirectScore(effect, player = getCurrentPlayer()) {
+    function getAiEffectDirectScore(effect, player = getCurrentPlayer(), options = {}) {
       if (!effect) return 0;
       const type = effect.type;
       const effectOptions = effect.options || {};
@@ -10157,9 +10231,11 @@
       }
       if (type === cardEffects.EFFECT_TYPES.CONDITIONAL_REWARD) {
         return (effectOptions.rewards || [])
-          .reduce((total, reward) => total + getAiEffectDirectScore(reward, player), 0)
+          .reduce((total, reward) => total + getAiEffectDirectScore(reward, player, options), 0)
           * 0.8
-          * getAiConditionRewardMultiplier(effectOptions.condition, player).multiplier;
+          * getAiConditionRewardMultiplier(effectOptions.condition, player, {
+            immediate: options.immediate === true,
+          }).multiplier;
       }
       if (type === cardEffects.EFFECT_TYPES.CARD_ORBIT) {
         const check = actions.canExecute("orbit", createActionContext());
@@ -10175,9 +10251,9 @@
       return 0;
     }
 
-    function getAiRewardDirectScore(effects = [], player = getCurrentPlayer()) {
+    function getAiRewardDirectScore(effects = [], player = getCurrentPlayer(), options = {}) {
       return (effects || []).reduce((total, effect) => (
-        total + getAiEffectDirectScore(effect, player)
+        total + getAiEffectDirectScore(effect, player, options)
       ), 0);
     }
 
@@ -13636,13 +13712,17 @@
       const readyTaskCashout = getAiReadyHandTaskCashout(card, model, currentPlayer);
       const endGameExpectedScore = scoreAiCardEndGameExpectedValue(card, model, currentPlayer);
       const plan = scoreAiPlayCardRoutePlan(card, model, playEffects, currentPlayer);
-      const directScoreGain = getAiRewardDirectScore(playEffects, currentPlayer);
+      const directScoreGain = getAiRewardDirectScore(playEffects, currentPlayer, { immediate: true });
       const standardActionPremium = scoreAiCardStandardActionPremium(playEffects, currentPlayer);
       const readyTaskTechReplacementValue = scoreAiReadyTaskTechReplacementValue(
         playEffects,
         readyTaskCashout,
         currentPlayer,
       );
+      const effectValue = playEffects.reduce((total, effect) => (
+        total + scoreAiEffectValue(effect, { player: currentPlayer, immediate: true })
+      ), 0);
+      const strategyPassivePlayValue = scoreAiStrategyPassiveCardPlayValue(card, currentPlayer);
       const lateCardEnginePressure = scoreAiLatePlayCardEnginePressure(card, {
         player: currentPlayer,
         model,
@@ -13705,7 +13785,35 @@
         finalRoundResourceDrainPenalty,
         chongTaskChainValue,
         banrenmaThresholdSetupValue,
+        effectValue,
+        strategyPassivePlayValue,
       });
+      const hasPersistentModeledValue = Boolean(
+        (reservesAfterPlay && (
+          model?.tasks?.length
+          || model?.triggers?.length
+          || model?.endGameScoring
+          || model?.pluto
+          || typeCode === 3
+        ))
+        || isAiAlienMainPlayCard(card)
+      );
+      const concretePlayValue = Math.max(
+        0,
+        effectValue,
+        directScoreGain,
+        standardActionPremium,
+        readyTaskCashout.value,
+        readyTaskTechReplacementValue,
+        chongTaskChainValue,
+        banrenmaThresholdSetupValue,
+        strategyPassivePlayValue,
+        endGameExpectedScore,
+        c2Type3ProgressValue,
+        cFinalTaskProgressValue,
+        aiNumber(plan?.score),
+      );
+      if (!hasPersistentModeledValue && concretePlayValue <= 0) return null;
       const finalNoThresholdDeadPlay = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && countAiFinalMarksForPlayer(currentPlayer) >= 3
         && !getAiNextMissingFinalScoreThreshold(currentPlayer)
@@ -13746,7 +13854,8 @@
           costValue: scoreAiResourceBundle(cost),
           cornerOpportunity: scoreAiCardCornerOpportunity(card),
           directScoreGain,
-          effectValue: playEffects.reduce((total, effect) => total + scoreAiEffectValue(effect), 0),
+          effectValue,
+          strategyPassivePlayValue,
           c2Type3ProgressValue,
           cFinalTaskProgressValue,
           readyTaskCashoutValue: readyTaskCashout.value,
