@@ -6125,7 +6125,7 @@
       const currentScore = Math.max(0, aiNumber(resources.score));
       if (currentScore < 35) return null;
       const handSize = Math.max(0, Math.round(aiNumber(resources.handSize ?? (player.hand || []).length)));
-      if (handSize < 2) return null;
+      if (handSize <= 0) return null;
       const playCardCandidate = (candidates || []).find((candidate) => candidate?.id === "playCard");
       if (!playCardCandidate || playCardCandidate.available !== false) return null;
       if (!String(playCardCandidate.reason || "").includes("没有资源可支付")) return null;
@@ -6146,7 +6146,9 @@
       const handCost = Math.max(0, Math.round(aiNumber(trade.cost?.handSize)));
       const handGain = Math.max(0, Math.round(aiNumber(trade.gain?.handSize)));
       const handAfterTrade = handSize - handCost + handGain;
-      if (handCost < 2 || handAfterTrade < 0) return null;
+      if (handAfterTrade < 0) return null;
+      if (handCost > 0 && handCost < 2) return null;
+      if (handCost <= 0 && aiNumber(trade.gain?.energy) <= 0) return null;
       const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
       if (!simulatedPlayer) return null;
 
@@ -6173,6 +6175,18 @@
       const discardCost = estimateAiTradeDiscardOpportunityCost(player, trade);
       if (!Number.isFinite(discardCost)) return null;
       const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
+      if (
+        handCost <= 0
+        && (
+          getAiRoundNumber() !== 2
+          || nextThreshold
+          || currentScore < 70
+          || handAfterTrade < 2
+          || aiNumber(bestAction.score) < 28
+        )
+      ) {
+        return null;
+      }
       const thresholdBonus = nextThreshold
         && currentScore < nextThreshold
         && currentScore + bestAction.directScoreGain >= nextThreshold
@@ -6193,7 +6207,7 @@
         available: true,
         tradeId: trade.id,
         label: trade.label || trade.id,
-        reason: "资源锁：弃牌换能量解锁分析",
+        reason: handCost > 0 ? "资源锁：弃牌换能量解锁分析" : "资源锁：信用点换能量解锁分析",
         score: roundAiScore(Math.min(42, score)),
         valueBreakdown: {
           resourceLockMainUnlockTrade: true,
@@ -6215,7 +6229,7 @@
     }
 
     function listAiResourceLockMainUnlockTradeCandidates(player = getCurrentPlayer(), candidates = []) {
-      return ["cards-for-energy"]
+      return ["credits-for-energy", "cards-for-energy"]
         .map((tradeId) => buildAiResourceLockMainUnlockTradeCandidate(player, tradeId, candidates))
         .filter(Boolean)
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
