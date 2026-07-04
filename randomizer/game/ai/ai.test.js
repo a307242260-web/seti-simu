@@ -808,6 +808,42 @@ assert.equal(forcedOpening.industry.label, "作弊实验室");
 assert.equal(forcedOpening.openingPlan.summary.hand, 6);
 assert.ok(forcedOpening.openingPlan.topPlans.every((plan) => plan.industryLabel === "作弊实验室"));
 
+const huanyuOpeningOffer = {
+  industryOptions: [{ id: "industry:huanyu.png", label: "寰宇超动力" }],
+  initialOptions: [
+    { id: "initial:7", label: "初始牌 7" },
+    { id: "initial:11", label: "初始牌 11" },
+    { id: "initial:18", label: "初始牌 18" },
+  ],
+};
+const huanyuOpening = policy.chooseInitialSelection(huanyuOpeningOffer, {
+  roundNumber: 1,
+  forcedIndustryCard: huanyuOpeningOffer.industryOptions[0],
+});
+assert.deepEqual(
+  huanyuOpening.openingPlan.topPlans[0].initialNumbers,
+  [7, 18],
+  "Huanyu should prefer the data-income orbit plus scan opening over thin trace openings",
+);
+
+const huanyuResourceOpeningOffer = {
+  industryOptions: [{ id: "industry:huanyu.png", label: "寰宇超动力" }],
+  initialOptions: [
+    { id: "initial:13", label: "初始牌 13" },
+    { id: "initial:11", label: "初始牌 11" },
+    { id: "initial:2", label: "初始牌 2" },
+  ],
+};
+const huanyuResourceOpening = policy.chooseInitialSelection(huanyuResourceOpeningOffer, {
+  roundNumber: 1,
+  forcedIndustryCard: huanyuResourceOpeningOffer.industryOptions[0],
+});
+assert.deepEqual(
+  huanyuResourceOpening.openingPlan.topPlans[0].initialNumbers,
+  [13, 11],
+  "Huanyu should not replace trace plus scan with a plain resource plus scan opening",
+);
+
 assert.equal(policy.chooseTurnAction([
   { id: "orbit", available: true, score: 20, actionGraph: { net: 2 } },
   { id: "playCard", available: true, score: 1, actionGraph: { net: 9 } },
