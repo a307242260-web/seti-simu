@@ -2142,6 +2142,41 @@
         + (typeCode === 3 ? 2 : 0);
     }
 
+    function summarizeAiPublicPickCandidate(entry, player = getCurrentPlayer()) {
+      const card = entry?.card || null;
+      if (!card) return null;
+      const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+      const breakdown = playCandidate?.valueBreakdown || null;
+      return {
+        slotIndex: Number.isInteger(Number(entry.slotIndex)) ? Number(entry.slotIndex) : null,
+        score: roundAiScore(entry.score),
+        cardId: card.cardId || card.id || null,
+        cardInstanceId: card.id || null,
+        cardLabel: getAiCardDisplayLabel({ card, cardId: card.cardId || card.id || null }, player)
+          || card.cardName
+          || card.label
+          || null,
+        price: getCardPrice(card),
+        typeCode: getCardTypeCode(card),
+        playScore: playCandidate ? roundAiScore(playCandidate.score) : null,
+        directScoreGain: playCandidate ? roundAiScore(playCandidate.directScoreGain) : 0,
+        effectTypes: Array.isArray(playCandidate?.effectTypes)
+          ? playCandidate.effectTypes.slice(0, 6)
+          : [],
+        valueSignals: breakdown ? {
+          planScore: roundAiScore(breakdown.planScore),
+          endGameExpectedScore: roundAiScore(breakdown.endGameExpectedScore),
+          c2Type3ProgressValue: roundAiScore(breakdown.c2Type3ProgressValue),
+          cFinalTaskProgressValue: roundAiScore(breakdown.cFinalTaskProgressValue),
+          readyTaskCashoutDirectScore: roundAiScore(breakdown.readyTaskCashoutDirectScore),
+          readyTaskCashoutCount: roundAiScore(breakdown.readyTaskCashoutCount),
+          playCardConversionPressure: roundAiScore(breakdown.playCardConversionPressure),
+          finalRoundResourceDrainPenalty: roundAiScore(breakdown.finalRoundResourceDrainPenalty),
+          standardActionPremium: roundAiScore(breakdown.standardActionPremium),
+        } : null,
+      };
+    }
+
     const AI_DEEPSPACE_SWAP_MIN_SCORE = 10;
 
     function scoreAiDeepspaceHandSwapCost(card, player = getCurrentPlayer()) {
@@ -2306,20 +2341,25 @@
         return confirmPublicScanSelection();
       }
 
-      const selectedPublic = (cardState.publicCards || [])
+      const rankedPublic = (cardState.publicCards || [])
         .map((card, slotIndex) => ({
           card,
           slotIndex,
           score: scoreAiPublicPickCard(card, player, pending.type || null),
         }))
         .filter((entry) => entry.card && Number.isFinite(Number(entry.score)))
-        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.slotIndex - right.slotIndex)[0] || null;
+        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.slotIndex - right.slotIndex);
+      const selectedPublic = rankedPublic[0] || null;
       if (selectedPublic) {
         recordAiAutoBattleLog("pick-card", `${player.colorLabel}AI 精选公共牌 ${selectedPublic.slotIndex + 1}`, {
           pendingType: pending.type || null,
           slotIndex: selectedPublic.slotIndex,
           score: selectedPublic.score,
           card: selectedPublic.card,
+          topPublicCandidates: rankedPublic
+            .slice(0, 5)
+            .map((entry) => summarizeAiPublicPickCandidate(entry, player))
+            .filter(Boolean),
         });
         return pickPublicCardForCurrentPlayer(selectedPublic.slotIndex);
       }
