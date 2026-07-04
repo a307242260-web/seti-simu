@@ -216,6 +216,7 @@
     aiMainActions: [],
     lastShownTurnKey: null,
     pendingTurnKey: null,
+    pendingAiResume: false,
   };
   const startScreenState = {
     aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
@@ -1212,6 +1213,7 @@
     isMovePaymentSelectionActive,
     isPlayCardSelectionActive,
     isPublicScanMultiSelectActive,
+    isUiBlockingAiAutomation: isActionBriefingOpen,
     isTechTileOwnedByOtherPlayer,
     isTechTilePickingActive,
     landForCurrentPlayer,
@@ -2450,6 +2452,7 @@
     actionBriefingState.aiMainActions = [];
     actionBriefingState.lastShownTurnKey = null;
     actionBriefingState.pendingTurnKey = null;
+    actionBriefingState.pendingAiResume = false;
     closeActionBriefing();
   }
 
@@ -2671,11 +2674,12 @@
     return item;
   }
 
-  function getActionBriefingTurnKey(player = getCurrentPlayer()) {
+  function getActionBriefingTurnKey(advanceResult = null) {
     return [
       turnState.roundNumber,
-      turnState.turnNumber,
-      player?.id || playerState.currentPlayerId || "",
+      getDisplayedTurnNumber(),
+      advanceResult?.completedActionCycleRoundNumber || "",
+      advanceResult?.completedActionCycleTurnNumber || "",
     ].join(":");
   }
 
@@ -2709,26 +2713,38 @@
     return row;
   }
 
-  function openActionBriefing(items, turnKey) {
+  function openActionBriefing(items, turnKey, options = {}) {
     if (!els.actionBriefingOverlay || !els.actionBriefingList || !els.actionBriefingConfirm) return false;
     const visibleItems = (items || []).filter(Boolean);
     if (!visibleItems.length) return false;
+    if (els.actionBriefingRoundLabel) {
+      els.actionBriefingRoundLabel.textContent = options.roundLabel || "";
+      els.actionBriefingRoundLabel.hidden = !options.roundLabel;
+    }
     els.actionBriefingList.replaceChildren(...visibleItems.map(createActionBriefingItemElement));
     els.actionBriefingOverlay.hidden = false;
     els.actionBriefingOverlay.setAttribute("aria-hidden", "false");
     actionBriefingState.pendingTurnKey = turnKey || null;
+    actionBriefingState.pendingAiResume = Boolean(options.resumeAiAfterClose);
     window.setTimeout(() => els.actionBriefingConfirm?.focus?.(), 0);
     return true;
   }
 
   function closeActionBriefing() {
+    const shouldResumeAi = Boolean(actionBriefingState.pendingAiResume);
     hideCardHoverPreview();
     if (els.actionBriefingOverlay) {
       els.actionBriefingOverlay.hidden = true;
       els.actionBriefingOverlay.setAttribute("aria-hidden", "true");
     }
+    if (els.actionBriefingRoundLabel) {
+      els.actionBriefingRoundLabel.textContent = "";
+      els.actionBriefingRoundLabel.hidden = true;
+    }
     els.actionBriefingList?.replaceChildren();
     actionBriefingState.pendingTurnKey = null;
+    actionBriefingState.pendingAiResume = false;
+    if (shouldResumeAi) scheduleAiAutoStepIfNeeded();
   }
 
   function openActionBriefingDetailLog() {
@@ -2741,14 +2757,31 @@
     return startScreenState.actionBriefingEnabled !== false;
   }
 
-  function maybeOpenActionBriefingForCurrentHumanTurn(player = getCurrentPlayer()) {
+  function isActionBriefingOpen() {
+    return Boolean(els.actionBriefingOverlay && !els.actionBriefingOverlay.hidden);
+  }
+
+  function getActionBriefingItemsForCompletedCycle(advanceResult) {
+    if (!advanceResult?.completedActionCycle) return [];
+    const roundNumber = advanceResult.completedActionCycleRoundNumber;
+    const turnNumber = advanceResult.completedActionCycleTurnNumber;
+    return actionBriefingState.aiMainActions
+      .filter((item) => item.roundNumber === roundNumber && item.turnNumber === turnNumber)
+      .slice(-ACTION_BRIEFING_MAX_ITEMS);
+  }
+
+  function maybeOpenActionBriefingForCompletedCycle(advanceResult) {
     if (!isActionBriefingEnabled()) return false;
-    if (!player?.id || isAiAutoBattlePlayer(player.id) || isGameEnded()) return false;
-    if (!actionBriefingState.aiMainActions.length) return false;
-    const turnKey = getActionBriefingTurnKey(player);
+    if (!advanceResult?.completedActionCycle || isGameEnded()) return false;
+    const items = getActionBriefingItemsForCompletedCycle(advanceResult);
+    if (!items.length) return false;
+    const turnKey = getActionBriefingTurnKey(advanceResult);
     if (actionBriefingState.lastShownTurnKey === turnKey) return false;
-    const items = actionBriefingState.aiMainActions.slice(-ACTION_BRIEFING_MAX_ITEMS);
-    if (!openActionBriefing(items, turnKey)) return false;
+    const roundLabel = `第${getDisplayedTurnNumber()}回合：`;
+    if (!openActionBriefing(items, turnKey, {
+      roundLabel,
+      resumeAiAfterClose: true,
+    })) return false;
     actionBriefingState.lastShownTurnKey = turnKey;
     return true;
   }
@@ -3165,12 +3198,20 @@
       turnState.completedTurnPlayerIds.push(playerId);
     }
 
+    const completedCycleInfo = {
+      completedActionCycle: true,
+      completedActionCycleRoundNumber: turnState.roundNumber,
+      completedActionCycleTurnNumber: getDisplayedTurnNumber(),
+      completedActionCycleRawTurnNumber: turnState.turnNumber,
+      completedActionCyclePlayerIds: [...(turnState.completedTurnPlayerIds || [])],
+    };
+
     if (haveAllActivePlayersPassed() && isFinalRound()) {
       return finishGameAfterFinalPass();
     }
 
     if (haveAllActivePlayersPassed()) {
-      return beginNextRound();
+      return { ...beginNextRound(), ...completedCycleInfo };
     }
 
     const nextPlayerId = getNextEligiblePlayerId(playerId);
@@ -3184,7 +3225,12 @@
     turnState.completedTurnPlayerIds = [];
     const firstEligiblePlayerId = getFirstEligiblePlayerId();
     playerState.currentPlayerId = firstEligiblePlayerId || playerState.currentPlayerId;
-    return { roundAdvanced: false, turnAdvanced: true, nextPlayerId: playerState.currentPlayerId };
+    return {
+      roundAdvanced: false,
+      turnAdvanced: true,
+      nextPlayerId: playerState.currentPlayerId,
+      ...completedCycleInfo,
+    };
   }
 
   function renderRoundStatus() {
@@ -27406,8 +27452,9 @@
     renderAfterFailsafeControl(message, { saveLabel: "强制跳过后状态" });
     if (!advanceResult.gameEnded) {
       maybeStartFundamentalismRoundStartIncomeFlow(nextPlayer, turnState.roundNumber);
-      maybeOpenActionBriefingForCurrentHumanTurn(nextPlayer);
-      scheduleAiAutoStepIfNeeded();
+      if (!maybeOpenActionBriefingForCompletedCycle(advanceResult)) {
+        scheduleAiAutoStepIfNeeded();
+      }
     } else {
       maybeAutoOpenFinalResultDialog();
     }
@@ -32631,7 +32678,7 @@
     renderStateReadout();
     if (!advanceResult.gameEnded) {
       maybeStartFundamentalismRoundStartIncomeFlow(nextPlayer, turnState.roundNumber);
-      maybeOpenActionBriefingForCurrentHumanTurn(nextPlayer);
+      maybeOpenActionBriefingForCompletedCycle(advanceResult);
     }
     refreshLatestActionLogRecoverySnapshot("回合结束后状态");
     if (advanceResult.gameEnded) {

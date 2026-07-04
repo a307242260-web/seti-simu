@@ -145,6 +145,7 @@
       stateReadout: documentRef.getElementById("state-readout"),
       actionLogReadout: documentRef.getElementById("action-log-readout"),
       actionBriefingOverlay: documentRef.getElementById("action-briefing-overlay"),
+      actionBriefingRoundLabel: documentRef.getElementById("action-briefing-round-label"),
       actionBriefingList: documentRef.getElementById("action-briefing-list"),
       actionBriefingDetailLog: documentRef.getElementById("action-briefing-detail-log"),
       actionBriefingConfirm: documentRef.getElementById("action-briefing-confirm"),

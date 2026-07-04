@@ -186,6 +186,7 @@
       isMovePaymentSelectionActive,
       isPlayCardSelectionActive,
       isPublicScanMultiSelectActive,
+      isUiBlockingAiAutomation = () => false,
       isTechTileOwnedByOtherPlayer,
       isTechTilePickingActive,
       landForCurrentPlayer,
@@ -1215,6 +1216,7 @@
         && !aiAutoStepPausedOnBug
         && !aiAutoStepScheduled
         && !aiAutoStepInProgress
+        && !isUiBlockingAiAutomation()
         && !isGameEnded()
         && isAiAutoBattlePlayer(automationPlayerId),
       );
