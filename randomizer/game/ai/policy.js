@@ -203,6 +203,15 @@
     score += combined.data >= 2 ? 5 : combined.data * 1.7;
     score += combined.traces * 7;
     score += combined.orbits * 2.5;
+    if (
+      String(industry?.label || industry?.id || "").includes("寰宇超动力")
+      && combined.traces <= 0
+      && combined.orbits >= 1
+      && combined.data >= 1
+      && combined.scan >= 2
+    ) {
+      score += 1.8;
+    }
 
     if (combined.resourceScore >= 8 || combined.traces || combined.scan >= 2) {
       addOpeningGoal(goals, "FIRST_ROUND_SCORE_25", 1);
@@ -233,7 +242,8 @@
   }
 
   function chooseInitialSelection(offer, options = {}) {
-    const industryOptions = offer?.industryOptions || [];
+    const forcedIndustry = options.forcedIndustryCard || options.forcedIndustry || null;
+    const industryOptions = forcedIndustry ? [forcedIndustry] : (offer?.industryOptions || []);
     const initialOptions = offer?.initialOptions || [];
     const initialCount = Math.max(1, Math.round(Number(options.initialCount) || 2));
     const plans = [];

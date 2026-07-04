@@ -66,7 +66,7 @@
 | 芬威克研究中心 | `fenwick_publicity_pick_corner` | `fenwick_publicity_pick` | 消耗 1 宣传精选 1 张牌，获得**弃牌角标**（不弃牌）；若角标是移动，移动选择可取消但精选补牌仍不可撤销 |
 | 深空探测 | `deepspace_swap_cards` | `deepspace_swap` | 选手牌 1 张再选公共牌 1 张交换 |
 | 宇宙战略集团 | `strategy_pick_card` | `strategy_pick` | 精选 1 张公共牌（无额外资源）；确认精选后清除 3 个被动奖励槽 token |
-| 宇宙大战略集团 | `strategy_pick_card` | `strategy_pick` | AI 专用，暂不自动分配；以宇宙战略集团为模板，精选 1 张公共牌（无额外资源），确认精选后清除 3 个被动奖励槽 token；每轮开始还会额外清空 3 个被动奖励槽 |
+| 宇宙大战略集团 | `strategy_pick_card` | `strategy_pick` | AI 专用，默认分配给第 2 个 AI 电脑，不进入开始界面公司池；以宇宙战略集团为模板，精选 1 张公共牌（无额外资源），确认精选后清除 3 个被动奖励槽 token；每轮开始还会额外清空 3 个被动奖励槽 |
 | 未来跨度研究所 | `future_span_pick_advance` | `future_span_pick` | 若专属标记已有未达成目标牌：精选 1 张公共牌，并将目标分提高 3 |
 | 原教旨主义 | `fundamentalism_score_exchange` | `fundamentalism_score_exchange` | 启动 3 个 `industry_fundamentalism_exchange` 节点；每个节点可跳过、可撤销，可在 3 分与 1 信用/1 能量/1 精选之间兑换，或用 1 信用/1 能量/弃 1 手牌换 3 分 |
 | 星际海盗 | `pirates_raid_launch` | `pirates_raid_launch` | 启动 1 个 `industry_pirates_raid_launch` 节点；选择一个已有掠夺标记主星上的己方环绕/登陆标记，移除并消耗 1 信用点，然后在该星球当前扇区免费发射 |

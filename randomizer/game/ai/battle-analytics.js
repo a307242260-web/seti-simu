@@ -14,8 +14,59 @@
   const BASIC_MAIN_ACTIONS = Object.freeze(["launch", "orbit", "land", "scan", "analyze"]);
   const ENGINE_ACTIONS = Object.freeze(["playCard", "researchTech"]);
   const QUICK_ACTIONS = Object.freeze(["move", "placeData"]);
+  const PACE_QUICK_ACTIONS = Object.freeze(["move", "placeData", "cardCorner", "quickTrade", "industry"]);
+  const PACE_MAIN_ACTIONS = Object.freeze([...BASIC_MAIN_ACTIONS, ...ENGINE_ACTIONS]);
   const PASS_ACTIONS = Object.freeze(["pass", "end-turn"]);
+  const MEANINGFUL_RESOURCE_UNLOCK_SCORE = 8;
+  const LOW_PLAYER_CANDIDATE_ACTIONS = Object.freeze([
+    "playCard",
+    "researchTech",
+    "scan",
+    "analyze",
+    "placeData",
+    "cardCorner",
+    "quickTrade",
+    "move",
+    "orbit",
+    "land",
+    "launch",
+    "pass",
+    "end-turn",
+  ]);
   const DEFAULT_SEQUENCE_WINDOW_TURNS = 6;
+  const HIGH_SCORE_NEAR_MISS_TARGET = 300;
+  const HIGH_SCORE_NEAR_MISS_MIN = 280;
+  const FINAL_PUBLIC_REFILL_SHORTFALL_SCORE = 20;
+  const PUBLIC_REFILL_TRADE_IDS = Object.freeze([
+    "credits-for-card",
+    "energy-for-card",
+    "publicity-for-card",
+    "cards-for-pick-card",
+  ]);
+  const RESOURCE_SHORTFALL_KEYS = Object.freeze(["credits", "energy", "publicity", "handSize"]);
+  const D1_TECH_TYPES = Object.freeze(["orange", "blue", "purple"]);
+  const ENGINE_NEAR_MISS_TARGET_ACTIONS = Object.freeze(["playCard", "researchTech", "scan", "analyze", "placeData"]);
+  const ENGINE_NEAR_MISS_MAX_FINAL_SCORE = 255;
+  const ENGINE_NEAR_MISS_MIN_TARGET_SCORE = 20;
+  const ENGINE_NEAR_MISS_MAX_POLICY_GAP = 15;
+  const ENGINE_NEAR_MISS_MIN_POLICY_GAP = -5;
+  const ENGINE_NEAR_MISS_FOLLOWUP_LIMIT = 4;
+  const ROUTE_ENERGY_TRADE_FOLLOWUP_LIMIT = 8;
+  const HIGH_SCORE_NEAR_MISS_REFERENCE_METRICS = Object.freeze([
+    "baseScore",
+    "tileScore",
+    "cardScore",
+    "mainActionCount",
+    "quickStepCount",
+    "resourceQuickStepCount",
+    "playCardCount",
+    "researchTechCount",
+    "scanCount",
+    "analyzeCount",
+    "placeDataCount",
+    "techCount",
+    "completedTaskCount",
+  ]);
   const KEY_SEQUENCE_DECISIONS = Object.freeze([
     "play-card",
     "tech-placement",
@@ -80,6 +131,14 @@
     return "other";
   }
 
+  function getActionPaceCategory(actionId, action = {}) {
+    const id = String(actionId || "");
+    if (PASS_ACTIONS.includes(id)) return "idle";
+    if (PACE_MAIN_ACTIONS.includes(id) || action.kind === "main") return "main";
+    if (PACE_QUICK_ACTIONS.includes(id) || action.kind === "quick") return "quick";
+    return "other";
+  }
+
   function getCandidateStats(stats, actionId) {
     const key = actionId == null || actionId === "" ? "unknown" : String(actionId);
     if (!stats[key]) {
@@ -118,7 +177,7 @@
 
   function getCandidatePolicyScore(candidate) {
     if (!candidate) return null;
-    const graphNet = getFiniteScore(candidate.actionGraph?.net ?? candidate.net);
+    const graphNet = getCandidateActionGraphNet(candidate);
     if (graphNet != null) return graphNet;
     const actionId = getCandidateId(candidate);
     const explicitScore = getFiniteScore(candidate.score);
@@ -131,6 +190,10 @@
       if (Number.isFinite(bestCardScore)) valueScore = Math.max(valueScore, bestCardScore);
     }
     return (POLICY_ACTION_BIAS[actionId] ?? 0) + valueScore;
+  }
+
+  function getCandidateActionGraphNet(candidate) {
+    return getFiniteScore(candidate?.actionGraph?.net ?? candidate?.net);
   }
 
   function isCandidateAvailable(candidate) {
@@ -163,6 +226,2294 @@
     return String(getSelectedAction(entry)?.id || "unknown");
   }
 
+  function summarizeOpportunityCandidate(candidate = {}) {
+    return {
+      id: getCandidateId(candidate),
+      kind: candidate.kind || null,
+      tradeId: candidate.tradeId || null,
+      label: candidate.label || candidate.planetName || candidate.cardLabel || null,
+      score: roundRatio(candidate.score),
+      policyScore: roundRatio(getCandidatePolicyScore(candidate)),
+      directScoreGain: roundRatio(candidate.directScoreGain),
+      reason: candidate.reason || null,
+    };
+  }
+
+  function buildPassOpportunitySample(entry, candidates = [], limit = 3) {
+    const availableCandidates = (candidates || []).filter(isCandidateAvailable);
+    const availableMain = availableCandidates
+      .filter((candidate) => candidate.kind === "main")
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ));
+    const topCandidates = availableCandidates
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ))
+      .slice(0, limit)
+      .map(summarizeOpportunityCandidate);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      bestMain: availableMain[0] ? summarizeOpportunityCandidate(availableMain[0]) : null,
+      topCandidates,
+    };
+  }
+
+  function buildEndTurnMoveOpportunitySample(entry, candidates = [], limit = 3) {
+    const availableCandidates = (candidates || []).filter(isCandidateAvailable);
+    const availableMoves = availableCandidates
+      .filter((candidate) => getCandidateId(candidate) === "move")
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ));
+    const topCandidates = availableCandidates
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ))
+      .slice(0, limit)
+      .map(summarizeOpportunityCandidate);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      bestMove: availableMoves[0] ? summarizeOpportunityCandidate(availableMoves[0]) : null,
+      bestMovePositive: numeric(availableMoves[0]?.score) > 0,
+      topCandidates,
+    };
+  }
+
+  function getPlayCardCandidate(candidates = []) {
+    return (candidates || []).find((candidate) => getCandidateId(candidate) === "playCard") || null;
+  }
+
+  function getSelectedCandidate(entry, candidates = []) {
+    const action = getSelectedAction(entry);
+    return (candidates || []).find((candidate) => candidateMatchesAction(candidate, action)) || action || null;
+  }
+
+  function isPassResourceLockedPlayCard(entry, candidates = []) {
+    if (getSelectedActionId(entry) !== "pass") return false;
+    const playCardCandidate = getPlayCardCandidate(candidates);
+    if (!playCardCandidate || isCandidateAvailable(playCardCandidate)) return false;
+    const reason = String(playCardCandidate.reason || "");
+    if (!reason.includes("没有资源可支付")) return false;
+    return numeric(entry?.playerResources?.handSize) >= 2;
+  }
+
+  function buildPassResourceLockSample(entry, candidates = [], limit = 4) {
+    const playCardCandidate = getPlayCardCandidate(candidates);
+    const availableCandidates = (candidates || []).filter(isCandidateAvailable);
+    const topCandidates = availableCandidates
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ))
+      .slice(0, limit)
+      .map(summarizeOpportunityCandidate);
+    const unavailableMain = (candidates || [])
+      .filter((candidate) => candidate.kind === "main" && !isCandidateAvailable(candidate))
+      .slice(0, limit)
+      .map(summarizeOpportunityCandidate);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      playCard: playCardCandidate ? summarizeOpportunityCandidate(playCardCandidate) : null,
+      unavailableMain,
+      resourceLockTradePreviews: Array.isArray(entry.details?.resourceLockTradePreviews)
+        ? entry.details.resourceLockTradePreviews.slice(0, limit)
+        : [],
+      topCandidates,
+    };
+  }
+
+  function sortByCandidatePolicy(candidates = []) {
+    return [...(candidates || [])].sort((left, right) => (
+      numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+      || getCandidateId(left).localeCompare(getCandidateId(right))
+    ));
+  }
+
+  function getBestResourceLockTradePreview(previews = []) {
+    return [...(previews || [])]
+      .filter((preview) => preview && getFiniteScore(preview.bestAction?.score) != null)
+      .sort((left, right) => (
+        numeric(right.bestAction?.score) - numeric(left.bestAction?.score)
+        || String(left.tradeId || "").localeCompare(String(right.tradeId || ""))
+      ))[0] || null;
+  }
+
+  function classifyEarlyPassNoMain(profile = {}) {
+    if (!profile.candidateCount) return "missing-pass-candidates";
+    if (numeric(profile.bestMain?.policyScore) > 0) return "positive-main-available";
+    const bestTradeScore = numeric(profile.bestResourceLockTrade?.bestAction?.score);
+    if (bestTradeScore >= MEANINGFUL_RESOURCE_UNLOCK_SCORE) return "resource-trade-unlocks-main";
+    if (bestTradeScore > 0) return "resource-trade-unlocks-low-main";
+    if (profile.availableMainCount > 0) return "negative-main-only";
+    const playCardReason = String(profile.playCard?.reason || "");
+    if (playCardReason.includes("没有资源可支付")) {
+      return numeric(profile.resources?.handSize) >= 2 ? "resource-locked-hand" : "low-hand-resource-lock";
+    }
+    if (profile.unavailableMainCount > 0) return "no-main-available";
+    return "no-main-candidate";
+  }
+
+  function buildEarlyPassCandidateProfile(entry, candidates = [], limit = 5) {
+    const availableCandidates = (candidates || []).filter(isCandidateAvailable);
+    const availableMain = sortByCandidatePolicy(
+      availableCandidates.filter((candidate) => candidate.kind === "main"),
+    );
+    const unavailableMain = (candidates || [])
+      .filter((candidate) => candidate.kind === "main" && !isCandidateAvailable(candidate));
+    const resourceLockTradePreviews = Array.isArray(entry.details?.resourceLockTradePreviews)
+      ? entry.details.resourceLockTradePreviews.slice(0, limit)
+      : [];
+    const playCardCandidate = getPlayCardCandidate(candidates);
+    const profile = {
+      resources: entry.playerResources || null,
+      candidateCount: (candidates || []).length,
+      availableMainCount: availableMain.length,
+      unavailableMainCount: unavailableMain.length,
+      bestMain: availableMain[0] ? summarizeOpportunityCandidate(availableMain[0]) : null,
+      topCandidates: sortByCandidatePolicy(availableCandidates)
+        .slice(0, limit)
+        .map(summarizeOpportunityCandidate),
+      unavailableMain: unavailableMain
+        .slice(0, limit)
+        .map(summarizeOpportunityCandidate),
+      playCard: playCardCandidate ? summarizeOpportunityCandidate(playCardCandidate) : null,
+      resourceLockTradePreviews,
+      bestResourceLockTrade: getBestResourceLockTradePreview(resourceLockTradePreviews),
+      publicRefillPreview: entry.details?.earlyNoMainPublicRefillDiagnostic || null,
+    };
+    return {
+      ...profile,
+      reasonTag: classifyEarlyPassNoMain(profile),
+    };
+  }
+
+  function getTurnGroupKey(entry = {}) {
+    return [
+      entry.playerId || entry.playerLabel || "unknown",
+      entry.roundNumber ?? "unknown",
+      entry.rawTurnNumber ?? entry.turnNumber ?? "unknown",
+    ].join("|");
+  }
+
+  function summarizeGroupedTurnAction(action = {}) {
+    const id = String(action?.id || "unknown");
+    return {
+      id,
+      kind: action?.kind || null,
+      tradeId: action?.tradeId || null,
+      label: action?.label || action?.cardLabel || action?.planetName || null,
+      score: roundRatio(action?.score),
+      pace: getActionPaceCategory(id, action),
+    };
+  }
+
+  function getRoundPaceKey(roundNumber) {
+    if (roundNumber == null || roundNumber === "") return "unknown";
+    return String(roundNumber);
+  }
+
+  function ensureRoundPaceBucket(profile, roundNumber) {
+    const key = getRoundPaceKey(roundNumber);
+    if (!profile.roundPaceCounts[key]) {
+      profile.roundPaceCounts[key] = {
+        roundNumber: Number.isFinite(Number(roundNumber)) ? Number(roundNumber) : null,
+        turnActionCount: 0,
+        actionCounts: {},
+        paceCounts: {},
+      };
+    }
+    return profile.roundPaceCounts[key];
+  }
+
+  function summarizeRoundPaceBucket(bucket = {}) {
+    const actionCounts = bucket.actionCounts || {};
+    const paceCounts = bucket.paceCounts || {};
+    const mainActionCount = numeric(paceCounts.main);
+    const quickStepCount = numeric(paceCounts.quick);
+    const idleTurnCount = numeric(paceCounts.idle);
+    const otherTurnActionCount = numeric(paceCounts.other);
+    const turnActionCount = numeric(bucket.turnActionCount);
+    const resourceQuickStepCount = numeric(actionCounts.placeData)
+      + numeric(actionCounts.cardCorner)
+      + numeric(actionCounts.quickTrade);
+    return {
+      roundNumber: bucket.roundNumber ?? null,
+      turnActionCount,
+      mainActionCount,
+      quickStepCount,
+      resourceQuickStepCount,
+      productiveActionCount: mainActionCount + quickStepCount,
+      idleTurnCount,
+      otherTurnActionCount,
+      quickToMainRatio: mainActionCount ? roundRatio(quickStepCount / mainActionCount) : 0,
+      idleTurnRatio: turnActionCount ? roundRatio(idleTurnCount / turnActionCount) : 0,
+      playCardCount: numeric(actionCounts.playCard),
+      researchTechCount: numeric(actionCounts.researchTech),
+      scanCount: numeric(actionCounts.scan),
+      analyzeCount: numeric(actionCounts.analyze),
+      moveCount: numeric(actionCounts.move),
+      placeDataCount: numeric(actionCounts.placeData),
+      cardCornerCount: numeric(actionCounts.cardCorner),
+      quickTradeCount: numeric(actionCounts.quickTrade),
+      passCount: numeric(actionCounts.pass),
+      actionCounts: { ...actionCounts },
+    };
+  }
+
+  function recordRoundPace(profile, entry, actionId, action) {
+    const bucket = ensureRoundPaceBucket(profile, entry.roundNumber);
+    bucket.turnActionCount += 1;
+    increment(bucket.actionCounts, actionId);
+    increment(bucket.paceCounts, getActionPaceCategory(actionId, action));
+  }
+
+  function buildEarlyPassNoMainSamples(logs = [], playerResults = [], limit = Infinity) {
+    const playerResultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const groups = new Map();
+    for (const entry of logs || []) {
+      if (entry.type !== "turn-action") continue;
+      const action = getSelectedAction(entry) || {};
+      const actionId = getSelectedActionId(entry);
+      const key = getTurnGroupKey(entry);
+      if (!groups.has(key)) {
+        groups.set(key, {
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || entry.playerId || "unknown",
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          passResources: null,
+          actions: [],
+          mainActionCount: 0,
+          quickStepCount: 0,
+          quickBeforePassCount: 0,
+          quickAfterPassCount: 0,
+          passed: false,
+          passCandidateProfile: null,
+        });
+      }
+      const group = groups.get(key);
+      const pace = getActionPaceCategory(actionId, action);
+      if (pace === "main") group.mainActionCount += 1;
+      if (pace === "quick") {
+        group.quickStepCount += 1;
+        if (group.passed) group.quickAfterPassCount += 1;
+        else group.quickBeforePassCount += 1;
+      }
+      if (actionId === "pass") {
+        group.passed = true;
+        group.passResources = entry.playerResources || group.passResources;
+        group.passCandidateProfile = buildEarlyPassCandidateProfile(entry, entry.details?.candidates || []);
+      }
+      group.actions.push(summarizeGroupedTurnAction(action));
+      group.resources = entry.playerResources || group.resources;
+    }
+    const samples = [...groups.values()]
+      .filter((group) => group.passed && group.mainActionCount <= 0)
+      .map((group) => {
+        const result = playerResultById.get(group.playerId) || {};
+        const resources = group.passResources || group.resources || {};
+        return {
+          playerId: group.playerId,
+          playerLabel: group.playerLabel,
+          finalScore: roundRatio(result.finalScore),
+          roundNumber: group.roundNumber,
+          turnNumber: group.turnNumber,
+          rawTurnNumber: group.rawTurnNumber,
+          resources,
+          quickStepCount: group.quickStepCount,
+          quickBeforePassCount: group.quickBeforePassCount,
+          quickAfterPassCount: group.quickAfterPassCount,
+          reasonTag: group.passCandidateProfile?.reasonTag || null,
+          candidateProfile: group.passCandidateProfile || null,
+          actionIds: group.actions.map((action) => action.tradeId ? `${action.id}:${action.tradeId}` : action.id),
+          actions: group.actions,
+          resourceProfile: {
+            credits: roundRatio(resources.credits),
+            energy: roundRatio(resources.energy),
+            publicity: roundRatio(resources.publicity),
+            handSize: roundRatio(resources.handSize),
+            availableData: roundRatio(resources.availableData),
+          },
+        };
+      });
+    return sortEarlyPassNoMainSamples(samples, limit);
+  }
+
+  function sortEarlyPassNoMainSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function getResourceLockMainUnlockScore(sample = {}) {
+    return numeric(
+      sample?.bestResourceLockTrade?.bestAction?.score
+      ?? sample?.candidateProfile?.bestResourceLockTrade?.bestAction?.score,
+    );
+  }
+
+  function getResourceLockBestAction(sample = {}) {
+    return sample?.bestResourceLockTrade?.bestAction
+      || sample?.candidateProfile?.bestResourceLockTrade?.bestAction
+      || null;
+  }
+
+  function isResourceLockWeakLaunchUnlock(sample = {}) {
+    if (getResourceLockMainUnlockScore(sample) < MEANINGFUL_RESOURCE_UNLOCK_SCORE) return false;
+    const bestAction = getResourceLockBestAction(sample);
+    if (bestAction?.actionId !== "launch") return false;
+    const planScore = getFiniteScore(bestAction.planScore);
+    const directScoreGain = numeric(bestAction.directScoreGain);
+    return (planScore == null || planScore <= 0) && directScoreGain <= 0;
+  }
+
+  function sortResourceLockMainUnlockSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || getResourceLockMainUnlockScore(right) - getResourceLockMainUnlockScore(left)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildResourceLockMainUnlockSamples(earlyPassSamples = [], limit = 12) {
+    const samples = (earlyPassSamples || [])
+      .filter((sample) => getResourceLockMainUnlockScore(sample) >= MEANINGFUL_RESOURCE_UNLOCK_SCORE)
+      .map((sample) => ({
+        playerId: sample.playerId || null,
+        playerLabel: sample.playerLabel || null,
+        finalScore: roundRatio(sample.finalScore),
+        roundNumber: sample.roundNumber ?? null,
+        turnNumber: sample.turnNumber ?? null,
+        rawTurnNumber: sample.rawTurnNumber ?? null,
+        resources: sample.resources || null,
+        resourceProfile: sample.resourceProfile || null,
+        quickStepCount: numeric(sample.quickStepCount),
+        quickBeforePassCount: numeric(sample.quickBeforePassCount),
+        quickAfterPassCount: numeric(sample.quickAfterPassCount),
+        reasonTag: sample.reasonTag || null,
+        bestResourceLockTrade: sample.candidateProfile?.bestResourceLockTrade || null,
+        resourceLockTradePreviews: sample.candidateProfile?.resourceLockTradePreviews || [],
+        bestMain: sample.candidateProfile?.bestMain || null,
+        playCard: sample.candidateProfile?.playCard || null,
+        topCandidates: sample.candidateProfile?.topCandidates || [],
+        unavailableMain: sample.candidateProfile?.unavailableMain || [],
+        actionIds: sample.actionIds || [],
+        actions: sample.actions || [],
+      }));
+    return sortResourceLockMainUnlockSamples(samples, limit);
+  }
+
+  function buildResourceLockWeakLaunchUnlockSamples(earlyPassSamples = [], limit = 12) {
+    const samples = (earlyPassSamples || [])
+      .filter(isResourceLockWeakLaunchUnlock)
+      .map((sample) => ({
+        playerId: sample.playerId || null,
+        playerLabel: sample.playerLabel || null,
+        finalScore: roundRatio(sample.finalScore),
+        roundNumber: sample.roundNumber ?? null,
+        turnNumber: sample.turnNumber ?? null,
+        rawTurnNumber: sample.rawTurnNumber ?? null,
+        resources: sample.resources || null,
+        resourceProfile: sample.resourceProfile || null,
+        quickStepCount: numeric(sample.quickStepCount),
+        quickBeforePassCount: numeric(sample.quickBeforePassCount),
+        quickAfterPassCount: numeric(sample.quickAfterPassCount),
+        reasonTag: sample.reasonTag || null,
+        bestResourceLockTrade: sample.candidateProfile?.bestResourceLockTrade || null,
+        bestMain: sample.candidateProfile?.bestMain || null,
+        unavailableMain: sample.candidateProfile?.unavailableMain || [],
+        actionIds: sample.actionIds || [],
+        actions: sample.actions || [],
+      }));
+    return sortResourceLockMainUnlockSamples(samples, limit);
+  }
+
+  function countEarlyPassNoMainReasons(samples = []) {
+    const counts = {};
+    for (const sample of samples || []) {
+      increment(counts, sample?.reasonTag || "unknown");
+    }
+    return counts;
+  }
+
+  function getResourceDelta(fromResources = {}, toResources = {}) {
+    const keys = ["credits", "energy", "handSize", "availableData", "publicity"];
+    const delta = {};
+    for (const key of keys) {
+      delta[key] = roundRatio(numeric(fromResources?.[key]) - numeric(toResources?.[key]));
+    }
+    delta.totalDrain = roundRatio(keys.reduce((total, key) => total + Math.max(0, numeric(delta[key])), 0));
+    return delta;
+  }
+
+  function findPassEntryForEarlyPassSample(turnEntries = [], sample = {}) {
+    return turnEntries.find((entry) => (
+      entry.playerId === sample.playerId
+      && numeric(entry.roundNumber) === numeric(sample.roundNumber)
+      && numeric(entry.rawTurnNumber ?? entry.turnNumber) === numeric(sample.rawTurnNumber)
+      && getSelectedActionId(entry) === "pass"
+    )) || null;
+  }
+
+  function findPreviousNonIdleTurnAction(turnEntries = [], passEntry = null) {
+    if (!passEntry) return null;
+    const passIndex = turnEntries.indexOf(passEntry);
+    for (let index = passIndex - 1; index >= 0; index -= 1) {
+      const entry = turnEntries[index];
+      if (entry.playerId !== passEntry.playerId) continue;
+      if (numeric(entry.roundNumber) !== numeric(passEntry.roundNumber)) continue;
+      if (numeric(entry.rawTurnNumber ?? entry.turnNumber) > numeric(passEntry.rawTurnNumber ?? passEntry.turnNumber)) continue;
+      const actionId = getSelectedActionId(entry);
+      if (actionId === "pass" || actionId === "end-turn") continue;
+      return entry;
+    }
+    return null;
+  }
+
+  function summarizePreNoMainPassResourceDrainAction(entry = {}) {
+    const action = getSelectedAction(entry) || {};
+    return {
+      id: getSelectedActionId(entry),
+      kind: action.kind || null,
+      tradeId: action.tradeId || null,
+      label: action.label || action.cardLabel || action.planetName || null,
+      score: roundRatio(action.score),
+      policyScore: roundRatio(getCandidatePolicyScore(action)),
+      directScoreGain: roundRatio(action.directScoreGain),
+      cardId: action.cardId || null,
+      cardLabel: action.cardLabel || null,
+      routeTarget: action.routeTarget || null,
+      valueBreakdown: action.valueBreakdown || action.breakdown || null,
+    };
+  }
+
+  function buildPreNoMainPassResourceDrainSamples(logs = [], playerResults = [], earlyPassSamples = [], limit = 12) {
+    const playerResultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const turnEntries = (logs || []).filter((entry) => entry.type === "turn-action");
+    const samples = [];
+    for (const passSample of earlyPassSamples || []) {
+      const passEntry = findPassEntryForEarlyPassSample(turnEntries, passSample);
+      const previousEntry = findPreviousNonIdleTurnAction(turnEntries, passEntry);
+      if (!passEntry || !previousEntry) continue;
+      const delta = getResourceDelta(previousEntry.playerResources || {}, passEntry.playerResources || {});
+      if (numeric(delta.totalDrain) <= 0) continue;
+      const result = playerResultById.get(passSample.playerId) || {};
+      samples.push({
+        playerId: passSample.playerId,
+        playerLabel: passSample.playerLabel,
+        finalScore: roundRatio(result.finalScore ?? passSample.finalScore),
+        roundNumber: passSample.roundNumber,
+        rawTurnNumber: passSample.rawTurnNumber,
+        reasonTag: passSample.reasonTag || null,
+        passResources: passEntry.playerResources || null,
+        previousRoundNumber: previousEntry.roundNumber ?? null,
+        previousRawTurnNumber: previousEntry.rawTurnNumber ?? previousEntry.turnNumber ?? null,
+        previousResources: previousEntry.playerResources || null,
+        rawTurnDistance: roundRatio(
+          numeric(passEntry.rawTurnNumber ?? passEntry.turnNumber)
+            - numeric(previousEntry.rawTurnNumber ?? previousEntry.turnNumber),
+        ),
+        previousAction: summarizePreNoMainPassResourceDrainAction(previousEntry),
+        resourceDeltaToPass: delta,
+        passActionIds: passSample.actionIds || [],
+        candidateProfile: passSample.candidateProfile || null,
+      });
+    }
+    return sortPreNoMainPassResourceDrainSamples(samples, limit);
+  }
+
+  function sortPreNoMainPassResourceDrainSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(right.resourceDeltaToPass?.totalDrain) - numeric(left.resourceDeltaToPass?.totalDrain)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function getMovePaymentAfterEntry(entries = [], startIndex = 0) {
+    for (let index = startIndex + 1; index < entries.length; index += 1) {
+      const entry = entries[index];
+      if (entry?.type === "move-payment") return entry;
+      if (entry?.type === "turn-action") return null;
+    }
+    return null;
+  }
+
+  function summarizePostPassQuickAction(entry = {}, entries = [], entryIndex = 0) {
+    const action = getSelectedAction(entry) || {};
+    const actionId = getSelectedActionId(entry);
+    const valueBreakdown = action.valueBreakdown || {};
+    const movePayment = actionId === "move" ? getMovePaymentAfterEntry(entries, entryIndex) : null;
+    const selectedHandIndices = Array.isArray(movePayment?.details?.selectedHandIndices)
+      ? movePayment.details.selectedHandIndices
+      : null;
+    const moveCardSpent = selectedHandIndices
+      ? selectedHandIndices.length
+      : Math.max(0, numeric(valueBreakdown.moveCardSpent));
+    const moveEnergySpent = movePayment?.details?.energyCost != null
+      ? Math.max(0, numeric(movePayment.details.energyCost))
+      : Math.max(0, numeric(valueBreakdown.moveEnergySpent));
+    const followupMainAction = action.followupMainAction || null;
+    const followupScore = numeric(followupMainAction?.score ?? valueBreakdown.followupScore);
+    const resources = entry.playerResources || {};
+    const handSize = Math.max(0, numeric(resources.handSize));
+    const handAfterMovePayment = Math.max(0, handSize - moveCardSpent);
+    const routeTarget = action.routeTarget || null;
+    const routeTargetDistance = Math.max(0, Math.round(numeric(routeTarget?.newDistance)));
+    const isPaidMoveNoFollowup = actionId === "move"
+      && (moveCardSpent > 0 || moveEnergySpent > 0)
+      && followupScore <= 0;
+    const isThinHandNoFollowupMove = isPaidMoveNoFollowup
+      && moveCardSpent > 0
+      && Math.max(0, numeric(resources.energy)) <= 0
+      && handAfterMovePayment <= 1
+      && routeTarget?.kind === "planet"
+      && routeTargetDistance <= 1;
+    return {
+      action: summarizeGroupedTurnAction(action),
+      resources,
+      payment: actionId === "move"
+        ? {
+          requiredMovePoints: roundRatio(valueBreakdown.requiredMovePoints ?? movePayment?.details?.requiredMovePoints),
+          moveCardSpent: roundRatio(moveCardSpent),
+          moveEnergySpent: roundRatio(moveEnergySpent),
+          handAfterMovePayment: roundRatio(handAfterMovePayment),
+        }
+        : null,
+      routeTarget: routeTarget
+        ? {
+          kind: routeTarget.kind || null,
+          id: routeTarget.id || routeTarget.planetId || null,
+          planetId: routeTarget.planetId || routeTarget.id || null,
+          newDistance: roundRatio(routeTarget.newDistance),
+        }
+        : null,
+      followupMainAction: followupMainAction
+        ? {
+          actionId: followupMainAction.actionId || null,
+          timing: followupMainAction.timing || null,
+          planetId: followupMainAction.planetId || null,
+          score: roundRatio(followupMainAction.score),
+          directScoreGain: roundRatio(followupMainAction.directScoreGain),
+        }
+        : null,
+      flags: {
+        paidMoveNoFollowup: isPaidMoveNoFollowup,
+        thinHandNoFollowupMove: isThinHandNoFollowupMove,
+      },
+      valueBreakdown: actionId === "move"
+        ? {
+          routeScore: roundRatio(valueBreakdown.routeScore),
+          routeScoreForGain: roundRatio(valueBreakdown.routeScoreForGain),
+          followupScore: roundRatio(valueBreakdown.followupScore),
+          followupTiming: valueBreakdown.followupTiming || null,
+          paymentCost: roundRatio(valueBreakdown.paymentCost),
+          movementCost: roundRatio(valueBreakdown.movementCost),
+        }
+        : null,
+    };
+  }
+
+  function buildPostPassQuickAnalysis(logs = [], playerResults = [], limit = Infinity) {
+    const playerResultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const groups = new Map();
+    for (const entry of logs || []) {
+      if (!["turn-action", "move-payment"].includes(entry.type)) continue;
+      const key = getTurnGroupKey(entry);
+      if (!groups.has(key)) {
+        groups.set(key, {
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || entry.playerId || "unknown",
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          entries: [],
+        });
+      }
+      groups.get(key).entries.push(entry);
+    }
+
+    const counts = {
+      postPassQuickAfterPass: 0,
+      postPassPaidMoveNoFollowup: 0,
+      postPassThinHandNoFollowupMove: 0,
+    };
+    const samples = [];
+    for (const group of groups.values()) {
+      let seenPass = false;
+      const turnActions = group.entries.filter((entry) => entry.type === "turn-action");
+      const actionIds = turnActions.map((entry) => {
+        const action = getSelectedAction(entry) || {};
+        return action.tradeId ? `${getSelectedActionId(entry)}:${action.tradeId}` : getSelectedActionId(entry);
+      });
+      for (let index = 0; index < group.entries.length; index += 1) {
+        const entry = group.entries[index];
+        if (entry.type !== "turn-action") continue;
+        const actionId = getSelectedActionId(entry);
+        const action = getSelectedAction(entry) || {};
+        if (actionId === "pass") {
+          seenPass = true;
+          continue;
+        }
+        if (!seenPass || getActionPaceCategory(actionId, action) !== "quick") continue;
+        counts.postPassQuickAfterPass += 1;
+        const postAction = summarizePostPassQuickAction(entry, group.entries, index);
+        if (postAction.flags.paidMoveNoFollowup) counts.postPassPaidMoveNoFollowup += 1;
+        if (postAction.flags.thinHandNoFollowupMove) counts.postPassThinHandNoFollowupMove += 1;
+        if (samples.length < limit) {
+          const result = playerResultById.get(group.playerId) || {};
+          samples.push({
+            playerId: group.playerId,
+            playerLabel: group.playerLabel,
+            finalScore: roundRatio(result.finalScore),
+            roundNumber: group.roundNumber,
+            turnNumber: group.turnNumber,
+            rawTurnNumber: group.rawTurnNumber,
+            actionIds,
+            postAction,
+          });
+        }
+      }
+    }
+    samples.sort((left, right) => (
+      numeric(left.finalScore) - numeric(right.finalScore)
+      || numeric(left.roundNumber) - numeric(right.roundNumber)
+      || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+    ));
+    return {
+      counts,
+      samples: samples.slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined),
+    };
+  }
+
+  function buildFinalLowHandPassRecoverySample(entry) {
+    const diagnostic = entry?.details?.finalLowHandPassRecoveryDiagnostic || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      currentScore: roundRatio(diagnostic.currentScore),
+      finalMarkCount: numeric(diagnostic.finalMarkCount),
+      nextFinalMarkThreshold: diagnostic.nextFinalMarkThreshold ?? null,
+      handSize: numeric(diagnostic.handSize),
+      bestPublicTradeCardScore: roundRatio(diagnostic.bestPublicTradeCardScore),
+      topPublicTradeCards: Array.isArray(diagnostic.topPublicTradeCards)
+        ? diagnostic.topPublicTradeCards.slice(0, 5)
+        : [],
+      cardsForPickCardPreview: diagnostic.cardsForPickCardPreview || null,
+      tradeChecks: Array.isArray(diagnostic.tradeChecks)
+        ? diagnostic.tradeChecks.slice(0, 8)
+        : [],
+      lateRecoveryGate: diagnostic.lateRecoveryGate || null,
+      availableQuick: Array.isArray(diagnostic.availableQuick)
+        ? diagnostic.availableQuick.slice(0, 5)
+        : [],
+      lateRecoveryPreviewCandidates: Array.isArray(diagnostic.lateRecoveryPreviewCandidates)
+        ? diagnostic.lateRecoveryPreviewCandidates.slice(0, 5)
+        : [],
+      unavailableMain: Array.isArray(diagnostic.unavailableMain)
+        ? diagnostic.unavailableMain.slice(0, 6)
+        : [],
+    };
+  }
+
+  function getFinalPublicRefillResources(entry, diagnostic = {}) {
+    const resources = entry?.playerResources || {};
+    return {
+      credits: numeric(resources.credits ?? diagnostic.credits),
+      energy: numeric(resources.energy ?? diagnostic.energy),
+      publicity: numeric(resources.publicity ?? diagnostic.publicity),
+      handSize: numeric(resources.handSize ?? diagnostic.handSize),
+    };
+  }
+
+  function getBestPublicRefillCard(diagnostic = {}) {
+    if (Array.isArray(diagnostic.topPublicTradeCards) && diagnostic.topPublicTradeCards.length) {
+      return diagnostic.topPublicTradeCards[0];
+    }
+    return diagnostic.cardsForPickCardPreview?.bestPublicTradeCard || null;
+  }
+
+  function getFinalPublicRefillTradeChecks(diagnostic = {}) {
+    return (Array.isArray(diagnostic.tradeChecks) ? diagnostic.tradeChecks : [])
+      .filter((check) => PUBLIC_REFILL_TRADE_IDS.includes(check?.tradeId));
+  }
+
+  function buildResourceShortfallForTrade(check = {}, resources = {}) {
+    const cost = check.cost || {};
+    const missing = [];
+    for (const key of RESOURCE_SHORTFALL_KEYS) {
+      const required = numeric(cost[key]);
+      if (required <= 0) continue;
+      const available = Math.max(0, numeric(resources[key]));
+      if (available >= required) continue;
+      missing.push({
+        resource: key,
+        required: roundRatio(required),
+        available: roundRatio(available),
+        missing: roundRatio(required - available),
+      });
+    }
+    if (!missing.length) return null;
+    return {
+      tradeId: check.tradeId || null,
+      reason: check.reason || null,
+      cost: check.cost || null,
+      missing,
+      totalMissing: roundRatio(missing.reduce((total, item) => total + numeric(item.missing), 0)),
+    };
+  }
+
+  function buildFinalPublicRefillShortfalls(entry) {
+    const diagnostic = entry?.details?.finalLowHandPassRecoveryDiagnostic || {};
+    const resources = getFinalPublicRefillResources(entry, diagnostic);
+    return getFinalPublicRefillTradeChecks(diagnostic)
+      .filter((check) => check && !check.ok)
+      .map((check) => buildResourceShortfallForTrade(check, resources))
+      .filter(Boolean);
+  }
+
+  function isFinalPublicRefillShortfall(entry) {
+    const diagnostic = entry?.details?.finalLowHandPassRecoveryDiagnostic;
+    if (!diagnostic) return false;
+    const bestScore = getFiniteScore(diagnostic.bestPublicTradeCardScore)
+      ?? getFiniteScore(getBestPublicRefillCard(diagnostic)?.tradeScore)
+      ?? getFiniteScore(diagnostic.cardsForPickCardPreview?.bestPublicTradeCardScore);
+    if (bestScore == null || bestScore < FINAL_PUBLIC_REFILL_SHORTFALL_SCORE) return false;
+    const refillChecks = getFinalPublicRefillTradeChecks(diagnostic);
+    if (!refillChecks.length || refillChecks.some((check) => check?.ok)) return false;
+    return buildFinalPublicRefillShortfalls(entry).length > 0;
+  }
+
+  function buildFinalPublicRefillShortfallSample(entry) {
+    const diagnostic = entry?.details?.finalLowHandPassRecoveryDiagnostic || {};
+    const resources = getFinalPublicRefillResources(entry, diagnostic);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      currentScore: roundRatio(diagnostic.currentScore),
+      finalMarkCount: numeric(diagnostic.finalMarkCount),
+      handSize: numeric(diagnostic.handSize),
+      bestPublicTradeCardScore: roundRatio(diagnostic.bestPublicTradeCardScore),
+      bestPublicTradeCard: getBestPublicRefillCard(diagnostic),
+      shortfalls: buildFinalPublicRefillShortfalls(entry),
+      tradeChecks: getFinalPublicRefillTradeChecks(diagnostic),
+      cardsForPickCardPreview: diagnostic.cardsForPickCardPreview || null,
+      unavailableMain: Array.isArray(diagnostic.unavailableMain)
+        ? diagnostic.unavailableMain.slice(0, 6)
+        : [],
+    };
+  }
+
+  function isNegativeCardCornerGraphLift(entry) {
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "cardCorner") return false;
+    const rawScore = getFiniteScore(action?.score);
+    const graphNet = getFiniteScore(action?.actionGraph?.net ?? action?.net);
+    return rawScore != null && rawScore < 0 && graphNet != null && graphNet > rawScore;
+  }
+
+  function buildNegativeCardCornerGraphLiftSample(entry) {
+    const action = getSelectedAction(entry) || {};
+    const graph = action.actionGraph || {};
+    const breakdown = action.breakdown || action.valueBreakdown || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(action),
+      cardId: action.cardId || null,
+      cardInstanceId: action.cardInstanceId || null,
+      cardLabel: action.cardLabel || action.label || null,
+      actionKind: action.actionKind || null,
+      rawScore: roundRatio(action.score),
+      policyScore: roundRatio(getCandidatePolicyScore(action)),
+      graphNet: roundRatio(graph.net),
+      graphGain: roundRatio(graph.gain),
+      graphCost: roundRatio(graph.cost),
+      finalMarginal: roundRatio(graph.finalMarginal),
+      goalBonus: roundRatio(graph.goalBonus),
+      rewardValue: roundRatio(breakdown.rewardValue),
+      discardCost: roundRatio(breakdown.discardCost),
+      handPressure: roundRatio(breakdown.handPressure),
+      followupMainActionScore: roundRatio(breakdown.followupMainActionScore),
+      moveFollowupScore: roundRatio(breakdown.moveFollowupScore),
+      noCashoutMovePenalty: roundRatio(breakdown.noCashoutMovePenalty),
+    };
+  }
+
+  function getBestNonPlayMainCandidate(candidates = []) {
+    return (candidates || [])
+      .filter((candidate) => (
+        isCandidateAvailable(candidate)
+        && candidate.kind === "main"
+        && getCandidateId(candidate) !== "playCard"
+      ))
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || numeric(right.score) - numeric(left.score)
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ))[0] || null;
+  }
+
+  function getSelectedNestedPlayCard(action = {}) {
+    const cards = Array.isArray(action.playableCards) ? action.playableCards : [];
+    if (!cards.length) return null;
+    if (action.cardInstanceId) {
+      const matched = cards.find((card) => card?.cardInstanceId === action.cardInstanceId);
+      if (matched) return matched;
+    }
+    if (action.cardId) {
+      const matched = cards.find((card) => card?.cardId === action.cardId);
+      if (matched) return matched;
+    }
+    return cards[0] || null;
+  }
+
+  function isNegativePlayCardGraphLift(entry) {
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "playCard") return false;
+    const rawScore = getFiniteScore(action?.score);
+    const graphNet = getFiniteScore(action?.actionGraph?.net ?? action?.net);
+    const goalBonus = numeric(action?.actionGraph?.goalBonus ?? action?.breakdown?.goalBonus);
+    return rawScore != null
+      && rawScore < 0
+      && graphNet != null
+      && graphNet > Math.max(0, rawScore)
+      && goalBonus > 0;
+  }
+
+  function buildNegativePlayCardGraphLiftSample(entry, candidates = []) {
+    const action = getSelectedAction(entry) || {};
+    const graph = action.actionGraph || {};
+    const nested = getSelectedNestedPlayCard(action) || {};
+    const nestedBreakdown = nested.valueBreakdown || nested.breakdown || {};
+    const bestNonPlayMain = getBestNonPlayMainCandidate(candidates);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(action),
+      cardId: action.cardId || nested.cardId || null,
+      cardInstanceId: action.cardInstanceId || nested.cardInstanceId || null,
+      cardLabel: action.cardLabel || action.label || nested.cardLabel || null,
+      price: numeric(nested.price ?? action.price),
+      typeCode: numeric(nested.typeCode ?? action.typeCode),
+      effectTypes: action.effectTypes || nested.effectTypes || [],
+      rawScore: roundRatio(action.score),
+      policyScore: roundRatio(getCandidatePolicyScore(action)),
+      graphNet: roundRatio(graph.net),
+      graphGain: roundRatio(graph.gain),
+      graphCost: roundRatio(graph.cost),
+      finalMarginal: roundRatio(graph.finalMarginal),
+      goalBonus: roundRatio(graph.goalBonus),
+      bestNonPlayMain: bestNonPlayMain ? summarizeOpportunityCandidate(bestNonPlayMain) : null,
+      nestedScore: roundRatio(nested.score),
+      nestedPolicyScore: nested ? roundRatio(getNestedPlayCardPolicyScore(nested)) : null,
+      costValue: roundRatio(nestedBreakdown.costValue),
+      effectValue: roundRatio(nestedBreakdown.effectValue),
+      cornerOpportunity: roundRatio(nestedBreakdown.cornerOpportunity),
+      directScoreGain: roundRatio(nested.directScoreGain ?? action.directScoreGain),
+      c2Type3ProgressValue: roundRatio(nestedBreakdown.c2Type3ProgressValue),
+      cFinalTaskProgressValue: roundRatio(nestedBreakdown.cFinalTaskProgressValue),
+      readyTaskCashoutValue: roundRatio(nestedBreakdown.readyTaskCashoutValue),
+      endGameExpectedScore: roundRatio(nestedBreakdown.endGameExpectedScore),
+      lateCardEnginePressure: roundRatio(nestedBreakdown.lateCardEnginePressure),
+      playCardConversionPressure: roundRatio(nestedBreakdown.playCardConversionPressure),
+    };
+  }
+
+  function isResearchTechEffectType(type) {
+    return type === "card_research_tech" || type === "research_tech_select" || type === "research_tech";
+  }
+
+  function getNestedPlayCardPolicyScore(card) {
+    return POLICY_ACTION_BIAS.playCard + scoreNestedPlayCardCandidate(card);
+  }
+
+  function getBestPlayableCard(playCardCandidate = {}) {
+    const playableCards = Array.isArray(playCardCandidate?.playableCards)
+      ? playCardCandidate.playableCards
+      : [];
+    return playableCards
+      .filter(isCandidateAvailable)
+      .sort((left, right) => (
+        numeric(getNestedPlayCardPolicyScore(right)) - numeric(getNestedPlayCardPolicyScore(left))
+        || String(left.cardId || left.cardInstanceId || "").localeCompare(String(right.cardId || right.cardInstanceId || ""))
+      ))[0] || null;
+  }
+
+  function isPlayCardNearMiss(entry, candidates = []) {
+    if (getSelectedActionId(entry) === "playCard") return false;
+    const playCardCandidate = getPlayCardCandidate(candidates);
+    if (!isCandidateAvailable(playCardCandidate)) return false;
+    if (!getBestPlayableCard(playCardCandidate)) return false;
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const playPolicyScore = getFiniteScore(getCandidatePolicyScore(playCardCandidate));
+    const selectedPolicyScore = getFiniteScore(getCandidatePolicyScore(selectedCandidate));
+    if (playPolicyScore == null || selectedPolicyScore == null) return false;
+    const policyScoreGap = selectedPolicyScore - playPolicyScore;
+    if (playPolicyScore >= 20 && policyScoreGap <= 18) return true;
+    if (playPolicyScore >= 45) return true;
+    const playGraphNet = getCandidateActionGraphNet(playCardCandidate);
+    const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
+    return playGraphNet != null && selectedGraphNet != null && playGraphNet >= selectedGraphNet - 12;
+  }
+
+  function summarizePlayCardPlan(plan = null) {
+    if (!plan) return null;
+    return {
+      type: plan.type || null,
+      actionId: plan.actionId || null,
+      score: roundRatio(plan.score),
+      label: plan.label || plan.targetLabel || plan.planetName || null,
+    };
+  }
+
+  function summarizePlayCardValueBreakdown(card = {}) {
+    const breakdown = card.valueBreakdown || card.breakdown || {};
+    return {
+      planScore: roundRatio(breakdown.planScore ?? card.plan?.score),
+      lateCardEnginePressure: roundRatio(breakdown.lateCardEnginePressure),
+      playCardConversionPressure: roundRatio(breakdown.playCardConversionPressure),
+      cFinalTaskProgressValue: roundRatio(breakdown.cFinalTaskProgressValue),
+      c2Type3ProgressValue: roundRatio(breakdown.c2Type3ProgressValue),
+      endGameExpectedScore: roundRatio(breakdown.endGameExpectedScore),
+      standardActionPremium: roundRatio(breakdown.standardActionPremium),
+      finalSecondMarkNoDirectSetupPenalty: roundRatio(breakdown.finalSecondMarkNoDirectSetupPenalty),
+    };
+  }
+
+  function getPlayCardNearMissConcreteValue(sample = {}) {
+    const breakdown = sample.bestCard?.valueBreakdown || {};
+    return [
+      sample.bestCard?.directScoreGain,
+      breakdown.planScore,
+      breakdown.lateCardEnginePressure,
+      breakdown.playCardConversionPressure,
+      breakdown.cFinalTaskProgressValue,
+      breakdown.c2Type3ProgressValue,
+      breakdown.endGameExpectedScore,
+      breakdown.standardActionPremium,
+    ].reduce((total, value) => total + Math.max(0, numeric(value)), 0);
+  }
+
+  function classifyPlayCardNearMissSample(sample = {}) {
+    const tags = [];
+    const gap = numeric(sample.policyScoreGap);
+    const selectedId = getCandidateId(sample.selected || {});
+    const bestCard = sample.bestCard || {};
+    const breakdown = bestCard.valueBreakdown || {};
+    const routeActionId = bestCard.plan?.actionId || null;
+    const concreteValue = getPlayCardNearMissConcreteValue(sample);
+    if (gap <= 2) tags.push("tiny-gap");
+    else if (gap <= 6) tags.push("small-gap");
+    if (routeActionId) tags.push(`route-${routeActionId}`);
+    if ((bestCard.effectTypes || []).length) tags.push("modeled-effect-card");
+    if (numeric(breakdown.playCardConversionPressure) >= 12) tags.push("high-conversion-pressure");
+    if (numeric(breakdown.standardActionPremium) >= 12) tags.push("high-standard-action-premium");
+    if (numeric(breakdown.lateCardEnginePressure) >= 8) tags.push("late-engine-pressure");
+    if (["land", "orbit", "scan", "analyze", "researchTech"].includes(selectedId)) {
+      tags.push(`selected-${selectedId}`);
+      if (["land", "orbit", "scan"].includes(selectedId)) tags.push("selected-cashout-action");
+    }
+    if (
+      gap <= 6
+      && routeActionId
+      && concreteValue >= 18
+      && ["land", "orbit", "scan", "researchTech"].includes(selectedId)
+    ) {
+      tags.push("counterfactual-required");
+      tags.push("shared-flow-risk");
+    }
+    return {
+      tags,
+      routeActionId,
+      concreteValue: roundRatio(concreteValue),
+    };
+  }
+
+  function sortPlayCardNearMissSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        (getFiniteScore(left.finalScore) ?? Infinity) - (getFiniteScore(right.finalScore) ?? Infinity)
+        || numeric(left.policyScoreGap) - numeric(right.policyScoreGap)
+        || getPlayCardNearMissConcreteValue(right) - getPlayCardNearMissConcreteValue(left)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.turnNumber) - numeric(right.turnNumber)
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function buildPlayCardNearMissTagCounts(samples = [], limit = 16) {
+    const counts = {};
+    for (const sample of samples || []) {
+      for (const tag of sample?.nearMissTags || []) {
+        increment(counts, tag);
+      }
+    }
+    return rankCounts(counts, limit);
+  }
+
+  function sortCounterfactualPlayCardNearMissSamples(samples = [], limit = 12) {
+    return sortPlayCardNearMissSamples(
+      (samples || []).filter((sample) => {
+        const tags = new Set(sample?.nearMissTags || []);
+        return tags.has("counterfactual-required") || tags.has("shared-flow-risk");
+      }),
+      limit,
+    );
+  }
+
+  function buildPlayCardNearMissSample(entry, candidates = [], playerResultById = new Map()) {
+    const playCardCandidate = getPlayCardCandidate(candidates);
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const bestCard = getBestPlayableCard(playCardCandidate);
+    const playGraphNet = getCandidateActionGraphNet(playCardCandidate);
+    const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    const sample = {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      finalScore: roundRatio(result.finalScore),
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(selectedCandidate || {}),
+      playCard: playCardCandidate ? summarizeOpportunityCandidate(playCardCandidate) : null,
+      policyScoreGap: roundRatio(numeric(getCandidatePolicyScore(selectedCandidate)) - numeric(getCandidatePolicyScore(playCardCandidate))),
+      actionGraphNetGap: selectedGraphNet == null || playGraphNet == null
+        ? null
+        : roundRatio(selectedGraphNet - playGraphNet),
+      bestCard: bestCard
+        ? {
+          cardId: bestCard.cardId || null,
+          cardInstanceId: bestCard.cardInstanceId || null,
+          label: bestCard.cardLabel || bestCard.label || null,
+          price: numeric(bestCard.price),
+          typeCode: numeric(bestCard.typeCode),
+          score: roundRatio(bestCard.score),
+          policyScore: roundRatio(getNestedPlayCardPolicyScore(bestCard)),
+          directScoreGain: roundRatio(bestCard.directScoreGain),
+          effectTypes: bestCard.effectTypes || [],
+          plan: summarizePlayCardPlan(bestCard.plan),
+          valueBreakdown: summarizePlayCardValueBreakdown(bestCard),
+        }
+        : null,
+    };
+    const classification = classifyPlayCardNearMissSample(sample);
+    return {
+      ...sample,
+      nearMissTags: classification.tags,
+      routeActionId: classification.routeActionId,
+      concreteValue: classification.concreteValue,
+    };
+  }
+
+  function getScanCandidate(candidates = []) {
+    return (candidates || []).find((candidate) => getCandidateId(candidate) === "scan") || null;
+  }
+
+  function resultHasB2SectorBottleneck(result = {}) {
+    const progress = result?.b2Progress || null;
+    if (!progress) return false;
+    if (String(progress.bottleneck || "") === "sectorWins") return true;
+    const sectorWins = numeric(progress.sectorWins);
+    const orbitLandCount = numeric(progress.orbitLandCount);
+    return numeric(progress.deficit) > 0 && sectorWins < orbitLandCount;
+  }
+
+  function scanPreviewChoiceHasB2Value(choice = {}, options = {}) {
+    const b2 = choice?.b2 || null;
+    if (!b2) return false;
+    if (options.requireCommittedB2 && !b2.marked && !options.finalB2SectorBottleneck) return false;
+    return Boolean(
+      b2.marked
+      || b2.winsAfterScan
+      || numeric(b2.focus) > 0
+      || numeric(b2.deficit) > 0
+    );
+  }
+
+  function summarizeB2ScanPreviewChoice(choice = {}) {
+    const b2 = choice.b2 || {};
+    return {
+      targetRank: choice.targetRank == null ? null : numeric(choice.targetRank),
+      effectType: choice.effectType || null,
+      pendingType: choice.pendingType || null,
+      nebulaId: choice.nebulaId || null,
+      sectorX: choice.sectorX ?? null,
+      label: choice.label || null,
+      score: roundRatio(choice.score),
+      directScoreGain: roundRatio(choice.directScoreGain),
+      b2: {
+        focus: roundRatio(b2.focus),
+        active: Boolean(b2.active),
+        marked: Boolean(b2.marked),
+        sectorWins: numeric(b2.sectorWins),
+        orbitLandCount: numeric(b2.orbitLandCount),
+        deficit: numeric(b2.deficit),
+        multiplier: numeric(b2.multiplier),
+        ownCount: numeric(b2.ownCount),
+        openCount: numeric(b2.openCount),
+        markedCount: numeric(b2.markedCount),
+        maxOtherCount: numeric(b2.maxOtherCount),
+        winsAfterScan: Boolean(b2.winsAfterScan),
+      },
+    };
+  }
+
+  function compareB2ScanPreviewUrgency(left = {}, right = {}) {
+    return (
+      numeric(right.b2?.winsAfterScan) - numeric(left.b2?.winsAfterScan)
+      || numeric(right.b2?.deficit) - numeric(left.b2?.deficit)
+      || numeric(right.b2?.focus) - numeric(left.b2?.focus)
+      || numeric(right.score) - numeric(left.score)
+      || numeric(left.targetRank) - numeric(right.targetRank)
+    );
+  }
+
+  function getBestB2ScanPreviewChoice(choices = []) {
+    return [...(choices || [])].sort(compareB2ScanPreviewUrgency)[0] || null;
+  }
+
+  function getB2ScanPreviewChoices(scanCandidate = {}, limit = 6, options = {}) {
+    const preview = scanCandidate?.targetPreview || {};
+    const effectChoices = (preview.effects || []).flatMap((effect) => (
+      (effect.topChoices || []).map((choice) => ({
+        ...choice,
+        effectType: choice.effectType || effect.effectType || null,
+        pendingType: choice.pendingType || effect.pendingType || null,
+      }))
+    ));
+    const sourceChoices = Array.isArray(preview.topChoices) && preview.topChoices.length
+      ? preview.topChoices
+      : effectChoices;
+    const seen = new Set();
+    return (sourceChoices || [])
+      .map((choice, index) => ({ ...choice, targetRank: index + 1 }))
+      .filter((choice) => scanPreviewChoiceHasB2Value(choice, options))
+      .map(summarizeB2ScanPreviewChoice)
+      .filter((choice) => {
+        const key = [
+          choice.effectType || "effect",
+          choice.pendingType || "scan",
+          choice.nebulaId || "nebula",
+          choice.sectorX ?? "x",
+        ].join(":");
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function isB2ScanNearMiss(entry, candidates = [], playerResultById = new Map()) {
+    if (getSelectedActionId(entry) === "scan") return false;
+    const scanCandidate = getScanCandidate(candidates);
+    if (!isCandidateAvailable(scanCandidate)) return false;
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    return getB2ScanPreviewChoices(scanCandidate, 1, {
+      requireCommittedB2: true,
+      finalB2SectorBottleneck: numeric(entry.roundNumber) >= 3 && resultHasB2SectorBottleneck(result),
+    }).length > 0;
+  }
+
+  function getB2ScanNearMissUrgency(sample = {}) {
+    const bestChoice = sample.bestB2Choice || getBestB2ScanPreviewChoice(sample.topChoices || []) || {};
+    const b2 = bestChoice.b2 || {};
+    return numeric(b2.deficit) + (b2.winsAfterScan ? 3 : 0) + Math.max(0, numeric(b2.focus)) * 0.1;
+  }
+
+  function sortB2ScanNearMissSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        (getFiniteScore(left.finalScore) ?? Infinity) - (getFiniteScore(right.finalScore) ?? Infinity)
+        || getB2ScanNearMissUrgency(right) - getB2ScanNearMissUrgency(left)
+        || numeric(left.policyScoreGap) - numeric(right.policyScoreGap)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.turnNumber) - numeric(right.turnNumber)
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function buildB2ScanNearMissSample(entry, candidates = [], playerResultById = new Map()) {
+    const scanCandidate = getScanCandidate(candidates);
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const selectedPolicyScore = getFiniteScore(getCandidatePolicyScore(selectedCandidate));
+    const scanPolicyScore = getFiniteScore(getCandidatePolicyScore(scanCandidate));
+    const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
+    const scanGraphNet = getCandidateActionGraphNet(scanCandidate);
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    const finalB2SectorBottleneck = numeric(entry.roundNumber) >= 3 && resultHasB2SectorBottleneck(result);
+    const topChoices = getB2ScanPreviewChoices(scanCandidate, 6, {
+      requireCommittedB2: true,
+      finalB2SectorBottleneck,
+    });
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      finalScore: roundRatio(result.finalScore),
+      resources: entry.playerResources || null,
+      b2Progress: result.b2Progress || null,
+      selected: summarizeOpportunityCandidate(selectedCandidate || {}),
+      scan: scanCandidate
+        ? {
+          ...summarizeOpportunityCandidate(scanCandidate),
+          scoreCapReason: scanCandidate.scoreCapReason || null,
+          valueBreakdown: scanCandidate.valueBreakdown || null,
+        }
+        : null,
+      policyScoreGap: selectedPolicyScore == null || scanPolicyScore == null
+        ? null
+        : roundRatio(selectedPolicyScore - scanPolicyScore),
+      actionGraphNetGap: selectedGraphNet == null || scanGraphNet == null
+        ? null
+        : roundRatio(selectedGraphNet - scanGraphNet),
+      topChoices,
+      bestB2Choice: getBestB2ScanPreviewChoice(topChoices),
+    };
+  }
+
+  function getB2TradeCandidates(candidates = []) {
+    return (candidates || [])
+      .filter((candidate) => (
+        isCandidateAvailable(candidate)
+        && getCandidateId(candidate) === "quickTrade"
+        && (
+          String(candidate.reason || "").includes("B2")
+          || String(candidate.label || "").includes("B2")
+          || numeric(candidate.valueBreakdown?.b2SectorScanUnlockByTrade?.[candidate.tradeId]) > 0
+        )
+      ))
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || numeric(right.score) - numeric(left.score)
+        || String(left.tradeId || "").localeCompare(String(right.tradeId || ""))
+      ));
+  }
+
+  function isB2TradeNearMiss(entry, candidates = [], playerResultById = new Map()) {
+    const selected = getSelectedCandidate(entry, candidates);
+    if (getCandidateId(selected) === "quickTrade" && String(selected?.reason || "").includes("B2")) return false;
+    const b2Trades = getB2TradeCandidates(candidates);
+    if (!b2Trades.length) return false;
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    const finalScore = numeric(result.finalScore);
+    return finalScore >= 260
+      || resultHasB2SectorBottleneck(result)
+      || numeric(b2Trades[0].score) >= 35;
+  }
+
+  function sortB2TradeNearMissSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        Math.abs(numeric(left.scoreTo300)) - Math.abs(numeric(right.scoreTo300))
+        || numeric(left.policyScoreGap) - numeric(right.policyScoreGap)
+        || numeric(right.bestTrade?.score) - numeric(left.bestTrade?.score)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.turnNumber) - numeric(right.turnNumber)
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function buildB2TradeNearMissSample(entry, candidates = [], playerResultById = new Map()) {
+    const b2Trades = getB2TradeCandidates(candidates);
+    const bestTrade = b2Trades[0] || null;
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const selectedPolicyScore = getFiniteScore(getCandidatePolicyScore(selectedCandidate));
+    const tradePolicyScore = getFiniteScore(getCandidatePolicyScore(bestTrade));
+    const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
+    const tradeGraphNet = getCandidateActionGraphNet(bestTrade);
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      finalScore: roundRatio(result.finalScore),
+      scoreTo300: roundRatio(300 - numeric(result.finalScore)),
+      resources: entry.playerResources || null,
+      b2Progress: result.b2Progress || null,
+      selected: summarizeOpportunityCandidate(selectedCandidate || {}),
+      bestTrade: bestTrade
+        ? {
+          ...summarizeOpportunityCandidate(bestTrade),
+          valueBreakdown: bestTrade.valueBreakdown || bestTrade.breakdown || null,
+        }
+        : null,
+      policyScoreGap: selectedPolicyScore == null || tradePolicyScore == null
+        ? null
+        : roundRatio(selectedPolicyScore - tradePolicyScore),
+      actionGraphNetGap: selectedGraphNet == null || tradeGraphNet == null
+        ? null
+        : roundRatio(selectedGraphNet - tradeGraphNet),
+      tradeCandidates: b2Trades.slice(0, 4).map((candidate) => ({
+        ...summarizeOpportunityCandidate(candidate),
+        valueBreakdown: candidate.valueBreakdown || candidate.breakdown || null,
+      })),
+    };
+  }
+
+  function getEntryScoreboardPlayer(entry = {}) {
+    const scoreboard = Array.isArray(entry.scoreboard) ? entry.scoreboard : [];
+    return scoreboard.find((player) => player?.playerId === entry.playerId) || null;
+  }
+
+  function summarizeCandidateWithGraph(candidate = {}) {
+    return {
+      ...summarizeOpportunityCandidate(candidate),
+      actionGraphNet: roundRatio(getCandidateActionGraphNet(candidate)),
+    };
+  }
+
+  function summarizePlanetCashoutRecoveryPlan(plan = {}) {
+    if (!plan) return null;
+    return {
+      kind: plan.kind || null,
+      planetId: plan.planetId || null,
+      planetName: plan.planetName || null,
+      targetEnergy: roundRatio(plan.targetEnergy),
+      directScore: roundRatio(plan.directScore),
+      rewardValue: roundRatio(plan.rewardValue),
+      energyAfterTrade: roundRatio(plan.energyAfterTrade),
+      afterTradeGap: roundRatio(plan.afterTradeGap),
+      reachesNextThreshold: Boolean(plan.reachesNextThreshold),
+      score: roundRatio(plan.score),
+    };
+  }
+
+  function summarizeMidgameLowTechRouteEnergyTradeBreakdown(breakdown = {}) {
+    return {
+      lateResourceRecoveryTrade: Boolean(breakdown.lateResourceRecoveryTrade),
+      currentScore: roundRatio(breakdown.currentScore),
+      finalMarkCount: roundRatio(breakdown.finalMarkCount),
+      nextFinalMarkThreshold: breakdown.nextFinalMarkThreshold ?? null,
+      canReachAnalyze: Boolean(breakdown.canReachAnalyze),
+      paceDeficit: roundRatio(breakdown.paceDeficit),
+      scoreToNextThreshold: roundRatio(breakdown.scoreToNextThreshold),
+      scanCashoutTrade: Boolean(breakdown.scanCashoutTrade),
+      scanCost: breakdown.scanCost || null,
+      closeScanDirectScoreGain: roundRatio(breakdown.closeScanDirectScoreGain),
+      midgameAnalyzeUnlockByTrade: breakdown.midgameAnalyzeUnlockByTrade || null,
+      finalLowScoreScanUnlockByTrade: breakdown.finalLowScoreScanUnlockByTrade || null,
+      scanProgressTradeValue: roundRatio(breakdown.scanProgressTradeValue),
+      launchMoveRecoveryScore: roundRatio(breakdown.launchMoveRecoveryScore),
+      planetCashoutRecoveryScore: roundRatio(breakdown.planetCashoutRecoveryScore),
+      planetCashoutRecoveryPlan: summarizePlanetCashoutRecoveryPlan(breakdown.planetCashoutRecoveryPlan),
+      reservedPlanetCashoutEnergy: breakdown.reservedPlanetCashoutEnergy ?? null,
+      cardsForEnergyHandDrainPenalty: roundRatio(breakdown.cardsForEnergyHandDrainPenalty),
+    };
+  }
+
+  function isMidgameLowTechRouteEnergyTrade(entry) {
+    if (entry?.type !== "turn-action") return false;
+    if (numeric(entry.roundNumber) !== 3) return false;
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "quickTrade") return false;
+    if (!["credits-for-energy", "cards-for-energy"].includes(action?.tradeId)) return false;
+    if (!String(action.reason || "").includes("路线兑现")) return false;
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    if (!breakdown.lateResourceRecoveryTrade) return false;
+    if (numeric(breakdown.finalMarkCount) < 3) return false;
+    if (breakdown.nextFinalMarkThreshold != null) return false;
+    if (breakdown.canReachAnalyze) return false;
+    const scoreboardPlayer = getEntryScoreboardPlayer(entry);
+    if (!scoreboardPlayer) return false;
+    const techCount = numeric(scoreboardPlayer.techCount);
+    if (techCount > 4) return false;
+    const currentScore = getFiniteScore(breakdown.currentScore ?? scoreboardPlayer.score ?? entry.playerResources?.score);
+    if (currentScore == null || currentScore < 70 || currentScore > 115) return false;
+    return numeric(breakdown.planetCashoutRecoveryScore) > 0 || Boolean(breakdown.planetCashoutRecoveryPlan);
+  }
+
+  function buildMidgameRouteEnergyTradeFollowupTags(followup = {}) {
+    const tags = [];
+    if (followup.noSamePlayerFollowup) {
+      tags.push("no-followup-after-trade");
+    } else if (followup.firstEngineActionId) {
+      tags.push("engine-followup");
+      tags.push(`first-engine-${followup.firstEngineActionId}`);
+    } else {
+      tags.push("no-engine-followup");
+      if (followup.windowExhaustedWithoutEngine) tags.push("window-exhausted-without-engine");
+    }
+    if (followup.firstPlanetCashoutActionId) {
+      tags.push(`first-planet-${followup.firstPlanetCashoutActionId}`);
+      if (
+        !followup.firstEngineActionId
+        || numeric(followup.firstPlanetCashoutOffset) < numeric(followup.firstEngineActionOffset)
+      ) {
+        tags.push("planet-cashout-before-engine");
+      }
+    }
+    if (followup.passOrEndTurnBeforeEngine) tags.push("idle-before-engine");
+    if (followup.lastPassReasonTag) tags.push(`tail-pass-${followup.lastPassReasonTag}`);
+    if (followup.lastResources) {
+      if (numeric(followup.lastResources.credits) <= 0) tags.push("tail-zero-credit");
+      if (numeric(followup.lastResources.energy) <= 0) tags.push("tail-zero-energy");
+      if (numeric(followup.lastResources.handSize) <= 0) tags.push("tail-zero-hand");
+    }
+    if (
+      followup.firstPlanetCashoutActionId
+      && !followup.firstEngineActionId
+      && followup.lastPassReasonTag
+    ) {
+      tags.push("single-cashout-then-lock");
+    }
+    return tags;
+  }
+
+  function buildMidgameRouteEnergyTradeFollowup(logs = [], startIndex = -1, playerId = null, limit = ROUTE_ENERGY_TRADE_FOLLOWUP_LIMIT) {
+    const actions = [];
+    let lastPassProfile = null;
+    for (let index = startIndex + 1; index >= 0 && index < logs.length && actions.length < limit; index += 1) {
+      const entry = logs[index];
+      if (entry?.type !== "turn-action" || entry.playerId !== playerId) continue;
+      const action = getSelectedAction(entry) || {};
+      const actionId = getSelectedActionId(entry);
+      const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+      if (actionId === "pass") {
+        lastPassProfile = buildEarlyPassCandidateProfile(entry, candidates, 5);
+      }
+      actions.push({
+        roundNumber: entry.roundNumber ?? null,
+        turnNumber: entry.turnNumber ?? null,
+        rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+        id: actionId,
+        kind: action.kind || null,
+        tradeId: action.tradeId || null,
+        reason: action.reason || null,
+        score: roundRatio(action.score),
+        policyScore: roundRatio(getCandidatePolicyScore(action)),
+        actionGraphNet: roundRatio(getCandidateActionGraphNet(action)),
+        resources: entry.playerResources || null,
+      });
+    }
+    const engineActionIds = new Set(["playCard", "researchTech", "scan", "analyze", "placeData"]);
+    const planetCashoutIds = new Set(["land", "orbit"]);
+    const firstEngineIndex = actions.findIndex((action) => engineActionIds.has(action.id));
+    const firstMainIndex = actions.findIndex((action) => action.kind === "main");
+    const firstPlanetCashoutIndex = actions.findIndex((action) => planetCashoutIds.has(action.id));
+    const beforeEngine = firstEngineIndex >= 0 ? actions.slice(0, firstEngineIndex) : actions;
+    const followup = {
+      limit,
+      actionIds: actions.map((action) => action.id),
+      actions,
+      noSamePlayerFollowup: actions.length === 0,
+      firstEngineActionId: firstEngineIndex >= 0 ? actions[firstEngineIndex].id : null,
+      firstEngineActionOffset: firstEngineIndex >= 0 ? firstEngineIndex + 1 : null,
+      firstMainActionId: firstMainIndex >= 0 ? actions[firstMainIndex].id : null,
+      firstMainActionOffset: firstMainIndex >= 0 ? firstMainIndex + 1 : null,
+      firstPlanetCashoutActionId: firstPlanetCashoutIndex >= 0 ? actions[firstPlanetCashoutIndex].id : null,
+      firstPlanetCashoutOffset: firstPlanetCashoutIndex >= 0 ? firstPlanetCashoutIndex + 1 : null,
+      engineNotSeen: firstEngineIndex < 0,
+      windowExhaustedWithoutEngine: firstEngineIndex < 0 && actions.length >= limit,
+      passOrEndTurnBeforeEngine: beforeEngine.some((action) => PASS_ACTIONS.includes(action.id)),
+      lastResources: actions.length ? actions[actions.length - 1].resources || null : null,
+      lastPassReasonTag: lastPassProfile?.reasonTag || null,
+      lastPassResources: lastPassProfile?.resources || null,
+      lastPassBestResourceLockTrade: summarizeLowRoundResourceLockTrade(
+        lastPassProfile?.bestResourceLockTrade || null,
+      ),
+    };
+    return {
+      ...followup,
+      tags: buildMidgameRouteEnergyTradeFollowupTags(followup),
+    };
+  }
+
+  function buildMidgameLowTechRouteEnergyTradeSample(
+    entry,
+    candidates = [],
+    playerResultById = new Map(),
+    logs = [],
+    logIndex = -1,
+  ) {
+    const action = getSelectedAction(entry) || {};
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    const scoreboardPlayer = getEntryScoreboardPlayer(entry) || {};
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const availableCandidates = (candidates || [])
+      .filter(isCandidateAvailable)
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || numeric(right.score) - numeric(left.score)
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ));
+    const engineActionIds = new Set(["playCard", "researchTech", "scan", "analyze", "placeData"]);
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      finalScore: roundRatio(result.finalScore),
+      tradeId: action.tradeId || null,
+      reason: action.reason || null,
+      resources: entry.playerResources || null,
+      scoreboard: {
+        score: roundRatio(scoreboardPlayer.score),
+        credits: roundRatio(scoreboardPlayer.credits),
+        energy: roundRatio(scoreboardPlayer.energy),
+        publicity: roundRatio(scoreboardPlayer.publicity),
+        availableData: roundRatio(scoreboardPlayer.availableData),
+        handSize: roundRatio(scoreboardPlayer.handSize),
+        techCount: roundRatio(scoreboardPlayer.techCount),
+        reservedCount: roundRatio(scoreboardPlayer.reservedCount),
+      },
+      selected: summarizeCandidateWithGraph(selectedCandidate || action),
+      valueBreakdown: summarizeMidgameLowTechRouteEnergyTradeBreakdown(breakdown),
+      topCandidates: availableCandidates.slice(0, 6).map(summarizeCandidateWithGraph),
+      topMainCandidates: availableCandidates
+        .filter((candidate) => candidate.kind === "main")
+        .slice(0, 4)
+        .map(summarizeCandidateWithGraph),
+      topQuickCandidates: availableCandidates
+        .filter((candidate) => candidate.kind === "quick")
+        .slice(0, 4)
+        .map(summarizeCandidateWithGraph),
+      engineCandidates: availableCandidates
+        .filter((candidate) => engineActionIds.has(getCandidateId(candidate)))
+        .slice(0, 5)
+        .map(summarizeCandidateWithGraph),
+      followup: buildMidgameRouteEnergyTradeFollowup(
+        logs,
+        logIndex,
+        entry.playerId || null,
+      ),
+    };
+  }
+
+  function sortMidgameLowTechRouteEnergyTradeSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.scoreboard?.techCount) - numeric(right.scoreboard?.techCount)
+        || numeric(left.valueBreakdown?.currentScore) - numeric(right.valueBreakdown?.currentScore)
+        || numeric(right.valueBreakdown?.planetCashoutRecoveryScore) - numeric(left.valueBreakdown?.planetCashoutRecoveryScore)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function getBestTakeableTechTile(candidate = {}) {
+    return (candidate.takeable || [])
+      .filter(isCandidateAvailable)
+      .sort((left, right) => (
+        numeric(right.score) - numeric(left.score)
+        || String(left.tileId || "").localeCompare(String(right.tileId || ""))
+      ))[0] || null;
+  }
+
+  function summarizeEngineNearMissBestTech(tile = null) {
+    if (!tile) return null;
+    return {
+      tileId: tile.tileId || null,
+      techType: tile.techType || null,
+      bonusId: tile.bonusId || null,
+      score: roundRatio(tile.score),
+      directScoreGain: roundRatio(tile.directScoreGain),
+    };
+  }
+
+  function summarizeEngineNearMissBestCard(card = null) {
+    if (!card) return null;
+    return {
+      cardId: card.cardId || null,
+      cardInstanceId: card.cardInstanceId || null,
+      label: card.cardLabel || card.label || null,
+      price: numeric(card.price),
+      typeCode: numeric(card.typeCode),
+      score: roundRatio(card.score),
+      policyScore: roundRatio(getNestedPlayCardPolicyScore(card)),
+      directScoreGain: roundRatio(card.directScoreGain),
+      effectTypes: card.effectTypes || [],
+      plan: summarizePlayCardPlan(card.plan),
+      valueBreakdown: summarizePlayCardValueBreakdown(card),
+    };
+  }
+
+  function getEngineNearMissScanTopChoice(candidate = {}) {
+    const preview = candidate.targetPreview || {};
+    const choices = [];
+    if (Array.isArray(preview.topChoices)) choices.push(...preview.topChoices);
+    for (const effect of preview.effects || []) {
+      if (Array.isArray(effect?.topChoices)) choices.push(...effect.topChoices);
+    }
+    return choices
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(right.score) - numeric(left.score)
+        || numeric(right.directScoreGain) - numeric(left.directScoreGain)
+        || String(left.nebulaId || left.sectorX || "").localeCompare(String(right.nebulaId || right.sectorX || ""))
+      ))[0] || null;
+  }
+
+  function summarizeEngineNearMissScanChoice(choice = null) {
+    if (!choice) return null;
+    const b2 = choice.b2 || null;
+    return {
+      effectType: choice.effectType || null,
+      pendingType: choice.pendingType || null,
+      nebulaId: choice.nebulaId || null,
+      sectorX: choice.sectorX ?? null,
+      score: roundRatio(choice.score),
+      directScoreGain: roundRatio(choice.directScoreGain),
+      b2: b2
+        ? {
+          marked: Boolean(b2.marked),
+          sectorWins: roundRatio(b2.sectorWins),
+          orbitLandCount: roundRatio(b2.orbitLandCount),
+          deficit: roundRatio(b2.deficit),
+          focus: roundRatio(b2.focus),
+          winsAfterScan: Boolean(b2.winsAfterScan),
+        }
+        : null,
+    };
+  }
+
+  function summarizeEngineNearMissBreakdown(candidate = {}) {
+    const breakdown = candidate.valueBreakdown || candidate.breakdown || {};
+    return {
+      currentScore: roundRatio(breakdown.currentScore),
+      finalMarkCount: roundRatio(breakdown.finalMarkCount),
+      directScoreGain: roundRatio(candidate.directScoreGain ?? breakdown.directScoreGain),
+      scoreCapReason: candidate.scoreCapReason || breakdown.scoreCapReason || null,
+      cFinalTaskProgressValue: roundRatio(breakdown.cFinalTaskProgressValue),
+      c2Type3ProgressValue: roundRatio(breakdown.c2Type3ProgressValue),
+      endGameExpectedScore: roundRatio(breakdown.endGameExpectedScore),
+      standardActionPremium: roundRatio(breakdown.standardActionPremium),
+      lateCardEnginePressure: roundRatio(breakdown.lateCardEnginePressure),
+      playCardConversionPressure: roundRatio(breakdown.playCardConversionPressure),
+      scanEnergyReservationPenalty: roundRatio(breakdown.scanEnergyReservationPenalty),
+      lateResourceRecoveryTrade: Boolean(breakdown.lateResourceRecoveryTrade),
+      canReachAnalyze: Boolean(breakdown.canReachAnalyze),
+      analyzePlacedCount: roundRatio(breakdown.placedCount),
+      analyzeRequiredSlot: roundRatio(breakdown.requiredSlot),
+      analyzeDataRoom: roundRatio(breakdown.dataRoom),
+      analyzeAvailableData: roundRatio(breakdown.availableData),
+      analyzeEnergyCost: roundRatio(breakdown.energyCost),
+      analyzeRawScore: roundRatio(breakdown.rawScore),
+      analyzeWeightedScore: roundRatio(breakdown.weightedScore),
+      analyzeNextFinalScoreThreshold: breakdown.nextFinalScoreThreshold ?? null,
+      analyzeScoreToNextThreshold: roundRatio(breakdown.scoreToNextThreshold),
+      analyzeBlueTraceDemand: roundRatio(breakdown.blueTraceDemand),
+      analyzeBestBlueTraceScore: roundRatio(breakdown.analyzeBestBlueTraceScore),
+      analyzeThresholdCashoutPressure: roundRatio(breakdown.thresholdCashoutPressure),
+      readyAnalyzeWindowValue: roundRatio(breakdown.readyAnalyzeWindowValue),
+      lateFullDataAnalyzeRecovery: roundRatio(breakdown.lateFullDataAnalyzeRecovery),
+      firstThresholdCatchupBonus: roundRatio(breakdown.firstThresholdCatchupBonus),
+      fullComputerAnalyzeBonus: roundRatio(breakdown.fullComputerBonus),
+      analyzeLateRoundPressure: roundRatio(breakdown.lateRoundPressure),
+      analyzeHighScorePushValue: roundRatio(breakdown.highScorePushValue),
+      analyzeLowEngineCatchupValue: roundRatio(breakdown.lowEngineCatchupValue),
+      analyzePostSecondFinalMarkPenalty: roundRatio(breakdown.postSecondFinalMarkPenalty),
+      analyzeHasBlueTraceFinalFormula: Boolean(breakdown.hasBlueTraceFinalFormula),
+      midgameAnalyzeUnlockByTrade: breakdown.midgameAnalyzeUnlockByTrade || null,
+      finalLowScoreScanUnlockByTrade: breakdown.finalLowScoreScanUnlockByTrade || null,
+      b2SectorScanUnlockByTrade: breakdown.b2SectorScanUnlockByTrade || null,
+    };
+  }
+
+  function summarizeEngineNearMissCandidate(candidate = {}) {
+    const actionId = getCandidateId(candidate);
+    const summary = {
+      ...summarizeCandidateWithGraph(candidate),
+      valueBreakdown: summarizeEngineNearMissBreakdown(candidate),
+    };
+    if (actionId === "playCard") {
+      summary.bestCard = summarizeEngineNearMissBestCard(getBestPlayableCard(candidate));
+    } else if (actionId === "researchTech") {
+      summary.bestTechTile = summarizeEngineNearMissBestTech(getBestTakeableTechTile(candidate));
+    } else if (actionId === "scan") {
+      summary.topScanChoice = summarizeEngineNearMissScanChoice(getEngineNearMissScanTopChoice(candidate));
+    }
+    return summary;
+  }
+
+  function getEngineActionNearMissTargets(entry, candidates = [], playerResultById = new Map()) {
+    if (entry?.type !== "turn-action") return [];
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    const finalScore = getFiniteScore(result.finalScore);
+    if (finalScore == null || finalScore > ENGINE_NEAR_MISS_MAX_FINAL_SCORE) return [];
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const selectedId = getCandidateId(selectedCandidate);
+    const selectedPolicyScore = getFiniteScore(getCandidatePolicyScore(selectedCandidate));
+    if (selectedPolicyScore == null) return [];
+    return (candidates || [])
+      .filter((candidate) => {
+        const targetId = getCandidateId(candidate);
+        if (!ENGINE_NEAR_MISS_TARGET_ACTIONS.includes(targetId)) return false;
+        if (targetId === selectedId) return false;
+        if (!isCandidateAvailable(candidate)) return false;
+        if (targetId === "playCard" && !getBestPlayableCard(candidate)) return false;
+        const targetPolicyScore = getFiniteScore(getCandidatePolicyScore(candidate));
+        if (targetPolicyScore == null || targetPolicyScore < ENGINE_NEAR_MISS_MIN_TARGET_SCORE) return false;
+        const policyGap = selectedPolicyScore - targetPolicyScore;
+        return policyGap <= ENGINE_NEAR_MISS_MAX_POLICY_GAP && policyGap >= ENGINE_NEAR_MISS_MIN_POLICY_GAP;
+      })
+      .sort((left, right) => (
+        (selectedPolicyScore - numeric(getCandidatePolicyScore(left)))
+          - (selectedPolicyScore - numeric(getCandidatePolicyScore(right)))
+        || numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ));
+  }
+
+  function classifyEngineActionNearMissSample(sample = {}) {
+    const tags = [];
+    const selectedId = getCandidateId(sample.selected || {});
+    const targetId = getCandidateId(sample.target || {});
+    const gap = numeric(sample.policyScoreGap);
+    const targetBreakdown = sample.target?.valueBreakdown || {};
+    const bestCardBreakdown = sample.target?.bestCard?.valueBreakdown || {};
+    tags.push(`selected-${selectedId}`);
+    tags.push(`target-${targetId}`);
+    if (gap < 0) tags.push("target-above-selected");
+    else if (gap <= 1) tags.push("tiny-gap");
+    else if (gap <= 3) tags.push("small-gap");
+    else if (gap <= 8) tags.push("medium-gap");
+    if (numeric(sample.finalScore) <= 200) tags.push("low-final-score");
+    if (numeric(sample.roundNumber) >= 4) tags.push("final-round");
+    if (sample.selected?.kind === "quick" && sample.target?.kind === "main") tags.push("quick-over-main-engine");
+    if (sample.selected?.kind === "main" && sample.target?.kind === "quick") tags.push("main-over-quick-engine");
+    if (targetBreakdown.scoreCapReason || sample.target?.scoreCapReason) tags.push("target-score-capped");
+    if (targetId === "playCard") {
+      const routeActionId = sample.target?.bestCard?.plan?.actionId || null;
+      if (routeActionId) tags.push(`route-${routeActionId}`);
+      if (numeric(bestCardBreakdown.playCardConversionPressure) >= 12) tags.push("high-conversion-pressure");
+      if (numeric(bestCardBreakdown.standardActionPremium) >= 12) tags.push("high-standard-action-premium");
+      if (numeric(bestCardBreakdown.lateCardEnginePressure) >= 8) tags.push("late-engine-pressure");
+      if (["land", "orbit", "scan", "researchTech"].includes(selectedId)) tags.push("shared-flow-risk");
+    } else if (targetId === "scan") {
+      if (sample.target?.topScanChoice?.b2?.winsAfterScan) tags.push("b2-wins-after-scan");
+      if (targetBreakdown.scoreCapReason) tags.push("scan-capped");
+    } else if (targetId === "researchTech") {
+      const techType = sample.target?.bestTechTile?.techType || null;
+      if (techType) tags.push(`tech-${techType}`);
+    } else if (targetId === "analyze") {
+      tags.push("data-cashout");
+    } else if (targetId === "placeData") {
+      tags.push("data-placement");
+    }
+    const followup = sample.followup || {};
+    if (followup.noSamePlayerFollowup) {
+      tags.push("no-followup-after-nearmiss");
+    } else if (followup.targetSeenWithin != null) {
+      tags.push("target-delayed-hit");
+    } else if (followup.targetNotSeen) {
+      tags.push("target-not-seen");
+      if (followup.windowExhaustedWithoutTarget) tags.push("window-exhausted-without-target");
+    }
+    if (followup.passOrEndTurnBeforeTarget) tags.push("idle-before-target");
+    if (
+      followup.firstEngineActionId
+      && followup.firstEngineActionId !== targetId
+      && (followup.targetSeenWithin == null || numeric(followup.firstEngineActionOffset) < numeric(followup.targetSeenWithin))
+    ) {
+      tags.push("different-engine-before-target");
+    }
+    return tags;
+  }
+
+  function buildEngineNearMissFollowup(logs = [], startIndex = -1, playerId = null, targetId = null, limit = ENGINE_NEAR_MISS_FOLLOWUP_LIMIT) {
+    const actions = [];
+    for (let index = startIndex + 1; index >= 0 && index < logs.length && actions.length < limit; index += 1) {
+      const entry = logs[index];
+      if (entry?.type !== "turn-action" || entry.playerId !== playerId) continue;
+      const action = getSelectedAction(entry) || {};
+      const actionId = getSelectedActionId(entry);
+      actions.push({
+        roundNumber: entry.roundNumber ?? null,
+        turnNumber: entry.turnNumber ?? null,
+        rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+        id: actionId,
+        kind: action.kind || null,
+        score: roundRatio(action.score),
+        policyScore: roundRatio(getCandidatePolicyScore(action)),
+        actionGraphNet: roundRatio(getCandidateActionGraphNet(action)),
+      });
+    }
+    const targetIndex = actions.findIndex((action) => action.id === targetId);
+    const firstEngineIndex = actions.findIndex((action) => ENGINE_NEAR_MISS_TARGET_ACTIONS.includes(action.id));
+    const firstMainIndex = actions.findIndex((action) => action.kind === "main");
+    const beforeTarget = targetIndex >= 0 ? actions.slice(0, targetIndex) : actions;
+    return {
+      limit,
+      actionIds: actions.map((action) => action.id),
+      actions,
+      targetActionId: targetId || null,
+      targetSeenWithin: targetIndex >= 0 ? targetIndex + 1 : null,
+      targetNotSeen: targetIndex < 0,
+      noSamePlayerFollowup: actions.length === 0,
+      windowExhaustedWithoutTarget: targetIndex < 0 && actions.length >= limit,
+      passOrEndTurnBeforeTarget: beforeTarget.some((action) => PASS_ACTIONS.includes(action.id)),
+      firstEngineActionId: firstEngineIndex >= 0 ? actions[firstEngineIndex].id : null,
+      firstEngineActionOffset: firstEngineIndex >= 0 ? firstEngineIndex + 1 : null,
+      firstMainActionId: firstMainIndex >= 0 ? actions[firstMainIndex].id : null,
+      firstMainActionOffset: firstMainIndex >= 0 ? firstMainIndex + 1 : null,
+    };
+  }
+
+  function buildEngineActionNearMissSample(
+    entry,
+    targetCandidate = {},
+    candidates = [],
+    playerResultById = new Map(),
+    logs = [],
+    logIndex = -1,
+  ) {
+    const selectedCandidate = getSelectedCandidate(entry, candidates);
+    const selectedPolicyScore = getFiniteScore(getCandidatePolicyScore(selectedCandidate));
+    const targetPolicyScore = getFiniteScore(getCandidatePolicyScore(targetCandidate));
+    const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
+    const targetGraphNet = getCandidateActionGraphNet(targetCandidate);
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    const availableCandidates = (candidates || [])
+      .filter(isCandidateAvailable)
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ));
+    const targetRank = availableCandidates.indexOf(targetCandidate) + 1;
+    const sample = {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      finalScore: roundRatio(result.finalScore),
+      resources: entry.playerResources || null,
+      selected: summarizeEngineNearMissCandidate(selectedCandidate || getSelectedAction(entry) || {}),
+      target: summarizeEngineNearMissCandidate(targetCandidate),
+      targetRank: targetRank > 0 ? targetRank : null,
+      policyScoreGap: selectedPolicyScore == null || targetPolicyScore == null
+        ? null
+        : roundRatio(selectedPolicyScore - targetPolicyScore),
+      actionGraphNetGap: selectedGraphNet == null || targetGraphNet == null
+        ? null
+        : roundRatio(selectedGraphNet - targetGraphNet),
+      topCandidates: availableCandidates.slice(0, 6).map(summarizeCandidateWithGraph),
+      followup: buildEngineNearMissFollowup(
+        logs,
+        logIndex,
+        entry.playerId || null,
+        getCandidateId(targetCandidate),
+      ),
+    };
+    return {
+      ...sample,
+      nearMissTags: classifyEngineActionNearMissSample(sample),
+    };
+  }
+
+  function sortEngineActionNearMissSamples(samples = [], limit = 16) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.policyScoreGap) - numeric(right.policyScoreGap)
+        || numeric(right.target?.policyScore) - numeric(left.target?.policyScore)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+        || getCandidateId(left.target || {}).localeCompare(getCandidateId(right.target || {}))
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function buildEngineActionNearMissCounts(samples = [], limit = 16) {
+    const targetCounts = {};
+    const transitionCounts = {};
+    const tagCounts = {};
+    for (const sample of samples || []) {
+      const selectedId = getCandidateId(sample.selected || {});
+      const targetId = getCandidateId(sample.target || {});
+      increment(targetCounts, targetId);
+      increment(transitionCounts, `${selectedId}->${targetId}`);
+      for (const tag of sample.nearMissTags || []) increment(tagCounts, tag);
+    }
+    return {
+      byTarget: rankCounts(targetCounts, limit),
+      byTransition: rankCounts(transitionCounts, limit),
+      byTag: rankCounts(tagCounts, limit),
+    };
+  }
+
+  function createEngineActionNearMissCountBuckets() {
+    return {
+      byTarget: {},
+      byTransition: {},
+      byTag: {},
+    };
+  }
+
+  function mergeEngineActionNearMissCounts(target, source = {}) {
+    for (const bucketKey of ["byTarget", "byTransition", "byTag"]) {
+      for (const entry of source[bucketKey] || []) {
+        increment(target[bucketKey], entry.key, numeric(entry.count));
+      }
+    }
+  }
+
+  function rankEngineActionNearMissCountBuckets(buckets = {}, limit = 16) {
+    return {
+      byTarget: rankCounts(buckets.byTarget || {}, limit),
+      byTransition: rankCounts(buckets.byTransition || {}, limit),
+      byTag: rankCounts(buckets.byTag || {}, limit),
+    };
+  }
+
+  function getCompoundResearchTechCards(candidates = []) {
+    const playCardCandidate = (candidates || [])
+      .filter(isCandidateAvailable)
+      .find((candidate) => getCandidateId(candidate) === "playCard");
+    const playableCards = Array.isArray(playCardCandidate?.playableCards)
+      ? playCardCandidate.playableCards
+      : [];
+    return playableCards
+      .filter((card) => {
+        if (!isCandidateAvailable(card)) return false;
+        const effectTypes = Array.isArray(card.effectTypes) ? card.effectTypes : [];
+        const hasResearchTech = effectTypes.some(isResearchTechEffectType);
+        if (!hasResearchTech) return false;
+        const breakdown = card.valueBreakdown || card.breakdown || {};
+        return Number(card.typeCode) === 2
+          || Number(card.typeCode) === 3
+          || numeric(breakdown.cFinalTaskProgressValue) > 0
+          || numeric(breakdown.endGameExpectedScore) > 0
+          || numeric(breakdown.lateCardEnginePressure) > 0;
+      })
+      .sort((left, right) => (
+        numeric(getNestedPlayCardPolicyScore(right)) - numeric(getNestedPlayCardPolicyScore(left))
+        || String(left.cardId || "").localeCompare(String(right.cardId || ""))
+      ));
+  }
+
+  function buildResearchTechCompoundCardSample(entry, candidates = []) {
+    const availableCandidates = (candidates || []).filter(isCandidateAvailable);
+    const researchTech = availableCandidates
+      .filter((candidate) => getCandidateId(candidate) === "researchTech")
+      .sort((left, right) => numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left)))[0] || null;
+    const compoundCard = getCompoundResearchTechCards(availableCandidates)[0] || null;
+    const bestTechTile = (researchTech?.takeable || [])
+      .filter(isCandidateAvailable)
+      .sort((left, right) => numeric(right.score) - numeric(left.score))[0] || null;
+    const compoundPolicyScore = compoundCard
+      ? getNestedPlayCardPolicyScore(compoundCard)
+      : null;
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      researchTech: researchTech ? summarizeOpportunityCandidate(researchTech) : null,
+      bestTechTile: bestTechTile
+        ? {
+          tileId: bestTechTile.tileId || null,
+          techType: bestTechTile.techType || null,
+          score: roundRatio(bestTechTile.score),
+          directScoreGain: roundRatio(bestTechTile.directScoreGain),
+        }
+        : null,
+      compoundCard: compoundCard
+        ? {
+          cardId: compoundCard.cardId || null,
+          cardInstanceId: compoundCard.cardInstanceId || null,
+          label: compoundCard.cardLabel || compoundCard.label || null,
+          price: numeric(compoundCard.price),
+          typeCode: numeric(compoundCard.typeCode),
+          score: roundRatio(compoundCard.score),
+          policyScore: roundRatio(compoundPolicyScore),
+          directScoreGain: roundRatio(compoundCard.directScoreGain),
+          effectTypes: compoundCard.effectTypes || [],
+        }
+        : null,
+      policyScoreGap: roundRatio(numeric(getCandidatePolicyScore(researchTech)) - numeric(compoundPolicyScore)),
+    };
+  }
+
+  function getMainUnlockBestPlayCard(action = {}) {
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    return breakdown.bestPlayCard || null;
+  }
+
+  function isMainUnlockLowConcretePlay(entry) {
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "quickTrade") return false;
+    const breakdown = action?.valueBreakdown || action?.breakdown || {};
+    if (!breakdown.mainUnlockTrade) return false;
+    const bestPlay = getMainUnlockBestPlayCard(action);
+    if (!bestPlay) return false;
+    const concreteSignals = [
+      bestPlay.directScoreGain,
+      bestPlay.finalDeltaValue,
+      bestPlay.c2Type3ProgressValue,
+      bestPlay.cFinalTaskProgressValue,
+      bestPlay.endGameExpectedScore,
+    ];
+    return concreteSignals.every((value) => numeric(value) <= 0);
+  }
+
+  function buildMainUnlockLowConcretePlaySample(entry) {
+    const action = getSelectedAction(entry) || {};
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    const bestPlay = getMainUnlockBestPlayCard(action) || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(action),
+      tradeId: action.tradeId || null,
+      bestPlayCard: {
+        handIndex: Number.isFinite(Number(bestPlay.handIndex)) ? Number(bestPlay.handIndex) : null,
+        cardId: bestPlay.cardId || null,
+        cardLabel: bestPlay.cardLabel || null,
+        score: roundRatio(bestPlay.score),
+        continuationValue: roundRatio(bestPlay.continuationValue),
+        directScoreGain: roundRatio(bestPlay.directScoreGain),
+        finalDeltaValue: roundRatio(bestPlay.finalDeltaValue),
+        c2Type3ProgressValue: roundRatio(bestPlay.c2Type3ProgressValue),
+        cFinalTaskProgressValue: roundRatio(bestPlay.cFinalTaskProgressValue),
+        endGameExpectedScore: roundRatio(bestPlay.endGameExpectedScore),
+      },
+      currentBestPlayScore: roundRatio(breakdown.currentBestPlayScore),
+      concreteFinalValue: roundRatio(breakdown.concreteFinalValue),
+      discardCost: roundRatio(breakdown.discardCost),
+      finalMarkCount: roundRatio(breakdown.finalMarkCount),
+      nextFinalMarkThreshold: breakdown.nextFinalMarkThreshold || null,
+      thresholdBonus: roundRatio(breakdown.thresholdBonus),
+      finalLowTailOneCreditUnlock: Boolean(breakdown.finalLowTailOneCreditUnlock),
+      finalHighScoreOneCreditUnlock: Boolean(breakdown.finalHighScoreOneCreditUnlock),
+      highScoreProjectedScore: roundRatio(breakdown.highScoreProjectedScore),
+    };
+  }
+
+  function isNonPositivePublicRefillPick(entry) {
+    if (entry?.type !== "pick-card") return false;
+    if (entry.details?.pendingType !== "trade") return false;
+    const score = getFiniteScore(entry.details?.score);
+    return score != null && score <= 0;
+  }
+
+  function buildNonPositivePublicRefillSample(entry) {
+    const card = entry.details?.card || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      slotIndex: Number.isFinite(Number(entry.details?.slotIndex)) ? Number(entry.details.slotIndex) : null,
+      score: roundRatio(entry.details?.score),
+      cardId: card.cardId || card.id || null,
+      cardLabel: card.cardName || card.label || entry.details?.cardLabel || null,
+      price: roundRatio(card.price),
+      typeCode: Number.isFinite(Number(card.cardTypeCode)) ? Number(card.cardTypeCode) : null,
+      discardActionCode: card.discardActionCode ?? null,
+      scanActionCode: card.scanActionCode ?? null,
+      incomeCode: card.incomeCode ?? null,
+    };
+  }
+
+  function isHighHandDrainEnergyTrade(entry) {
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "quickTrade") return false;
+    if (action?.tradeId !== "cards-for-energy") return false;
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    return numeric(breakdown.cardsForEnergyHandDrainPenalty) >= 8;
+  }
+
+  function isSameRawTurnEntry(left = {}, right = {}) {
+    return left.playerId === right.playerId
+      && numeric(left.roundNumber) === numeric(right.roundNumber)
+      && numeric(left.rawTurnNumber ?? left.turnNumber) === numeric(right.rawTurnNumber ?? right.turnNumber);
+  }
+
+  function countPriorSameRawTurnActions(logs = [], entry = {}, predicate = () => false) {
+    const entryIndex = logs.indexOf(entry);
+    const limit = entryIndex >= 0 ? entryIndex : logs.length;
+    let count = 0;
+    for (let index = 0; index < limit; index += 1) {
+      const candidate = logs[index];
+      if (candidate?.type !== "turn-action") continue;
+      if (!isSameRawTurnEntry(candidate, entry)) continue;
+      if (predicate(candidate)) count += 1;
+    }
+    return count;
+  }
+
+  function findLaterSameRawTurnAction(logs = [], entry = {}, predicate = () => false) {
+    const entryIndex = logs.indexOf(entry);
+    const start = entryIndex >= 0 ? entryIndex + 1 : 0;
+    for (let index = start; index < logs.length; index += 1) {
+      const candidate = logs[index];
+      if (candidate?.type !== "turn-action") continue;
+      if (!isSameRawTurnEntry(candidate, entry)) continue;
+      if (predicate(candidate)) return candidate;
+    }
+    return null;
+  }
+
+  function isCardsForEnergyTurnAction(entry = {}) {
+    const action = getSelectedAction(entry);
+    return getCandidateId(action) === "quickTrade" && action?.tradeId === "cards-for-energy";
+  }
+
+  function buildHighHandDrainEnergyTradeSample(entry, logs = []) {
+    const action = getSelectedAction(entry) || {};
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    const planetPlan = breakdown.planetCashoutRecoveryPlan || null;
+    const priorCardsForEnergyThisRawTurn = countPriorSameRawTurnActions(logs, entry, isCardsForEnergyTurnAction);
+    const laterLastCardMove = findLaterSameRawTurnAction(logs, entry, isLastCardPreserveEnergyMove);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(action),
+      priorCardsForEnergyThisRawTurn,
+      handDrainPenalty: roundRatio(breakdown.cardsForEnergyHandDrainPenalty),
+      currentScore: roundRatio(breakdown.currentScore),
+      finalMarkCount: numeric(breakdown.finalMarkCount),
+      canReachAnalyze: Boolean(breakdown.canReachAnalyze),
+      planetCashoutRecoveryScore: roundRatio(breakdown.planetCashoutRecoveryScore),
+      launchMoveRecoveryScore: roundRatio(breakdown.launchMoveRecoveryScore),
+      planetPlan: planetPlan
+        ? {
+          kind: planetPlan.kind || null,
+          planetId: planetPlan.planetId || null,
+          targetEnergy: roundRatio(planetPlan.targetEnergy),
+          directScore: roundRatio(planetPlan.directScore),
+          rewardValue: roundRatio(planetPlan.rewardValue),
+          energyAfterTrade: roundRatio(planetPlan.energyAfterTrade),
+          afterTradeGap: roundRatio(planetPlan.afterTradeGap),
+          reachesNextThreshold: Boolean(planetPlan.reachesNextThreshold),
+          score: roundRatio(planetPlan.score),
+        }
+        : null,
+      laterLastCardPreserveEnergyMove: laterLastCardMove
+        ? buildLastCardPreserveEnergyMoveSample(laterLastCardMove)
+        : null,
+    };
+  }
+
+  function isLastCardPreserveEnergyMove(entry) {
+    const action = getSelectedAction(entry);
+    if (getCandidateId(action) !== "move") return false;
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    if (!breakdown.preserveEnergyForRouteCashout) return false;
+    const handSize = numeric(entry?.playerResources?.handSize);
+    const moveCardSpent = numeric(breakdown.moveCardSpent);
+    return handSize > 0 && moveCardSpent > 0 && moveCardSpent >= handSize;
+  }
+
+  function summarizeRouteTarget(target = {}) {
+    if (!target) return null;
+    return {
+      kind: target.kind || null,
+      id: target.id || target.planetId || target.locationType || null,
+      planetId: target.planetId || target.id || null,
+      newDistance: target.newDistance == null ? null : roundRatio(target.newDistance),
+      distance: target.distance == null ? null : roundRatio(target.distance),
+      score: target.score == null ? null : roundRatio(target.score),
+    };
+  }
+
+  function summarizeFollowupMainAction(followup = {}) {
+    if (!followup) return null;
+    return {
+      actionId: followup.actionId || null,
+      planetId: followup.planetId || null,
+      timing: followup.timing || null,
+      score: roundRatio(followup.score),
+      directScoreGain: roundRatio(followup.directScoreGain),
+      rewardValue: roundRatio(followup.rewardValue),
+      energyCost: roundRatio(followup.energyCost),
+    };
+  }
+
+  function buildLastCardPreserveEnergyMoveSample(entry) {
+    const action = getSelectedAction(entry) || {};
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(action),
+      requiredMovePoints: roundRatio(breakdown.requiredMovePoints),
+      moveCardSpent: roundRatio(breakdown.moveCardSpent),
+      moveEnergySpent: roundRatio(breakdown.moveEnergySpent),
+      energyAfterMovePayment: roundRatio(breakdown.energyAfterMovePayment),
+      paymentCost: roundRatio(breakdown.paymentCost),
+      pathPenalty: roundRatio(breakdown.pathPenalty),
+      routeScore: roundRatio(breakdown.routeScore),
+      routeScoreForGain: roundRatio(breakdown.routeScoreForGain),
+      followupScore: roundRatio(breakdown.followupScore),
+      followupTiming: breakdown.followupTiming || null,
+      routeTarget: summarizeRouteTarget(action.routeTarget),
+      followupMainAction: summarizeFollowupMainAction(action.followupMainAction),
+    };
+  }
+
   function getPlayerKey(entry) {
     return entry?.playerId || entry?.playerLabel || "unknown";
   }
@@ -176,6 +2527,56 @@
     const tileId = selected.tileId || entry?.details?.mark?.tileId || "unknown";
     const formulaId = selected.formulaId || "unknown";
     return `${tileId}:${formulaId}`;
+  }
+
+  function getAvailableFinalScoreMarkCandidates(entry) {
+    const candidates = Array.isArray(entry?.details?.candidates) ? entry.details.candidates : [];
+    return candidates.filter((candidate) => candidate && candidate.available !== false);
+  }
+
+  function isNegativeThirdFinalMark(entry) {
+    if (entry?.type !== "final-score-mark") return false;
+    const selected = getFinalScoreMarkSelection(entry);
+    const selectedScore = getFiniteScore(selected?.score);
+    if (selectedScore == null || selectedScore >= 0) return false;
+    const threshold = numeric(selected?.threshold ?? entry?.details?.pending?.threshold);
+    if (threshold < 70) return false;
+    const availableCandidates = getAvailableFinalScoreMarkCandidates(entry);
+    if (!availableCandidates.length) return false;
+    return availableCandidates.every((candidate) => numeric(candidate.score) <= 0);
+  }
+
+  function summarizeFinalScoreMarkCandidate(candidate = {}) {
+    const breakdown = candidate.scoreBreakdown || {};
+    return {
+      tileId: candidate.tileId || null,
+      formulaId: candidate.formulaId || null,
+      threshold: numeric(candidate.threshold),
+      baseValue: roundRatio(candidate.baseValue),
+      multiplier: roundRatio(candidate.multiplier),
+      immediateScore: roundRatio(candidate.immediateScore),
+      score: roundRatio(candidate.score),
+      zeroBaseLatePenalty: roundRatio(breakdown.zeroBaseLatePenalty),
+      weakCFormulaPenalty: roundRatio(breakdown.weakCFormulaPenalty),
+      b1FeasibilityPenalty: roundRatio(breakdown.b1FeasibilityPenalty),
+      b2FeasibilityPenalty: roundRatio(breakdown.b2FeasibilityPenalty),
+      b2OrbitLandCount: roundRatio(breakdown.b2OrbitLandCount),
+      b2SectorWins: roundRatio(breakdown.b2SectorWins),
+    };
+  }
+
+  function buildNegativeThirdFinalMarkSample(entry) {
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeFinalScoreMarkCandidate(getFinalScoreMarkSelection(entry) || {}),
+      candidates: getAvailableFinalScoreMarkCandidates(entry)
+        .slice(0, 6)
+        .map(summarizeFinalScoreMarkCandidate),
+    };
   }
 
   function ensurePlayerProfile(profiles, playerId, playerLabel) {
@@ -197,6 +2598,9 @@
         actionCounts: {},
         actionCategoryCounts: {},
         actionCategoryRatios: {},
+        paceCounts: {},
+        roundPaceCounts: {},
+        roundPace: [],
         techTypeCounts: {},
         scanTargetCounts: {},
         routeTargetCounts: {},
@@ -276,6 +2680,22 @@
       .slice(0, limit);
   }
 
+  function buildTopMissedCandidates(candidateStats = {}, limit = 8) {
+    return Object.entries(candidateStats || {})
+      .map(([actionId, stats]) => ({
+        actionId,
+        availableNotSelected: numeric(stats.availableNotSelected),
+        available: numeric(stats.available),
+        selected: numeric(stats.selected),
+      }))
+      .filter((entry) => entry.availableNotSelected > 0)
+      .sort((left, right) => (
+        right.availableNotSelected - left.availableNotSelected
+        || left.actionId.localeCompare(right.actionId)
+      ))
+      .slice(0, limit);
+  }
+
   function mergeCandidateScoreStats(target, source = {}) {
     for (const [actionId, sourceStat] of Object.entries(source || {})) {
       const stat = getCandidateScoreStat(target, actionId);
@@ -296,6 +2716,17 @@
   function getTechTypeFromTile(tileId) {
     const match = String(tileId || "").match(/^(orange|purple|blue)/);
     return match ? match[1] : null;
+  }
+
+  function normalizeTechTypeCounts(counts = {}) {
+    return Object.fromEntries(D1_TECH_TYPES.map((type) => [
+      type,
+      Math.max(0, Math.round(numeric(counts?.[type]))),
+    ]));
+  }
+
+  function getTechTypeCountsTotal(counts = {}) {
+    return D1_TECH_TYPES.reduce((total, type) => total + numeric(counts?.[type]), 0);
   }
 
   function getRouteTargetKey(routeTarget) {
@@ -755,6 +3186,1641 @@
     addProfileMetric(profile, "rocketCount", profile.rocketCount);
   }
 
+  function summarizePaceProfile(profile = {}) {
+    const metrics = profile.metrics || {};
+    return {
+      playerId: profile.playerId || null,
+      playerLabel: profile.playerLabel || profile.playerId || "unknown",
+      finalScore: roundRatio(profile.finalScore),
+      mainActionCount: roundRatio(metrics.mainActionCount),
+      quickStepCount: roundRatio(metrics.quickStepCount),
+      resourceQuickStepCount: roundRatio(metrics.resourceQuickStepCount),
+      productiveActionCount: roundRatio(metrics.productiveActionCount),
+      idleTurnCount: roundRatio(metrics.idleTurnCount),
+      quickToMainRatio: roundRatio(metrics.quickToMainRatio),
+      idleTurnRatio: roundRatio(metrics.idleTurnRatio),
+      playCardCount: roundRatio(metrics.playCardCount),
+      researchTechCount: roundRatio(metrics.researchTechCount),
+      techCount: roundRatio(metrics.techCount),
+      completedTaskCount: roundRatio(metrics.completedTaskCount),
+    };
+  }
+
+  function buildPaceSummary(playerProfiles = []) {
+    const profiles = (playerProfiles || []).filter(Boolean);
+    const average = averageProfileMetrics(profiles);
+    const scoreLeaders = [...profiles]
+      .sort((left, right) => numeric(right.finalScore) - numeric(left.finalScore) || left.playerLabel.localeCompare(right.playerLabel));
+    const lowTailPlayers = [...profiles]
+      .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore) || left.playerLabel.localeCompare(right.playerLabel))
+      .slice(0, 3)
+      .map(summarizePaceProfile);
+    const quickStepLeaders = [...profiles]
+      .sort((left, right) => (
+        numeric(right.metrics?.quickStepCount) - numeric(left.metrics?.quickStepCount)
+        || numeric(right.finalScore) - numeric(left.finalScore)
+        || left.playerLabel.localeCompare(right.playerLabel)
+      ))
+      .slice(0, 3)
+      .map(summarizePaceProfile);
+    return {
+      playerCount: profiles.length,
+      averageMainActionCount: roundRatio(average.mainActionCount),
+      averageQuickStepCount: roundRatio(average.quickStepCount),
+      averageResourceQuickStepCount: roundRatio(average.resourceQuickStepCount),
+      averageProductiveActionCount: roundRatio(average.productiveActionCount),
+      averageQuickToMainRatio: roundRatio(average.quickToMainRatio),
+      averageIdleTurnRatio: roundRatio(average.idleTurnRatio),
+      winner: scoreLeaders[0] ? summarizePaceProfile(scoreLeaders[0]) : null,
+      lowTail: lowTailPlayers[0] || null,
+      lowTailPlayers,
+      quickStepLeaders,
+    };
+  }
+
+  const ROUND_PACE_METRICS = Object.freeze([
+    "turnActionCount",
+    "mainActionCount",
+    "quickStepCount",
+    "resourceQuickStepCount",
+    "productiveActionCount",
+    "idleTurnCount",
+    "otherTurnActionCount",
+    "playCardCount",
+    "researchTechCount",
+    "scanCount",
+    "analyzeCount",
+    "moveCount",
+    "placeDataCount",
+    "cardCornerCount",
+    "quickTradeCount",
+    "passCount",
+  ]);
+
+  function getAverageRoundPaceKey(metric) {
+    return `average${metric.charAt(0).toUpperCase()}${metric.slice(1)}`;
+  }
+
+  function buildRoundPaceAverageMap(playerProfiles = []) {
+    const byRound = new Map();
+    for (const profile of playerProfiles || []) {
+      for (const round of profile?.roundPace || []) {
+        const key = getRoundPaceKey(round.roundNumber);
+        if (!byRound.has(key)) {
+          const initial = {
+            roundNumber: round.roundNumber ?? null,
+            playerCount: 0,
+            totals: {},
+          };
+          for (const metric of ROUND_PACE_METRICS) initial.totals[metric] = 0;
+          byRound.set(key, initial);
+        }
+        const bucket = byRound.get(key);
+        bucket.playerCount += 1;
+        for (const metric of ROUND_PACE_METRICS) {
+          bucket.totals[metric] += numeric(round[metric]);
+        }
+      }
+    }
+
+    const averaged = new Map();
+    for (const [key, bucket] of byRound.entries()) {
+      const count = Math.max(1, numeric(bucket.playerCount));
+      const roundAverage = {
+        roundNumber: bucket.roundNumber,
+        playerCount: numeric(bucket.playerCount),
+      };
+      for (const metric of ROUND_PACE_METRICS) {
+        roundAverage[metric] = roundRatio(bucket.totals[metric] / count);
+      }
+      averaged.set(key, roundAverage);
+    }
+    return averaged;
+  }
+
+  function summarizeRoundPaceAverage(roundAverage = {}) {
+    const summary = {
+      roundNumber: roundAverage.roundNumber ?? null,
+      playerCount: numeric(roundAverage.playerCount),
+    };
+    for (const metric of ROUND_PACE_METRICS) {
+      summary[getAverageRoundPaceKey(metric)] = roundRatio(roundAverage[metric]);
+    }
+    return summary;
+  }
+
+  function summarizeLowRoundPaceSample(profile = {}, round = {}, averageRound = {}, referenceRound = {}) {
+    const referenceMainActionCount = roundRatio(referenceRound.mainActionCount ?? averageRound.mainActionCount);
+    const averageMainActionCount = roundRatio(averageRound.mainActionCount);
+    const mainActionGap = roundRatio(Math.max(0, referenceMainActionCount - numeric(round.mainActionCount)));
+    return {
+      playerId: profile.playerId || null,
+      playerLabel: profile.playerLabel || profile.playerId || "unknown",
+      finalScore: roundRatio(profile.finalScore),
+      roundNumber: round.roundNumber ?? null,
+      turnActionCount: roundRatio(round.turnActionCount),
+      mainActionCount: roundRatio(round.mainActionCount),
+      quickStepCount: roundRatio(round.quickStepCount),
+      resourceQuickStepCount: roundRatio(round.resourceQuickStepCount),
+      productiveActionCount: roundRatio(round.productiveActionCount),
+      idleTurnCount: roundRatio(round.idleTurnCount),
+      passCount: roundRatio(round.passCount),
+      quickToMainRatio: roundRatio(round.quickToMainRatio),
+      playCardCount: roundRatio(round.playCardCount),
+      researchTechCount: roundRatio(round.researchTechCount),
+      scanCount: roundRatio(round.scanCount),
+      analyzeCount: roundRatio(round.analyzeCount),
+      moveCount: roundRatio(round.moveCount),
+      referenceMainActionCount,
+      averageMainActionCount,
+      mainActionGap,
+      actionCounts: round.actionCounts || {},
+    };
+  }
+
+  function buildLowRoundPaceSamples(playerProfiles = [], roundAverages = buildRoundPaceAverageMap(playerProfiles), limit = 12) {
+    const profiles = (playerProfiles || []).filter(Boolean);
+    if (!profiles.length) return [];
+
+    const average = averageProfileMetrics(profiles);
+    const lowScoreCutoff = Math.min(245, numeric(average.finalScore) - 15);
+    const scoreAscending = [...profiles]
+      .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore) || left.playerLabel.localeCompare(right.playerLabel));
+    const scoreDescending = [...profiles]
+      .sort((left, right) => numeric(right.finalScore) - numeric(left.finalScore) || left.playerLabel.localeCompare(right.playerLabel));
+    const fallbackLowCount = Math.max(1, Math.ceil(profiles.length * 0.35));
+    const highProfiles = scoreDescending.filter((profile) => numeric(profile.finalScore) >= 300);
+    const referenceProfiles = highProfiles.length
+      ? highProfiles
+      : scoreDescending.slice(0, Math.max(1, Math.ceil(profiles.length * 0.25)));
+    const referenceAverages = buildRoundPaceAverageMap(referenceProfiles);
+    const lowKeys = new Set([
+      ...scoreAscending
+        .filter((profile) => numeric(profile.finalScore) <= lowScoreCutoff)
+        .map((profile) => profile.playerId || profile.playerLabel),
+      ...scoreAscending
+        .slice(0, fallbackLowCount)
+        .map((profile) => profile.playerId || profile.playerLabel),
+    ]);
+
+    const samples = [];
+    for (const profile of profiles) {
+      const profileKey = profile.playerId || profile.playerLabel;
+      if (!lowKeys.has(profileKey)) continue;
+      for (const round of profile.roundPace || []) {
+        const key = getRoundPaceKey(round.roundNumber);
+        const averageRound = roundAverages.get(key) || {};
+        const referenceRound = referenceAverages.get(key) || averageRound;
+        const sample = summarizeLowRoundPaceSample(profile, round, averageRound, referenceRound);
+        const lowMainRound = numeric(sample.mainActionCount) <= 5 || numeric(sample.mainActionGap) >= 2;
+        if (!lowMainRound && numeric(sample.finalScore) > lowScoreCutoff) continue;
+        samples.push(sample);
+      }
+    }
+
+    return samples
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.mainActionCount) - numeric(right.mainActionCount)
+        || numeric(right.mainActionGap) - numeric(left.mainActionGap)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+      ))
+      .slice(0, limit);
+  }
+
+  function getLowRoundSamplePlayerKey(sample = {}) {
+    return sample.playerId || sample.playerLabel || "unknown";
+  }
+
+  function getLowRoundSampleKey(sample = {}) {
+    return [
+      getLowRoundSamplePlayerKey(sample),
+      getRoundPaceKey(sample.roundNumber),
+    ].join("|");
+  }
+
+  function summarizeLowRoundTailAction(entry = {}, limit = 4) {
+    const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+    const availableCandidates = sortByCandidatePolicy(candidates.filter(isCandidateAvailable));
+    const availableMain = availableCandidates.filter((candidate) => candidate.kind === "main");
+    const availableQuick = availableCandidates.filter((candidate) => candidate.kind === "quick");
+    const selected = getSelectedAction(entry) || {};
+    const selectedId = getSelectedActionId(entry);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(selected),
+      pace: getActionPaceCategory(selectedId, selected),
+      bestMain: availableMain[0] ? summarizeOpportunityCandidate(availableMain[0]) : null,
+      bestQuick: availableQuick[0] ? summarizeOpportunityCandidate(availableQuick[0]) : null,
+      topCandidates: availableCandidates
+        .slice(0, limit)
+        .map(summarizeOpportunityCandidate),
+    };
+  }
+
+  function getResourceCount(resources = {}, key) {
+    return numeric(resources?.[key]);
+  }
+
+  function summarizeLowRoundTailResourceDelta(firstResources = null, lastResources = null) {
+    if (!firstResources || !lastResources) return null;
+    return {
+      score: roundRatio(getResourceCount(lastResources, "score") - getResourceCount(firstResources, "score")),
+      credits: roundRatio(getResourceCount(lastResources, "credits") - getResourceCount(firstResources, "credits")),
+      energy: roundRatio(getResourceCount(lastResources, "energy") - getResourceCount(firstResources, "energy")),
+      publicity: roundRatio(getResourceCount(lastResources, "publicity") - getResourceCount(firstResources, "publicity")),
+      availableData: roundRatio(getResourceCount(lastResources, "availableData") - getResourceCount(firstResources, "availableData")),
+      handSize: roundRatio(getResourceCount(lastResources, "handSize") - getResourceCount(firstResources, "handSize")),
+    };
+  }
+
+  function buildLowRoundTailTags(tailEntries = [], lastPassCandidateProfile = null, firstResources = null, lastResources = null) {
+    const tags = [];
+    const add = (tag) => {
+      if (tag && !tags.includes(tag)) tags.push(tag);
+    };
+    const selectedActions = (tailEntries || [])
+      .map((entry) => getSelectedAction(entry) || {})
+      .filter(Boolean);
+    const quickTradeCounts = {};
+    for (const action of selectedActions) {
+      if (getCandidateId(action) !== "quickTrade") continue;
+      increment(quickTradeCounts, action.tradeId || "unknown");
+    }
+    for (const [tradeId, count] of Object.entries(quickTradeCounts)) {
+      if (numeric(count) >= 2) add(`repeated-${tradeId}`);
+    }
+
+    const firstHand = getResourceCount(firstResources, "handSize");
+    const lastHand = getResourceCount(lastResources, "handSize");
+    if (firstHand >= 4 && lastHand <= 1) add("hand-drain-tail");
+    if (getResourceCount(lastResources, "credits") <= 0) add("zero-credit-tail");
+    if (getResourceCount(lastResources, "energy") <= 0) add("zero-energy-tail");
+    if (getResourceCount(lastResources, "availableData") <= 0) add("zero-data-tail");
+    if (lastHand <= 1 && getResourceCount(lastResources, "credits") <= 0) add("low-hand-credit-tail");
+
+    for (let index = 1; index < tailEntries.length; index += 1) {
+      const entry = tailEntries[index];
+      const action = getSelectedAction(entry) || {};
+      const actionId = getCandidateId(action);
+      if (getActionPaceCategory(actionId, action) !== "main") continue;
+      const previousResources = tailEntries[index - 1]?.playerResources || {};
+      const previousHand = getResourceCount(previousResources, "handSize");
+      const previousCredits = getResourceCount(previousResources, "credits");
+      const previousEnergy = getResourceCount(previousResources, "energy");
+      if (previousHand <= 1 || previousCredits <= 0 || previousEnergy <= 0) {
+        add(`cashout-after-resource-drain:${actionId}`);
+      }
+    }
+
+    const reasonTag = lastPassCandidateProfile?.reasonTag || null;
+    if (reasonTag) add(`pass-${reasonTag}`);
+    const bestTrade = lastPassCandidateProfile?.bestResourceLockTrade || null;
+    const bestTradeActionId = bestTrade?.bestAction?.actionId || bestTrade?.bestAction?.id || null;
+    if (bestTrade?.tradeId && bestTradeActionId) {
+      add(`pass-${bestTrade.tradeId}-unlocks-${bestTradeActionId}`);
+      const resourcesAfterTrade = bestTrade.resourcesAfterTrade || {};
+      if (getResourceCount(resourcesAfterTrade, "handSize") <= 0) add("pass-trade-unlock-no-hand");
+    }
+
+    const unavailableReasons = (lastPassCandidateProfile?.unavailableMain || [])
+      .map((candidate) => String(candidate?.reason || ""));
+    if (unavailableReasons.some((reason) => reason.includes("扫描") && reason.includes("能量"))) add("scan-energy-lock");
+    if (unavailableReasons.some((reason) => reason.includes("研究科技") && reason.includes("宣传"))) add("tech-publicity-lock");
+    const playCardReason = String(lastPassCandidateProfile?.playCard?.reason || "");
+    if (
+      unavailableReasons.some((reason) => reason.includes("打牌") || reason.includes("普通手牌"))
+      || playCardReason.includes("普通手牌")
+      || playCardReason.includes("资源")
+    ) {
+      add("play-card-resource-lock");
+    }
+
+    return tags;
+  }
+
+  function getCompactActionId(action = {}) {
+    const actionId = getCandidateId(action);
+    const tradeId = action?.tradeId || null;
+    return tradeId ? `${actionId}:${tradeId}` : actionId;
+  }
+
+  function summarizeLowRoundResourceLockTrade(preview = null) {
+    if (!preview) return null;
+    return {
+      tradeId: preview.tradeId || null,
+      label: preview.label || null,
+      score: roundRatio(preview.score),
+      bestAction: preview.bestAction
+        ? {
+          actionId: preview.bestAction.actionId || preview.bestAction.id || null,
+          score: roundRatio(preview.bestAction.score),
+          directScoreGain: roundRatio(preview.bestAction.directScoreGain),
+          planScore: roundRatio(preview.bestAction.planScore),
+        }
+        : null,
+      resourcesAfterTrade: preview.resourcesAfterTrade || null,
+      discardCards: Array.isArray(preview.discardPlan?.selectedCards)
+        ? preview.discardPlan.selectedCards.map((card) => ({
+          cardId: card.cardId || null,
+          cardLabel: card.cardLabel || card.label || null,
+          opportunityCost: roundRatio(card.opportunityCost),
+        }))
+        : [],
+    };
+  }
+
+  function summarizeLowRoundPublicRefillPreview(preview = null) {
+    if (!preview) return null;
+    const pickPreview = preview.cardsForPickCardPreview || null;
+    return {
+      bestPublicTradeCardScore: roundRatio(preview.bestPublicTradeCardScore),
+      topPublicTradeCards: (preview.topPublicTradeCards || []).slice(0, 3).map((card) => ({
+        slotIndex: card.slotIndex ?? null,
+        cardId: card.cardId || null,
+        cardLabel: card.cardLabel || null,
+        price: roundRatio(card.price),
+        typeCode: card.typeCode ?? null,
+        tradeScore: roundRatio(card.tradeScore),
+        playScore: card.playScore == null ? null : roundRatio(card.playScore),
+        directScoreGain: roundRatio(card.directScoreGain),
+      })),
+      cardsForPickCard: pickPreview
+        ? {
+          ok: Boolean(pickPreview.ok),
+          reason: pickPreview.reason || null,
+          handCost: roundRatio(pickPreview.handCost),
+          handAfterTrade: roundRatio(pickPreview.handAfterTrade),
+          discardCost: pickPreview.discardCost == null ? null : roundRatio(pickPreview.discardCost),
+          net: pickPreview.net == null ? null : roundRatio(pickPreview.net),
+          bestPublicTradeCard: pickPreview.bestPublicTradeCard || null,
+        }
+        : null,
+      executableTrades: (preview.tradeChecks || [])
+        .filter((trade) => trade?.ok)
+        .map((trade) => trade.tradeId || null)
+        .filter(Boolean),
+    };
+  }
+
+  function buildLowRoundTailSummary(tailEntries = [], lastPassCandidateProfile = null) {
+    const actionIds = (tailEntries || [])
+      .map((entry) => getCompactActionId(getSelectedAction(entry) || {}))
+      .filter(Boolean);
+    const paceCounts = {};
+    for (const entry of tailEntries || []) {
+      const action = getSelectedAction(entry) || {};
+      increment(paceCounts, getActionPaceCategory(getCandidateId(action), action));
+    }
+    const bestResourceLockTrade = lastPassCandidateProfile?.bestResourceLockTrade || null;
+    return {
+      actionIds,
+      paceCounts,
+      lastSelected: actionIds[actionIds.length - 1] || null,
+      lastPassReasonTag: lastPassCandidateProfile?.reasonTag || null,
+      lastPassResources: lastPassCandidateProfile?.resources || null,
+      unavailableMainReasons: (lastPassCandidateProfile?.unavailableMain || []).slice(0, 5).map((candidate) => ({
+        id: getCandidateId(candidate),
+        reason: candidate.reason || null,
+      })),
+      playCardReason: lastPassCandidateProfile?.playCard?.reason || null,
+      bestResourceLockTrade: summarizeLowRoundResourceLockTrade(bestResourceLockTrade),
+      publicRefillPreview: summarizeLowRoundPublicRefillPreview(lastPassCandidateProfile?.publicRefillPreview || null),
+    };
+  }
+
+  function sortLowRoundActionTailSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.mainActionCount) - numeric(right.mainActionCount)
+        || numeric(right.mainActionGap) - numeric(left.mainActionGap)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""))
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildLowRoundActionTailSamples(
+    logs = [],
+    playerResults = [],
+    lowRoundPaceSamples = [],
+    earlyPassNoMainSamples = [],
+    preNoMainPassResourceDrainSamples = [],
+    limit = 12,
+  ) {
+    const targetSamples = sortLowRoundActionTailSamples(lowRoundPaceSamples, limit);
+    if (!targetSamples.length) return [];
+
+    const targetKeys = new Set(targetSamples.map(getLowRoundSampleKey));
+    const turnEntriesByRound = new Map();
+    for (const entry of logs || []) {
+      if (entry?.type !== "turn-action") continue;
+      const key = [
+        entry.playerId || entry.playerLabel || "unknown",
+        getRoundPaceKey(entry.roundNumber),
+      ].join("|");
+      if (!targetKeys.has(key)) continue;
+      if (!turnEntriesByRound.has(key)) turnEntriesByRound.set(key, []);
+      turnEntriesByRound.get(key).push(entry);
+    }
+
+    const passSamplesByRound = new Map();
+    for (const sample of earlyPassNoMainSamples || []) {
+      const key = getLowRoundSampleKey(sample);
+      if (!targetKeys.has(key)) continue;
+      if (!passSamplesByRound.has(key)) passSamplesByRound.set(key, []);
+      passSamplesByRound.get(key).push(sample);
+    }
+
+    const drainSamplesByRound = new Map();
+    for (const sample of preNoMainPassResourceDrainSamples || []) {
+      const key = getLowRoundSampleKey(sample);
+      if (!targetKeys.has(key)) continue;
+      if (!drainSamplesByRound.has(key)) drainSamplesByRound.set(key, []);
+      drainSamplesByRound.get(key).push(sample);
+    }
+
+    const playerResultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const samples = targetSamples.map((roundSample) => {
+      const key = getLowRoundSampleKey(roundSample);
+      const turnEntries = turnEntriesByRound.get(key) || [];
+      const passEntries = turnEntries.filter((entry) => getSelectedActionId(entry) === "pass");
+      const lastPass = passEntries[passEntries.length - 1] || null;
+      const result = playerResultById.get(roundSample.playerId) || {};
+      const tailEntries = turnEntries.slice(-8);
+      const firstResources = turnEntries[0]?.playerResources || null;
+      const lastResources = turnEntries[turnEntries.length - 1]?.playerResources || null;
+      const lastPassCandidateProfile = lastPass
+        ? buildEarlyPassCandidateProfile(lastPass, lastPass.details?.candidates || [], 5)
+        : null;
+      return {
+        playerId: roundSample.playerId || null,
+        playerLabel: roundSample.playerLabel || roundSample.playerId || "unknown",
+        finalScore: roundRatio(result.finalScore ?? roundSample.finalScore),
+        roundNumber: roundSample.roundNumber ?? null,
+        mainActionCount: roundRatio(roundSample.mainActionCount),
+        quickStepCount: roundRatio(roundSample.quickStepCount),
+        resourceQuickStepCount: roundRatio(roundSample.resourceQuickStepCount),
+        idleTurnCount: roundRatio(roundSample.idleTurnCount),
+        passCount: roundRatio(roundSample.passCount),
+        referenceMainActionCount: roundRatio(roundSample.referenceMainActionCount),
+        averageMainActionCount: roundRatio(roundSample.averageMainActionCount),
+        mainActionGap: roundRatio(roundSample.mainActionGap),
+        actionCounts: roundSample.actionCounts || {},
+        roundActionCount: turnEntries.length,
+        firstResources,
+        lastResources,
+        tailResourceDelta: summarizeLowRoundTailResourceDelta(firstResources, lastResources),
+        tailTags: buildLowRoundTailTags(tailEntries, lastPassCandidateProfile, firstResources, lastResources),
+        tailSummary: buildLowRoundTailSummary(tailEntries, lastPassCandidateProfile),
+        actionTail: tailEntries.map((entry) => summarizeLowRoundTailAction(entry, 4)),
+        lastPassCandidateProfile,
+        noMainPassSamples: (passSamplesByRound.get(key) || [])
+          .slice(-3)
+          .map((sample) => ({
+            rawTurnNumber: sample.rawTurnNumber ?? null,
+            resources: sample.resources || null,
+            reasonTag: sample.reasonTag || null,
+            quickStepCount: numeric(sample.quickStepCount),
+            quickBeforePassCount: numeric(sample.quickBeforePassCount),
+            quickAfterPassCount: numeric(sample.quickAfterPassCount),
+            actionIds: sample.actionIds || [],
+            candidateProfile: sample.candidateProfile || null,
+          })),
+        resourceDrainSamples: (drainSamplesByRound.get(key) || [])
+          .slice(-3)
+          .map((sample) => ({
+            rawTurnNumber: sample.rawTurnNumber ?? null,
+            reasonTag: sample.reasonTag || null,
+            previousAction: sample.previousAction || null,
+            resourceDeltaToPass: sample.resourceDeltaToPass || null,
+            passActionIds: sample.passActionIds || [],
+            candidateProfile: sample.candidateProfile || null,
+          })),
+      };
+    });
+
+    return sortLowRoundActionTailSamples(samples, limit);
+  }
+
+  function buildRoundPaceSummary(playerProfiles = []) {
+    const profiles = (playerProfiles || []).filter(Boolean);
+    const roundAverages = buildRoundPaceAverageMap(profiles);
+    return {
+      rounds: [...roundAverages.values()]
+        .map(summarizeRoundPaceAverage)
+        .sort((left, right) => numeric(left.roundNumber) - numeric(right.roundNumber)),
+      lowRoundPaceSamples: buildLowRoundPaceSamples(profiles, roundAverages),
+    };
+  }
+
+  function getProfileMetric(profile = {}, key) {
+    return numeric(profile.metrics?.[key] ?? profile[key]);
+  }
+
+  function buildLowEngineThroughputSamples(playerProfiles = []) {
+    const profiles = (playerProfiles || []).filter(Boolean);
+    if (!profiles.length) return [];
+
+    const scoreSorted = [...profiles]
+      .sort((left, right) => numeric(right.finalScore) - numeric(left.finalScore) || left.playerLabel.localeCompare(right.playerLabel));
+    const highProfiles = scoreSorted.filter((profile) => numeric(profile.finalScore) >= 300);
+    const referenceProfiles = highProfiles.length
+      ? highProfiles
+      : scoreSorted.slice(0, Math.max(1, Math.ceil(scoreSorted.length * 0.25)));
+    const reference = averageProfileMetrics(referenceProfiles);
+    const average = averageProfileMetrics(profiles);
+
+    const buildGap = (profile, key) => roundRatio(Math.max(0, numeric(reference[key]) - getProfileMetric(profile, key)));
+    const lowScoreCutoff = Math.min(230, numeric(average.finalScore) - 25);
+    const samples = profiles
+      .map((profile) => {
+        const placeDataGap = buildGap(profile, "placeDataCount");
+        const scanGap = buildGap(profile, "scanCount");
+        const analyzeGap = buildGap(profile, "analyzeCount");
+        const playGap = buildGap(profile, "playCardCount");
+        const techActionGap = buildGap(profile, "researchTechCount");
+        const techCountGap = buildGap(profile, "techCount");
+        const taskGap = buildGap(profile, "completedTaskCount");
+        const baseScoreGap = roundRatio(Math.max(0, numeric(reference.baseScore) - numeric(profile.baseScore)));
+        const reasons = [];
+        if (placeDataGap >= 8) reasons.push("low-place-data");
+        if (scanGap >= 2) reasons.push("low-scan");
+        if (analyzeGap >= 1.5) reasons.push("low-analyze");
+        if (playGap >= 2) reasons.push("low-play-card");
+        if (techActionGap >= 1.5 || techCountGap >= 2) reasons.push("low-tech");
+        if (taskGap >= 1.5) reasons.push("low-task");
+        if (baseScoreGap >= 35) reasons.push("low-base-score");
+        if (getProfileMetric(profile, "idleTurnRatio") > numeric(reference.idleTurnRatio) + 0.04) reasons.push("high-idle");
+
+        const score = numeric(profile.finalScore);
+        const throughputGap = roundRatio(
+          placeDataGap * 0.35
+          + scanGap * 2
+          + analyzeGap * 2.5
+          + playGap * 1.5
+          + techActionGap * 1.5
+          + techCountGap * 1.2
+          + taskGap * 2,
+        );
+        const shouldKeep = score <= lowScoreCutoff
+          || (score < numeric(average.finalScore) - 35 && throughputGap >= 10)
+          || (score < 260 && reasons.length >= 4);
+        if (!shouldKeep || !reasons.length) return null;
+
+        return {
+          playerId: profile.playerId || null,
+          playerLabel: profile.playerLabel || profile.playerId || "unknown",
+          finalScore: roundRatio(score),
+          baseScore: roundRatio(profile.baseScore),
+          tileScore: roundRatio(profile.tileScore),
+          cardScore: roundRatio(profile.cardScore),
+          techCount: roundRatio(profile.techCount),
+          completedTaskCount: roundRatio(profile.completedTaskCount),
+          throughputGap,
+          reasons,
+          counts: {
+            playCard: roundRatio(getProfileMetric(profile, "playCardCount")),
+            researchTech: roundRatio(getProfileMetric(profile, "researchTechCount")),
+            scan: roundRatio(getProfileMetric(profile, "scanCount")),
+            analyze: roundRatio(getProfileMetric(profile, "analyzeCount")),
+            placeData: roundRatio(getProfileMetric(profile, "placeDataCount")),
+            cardCorner: roundRatio(getProfileMetric(profile, "cardCornerCount")),
+            quickTrade: roundRatio(getProfileMetric(profile, "quickTradeCount")),
+            mainAction: roundRatio(getProfileMetric(profile, "mainActionCount")),
+            quickStep: roundRatio(getProfileMetric(profile, "quickStepCount")),
+            resourceQuickStep: roundRatio(getProfileMetric(profile, "resourceQuickStepCount")),
+            idleTurnRatio: roundRatio(getProfileMetric(profile, "idleTurnRatio")),
+          },
+          referenceGaps: {
+            baseScore: baseScoreGap,
+            playCard: playGap,
+            researchTech: techActionGap,
+            techCount: techCountGap,
+            scan: scanGap,
+            analyze: analyzeGap,
+            placeData: placeDataGap,
+            completedTask: taskGap,
+          },
+        };
+      })
+      .filter(Boolean)
+      .sort((left, right) => right.throughputGap - left.throughputGap || numeric(left.finalScore) - numeric(right.finalScore))
+      .slice(0, 8);
+
+    return samples;
+  }
+
+  function matchesPlayerResult(entry = {}, result = {}) {
+    const resultId = result.playerId == null ? null : String(result.playerId);
+    const resultLabel = result.playerLabel == null ? null : String(result.playerLabel);
+    const entryId = entry.playerId == null ? null : String(entry.playerId);
+    const entryLabel = entry.playerLabel == null ? null : String(entry.playerLabel);
+    return Boolean(
+      (resultId && entryId && resultId === entryId)
+      || (resultLabel && entryLabel && resultLabel === entryLabel)
+    );
+  }
+
+  function getBestAvailableCandidate(candidates = []) {
+    return (candidates || [])
+      .filter(isCandidateAvailable)
+      .map((candidate) => ({
+        candidate,
+        score: getCandidatePolicyScore(candidate),
+        actionId: getCandidateId(candidate),
+      }))
+      .filter((entry) => getFiniteScore(entry.score) != null)
+      .sort((left, right) => right.score - left.score || left.actionId.localeCompare(right.actionId))[0]
+      || null;
+  }
+
+  function buildCandidateGapSample(entry, candidates = [], scoreGap = {}) {
+    const bestEntry = getBestAvailableCandidate(candidates);
+    const topCandidates = [...(candidates || [])]
+      .filter(isCandidateAvailable)
+      .sort((left, right) => (
+        numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+        || getCandidateId(left).localeCompare(getCandidateId(right))
+      ))
+      .slice(0, 5)
+      .map(summarizeOpportunityCandidate);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedCandidate(entry, candidates) || {}),
+      bestCandidate: bestEntry ? summarizeOpportunityCandidate(bestEntry.candidate) : null,
+      selectedActionId: scoreGap.selectedActionId || null,
+      bestActionId: scoreGap.bestActionId || null,
+      selectedScore: roundRatio(scoreGap.selectedScore),
+      bestScore: roundRatio(scoreGap.bestScore),
+      gap: roundRatio(scoreGap.gap),
+      topCandidates,
+    };
+  }
+
+  function buildFocusedCandidateRows(candidateStats = {}, candidateScoreStats = {}) {
+    const finalizedScoreStats = finalizeCandidateScoreStats(candidateScoreStats);
+    return LOW_PLAYER_CANDIDATE_ACTIONS
+      .map((actionId) => {
+        const stats = candidateStats[actionId] || {};
+        const scoreStats = finalizedScoreStats[actionId] || {};
+        const available = numeric(stats.available);
+        const availableNotSelected = numeric(stats.availableNotSelected);
+        const selected = numeric(stats.selected);
+        if (!available && !selected && !numeric(stats.offered)) return null;
+        return {
+          actionId,
+          offered: numeric(stats.offered),
+          available,
+          selected,
+          availableNotSelected,
+          availableNotSelectedRate: available ? roundRatio(availableNotSelected / available) : 0,
+          bestAvailable: numeric(scoreStats.bestAvailable),
+          missedAsBest: numeric(scoreStats.missedAsBest),
+          averageAvailableScore: roundRatio(scoreStats.averageAvailableScore),
+          averageSelectedScore: roundRatio(scoreStats.averageSelectedScore),
+          averageBestAvailableScore: roundRatio(scoreStats.averageBestAvailableScore),
+          averageMissedGap: roundRatio(scoreStats.averageMissedGap),
+          maxMissedGap: roundRatio(scoreStats.maxMissedGap),
+        };
+      })
+      .filter(Boolean);
+  }
+
+  function buildLowPlayerCandidateStats(logs = [], playerResults = [], options = {}) {
+    const results = (playerResults || []).filter(Boolean);
+    if (!results.length) return [];
+    const averageFinalScore = results.reduce((total, result) => total + numeric(result.finalScore), 0) / results.length;
+    const lowCutoff = Math.max(230, averageFinalScore - 25);
+    const lowResults = results
+      .filter((result) => (
+        numeric(result.finalScore) <= lowCutoff
+        || (result.finalMarkCount != null && Number.isFinite(Number(result.finalMarkCount)) && numeric(result.finalMarkCount) < 3)
+      ))
+      .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore) || String(left.playerLabel || "").localeCompare(String(right.playerLabel || "")))
+      .slice(0, Math.max(1, Math.round(numeric(options.lowPlayerCandidateLimit) || 6)));
+
+    return lowResults.map((result) => {
+      const candidateStats = {};
+      const candidateScoreStats = {};
+      const actionCounts = {};
+      const scoreOpportunities = {
+        selectedBelowBest: 0,
+        totalGap: 0,
+        maxGap: 0,
+      };
+      const topGapSamples = [];
+      const turnActionLogs = (logs || []).filter((entry) => (
+        entry?.type === "turn-action"
+        && matchesPlayerResult(entry, result)
+      ));
+
+      for (const entry of turnActionLogs) {
+        const action = getSelectedAction(entry);
+        const actionId = getSelectedActionId(entry);
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        increment(actionCounts, actionId);
+        const scoreGap = recordTurnCandidateScores(candidateScoreStats, candidates, action);
+        if (scoreGap.gap > 0) {
+          scoreOpportunities.selectedBelowBest += 1;
+          scoreOpportunities.totalGap += scoreGap.gap;
+          scoreOpportunities.maxGap = Math.max(scoreOpportunities.maxGap, scoreGap.gap);
+          if (topGapSamples.length < 8) {
+            topGapSamples.push(buildCandidateGapSample(entry, candidates, scoreGap));
+          }
+        }
+
+        let matchedSelectedCandidate = false;
+        for (const candidate of candidates) {
+          const candidateId = getCandidateId(candidate);
+          const stats = getCandidateStats(candidateStats, candidateId);
+          stats.offered += 1;
+          if (isCandidateAvailable(candidate)) stats.available += 1;
+          if (candidateMatchesAction(candidate, action)) {
+            stats.selected += 1;
+            matchedSelectedCandidate = true;
+          } else if (isCandidateAvailable(candidate)) {
+            stats.availableNotSelected += 1;
+          }
+        }
+        if (!matchedSelectedCandidate) {
+          getCandidateStats(candidateStats, actionId).selected += 1;
+        }
+      }
+
+      return {
+        playerId: result.playerId || null,
+        playerLabel: result.playerLabel || result.playerId || "unknown",
+        finalScore: roundRatio(result.finalScore),
+        baseScore: roundRatio(result.baseScore),
+        tileScore: roundRatio(result.tileScore),
+        cardScore: roundRatio(result.cardScore),
+        finalMarkCount: result.finalMarkCount == null ? null : numeric(result.finalMarkCount),
+        completedTaskCount: numeric(result.completedTaskCount),
+        techCount: numeric(result.techCount),
+        turnActionCount: turnActionLogs.length,
+        actionCounts,
+        focusedCandidateRows: buildFocusedCandidateRows(candidateStats, candidateScoreStats),
+        topMissedCandidates: buildTopMissedCandidates(candidateStats),
+        topScoreGaps: buildTopScoreGaps(candidateScoreStats),
+        scoreOpportunities: {
+          selectedBelowBest: scoreOpportunities.selectedBelowBest,
+          totalGap: roundRatio(scoreOpportunities.totalGap),
+          maxGap: roundRatio(scoreOpportunities.maxGap),
+          averageGap: scoreOpportunities.selectedBelowBest
+            ? roundRatio(scoreOpportunities.totalGap / scoreOpportunities.selectedBelowBest)
+            : 0,
+        },
+        topGapSamples,
+      };
+    });
+  }
+
+  function getLowPlayerResults(playerResults = [], options = {}) {
+    const results = (playerResults || []).filter(Boolean);
+    if (!results.length) return [];
+    const averageFinalScore = results.reduce((total, result) => total + numeric(result.finalScore), 0) / results.length;
+    const lowCutoff = Math.max(230, averageFinalScore - 25);
+    return results
+      .filter((result) => (
+        numeric(result.finalScore) <= lowCutoff
+        || (result.finalMarkCount != null && Number.isFinite(Number(result.finalMarkCount)) && numeric(result.finalMarkCount) < 3)
+      ))
+      .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore) || String(left.playerLabel || "").localeCompare(String(right.playerLabel || "")))
+      .slice(0, Math.max(1, Math.round(numeric(options.lowPlayerCandidateLimit) || 6)));
+  }
+
+  function summarizeUnplayedCard(card = {}, zone = "hand") {
+    if (!card) return null;
+    const typeCode = Number.isFinite(Number(card.typeCode ?? card.cardTypeCode))
+      ? Number(card.typeCode ?? card.cardTypeCode)
+      : null;
+    const taskCount = Math.max(0, Math.round(numeric(card.taskCount)));
+    const tasks = Array.isArray(card.tasks) ? card.tasks.filter(Boolean) : [];
+    const remainingTaskCount = Number.isFinite(Number(card.remainingTaskCount))
+      ? Math.max(0, Math.round(Number(card.remainingTaskCount)))
+      : tasks.length
+        ? tasks.filter((task) => !task.completed).length
+        : taskCount;
+    const endGameScoring = Boolean(card.endGameScoring);
+    const effectTypes = Array.isArray(card.effectTypes) ? card.effectTypes.filter(Boolean) : [];
+    if (!taskCount && !endGameScoring && typeCode !== 3) return null;
+    return {
+      zone,
+      cardId: card.cardId || card.id || null,
+      cardInstanceId: card.id || null,
+      label: card.label || card.cardName || card.cardLabel || null,
+      price: roundRatio(card.price),
+      typeCode,
+      taskCount,
+      remainingTaskCount,
+      tasks,
+      endGameScoring,
+      effectTypes,
+      discardActionCode: card.discardActionCode ?? null,
+      scanActionCode: card.scanActionCode ?? null,
+      incomeCode: card.incomeCode ?? null,
+    };
+  }
+
+  function buildLowUnplayedCardSamples(playerResults = [], options = {}) {
+    return getLowPlayerResults(playerResults, options)
+      .map((result) => {
+        const cards = [
+          ...(result.handCards || []).map((card) => summarizeUnplayedCard(card, "hand")),
+          ...(result.reservedCards || []).map((card) => summarizeUnplayedCard(card, "reserved")),
+        ].filter(Boolean);
+        if (!cards.length) return null;
+        return {
+          playerId: result.playerId || null,
+          playerLabel: result.playerLabel || result.playerId || "unknown",
+          finalScore: roundRatio(result.finalScore),
+          baseScore: roundRatio(result.baseScore),
+          tileScore: roundRatio(result.tileScore),
+          cardScore: roundRatio(result.cardScore),
+          completedTaskCount: numeric(result.completedTaskCount),
+          techCount: numeric(result.techCount),
+          finalMarkCount: result.finalMarkCount == null ? null : numeric(result.finalMarkCount),
+          finalFormulas: result.finalFormulas || [],
+          b2Progress: result.b2Progress || null,
+          handSize: numeric(result.handSize),
+          reservedCount: numeric(result.reservedCount),
+          cards: cards.slice(0, 12),
+        };
+      })
+      .filter(Boolean)
+      .slice(0, 12);
+  }
+
+  function isReadyTask(task = {}) {
+    return Boolean(task.completed || task.condition?.met);
+  }
+
+  function summarizeReadyTask(task = {}) {
+    const condition = task.condition || {};
+    return {
+      id: task.id || null,
+      type: condition.type || null,
+      resource: condition.resource || null,
+      targetCount: condition.targetCount ?? null,
+      currentCount: condition.currentCount ?? null,
+      missingCount: condition.missingCount ?? null,
+      rewardDirectScore: roundRatio(task.rewardDirectScore),
+      rewardValue: roundRatio(task.rewardValue),
+    };
+  }
+
+  function buildFinalReadyTaskCreditShortfallSamples(playerResults = [], options = {}) {
+    const samples = [];
+    for (const result of getLowPlayerResults(playerResults, options)) {
+      const resources = result.resources || {};
+      const credits = Math.max(0, numeric(resources.credits));
+      const handSize = Math.max(0, numeric(result.handSize ?? resources.handSize ?? result.handCards?.length));
+      const otherHandCardsForTrade = Math.max(0, handSize - 1);
+      const maxCardsForCreditTrades = Math.floor(otherHandCardsForTrade / 2);
+      const maxCreditsAfterCardsForCredit = credits + maxCardsForCreditTrades;
+      const cards = (result.handCards || [])
+        .map((card) => summarizeUnplayedCard(card, "hand"))
+        .filter(Boolean)
+        .map((card) => {
+          const readyTasks = (card.tasks || []).filter(isReadyTask);
+          const price = Math.max(0, numeric(card.price));
+          const creditsMissing = Math.max(0, price - credits);
+          const creditsMissingAfterCardsForCredit = Math.max(0, price - maxCreditsAfterCardsForCredit);
+          if (!readyTasks.length || creditsMissing <= 0 || creditsMissingAfterCardsForCredit <= 0) return null;
+          return {
+            ...card,
+            readyTasks: readyTasks.map(summarizeReadyTask),
+            readyTaskCount: readyTasks.length,
+            readyTaskDirectScore: roundRatio(readyTasks.reduce((total, task) => total + numeric(task.rewardDirectScore), 0)),
+            readyTaskRewardValue: roundRatio(readyTasks.reduce((total, task) => total + numeric(task.rewardValue), 0)),
+            credits,
+            creditsMissing: roundRatio(creditsMissing),
+            maxCardsForCreditTrades,
+            maxCreditsAfterCardsForCredit: roundRatio(maxCreditsAfterCardsForCredit),
+            creditsMissingAfterCardsForCredit: roundRatio(creditsMissingAfterCardsForCredit),
+          };
+        })
+        .filter(Boolean)
+        .sort((left, right) => (
+          numeric(right.readyTaskRewardValue) - numeric(left.readyTaskRewardValue)
+          || numeric(right.readyTaskDirectScore) - numeric(left.readyTaskDirectScore)
+          || numeric(left.creditsMissingAfterCardsForCredit) - numeric(right.creditsMissingAfterCardsForCredit)
+        ));
+      if (!cards.length) continue;
+      samples.push({
+        playerId: result.playerId || null,
+        playerLabel: result.playerLabel || result.playerId || "unknown",
+        finalScore: roundRatio(result.finalScore),
+        baseScore: roundRatio(result.baseScore),
+        tileScore: roundRatio(result.tileScore),
+        cardScore: roundRatio(result.cardScore),
+        completedTaskCount: numeric(result.completedTaskCount),
+        techCount: numeric(result.techCount),
+        finalMarkCount: result.finalMarkCount == null ? null : numeric(result.finalMarkCount),
+        resources: {
+          credits: roundRatio(credits),
+          energy: roundRatio(resources.energy),
+          publicity: roundRatio(resources.publicity),
+          handSize: roundRatio(handSize),
+          availableData: roundRatio(resources.availableData),
+        },
+        maxCardsForCreditTrades,
+        maxCreditsAfterCardsForCredit: roundRatio(maxCreditsAfterCardsForCredit),
+        cards: cards.slice(0, 6),
+      });
+    }
+    return samples
+      .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore))
+      .slice(0, 12);
+  }
+
+  function buildFinalReadyTaskTradeUnlockMissSamples(playerResults = [], options = {}) {
+    const samples = [];
+    for (const result of getLowPlayerResults(playerResults, options)) {
+      const resources = result.resources || {};
+      const credits = Math.max(0, numeric(resources.credits));
+      const handSize = Math.max(0, numeric(result.handSize ?? resources.handSize ?? result.handCards?.length));
+      const otherHandCardsForTrade = Math.max(0, handSize - 1);
+      const maxCardsForCreditTrades = Math.floor(otherHandCardsForTrade / 2);
+      const maxCreditsAfterCardsForCredit = credits + maxCardsForCreditTrades;
+      const cards = (result.handCards || [])
+        .map((card) => summarizeUnplayedCard(card, "hand"))
+        .filter(Boolean)
+        .map((card) => {
+          const readyTasks = (card.tasks || []).filter(isReadyTask);
+          const price = Math.max(0, numeric(card.price));
+          const creditsMissing = Math.max(0, price - credits);
+          const creditsMissingAfterCardsForCredit = Math.max(0, price - maxCreditsAfterCardsForCredit);
+          const tradesNeeded = Math.ceil(creditsMissing);
+          if (
+            !readyTasks.length
+            || creditsMissing <= 0
+            || creditsMissingAfterCardsForCredit > 0
+            || tradesNeeded <= 0
+            || tradesNeeded > maxCardsForCreditTrades
+          ) {
+            return null;
+          }
+          return {
+            ...card,
+            readyTasks: readyTasks.map(summarizeReadyTask),
+            readyTaskCount: readyTasks.length,
+            readyTaskDirectScore: roundRatio(readyTasks.reduce((total, task) => total + numeric(task.rewardDirectScore), 0)),
+            readyTaskRewardValue: roundRatio(readyTasks.reduce((total, task) => total + numeric(task.rewardValue), 0)),
+            credits,
+            creditsMissing: roundRatio(creditsMissing),
+            cardsForCreditTradesNeeded: tradesNeeded,
+            maxCardsForCreditTrades,
+            maxCreditsAfterCardsForCredit: roundRatio(maxCreditsAfterCardsForCredit),
+          };
+        })
+        .filter(Boolean)
+        .sort((left, right) => (
+          numeric(right.readyTaskRewardValue) - numeric(left.readyTaskRewardValue)
+          || numeric(right.readyTaskDirectScore) - numeric(left.readyTaskDirectScore)
+          || numeric(left.cardsForCreditTradesNeeded) - numeric(right.cardsForCreditTradesNeeded)
+        ));
+      if (!cards.length) continue;
+      samples.push({
+        playerId: result.playerId || null,
+        playerLabel: result.playerLabel || result.playerId || "unknown",
+        finalScore: roundRatio(result.finalScore),
+        baseScore: roundRatio(result.baseScore),
+        tileScore: roundRatio(result.tileScore),
+        cardScore: roundRatio(result.cardScore),
+        completedTaskCount: numeric(result.completedTaskCount),
+        techCount: numeric(result.techCount),
+        finalMarkCount: result.finalMarkCount == null ? null : numeric(result.finalMarkCount),
+        resources: {
+          credits: roundRatio(credits),
+          energy: roundRatio(resources.energy),
+          publicity: roundRatio(resources.publicity),
+          handSize: roundRatio(handSize),
+          availableData: roundRatio(resources.availableData),
+        },
+        maxCardsForCreditTrades,
+        maxCreditsAfterCardsForCredit: roundRatio(maxCreditsAfterCardsForCredit),
+        cards: cards.slice(0, 6),
+      });
+    }
+    return samples
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(right.cards?.[0]?.readyTaskRewardValue) - numeric(left.cards?.[0]?.readyTaskRewardValue)
+      ))
+      .slice(0, 12);
+  }
+
+  function getPlayerResultForProfile(profile = {}, resultById = new Map(), resultByLabel = new Map()) {
+    const playerId = profile.playerId == null ? null : String(profile.playerId);
+    const playerLabel = profile.playerLabel == null ? null : String(profile.playerLabel);
+    return (playerId && resultById.get(playerId))
+      || (playerLabel && resultByLabel.get(playerLabel))
+      || null;
+  }
+
+  function averageProfilesByMetric(profiles = [], metric) {
+    const rows = (profiles || []).filter(Boolean);
+    if (!rows.length) return 0;
+    return roundRatio(rows.reduce((total, profile) => total + getProfileMetric(profile, metric), 0) / rows.length);
+  }
+
+  function buildHighScoreReferenceMetrics(referenceProfiles = []) {
+    const reference = {};
+    for (const metric of HIGH_SCORE_NEAR_MISS_REFERENCE_METRICS) {
+      reference[metric] = averageProfilesByMetric(referenceProfiles, metric);
+    }
+    return reference;
+  }
+
+  function buildHighScoreNearMissCounts(profile = {}) {
+    return {
+      mainAction: roundRatio(getProfileMetric(profile, "mainActionCount")),
+      quickStep: roundRatio(getProfileMetric(profile, "quickStepCount")),
+      resourceQuickStep: roundRatio(getProfileMetric(profile, "resourceQuickStepCount")),
+      playCard: roundRatio(getProfileMetric(profile, "playCardCount")),
+      researchTech: roundRatio(getProfileMetric(profile, "researchTechCount")),
+      scan: roundRatio(getProfileMetric(profile, "scanCount")),
+      analyze: roundRatio(getProfileMetric(profile, "analyzeCount")),
+      placeData: roundRatio(getProfileMetric(profile, "placeDataCount")),
+      techCount: roundRatio(getProfileMetric(profile, "techCount")),
+      completedTask: roundRatio(getProfileMetric(profile, "completedTaskCount")),
+    };
+  }
+
+  function buildHighScoreNearMissReferenceGaps(profile = {}, reference = {}) {
+    return {
+      baseScore: roundRatio(Math.max(0, numeric(reference.baseScore) - getProfileMetric(profile, "baseScore"))),
+      tileScore: roundRatio(Math.max(0, numeric(reference.tileScore) - getProfileMetric(profile, "tileScore"))),
+      cardScore: roundRatio(Math.max(0, numeric(reference.cardScore) - getProfileMetric(profile, "cardScore"))),
+      mainAction: roundRatio(Math.max(0, numeric(reference.mainActionCount) - getProfileMetric(profile, "mainActionCount"))),
+      quickStep: roundRatio(Math.max(0, numeric(reference.quickStepCount) - getProfileMetric(profile, "quickStepCount"))),
+      resourceQuickStep: roundRatio(Math.max(0, numeric(reference.resourceQuickStepCount) - getProfileMetric(profile, "resourceQuickStepCount"))),
+      playCard: roundRatio(Math.max(0, numeric(reference.playCardCount) - getProfileMetric(profile, "playCardCount"))),
+      researchTech: roundRatio(Math.max(0, numeric(reference.researchTechCount) - getProfileMetric(profile, "researchTechCount"))),
+      scan: roundRatio(Math.max(0, numeric(reference.scanCount) - getProfileMetric(profile, "scanCount"))),
+      analyze: roundRatio(Math.max(0, numeric(reference.analyzeCount) - getProfileMetric(profile, "analyzeCount"))),
+      placeData: roundRatio(Math.max(0, numeric(reference.placeDataCount) - getProfileMetric(profile, "placeDataCount"))),
+      techCount: roundRatio(Math.max(0, numeric(reference.techCount) - getProfileMetric(profile, "techCount"))),
+      completedTask: roundRatio(Math.max(0, numeric(reference.completedTaskCount) - getProfileMetric(profile, "completedTaskCount"))),
+    };
+  }
+
+  function getHighScoreNearMissGapScore(referenceGaps = {}) {
+    return roundRatio(
+      numeric(referenceGaps.cardScore) * 1.2
+      + numeric(referenceGaps.completedTask) * 4
+      + numeric(referenceGaps.techCount) * 2
+      + numeric(referenceGaps.playCard) * 2
+      + numeric(referenceGaps.researchTech) * 1.5
+      + numeric(referenceGaps.scan) * 1.5
+      + numeric(referenceGaps.analyze) * 2
+      + numeric(referenceGaps.resourceQuickStep) * 0.35
+      + numeric(referenceGaps.mainAction) * 1.5,
+    );
+  }
+
+  function buildHighScoreNearMissReasons(sample = {}, referenceGaps = {}) {
+    const reasons = [];
+    if (numeric(sample.scoreTo300) <= 10) reasons.push("near-300");
+    const b2 = sample.b2Progress || {};
+    const b2Bottleneck = String(b2.bottleneck || "");
+    const sectorDeficit = Math.max(0, numeric(b2.sectorWinDeficit ?? b2.sectorWinsDeficit));
+    const orbitLandDeficit = Math.max(0, numeric(b2.orbitLandDeficit));
+    if (sectorDeficit > 0 && (sectorDeficit >= 2 || b2Bottleneck.includes("sector"))) reasons.push("b2-sector");
+    if (orbitLandDeficit > 0 && (orbitLandDeficit >= 2 || b2Bottleneck.includes("orbit"))) reasons.push("b2-orbit-land");
+    if (sample.finalMarkCount != null && numeric(sample.finalMarkCount) < 3) reasons.push("missing-final-mark");
+    if (numeric(referenceGaps.cardScore) >= 8) reasons.push("card-score-gap");
+    if (numeric(referenceGaps.playCard) >= 2) reasons.push("play-card-gap");
+    if (numeric(referenceGaps.techCount) >= 2 || numeric(referenceGaps.researchTech) >= 1.5) reasons.push("tech-gap");
+    if (numeric(referenceGaps.scan) >= 2) reasons.push("scan-gap");
+    if (numeric(referenceGaps.analyze) >= 1.5) reasons.push("analyze-gap");
+    if (numeric(referenceGaps.resourceQuickStep) >= 8 || numeric(referenceGaps.mainAction) >= 4) reasons.push("throughput-gap");
+    if ((sample.cards || []).length) reasons.push("unplayed-scoring-card");
+    return reasons;
+  }
+
+  function buildDTechNearMissPlan(result = {}, profile = {}) {
+    const entries = Array.isArray(result.finalFormulaProgress?.entries)
+      ? result.finalFormulaProgress.entries
+      : [];
+    const dEntries = entries.filter((entry) => entry?.formulaId === "d1" || entry?.formulaId === "d2");
+    if (!dEntries.length) return null;
+    const techCount = Math.max(0, Math.round(numeric(result.techCount ?? profile.techCount)));
+    const d2Entries = dEntries.filter((entry) => entry.formulaId === "d2");
+    const d2Multiplier = d2Entries.reduce((total, entry) => total + Math.max(0, numeric(entry.multiplier)), 0);
+    const currentD2Base = Math.floor(techCount / 2);
+    const nextTechD2Base = Math.floor((techCount + 1) / 2);
+    const nextTwoTechD2Base = Math.floor((techCount + 2) / 2);
+    return {
+      techCount: roundRatio(techCount),
+      formulas: dEntries.map((entry) => ({
+        formulaId: entry.formulaId || null,
+        multiplier: roundRatio(entry.multiplier),
+        baseValue: roundRatio(entry.baseValue),
+        score: roundRatio(entry.score),
+      })),
+      hasD2: d2Entries.length > 0,
+      d2Multiplier: roundRatio(d2Multiplier),
+      d2CurrentBase: roundRatio(currentD2Base),
+      d2NextTechScore: roundRatio(Math.max(0, nextTechD2Base - currentD2Base) * d2Multiplier),
+      d2NextTwoTechScore: roundRatio(Math.max(0, nextTwoTechD2Base - currentD2Base) * d2Multiplier),
+      techsToNextD2Step: d2Entries.length ? (techCount % 2 === 0 ? 2 : 1) : null,
+    };
+  }
+
+  function buildRecentHighScoreTurnTail(logs = [], result = {}, limit = 8) {
+    const turnActionLogs = (logs || []).filter((entry) => (
+      entry?.type === "turn-action"
+      && matchesPlayerResult(entry, result)
+    ));
+    return turnActionLogs
+      .slice(-Math.max(0, Math.round(numeric(limit) || 0)))
+      .map((entry) => {
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        const availableCandidates = candidates
+          .filter(isCandidateAvailable)
+          .sort((left, right) => (
+            numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+            || getCandidateId(left).localeCompare(getCandidateId(right))
+          ));
+        const availableMain = availableCandidates
+          .filter((candidate) => candidate.kind === "main");
+        const researchTechCandidate = candidates.find((candidate) => getCandidateId(candidate) === "researchTech");
+        const playCardCandidate = candidates.find((candidate) => getCandidateId(candidate) === "playCard");
+        return {
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+          bestMain: availableMain[0] ? summarizeOpportunityCandidate(availableMain[0]) : null,
+          researchTech: researchTechCandidate ? summarizeOpportunityCandidate(researchTechCandidate) : null,
+          playCard: playCardCandidate ? summarizeOpportunityCandidate(playCardCandidate) : null,
+          topCandidates: availableCandidates.slice(0, 4).map(summarizeOpportunityCandidate),
+        };
+      });
+  }
+
+  function buildDTechSetupWindowTail(logs = [], result = {}, limit = 16) {
+    const formulas = new Set((result.finalFormulas || []).map((formulaId) => String(formulaId || "")));
+    const entries = Array.isArray(result.finalFormulaProgress?.entries)
+      ? result.finalFormulaProgress.entries
+      : [];
+    const hasDTechPlan = formulas.has("d1")
+      || formulas.has("d2")
+      || entries.some((entry) => entry?.formulaId === "d1" || entry?.formulaId === "d2");
+    if (!hasDTechPlan) return [];
+
+    const normalizedLimit = Math.max(0, Math.round(numeric(limit) || 0));
+    if (!normalizedLimit) return [];
+
+    return (logs || [])
+      .filter((entry) => {
+        if (entry?.type !== "turn-action" || !matchesPlayerResult(entry, result)) return false;
+        if (numeric(entry.roundNumber) < 3) return false;
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        const selected = getSelectedAction(entry) || {};
+        const selectedId = getCandidateId(selected);
+        const researchTechCandidate = candidates.find((candidate) => getCandidateId(candidate) === "researchTech");
+        if (selectedId === "researchTech") return true;
+        if (!researchTechCandidate) return false;
+        const resources = entry.playerResources || {};
+        const reason = String(researchTechCandidate.reason || researchTechCandidate.message || "");
+        return (
+          reason.includes("宣传")
+          || numeric(resources.publicity) >= 3
+          || numeric(getCandidatePolicyScore(researchTechCandidate)) > 0
+        );
+      })
+      .slice(-normalizedLimit)
+      .map((entry) => {
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        const availableCandidates = candidates
+          .filter(isCandidateAvailable)
+          .sort((left, right) => (
+            numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+            || getCandidateId(left).localeCompare(getCandidateId(right))
+          ));
+        const researchTechCandidate = candidates.find((candidate) => getCandidateId(candidate) === "researchTech");
+        const bestMain = availableCandidates.find((candidate) => candidate.kind === "main") || null;
+        const bestQuick = availableCandidates.find((candidate) => candidate.kind === "quick") || null;
+        const bestSetupQuick = availableCandidates.find((candidate) => (
+          candidate.kind === "quick"
+          && ["cardCorner", "quickTrade", "move", "placeData"].includes(getCandidateId(candidate))
+        )) || null;
+        return {
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+          researchTech: researchTechCandidate ? summarizeOpportunityCandidate(researchTechCandidate) : null,
+          bestMain: bestMain ? summarizeOpportunityCandidate(bestMain) : null,
+          bestQuick: bestQuick ? summarizeOpportunityCandidate(bestQuick) : null,
+          bestSetupQuick: bestSetupQuick ? summarizeOpportunityCandidate(bestSetupQuick) : null,
+          topCandidates: availableCandidates.slice(0, 5).map(summarizeOpportunityCandidate),
+        };
+      });
+  }
+
+  function getD1FormulaEntries(result = {}) {
+    const entries = Array.isArray(result.finalFormulaProgress?.entries)
+      ? result.finalFormulaProgress.entries
+      : [];
+    return entries.filter((entry) => entry?.formulaId === "d1");
+  }
+
+  function getProfileForResult(result = {}, profileById = new Map(), profileByLabel = new Map()) {
+    const playerId = result.playerId == null ? null : String(result.playerId);
+    const playerLabel = result.playerLabel == null ? null : String(result.playerLabel);
+    return (playerId && profileById.get(playerId))
+      || (playerLabel && profileByLabel.get(playerLabel))
+      || null;
+  }
+
+  function buildLogTechTypeCounts(logs = [], result = {}) {
+    const counts = normalizeTechTypeCounts();
+    for (const entry of logs || []) {
+      if (entry?.type !== "tech-placement" || !matchesPlayerResult(entry, result)) continue;
+      const selected = entry.details?.selected || null;
+      if (!selected?.tileId && Array.isArray(entry.details?.availableSlots)) continue;
+      const tileId = selected?.tileId || entry.details?.tileId || null;
+      const techType = selected?.techType || entry.details?.techType || getTechTypeFromTile(tileId);
+      if (D1_TECH_TYPES.includes(techType)) counts[techType] += 1;
+    }
+    return counts;
+  }
+
+  function getD1TechTypeCounts(logs = [], result = {}, profile = null) {
+    const profileCounts = normalizeTechTypeCounts(profile?.techTypeCounts || {});
+    if (getTechTypeCountsTotal(profileCounts) > 0) return profileCounts;
+    const logCounts = buildLogTechTypeCounts(logs, result);
+    if (getTechTypeCountsTotal(logCounts) > 0) return logCounts;
+    return normalizeTechTypeCounts(result.techTypeCounts || {});
+  }
+
+  function summarizeD1FormulaEntries(entries = []) {
+    return (entries || []).map((entry) => ({
+      tileId: entry.tileId || null,
+      slotIndex: entry.slotIndex ?? null,
+      multiplier: roundRatio(entry.multiplier),
+      baseValue: roundRatio(entry.baseValue),
+      score: roundRatio(entry.score),
+    }));
+  }
+
+  function summarizeD1TechCardOption(card = {}, zone = "hand") {
+    if (!card) return null;
+    const effectTypes = Array.isArray(card.effectTypes) ? card.effectTypes.filter(Boolean) : [];
+    const hasResearchTechEffect = effectTypes.includes("card_research_tech");
+    const endGameScoring = Boolean(card.endGameScoring);
+    const taskCount = Math.max(0, Math.round(numeric(card.taskCount)));
+    const remainingTaskCount = Number.isFinite(Number(card.remainingTaskCount))
+      ? Math.max(0, Math.round(Number(card.remainingTaskCount)))
+      : taskCount;
+    if (!hasResearchTechEffect && !endGameScoring && !taskCount) return null;
+    return {
+      zone,
+      cardId: card.cardId || card.id || null,
+      cardInstanceId: card.id || null,
+      label: card.label || card.cardName || card.cardLabel || null,
+      price: roundRatio(card.price),
+      typeCode: card.typeCode ?? card.cardTypeCode ?? null,
+      taskCount,
+      remainingTaskCount,
+      endGameScoring,
+      effectTypes,
+      discardActionCode: card.discardActionCode ?? null,
+      scanActionCode: card.scanActionCode ?? null,
+      incomeCode: card.incomeCode ?? null,
+      researchTechEffect: hasResearchTechEffect,
+    };
+  }
+
+  function buildD1TechCardOptions(result = {}) {
+    return [
+      ...(result.handCards || []).map((card) => summarizeD1TechCardOption(card, "hand")),
+      ...(result.reservedCards || []).map((card) => summarizeD1TechCardOption(card, "reserved")),
+    ].filter((card) => card && (card.researchTechEffect || card.endGameScoring || numeric(card.remainingTaskCount) > 0));
+  }
+
+  function summarizeD1TechPlan(plan = null) {
+    if (!plan) return null;
+    return {
+      type: plan.type || null,
+      mainActionId: plan.mainActionId || null,
+      actionId: plan.actionId || plan.quickActionId || null,
+      label: plan.label || null,
+      score: roundRatio(plan.score),
+      tileId: plan.tileId || null,
+      techType: plan.techType || null,
+    };
+  }
+
+  function summarizeD1TechTileCandidate(candidate = {}) {
+    if (!candidate) return null;
+    const tileId = candidate.tileId || null;
+    const techType = candidate.techType || getTechTypeFromTile(tileId);
+    if (!D1_TECH_TYPES.includes(techType)) return null;
+    return {
+      tileId,
+      techType,
+      bonusId: candidate.bonusId || null,
+      available: candidate.available !== false,
+      score: roundRatio(candidate.score),
+      directScoreGain: roundRatio(candidate.directScoreGain),
+      finalFormulaDeltas: candidate.finalFormulaDeltas || null,
+      plan: summarizeD1TechPlan(candidate.plan),
+    };
+  }
+
+  function sortD1TechTileCandidates(candidates = []) {
+    return (candidates || [])
+      .map(summarizeD1TechTileCandidate)
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(right.score) - numeric(left.score)
+        || String(left.tileId || "").localeCompare(String(right.tileId || ""))
+      ));
+  }
+
+  function buildD1BestTechCandidateByType(candidates = []) {
+    const bestByType = {};
+    for (const type of D1_TECH_TYPES) {
+      bestByType[type] = (candidates || []).find((candidate) => candidate.techType === type) || null;
+    }
+    return bestByType;
+  }
+
+  function summarizeD1ResearchTechActionCandidate(candidate = null) {
+    if (!candidate) return null;
+    const topTechCandidates = sortD1TechTileCandidates(candidate.takeable || []);
+    const summary = summarizeOpportunityCandidate(candidate);
+    const bestTechType = candidate.techType
+      || candidate.valueBreakdown?.bestTechType
+      || topTechCandidates[0]?.techType
+      || null;
+    return {
+      ...summary,
+      available: candidate.available !== false,
+      techType: bestTechType,
+      bestTechTileId: candidate.valueBreakdown?.bestTechTileId || topTechCandidates[0]?.tileId || null,
+      bestTechType,
+      finalFormulaDeltas: candidate.finalFormulaDeltas || null,
+      topTechCandidates: topTechCandidates.slice(0, 6),
+      bestByType: buildD1BestTechCandidateByType(topTechCandidates),
+    };
+  }
+
+  function buildD1ResearchTechChoices(logs = [], result = {}, missingTechTypes = [], limit = 8) {
+    const missingSet = new Set(missingTechTypes || []);
+    return (logs || [])
+      .filter((entry) => entry?.type === "tech-placement" && matchesPlayerResult(entry, result))
+      .map((entry) => {
+        const candidates = sortD1TechTileCandidates(entry.details?.candidates || []);
+        const selected = summarizeD1TechTileCandidate(entry.details?.selected || {});
+        const bestByType = buildD1BestTechCandidateByType(candidates);
+        const missingTypeCandidates = D1_TECH_TYPES
+          .filter((type) => missingSet.has(type))
+          .map((type) => bestByType[type])
+          .filter(Boolean);
+        const bestMissingScore = missingTypeCandidates.reduce((best, candidate) => Math.max(best, numeric(candidate.score)), -Infinity);
+        return {
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          selected,
+          bestCandidate: candidates[0] || null,
+          bestByType,
+          missingTypeCandidates,
+          selectedVsBestMissingGap: Number.isFinite(bestMissingScore)
+            ? roundRatio(numeric(selected?.score) - bestMissingScore)
+            : null,
+        };
+      })
+      .filter((entry) => entry.selected || entry.bestCandidate)
+      .slice(-Math.max(0, Math.round(numeric(limit) || 0)));
+  }
+
+  function buildD1ResearchTechWindows(logs = [], result = {}, missingTechTypes = [], limit = 8) {
+    const missingSet = new Set(missingTechTypes || []);
+    return (logs || [])
+      .filter((entry) => {
+        if (entry?.type !== "turn-action" || !matchesPlayerResult(entry, result)) return false;
+        if (numeric(entry.roundNumber) < 3) return false;
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        return getSelectedActionId(entry) === "researchTech"
+          || candidates.some((candidate) => getCandidateId(candidate) === "researchTech");
+      })
+      .map((entry) => {
+        const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+        const availableCandidates = sortByCandidatePolicy(candidates.filter(isCandidateAvailable));
+        const researchTechCandidate = candidates.find((candidate) => getCandidateId(candidate) === "researchTech") || null;
+        const researchTech = summarizeD1ResearchTechActionCandidate(researchTechCandidate);
+        const bestMain = availableCandidates.find((candidate) => candidate.kind === "main") || null;
+        const missingTypeCandidates = D1_TECH_TYPES
+          .filter((type) => missingSet.has(type))
+          .map((type) => researchTech?.bestByType?.[type])
+          .filter(Boolean);
+        return {
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+          researchTech,
+          missingTypeCandidates,
+          bestMain: bestMain ? summarizeOpportunityCandidate(bestMain) : null,
+          topCandidates: availableCandidates.slice(0, 5).map(summarizeOpportunityCandidate),
+        };
+      })
+      .slice(-Math.max(0, Math.round(numeric(limit) || 0)));
+  }
+
+  function buildD1TechBalanceReasons(sample = {}) {
+    const reasons = [];
+    if (numeric(sample.minTechTypeCount) <= 1) reasons.push("low-d1-base");
+    if ((sample.missingTechTypesForNextD1 || []).length > 1) reasons.push("multi-color-shortfall");
+    if (numeric(sample.finalScore) <= 230) reasons.push("low-final-score");
+    if (numeric(sample.techCount) <= 7) reasons.push("low-tech-count");
+    if ((sample.techCardOptions || []).some((card) => card.researchTechEffect)) reasons.push("has-tech-card-option");
+    if (!(sample.techCardOptions || []).some((card) => card.researchTechEffect)) reasons.push("no-tech-card-option");
+    if ((sample.researchTechWindows || []).some((window) => window.researchTech && window.researchTech.available === false)) {
+      reasons.push("late-tech-resource-lock");
+    }
+    return reasons;
+  }
+
+  function sortD1TechBalanceBottleneckSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.minTechTypeCount) - numeric(right.minTechTypeCount)
+        || numeric(right.techsToNextD1Step) - numeric(left.techsToNextD1Step)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""))
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildD1TechBalanceBottleneckSamples(logs = [], playerResults = [], playerProfiles = [], options = {}) {
+    const profileById = new Map((playerProfiles || [])
+      .filter((profile) => profile?.playerId != null)
+      .map((profile) => [String(profile.playerId), profile]));
+    const profileByLabel = new Map((playerProfiles || [])
+      .filter((profile) => profile?.playerLabel != null)
+      .map((profile) => [String(profile.playerLabel), profile]));
+
+    const samples = getLowPlayerResults(playerResults, options)
+      .map((result) => {
+        const d1Entries = getD1FormulaEntries(result);
+        if (!d1Entries.length) return null;
+        const profile = getProfileForResult(result, profileById, profileByLabel);
+        const techTypeCounts = getD1TechTypeCounts(logs, result, profile);
+        const counts = D1_TECH_TYPES.map((type) => numeric(techTypeCounts[type]));
+        const minTechTypeCount = Math.min(...counts);
+        const maxTechTypeCount = Math.max(...counts);
+        const d1BaseValue = Math.min(...d1Entries.map((entry) => numeric(entry.baseValue)));
+        const weakD1 = d1BaseValue <= 1
+          || minTechTypeCount <= 1
+          || maxTechTypeCount - minTechTypeCount >= 2;
+        const lowScoreContext = numeric(result.finalScore) <= 240
+          || (result.finalMarkCount != null && numeric(result.finalMarkCount) < 3)
+          || numeric(result.baseScore) < 160;
+        if (!weakD1 && !lowScoreContext) return null;
+
+        const missingTechTypesForNextD1 = D1_TECH_TYPES.filter((type) => numeric(techTypeCounts[type]) === minTechTypeCount);
+        const d1MultiplierTotal = d1Entries.reduce((total, entry) => total + Math.max(0, numeric(entry.multiplier)), 0);
+        const techCardOptions = buildD1TechCardOptions(result).slice(0, 10);
+        const sample = {
+          playerId: result.playerId || null,
+          playerLabel: result.playerLabel || result.playerId || "unknown",
+          finalScore: roundRatio(result.finalScore),
+          baseScore: roundRatio(result.baseScore),
+          tileScore: roundRatio(result.tileScore),
+          cardScore: roundRatio(result.cardScore),
+          finalMarkCount: result.finalMarkCount == null ? null : roundRatio(result.finalMarkCount),
+          techCount: roundRatio(Math.max(numeric(result.techCount), getTechTypeCountsTotal(techTypeCounts))),
+          completedTaskCount: roundRatio(result.completedTaskCount),
+          resources: result.resources || null,
+          d1: {
+            entries: summarizeD1FormulaEntries(d1Entries),
+            multiplierTotal: roundRatio(d1MultiplierTotal),
+            baseValue: roundRatio(d1BaseValue),
+            score: roundRatio(d1Entries.reduce((total, entry) => total + numeric(entry.score), 0)),
+          },
+          techTypeCounts,
+          minTechTypeCount: roundRatio(minTechTypeCount),
+          maxTechTypeCount: roundRatio(maxTechTypeCount),
+          missingTechTypesForNextD1,
+          techsToNextD1Step: missingTechTypesForNextD1.length,
+          nextD1StepScore: roundRatio(d1MultiplierTotal),
+          techCardOptions,
+          researchTechChoices: buildD1ResearchTechChoices(logs, result, missingTechTypesForNextD1, 8),
+          researchTechWindows: buildD1ResearchTechWindows(logs, result, missingTechTypesForNextD1, 8),
+        };
+        sample.reasons = buildD1TechBalanceReasons(sample);
+        return sample;
+      })
+      .filter(Boolean);
+
+    return sortD1TechBalanceBottleneckSamples(samples, options.d1TechBalanceBottleneckLimit ?? 12);
+  }
+
+  function sortHighScoreNearMissSamples(samples = [], limit = 12) {
+    const normalizedLimit = Math.max(0, Math.round(limit == null ? 12 : numeric(limit)));
+    if (!normalizedLimit) return [];
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(left.scoreTo300) - numeric(right.scoreTo300)
+        || numeric(right.referenceGapScore) - numeric(left.referenceGapScore)
+        || numeric(right.finalScore) - numeric(left.finalScore)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""))
+      ))
+      .slice(0, normalizedLimit);
+  }
+
+  function buildHighScoreNearMissSamples(playerProfiles = [], playerResults = [], options = {}, logs = []) {
+    const profiles = (playerProfiles || []).filter(Boolean);
+    if (!profiles.length) return [];
+
+    const limit = Math.max(0, Math.round(options.highScoreNearMissLimit == null ? 12 : numeric(options.highScoreNearMissLimit)));
+    if (!limit) return [];
+
+    const scoreSorted = [...profiles]
+      .sort((left, right) => numeric(right.finalScore) - numeric(left.finalScore) || left.playerLabel.localeCompare(right.playerLabel));
+    const highProfiles = scoreSorted.filter((profile) => numeric(profile.finalScore) >= HIGH_SCORE_NEAR_MISS_TARGET);
+    const referenceProfiles = highProfiles.length
+      ? highProfiles
+      : scoreSorted.slice(0, Math.max(1, Math.ceil(scoreSorted.length * 0.25)));
+    const reference = buildHighScoreReferenceMetrics(referenceProfiles);
+    const resultById = new Map((playerResults || [])
+      .filter((result) => result?.playerId != null)
+      .map((result) => [String(result.playerId), result]));
+    const resultByLabel = new Map((playerResults || [])
+      .filter((result) => result?.playerLabel != null)
+      .map((result) => [String(result.playerLabel), result]));
+
+    const samples = scoreSorted
+      .filter((profile) => {
+        const score = numeric(profile.finalScore);
+        return score >= HIGH_SCORE_NEAR_MISS_MIN && score < HIGH_SCORE_NEAR_MISS_TARGET;
+      })
+      .map((profile) => {
+        const result = getPlayerResultForProfile(profile, resultById, resultByLabel) || {};
+        const cards = [
+          ...(result.handCards || []).map((card) => summarizeUnplayedCard(card, "hand")),
+          ...(result.reservedCards || []).map((card) => summarizeUnplayedCard(card, "reserved")),
+        ].filter(Boolean).slice(0, 8);
+        const referenceGaps = buildHighScoreNearMissReferenceGaps(profile, reference);
+        const sample = {
+          playerId: profile.playerId || null,
+          playerLabel: profile.playerLabel || profile.playerId || "unknown",
+          finalScore: roundRatio(profile.finalScore),
+          scoreTo300: roundRatio(HIGH_SCORE_NEAR_MISS_TARGET - numeric(profile.finalScore)),
+          baseScore: roundRatio(profile.baseScore),
+          tileScore: roundRatio(profile.tileScore),
+          cardScore: roundRatio(profile.cardScore),
+          finalMarkCount: result.finalMarkCount == null
+            ? (profile.metrics?.finalScoreMarkCount == null ? null : roundRatio(profile.metrics.finalScoreMarkCount))
+            : roundRatio(result.finalMarkCount),
+          finalFormulas: result.finalFormulas || [],
+          finalFormulaProgress: result.finalFormulaProgress || null,
+          b2Progress: result.b2Progress || null,
+          resources: result.resources || null,
+          handSize: numeric(result.handSize ?? profile.handSize),
+          reservedCount: numeric(result.reservedCount ?? profile.reservedCount),
+          techCount: roundRatio(profile.techCount),
+          completedTaskCount: roundRatio(profile.completedTaskCount),
+          counts: buildHighScoreNearMissCounts(profile),
+          reference,
+          referenceGaps,
+          referenceGapScore: getHighScoreNearMissGapScore(referenceGaps),
+          cards,
+          dTechPlan: buildDTechNearMissPlan(result, profile),
+          recentTurnTail: buildRecentHighScoreTurnTail(logs, result, 8),
+          dTechSetupWindows: buildDTechSetupWindowTail(logs, result, 16),
+        };
+        sample.reasons = buildHighScoreNearMissReasons(sample, referenceGaps);
+        return sample;
+      });
+
+    return sortHighScoreNearMissSamples(samples, limit);
+  }
+
   function finalizePlayerProfile(profile) {
     for (const [category, count] of Object.entries(profile.actionCategoryCounts || {})) {
       profile.actionCategoryRatios[category] = profile.turnActionCount
@@ -765,10 +4831,31 @@
     profile.metrics.engineRatio = profile.actionCategoryRatios.engine || 0;
     profile.metrics.quickRatio = profile.actionCategoryRatios.quick || 0;
     profile.metrics.passRatio = profile.actionCategoryRatios.pass || 0;
+    profile.metrics.mainActionCount = numeric(profile.paceCounts.main);
+    profile.metrics.quickStepCount = numeric(profile.paceCounts.quick);
+    profile.metrics.idleTurnCount = numeric(profile.paceCounts.idle);
+    profile.metrics.otherTurnActionCount = numeric(profile.paceCounts.other);
+    profile.metrics.productiveActionCount = profile.metrics.mainActionCount + profile.metrics.quickStepCount;
+    profile.metrics.quickToMainRatio = profile.metrics.mainActionCount
+      ? roundRatio(profile.metrics.quickStepCount / profile.metrics.mainActionCount)
+      : 0;
+    profile.metrics.productiveActionRatio = profile.turnActionCount
+      ? roundRatio(profile.metrics.productiveActionCount / profile.turnActionCount)
+      : 0;
+    profile.metrics.idleTurnRatio = profile.turnActionCount
+      ? roundRatio(profile.metrics.idleTurnCount / profile.turnActionCount)
+      : 0;
     profile.metrics.scanCount = numeric(profile.actionCounts.scan);
+    profile.metrics.analyzeCount = numeric(profile.actionCounts.analyze);
     profile.metrics.playCardCount = numeric(profile.actionCounts.playCard);
     profile.metrics.researchTechCount = numeric(profile.actionCounts.researchTech);
     profile.metrics.moveCount = numeric(profile.actionCounts.move);
+    profile.metrics.placeDataCount = numeric(profile.actionCounts.placeData);
+    profile.metrics.cardCornerCount = numeric(profile.actionCounts.cardCorner);
+    profile.metrics.quickTradeCount = numeric(profile.actionCounts.quickTrade);
+    profile.metrics.resourceQuickStepCount = profile.metrics.placeDataCount
+      + profile.metrics.cardCornerCount
+      + profile.metrics.quickTradeCount;
     profile.metrics.orbitLandCount = numeric(profile.actionCounts.orbit) + numeric(profile.actionCounts.land);
     profile.metrics.passCount = numeric(profile.actionCounts.pass);
     profile.metrics.routeTargetCount = Object.values(profile.routeTargetCounts || {})
@@ -777,6 +4864,10 @@
       .reduce((total, count) => total + numeric(count), 0);
     profile.metrics.turnPlanCount = Object.values(profile.turnPlanCounts || {})
       .reduce((total, count) => total + numeric(count), 0);
+    profile.roundPace = Object.values(profile.roundPaceCounts || {})
+      .map(summarizeRoundPaceBucket)
+      .sort((left, right) => numeric(left.roundNumber) - numeric(right.roundNumber));
+    delete profile.roundPaceCounts;
     return profile;
   }
 
@@ -791,9 +4882,12 @@
       const profile = ensurePlayerProfile(profiles, entry.playerId, entry.playerLabel);
       if (entry.type === "turn-action") {
         const actionId = getSelectedActionId(entry);
+        const action = getSelectedAction(entry);
         const category = getActionCategory(actionId);
         increment(profile.actionCounts, actionId);
         increment(profile.actionCategoryCounts, category);
+        increment(profile.paceCounts, getActionPaceCategory(actionId, action));
+        recordRoundPace(profile, entry, actionId, action);
         profile.turnActionCount += 1;
         const routeTargetKey = getRouteTargetKey(getRouteTargetFromEntry(entry));
         if (routeTargetKey) increment(profile.routeTargetCounts, routeTargetKey);
@@ -801,7 +4895,9 @@
         if (followupKey) increment(profile.moveFollowupCounts, followupKey);
         recordProfileTurnPlan(profile, entry);
       } else if (entry.type === "tech-placement") {
-        const tileId = entry.details?.tileId || entry.details?.selected?.tileId || "unknown";
+        const selected = entry.details?.selected || null;
+        if (!selected?.tileId && Array.isArray(entry.details?.availableSlots)) continue;
+        const tileId = selected?.tileId || entry.details?.tileId || "unknown";
         const techType = getTechTypeFromTile(tileId);
         increment(profile.techTypeCounts, techType || "unknown");
         addProfileMetric(profile, "techPlacementCount", 1);
@@ -839,11 +4935,24 @@
     "completedTaskCount",
     "techCount",
     "rocketCount",
+    "mainActionCount",
+    "quickStepCount",
+    "resourceQuickStepCount",
+    "productiveActionCount",
+    "idleTurnCount",
+    "otherTurnActionCount",
+    "quickToMainRatio",
+    "productiveActionRatio",
+    "idleTurnRatio",
+    "placeDataCount",
+    "cardCornerCount",
+    "quickTradeCount",
     "basicMainRatio",
     "engineRatio",
     "quickRatio",
     "passRatio",
     "scanCount",
+    "analyzeCount",
     "playCardCount",
     "researchTechCount",
     "moveCount",
@@ -1429,10 +5538,369 @@
         completedTaskCount: numeric(player.completedTaskCount),
         reservedCount: numeric(player.reservedCount),
         handSize: numeric(player.handSize ?? player.resources?.handSize),
+        handCards: Array.isArray(player.handCards) ? player.handCards : [],
+        reservedCards: Array.isArray(player.reservedCards) ? player.reservedCards : [],
         techCount: numeric(player.techCount),
+        techTypeCounts: normalizeTechTypeCounts(player.techTypeCounts || {}),
         rocketCount: numeric(player.rocketCount),
+        finalMarkCount: player.finalMarkCount != null && Number.isFinite(Number(player.finalMarkCount))
+          ? numeric(player.finalMarkCount)
+          : null,
+        finalFormulas: Array.isArray(player.finalFormulas) ? player.finalFormulas : [],
+        finalFormulaProgress: player.finalFormulaProgress || null,
+        b2Progress: player.b2Progress || null,
       }))
       .sort((left, right) => right.finalScore - left.finalScore || left.playerLabel.localeCompare(right.playerLabel));
+  }
+
+  function normalizeInitialNumbers(numbers = []) {
+    return (numbers || [])
+      .map((number) => Number(number))
+      .filter((number) => Number.isFinite(number))
+      .sort((left, right) => left - right);
+  }
+
+  function getInitialNumbersKey(numbers = []) {
+    return normalizeInitialNumbers(numbers).join(",");
+  }
+
+  function getOpeningLogInitialNumbers(entry = {}) {
+    return (entry.details?.initialCards || [])
+      .map((card) => {
+        const idMatch = String(card?.id || "").match(/initial:(\d+)/);
+        if (idMatch) return Number(idMatch[1]);
+        const labelMatch = String(card?.label || "").match(/(\d+)/);
+        return labelMatch ? Number(labelMatch[1]) : null;
+      })
+      .filter((number) => Number.isFinite(number));
+  }
+
+  function summarizeOpeningPlan(plan = {}, selectedScore = 0) {
+    const score = roundRatio(plan.score);
+    return {
+      score,
+      scoreGap: roundRatio(numeric(selectedScore) - score),
+      industryLabel: plan.industryLabel || null,
+      initialNumbers: normalizeInitialNumbers(plan.initialNumbers || []),
+      summary: plan.summary || null,
+      goals: plan.goals || null,
+    };
+  }
+
+  function sortOpeningPlanNearMissSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.bestAlternativeGap) - numeric(right.bestAlternativeGap)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""), "zh-Hans-CN")
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildOpeningPlanNearMissSamples(logs = [], playerResults = [], limit = 12) {
+    const resultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const samples = (logs || [])
+      .filter((entry) => entry?.type === "initial-selection")
+      .map((entry) => {
+        const openingPlan = entry.details?.openingPlan || {};
+        const topPlans = Array.isArray(openingPlan.topPlans) ? openingPlan.topPlans : [];
+        if (topPlans.length < 2) return null;
+        const selectedNumbers = getOpeningLogInitialNumbers(entry);
+        const selectedKey = getInitialNumbersKey(selectedNumbers);
+        const selectedScore = numeric(openingPlan.score ?? topPlans[0]?.score);
+        const alternatives = topPlans
+          .filter((plan) => getInitialNumbersKey(plan.initialNumbers || []) !== selectedKey)
+          .slice(0, 4)
+          .map((plan) => summarizeOpeningPlan(plan, selectedScore));
+        if (!alternatives.length) return null;
+        const player = resultById.get(entry.playerId) || {};
+        const bestAlternativeGap = roundRatio(alternatives[0].scoreGap);
+        if (bestAlternativeGap > 1.5 && numeric(player.finalScore) > 240) return null;
+        return {
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || player.playerLabel || null,
+          finalScore: roundRatio(player.finalScore),
+          industryLabel: entry.details?.industryCard?.label || null,
+          aiStyle: entry.details?.aiStyle || null,
+          selected: {
+            score: roundRatio(selectedScore),
+            initialNumbers: normalizeInitialNumbers(selectedNumbers),
+            summary: openingPlan.summary || null,
+            goals: openingPlan.goals || null,
+          },
+          bestAlternativeGap,
+          alternatives,
+        };
+      })
+      .filter(Boolean);
+    return sortOpeningPlanNearMissSamples(samples, limit);
+  }
+
+  function getOpeningPlanEarlyActionWindow(logs = [], playerId, maxRoundNumber = 2) {
+    const actual = {
+      turnActionCount: 0,
+      mainActionCount: 0,
+      quickStepCount: 0,
+      resourceQuickStepCount: 0,
+      idleTurnCount: 0,
+      playCardCount: 0,
+      researchTechCount: 0,
+      scanCount: 0,
+      analyzeCount: 0,
+      placeDataCount: 0,
+      cardCornerCount: 0,
+      quickTradeCount: 0,
+      moveCount: 0,
+      launchCount: 0,
+      orbitCount: 0,
+      landCount: 0,
+      orbitLandCount: 0,
+      scanTargetCount: 0,
+      alienTraceCount: 0,
+      dataPlacementCount: 0,
+      firstResources: null,
+      lastResources: null,
+      actionCounts: {},
+    };
+    for (const entry of logs || []) {
+      if ((entry.playerId || null) !== playerId) continue;
+      const roundNumber = Number(entry.roundNumber);
+      if (!Number.isFinite(roundNumber) || roundNumber > maxRoundNumber) continue;
+      if (entry.playerResources) {
+        if (!actual.firstResources) actual.firstResources = entry.playerResources;
+        actual.lastResources = entry.playerResources;
+      }
+      if (entry.type === "turn-action") {
+        const action = getSelectedAction(entry);
+        const actionId = getSelectedActionId(entry);
+        const pace = getActionPaceCategory(actionId, action);
+        actual.turnActionCount += 1;
+        increment(actual.actionCounts, actionId);
+        if (pace === "main") actual.mainActionCount += 1;
+        else if (pace === "quick") actual.quickStepCount += 1;
+        else if (pace === "idle") actual.idleTurnCount += 1;
+        if (["placeData", "cardCorner", "quickTrade"].includes(actionId)) actual.resourceQuickStepCount += 1;
+        if (actionId === "playCard") actual.playCardCount += 1;
+        else if (actionId === "researchTech") actual.researchTechCount += 1;
+        else if (actionId === "scan") actual.scanCount += 1;
+        else if (actionId === "analyze") actual.analyzeCount += 1;
+        else if (actionId === "placeData") actual.placeDataCount += 1;
+        else if (actionId === "cardCorner") actual.cardCornerCount += 1;
+        else if (actionId === "quickTrade") actual.quickTradeCount += 1;
+        else if (actionId === "move") actual.moveCount += 1;
+        else if (actionId === "launch") actual.launchCount += 1;
+        else if (actionId === "orbit") actual.orbitCount += 1;
+        else if (actionId === "land") actual.landCount += 1;
+      } else if (entry.type === "scan-target") {
+        actual.scanTargetCount += 1;
+      } else if (entry.type === "alien-trace") {
+        actual.alienTraceCount += 1;
+      } else if (entry.type === "data-placement") {
+        actual.dataPlacementCount += 1;
+      }
+    }
+    actual.orbitLandCount = actual.orbitCount + actual.landCount;
+    return actual;
+  }
+
+  function getOpeningPlanSummaryValue(summary = {}, key) {
+    return roundRatio(summary?.[key]);
+  }
+
+  function buildOpeningPlanConversionReasons(selectedSummary = {}, earlyActual = {}, finalScore = 0) {
+    const reasons = [];
+    const plannedScan = getOpeningPlanSummaryValue(selectedSummary, "scan");
+    const plannedData = getOpeningPlanSummaryValue(selectedSummary, "data");
+    const plannedTraces = getOpeningPlanSummaryValue(selectedSummary, "traces");
+    const plannedOrbits = getOpeningPlanSummaryValue(selectedSummary, "orbits");
+    const earlyScanProgress = numeric(earlyActual.scanCount) + numeric(earlyActual.scanTargetCount);
+    const earlyDataProgress = numeric(earlyActual.analyzeCount) + numeric(earlyActual.placeDataCount) + numeric(earlyActual.dataPlacementCount);
+    const earlyTraceProgress = numeric(earlyActual.alienTraceCount);
+    const engineActionCount = numeric(earlyActual.playCardCount) + numeric(earlyActual.researchTechCount);
+    const routeActionCount = numeric(earlyActual.launchCount) + numeric(earlyActual.moveCount) + numeric(earlyActual.orbitLandCount);
+    if (plannedScan >= 2 && earlyScanProgress <= 0) reasons.push("scan-plan-unconverted");
+    else if (plannedScan >= 2 && earlyScanProgress < plannedScan) reasons.push("scan-plan-underconverted");
+    if (plannedTraces >= 1 && earlyTraceProgress <= 0) reasons.push("trace-plan-unconverted");
+    else if (plannedTraces >= 1 && earlyTraceProgress < plannedTraces) reasons.push("trace-plan-underconverted");
+    if (plannedData >= 1 && earlyDataProgress <= 0) reasons.push("data-plan-unconverted");
+    else if (plannedData >= 1 && earlyDataProgress < plannedData) reasons.push("data-plan-underconverted");
+    if (plannedOrbits >= 1 && numeric(earlyActual.orbitLandCount) <= 0) reasons.push("orbit-plan-unconverted");
+    else if (plannedOrbits >= 1 && numeric(earlyActual.orbitLandCount) < plannedOrbits) reasons.push("orbit-plan-underconverted");
+    if (numeric(finalScore) < 245 && engineActionCount <= 1) reasons.push("early-engine-thin");
+    if (numeric(finalScore) < 245 && numeric(earlyActual.mainActionCount) <= 8) reasons.push("low-early-main-throughput");
+    if (
+      routeActionCount >= 4
+      && plannedScan + plannedData + plannedTraces >= 2
+      && earlyScanProgress + numeric(earlyActual.analyzeCount) <= 1
+    ) {
+      reasons.push("route-only-before-engine");
+    }
+    if (numeric(earlyActual.resourceQuickStepCount) >= 4 && engineActionCount <= 1) {
+      reasons.push("resource-roll-without-engine");
+    }
+    return reasons;
+  }
+
+  function getOpeningPlanConversionGapScore(selectedSummary = {}, earlyActual = {}, finalScore = 0) {
+    const plannedScan = getOpeningPlanSummaryValue(selectedSummary, "scan");
+    const plannedData = getOpeningPlanSummaryValue(selectedSummary, "data");
+    const plannedTraces = getOpeningPlanSummaryValue(selectedSummary, "traces");
+    const plannedOrbits = getOpeningPlanSummaryValue(selectedSummary, "orbits");
+    const earlyScanProgress = numeric(earlyActual.scanCount) + numeric(earlyActual.scanTargetCount);
+    const earlyDataProgress = numeric(earlyActual.analyzeCount) + numeric(earlyActual.placeDataCount) + numeric(earlyActual.dataPlacementCount);
+    const earlyTraceProgress = numeric(earlyActual.alienTraceCount);
+    const engineActionCount = numeric(earlyActual.playCardCount) + numeric(earlyActual.researchTechCount);
+    let gap = 0;
+    gap += Math.max(0, plannedScan - earlyScanProgress) * 3;
+    gap += Math.max(0, plannedTraces - earlyTraceProgress) * 3;
+    gap += Math.max(0, plannedData - earlyDataProgress) * 2;
+    gap += Math.max(0, plannedOrbits - numeric(earlyActual.orbitLandCount)) * 1.5;
+    if (numeric(finalScore) < 245 && numeric(earlyActual.mainActionCount) <= 8) gap += 2;
+    if (numeric(finalScore) < 245 && engineActionCount <= 1) gap += 1.5;
+    return roundRatio(gap);
+  }
+
+  function sortOpeningPlanConversionSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(right.conversionGapScore) - numeric(left.conversionGapScore)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""), "zh-Hans-CN")
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildOpeningPlanConversionSamples(logs = [], playerResults = [], playerProfiles = [], limit = 12) {
+    const resultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const profiles = (playerProfiles || []).filter(Boolean);
+    const averageScore = profiles.length
+      ? profiles.reduce((total, profile) => total + numeric(profile.finalScore), 0) / profiles.length
+      : 0;
+    const lowScoreCutoff = Math.min(245, averageScore ? averageScore - 15 : 245);
+    const lowKeys = new Set(
+      [...profiles]
+        .sort((left, right) => numeric(left.finalScore) - numeric(right.finalScore) || left.playerLabel.localeCompare(right.playerLabel))
+        .slice(0, Math.max(1, Math.ceil(Math.max(1, profiles.length) * 0.35)))
+        .map((profile) => profile.playerId || profile.playerLabel),
+    );
+    const samples = (logs || [])
+      .filter((entry) => entry?.type === "initial-selection")
+      .map((entry) => {
+        const openingPlan = entry.details?.openingPlan || {};
+        const selectedSummary = openingPlan.summary || null;
+        if (!selectedSummary) return null;
+        const player = resultById.get(entry.playerId) || {};
+        const finalScore = numeric(player.finalScore);
+        const earlyActual = getOpeningPlanEarlyActionWindow(logs, entry.playerId, 2);
+        const reasons = buildOpeningPlanConversionReasons(selectedSummary, earlyActual, finalScore);
+        const conversionGapScore = getOpeningPlanConversionGapScore(selectedSummary, earlyActual, finalScore);
+        const playerKey = entry.playerId || entry.playerLabel;
+        const lowPlayer = finalScore <= lowScoreCutoff || lowKeys.has(playerKey);
+        if (!reasons.length && conversionGapScore <= 0) return null;
+        if (!lowPlayer && !reasons.length) return null;
+        if (!lowPlayer && conversionGapScore < 2) return null;
+        return {
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || player.playerLabel || null,
+          finalScore: roundRatio(finalScore),
+          industryLabel: entry.details?.industryCard?.label || null,
+          aiStyle: entry.details?.aiStyle || null,
+          selected: {
+            score: roundRatio(openingPlan.score),
+            initialNumbers: normalizeInitialNumbers(getOpeningLogInitialNumbers(entry)),
+            summary: selectedSummary,
+            goals: openingPlan.goals || null,
+          },
+          earlyWindow: {
+            rounds: 2,
+            actual: earlyActual,
+          },
+          conversionGapScore,
+          reasons,
+        };
+      })
+      .filter(Boolean);
+    return sortOpeningPlanConversionSamples(samples, limit);
+  }
+
+  function summarizePassReserveCard(card = {}) {
+    if (!card) return null;
+    return {
+      cardId: card.cardId || card.id || null,
+      cardLabel: card.cardName || card.label || card.name || null,
+      price: numeric(card.price),
+      typeCode: card.cardTypeCode ?? card.typeCode ?? null,
+      discardActionCode: card.discardActionCode ?? null,
+      scanActionCode: card.scanActionCode ?? null,
+      incomeCode: card.incomeCode ?? null,
+    };
+  }
+
+  function isSelectedPassReserveIncomeCandidate(details = {}, preview = {}) {
+    const selected = summarizePassReserveCard(details.card || {});
+    const selectedIds = [selected?.cardId].filter(Boolean).map(String);
+    if (!selectedIds.length || !Array.isArray(preview?.incomeCandidates)) return false;
+    return preview.incomeCandidates.some((entry) => selectedIds.includes(String(entry?.cardId || "")));
+  }
+
+  function sortPassReserveResourcePressureMissSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(right.previewScore) - numeric(left.previewScore)
+        || String(left.playerLabel || "").localeCompare(String(right.playerLabel || ""), "zh-Hans-CN")
+      ))
+      .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
+  }
+
+  function buildPassReserveResourcePressureMissSamples(logs = [], playerResults = [], limit = 12) {
+    const resultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
+    const samples = (logs || [])
+      .filter((entry) => entry?.type === "pass-reserve")
+      .map((entry) => {
+        const details = entry.details || {};
+        const actual = details.passReserveResourcePressure || {};
+        const preview = details.passReserveResourcePressurePreview || null;
+        if (!details.passReserveResourcePressureMiss || actual.active || !preview?.active) return null;
+        if (isSelectedPassReserveIncomeCandidate(details, preview)) return null;
+        const result = resultById.get(entry.playerId) || {};
+        return {
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || result.playerLabel || null,
+          finalScore: roundRatio(result.finalScore),
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+          resources: entry.playerResources || null,
+          selectedCard: summarizePassReserveCard(details.card || {}),
+          previewReasons: Array.isArray(preview.reasons) ? preview.reasons : [],
+          previewIncomeCandidates: Array.isArray(preview.incomeCandidates)
+            ? preview.incomeCandidates.slice(0, 6)
+            : [],
+          previewScore: roundRatio(preview.score),
+          selectedScore: details.selectedScore == null ? null : roundRatio(details.selectedScore),
+          rankedCandidateCount: Array.isArray(details.candidates) ? details.candidates.length : 0,
+          rankedCandidates: Array.isArray(details.candidates) ? details.candidates.slice(0, 5) : [],
+        };
+      })
+      .filter(Boolean);
+    return sortPassReserveResourcePressureMissSamples(samples, limit);
+  }
+
+  function getPassOpportunityBestMainScore(sample = {}) {
+    const bestMain = sample?.bestMain || {};
+    const policyScore = getFiniteScore(bestMain.policyScore);
+    if (policyScore != null) return policyScore;
+    const score = getFiniteScore(bestMain.score);
+    return score == null ? null : score;
+  }
+
+  function hasPositivePassOpportunitySample(samples = []) {
+    return (samples || []).some((sample) => {
+      const bestMainScore = getPassOpportunityBestMainScore(sample);
+      return bestMainScore != null && bestMainScore > 0;
+    });
   }
 
   function buildRecommendations(analysis) {
@@ -1442,6 +5910,18 @@
     const opportunities = analysis.opportunities || {};
     const candidateStats = analysis.candidateStats || {};
     const candidateScoreStats = analysis.candidateScoreStats || {};
+    const passOpportunitySamples = Array.isArray(analysis.passOpportunitySamples)
+      ? analysis.passOpportunitySamples
+      : [];
+    const lowEngineThroughputSamples = Array.isArray(analysis.lowEngineThroughputSamples)
+      ? analysis.lowEngineThroughputSamples
+      : [];
+    const highScoreNearMissSamples = Array.isArray(analysis.highScoreNearMissSamples)
+      ? analysis.highScoreNearMissSamples
+      : [];
+    const d1TechBalanceBottleneckSamples = Array.isArray(analysis.d1TechBalanceBottleneckSamples)
+      ? analysis.d1TechBalanceBottleneckSamples
+      : [];
 
     if (actionTotal >= 10 && ratios.basicMain >= 0.45 && ratios.engine < 0.25) {
       recommendations.push({
@@ -1451,17 +5931,80 @@
       });
     }
     if (opportunities.passWithAvailableMain > 0) {
+      if (!passOpportunitySamples.length || hasPositivePassOpportunitySample(passOpportunitySamples)) {
+        recommendations.push({
+          id: "score-pass-opportunity-cost",
+          priority: "high",
+          message: "出现 PASS 时仍有正收益主行动的局面，需要显式计算 PASS 收入/轮序收益与剩余行动机会成本。",
+        });
+      } else {
+        recommendations.push({
+          id: "classify-negative-pass-opportunity",
+          priority: "medium",
+          message: "PASS 样本里的最高主行动均为非正收益，后续应先按样本确认是否为合理 PASS，而不是直接放宽行动阈值。",
+        });
+      }
+    }
+    if (numeric(opportunities.earlyPassNoMain) > 0) {
       recommendations.push({
-        id: "score-pass-opportunity-cost",
-        priority: "high",
-        message: "出现 PASS 时仍有可用主行动的局面，需要显式计算 PASS 收入/轮序收益与剩余行动机会成本。",
+        id: "inspect-early-pass-no-main",
+        priority: "medium",
+        message: "存在无主行动即 PASS 的回合，应按样本区分资源锁、公共牌/交易不可转化和已验证负收益的强开行动。",
       });
     }
-    if (opportunities.endTurnWithAvailableMove > 0) {
+    if (numeric(opportunities.resourceLockMainUnlock) > 0) {
+      recommendations.push({
+        id: "inspect-resource-lock-main-unlock",
+        priority: "medium",
+        message: "无主行动 PASS 样本里存在资源交易后可打开较高分主行动的窗口，应按具体 seed 验证是否会扰动共享牌流和高分席位后再放行为。",
+      });
+    }
+    if (numeric(opportunities.resourceLockWeakLaunchUnlock) > 0) {
+      recommendations.push({
+        id: "classify-resource-lock-weak-launch",
+        priority: "medium",
+        message: "资源锁预览里存在只打开发射、且没有正计划分或直接分的窗口，应先验证后续路线是否闭合，不要把它当作可直接放行的资源滚动。",
+      });
+    }
+    if (numeric(opportunities.finalPublicRefillShortfall) > 0) {
+      recommendations.push({
+        id: "inspect-final-public-refill-shortfall",
+        priority: "medium",
+        message: "终局低手牌 PASS 存在高价值公共牌但缺关键资源的样本，应先按缺口验证前序信用点、能量、宣传或手牌保留链，而不是直接放宽精选行为。",
+      });
+    }
+    if (numeric(opportunities.quickBeforePassNoMain) > 0) {
+      recommendations.push({
+        id: "inspect-quick-before-pass-no-main",
+        priority: "medium",
+        message: "存在已执行快速行动但仍未接上主行动即 PASS 的回合，应检查资源滚动是否只消耗了手牌/资源而没有打开有效主行动。",
+      });
+    }
+    if (numeric(opportunities.preNoMainPassResourceDrain) > 0) {
+      recommendations.push({
+        id: "inspect-pre-no-main-resource-drain",
+        priority: "medium",
+        message: "无主行动 PASS 前存在资源/手牌消耗动作，应按前一动作到 PASS 的资源差定位哪类资源滚动没有接上主行动。",
+      });
+    }
+    if (numeric(opportunities.postPassQuickNoMain) > 0) {
+      recommendations.push({
+        id: "inspect-post-pass-quick-no-main",
+        priority: "medium",
+        message: "存在 PASS 后继续快速行动但没有后续主行动的回合，应区分有效路线铺垫和消耗手牌/资源的尾随动作。",
+      });
+    }
+    if (opportunities.endTurnWithPositiveMove > 0) {
       recommendations.push({
         id: "targeted-post-action-move",
         priority: "medium",
-        message: "出现结束回合时仍有可用移动的局面，移动评分应绑定星球、星云、任务牌或终局目标距离。",
+        message: "出现结束回合时仍有正收益移动的局面，移动评分应绑定星球、星云、任务牌或终局目标距离。",
+      });
+    } else if (opportunities.endTurnWithAvailableMove > 0) {
+      recommendations.push({
+        id: "classify-negative-end-turn-move",
+        priority: "low",
+        message: "结束回合时虽有移动候选，但最高移动为非正收益；后续应先验证是否存在真实兑现链，而不是直接放宽移动。",
       });
     }
     if (opportunities.selectedBelowBestScore > 0) {
@@ -1469,6 +6012,55 @@
         id: "inspect-score-gap",
         priority: "high",
         message: "出现实际选择低于最高分可用候选的局面，需要检查行动基础偏置、候选 score 和策略选择函数是否一致。",
+      });
+    }
+    if (lowEngineThroughputSamples.length) {
+      recommendations.push({
+        id: "inspect-low-engine-throughput",
+        priority: "medium",
+        message: "低分玩家的数据/扫描/分析/科技或打牌吞吐明显落后，应优先定位可闭合的资源滚动链，而不是单独放宽补牌或移动。",
+      });
+    }
+    if (highScoreNearMissSamples.length) {
+      recommendations.push({
+        id: "inspect-high-score-near-miss",
+        priority: "medium",
+        message: "存在 280-299 分的高分近失席位，应按样本拆解终局板、B2、行动吞吐和未兑现手牌缺口，优先提高 300+ 命中率。",
+      });
+    }
+    if (numeric(opportunities.openingPlanConversionGap) > 0) {
+      recommendations.push({
+        id: "inspect-opening-plan-conversion",
+        priority: "medium",
+        message: "低分玩家存在开局计划未兑现到前两轮行动的样本，应先定位扫描、数据、痕迹或科技/打牌链断点，再调整开局偏置。",
+      });
+    }
+    if (numeric(opportunities.passReserveResourcePressureMiss) > 0) {
+      recommendations.push({
+        id: "inspect-pass-reserve-resource-pressure",
+        priority: "medium",
+        message: "存在非第 2 轮 PASS 预留资源压力窗口，应先按样本验证收入牌能否接上下一轮行动，再决定是否放宽预留排序。",
+      });
+    }
+    if (d1TechBalanceBottleneckSamples.length) {
+      recommendations.push({
+        id: "inspect-d1-tech-chain-closure",
+        priority: "medium",
+        message: "低分 D1 样本存在三色科技短板，应结合研究科技候选、科技牌和剩余主行动窗口验证闭环，不能只按颜色平衡硬改科技选择。",
+      });
+    }
+    if (numeric(opportunities.finalReadyTaskCreditShortfall) > 0) {
+      recommendations.push({
+        id: "inspect-final-ready-task-credit-shortfall",
+        priority: "medium",
+        message: "低分玩家终局手里有任务已满足的牌，但信用点即使靠弃其它手牌换信用也不够，应回溯前序信用点保留和低价值资源消耗，而不是只提高已满足任务牌出牌分。",
+      });
+    }
+    if (numeric(opportunities.finalReadyTaskTradeUnlockMiss) > 0) {
+      recommendations.push({
+        id: "inspect-final-ready-task-trade-unlock",
+        priority: "medium",
+        message: "低分玩家终局存在已满足任务牌，且一笔或多笔弃牌换信用点即可支付，应优先验证交易弃牌保护和后续打牌闭环，再决定是否放宽尾局信用点交易。",
       });
     }
     if ((candidateStats.playCard?.availableNotSelected || 0) > (candidateStats.playCard?.selected || 0) * 2) {
@@ -1483,6 +6075,20 @@
         id: "inspect-card-score-gap",
         priority: "high",
         message: "打牌曾是最高分候选但未被选择，应检查打牌候选分与顶层行动偏置是否被其他行动压过。",
+      });
+    }
+    if (numeric(opportunities.playCardNearMiss) > 0) {
+      recommendations.push({
+        id: "inspect-play-card-near-miss",
+        priority: "medium",
+        message: "打牌候选多次接近实际行动分值但被跳过，应按样本确认具体牌链是否能闭合任务、科技、终局或资源滚动。",
+      });
+    }
+    if (numeric(opportunities.b2TradeNearMiss) > 0) {
+      recommendations.push({
+        id: "inspect-b2-trade-near-miss",
+        priority: "medium",
+        message: "B2 扫描解锁交易被其它行动压过，应按样本区分 raw 分接近、action graph 差距过大或扫描后无法闭合。",
       });
     }
     if ((candidateStats.researchTech?.availableNotSelected || 0) > (candidateStats.researchTech?.selected || 0) * 2) {
@@ -1500,11 +6106,22 @@
       });
     }
     if ((analysis.movePayment?.count || 0) > 0 && ratios.quick > 0.25) {
-      recommendations.push({
-        id: "route-planner",
-        priority: "high",
-        message: "移动占比不低，建议先实现目标导向路线评分，避免只按方向偏好移动。",
-      });
+      const hasMoveRiskWithoutPositiveFollowup = numeric(opportunities.endTurnWithAvailableMove) > 0
+        && numeric(opportunities.endTurnWithPositiveMove) <= 0;
+      const hasPostPassPaidMoveRisk = numeric(opportunities.postPassPaidMoveNoFollowup) > 0;
+      if (hasMoveRiskWithoutPositiveFollowup || hasPostPassPaidMoveRisk) {
+        recommendations.push({
+          id: "classify-route-payment-risk",
+          priority: "medium",
+          message: "移动付费样本存在无跟进或负收益窗口，应先按目标链验证可兑现性，不要直接上调全局路线/移动权重。",
+        });
+      } else {
+        recommendations.push({
+          id: "route-planner",
+          priority: "high",
+          message: "移动占比不低，建议先实现目标导向路线评分，避免只按方向偏好移动。",
+        });
+      }
     }
     if ((analysis.bugs || []).length > 0) {
       recommendations.push({
@@ -1546,7 +6163,7 @@
       recommendations.push({
         id: "winner-targeted-route",
         priority: "medium",
-        message: "胜者移动更常指向明确路线目标，应继续提高 route/move 权重，并扩展任务牌和终局目标识别。",
+        message: "胜者移动更常指向明确路线目标，应继续扩展任务牌和终局目标识别，并用同 seed 验证具体兑现链。",
       });
     }
     if (numeric(routeDelta.moveFollowupCount) >= 1) {
@@ -1598,6 +6215,8 @@
   function analyzeBattleReport(report = {}, options = {}) {
     const logs = Array.isArray(report.logs) ? report.logs : [];
     const bugs = Array.isArray(report.bugs) ? report.bugs : [];
+    const playerResults = normalizePlayerResults(report.playerResults || []);
+    const playerResultById = new Map((playerResults || []).map((player) => [player.playerId, player]));
     const typeCounts = {};
     const actionCounts = {};
     const actionCategoryCounts = {};
@@ -1620,10 +6239,71 @@
     const bugCounts = {};
     const opportunities = {
       passWithAvailableMain: 0,
+      passWithResourceLockedHand: 0,
+      openingPlanNearMiss: 0,
+      openingPlanConversionGap: 0,
+      passReserveResourcePressureMiss: 0,
+      earlyPassNoMain: 0,
+      resourceLockMainUnlock: 0,
+      resourceLockWeakLaunchUnlock: 0,
+      quickBeforePassNoMain: 0,
+      preNoMainPassResourceDrain: 0,
+      postPassQuickNoMain: 0,
+      postPassQuickAfterPass: 0,
+      postPassPaidMoveNoFollowup: 0,
+      postPassThinHandNoFollowupMove: 0,
+      finalLowHandPassNoRecovery: 0,
+      finalPublicRefillShortfall: 0,
+      negativeCardCornerGraphLift: 0,
+      negativePlayCardGraphLift: 0,
       endTurnWithAvailableMove: 0,
+      endTurnWithPositiveMove: 0,
+      researchTechOverCompoundTechCard: 0,
+      playCardNearMiss: 0,
+      b2ScanNearMiss: 0,
+      b2TradeNearMiss: 0,
+      midgameLowTechRouteEnergyTrade: 0,
+      engineActionNearMiss: 0,
+      mainUnlockLowConcretePlay: 0,
+      nonPositivePublicRefill: 0,
+      highHandDrainEnergyTrade: 0,
+      lastCardPreserveEnergyMove: 0,
+      negativeThirdFinalMark: 0,
+      d1TechBalanceBottleneck: 0,
+      finalReadyTaskCreditShortfall: 0,
+      finalReadyTaskTradeUnlockMiss: 0,
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
     };
+    const passOpportunitySamples = [];
+    const passResourceLockSamples = [];
+    const openingPlanNearMissSamples = [];
+    const openingPlanConversionSamples = [];
+    const passReserveResourcePressureMissSamples = [];
+    const earlyPassNoMainSamples = [];
+    const resourceLockMainUnlockSamples = [];
+    const resourceLockWeakLaunchUnlockSamples = [];
+    const quickBeforePassNoMainSamples = [];
+    const preNoMainPassResourceDrainSamples = [];
+    const postPassQuickNoMainSamples = [];
+    const finalLowHandPassRecoverySamples = [];
+    const finalPublicRefillShortfallSamples = [];
+    const negativeCardCornerGraphLiftSamples = [];
+    const negativePlayCardGraphLiftSamples = [];
+    const endTurnMoveOpportunitySamples = [];
+    const researchTechCompoundCardSamples = [];
+    const playCardNearMissSamples = [];
+    const b2ScanNearMissSamples = [];
+    const b2TradeNearMissSamples = [];
+    const midgameLowTechRouteEnergyTradeSamples = [];
+    const engineActionNearMissSamples = [];
+    const mainUnlockLowConcretePlaySamples = [];
+    const nonPositivePublicRefillSamples = [];
+    const highHandDrainEnergyTradeSamples = [];
+    const lastCardPreserveEnergyMoveSamples = [];
+    const negativeThirdFinalMarkSamples = [];
+    const finalReadyTaskCreditShortfallSamples = [];
+    const finalReadyTaskTradeUnlockMissSamples = [];
     const scoreOpportunities = {
       selectedBelowBest: 0,
       totalGap: 0,
@@ -1636,7 +6316,8 @@
       discardedMoveCards: 0,
     };
 
-    for (const entry of logs) {
+    for (let logIndex = 0; logIndex < logs.length; logIndex += 1) {
+      const entry = logs[logIndex];
       increment(typeCounts, entry.type);
       if (entry.type === "effect") {
         increment(effectCounts, entry.details?.effectType || entry.details?.effectId || "unknown");
@@ -1674,9 +6355,100 @@
         }
         if (actionId === "pass" && hasAvailableKind(candidates, "main")) {
           opportunities.passWithAvailableMain += 1;
+          if (passOpportunitySamples.length < 12) {
+            passOpportunitySamples.push(buildPassOpportunitySample(entry, candidates));
+          }
+        }
+        if (isPassResourceLockedPlayCard(entry, candidates)) {
+          opportunities.passWithResourceLockedHand += 1;
+          if (passResourceLockSamples.length < 12) {
+            passResourceLockSamples.push(buildPassResourceLockSample(entry, candidates));
+          }
+        }
+        if (entry.details?.finalLowHandPassRecoveryDiagnostic) {
+          opportunities.finalLowHandPassNoRecovery += 1;
+          if (finalLowHandPassRecoverySamples.length < 12) {
+            finalLowHandPassRecoverySamples.push(buildFinalLowHandPassRecoverySample(entry));
+          }
+          if (isFinalPublicRefillShortfall(entry)) {
+            opportunities.finalPublicRefillShortfall += 1;
+            if (finalPublicRefillShortfallSamples.length < 12) {
+              finalPublicRefillShortfallSamples.push(buildFinalPublicRefillShortfallSample(entry));
+            }
+          }
+        }
+        if (isNegativeCardCornerGraphLift(entry)) {
+          opportunities.negativeCardCornerGraphLift += 1;
+          if (negativeCardCornerGraphLiftSamples.length < 12) {
+            negativeCardCornerGraphLiftSamples.push(buildNegativeCardCornerGraphLiftSample(entry));
+          }
+        }
+        if (isNegativePlayCardGraphLift(entry)) {
+          opportunities.negativePlayCardGraphLift += 1;
+          if (negativePlayCardGraphLiftSamples.length < 12) {
+            negativePlayCardGraphLiftSamples.push(buildNegativePlayCardGraphLiftSample(entry, candidates));
+          }
         }
         if (actionId === "end-turn" && hasAvailableAction(candidates, "move")) {
           opportunities.endTurnWithAvailableMove += 1;
+          const endTurnMoveSample = buildEndTurnMoveOpportunitySample(entry, candidates);
+          if (endTurnMoveSample.bestMovePositive) {
+            opportunities.endTurnWithPositiveMove += 1;
+          }
+          if (endTurnMoveOpportunitySamples.length < 12) {
+            endTurnMoveOpportunitySamples.push(endTurnMoveSample);
+          }
+        }
+        if (actionId === "researchTech" && getCompoundResearchTechCards(candidates).length) {
+          opportunities.researchTechOverCompoundTechCard += 1;
+          if (researchTechCompoundCardSamples.length < 12) {
+            researchTechCompoundCardSamples.push(buildResearchTechCompoundCardSample(entry, candidates));
+          }
+        }
+        if (isPlayCardNearMiss(entry, candidates)) {
+          opportunities.playCardNearMiss += 1;
+          playCardNearMissSamples.push(buildPlayCardNearMissSample(entry, candidates, playerResultById));
+        }
+        if (isB2ScanNearMiss(entry, candidates, playerResultById)) {
+          opportunities.b2ScanNearMiss += 1;
+          b2ScanNearMissSamples.push(buildB2ScanNearMissSample(entry, candidates, playerResultById));
+        }
+        if (isB2TradeNearMiss(entry, candidates, playerResultById)) {
+          opportunities.b2TradeNearMiss += 1;
+          b2TradeNearMissSamples.push(buildB2TradeNearMissSample(entry, candidates, playerResultById));
+        }
+        if (isMidgameLowTechRouteEnergyTrade(entry)) {
+          opportunities.midgameLowTechRouteEnergyTrade += 1;
+          midgameLowTechRouteEnergyTradeSamples.push(
+            buildMidgameLowTechRouteEnergyTradeSample(entry, candidates, playerResultById, logs, logIndex),
+          );
+        }
+        const engineNearMissTargets = getEngineActionNearMissTargets(entry, candidates, playerResultById);
+        if (engineNearMissTargets.length) {
+          opportunities.engineActionNearMiss += engineNearMissTargets.length;
+          for (const targetCandidate of engineNearMissTargets) {
+            engineActionNearMissSamples.push(
+              buildEngineActionNearMissSample(entry, targetCandidate, candidates, playerResultById, logs, logIndex),
+            );
+          }
+        }
+        if (isMainUnlockLowConcretePlay(entry)) {
+          opportunities.mainUnlockLowConcretePlay += 1;
+          if (mainUnlockLowConcretePlaySamples.length < 12) {
+            mainUnlockLowConcretePlaySamples.push(buildMainUnlockLowConcretePlaySample(entry));
+          }
+        }
+        if (isHighHandDrainEnergyTrade(entry)) {
+          opportunities.highHandDrainEnergyTrade += 1;
+          if (highHandDrainEnergyTradeSamples.length < 12) {
+            highHandDrainEnergyTradeSamples.push(buildHighHandDrainEnergyTradeSample(entry, logs));
+          }
+        }
+        if (isLastCardPreserveEnergyMove(entry)) {
+          opportunities.lastCardPreserveEnergyMove += 1;
+          if (lastCardPreserveEnergyMoveSamples.length < 12) {
+            lastCardPreserveEnergyMoveSamples.push(buildLastCardPreserveEnergyMoveSample(entry));
+          }
         }
         if (candidates.length && action && candidates.some((candidate) => candidateMatchesAction(candidate, action) && !isCandidateAvailable(candidate))) {
           opportunities.selectedUnavailableCandidate += 1;
@@ -1691,6 +6463,11 @@
           increment(turnPlans, turnPlanKey);
           increment(turnPlanTypes, turnPlan?.type || "unknown");
           increment(turnPlanActions, getTurnPlanActionId(turnPlan));
+        }
+      } else if (isNonPositivePublicRefillPick(entry)) {
+        opportunities.nonPositivePublicRefill += 1;
+        if (nonPositivePublicRefillSamples.length < 12) {
+          nonPositivePublicRefillSamples.push(buildNonPositivePublicRefillSample(entry));
         }
       } else if (entry.type === "play-card") {
         const card = entry.details?.selected || entry.details?.card || {};
@@ -1725,6 +6502,12 @@
         increment(finalScoreMarks, markKey);
         increment(finalScoreFormulas, selected.formulaId || "unknown");
         incrementNested(decisionTargets, entry.type, markKey);
+        if (isNegativeThirdFinalMark(entry)) {
+          opportunities.negativeThirdFinalMark += 1;
+          if (negativeThirdFinalMarkSamples.length < 12) {
+            negativeThirdFinalMarkSamples.push(buildNegativeThirdFinalMarkSample(entry));
+          }
+        }
       } else if (["discard", "pass-reserve", "pick-card", "hand-scan", "land-target", "alien-trace"].includes(entry.type)) {
         incrementNested(decisionTargets, entry.type, entry.details?.pendingType || entry.details?.kind || entry.details?.label || "unknown");
       }
@@ -1740,9 +6523,83 @@
       actionCategoryRatios[category] = turnActionCount ? roundRatio(count / turnActionCount) : 0;
     }
 
-    const playerResults = normalizePlayerResults(report.playerResults || []);
     const playerProfiles = buildPlayerProfiles(logs, playerResults);
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
+    const roundPaceSummary = buildRoundPaceSummary(playerProfiles);
+    const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
+    const highScoreNearMissSamples = buildHighScoreNearMissSamples(playerProfiles, playerResults, options, logs);
+    const allOpeningPlanNearMissSamples = buildOpeningPlanNearMissSamples(logs, playerResults, Infinity);
+    openingPlanNearMissSamples.push(...allOpeningPlanNearMissSamples.slice(0, 12));
+    opportunities.openingPlanNearMiss = allOpeningPlanNearMissSamples.length;
+    const allOpeningPlanConversionSamples = buildOpeningPlanConversionSamples(
+      logs,
+      playerResults,
+      playerProfiles,
+      Infinity,
+    );
+    openingPlanConversionSamples.push(...allOpeningPlanConversionSamples.slice(0, 12));
+    opportunities.openingPlanConversionGap = allOpeningPlanConversionSamples.length;
+    const allPassReserveResourcePressureMissSamples = buildPassReserveResourcePressureMissSamples(
+      logs,
+      playerResults,
+      Infinity,
+    );
+    passReserveResourcePressureMissSamples.push(...allPassReserveResourcePressureMissSamples.slice(0, 12));
+    opportunities.passReserveResourcePressureMiss = allPassReserveResourcePressureMissSamples.length;
+    const allEarlyPassNoMainSamples = buildEarlyPassNoMainSamples(logs, playerResults);
+    const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
+    earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
+    opportunities.earlyPassNoMain = allEarlyPassNoMainSamples.length;
+    const allResourceLockMainUnlockSamples = buildResourceLockMainUnlockSamples(allEarlyPassNoMainSamples, Infinity);
+    resourceLockMainUnlockSamples.push(...allResourceLockMainUnlockSamples.slice(0, 12));
+    opportunities.resourceLockMainUnlock = allResourceLockMainUnlockSamples.length;
+    const allResourceLockWeakLaunchUnlockSamples = buildResourceLockWeakLaunchUnlockSamples(
+      allEarlyPassNoMainSamples,
+      Infinity,
+    );
+    resourceLockWeakLaunchUnlockSamples.push(...allResourceLockWeakLaunchUnlockSamples.slice(0, 12));
+    opportunities.resourceLockWeakLaunchUnlock = allResourceLockWeakLaunchUnlockSamples.length;
+    const allQuickBeforePassNoMainSamples = allEarlyPassNoMainSamples
+      .filter((sample) => numeric(sample.quickBeforePassCount) > 0);
+    quickBeforePassNoMainSamples.push(...allQuickBeforePassNoMainSamples.slice(0, 12));
+    opportunities.quickBeforePassNoMain = allQuickBeforePassNoMainSamples.length;
+    const allPreNoMainPassResourceDrainSamples = buildPreNoMainPassResourceDrainSamples(
+      logs,
+      playerResults,
+      allEarlyPassNoMainSamples,
+    );
+    preNoMainPassResourceDrainSamples.push(...allPreNoMainPassResourceDrainSamples.slice(0, 12));
+    opportunities.preNoMainPassResourceDrain = allPreNoMainPassResourceDrainSamples.length;
+    const lowRoundActionTailSamples = buildLowRoundActionTailSamples(
+      logs,
+      playerResults,
+      roundPaceSummary.lowRoundPaceSamples,
+      allEarlyPassNoMainSamples,
+      allPreNoMainPassResourceDrainSamples,
+    );
+    const allPostPassQuickNoMainSamples = allEarlyPassNoMainSamples
+      .filter((sample) => numeric(sample.quickAfterPassCount) > 0);
+    postPassQuickNoMainSamples.push(...allPostPassQuickNoMainSamples.slice(0, 12));
+    opportunities.postPassQuickNoMain = allPostPassQuickNoMainSamples.length;
+    const postPassQuickAnalysis = buildPostPassQuickAnalysis(logs, playerResults);
+    opportunities.postPassQuickAfterPass = postPassQuickAnalysis.counts.postPassQuickAfterPass;
+    opportunities.postPassPaidMoveNoFollowup = postPassQuickAnalysis.counts.postPassPaidMoveNoFollowup;
+    opportunities.postPassThinHandNoFollowupMove = postPassQuickAnalysis.counts.postPassThinHandNoFollowupMove;
+    const lowPlayerCandidateStats = buildLowPlayerCandidateStats(logs, playerResults, options);
+    const lowUnplayedCardSamples = buildLowUnplayedCardSamples(playerResults, options);
+    const allFinalReadyTaskCreditShortfallSamples = buildFinalReadyTaskCreditShortfallSamples(playerResults, options);
+    finalReadyTaskCreditShortfallSamples.push(...allFinalReadyTaskCreditShortfallSamples.slice(0, 12));
+    opportunities.finalReadyTaskCreditShortfall = allFinalReadyTaskCreditShortfallSamples.length;
+    const allFinalReadyTaskTradeUnlockMissSamples = buildFinalReadyTaskTradeUnlockMissSamples(playerResults, options);
+    finalReadyTaskTradeUnlockMissSamples.push(...allFinalReadyTaskTradeUnlockMissSamples.slice(0, 12));
+    opportunities.finalReadyTaskTradeUnlockMiss = allFinalReadyTaskTradeUnlockMissSamples.length;
+    const d1TechBalanceBottleneckSamples = buildD1TechBalanceBottleneckSamples(
+      logs,
+      playerResults,
+      playerProfiles,
+      options,
+    );
+    opportunities.d1TechBalanceBottleneck = d1TechBalanceBottleneckSamples.length;
     const actionSequences = buildActionSequences(logs, playerResults, options);
     const scoreBuckets = buildScoreBuckets(playerResults, logs);
     const analysis = {
@@ -1757,11 +6614,7 @@
       candidateStats,
       candidateScoreStats: finalizeCandidateScoreStats(candidateScoreStats),
       topScoreGaps: buildTopScoreGaps(candidateScoreStats),
-      topMissedCandidates: Object.entries(candidateStats)
-        .map(([actionId, stats]) => ({ actionId, availableNotSelected: stats.availableNotSelected, available: stats.available, selected: stats.selected }))
-        .filter((entry) => entry.availableNotSelected > 0)
-        .sort((left, right) => right.availableNotSelected - left.availableNotSelected || left.actionId.localeCompare(right.actionId))
-        .slice(0, 8),
+      topMissedCandidates: buildTopMissedCandidates(candidateStats),
       effectCounts,
       topEffects: rankCounts(effectCounts),
       playCards: rankCounts(playCards),
@@ -1785,6 +6638,40 @@
       decisionTargets,
       movePayment,
       opportunities,
+      passOpportunitySamples,
+      passResourceLockSamples,
+      openingPlanNearMissSamples,
+      openingPlanConversionSamples,
+      passReserveResourcePressureMissSamples,
+      earlyPassNoMainSamples,
+      resourceLockMainUnlockSamples,
+      resourceLockWeakLaunchUnlockSamples,
+      earlyPassNoMainReasonCounts,
+      quickBeforePassNoMainSamples,
+      preNoMainPassResourceDrainSamples,
+      postPassQuickNoMainSamples,
+      postPassQuickSamples: postPassQuickAnalysis.samples.slice(0, 12),
+      finalLowHandPassRecoverySamples,
+      finalPublicRefillShortfallSamples,
+      negativeCardCornerGraphLiftSamples,
+      negativePlayCardGraphLiftSamples,
+      endTurnMoveOpportunitySamples,
+      researchTechCompoundCardSamples,
+      playCardNearMissSamples: sortPlayCardNearMissSamples(playCardNearMissSamples),
+      playCardNearMissTagCounts: buildPlayCardNearMissTagCounts(playCardNearMissSamples),
+      counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(playCardNearMissSamples),
+      b2ScanNearMissSamples: sortB2ScanNearMissSamples(b2ScanNearMissSamples),
+      b2TradeNearMissSamples: sortB2TradeNearMissSamples(b2TradeNearMissSamples),
+      midgameLowTechRouteEnergyTradeSamples: sortMidgameLowTechRouteEnergyTradeSamples(
+        midgameLowTechRouteEnergyTradeSamples,
+      ),
+      engineActionNearMissSamples: sortEngineActionNearMissSamples(engineActionNearMissSamples),
+      engineActionNearMissCounts: buildEngineActionNearMissCounts(engineActionNearMissSamples),
+      mainUnlockLowConcretePlaySamples,
+      nonPositivePublicRefillSamples,
+      highHandDrainEnergyTradeSamples,
+      lastCardPreserveEnergyMoveSamples,
+      negativeThirdFinalMarkSamples,
       scoreOpportunities: {
         selectedBelowBest: scoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(scoreOpportunities.totalGap),
@@ -1799,6 +6686,17 @@
       winnerProfileComparison,
       winnerProfileDeltas: winnerProfileComparison?.delta || {},
       winner: playerResults[0] || null,
+      paceSummary: buildPaceSummary(playerProfiles),
+      roundPaceSummary,
+      lowRoundPaceSamples: roundPaceSummary.lowRoundPaceSamples,
+      lowRoundActionTailSamples,
+      lowEngineThroughputSamples,
+      highScoreNearMissSamples,
+      lowPlayerCandidateStats,
+      lowUnplayedCardSamples,
+      finalReadyTaskCreditShortfallSamples,
+      finalReadyTaskTradeUnlockMissSamples,
+      d1TechBalanceBottleneckSamples,
       sequenceWindowTurns: actionSequences.windowTurns,
       actionSequences,
       scoreBuckets,
@@ -1821,6 +6719,43 @@
       totalGap: 0,
       maxGap: 0,
     };
+    const mergedPassOpportunitySamples = [];
+    const mergedPassResourceLockSamples = [];
+    const mergedOpeningPlanNearMissSamples = [];
+    const mergedOpeningPlanConversionSamples = [];
+    const mergedPassReserveResourcePressureMissSamples = [];
+    const mergedEarlyPassNoMainSamples = [];
+    const mergedResourceLockMainUnlockSamples = [];
+    const mergedResourceLockWeakLaunchUnlockSamples = [];
+    const mergedEarlyPassNoMainReasonCounts = {};
+    const mergedQuickBeforePassNoMainSamples = [];
+    const mergedPreNoMainPassResourceDrainSamples = [];
+    const mergedPostPassQuickNoMainSamples = [];
+    const mergedPostPassQuickSamples = [];
+    const mergedFinalLowHandPassRecoverySamples = [];
+    const mergedFinalPublicRefillShortfallSamples = [];
+    const mergedNegativeCardCornerGraphLiftSamples = [];
+    const mergedNegativePlayCardGraphLiftSamples = [];
+    const mergedEndTurnMoveOpportunitySamples = [];
+    const mergedResearchTechCompoundCardSamples = [];
+    const mergedPlayCardNearMissSamples = [];
+    const mergedB2ScanNearMissSamples = [];
+    const mergedB2TradeNearMissSamples = [];
+    const mergedMidgameLowTechRouteEnergyTradeSamples = [];
+    const mergedEngineActionNearMissSamples = [];
+    const mergedEngineActionNearMissCounts = createEngineActionNearMissCountBuckets();
+    const mergedMainUnlockLowConcretePlaySamples = [];
+    const mergedNonPositivePublicRefillSamples = [];
+    const mergedHighHandDrainEnergyTradeSamples = [];
+    const mergedLastCardPreserveEnergyMoveSamples = [];
+    const mergedNegativeThirdFinalMarkSamples = [];
+    const mergedLowPlayerCandidateStats = [];
+    const mergedLowUnplayedCardSamples = [];
+    const mergedFinalReadyTaskCreditShortfallSamples = [];
+    const mergedFinalReadyTaskTradeUnlockMissSamples = [];
+    const mergedD1TechBalanceBottleneckSamples = [];
+    const mergedHighScoreNearMissSamples = [];
+    const mergedLowRoundActionTailSamples = [];
     const mergedMovePayment = {
       count: 0,
       requiredMovePoints: 0,
@@ -1838,6 +6773,7 @@
     const mergedSequenceCounts = {};
     const mergedScoreBuckets = {};
     const winnerCounts = {};
+    const allProfiles = [];
     const winnerProfiles = [];
     const nonWinnerProfiles = [];
     let totalSteps = 0;
@@ -1862,6 +6798,186 @@
       }
       mergeCandidateScoreStats(mergedCandidateScoreStats, analysis.candidateScoreStats || {});
       for (const [key, count] of Object.entries(analysis.opportunities || {})) increment(mergedOpportunities, key, count);
+      if (mergedPassOpportunitySamples.length < 12 && Array.isArray(analysis.passOpportunitySamples)) {
+        mergedPassOpportunitySamples.push(...analysis.passOpportunitySamples.slice(0, 12 - mergedPassOpportunitySamples.length));
+      }
+      if (mergedPassResourceLockSamples.length < 12 && Array.isArray(analysis.passResourceLockSamples)) {
+        mergedPassResourceLockSamples.push(
+          ...analysis.passResourceLockSamples.slice(0, 12 - mergedPassResourceLockSamples.length),
+        );
+      }
+      if (Array.isArray(analysis.openingPlanNearMissSamples)) {
+        mergedOpeningPlanNearMissSamples.push(...analysis.openingPlanNearMissSamples);
+      }
+      if (Array.isArray(analysis.openingPlanConversionSamples)) {
+        mergedOpeningPlanConversionSamples.push(...analysis.openingPlanConversionSamples);
+      }
+      if (Array.isArray(analysis.passReserveResourcePressureMissSamples)) {
+        mergedPassReserveResourcePressureMissSamples.push(...analysis.passReserveResourcePressureMissSamples);
+      }
+      if (Array.isArray(analysis.earlyPassNoMainSamples)) {
+        mergedEarlyPassNoMainSamples.push(...analysis.earlyPassNoMainSamples);
+      }
+      if (Array.isArray(analysis.resourceLockMainUnlockSamples)) {
+        mergedResourceLockMainUnlockSamples.push(...analysis.resourceLockMainUnlockSamples);
+      }
+      if (
+        mergedResourceLockWeakLaunchUnlockSamples.length < 12
+        && Array.isArray(analysis.resourceLockWeakLaunchUnlockSamples)
+      ) {
+        mergedResourceLockWeakLaunchUnlockSamples.push(
+          ...analysis.resourceLockWeakLaunchUnlockSamples.slice(
+            0,
+            12 - mergedResourceLockWeakLaunchUnlockSamples.length,
+          ),
+        );
+      }
+      for (const [key, count] of Object.entries(analysis.earlyPassNoMainReasonCounts || {})) {
+        increment(mergedEarlyPassNoMainReasonCounts, key, count);
+      }
+      if (Array.isArray(analysis.quickBeforePassNoMainSamples)) {
+        mergedQuickBeforePassNoMainSamples.push(...analysis.quickBeforePassNoMainSamples);
+      }
+      if (Array.isArray(analysis.preNoMainPassResourceDrainSamples)) {
+        mergedPreNoMainPassResourceDrainSamples.push(...analysis.preNoMainPassResourceDrainSamples);
+      }
+      if (Array.isArray(analysis.postPassQuickNoMainSamples)) {
+        mergedPostPassQuickNoMainSamples.push(...analysis.postPassQuickNoMainSamples);
+      }
+      if (mergedPostPassQuickSamples.length < 12 && Array.isArray(analysis.postPassQuickSamples)) {
+        mergedPostPassQuickSamples.push(
+          ...analysis.postPassQuickSamples.slice(0, 12 - mergedPostPassQuickSamples.length),
+        );
+      }
+      if (
+        mergedFinalLowHandPassRecoverySamples.length < 12
+        && Array.isArray(analysis.finalLowHandPassRecoverySamples)
+      ) {
+        mergedFinalLowHandPassRecoverySamples.push(
+          ...analysis.finalLowHandPassRecoverySamples.slice(0, 12 - mergedFinalLowHandPassRecoverySamples.length),
+        );
+      }
+      if (
+        mergedFinalPublicRefillShortfallSamples.length < 12
+        && Array.isArray(analysis.finalPublicRefillShortfallSamples)
+      ) {
+        mergedFinalPublicRefillShortfallSamples.push(
+          ...analysis.finalPublicRefillShortfallSamples.slice(
+            0,
+            12 - mergedFinalPublicRefillShortfallSamples.length,
+          ),
+        );
+      }
+      if (
+        mergedNegativeCardCornerGraphLiftSamples.length < 12
+        && Array.isArray(analysis.negativeCardCornerGraphLiftSamples)
+      ) {
+        mergedNegativeCardCornerGraphLiftSamples.push(
+          ...analysis.negativeCardCornerGraphLiftSamples.slice(0, 12 - mergedNegativeCardCornerGraphLiftSamples.length),
+        );
+      }
+      if (
+        mergedNegativePlayCardGraphLiftSamples.length < 12
+        && Array.isArray(analysis.negativePlayCardGraphLiftSamples)
+      ) {
+        mergedNegativePlayCardGraphLiftSamples.push(
+          ...analysis.negativePlayCardGraphLiftSamples.slice(0, 12 - mergedNegativePlayCardGraphLiftSamples.length),
+        );
+      }
+      if (mergedEndTurnMoveOpportunitySamples.length < 12 && Array.isArray(analysis.endTurnMoveOpportunitySamples)) {
+        mergedEndTurnMoveOpportunitySamples.push(
+          ...analysis.endTurnMoveOpportunitySamples.slice(0, 12 - mergedEndTurnMoveOpportunitySamples.length),
+        );
+      }
+      if (mergedResearchTechCompoundCardSamples.length < 12 && Array.isArray(analysis.researchTechCompoundCardSamples)) {
+        mergedResearchTechCompoundCardSamples.push(
+          ...analysis.researchTechCompoundCardSamples.slice(0, 12 - mergedResearchTechCompoundCardSamples.length),
+        );
+      }
+      if (Array.isArray(analysis.playCardNearMissSamples)) {
+        mergedPlayCardNearMissSamples.push(...analysis.playCardNearMissSamples);
+      }
+      if (Array.isArray(analysis.b2ScanNearMissSamples)) {
+        mergedB2ScanNearMissSamples.push(...analysis.b2ScanNearMissSamples);
+      }
+      if (Array.isArray(analysis.b2TradeNearMissSamples)) {
+        mergedB2TradeNearMissSamples.push(...analysis.b2TradeNearMissSamples);
+      }
+      if (Array.isArray(analysis.midgameLowTechRouteEnergyTradeSamples)) {
+        mergedMidgameLowTechRouteEnergyTradeSamples.push(...analysis.midgameLowTechRouteEnergyTradeSamples);
+      }
+      if (Array.isArray(analysis.engineActionNearMissSamples)) {
+        mergedEngineActionNearMissSamples.push(...analysis.engineActionNearMissSamples);
+      }
+      mergeEngineActionNearMissCounts(mergedEngineActionNearMissCounts, analysis.engineActionNearMissCounts);
+      if (mergedMainUnlockLowConcretePlaySamples.length < 12 && Array.isArray(analysis.mainUnlockLowConcretePlaySamples)) {
+        mergedMainUnlockLowConcretePlaySamples.push(
+          ...analysis.mainUnlockLowConcretePlaySamples.slice(0, 12 - mergedMainUnlockLowConcretePlaySamples.length),
+        );
+      }
+      if (mergedNonPositivePublicRefillSamples.length < 12 && Array.isArray(analysis.nonPositivePublicRefillSamples)) {
+        mergedNonPositivePublicRefillSamples.push(
+          ...analysis.nonPositivePublicRefillSamples.slice(0, 12 - mergedNonPositivePublicRefillSamples.length),
+        );
+      }
+      if (mergedHighHandDrainEnergyTradeSamples.length < 12 && Array.isArray(analysis.highHandDrainEnergyTradeSamples)) {
+        mergedHighHandDrainEnergyTradeSamples.push(
+          ...analysis.highHandDrainEnergyTradeSamples.slice(0, 12 - mergedHighHandDrainEnergyTradeSamples.length),
+        );
+      }
+      if (mergedLastCardPreserveEnergyMoveSamples.length < 12 && Array.isArray(analysis.lastCardPreserveEnergyMoveSamples)) {
+        mergedLastCardPreserveEnergyMoveSamples.push(
+          ...analysis.lastCardPreserveEnergyMoveSamples.slice(0, 12 - mergedLastCardPreserveEnergyMoveSamples.length),
+        );
+      }
+      if (mergedNegativeThirdFinalMarkSamples.length < 12 && Array.isArray(analysis.negativeThirdFinalMarkSamples)) {
+        mergedNegativeThirdFinalMarkSamples.push(
+          ...analysis.negativeThirdFinalMarkSamples.slice(0, 12 - mergedNegativeThirdFinalMarkSamples.length),
+        );
+      }
+      if (mergedLowPlayerCandidateStats.length < 16 && Array.isArray(analysis.lowPlayerCandidateStats)) {
+        mergedLowPlayerCandidateStats.push(
+          ...analysis.lowPlayerCandidateStats.slice(0, 16 - mergedLowPlayerCandidateStats.length),
+        );
+      }
+      if (mergedLowUnplayedCardSamples.length < 16 && Array.isArray(analysis.lowUnplayedCardSamples)) {
+        mergedLowUnplayedCardSamples.push(
+          ...analysis.lowUnplayedCardSamples.slice(0, 16 - mergedLowUnplayedCardSamples.length),
+        );
+      }
+      if (
+        mergedFinalReadyTaskCreditShortfallSamples.length < 16
+        && Array.isArray(analysis.finalReadyTaskCreditShortfallSamples)
+      ) {
+        mergedFinalReadyTaskCreditShortfallSamples.push(
+          ...analysis.finalReadyTaskCreditShortfallSamples.slice(
+            0,
+            16 - mergedFinalReadyTaskCreditShortfallSamples.length,
+          ),
+        );
+      }
+      if (
+        mergedFinalReadyTaskTradeUnlockMissSamples.length < 16
+        && Array.isArray(analysis.finalReadyTaskTradeUnlockMissSamples)
+      ) {
+        mergedFinalReadyTaskTradeUnlockMissSamples.push(
+          ...analysis.finalReadyTaskTradeUnlockMissSamples.slice(
+            0,
+            16 - mergedFinalReadyTaskTradeUnlockMissSamples.length,
+          ),
+        );
+      }
+      if (mergedD1TechBalanceBottleneckSamples.length < 16 && Array.isArray(analysis.d1TechBalanceBottleneckSamples)) {
+        mergedD1TechBalanceBottleneckSamples.push(
+          ...analysis.d1TechBalanceBottleneckSamples.slice(0, 16 - mergedD1TechBalanceBottleneckSamples.length),
+        );
+      }
+      if (Array.isArray(analysis.highScoreNearMissSamples)) {
+        mergedHighScoreNearMissSamples.push(...analysis.highScoreNearMissSamples);
+      }
+      if (Array.isArray(analysis.lowRoundActionTailSamples)) {
+        mergedLowRoundActionTailSamples.push(...analysis.lowRoundActionTailSamples);
+      }
       mergedScoreOpportunities.selectedBelowBest += numeric(analysis.scoreOpportunities?.selectedBelowBest);
       mergedScoreOpportunities.totalGap += numeric(analysis.scoreOpportunities?.totalGap);
       mergedScoreOpportunities.maxGap = Math.max(mergedScoreOpportunities.maxGap, numeric(analysis.scoreOpportunities?.maxGap));
@@ -1884,6 +7000,7 @@
       }
       const profiles = analysis.playerProfiles || [];
       if (profiles.length) {
+        allProfiles.push(...profiles);
         winnerProfiles.push(profiles[0]);
         nonWinnerProfiles.push(...profiles.slice(1));
       }
@@ -1895,16 +7012,21 @@
     for (const [category, count] of Object.entries(mergedActionCategoryCounts)) {
       actionCategoryRatios[category] = turnActionCount ? roundRatio(count / turnActionCount) : 0;
     }
-    const topMissedCandidates = Object.entries(mergedCandidateStats)
-      .map(([actionId, stats]) => ({
-        actionId,
-        availableNotSelected: stats.availableNotSelected,
-        available: stats.available,
-        selected: stats.selected,
-      }))
-      .filter((entry) => entry.availableNotSelected > 0)
-      .sort((left, right) => right.availableNotSelected - left.availableNotSelected || left.actionId.localeCompare(right.actionId))
-      .slice(0, 8);
+    const topMissedCandidates = buildTopMissedCandidates(mergedCandidateStats);
+    const averageWinnerProfile = averageProfileMetrics(winnerProfiles);
+    const averageNonWinnerProfile = averageProfileMetrics(nonWinnerProfiles);
+    const winnerProfileDeltas = diffProfileMetrics(averageWinnerProfile, averageNonWinnerProfile);
+    const paceSummary = buildPaceSummary(allProfiles);
+    const roundPaceSummary = buildRoundPaceSummary(allProfiles);
+    const lowEngineThroughputSamples = buildLowEngineThroughputSamples(allProfiles);
+    const highScoreNearMissSamples = sortHighScoreNearMissSamples(
+      mergedHighScoreNearMissSamples,
+      options.highScoreNearMissLimit ?? 12,
+    );
+    const d1TechBalanceBottleneckSamples = sortD1TechBalanceBottleneckSamples(
+      mergedD1TechBalanceBottleneckSamples,
+      options.d1TechBalanceBottleneckLimit ?? 12,
+    );
     const summaryForRecommendations = {
       turnActionCount,
       actionCategoryRatios,
@@ -1912,6 +7034,14 @@
       candidateScoreStats: finalizeCandidateScoreStats(mergedCandidateScoreStats),
       topScoreGaps: buildTopScoreGaps(mergedCandidateScoreStats),
       opportunities: mergedOpportunities,
+      passOpportunitySamples: mergedPassOpportunitySamples,
+      highScoreNearMissSamples,
+      d1TechBalanceBottleneckSamples,
+      resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
+      resourceLockWeakLaunchUnlockSamples: mergedResourceLockWeakLaunchUnlockSamples,
+      quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
+      preNoMainPassResourceDrainSamples: mergedPreNoMainPassResourceDrainSamples,
+      postPassQuickNoMainSamples: mergedPostPassQuickNoMainSamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(mergedScoreOpportunities.totalGap),
@@ -1922,14 +7052,14 @@
       },
       movePayment: mergedMovePayment,
       bugs: rankCounts(mergedBugCounts),
-      winnerProfileDeltas: diffProfileMetrics(
-        averageProfileMetrics(winnerProfiles),
-        averageProfileMetrics(nonWinnerProfiles),
-      ),
+      winnerProfileDeltas,
+      lowEngineThroughputSamples,
+      engineActionNearMissSamples: sortEngineActionNearMissSamples(mergedEngineActionNearMissSamples),
+      engineActionNearMissCounts: rankEngineActionNearMissCountBuckets(mergedEngineActionNearMissCounts),
+      finalReadyTaskCreditShortfallSamples: mergedFinalReadyTaskCreditShortfallSamples,
+      finalReadyTaskTradeUnlockMissSamples: mergedFinalReadyTaskTradeUnlockMissSamples,
+      lowRoundActionTailSamples: sortLowRoundActionTailSamples(mergedLowRoundActionTailSamples),
     };
-    const averageWinnerProfile = averageProfileMetrics(winnerProfiles);
-    const averageNonWinnerProfile = averageProfileMetrics(nonWinnerProfiles);
-    const winnerProfileDeltas = diffProfileMetrics(averageWinnerProfile, averageNonWinnerProfile);
     const sequenceWindowTurns = normalizeSequenceWindowTurns(
       options.sequenceWindowTurns
       ?? validAnalyses.find((analysis) => analysis?.sequenceWindowTurns != null)?.sequenceWindowTurns
@@ -1953,6 +7083,46 @@
       topScoreGaps: buildTopScoreGaps(mergedCandidateScoreStats),
       topMissedCandidates,
       opportunities: mergedOpportunities,
+      passOpportunitySamples: mergedPassOpportunitySamples,
+      passResourceLockSamples: mergedPassResourceLockSamples,
+      openingPlanNearMissSamples: sortOpeningPlanNearMissSamples(mergedOpeningPlanNearMissSamples),
+      openingPlanConversionSamples: sortOpeningPlanConversionSamples(mergedOpeningPlanConversionSamples),
+      passReserveResourcePressureMissSamples: sortPassReserveResourcePressureMissSamples(
+        mergedPassReserveResourcePressureMissSamples,
+      ),
+      earlyPassNoMainSamples: sortEarlyPassNoMainSamples(mergedEarlyPassNoMainSamples),
+      resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
+      resourceLockWeakLaunchUnlockSamples: mergedResourceLockWeakLaunchUnlockSamples,
+      earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
+      quickBeforePassNoMainSamples: sortEarlyPassNoMainSamples(mergedQuickBeforePassNoMainSamples),
+      preNoMainPassResourceDrainSamples: sortPreNoMainPassResourceDrainSamples(mergedPreNoMainPassResourceDrainSamples),
+      postPassQuickNoMainSamples: sortEarlyPassNoMainSamples(mergedPostPassQuickNoMainSamples),
+      postPassQuickSamples: [...mergedPostPassQuickSamples].sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      )),
+      finalLowHandPassRecoverySamples: mergedFinalLowHandPassRecoverySamples,
+      finalPublicRefillShortfallSamples: mergedFinalPublicRefillShortfallSamples,
+      negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
+      negativePlayCardGraphLiftSamples: mergedNegativePlayCardGraphLiftSamples,
+      endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
+      researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
+      playCardNearMissSamples: sortPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
+      playCardNearMissTagCounts: buildPlayCardNearMissTagCounts(mergedPlayCardNearMissSamples),
+      counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
+      b2ScanNearMissSamples: sortB2ScanNearMissSamples(mergedB2ScanNearMissSamples),
+      b2TradeNearMissSamples: sortB2TradeNearMissSamples(mergedB2TradeNearMissSamples),
+      midgameLowTechRouteEnergyTradeSamples: sortMidgameLowTechRouteEnergyTradeSamples(
+        mergedMidgameLowTechRouteEnergyTradeSamples,
+      ),
+      engineActionNearMissSamples: sortEngineActionNearMissSamples(mergedEngineActionNearMissSamples),
+      engineActionNearMissCounts: rankEngineActionNearMissCountBuckets(mergedEngineActionNearMissCounts),
+      mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
+      nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
+      highHandDrainEnergyTradeSamples: mergedHighHandDrainEnergyTradeSamples,
+      lastCardPreserveEnergyMoveSamples: mergedLastCardPreserveEnergyMoveSamples,
+      negativeThirdFinalMarkSamples: mergedNegativeThirdFinalMarkSamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
         totalGap: roundRatio(mergedScoreOpportunities.totalGap),
@@ -1973,6 +7143,17 @@
       actionSequences,
       scoreBuckets: finalizeScoreBuckets(mergedScoreBuckets),
       winnerCounts,
+      paceSummary,
+      roundPaceSummary,
+      lowRoundPaceSamples: roundPaceSummary.lowRoundPaceSamples,
+      lowRoundActionTailSamples: sortLowRoundActionTailSamples(mergedLowRoundActionTailSamples),
+      lowEngineThroughputSamples,
+      highScoreNearMissSamples,
+      lowPlayerCandidateStats: mergedLowPlayerCandidateStats,
+      lowUnplayedCardSamples: mergedLowUnplayedCardSamples,
+      finalReadyTaskCreditShortfallSamples: mergedFinalReadyTaskCreditShortfallSamples,
+      finalReadyTaskTradeUnlockMissSamples: mergedFinalReadyTaskTradeUnlockMissSamples,
+      d1TechBalanceBottleneckSamples,
       averageWinnerProfile,
       averageNonWinnerProfile,
       winnerProfileDeltas,

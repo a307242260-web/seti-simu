@@ -22,6 +22,244 @@ const constants = appConstants.createAppConstants({
 });
 assert.equal(constants.DEFAULT_ACTIVE_PLAYER_COUNT, 4);
 
+const lowRoundTailDiagnostic = analytics.analyzeBattleReport({
+  lastSummary: { gameEnded: true, steps: 6 },
+  playerResults: [
+    { playerId: "p-low", playerLabel: "低分", finalScore: 120 },
+    { playerId: "p-high", playerLabel: "高分", finalScore: 320 },
+  ],
+  logs: [
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 1,
+      turnNumber: 1,
+      rawTurnNumber: 1,
+      playerResources: { credits: 0, energy: 0, publicity: 0, handSize: 2, availableData: 0 },
+      details: {
+        action: { id: "cardCorner", kind: "quick", score: 1, label: "整理资源" },
+        candidates: [
+          { id: "cardCorner", kind: "quick", available: true, score: 1, label: "整理资源" },
+          { id: "pass", kind: "pass", available: true, score: -2 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 1,
+      turnNumber: 2,
+      rawTurnNumber: 2,
+      playerResources: { credits: 0, energy: 0, publicity: 0, handSize: 2, availableData: 0 },
+      details: {
+        action: { id: "pass", kind: "pass", score: -2 },
+        candidates: [
+          { id: "playCard", kind: "main", available: false, score: 12, reason: "没有资源可支付" },
+          { id: "scan", kind: "main", available: false, score: 8, reason: "能量不足" },
+          { id: "pass", kind: "pass", available: true, score: -2 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-high",
+      playerLabel: "高分",
+      roundNumber: 1,
+      turnNumber: 1,
+      rawTurnNumber: 1,
+      playerResources: { credits: 3, energy: 3, publicity: 2, handSize: 4, availableData: 2 },
+      details: {
+        action: { id: "researchTech", kind: "main", score: 40 },
+        candidates: [
+          { id: "researchTech", kind: "main", available: true, score: 40 },
+          { id: "pass", kind: "pass", available: true, score: -2 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-high",
+      playerLabel: "高分",
+      roundNumber: 1,
+      turnNumber: 2,
+      rawTurnNumber: 2,
+      playerResources: { credits: 2, energy: 2, publicity: 1, handSize: 4, availableData: 4 },
+      details: {
+        action: { id: "scan", kind: "main", score: 35 },
+        candidates: [
+          { id: "scan", kind: "main", available: true, score: 35 },
+          { id: "pass", kind: "pass", available: true, score: -2 },
+        ],
+      },
+    },
+  ],
+});
+const lowRoundTailSample = lowRoundTailDiagnostic.lowRoundActionTailSamples.find((sample) => sample.playerId === "p-low");
+assert.ok(lowRoundTailSample, "low-round tail diagnostic should include the low-score player");
+assert.equal(lowRoundTailSample.mainActionCount, 0);
+assert.equal(lowRoundTailSample.actionTail.at(-1).selected.id, "pass");
+assert.equal(lowRoundTailSample.lastPassCandidateProfile.reasonTag, "resource-locked-hand");
+assert.deepStrictEqual(lowRoundTailSample.tailSummary.actionIds, ["cardCorner", "pass"]);
+assert.equal(lowRoundTailSample.tailSummary.lastPassReasonTag, "resource-locked-hand");
+assert.equal(lowRoundTailSample.tailSummary.playCardReason, "没有资源可支付");
+assert.deepStrictEqual(lowRoundTailSample.tailResourceDelta, {
+  score: 0,
+  credits: 0,
+  energy: 0,
+  publicity: 0,
+  availableData: 0,
+  handSize: 0,
+});
+assert.ok(lowRoundTailSample.tailTags.includes("zero-credit-tail"));
+assert.ok(lowRoundTailSample.tailTags.includes("zero-energy-tail"));
+assert.ok(lowRoundTailSample.tailTags.includes("zero-data-tail"));
+assert.ok(lowRoundTailSample.tailTags.includes("pass-resource-locked-hand"));
+assert.ok(lowRoundTailSample.tailTags.includes("play-card-resource-lock"));
+assert.equal(
+  analytics.summarizeBattleAnalyses([lowRoundTailDiagnostic]).lowRoundActionTailSamples[0].playerId,
+  "p-low",
+);
+assert.deepStrictEqual(
+  analytics.summarizeBattleAnalyses([lowRoundTailDiagnostic]).lowRoundActionTailSamples[0].tailSummary.actionIds,
+  ["cardCorner", "pass"],
+);
+assert.ok(
+  analytics.summarizeBattleAnalyses([lowRoundTailDiagnostic]).lowRoundActionTailSamples[0].tailTags.includes("zero-credit-tail"),
+);
+
+const midgameRouteEnergyTradeDiagnostic = analytics.analyzeBattleReport({
+  lastSummary: { gameEnded: true, steps: 8 },
+  playerResults: [
+    { playerId: "p-low", playerLabel: "低分", finalScore: 170 },
+  ],
+  logs: [
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 3,
+      turnNumber: 1,
+      rawTurnNumber: 1,
+      playerResources: { score: 80, credits: 2, energy: 1, publicity: 4, handSize: 7, availableData: 0 },
+      scoreboard: [
+        {
+          playerId: "p-low",
+          score: 80,
+          credits: 2,
+          energy: 1,
+          publicity: 4,
+          availableData: 0,
+          handSize: 7,
+          techCount: 3,
+          reservedCount: 2,
+        },
+      ],
+      details: {
+        action: {
+          id: "quickTrade",
+          kind: "quick",
+          tradeId: "credits-for-energy",
+          label: "2信用点 -> 1能量",
+          score: 34,
+          reason: "路线兑现：信用点换能量准备环绕/登陆",
+          valueBreakdown: {
+            lateResourceRecoveryTrade: true,
+            currentScore: 80,
+            finalMarkCount: 3,
+            nextFinalMarkThreshold: null,
+            canReachAnalyze: false,
+            planetCashoutRecoveryScore: 33,
+            planetCashoutRecoveryPlan: {
+              kind: "land",
+              planetId: "mars",
+              planetName: "火星",
+              targetEnergy: 2,
+              directScore: 6,
+              rewardValue: 25,
+              energyAfterTrade: 2,
+              afterTradeGap: 0,
+              reachesNextThreshold: false,
+              score: 33,
+            },
+          },
+        },
+        candidates: [
+          {
+            id: "quickTrade",
+            kind: "quick",
+            tradeId: "credits-for-energy",
+            label: "2信用点 -> 1能量",
+            available: true,
+            score: 34,
+          },
+          { id: "pass", kind: "pass", available: true, score: -4 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 3,
+      turnNumber: 2,
+      rawTurnNumber: 2,
+      playerResources: { score: 88, credits: 0, energy: 2, publicity: 4, handSize: 7, availableData: 0 },
+      details: {
+        action: { id: "land", kind: "main", score: 22 },
+        candidates: [
+          { id: "land", kind: "main", available: true, score: 22 },
+          { id: "pass", kind: "pass", available: true, score: -4 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 3,
+      turnNumber: 3,
+      rawTurnNumber: 3,
+      playerResources: { score: 100, credits: 0, energy: 1, publicity: 5, handSize: 5, availableData: 0 },
+      details: {
+        action: { id: "researchTech", kind: "main", score: 18 },
+        candidates: [
+          { id: "researchTech", kind: "main", available: true, score: 18 },
+          { id: "pass", kind: "pass", available: true, score: -4 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 3,
+      turnNumber: 4,
+      rawTurnNumber: 4,
+      playerResources: { score: 100, credits: 0, energy: 1, publicity: 5, handSize: 4, availableData: 0 },
+      details: {
+        action: { id: "pass", kind: "pass", score: -4 },
+        candidates: [
+          { id: "playCard", kind: "main", available: false, score: 12, reason: "没有资源可支付" },
+          { id: "scan", kind: "main", available: false, score: 8, reason: "能量不足" },
+          { id: "researchTech", kind: "main", available: false, score: 18, reason: "宣传不足" },
+          { id: "pass", kind: "pass", available: true, score: -4 },
+        ],
+      },
+    },
+  ],
+});
+assert.equal(midgameRouteEnergyTradeDiagnostic.midgameLowTechRouteEnergyTradeSamples.length, 1);
+const midgameRouteEnergyTradeSample = midgameRouteEnergyTradeDiagnostic.midgameLowTechRouteEnergyTradeSamples[0];
+assert.deepStrictEqual(midgameRouteEnergyTradeSample.followup.actionIds, ["land", "researchTech", "pass"]);
+assert.equal(midgameRouteEnergyTradeSample.followup.firstPlanetCashoutActionId, "land");
+assert.equal(midgameRouteEnergyTradeSample.followup.firstEngineActionId, "researchTech");
+assert.equal(midgameRouteEnergyTradeSample.followup.lastPassReasonTag, "resource-locked-hand");
+assert.ok(midgameRouteEnergyTradeSample.followup.tags.includes("engine-followup"));
+assert.ok(midgameRouteEnergyTradeSample.followup.tags.includes("planet-cashout-before-engine"));
+assert.ok(midgameRouteEnergyTradeSample.followup.tags.includes("tail-pass-resource-locked-hand"));
+
 assert.equal(evaluator.getResourceValue({ credits: 1, energy: 1, publicity: 1 }), 7);
 assert.equal(evaluator.getRemainingIncomeMultiplier(1), 3);
 assert.equal(evaluator.getRemainingIncomeMultiplier(4), 0);
@@ -688,6 +926,62 @@ assert.equal(decision.initialCards.length, 2);
 assert.ok(decision.openingPlan);
 assert.ok(Object.keys(decision.openingPlan.goals || {}).length > 0);
 
+const forcedIndustryOffer = {
+  industryOptions: [
+    { id: "industry:turing.png", label: "图灵系统" },
+    { id: "industry:cheat.png", label: "作弊实验室" },
+  ],
+  initialOptions: [
+    { id: "initial:5", label: "初始牌 5" },
+    { id: "initial:20", label: "初始牌 20" },
+  ],
+};
+const unforcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, { roundNumber: 1 });
+assert.equal(unforcedOpening.industry.label, "图灵系统");
+const forcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
+  roundNumber: 1,
+  forcedIndustryCard: forcedIndustryOffer.industryOptions[1],
+});
+assert.equal(forcedOpening.industry.label, "作弊实验室");
+assert.equal(forcedOpening.openingPlan.summary.hand, 6);
+assert.ok(forcedOpening.openingPlan.topPlans.every((plan) => plan.industryLabel === "作弊实验室"));
+
+const huanyuOpeningOffer = {
+  industryOptions: [{ id: "industry:huanyu.png", label: "寰宇超动力" }],
+  initialOptions: [
+    { id: "initial:7", label: "初始牌 7" },
+    { id: "initial:11", label: "初始牌 11" },
+    { id: "initial:18", label: "初始牌 18" },
+  ],
+};
+const huanyuOpening = policy.chooseInitialSelection(huanyuOpeningOffer, {
+  roundNumber: 1,
+  forcedIndustryCard: huanyuOpeningOffer.industryOptions[0],
+});
+assert.deepEqual(
+  huanyuOpening.openingPlan.topPlans[0].initialNumbers,
+  [7, 18],
+  "Huanyu should prefer the data-income orbit plus scan opening over thin trace openings",
+);
+
+const huanyuResourceOpeningOffer = {
+  industryOptions: [{ id: "industry:huanyu.png", label: "寰宇超动力" }],
+  initialOptions: [
+    { id: "initial:13", label: "初始牌 13" },
+    { id: "initial:11", label: "初始牌 11" },
+    { id: "initial:2", label: "初始牌 2" },
+  ],
+};
+const huanyuResourceOpening = policy.chooseInitialSelection(huanyuResourceOpeningOffer, {
+  roundNumber: 1,
+  forcedIndustryCard: huanyuResourceOpeningOffer.industryOptions[0],
+});
+assert.deepEqual(
+  huanyuResourceOpening.openingPlan.topPlans[0].initialNumbers,
+  [13, 11],
+  "Huanyu should not replace trace plus scan with a plain resource plus scan opening",
+);
+
 assert.equal(policy.chooseTurnAction([
   { id: "orbit", available: true, score: 20, actionGraph: { net: 2 } },
   { id: "playCard", available: true, score: 1, actionGraph: { net: 9 } },
@@ -826,6 +1120,40 @@ const sampleBattleReport = {
   lastSummary: { ok: false, blocked: true, gameEnded: false, steps: 4, message: "sample" },
   logs: [
     {
+      type: "initial-selection",
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: {
+        aiStyle: "route",
+        industryCard: { label: "寰宇超动力" },
+        initialCards: [
+          { id: "initial:18", label: "初始牌 18" },
+          { id: "initial:11", label: "初始牌 11" },
+        ],
+        openingPlan: {
+          score: 100.5,
+          summary: { scan: 2, traces: 1, orbits: 0, data: 0 },
+          goals: { GRAB_TRACE_PINK: 2 },
+          topPlans: [
+            {
+              score: 100.5,
+              industryLabel: "寰宇超动力",
+              initialNumbers: [18, 11],
+              summary: { scan: 2, traces: 1, orbits: 0, data: 0 },
+              goals: { GRAB_TRACE_PINK: 2 },
+            },
+            {
+              score: 100.2,
+              industryLabel: "寰宇超动力",
+              initialNumbers: [7, 11],
+              summary: { scan: 0, traces: 1, orbits: 1, data: 1 },
+              goals: { GRAB_TRACE_YELLOW: 1.35 },
+            },
+          ],
+        },
+      },
+    },
+    {
       type: "turn-action",
       playerId: "player-white",
       details: {
@@ -860,6 +1188,30 @@ const sampleBattleReport = {
       type: "play-card",
       playerId: "player-white",
       details: { selected: { cardLabel: "控制中心", cardId: "b_25.webp" } },
+    },
+    {
+      type: "pass-reserve",
+      playerId: "player-blue",
+      playerLabel: "蓝色",
+      roundNumber: 1,
+      turnNumber: 3,
+      rawTurnNumber: 7,
+      playerResources: { score: 18, credits: 2, energy: 0, handSize: 2 },
+      details: {
+        card: { id: "reserve-low", cardId: "b_1.webp", cardName: "低续航牌", price: 1, cardTypeCode: 1 },
+        passReserveResourcePressure: { active: false, reasons: [], score: 0 },
+        passReserveResourcePressurePreview: {
+          active: true,
+          reasons: ["energy"],
+          score: 1.5,
+          incomeCandidates: [
+            { cardId: "b_2.webp", cardLabel: "补能量牌", incomeGain: { energy: 1 } },
+          ],
+        },
+        passReserveResourcePressureMiss: true,
+        selectedScore: null,
+        candidates: [],
+      },
     },
     {
       type: "move-payment",
@@ -905,6 +1257,18 @@ assert.equal(battleAnalysis.actionCounts.launch, 1);
 assert.equal(battleAnalysis.actionCounts.pass, 1);
 assert.equal(battleAnalysis.candidateStats.playCard.availableNotSelected, 1);
 assert.equal(battleAnalysis.opportunities.passWithAvailableMain, 1);
+assert.equal(battleAnalysis.opportunities.openingPlanNearMiss, 1);
+assert.equal(battleAnalysis.openingPlanNearMissSamples[0].bestAlternativeGap, 0.3);
+assert.deepEqual(battleAnalysis.openingPlanNearMissSamples[0].alternatives[0].initialNumbers, [7, 11]);
+assert.equal(battleAnalysis.opportunities.openingPlanConversionGap, 1);
+assert.equal(battleAnalysis.openingPlanConversionSamples[0].playerId, "player-white");
+assert.ok(battleAnalysis.openingPlanConversionSamples[0].reasons.includes("scan-plan-unconverted"));
+assert.ok(battleAnalysis.openingPlanConversionSamples[0].reasons.includes("trace-plan-unconverted"));
+assert.equal(battleAnalysis.openingPlanConversionSamples[0].earlyWindow.actual.scanCount, 0);
+assert.equal(battleAnalysis.opportunities.passReserveResourcePressureMiss, 1);
+assert.equal(battleAnalysis.passReserveResourcePressureMissSamples[0].playerId, "player-blue");
+assert.deepEqual(battleAnalysis.passReserveResourcePressureMissSamples[0].previewReasons, ["energy"]);
+assert.equal(battleAnalysis.passReserveResourcePressureMissSamples[0].previewIncomeCandidates[0].cardId, "b_2.webp");
 assert.equal(battleAnalysis.opportunities.selectedBelowBestScore, 2);
 assert.equal(battleAnalysis.scoreOpportunities.selectedBelowBest, 2);
 assert.equal(battleAnalysis.scoreOpportunities.averageGap, 10.75);
@@ -927,6 +1291,10 @@ assert.equal(battleAnalysis.playerProfiles[0].metrics.planMoveCount, 1);
 assert.equal(battleAnalysis.winner.playerId, "player-white");
 assert.equal(battleAnalysis.playerProfiles.length, 2);
 assert.equal(battleAnalysis.playerProfiles[0].playerId, "player-white");
+assert.equal(battleAnalysis.playerProfiles[0].metrics.mainActionCount, 1);
+assert.equal(battleAnalysis.playerProfiles[0].metrics.idleTurnCount, 0);
+assert.equal(battleAnalysis.playerProfiles[1].metrics.idleTurnCount, 1);
+assert.equal(battleAnalysis.paceSummary.lowTail.playerId, "player-blue");
 assert.equal(battleAnalysis.playerProfiles[0].metrics.engineRatio, 0);
 assert.equal(battleAnalysis.winnerProfileDeltas.finalScore, 5);
 assert.ok(battleAnalysis.strategyTuning.weights.tech > 1);
@@ -935,6 +1303,1704 @@ assert.ok(battleAnalysis.strategyTuning.weights.pass < 1);
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "score-pass-opportunity-cost"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-score-gap"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-card-score-gap"));
+assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-opening-plan-conversion"));
+assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-pass-reserve-resource-pressure"));
+const sampleBattleSummary = analytics.summarizeBattleReports([sampleBattleReport]);
+assert.equal(sampleBattleSummary.openingPlanNearMissSamples[0].playerLabel, "白色");
+assert.equal(sampleBattleSummary.openingPlanConversionSamples[0].playerLabel, "白色");
+assert.equal(sampleBattleSummary.passReserveResourcePressureMissSamples[0].playerLabel, "蓝色");
+
+const selectedIncomePassReserveReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "pass-reserve",
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    roundNumber: 1,
+    turnNumber: 3,
+    rawTurnNumber: 7,
+    playerResources: { score: 18, credits: 0, energy: 0, handSize: 1 },
+    details: {
+      card: { id: "b_2.webp", cardId: "b_2.webp", cardName: "补能量牌", price: 1, cardTypeCode: 1 },
+      passReserveResourcePressure: { active: false, reasons: [], score: 0 },
+      passReserveResourcePressurePreview: {
+        active: true,
+        reasons: ["energy", "hand"],
+        score: 2.5,
+        incomeCandidates: [
+          { cardId: "b_2.webp", cardLabel: "补能量牌", incomeGain: { energy: 1 } },
+        ],
+      },
+      passReserveResourcePressureMiss: true,
+      selectedScore: null,
+      candidates: [],
+    },
+  }],
+  playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 19 }],
+};
+const selectedIncomePassReserveAnalysis = analytics.analyzeBattleReport(selectedIncomePassReserveReport);
+assert.equal(selectedIncomePassReserveAnalysis.opportunities.passReserveResourcePressureMiss, 0);
+assert.equal(selectedIncomePassReserveAnalysis.passReserveResourcePressureMissSamples.length, 0);
+
+const negativePassOpportunityReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 9,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 126, credits: 1, energy: 0, publicity: 2, handSize: 1 },
+    details: {
+      action: { id: "pass", kind: "pass", score: -2.3 },
+      candidates: [
+        { id: "pass", kind: "pass", available: true, score: -2.3 },
+        { id: "launch", kind: "main", available: true, score: -10.5 },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 126 }],
+};
+const negativePassOpportunityAnalysis = analytics.analyzeBattleReport(negativePassOpportunityReport);
+assert.equal(negativePassOpportunityAnalysis.opportunities.passWithAvailableMain, 1);
+assert.equal(negativePassOpportunityAnalysis.passOpportunitySamples[0].bestMain.policyScore, -6.5);
+assert.ok(!negativePassOpportunityAnalysis.recommendations.some((entry) => entry.id === "score-pass-opportunity-cost"));
+assert.ok(negativePassOpportunityAnalysis.recommendations.some((entry) => entry.id === "classify-negative-pass-opportunity"));
+const negativePassOpportunitySummary = analytics.summarizeBattleReports([negativePassOpportunityReport]);
+assert.ok(!negativePassOpportunitySummary.recommendations.some((entry) => entry.id === "score-pass-opportunity-cost"));
+assert.ok(negativePassOpportunitySummary.recommendations.some((entry) => entry.id === "classify-negative-pass-opportunity"));
+
+const endTurnMoveReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 5,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 90, credits: 1, energy: 1, handSize: 2 },
+    details: {
+      action: { id: "end-turn", kind: "quick", score: -0.5 },
+      candidates: [
+        { id: "end-turn", kind: "quick", available: true, score: -0.5 },
+        { id: "move", kind: "quick", available: true, score: 7.25, direction: "clockwise", directScoreGain: 0 },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 90 }],
+};
+const endTurnMoveAnalysis = analytics.analyzeBattleReport(endTurnMoveReport);
+assert.equal(endTurnMoveAnalysis.opportunities.endTurnWithAvailableMove, 1);
+assert.equal(endTurnMoveAnalysis.opportunities.endTurnWithPositiveMove, 1);
+assert.equal(endTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].bestMove.score, 7.25);
+assert.equal(endTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].bestMovePositive, true);
+assert.equal(endTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].resources.energy, 1);
+const endTurnMoveSummary = analytics.summarizeBattleReports([endTurnMoveReport]);
+assert.equal(endTurnMoveSummary.endTurnMoveOpportunitySamples[0].bestMove.score, 7.25);
+assert.equal(endTurnMoveSummary.opportunities.endTurnWithPositiveMove, 1);
+
+const negativeEndTurnMoveReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 11,
+    playerId: "player-green",
+    playerLabel: "绿色",
+    playerResources: { score: 151, credits: 0, energy: 1, handSize: 2 },
+    details: {
+      action: { id: "end-turn", kind: "quick", score: -0.5 },
+      candidates: [
+        { id: "end-turn", kind: "quick", available: true, score: -0.5 },
+        { id: "move", kind: "quick", available: true, score: -3.25, direction: "inward" },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-green", playerLabel: "绿色", finalScore: 151 }],
+};
+const negativeEndTurnMoveAnalysis = analytics.analyzeBattleReport(negativeEndTurnMoveReport);
+assert.equal(negativeEndTurnMoveAnalysis.opportunities.endTurnWithAvailableMove, 1);
+assert.equal(negativeEndTurnMoveAnalysis.opportunities.endTurnWithPositiveMove, 0);
+assert.equal(negativeEndTurnMoveAnalysis.endTurnMoveOpportunitySamples[0].bestMovePositive, false);
+assert.ok(!negativeEndTurnMoveAnalysis.recommendations.some((entry) => entry.id === "targeted-post-action-move"));
+assert.ok(negativeEndTurnMoveAnalysis.recommendations.some((entry) => entry.id === "classify-negative-end-turn-move"));
+
+const passResourceLockReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 6,
+    playerId: "player-green",
+    playerLabel: "绿色",
+    playerResources: { score: 132, credits: 0, energy: 1, publicity: 4, handSize: 4 },
+    details: {
+      action: { id: "pass", kind: "main", score: -3 },
+      candidates: [
+        { id: "pass", kind: "main", available: true, score: -3 },
+        { id: "playCard", kind: "main", available: false, score: 0, reason: "没有资源可支付的普通手牌" },
+        { id: "researchTech", kind: "main", available: false, score: 0, reason: "宣传不足" },
+        { id: "launch", kind: "main", available: false, score: 0, reason: "信用点不足" },
+        { id: "publicity-for-card", kind: "quick", available: true, score: 1.25 },
+      ],
+      resourceLockTradePreviews: [{
+        tradeId: "cards-for-credit",
+        label: "2张牌 → 1信用点",
+        bestAction: { actionId: "playCard", score: 11.5, cardId: "b_135.webp" },
+        unlockedActions: [{ actionId: "playCard", score: 11.5, cardId: "b_135.webp" }],
+      }],
+    },
+  }],
+  playerResults: [{ playerId: "player-green", playerLabel: "绿色", finalScore: 132 }],
+};
+const passResourceLockAnalysis = analytics.analyzeBattleReport(passResourceLockReport);
+assert.equal(passResourceLockAnalysis.opportunities.passWithResourceLockedHand, 1);
+assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].playCard.reason, "没有资源可支付的普通手牌");
+assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].resources.handSize, 4);
+assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].unavailableMain.length, 3);
+assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].resourceLockTradePreviews[0].tradeId, "cards-for-credit");
+assert.equal(passResourceLockAnalysis.passResourceLockSamples[0].resourceLockTradePreviews[0].bestAction.actionId, "playCard");
+const passResourceLockSummary = analytics.summarizeBattleReports([passResourceLockReport]);
+assert.equal(passResourceLockSummary.passResourceLockSamples[0].playCard.reason, "没有资源可支付的普通手牌");
+assert.equal(passResourceLockSummary.passResourceLockSamples[0].resourceLockTradePreviews[0].bestAction.cardId, "b_135.webp");
+
+const finalLowHandPassRecoveryReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 7,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 115, credits: 0, energy: 1, publicity: 4, handSize: 1 },
+    details: {
+      action: { id: "pass", kind: "pass", score: -2.3 },
+      finalLowHandPassRecoveryDiagnostic: {
+        currentScore: 115,
+        finalMarkCount: 3,
+        nextFinalMarkThreshold: null,
+        handSize: 1,
+        bestPublicTradeCardScore: 1.75,
+        topPublicTradeCards: [{ cardId: "b_87.webp", cardLabel: "引力弹弓", tradeScore: 1.75 }],
+        cardsForPickCardPreview: {
+          ok: false,
+          reason: "资源不足，需要 2张牌",
+          handCost: 2,
+          handAfterTrade: 0,
+          discardCost: null,
+          bestPublicTradeCardScore: 1.75,
+          bestPublicTradeCard: { cardId: "b_87.webp", cardLabel: "引力弹弓", tradeScore: 1.75 },
+          net: null,
+        },
+        tradeChecks: [{ tradeId: "publicity-for-card", ok: true }],
+        availableQuick: [],
+        unavailableMain: [{ id: "playCard", reason: "没有资源可支付的普通手牌" }],
+      },
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 163 }],
+};
+const finalLowHandPassRecoveryAnalysis = analytics.analyzeBattleReport(finalLowHandPassRecoveryReport);
+assert.equal(finalLowHandPassRecoveryAnalysis.opportunities.finalLowHandPassNoRecovery, 1);
+assert.equal(finalLowHandPassRecoveryAnalysis.opportunities.finalPublicRefillShortfall, 0);
+assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].bestPublicTradeCardScore, 1.75);
+assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].topPublicTradeCards[0].cardId, "b_87.webp");
+assert.equal(finalLowHandPassRecoveryAnalysis.finalLowHandPassRecoverySamples[0].cardsForPickCardPreview.handCost, 2);
+const finalLowHandPassRecoverySummary = analytics.summarizeBattleReports([finalLowHandPassRecoveryReport]);
+assert.equal(finalLowHandPassRecoverySummary.finalLowHandPassRecoverySamples[0].tradeChecks[0].tradeId, "publicity-for-card");
+
+const finalPublicRefillShortfallReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 11,
+    playerId: "player-brown",
+    playerLabel: "棕色",
+    playerResources: { score: 137, credits: 1, energy: 0, publicity: 1, handSize: 0 },
+    details: {
+      action: { id: "pass", kind: "pass", score: -4.2 },
+      finalLowHandPassRecoveryDiagnostic: {
+        currentScore: 137,
+        finalMarkCount: 3,
+        nextFinalMarkThreshold: null,
+        handSize: 0,
+        bestPublicTradeCardScore: 40.15,
+        topPublicTradeCards: [{
+          cardId: "b_3.webp",
+          cardLabel: "阿尔冈金射电天文台",
+          tradeScore: 40.15,
+          playScore: 40.04,
+        }],
+        cardsForPickCardPreview: {
+          ok: false,
+          reason: "资源不足，需要 2张牌",
+          handCost: 2,
+          handAfterTrade: 0,
+          discardCost: null,
+          bestPublicTradeCardScore: 40.15,
+          bestPublicTradeCard: { cardId: "b_3.webp", cardLabel: "阿尔冈金射电天文台", tradeScore: 40.15 },
+          net: null,
+        },
+        tradeChecks: [
+          { tradeId: "credits-for-card", ok: false, reason: "资源不足，需要 2信用点", cost: { credits: 2 }, gain: { handSize: 1 } },
+          { tradeId: "energy-for-card", ok: false, reason: "资源不足，需要 2能量", cost: { energy: 2 }, gain: { handSize: 1 } },
+          { tradeId: "publicity-for-card", ok: false, reason: "资源不足，需要 3宣传", cost: { publicity: 3 }, gain: { handSize: 1 } },
+          { tradeId: "cards-for-pick-card", ok: false, reason: "资源不足，需要 2张牌", cost: { handSize: 2 }, gain: { handSize: 1 } },
+        ],
+        availableQuick: [],
+        unavailableMain: [{ id: "playCard", reason: "没有手牌" }],
+      },
+    },
+  }],
+  playerResults: [{ playerId: "player-brown", playerLabel: "棕色", finalScore: 223 }],
+};
+const finalPublicRefillShortfallAnalysis = analytics.analyzeBattleReport(finalPublicRefillShortfallReport);
+assert.equal(finalPublicRefillShortfallAnalysis.opportunities.finalLowHandPassNoRecovery, 1);
+assert.equal(finalPublicRefillShortfallAnalysis.opportunities.finalPublicRefillShortfall, 1);
+assert.equal(finalPublicRefillShortfallAnalysis.finalPublicRefillShortfallSamples[0].bestPublicTradeCard.cardId, "b_3.webp");
+assert.equal(finalPublicRefillShortfallAnalysis.finalPublicRefillShortfallSamples[0].shortfalls[0].tradeId, "credits-for-card");
+assert.equal(finalPublicRefillShortfallAnalysis.finalPublicRefillShortfallSamples[0].shortfalls[0].missing[0].missing, 1);
+assert(finalPublicRefillShortfallAnalysis.recommendations.some((item) => item.id === "inspect-final-public-refill-shortfall"));
+const finalPublicRefillShortfallSummary = analytics.summarizeBattleReports([finalPublicRefillShortfallReport]);
+assert.equal(finalPublicRefillShortfallSummary.finalPublicRefillShortfallSamples[0].shortfalls.length, 4);
+assert.equal(finalPublicRefillShortfallSummary.opportunities.finalPublicRefillShortfall, 1);
+
+const paceReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 5 },
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: { action: { id: "playCard", kind: "main", score: 20 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: { action: { id: "industry", kind: "quick", score: 12 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: { action: { id: "cardCorner", kind: "quick", score: 4 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: { action: { id: "quickTrade", kind: "quick", tradeId: "cards-for-energy", score: 6 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: { action: { id: "placeData", kind: "quick", score: 3 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: { action: { id: "end-turn", kind: "quick", score: -0.5 }, candidates: [] },
+    },
+  ],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 120 }],
+};
+const paceAnalysis = analytics.analyzeBattleReport(paceReport);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.mainActionCount, 1);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.quickStepCount, 4);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.resourceQuickStepCount, 3);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.idleTurnCount, 1);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.quickToMainRatio, 4);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.productiveActionRatio, 0.833);
+assert.equal(paceAnalysis.playerProfiles[0].metrics.idleTurnRatio, 0.167);
+assert.equal(paceAnalysis.playerProfiles[0].roundPace[0].roundNumber, 2);
+assert.equal(paceAnalysis.playerProfiles[0].roundPace[0].mainActionCount, 1);
+assert.equal(paceAnalysis.playerProfiles[0].roundPace[0].resourceQuickStepCount, 3);
+assert.equal(paceAnalysis.paceSummary.averageQuickStepCount, 4);
+assert.equal(paceAnalysis.roundPaceSummary.rounds[0].averageMainActionCount, 1);
+assert.equal(paceAnalysis.roundPaceSummary.rounds[0].averageResourceQuickStepCount, 3);
+assert.equal(paceAnalysis.lowRoundPaceSamples[0].roundNumber, 2);
+assert.equal(paceAnalysis.lowRoundPaceSamples[0].mainActionGap, 0);
+const paceSummary = analytics.summarizeBattleReports([paceReport]);
+assert.equal(paceSummary.paceSummary.averageMainActionCount, 1);
+assert.equal(paceSummary.paceSummary.lowTail.quickStepCount, 4);
+assert.equal(paceSummary.roundPaceSummary.lowRoundPaceSamples[0].resourceQuickStepCount, 3);
+assert.equal(paceSummary.lowRoundPaceSamples[0].playCardCount, 1);
+
+const earlyPassReport = {
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 1,
+      turnNumber: 1,
+      rawTurnNumber: 1,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 8, credits: 1, energy: 0, publicity: 2, handSize: 2 },
+      details: { action: { id: "playCard", kind: "main", score: 12 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 1,
+      turnNumber: 2,
+      rawTurnNumber: 2,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 12, credits: 0, energy: 0, publicity: 1, handSize: 2 },
+      details: {
+        action: { id: "pass", kind: "pass", score: -2 },
+        candidates: [
+          { id: "pass", kind: "pass", available: true, score: -2 },
+          { id: "launch", kind: "main", available: false, score: 0, reason: "信用点不足" },
+          { id: "scan", kind: "main", available: false, score: 0, reason: "能量不足" },
+          { id: "playCard", kind: "main", available: false, score: 0, reason: "没有资源可支付的普通手牌" },
+        ],
+        resourceLockTradePreviews: [{
+          tradeId: "cards-for-credit",
+          label: "2张牌 → 1信用点",
+          bestAction: { actionId: "playCard", score: 9.5, cardId: "b_19.webp" },
+          unlockedActions: [{ actionId: "playCard", score: 9.5, cardId: "b_19.webp" }],
+        }],
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      rawTurnNumber: 3,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 18, credits: 0, energy: 1, publicity: 1, handSize: 1 },
+      details: { action: { id: "cardCorner", kind: "quick", score: 3 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 1,
+      rawTurnNumber: 3,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 18, credits: 0, energy: 1, publicity: 1, handSize: 1 },
+      details: {
+        action: { id: "pass", kind: "pass", score: -2 },
+        candidates: [
+          { id: "pass", kind: "pass", available: true, score: -2 },
+          { id: "researchTech", kind: "main", available: true, score: -8 },
+          { id: "launch", kind: "main", available: false, score: 0, reason: "信用点不足" },
+        ],
+      },
+    },
+  ],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 88 }],
+};
+const earlyPassAnalysis = analytics.analyzeBattleReport(earlyPassReport);
+assert.equal(earlyPassAnalysis.opportunities.earlyPassNoMain, 2);
+assert.equal(earlyPassAnalysis.opportunities.resourceLockMainUnlock, 1);
+assert.equal(earlyPassAnalysis.opportunities.resourceLockWeakLaunchUnlock, 0);
+assert.equal(earlyPassAnalysis.opportunities.quickBeforePassNoMain, 1);
+assert.equal(earlyPassAnalysis.opportunities.preNoMainPassResourceDrain, 1);
+assert.equal(earlyPassAnalysis.opportunities.postPassQuickNoMain, 0);
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].rawTurnNumber, 2);
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].reasonTag, "resource-trade-unlocks-main");
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].candidateProfile.unavailableMainCount, 3);
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[0].candidateProfile.bestResourceLockTrade.tradeId, "cards-for-credit");
+assert.equal(earlyPassAnalysis.resourceLockMainUnlockSamples[0].bestResourceLockTrade.tradeId, "cards-for-credit");
+assert.equal(earlyPassAnalysis.resourceLockMainUnlockSamples[0].bestResourceLockTrade.bestAction.cardId, "b_19.webp");
+assert.deepEqual(earlyPassAnalysis.earlyPassNoMainSamples[1].actionIds, ["cardCorner", "pass"]);
+assert.deepEqual(earlyPassAnalysis.quickBeforePassNoMainSamples[0].actionIds, ["cardCorner", "pass"]);
+assert.equal(earlyPassAnalysis.quickBeforePassNoMainSamples[0].quickBeforePassCount, 1);
+assert.equal(earlyPassAnalysis.quickBeforePassNoMainSamples[0].quickAfterPassCount, 0);
+assert.equal(earlyPassAnalysis.preNoMainPassResourceDrainSamples[0].previousAction.id, "playCard");
+assert.equal(earlyPassAnalysis.preNoMainPassResourceDrainSamples[0].resourceDeltaToPass.credits, 1);
+assert.equal(earlyPassAnalysis.preNoMainPassResourceDrainSamples[0].resourceDeltaToPass.publicity, 1);
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[1].reasonTag, "negative-main-only");
+assert.equal(earlyPassAnalysis.earlyPassNoMainSamples[1].candidateProfile.bestMain.id, "researchTech");
+assert.deepEqual(earlyPassAnalysis.earlyPassNoMainReasonCounts, {
+  "resource-trade-unlocks-main": 1,
+  "negative-main-only": 1,
+});
+const earlyPassSummary = analytics.summarizeBattleReports([earlyPassReport]);
+assert.deepEqual(earlyPassSummary.earlyPassNoMainReasonCounts, earlyPassAnalysis.earlyPassNoMainReasonCounts);
+assert.equal(earlyPassSummary.opportunities.resourceLockMainUnlock, 1);
+assert.equal(earlyPassSummary.opportunities.quickBeforePassNoMain, 1);
+assert.equal(earlyPassSummary.resourceLockMainUnlockSamples[0].bestResourceLockTrade.tradeId, "cards-for-credit");
+assert.equal(earlyPassSummary.preNoMainPassResourceDrainSamples[0].previousAction.id, "playCard");
+assert.ok(earlyPassSummary.recommendations.some((entry) => entry.id === "inspect-resource-lock-main-unlock"));
+assert.ok(earlyPassSummary.recommendations.some((entry) => entry.id === "inspect-quick-before-pass-no-main"));
+assert.ok(earlyPassSummary.recommendations.some((entry) => entry.id === "inspect-pre-no-main-resource-drain"));
+
+const resourceLockWeakLaunchReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 9,
+    rawTurnNumber: 36,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 143, credits: 1, energy: 0, publicity: 3, handSize: 2 },
+    details: {
+      action: { id: "pass", kind: "pass", score: -2.3 },
+      candidates: [
+        { id: "pass", kind: "pass", available: true, score: -2.3 },
+        { id: "launch", kind: "main", available: false, score: 0, reason: "信用点不足" },
+      ],
+      resourceLockTradePreviews: [{
+        tradeId: "cards-for-credit",
+        label: "2张牌 → 1信用点",
+        bestAction: { actionId: "launch", score: 27.5, planScore: 0, directScoreGain: 0 },
+        unlockedActions: [{ actionId: "launch", score: 27.5, planScore: 0, directScoreGain: 0 }],
+      }],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 233 }],
+};
+const resourceLockWeakLaunchAnalysis = analytics.analyzeBattleReport(resourceLockWeakLaunchReport);
+assert.equal(resourceLockWeakLaunchAnalysis.opportunities.resourceLockMainUnlock, 1);
+assert.equal(resourceLockWeakLaunchAnalysis.opportunities.resourceLockWeakLaunchUnlock, 1);
+assert.equal(resourceLockWeakLaunchAnalysis.resourceLockWeakLaunchUnlockSamples[0].bestResourceLockTrade.bestAction.actionId, "launch");
+assert(resourceLockWeakLaunchAnalysis.recommendations.some((entry) => entry.id === "classify-resource-lock-weak-launch"));
+const resourceLockWeakLaunchSummary = analytics.summarizeBattleReports([resourceLockWeakLaunchReport]);
+assert.equal(resourceLockWeakLaunchSummary.resourceLockWeakLaunchUnlockSamples[0].bestResourceLockTrade.tradeId, "cards-for-credit");
+assert.equal(resourceLockWeakLaunchSummary.opportunities.resourceLockWeakLaunchUnlock, 1);
+
+const postPassQuickReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 6,
+      rawTurnNumber: 24,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 25, credits: 0, energy: 0, publicity: 4, handSize: 1 },
+      details: { action: { id: "pass", kind: "pass", score: -2.3 }, candidates: [] },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 6,
+      rawTurnNumber: 24,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 25, credits: 0, energy: 0, publicity: 4, handSize: 2 },
+      details: {
+        action: {
+          id: "move",
+          kind: "quick",
+          score: 5.6,
+          routeTarget: { kind: "planet", id: "mars", planetId: "mars", newDistance: 0 },
+          valueBreakdown: {
+            requiredMovePoints: 1,
+            moveCardSpent: 1,
+            moveEnergySpent: 0,
+            followupScore: 0,
+            routeScore: 25.2,
+            routeScoreForGain: 14,
+            paymentCost: 5.4,
+            movementCost: 5.4,
+          },
+        },
+        candidates: [],
+      },
+    },
+    {
+      type: "move-payment",
+      roundNumber: 2,
+      turnNumber: 6,
+      rawTurnNumber: 24,
+      playerId: "player-white",
+      playerLabel: "白色",
+      details: {
+        requiredMovePoints: 1,
+        selectedHandIndices: [1],
+        energyCost: 0,
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 6,
+      rawTurnNumber: 24,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 25, credits: 0, energy: 0, publicity: 5, handSize: 1 },
+      details: { action: { id: "end-turn", kind: "end-turn", score: -0.5 }, candidates: [] },
+    },
+  ],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 184 }],
+};
+const postPassQuickAnalysis = analytics.analyzeBattleReport(postPassQuickReport);
+assert.equal(postPassQuickAnalysis.opportunities.quickBeforePassNoMain, 0);
+assert.equal(postPassQuickAnalysis.opportunities.postPassQuickNoMain, 1);
+assert.equal(postPassQuickAnalysis.opportunities.postPassQuickAfterPass, 1);
+assert.equal(postPassQuickAnalysis.opportunities.postPassPaidMoveNoFollowup, 1);
+assert.equal(postPassQuickAnalysis.opportunities.postPassThinHandNoFollowupMove, 1);
+assert.equal(postPassQuickAnalysis.postPassQuickSamples[0].postAction.payment.handAfterMovePayment, 1);
+assert.equal(postPassQuickAnalysis.postPassQuickSamples[0].postAction.routeTarget.planetId, "mars");
+assert.equal(postPassQuickAnalysis.postPassQuickSamples[0].postAction.flags.thinHandNoFollowupMove, true);
+const postPassQuickSummary = analytics.summarizeBattleReports([postPassQuickReport]);
+assert.equal(postPassQuickSummary.postPassQuickNoMainSamples[0].quickAfterPassCount, 1);
+assert.equal(postPassQuickSummary.postPassQuickSamples[0].postAction.flags.paidMoveNoFollowup, true);
+assert.ok(postPassQuickSummary.recommendations.some((entry) => entry.id === "inspect-post-pass-quick-no-main"));
+assert.ok(postPassQuickSummary.recommendations.some((entry) => entry.id === "classify-route-payment-risk"));
+assert.ok(!postPassQuickSummary.recommendations.some((entry) => entry.id === "route-planner"));
+
+function appendRepeatedTurnActions(logs, playerId, playerLabel, counts) {
+  for (const [actionId, count] of Object.entries(counts || {})) {
+    for (let index = 0; index < count; index += 1) {
+      logs.push({
+        type: "turn-action",
+        playerId,
+        playerLabel,
+        details: { action: { id: actionId, score: 1 } },
+      });
+    }
+  }
+}
+
+const lowEngineLogs = [];
+appendRepeatedTurnActions(lowEngineLogs, "winner", "Winner", {
+  playCard: 13,
+  researchTech: 11,
+  scan: 9,
+  analyze: 6,
+  placeData: 48,
+  cardCorner: 5,
+  quickTrade: 4,
+  pass: 4,
+});
+appendRepeatedTurnActions(lowEngineLogs, "low", "Low", {
+  playCard: 5,
+  researchTech: 4,
+  scan: 2,
+  analyze: 1,
+  placeData: 14,
+  cardCorner: 4,
+  quickTrade: 1,
+  pass: 4,
+});
+const lowEngineReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: lowEngineLogs,
+  playerResults: [
+    { playerId: "winner", playerLabel: "Winner", finalScore: 320, baseScore: 205, techCount: 12, completedTaskCount: 5 },
+    { playerId: "low", playerLabel: "Low", finalScore: 190, baseScore: 120, techCount: 6, completedTaskCount: 1 },
+  ],
+};
+const lowEngineAnalysis = analytics.analyzeBattleReport(lowEngineReport);
+assert.equal(lowEngineAnalysis.lowEngineThroughputSamples[0].playerId, "low");
+assert.ok(lowEngineAnalysis.lowEngineThroughputSamples[0].reasons.includes("low-place-data"));
+assert.ok(lowEngineAnalysis.lowEngineThroughputSamples[0].reasons.includes("low-scan"));
+assert.ok(lowEngineAnalysis.lowEngineThroughputSamples[0].reasons.includes("low-analyze"));
+assert.ok(lowEngineAnalysis.lowEngineThroughputSamples[0].reasons.includes("low-tech"));
+assert.ok(lowEngineAnalysis.lowEngineThroughputSamples[0].referenceGaps.placeData >= 30);
+assert.ok(lowEngineAnalysis.recommendations.some((entry) => entry.id === "inspect-low-engine-throughput"));
+const lowEngineSummary = analytics.summarizeBattleReports([lowEngineReport]);
+assert.equal(lowEngineSummary.lowEngineThroughputSamples[0].playerId, "low");
+assert.ok(lowEngineSummary.recommendations.some((entry) => entry.id === "inspect-low-engine-throughput"));
+
+const highScoreNearMissLogs = [];
+appendRepeatedTurnActions(highScoreNearMissLogs, "winner", "Winner", {
+  playCard: 15,
+  researchTech: 11,
+  scan: 8,
+  analyze: 5,
+  placeData: 42,
+  cardCorner: 6,
+  quickTrade: 5,
+  pass: 3,
+});
+appendRepeatedTurnActions(highScoreNearMissLogs, "near", "Near", {
+  playCard: 8,
+  researchTech: 7,
+  scan: 5,
+  analyze: 3,
+  placeData: 28,
+  cardCorner: 4,
+  quickTrade: 2,
+  pass: 4,
+});
+highScoreNearMissLogs.push({
+  type: "turn-action",
+  roundNumber: 3,
+  turnNumber: 7,
+  rawTurnNumber: 25,
+  playerId: "near",
+  playerLabel: "Near",
+  playerResources: { score: 132, credits: 2, energy: 1, publicity: 5, handSize: 3 },
+  details: {
+    action: { id: "cardCorner", kind: "quick", score: 8 },
+    candidates: [
+      { id: "researchTech", kind: "main", available: false, score: 0, reason: "宣传不足，研究科技需要 6 宣传" },
+      { id: "cardCorner", kind: "quick", available: true, score: 8, directScoreGain: 0 },
+      { id: "move", kind: "quick", available: true, score: 5, directScoreGain: 0 },
+      { id: "pass", kind: "pass", available: true, score: -2 },
+    ],
+  },
+});
+highScoreNearMissLogs.push({
+  type: "turn-action",
+  roundNumber: 4,
+  turnNumber: 9,
+  rawTurnNumber: 31,
+  playerId: "near",
+  playerLabel: "Near",
+  playerResources: { score: 188, credits: 1, energy: 1, publicity: 6, handSize: 1 },
+  details: {
+    action: { id: "end-turn", kind: "quick", score: -0.5 },
+    candidates: [
+      { id: "researchTech", kind: "main", available: true, score: 12, directScoreGain: 0 },
+      { id: "pass", kind: "pass", available: true, score: -2 },
+      { id: "end-turn", kind: "quick", available: true, score: -0.5 },
+    ],
+  },
+});
+const highScoreNearMissReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: highScoreNearMissLogs,
+  playerResults: [
+    {
+      playerId: "winner",
+      playerLabel: "Winner",
+      finalScore: 320,
+      baseScore: 205,
+      tileScore: 95,
+      cardScore: 20,
+      techCount: 12,
+      completedTaskCount: 5,
+      finalMarkCount: 3,
+    },
+    {
+      playerId: "near",
+      playerLabel: "Near",
+      finalScore: 293,
+      baseScore: 206,
+      tileScore: 81,
+      cardScore: 6,
+      techCount: 10,
+      completedTaskCount: 3,
+      finalMarkCount: 3,
+      finalFormulas: ["a1", "b2", "d2"],
+      finalFormulaProgress: {
+        entries: [
+          { formulaId: "a1", multiplier: 4, baseValue: 3, score: 12 },
+          { formulaId: "b2", multiplier: 6, baseValue: 2, score: 12 },
+          { formulaId: "d2", multiplier: 7, baseValue: 5, score: 35 },
+        ],
+      },
+      b2Progress: { sectorWins: 2, orbitLandCount: 5, sectorWinDeficit: 2, orbitLandDeficit: 0, bottleneck: "sectorWins" },
+      resources: { credits: 0, energy: 1, publicity: 4, handSize: 2 },
+      handCards: [
+        { id: "near-task-1", cardId: "near-task.webp", label: "Near task", price: 2, typeCode: 3, taskCount: 1, endGameScoring: true },
+      ],
+      reservedCards: [
+        { id: "near-final-1", cardId: "near-final.webp", label: "Near final", price: 1, typeCode: 2, endGameScoring: true },
+      ],
+    },
+  ],
+};
+const highScoreNearMissAnalysis = analytics.analyzeBattleReport(highScoreNearMissReport);
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].playerId, "near");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].scoreTo300, 7);
+assert.ok(highScoreNearMissAnalysis.highScoreNearMissSamples[0].reasons.includes("near-300"));
+assert.ok(highScoreNearMissAnalysis.highScoreNearMissSamples[0].reasons.includes("b2-sector"));
+assert.ok(highScoreNearMissAnalysis.highScoreNearMissSamples[0].reasons.includes("card-score-gap"));
+assert.ok(highScoreNearMissAnalysis.highScoreNearMissSamples[0].referenceGaps.cardScore >= 14);
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].cards[0].cardId, "near-task.webp");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechPlan.hasD2, true);
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechPlan.d2NextTwoTechScore, 7);
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechPlan.techsToNextD2Step, 2);
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].recentTurnTail.at(-1).selected.id, "end-turn");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].recentTurnTail.at(-1).bestMain.id, "researchTech");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechSetupWindows[0].researchTech.reason, "宣传不足，研究科技需要 6 宣传");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechSetupWindows[0].bestSetupQuick.id, "cardCorner");
+assert.equal(highScoreNearMissAnalysis.highScoreNearMissSamples[0].dTechSetupWindows.at(-1).selected.id, "end-turn");
+assert.ok(highScoreNearMissAnalysis.recommendations.some((entry) => entry.id === "inspect-high-score-near-miss"));
+const highScoreNearMissSummary = analytics.summarizeBattleReports([highScoreNearMissReport]);
+assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].playerId, "near");
+assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].cards[1].zone, "reserved");
+assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].dTechPlan.d2NextTwoTechScore, 7);
+assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].dTechSetupWindows[0].bestSetupQuick.id, "cardCorner");
+assert.ok(highScoreNearMissSummary.recommendations.some((entry) => entry.id === "inspect-high-score-near-miss"));
+
+const d1TechBalanceReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [
+    {
+      type: "tech-placement",
+      roundNumber: 1,
+      turnNumber: 1,
+      rawTurnNumber: 1,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: { selected: { tileId: "orange4", techType: "orange", score: 42 } },
+    },
+    {
+      type: "tech-placement",
+      roundNumber: 2,
+      turnNumber: 3,
+      rawTurnNumber: 7,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: { selected: { tileId: "blue1", techType: "blue", score: 38 } },
+    },
+    {
+      type: "tech-placement",
+      roundNumber: 2,
+      turnNumber: 6,
+      rawTurnNumber: 10,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: { selected: { tileId: "purple1", techType: "purple", score: 35 } },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 5,
+      rawTurnNumber: 13,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      playerResources: { score: 92, credits: 3, energy: 2, publicity: 6, handSize: 4 },
+      details: {
+        action: { id: "researchTech", kind: "main", score: 76 },
+        candidates: [{
+          id: "researchTech",
+          kind: "main",
+          available: true,
+          score: 76,
+          techType: "orange",
+          takeable: [
+            { tileId: "orange2", techType: "orange", score: 76, directScoreGain: 2 },
+            { tileId: "blue2", techType: "blue", score: 67, directScoreGain: 2 },
+            { tileId: "purple2", techType: "purple", score: 66, directScoreGain: 2 },
+          ],
+        }],
+      },
+    },
+    {
+      type: "tech-placement",
+      roundNumber: 3,
+      turnNumber: 5,
+      rawTurnNumber: 13,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: {
+        selected: { tileId: "orange2", techType: "orange", score: 76 },
+        candidates: [
+          { tileId: "orange2", techType: "orange", score: 76, directScoreGain: 2 },
+          { tileId: "blue2", techType: "blue", score: 67, directScoreGain: 2 },
+          { tileId: "purple2", techType: "purple", score: 66, directScoreGain: 2 },
+        ],
+      },
+    },
+    {
+      type: "tech-placement",
+      roundNumber: 4,
+      turnNumber: 2,
+      rawTurnNumber: 18,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: { selected: { tileId: "purple3", techType: "purple", score: 58 } },
+    },
+    {
+      type: "tech-placement",
+      roundNumber: 4,
+      turnNumber: 6,
+      rawTurnNumber: 22,
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      details: { selected: { tileId: "orange1", techType: "orange", score: 54 } },
+    },
+  ],
+  playerResults: [
+    {
+      playerId: "winner",
+      playerLabel: "Winner",
+      finalScore: 320,
+      baseScore: 210,
+      tileScore: 90,
+      cardScore: 20,
+      techCount: 11,
+      completedTaskCount: 5,
+      finalMarkCount: 3,
+    },
+    {
+      playerId: "low-d1",
+      playerLabel: "Low D1",
+      finalScore: 184,
+      baseScore: 125,
+      tileScore: 26,
+      cardScore: 9,
+      techCount: 6,
+      completedTaskCount: 3,
+      finalMarkCount: 3,
+      finalFormulas: ["a1", "c1", "d1"],
+      finalFormulaProgress: {
+        entries: [
+          { formulaId: "d1", multiplier: 5, baseValue: 1, score: 5, slotIndex: 3 },
+        ],
+      },
+      resources: { credits: 0, energy: 0, publicity: 6, handSize: 1 },
+      handCards: [{
+        id: "tech-card-1",
+        cardId: "b_135.webp",
+        label: "Tech route",
+        price: 3,
+        typeCode: 2,
+        effectTypes: ["card_research_tech"],
+      }],
+      reservedCards: [],
+    },
+  ],
+};
+const d1TechBalanceAnalysis = analytics.analyzeBattleReport(d1TechBalanceReport);
+assert.equal(d1TechBalanceAnalysis.opportunities.d1TechBalanceBottleneck, 1);
+assert.deepEqual(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].techTypeCounts, { orange: 3, blue: 1, purple: 2 });
+assert.deepEqual(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].missingTechTypesForNextD1, ["blue"]);
+assert.equal(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].nextD1StepScore, 5);
+assert.equal(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].techCardOptions[0].researchTechEffect, true);
+assert.equal(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].researchTechChoices[3].missingTypeCandidates[0].techType, "blue");
+assert.equal(d1TechBalanceAnalysis.d1TechBalanceBottleneckSamples[0].researchTechWindows[0].researchTech.bestByType.blue.tileId, "blue2");
+assert.ok(d1TechBalanceAnalysis.recommendations.some((entry) => entry.id === "inspect-d1-tech-chain-closure"));
+const d1TechBalanceSummary = analytics.summarizeBattleReports([d1TechBalanceReport]);
+assert.equal(d1TechBalanceSummary.d1TechBalanceBottleneckSamples[0].playerId, "low-d1");
+assert.equal(d1TechBalanceSummary.opportunities.d1TechBalanceBottleneck, 1);
+assert.ok(d1TechBalanceSummary.recommendations.some((entry) => entry.id === "inspect-d1-tech-chain-closure"));
+
+const highHandDrainEnergyTradeReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 4,
+      rawTurnNumber: 12,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 96, credits: 0, energy: 0, publicity: 4, handSize: 5 },
+      details: {
+        action: {
+          id: "quickTrade",
+          kind: "quick",
+          tradeId: "cards-for-energy",
+          score: 21.4,
+          valueBreakdown: { cardsForEnergyHandDrainPenalty: 0 },
+        },
+        candidates: [],
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 4,
+      rawTurnNumber: 12,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 96, credits: 0, energy: 1, publicity: 4, handSize: 3 },
+      details: {
+        action: {
+          id: "quickTrade",
+          kind: "quick",
+          tradeId: "cards-for-energy",
+          score: 15.4,
+          valueBreakdown: {
+            cardsForEnergyHandDrainPenalty: 11.5,
+            currentScore: 96,
+            finalMarkCount: 3,
+            canReachAnalyze: false,
+            planetCashoutRecoveryScore: 32,
+            launchMoveRecoveryScore: 0,
+            planetCashoutRecoveryPlan: {
+              kind: "land",
+              planetId: "mars",
+              targetEnergy: 2,
+              directScore: 6,
+              rewardValue: 24,
+              energyAfterTrade: 2,
+              afterTradeGap: 0,
+              reachesNextThreshold: false,
+              score: 32,
+            },
+          },
+        },
+        candidates: [],
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 4,
+      rawTurnNumber: 12,
+      playerId: "player-white",
+      playerLabel: "白色",
+      playerResources: { score: 96, credits: 0, energy: 2, publicity: 4, handSize: 1 },
+      details: {
+        action: {
+          id: "move",
+          kind: "quick",
+          score: 6.1,
+          routeTarget: { kind: "planet", id: "jupiter", planetId: "jupiter", newDistance: 0 },
+          followupMainAction: {
+            actionId: "land",
+            planetId: "jupiter",
+            timing: "next_turn",
+            score: 33.3,
+            directScoreGain: 10,
+            rewardValue: 0,
+            energyCost: 2,
+          },
+          valueBreakdown: {
+            preserveEnergyForRouteCashout: true,
+            requiredMovePoints: 1,
+            moveCardSpent: 1,
+            moveEnergySpent: 0,
+            energyAfterMovePayment: 2,
+            paymentCost: 4.3,
+            routeScore: 18.01,
+            routeScoreForGain: 5.76,
+            followupScore: 33.3,
+            followupTiming: "next_turn",
+          },
+        },
+        candidates: [],
+      },
+    },
+  ],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 180 }],
+};
+const highHandDrainAnalysis = analytics.analyzeBattleReport(highHandDrainEnergyTradeReport);
+assert.equal(highHandDrainAnalysis.opportunities.highHandDrainEnergyTrade, 1);
+assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].handDrainPenalty, 11.5);
+assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].priorCardsForEnergyThisRawTurn, 1);
+assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].planetPlan.planetId, "mars");
+assert.equal(
+  highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].laterLastCardPreserveEnergyMove.followupMainAction.actionId,
+  "land",
+);
+const highHandDrainSummary = analytics.summarizeBattleReports([highHandDrainEnergyTradeReport]);
+assert.equal(highHandDrainSummary.highHandDrainEnergyTradeSamples[0].planetPlan.score, 32);
+assert.equal(highHandDrainSummary.highHandDrainEnergyTradeSamples[0].priorCardsForEnergyThisRawTurn, 1);
+
+const lastCardPreserveEnergyMoveReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 4,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 96, credits: 0, energy: 2, publicity: 4, handSize: 1 },
+    details: {
+      action: {
+        id: "move",
+        kind: "quick",
+        score: 12.2,
+        routeTarget: { kind: "planet", id: "mars", planetId: "mars", newDistance: 0, score: 24 },
+        followupMainAction: {
+          actionId: "land",
+          planetId: "mars",
+          timing: "next_turn",
+          score: 33.3,
+          directScoreGain: 6,
+          rewardValue: 24,
+          energyCost: 2,
+        },
+        valueBreakdown: {
+          preserveEnergyForRouteCashout: true,
+          requiredMovePoints: 1,
+          moveCardSpent: 1,
+          moveEnergySpent: 0,
+          energyAfterMovePayment: 2,
+          paymentCost: 3,
+          pathPenalty: 1.5,
+          routeScore: 24,
+          routeScoreForGain: 9.12,
+          followupScore: 33.3,
+          followupTiming: "next_turn",
+        },
+      },
+      candidates: [],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 184 }],
+};
+const lastCardMoveAnalysis = analytics.analyzeBattleReport(lastCardPreserveEnergyMoveReport);
+assert.equal(lastCardMoveAnalysis.opportunities.lastCardPreserveEnergyMove, 1);
+assert.equal(lastCardMoveAnalysis.lastCardPreserveEnergyMoveSamples[0].moveCardSpent, 1);
+assert.equal(lastCardMoveAnalysis.lastCardPreserveEnergyMoveSamples[0].routeTarget.planetId, "mars");
+assert.equal(lastCardMoveAnalysis.lastCardPreserveEnergyMoveSamples[0].followupMainAction.actionId, "land");
+const lastCardMoveSummary = analytics.summarizeBattleReports([lastCardPreserveEnergyMoveReport]);
+assert.equal(lastCardMoveSummary.lastCardPreserveEnergyMoveSamples[0].followupTiming, "next_turn");
+
+const negativeCardCornerGraphLiftReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 2,
+    turnNumber: 7,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 56, credits: 2, energy: 1, publicity: 2, handSize: 6 },
+    details: {
+      action: {
+        id: "cardCorner",
+        kind: "quick",
+        score: -3.25,
+        cardId: "b_90.webp",
+        cardInstanceId: "card-b90",
+        cardLabel: "MUREP创意竞赛",
+        actionKind: "resource",
+        actionGraph: { gain: -2.4, cost: 3, finalMarginal: 2, goalBonus: 11.2, net: 8.8 },
+        breakdown: {
+          rewardValue: -2.4,
+          discardCost: 3,
+          handPressure: 1.1,
+          followupMainActionScore: 0,
+          moveFollowupScore: 0,
+          noCashoutMovePenalty: 0,
+        },
+      },
+      candidates: [],
+    },
+  }],
+  playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 56 }],
+};
+const negativeCardCornerGraphLiftAnalysis = analytics.analyzeBattleReport(negativeCardCornerGraphLiftReport);
+assert.equal(negativeCardCornerGraphLiftAnalysis.opportunities.negativeCardCornerGraphLift, 1);
+assert.equal(negativeCardCornerGraphLiftAnalysis.negativeCardCornerGraphLiftSamples[0].rawScore, -3.25);
+assert.equal(negativeCardCornerGraphLiftAnalysis.negativeCardCornerGraphLiftSamples[0].graphNet, 8.8);
+assert.equal(negativeCardCornerGraphLiftAnalysis.negativeCardCornerGraphLiftSamples[0].goalBonus, 11.2);
+const negativeCardCornerGraphLiftSummary = analytics.summarizeBattleReports([negativeCardCornerGraphLiftReport]);
+assert.equal(negativeCardCornerGraphLiftSummary.negativeCardCornerGraphLiftSamples[0].cardId, "b_90.webp");
+
+const nonPositivePublicRefillReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "pick-card",
+    roundNumber: 4,
+    turnNumber: 10,
+    playerId: "player-brown",
+    playerLabel: "棕色",
+    playerResources: { score: 149, credits: 0, energy: 1, publicity: 6, handSize: 2 },
+    details: {
+      pendingType: "trade",
+      slotIndex: 1,
+      score: -11.96,
+      card: {
+        id: "card-163-0",
+        cardId: "dlc_2.png",
+        cardName: "跟踪与数据中继卫星",
+        price: 1,
+        cardTypeCode: 0,
+        discardActionCode: 1,
+        scanActionCode: 1,
+        incomeCode: 2,
+      },
+    },
+  }],
+  playerResults: [{ playerId: "player-brown", playerLabel: "棕色", finalScore: 290 }],
+};
+const nonPositivePublicRefillAnalysis = analytics.analyzeBattleReport(nonPositivePublicRefillReport);
+assert.equal(nonPositivePublicRefillAnalysis.opportunities.nonPositivePublicRefill, 1);
+assert.equal(nonPositivePublicRefillAnalysis.nonPositivePublicRefillSamples[0].score, -11.96);
+assert.equal(nonPositivePublicRefillAnalysis.nonPositivePublicRefillSamples[0].cardId, "dlc_2.png");
+const nonPositivePublicRefillSummary = analytics.summarizeBattleReports([nonPositivePublicRefillReport]);
+assert.equal(nonPositivePublicRefillSummary.nonPositivePublicRefillSamples[0].cardLabel, "跟踪与数据中继卫星");
+
+const compoundTechCardReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 2,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 114, credits: 3, energy: 6, publicity: 6, handSize: 6 },
+    details: {
+      action: { id: "researchTech", kind: "main", score: 109 },
+      candidates: [
+        {
+          id: "researchTech",
+          kind: "main",
+          available: true,
+          score: 109,
+          takeable: [{ tileId: "purple1", techType: "purple", score: 71, directScoreGain: 3 }],
+        },
+        {
+          id: "playCard",
+          kind: "main",
+          available: true,
+          score: 79,
+          playableCards: [{
+            id: "playCard",
+            kind: "main",
+            available: true,
+            cardId: "b_135.webp",
+            cardInstanceId: "card-b135",
+            cardLabel: "韦断特v克综合孔径射电|远锐",
+            price: 3,
+            typeCode: 2,
+            score: 79,
+            directScoreGain: 3,
+            effectTypes: ["card_research_tech"],
+            valueBreakdown: { cFinalTaskProgressValue: 0, lateCardEnginePressure: 8 },
+          }],
+        },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 185 }],
+};
+const compoundTechCardAnalysis = analytics.analyzeBattleReport(compoundTechCardReport);
+assert.equal(compoundTechCardAnalysis.opportunities.researchTechOverCompoundTechCard, 1);
+assert.equal(compoundTechCardAnalysis.researchTechCompoundCardSamples[0].compoundCard.cardId, "b_135.webp");
+assert.equal(compoundTechCardAnalysis.researchTechCompoundCardSamples[0].bestTechTile.tileId, "purple1");
+const compoundTechCardSummary = analytics.summarizeBattleReports([compoundTechCardReport]);
+assert.equal(compoundTechCardSummary.researchTechCompoundCardSamples[0].compoundCard.cardId, "b_135.webp");
+
+const playCardNearMissReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 5,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 101, credits: 3, energy: 4, publicity: 6, handSize: 5 },
+    details: {
+      action: { id: "land", kind: "main", score: 80, actionGraph: { net: 80 } },
+      candidates: [
+        { id: "land", kind: "main", available: true, score: 80, actionGraph: { net: 80 } },
+        {
+          id: "playCard",
+          kind: "main",
+          available: true,
+          score: 68,
+          actionGraph: { net: 72 },
+          playableCards: [{
+            id: "playCard",
+            kind: "main",
+            available: true,
+            cardId: "b_135.webp",
+            cardInstanceId: "card-b135",
+            cardLabel: "韦断特v克综合孔径射电|远锐",
+            price: 3,
+            typeCode: 2,
+            score: 64,
+            directScoreGain: 3,
+            effectTypes: ["card_research_tech"],
+            plan: { type: "card-route", actionId: "researchTech", score: 21, label: "紫色科技" },
+            valueBreakdown: {
+              planScore: 21,
+              lateCardEnginePressure: 8,
+              playCardConversionPressure: 9,
+              cFinalTaskProgressValue: 4,
+              c2Type3ProgressValue: 0,
+              endGameExpectedScore: 3,
+              standardActionPremium: 6,
+              finalSecondMarkNoDirectSetupPenalty: -2,
+            },
+          }],
+        },
+      ],
+    },
+  }],
+  playerResults: [{
+    playerId: "player-white",
+    playerLabel: "白色",
+    finalScore: 185,
+    handCards: [{
+      id: "card-b135",
+      cardId: "b_135.webp",
+      label: "韦断特v克综合孔径射电|远锐",
+      price: 3,
+      typeCode: 2,
+      taskCount: 1,
+      remainingTaskCount: 1,
+      tasks: [{
+        id: "b135-same-color-sectors-task",
+        completed: false,
+        condition: {
+          type: "completedSameSectorColor",
+          targetCount: 2,
+          currentCount: 1,
+          missingCount: 1,
+          met: false,
+        },
+        rewardDirectScore: 9,
+        rewardValue: 9,
+      }],
+      effectTypes: ["card_research_tech"],
+    }],
+    reservedCards: [{ id: "card-b30", cardId: "b_30.webp", label: "深部地下中微子实验", price: 3, typeCode: 3, taskCount: 0, endGameScoring: true }],
+  }],
+};
+const playCardNearMissAnalysis = analytics.analyzeBattleReport(playCardNearMissReport);
+assert.equal(playCardNearMissAnalysis.opportunities.playCardNearMiss, 1);
+assert.equal(playCardNearMissAnalysis.opportunities.engineActionNearMiss, 1);
+assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].bestCard.cardId, "b_135.webp");
+assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].policyScoreGap, 8);
+assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].finalScore, 185);
+assert.equal(playCardNearMissAnalysis.playCardNearMissSamples[0].bestCard.valueBreakdown.playCardConversionPressure, 9);
+assert.equal(playCardNearMissAnalysis.engineActionNearMissSamples[0].target.id, "playCard");
+assert(playCardNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("target-playCard"));
+assert.equal(playCardNearMissAnalysis.lowPlayerCandidateStats[0].playerId, "player-white");
+assert.equal(
+  playCardNearMissAnalysis.lowPlayerCandidateStats[0].focusedCandidateRows.find((row) => row.actionId === "playCard").availableNotSelected,
+  1,
+);
+assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[0].cardId, "b_135.webp");
+assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[0].remainingTaskCount, 1);
+assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[0].tasks[0].condition.missingCount, 1);
+assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[1].zone, "reserved");
+const playCardNearMissSummary = analytics.summarizeBattleReports([playCardNearMissReport]);
+assert.equal(playCardNearMissSummary.playCardNearMissSamples[0].bestCard.cardId, "b_135.webp");
+assert.equal(playCardNearMissSummary.engineActionNearMissCounts.byTransition[0].key, "land->playCard");
+assert.equal(playCardNearMissSummary.lowPlayerCandidateStats[0].topMissedCandidates[0].actionId, "playCard");
+assert.equal(playCardNearMissSummary.lowUnplayedCardSamples[0].cards[0].tasks[0].rewardDirectScore, 9);
+assert.equal(playCardNearMissSummary.lowUnplayedCardSamples[0].cards[1].endGameScoring, true);
+
+const engineActionNearMissReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 6,
+    rawTurnNumber: 18,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 122, credits: 2, energy: 2, publicity: 4, availableData: 6, handSize: 3 },
+    details: {
+      action: { id: "researchTech", kind: "main", score: 34.5, actionGraph: { net: 34.5 } },
+      candidates: [
+        {
+          id: "researchTech",
+          kind: "main",
+          available: true,
+          score: 34.5,
+          actionGraph: { net: 34.5 },
+          takeable: [{ tileId: "blue2", techType: "blue", bonusId: "bonus_1e", score: 31, directScoreGain: 4 }],
+        },
+        {
+          id: "analyze",
+          kind: "main",
+          available: true,
+          score: 31,
+          directScoreGain: 10,
+          actionGraph: { net: 31 },
+          valueBreakdown: {
+            currentScore: 122,
+            finalMarkCount: 3,
+            placedCount: 6,
+            requiredSlot: 6,
+            availableData: 6,
+            dataRoom: 0,
+            energyCost: 1,
+            analyzeBestBlueTraceScore: 10,
+            readyAnalyzeWindowValue: 13.5,
+            lateFullDataAnalyzeRecovery: 0,
+            thresholdCashoutPressure: 2.2,
+            rawScore: 31,
+            weightedScore: 31,
+          },
+        },
+        {
+          id: "placeData",
+          kind: "quick",
+          available: true,
+          score: 25,
+          directScoreGain: 0,
+          actionGraph: { net: 25 },
+          valueBreakdown: { currentScore: 122, canReachAnalyze: true },
+        },
+      ],
+    },
+  }, {
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 7,
+    rawTurnNumber: 19,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 122, credits: 2, energy: 2, publicity: 4, availableData: 6, handSize: 3 },
+    details: {
+      action: { id: "end-turn", kind: "pass", score: 0, actionGraph: { net: 0 } },
+      candidates: [],
+    },
+  }, {
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 8,
+    rawTurnNumber: 20,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 132, credits: 2, energy: 1, publicity: 4, availableData: 0, handSize: 3 },
+    details: {
+      action: { id: "analyze", kind: "main", score: 31, directScoreGain: 10, actionGraph: { net: 31 } },
+      candidates: [],
+    },
+  }, {
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 9,
+    rawTurnNumber: 21,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 132, credits: 2, energy: 1, publicity: 4, availableData: 0, handSize: 3 },
+    details: {
+      action: { id: "placeData", kind: "quick", score: 25, actionGraph: { net: 25 } },
+      candidates: [],
+    },
+  }],
+  playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 214 }],
+};
+const engineActionNearMissAnalysis = analytics.analyzeBattleReport(engineActionNearMissReport);
+assert.equal(engineActionNearMissAnalysis.opportunities.engineActionNearMiss, 2);
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.id, "analyze");
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.valueBreakdown.analyzePlacedCount, 6);
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.valueBreakdown.analyzeBestBlueTraceScore, 10);
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.valueBreakdown.readyAnalyzeWindowValue, 13.5);
+assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("data-cashout"));
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].followup.targetSeenWithin, 2);
+assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("target-delayed-hit"));
+assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("idle-before-target"));
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[1].target.id, "placeData");
+assert(engineActionNearMissAnalysis.engineActionNearMissSamples[1].nearMissTags.includes("data-placement"));
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[1].followup.targetSeenWithin, 3);
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[1].followup.firstEngineActionId, "analyze");
+assert(engineActionNearMissAnalysis.engineActionNearMissSamples[1].nearMissTags.includes("different-engine-before-target"));
+const engineActionNearMissSummary = analytics.summarizeBattleReports([engineActionNearMissReport]);
+assert.equal(engineActionNearMissSummary.engineActionNearMissCounts.byTarget.length, 2);
+assert.equal(engineActionNearMissSummary.engineActionNearMissCounts.byTransition[0].key, "researchTech->analyze");
+
+const finalReadyTaskCreditShortfallReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [],
+  playerResults: [
+    {
+      playerId: "player-blue",
+      playerLabel: "蓝色",
+      finalScore: 227,
+      baseScore: 143,
+      cardScore: 17,
+      resources: { score: 143, credits: 1, energy: 0, publicity: 3, availableData: 0, handSize: 3 },
+      completedTaskCount: 5,
+      techCount: 12,
+      handSize: 3,
+      handCards: [
+        {
+          id: "card-b117",
+          cardId: "b_117.webp",
+          label: "航天飞机",
+          price: 3,
+          typeCode: 2,
+          taskCount: 1,
+          remainingTaskCount: 1,
+          tasks: [{
+            id: "b117-orbit-land-count-task",
+            completed: false,
+            condition: { type: "orbitOrLandCount", targetCount: 5, currentCount: 6, missingCount: 0, met: true },
+            rewardDirectScore: 3,
+            rewardValue: 7.5,
+          }],
+          effectTypes: ["launch", "gain_resources"],
+        },
+        {
+          id: "card-b12",
+          cardId: "b_12.webp",
+          label: "超环面仪器",
+          price: 3,
+          typeCode: 2,
+          taskCount: 1,
+          remainingTaskCount: 1,
+          tasks: [{
+            id: "b12-blue-trace-task",
+            completed: false,
+            condition: { type: "traceCount", targetCount: 3, currentCount: 5, missingCount: 0, met: true },
+            rewardDirectScore: 3,
+            rewardValue: 4.5,
+          }],
+          effectTypes: ["card_research_tech"],
+        },
+        { id: "card-b68", cardId: "b_68.webp", label: "洛弗尔望远锐", price: 3, typeCode: 2, taskCount: 0, effectTypes: [] },
+      ],
+      reservedCards: [],
+    },
+    {
+      playerId: "player-white",
+      playerLabel: "白色",
+      finalScore: 228,
+      resources: { score: 140, credits: 2, energy: 0, publicity: 1, availableData: 0, handSize: 3 },
+      handSize: 3,
+      handCards: [
+        {
+          id: "card-ready-recoverable",
+          cardId: "b_135.webp",
+          label: "韦断特v克综合孔径射电|远锐",
+          price: 3,
+          typeCode: 2,
+          taskCount: 1,
+          tasks: [{
+            id: "b135-same-color-sectors-task",
+            completed: true,
+            condition: { type: "completedSameSectorColor", targetCount: 2, currentCount: 2, missingCount: 0, met: true },
+            rewardDirectScore: 9,
+            rewardValue: 9,
+          }],
+          effectTypes: ["card_research_tech"],
+        },
+        { id: "card-filler-1", cardId: "b_2.webp", label: "高级导航系统", price: 1, typeCode: 1, taskCount: 0 },
+        { id: "card-filler-2", cardId: "dlc_28.png", label: "重组", price: 1, typeCode: 2, taskCount: 0 },
+      ],
+      reservedCards: [],
+    },
+  ],
+};
+const finalReadyTaskCreditShortfallAnalysis = analytics.analyzeBattleReport(finalReadyTaskCreditShortfallReport);
+assert.equal(finalReadyTaskCreditShortfallAnalysis.opportunities.finalReadyTaskCreditShortfall, 1);
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskCreditShortfallSamples[0].playerId, "player-blue");
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskCreditShortfallSamples[0].cards.length, 2);
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskCreditShortfallSamples[0].cards[0].cardId, "b_117.webp");
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskCreditShortfallSamples[0].cards[0].creditsMissingAfterCardsForCredit, 1);
+assert(finalReadyTaskCreditShortfallAnalysis.recommendations.some((entry) => entry.id === "inspect-final-ready-task-credit-shortfall"));
+assert.equal(finalReadyTaskCreditShortfallAnalysis.opportunities.finalReadyTaskTradeUnlockMiss, 1);
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskTradeUnlockMissSamples[0].playerId, "player-white");
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskTradeUnlockMissSamples[0].cards[0].cardId, "b_135.webp");
+assert.equal(finalReadyTaskCreditShortfallAnalysis.finalReadyTaskTradeUnlockMissSamples[0].cards[0].cardsForCreditTradesNeeded, 1);
+assert(finalReadyTaskCreditShortfallAnalysis.recommendations.some((entry) => entry.id === "inspect-final-ready-task-trade-unlock"));
+const finalReadyTaskCreditShortfallSummary = analytics.summarizeBattleReports([finalReadyTaskCreditShortfallReport]);
+assert.equal(finalReadyTaskCreditShortfallSummary.finalReadyTaskCreditShortfallSamples[0].maxCreditsAfterCardsForCredit, 2);
+assert.equal(finalReadyTaskCreditShortfallSummary.opportunities.finalReadyTaskCreditShortfall, 1);
+assert.equal(finalReadyTaskCreditShortfallSummary.opportunities.finalReadyTaskTradeUnlockMiss, 1);
+assert.equal(finalReadyTaskCreditShortfallSummary.finalReadyTaskTradeUnlockMissSamples[0].cards[0].readyTaskDirectScore, 9);
+
+const b2ScanNearMissReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 10,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 142, credits: 4, energy: 3, publicity: 2, handSize: 2 },
+    details: {
+      action: { id: "researchTech", kind: "main", score: 105.6, actionGraph: { net: 105.6 } },
+      candidates: [
+        { id: "researchTech", kind: "main", available: true, score: 105.6, actionGraph: { net: 105.6 } },
+        {
+          id: "scan",
+          kind: "main",
+          available: true,
+          score: 54.5,
+          directScoreGain: 2,
+          scoreCapReason: "优先兑现数据分析",
+          actionGraph: { net: 54.5 },
+          targetPreview: {
+            effectCount: 1,
+            effects: [{
+              effectType: "earth_sector_scan",
+              pendingType: "sector_scan",
+              topChoices: [{
+                effectType: "earth_sector_scan",
+                pendingType: "sector_scan",
+                nebulaId: "sector-3-a",
+                sectorX: 3,
+                score: 22.7,
+                directScoreGain: 2,
+                b2: {
+                  focus: 12.4,
+                  active: true,
+                  marked: true,
+                  sectorWins: 2,
+                  orbitLandCount: 8,
+                  deficit: 6,
+                  multiplier: 4,
+                  ownCount: 1,
+                  openCount: 1,
+                  markedCount: 3,
+                  maxOtherCount: 1,
+                  winsAfterScan: true,
+                },
+              }],
+            }],
+            topChoices: [{
+              effectType: "earth_sector_scan",
+              pendingType: "sector_scan",
+              nebulaId: "sector-3-a",
+              sectorX: 3,
+              score: 22.7,
+              directScoreGain: 2,
+              b2: {
+                focus: 12.4,
+                active: true,
+                marked: true,
+                sectorWins: 2,
+                orbitLandCount: 8,
+                deficit: 6,
+                multiplier: 4,
+                ownCount: 1,
+                openCount: 1,
+                markedCount: 3,
+                maxOtherCount: 1,
+                winsAfterScan: true,
+              },
+            }],
+          },
+        },
+      ],
+    },
+  }],
+  playerResults: [{
+    playerId: "player-white",
+    playerLabel: "白色",
+    finalScore: 184,
+    b2Progress: {
+      formulaId: "b2",
+      sectorWins: 2,
+      orbitLandCount: 8,
+      deficit: 6,
+      bottleneck: "sectorWins",
+    },
+  }],
+};
+const b2ScanNearMissAnalysis = analytics.analyzeBattleReport(b2ScanNearMissReport);
+assert.equal(b2ScanNearMissAnalysis.opportunities.b2ScanNearMiss, 1);
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].finalScore, 184);
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].selected.id, "researchTech");
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].scan.scoreCapReason, "优先兑现数据分析");
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].topChoices[0].targetRank, 1);
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].topChoices[0].b2.winsAfterScan, true);
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].bestB2Choice.nebulaId, "sector-3-a");
+assert.equal(b2ScanNearMissAnalysis.b2ScanNearMissSamples[0].b2Progress.bottleneck, "sectorWins");
+const b2ScanNearMissSummary = analytics.summarizeBattleReports([b2ScanNearMissReport]);
+assert.equal(b2ScanNearMissSummary.b2ScanNearMissSamples[0].topChoices[0].nebulaId, "sector-3-a");
+
+const b2TradeNearMissReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 2,
+    playerId: "player-brown",
+    playerLabel: "棕色",
+    playerResources: { score: 172, credits: 6, energy: 3, publicity: 1, handSize: 3 },
+    details: {
+      action: { id: "researchTech", kind: "main", score: 49.547, actionGraph: { net: 95.914 } },
+      candidates: [
+        { id: "researchTech", kind: "main", available: true, score: 49.547, actionGraph: { net: 95.914 } },
+        {
+          id: "quickTrade",
+          kind: "quick",
+          available: true,
+          tradeId: "credits-for-energy",
+          label: "2信用点 -> 1能量",
+          reason: "B2兑现：信用点换能量准备完成扇区",
+          score: 48.51,
+          actionGraph: { net: 51.421 },
+          valueBreakdown: {
+            lateResourceRecoveryTrade: true,
+            b2SectorScanUnlockByTrade: { "credits-for-energy": 24.5 },
+            highScoreProjectedScore: 249,
+            currentScore: 172,
+          },
+        },
+      ],
+    },
+  }],
+  playerResults: [{
+    playerId: "player-brown",
+    playerLabel: "棕色",
+    finalScore: 299,
+    b2Progress: {
+      formulaId: "b2",
+      sectorWins: 6,
+      orbitLandCount: 7,
+      sectorWinDeficit: 1,
+      bottleneck: "sectorWins",
+    },
+  }],
+};
+const b2TradeNearMissAnalysis = analytics.analyzeBattleReport(b2TradeNearMissReport);
+assert.equal(b2TradeNearMissAnalysis.opportunities.b2TradeNearMiss, 1);
+assert.equal(b2TradeNearMissAnalysis.b2TradeNearMissSamples[0].playerId, "player-brown");
+assert.equal(b2TradeNearMissAnalysis.b2TradeNearMissSamples[0].scoreTo300, 1);
+assert.equal(b2TradeNearMissAnalysis.b2TradeNearMissSamples[0].selected.id, "researchTech");
+assert.equal(b2TradeNearMissAnalysis.b2TradeNearMissSamples[0].bestTrade.tradeId, "credits-for-energy");
+assert.equal(b2TradeNearMissAnalysis.b2TradeNearMissSamples[0].actionGraphNetGap, 44.493);
+assert.ok(b2TradeNearMissAnalysis.recommendations.some((entry) => entry.id === "inspect-b2-trade-near-miss"));
+const b2TradeNearMissSummary = analytics.summarizeBattleReports([b2TradeNearMissReport]);
+assert.equal(b2TradeNearMissSummary.b2TradeNearMissSamples[0].bestTrade.tradeId, "credits-for-energy");
+assert.ok(b2TradeNearMissSummary.recommendations.some((entry) => entry.id === "inspect-b2-trade-near-miss"));
+
+const mainUnlockLowConcretePlayReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 7,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 139, credits: 2, energy: 1, publicity: 1, handSize: 3 },
+    details: {
+      action: {
+        id: "quickTrade",
+        kind: "quick",
+        tradeId: "cards-for-credit",
+        score: 15.975,
+        reason: "主行动前：交易信用点解锁高价值打牌",
+        valueBreakdown: {
+          mainUnlockTrade: true,
+          bestPlayCard: {
+            handIndex: 0,
+            cardId: "b_135.webp",
+            cardLabel: "韦断特v克综合孔径射电|远锐",
+            score: 22.121,
+            continuationValue: 22.121,
+            directScoreGain: 0,
+            finalDeltaValue: 0,
+            c2Type3ProgressValue: 0,
+            cFinalTaskProgressValue: 0,
+            endGameExpectedScore: 0,
+          },
+          currentBestPlayScore: 4.92,
+          concreteFinalValue: 18.675,
+          discardCost: 3,
+          finalMarkCount: 3,
+          nextFinalMarkThreshold: null,
+          thresholdBonus: 0,
+          finalLowTailOneCreditUnlock: true,
+          finalHighScoreOneCreditUnlock: false,
+          highScoreProjectedScore: 194,
+        },
+      },
+      candidates: [],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 187 }],
+};
+const mainUnlockLowConcretePlayAnalysis = analytics.analyzeBattleReport(mainUnlockLowConcretePlayReport);
+assert.equal(mainUnlockLowConcretePlayAnalysis.opportunities.mainUnlockLowConcretePlay, 1);
+assert.equal(mainUnlockLowConcretePlayAnalysis.mainUnlockLowConcretePlaySamples[0].bestPlayCard.cardId, "b_135.webp");
+assert.equal(mainUnlockLowConcretePlayAnalysis.mainUnlockLowConcretePlaySamples[0].concreteFinalValue, 18.675);
+const mainUnlockLowConcretePlaySummary = analytics.summarizeBattleReports([mainUnlockLowConcretePlayReport]);
+assert.equal(mainUnlockLowConcretePlaySummary.mainUnlockLowConcretePlaySamples[0].bestPlayCard.cardId, "b_135.webp");
 
 const actionGraphAlignedAnalysis = analytics.analyzeBattleReport({
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
@@ -990,6 +3056,75 @@ assert.ok(finalMarkAnalysis.strategyTuning.weights.final > 1);
 const finalMarkSummary = analytics.summarizeBattleReports([finalMarkReport]);
 assert.equal(finalMarkSummary.finalScoreMarks[0].key, "c:c1");
 assert.equal(finalMarkSummary.finalScoreFormulas[0].key, "c1");
+
+const negativeThirdFinalMarkReport = {
+  logs: [{
+    type: "final-score-mark",
+    roundNumber: 3,
+    turnNumber: 1,
+    playerId: "player-white",
+    playerLabel: "白色",
+    playerResources: { score: 72, credits: 5, energy: 4, publicity: 5, handSize: 2 },
+    details: {
+      pending: { threshold: 70 },
+      selected: {
+        tileId: "b",
+        formulaId: "b2",
+        threshold: 70,
+        baseValue: 0,
+        multiplier: 4,
+        immediateScore: 0,
+        score: -23.26,
+        scoreBreakdown: {
+          zeroBaseLatePenalty: 8.32,
+          b2FeasibilityPenalty: 13.39,
+          b2OrbitLandCount: 4,
+          b2SectorWins: 0,
+        },
+      },
+      candidates: [
+        {
+          tileId: "b",
+          formulaId: "b2",
+          available: true,
+          threshold: 70,
+          baseValue: 0,
+          multiplier: 4,
+          immediateScore: 0,
+          score: -23.26,
+          scoreBreakdown: {
+            zeroBaseLatePenalty: 8.32,
+            b2FeasibilityPenalty: 13.39,
+            b2OrbitLandCount: 4,
+            b2SectorWins: 0,
+          },
+        },
+        {
+          tileId: "c",
+          formulaId: "c1",
+          available: true,
+          threshold: 70,
+          baseValue: 0,
+          multiplier: 2,
+          immediateScore: 0,
+          score: -55.85,
+          scoreBreakdown: {
+            zeroBaseLatePenalty: 8.24,
+            weakCFormulaPenalty: 26,
+          },
+        },
+      ],
+    },
+  }],
+  playerResults: [{ playerId: "player-white", playerLabel: "白色", finalScore: 185 }],
+};
+const negativeThirdFinalMarkAnalysis = analytics.analyzeBattleReport(negativeThirdFinalMarkReport);
+assert.equal(negativeThirdFinalMarkAnalysis.opportunities.negativeThirdFinalMark, 1);
+assert.equal(negativeThirdFinalMarkAnalysis.negativeThirdFinalMarkSamples[0].selected.formulaId, "b2");
+assert.equal(negativeThirdFinalMarkAnalysis.negativeThirdFinalMarkSamples[0].selected.b2FeasibilityPenalty, 13.39);
+assert.equal(negativeThirdFinalMarkAnalysis.negativeThirdFinalMarkSamples[0].candidates[1].weakCFormulaPenalty, 26);
+const negativeThirdFinalMarkSummary = analytics.summarizeBattleReports([negativeThirdFinalMarkReport]);
+assert.equal(negativeThirdFinalMarkSummary.negativeThirdFinalMarkSamples[0].selected.tileId, "b");
 
 const sequenceLogs = Array.from({ length: 7 }, (_item, index) => ({
   type: "turn-action",

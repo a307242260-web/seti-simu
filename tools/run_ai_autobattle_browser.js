@@ -15,7 +15,7 @@ function parseArgs(argv) {
   const options = {
     seed: "ai-v2-baseline",
     games: 5,
-    activePlayerCount: 2,
+    activePlayerCount: 4,
     maxSteps: 2500,
     stopBeforeRound: null,
     maxMovesPerTurn: null,
@@ -34,6 +34,7 @@ function parseArgs(argv) {
     resetStrategyWeights: false,
     aiDifficulty: null,
     includeState: false,
+    includeLogs: false,
     timeoutMs: null,
     tmpRoot: process.env.SETI_AI_TMP_ROOT || os.tmpdir(),
   };
@@ -84,6 +85,10 @@ function parseArgs(argv) {
         break;
       case "includeState":
         options.includeState = true;
+        if (inlineValue == null && value != null && !String(value).startsWith("--")) index -= 1;
+        break;
+      case "includeLogs":
+        options.includeLogs = true;
         if (inlineValue == null && value != null && !String(value).startsWith("--")) index -= 1;
         break;
       case "headed":
@@ -521,6 +526,7 @@ async function main() {
       strategyTuning: options.strategyTuning || undefined,
       mergeStrategyWeights: options.strategyWeights ? options.mergeStrategyWeights : undefined,
       resetStrategyWeights: options.resetStrategyWeights || undefined,
+      includeLogs: options.includeLogs || undefined,
       single: options.single,
       reset: options.single ? true : undefined,
     };

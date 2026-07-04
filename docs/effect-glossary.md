@@ -88,7 +88,7 @@
 | 蓝色星云扫描 | 天狼星A扫描 或 南河三扫描 | 蓝色二选一。两个确定星云复用蓝色扫描图标。 | `assets/symbol/effect/blue_scan.webp` |
 | 黑色二选一扫描 | 织女一扫描 或 绘架座β扫描 | 天王星/海王星奖励与黑色扫描牌角标使用。 | `assets/symbol/effect/black_scan.webp` |
 | 公共牌区扫描 | 弃 1 张公共牌 -> 按该牌扫描角标执行对应二选一扫描；每个额外弃牌扫描标记可追加 1 张公共牌和 1 组二选一扫描 | 扫描行动和卡牌公共扫描都会先留下空公共牌位，补牌在对应扫描相关 flow 收尾自动处理；卡牌多次公共扫描先选完并弃完本次要扫描的公共牌，再依次选择星云。 | `assets/symbol/action/scan/public_card_scan.webp` |
-| 手牌扫描 | 弃 1 张手牌 -> 按该牌扫描角标执行对应二选一扫描 | 紫3扫描行动追加效果。 | `assets/symbol/action/scan/private_card_scan.webp` |
+| 手牌扫描 | 弃 1 张手牌 -> 按该牌扫描角标执行对应二选一扫描 | 紫3扫描行动追加效果；若当前手牌没有可扫描角标，节点直接跳过。 | `assets/symbol/action/scan/private_card_scan.webp` |
 | 紫4发射/移动 | 发射（成本：1 能量） 或 移动（免费提供 1 点移动力） | 紫4不是原子效果，而是扫描行动追加的选择型复合效果。实际结算复用发射或移动原子效果；能量不足时发射不可选，只能移动或跳过。卡牌/外星人扫描行动免基础扫描费用时仍需支付紫4发射的 1 能量。若从小行星移出需要 2 点移动力，紫4移动可补 1 张移动牌或 1 能量后执行。 | `assets/symbol/action/scan/scan_action_4.png` |
 | 研究科技 | 选择科技片 -> 旋转 -> 橙1免费发射（若选橙1） -> 科技 bonus -> 紫1获得 2 数据（若选紫1） | 主要行动。默认全部颜色科技可选；可传 `techType` / `techTypes` 限制为 `blue`、`orange`、`purple` 中的一个或多个颜色。选择科技片可撤销；旋转与 bonus 不可撤销；橙1发射和紫1数据按各自原子效果结算。 | `assets/symbol/effect/research_tech.webp` |
 | 环绕行动 | 环绕标记 -> 环绕奖励链 | 主要行动。环绕标记负责支付成本、移除火箭和放标记；奖励链由星球与标记序号决定。 | `assets/symbol/effect/orbit.webp` |
