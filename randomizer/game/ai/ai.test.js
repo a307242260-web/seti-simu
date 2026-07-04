@@ -129,6 +129,137 @@ assert.ok(
   analytics.summarizeBattleAnalyses([lowRoundTailDiagnostic]).lowRoundActionTailSamples[0].tailTags.includes("zero-credit-tail"),
 );
 
+const midgameRouteEnergyTradeDiagnostic = analytics.analyzeBattleReport({
+  lastSummary: { gameEnded: true, steps: 8 },
+  playerResults: [
+    { playerId: "p-low", playerLabel: "低分", finalScore: 170 },
+  ],
+  logs: [
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 3,
+      turnNumber: 1,
+      rawTurnNumber: 1,
+      playerResources: { score: 80, credits: 2, energy: 1, publicity: 4, handSize: 7, availableData: 0 },
+      scoreboard: [
+        {
+          playerId: "p-low",
+          score: 80,
+          credits: 2,
+          energy: 1,
+          publicity: 4,
+          availableData: 0,
+          handSize: 7,
+          techCount: 3,
+          reservedCount: 2,
+        },
+      ],
+      details: {
+        action: {
+          id: "quickTrade",
+          kind: "quick",
+          tradeId: "credits-for-energy",
+          label: "2信用点 -> 1能量",
+          score: 34,
+          reason: "路线兑现：信用点换能量准备环绕/登陆",
+          valueBreakdown: {
+            lateResourceRecoveryTrade: true,
+            currentScore: 80,
+            finalMarkCount: 3,
+            nextFinalMarkThreshold: null,
+            canReachAnalyze: false,
+            planetCashoutRecoveryScore: 33,
+            planetCashoutRecoveryPlan: {
+              kind: "land",
+              planetId: "mars",
+              planetName: "火星",
+              targetEnergy: 2,
+              directScore: 6,
+              rewardValue: 25,
+              energyAfterTrade: 2,
+              afterTradeGap: 0,
+              reachesNextThreshold: false,
+              score: 33,
+            },
+          },
+        },
+        candidates: [
+          {
+            id: "quickTrade",
+            kind: "quick",
+            tradeId: "credits-for-energy",
+            label: "2信用点 -> 1能量",
+            available: true,
+            score: 34,
+          },
+          { id: "pass", kind: "pass", available: true, score: -4 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 3,
+      turnNumber: 2,
+      rawTurnNumber: 2,
+      playerResources: { score: 88, credits: 0, energy: 2, publicity: 4, handSize: 7, availableData: 0 },
+      details: {
+        action: { id: "land", kind: "main", score: 22 },
+        candidates: [
+          { id: "land", kind: "main", available: true, score: 22 },
+          { id: "pass", kind: "pass", available: true, score: -4 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 3,
+      turnNumber: 3,
+      rawTurnNumber: 3,
+      playerResources: { score: 100, credits: 0, energy: 1, publicity: 5, handSize: 5, availableData: 0 },
+      details: {
+        action: { id: "researchTech", kind: "main", score: 18 },
+        candidates: [
+          { id: "researchTech", kind: "main", available: true, score: 18 },
+          { id: "pass", kind: "pass", available: true, score: -4 },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      playerId: "p-low",
+      playerLabel: "低分",
+      roundNumber: 3,
+      turnNumber: 4,
+      rawTurnNumber: 4,
+      playerResources: { score: 100, credits: 0, energy: 1, publicity: 5, handSize: 4, availableData: 0 },
+      details: {
+        action: { id: "pass", kind: "pass", score: -4 },
+        candidates: [
+          { id: "playCard", kind: "main", available: false, score: 12, reason: "没有资源可支付" },
+          { id: "scan", kind: "main", available: false, score: 8, reason: "能量不足" },
+          { id: "researchTech", kind: "main", available: false, score: 18, reason: "宣传不足" },
+          { id: "pass", kind: "pass", available: true, score: -4 },
+        ],
+      },
+    },
+  ],
+});
+assert.equal(midgameRouteEnergyTradeDiagnostic.midgameLowTechRouteEnergyTradeSamples.length, 1);
+const midgameRouteEnergyTradeSample = midgameRouteEnergyTradeDiagnostic.midgameLowTechRouteEnergyTradeSamples[0];
+assert.deepStrictEqual(midgameRouteEnergyTradeSample.followup.actionIds, ["land", "researchTech", "pass"]);
+assert.equal(midgameRouteEnergyTradeSample.followup.firstPlanetCashoutActionId, "land");
+assert.equal(midgameRouteEnergyTradeSample.followup.firstEngineActionId, "researchTech");
+assert.equal(midgameRouteEnergyTradeSample.followup.lastPassReasonTag, "resource-locked-hand");
+assert.ok(midgameRouteEnergyTradeSample.followup.tags.includes("engine-followup"));
+assert.ok(midgameRouteEnergyTradeSample.followup.tags.includes("planet-cashout-before-engine"));
+assert.ok(midgameRouteEnergyTradeSample.followup.tags.includes("tail-pass-resource-locked-hand"));
+
 assert.equal(evaluator.getResourceValue({ credits: 1, energy: 1, publicity: 1 }), 7);
 assert.equal(evaluator.getRemainingIncomeMultiplier(1), 3);
 assert.equal(evaluator.getRemainingIncomeMultiplier(4), 0);

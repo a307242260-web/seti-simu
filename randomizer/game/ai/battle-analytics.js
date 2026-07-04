@@ -51,6 +51,7 @@
   const ENGINE_NEAR_MISS_MAX_POLICY_GAP = 15;
   const ENGINE_NEAR_MISS_MIN_POLICY_GAP = -5;
   const ENGINE_NEAR_MISS_FOLLOWUP_LIMIT = 4;
+  const ROUTE_ENERGY_TRADE_FOLLOWUP_LIMIT = 8;
   const HIGH_SCORE_NEAR_MISS_REFERENCE_METRICS = Object.freeze([
     "baseScore",
     "tileScore",
@@ -1673,7 +1674,109 @@
     return numeric(breakdown.planetCashoutRecoveryScore) > 0 || Boolean(breakdown.planetCashoutRecoveryPlan);
   }
 
-  function buildMidgameLowTechRouteEnergyTradeSample(entry, candidates = [], playerResultById = new Map()) {
+  function buildMidgameRouteEnergyTradeFollowupTags(followup = {}) {
+    const tags = [];
+    if (followup.noSamePlayerFollowup) {
+      tags.push("no-followup-after-trade");
+    } else if (followup.firstEngineActionId) {
+      tags.push("engine-followup");
+      tags.push(`first-engine-${followup.firstEngineActionId}`);
+    } else {
+      tags.push("no-engine-followup");
+      if (followup.windowExhaustedWithoutEngine) tags.push("window-exhausted-without-engine");
+    }
+    if (followup.firstPlanetCashoutActionId) {
+      tags.push(`first-planet-${followup.firstPlanetCashoutActionId}`);
+      if (
+        !followup.firstEngineActionId
+        || numeric(followup.firstPlanetCashoutOffset) < numeric(followup.firstEngineActionOffset)
+      ) {
+        tags.push("planet-cashout-before-engine");
+      }
+    }
+    if (followup.passOrEndTurnBeforeEngine) tags.push("idle-before-engine");
+    if (followup.lastPassReasonTag) tags.push(`tail-pass-${followup.lastPassReasonTag}`);
+    if (followup.lastResources) {
+      if (numeric(followup.lastResources.credits) <= 0) tags.push("tail-zero-credit");
+      if (numeric(followup.lastResources.energy) <= 0) tags.push("tail-zero-energy");
+      if (numeric(followup.lastResources.handSize) <= 0) tags.push("tail-zero-hand");
+    }
+    if (
+      followup.firstPlanetCashoutActionId
+      && !followup.firstEngineActionId
+      && followup.lastPassReasonTag
+    ) {
+      tags.push("single-cashout-then-lock");
+    }
+    return tags;
+  }
+
+  function buildMidgameRouteEnergyTradeFollowup(logs = [], startIndex = -1, playerId = null, limit = ROUTE_ENERGY_TRADE_FOLLOWUP_LIMIT) {
+    const actions = [];
+    let lastPassProfile = null;
+    for (let index = startIndex + 1; index >= 0 && index < logs.length && actions.length < limit; index += 1) {
+      const entry = logs[index];
+      if (entry?.type !== "turn-action" || entry.playerId !== playerId) continue;
+      const action = getSelectedAction(entry) || {};
+      const actionId = getSelectedActionId(entry);
+      const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+      if (actionId === "pass") {
+        lastPassProfile = buildEarlyPassCandidateProfile(entry, candidates, 5);
+      }
+      actions.push({
+        roundNumber: entry.roundNumber ?? null,
+        turnNumber: entry.turnNumber ?? null,
+        rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+        id: actionId,
+        kind: action.kind || null,
+        tradeId: action.tradeId || null,
+        reason: action.reason || null,
+        score: roundRatio(action.score),
+        policyScore: roundRatio(getCandidatePolicyScore(action)),
+        actionGraphNet: roundRatio(getCandidateActionGraphNet(action)),
+        resources: entry.playerResources || null,
+      });
+    }
+    const engineActionIds = new Set(["playCard", "researchTech", "scan", "analyze", "placeData"]);
+    const planetCashoutIds = new Set(["land", "orbit"]);
+    const firstEngineIndex = actions.findIndex((action) => engineActionIds.has(action.id));
+    const firstMainIndex = actions.findIndex((action) => action.kind === "main");
+    const firstPlanetCashoutIndex = actions.findIndex((action) => planetCashoutIds.has(action.id));
+    const beforeEngine = firstEngineIndex >= 0 ? actions.slice(0, firstEngineIndex) : actions;
+    const followup = {
+      limit,
+      actionIds: actions.map((action) => action.id),
+      actions,
+      noSamePlayerFollowup: actions.length === 0,
+      firstEngineActionId: firstEngineIndex >= 0 ? actions[firstEngineIndex].id : null,
+      firstEngineActionOffset: firstEngineIndex >= 0 ? firstEngineIndex + 1 : null,
+      firstMainActionId: firstMainIndex >= 0 ? actions[firstMainIndex].id : null,
+      firstMainActionOffset: firstMainIndex >= 0 ? firstMainIndex + 1 : null,
+      firstPlanetCashoutActionId: firstPlanetCashoutIndex >= 0 ? actions[firstPlanetCashoutIndex].id : null,
+      firstPlanetCashoutOffset: firstPlanetCashoutIndex >= 0 ? firstPlanetCashoutIndex + 1 : null,
+      engineNotSeen: firstEngineIndex < 0,
+      windowExhaustedWithoutEngine: firstEngineIndex < 0 && actions.length >= limit,
+      passOrEndTurnBeforeEngine: beforeEngine.some((action) => PASS_ACTIONS.includes(action.id)),
+      lastResources: actions.length ? actions[actions.length - 1].resources || null : null,
+      lastPassReasonTag: lastPassProfile?.reasonTag || null,
+      lastPassResources: lastPassProfile?.resources || null,
+      lastPassBestResourceLockTrade: summarizeLowRoundResourceLockTrade(
+        lastPassProfile?.bestResourceLockTrade || null,
+      ),
+    };
+    return {
+      ...followup,
+      tags: buildMidgameRouteEnergyTradeFollowupTags(followup),
+    };
+  }
+
+  function buildMidgameLowTechRouteEnergyTradeSample(
+    entry,
+    candidates = [],
+    playerResultById = new Map(),
+    logs = [],
+    logIndex = -1,
+  ) {
     const action = getSelectedAction(entry) || {};
     const breakdown = action.valueBreakdown || action.breakdown || {};
     const scoreboardPlayer = getEntryScoreboardPlayer(entry) || {};
@@ -1722,6 +1825,11 @@
         .filter((candidate) => engineActionIds.has(getCandidateId(candidate)))
         .slice(0, 5)
         .map(summarizeCandidateWithGraph),
+      followup: buildMidgameRouteEnergyTradeFollowup(
+        logs,
+        logIndex,
+        entry.playerId || null,
+      ),
     };
   }
 
@@ -6312,7 +6420,7 @@
         if (isMidgameLowTechRouteEnergyTrade(entry)) {
           opportunities.midgameLowTechRouteEnergyTrade += 1;
           midgameLowTechRouteEnergyTradeSamples.push(
-            buildMidgameLowTechRouteEnergyTradeSample(entry, candidates, playerResultById),
+            buildMidgameLowTechRouteEnergyTradeSample(entry, candidates, playerResultById, logs, logIndex),
           );
         }
         const engineNearMissTargets = getEngineActionNearMissTargets(entry, candidates, playerResultById);
