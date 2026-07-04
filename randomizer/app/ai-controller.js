@@ -12597,6 +12597,7 @@
         dataRoom,
         availableData,
         energyCost,
+        directScoreGain: bestBlueTraceScore,
         currentScore,
         finalMarkCount: finalMarks,
         nextFinalScoreThreshold: nextThreshold,
@@ -17353,6 +17354,7 @@
         available: analyzeCheck.ok,
         reason: analyzeCheck.message || null,
         score: analyzeScore,
+        directScoreGain: Math.max(0, aiNumber(analyzeBreakdown?.directScoreGain)),
         scoreCapReason: analyzeBreakdown?.scoreCapReason || null,
         valueBreakdown: analyzeBreakdown,
       });
