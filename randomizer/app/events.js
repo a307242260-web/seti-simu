@@ -143,6 +143,7 @@
       downloadActionLogMarkdown,
       minimizeFinalResultDialog,
       closeFinalResultDialog,
+      closeActionBriefing,
       blockManualAiSharedOverlayInputIfNeeded,
       handleAiTakeoverFailsafe,
       handleForceSkipTurnFailsafe,
@@ -1161,6 +1162,9 @@
     els.actionLogTab?.addEventListener("click", () => {
       setReportTab("action");
     });
+    els.actionBriefingConfirm?.addEventListener("click", () => {
+      closeActionBriefing();
+    });
     aliens.bindAlienTraceDragging?.({
       onPositionChange: (payload) => {
         rocketState.statusNote = payload?.message || "外星人坐标已更新";
@@ -1192,6 +1196,10 @@
       },
     });
     windowRef.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !els.actionBriefingOverlay?.hidden) {
+        closeActionBriefing();
+        return;
+      }
       if (event.key !== "Escape" || els.finalResultOverlay?.hidden) return;
       closeFinalResultDialog();
     });

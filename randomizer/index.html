@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SETI 太阳系随机器</title>
-  <link rel="stylesheet" href="./style.css?v=land-target-overlay-1">
+  <link rel="stylesheet" href="./style.css?v=action-briefing-1">
 </head>
 <body>
   <div class="start-screen" id="start-screen" aria-label="开始界面">
@@ -247,6 +247,18 @@
         <div class="pass-reserve-selection-footer">
           <div class="pass-reserve-selection-status" id="pass-reserve-selection-status"></div>
           <button class="pass-reserve-selection-confirm" type="button" id="pass-reserve-selection-confirm" disabled>确认选择</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-briefing-overlay" id="action-briefing-overlay" hidden aria-hidden="true">
+      <div class="action-briefing-dialog" role="dialog" aria-modal="true" aria-labelledby="action-briefing-title">
+        <div class="action-briefing-header">
+          <div class="action-briefing-title" id="action-briefing-title">电脑主要行动简报</div>
+        </div>
+        <ol class="action-briefing-list" id="action-briefing-list"></ol>
+        <div class="action-briefing-footer">
+          <button class="action-briefing-confirm" type="button" id="action-briefing-confirm">确定</button>
         </div>
       </div>
     </div>
@@ -751,11 +763,11 @@
   <script src="./game/ai/index.js?v=ai-auto-battle-1"></script>
   <script src="./app/dependencies.js?v=app-boundaries-5"></script>
   <script src="./app/constants.js?v=industry-pirates-1"></script>
-  <script src="./app/dom.js?v=hand-card-play-1"></script>
-  <script src="./app/events.js?v=hand-card-play-1"></script>
+  <script src="./app/dom.js?v=action-briefing-1"></script>
+  <script src="./app/events.js?v=action-briefing-1"></script>
   <script src="./app/action-log-export.js?v=action-log-export-1"></script>
   <script src="./app/public-api.js?v=app-boundaries-5"></script>
   <script src="./app/ai-controller.js?v=ai-weak-start-1"></script>
-  <script src="./app.js?v=grand-strategy-1"></script>
+  <script src="./app.js?v=action-briefing-1"></script>
 </body>
 </html>

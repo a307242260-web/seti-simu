@@ -178,6 +178,17 @@
   const HISTORY_SOURCE_MAIN = "main";
   const HISTORY_SOURCE_QUICK = "quick";
   const HISTORY_SOURCE_SETUP = "setup";
+  const ACTION_BRIEFING_MAX_ITEMS = 3;
+  const ACTION_BRIEFING_MAIN_ACTION_TYPES = new Set([
+    "launch",
+    "orbit",
+    "land",
+    "scan",
+    "analyze",
+    "playCard",
+    "researchTech",
+    "pass",
+  ]);
   const SCAN_TARGET_ACTION_LAYOUT_CLASSES = Object.freeze([
     "jiuzhe-card-grid",
     "fangzhou-card-grid",
@@ -200,6 +211,11 @@
     draft: null,
     nextEntryId: 1,
     activeReportTab: "action",
+  };
+  const actionBriefingState = {
+    aiMainActions: [],
+    lastShownTurnKey: null,
+    pendingTurnKey: null,
   };
   const startScreenState = {
     aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
@@ -1357,6 +1373,10 @@
       "card-hover-preview--pass-reserve",
       Boolean(anchor.closest?.(".pass-reserve-selection-overlay")),
     );
+    preview.classList.toggle(
+      "card-hover-preview--action-briefing",
+      Boolean(anchor.closest?.(".action-briefing-overlay")),
+    );
     preview.style.visibility = "hidden";
     preview.classList.add("is-visible");
     positionCardHoverPreview(anchor);
@@ -1368,6 +1388,7 @@
     if (cardHoverPreview) {
       cardHoverPreview.classList.remove("is-visible");
       cardHoverPreview.classList.remove("card-hover-preview--pass-reserve");
+      cardHoverPreview.classList.remove("card-hover-preview--action-briefing");
       cardHoverPreview.style.visibility = "";
     }
     cardHoverPreviewAnchor = null;
@@ -1421,6 +1442,27 @@
     return `${cleanLabel}：${cleanDetail}`;
   }
 
+  function normalizeActionLogBriefingSnapshot(briefing) {
+    if (!briefing || typeof briefing !== "object") return null;
+    const snapshot = {};
+    if (Array.isArray(briefing.scanTargets)) {
+      const scanTargets = briefing.scanTargets
+        .map((target) => {
+          if (!target || typeof target !== "object") return null;
+          const x = Number.isFinite(Number(target.x ?? target.sectorX))
+            ? solar.mod8(Number(target.x ?? target.sectorX))
+            : null;
+          const nebulaId = normalizeActionLogText(target.nebulaId);
+          const label = normalizeActionLogText(target.label || (nebulaId ? data.getNebulaLabel?.(nebulaId) : ""));
+          if (x == null && !label && !nebulaId) return null;
+          return { x, nebulaId: nebulaId || null, label: label || null };
+        })
+        .filter(Boolean);
+      if (scanTargets.length) snapshot.scanTargets = scanTargets;
+    }
+    return Object.keys(snapshot).length ? snapshot : null;
+  }
+
   function normalizeActionLogStep(source, label, detail = null, options = {}) {
     const text = composeActionLogStepText(label, detail);
     if (!text) return null;
@@ -1434,6 +1476,7 @@
       irreversibleCode: options.irreversibleCode || null,
       irreversibleReason: normalizeActionLogText(options.irreversibleReason),
       playedCard: createActionLogPlayedCardSnapshot(options.playedCard),
+      briefing: normalizeActionLogBriefingSnapshot(options.briefing),
     };
   }
 
@@ -1444,6 +1487,7 @@
       irreversibleCode: step.irreversibleCode || null,
       irreversibleReason: step.irreversibleReason || null,
       playedCard: step.playedCard || null,
+      briefing: step.briefing || null,
     };
   }
 
@@ -1658,6 +1702,7 @@
     actionLogState.entries = [];
     actionLogState.draft = null;
     actionLogState.nextEntryId = 1;
+    resetActionBriefingState();
     renderActionLog();
   }
 
@@ -2214,6 +2259,7 @@
     attachRecoverySnapshotToActionLogEntry(entry, "行动提交后状态");
     actionLogState.nextEntryId += 1;
     actionLogState.entries.push(entry);
+    rememberActionBriefingEntry(entry);
     actionLogState.draft = null;
     renderActionLog();
     schedulePersistentGameStateSave({ label: "行动提交后状态" });
@@ -2250,6 +2296,7 @@
     attachRecoverySnapshotToActionLogEntry(entry, entry.title || "已确认日志后状态");
     actionLogState.nextEntryId += 1;
     actionLogState.entries.push(entry);
+    rememberActionBriefingEntry(entry);
     renderActionLog();
     schedulePersistentGameStateSave({ label: entry.title || "已确认日志后状态" });
     return entry;
@@ -2396,6 +2443,302 @@
       list.append(createActionLogEntryElement(entry));
     }
     els.actionLogReadout.replaceChildren(list);
+  }
+
+  function resetActionBriefingState() {
+    actionBriefingState.aiMainActions = [];
+    actionBriefingState.lastShownTurnKey = null;
+    actionBriefingState.pendingTurnKey = null;
+    closeActionBriefing();
+  }
+
+  function isActionBriefingMainActionEntry(entry) {
+    return Boolean(
+      entry?.playerId
+      && ACTION_BRIEFING_MAIN_ACTION_TYPES.has(entry.actionType)
+      && isAiAutoBattlePlayer(entry.playerId)
+    );
+  }
+
+  function getActionBriefingActionName(entry) {
+    switch (entry?.actionType) {
+      case "launch":
+        return "发射";
+      case "orbit":
+        return "环绕";
+      case "land":
+        return "登陆";
+      case "scan":
+        return "扫描";
+      case "analyze":
+        return "分析";
+      case "playCard":
+        return "打牌";
+      case "researchTech":
+        return "科技行动";
+      case "pass":
+        return "PASS";
+      default:
+        return normalizeActionLogText(entry?.actionLabel || "主要行动");
+    }
+  }
+
+  function getActionBriefingStepTexts(entry) {
+    return (entry?.steps || [])
+      .filter((step) => !step?.source || step.source === HISTORY_SOURCE_MAIN)
+      .flatMap((step) => [step.text, step.label, step.detail])
+      .map(normalizeActionLogText)
+      .filter(Boolean);
+  }
+
+  function findActionBriefingPlayedCard(entry) {
+    for (const step of entry?.steps || []) {
+      const card = createActionLogPlayedCardSnapshot(step?.playedCard);
+      if (card?.label) return card;
+    }
+    return null;
+  }
+
+  function trimActionBriefingPunctuation(text) {
+    return normalizeActionLogText(text).replace(/[。；，、\s]+$/g, "");
+  }
+
+  function extractActionBriefingTravelTarget(entry, verb) {
+    const pattern = new RegExp(`(?:^|[：:；])${verb}\\s*([^，；。:：]+)`);
+    for (const text of getActionBriefingStepTexts(entry)) {
+      const match = text.match(pattern);
+      if (!match?.[1]) continue;
+      const target = trimActionBriefingPunctuation(match[1]);
+      if (target && !target.includes("奖励") && !target.includes("行动")) return target;
+    }
+    return "";
+  }
+
+  function getActionBriefingNebulaLocations() {
+    const locations = solar.getNebulaLocations?.(solarState.sectorBySlot) || [];
+    const result = locations.map((location) => ({
+      id: location.id || null,
+      label: location.label || data.getNebulaLabel?.(location.id) || location.id || "星云",
+      x: Number.isFinite(Number(location.x)) ? Number(location.x) : null,
+    }));
+    const aomomoLabel = data.getNebulaLabel?.(aomomo?.NEBULA_ID || "aomomo") || "奥陌陌";
+    const aomomoX = typeof getAomomoCurrentX === "function" ? getAomomoCurrentX() : null;
+    result.push({
+      id: aomomo?.NEBULA_ID || "aomomo",
+      label: aomomoLabel,
+      x: Number.isFinite(Number(aomomoX)) ? Number(aomomoX) : null,
+    });
+    return result;
+  }
+
+  function createActionBriefingStepMetadata(result) {
+    if (!result || typeof result !== "object") return null;
+    const targets = [];
+    const seen = new Set();
+    const hasSignalMarkedEvent = Array.isArray(result.events)
+      && result.events.some((event) => event?.type === "signalMarked");
+
+    const addTarget = (target) => {
+      if (!target || typeof target !== "object") return;
+      const nebulaId = normalizeActionLogText(target.nebulaId);
+      if (!nebulaId && !hasSignalMarkedEvent) return;
+      const x = Number.isFinite(Number(target.x ?? target.sectorX))
+        ? solar.mod8(Number(target.x ?? target.sectorX))
+        : null;
+      const label = normalizeActionLogText(target.label || (nebulaId ? data.getNebulaLabel?.(nebulaId) : ""));
+      if (x == null && !nebulaId && !label) return;
+      const key = `${x ?? "x"}:${nebulaId || label || ""}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      targets.push({ x, nebulaId: nebulaId || null, label: label || null });
+    };
+
+    addTarget(result.payload);
+    addTarget(result);
+    for (const event of result.events || []) {
+      if (event?.type === "signalMarked") addTarget(event);
+    }
+
+    return targets.length ? { scanTargets: targets } : null;
+  }
+
+  function addActionBriefingScanTarget(targets, seen, target) {
+    if (!target) return;
+    const x = Number.isFinite(Number(target.x)) ? Number(target.x) : null;
+    const label = trimActionBriefingPunctuation(target.label || "");
+    const key = `${x ?? "x"}:${label || ""}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    targets.push({ x, label });
+  }
+
+  function listActionBriefingScanTargets(entry) {
+    const targets = [];
+    const seen = new Set();
+
+    for (const step of entry?.steps || []) {
+      if (step?.source && step.source !== HISTORY_SOURCE_MAIN) continue;
+      for (const target of step?.briefing?.scanTargets || []) {
+        addActionBriefingScanTarget(targets, seen, {
+          x: target.x,
+          label: target.label || (target.nebulaId ? data.getNebulaLabel?.(target.nebulaId) : ""),
+        });
+      }
+    }
+
+    const haystack = getActionBriefingStepTexts(entry).join("；");
+    if (!haystack) return targets;
+
+    for (const location of getActionBriefingNebulaLocations()) {
+      if ((location.label && haystack.includes(location.label)) || (location.id && haystack.includes(location.id))) {
+        addActionBriefingScanTarget(targets, seen, location);
+      }
+    }
+
+    for (const match of haystack.matchAll(/扇区\s*\[?([0-7])\]?/g)) {
+      const x = Number(match[1]);
+      if (!targets.some((target) => target.x === x)) {
+        addActionBriefingScanTarget(targets, seen, { x, label: "" });
+      }
+    }
+
+    return targets;
+  }
+
+  function formatActionBriefingScanTargets(targets) {
+    return targets
+      .map((target) => (
+        Number.isFinite(Number(target.x))
+          ? `扇区[${Number(target.x)}]${target.label || ""}`
+          : (target.label || "星云")
+      ))
+      .filter(Boolean)
+      .join("、");
+  }
+
+  function getActionBriefingDetailText(entry, playedCard) {
+    switch (entry?.actionType) {
+      case "orbit": {
+        const target = extractActionBriefingTravelTarget(entry, "环绕");
+        return target ? `环绕了${target}` : "";
+      }
+      case "land": {
+        const target = extractActionBriefingTravelTarget(entry, "登陆");
+        return target ? `登陆了${target}` : "";
+      }
+      case "scan": {
+        const targets = listActionBriefingScanTargets(entry);
+        const targetText = formatActionBriefingScanTargets(targets);
+        return targetText ? `扫描了${targetText}` : "";
+      }
+      case "playCard":
+        return playedCard?.label ? `打出了${playedCard.label}` : "";
+      default:
+        return "";
+    }
+  }
+
+  function createActionBriefingItemFromEntry(entry) {
+    if (!isActionBriefingMainActionEntry(entry)) return null;
+    const player = getPlayerById(entry.playerId);
+    const color = players.getPlayerColorDefinition(player?.color);
+    const playedCard = entry.actionType === "playCard" ? findActionBriefingPlayedCard(entry) : null;
+    return {
+      entryId: entry.id,
+      roundNumber: entry.roundNumber,
+      turnNumber: entry.turnNumber,
+      playerId: entry.playerId,
+      playerLabel: player?.colorLabel || entry.playerLabel || getPlayerLabelById(entry.playerId) || "电脑玩家",
+      playerColor: player?.color || null,
+      playerColorValue: color?.uiColor || "rgba(232, 244, 255, 0.78)",
+      actionType: entry.actionType,
+      actionName: getActionBriefingActionName(entry),
+      detailText: getActionBriefingDetailText(entry, playedCard),
+      playedCard,
+    };
+  }
+
+  function rememberActionBriefingEntry(entry) {
+    const item = createActionBriefingItemFromEntry(entry);
+    if (!item) return null;
+    actionBriefingState.aiMainActions = actionBriefingState.aiMainActions
+      .filter((existing) => existing.entryId !== item.entryId);
+    actionBriefingState.aiMainActions.push(item);
+    if (actionBriefingState.aiMainActions.length > ACTION_BRIEFING_MAX_ITEMS) {
+      actionBriefingState.aiMainActions = actionBriefingState.aiMainActions.slice(-ACTION_BRIEFING_MAX_ITEMS);
+    }
+    return item;
+  }
+
+  function getActionBriefingTurnKey(player = getCurrentPlayer()) {
+    return [
+      turnState.roundNumber,
+      turnState.turnNumber,
+      player?.id || playerState.currentPlayerId || "",
+    ].join(":");
+  }
+
+  function formatActionBriefingLead(item) {
+    const playerLabel = item?.playerLabel || "电脑玩家";
+    const actionName = item?.actionName || "主要行动";
+    return actionName === "PASS"
+      ? `${playerLabel}进行了 PASS`
+      : `${playerLabel}进行了${actionName}`;
+  }
+
+  function createActionBriefingItemElement(item) {
+    const row = document.createElement("li");
+    row.className = "action-briefing-item";
+
+    const marker = document.createElement("span");
+    marker.className = "action-briefing-player-marker";
+    marker.style.setProperty("--player-color", item.playerColorValue || "rgba(232, 244, 255, 0.78)");
+    marker.setAttribute("aria-hidden", "true");
+
+    const text = document.createElement("span");
+    text.className = "action-briefing-text";
+    text.append(document.createTextNode(formatActionBriefingLead(item)));
+    if (item.detailText) {
+      text.append(document.createTextNode("，"));
+      appendActionLogTextWithPlayedCard(text, item.detailText, item.playedCard);
+    }
+    text.append(document.createTextNode("。"));
+
+    row.append(marker, text);
+    return row;
+  }
+
+  function openActionBriefing(items, turnKey) {
+    if (!els.actionBriefingOverlay || !els.actionBriefingList || !els.actionBriefingConfirm) return false;
+    const visibleItems = (items || []).filter(Boolean);
+    if (!visibleItems.length) return false;
+    els.actionBriefingList.replaceChildren(...visibleItems.map(createActionBriefingItemElement));
+    els.actionBriefingOverlay.hidden = false;
+    els.actionBriefingOverlay.setAttribute("aria-hidden", "false");
+    actionBriefingState.pendingTurnKey = turnKey || null;
+    window.setTimeout(() => els.actionBriefingConfirm?.focus?.(), 0);
+    return true;
+  }
+
+  function closeActionBriefing() {
+    hideCardHoverPreview();
+    if (els.actionBriefingOverlay) {
+      els.actionBriefingOverlay.hidden = true;
+      els.actionBriefingOverlay.setAttribute("aria-hidden", "true");
+    }
+    els.actionBriefingList?.replaceChildren();
+    actionBriefingState.pendingTurnKey = null;
+  }
+
+  function maybeOpenActionBriefingForCurrentHumanTurn(player = getCurrentPlayer()) {
+    if (!player?.id || isAiAutoBattlePlayer(player.id) || isGameEnded()) return false;
+    if (!actionBriefingState.aiMainActions.length) return false;
+    const turnKey = getActionBriefingTurnKey(player);
+    if (actionBriefingState.lastShownTurnKey === turnKey) return false;
+    const items = actionBriefingState.aiMainActions.slice(-ACTION_BRIEFING_MAX_ITEMS);
+    if (!openActionBriefing(items, turnKey)) return false;
+    actionBriefingState.lastShownTurnKey = turnKey;
+    return true;
   }
 
   function isDebugToolsEnabled() {
@@ -12385,11 +12728,14 @@
         markCurrentActionIrreversibleForSource(source, irreversibleReason, step.irreversibleCode);
       }
       rememberHistoryStep(source, step.id);
+      const logOptions = actionLogOptionsFromHistoryStep(step);
+      const briefing = createActionBriefingStepMetadata(effectResult);
+      if (briefing) logOptions.briefing = briefing;
       appendActionLogStep(
         source,
         step.label,
         composeActionLogDetailWithImpact(effectResult?.message || null, step),
-        actionLogOptionsFromHistoryStep(step),
+        logOptions,
       );
     }
     effectStepActive = false;
@@ -13034,7 +13380,13 @@
         current.result?.irreversible?.code || "irreversible_effect",
       );
     } else if (!hadHistoryStep && status !== "skipped") {
-      appendActionLogStep(getEffectHistorySource(), current.label, current.result?.message || null);
+      const briefing = createActionBriefingStepMetadata(current.result);
+      appendActionLogStep(
+        getEffectHistorySource(),
+        current.label,
+        current.result?.message || null,
+        briefing ? { briefing } : {},
+      );
     }
     let chainTransition = null;
     if (status === "skipped") {
@@ -15967,6 +16319,14 @@
     const sectorX = options.sectorX != null
       ? solar.mod8(Number(options.sectorX))
       : getNebulaCurrentX(nebulaId);
+    result.sectorX = result.sectorX ?? sectorX;
+    if (result.payload && typeof result.payload === "object") {
+      result.payload = {
+        ...result.payload,
+        nebulaId: result.payload.nebulaId || nebulaId,
+        sectorX: result.payload.sectorX ?? sectorX,
+      };
+    }
     if (Array.isArray(result.events)) {
       result.events = result.events.map((event) => (
         event?.type === "signalMarked"
@@ -27000,6 +27360,7 @@
     renderAfterFailsafeControl(message, { saveLabel: "强制跳过后状态" });
     if (!advanceResult.gameEnded) {
       maybeStartFundamentalismRoundStartIncomeFlow(nextPlayer, turnState.roundNumber);
+      maybeOpenActionBriefingForCurrentHumanTurn(nextPlayer);
       scheduleAiAutoStepIfNeeded();
     } else {
       maybeAutoOpenFinalResultDialog();
@@ -32224,6 +32585,7 @@
     renderStateReadout();
     if (!advanceResult.gameEnded) {
       maybeStartFundamentalismRoundStartIncomeFlow(nextPlayer, turnState.roundNumber);
+      maybeOpenActionBriefingForCurrentHumanTurn(nextPlayer);
     }
     refreshLatestActionLogRecoverySnapshot("回合结束后状态");
     if (advanceResult.gameEnded) {
@@ -34800,6 +35162,7 @@
     downloadActionLogMarkdown,
     minimizeFinalResultDialog,
     closeFinalResultDialog,
+    closeActionBriefing,
     blockManualAiSharedOverlayInputIfNeeded,
     handleAiTakeoverFailsafe,
     handleForceSkipTurnFailsafe,

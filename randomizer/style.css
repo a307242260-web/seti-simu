@@ -629,6 +629,115 @@ body {
   overflow: auto;
 }
 
+.action-briefing-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1450;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(4, 8, 14, 0.66);
+  backdrop-filter: blur(2px);
+}
+
+.action-briefing-overlay[hidden] {
+  display: none;
+}
+
+.action-briefing-dialog {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(520px, calc(100vw - 48px));
+  max-height: min(78vh, 560px);
+  border: 1px solid rgba(255, 214, 98, 0.34);
+  border-radius: 8px;
+  background: rgba(13, 20, 29, 0.96);
+  color: #edf4fb;
+  box-shadow: 0 24px 58px rgba(0, 0, 0, 0.54), 0 0 0 1px rgba(120, 210, 255, 0.1);
+  overflow: hidden;
+}
+
+.action-briefing-header,
+.action-briefing-footer {
+  padding: 14px 16px;
+  background: rgba(28, 32, 28, 0.74);
+}
+
+.action-briefing-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.action-briefing-title {
+  font: 800 16px/1.25 "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+}
+
+.action-briefing-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 14px 16px;
+  overflow: auto;
+  list-style: none;
+}
+
+.action-briefing-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.action-briefing-item:last-child {
+  border-bottom: 0;
+}
+
+.action-briefing-player-marker {
+  width: 12px;
+  height: 12px;
+  margin-top: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  border-radius: 50%;
+  background: var(--player-color, #f3f5ef);
+  box-shadow: 0 0 10px var(--player-color, rgba(255, 255, 255, 0.36));
+}
+
+.action-briefing-text {
+  min-width: 0;
+  color: rgba(239, 246, 253, 0.92);
+  font: 600 14px/1.55 "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+  overflow-wrap: anywhere;
+}
+
+.action-briefing-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid rgba(255, 255, 255, 0.11);
+}
+
+.action-briefing-confirm {
+  min-width: 88px;
+  min-height: 36px;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 214, 98, 0.48);
+  border-radius: 8px;
+  background: rgba(78, 70, 36, 0.9);
+  color: #fff7df;
+  cursor: pointer;
+  font: 800 13px/1.2 "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+}
+
+.action-briefing-confirm:hover,
+.action-briefing-confirm:focus-visible {
+  border-color: rgba(255, 229, 128, 0.76);
+  background: rgba(96, 84, 42, 0.96);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 214, 98, 0.18);
+}
+
 .pass-reserve-card-button {
   position: relative;
   justify-self: center;
@@ -1141,6 +1250,10 @@ body {
 
 .card-hover-preview.card-hover-preview--pass-reserve {
   z-index: 1340;
+}
+
+.card-hover-preview.card-hover-preview--action-briefing {
+  z-index: 1480;
 }
 
 .card-hover-preview[data-placement="below"] {
