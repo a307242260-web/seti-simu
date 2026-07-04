@@ -92,9 +92,10 @@
   function buildScanEffectQueue(player, options = {}) {
     const scanRunId = options.scanRunId || null;
     const fullScanAction = Boolean(options.fullScanAction || options.includeFinalize);
+    const skipEffectCosts = Boolean(options.skipEffectCosts);
     const sharedOptions = {
       ...(scanRunId ? { scanRunId, fullScanAction } : {}),
-      ...(options.skipCost ? { skipCost: true } : {}),
+      ...(skipEffectCosts ? { skipCost: true } : {}),
     };
     const effects = [];
 

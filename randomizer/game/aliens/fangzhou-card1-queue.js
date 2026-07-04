@@ -102,7 +102,7 @@
         type: CARD_EFFECT_TYPES.SCAN_ACTION,
         label: `${labelPrefix}：扫描行动`,
         icon: "scan_action",
-        options: { skipCost: true },
+        options: { skipCost: true, skipEffectCosts: true },
       });
     }
     if (effect.techAction) {

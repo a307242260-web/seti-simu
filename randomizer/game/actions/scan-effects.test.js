@@ -47,14 +47,24 @@ assert.equal(completePurpleQueue[1].options.scanRunId, "purple-scan-test");
 assert.equal(completePurpleQueue[4].type, scanEffects.EFFECT_TYPES.SCAN_ACTION_4);
 assert.equal(completePurpleQueue[4].options.fullScanAction, true);
 
-const freePurpleQueue = scanEffects.buildScanEffectQueue(purplePlayer, {
+const freeBaseCostPurpleQueue = scanEffects.buildScanEffectQueue(purplePlayer, {
   includeFinalize: true,
   fullScanAction: true,
   scanRunId: "free-purple-scan-test",
   skipCost: true,
 });
-for (const effect of freePurpleQueue) {
-  assert.equal(effect.options.skipCost, true, "免费完整扫描行动的后续效果应继承 skipCost");
+assert.equal(freeBaseCostPurpleQueue[2].options.skipCost, undefined);
+assert.deepEqual(freeBaseCostPurpleQueue[2].options.cost, { publicity: 1 });
+assert.equal(freeBaseCostPurpleQueue[4].options.skipCost, undefined);
+
+const freeFollowupCostPurpleQueue = scanEffects.buildScanEffectQueue(purplePlayer, {
+  includeFinalize: true,
+  fullScanAction: true,
+  scanRunId: "free-purple-followup-costs-test",
+  skipEffectCosts: true,
+});
+for (const effect of freeFollowupCostPurpleQueue) {
+  assert.equal(effect.options.skipCost, true, "明确免费后续费用的完整扫描行动才继承 skipCost");
 }
 
 const borrowedPurpleCases = [
