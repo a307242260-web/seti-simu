@@ -12372,9 +12372,16 @@
         - energyCost * getAiResourceValuesForRound(currentPlayer).energy * 0.25;
     }
 
-    function scoreAiAnalyzeAction(player = getCurrentPlayer()) {
+    function buildAiAnalyzeActionValueBreakdown(player = getCurrentPlayer()) {
       const check = canAiAnalyzeData(player);
-      if (!check?.ok) return 0;
+      if (!check?.ok) {
+        return {
+          available: false,
+          reason: check?.message || null,
+          score: 0,
+          energyCost: getAiAnalyzeEnergyCost(player),
+        };
+      }
       const placedCount = Math.max(0, (data.listComputerPlacedTokens?.(player) || []).length);
       const dataRoom = getAiAvailableDataRoom(player);
       const demand = getAiStrategyDemand(player);
@@ -12393,6 +12400,7 @@
       const scoreToNextThreshold = nextThreshold ? Math.max(0, nextThreshold - currentScore) : 0;
       const bestBlueTraceScore = Math.max(0, aiNumber(getAiBestRevealedAlienTraceDirectScore(player, "blue")));
       const availableData = Math.max(0, aiNumber(player?.resources?.availableData));
+      const energyCost = getAiAnalyzeEnergyCost(player);
       const thresholdCashoutPressure = nextThreshold && currentScore < nextThreshold
         ? Math.min(
           7,
@@ -12427,6 +12435,8 @@
       const postSecondFinalMarkPenalty = finalMarks >= 2 && dataRoom <= 1 && blueTraceDemand < 1
         ? 5
         : 0;
+      const highScorePushValue = scoreAiHighScorePushValue(player, "analyze");
+      const lowEngineCatchupValue = scoreAiLowEngineCatchupValue(player, "analyze");
       const rawScore = 7
         + placedCount * 1.15
         + fullComputerBonus * 0.8
@@ -12437,9 +12447,9 @@
         + firstThresholdCatchupBonus
         + readyAnalyzeWindowValue
         + lateFullDataAnalyzeRecovery
-        + scoreAiHighScorePushValue(player, "analyze")
-        + scoreAiLowEngineCatchupValue(player, "analyze")
-        - getAiAnalyzeEnergyCost(player) * getAiResourceValuesForRound(player).energy * 0.35
+        + highScorePushValue
+        + lowEngineCatchupValue
+        - energyCost * getAiResourceValuesForRound(player).energy * 0.35
         - postSecondFinalMarkPenalty;
       const weightedScore = applyAiStrategyWeight(
         rawScore,
@@ -12448,6 +12458,8 @@
       );
       const hasBlueTraceFinalFormula = getAiMarkedFinalFormulaEntries(player)
         .some((entry) => entry.formulaId === "b1");
+      let score = weightedScore;
+      let scoreCapReason = null;
       if (
         round >= FINAL_ROUND_NUMBER
         && placedCount >= requiredSlot
@@ -12458,7 +12470,8 @@
         && blueTraceDemand < 1
         && !hasBlueTraceFinalFormula
       ) {
-        return Math.min(
+        scoreCapReason = "终局分析蓝痕迹与阈值不足";
+        score = Math.min(
           weightedScore,
           roundAiScore(
             7
@@ -12469,7 +12482,39 @@
           ),
         );
       }
-      return weightedScore;
+      return {
+        available: true,
+        reason: null,
+        score,
+        rawScore,
+        weightedScore,
+        scoreCapReason,
+        placedCount,
+        requiredSlot,
+        dataRoom,
+        availableData,
+        energyCost,
+        currentScore,
+        finalMarkCount: finalMarks,
+        nextFinalScoreThreshold: nextThreshold,
+        scoreToNextThreshold,
+        blueTraceDemand,
+        analyzeBestBlueTraceScore: bestBlueTraceScore,
+        thresholdCashoutPressure,
+        readyAnalyzeWindowValue,
+        lateFullDataAnalyzeRecovery,
+        firstThresholdCatchupBonus,
+        fullComputerBonus,
+        lateRoundPressure,
+        highScorePushValue,
+        lowEngineCatchupValue,
+        postSecondFinalMarkPenalty,
+        hasBlueTraceFinalFormula,
+      };
+    }
+
+    function scoreAiAnalyzeAction(player = getCurrentPlayer()) {
+      return buildAiAnalyzeActionValueBreakdown(player).score;
     }
 
     function scoreAiFollowupMainActionAfterMove(coordinate, player = getCurrentPlayer(), options = {}) {
@@ -17084,7 +17129,8 @@
       ), null);
       const bestMoveScore = Math.max(0, aiNumber(bestMoveCandidate?.score));
       const analyzeCheck = canAiAnalyzeData(currentPlayer);
-      const analyzeScore = analyzeCheck.ok ? scoreAiAnalyzeAction(currentPlayer) : 0;
+      const analyzeBreakdown = analyzeCheck.ok ? buildAiAnalyzeActionValueBreakdown(currentPlayer) : null;
+      const analyzeScore = analyzeBreakdown ? analyzeBreakdown.score : 0;
       const immediatePlanetActionScore = Math.max(
         orbitCandidate.available ? Number(orbitCandidate.score || 0) : 0,
         landCandidate.available ? Number(landCandidate.score || 0) : 0,
@@ -17204,6 +17250,8 @@
         available: analyzeCheck.ok,
         reason: analyzeCheck.message || null,
         score: analyzeScore,
+        scoreCapReason: analyzeBreakdown?.scoreCapReason || null,
+        valueBreakdown: analyzeBreakdown,
       });
       const playCardCandidates = listAiPlayCardCandidates(getCurrentPlayer());
       const bestPlayCardCandidate = [...playCardCandidates]

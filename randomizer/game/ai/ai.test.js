@@ -2467,7 +2467,21 @@ const engineActionNearMissReport = {
           score: 31,
           directScoreGain: 10,
           actionGraph: { net: 31 },
-          valueBreakdown: { currentScore: 122, finalMarkCount: 3 },
+          valueBreakdown: {
+            currentScore: 122,
+            finalMarkCount: 3,
+            placedCount: 6,
+            requiredSlot: 6,
+            availableData: 6,
+            dataRoom: 0,
+            energyCost: 1,
+            analyzeBestBlueTraceScore: 10,
+            readyAnalyzeWindowValue: 13.5,
+            lateFullDataAnalyzeRecovery: 0,
+            thresholdCashoutPressure: 2.2,
+            rawScore: 31,
+            weightedScore: 31,
+          },
         },
         {
           id: "placeData",
@@ -2522,6 +2536,9 @@ const engineActionNearMissReport = {
 const engineActionNearMissAnalysis = analytics.analyzeBattleReport(engineActionNearMissReport);
 assert.equal(engineActionNearMissAnalysis.opportunities.engineActionNearMiss, 2);
 assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.id, "analyze");
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.valueBreakdown.analyzePlacedCount, 6);
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.valueBreakdown.analyzeBestBlueTraceScore, 10);
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.valueBreakdown.readyAnalyzeWindowValue, 13.5);
 assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("data-cashout"));
 assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].followup.targetSeenWithin, 2);
 assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("target-delayed-hit"));
