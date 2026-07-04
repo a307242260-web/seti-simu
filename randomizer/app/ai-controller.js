@@ -340,6 +340,9 @@
     const AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL = "寰宇超动力";
     const AI_HUANYU_SUPERDRIVE_INDUSTRY_ID = "industry:寰宇超动力";
     const AI_HUANYU_SUPERDRIVE_INDUSTRY_SRC = "../assets/industry/寰宇动力.png";
+    const AI_GRAND_STRATEGY_INDUSTRY_LABEL = "宇宙大战略集团";
+    const AI_GRAND_STRATEGY_INDUSTRY_ID = "industry:宇宙大战略集团";
+    const AI_GRAND_STRATEGY_INDUSTRY_SRC = "../assets/industry/宇宙战略集团.png";
     const AI_STYLE_IDS = Object.freeze(["scanner", "route", "task", "tech", "balanced"]);
     const AI_STYLE_SEAT_ORDER = Object.freeze(["route", "scanner", "task", "tech", "balanced"]);
     let aiStrategyWeights = { ...AI_STRATEGY_WEIGHT_DEFAULTS };
@@ -1338,9 +1341,17 @@
       return ordered;
     }
 
-    function shouldForceAiHuanyuSuperdrivePlayer(playerId) {
+    function getForcedAiIndustrySeatIndex(playerId) {
       const orderedAiIds = getOrderedAiAutoBattlePlayerIds();
-      return orderedAiIds.length > 0 && orderedAiIds[0] === playerId;
+      return orderedAiIds.indexOf(playerId);
+    }
+
+    function getForcedAiIndustryOffer(playerId, offer) {
+      const seatIndex = getForcedAiIndustrySeatIndex(playerId);
+      if (seatIndex < 0) return null;
+      if (seatIndex === 0) return ensureAiHuanyuSuperdriveIndustryOffer(offer);
+      if (seatIndex === 1) return ensureAiGrandStrategyIndustryOffer(offer);
+      return ensureAiCheatLabIndustryOffer(offer);
     }
 
     function getAiStyleFallbackIndex(playerId) {
@@ -1357,6 +1368,7 @@
     function inferAiStyleFromOpening(openingPlan = null, industryCard = null, player = null) {
       const industryLabel = String(industryCard?.label || "");
       if (industryLabel === AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL) return "route";
+      if (industryLabel === AI_GRAND_STRATEGY_INDUSTRY_LABEL) return "task";
 
       const summary = openingPlan?.summary || {};
       const goals = openingPlan?.goals || {};
@@ -1412,6 +1424,32 @@
       return card;
     }
 
+    function createAiGrandStrategyIndustryCard(offer) {
+      const template = Array.isArray(offer?.industryOptions) ? offer.industryOptions[0] : null;
+      return {
+        id: AI_GRAND_STRATEGY_INDUSTRY_ID,
+        kind: "industry",
+        label: AI_GRAND_STRATEGY_INDUSTRY_LABEL,
+        src: AI_GRAND_STRATEGY_INDUSTRY_SRC,
+        width: template?.width || 1382,
+        height: template?.height || 1054,
+        aiOnly: true,
+      };
+    }
+
+    function ensureAiGrandStrategyIndustryOffer(offer) {
+      if (!offer) return null;
+      if (!Array.isArray(offer.industryOptions)) offer.industryOptions = [];
+      const existing = offer.industryOptions.find((card) => (
+        card?.label === AI_GRAND_STRATEGY_INDUSTRY_LABEL
+        || card?.id === AI_GRAND_STRATEGY_INDUSTRY_ID
+      ));
+      if (existing) return existing;
+      const card = createAiGrandStrategyIndustryCard(offer);
+      offer.industryOptions.push(card);
+      return card;
+    }
+
     function chooseInitialSelectionForAiPlayer() {
       if (!isInitialSelectionActive()) return null;
       const playerId = playerState.currentPlayerId;
@@ -1420,9 +1458,7 @@
       }
       const offer = getInitialSelectionOffer(playerId);
       if (!offer || offer.confirmed) return { ok: false, message: "没有可用初始选择" };
-      const forcedIndustryCard = shouldForceAiHuanyuSuperdrivePlayer(playerId)
-        ? ensureAiHuanyuSuperdriveIndustryOffer(offer)
-        : ensureAiCheatLabIndustryOffer(offer);
+      const forcedIndustryCard = getForcedAiIndustryOffer(playerId, offer);
       const decision = ai?.policy?.chooseInitialSelection?.(offer, {
         roundNumber: turnState.roundNumber,
         forcedIndustryCard,

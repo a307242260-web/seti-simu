@@ -68,7 +68,17 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     techCounts: { ...(options.blueTechCounts || {}) },
     runezuSymbols: options.blueRunezuSymbols || {},
   };
-  const allPlayers = [white, blue];
+  const extraPlayers = (options.extraPlayers || []).map((player) => ({
+    hand: [],
+    reservedCards: [],
+    resources: { credits: 5, energy: 5, ...(player.resources || {}) },
+    income: { ...(player.income || {}) },
+    techState: player.techState || { ownedTiles: { ...(player.ownedTechTiles || {}) } },
+    techCounts: { ...(player.techCounts || {}) },
+    runezuSymbols: player.runezuSymbols || {},
+    ...player,
+  }));
+  const allPlayers = [white, blue, ...extraPlayers];
   const currentPlayer = options.currentPlayerColor === "blue" ? blue : white;
   const playerState = {
     players: allPlayers,
@@ -431,7 +441,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     DEFAULT_INITIAL_PLAYER_COLOR: "white",
     FINAL_ROUND_NUMBER: options.finalRoundNumber || 4,
     FINAL_SCORE_IDS: options.finalScoreIds || [],
-    INITIAL_SELECTION_REQUIRED: { initial: 0 },
+    INITIAL_SELECTION_REQUIRED: { initial: options.initialSelectionRequired ?? 0 },
     MOVE_ENERGY_COST: 1,
     createActionContext: () => ({
       ensurePlayerTechState: (player) => {
@@ -466,7 +476,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       if (options.effectOwnerColor) return allPlayers.find((player) => player.color === options.effectOwnerColor) || null;
       return null;
     },
-    getInitialSelectionOffer: () => null,
+    getInitialSelectionOffer: (playerId) => options.initialSelectionOffers?.[playerId] || null,
     getPendingPlayCardSelection: () => null,
     getPlanetSectorCoordinate: () => ({ x: 1, y: 1 }),
     getPlayerByColor: (color) => allPlayers.find((player) => player.color === color) || null,
@@ -591,6 +601,19 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     "updateActionButtons",
   ];
   for (const name of noopNames) context[name] = () => null;
+  if (options.recordInitialSelection) {
+    context.confirmInitialSelectionForCurrentPlayer = () => {
+      const offer = context.getInitialSelectionOffer(playerState.currentPlayerId);
+      if (offer) offer.confirmed = true;
+      noteHandled({
+        type: "initial-selection",
+        playerId: playerState.currentPlayerId,
+        industryId: offer?.selectedIndustryId || null,
+        selectedInitialIds: [...(offer?.selectedInitialIds || [])],
+      });
+      return { ok: true, progressed: true };
+    };
+  }
   if (options.recordPublicPick) {
     context.pickPublicCardForCurrentPlayer = (slotIndex) => {
       noteHandled({ type: "public-pick", slotIndex: Number(slotIndex) });
@@ -704,6 +727,9 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   }
   if (options.actionEffectFlowActive) {
     context.isActionEffectFlowActive = () => true;
+  }
+  if (options.initialSelectionActive) {
+    context.isInitialSelectionActive = () => true;
   }
   if (options.currentPlayerDiscardPending || options.pendingDiscardAction) {
     context.isDiscardSelectionActive = () => true;
@@ -859,6 +885,10 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   return {
     white,
     blue,
+    extraPlayers,
+    allPlayers,
+    playerState,
+    turnState,
     controller: createAiController(context),
     getHandled: () => handled,
     getHandledEvents: () => handledEvents.slice(),
@@ -968,6 +998,46 @@ function makeYichangdianAlienState(options = {}) {
   };
   yichangdian.ensureTraceGrid(alienGameState, 1);
   return alienGameState;
+}
+
+{
+  const red = { id: "player-red", color: "red", colorLabel: "Red" };
+  const yellow = { id: "player-yellow", color: "yellow", colorLabel: "Yellow" };
+  const offers = Object.fromEntries(
+    ["player-blue", "player-red", "player-yellow"].map((playerId) => [playerId, {
+      industryOptions: [{ id: `industry:baseline-${playerId}`, label: "层云核心" }],
+      initialOptions: [],
+    }]),
+  );
+  const harness = createAiControllerHarness(null, {
+    extraPlayers: [red, yellow],
+    initialSelectionActive: true,
+    initialSelectionOffers: offers,
+    recordInitialSelection: true,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id, red.id, yellow.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const expectedIndustries = [
+    [harness.blue.id, "industry:寰宇超动力", "寰宇超动力"],
+    [red.id, "industry:宇宙大战略集团", "宇宙大战略集团"],
+    [yellow.id, "industry:作弊实验室", "作弊实验室"],
+  ];
+  for (const [playerId, expectedId, expectedLabel] of expectedIndustries) {
+    harness.playerState.currentPlayerId = playerId;
+    const result = harness.controller.runAiAutomationStep();
+    assert.equal(result.ok, true, `${expectedLabel} AI initial selection should complete`);
+    assert.equal(offers[playerId].selectedIndustryId, expectedId);
+    const selected = offers[playerId].industryOptions
+      .find((card) => card.id === offers[playerId].selectedIndustryId);
+    assert.equal(selected?.label, expectedLabel);
+    assert.equal(selected?.aiOnly, true);
+  }
 }
 
 {
