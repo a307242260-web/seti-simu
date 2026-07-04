@@ -1282,6 +1282,26 @@
       .slice(0, Math.max(0, Number(limit) || 0));
   }
 
+  function buildPlayCardNearMissTagCounts(samples = [], limit = 16) {
+    const counts = {};
+    for (const sample of samples || []) {
+      for (const tag of sample?.nearMissTags || []) {
+        increment(counts, tag);
+      }
+    }
+    return rankCounts(counts, limit);
+  }
+
+  function sortCounterfactualPlayCardNearMissSamples(samples = [], limit = 12) {
+    return sortPlayCardNearMissSamples(
+      (samples || []).filter((sample) => {
+        const tags = new Set(sample?.nearMissTags || []);
+        return tags.has("counterfactual-required") || tags.has("shared-flow-risk");
+      }),
+      limit,
+    );
+  }
+
   function buildPlayCardNearMissSample(entry, candidates = [], playerResultById = new Map()) {
     const playCardCandidate = getPlayCardCandidate(candidates);
     const selectedCandidate = getSelectedCandidate(entry, candidates);
@@ -5908,6 +5928,8 @@
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
       playCardNearMissSamples: sortPlayCardNearMissSamples(playCardNearMissSamples),
+      playCardNearMissTagCounts: buildPlayCardNearMissTagCounts(playCardNearMissSamples),
+      counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(playCardNearMissSamples),
       b2ScanNearMissSamples: sortB2ScanNearMissSamples(b2ScanNearMissSamples),
       b2TradeNearMissSamples: sortB2TradeNearMissSamples(b2TradeNearMissSamples),
       mainUnlockLowConcretePlaySamples,
@@ -6340,6 +6362,8 @@
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       playCardNearMissSamples: sortPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
+      playCardNearMissTagCounts: buildPlayCardNearMissTagCounts(mergedPlayCardNearMissSamples),
+      counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
       b2ScanNearMissSamples: sortB2ScanNearMissSamples(mergedB2ScanNearMissSamples),
       b2TradeNearMissSamples: sortB2TradeNearMissSamples(mergedB2TradeNearMissSamples),
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
