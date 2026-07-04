@@ -2567,6 +2567,12 @@
         return listCardTriggerFreeMoveCandidates(match).length > 0;
       }
       if (type === "pick_card") return true;
+      if (
+        type === runezu?.EFFECT_TYPES?.SYMBOL_REWARD
+        || type === runezu?.EFFECT_TYPES?.SYMBOL_BRANCH
+      ) {
+        return true;
+      }
       if (String(type).startsWith("card_")) {
         return canAiResolvePlayCardEffects([match.effect]).ok;
       }

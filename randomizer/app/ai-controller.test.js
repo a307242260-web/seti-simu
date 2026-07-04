@@ -164,6 +164,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     get pendingCardSelectionAction() { return options.pendingCardSelectionAction || null; },
     get pendingDiscardAction() { return pendingDiscardAction; },
     get pendingPassReserveSelection() { return pendingPassReserveSelection; },
+    get pendingCardTriggerAction() { return options.pendingCardTriggerAction || null; },
     get pendingMovePayment() { return options.pendingMovePayment || null; },
     get pendingActionExecuted() { return Boolean(options.pendingActionExecuted); },
     get pendingActionEffectFlow() { return options.pendingActionEffectFlow || null; },
@@ -357,6 +358,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
         FREE_MOVE: "free_move",
         RESEARCH_TECH: "card_research_tech",
         PAY_CREDITS_FOR_REWARD: "card_pay_credits_for_reward",
+        CARD_CORNER_EVENT_REWARD: "card_corner_event_reward",
       },
       buildPlayEffects: (card) => card?.playEffects || [],
       getCardModel: (card) => card?.model || null,
@@ -612,6 +614,18 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
         selectedInitialIds: [...(offer?.selectedInitialIds || [])],
       });
       return { ok: true, progressed: true };
+    };
+  }
+  if (options.recordCardTriggerChoice) {
+    context.handleCardTriggerChoice = (choiceIndex) => {
+      noteHandled({ type: "card-trigger", choiceIndex: Number(choiceIndex) });
+      return { ok: true, progressed: true };
+    };
+  }
+  if (options.recordCancelCardTriggerChoice) {
+    context.cancelCardTriggerChoice = () => {
+      noteHandled({ type: "card-trigger-cancel" });
+      return { ok: true, progressed: true, skipped: true };
     };
   }
   if (options.recordPublicPick) {
@@ -1038,6 +1052,43 @@ function makeYichangdianAlienState(options = {}) {
     assert.equal(selected?.label, expectedLabel);
     assert.equal(selected?.aiOnly, true);
   }
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    pendingCardTriggerAction: {
+      matches: [
+        {
+          card: { id: "unsupported-test", cardName: "unsupported" },
+          trigger: { id: "unsupported-trigger" },
+          effect: { type: "unsupported_trigger_effect", label: "无法自动处理的触发" },
+        },
+        {
+          card: { id: "runezu-2", cardName: "符文族2" },
+          trigger: { id: "runezu2-orbit-land-s4" },
+          effect: {
+            type: runezu.EFFECT_TYPES.SYMBOL_REWARD,
+            label: "符文族任务：符文4奖励",
+            options: { symbolId: "symbol_4" },
+          },
+        },
+      ],
+    },
+    recordCardTriggerChoice: true,
+    recordCancelCardTriggerChoice: true,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "Runezu symbol card trigger should be selectable by AI");
+  assert.deepEqual(harness.getHandled(), { type: "card-trigger", choiceIndex: 1 });
 }
 
 {
