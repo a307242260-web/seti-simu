@@ -50,6 +50,7 @@
   const ENGINE_NEAR_MISS_MIN_TARGET_SCORE = 20;
   const ENGINE_NEAR_MISS_MAX_POLICY_GAP = 15;
   const ENGINE_NEAR_MISS_MIN_POLICY_GAP = -5;
+  const ENGINE_NEAR_MISS_FOLLOWUP_LIMIT = 4;
   const HIGH_SCORE_NEAR_MISS_REFERENCE_METRICS = Object.freeze([
     "baseScore",
     "tileScore",
@@ -1917,10 +1918,73 @@
     } else if (targetId === "placeData") {
       tags.push("data-placement");
     }
+    const followup = sample.followup || {};
+    if (followup.noSamePlayerFollowup) {
+      tags.push("no-followup-after-nearmiss");
+    } else if (followup.targetSeenWithin != null) {
+      tags.push("target-delayed-hit");
+    } else if (followup.targetNotSeen) {
+      tags.push("target-not-seen");
+      if (followup.windowExhaustedWithoutTarget) tags.push("window-exhausted-without-target");
+    }
+    if (followup.passOrEndTurnBeforeTarget) tags.push("idle-before-target");
+    if (
+      followup.firstEngineActionId
+      && followup.firstEngineActionId !== targetId
+      && (followup.targetSeenWithin == null || numeric(followup.firstEngineActionOffset) < numeric(followup.targetSeenWithin))
+    ) {
+      tags.push("different-engine-before-target");
+    }
     return tags;
   }
 
-  function buildEngineActionNearMissSample(entry, targetCandidate = {}, candidates = [], playerResultById = new Map()) {
+  function buildEngineNearMissFollowup(logs = [], startIndex = -1, playerId = null, targetId = null, limit = ENGINE_NEAR_MISS_FOLLOWUP_LIMIT) {
+    const actions = [];
+    for (let index = startIndex + 1; index >= 0 && index < logs.length && actions.length < limit; index += 1) {
+      const entry = logs[index];
+      if (entry?.type !== "turn-action" || entry.playerId !== playerId) continue;
+      const action = getSelectedAction(entry) || {};
+      const actionId = getSelectedActionId(entry);
+      actions.push({
+        roundNumber: entry.roundNumber ?? null,
+        turnNumber: entry.turnNumber ?? null,
+        rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+        id: actionId,
+        kind: action.kind || null,
+        score: roundRatio(action.score),
+        policyScore: roundRatio(getCandidatePolicyScore(action)),
+        actionGraphNet: roundRatio(getCandidateActionGraphNet(action)),
+      });
+    }
+    const targetIndex = actions.findIndex((action) => action.id === targetId);
+    const firstEngineIndex = actions.findIndex((action) => ENGINE_NEAR_MISS_TARGET_ACTIONS.includes(action.id));
+    const firstMainIndex = actions.findIndex((action) => action.kind === "main");
+    const beforeTarget = targetIndex >= 0 ? actions.slice(0, targetIndex) : actions;
+    return {
+      limit,
+      actionIds: actions.map((action) => action.id),
+      actions,
+      targetActionId: targetId || null,
+      targetSeenWithin: targetIndex >= 0 ? targetIndex + 1 : null,
+      targetNotSeen: targetIndex < 0,
+      noSamePlayerFollowup: actions.length === 0,
+      windowExhaustedWithoutTarget: targetIndex < 0 && actions.length >= limit,
+      passOrEndTurnBeforeTarget: beforeTarget.some((action) => PASS_ACTIONS.includes(action.id)),
+      firstEngineActionId: firstEngineIndex >= 0 ? actions[firstEngineIndex].id : null,
+      firstEngineActionOffset: firstEngineIndex >= 0 ? firstEngineIndex + 1 : null,
+      firstMainActionId: firstMainIndex >= 0 ? actions[firstMainIndex].id : null,
+      firstMainActionOffset: firstMainIndex >= 0 ? firstMainIndex + 1 : null,
+    };
+  }
+
+  function buildEngineActionNearMissSample(
+    entry,
+    targetCandidate = {},
+    candidates = [],
+    playerResultById = new Map(),
+    logs = [],
+    logIndex = -1,
+  ) {
     const selectedCandidate = getSelectedCandidate(entry, candidates);
     const selectedPolicyScore = getFiniteScore(getCandidatePolicyScore(selectedCandidate));
     const targetPolicyScore = getFiniteScore(getCandidatePolicyScore(targetCandidate));
@@ -1952,6 +2016,12 @@
         ? null
         : roundRatio(selectedGraphNet - targetGraphNet),
       topCandidates: availableCandidates.slice(0, 6).map(summarizeCandidateWithGraph),
+      followup: buildEngineNearMissFollowup(
+        logs,
+        logIndex,
+        entry.playerId || null,
+        getCandidateId(targetCandidate),
+      ),
     };
     return {
       ...sample,
@@ -6026,7 +6096,8 @@
       discardedMoveCards: 0,
     };
 
-    for (const entry of logs) {
+    for (let logIndex = 0; logIndex < logs.length; logIndex += 1) {
+      const entry = logs[logIndex];
       increment(typeCounts, entry.type);
       if (entry.type === "effect") {
         increment(effectCounts, entry.details?.effectType || entry.details?.effectId || "unknown");
@@ -6137,7 +6208,7 @@
           opportunities.engineActionNearMiss += engineNearMissTargets.length;
           for (const targetCandidate of engineNearMissTargets) {
             engineActionNearMissSamples.push(
-              buildEngineActionNearMissSample(entry, targetCandidate, candidates, playerResultById),
+              buildEngineActionNearMissSample(entry, targetCandidate, candidates, playerResultById, logs, logIndex),
             );
           }
         }

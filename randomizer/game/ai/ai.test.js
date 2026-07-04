@@ -2480,6 +2480,42 @@ const engineActionNearMissReport = {
         },
       ],
     },
+  }, {
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 7,
+    rawTurnNumber: 19,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 122, credits: 2, energy: 2, publicity: 4, availableData: 6, handSize: 3 },
+    details: {
+      action: { id: "end-turn", kind: "pass", score: 0, actionGraph: { net: 0 } },
+      candidates: [],
+    },
+  }, {
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 8,
+    rawTurnNumber: 20,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 132, credits: 2, energy: 1, publicity: 4, availableData: 0, handSize: 3 },
+    details: {
+      action: { id: "analyze", kind: "main", score: 31, directScoreGain: 10, actionGraph: { net: 31 } },
+      candidates: [],
+    },
+  }, {
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 9,
+    rawTurnNumber: 21,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 132, credits: 2, energy: 1, publicity: 4, availableData: 0, handSize: 3 },
+    details: {
+      action: { id: "placeData", kind: "quick", score: 25, actionGraph: { net: 25 } },
+      candidates: [],
+    },
   }],
   playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 214 }],
 };
@@ -2487,8 +2523,14 @@ const engineActionNearMissAnalysis = analytics.analyzeBattleReport(engineActionN
 assert.equal(engineActionNearMissAnalysis.opportunities.engineActionNearMiss, 2);
 assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.id, "analyze");
 assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("data-cashout"));
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].followup.targetSeenWithin, 2);
+assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("target-delayed-hit"));
+assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("idle-before-target"));
 assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[1].target.id, "placeData");
 assert(engineActionNearMissAnalysis.engineActionNearMissSamples[1].nearMissTags.includes("data-placement"));
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[1].followup.targetSeenWithin, 3);
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[1].followup.firstEngineActionId, "analyze");
+assert(engineActionNearMissAnalysis.engineActionNearMissSamples[1].nearMissTags.includes("different-engine-before-target"));
 const engineActionNearMissSummary = analytics.summarizeBattleReports([engineActionNearMissReport]);
 assert.equal(engineActionNearMissSummary.engineActionNearMissCounts.byTarget.length, 2);
 assert.equal(engineActionNearMissSummary.engineActionNearMissCounts.byTransition[0].key, "researchTech->analyze");
