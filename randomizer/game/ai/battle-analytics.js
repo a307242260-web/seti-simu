@@ -1235,6 +1235,41 @@
     ].reduce((total, value) => total + Math.max(0, numeric(value)), 0);
   }
 
+  function classifyPlayCardNearMissSample(sample = {}) {
+    const tags = [];
+    const gap = numeric(sample.policyScoreGap);
+    const selectedId = getCandidateId(sample.selected || {});
+    const bestCard = sample.bestCard || {};
+    const breakdown = bestCard.valueBreakdown || {};
+    const routeActionId = bestCard.plan?.actionId || null;
+    const concreteValue = getPlayCardNearMissConcreteValue(sample);
+    if (gap <= 2) tags.push("tiny-gap");
+    else if (gap <= 6) tags.push("small-gap");
+    if (routeActionId) tags.push(`route-${routeActionId}`);
+    if ((bestCard.effectTypes || []).length) tags.push("modeled-effect-card");
+    if (numeric(breakdown.playCardConversionPressure) >= 12) tags.push("high-conversion-pressure");
+    if (numeric(breakdown.standardActionPremium) >= 12) tags.push("high-standard-action-premium");
+    if (numeric(breakdown.lateCardEnginePressure) >= 8) tags.push("late-engine-pressure");
+    if (["land", "orbit", "scan", "analyze", "researchTech"].includes(selectedId)) {
+      tags.push(`selected-${selectedId}`);
+      if (["land", "orbit", "scan"].includes(selectedId)) tags.push("selected-cashout-action");
+    }
+    if (
+      gap <= 6
+      && routeActionId
+      && concreteValue >= 18
+      && ["land", "orbit", "scan", "researchTech"].includes(selectedId)
+    ) {
+      tags.push("counterfactual-required");
+      tags.push("shared-flow-risk");
+    }
+    return {
+      tags,
+      routeActionId,
+      concreteValue: roundRatio(concreteValue),
+    };
+  }
+
   function sortPlayCardNearMissSamples(samples = [], limit = 12) {
     return [...(samples || [])]
       .sort((left, right) => (
@@ -1254,7 +1289,7 @@
     const playGraphNet = getCandidateActionGraphNet(playCardCandidate);
     const selectedGraphNet = getCandidateActionGraphNet(selectedCandidate);
     const result = playerResultById?.get?.(entry.playerId) || {};
-    return {
+    const sample = {
       roundNumber: entry.roundNumber ?? null,
       turnNumber: entry.turnNumber ?? null,
       playerId: entry.playerId || null,
@@ -1282,6 +1317,13 @@
           valueBreakdown: summarizePlayCardValueBreakdown(bestCard),
         }
         : null,
+    };
+    const classification = classifyPlayCardNearMissSample(sample);
+    return {
+      ...sample,
+      nearMissTags: classification.tags,
+      routeActionId: classification.routeActionId,
+      concreteValue: classification.concreteValue,
     };
   }
 
