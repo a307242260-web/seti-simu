@@ -40,6 +40,7 @@
       startNewGameFromStartScreen,
       continueGameFromStartScreen,
       syncStartScreenDebugOption,
+      syncStartScreenActionLogOption,
       handleStartAlienOptionChange,
       handleStartIndustryOptionChange,
       handleMainActionButtonClick,
@@ -144,6 +145,7 @@
       minimizeFinalResultDialog,
       closeFinalResultDialog,
       closeActionBriefing,
+      openActionBriefingDetailLog,
       blockManualAiSharedOverlayInputIfNeeded,
       handleAiTakeoverFailsafe,
       handleForceSkipTurnFailsafe,
@@ -233,6 +235,7 @@
       continueGameFromStartScreen();
     });
     els.startDebugEnabled?.addEventListener("change", syncStartScreenDebugOption);
+    els.startActionLogEnabled?.addEventListener("change", syncStartScreenActionLogOption);
     els.startAlienOptions?.addEventListener("change", handleStartAlienOptionChange);
     els.startIndustryOptions?.addEventListener("change", handleStartIndustryOptionChange);
     els.spinButton?.addEventListener("click", randomizeAll);
@@ -1164,6 +1167,9 @@
     });
     els.actionBriefingConfirm?.addEventListener("click", () => {
       closeActionBriefing();
+    });
+    els.actionBriefingDetailLog?.addEventListener("click", () => {
+      openActionBriefingDetailLog();
     });
     aliens.bindAlienTraceDragging?.({
       onPositionChange: (payload) => {

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SETI 太阳系随机器</title>
-  <link rel="stylesheet" href="./style.css?v=action-briefing-1">
+  <link rel="stylesheet" href="./style.css?v=action-briefing-2">
 </head>
 <body>
   <div class="start-screen" id="start-screen" aria-label="开始界面">
@@ -34,6 +34,11 @@
           <span class="start-screen-option-label">调试功能</span>
           <input class="start-screen-checkbox" type="checkbox" id="start-debug-enabled">
           <span class="start-screen-toggle-text" id="start-debug-toggle-text" aria-hidden="true">关闭</span>
+        </label>
+        <label class="start-screen-option start-screen-toggle-option" for="start-action-log-enabled">
+          <span class="start-screen-option-label">开启行动日志</span>
+          <input class="start-screen-checkbox" type="checkbox" id="start-action-log-enabled" checked>
+          <span class="start-screen-toggle-text" id="start-action-log-toggle-text" aria-hidden="true">开启</span>
         </label>
         <fieldset class="start-screen-alien-option" aria-label="外星人">
           <legend class="visually-hidden">外星人</legend>
@@ -258,6 +263,7 @@
         </div>
         <ol class="action-briefing-list" id="action-briefing-list"></ol>
         <div class="action-briefing-footer">
+          <button class="action-briefing-detail-log" type="button" id="action-briefing-detail-log">打开详细日志</button>
           <button class="action-briefing-confirm" type="button" id="action-briefing-confirm">确定</button>
         </div>
       </div>
@@ -763,11 +769,11 @@
   <script src="./game/ai/index.js?v=ai-auto-battle-1"></script>
   <script src="./app/dependencies.js?v=app-boundaries-5"></script>
   <script src="./app/constants.js?v=industry-pirates-1"></script>
-  <script src="./app/dom.js?v=action-briefing-1"></script>
-  <script src="./app/events.js?v=action-briefing-1"></script>
+  <script src="./app/dom.js?v=action-briefing-2"></script>
+  <script src="./app/events.js?v=action-briefing-2"></script>
   <script src="./app/action-log-export.js?v=action-log-export-1"></script>
   <script src="./app/public-api.js?v=app-boundaries-5"></script>
   <script src="./app/ai-controller.js?v=ai-weak-start-1"></script>
-  <script src="./app.js?v=action-briefing-1"></script>
+  <script src="./app.js?v=action-briefing-2"></script>
 </body>
 </html>

@@ -221,6 +221,7 @@
     aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
     activePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
     debugToolsEnabled: false,
+    actionBriefingEnabled: true,
     selectedAlienIds: [...(aliens.ALIEN_TYPE_IDS || [])],
     selectedIndustryLabels: INDUSTRY_CARD_FILES.map(stripAssetExtension),
     continueAvailable: false,
@@ -2730,7 +2731,18 @@
     actionBriefingState.pendingTurnKey = null;
   }
 
+  function openActionBriefingDetailLog() {
+    setReportTab("action");
+    setLogOpen(true);
+    closeActionBriefing();
+  }
+
+  function isActionBriefingEnabled() {
+    return startScreenState.actionBriefingEnabled !== false;
+  }
+
   function maybeOpenActionBriefingForCurrentHumanTurn(player = getCurrentPlayer()) {
+    if (!isActionBriefingEnabled()) return false;
     if (!player?.id || isAiAutoBattlePlayer(player.id) || isGameEnded()) return false;
     if (!actionBriefingState.aiMainActions.length) return false;
     const turnKey = getActionBriefingTurnKey(player);
@@ -2754,6 +2766,16 @@
     if (els.startDebugToggleText) {
       els.startDebugToggleText.textContent = enabled ? "开启" : "关闭";
     }
+  }
+
+  function syncStartScreenActionLogOption() {
+    const enabled = els.startActionLogEnabled ? Boolean(els.startActionLogEnabled.checked) : true;
+    startScreenState.actionBriefingEnabled = enabled;
+    if (els.startActionLogToggleText) {
+      els.startActionLogToggleText.textContent = enabled ? "开启" : "关闭";
+    }
+    if (!enabled) closeActionBriefing();
+    return enabled;
   }
 
   function getStartAlienCheckboxes() {
@@ -2877,6 +2899,7 @@
   function applyStartScreenOptions() {
     syncStartScreenAlienOptions();
     syncStartScreenIndustryOptions();
+    syncStartScreenActionLogOption();
     startScreenState.aiDifficulty = normalizeAiDifficulty(els.startAiDifficulty?.value);
     if (els.startAiDifficulty) {
       els.startAiDifficulty.value = startScreenState.aiDifficulty;
@@ -35059,6 +35082,7 @@
     startNewGameFromStartScreen,
     continueGameFromStartScreen,
     syncStartScreenDebugOption,
+    syncStartScreenActionLogOption,
     handleStartAlienOptionChange,
     handleStartIndustryOptionChange,
     handleMainActionButtonClick,
@@ -35163,6 +35187,7 @@
     minimizeFinalResultDialog,
     closeFinalResultDialog,
     closeActionBriefing,
+    openActionBriefingDetailLog,
     blockManualAiSharedOverlayInputIfNeeded,
     handleAiTakeoverFailsafe,
     handleForceSkipTurnFailsafe,
@@ -35248,6 +35273,7 @@
   });
   setTokenAssetSizes();
   syncStartScreenDebugOption();
+  syncStartScreenActionLogOption();
   syncStartScreenAlienOptions();
   syncStartScreenIndustryOptions();
   setDebugToolsEnabled(false);

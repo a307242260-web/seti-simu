@@ -714,10 +714,13 @@ body {
 
 .action-briefing-footer {
   display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
   justify-content: flex-end;
   border-top: 1px solid rgba(255, 255, 255, 0.11);
 }
 
+.action-briefing-detail-log,
 .action-briefing-confirm {
   min-width: 88px;
   min-height: 36px;
@@ -730,12 +733,27 @@ body {
   font: 800 13px/1.2 "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
 }
 
+.action-briefing-detail-log {
+  border-color: rgba(154, 218, 255, 0.42);
+  background: rgba(12, 43, 61, 0.9);
+  color: #e3f6ff;
+}
+
+.action-briefing-detail-log:hover,
+.action-briefing-detail-log:focus-visible,
 .action-briefing-confirm:hover,
 .action-briefing-confirm:focus-visible {
   border-color: rgba(255, 229, 128, 0.76);
   background: rgba(96, 84, 42, 0.96);
   outline: none;
   box-shadow: 0 0 0 2px rgba(255, 214, 98, 0.18);
+}
+
+.action-briefing-detail-log:hover,
+.action-briefing-detail-log:focus-visible {
+  border-color: rgba(172, 225, 255, 0.78);
+  background: rgba(24, 72, 96, 0.96);
+  box-shadow: 0 0 0 2px rgba(154, 218, 255, 0.16);
 }
 
 .pass-reserve-card-button {
