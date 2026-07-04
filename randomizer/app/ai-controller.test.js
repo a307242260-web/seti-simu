@@ -227,7 +227,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       ROCKET_KIND: { STANDARD: "standard", CHONG_FOSSIL: "chong-fossil" },
       getRocketsForPlayer: () => [],
       getRocketSectorCoordinate: (rocket) => rocket?.sector || null,
-      findAvailableSlotIndex: () => null,
+      findAvailableSlotIndex: options.findAvailableSlotIndex || (() => null),
       canMoveRocket: (_rocketState, rocketId, deltaX, deltaY) => {
         const rocket = (options.movableTokens || []).find((item) => Number(item.id) === Number(rocketId));
         if (!rocket) return { ok: false, message: "rocket not found" };
@@ -1139,6 +1139,54 @@ function makeYichangdianAlienState(options = {}) {
     Number(twoRocketCard?.valueBreakdown?.effectValue || 0) > 0,
     "two-rocket solar panel should value the actual energy gain",
   );
+}
+
+{
+  const turnChoices = [];
+  const selectedActions = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 1,
+    canStartMainAction: true,
+    canPayForMove: true,
+    realisticCanAfford: true,
+    blueResources: { score: 12, credits: 4, energy: 2, publicity: 3, handSize: 0 },
+    planetLocations: [{ planetId: "earth", x: 3, y: 1 }],
+    findAvailableSlotIndex: () => 0,
+    actionChecks: {
+      launch: { ok: true },
+    },
+    onChooseTurnAction: (candidates, selected) => {
+      turnChoices.push(candidates);
+      selectedActions.push(selected);
+    },
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+  harness.controller.runAiAutomationStep();
+  const candidates = turnChoices.flat();
+  const launchCandidate = candidates.find((candidate) => candidate.id === "launch");
+  const passCandidate = candidates.find((candidate) => candidate.id === "pass");
+  assert.ok(launchCandidate, "weak launch route scenario should expose launch candidate");
+  assert.ok(passCandidate, "weak launch route scenario should expose pass candidate");
+  assert.ok(
+    Number(launchCandidate.valueBreakdown?.weakEarlyPostLaunchRoutePenalty || 0) > 0,
+    "weak post-launch route should be penalized before selecting launch",
+  );
+  assert.ok(
+    Number(launchCandidate.score || 0) < Number(passCandidate.score || 0),
+    "weak post-launch route should not beat pass on early launch base value alone",
+  );
+  assert.notEqual(selectedActions[0]?.id, "launch");
 }
 
 {

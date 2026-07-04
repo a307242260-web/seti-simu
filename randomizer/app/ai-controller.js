@@ -12081,6 +12081,21 @@
       return roundAiScore(Math.min(isFinalRound ? 34 : 44, penalty));
     }
 
+    function scoreAiWeakEarlyPostLaunchRoutePenalty(player = getCurrentPlayer(), postLaunchMovePlan = null) {
+      if (!player) return 0;
+      const round = getAiRoundNumber();
+      if (round > 2) return 0;
+      const planScore = Math.max(0, aiNumber(postLaunchMovePlan?.score));
+      if (planScore >= 1) return 0;
+      const rocketCount = getMovableTokensForPlayer(player.id).length;
+      const weakRouteGap = Math.max(0, 1 - planScore);
+      const penalty = 14
+        + weakRouteGap * 6
+        + (rocketCount <= 0 ? 4 : 0)
+        + (round === 1 ? 2 : 0);
+      return roundAiScore(Math.min(26, penalty));
+    }
+
     function scoreAiExtraLaunchPacePenalty(player = getCurrentPlayer()) {
       if (!player) return 0;
       const round = getAiRoundNumber();
@@ -17277,6 +17292,9 @@
       const noRouteLaunchPenalty = launchCheck.ok
         ? scoreAiNoRouteLaunchPenalty(currentPlayer, postLaunchMovePlan)
         : 0;
+      const weakEarlyPostLaunchRoutePenalty = launchCheck.ok
+        ? scoreAiWeakEarlyPostLaunchRoutePenalty(currentPlayer, postLaunchMovePlan)
+        : 0;
       const launchCost = scoreAiLaunchPaymentCost();
       const launchReservePenalty = launchCheck.ok
         ? scoreAiResourceReservePenaltyForCost(currentPlayer, getAiLaunchPaymentCost(), { actionId: "launch" })
@@ -17288,6 +17306,7 @@
           - extraLaunchPacePenalty
           - finalSecondMarkExtraLaunchPenalty
           - noRouteLaunchPenalty
+          - weakEarlyPostLaunchRoutePenalty
         : 0;
       const launchCandidate = {
         id: "launch",
@@ -17307,6 +17326,7 @@
           extraLaunchPacePenalty,
           finalSecondMarkExtraLaunchPenalty,
           noRouteLaunchPenalty,
+          weakEarlyPostLaunchRoutePenalty,
         },
       };
       candidates.push(launchCandidate);
