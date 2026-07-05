@@ -6726,6 +6726,7 @@
         && bestImmediateMainCashoutScore >= 35
         && !(turnState.passedPlayerIds || []).includes(player.id);
       const finalLowScoreMainUnlockWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && mainActionOpen
         && (!recoveryThreshold || finalMarks >= 3)
         && currentScore >= 70
         && currentScore < finalLowScoreScanUnlockCeiling
