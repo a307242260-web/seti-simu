@@ -15356,6 +15356,120 @@
       return Math.min(24, 13 + Math.max(0, 7 - remainingPlacements) * 1.2 + Math.min(4, slot * 0.25));
     }
 
+    function getAiFinalHighScoreDataCreditPreserveProfile(choice, player = getCurrentPlayer()) {
+      if (
+        !player
+        || normalizeAiDifficulty(player?.aiDifficulty || aiAutoBattleState.aiDifficulty) !== AI_DIFFICULTY_WEAK_START
+        || getAiRoundNumber() < FINAL_ROUND_NUMBER
+        || !state.pendingActionExecuted
+        || choice?.target !== data.PLACEMENT_KIND_BLUE_BONUS
+        || (turnState.passedPlayerIds || []).includes(player.id)
+      ) {
+        return null;
+      }
+      const creditGain = getAiDataPlacementBonuses(choice, player)
+        .reduce((total, bonus) => total + Math.max(0, aiNumber(bonus?.credits)), 0);
+      if (creditGain <= 0) return null;
+      const resources = player.resources || {};
+      const currentCredits = Math.max(0, aiNumber(resources.credits));
+      if (currentCredits > 0) return null;
+      const hand = player.hand || [];
+      const handSize = Math.max(hand.length, Math.round(aiNumber(resources.handSize)));
+      if (handSize < 2) return null;
+      const highScoreProfile = getAiHighScorePushProfile(player);
+      const projectedScore = Math.max(0, aiNumber(highScoreProfile.projectedScore || getAiProjectedFinalScore(player)));
+      if (
+        !highScoreProfile.active
+        || projectedScore < 260
+        || projectedScore > 310
+        || countAiFinalMarksForPlayer(player) < 3
+        || getAiNextMissingFinalScoreThreshold(player)
+      ) {
+        return null;
+      }
+      const currentPlayable = listAiPlayCardCandidates(player);
+      const currentPlayableByIndex = new Map((currentPlayable || []).map((candidate) => [candidate.handIndex, candidate]));
+      const currentBestScore = (currentPlayable || []).reduce((best, candidate) => (
+        Math.max(best, aiNumber(candidate?.score))
+      ), 0);
+      const simulatedPlayer = createAiPlayerAfterResourceGain(player, { credits: creditGain });
+      if (!simulatedPlayer) return null;
+      const postGainCandidates = hand
+        .map((card, handIndex) => buildAiPlayCardCandidate(card, handIndex, simulatedPlayer))
+        .filter(Boolean)
+        .map((candidate) => {
+          const finalDeltaValue = Math.max(
+            0,
+            scoreAiFinalFormulaDeltaValue(candidate.finalFormulaDeltas || {}, player, {
+              includePotential: true,
+              potentialScale: 0.45,
+            }),
+          );
+          const breakdown = candidate.valueBreakdown || {};
+          const directScoreGain = Math.max(0, aiNumber(candidate.directScoreGain));
+          const c2Type3ProgressValue = Math.max(0, aiNumber(breakdown.c2Type3ProgressValue));
+          const cFinalTaskProgressValue = Math.max(0, aiNumber(breakdown.cFinalTaskProgressValue));
+          const endGameExpectedScore = Math.max(0, aiNumber(breakdown.endGameExpectedScore));
+          const playCardConversionPressure = Math.max(0, aiNumber(breakdown.playCardConversionPressure));
+          const concreteValue = directScoreGain
+            + finalDeltaValue
+            + c2Type3ProgressValue
+            + cFinalTaskProgressValue
+            + endGameExpectedScore
+            + playCardConversionPressure * 0.45;
+          const continuationValue = aiNumber(candidate.score)
+            + directScoreGain * 0.8
+            + finalDeltaValue * 0.65
+            + c2Type3ProgressValue * 0.35
+            + cFinalTaskProgressValue * 0.35
+            + endGameExpectedScore * 0.25;
+          return {
+            ...candidate,
+            concreteValue,
+            continuationValue,
+            finalDeltaValue,
+          };
+        })
+        .sort((left, right) => aiNumber(right.continuationValue) - aiNumber(left.continuationValue));
+      const bestPlay = postGainCandidates[0] || null;
+      if (!bestPlay) return null;
+      const currentSameCardScore = aiNumber(currentPlayableByIndex.get(bestPlay.handIndex)?.score);
+      const newlyUnlocked = !currentPlayableByIndex.has(bestPlay.handIndex)
+        || aiNumber(bestPlay.score) > currentSameCardScore + 1;
+      if (!newlyUnlocked || aiNumber(bestPlay.score) < 8 || aiNumber(bestPlay.concreteValue) <= 0) return null;
+      const scoreTo300 = Math.max(0, 300 - projectedScore);
+      const preservedHandValue = Math.min(6, Math.max(0, handSize - 1) * 1.7);
+      const value = Math.min(
+        10.5,
+        3.2
+          + Math.max(0, aiNumber(bestPlay.continuationValue) - currentBestScore) * 0.14
+          + Math.max(0, aiNumber(bestPlay.concreteValue)) * 0.16
+          + preservedHandValue
+          + (scoreTo300 <= 12 ? 1.4 : 0),
+      );
+      return {
+        value: roundAiScore(value),
+        projectedScore: roundAiScore(projectedScore),
+        scoreTo300: roundAiScore(scoreTo300),
+        currentBestPlayScore: roundAiScore(currentBestScore),
+        bestPlayCard: {
+          handIndex: bestPlay.handIndex,
+          cardId: bestPlay.cardId || null,
+          cardLabel: bestPlay.cardLabel || null,
+          score: roundAiScore(bestPlay.score),
+          continuationValue: roundAiScore(bestPlay.continuationValue),
+          concreteValue: roundAiScore(bestPlay.concreteValue),
+          finalDeltaValue: roundAiScore(bestPlay.finalDeltaValue),
+          directScoreGain: roundAiScore(bestPlay.directScoreGain),
+        },
+        preservedHandValue: roundAiScore(preservedHandValue),
+      };
+    }
+
+    function scoreAiFinalHighScoreDataCreditPreserveValue(choice, player = getCurrentPlayer()) {
+      return Math.max(0, aiNumber(getAiFinalHighScoreDataCreditPreserveProfile(choice, player)?.value));
+    }
+
     function scoreAiDataPlacementChoice(choice, player = getCurrentPlayer()) {
       if (!choice) return -Infinity;
       const target = choice.target || null;
@@ -15381,11 +15495,12 @@
       }
       if (target === data.PLACEMENT_KIND_BLUE_BONUS) {
         const bonusValue = scoreAiDataPlacementBonusValue(choice, player);
+        const finalHighScoreCreditPreserveValue = scoreAiFinalHighScoreDataCreditPreserveValue(choice, player);
         return applyAiStrategyWeight(
           5 + Math.max(0, aiNumber(choice.blueSlot)) * 0.05 + bonusValue * 0.8,
           "tech",
           0.25,
-        );
+        ) + finalHighScoreCreditPreserveValue;
       }
       return 0;
     }
@@ -15394,18 +15509,24 @@
       const check = data.canPlaceAnyData?.(player);
       if (!check?.ok) return [];
       return (check.choices || data.listPlaceDataChoices?.(player) || [])
-        .map((choice, index) => ({
-          id: "placeData",
-          kind: "quick",
-          available: true,
-          target: choice.target || null,
-          blueSlot: choice.blueSlot ?? null,
-          placementSlot: choice.placementSlot ?? null,
-          label: choice.label || null,
-          description: choice.description || null,
-          directScoreGain: getAiDataPlacementDirectScoreGain(choice, player),
-          score: scoreAiDataPlacementChoice(choice, player) - index * 0.05,
-        }))
+        .map((choice, index) => {
+          const creditPreserveProfile = getAiFinalHighScoreDataCreditPreserveProfile(choice, player);
+          return {
+            id: "placeData",
+            kind: "quick",
+            available: true,
+            target: choice.target || null,
+            blueSlot: choice.blueSlot ?? null,
+            placementSlot: choice.placementSlot ?? null,
+            label: choice.label || null,
+            description: choice.description || null,
+            directScoreGain: getAiDataPlacementDirectScoreGain(choice, player),
+            score: scoreAiDataPlacementChoice(choice, player) - index * 0.05,
+            valueBreakdown: creditPreserveProfile ? {
+              finalHighScoreDataCreditPreserve: creditPreserveProfile,
+            } : null,
+          };
+        })
         .filter((candidate) => Number.isFinite(Number(candidate.score)));
     }
 
