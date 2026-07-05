@@ -1921,6 +1921,9 @@
         baseScore: breakdown.baseScore ?? player.resources?.score ?? 0,
         tileScore: breakdown.tileScore ?? 0,
         cardScore: breakdown.cardScore ?? 0,
+        jiuzheCardScore: breakdown.jiuzheCardScore ?? 0,
+        jiuzhePenaltyScore: breakdown.jiuzhePenaltyScore ?? 0,
+        runezuSymbolScore: breakdown.runezuSymbolScore ?? 0,
         completedTaskCount: player.completedTaskCount || 0,
         techCount: countPlayerOwnedTechForActionLogExport(player),
         passed: isPlayerPassedThisRound(player.id),
@@ -23700,12 +23703,21 @@
     enqueueJiuzheOpportunity(player, opportunity);
   }
 
-  function getJiuzheCardConditionLabel(card, player) {
-    const achieved = jiuzhe?.isCardConditionMet?.(card, player, {
+  function buildJiuzheCardConditionContext() {
+    const probeLocationData = buildProbeLocationIndex();
+    return {
       alienGameState,
       planetStatsState,
       nebulaDataState,
-    });
+      ...buildPlutoMarkerContext(),
+      probeLocations: probeLocationData.index,
+      probeLocationDetails: probeLocationData.details,
+      getPlayerCompanyBaseIncome,
+    };
+  }
+
+  function getJiuzheCardConditionLabel(card, player) {
+    const achieved = jiuzhe?.isCardConditionMet?.(card, player, buildJiuzheCardConditionContext());
     return {
       achieved,
       label: `${card.label || `九折牌 ${card.index}`} · ${card.score || 0}分 · 威胁${card.threat || 0}`,
@@ -34359,6 +34371,7 @@
     alienGameState.jiuzhe.revealedByPlayerColor = currentPlayer.color;
     alienGameState.jiuzhe.freeScoreThreshold = (Number(currentPlayer.resources?.score) || 0) + 20;
     alienGameState.jiuzhe.paidScoreThreshold = (Number(currentPlayer.resources?.score) || 0) + 40;
+    alienGameState.jiuzhe.revealInitialized = true;
     delete alienGameState.jiuzhe.traceSlotsByAlienSlotId[String(alienSlotId)];
     const grantSummary = grantAllJiuzheCardsForDebug(currentPlayer);
 

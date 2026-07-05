@@ -319,6 +319,43 @@ assert.equal(jiuzheFinal.totalScore, Math.ceil(112 * 0.9));
 assert.equal(jiuzheFinal.jiuzhePenaltyScore, Math.ceil(112 * 0.9) - 112);
 assert.ok(jiuzheFinal.jiuzhePenaltyScore < 0);
 
+const jiuzheNoPenaltyState = {
+  aliens: {
+    1: {
+      revealed: true,
+      alienId: jiuzhe.ALIEN_ID,
+      traces: { yellow: {}, pink: {}, blue: {} },
+    },
+  },
+};
+jiuzhe.ensureJiuzheState(jiuzheNoPenaltyState).revealedSlotId = 1;
+const jiuzheNoPenaltyPlayer = player({
+  id: "player-jiuzhe-clean",
+  color: "white",
+  resources: { score: 100 },
+  completedTaskCount: 5,
+});
+jiuzhe.getPlayerJiuzheState(jiuzheNoPenaltyState, jiuzheNoPenaltyPlayer, true).cards = [{
+  index: 13,
+  threat: 4,
+  score: 12,
+  label: "完成5张任务牌",
+  played: true,
+}];
+const jiuzheNoPenaltyFinal = endGameScoring.computePlayerFinalScore({
+  currentPlayer: jiuzheNoPenaltyPlayer,
+  players: [jiuzheNoPenaltyPlayer],
+  finalScoringState: finalScoring.createFinalScoringState(),
+  nebulaDataState: { sectorSettlements: { winsByPlayerId: {} }, nebulae: {}, sectorExtraMarks: {} },
+  alienGameState: jiuzheNoPenaltyState,
+  planetStatsState: { planets: {} },
+  cardEffects,
+  getCardTypeCode: (card) => cardEffects.getRuntimeCardTypeCode(card, 0),
+});
+assert.equal(jiuzheNoPenaltyFinal.jiuzheCardScore, 12);
+assert.equal(jiuzheNoPenaltyFinal.jiuzhePenaltyApplied, false);
+assert.equal(jiuzheNoPenaltyFinal.totalScore, 112, "completed Jiuzhe cards should add to final total when no threat penalty applies");
+
 const revealedStateTracePlayer = player();
 const revealedStateTraceState = {
   aliens: {

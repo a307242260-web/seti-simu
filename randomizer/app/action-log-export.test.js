@@ -97,6 +97,30 @@ assert.ok(markdown.includes("- [quick] 快速行动：移动 R1"));
 assert.ok(!markdown.includes("recoverySnapshot"));
 assert.ok(!markdown.includes("hiddenDeck"));
 
+const jiuzheScoreMarkdown = exportLog.buildActionLogMarkdown({
+  isGameEnded: true,
+  roundNumber: 4,
+  turnNumber: 8,
+  playerResults: [
+    {
+      playerId: "player-white",
+      playerLabel: "白色玩家",
+      finalScore: 52,
+      baseScore: 40,
+      tileScore: 0,
+      cardScore: 0,
+      jiuzheCardScore: 12,
+      completedTaskCount: 5,
+      techCount: 6,
+      passed: true,
+    },
+  ],
+  entries: [],
+});
+
+assert.ok(jiuzheScoreMarkdown.includes("| 玩家 | 总分 | 基础分 | 板块分 | 卡牌分 | 九折分 | 任务数 | 科技数 | PASS | 最高分 |"));
+assert.ok(jiuzheScoreMarkdown.includes("| 白色玩家 | 52 | 40 | 0 | 0 | 12 | 5 | 6 | 是 | 是 |"));
+
 const emptyMarkdown = exportLog.buildActionLogMarkdown({
   isGameEnded: false,
   roundNumber: 2,

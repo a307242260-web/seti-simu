@@ -101,7 +101,7 @@
 - 玩家状态栏在正常分数后显示终局总分（图标 `assets/symbol/effect/final_score.webp`）= 当前 `resources.score` + 板块分 + 终局计分牌 + 外星人终局项（如九折、符文族）；正常分数行不变。
 - 右侧日志 dock 的控制列固定提供「统计」和「日志」入口；「统计」可随时打开当前实时总分统计，游戏结束后仍会默认弹出统计悬浮窗。窗口第一列为得分项目，后续列按白、棕、蓝、绿展示本局参与玩家，最高总分单元格高亮。
 - 终局弹窗中 `裸分` 直接取当前 `resources.score`；同时玩家状态维护 `scoreSources` 账本，用于拆出普通游戏内即时得分来源：开局分数、扫描数据槽分数、科技 bonus（含 3 分 bonus 与首科技 2 分）、蓝色科技放置数据得分、普通/外星人卡牌左上角快速行动得分、卡牌即时得分、1/2 型任务牌得分、环绕、登陆、粉/黄/蓝外星人痕迹得分、外星机制得分、公司能力得分。统计表额外显示 `未拆分裸分` = `裸分` - 已记录即时得分来源合计，用于暴露旧存档或尚未接入账本的得分。
-- 统一计分入口：`SetiEndGameScoring.computePlayerFinalScore(context)`，`context` 需包含 `currentPlayer`、`finalScoringState`、`nebulaDataState`、`alienGameState`、`planetStatsState`、`cardEffects`、`getCardTypeCode`。返回值包含 `baseScore`、`tileScore`、`cardScore`、`jiuzheCardScore`、`jiuzhePenaltyScore`、`runezuSymbolScore`、`totalScore`，并用 `tileScoresById.{a,b,c,d}` 拆出 a/b/c/d 板块分；九折卡牌分数、九折损失分数和符文族 symbol 分数在对应外星人存在时作为条件行展示。
+- 统一计分入口：`SetiEndGameScoring.computePlayerFinalScore(context)`，`context` 需包含 `currentPlayer`、`finalScoringState`、`nebulaDataState`、`alienGameState`、`planetStatsState`、`cardEffects`、`getCardTypeCode`。返回值包含 `baseScore`、`tileScore`、`cardScore`、`jiuzheCardScore`、`jiuzhePenaltyScore`、`runezuSymbolScore`、`totalScore`，并用 `tileScoresById.{a,b,c,d}` 拆出 a/b/c/d 板块分；九折卡牌分数、九折损失分数和符文族 symbol 分数在对应外星人存在时作为条件行展示，行动日志终局分数表也按这些外星终局项单列，不并入普通 3 型卡牌分数。
 - 调试按钮「+20分」会给当前玩家增加 20 分，用于快速触发 25 / 50 / 70 分门槛标记流程。
 
 ### 火箭状态

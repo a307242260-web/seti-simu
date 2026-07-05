@@ -77,6 +77,9 @@
       baseScore: numberValue(breakdown.baseScore ?? result.baseScore ?? player.resources?.score),
       tileScore: numberValue(breakdown.tileScore ?? result.tileScore ?? sumTileScores(tileScoresById)),
       cardScore: numberValue(breakdown.cardScore ?? result.cardScore),
+      jiuzheCardScore: numberValue(breakdown.jiuzheCardScore ?? result.jiuzheCardScore),
+      jiuzhePenaltyScore: numberValue(breakdown.jiuzhePenaltyScore ?? result.jiuzhePenaltyScore),
+      runezuSymbolScore: numberValue(breakdown.runezuSymbolScore ?? result.runezuSymbolScore),
       completedTaskCount: numberValue(result.completedTaskCount ?? player.completedTaskCount),
       techCount: numberValue(result.techCount ?? countOwnedTech(player)),
       passed: Boolean(result.passed ?? player.passed ?? (playerId && passedIds.has(playerId))),
@@ -188,21 +191,44 @@
     }
 
     const maxScore = Math.max(...playerResults.map((result) => numberValue(result.totalScore)), -Infinity);
-    lines.push("| 玩家 | 总分 | 基础分 | 板块分 | 卡牌分 | 任务数 | 科技数 | PASS | 最高分 |");
-    lines.push("| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |");
+    const extraScoreColumns = [
+      { key: "jiuzheCardScore", label: "九折分" },
+      { key: "jiuzhePenaltyScore", label: "九折修正" },
+      { key: "runezuSymbolScore", label: "符文族分" },
+    ].filter((column) => playerResults.some((result) => numberValue(result[column.key]) !== 0));
+    const headers = [
+      "玩家",
+      "总分",
+      "基础分",
+      "板块分",
+      "卡牌分",
+      ...extraScoreColumns.map((column) => column.label),
+      "任务数",
+      "科技数",
+      "PASS",
+      "最高分",
+    ];
+    const alignments = headers.map((header, index) => {
+      if (index === 0) return "---";
+      return header === "PASS" || header === "最高分" ? "---" : "---:";
+    });
+    lines.push(`| ${headers.join(" | ")} |`);
+    lines.push(`| ${alignments.join(" | ")} |`);
     for (const result of playerResults) {
       const isWinner = numberValue(result.totalScore) === maxScore;
-      lines.push([
+      const row = [
         markdownTableCell(result.playerLabel),
         formatNumber(result.totalScore),
         formatNumber(result.baseScore),
         formatNumber(result.tileScore),
         formatNumber(result.cardScore),
+        ...extraScoreColumns.map((column) => formatNumber(result[column.key])),
         formatNumber(result.completedTaskCount),
         formatNumber(result.techCount),
         result.passed ? "是" : "否",
         isWinner ? "是" : "",
-      ].join(" | ").replace(/^/, "| ").replace(/$/, " |"));
+      ];
+      lines.push(row.join(" | ").replace(/^/, "| ").replace(/$/, " |"));
     }
     lines.push("");
     return lines;
