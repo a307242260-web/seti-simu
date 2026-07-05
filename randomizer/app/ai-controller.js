@@ -5902,8 +5902,18 @@
         ? null
         : Number(preserveHandIndex);
       const preservedIndex = Number.isInteger(explicitPreserveHandIndex) ? explicitPreserveHandIndex : null;
-      const costEntries = buildAiTradeDiscardCostEntries(player, preservedIndex);
-      const selectedEntries = costEntries.slice(0, handCost);
+      const tradeId = options.tradeId || trade.id || null;
+      const costEntries = buildAiTradeDiscardCostEntries(player, null);
+      const costEntryByIndex = new Map(costEntries.map((entry) => [Number(entry.handIndex), entry]));
+      const executionIndexes = tradeId && handCost > 0
+        ? chooseAiTradeDiscardIndexes(player, handCost, { tradeId, preserveHandIndex: preservedIndex }) || []
+        : [];
+      const selectedEntries = tradeId
+        ? executionIndexes
+          .slice(0, handCost)
+          .map((index) => costEntryByIndex.get(Number(index)))
+          .filter(Boolean)
+        : buildAiTradeDiscardCostEntries(player, preservedIndex).slice(0, handCost);
       const hasEnoughCards = selectedEntries.length >= handCost;
       const totalCost = hasEnoughCards
         ? resourceCostValue + selectedEntries.reduce((total, entry) => total + Math.max(0, aiNumber(entry.opportunityCost)), 0)
@@ -5923,11 +5933,6 @@
       };
 
       if (options.includeExecutionPlan && handCost > 0) {
-        const tradeId = options.tradeId || trade.id || null;
-        const executionIndexes = tradeId
-          ? chooseAiTradeDiscardIndexes(player, handCost, { tradeId, preserveHandIndex: preservedIndex }) || []
-          : [];
-        const costEntryByIndex = new Map(costEntries.map((entry) => [Number(entry.handIndex), entry]));
         const selectedIndexSet = new Set(selectedEntries.map((entry) => Number(entry.handIndex)));
         plan.executionSelectedIndexes = executionIndexes.slice(0, handCost).map((index) => Number(index));
         plan.executionSelectedCards = plan.executionSelectedIndexes
