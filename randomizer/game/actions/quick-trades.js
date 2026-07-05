@@ -47,6 +47,7 @@
       label: "2张牌 → 精选1张牌",
       cost: Object.freeze({ handSize: 2 }),
       gain: Object.freeze({ handSize: 1 }),
+      allowBlindDraw: true,
     }),
     Object.freeze({
       id: "energy-for-card",
@@ -65,6 +66,7 @@
       label: "3宣传 → 精选1张牌",
       cost: Object.freeze({ publicity: 3 }),
       gain: Object.freeze({ handSize: 1 }),
+      allowBlindDraw: true,
     }),
   ]);
 
@@ -126,7 +128,7 @@
         tradeId: trade.id,
         player,
         refundCost: getResourceCost(trade.cost),
-        allowBlindDraw: false,
+        allowBlindDraw: Boolean(trade.allowBlindDraw),
       });
       if (!selectionResult?.ok) {
         return { ok: false, message: selectionResult?.message || "精选失败" };
