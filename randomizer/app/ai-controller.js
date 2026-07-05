@@ -6543,7 +6543,7 @@
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
     }
 
-    function listAiLateResourceRecoveryTradeCandidates(player = getCurrentPlayer()) {
+    function listAiLateResourceRecoveryTradeCandidates(player = getCurrentPlayer(), candidates = []) {
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -6604,6 +6604,21 @@
         trade: true,
       });
       const highScorePushProfile = getAiHighScorePushProfile(player);
+      const bestImmediateMainCashout = (candidates || [])
+        .filter((candidate) => (
+          candidate?.kind === "main"
+          && candidate.available !== false
+          && candidate.id !== "launch"
+          && candidate.id !== "playCard"
+        ))
+        .sort((left, right) => (
+          Math.max(0, aiNumber(right.directScoreGain)) - Math.max(0, aiNumber(left.directScoreGain))
+          || aiNumber(right.score) - aiNumber(left.score)
+        ))[0] || null;
+      const bestImmediateMainCashoutDirectScore = Math.max(0, aiNumber(bestImmediateMainCashout?.directScoreGain));
+      const bestImmediateMainCashoutScore = Math.max(0, aiNumber(bestImmediateMainCashout?.score));
+      const highScoreProjectedAfterImmediateMain = highScorePushProfile.projectedScore
+        + bestImmediateMainCashoutDirectScore;
       const hasImmediateRouteRecovery = bestLaunchMoveRecoveryScore > 0 || bestPlanetCashoutRecoveryScore > 0;
       const finalLowHandScoreCeiling = 165;
       const finalLowScoreScanUnlockCeiling = 150;
@@ -6651,6 +6666,19 @@
         || (handSize <= 2 && highScorePlayableHandScore < 8)
       );
       const finalHighScoreHandRefillWindow = finalHighScoreNeedsCardRefill;
+      const finalPreMainCashoutHandRefillWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && mainActionOpen
+        && !state.pendingActionExecuted
+        && finalMarks >= 3
+        && !recoveryThreshold
+        && handSize <= 0
+        && publicity >= 3
+        && highScorePushProfile.projectedScore >= 230
+        && highScoreProjectedAfterImmediateMain >= 260
+        && highScoreProjectedAfterImmediateMain < 330
+        && bestImmediateMainCashoutDirectScore >= 8
+        && bestImmediateMainCashoutScore >= 35
+        && !(turnState.passedPlayerIds || []).includes(player.id);
       const finalLowScoreMainUnlockWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && (!recoveryThreshold || finalMarks >= 3)
         && currentScore >= 70
@@ -6789,6 +6817,7 @@
         && !finalLowHandRefillWindow
         && !finalLowStaleHandRefillBaseWindow
         && !finalHighScoreHandRefillWindow
+        && !finalPreMainCashoutHandRefillWindow
         && !finalLowScoreScanUnlock
         && !b2SectorScanUnlock
         && !midgameAnalyzeUnlock
@@ -6806,6 +6835,7 @@
         && !finalLowHandRefillWindow
         && !finalLowStaleHandRefillBaseWindow
         && !finalHighScoreHandRefillWindow
+        && !finalPreMainCashoutHandRefillWindow
         && !finalLowScoreScanUnlock
         && !midgameAnalyzeUnlock
       ) return [];
@@ -6935,11 +6965,20 @@
         && !bestPublicTradeCardProfile.hasConcreteSignal;
       const finalHighScorePublicRefill = finalHighScorePublicRefillBase
         && !finalHighScoreTerminalNoSignalPublicRefill;
+      const finalPreMainCashoutPublicRefill = finalPreMainCashoutHandRefillWindow
+        && bestPublicTradeCardScore >= 12
+        && bestPublicTradeCardProfile.hasConcreteSignal;
       const finalHighScoreRefillValue = finalHighScorePublicRefill
         ? 8
           + Math.max(0, 18 - highScoreGapTo300) * 0.45
           + Math.min(9, bestPublicTradeCardScore * 0.32)
           + Math.min(4, highScorePushProfile.strength * 2)
+        : 0;
+      const preMainCashoutRefillValue = finalPreMainCashoutPublicRefill
+        ? 10
+          + Math.min(8, bestPublicTradeCardScore * 0.28)
+          + Math.min(12, bestImmediateMainCashoutScore * 0.18)
+          + Math.min(6, bestImmediateMainCashoutDirectScore * 0.16)
         : 0;
       const finalLowHandCreditRefill = finalLowHandPublicRefill && credits >= 2;
       const finalLowHandEnergyRefill = finalLowHandPublicRefill && energy >= 2;
@@ -7221,6 +7260,7 @@
             || finalLowHandPublicRefill
             || finalLowStaleHandPublicRefill
             || finalHighScorePublicRefill
+            || finalPreMainCashoutPublicRefill
             || secondMarkCardSearch
             || closeSecondMarkCardSearch
           ),
@@ -7234,6 +7274,7 @@
               ? 3 + Math.min(7, bestPublicTradeCardScore * 0.28) + Math.max(0, 170 - currentScore) * 0.02
               : 0)
             + (finalHighScorePublicRefill ? finalHighScoreRefillValue : 0)
+            + preMainCashoutRefillValue
             + ((secondMarkCardSearch || closeSecondMarkCardSearch)
               ? 5 + Math.min(9, bestPublicTradeCardScore * 0.3)
               : 0),
@@ -7245,6 +7286,8 @@
                 ? "终局资源断档：宣传精选找可打牌"
                 : finalHighScorePublicRefill
                   ? "高分冲刺：宣传精选找最后得分牌"
+                  : finalPreMainCashoutPublicRefill
+                    ? "高分冲刺：主行动前精选找后续得分牌"
                   : "后期落后：宣传换牌恢复行动",
         },
       ];
@@ -7295,6 +7338,16 @@
               finalHighScoreNeedsCardRefill,
               finalHighScorePublicRefill,
               finalHighScoreRefillValue: roundAiScore(finalHighScoreRefillValue),
+              finalPreMainCashoutHandRefillWindow,
+              finalPreMainCashoutPublicRefill,
+              preMainCashoutRefillValue: roundAiScore(preMainCashoutRefillValue),
+              bestImmediateMainCashout: bestImmediateMainCashout ? {
+                id: bestImmediateMainCashout.id || null,
+                score: roundAiScore(bestImmediateMainCashoutScore),
+                directScoreGain: roundAiScore(bestImmediateMainCashoutDirectScore),
+                label: bestImmediateMainCashout.label || bestImmediateMainCashout.planetName || null,
+              } : null,
+              highScoreProjectedAfterImmediateMain: roundAiScore(highScoreProjectedAfterImmediateMain),
               highScoreProjectedScore: roundAiScore(highScorePushProfile.projectedScore),
               highScoreGapTo300: roundAiScore(highScoreGapTo300),
               highScorePlayableHandScore: roundAiScore(highScorePlayableHandScore),
@@ -17951,7 +18004,7 @@
       candidates.push(...listAiMainUnlockTradeCandidates(currentPlayer, playCardCandidates));
       candidates.push(...listAiFinalReadyTaskCreditChainTradeCandidates(currentPlayer));
       candidates.push(...listAiResourceLockMainUnlockTradeCandidates(currentPlayer, candidates));
-      candidates.push(...listAiLateResourceRecoveryTradeCandidates(currentPlayer));
+      candidates.push(...listAiLateResourceRecoveryTradeCandidates(currentPlayer, candidates));
       candidates.push(...listAiDataPlacementCandidates(currentPlayer));
       candidates.push(...listAiRunezuFaceSymbolQuickCandidates(currentPlayer));
       candidates.push(...listAiCardCornerQuickCandidates(currentPlayer, playCardCandidates));
