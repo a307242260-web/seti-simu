@@ -1566,6 +1566,59 @@ const finalPublicRefillShortfallSummary = analytics.summarizeBattleReports([fina
 assert.equal(finalPublicRefillShortfallSummary.finalPublicRefillShortfallSamples[0].shortfalls.length, 4);
 assert.equal(finalPublicRefillShortfallSummary.opportunities.finalPublicRefillShortfall, 1);
 
+const finalHighScorePassRecoveryReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 4,
+    turnNumber: 11,
+    playerId: "player-green",
+    playerLabel: "绿色",
+    playerResources: { score: 190, credits: 0, energy: 0, publicity: 6, handSize: 2 },
+    details: {
+      action: { id: "pass", kind: "pass", score: -2.1 },
+      finalHighScorePassRecoveryDiagnostic: {
+        currentScore: 190,
+        projectedScore: 288,
+        scoreTo300: 12,
+        finalMarkCount: 3,
+        finalFormulas: ["a2", "c2", "d1"],
+        handSize: 2,
+        credits: 0,
+        energy: 0,
+        publicity: 6,
+        highScoreStrength: 1.1,
+        highScorePlayableHandScore: 2.5,
+        playableHandCards: [
+          { cardId: "b_119.webp", cardLabel: "星舰", price: 4, score: 2.5, reason: "信用点不足" },
+        ],
+        bestPublicTradeCardScore: 3.75,
+        topPublicTradeCards: [{ cardId: "b_87.webp", cardLabel: "引力弹弓", tradeScore: 3.75 }],
+        tradeChecks: [{ tradeId: "publicity-for-card", ok: true, cost: { publicity: 3 }, gain: { handSize: 1 } }],
+        highScoreGate: {
+          finalHighScoreCandidateWindow: true,
+          finalHighScoreNeedsCardRefill: true,
+          finalHighScorePublicRefillBase: false,
+          finalHighScorePublicRefill: false,
+          publicRefillScoreThreshold: 5,
+        },
+        lateRecoveryPreviewCandidates: [],
+        unavailableMain: [{ id: "playCard", reason: "没有资源可支付的普通手牌" }],
+      },
+    },
+  }],
+  playerResults: [{ playerId: "player-green", playerLabel: "绿色", finalScore: 288 }],
+};
+const finalHighScorePassRecoveryAnalysis = analytics.analyzeBattleReport(finalHighScorePassRecoveryReport);
+assert.equal(finalHighScorePassRecoveryAnalysis.opportunities.finalHighScorePassNoRecovery, 1);
+assert.equal(finalHighScorePassRecoveryAnalysis.finalHighScorePassRecoverySamples[0].scoreTo300, 12);
+assert.equal(finalHighScorePassRecoveryAnalysis.finalHighScorePassRecoverySamples[0].highScoreGate.publicRefillScoreThreshold, 5);
+assert.equal(finalHighScorePassRecoveryAnalysis.finalHighScorePassRecoverySamples[0].playableHandCards[0].cardId, "b_119.webp");
+assert(finalHighScorePassRecoveryAnalysis.recommendations.some((item) => item.id === "inspect-final-high-score-pass-recovery"));
+const finalHighScorePassRecoverySummary = analytics.summarizeBattleReports([finalHighScorePassRecoveryReport]);
+assert.equal(finalHighScorePassRecoverySummary.opportunities.finalHighScorePassNoRecovery, 1);
+assert.equal(finalHighScorePassRecoverySummary.finalHighScorePassRecoverySamples[0].projectedScore, 288);
+
 const paceReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 5 },
   logs: [

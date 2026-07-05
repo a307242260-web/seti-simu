@@ -952,6 +952,52 @@
     };
   }
 
+  function buildFinalHighScorePassRecoverySample(entry) {
+    const diagnostic = entry?.details?.finalHighScorePassRecoveryDiagnostic || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(getSelectedAction(entry) || {}),
+      currentScore: roundRatio(diagnostic.currentScore),
+      projectedScore: roundRatio(diagnostic.projectedScore),
+      scoreTo300: roundRatio(diagnostic.scoreTo300),
+      finalMarkCount: numeric(diagnostic.finalMarkCount),
+      finalFormulas: Array.isArray(diagnostic.finalFormulas)
+        ? diagnostic.finalFormulas.slice(0, 5)
+        : [],
+      handSize: numeric(diagnostic.handSize),
+      credits: roundRatio(diagnostic.credits),
+      energy: roundRatio(diagnostic.energy),
+      publicity: roundRatio(diagnostic.publicity),
+      highScoreStrength: roundRatio(diagnostic.highScoreStrength),
+      highScorePlayableHandScore: roundRatio(diagnostic.highScorePlayableHandScore),
+      playableHandCards: Array.isArray(diagnostic.playableHandCards)
+        ? diagnostic.playableHandCards.slice(0, 5)
+        : [],
+      bestPublicTradeCardScore: roundRatio(diagnostic.bestPublicTradeCardScore),
+      topPublicTradeCards: Array.isArray(diagnostic.topPublicTradeCards)
+        ? diagnostic.topPublicTradeCards.slice(0, 5)
+        : [],
+      cardsForPickCardPreview: diagnostic.cardsForPickCardPreview || null,
+      tradeChecks: Array.isArray(diagnostic.tradeChecks)
+        ? diagnostic.tradeChecks.slice(0, 8)
+        : [],
+      highScoreGate: diagnostic.highScoreGate || null,
+      availableQuick: Array.isArray(diagnostic.availableQuick)
+        ? diagnostic.availableQuick.slice(0, 5)
+        : [],
+      lateRecoveryPreviewCandidates: Array.isArray(diagnostic.lateRecoveryPreviewCandidates)
+        ? diagnostic.lateRecoveryPreviewCandidates.slice(0, 5)
+        : [],
+      unavailableMain: Array.isArray(diagnostic.unavailableMain)
+        ? diagnostic.unavailableMain.slice(0, 6)
+        : [],
+    };
+  }
+
   function getFinalPublicRefillResources(entry, diagnostic = {}) {
     const resources = entry?.playerResources || {};
     return {
@@ -5973,6 +6019,13 @@
         message: "终局低手牌 PASS 存在高价值公共牌但缺关键资源的样本，应先按缺口验证前序信用点、能量、宣传或手牌保留链，而不是直接放宽精选行为。",
       });
     }
+    if (numeric(opportunities.finalHighScorePassNoRecovery) > 0) {
+      recommendations.push({
+        id: "inspect-final-high-score-pass-recovery",
+        priority: "medium",
+        message: "高分近 300 席位在终局 PASS 时缺少补牌或续行动，应按样本核对公共牌评分、手牌可打分和交易门槛后再改收益模型。",
+      });
+    }
     if (numeric(opportunities.quickBeforePassNoMain) > 0) {
       recommendations.push({
         id: "inspect-quick-before-pass-no-main",
@@ -6253,6 +6306,7 @@
       postPassPaidMoveNoFollowup: 0,
       postPassThinHandNoFollowupMove: 0,
       finalLowHandPassNoRecovery: 0,
+      finalHighScorePassNoRecovery: 0,
       finalPublicRefillShortfall: 0,
       negativeCardCornerGraphLift: 0,
       negativePlayCardGraphLift: 0,
@@ -6287,6 +6341,7 @@
     const preNoMainPassResourceDrainSamples = [];
     const postPassQuickNoMainSamples = [];
     const finalLowHandPassRecoverySamples = [];
+    const finalHighScorePassRecoverySamples = [];
     const finalPublicRefillShortfallSamples = [];
     const negativeCardCornerGraphLiftSamples = [];
     const negativePlayCardGraphLiftSamples = [];
@@ -6375,6 +6430,12 @@
             if (finalPublicRefillShortfallSamples.length < 12) {
               finalPublicRefillShortfallSamples.push(buildFinalPublicRefillShortfallSample(entry));
             }
+          }
+        }
+        if (entry.details?.finalHighScorePassRecoveryDiagnostic) {
+          opportunities.finalHighScorePassNoRecovery += 1;
+          if (finalHighScorePassRecoverySamples.length < 12) {
+            finalHighScorePassRecoverySamples.push(buildFinalHighScorePassRecoverySample(entry));
           }
         }
         if (isNegativeCardCornerGraphLift(entry)) {
@@ -6652,6 +6713,7 @@
       postPassQuickNoMainSamples,
       postPassQuickSamples: postPassQuickAnalysis.samples.slice(0, 12),
       finalLowHandPassRecoverySamples,
+      finalHighScorePassRecoverySamples,
       finalPublicRefillShortfallSamples,
       negativeCardCornerGraphLiftSamples,
       negativePlayCardGraphLiftSamples,
@@ -6733,6 +6795,7 @@
     const mergedPostPassQuickNoMainSamples = [];
     const mergedPostPassQuickSamples = [];
     const mergedFinalLowHandPassRecoverySamples = [];
+    const mergedFinalHighScorePassRecoverySamples = [];
     const mergedFinalPublicRefillShortfallSamples = [];
     const mergedNegativeCardCornerGraphLiftSamples = [];
     const mergedNegativePlayCardGraphLiftSamples = [];
@@ -6855,6 +6918,17 @@
       ) {
         mergedFinalLowHandPassRecoverySamples.push(
           ...analysis.finalLowHandPassRecoverySamples.slice(0, 12 - mergedFinalLowHandPassRecoverySamples.length),
+        );
+      }
+      if (
+        mergedFinalHighScorePassRecoverySamples.length < 12
+        && Array.isArray(analysis.finalHighScorePassRecoverySamples)
+      ) {
+        mergedFinalHighScorePassRecoverySamples.push(
+          ...analysis.finalHighScorePassRecoverySamples.slice(
+            0,
+            12 - mergedFinalHighScorePassRecoverySamples.length,
+          ),
         );
       }
       if (
@@ -7103,6 +7177,7 @@
         || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
       )),
       finalLowHandPassRecoverySamples: mergedFinalLowHandPassRecoverySamples,
+      finalHighScorePassRecoverySamples: mergedFinalHighScorePassRecoverySamples,
       finalPublicRefillShortfallSamples: mergedFinalPublicRefillShortfallSamples,
       negativeCardCornerGraphLiftSamples: mergedNegativeCardCornerGraphLiftSamples,
       negativePlayCardGraphLiftSamples: mergedNegativePlayCardGraphLiftSamples,

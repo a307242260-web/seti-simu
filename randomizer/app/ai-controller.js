@@ -5441,13 +5441,28 @@
           const trade = quickTrades.getTradeAction(tradeId);
           const check = quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false };
           if (!trade || !check.ok || aiNumber(trade.gain?.energy) <= 0) return null;
+          const competingCreditUnlock = tradeId === "cards-for-energy"
+            ? buildAiMainUnlockTradeCandidate(player, "cards-for-credit")
+            : null;
+          const preserveHandIndex = Number.isInteger(Number(competingCreditUnlock?.valueBreakdown?.bestPlayCard?.handIndex))
+            ? Number(competingCreditUnlock.valueBreakdown.bestPlayCard.handIndex)
+            : null;
+          const discardPlan = summarizeAiTradeDiscardPlan(player, trade, preserveHandIndex, {
+            includeExecutionPlan: true,
+            tradeId,
+          });
+          if (!discardPlan.ok) return null;
           const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
           if (!simulatedPlayer || !canAiAnalyzeData(simulatedPlayer).ok) return null;
           const analyzeScore = Math.max(0, aiNumber(scoreAiAnalyzeAction(simulatedPlayer)));
           if (analyzeScore < 10) return null;
           const bestBlueTraceScore = getAiBestRevealedAlienTraceDirectScore(player, "blue");
-          const tradeCost = scoreAiResourceBundle(trade.cost || {});
-          const handTradePenalty = tradeId === "cards-for-energy" ? 2.5 : 0;
+          const genericTradeCost = scoreAiResourceBundle(trade.cost || {});
+          const tradeCost = Math.max(genericTradeCost, aiNumber(discardPlan.totalCost));
+          const handOpportunityCost = Math.max(0, tradeCost - genericTradeCost);
+          const handTradePenalty = tradeId === "cards-for-energy"
+            ? Math.max(2.5, handOpportunityCost * 0.18)
+            : 0;
           const highScoreContinuationBonus = aiNumber(resources.score) >= 70 ? 4 : 0;
           const score = analyzeScore * 0.92
             + Math.max(0, bestBlueTraceScore) * 0.75
@@ -5460,6 +5475,7 @@
             kind: "quick",
             available: true,
             tradeId: trade.id,
+            ...(preserveHandIndex !== null ? { preserveHandIndex } : {}),
             label: trade.label || trade.id,
             reason: "终局交易补能量分析",
             score: roundAiScore(Math.min(48, score)),
@@ -5468,8 +5484,19 @@
               analyzeScore: roundAiScore(analyzeScore),
               bestBlueTraceScore: roundAiScore(bestBlueTraceScore),
               highScoreContinuationBonus,
+              genericTradeCost: roundAiScore(genericTradeCost),
               tradeCost: roundAiScore(tradeCost),
+              handOpportunityCost: roundAiScore(handOpportunityCost),
               handTradePenalty,
+              preserveHandIndex,
+              competingCreditUnlock: competingCreditUnlock
+                ? {
+                  tradeId: competingCreditUnlock.tradeId || null,
+                  score: roundAiScore(competingCreditUnlock.score),
+                  bestPlayCard: competingCreditUnlock.valueBreakdown?.bestPlayCard || null,
+                }
+                : null,
+              discardPlan,
             },
           };
         })
@@ -9833,6 +9860,25 @@
         c2Type3ProgressValue,
       );
       const directScoreGain = details.directScoreGain ?? getAiRewardDirectScore(playEffects, player, { immediate: true });
+      const highScoreConcretePlayValue = Math.max(
+        0,
+        directScoreGain,
+        effectValue,
+        standardActionPremium,
+        c2Type3ProgressValue,
+        cFinalTaskProgressValue,
+        chongTaskChainValue,
+        banrenmaThresholdSetupValue,
+        endGameExpectedScore,
+        aiNumber(routePlan?.score),
+      );
+      const requireConcreteHighScorePlay = normalizeAiDifficulty(player?.aiDifficulty || aiAutoBattleState.aiDifficulty)
+        === AI_DIFFICULTY_WEAK_START;
+      const highScorePushValue = details.highScorePushValue ?? (
+        (!requireConcreteHighScorePlay || highScoreConcretePlayValue > 0)
+          ? scoreAiHighScorePushValue(player, "playCard", { endGameExpectedScore, directScoreGain })
+          : 0
+      );
       const strategyPassivePlayValue = details.strategyPassivePlayValue
         ?? scoreAiStrategyPassiveCardPlayValue(card, player);
       const firstRound25Pressure = getAiRoundNumber() <= 1
@@ -9899,7 +9945,7 @@
         + applyAiStrategyWeight(Math.max(0, aiNumber(routePlan?.score)), "playCard", 0.35)
         + applyAiStrategyWeight(playCardConversionPressure, "playCard", 0.65)
         + applyAiStrategyWeight(Math.min(8, Math.max(0, strategyPassivePlayValue)), "playCard", 0.65)
-        + scoreAiHighScorePushValue(player, "playCard", { endGameExpectedScore, directScoreGain })
+        + highScorePushValue
         + scoreAiLowEngineCatchupValue(player, "playCard")
         + Math.max(0, 4 - aiNumber(price)) * 0.5
         - costValue
@@ -18455,6 +18501,150 @@
       };
     }
 
+    function buildAiFinalHighScorePassRecoveryDiagnostic(player = getCurrentPlayer(), candidates = []) {
+      if (
+        !player
+        || getAiRoundNumber() < FINAL_ROUND_NUMBER
+        || state.pendingActionExecuted
+        || !canStartMainAction()
+      ) {
+        return null;
+      }
+      const resources = player.resources || {};
+      const highScorePushProfile = getAiHighScorePushProfile(player);
+      const projectedScore = Math.max(0, aiNumber(highScorePushProfile.projectedScore || getAiProjectedFinalScore(player)));
+      const scoreTo300 = Math.max(0, 300 - projectedScore);
+      const finalMarks = countAiFinalMarksForPlayer(player);
+      const nextThreshold = getAiNextMissingFinalScoreThreshold(player) || null;
+      const currentScore = Math.max(0, aiNumber(resources.score));
+      const handSize = Math.max(0, Math.round(aiNumber(resources.handSize ?? (player.hand || []).length)));
+      const credits = Math.max(0, aiNumber(resources.credits));
+      const energy = Math.max(0, aiNumber(resources.energy));
+      const publicity = Math.max(0, aiNumber(resources.publicity));
+      const finalHighScoreCandidateWindow = finalMarks >= 3
+        && !nextThreshold
+        && highScorePushProfile.active
+        && projectedScore >= 260
+        && projectedScore < 340
+        && !(turnState.passedPlayerIds || []).includes(player.id);
+      if (!finalHighScoreCandidateWindow) return null;
+
+      const playableHandCards = (player.hand || [])
+        .map((card, handIndex) => {
+          const candidate = buildAiPlayCardCandidate(card, handIndex, player);
+          return {
+            handIndex,
+            cardId: card?.cardId || card?.id || null,
+            cardLabel: cards.getCardLabel?.(card) || card?.cardName || card?.label || null,
+            price: getCardPrice(card),
+            typeCode: getCardTypeCode(card),
+            score: candidate ? roundAiScore(candidate.score) : null,
+            available: candidate ? candidate.available !== false : false,
+            reason: candidate?.reason || null,
+            directScoreGain: candidate ? roundAiScore(candidate.directScoreGain) : 0,
+            endGameExpectedScore: candidate ? roundAiScore(candidate.breakdown?.endGameExpectedScore) : 0,
+          };
+        })
+        .sort((left, right) => (
+          aiNumber(right.score) - aiNumber(left.score)
+          || left.handIndex - right.handIndex
+        ))
+        .slice(0, 5);
+      const highScorePlayableHandScore = handSize <= 2
+        ? playableHandCards.reduce((best, card) => Math.max(best, aiNumber(card.score)), 0)
+        : 0;
+      const finalHighScoreNeedsCardRefill = handSize <= 1
+        || (handSize <= 2 && highScorePlayableHandScore < 8);
+      const publicPreview = buildAiPublicRefillTradePreview(player) || {};
+      const rankedPublicTradeCards = (cardState.publicCards || [])
+        .map((card, slotIndex) => ({
+          card,
+          slotIndex,
+          score: scoreAiPublicPickCard(card, player, "trade"),
+        }))
+        .filter((entry) => entry.card && Number.isFinite(Number(entry.score)))
+        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.slotIndex - right.slotIndex);
+      const bestPublicTradeCard = rankedPublicTradeCards[0] || null;
+      const bestPublicTradeCardScore = aiNumber(bestPublicTradeCard?.score ?? publicPreview.bestPublicTradeCardScore);
+      const bestPublicTradeCardProfile = getAiPublicPickConcreteProfile(bestPublicTradeCard?.card, player);
+      const publicRefillScoreThreshold = projectedScore >= 305 ? 8 : scoreTo300 <= 10 ? 0 : 5;
+      const finalHighScorePublicRefillBase = finalHighScoreNeedsCardRefill
+        && bestPublicTradeCardScore >= publicRefillScoreThreshold;
+      const finalHighScoreTerminalNoSignalPublicRefill = finalHighScorePublicRefillBase
+        && handSize <= 0
+        && publicity >= 3
+        && publicity < 6
+        && !bestPublicTradeCardProfile.hasConcreteSignal;
+      const finalHighScorePublicRefill = finalHighScorePublicRefillBase
+        && !finalHighScoreTerminalNoSignalPublicRefill;
+      const availableQuick = (candidates || [])
+        .filter((candidate) => candidate?.kind === "quick" && candidate.available !== false)
+        .sort((left, right) => aiNumber(right.score) - aiNumber(left.score))
+        .slice(0, 5)
+        .map((candidate) => ({
+          id: candidate.id || null,
+          tradeId: candidate.tradeId || null,
+          label: candidate.label || null,
+          score: roundAiScore(candidate.score),
+          reason: candidate.reason || null,
+        }));
+      const lateRecoveryPreviewCandidates = listAiLateResourceRecoveryTradeCandidates(player)
+        .slice(0, 5)
+        .map((candidate) => ({
+          id: candidate.id || null,
+          tradeId: candidate.tradeId || null,
+          label: candidate.label || null,
+          score: roundAiScore(candidate.score),
+          reason: candidate.reason || null,
+          valueBreakdown: candidate.valueBreakdown || null,
+        }));
+      const unavailableMain = (candidates || [])
+        .filter((candidate) => candidate?.kind === "main" && candidate.available === false)
+        .slice(0, 6)
+        .map((candidate) => ({
+          id: candidate.id || null,
+          score: roundAiScore(candidate.score),
+          reason: candidate.reason || null,
+        }));
+
+      return {
+        currentScore: roundAiScore(currentScore),
+        projectedScore: roundAiScore(projectedScore),
+        scoreTo300: roundAiScore(scoreTo300),
+        finalMarkCount: finalMarks,
+        finalFormulas: Array.from(highScorePushProfile.formulas || []),
+        nextFinalMarkThreshold: nextThreshold,
+        handSize,
+        credits: roundAiScore(credits),
+        energy: roundAiScore(energy),
+        publicity: roundAiScore(publicity),
+        highScoreStrength: roundAiScore(highScorePushProfile.strength),
+        highScorePlayableHandScore: roundAiScore(highScorePlayableHandScore),
+        playableHandCards,
+        bestPublicTradeCardScore: roundAiScore(bestPublicTradeCardScore),
+        topPublicTradeCards: Array.isArray(publicPreview.topPublicTradeCards)
+          ? publicPreview.topPublicTradeCards.slice(0, 5)
+          : [],
+        cardsForPickCardPreview: publicPreview.cardsForPickCardPreview || null,
+        tradeChecks: Array.isArray(publicPreview.tradeChecks)
+          ? publicPreview.tradeChecks.slice(0, 8)
+          : [],
+        highScoreGate: {
+          finalHighScoreCandidateWindow,
+          finalHighScoreNeedsCardRefill,
+          finalHighScorePublicRefillBase,
+          finalHighScoreTerminalNoSignalPublicRefill,
+          finalHighScorePublicRefill,
+          publicRefillScoreThreshold: roundAiScore(publicRefillScoreThreshold),
+          bestPublicTradeCardHasConcreteSignal: Boolean(bestPublicTradeCardProfile.hasConcreteSignal),
+          hasCardRefillResource: credits >= 2 || energy >= 2 || publicity >= 3 || handSize >= 2,
+        },
+        availableQuick,
+        lateRecoveryPreviewCandidates,
+        unavailableMain,
+      };
+    }
+
     function executeAiTurnAction(action, currentPlayer = getCurrentPlayer()) {
       if (action.id === "end-turn") {
         endCurrentTurn();
@@ -18621,12 +18811,16 @@
         const finalLowHandPassRecoveryDiagnostic = action.id === "pass"
           ? buildAiFinalLowHandPassRecoveryDiagnostic(currentPlayer, selectableCandidates)
           : null;
+        const finalHighScorePassRecoveryDiagnostic = action.id === "pass"
+          ? buildAiFinalHighScorePassRecoveryDiagnostic(currentPlayer, selectableCandidates)
+          : null;
         recordAiAutoBattleLog("turn-action", `${currentPlayer.colorLabel}AI 执行 ${action.id}`, {
           action,
           candidates: selectableCandidates,
           ...(resourceLockTradePreviews.length ? { resourceLockTradePreviews } : {}),
           ...(earlyNoMainPublicRefillDiagnostic ? { earlyNoMainPublicRefillDiagnostic } : {}),
           ...(finalLowHandPassRecoveryDiagnostic ? { finalLowHandPassRecoveryDiagnostic } : {}),
+          ...(finalHighScorePassRecoveryDiagnostic ? { finalHighScorePassRecoveryDiagnostic } : {}),
         });
         const result = executeAiTurnAction(action, currentPlayer);
         if (shouldRetryAiTurnAction(action, result)) {
@@ -19259,6 +19453,7 @@
             openingPlanConversionSamples: analysis.openingPlanConversionSamples,
             passReserveResourcePressureMissSamples: analysis.passReserveResourcePressureMissSamples,
             finalLowHandPassRecoverySamples: analysis.finalLowHandPassRecoverySamples,
+            finalHighScorePassRecoverySamples: analysis.finalHighScorePassRecoverySamples,
             earlyPassNoMainSamples: analysis.earlyPassNoMainSamples,
             quickBeforePassNoMainSamples: analysis.quickBeforePassNoMainSamples,
             preNoMainPassResourceDrainSamples: analysis.preNoMainPassResourceDrainSamples,

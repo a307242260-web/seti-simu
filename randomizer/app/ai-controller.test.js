@@ -4479,6 +4479,104 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const placedTokens = Array.from({ length: 6 }, (_item, index) => ({
+    id: `data-${index}`,
+    placementSlot: index + 1,
+  }));
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "cards-for-energy": {
+        id: "cards-for-energy",
+        label: "2 cards -> 1 energy",
+        cost: { handSize: 2 },
+        gain: { energy: 1 },
+      },
+      "cards-for-credit": {
+        id: "cards-for-credit",
+        label: "2 cards -> 1 credit",
+        cost: { handSize: 2 },
+        gain: { credits: 1 },
+      },
+    },
+    blueResources: { score: 182, credits: 0, energy: 0, publicity: 5, availableData: 3, handSize: 5 },
+    blueHand: [
+      { id: "analysis-filler-a", cardName: "Analysis filler A", price: 0 },
+      { id: "analysis-filler-b", cardName: "Analysis filler B", price: 0 },
+      { id: "analysis-filler-c", cardName: "Analysis filler C", price: 0 },
+      {
+        id: "analysis-credit-target",
+        cardName: "Analysis credit target",
+        price: 1,
+        playEffects: [{ type: "gain_resources", options: { gain: { score: 12 } } }],
+      },
+      { id: "analysis-filler-d", cardName: "Analysis filler D", price: 0 },
+    ],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_c2: {
+          id: "final_c2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d1: {
+          id: "final_d1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_c2: "c2",
+      final_d1: "d1",
+    },
+    data: {
+      ANALYZE_REQUIRED_COMPUTER_SLOT: 6,
+      ANALYZE_ENERGY_COST: 1,
+      canAnalyzeData: (player) => (
+        Number(player?.resources?.energy || 0) >= 1
+          ? { ok: true }
+          : { ok: false, message: "energy missing" }
+      ),
+      listComputerPlacedTokens: () => placedTokens,
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-energy")
+      || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should still allow the final analyze energy trade");
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-energy");
+  assert.equal(tradeCandidate?.valueBreakdown?.finalAnalyzeEnergyTrade, true);
+  assert.equal(tradeCandidate.preserveHandIndex, 3);
+  assert.equal(tradeCandidate.valueBreakdown?.competingCreditUnlock?.bestPlayCard?.handIndex, 3);
+  assert.deepEqual(
+    tradeCandidate.valueBreakdown?.discardPlan?.executionSelectedIndexes?.includes(3),
+    false,
+    "final analyze energy trade should not discard the high-value credit-unlock play card",
+  );
+}
+
+{
   const turnChoices = [];
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
@@ -5619,6 +5717,70 @@ function makeYichangdianAlienState(options = {}) {
   assert.ok(tradeCandidate, "two-card stale high-score refill candidate should be enumerated");
   assert.equal(tradeCandidate.valueBreakdown?.finalHighScoreNeedsCardRefill, true);
   assert.ok(Number(tradeCandidate.valueBreakdown?.highScorePlayableHandScore || 0) < 8);
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    quickTrades: {
+      "publicity-for-card": {
+        id: "publicity-for-card",
+        label: "3 publicity -> public card",
+        cost: { publicity: 3 },
+        gain: { handSize: 1 },
+      },
+    },
+    blueResources: { score: 288, credits: 0, energy: 0, publicity: 6, availableData: 0, handSize: 2 },
+    blueHand: [
+      { id: "highscore-unpayable-a", cardName: "Highscore unpayable A", price: 5 },
+      { id: "highscore-unpayable-b", cardName: "Highscore unpayable B", price: 5 },
+    ],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b2: "b2",
+      final_d2: "d2",
+    },
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "pass") || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  harness.controller.runAiAutomationStep();
+  const passLog = harness.controller.getAiAutoBattleReport().logs
+    .find((entry) => entry.type === "turn-action" && entry.details?.action?.id === "pass");
+  assert.equal(passLog?.details?.finalHighScorePassRecoveryDiagnostic?.scoreTo300, 12);
+  assert.equal(
+    passLog?.details?.finalHighScorePassRecoveryDiagnostic?.highScoreGate?.finalHighScoreNeedsCardRefill,
+    true,
+  );
+  assert.equal(
+    passLog?.details?.finalHighScorePassRecoveryDiagnostic?.highScoreGate?.publicRefillScoreThreshold,
+    5,
+  );
 }
 
 {
