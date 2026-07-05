@@ -14623,10 +14623,80 @@
       return player?.initialSelection?.industry || null;
     }
 
+    function getAiIndustryPublicPickProfile(player, pendingType = null) {
+      const ranked = (cardState.publicCards || [])
+        .map((card, slotIndex) => ({
+          card,
+          slotIndex,
+          score: scoreAiPublicPickCard(card, player, pendingType),
+        }))
+        .filter((entry) => entry.card && Number.isFinite(Number(entry.score)))
+        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.slotIndex - right.slotIndex);
+      const best = ranked[0] || null;
+      return {
+        pendingType,
+        bestScore: best ? aiNumber(best.score) : -Infinity,
+        bestCard: best ? summarizeAiPublicPickCandidate(best, player) : null,
+        topCards: ranked.slice(0, 3).map((entry) => summarizeAiPublicPickCandidate(entry, player)).filter(Boolean),
+      };
+    }
+
     function scoreAiIndustryPublicPick(player, pendingType = null) {
-      return (cardState.publicCards || []).reduce((best, card) => (
-        Math.max(best, scoreAiPublicPickCard(card, player, pendingType))
-      ), -Infinity);
+      return getAiIndustryPublicPickProfile(player, pendingType).bestScore;
+    }
+
+    function summarizeAiStrategyPassiveSlots(player = getCurrentPlayer()) {
+      if (!player || !industry?.playerHasStrategyPassive?.(player)) return null;
+      const slotIds = industry.STRATEGY_PASSIVE_SLOT_IDS || ["yellow", "red", "blue"];
+      const slots = slotIds.map((slotId) => {
+        const occupied = Boolean(player.industryStrategyPassiveSlots?.[slotId]);
+        return {
+          slotId,
+          occupied,
+          rewardLabel: industry?.getStrategySlotRewardLabel?.(slotId) || "",
+          rewardValue: roundAiScore(scoreAiStrategyPassiveSlotChoice(slotId, player)),
+        };
+      });
+      return {
+        occupiedSlotIds: slots.filter((slot) => slot.occupied).map((slot) => slot.slotId),
+        emptySlotIds: slots.filter((slot) => !slot.occupied).map((slot) => slot.slotId),
+        occupiedCount: slots.filter((slot) => slot.occupied).length,
+        emptyCount: slots.filter((slot) => !slot.occupied).length,
+        roundStartClearsSlots: Boolean(industry?.hasGrandStrategyRoundStart?.(player)),
+        slots,
+      };
+    }
+
+    function scoreAiEarlyEmptyStrategyPickPenalty(
+      player = getCurrentPlayer(),
+      publicPickProfile = null,
+      strategyPassiveSlots = null,
+    ) {
+      if (player?.aiDifficulty !== AI_DIFFICULTY_WEAK_START) return 0;
+      if (getAiRoundNumber() > 2) return 0;
+      if (!strategyPassiveSlots || strategyPassiveSlots.occupiedCount > 0) return 0;
+      const bestCard = publicPickProfile?.bestCard || null;
+      if (!bestCard) return 0;
+      const signals = bestCard.valueSignals || {};
+      const playScore = aiNumber(bestCard.playScore);
+      const directScoreGain = Math.max(0, aiNumber(bestCard.directScoreGain));
+      const standardActionPremium = Math.max(0, aiNumber(signals.standardActionPremium));
+      const conversionPressure = Math.max(0, aiNumber(signals.playCardConversionPressure));
+      const taskProgress = Math.max(0, aiNumber(signals.cFinalTaskProgressValue));
+      const type3Progress = Math.max(0, aiNumber(signals.c2Type3ProgressValue));
+      const planScore = Math.max(0, aiNumber(signals.planScore));
+      const endGameExpectedScore = Math.max(0, aiNumber(signals.endGameExpectedScore));
+      const hasConcretePublicCard = Boolean(
+        directScoreGain > 0
+        || playScore >= 12
+        || conversionPressure >= 8
+        || (standardActionPremium >= 5 && playScore >= 6)
+        || taskProgress >= 1
+        || type3Progress >= 1.5
+        || planScore >= 4
+        || endGameExpectedScore >= 4
+      );
+      return hasConcretePublicCard ? 0 : 16;
     }
 
     function listAiCardCornerMoveCandidatesForReward(moveReward, options = {}) {
@@ -14745,6 +14815,8 @@
       if (!check?.ok) return null;
       const definition = industry.getIndustryDefinition?.(industryCard);
       const abilityId = definition?.activeAbilityId || null;
+      let publicPickProfile = null;
+      let strategyPassiveSlots = null;
       let score = -Infinity;
       if (abilityId === "stratus_public_corners") {
         score = 4 + scoreAiIndustryStratusCorners(player) * 0.85;
@@ -14755,18 +14827,26 @@
       } else if (abilityId === "huanyu_free_moves") {
         score = scoreAiIndustryHuanyuMoves();
       } else if (abilityId === "mission_publicity_pick_income") {
+        publicPickProfile = getAiIndustryPublicPickProfile(player, "industry_mission_pick");
         score = players.canAfford(player, { publicity: industry.PUBLICITY_PICK_COST || 2 })
-          ? scoreAiIndustryPublicPick(player, "industry_mission_pick") - 3
+          ? publicPickProfile.bestScore - 3
           : -Infinity;
       } else if (abilityId === "fenwick_publicity_pick_corner") {
+        publicPickProfile = getAiIndustryPublicPickProfile(player, "industry_fenwick_pick");
         score = players.canAfford(player, { publicity: industry.FENWICK_PUBLICITY_PICK_COST || 1 })
-          ? scoreAiIndustryPublicPick(player, "industry_fenwick_pick") - 3
+          ? publicPickProfile.bestScore - 3
           : -Infinity;
       } else if (abilityId === "deepspace_swap_cards") {
         score = scoreAiIndustryDeepspaceSwap(player);
       } else if (abilityId === "strategy_pick_card") {
-        score = scoreAiIndustryPublicPick(player, "industry_strategy_pick");
+        publicPickProfile = getAiIndustryPublicPickProfile(player, "industry_strategy_pick");
+        strategyPassiveSlots = summarizeAiStrategyPassiveSlots(player);
+        score = publicPickProfile.bestScore;
       }
+      const earlyEmptyStrategyPickPenalty = abilityId === "strategy_pick_card"
+        ? scoreAiEarlyEmptyStrategyPickPenalty(player, publicPickProfile, strategyPassiveSlots)
+        : 0;
+      score -= earlyEmptyStrategyPickPenalty;
       const finalSecondMarkNoDirectSetupPenalty = scoreAiFinalSecondMarkNoDirectSetupPenalty(player, {
         actionId: "industry",
         directScoreGain: 0,
@@ -14792,6 +14872,14 @@
           abilityId,
           companyLabel: definition?.label || industryCard.label || "公司牌",
           finalSecondMarkNoDirectSetupPenalty,
+          earlyEmptyStrategyPickPenalty,
+          industryPublicPick: publicPickProfile ? {
+            pendingType: publicPickProfile.pendingType,
+            bestScore: roundAiScore(publicPickProfile.bestScore),
+            bestCard: publicPickProfile.bestCard,
+            topCards: publicPickProfile.topCards,
+          } : null,
+          strategyPassiveSlots,
         },
       };
     }

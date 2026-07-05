@@ -61,6 +61,9 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     colorLabel: "Blue",
     hand: options.blueHand || [],
     reservedCards: [],
+    initialSelection: options.blueInitialSelection || null,
+    industryStrategyPassiveSlots: options.blueIndustryStrategyPassiveSlots || undefined,
+    aiDifficulty: options.blueAiDifficulty || options.aiDifficulty || undefined,
     resources: { credits: 5, energy: 5, ...(options.blueResources || {}) },
     income: { ...(options.blueIncome || {}) },
     companyBaseIncome: options.blueCompanyBaseIncome || null,
@@ -421,6 +424,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     techGameState: { board: options.techBoard || {}, ui: { ...(options.techUi || {}) } },
     cardState: { publicCards: options.publicCards || [] },
     cardTaskState: {},
+    industry: options.industry || null,
     historyStepOrder: {},
     els: {
       scanTargetOverlay: { hidden: options.scanTargetHidden ?? false },
@@ -1054,6 +1058,156 @@ function makeYichangdianAlienState(options = {}) {
     assert.equal(selected?.label, expectedLabel);
     assert.equal(selected?.aiOnly, true);
   }
+}
+
+{
+  const turnChoices = [];
+  const strategyIndustry = { id: "industry:宇宙大战略集团", label: "宇宙大战略集团" };
+  const strategyRewards = {
+    yellow: { credits: 1 },
+    red: { publicity: 1 },
+    blue: { data: 1 },
+  };
+  const publicScoreCard = {
+    id: "strategy-public-score",
+    cardId: "strategy-public-score",
+    cardName: "Strategy public score",
+    price: 0,
+    scanActionCode: 2,
+    playEffects: [{ type: "gain_resources", options: { gain: { score: 8 } } }],
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    blueInitialSelection: { industry: strategyIndustry },
+    blueIndustryStrategyPassiveSlots: { yellow: true, red: true, blue: false },
+    blueResources: { score: 86, credits: 2, energy: 1, publicity: 2, handSize: 2 },
+    publicCards: [publicScoreCard],
+    industry: {
+      STRATEGY_PASSIVE_SLOT_IDS: ["yellow", "red", "blue"],
+      getIndustryActionMarkerLayout: () => ({ percentX: 9, percentY: 77, radiusPercent: 4.9 }),
+      canMarkIndustryAction: () => ({ ok: true }),
+      getIndustryDefinition: () => ({
+        label: "宇宙大战略集团",
+        activeAbilityId: "strategy_pick_card",
+        passiveIds: ["strategy_passive_reward_slots", "grand_strategy_round_start"],
+      }),
+      playerHasStrategyPassive: () => true,
+      hasGrandStrategyRoundStart: () => true,
+      getStrategySlotReward: (slotId) => strategyRewards[slotId] || null,
+      getStrategySlotRewardLabel: (slotId) => {
+        if (slotId === "yellow") return "1 信用点";
+        if (slotId === "red") return "1 宣传";
+        if (slotId === "blue") return "1 数据";
+        return "";
+      },
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .find((candidate) => candidate.id === "industry" && candidate.abilityId === "strategy_pick_card")
+      || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should enumerate the grand strategy 1x diagnostic candidate");
+  const industryCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "industry" && candidate.abilityId === "strategy_pick_card");
+  assert.ok(industryCandidate, "grand strategy 1x candidate should be available");
+  assert.equal(
+    industryCandidate.valueBreakdown?.industryPublicPick?.bestCard?.cardId,
+    "strategy-public-score",
+    "industry public-pick diagnostics should expose the best public card",
+  );
+  assert.deepEqual(
+    industryCandidate.valueBreakdown?.strategyPassiveSlots?.occupiedSlotIds,
+    ["yellow", "red"],
+    "grand strategy diagnostics should expose occupied passive reward slots",
+  );
+  assert.deepEqual(
+    industryCandidate.valueBreakdown?.strategyPassiveSlots?.emptySlotIds,
+    ["blue"],
+    "grand strategy diagnostics should expose empty passive reward slots",
+  );
+  assert.equal(
+    industryCandidate.valueBreakdown?.strategyPassiveSlots?.roundStartClearsSlots,
+    true,
+    "grand strategy diagnostics should record the round-start auto-clear rule",
+  );
+}
+
+{
+  const turnChoices = [];
+  const strategyIndustry = { id: "industry:宇宙大战略集团", label: "宇宙大战略集团" };
+  const lowSignalPublicCard = {
+    id: "low-signal-public-card",
+    cardId: "low-signal-public-card",
+    cardName: "Low signal public card",
+    price: 0,
+    scanActionCode: 1,
+    playEffects: [{ type: "draw_cards", options: { count: 1 } }],
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    blueInitialSelection: { industry: strategyIndustry },
+    blueIndustryStrategyPassiveSlots: { yellow: false, red: false, blue: false },
+    blueAiDifficulty: "weak_start",
+    blueResources: { score: 20, credits: 2, energy: 1, publicity: 2, handSize: 2 },
+    publicCards: [lowSignalPublicCard],
+    industry: {
+      STRATEGY_PASSIVE_SLOT_IDS: ["yellow", "red", "blue"],
+      getIndustryActionMarkerLayout: () => ({ percentX: 9, percentY: 77, radiusPercent: 4.9 }),
+      canMarkIndustryAction: () => ({ ok: true }),
+      getIndustryDefinition: () => ({
+        label: "宇宙大战略集团",
+        activeAbilityId: "strategy_pick_card",
+        passiveIds: ["strategy_passive_reward_slots", "grand_strategy_round_start"],
+      }),
+      playerHasStrategyPassive: () => true,
+      hasGrandStrategyRoundStart: () => true,
+      getStrategySlotReward: (slotId) => ({
+        yellow: { credits: 1 },
+        red: { publicity: 1 },
+        blue: { data: 1 },
+      }[slotId] || null),
+      getStrategySlotRewardLabel: (slotId) => ({
+        yellow: "1 信用点",
+        red: "1 宣传",
+        blue: "1 数据",
+      }[slotId] || ""),
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "pass") || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  harness.controller.runAiAutomationStep();
+  const industryCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "industry" && candidate.abilityId === "strategy_pick_card");
+  assert.equal(
+    industryCandidate,
+    undefined,
+    "early empty grand strategy 1x should wait when the best public card has no concrete play chain",
+  );
 }
 
 {
