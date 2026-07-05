@@ -1594,7 +1594,7 @@
       if (pendingType !== "place_data_income" || !player?.hand?.length) return null;
       const target = Math.max(0, Math.round(aiNumber(count)));
       const handSize = Math.max(0, Math.round(aiNumber(player.resources?.handSize ?? player.hand.length)));
-      const handScarcityCost = handSize <= 1 ? 10 : handSize === 2 ? 6 : handSize === 3 ? 2.5 : 0;
+      const handScarcityCost = getAiIncomeDiscardHandScarcityCost(player);
       const selectedSet = new Set((selectedIndexes || []).map((index) => Number(index)));
       const options = (player.hand || [])
         .map((card, index) => {
@@ -1642,6 +1642,46 @@
         },
         options,
       };
+    }
+
+    function getAiIncomeDiscardHandScarcityCost(player = getCurrentPlayer()) {
+      const handSize = Math.max(0, Math.round(aiNumber(player?.resources?.handSize ?? player?.hand?.length)));
+      if (handSize <= 1) return 10;
+      if (handSize === 2) return 6;
+      if (handSize === 3) return 2.5;
+      return 0;
+    }
+
+    function scoreAiIncomeDiscardOptionNet(player, card, index, incomeGain, incomeFormulaEntries = null) {
+      if (!player || !card || !incomeGain) return null;
+      const incomeScore = scoreAiIncomeOpportunityValue(player, incomeGain);
+      const finalFormulaFit = scoreAiIncomeDiscardFinalFormulaFit(player, incomeGain, incomeFormulaEntries);
+      const routeEnergyFit = scoreAiIncomeDiscardRouteEnergyFit(player, incomeGain);
+      const playCandidate = buildAiPlayCardCandidate(card, index, player);
+      const discardOpportunityCost = getAiDiscardedCardOpportunityCost(card, playCandidate);
+      const handScarcityCost = getAiIncomeDiscardHandScarcityCost(player);
+      return {
+        incomeScore,
+        finalFormulaFit,
+        routeEnergyFit,
+        discardOpportunityCost,
+        handScarcityCost,
+        net: incomeScore + finalFormulaFit + routeEnergyFit - discardOpportunityCost - handScarcityCost,
+      };
+    }
+
+    function scoreAiIncomePlacementRewardValue(player = getCurrentPlayer()) {
+      const hand = player?.hand || [];
+      if (!player || !hand.length) return -8;
+      const incomeFormulaEntries = getAiIncomeFinalFormulaEntries(player);
+      const best = hand.reduce((result, card, index) => {
+        const incomeGain = cards.getIncomeGainForCard?.(card);
+        const score = scoreAiIncomeDiscardOptionNet(player, card, index, incomeGain, incomeFormulaEntries);
+        if (!score) return result;
+        return !result || score.net > result.net ? score : result;
+      }, null);
+      if (!best) return 0;
+      return roundAiScore(Math.max(-18, best.net));
     }
 
     function chooseAiTradeDiscardIndexes(player, count, pending = {}) {
@@ -8076,6 +8116,22 @@
           + Math.max(0, 4 - scoreToThreshold) * (nextThreshold <= 50 ? 2.8 : 1.8)
           + creditToPlayRemainingHand,
       );
+    }
+
+    function scoreAiLateIncomePlacementDiscardPenalty(choice, player = getCurrentPlayer()) {
+      if (!player || getAiRoundNumber() < FINAL_ROUND_NUMBER || !state.pendingActionExecuted) return 0;
+      if (normalizeAiDifficulty(player?.aiDifficulty || aiAutoBattleState.aiDifficulty) !== AI_DIFFICULTY_WEAK_START) return 0;
+      const bonuses = getAiDataPlacementBonuses(choice, player);
+      if (!bonuses.some((bonus) => bonus?.type === "income")) return 0;
+      const resources = player.resources || {};
+      const handSize = Math.max(0, Math.round(aiNumber(resources.handSize ?? player.hand?.length)));
+      if (handSize > 1) return 0;
+      const incomeNet = scoreAiIncomePlacementRewardValue(player);
+      if (incomeNet >= 0) return 0;
+      const credits = Math.max(0, aiNumber(resources.credits));
+      const energy = Math.max(0, aiNumber(resources.energy));
+      const resourceLockPenalty = credits <= 0 && energy <= 0 ? 3 : 0;
+      return roundAiScore(Math.min(22, Math.abs(incomeNet) * 0.55 + 4 + resourceLockPenalty));
     }
 
     function getAiDataPlacementDirectScoreGainFromBonus(bonus) {
@@ -15213,6 +15269,7 @@
         const engineProgressValue = scoreAiDataEngineProgressValue(placementSlot, player);
         const secondMarkAnalyzeReloadValue = scoreAiSecondMarkAnalyzeReloadDataValue(player, placementSlot);
         const finalIncomeRiskPenalty = scoreAiFinalThresholdIncomePlacementPenalty(choice, player);
+        const lateIncomeDiscardPenalty = scoreAiLateIncomePlacementDiscardPenalty(choice, player);
         return applyAiStrategyWeight(
           7
             + placementSlot * 0.8
@@ -15223,7 +15280,7 @@
             + getAiMapDemand(getAiStrategyDemand(player).actions, "analyze") * 0.08,
           "task",
           0.35,
-        ) - finalIncomeRiskPenalty;
+        ) - finalIncomeRiskPenalty - lateIncomeDiscardPenalty;
       }
       if (target === data.PLACEMENT_KIND_BLUE_BONUS) {
         const bonusValue = scoreAiDataPlacementBonusValue(choice, player);
