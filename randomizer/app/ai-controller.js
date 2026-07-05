@@ -7538,7 +7538,10 @@
       const actionId = String(rawCandidate.id || graphCandidate.id || "");
       const round = getAiRoundNumber();
       const deficit = getAiLiveScorePaceDeficit(player);
-      if (round > FINAL_ROUND_NUMBER || deficit <= 0) return graphCandidate;
+      const hasWeakFinalAnalyzeEnergyCap = actionId === "scan"
+        && rawCandidate.valueBreakdown?.weakFinalAnalyzeEnergyCap !== null
+        && rawCandidate.valueBreakdown?.weakFinalAnalyzeEnergyCap !== undefined;
+      if (round > FINAL_ROUND_NUMBER || (deficit <= 0 && !hasWeakFinalAnalyzeEnergyCap)) return graphCandidate;
       const broadGoalActions = new Set(["playCard", "researchTech", "scan"]);
       const rawMissingFinalMarkPenalty = aiNumber(
         graphCandidate.missingFinalMarkPenalty ?? graphCandidate.breakdown?.missingFinalMarkPenalty,
@@ -17643,6 +17646,7 @@
       const analyzeCheck = canAiAnalyzeData(currentPlayer);
       const analyzeBreakdown = analyzeCheck.ok ? buildAiAnalyzeActionValueBreakdown(currentPlayer) : null;
       const analyzeScore = analyzeBreakdown ? analyzeBreakdown.score : 0;
+      const analyzeDirectScoreGain = Math.max(0, aiNumber(analyzeBreakdown?.directScoreGain));
       const immediatePlanetActionScore = Math.max(
         orbitCandidate.available ? Number(orbitCandidate.score || 0) : 0,
         landCandidate.available ? Number(landCandidate.score || 0) : 0,
@@ -17712,6 +17716,30 @@
           Math.min(scanScore, Math.max(0, analyzeCashoutScore - 2)),
         );
       }
+      const scanEnergyCost = scanCheck.ok
+        ? Math.max(0, aiNumber(scanEffects.getStandardScanCost?.(currentPlayer)?.energy))
+        : 0;
+      const currentEnergy = Math.max(0, aiNumber(currentPlayer?.resources?.energy));
+      const analyzeEnergyCost = Math.max(0, getAiAnalyzeEnergyCost(currentPlayer));
+      const weakFinalAnalyzeEnergyCap = scanCheck.ok
+        && analyzeCheck.ok
+        && currentPlayer?.aiDifficulty === AI_DIFFICULTY_WEAK_START
+        && getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && scanEnergyCost > 0
+        && analyzeEnergyCost > 0
+        && currentEnergy >= scanEnergyCost
+        && currentEnergy - scanEnergyCost < analyzeEnergyCost
+        && Math.max(0, aiNumber(currentPlayer?.resources?.availableData)) >= 3
+        && analyzeScore >= 8
+        && analyzeScore < 18
+        && scanScore > analyzeScore
+        && scanDirectScoreGain <= analyzeDirectScoreGain
+        && scanCurrentScore < 170
+          ? Math.max(0, analyzeScore - 1)
+          : null;
+      if (weakFinalAnalyzeEnergyCap !== null) {
+        scanScore = Math.min(scanScore, weakFinalAnalyzeEnergyCap);
+      }
       const scanEnergyReservationPenalty = scanCheck.ok
         ? scoreAiScanEnergyReservationPenalty(currentPlayer)
         : 0;
@@ -17739,9 +17767,11 @@
                       ? "优先兑现第3轮移动路线"
                       : scanCheck.ok && analyzeCashoutScore > 0
                         ? "优先兑现数据分析"
-                        : scanCheck.ok && scanEnergyReservationPenalty > 0
-                          ? "保留星球兑现能量"
-                          : null;
+                        : scanCheck.ok && weakFinalAnalyzeEnergyCap !== null
+                          ? "保留终局分析能量"
+                          : scanCheck.ok && scanEnergyReservationPenalty > 0
+                            ? "保留星球兑现能量"
+                            : null;
       candidates.push({
         id: "scan",
         kind: "main",
@@ -17754,6 +17784,7 @@
         valueBreakdown: {
           directScoreGain: scanDirectScoreGain,
           scanEnergyReservationPenalty,
+          weakFinalAnalyzeEnergyCap,
         },
       });
       candidates.push({
@@ -17762,7 +17793,7 @@
         available: analyzeCheck.ok,
         reason: analyzeCheck.message || null,
         score: analyzeScore,
-        directScoreGain: Math.max(0, aiNumber(analyzeBreakdown?.directScoreGain)),
+        directScoreGain: analyzeDirectScoreGain,
         scoreCapReason: analyzeBreakdown?.scoreCapReason || null,
         valueBreakdown: analyzeBreakdown,
       });

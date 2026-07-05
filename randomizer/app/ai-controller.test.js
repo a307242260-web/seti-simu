@@ -9,6 +9,7 @@ const fangzhou = require("../game/aliens/fangzhou");
 const runezu = require("../game/aliens/runezu");
 const yichangdian = require("../game/aliens/yichangdian");
 const alienCore = require("../game/aliens");
+const setiAi = require("../game/ai");
 
 function datasetKeyForSelector(selector) {
   const match = String(selector || "").match(/\[data-([a-z0-9-]+)\]/i);
@@ -1322,6 +1323,7 @@ function makeYichangdianAlienState(options = {}) {
   assert.equal(
     harness.controller.configureAiAutoBattle({
       playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
       suppressAutoSchedule: true,
     }).ok,
     true,
@@ -3155,6 +3157,126 @@ function makeYichangdianAlienState(options = {}) {
     Number(analyzeCandidate.score || 0) <= 8,
     "final low-value analyze should be capped instead of scoring like a high-value cashout",
   );
+}
+
+{
+  const turnChoices = [];
+  let selectedAction = null;
+  const placedTokens = Array.from({ length: 6 }, (_item, index) => ({ placementSlot: index + 1 }));
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    aiDifficulty: "weak_start",
+    roundNumber: 4,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordAnalyze: true,
+    blueResources: { score: 106, credits: 1, energy: 2, publicity: 6, availableData: 3, handSize: 3 },
+    publicCards: [{
+      id: "public-late-scan",
+      cardId: "public-late-scan",
+      cardName: "Late scan setup",
+      scanActionCode: 2,
+    }],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_c1: {
+          id: "final_c1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_c1: "c1",
+      final_d2: "d2",
+    },
+    scanEffects: {
+      EFFECT_TYPES: {
+        EARTH_SECTOR_SCAN: "earth_sector_scan",
+        IMPROVED_SECTOR_SCAN: "improved_sector_scan",
+        MERCURY_SECTOR_SCAN: "mercury_sector_scan",
+        PUBLIC_CARD_SCAN: "public_card_scan",
+        HAND_SCAN: "hand_scan",
+        SCAN_ACTION_4: "scan_action_4",
+      },
+      SCAN_COST: { credits: 1, energy: 2 },
+      getStandardScanCost: () => ({ credits: 1, energy: 2 }),
+      buildScanEffectQueue: () => [{ type: "public_card_scan" }],
+      canExecuteScan: (player) => (
+        Number(player?.resources?.credits || 0) >= 1 && Number(player?.resources?.energy || 0) >= 2
+          ? { ok: true }
+          : { ok: false, message: "scan resources missing" }
+      ),
+    },
+    getPublicScanChoicesForCard: () => ({
+      ok: true,
+      choices: [{ nebulaId: "late-nebula", sectorX: 4, label: "Late nebula" }],
+    }),
+    data: {
+      ANALYZE_REQUIRED_COMPUTER_SLOT: 6,
+      ANALYZE_ENERGY_COST: 1,
+      canAnalyzeData: (player) => (
+        Number(player?.resources?.energy || 0) >= 1
+          ? { ok: true }
+          : { ok: false, message: "energy missing" }
+      ),
+      listComputerPlacedTokens: () => placedTokens,
+      getNextReplaceableNebulaToken: () => ({ slotIndex: 30 }),
+      getNebulaCapacity: () => 3,
+      getNebulaSlotScoreReward: (_nebulaId, slotIndex) => Number(slotIndex || 0),
+      getNebulaColor: () => "blue",
+      listNebulaTokens: () => [],
+      listSectorExtraMarks: () => [],
+      getSectorTokenStats: () => ({}),
+    },
+    actionGraph: setiAi.actionGraph,
+    onChooseTurnAction: (candidates, selected) => {
+      turnChoices.push(candidates);
+      selectedAction = selected;
+    },
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => (
+        Number(right.actionGraph?.net ?? right.score ?? 0) - Number(left.actionGraph?.net ?? left.score ?? 0)
+      ))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  const candidates = turnChoices.flat();
+  const scanCandidate = candidates.find((candidate) => candidate.id === "scan");
+  const analyzeCandidate = candidates.find((candidate) => candidate.id === "analyze");
+  assert.ok(scanCandidate, "scan candidate should be enumerated");
+  assert.ok(analyzeCandidate, "analyze candidate should be enumerated");
+  assert.equal(scanCandidate.scoreCapReason, "保留终局分析能量");
+  assert.ok(
+    Number(scanCandidate.score || 0) < Number(analyzeCandidate.score || 0),
+    "weak_start final scan should yield to available analyze when scan spends the last analyze energy",
+  );
+  assert.ok(
+    Number(scanCandidate.actionGraph?.net || 0) < Number(analyzeCandidate.actionGraph?.net || 0),
+    "weak_start final scan cap should also suppress action-graph goal bonus below analyze",
+  );
+  assert.equal(analyzeCandidate.scoreCapReason, "终局分析蓝痕迹与阈值不足");
+  assert.equal(result.ok, true, "weak_start final low-resource AI should keep energy for analyze");
+  assert.deepEqual(harness.getHandled(), { type: "analyze" });
+  assert.equal(selectedAction?.id, "analyze");
 }
 
 {
