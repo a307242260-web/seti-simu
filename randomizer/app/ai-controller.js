@@ -323,6 +323,19 @@
     ]);
     const AI_STRATEGY_WEIGHT_DEFAULTS = Object.freeze({
       ...AI_STRATEGY_WEIGHT_KEYS.reduce((weights, key) => ({ ...weights, [key]: 1 }), {}),
+      engine: 1.30,
+      playCard: 1.44,
+      tech: 1.16,
+      scan: 1.18,
+      route: 0.76,
+      move: 0.74,
+      orbitLand: 1.00,
+      task: 1.24,
+      final: 1.34,
+      pass: 0.78,
+    });
+    const AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS = Object.freeze({
+      ...AI_STRATEGY_WEIGHT_KEYS.reduce((weights, key) => ({ ...weights, [key]: 1 }), {}),
       engine: 1.22,
       playCard: 1.40,
       tech: 1.14,
@@ -346,6 +359,7 @@
     const AI_STYLE_IDS = Object.freeze(["scanner", "route", "task", "tech", "balanced"]);
     const AI_STYLE_SEAT_ORDER = Object.freeze(["route", "scanner", "task", "tech", "balanced"]);
     let aiStrategyWeights = { ...AI_STRATEGY_WEIGHT_DEFAULTS };
+    let aiStrategyWeightsUseDifficultyDefaults = true;
     let aiStrategyDemandCache = null;
 
     function getAiAutoBattleScoreSnapshot() {
@@ -2847,6 +2861,7 @@
 
     function configureAiStrategyWeights(weights = {}, options = {}) {
       aiStrategyWeights = normalizeAiStrategyWeights(weights, options);
+      aiStrategyWeightsUseDifficultyDefaults = options.useDifficultyDefaults === true;
       aiStrategyDemandCache = null;
       return {
         ok: true,
@@ -2855,7 +2870,10 @@
     }
 
     function resetAiStrategyWeights() {
-      return configureAiStrategyWeights(AI_STRATEGY_WEIGHT_DEFAULTS, { merge: false });
+      return configureAiStrategyWeights(AI_STRATEGY_WEIGHT_DEFAULTS, {
+        merge: false,
+        useDifficultyDefaults: true,
+      });
     }
 
     function applyAiStrategyTuning(tuning = {}) {
@@ -2863,12 +2881,24 @@
       return configureAiStrategyWeights(weights, { merge: true });
     }
 
-    function getAiStrategyWeights() {
-      return { ...aiStrategyWeights };
+    function getAiActiveStrategyWeights(player = getCurrentPlayer()) {
+      const difficulty = player?.aiDifficulty || aiAutoBattleState.aiDifficulty;
+      if (
+        aiStrategyWeightsUseDifficultyDefaults
+        && normalizeAiDifficulty(difficulty) === AI_DIFFICULTY_WEAK_START
+      ) {
+        return AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS;
+      }
+      return aiStrategyWeights;
     }
 
-    function getAiStrategyWeight(key) {
-      const value = Number(aiStrategyWeights?.[key]);
+    function getAiStrategyWeights(player = getCurrentPlayer()) {
+      return { ...getAiActiveStrategyWeights(player) };
+    }
+
+    function getAiStrategyWeight(key, player = getCurrentPlayer()) {
+      const weights = getAiActiveStrategyWeights(player);
+      const value = Number(weights?.[key]);
       return Number.isFinite(value) ? value : 1;
     }
 
@@ -6252,7 +6282,7 @@
       const currentScore = Math.max(0, aiNumber(resources.score));
       if (currentScore < 35) return null;
       const handSize = Math.max(0, Math.round(aiNumber(resources.handSize ?? (player.hand || []).length)));
-      if (handSize <= 0) return null;
+      const allowExtendedResourceLock = player.aiDifficulty !== AI_DIFFICULTY_WEAK_START;
       const playCardCandidate = (candidates || []).find((candidate) => candidate?.id === "playCard");
       if (!playCardCandidate || playCardCandidate.available !== false) return null;
       if (!String(playCardCandidate.reason || "").includes("没有资源可支付")) return null;
@@ -6275,7 +6305,8 @@
       const handAfterTrade = handSize - handCost + handGain;
       if (handAfterTrade < 0) return null;
       if (handCost > 0 && handCost < 2) return null;
-      if (handCost <= 0 && aiNumber(trade.gain?.energy) <= 0) return null;
+      if (handCost > 0 && handSize <= 0) return null;
+      if (handCost <= 0 && aiNumber(trade.gain?.energy) <= 0 && aiNumber(trade.gain?.credits) <= 0) return null;
       const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
       if (!simulatedPlayer) return null;
 
@@ -6283,6 +6314,68 @@
       const analyzeCheck = canAiAnalyzeData(simulatedPlayer);
       const currentAnalyzeScore = currentAnalyzeCheck?.ok ? scoreAiAnalyzeAction(player) : 0;
       const analyzeScore = analyzeCheck?.ok ? scoreAiAnalyzeAction(simulatedPlayer) : 0;
+      const currentScanCheck = scanEffects?.canExecuteScan?.(player, { standardAction: true }) || { ok: false };
+      const scanCheck = scanEffects?.canExecuteScan?.(simulatedPlayer, { standardAction: true }) || { ok: false };
+      const currentScanScore = currentScanCheck.ok ? scoreAiScanAction(player) : 0;
+      const scanScore = scanCheck.ok ? scoreAiScanAction(simulatedPlayer) : 0;
+      const scanDirectScoreGain = scanCheck.ok ? Math.max(0, aiNumber(getAiScanDirectScoreGain(simulatedPlayer))) : 0;
+      const earlyLowScoreScanUnlock = allowExtendedResourceLock
+        && getAiRoundNumber() <= 2
+        && currentScore < 70
+        && handAfterTrade >= 2
+        && scanScore >= 15;
+      const directScoreScanUnlock = allowExtendedResourceLock
+        && scanDirectScoreGain > 0
+        && scanScore >= (getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 20 : 22);
+      const currentPlayScore = aiNumber(playCardCandidate.score);
+      const postTradePlayCandidates = handAfterTrade > 0
+        ? (player.hand || [])
+          .map((card, handIndex) => buildAiPlayCardCandidate(card, handIndex, simulatedPlayer))
+          .filter(Boolean)
+          .map((candidate) => {
+            const breakdown = candidate.valueBreakdown || {};
+            const finalDeltaValue = Math.max(
+              0,
+              scoreAiFinalFormulaDeltaValue(candidate.finalFormulaDeltas || {}, player, {
+                includePotential: true,
+                potentialScale: 0.35,
+              }),
+            );
+            const concreteValue = Math.max(
+              0,
+              aiNumber(candidate.directScoreGain),
+              finalDeltaValue,
+              aiNumber(breakdown.c2Type3ProgressValue),
+              aiNumber(breakdown.cFinalTaskProgressValue),
+              aiNumber(breakdown.endGameExpectedScore),
+              aiNumber(breakdown.playCardConversionPressure),
+              aiNumber(breakdown.planScore),
+            );
+            return {
+              ...candidate,
+              finalDeltaValue,
+              concreteValue,
+            };
+          })
+          .sort((left, right) => (
+            aiNumber(right.score) - aiNumber(left.score)
+            || aiNumber(right.concreteValue) - aiNumber(left.concreteValue)
+          ))
+        : [];
+      const bestPlay = postTradePlayCandidates[0] || null;
+      const bestPlayDiscardCost = bestPlay
+        ? estimateAiTradeDiscardOpportunityCost(player, trade, bestPlay.handIndex)
+        : Infinity;
+      const playUnlockSafe = allowExtendedResourceLock
+        && Boolean(bestPlay)
+        && Number.isFinite(bestPlayDiscardCost)
+        && aiNumber(bestPlay.score) > Math.max(16, currentPlayScore + 2)
+        && aiNumber(bestPlay.concreteValue) >= 8
+        && (
+          (handAfterTrade >= 2 && aiNumber(bestPlay.score) >= 24)
+          || aiNumber(bestPlay.directScoreGain) >= 6
+          || aiNumber(bestPlay.concreteValue) >= 12
+        );
       const postTradeMainActions = [
         analyzeCheck?.ok && analyzeScore > currentAnalyzeScore + 1
           ? {
@@ -6290,16 +6383,51 @@
             score: analyzeScore,
             currentScore: currentAnalyzeScore,
             directScoreGain: 0,
+            concreteValue: Math.max(0, aiNumber(analyzeScore)),
+          }
+          : null,
+        scanCheck.ok && scanScore > currentScanScore + 1 && (earlyLowScoreScanUnlock || directScoreScanUnlock)
+          ? {
+            actionId: "scan",
+            score: scanScore,
+            currentScore: currentScanScore,
+            directScoreGain: scanDirectScoreGain,
+            concreteValue: scanDirectScoreGain + Math.max(0, scoreAiScanPriorityFloor(player)) * 0.35,
+          }
+          : null,
+        playUnlockSafe
+          ? {
+            actionId: "playCard",
+            score: aiNumber(bestPlay.score),
+            currentScore: currentPlayScore,
+            directScoreGain: Math.max(0, aiNumber(bestPlay.directScoreGain)),
+            concreteValue: aiNumber(bestPlay.concreteValue),
+            handIndex: bestPlay.handIndex,
+            cardId: bestPlay.cardId || null,
+            cardLabel: bestPlay.cardLabel || null,
+            discardCost: bestPlayDiscardCost,
           }
           : null,
       ].filter(Boolean).sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
       const bestAction = postTradeMainActions[0] || null;
       if (!bestAction) return null;
-      const minPostTradeScore = getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 16 : 18;
+      const minPostTradeScore = bestAction.actionId === "scan"
+        ? (
+          getAiRoundNumber() <= 2 && currentScore < 70 && handAfterTrade >= 2
+            ? 15
+            : getAiRoundNumber() >= FINAL_ROUND_NUMBER
+              ? 20
+              : 22
+        )
+        : bestAction.actionId === "playCard"
+          ? 17
+          : getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 16 : 18;
       if (aiNumber(bestAction.score) < minPostTradeScore) return null;
       if (handAfterTrade <= 0 && aiNumber(bestAction.score) < 35) return null;
 
-      const discardCost = estimateAiTradeDiscardOpportunityCost(player, trade);
+      const discardCost = bestAction.actionId === "playCard" && Number.isFinite(bestAction.discardCost)
+        ? bestAction.discardCost
+        : estimateAiTradeDiscardOpportunityCost(player, trade);
       if (!Number.isFinite(discardCost)) return null;
       const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
       if (
@@ -6320,21 +6448,33 @@
           ? (nextThreshold >= 70 ? 7 : 5)
           : 0;
       const analyzeBonus = bestAction.actionId === "analyze" ? 2.5 : 0;
+      const scanBonus = bestAction.actionId === "scan"
+        ? Math.min(5.5, 1.4 + Math.max(0, bestAction.score - minPostTradeScore) * 0.15 + bestAction.directScoreGain * 0.45)
+        : 0;
+      const playBonus = bestAction.actionId === "playCard"
+        ? Math.min(5, 1.2 + Math.max(0, bestAction.concreteValue) * 0.18)
+        : 0;
       const handBufferBonus = handAfterTrade >= 1 ? 1.5 : 0;
       const score = bestAction.score * 0.52
         + bestAction.directScoreGain * 0.7
         + thresholdBonus
         + analyzeBonus
+        + scanBonus
+        + playBonus
         + handBufferBonus
         - discardCost * 0.34;
       if (score < 7) return null;
+      const reason = bestAction.actionId === "analyze"
+        ? (handCost > 0 ? "资源锁：弃牌换能量解锁分析" : "资源锁：信用点换能量解锁分析")
+        : `资源锁：交易解锁${bestAction.actionId === "scan" ? "扫描" : "打牌"}`;
       return {
         id: "quickTrade",
         kind: "quick",
         available: true,
         tradeId: trade.id,
         label: trade.label || trade.id,
-        reason: handCost > 0 ? "资源锁：弃牌换能量解锁分析" : "资源锁：信用点换能量解锁分析",
+        preserveHandIndex: bestAction.actionId === "playCard" ? bestAction.handIndex : null,
+        reason,
         score: roundAiScore(Math.min(42, score)),
         valueBreakdown: {
           resourceLockMainUnlockTrade: true,
@@ -6343,6 +6483,10 @@
             score: roundAiScore(bestAction.score),
             currentScore: roundAiScore(bestAction.currentScore),
             directScoreGain: bestAction.directScoreGain,
+            concreteValue: roundAiScore(bestAction.concreteValue),
+            cardId: bestAction.cardId || null,
+            cardLabel: bestAction.cardLabel || null,
+            handIndex: Number.isInteger(Number(bestAction.handIndex)) ? Number(bestAction.handIndex) : null,
           },
           currentScore,
           handSize,
@@ -6350,13 +6494,18 @@
           discardCost: roundAiScore(discardCost),
           nextFinalMarkThreshold: nextThreshold || null,
           thresholdBonus,
+          analyzeBonus,
+          scanBonus: roundAiScore(scanBonus),
+          playBonus: roundAiScore(playBonus),
+          earlyLowScoreScanUnlock,
+          directScoreScanUnlock,
           bestExistingScore: Number.isFinite(bestExistingScore) ? roundAiScore(bestExistingScore) : null,
         },
       };
     }
 
     function listAiResourceLockMainUnlockTradeCandidates(player = getCurrentPlayer(), candidates = []) {
-      return ["credits-for-energy", "cards-for-energy"]
+      return ["credits-for-energy", "cards-for-energy", "cards-for-credit", "energy-for-credit"]
         .map((tradeId) => buildAiResourceLockMainUnlockTradeCandidate(player, tradeId, candidates))
         .filter(Boolean)
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));

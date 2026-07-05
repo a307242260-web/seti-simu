@@ -2898,6 +2898,44 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const defaultHarness = createAiControllerHarness(null);
+  assert.equal(
+    defaultHarness.controller.configureAiAutoBattle({
+      playerIds: [defaultHarness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+  assert.equal(defaultHarness.controller.getAiStrategyWeights().engine, 1.3);
+  assert.equal(defaultHarness.controller.getAiStrategyWeights().scan, 1.18);
+
+  const weakHarness = createAiControllerHarness(null);
+  assert.equal(
+    weakHarness.controller.configureAiAutoBattle({
+      playerIds: [weakHarness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+  assert.equal(weakHarness.controller.getAiStrategyWeights(weakHarness.blue).engine, 1.22);
+  assert.equal(weakHarness.controller.getAiStrategyWeights(weakHarness.blue).scan, 1.08);
+
+  const customWeakHarness = createAiControllerHarness(null);
+  assert.equal(
+    customWeakHarness.controller.configureAiAutoBattle({
+      playerIds: [customWeakHarness.blue.id],
+      aiDifficulty: "weak_start",
+      strategyWeights: { engine: 1.31, scan: 1.21 },
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+  assert.equal(customWeakHarness.controller.getAiStrategyWeights(customWeakHarness.blue).engine, 1.31);
+  assert.equal(customWeakHarness.controller.getAiStrategyWeights(customWeakHarness.blue).scan, 1.21);
+}
+
+{
   const harness = createAiControllerHarness(null);
   assert.equal(
     harness.controller.configureAiAutoBattle({
@@ -4654,6 +4692,91 @@ function makeYichangdianAlienState(options = {}) {
   assert.equal(preview.bestActionDiscardRisk?.costPlanDiscards, false);
   assert.equal(preview.bestActionDiscardRisk?.executionPlanDiscards, false);
   assert.equal(preview.bestActionDiscardRisk?.executionMatchesCostPlan, true);
+}
+
+{
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 2,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "cards-for-credit": {
+        id: "cards-for-credit",
+        label: "2 cards -> 1 credit",
+        cost: { handSize: 2 },
+        gain: { credits: 1 },
+      },
+    },
+    blueResources: { score: 55, credits: 0, energy: 2, publicity: 2, availableData: 0, handSize: 4 },
+    blueHand: [
+      { id: "scan-lock-a", cardName: "Scan Lock A", price: 2 },
+      { id: "scan-lock-b", cardName: "Scan Lock B", price: 2 },
+      { id: "scan-lock-c", cardName: "Scan Lock C", price: 2 },
+      { id: "scan-lock-d", cardName: "Scan Lock D", price: 2 },
+    ],
+    publicCards: [{
+      id: "public-high-scan",
+      cardId: "public-high-scan",
+      cardName: "High public scan",
+      scanActionCode: 2,
+    }],
+    scanEffects: {
+      EFFECT_TYPES: {
+        EARTH_SECTOR_SCAN: "earth_sector_scan",
+        IMPROVED_SECTOR_SCAN: "improved_sector_scan",
+        MERCURY_SECTOR_SCAN: "mercury_sector_scan",
+        PUBLIC_CARD_SCAN: "public_card_scan",
+        HAND_SCAN: "hand_scan",
+        SCAN_ACTION_4: "scan_action_4",
+      },
+      SCAN_COST: { credits: 1, energy: 2 },
+      getStandardScanCost: () => ({ credits: 1, energy: 2 }),
+      buildScanEffectQueue: () => [{ type: "public_card_scan" }],
+      canExecuteScan: (player) => (
+        Number(player?.resources?.credits || 0) >= 1 && Number(player?.resources?.energy || 0) >= 2
+          ? { ok: true }
+          : { ok: false, message: "scan resources missing" }
+      ),
+    },
+    getPublicScanChoicesForCard: () => ({
+      ok: true,
+      choices: [{ nebulaId: "high-nebula", sectorX: 4, label: "High nebula" }],
+    }),
+    data: {
+      getNextReplaceableNebulaToken: () => ({ slotIndex: 30 }),
+      getNebulaCapacity: () => 3,
+      getNebulaSlotScoreReward: (_nebulaId, slotIndex) => Number(slotIndex || 0),
+      getNebulaColor: () => "blue",
+      listNebulaTokens: () => [],
+      listSectorExtraMarks: () => [],
+      getSectorTokenStats: () => ({}),
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "resource-locked AI should trade cards for credit before a high-value scan");
+  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "cards-for-credit" });
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-credit");
+  assert.ok(tradeCandidate, "resource-lock scan unlock trade should be enumerated");
+  assert.equal(tradeCandidate.reason, "资源锁：交易解锁扫描");
+  assert.equal(tradeCandidate.valueBreakdown?.unlockedMainAction?.actionId, "scan");
 }
 
 {
