@@ -2058,17 +2058,21 @@
       if (!entries.length) return 0;
       const currentTasks = Math.max(0, Math.round(aiNumber(player.completedTaskCount)));
       const currentType3 = countAiType3CardsForPlayer(player);
+      const finalCashoutFocus = getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && countAiFinalMarksForPlayer(player) >= 3;
+      const c1ImmediateScale = finalCashoutFocus ? 0.94 : 0.72;
+      const c2ImmediateScale = finalCashoutFocus ? 0.94 : 0.82;
       return entries.reduce((total, entry) => {
         const multiplier = Math.max(1, aiNumber(entry.multiplier));
         if (entry.formulaId === "c1") {
           const immediate = increment * multiplier;
-          return total + (entry.potential ? immediate * 0.38 : immediate * 0.72);
+          return total + (entry.potential ? immediate * 0.38 : immediate * c1ImmediateScale);
         }
         if (entry.formulaId === "c2") {
           const beforeBase = Math.floor((currentTasks + currentType3) / 2);
           const afterBase = Math.floor((currentTasks + currentType3 + increment) / 2);
           const immediate = Math.max(0, afterBase - beforeBase) * multiplier;
-          return total + (immediate > 0 ? immediate * 0.82 : multiplier * 0.18);
+          return total + (immediate > 0 ? immediate * c2ImmediateScale : multiplier * 0.18);
         }
         return total;
       }, 0);
@@ -5149,6 +5153,13 @@
         value += Math.min(5, Math.max(0, aiNumber(player.resources?.handSize) - 1) * 0.9);
         if (options.endGameExpectedScore > 0 || options.directScoreGain > 0) value += 2.6;
       }
+      if (["orbit", "land", "analyze"].includes(actionId)) {
+        const directScoreGain = Math.max(0, aiNumber(options.directScoreGain));
+        if (directScoreGain > 0) {
+          value += Math.min(5.5, directScoreGain * (gapTo300 <= 12 ? 0.72 : 0.42));
+          if (gapTo300 > 0 && directScoreGain >= Math.max(1, gapTo300 - 2)) value += 2.4;
+        }
+      }
       if (actionId === "move" && !options.followupCashout) value *= 0.55;
       return roundAiScore(Math.min(40, Math.max(0, value)));
     }
@@ -8219,6 +8230,71 @@
       ), 0);
     }
 
+    function getAiB1TraceCounts(player = getCurrentPlayer()) {
+      const counts = {};
+      for (const traceType of AI_TRACE_TYPES) {
+        counts[traceType] = endGameScoring?.countTraceMarkers && player
+          ? Math.max(0, Math.round(aiNumber(endGameScoring.countTraceMarkers(player, alienGameState, traceType))))
+          : 0;
+      }
+      return counts;
+    }
+
+    function addAiB1TraceDemand(demand, amount, player = getCurrentPlayer()) {
+      if (!demand || !demand.traceTypes) return;
+      void player;
+      addAiAllTraceDemand(demand, amount);
+    }
+
+    function scoreAiB1TraceMarginalValue(player, traceType) {
+      const entries = getAiMarkedFinalFormulaEntries(player)
+        .filter((entry) => entry.formulaId === "b1");
+      const finalTraceFocus = getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && countAiFinalMarksForPlayer(player) >= 3;
+      if (!player || !traceType || !entries.length || !AI_TRACE_TYPES.includes(traceType) || !finalTraceFocus) {
+        return {
+          score: 0,
+          counts: null,
+          currentBase: 0,
+          nextBase: 0,
+          multiplier: 0,
+          directMarginal: 0,
+          potentialValue: 0,
+          surplusPenalty: 0,
+        };
+      }
+      const counts = getAiB1TraceCounts(player);
+      const currentBase = Math.min(...AI_TRACE_TYPES.map((type) => counts[type]));
+      const afterCounts = { ...counts, [traceType]: counts[traceType] + 1 };
+      const nextBase = Math.min(...AI_TRACE_TYPES.map((type) => afterCounts[type]));
+      const multiplier = entries.reduce((total, entry) => total + Math.max(0, aiNumber(entry.multiplier)), 0);
+      const directMarginal = Math.max(0, nextBase - currentBase) * multiplier;
+      const traceCount = counts[traceType];
+      const isBottleneck = traceCount <= currentBase;
+      const round = getAiRoundNumber();
+      const potentialValue = directMarginal > 0
+        ? 0
+        : isBottleneck
+          ? Math.min(2.4, multiplier * 0.28)
+          : traceCount === currentBase + 1
+            ? Math.min(1.4, multiplier * 0.1)
+            : 0;
+      const surplus = Math.max(0, traceCount - currentBase);
+      const surplusPenalty = directMarginal > 0
+        ? 0
+        : Math.min(2, Math.max(0, surplus - 1) * multiplier * 0.06);
+      return {
+        score: roundAiScore(directMarginal * 0.72 + potentialValue - surplusPenalty),
+        counts,
+        currentBase,
+        nextBase,
+        multiplier: roundAiScore(multiplier),
+        directMarginal: roundAiScore(directMarginal),
+        potentialValue: roundAiScore(potentialValue),
+        surplusPenalty: roundAiScore(surplusPenalty),
+      };
+    }
+
     function isAiFirstTraceTakenByOpponent(alienSlotId, traceType, player = getCurrentPlayer()) {
       if (!traceType || alienSlotId == null) return false;
       const slot = aliens?.getAlienSlot?.(alienGameState, alienSlotId);
@@ -9268,7 +9344,7 @@
           addAiMapDemand(demand.resources, "energy", amount * 0.4);
           addAiMapDemand(demand.resources, "handSize", amount * 0.35);
         } else if (formulaId === "b1") {
-          addAiAllTraceDemand(demand, amount);
+          addAiB1TraceDemand(demand, amount, player);
         } else if (formulaId === "b2") {
           addAiActionDemand(demand, "orbit", amount * 0.7);
           addAiActionDemand(demand, "land", amount * 0.7);
@@ -12863,7 +12939,7 @@
         { actionId: "orbit" },
       );
       const orbitThenLandThresholdValue = scoreAiOrbitThenLandThresholdComboValue(candidate.planetId, currentPlayer);
-      const highScoreOrbitPushValue = scoreAiHighScorePushValue(currentPlayer, "orbit")
+      const highScoreOrbitPushValue = scoreAiHighScorePushValue(currentPlayer, "orbit", { directScoreGain })
         * (directScoreGain > 0 ? 1 : 0.45);
       const finalNoDirectOrbitPenalty = round >= FINAL_ROUND_NUMBER
         && nextThreshold
@@ -12959,7 +13035,7 @@
         energyCost,
         highScoreTarget: regularBestChoice?.choice?.target?.type === "satellite" && directScoreGain >= 20,
       }));
-      const highScoreLandPushValue = scoreAiHighScorePushValue(currentPlayer, "land")
+      const highScoreLandPushValue = scoreAiHighScorePushValue(currentPlayer, "land", { directScoreGain })
         * (directScoreGain > 0 ? 1 : 0.55);
       const rawScore = 12
         + (candidate.planetId === "mars" || candidate.planetId === "venus" ? 1.5 : 0)
@@ -13049,7 +13125,9 @@
       const postSecondFinalMarkPenalty = finalMarks >= 2 && dataRoom <= 1 && blueTraceDemand < 1
         ? 5
         : 0;
-      const highScorePushValue = scoreAiHighScorePushValue(player, "analyze");
+      const highScorePushValue = scoreAiHighScorePushValue(player, "analyze", {
+        directScoreGain: bestBlueTraceScore,
+      });
       const lowEngineCatchupValue = scoreAiLowEngineCatchupValue(player, "analyze");
       const rawScore = 7
         + placedCount * 1.15
@@ -16980,6 +17058,7 @@
         return { ok: false, blocked: true, message: "AI 没有可用外星人痕迹目标" };
       }
       const button = target.button;
+      const traceType = getAiAlienTraceTargetTraceType(target);
       recordAiAutoBattleLog("alien-trace", `${player.colorLabel}AI 选择外星人痕迹`, {
         logPlayerId: player.id || null,
         logPlayerColor: player.color || null,
@@ -16987,9 +17066,10 @@
         mode: state.alienTracePickerState?.mode || null,
         alienSlot: button.dataset.alienSlot || null,
         pickerStep: button.dataset.alienPickerStep || null,
-        traceType: button.dataset.traceType || null,
+        traceType: traceType || null,
         position: getAiAlienTraceTargetPosition(target),
         score: target.score,
+        b1TraceValue: scoreAiB1TraceMarginalValue(player, traceType),
         label: button.textContent || "",
       });
       button.click();
