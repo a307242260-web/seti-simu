@@ -6319,12 +6319,16 @@
       const currentScanScore = currentScanCheck.ok ? scoreAiScanAction(player) : 0;
       const scanScore = scanCheck.ok ? scoreAiScanAction(simulatedPlayer) : 0;
       const scanDirectScoreGain = scanCheck.ok ? Math.max(0, aiNumber(getAiScanDirectScoreGain(simulatedPlayer))) : 0;
+      const weakNoDiscardDirectScanUnlock = !allowExtendedResourceLock
+        && handCost <= 0
+        && scanDirectScoreGain > 0
+        && scanScore >= (getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 20 : 22);
       const earlyLowScoreScanUnlock = allowExtendedResourceLock
         && getAiRoundNumber() <= 2
         && currentScore < 70
         && handAfterTrade >= 2
         && scanScore >= 15;
-      const directScoreScanUnlock = allowExtendedResourceLock
+      const directScoreScanUnlock = (allowExtendedResourceLock || weakNoDiscardDirectScanUnlock)
         && scanDirectScoreGain > 0
         && scanScore >= (getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 20 : 22);
       const currentPlayScore = aiNumber(playCardCandidate.score);
@@ -6432,6 +6436,7 @@
       const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
       if (
         handCost <= 0
+        && !weakNoDiscardDirectScanUnlock
         && (
           getAiRoundNumber() !== 2
           || nextThreshold

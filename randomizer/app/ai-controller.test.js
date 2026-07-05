@@ -870,6 +870,12 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     "getSectorXsMatchingCondition",
   ];
   for (const name of emptyArrayNames) context[name] = () => [];
+  if (options.buildSectorScanChoicesForX) {
+    context.buildSectorScanChoicesForX = options.buildSectorScanChoicesForX;
+  }
+  if (options.buildSectorScanChoicesForXs) {
+    context.buildSectorScanChoicesForXs = options.buildSectorScanChoicesForXs;
+  }
   if (options.getPublicScanChoicesForCard) {
     context.getPublicScanChoicesForCard = options.getPublicScanChoicesForCard;
   }
@@ -4964,6 +4970,86 @@ function makeYichangdianAlienState(options = {}) {
     undefined,
     "resource-lock trade should not spend two cards for a low-value scan",
   );
+}
+
+{
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    aiDifficulty: "weak_start",
+    roundNumber: 4,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "credits-for-energy": {
+        id: "credits-for-energy",
+        label: "2 credits -> 1 energy",
+        cost: { credits: 2 },
+        gain: { energy: 1 },
+      },
+    },
+    blueResources: { score: 112, credits: 7, energy: 1, publicity: 2, availableData: 0, handSize: 1 },
+    scanEffects: {
+      EFFECT_TYPES: {
+        EARTH_SECTOR_SCAN: "earth_sector_scan",
+        IMPROVED_SECTOR_SCAN: "improved_sector_scan",
+        MERCURY_SECTOR_SCAN: "mercury_sector_scan",
+        PUBLIC_CARD_SCAN: "public_card_scan",
+        HAND_SCAN: "hand_scan",
+        SCAN_ACTION_4: "scan_action_4",
+      },
+      SCAN_COST: { credits: 0, energy: 2 },
+      getStandardScanCost: () => ({ credits: 0, energy: 2 }),
+      buildScanEffectQueue: () => [{ type: "earth_sector_scan" }],
+      canExecuteScan: (player) => (
+        Number(player?.resources?.energy || 0) >= 2
+          ? { ok: true }
+          : { ok: false, message: "scan resources missing" }
+      ),
+    },
+    buildSectorScanChoicesForX: (sectorX) => [{
+      nebulaId: "direct-score-sector",
+      sectorX,
+      label: "Direct score sector",
+    }],
+    data: {
+      getNextReplaceableNebulaToken: () => ({ slotIndex: 30 }),
+      getNebulaCapacity: () => 3,
+      getNebulaSlotScoreReward: () => 18,
+      getNebulaColor: () => "blue",
+      listNebulaTokens: () => [],
+      listSectorExtraMarks: () => [],
+      getSectorTokenStats: () => ({}),
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "credits-for-energy");
+  assert.ok(tradeCandidate, "weak no-discard scan unlock trade should be enumerated");
+  assert.equal(tradeCandidate.reason, "资源锁：交易解锁扫描");
+  assert.equal(tradeCandidate.valueBreakdown?.unlockedMainAction?.actionId, "scan");
+  assert.ok(
+    Number(tradeCandidate.valueBreakdown?.unlockedMainAction?.directScoreGain || 0) > 0,
+    "weak no-discard scan unlock should require direct scan score",
+  );
+  assert.equal(result.ok, true, "weak_start AI should spend spare credits to unlock direct-score scan without discarding");
+  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "credits-for-energy" });
 }
 
 {
