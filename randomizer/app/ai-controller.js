@@ -1314,8 +1314,16 @@
           applyAiStrategyTuning(options.strategyTuning);
         }
         if (options.strategyWeights) {
+          const strategyDifficulty = normalizeAiDifficulty(options.aiDifficulty || aiAutoBattleState.aiDifficulty);
+          const mergeStrategyWeights = options.mergeStrategyWeights !== false;
+          const strategyMergeBase = mergeStrategyWeights
+            && aiStrategyWeightsUseDifficultyDefaults
+            && strategyDifficulty === AI_DIFFICULTY_WEAK_START
+              ? AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS
+              : null;
           configureAiStrategyWeights(options.strategyWeights, {
-            merge: options.mergeStrategyWeights !== false,
+            merge: mergeStrategyWeights,
+            ...(strategyMergeBase ? { baseWeights: strategyMergeBase } : {}),
           });
         }
         if (options.reset) {
@@ -2896,7 +2904,12 @@
     }
 
     function normalizeAiStrategyWeights(weights = {}, options = {}) {
-      const base = options.merge === false ? AI_STRATEGY_WEIGHT_DEFAULTS : aiStrategyWeights;
+      const explicitBase = options.baseWeights && typeof options.baseWeights === "object"
+        ? options.baseWeights
+        : null;
+      const base = options.merge === false
+        ? (explicitBase || AI_STRATEGY_WEIGHT_DEFAULTS)
+        : (explicitBase || aiStrategyWeights);
       const normalized = {};
       for (const key of AI_STRATEGY_WEIGHT_KEYS) {
         const value = Number(weights?.[key] ?? base[key] ?? AI_STRATEGY_WEIGHT_DEFAULTS[key]);
