@@ -10951,12 +10951,14 @@
       const demand = getAiStrategyDemand(player);
       const rewardValue = scoreAiOrbitRewardValue(planetId, player);
       const directScoreGain = getAiOrbitDirectScoreGain(planetId, player);
+      const taskRouteCashout = getAiPendingPlanetTaskRouteCashout(planetId, player);
       const chongEffect = options.chongEffect || state.pendingLandTargetAction?.effect || getCurrentActionEffect?.() || null;
       const chongBonus = scoreAiChongTravelChoiceBonus(chongEffect, choice, player);
       return 9
         + rewardValue * 0.72
         + directScoreGain * 0.42
         + scoreAiPaceValueForDirectScore(directScoreGain, player, { baseWeight: 0.3, pressureWeight: 0.14 })
+        + Math.min(24, aiNumber(taskRouteCashout.value)) * 0.95 * getAiStrategyWeight("task")
         + scoreAiPlanetMarkerEndGameValue(planetId, player, { markerKind: "orbit" }) * getAiStrategyWeight("final")
         + getAiMapDemand(demand.planetIds, planetId) * 0.65 * getAiStrategyWeight("route")
         + getAiMapDemand(demand.actions, "orbit") * 0.26 * getAiStrategyWeight("orbitLand")
@@ -10973,6 +10975,7 @@
       const energyCost = Math.max(0, aiNumber(choice.energyCost ?? choice.cost?.energy));
       const demand = getAiStrategyDemand(player);
       const planetDemand = getAiMapDemand(demand.planetIds, planetId);
+      const taskRouteCashout = getAiPendingPlanetTaskRouteCashout(planetId, player);
       const satelliteBonus = choice.target?.type === "satellite" ? 2 : 0;
       const yellowTracePenalty = getAiYellowTraceLandCompetitionPenalty(planetId, choice.target, player);
       const deferredTracePenalty = scoreAiDeferredAlienTraceRewardPenalty(rewardEffects, player);
@@ -11005,6 +11008,7 @@
       const chongBonus = scoreAiChongTravelChoiceBonus(chongEffect, choice, player);
       return rewardValue
         + markerValue * getAiStrategyWeight("final")
+        + Math.min(24, aiNumber(taskRouteCashout.value)) * getAiStrategyWeight("task")
         + planetDemand * 0.7 * getAiStrategyWeight("route")
         + getAiMapDemand(demand.actions, "land") * 0.26 * getAiStrategyWeight("orbitLand")
         + satelliteBonus
