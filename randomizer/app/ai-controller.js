@@ -18394,9 +18394,40 @@
 
     function applyAiTurnActionSelectionPressure(candidates = []) {
       const round = getAiRoundNumber();
+      const currentPlayer = getCurrentPlayer();
       const repeatedNegativeResourceCardCorners = countAiRepeatedNegativeResourceCardCornersThisTurn(
-        getCurrentPlayer()?.id,
+        currentPlayer?.id,
       );
+      const playCardCandidate = (candidates || []).find((candidate) => (
+        candidate?.id === "playCard"
+        && candidate.available !== false
+      ));
+      const scanCandidate = (candidates || []).find((candidate) => (
+        candidate?.id === "scan"
+        && candidate.available !== false
+      ));
+      const playCardNet = Number(playCardCandidate?.actionGraph?.net);
+      const scanNet = Number(scanCandidate?.actionGraph?.net);
+      const scanOverTechCardGap = scanNet - playCardNet;
+      const canUseWeakStartTechCardTieBreak = Boolean(
+        round === 2
+        && normalizeAiDifficulty(currentPlayer?.aiDifficulty || aiAutoBattleState.aiDifficulty) === AI_DIFFICULTY_WEAK_START
+        && Math.max(0, aiNumber(currentPlayer?.resources?.publicity)) <= 0
+        && Math.max(0, aiNumber(currentPlayer?.resources?.score)) >= 50
+        && Math.max(0, aiNumber(currentPlayer?.resources?.score)) <= 85
+        && Number.isFinite(playCardNet)
+        && Number.isFinite(scanNet)
+        && playCardNet >= 15
+        && scanNet >= 15
+        && scanOverTechCardGap > 0
+        && scanOverTechCardGap <= 0.45
+        && Math.max(0, aiNumber(scanCandidate?.directScoreGain)) <= 2
+        && (playCardCandidate?.effectTypes || []).some((type) => String(type || "").includes("research_tech"))
+        && playCardCandidate?.plan?.type === "card-synergy"
+      );
+      const weakStartTechCardTieBreakBonus = canUseWeakStartTechCardTieBreak
+        ? Math.min(0.55, scanOverTechCardGap + 0.18)
+        : 0;
       const bestContinuation = (candidates || [])
         .filter((candidate) => (
           candidate?.available !== false
@@ -18459,6 +18490,26 @@
             selectionAdjustment: {
               ...(adjusted.selectionAdjustment || {}),
               quickScoreFloor: Math.round((explicitScore - (Number.isFinite(graphNet) ? graphNet : 0)) * 100) / 100,
+            },
+          };
+        }
+        if (candidate.id === "playCard" && weakStartTechCardTieBreakBonus > 0) {
+          const currentScore = Number.isFinite(explicitScore) ? explicitScore : 0;
+          const currentNet = Number(adjusted.actionGraph?.net);
+          adjusted = {
+            ...adjusted,
+            score: currentScore + weakStartTechCardTieBreakBonus,
+            actionGraph: adjusted.actionGraph
+              ? {
+                ...adjusted.actionGraph,
+                net: roundAiScore((Number.isFinite(currentNet) ? currentNet : currentScore) + weakStartTechCardTieBreakBonus),
+              }
+              : adjusted.actionGraph,
+            selectionAdjustment: {
+              ...(adjusted.selectionAdjustment || {}),
+              weakStartTechCardTieBreak: roundAiScore(weakStartTechCardTieBreakBonus),
+              scanNet: roundAiScore(scanNet),
+              playCardNet: roundAiScore(playCardNet),
             },
           };
         }
