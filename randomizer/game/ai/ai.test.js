@@ -945,6 +945,14 @@ const forcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
 assert.equal(forcedOpening.industry.label, "作弊实验室");
 assert.equal(forcedOpening.openingPlan.summary.hand, 6);
 assert.ok(forcedOpening.openingPlan.topPlans.every((plan) => plan.industryLabel === "作弊实验室"));
+const weakForcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
+  roundNumber: 1,
+  forcedIndustryCard: forcedIndustryOffer.industryOptions[1],
+  aiDifficulty: "weak_start",
+});
+assert.equal(weakForcedOpening.openingPlan.summary.incomeIncreases, 4);
+assert.equal(weakForcedOpening.openingPlan.goals.OPENING_INCOME, 6);
+assert.ok(weakForcedOpening.openingPlan.topPlans.every((plan) => plan.summary.incomeIncreases === 4));
 
 const huanyuOpeningOffer = {
   industryOptions: [{ id: "industry:huanyu.png", label: "寰宇超动力" }],

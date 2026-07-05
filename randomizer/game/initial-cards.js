@@ -786,6 +786,7 @@
     getInitialCardEffect,
     getInitialTurnOrderScore,
     getIndustryEffect,
+    getEffectiveIndustryEffect,
     resolveInitialCardEffect,
     resolveIndustryEffect,
     resolveInitialSelections,

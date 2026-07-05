@@ -1483,9 +1483,13 @@
       const offer = getInitialSelectionOffer(playerId);
       if (!offer || offer.confirmed) return { ok: false, message: "没有可用初始选择" };
       const forcedIndustryCard = getForcedAiIndustryOffer(playerId, offer);
+      const player = getPlayerById(playerId);
+      if (player) applyAiDifficultyToPlayer(player);
       const decision = ai?.policy?.chooseInitialSelection?.(offer, {
         roundNumber: turnState.roundNumber,
         forcedIndustryCard,
+        player,
+        aiDifficulty: player?.aiDifficulty,
       }) || {};
       const industryCard = forcedIndustryCard || decision.industry || offer.industryOptions?.[0] || null;
       const initialSelection = decision.initialCards?.length
@@ -1494,11 +1498,9 @@
       if (!industryCard || initialSelection.length < INITIAL_SELECTION_REQUIRED.initial) {
         return { ok: false, message: "AI 初始选择候选不足" };
       }
-      const player = getPlayerById(playerId);
       const openingPlan = decision.openingPlan || null;
       const aiStyle = inferAiStyleFromOpening(openingPlan, industryCard, player);
       if (player) {
-        applyAiDifficultyToPlayer(player);
         player.aiStyle = aiStyle;
       }
       if (player && openingPlan) {
