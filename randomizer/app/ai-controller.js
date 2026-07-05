@@ -1584,6 +1584,8 @@
         ? getAiIncomeDiscardPreview(player, count, pendingType, incomeGainByIndex, incomePlanningEntries, selectedIndexes)
         : null;
       recordAiAutoBattleLog("discard", `${player.colorLabel}AI 弃牌 ${state.pendingDiscardAction.selectedIndexes.length} 张`, {
+        logPlayerId: player.id || null,
+        logPlayerColor: player.color || null,
         selectedIndexes: state.pendingDiscardAction.selectedIndexes,
         pendingType,
         incomeGainByIndex,
