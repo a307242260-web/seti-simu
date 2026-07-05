@@ -2245,7 +2245,7 @@
       playEffects: Object.freeze([
         cardMoveEffect("dlc6-move", "1移动"),
         cardLandEffect("dlc6-land", "登陆"),
-        landingSectorScanEffect("dlc6-landing-sector-scan", "刚登陆星球所在扇区标记信号", { gainData: false }),
+        landingSectorScanEffect("dlc6-landing-sector-scan", "刚登陆星球所在扇区扫描"),
       ]),
     }),
     "dlc_7.png": withSource("dlc_7.png", {
