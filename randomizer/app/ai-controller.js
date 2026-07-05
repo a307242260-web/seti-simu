@@ -6341,6 +6341,19 @@
       const analyzeCheck = canAiAnalyzeData(simulatedPlayer);
       const currentAnalyzeScore = currentAnalyzeCheck?.ok ? scoreAiAnalyzeAction(player) : 0;
       const analyzeScore = analyzeCheck?.ok ? scoreAiAnalyzeAction(simulatedPlayer) : 0;
+      const activeRocketCount = rocketActions.getRocketsForPlayer
+        ? rocketActions.getRocketsForPlayer(rocketState, player.id).length
+        : 0;
+      const rocketLimit = abilities.rocket?.getRocketLimitForPlayer
+        ? abilities.rocket.getRocketLimitForPlayer(player, createActionContext())
+        : activeRocketCount;
+      const canLaunchAfterTrade = activeRocketCount < rocketLimit
+        && players.canAfford(simulatedPlayer, getAiLaunchPaymentCost());
+      const postTradeLaunchPlan = canLaunchAfterTrade ? scoreAiPostLaunchMovePlan(simulatedPlayer) : null;
+      const launchScore = canLaunchAfterTrade
+        ? scoreAiLaunchAction(simulatedPlayer)
+          + applyAiStrategyWeight(Math.max(0, aiNumber(postTradeLaunchPlan?.score)), "move", 0.45)
+        : 0;
       const currentScanCheck = scanEffects?.canExecuteScan?.(player, { standardAction: true }) || { ok: false };
       const scanCheck = scanEffects?.canExecuteScan?.(simulatedPlayer, { standardAction: true }) || { ok: false };
       const currentScanScore = currentScanCheck.ok ? scoreAiScanAction(player) : 0;
@@ -6440,6 +6453,25 @@
           }
           : null,
       ].filter(Boolean).sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
+      if (
+        tradeId === "cards-for-credit"
+        && canLaunchAfterTrade
+        && getAiRoundNumber() <= 2
+        && currentScore >= 45
+        && currentScore < 70
+        && handAfterTrade <= 0
+        && launchScore >= 18
+      ) {
+        postTradeMainActions.push({
+          actionId: "launch",
+          score: launchScore,
+          currentScore: 0,
+          directScoreGain: 0,
+          concreteValue: Math.max(0, aiNumber(postTradeLaunchPlan?.score), launchScore * 0.35),
+          planScore: Math.max(0, aiNumber(postTradeLaunchPlan?.score)),
+        });
+        postTradeMainActions.sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
+      }
       const bestAction = postTradeMainActions[0] || null;
       if (!bestAction) return null;
       const minPostTradeScore = bestAction.actionId === "scan"
@@ -6452,9 +6484,18 @@
         )
         : bestAction.actionId === "playCard"
           ? 17
-          : getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 16 : 18;
+          : bestAction.actionId === "launch"
+            ? 18
+            : getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 16 : 18;
       if (aiNumber(bestAction.score) < minPostTradeScore) return null;
-      if (handAfterTrade <= 0 && aiNumber(bestAction.score) < 35) return null;
+      const launchUnlockSafe = bestAction.actionId === "launch"
+        && tradeId === "cards-for-credit"
+        && getAiRoundNumber() <= 2
+        && currentScore >= 45
+        && currentScore < 70
+        && handCost >= 2
+        && aiNumber(bestAction.score) >= 18;
+      if (handAfterTrade <= 0 && aiNumber(bestAction.score) < 35 && !launchUnlockSafe) return null;
 
       const discardCost = bestAction.actionId === "playCard" && Number.isFinite(bestAction.discardCost)
         ? bestAction.discardCost
@@ -6486,6 +6527,9 @@
       const playBonus = bestAction.actionId === "playCard"
         ? Math.min(5, 1.2 + Math.max(0, bestAction.concreteValue) * 0.18)
         : 0;
+      const launchBonus = bestAction.actionId === "launch"
+        ? Math.min(4, 1.1 + Math.max(0, bestAction.planScore) * 0.16)
+        : 0;
       const handBufferBonus = handAfterTrade >= 1 ? 1.5 : 0;
       const score = bestAction.score * 0.52
         + bestAction.directScoreGain * 0.7
@@ -6493,12 +6537,13 @@
         + analyzeBonus
         + scanBonus
         + playBonus
+        + launchBonus
         + handBufferBonus
         - discardCost * 0.34;
       if (score < 7) return null;
       const reason = bestAction.actionId === "analyze"
         ? (handCost > 0 ? "资源锁：弃牌换能量解锁分析" : "资源锁：信用点换能量解锁分析")
-        : `资源锁：交易解锁${bestAction.actionId === "scan" ? "扫描" : "打牌"}`;
+        : `资源锁：交易解锁${bestAction.actionId === "scan" ? "扫描" : bestAction.actionId === "launch" ? "发射" : "打牌"}`;
       return {
         id: "quickTrade",
         kind: "quick",
@@ -6529,6 +6574,7 @@
           analyzeBonus,
           scanBonus: roundAiScore(scanBonus),
           playBonus: roundAiScore(playBonus),
+          launchBonus: roundAiScore(launchBonus),
           earlyLowScoreScanUnlock,
           directScoreScanUnlock,
           bestExistingScore: Number.isFinite(bestExistingScore) ? roundAiScore(bestExistingScore) : null,
