@@ -7030,6 +7030,7 @@
       const bestPublicTradeCard = rankedPublicTradeCards[0] || null;
       const bestPublicTradeCardScore = bestPublicTradeCard ? aiNumber(bestPublicTradeCard.score) : 0;
       const bestPublicTradeCardProfile = getAiPublicPickConcreteProfile(bestPublicTradeCard?.card, player);
+      const bestPublicTradeCardDirectScore = Math.max(0, aiNumber(bestPublicTradeCardProfile.directScoreGain));
       const usefulPublicTradeThreshold = recoveryThreshold && recoveryThreshold <= 50 && scoreToNextThreshold <= 3 ? 8 : 4;
       const hasUsefulPublicTradeCard = bestPublicTradeCardScore >= usefulPublicTradeThreshold;
       const finalLowHandPublicRefill = finalLowHandRefillWindow && (
@@ -7055,13 +7056,29 @@
       const finalPreMainCashoutPublicRefill = finalPreMainCashoutHandRefillWindow
         && bestPublicTradeCardScore >= 12
         && bestPublicTradeCardProfile.hasConcreteSignal;
+      const finalPreMainSecondCashoutPublicRefill = !finalPreMainCashoutPublicRefill
+        && getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && mainActionOpen
+        && !state.pendingActionExecuted
+        && finalMarks >= 3
+        && !recoveryThreshold
+        && handSize === 1
+        && publicity >= 6
+        && highScorePushProfile.projectedScore >= 230
+        && highScoreProjectedAfterImmediateMain >= 260
+        && highScoreProjectedAfterImmediateMain < 330
+        && bestImmediateMainCashoutDirectScore >= 20
+        && bestImmediateMainCashoutScore >= 35
+        && bestPublicTradeCardScore >= 45
+        && bestPublicTradeCardDirectScore >= Math.max(20, bestImmediateMainCashoutDirectScore - 2)
+        && bestPublicTradeCardProfile.hasConcreteSignal;
       const finalHighScoreRefillValue = finalHighScorePublicRefill
         ? 8
           + Math.max(0, 18 - highScoreGapTo300) * 0.45
           + Math.min(9, bestPublicTradeCardScore * 0.32)
           + Math.min(4, highScorePushProfile.strength * 2)
         : 0;
-      const preMainCashoutRefillValue = finalPreMainCashoutPublicRefill
+      const preMainCashoutRefillValue = (finalPreMainCashoutPublicRefill || finalPreMainSecondCashoutPublicRefill)
         ? 10
           + Math.min(8, bestPublicTradeCardScore * 0.28)
           + Math.min(12, bestImmediateMainCashoutScore * 0.18)
@@ -7348,6 +7365,7 @@
             || finalLowStaleHandPublicRefill
             || finalHighScorePublicRefill
             || finalPreMainCashoutPublicRefill
+            || finalPreMainSecondCashoutPublicRefill
             || secondMarkCardSearch
             || closeSecondMarkCardSearch
           ),
@@ -7373,9 +7391,9 @@
                 ? "终局资源断档：宣传精选找可打牌"
                 : finalHighScorePublicRefill
                   ? "高分冲刺：宣传精选找最后得分牌"
-                  : finalPreMainCashoutPublicRefill
+                  : (finalPreMainCashoutPublicRefill || finalPreMainSecondCashoutPublicRefill)
                     ? "高分冲刺：主行动前精选找后续得分牌"
-                  : "后期落后：宣传换牌恢复行动",
+                    : "后期落后：宣传换牌恢复行动",
         },
       ];
 
@@ -7427,6 +7445,7 @@
               finalHighScoreRefillValue: roundAiScore(finalHighScoreRefillValue),
               finalPreMainCashoutHandRefillWindow,
               finalPreMainCashoutPublicRefill,
+              finalPreMainSecondCashoutPublicRefill,
               preMainCashoutRefillValue: roundAiScore(preMainCashoutRefillValue),
               bestImmediateMainCashout: bestImmediateMainCashout ? {
                 id: bestImmediateMainCashout.id || null,
