@@ -179,6 +179,7 @@
   const HISTORY_SOURCE_QUICK = "quick";
   const HISTORY_SOURCE_SETUP = "setup";
   const ACTION_BRIEFING_MAX_ITEMS = 3;
+  const ACTION_BRIEFING_MAX_CYCLES = 8;
   const ACTION_BRIEFING_MAIN_ACTION_TYPES = new Set([
     "launch",
     "orbit",
@@ -2654,6 +2655,7 @@
       entryId: entry.id,
       roundNumber: entry.roundNumber,
       turnNumber: entry.turnNumber,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber,
       playerId: entry.playerId,
       playerLabel: player?.colorLabel || entry.playerLabel || getPlayerLabelById(entry.playerId) || "电脑玩家",
       playerColor: player?.color || null,
@@ -2665,15 +2667,45 @@
     };
   }
 
+  function getActionBriefingCycleKey(roundNumber, turnNumber) {
+    return `${roundNumber ?? ""}:${turnNumber ?? ""}`;
+  }
+
+  function getActionBriefingItemCycleKey(item) {
+    return getActionBriefingCycleKey(item?.roundNumber, item?.turnNumber);
+  }
+
+  function getActionBriefingPlayerKey(item) {
+    return item?.playerId || item?.playerColor || item?.playerLabel || "";
+  }
+
+  function pruneActionBriefingHistory() {
+    const cycleKeys = [];
+    for (const item of actionBriefingState.aiMainActions) {
+      const cycleKey = getActionBriefingItemCycleKey(item);
+      if (cycleKey && !cycleKeys.includes(cycleKey)) cycleKeys.push(cycleKey);
+    }
+    if (cycleKeys.length <= ACTION_BRIEFING_MAX_CYCLES) return;
+    const keepCycleKeys = new Set(cycleKeys.slice(-ACTION_BRIEFING_MAX_CYCLES));
+    actionBriefingState.aiMainActions = actionBriefingState.aiMainActions
+      .filter((item) => keepCycleKeys.has(getActionBriefingItemCycleKey(item)));
+  }
+
   function rememberActionBriefingEntry(entry) {
     const item = createActionBriefingItemFromEntry(entry);
     if (!item) return null;
+    const cycleKey = getActionBriefingItemCycleKey(item);
+    const playerKey = getActionBriefingPlayerKey(item);
     actionBriefingState.aiMainActions = actionBriefingState.aiMainActions
-      .filter((existing) => existing.entryId !== item.entryId);
+      .filter((existing) => {
+        if (existing.entryId === item.entryId) return false;
+        return !(
+          getActionBriefingItemCycleKey(existing) === cycleKey
+          && getActionBriefingPlayerKey(existing) === playerKey
+        );
+      });
     actionBriefingState.aiMainActions.push(item);
-    if (actionBriefingState.aiMainActions.length > ACTION_BRIEFING_MAX_ITEMS) {
-      actionBriefingState.aiMainActions = actionBriefingState.aiMainActions.slice(-ACTION_BRIEFING_MAX_ITEMS);
-    }
+    pruneActionBriefingHistory();
     return item;
   }
 
@@ -2768,9 +2800,30 @@
     if (!advanceResult?.completedActionCycle) return [];
     const roundNumber = advanceResult.completedActionCycleRoundNumber;
     const turnNumber = advanceResult.completedActionCycleTurnNumber;
-    return actionBriefingState.aiMainActions
-      .filter((item) => item.roundNumber === roundNumber && item.turnNumber === turnNumber)
-      .slice(-ACTION_BRIEFING_MAX_ITEMS);
+    const cycleKey = getActionBriefingCycleKey(roundNumber, turnNumber);
+    const latestByPlayerKey = new Map();
+    for (const item of actionBriefingState.aiMainActions) {
+      if (getActionBriefingItemCycleKey(item) !== cycleKey) continue;
+      const playerKey = getActionBriefingPlayerKey(item);
+      if (!playerKey) continue;
+      latestByPlayerKey.set(playerKey, item);
+    }
+
+    const orderedItems = [];
+    for (const playerId of advanceResult.completedActionCyclePlayerIds || []) {
+      const player = getPlayerById(playerId);
+      const playerKey = getActionBriefingPlayerKey({
+        playerId,
+        playerColor: player?.color || null,
+        playerLabel: player?.colorLabel || null,
+      });
+      if (!playerKey || !latestByPlayerKey.has(playerKey)) continue;
+      orderedItems.push(latestByPlayerKey.get(playerKey));
+      latestByPlayerKey.delete(playerKey);
+    }
+
+    return [...orderedItems, ...latestByPlayerKey.values()]
+      .slice(0, ACTION_BRIEFING_MAX_ITEMS);
   }
 
   function maybeOpenActionBriefingForCompletedCycle(advanceResult) {
