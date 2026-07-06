@@ -1314,8 +1314,16 @@
           applyAiStrategyTuning(options.strategyTuning);
         }
         if (options.strategyWeights) {
+          const strategyDifficulty = normalizeAiDifficulty(options.aiDifficulty || aiAutoBattleState.aiDifficulty);
+          const mergeStrategyWeights = options.mergeStrategyWeights !== false;
+          const strategyMergeBase = mergeStrategyWeights
+            && aiStrategyWeightsUseDifficultyDefaults
+            && strategyDifficulty === AI_DIFFICULTY_WEAK_START
+              ? AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS
+              : null;
           configureAiStrategyWeights(options.strategyWeights, {
-            merge: options.mergeStrategyWeights !== false,
+            merge: mergeStrategyWeights,
+            ...(strategyMergeBase ? { baseWeights: strategyMergeBase } : {}),
           });
         }
         if (options.reset) {
@@ -1475,9 +1483,13 @@
       const offer = getInitialSelectionOffer(playerId);
       if (!offer || offer.confirmed) return { ok: false, message: "没有可用初始选择" };
       const forcedIndustryCard = getForcedAiIndustryOffer(playerId, offer);
+      const player = getPlayerById(playerId);
+      if (player) applyAiDifficultyToPlayer(player);
       const decision = ai?.policy?.chooseInitialSelection?.(offer, {
         roundNumber: turnState.roundNumber,
         forcedIndustryCard,
+        player,
+        aiDifficulty: player?.aiDifficulty,
       }) || {};
       const industryCard = forcedIndustryCard || decision.industry || offer.industryOptions?.[0] || null;
       const initialSelection = decision.initialCards?.length
@@ -1486,11 +1498,9 @@
       if (!industryCard || initialSelection.length < INITIAL_SELECTION_REQUIRED.initial) {
         return { ok: false, message: "AI 初始选择候选不足" };
       }
-      const player = getPlayerById(playerId);
       const openingPlan = decision.openingPlan || null;
       const aiStyle = inferAiStyleFromOpening(openingPlan, industryCard, player);
       if (player) {
-        applyAiDifficultyToPlayer(player);
         player.aiStyle = aiStyle;
       }
       if (player && openingPlan) {
@@ -1576,6 +1586,8 @@
         ? getAiIncomeDiscardPreview(player, count, pendingType, incomeGainByIndex, incomePlanningEntries, selectedIndexes)
         : null;
       recordAiAutoBattleLog("discard", `${player.colorLabel}AI 弃牌 ${state.pendingDiscardAction.selectedIndexes.length} 张`, {
+        logPlayerId: player.id || null,
+        logPlayerColor: player.color || null,
         selectedIndexes: state.pendingDiscardAction.selectedIndexes,
         pendingType,
         incomeGainByIndex,
@@ -2896,7 +2908,12 @@
     }
 
     function normalizeAiStrategyWeights(weights = {}, options = {}) {
-      const base = options.merge === false ? AI_STRATEGY_WEIGHT_DEFAULTS : aiStrategyWeights;
+      const explicitBase = options.baseWeights && typeof options.baseWeights === "object"
+        ? options.baseWeights
+        : null;
+      const base = options.merge === false
+        ? (explicitBase || AI_STRATEGY_WEIGHT_DEFAULTS)
+        : (explicitBase || aiStrategyWeights);
       const normalized = {};
       for (const key of AI_STRATEGY_WEIGHT_KEYS) {
         const value = Number(weights?.[key] ?? base[key] ?? AI_STRATEGY_WEIGHT_DEFAULTS[key]);
@@ -5885,8 +5902,18 @@
         ? null
         : Number(preserveHandIndex);
       const preservedIndex = Number.isInteger(explicitPreserveHandIndex) ? explicitPreserveHandIndex : null;
-      const costEntries = buildAiTradeDiscardCostEntries(player, preservedIndex);
-      const selectedEntries = costEntries.slice(0, handCost);
+      const tradeId = options.tradeId || trade.id || null;
+      const costEntries = buildAiTradeDiscardCostEntries(player, null);
+      const costEntryByIndex = new Map(costEntries.map((entry) => [Number(entry.handIndex), entry]));
+      const executionIndexes = tradeId && handCost > 0
+        ? chooseAiTradeDiscardIndexes(player, handCost, { tradeId, preserveHandIndex: preservedIndex }) || []
+        : [];
+      const selectedEntries = tradeId
+        ? executionIndexes
+          .slice(0, handCost)
+          .map((index) => costEntryByIndex.get(Number(index)))
+          .filter(Boolean)
+        : buildAiTradeDiscardCostEntries(player, preservedIndex).slice(0, handCost);
       const hasEnoughCards = selectedEntries.length >= handCost;
       const totalCost = hasEnoughCards
         ? resourceCostValue + selectedEntries.reduce((total, entry) => total + Math.max(0, aiNumber(entry.opportunityCost)), 0)
@@ -5906,11 +5933,6 @@
       };
 
       if (options.includeExecutionPlan && handCost > 0) {
-        const tradeId = options.tradeId || trade.id || null;
-        const executionIndexes = tradeId
-          ? chooseAiTradeDiscardIndexes(player, handCost, { tradeId, preserveHandIndex: preservedIndex }) || []
-          : [];
-        const costEntryByIndex = new Map(costEntries.map((entry) => [Number(entry.handIndex), entry]));
         const selectedIndexSet = new Set(selectedEntries.map((entry) => Number(entry.handIndex)));
         plan.executionSelectedIndexes = executionIndexes.slice(0, handCost).map((index) => Number(index));
         plan.executionSelectedCards = plan.executionSelectedIndexes
@@ -10934,12 +10956,14 @@
       const demand = getAiStrategyDemand(player);
       const rewardValue = scoreAiOrbitRewardValue(planetId, player);
       const directScoreGain = getAiOrbitDirectScoreGain(planetId, player);
+      const taskRouteCashout = getAiPendingPlanetTaskRouteCashout(planetId, player);
       const chongEffect = options.chongEffect || state.pendingLandTargetAction?.effect || getCurrentActionEffect?.() || null;
       const chongBonus = scoreAiChongTravelChoiceBonus(chongEffect, choice, player);
       return 9
         + rewardValue * 0.72
         + directScoreGain * 0.42
         + scoreAiPaceValueForDirectScore(directScoreGain, player, { baseWeight: 0.3, pressureWeight: 0.14 })
+        + Math.min(24, aiNumber(taskRouteCashout.value)) * 0.95 * getAiStrategyWeight("task")
         + scoreAiPlanetMarkerEndGameValue(planetId, player, { markerKind: "orbit" }) * getAiStrategyWeight("final")
         + getAiMapDemand(demand.planetIds, planetId) * 0.65 * getAiStrategyWeight("route")
         + getAiMapDemand(demand.actions, "orbit") * 0.26 * getAiStrategyWeight("orbitLand")
@@ -10956,6 +10980,7 @@
       const energyCost = Math.max(0, aiNumber(choice.energyCost ?? choice.cost?.energy));
       const demand = getAiStrategyDemand(player);
       const planetDemand = getAiMapDemand(demand.planetIds, planetId);
+      const taskRouteCashout = getAiPendingPlanetTaskRouteCashout(planetId, player);
       const satelliteBonus = choice.target?.type === "satellite" ? 2 : 0;
       const yellowTracePenalty = getAiYellowTraceLandCompetitionPenalty(planetId, choice.target, player);
       const deferredTracePenalty = scoreAiDeferredAlienTraceRewardPenalty(rewardEffects, player);
@@ -10988,6 +11013,7 @@
       const chongBonus = scoreAiChongTravelChoiceBonus(chongEffect, choice, player);
       return rewardValue
         + markerValue * getAiStrategyWeight("final")
+        + Math.min(24, aiNumber(taskRouteCashout.value)) * getAiStrategyWeight("task")
         + planetDemand * 0.7 * getAiStrategyWeight("route")
         + getAiMapDemand(demand.actions, "land") * 0.26 * getAiStrategyWeight("orbitLand")
         + satelliteBonus
@@ -18377,9 +18403,40 @@
 
     function applyAiTurnActionSelectionPressure(candidates = []) {
       const round = getAiRoundNumber();
+      const currentPlayer = getCurrentPlayer();
       const repeatedNegativeResourceCardCorners = countAiRepeatedNegativeResourceCardCornersThisTurn(
-        getCurrentPlayer()?.id,
+        currentPlayer?.id,
       );
+      const playCardCandidate = (candidates || []).find((candidate) => (
+        candidate?.id === "playCard"
+        && candidate.available !== false
+      ));
+      const scanCandidate = (candidates || []).find((candidate) => (
+        candidate?.id === "scan"
+        && candidate.available !== false
+      ));
+      const playCardNet = Number(playCardCandidate?.actionGraph?.net);
+      const scanNet = Number(scanCandidate?.actionGraph?.net);
+      const scanOverTechCardGap = scanNet - playCardNet;
+      const canUseWeakStartTechCardTieBreak = Boolean(
+        round === 2
+        && normalizeAiDifficulty(currentPlayer?.aiDifficulty || aiAutoBattleState.aiDifficulty) === AI_DIFFICULTY_WEAK_START
+        && Math.max(0, aiNumber(currentPlayer?.resources?.publicity)) <= 0
+        && Math.max(0, aiNumber(currentPlayer?.resources?.score)) >= 50
+        && Math.max(0, aiNumber(currentPlayer?.resources?.score)) <= 85
+        && Number.isFinite(playCardNet)
+        && Number.isFinite(scanNet)
+        && playCardNet >= 15
+        && scanNet >= 15
+        && scanOverTechCardGap > 0
+        && scanOverTechCardGap <= 0.45
+        && Math.max(0, aiNumber(scanCandidate?.directScoreGain)) <= 2
+        && (playCardCandidate?.effectTypes || []).some((type) => String(type || "").includes("research_tech"))
+        && playCardCandidate?.plan?.type === "card-synergy"
+      );
+      const weakStartTechCardTieBreakBonus = canUseWeakStartTechCardTieBreak
+        ? Math.min(0.55, scanOverTechCardGap + 0.18)
+        : 0;
       const bestContinuation = (candidates || [])
         .filter((candidate) => (
           candidate?.available !== false
@@ -18442,6 +18499,26 @@
             selectionAdjustment: {
               ...(adjusted.selectionAdjustment || {}),
               quickScoreFloor: Math.round((explicitScore - (Number.isFinite(graphNet) ? graphNet : 0)) * 100) / 100,
+            },
+          };
+        }
+        if (candidate.id === "playCard" && weakStartTechCardTieBreakBonus > 0) {
+          const currentScore = Number.isFinite(explicitScore) ? explicitScore : 0;
+          const currentNet = Number(adjusted.actionGraph?.net);
+          adjusted = {
+            ...adjusted,
+            score: currentScore + weakStartTechCardTieBreakBonus,
+            actionGraph: adjusted.actionGraph
+              ? {
+                ...adjusted.actionGraph,
+                net: roundAiScore((Number.isFinite(currentNet) ? currentNet : currentScore) + weakStartTechCardTieBreakBonus),
+              }
+              : adjusted.actionGraph,
+            selectionAdjustment: {
+              ...(adjusted.selectionAdjustment || {}),
+              weakStartTechCardTieBreak: roundAiScore(weakStartTechCardTieBreakBonus),
+              scanNet: roundAiScore(scanNet),
+              playCardNet: roundAiScore(playCardNet),
             },
           };
         }

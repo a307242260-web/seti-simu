@@ -151,9 +151,17 @@
     goals[id] = (goals[id] || 0) + Math.max(0, Number(amount) || 0);
   }
 
-  function getOpeningEffects(industry, initialPair = []) {
+  function getOpeningIndustryEffect(industry, options = {}) {
+    const player = options.player || (options.aiDifficulty ? { aiDifficulty: options.aiDifficulty } : null);
+    if (player && initialCards?.getEffectiveIndustryEffect) {
+      return initialCards.getEffectiveIndustryEffect(industry, player);
+    }
+    return initialCards?.getIndustryEffect?.(industry);
+  }
+
+  function getOpeningEffects(industry, initialPair = [], options = {}) {
     const effects = [];
-    const industryEffect = initialCards?.getIndustryEffect?.(industry);
+    const industryEffect = getOpeningIndustryEffect(industry, options);
     if (industryEffect) effects.push({ source: "industry", effect: industryEffect });
     for (const card of initialPair) {
       const effect = initialCards?.getInitialCardEffect?.(initialCards.getInitialCardNumber?.(card) || card);
@@ -162,8 +170,14 @@
     return effects;
   }
 
+  function getWeakStartCheatLabOpeningIncomePressure(industry, options = {}) {
+    const difficulty = String(options.aiDifficulty || options.player?.aiDifficulty || "");
+    const label = String(industry?.label || industry?.id || "");
+    return difficulty === "weak_start" && label.includes("作弊实验室") ? 1 : 0;
+  }
+
   function scoreOpeningCombination(industry, initialPair = [], options = {}) {
-    const effects = getOpeningEffects(industry, initialPair);
+    const effects = getOpeningEffects(industry, initialPair, options);
     const goals = {};
     let score = evaluator.evaluateIndustryCard(industry, options);
     for (const card of initialPair) {
@@ -219,7 +233,10 @@
     if (combined.scan >= 2) addOpeningGoal(goals, "GRAB_TRACE_PINK", combined.scan);
     if (combined.data >= 1 || combined.scan >= 2) addOpeningGoal(goals, "GRAB_TRACE_BLUE", combined.data + combined.scan * 0.35);
     if (combined.traces || combined.orbits) addOpeningGoal(goals, "GRAB_TRACE_YELLOW", combined.traces + combined.orbits * 0.35);
-    if (combined.incomeIncreases >= 2 || combined.credits >= 3) addOpeningGoal(goals, "OPENING_INCOME", combined.incomeIncreases + combined.credits * 0.25);
+    const weakStartIncomePressure = getWeakStartCheatLabOpeningIncomePressure(industry, options);
+    if (combined.incomeIncreases >= 2 || combined.credits >= 3) {
+      addOpeningGoal(goals, "OPENING_INCOME", combined.incomeIncreases + combined.credits * 0.25 + weakStartIncomePressure);
+    }
 
     return {
       score,

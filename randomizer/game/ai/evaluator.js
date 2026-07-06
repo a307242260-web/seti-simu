@@ -69,8 +69,16 @@
     return getResourceValue(income, options.resourceValues) * getRemainingIncomeMultiplier(options.roundNumber);
   }
 
+  function getIndustryEffectForEvaluation(cardOrLabel, options = {}) {
+    const player = options.player || (options.aiDifficulty ? { aiDifficulty: options.aiDifficulty } : null);
+    if (player && initialCards?.getEffectiveIndustryEffect) {
+      return initialCards.getEffectiveIndustryEffect(cardOrLabel, player);
+    }
+    return initialCards?.getIndustryEffect?.(cardOrLabel);
+  }
+
   function evaluateIndustryCard(cardOrLabel, options = {}) {
-    const effect = initialCards?.getIndustryEffect?.(cardOrLabel);
+    const effect = getIndustryEffectForEvaluation(cardOrLabel, options);
     if (!effect) return 0;
     const incomeValue = getIncomeValue(effect.baseIncome, options);
     const resourceValue = getResourceValue(effect.resources, options.resourceValues);
