@@ -270,7 +270,9 @@
   function getUnlockCount(alienState, player) {
     const key = getPlayerKey(player);
     if (!key) return 0;
-    return Number(alienState?.fangzhou?.unlockCountByPlayerId?.[key]) || 0;
+    const indexedCount = Number(alienState?.fangzhou?.unlockCountByPlayerId?.[key]) || 0;
+    const playerStateCount = Number(alienState?.fangzhou?.playerCard2ById?.[key]?.unlockCount) || 0;
+    return Math.max(0, indexedCount, playerStateCount);
   }
 
   function canPlaceFangzhouTrace(alienState, alienSlotId, traceType, position, player) {

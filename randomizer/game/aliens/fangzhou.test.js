@@ -78,10 +78,14 @@ lockedState.fangzhou.revealedSlotId = 2;
 lockedState.fangzhou.revealInitialized = true;
 fangzhou.dealPlayerCard2(lockedState, white, () => 0);
 fangzhou.ensureTraceGrid(lockedState, 2);
+assert.equal(fangzhou.getUnlockCount(lockedState, white), 0);
 const locked = fangzhou.canPlaceFangzhouTrace(lockedState, 2, "pink", 2, white);
 assert.equal(locked.ok, false);
 
 fangzhou.unlockCard2(lockedState, white, "pink");
+assert.equal(fangzhou.getUnlockCount(lockedState, white), 1);
+delete lockedState.fangzhou.unlockCountByPlayerId.white;
+assert.equal(fangzhou.getUnlockCount(lockedState, white), 1);
 const reserved = fangzhou.getPlayerCard2Reserved(lockedState, white);
 assert.equal(reserved.find((card) => card.traceType === "pink"), undefined);
 assert.equal(fangzhou.canUnlockCard2ForTrace(lockedState, white, "pink"), false);

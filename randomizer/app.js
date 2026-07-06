@@ -20894,7 +20894,7 @@
       choices.push({
         destination: "panel",
         label: "放到外星人面板",
-        description: "随后点击 state 或正面牌图上的可放置痕迹位",
+        description: "随后点击 state 或正面牌图；state额外位会自动解锁同色方舟牌",
       });
     }
     if (unlockableTraceTypes.length === 1) {
@@ -21083,17 +21083,17 @@
     if (els.alienTraceSubtitle) {
       els.alienTraceSubtitle.textContent = (
         `当前玩家：${currentPlayer.colorLabel}。${traceLabel}外星人痕迹：`
-        + "选择放置到方舟正面，或追加到 state 额外位并解锁对应卡牌。"
+        + "选择放置到方舟正面，或追加到 state 额外位并自动解锁对应卡牌。"
       );
     }
 
     const choices = [];
     if (canPlace) {
       const placeDescription = placeTarget?.kind === "state"
-        ? "追加到 state 额外痕迹位"
+        ? "追加到 state 额外痕迹位，并自动解锁同色方舟牌"
         : placeTarget?.kind === "fangzhou-trace"
           ? "放置到已点击的方舟正面位置"
-          : "在方舟正面或 state 额外位选择痕迹位并结算放置奖励";
+          : "在方舟正面或 state 额外位选择痕迹位；state额外位会自动解锁同色方舟牌";
       choices.push({
         alienSlotId,
         traceType,
@@ -21232,9 +21232,7 @@
       renderStateReadout();
       return stateTraceResult;
     }
-    if (unlockResult.handCard) {
-      currentPlayer.hand.push(unlockResult.handCard);
-    }
+    addFangzhouUnlockedCardToHand(currentPlayer, unlockResult.handCard);
 
     const stateTraceReward = applyFangzhouUnlockStateTraceReward(alienSlotId, currentPlayer, traceType, stateTraceResult);
     rocketState.statusNote = [
@@ -24821,6 +24819,33 @@
     };
   }
 
+  function addFangzhouUnlockedCardToHand(player, handCard) {
+    if (!player || !handCard) return false;
+    if (!Array.isArray(player.hand)) player.hand = [];
+    player.hand.push(handCard);
+    if (player.resources) player.resources.handSize = player.hand.length;
+    return true;
+  }
+
+  function maybeUnlockFangzhouCardForStateExtraTrace(alienSlotId, traceType, player, placementResult) {
+    if (!placementResult?.ok || !placementResult.extraOnly) return null;
+    if (!fangzhou?.isFangzhouRevealedSlot?.(alienGameState, alienSlotId)) return null;
+    if (!fangzhou.canUnlockCard2ForTrace?.(alienGameState, player, traceType)) return null;
+
+    const unlockResult = fangzhou.unlockCard2(alienGameState, player, traceType);
+    if (unlockResult.ok) {
+      addFangzhouUnlockedCardToHand(player, unlockResult.handCard);
+    }
+    return {
+      kind: "fangzhouStateExtraUnlock",
+      ok: Boolean(unlockResult.ok),
+      traceType,
+      unlockCount: unlockResult.unlockCount || null,
+      cardId: unlockResult.handCard?.cardId || null,
+      message: unlockResult.message,
+    };
+  }
+
   function applyAlienTraceAfterReward(pending, player, traceType) {
     const reward = pending?.afterTraceReward;
     if (!reward || reward.kind !== "traceCountScore") return null;
@@ -24876,6 +24901,9 @@
     const stateExtraTraceReward = result.ok
       ? applyAlienStateExtraTraceReward(alienSlotId, traceType, currentPlayer, result)
       : null;
+    const fangzhouStateExtraUnlock = result.ok
+      ? maybeUnlockFangzhouCardForStateExtraTrace(alienSlotId, traceType, currentPlayer, result)
+      : null;
     const revealResult = maybeRevealAlienAfterTrace(alienSlotId, result, { immediate: inDebugMode });
     const immediateRevealResult = revealResult?.delayed ? null : revealResult;
     const revealIrreversibleReason = immediateRevealResult?.ok
@@ -24887,6 +24915,7 @@
       result.message,
       firstTraceReward?.message || null,
       stateExtraTraceReward?.message || null,
+      fangzhouStateExtraUnlock?.message || null,
       revealSideEffect?.message || revealResult?.message || null,
     ].filter(Boolean).join("；");
     const traceEvents = result.ok && !inDebugMode
@@ -24917,7 +24946,7 @@
           irreversible: revealIrreversible,
           message: rocketState.statusNote,
           events: traceEvents,
-          payload: { alienSlotId, traceType, revealed: immediateRevealResult || null, revealPending: revealResult?.delayed || false, firstTraceReward, stateExtraTraceReward, afterReward },
+          payload: { alienSlotId, traceType, revealed: immediateRevealResult || null, revealPending: revealResult?.delayed || false, firstTraceReward, stateExtraTraceReward, fangzhouStateExtraUnlock, afterReward },
         };
       }
       completeCurrentActionEffect();
@@ -28361,6 +28390,26 @@
     );
   }
 
+  function shouldShowFangzhouUnlockStats() {
+    return Boolean(fangzhou && alienGameState.fangzhou?.revealInitialized);
+  }
+
+  function getPlayerFangzhouUnlockCount(player) {
+    const count = Number(fangzhou?.getUnlockCount?.(alienGameState, player)) || 0;
+    return Math.min(3, Math.max(0, Math.round(count)));
+  }
+
+  function buildPlayerFangzhouStatNodes(player) {
+    if (!shouldShowFangzhouUnlockStats()) return [];
+    const label = document.createElement("span");
+    label.className = "player-stat player-stat-fangzhou-label";
+    label.textContent = "方舟";
+    return [
+      label,
+      createStatText("🔒", `${getPlayerFangzhouUnlockCount(player)}/3`),
+    ];
+  }
+
   function buildPlayerResourceStatNodes(player, options = {}) {
     const resources = player.resources || players.DEFAULT_RESOURCES;
     const limits = players.RESOURCE_LIMITS;
@@ -31516,9 +31565,14 @@
       ...buildPlayerIncomeStatNodes(currentPlayer, { showBasePlusIncrease: true }),
     ];
     const runezuStats = buildPlayerRunezuStatNodes(currentPlayer);
+    const fangzhouStats = buildPlayerFangzhouStatNodes(currentPlayer);
     const statRows = [
       createPlayerStatsRow("player-stats-main-row", mainStats),
     ];
+
+    if (fangzhouStats.length) {
+      statRows.push(createPlayerStatsRow("player-stats-fangzhou-row", fangzhouStats));
+    }
 
     if (runezuStats.length) {
       const label = document.createElement("span");

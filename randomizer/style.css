@@ -2039,7 +2039,8 @@ body {
   gap: 6px 10px;
 }
 
-.player-stats-runezu-row {
+.player-stats-runezu-row,
+.player-stats-fangzhou-row {
   padding-top: 4px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -2076,6 +2077,11 @@ body {
 
 .player-stat-runezu-label {
   color: rgba(255, 246, 177, 0.82);
+  font-weight: 700;
+}
+
+.player-stat-fangzhou-label {
+  color: rgba(159, 224, 255, 0.86);
   font-weight: 700;
 }
 
