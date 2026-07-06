@@ -258,6 +258,8 @@ const dlc20RepeatCorner = cardEffects.buildPlayEffects({ cardId: "dlc_20.png" })
 assert.equal(dlc20RepeatCorner.options.cornerRepeat, 3);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_22.png" })[0].options.condition.minCount, 3);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_22.png" })[0].options.repeat, 2);
+assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_22.png" })[0].options.gainData, false);
+assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_22.png" })[0].options.noAutoRepeatExpansion, true);
 const dlc27RocketReward = cardEffects.buildPlayEffects({ cardId: "dlc_27.png" })[0].options.rewards[0];
 assert.equal(dlc27RocketReward.type, cardEffects.EFFECT_TYPES.COUNT_ROCKETS_REWARD);
 assert.equal(dlc27RocketReward.options.owner, "current");
@@ -786,7 +788,7 @@ assert.equal(b28Effects[1].type, cardEffects.EFFECT_TYPES.SCAN_ACTION);
 
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.allowDuplicateLanding, true);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.allowDuplicateSatelliteLanding, true);
-assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.allowSatelliteWithoutTech, true);
+assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.allowSatelliteWithoutTech, false);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.forceFirstLandingReward, true);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.displayLandingSlot, 1);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_29.webp" })[0].options.referenceOffsetTokenWidths, 0.5);

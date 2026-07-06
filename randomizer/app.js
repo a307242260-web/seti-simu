@@ -13168,7 +13168,7 @@
     if (!flow?.historySource) return false;
     if (flow.historySource === HISTORY_SOURCE_QUICK) return true;
     if (flow.historySource === HISTORY_SOURCE_MAIN) {
-      return Boolean(hasCurrentMainActionIrreversibleBarrier() && actionHistory.hasUndoableStep());
+      return Boolean(actionHistory.hasUndoableStep());
     }
     return false;
   }
@@ -13196,6 +13196,15 @@
     if (!flow || flow.historySource !== source || !effect) return null;
     if (step.effectType && effect.type !== step.effectType) return null;
     clearCompletedEffectFlowForUndo(source);
+    return flow;
+  }
+
+  function peekCompletedEffectFlowForUndo(step, source) {
+    const flow = completedEffectFlowsForUndo[source];
+    const effectIndex = step?.effectIndex;
+    const effect = Number.isInteger(effectIndex) ? flow?.effects?.[effectIndex] : null;
+    if (!flow || flow.historySource !== source || !effect) return null;
+    if (step.effectType && effect.type !== step.effectType) return null;
     return flow;
   }
 
@@ -32863,6 +32872,32 @@
           return;
         }
       }
+    }
+
+    const completedMainFlowUndoStep = actionHistory.peekLastUndoableStep?.() || null;
+    if (
+      latestUndoSource === HISTORY_SOURCE_MAIN
+      && !isActionEffectFlowActive()
+      && peekCompletedEffectFlowForUndo(completedMainFlowUndoStep, HISTORY_SOURCE_MAIN)
+      && actionHistory.hasUndoableStep()
+    ) {
+      const result = actionHistory.undoLastStep();
+      if (result.ok) {
+        effectStepActive = false;
+        forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
+        removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
+        const completedMainEffectFlow = takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_MAIN);
+        if (completedMainEffectFlow) {
+          pendingActionEffectFlow = completedMainEffectFlow;
+          els.appWrap?.classList.toggle("action-effect-flow-active", true);
+          revertEffectFlowAfterUndo(result.step);
+        }
+        if (!isActionEffectFlowActive()) {
+          clearFullyUndoneMainActionSession();
+        }
+      }
+      refreshAfterHistoryChange(result.ok ? result.message : result.message || "已撤销效果");
+      return;
     }
 
     if (pendingActionExecuted || actionHistory.hasSession()) {

@@ -74,6 +74,7 @@ const undoPlacement = incremental.undoLastStep();
 assert.equal(undoPlacement.ok, true);
 assert.equal(value, -4);
 assert.equal(incremental.getSessionInfo()?.stepCount, 1);
+assert.equal(incremental.peekLastUndoableStep()?.label, "放置数据");
 
 const barrierHistory = actionHistory.createActionHistory();
 barrierHistory.beginSession("mixed", "交错行动");
@@ -99,6 +100,7 @@ const barrierStep = barrierHistory.endStep();
 assert.equal(barrierStep.undoable, false);
 assert.equal(barrierHistory.hasIrreversibleBarrier(), true);
 assert.equal(barrierHistory.hasUndoableStep(), false, "barrier blocks previous undoable steps");
+assert.equal(barrierHistory.peekLastUndoableStep(), null);
 const blockedUndo = barrierHistory.undoLastStep();
 assert.equal(blockedUndo.ok, false);
 assert.match(blockedUndo.message, /不可撤销/);
@@ -113,6 +115,7 @@ barrierHistory.record({
 const afterBarrier = barrierHistory.endStep();
 assert.ok(afterBarrier.id);
 assert.equal(barrierHistory.hasUndoableStep(), true);
+assert.equal(barrierHistory.peekLastUndoableStep()?.id, afterBarrier.id);
 const undoAfterBarrier = barrierHistory.undoLastStep();
 assert.equal(undoAfterBarrier.ok, true);
 assert.equal(undoAfterBarrier.step.id, afterBarrier.id);

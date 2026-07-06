@@ -242,6 +242,18 @@
       return false;
     }
 
+    function peekLastUndoableStep() {
+      if (!session) return null;
+      if (session.currentStep) {
+        return isStepUndoable(session.currentStep) ? session.currentStep : null;
+      }
+      const barrierIndex = findLastBarrierIndex(session.steps);
+      for (let index = session.steps.length - 1; index > barrierIndex; index -= 1) {
+        if (isStepUndoable(session.steps[index])) return session.steps[index];
+      }
+      return null;
+    }
+
     function hasIrreversibleBarrier() {
       if (!session) return false;
       if (session.currentStep && !isStepUndoable(session.currentStep)) return true;
@@ -303,6 +315,7 @@
       hasSession,
       getSessionInfo,
       hasUndoableStep,
+      peekLastUndoableStep,
       hasIrreversibleBarrier,
       getTrace,
       listSteps,

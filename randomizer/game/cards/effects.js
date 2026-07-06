@@ -1411,7 +1411,6 @@
         cardLandEffect("b29-land", "登陆（可重复登陆并获得地点奖励）", {
           allowDuplicateLanding: true,
           allowDuplicateSatelliteLanding: true,
-          allowSatelliteWithoutTech: true,
           forceFirstLandingReward: true,
           displayLandingSlot: 1,
           referenceOffsetTokenWidths: 0.5,

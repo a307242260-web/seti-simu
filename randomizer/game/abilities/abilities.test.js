@@ -492,8 +492,17 @@ function launchToPlanet(context, planetId) {
   const player = currentPlayer(context);
   assert.equal(planetStats.addSatelliteLandingMarker(context.planetStatsState, "jupiter", "io", { id: "p2", color: "white" }).ok, true);
   launchToPlanet(context, "jupiter");
+  const blockedWithoutOrange4 = abilities.planet.getLandOptions(context, {
+    allowDuplicateSatelliteLanding: true,
+    referenceOffsetTokenWidths: 0.5,
+  });
+  assert.equal(
+    blockedWithoutOrange4.choices.some((choice) => choice.target.satelliteId === "io"),
+    false,
+    "duplicate satellite landing still requires orange4 without allowSatelliteWithoutTech",
+  );
+  player.techState.ownedTiles.orange4 = true;
   const options = abilities.planet.getLandOptions(context, {
-    allowSatelliteWithoutTech: true,
     allowDuplicateSatelliteLanding: true,
     referenceOffsetTokenWidths: 0.5,
   });
@@ -504,7 +513,6 @@ function launchToPlanet(context, planetId) {
   const result = abilities.executeAbility("landProbe", context, {
     target: ioChoice.target,
     skipCost: true,
-    allowSatelliteWithoutTech: true,
     allowDuplicateSatelliteLanding: true,
     referenceOffsetTokenWidths: 0.5,
   });
