@@ -300,7 +300,7 @@ function initialCard(number) {
   assert.equal(incomeResult.ok, true);
   assert.equal(player.income.availableData, 1);
   assert.equal(data.listPoolTokens(player).length, 1);
-  assert.equal(planetStats.getPlanetOrbitCount(context.planetStatsState, "uranus"), 1);
+  assert.equal(planetStats.getPlanetOrbitCount(context.planetStatsState, "neptune"), 1);
 }
 
 {
@@ -312,7 +312,7 @@ function initialCard(number) {
   assert.equal(incomeResult.ok, true);
   assert.equal(player.income.handSize, 1);
   assert.equal(player.hand.length, 1);
-  assert.equal(planetStats.getPlanetOrbitCount(context.planetStatsState, "neptune"), 1);
+  assert.equal(planetStats.getPlanetOrbitCount(context.planetStatsState, "uranus"), 1);
 
   const traceResult = initialCards.resolveInitialCardEffect(context, player, initialCard(10));
   assert.equal(traceResult.ok, true);

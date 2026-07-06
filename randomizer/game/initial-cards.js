@@ -102,9 +102,9 @@
       resources: Object.freeze({ additionalPublicScan: 1 }),
     }),
     7: Object.freeze({
-      label: "1数据收入、天王星环绕器",
+      label: "1数据收入、海王星环绕器",
       income: Object.freeze({ availableData: 1 }),
-      orbitPlanetId: "uranus",
+      orbitPlanetId: "neptune",
     }),
     8: Object.freeze({
       label: "2分、2信用点、1宣传、水星环绕器",
@@ -112,9 +112,9 @@
       orbitPlanetId: "mercury",
     }),
     9: Object.freeze({
-      label: "1盲抽收入、海王星环绕器",
+      label: "1盲抽收入、天王星环绕器",
       income: Object.freeze({ handSize: 1 }),
-      orbitPlanetId: "neptune",
+      orbitPlanetId: "uranus",
     }),
     10: Object.freeze({ label: "外星人2黄色痕迹", alienTrace: Object.freeze({ alienSlotId: 2, traceType: "yellow" }) }),
     11: Object.freeze({ label: "外星人2粉色痕迹", alienTrace: Object.freeze({ alienSlotId: 2, traceType: "pink" }) }),
