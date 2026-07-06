@@ -28,6 +28,7 @@
     3: 35,
     4: 45,
   });
+  const FUTURE_SPAN_PICK_ADVANCE_AMOUNT = 2;
   const PIRATES_RAID_TECH_TILE_IDS = Object.freeze([
     "orange2",
     "orange3",
@@ -260,13 +261,13 @@
     };
   }
 
-  function advanceFutureSpanTarget(player, amount = 3) {
+  function advanceFutureSpanTarget(player, amount = FUTURE_SPAN_PICK_ADVANCE_AMOUNT) {
     const futureState = ensureFutureSpanState(player);
     if (!futureState?.card) {
       return { ok: false, player, message: "未来跨度专属标记尚未锁定目标牌" };
     }
-    if (futureState.playing || isFutureSpanCardReady(player)) {
-      return { ok: false, player, message: "未来跨度目标牌已可打出" };
+    if (futureState.playing) {
+      return { ok: false, player, message: "未来跨度目标牌正在打出" };
     }
     const currentTarget = getFutureSpanTargetScore(player);
     if (!Number.isFinite(Number(currentTarget))) {
@@ -590,6 +591,7 @@
     ALIEN_LAB_TRACE_TO_PANEL,
     ALIEN_LAB_PANEL_LABELS,
     FUTURE_SPAN_DELTAS_BY_COST,
+    FUTURE_SPAN_PICK_ADVANCE_AMOUNT,
     PIRATES_RAID_TECH_TILE_IDS,
     PIRATES_RAID_MARKER_SRC,
     createAlienLabPanels,

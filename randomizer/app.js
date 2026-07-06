@@ -7319,7 +7319,8 @@
     }
     if (pending?.type === "industry_future_pick") {
       const player = pending.player || getCurrentPlayer();
-      const advanceResult = industry.advanceFutureSpanTarget?.(player, 3);
+      const advanceAmount = Math.round(Number(pending.advanceAmount ?? industry?.FUTURE_SPAN_PICK_ADVANCE_AMOUNT) || 2);
+      const advanceResult = industry.advanceFutureSpanTarget?.(player, advanceAmount);
       rocketState.statusNote = advanceResult?.ok
         ? `未来跨度研究所：精选 ${cards.getCardLabel(result.card)}，目标提高到 ${advanceResult.targetScore} 分`
         : (advanceResult?.message || "未来跨度目标分更新失败");
@@ -29838,6 +29839,7 @@
           type: "industry_future_pick",
           player: getCurrentPlayer(),
           allowBlindDraw: false,
+          advanceAmount: flow.advanceAmount,
         });
         rocketState.statusNote = flow.message;
         renderStateReadout();

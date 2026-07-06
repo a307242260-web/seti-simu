@@ -67,7 +67,7 @@
 | 深空探测 | `deepspace_swap_cards` | `deepspace_swap` | 选手牌 1 张再选公共牌 1 张交换 |
 | 宇宙战略集团 | `strategy_pick_card` | `strategy_pick` | 精选 1 张公共牌（无额外资源）；确认精选后清除 3 个被动奖励槽 token |
 | 宇宙大战略集团 | `strategy_pick_card` | `strategy_pick` | AI 专用，默认分配给第 2 个 AI 电脑，不进入开始界面公司池；以宇宙战略集团为模板，精选 1 张公共牌（无额外资源），确认精选后清除 3 个被动奖励槽 token；每轮开始还会额外清空 3 个被动奖励槽 |
-| 未来跨度研究所 | `future_span_pick_advance` | `future_span_pick` | 若专属标记已有未达成目标牌：精选 1 张公共牌，并将目标分提高 3 |
+| 未来跨度研究所 | `future_span_pick_advance` | `future_span_pick` | 若专属标记已有尚未打出的目标牌：精选 1 张公共牌，并将目标分提高 2 |
 | 原教旨主义 | `fundamentalism_score_exchange` | `fundamentalism_score_exchange` | 启动 3 个 `industry_fundamentalism_exchange` 节点；每个节点可跳过、可撤销，可在 3 分与 1 信用/1 能量/1 精选之间兑换，或用 1 信用/1 能量/弃 1 手牌换 3 分 |
 | 星际海盗 | `pirates_raid_launch` | `pirates_raid_launch` | 启动 1 个 `industry_pirates_raid_launch` 节点；选择一个已有掠夺标记主星上的己方环绕/登陆标记，移除并消耗 1 信用点，然后在该星球当前扇区免费发射 |
 | 异星实验室 | — | — | **无 1x 圆标**（`EXCLUDED_INDUSTRY_LABELS`） |
@@ -78,7 +78,7 @@
 - 公司牌上的 `wlkd_token` 是独立快速行动：选择 1 张费用为信用点的手牌（半人马等能量费用牌不可选），将其从手牌移到公司牌下方，并设置目标分为当前分数 + 15/25/35/45（对应牌费 1/2/3/4）。
 - 已有目标牌时不能再次使用专属标记；扣下的牌不在手牌、保留牌或弃牌堆中，但会计入牌库占用，避免被重新抽到。
 - 当玩家分数达到目标分后，目标牌高亮为可打出，但不显示专属标记；玩家可用标准“打牌”主行动免费打出该牌。打牌效果与临时任务奖励全部完成后，专属标记回到公司牌，当轮即可再次作为快速行动使用；这个回收是打牌完成后的状态收尾，不作为可单独撤回的效果。若打牌本身仍可整体撤回，行动起点快照会恢复目标牌；若打牌已跨过不可撤回边界，后续效果撤回时专属标记仍保持已回到公司牌。
-- 底部普通 1x 只能在已有未达成目标牌时使用；精选并补牌后不可撤销，随后 `industryFutureSpan.targetScore += 3`。
+- 底部普通 1x 只要求已有尚未打出的目标牌；即使当前分数已经达到目标分，也可以精选并补牌。确认后不可撤销，随后 `industryFutureSpan.targetScore += 2`；若新目标分反超当前分，目标牌重新变为不可打出。没有目标牌或目标牌已打出回到公司后，因没有标记值而不能使用该能力。
 
 ### 共享能力函数（`abilities.js`）
 
@@ -138,7 +138,7 @@
 | `helios_remove_tech` | 扫描式科技选择 → 弃牌收入 `industry_helios_income` |
 | `mission_publicity_pick` / `fenwick_publicity_pick` | 消耗宣传 + 公共牌精选 |
 | `deepspace_swap` | 手牌选择 → 公共牌选择交换 |
-| `future_span_pick` | 公共牌精选 → 目标分 +3 |
+| `future_span_pick` | 公共牌精选 → 目标分 +2 |
 | `strategy_pick` | 公共牌精选 |
 | `fundamentalism_score_exchange` | 快速行动效果队列：3 个分数/资源兑换节点；精选分支确认补牌后该节点不可撤销 |
 | `pirates_raid_launch` | 快速行动效果队列：选择已有掠夺标记主星上的己方环绕/登陆标记，消耗 1 信用点并在同星球当前扇区免费发射 |

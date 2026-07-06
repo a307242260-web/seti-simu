@@ -27,6 +27,7 @@
   const PIRATES_RAID_PUBLICITY_GAIN = 3;
   const PIRATES_RAID_ACTIVE_COST = Object.freeze({ credits: 1 });
   const PIRATES_RAID_MAIN_MARKER_KINDS = Object.freeze(["orbit", "land", "aomomo-orbit", "aomomo-land"]);
+  const FUTURE_SPAN_PICK_ADVANCE_AMOUNT = 2;
 
   function isAlienCard(card) {
     const cardId = String(card?.cardId || card?.id || "");
@@ -349,19 +350,16 @@
       case "future_span_pick_advance": {
         const futureState = player?.industryFutureSpan;
         const targetScore = Number(futureState?.targetScore);
-        const currentScore = Number(player?.resources?.score || 0);
         if (!futureState?.card || futureState.playing || !Number.isFinite(targetScore)) {
-          return { ok: false, message: `${prepared.label}：没有使用专属标记，暂无可前移的目标分` };
-        }
-        if (currentScore >= targetScore) {
-          return { ok: false, message: `${prepared.label}：目标牌已可打出，不能再前移目标分` };
+          return { ok: false, message: `${prepared.label}：没有已标记的目标牌，无法使用该能力` };
         }
         return {
           ok: true,
           abilityId,
           flowType: "future_span_pick",
           label: prepared.label,
-          message: `${prepared.label}：精选 1 张公共牌，并将专属标记目标分前移 3 格`,
+          advanceAmount: FUTURE_SPAN_PICK_ADVANCE_AMOUNT,
+          message: `${prepared.label}：精选 1 张公共牌，并将专属标记目标分提高 ${FUTURE_SPAN_PICK_ADVANCE_AMOUNT}`,
         };
       }
       case "strategy_pick_card":
@@ -568,6 +566,7 @@
     FUNDAMENTALISM_EXCHANGE_COUNT,
     PIRATES_RAID_PUBLICITY_GAIN,
     PIRATES_RAID_ACTIVE_COST,
+    FUTURE_SPAN_PICK_ADVANCE_AMOUNT,
     isPiratesRaidMainPlanetMarkerAction,
     isAlienCard,
     getCornerReward,
