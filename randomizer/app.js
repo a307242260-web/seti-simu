@@ -790,6 +790,7 @@
     return {
       roundNumber: 1,
       turnNumber: 1,
+      actionCycleNumber: 1,
       activePlayerCount,
       turnOrderPlayerIds: playerIds,
       activePlayerIds,
@@ -1605,6 +1606,7 @@
     const player = options.player || getCurrentPlayer();
     const playerId = options.playerId || player?.id || playerState.currentPlayerId || null;
     const playerLabel = options.playerLabel || getPlayerLabelById(playerId);
+    const actionCycleNumber = getActionCycleNumber();
     const isSameTurnDraft = actionLogState.draft
       && actionLogState.draft.roundNumber === turnState.roundNumber
       && actionLogState.draft.rawTurnNumber === turnState.turnNumber
@@ -1615,6 +1617,7 @@
         roundNumber: turnState.roundNumber,
         turnNumber: turnState.turnNumber,
         rawTurnNumber: turnState.turnNumber,
+        actionCycleNumber,
         playerId,
         playerLabel,
         actionType: null,
@@ -1716,6 +1719,7 @@
       meta: {
         roundNumber: turnState.roundNumber,
         turnNumber: turnState.turnNumber,
+        actionCycleNumber: getActionCycleNumber(),
         currentPlayerId: playerState.currentPlayerId,
         entryId: meta.entryId ?? null,
         label: meta.label || null,
@@ -2180,6 +2184,7 @@
         restoreMutableObject(target, state[key]);
       }
     }
+    getActionCycleNumber();
     clearTransientStateForRecovery();
     const aiControlResult = restoreAiControlSnapshot(snapshot?.runtime?.aiControl || null, {
       missingMessage: "旧存档未包含电脑配置，已按默认人机对局恢复",
@@ -2256,6 +2261,7 @@
       roundNumber: draft.roundNumber,
       turnNumber: getDisplayedTurnNumber(rawTurnNumber),
       rawTurnNumber,
+      actionCycleNumber: draft.actionCycleNumber ?? getActionCycleNumber(),
       playerId: draft.playerId,
       playerLabel: draft.playerLabel,
       actionType: draft.actionType || options.actionType || "turn",
@@ -2282,6 +2288,7 @@
       roundNumber: entryInput.roundNumber ?? turnState.roundNumber,
       turnNumber: getDisplayedTurnNumber(rawTurnNumber),
       rawTurnNumber,
+      actionCycleNumber: entryInput.actionCycleNumber ?? getActionCycleNumber(),
       title: entryInput.title || null,
       playerId,
       playerLabel: entryInput.playerLabel || getPlayerLabelById(playerId),
@@ -2656,6 +2663,7 @@
       roundNumber: entry.roundNumber,
       turnNumber: entry.turnNumber,
       rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber,
+      actionCycleNumber: entry.actionCycleNumber ?? null,
       playerId: entry.playerId,
       playerLabel: player?.colorLabel || entry.playerLabel || getPlayerLabelById(entry.playerId) || "电脑玩家",
       playerColor: player?.color || null,
@@ -2667,12 +2675,13 @@
     };
   }
 
-  function getActionBriefingCycleKey(roundNumber, turnNumber) {
-    return `${roundNumber ?? ""}:${turnNumber ?? ""}`;
+  function getActionBriefingCycleKey(roundNumber, actionCycleNumber, turnNumber = null) {
+    const cycleNumber = actionCycleNumber ?? (turnNumber != null ? `turn:${turnNumber}` : "");
+    return `${roundNumber ?? ""}:${cycleNumber}`;
   }
 
   function getActionBriefingItemCycleKey(item) {
-    return getActionBriefingCycleKey(item?.roundNumber, item?.turnNumber);
+    return getActionBriefingCycleKey(item?.roundNumber, item?.actionCycleNumber, item?.turnNumber);
   }
 
   function getActionBriefingPlayerKey(item) {
@@ -2714,6 +2723,7 @@
       turnState.roundNumber,
       getDisplayedTurnNumber(),
       advanceResult?.completedActionCycleRoundNumber || "",
+      advanceResult?.completedActionCycleNumber || "",
       advanceResult?.completedActionCycleTurnNumber || "",
     ].join(":");
   }
@@ -2800,7 +2810,11 @@
     if (!advanceResult?.completedActionCycle) return [];
     const roundNumber = advanceResult.completedActionCycleRoundNumber;
     const turnNumber = advanceResult.completedActionCycleTurnNumber;
-    const cycleKey = getActionBriefingCycleKey(roundNumber, turnNumber);
+    const cycleKey = getActionBriefingCycleKey(
+      roundNumber,
+      advanceResult.completedActionCycleNumber,
+      turnNumber,
+    );
     const latestByPlayerKey = new Map();
     for (const item of actionBriefingState.aiMainActions) {
       if (getActionBriefingItemCycleKey(item) !== cycleKey) continue;
@@ -2833,7 +2847,7 @@
     if (!items.length) return false;
     const turnKey = getActionBriefingTurnKey(advanceResult);
     if (actionBriefingState.lastShownTurnKey === turnKey) return false;
-    const roundLabel = `第${getDisplayedTurnNumber()}回合：`;
+    const roundLabel = `第${getActionCycleNumber()}回合：`;
     if (!openActionBriefing(items, turnKey, {
       roundLabel,
       resumeAiAfterClose: true,
@@ -3068,6 +3082,7 @@
     turnState.startPlayerId = turnState.activePlayerIds[0] || validPlayerIds[0];
     turnState.roundNumber = 1;
     turnState.turnNumber = 1;
+    turnState.actionCycleNumber = 1;
     turnState.passedPlayerIds = [];
     turnState.completedTurnPlayerIds = [];
     turnState.cardTurnEventBonuses = [];
@@ -3167,6 +3182,7 @@
     industry?.resetAllRoundIndustryRuntimeState?.(playerState.players);
     turnState.roundNumber += 1;
     turnState.turnNumber = 1;
+    turnState.actionCycleNumber = 1;
     turnState.passedPlayerIds = [];
     turnState.completedTurnPlayerIds = [];
     turnState.cardTurnEventBonuses = [];
@@ -3185,6 +3201,17 @@
     );
     const raw = Math.max(1, Math.round(Number(rawTurnNumber) || 1));
     return Math.floor((raw - 1) / activePlayerCount) + 1;
+  }
+
+  function getActionCycleNumber() {
+    const value = Math.max(1, Math.round(Number(turnState.actionCycleNumber) || 1));
+    if (turnState.actionCycleNumber !== value) turnState.actionCycleNumber = value;
+    return value;
+  }
+
+  function advanceActionCycleNumber() {
+    turnState.actionCycleNumber = getActionCycleNumber() + 1;
+    return turnState.actionCycleNumber;
   }
 
   function clearCardTurnEventBonusesForPlayer(playerId) {
@@ -3257,6 +3284,7 @@
     const completedCycleInfo = {
       completedActionCycle: true,
       completedActionCycleRoundNumber: turnState.roundNumber,
+      completedActionCycleNumber: getActionCycleNumber(),
       completedActionCycleTurnNumber: getDisplayedTurnNumber(),
       completedActionCycleRawTurnNumber: turnState.turnNumber,
       completedActionCyclePlayerIds: [...(turnState.completedTurnPlayerIds || [])],
@@ -3279,6 +3307,7 @@
 
     turnState.turnNumber += 1;
     turnState.completedTurnPlayerIds = [];
+    advanceActionCycleNumber();
     const firstEligiblePlayerId = getFirstEligiblePlayerId();
     playerState.currentPlayerId = firstEligiblePlayerId || playerState.currentPlayerId;
     return {

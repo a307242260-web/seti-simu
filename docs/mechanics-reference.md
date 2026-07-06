@@ -240,8 +240,8 @@ UI 布局：
 轮与回合：
 
 - 轮：所有玩家各自执行若干回合，直到所有玩家都 PASS 后结束；全部 PASS 后进入下一轮第 1 回合。
-- 回合：一轮内的一次行动圈；每名未 PASS 玩家按本轮顺位最多行动一次，除非已经 PASS。所有未 PASS 玩家在当前行动圈都行动后，显示回合号才递增。
-- `turnState` 位于 `randomizer/app.js`，记录 `roundNumber`（轮号）、`turnNumber`（内部行动序号，用 `getDisplayedTurnNumber()` 折算为界面/日志回合号）、基础顺位 `turnOrderPlayerIds`、本轮起始玩家 `startPlayerId`、启用玩家 `activePlayerIds`、本轮已 PASS 玩家与当前行动圈已行动玩家。
+- 回合：一轮内的一次行动圈；每名未 PASS 玩家按本轮顺位最多行动一次，除非已经 PASS。所有未 PASS 玩家在当前行动圈都行动后，真实行动圈编号才递增。
+- `turnState` 位于 `randomizer/app.js`，记录 `roundNumber`（轮号）、`turnNumber`（内部行动序号，用 `getDisplayedTurnNumber()` 折算为界面/详细日志回合号）、`actionCycleNumber`（本轮内真实行动圈编号，所有未 PASS 玩家各行动一次后递增，用于行动简报分组和弹窗回合标题）、基础顺位 `turnOrderPlayerIds`、本轮起始玩家 `startPlayerId`、启用玩家 `activePlayerIds`、本轮已 PASS 玩家与当前行动圈已行动玩家。
 - 页面加载时会自动执行原 `set-button` 设置流程：白色玩家固定为初始首位，其余颜色玩家随机洗牌，并重置为第 1 轮第 1 回合。默认人机入口启用 4 名活跃玩家，其中白色为人类玩家，其余 3 个活跃席位为电脑玩家；开始界面可切换为 3 人局，此时白色玩家仍固定参与，其余颜色只随机启用 2 个电脑席位。
 - 新轮开始时，起始玩家按基础顺位顺延到上一轮第二顺位玩家。
 
