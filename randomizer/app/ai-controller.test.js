@@ -1232,8 +1232,8 @@ function makeYichangdianAlienState(options = {}) {
         condition: { type: "resourceEquals", resource: "energy", count: 0 },
         rewards: [{
           type: "card_count_rockets_reward",
-          label: "每个己方太阳系探测器：1能量",
-          options: { resource: "energy", owner: "current", location: "solar", per: 1 },
+          label: "每个己方太阳系探测器或虫族搬运化石：1能量",
+          options: { resource: "energy", owner: "current", location: "solar", per: 1, includeTransportedChongFossils: true },
         }],
       },
     }],
@@ -1299,6 +1299,41 @@ function makeYichangdianAlienState(options = {}) {
   assert.ok(
     Number(twoRocketCard?.valueBreakdown?.effectValue || 0) > 0,
     "two-rocket solar panel should value the actual energy gain",
+  );
+
+  const fossilTokenChoices = [];
+  const fossilTokenHarness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordBeginPlayCard: true,
+    blueResources: { score: 80, credits: 3, energy: 0, publicity: 0 },
+    blueHand: [makeSolarPanelCard()],
+    movableTokens: [
+      { id: 1, playerId: "player-blue", color: "blue", kind: "chong-fossil", surface: "solar", sector: { x: 1, y: 1 } },
+      { id: 2, playerId: "player-blue", color: "blue", kind: "chong-fossil", surface: "solar", movementLocked: true, sector: { x: 2, y: 1 } },
+    ],
+    onChooseTurnAction: (candidates) => fossilTokenChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "playCard") || null,
+  });
+  assert.equal(
+    fossilTokenHarness.controller.configureAiAutoBattle({
+      playerIds: [fossilTokenHarness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+  const fossilTokenResult = fossilTokenHarness.controller.runAiAutomationStep();
+  assert.equal(fossilTokenResult.ok, true, "transported fossil should make solar panel playable");
+  const fossilTokenPlay = fossilTokenChoices
+    .flat()
+    .find((candidate) => candidate.id === "playCard");
+  assert.equal(fossilTokenPlay?.cardId, "dlc_27.png");
+  const fossilTokenCard = fossilTokenPlay?.playableCards?.[0] || fossilTokenPlay;
+  assert.ok(
+    Number(fossilTokenCard?.valueBreakdown?.effectValue || 0) > 0,
+    "solar panel should value an unlocked transported Chong fossil as one rocket",
   );
 }
 

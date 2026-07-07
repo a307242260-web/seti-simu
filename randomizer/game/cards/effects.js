@@ -84,6 +84,7 @@
   });
   const ROCKET_REWARD_SOLAR_SURFACE = "solar-board";
   const ROCKET_REWARD_STANDARD_KIND = "standard";
+  const ROCKET_REWARD_CHONG_FOSSIL_KIND = "chong-fossil";
 
   let endGameScoringModule = null;
   let yichangdianModule = null;
@@ -689,6 +690,7 @@
       owner: options.owner || "current",
       location: options.location || "solar",
       includeNonStandard: options.includeNonStandard === true,
+      includeTransportedChongFossils: options.includeTransportedChongFossils === true,
       resource: options.resource || "energy",
       per: Math.max(0, Number(options.per) || 1),
     });
@@ -2388,7 +2390,7 @@
     }),
     "dlc_27.png": withSource("dlc_27.png", {
       cardType: 0,
-      playEffects: Object.freeze([conditionalRewardEffect("dlc27-zero-energy", "若当前能量为0，按己方太阳系探测器数获得能量", { type: "resourceEquals", resource: "energy", count: 0 }, [countRocketsRewardEffect("dlc27-energy", "每个己方太阳系探测器：1能量", { resource: "energy", owner: "current", location: "solar" })])]),
+      playEffects: Object.freeze([conditionalRewardEffect("dlc27-zero-energy", "若当前能量为0，按己方太阳系探测器和搬运化石数获得能量", { type: "resourceEquals", resource: "energy", count: 0 }, [countRocketsRewardEffect("dlc27-energy", "每个己方太阳系探测器或虫族搬运化石：1能量", { resource: "energy", owner: "current", location: "solar", includeTransportedChongFossils: true })])]),
     }),
     "dlc_28.png": withSource("dlc_28.png", {
       cardType: 2,
@@ -2776,7 +2778,11 @@
       if ((rocket.surface || ROCKET_REWARD_SOLAR_SURFACE) !== ROCKET_REWARD_SOLAR_SURFACE) return false;
       if (rocket.referencePlacement?.isPlanetMarker) return false;
     }
-    if (options.includeNonStandard !== true && (rocket.kind || ROCKET_REWARD_STANDARD_KIND) !== ROCKET_REWARD_STANDARD_KIND) {
+    const kind = rocket.kind || ROCKET_REWARD_STANDARD_KIND;
+    const isTransportedChongFossil = options.includeTransportedChongFossils === true
+      && kind === ROCKET_REWARD_CHONG_FOSSIL_KIND
+      && rocket.movementLocked !== true;
+    if (options.includeNonStandard !== true && kind !== ROCKET_REWARD_STANDARD_KIND && !isTransportedChongFossil) {
       return false;
     }
     return true;

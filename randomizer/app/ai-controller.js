@@ -8645,7 +8645,11 @@
         if ((rocket.surface || "solar") !== "solar") return false;
         if (rocket.referencePlacement?.isPlanetMarker) return false;
       }
-      if (options.includeNonStandard !== true && (rocket.kind || "standard") !== "standard") return false;
+      const kind = rocket.kind || "standard";
+      const isTransportedChongFossil = options.includeTransportedChongFossils === true
+        && kind === "chong-fossil"
+        && rocket.movementLocked !== true;
+      if (options.includeNonStandard !== true && kind !== "standard" && !isTransportedChongFossil) return false;
       return true;
     }
 
