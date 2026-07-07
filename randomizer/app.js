@@ -30861,13 +30861,19 @@
   function executeIndustryStratusCornerEffect(effect) {
     const currentPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
     const card = effect.options?.card;
-    if (!currentPlayer || !card) {
+    const effectCards = Array.isArray(effect.options?.cards) && effect.options.cards.length
+      ? effect.options.cards
+      : (card ? [card] : []);
+    const rewardSnapshot = effect.options?.reward || null;
+    if (!currentPlayer || (!card && !rewardSnapshot)) {
       rocketState.statusNote = "层云核心：无效公共牌";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
 
-    const reward = industry.getCornerReward(cards, card);
+    const reward = rewardSnapshot
+      ? { ...rewardSnapshot, gain: { ...(rewardSnapshot.gain || {}) } }
+      : industry.getCornerReward(cards, card);
     beginEffectHistoryStep(effect.label);
     if (!reward) {
       effect.result = {
@@ -30895,7 +30901,7 @@
       insertActionEffectsAfterCurrent([{
         id: `${effect.id || "stratus-corner"}-move`,
         type: cardEffects.EFFECT_TYPES.CARD_MOVE,
-        label: `${cards.getCardLabel(card)}：${reward.label}`,
+        label: `${effect.label}：${reward.label}`,
         icon: "movement",
         options: {
           movementPoints: reward.movementPoints || 1,
@@ -30921,7 +30927,7 @@
       undoable: true,
       message: `${effect.label}：${rewardText}`,
       events: [createIndustryCardCornerEvent(currentPlayer, reward, "industry_stratus")],
-      payload: { card, reward, dataResults: applied.results || [] },
+      payload: { card, cards: effectCards, reward, dataResults: applied.results || [] },
     });
   }
 

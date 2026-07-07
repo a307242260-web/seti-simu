@@ -52,29 +52,178 @@
     return "pick_card";
   }
 
+  function normalizeRewardAmount(value) {
+    return Math.max(0, Math.round(Number(value) || 0));
+  }
+
+  function cloneRewardGain(gain) {
+    return Object.fromEntries(
+      Object.entries(gain || {})
+        .map(([key, value]) => [key, Number(value) || 0])
+        .filter(([, value]) => value !== 0),
+    );
+  }
+
+  function addRewardGain(target, gain) {
+    for (const [key, value] of Object.entries(gain || {})) {
+      const amount = Number(value) || 0;
+      if (!amount) continue;
+      target[key] = (Number(target[key]) || 0) + amount;
+      if (!target[key]) delete target[key];
+    }
+  }
+
+  function getCornerRewardMergeKey(reward) {
+    if (!reward) return "none";
+    if (reward.code !== undefined && reward.code !== null) {
+      return `${reward.kind || "unknown"}:${reward.code}`;
+    }
+    const gainKey = Object.entries(reward.gain || {})
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([key, value]) => `${key}:${Number(value) || 0}`)
+      .join(",");
+    return [
+      reward.kind || "unknown",
+      `move:${normalizeRewardAmount(reward.movementPoints)}`,
+      `data:${normalizeRewardAmount(reward.dataCount)}`,
+      `gain:${gainKey}`,
+    ].join("|");
+  }
+
+  function pushRewardLabelPart(parts, value, label) {
+    const amount = normalizeRewardAmount(value);
+    if (amount > 0) parts.push(`${amount}${label}`);
+  }
+
+  function formatMergedCornerRewardLabel(reward) {
+    const parts = [];
+    const gain = reward?.gain || {};
+    if (reward?.kind === "move") pushRewardLabelPart(parts, reward.movementPoints, "移动");
+    pushRewardLabelPart(parts, gain.credits, "信用点");
+    pushRewardLabelPart(parts, gain.energy, "能量");
+    pushRewardLabelPart(parts, gain.publicity, "宣传");
+    pushRewardLabelPart(parts, reward?.dataCount, "数据");
+    pushRewardLabelPart(parts, gain.score, "分");
+    return parts.length ? `弃牌换${parts.join("+")}` : (reward?.label || "弃牌角标");
+  }
+
+  function createMergedCornerReward(reward) {
+    const merged = {
+      kind: reward?.kind || "resource",
+      code: reward?.code ?? null,
+      label: reward?.label || "弃牌角标",
+      gain: {},
+      dataCount: 0,
+      movementPoints: 0,
+      sourceCount: 0,
+    };
+    return mergeCornerRewardInto(merged, reward);
+  }
+
+  function mergeCornerRewardInto(target, reward) {
+    if (!target || !reward) return target;
+    addRewardGain(target.gain, reward.gain);
+    target.dataCount = normalizeRewardAmount(target.dataCount) + normalizeRewardAmount(reward.dataCount);
+    target.movementPoints = normalizeRewardAmount(target.movementPoints) + normalizeRewardAmount(reward.movementPoints);
+    target.sourceCount = normalizeRewardAmount(target.sourceCount) + 1;
+    target.label = formatMergedCornerRewardLabel(target);
+    return target;
+  }
+
+  function snapshotCornerReward(reward) {
+    if (!reward) return null;
+    return {
+      kind: reward.kind,
+      code: reward.code ?? null,
+      label: reward.label,
+      gain: cloneRewardGain(reward.gain),
+      dataCount: normalizeRewardAmount(reward.dataCount),
+      movementPoints: normalizeRewardAmount(reward.movementPoints),
+      sourceCount: normalizeRewardAmount(reward.sourceCount),
+    };
+  }
+
+  function formatStratusEffectNodeLabel(group) {
+    const count = group.cards.length;
+    if (!group.reward) {
+      return `层云核心：${group.cardLabels[0] || "公共牌"} 无弃牌角标`;
+    }
+    if (count <= 1) {
+      return `层云核心：${group.cardLabels[0] || "公共牌"} 弃牌角标`;
+    }
+    return `层云核心：${count} 张公共牌合并为${group.reward.label}`;
+  }
+
   function buildStratusPublicCornerEffectNodes(cards, publicCards) {
-    return (publicCards || [])
+    const groups = [];
+    const rewardGroups = new Map();
+
+    (publicCards || [])
       .slice(0, STRATUS_PUBLIC_CARD_LIMIT)
-      .map((card, index) => {
+      .forEach((card, index) => {
         if (!card) return null;
         const reward = getCornerReward(cards, card);
         const cardLabel = cards?.getCardLabel?.(card) || card.cardName || card.cardId || `公共牌 ${index + 1}`;
+        const snapshot = snapshotPlayedCard(card);
+        if (!reward) {
+          groups.push({
+            key: `none:${index}`,
+            firstIndex: index,
+            reward: null,
+            cards: [snapshot],
+            cardLabels: [cardLabel],
+            publicSlotIndexes: [index],
+          });
+          return null;
+        }
+
+        const key = getCornerRewardMergeKey(reward);
+        let group = rewardGroups.get(key);
+        if (!group) {
+          group = {
+            key,
+            firstIndex: index,
+            reward: createMergedCornerReward(reward),
+            cards: [],
+            cardLabels: [],
+            publicSlotIndexes: [],
+          };
+          rewardGroups.set(key, group);
+          groups.push(group);
+        } else {
+          mergeCornerRewardInto(group.reward, reward);
+        }
+        group.cards.push(snapshot);
+        group.cardLabels.push(cardLabel);
+        group.publicSlotIndexes.push(index);
+        return null;
+      });
+
+    return groups
+      .sort((left, right) => left.firstIndex - right.firstIndex)
+      .map((group) => {
+        const firstCard = group.cards[0] || null;
+        const slotPart = group.publicSlotIndexes.join("-");
+        const idSource = group.reward
+          ? `${group.reward.kind || "reward"}-${group.reward.code ?? group.key}`
+          : `${firstCard?.id || firstCard?.cardId || firstCard?.src || "card"}`;
         return {
-          id: `industry-stratus-corner-${index}-${card.id || card.cardId || card.src || "card"}`,
+          id: `industry-stratus-corner-${slotPart}-${idSource}`,
           type: "industry_stratus_corner",
-          label: reward
-            ? `层云核心：${cardLabel} 弃牌角标`
-            : `层云核心：${cardLabel} 无弃牌角标`,
-          icon: getCornerRewardIcon(reward),
+          label: formatStratusEffectNodeLabel(group),
+          icon: getCornerRewardIcon(group.reward),
           status: "pending",
           undoable: true,
           options: {
-            publicSlotIndex: index,
-            card: snapshotPlayedCard(card),
+            publicSlotIndex: group.publicSlotIndexes[0],
+            publicSlotIndexes: [...group.publicSlotIndexes],
+            card: firstCard,
+            cards: group.cards.filter(Boolean),
+            cardLabels: [...group.cardLabels],
+            reward: snapshotCornerReward(group.reward),
           },
         };
-      })
-      .filter(Boolean);
+      });
   }
 
   function buildHuanyuFreeMoveEffectNodes(options = {}) {

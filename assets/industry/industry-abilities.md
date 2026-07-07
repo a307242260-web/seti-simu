@@ -56,7 +56,7 @@
 
 | 公司 | activeAbilityId | flowType | 规则摘要 |
 |------|-----------------|----------|----------|
-| 层云核心 | `stratus_public_corners` | `stratus_public_corners` | 根据公共牌区 3 张牌生成效果队列，逐个结算**左上角弃牌角标**（不弃牌、不移除公共牌） |
+| 层云核心 | `stratus_public_corners` | `stratus_public_corners` | 根据公共牌区 3 张牌生成效果队列，结算**左上角弃牌角标**（不弃牌、不移除公共牌）；相同角标合并为一个效果，例如 3 个移动角标合并为 1 个 3 点移动效果 |
 | 图灵系统 | `turing_borrow_tech` | `turing_borrow_tech` | 选择供应区一项橙色或紫色科技，**当前回合**借用其效果（不获得板块/bonus）；公司牌下方只复制显示该科技图标 |
 | 哨兵探测网络 | `sentinel_arm_play_corner` | `sentinel_arm_play_corner` | 武装当前回合；**打牌效果队列末尾**追加 `industry_sentinel_corner` 结算打出牌弃牌角标（非外星人） |
 | 寰宇动力 | `huanyu_free_moves` | `huanyu_free_moves` | 启动 2 个移动效果队列节点；每个节点提供 1 点移动力，已结算节点的火箭不能作为后续寰宇节点目标，可跳过任一节点 |
@@ -85,7 +85,7 @@
 - `getCornerReward(cards, card)`：读左上角弃牌角标 → `{ kind: "resource" \| "move", gain, dataCount?, movementPoints? }`
 - `applyCornerReward(players, data, player, reward)`：结算资源/数据；移动类返回 `pendingFreeMove`
 - `applyIncomeResourcesFromCard`：任务中继站精选后的收入角标奖励（资源、数据与 `handSize` 盲抽）
-- `buildStratusPublicCornerEffectNodes`：生成层云核心快速行动队列节点 `type: "industry_stratus_corner"`
+- `buildStratusPublicCornerEffectNodes`：生成层云核心快速行动队列节点 `type: "industry_stratus_corner"`；相同弃牌角标按奖励合并，移动点数、资源、数据和分数累计到同一个节点
 - `buildFundamentalismScoreExchangeEffectNodes`：生成原教旨主义 3 个快速行动兑换节点 `type: "industry_fundamentalism_exchange"`
 - `buildPiratesRaidMarkerEffectNodes`：环绕/登陆未掠夺主星后生成必做的放置掠夺标记与 +3 宣传节点
 - `buildPiratesRaidLaunchEffectNodes`：生成星际海盗 1x 快速行动节点 `type: "industry_pirates_raid_launch"`
@@ -150,7 +150,7 @@
 | 类型 | 可撤销 | 说明 |
 |------|--------|------|
 | 普通 1x 确定性流程 | 是 | 标记、图灵借用、赫利昂、深空交换等并入 quick history，撤销回到 1x 前 |
-| 层云核心 | 是 | 不弃牌；角标奖励按效果步骤撤销，第一个效果步骤同时包含公司标记回退 |
+| 层云核心 | 是 | 不弃牌；相同角标合并为一个效果步骤并按步骤撤销，第一个效果步骤同时包含公司标记回退 |
 | 图灵借用 | 是 | 恢复借用前玩家快照，撤销后 1x 标记也回到可用 |
 | 寰宇移动 | 是 | 2 个快速行动效果队列节点逐个撤销；1x 标记通过队列预置撤销命令同事务恢复 |
 | 原教旨主义兑换 | 是/部分否 | 3 个快速行动效果队列节点逐个处理；纯资源/弃牌换分可撤销，3 分换精选在公共牌补牌后该节点不可撤销 |

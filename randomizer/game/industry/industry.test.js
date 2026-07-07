@@ -445,10 +445,31 @@ const stratusNodes = abilities.buildStratusPublicCornerEffectNodes({
     card.discardActionCode === 2 ? { kind: "move", movementPoints: 1, label: "1移动", gain: {} } : null
   ),
 }, stratusCards);
-assert.equal(stratusNodes.length, 3);
+assert.equal(stratusNodes.length, 2);
 assert.equal(stratusNodes[0].type, "industry_stratus_corner");
 assert.equal(stratusNodes[0].options.card.cardId, "b_1.webp");
+assert.deepEqual(stratusNodes[0].options.publicSlotIndexes, [0, 2]);
+assert.deepEqual(stratusNodes[0].options.reward.gain, { publicity: 2 });
+assert.equal(stratusNodes[0].options.reward.sourceCount, 2);
 assert.equal(stratusNodes[1].icon, "movement");
+assert.equal(stratusNodes[1].options.reward.movementPoints, 1);
+
+const stratusMoveNodes = abilities.buildStratusPublicCornerEffectNodes({
+  ...cardsStub,
+  getDiscardActionMoveRewardForCard: (card) => (
+    card.discardActionCode === 2 ? { kind: "move", movementPoints: 1, label: "1移动", gain: {} } : null
+  ),
+}, [
+  { id: "move-public-1", cardId: "move_1.webp", discardActionCode: 2, label: "移动牌1" },
+  { id: "move-public-2", cardId: "move_2.webp", discardActionCode: 2, label: "移动牌2" },
+  { id: "move-public-3", cardId: "move_3.webp", discardActionCode: 2, label: "移动牌3" },
+]);
+assert.equal(stratusMoveNodes.length, 1);
+assert.equal(stratusMoveNodes[0].icon, "movement");
+assert.equal(stratusMoveNodes[0].options.reward.kind, "move");
+assert.equal(stratusMoveNodes[0].options.reward.movementPoints, 3);
+assert.equal(stratusMoveNodes[0].options.reward.sourceCount, 3);
+assert.match(stratusMoveNodes[0].label, /合并/);
 assert.match(abilities.buildActiveAbilityFlow(
   { initialSelection: { industry: { label: "层云核心" } } },
   "层云核心",
