@@ -8931,6 +8931,8 @@
         const target = getSectorFinishWinnerTarget(sectorId);
         return {
           type: scanEffects.EFFECT_TYPES.SECTOR_FINISH_SCAN,
+          playerId: target?.playerId || null,
+          playerColor: target?.playerColor || null,
           icon: getSectorFinishIcon(sectorId),
           label: `完成扇区：${data.getNebulaLabel(sectorId)}`,
           required: true,
@@ -8979,6 +8981,8 @@
     return {
       id,
       type: planetRewards.EFFECT_TYPES.GAIN_RESOURCES,
+      playerId: target?.id || null,
+      playerColor: target?.color || null,
       icon,
       label,
       options: {
@@ -8993,6 +8997,8 @@
     return {
       id,
       type: planetRewards.EFFECT_TYPES.ALIEN_TRACE,
+      playerId: target?.id || null,
+      playerColor: target?.color || null,
       icon: "alien_pink",
       label,
       options: {
@@ -19405,6 +19411,8 @@
     if (Number(effectIndex) !== pendingActionEffectFlow.currentIndex) return;
 
     const effect = getCurrentActionEffect();
+    const blocked = blockManualAiPendingInputIfNeeded(null, {}, "效果结算", effect);
+    if (blocked) return blocked;
     executeActionEffect(effect);
   }
 
@@ -24090,7 +24098,20 @@
   }
 
   function getActiveAlienSharedOverlayPendingForManualGuard() {
+    const tracePickerMode = String(alienTracePickerState?.mode || "");
+    const tracePickerHasOwner = Boolean(
+      alienTracePickerState?.targetPlayerId
+      || alienTracePickerState?.targetPlayerColor
+    );
+    const tracePickerPending = tracePickerMode
+      && tracePickerMode !== "debug-direct"
+      && tracePickerMode !== "reveal-confirm"
+      && tracePickerHasOwner
+        ? alienTracePickerState
+        : null;
     const pendingEntries = [
+      pendingAlienTraceAction ? { pending: pendingAlienTraceAction, label: "外星人痕迹" } : null,
+      tracePickerPending ? { pending: tracePickerPending, label: "外星人痕迹" } : null,
       pendingCardTaskCompletion ? { pending: pendingCardTaskCompletion, label: "任务完成" } : null,
       pendingJiuzheCardPlay?.reason === "view"
         ? null

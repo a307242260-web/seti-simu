@@ -229,6 +229,10 @@
       throw new Error("bindAppEvents requires mutable app state accessors");
     }
 
+    function shouldBlockTrustedManualAiSharedInput(event) {
+      return Boolean(event?.isTrusted && blockManualAiSharedOverlayInputIfNeeded?.());
+    }
+
     els.startScreenStartButton?.addEventListener("click", startNewGameFromStartScreen);
     els.startScreenContinueButton?.addEventListener("click", () => {
       if (els.startScreenContinueButton.disabled) return;
@@ -687,6 +691,7 @@
         confirmAlienRevealNotice();
         return;
       }
+      if (shouldBlockTrustedManualAiSharedInput(event)) return;
 
       const button = event.target.closest("[data-alien-picker-step][data-alien-slot]");
       if (!button || button.disabled) return;
@@ -797,18 +802,21 @@
         confirmAlienTracePlacement(alienSlotId, button.dataset.traceType);
       }
     });
-    els.alienTraceCancel?.addEventListener("click", () => {
+    els.alienTraceCancel?.addEventListener("click", (event) => {
       if (state.pendingAlienRevealConfirmation) return;
+      if (shouldBlockTrustedManualAiSharedInput(event)) return;
       closeAlienTracePicker();
     });
     els.alienTraceOverlay?.addEventListener("click", (event) => {
       if (event.target === els.alienTraceOverlay) {
         if (state.pendingAlienRevealConfirmation) return;
+        if (shouldBlockTrustedManualAiSharedInput(event)) return;
         closeAlienTracePicker();
       }
     });
     els.alienTraceLayers?.forEach((layer) => {
       layer.addEventListener("click", (event) => {
+        if (shouldBlockTrustedManualAiSharedInput(event)) return;
         const button = event.target.closest("[data-state-trace-slot]");
         if (!button || button.disabled || !button.classList.contains("is-placeable")) return;
         handleStateTraceSlotPlacement(
@@ -819,6 +827,7 @@
     });
     els.alienJiuzheTraceLayers?.forEach((layer) => {
       layer.addEventListener("click", (event) => {
+        if (shouldBlockTrustedManualAiSharedInput(event)) return;
         const banrenmaButton = event.target.closest("[data-banrenma-trace-slot]");
         if (banrenmaButton && !banrenmaButton.disabled && banrenmaButton.classList.contains("is-placeable")) {
           confirmBanrenmaTracePlacement(
