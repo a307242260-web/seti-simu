@@ -9346,6 +9346,45 @@
     return buildEndOfFlowFollowupEffects(flow).length > 0;
   }
 
+  function createEndOfFlowInsertionSource(flow) {
+    if (!flow?.effects?.length) return null;
+    const effectIndex = Number.isInteger(flow.currentIndex)
+      ? flow.currentIndex
+      : flow.effects.length - 1;
+    const effect = flow.effects[effectIndex];
+    if (!effect) return null;
+    return {
+      chainId: flow.chainId || null,
+      effectIndex,
+      effectId: effect.id || null,
+      effectType: effect.type || effect.abilityId || null,
+    };
+  }
+
+  function isEndOfFlowSettlementEffect(effect) {
+    if (!effect) return false;
+    if (effect.endOfFlowSettlement || effect.options?.endOfFlowSettlement) return true;
+    return effect.type === scanEffects.EFFECT_TYPES.SECTOR_FINISH_SCAN
+      && String(effect.id || "").startsWith("end-flow-followup-");
+  }
+
+  function pruneEndOfFlowSettlementEffectsAfterUndo(flow, effectIndex) {
+    if (!flow?.effects?.length || !Number.isInteger(effectIndex)) return 0;
+    let removed = 0;
+    for (let index = flow.effects.length - 1; index > effectIndex; index -= 1) {
+      if (!isEndOfFlowSettlementEffect(flow.effects[index])) continue;
+      flow.effects.splice(index, 1);
+      if (index < flow.currentIndex) {
+        flow.currentIndex = Math.max(0, flow.currentIndex - 1);
+      }
+      removed += 1;
+    }
+    if (removed) {
+      flow.endOfFlowSettlementScheduled = false;
+    }
+    return removed;
+  }
+
   function appendEndOfFlowSectorFinishEffects(flow) {
     if (!shouldAppendQueuedSectorFinishEffects(flow)) return false;
     const effects = buildEndOfFlowFollowupEffects(flow);
@@ -9353,13 +9392,16 @@
     flow.endOfFlowSettlementScheduled = true;
     flow.completed = false;
     const ownerId = flow.playerId || flow.defaultPlayerId || pendingActionEffectFlow?.playerId || null;
+    const insertionSource = createEndOfFlowInsertionSource(flow);
     for (const effect of effects) {
-      flow.effects.push({
+      const node = {
         ...assignEffectOwner({ ...effect }, ownerId),
         id: effect.id || `end-flow-followup-${flow.effects.length}`,
-        options: { ...(effect.options || {}) },
+        endOfFlowSettlement: true,
+        options: { ...(effect.options || {}), endOfFlowSettlement: true },
         status: "pending",
-      });
+      };
+      flow.effects.push(abilities.chain.markInsertedNode?.(node, insertionSource) || node);
     }
     activateNextActionEffect();
     return true;
@@ -13005,6 +13047,7 @@
     const effect = effects[step.effectIndex];
     if (!effect) return;
 
+    pruneEndOfFlowSettlementEffectsAfterUndo(pendingActionEffectFlow, step.effectIndex);
     abilities.chain.removeInsertedNodesBySource?.(pendingActionEffectFlow, {
       chainId: pendingActionEffectFlow.chainId || null,
       effectId: step.effectId || effect.id || null,
