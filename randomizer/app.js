@@ -15494,15 +15494,12 @@
       .reduce((total, choice) => total + countPlayerSignalsInNebula(player, choice.nebulaId), 0);
   }
 
-  function getSectorXsMatchingCondition(condition) {
-    const currentPlayer = getCurrentPlayer();
-    const matches = [];
-    for (let x = 0; x < 8; x += 1) {
-      const count = countPlayerSignalsInSectorX(currentPlayer, x);
-      if (condition?.type === "sectorSignalCount" && count >= Number(condition.minCount || 1)) matches.push(x);
-      if (condition?.type === "hasPlayerSignal" && count > 0) matches.push(x);
-    }
-    return matches;
+  function getSectorXsMatchingCondition(condition, player = getCurrentPlayer()) {
+    return cardEffects.getMatchingConditionalSectorXs(
+      condition,
+      Array.from({ length: 8 }, (_item, x) => x),
+      (sectorX) => countPlayerSignalsInSectorX(player, sectorX),
+    );
   }
 
   function sectorXHasAvailableScanTarget(sectorX) {
@@ -15511,7 +15508,8 @@
   }
 
   function executeConditionalSectorScanEffect(effect) {
-    const xs = getSectorXsMatchingCondition(effect.options?.condition)
+    const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+    const xs = getSectorXsMatchingCondition(effect.options?.condition, player)
       .filter(sectorXHasAvailableScanTarget);
     if (!xs.length) {
       rocketState.statusNote = `${effect.label}：没有符合条件的扇区`;
@@ -15554,7 +15552,7 @@
         payload: { sectorX: xs[0] },
       });
     }
-    pendingScanTargetAction = { ...getPendingOwnerFields(effect), type: "conditional_sector_scan", effect, sectorXs: xs };
+    pendingScanTargetAction = { ...getPendingOwnerFields(effect, player), type: "conditional_sector_scan", effect, sectorXs: xs };
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = `选择一个符合条件的扇区，随后扫描 ${repeat} 次。`;
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -15563,7 +15561,7 @@
       button.type = "button";
       button.className = "scan-target-option-button";
       button.dataset.conditionalSectorX = String(sectorX);
-      button.innerHTML = `扇区 ${sectorX}<small>自己信号 ${countPlayerSignalsInSectorX(getCurrentPlayer(), sectorX)} 个</small>`;
+      button.innerHTML = `扇区 ${sectorX}<small>自己信号 ${countPlayerSignalsInSectorX(player, sectorX)} 个</small>`;
       return button;
     }));
     els.scanTargetOverlay.hidden = false;
@@ -15577,26 +15575,31 @@
     if (pending?.type !== "conditional_sector_scan") return { ok: false, message: "没有待处理的条件扇区扫描" };
     const effect = pending.effect;
     const sectorX = solar.mod8(Number(sectorXValue) || 0);
+    if (!pending.sectorXs?.some((candidate) => solar.mod8(Number(candidate) || 0) === sectorX)) {
+      rocketState.statusNote = "所选扇区不符合当前条件";
+      renderStateReadout();
+      return { ok: false, message: rocketState.statusNote };
+    }
     closeScanTargetPicker();
     return withPendingOwnerPlayer(pending, () => {
-    const repeat = Math.max(1, Math.round(Number(effect.options?.repeat || 1)));
-    const followups = [];
-    for (let index = 0; index < repeat; index += 1) {
-      followups.push({
-        id: `${effect.id || "conditional-sector-scan"}-${sectorX}-${index + 1}`,
-        type: cardEffects.EFFECT_TYPES.SECTOR_X_SCAN,
-        label: `${effect.label}：扇区${sectorX} ${index + 1}/${repeat}`,
-        icon: "scan",
-        options: { sectorX, gainData: effect.options?.gainData, skipIfNoTarget: true },
+      const repeat = Math.max(1, Math.round(Number(effect.options?.repeat || 1)));
+      const followups = [];
+      for (let index = 0; index < repeat; index += 1) {
+        followups.push({
+          id: `${effect.id || "conditional-sector-scan"}-${sectorX}-${index + 1}`,
+          type: cardEffects.EFFECT_TYPES.SECTOR_X_SCAN,
+          label: `${effect.label}：扇区${sectorX} ${index + 1}/${repeat}`,
+          icon: "scan",
+          options: { sectorX, gainData: effect.options?.gainData, skipIfNoTarget: true },
+        });
+      }
+      insertActionEffectsAfterCurrent(followups);
+      return finishAutomaticRewardEffect(effect, {
+        ok: true,
+        undoable: true,
+        message: `${effect.label}：已追加 ${followups.length} 次扫描`,
+        payload: { sectorX },
       });
-    }
-    insertActionEffectsAfterCurrent(followups);
-    return finishAutomaticRewardEffect(effect, {
-      ok: true,
-      undoable: true,
-      message: `${effect.label}：已追加 ${followups.length} 次扫描`,
-      payload: { sectorX },
-    });
     });
   }
 

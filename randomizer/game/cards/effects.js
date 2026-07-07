@@ -2921,6 +2921,21 @@
       + marks.filter((mark) => tokenBelongsToPlayer(mark, playerKeys)).length;
   }
 
+  function getMatchingConditionalSectorXs(condition, sectorXs, getSignalCount) {
+    if (!condition || typeof getSignalCount !== "function") return [];
+    const xs = Array.isArray(sectorXs) ? sectorXs : [];
+    const matches = [];
+    for (const sectorX of xs) {
+      const count = Math.max(0, Math.round(Number(getSignalCount(sectorX)) || 0));
+      if (condition.type === "sectorSignalCount" && count >= Number(condition.minCount || 1)) {
+        matches.push(sectorX);
+      } else if (condition.type === "hasPlayerSignal" && count > 0) {
+        matches.push(sectorX);
+      }
+    }
+    return matches;
+  }
+
   function playerHasSignalInColor(player, nebulaDataState, color) {
     return (NEBULA_IDS_BY_COLOR[color] || []).some((nebulaId) => (
       playerHasSignalInNebula(player, nebulaDataState, nebulaId)
@@ -3414,6 +3429,7 @@
     countRocketsForReward,
     getProbeStackRewardMatch,
     hasProbeStackReward,
+    getMatchingConditionalSectorXs,
     areAllTriggersConsumed,
     getConsumedTriggerIndexes,
   });

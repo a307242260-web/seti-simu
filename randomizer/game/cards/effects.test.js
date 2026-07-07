@@ -260,6 +260,22 @@ assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_22.png" })[0].options.c
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_22.png" })[0].options.repeat, 2);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_22.png" })[0].options.gainData, false);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "dlc_22.png" })[0].options.noAutoRepeatExpansion, true);
+assert.deepEqual(
+  cardEffects.getMatchingConditionalSectorXs(
+    { type: "sectorSignalCount", minCount: 3 },
+    [0, 1, 2, 3],
+    (sectorX) => ({ 0: 2, 1: 3, 2: 4, 3: 0 })[sectorX],
+  ),
+  [1, 2],
+);
+assert.deepEqual(
+  cardEffects.getMatchingConditionalSectorXs(
+    { type: "hasPlayerSignal" },
+    [0, 1, 2, 3],
+    (sectorX) => ({ 0: 0, 1: 1, 2: 0, 3: 2 })[sectorX],
+  ),
+  [1, 3],
+);
 const dlc27RocketReward = cardEffects.buildPlayEffects({ cardId: "dlc_27.png" })[0].options.rewards[0];
 assert.equal(dlc27RocketReward.type, cardEffects.EFFECT_TYPES.COUNT_ROCKETS_REWARD);
 assert.equal(dlc27RocketReward.options.owner, "current");
