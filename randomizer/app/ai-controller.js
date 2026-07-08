@@ -811,6 +811,7 @@
           handCards: summarizeAiResultCards(player.hand, player),
           reservedCards: summarizeAiResultCards(player.reservedCards, player),
           techCount: countAiPlayerTech(player),
+          techTypeCounts: getAiPlayerTechTypeCounts(player),
           finalMarkCount: finalMarks.length,
           finalFormulas: finalMarks.map((entry) => entry.formulaId),
           finalFormulaProgress,

@@ -6026,4 +6026,34 @@ function makeYichangdianAlienState(options = {}) {
   assert.deepEqual(harness.getHandled(), { type: "public-pick", slotIndex: 0 });
 }
 
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    blueOwnedTechTiles: {
+      orange1: true,
+      orange3: true,
+      blue2: true,
+      purple4: true,
+    },
+    blueTechCounts: {
+      orange: 2,
+      blue: 1,
+      purple: 1,
+    },
+  });
+  harness.controller.configureAiAutoBattle({
+    playerIds: [harness.blue.id],
+    suppressAutoSchedule: true,
+  });
+
+  const blueResult = harness.controller.getAiAutoBattleReport().playerResults
+    .find((player) => player.playerId === harness.blue.id);
+  assert.equal(blueResult.techCount, 4, "autobattle player results should keep total tech count");
+  assert.deepEqual(
+    blueResult.techTypeCounts,
+    { orange: 2, blue: 1, purple: 1 },
+    "autobattle player results should expose tech type counts for D1 diagnostics",
+  );
+}
+
 console.log("app/ai-controller.test.js ok");
