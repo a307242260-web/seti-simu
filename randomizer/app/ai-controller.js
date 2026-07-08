@@ -10752,6 +10752,72 @@
       return roundAiScore(Math.min(18, Math.max(0, penalty)));
     }
 
+    function getAiBestPlayableLaunchCardRoute(player = getCurrentPlayer()) {
+      if (!player || !Array.isArray(player.hand) || !player.hand.length) return null;
+      const isCurrentPlayer = String(player.id || "") === String(getCurrentPlayer()?.id || "");
+      let best = null;
+      for (let handIndex = 0; handIndex < player.hand.length; handIndex += 1) {
+        const card = player.hand[handIndex];
+        if (!isAiSupportedHandPlayCard(card)) continue;
+        const cost = getCardPlayCost(card) || {};
+        if (!players.canAfford(player, cost)) continue;
+        const playEffects = getAiPlayEffectsForCard(card);
+        if (!(playEffects || []).some((effect) => effect?.type === "launch")) continue;
+        if ((playEffects || []).some((effect) => isAiResearchTechEffectType(effect?.type))) continue;
+        if (getAiRunezuPrematureSymbolCardReason(card, playEffects, player)) continue;
+        if (isCurrentPlayer) {
+          const effectCheck = canAiResolvePlayCardEffects(playEffects);
+          if (!effectCheck.ok) continue;
+        }
+        const model = cardEffects.getCardModel?.(card) || null;
+        const plan = scoreAiPlayCardRoutePlan(card, model, playEffects, player);
+        if (plan?.actionId !== "launch") continue;
+        const planScore = Math.max(0, aiNumber(plan.score));
+        if (planScore < 3.5) continue;
+        const postLaunchMovePlan = plan.postLaunchMovePlan || null;
+        const entry = {
+          handIndex,
+          cardId: card.cardId || card.id || null,
+          cardLabel: getAiCardDisplayLabel({ card, cardId: card.cardId || card.id || null }, player),
+          planScore,
+          postLaunchMoveScore: Math.max(0, aiNumber(plan.postLaunchMoveScore)),
+          routeTarget: postLaunchMovePlan?.routeTarget || null,
+          to: postLaunchMovePlan?.to || null,
+        };
+        if (!best || entry.planScore > best.planScore) best = entry;
+      }
+      return best;
+    }
+
+    function getAiOrange4LaunchRouteRaceRelief(rawRacePenalty, launchRoute, planetId) {
+      const penalty = Math.max(0, aiNumber(rawRacePenalty));
+      if (penalty <= 0 || !launchRoute?.to || !planetId) {
+        return { relief: 0, estimatedRouteDistance: 99 };
+      }
+      const coordinate = getAiPlanetCoordinateById(planetId);
+      if (!coordinate) return { relief: 0, estimatedRouteDistance: 99 };
+      const launchDistance = getAiSectorDistance(launchRoute.to, coordinate);
+      if (!Number.isFinite(Number(launchDistance)) || launchDistance >= 99) {
+        return { relief: 0, estimatedRouteDistance: 99 };
+      }
+
+      const estimatedRouteDistance = Math.max(0, Math.round(aiNumber(launchDistance))) + 1;
+      if (estimatedRouteDistance <= 3) {
+        return { relief: 0, estimatedRouteDistance };
+      }
+      if (estimatedRouteDistance > 6) {
+        return { relief: 0, estimatedRouteDistance };
+      }
+      const routeScale = estimatedRouteDistance <= 5 ? 0.68 : 0.52;
+      const roundScale = getAiRoundNumber() <= 2 ? 1 : getAiRoundNumber() === 3 ? 0.85 : 0.65;
+      const planScale = Math.min(1, Math.max(0.55, aiNumber(launchRoute.planScore) / 5.2));
+      const relief = Math.min(8.2, penalty * routeScale * roundScale * planScale);
+      return {
+        relief: roundAiScore(Math.max(0, relief)),
+        estimatedRouteDistance,
+      };
+    }
+
     function scoreAiOuterSatelliteContestRiskPenalty(planetId, target = {}, player = getCurrentPlayer(), options = {}) {
       if (!isAiOuterHighScoreSatelliteTarget(planetId, target)) return 0;
       if (options.immediate === true) return 0;
@@ -12405,9 +12471,33 @@
 
     function getAiOrange4SatellitePotentialProfile(player = getCurrentPlayer()) {
       if (!player) {
-        return { potential: 0, rawPotential: 0, racePenalty: 0, routeDistance: 99, planetId: null, satelliteId: null };
+        return {
+          potential: 0,
+          rawPotential: 0,
+          racePenalty: 0,
+          rawRacePenalty: 0,
+          launchRouteRelief: 0,
+          launchRouteDistance: 99,
+          launchRoutePlanScore: 0,
+          routeDistance: 99,
+          planetId: null,
+          satelliteId: null,
+        };
       }
-      let best = { potential: 0, rawPotential: 0, racePenalty: 0, routeDistance: 99, planetId: null, satelliteId: null };
+      const playableLaunchRoute = getAiBestPlayableLaunchCardRoute(player);
+      let best = {
+        potential: 0,
+        rawPotential: 0,
+        racePenalty: 0,
+        rawRacePenalty: 0,
+        launchRouteRelief: 0,
+        launchRouteDistance: 99,
+        launchRoutePlanScore: 0,
+        launchRouteCardId: null,
+        routeDistance: 99,
+        planetId: null,
+        satelliteId: null,
+      };
       for (const planet of solar.createSolarSnapshot(solarState).planetLocations || []) {
         if (!planet?.planetId || planet.planetId === "earth") continue;
         const routeDistance = getAiNearestRocketDistanceToPlanet(player, planet.planetId);
@@ -12423,12 +12513,16 @@
             energyShortfall,
             routeDistance,
           });
-          const racePenalty = scoreAiSatelliteLandingRaceWastePenalty(planet.planetId, target, player, {
+          const rawRacePenalty = scoreAiSatelliteLandingRaceWastePenalty(planet.planetId, target, player, {
             directScore,
             energyCost,
             energyShortfall,
             routeDistance,
           });
+          const launchRouteRelief = routeDistance >= 99
+            ? getAiOrange4LaunchRouteRaceRelief(rawRacePenalty, playableLaunchRoute, planet.planetId)
+            : { relief: 0, estimatedRouteDistance: 99 };
+          const racePenalty = Math.max(0, rawRacePenalty - Math.max(0, aiNumber(launchRouteRelief.relief)));
           const rawPotential = scoreAiRewardEffects(effects, player) + cashoutPremium;
           const potential = Math.max(0, rawPotential - racePenalty);
           if (
@@ -12439,6 +12533,11 @@
               potential,
               rawPotential,
               racePenalty,
+              rawRacePenalty,
+              launchRouteRelief: launchRouteRelief.relief,
+              launchRouteDistance: launchRouteRelief.estimatedRouteDistance,
+              launchRoutePlanScore: playableLaunchRoute?.planScore || 0,
+              launchRouteCardId: playableLaunchRoute?.cardId || null,
               routeDistance,
               planetId: planet.planetId,
               satelliteId: satellite.satelliteId,
@@ -12451,6 +12550,9 @@
         potential: roundAiScore(best.potential),
         rawPotential: roundAiScore(best.rawPotential),
         racePenalty: roundAiScore(best.racePenalty),
+        rawRacePenalty: roundAiScore(best.rawRacePenalty),
+        launchRouteRelief: roundAiScore(best.launchRouteRelief),
+        launchRoutePlanScore: roundAiScore(best.launchRoutePlanScore),
       };
     }
 
@@ -19519,6 +19621,28 @@
           recordAiAutoBattleLog("move-path-skip", `${getPlayerLabelById(playerId)}AI 跳过卡牌移动效果`, {
             effectId: effect.id || null,
             effectType: effect.type || null,
+            message,
+          });
+          skipCurrentActionEffect?.();
+          return { ok: true, progressed: true, skipped: true, message };
+        }
+      }
+      if (isAiResearchTechEffectType(effect.type) && !isTechTilePickingActive()) {
+        const effectPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+        const selectionOptions = getAiResearchTechSelectionOptionsForEffect(effect);
+        const candidates = listAiResearchTechCandidates(selectionOptions);
+        const executable = selectExecutableAiResearchTechCandidate(
+          candidates,
+          candidates[0] || null,
+          effectPlayer,
+          selectionOptions,
+        );
+        if (!executable.candidate) {
+          const message = `${effect.label || "科技行动"}：${executable.check?.message || "没有可研究科技候选"}，已跳过`;
+          recordAiAutoBattleLog("tech-placement-skip", `${getPlayerLabelById(playerId)}AI 跳过科技行动效果`, {
+            effectId: effect.id || null,
+            effectType: effect.type || null,
+            candidates,
             message,
           });
           skipCurrentActionEffect?.();
