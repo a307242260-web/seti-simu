@@ -6489,6 +6489,30 @@
       const bestPlayDiscardCost = bestPlay
         ? estimateAiTradeDiscardOpportunityCost(player, trade, bestPlay.handIndex)
         : Infinity;
+      const weakStartAlienPlayConcreteValue = bestPlay
+        ? Math.max(
+          0,
+          aiNumber(bestPlay.concreteValue),
+          aiNumber(bestPlay.valueBreakdown?.banrenmaThresholdSetupValue),
+          aiNumber(bestPlay.valueBreakdown?.chongTaskChainValue),
+          aiNumber(bestPlay.valueBreakdown?.effectValue),
+          aiNumber(bestPlay.valueBreakdown?.strategyPassivePlayValue),
+          aiNumber(bestPlay.valueBreakdown?.playCardConversionPressure),
+        )
+        : 0;
+      const weakStartNoDiscardAlienPlayUnlock = !allowExtendedResourceLock
+        && tradeId === "credits-for-energy"
+        && handCost <= 0
+        && aiNumber(trade.gain?.energy) > 0
+        && getAiRoundNumber() === 3
+        && countAiFinalMarksForPlayer(player) >= 3
+        && currentScore >= 90
+        && currentScore <= 125
+        && handAfterTrade >= 2
+        && Boolean(bestPlay)
+        && bestPlay.alienCard
+        && aiNumber(bestPlay.score) >= 32
+        && weakStartAlienPlayConcreteValue >= 10;
       const playUnlockSafe = allowExtendedResourceLock
         && Boolean(bestPlay)
         && Number.isFinite(bestPlayDiscardCost)
@@ -6499,6 +6523,12 @@
           || aiNumber(bestPlay.directScoreGain) >= 6
           || aiNumber(bestPlay.concreteValue) >= 12
         );
+      const weakStartAlienPlayUnlockSafe = weakStartNoDiscardAlienPlayUnlock
+        && Number.isFinite(bestPlayDiscardCost)
+        && aiNumber(bestPlay.score) > Math.max(24, currentPlayScore + 8);
+      const bestPlayConcreteValue = weakStartAlienPlayUnlockSafe
+        ? Math.max(aiNumber(bestPlay.concreteValue), weakStartAlienPlayConcreteValue)
+        : aiNumber(bestPlay?.concreteValue);
       const postTradeMainActions = [
         analyzeCheck?.ok && analyzeScore > currentAnalyzeScore + 1
           ? {
@@ -6518,13 +6548,13 @@
             concreteValue: scanDirectScoreGain + Math.max(0, scoreAiScanPriorityFloor(player)) * 0.35,
           }
           : null,
-        playUnlockSafe
+        (playUnlockSafe || weakStartAlienPlayUnlockSafe)
           ? {
             actionId: "playCard",
             score: aiNumber(bestPlay.score),
             currentScore: currentPlayScore,
             directScoreGain: Math.max(0, aiNumber(bestPlay.directScoreGain)),
-            concreteValue: aiNumber(bestPlay.concreteValue),
+            concreteValue: bestPlayConcreteValue,
             handIndex: bestPlay.handIndex,
             cardId: bestPlay.cardId || null,
             cardLabel: bestPlay.cardLabel || null,
@@ -6584,6 +6614,7 @@
       if (
         handCost <= 0
         && !weakNoDiscardDirectScanUnlock
+        && !weakStartAlienPlayUnlockSafe
         && (
           getAiRoundNumber() !== 2
           || nextThreshold
@@ -6656,6 +6687,8 @@
           launchBonus: roundAiScore(launchBonus),
           earlyLowScoreScanUnlock,
           directScoreScanUnlock,
+          weakStartAlienPlayUnlock: weakStartAlienPlayUnlockSafe,
+          weakStartAlienPlayConcreteValue: roundAiScore(weakStartAlienPlayConcreteValue),
           bestExistingScore: Number.isFinite(bestExistingScore) ? roundAiScore(bestExistingScore) : null,
         },
       };
