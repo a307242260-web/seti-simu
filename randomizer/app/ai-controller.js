@@ -2170,6 +2170,41 @@
       return value + Math.max(0, 4 - aiNumber(getCardPrice(card))) * 0.25;
     }
 
+    function scoreAiFinalRoundUnreachablePublicPickPenalty(card, player = getCurrentPlayer(), details = {}) {
+      if (!card || !player || getAiRoundNumber() < FINAL_ROUND_NUMBER) return 0;
+      if (details.pendingType === "trade" || countAiFinalMarksForPlayer(player) < 3) return 0;
+      if (details.playCandidate) return 0;
+      const model = details.model || cardEffects.getCardModel?.(card) || null;
+      const typeCode = details.typeCode ?? getCardTypeCode(card);
+      const hasPersistentValue = Boolean(
+        model?.tasks?.length
+        || model?.triggers?.length
+        || model?.endGameScoring
+        || model?.pluto
+        || typeCode === 3
+        || isAiAlienMainPlayCard(card)
+      );
+      if (hasPersistentValue) return 0;
+      const cost = getCardPlayCost(card);
+      if (players.canAfford(player, cost)) return 0;
+      const resources = player.resources || {};
+      const creditShortfall = Math.max(0, aiNumber(cost.credits) - aiNumber(resources.credits));
+      const energyShortfall = Math.max(0, aiNumber(cost.energy) - aiNumber(resources.energy));
+      const publicityShortfall = Math.max(0, aiNumber(cost.publicity) - aiNumber(resources.publicity));
+      const dataShortfall = Math.max(0, aiNumber(cost.availableData) - aiNumber(resources.availableData));
+      const weightedShortfall =
+        creditShortfall * AI_RESOURCE_VALUES.credits
+        + energyShortfall * AI_RESOURCE_VALUES.energy
+        + publicityShortfall * AI_RESOURCE_VALUES.publicity
+        + dataShortfall * AI_RESOURCE_VALUES.availableData;
+      if (weightedShortfall <= 0) return 0;
+      const severeShortfall = creditShortfall >= 2 || energyShortfall >= 2 || weightedShortfall >= 6;
+      if (!severeShortfall) return 0;
+      const projectedScore = getAiProjectedFinalScore(player);
+      const highScoreWastePenalty = projectedScore >= 260 ? 8 : 4;
+      return Math.min(30, 9 + weightedShortfall * 1.35 + highScoreWastePenalty);
+    }
+
     function scoreAiPublicPickCard(card, player = getCurrentPlayer(), pendingType = null) {
       if (!card) return -Infinity;
       const incomeGain = cards.getIncomeGainForCard?.(card) || null;
@@ -2196,6 +2231,12 @@
       }));
       const currentScore = Math.max(0, aiNumber(player?.resources?.score));
       const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
+      const finalRoundDeferredPick = pendingType !== "trade"
+        && getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && countAiFinalMarksForPlayer(player) >= 3;
+      const deferredPlayCandidate = finalRoundDeferredPick
+        ? buildAiPlayCardCandidate(card, -1, player)
+        : null;
       const closeThirdFinalMarkPick = pendingType === "trade"
         && nextThreshold === 70
         && countAiFinalMarksForPlayer(player) === 2
@@ -2244,10 +2285,16 @@
           + (typeCode === 3 ? 1.4 : 0)
           - unplayablePenalty;
       }
-      return playableValue * 0.75
+      const baseValue = playableValue * 0.75
         + cornerValue * 0.3
         + incomeValue * 0.2
         + (typeCode === 3 ? 2 : 0);
+      return baseValue - scoreAiFinalRoundUnreachablePublicPickPenalty(card, player, {
+        pendingType,
+        model,
+        typeCode,
+        playCandidate: deferredPlayCandidate,
+      });
     }
 
     function summarizeAiPublicPickCandidate(entry, player = getCurrentPlayer()) {
