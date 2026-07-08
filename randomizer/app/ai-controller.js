@@ -5528,8 +5528,12 @@
           if (analyzeScore < 10) return null;
           const bestBlueTraceScore = getAiBestRevealedAlienTraceDirectScore(player, "blue");
           const genericTradeCost = scoreAiResourceBundle(trade.cost || {});
-          const tradeCost = Math.max(genericTradeCost, aiNumber(discardPlan.totalCost));
-          const handOpportunityCost = Math.max(0, tradeCost - genericTradeCost);
+          const handCost = Math.max(0, Math.round(aiNumber(trade.cost?.handSize)));
+          const actualDiscardCost = aiNumber(discardPlan.totalCost);
+          const tradeCost = handCost > 0
+            ? actualDiscardCost
+            : Math.max(genericTradeCost, actualDiscardCost);
+          const handOpportunityCost = Math.max(0, actualDiscardCost - genericTradeCost);
           const handTradePenalty = tradeId === "cards-for-energy"
             ? Math.max(2.5, handOpportunityCost * 0.18)
             : 0;
@@ -10635,7 +10639,7 @@
     function canAiOpponentContestSatelliteNow(opponent, planetId) {
       if (!opponent || !planetId || !players.playerOwnsTech(opponent, "orange4", createActionContext())) return false;
       if (!(planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planetId) || []).length) return false;
-      const energyCost = abilities.planet.getLandEnergyCost(createActionContext(), planetId);
+      const energyCost = getAiApproxLandEnergyCostForPlayer(opponent, planetId);
       if (!players.canAfford(opponent, energyCost > 0 ? { energy: energyCost } : {})) return false;
       return getMovableTokensForPlayer(opponent.id).some((rocket) => {
         const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
@@ -10651,15 +10655,113 @@
       }, 0);
     }
 
+    function getAiNearestRocketDistanceToPlanet(player, planetId) {
+      if (!player || !planetId) return 99;
+      const coordinate = getAiPlanetCoordinateById(planetId);
+      if (!coordinate) return 99;
+      return getMovableTokensForPlayer(player.id)
+        .reduce((best, rocket) => {
+          const rocketCoordinate = rocketActions.getRocketSectorCoordinate(rocket);
+          if (!rocketCoordinate) return best;
+          return Math.min(best, getAiSectorDistance(rocketCoordinate, coordinate));
+        }, 99);
+    }
+
+    function getAiSatelliteLandingRaceState(planetId, target = {}, player = getCurrentPlayer(), options = {}) {
+      if (!planetId || !player || target?.type !== "satellite") {
+        return { pressure: 0, ownDistance: 99, closestOpponentDistance: 99, fasterOpponentCount: 0 };
+      }
+      const availableSatellites = planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planetId) || [];
+      if (!availableSatellites.length) {
+        return { pressure: 0, ownDistance: 99, closestOpponentDistance: 99, fasterOpponentCount: 0 };
+      }
+      if (target.satelliteId && !availableSatellites.some((satellite) => satellite.satelliteId === target.satelliteId)) {
+        return { pressure: 0, ownDistance: 99, closestOpponentDistance: 99, fasterOpponentCount: 0 };
+      }
+
+      const ownDistance = options.routeDistance == null
+        ? getAiNearestRocketDistanceToPlanet(player, planetId)
+        : Math.max(0, Math.round(aiNumber(options.routeDistance)));
+      if (ownDistance <= 0 && options.immediate === true) {
+        return { pressure: 0, ownDistance, closestOpponentDistance: 99, fasterOpponentCount: 0 };
+      }
+
+      const activeIds = Array.isArray(turnState.activePlayerIds) && turnState.activePlayerIds.length
+        ? turnState.activePlayerIds
+        : (playerState.players || []).map((entry) => entry.id).filter(Boolean);
+      const activeIdSet = new Set(activeIds.map((playerId) => String(playerId)));
+      const precedingIds = new Set(getAiPrecedingOpponentIds(player).map((playerId) => String(playerId)));
+      let pressure = 0;
+      let closestOpponentDistance = 99;
+      let fasterOpponentCount = 0;
+
+      for (const opponent of playerState.players || []) {
+        if (!opponent || String(opponent.id) === String(player.id)) continue;
+        if (activeIdSet.size && !activeIdSet.has(String(opponent.id))) continue;
+        if (!players.playerOwnsTech(opponent, "orange4", createActionContext())) continue;
+
+        const opponentDistance = getAiNearestRocketDistanceToPlanet(opponent, planetId);
+        if (opponentDistance >= 99) continue;
+        closestOpponentDistance = Math.min(closestOpponentDistance, opponentDistance);
+
+        const opponentEnergyCost = getAiApproxLandEnergyCostForPlayer(opponent, planetId);
+        const opponentEnergyNow = Math.max(0, aiNumber(opponent.resources?.energy));
+        const opponentEnergyWithIncome = opponentEnergyNow + Math.max(0, aiNumber(opponent.income?.energy));
+        const energyShortfall = Math.max(0, opponentEnergyCost - opponentEnergyWithIncome);
+        if (energyShortfall > 2) continue;
+
+        const isPreceding = precedingIds.has(String(opponent.id));
+        const canLandNow = opponentDistance <= 0
+          && players.canAfford(opponent, opponentEnergyCost > 0 ? { energy: opponentEnergyCost } : {});
+        let entryPressure = 0;
+        if (canLandNow) {
+          entryPressure = isPreceding ? 1.55 : 1.05;
+        } else if (opponentDistance < ownDistance) {
+          fasterOpponentCount += 1;
+          entryPressure = (isPreceding ? 1.1 : 0.78)
+            + Math.min(0.55, Math.max(0, ownDistance - opponentDistance) * 0.14);
+        } else if (opponentDistance === ownDistance && isPreceding) {
+          entryPressure = 0.72;
+        } else if (ownDistance >= 3 && opponentDistance <= ownDistance + 1 && isPreceding) {
+          entryPressure = 0.34;
+        }
+
+        if (entryPressure <= 0) continue;
+        if (energyShortfall > 0) entryPressure *= Math.max(0.42, 1 - energyShortfall * 0.24);
+        pressure += entryPressure;
+      }
+
+      return {
+        pressure: roundAiScore(pressure),
+        ownDistance,
+        closestOpponentDistance,
+        fasterOpponentCount,
+      };
+    }
+
+    function scoreAiSatelliteLandingRaceWastePenalty(planetId, target = {}, player = getCurrentPlayer(), options = {}) {
+      if (target?.type !== "satellite" || options.immediate === true) return 0;
+      const race = getAiSatelliteLandingRaceState(planetId, target, player, options);
+      if (race.pressure <= 0) return 0;
+      const round = getAiRoundNumber();
+      const directScore = Math.max(0, aiNumber(options.directScore));
+      const routeDistance = Math.max(0, Math.round(aiNumber(race.ownDistance)));
+      let penalty = race.pressure * (round <= 2 ? 4.2 : round === 3 ? 3.3 : 1.8);
+      if (directScore >= 20) penalty += race.pressure * (round <= 3 ? 2.4 : 1.2);
+      if (routeDistance >= 3) penalty += Math.min(4.5, (routeDistance - 2) * 1.15);
+      return roundAiScore(Math.min(18, Math.max(0, penalty)));
+    }
+
     function scoreAiOuterSatelliteContestRiskPenalty(planetId, target = {}, player = getCurrentPlayer(), options = {}) {
       if (!isAiOuterHighScoreSatelliteTarget(planetId, target)) return 0;
       if (options.immediate === true) return 0;
       const pressure = getAiOuterSatelliteContestPressure(planetId, player);
-      if (pressure <= 0) return 0;
+      const racePenalty = scoreAiSatelliteLandingRaceWastePenalty(planetId, target, player, options);
+      if (pressure <= 0 && racePenalty <= 0) return 0;
       const directScore = Math.max(0, aiNumber(options.directScore));
       const round = getAiRoundNumber();
       const base = round <= 2 ? 11 : round === 3 ? 7 : 3.5;
-      return Math.min(24, pressure * base + (directScore >= 20 ? 4 : 0));
+      return Math.min(24, pressure * base + (directScore >= 20 && pressure > 0 ? 4 : 0) + racePenalty);
     }
 
     function getAiYellowTraceLandCompetitionPenalty(planetId, target = { type: "planet" }, player = getCurrentPlayer()) {
@@ -10802,10 +10904,18 @@
             energyCost,
             highScoreTarget: directScore >= 20,
           });
-          const contestRiskPenalty = scoreAiOuterSatelliteContestRiskPenalty(planetId, target, player, {
+          const raceWastePenalty = scoreAiSatelliteLandingRaceWastePenalty(planetId, target, player, {
+            directScore,
+            energyCost,
+            energyShortfall,
+            immediate: options.immediate === true,
+            routeDistance: options.routeDistance,
+          });
+          const contestRiskPenalty = Math.max(raceWastePenalty, scoreAiOuterSatelliteContestRiskPenalty(planetId, target, player, {
             directScore,
             immediate: options.immediate === true,
-          });
+            routeDistance: options.routeDistance,
+          }));
           const cashoutPremium = scoreAiOuterSatelliteCashoutPremium(planetId, target, player, {
             directScore,
             energyCost,
@@ -10823,6 +10933,7 @@
             energyShortfall,
             pointConversionPenalty,
             contestRiskPenalty,
+            raceWastePenalty,
             cashoutPremium,
             score: rewardValue * 0.55
               + directScore * 0.22
@@ -11557,12 +11668,23 @@
               routeDistance: newDistance,
               immediate: newDistance === 0,
             });
+            const satelliteRacePenalty = scoreAiSatelliteLandingRaceWastePenalty(target.id, satelliteTarget, player, {
+              directScore: target.satelliteOpportunity.directScore,
+              energyCost: target.satelliteOpportunity.energyCost,
+              energyShortfall: target.satelliteOpportunity.energyShortfall,
+              routeDistance: newDistance,
+              immediate: newDistance === 0 && !mainActionAlreadyUsed,
+            });
             const distanceScale = newDistance === 0 ? 0.75 : newDistance === 1 ? 0.62 : 0.42;
             score += satelliteCashoutPremium * distanceScale;
             score += scoreAiOuterSatelliteRouteApproachPremium(target.id, target.satelliteOpportunity, player, {
               oldDistance,
               newDistance,
             });
+            if (satelliteRacePenalty > 0) {
+              const racePenaltyScale = newDistance === 0 ? 0.75 : newDistance === 1 ? 0.65 : 0.45;
+              score -= satelliteRacePenalty * racePenaltyScale;
+            }
           }
           rotationStagingValue = scoreAiRotationStagingValue({
             ...target,
@@ -12281,6 +12403,57 @@
       return roundAiScore(Math.min(hasMarkedTechFinal ? 13 : 10, Math.max(0, value)));
     }
 
+    function getAiOrange4SatellitePotentialProfile(player = getCurrentPlayer()) {
+      if (!player) {
+        return { potential: 0, rawPotential: 0, racePenalty: 0, routeDistance: 99, planetId: null, satelliteId: null };
+      }
+      let best = { potential: 0, rawPotential: 0, racePenalty: 0, routeDistance: 99, planetId: null, satelliteId: null };
+      for (const planet of solar.createSolarSnapshot(solarState).planetLocations || []) {
+        if (!planet?.planetId || planet.planetId === "earth") continue;
+        const routeDistance = getAiNearestRocketDistanceToPlanet(player, planet.planetId);
+        for (const satellite of planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planet.planetId) || []) {
+          const effects = planetRewards.buildSatelliteLandRewardEffects?.(satellite.satelliteId) || [];
+          const directScore = getAiRewardDirectScore(effects, player);
+          const energyCost = getAiApproxLandEnergyCostForPlayer(player, planet.planetId);
+          const energyShortfall = Math.max(0, energyCost - Math.max(0, aiNumber(player.resources?.energy)));
+          const target = { type: "satellite", satelliteId: satellite.satelliteId };
+          const cashoutPremium = scoreAiOuterSatelliteCashoutPremium(planet.planetId, target, player, {
+            directScore,
+            energyCost,
+            energyShortfall,
+            routeDistance,
+          });
+          const racePenalty = scoreAiSatelliteLandingRaceWastePenalty(planet.planetId, target, player, {
+            directScore,
+            energyCost,
+            energyShortfall,
+            routeDistance,
+          });
+          const rawPotential = scoreAiRewardEffects(effects, player) + cashoutPremium;
+          const potential = Math.max(0, rawPotential - racePenalty);
+          if (
+            potential > best.potential
+            || (potential === best.potential && rawPotential > best.rawPotential)
+          ) {
+            best = {
+              potential,
+              rawPotential,
+              racePenalty,
+              routeDistance,
+              planetId: planet.planetId,
+              satelliteId: satellite.satelliteId,
+            };
+          }
+        }
+      }
+      return {
+        ...best,
+        potential: roundAiScore(best.potential),
+        rawPotential: roundAiScore(best.rawPotential),
+        racePenalty: roundAiScore(best.racePenalty),
+      };
+    }
+
     function scoreAiResearchTechValue(candidate, player = getCurrentPlayer()) {
       const techType = candidate?.techType || "";
       const stackIndex = Math.max(1, Math.round(aiNumber(candidate?.stackIndex) || 1));
@@ -12295,35 +12468,14 @@
       if (candidate?.tileId === "orange2") value += scoreAiOrange2MobilityNeed(player) * 0.75;
       if (candidate?.tileId === "orange3") value += 4.8 + getAiMapDemand(demand.actions, "land") * 0.05;
       if (candidate?.tileId === "orange4") {
-        const satellitePotential = (solar.createSolarSnapshot(solarState).planetLocations || [])
-          .filter((planet) => planet?.planetId && planet.planetId !== "earth")
-          .reduce((best, planet) => Math.max(best, (
-            planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planet.planetId) || []
-          ).reduce((innerBest, satellite) => Math.max(
-            innerBest,
-            scoreAiRewardEffects(planetRewards.buildSatelliteLandRewardEffects?.(satellite.satelliteId) || [], player)
-              + scoreAiOuterSatelliteCashoutPremium(planet.planetId, {
-                type: "satellite",
-                satelliteId: satellite.satelliteId,
-              }, player, {
-                directScore: getAiRewardDirectScore(
-                  planetRewards.buildSatelliteLandRewardEffects?.(satellite.satelliteId) || [],
-                  player,
-                ),
-                energyCost: getAiApproxLandEnergyCostForPlayer(player, planet.planetId),
-                energyShortfall: Math.max(
-                  0,
-                  getAiApproxLandEnergyCostForPlayer(player, planet.planetId)
-                    - Math.max(0, aiNumber(resources.energy)),
-                ),
-              }),
-          ), 0)), 0);
+        const satelliteProfile = getAiOrange4SatellitePotentialProfile(player);
         const energyCapacity = Math.max(
           aiNumber(resources.energy),
           aiNumber(player?.income?.energy) + (players.playerOwnsTech(player, "orange3", createActionContext()) ? 1 : 0),
         );
         const satelliteAffordability = energyCapacity >= 3 ? 1 : energyCapacity >= 2 ? 0.65 : 0.35;
-        value += 4.5 + Math.min(10, satellitePotential * 0.22 * satelliteAffordability);
+        value += 4.5 + Math.min(10, aiNumber(satelliteProfile.potential) * 0.22 * satelliteAffordability);
+        value -= Math.min(6.5, aiNumber(satelliteProfile.racePenalty) * 0.55);
       }
       if (candidate?.tileId === "purple1") value += 1.5;
       value += scoreAiTechBonus(candidate?.bonusId, player);
@@ -17695,6 +17847,9 @@
         lateTechCatchupValue: scoreAiLateTechEngineCatchupValue(candidate, getCurrentPlayer()),
         lowTechCatchupValue: scoreAiLowTechBoardCatchupValue(candidate, getCurrentPlayer()),
       };
+      if (candidate.tileId === "orange4") {
+        candidate.valueBreakdown.orange4SatelliteProfile = getAiOrange4SatellitePotentialProfile(getCurrentPlayer());
+      }
       if (!safety.ok) candidate.score -= 1000;
       return candidate;
     }
