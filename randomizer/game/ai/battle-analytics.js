@@ -2331,6 +2331,143 @@
     };
   }
 
+  function summarizeTechTileCandidate(candidate = {}) {
+    if (!candidate) return null;
+    return {
+      tileId: candidate.tileId || null,
+      techType: candidate.techType || null,
+      bonusId: candidate.bonusId || null,
+      score: roundRatio(candidate.score),
+      directScoreGain: roundRatio(candidate.directScoreGain),
+      finalFormulaDeltas: candidate.finalFormulaDeltas || {},
+      orange4SatelliteProfile: candidate.valueBreakdown?.orange4SatelliteProfile || null,
+    };
+  }
+
+  function getLandTargetChoice(logs = [], logIndex = -1, entry = {}) {
+    const selectedIndex = Number(entry.details?.selectedIndex);
+    if (!Number.isInteger(selectedIndex) || selectedIndex < 0) return null;
+    const previousLandAction = logs
+      .slice(Math.max(0, logIndex - 4), logIndex)
+      .reverse()
+      .find((log) => (
+        log?.type === "turn-action"
+        && log.playerId === entry.playerId
+        && getSelectedActionId(log) === "land"
+      ));
+    return previousLandAction?.details?.action?.choices?.[selectedIndex] || null;
+  }
+
+  function collectLaterSatelliteLandings(logs = [], logIndex = -1, playerId = null, satelliteId = null) {
+    const own = [];
+    const sameTarget = [];
+    for (let index = Math.max(0, logIndex + 1); index < logs.length; index += 1) {
+      const entry = logs[index];
+      if (entry?.type !== "land-target" || entry.details?.selected?.target?.type !== "satellite") continue;
+      const choice = getLandTargetChoice(logs, index, entry);
+      const landing = {
+        roundNumber: entry.roundNumber ?? null,
+        turnNumber: entry.turnNumber ?? null,
+        rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+        playerId: entry.playerId || null,
+        playerLabel: entry.playerLabel || null,
+        planetId: choice?.planetId || entry.details?.planetId || null,
+        satelliteId: entry.details.selected.target.satelliteId || null,
+        score: roundRatio(entry.details.selected.score),
+      };
+      if (playerId && entry.playerId === playerId) own.push(landing);
+      if (satelliteId && landing.satelliteId === satelliteId) sameTarget.push(landing);
+    }
+    return {
+      own: own.slice(0, 4),
+      sameTarget: sameTarget.slice(0, 4),
+    };
+  }
+
+  function buildOrange4RaceSensitiveTechSample(entry, candidates = [], playerResultById = new Map(), logs = [], logIndex = -1) {
+    if (getSelectedActionId(entry) !== "researchTech") return null;
+    const action = getSelectedAction(entry) || {};
+    if (action.valueBreakdown?.bestTechTileId !== "orange4") return null;
+    const takeable = (action.takeable || [])
+      .filter(isCandidateAvailable)
+      .sort((left, right) => numeric(right.score) - numeric(left.score));
+    const orange4 = takeable.find((candidate) => candidate?.tileId === "orange4") || null;
+    if (!orange4) return null;
+    const nextBest = takeable.find((candidate) => candidate?.tileId !== "orange4") || null;
+    const profile = orange4.valueBreakdown?.orange4SatelliteProfile || {};
+    const scoreGap = nextBest ? numeric(orange4.score) - numeric(nextBest.score) : null;
+    const routeDistance = numeric(profile.routeDistance);
+    const launchRouteDistance = numeric(profile.launchRouteDistance);
+    const racePenalty = numeric(profile.racePenalty);
+    const rawRacePenalty = numeric(profile.rawRacePenalty);
+    const sensitive = (
+      scoreGap == null
+      || scoreGap <= 8
+      || routeDistance >= 4
+      || routeDistance >= 99
+      || racePenalty > 0
+      || rawRacePenalty > 0
+    );
+    if (!sensitive) return null;
+    const laterLandings = collectLaterSatelliteLandings(
+      logs,
+      logIndex,
+      entry.playerId || null,
+      profile.satelliteId || null,
+    );
+    const targetCashedBySelf = laterLandings.sameTarget.some((landing) => landing.playerId === entry.playerId);
+    const targetTakenByOther = laterLandings.sameTarget.some((landing) => landing.playerId !== entry.playerId);
+    const ownDifferentSatelliteCashout = laterLandings.own.some((landing) => landing.satelliteId !== profile.satelliteId);
+    const riskTags = [];
+    if (scoreGap != null && scoreGap <= 2) riskTags.push("close-tech-margin");
+    if (routeDistance >= 99) riskTags.push("no-current-route");
+    else if (routeDistance >= 4) riskTags.push("far-satellite-route");
+    if (routeDistance >= 99 && launchRouteDistance < 99) riskTags.push("launch-route-only");
+    if (racePenalty > 0 || rawRacePenalty > 0) riskTags.push("race-penalty");
+    if (!targetCashedBySelf) riskTags.push("target-not-cashed-by-self");
+    if (targetTakenByOther) riskTags.push("target-taken-by-other");
+    if (ownDifferentSatelliteCashout) riskTags.push("different-satellite-cashout");
+    const result = playerResultById?.get?.(entry.playerId) || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      playerId: entry.playerId || null,
+      playerLabel: entry.playerLabel || null,
+      finalScore: roundRatio(result.finalScore),
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(action),
+      orange4: summarizeTechTileCandidate(orange4),
+      nextBestTech: summarizeTechTileCandidate(nextBest),
+      techScoreGap: scoreGap == null ? null : roundRatio(scoreGap),
+      topTechCandidates: takeable.slice(0, 5).map(summarizeTechTileCandidate),
+      laterOwnSatelliteLands: laterLandings.own,
+      laterSameTargetLands: laterLandings.sameTarget,
+      targetCashedBySelf,
+      targetTakenByOther,
+      riskTags,
+      topActions: (candidates || [])
+        .filter(isCandidateAvailable)
+        .sort((left, right) => numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left)))
+        .slice(0, 5)
+        .map(summarizeCandidateWithGraph),
+    };
+  }
+
+  function sortOrange4RaceSensitiveTechSamples(samples = [], limit = 16) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.techScoreGap) - numeric(right.techScoreGap)
+        || numeric(right.orange4?.orange4SatelliteProfile?.rawRacePenalty) - numeric(left.orange4?.orange4SatelliteProfile?.rawRacePenalty)
+        || numeric(right.orange4?.orange4SatelliteProfile?.routeDistance) - numeric(left.orange4?.orange4SatelliteProfile?.routeDistance)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
   function getMainUnlockBestPlayCard(action = {}) {
     const breakdown = action.valueBreakdown || action.breakdown || {};
     return breakdown.bestPlayCard || null;
@@ -6313,6 +6450,7 @@
       endTurnWithAvailableMove: 0,
       endTurnWithPositiveMove: 0,
       researchTechOverCompoundTechCard: 0,
+      orange4RaceSensitiveTech: 0,
       playCardNearMiss: 0,
       b2ScanNearMiss: 0,
       b2TradeNearMiss: 0,
@@ -6347,6 +6485,7 @@
     const negativePlayCardGraphLiftSamples = [];
     const endTurnMoveOpportunitySamples = [];
     const researchTechCompoundCardSamples = [];
+    const orange4RaceSensitiveTechSamples = [];
     const playCardNearMissSamples = [];
     const b2ScanNearMissSamples = [];
     const b2TradeNearMissSamples = [];
@@ -6465,6 +6604,17 @@
           if (researchTechCompoundCardSamples.length < 12) {
             researchTechCompoundCardSamples.push(buildResearchTechCompoundCardSample(entry, candidates));
           }
+        }
+        const orange4RaceSensitiveTechSample = buildOrange4RaceSensitiveTechSample(
+          entry,
+          candidates,
+          playerResultById,
+          logs,
+          logIndex,
+        );
+        if (orange4RaceSensitiveTechSample) {
+          opportunities.orange4RaceSensitiveTech += 1;
+          orange4RaceSensitiveTechSamples.push(orange4RaceSensitiveTechSample);
         }
         if (isPlayCardNearMiss(entry, candidates)) {
           opportunities.playCardNearMiss += 1;
@@ -6719,6 +6869,7 @@
       negativePlayCardGraphLiftSamples,
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
+      orange4RaceSensitiveTechSamples: sortOrange4RaceSensitiveTechSamples(orange4RaceSensitiveTechSamples),
       playCardNearMissSamples: sortPlayCardNearMissSamples(playCardNearMissSamples),
       playCardNearMissTagCounts: buildPlayCardNearMissTagCounts(playCardNearMissSamples),
       counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(playCardNearMissSamples),
@@ -6801,6 +6952,7 @@
     const mergedNegativePlayCardGraphLiftSamples = [];
     const mergedEndTurnMoveOpportunitySamples = [];
     const mergedResearchTechCompoundCardSamples = [];
+    const mergedOrange4RaceSensitiveTechSamples = [];
     const mergedPlayCardNearMissSamples = [];
     const mergedB2ScanNearMissSamples = [];
     const mergedB2TradeNearMissSamples = [];
@@ -6968,6 +7120,9 @@
           ...analysis.researchTechCompoundCardSamples.slice(0, 12 - mergedResearchTechCompoundCardSamples.length),
         );
       }
+      if (Array.isArray(analysis.orange4RaceSensitiveTechSamples)) {
+        mergedOrange4RaceSensitiveTechSamples.push(...analysis.orange4RaceSensitiveTechSamples);
+      }
       if (Array.isArray(analysis.playCardNearMissSamples)) {
         mergedPlayCardNearMissSamples.push(...analysis.playCardNearMissSamples);
       }
@@ -7130,6 +7285,7 @@
       lowEngineThroughputSamples,
       engineActionNearMissSamples: sortEngineActionNearMissSamples(mergedEngineActionNearMissSamples),
       engineActionNearMissCounts: rankEngineActionNearMissCountBuckets(mergedEngineActionNearMissCounts),
+      orange4RaceSensitiveTechSamples: sortOrange4RaceSensitiveTechSamples(mergedOrange4RaceSensitiveTechSamples),
       finalReadyTaskCreditShortfallSamples: mergedFinalReadyTaskCreditShortfallSamples,
       finalReadyTaskTradeUnlockMissSamples: mergedFinalReadyTaskTradeUnlockMissSamples,
       lowRoundActionTailSamples: sortLowRoundActionTailSamples(mergedLowRoundActionTailSamples),
@@ -7183,6 +7339,7 @@
       negativePlayCardGraphLiftSamples: mergedNegativePlayCardGraphLiftSamples,
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
+      orange4RaceSensitiveTechSamples: sortOrange4RaceSensitiveTechSamples(mergedOrange4RaceSensitiveTechSamples),
       playCardNearMissSamples: sortPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
       playCardNearMissTagCounts: buildPlayCardNearMissTagCounts(mergedPlayCardNearMissSamples),
       counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
