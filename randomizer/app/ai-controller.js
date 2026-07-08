@@ -13654,6 +13654,68 @@
       return roundAiScore(Math.min(options.cap ?? 34, Math.max(0, base * markedScale)));
     }
 
+    function getAiBestB2WinningScanPreviewChoice(scanCandidate) {
+      return (scanCandidate?.targetPreview?.topChoices || [])
+        .filter((choice) => (
+          choice?.b2?.marked
+          && choice?.b2?.active
+          && choice?.b2?.winsAfterScan
+          && Math.max(0, aiNumber(choice.directScoreGain)) >= 2
+        ))
+        .sort((left, right) => (
+          aiNumber(right.score) - aiNumber(left.score)
+          || aiNumber(right.directScoreGain) - aiNumber(left.directScoreGain)
+        ))[0] || null;
+    }
+
+    function isAiFixedNebulaScanPlayCandidate(candidate) {
+      const effectTypes = candidate?.effectTypes || [];
+      if (!effectTypes.includes(cardEffects.EFFECT_TYPES.SCAN_NEBULA)) return false;
+      return !effectTypes.some((type) => (
+        type === cardEffects.EFFECT_TYPES.SCAN_ACTION
+        || type === cardEffects.EFFECT_TYPES.ANY_SECTOR_SCAN
+        || type === cardEffects.EFFECT_TYPES.SCAN_COLOR_CHOICE
+        || type === cardEffects.EFFECT_TYPES.PUBLIC_SCAN
+        || type === cardEffects.EFFECT_TYPES.HAND_SCAN
+        || type === cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN
+        || type === cardEffects.EFFECT_TYPES.CONDITIONAL_SECTOR_SCAN
+        || type === cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN
+      ));
+    }
+
+    function scoreAiWeakFinalB2TargetedScanTieBreak(player, scanCandidate, playCardCandidate) {
+      if (!player || player.aiDifficulty !== AI_DIFFICULTY_WEAK_START) return 0;
+      if (getAiRoundNumber() < FINAL_ROUND_NUMBER) return 0;
+      if (countAiFinalMarksForPlayer(player) < 3) return 0;
+      if (!scanCandidate || scanCandidate.available === false || !playCardCandidate || playCardCandidate.available === false) return 0;
+      const currentScore = Math.max(0, aiNumber(player.resources?.score));
+      if (currentScore < 70 || currentScore > 115) return 0;
+      if (Math.max(0, aiNumber(scanCandidate.directScoreGain)) < 2) return 0;
+      if (aiNumber(scanCandidate.score) < aiNumber(playCardCandidate.score) - 1) return 0;
+      const bestB2Choice = getAiBestB2WinningScanPreviewChoice(scanCandidate);
+      if (!bestB2Choice) return 0;
+      const bestPlayCard = (playCardCandidate.playableCards || [])
+        .filter((candidate) => candidate?.available !== false)
+        .sort((left, right) => aiNumber(right.score) - aiNumber(left.score))[0] || null;
+      if (!isAiFixedNebulaScanPlayCandidate(bestPlayCard)) return 0;
+      const breakdown = bestPlayCard.valueBreakdown || {};
+      if (Math.max(0, aiNumber(bestPlayCard.directScoreGain)) > 0) return 0;
+      const concreteCardValue = Math.max(
+        0,
+        aiNumber(breakdown.c2Type3ProgressValue),
+        aiNumber(breakdown.cFinalTaskProgressValue),
+        aiNumber(breakdown.endGameExpectedScore),
+        aiNumber(breakdown.standardActionPremium),
+        aiNumber(breakdown.planScore),
+      );
+      if (concreteCardValue > 6) return 0;
+      const b2 = bestB2Choice.b2 || {};
+      const value = 0.85
+        + Math.min(0.55, Math.max(0, aiNumber(b2.deficit)) * 0.18)
+        + Math.min(0.35, Math.max(0, aiNumber(bestB2Choice.directScoreGain)) * 0.12);
+      return roundAiScore(Math.min(1.6, value));
+    }
+
     function shouldAiProtectB2SectorScanFromPlanetCap(player = getCurrentPlayer()) {
       if (!player || getAiRoundNumber() < FINAL_ROUND_NUMBER) return false;
       const bottleneck = getAiB2SectorBottleneck(player, { requireMarked: true });
@@ -18544,6 +18606,20 @@
           playCardConversionPressure: Math.max(0, aiNumber(bestPlayCardBreakdown.playCardConversionPressure)),
         },
       });
+      const scanCandidate = candidates.find((candidate) => candidate?.id === "scan");
+      const playCardCandidate = candidates.find((candidate) => candidate?.id === "playCard");
+      const weakFinalB2TargetedScanTieBreak = scoreAiWeakFinalB2TargetedScanTieBreak(
+        currentPlayer,
+        scanCandidate,
+        playCardCandidate,
+      );
+      if (weakFinalB2TargetedScanTieBreak > 0 && scanCandidate) {
+        scanCandidate.score = roundAiScore(aiNumber(scanCandidate.score) + weakFinalB2TargetedScanTieBreak);
+        scanCandidate.valueBreakdown = {
+          ...(scanCandidate.valueBreakdown || {}),
+          weakFinalB2TargetedScanTieBreak,
+        };
+      }
       const strongestNonLaunchMain = candidates
         .filter((candidate) => (
           candidate?.kind === "main"
