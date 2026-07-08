@@ -13735,10 +13735,11 @@
       return roundAiScore(Math.min(options.cap ?? 34, Math.max(0, base * markedScale)));
     }
 
-    function getAiBestB2WinningScanPreviewChoice(scanCandidate) {
+    function getAiBestB2WinningScanPreviewChoice(scanCandidate, options = {}) {
+      const requireMarked = options.requireMarked !== false;
       return (scanCandidate?.targetPreview?.topChoices || [])
         .filter((choice) => (
-          choice?.b2?.marked
+          (!requireMarked || choice?.b2?.marked)
           && choice?.b2?.active
           && choice?.b2?.winsAfterScan
           && Math.max(0, aiNumber(choice.directScoreGain)) >= 2
@@ -13795,6 +13796,25 @@
         + Math.min(0.55, Math.max(0, aiNumber(b2.deficit)) * 0.18)
         + Math.min(0.35, Math.max(0, aiNumber(bestB2Choice.directScoreGain)) * 0.12);
       return roundAiScore(Math.min(1.6, value));
+    }
+
+    function scoreAiWeakEarlyB2SetupScanTieBreak(player, scanCandidate, researchTechCandidate) {
+      if (!player || player.aiDifficulty !== AI_DIFFICULTY_WEAK_START) return 0;
+      if (getAiRoundNumber() !== 2) return 0;
+      if (!scanCandidate || scanCandidate.available === false || !researchTechCandidate || researchTechCandidate.available === false) return 0;
+      const currentScore = Math.max(0, aiNumber(player.resources?.score));
+      if (currentScore < 30 || currentScore > 55) return 0;
+      if (Math.max(0, aiNumber(scanCandidate.directScoreGain)) < 2) return 0;
+      if (Math.max(0, aiNumber(researchTechCandidate.directScoreGain)) > 0) return 0;
+      if (aiNumber(scanCandidate.score) < aiNumber(researchTechCandidate.score) - 24) return 0;
+      const bottleneck = getAiB2SectorBottleneck(player);
+      if (!bottleneck.active || bottleneck.marked || bottleneck.sectorWins > 0 || bottleneck.deficit !== 1) return 0;
+      const bestB2Choice = getAiBestB2WinningScanPreviewChoice(scanCandidate, { requireMarked: false });
+      if (!bestB2Choice || bestB2Choice?.b2?.marked) return 0;
+      const value = 17.5
+        + Math.min(2.8, Math.max(0, aiNumber(bestB2Choice.directScoreGain)) * 0.8)
+        + Math.min(1.7, Math.max(0, aiNumber(bestB2Choice.b2?.multiplier)) * 0.22);
+      return roundAiScore(Math.min(21.5, value));
     }
 
     function shouldAiProtectB2SectorScanFromPlanetCap(player = getCurrentPlayer()) {
@@ -18688,7 +18708,20 @@
         },
       });
       const scanCandidate = candidates.find((candidate) => candidate?.id === "scan");
+      const researchTechCandidate = candidates.find((candidate) => candidate?.id === "researchTech");
       const playCardCandidate = candidates.find((candidate) => candidate?.id === "playCard");
+      const weakEarlyB2SetupScanTieBreak = scoreAiWeakEarlyB2SetupScanTieBreak(
+        currentPlayer,
+        scanCandidate,
+        researchTechCandidate,
+      );
+      if (weakEarlyB2SetupScanTieBreak > 0 && scanCandidate) {
+        scanCandidate.score = roundAiScore(aiNumber(scanCandidate.score) + weakEarlyB2SetupScanTieBreak);
+        scanCandidate.valueBreakdown = {
+          ...(scanCandidate.valueBreakdown || {}),
+          weakEarlyB2SetupScanTieBreak,
+        };
+      }
       const weakFinalB2TargetedScanTieBreak = scoreAiWeakFinalB2TargetedScanTieBreak(
         currentPlayer,
         scanCandidate,

@@ -5315,6 +5315,104 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const buildHarness = (aiDifficulty) => {
+    const turnChoices = [];
+    const harness = createAiControllerHarness(null, {
+      currentPlayerColor: "blue",
+      aiDifficulty,
+      roundNumber: 2,
+      canStartMainAction: true,
+      realisticCanAfford: true,
+      takeableTechIds: ["orange1"],
+      techStacks: {
+        orange1: { techType: "orange", bonusId: null, firstTakeClaimedBy: "other-player", stackIndex: 1 },
+      },
+      blueResources: { score: 37, credits: 1, energy: 4, publicity: 7, availableData: 0, handSize: 5 },
+      finalScoringState: {
+        tiles: {
+          final_b2: {
+            id: "final_b2",
+            marks: [],
+          },
+        },
+      },
+      finalFormulaIds: { final_b2: "b2" },
+      finalSlotMultipliers: { b2: { 1: 8 } },
+      endGameScoring: {
+        countSectorWins: () => 0,
+        countOrbitOrLandMarkers: () => 1,
+      },
+      scanEffects: {
+        EFFECT_TYPES: {
+          EARTH_SECTOR_SCAN: "earth_sector_scan",
+          IMPROVED_SECTOR_SCAN: "improved_sector_scan",
+          MERCURY_SECTOR_SCAN: "mercury_sector_scan",
+          PUBLIC_CARD_SCAN: "public_card_scan",
+          HAND_SCAN: "hand_scan",
+          SCAN_ACTION_4: "scan_action_4",
+        },
+        SCAN_COST: { credits: 1, energy: 2 },
+        getStandardScanCost: () => ({ credits: 1, energy: 2 }),
+        buildScanEffectQueue: () => [{ type: "earth_sector_scan" }],
+        canExecuteScan: () => ({ ok: true }),
+      },
+      buildSectorScanChoicesForX: (sectorX) => [{
+        nebulaId: "b2-setup-sector",
+        sectorX,
+        label: "B2 setup sector",
+      }],
+      data: {
+        getNextReplaceableNebulaToken: () => ({ slotIndex: 2 }),
+        getNebulaCapacity: () => 3,
+        getNebulaSlotScoreReward: () => 2,
+        getNebulaColor: () => "blue",
+        listNebulaTokens: () => [{}, {}, { playerId: "other-player" }],
+        listSectorExtraMarks: () => [],
+        getSectorTokenStats: () => ({
+          other: { playerId: "other-player", count: 0 },
+        }),
+      },
+      onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+      chooseTurnAction: (candidates) => candidates
+        .slice()
+        .filter((candidate) => candidate.available !== false)
+        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+    });
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      ...(aiDifficulty ? { aiDifficulty } : {}),
+      suppressAutoSchedule: true,
+    });
+    return { harness, turnChoices };
+  };
+
+  const weak = buildHarness("weak_start");
+  weak.harness.controller.runAiAutomationStep();
+  const weakCandidates = weak.turnChoices.flat();
+  const weakScan = weakCandidates.find((candidate) => candidate.id === "scan");
+  const weakTech = weakCandidates.find((candidate) => candidate.id === "researchTech");
+  assert.ok(
+    weakScan?.valueBreakdown?.weakEarlyB2SetupScanTieBreak > 0,
+    "weak_start should add a B2 setup scan tie-break before B2 is marked",
+  );
+  assert.ok(
+    Number(weakScan.score) > Number(weakTech.score),
+    "weak_start B2 setup scan should beat a zero-direct research-tech candidate in the narrow low-resource window",
+  );
+
+  const defaultDifficulty = buildHarness(undefined);
+  defaultDifficulty.harness.controller.runAiAutomationStep();
+  const defaultScan = defaultDifficulty.turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "scan");
+  assert.equal(
+    defaultScan?.valueBreakdown?.weakEarlyB2SetupScanTieBreak,
+    undefined,
+    "default difficulty should not receive the weak_start B2 setup scan tie-break",
+  );
+}
+
+{
   const turnChoices = [];
   const publicScoreCard = {
     id: "public-tail-score-card",
