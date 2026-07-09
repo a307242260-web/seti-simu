@@ -12757,12 +12757,14 @@
         const satelliteAffordability = energyCapacity >= 3 ? 1 : energyCapacity >= 2 ? 0.65 : 0.35;
         value += 4.5 + Math.min(10, aiNumber(satelliteProfile.potential) * 0.22 * satelliteAffordability);
         value -= Math.min(6.5, aiNumber(satelliteProfile.racePenalty) * 0.55);
+        const lowResourceMarsRaceWindow = aiNumber(resources.energy) <= 1 || aiNumber(resources.credits) <= 1;
         if (
           player?.aiDifficulty === AI_DIFFICULTY_WEAK_START
           && getAiRoundNumber() === 1
           && satelliteProfile.planetId === "mars"
           && satelliteProfile.satelliteId === "phobos-deimos"
           && routeDistance >= 3
+          && lowResourceMarsRaceWindow
         ) {
           value -= routeDistance >= 99 ? 0.65 : 0.45;
         }
