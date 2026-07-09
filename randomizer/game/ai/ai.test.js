@@ -3182,11 +3182,13 @@ assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.
 assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].target.valueBreakdown.readyAnalyzeWindowValue, 13.5);
 assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("data-cashout"));
 assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].followup.targetSeenWithin, 2);
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[0].followup.targetSearch.targetSeenWithin, 2);
 assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("target-delayed-hit"));
 assert(engineActionNearMissAnalysis.engineActionNearMissSamples[0].nearMissTags.includes("idle-before-target"));
 assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[1].target.id, "placeData");
 assert(engineActionNearMissAnalysis.engineActionNearMissSamples[1].nearMissTags.includes("data-placement"));
 assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[1].followup.targetSeenWithin, 3);
+assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[1].followup.targetSearch.targetSeenWithin, 3);
 assert.equal(engineActionNearMissAnalysis.engineActionNearMissSamples[1].followup.firstEngineActionId, "analyze");
 assert(engineActionNearMissAnalysis.engineActionNearMissSamples[1].nearMissTags.includes("different-engine-before-target"));
 assert.equal(engineActionNearMissAnalysis.engineActionUnrecoveredNearMissSamples.length, 0);
@@ -3278,8 +3280,11 @@ assert.equal(engineActionUnrecoveredNearMissAnalysis.opportunities.engineActionN
 assert.equal(engineActionUnrecoveredNearMissAnalysis.engineActionNearMissSamples[0].target.id, "researchTech");
 assert.equal(engineActionUnrecoveredNearMissAnalysis.engineActionUnrecoveredNearMissSamples.length, 1);
 assert.equal(engineActionUnrecoveredNearMissAnalysis.engineActionUnrecoveredNearMissSamples[0].target.bestTechTile.tileId, "purple1");
+assert.deepEqual(
+  engineActionUnrecoveredNearMissAnalysis.engineActionUnrecoveredNearMissSamples[0].followup.targetSearch.actionIds,
+  ["end-turn", "pass"],
+);
 assert(engineActionUnrecoveredNearMissAnalysis.engineActionUnrecoveredNearMissSamples[0].nearMissTags.includes("target-not-seen"));
-assert(engineActionUnrecoveredNearMissAnalysis.engineActionUnrecoveredNearMissSamples[0].nearMissTags.includes("window-exhausted-without-target"));
 const engineActionUnrecoveredNearMissSummary = analytics.summarizeBattleReports([engineActionUnrecoveredNearMissReport]);
 assert.equal(engineActionUnrecoveredNearMissSummary.engineActionUnrecoveredNearMissSamples[0].target.id, "researchTech");
 

@@ -2098,15 +2098,16 @@
       tags.push("data-placement");
     }
     const followup = sample.followup || {};
-    if (followup.noSamePlayerFollowup) {
+    const recoveryWindow = followup.targetSearch || followup;
+    if (recoveryWindow.noSamePlayerFollowup) {
       tags.push("no-followup-after-nearmiss");
-    } else if (followup.targetSeenWithin != null) {
+    } else if (recoveryWindow.targetSeenWithin != null) {
       tags.push("target-delayed-hit");
-    } else if (followup.targetNotSeen) {
+    } else if (recoveryWindow.targetNotSeen) {
       tags.push("target-not-seen");
-      if (followup.windowExhaustedWithoutTarget) tags.push("window-exhausted-without-target");
+      if (recoveryWindow.windowExhaustedWithoutTarget) tags.push("window-exhausted-without-target");
     }
-    if (followup.passOrEndTurnBeforeTarget) tags.push("idle-before-target");
+    if (recoveryWindow.passOrEndTurnBeforeTarget) tags.push("idle-before-target");
     if (
       followup.firstEngineActionId
       && followup.firstEngineActionId !== targetId
@@ -2117,23 +2118,58 @@
     return tags;
   }
 
+  function summarizeEngineNearMissFollowupAction(entry = {}) {
+    const action = getSelectedAction(entry) || {};
+    const actionId = getSelectedActionId(entry);
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      id: actionId,
+      kind: action.kind || null,
+      score: roundRatio(action.score),
+      policyScore: roundRatio(getCandidatePolicyScore(action)),
+      actionGraphNet: roundRatio(getCandidateActionGraphNet(action)),
+    };
+  }
+
+  function isEngineNearMissTargetSearchAction(action = {}, targetId = null) {
+    if (!action?.id) return false;
+    if (action.id === targetId) return true;
+    if (PASS_ACTIONS.includes(action.id)) return true;
+    return action.kind === "main";
+  }
+
+  function buildEngineNearMissTargetSearch(logs = [], startIndex = -1, playerId = null, targetId = null, limit = ENGINE_NEAR_MISS_FOLLOWUP_LIMIT) {
+    const actions = [];
+    for (let index = startIndex + 1; index >= 0 && index < logs.length && actions.length < limit; index += 1) {
+      const entry = logs[index];
+      if (entry?.type !== "turn-action" || entry.playerId !== playerId) continue;
+      const action = summarizeEngineNearMissFollowupAction(entry);
+      if (!isEngineNearMissTargetSearchAction(action, targetId)) continue;
+      actions.push(action);
+    }
+    const targetIndex = actions.findIndex((action) => action.id === targetId);
+    const beforeTarget = targetIndex >= 0 ? actions.slice(0, targetIndex) : actions;
+    return {
+      limit,
+      actionIds: actions.map((action) => action.id),
+      actions,
+      targetActionId: targetId || null,
+      targetSeenWithin: targetIndex >= 0 ? targetIndex + 1 : null,
+      targetNotSeen: targetIndex < 0,
+      noSamePlayerFollowup: actions.length === 0,
+      windowExhaustedWithoutTarget: targetIndex < 0 && actions.length >= limit,
+      passOrEndTurnBeforeTarget: beforeTarget.some((action) => PASS_ACTIONS.includes(action.id)),
+    };
+  }
+
   function buildEngineNearMissFollowup(logs = [], startIndex = -1, playerId = null, targetId = null, limit = ENGINE_NEAR_MISS_FOLLOWUP_LIMIT) {
     const actions = [];
     for (let index = startIndex + 1; index >= 0 && index < logs.length && actions.length < limit; index += 1) {
       const entry = logs[index];
       if (entry?.type !== "turn-action" || entry.playerId !== playerId) continue;
-      const action = getSelectedAction(entry) || {};
-      const actionId = getSelectedActionId(entry);
-      actions.push({
-        roundNumber: entry.roundNumber ?? null,
-        turnNumber: entry.turnNumber ?? null,
-        rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
-        id: actionId,
-        kind: action.kind || null,
-        score: roundRatio(action.score),
-        policyScore: roundRatio(getCandidatePolicyScore(action)),
-        actionGraphNet: roundRatio(getCandidateActionGraphNet(action)),
-      });
+      actions.push(summarizeEngineNearMissFollowupAction(entry));
     }
     const targetIndex = actions.findIndex((action) => action.id === targetId);
     const firstEngineIndex = actions.findIndex((action) => ENGINE_NEAR_MISS_TARGET_ACTIONS.includes(action.id));
@@ -2153,6 +2189,7 @@
       firstEngineActionOffset: firstEngineIndex >= 0 ? firstEngineIndex + 1 : null,
       firstMainActionId: firstMainIndex >= 0 ? actions[firstMainIndex].id : null,
       firstMainActionOffset: firstMainIndex >= 0 ? firstMainIndex + 1 : null,
+      targetSearch: buildEngineNearMissTargetSearch(logs, startIndex, playerId, targetId, limit),
     };
   }
 
@@ -2227,7 +2264,7 @@
     const tags = new Set(sample.nearMissTags || []);
     if (tags.has("target-delayed-hit")) return false;
     if (tags.has("shared-flow-risk")) return false;
-    const followup = sample.followup || {};
+    const followup = sample.followup?.targetSearch || sample.followup || {};
     const targetUnseen = followup.targetNotSeen === true
       || followup.noSamePlayerFollowup === true
       || tags.has("target-not-seen")
