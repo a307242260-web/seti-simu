@@ -7195,10 +7195,13 @@
         && !bestPublicTradeCardProfile.hasConcreteSignal;
       const finalHighScorePublicRefill = finalHighScorePublicRefillBase
         && !finalHighScoreTerminalNoSignalPublicRefill;
+      const finalHighScoreBlindRefillPublicityThreshold = normalizeAiDifficulty(
+        player?.aiDifficulty || aiAutoBattleState.aiDifficulty,
+      ) === AI_DIFFICULTY_WEAK_START ? 3 : 6;
       const finalHighScoreBlindRefill = finalHighScoreHandRefillWindow
         && highScorePushProfile.projectedScore < 300
         && highScoreGapTo300 <= 32
-        && publicity >= 6
+        && publicity >= finalHighScoreBlindRefillPublicityThreshold
         && handSize <= 1
         && bestPublicTradeCardScore < (highScoreGapTo300 <= 10 ? 0 : 5)
         && !bestPublicTradeCardProfile.hasConcreteSignal;
@@ -7659,6 +7662,7 @@
               finalHighScoreRefillValue: roundAiScore(finalHighScoreRefillValue),
               finalHighScoreBlindRefill,
               finalHighScoreBlindRefillValue: roundAiScore(finalHighScoreBlindRefillValue),
+              finalHighScoreBlindRefillPublicityThreshold,
               preferBlindDraw: Boolean(spec.preferBlindDraw),
               finalPreMainCashoutHandRefillWindow,
               finalPreMainCashoutPublicRefill,
@@ -19604,10 +19608,13 @@
         && !bestPublicTradeCardProfile.hasConcreteSignal;
       const finalHighScorePublicRefill = finalHighScorePublicRefillBase
         && !finalHighScoreTerminalNoSignalPublicRefill;
+      const finalHighScoreBlindRefillPublicityThreshold = normalizeAiDifficulty(
+        player?.aiDifficulty || aiAutoBattleState.aiDifficulty,
+      ) === AI_DIFFICULTY_WEAK_START ? 3 : 6;
       const finalHighScoreBlindRefill = finalHighScoreNeedsCardRefill
         && projectedScore < 300
         && scoreTo300 <= 32
-        && publicity >= 6
+        && publicity >= finalHighScoreBlindRefillPublicityThreshold
         && handSize <= 1
         && bestPublicTradeCardScore < publicRefillScoreThreshold
         && !bestPublicTradeCardProfile.hasConcreteSignal;
@@ -19683,6 +19690,7 @@
           finalHighScoreTerminalNoSignalPublicRefill,
           finalHighScorePublicRefill,
           finalHighScoreBlindRefill,
+          finalHighScoreBlindRefillPublicityThreshold,
           finalHighScoreDeadHandRefillBaseWindow,
           finalHighScoreDeadHandPickRefill,
           cardsForPickCardHandAfterTrade,
