@@ -12749,6 +12749,7 @@
       if (candidate?.tileId === "orange3") value += 4.8 + getAiMapDemand(demand.actions, "land") * 0.05;
       if (candidate?.tileId === "orange4") {
         const satelliteProfile = getAiOrange4SatellitePotentialProfile(player);
+        const routeDistance = Math.max(0, Math.round(aiNumber(satelliteProfile.routeDistance)));
         const energyCapacity = Math.max(
           aiNumber(resources.energy),
           aiNumber(player?.income?.energy) + (players.playerOwnsTech(player, "orange3", createActionContext()) ? 1 : 0),
@@ -12756,6 +12757,15 @@
         const satelliteAffordability = energyCapacity >= 3 ? 1 : energyCapacity >= 2 ? 0.65 : 0.35;
         value += 4.5 + Math.min(10, aiNumber(satelliteProfile.potential) * 0.22 * satelliteAffordability);
         value -= Math.min(6.5, aiNumber(satelliteProfile.racePenalty) * 0.55);
+        if (
+          player?.aiDifficulty === AI_DIFFICULTY_WEAK_START
+          && getAiRoundNumber() === 1
+          && satelliteProfile.planetId === "mars"
+          && satelliteProfile.satelliteId === "phobos-deimos"
+          && routeDistance >= 3
+        ) {
+          value -= routeDistance >= 99 ? 0.65 : 0.45;
+        }
       }
       if (candidate?.tileId === "purple1") value += 1.5;
       value += scoreAiTechBonus(candidate?.bonusId, player);

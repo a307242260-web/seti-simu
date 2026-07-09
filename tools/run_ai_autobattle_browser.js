@@ -373,24 +373,34 @@ async function runPageBatch(cdp, batchOptions, timeoutMs) {
 
   const deadline = Date.now() + timeoutMs;
   let state = null;
+  let lastPollError = null;
   while (Date.now() < deadline) {
     const remainingMs = Math.max(1000, deadline - Date.now());
-    // The page can be busy running AI turns; keep CDP polling within the outer batch budget.
-    const pollTimeoutMs = Math.min(batchEvaluateTimeoutMs, remainingMs);
-    const poll = await cdp.send("Runtime.evaluate", {
-      expression: "JSON.stringify(window.__setiAiBatchState || null)",
-      returnByValue: true,
-    }, pollTimeoutMs);
+    // Busy AI turns can starve CDP evaluation; keep a usable poll window even near the outer deadline.
+    const pollTimeoutMs = Math.min(batchEvaluateTimeoutMs, Math.max(DEFAULT_CDP_TIMEOUT_MS, remainingMs));
+    let poll = null;
+    try {
+      poll = await cdp.send("Runtime.evaluate", {
+        expression: "JSON.stringify(window.__setiAiBatchState || null)",
+        returnByValue: true,
+      }, pollTimeoutMs);
+    } catch (error) {
+      lastPollError = error;
+      await delay(1000);
+      continue;
+    }
     if (poll.exceptionDetails) {
       throw new Error(poll.exceptionDetails.text || "Runtime batch poll failed");
     }
+    lastPollError = null;
     state = poll.result?.value ? JSON.parse(poll.result.value) : null;
     if (state?.done) break;
     await delay(500);
   }
 
   if (!state?.done) {
-    throw new Error(`Timed out waiting for AI auto battle result: ${JSON.stringify(state?.progress || null)}`);
+    const pollErrorText = lastPollError ? `; last poll error: ${lastPollError.message || String(lastPollError)}` : "";
+    throw new Error(`Timed out waiting for AI auto battle result: ${JSON.stringify(state?.progress || null)}${pollErrorText}`);
   }
   if (state.error) {
     throw new Error(state.error.stack || state.error.message || "AI auto battle failed");
