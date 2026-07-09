@@ -10,6 +10,14 @@ const { spawn, spawnSync } = require("child_process");
 const REPO_ROOT = path.resolve(__dirname, "..");
 const DEFAULT_CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const DEFAULT_CDP_TIMEOUT_MS = 45000;
+const MAX_BATCH_CDP_EVALUATE_TIMEOUT_MS = 300000;
+
+function getBatchCdpEvaluateTimeoutMs(timeoutMs) {
+  const budgetMs = Number.isFinite(timeoutMs) && timeoutMs > 0
+    ? timeoutMs
+    : DEFAULT_CDP_TIMEOUT_MS;
+  return Math.max(DEFAULT_CDP_TIMEOUT_MS, Math.min(MAX_BATCH_CDP_EVALUATE_TIMEOUT_MS, budgetMs));
+}
 
 function parseArgs(argv) {
   const options = {
@@ -354,10 +362,11 @@ function buildBatchStartExpression(pageOptions) {
 }
 
 async function runPageBatch(cdp, batchOptions, timeoutMs) {
+  const batchEvaluateTimeoutMs = getBatchCdpEvaluateTimeoutMs(timeoutMs);
   const started = await cdp.send("Runtime.evaluate", {
     expression: buildBatchStartExpression(batchOptions),
     returnByValue: true,
-  });
+  }, batchEvaluateTimeoutMs);
   if (started.exceptionDetails) {
     throw new Error(started.exceptionDetails.text || "Runtime batch start failed");
   }
@@ -365,10 +374,13 @@ async function runPageBatch(cdp, batchOptions, timeoutMs) {
   const deadline = Date.now() + timeoutMs;
   let state = null;
   while (Date.now() < deadline) {
+    const remainingMs = Math.max(1000, deadline - Date.now());
+    // The page can be busy running AI turns; keep CDP polling within the outer batch budget.
+    const pollTimeoutMs = Math.min(batchEvaluateTimeoutMs, remainingMs);
     const poll = await cdp.send("Runtime.evaluate", {
       expression: "JSON.stringify(window.__setiAiBatchState || null)",
       returnByValue: true,
-    });
+    }, pollTimeoutMs);
     if (poll.exceptionDetails) {
       throw new Error(poll.exceptionDetails.text || "Runtime batch poll failed");
     }
