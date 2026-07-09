@@ -4646,6 +4646,148 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const turnChoices = [];
+  const selectedActions = [];
+  let step = 0;
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    turnNumber: 15,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    aiDifficulty: "weak_start",
+    quickTrades: {
+      "energy-for-credit": {
+        id: "energy-for-credit",
+        label: "2 energy -> 1 credit",
+        cost: { energy: 2 },
+        gain: { credits: 1 },
+      },
+      "cards-for-credit": {
+        id: "cards-for-credit",
+        label: "2 cards -> 1 credit",
+        cost: { handSize: 2 },
+        gain: { credits: 1 },
+      },
+    },
+    blueResources: { score: 78, credits: 0, energy: 5, publicity: 1, availableData: 0, handSize: 5 },
+    blueHand: [
+      {
+        id: "low-tail-task-setup",
+        cardName: "Low tail task setup",
+        price: 2,
+        typeCode: 2,
+        model: { tasks: [{ id: "unfinished-task" }] },
+        playEffects: [{ type: "gain_resources", options: { gain: { publicity: 1 } } }],
+      },
+      { id: "tail-filler-a", cardName: "Tail filler A", price: 2 },
+      { id: "tail-filler-b", cardName: "Tail filler B", price: 2 },
+      { id: "tail-filler-c", cardName: "Tail filler C", price: 2 },
+      { id: "tail-filler-d", cardName: "Tail filler D", price: 2 },
+    ],
+    finalScoringState: {
+      tiles: {
+        final_a2: {
+          id: "final_a2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_c2: {
+          id: "final_c2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a2: "a2",
+      final_c2: "c2",
+      final_d2: "d2",
+    },
+    scanEffects: {
+      EFFECT_TYPES: {
+        EARTH_SECTOR_SCAN: "earth_sector_scan",
+        IMPROVED_SECTOR_SCAN: "improved_sector_scan",
+        MERCURY_SECTOR_SCAN: "mercury_sector_scan",
+        PUBLIC_CARD_SCAN: "public_card_scan",
+        HAND_SCAN: "hand_scan",
+        SCAN_ACTION_4: "scan_action_4",
+      },
+      SCAN_COST: { credits: 1, energy: 2 },
+      getStandardScanCost: () => ({ credits: 1, energy: 2 }),
+      buildScanEffectQueue: () => [{ type: "earth_sector_scan" }],
+      canExecuteScan: (player) => (
+        Number(player?.resources?.credits || 0) >= 1 && Number(player?.resources?.energy || 0) >= 2
+          ? { ok: true }
+          : { ok: false, message: "scan resources missing" }
+      ),
+    },
+    buildSectorScanChoicesForX: (sectorX) => [{
+      nebulaId: "tail-scan-nebula",
+      sectorX,
+      label: "Tail scan nebula",
+    }],
+    data: {
+      getNextReplaceableNebulaToken: () => ({ slotIndex: 18 }),
+      getNebulaCapacity: () => 3,
+      getNebulaSlotScoreReward: (_nebulaId, slotIndex) => Number(slotIndex || 0),
+      getNebulaColor: () => "blue",
+      listNebulaTokens: () => [],
+      listSectorExtraMarks: () => [],
+      getSectorTokenStats: () => ({}),
+    },
+    onChooseTurnAction: (candidates, selected) => {
+      turnChoices.push(candidates);
+      selectedActions.push(selected);
+    },
+    chooseTurnAction: (candidates) => {
+      step += 1;
+      if (step === 1) {
+        return candidates.find((candidate) => (
+          candidate.id === "quickTrade" && candidate.tradeId === "energy-for-credit"
+        )) || null;
+      }
+      return candidates
+        .slice()
+        .filter((candidate) => candidate.available !== false)
+        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null;
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const firstResult = harness.controller.runAiAutomationStep();
+  assert.equal(firstResult.ok, true, "AI should first use energy for credit to open the scan action");
+  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "energy-for-credit" });
+
+  harness.blue.resources.credits = 1;
+  harness.blue.resources.energy = 3;
+  const secondResult = harness.controller.runAiAutomationStep();
+  assert.notEqual(secondResult?.blocked, true, "second low-tail decision should not block");
+  assert.equal(selectedActions[1]?.id, "scan", "AI should keep the already-opened scan instead of chaining another discard trade");
+  const secondCandidates = turnChoices[1] || [];
+  const repeatedCardsForCredit = secondCandidates.find((candidate) => (
+    candidate.id === "quickTrade"
+    && candidate.tradeId === "cards-for-credit"
+    && candidate.valueBreakdown?.mainUnlockTrade
+  ));
+  assert.equal(
+    repeatedCardsForCredit,
+    undefined,
+    "weak_start low-tail should suppress repeated cards-for-credit setup when a scan is already open",
+  );
+}
+
+{
   const placedTokens = Array.from({ length: 6 }, (_item, index) => ({
     id: `data-${index}`,
     placementSlot: index + 1,

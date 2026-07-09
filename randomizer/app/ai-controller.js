@@ -6277,7 +6277,29 @@
       }];
     }
 
-    function buildAiMainUnlockTradeCandidate(player = getCurrentPlayer(), tradeId = null, playCardCandidates = null) {
+    function countAiQuickTradesThisTurn(playerId = getCurrentPlayer()?.id) {
+      if (!playerId) return 0;
+      return (aiAutoBattleState.logs || []).filter((entry) => (
+        entry?.type === "turn-action"
+        && entry.roundNumber === turnState.roundNumber
+        && entry.rawTurnNumber === turnState.turnNumber
+        && entry.playerId === playerId
+        && entry.details?.action?.id === "quickTrade"
+      )).length;
+    }
+
+    function getAiBestOpenedMainActionScore(candidates = []) {
+      return (candidates || [])
+        .filter((candidate) => (
+          candidate?.kind === "main"
+          && candidate.available !== false
+          && candidate.id !== "launch"
+          && candidate.id !== "playCard"
+        ))
+        .reduce((best, candidate) => Math.max(best, aiNumber(candidate.score)), 0);
+    }
+
+    function buildAiMainUnlockTradeCandidate(player = getCurrentPlayer(), tradeId = null, playCardCandidates = null, candidates = []) {
       if (!player || !tradeId || !quickTrades?.getTradeAction) return null;
       const trade = quickTrades.getTradeAction(tradeId);
       const check = quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false };
@@ -6370,6 +6392,17 @@
       const finalMarks = currentFinalMarks;
       if (aiNumber(bestPlay.score) < 8) return null;
       if (finalMarks >= 3 && concreteFinalValue <= 0) return null;
+      const weakRepeatedTradeOverOpenedMain = (
+        tradeId === "cards-for-credit"
+        && normalizeAiDifficulty(player.aiDifficulty || aiAutoBattleState.aiDifficulty) === AI_DIFFICULTY_WEAK_START
+        && finalLowTailOneCreditUnlock
+        && countAiQuickTradesThisTurn(player.id) > 0
+        && handCost >= 2
+        && directScoreGain <= 0
+        && concreteFinalValue < 34
+        && getAiBestOpenedMainActionScore(candidates) >= 12
+      );
+      if (weakRepeatedTradeOverOpenedMain) return null;
       const discardCost = estimateAiTradeDiscardOpportunityCost(player, trade, bestPlay.handIndex);
       if (!Number.isFinite(discardCost)) return null;
       const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
@@ -6417,7 +6450,7 @@
       };
     }
 
-    function listAiMainUnlockTradeCandidates(player = getCurrentPlayer(), playCardCandidates = null) {
+    function listAiMainUnlockTradeCandidates(player = getCurrentPlayer(), playCardCandidates = null, candidates = []) {
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -6430,7 +6463,7 @@
         return [];
       }
       return ["cards-for-credit", "energy-for-credit"]
-        .map((tradeId) => buildAiMainUnlockTradeCandidate(player, tradeId, playCardCandidates))
+        .map((tradeId) => buildAiMainUnlockTradeCandidate(player, tradeId, playCardCandidates, candidates))
         .filter(Boolean)
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
     }
@@ -19068,7 +19101,7 @@
       candidates.push(...listAiEmergencyAnalyzeEnergyTradeCandidates(currentPlayer));
       candidates.push(...listAiFinalAnalyzeEnergyTradeCandidates(currentPlayer));
       candidates.push(...listAiThirdFinalMarkResourceTradeCandidates(currentPlayer));
-      candidates.push(...listAiMainUnlockTradeCandidates(currentPlayer, playCardCandidates));
+      candidates.push(...listAiMainUnlockTradeCandidates(currentPlayer, playCardCandidates, candidates));
       candidates.push(...listAiFinalReadyTaskCreditChainTradeCandidates(currentPlayer));
       candidates.push(...listAiResourceLockMainUnlockTradeCandidates(currentPlayer, candidates));
       candidates.push(...listAiLateResourceRecoveryTradeCandidates(currentPlayer, candidates));
