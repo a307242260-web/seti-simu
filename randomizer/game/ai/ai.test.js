@@ -2740,6 +2740,129 @@ assert.equal(playCardNearMissSummary.opportunities.nearCompleteTaskPressure, 1);
 assert.equal(playCardNearMissSummary.nearCompleteTaskPressureSamples[0].task.rewardDirectScore, 9);
 assert(playCardNearMissSummary.recommendations.some((entry) => entry.id === "inspect-near-complete-task-pressure"));
 
+const nearCompleteTaskTargetReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 2,
+    rawTurnNumber: 8,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 82, credits: 3, energy: 2, publicity: 1, availableData: 0, handSize: 2 },
+    details: {
+      action: {
+        id: "land",
+        kind: "main",
+        planetId: "mars",
+        planetName: "火星",
+        score: 20,
+        directScoreGain: 6,
+        actionGraph: { net: 20 },
+      },
+      candidates: [
+        {
+          id: "land",
+          kind: "main",
+          available: true,
+          planetId: "jupiter",
+          planetName: "木星",
+          score: 42,
+          directScoreGain: 10,
+          actionGraph: { net: 42 },
+        },
+        {
+          id: "land",
+          kind: "main",
+          available: true,
+          planetId: "mars",
+          planetName: "火星",
+          score: 20,
+          directScoreGain: 6,
+          actionGraph: { net: 20 },
+        },
+      ],
+    },
+  }, {
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 3,
+    rawTurnNumber: 12,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 88, credits: 1, energy: 1, publicity: 1, availableData: 0, handSize: 2 },
+    details: {
+      action: {
+        id: "land",
+        kind: "main",
+        planetId: "mars",
+        planetName: "火星",
+        score: 18,
+        directScoreGain: 6,
+        actionGraph: { net: 18 },
+      },
+      candidates: [{
+        id: "land",
+        kind: "main",
+        available: true,
+        planetId: "mars",
+        planetName: "火星",
+        score: 18,
+        directScoreGain: 6,
+        actionGraph: { net: 18 },
+      }],
+    },
+  }],
+  playerResults: [{
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    finalScore: 180,
+    baseScore: 120,
+    tileScore: 40,
+    cardScore: 20,
+    completedTaskCount: 1,
+    techCount: 6,
+    finalMarkCount: 3,
+    resources: { credits: 0, energy: 0, publicity: 0, availableData: 0, handSize: 0 },
+    handCards: [],
+    reservedCards: [{
+      cardId: "b_jupiter_test.webp",
+      cardInstanceId: "card-jupiter-task",
+      label: "木星任务测试",
+      price: 2,
+      typeCode: 2,
+      taskCount: 1,
+      remainingTaskCount: 1,
+      effectTypes: ["launch"],
+      tasks: [{
+        id: "jupiter-task-test",
+        completed: false,
+        condition: {
+          type: "planetOrbitOrLand",
+          planetId: "jupiter",
+          targetCount: 1,
+          currentCount: 0,
+          missingCount: 1,
+          met: false,
+        },
+        rewardDirectScore: 4,
+        rewardValue: 7,
+      }],
+    }],
+  }],
+};
+const nearCompleteTaskTargetAnalysis = analytics.analyzeBattleReport(nearCompleteTaskTargetReport);
+const nearCompleteTaskTargetSample = nearCompleteTaskTargetAnalysis.nearCompleteTaskPressureSamples[0];
+assert.equal(nearCompleteTaskTargetSample.routeCandidateTurnCount, 2);
+assert.equal(nearCompleteTaskTargetSample.routeSelectedCount, 2);
+assert.equal(nearCompleteTaskTargetSample.taskTarget.key, "planet:jupiter");
+assert.equal(nearCompleteTaskTargetSample.taskTarget.candidateTurnCount, 1);
+assert.equal(nearCompleteTaskTargetSample.taskTarget.selectedCount, 0);
+assert.equal(nearCompleteTaskTargetSample.taskTarget.bestTurn.bestRouteCandidate.planetId, "jupiter");
+const nearCompleteTaskTargetSummary = analytics.summarizeBattleReports([nearCompleteTaskTargetReport]);
+assert.equal(nearCompleteTaskTargetSummary.nearCompleteTaskPressureSamples[0].taskTarget.key, "planet:jupiter");
+assert.equal(nearCompleteTaskTargetSummary.nearCompleteTaskPressureSamples[0].taskTarget.selectedCount, 0);
+
 const engineActionNearMissReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{

@@ -232,6 +232,8 @@
       kind: candidate.kind || null,
       tradeId: candidate.tradeId || null,
       label: candidate.label || candidate.planetName || candidate.cardLabel || null,
+      cardId: candidate.cardId || candidate.bestCard?.cardId || null,
+      planetId: candidate.planetId || candidate.routeTarget?.planetId || candidate.routeTarget?.id || null,
       score: roundRatio(candidate.score),
       policyScore: roundRatio(getCandidatePolicyScore(candidate)),
       directScoreGain: roundRatio(candidate.directScoreGain),
@@ -4397,10 +4399,114 @@
     };
   }
 
-  function buildNearCompleteTaskRouteContext(logs = [], playerId = null, routeActions = []) {
+  function getNearCompleteTaskTargetKey(task = {}) {
+    if (task.planetId) return `planet:${task.planetId}`;
+    if (task.traceType) return `trace:${task.traceType}`;
+    if (task.techType) return `tech:${task.techType}`;
+    if (task.resource) return `resource:${task.resource}`;
+    return null;
+  }
+
+  function addCandidatePlanetIds(target, candidate = {}) {
+    const add = (value) => {
+      if (value != null && value !== "") target.add(String(value));
+    };
+    add(candidate.planetId);
+    add(candidate.targetPlanetId);
+    add(candidate.routeTarget?.planetId);
+    add(candidate.routeTarget?.id);
+    add(candidate.followupMainAction?.planetId);
+    add(candidate.plan?.planetId);
+    for (const choice of candidate.choices || []) {
+      add(choice?.planetId);
+      add(choice?.planet?.planetId);
+      add(choice?.target?.planetId);
+    }
+  }
+
+  function addCandidateTechTypes(target, candidate = {}) {
+    const add = (value) => {
+      if (value != null && value !== "") target.add(String(value));
+    };
+    add(candidate.techType);
+    add(candidate.bestTechTile?.techType);
+    for (const tile of candidate.takeable || []) add(tile?.techType);
+    for (const techType of candidate.plan?.techTypes || []) add(techType);
+    for (const card of candidate.playableCards || []) {
+      add(card?.plan?.techType);
+      for (const techType of card?.plan?.techTypes || []) add(techType);
+    }
+  }
+
+  function addCandidateTraceTypes(target, candidate = {}) {
+    const add = (value) => {
+      if (value != null && value !== "") target.add(String(value));
+    };
+    add(candidate.traceType);
+    add(candidate.targetTraceType);
+    add(candidate.traceColor);
+    add(candidate.plan?.traceType);
+    add(candidate.valueBreakdown?.traceType);
+    add(candidate.valueBreakdown?.bestTraceType);
+    for (const effect of candidate.targetPreview?.effects || []) {
+      add(effect?.traceType);
+      for (const choice of effect?.topChoices || []) {
+        add(choice?.traceType);
+        add(choice?.color);
+      }
+    }
+  }
+
+  function candidateMatchesNearCompleteTaskTarget(candidate = {}, task = {}) {
+    if (!candidate || !task) return false;
+    if (task.planetId) {
+      const planetIds = new Set();
+      addCandidatePlanetIds(planetIds, candidate);
+      return planetIds.has(String(task.planetId));
+    }
+    if (task.techType) {
+      const techTypes = new Set();
+      addCandidateTechTypes(techTypes, candidate);
+      return techTypes.has(String(task.techType));
+    }
+    if (task.traceType) {
+      const traceTypes = new Set();
+      addCandidateTraceTypes(traceTypes, candidate);
+      return traceTypes.has(String(task.traceType));
+    }
+    return false;
+  }
+
+  function summarizeNearCompleteTaskTargetContext(turns = [], targetKey = null, limit = ENGINE_NEAR_MISS_FOLLOWUP_LIMIT) {
+    if (!targetKey) return null;
+    const lateTurns = turns.filter((turn) => numeric(turn.roundNumber) >= 3);
+    const sortTurns = (items) => [...items].sort((left, right) => (
+      numeric(right.bestRouteCandidate?.policyScore) - numeric(left.bestRouteCandidate?.policyScore)
+      || numeric(right.roundNumber) - numeric(left.roundNumber)
+      || numeric(right.rawTurnNumber) - numeric(left.rawTurnNumber)
+    ));
+    const bestTurn = sortTurns(turns)[0] || null;
+    const lateBestTurn = sortTurns(lateTurns)[0] || null;
+    return {
+      key: targetKey,
+      limit,
+      candidateTurnCount: turns.length,
+      selectedCount: turns.filter((turn) => turn.routeSelected).length,
+      lateCandidateTurnCount: lateTurns.length,
+      lateSelectedCount: lateTurns.filter((turn) => turn.routeSelected).length,
+      bestTurn,
+      lateBestTurn,
+      latestTurn: turns[turns.length - 1] || null,
+    };
+  }
+
+  function buildNearCompleteTaskRouteContext(logs = [], playerId = null, task = {}) {
+    const routeActions = task.routeActions || [];
     const routeActionSet = new Set(routeActions || []);
     const routeActionCounts = {};
     const matchedTurns = [];
+    const targetKey = getNearCompleteTaskTargetKey(task);
+    const targetMatchedTurns = [];
     for (let logIndex = 0; logIndex < (logs || []).length; logIndex += 1) {
       const entry = logs[logIndex];
       if (entry?.type !== "turn-action" || entry.playerId !== playerId) continue;
@@ -4413,9 +4519,15 @@
           numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
           || getCandidateId(left).localeCompare(getCandidateId(right))
         ));
+      const targetCandidates = targetKey
+        ? routeCandidates.filter((candidate) => candidateMatchesNearCompleteTaskTarget(candidate, task))
+        : [];
+      const targetSelected = targetKey
+        && routeActionSet.has(selectedId)
+        && candidateMatchesNearCompleteTaskTarget(selected, task);
       if (!routeCandidates.length && !routeActionSet.has(selectedId)) continue;
       const bestRouteCandidate = routeCandidates[0] || selected;
-      matchedTurns.push({
+      const routeTurn = {
         logIndex,
         roundNumber: entry.roundNumber ?? null,
         turnNumber: entry.turnNumber ?? null,
@@ -4425,10 +4537,24 @@
         routeSelected: routeActionSet.has(selectedId),
         bestRouteCandidate: bestRouteCandidate ? summarizeCandidateWithGraph(bestRouteCandidate) : null,
         topRouteCandidates: routeCandidates.slice(0, 5).map(summarizeCandidateWithGraph),
+        targetSelected: Boolean(targetSelected),
+        bestTargetCandidate: (targetCandidates[0] || (targetSelected ? selected : null))
+          ? summarizeCandidateWithGraph(targetCandidates[0] || selected)
+          : null,
+        topTargetCandidates: targetCandidates.slice(0, 5).map(summarizeCandidateWithGraph),
         topCandidates: sortByCandidatePolicy((entry.details?.candidates || []).filter(isCandidateAvailable))
           .slice(0, 5)
           .map(summarizeCandidateWithGraph),
-      });
+      };
+      matchedTurns.push(routeTurn);
+      if (targetKey && (targetCandidates.length || targetSelected)) {
+        targetMatchedTurns.push({
+          ...routeTurn,
+          routeSelected: Boolean(targetSelected),
+          bestRouteCandidate: routeTurn.bestTargetCandidate,
+          topRouteCandidates: routeTurn.topTargetCandidates,
+        });
+      }
     }
     const bestTurn = [...matchedTurns].sort((left, right) => (
       numeric(right.bestRouteCandidate?.policyScore) - numeric(left.bestRouteCandidate?.policyScore)
@@ -4457,6 +4583,7 @@
       lateFollowup: lateBestTurn?.bestRouteCandidate?.id
         ? buildEngineNearMissFollowup(logs, lateBestTurn.logIndex, playerId, lateBestTurn.bestRouteCandidate.id)
         : null,
+      taskTarget: summarizeNearCompleteTaskTargetContext(targetMatchedTurns, targetKey),
     };
   }
 
@@ -4469,7 +4596,7 @@
       ].filter(Boolean);
       for (const card of cards) {
         for (const task of card.tasks || []) {
-          const routeContext = buildNearCompleteTaskRouteContext(logs, result.playerId || null, task.routeActions);
+          const routeContext = buildNearCompleteTaskRouteContext(logs, result.playerId || null, task);
           samples.push({
             playerId: result.playerId || null,
             playerLabel: result.playerLabel || result.playerId || "unknown",
