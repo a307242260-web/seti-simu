@@ -252,7 +252,8 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       getRocketSectorCoordinate: (rocket) => rocket?.sector || null,
       findAvailableSlotIndex: options.findAvailableSlotIndex || (() => null),
       canMoveRocket: (_rocketState, rocketId, deltaX, deltaY) => {
-        const rocket = (options.movableTokens || []).find((item) => Number(item.id) === Number(rocketId));
+        const rocketPool = options.movableTokens || Object.values(options.rocketTokensByPlayer || {}).flat();
+        const rocket = rocketPool.find((item) => Number(item.id) === Number(rocketId));
         if (!rocket) return { ok: false, message: "rocket not found" };
         if (Array.isArray(options.allowedMoveDeltas)
           && !options.allowedMoveDeltas.some((delta) => (
@@ -6809,6 +6810,75 @@ function makeYichangdianAlienState(options = {}) {
     plainWhiteProfile.playScore,
     "pending blue public-pick play score should ignore current white player's reserved-task demand",
   );
+}
+
+{
+  const pendingBlue = {
+    id: "player-blue",
+    color: "blue",
+    colorLabel: "Blue",
+    hand: [],
+    reservedCards: [],
+    resources: { score: 18, credits: 4, energy: 3, publicity: 2, availableData: 0, handSize: 0 },
+    income: {},
+    techState: { ownedTiles: {} },
+  };
+  const publicMoveCard = {
+    id: "blue-move-public-card",
+    cardName: "Blue move public card",
+    price: 0,
+    typeCode: 0,
+    playEffects: [{ type: "free_move", options: { movementPoints: 1 } }],
+  };
+  const readMovePickProfile = (whiteRocketCount) => {
+    const whiteRockets = Array.from({ length: whiteRocketCount }, (_item, index) => ({
+      id: 300 + index,
+      playerId: "player-white",
+      sector: { x: index, y: 2 },
+    }));
+    const harness = createAiControllerHarness(null, {
+      currentPlayerColor: "white",
+      cardSelectionActive: true,
+      recordPublicPick: true,
+      roundNumber: 3,
+      whiteResources: { score: 20, credits: 4, energy: 3, publicity: 2, handSize: 0 },
+      blueResources: pendingBlue.resources,
+      pendingCardSelectionAction: {
+        type: "trade",
+        player: pendingBlue,
+      },
+      publicCards: [publicMoveCard],
+      rocketTokensByPlayer: {
+        "player-white": whiteRockets,
+        "player-blue": [{ id: 201, playerId: "player-blue", sector: { x: 1, y: 2 } }],
+      },
+    });
+    assert.equal(
+      harness.controller.configureAiAutoBattle({
+        playerIds: [harness.blue.id],
+        suppressAutoSchedule: true,
+      }).ok,
+      true,
+    );
+
+    const result = harness.controller.runAiAutomationStep();
+    assert.equal(result.ok, true, "AI should resolve the pending blue public pick");
+    const pickLog = harness.controller.getAiAutoBattleReport().logs
+      .find((entry) => entry.type === "pick-card");
+    assert.ok(pickLog, "public pick log should expose the evaluated public candidate");
+    return pickLog.details?.topPublicCandidates?.[0] || null;
+  };
+
+  const noWhiteRocketProfile = readMovePickProfile(0);
+  const manyWhiteRocketsProfile = readMovePickProfile(3);
+  assert.equal(noWhiteRocketProfile?.cardId, "blue-move-public-card");
+  assert.equal(manyWhiteRocketsProfile?.cardId, "blue-move-public-card");
+  assert.equal(
+    manyWhiteRocketsProfile.playScore,
+    noWhiteRocketProfile.playScore,
+    "pending blue public-pick move preview should use blue rockets, not current white rockets",
+  );
+  assert.notEqual(noWhiteRocketProfile.playScore, null, "blue-owned move card should remain playable from blue's rocket");
 }
 
 {

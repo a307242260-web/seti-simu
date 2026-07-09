@@ -9978,6 +9978,7 @@
         const candidates = listAiEffectMoveCandidates({
           id: "playCardMovePreview",
           free: effect.type === cardEffects.EFFECT_TYPES.FREE_MOVE,
+          player,
           effect,
           poolRemaining: effect?.options?.movementPoints ?? 1,
           nextEffect: playEffects[effectIndex + 1] || null,
@@ -14859,6 +14860,7 @@
           if (!players.canAfford(currentPlayer, { aomomoFossils: fossilCost })) continue;
           const moveCandidates = listAiEffectMoveCandidates({
             id: "cardMove",
+            player: effectPlayer,
             effect: {
               ...effect,
               type: cardEffects.EFFECT_TYPES.CARD_MOVE,
@@ -14880,6 +14882,7 @@
         if (effect?.type === cardEffects.EFFECT_TYPES.CARD_MOVE) {
           const moveCandidates = listAiEffectMoveCandidates({
             id: "cardMove",
+            player: effectPlayer,
             effect,
             poolRemaining: effect?.options?.movementPoints ?? 1,
             nextEffect,
@@ -15134,6 +15137,7 @@
         const bestMove = listAiEffectMoveCandidates({
           id: "cardCornerMovePreview",
           free: true,
+          player,
           poolRemaining: moveReward.movementPoints || 1,
         }).sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null;
         if (!bestMove) return { value: -Infinity, resourceReward, moveReward, bestMove: null };
@@ -16836,7 +16840,7 @@
     }
 
     function buildAiEffectMoveCandidate(rocket, direction, index = 0, options = {}) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = options.player || getCurrentPlayer();
       const moveCheck = rocketActions.canMoveRocket(
         rocketState,
         rocket.id,
@@ -17059,7 +17063,7 @@
     }
 
     function listAiEffectMoveCandidates(options = {}) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = options.player || getCurrentPlayer();
       if (!currentPlayer) return [];
       const effect = options.effect || getCurrentActionEffect?.() || null;
       const usedHuanyuRocketIds = isAiIndustryHuanyuMoveEffect(effect)
