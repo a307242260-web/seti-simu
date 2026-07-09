@@ -7183,6 +7183,18 @@
       const finalLowStaleHandPublicRefill = finalLowStaleHandRefillBaseWindow
         && finalLowStaleHandPlayableScore < 7
         && bestPublicTradeCardScore >= 8;
+      const isPublicRefillStillPositiveAfterQuickTrade = (tradeId) => {
+        const trade = quickTrades.getTradeAction(tradeId);
+        if (!trade) return false;
+        const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
+        if (!simulatedPlayer) return false;
+        const afterTradeBestPublicScore = (cardState.publicCards || []).reduce((best, card) => {
+          if (!card) return best;
+          const score = scoreAiPublicPickCard(card, simulatedPlayer, "trade");
+          return Number.isFinite(Number(score)) ? Math.max(best, aiNumber(score)) : best;
+        }, -Infinity);
+        return Number.isFinite(afterTradeBestPublicScore) && afterTradeBestPublicScore >= 0;
+      };
       const highScoreGapTo300 = Math.max(0, 300 - highScorePushProfile.projectedScore);
       const finalHighScorePublicRefillBase = finalHighScoreHandRefillWindow
         && bestPublicTradeCardScore >= (highScorePushProfile.projectedScore >= 305
@@ -7280,8 +7292,12 @@
           + Math.min(12, bestImmediateMainCashoutScore * 0.18)
           + Math.min(6, bestImmediateMainCashoutDirectScore * 0.16)
         : 0;
-      const finalLowHandCreditRefill = finalLowHandPublicRefill && credits >= 2;
-      const finalLowHandEnergyRefill = finalLowHandPublicRefill && energy >= 2;
+      const finalLowHandCreditRefill = finalLowHandPublicRefill
+        && credits >= 2
+        && isPublicRefillStillPositiveAfterQuickTrade("credits-for-card");
+      const finalLowHandEnergyRefill = finalLowHandPublicRefill
+        && energy >= 2
+        && isPublicRefillStillPositiveAfterQuickTrade("energy-for-card");
       const finalHighScorePreserveLastCredits = finalHighScorePublicRefill
         && publicity >= 3
         && credits <= 2;

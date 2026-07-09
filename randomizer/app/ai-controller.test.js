@@ -5712,17 +5712,14 @@ function makeYichangdianAlienState(options = {}) {
     true,
   );
 
-  const result = harness.controller.runAiAutomationStep();
-  assert.equal(result.ok, true, "AI should use credits to refill after all three final marks are already claimed");
-  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "credits-for-card" });
+  harness.controller.runAiAutomationStep();
   const tradeCandidate = turnChoices
     .flat()
     .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "credits-for-card");
-  assert.ok(tradeCandidate, "three-mark low-tail credit refill candidate should be enumerated");
   assert.equal(
-    tradeCandidate.valueBreakdown?.avoidCloseSecondMarkCreditCardTrap,
-    false,
-    "missing-threshold trap should not apply after all three final marks are claimed",
+    tradeCandidate,
+    undefined,
+    "three-mark low-tail credit refill should not spend the last credits on public cards that become unpayable after trade",
   );
 }
 
