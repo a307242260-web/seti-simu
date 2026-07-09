@@ -2222,6 +2222,33 @@
       .slice(0, Math.max(0, Number(limit) || 0));
   }
 
+  function isEngineActionUnrecoveredNearMissSample(sample = {}) {
+    if (!sample) return false;
+    const tags = new Set(sample.nearMissTags || []);
+    if (tags.has("target-delayed-hit")) return false;
+    if (tags.has("shared-flow-risk")) return false;
+    const followup = sample.followup || {};
+    const targetUnseen = followup.targetNotSeen === true
+      || followup.noSamePlayerFollowup === true
+      || tags.has("target-not-seen")
+      || tags.has("no-followup-after-nearmiss");
+    return targetUnseen;
+  }
+
+  function sortEngineActionUnrecoveredNearMissSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .filter(isEngineActionUnrecoveredNearMissSample)
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.policyScoreGap) - numeric(right.policyScoreGap)
+        || numeric(right.target?.policyScore) - numeric(left.target?.policyScore)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+        || getCandidateId(left.target || {}).localeCompare(getCandidateId(right.target || {}))
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
   function buildEngineActionNearMissCounts(samples = [], limit = 16) {
     const targetCounts = {};
     const transitionCounts = {};
@@ -7423,6 +7450,9 @@
         midgameLowTechRouteEnergyTradeSamples,
       ),
       engineActionNearMissSamples: sortEngineActionNearMissSamples(engineActionNearMissSamples),
+      engineActionUnrecoveredNearMissSamples: sortEngineActionUnrecoveredNearMissSamples(
+        engineActionNearMissSamples,
+      ),
       engineActionNearMissCounts: buildEngineActionNearMissCounts(engineActionNearMissSamples),
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
@@ -7841,6 +7871,9 @@
       winnerProfileDeltas,
       lowEngineThroughputSamples,
       engineActionNearMissSamples: sortEngineActionNearMissSamples(mergedEngineActionNearMissSamples),
+      engineActionUnrecoveredNearMissSamples: sortEngineActionUnrecoveredNearMissSamples(
+        mergedEngineActionNearMissSamples,
+      ),
       engineActionNearMissCounts: rankEngineActionNearMissCountBuckets(mergedEngineActionNearMissCounts),
       orange4RaceSensitiveTechSamples: sortOrange4RaceSensitiveTechSamples(mergedOrange4RaceSensitiveTechSamples),
       orange4RaceSensitiveTechTagCounts: buildOrange4RaceSensitiveTechTagCounts(mergedOrange4RaceSensitiveTechSamples),
@@ -7915,6 +7948,9 @@
         mergedMidgameLowTechRouteEnergyTradeSamples,
       ),
       engineActionNearMissSamples: sortEngineActionNearMissSamples(mergedEngineActionNearMissSamples),
+      engineActionUnrecoveredNearMissSamples: sortEngineActionUnrecoveredNearMissSamples(
+        mergedEngineActionNearMissSamples,
+      ),
       engineActionNearMissCounts: rankEngineActionNearMissCountBuckets(mergedEngineActionNearMissCounts),
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
