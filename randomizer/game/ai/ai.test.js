@@ -1840,6 +1840,55 @@ const resourceLockWeakLaunchSummary = analytics.summarizeBattleReports([resource
 assert.equal(resourceLockWeakLaunchSummary.resourceLockWeakLaunchUnlockSamples[0].bestResourceLockTrade.tradeId, "cards-for-credit");
 assert.equal(resourceLockWeakLaunchSummary.opportunities.resourceLockWeakLaunchUnlock, 1);
 
+const resourceLockNoDirectScanReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 3,
+    turnNumber: 6,
+    rawTurnNumber: 24,
+    playerId: "player-blue",
+    playerLabel: "蓝色",
+    playerResources: { score: 64, credits: 0, energy: 5, publicity: 0, handSize: 1 },
+    details: {
+      action: { id: "pass", kind: "pass", score: -2.3 },
+      candidates: [
+        { id: "pass", kind: "pass", available: true, score: -2.3 },
+        { id: "playCard", kind: "main", available: false, score: 0, reason: "没有资源可支付" },
+      ],
+      resourceLockTradePreviews: [{
+        tradeId: "energy-for-credit",
+        label: "2能量 → 1信用点",
+        bestAction: { actionId: "scan", score: 53.588, directScoreGain: 0 },
+        unlockedActions: [{ actionId: "scan", score: 53.588, directScoreGain: 0 }],
+      }],
+    },
+  }],
+  playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 153 }],
+};
+const resourceLockNoDirectScanAnalysis = analytics.analyzeBattleReport(resourceLockNoDirectScanReport);
+assert.equal(resourceLockNoDirectScanAnalysis.opportunities.resourceLockMainUnlock, 1);
+assert.equal(resourceLockNoDirectScanAnalysis.opportunities.resourceLockNoDirectScanUnlock, 1);
+assert.equal(
+  resourceLockNoDirectScanAnalysis.resourceLockNoDirectScanUnlockSamples[0].bestResourceLockTrade.tradeId,
+  "energy-for-credit",
+);
+assert.equal(
+  resourceLockNoDirectScanAnalysis.resourceLockNoDirectScanUnlockSamples[0].bestResourceLockTrade.bestAction.actionId,
+  "scan",
+);
+assert(
+  resourceLockNoDirectScanAnalysis.recommendations.some(
+    (entry) => entry.id === "classify-resource-lock-no-direct-scan",
+  ),
+);
+const resourceLockNoDirectScanSummary = analytics.summarizeBattleReports([resourceLockNoDirectScanReport]);
+assert.equal(resourceLockNoDirectScanSummary.opportunities.resourceLockNoDirectScanUnlock, 1);
+assert.equal(
+  resourceLockNoDirectScanSummary.resourceLockNoDirectScanUnlockSamples[0].bestResourceLockTrade.tradeId,
+  "energy-for-credit",
+);
+
 const postPassQuickReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [
