@@ -54,7 +54,13 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     id: "player-white",
     color: "white",
     colorLabel: "White",
-    resources: {},
+    hand: options.whiteHand || [],
+    reservedCards: options.whiteReservedCards || [],
+    resources: { ...(options.whiteResources || {}) },
+    income: { ...(options.whiteIncome || {}) },
+    techState: options.whiteTechState || { ownedTiles: { ...(options.whiteOwnedTechTiles || {}) } },
+    techCounts: { ...(options.whiteTechCounts || {}) },
+    runezuSymbols: options.whiteRunezuSymbols || {},
   };
   const blue = {
     id: "player-blue",
@@ -6726,6 +6732,82 @@ function makeYichangdianAlienState(options = {}) {
     manyWhiteRocketsProfile.playScore,
     noWhiteRocketProfile.playScore,
     "non-current player public-pick play score should be stable when only current player's rockets change",
+  );
+}
+
+{
+  const pendingBlue = {
+    id: "player-blue",
+    color: "blue",
+    colorLabel: "Blue",
+    hand: [],
+    reservedCards: [],
+    resources: { score: 18, credits: 4, energy: 3, publicity: 2, availableData: 0, handSize: 0 },
+    income: {},
+    techState: { ownedTiles: {} },
+  };
+  const publicLaunchCard = {
+    id: "blue-demand-public-launch",
+    cardName: "Blue demand public launch",
+    price: 0,
+    typeCode: 0,
+    playEffects: [{ type: "launch", options: { cost: {} } }],
+    model: { tasks: [] },
+  };
+  const whiteTaskCard = {
+    id: "white-planet-task",
+    cardName: "White planet task",
+    model: {
+      tasks: [{
+        id: "white-jupiter-task",
+        condition: { type: "planetOrbitOrLand", planetId: "jupiter" },
+        rewards: [{ type: "gain_resources", options: { gain: { score: 40 } } }],
+      }],
+    },
+  };
+  const readDemandPickProfile = (whiteReservedCards) => {
+    const harness = createAiControllerHarness(null, {
+      currentPlayerColor: "white",
+      cardSelectionActive: true,
+      recordPublicPick: true,
+      roundNumber: 3,
+      whiteResources: { score: 20, credits: 4, energy: 3, publicity: 2, handSize: 0 },
+      whiteReservedCards,
+      blueResources: pendingBlue.resources,
+      pendingCardSelectionAction: {
+        type: "trade",
+        player: pendingBlue,
+      },
+      publicCards: [publicLaunchCard],
+      rocketTokensByPlayer: {
+        "player-white": [],
+        "player-blue": [],
+      },
+    });
+    assert.equal(
+      harness.controller.configureAiAutoBattle({
+        playerIds: [harness.blue.id],
+        suppressAutoSchedule: true,
+      }).ok,
+      true,
+    );
+
+    const result = harness.controller.runAiAutomationStep();
+    assert.equal(result.ok, true, "AI should resolve the pending blue public pick");
+    const pickLog = harness.controller.getAiAutoBattleReport().logs
+      .find((entry) => entry.type === "pick-card");
+    assert.ok(pickLog, "public pick log should expose the evaluated public candidate");
+    return pickLog.details?.topPublicCandidates?.[0] || null;
+  };
+
+  const plainWhiteProfile = readDemandPickProfile([]);
+  const taskDrivenWhiteProfile = readDemandPickProfile([whiteTaskCard]);
+  assert.equal(plainWhiteProfile?.cardId, "blue-demand-public-launch");
+  assert.equal(taskDrivenWhiteProfile?.cardId, "blue-demand-public-launch");
+  assert.equal(
+    taskDrivenWhiteProfile.playScore,
+    plainWhiteProfile.playScore,
+    "pending blue public-pick play score should ignore current white player's reserved-task demand",
   );
 }
 

@@ -10312,9 +10312,9 @@
       const plutoValue = model?.pluto ? 8 : 0;
       const costValue = scoreAiResourceBundle(cost);
       const cornerOpportunity = scoreAiCardCornerOpportunity(card);
-      const demandFit = scoreAiCardDemandFit(card, model, playEffects);
-      const endGameExpectedScore = details.endGameExpectedScore ?? scoreAiCardEndGameExpectedValue(card, model);
-      const routePlan = details.plan || scoreAiPlayCardRoutePlan(card, model, playEffects);
+      const demandFit = scoreAiCardDemandFit(card, model, playEffects, player);
+      const endGameExpectedScore = details.endGameExpectedScore ?? scoreAiCardEndGameExpectedValue(card, model, player);
+      const routePlan = details.plan || scoreAiPlayCardRoutePlan(card, model, playEffects, player);
       const standardActionPremium = details.standardActionPremium
         ?? scoreAiCardStandardActionPremium(playEffects, player);
       const c2Type3ProgressValue = typeCode === 3 ? scoreAiC2Type3ProgressValue(player) : 0;
@@ -14262,7 +14262,8 @@
       const bestTargetScore = getBestAiNebulaChoiceScore(scanChoices.choices || [], options);
       if (!Number.isFinite(bestTargetScore)) return -Infinity;
       const handDiscardPenalty = options.fromHand
-        ? Math.max(0, scoreAiPlayCardValue(card)) * 0.25 + scoreAiCardCornerOpportunity(card) * 0.15
+        ? Math.max(0, scoreAiPlayCardValue(card, { player: options.player || getCurrentPlayer() })) * 0.25
+          + scoreAiCardCornerOpportunity(card) * 0.15
         : 0;
       return bestTargetScore + Math.min(1.5, (scanChoices.choices || []).length * 0.25) - handDiscardPenalty;
     }
