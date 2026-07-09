@@ -6859,9 +6859,9 @@
         && highScorePushProfile.active
         && highScorePushProfile.projectedScore >= 260
         && highScorePushProfile.projectedScore < 340
-        && (credits >= 2 || energy >= 2 || publicity >= 3)
+        && (credits >= 2 || energy >= 2 || publicity >= 3 || handSize >= 2)
         && !(turnState.passedPlayerIds || []).includes(player.id);
-      const highScorePlayableHandScore = finalHighScoreRefillBaseWindow && handSize <= 2
+      const highScorePlayableHandScore = finalHighScoreRefillBaseWindow && handSize <= 4
         ? (player.hand || []).reduce((best, card, handIndex) => {
           const candidate = buildAiPlayCardCandidate(card, handIndex, player);
           return Math.max(best, aiNumber(candidate?.score));
@@ -6872,6 +6872,10 @@
         || (handSize <= 2 && highScorePlayableHandScore < 8)
       );
       const finalHighScoreHandRefillWindow = finalHighScoreNeedsCardRefill;
+      const finalHighScoreDeadHandRefillBaseWindow = finalHighScoreRefillBaseWindow
+        && handSize >= 3
+        && handSize <= 4
+        && highScorePlayableHandScore < 8;
       const finalPreMainCashoutHandRefillWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && mainActionOpen
         && !state.pendingActionExecuted
@@ -7024,6 +7028,7 @@
         && !finalLowHandRefillWindow
         && !finalLowStaleHandRefillBaseWindow
         && !finalHighScoreHandRefillWindow
+        && !finalHighScoreDeadHandRefillBaseWindow
         && !finalPreMainCashoutHandRefillWindow
         && !finalLowScoreScanUnlock
         && !b2SectorScanUnlock
@@ -7042,6 +7047,7 @@
         && !finalLowHandRefillWindow
         && !finalLowStaleHandRefillBaseWindow
         && !finalHighScoreHandRefillWindow
+        && !finalHighScoreDeadHandRefillBaseWindow
         && !finalPreMainCashoutHandRefillWindow
         && !finalLowScoreScanUnlock
         && !midgameAnalyzeUnlock
@@ -7173,6 +7179,37 @@
         && !bestPublicTradeCardProfile.hasConcreteSignal;
       const finalHighScorePublicRefill = finalHighScorePublicRefillBase
         && !finalHighScoreTerminalNoSignalPublicRefill;
+      const cardsForPickCardTrade = quickTrades.getTradeAction("cards-for-pick-card");
+      const cardsForPickCardCheck = cardsForPickCardTrade
+        ? (quickTrades.canExecuteTrade?.("cards-for-pick-card", createActionContext()) || { ok: false })
+        : { ok: false };
+      const cardsForPickCardDiscardPlan = finalHighScoreDeadHandRefillBaseWindow
+        && cardsForPickCardTrade
+        && cardsForPickCardCheck.ok
+        ? summarizeAiTradeDiscardPlan(player, cardsForPickCardTrade, null, {
+          includeExecutionPlan: true,
+          tradeId: "cards-for-pick-card",
+        })
+        : null;
+      const cardsForPickCardDiscardCost = cardsForPickCardDiscardPlan?.ok
+        ? aiNumber(cardsForPickCardDiscardPlan.totalCost)
+        : Infinity;
+      const cardsForPickCardHandAfterTrade = cardsForPickCardTrade
+        ? Math.max(
+          0,
+          handSize
+            - Math.max(0, Math.round(aiNumber(cardsForPickCardTrade.cost?.handSize)))
+            + Math.max(0, Math.round(aiNumber(cardsForPickCardTrade.gain?.handSize))),
+        )
+        : 0;
+      const finalHighScoreDeadHandPickRefill = finalHighScoreDeadHandRefillBaseWindow
+        && Boolean(cardsForPickCardCheck.ok)
+        && cardsForPickCardHandAfterTrade >= 2
+        && Number.isFinite(cardsForPickCardDiscardCost)
+        && cardsForPickCardDiscardCost <= 8
+        && bestPublicTradeCardScore >= 24
+        && aiNumber(bestPublicTradeCardProfile.playScore) >= 18
+        && bestPublicTradeCardProfile.hasConcreteSignal;
       const finalPreMainCashoutPublicRefill = finalPreMainCashoutHandRefillWindow
         && bestPublicTradeCardScore >= 12
         && bestPublicTradeCardProfile.hasConcreteSignal;
@@ -7197,6 +7234,13 @@
           + Math.max(0, 18 - highScoreGapTo300) * 0.45
           + Math.min(9, bestPublicTradeCardScore * 0.32)
           + Math.min(4, highScorePushProfile.strength * 2)
+        : 0;
+      const finalHighScoreDeadHandPickRefillValue = finalHighScoreDeadHandPickRefill
+        ? 7.5
+          + Math.min(10, bestPublicTradeCardScore * 0.32)
+          + Math.min(6, aiNumber(bestPublicTradeCardProfile.playScore) * 0.16)
+          + Math.min(4, highScorePushProfile.strength * 1.8)
+          - Math.min(5, cardsForPickCardDiscardCost * 0.45)
         : 0;
       const preMainCashoutRefillValue = (finalPreMainCashoutPublicRefill || finalPreMainSecondCashoutPublicRefill)
         ? 10
@@ -7478,6 +7522,14 @@
                 : "后期落后：能量换信用点恢复打牌/扫描",
         },
         {
+          tradeId: "cards-for-pick-card",
+          enabled: finalHighScoreDeadHandPickRefill,
+          value: baseValue
+            + finalHighScoreDeadHandPickRefillValue
+            + Math.min(5, Math.max(0, 305 - highScorePushProfile.projectedScore) * 0.06),
+          reason: "高分冲刺：弃死手牌精选可打牌",
+        },
+        {
           tradeId: "publicity-for-card",
           enabled: (mainActionOpen || canPrepareFinalThresholdAction) && publicity >= 3 && (
             (handSize <= 1 && hasUsefulPublicTradeCard)
@@ -7561,6 +7613,13 @@
               finalLowStaleHandPublicRefill,
               finalLowStaleHandPlayableScore: roundAiScore(finalLowStaleHandPlayableScore),
               finalHighScoreNeedsCardRefill,
+              finalHighScoreDeadHandRefillBaseWindow,
+              finalHighScoreDeadHandPickRefill,
+              finalHighScoreDeadHandPickRefillValue: roundAiScore(finalHighScoreDeadHandPickRefillValue),
+              cardsForPickCardHandAfterTrade,
+              cardsForPickCardDiscardCost: Number.isFinite(cardsForPickCardDiscardCost)
+                ? roundAiScore(cardsForPickCardDiscardCost)
+                : null,
               finalHighScorePublicRefill,
               finalHighScoreRefillValue: roundAiScore(finalHighScoreRefillValue),
               finalPreMainCashoutHandRefillWindow,
@@ -19457,11 +19516,14 @@
           || left.handIndex - right.handIndex
         ))
         .slice(0, 5);
-      const highScorePlayableHandScore = handSize <= 2
+      const highScorePlayableHandScore = handSize <= 4
         ? playableHandCards.reduce((best, card) => Math.max(best, aiNumber(card.score)), 0)
         : 0;
       const finalHighScoreNeedsCardRefill = handSize <= 1
         || (handSize <= 2 && highScorePlayableHandScore < 8);
+      const finalHighScoreDeadHandRefillBaseWindow = handSize >= 3
+        && handSize <= 4
+        && highScorePlayableHandScore < 8;
       const publicPreview = buildAiPublicRefillTradePreview(player) || {};
       const rankedPublicTradeCards = (cardState.publicCards || [])
         .map((card, slotIndex) => ({
@@ -19484,6 +19546,19 @@
         && !bestPublicTradeCardProfile.hasConcreteSignal;
       const finalHighScorePublicRefill = finalHighScorePublicRefillBase
         && !finalHighScoreTerminalNoSignalPublicRefill;
+      const cardsForPickCardPreview = publicPreview.cardsForPickCardPreview || null;
+      const cardsForPickCardHandAfterTrade = Math.max(0, aiNumber(cardsForPickCardPreview?.handAfterTrade));
+      const cardsForPickCardDiscardCost = Number.isFinite(Number(cardsForPickCardPreview?.discardCost))
+        ? aiNumber(cardsForPickCardPreview.discardCost)
+        : Infinity;
+      const finalHighScoreDeadHandPickRefill = finalHighScoreDeadHandRefillBaseWindow
+        && Boolean(cardsForPickCardPreview?.ok)
+        && cardsForPickCardHandAfterTrade >= 2
+        && Number.isFinite(cardsForPickCardDiscardCost)
+        && cardsForPickCardDiscardCost <= 8
+        && bestPublicTradeCardScore >= 24
+        && aiNumber(bestPublicTradeCardProfile.playScore) >= 18
+        && bestPublicTradeCardProfile.hasConcreteSignal;
       const availableQuick = (candidates || [])
         .filter((candidate) => candidate?.kind === "quick" && candidate.available !== false)
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score))
@@ -19532,7 +19607,7 @@
         topPublicTradeCards: Array.isArray(publicPreview.topPublicTradeCards)
           ? publicPreview.topPublicTradeCards.slice(0, 5)
           : [],
-        cardsForPickCardPreview: publicPreview.cardsForPickCardPreview || null,
+        cardsForPickCardPreview,
         tradeChecks: Array.isArray(publicPreview.tradeChecks)
           ? publicPreview.tradeChecks.slice(0, 8)
           : [],
@@ -19542,6 +19617,12 @@
           finalHighScorePublicRefillBase,
           finalHighScoreTerminalNoSignalPublicRefill,
           finalHighScorePublicRefill,
+          finalHighScoreDeadHandRefillBaseWindow,
+          finalHighScoreDeadHandPickRefill,
+          cardsForPickCardHandAfterTrade,
+          cardsForPickCardDiscardCost: Number.isFinite(cardsForPickCardDiscardCost)
+            ? roundAiScore(cardsForPickCardDiscardCost)
+            : null,
           publicRefillScoreThreshold: roundAiScore(publicRefillScoreThreshold),
           bestPublicTradeCardHasConcreteSignal: Boolean(bestPublicTradeCardProfile.hasConcreteSignal),
           hasCardRefillResource: credits >= 2 || energy >= 2 || publicity >= 3 || handSize >= 2,

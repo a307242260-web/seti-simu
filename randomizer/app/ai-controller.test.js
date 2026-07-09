@@ -5919,6 +5919,83 @@ function makeYichangdianAlienState(options = {}) {
 {
   const turnChoices = [];
   const publicScoreCard = {
+    id: "public-highscore-dead-hand-score-card",
+    cardName: "Public highscore dead-hand score card",
+    price: 1,
+    playEffects: [{ type: "gain_resources", options: { gain: { score: 26 } } }],
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 5,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "cards-for-pick-card": {
+        id: "cards-for-pick-card",
+        label: "2 cards -> public card",
+        cost: { handSize: 2 },
+        gain: { handSize: 1 },
+      },
+    },
+    publicCards: [publicScoreCard],
+    blueResources: { score: 288, credits: 9, energy: 1, publicity: 0, availableData: 0, handSize: 4 },
+    blueHand: [
+      { id: "dead-highscore-a", cardName: "Dead highscore A", price: 20 },
+      { id: "dead-highscore-b", cardName: "Dead highscore B", price: 20 },
+      { id: "dead-highscore-c", cardName: "Dead highscore C", price: 20 },
+      { id: "dead-highscore-d", cardName: "Dead highscore D", price: 20 },
+    ],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b2: "b2",
+      final_d2: "d2",
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should trade dead high-score hands for a concrete public score card");
+  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "cards-for-pick-card" });
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-pick-card");
+  assert.ok(tradeCandidate, "dead-hand public-card trade should be enumerated for high-score push");
+  assert.equal(tradeCandidate.valueBreakdown?.finalHighScoreDeadHandRefillBaseWindow, true);
+  assert.equal(tradeCandidate.valueBreakdown?.finalHighScoreDeadHandPickRefill, true);
+  assert.ok(Number(tradeCandidate.valueBreakdown?.cardsForPickCardDiscardCost || 0) <= 8);
+}
+
+{
+  const turnChoices = [];
+  const publicScoreCard = {
     id: "public-low-stale-score-card",
     cardName: "Public low stale score card",
     price: 1,
