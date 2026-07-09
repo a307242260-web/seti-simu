@@ -4974,6 +4974,88 @@ function makeYichangdianAlienState(options = {}) {
   const turnChoices = [];
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
+    aiDifficulty: "weak_start",
+    roundNumber: 4,
+    turnNumber: 7,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    quickTrades: {
+      "cards-for-credit": {
+        id: "cards-for-credit",
+        label: "2 cards -> 1 credit",
+        cost: { handSize: 2 },
+        gain: { credits: 1 },
+      },
+    },
+    actionChecks: {
+      launch: { ok: true },
+    },
+    blueResources: { score: 122, credits: 1, energy: 0, publicity: 2, availableData: 0, handSize: 3 },
+    blueHand: [
+      { id: "dead-launch-a", cardName: "Dead launch A", price: 3 },
+      { id: "dead-launch-b", cardName: "Dead launch B", price: 3 },
+      { id: "dead-launch-c", cardName: "Dead launch C", price: 3 },
+    ],
+    findAvailableSlotIndex: () => null,
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_c2: {
+          id: "final_c2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_c2: "c2",
+      final_d2: "d2",
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "pass") || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  harness.controller.runAiAutomationStep();
+  const passLog = harness.controller.getAiAutoBattleReport().logs
+    .find((entry) => entry.type === "turn-action" && entry.details?.action?.id === "pass");
+  const preview = passLog?.details?.resourceLockTradePreviews
+    ?.find((entry) => entry.tradeId === "cards-for-credit");
+  assert.ok(preview, "resource-lock preview should include the possible launch trade");
+  assert.equal(preview.bestAction?.actionId, "launch");
+  assert.ok(
+    Number(preview.bestAction?.score || 0) < 26,
+    "final low-resource launch preview should include no-route penalties before applying the unlock threshold",
+  );
+  assert.equal(
+    turnChoices.flat().some((candidate) => (
+      candidate.id === "quickTrade"
+      && candidate.tradeId === "cards-for-credit"
+      && candidate.valueBreakdown?.unlockedMainAction?.actionId === "launch"
+    )),
+    false,
+    "weak_start should not trade dead final hand into a no-route launch",
+  );
+}
+
+{
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
     roundNumber: 2,
     canStartMainAction: true,
     realisticCanAfford: true,

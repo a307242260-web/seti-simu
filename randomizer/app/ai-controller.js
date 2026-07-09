@@ -6493,10 +6493,10 @@
       const canLaunchAfterTrade = activeRocketCount < rocketLimit
         && players.canAfford(simulatedPlayer, getAiLaunchPaymentCost());
       const postTradeLaunchPlan = canLaunchAfterTrade ? scoreAiPostLaunchMovePlan(simulatedPlayer) : null;
-      const launchScore = canLaunchAfterTrade
-        ? scoreAiLaunchAction(simulatedPlayer)
-          + applyAiStrategyWeight(Math.max(0, aiNumber(postTradeLaunchPlan?.score)), "move", 0.45)
-        : 0;
+      const launchValue = canLaunchAfterTrade
+        ? scoreAiLaunchTurnCandidateValue(simulatedPlayer, postTradeLaunchPlan)
+        : null;
+      const launchScore = aiNumber(launchValue?.score);
       const currentScanCheck = scanEffects?.canExecuteScan?.(player, { standardAction: true }) || { ok: false };
       const scanCheck = scanEffects?.canExecuteScan?.(simulatedPlayer, { standardAction: true }) || { ok: false };
       const currentScanScore = currentScanCheck.ok ? scoreAiScanAction(player) : 0;
@@ -12940,6 +12940,38 @@
         - postSecondFinalMarkPenalty;
     }
 
+    function scoreAiLaunchTurnCandidateValue(player = getCurrentPlayer(), postLaunchMovePlan = null) {
+      const launchCost = scoreAiLaunchPaymentCost();
+      const launchReservePenalty = scoreAiResourceReservePenaltyForCost(
+        player,
+        getAiLaunchPaymentCost(),
+        { actionId: "launch" },
+      );
+      const lateLaunchPenalty = scoreAiLateLaunchDeadEndPenalty(player, postLaunchMovePlan);
+      const extraLaunchPacePenalty = scoreAiExtraLaunchPacePenalty(player);
+      const finalSecondMarkExtraLaunchPenalty = scoreAiFinalSecondMarkExtraLaunchPenalty(player, postLaunchMovePlan);
+      const noRouteLaunchPenalty = scoreAiNoRouteLaunchPenalty(player, postLaunchMovePlan);
+      const weakEarlyPostLaunchRoutePenalty = scoreAiWeakEarlyPostLaunchRoutePenalty(player, postLaunchMovePlan);
+      const launchGain = scoreAiLaunchAction(player)
+        + applyAiStrategyWeight(Math.max(0, aiNumber(postLaunchMovePlan?.score)), "move", 0.45)
+        - lateLaunchPenalty
+        - extraLaunchPacePenalty
+        - finalSecondMarkExtraLaunchPenalty
+        - noRouteLaunchPenalty
+        - weakEarlyPostLaunchRoutePenalty;
+      return {
+        score: launchGain - launchCost - launchReservePenalty,
+        launchGain,
+        launchCost,
+        launchReservePenalty,
+        lateLaunchPenalty,
+        extraLaunchPacePenalty,
+        finalSecondMarkExtraLaunchPenalty,
+        noRouteLaunchPenalty,
+        weakEarlyPostLaunchRoutePenalty,
+      };
+    }
+
     function scoreAiLateLaunchDeadEndPenalty(player = getCurrentPlayer(), postLaunchMovePlan = null) {
       const round = getAiRoundNumber();
       if (round < 3) return 0;
@@ -18507,53 +18539,28 @@
 
       const launchCheck = actions.canExecute("launch", context);
       const postLaunchMovePlan = launchCheck.ok ? scoreAiPostLaunchMovePlan(currentPlayer) : null;
-      const lateLaunchPenalty = launchCheck.ok
-        ? scoreAiLateLaunchDeadEndPenalty(currentPlayer, postLaunchMovePlan)
-        : 0;
-      const extraLaunchPacePenalty = launchCheck.ok
-        ? scoreAiExtraLaunchPacePenalty(currentPlayer)
-        : 0;
-      const finalSecondMarkExtraLaunchPenalty = launchCheck.ok
-        ? scoreAiFinalSecondMarkExtraLaunchPenalty(currentPlayer, postLaunchMovePlan)
-        : 0;
-      const noRouteLaunchPenalty = launchCheck.ok
-        ? scoreAiNoRouteLaunchPenalty(currentPlayer, postLaunchMovePlan)
-        : 0;
-      const weakEarlyPostLaunchRoutePenalty = launchCheck.ok
-        ? scoreAiWeakEarlyPostLaunchRoutePenalty(currentPlayer, postLaunchMovePlan)
-        : 0;
-      const launchCost = scoreAiLaunchPaymentCost();
-      const launchReservePenalty = launchCheck.ok
-        ? scoreAiResourceReservePenaltyForCost(currentPlayer, getAiLaunchPaymentCost(), { actionId: "launch" })
-        : 0;
-      const launchGain = launchCheck.ok
-        ? scoreAiLaunchAction(currentPlayer)
-          + applyAiStrategyWeight(Math.max(0, aiNumber(postLaunchMovePlan?.score)), "move", 0.45)
-          - lateLaunchPenalty
-          - extraLaunchPacePenalty
-          - finalSecondMarkExtraLaunchPenalty
-          - noRouteLaunchPenalty
-          - weakEarlyPostLaunchRoutePenalty
-        : 0;
+      const launchValue = launchCheck.ok
+        ? scoreAiLaunchTurnCandidateValue(currentPlayer, postLaunchMovePlan)
+        : {};
       const launchCandidate = {
         id: "launch",
         kind: "main",
         available: launchCheck.ok,
         reason: launchCheck.message || null,
         plan: postLaunchMovePlan?.score > 0 ? postLaunchMovePlan : null,
-        gain: launchGain,
-        cost: launchCost + launchReservePenalty,
-        score: launchGain - launchCost - launchReservePenalty,
+        gain: launchValue.launchGain || 0,
+        cost: aiNumber(launchValue.launchCost) + aiNumber(launchValue.launchReservePenalty),
+        score: launchValue.score || 0,
         valueBreakdown: {
-          launchGain,
-          launchCost,
-          launchReservePenalty,
+          launchGain: launchValue.launchGain || 0,
+          launchCost: launchValue.launchCost || 0,
+          launchReservePenalty: launchValue.launchReservePenalty || 0,
           postLaunchMovePlanScore: postLaunchMovePlan?.score || 0,
-          lateLaunchPenalty,
-          extraLaunchPacePenalty,
-          finalSecondMarkExtraLaunchPenalty,
-          noRouteLaunchPenalty,
-          weakEarlyPostLaunchRoutePenalty,
+          lateLaunchPenalty: launchValue.lateLaunchPenalty || 0,
+          extraLaunchPacePenalty: launchValue.extraLaunchPacePenalty || 0,
+          finalSecondMarkExtraLaunchPenalty: launchValue.finalSecondMarkExtraLaunchPenalty || 0,
+          noRouteLaunchPenalty: launchValue.noRouteLaunchPenalty || 0,
+          weakEarlyPostLaunchRoutePenalty: launchValue.weakEarlyPostLaunchRoutePenalty || 0,
         },
       };
       candidates.push(launchCandidate);
@@ -19168,9 +19175,10 @@
         const canLaunchAfterTrade = activeRocketCount < rocketLimit
           && players.canAfford(simulatedPlayer, getAiLaunchPaymentCost());
         const launchPlan = canLaunchAfterTrade ? scoreAiPostLaunchMovePlan(simulatedPlayer) : null;
-        const launchScore = canLaunchAfterTrade
-          ? scoreAiLaunchAction(simulatedPlayer) + Math.max(0, aiNumber(launchPlan?.score)) * 0.35
-          : 0;
+        const launchValue = canLaunchAfterTrade
+          ? scoreAiLaunchTurnCandidateValue(simulatedPlayer, launchPlan)
+          : null;
+        const launchScore = aiNumber(launchValue?.score);
 
         const options = [
           bestPlay ? {
