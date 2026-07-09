@@ -2600,6 +2600,72 @@ assert.equal(negativeCardCornerGraphLiftAnalysis.negativeCardCornerGraphLiftSamp
 const negativeCardCornerGraphLiftSummary = analytics.summarizeBattleReports([negativeCardCornerGraphLiftReport]);
 assert.equal(negativeCardCornerGraphLiftSummary.negativeCardCornerGraphLiftSamples[0].cardId, "b_90.webp");
 
+const negativeCardCornerBeforeNoMainPassReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 4,
+      rawTurnNumber: 12,
+      playerId: "player-blue",
+      playerLabel: "蓝色",
+      playerResources: { score: 35, credits: 0, energy: 1, publicity: 2, handSize: 2 },
+      details: {
+        action: {
+          id: "cardCorner",
+          kind: "quick",
+          score: -1.25,
+          cardId: "b_11.webp",
+          cardLabel: "飞掠小行星",
+          actionGraph: { goalBonus: 7.4, net: 6.15 },
+        },
+        candidates: [],
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 4,
+      rawTurnNumber: 12,
+      playerId: "player-blue",
+      playerLabel: "蓝色",
+      playerResources: { score: 35, credits: 0, energy: 1, publicity: 3, handSize: 1 },
+      details: {
+        action: { id: "pass", kind: "pass", score: -2.3 },
+        candidates: [
+          { id: "pass", kind: "pass", available: true, score: -2.3 },
+          { id: "playCard", kind: "main", available: false, score: 0, reason: "没有资源可支付的普通手牌" },
+          { id: "scan", kind: "main", available: false, score: 0, reason: "资源不足，扫描需要 1信用点 + 2能量" },
+        ],
+      },
+    },
+  ],
+  playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 153 }],
+};
+const negativeCardCornerBeforeNoMainPassAnalysis = analytics.analyzeBattleReport(
+  negativeCardCornerBeforeNoMainPassReport,
+);
+assert.equal(negativeCardCornerBeforeNoMainPassAnalysis.opportunities.preNoMainPassResourceDrain, 1);
+assert.equal(negativeCardCornerBeforeNoMainPassAnalysis.opportunities.negativeCardCornerBeforeNoMainPass, 1);
+assert.equal(
+  negativeCardCornerBeforeNoMainPassAnalysis.negativeCardCornerBeforeNoMainPassSamples[0].previousAction.cardId,
+  "b_11.webp",
+);
+assert(
+  negativeCardCornerBeforeNoMainPassAnalysis.recommendations.some(
+    (entry) => entry.id === "classify-negative-card-corner-before-no-main-pass",
+  ),
+);
+const negativeCardCornerBeforeNoMainPassSummary = analytics.summarizeBattleReports([
+  negativeCardCornerBeforeNoMainPassReport,
+]);
+assert.equal(negativeCardCornerBeforeNoMainPassSummary.opportunities.negativeCardCornerBeforeNoMainPass, 1);
+assert.equal(
+  negativeCardCornerBeforeNoMainPassSummary.negativeCardCornerBeforeNoMainPassSamples[0].previousAction.cardLabel,
+  "飞掠小行星",
+);
+
 const nonPositivePublicRefillReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{

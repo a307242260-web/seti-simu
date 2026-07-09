@@ -799,6 +799,21 @@
       .slice(0, Number.isFinite(Number(limit)) ? Math.max(0, Number(limit)) : undefined);
   }
 
+  function isNegativeCardCornerBeforeNoMainPassSample(sample = {}) {
+    const action = sample.previousAction || {};
+    return action.id === "cardCorner"
+      && numeric(action.score) < 0
+      && numeric(action.policyScore) > Math.max(0, numeric(action.score))
+      && numeric(sample.resourceDeltaToPass?.totalDrain) > 0;
+  }
+
+  function buildNegativeCardCornerBeforeNoMainPassSamples(preNoMainPassResourceDrainSamples = [], limit = 12) {
+    return sortPreNoMainPassResourceDrainSamples(
+      (preNoMainPassResourceDrainSamples || []).filter(isNegativeCardCornerBeforeNoMainPassSample),
+      limit,
+    );
+  }
+
   function getMovePaymentAfterEntry(entries = [], startIndex = 0) {
     for (let index = startIndex + 1; index < entries.length; index += 1) {
       const entry = entries[index];
@@ -6809,6 +6824,13 @@
         message: "无主行动 PASS 前存在资源/手牌消耗动作，应按前一动作到 PASS 的资源差定位哪类资源滚动没有接上主行动。",
       });
     }
+    if (numeric(opportunities.negativeCardCornerBeforeNoMainPass) > 0) {
+      recommendations.push({
+        id: "classify-negative-card-corner-before-no-main-pass",
+        priority: "medium",
+        message: "存在 raw 负分角标被 action graph 抬成正分后仍无主行动 PASS 的样本；这类窗口应先做序列反事实，不能扩成全局负角标压制。",
+      });
+    }
     if (numeric(opportunities.postPassQuickNoMain) > 0) {
       recommendations.push({
         id: "inspect-post-pass-quick-no-main",
@@ -7078,6 +7100,7 @@
       resourceLockWeakLaunchUnlock: 0,
       quickBeforePassNoMain: 0,
       preNoMainPassResourceDrain: 0,
+      negativeCardCornerBeforeNoMainPass: 0,
       postPassQuickNoMain: 0,
       postPassQuickAfterPass: 0,
       postPassPaidMoveNoFollowup: 0,
@@ -7119,6 +7142,7 @@
     const resourceLockWeakLaunchUnlockSamples = [];
     const quickBeforePassNoMainSamples = [];
     const preNoMainPassResourceDrainSamples = [];
+    const negativeCardCornerBeforeNoMainPassSamples = [];
     const postPassQuickNoMainSamples = [];
     const finalLowHandPassRecoverySamples = [];
     const finalHighScorePassRecoverySamples = [];
@@ -7430,6 +7454,12 @@
     );
     preNoMainPassResourceDrainSamples.push(...allPreNoMainPassResourceDrainSamples.slice(0, 12));
     opportunities.preNoMainPassResourceDrain = allPreNoMainPassResourceDrainSamples.length;
+    const allNegativeCardCornerBeforeNoMainPassSamples = buildNegativeCardCornerBeforeNoMainPassSamples(
+      allPreNoMainPassResourceDrainSamples,
+      Infinity,
+    );
+    negativeCardCornerBeforeNoMainPassSamples.push(...allNegativeCardCornerBeforeNoMainPassSamples.slice(0, 12));
+    opportunities.negativeCardCornerBeforeNoMainPass = allNegativeCardCornerBeforeNoMainPassSamples.length;
     const lowRoundActionTailSamples = buildLowRoundActionTailSamples(
       logs,
       playerResults,
@@ -7513,6 +7543,7 @@
       earlyPassNoMainReasonCounts,
       quickBeforePassNoMainSamples,
       preNoMainPassResourceDrainSamples,
+      negativeCardCornerBeforeNoMainPassSamples,
       postPassQuickNoMainSamples,
       postPassQuickSamples: postPassQuickAnalysis.samples.slice(0, 12),
       finalLowHandPassRecoverySamples,
@@ -7605,6 +7636,7 @@
     const mergedEarlyPassNoMainReasonCounts = {};
     const mergedQuickBeforePassNoMainSamples = [];
     const mergedPreNoMainPassResourceDrainSamples = [];
+    const mergedNegativeCardCornerBeforeNoMainPassSamples = [];
     const mergedPostPassQuickNoMainSamples = [];
     const mergedPostPassQuickSamples = [];
     const mergedFinalLowHandPassRecoverySamples = [];
@@ -7729,6 +7761,17 @@
       }
       if (Array.isArray(analysis.preNoMainPassResourceDrainSamples)) {
         mergedPreNoMainPassResourceDrainSamples.push(...analysis.preNoMainPassResourceDrainSamples);
+      }
+      if (
+        mergedNegativeCardCornerBeforeNoMainPassSamples.length < 12
+        && Array.isArray(analysis.negativeCardCornerBeforeNoMainPassSamples)
+      ) {
+        mergedNegativeCardCornerBeforeNoMainPassSamples.push(
+          ...analysis.negativeCardCornerBeforeNoMainPassSamples.slice(
+            0,
+            12 - mergedNegativeCardCornerBeforeNoMainPassSamples.length,
+          ),
+        );
       }
       if (Array.isArray(analysis.postPassQuickNoMainSamples)) {
         mergedPostPassQuickNoMainSamples.push(...analysis.postPassQuickNoMainSamples);
@@ -7956,6 +7999,7 @@
       resourceLockWeakLaunchUnlockSamples: mergedResourceLockWeakLaunchUnlockSamples,
       quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
       preNoMainPassResourceDrainSamples: mergedPreNoMainPassResourceDrainSamples,
+      negativeCardCornerBeforeNoMainPassSamples: mergedNegativeCardCornerBeforeNoMainPassSamples,
       postPassQuickNoMainSamples: mergedPostPassQuickNoMainSamples,
       scoreOpportunities: {
         selectedBelowBest: mergedScoreOpportunities.selectedBelowBest,
@@ -8021,6 +8065,7 @@
       earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
       quickBeforePassNoMainSamples: sortEarlyPassNoMainSamples(mergedQuickBeforePassNoMainSamples),
       preNoMainPassResourceDrainSamples: sortPreNoMainPassResourceDrainSamples(mergedPreNoMainPassResourceDrainSamples),
+      negativeCardCornerBeforeNoMainPassSamples: mergedNegativeCardCornerBeforeNoMainPassSamples,
       postPassQuickNoMainSamples: sortEarlyPassNoMainSamples(mergedPostPassQuickNoMainSamples),
       postPassQuickSamples: [...mergedPostPassQuickSamples].sort((left, right) => (
         numeric(left.finalScore) - numeric(right.finalScore)
