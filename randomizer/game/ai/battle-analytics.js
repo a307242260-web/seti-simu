@@ -2468,6 +2468,16 @@
       .slice(0, Math.max(0, Number(limit) || 0));
   }
 
+  function buildOrange4RaceSensitiveTechTagCounts(samples = [], limit = 16) {
+    const counts = {};
+    for (const sample of samples || []) {
+      for (const tag of sample?.riskTags || []) {
+        increment(counts, tag);
+      }
+    }
+    return rankCounts(counts, limit);
+  }
+
   function getMainUnlockBestPlayCard(action = {}) {
     const breakdown = action.valueBreakdown || action.breakdown || {};
     return breakdown.bestPlayCard || null;
@@ -6870,6 +6880,7 @@
       endTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples,
       orange4RaceSensitiveTechSamples: sortOrange4RaceSensitiveTechSamples(orange4RaceSensitiveTechSamples),
+      orange4RaceSensitiveTechTagCounts: buildOrange4RaceSensitiveTechTagCounts(orange4RaceSensitiveTechSamples),
       playCardNearMissSamples: sortPlayCardNearMissSamples(playCardNearMissSamples),
       playCardNearMissTagCounts: buildPlayCardNearMissTagCounts(playCardNearMissSamples),
       counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(playCardNearMissSamples),
@@ -7286,6 +7297,7 @@
       engineActionNearMissSamples: sortEngineActionNearMissSamples(mergedEngineActionNearMissSamples),
       engineActionNearMissCounts: rankEngineActionNearMissCountBuckets(mergedEngineActionNearMissCounts),
       orange4RaceSensitiveTechSamples: sortOrange4RaceSensitiveTechSamples(mergedOrange4RaceSensitiveTechSamples),
+      orange4RaceSensitiveTechTagCounts: buildOrange4RaceSensitiveTechTagCounts(mergedOrange4RaceSensitiveTechSamples),
       finalReadyTaskCreditShortfallSamples: mergedFinalReadyTaskCreditShortfallSamples,
       finalReadyTaskTradeUnlockMissSamples: mergedFinalReadyTaskTradeUnlockMissSamples,
       lowRoundActionTailSamples: sortLowRoundActionTailSamples(mergedLowRoundActionTailSamples),
@@ -7340,6 +7352,7 @@
       endTurnMoveOpportunitySamples: mergedEndTurnMoveOpportunitySamples,
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       orange4RaceSensitiveTechSamples: sortOrange4RaceSensitiveTechSamples(mergedOrange4RaceSensitiveTechSamples),
+      orange4RaceSensitiveTechTagCounts: buildOrange4RaceSensitiveTechTagCounts(mergedOrange4RaceSensitiveTechSamples),
       playCardNearMissSamples: sortPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
       playCardNearMissTagCounts: buildPlayCardNearMissTagCounts(mergedPlayCardNearMissSamples),
       counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(mergedPlayCardNearMissSamples),

@@ -20523,6 +20523,8 @@
             highScoreNearMissSamples: analysis.highScoreNearMissSamples,
             d1TechBalanceBottleneckSamples: analysis.d1TechBalanceBottleneckSamples,
             researchTechCompoundCardSamples: analysis.researchTechCompoundCardSamples,
+            orange4RaceSensitiveTechSamples: analysis.orange4RaceSensitiveTechSamples,
+            orange4RaceSensitiveTechTagCounts: analysis.orange4RaceSensitiveTechTagCounts,
             playCardNearMissSamples: analysis.playCardNearMissSamples,
             b2ScanNearMissSamples: analysis.b2ScanNearMissSamples,
             b2TradeNearMissSamples: analysis.b2TradeNearMissSamples,
