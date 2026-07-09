@@ -4254,6 +4254,206 @@
       .slice(0, 12);
   }
 
+  function isNearCompleteTaskPressureTask(task = {}) {
+    if (isReadyTask(task)) return false;
+    const condition = task.condition || {};
+    const missingCount = Number(condition.missingCount);
+    if (!Number.isFinite(missingCount) || missingCount <= 0 || missingCount > 1) return false;
+    return numeric(task.rewardValue) >= 6 || numeric(task.rewardDirectScore) >= 3;
+  }
+
+  function addRouteActions(actionSet, actions = []) {
+    for (const action of actions || []) {
+      if (action) actionSet.add(action);
+    }
+  }
+
+  function getNearCompleteTaskRouteActions(condition = {}, card = {}) {
+    const type = String(condition.type || "").toLowerCase();
+    const actions = new Set(["playCard"]);
+    const effectTypes = Array.isArray(card.effectTypes) ? card.effectTypes.map((entry) => String(entry || "")) : [];
+    if (
+      type.includes("trace")
+      || type.includes("alien")
+      || ["aomomolanding", "aomomofossilspendingtrace", "yichangdianalltracetypes"].includes(type)
+    ) {
+      addRouteActions(actions, ["scan", "alien-trace"]);
+    }
+    if (type.includes("tech")) addRouteActions(actions, ["researchTech"]);
+    if (
+      type.includes("sector")
+      || type.includes("signal")
+      || type.includes("data")
+      || type.includes("scan")
+      || ["completedsectors", "completedsamesectorcolor"].includes(type)
+    ) {
+      addRouteActions(actions, ["scan", "orbit", "land", "placeData", "analyze"]);
+    }
+    if (
+      type.includes("planet")
+      || type.includes("orbit")
+      || type.includes("land")
+      || type.includes("probe")
+      || type.includes("satellite")
+      || type.includes("location")
+    ) {
+      addRouteActions(actions, ["launch", "move", "orbit", "land"]);
+    }
+    if (type.includes("resource") || type.includes("hand")) addRouteActions(actions, ["quickTrade", "pick-card"]);
+    if (effectTypes.some((entry) => entry.includes("research_tech") || entry.includes("tech"))) {
+      addRouteActions(actions, ["researchTech"]);
+    }
+    if (effectTypes.some((entry) => entry.includes("scan"))) addRouteActions(actions, ["scan"]);
+    if (effectTypes.some((entry) => entry.includes("launch"))) addRouteActions(actions, ["launch"]);
+    if (effectTypes.some((entry) => entry.includes("move"))) addRouteActions(actions, ["move"]);
+    return [...actions].sort();
+  }
+
+  function summarizeNearCompleteTask(task = {}, card = {}) {
+    const condition = task.condition || {};
+    return {
+      id: task.id || null,
+      type: condition.type || null,
+      resource: condition.resource || null,
+      traceType: condition.traceType || null,
+      techType: condition.techType || null,
+      planetId: condition.planetId || null,
+      targetCount: condition.targetCount ?? condition.count ?? null,
+      currentCount: condition.currentCount ?? null,
+      missingCount: condition.missingCount ?? null,
+      met: Boolean(task.completed || condition.met),
+      rewardDirectScore: roundRatio(task.rewardDirectScore),
+      rewardValue: roundRatio(task.rewardValue),
+      routeActions: getNearCompleteTaskRouteActions(condition, card),
+    };
+  }
+
+  function summarizeNearCompleteTaskCard(card = {}, zone = "hand") {
+    const summary = summarizeUnplayedCard(card, zone);
+    if (!summary) return null;
+    const tasks = (summary.tasks || [])
+      .filter(isNearCompleteTaskPressureTask)
+      .map((task) => summarizeNearCompleteTask(task, summary));
+    if (!tasks.length) return null;
+    return {
+      zone: summary.zone,
+      cardId: summary.cardId,
+      cardInstanceId: summary.cardInstanceId,
+      label: summary.label,
+      price: summary.price,
+      typeCode: summary.typeCode,
+      effectTypes: summary.effectTypes,
+      tasks,
+    };
+  }
+
+  function buildNearCompleteTaskRouteContext(logs = [], playerId = null, routeActions = []) {
+    const routeActionSet = new Set(routeActions || []);
+    const routeActionCounts = {};
+    const matchedTurns = [];
+    for (let logIndex = 0; logIndex < (logs || []).length; logIndex += 1) {
+      const entry = logs[logIndex];
+      if (entry?.type !== "turn-action" || entry.playerId !== playerId) continue;
+      const selected = getSelectedAction(entry) || {};
+      const selectedId = getSelectedActionId(entry);
+      if (routeActionSet.has(selectedId)) increment(routeActionCounts, selectedId);
+      const routeCandidates = (entry.details?.candidates || [])
+        .filter((candidate) => routeActionSet.has(getCandidateId(candidate)))
+        .sort((left, right) => (
+          numeric(getCandidatePolicyScore(right)) - numeric(getCandidatePolicyScore(left))
+          || getCandidateId(left).localeCompare(getCandidateId(right))
+        ));
+      if (!routeCandidates.length && !routeActionSet.has(selectedId)) continue;
+      const bestRouteCandidate = routeCandidates[0] || selected;
+      matchedTurns.push({
+        logIndex,
+        roundNumber: entry.roundNumber ?? null,
+        turnNumber: entry.turnNumber ?? null,
+        rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+        resources: entry.playerResources || null,
+        selected: summarizeCandidateWithGraph(selected),
+        routeSelected: routeActionSet.has(selectedId),
+        bestRouteCandidate: bestRouteCandidate ? summarizeCandidateWithGraph(bestRouteCandidate) : null,
+        topRouteCandidates: routeCandidates.slice(0, 5).map(summarizeCandidateWithGraph),
+        topCandidates: sortByCandidatePolicy((entry.details?.candidates || []).filter(isCandidateAvailable))
+          .slice(0, 5)
+          .map(summarizeCandidateWithGraph),
+      });
+    }
+    const bestTurn = [...matchedTurns].sort((left, right) => (
+      numeric(right.bestRouteCandidate?.policyScore) - numeric(left.bestRouteCandidate?.policyScore)
+      || numeric(right.roundNumber) - numeric(left.roundNumber)
+      || numeric(right.rawTurnNumber) - numeric(left.rawTurnNumber)
+    ))[0] || null;
+    const lateMatchedTurns = matchedTurns.filter((turn) => numeric(turn.roundNumber) >= 3);
+    const lateBestTurn = [...lateMatchedTurns].sort((left, right) => (
+      numeric(right.bestRouteCandidate?.policyScore) - numeric(left.bestRouteCandidate?.policyScore)
+      || numeric(right.roundNumber) - numeric(left.roundNumber)
+      || numeric(right.rawTurnNumber) - numeric(left.rawTurnNumber)
+    ))[0] || null;
+    const latestTurn = matchedTurns[matchedTurns.length - 1] || null;
+    return {
+      routeActionCounts,
+      routeCandidateTurnCount: matchedTurns.length,
+      routeSelectedCount: matchedTurns.filter((turn) => turn.routeSelected).length,
+      bestRouteTurn: bestTurn,
+      lateRouteCandidateTurnCount: lateMatchedTurns.length,
+      lateRouteSelectedCount: lateMatchedTurns.filter((turn) => turn.routeSelected).length,
+      lateBestRouteTurn: lateBestTurn,
+      latestRouteTurn: latestTurn,
+      followup: bestTurn?.bestRouteCandidate?.id
+        ? buildEngineNearMissFollowup(logs, bestTurn.logIndex, playerId, bestTurn.bestRouteCandidate.id)
+        : null,
+      lateFollowup: lateBestTurn?.bestRouteCandidate?.id
+        ? buildEngineNearMissFollowup(logs, lateBestTurn.logIndex, playerId, lateBestTurn.bestRouteCandidate.id)
+        : null,
+    };
+  }
+
+  function buildNearCompleteTaskPressureSamples(logs = [], playerResults = [], options = {}) {
+    const samples = [];
+    for (const result of getLowPlayerResults(playerResults, options)) {
+      const cards = [
+        ...(result.handCards || []).map((card) => summarizeNearCompleteTaskCard(card, "hand")),
+        ...(result.reservedCards || []).map((card) => summarizeNearCompleteTaskCard(card, "reserved")),
+      ].filter(Boolean);
+      for (const card of cards) {
+        for (const task of card.tasks || []) {
+          const routeContext = buildNearCompleteTaskRouteContext(logs, result.playerId || null, task.routeActions);
+          samples.push({
+            playerId: result.playerId || null,
+            playerLabel: result.playerLabel || result.playerId || "unknown",
+            finalScore: roundRatio(result.finalScore),
+            completedTaskCount: numeric(result.completedTaskCount),
+            techCount: numeric(result.techCount),
+            finalMarkCount: result.finalMarkCount == null ? null : numeric(result.finalMarkCount),
+            resources: result.resources || null,
+            card: {
+              zone: card.zone,
+              cardId: card.cardId,
+              cardInstanceId: card.cardInstanceId,
+              label: card.label,
+              price: card.price,
+              typeCode: card.typeCode,
+              effectTypes: card.effectTypes,
+            },
+            task,
+            stillMissingAtFinal: !task.met,
+            ...routeContext,
+          });
+        }
+      }
+    }
+    return samples
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(right.task.rewardValue) - numeric(left.task.rewardValue)
+        || numeric(right.routeCandidateTurnCount) - numeric(left.routeCandidateTurnCount)
+        || String(left.card.cardId || "").localeCompare(String(right.card.cardId || ""))
+      ))
+      .slice(0, 16);
+  }
+
   function isReadyTask(task = {}) {
     return Boolean(task.completed || task.condition?.met);
   }
@@ -6263,6 +6463,13 @@
         message: "低分玩家终局存在已满足任务牌，且一笔或多笔弃牌换信用点即可支付，应优先验证交易弃牌保护和后续打牌闭环，再决定是否放宽尾局信用点交易。",
       });
     }
+    if (numeric(opportunities.nearCompleteTaskPressure) > 0) {
+      recommendations.push({
+        id: "inspect-near-complete-task-pressure",
+        priority: "medium",
+        message: "低分玩家存在只差 1 个条件的高价值未完成任务，应先按样本核对候选动作、后续跟进行动和最终是否闭合，再决定是否给已上桌任务补压。",
+      });
+    }
     if ((candidateStats.playCard?.availableNotSelected || 0) > (candidateStats.playCard?.selected || 0) * 2) {
       recommendations.push({
         id: "improve-card-value",
@@ -6474,6 +6681,7 @@
       d1TechBalanceBottleneck: 0,
       finalReadyTaskCreditShortfall: 0,
       finalReadyTaskTradeUnlockMiss: 0,
+      nearCompleteTaskPressure: 0,
       selectedUnavailableCandidate: 0,
       selectedBelowBestScore: 0,
     };
@@ -6508,6 +6716,7 @@
     const negativeThirdFinalMarkSamples = [];
     const finalReadyTaskCreditShortfallSamples = [];
     const finalReadyTaskTradeUnlockMissSamples = [];
+    const nearCompleteTaskPressureSamples = [];
     const scoreOpportunities = {
       selectedBelowBest: 0,
       totalGap: 0,
@@ -6814,6 +7023,9 @@
     const allFinalReadyTaskTradeUnlockMissSamples = buildFinalReadyTaskTradeUnlockMissSamples(playerResults, options);
     finalReadyTaskTradeUnlockMissSamples.push(...allFinalReadyTaskTradeUnlockMissSamples.slice(0, 12));
     opportunities.finalReadyTaskTradeUnlockMiss = allFinalReadyTaskTradeUnlockMissSamples.length;
+    const allNearCompleteTaskPressureSamples = buildNearCompleteTaskPressureSamples(logs, playerResults, options);
+    nearCompleteTaskPressureSamples.push(...allNearCompleteTaskPressureSamples.slice(0, 12));
+    opportunities.nearCompleteTaskPressure = allNearCompleteTaskPressureSamples.length;
     const d1TechBalanceBottleneckSamples = buildD1TechBalanceBottleneckSamples(
       logs,
       playerResults,
@@ -6920,6 +7132,7 @@
       lowUnplayedCardSamples,
       finalReadyTaskCreditShortfallSamples,
       finalReadyTaskTradeUnlockMissSamples,
+      nearCompleteTaskPressureSamples,
       d1TechBalanceBottleneckSamples,
       sequenceWindowTurns: actionSequences.windowTurns,
       actionSequences,
@@ -6979,6 +7192,7 @@
     const mergedLowUnplayedCardSamples = [];
     const mergedFinalReadyTaskCreditShortfallSamples = [];
     const mergedFinalReadyTaskTradeUnlockMissSamples = [];
+    const mergedNearCompleteTaskPressureSamples = [];
     const mergedD1TechBalanceBottleneckSamples = [];
     const mergedHighScoreNearMissSamples = [];
     const mergedLowRoundActionTailSamples = [];
@@ -7207,6 +7421,17 @@
           ),
         );
       }
+      if (
+        mergedNearCompleteTaskPressureSamples.length < 16
+        && Array.isArray(analysis.nearCompleteTaskPressureSamples)
+      ) {
+        mergedNearCompleteTaskPressureSamples.push(
+          ...analysis.nearCompleteTaskPressureSamples.slice(
+            0,
+            16 - mergedNearCompleteTaskPressureSamples.length,
+          ),
+        );
+      }
       if (mergedD1TechBalanceBottleneckSamples.length < 16 && Array.isArray(analysis.d1TechBalanceBottleneckSamples)) {
         mergedD1TechBalanceBottleneckSamples.push(
           ...analysis.d1TechBalanceBottleneckSamples.slice(0, 16 - mergedD1TechBalanceBottleneckSamples.length),
@@ -7300,6 +7525,7 @@
       orange4RaceSensitiveTechTagCounts: buildOrange4RaceSensitiveTechTagCounts(mergedOrange4RaceSensitiveTechSamples),
       finalReadyTaskCreditShortfallSamples: mergedFinalReadyTaskCreditShortfallSamples,
       finalReadyTaskTradeUnlockMissSamples: mergedFinalReadyTaskTradeUnlockMissSamples,
+      nearCompleteTaskPressureSamples: mergedNearCompleteTaskPressureSamples,
       lowRoundActionTailSamples: sortLowRoundActionTailSamples(mergedLowRoundActionTailSamples),
     };
     const sequenceWindowTurns = normalizeSequenceWindowTurns(
@@ -7398,6 +7624,7 @@
       lowUnplayedCardSamples: mergedLowUnplayedCardSamples,
       finalReadyTaskCreditShortfallSamples: mergedFinalReadyTaskCreditShortfallSamples,
       finalReadyTaskTradeUnlockMissSamples: mergedFinalReadyTaskTradeUnlockMissSamples,
+      nearCompleteTaskPressureSamples: mergedNearCompleteTaskPressureSamples,
       d1TechBalanceBottleneckSamples,
       averageWinnerProfile,
       averageNonWinnerProfile,

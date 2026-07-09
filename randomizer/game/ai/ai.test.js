@@ -2717,12 +2717,24 @@ assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[0].cardId,
 assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[0].remainingTaskCount, 1);
 assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[0].tasks[0].condition.missingCount, 1);
 assert.equal(playCardNearMissAnalysis.lowUnplayedCardSamples[0].cards[1].zone, "reserved");
+assert.equal(playCardNearMissAnalysis.opportunities.nearCompleteTaskPressure, 1);
+assert.equal(playCardNearMissAnalysis.nearCompleteTaskPressureSamples[0].card.cardId, "b_135.webp");
+assert.equal(playCardNearMissAnalysis.nearCompleteTaskPressureSamples[0].task.id, "b135-same-color-sectors-task");
+assert(playCardNearMissAnalysis.nearCompleteTaskPressureSamples[0].task.routeActions.includes("scan"));
+assert(playCardNearMissAnalysis.nearCompleteTaskPressureSamples[0].task.routeActions.includes("land"));
+assert(playCardNearMissAnalysis.nearCompleteTaskPressureSamples[0].task.routeActions.includes("playCard"));
+assert.equal(playCardNearMissAnalysis.nearCompleteTaskPressureSamples[0].routeCandidateTurnCount, 1);
+assert.equal(playCardNearMissAnalysis.nearCompleteTaskPressureSamples[0].routeSelectedCount, 1);
+assert.equal(playCardNearMissAnalysis.nearCompleteTaskPressureSamples[0].bestRouteTurn.selected.id, "land");
 const playCardNearMissSummary = analytics.summarizeBattleReports([playCardNearMissReport]);
 assert.equal(playCardNearMissSummary.playCardNearMissSamples[0].bestCard.cardId, "b_135.webp");
 assert.equal(playCardNearMissSummary.engineActionNearMissCounts.byTransition[0].key, "land->playCard");
 assert.equal(playCardNearMissSummary.lowPlayerCandidateStats[0].topMissedCandidates[0].actionId, "playCard");
 assert.equal(playCardNearMissSummary.lowUnplayedCardSamples[0].cards[0].tasks[0].rewardDirectScore, 9);
 assert.equal(playCardNearMissSummary.lowUnplayedCardSamples[0].cards[1].endGameScoring, true);
+assert.equal(playCardNearMissSummary.opportunities.nearCompleteTaskPressure, 1);
+assert.equal(playCardNearMissSummary.nearCompleteTaskPressureSamples[0].task.rewardDirectScore, 9);
+assert(playCardNearMissSummary.recommendations.some((entry) => entry.id === "inspect-near-complete-task-pressure"));
 
 const engineActionNearMissReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
