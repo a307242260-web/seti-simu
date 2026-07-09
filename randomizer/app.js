@@ -33973,6 +33973,12 @@
     if (result.awaitingCardSelection) {
       if (pendingCardSelectionAction) {
         pendingCardSelectionAction.beforeTradeState = beforeState;
+        if (options.preferBlindDraw) {
+          pendingCardSelectionAction.aiPreferBlindDraw = true;
+        }
+        if (options.aiReason) {
+          pendingCardSelectionAction.aiReason = options.aiReason;
+        }
       }
       rocketState.statusNote = result.message;
       renderStateReadout();

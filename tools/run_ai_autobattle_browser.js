@@ -574,16 +574,18 @@ async function main() {
     chrome.stdout?.destroy?.();
     chrome.stderr?.destroy?.();
     chrome.unref?.();
-    for (let attempt = 0; attempt < 10; attempt += 1) {
+    await delay(300);
+    const cleanupAttempts = 20;
+    for (let attempt = 0; attempt < cleanupAttempts; attempt += 1) {
       try {
         fs.rmSync(userDataDir, { recursive: true, force: true });
         break;
       } catch (error) {
-        if (attempt === 9) {
+        if (attempt === cleanupAttempts - 1) {
           process.stderr.write(`Warning: could not remove temp Chrome profile ${userDataDir}: ${error.message}\n`);
           break;
         }
-        await delay(200);
+        await delay(500);
       }
     }
   }

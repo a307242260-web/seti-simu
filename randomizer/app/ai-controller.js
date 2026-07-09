@@ -2551,6 +2551,22 @@
         .filter((entry) => entry.card && Number.isFinite(Number(entry.score)))
         .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.slotIndex - right.slotIndex);
       const selectedPublic = rankedPublic[0] || null;
+      if (pending.aiPreferBlindDraw && allowsBlindDrawInSelection() && canBlindDraw()) {
+        recordAiAutoBattleLog("pick-card", `${player.colorLabel}AI 盲抽 1 张牌`, {
+          pendingType: pending.type || null,
+          tradeId: pending.tradeId || null,
+          aiPreferBlindDraw: true,
+          aiReason: pending.aiReason || null,
+          skippedPublicCard: selectedPublic
+            ? summarizeAiPublicPickCandidate(selectedPublic, player)
+            : null,
+          topPublicCandidates: rankedPublic
+            .slice(0, 5)
+            .map((entry) => summarizeAiPublicPickCandidate(entry, player))
+            .filter(Boolean),
+        });
+        return drawCardForCurrentPlayer({ fromSelection: true });
+      }
       if (selectedPublic) {
         recordAiAutoBattleLog("pick-card", `${player.colorLabel}AI 精选公共牌 ${selectedPublic.slotIndex + 1}`, {
           pendingType: pending.type || null,
@@ -7179,6 +7195,13 @@
         && !bestPublicTradeCardProfile.hasConcreteSignal;
       const finalHighScorePublicRefill = finalHighScorePublicRefillBase
         && !finalHighScoreTerminalNoSignalPublicRefill;
+      const finalHighScoreBlindRefill = finalHighScoreHandRefillWindow
+        && highScorePushProfile.projectedScore < 300
+        && highScoreGapTo300 <= 32
+        && publicity >= 6
+        && handSize <= 1
+        && bestPublicTradeCardScore < (highScoreGapTo300 <= 10 ? 0 : 5)
+        && !bestPublicTradeCardProfile.hasConcreteSignal;
       const cardsForPickCardTrade = quickTrades.getTradeAction("cards-for-pick-card");
       const cardsForPickCardCheck = cardsForPickCardTrade
         ? (quickTrades.canExecuteTrade?.("cards-for-pick-card", createActionContext()) || { ok: false })
@@ -7234,6 +7257,12 @@
           + Math.max(0, 18 - highScoreGapTo300) * 0.45
           + Math.min(9, bestPublicTradeCardScore * 0.32)
           + Math.min(4, highScorePushProfile.strength * 2)
+        : 0;
+      const finalHighScoreBlindRefillValue = finalHighScoreBlindRefill
+        ? 6.5
+          + (handSize <= 0 ? 2.5 : 1)
+          + Math.max(0, 32 - highScoreGapTo300) * 0.16
+          + Math.min(4, highScorePushProfile.strength * 1.4)
         : 0;
       const finalHighScoreDeadHandPickRefillValue = finalHighScoreDeadHandPickRefill
         ? 7.5
@@ -7536,6 +7565,7 @@
             || finalLowHandPublicRefill
             || finalLowStaleHandPublicRefill
             || finalHighScorePublicRefill
+            || finalHighScoreBlindRefill
             || finalPreMainCashoutPublicRefill
             || finalPreMainSecondCashoutPublicRefill
             || secondMarkCardSearch
@@ -7551,10 +7581,12 @@
               ? 3 + Math.min(7, bestPublicTradeCardScore * 0.28) + Math.max(0, 170 - currentScore) * 0.02
               : 0)
             + (finalHighScorePublicRefill ? finalHighScoreRefillValue : 0)
+            + (finalHighScoreBlindRefill ? finalHighScoreBlindRefillValue : 0)
             + preMainCashoutRefillValue
             + ((secondMarkCardSearch || closeSecondMarkCardSearch)
               ? 5 + Math.min(9, bestPublicTradeCardScore * 0.3)
               : 0),
+          preferBlindDraw: finalHighScoreBlindRefill,
           reason: secondMarkCardSearch || closeSecondMarkCardSearch
             ? "终局第2标记：宣传精选寻找得分牌"
             : finalLowHandPublicRefill
@@ -7563,6 +7595,8 @@
                 ? "终局资源断档：宣传精选找可打牌"
                 : finalHighScorePublicRefill
                   ? "高分冲刺：宣传精选找最后得分牌"
+                  : finalHighScoreBlindRefill
+                    ? "高分冲刺：公共牌无收益时盲抽找最后得分牌"
                   : (finalPreMainCashoutPublicRefill || finalPreMainSecondCashoutPublicRefill)
                     ? "高分冲刺：主行动前精选找后续得分牌"
                     : "后期落后：宣传换牌恢复行动",
@@ -7583,6 +7617,7 @@
             label: trade.label || trade.id,
             score: roundAiScore(spec.value),
             reason: spec.reason,
+            preferBlindDraw: Boolean(spec.preferBlindDraw),
             valueBreakdown: {
               lateResourceRecoveryTrade: true,
               currentScore,
@@ -7622,6 +7657,9 @@
                 : null,
               finalHighScorePublicRefill,
               finalHighScoreRefillValue: roundAiScore(finalHighScoreRefillValue),
+              finalHighScoreBlindRefill,
+              finalHighScoreBlindRefillValue: roundAiScore(finalHighScoreBlindRefillValue),
+              preferBlindDraw: Boolean(spec.preferBlindDraw),
               finalPreMainCashoutHandRefillWindow,
               finalPreMainCashoutPublicRefill,
               finalPreMainSecondCashoutPublicRefill,
@@ -19546,6 +19584,13 @@
         && !bestPublicTradeCardProfile.hasConcreteSignal;
       const finalHighScorePublicRefill = finalHighScorePublicRefillBase
         && !finalHighScoreTerminalNoSignalPublicRefill;
+      const finalHighScoreBlindRefill = finalHighScoreNeedsCardRefill
+        && projectedScore < 300
+        && scoreTo300 <= 32
+        && publicity >= 6
+        && handSize <= 1
+        && bestPublicTradeCardScore < publicRefillScoreThreshold
+        && !bestPublicTradeCardProfile.hasConcreteSignal;
       const cardsForPickCardPreview = publicPreview.cardsForPickCardPreview || null;
       const cardsForPickCardHandAfterTrade = Math.max(0, aiNumber(cardsForPickCardPreview?.handAfterTrade));
       const cardsForPickCardDiscardCost = Number.isFinite(Number(cardsForPickCardPreview?.discardCost))
@@ -19617,6 +19662,7 @@
           finalHighScorePublicRefillBase,
           finalHighScoreTerminalNoSignalPublicRefill,
           finalHighScorePublicRefill,
+          finalHighScoreBlindRefill,
           finalHighScoreDeadHandRefillBaseWindow,
           finalHighScoreDeadHandPickRefill,
           cardsForPickCardHandAfterTrade,
@@ -19682,6 +19728,7 @@
         return runQuickTrade(action.tradeId, {
           preserveHandIndex: action.preserveHandIndex,
           aiReason: action.reason || null,
+          preferBlindDraw: action.preferBlindDraw === true,
         });
       }
       if (action.id === "pass") {

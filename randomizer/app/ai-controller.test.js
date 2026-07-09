@@ -641,6 +641,12 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       return { ok: true, progressed: true };
     };
   }
+  if (options.recordBlindDraw) {
+    context.drawCardForCurrentPlayer = (drawOptions = {}) => {
+      noteHandled({ type: "blind-draw", fromSelection: drawOptions.fromSelection === true });
+      return { ok: true, progressed: true };
+    };
+  }
 
   context.finalizePendingDiscardSelection = () => {
     noteHandled({
@@ -758,6 +764,10 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   if (options.cardSelectionActive) {
     context.isCardSelectionActive = () => true;
   }
+  if (options.canBlindDraw) {
+    context.canBlindDraw = () => true;
+    context.allowsBlindDrawInSelection = () => options.pendingCardSelectionAction?.allowBlindDraw !== false;
+  }
   if (options.playCardSelectionActive) {
     context.isPlayCardSelectionActive = () => true;
     context.handlePlayCardSelect = (handIndex) => {
@@ -821,8 +831,13 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     };
   }
   if (options.recordQuickTrade) {
-    context.runQuickTrade = (tradeId) => {
-      noteHandled({ type: "quick-trade", tradeId });
+    context.runQuickTrade = (tradeId, tradeOptions = {}) => {
+      const event = {
+        type: "quick-trade",
+        tradeId,
+      };
+      if (tradeOptions.preferBlindDraw === true) event.preferBlindDraw = true;
+      noteHandled(event);
       return { ok: true, progressed: true };
     };
   }
@@ -5917,6 +5932,80 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const badPublicCard = {
+    id: "negative-highscore-public-card",
+    cardName: "Negative highscore public card",
+    price: 4,
+  };
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "publicity-for-card": {
+        id: "publicity-for-card",
+        label: "3 publicity -> public card",
+        cost: { publicity: 3 },
+        gain: { handSize: 1 },
+      },
+    },
+    publicCards: [badPublicCard],
+    blueResources: { score: 288, credits: 0, energy: 0, publicity: 6, availableData: 0, handSize: 0 },
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b2: "b2",
+      final_d2: "d2",
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should use publicity to blind draw when high-score public cards are negative");
+  assert.deepEqual(harness.getHandled(), {
+    type: "quick-trade",
+    tradeId: "publicity-for-card",
+    preferBlindDraw: true,
+  });
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "publicity-for-card");
+  assert.ok(tradeCandidate, "blind high-score refill candidate should be enumerated");
+  assert.equal(tradeCandidate.preferBlindDraw, true);
+  assert.equal(tradeCandidate.valueBreakdown?.finalHighScoreBlindRefill, true);
+  assert.ok(Number(tradeCandidate.valueBreakdown?.bestPublicTradeCardScore || 0) < 5);
+}
+
+{
   const turnChoices = [];
   const publicScoreCard = {
     id: "public-highscore-dead-hand-score-card",
@@ -6066,6 +6155,39 @@ function makeYichangdianAlienState(options = {}) {
   assert.ok(tradeCandidate, "low stale hand publicity refill candidate should be enumerated");
   assert.equal(tradeCandidate.valueBreakdown?.finalLowStaleHandPublicRefill, true);
   assert.ok(Number(tradeCandidate.valueBreakdown?.finalLowStaleHandPlayableScore || 0) < 7);
+}
+
+{
+  const badPublicCard = {
+    id: "negative-selection-public-card",
+    cardName: "Negative selection public card",
+    price: 4,
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    cardSelectionActive: true,
+    recordBlindDraw: true,
+    recordPublicPick: true,
+    canBlindDraw: true,
+    publicCards: [badPublicCard],
+    pendingCardSelectionAction: {
+      type: "trade",
+      tradeId: "publicity-for-card",
+      aiPreferBlindDraw: true,
+      aiReason: "高分冲刺：公共牌无收益时盲抽找最后得分牌",
+      player: null,
+    },
+    blueResources: { score: 288, credits: 0, energy: 0, publicity: 3, handSize: 0 },
+  });
+  harness.controller.configureAiAutoBattle({
+    playerIds: [harness.blue.id],
+    suppressAutoSchedule: true,
+  });
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should blind draw when the trade pending explicitly prefers blind draw");
+  assert.deepEqual(harness.getHandled(), { type: "blind-draw", fromSelection: true });
 }
 
 {
