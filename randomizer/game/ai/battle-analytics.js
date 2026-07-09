@@ -2478,6 +2478,56 @@
     return rankCounts(counts, limit);
   }
 
+  function sortOrange4RaceActionableCounterfactualSamples(samples = [], limit = 12) {
+    return [...(samples || [])]
+      .filter(Boolean)
+      .filter((sample) => {
+        const tags = new Set(sample.riskTags || []);
+        const profile = sample.orange4?.orange4SatelliteProfile || {};
+        const gap = numeric(sample.techScoreGap);
+        const targetTakenByOther = tags.has("target-taken-by-other");
+        const ownDifferentSatelliteCashout = tags.has("target-not-cashed-by-self")
+          && tags.has("different-satellite-cashout");
+        const closeMargin = targetTakenByOther
+          ? gap <= 4
+          : gap <= 2.25;
+        const contestedTarget = targetTakenByOther || ownDifferentSatelliteCashout;
+        const noCurrentRoute = tags.has("no-current-route")
+          || numeric(profile.routeDistance) >= 99;
+        const replacement = sample.nextBestTech || null;
+        return closeMargin
+          && contestedTarget
+          && noCurrentRoute
+          && replacement
+          && replacement.tileId
+          && replacement.tileId !== "orange4";
+      })
+      .map((sample) => ({
+        roundNumber: sample.roundNumber ?? null,
+        turnNumber: sample.turnNumber ?? null,
+        rawTurnNumber: sample.rawTurnNumber ?? sample.turnNumber ?? null,
+        playerId: sample.playerId || null,
+        playerLabel: sample.playerLabel || null,
+        finalScore: roundRatio(sample.finalScore),
+        resources: sample.resources || null,
+        selected: sample.selected || null,
+        orange4: sample.orange4 || null,
+        replacementTech: sample.nextBestTech || null,
+        techScoreGap: roundRatio(sample.techScoreGap),
+        riskTags: sample.riskTags || [],
+        laterOwnSatelliteLands: sample.laterOwnSatelliteLands || [],
+        laterSameTargetLands: sample.laterSameTargetLands || [],
+      }))
+      .sort((left, right) => (
+        numeric(left.finalScore) - numeric(right.finalScore)
+        || numeric(left.techScoreGap) - numeric(right.techScoreGap)
+        || numeric(right.orange4?.orange4SatelliteProfile?.rawRacePenalty) - numeric(left.orange4?.orange4SatelliteProfile?.rawRacePenalty)
+        || numeric(left.roundNumber) - numeric(right.roundNumber)
+        || numeric(left.rawTurnNumber) - numeric(right.rawTurnNumber)
+      ))
+      .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
   function getMainUnlockBestPlayCard(action = {}) {
     const breakdown = action.valueBreakdown || action.breakdown || {};
     return breakdown.bestPlayCard || null;
@@ -7093,6 +7143,9 @@
       researchTechCompoundCardSamples,
       orange4RaceSensitiveTechSamples: sortOrange4RaceSensitiveTechSamples(orange4RaceSensitiveTechSamples),
       orange4RaceSensitiveTechTagCounts: buildOrange4RaceSensitiveTechTagCounts(orange4RaceSensitiveTechSamples),
+      orange4RaceActionableCounterfactualSamples: sortOrange4RaceActionableCounterfactualSamples(
+        orange4RaceSensitiveTechSamples,
+      ),
       playCardNearMissSamples: sortPlayCardNearMissSamples(playCardNearMissSamples),
       playCardNearMissTagCounts: buildPlayCardNearMissTagCounts(playCardNearMissSamples),
       counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(playCardNearMissSamples),
@@ -7523,6 +7576,9 @@
       engineActionNearMissCounts: rankEngineActionNearMissCountBuckets(mergedEngineActionNearMissCounts),
       orange4RaceSensitiveTechSamples: sortOrange4RaceSensitiveTechSamples(mergedOrange4RaceSensitiveTechSamples),
       orange4RaceSensitiveTechTagCounts: buildOrange4RaceSensitiveTechTagCounts(mergedOrange4RaceSensitiveTechSamples),
+      orange4RaceActionableCounterfactualSamples: sortOrange4RaceActionableCounterfactualSamples(
+        mergedOrange4RaceSensitiveTechSamples,
+      ),
       finalReadyTaskCreditShortfallSamples: mergedFinalReadyTaskCreditShortfallSamples,
       finalReadyTaskTradeUnlockMissSamples: mergedFinalReadyTaskTradeUnlockMissSamples,
       nearCompleteTaskPressureSamples: mergedNearCompleteTaskPressureSamples,
@@ -7579,6 +7635,9 @@
       researchTechCompoundCardSamples: mergedResearchTechCompoundCardSamples,
       orange4RaceSensitiveTechSamples: sortOrange4RaceSensitiveTechSamples(mergedOrange4RaceSensitiveTechSamples),
       orange4RaceSensitiveTechTagCounts: buildOrange4RaceSensitiveTechTagCounts(mergedOrange4RaceSensitiveTechSamples),
+      orange4RaceActionableCounterfactualSamples: sortOrange4RaceActionableCounterfactualSamples(
+        mergedOrange4RaceSensitiveTechSamples,
+      ),
       playCardNearMissSamples: sortPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
       playCardNearMissTagCounts: buildPlayCardNearMissTagCounts(mergedPlayCardNearMissSamples),
       counterfactualPlayCardNearMissSamples: sortCounterfactualPlayCardNearMissSamples(mergedPlayCardNearMissSamples),
