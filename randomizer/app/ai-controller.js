@@ -10315,7 +10315,8 @@
       const demandFit = scoreAiCardDemandFit(card, model, playEffects);
       const endGameExpectedScore = details.endGameExpectedScore ?? scoreAiCardEndGameExpectedValue(card, model);
       const routePlan = details.plan || scoreAiPlayCardRoutePlan(card, model, playEffects);
-      const standardActionPremium = scoreAiCardStandardActionPremium(playEffects);
+      const standardActionPremium = details.standardActionPremium
+        ?? scoreAiCardStandardActionPremium(playEffects, player);
       const c2Type3ProgressValue = typeCode === 3 ? scoreAiC2Type3ProgressValue(player) : 0;
       const cFinalTaskProgressValue = model?.tasks?.length
         ? scoreAiCFinalTaskProgressValue(player, model.tasks.length)
@@ -11071,7 +11072,7 @@
         if ((playEffects || []).some((effect) => isAiResearchTechEffectType(effect?.type))) continue;
         if (getAiRunezuPrematureSymbolCardReason(card, playEffects, player)) continue;
         if (isCurrentPlayer) {
-          const effectCheck = canAiResolvePlayCardEffects(playEffects);
+          const effectCheck = canAiResolvePlayCardEffects(playEffects, player);
           if (!effectCheck.ok) continue;
         }
         const model = cardEffects.getCardModel?.(card) || null;
@@ -14767,8 +14768,9 @@
         : { ok: false, message: "当前没有可拾取化石的木星/土星登陆或环绕目标" };
     }
 
-    function canAiResolvePlayCardEffects(playEffects = []) {
+    function canAiResolvePlayCardEffects(playEffects = [], player = getCurrentPlayer()) {
       const context = createActionContext();
+      const effectPlayer = player || getCurrentPlayer();
       const unsupportedTypes = new Set([
         "alien_trace",
         cardEffects.EFFECT_TYPES.REMOVE_PLANET_MARKER,
@@ -14794,14 +14796,13 @@
         if (
           effect?.type === cardEffects.EFFECT_TYPES.PAY_CREDITS_FOR_REWARD
         ) {
-          const currentPlayer = getCurrentPlayer();
           if (getAiRoundNumber() < FINAL_ROUND_NUMBER) {
             return { ok: false, message: `${effect.label || "支付信用奖励"}：保留到终局资源滚动` };
           }
-          if (!players.canAfford(currentPlayer, { credits: 1 })) {
+          if (!players.canAfford(effectPlayer, { credits: 1 })) {
             return { ok: false, message: `${effect.label || "支付信用奖励"}：信用不足` };
           }
-          if (Math.max(0, Math.round(aiNumber(currentPlayer?.resources?.energy))) > 1) {
+          if (Math.max(0, Math.round(aiNumber(effectPlayer?.resources?.energy))) > 1) {
             return { ok: false, message: `${effect.label || "支付信用奖励"}：仍保留能量优先兑现主引擎` };
           }
         }
@@ -14810,9 +14811,8 @@
           if (!chongCheck.ok) return chongCheck;
         }
         if (effect?.type === "launch" && !effect.options?.ignoreRocketLimit) {
-          const currentPlayer = getCurrentPlayer();
-          const rocketLimit = abilities.rocket.getRocketLimitForPlayer(currentPlayer, context);
-          const activeRocketCount = rocketActions.getRocketsForPlayer(rocketState, currentPlayer.id).length;
+          const rocketLimit = abilities.rocket.getRocketLimitForPlayer(effectPlayer, context);
+          const activeRocketCount = rocketActions.getRocketsForPlayer(rocketState, effectPlayer.id).length;
           if (activeRocketCount >= rocketLimit) {
             return { ok: false, message: `火箭数量已达上限（${activeRocketCount}/${rocketLimit}）` };
           }
@@ -14822,8 +14822,7 @@
           if (!check.ok) return { ok: false, message: check.message || "当前不能环绕" };
         }
         if (effect?.type === cardEffects.EFFECT_TYPES.CARD_LAND) {
-          const currentPlayer = getCurrentPlayer();
-          const options = canAiResolveCardLandEffect(effect, currentPlayer);
+          const options = canAiResolveCardLandEffect(effect, effectPlayer);
           if (!options.ok) return options;
         }
         if (effect?.type === cardEffects.EFFECT_TYPES.DISCARD_PUBLIC_CORNER_REWARDS) {
@@ -14903,7 +14902,7 @@
       const typeCode = getCardTypeCode(card);
       const model = cardEffects.getCardModel?.(card) || null;
       const playEffects = getAiPlayEffectsForCard(card);
-      const effectCheck = canAiResolvePlayCardEffects(playEffects);
+      const effectCheck = canAiResolvePlayCardEffects(playEffects, currentPlayer);
       if (!effectCheck.ok) return null;
       if (getAiRunezuPrematureSymbolCardReason(card, playEffects, currentPlayer)) return null;
       const reservesAfterPlay = doesAiCardReserveAfterPlay(card, typeCode, model);
@@ -14990,6 +14989,7 @@
         chongTaskChainValue,
         banrenmaThresholdSetupValue,
         effectValue,
+        standardActionPremium,
         strategyPassivePlayValue,
       });
       const hasPersistentModeledValue = Boolean(

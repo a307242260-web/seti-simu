@@ -6657,6 +6657,79 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const pendingBlue = {
+    id: "player-blue",
+    color: "blue",
+    colorLabel: "Blue",
+    hand: [],
+    reservedCards: [],
+    resources: { score: 18, credits: 4, energy: 3, publicity: 2, availableData: 0, handSize: 0 },
+    income: {},
+    techState: { ownedTiles: {} },
+  };
+  const launchCard = {
+    id: "blue-launch-public-card",
+    cardName: "Blue launch public card",
+    price: 0,
+    typeCode: 0,
+    playEffects: [{ type: "launch", options: { cost: {} } }],
+  };
+  const readLaunchPickProfile = (whiteRocketCount) => {
+    const whiteRockets = Array.from({ length: whiteRocketCount }, (_item, index) => ({
+      id: 100 + index,
+      playerId: "player-white",
+      sector: { x: index, y: 2 },
+    }));
+    const harness = createAiControllerHarness(null, {
+      currentPlayerColor: "white",
+      cardSelectionActive: true,
+      recordPublicPick: true,
+      roundNumber: 2,
+      whiteResources: { score: 20, credits: 4, energy: 3, publicity: 2, handSize: 0 },
+      blueResources: pendingBlue.resources,
+      pendingCardSelectionAction: {
+        type: "trade",
+        player: pendingBlue,
+      },
+      publicCards: [launchCard],
+      rocketTokensByPlayer: {
+        "player-white": whiteRockets,
+        "player-blue": [],
+      },
+    });
+    assert.equal(
+      harness.controller.configureAiAutoBattle({
+        playerIds: [harness.blue.id],
+        suppressAutoSchedule: true,
+      }).ok,
+      true,
+    );
+
+    const result = harness.controller.runAiAutomationStep();
+    assert.equal(result.ok, true, "AI should resolve the pending blue public pick");
+    const pickLog = harness.controller.getAiAutoBattleReport().logs
+      .find((entry) => entry.type === "pick-card");
+    assert.ok(pickLog, "public pick log should expose the evaluated public candidate");
+    return pickLog.details?.topPublicCandidates?.[0] || null;
+  };
+
+  const noWhiteRocketProfile = readLaunchPickProfile(0);
+  const manyWhiteRocketsProfile = readLaunchPickProfile(3);
+  assert.equal(noWhiteRocketProfile?.cardId, "blue-launch-public-card");
+  assert.equal(manyWhiteRocketsProfile?.cardId, "blue-launch-public-card");
+  assert.equal(
+    manyWhiteRocketsProfile.valueSignals?.standardActionPremium,
+    noWhiteRocketProfile.valueSignals?.standardActionPremium,
+    "pending blue public-pick play value should use blue's launch context, not current white rockets",
+  );
+  assert.equal(
+    manyWhiteRocketsProfile.playScore,
+    noWhiteRocketProfile.playScore,
+    "non-current player public-pick play score should be stable when only current player's rockets change",
+  );
+}
+
+{
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
     blueOwnedTechTiles: {
