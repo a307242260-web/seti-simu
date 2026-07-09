@@ -4879,6 +4879,7 @@
     if (numeric(referenceGaps.analyze) >= 1.5) reasons.push("analyze-gap");
     if (numeric(referenceGaps.resourceQuickStep) >= 8 || numeric(referenceGaps.mainAction) >= 4) reasons.push("throughput-gap");
     if ((sample.cards || []).length) reasons.push("unplayed-scoring-card");
+    if ((sample.b2TerminalReopenWindows || []).length) reasons.push("b2-reopened-after-scan");
     return reasons;
   }
 
@@ -5004,6 +5005,109 @@
           topCandidates: availableCandidates.slice(0, 5).map(summarizeOpportunityCandidate),
         };
       });
+  }
+
+  function getB2SectorWinDeficit(progress = {}) {
+    const explicit = Math.max(0, numeric(progress.sectorWinDeficit ?? progress.sectorWinsDeficit));
+    if (explicit > 0) return explicit;
+    const sectorWins = numeric(progress.sectorWins);
+    const orbitLandCount = numeric(progress.orbitLandCount);
+    const deficit = Math.max(0, numeric(progress.deficit));
+    if (String(progress.bottleneck || "").includes("sector")) {
+      return Math.max(deficit, orbitLandCount - sectorWins, 0);
+    }
+    return Math.max(0, orbitLandCount - sectorWins);
+  }
+
+  function getB2WinningScanTargetChoice(entry = {}) {
+    const details = entry.details || {};
+    const choices = Array.isArray(details.topChoices) ? details.topChoices : [];
+    const summarized = choices
+      .map((choice, index) => summarizeB2ScanPreviewChoice({
+        ...choice,
+        targetRank: choice.targetRank ?? index + 1,
+        effectType: choice.effectType || details.effectType || null,
+        pendingType: choice.pendingType || details.pendingType || null,
+      }))
+      .filter((choice) => (
+        choice.b2.marked
+        && choice.b2.winsAfterScan
+        && (choice.b2.active || numeric(choice.b2.deficit) > 0)
+      ));
+    return getBestB2ScanPreviewChoice(summarized);
+  }
+
+  function summarizeB2TerminalScanEntry(entry = {}, choice = {}) {
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      resources: entry.playerResources || null,
+      pendingType: entry.details?.pendingType || choice.pendingType || null,
+      selectedNebulaId: entry.details?.nebulaId || null,
+      selectedSectorX: entry.details?.sectorX ?? null,
+      selectedLabel: entry.details?.label || null,
+      selectedScore: roundRatio(entry.details?.selectedScore),
+      choice,
+    };
+  }
+
+  function summarizeB2ReopeningPlanetAction(entry = {}) {
+    const candidates = Array.isArray(entry.details?.candidates) ? entry.details.candidates : [];
+    const selected = getSelectedCandidate(entry, candidates);
+    const graph = selected?.actionGraph || selected?.breakdown || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      resources: entry.playerResources || null,
+      selected: summarizeOpportunityCandidate(selected || {}),
+      actionGraph: {
+        net: getCandidateActionGraphNet(selected) == null ? null : roundRatio(getCandidateActionGraphNet(selected)),
+        finalMarginal: roundRatio(graph.finalMarginal),
+        goalBonus: roundRatio(graph.goalBonus),
+      },
+    };
+  }
+
+  function buildB2TerminalReopenWindows(logs = [], result = {}, limit = 4) {
+    const finalProgress = result.b2Progress || {};
+    const finalSectorDeficit = getB2SectorWinDeficit(finalProgress);
+    if (finalSectorDeficit <= 0) return [];
+
+    const playerLogs = (logs || [])
+      .map((entry, index) => ({ entry, index }))
+      .filter(({ entry }) => matchesPlayerResult(entry, result));
+    const winningScans = playerLogs
+      .filter(({ entry }) => entry?.type === "scan-target")
+      .map(({ entry, index }) => ({
+        index,
+        entry,
+        choice: getB2WinningScanTargetChoice(entry),
+      }))
+      .filter((item) => item.choice);
+    if (!winningScans.length) return [];
+
+    const windows = [];
+    for (let scanIndex = winningScans.length - 1; scanIndex >= 0; scanIndex -= 1) {
+      const scan = winningScans[scanIndex];
+      const reopening = playerLogs.find(({ entry, index }) => {
+        if (index <= scan.index || entry?.type !== "turn-action") return false;
+        const actionId = getSelectedActionId(entry);
+        return actionId === "orbit" || actionId === "land";
+      });
+      if (!reopening) continue;
+      const laterClosingScan = winningScans.find((item) => item.index > reopening.index);
+      if (laterClosingScan) continue;
+      windows.push({
+        finalB2Progress: finalProgress,
+        finalSectorWinDeficit: roundRatio(finalSectorDeficit),
+        closingScan: summarizeB2TerminalScanEntry(scan.entry, scan.choice),
+        reopeningAction: summarizeB2ReopeningPlanetAction(reopening.entry),
+      });
+      if (windows.length >= Math.max(0, Math.round(numeric(limit) || 0))) break;
+    }
+    return windows;
   }
 
   function getD1FormulaEntries(result = {}) {
@@ -5385,6 +5489,7 @@
           dTechPlan: buildDTechNearMissPlan(result, profile),
           recentTurnTail: buildRecentHighScoreTurnTail(logs, result, 8),
           dTechSetupWindows: buildDTechSetupWindowTail(logs, result, 16),
+          b2TerminalReopenWindows: buildB2TerminalReopenWindows(logs, result, 1),
         };
         sample.reasons = buildHighScoreNearMissReasons(sample, referenceGaps);
         return sample;

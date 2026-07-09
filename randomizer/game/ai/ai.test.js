@@ -2101,6 +2101,106 @@ assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].dTechPlan.d2Ne
 assert.equal(highScoreNearMissSummary.highScoreNearMissSamples[0].dTechSetupWindows[0].bestSetupQuick.id, "cardCorner");
 assert.ok(highScoreNearMissSummary.recommendations.some((entry) => entry.id === "inspect-high-score-near-miss"));
 
+const b2TerminalReopenReport = {
+  lastSummary: { gameEnded: true, steps: 6 },
+  playerResults: [{
+    playerId: "near-b2",
+    playerLabel: "近300 B2",
+    finalScore: 298,
+    baseScore: 158,
+    tileScore: 100,
+    cardScore: 17,
+    finalMarkCount: 3,
+    finalFormulas: ["a1", "b2", "d2"],
+    b2Progress: {
+      sectorWins: 7,
+      orbitLandCount: 8,
+      baseValue: 7,
+      multiplier: 6,
+      score: 42,
+      sectorWinDeficit: 1,
+      orbitLandDeficit: 0,
+      bottleneck: "sectorWins",
+    },
+    resources: { score: 158, credits: 0, energy: 0, publicity: 2, handSize: 1 },
+  }],
+  logs: [
+    {
+      type: "scan-target",
+      roundNumber: 4,
+      turnNumber: 10,
+      rawTurnNumber: 40,
+      playerId: "near-b2",
+      playerLabel: "近300 B2",
+      playerResources: { score: 137, credits: 2, energy: 0, publicity: 3, handSize: 3 },
+      details: {
+        pendingType: "sector_scan",
+        nebulaId: "sector-2-b",
+        sectorX: "0",
+        label: "扇区 0：巴纳德下一次替换槽位 4",
+        selectedScore: 19.946,
+        topChoices: [{
+          nebulaId: "sector-2-b",
+          sectorX: "0",
+          label: "扇区 0：巴纳德下一次替换槽位 4",
+          score: 19.946,
+          directScoreGain: 0,
+          b2: {
+            focus: 5.893,
+            active: true,
+            marked: true,
+            sectorWins: 6,
+            orbitLandCount: 7,
+            deficit: 1,
+            multiplier: 6,
+            ownCount: 3,
+            openCount: 2,
+            markedCount: 3,
+            maxOtherCount: 0,
+            winsAfterScan: true,
+          },
+        }],
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 4,
+      turnNumber: 11,
+      rawTurnNumber: 43,
+      playerId: "near-b2",
+      playerLabel: "近300 B2",
+      playerResources: { score: 142, credits: 0, energy: 1, publicity: 5, handSize: 1 },
+      details: {
+        action: {
+          id: "land",
+          kind: "main",
+          score: 60.055,
+          directScoreGain: 12,
+          label: "水星",
+          actionGraph: { net: 86.285, finalMarginal: 6, goalBonus: 15.2 },
+        },
+        candidates: [{
+          id: "land",
+          kind: "main",
+          available: true,
+          score: 60.055,
+          directScoreGain: 12,
+          label: "水星",
+          actionGraph: { net: 86.285, finalMarginal: 6, goalBonus: 15.2 },
+        }],
+      },
+    },
+  ],
+};
+const b2TerminalReopenAnalysis = analytics.analyzeBattleReport(b2TerminalReopenReport);
+assert.equal(b2TerminalReopenAnalysis.highScoreNearMissSamples[0].playerId, "near-b2");
+assert.equal(b2TerminalReopenAnalysis.highScoreNearMissSamples[0].b2TerminalReopenWindows[0].closingScan.choice.nebulaId, "sector-2-b");
+assert.equal(b2TerminalReopenAnalysis.highScoreNearMissSamples[0].b2TerminalReopenWindows[0].reopeningAction.selected.id, "land");
+assert.equal(b2TerminalReopenAnalysis.highScoreNearMissSamples[0].b2TerminalReopenWindows[0].finalSectorWinDeficit, 1);
+assert.ok(b2TerminalReopenAnalysis.highScoreNearMissSamples[0].reasons.includes("b2-reopened-after-scan"));
+const b2TerminalReopenSummary = analytics.summarizeBattleReports([b2TerminalReopenReport]);
+assert.equal(b2TerminalReopenSummary.highScoreNearMissSamples[0].b2TerminalReopenWindows[0].reopeningAction.actionGraph.finalMarginal, 6);
+
 const d1TechBalanceReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [
