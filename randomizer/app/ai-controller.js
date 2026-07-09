@@ -10845,6 +10845,61 @@
       });
     }
 
+    function getAiResearchTechPublicityCostForPlayer(player) {
+      return Math.max(
+        0,
+        aiNumber(
+          tech?.resolver?.getResearchPublicityCost?.(player)
+            ?? tech?.RESEARCH_PUBLICITY_COST
+            ?? 6,
+        ),
+      );
+    }
+
+    function getAiTechTileRemaining(tileId) {
+      const stack = tech.getStack?.(techGameState.board, tileId) || null;
+      const remaining = Number(stack?.remaining);
+      return Number.isFinite(remaining) ? remaining : null;
+    }
+
+    function getAiProspectiveOrange4ContestAccess(opponent, options = {}) {
+      if (!opponent) return null;
+      if (players.playerOwnsTech(opponent, "orange4", createActionContext())) {
+        return { ownsOrange4: true, canResearchOrange4: false, publicityShortfall: 0, pressureScale: 1 };
+      }
+      if (options.includeProspectiveOrange4 !== true) return null;
+      if (options.afterCurrentOrange4Take === true) {
+        const remaining = getAiTechTileRemaining("orange4");
+        if (remaining != null && remaining <= 1) return null;
+      }
+      createActionContext().ensurePlayerTechState?.(opponent);
+      const check = tech?.resolver?.canTakeTile?.(
+        techGameState.board,
+        opponent.techState,
+        "orange4",
+        { techTypes: ["orange"] },
+      ) || { ok: false };
+      if (!check.ok) return null;
+
+      const researchCost = getAiResearchTechPublicityCostForPlayer(opponent);
+      const currentPublicity = Math.max(0, aiNumber(opponent.resources?.publicity));
+      const nextPublicity = currentPublicity + Math.max(0, aiNumber(opponent.income?.publicity));
+      const publicityShortfall = Math.max(0, researchCost - nextPublicity);
+      if (publicityShortfall > 2) return null;
+
+      const pressureScale = publicityShortfall <= 0
+        ? 0.62
+        : publicityShortfall === 1
+          ? 0.48
+          : 0.34;
+      return {
+        ownsOrange4: false,
+        canResearchOrange4: true,
+        publicityShortfall,
+        pressureScale,
+      };
+    }
+
     function getAiOuterSatelliteContestPressure(planetId, player = getCurrentPlayer()) {
       if (!planetId || !player) return 0;
       return getAiPrecedingOpponentIds(player).reduce((total, playerId) => {
@@ -10867,21 +10922,49 @@
 
     function getAiSatelliteLandingRaceState(planetId, target = {}, player = getCurrentPlayer(), options = {}) {
       if (!planetId || !player || target?.type !== "satellite") {
-        return { pressure: 0, ownDistance: 99, closestOpponentDistance: 99, fasterOpponentCount: 0 };
+        return {
+          pressure: 0,
+          ownDistance: 99,
+          closestOpponentDistance: 99,
+          fasterOpponentCount: 0,
+          prospectiveOrange4Count: 0,
+          prospectiveOrange4Pressure: 0,
+        };
       }
       const availableSatellites = planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planetId) || [];
       if (!availableSatellites.length) {
-        return { pressure: 0, ownDistance: 99, closestOpponentDistance: 99, fasterOpponentCount: 0 };
+        return {
+          pressure: 0,
+          ownDistance: 99,
+          closestOpponentDistance: 99,
+          fasterOpponentCount: 0,
+          prospectiveOrange4Count: 0,
+          prospectiveOrange4Pressure: 0,
+        };
       }
       if (target.satelliteId && !availableSatellites.some((satellite) => satellite.satelliteId === target.satelliteId)) {
-        return { pressure: 0, ownDistance: 99, closestOpponentDistance: 99, fasterOpponentCount: 0 };
+        return {
+          pressure: 0,
+          ownDistance: 99,
+          closestOpponentDistance: 99,
+          fasterOpponentCount: 0,
+          prospectiveOrange4Count: 0,
+          prospectiveOrange4Pressure: 0,
+        };
       }
 
       const ownDistance = options.routeDistance == null
         ? getAiNearestRocketDistanceToPlanet(player, planetId)
         : Math.max(0, Math.round(aiNumber(options.routeDistance)));
       if (ownDistance <= 0 && options.immediate === true) {
-        return { pressure: 0, ownDistance, closestOpponentDistance: 99, fasterOpponentCount: 0 };
+        return {
+          pressure: 0,
+          ownDistance,
+          closestOpponentDistance: 99,
+          fasterOpponentCount: 0,
+          prospectiveOrange4Count: 0,
+          prospectiveOrange4Pressure: 0,
+        };
       }
 
       const activeIds = Array.isArray(turnState.activePlayerIds) && turnState.activePlayerIds.length
@@ -10892,11 +10975,14 @@
       let pressure = 0;
       let closestOpponentDistance = 99;
       let fasterOpponentCount = 0;
+      let prospectiveOrange4Count = 0;
+      let prospectiveOrange4Pressure = 0;
 
       for (const opponent of playerState.players || []) {
         if (!opponent || String(opponent.id) === String(player.id)) continue;
         if (activeIdSet.size && !activeIdSet.has(String(opponent.id))) continue;
-        if (!players.playerOwnsTech(opponent, "orange4", createActionContext())) continue;
+        const orange4Access = getAiProspectiveOrange4ContestAccess(opponent, options);
+        if (!orange4Access) continue;
 
         const opponentDistance = getAiNearestRocketDistanceToPlanet(opponent, planetId);
         if (opponentDistance >= 99) continue;
@@ -10926,6 +11012,11 @@
 
         if (entryPressure <= 0) continue;
         if (energyShortfall > 0) entryPressure *= Math.max(0.42, 1 - energyShortfall * 0.24);
+        if (orange4Access.canResearchOrange4) {
+          entryPressure *= orange4Access.pressureScale;
+          prospectiveOrange4Count += 1;
+          prospectiveOrange4Pressure += entryPressure;
+        }
         pressure += entryPressure;
       }
 
@@ -10934,19 +11025,35 @@
         ownDistance,
         closestOpponentDistance,
         fasterOpponentCount,
+        prospectiveOrange4Count,
+        prospectiveOrange4Pressure: roundAiScore(prospectiveOrange4Pressure),
       };
     }
 
     function scoreAiSatelliteLandingRaceWastePenalty(planetId, target = {}, player = getCurrentPlayer(), options = {}) {
       if (target?.type !== "satellite" || options.immediate === true) return 0;
-      const race = getAiSatelliteLandingRaceState(planetId, target, player, options);
+      const race = options.raceState || getAiSatelliteLandingRaceState(planetId, target, player, options);
       if (race.pressure <= 0) return 0;
       const round = getAiRoundNumber();
       const directScore = Math.max(0, aiNumber(options.directScore));
       const routeDistance = Math.max(0, Math.round(aiNumber(race.ownDistance)));
-      let penalty = race.pressure * (round <= 2 ? 4.2 : round === 3 ? 3.3 : 1.8);
-      if (directScore >= 20) penalty += race.pressure * (round <= 3 ? 2.4 : 1.2);
-      if (routeDistance >= 3) penalty += Math.min(4.5, (routeDistance - 2) * 1.15);
+      const prospectiveOnly = aiNumber(race.prospectiveOrange4Pressure) > 0
+        && aiNumber(race.prospectiveOrange4Pressure) >= aiNumber(race.pressure) - 0.001;
+      let penalty = race.pressure * (
+        prospectiveOnly
+          ? (round <= 2 ? 2.25 : round === 3 ? 1.75 : 0.95)
+          : (round <= 2 ? 4.2 : round === 3 ? 3.3 : 1.8)
+      );
+      if (directScore >= 20) {
+        penalty += race.pressure * (
+          prospectiveOnly
+            ? (round <= 3 ? 0.9 : 0.45)
+            : (round <= 3 ? 2.4 : 1.2)
+        );
+      }
+      if (routeDistance >= 3) {
+        penalty += Math.min(4.5, (routeDistance - 2) * 1.15) * (prospectiveOnly ? 0.35 : 1);
+      }
       return roundAiScore(Math.min(18, Math.max(0, penalty)));
     }
 
@@ -12695,6 +12802,10 @@
         routeDistance: 99,
         planetId: null,
         satelliteId: null,
+        closestOpponentDistance: 99,
+        fasterOpponentCount: 0,
+        prospectiveOrange4Count: 0,
+        prospectiveOrange4Pressure: 0,
       };
       for (const planet of solar.createSolarSnapshot(solarState).planetLocations || []) {
         if (!planet?.planetId || planet.planetId === "earth") continue;
@@ -12711,11 +12822,18 @@
             energyShortfall,
             routeDistance,
           });
-          const rawRacePenalty = scoreAiSatelliteLandingRaceWastePenalty(planet.planetId, target, player, {
+          const raceOptions = {
             directScore,
             energyCost,
             energyShortfall,
             routeDistance,
+            includeProspectiveOrange4: true,
+            afterCurrentOrange4Take: true,
+          };
+          const raceState = getAiSatelliteLandingRaceState(planet.planetId, target, player, raceOptions);
+          const rawRacePenalty = scoreAiSatelliteLandingRaceWastePenalty(planet.planetId, target, player, {
+            ...raceOptions,
+            raceState,
           });
           const launchRouteRelief = routeDistance >= 99
             ? getAiOrange4LaunchRouteRaceRelief(rawRacePenalty, playableLaunchRoute, planet.planetId)
@@ -12739,6 +12857,10 @@
               routeDistance,
               planetId: planet.planetId,
               satelliteId: satellite.satelliteId,
+              closestOpponentDistance: raceState.closestOpponentDistance,
+              fasterOpponentCount: raceState.fasterOpponentCount,
+              prospectiveOrange4Count: raceState.prospectiveOrange4Count,
+              prospectiveOrange4Pressure: raceState.prospectiveOrange4Pressure,
             };
           }
         }
@@ -12751,6 +12873,7 @@
         rawRacePenalty: roundAiScore(best.rawRacePenalty),
         launchRouteRelief: roundAiScore(best.launchRouteRelief),
         launchRoutePlanScore: roundAiScore(best.launchRoutePlanScore),
+        prospectiveOrange4Pressure: roundAiScore(best.prospectiveOrange4Pressure),
       };
     }
 

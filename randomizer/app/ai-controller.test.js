@@ -83,6 +83,19 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     ...player,
   }));
   const allPlayers = [white, blue, ...extraPlayers];
+  const getHarnessRocketsForPlayer = (playerId) => {
+    if (typeof options.getRocketsForPlayer === "function") {
+      return options.getRocketsForPlayer(playerId) || [];
+    }
+    const byPlayer = options.rocketTokensByPlayer || {};
+    if (Object.prototype.hasOwnProperty.call(byPlayer, playerId)) {
+      return byPlayer[playerId] || [];
+    }
+    if (Array.isArray(options.movableTokens) && String(playerId) === String(currentPlayer.id)) {
+      return options.movableTokens;
+    }
+    return [];
+  };
   const currentPlayer = options.currentPlayerColor === "blue" ? blue : white;
   const playerState = {
     players: allPlayers,
@@ -229,7 +242,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     },
     rocketActions: {
       ROCKET_KIND: { STANDARD: "standard", CHONG_FOSSIL: "chong-fossil" },
-      getRocketsForPlayer: () => [],
+      getRocketsForPlayer: (_rocketState, playerId) => getHarnessRocketsForPlayer(playerId),
       getRocketSectorCoordinate: (rocket) => rocket?.sector || null,
       findAvailableSlotIndex: options.findAvailableSlotIndex || (() => null),
       canMoveRocket: (_rocketState, rocketId, deltaX, deltaY) => {
@@ -486,8 +499,15 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       return null;
     },
     getInitialSelectionOffer: (playerId) => options.initialSelectionOffers?.[playerId] || null,
+    getMovableTokensForPlayer: (playerId) => getHarnessRocketsForPlayer(playerId),
     getPendingPlayCardSelection: () => null,
-    getPlanetSectorCoordinate: () => ({ x: 1, y: 1 }),
+    getPlanetSectorCoordinate: (planetId) => {
+      if (typeof options.getPlanetSectorCoordinate === "function") {
+        return options.getPlanetSectorCoordinate(planetId);
+      }
+      const planet = (options.planetLocations || []).find((entry) => entry.planetId === planetId);
+      return planet ? { x: planet.x, y: planet.y } : null;
+    },
     getPlayerByColor: (color) => allPlayers.find((player) => player.color === color) || null,
     getPlayerById: (id) => allPlayers.find((player) => player.id === id) || null,
     getPlayerLabelById: (id) => allPlayers.find((player) => player.id === id)?.colorLabel || id,
@@ -910,8 +930,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       return { ok: true, progressed: true, cardId };
     };
   }
-  context.getMovableTokensForPlayer = (playerId) => (options.movableTokens || [])
-    .filter((token) => !playerId || token.playerId === playerId);
+  context.getMovableTokensForPlayer = (playerId) => getHarnessRocketsForPlayer(playerId);
   if (options.recordMove) {
     context.moveRocket = (deltaX, deltaY, rocketId) => {
       noteHandled({
@@ -3152,6 +3171,97 @@ function makeYichangdianAlienState(options = {}) {
   assert.ok(
     Number(researchCandidate.score || 0) > Number(passCandidate?.score || -Infinity),
     "low-tech catch-up research should outrank PASS",
+  );
+}
+
+{
+  const buildOrange4Harness = (withProspectiveOpponent) => {
+    const turnChoices = [];
+    const extraPlayers = withProspectiveOpponent
+      ? [{
+        id: "player-green",
+        color: "green",
+        colorLabel: "Green",
+        resources: { credits: 4, energy: 3, publicity: 6, handSize: 2 },
+        income: { publicity: 0 },
+      }]
+      : [];
+    const harness = createAiControllerHarness(null, {
+      currentPlayerColor: "blue",
+      roundNumber: 1,
+      canStartMainAction: true,
+      recordResearchTech: true,
+      realisticCanAfford: true,
+      blueResources: { score: 12, credits: 4, energy: 3, publicity: 6, handSize: 2 },
+      extraPlayers,
+      takeableTechIds: ["orange4", "blue1"],
+      techStacks: {
+        orange4: { techType: "orange", stackIndex: 1, remaining: 3 },
+        blue1: { techType: "blue", stackIndex: 1, remaining: 3 },
+      },
+      planetLocations: [{ planetId: "neptune", name: "Neptune", x: 4, y: 4 }],
+      rocketTokensByPlayer: withProspectiveOpponent
+        ? { "player-green": [{ id: 9, sector: { x: 4, y: 4 } }] }
+        : {},
+      planetStats: {
+        canAddLandingMarker: () => false,
+        canAddOrbitMarker: () => false,
+        getAvailableSatellitesForLanding: (stateToRead, planetId) => (
+          planetId === "neptune"
+            ? [{ satelliteId: "triton", satelliteName: "Triton" }]
+            : []
+        ),
+        getPlanetLandingCount: () => 0,
+        getPlanetOrbitCount: () => 0,
+      },
+      planetRewards: {
+        EFFECT_TYPES: {
+          GAIN_RESOURCES: "gain_resources",
+          GAIN_DATA: "gain_data",
+          ALIEN_TRACE: "alien_trace",
+          DRAW_CARDS: "draw_cards",
+          PICK_CARD: "pick_card",
+          INCOME: "income",
+        },
+        buildSatelliteLandRewardEffects: () => [{
+          type: "gain_resources",
+          options: { gain: { score: 26 } },
+        }],
+        buildPlanetLandRewardEffects: () => [],
+        buildOrbitRewardEffects: () => [],
+      },
+      onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+      chooseTurnAction: (candidates) => (
+        candidates.find((candidate) => candidate.id === "researchTech")
+        || candidates.find((candidate) => candidate.available !== false)
+        || null
+      ),
+    });
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    });
+    const result = harness.controller.runAiAutomationStep();
+    assert.equal(result.ok, true, "AI should evaluate the orange4 tech candidate");
+    const researchCandidate = turnChoices.flat().find((candidate) => candidate.id === "researchTech");
+    assert.ok(researchCandidate, "researchTech candidate should be available");
+    const orange4 = researchCandidate.takeable.find((candidate) => candidate.tileId === "orange4");
+    assert.ok(orange4, "orange4 candidate should be listed");
+    return orange4;
+  };
+
+  const uncontestedOrange4 = buildOrange4Harness(false);
+  const contestedOrange4 = buildOrange4Harness(true);
+  const profile = contestedOrange4.valueBreakdown?.orange4SatelliteProfile || {};
+  assert.equal(profile.prospectiveOrange4Count, 1, "nearby opponent that can research orange4 should count as prospective satellite pressure");
+  assert.ok(Number(profile.rawRacePenalty || 0) > 0, "prospective satellite pressure should create race penalty");
+  assert.ok(
+    Number(profile.potential || 0) < Number(profile.rawPotential || 0),
+    "orange4 satellite potential should be discounted by race risk",
+  );
+  assert.ok(
+    Number(contestedOrange4.score || 0) < Number(uncontestedOrange4.score || 0),
+    "orange4 tech score should drop when a closer opponent can reach the same satellite route",
   );
 }
 
