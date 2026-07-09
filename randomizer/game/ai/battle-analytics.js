@@ -2370,6 +2370,7 @@
       if (entry?.type !== "land-target" || entry.details?.selected?.target?.type !== "satellite") continue;
       const choice = getLandTargetChoice(logs, index, entry);
       const landing = {
+        logIndex: index,
         roundNumber: entry.roundNumber ?? null,
         turnNumber: entry.turnNumber ?? null,
         rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
@@ -2422,6 +2423,25 @@
     const targetCashedBySelf = laterLandings.sameTarget.some((landing) => landing.playerId === entry.playerId);
     const targetTakenByOther = laterLandings.sameTarget.some((landing) => landing.playerId !== entry.playerId);
     const ownDifferentSatelliteCashout = laterLandings.own.some((landing) => landing.satelliteId !== profile.satelliteId);
+    const firstOwnSatelliteCashout = laterLandings.own[0] || null;
+    const firstSameTargetTakenByOther = laterLandings.sameTarget
+      .find((landing) => landing.playerId !== entry.playerId) || null;
+    const firstOwnDifferentSatelliteCashout = laterLandings.own
+      .find((landing) => landing.satelliteId !== profile.satelliteId) || null;
+    const ownSatelliteCashoutBeforeTargetLoss = Boolean(
+      firstOwnSatelliteCashout
+      && (
+        !firstSameTargetTakenByOther
+        || numeric(firstOwnSatelliteCashout.logIndex) < numeric(firstSameTargetTakenByOther.logIndex)
+      ),
+    );
+    const ownDifferentSatelliteCashoutBeforeTargetLoss = Boolean(
+      firstOwnDifferentSatelliteCashout
+      && (
+        !firstSameTargetTakenByOther
+        || numeric(firstOwnDifferentSatelliteCashout.logIndex) < numeric(firstSameTargetTakenByOther.logIndex)
+      ),
+    );
     const riskTags = [];
     if (scoreGap != null && scoreGap <= 2) riskTags.push("close-tech-margin");
     if (routeDistance >= 99) riskTags.push("no-current-route");
@@ -2431,6 +2451,8 @@
     if (!targetCashedBySelf) riskTags.push("target-not-cashed-by-self");
     if (targetTakenByOther) riskTags.push("target-taken-by-other");
     if (ownDifferentSatelliteCashout) riskTags.push("different-satellite-cashout");
+    if (ownSatelliteCashoutBeforeTargetLoss) riskTags.push("orange4-cashed-before-target-loss");
+    if (ownDifferentSatelliteCashoutBeforeTargetLoss) riskTags.push("orange4-redirected-before-target-loss");
     const result = playerResultById?.get?.(entry.playerId) || {};
     return {
       roundNumber: entry.roundNumber ?? null,
@@ -2447,6 +2469,10 @@
       topTechCandidates: takeable.slice(0, 5).map(summarizeTechTileCandidate),
       laterOwnSatelliteLands: laterLandings.own,
       laterSameTargetLands: laterLandings.sameTarget,
+      firstOwnSatelliteCashout,
+      firstSameTargetTakenByOther,
+      ownSatelliteCashoutBeforeTargetLoss,
+      ownDifferentSatelliteCashoutBeforeTargetLoss,
       targetCashedBySelf,
       targetTakenByOther,
       riskTags,
@@ -2492,6 +2518,9 @@
         const targetTakenByOther = tags.has("target-taken-by-other");
         const ownDifferentSatelliteCashout = tags.has("target-not-cashed-by-self")
           && tags.has("different-satellite-cashout");
+        const cashedBeforeTargetLoss = sample.ownSatelliteCashoutBeforeTargetLoss === true
+          || tags.has("orange4-cashed-before-target-loss")
+          || tags.has("orange4-redirected-before-target-loss");
         const closeMargin = targetTakenByOther
           ? gap <= 4
           : gap <= 2.25;
@@ -2501,6 +2530,7 @@
         const replacement = sample.nextBestTech || null;
         return closeMargin
           && contestedTarget
+          && !cashedBeforeTargetLoss
           && noCurrentRoute
           && replacement
           && replacement.tileId
@@ -2521,6 +2551,10 @@
         riskTags: sample.riskTags || [],
         laterOwnSatelliteLands: sample.laterOwnSatelliteLands || [],
         laterSameTargetLands: sample.laterSameTargetLands || [],
+        firstOwnSatelliteCashout: sample.firstOwnSatelliteCashout || null,
+        firstSameTargetTakenByOther: sample.firstSameTargetTakenByOther || null,
+        ownSatelliteCashoutBeforeTargetLoss: sample.ownSatelliteCashoutBeforeTargetLoss === true,
+        ownDifferentSatelliteCashoutBeforeTargetLoss: sample.ownDifferentSatelliteCashoutBeforeTargetLoss === true,
       }))
       .sort((left, right) => (
         numeric(left.finalScore) - numeric(right.finalScore)

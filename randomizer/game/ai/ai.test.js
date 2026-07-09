@@ -2726,6 +2726,116 @@ const orange4RaceSensitiveSummary = analytics.summarizeBattleReports([orange4Rac
 assert.ok(orange4RaceSensitiveSummary.orange4RaceSensitiveTechTagCounts.some((entry) => entry.key === "target-taken-by-other" && entry.count === 1));
 assert.equal(orange4RaceSensitiveSummary.orange4RaceActionableCounterfactualSamples[0].replacementTech.tileId, "blue1");
 
+const orange4RedirectedBeforeTargetLossReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 1,
+      turnNumber: 1,
+      rawTurnNumber: 2,
+      playerId: "player-blue",
+      playerLabel: "蓝色",
+      playerResources: { score: 7, credits: 5, energy: 3, publicity: 6, handSize: 4 },
+      details: {
+        action: {
+          id: "researchTech",
+          kind: "main",
+          score: 38,
+          valueBreakdown: { bestTechTileId: "orange4" },
+          takeable: [
+            {
+              tileId: "orange4",
+              techType: "orange",
+              bonusId: "bonus_1c",
+              available: true,
+              score: 34,
+              valueBreakdown: {
+                orange4SatelliteProfile: {
+                  potential: 65,
+                  rawPotential: 69,
+                  racePenalty: 4,
+                  rawRacePenalty: 4,
+                  routeDistance: 99,
+                  launchRouteDistance: 99,
+                  planetId: "mars",
+                  satelliteId: "phobos-deimos",
+                },
+              },
+            },
+            {
+              tileId: "orange1",
+              techType: "orange",
+              bonusId: "bonus_1p",
+              available: true,
+              score: 31,
+            },
+          ],
+        },
+        candidates: [],
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 1,
+      turnNumber: 4,
+      rawTurnNumber: 14,
+      playerId: "player-blue",
+      playerLabel: "蓝色",
+      details: {
+        action: {
+          id: "land",
+          choices: [{ planetId: "card-pluto-land", target: { type: "satellite", satelliteId: "titan" } }],
+        },
+      },
+    },
+    {
+      type: "land-target",
+      roundNumber: 1,
+      turnNumber: 4,
+      rawTurnNumber: 15,
+      playerId: "player-blue",
+      playerLabel: "蓝色",
+      details: {
+        selectedIndex: 0,
+        selected: { target: { type: "satellite", satelliteId: "titan" }, score: 38 },
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 2,
+      turnNumber: 2,
+      rawTurnNumber: 7,
+      playerId: "player-green",
+      playerLabel: "绿色",
+      details: {
+        action: {
+          id: "land",
+          choices: [{ planetId: "mars", target: { type: "satellite", satelliteId: "phobos-deimos" } }],
+        },
+      },
+    },
+    {
+      type: "land-target",
+      roundNumber: 2,
+      turnNumber: 2,
+      rawTurnNumber: 8,
+      playerId: "player-green",
+      playerLabel: "绿色",
+      details: {
+        selectedIndex: 0,
+        selected: { target: { type: "satellite", satelliteId: "phobos-deimos" }, score: 48 },
+      },
+    },
+  ],
+  playerResults: [{ playerId: "player-blue", playerLabel: "蓝色", finalScore: 153 }],
+};
+const orange4RedirectedBeforeTargetLossAnalysis = analytics.analyzeBattleReport(orange4RedirectedBeforeTargetLossReport);
+assert.equal(orange4RedirectedBeforeTargetLossAnalysis.opportunities.orange4RaceSensitiveTech, 1);
+assert.ok(orange4RedirectedBeforeTargetLossAnalysis.orange4RaceSensitiveTechSamples[0].riskTags.includes("target-taken-by-other"));
+assert.ok(orange4RedirectedBeforeTargetLossAnalysis.orange4RaceSensitiveTechSamples[0].riskTags.includes("orange4-redirected-before-target-loss"));
+assert.equal(orange4RedirectedBeforeTargetLossAnalysis.orange4RaceActionableCounterfactualSamples.length, 0);
+
 const playCardNearMissReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{
