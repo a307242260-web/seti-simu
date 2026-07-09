@@ -2766,6 +2766,12 @@ const nearCompleteTaskTargetReport = {
           kind: "main",
           available: true,
           planetId: "jupiter",
+          routeTarget: {
+            id: "jupiter",
+            kind: "planet",
+            taskRouteCashout: { value: 12, directScore: 4, count: 1 },
+            nearCompleteTaskRouteCashout: { value: 12, directScore: 4, count: 1 },
+          },
           planetName: "木星",
           score: 42,
           directScoreGain: 10,
@@ -2859,6 +2865,7 @@ assert.equal(nearCompleteTaskTargetSample.taskTarget.key, "planet:jupiter");
 assert.equal(nearCompleteTaskTargetSample.taskTarget.candidateTurnCount, 1);
 assert.equal(nearCompleteTaskTargetSample.taskTarget.selectedCount, 0);
 assert.equal(nearCompleteTaskTargetSample.taskTarget.bestTurn.bestRouteCandidate.planetId, "jupiter");
+assert.equal(nearCompleteTaskTargetSample.taskTarget.bestTurn.bestRouteCandidate.nearCompleteTaskRouteCashout.count, 1);
 const nearCompleteTaskTargetSummary = analytics.summarizeBattleReports([nearCompleteTaskTargetReport]);
 assert.equal(nearCompleteTaskTargetSummary.nearCompleteTaskPressureSamples[0].taskTarget.key, "planet:jupiter");
 assert.equal(nearCompleteTaskTargetSummary.nearCompleteTaskPressureSamples[0].taskTarget.selectedCount, 0);

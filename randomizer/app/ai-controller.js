@@ -9267,6 +9267,23 @@
       });
     }
 
+    function getAiPendingNearCompletePlanetTaskRouteCashout(planetId, player = getCurrentPlayer()) {
+      if (!planetId || planetId === "earth") return { value: 0, directScore: 0, count: 0 };
+      return getAiPendingTaskRouteCashout(player, (condition) => {
+        if (condition.type !== "planetOrbitOrLand" && condition.type !== "planetOrbitOrLandAll") return false;
+        if (condition.type === "planetOrbitOrLand" && condition.planetId !== planetId) return false;
+        if (
+          condition.type === "planetOrbitOrLandAll"
+          && (!(condition.planetIds || []).includes(planetId)
+            || endGameScoring.countPlanetOrbitOrLand(player, planetStatsState, planetId) > 0)
+        ) {
+          return false;
+        }
+        const summary = summarizeAiTaskCondition(condition, player);
+        return summary?.met === false && Math.max(0, aiNumber(summary.missingCount)) <= 1;
+      });
+    }
+
     function getAiPendingLocationTaskRouteCashout(locationType, player = getCurrentPlayer()) {
       if (!locationType) return { value: 0, directScore: 0, count: 0 };
       return getAiPendingTaskRouteCashout(player, (condition) => {
@@ -11970,6 +11987,8 @@
         .filter((planet) => planet.planetId !== "earth")
         .map((planet) => {
           const satelliteOpportunity = getAiBestSatelliteLandingOpportunity(planet.planetId, player);
+          const taskRouteCashout = getAiPendingPlanetTaskRouteCashout(planet.planetId, player);
+          const nearCompleteTaskRouteCashout = getAiPendingNearCompletePlanetTaskRouteCashout(planet.planetId, player);
           return {
             id: planet.planetId,
             label: planet.name || planet.planetId,
@@ -11977,6 +11996,8 @@
             coordinate: { x: planet.x, y: planet.y },
             value: scoreAiPlanetTarget(planet, player),
             satelliteOpportunity,
+            taskRouteCashout: taskRouteCashout.count > 0 ? taskRouteCashout : null,
+            nearCompleteTaskRouteCashout: nearCompleteTaskRouteCashout.count > 0 ? nearCompleteTaskRouteCashout : null,
           };
         })
         .filter((target) => target.value > 0);

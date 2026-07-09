@@ -234,6 +234,8 @@
       label: candidate.label || candidate.planetName || candidate.cardLabel || null,
       cardId: candidate.cardId || candidate.bestCard?.cardId || null,
       planetId: candidate.planetId || candidate.routeTarget?.planetId || candidate.routeTarget?.id || null,
+      taskRouteCashout: candidate.taskRouteCashout || candidate.routeTarget?.taskRouteCashout || null,
+      nearCompleteTaskRouteCashout: candidate.nearCompleteTaskRouteCashout || candidate.routeTarget?.nearCompleteTaskRouteCashout || null,
       score: roundRatio(candidate.score),
       policyScore: roundRatio(getCandidatePolicyScore(candidate)),
       directScoreGain: roundRatio(candidate.directScoreGain),
