@@ -5233,6 +5233,113 @@ function makeYichangdianAlienState(options = {}) {
 
 {
   const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    pendingActionExecuted: true,
+    canPayForMove: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "cards-for-energy": {
+        id: "cards-for-energy",
+        label: "2 cards -> 1 energy",
+        cost: { handSize: 2 },
+        gain: { energy: 1 },
+      },
+    },
+    movableTokens: [
+      { id: 1, playerId: "player-blue", sector: { x: 2, y: 2 } },
+    ],
+    planetLocations: [
+      { planetId: "mars", name: "Mars", x: 2, y: 2 },
+    ],
+    planetStats: {
+      canAddLandingMarker: () => true,
+      canAddOrbitMarker: () => false,
+      getAvailableSatellitesForLanding: () => [],
+      getPlanetLandingCount: () => 0,
+      getPlanetOrbitCount: () => 0,
+    },
+    abilities: {
+      planet: {
+        DEFAULT_ORBIT_COST: { credits: 1, energy: 1 },
+        BASE_LAND_ENERGY_COST: 2,
+        getLandEnergyCost: () => 2,
+        getLandOptions: () => ({ ok: false, message: "land disabled in harness" }),
+        getOrbitOptions: () => ({ ok: false, message: "orbit disabled in harness" }),
+      },
+      rocket: {
+        ORANGE1_ROCKET_LIMIT: 4,
+        getRocketLimitForPlayer: () => 3,
+      },
+    },
+    planetRewards: {
+      EFFECT_TYPES: {
+        GAIN_RESOURCES: "gain_resources",
+        GAIN_DATA: "gain_data",
+        ALIEN_TRACE: "alien_trace",
+        DRAW_CARDS: "draw_cards",
+        PICK_CARD: "pick_card",
+        INCOME: "income",
+      },
+      buildPlanetLandRewardEffects: () => [
+        { type: "gain_resources", options: { gain: { score: 6 } } },
+      ],
+      buildOrbitRewardEffects: () => [],
+      buildSatelliteLandRewardEffects: () => [],
+    },
+    blueResources: { score: 120, credits: 0, energy: 1, publicity: 0, availableData: 0, handSize: 3 },
+    blueHand: [
+      { id: "post-main-engine-a", cardName: "Post-main engine A", price: 0, playEffects: [{ type: "gain_resources", options: { gain: { score: 10 } } }] },
+      { id: "post-main-engine-b", cardName: "Post-main engine B", price: 0, playEffects: [{ type: "gain_resources", options: { gain: { score: 9 } } }] },
+      { id: "post-main-engine-c", cardName: "Post-main engine C", price: 0, playEffects: [{ type: "gain_resources", options: { gain: { score: 8 } } }] },
+    ],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b1: {
+          id: "final_b1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d1: {
+          id: "final_d1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b1: "b1",
+      final_d1: "d1",
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "end-turn") || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  harness.controller.runAiAutomationStep();
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-energy");
+  assert.equal(
+    tradeCandidate,
+    undefined,
+    "post-main energy trade must not claim an unavailable same-turn land cashout",
+  );
+}
+
+{
+  const turnChoices = [];
   const placedTokens = Array.from({ length: 6 }, (_item, index) => ({ placementSlot: index + 1 }));
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",

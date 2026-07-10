@@ -13487,7 +13487,13 @@
     }
 
     function scoreAiEnergyTradePlanetCashoutRecovery(player = getCurrentPlayer(), tradeId = null) {
-      if (!player || !tradeId || !quickTrades?.getTradeAction) return null;
+      if (
+        !player
+        || !tradeId
+        || !quickTrades?.getTradeAction
+        || state.pendingActionExecuted
+        || !canStartMainAction()
+      ) return null;
       const trade = quickTrades.getTradeAction(tradeId);
       if (!trade || aiNumber(trade.gain?.energy) <= 0) return null;
       const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
