@@ -379,6 +379,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     cardEffects: {
       EFFECT_TYPES: {
         CARD_MOVE: "card_move",
+        CARD_LAND: "card_land",
         FREE_MOVE: "free_move",
         RESEARCH_TECH: "card_research_tech",
         PAY_CREDITS_FOR_REWARD: "card_pay_credits_for_reward",

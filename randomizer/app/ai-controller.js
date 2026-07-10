@@ -11857,7 +11857,8 @@
     }
 
     function isAiLandingEffect(effect) {
-      return effect?.type === cardEffects.EFFECT_TYPES.CARD_LAND
+      if (!effect?.type) return false;
+      return effect.type === cardEffects.EFFECT_TYPES.CARD_LAND
         || effect?.type === "aomomo_land_only"
         || isAiChongTravelEffect(effect);
     }
