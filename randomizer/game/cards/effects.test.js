@@ -880,6 +880,14 @@ assert.equal(cardEffects.buildPlayEffects({ cardId: "b_64.webp" }).filter((effec
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_66.webp" })[0].options.bonus.distinctBy, "planetId");
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_79.webp" })[1].options.incomeKey, "handSize");
 
+const b94Effects = cardEffects.buildPlayEffects({ cardId: "b_94.webp" });
+assert.equal(b94Effects.length, 2);
+assert.equal(b94Effects[0].type, "draw_cards");
+assert.equal(b94Effects[0].options.count, 1);
+assert.notEqual(b94Effects[0].type, cardEffects.EFFECT_TYPES.PICK_CARD);
+assert.equal(b94Effects[1].type, cardEffects.EFFECT_TYPES.OPTIONAL_DISCARD_SCAN);
+assert.equal(b94Effects[1].options.count, 3);
+
 const b39 = { id: "card-b39", cardId: "b_39.webp" };
 const blueTriggerPlayer = { id: "p1", color: "red", reservedCards: [b39] };
 cardEffects.ensureCardEffectState(b39);
