@@ -12,6 +12,14 @@ const DEFAULT_CHROME = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.e
 const DEFAULT_CDP_TIMEOUT_MS = 45000;
 const MAX_BATCH_CDP_EVALUATE_TIMEOUT_MS = 300000;
 
+class AiAutoBattleTimeoutError extends Error {
+  constructor(message, state = null) {
+    super(message);
+    this.name = "AiAutoBattleTimeoutError";
+    this.state = state;
+  }
+}
+
 function getBatchCdpEvaluateTimeoutMs(timeoutMs) {
   const budgetMs = Number.isFinite(timeoutMs) && timeoutMs > 0
     ? timeoutMs
@@ -400,7 +408,10 @@ async function runPageBatch(cdp, batchOptions, timeoutMs) {
 
   if (!state?.done) {
     const pollErrorText = lastPollError ? `; last poll error: ${lastPollError.message || String(lastPollError)}` : "";
-    throw new Error(`Timed out waiting for AI auto battle result: ${JSON.stringify(state?.progress || null)}${pollErrorText}`);
+    throw new AiAutoBattleTimeoutError(
+      `Timed out waiting for AI auto battle result: ${JSON.stringify(state?.progress || null)}${pollErrorText}`,
+      state,
+    );
   }
   if (state.error) {
     throw new Error(state.error.stack || state.error.message || "AI auto battle failed");
@@ -409,6 +420,12 @@ async function runPageBatch(cdp, batchOptions, timeoutMs) {
     throw new Error("AI auto battle finished without a result");
   }
   return JSON.parse(state.result);
+}
+
+function writeJsonOutput(filePath, output) {
+  if (!filePath) return;
+  fs.mkdirSync(path.dirname(path.resolve(filePath)), { recursive: true });
+  fs.writeFileSync(filePath, JSON.stringify(output, null, 2));
 }
 
 async function getPageAiDebugState(cdp) {
@@ -493,6 +510,24 @@ function summarizeResult(result) {
   };
 }
 
+function summarizeTimeoutState(state = null, error = null) {
+  const progress = state?.progress || {};
+  const lastSummary = progress.lastSummary || {};
+  return {
+    ok: false,
+    timedOut: true,
+    single: null,
+    blocked: Boolean(lastSummary.blocked),
+    gameEnded: Boolean(lastSummary.gameEnded),
+    stoppedBeforeRound: lastSummary.stoppedBeforeRound || null,
+    steps: lastSummary.steps || null,
+    logCount: Number(progress.logCount || 0),
+    bugCount: Number(progress.bugCount || 0),
+    pendingState: progress.pendingState || null,
+    message: error?.message || "Timed out waiting for AI auto battle result",
+  };
+}
+
 async function main() {
   const options = parseArgs(process.argv.slice(2));
   const debugPort = 10000 + Math.floor(Math.random() * 30000);
@@ -553,22 +588,38 @@ async function main() {
       reset: options.single ? true : undefined,
     };
     const timeoutMs = options.timeoutMs || Math.max(300000, options.games * options.maxSteps * 180);
-    const result = await runPageBatch(cdp, batchOptions, timeoutMs);
-    const debugState = options.includeState ? await getPageAiDebugState(cdp) : null;
-    const summary = summarizeResult(result);
-    const output = {
-      options: batchOptions,
-      pageUrl,
-      summary,
-      result,
-      consoleMessages: consoleMessages.slice(-50),
-    };
-    if (options.includeState) output.debugState = debugState;
-    if (options.out) {
-      fs.mkdirSync(path.dirname(path.resolve(options.out)), { recursive: true });
-      fs.writeFileSync(options.out, JSON.stringify(output, null, 2));
+    try {
+      const result = await runPageBatch(cdp, batchOptions, timeoutMs);
+      const debugState = options.includeState ? await getPageAiDebugState(cdp) : null;
+      const summary = summarizeResult(result);
+      const output = {
+        options: batchOptions,
+        pageUrl,
+        summary,
+        result,
+        consoleMessages: consoleMessages.slice(-50),
+      };
+      if (options.includeState) output.debugState = debugState;
+      writeJsonOutput(options.out, output);
+      process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`);
+    } catch (error) {
+      if (error instanceof AiAutoBattleTimeoutError) {
+        writeJsonOutput(options.out, {
+          options: batchOptions,
+          pageUrl,
+          summary: summarizeTimeoutState(error.state, error),
+          result: null,
+          partialState: error.state || null,
+          error: {
+            name: error.name,
+            message: error.message,
+            stack: error.stack || null,
+          },
+          consoleMessages: consoleMessages.slice(-50),
+        });
+      }
+      throw error;
     }
-    process.stdout.write(`${JSON.stringify(summary, null, 2)}\n`);
   } finally {
     if (cdp) cdp.close();
     server.close();
