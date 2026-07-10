@@ -13836,6 +13836,20 @@
         directScoreGain: bestBlueTraceScore,
       });
       const lowEngineCatchupValue = scoreAiLowEngineCatchupValue(player, "analyze");
+      const lowResourceReadyAnalyzeCashout = player?.aiDifficulty === AI_DIFFICULTY_WEAK_START
+        && round === 3
+        && finalMarks >= 3
+        && placedCount >= requiredSlot
+        && currentScore >= 65
+        && currentScore <= 95
+        && aiNumber(player?.resources?.credits) <= 0
+        && availableData >= 1
+        && availableData <= 2
+        && dataRoom >= 4
+        && bestBlueTraceScore >= 6
+        && lowEngineCatchupValue >= 5
+        ? 1.4
+        : 0;
       const rawScore = 7
         + placedCount * 1.15
         + fullComputerBonus * 0.8
@@ -13903,6 +13917,7 @@
         thresholdCashoutPressure,
         readyAnalyzeWindowValue,
         lateFullDataAnalyzeRecovery,
+        lowResourceReadyAnalyzeCashout,
         firstThresholdCatchupBonus,
         fullComputerBonus,
         lateRoundPressure,

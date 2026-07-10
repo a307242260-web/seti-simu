@@ -2100,6 +2100,7 @@
       analyzeLateRoundPressure: roundRatio(breakdown.lateRoundPressure),
       analyzeHighScorePushValue: roundRatio(breakdown.highScorePushValue),
       analyzeLowEngineCatchupValue: roundRatio(breakdown.lowEngineCatchupValue),
+      lowResourceReadyAnalyzeCashout: roundRatio(breakdown.lowResourceReadyAnalyzeCashout),
       analyzePostSecondFinalMarkPenalty: roundRatio(breakdown.postSecondFinalMarkPenalty),
       analyzeHasBlueTraceFinalFormula: Boolean(breakdown.hasBlueTraceFinalFormula),
       midgameAnalyzeUnlockByTrade: breakdown.midgameAnalyzeUnlockByTrade || null,
@@ -2376,6 +2377,20 @@
         || getCandidateId(left.target || {}).localeCompare(getCandidateId(right.target || {}))
       ))
       .slice(0, Math.max(0, Number(limit) || 0));
+  }
+
+  function isAnalyzeLowResourceReadyCashoutNearMissSample(sample = {}) {
+    if (!isEngineActionUnrecoveredNearMissSample(sample)) return false;
+    if (getCandidateId(sample.target || {}) !== "analyze") return false;
+    const breakdown = sample.target?.valueBreakdown || {};
+    return numeric(breakdown.lowResourceReadyAnalyzeCashout) > 0;
+  }
+
+  function sortAnalyzeLowResourceReadyCashoutNearMissSamples(samples = [], limit = 12) {
+    return sortEngineActionNearMissSamples(
+      (samples || []).filter(isAnalyzeLowResourceReadyCashoutNearMissSample),
+      limit,
+    );
   }
 
   function buildEngineActionNearMissCounts(samples = [], limit = 16) {
@@ -6931,6 +6946,13 @@
         message: "低分玩家的数据/扫描/分析/科技或打牌吞吐明显落后，应优先定位可闭合的资源滚动链，而不是单独放宽补牌或移动。",
       });
     }
+    if (numeric(opportunities.analyzeLowResourceReadyCashoutNearMiss) > 0) {
+      recommendations.push({
+        id: "classify-low-resource-ready-analyze-cashout",
+        priority: "medium",
+        message: "第 3 轮低资源 ready-analyze 现金化窗口已被实跑证伪为不宜直接补分；后续只作为诊断，需证明提前分析不会打断高分席位的路线和共享牌流。",
+      });
+    }
     if (highScoreNearMissSamples.length) {
       recommendations.push({
         id: "inspect-high-score-near-miss",
@@ -7194,6 +7216,7 @@
       b2TradeNearMiss: 0,
       midgameLowTechRouteEnergyTrade: 0,
       engineActionNearMiss: 0,
+      analyzeLowResourceReadyCashoutNearMiss: 0,
       mainUnlockLowConcretePlay: 0,
       nonPositivePublicRefill: 0,
       highHandDrainEnergyTrade: 0,
@@ -7234,6 +7257,7 @@
     const b2TradeNearMissSamples = [];
     const midgameLowTechRouteEnergyTradeSamples = [];
     const engineActionNearMissSamples = [];
+    const analyzeLowResourceReadyCashoutNearMissSamples = [];
     const mainUnlockLowConcretePlaySamples = [];
     const nonPositivePublicRefillSamples = [];
     const highHandDrainEnergyTradeSamples = [];
@@ -7477,6 +7501,14 @@
     for (const [category, count] of Object.entries(actionCategoryCounts)) {
       actionCategoryRatios[category] = turnActionCount ? roundRatio(count / turnActionCount) : 0;
     }
+    const allAnalyzeLowResourceReadyCashoutNearMissSamples = sortAnalyzeLowResourceReadyCashoutNearMissSamples(
+      engineActionNearMissSamples,
+      Infinity,
+    );
+    analyzeLowResourceReadyCashoutNearMissSamples.push(
+      ...allAnalyzeLowResourceReadyCashoutNearMissSamples.slice(0, 12),
+    );
+    opportunities.analyzeLowResourceReadyCashoutNearMiss = allAnalyzeLowResourceReadyCashoutNearMissSamples.length;
 
     const playerProfiles = buildPlayerProfiles(logs, playerResults);
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
@@ -7661,6 +7693,7 @@
       engineActionUnrecoveredNearMissSamples: sortEngineActionUnrecoveredNearMissSamples(
         engineActionNearMissSamples,
       ),
+      analyzeLowResourceReadyCashoutNearMissSamples,
       engineActionNearMissCounts: buildEngineActionNearMissCounts(engineActionNearMissSamples),
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
@@ -7745,6 +7778,7 @@
     const mergedB2TradeNearMissSamples = [];
     const mergedMidgameLowTechRouteEnergyTradeSamples = [];
     const mergedEngineActionNearMissSamples = [];
+    const mergedAnalyzeLowResourceReadyCashoutNearMissSamples = [];
     const mergedEngineActionNearMissCounts = createEngineActionNearMissCountBuckets();
     const mergedMainUnlockLowConcretePlaySamples = [];
     const mergedNonPositivePublicRefillSamples = [];
@@ -7970,6 +8004,17 @@
       if (Array.isArray(analysis.engineActionNearMissSamples)) {
         mergedEngineActionNearMissSamples.push(...analysis.engineActionNearMissSamples);
       }
+      if (
+        mergedAnalyzeLowResourceReadyCashoutNearMissSamples.length < 12
+        && Array.isArray(analysis.analyzeLowResourceReadyCashoutNearMissSamples)
+      ) {
+        mergedAnalyzeLowResourceReadyCashoutNearMissSamples.push(
+          ...analysis.analyzeLowResourceReadyCashoutNearMissSamples.slice(
+            0,
+            12 - mergedAnalyzeLowResourceReadyCashoutNearMissSamples.length,
+          ),
+        );
+      }
       mergeEngineActionNearMissCounts(mergedEngineActionNearMissCounts, analysis.engineActionNearMissCounts);
       if (mergedMainUnlockLowConcretePlaySamples.length < 12 && Array.isArray(analysis.mainUnlockLowConcretePlaySamples)) {
         mergedMainUnlockLowConcretePlaySamples.push(
@@ -8134,6 +8179,7 @@
       engineActionUnrecoveredNearMissSamples: sortEngineActionUnrecoveredNearMissSamples(
         mergedEngineActionNearMissSamples,
       ),
+      analyzeLowResourceReadyCashoutNearMissSamples: mergedAnalyzeLowResourceReadyCashoutNearMissSamples,
       engineActionNearMissCounts: rankEngineActionNearMissCountBuckets(mergedEngineActionNearMissCounts),
       orange4RaceSensitiveTechSamples: sortOrange4RaceSensitiveTechSamples(mergedOrange4RaceSensitiveTechSamples),
       orange4RaceSensitiveTechTagCounts: buildOrange4RaceSensitiveTechTagCounts(mergedOrange4RaceSensitiveTechSamples),
@@ -8216,6 +8262,9 @@
       engineActionNearMissSamples: sortEngineActionNearMissSamples(mergedEngineActionNearMissSamples),
       engineActionUnrecoveredNearMissSamples: sortEngineActionUnrecoveredNearMissSamples(
         mergedEngineActionNearMissSamples,
+      ),
+      analyzeLowResourceReadyCashoutNearMissSamples: sortEngineActionNearMissSamples(
+        mergedAnalyzeLowResourceReadyCashoutNearMissSamples,
       ),
       engineActionNearMissCounts: rankEngineActionNearMissCountBuckets(mergedEngineActionNearMissCounts),
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,

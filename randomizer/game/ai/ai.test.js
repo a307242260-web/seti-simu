@@ -3503,6 +3503,86 @@ assert(engineActionUnrecoveredNearMissAnalysis.engineActionUnrecoveredNearMissSa
 const engineActionUnrecoveredNearMissSummary = analytics.summarizeBattleReports([engineActionUnrecoveredNearMissReport]);
 assert.equal(engineActionUnrecoveredNearMissSummary.engineActionUnrecoveredNearMissSamples[0].target.id, "researchTech");
 
+const analyzeLowResourceReadyCashoutNearMissReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 5,
+      rawTurnNumber: 17,
+      playerId: "player-green",
+      playerLabel: "绿色",
+      playerResources: { score: 71, credits: 0, energy: 3, publicity: 3, availableData: 1, handSize: 3 },
+      details: {
+        action: { id: "scan", kind: "main", score: 45, directScoreGain: 0, actionGraph: { net: 45 } },
+        candidates: [
+          { id: "scan", kind: "main", available: true, score: 45, directScoreGain: 0, actionGraph: { net: 45 } },
+          {
+            id: "analyze",
+            kind: "main",
+            available: true,
+            score: 43.4,
+            directScoreGain: 6,
+            actionGraph: { net: 44.6 },
+            valueBreakdown: {
+              analyzePlacedCount: 6,
+              analyzeAvailableData: 1,
+              analyzeEnergyCost: 1,
+              analyzeBestBlueTraceScore: 6,
+              readyAnalyzeWindowValue: 7.95,
+              analyzeLowEngineCatchupValue: 6.6,
+              lowResourceReadyAnalyzeCashout: 1.4,
+            },
+          },
+        ],
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 5,
+      rawTurnNumber: 18,
+      playerId: "player-green",
+      playerLabel: "绿色",
+      details: {
+        action: { id: "end-turn", kind: "end-turn", score: -1, actionGraph: { net: -1 } },
+        candidates: [],
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 3,
+      turnNumber: 6,
+      rawTurnNumber: 21,
+      playerId: "player-green",
+      playerLabel: "绿色",
+      details: {
+        action: { id: "pass", kind: "pass", score: -2, actionGraph: { net: -2 } },
+        candidates: [],
+      },
+    },
+  ],
+  playerResults: [{ playerId: "player-green", playerLabel: "绿色", finalScore: 212 }],
+};
+const analyzeLowResourceReadyCashoutNearMissAnalysis = analytics.analyzeBattleReport(analyzeLowResourceReadyCashoutNearMissReport);
+assert.equal(analyzeLowResourceReadyCashoutNearMissAnalysis.opportunities.engineActionNearMiss, 1);
+assert.equal(analyzeLowResourceReadyCashoutNearMissAnalysis.opportunities.analyzeLowResourceReadyCashoutNearMiss, 1);
+assert.equal(
+  analyzeLowResourceReadyCashoutNearMissAnalysis.analyzeLowResourceReadyCashoutNearMissSamples[0].target.valueBreakdown.lowResourceReadyAnalyzeCashout,
+  1.4,
+);
+assert(
+  analyzeLowResourceReadyCashoutNearMissAnalysis.recommendations.some(
+    (entry) => entry.id === "classify-low-resource-ready-analyze-cashout",
+  ),
+);
+const analyzeLowResourceReadyCashoutNearMissSummary = analytics.summarizeBattleReports([
+  analyzeLowResourceReadyCashoutNearMissReport,
+]);
+assert.equal(analyzeLowResourceReadyCashoutNearMissSummary.opportunities.analyzeLowResourceReadyCashoutNearMiss, 1);
+assert.equal(analyzeLowResourceReadyCashoutNearMissSummary.analyzeLowResourceReadyCashoutNearMissSamples[0].playerLabel, "绿色");
+
 const finalReadyTaskCreditShortfallReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [],
