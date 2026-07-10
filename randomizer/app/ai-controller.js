@@ -1618,9 +1618,8 @@
           const incomeScore = scoreAiIncomeOpportunityValue(player, gain);
           const finalFormulaFit = scoreAiIncomeDiscardFinalFormulaFit(player, gain, incomeFormulaEntries);
           const routeEnergyFit = scoreAiIncomeDiscardRouteEnergyFit(player, gain);
-          const playCandidate = buildAiPlayCardCandidate(card, index, player);
           const playValue = Math.max(0, scoreAiPlayCardValue(card, { player }));
-          const discardOpportunityCost = getAiDiscardedCardOpportunityCost(card, playCandidate);
+          const discardOpportunityCost = scoreAiIncomeDiscardSelectionOpportunityCost(player, card, { playValue });
           const value = incomeScore + finalFormulaFit + routeEnergyFit;
           return {
             index,
@@ -1672,8 +1671,7 @@
       const incomeScore = scoreAiIncomeOpportunityValue(player, incomeGain);
       const finalFormulaFit = scoreAiIncomeDiscardFinalFormulaFit(player, incomeGain, incomeFormulaEntries);
       const routeEnergyFit = scoreAiIncomeDiscardRouteEnergyFit(player, incomeGain);
-      const playCandidate = buildAiPlayCardCandidate(card, index, player);
-      const discardOpportunityCost = getAiDiscardedCardOpportunityCost(card, playCandidate);
+      const discardOpportunityCost = scoreAiIncomeDiscardSelectionOpportunityCost(player, card);
       const handScarcityCost = getAiIncomeDiscardHandScarcityCost(player);
       return {
         incomeScore,
@@ -1683,6 +1681,14 @@
         handScarcityCost,
         net: incomeScore + finalFormulaFit + routeEnergyFit - discardOpportunityCost - handScarcityCost,
       };
+    }
+
+    function scoreAiIncomeDiscardSelectionOpportunityCost(player, card, options = {}) {
+      if (!player || !card) return 0;
+      const playValue = options.playValue == null
+        ? Math.max(0, scoreAiPlayCardValue(card, { player }))
+        : Math.max(0, aiNumber(options.playValue));
+      return Math.min(8, playValue * 0.12);
     }
 
     function scoreAiIncomePlacementRewardValue(player = getCurrentPlayer()) {
@@ -1829,6 +1835,7 @@
             ? scoreAiMultiIncomeSequenceFit(simulatedPlayer, gain, target - selected.length)
             : 0;
           const playValue = Math.max(0, scoreAiPlayCardValue(card, { player: simulatedPlayer }));
+          const discardOpportunityCost = scoreAiIncomeDiscardSelectionOpportunityCost(simulatedPlayer, card, { playValue });
           return {
             index,
             incomeScore,
@@ -1836,7 +1843,7 @@
             routeEnergyFit,
             sequenceFit,
             playValue,
-            score: incomeScore + finalFormulaFit + routeEnergyFit + sequenceFit - Math.min(8, playValue * 0.12),
+            score: incomeScore + finalFormulaFit + routeEnergyFit + sequenceFit - discardOpportunityCost,
           };
         })
         .filter((entry) => entry && Number.isFinite(entry.score))

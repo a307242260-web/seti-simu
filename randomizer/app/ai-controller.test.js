@@ -1698,6 +1698,51 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const pendingDiscardAction = { type: "place_data_income", selectedIndexes: [] };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    pendingDiscardAction,
+    discardCount: 1,
+    blueResources: { credits: 0, energy: 2, handSize: 2, score: 52 },
+    blueHand: [
+      { id: "income-low-future-value", incomeGain: { handSize: 1 }, price: 1 },
+      {
+        id: "income-high-future-value",
+        incomeGain: { handSize: 1 },
+        price: 1,
+        playEffects: [{ type: "gain_resources", options: { gain: { score: 16 } } }],
+      },
+    ],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should resolve place-data income discard selection");
+  assert.equal(
+    harness.blue.hand[pendingDiscardAction.selectedIndexes[0]]?.id,
+    "income-low-future-value",
+    "income discard should preserve the higher future-value card",
+  );
+  const discardLog = harness.controller.getAiAutoBattleReport().logs
+    .find((entry) => entry.type === "discard" && entry.details?.pendingType === "place_data_income");
+  const preview = discardLog?.details?.incomeDiscardPreview?.options || [];
+  const low = preview.find((entry) => entry.cardId === "income-low-future-value");
+  const high = preview.find((entry) => entry.cardId === "income-high-future-value");
+  assert.ok(low && high, "income discard preview should include both cards");
+  assert.ok(
+    Number(low.netAfterDiscard || 0) > Number(high.netAfterDiscard || 0),
+    "income preview should use the same future-card opportunity cost as the selected discard",
+  );
+}
+
+{
   const harness = createAiControllerHarness(null, {
     scanTargetPending: {
       type: "remove_orbit_to_probe",
