@@ -61,6 +61,10 @@
     const mainLimit = Math.max(1, Math.round(numeric(options.mainBeamWidth ?? 6)));
     const plans = [];
 
+    for (const action of quick.slice(0, quickLimit)) {
+      plans.push({ actions: [action], score: scoreChain([action]), type: "quick" });
+    }
+
     for (const action of main.slice(0, mainLimit)) {
       plans.push({ actions: [action], score: scoreChain([action]), type: "main" });
       for (const before of quick.slice(0, quickLimit)) {

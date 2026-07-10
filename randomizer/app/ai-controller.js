@@ -20172,6 +20172,31 @@
       ));
     }
 
+    function buildAiPlannerShadowDecision(candidates = [], graphState = {}, player = null, selectedAction = null) {
+      const plan = ai?.planner?.chooseTurnPlan?.(candidates, graphState, player?.id || null, {
+        quickBeamWidth: 3,
+        mainBeamWidth: 6,
+      }) || null;
+      const firstAction = plan?.firstAction || null;
+      if (!firstAction) return null;
+      return {
+        key: plan.key || null,
+        type: plan.type || null,
+        score: roundAiScore(aiNumber(plan.score)),
+        firstAction: {
+          id: firstAction.id || null,
+          kind: firstAction.kind || null,
+          score: roundAiScore(aiNumber(firstAction.score)),
+          actionGraphNet: Number.isFinite(Number(firstAction.actionGraph?.net))
+            ? roundAiScore(aiNumber(firstAction.actionGraph.net))
+            : null,
+          planActionId: firstAction.plan?.quickActionId || firstAction.plan?.actionId || null,
+        },
+        policyActionId: selectedAction?.id || null,
+        diverged: Boolean(selectedAction?.id && selectedAction.id !== firstAction.id),
+      };
+    }
+
     function runAiTurnActionDecision() {
       const currentPlayer = getCurrentPlayer();
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
@@ -20266,9 +20291,11 @@
         const finalHighScorePassRecoveryDiagnostic = action.id === "pass"
           ? buildAiFinalHighScorePassRecoveryDiagnostic(currentPlayer, selectableCandidates)
           : null;
+        const plannerShadow = buildAiPlannerShadowDecision(selectableCandidates, graphState, currentPlayer, action);
         recordAiAutoBattleLog("turn-action", `${currentPlayer.colorLabel}AI 执行 ${action.id}`, {
           action,
           candidates: selectableCandidates,
+          ...(plannerShadow ? { plannerShadow } : {}),
           ...(resourceLockTradePreviews.length ? { resourceLockTradePreviews } : {}),
           ...(earlyNoMainPublicRefillDiagnostic ? { earlyNoMainPublicRefillDiagnostic } : {}),
           ...(finalLowHandPassRecoveryDiagnostic ? { finalLowHandPassRecoveryDiagnostic } : {}),

@@ -70,7 +70,7 @@ GameState 快照
 - 批跑 / A/B / 调参入口走 `configureAiAutoBattle()`、`runAiAutomationStep()`、`runAiAutoBattleBatch()`、`runAiStrategyABTest()`、`runAiStrategyTuningCycle()`；未显式传 `activePlayerCount` 时按 4 人局重置。
 - `runAiAutomationStep()` 是唯一推进器，先收口外星人使用、外星人痕迹和半人马就绪机会，再按“初始选择 / 弃牌 / PASS 预留 / 终局标记 / 公共牌选择 / 科技放置 / 扫描 / 打牌 / 移动支付 / 登陆 / 数据放置 / 共用扫描弹窗 / 效果链 / 顶层行动”的顺序推进其余 pending 状态。
 - AI 专用强制公司牌（当前默认席位顺序为寰宇超动力、宇宙大战略集团、作弊实验室）必须作为开局规划的真实公司输入；初始牌组合、`openingPlan` 摘要、目标和 `aiStyle` 都按实际被确认的公司重算，避免使用未选择公司牌的资源结构污染后续策略。
-- 顶层行动候选仍由现有规则入口判断可用性，策略层优先读取 `actionGraph.net`，旧 `candidate.score` 只作为 fallback 与 tie-breaker。
+- 顶层行动候选仍由现有规则入口判断可用性，策略层优先读取 `actionGraph.net`，旧 `candidate.score` 只作为 fallback 与 tie-breaker。L3 规划器目前以影子模式对同一候选生成“快速 -> 主行动 -> 快速”的静态链，并把与实际策略的首行动分歧写入 `turn-action.plannerShadow`；在固定种子证明某类链能提升而不破坏高分局前，影子结果不直接改写实际选择。
 - 子决策以 `runAi*Decision()` 族函数处理；每个 AI pending 分支必须返回 `progressed`、`skipped` 或明确 `blocked`，不能把自动批跑永久停在需要人工点击的状态。
 - 任何跨弹窗延迟结算的 pending 都必须带 `playerId/playerColor` 或可解析 `effect`；AI 分发和确认 handler 均按 `pending owner -> effect owner -> current player` 解析执行玩家。若 pending owner 是人类玩家，AI 必须返回 `blocked` 等待人工处理；若 pending owner 是电脑玩家，人工入口必须拒绝并重新调度 AI，AI 调用确认 handler 时显式传入 `{ automated: true }`。不能因为当前可见玩家是人类而让人类控制 AI pending，也不能因为当前可见玩家是 AI 而代处理人类 pending。公共牌精选和打牌候选估值同样必须使用 pending owner 的资源、火箭数、可结算效果、任务/终局需求、路线计划、移动效果和角标移动预览；`scoreAiPlayCardValue` 内部 helper 不能回退到当前可见玩家。`codex-ai-low-resource-baseline:5` 在修正 owner 上下文后仍复现 `[138,199,279,218]`、`bugCount=0`，说明这是估值归属修正而非新的提分窗口。
 - 左侧兜底控制只用于恢复异常状态：`AI接管` 会把当前电脑 pending 或可恢复的电脑回合交回自动机并清除旧阻塞暂停，不清空现场 pending；`强制跳过` 会清理当前 pending UI 并把目标玩家标记为本回合已完成但不标记 PASS，用于脱离无法继续的执行卡死。

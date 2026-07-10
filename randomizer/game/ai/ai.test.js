@@ -909,6 +909,14 @@ assert.ok(planned);
 assert.equal(planned.key, "land>move");
 assert.equal(planned.firstAction.id, "land");
 
+const quickOnlyPlan = planner.chooseTurnPlan([
+  { id: "placeData", kind: "quick", available: true, score: 7 },
+  { id: "end-turn", kind: "end-turn", available: true, score: -2 },
+], {}, "p1");
+assert.ok(quickOnlyPlan);
+assert.equal(quickOnlyPlan.key, "placeData");
+assert.equal(quickOnlyPlan.firstAction.id, "placeData");
+
 const offer = {
   industryOptions: [
     { id: "industry:a.png", label: "异星实验室" },

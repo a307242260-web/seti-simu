@@ -376,6 +376,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
         },
       },
       ...(options.actionGraph ? { actionGraph: options.actionGraph } : {}),
+      ...(options.aiPlanner ? { planner: options.aiPlanner } : {}),
     },
     cardEffects: {
       EFFECT_TYPES: {
@@ -7623,6 +7624,49 @@ function makeYichangdianAlienState(options = {}) {
     { orange: 2, blue: 1, purple: 1 },
     "autobattle player results should expose tech type counts for D1 diagnostics",
   );
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    canStartMainAction: true,
+    recordResearchTech: true,
+    takeableTechIds: ["blue1"],
+    techStacks: {
+      blue1: { techType: "blue", stackIndex: 1, remaining: 3 },
+    },
+    aiPlanner: {
+      chooseTurnPlan: (candidates) => ({
+        key: "pass",
+        type: "pass",
+        score: -2,
+        firstAction: candidates.find((candidate) => candidate.id === "pass") || null,
+      }),
+    },
+    chooseTurnAction: (candidates) => (
+      candidates.find((candidate) => candidate.id === "researchTech") || null
+    ),
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+  assert.equal(harness.controller.runAiAutomationStep().ok, true);
+  const turnLog = harness.controller.getAiAutoBattleReport().logs
+    .find((entry) => entry.type === "turn-action");
+  assert.equal(turnLog?.details?.action?.id, "researchTech");
+  const plannerShadow = turnLog?.details?.plannerShadow;
+  assert.equal(plannerShadow?.key, "pass");
+  assert.equal(plannerShadow?.type, "pass");
+  assert.equal(plannerShadow?.score, -2);
+  assert.equal(plannerShadow?.firstAction?.id, "pass");
+  assert.equal(plannerShadow?.firstAction?.kind, "pass");
+  assert.equal(plannerShadow?.firstAction?.actionGraphNet, null);
+  assert.equal(plannerShadow?.policyActionId, "researchTech");
+  assert.equal(plannerShadow?.diverged, true);
 }
 
 console.log("app/ai-controller.test.js ok");
