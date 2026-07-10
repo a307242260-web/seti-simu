@@ -293,6 +293,29 @@ assert.deepEqual(cards.getDiscardActionMoveRewardForCard(cardWithDiscardActionCo
   movementPoints: 1,
   gain: { score: 1 },
 });
+assert.deepEqual(
+  [0, 1, 2, 3, 4, 5].map((code) => cards.normalizeDiscardActionTriggerCode(code)),
+  [0, 1, 2, 0, 1, 2],
+);
+assert.deepEqual(cards.getDiscardActionTriggerRewardForCode(3), {
+  code: 0,
+  label: "弃牌换1宣传",
+  gain: { publicity: 1 },
+  dataCount: 0,
+});
+assert.deepEqual(cards.getDiscardActionTriggerRewardForCode(4), {
+  code: 1,
+  label: "弃牌换1数据",
+  gain: {},
+  dataCount: 1,
+});
+assert.deepEqual(cards.getDiscardActionTriggerMoveRewardForCode(5), {
+  code: 2,
+  label: "弃牌换1移动",
+  movementPoints: 1,
+  gain: {},
+});
+assert.equal(cards.getDiscardActionTriggerCodeForCard(cardWithDiscardActionCode(5)), 2);
 assert.equal(cards.getDiscardActionMoveRewardForCard(cardWithDiscardActionCode(0)), null);
 const clonedReward = cards.getDiscardActionRewardForCard(cardWithDiscardActionCode(0));
 clonedReward.gain.publicity = 99;

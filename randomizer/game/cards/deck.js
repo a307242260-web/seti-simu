@@ -70,6 +70,11 @@
       gain: Object.freeze({ score: 1 }),
     }),
   });
+  const DISCARD_ACTION_TRIGGER_CODE_EQUIVALENTS = Object.freeze({
+    3: 0,
+    4: 1,
+    5: 2,
+  });
   const CARD_CATALOG_BY_ID = new Map(CARD_CATALOG.map((entry) => [entry.card_id, entry]));
 
   let cardInstanceSequence = 0;
@@ -210,9 +215,7 @@
     return Number.isInteger(entry?.discard_action_code) ? entry.discard_action_code : null;
   }
 
-  function getDiscardActionRewardForCard(card) {
-    const actionCode = getDiscardActionCodeForCard(card);
-    const reward = DISCARD_ACTION_REWARDS[actionCode];
+  function cloneDiscardActionReward(reward) {
     if (!reward) return null;
     return {
       code: reward.code,
@@ -222,9 +225,7 @@
     };
   }
 
-  function getDiscardActionMoveRewardForCard(card) {
-    const actionCode = getDiscardActionCodeForCard(card);
-    const reward = DISCARD_ACTION_MOVE_REWARDS[actionCode];
+  function cloneDiscardActionMoveReward(reward) {
     if (!reward) return null;
     return {
       code: reward.code,
@@ -232,6 +233,53 @@
       movementPoints: reward.movementPoints,
       gain: { ...reward.gain },
     };
+  }
+
+  function getDiscardActionRewardForCode(actionCode) {
+    const reward = DISCARD_ACTION_REWARDS[actionCode];
+    return cloneDiscardActionReward(reward);
+  }
+
+  function getDiscardActionMoveRewardForCode(actionCode) {
+    const reward = DISCARD_ACTION_MOVE_REWARDS[actionCode];
+    return cloneDiscardActionMoveReward(reward);
+  }
+
+  function getDiscardActionRewardForCard(card) {
+    return getDiscardActionRewardForCode(getDiscardActionCodeForCard(card));
+  }
+
+  function getDiscardActionMoveRewardForCard(card) {
+    return getDiscardActionMoveRewardForCode(getDiscardActionCodeForCard(card));
+  }
+
+  function normalizeDiscardActionTriggerCode(actionCode) {
+    if (actionCode == null || actionCode === "") return null;
+    const numericCode = Number(actionCode);
+    if (!Number.isInteger(numericCode)) return actionCode;
+    return Object.prototype.hasOwnProperty.call(DISCARD_ACTION_TRIGGER_CODE_EQUIVALENTS, numericCode)
+      ? DISCARD_ACTION_TRIGGER_CODE_EQUIVALENTS[numericCode]
+      : numericCode;
+  }
+
+  function getDiscardActionTriggerCodeForCard(card) {
+    return normalizeDiscardActionTriggerCode(getDiscardActionCodeForCard(card));
+  }
+
+  function getDiscardActionTriggerRewardForCode(actionCode) {
+    return getDiscardActionRewardForCode(normalizeDiscardActionTriggerCode(actionCode));
+  }
+
+  function getDiscardActionTriggerMoveRewardForCode(actionCode) {
+    return getDiscardActionMoveRewardForCode(normalizeDiscardActionTriggerCode(actionCode));
+  }
+
+  function getDiscardActionTriggerRewardForCard(card) {
+    return getDiscardActionRewardForCode(getDiscardActionTriggerCodeForCard(card));
+  }
+
+  function getDiscardActionTriggerMoveRewardForCard(card) {
+    return getDiscardActionMoveRewardForCode(getDiscardActionTriggerCodeForCard(card));
   }
 
   function createCardState() {
@@ -734,6 +782,7 @@
     INCOME_CODE_GAINS,
     DISCARD_ACTION_REWARDS,
     DISCARD_ACTION_MOVE_REWARDS,
+    DISCARD_ACTION_TRIGGER_CODE_EQUIVALENTS,
     getCardSrc,
     normalizeBasicCardInput,
     normalizeDlcCardInput,
@@ -747,8 +796,16 @@
     getIncomeCodeForCard,
     getIncomeGainForCard,
     getDiscardActionCodeForCard,
+    getDiscardActionRewardForCode,
+    getDiscardActionMoveRewardForCode,
     getDiscardActionRewardForCard,
     getDiscardActionMoveRewardForCard,
+    normalizeDiscardActionTriggerCode,
+    getDiscardActionTriggerCodeForCard,
+    getDiscardActionTriggerRewardForCode,
+    getDiscardActionTriggerMoveRewardForCode,
+    getDiscardActionTriggerRewardForCard,
+    getDiscardActionTriggerMoveRewardForCard,
     createCardState,
     collectClaimedCardIds,
     getDrawPileCardIds,

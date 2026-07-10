@@ -4685,21 +4685,25 @@
 
     const resourceReward = cards.getDiscardActionRewardForCard(card);
     if (resourceReward) {
-      const reward = multiplyDiscardActionReward(resourceReward, getDiscardCornerRewardMultiplier());
+      const rewardMultiplier = getDiscardCornerRewardMultiplier();
+      const reward = multiplyDiscardActionReward(resourceReward, rewardMultiplier);
       return {
         actionKind: "resource",
         label: reward.label,
         reward,
+        rewardMultiplier,
       };
     }
 
     const moveReward = cards.getDiscardActionMoveRewardForCard?.(card);
     if (moveReward) {
-      const reward = multiplyDiscardMoveReward(moveReward, getDiscardCornerRewardMultiplier());
+      const rewardMultiplier = getDiscardCornerRewardMultiplier();
+      const reward = multiplyDiscardMoveReward(moveReward, rewardMultiplier);
       return {
         actionKind: "move",
         label: reward.label,
         moveReward: reward,
+        rewardMultiplier,
       };
     }
 
@@ -4827,6 +4831,75 @@
     return "unknown";
   }
 
+  function normalizeCardCornerRewardMultiplier(multiplier) {
+    const numeric = Number(multiplier);
+    return Number.isFinite(numeric) ? Math.max(1, Math.round(numeric)) : 1;
+  }
+
+  function cardCornerCodesEqual(left, right) {
+    if (left == null && right == null) return true;
+    const leftNumber = Number(left);
+    const rightNumber = Number(right);
+    if (Number.isInteger(leftNumber) && Number.isInteger(rightNumber)) {
+      return leftNumber === rightNumber;
+    }
+    return String(left) === String(right);
+  }
+
+  function normalizeCardCornerTriggerCode(cornerCode) {
+    if (typeof cards.normalizeDiscardActionTriggerCode === "function") {
+      return cards.normalizeDiscardActionTriggerCode(cornerCode);
+    }
+    if (cornerCode == null || cornerCode === "") return null;
+    const numericCode = Number(cornerCode);
+    if (!Number.isInteger(numericCode)) return cornerCode ?? null;
+    if (numericCode >= 3 && numericCode <= 5) return numericCode - 3;
+    return numericCode;
+  }
+
+  function getDiscardActionTriggerResourceRewardForCode(cornerCode) {
+    if (typeof cards.getDiscardActionTriggerRewardForCode === "function") {
+      return cards.getDiscardActionTriggerRewardForCode(cornerCode);
+    }
+    const triggerCode = normalizeCardCornerTriggerCode(cornerCode);
+    return cards.getDiscardActionRewardForCard?.({ discardActionCode: triggerCode }) || null;
+  }
+
+  function getDiscardActionTriggerMoveRewardForCode(cornerCode) {
+    if (typeof cards.getDiscardActionTriggerMoveRewardForCode === "function") {
+      return cards.getDiscardActionTriggerMoveRewardForCode(cornerCode);
+    }
+    const triggerCode = normalizeCardCornerTriggerCode(cornerCode);
+    return cards.getDiscardActionMoveRewardForCard?.({ discardActionCode: triggerCode }) || null;
+  }
+
+  function createCardCornerTriggerEventFields(resourceReward, moveReward, options = {}) {
+    const actualCornerCode = options.cornerCode ?? resourceReward?.code ?? moveReward?.code ?? null;
+    const triggerCornerCode = normalizeCardCornerTriggerCode(actualCornerCode);
+    const useEquivalentReward = actualCornerCode != null && !cardCornerCodesEqual(triggerCornerCode, actualCornerCode);
+    const rewardMultiplier = normalizeCardCornerRewardMultiplier(options.rewardMultiplier);
+
+    let eventResourceReward = resourceReward || null;
+    let eventMoveReward = moveReward || null;
+    if (useEquivalentReward) {
+      eventResourceReward = getDiscardActionTriggerResourceRewardForCode(actualCornerCode);
+      eventMoveReward = getDiscardActionTriggerMoveRewardForCode(actualCornerCode);
+      if (eventResourceReward) eventResourceReward = multiplyDiscardActionReward(eventResourceReward, rewardMultiplier);
+      if (eventMoveReward) eventMoveReward = multiplyDiscardMoveReward(eventMoveReward, rewardMultiplier);
+    }
+
+    return {
+      cornerKind: getCardCornerEventKind(eventResourceReward, eventMoveReward),
+      cornerCode: triggerCornerCode,
+      originalCornerCode: actualCornerCode,
+      resourceReward: eventResourceReward,
+      moveReward: eventMoveReward,
+      actualResourceReward: resourceReward || null,
+      actualMoveReward: moveReward || null,
+      rewardMultiplier,
+    };
+  }
+
   function applyCardCornerRewardFromCard(player, card, options = {}) {
     if (!player || !card) return { ok: false, message: "没有可结算角标的卡牌" };
     const resourceReward = cards.getDiscardActionRewardForCard(card);
@@ -4869,13 +4942,21 @@
       : moveReward
         ? [formatPlanetRewardGain(moveReward.gain || {}), `${moveReward.movementPoints || 1}移动`].filter(Boolean).join("、")
         : "无可结算角标";
+    const eventFields = createCardCornerTriggerEventFields(resourceReward, moveReward, {
+      cornerCode: cards.getDiscardActionCodeForCard?.(card),
+    });
     return {
       ok: Boolean(resourceReward || moveReward),
       resourceReward,
       moveReward,
       dataResults,
-      cornerKind: getCardCornerEventKind(resourceReward, moveReward),
-      cornerCode: cards.getDiscardActionCodeForCard?.(card),
+      cornerKind: eventFields.cornerKind,
+      cornerCode: eventFields.cornerCode,
+      originalCornerCode: eventFields.originalCornerCode,
+      eventResourceReward: eventFields.resourceReward,
+      eventMoveReward: eventFields.moveReward,
+      actualResourceReward: resourceReward,
+      actualMoveReward: moveReward,
       message: rewardText,
     };
   }
@@ -5171,10 +5252,10 @@
       : formatCardCornerRewardMessage(action.reward, dataResults);
     const cornerEvent = {
       type: "cardCorner",
-      cornerKind: getCardCornerEventKind(action.reward, action.moveReward),
-      cornerCode: action.reward?.code ?? action.moveReward?.code ?? null,
-      resourceReward: action.reward || null,
-      moveReward: action.moveReward || null,
+      ...createCardCornerTriggerEventFields(action.reward, action.moveReward, {
+        cornerCode: action.reward?.code ?? action.moveReward?.code ?? null,
+        rewardMultiplier: action.rewardMultiplier,
+      }),
       playerId: currentPlayer.id || null,
       playerColor: currentPlayer.color || null,
       source: "card_corner",
@@ -30846,12 +30927,11 @@
   function createIndustryCardCornerEvent(player, reward, source) {
     return {
       type: "cardCorner",
-      cornerKind: reward?.kind === "move"
-        ? "move"
-        : getCardCornerEventKind(reward || null, null),
-      cornerCode: reward?.code ?? null,
-      resourceReward: reward?.kind === "resource" ? reward : null,
-      moveReward: reward?.kind === "move" ? reward : null,
+      ...createCardCornerTriggerEventFields(
+        reward?.kind === "resource" ? reward : null,
+        reward?.kind === "move" ? reward : null,
+        { cornerCode: reward?.code ?? null },
+      ),
       playerId: player?.id || null,
       playerColor: player?.color || null,
       source,

@@ -795,6 +795,38 @@ const b26CornerMatches = cardEffects.collectMatchingTriggers(cornerPlayer, {
 assert.equal(b26CornerMatches.length, 1);
 assert.equal(b26CornerMatches[0].event.cornerKind, "publicity");
 assert.equal(b26CornerMatches[0].effect.type, cardEffects.EFFECT_TYPES.CARD_CORNER_EVENT_REWARD);
+const b26AlienCornerEvents = [
+  {
+    type: "cardCorner",
+    cornerKind: "publicity",
+    cornerCode: 0,
+    originalCornerCode: 3,
+    resourceReward: { code: 0, label: "弃牌换1宣传", gain: { publicity: 1 }, dataCount: 0 },
+    actualResourceReward: { code: 3, label: "弃牌换2宣传", gain: { publicity: 2 }, dataCount: 0 },
+  },
+  {
+    type: "cardCorner",
+    cornerKind: "data",
+    cornerCode: 1,
+    originalCornerCode: 4,
+    resourceReward: { code: 1, label: "弃牌换1数据", gain: {}, dataCount: 1 },
+    actualResourceReward: { code: 4, label: "弃牌换1数据+1分", gain: { score: 1 }, dataCount: 1 },
+  },
+  {
+    type: "cardCorner",
+    cornerKind: "move",
+    cornerCode: 2,
+    originalCornerCode: 5,
+    moveReward: { code: 2, label: "弃牌换1移动", movementPoints: 1, gain: {} },
+    actualMoveReward: { code: 5, label: "弃牌换1移动+1分", movementPoints: 1, gain: { score: 1 } },
+  },
+];
+for (const cornerEvent of b26AlienCornerEvents) {
+  const matches = cardEffects.collectMatchingTriggers(cornerPlayer, cornerEvent);
+  assert.equal(matches.length, 1, `b_26 should match alien corner code ${cornerEvent.originalCornerCode} as ${cornerEvent.cornerCode}`);
+  assert.equal(matches[0].event.cornerCode, cornerEvent.cornerCode);
+  assert.equal(matches[0].event.originalCornerCode, cornerEvent.originalCornerCode);
+}
 
 for (const [cardId, traceType] of [["b_27.webp", "pink"], ["b_32.webp", "yellow"], ["b_35.webp", "blue"]]) {
   const effect = cardEffects.buildPlayEffects({ cardId })[0];
