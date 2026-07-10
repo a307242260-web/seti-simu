@@ -573,6 +573,8 @@ $tests = rg --files randomizer | Where-Object { $_ -match '\.test\.js$' } | Sort
 浏览器 smoke 与批跑入口使用 `runAiAutoBattleBatch`。
 本地浏览器可用 `randomizer/index.html?codexAiBatch=3&seed=codex-ai-batch` 触发受 URL 参数保护的 smoke，结果写入 `#codex-ai-batch-result`；需要复现离散种子时可传 `seeds=codex-ai-batch-wide%3A6`，需要快速出口时可配 `maxSteps=50`、`stopBeforeRound=4` 或 `activePlayerCount=1`。该入口默认跳过状态读数/行动日志 DOM 重绘，并在 `stepDelayMs=0` 时不再每步进入浏览器定时器队列以避开后台标签页节流；长批跑默认每 80 步让出一次事件循环，也可用 `yieldEverySteps=120` 调整诊断可读性。`tools/run_ai_autobattle_browser.js` 作为 CDP 包装器默认传入 `yieldEverySteps=20`，等待预算至少 5 分钟并按 `games * maxSteps * 180ms` 放大，避免慢局在普通效果流中被误报为卡死；需要观察完整 UI 时传 `renderReadout=1`，极慢诊断可显式传 `--timeoutMs`；如果传了 `--out` 但运行超时，工具仍会落盘 `summary.timedOut=true`、`partialState.progress`、尾部日志和错误信息，方便先复盘阻塞点再继续 A/B；长批跑建议传 `--tmpRoot C:\tmp` 或设置 `SETI_AI_TMP_ROOT`，把临时 Chrome profile 放到可控目录，避免用户 Temp 持续膨胀。
 
+- 2026-07-10 验证过一个终局主行动前资源交易的严格收益口径：当 `cards-for-credit` 解锁的牌只有单步移动路线和 `playCardConversionPressure`，而没有直接分、公式增量、C2/任务进度或终局牌预期分时，不把路线计划和转换压力当成具体终局收益。它命中 seed2 蓝色 R4T5 的 `突破摄星`，但浏览器实跑从当前基线 `[194,172,227,181]` 退到 `[162,167,221,184]`，总分 `774→734`、最高 `227→221`、`bugCount=0`。行为已撤回：路线计划虽未立刻兑现，仍会改变后续共享牌、科技和行动节奏；后续必须按完整替代序列验证，不能仅根据“非直接收益”压制这类交易。
+
 ---
 
 ## 12. 文档维护原则
