@@ -6755,6 +6755,21 @@
     return sortPassReserveResourcePressureMissSamples(samples, limit);
   }
 
+  function isCriticalRoundThreePassReserveMiss(sample = {}) {
+    const resources = sample.resources || {};
+    return numeric(sample.roundNumber) === 3
+      && numeric(resources.credits) <= 0
+      && numeric(resources.energy) <= 0
+      && numeric(resources.handSize) <= 1;
+  }
+
+  function buildPassReserveCriticalRoundThreeMissSamples(passReserveMissSamples = [], limit = 12) {
+    return sortPassReserveResourcePressureMissSamples(
+      (passReserveMissSamples || []).filter(isCriticalRoundThreePassReserveMiss),
+      limit,
+    );
+  }
+
   function getPassOpportunityBestMainScore(sample = {}) {
     const bestMain = sample?.bestMain || {};
     const policyScore = getFiniteScore(bestMain.policyScore);
@@ -6935,6 +6950,13 @@
         id: "inspect-pass-reserve-resource-pressure",
         priority: "medium",
         message: "存在非第 2 轮 PASS 预留资源压力窗口，应先按样本验证收入牌能否接上下一轮行动，再决定是否放宽预留排序。",
+      });
+    }
+    if (numeric(opportunities.passReserveCriticalRoundThreeMiss) > 0) {
+      recommendations.push({
+        id: "classify-pass-reserve-critical-r3",
+        priority: "medium",
+        message: "第 3 轮 0 信用/0 能量/低手牌的 PASS 预留收入候选已被实跑证伪为不宜直接放行；后续只作为诊断，需证明保留牌能接上后续主行动链。",
       });
     }
     if (d1TechBalanceBottleneckSamples.length) {
@@ -7145,6 +7167,7 @@
       openingPlanNearMiss: 0,
       openingPlanConversionGap: 0,
       passReserveResourcePressureMiss: 0,
+      passReserveCriticalRoundThreeMiss: 0,
       earlyPassNoMain: 0,
       resourceLockMainUnlock: 0,
       resourceLockNoDirectScanUnlock: 0,
@@ -7188,6 +7211,7 @@
     const openingPlanNearMissSamples = [];
     const openingPlanConversionSamples = [];
     const passReserveResourcePressureMissSamples = [];
+    const passReserveCriticalRoundThreeMissSamples = [];
     const earlyPassNoMainSamples = [];
     const resourceLockMainUnlockSamples = [];
     const resourceLockNoDirectScanUnlockSamples = [];
@@ -7477,6 +7501,12 @@
     );
     passReserveResourcePressureMissSamples.push(...allPassReserveResourcePressureMissSamples.slice(0, 12));
     opportunities.passReserveResourcePressureMiss = allPassReserveResourcePressureMissSamples.length;
+    const allPassReserveCriticalRoundThreeMissSamples = buildPassReserveCriticalRoundThreeMissSamples(
+      allPassReserveResourcePressureMissSamples,
+      Infinity,
+    );
+    passReserveCriticalRoundThreeMissSamples.push(...allPassReserveCriticalRoundThreeMissSamples.slice(0, 12));
+    opportunities.passReserveCriticalRoundThreeMiss = allPassReserveCriticalRoundThreeMissSamples.length;
     const allEarlyPassNoMainSamples = buildEarlyPassNoMainSamples(logs, playerResults);
     const earlyPassNoMainReasonCounts = countEarlyPassNoMainReasons(allEarlyPassNoMainSamples);
     earlyPassNoMainSamples.push(...allEarlyPassNoMainSamples.slice(0, 12));
@@ -7595,6 +7625,7 @@
       openingPlanNearMissSamples,
       openingPlanConversionSamples,
       passReserveResourcePressureMissSamples,
+      passReserveCriticalRoundThreeMissSamples,
       earlyPassNoMainSamples,
       resourceLockMainUnlockSamples,
       resourceLockNoDirectScanUnlockSamples,
@@ -7689,6 +7720,7 @@
     const mergedOpeningPlanNearMissSamples = [];
     const mergedOpeningPlanConversionSamples = [];
     const mergedPassReserveResourcePressureMissSamples = [];
+    const mergedPassReserveCriticalRoundThreeMissSamples = [];
     const mergedEarlyPassNoMainSamples = [];
     const mergedResourceLockMainUnlockSamples = [];
     const mergedResourceLockNoDirectScanUnlockSamples = [];
@@ -7785,6 +7817,17 @@
       }
       if (Array.isArray(analysis.passReserveResourcePressureMissSamples)) {
         mergedPassReserveResourcePressureMissSamples.push(...analysis.passReserveResourcePressureMissSamples);
+      }
+      if (
+        mergedPassReserveCriticalRoundThreeMissSamples.length < 12
+        && Array.isArray(analysis.passReserveCriticalRoundThreeMissSamples)
+      ) {
+        mergedPassReserveCriticalRoundThreeMissSamples.push(
+          ...analysis.passReserveCriticalRoundThreeMissSamples.slice(
+            0,
+            12 - mergedPassReserveCriticalRoundThreeMissSamples.length,
+          ),
+        );
       }
       if (Array.isArray(analysis.earlyPassNoMainSamples)) {
         mergedEarlyPassNoMainSamples.push(...analysis.earlyPassNoMainSamples);
@@ -8066,6 +8109,7 @@
       passOpportunitySamples: mergedPassOpportunitySamples,
       highScoreNearMissSamples,
       d1TechBalanceBottleneckSamples,
+      passReserveCriticalRoundThreeMissSamples: mergedPassReserveCriticalRoundThreeMissSamples,
       resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
       resourceLockNoDirectScanUnlockSamples: mergedResourceLockNoDirectScanUnlockSamples,
       resourceLockNoDiscardAnalyzeUnlockSamples: mergedResourceLockNoDiscardAnalyzeUnlockSamples,
@@ -8130,6 +8174,9 @@
       openingPlanConversionSamples: sortOpeningPlanConversionSamples(mergedOpeningPlanConversionSamples),
       passReserveResourcePressureMissSamples: sortPassReserveResourcePressureMissSamples(
         mergedPassReserveResourcePressureMissSamples,
+      ),
+      passReserveCriticalRoundThreeMissSamples: sortPassReserveResourcePressureMissSamples(
+        mergedPassReserveCriticalRoundThreeMissSamples,
       ),
       earlyPassNoMainSamples: sortEarlyPassNoMainSamples(mergedEarlyPassNoMainSamples),
       resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),

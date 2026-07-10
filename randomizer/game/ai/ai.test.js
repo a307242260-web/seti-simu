@@ -1350,6 +1350,52 @@ const selectedIncomePassReserveAnalysis = analytics.analyzeBattleReport(selected
 assert.equal(selectedIncomePassReserveAnalysis.opportunities.passReserveResourcePressureMiss, 0);
 assert.equal(selectedIncomePassReserveAnalysis.passReserveResourcePressureMissSamples.length, 0);
 
+const criticalRoundThreePassReserveReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "pass-reserve",
+    playerId: "player-green",
+    playerLabel: "绿色",
+    roundNumber: 3,
+    turnNumber: 8,
+    rawTurnNumber: 30,
+    playerResources: { score: 86, credits: 0, energy: 0, publicity: 2, handSize: 1 },
+    details: {
+      card: { id: "b_1.webp", cardId: "b_1.webp", cardName: "低收益保留", price: 1, cardTypeCode: 1 },
+      passReserveResourcePressure: { active: false, reasons: [], score: 0 },
+      passReserveResourcePressurePreview: {
+        active: true,
+        reasons: ["credits", "energy", "hand"],
+        score: 2.2,
+        incomeCandidates: [
+          { cardId: "b_25.webp", cardLabel: "资源收入牌", incomeGain: { credits: 1, energy: 1 } },
+        ],
+      },
+      passReserveResourcePressureMiss: true,
+      selectedScore: null,
+      candidates: [],
+    },
+  }],
+  playerResults: [{ playerId: "player-green", playerLabel: "绿色", finalScore: 209 }],
+};
+const criticalRoundThreePassReserveAnalysis = analytics.analyzeBattleReport(criticalRoundThreePassReserveReport);
+assert.equal(criticalRoundThreePassReserveAnalysis.opportunities.passReserveResourcePressureMiss, 1);
+assert.equal(criticalRoundThreePassReserveAnalysis.opportunities.passReserveCriticalRoundThreeMiss, 1);
+assert.equal(criticalRoundThreePassReserveAnalysis.passReserveCriticalRoundThreeMissSamples[0].selectedCard.cardId, "b_1.webp");
+assert.deepEqual(criticalRoundThreePassReserveAnalysis.passReserveCriticalRoundThreeMissSamples[0].previewReasons, [
+  "credits",
+  "energy",
+  "hand",
+]);
+assert.ok(
+  criticalRoundThreePassReserveAnalysis.recommendations.some(
+    (entry) => entry.id === "classify-pass-reserve-critical-r3",
+  ),
+);
+const criticalRoundThreePassReserveSummary = analytics.summarizeBattleReports([criticalRoundThreePassReserveReport]);
+assert.equal(criticalRoundThreePassReserveSummary.opportunities.passReserveCriticalRoundThreeMiss, 1);
+assert.equal(criticalRoundThreePassReserveSummary.passReserveCriticalRoundThreeMissSamples[0].playerLabel, "绿色");
+
 const negativePassOpportunityReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [{
