@@ -588,6 +588,12 @@
       || null;
   }
 
+  function getResourceLockBestTrade(sample = {}) {
+    return sample?.bestResourceLockTrade
+      || sample?.candidateProfile?.bestResourceLockTrade
+      || null;
+  }
+
   function isResourceLockWeakLaunchUnlock(sample = {}) {
     if (getResourceLockMainUnlockScore(sample) < MEANINGFUL_RESOURCE_UNLOCK_SCORE) return false;
     const bestAction = getResourceLockBestAction(sample);
@@ -602,6 +608,17 @@
     const bestAction = getResourceLockBestAction(sample);
     if (bestAction?.actionId !== "scan") return false;
     return numeric(bestAction.directScoreGain) <= 0;
+  }
+
+  function isResourceLockNoDiscardAnalyzeUnlock(sample = {}) {
+    if (getResourceLockMainUnlockScore(sample) < MEANINGFUL_RESOURCE_UNLOCK_SCORE) return false;
+    const bestAction = getResourceLockBestAction(sample);
+    if (bestAction?.actionId !== "analyze") return false;
+    const bestTrade = getResourceLockBestTrade(sample);
+    if (bestTrade?.tradeId !== "credits-for-energy") return false;
+    const discardPlan = bestTrade.discardPlan || {};
+    const handCost = numeric(discardPlan.handCost ?? bestTrade.cost?.handSize);
+    return handCost <= 0;
   }
 
   function sortResourceLockMainUnlockSamples(samples = [], limit = 12) {
@@ -662,6 +679,33 @@
         bestResourceLockTrade: sample.candidateProfile?.bestResourceLockTrade || null,
         resourceLockTradePreviews: sample.candidateProfile?.resourceLockTradePreviews || [],
         bestMain: sample.candidateProfile?.bestMain || null,
+        unavailableMain: sample.candidateProfile?.unavailableMain || [],
+        actionIds: sample.actionIds || [],
+        actions: sample.actions || [],
+      }));
+    return sortResourceLockMainUnlockSamples(samples, limit);
+  }
+
+  function buildResourceLockNoDiscardAnalyzeUnlockSamples(earlyPassSamples = [], limit = 12) {
+    const samples = (earlyPassSamples || [])
+      .filter(isResourceLockNoDiscardAnalyzeUnlock)
+      .map((sample) => ({
+        playerId: sample.playerId || null,
+        playerLabel: sample.playerLabel || null,
+        finalScore: roundRatio(sample.finalScore),
+        roundNumber: sample.roundNumber ?? null,
+        turnNumber: sample.turnNumber ?? null,
+        rawTurnNumber: sample.rawTurnNumber ?? null,
+        resources: sample.resources || null,
+        resourceProfile: sample.resourceProfile || null,
+        quickStepCount: numeric(sample.quickStepCount),
+        quickBeforePassCount: numeric(sample.quickBeforePassCount),
+        quickAfterPassCount: numeric(sample.quickAfterPassCount),
+        reasonTag: sample.reasonTag || null,
+        bestResourceLockTrade: sample.candidateProfile?.bestResourceLockTrade || null,
+        resourceLockTradePreviews: sample.candidateProfile?.resourceLockTradePreviews || [],
+        bestMain: sample.candidateProfile?.bestMain || null,
+        playCard: sample.candidateProfile?.playCard || null,
         unavailableMain: sample.candidateProfile?.unavailableMain || [],
         actionIds: sample.actionIds || [],
         actions: sample.actions || [],
@@ -6789,6 +6833,13 @@
         message: "资源锁预览里存在只打开无直接得分扫描的窗口；这类交易已多次实跑显示会扰动扫描目标、数据放置和共享牌流，应继续保持诊断-only，先证明后续分析/科技/终局链闭合。",
       });
     }
+    if (numeric(opportunities.resourceLockNoDiscardAnalyzeUnlock) > 0) {
+      recommendations.push({
+        id: "classify-resource-lock-no-discard-analyze",
+        priority: "medium",
+        message: "资源锁预览里存在无弃牌信用换能量只打开分析的窗口；当前固定 seed 实跑会降低最高分和总分，应先证明分析后的资源滚动能闭合再考虑放行。",
+      });
+    }
     if (numeric(opportunities.resourceLockWeakLaunchUnlock) > 0) {
       recommendations.push({
         id: "classify-resource-lock-weak-launch",
@@ -7097,6 +7148,7 @@
       earlyPassNoMain: 0,
       resourceLockMainUnlock: 0,
       resourceLockNoDirectScanUnlock: 0,
+      resourceLockNoDiscardAnalyzeUnlock: 0,
       resourceLockWeakLaunchUnlock: 0,
       quickBeforePassNoMain: 0,
       preNoMainPassResourceDrain: 0,
@@ -7139,6 +7191,7 @@
     const earlyPassNoMainSamples = [];
     const resourceLockMainUnlockSamples = [];
     const resourceLockNoDirectScanUnlockSamples = [];
+    const resourceLockNoDiscardAnalyzeUnlockSamples = [];
     const resourceLockWeakLaunchUnlockSamples = [];
     const quickBeforePassNoMainSamples = [];
     const preNoMainPassResourceDrainSamples = [];
@@ -7437,6 +7490,12 @@
     );
     resourceLockNoDirectScanUnlockSamples.push(...allResourceLockNoDirectScanUnlockSamples.slice(0, 12));
     opportunities.resourceLockNoDirectScanUnlock = allResourceLockNoDirectScanUnlockSamples.length;
+    const allResourceLockNoDiscardAnalyzeUnlockSamples = buildResourceLockNoDiscardAnalyzeUnlockSamples(
+      allEarlyPassNoMainSamples,
+      Infinity,
+    );
+    resourceLockNoDiscardAnalyzeUnlockSamples.push(...allResourceLockNoDiscardAnalyzeUnlockSamples.slice(0, 12));
+    opportunities.resourceLockNoDiscardAnalyzeUnlock = allResourceLockNoDiscardAnalyzeUnlockSamples.length;
     const allResourceLockWeakLaunchUnlockSamples = buildResourceLockWeakLaunchUnlockSamples(
       allEarlyPassNoMainSamples,
       Infinity,
@@ -7539,6 +7598,7 @@
       earlyPassNoMainSamples,
       resourceLockMainUnlockSamples,
       resourceLockNoDirectScanUnlockSamples,
+      resourceLockNoDiscardAnalyzeUnlockSamples,
       resourceLockWeakLaunchUnlockSamples,
       earlyPassNoMainReasonCounts,
       quickBeforePassNoMainSamples,
@@ -7632,6 +7692,7 @@
     const mergedEarlyPassNoMainSamples = [];
     const mergedResourceLockMainUnlockSamples = [];
     const mergedResourceLockNoDirectScanUnlockSamples = [];
+    const mergedResourceLockNoDiscardAnalyzeUnlockSamples = [];
     const mergedResourceLockWeakLaunchUnlockSamples = [];
     const mergedEarlyPassNoMainReasonCounts = {};
     const mergedQuickBeforePassNoMainSamples = [];
@@ -7739,6 +7800,17 @@
           ...analysis.resourceLockNoDirectScanUnlockSamples.slice(
             0,
             12 - mergedResourceLockNoDirectScanUnlockSamples.length,
+          ),
+        );
+      }
+      if (
+        mergedResourceLockNoDiscardAnalyzeUnlockSamples.length < 12
+        && Array.isArray(analysis.resourceLockNoDiscardAnalyzeUnlockSamples)
+      ) {
+        mergedResourceLockNoDiscardAnalyzeUnlockSamples.push(
+          ...analysis.resourceLockNoDiscardAnalyzeUnlockSamples.slice(
+            0,
+            12 - mergedResourceLockNoDiscardAnalyzeUnlockSamples.length,
           ),
         );
       }
@@ -7996,6 +8068,7 @@
       d1TechBalanceBottleneckSamples,
       resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
       resourceLockNoDirectScanUnlockSamples: mergedResourceLockNoDirectScanUnlockSamples,
+      resourceLockNoDiscardAnalyzeUnlockSamples: mergedResourceLockNoDiscardAnalyzeUnlockSamples,
       resourceLockWeakLaunchUnlockSamples: mergedResourceLockWeakLaunchUnlockSamples,
       quickBeforePassNoMainSamples: mergedQuickBeforePassNoMainSamples,
       preNoMainPassResourceDrainSamples: mergedPreNoMainPassResourceDrainSamples,
@@ -8061,6 +8134,7 @@
       earlyPassNoMainSamples: sortEarlyPassNoMainSamples(mergedEarlyPassNoMainSamples),
       resourceLockMainUnlockSamples: sortResourceLockMainUnlockSamples(mergedResourceLockMainUnlockSamples),
       resourceLockNoDirectScanUnlockSamples: mergedResourceLockNoDirectScanUnlockSamples,
+      resourceLockNoDiscardAnalyzeUnlockSamples: mergedResourceLockNoDiscardAnalyzeUnlockSamples,
       resourceLockWeakLaunchUnlockSamples: mergedResourceLockWeakLaunchUnlockSamples,
       earlyPassNoMainReasonCounts: mergedEarlyPassNoMainReasonCounts,
       quickBeforePassNoMainSamples: sortEarlyPassNoMainSamples(mergedQuickBeforePassNoMainSamples),

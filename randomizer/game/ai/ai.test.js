@@ -1889,6 +1889,60 @@ assert.equal(
   "energy-for-credit",
 );
 
+const resourceLockNoDiscardAnalyzeReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [{
+    type: "turn-action",
+    roundNumber: 2,
+    turnNumber: 9,
+    rawTurnNumber: 36,
+    playerId: "player-green",
+    playerLabel: "绿色",
+    playerResources: { score: 54, credits: 2, energy: 0, publicity: 3, handSize: 1, availableData: 0 },
+    details: {
+      action: { id: "pass", kind: "pass", score: -2.3 },
+      candidates: [
+        { id: "pass", kind: "pass", available: true, score: -2.3 },
+        { id: "launch", kind: "main", available: true, score: -21.247 },
+        { id: "playCard", kind: "main", available: false, score: 0, reason: "没有资源可支付的普通手牌" },
+      ],
+      resourceLockTradePreviews: [{
+        tradeId: "credits-for-energy",
+        label: "2信用点 → 1能量",
+        cost: { credits: 2 },
+        gain: { energy: 1 },
+        discardPlan: { ok: true, handCost: 0, totalCost: 12, selectedCards: [] },
+        resourcesAfterTrade: { credits: 0, energy: 1, publicity: 3, handSize: 1 },
+        bestAction: { actionId: "analyze", score: 35.109, directScoreGain: 0 },
+        unlockedActions: [{ actionId: "analyze", score: 35.109, directScoreGain: 0 }],
+      }],
+    },
+  }],
+  playerResults: [{ playerId: "player-green", playerLabel: "绿色", finalScore: 172 }],
+};
+const resourceLockNoDiscardAnalyzeAnalysis = analytics.analyzeBattleReport(resourceLockNoDiscardAnalyzeReport);
+assert.equal(resourceLockNoDiscardAnalyzeAnalysis.opportunities.resourceLockMainUnlock, 1);
+assert.equal(resourceLockNoDiscardAnalyzeAnalysis.opportunities.resourceLockNoDiscardAnalyzeUnlock, 1);
+assert.equal(
+  resourceLockNoDiscardAnalyzeAnalysis.resourceLockNoDiscardAnalyzeUnlockSamples[0].bestResourceLockTrade.tradeId,
+  "credits-for-energy",
+);
+assert.equal(
+  resourceLockNoDiscardAnalyzeAnalysis.resourceLockNoDiscardAnalyzeUnlockSamples[0].bestResourceLockTrade.bestAction.actionId,
+  "analyze",
+);
+assert(
+  resourceLockNoDiscardAnalyzeAnalysis.recommendations.some(
+    (entry) => entry.id === "classify-resource-lock-no-discard-analyze",
+  ),
+);
+const resourceLockNoDiscardAnalyzeSummary = analytics.summarizeBattleReports([resourceLockNoDiscardAnalyzeReport]);
+assert.equal(resourceLockNoDiscardAnalyzeSummary.opportunities.resourceLockNoDiscardAnalyzeUnlock, 1);
+assert.equal(
+  resourceLockNoDiscardAnalyzeSummary.resourceLockNoDiscardAnalyzeUnlockSamples[0].bestResourceLockTrade.tradeId,
+  "credits-for-energy",
+);
+
 const postPassQuickReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
   logs: [
