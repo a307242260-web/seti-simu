@@ -19214,6 +19214,50 @@
       return graphFinalMarginal <= 4;
     }
 
+    function hasAiPassActionThisTurn(playerId = getCurrentPlayer()?.id) {
+      if (!playerId) return false;
+      return (aiAutoBattleState.logs || []).some((entry) => (
+        entry?.type === "turn-action"
+        && entry.roundNumber === turnState.roundNumber
+        && entry.rawTurnNumber === turnState.turnNumber
+        && entry.playerId === playerId
+        && entry.details?.action?.id === "pass"
+      ));
+    }
+
+    function shouldCapPostPassNoCashoutCardCorner(candidate = {}, player = getCurrentPlayer()) {
+      if (!player || candidate?.id !== "cardCorner") return false;
+      const alreadyPassed = (turnState.passedPlayerIds || []).includes(player.id)
+        || hasAiPassActionThisTurn(player.id);
+      if (!alreadyPassed) return false;
+      if (normalizeAiDifficulty(player?.aiDifficulty || aiAutoBattleState.aiDifficulty) !== AI_DIFFICULTY_WEAK_START) {
+        return false;
+      }
+      const currentScore = Math.max(0, aiNumber(player.resources?.score));
+      if (currentScore > 65) return false;
+
+      const breakdown = candidate.valueBreakdown || {};
+      const directScoreGain = Math.max(0, aiNumber(candidate.directScoreGain));
+      const followupMainActionScore = Math.max(0, aiNumber(breakdown.followupMainActionScore));
+      const stagedTechSetupScore = Math.max(0, aiNumber(breakdown.stagedTechSetupScore));
+      const moveFollowupScore = Math.max(0, aiNumber(breakdown.moveFollowupScore));
+      const moveFollowupDirectScore = Math.max(0, aiNumber(breakdown.moveFollowupDirectScore));
+      if (
+        directScoreGain > 0
+        || followupMainActionScore > 0
+        || stagedTechSetupScore > 0
+        || moveFollowupScore > 0
+        || moveFollowupDirectScore > 0
+      ) {
+        return false;
+      }
+      const candidateScore = aiNumber(candidate.score);
+      if (candidate.actionKind === "resource") return candidateScore > 0;
+      if (candidate.actionKind !== "move") return false;
+      if (breakdown.moveHasCashout !== false) return false;
+      return candidateScore > 0 && candidateScore <= 6;
+    }
+
     function applyAiTurnActionSelectionPressure(candidates = []) {
       const round = getAiRoundNumber();
       const currentPlayer = getCurrentPlayer();
@@ -19255,6 +19299,7 @@
           candidate?.available !== false
           && candidate.id !== "end-turn"
           && candidate.id !== "pass"
+          && !shouldCapPostPassNoCashoutCardCorner(candidate, currentPlayer)
         ))
         .reduce((best, candidate) => {
           const score = aiNumber(candidate.score);
@@ -19312,6 +19357,31 @@
             selectionAdjustment: {
               ...(adjusted.selectionAdjustment || {}),
               quickScoreFloor: Math.round((explicitScore - (Number.isFinite(graphNet) ? graphNet : 0)) * 100) / 100,
+            },
+          };
+        }
+        if (shouldCapPostPassNoCashoutCardCorner(candidate, currentPlayer)) {
+          const cappedScore = Math.min(aiNumber(adjusted.score), -0.75);
+          const currentNet = Number(adjusted.actionGraph?.net);
+          adjusted = {
+            ...adjusted,
+            score: cappedScore,
+            actionGraph: adjusted.actionGraph
+              ? {
+                ...adjusted.actionGraph,
+                uncappedPostPassNoCashoutNet: adjusted.actionGraph.net,
+                net: Math.min(Number.isFinite(currentNet) ? currentNet : cappedScore, -0.75),
+              }
+              : adjusted.actionGraph,
+            selectionAdjustment: {
+              ...(adjusted.selectionAdjustment || {}),
+              postPassNoCashoutCardCornerCap: true,
+              originalScore: Math.round(aiNumber(candidate.score) * 100) / 100,
+              originalNet: Number.isFinite(graphNet) ? Math.round(graphNet * 100) / 100 : null,
+            },
+            valueBreakdown: {
+              ...(adjusted.valueBreakdown || {}),
+              postPassNoCashoutCardCornerCap: true,
             },
           };
         }

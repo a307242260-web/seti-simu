@@ -114,6 +114,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     roundNumber: options.roundNumber || 1,
     turnNumber: options.turnNumber || 1,
     startPlayerId: white.id,
+    passedPlayerIds: options.passedPlayerIds || [],
   };
   let pendingJiuzheCardPlay = pendingPlayerColor
     ? {
@@ -3926,6 +3927,106 @@ function makeYichangdianAlienState(options = {}) {
     repeatedCorner.actionGraph?.net,
     -0.5,
     "cap should lower graph net below the normal end-turn candidate",
+  );
+}
+
+{
+  const turnChoices = [];
+  const selectedActions = [];
+  const scoreForChoice = (candidate) => {
+    const graphNet = Number(candidate?.actionGraph?.net);
+    if (Number.isFinite(graphNet)) return graphNet;
+    return Number(candidate?.score || 0);
+  };
+  const resourceCornerCard = {
+    id: "post-pass-resource-corner",
+    cardName: "Post-pass resource corner",
+    price: 4,
+    resourceReward: { gain: { credits: 1 } },
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    aiDifficulty: "weak_start",
+    roundNumber: 2,
+    pendingActionExecuted: true,
+    passedPlayerIds: ["player-blue"],
+    recordCardCorner: true,
+    blueResources: { score: 32, credits: 0, energy: 1, publicity: 1, availableData: 0, handSize: 6 },
+    blueHand: [
+      resourceCornerCard,
+      ...Array.from({ length: 5 }, (_value, index) => ({
+        id: `post-pass-padding-${index}`,
+        cardName: `Post-pass padding ${index}`,
+        price: 4,
+      })),
+    ],
+    actionGraph: {
+      buildActionGraph: (candidates) => candidates.map((candidate) => {
+        if (candidate.id === "cardCorner") {
+          return {
+            ...candidate,
+            gain: 9,
+            cost: 0,
+            finalMarginal: 2,
+            goalBonus: 7,
+            feasibility: 1,
+            net: 9,
+          };
+        }
+        if (candidate.id === "end-turn") {
+          return {
+            ...candidate,
+            gain: 0,
+            cost: 0,
+            finalMarginal: 0,
+            goalBonus: 0,
+            feasibility: 1,
+            net: -0.5,
+          };
+        }
+        return {
+          ...candidate,
+          gain: Number(candidate.gain || candidate.score || 0),
+          cost: Number(candidate.cost || 0),
+          finalMarginal: 0,
+          goalBonus: 0,
+          feasibility: 1,
+          net: Number(candidate.score || 0),
+        };
+      }),
+    },
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => scoreForChoice(right) - scoreForChoice(left))[0] || null,
+    onChooseTurnAction: (candidates, selected) => {
+      turnChoices.push(candidates);
+      selectedActions.push(selected);
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should end turn after a post-pass no-cashout resource corner is capped");
+  assert.equal(selectedActions[0]?.id, "end-turn");
+  const cappedCorner = turnChoices[0].find((candidate) => candidate.id === "cardCorner");
+  assert.ok(cappedCorner, "post-pass resource corner should remain visible for diagnostics");
+  assert.equal(
+    cappedCorner.selectionAdjustment?.postPassNoCashoutCardCornerCap,
+    true,
+    "post-pass no-cashout resource corner should record its cap",
+  );
+  assert.equal(
+    cappedCorner.actionGraph?.net,
+    -0.75,
+    "cap should stay below end-turn after quick score floor runs",
   );
 }
 
