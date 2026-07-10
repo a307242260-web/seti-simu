@@ -6680,6 +6680,16 @@
       }
       const bestAction = postTradeMainActions[0] || null;
       if (!bestAction) return null;
+      const weakStartFinalDeadHandAnalyzeUnlock = !allowExtendedResourceLock
+        && tradeId === "cards-for-energy"
+        && bestAction.actionId === "analyze"
+        && getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && countAiFinalMarksForPlayer(player) >= 3
+        && currentScore >= 110
+        && currentScore <= 170
+        && handCost >= 2
+        && handAfterTrade <= 0
+        && aiNumber(bestAction.score) >= 8;
       const minPostTradeScore = bestAction.actionId === "scan"
         ? (
           getAiRoundNumber() <= 2 && currentScore < 70 && handAfterTrade >= 2
@@ -6692,7 +6702,9 @@
           ? 17
           : bestAction.actionId === "launch"
             ? 18
-            : getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 16 : 18;
+            : weakStartFinalDeadHandAnalyzeUnlock
+              ? 8
+              : getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 16 : 18;
       if (aiNumber(bestAction.score) < minPostTradeScore) return null;
       const launchUnlockSafe = bestAction.actionId === "launch"
         && tradeId === "cards-for-credit"
@@ -6701,12 +6713,18 @@
         && currentScore < 70
         && handCost >= 2
         && aiNumber(bestAction.score) >= 18;
-      if (handAfterTrade <= 0 && aiNumber(bestAction.score) < 35 && !launchUnlockSafe) return null;
+      if (
+        handAfterTrade <= 0
+        && aiNumber(bestAction.score) < 35
+        && !launchUnlockSafe
+        && !weakStartFinalDeadHandAnalyzeUnlock
+      ) return null;
 
       const discardCost = bestAction.actionId === "playCard" && Number.isFinite(bestAction.discardCost)
         ? bestAction.discardCost
         : estimateAiTradeDiscardOpportunityCost(player, trade);
       if (!Number.isFinite(discardCost)) return null;
+      if (weakStartFinalDeadHandAnalyzeUnlock && discardCost > 6.5) return null;
       const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
       if (
         handCost <= 0
@@ -6738,7 +6756,7 @@
         ? Math.min(4, 1.1 + Math.max(0, bestAction.planScore) * 0.16)
         : 0;
       const handBufferBonus = handAfterTrade >= 1 ? 1.5 : 0;
-      const score = bestAction.score * 0.52
+      const score = bestAction.score * (weakStartFinalDeadHandAnalyzeUnlock ? 0.74 : 0.52)
         + bestAction.directScoreGain * 0.7
         + thresholdBonus
         + analyzeBonus
@@ -6747,7 +6765,7 @@
         + launchBonus
         + handBufferBonus
         - discardCost * 0.34;
-      if (score < 7) return null;
+      if (score < (weakStartFinalDeadHandAnalyzeUnlock ? 6 : 7)) return null;
       const reason = bestAction.actionId === "analyze"
         ? (handCost > 0 ? "资源锁：弃牌换能量解锁分析" : "资源锁：信用点换能量解锁分析")
         : `资源锁：交易解锁${bestAction.actionId === "scan" ? "扫描" : bestAction.actionId === "launch" ? "发射" : "打牌"}`;
@@ -6784,6 +6802,7 @@
           launchBonus: roundAiScore(launchBonus),
           earlyLowScoreScanUnlock,
           directScoreScanUnlock,
+          weakStartFinalDeadHandAnalyzeUnlock,
           weakStartAlienPlayUnlock: weakStartAlienPlayUnlockSafe,
           weakStartAlienPlayConcreteValue: roundAiScore(weakStartAlienPlayConcreteValue),
           bestExistingScore: Number.isFinite(bestExistingScore) ? roundAiScore(bestExistingScore) : null,

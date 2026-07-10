@@ -5279,6 +5279,96 @@ function makeYichangdianAlienState(options = {}) {
   const placedTokens = Array.from({ length: 6 }, (_item, index) => ({ placementSlot: index + 1 }));
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
+    roundNumber: 4,
+    aiDifficulty: "weak_start",
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "cards-for-energy": {
+        id: "cards-for-energy",
+        label: "2 cards -> 1 energy",
+        cost: { handSize: 2 },
+        gain: { energy: 1 },
+      },
+    },
+    blueResources: { score: 136, credits: 1, energy: 0, publicity: 0, availableData: 3, handSize: 2 },
+    blueHand: [
+      { id: "dead-analyze-a", cardName: "Dead Analyze A", price: 2 },
+      { id: "dead-analyze-b", cardName: "Dead Analyze B", price: 2 },
+    ],
+    finalScoringState: {
+      tiles: {
+        final_a2: {
+          id: "final_a2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_c2: {
+          id: "final_c2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a2: "a2",
+      final_c2: "c2",
+      final_d2: "d2",
+    },
+    data: {
+      ANALYZE_REQUIRED_COMPUTER_SLOT: 6,
+      ANALYZE_ENERGY_COST: 1,
+      canAnalyzeData: (player) => (
+        Number(player?.resources?.energy || 0) >= 1
+          ? { ok: true }
+          : { ok: false, message: "energy missing" }
+      ),
+      listComputerPlacedTokens: () => placedTokens,
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "weak_start final low-tail should trade dead hand for analyze energy");
+  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "cards-for-energy" });
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-energy");
+  assert.ok(tradeCandidate, "weak_start final dead-hand analyze unlock trade should be enumerated");
+  assert.equal(tradeCandidate.valueBreakdown?.resourceLockMainUnlockTrade, true);
+  assert.equal(tradeCandidate.valueBreakdown?.weakStartFinalDeadHandAnalyzeUnlock, true);
+  assert.equal(tradeCandidate.valueBreakdown?.unlockedMainAction?.actionId, "analyze");
+  assert.ok(
+    Number(tradeCandidate.valueBreakdown?.unlockedMainAction?.score || 0) >= 8,
+    "the dead-hand exception should still require a concrete analyze score",
+  );
+  assert.equal(tradeCandidate.valueBreakdown?.handAfterTrade, 0);
+  assert.ok(
+    Number(tradeCandidate.valueBreakdown?.discardCost || 0) <= 6.5,
+    "the dead-hand exception should stay limited to low-opportunity-cost discards",
+  );
+}
+
+{
+  const turnChoices = [];
+  const placedTokens = Array.from({ length: 6 }, (_item, index) => ({ placementSlot: index + 1 }));
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
     roundNumber: 3,
     canStartMainAction: true,
     realisticCanAfford: true,
