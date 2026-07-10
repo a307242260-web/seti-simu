@@ -15203,12 +15203,13 @@
       }
       if (moveReward) {
         value += scoreAiResourceBundle(moveReward.gain || {});
-        const bestMove = listAiEffectMoveCandidates({
+        const moveCandidates = listAiEffectMoveCandidates({
           id: "cardCornerMovePreview",
           free: true,
           player,
           poolRemaining: moveReward.movementPoints || 1,
-        }).sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null;
+        }).sort((left, right) => Number(right.score || 0) - Number(left.score || 0));
+        const bestMove = moveCandidates[0] || null;
         if (!bestMove) return { value: -Infinity, resourceReward, moveReward, bestMove: null };
         const bestMoveScore = aiNumber(bestMove.score);
         if (bestMoveScore < 0) return { value: -Infinity, resourceReward, moveReward, bestMove };
@@ -15292,6 +15293,28 @@
       };
     }
 
+    function getAiNextTurnMoveFollowupScale() {
+      return getAiRoundNumber() <= 2 ? 0.24 : 0.16;
+    }
+
+    function scoreAiCardCornerMoveFollowupMainAction(coordinate, player = getCurrentPlayer()) {
+      if (!coordinate) return null;
+      const immediate = Boolean(canStartMainAction() && !state.pendingActionExecuted);
+      const followup = scoreAiFollowupMainActionAfterMove(coordinate, player, {
+        ignoreMainActionUsed: !immediate,
+      });
+      const rawScore = Math.max(0, aiNumber(followup?.score));
+      if (rawScore <= 0) return followup;
+      const scoreScale = immediate ? 1 : getAiNextTurnMoveFollowupScale();
+      return {
+        ...followup,
+        timing: immediate ? "immediate" : "next_turn",
+        rawScore: roundAiScore(rawScore),
+        scoreScale,
+        score: roundAiScore(rawScore * scoreScale),
+      };
+    }
+
     function scoreAiCardCornerStagedTechSetup(reward, player = getCurrentPlayer()) {
       if (!player || !canStartMainAction()) return 0;
       const gain = getAiCardCornerResourceGain(reward);
@@ -15363,11 +15386,13 @@
         ?? scoreAiCardEndGameExpectedValue(card, model, currentPlayer);
       const alienCard = isAiAlienMainPlayCard(card);
       const moveFollowupMainAction = reward.bestMove?.to
-        ? scoreAiFollowupMainActionAfterMove(reward.bestMove.to, currentPlayer, {
-          ignoreMainActionUsed: !canStartMainAction(),
-        })
+        ? scoreAiCardCornerMoveFollowupMainAction(reward.bestMove.to, currentPlayer)
         : null;
       const moveFollowupScore = Math.max(0, aiNumber(moveFollowupMainAction?.score));
+      const moveFollowupRawScore = Math.max(0, aiNumber(
+        moveFollowupMainAction?.rawScore ?? moveFollowupMainAction?.score,
+      ));
+      const moveFollowupScoreScale = Math.max(0, aiNumber(moveFollowupMainAction?.scoreScale ?? 1));
       const moveFollowupDirectScore = Math.max(
         0,
         aiNumber(moveFollowupMainAction?.directScoreGain),
@@ -15497,6 +15522,9 @@
           alienCardPreservePenalty,
           noCashoutMovePenalty,
           moveFollowupScore,
+          moveFollowupRawScore,
+          moveFollowupScoreScale,
+          moveFollowupTiming: moveFollowupMainAction?.timing || null,
           moveFollowupDirectScore,
           moveHasCashout,
           handPressure,
@@ -15704,7 +15732,7 @@
         routeScoreForGain = Math.min(routeScoreForGain, insufficientCashoutAdjustment.routeScoreCap);
       }
       const followupScoreScale = insufficientCashoutAdjustment?.followupScoreScale ?? 1;
-      const nextTurnFollowupScale = getAiRoundNumber() <= 2 ? 0.24 : 0.16;
+      const nextTurnFollowupScale = getAiNextTurnMoveFollowupScale();
       const followupGain = (
         followupMainAction.timing === "next_turn"
           ? Math.max(0, aiNumber(followupMainAction.score)) * nextTurnFollowupScale

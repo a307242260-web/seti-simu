@@ -3741,6 +3741,95 @@ function makeYichangdianAlienState(options = {}) {
 
 {
   const turnChoices = [];
+  const moveCornerCard = {
+    id: "move-corner-deferred-followup",
+    cardName: "Move corner deferred followup",
+    typeCode: 1,
+    price: 5,
+    moveReward: { movementPoints: 1, gain: {} },
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 2,
+    pendingActionExecuted: true,
+    recordCardCorner: true,
+    blueResources: { score: 45, credits: 4, energy: 4, publicity: 0, availableData: 0, handSize: 7 },
+    blueHand: [
+      moveCornerCard,
+      ...Array.from({ length: 6 }, (_value, index) => ({
+        id: `move-corner-padding-${index}`,
+        cardName: `Move corner padding ${index}`,
+        typeCode: 1,
+        price: 5,
+      })),
+    ],
+    allowedMoveDeltas: [
+      { deltaX: 1, deltaY: 0 },
+      { deltaX: 0, deltaY: 1 },
+    ],
+    movableTokens: [{
+      id: 901,
+      kind: "standard",
+      playerId: "player-blue",
+      color: "blue",
+      sector: { x: 0, y: 2 },
+      sectorX: 0,
+      sectorY: 2,
+    }],
+    planetLocations: [{ planetId: "jupiter", label: "木星", name: "木星", x: 1, y: 2 }],
+    planetStats: {
+      canAddLandingMarker: (_state, planetId) => planetId === "jupiter",
+      canAddOrbitMarker: (_state, planetId) => planetId === "jupiter",
+      getAvailableSatellitesForLanding: () => [],
+      getPlanetLandingCount: () => 0,
+      getPlanetOrbitCount: () => 0,
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .find((candidate) => candidate.id === "cardCorner")
+      || candidates.find((candidate) => candidate.available !== false)
+      || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should still be able to use a card-corner move after its main action");
+  const cornerCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "cardCorner" && candidate.cardInstanceId === moveCornerCard.id);
+  assert.ok(cornerCandidate, "deferred move card-corner candidate should be visible");
+  assert.equal(
+    cornerCandidate.moveFollowupMainAction?.timing,
+    "next_turn",
+    "card-corner move followup should be deferred after the main action has already been used",
+  );
+  assert.ok(
+    Number(cornerCandidate.moveFollowupMainAction?.rawScore || 0)
+      > Number(cornerCandidate.moveFollowupMainAction?.score || 0),
+    "deferred card-corner move followup should keep rawScore but apply a smaller decision score",
+  );
+  assert.equal(
+    Number(cornerCandidate.valueBreakdown?.moveFollowupScore),
+    Number(cornerCandidate.moveFollowupMainAction?.score),
+    "value breakdown should expose the applied followup score, not the raw immediate score",
+  );
+  assert.ok(
+    Number(cornerCandidate.valueBreakdown?.moveFollowupScoreScale || 0) > 0
+      && Number(cornerCandidate.valueBreakdown?.moveFollowupScoreScale || 0) < 1,
+    "deferred card-corner move followup should record a next-turn discount scale",
+  );
+}
+
+{
+  const turnChoices = [];
   const selectedActions = [];
   const scoreForChoice = (candidate) => {
     const graphNet = Number(candidate?.actionGraph?.net);
