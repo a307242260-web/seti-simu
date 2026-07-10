@@ -2986,6 +2986,8 @@ const orange4RaceSensitiveReport = {
                   rawRacePenalty: 6,
                   routeDistance: 99,
                   launchRouteDistance: 99,
+                  launchRoutePlanScore: 5.2,
+                  launchRouteCardId: "b_129.webp",
                   planetId: "mars",
                   satelliteId: "phobos-deimos",
                 },
@@ -3036,7 +3038,9 @@ const orange4RaceSensitiveAnalysis = analytics.analyzeBattleReport(orange4RaceSe
 assert.equal(orange4RaceSensitiveAnalysis.opportunities.orange4RaceSensitiveTech, 1);
 assert.ok(orange4RaceSensitiveAnalysis.orange4RaceSensitiveTechSamples[0].riskTags.includes("target-taken-by-other"));
 assert.ok(orange4RaceSensitiveAnalysis.orange4RaceSensitiveTechSamples[0].riskTags.includes("no-current-route"));
+assert.ok(orange4RaceSensitiveAnalysis.orange4RaceSensitiveTechSamples[0].riskTags.includes("launch-card-route-only"));
 assert.ok(orange4RaceSensitiveAnalysis.orange4RaceSensitiveTechTagCounts.some((entry) => entry.key === "target-taken-by-other" && entry.count === 1));
+assert.ok(orange4RaceSensitiveAnalysis.orange4RaceSensitiveTechTagCounts.some((entry) => entry.key === "launch-card-route-only" && entry.count === 1));
 assert.equal(orange4RaceSensitiveAnalysis.orange4RaceActionableCounterfactualSamples.length, 1);
 assert.equal(orange4RaceSensitiveAnalysis.orange4RaceActionableCounterfactualSamples[0].replacementTech.tileId, "blue1");
 assert.ok(orange4RaceSensitiveAnalysis.orange4RaceActionableCounterfactualSamples[0].riskTags.includes("target-taken-by-other"));

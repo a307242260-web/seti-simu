@@ -2575,6 +2575,8 @@
     const scoreGap = nextBest ? numeric(orange4.score) - numeric(nextBest.score) : null;
     const routeDistance = numeric(profile.routeDistance);
     const launchRouteDistance = numeric(profile.launchRouteDistance);
+    const launchRoutePlanScore = numeric(profile.launchRoutePlanScore);
+    const launchRouteCardId = profile.launchRouteCardId || null;
     const racePenalty = numeric(profile.racePenalty);
     const rawRacePenalty = numeric(profile.rawRacePenalty);
     const sensitive = (
@@ -2619,6 +2621,9 @@
     if (routeDistance >= 99) riskTags.push("no-current-route");
     else if (routeDistance >= 4) riskTags.push("far-satellite-route");
     if (routeDistance >= 99 && launchRouteDistance < 99) riskTags.push("launch-route-only");
+    if (routeDistance >= 99 && launchRouteDistance >= 99 && (launchRoutePlanScore > 0 || launchRouteCardId)) {
+      riskTags.push("launch-card-route-only");
+    }
     if (racePenalty > 0 || rawRacePenalty > 0) riskTags.push("race-penalty");
     if (!targetCashedBySelf) riskTags.push("target-not-cashed-by-self");
     if (targetTakenByOther) riskTags.push("target-taken-by-other");
