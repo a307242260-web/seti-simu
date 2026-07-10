@@ -187,6 +187,7 @@
     const combined = effects.reduce((summary, entry) => {
       const effect = entry.effect || {};
       summary.resourceScore += Number(effect.resources?.score || 0);
+      summary.immediatePublicity += Number(effect.resources?.publicity || 0);
       summary.credits += Number(effect.resources?.credits || 0) + Number(effect.baseIncome?.credits || 0) + Number(effect.income?.credits || 0);
       summary.energy += Number(effect.resources?.energy || 0) + Number(effect.baseIncome?.energy || 0) + Number(effect.income?.energy || 0);
       summary.hand += Number(effect.blindDraw || 0) + Number(effect.baseIncome?.handSize || 0) + Number(effect.income?.handSize || 0);
@@ -199,6 +200,7 @@
       return summary;
     }, {
       resourceScore: 0,
+      immediatePublicity: 0,
       credits: 0,
       energy: 0,
       hand: 0,
@@ -234,6 +236,9 @@
     if (combined.data >= 1 || combined.scan >= 2) addOpeningGoal(goals, "GRAB_TRACE_BLUE", combined.data + combined.scan * 0.35);
     if (combined.traces || combined.orbits) addOpeningGoal(goals, "GRAB_TRACE_YELLOW", combined.traces + combined.orbits * 0.35);
     const weakStartIncomePressure = getWeakStartCheatLabOpeningIncomePressure(industry, options);
+    const weakStartResearchReady = String(options.aiDifficulty || options.player?.aiDifficulty || "") === "weak_start"
+      && combined.immediatePublicity >= 4;
+    if (weakStartResearchReady) score += 3.2;
     if (combined.incomeIncreases >= 2 || combined.credits >= 3) {
       addOpeningGoal(goals, "OPENING_INCOME", combined.incomeIncreases + combined.credits * 0.25 + weakStartIncomePressure);
     }

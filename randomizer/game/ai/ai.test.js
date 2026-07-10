@@ -954,6 +954,25 @@ assert.equal(weakForcedOpening.openingPlan.summary.incomeIncreases, 4);
 assert.equal(weakForcedOpening.openingPlan.goals.OPENING_INCOME, 6);
 assert.ok(weakForcedOpening.openingPlan.topPlans.every((plan) => plan.summary.incomeIncreases === 4));
 
+const weakResearchOpeningOffer = {
+  industryOptions: [{ id: "industry:cheat-lab", label: "作弊实验室" }],
+  initialOptions: [
+    { id: "initial:6", label: "初始牌 6" },
+    { id: "initial:2", label: "初始牌 2" },
+    { id: "initial:16", label: "初始牌 16" },
+  ],
+};
+const weakResearchOpening = policy.chooseInitialSelection(weakResearchOpeningOffer, {
+  roundNumber: 1,
+  forcedIndustryCard: weakResearchOpeningOffer.industryOptions[0],
+  aiDifficulty: "weak_start",
+});
+assert.deepEqual(
+  weakResearchOpening.openingPlan.topPlans[0].initialNumbers,
+  [2, 16],
+  "weak_start opening should recognize the first research publicity threshold over a generic scan tie",
+);
+
 const huanyuOpeningOffer = {
   industryOptions: [{ id: "industry:huanyu.png", label: "寰宇超动力" }],
   initialOptions: [
