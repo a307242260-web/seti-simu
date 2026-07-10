@@ -7071,6 +7071,19 @@
       };
       const midgameAnalyzeUnlock = Object.values(midgameAnalyzeUnlockByTrade)
         .some((score) => aiNumber(score) >= 7.5);
+      const weakStartPostMainPublicRefillBaseWindow = normalizeAiDifficulty(
+        player?.aiDifficulty || aiAutoBattleState.aiDifficulty,
+      ) === AI_DIFFICULTY_WEAK_START
+        && getAiRoundNumber() >= 3
+        && state.pendingActionExecuted
+        && !mainActionOpen
+        && finalMarks >= 3
+        && !recoveryThreshold
+        && currentScore >= 65
+        && currentScore < 130
+        && handSize <= 0
+        && (credits >= 6 || publicity >= 6)
+        && !(turnState.passedPlayerIds || []).includes(player.id);
       if (
         !recoveryThreshold
         && !hasImmediateRouteRecovery
@@ -7082,6 +7095,7 @@
         && !finalLowScoreScanUnlock
         && !b2SectorScanUnlock
         && !midgameAnalyzeUnlock
+        && !weakStartPostMainPublicRefillBaseWindow
       ) return [];
       const scoreToNextThreshold = recoveryThreshold ? Math.max(1, recoveryThreshold - currentScore) : 0;
       const closeThirdMarkScanSetup = getAiRoundNumber() >= FINAL_ROUND_NUMBER
@@ -7100,6 +7114,7 @@
         && !finalPreMainCashoutHandRefillWindow
         && !finalLowScoreScanUnlock
         && !midgameAnalyzeUnlock
+        && !weakStartPostMainPublicRefillBaseWindow
       ) return [];
       const closeScanCashoutWindow = recoveryThreshold <= 50 ? 10 : 8;
       const closeScanDirectScoreGain = getAiRoundNumber() >= FINAL_ROUND_NUMBER
@@ -7192,7 +7207,7 @@
       const launchMoveRecoveryValue = Math.min(8, bestLaunchMoveRecoveryScore * 0.35);
       const planetCashoutRecoveryValue = Math.min(12, bestPlanetCashoutRecoveryScore * 0.32);
       const baseValue = (8 + lowEngine + thresholdPressure + Math.max(0, 2 - finalMarks) * 2.5 + launchMoveRecoveryValue + planetCashoutRecoveryValue) * urgency;
-      const rankedPublicTradeCards = (mainActionOpen || canPrepareFinalThresholdAction)
+      const rankedPublicTradeCards = (mainActionOpen || canPrepareFinalThresholdAction || weakStartPostMainPublicRefillBaseWindow)
         ? (cardState.publicCards || [])
           .map((card, slotIndex) => ({
             card,
@@ -7250,6 +7265,23 @@
         && handSize <= 1
         && bestPublicTradeCardScore < (highScoreGapTo300 <= 10 ? 0 : 5)
         && !bestPublicTradeCardProfile.hasConcreteSignal;
+      const weakStartPostMainPublicRefill = weakStartPostMainPublicRefillBaseWindow
+        && bestPublicTradeCardScore >= 24
+        && aiNumber(bestPublicTradeCardProfile.playScore) >= 18
+        && bestPublicTradeCardProfile.hasConcreteSignal;
+      const weakStartPostMainCreditRefill = weakStartPostMainPublicRefill
+        && credits >= 6
+        && isPublicRefillStillPositiveAfterQuickTrade("credits-for-card");
+      const weakStartPostMainPublicityRefill = weakStartPostMainPublicRefill
+        && !weakStartPostMainCreditRefill
+        && publicity >= 6
+        && isPublicRefillStillPositiveAfterQuickTrade("publicity-for-card");
+      const weakStartPostMainPublicRefillValue = weakStartPostMainPublicRefill
+        ? 6
+          + Math.min(10, bestPublicTradeCardScore * 0.28)
+          + Math.min(6, aiNumber(bestPublicTradeCardProfile.playScore) * 0.14)
+          + Math.max(0, 130 - currentScore) * 0.035
+        : 0;
       const cardsForPickCardTrade = quickTrades.getTradeAction("cards-for-pick-card");
       const cardsForPickCardCheck = cardsForPickCardTrade
         ? (quickTrades.canExecuteTrade?.("cards-for-pick-card", createActionContext()) || { ok: false })
@@ -7460,19 +7492,23 @@
       const tradeSpecs = [
         {
           tradeId: "credits-for-card",
-          enabled: (mainActionOpen || canPrepareFinalThresholdAction)
+          enabled: ((mainActionOpen || canPrepareFinalThresholdAction)
             && credits >= 2
             && (handSize <= 1 || finalHighScoreCreditRefill)
             && !avoidCloseSecondMarkCreditCardTrap
-            && (recoveryThreshold || finalLowHandCreditRefill || finalHighScoreCreditRefill),
+            && (recoveryThreshold || finalLowHandCreditRefill || finalHighScoreCreditRefill))
+            || weakStartPostMainCreditRefill,
           value: baseValue
             + (handSize <= 0 ? 6 : 3)
             + (credits >= 6 ? 2 : 0)
-            + (finalHighScoreCreditRefill ? finalHighScoreRefillValue : 0),
+            + (finalHighScoreCreditRefill ? finalHighScoreRefillValue : 0)
+            + (weakStartPostMainCreditRefill ? weakStartPostMainPublicRefillValue : 0),
           reason: finalLowHandCreditRefill
             ? "终局低手牌：信用点精选恢复打牌"
             : finalHighScoreCreditRefill
               ? "高分冲刺：信用点精选找最后得分牌"
+            : weakStartPostMainCreditRefill
+              ? "弱起步保牌：主行动后信用点精选下轮得分牌"
             : "后期落后：信用点换牌恢复行动",
         },
         {
@@ -7612,17 +7648,18 @@
         },
         {
           tradeId: "publicity-for-card",
-          enabled: (mainActionOpen || canPrepareFinalThresholdAction) && publicity >= 3 && (
-            (handSize <= 1 && hasUsefulPublicTradeCard)
-            || finalLowHandPublicRefill
-            || finalLowStaleHandPublicRefill
-            || finalHighScorePublicRefill
-            || finalHighScoreBlindRefill
-            || finalPreMainCashoutPublicRefill
-            || finalPreMainSecondCashoutPublicRefill
-            || secondMarkCardSearch
-            || closeSecondMarkCardSearch
-          ),
+          enabled: ((mainActionOpen || canPrepareFinalThresholdAction) && publicity >= 3 && (
+              (handSize <= 1 && hasUsefulPublicTradeCard)
+              || finalLowHandPublicRefill
+              || finalLowStaleHandPublicRefill
+              || finalHighScorePublicRefill
+              || finalHighScoreBlindRefill
+              || finalPreMainCashoutPublicRefill
+              || finalPreMainSecondCashoutPublicRefill
+              || secondMarkCardSearch
+              || closeSecondMarkCardSearch
+            ))
+            || weakStartPostMainPublicityRefill,
           value: baseValue
             + (handSize <= 0 ? 4 : 2)
             + (!(secondMarkCardSearch || closeSecondMarkCardSearch) ? Math.min(6, bestPublicTradeCardScore * 0.22) : 0)
@@ -7635,6 +7672,7 @@
             + (finalHighScorePublicRefill ? finalHighScoreRefillValue : 0)
             + (finalHighScoreBlindRefill ? finalHighScoreBlindRefillValue : 0)
             + preMainCashoutRefillValue
+            + (weakStartPostMainPublicityRefill ? weakStartPostMainPublicRefillValue : 0)
             + ((secondMarkCardSearch || closeSecondMarkCardSearch)
               ? 5 + Math.min(9, bestPublicTradeCardScore * 0.3)
               : 0),
@@ -7651,6 +7689,8 @@
                     ? "高分冲刺：公共牌无收益时盲抽找最后得分牌"
                   : (finalPreMainCashoutPublicRefill || finalPreMainSecondCashoutPublicRefill)
                     ? "高分冲刺：主行动前精选找后续得分牌"
+                    : weakStartPostMainPublicityRefill
+                      ? "弱起步保牌：主行动后宣传精选下轮得分牌"
                     : "后期落后：宣传换牌恢复行动",
         },
       ];
@@ -7717,6 +7757,11 @@
               finalPreMainCashoutPublicRefill,
               finalPreMainSecondCashoutPublicRefill,
               preMainCashoutRefillValue: roundAiScore(preMainCashoutRefillValue),
+              weakStartPostMainPublicRefillBaseWindow,
+              weakStartPostMainPublicRefill,
+              weakStartPostMainCreditRefill,
+              weakStartPostMainPublicityRefill,
+              weakStartPostMainPublicRefillValue: roundAiScore(weakStartPostMainPublicRefillValue),
               bestImmediateMainCashout: bestImmediateMainCashout ? {
                 id: bestImmediateMainCashout.id || null,
                 score: roundAiScore(bestImmediateMainCashoutScore),

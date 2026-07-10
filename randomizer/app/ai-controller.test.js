@@ -6175,6 +6175,145 @@ function makeYichangdianAlienState(options = {}) {
 
 {
   const turnChoices = [];
+  const publicNextTurnScoreCard = {
+    id: "public-post-main-score-card",
+    cardName: "Public post-main score card",
+    price: 2,
+    playEffects: [{ type: "gain_resources", options: { gain: { score: 50 } } }],
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    aiDifficulty: "weak_start",
+    roundNumber: 3,
+    pendingActionExecuted: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "credits-for-card": {
+        id: "credits-for-card",
+        label: "2 credits -> public card",
+        cost: { credits: 2 },
+        gain: { handSize: 1 },
+      },
+    },
+    publicCards: [publicNextTurnScoreCard],
+    blueResources: { score: 70, credits: 8, energy: 0, publicity: 3, availableData: 0, handSize: 0 },
+    blueHand: [],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b2: "b2",
+      final_d2: "d2",
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "credits-for-card")
+      || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "weak_start should preserve a concrete public scoring card after the main action");
+  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "credits-for-card" });
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "credits-for-card");
+  assert.ok(tradeCandidate, "post-main credit refill candidate should be enumerated");
+  assert.equal(tradeCandidate.valueBreakdown?.weakStartPostMainCreditRefill, true);
+}
+
+{
+  const turnChoices = [];
+  const publicNextTurnScoreCard = {
+    id: "public-post-main-default-score-card",
+    cardName: "Public post-main default score card",
+    price: 2,
+    playEffects: [{ type: "gain_resources", options: { gain: { score: 50 } } }],
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    pendingActionExecuted: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "credits-for-card": {
+        id: "credits-for-card",
+        label: "2 credits -> public card",
+        cost: { credits: 2 },
+        gain: { handSize: 1 },
+      },
+    },
+    publicCards: [publicNextTurnScoreCard],
+    blueResources: { score: 70, credits: 8, energy: 0, publicity: 3, availableData: 0, handSize: 0 },
+    blueHand: [],
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b2: "b2",
+      final_d2: "d2",
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: () => null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  harness.controller.runAiAutomationStep();
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "credits-for-card");
+  assert.equal(
+    tradeCandidate,
+    undefined,
+    "post-main weak_start public refill should not affect default difficulty",
+  );
+}
+
+{
+  const turnChoices = [];
   const publicFillerCard = {
     id: "public-payable-filler",
     cardName: "Public payable filler",
