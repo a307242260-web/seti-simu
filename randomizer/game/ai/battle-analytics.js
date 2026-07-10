@@ -52,6 +52,7 @@
   const ENGINE_NEAR_MISS_MIN_POLICY_GAP = -5;
   const ENGINE_NEAR_MISS_FOLLOWUP_LIMIT = 4;
   const ROUTE_ENERGY_TRADE_FOLLOWUP_LIMIT = 8;
+  const HIGH_HAND_DRAIN_FOLLOWUP_LIMIT = 6;
   const HIGH_SCORE_NEAR_MISS_REFERENCE_METRICS = Object.freeze([
     "baseScore",
     "tileScore",
@@ -2861,9 +2862,140 @@
     return null;
   }
 
+  function getLaterSameRawTurnActions(logs = [], entry = {}, limit = HIGH_HAND_DRAIN_FOLLOWUP_LIMIT) {
+    const actions = [];
+    const entryIndex = logs.indexOf(entry);
+    const start = entryIndex >= 0 ? entryIndex + 1 : 0;
+    for (let index = start; index < logs.length && actions.length < limit; index += 1) {
+      const candidate = logs[index];
+      if (candidate?.type !== "turn-action") continue;
+      if (!isSameRawTurnEntry(candidate, entry)) continue;
+      actions.push(candidate);
+    }
+    return actions;
+  }
+
   function isCardsForEnergyTurnAction(entry = {}) {
     const action = getSelectedAction(entry);
     return getCandidateId(action) === "quickTrade" && action?.tradeId === "cards-for-energy";
+  }
+
+  function summarizeHighHandDrainFollowupAction(entry = {}) {
+    const action = getSelectedAction(entry) || {};
+    return {
+      roundNumber: entry.roundNumber ?? null,
+      turnNumber: entry.turnNumber ?? null,
+      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber ?? null,
+      id: getCandidateId(action),
+      kind: action.kind || null,
+      tradeId: action.tradeId || null,
+      reason: action.reason || null,
+      score: roundRatio(action.score),
+      policyScore: roundRatio(getCandidatePolicyScore(action)),
+      planetId: action.planetId || null,
+      routeTarget: summarizeRouteTarget(action.routeTarget),
+      followupMainAction: summarizeFollowupMainAction(action.followupMainAction),
+      resources: entry.playerResources || null,
+    };
+  }
+
+  function buildHighHandDrainPredictedPlan(action = {}) {
+    const breakdown = action.valueBreakdown || action.breakdown || {};
+    const b2UnlockScore = numeric(breakdown.b2SectorScanUnlockByTrade?.[action.tradeId]);
+    const planetPlan = breakdown.planetCashoutRecoveryPlan || null;
+    if (b2UnlockScore > 0 && String(action.reason || "").includes("B2")) {
+      return {
+        kind: "b2Scan",
+        expectedActionIds: ["scan"],
+        b2SectorScanUnlockScore: roundRatio(b2UnlockScore),
+      };
+    }
+    if (planetPlan) {
+      const expectedActionIds = planetPlan.kind === "orbit" || planetPlan.kind === "land"
+        ? [planetPlan.kind]
+        : ["orbit", "land"];
+      return {
+        kind: "planetCashout",
+        expectedActionIds,
+        planetId: planetPlan.planetId || null,
+        score: roundRatio(planetPlan.score),
+      };
+    }
+    if (b2UnlockScore > 0) {
+      return {
+        kind: "b2Scan",
+        expectedActionIds: ["scan"],
+        b2SectorScanUnlockScore: roundRatio(b2UnlockScore),
+      };
+    }
+    return null;
+  }
+
+  function highHandDrainActionMatchesPlan(action = {}, plan = null, { allowDeferredMove = false } = {}) {
+    if (!plan) return false;
+    const actionId = action.id || null;
+    if (plan.kind === "b2Scan") return actionId === "scan";
+    if (plan.kind !== "planetCashout") return false;
+    if (plan.expectedActionIds?.includes(actionId)) {
+      return !plan.planetId || action.planetId === plan.planetId;
+    }
+    if (!allowDeferredMove || actionId !== "move") return false;
+    const followup = action.followupMainAction || {};
+    if (!plan.expectedActionIds?.includes(followup.actionId)) return false;
+    return true;
+  }
+
+  function classifyHighHandDrainPlanFollowup(plan = null, followupActions = []) {
+    if (!plan) return null;
+    const actions = (followupActions || []).map(summarizeHighHandDrainFollowupAction);
+    if (!actions.length) return {
+      status: "missing",
+      firstMatchingAction: null,
+      firstDeferredRouteAction: null,
+      firstBlockingAction: null,
+    };
+    const firstMatchingAction = actions.find((action) => highHandDrainActionMatchesPlan(action, plan)) || null;
+    if (firstMatchingAction) return {
+      status: "followed",
+      firstMatchingAction,
+      firstDeferredRouteAction: null,
+      firstBlockingAction: null,
+    };
+    if (plan.kind === "planetCashout") {
+      const firstDeferredRouteAction = actions.find((action) => (
+        highHandDrainActionMatchesPlan(action, plan, { allowDeferredMove: true })
+      )) || null;
+      if (firstDeferredRouteAction) return {
+        status: "deferred-route",
+        firstMatchingAction: null,
+        firstDeferredRouteAction,
+        firstBlockingAction: null,
+      };
+    }
+    const firstBlockingAction = actions.find((action) => (
+      action.kind === "main"
+      || ENGINE_ACTIONS.includes(action.id)
+      || action.id === "placeData"
+      || PASS_ACTIONS.includes(action.id)
+    )) || null;
+    if (firstBlockingAction) return {
+      status: PASS_ACTIONS.includes(firstBlockingAction.id) ? "ended-before-plan" : "rerouted-before-plan",
+      firstMatchingAction: null,
+      firstDeferredRouteAction: null,
+      firstBlockingAction,
+    };
+    return {
+      status: "quick-only",
+      firstMatchingAction: null,
+      firstDeferredRouteAction: null,
+      firstBlockingAction: null,
+    };
+  }
+
+  function isHighHandDrainUnfollowedPlanSample(sample = {}) {
+    return ["missing", "quick-only", "rerouted-before-plan", "ended-before-plan"].includes(
+      sample.planFollowup?.status || "",
+    );
   }
 
   function buildHighHandDrainEnergyTradeSample(entry, logs = []) {
@@ -2872,6 +3004,9 @@
     const planetPlan = breakdown.planetCashoutRecoveryPlan || null;
     const priorCardsForEnergyThisRawTurn = countPriorSameRawTurnActions(logs, entry, isCardsForEnergyTurnAction);
     const laterLastCardMove = findLaterSameRawTurnAction(logs, entry, isLastCardPreserveEnergyMove);
+    const predictedPlan = buildHighHandDrainPredictedPlan(action);
+    const laterSameRawTurnActions = getLaterSameRawTurnActions(logs, entry);
+    const planFollowup = classifyHighHandDrainPlanFollowup(predictedPlan, laterSameRawTurnActions);
     return {
       roundNumber: entry.roundNumber ?? null,
       turnNumber: entry.turnNumber ?? null,
@@ -2887,6 +3022,10 @@
       canReachAnalyze: Boolean(breakdown.canReachAnalyze),
       planetCashoutRecoveryScore: roundRatio(breakdown.planetCashoutRecoveryScore),
       launchMoveRecoveryScore: roundRatio(breakdown.launchMoveRecoveryScore),
+      b2SectorScanUnlockScore: roundRatio(breakdown.b2SectorScanUnlockByTrade?.[action.tradeId]),
+      predictedPlan,
+      planFollowup,
+      laterSameRawTurnActions: laterSameRawTurnActions.map(summarizeHighHandDrainFollowupAction),
       planetPlan: planetPlan
         ? {
           kind: planetPlan.kind || null,
@@ -6953,6 +7092,13 @@
         message: "第 3 轮低资源 ready-analyze 现金化窗口已被实跑证伪为不宜直接补分；后续只作为诊断，需证明提前分析不会打断高分席位的路线和共享牌流。",
       });
     }
+    if (numeric(opportunities.highHandDrainEnergyTradeUnfollowedPlan) > 0) {
+      recommendations.push({
+        id: "classify-high-hand-energy-trade-unfollowed-plan",
+        priority: "medium",
+        message: "高耗手牌弃牌换能量存在预测行星/B2 兑现但同一原始回合未跟进的样本；应先按真实后续动作区分路线延迟、转去打牌/精选和空耗，再决定是否调整收益模型。",
+      });
+    }
     if (highScoreNearMissSamples.length) {
       recommendations.push({
         id: "inspect-high-score-near-miss",
@@ -7220,6 +7366,7 @@
       mainUnlockLowConcretePlay: 0,
       nonPositivePublicRefill: 0,
       highHandDrainEnergyTrade: 0,
+      highHandDrainEnergyTradeUnfollowedPlan: 0,
       lastCardPreserveEnergyMove: 0,
       negativeThirdFinalMark: 0,
       d1TechBalanceBottleneck: 0,
@@ -7261,6 +7408,7 @@
     const mainUnlockLowConcretePlaySamples = [];
     const nonPositivePublicRefillSamples = [];
     const highHandDrainEnergyTradeSamples = [];
+    const highHandDrainEnergyTradeUnfollowedPlanSamples = [];
     const lastCardPreserveEnergyMoveSamples = [];
     const negativeThirdFinalMarkSamples = [];
     const finalReadyTaskCreditShortfallSamples = [];
@@ -7419,8 +7567,15 @@
         }
         if (isHighHandDrainEnergyTrade(entry)) {
           opportunities.highHandDrainEnergyTrade += 1;
+          const highHandDrainSample = buildHighHandDrainEnergyTradeSample(entry, logs);
+          if (isHighHandDrainUnfollowedPlanSample(highHandDrainSample)) {
+            opportunities.highHandDrainEnergyTradeUnfollowedPlan += 1;
+            if (highHandDrainEnergyTradeUnfollowedPlanSamples.length < 12) {
+              highHandDrainEnergyTradeUnfollowedPlanSamples.push(highHandDrainSample);
+            }
+          }
           if (highHandDrainEnergyTradeSamples.length < 12) {
-            highHandDrainEnergyTradeSamples.push(buildHighHandDrainEnergyTradeSample(entry, logs));
+            highHandDrainEnergyTradeSamples.push(highHandDrainSample);
           }
         }
         if (isLastCardPreserveEnergyMove(entry)) {
@@ -7698,6 +7853,7 @@
       mainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples,
+      highHandDrainEnergyTradeUnfollowedPlanSamples,
       lastCardPreserveEnergyMoveSamples,
       negativeThirdFinalMarkSamples,
       scoreOpportunities: {
@@ -7783,6 +7939,7 @@
     const mergedMainUnlockLowConcretePlaySamples = [];
     const mergedNonPositivePublicRefillSamples = [];
     const mergedHighHandDrainEnergyTradeSamples = [];
+    const mergedHighHandDrainEnergyTradeUnfollowedPlanSamples = [];
     const mergedLastCardPreserveEnergyMoveSamples = [];
     const mergedNegativeThirdFinalMarkSamples = [];
     const mergedLowPlayerCandidateStats = [];
@@ -8031,6 +8188,17 @@
           ...analysis.highHandDrainEnergyTradeSamples.slice(0, 12 - mergedHighHandDrainEnergyTradeSamples.length),
         );
       }
+      if (
+        mergedHighHandDrainEnergyTradeUnfollowedPlanSamples.length < 12
+        && Array.isArray(analysis.highHandDrainEnergyTradeUnfollowedPlanSamples)
+      ) {
+        mergedHighHandDrainEnergyTradeUnfollowedPlanSamples.push(
+          ...analysis.highHandDrainEnergyTradeUnfollowedPlanSamples.slice(
+            0,
+            12 - mergedHighHandDrainEnergyTradeUnfollowedPlanSamples.length,
+          ),
+        );
+      }
       if (mergedLastCardPreserveEnergyMoveSamples.length < 12 && Array.isArray(analysis.lastCardPreserveEnergyMoveSamples)) {
         mergedLastCardPreserveEnergyMoveSamples.push(
           ...analysis.lastCardPreserveEnergyMoveSamples.slice(0, 12 - mergedLastCardPreserveEnergyMoveSamples.length),
@@ -8270,6 +8438,7 @@
       mainUnlockLowConcretePlaySamples: mergedMainUnlockLowConcretePlaySamples,
       nonPositivePublicRefillSamples: mergedNonPositivePublicRefillSamples,
       highHandDrainEnergyTradeSamples: mergedHighHandDrainEnergyTradeSamples,
+      highHandDrainEnergyTradeUnfollowedPlanSamples: mergedHighHandDrainEnergyTradeUnfollowedPlanSamples,
       lastCardPreserveEnergyMoveSamples: mergedLastCardPreserveEnergyMoveSamples,
       negativeThirdFinalMarkSamples: mergedNegativeThirdFinalMarkSamples,
       scoreOpportunities: {

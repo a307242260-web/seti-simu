@@ -2600,13 +2600,116 @@ assert.equal(highHandDrainAnalysis.opportunities.highHandDrainEnergyTrade, 1);
 assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].handDrainPenalty, 11.5);
 assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].priorCardsForEnergyThisRawTurn, 1);
 assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].planetPlan.planetId, "mars");
+assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].predictedPlan.kind, "planetCashout");
+assert.equal(highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].planFollowup.status, "deferred-route");
 assert.equal(
   highHandDrainAnalysis.highHandDrainEnergyTradeSamples[0].laterLastCardPreserveEnergyMove.followupMainAction.actionId,
   "land",
 );
+assert.equal(highHandDrainAnalysis.opportunities.highHandDrainEnergyTradeUnfollowedPlan, 0);
 const highHandDrainSummary = analytics.summarizeBattleReports([highHandDrainEnergyTradeReport]);
 assert.equal(highHandDrainSummary.highHandDrainEnergyTradeSamples[0].planetPlan.score, 32);
 assert.equal(highHandDrainSummary.highHandDrainEnergyTradeSamples[0].priorCardsForEnergyThisRawTurn, 1);
+
+const highHandDrainUnfollowedPlanReport = {
+  lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },
+  logs: [
+    {
+      type: "turn-action",
+      roundNumber: 4,
+      turnNumber: 9,
+      rawTurnNumber: 35,
+      playerId: "player-green",
+      playerLabel: "绿色",
+      playerResources: { score: 83, credits: 1, energy: 0, publicity: 3, handSize: 3 },
+      details: {
+        action: {
+          id: "quickTrade",
+          kind: "quick",
+          tradeId: "cards-for-energy",
+          reason: "路线兑现：弃牌换能量准备环绕/登陆",
+          score: 28.89,
+          valueBreakdown: {
+            cardsForEnergyHandDrainPenalty: 10.69,
+            currentScore: 83,
+            finalMarkCount: 3,
+            canReachAnalyze: false,
+            planetCashoutRecoveryScore: 33.375,
+            launchMoveRecoveryScore: 0,
+            planetCashoutRecoveryPlan: {
+              kind: "land",
+              planetId: "mars",
+              targetEnergy: 1,
+              directScore: 6,
+              rewardValue: 24,
+              energyAfterTrade: 1,
+              afterTradeGap: 0,
+              reachesNextThreshold: false,
+              score: 33.375,
+            },
+          },
+        },
+        candidates: [],
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 4,
+      turnNumber: 9,
+      rawTurnNumber: 35,
+      playerId: "player-green",
+      playerLabel: "绿色",
+      playerResources: { score: 83, credits: 1, energy: 1, publicity: 3, handSize: 1 },
+      details: {
+        action: {
+          id: "quickTrade",
+          kind: "quick",
+          tradeId: "publicity-for-card",
+          reason: "终局低手牌：宣传精选恢复打牌",
+          score: 31.2,
+        },
+        candidates: [],
+      },
+    },
+    {
+      type: "turn-action",
+      roundNumber: 4,
+      turnNumber: 9,
+      rawTurnNumber: 35,
+      playerId: "player-green",
+      playerLabel: "绿色",
+      playerResources: { score: 83, credits: 1, energy: 1, publicity: 0, handSize: 2 },
+      details: {
+        action: {
+          id: "playCard",
+          kind: "main",
+          cardId: "b_3.webp",
+          cardLabel: "替代主行动",
+          score: 52.5,
+        },
+        candidates: [],
+      },
+    },
+  ],
+  playerResults: [{ playerId: "player-green", playerLabel: "绿色", finalScore: 160 }],
+};
+const highHandDrainUnfollowedAnalysis = analytics.analyzeBattleReport(highHandDrainUnfollowedPlanReport);
+assert.equal(highHandDrainUnfollowedAnalysis.opportunities.highHandDrainEnergyTrade, 1);
+assert.equal(highHandDrainUnfollowedAnalysis.opportunities.highHandDrainEnergyTradeUnfollowedPlan, 1);
+assert.equal(highHandDrainUnfollowedAnalysis.highHandDrainEnergyTradeSamples[0].planFollowup.status, "rerouted-before-plan");
+assert.equal(
+  highHandDrainUnfollowedAnalysis.highHandDrainEnergyTradeUnfollowedPlanSamples[0].planFollowup.firstBlockingAction.id,
+  "playCard",
+);
+assert.equal(
+  highHandDrainUnfollowedAnalysis.highHandDrainEnergyTradeUnfollowedPlanSamples[0].laterSameRawTurnActions[0].tradeId,
+  "publicity-for-card",
+);
+const highHandDrainUnfollowedSummary = analytics.summarizeBattleReports([highHandDrainUnfollowedPlanReport]);
+assert.equal(highHandDrainUnfollowedSummary.highHandDrainEnergyTradeUnfollowedPlanSamples[0].playerId, "player-green");
+assert.ok(highHandDrainUnfollowedSummary.recommendations.some(
+  (entry) => entry.id === "classify-high-hand-energy-trade-unfollowed-plan",
+));
 
 const lastCardPreserveEnergyMoveReport = {
   lastSummary: { ok: true, blocked: false, gameEnded: true, steps: 1 },

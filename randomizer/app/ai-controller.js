@@ -20773,6 +20773,7 @@
             mainUnlockLowConcretePlaySamples: analysis.mainUnlockLowConcretePlaySamples,
             nonPositivePublicRefillSamples: analysis.nonPositivePublicRefillSamples,
             highHandDrainEnergyTradeSamples: analysis.highHandDrainEnergyTradeSamples,
+            highHandDrainEnergyTradeUnfollowedPlanSamples: analysis.highHandDrainEnergyTradeUnfollowedPlanSamples,
             lastCardPreserveEnergyMoveSamples: analysis.lastCardPreserveEnergyMoveSamples,
             negativeThirdFinalMarkSamples: analysis.negativeThirdFinalMarkSamples,
             lowPlayerCandidateStats: analysis.lowPlayerCandidateStats,
