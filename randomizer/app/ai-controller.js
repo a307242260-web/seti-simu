@@ -2213,14 +2213,40 @@
       return Math.min(30, 9 + weightedShortfall * 1.35 + highScoreWastePenalty);
     }
 
+    function getAiImmediateIncomeRewardGain(player = getCurrentPlayer(), incomeGain = {}) {
+      const gain = incomeGain && typeof incomeGain === "object" ? incomeGain : {};
+      const resources = player?.resources || {};
+      const limits = players.RESOURCE_LIMITS || {};
+      const immediateGain = {
+        credits: Math.max(0, aiNumber(gain.credits)),
+        energy: Math.max(0, aiNumber(gain.energy)),
+        handSize: Math.max(0, aiNumber(gain.handSize)),
+        additionalPublicScan: Math.max(0, aiNumber(gain.additionalPublicScan)),
+      };
+      for (const key of ["publicity", "availableData"]) {
+        immediateGain[key] = Math.max(0, Math.min(
+          Math.max(0, aiNumber(gain[key])),
+          Math.max(0, aiNumber(limits[key]) - aiNumber(resources[key])),
+        ));
+      }
+      return immediateGain;
+    }
+
+    function scoreAiImmediateIncomeRewardValue(player = getCurrentPlayer(), incomeGain = {}) {
+      const immediateGain = getAiImmediateIncomeRewardGain(player, incomeGain);
+      return scoreAiResourceBundle(immediateGain)
+        + scoreAiMidgameResourceContinuationValue(immediateGain, player, { scale: 0.7 })
+        + scoreAiPublicityResearchTechSetupValue(immediateGain, player, { scale: 0.7 });
+    }
+
     function scoreAiPublicPickCard(card, player = getCurrentPlayer(), pendingType = null) {
       if (!card) return -Infinity;
       const incomeGain = cards.getIncomeGainForCard?.(card) || null;
+      if (pendingType === "industry_mission_pick") {
+        return incomeGain ? scoreAiImmediateIncomeRewardValue(player, incomeGain) : -Infinity;
+      }
       const incomeValue = incomeGain ? scoreAiIncomeOpportunityValue(player, incomeGain) : 0;
       const cornerValue = scoreAiCardCornerOpportunity(card);
-      if (pendingType === "industry_mission_pick") {
-        return incomeGain ? incomeValue : -Infinity;
-      }
       if (pendingType === "industry_fenwick_pick") {
         const reward = industry?.getCornerReward?.(cards, card) || null;
         const rewardValue = scoreAiIndustryCornerReward(card, reward, {

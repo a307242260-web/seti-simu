@@ -1572,6 +1572,38 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const pendingCardSelectionAction = { type: "industry_mission_pick", player: null };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    cardSelectionActive: true,
+    recordPublicPick: true,
+    pendingCardSelectionAction,
+    blueResources: { credits: 0, energy: 0, publicity: 0, availableData: 0, handSize: 1, score: 96 },
+    publicCards: [
+      { id: "mission-hand-income", incomeGain: { handSize: 1 } },
+      { id: "mission-credit-income", incomeGain: { credits: 1 } },
+    ],
+  });
+  pendingCardSelectionAction.player = harness.blue;
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should resolve the mission income public-card pick");
+  assert.deepEqual(
+    harness.getHandled(),
+    { type: "public-pick", slotIndex: 1 },
+    "mission pick should value the immediate credit reward, not a permanent income projection",
+  );
+}
+
+{
   const pendingDiscardAction = { type: "initial_income", selectedIndexes: [] };
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
