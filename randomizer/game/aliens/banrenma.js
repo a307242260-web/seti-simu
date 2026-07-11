@@ -137,10 +137,13 @@
       case 7:
         return [researchTechEffect("banrenma-7-purple-tech", "半人马7：粉紫科技", ["purple"])];
       case 8:
-        return [
-          effect("banrenma-8-scan-1", "card_any_sector_scan", "半人马8：选择扇区扫描 1/2", "scan", { gainData: true }),
-          effect("banrenma-8-scan-2", "card_any_sector_scan", "半人马8：选择扇区扫描 2/2", "scan", { gainData: true }),
-        ];
+        return [effect(
+          "banrenma-8-sector-scan",
+          "card_any_sector_scan",
+          "半人马8：选定扇区扫描2次",
+          "scan",
+          { gainData: true, repeat: 2 },
+        )];
       case 9:
         return [launchEffect("banrenma-9-launch", "半人马9：发射")];
       default:

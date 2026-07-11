@@ -9140,7 +9140,7 @@
       } else if (reward.traceType === "pink") {
         effects.push(createTargetPinkTraceEffect(
           `sector-${settlement.sectorId}-winner-pink-trace-${settlement.settlementNumber}`,
-          `${sectorLabel}赢家奖励：粉色外星人痕迹`,
+          `${sectorLabel}赢家奖励：${winner.colorLabel || winner.name}放置粉色外星人痕迹`,
           winner,
         ));
       }
@@ -9855,6 +9855,36 @@
           cost,
           sectorX,
         });
+      }
+      const repeat = Math.max(1, Math.round(Number(pending.repeat) || 1));
+      if (repeat > 1) {
+        const effects = Array.from({ length: repeat }, (_item, index) => ({
+          id: `${pending.effect?.id || "selected-sector-scan"}-${index + 1}`,
+          type: cardEffects.EFFECT_TYPES.SCAN_NEBULA,
+          playerId: pending.playerId || null,
+          playerColor: pending.playerColor || null,
+          label: `${pending.title || "选定扇区扫描"} ${index + 1}/${repeat}`,
+          icon: pending.effect?.icon || "scan",
+          options: {
+            nebulaId,
+            sectorX,
+            gainData: pending.gainData,
+          },
+        }));
+        insertActionEffectsAfterCurrent(effects);
+        const effect = pending.effect || getCurrentActionEffect();
+        const result = {
+          ok: true,
+          undoable: true,
+          message: `${pending.title || "选定扇区扫描"}：已选定扇区 ${sectorX}，追加 ${repeat} 次扫描`,
+          payload: { nebulaId, sectorX, repeat },
+          events: [],
+        };
+        if (effect) effect.result = result;
+        rocketState.statusNote = result.message;
+        completeCurrentActionEffect();
+        renderStateReadout();
+        return result;
       }
       let result = replaceNebulaDataForCurrentPlayer(nebulaId, {
         prefix: pending.title || (sectorX != null ? `扇区${sectorX}扫描` : "星云扫描"),
@@ -17460,14 +17490,19 @@
 
   function openCardAnySectorScanEffect(effect) {
     const choices = buildSectorScanChoicesForXs(Array.from({ length: 8 }, (_, x) => x));
+    const repeat = Math.max(1, Math.round(Number(effect.options?.repeat) || 1));
     rocketState.statusNote = `${effect.label}：请选择 0-7 号扇区之一`;
     renderStateReadout();
     return openScanTargetPicker({
       type: "sector_scan",
       fromEffectFlow: true,
+      effect,
       title: effect.label,
-      subtitle: "选择任意外圈扇区中的一个星云；无可替换数据时追加扫描计数且不获得数据。",
+      subtitle: repeat > 1
+        ? `选定一个扇区后，在同一目标连续扫描 ${repeat} 次；无可替换数据时追加扫描计数且不获得数据。`
+        : "选择任意外圈扇区中的一个星云；无可替换数据时追加扫描计数且不获得数据。",
       gainData: effect.options?.gainData,
+      repeat,
       choices,
     });
   }

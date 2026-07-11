@@ -67,6 +67,10 @@ assert.equal(blind.ok, true);
 assert.equal(blind.card.cardId.startsWith("banrenma_"), true);
 
 assert.equal(banrenma.buildImmediateEffects(3)[0].type, "card_research_tech");
+const card8Effects = banrenma.buildImmediateEffects(8);
+assert.equal(card8Effects.length, 1, "card 8 should choose one sector once");
+assert.equal(card8Effects[0].type, "card_any_sector_scan");
+assert.equal(card8Effects[0].options.repeat, 2, "card 8 should scan the selected sector twice");
 assert.equal(banrenma.buildConditionEffects(2)[0].type, banrenma.EFFECT_GAIN_INCOME);
 
 const multiReadyState = state.createDefaultAlienState();
