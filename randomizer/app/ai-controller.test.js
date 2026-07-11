@@ -233,6 +233,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     state,
     players: {
       PLAYER_COLOR_IDS: allPlayers.map((player) => player.color),
+      createPlayerState: () => ({}),
       canAfford: options.realisticCanAfford ? canAffordResources : () => true,
       formatResourceCost: (cost = {}) => Object.entries(cost)
         .filter(([, value]) => Number(value || 0) > 0)
@@ -242,6 +243,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       playerOwnsTech: () => false,
     },
     solar: {
+      createBaselineState: () => ({}),
       mod8: (value) => ((Math.round(Number(value) || 0) % 8) + 8) % 8,
       createSolarSnapshot: () => ({ planetLocations: options.planetLocations || [] }),
       collectVisibleCoordinateGroups: () => ({ asteroids: [], comets: [] }),
@@ -249,6 +251,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     },
     rocketActions: {
       ROCKET_KIND: { STANDARD: "standard", CHONG_FOSSIL: "chong-fossil" },
+      createRocketState: () => ({}),
       getRocketsForPlayer: (_rocketState, playerId) => getHarnessRocketsForPlayer(playerId),
       getRocketSectorCoordinate: (rocket) => rocket?.sector || null,
       findAvailableSlotIndex: options.findAvailableSlotIndex || (() => null),
@@ -283,16 +286,20 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
         INCOME: "income",
       },
     },
-    planetStats: options.planetStats || {
-      canAddLandingMarker: () => false,
-      canAddOrbitMarker: () => false,
-      getAvailableSatellitesForLanding: () => [],
-      getPlanetLandingCount: () => 0,
-      getPlanetOrbitCount: () => 0,
+    planetStats: {
+      createPlanetStatsState: () => ({}),
+      ...(options.planetStats || {
+        canAddLandingMarker: () => false,
+        canAddOrbitMarker: () => false,
+        getAvailableSatellitesForLanding: () => [],
+        getPlanetLandingCount: () => 0,
+        getPlanetOrbitCount: () => 0,
+      }),
     },
     aliens: {
       ALIEN_SLOT_IDS: options.alienSlotIds || [1],
       TRACE_TYPES: alienCore.TRACE_TYPES,
+      createDefaultAlienState: () => ({}),
       getAlienSlot: (stateToRead, alienSlotId) => (
         stateToRead?.aliens?.[String(alienSlotId)]
         || stateToRead?.aliens?.[Number(alienSlotId)]
@@ -306,12 +313,16 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     yichangdian,
     aomomo,
     cards: {
+      createCardState: () => ({}),
       getCardLabel: (card) => card?.cardName || card?.label || card?.cardId || card?.id || "card",
       getDiscardRemaining: () => Math.max(0, Math.round(Number(options.discardCount ?? pendingDiscardAction?.count ?? 1) || 0)),
       getIncomeCodeForCard: (card) => card?.incomeCode ?? null,
       getIncomeGainForCard: (card) => card?.incomeGain || null,
       getDiscardActionMoveRewardForCard: (card) => card?.moveReward || null,
       getDiscardActionRewardForCard: (card) => card?.resourceReward || null,
+    },
+    cardTaskStateModule: {
+      createTaskState: () => ({}),
     },
     abilities: options.abilities || {
       planet: {
@@ -352,7 +363,10 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
           : { ok: false, message: "trade unaffordable" };
       },
     } : null,
-    data: options.data || {},
+    data: {
+      createDefaultNebulaDataState: () => ({}),
+      ...(options.data || {}),
+    },
     ai: {
       policy: {
         choosePlayCard: (candidates) => (
@@ -394,6 +408,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       ensureCardEffectState: () => null,
     },
     finalScoring: {
+      createFinalScoringState: () => ({}),
       ensureFinalScoringState: (stateToEnsure) => {
         if (!stateToEnsure.tiles) stateToEnsure.tiles = {};
       },
@@ -412,30 +427,33 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       ),
       ...(options.endGameScoring || {}),
     },
-    tech: options.tech || {
-      getStack: (_board, tileId) => getTechStack(tileId),
-      getStackIndex: (tileId) => getTechStack(tileId).stackIndex || 1,
-      getTechType: (tileId) => getTechStack(tileId).techType,
-      getAvailableBlueSlots: () => [1],
-      listTakeableTiles: (_board, _techState, filter = {}) => {
-        const allowed = Array.isArray(filter.techTypes) ? new Set(filter.techTypes) : null;
-        return takeableTechIds.filter((tileId) => (
-          !allowed || allowed.has(getTechStack(tileId).techType)
-        ));
-      },
-      resolver: {
-        normalizeTechTypeFilter: (filter = {}) => (
-          Array.isArray(filter.techTypes) && filter.techTypes.length ? filter.techTypes : null
-        ),
-        canTakeTile: (_board, _techState, tileId, filter = {}) => {
-          const stack = getTechStack(tileId);
+    tech: {
+      createState: () => ({}),
+      ...(options.tech || {
+        getStack: (_board, tileId) => getTechStack(tileId),
+        getStackIndex: (tileId) => getTechStack(tileId).stackIndex || 1,
+        getTechType: (tileId) => getTechStack(tileId).techType,
+        getAvailableBlueSlots: () => [1],
+        listTakeableTiles: (_board, _techState, filter = {}) => {
           const allowed = Array.isArray(filter.techTypes) ? new Set(filter.techTypes) : null;
-          if (allowed && !allowed.has(stack.techType)) return { ok: false, message: "tech type disabled" };
-          return takeableTechIds.includes(tileId)
-            ? { ok: true }
-            : { ok: false, message: "tech tile unavailable" };
+          return takeableTechIds.filter((tileId) => (
+            !allowed || allowed.has(getTechStack(tileId).techType)
+          ));
         },
-      },
+        resolver: {
+          normalizeTechTypeFilter: (filter = {}) => (
+            Array.isArray(filter.techTypes) && filter.techTypes.length ? filter.techTypes : null
+          ),
+          canTakeTile: (_board, _techState, tileId, filter = {}) => {
+            const stack = getTechStack(tileId);
+            const allowed = Array.isArray(filter.techTypes) ? new Set(filter.techTypes) : null;
+            if (allowed && !allowed.has(stack.techType)) return { ok: false, message: "tech type disabled" };
+            return takeableTechIds.includes(tileId)
+              ? { ok: true }
+              : { ok: false, message: "tech tile unavailable" };
+          },
+        },
+      }),
     },
     playerState,
     turnState,
@@ -3409,6 +3427,97 @@ function makeYichangdianAlienState(options = {}) {
   assert.ok(
     Number(analyzeCandidate.score || 0) <= 8,
     "final low-value analyze should be capped instead of scoring like a high-value cashout",
+  );
+}
+
+{
+  const turnChoices = [];
+  const placedTokens = Array.from({ length: 6 }, (_item, index) => ({ placementSlot: index + 1 }));
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    aiDifficulty: "weak_start",
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "cards-for-energy": {
+        id: "cards-for-energy",
+        label: "2 cards -> 1 energy",
+        cost: { handSize: 2 },
+        gain: { energy: 1 },
+      },
+    },
+    blueResources: { score: 100, credits: 1, energy: 0, publicity: 2, availableData: 3, handSize: 3 },
+    blueHand: [
+      { id: "stranded-analyze-a", cardName: "Stranded Analyze A", price: 2 },
+      { id: "stranded-analyze-b", cardName: "Stranded Analyze B", price: 2 },
+      { id: "stranded-analyze-c", cardName: "Stranded Analyze C", price: 2 },
+    ],
+    finalScoringState: {
+      tiles: {
+        final_a2: {
+          id: "final_a2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_c2: {
+          id: "final_c2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }],
+        },
+        final_d2: {
+          id: "final_d2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: {
+      final_a2: "a2",
+      final_c2: "c2",
+      final_d2: "d2",
+    },
+    data: {
+      ANALYZE_REQUIRED_COMPUTER_SLOT: 6,
+      ANALYZE_ENERGY_COST: 1,
+      canAnalyzeData: (player) => (
+        Number(player?.resources?.energy || 0) >= 1
+          ? { ok: true }
+          : { ok: false, message: "energy missing" }
+      ),
+      listComputerPlacedTokens: () => placedTokens,
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "weak_start final stranded hand should trade for a concrete analyze");
+  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "cards-for-energy" });
+  const tradeCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "cards-for-energy");
+  assert.ok(tradeCandidate, "weak_start final stranded analyze trade should be enumerated");
+  assert.equal(tradeCandidate.valueBreakdown?.resourceLockMainUnlockTrade, true);
+  assert.equal(tradeCandidate.valueBreakdown?.weakStartFinalStrandedAnalyzeUnlock, true);
+  assert.equal(tradeCandidate.valueBreakdown?.unlockedMainAction?.actionId, "analyze");
+  assert.equal(tradeCandidate.valueBreakdown?.handAfterTrade, 1);
+  assert.ok(
+    Number(tradeCandidate.valueBreakdown?.unlockedMainAction?.score || 0) >= 7,
+    "the stranded-hand exception should still require a concrete analyze score",
+  );
+  assert.ok(
+    Number(tradeCandidate.valueBreakdown?.discardCost || 0) <= 6.5,
+    "the stranded-hand exception should stay limited to low-opportunity-cost discards",
   );
 }
 
@@ -7701,4 +7810,35 @@ function makeYichangdianAlienState(options = {}) {
   assert.equal(plannerShadow?.diverged, true);
 }
 
-console.log("app/ai-controller.test.js ok");
+async function runAsyncControllerTests() {
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+  });
+  const result = await harness.controller.runAiStrategyABTest({
+    games: 1,
+    maxSteps: 1,
+    aiDifficulty: "weak_start",
+    stopOnBlocked: false,
+    recordABResult: false,
+    recordStrategyTuning: false,
+  });
+  assert.equal(result.aiDifficulty, "weak_start");
+  assert.equal(result.baselineWeights.engine, 1.22);
+  assert.equal(result.baselineWeights.scan, 1.08);
+  assert.equal(result.baselineWeights.pass, 0.82);
+  assert.equal(result.baseline.gamesRun, 1);
+  assert.equal(result.tuned.gamesRun, 1);
+  assert.equal(harness.blue.aiDifficulty, "weak_start");
+  assert.equal(
+    harness.controller.getAiStrategyWeights(harness.blue).engine,
+    1.22,
+    "A/B should restore difficulty-default mode after the comparison",
+  );
+}
+
+runAsyncControllerTests()
+  .then(() => console.log("app/ai-controller.test.js ok"))
+  .catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });

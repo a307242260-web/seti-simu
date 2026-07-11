@@ -63,11 +63,14 @@ GameState 快照
 
 设计约束：估值只读、克隆 `createGameRecoverySnapshot()` 做“试一步→回退”；`irreversible` 步骤不进搜索回退，遇到用启发式即时决策。
 
+`game/ai/race-model.js` 是横跨 L2-L4 的纯状态竞速层：按 `startPlayerId` 轮转并结合 `completedTurnPlayerIds` / `passedPlayerIds` 计算当前玩家下次行动前的公开行动窗口；独占目标统一拆成“可复用基础价值 + 抢到时的独占价值 + 失败后的备选价值”。第一阶段只把卫星竞速的 `actorEta`、`opponentEtas`、`exclusiveValueAtRisk` 和行动窗口写入诊断，尚不直接改现有 penalty 或候选排序，避免用新的静态折扣再次破坏共享高分链。ETA 只使用公开的顺位、火箭距离、科技、宣传、收入和能量，不读取对手手牌。
+
 ### 2.1 当前接口契约
 
 - 电脑玩家判定由 `isAiAutoBattlePlayer(playerId)` 统一处理；默认人机局保留白色人类玩家，其余活跃玩家由 `configureDefaultAiOpponent()` 配置为电脑。
 - `createAiControlSnapshot()` / `restoreAiControlSnapshot()` 只保存和恢复可持久化 AI 控制配置：是否启用、电脑席位、步进参数和策略权重；不恢复 `running`、已排队定时器、进行中的自动步骤或旧的阻塞暂停。旧存档缺失 AI 控制配置，或快照中的电脑席位无法解析时，按默认人机入口重建电脑席位；显式 `enabled:false` 的快照仍按全手动恢复。
 - 批跑 / A/B / 调参入口走 `configureAiAutoBattle()`、`runAiAutomationStep()`、`runAiAutoBattleBatch()`、`runAiStrategyABTest()`、`runAiStrategyTuningCycle()`；未显式传 `activePlayerCount` 时按 4 人局重置。
+- `runAiStrategyABTest()` 必须透传当前 `aiDifficulty`，`weak_start` 基线使用真实低难度默认权重；A/B 验收同时比较全席均分、每局最低分均值、P25、270+ 席位数、270+ 赢家局数、最高分、完成率、未完成局、阻塞和 bug。赢家均分单独上升、但全席或低尾下降时不得判定为改进；A/B 结束后必须恢复进入测试前的“难度默认权重 / 显式自定义权重”模式。
 - `runAiAutomationStep()` 是唯一推进器，先收口外星人使用、外星人痕迹和半人马就绪机会，再按“初始选择 / 弃牌 / PASS 预留 / 终局标记 / 公共牌选择 / 科技放置 / 扫描 / 打牌 / 移动支付 / 登陆 / 数据放置 / 共用扫描弹窗 / 效果链 / 顶层行动”的顺序推进其余 pending 状态。
 - AI 专用强制公司牌（当前默认席位顺序为寰宇超动力、宇宙大战略集团、作弊实验室）必须作为开局规划的真实公司输入；初始牌组合、`openingPlan` 摘要、目标和 `aiStyle` 都按实际被确认的公司重算，避免使用未选择公司牌的资源结构污染后续策略。
 - 顶层行动候选仍由现有规则入口判断可用性，策略层优先读取 `actionGraph.net`，旧 `candidate.score` 只作为 fallback 与 tie-breaker。L3 规划器目前以影子模式对同一候选生成“快速 -> 主行动 -> 快速”的静态链，并把与实际策略的首行动分歧写入 `turn-action.plannerShadow`；在固定种子证明某类链能提升而不破坏高分局前，影子结果不直接改写实际选择。
@@ -450,6 +453,7 @@ randomizer/
 ├─ app/ai-controller.js # 电脑玩家配置、自动步骤推进、批跑/A/B/调参入口
 └─ game/ai/
    ├─ valuation.js        # L1：资源折算 / 收入净值 / 终局边际 / 状态估值
+   ├─ race-model.js       # 跨层：公开行动窗口 / ETA / 独占收益与失败备选
    ├─ action-graph.js     # L2：实时候选 {gain,cost,net,breakdown}
    ├─ planner.js          # L3：回合浅前瞻
    ├─ goals.js            # L4：目标系统 + 开局规划
@@ -457,6 +461,7 @@ randomizer/
    ├─ policy.js           # 顶层行动与子决策选择
    ├─ battle-analytics.js # 可配置窗口序列挖掘 + 分数构成分桶
    ├─ index.js            # 浏览器/Node 模块汇总
+   ├─ race-model.test.js  # 竞速顺位、PASS、ETA 与备选收益回归
    └─ ai.test.js          # 逐项回归
 ```
 
@@ -570,11 +575,13 @@ randomizer/
 node --check randomizer/app.js
 node --check randomizer/app/ai-controller.js
 node --check randomizer/game/ai/valuation.js
+node --check randomizer/game/ai/race-model.js
 node --check randomizer/game/ai/action-graph.js
 node --check randomizer/game/ai/goals.js
 node --check randomizer/game/ai/planner.js
 node --check randomizer/game/ai/policy.js
 node --check randomizer/game/ai/battle-analytics.js
+node randomizer/game/ai/race-model.test.js
 node randomizer/game/ai/ai.test.js
 $tests = rg --files randomizer | Where-Object { $_ -match '\.test\.js$' } | Sort-Object; foreach ($test in $tests) { node $test; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } }
 ```
@@ -598,6 +605,9 @@ $tests = rg --files randomizer | Where-Object { $_ -match '\.test\.js$' } | Sort
 - 2026-07-11 计算机第 4 个数据位不能直接改为“按实际会弃的收入牌”替代原先的通用收入候选估值。该试验保留永久收入、弃牌机会成本和手牌稀缺成本，并记录所选卡；`seed5` 从 `[153,209,279,250]` 退为 `[147,192,258,245]`，总分 `891→842`、最低 `153→147`、最高 `279→258`，`bugCount=0`。行为已撤回：这个局部替代仍会抬高收入位并重排共享行动序列；后续只能用“实际即时资源解锁某个同回合主行动”的窄反事实，而不能把收入位整体替换为最优弃牌净值。
 - 2026-07-11 资源锁日志发现 seed5 蓝色 R3T24（64 分、0 信用、5 能量、1 手牌）可用 `2能量→1信用` 无弃牌解锁估值 `53.588` 的扫描。临时仅在弱起步、第3轮、50-84 分、0 信用、至少5能量、交易后仍有3能量且扫描分至少45时放行；该交易确实执行，蓝色 `153→167`，但完整分布从 `[153,209,279,250]` 变为 `[167,213,262,213]`，总分 `891→855`、最高 `279→262`、`bugCount=0`。行为已撤回：即使是有真实资源缺口和主行动的单点链，也会重排共享扫描/科技流；后续需要同时验证高分席位的替代路线，不能只以低尾单席改善为准。
 - 2026-07-11 修正开局组合把 `baseIncome` 误当成即时资源的模型偏差：实际设置中基础收入只写入后续 PASS 收入，只有 `resources`、盲抽和 `income` 会立即进入玩家资源。开局汇总、信用点阈值和 `OPENING_INCOME` 现在按该结算口径计算，长期公司收入价值仍由估值层保留。回归覆盖作弊实验室的即时手牌/资源和寰宇超动力的即时资源排序；完整 seed2/seed5 分别复跑为 `[229,188,213,146]` / `[153,209,279,250]`，均与当前基线一致且 `gameEnded=true`、`bugCount=0`。这修正的是资源可支付性，不把两局未变当作提分证据。
+- 2026-07-12 在上述开局即时资源修正之后重新串行跑完 `codex-ai-low-resource-baseline:1..5`，确认旧的 5 局基线已过期：当前未增加新行为时应为 `[147,236,193,189]`、`[229,188,213,146]`、`[163,212,287,174]`、`[307,161,298,160]`、`[153,209,279,250]`，20 席均分 `209.70`、赢家均分 `267.60`、P25 `161`、最高 `307`、270+ 席位 `4`、270+ 赢家局 `3/5`、每局最低分均值 `153.8`，全部 `gameEnded=true`、`bugCount=0`。当前“均分 +10”的开发门槛因此是同一固定集至少 `219.70`，通过后还要用未参与开发的种子验证；不得再引用修正规则前的 `216.35` 作为当前 HEAD 基线。
+- `weak_start` 最终轮、已拿满 3 个终局标记、95-109 分、1 信用点以内、2 宣传以内且只有 3 张低机会成本手牌时，若弃 2 张换能量后仍保留 1 手牌并能立即执行至少 7 分的真实分析，允许这个严格的搁浅分析恢复窗口。它修正 seed2 白色 100 分时明明可分析却直接 PASS 的收益模型漏判：固定 5 种子只有 seed2 命中，从 `[229,188,213,146]` 到 `[229,188,213,149]`；其余四局完全复现当前基线。20 席均分 `209.70→209.85`、最低分均值 `153.8→154.4`，P25/最高分/270+ 数量不变，全部 `bugCount=0`。这是低尾 +3 的小修，不视为达到均分 +10。
+- A/B 汇总新增 `averagePlayerScore`、`averageMinimumPlayerScore`、`p25PlayerScore`、`playersAtLeast270`、`gamesWinnerAtLeast270`、`maxScore`、`incompleteGames` 和 `bugCount`；结论要求全席均分提高，且赢家均分、低尾、高分产出、完成率、阻塞与 bug 均不退化。策略 A/B 与调参循环会按 `aiDifficulty` 选择真实默认权重并在结束或异常时恢复原权重模式，避免低难度试验被高资源默认权重污染。
 
 ---
 

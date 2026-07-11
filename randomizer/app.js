@@ -37,6 +37,7 @@
     initialCards,
     industry,
     aiValuation,
+    aiRaceModel,
     ai,
   } = dependencies;
 
@@ -1074,6 +1075,7 @@
     chong,
     amiba,
     runezu,
+    aiRaceModel,
     ai,
     solarState,
     nebulaDataState,

@@ -46,6 +46,7 @@
       chong,
       amiba,
       runezu,
+      aiRaceModel,
       ai,
       solarState,
       nebulaDataState,
@@ -349,6 +350,11 @@
       final: 1.28,
       pass: 0.82,
     });
+    function getAiStrategyWeightDefaultsForDifficulty(difficulty) {
+      return normalizeAiDifficulty(difficulty) === AI_DIFFICULTY_WEAK_START
+        ? AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS
+        : AI_STRATEGY_WEIGHT_DEFAULTS;
+    }
     const AI_CHEAT_LAB_INDUSTRY_LABEL = "作弊实验室";
     const AI_CHEAT_LAB_INDUSTRY_ID = "industry:作弊实验室";
     const AI_CHEAT_LAB_INDUSTRY_SRC = "../assets/industry/异星实验室.png";
@@ -513,6 +519,14 @@
           completionRate: summary?.completionRate || 0,
           averageSteps: summary?.averageSteps || 0,
           averageWinnerScore: summary?.averageWinnerScore || 0,
+          averagePlayerScore: summary?.averagePlayerScore || 0,
+          averageMinimumPlayerScore: summary?.averageMinimumPlayerScore || 0,
+          p25PlayerScore: summary?.p25PlayerScore || 0,
+          playersAtLeast270: summary?.playersAtLeast270 || 0,
+          gamesWinnerAtLeast270: summary?.gamesWinnerAtLeast270 || 0,
+          maxScore: summary?.maxScore || 0,
+          incompleteGames: summary?.incompleteGames || 0,
+          bugCount: summary?.bugCount || 0,
           turnActionCount: summary?.turnActionCount || 0,
           actionCategoryRatios: summary?.actionCategoryRatios || {},
           winnerProfileDeltas: summary?.winnerProfileDeltas || {},
@@ -549,7 +563,9 @@
         ? normalizeAiStrategyWeights(options.tunedWeights, { merge: false })
         : normalizeAiStrategyWeights(options.baselineWeights, { merge: false });
       const gameCount = Math.max(0, Math.round(Number(comparison?.gameCount) || Number(options.gamesRun) || 0));
-      const scoreDelta = aiNumber(comparison?.verdict?.scoreDelta ?? comparison?.deltas?.averageWinnerScore);
+      const scoreDelta = comparison?.verdict?.averagePlayerScoreDelta != null
+        ? aiNumber(comparison.verdict.averagePlayerScoreDelta)
+        : aiNumber(comparison?.deltas?.averagePlayerScore ?? comparison?.verdict?.scoreDelta ?? comparison?.deltas?.averageWinnerScore);
       const blockedDelta = aiNumber(comparison?.verdict?.blockedDelta ?? comparison?.deltas?.blockedGames);
       const completionDelta = aiNumber(comparison?.verdict?.completionDelta ?? comparison?.deltas?.completionRate);
       const confidence = improved
@@ -559,14 +575,15 @@
         key: improved ? "ab-tuned" : "ab-baseline",
         delta: Math.round(scoreDelta * 1000) / 1000,
         reason: improved
-          ? "同 seed A/B 中 tuned 平均胜者分更高且未增加阻塞"
-          : "同 seed A/B 中 tuned 未证明优于 baseline，回退长期权重置信度",
+          ? "同 seed A/B 中 tuned 全员均分提高，且低尾、高分产出与可靠性未退化"
+          : "同 seed A/B 中 tuned 未同时改善全员均分、低尾、高分产出与可靠性，回退长期权重置信度",
       }];
       return {
         kind: "ab-test",
         id: aiAutoBattleState.nextStrategyTuningHistoryId++,
         createdAt: new Date().toISOString(),
         label: options.label || null,
+        aiDifficulty: options.aiDifficulty || null,
         gamesRequested: gameCount,
         gamesRun: gameCount,
         seedBase: comparison?.seedBase || options.seedBase || null,
@@ -581,6 +598,14 @@
           blockedGames: selectedComparison?.blockedGames || 0,
           completionRate: selectedComparison?.completionRate || 0,
           averageWinnerScore: selectedComparison?.averageWinnerScore || 0,
+          averagePlayerScore: selectedComparison?.averagePlayerScore || 0,
+          averageMinimumPlayerScore: selectedComparison?.averageMinimumPlayerScore || 0,
+          p25PlayerScore: selectedComparison?.p25PlayerScore || 0,
+          playersAtLeast270: selectedComparison?.playersAtLeast270 || 0,
+          gamesWinnerAtLeast270: selectedComparison?.gamesWinnerAtLeast270 || 0,
+          maxScore: selectedComparison?.maxScore || 0,
+          incompleteGames: selectedComparison?.incompleteGames || 0,
+          bugCount: selectedComparison?.bugCount || 0,
           winnerProfileDeltas: selectedComparison?.winnerProfileDeltas || {},
           actionCategoryRatios: selectedComparison?.actionCategoryRatios || {},
           strategyTuning: {
@@ -3102,12 +3127,7 @@
 
     function getAiActiveStrategyWeights(player = getCurrentPlayer()) {
       const difficulty = player?.aiDifficulty || aiAutoBattleState.aiDifficulty;
-      if (
-        aiStrategyWeightsUseDifficultyDefaults
-        && normalizeAiDifficulty(difficulty) === AI_DIFFICULTY_WEAK_START
-      ) {
-        return AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS;
-      }
+      if (aiStrategyWeightsUseDifficultyDefaults) return getAiStrategyWeightDefaultsForDifficulty(difficulty);
       return aiStrategyWeights;
     }
 
@@ -6782,6 +6802,22 @@
         && handCost >= 2
         && handAfterTrade <= 0
         && aiNumber(bestAction.score) >= 8;
+      const weakStartFinalStrandedAnalyzeUnlock = !allowExtendedResourceLock
+        && tradeId === "cards-for-energy"
+        && bestAction.actionId === "analyze"
+        && getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && countAiFinalMarksForPlayer(player) >= 3
+        && !getAiNextMissingFinalScoreThreshold(player)
+        && currentScore >= 95
+        && currentScore < 110
+        && aiNumber(resources.credits) <= 1
+        && aiNumber(resources.publicity) <= 2
+        && handCost >= 2
+        && handSize === handCost + 1
+        && handAfterTrade === 1
+        && aiNumber(bestAction.score) >= 7;
+      const weakStartFinalAnalyzeRecoveryUnlock = weakStartFinalDeadHandAnalyzeUnlock
+        || weakStartFinalStrandedAnalyzeUnlock;
       const minPostTradeScore = bestAction.actionId === "scan"
         ? (
           getAiRoundNumber() <= 2 && currentScore < 70 && handAfterTrade >= 2
@@ -6794,8 +6830,8 @@
           ? 17
           : bestAction.actionId === "launch"
             ? 18
-            : weakStartFinalDeadHandAnalyzeUnlock
-              ? 8
+            : weakStartFinalAnalyzeRecoveryUnlock
+              ? (weakStartFinalStrandedAnalyzeUnlock ? 7 : 8)
               : getAiRoundNumber() >= FINAL_ROUND_NUMBER ? 16 : 18;
       if (aiNumber(bestAction.score) < minPostTradeScore) return null;
       const launchUnlockSafe = bestAction.actionId === "launch"
@@ -6809,14 +6845,14 @@
         handAfterTrade <= 0
         && aiNumber(bestAction.score) < 35
         && !launchUnlockSafe
-        && !weakStartFinalDeadHandAnalyzeUnlock
+        && !weakStartFinalAnalyzeRecoveryUnlock
       ) return null;
 
       const discardCost = bestAction.actionId === "playCard" && Number.isFinite(bestAction.discardCost)
         ? bestAction.discardCost
         : estimateAiTradeDiscardOpportunityCost(player, trade);
       if (!Number.isFinite(discardCost)) return null;
-      if (weakStartFinalDeadHandAnalyzeUnlock && discardCost > 6.5) return null;
+      if (weakStartFinalAnalyzeRecoveryUnlock && discardCost > 6.5) return null;
       const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
       if (
         handCost <= 0
@@ -6848,7 +6884,7 @@
         ? Math.min(4, 1.1 + Math.max(0, bestAction.planScore) * 0.16)
         : 0;
       const handBufferBonus = handAfterTrade >= 1 ? 1.5 : 0;
-      const score = bestAction.score * (weakStartFinalDeadHandAnalyzeUnlock ? 0.74 : 0.52)
+      const score = bestAction.score * (weakStartFinalAnalyzeRecoveryUnlock ? 0.74 : 0.52)
         + bestAction.directScoreGain * 0.7
         + thresholdBonus
         + analyzeBonus
@@ -6857,7 +6893,7 @@
         + launchBonus
         + handBufferBonus
         - discardCost * 0.34;
-      if (score < (weakStartFinalDeadHandAnalyzeUnlock ? 6 : 7)) return null;
+      if (score < (weakStartFinalAnalyzeRecoveryUnlock ? 6 : 7)) return null;
       const reason = bestAction.actionId === "analyze"
         ? (handCost > 0 ? "资源锁：弃牌换能量解锁分析" : "资源锁：信用点换能量解锁分析")
         : `资源锁：交易解锁${bestAction.actionId === "scan" ? "扫描" : bestAction.actionId === "launch" ? "发射" : "打牌"}`;
@@ -6895,6 +6931,7 @@
           earlyLowScoreScanUnlock,
           directScoreScanUnlock,
           weakStartFinalDeadHandAnalyzeUnlock,
+          weakStartFinalStrandedAnalyzeUnlock,
           weakStartAlienPlayUnlock: weakStartAlienPlayUnlockSafe,
           weakStartAlienPlayConcreteValue: roundAiScore(weakStartAlienPlayConcreteValue),
           bestExistingScore: Number.isFinite(bestExistingScore) ? roundAiScore(bestExistingScore) : null,
@@ -10895,6 +10932,54 @@
       return activeIds.filter((playerId) => String(playerId) !== String(player?.id));
     }
 
+    function getAiPostActionWindowOpponentIds(player = getCurrentPlayer()) {
+      const raceModel = aiRaceModel || ai?.raceModel;
+      if (!player?.id || !raceModel?.buildActionWindowOrder) return [];
+      const completedPlayerIds = [...(turnState.completedTurnPlayerIds || [])];
+      if (!completedPlayerIds.some((playerId) => String(playerId) === String(player.id))) {
+        completedPlayerIds.push(player.id);
+      }
+      return raceModel.buildActionWindowOrder({
+        ...turnState,
+        completedTurnPlayerIds: completedPlayerIds,
+      }, player.id);
+    }
+
+    function estimateAiSatelliteClaimEta(distance, options = {}) {
+      const normalizedDistance = Math.max(0, Math.round(aiNumber(distance)));
+      if (options.immediate === true && normalizedDistance <= 0) return 0;
+      return Math.max(1, normalizedDistance)
+        + Math.max(0, Math.round(aiNumber(options.techSetupActions)));
+    }
+
+    function buildAiSatelliteRaceDiagnostics(player, ownDistance, options = {}, opponentEtas = []) {
+      const raceModel = aiRaceModel || ai?.raceModel;
+      const actionWindowOpponentIds = getAiPostActionWindowOpponentIds(player);
+      const actorEta = estimateAiSatelliteClaimEta(ownDistance, {
+        immediate: options.immediate === true,
+      });
+      const eligibleOpponentEtas = (opponentEtas || [])
+        .filter((entry) => entry?.actsBeforeActorNext !== false)
+        .map((entry) => ({ ...entry }));
+      const outcome = raceModel?.estimateRaceOutcome?.({
+        actorEta,
+        opponentEtas: eligibleOpponentEtas,
+        reusableValue: 0,
+        exclusiveValue: 1,
+        fallbackValue: 0,
+      }) || null;
+      return {
+        actionWindowOpponentIds,
+        actorEta,
+        opponentEtas: (opponentEtas || []).map((entry) => ({ ...entry })),
+        estimatedRaceOutcome: outcome?.outcome || null,
+        estimatedFastestOpponentEta: Number.isFinite(outcome?.fastestOpponentEta)
+          ? outcome.fastestOpponentEta
+          : null,
+        etaBasis: "public-action-windows-with-final-move-and-land",
+      };
+    }
+
     function getAiApproxLandEnergyCostForPlayer(player, planetId) {
       if (!planetId) return abilities.planet?.BASE_LAND_ENERGY_COST || 3;
       const hasOrbit = planetId === aomomo?.PLANET_ID
@@ -11137,6 +11222,7 @@
           fasterOpponentCount: 0,
           prospectiveOrange4Count: 0,
           prospectiveOrange4Pressure: 0,
+          ...buildAiSatelliteRaceDiagnostics(player, 99, options),
         };
       }
       const availableSatellites = planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planetId) || [];
@@ -11148,6 +11234,7 @@
           fasterOpponentCount: 0,
           prospectiveOrange4Count: 0,
           prospectiveOrange4Pressure: 0,
+          ...buildAiSatelliteRaceDiagnostics(player, 99, options),
         };
       }
       if (target.satelliteId && !availableSatellites.some((satellite) => satellite.satelliteId === target.satelliteId)) {
@@ -11158,6 +11245,7 @@
           fasterOpponentCount: 0,
           prospectiveOrange4Count: 0,
           prospectiveOrange4Pressure: 0,
+          ...buildAiSatelliteRaceDiagnostics(player, 99, options),
         };
       }
 
@@ -11172,6 +11260,7 @@
           fasterOpponentCount: 0,
           prospectiveOrange4Count: 0,
           prospectiveOrange4Pressure: 0,
+          ...buildAiSatelliteRaceDiagnostics(player, ownDistance, options),
         };
       }
 
@@ -11185,6 +11274,8 @@
       let fasterOpponentCount = 0;
       let prospectiveOrange4Count = 0;
       let prospectiveOrange4Pressure = 0;
+      const actionWindowOpponentIds = getAiPostActionWindowOpponentIds(player);
+      const opponentEtas = [];
 
       for (const opponent of playerState.players || []) {
         if (!opponent || String(opponent.id) === String(player.id)) continue;
@@ -11203,6 +11294,21 @@
         if (energyShortfall > 2) continue;
 
         const isPreceding = precedingIds.has(String(opponent.id));
+        const actionWindowIndex = actionWindowOpponentIds
+          .findIndex((playerId) => String(playerId) === String(opponent.id));
+        opponentEtas.push({
+          playerId: opponent.id,
+          eta: estimateAiSatelliteClaimEta(opponentDistance, {
+            techSetupActions: orange4Access.canResearchOrange4 ? 1 : 0,
+          }),
+          distance: opponentDistance,
+          actionWindowIndex: actionWindowIndex >= 0 ? actionWindowIndex : null,
+          actsBeforeActorNext: actionWindowIndex >= 0,
+          ownsOrange4: orange4Access.ownsOrange4,
+          prospectiveOrange4: orange4Access.canResearchOrange4,
+          publicityShortfall: orange4Access.publicityShortfall,
+          landingEnergyShortfall: energyShortfall,
+        });
         const canLandNow = opponentDistance <= 0
           && players.canAfford(opponent, opponentEnergyCost > 0 ? { energy: opponentEnergyCost } : {});
         let entryPressure = 0;
@@ -11235,6 +11341,7 @@
         fasterOpponentCount,
         prospectiveOrange4Count,
         prospectiveOrange4Pressure: roundAiScore(prospectiveOrange4Pressure),
+        ...buildAiSatelliteRaceDiagnostics(player, ownDistance, options, opponentEtas),
       };
     }
 
@@ -21189,19 +21296,25 @@
         seeds.push(`${seedBase}:${seeds.length + 1}`);
       }
 
-      const originalWeights = getAiStrategyWeights();
+      const originalWeights = { ...aiStrategyWeights };
+      const originalWeightsUseDifficultyDefaults = aiStrategyWeightsUseDifficultyDefaults;
+      const aiDifficulty = normalizeAiDifficulty(options.aiDifficulty || aiAutoBattleState.aiDifficulty);
+      const difficultyDefaultWeights = getAiStrategyWeightDefaultsForDifficulty(aiDifficulty);
       const baselineWeights = normalizeAiStrategyWeights(
-        options.baselineWeights || AI_STRATEGY_WEIGHT_DEFAULTS,
-        { merge: false },
+        options.baselineWeights || difficultyDefaultWeights,
+        { merge: false, baseWeights: difficultyDefaultWeights },
       );
       const recommendation = options.strategyTuning
         || options.tunedStrategyTuning
         || getAiStrategyTuningRecommendation({ learningRate: options.tuningLearningRate });
       const tunedWeights = normalizeAiStrategyWeights(
-        options.tunedWeights || recommendation?.weights || originalWeights,
-        { merge: false },
+        options.tunedWeights
+          || recommendation?.weights
+          || (originalWeightsUseDifficultyDefaults ? difficultyDefaultWeights : originalWeights),
+        { merge: false, baseWeights: difficultyDefaultWeights },
       );
       const sharedOptions = {
+        aiDifficulty,
         activePlayerCount: options.activePlayerCount,
         maxSteps: options.maxSteps,
         stepDelayMs: options.stepDelayMs,
@@ -21254,13 +21367,17 @@
         if (options.keepTunedWeights) {
           configureAiStrategyWeights(tunedWeights, { merge: false });
         } else {
-          configureAiStrategyWeights(originalWeights, { merge: false });
+          configureAiStrategyWeights(originalWeights, {
+            merge: false,
+            useDifficultyDefaults: originalWeightsUseDifficultyDefaults,
+          });
         }
         const strategyABHistoryEntry = comparison && options.recordABResult !== false
           ? recordAiStrategyABComparison(comparison, {
             label: options.strategyTuningLabel || options.label || null,
             seedBase,
             gamesRun: games,
+            aiDifficulty,
             baselineWeights,
             tunedWeights,
             maxHistory: options.strategyTuningHistoryLimit,
@@ -21276,6 +21393,7 @@
         return structuredClone({
           ok: Boolean(baseline?.ok && tuned?.ok),
           games,
+          aiDifficulty,
           seedBase,
           seeds,
           baselineWeights,
@@ -21288,7 +21406,10 @@
           tuned,
         });
       } catch (error) {
-        configureAiStrategyWeights(originalWeights, { merge: false });
+        configureAiStrategyWeights(originalWeights, {
+          merge: false,
+          useDifficultyDefaults: originalWeightsUseDifficultyDefaults,
+        });
         throw error;
       }
     }
@@ -21297,15 +21418,20 @@
       if (aiAutoBattleState.running) {
         return { ok: false, message: "AI 自动对战已经在运行" };
       }
-      const originalWeights = getAiStrategyWeights();
+      const originalWeights = { ...aiStrategyWeights };
+      const originalWeightsUseDifficultyDefaults = aiStrategyWeightsUseDifficultyDefaults;
+      const aiDifficulty = normalizeAiDifficulty(options.aiDifficulty || aiAutoBattleState.aiDifficulty);
+      const difficultyDefaultWeights = getAiStrategyWeightDefaultsForDifficulty(aiDifficulty);
       const baselineWeights = normalizeAiStrategyWeights(
-        options.baselineWeights || originalWeights,
-        { merge: false },
+        options.baselineWeights
+          || (originalWeightsUseDifficultyDefaults ? difficultyDefaultWeights : originalWeights),
+        { merge: false, baseWeights: difficultyDefaultWeights },
       );
       const seedBase = options.seed ?? options.randomSeed ?? `strategy-cycle-${Date.now()}`;
       const games = Math.min(100, Math.max(1, Math.round(Number(options.games ?? options.batchGames) || 5)));
       const abGames = Math.min(50, Math.max(1, Math.round(Number(options.abGames) || games)));
       const sharedOptions = {
+        aiDifficulty,
         activePlayerCount: options.activePlayerCount,
         maxSteps: options.maxSteps,
         stepDelayMs: options.stepDelayMs,
@@ -21330,12 +21456,16 @@
 
         if (!baselineBatch?.ok && options.continueOnBaselineBlocked !== true) {
           if (options.restoreWeights !== false) {
-            configureAiStrategyWeights(originalWeights, { merge: false });
+            configureAiStrategyWeights(originalWeights, {
+              merge: false,
+              useDifficultyDefaults: originalWeightsUseDifficultyDefaults,
+            });
           }
           return structuredClone({
             ok: false,
             phase: "baseline",
             seedBase,
+            aiDifficulty,
             games,
             abGames,
             baselineWeights,
@@ -21354,7 +21484,7 @@
           || getAiStrategyTuningRecommendation({ learningRate: options.tuningLearningRate });
         const tunedWeights = normalizeAiStrategyWeights(
           options.tunedWeights || recommendation?.weights || baselineWeights,
-          { merge: false },
+          { merge: false, baseWeights: difficultyDefaultWeights },
         );
 
         const abTest = await runAiStrategyABTest({
@@ -21378,11 +21508,15 @@
         if (options.applySelectedWeights || (options.applyImprovedWeights && selectedVariant === "tuned")) {
           appliedWeights = configureAiStrategyWeights(selectedWeights, { merge: false }).weights;
         } else if (options.restoreWeights !== false) {
-          configureAiStrategyWeights(originalWeights, { merge: false });
+          configureAiStrategyWeights(originalWeights, {
+            merge: false,
+            useDifficultyDefaults: originalWeightsUseDifficultyDefaults,
+          });
         }
 
         return structuredClone({
           ok: Boolean(baselineBatch?.ok && abTest?.ok),
+          aiDifficulty,
           seedBase,
           games,
           abGames,
@@ -21398,7 +21532,10 @@
         });
       } catch (error) {
         if (options.restoreWeights !== false) {
-          configureAiStrategyWeights(originalWeights, { merge: false });
+          configureAiStrategyWeights(originalWeights, {
+            merge: false,
+            useDifficultyDefaults: originalWeightsUseDifficultyDefaults,
+          });
         }
         throw error;
       }

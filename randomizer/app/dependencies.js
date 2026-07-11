@@ -38,6 +38,7 @@
     Object.freeze({ key: "initialCards", globalName: "SetiInitialCards" }),
     Object.freeze({ key: "industry", globalName: "SetiIndustry" }),
     Object.freeze({ key: "aiValuation", globalName: "SetiAIValuation" }),
+    Object.freeze({ key: "aiRaceModel", globalName: "SetiAIRaceModel" }),
     Object.freeze({ key: "ai", globalName: "SetiAI" }),
   ]);
 

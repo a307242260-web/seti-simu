@@ -4325,6 +4325,14 @@ const battleSummary = analytics.summarizeBattleReports([
 assert.equal(battleSummary.gameCount, 2);
 assert.equal(battleSummary.completedGames, 1);
 assert.equal(battleSummary.blockedGames, 1);
+assert.equal(battleSummary.incompleteGames, 1);
+assert.equal(battleSummary.bugCount, 1);
+assert.equal(battleSummary.averagePlayerScore, 24.333);
+assert.equal(battleSummary.averageMinimumPlayerScore, 24.5);
+assert.equal(battleSummary.p25PlayerScore, 19);
+assert.equal(battleSummary.playersAtLeast270, 0);
+assert.equal(battleSummary.gamesWinnerAtLeast270, 0);
+assert.equal(battleSummary.maxScore, 30);
 assert.equal(battleSummary.actionCounts.playCard, 1);
 assert.equal(battleSummary.actionCategoryRatios.basicMain, 0.333);
 assert.equal(battleSummary.actionCategoryRatios.engine, 0.333);
@@ -4447,8 +4455,16 @@ const comparison = analytics.compareStrategyBatchResults(
       gameCount: 2,
       completedGames: 2,
       blockedGames: 0,
+      incompleteGames: 0,
+      bugCount: 0,
       completionRate: 1,
       averageWinnerScore: 30,
+      averagePlayerScore: 25,
+      averageMinimumPlayerScore: 20,
+      p25PlayerScore: 22,
+      playersAtLeast270: 1,
+      gamesWinnerAtLeast270: 1,
+      maxScore: 280,
       actionCategoryRatios: { engine: 0.2, basicMain: 0.3 },
       scoreOpportunities: { selectedBelowBest: 2, totalGap: 10, maxGap: 6, averageGap: 5 },
       candidateScoreStats: {
@@ -4468,8 +4484,16 @@ const comparison = analytics.compareStrategyBatchResults(
       gameCount: 2,
       completedGames: 2,
       blockedGames: 0,
+      incompleteGames: 0,
+      bugCount: 0,
       completionRate: 1,
       averageWinnerScore: 34,
+      averagePlayerScore: 30,
+      averageMinimumPlayerScore: 23,
+      p25PlayerScore: 24,
+      playersAtLeast270: 2,
+      gamesWinnerAtLeast270: 2,
+      maxScore: 290,
       actionCategoryRatios: { engine: 0.3, basicMain: 0.2 },
       scoreOpportunities: { selectedBelowBest: 1, totalGap: 3, maxGap: 3, averageGap: 3 },
       candidateScoreStats: {
@@ -4487,6 +4511,12 @@ const comparison = analytics.compareStrategyBatchResults(
   { seed: "sample-ab" },
 );
 assert.equal(comparison.deltas.averageWinnerScore, 4);
+assert.equal(comparison.deltas.averagePlayerScore, 5);
+assert.equal(comparison.deltas.averageMinimumPlayerScore, 3);
+assert.equal(comparison.deltas.p25PlayerScore, 2);
+assert.equal(comparison.deltas.playersAtLeast270, 1);
+assert.equal(comparison.deltas.gamesWinnerAtLeast270, 1);
+assert.equal(comparison.deltas.maxScore, 10);
 assert.equal(comparison.deltas.actionCategoryRatios.engine, 0.1);
 assert.equal(comparison.deltas.scoreOpportunities.selectedBelowBest, -1);
 assert.equal(comparison.deltas.scoreOpportunities.totalGap, -7);
@@ -4503,6 +4533,129 @@ assert.equal(comparison.deltas.turnPlanTypeCounts["card-synergy"], 2);
 assert.equal(comparison.deltas.turnPlanActionCounts.move, 2);
 assert.equal(comparison.deltas.turnPlanActionCounts.scan, 2);
 assert.equal(comparison.verdict.improved, true);
+assert.equal(comparison.verdict.metricsComplete, true);
+assert.equal(comparison.verdict.allSeatMeanImproved, true);
+assert.equal(comparison.verdict.lowTailPreserved, true);
+assert.equal(comparison.verdict.highScorePreserved, true);
+assert.equal(comparison.verdict.reliabilityPreserved, true);
+
+const winnerOnlyImprovementComparison = analytics.compareStrategyBatchResults(
+  {
+    summary: {
+      gameCount: 2,
+      completedGames: 2,
+      blockedGames: 0,
+      incompleteGames: 0,
+      bugCount: 0,
+      completionRate: 1,
+      averageWinnerScore: 300,
+      averagePlayerScore: 240,
+      averageMinimumPlayerScore: 190,
+      p25PlayerScore: 210,
+      playersAtLeast270: 2,
+      gamesWinnerAtLeast270: 2,
+      maxScore: 310,
+    },
+  },
+  {
+    summary: {
+      gameCount: 2,
+      completedGames: 2,
+      blockedGames: 0,
+      incompleteGames: 0,
+      bugCount: 0,
+      completionRate: 1,
+      averageWinnerScore: 310,
+      averagePlayerScore: 230,
+      averageMinimumPlayerScore: 175,
+      p25PlayerScore: 190,
+      playersAtLeast270: 2,
+      gamesWinnerAtLeast270: 2,
+      maxScore: 320,
+    },
+  },
+);
+assert.equal(winnerOnlyImprovementComparison.verdict.improved, false);
+assert.equal(winnerOnlyImprovementComparison.verdict.allSeatMeanImproved, false);
+assert.equal(winnerOnlyImprovementComparison.verdict.lowTailPreserved, false);
+
+const highScoreRegressionComparison = analytics.compareStrategyBatchResults(
+  {
+    summary: {
+      gameCount: 2,
+      completedGames: 2,
+      blockedGames: 0,
+      incompleteGames: 0,
+      bugCount: 0,
+      completionRate: 1,
+      averageWinnerScore: 280,
+      averagePlayerScore: 220,
+      averageMinimumPlayerScore: 180,
+      p25PlayerScore: 195,
+      playersAtLeast270: 3,
+      gamesWinnerAtLeast270: 2,
+      maxScore: 290,
+    },
+  },
+  {
+    summary: {
+      gameCount: 2,
+      completedGames: 2,
+      blockedGames: 0,
+      incompleteGames: 0,
+      bugCount: 0,
+      completionRate: 1,
+      averageWinnerScore: 282,
+      averagePlayerScore: 225,
+      averageMinimumPlayerScore: 185,
+      p25PlayerScore: 200,
+      playersAtLeast270: 2,
+      gamesWinnerAtLeast270: 1,
+      maxScore: 295,
+    },
+  },
+);
+assert.equal(highScoreRegressionComparison.verdict.improved, false);
+assert.equal(highScoreRegressionComparison.verdict.highScorePreserved, false);
+
+const reliabilityRegressionComparison = analytics.compareStrategyBatchResults(
+  {
+    summary: {
+      gameCount: 2,
+      completedGames: 2,
+      blockedGames: 0,
+      incompleteGames: 0,
+      bugCount: 0,
+      completionRate: 1,
+      averageWinnerScore: 280,
+      averagePlayerScore: 220,
+      averageMinimumPlayerScore: 180,
+      p25PlayerScore: 195,
+      playersAtLeast270: 2,
+      gamesWinnerAtLeast270: 2,
+      maxScore: 290,
+    },
+  },
+  {
+    summary: {
+      gameCount: 2,
+      completedGames: 2,
+      blockedGames: 0,
+      incompleteGames: 0,
+      bugCount: 1,
+      completionRate: 1,
+      averageWinnerScore: 282,
+      averagePlayerScore: 225,
+      averageMinimumPlayerScore: 185,
+      p25PlayerScore: 200,
+      playersAtLeast270: 2,
+      gamesWinnerAtLeast270: 2,
+      maxScore: 295,
+    },
+  },
+);
+assert.equal(reliabilityRegressionComparison.verdict.improved, false);
+assert.equal(reliabilityRegressionComparison.verdict.reliabilityPreserved, false);
 const improvedAbTuning = {
   id: "ab-tuned-v1",
   confidence: 0.7,
@@ -4538,8 +4691,16 @@ const losingComparison = analytics.compareStrategyBatchResults(
       gameCount: 2,
       completedGames: 2,
       blockedGames: 0,
+      incompleteGames: 0,
+      bugCount: 0,
       completionRate: 1,
       averageWinnerScore: 34,
+      averagePlayerScore: 29,
+      averageMinimumPlayerScore: 22,
+      p25PlayerScore: 24,
+      playersAtLeast270: 0,
+      gamesWinnerAtLeast270: 0,
+      maxScore: 34,
       actionCategoryRatios: { engine: 0.2 },
       winnerProfileDeltas: { techCount: 1 },
     },
@@ -4550,8 +4711,16 @@ const losingComparison = analytics.compareStrategyBatchResults(
       gameCount: 2,
       completedGames: 2,
       blockedGames: 0,
+      incompleteGames: 0,
+      bugCount: 0,
       completionRate: 1,
       averageWinnerScore: 30,
+      averagePlayerScore: 28,
+      averageMinimumPlayerScore: 21,
+      p25PlayerScore: 23,
+      playersAtLeast270: 0,
+      gamesWinnerAtLeast270: 0,
+      maxScore: 30,
       actionCategoryRatios: { engine: 0.3 },
       winnerProfileDeltas: { techCount: 1.5 },
     },

@@ -34,6 +34,7 @@
     "end-turn",
   ]);
   const DEFAULT_SEQUENCE_WINDOW_TURNS = 6;
+  const HIGH_SCORE_THRESHOLD = 270;
   const HIGH_SCORE_NEAR_MISS_TARGET = 300;
   const HIGH_SCORE_NEAR_MISS_MIN = 280;
   const FINAL_PUBLIC_REFILL_SHORTFALL_SCORE = 20;
@@ -115,6 +116,17 @@
 
   function roundRatio(value) {
     return Math.round(numeric(value) * 1000) / 1000;
+  }
+
+  function nearestRankPercentile(values = [], ratio = 0.25) {
+    const sorted = (values || [])
+      .map(Number)
+      .filter(Number.isFinite)
+      .sort((left, right) => left - right);
+    if (!sorted.length) return 0;
+    const boundedRatio = Math.min(1, Math.max(0, Number(ratio) || 0));
+    const rank = Math.max(1, Math.ceil(sorted.length * boundedRatio));
+    return sorted[Math.min(sorted.length - 1, rank - 1)];
   }
 
   function rankCounts(counts = {}, limit = 10) {
@@ -6236,7 +6248,10 @@
       const scoreDelta = numeric(abComparison.verdict?.scoreDelta ?? abComparison.deltas?.averageWinnerScore);
       const blockedDelta = numeric(abComparison.verdict?.blockedDelta ?? abComparison.deltas?.blockedGames);
       const completionDelta = numeric(abComparison.verdict?.completionDelta ?? abComparison.deltas?.completionRate);
-      if (abComparison.verdict?.improved || (scoreDelta > 0 && blockedDelta <= 0 && completionDelta >= 0)) {
+      const comparisonImproved = typeof abComparison.verdict?.improved === "boolean"
+        ? abComparison.verdict.improved
+        : scoreDelta > 0 && blockedDelta <= 0 && completionDelta >= 0;
+      if (comparisonImproved) {
         weight *= 1.25 + Math.min(0.75, scoreDelta / 10);
       } else if (selectedVariant === "baseline") {
         weight *= 1.1
@@ -6305,8 +6320,16 @@
       gameCount: numeric(summary.gameCount || summary.gamesRun || entry.gamesRun),
       completedGames: numeric(summary.completedGames),
       blockedGames: numeric(summary.blockedGames),
+      incompleteGames: numeric(summary.incompleteGames),
+      bugCount: numeric(summary.bugCount),
       completionRate: summary.completionRate == null ? null : roundRatio(summary.completionRate),
       averageWinnerScore: numeric(summary.averageWinnerScore),
+      averagePlayerScore: numeric(summary.averagePlayerScore),
+      averageMinimumPlayerScore: numeric(summary.averageMinimumPlayerScore),
+      p25PlayerScore: numeric(summary.p25PlayerScore),
+      playersAtLeast270: numeric(summary.playersAtLeast270),
+      gamesWinnerAtLeast270: numeric(summary.gamesWinnerAtLeast270),
+      maxScore: numeric(summary.maxScore),
       confidence: tuning?.confidence == null ? null : roundRatio(tuning.confidence),
       weights: tuning?.weights ? normalizeStrategyWeights(tuning.weights) : null,
       selectedVariant: getStrategyHistorySelectedVariant(entry, tuning),
@@ -6434,8 +6457,51 @@
     const tunedGames = numeric(tuned.gameCount || tunedResult.gamesRun);
     const gameCount = Math.min(baselineGames || 0, tunedGames || 0);
     const scoreDelta = roundRatio(numeric(tuned.averageWinnerScore) - numeric(baseline.averageWinnerScore));
+    const averagePlayerScoreDelta = roundRatio(
+      numeric(tuned.averagePlayerScore) - numeric(baseline.averagePlayerScore),
+    );
+    const averageMinimumPlayerScoreDelta = roundRatio(
+      numeric(tuned.averageMinimumPlayerScore) - numeric(baseline.averageMinimumPlayerScore),
+    );
+    const p25PlayerScoreDelta = roundRatio(numeric(tuned.p25PlayerScore) - numeric(baseline.p25PlayerScore));
+    const playersAtLeast270Delta = roundRatio(
+      numeric(tuned.playersAtLeast270) - numeric(baseline.playersAtLeast270),
+    );
+    const gamesWinnerAtLeast270Delta = roundRatio(
+      numeric(tuned.gamesWinnerAtLeast270) - numeric(baseline.gamesWinnerAtLeast270),
+    );
+    const maxScoreDelta = roundRatio(numeric(tuned.maxScore) - numeric(baseline.maxScore));
     const completionDelta = roundRatio(numeric(tuned.completionRate) - numeric(baseline.completionRate));
     const blockedDelta = roundRatio(numeric(tuned.blockedGames) - numeric(baseline.blockedGames));
+    const incompleteDelta = roundRatio(numeric(tuned.incompleteGames) - numeric(baseline.incompleteGames));
+    const bugDelta = roundRatio(numeric(tuned.bugCount) - numeric(baseline.bugCount));
+    const requiredDistributionMetrics = [
+      "averagePlayerScore",
+      "averageMinimumPlayerScore",
+      "p25PlayerScore",
+      "playersAtLeast270",
+      "gamesWinnerAtLeast270",
+      "maxScore",
+      "incompleteGames",
+      "bugCount",
+    ];
+    const metricsComplete = [baseline, tuned].every((summary) => (
+      requiredDistributionMetrics.every((key) => Number.isFinite(Number(summary?.[key])))
+    ));
+    const winnerScorePreserved = scoreDelta >= 0;
+    const allSeatMeanImproved = averagePlayerScoreDelta > 0;
+    const lowTailPreserved = averageMinimumPlayerScoreDelta >= 0 && p25PlayerScoreDelta >= 0;
+    const highScorePreserved = playersAtLeast270Delta >= 0 && gamesWinnerAtLeast270Delta >= 0;
+    const reliabilityPreserved = blockedDelta <= 0
+      && incompleteDelta <= 0
+      && bugDelta <= 0
+      && completionDelta >= 0;
+    const improved = metricsComplete
+      && winnerScorePreserved
+      && allSeatMeanImproved
+      && lowTailPreserved
+      && highScorePreserved
+      && reliabilityPreserved;
     return {
       id: "strategy-ab-v1",
       label: options.label || null,
@@ -6445,8 +6511,16 @@
         gameCount: baselineGames,
         completedGames: numeric(baseline.completedGames),
         blockedGames: numeric(baseline.blockedGames),
+        incompleteGames: numeric(baseline.incompleteGames),
+        bugCount: numeric(baseline.bugCount),
         completionRate: numeric(baseline.completionRate),
         averageWinnerScore: numeric(baseline.averageWinnerScore),
+        averagePlayerScore: numeric(baseline.averagePlayerScore),
+        averageMinimumPlayerScore: numeric(baseline.averageMinimumPlayerScore),
+        p25PlayerScore: numeric(baseline.p25PlayerScore),
+        playersAtLeast270: numeric(baseline.playersAtLeast270),
+        gamesWinnerAtLeast270: numeric(baseline.gamesWinnerAtLeast270),
+        maxScore: numeric(baseline.maxScore),
         actionCategoryRatios: baseline.actionCategoryRatios || {},
         scoreOpportunities: baseline.scoreOpportunities || {},
         candidateScoreStats: baseline.candidateScoreStats || {},
@@ -6466,8 +6540,16 @@
         gameCount: tunedGames,
         completedGames: numeric(tuned.completedGames),
         blockedGames: numeric(tuned.blockedGames),
+        incompleteGames: numeric(tuned.incompleteGames),
+        bugCount: numeric(tuned.bugCount),
         completionRate: numeric(tuned.completionRate),
         averageWinnerScore: numeric(tuned.averageWinnerScore),
+        averagePlayerScore: numeric(tuned.averagePlayerScore),
+        averageMinimumPlayerScore: numeric(tuned.averageMinimumPlayerScore),
+        p25PlayerScore: numeric(tuned.p25PlayerScore),
+        playersAtLeast270: numeric(tuned.playersAtLeast270),
+        gamesWinnerAtLeast270: numeric(tuned.gamesWinnerAtLeast270),
+        maxScore: numeric(tuned.maxScore),
         actionCategoryRatios: tuned.actionCategoryRatios || {},
         scoreOpportunities: tuned.scoreOpportunities || {},
         candidateScoreStats: tuned.candidateScoreStats || {},
@@ -6485,8 +6567,16 @@
       },
       deltas: {
         averageWinnerScore: scoreDelta,
+        averagePlayerScore: averagePlayerScoreDelta,
+        averageMinimumPlayerScore: averageMinimumPlayerScoreDelta,
+        p25PlayerScore: p25PlayerScoreDelta,
+        playersAtLeast270: playersAtLeast270Delta,
+        gamesWinnerAtLeast270: gamesWinnerAtLeast270Delta,
+        maxScore: maxScoreDelta,
         completionRate: completionDelta,
         blockedGames: blockedDelta,
+        incompleteGames: incompleteDelta,
+        bugCount: bugDelta,
         actionCategoryRatios: diffNumericMaps(tuned.actionCategoryRatios, baseline.actionCategoryRatios),
         scoreOpportunities: diffNumericMaps(tuned.scoreOpportunities, baseline.scoreOpportunities),
         candidateScoreStats: diffCandidateScoreStats(tuned.candidateScoreStats, baseline.candidateScoreStats),
@@ -6510,10 +6600,24 @@
         ),
       },
       verdict: {
-        improved: scoreDelta > 0 && blockedDelta <= 0 && completionDelta >= 0,
+        improved,
+        metricsComplete,
+        winnerScorePreserved,
+        allSeatMeanImproved,
+        lowTailPreserved,
+        highScorePreserved,
+        reliabilityPreserved,
         scoreDelta,
+        averagePlayerScoreDelta,
+        averageMinimumPlayerScoreDelta,
+        p25PlayerScoreDelta,
+        playersAtLeast270Delta,
+        gamesWinnerAtLeast270Delta,
+        maxScoreDelta,
         completionDelta,
         blockedDelta,
+        incompleteDelta,
+        bugDelta,
       },
     };
   }
@@ -7975,16 +8079,38 @@
     const allProfiles = [];
     const winnerProfiles = [];
     const nonWinnerProfiles = [];
+    const allPlayerScores = [];
+    const minimumPlayerScores = [];
     let totalSteps = 0;
     let completedGames = 0;
     let blockedGames = 0;
+    let incompleteGames = 0;
+    let bugCount = 0;
     let totalWinnerScore = 0;
+    let playersAtLeast270 = 0;
+    let gamesWinnerAtLeast270 = 0;
+    let maxScore = 0;
 
     for (const analysis of validAnalyses) {
       const summary = analysis.summary || {};
       totalSteps += numeric(summary.steps);
       if (summary.gameEnded) completedGames += 1;
       if (summary.blocked || analysis.bugs?.length) blockedGames += 1;
+      if ((!summary.gameEnded && !summary.stoppedBeforeRound) || summary.ok === false) {
+        incompleteGames += 1;
+      }
+      bugCount += (analysis.bugs || []).reduce((total, bug) => total + Math.max(1, numeric(bug.count)), 0);
+      const playerScores = (analysis.playerResults || [])
+        .map((player) => Number(player?.finalScore))
+        .filter(Number.isFinite);
+      if (playerScores.length) {
+        allPlayerScores.push(...playerScores);
+        minimumPlayerScores.push(Math.min(...playerScores));
+        playersAtLeast270 += playerScores.filter((score) => score >= HIGH_SCORE_THRESHOLD).length;
+        const winnerScore = Math.max(...playerScores);
+        if (winnerScore >= HIGH_SCORE_THRESHOLD) gamesWinnerAtLeast270 += 1;
+        maxScore = Math.max(maxScore, winnerScore);
+      }
       for (const [key, count] of Object.entries(analysis.actionCounts || {})) increment(mergedActionCounts, key, count);
       for (const [key, count] of Object.entries(analysis.actionCategoryCounts || {})) increment(mergedActionCategoryCounts, key, count);
       for (const [key, count] of Object.entries(analysis.typeCounts || {})) increment(mergedTypeCounts, key, count);
@@ -8374,9 +8500,21 @@
       gameCount,
       completedGames,
       blockedGames,
+      incompleteGames,
+      bugCount,
       completionRate: gameCount ? roundRatio(completedGames / gameCount) : 0,
       averageSteps: gameCount ? roundRatio(totalSteps / gameCount) : 0,
       averageWinnerScore: gameCount ? roundRatio(totalWinnerScore / gameCount) : 0,
+      averagePlayerScore: allPlayerScores.length
+        ? roundRatio(allPlayerScores.reduce((total, score) => total + score, 0) / allPlayerScores.length)
+        : 0,
+      averageMinimumPlayerScore: minimumPlayerScores.length
+        ? roundRatio(minimumPlayerScores.reduce((total, score) => total + score, 0) / minimumPlayerScores.length)
+        : 0,
+      p25PlayerScore: roundRatio(nearestRankPercentile(allPlayerScores, 0.25)),
+      playersAtLeast270,
+      gamesWinnerAtLeast270,
+      maxScore: roundRatio(maxScore),
       turnActionCount,
       actionCounts: mergedActionCounts,
       actionCategoryCounts: mergedActionCategoryCounts,
