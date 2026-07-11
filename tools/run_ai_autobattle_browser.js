@@ -323,14 +323,13 @@ function buildBatchStartExpression(pageOptions) {
       let progressTimer = null;
       const updateProgress = () => {
         try {
-          const report = window.SetiRandomizer?.getAiAutoBattleReport?.();
-          window.__setiAiBatchState.progress = report
+          const progress = window.SetiRandomizer?.getAiAutoBattleProgress?.();
+          window.__setiAiBatchState.progress = progress
             ? {
-              lastSummary: report.lastSummary || null,
-              logCount: Array.isArray(report.logs) ? report.logs.length : 0,
-              bugCount: Array.isArray(report.bugs) ? report.bugs.length : 0,
-              pendingState: report.pendingState || null,
-              tailLogs: Array.isArray(report.logs) ? report.logs.slice(-3) : [],
+              lastSummary: progress.lastSummary || null,
+              logCount: Number(progress.logCount) || 0,
+              bugCount: Number(progress.bugCount) || 0,
+              pendingState: progress.pendingState || null,
             }
             : null;
         } catch (error) {

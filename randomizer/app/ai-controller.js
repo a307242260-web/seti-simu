@@ -904,6 +904,30 @@
       return structuredClone(buildAiAutoBattleReport());
     }
 
+    function getAiAutoBattleProgress() {
+      const summary = aiAutoBattleState.lastSummary;
+      return {
+        enabled: aiAutoBattleState.enabled,
+        running: aiAutoBattleState.running,
+        pausedOnBug: aiAutoStepPausedOnBug,
+        logCount: aiAutoBattleState.logs.length,
+        bugCount: aiAutoBattleState.bugs.length,
+        lastSummary: summary
+          ? {
+            ok: summary.ok,
+            steps: summary.steps,
+            stopped: summary.stopped,
+            blocked: summary.blocked,
+            gameEnded: summary.gameEnded,
+            stoppedBeforeRound: summary.stoppedBeforeRound,
+            seed: summary.seed,
+            message: summary.message,
+          }
+          : null,
+        pendingState: getAiAutoBattlePendingState(),
+      };
+    }
+
     function getAiAutoBattleAnalysis() {
       return structuredClone(buildAiAutoBattleReport().analysis || null);
     }
@@ -21356,6 +21380,7 @@
       configureDefaultAiOpponent,
       createAiControlSnapshot,
       getAiAutoBattleAnalysis,
+      getAiAutoBattleProgress,
       getAiAutoBattleReport,
       getAiMapDemand,
       getAiRemainingRoundWeight,
