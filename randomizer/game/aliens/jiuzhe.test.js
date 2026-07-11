@@ -108,6 +108,143 @@ assert.equal(
   "Pluto markers should count for same-planet orbit/land Jiuzhe conditions",
 );
 
+{
+  const progressPlayer = {
+    id: "player-progress",
+    color: "green",
+    income: {
+      credits: 4,
+      energy: 3,
+      handSize: 2,
+      publicity: 1,
+      availableData: 1,
+      additionalPublicScan: 1,
+    },
+    techState: {
+      ownedTiles: {
+        purple1: true,
+        purple2: true,
+        purple3: true,
+        blue1: true,
+        blue2: true,
+        orange1: true,
+        orange2: true,
+        orange3: true,
+      },
+    },
+    completedTaskCount: 5,
+  };
+  const progressAlienState = state.createDefaultAlienState();
+  progressAlienState.aliens[1].assignedAlienId = jiuzhe.ALIEN_ID;
+  progressAlienState.aliens[1].alienId = jiuzhe.ALIEN_ID;
+  progressAlienState.aliens[1].revealed = true;
+  jiuzhe.ensureJiuzheState(progressAlienState).revealedSlotId = 1;
+  for (const position of [1, 2, 3, 4, 5]) {
+    assert.equal(
+      jiuzhe.placeJiuzheTrace(progressAlienState, 1, "pink", position, progressPlayer).ok,
+      true,
+    );
+  }
+  assert.equal(jiuzhe.placeJiuzheTrace(progressAlienState, 1, "yellow", 1, progressPlayer).ok, true);
+
+  progressAlienState.aliens[2].traces.pink = {
+    firstPlaced: true,
+    ownerPlayerId: progressPlayer.id,
+    ownerPlayerColor: progressPlayer.color,
+    extraCount: 4,
+    extraMarkers: Array.from({ length: 4 }, () => ({
+      ownerPlayerId: progressPlayer.id,
+      ownerPlayerColor: progressPlayer.color,
+    })),
+  };
+  progressAlienState.aliens[2].traces.yellow = {
+    firstPlaced: true,
+    ownerPlayerId: progressPlayer.id,
+    ownerPlayerColor: progressPlayer.color,
+    extraCount: 0,
+  };
+
+  const marker = () => ({ playerId: progressPlayer.id, playerColor: progressPlayer.color });
+  const progressContext = {
+    alienGameState: progressAlienState,
+    companyBaseIncome: {
+      credits: 2,
+      energy: 1,
+      handSize: 1,
+      publicity: 0,
+      availableData: 0,
+      additionalPublicScan: 0,
+    },
+    planetStatsState: {
+      planets: {
+        mars: { orbitMarkers: [marker(), marker()], landingMarkers: [], satelliteLandings: [] },
+        venus: { orbitMarkers: [], landingMarkers: [marker()], satelliteLandings: [marker()] },
+      },
+    },
+    plutoMarkers: [
+      { ...marker(), kind: "orbit", planetId: "pluto" },
+      { ...marker(), kind: "land", planetId: "pluto", sequence: 1 },
+      { ...marker(), kind: "land", planetId: "pluto", sequence: 2 },
+    ],
+    nebulaDataState: {
+      sectorSettlements: {
+        winsByPlayerId: {
+          [progressPlayer.id]: [
+            { sectorId: "sector-2-a" },
+            { sectorId: "sector-1-a" },
+            { sectorId: "sector-1-b" },
+            { sectorId: "sector-4-a" },
+            { sectorId: "sector-3-a" },
+          ],
+        },
+      },
+    },
+  };
+  const expectedProgressByCard = new Map([
+    [0, 6],
+    [1, 3],
+    [2, 2],
+    [3, 3],
+    [4, 2],
+    [5, 8],
+    [6, 1],
+    [7, 4],
+    [8, 10],
+    [9, 6],
+    [10, 3],
+    [11, 0],
+    [12, 3],
+    [13, 5],
+    [14, 2],
+  ]);
+
+  for (const definition of jiuzhe.CARD_DEFINITIONS) {
+    const progress = jiuzhe.getCardConditionProgress(definition, progressPlayer, progressContext);
+    assert.ok(progress, `Jiuzhe card ${definition.index} should expose condition progress`);
+    assert.equal(progress.current, expectedProgressByCard.get(definition.index));
+    assert.equal(progress.target, definition.condition.count);
+    assert.equal(progress.remaining, Math.max(0, progress.target - progress.current));
+    assert.equal(progress.met, progress.current >= progress.target);
+    assert.equal(
+      jiuzhe.isCardConditionMet(definition, progressPlayer, progressContext),
+      progress.met,
+      `Jiuzhe card ${definition.index} condition result should reuse shared progress`,
+    );
+  }
+
+  const totalIncomeProgress = jiuzhe.getCardConditionProgress({
+    index: 99,
+    condition: { type: "totalIncome", count: 8 },
+  }, progressPlayer, progressContext);
+  assert.equal(totalIncomeProgress.current, 8, "legacy totalIncome should share income-increase progress");
+  assert.equal(totalIncomeProgress.met, true);
+  assert.equal(
+    jiuzhe.getCardConditionProgress({ index: 100, condition: { type: "unknown", count: 1 } }, progressPlayer, progressContext),
+    null,
+    "unsupported Jiuzhe conditions should not invent progress",
+  );
+}
+
 const revealState = {
   aliens: {
     1: {

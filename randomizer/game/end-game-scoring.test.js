@@ -404,7 +404,7 @@ assert.equal(
   "first state trace should score for the first owner",
 );
 
-const banrenmaTracePlayer = player({ resources: { score: 25 } });
+const banrenmaTracePlayer = player({ resources: { score: 25, availableData: 10 } });
 const banrenmaTraceState = {
   aliens: {
     1: {

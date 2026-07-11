@@ -16,6 +16,7 @@
 
 - `randomizer/index.html`：浏览器页面入口。
 - `randomizer/app/dependencies.js`：app 层全局模块依赖收集与脚本顺序校验。
+- `randomizer/app/alien-trace-reward-flow.js`：外星人痕迹奖励的方舟解锁、面板放置与无目标落空编排。
 - `randomizer/app/constants.js`：app 层静态配置、图标路径、奖励表和 UI 参数。
 - `randomizer/app/dom.js`：固定 DOM 元素注册表。
 - `randomizer/app/events.js`：app 层事件绑定、overlay 点击分发、拖拽绑定与 resize 入口。

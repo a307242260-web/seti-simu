@@ -2986,23 +2986,127 @@
       ].filter(Boolean);
     }
 
+    function scoreAiBanrenmaTraceEffectValue(effect, player = getCurrentPlayer()) {
+      if (!effect || !player || !canAiResolveAlienTraceEffect(effect, player)) return -Infinity;
+      const fixedTraceType = effect.options?.traceType || null;
+      const traceTypes = fixedTraceType
+        ? [fixedTraceType]
+        : (effect.options?.allowedTraceTypes?.length
+          ? effect.options.allowedTraceTypes
+          : aliens?.TRACE_TYPES || []);
+      return traceTypes.reduce((best, traceType) => Math.max(
+        best,
+        aiNumber(scoreAiAlienTraceValue({ player, traceType }))
+          + aiNumber(scoreAiB1TraceMarginalValue(player, traceType)),
+      ), -Infinity);
+    }
+
+    function scoreAiExecutableBanrenmaEffects(effects = [], player = getCurrentPlayer()) {
+      if (!player || !Array.isArray(effects) || !effects.length) return -Infinity;
+      let value = 0;
+      for (const effect of effects) {
+        const effectValue = effect?.type === "alien_trace"
+          ? scoreAiBanrenmaTraceEffectValue(effect, player)
+          : scoreAiEffectValue(effect, { player });
+        if (!Number.isFinite(Number(effectValue))) return -Infinity;
+        value += aiNumber(effectValue);
+      }
+      return roundAiScore(value);
+    }
+
+    function scoreAiReadyBanrenmaCardOpportunity(card, player = getCurrentPlayer(), markId = null) {
+      if (!player || !banrenma?.isBanrenmaCard?.(card)) return -Infinity;
+      const mark = banrenma.getReadyScoreMarkForCard?.(alienGameState, player, card, markId);
+      if (!mark) return -Infinity;
+      return scoreAiExecutableBanrenmaEffects(banrenma.buildConditionEffects?.(card) || [], player);
+    }
+
+    function listAiReadyBanrenmaCardOpportunities(player = getCurrentPlayer()) {
+      return (player?.reservedCards || [])
+        .map((card, index) => {
+          if (!banrenma?.isBanrenmaCard?.(card)) return null;
+          const mark = banrenma.getReadyScoreMarkForCard?.(alienGameState, player, card);
+          if (!mark) return null;
+          return {
+            card,
+            cardId: card.id || null,
+            markId: mark.id || null,
+            index,
+            score: scoreAiReadyBanrenmaCardOpportunity(card, player, mark.id),
+          };
+        })
+        .filter(Boolean)
+        .sort((left, right) => {
+          const leftScore = Number.isFinite(Number(left.score)) ? Number(left.score) : -Infinity;
+          const rightScore = Number.isFinite(Number(right.score)) ? Number(right.score) : -Infinity;
+          return rightScore - leftScore || left.index - right.index;
+        });
+    }
+
+    function openAiPreferredBanrenmaCardOpportunity(player, includeCards, preferred = null) {
+      const reservedCards = player?.reservedCards;
+      const preferredCardId = includeCards && preferred?.cardId ? preferred.cardId : null;
+      const preferredIndex = preferredCardId && Array.isArray(reservedCards)
+        ? reservedCards.findIndex((card) => card?.id === preferredCardId)
+        : -1;
+      if (preferredIndex <= 0) {
+        return openBanrenmaReadyOpportunityForPlayer(player, {
+          includeCards,
+          playerId: player?.id || null,
+          playerColor: player?.color || null,
+          ...(preferredCardId ? { preferredCardId } : {}),
+        });
+      }
+
+      const originalOrder = reservedCards.slice();
+      const [preferredCard] = reservedCards.splice(preferredIndex, 1);
+      reservedCards.unshift(preferredCard);
+      try {
+        return openBanrenmaReadyOpportunityForPlayer(player, {
+          includeCards,
+          playerId: player?.id || null,
+          playerColor: player?.color || null,
+          preferredCardId,
+        });
+      } finally {
+        reservedCards.splice(0, reservedCards.length, ...originalOrder);
+      }
+    }
+
     function runAiReadyBanrenmaOpportunityOpenDecision() {
       if (state.pendingBanrenmaOpportunity || state.pendingBanrenmaCardGain) return null;
       if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return null;
       const currentPlayerId = getCurrentPlayer()?.id || null;
       for (const player of getAiBanrenmaOpportunityPlayers()) {
         const includeCards = player.id === currentPlayerId;
-        const result = openBanrenmaReadyOpportunityForPlayer(player, {
+        const hasPanelOpportunity = Boolean(
+          banrenma?.getPendingPanelMark?.(alienGameState, player)
+          && (banrenma?.getAvailableBonusPositions?.(alienGameState) || []).length,
+        );
+        const readyCardOpportunities = includeCards && !hasPanelOpportunity
+          ? listAiReadyBanrenmaCardOpportunities(player)
+          : [];
+        const preferredCardOpportunity = readyCardOpportunities
+          .find((entry) => Number.isFinite(Number(entry.score))) || null;
+        if (readyCardOpportunities.length && !preferredCardOpportunity) continue;
+        const result = openAiPreferredBanrenmaCardOpportunity(
+          player,
           includeCards,
-          playerId: player.id || null,
-          playerColor: player.color || null,
-        });
+          preferredCardOpportunity,
+        );
         if (!result) continue;
         if (result.ok === false) return result;
         recordAiAutoBattleLog("alien-use", `${player.colorLabel}AI 打开半人马达标机会`, {
           logPlayerId: player.id || null,
           logPlayerColor: player.color || null,
           includeCards,
+          preferredCardId: preferredCardOpportunity?.cardId || null,
+          preferredCardScore: preferredCardOpportunity?.score ?? null,
+          readyCardScores: readyCardOpportunities.map((entry) => ({
+            cardId: entry.cardId,
+            markId: entry.markId,
+            score: Number.isFinite(Number(entry.score)) ? entry.score : null,
+          })),
           result,
         });
         return {
@@ -3226,6 +3330,9 @@
       };
     }
 
+    let aiPublicityResearchPreviewDepth = 0;
+    let aiDeferredCardResearchPreviewDepth = 0;
+
     function scoreAiPublicityResearchTechSetupValue(gain = {}, player = getCurrentPlayer(), options = {}) {
       if (!player || !gain || typeof gain !== "object") return 0;
       const publicityGain = Math.max(0, aiNumber(gain.publicity));
@@ -3275,6 +3382,30 @@
       if (round >= 3 && finalMarks >= 2 && hasMarkedTechFinal) value += 1.4;
       if (round >= FINAL_ROUND_NUMBER && currentScore < 160) value += Math.min(2.2, (160 - currentScore) * 0.035);
       if (earlyTechEngineWindow && !hasTechFinalPlan) value *= 0.62;
+
+      // A publicity reward that crosses the real research threshold can save an
+      // entire setup action.  Price that tempo from the currently takeable tech
+      // supply instead of relying only on a historical resource constant.  The
+      // caller must opt into this real-supply preview: ordinary resource gains
+      // already price the publicity setup through their existing scalar paths.
+      // The guard keeps tech-bonus valuation (which can itself grant publicity)
+      // from recursively previewing the same supply.
+      if (
+        crossesResearchCost
+        && options.previewTakeableTechSupply === true
+        && aiPublicityResearchPreviewDepth <= 0
+        && aiDeferredCardResearchPreviewDepth <= 0
+        && String(getCurrentPlayer()?.id || "") === String(player?.id || "")
+      ) {
+        aiPublicityResearchPreviewDepth += 1;
+        try {
+          const bestTakeableTechScore = listAiResearchTechCandidates({})
+            .reduce((best, candidate) => Math.max(best, aiNumber(candidate?.score)), 0);
+          value = Math.max(value, bestTakeableTechScore * 0.28);
+        } finally {
+          aiPublicityResearchPreviewDepth = Math.max(0, aiPublicityResearchPreviewDepth - 1);
+        }
+      }
 
       const scale = options.scale == null ? 1 : Math.max(0, aiNumber(options.scale));
       return roundAiScore(Math.min(12, Math.max(0, value)) * scale);
@@ -5634,11 +5765,25 @@
         })
         : 0;
       if (tradeValue <= 0) return [];
+      const saferEnergyTrade = quickTrades.getTradeAction("credits-for-energy");
+      const saferEnergyTradeAvailable = Boolean(
+        saferEnergyTrade
+        && aiNumber(saferEnergyTrade.gain?.energy) > 0
+        && quickTrades.canExecuteTrade?.("credits-for-energy", createActionContext())?.ok,
+      );
       return ["credits-for-energy", "cards-for-energy"]
         .map((tradeId) => {
           const trade = quickTrades.getTradeAction(tradeId);
           const check = quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false };
           if (!trade || !check.ok) return null;
+          const analyzeTrade = tradeId === "cards-for-energy"
+            ? evaluateAiCardsForEnergyAnalyzeProtection(player, trade, null, {
+              saferEnergyTradeAvailable,
+            })
+            : null;
+          if (analyzeTrade && (!analyzeTrade.discardPlan.ok || analyzeTrade.protection.shouldProtect)) {
+            return null;
+          }
           const handTradePenalty = tradeId === "cards-for-energy" ? 2.5 : 0;
           return {
             id: "quickTrade",
@@ -5657,6 +5802,11 @@
               placedComputerData: placedCount,
               scoreToSecondFinalMark: scoreToSecondMark,
               handTradePenalty,
+              ...(analyzeTrade ? {
+                analyzeScore: roundAiScore(analyzeTrade.analyzeScore),
+                directScoreProtection: analyzeTrade.protection,
+                discardPlan: analyzeTrade.discardPlan,
+              } : {}),
             },
           };
         })
@@ -5681,6 +5831,12 @@
       if (analyzeEnergyCost <= 0) return [];
       if (aiNumber(resources.energy) >= analyzeEnergyCost) return [];
       if (!hasAiAnalyzeReadyDataSlot(player)) return [];
+      const saferEnergyTrade = quickTrades.getTradeAction("credits-for-energy");
+      const saferEnergyTradeAvailable = Boolean(
+        saferEnergyTrade
+        && aiNumber(saferEnergyTrade.gain?.energy) > 0
+        && quickTrades.canExecuteTrade?.("credits-for-energy", createActionContext())?.ok,
+      );
 
       return ["credits-for-energy", "cards-for-energy"]
         .map((tradeId) => {
@@ -5693,14 +5849,13 @@
           const preserveHandIndex = Number.isInteger(Number(competingCreditUnlock?.valueBreakdown?.bestPlayCard?.handIndex))
             ? Number(competingCreditUnlock.valueBreakdown.bestPlayCard.handIndex)
             : null;
-          const discardPlan = summarizeAiTradeDiscardPlan(player, trade, preserveHandIndex, {
-            includeExecutionPlan: true,
-            tradeId,
+          const analyzeTrade = evaluateAiCardsForEnergyAnalyzeProtection(player, trade, preserveHandIndex, {
+            saferEnergyTradeAvailable: tradeId === "cards-for-energy" && saferEnergyTradeAvailable,
           });
+          const { discardPlan, simulatedPlayer, analyzeScore, protection: directScoreProtection } = analyzeTrade;
           if (!discardPlan.ok) return null;
-          const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
           if (!simulatedPlayer || !canAiAnalyzeData(simulatedPlayer).ok) return null;
-          const analyzeScore = Math.max(0, aiNumber(scoreAiAnalyzeAction(simulatedPlayer)));
+          if (tradeId === "cards-for-energy" && directScoreProtection.shouldProtect) return null;
           if (analyzeScore < 10) return null;
           const bestBlueTraceScore = getAiBestRevealedAlienTraceDirectScore(player, "blue");
           const genericTradeCost = scoreAiResourceBundle(trade.cost || {});
@@ -5739,6 +5894,7 @@
               handOpportunityCost: roundAiScore(handOpportunityCost),
               handTradePenalty,
               preserveHandIndex,
+              directScoreProtection,
               competingCreditUnlock: competingCreditUnlock
                 ? {
                   tradeId: competingCreditUnlock.tradeId || null,
@@ -6748,7 +6904,9 @@
             concreteValue: Math.max(0, aiNumber(analyzeScore)),
           }
           : null,
-        scanCheck.ok && scanScore > currentScanScore + 1 && (earlyLowScoreScanUnlock || directScoreScanUnlock)
+        scanCheck.ok
+          && scanScore > currentScanScore + 1
+          && (earlyLowScoreScanUnlock || directScoreScanUnlock)
           ? {
             actionId: "scan",
             score: scanScore,
@@ -7849,6 +8007,18 @@
           const trade = quickTrades.getTradeAction(spec.tradeId);
           const check = quickTrades.canExecuteTrade?.(spec.tradeId, createActionContext()) || { ok: false };
           if (!trade || !check.ok) return null;
+          const analyzeTrade = spec.tradeId === "cards-for-energy" && String(spec.reason || "").includes("分析")
+            ? evaluateAiCardsForEnergyAnalyzeProtection(player, trade, null, {
+              saferEnergyTradeAvailable: Boolean(
+                !finalHighScoreAvoidCreditEnergyTrap
+                && quickTrades.getTradeAction("credits-for-energy")
+                && quickTrades.canExecuteTrade?.("credits-for-energy", createActionContext())?.ok,
+              ),
+            })
+            : null;
+          if (analyzeTrade && (!analyzeTrade.discardPlan.ok || analyzeTrade.protection.shouldProtect)) {
+            return null;
+          }
           return {
             id: "quickTrade",
             kind: "quick",
@@ -7951,6 +8121,11 @@
               planetCashoutRecoveryScore: aiNumber(planetCashoutRecoveryByTrade[spec.tradeId]?.score),
               planetCashoutRecoveryPlan: planetCashoutRecoveryByTrade[spec.tradeId]?.plan || null,
               reservedPlanetCashoutEnergy,
+              ...(analyzeTrade ? {
+                analyzeScore: roundAiScore(analyzeTrade.analyzeScore),
+                directScoreProtection: analyzeTrade.protection,
+                discardPlan: analyzeTrade.discardPlan,
+              } : {}),
             },
           };
         })
@@ -8188,14 +8363,37 @@
       };
     }
 
+    function getAiTerminalResearchGoalBonusScale(options = {}) {
+      if (options.actionId !== "researchTech") return 1;
+      if (Math.max(1, Math.round(aiNumber(options.roundNumber) || 1)) < FINAL_ROUND_NUMBER) return 1;
+      if (Math.max(0, Math.round(aiNumber(options.finalMarkCount))) < 3) return 1;
+      if (options.nextThreshold) return 1;
+      if (Math.max(0, aiNumber(options.directScoreGain)) > 0) return 1;
+      return 0.35;
+    }
+
     function adjustAiActionGraphCandidate(rawCandidate = {}, graphCandidate = {}, player = getCurrentPlayer()) {
       const actionId = String(rawCandidate.id || graphCandidate.id || "");
       const round = getAiRoundNumber();
       const deficit = getAiLiveScorePaceDeficit(player);
+      const currentScore = Math.max(0, aiNumber(player?.resources?.score));
+      const finalMarks = countAiFinalMarksForPlayer(player);
+      const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
+      const directScoreGain = Math.max(0, aiNumber(rawCandidate.directScoreGain));
+      const terminalResearchGoalBonusScale = getAiTerminalResearchGoalBonusScale({
+        actionId,
+        roundNumber: round,
+        finalMarkCount: finalMarks,
+        nextThreshold,
+        directScoreGain,
+      });
       const hasWeakFinalAnalyzeEnergyCap = actionId === "scan"
         && rawCandidate.valueBreakdown?.weakFinalAnalyzeEnergyCap !== null
         && rawCandidate.valueBreakdown?.weakFinalAnalyzeEnergyCap !== undefined;
-      if (round > FINAL_ROUND_NUMBER || (deficit <= 0 && !hasWeakFinalAnalyzeEnergyCap)) return graphCandidate;
+      if (
+        round > FINAL_ROUND_NUMBER
+        || (deficit <= 0 && !hasWeakFinalAnalyzeEnergyCap && terminalResearchGoalBonusScale >= 1)
+      ) return graphCandidate;
       const broadGoalActions = new Set(["playCard", "researchTech", "scan"]);
       const rawMissingFinalMarkPenalty = aiNumber(
         graphCandidate.missingFinalMarkPenalty ?? graphCandidate.breakdown?.missingFinalMarkPenalty,
@@ -8219,6 +8417,8 @@
         : Math.min(baseNet, nestedBestScore);
       let goalBonusScale = 1;
       let urgencyPenalty = 0;
+
+      goalBonusScale = Math.min(goalBonusScale, terminalResearchGoalBonusScale);
 
       if (actionId === "scan" && rawCandidate.scoreCapReason) {
         goalBonusScale = Math.min(goalBonusScale, 0.2);
@@ -8249,10 +8449,6 @@
         urgencyPenalty += Math.min(4, (8 - effectiveBase) * 0.35);
       }
 
-      const currentScore = Math.max(0, aiNumber(player?.resources?.score));
-      const finalMarks = countAiFinalMarksForPlayer(player);
-      const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
-      const directScoreGain = Math.max(0, aiNumber(rawCandidate.directScoreGain));
       if (
         round >= FINAL_ROUND_NUMBER
         && nextThreshold
@@ -8852,16 +9048,20 @@
       const traceType = options.traceType || picker.selectedTraceType || picker.allowedTraceTypes?.[0];
       const alienSlotId = options.alienSlotId ?? picker.selectedAlienSlotId;
       const player = options.player || getCurrentPlayer();
+      const mode = String(options.mode || picker.mode || "");
       const value = ai?.valuation?.estimateAlienTraceValue
         ? ai.valuation.estimateAlienTraceValue({
           alienGameState,
           player,
           traceType,
           alienSlotId,
-          mode: options.mode || picker.mode,
+          mode,
           position: options.position,
           label: options.label,
           reward: options.reward,
+          jiuzheThreatContext: mode.includes("jiuzhe")
+            ? getAiJiuzheThreatValuationContext(player)
+            : null,
           alienCardExpectedValue: getAiAlienCardExpectedValue(player, {
             hiddenFirstTrace: true,
             alienSlotId,
@@ -9330,6 +9530,7 @@
           weight: 0,
         },
         traceTypes: {},
+        alienTraceTargets: {},
         resources: {},
         task: 0,
         final: 0,
@@ -9345,6 +9546,29 @@
 
     function getAiMapDemand(map, key) {
       return Math.max(0, aiNumber(map?.[key]));
+    }
+
+    function addAiAlienTraceTargetDemand(demand, alienId, traceType, amount) {
+      if (!demand || !alienId) return;
+      if (!demand.alienTraceTargets[alienId]) demand.alienTraceTargets[alienId] = {};
+      addAiMapDemand(demand.alienTraceTargets[alienId], traceType || "*", amount);
+    }
+
+    function getAiAlienTraceTargetDemand(demand, alienId, traceType) {
+      if (!alienId) return 0;
+      const speciesDemand = demand?.alienTraceTargets?.[alienId];
+      return getAiMapDemand(speciesDemand, traceType) + getAiMapDemand(speciesDemand, "*");
+    }
+
+    function getAiAlienTraceTargetDemandForSlot(demand, alienSlotId, traceType) {
+      if (!Number.isFinite(Number(alienSlotId))) return 0;
+      const slot = aliens.getAlienSlot?.(alienGameState, Number(alienSlotId));
+      if (!slot?.revealed) return 0;
+      return getAiAlienTraceTargetDemand(
+        demand,
+        slot.alienId || slot.assignedAlienId || null,
+        traceType,
+      );
     }
 
     function addAiActionDemand(demand, actionId, amount) {
@@ -9750,9 +9974,9 @@
       }
     }
 
-    function addAiEndGameRuleDemand(demand, rule, weight) {
+    function addAiEndGameRuleDemand(demand, rule, weight, options = {}) {
       if (!rule) return;
-      const amount = Math.max(0.5, aiNumber(weight));
+      const amount = Math.max(options.minimum ?? 0.5, aiNumber(weight));
       demand.final += amount * 0.4;
       switch (rule.kind) {
         case "sectorWinsByColor":
@@ -9779,12 +10003,21 @@
           addAiActionDemand(demand, "move", amount * 0.35);
           break;
         case "traceCount":
-        case "amibaTraceCount":
           addAiMapDemand(demand.traceTypes, rule.traceType, amount * Math.max(1, aiNumber(rule.scorePer) * 0.35));
           break;
+        case "amibaTraceCount":
+          addAiAlienTraceTargetDemand(
+            demand,
+            amiba?.ALIEN_ID || "阿米巴",
+            rule.traceType,
+            amount * Math.max(1, aiNumber(rule.scorePer) * 0.35),
+          );
+          break;
         case "aomomoTraceCount":
+          addAiAlienTraceTargetDemand(demand, aomomo?.ALIEN_ID || "奥陌陌", "*", amount * 0.4);
+          break;
         case "chongTraceCount":
-          addAiAllTraceDemand(demand, amount * 0.4);
+          addAiAlienTraceTargetDemand(demand, chong?.ALIEN_ID || "虫", "*", amount * 0.4);
           break;
         case "remainingResource":
           addAiMapDemand(demand.resources, rule.resource, amount * Math.max(1, aiNumber(rule.scorePer) * 0.3));
@@ -9800,6 +10033,11 @@
           demand.final += amount * 0.2;
           break;
       }
+    }
+
+    function resolveAiCardEndGameRule(card) {
+      if (!card || !endGameScoring?.resolveCardEndGameRule) return null;
+      return endGameScoring.resolveCardEndGameRule(card, cardEffects) || null;
     }
 
     function addAiFinalTileDemand(demand, player, context) {
@@ -9835,22 +10073,29 @@
     }
 
     function addAiCardModelDemand(demand, card, model, weight, player, context) {
-      if (!model) return;
+      const endGameRule = resolveAiCardEndGameRule(card);
+      if (!model && !endGameRule) return;
       const completedTaskIds = new Set(card?.cardEffectState?.completedTaskIds || []);
-      for (const task of model.tasks || []) {
+      for (const task of model?.tasks || []) {
         if (completedTaskIds.has(task.id)) continue;
         addAiTaskConditionDemand(demand, task, weight, player, context);
       }
-      for (const trigger of model.triggers || []) {
+      for (const trigger of model?.triggers || []) {
         const consumed = new Set(card?.cardEffectState?.consumedTriggerIds || []);
         if (consumed.has(trigger.id)) continue;
         addAiEventDemand(demand, trigger.event, trigger.effect, weight * 0.8);
       }
-      for (const effect of model.playEffects || []) {
+      for (const effect of model?.playEffects || []) {
         addAiEffectDemand(demand, effect, weight * 0.35);
       }
-      if (model.endGameScoring) {
-        addAiEndGameRuleDemand(demand, model.endGameScoring, weight * 1.2);
+      if (endGameRule) {
+        const modelOwnsEndGameRule = Boolean(model?.endGameScoring);
+        addAiEndGameRuleDemand(
+          demand,
+          endGameRule,
+          weight * (modelOwnsEndGameRule ? 1.2 : 0.45),
+          { minimum: modelOwnsEndGameRule ? 0.5 : 0.08 },
+        );
       }
     }
 
@@ -9958,10 +10203,7 @@
     }
 
     function scoreAiCardEndGameExpectedValue(card, model, player = getCurrentPlayer()) {
-      const runezuFinalRule = runezu?.getFinalCardRule?.(card);
-      const rule = model?.endGameScoring || (runezuFinalRule
-        ? { kind: runezuFinalRule.type, multiplier: Number(runezuFinalRule.multiplier) || 1 }
-        : null);
+      const rule = resolveAiCardEndGameRule(card);
       if (!card || !rule || !player || !endGameScoring?.scoreCardEndGameRule) return 0;
       const simulatedPlayer = {
         ...player,
@@ -9973,6 +10215,7 @@
       const context = {
         ...createActionContext(),
         finalScoringState,
+        alienGameState,
         cardEffects,
         getCardTypeCode,
       };
@@ -10412,6 +10655,12 @@
         }
         if (isAiChongTravelEffect(effect)) {
           return total + Math.max(3.5, scoreAiChongTravelEffectImmediateValue(effect, player) * 0.28);
+        }
+        if (type === cardEffects.EFFECT_TYPES.SCAN_ACTION && effect?.options?.skipCost === true) {
+          return total + Math.max(
+            2.5,
+            scoreAiScanPriorityFloor(player) * 0.3,
+          );
         }
         if (
           type === cardEffects.EFFECT_TYPES.PUBLIC_SCAN
@@ -10949,7 +11198,34 @@
       const normalizedDistance = Math.max(0, Math.round(aiNumber(distance)));
       if (options.immediate === true && normalizedDistance <= 0) return 0;
       return Math.max(1, normalizedDistance)
-        + Math.max(0, Math.round(aiNumber(options.techSetupActions)));
+        + Math.max(0, Math.round(aiNumber(options.techSetupActions)))
+        + Math.max(0, Math.round(aiNumber(options.resourceSetupActions)));
+    }
+
+    function getAiImmediateEnergyTradeCapacity(player) {
+      if (!player || !quickTrades?.getTradeAction) return 0;
+      const resources = player.resources || {};
+      const resourceAmount = (key) => {
+        if (key === "handSize") {
+          return Math.max(0, Math.round(aiNumber(resources.handSize ?? (player.hand || []).length)));
+        }
+        return Math.max(0, aiNumber(resources[key]));
+      };
+      return ["cards-for-energy", "credits-for-energy"].reduce((total, tradeId) => {
+        const trade = quickTrades.getTradeAction(tradeId);
+        const energyGain = Math.max(0, aiNumber(trade?.gain?.energy));
+        const costs = Object.entries(trade?.cost || {})
+          .filter(([, amount]) => aiNumber(amount) > 0);
+        if (!trade || energyGain <= 0 || !costs.length || !players.canAfford(player, trade.cost)) {
+          return total;
+        }
+        const repetitions = costs.reduce((limit, [key, amount]) => Math.min(
+          limit,
+          Math.floor(resourceAmount(key) / Math.max(1, aiNumber(amount))),
+        ), Infinity);
+        if (!Number.isFinite(repetitions) || repetitions <= 0) return total;
+        return total + repetitions * energyGain;
+      }, 0);
     }
 
     function buildAiSatelliteRaceDiagnostics(player, ownDistance, options = {}, opponentEtas = []) {
@@ -11289,17 +11565,27 @@
 
         const opponentEnergyCost = getAiApproxLandEnergyCostForPlayer(opponent, planetId);
         const opponentEnergyNow = Math.max(0, aiNumber(opponent.resources?.energy));
-        const opponentEnergyWithIncome = opponentEnergyNow + Math.max(0, aiNumber(opponent.income?.energy));
-        const energyShortfall = Math.max(0, opponentEnergyCost - opponentEnergyWithIncome);
-        if (energyShortfall > 2) continue;
+        const energyShortfall = Math.max(0, opponentEnergyCost - opponentEnergyNow);
+        const immediateEnergyTradeCapacity = getAiImmediateEnergyTradeCapacity(opponent);
+        const immediateEnergyTradeGain = Math.min(energyShortfall, immediateEnergyTradeCapacity);
+        const nextIncomeEnergy = Math.max(0, aiNumber(opponent.income?.energy));
+        const futureEnergyShortfall = Math.max(
+          0,
+          opponentEnergyCost - opponentEnergyNow - immediateEnergyTradeGain - nextIncomeEnergy,
+        );
+        if (futureEnergyShortfall > 2) continue;
 
         const isPreceding = precedingIds.has(String(opponent.id));
         const actionWindowIndex = actionWindowOpponentIds
           .findIndex((playerId) => String(playerId) === String(opponent.id));
+        const resourceSetupActions = energyShortfall;
+        const requiresAdditionalPreparation = energyShortfall > immediateEnergyTradeGain;
+        const requiresFutureIncome = requiresAdditionalPreparation && nextIncomeEnergy > 0;
         opponentEtas.push({
           playerId: opponent.id,
           eta: estimateAiSatelliteClaimEta(opponentDistance, {
             techSetupActions: orange4Access.canResearchOrange4 ? 1 : 0,
+            resourceSetupActions,
           }),
           distance: opponentDistance,
           actionWindowIndex: actionWindowIndex >= 0 ? actionWindowIndex : null,
@@ -11308,6 +11594,11 @@
           prospectiveOrange4: orange4Access.canResearchOrange4,
           publicityShortfall: orange4Access.publicityShortfall,
           landingEnergyShortfall: energyShortfall,
+          immediateEnergyTradeGain: roundAiScore(immediateEnergyTradeGain),
+          futureEnergyShortfall: roundAiScore(futureEnergyShortfall),
+          resourceSetupActions,
+          requiresAdditionalPreparation,
+          requiresFutureIncome,
         });
         const canLandNow = opponentDistance <= 0
           && players.canAfford(opponent, opponentEnergyCost > 0 ? { energy: opponentEnergyCost } : {});
@@ -13126,6 +13417,10 @@
         fasterOpponentCount: 0,
         prospectiveOrange4Count: 0,
         prospectiveOrange4Pressure: 0,
+        actorEta: null,
+        opponentEtas: [],
+        estimatedRaceOutcome: null,
+        estimatedFastestOpponentEta: null,
       };
       for (const planet of solar.createSolarSnapshot(solarState).planetLocations || []) {
         if (!planet?.planetId || planet.planetId === "earth") continue;
@@ -13181,6 +13476,10 @@
               fasterOpponentCount: raceState.fasterOpponentCount,
               prospectiveOrange4Count: raceState.prospectiveOrange4Count,
               prospectiveOrange4Pressure: raceState.prospectiveOrange4Pressure,
+              actorEta: raceState.actorEta,
+              opponentEtas: raceState.opponentEtas,
+              estimatedRaceOutcome: raceState.estimatedRaceOutcome,
+              estimatedFastestOpponentEta: raceState.estimatedFastestOpponentEta,
             };
           }
         }
@@ -14453,6 +14752,52 @@
       }) >= 10;
     }
 
+    function isAiB2SectorScanRaceLost(counts = {}, options = {}) {
+      const round = Math.max(1, Math.round(aiNumber(options.roundNumber) || 1));
+      if (round < FINAL_ROUND_NUMBER || !options.active || !options.marked) return false;
+      const openCount = Math.max(0, Math.round(aiNumber(counts.openCount)));
+      if (openCount <= 0 || openCount > 2) return false;
+      const ownCount = Math.max(0, Math.round(aiNumber(counts.ownCount)));
+      const maxOtherCount = Math.max(0, Math.round(aiNumber(counts.maxOtherCount)));
+      // Sector ties are broken by the latest replacement, so filling the last
+      // open slot can still win when the final counts are equal.
+      return ownCount + openCount < maxOtherCount;
+    }
+
+    function getAiSectorScanWinState(counts = {}) {
+      const openCount = Math.max(0, Math.round(aiNumber(counts.openCount)));
+      const ownCount = Math.max(0, Math.round(aiNumber(counts.ownCount)));
+      const maxOtherCount = Math.max(0, Math.round(aiNumber(counts.maxOtherCount)));
+      const ownAfterScan = ownCount + 1;
+      const strictLeadAfterScan = ownAfterScan > maxOtherCount;
+      const tieBreakWinAfterScan = openCount <= 1 && ownAfterScan === maxOtherCount;
+      return {
+        openCount,
+        ownCount,
+        maxOtherCount,
+        ownAfterScan,
+        strictLeadAfterScan,
+        tieBreakWinAfterScan,
+        winsAfterScan: strictLeadAfterScan || tieBreakWinAfterScan,
+      };
+    }
+
+    function getAiClosedSectorControlMarginValue(counts = {}) {
+      const winState = getAiSectorScanWinState(counts);
+      if (winState.strictLeadAfterScan) return 10;
+      if (winState.tieBreakWinAfterScan) return -2;
+      return -8;
+    }
+
+    function getAiB2SectorWinExactDelta(options = {}) {
+      const sectorWins = Math.max(0, Math.round(aiNumber(options.sectorWins)));
+      const orbitLandCount = Math.max(0, Math.round(aiNumber(options.orbitLandCount)));
+      const multiplier = Math.max(0, aiNumber(options.multiplier));
+      const before = Math.min(sectorWins, orbitLandCount);
+      const after = Math.min(sectorWins + 1, orbitLandCount);
+      return Math.max(0, after - before) * multiplier;
+    }
+
     function scoreAiB2SectorScanFocus(nebulaId, counts, player = getCurrentPlayer()) {
       if (!nebulaId || !counts || !player || !endGameScoring?.countSectorWins || !endGameScoring?.countOrbitOrLandMarkers) {
         return 0;
@@ -14473,16 +14818,32 @@
       );
       if (b2Multiplier <= 0) return 0;
 
-      const ownAfterScan = counts.ownCount + 1;
-      const winsAfterScan = ownAfterScan > counts.maxOtherCount;
       const closesSector = counts.openCount <= 1;
       const nearClose = counts.openCount === 2;
+      const scanWinState = getAiSectorScanWinState(counts);
+      const winsAfterScan = scanWinState.winsAfterScan;
       const bottleneckPressure = Math.max(1, orbitLandCount - sectorWins);
+      const raceLost = isAiB2SectorScanRaceLost(counts, {
+        roundNumber: getAiRoundNumber(),
+        active: b2Bottleneck.active,
+        marked: b2Bottleneck.marked,
+      });
       let value = 0;
       if (closesSector) {
+        if (scanWinState.tieBreakWinAfterScan) {
+          // A latest-placement tie is a real settlement win, but it is not a
+          // strict control lead. Price only the B2 score that this one sector
+          // win actually unlocks; the old bottleneck/urgency heuristics would
+          // count the same cash-out a second time.
+          return getAiB2SectorWinExactDelta({ sectorWins, orbitLandCount, multiplier: b2Multiplier });
+        }
         value += winsAfterScan ? b2Multiplier * (1.25 + bottleneckPressure * 0.24) : -b2Multiplier * 0.75;
       } else if (nearClose) {
-        value += winsAfterScan ? b2Multiplier * 0.62 : b2Multiplier * 0.28;
+        value += winsAfterScan
+          ? b2Multiplier * 0.62
+          : raceLost
+            ? -b2Multiplier * 0.6
+            : b2Multiplier * 0.28;
       } else if (counts.ownCount > 0) {
         value += b2Multiplier * (b2Bottleneck.marked ? 0.3 : 0.18);
       } else if (sectorWins <= 0 && getAiRoundNumber() >= 3) {
@@ -14494,17 +14855,56 @@
       return applyAiStrategyWeight(value, "final", 0.75);
     }
 
+    function scoreAiFullSectorExtraMark(nebulaId, counts, player = getCurrentPlayer(), options = {}) {
+      const pendingPenalty = options.pendingType === "hand_scan" ? 0.5 : 0;
+      if (nebulaId === aomomo?.NEBULA_ID) {
+        if (counts.ownCount > 0) return -3;
+        const participationValue = getAiAomomoFossilUnitValue(player)
+          + scoreAiAomomoFossilPlanBonus(1, player);
+        return Math.max(-3, Math.min(6, participationValue - pendingPenalty));
+      }
+
+      const ranking = data.getSectorRanking?.(nebulaDataState, nebulaId) || [];
+      const currentWinner = ranking[0] || null;
+      const alreadyWins = currentWinner
+        ? aiTokenBelongsToPlayer(currentWinner, player)
+        : counts.ownCount > counts.maxOtherCount;
+      const winState = getAiSectorScanWinState(counts);
+      if (alreadyWins) return -3;
+      if (!winState.winsAfterScan) return Math.max(-3, -2 - pendingPenalty);
+
+      const b2Bottleneck = getAiB2SectorBottleneck(player);
+      const b2Delta = b2Bottleneck.active
+        ? getAiB2SectorWinExactDelta({
+          sectorWins: b2Bottleneck.sectorWins,
+          orbitLandCount: b2Bottleneck.orbitLandCount,
+          multiplier: Math.min(8, b2Bottleneck.multiplier),
+        })
+        : 0;
+      const runezuDelta = Math.max(0, scoreAiRunezuSourceSymbolValue("sector", nebulaId, player));
+      const cap = b2Delta > 0 && b2Bottleneck.marked ? 8 : 6;
+      const value = 0.25 + b2Delta + runezuDelta - pendingPenalty;
+      return Math.max(-3, Math.min(cap, value));
+    }
+
     function scoreAiNebulaScanChoice(choice, options = {}) {
       const player = options.player || getCurrentPlayer();
       const nebulaId = choice?.nebulaId || null;
       if (!nebulaId || choice?.disabled) return -Infinity;
       const nextToken = data.getNextReplaceableNebulaToken?.(nebulaDataState, nebulaId);
-      if (!nextToken) return -Infinity;
+      const tokens = data.listNebulaTokens?.(nebulaDataState, nebulaId) || [];
+      const extraMarkOnly = !nextToken;
+      if (extraMarkOnly && !tokens.length) return -Infinity;
 
       const capacity = Math.max(0, Math.round(aiNumber(data.getNebulaCapacity?.(nebulaId))));
       const counts = getAiNebulaSignalCounts(nebulaId, player);
-      const slotScore = Math.max(0, aiNumber(data.getNebulaSlotScoreReward?.(nebulaId, nextToken.slotIndex)));
-      const gainsData = options.gainData !== false;
+      if (extraMarkOnly) {
+        return scoreAiFullSectorExtraMark(nebulaId, counts, player, options);
+      }
+      const slotScore = nextToken
+        ? Math.max(0, aiNumber(data.getNebulaSlotScoreReward?.(nebulaId, nextToken.slotIndex)))
+        : 0;
+      const gainsData = !extraMarkOnly && options.gainData !== false;
       const dataRoom = getAiAvailableDataRoom(player);
       const dataValue = gainsData
         ? (
@@ -14528,7 +14928,7 @@
       if (runezuSectorSymbolValue > 0) {
         const ownAfterScan = counts.ownCount + 1;
         const runezuClaimScale = counts.openCount <= 1
-          ? (ownAfterScan > counts.maxOtherCount ? 1 : 0.18)
+          ? (ownAfterScan >= counts.maxOtherCount ? 1 : 0.18)
           : counts.openCount === 2
             ? (ownAfterScan > counts.maxOtherCount ? 0.45 : 0.18)
             : 0.08;
@@ -14536,10 +14936,10 @@
       }
 
       if (counts.openCount <= 1 && capacity > 0) {
-        const ownAfterScan = counts.ownCount + 1;
-        if (ownAfterScan > counts.maxOtherCount) value += 10;
-        else if (ownAfterScan === counts.maxOtherCount) value -= 2;
-        else value -= 8;
+        // This is a generic control-margin heuristic, not the settlement winner
+        // test. Exact latest-placement tie wins are already reflected in B2 and
+        // species-specific rewards; only a strict lead earns the full premium.
+        value += getAiClosedSectorControlMarginValue(counts);
       } else if (counts.openCount === 2) {
         value += counts.ownCount + 1 > counts.maxOtherCount ? 3 : 1;
       }
@@ -14709,7 +15109,14 @@
         openCount: Math.max(0, Math.round(aiNumber(counts.openCount))),
         markedCount: Math.max(0, Math.round(aiNumber(counts.markedCount))),
         maxOtherCount: Math.max(0, Math.round(aiNumber(counts.maxOtherCount))),
-        winsAfterScan: ownAfterScan > counts.maxOtherCount,
+        winsAfterScan: counts.openCount <= 1
+          ? ownAfterScan >= counts.maxOtherCount
+          : ownAfterScan > counts.maxOtherCount,
+        raceLost: isAiB2SectorScanRaceLost(counts, {
+          roundNumber: getAiRoundNumber(),
+          active: bottleneck.active,
+          marked: bottleneck.marked,
+        }),
       };
     }
 
@@ -18102,8 +18509,11 @@
         : getAiAlienTraceTargetReward(scoringMode, traceType, position);
       const reward = getAiAlienTraceRewardForValuation(scoringMode, rawReward, player);
       const demand = getAiStrategyDemand(player);
-      const traceDemand = traceType ? getAiMapDemand(demand.traceTypes, traceType) : 0;
       const alienSlot = Number(target.button.dataset.alienSlot || state.alienTracePickerState?.selectedAlienSlotId);
+      const traceDemand = traceType
+        ? getAiMapDemand(demand.traceTypes, traceType)
+          + getAiAlienTraceTargetDemandForSlot(demand, alienSlot, traceType)
+        : 0;
       const hiddenFirstTraceColorLost = Number.isFinite(alienSlot)
         && isAiOpenHiddenFirstTraceTarget(alienSlot, traceType)
         && isAiHiddenFirstTraceColorLost(traceType, player);
@@ -18489,6 +18899,7 @@
 
     function getAiJiuzheScoringContext(player) {
       return {
+        ...(createActionContext?.() || {}),
         currentPlayer: player,
         players: playerState.players,
         playerState,
@@ -18501,53 +18912,144 @@
       };
     }
 
-    function getAiHighestOtherJiuzheThreat(player) {
-      if (!jiuzhe?.getThreat || !player) return 0;
-      return (playerState.players || []).reduce((highest, candidate) => {
+    function getAiOtherJiuzheThreats(player) {
+      if (!jiuzhe?.getThreat || !player) return [];
+      return (playerState.players || []).reduce((threats, candidate) => {
         if (!candidate || candidate === player || candidate.id === player.id || candidate.color === player.color) {
-          return highest;
+          return threats;
         }
-        return Math.max(highest, aiNumber(jiuzhe.getThreat(alienGameState, candidate)));
-      }, 0);
+        threats.push(Math.max(0, aiNumber(jiuzhe.getThreat(alienGameState, candidate))));
+        return threats;
+      }, []);
     }
 
-    function estimateAiJiuzheThreatPenalty(player, addedThreat) {
-      if (!player || !jiuzhe?.getThreat) return 0;
-      const threat = Math.max(0, Math.round(aiNumber(addedThreat)));
-      if (!threat) return 0;
-      const currentThreat = Math.max(0, Math.round(aiNumber(jiuzhe.getThreat(alienGameState, player))));
-      const nextThreat = currentThreat + threat;
-      const highestOtherThreat = getAiHighestOtherJiuzheThreat(player);
-      if (highestOtherThreat <= 0 || nextThreat < highestOtherThreat) return 0;
+    function getAiJiuzheThreatValuationContext(player) {
+      if (!player || !jiuzhe?.getThreat) return null;
       const breakdown = computePlayerFinalScoreBreakdown?.(player) || {};
-      const prePenalty = Math.max(
-        aiNumber(breakdown.prePenaltyTotalScore),
-        aiNumber(breakdown.totalScore),
-        aiNumber(player?.resources?.score),
-      );
-      return Math.max(6, Math.ceil(prePenalty * 0.1));
+      return {
+        currentThreat: Math.max(0, aiNumber(jiuzhe.getThreat(alienGameState, player))),
+        otherThreats: getAiOtherJiuzheThreats(player),
+        currentPrePenaltyScore: Math.max(
+          aiNumber(breakdown.prePenaltyTotalScore),
+          aiNumber(breakdown.totalScore),
+          aiNumber(player?.resources?.score),
+        ),
+      };
     }
 
-    function scoreAiJiuzheCardOption(option, player) {
+    function getAiFinalAnalyzeDirectScoreProtection(discardPlan = null, analyzeScore = 0, options = {}) {
+      const minimumScore = Math.max(0, aiNumber(options.minimumScore ?? 8));
+      const clearAdvantage = Math.max(0, aiNumber(options.clearAdvantage ?? 4));
+      const protectedCard = Boolean(discardPlan?.ok)
+        ? (discardPlan.selectedCards || [])
+          .filter((card) => (
+            card?.playScore !== null
+            && card?.playScore !== undefined
+            && Math.max(0, aiNumber(card?.directScoreGain)) >= minimumScore
+          ))
+          .sort((left, right) => (
+            Math.max(aiNumber(right?.playScore), aiNumber(right?.directScoreGain))
+              - Math.max(aiNumber(left?.playScore), aiNumber(left?.directScoreGain))
+          ))[0] || null
+        : null;
+      const protectedPlayScore = protectedCard
+        ? Math.max(0, aiNumber(protectedCard.playScore), aiNumber(protectedCard.directScoreGain))
+        : 0;
+      const normalizedAnalyzeScore = Math.max(0, aiNumber(analyzeScore));
+      const clearlyBetter = Boolean(protectedCard)
+        && normalizedAnalyzeScore >= protectedPlayScore + clearAdvantage;
+      const saferEnergyTradeAvailable = options.saferEnergyTradeAvailable === true;
+      return {
+        spendsPlayableDirectScoreCard: Boolean(protectedCard),
+        shouldProtect: Boolean(protectedCard) && (saferEnergyTradeAvailable || !clearlyBetter),
+        clearlyBetter,
+        saferEnergyTradeAvailable,
+        minimumScore,
+        clearAdvantage,
+        analyzeScore: roundAiScore(normalizedAnalyzeScore),
+        protectedPlayScore: roundAiScore(protectedPlayScore),
+        protectedCard,
+      };
+    }
+
+    function evaluateAiCardsForEnergyAnalyzeProtection(player, trade, preserveHandIndex = null, options = {}) {
+      const discardPlan = summarizeAiTradeDiscardPlan(player, trade, preserveHandIndex, {
+        includeExecutionPlan: true,
+        tradeId: trade?.id || "cards-for-energy",
+      });
+      const simulatedPlayer = discardPlan.ok ? createAiPlayerAfterQuickTrade(player, trade) : null;
+      const analyzeScore = simulatedPlayer && canAiAnalyzeData(simulatedPlayer).ok
+        ? Math.max(0, aiNumber(scoreAiAnalyzeAction(simulatedPlayer)))
+        : 0;
+      return {
+        discardPlan,
+        simulatedPlayer,
+        analyzeScore,
+        protection: getAiFinalAnalyzeDirectScoreProtection(discardPlan, analyzeScore, options),
+      };
+    }
+
+    function estimateAiJiuzheCardCompletionFactor(definition, player, context, options = {}) {
+      if (!definition?.condition || !player) return 0;
+      const progress = options.progress
+        || jiuzhe?.getCardConditionProgress?.(definition, player, context)
+        || null;
+      if (progress?.met || (!progress && jiuzhe?.isCardConditionMet?.(definition, player, context))) return 1;
+      const target = Math.max(1, aiNumber(progress?.target ?? definition.condition.count));
+      const current = progress?.current;
+      const round = getAiRoundNumber();
+      if (!Number.isFinite(Number(current))) {
+        return round >= FINAL_ROUND_NUMBER ? 0.02 : round >= 3 ? 0.09 : round === 2 ? 0.22 : 0.32;
+      }
+      const missing = Math.max(1, Math.ceil(target - Math.max(0, aiNumber(current))));
+      const table = round >= FINAL_ROUND_NUMBER
+        ? [0, 0.22, 0.06, 0.02, 0.01]
+        : round >= 3
+          ? [0, 0.5, 0.22, 0.09, 0.04]
+          : round === 2
+            ? [0, 0.68, 0.42, 0.22, 0.12]
+            : [0, 0.78, 0.52, 0.32, 0.18];
+      let factor = table[Math.min(4, missing)];
+      if (options.paid) {
+        factor *= round >= FINAL_ROUND_NUMBER ? 0.25 : round >= 3 ? 0.45 : round === 2 ? 0.7 : 0.85;
+      }
+      return Math.max(0.01, Math.min(1, factor));
+    }
+
+    function estimateAiJiuzheThreatPenalty(player, addedThreat, scoreGain = 0) {
+      if (!ai?.valuation?.estimateJiuzheThreatPenaltyMarginal) return 0;
+      return ai.valuation.estimateJiuzheThreatPenaltyMarginal({
+        ...getAiJiuzheThreatValuationContext(player),
+        addedThreat,
+        scoreGain,
+      });
+    }
+
+    function scoreAiJiuzheCardOption(option, player, flow) {
       if (!option || option.disabled) return -Infinity;
       if (option.choice === "skip") return 0;
       if (option.choice === "cancel") return -100;
       const definition = getAiJiuzheCardDefinition(option.choice);
       if (!definition) return option.score;
-      const round = getAiRoundNumber();
       const context = getAiJiuzheScoringContext(player);
-      const achievedNow = Boolean(jiuzhe?.isCardConditionMet?.(definition, player, context));
-      const completionFactor = achievedNow
-        ? 1
-        : round >= FINAL_ROUND_NUMBER
-          ? 0.05
-          : round >= 3
-            ? 0.15
-            : 0.3;
+      const conditionProgress = jiuzhe?.getCardConditionProgress?.(definition, player, context) || null;
+      const achievedNow = conditionProgress
+        ? Boolean(conditionProgress.met)
+        : Boolean(jiuzhe?.isCardConditionMet?.(definition, player, context));
+      const paymentOpportunityCost = scoreAiResourceBundle(flow?.pending?.cost || {});
+      const completionFactor = estimateAiJiuzheCardCompletionFactor(definition, player, context, {
+        paid: paymentOpportunityCost > 0,
+        progress: conditionProgress,
+      });
       const expectedScore = Math.max(0, aiNumber(definition.score)) * completionFactor;
       const threat = Math.max(0, Math.round(aiNumber(definition.threat)));
-      const threatPenalty = estimateAiJiuzheThreatPenalty(player, threat);
-      return 5 + expectedScore * 2.2 - threatPenalty + Math.min(2, threat * 0.2);
+      const threatPenalty = estimateAiJiuzheThreatPenalty(
+        player,
+        threat,
+        achievedNow ? Math.max(0, aiNumber(definition.score)) : 0,
+      );
+      const acquisitionValue = paymentOpportunityCost > 0 ? 0 : 5;
+      return acquisitionValue + expectedScore * 2.2 - threatPenalty - paymentOpportunityCost;
     }
 
     function enrichAiJiuzheCardOptions(options, flow) {
@@ -18555,7 +19057,7 @@
       const player = getAiAlienPendingPlayer(flow.pending);
       return options.map((option) => ({
         ...option,
-        score: scoreAiJiuzheCardOption(option, player),
+        score: scoreAiJiuzheCardOption(option, player, flow),
       }));
     }
 
@@ -18565,6 +19067,98 @@
       if (!reward) return option.score ?? 0;
       return scoreAiAlienRewardBundle(reward, player)
         + scoreAiChongPanelUnlockValue(player) * 0.35;
+    }
+
+    function getAiEffectiveBanrenmaRewardGain(gain = {}, player = getCurrentPlayer()) {
+      if (!player) return {};
+      return Object.entries(gain || {}).reduce((result, [resource, rawCount]) => {
+        const count = Math.max(0, aiNumber(rawCount));
+        const limit = Number(players?.RESOURCE_LIMITS?.[resource]);
+        result[resource] = Number.isFinite(limit)
+          ? Math.min(count, Math.max(0, limit - aiNumber(player.resources?.[resource])))
+          : count;
+        return result;
+      }, {});
+    }
+
+    function scoreAiBanrenmaDisplayedCardGainValue(player, effectiveGain = {}) {
+      const rawDisplayedCardIndex = alienGameState?.banrenma?.displayedCardIndex;
+      if (
+        !player
+        || rawDisplayedCardIndex == null
+        || rawDisplayedCardIndex === ""
+        || !banrenma?.createAlienCard
+      ) {
+        return getAiAlienCardExpectedValue(player);
+      }
+      const displayedCardIndex = Number(rawDisplayedCardIndex);
+      if (!Number.isInteger(displayedCardIndex)) return getAiAlienCardExpectedValue(player);
+      const displayedCard = banrenma.createAlienCard(displayedCardIndex, 0);
+      if (!displayedCard) return getAiAlienCardExpectedValue(player);
+      const simulatedPlayer = cloneAiValue(player);
+      simulatedPlayer.resources = { ...(simulatedPlayer.resources || {}) };
+      for (const [resource, count] of Object.entries(effectiveGain || {})) {
+        simulatedPlayer.resources[resource] = aiNumber(simulatedPlayer.resources[resource]) + aiNumber(count);
+      }
+      simulatedPlayer.hand = [...(simulatedPlayer.hand || []), displayedCard];
+      simulatedPlayer.resources.handSize = simulatedPlayer.hand.length;
+      aiDeferredCardResearchPreviewDepth += 1;
+      let displayedCardValue = 0;
+      try {
+        displayedCardValue = Math.max(0, scoreAiPublicPickCard(displayedCard, simulatedPlayer, "banrenma-card"));
+      } finally {
+        aiDeferredCardResearchPreviewDepth = Math.max(0, aiDeferredCardResearchPreviewDepth - 1);
+      }
+      const deferredPublicityGain = getAiPlayEffectsForCard(displayedCard)
+        .reduce((total, effect) => {
+          const type = effect?.type;
+          if (type !== planetRewards.EFFECT_TYPES?.GAIN_RESOURCES && type !== "gain_resources") return total;
+          return total + Math.max(0, aiNumber(effect?.options?.gain?.publicity));
+        }, 0);
+      const researchCost = tech.resolver?.getResearchPublicityCost?.(simulatedPlayer)
+        ?? tech.RESEARCH_PUBLICITY_COST
+        ?? 6;
+      const publicityBeforeCard = Math.max(0, aiNumber(simulatedPlayer.resources?.publicity));
+      const cardIsResearchBridge = deferredPublicityGain > 0
+        && publicityBeforeCard < researchCost
+        && publicityBeforeCard + deferredPublicityGain >= researchCost;
+      const deferredResearchTempoCost = cardIsResearchBridge
+        ? scoreAiPublicityResearchTechSetupValue(
+          { publicity: deferredPublicityGain },
+          simulatedPlayer,
+          { previewTakeableTechSupply: true },
+        )
+        : 0;
+      return Math.max(0, displayedCardValue - deferredResearchTempoCost);
+    }
+
+    function scoreAiBanrenmaBonusUseOption(option, player) {
+      if (!option || option.disabled || option.choice === "cancel") return -Infinity;
+      const position = Number(option.choice);
+      const reward = banrenma?.getBonusReward?.(position);
+      if (!reward) return -Infinity;
+      if (reward.alienTrace) {
+        return scoreAiBanrenmaTraceEffectValue({
+          type: "alien_trace",
+          options: { allowedTraceTypes: aliens?.TRACE_TYPES || [] },
+        }, player);
+      }
+
+      const effectiveGain = getAiEffectiveBanrenmaRewardGain(reward.gain || {}, player);
+      const directScore = Math.max(0, aiNumber(effectiveGain.score));
+      const nonScoreGain = { ...effectiveGain, score: 0 };
+      let value = scoreAiCountedResourceGain(nonScoreGain, player) + directScore;
+      if (reward.pickAlienCard) {
+        value += scoreAiBanrenmaDisplayedCardGainValue(player, effectiveGain);
+      }
+
+      return roundAiScore(value);
+    }
+
+    function scoreAiBanrenmaConditionUseOption(option, flow, player) {
+      if (!option || option.disabled || option.choice === "cancel") return -Infinity;
+      const card = (player?.reservedCards || []).find((item) => item?.id === option.choice);
+      return scoreAiReadyBanrenmaCardOpportunity(card, player, flow.pending?.markId || null);
     }
 
     function scoreAiAmibaSymbolUseOption(option, player) {
@@ -18600,19 +19194,45 @@
 
     function enrichAiAlienUseOptions(options, flow) {
       let enriched = enrichAiJiuzheCardOptions(options, flow);
-      if (!["chong-fossil", "amiba-symbol", "amiba-trace-removal", "runezu-face-symbol", "runezu-symbol-branch"].includes(flow.type)) {
+      if (!["banrenma-bonus", "banrenma-condition", "chong-fossil", "amiba-symbol", "amiba-trace-removal", "runezu-face-symbol", "runezu-symbol-branch"].includes(flow.type)) {
         return enriched;
       }
       const player = getAiAlienPendingPlayer(flow.pending);
-      return enriched.map((option) => {
+      const initiallyAvailableBanrenmaBonusOptions = flow.type === "banrenma-bonus"
+        ? enriched.filter((option) => !option.disabled)
+        : [];
+      const scored = enriched.map((option) => {
         let score = option.score;
+        if (flow.type === "banrenma-bonus") score = scoreAiBanrenmaBonusUseOption(option, player);
+        if (flow.type === "banrenma-condition") score = scoreAiBanrenmaConditionUseOption(option, flow, player);
         if (flow.type === "chong-fossil") score = scoreAiChongFossilUseOption(option, player);
         if (flow.type === "amiba-symbol") score = scoreAiAmibaSymbolUseOption(option, player);
         if (flow.type === "amiba-trace-removal") score = scoreAiAmibaTraceRemovalUseOption(option, flow, player);
         if (flow.type === "runezu-face-symbol") score = scoreAiRunezuFaceSymbolUseOption(option, flow, player);
         if (flow.type === "runezu-symbol-branch") score = scoreAiRunezuSymbolBranchUseOption(option, flow, player);
-        return { ...option, score };
+        const requiresExecutableBanrenmaReward = flow.type === "banrenma-bonus" || flow.type === "banrenma-condition";
+        return {
+          ...option,
+          score,
+          disabled: Boolean(option.disabled || (requiresExecutableBanrenmaReward && !Number.isFinite(Number(score)))),
+        };
       });
+      if (
+        flow.type === "banrenma-bonus"
+        && !scored.some((option) => !option.disabled)
+        && initiallyAvailableBanrenmaBonusOptions.length === 1
+      ) {
+        const fallbackChoice = initiallyAvailableBanrenmaBonusOptions[0].choice;
+        const fallbackReward = banrenma?.getBonusReward?.(Number(fallbackChoice));
+        if (fallbackReward?.alienTrace) {
+          return scored.map((option) => (
+            option.choice === fallbackChoice
+              ? { ...option, disabled: false, score: 0, rewardFallsThroughWithoutTarget: true }
+              : option
+          ));
+        }
+      }
+      return scored;
     }
 
     function listAiAlienUseOptions(flow) {
@@ -19527,6 +20147,55 @@
       return candidateScore > 0 && candidateScore <= 6;
     }
 
+    function getAiEarlyDirectScorePlayPassFloor(candidates = [], options = {}) {
+      const round = options.roundNumber == null
+        ? getAiRoundNumber()
+        : Math.max(1, Math.round(aiNumber(options.roundNumber) || 1));
+      if (round > 3) return null;
+      const playCardCandidate = (candidates || []).find((candidate) => (
+        candidate?.id === "playCard"
+        && candidate.available !== false
+        && Array.isArray(candidate.playableCards)
+        && candidate.playableCards.length > 0
+      ));
+      const passCandidate = (candidates || []).find((candidate) => (
+        (candidate?.id === "pass" || candidate?.id === "end-turn")
+        && candidate.available !== false
+      ));
+      if (!playCardCandidate || !passCandidate) return null;
+
+      const bestPlayableCard = playCardCandidate.playableCards
+        .filter((candidate) => candidate?.available !== false)
+        .slice()
+        .sort((left, right) => aiNumber(right?.score) - aiNumber(left?.score))[0] || null;
+      if (!bestPlayableCard || Math.max(0, aiNumber(bestPlayableCard.directScoreGain)) < 8) return null;
+
+      const outerBaseScore = aiNumber(playCardCandidate.score);
+      const nestedScore = aiNumber(bestPlayableCard.score);
+      const playGraphNet = Number(playCardCandidate.actionGraph?.net);
+      const passGraphNet = Number(passCandidate.actionGraph?.net);
+      const passNet = Number.isFinite(passGraphNet) ? passGraphNet : aiNumber(passCandidate.score);
+      if (
+        !Number.isFinite(playGraphNet)
+        || outerBaseScore <= passNet
+        || nestedScore <= passNet
+        || playGraphNet > passNet
+      ) {
+        return null;
+      }
+      const floor = roundAiScore(Math.min(outerBaseScore, nestedScore, passNet + 0.01));
+      if (floor <= playGraphNet) return null;
+      return {
+        floor,
+        originalNet: roundAiScore(playGraphNet),
+        passNet: roundAiScore(passNet),
+        outerBaseScore: roundAiScore(outerBaseScore),
+        nestedScore: roundAiScore(nestedScore),
+        directScoreGain: roundAiScore(Math.max(0, aiNumber(bestPlayableCard.directScoreGain))),
+        cardId: bestPlayableCard.cardId || null,
+      };
+    }
+
     function applyAiTurnActionSelectionPressure(candidates = []) {
       const round = getAiRoundNumber();
       const currentPlayer = getCurrentPlayer();
@@ -19563,6 +20232,7 @@
       const weakStartTechCardTieBreakBonus = canUseWeakStartTechCardTieBreak
         ? Math.min(0.55, scanOverTechCardGap + 0.18)
         : 0;
+      const directScorePlayPassFloor = getAiEarlyDirectScorePlayPassFloor(candidates, { roundNumber: round });
       const bestContinuation = (candidates || [])
         .filter((candidate) => (
           candidate?.available !== false
@@ -19703,6 +20373,27 @@
               originalScore: Math.round(currentScore * 100) / 100,
             },
           };
+        }
+        if (candidate.id === "playCard" && directScorePlayPassFloor) {
+          const currentNet = Number(adjusted.actionGraph?.net);
+          if (adjusted.actionGraph && Number.isFinite(currentNet) && currentNet < directScorePlayPassFloor.floor) {
+            adjusted = {
+              ...adjusted,
+              actionGraph: {
+                ...adjusted.actionGraph,
+                uncappedDirectScorePlayNet: adjusted.actionGraph.net,
+                net: directScorePlayPassFloor.floor,
+              },
+              selectionAdjustment: {
+                ...(adjusted.selectionAdjustment || {}),
+                directScoreAbovePassFloor: directScorePlayPassFloor,
+              },
+              valueBreakdown: {
+                ...(adjusted.valueBreakdown || {}),
+                directScoreAbovePassFloor: directScorePlayPassFloor.floor,
+              },
+            };
+          }
         }
         return adjusted;
       });
@@ -21552,9 +22243,17 @@
       configureAiStrategyWeights,
       configureDefaultAiOpponent,
       createAiControlSnapshot,
+      estimateAiJiuzheCardCompletionFactor,
+      getAiEarlyDirectScorePlayPassFloor,
+      getAiB2SectorWinExactDelta,
+      getAiClosedSectorControlMarginValue,
+      getAiFinalAnalyzeDirectScoreProtection,
+      getAiTerminalResearchGoalBonusScale,
       getAiAutoBattleAnalysis,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,
+      getAiAlienTraceTargetDemand,
+      getAiAlienTraceTargetDemandForSlot,
       getAiMapDemand,
       getAiRemainingRoundWeight,
       getAiStrategyDemand,
@@ -21563,6 +22262,8 @@
       getAiStrategyWeights,
       getCardTriggerFreeMoveEffect,
       getPlayerAgentLabel,
+      getAiSectorScanWinState,
+      isAiB2SectorScanRaceLost,
       isAiAutomationPaused,
       isAiAutoBattlePlayer,
       listCardTriggerFreeMoveCandidates,
@@ -21575,6 +22276,9 @@
       runAiStrategyABTest,
       runAiStrategyTuningCycle,
       scheduleAiAutoStepIfNeeded,
+      scoreAiB2SectorScanFocus,
+      scoreAiFullSectorExtraMark,
+      scoreAiNebulaScanChoice,
       stopAiAutoBattle,
       sumAiDemandMap,
     };

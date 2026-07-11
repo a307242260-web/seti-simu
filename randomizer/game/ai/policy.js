@@ -193,6 +193,10 @@
       summary.energy += Number(effect.resources?.energy || 0) + Number(effect.income?.energy || 0);
       summary.hand += Number(effect.blindDraw || 0) + Number(effect.income?.handSize || 0);
       summary.data += Number(effect.dataGain || 0) + Number(effect.income?.availableData || 0);
+      summary.baseIncomeCredits += Number(effect.baseIncome?.credits || 0);
+      summary.baseIncomeEnergy += Number(effect.baseIncome?.energy || 0);
+      summary.baseIncomeHand += Number(effect.baseIncome?.handSize || 0);
+      summary.baseIncomeData += Number(effect.baseIncome?.availableData || 0);
       summary.scan += Number(effect.scan?.count || 0) + Number(effect.resources?.additionalPublicScan || 0);
       summary.incomeIncreases += Number(effect.incomeIncreaseCount || 0);
       if (effect.alienTrace) summary.traces += 1;
@@ -206,6 +210,10 @@
       energy: 0,
       hand: 0,
       data: 0,
+      baseIncomeCredits: 0,
+      baseIncomeEnergy: 0,
+      baseIncomeHand: 0,
+      baseIncomeData: 0,
       scan: 0,
       incomeIncreases: 0,
       traces: 0,
@@ -240,8 +248,15 @@
     const weakStartResearchReady = String(options.aiDifficulty || options.player?.aiDifficulty || "") === "weak_start"
       && combined.immediatePublicity >= 4;
     if (weakStartResearchReady) score += 3.2;
+    // Keep setup payability on immediately granted resources, while preserving
+    // the recurring company income as a long-term strategic signal.
+    combined.longTermCredits = combined.credits + combined.baseIncomeCredits;
     if (combined.incomeIncreases >= 2 || combined.credits >= 3) {
-      addOpeningGoal(goals, "OPENING_INCOME", combined.incomeIncreases + combined.credits * 0.25 + weakStartIncomePressure);
+      addOpeningGoal(
+        goals,
+        "OPENING_INCOME",
+        combined.incomeIncreases + combined.longTermCredits * 0.25 + weakStartIncomePressure,
+      );
     }
 
     return {

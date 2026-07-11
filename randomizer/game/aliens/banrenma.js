@@ -309,11 +309,17 @@
     return cloneReward(TRACE_REWARDS[traceType]?.[position]);
   }
 
-  function getBonusReward(position) {
-    return cloneReward(BONUS_REWARDS[Math.round(Number(position))]);
+  function getAvailableDataCount(player, options = {}) {
+    if (Number.isFinite(Number(options.availableDataCount))) {
+      return Math.max(0, Math.round(Number(options.availableDataCount)));
+    }
+    if (Array.isArray(player?.dataState?.poolTokens)) {
+      return player.dataState.poolTokens.length;
+    }
+    return Math.max(0, Math.round(Number(player?.resources?.availableData) || 0));
   }
 
-  function placeBanrenmaTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
+  function canPlaceBanrenmaTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
     if (!isBanrenmaRevealedSlot(alienState, alienSlotId) && !options.debugOnly) {
       return { ok: false, message: "半人马尚未揭示，不能放置半人马痕迹" };
     }
@@ -331,6 +337,39 @@
     }
 
     const reward = options.debugOnly ? null : getTraceReward(traceType, normalizedPosition);
+    if (reward?.payData && getAvailableDataCount(player, options) < reward.payData) {
+      return {
+        ok: false,
+        message: `数据不足：该位置需要 ${reward.payData} 数据`,
+      };
+    }
+    return { ok: true, position: normalizedPosition, reward };
+  }
+
+  function canPlaceAnyBanrenmaTrace(alienState, alienSlotId, traceType, player, options = {}) {
+    return TRACE_POSITIONS.some((position) => (
+      canPlaceBanrenmaTrace(alienState, alienSlotId, traceType, position, player, options).ok
+    ));
+  }
+
+  function getBonusReward(position) {
+    return cloneReward(BONUS_REWARDS[Math.round(Number(position))]);
+  }
+
+  function placeBanrenmaTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
+    const placementCheck = canPlaceBanrenmaTrace(
+      alienState,
+      alienSlotId,
+      traceType,
+      position,
+      player,
+      options,
+    );
+    if (!placementCheck.ok) return placementCheck;
+
+    const grid = ensureTraceGrid(alienState, alienSlotId);
+    const normalizedPosition = placementCheck.position;
+    const reward = placementCheck.reward;
     const entry = createTraceEntry(alienState, player, traceType, normalizedPosition, {
       debugOnly: options.debugOnly,
       rewardApplied: Boolean(!options.debugOnly && reward),
@@ -633,6 +672,9 @@
     isBanrenmaRevealedSlot,
     getTraceReward,
     getBonusReward,
+    getAvailableDataCount,
+    canPlaceBanrenmaTrace,
+    canPlaceAnyBanrenmaTrace,
     placeBanrenmaTrace,
     listTraceEntries,
     getTraceEntries,

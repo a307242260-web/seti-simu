@@ -223,7 +223,7 @@
     return cloneReward(TRACE_REWARDS[traceType]?.[position]);
   }
 
-  function placeYichangdianTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
+  function canPlaceYichangdianTrace(alienState, alienSlotId, traceType, position, _player, options = {}) {
     if (!isYichangdianRevealedSlot(alienState, alienSlotId) && !options.debugOnly) {
       return { ok: false, message: "异常点尚未揭示，不能放置异常点痕迹" };
     }
@@ -239,6 +239,22 @@
         message: `${placement.getTraceTypeLabel(traceType)} ${normalizedPosition} 号位已经有痕迹`,
       };
     }
+    return { ok: true, position: normalizedPosition };
+  }
+
+  function placeYichangdianTrace(alienState, alienSlotId, traceType, position, player, options = {}) {
+    const placementCheck = canPlaceYichangdianTrace(
+      alienState,
+      alienSlotId,
+      traceType,
+      position,
+      player,
+      options,
+    );
+    if (!placementCheck.ok) return placementCheck;
+
+    const grid = ensureTraceGrid(alienState, alienSlotId);
+    const normalizedPosition = placementCheck.position;
 
     const reward = getTraceReward(traceType, normalizedPosition);
     const entry = createTraceEntry(alienState, player, traceType, normalizedPosition, {
@@ -518,6 +534,7 @@
     isYichangdianAlienSlot,
     isYichangdianRevealedSlot,
     getTraceReward,
+    canPlaceYichangdianTrace,
     placeYichangdianTrace,
     listTraceEntries,
     getTopTraceEntry,

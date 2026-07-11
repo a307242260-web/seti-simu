@@ -19,7 +19,7 @@ const blue = {
   id: "player-blue",
   color: "blue",
   colorLabel: "蓝色",
-  resources: { score: 5, credits: 0, energy: 0, publicity: 0, availableData: 0 },
+  resources: { score: 5, credits: 0, energy: 0, publicity: 0, availableData: 1 },
 };
 const revealResult = banrenma.initializeBanrenmaReveal(alienState, 2, white, [white, blue], () => 0);
 assert.equal(revealResult.ok, true);
@@ -56,6 +56,27 @@ debugState.aliens[1].revealed = true;
 banrenma.seedDebugTraceGrid(debugState, 1, white);
 assert.equal(banrenma.listTraceEntries(debugState, 1).length, 15, "debug grid should place 3x5 tokens");
 assert.equal(banrenma.getTraceGrid(debugState, 1).pink[1].length, 1, "debug only places one position-1 token");
+
+const zeroDataPlayer = {
+  id: "player-zero-data",
+  color: "green",
+  resources: { availableData: 0 },
+};
+assert.equal(
+  banrenma.canPlaceAnyBanrenmaTrace(debugState, 1, "pink", zeroDataPlayer),
+  false,
+  "a full Banrenma row should not treat the stackable data-cost slot as legal without data",
+);
+assert.match(
+  banrenma.canPlaceBanrenmaTrace(debugState, 1, "pink", 1, zeroDataPlayer).message,
+  /数据不足/,
+);
+zeroDataPlayer.resources.availableData = 1;
+assert.equal(
+  banrenma.canPlaceAnyBanrenmaTrace(debugState, 1, "pink", zeroDataPlayer),
+  true,
+  "one data should make the stackable position 1 legal again",
+);
 
 const displayed = banrenma.takeDisplayedCard(alienState, () => 0);
 assert.equal(displayed.ok, true);

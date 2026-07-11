@@ -755,38 +755,65 @@
     return count;
   }
 
-  function isCardConditionMet(cardOrDefinition, player, context = {}) {
+  function getCardConditionProgress(cardOrDefinition, player, context = {}) {
     const definition = typeof cardOrDefinition?.index === "number"
       ? (CARD_BY_INDEX[cardOrDefinition.index] || cardOrDefinition)
       : CARD_BY_INDEX[Number(cardOrDefinition)];
     const condition = definition?.condition;
-    if (!condition) return false;
+    if (!condition) return null;
 
+    let current = 0;
     switch (condition.type) {
       case "jiuzheTraceCount":
-        return countJiuzheTraces(context.alienGameState, player) >= condition.count;
+        current = countJiuzheTraces(context.alienGameState, player);
+        break;
       case "samePlanetOrbitOrLand":
-        return maxSamePlanetOrbitOrLand(player, context.planetStatsState, context) >= condition.count;
+        current = maxSamePlanetOrbitOrLand(player, context.planetStatsState, context);
+        break;
       case "sectorWinsByColor":
-        return countSectorWinsByColor(player, context.nebulaDataState, condition.color) >= condition.count;
+        current = countSectorWinsByColor(player, context.nebulaDataState, condition.color);
+        break;
       case "techCount":
-        return countOwnedTech(player, condition.techType) >= condition.count;
+        current = countOwnedTech(player, condition.techType);
+        break;
       case "incomeIncreaseCount":
       case "totalIncome":
-        return countIncomeIncreases(player, context) >= condition.count;
+        current = countIncomeIncreases(player, context);
+        break;
       case "landingCount":
-        return countLandingMarkers(player, context.planetStatsState, context) >= condition.count;
+        current = countLandingMarkers(player, context.planetStatsState, context);
+        break;
       case "sameColorTraceCount":
-        return TRACE_TYPES.some((traceType) => countAllTraceMarkersByColor(player, context.alienGameState, traceType) >= condition.count);
+        current = Math.max(0, ...TRACE_TYPES.map((traceType) => (
+          countAllTraceMarkersByColor(player, context.alienGameState, traceType)
+        )));
+        break;
       case "otherAlienTraceCount":
-        return countOtherAlienTraces(player, context.alienGameState) >= condition.count;
+        current = countOtherAlienTraces(player, context.alienGameState);
+        break;
       case "orbitCount":
-        return countOrbitMarkers(player, context.planetStatsState) + countPlutoMarkers(player, context, "orbit") >= condition.count;
+        current = countOrbitMarkers(player, context.planetStatsState) + countPlutoMarkers(player, context, "orbit");
+        break;
       case "completedTasks":
-        return (Number(player?.completedTaskCount) || 0) >= condition.count;
+        current = Number(player?.completedTaskCount) || 0;
+        break;
       default:
-        return false;
+        return null;
     }
+
+    const target = Math.max(0, Number(condition.count) || 0);
+    const normalizedCurrent = Math.max(0, Number(current) || 0);
+    return {
+      condition,
+      current: normalizedCurrent,
+      target,
+      remaining: Math.max(0, target - normalizedCurrent),
+      met: normalizedCurrent >= target,
+    };
+  }
+
+  function isCardConditionMet(cardOrDefinition, player, context = {}) {
+    return Boolean(getCardConditionProgress(cardOrDefinition, player, context)?.met);
   }
 
   function scorePlayedCards(alienState, player, context = {}) {
@@ -874,6 +901,7 @@
     countJiuzheTraces,
     countAllTraceMarkersByColor,
     countOtherAlienTraces,
+    getCardConditionProgress,
     isCardConditionMet,
     scorePlayedCards,
     getHighestThreatPlayers,

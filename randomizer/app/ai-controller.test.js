@@ -3,9 +3,12 @@
 const assert = require("node:assert/strict");
 const { createAiController } = require("./ai-controller");
 const aomomo = require("../game/aliens/aomomo");
+const amiba = require("../game/aliens/amiba");
 const banrenma = require("../game/aliens/banrenma");
 const chong = require("../game/aliens/chong");
+const endGameScoring = require("../game/end-game-scoring");
 const fangzhou = require("../game/aliens/fangzhou");
+const jiuzhe = require("../game/aliens/jiuzhe");
 const runezu = require("../game/aliens/runezu");
 const yichangdian = require("../game/aliens/yichangdian");
 const alienCore = require("../game/aliens");
@@ -42,9 +45,14 @@ function makeActionList(buttons = []) {
   return {
     querySelectorAll: (selector) => {
       if (selector === ".scan-target-option-button") return buttons;
-      const key = datasetKeyForSelector(selector);
-      if (!key) return [];
-      return buttons.filter((button) => Object.prototype.hasOwnProperty.call(button.dataset || {}, key));
+      const keys = String(selector || "")
+        .split(",")
+        .map((part) => datasetKeyForSelector(part.trim()))
+        .filter(Boolean);
+      if (!keys.length) return [];
+      return buttons.filter((button) => keys.some(
+        (key) => Object.prototype.hasOwnProperty.call(button.dataset || {}, key),
+      ));
     },
   };
 }
@@ -67,7 +75,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     color: "blue",
     colorLabel: "Blue",
     hand: options.blueHand || [],
-    reservedCards: [],
+    reservedCards: options.blueReservedCards || [],
     initialSelection: options.blueInitialSelection || null,
     industryStrategyPassiveSlots: options.blueIndustryStrategyPassiveSlots || undefined,
     aiDifficulty: options.blueAiDifficulty || options.aiDifficulty || undefined,
@@ -116,14 +124,15 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     startPlayerId: white.id,
     passedPlayerIds: options.passedPlayerIds || [],
   };
-  let pendingJiuzheCardPlay = pendingPlayerColor
-    ? {
+  let pendingJiuzheCardPlay = options.pendingJiuzheCardPlay
+    || (pendingPlayerColor
+      ? {
       playerColor: pendingPlayerColor,
       reason: "reveal",
       cost: {},
       label: "Jiuzhe reveal",
-    }
-    : null;
+      }
+      : null);
   let pendingPassReserveSelection = options.pendingPassReserveSelection || null;
   const pendingDiscardAction = options.pendingDiscardAction
     || (options.currentPlayerDiscardPending
@@ -192,6 +201,8 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     get pendingMovePayment() { return options.pendingMovePayment || null; },
     get pendingActionExecuted() { return Boolean(options.pendingActionExecuted); },
     get pendingActionEffectFlow() { return options.pendingActionEffectFlow || null; },
+    get pendingBanrenmaCardGain() { return options.pendingBanrenmaCardGain || null; },
+    get pendingBanrenmaOpportunity() { return options.pendingBanrenmaOpportunity || null; },
     get pendingRunezuFaceSymbolPlacement() { return null; },
     alienTracePickerState: options.alienTracePickerState || null,
   };
@@ -233,6 +244,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     state,
     players: {
       PLAYER_COLOR_IDS: allPlayers.map((player) => player.color),
+      RESOURCE_LIMITS: { publicity: 10, availableData: 6 },
       createPlayerState: () => ({}),
       canAfford: options.realisticCanAfford ? canAffordResources : () => true,
       formatResourceCost: (cost = {}) => Object.entries(cost)
@@ -309,6 +321,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     banrenma,
     chong,
     fangzhou,
+    jiuzhe,
     runezu,
     yichangdian,
     aomomo,
@@ -367,6 +380,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
       createDefaultNebulaDataState: () => ({}),
       ...(options.data || {}),
     },
+    aiRaceModel: options.aiRaceModel,
     ai: {
       policy: {
         choosePlayCard: (candidates) => (
@@ -388,7 +402,11 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
           }
           return selected;
         },
+        ...(options.useDefaultAlienUsePolicy
+          ? { chooseAlienUseOption: setiAi.policy.chooseAlienUseOption }
+          : {}),
       },
+      ...(options.aiValuation ? { valuation: options.aiValuation } : {}),
       ...(options.actionGraph ? { actionGraph: options.actionGraph } : {}),
       ...(options.aiPlanner ? { planner: options.aiPlanner } : {}),
     },
@@ -424,6 +442,9 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
         options.finalSlotMultipliers?.[formulaId]?.[slotIndex]
         ?? options.finalSlotMultipliers?.[formulaId]
         ?? 1
+      ),
+      resolveCardEndGameRule: (card, cardEffects) => (
+        cardEffects?.getCardModel?.(card)?.endGameScoring || null
       ),
       ...(options.endGameScoring || {}),
     },
@@ -494,6 +515,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     INITIAL_SELECTION_REQUIRED: { initial: options.initialSelectionRequired ?? 0 },
     MOVE_ENERGY_COST: 1,
     createActionContext: () => ({
+      ...(options.actionContext || {}),
       ensurePlayerTechState: (player) => {
         if (player && !player.techState) player.techState = { ownedTiles: {} };
         return player?.techState || null;
@@ -561,11 +583,16 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     ),
     openBanrenmaReadyOpportunityForPlayer: (player, openOptions = {}) => {
       if (!options.readyBanrenmaPlayerColor || player?.color !== options.readyBanrenmaPlayerColor) return null;
-      noteHandled({
+      const event = {
         type: "banrenma-ready",
         playerColor: player.color,
         includeCards: openOptions.includeCards,
-      });
+      };
+      if (openOptions.preferredCardId) {
+        event.preferredCardId = openOptions.preferredCardId;
+        event.firstReservedCardId = player.reservedCards?.[0]?.id || null;
+      }
+      noteHandled(event);
       return { ok: true, message: "opened banrenma opportunity" };
     },
     openRunezuFaceSymbolPlacement: (alienSlotId, position) => {
@@ -658,6 +685,16 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     "updateActionButtons",
   ];
   for (const name of noopNames) context[name] = () => null;
+  if (options.recordBanrenmaChoices) {
+    context.handleBanrenmaBonusChoice = (choice) => {
+      noteHandled({ type: "banrenma-bonus", choice: String(choice) });
+      return { ok: true, progressed: true };
+    };
+    context.handleBanrenmaCardConditionChoice = (choice) => {
+      noteHandled({ type: "banrenma-condition", choice: String(choice) });
+      return { ok: true, progressed: true };
+    };
+  }
   if (options.recordInitialSelection) {
     context.confirmInitialSelectionForCurrentPlayer = () => {
       const offer = context.getInitialSelectionOffer(playerState.currentPlayerId);
@@ -1516,6 +1553,284 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const getCompletionFactor = (roundNumber, definition, progress, options = {}) => {
+    const harness = createAiControllerHarness(null, { roundNumber });
+    return harness.controller.estimateAiJiuzheCardCompletionFactor(
+      definition,
+      harness.blue,
+      {},
+      { progress, ...options },
+    );
+  };
+  const techDefinition = jiuzhe.CARD_BY_INDEX[3];
+  const missingThreeTech = {
+    condition: techDefinition.condition,
+    current: 0,
+    target: 3,
+    remaining: 3,
+    met: false,
+  };
+  const blackSectorDefinition = jiuzhe.CARD_BY_INDEX[6];
+  const missingTwoBlackSectors = {
+    condition: blackSectorDefinition.condition,
+    current: 0,
+    target: 2,
+    remaining: 2,
+    met: false,
+  };
+
+  assert.equal(
+    getCompletionFactor(1, techDefinition, missingThreeTech),
+    0.32,
+    "round-one missing-three tech should use the measured progress table",
+  );
+  assert.equal(
+    getCompletionFactor(2, techDefinition, missingThreeTech),
+    0.22,
+    "round-two missing-three tech should not assume three future research actions",
+  );
+  assert.equal(
+    getCompletionFactor(3, techDefinition, missingThreeTech),
+    0.09,
+    "round-three missing-three tech should retain the shared completion table",
+  );
+  assert.ok(
+    Math.abs(getCompletionFactor(2, techDefinition, missingThreeTech, { paid: true }) - 0.154) < 1e-9,
+    "the paid multiplier should apply after the measured round-two factor",
+  );
+  assert.equal(
+    getCompletionFactor(2, blackSectorDefinition, missingTwoBlackSectors),
+    0.42,
+    "non-tech missing-two conditions should retain their existing round-two factor",
+  );
+}
+
+{
+  const jiuzheState = jiuzhe.createJiuzheState();
+  jiuzheState.revealedSlotId = 1;
+  jiuzheState.revealInitialized = true;
+  jiuzheState.playerThreatById["player-white"] = 20;
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 2,
+    blueResources: { score: 95, credits: 5 },
+    alienGameState: {
+      aliens: {
+        1: { revealed: true, alienId: jiuzhe.ALIEN_ID, assignedAlienId: jiuzhe.ALIEN_ID },
+      },
+      jiuzhe: jiuzheState,
+    },
+    pendingJiuzheCardPlay: {
+      playerId: "player-blue",
+      reason: "freeThreshold",
+      cost: {},
+      label: "Jiuzhe controllable-tech ordering",
+    },
+    scanTargetButtons: [
+      makeButton({ jiuzheCardChoice: "3" }, "拥有3个紫色科技"),
+      makeButton({ jiuzheCardChoice: "6" }, "完成2个黑色扇区"),
+    ],
+    useDefaultAlienUsePolicy: true,
+    aiValuation: setiAi.valuation,
+  });
+  assert.equal(harness.controller.configureAiAutoBattle({
+    playerIds: [harness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+  assert.equal(harness.controller.runAiAutomationStep().ok, true);
+  const useLog = harness.controller.getAiAutoBattleReport().logs
+    .find((entry) => entry.type === "alien-use" && entry.details?.pendingType === "jiuzhe-card");
+  const techScore = Number(useLog?.details?.options?.find((option) => option.choice === "3")?.score);
+  const blackSectorScore = Number(useLog?.details?.options?.find((option) => option.choice === "6")?.score);
+  assert.equal(techScore, 12.26, "round-two missing-three tech should retain its measured completion factor");
+  assert.equal(blackSectorScore, 17.936, "black-sector missing-two valuation should remain unchanged");
+  assert.ok(techScore < blackSectorScore, "three missing techs should not outrank a condition only two steps away");
+  assert.deepEqual(
+    harness.getHandled(),
+    { type: "card", choice: "6", automated: true },
+    "round-two Jiuzhe planning should prefer the closer black-sector condition",
+  );
+}
+
+{
+  const getJiuzheCardOptionScore = (cost) => {
+    const jiuzheState = jiuzhe.createJiuzheState();
+    jiuzheState.revealedSlotId = 1;
+    jiuzheState.revealInitialized = true;
+    jiuzheState.playerThreatById["player-blue"] = 6;
+    const harness = createAiControllerHarness(null, {
+      currentPlayerColor: "blue",
+      roundNumber: 3,
+      blueResources: { score: 95, credits: 5 },
+      alienGameState: {
+        aliens: {
+          1: { revealed: true, alienId: jiuzhe.ALIEN_ID, assignedAlienId: jiuzhe.ALIEN_ID },
+        },
+        jiuzhe: jiuzheState,
+      },
+      pendingJiuzheCardPlay: {
+        playerId: "player-blue",
+        reason: Object.keys(cost).length ? "paidThreshold" : "freeThreshold",
+        cost,
+        label: "Jiuzhe opportunity cost test",
+      },
+      scanTargetButtons: [
+        makeButton({ jiuzheCardChoice: "1" }, "九折牌 1"),
+      ],
+      aiValuation: setiAi.valuation,
+    });
+    assert.equal(
+      harness.controller.configureAiAutoBattle({
+        playerIds: [harness.blue.id],
+        suppressAutoSchedule: true,
+      }).ok,
+      true,
+    );
+    assert.equal(harness.controller.runAiAutomationStep().ok, true);
+    const useLog = harness.controller.getAiAutoBattleReport().logs
+      .find((entry) => entry.type === "alien-use" && entry.details?.pendingType === "jiuzhe-card");
+    return Number(useLog?.details?.options?.find((option) => option.choice === "1")?.score);
+  };
+
+  const freeScore = getJiuzheCardOptionScore({});
+  const paidScore = getJiuzheCardOptionScore({ credits: 1 });
+  const paidTwoCreditsScore = getJiuzheCardOptionScore({ credits: 2 });
+  assert.ok(
+    freeScore - paidScore > 4.5,
+    "a late paid speculative Jiuzhe card must include both the credit and lower conversion probability",
+  );
+  assert.ok(
+    paidScore - paidTwoCreditsScore > 3,
+    "otherwise identical paid Jiuzhe options must preserve the marginal cost of the second credit",
+  );
+}
+
+{
+  const makeJiuzheProgressState = (traceCount) => {
+    const state = jiuzhe.createJiuzheState();
+    state.revealedSlotId = 1;
+    state.revealInitialized = true;
+    state.playerThreatById["player-blue"] = 6;
+    const alienGameState = {
+      aliens: {
+        1: { revealed: true, alienId: jiuzhe.ALIEN_ID, assignedAlienId: jiuzhe.ALIEN_ID },
+      },
+      jiuzhe: state,
+    };
+    const player = { id: "player-blue", color: "blue", colorLabel: "Blue" };
+    for (let position = 1; position <= traceCount; position += 1) {
+      assert.equal(jiuzhe.placeJiuzheTrace(alienGameState, 1, "pink", position, player).ok, true);
+    }
+    return alienGameState;
+  };
+
+  const freeHarness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    blueResources: { score: 95, credits: 5 },
+    blueCompletedTaskCount: 3,
+    alienGameState: makeJiuzheProgressState(5),
+    pendingJiuzheCardPlay: {
+      playerId: "player-blue",
+      reason: "freeThreshold",
+      cost: {},
+      label: "Jiuzhe progress choice",
+    },
+    scanTargetButtons: [
+      makeButton({ jiuzheCardChoice: "0" }, "九折有6个痕迹"),
+      makeButton({ jiuzheCardChoice: "13" }, "完成5张任务牌"),
+    ],
+    useDefaultAlienUsePolicy: true,
+    aiValuation: setiAi.valuation,
+  });
+  freeHarness.blue.completedTaskCount = 3;
+  assert.equal(freeHarness.controller.configureAiAutoBattle({
+    playerIds: [freeHarness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+  assert.equal(freeHarness.controller.runAiAutomationStep().ok, true);
+  assert.deepEqual(
+    freeHarness.getHandled(),
+    { type: "card", choice: "0", automated: true },
+    "round-three Jiuzhe planning should prefer a one-step condition over a two-task headline score",
+  );
+
+  const plutoHarness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    blueResources: { score: 95, credits: 5 },
+    alienGameState: makeJiuzheProgressState(0),
+    actionContext: {
+      plutoMarkers: [
+        { kind: "orbit", planetId: "pluto", playerId: "player-blue" },
+        { kind: "land", planetId: "pluto", playerId: "player-blue", sequence: 1 },
+        { kind: "land", planetId: "pluto", playerId: "player-blue", sequence: 2 },
+      ],
+    },
+    pendingJiuzheCardPlay: {
+      playerId: "player-blue",
+      reason: "freeThreshold",
+      cost: {},
+      label: "Jiuzhe Pluto progress choice",
+    },
+    scanTargetButtons: [
+      makeButton({ jiuzheCardChoice: "1" }, "同一星球3个环绕或登陆"),
+      makeButton({ jiuzheCardChoice: "13" }, "完成5张任务牌"),
+    ],
+    useDefaultAlienUsePolicy: true,
+    aiValuation: setiAi.valuation,
+  });
+  plutoHarness.blue.completedTaskCount = 4;
+  assert.equal(plutoHarness.controller.configureAiAutoBattle({
+    playerIds: [plutoHarness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+  assert.equal(plutoHarness.controller.runAiAutomationStep().ok, true);
+  assert.deepEqual(
+    plutoHarness.getHandled(),
+    { type: "card", choice: "1", automated: true },
+    "AI Jiuzhe planning should consume shared Pluto-aware same-planet progress",
+  );
+
+  const paidHarness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    blueResources: { score: 95, credits: 5 },
+    alienGameState: makeJiuzheProgressState(4),
+    pendingJiuzheCardPlay: {
+      playerId: "player-blue",
+      reason: "paidThreshold",
+      cost: { credits: 1 },
+      label: "Jiuzhe paid progress choice",
+    },
+    scanTargetButtons: [
+      makeButton({ jiuzheCardChoice: "8" }, "拥有5个相同颜色外星人痕迹"),
+      makeButton({ jiuzheOpportunitySkip: "true" }, "放弃本次机会"),
+    ],
+    useDefaultAlienUsePolicy: true,
+    aiValuation: setiAi.valuation,
+  });
+  assert.equal(paidHarness.controller.configureAiAutoBattle({
+    playerIds: [paidHarness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+  assert.equal(paidHarness.controller.runAiAutomationStep().ok, true);
+  const paidUseLog = paidHarness.controller.getAiAutoBattleReport().logs
+    .find((entry) => entry.type === "alien-use" && entry.details?.pendingType === "jiuzhe-card");
+  assert.ok(
+    paidUseLog?.details?.options?.some((option) => option.choice === "skip"),
+    `paid Jiuzhe options should include skip: ${JSON.stringify(paidUseLog?.details?.options)}`,
+  );
+  const paidCardScore = Number(paidUseLog?.details?.options?.find((option) => option.choice === "8")?.score);
+  assert.ok(paidCardScore < 0, `late speculative Jiuzhe card should be net negative, got ${paidCardScore}`);
+  assert.deepEqual(
+    paidHarness.getHandled(),
+    { type: "skip", automated: true },
+    "round-three paid Jiuzhe planning should skip an incomplete one-trace condition when its expected value is below cost",
+  );
+}
+
+{
   const harness = createAiControllerHarness(null, {
     scanTargetPending: {
       type: "pay_credit_reward",
@@ -1934,6 +2249,306 @@ function makeYichangdianAlienState(options = {}) {
   const harness = createAiControllerHarness(null, {
     scanTargetHidden: true,
     scanTargetPending: {
+      type: "sector_scan",
+      playerColor: "blue",
+      choices: [{ nebulaId: "full-nebula", sectorX: 6, label: "Full nebula" }],
+    },
+    data: {
+      getNextReplaceableNebulaToken: () => null,
+      getNebulaCapacity: () => 3,
+      getNebulaSlotScoreReward: () => 0,
+      getNebulaColor: () => "blue",
+      listNebulaTokens: () => [
+        { replacedByPlayerId: "player-white", replacedByPlayerColor: "white" },
+        { replacedByPlayerId: "player-white", replacedByPlayerColor: "white" },
+        { replacedByPlayerId: "player-blue", replacedByPlayerColor: "blue" },
+      ],
+      listSectorExtraMarks: () => [],
+      getSectorTokenStats: () => ({
+        white: { playerId: "player-white", playerColor: "white", count: 2 },
+        blue: { playerId: "player-blue", playerColor: "blue", count: 1 },
+      }),
+    },
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "a full sector should remain a legal AI scan target for an extra mark");
+  assert.deepEqual(harness.getHandled(), {
+    type: "scan-target",
+    nebulaId: "full-nebula",
+    sectorX: 6,
+  });
+}
+
+{
+  const makeOwnedToken = (color) => ({
+    replacedByPlayerId: `player-${color}`,
+    replacedByPlayerColor: color,
+  });
+  const buildFullSectorHarness = ({ tokens, ranking, stats, nebulaId = "full-score-sector", b2 = false }) => (
+    createAiControllerHarness(null, {
+      currentPlayerColor: "blue",
+      roundNumber: 4,
+      ...(b2 ? {
+        finalScoringState: {
+          tiles: {
+            final_b2: {
+              id: "final_b2",
+              marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+            },
+          },
+        },
+        finalFormulaIds: { final_b2: "b2" },
+        finalSlotMultipliers: { b2: { 1: 8 } },
+        endGameScoring: {
+          countSectorWins: () => 3,
+          countOrbitOrLandMarkers: () => 4,
+        },
+      } : {}),
+      data: {
+        getNextReplaceableNebulaToken: () => null,
+        getNebulaCapacity: () => tokens.length,
+        getNebulaSlotScoreReward: () => 0,
+        getNebulaColor: () => "blue",
+        listNebulaTokens: () => tokens,
+        listSectorExtraMarks: () => [],
+        getSectorTokenStats: () => stats,
+        getSectorRanking: () => ranking,
+      },
+    })
+  );
+
+  const alreadyWinning = buildFullSectorHarness({
+    tokens: [makeOwnedToken("blue"), makeOwnedToken("blue"), makeOwnedToken("white")],
+    stats: {
+      blue: { playerId: "player-blue", playerColor: "blue", count: 2 },
+      white: { playerId: "player-white", playerColor: "white", count: 1 },
+    },
+    ranking: [
+      { playerId: "player-blue", playerColor: "blue", count: 2 },
+      { playerId: "player-white", playerColor: "white", count: 1 },
+    ],
+    b2: true,
+  });
+  const alreadyWinningScore = alreadyWinning.controller.scoreAiNebulaScanChoice(
+    { nebulaId: "full-score-sector" },
+    { player: alreadyWinning.blue, pendingType: "sector_scan" },
+  );
+  assert.equal(alreadyWinningScore, -3, "a redundant full-sector mark should carry a measured no-op penalty");
+
+  const stillLosing = buildFullSectorHarness({
+    tokens: [makeOwnedToken("white"), makeOwnedToken("white"), makeOwnedToken("white")],
+    stats: {
+      white: { playerId: "player-white", playerColor: "white", count: 3 },
+    },
+    ranking: [{ playerId: "player-white", playerColor: "white", count: 3 }],
+    b2: true,
+  });
+  const stillLosingScore = stillLosing.controller.scoreAiNebulaScanChoice(
+    { nebulaId: "full-score-sector" },
+    { player: stillLosing.blue, pendingType: "sector_scan" },
+  );
+  assert.equal(stillLosingScore, -2, "a full-sector mark that remains behind should have a finite low score");
+
+  const tieFlip = buildFullSectorHarness({
+    tokens: [makeOwnedToken("white"), makeOwnedToken("white"), makeOwnedToken("blue")],
+    stats: {
+      white: { playerId: "player-white", playerColor: "white", count: 2 },
+      blue: { playerId: "player-blue", playerColor: "blue", count: 1 },
+    },
+    ranking: [
+      { playerId: "player-white", playerColor: "white", count: 2 },
+      { playerId: "player-blue", playerColor: "blue", count: 1 },
+    ],
+    b2: true,
+  });
+  const tieFlipScore = tieFlip.controller.scoreAiNebulaScanChoice(
+    { nebulaId: "full-score-sector" },
+    { player: tieFlip.blue, pendingType: "sector_scan" },
+  );
+  assert.equal(tieFlipScore, 8, "a marked-B2 full-sector tie flip should be bounded by the eight-point cap");
+  assert.ok(tieFlipScore > stillLosingScore && stillLosingScore > alreadyWinningScore);
+
+  const aomomoAlready = buildFullSectorHarness({
+    nebulaId: aomomo.NEBULA_ID,
+    tokens: [makeOwnedToken("blue"), makeOwnedToken("white"), makeOwnedToken("white")],
+    stats: {
+      blue: { playerId: "player-blue", playerColor: "blue", count: 1 },
+      white: { playerId: "player-white", playerColor: "white", count: 2 },
+    },
+    ranking: [],
+  });
+  const aomomoAlreadyScore = aomomoAlready.controller.scoreAiNebulaScanChoice(
+    { nebulaId: aomomo.NEBULA_ID },
+    { player: aomomoAlready.blue, pendingType: "sector_scan" },
+  );
+  const aomomoNew = buildFullSectorHarness({
+    nebulaId: aomomo.NEBULA_ID,
+    tokens: [makeOwnedToken("white"), makeOwnedToken("white"), makeOwnedToken("white")],
+    stats: {
+      white: { playerId: "player-white", playerColor: "white", count: 3 },
+    },
+    ranking: [],
+  });
+  const aomomoNewScore = aomomoNew.controller.scoreAiNebulaScanChoice(
+    { nebulaId: aomomo.NEBULA_ID },
+    { player: aomomoNew.blue, pendingType: "sector_scan" },
+  );
+  assert.equal(aomomoAlreadyScore, -3, "an existing Aomomo participant should penalize a no-op repeat scan");
+  assert.ok(
+    aomomoNewScore > aomomoAlreadyScore && aomomoNewScore <= 6,
+    "a new Aomomo participant should receive only the bounded actual fossil value",
+  );
+}
+
+{
+  const tokensByNebula = {
+    "full-owned": [
+      { replacedByPlayerId: "player-blue", replacedByPlayerColor: "blue" },
+      { replacedByPlayerId: "player-blue", replacedByPlayerColor: "blue" },
+      { replacedByPlayerId: "player-white", replacedByPlayerColor: "white" },
+    ],
+    "productive-open": [
+      { replacedByPlayerId: "player-white", replacedByPlayerColor: "white" },
+      {},
+      {},
+    ],
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    scanTargetHidden: true,
+    scanTargetPending: {
+      type: "sector_scan",
+      playerColor: "blue",
+      choices: [
+        { nebulaId: "full-owned", sectorX: 1, label: "Redundant full sector" },
+        { nebulaId: "productive-open", sectorX: 2, label: "Productive open sector" },
+      ],
+    },
+    data: {
+      getNextReplaceableNebulaToken: (_state, nebulaId) => (
+        nebulaId === "full-owned" ? null : { slotIndex: 2 }
+      ),
+      getNebulaCapacity: () => 3,
+      getNebulaSlotScoreReward: () => 1,
+      getNebulaColor: () => "blue",
+      listNebulaTokens: (_state, nebulaId) => tokensByNebula[nebulaId] || [],
+      listSectorExtraMarks: () => [],
+      getSectorTokenStats: (_state, nebulaId) => (
+        nebulaId === "full-owned"
+          ? {
+            blue: { playerId: "player-blue", playerColor: "blue", count: 2 },
+            white: { playerId: "player-white", playerColor: "white", count: 1 },
+          }
+          : { white: { playerId: "player-white", playerColor: "white", count: 1 } }
+      ),
+      getSectorRanking: () => [
+        { playerId: "player-blue", playerColor: "blue", count: 2 },
+        { playerId: "player-white", playerColor: "white", count: 1 },
+      ],
+    },
+  });
+  assert.equal(harness.controller.configureAiAutoBattle({
+    playerIds: [harness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "the AI should resolve a mixed full/open sector choice");
+  assert.deepEqual(harness.getHandled(), {
+    type: "scan-target",
+    nebulaId: "productive-open",
+    sectorX: 2,
+  }, "a productive open scan should outrank a redundant full-sector mark");
+}
+
+{
+  const tokensByNebula = {
+    "strictly-lost": [
+      { replacedByPlayerId: "player-white", replacedByPlayerColor: "white" },
+      { replacedByPlayerId: "player-white", replacedByPlayerColor: "white" },
+      { replacedByPlayerId: "player-white", replacedByPlayerColor: "white" },
+      {},
+      {},
+    ],
+    "tie-recoverable": [
+      { replacedByPlayerId: "player-white", replacedByPlayerColor: "white" },
+      { replacedByPlayerId: "player-white", replacedByPlayerColor: "white" },
+      {},
+      {},
+    ],
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    scanTargetHidden: true,
+    scanTargetPending: {
+      type: "sector_scan",
+      playerColor: "blue",
+      choices: [
+        { nebulaId: "strictly-lost", sectorX: 4, label: "Strictly lost" },
+        { nebulaId: "tie-recoverable", sectorX: 5, label: "Tie recoverable" },
+      ],
+    },
+    finalScoringState: {
+      tiles: {
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: { final_b2: "b2" },
+    finalSlotMultipliers: { b2: { 1: 8 } },
+    endGameScoring: {
+      countSectorWins: () => 0,
+      countOrbitOrLandMarkers: () => 4,
+    },
+    data: {
+      getNextReplaceableNebulaToken: () => ({ slotIndex: 1 }),
+      getNebulaCapacity: (nebulaId) => tokensByNebula[nebulaId]?.length || 0,
+      getNebulaSlotScoreReward: () => 0,
+      getNebulaColor: () => "blue",
+      listNebulaTokens: (_state, nebulaId) => tokensByNebula[nebulaId] || [],
+      listSectorExtraMarks: () => [],
+      getSectorTokenStats: (_state, nebulaId) => ({
+        white: {
+          playerId: "player-white",
+          playerColor: "white",
+          count: nebulaId === "strictly-lost" ? 3 : 2,
+        },
+      }),
+    },
+  });
+  assert.equal(harness.controller.configureAiAutoBattle({
+    playerIds: [harness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "the AI should resolve a final B2 race choice");
+  assert.deepEqual(harness.getHandled(), {
+    type: "scan-target",
+    nebulaId: "tie-recoverable",
+    sectorX: 5,
+  }, "a recoverable tie route should outrank a strictly lost B2 race");
+  const log = harness.controller.getAiAutoBattleReport().logs
+    .findLast((entry) => entry.type === "scan-target");
+  const lostSummary = log?.details?.topChoices?.find((entry) => entry.nebulaId === "strictly-lost");
+  const recoverableSummary = log?.details?.topChoices?.find((entry) => entry.nebulaId === "tie-recoverable");
+  assert.equal(lostSummary?.b2?.raceLost, true, "strictly lost B2 alternatives should remain diagnosed as lost");
+  assert.equal(recoverableSummary?.b2?.raceLost, false, "latest-placement tie routes must remain recoverable");
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    scanTargetHidden: true,
+    scanTargetPending: {
       type: "public_scan",
       playerColor: "blue",
       card: { id: "scan-card", cardName: "Scan card" },
@@ -2095,6 +2710,404 @@ function makeYichangdianAlienState(options = {}) {
     playerColor: "blue",
     includeCards: true,
   });
+}
+
+{
+  const alienGameState = makeBanrenmaAlienState();
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    blueResources: { score: 49, credits: 2, energy: 1, publicity: 0, availableData: 1, handSize: 1 },
+    alienGameState,
+    pendingBanrenmaOpportunity: {
+      type: "panel",
+      playerId: "player-blue",
+      playerColor: "blue",
+      markId: "banrenma-threshold-50",
+    },
+    scanTargetButtons: [1, 2, 3, 4].map((position) => makeButton(
+      { banrenmaBonusChoice: String(position) },
+      `${position}号奖励 ${banrenma.getBonusReward(position)?.label || ""}`,
+    )),
+    finalScoringState: {
+      tiles: {
+        first: { id: "first", marks: [{ playerId: "player-blue", threshold: 25, slotIndex: 1 }] },
+      },
+    },
+    useDefaultAlienUsePolicy: true,
+    recordBanrenmaChoices: true,
+    aiValuation: setiAi.valuation,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "Banrenma top reward should be resolved by explicit option value");
+  assert.deepEqual(harness.getHandled(), { type: "banrenma-bonus", choice: "1" });
+  const useLog = harness.controller.getAiAutoBattleReport().logs
+    .find((entry) => entry.type === "alien-use" && entry.details?.pendingType === "banrenma-bonus");
+  const scoredOptions = useLog?.details?.options || [];
+  assert.deepEqual(scoredOptions.map((option) => option.choice), ["1", "2", "3", "4"]);
+  assert.ok(
+    scoredOptions.every((option) => Number.isFinite(Number(option.score))),
+    "all four executable Banrenma rewards should receive explicit scores",
+  );
+  assert.ok(
+    Number(scoredOptions.find((option) => option.choice === "1")?.score || 0)
+      > Number(scoredOptions.find((option) => option.choice === "4")?.score || 0),
+    "a trace with its own reward chain should beat raw score instead of assigning the whole final-mark cashout to option four",
+  );
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 2,
+    blueResources: { score: 42, credits: 2, energy: 1, publicity: 0, availableData: 1, handSize: 1 },
+    alienGameState: makeBanrenmaAlienState(),
+    pendingBanrenmaOpportunity: {
+      type: "panel",
+      playerId: "player-blue",
+      playerColor: "blue",
+      markId: "banrenma-threshold-50-eight-away",
+    },
+    scanTargetButtons: [1, 4].map((position) => makeButton(
+      { banrenmaBonusChoice: String(position) },
+      `${position}号奖励 ${banrenma.getBonusReward(position)?.label || ""}`,
+    )),
+    finalScoringState: {
+      tiles: {
+        first: { id: "first", marks: [{ playerId: "player-blue", threshold: 25, slotIndex: 1 }] },
+      },
+    },
+    useDefaultAlienUsePolicy: true,
+    recordBanrenmaChoices: true,
+    aiValuation: setiAi.valuation,
+  });
+  assert.equal(harness.controller.configureAiAutoBattle({
+    playerIds: [harness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true);
+  assert.deepEqual(
+    harness.getHandled(),
+    { type: "banrenma-bonus", choice: "1" },
+    "an eight-point reward must not receive the full final-mark value when all eight points are still needed",
+  );
+}
+
+{
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 2,
+    blueResources: { score: 63, credits: 2, energy: 1, publicity: 0, availableData: 1, handSize: 1 },
+    alienGameState: makeBanrenmaAlienState(),
+    pendingBanrenmaOpportunity: {
+      type: "panel",
+      playerId: "player-blue",
+      playerColor: "blue",
+      markId: "banrenma-threshold-70-crossing",
+    },
+    scanTargetButtons: [1, 4].map((position) => makeButton(
+      { banrenmaBonusChoice: String(position) },
+      `${position}号奖励 ${banrenma.getBonusReward(position)?.label || ""}`,
+    )),
+    finalScoringState: {
+      tiles: {
+        first: { id: "first", marks: [{ playerId: "player-blue", threshold: 25, slotIndex: 1 }] },
+        second: { id: "second", marks: [{ playerId: "player-blue", threshold: 50, slotIndex: 1 }] },
+      },
+    },
+    useDefaultAlienUsePolicy: true,
+    recordBanrenmaChoices: true,
+    aiValuation: setiAi.valuation,
+  });
+  assert.equal(harness.controller.configureAiAutoBattle({
+    playerIds: [harness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+  assert.equal(harness.controller.runAiAutomationStep().ok, true);
+  assert.deepEqual(
+    harness.getHandled(),
+    { type: "banrenma-bonus", choice: "1" },
+    "Banrenma option ranking should not count the shared final-mark reward as if the eight-point option owned it",
+  );
+}
+
+{
+  const getDisplayedBanrenmaRewardScore = (displayedCardIndex) => {
+    const alienGameState = makeBanrenmaAlienState();
+    alienGameState.banrenma.displayedCardIndex = displayedCardIndex;
+    const harness = createAiControllerHarness(null, {
+      currentPlayerColor: "blue",
+      roundNumber: 2,
+      blueResources: { score: 45, credits: 2, energy: 0, publicity: 2, availableData: 0, handSize: 2 },
+      alienGameState,
+      pendingBanrenmaOpportunity: {
+        type: "panel",
+        playerId: "player-blue",
+        playerColor: "blue",
+        markId: "banrenma-displayed-value",
+      },
+      scanTargetButtons: [makeButton(
+        { banrenmaBonusChoice: "2" },
+        `2号奖励 ${banrenma.getBonusReward(2)?.label || ""}`,
+      )],
+      useDefaultAlienUsePolicy: true,
+      recordBanrenmaChoices: true,
+      aiValuation: setiAi.valuation,
+    });
+    assert.equal(harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok, true);
+    assert.equal(harness.controller.runAiAutomationStep().ok, true);
+    const useLog = harness.controller.getAiAutoBattleReport().logs
+      .find((entry) => entry.type === "alien-use" && entry.details?.pendingType === "banrenma-bonus");
+    return Number(useLog?.details?.options?.find((option) => option.choice === "2")?.score);
+  };
+
+  const drawCardRewardScore = getDisplayedBanrenmaRewardScore(0);
+  const freeTechRewardScore = getDisplayedBanrenmaRewardScore(3);
+  const unknownDisplayedRewardScore = getDisplayedBanrenmaRewardScore(null);
+  const invalidDisplayedRewardScore = getDisplayedBanrenmaRewardScore(99);
+  assert.ok(Number.isFinite(drawCardRewardScore) && Number.isFinite(freeTechRewardScore));
+  assert.ok(
+    drawCardRewardScore > freeTechRewardScore,
+    "the affordable one-energy displayed card should beat a two-energy card when only the reward energy is available",
+  );
+  assert.equal(
+    unknownDisplayedRewardScore,
+    invalidDisplayedRewardScore,
+    "missing and invalid displayed-card indexes must use the same generic fallback",
+  );
+  assert.notEqual(unknownDisplayedRewardScore, drawCardRewardScore);
+}
+
+{
+  const getOrdinaryPublicityCardEffectValue = (takeableTechIds = []) => {
+    const turnChoices = [];
+    const card = {
+      id: "seed-3-publicity-33-regression",
+      cardName: "Seed 3 publicity regression",
+      typeCode: 2,
+      price: 2,
+      playEffects: [{ type: "gain_resources", options: { gain: { publicity: 2 } } }],
+    };
+    const harness = createAiControllerHarness(null, {
+      currentPlayerColor: "blue",
+      roundNumber: 1,
+      canStartMainAction: true,
+      realisticCanAfford: true,
+      recordBeginPlayCard: true,
+      blueResources: { score: 6, credits: 3, energy: 3, publicity: 5, availableData: 3, handSize: 1 },
+      blueHand: [card],
+      takeableTechIds,
+      techStacks: {
+        purple3: {
+          techType: "purple",
+          stackIndex: 3,
+          bonusId: "bonus_3f",
+          firstTakeClaimedBy: null,
+          remaining: 4,
+        },
+      },
+      onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+      chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "playCard") || null,
+    });
+    assert.equal(harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok, true);
+    const result = harness.controller.runAiAutomationStep();
+    assert.equal(result.ok, true, JSON.stringify(result));
+    const playAction = turnChoices.flat().find((candidate) => candidate.id === "playCard");
+    const cardCandidate = playAction?.playableCards?.find((candidate) => candidate.cardId === card.id)
+      || playAction?.playableCards?.[0]
+      || null;
+    assert.ok(cardCandidate, "ordinary publicity card should remain a playable candidate");
+    return Number(cardCandidate.valueBreakdown?.effectValue);
+  };
+
+  const withoutTakeableTech = getOrdinaryPublicityCardEffectValue([]);
+  const withTakeableTech = getOrdinaryPublicityCardEffectValue(["purple3"]);
+  assert.ok(Number.isFinite(withoutTakeableTech) && withoutTakeableTech > 0);
+  assert.equal(
+    withTakeableTech,
+    withoutTakeableTech,
+    "ordinary gain_resources publicity should keep its scalar value and must not preview the real tech supply twice",
+  );
+}
+
+{
+  const alienGameState = makeBanrenmaAlienState();
+  alienGameState.banrenma.displayedCardIndex = 4;
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 2,
+    blueResources: { score: 56, credits: 1, energy: 0, publicity: 5, availableData: 0, handSize: 4 },
+    blueTechCounts: { orange: 3, purple: 2, blue: 3 },
+    takeableTechIds: ["purple3"],
+    techStacks: {
+      purple3: {
+        techType: "purple",
+        stackIndex: 3,
+        bonusId: "bonus_1m",
+        firstTakeClaimedBy: null,
+        remaining: 4,
+      },
+    },
+    finalScoringState: {
+      tiles: {
+        a: { id: "a", marks: [{ playerId: "player-blue", threshold: 25, slotIndex: 1 }] },
+        b: { id: "b", marks: [{ playerId: "player-blue", threshold: 50, slotIndex: 1 }] },
+        d: { id: "d", marks: [] },
+      },
+    },
+    finalFormulaIds: { a: "a1", b: "d1", d: "b1" },
+    finalSlotMultipliers: { a1: 5, b1: 8, d1: 11 },
+    endGameScoring: {
+      getFormulaBaseValue: (formulaId, player) => (
+        formulaId === "d1"
+          ? Math.min(
+            Number(player?.techCounts?.orange || 0),
+            Number(player?.techCounts?.purple || 0),
+            Number(player?.techCounts?.blue || 0),
+          )
+          : 0
+      ),
+    },
+    alienGameState,
+    pendingBanrenmaOpportunity: {
+      type: "panel",
+      playerId: "player-blue",
+      playerColor: "blue",
+      markId: "banrenma-publicity-tech-tempo",
+    },
+    scanTargetButtons: [2, 3].map((position) => makeButton(
+      { banrenmaBonusChoice: String(position) },
+      `${position}号奖励 ${banrenma.getBonusReward(position)?.label || ""}`,
+    )),
+    useDefaultAlienUsePolicy: true,
+    recordBanrenmaChoices: true,
+    aiValuation: setiAi.valuation,
+  });
+  assert.equal(harness.controller.configureAiAutoBattle({
+    playerIds: [harness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, JSON.stringify(result));
+  const useLog = harness.controller.getAiAutoBattleReport().logs
+    .find((entry) => entry.type === "alien-use" && entry.details?.pendingType === "banrenma-bonus");
+  assert.deepEqual(
+    harness.getHandled(),
+    { type: "banrenma-bonus", choice: "3" },
+    `a publicity reward that immediately unlocks a real high-value tech should beat a displayed card that needs another main action: ${JSON.stringify(useLog?.details?.options)}`,
+  );
+}
+
+{
+  const makeNoTraceTargetHarness = (choices) => createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    alienSlotIds: [],
+    alienGameState: makeBanrenmaAlienState(),
+    pendingBanrenmaOpportunity: {
+      type: "panel",
+      playerId: "player-blue",
+      playerColor: "blue",
+      markId: "banrenma-no-trace-target",
+    },
+    scanTargetButtons: choices.map((position) => makeButton(
+      { banrenmaBonusChoice: String(position) },
+      `${position}号奖励 ${banrenma.getBonusReward(position)?.label || ""}`,
+    )),
+    useDefaultAlienUsePolicy: true,
+    recordBanrenmaChoices: true,
+    aiValuation: setiAi.valuation,
+  });
+
+  const alternativeHarness = makeNoTraceTargetHarness([1, 3]);
+  assert.equal(alternativeHarness.controller.configureAiAutoBattle({
+    playerIds: [alternativeHarness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+  assert.equal(alternativeHarness.controller.runAiAutomationStep().ok, true);
+  assert.deepEqual(
+    alternativeHarness.getHandled(),
+    { type: "banrenma-bonus", choice: "3" },
+    "an unavailable trace reward should not beat an executable alternative",
+  );
+
+  const onlyTraceHarness = makeNoTraceTargetHarness([1]);
+  assert.equal(onlyTraceHarness.controller.configureAiAutoBattle({
+    playerIds: [onlyTraceHarness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+  assert.equal(onlyTraceHarness.controller.runAiAutomationStep().ok, true);
+  assert.deepEqual(
+    onlyTraceHarness.getHandled(),
+    { type: "banrenma-bonus", choice: "1" },
+    "the only remaining trace reward must still be consumed so the mandatory effect can advance",
+  );
+  const fallbackLog = onlyTraceHarness.controller.getAiAutoBattleReport().logs
+    .find((entry) => entry.type === "alien-use" && entry.details?.pendingType === "banrenma-bonus");
+  assert.equal(fallbackLog?.details?.options?.[0]?.disabled, false);
+  assert.equal(fallbackLog?.details?.options?.[0]?.score, 0);
+}
+
+{
+  const alienGameState = makeBanrenmaAlienState();
+  const traceCard = banrenma.createAlienCard(0, 1);
+  const incomeCard = banrenma.createAlienCard(2, 2);
+  const playerRef = { id: "player-blue", color: "blue", colorLabel: "Blue" };
+  const traceMark = banrenma.addScoreMark(alienGameState, playerRef, 40, "card", {
+    cardInstanceId: traceCard.id,
+    cardIndex: 0,
+  });
+  const incomeMark = banrenma.addScoreMark(alienGameState, playerRef, 40, "card", {
+    cardInstanceId: incomeCard.id,
+    cardIndex: 2,
+  });
+  traceCard.banrenmaScoreMarkId = traceMark.id;
+  incomeCard.banrenmaScoreMarkId = incomeMark.id;
+  const originalOrder = [traceCard.id, incomeCard.id];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 3,
+    alienSlotIds: [],
+    alienGameState,
+    blueReservedCards: [traceCard, incomeCard],
+    blueResources: { score: 50, credits: 2, energy: 1, publicity: 1, availableData: 0, handSize: 1 },
+    readyBanrenmaPlayerColor: "blue",
+  });
+  assert.equal(harness.controller.configureAiAutoBattle({
+    playerIds: [harness.blue.id],
+    suppressAutoSchedule: true,
+  }).ok, true);
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should open the best executable ready Banrenma card");
+  assert.deepEqual(harness.getHandled(), {
+    type: "banrenma-ready",
+    playerColor: "blue",
+    includeCards: true,
+    preferredCardId: incomeCard.id,
+    firstReservedCardId: incomeCard.id,
+  });
+  assert.deepEqual(
+    harness.blue.reservedCards.map((card) => card.id),
+    originalOrder,
+    "temporary preferred-card ordering must not mutate the player's reserved-card order",
+  );
 }
 
 {
@@ -3280,9 +4293,9 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
-  const buildOrange4Harness = (withProspectiveOpponent) => {
+  const buildOrange4Harness = (withProspectiveOpponent, scenario = {}) => {
     const turnChoices = [];
-    const extraPlayers = withProspectiveOpponent
+    const extraPlayers = scenario.extraPlayers || (withProspectiveOpponent
       ? [{
         id: "player-green",
         color: "green",
@@ -3290,24 +4303,29 @@ function makeYichangdianAlienState(options = {}) {
         resources: { credits: 4, energy: 3, publicity: 6, handSize: 2 },
         income: { publicity: 0 },
       }]
-      : [];
+      : []);
     const harness = createAiControllerHarness(null, {
       currentPlayerColor: "blue",
-      roundNumber: 1,
+      roundNumber: scenario.roundNumber || 1,
       canStartMainAction: true,
       recordResearchTech: true,
       realisticCanAfford: true,
-      blueResources: { score: 12, credits: 4, energy: 3, publicity: 6, handSize: 2 },
+      blueResources: scenario.blueResources
+        || { score: 12, credits: 4, energy: 3, publicity: 6, handSize: 2 },
       extraPlayers,
+      quickTrades: scenario.quickTrades,
+      abilities: scenario.abilities,
+      aiRaceModel: scenario.aiRaceModel,
       takeableTechIds: ["orange4", "blue1"],
       techStacks: {
         orange4: { techType: "orange", stackIndex: 1, remaining: 3 },
         blue1: { techType: "blue", stackIndex: 1, remaining: 3 },
       },
       planetLocations: [{ planetId: "neptune", name: "Neptune", x: 4, y: 4 }],
-      rocketTokensByPlayer: withProspectiveOpponent
-        ? { "player-green": [{ id: 9, sector: { x: 4, y: 4 } }] }
-        : {},
+      rocketTokensByPlayer: scenario.rocketTokensByPlayer || {
+        "player-blue": [{ id: 8, sector: { x: 2, y: 4 } }],
+        ...(withProspectiveOpponent ? { "player-green": [{ id: 9, sector: { x: 4, y: 4 } }] } : {}),
+      },
       planetStats: {
         canAddLandingMarker: () => false,
         canAddOrbitMarker: () => false,
@@ -3367,6 +4385,72 @@ function makeYichangdianAlienState(options = {}) {
   assert.ok(
     Number(contestedOrange4.score || 0) < Number(uncontestedOrange4.score || 0),
     "orange4 tech score should drop when a closer opponent can reach the same satellite route",
+  );
+  const noRouteOrange4 = buildOrange4Harness(false, { rocketTokensByPlayer: {} });
+  const noRouteProfile = noRouteOrange4.valueBreakdown?.orange4SatelliteProfile || {};
+  assert.equal(noRouteProfile.routeDistance, 99);
+  assert.ok(Number(noRouteProfile.rawPotential || 0) > 0, "unreachable satellite reward should remain visible for diagnostics");
+  assert.ok(Number(noRouteProfile.potential || 0) > 0, "pre-final orange4 should retain route-building value");
+
+  const energyTrade = {
+    id: "cards-for-energy",
+    label: "2 cards -> 1 energy",
+    cost: { handSize: 2 },
+    gain: { energy: 1 },
+  };
+  const timedRaceScenario = (opponentEnergy) => buildOrange4Harness(true, {
+    roundNumber: 2,
+    blueResources: { score: 51, credits: 4, energy: 2, publicity: 6, handSize: 2 },
+    extraPlayers: [{
+      id: "player-green",
+      color: "green",
+      colorLabel: "Green",
+      resources: { credits: 0, energy: opponentEnergy, publicity: 6, handSize: 3 },
+      income: { energy: 3, publicity: 0 },
+    }],
+    quickTrades: { "cards-for-energy": energyTrade },
+    aiRaceModel: setiAi.raceModel,
+    abilities: {
+      planet: {
+        DEFAULT_ORBIT_COST: { credits: 1, energy: 1 },
+        BASE_LAND_ENERGY_COST: 2,
+        getLandEnergyCost: () => 2,
+        getLandOptions: () => ({ ok: false, message: "land disabled in harness" }),
+        getOrbitOptions: () => ({ ok: false, message: "orbit disabled in harness" }),
+      },
+      rocket: {
+        ORANGE1_ROCKET_LIMIT: 4,
+        getRocketLimitForPlayer: () => 3,
+      },
+    },
+    rocketTokensByPlayer: {
+      "player-blue": [{ id: 8, sector: { x: 2, y: 4 } }],
+      "player-green": [{ id: 9, sector: { x: 4, y: 4 } }],
+    },
+  }).valueBreakdown?.orange4SatelliteProfile || {};
+
+  const resourceLockedRace = timedRaceScenario(0);
+  const immediatelyReadyRace = timedRaceScenario(2);
+  const lockedOpponent = resourceLockedRace.opponentEtas
+    ?.find((entry) => entry.playerId === "player-green") || null;
+  const readyOpponent = immediatelyReadyRace.opponentEtas
+    ?.find((entry) => entry.playerId === "player-green") || null;
+  assert.ok(lockedOpponent && readyOpponent, "orange4 profile should expose opponent ETA diagnostics");
+  assert.equal(lockedOpponent.landingEnergyShortfall, 2, "same-round race must use current E0, not next-round energy income");
+  assert.equal(lockedOpponent.immediateEnergyTradeGain, 1, "H3 should expose only one immediately affordable cards-for-energy trade");
+  assert.equal(lockedOpponent.resourceSetupActions, 2, "E0 to E2 should require at least two resource preparation steps");
+  assert.equal(lockedOpponent.requiresFutureIncome, true, "one immediate trade must not make an E2 landing available this round");
+  assert.equal(lockedOpponent.actsBeforeActorNext, true, "resource timing regression must cover an opponent in the current action window");
+  assert.equal(lockedOpponent.eta, 4, "distance-zero opponent should add one tech and two resource setup steps");
+  assert.equal(readyOpponent.eta, 2, "energy-ready opponent should need only landing plus prospective orange4 setup");
+  assert.equal(resourceLockedRace.estimatedFastestOpponentEta, 4, "race diagnostics should retain the delayed opponent ETA");
+  assert.ok(
+    Number(lockedOpponent.eta) >= Number(readyOpponent.eta) + 2,
+    "resource-locked opponent ETA should include the two missing-energy preparation steps",
+  );
+  assert.ok(
+    Number(resourceLockedRace.rawRacePenalty || 0) < Number(immediatelyReadyRace.rawRacePenalty || 0),
+    "future income must not create the same race penalty as an opponent that can land immediately",
   );
 }
 
@@ -4887,6 +5971,593 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const traceOwner = { id: "player-blue", color: "blue", colorLabel: "Blue" };
+  const chongAlienState = {
+    aliens: {
+      1: { revealed: true, alienId: chong.ALIEN_ID, assignedAlienId: chong.ALIEN_ID },
+      2: { revealed: true, alienId: amiba.ALIEN_ID, assignedAlienId: amiba.ALIEN_ID },
+      3: { revealed: true, alienId: aomomo.ALIEN_ID, assignedAlienId: aomomo.ALIEN_ID },
+      4: { revealed: false, alienId: null, assignedAlienId: chong.ALIEN_ID },
+    },
+    chong: chong.createChongState(),
+  };
+  chong.initializeChongReveal(chongAlienState, 1, traceOwner, () => 0);
+  for (const position of [1, 2, 3, 4]) {
+    assert.equal(chong.placeChongTrace(chongAlienState, 1, "pink", position, traceOwner).ok, true);
+  }
+  const card = chong.createAlienCard(2, 1);
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    canStartMainAction: true,
+    recordBeginPlayCard: true,
+    blueResources: { credits: 3, energy: 2, handSize: 1 },
+    blueHand: [card],
+    alienGameState: chongAlienState,
+    endGameScoring: {
+      resolveCardEndGameRule: endGameScoring.resolveCardEndGameRule,
+      scoreCardEndGameRule: endGameScoring.scoreCardEndGameRule,
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "playCard") || null,
+  });
+
+  const handDemand = harness.controller.getAiStrategyDemand(harness.blue);
+  const handGlobalPinkDemand = harness.controller.getAiMapDemand(handDemand.traceTypes, "pink");
+  const handChongPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    handDemand,
+    chong.ALIEN_ID,
+    "pink",
+  );
+  const handAmibaPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    handDemand,
+    amiba.ALIEN_ID,
+    "pink",
+  );
+  harness.blue.hand = [];
+  harness.blue.resources.handSize = 0;
+  const baselineDemand = harness.controller.getAiStrategyDemand(harness.blue);
+  const baselineGlobalPinkDemand = harness.controller.getAiMapDemand(baselineDemand.traceTypes, "pink");
+  const baselineChongPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    baselineDemand,
+    chong.ALIEN_ID,
+    "pink",
+  );
+  const baselineAmibaPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    baselineDemand,
+    amiba.ALIEN_ID,
+    "pink",
+  );
+  harness.blue.reservedCards = [card];
+  const reservedDemand = harness.controller.getAiStrategyDemand(harness.blue);
+  const reservedChongPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    reservedDemand,
+    chong.ALIEN_ID,
+    "pink",
+  );
+  assert.equal(
+    handGlobalPinkDemand,
+    baselineGlobalPinkDemand,
+    "Chong 2 must not leak its species-scoped final demand into global pink trace demand",
+  );
+  assert.ok(
+    handChongPinkDemand > baselineChongPinkDemand,
+    "Chong 2 in hand should increase Chong trace-target demand",
+  );
+  assert.equal(
+    harness.controller.getAiAlienTraceTargetDemandForSlot(handDemand, 1, "pink"),
+    handChongPinkDemand,
+    "Chong 2 demand should reach the revealed Chong slot",
+  );
+  assert.equal(
+    harness.controller.getAiAlienTraceTargetDemandForSlot(handDemand, 2, "pink"),
+    baselineAmibaPinkDemand,
+    "Chong 2 demand must not reach a revealed Amiba slot",
+  );
+  assert.equal(
+    harness.controller.getAiAlienTraceTargetDemandForSlot(handDemand, 4, "pink"),
+    0,
+    "Chong 2 demand must not use a hidden slot's assigned alien identity",
+  );
+  assert.equal(
+    handAmibaPinkDemand,
+    baselineAmibaPinkDemand,
+    "Chong 2 must not increase same-color Amiba trace-target demand",
+  );
+  assert.ok(
+    reservedChongPinkDemand > handChongPinkDemand,
+    "played/reserved Chong 2 should retain stronger Chong trace-target demand",
+  );
+
+  harness.blue.reservedCards = [];
+  harness.blue.hand = [card];
+  harness.blue.resources.handSize = 1;
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should enumerate Chong 2 as a playable final card");
+  const playCardCandidate = turnChoices.flat().find((candidate) => candidate.id === "playCard");
+  const chongFinalCandidate = playCardCandidate?.playableCards?.find((candidate) => candidate.cardId === card.cardId);
+  assert.equal(
+    Number(chongFinalCandidate?.valueBreakdown?.endGameExpectedScore || 0),
+    4,
+    "four owned Chong traces should make Chong 2 worth four end-game points",
+  );
+}
+
+{
+  const traceOwner = { id: "player-blue", color: "blue", colorLabel: "Blue" };
+  const amibaAlienState = {
+    aliens: {
+      1: { revealed: true, alienId: amiba.ALIEN_ID, assignedAlienId: amiba.ALIEN_ID },
+      2: { revealed: true, alienId: chong.ALIEN_ID, assignedAlienId: chong.ALIEN_ID },
+      3: { revealed: true, alienId: aomomo.ALIEN_ID, assignedAlienId: aomomo.ALIEN_ID },
+    },
+    amiba: amiba.createAmibaState(),
+  };
+  amiba.initializeAmibaReveal(amibaAlienState, 1, traceOwner, () => 0);
+  for (const traceType of ["pink", "yellow", "blue"]) {
+    for (const position of [1, 2, 3]) {
+      assert.equal(amiba.placeAmibaTrace(amibaAlienState, 1, traceType, position, traceOwner).ok, true);
+    }
+  }
+
+  const cards = [5, 6, 7].map((cardIndex, sequence) => amiba.createAlienCard(cardIndex, sequence + 1));
+  const card = cards[0];
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    canStartMainAction: true,
+    recordBeginPlayCard: true,
+    blueResources: { credits: 3, energy: 2, handSize: 1 },
+    blueHand: [card],
+    alienGameState: amibaAlienState,
+    endGameScoring: {
+      resolveCardEndGameRule: endGameScoring.resolveCardEndGameRule,
+      scoreCardEndGameRule: endGameScoring.scoreCardEndGameRule,
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "playCard") || null,
+  });
+
+  const handDemand = harness.controller.getAiStrategyDemand(harness.blue);
+  const handGlobalPinkDemand = harness.controller.getAiMapDemand(handDemand.traceTypes, "pink");
+  const handAmibaPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    handDemand,
+    amiba.ALIEN_ID,
+    "pink",
+  );
+  const handAmibaYellowDemand = harness.controller.getAiAlienTraceTargetDemand(
+    handDemand,
+    amiba.ALIEN_ID,
+    "yellow",
+  );
+  const handChongPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    handDemand,
+    chong.ALIEN_ID,
+    "pink",
+  );
+  harness.blue.hand = [];
+  harness.blue.resources.handSize = 0;
+  const baselineDemand = harness.controller.getAiStrategyDemand(harness.blue);
+  const baselineGlobalPinkDemand = harness.controller.getAiMapDemand(baselineDemand.traceTypes, "pink");
+  const baselineAmibaPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    baselineDemand,
+    amiba.ALIEN_ID,
+    "pink",
+  );
+  const baselineAmibaYellowDemand = harness.controller.getAiAlienTraceTargetDemand(
+    baselineDemand,
+    amiba.ALIEN_ID,
+    "yellow",
+  );
+  const baselineChongPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    baselineDemand,
+    chong.ALIEN_ID,
+    "pink",
+  );
+  harness.blue.reservedCards = [card];
+  const reservedDemand = harness.controller.getAiStrategyDemand(harness.blue);
+  const reservedAmibaPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    reservedDemand,
+    amiba.ALIEN_ID,
+    "pink",
+  );
+  assert.equal(
+    handGlobalPinkDemand,
+    baselineGlobalPinkDemand,
+    "Amiba 5 must not leak its species-scoped final demand into global pink trace demand",
+  );
+  assert.ok(
+    handAmibaPinkDemand > baselineAmibaPinkDemand,
+    "Amiba 5 in hand should increase pink Amiba trace-target demand",
+  );
+  assert.equal(
+    harness.controller.getAiAlienTraceTargetDemandForSlot(handDemand, 1, "pink"),
+    handAmibaPinkDemand,
+    "Amiba 5 demand should reach the revealed Amiba slot",
+  );
+  assert.equal(
+    harness.controller.getAiAlienTraceTargetDemandForSlot(handDemand, 2, "pink"),
+    baselineChongPinkDemand,
+    "Amiba 5 demand must not reach a revealed Chong slot",
+  );
+  assert.equal(
+    handAmibaYellowDemand,
+    baselineAmibaYellowDemand,
+    "Amiba 5 should not increase yellow Amiba trace-target demand",
+  );
+  assert.equal(
+    handChongPinkDemand,
+    baselineChongPinkDemand,
+    "Amiba 5 must not increase same-color Chong trace-target demand",
+  );
+  assert.ok(
+    reservedAmibaPinkDemand > handAmibaPinkDemand,
+    "played/reserved Amiba 5 should retain stronger pink Amiba trace-target demand",
+  );
+
+  harness.blue.reservedCards = [];
+  harness.blue.hand = cards;
+  harness.blue.resources.handSize = cards.length;
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should enumerate Amiba 5/6/7 as playable final cards");
+  const playCardCandidate = turnChoices.flat().find((candidate) => candidate.id === "playCard");
+  for (const [index, expectedTraceType] of ["pink", "yellow", "blue"].entries()) {
+    const finalCard = cards[index];
+    const amibaFinalCandidate = playCardCandidate?.playableCards?.find(
+      (candidate) => candidate.cardId === finalCard.cardId,
+    );
+    assert.equal(
+      Number(amibaFinalCandidate?.valueBreakdown?.endGameExpectedScore || 0),
+      6,
+      `three owned ${expectedTraceType} Amiba traces should make Amiba ${index + 5} worth six end-game points`,
+    );
+  }
+}
+
+{
+  const card = {
+    ...aomomo.createAlienCard(8, 1),
+    model: {
+      endGameScoring: { kind: "aomomoTraceCount", scorePer: 1 },
+    },
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    blueResources: { credits: 3, energy: 2, handSize: 1 },
+    blueHand: [card],
+    alienGameState: {
+      aliens: {
+        1: { revealed: true, alienId: aomomo.ALIEN_ID, assignedAlienId: aomomo.ALIEN_ID },
+        2: { revealed: true, alienId: chong.ALIEN_ID, assignedAlienId: chong.ALIEN_ID },
+        3: { revealed: true, alienId: amiba.ALIEN_ID, assignedAlienId: amiba.ALIEN_ID },
+      },
+    },
+  });
+
+  const handDemand = harness.controller.getAiStrategyDemand(harness.blue);
+  const handGlobalPinkDemand = harness.controller.getAiMapDemand(handDemand.traceTypes, "pink");
+  const handAomomoPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    handDemand,
+    aomomo.ALIEN_ID,
+    "pink",
+  );
+  const handAomomoBlueDemand = harness.controller.getAiAlienTraceTargetDemand(
+    handDemand,
+    aomomo.ALIEN_ID,
+    "blue",
+  );
+  const handChongPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    handDemand,
+    chong.ALIEN_ID,
+    "pink",
+  );
+  const handAmibaPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    handDemand,
+    amiba.ALIEN_ID,
+    "pink",
+  );
+  harness.blue.hand = [];
+  harness.blue.resources.handSize = 0;
+  const baselineDemand = harness.controller.getAiStrategyDemand(harness.blue);
+  const baselineGlobalPinkDemand = harness.controller.getAiMapDemand(baselineDemand.traceTypes, "pink");
+  const baselineAomomoPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    baselineDemand,
+    aomomo.ALIEN_ID,
+    "pink",
+  );
+  const baselineAomomoBlueDemand = harness.controller.getAiAlienTraceTargetDemand(
+    baselineDemand,
+    aomomo.ALIEN_ID,
+    "blue",
+  );
+  const baselineChongPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    baselineDemand,
+    chong.ALIEN_ID,
+    "pink",
+  );
+  const baselineAmibaPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    baselineDemand,
+    amiba.ALIEN_ID,
+    "pink",
+  );
+  harness.blue.reservedCards = [card];
+  const reservedDemand = harness.controller.getAiStrategyDemand(harness.blue);
+  const reservedAomomoPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    reservedDemand,
+    aomomo.ALIEN_ID,
+    "pink",
+  );
+
+  assert.equal(
+    handGlobalPinkDemand,
+    baselineGlobalPinkDemand,
+    "Aomomo 8 must not leak its species-scoped final demand into global pink trace demand",
+  );
+  assert.ok(
+    handAomomoPinkDemand > baselineAomomoPinkDemand,
+    "Aomomo 8 in hand should increase Aomomo trace-target demand",
+  );
+  assert.equal(
+    harness.controller.getAiAlienTraceTargetDemandForSlot(handDemand, 1, "pink"),
+    handAomomoPinkDemand,
+    "Aomomo 8 demand should reach the revealed Aomomo slot",
+  );
+  assert.equal(
+    harness.controller.getAiAlienTraceTargetDemandForSlot(handDemand, 2, "pink"),
+    baselineChongPinkDemand,
+    "Aomomo 8 demand must not reach a revealed Chong slot",
+  );
+  assert.ok(
+    handAomomoBlueDemand > baselineAomomoBlueDemand,
+    "Aomomo 8 should increase every Aomomo trace color through its wildcard demand",
+  );
+  assert.equal(
+    handChongPinkDemand,
+    baselineChongPinkDemand,
+    "Aomomo 8 must not increase same-color Chong trace-target demand",
+  );
+  assert.equal(
+    handAmibaPinkDemand,
+    baselineAmibaPinkDemand,
+    "Aomomo 8 must not increase same-color Amiba trace-target demand",
+  );
+  assert.ok(
+    reservedAomomoPinkDemand > handAomomoPinkDemand,
+    "played/reserved Aomomo 8 should retain stronger Aomomo trace-target demand",
+  );
+}
+
+{
+  const card = {
+    id: "generic-pink-trace-final",
+    cardId: "generic-pink-trace-final",
+    cardTypeCode: 3,
+    model: {
+      endGameScoring: { kind: "traceCount", traceType: "pink", scorePer: 2 },
+    },
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    blueResources: { handSize: 1 },
+    blueHand: [card],
+  });
+  const handDemand = harness.controller.getAiStrategyDemand(harness.blue);
+  const handGlobalPinkDemand = harness.controller.getAiMapDemand(handDemand.traceTypes, "pink");
+  const handChongPinkDemand = harness.controller.getAiAlienTraceTargetDemand(
+    handDemand,
+    chong.ALIEN_ID,
+    "pink",
+  );
+  harness.blue.hand = [];
+  harness.blue.resources.handSize = 0;
+  const baselineDemand = harness.controller.getAiStrategyDemand(harness.blue);
+  assert.ok(
+    handGlobalPinkDemand > harness.controller.getAiMapDemand(baselineDemand.traceTypes, "pink"),
+    "ordinary traceCount finals should keep their global color demand",
+  );
+  assert.equal(
+    handChongPinkDemand,
+    harness.controller.getAiAlienTraceTargetDemand(baselineDemand, chong.ALIEN_ID, "pink"),
+    "ordinary traceCount finals should not invent a species-scoped demand",
+  );
+}
+
+{
+  const harness = createAiControllerHarness(null, { roundNumber: 2 });
+  const makeCandidates = ({ directScoreGain = 8, outerScore = -3.487, nestedScore = -3.142 } = {}) => ([
+    {
+      id: "playCard",
+      available: true,
+      score: outerScore,
+      actionGraph: { net: -6.142 },
+      playableCards: [{
+        id: "playCard",
+        available: true,
+        cardId: "direct-cashout",
+        score: nestedScore,
+        directScoreGain,
+      }],
+    },
+    { id: "pass", available: true, score: -3.8, actionGraph: { net: -3.8 } },
+  ]);
+
+  const floor = harness.controller.getAiEarlyDirectScorePlayPassFloor(makeCandidates(), { roundNumber: 2 });
+  assert.equal(floor?.floor, -3.79, "an early payable eight-point card should retain its original ordering just above pass");
+  assert.equal(floor?.originalNet, -6.142);
+  assert.equal(floor?.passNet, -3.8);
+  assert.equal(floor?.directScoreGain, 8);
+  assert.equal(
+    harness.controller.getAiEarlyDirectScorePlayPassFloor(makeCandidates({ directScoreGain: 7 }), { roundNumber: 2 }),
+    null,
+    "the pass floor must not lift lower direct-score cards",
+  );
+  assert.equal(
+    harness.controller.getAiEarlyDirectScorePlayPassFloor(makeCandidates({ outerScore: -4 }), { roundNumber: 2 }),
+    null,
+    "the pass floor must not reverse a card that was already below pass before graph pressure",
+  );
+  assert.equal(
+    harness.controller.getAiEarlyDirectScorePlayPassFloor(makeCandidates(), { roundNumber: 4 }),
+    null,
+    "the early cashout exception must not alter final-round ordering",
+  );
+}
+
+{
+  const scale = createAiControllerHarness(null, { roundNumber: 4 })
+    .controller.getAiTerminalResearchGoalBonusScale;
+  assert.equal(scale({
+    actionId: "researchTech",
+    roundNumber: 4,
+    finalMarkCount: 3,
+    nextThreshold: null,
+    directScoreGain: 0,
+  }), 0.35, "terminal non-scoring research should not retain an engine-building goal bonus");
+  assert.equal(scale({
+    actionId: "researchTech",
+    roundNumber: 3,
+    finalMarkCount: 3,
+    nextThreshold: null,
+    directScoreGain: 0,
+  }), 1, "pre-final research still has future engine value");
+  assert.equal(scale({
+    actionId: "researchTech",
+    roundNumber: 4,
+    finalMarkCount: 3,
+    nextThreshold: null,
+    directScoreGain: 2,
+  }), 1, "direct-score research should retain its goal bonus");
+  assert.equal(scale({
+    actionId: "researchTech",
+    roundNumber: 4,
+    finalMarkCount: 2,
+    nextThreshold: 70,
+    directScoreGain: 0,
+  }), 1, "research that can still help reach a missing final mark should not be damped");
+}
+
+{
+  const raceLost = createAiControllerHarness(null, { roundNumber: 4 }).controller.isAiB2SectorScanRaceLost;
+  assert.equal(raceLost(
+    { ownCount: 0, openCount: 2, maxOtherCount: 2 },
+    { roundNumber: 4, active: true, marked: true },
+  ), false, "filling the remaining slots can win a tied count via the latest-placement tie-break");
+  assert.equal(raceLost(
+    { ownCount: 0, openCount: 2, maxOtherCount: 3 },
+    { roundNumber: 4, active: true, marked: true },
+  ), true, "a final B2 sector remains lost when even every open slot leaves the AI behind");
+  assert.equal(raceLost(
+    { ownCount: 1, openCount: 2, maxOtherCount: 2 },
+    { roundNumber: 4, active: true, marked: true },
+  ), false, "two remaining scans can still turn a 1-2 sector into a win");
+  assert.equal(raceLost(
+    { ownCount: 0, openCount: 2, maxOtherCount: 2 },
+    { roundNumber: 3, active: true, marked: true },
+  ), false, "pre-final planning should retain future ways to change sector counts");
+  assert.equal(raceLost(
+    { ownCount: 0, openCount: 2, maxOtherCount: 2 },
+    { roundNumber: 4, active: true, marked: false },
+  ), false, "unmarked B2 should not impose a terminal race-loss penalty");
+}
+
+{
+  const controller = createAiControllerHarness(null, { roundNumber: 4 }).controller;
+  assert.deepEqual(
+    controller.getAiSectorScanWinState({ ownCount: 1, openCount: 1, maxOtherCount: 2 }),
+    {
+      openCount: 1,
+      ownCount: 1,
+      maxOtherCount: 2,
+      ownAfterScan: 2,
+      strictLeadAfterScan: false,
+      tieBreakWinAfterScan: true,
+      winsAfterScan: true,
+    },
+    "closing on equal counts should be a real latest-placement settlement win",
+  );
+  assert.equal(
+    controller.getAiClosedSectorControlMarginValue({ ownCount: 2, openCount: 1, maxOtherCount: 2 }),
+    10,
+    "a strict close lead should retain the full generic control premium",
+  );
+  assert.equal(
+    controller.getAiClosedSectorControlMarginValue({ ownCount: 1, openCount: 1, maxOtherCount: 2 }),
+    -2,
+    "an exact latest-placement win should keep the measured disruption-risk discount",
+  );
+  assert.equal(
+    controller.getAiClosedSectorControlMarginValue({ ownCount: 0, openCount: 1, maxOtherCount: 2 }),
+    -8,
+    "a close that remains behind should retain the loss penalty",
+  );
+  assert.equal(
+    controller.getAiB2SectorWinExactDelta({ sectorWins: 3, orbitLandCount: 4, multiplier: 8 }),
+    8,
+    "one sector win should add exactly one B2 base point while orbit/land remains ahead",
+  );
+  assert.equal(
+    controller.getAiB2SectorWinExactDelta({ sectorWins: 4, orbitLandCount: 4, multiplier: 8 }),
+    0,
+    "an extra sector win beyond the B2 orbit/land bottleneck has no score delta",
+  );
+}
+
+{
+  const buildB2FocusHarness = (sectorWins, orbitLandCount) => createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    finalScoringState: {
+      tiles: {
+        final_b2: {
+          id: "final_b2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }],
+        },
+      },
+    },
+    finalFormulaIds: { final_b2: "b2" },
+    finalSlotMultipliers: { b2: { 1: 8 } },
+    endGameScoring: {
+      countSectorWins: () => sectorWins,
+      countOrbitOrLandMarkers: () => orbitLandCount,
+    },
+  });
+  const cashout = buildB2FocusHarness(3, 4);
+  assert.equal(
+    cashout.controller.scoreAiB2SectorScanFocus(
+      "tie-close-sector",
+      { ownCount: 1, openCount: 1, maxOtherCount: 2 },
+      cashout.blue,
+    ),
+    8,
+    "a B2 tie-break close should use the exact eight-point delta without historical urgency",
+  );
+  const capped = buildB2FocusHarness(4, 4);
+  assert.equal(
+    capped.controller.scoreAiB2SectorScanFocus(
+      "tie-close-sector",
+      { ownCount: 1, openCount: 1, maxOtherCount: 2 },
+      capped.blue,
+    ),
+    0,
+    "a B2 tie-break close should not invent value once sector wins reach orbit/land",
+  );
+}
+
+{
   const turnChoices = [];
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
@@ -5166,6 +6837,43 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const protection = createAiControllerHarness(null, { roundNumber: 4 })
+    .controller.getAiFinalAnalyzeDirectScoreProtection;
+  assert.equal(
+    protection({ ok: true, selectedCards: [{ playScore: 8.1, directScoreGain: 8 }] }, 8)
+      .spendsPlayableDirectScoreCard,
+    true,
+  );
+  assert.equal(
+    protection({ ok: true, selectedCards: [{ playScore: 7.9, directScoreGain: 7 }] }, 8)
+      .spendsPlayableDirectScoreCard,
+    false,
+  );
+  assert.equal(
+    protection({ ok: true, selectedCards: [{ playScore: null, directScoreGain: 8 }] }, 8)
+      .spendsPlayableDirectScoreCard,
+    false,
+    "an unaffordable or otherwise unplayable direct-score card should not block the trade",
+  );
+  assert.equal(
+    protection({ ok: true, selectedCards: [{ playScore: 1, directScoreGain: 0 }] }, 8)
+      .spendsPlayableDirectScoreCard,
+    false,
+    "a larger hand may still trade when the actual discard plan avoids the direct-score card",
+  );
+  assert.equal(
+    protection({ ok: true, selectedCards: [{ playScore: 11, directScoreGain: 8 }] }, 13).shouldProtect,
+    true,
+    "a marginal analyze upgrade should preserve the playable direct-score card",
+  );
+  assert.equal(
+    protection({ ok: true, selectedCards: [{ playScore: 11, directScoreGain: 8 }] }, 18).shouldProtect,
+    false,
+    "a clearly stronger analyze cashout should be allowed to spend the direct-score card",
+  );
+}
+
+{
   const placedTokens = Array.from({ length: 6 }, (_item, index) => ({
     id: `data-${index}`,
     placementSlot: index + 1,
@@ -5260,6 +6968,169 @@ function makeYichangdianAlienState(options = {}) {
     tradeCandidate.valueBreakdown?.discardPlan?.executionSelectedIndexes?.includes(3),
     false,
     "final analyze energy trade should not discard the high-value credit-unlock play card",
+  );
+}
+
+{
+  const placedTokens = Array.from({ length: 6 }, (_item, index) => ({
+    id: `protected-data-${index}`,
+    placementSlot: index + 1,
+  }));
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "credits-for-energy": {
+        id: "credits-for-energy",
+        label: "2 credits -> 1 energy",
+        cost: { credits: 2 },
+        gain: { energy: 1 },
+      },
+      "cards-for-energy": {
+        id: "cards-for-energy",
+        label: "2 cards -> 1 energy",
+        cost: { handSize: 2 },
+        gain: { energy: 1 },
+      },
+    },
+    blueResources: { score: 125, credits: 7, energy: 0, publicity: 3, availableData: 5, handSize: 2 },
+    blueHand: [
+      {
+        id: "protected-direct-eight",
+        cardName: "Protected direct eight",
+        price: 3,
+        playEffects: [{ type: "gain_resources", options: { gain: { score: 8 } } }],
+      },
+      { id: "protected-filler", cardName: "Protected filler", price: 0 },
+    ],
+    data: {
+      ANALYZE_REQUIRED_COMPUTER_SLOT: 6,
+      ANALYZE_ENERGY_COST: 1,
+      canAnalyzeData: (player) => (
+        Number(player?.resources?.energy || 0) >= 1
+          ? { ok: true }
+          : { ok: false, message: "energy missing" }
+      ),
+      listComputerPlacedTokens: () => placedTokens,
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => (
+      candidate.id === "quickTrade"
+      && candidate.tradeId === "credits-for-energy"
+      && candidate.valueBreakdown?.finalAnalyzeEnergyTrade
+    )) || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "final analyze should use spare credits instead of discarding a payable direct-eight card");
+  const finalAnalyzeCandidates = turnChoices
+    .flat()
+    .filter((candidate) => candidate.valueBreakdown?.finalAnalyzeEnergyTrade);
+  assert.ok(
+    finalAnalyzeCandidates.some((candidate) => candidate.tradeId === "credits-for-energy"),
+    "credits-for-energy should remain available for the final analyze",
+  );
+  assert.equal(
+    finalAnalyzeCandidates.some((candidate) => candidate.tradeId === "cards-for-energy"),
+    false,
+    "cards-for-energy should be filtered when its actual discard plan spends a payable direct-eight card",
+  );
+  assert.deepEqual(harness.getHandled(), { type: "quick-trade", tradeId: "credits-for-energy" });
+  assert.ok(
+    harness.blue.hand.some((card) => card.id === "protected-direct-eight"),
+    "the direct-eight card should remain in hand after the credit trade",
+  );
+}
+
+{
+  const placedTokens = Array.from({ length: 6 }, (_item, index) => ({
+    id: `late-protected-data-${index}`,
+    placementSlot: index + 1,
+  }));
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    turnNumber: 5,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordBeginPlayCard: true,
+    quickTrades: {
+      "cards-for-energy": {
+        id: "cards-for-energy",
+        label: "2 cards -> 1 energy",
+        cost: { handSize: 2 },
+        gain: { energy: 1 },
+      },
+    },
+    blueResources: { score: 49, credits: 0, energy: 0, publicity: 0, availableData: 0, handSize: 2 },
+    blueHand: [
+      {
+        id: "late-protected-direct-eight",
+        cardName: "Late protected direct eight",
+        price: 0,
+        playEffects: [{ type: "gain_resources", options: { gain: { score: 8 } } }],
+      },
+      { id: "late-protected-filler", cardName: "Late protected filler", price: 0 },
+    ],
+    finalScoringState: {
+      tiles: {
+        final_a2: {
+          id: "final_a2",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+      },
+    },
+    finalFormulaIds: { final_a2: "a2" },
+    data: {
+      ANALYZE_REQUIRED_COMPUTER_SLOT: 6,
+      ANALYZE_ENERGY_COST: 1,
+      canAnalyzeData: (player) => (
+        Number(player?.resources?.energy || 0) >= 1
+          ? { ok: true }
+          : { ok: false, message: "energy missing" }
+      ),
+      listComputerPlacedTokens: () => placedTokens,
+    },
+    aiValuation: setiAi.valuation,
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "playCard")
+      || candidates.find((candidate) => candidate.id === "pass")
+      || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "round-five direct-score protection should leave a legal main action");
+  assert.equal(
+    turnChoices.flat().some((candidate) => (
+      candidate.id === "quickTrade"
+      && candidate.tradeId === "cards-for-energy"
+      && (
+        candidate.valueBreakdown?.emergencyAnalyzeEnergyTrade
+        || candidate.valueBreakdown?.finalAnalyzeEnergyTrade
+        || candidate.valueBreakdown?.secondMarkAnalyzeEnergyRecovery
+      )
+    )),
+    false,
+    "round-five emergency and recovery candidates must not bypass the direct-eight discard protection",
   );
 }
 

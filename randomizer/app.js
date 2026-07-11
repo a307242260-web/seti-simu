@@ -39,6 +39,7 @@
     aiValuation,
     aiRaceModel,
     ai,
+    alienTraceRewardFlow,
   } = dependencies;
 
   const actionLogExport = window.SetiAppActionLogExport;
@@ -8526,6 +8527,212 @@
     ));
   }
 
+  const AI_B2_FINAL_TILE_RACE_SCORE_PER_ACTION = 8;
+  const AI_B2_FINAL_TILE_RACE_OPPONENT_SCORE_WINDOW = 15;
+  const AI_B2_FINAL_TILE_RACE_MAX_SCORE_ADJUSTMENT = 8;
+
+  function scoreAiB2FinalTileRaceAdjustment(
+    formulaId,
+    slotIndex,
+    opponentExpectedFirst,
+    exclusiveValueAtRisk,
+    weightedLegacyCompetitionScore,
+    maxScoreAdjustment = 8,
+  ) {
+    const slot = Math.max(1, Math.round(Number(slotIndex) || 1));
+    if (formulaId !== "b2" || slot >= 3 || !opponentExpectedFirst) return 0;
+    const risk = Number(exclusiveValueAtRisk);
+    const legacy = Number(weightedLegacyCompetitionScore);
+    const cap = Math.max(0, Number(maxScoreAdjustment) || 0);
+    const protectedValue = Math.min(cap, Number.isFinite(risk) ? Math.max(0, risk) : 0);
+    return Math.min(
+      cap,
+      Math.max(0, protectedValue - (Number.isFinite(legacy) ? Math.max(0, legacy) : 0)),
+    );
+  }
+
+  function getAiFinalTileRaceThresholds() {
+    return Array.isArray(finalScoringState.thresholds) && finalScoringState.thresholds.length
+      ? [...finalScoringState.thresholds]
+      : [...(finalScoring.FINAL_SCORE_THRESHOLDS || [])];
+  }
+
+  function getAiFinalTileRaceTarget(player, options = {}) {
+    if (!player) return null;
+    const minimumThreshold = Math.max(0, aiNumber(options.minimumThreshold));
+    const pending = (finalScoring.getPendingMarksForPlayer?.(finalScoringState, player.id) || [])
+      .find((entry) => aiNumber(entry?.threshold) > minimumThreshold);
+    if (pending) {
+      return {
+        threshold: aiNumber(pending.threshold),
+        deficit: 0,
+        pending: true,
+      };
+    }
+
+    const score = Math.max(0, aiNumber(player.resources?.score));
+    const threshold = getAiFinalTileRaceThresholds().find((entry) => (
+      aiNumber(entry) > minimumThreshold
+      && !hasAiPlayerClaimedFinalThreshold(player.id, entry)
+    ));
+    if (threshold == null) return null;
+    return {
+      threshold: aiNumber(threshold),
+      deficit: Math.max(0, aiNumber(threshold) - score),
+      pending: false,
+    };
+  }
+
+  function estimateAiFinalTileRaceEta(target, orderAdjustment = 0) {
+    if (!target) return Infinity;
+    if (target.pending || aiNumber(target.deficit) <= 0) return 0;
+    const actionCount = Math.max(
+      1,
+      Math.ceil(aiNumber(target.deficit) / AI_B2_FINAL_TILE_RACE_SCORE_PER_ACTION),
+    );
+    return Math.max(0, actionCount + aiNumber(orderAdjustment));
+  }
+
+  function getAiFinalTileRaceActionWindow(player) {
+    if (!player?.id || !aiRaceModel?.buildActionWindowOrder) return [];
+    const completedPlayerIds = [...(turnState.completedTurnPlayerIds || [])];
+    if (!completedPlayerIds.some((playerId) => String(playerId) === String(player.id))) {
+      completedPlayerIds.push(player.id);
+    }
+    return aiRaceModel.buildActionWindowOrder({
+      ...turnState,
+      completedTurnPlayerIds: completedPlayerIds,
+    }, player.id);
+  }
+
+  function getAiB2FinalTileRaceBase(baseValue, b2State = null) {
+    const currentBase = Math.max(0, aiNumber(baseValue));
+    const orbitLandCount = Math.max(0, aiNumber(b2State?.orbitLandCount));
+    const sectorWins = Math.max(0, aiNumber(b2State?.sectorWins));
+    if (orbitLandCount === sectorWins) return Math.max(currentBase, orbitLandCount);
+    const oneStepBase = orbitLandCount > sectorWins
+      ? Math.min(orbitLandCount, sectorWins + 1)
+      : Math.min(orbitLandCount + 1, sectorWins);
+    return Math.max(currentBase, oneStepBase);
+  }
+
+  function buildAiB2FinalTileDeferRace(
+    tileId,
+    formulaId,
+    slotIndex,
+    player,
+    pending,
+    baseValue,
+    b2State = null,
+  ) {
+    const currentSlot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
+    if (
+      formulaId !== "b2"
+      || currentSlot >= 3
+      || !player?.id
+      || !pending
+      || !aiRaceModel?.estimateRaceOutcome
+      || !endGameScoring?.getSlotMultiplier
+    ) return null;
+
+    const currentMultiplier = Math.max(
+      0,
+      aiNumber(endGameScoring.getSlotMultiplier(formulaId, currentSlot)),
+    );
+    const fallbackMultiplier = Math.max(
+      0,
+      aiNumber(endGameScoring.getSlotMultiplier(formulaId, currentSlot + 1)),
+    );
+    const multiplierGap = Math.max(0, currentMultiplier - fallbackMultiplier);
+    if (multiplierGap <= 0) return null;
+
+    const actionWindowOpponentIds = getAiFinalTileRaceActionWindow(player);
+    const actionWindowIndexById = new Map(actionWindowOpponentIds.map((playerId, index) => (
+      [String(playerId), index]
+    )));
+    const actorTarget = getAiFinalTileRaceTarget(player, {
+      minimumThreshold: aiNumber(pending.threshold),
+    });
+    const actorEta = estimateAiFinalTileRaceEta(actorTarget);
+    const activeIds = Array.isArray(turnState.activePlayerIds) && turnState.activePlayerIds.length
+      ? turnState.activePlayerIds
+      : playerState.players.map((entry) => entry.id).filter(Boolean);
+    const activeIdSet = new Set(activeIds.map((playerId) => String(playerId)));
+    const passedIdSet = new Set((turnState.passedPlayerIds || []).map((playerId) => String(playerId)));
+    const opponentEtas = [];
+
+    for (const opponent of playerState.players || []) {
+      if (!opponent?.id || String(opponent.id) === String(player.id)) continue;
+      if (activeIdSet.size && !activeIdSet.has(String(opponent.id))) continue;
+      if (passedIdSet.has(String(opponent.id))) continue;
+      if (finalScoring.hasPlayerMarkedTile?.(finalScoringState, tileId, opponent.id)) continue;
+
+      const target = getAiFinalTileRaceTarget(opponent);
+      if (!target) continue;
+      if (!target.pending && aiNumber(target.deficit) > AI_B2_FINAL_TILE_RACE_OPPONENT_SCORE_WINDOW) continue;
+      const actionWindowIndex = actionWindowIndexById.get(String(opponent.id));
+      const actsBeforeActorNext = actionWindowIndex != null;
+      const orderAdjustment = target.pending ? 0 : (actsBeforeActorNext ? -0.25 : 0.25);
+      opponentEtas.push({
+        playerId: opponent.id,
+        eta: estimateAiFinalTileRaceEta(target, orderAdjustment),
+        threshold: target.threshold,
+        scoreDeficit: target.deficit,
+        pending: target.pending,
+        actionWindowIndex: actsBeforeActorNext ? actionWindowIndex : null,
+        actsBeforeActorNext,
+      });
+    }
+
+    const raceBase = getAiB2FinalTileRaceBase(baseValue, b2State);
+    const exclusiveValue = raceBase * currentMultiplier;
+    const fallbackValue = raceBase * fallbackMultiplier;
+    const outcome = aiRaceModel.estimateRaceOutcome({
+      actorEta,
+      opponentEtas,
+      reusableValue: 0,
+      exclusiveValue,
+      fallbackValue,
+    });
+    const opponentExpectedFirst = Boolean(outcome?.contested && !outcome?.actorWins);
+    const protectedValue = opponentExpectedFirst
+      ? Math.min(
+        AI_B2_FINAL_TILE_RACE_MAX_SCORE_ADJUSTMENT,
+        Math.max(0, aiNumber(outcome?.exclusiveValueAtRisk)),
+      )
+      : 0;
+
+    return {
+      tileId,
+      formulaId,
+      slotIndex: currentSlot,
+      etaBasis: `public-score-deficit-per-${AI_B2_FINAL_TILE_RACE_SCORE_PER_ACTION}-points`,
+      opponentScoreWindow: AI_B2_FINAL_TILE_RACE_OPPONENT_SCORE_WINDOW,
+      actionWindowOpponentIds,
+      actorTarget,
+      actorEta: Number.isFinite(actorEta) ? actorEta : null,
+      actorUnreachable: !Number.isFinite(actorEta),
+      opponentEtas,
+      outcome: outcome?.outcome || null,
+      fastestOpponentEta: Number.isFinite(outcome?.fastestOpponentEta)
+        ? outcome.fastestOpponentEta
+        : null,
+      fastestOpponentIds: outcome?.fastestOpponentIds || [],
+      currentMultiplier,
+      fallbackMultiplier,
+      multiplierGap,
+      raceBase,
+      reusableValue: 0,
+      exclusiveValue,
+      fallbackValue,
+      raceAdjustedValue: aiNumber(outcome?.raceAdjustedValue),
+      exclusiveValueAtRisk: Math.max(0, aiNumber(outcome?.exclusiveValueAtRisk)),
+      opponentExpectedFirst,
+      protectedValue,
+      maxScoreAdjustment: AI_B2_FINAL_TILE_RACE_MAX_SCORE_ADJUSTMENT,
+    };
+  }
+
   function scoreAiFinalScoreTileCompetition(tileId, formulaId, slotIndex, player, context) {
     if (!tileId || !formulaId || !player || !endGameScoring?.getSlotMultiplier) return 0;
     const currentSlot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
@@ -8690,6 +8897,15 @@
       player,
       context,
     ) * Math.max(0.35, effectiveSpeculationScale);
+    const finalTileRace = buildAiB2FinalTileDeferRace(
+      tileId,
+      formulaId,
+      check.slotIndex,
+      player,
+      pending,
+      baseValue,
+      b2FormulaState,
+    );
     const slotPriorityScore = firstSlotPriorityScore
       + familyPriorityScore
       + competitiveSlotSwingScore
@@ -8746,7 +8962,7 @@
       demand,
       b2FormulaState,
     );
-    const score = applyAiStrategyWeight(
+    const weightedScore = applyAiStrategyWeight(
       immediateScore * immediateScoreWeight
         + demandScore
         + potentialScore
@@ -8761,6 +8977,20 @@
       "final",
       0.85,
     );
+    const weightedLegacyCompetitionScore = applyAiStrategyWeight(
+      opponentCompetitionScore,
+      "final",
+      0.85,
+    );
+    const finalTileRaceScoreAdjustment = scoreAiB2FinalTileRaceAdjustment(
+      formulaId,
+      check.slotIndex,
+      finalTileRace?.opponentExpectedFirst,
+      finalTileRace?.exclusiveValueAtRisk,
+      weightedLegacyCompetitionScore,
+      AI_B2_FINAL_TILE_RACE_MAX_SCORE_ADJUSTMENT,
+    );
+    const score = weightedScore + finalTileRaceScoreAdjustment;
 
     return {
       tileId,
@@ -8793,6 +9023,9 @@
         familyPriorityScore: Math.round(familyPriorityScore * 100) / 100,
         competitiveSlotSwingScore: Math.round(competitiveSlotSwingScore * 100) / 100,
         opponentCompetitionScore: Math.round(opponentCompetitionScore * 100) / 100,
+        weightedLegacyCompetitionScore: Math.round(weightedLegacyCompetitionScore * 100) / 100,
+        finalTileRaceScoreAdjustment: Math.round(finalTileRaceScoreAdjustment * 100) / 100,
+        finalTileRace,
         thresholdScore: Math.round(thresholdScore * 100) / 100,
         rawZeroBaseLatePenalty: Math.round(rawZeroBaseLatePenalty * 100) / 100,
         zeroBaseLatePenalty: Math.round(zeroBaseLatePenalty * 100) / 100,
@@ -19158,24 +19391,6 @@
       playerColor: effect.options?.targetPlayerColor,
     }) || getEffectOwnerPlayer(effect) || getCurrentPlayer();
     const allowedAlienSlotIds = getEligibleAlienSlotIdsForTraceEffect(effect, targetPlayer, allowedTraceTypes);
-    const hasLegalTarget = !allowedAlienSlotIds
-      || allowedAlienSlotIds.some((alienSlotId) => allowedTraceTypes.some((item) => {
-        if (!getAlienTracePlacementPreview(alienSlotId, item).canPlace) {
-          const slot = aliens.getAlienSlot(alienGameState, alienSlotId);
-          const revealedSpecial = slot?.revealed && slot?.alienId;
-          return Boolean(revealedSpecial);
-        }
-        return true;
-      }));
-    if (!hasLegalTarget) {
-      return finishAutomaticRewardEffect(effect, {
-        ok: true,
-        skipped: true,
-        undoable: true,
-        message: `${effect.label}：没有符合条件的外星人目标，已跳过`,
-        payload: { traceType, allowedTraceTypes, allowedAlienSlotIds },
-      });
-    }
     pendingAlienTraceAction = {
       type: "planet_reward_alien_trace",
       beforeAlienState: structuredClone(alienGameState),
@@ -19185,21 +19400,50 @@
       targetPlayerColor: targetPlayer?.color || effect.options?.targetPlayerColor || null,
       afterTraceReward: effect.options?.afterTraceReward || null,
     };
-    const fangzhouChoice = openFangzhouTraceDestinationChoice({
+    const flow = alienTraceRewardFlow.resolveAlienTraceRewardFlow({
+      effect,
       allowedTraceTypes,
       allowedAlienSlotIds,
-      targetPlayerId: targetPlayer?.id || null,
-      targetPlayerColor: targetPlayer?.color || null,
-      label: effect.label,
+      targetPlayer,
+      openFangzhouChoice: () => openFangzhouTraceDestinationChoice({
+        allowedTraceTypes,
+        allowedAlienSlotIds,
+        targetPlayerId: targetPlayer?.id || null,
+        targetPlayerColor: targetPlayer?.color || null,
+        label: effect.label,
+      }),
+      hasPanelPlacementTarget: () => hasAlienTracePanelPlacementTarget(
+        allowedAlienSlotIds,
+        allowedTraceTypes,
+        targetPlayer,
+      ),
+      beginPanelPlacement: () => beginAlienTraceBoardPlacement({
+        allowedTraceTypes,
+        allowedAlienSlotIds,
+        targetPlayerId: targetPlayer?.id || null,
+        targetPlayerColor: targetPlayer?.color || null,
+        label: effect.label,
+      }),
+      finishNoTarget: () => {
+        const message = `${effect.label}：没有合法外星人痕迹位置，奖励落空`;
+        pendingAlienTraceAction = null;
+        alienTracePickerState = null;
+        closeAlienTracePicker();
+        return finishAutomaticRewardEffect(effect, {
+          ok: true,
+          skipped: true,
+          undoable: true,
+          message,
+          payload: {
+            traceType,
+            allowedTraceTypes,
+            allowedAlienSlotIds,
+            alienTraceRewardLost: true,
+          },
+        });
+      },
     });
-    if (fangzhouChoice) return fangzhouChoice;
-    return beginAlienTraceBoardPlacement({
-      allowedTraceTypes,
-      allowedAlienSlotIds,
-      targetPlayerId: targetPlayer?.id || null,
-      targetPlayerColor: targetPlayer?.color || null,
-      label: effect.label,
-    });
+    return flow.result;
   }
 
   function openAomomoCardRewardEffect(effect) {
@@ -19909,8 +20153,13 @@
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
     if (!allowedTraceTypes.includes(traceType)) return false;
     if (!yichangdian?.isYichangdianRevealedSlot?.(alienGameState, alienSlotId)) return false;
-    const grid = yichangdian?.getTraceGrid?.(alienGameState, alienSlotId);
-    return Number(position) === 1 || !grid?.[traceType]?.[position];
+    return Boolean(yichangdian?.canPlaceYichangdianTrace?.(
+      alienGameState,
+      alienSlotId,
+      traceType,
+      position,
+      getAlienTracePickerPlayer(),
+    )?.ok);
   }
 
   function canPlaceFangzhouTrace(alienSlotId, traceType, position) {
@@ -19935,8 +20184,15 @@
     const allowedTraceTypes = alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
     if (!allowedTraceTypes.includes(traceType)) return false;
     if (!banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)) return false;
-    const grid = banrenma?.getTraceGrid?.(alienGameState, alienSlotId);
-    return Number(position) === 1 || !grid?.[traceType]?.[position];
+    const currentPlayer = getAlienTracePickerPlayer();
+    return Boolean(banrenma?.canPlaceBanrenmaTrace?.(
+      alienGameState,
+      alienSlotId,
+      traceType,
+      position,
+      currentPlayer,
+      currentPlayer ? { availableDataCount: getAvailableDataTokenCount(currentPlayer) } : {},
+    )?.ok);
   }
 
   function canPlaceChongTrace(alienSlotId, traceType, position) {
@@ -21092,9 +21348,10 @@
   }
 
   function getAlienTraceChoiceSlotIds(allowedAlienSlotIds = null) {
-    return allowedAlienSlotIds?.length
-      ? allowedAlienSlotIds.map(Number)
-      : aliens.ALIEN_SLOT_IDS;
+    return alienTraceRewardFlow.resolveAllowedAlienSlotIds(
+      allowedAlienSlotIds,
+      aliens.ALIEN_SLOT_IDS,
+    );
   }
 
   function getFangzhouTraceChoiceSlotId(allowedAlienSlotIds = null) {
@@ -21116,15 +21373,13 @@
     const statePreview = getAlienTracePlacementPreview(alienSlotId, traceType);
     if (!alienSlot.revealed) return statePreview.canPlace;
     if (statePreview.canPlace) return true;
-    if (fangzhou?.isFangzhouRevealedSlot?.(alienGameState, alienSlotId)) {
-      return Boolean(fangzhou.canPlaceAnyFangzhouTrace?.(
-        alienGameState,
-        alienSlotId,
-        traceType,
-        player,
-      ));
-    }
-    return Boolean(alienSlot.alienId);
+    return Boolean(aliens.canPlaceAnyRevealedAlienTrace?.(
+      alienGameState,
+      alienSlotId,
+      traceType,
+      player,
+      player ? { availableDataCount: getAvailableDataTokenCount(player) } : {},
+    ));
   }
 
   function hasAlienTracePanelPlacementTarget(allowedAlienSlotIds, allowedTraceTypes, player) {
@@ -21219,7 +21474,7 @@
       : (alienTracePickerState?.allowedTraceTypes?.length ? alienTracePickerState.allowedTraceTypes : aliens.TRACE_TYPES);
     const hasAllowedAlienSlotIdsOption = Object.prototype.hasOwnProperty.call(options, "allowedAlienSlotIds");
     const allowedAlienSlotIds = hasAllowedAlienSlotIdsOption
-      ? (options.allowedAlienSlotIds?.length ? options.allowedAlienSlotIds.map(Number) : null)
+      ? alienTraceRewardFlow.resolveAllowedAlienSlotIds(options.allowedAlienSlotIds, null)
       : (alienTracePickerState?.allowedAlienSlotIds || null);
     const alienSlotId = options.alienSlotId || getFangzhouTraceChoiceSlotId(allowedAlienSlotIds);
     if (!alienSlotId) return null;
@@ -24665,6 +24920,36 @@
         label: fromEffectFlow ? effectLabel : "半人马顶部奖励外星人痕迹",
       });
       if (!fangzhouChoice) {
+        const hasPanelTarget = hasAlienTracePanelPlacementTarget(
+          null,
+          aliens.TRACE_TYPES,
+          player,
+        );
+        if (!hasPanelTarget) {
+          const noTargetMessage = `${markResult.message}：无合法痕迹位置，奖励落空`;
+          pendingAlienTraceAction = null;
+          alienTracePickerState = null;
+          closeAlienTracePicker();
+          baseResult.message = noTargetMessage;
+          baseResult.payload.alienTraceRewardLost = true;
+          if (fromEffectFlow) {
+            if (getCurrentActionEffect()) getCurrentActionEffect().result = baseResult;
+            completeCurrentActionEffect();
+          } else {
+            queueBanrenmaOpportunitiesForPlayer(player);
+            maybeContinueAlienRevealQueuedOpportunities();
+          }
+          rocketState.statusNote = noTargetMessage;
+          renderAlienPanels();
+          renderPlayerStats();
+          updateActionButtons();
+          renderStateReadout();
+          return {
+            ...markResult,
+            message: noTargetMessage,
+            alienTraceRewardLost: true,
+          };
+        }
         beginAlienTraceBoardPlacement({
           allowedTraceTypes: aliens.TRACE_TYPES,
           targetPlayerId: player?.id || null,
@@ -31980,6 +32265,7 @@
       techUiState: techGameState.ui,
       techGameState,
       turnState,
+      ...buildPlutoMarkerContext(),
       roundNumber: turnState.roundNumber,
       turnNumber: turnState.turnNumber,
       getPlayerTokenSrc: (player) => getNormalTokenAssetForPlayer(player),

@@ -400,6 +400,34 @@
     return value;
   }
 
+  function estimateJiuzheThreatPenaltyMarginal(input = {}) {
+    const addedThreat = Math.max(0, numeric(input.addedThreat ?? input.threatGain));
+    if (addedThreat <= 0) return 0;
+
+    const currentThreat = Math.max(0, numeric(input.currentThreat));
+    const nextThreat = currentThreat + addedThreat;
+    const otherThreats = (input.otherThreats || input.opponentThreats || [])
+      .map((threat) => Math.max(0, numeric(threat)));
+    const highestOtherThreat = otherThreats.length ? Math.max(...otherThreats) : 0;
+    const wasHighest = currentThreat > 0 && currentThreat >= highestOtherThreat;
+    const willBeHighest = nextThreat > 0 && nextThreat >= highestOtherThreat;
+    if (!willBeHighest) return 0;
+
+    const currentPrePenaltyScore = Math.max(0, numeric(
+      input.currentPrePenaltyScore
+      ?? input.prePenaltyScore
+      ?? input.currentScore,
+    ));
+    const nextPrePenaltyScore = Math.max(0, numeric(
+      input.nextPrePenaltyScore
+      ?? (currentPrePenaltyScore + Math.max(0, numeric(input.scoreGain ?? input.projectedScoreGain))),
+    ));
+    const getPenalty = (score) => Math.max(0, score - Math.ceil(score * 0.9));
+    const previousPenalty = wasHighest ? getPenalty(currentPrePenaltyScore) : 0;
+    const nextPenalty = getPenalty(nextPrePenaltyScore);
+    return roundValue(Math.max(0, nextPenalty - previousPenalty));
+  }
+
   function getRevealedTracePositionValue(position) {
     const pos = Math.max(0, Math.round(numeric(position)));
     if (pos >= 5) return 5;
@@ -426,6 +454,13 @@
     if (mode.includes("banrenma") || mode.includes("aomomo")) value += position >= 4 ? 1 : position === 2 ? 1.2 : 0.6;
     if (mode.includes("chong") || mode.includes("amiba") || mode.includes("runezu")) value += position >= 4 ? 0.8 : position === 2 ? 1 : 0.4;
     if (mode.includes("jiuzhe")) value += position >= 4 ? 0.6 : position === 2 ? 0.8 : 0.25;
+    if (mode.includes("jiuzhe") && numeric(input.reward?.threat) > 0) {
+      value -= estimateJiuzheThreatPenaltyMarginal({
+        ...(input.jiuzheThreatContext || {}),
+        addedThreat: input.reward.threat,
+        scoreGain: input.reward?.gain?.score,
+      });
+    }
     if (label.includes("得分") || label.includes("分数")) value += 2;
     if (label.includes("精选") || label.includes("牌")) value += DEFAULT_CARD_VALUE;
     if (label.includes("信用")) value += RESOURCE_VALUES.credits;
@@ -803,6 +838,7 @@
     getIncomeValue,
     estimateIncomeStrategicAdjustment,
     estimateHighCostPointConversionPenalty,
+    estimateJiuzheThreatPenaltyMarginal,
     estimateAlienTraceValue,
     getNextMissingFinalScoreThreshold,
     estimateFinalMarkCashoutValue,

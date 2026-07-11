@@ -45,6 +45,116 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (catalog, placement, state, randomizer, render, jiuzhe, yichangdian, fangzhou, banrenma, chong, amiba, aomomo, runezu, fangzhouCard1Queue, revealCardGrants) {
   "use strict";
 
+  function getTracePositionsForSpecies(species, traceType) {
+    if (typeof species?.getPositionsForTraceType === "function") {
+      return species.getPositionsForTraceType(traceType) || [];
+    }
+    return species?.TRACE_POSITIONS || [];
+  }
+
+  function canPlaceAnySpeciesTrace(species, methodName, alienState, alienSlotId, traceType, player, options = {}) {
+    const canPlace = species?.[methodName];
+    if (typeof canPlace !== "function") return false;
+    return getTracePositionsForSpecies(species, traceType).some((position) => (
+      Boolean(canPlace(alienState, alienSlotId, traceType, position, player, options)?.ok)
+    ));
+  }
+
+  function canPlaceAnyRevealedAlienTrace(alienState, alienSlotId, traceType, player, options = {}) {
+    if (jiuzhe?.isJiuzheRevealedSlot?.(alienState, alienSlotId)) {
+      if (typeof jiuzhe.canPlaceJiuzheTrace === "function") {
+        return canPlaceAnySpeciesTrace(
+          jiuzhe,
+          "canPlaceJiuzheTrace",
+          alienState,
+          alienSlotId,
+          traceType,
+          player,
+          options,
+        );
+      }
+      if (!jiuzhe.TRACE_TYPES?.includes(traceType)) return false;
+      const grid = jiuzhe.getTraceGrid?.(alienState, alienSlotId);
+      return jiuzhe.TRACE_POSITIONS.some((position) => !grid?.[traceType]?.[position]);
+    }
+    if (yichangdian?.isYichangdianRevealedSlot?.(alienState, alienSlotId)) {
+      if (typeof yichangdian.canPlaceYichangdianTrace === "function") {
+        return canPlaceAnySpeciesTrace(
+          yichangdian,
+          "canPlaceYichangdianTrace",
+          alienState,
+          alienSlotId,
+          traceType,
+          player,
+          options,
+        );
+      }
+      return Boolean(yichangdian.TRACE_TYPES?.includes(traceType));
+    }
+    if (fangzhou?.isFangzhouRevealedSlot?.(alienState, alienSlotId)) {
+      return Boolean(fangzhou.canPlaceAnyFangzhouTrace?.(
+        alienState,
+        alienSlotId,
+        traceType,
+        player,
+      ));
+    }
+    if (banrenma?.isBanrenmaRevealedSlot?.(alienState, alienSlotId)) {
+      return Boolean(banrenma.canPlaceAnyBanrenmaTrace?.(
+        alienState,
+        alienSlotId,
+        traceType,
+        player,
+        options,
+      ));
+    }
+    if (chong?.isChongRevealedSlot?.(alienState, alienSlotId)) {
+      return canPlaceAnySpeciesTrace(
+        chong,
+        "canPlaceChongTrace",
+        alienState,
+        alienSlotId,
+        traceType,
+        player,
+        options,
+      );
+    }
+    if (amiba?.isAmibaRevealedSlot?.(alienState, alienSlotId)) {
+      return canPlaceAnySpeciesTrace(
+        amiba,
+        "canPlaceAmibaTrace",
+        alienState,
+        alienSlotId,
+        traceType,
+        player,
+        options,
+      );
+    }
+    if (aomomo?.isAomomoRevealedSlot?.(alienState, alienSlotId)) {
+      return canPlaceAnySpeciesTrace(
+        aomomo,
+        "canPlaceAomomoTrace",
+        alienState,
+        alienSlotId,
+        traceType,
+        player,
+        options,
+      );
+    }
+    if (runezu?.isRunezuRevealedSlot?.(alienState, alienSlotId)) {
+      return canPlaceAnySpeciesTrace(
+        runezu,
+        "canPlaceRunezuTrace",
+        alienState,
+        alienSlotId,
+        traceType,
+        player,
+        options,
+      );
+    }
+    return false;
+  }
+
   function getReadoutLines(alienState) {
     const source = alienState || state.createDefaultAlienState();
     const lines = ["外星人痕迹"];
@@ -632,6 +742,7 @@
     getYichangdianAnomalyMarkerBoardPoint: placement.getYichangdianAnomalyMarkerBoardPoint,
     getExtraTraceGridOriginCenter: placement.getExtraTraceGridOriginCenter,
     getExtraTraceGridCenter: placement.getExtraTraceGridCenter,
+    canPlaceAnyRevealedAlienTrace,
     getEffectiveTraceMarkerLayout: render.getEffectiveTraceMarkerLayout,
     getEffectiveExtraTraceAnchorLayout: render.getEffectiveExtraTraceAnchorLayout,
     getEffectiveExtraTraceGridLayout: render.getEffectiveExtraTraceGridLayout,

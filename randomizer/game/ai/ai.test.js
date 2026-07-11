@@ -738,6 +738,108 @@ assert.ok(revealedTraceAfterStolenFirstValue > hiddenBackupAfterStolenFirstValue
 assert.ok(jiuzheTraceValue < firstTraceValue);
 assert.ok(competitiveTraceValue > firstTraceValue + 4);
 
+assert.equal(
+  valuation.estimateJiuzheThreatPenaltyMarginal({
+    currentThreat: 0,
+    otherThreats: [0, 0, 0],
+    addedThreat: 1,
+    currentPrePenaltyScore: 95,
+  }),
+  9,
+  "0 -> positive threat must become penalized when every opponent remains at 0",
+);
+assert.equal(
+  valuation.estimateJiuzheThreatPenaltyMarginal({
+    currentThreat: 2,
+    otherThreats: [5, 1, 0],
+    addedThreat: 3,
+    currentPrePenaltyScore: 95,
+  }),
+  9,
+  "tying the highest opponent must incur the real Jiuzhe score penalty",
+);
+assert.equal(
+  valuation.estimateJiuzheThreatPenaltyMarginal({
+    currentThreat: 2,
+    otherThreats: [5, 1, 0],
+    addedThreat: 4,
+    currentPrePenaltyScore: 95,
+  }),
+  9,
+  "becoming the unique highest threat must incur the same real score penalty",
+);
+assert.equal(
+  valuation.estimateJiuzheThreatPenaltyMarginal({
+    currentThreat: 2,
+    otherThreats: [6, 1, 0],
+    addedThreat: 3,
+    currentPrePenaltyScore: 95,
+  }),
+  0,
+  "remaining below the highest opponent must not invent a threat penalty",
+);
+assert.equal(
+  valuation.estimateJiuzheThreatPenaltyMarginal({
+    currentThreat: 5,
+    otherThreats: [5, 2, 0],
+    addedThreat: 2,
+    currentPrePenaltyScore: 95,
+  }),
+  0,
+  "an already penalized tied leader should not pay the same penalty twice",
+);
+assert.equal(
+  valuation.estimateJiuzheThreatPenaltyMarginal({
+    currentThreat: 6,
+    otherThreats: [5, 2, 0],
+    addedThreat: 3,
+    currentPrePenaltyScore: 95,
+  }),
+  0,
+  "an already unique leader normally has zero marginal threat penalty",
+);
+assert.equal(
+  valuation.estimateJiuzheThreatPenaltyMarginal({
+    currentThreat: 6,
+    otherThreats: [5, 2, 0],
+    addedThreat: 3,
+    currentPrePenaltyScore: 100,
+    scoreGain: 10,
+  }),
+  1,
+  "an existing leader should only pay the exact incremental penalty on newly projected score",
+);
+
+const safeJiuzheRewardValue = valuation.estimateAlienTraceValue({
+  revealed: true,
+  mode: "jiuzhe-grid",
+  traceType: "yellow",
+  position: 2,
+  reward: { gain: { score: 4, credits: 1 }, threat: 2 },
+  jiuzheThreatContext: {
+    currentThreat: 0,
+    otherThreats: [8, 0, 0],
+    currentPrePenaltyScore: 95,
+  },
+});
+const exposedJiuzheRewardValue = valuation.estimateAlienTraceValue({
+  revealed: true,
+  mode: "jiuzhe-grid",
+  traceType: "yellow",
+  position: 2,
+  reward: { gain: { score: 4, credits: 1 }, threat: 2 },
+  jiuzheThreatContext: {
+    currentThreat: 0,
+    otherThreats: [0, 0, 0],
+    currentPrePenaltyScore: 95,
+  },
+});
+assert.equal(
+  safeJiuzheRewardValue - exposedJiuzheRewardValue,
+  9,
+  "Jiuzhe trace reward valuation must reuse the exact threat penalty marginal",
+);
+
 const neutralHiddenTraceState = {
   aliens: {
     1: {
@@ -954,6 +1056,8 @@ assert.equal(forcedOpening.industry.label, "作弊实验室");
 assert.equal(forcedOpening.openingPlan.summary.hand, 5);
 assert.equal(forcedOpening.openingPlan.summary.credits, 2);
 assert.equal(forcedOpening.openingPlan.summary.energy, 2);
+assert.equal(forcedOpening.openingPlan.summary.baseIncomeCredits, 2);
+assert.equal(forcedOpening.openingPlan.summary.longTermCredits, 4);
 assert.ok(forcedOpening.openingPlan.topPlans.every((plan) => plan.industryLabel === "作弊实验室"));
 const weakForcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
   roundNumber: 1,
@@ -961,7 +1065,7 @@ const weakForcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
   aiDifficulty: "weak_start",
 });
 assert.equal(weakForcedOpening.openingPlan.summary.incomeIncreases, 4);
-assert.equal(weakForcedOpening.openingPlan.goals.OPENING_INCOME, 5.5);
+assert.equal(weakForcedOpening.openingPlan.goals.OPENING_INCOME, 6);
 assert.ok(weakForcedOpening.openingPlan.topPlans.every((plan) => plan.summary.incomeIncreases === 4));
 
 const weakResearchOpeningOffer = {
