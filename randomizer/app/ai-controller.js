@@ -236,6 +236,7 @@
       maxBugRepeats: 3,
       maxMovesPerTurn: 1,
       stepDelayMs: 0,
+      compactLogs: false,
       lastSummary: null,
       strategyTuningHistory: [],
       strategyTuningHistoryLoaded: false,
@@ -388,6 +389,39 @@
         || getCurrentPlayer();
     }
 
+    function compactAiAutoBattleLogValue(value, depth = 0) {
+      if (value == null || typeof value !== "object") return value;
+      if (depth >= 2) return Array.isArray(value) ? `[${value.length}项]` : "[详情已省略]";
+      if (Array.isArray(value)) {
+        return value.slice(0, 6).map((entry) => compactAiAutoBattleLogValue(entry, depth + 1));
+      }
+      return Object.fromEntries(Object.entries(value)
+        .slice(0, 16)
+        .map(([key, entry]) => [key, compactAiAutoBattleLogValue(entry, depth + 1)]));
+    }
+
+    function compactAiAutoBattleLogDetails(type, details = {}) {
+      if (!aiAutoBattleState.compactLogs) return structuredClone(details || {});
+      if (type === "turn-action") {
+        const candidates = Array.isArray(details.candidates) ? details.candidates : [];
+        const rankedCandidates = candidates
+          .filter((candidate) => candidate?.available !== false)
+          .map((candidate, index) => ({ candidate, index }))
+          .sort((left, right) => (
+            getAiCandidateRankScore(right.candidate) - getAiCandidateRankScore(left.candidate)
+            || left.index - right.index
+          ))
+          .slice(0, 3)
+          .map(({ candidate }) => summarizeAiTurnActionCandidate(candidate));
+        return {
+          action: summarizeAiTurnActionCandidate(details.action || {}),
+          candidates: rankedCandidates,
+          plannerShadow: compactAiAutoBattleLogValue(details.plannerShadow || null),
+        };
+      }
+      return compactAiAutoBattleLogValue(details || {});
+    }
+
     function createAiAutoBattleEntry(type, message, details = {}) {
       const currentPlayer = getAiAutoBattleEntryPlayer(details);
       const rawTurnNumber = turnState.turnNumber;
@@ -413,7 +447,7 @@
           : null,
         scoreboard: getAiAutoBattleScoreSnapshot(),
         message: String(message || ""),
-        details: structuredClone(details || {}),
+        details: compactAiAutoBattleLogDetails(type, details),
         createdAt: new Date().toISOString(),
       };
     }
@@ -1363,6 +1397,7 @@
         if (options.stepDelayMs != null) {
           aiAutoBattleState.stepDelayMs = Math.max(0, Math.round(Number(options.stepDelayMs) || 0));
         }
+        aiAutoBattleState.compactLogs = options.compactLogs === true;
         if (options.maxBugRepeats != null) {
           aiAutoBattleState.maxBugRepeats = Math.max(1, Math.round(Number(options.maxBugRepeats) || 1));
         }
@@ -21083,6 +21118,7 @@
           ...options,
           seed,
           reset: true,
+          compactLogs: options.compactLogs !== false,
         });
         if (!report?.logs) {
           return report;
