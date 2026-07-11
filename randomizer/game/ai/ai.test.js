@@ -951,7 +951,9 @@ const forcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
   forcedIndustryCard: forcedIndustryOffer.industryOptions[1],
 });
 assert.equal(forcedOpening.industry.label, "作弊实验室");
-assert.equal(forcedOpening.openingPlan.summary.hand, 6);
+assert.equal(forcedOpening.openingPlan.summary.hand, 5);
+assert.equal(forcedOpening.openingPlan.summary.credits, 2);
+assert.equal(forcedOpening.openingPlan.summary.energy, 2);
 assert.ok(forcedOpening.openingPlan.topPlans.every((plan) => plan.industryLabel === "作弊实验室"));
 const weakForcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
   roundNumber: 1,
@@ -959,7 +961,7 @@ const weakForcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
   aiDifficulty: "weak_start",
 });
 assert.equal(weakForcedOpening.openingPlan.summary.incomeIncreases, 4);
-assert.equal(weakForcedOpening.openingPlan.goals.OPENING_INCOME, 6);
+assert.equal(weakForcedOpening.openingPlan.goals.OPENING_INCOME, 5.5);
 assert.ok(weakForcedOpening.openingPlan.topPlans.every((plan) => plan.summary.incomeIncreases === 4));
 
 const weakResearchOpeningOffer = {
@@ -1013,8 +1015,8 @@ const huanyuResourceOpening = policy.chooseInitialSelection(huanyuResourceOpenin
 });
 assert.deepEqual(
   huanyuResourceOpening.openingPlan.topPlans[0].initialNumbers,
-  [13, 11],
-  "Huanyu should not replace trace plus scan with a plain resource plus scan opening",
+  [11, 2],
+  "Huanyu should rank immediately usable credits and cards above deferred base income when choosing its opening",
 );
 
 assert.equal(policy.chooseTurnAction([

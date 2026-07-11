@@ -188,10 +188,11 @@
       const effect = entry.effect || {};
       summary.resourceScore += Number(effect.resources?.score || 0);
       summary.immediatePublicity += Number(effect.resources?.publicity || 0);
-      summary.credits += Number(effect.resources?.credits || 0) + Number(effect.baseIncome?.credits || 0) + Number(effect.income?.credits || 0);
-      summary.energy += Number(effect.resources?.energy || 0) + Number(effect.baseIncome?.energy || 0) + Number(effect.income?.energy || 0);
-      summary.hand += Number(effect.blindDraw || 0) + Number(effect.baseIncome?.handSize || 0) + Number(effect.income?.handSize || 0);
-      summary.data += Number(effect.dataGain || 0) + Number(effect.baseIncome?.availableData || 0) + Number(effect.income?.availableData || 0);
+      // baseIncome is only collected after PASS; income is awarded immediately on setup.
+      summary.credits += Number(effect.resources?.credits || 0) + Number(effect.income?.credits || 0);
+      summary.energy += Number(effect.resources?.energy || 0) + Number(effect.income?.energy || 0);
+      summary.hand += Number(effect.blindDraw || 0) + Number(effect.income?.handSize || 0);
+      summary.data += Number(effect.dataGain || 0) + Number(effect.income?.availableData || 0);
       summary.scan += Number(effect.scan?.count || 0) + Number(effect.resources?.additionalPublicScan || 0);
       summary.incomeIncreases += Number(effect.incomeIncreaseCount || 0);
       if (effect.alienTrace) summary.traces += 1;
