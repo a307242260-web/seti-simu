@@ -189,6 +189,15 @@
     return planetStats.getPlanetLandingCount(context.planetStatsState, planetId) + 1;
   }
 
+  function isPlanetLandingDisplaySlotOccupied(context, planetId, displaySlot) {
+    if (displaySlot == null) return false;
+    const normalizedDisplaySlot = Number(displaySlot);
+    if (!Number.isFinite(normalizedDisplaySlot)) return false;
+    return planetStats.getPlanetLandingMarkers(context.planetStatsState, planetId)
+      .some((marker) => marker.displayed !== false
+        && Number(marker.displaySlot ?? marker.sequence) === normalizedDisplaySlot);
+  }
+
   function buildOrbitRewardSummary(planetId, markerSequence, options = {}) {
     if (options.grantRewards === false || typeof planetRewards?.buildOrbitRewardEffects !== "function") return "";
     return formatRewardSummary(planetRewards.buildOrbitRewardEffects(planetId, markerSequence));
@@ -589,6 +598,11 @@
     let targetLabel = placement.planet.name;
 
     if (target.type === "satellite") {
+      const landingPositionOccupied = planetStats.isSatelliteLanded(
+        context.planetStatsState,
+        planetId,
+        target.satelliteId,
+      );
       markerResult = planetStats.addSatelliteLandingMarker(
         context.planetStatsState,
         planetId,
@@ -596,7 +610,9 @@
         currentPlayer,
         {
           allowDuplicate: Boolean(options.allowDuplicateSatelliteLanding),
-          referenceOffsetTokenWidths: options.referenceOffsetTokenWidths,
+          referenceOffsetTokenWidths: landingPositionOccupied
+            ? options.referenceOffsetTokenWidths
+            : undefined,
         },
       );
       markerKind = "satellite";
@@ -608,11 +624,18 @@
       markerSequence = markerResult.marker?.sequence || null;
       rewardMarkerSequence = getLandRewardMarkerSequence(target, markerSequence, options);
     } else {
+      const landingPositionOccupied = isPlanetLandingDisplaySlotOccupied(
+        context,
+        planetId,
+        options.displayLandingSlot,
+      );
       markerResult = planetStats.addPlanetLandingMarker(context.planetStatsState, planetId, currentPlayer, {
         allowDuplicate: Boolean(options.allowDuplicateLanding),
-        forceDisplaySlot: options.displayLandingSlot != null,
-        displaySlot: options.displayLandingSlot,
-        referenceOffsetTokenWidths: options.referenceOffsetTokenWidths,
+        forceDisplaySlot: landingPositionOccupied,
+        displaySlot: landingPositionOccupied ? options.displayLandingSlot : undefined,
+        referenceOffsetTokenWidths: landingPositionOccupied
+          ? options.referenceOffsetTokenWidths
+          : undefined,
       });
       markerKind = "land";
       markerSequence = markerResult.marker?.sequence || null;

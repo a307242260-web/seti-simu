@@ -490,6 +490,25 @@ function launchToPlanet(context, planetId) {
 {
   const context = createContext({ resources: { credits: 10, energy: 10 } });
   const player = currentPlayer(context);
+  launchToPlanet(context, "mars");
+  const result = abilities.executeAbility("landProbe", context, {
+    target: { type: "planet" },
+    allowDuplicateLanding: true,
+    forceFirstLandingReward: true,
+    displayLandingSlot: 1,
+    referenceOffsetTokenWidths: 0.5,
+  });
+  assert.equal(result.ok, true, result.message);
+  const marker = planetStats.getPlanetLandingMarkers(context.planetStatsState, "mars")[0];
+  assert.equal(marker.playerId, player.id);
+  assert.equal(marker.displaySlot, 1);
+  assert.equal(marker.referenceOffsetTokenWidths, undefined);
+  assert.equal(marker.forceDisplaySlot, false);
+}
+
+{
+  const context = createContext({ resources: { credits: 10, energy: 10 } });
+  const player = currentPlayer(context);
   assert.equal(planetStats.addSatelliteLandingMarker(context.planetStatsState, "jupiter", "io", { id: "p2", color: "white" }).ok, true);
   launchToPlanet(context, "jupiter");
   const blockedWithoutOrange4 = abilities.planet.getLandOptions(context, {
@@ -543,6 +562,23 @@ function launchToPlanet(context, planetId) {
   assert.equal(result.ok, true, result.message);
   assert.equal(result.markerKind, "satellite");
   assert.equal(currentPlayer(context).resources.energy, 0);
+}
+
+{
+  const context = createContext({ resources: { credits: 10, energy: 10 } });
+  const player = currentPlayer(context);
+  player.techState.ownedTiles.orange4 = true;
+  launchToPlanet(context, "jupiter");
+  const result = abilities.executeAbility("landProbe", context, {
+    target: { type: "satellite", satelliteId: "io" },
+    skipCost: true,
+    allowDuplicateSatelliteLanding: true,
+    referenceOffsetTokenWidths: 0.5,
+  });
+  assert.equal(result.ok, true, result.message);
+  const marker = planetStats.getSatelliteLandingMarkers(context.planetStatsState, "jupiter")[0];
+  assert.equal(marker.playerId, player.id);
+  assert.equal(marker.referenceOffsetTokenWidths, undefined);
 }
 
 {
