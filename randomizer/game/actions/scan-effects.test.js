@@ -30,12 +30,15 @@ purplePlayer.techState = playerTech.createPlayerTechState({
 });
 const fullPurpleQueue = scanEffects.buildScanEffectQueue(purplePlayer);
 assert.equal(fullPurpleQueue.length, 5);
-assert.equal(fullPurpleQueue[0].type, scanEffects.EFFECT_TYPES.IMPROVED_SECTOR_SCAN);
-assert.equal(fullPurpleQueue[1].type, scanEffects.EFFECT_TYPES.PUBLIC_CARD_SCAN);
-assert.equal(fullPurpleQueue[2].type, scanEffects.EFFECT_TYPES.MERCURY_SECTOR_SCAN);
-assert.deepEqual(fullPurpleQueue[2].options.cost, { publicity: 1 });
-assert.equal(fullPurpleQueue[3].type, scanEffects.EFFECT_TYPES.HAND_SCAN);
-assert.equal(fullPurpleQueue[4].type, scanEffects.EFFECT_TYPES.SCAN_ACTION_4);
+const expectedFullPurpleOrder = [
+  scanEffects.EFFECT_TYPES.IMPROVED_SECTOR_SCAN,
+  scanEffects.EFFECT_TYPES.PUBLIC_CARD_SCAN,
+  scanEffects.EFFECT_TYPES.SCAN_ACTION_4,
+  scanEffects.EFFECT_TYPES.MERCURY_SECTOR_SCAN,
+  scanEffects.EFFECT_TYPES.HAND_SCAN,
+];
+assert.deepEqual(fullPurpleQueue.map((effect) => effect.type), expectedFullPurpleOrder);
+assert.deepEqual(fullPurpleQueue[3].options.cost, { publicity: 1 });
 
 const completePurpleQueue = scanEffects.buildScanEffectQueue(purplePlayer, {
   includeFinalize: true,
@@ -44,19 +47,22 @@ const completePurpleQueue = scanEffects.buildScanEffectQueue(purplePlayer, {
 });
 assert.equal(completePurpleQueue.length, 5);
 assert.equal(completePurpleQueue[1].options.scanRunId, "purple-scan-test");
-assert.equal(completePurpleQueue[4].type, scanEffects.EFFECT_TYPES.SCAN_ACTION_4);
-assert.equal(completePurpleQueue[4].options.fullScanAction, true);
+assert.deepEqual(completePurpleQueue.map((effect) => effect.type), expectedFullPurpleOrder);
+assert.equal(completePurpleQueue[2].options.fullScanAction, true);
 
-const freeBaseCostPurpleQueue = scanEffects.buildScanEffectQueue(purplePlayer, {
+// Card-triggered scan actions skip only the base action cost; their purple-tech
+// followups keep the shared order and do not inherit a free-cost flag.
+const cardTriggeredPurpleQueue = scanEffects.buildScanEffectQueue(purplePlayer, {
   includeFinalize: true,
   fullScanAction: true,
-  scanRunId: "free-purple-scan-test",
+  scanRunId: "card-purple-scan-test",
   skipCost: true,
 });
-assert.equal(freeBaseCostPurpleQueue[2].options.skipCost, undefined);
-assert.deepEqual(freeBaseCostPurpleQueue[2].options.cost, { publicity: 1 });
-assert.equal(freeBaseCostPurpleQueue[3].options.skipCost, undefined);
-assert.equal(freeBaseCostPurpleQueue[4].options.skipCost, undefined);
+assert.deepEqual(cardTriggeredPurpleQueue.map((effect) => effect.type), expectedFullPurpleOrder);
+assert.equal(cardTriggeredPurpleQueue[2].options.skipCost, undefined);
+assert.equal(cardTriggeredPurpleQueue[3].options.skipCost, undefined);
+assert.deepEqual(cardTriggeredPurpleQueue[3].options.cost, { publicity: 1 });
+assert.equal(cardTriggeredPurpleQueue[4].options.skipCost, undefined);
 
 const borrowedPurpleCases = [
   ["purple1", scanEffects.EFFECT_TYPES.IMPROVED_SECTOR_SCAN],

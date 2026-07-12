@@ -123,6 +123,17 @@
       options: { ...sharedOptions },
     });
 
+    // Purple 4 resolves before the purple 2/3 followups in every full scan action.
+    if (playerOwnsPurpleTech(player, 4, options)) {
+      effects.push({
+        type: EFFECT_TYPES.SCAN_ACTION_4,
+        abilityId: "scanAction4",
+        icon: "scan_action_4",
+        label: "发射/移动",
+        options: { ...sharedOptions },
+      });
+    }
+
     if (playerOwnsPurpleTech(player, 2, options)) {
       effects.push({
         type: EFFECT_TYPES.MERCURY_SECTOR_SCAN,
@@ -142,17 +153,6 @@
         options: { ...sharedOptions },
       });
     }
-
-    if (playerOwnsPurpleTech(player, 4, options)) {
-      effects.push({
-        type: EFFECT_TYPES.SCAN_ACTION_4,
-        abilityId: "scanAction4",
-        icon: "scan_action_4",
-        label: "发射/移动",
-        options: { ...sharedOptions },
-      });
-    }
-
 
     return effects.map((effect, index) => ({
       ...effect,
