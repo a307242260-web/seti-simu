@@ -3809,6 +3809,100 @@ function makeYichangdianAlienState(options = {}) {
   const turnChoices = [];
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
+    roundNumber: 3,
+    turnNumber: 7,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "credits-for-energy": {
+        id: "credits-for-energy",
+        label: "2 credits -> 1 energy",
+        cost: { credits: 2 },
+        gain: { energy: 1 },
+      },
+    },
+    movableTokens: [
+      { id: 1, playerId: "player-blue", sector: { x: 2, y: 2 } },
+    ],
+    planetLocations: [
+      { planetId: "mercury", name: "Mercury", x: 2, y: 2 },
+    ],
+    actionChecks: {
+      orbit: { ok: true, planet: { planetId: "mercury", name: "Mercury" } },
+    },
+    planetStats: {
+      canAddLandingMarker: () => true,
+      canAddOrbitMarker: () => true,
+      getAvailableSatellitesForLanding: () => [],
+      getPlanetLandingCount: () => 0,
+      getPlanetOrbitCount: () => 0,
+    },
+    abilities: {
+      planet: {
+        DEFAULT_ORBIT_COST: { credits: 1, energy: 1 },
+        BASE_LAND_ENERGY_COST: 3,
+        getLandEnergyCost: () => 3,
+        getLandOptions: () => ({ ok: false, message: "land disabled in harness" }),
+        getOrbitOptions: () => ({ ok: false, message: "orbit disabled in harness" }),
+      },
+      rocket: {
+        ORANGE1_ROCKET_LIMIT: 4,
+        getRocketLimitForPlayer: () => 3,
+      },
+    },
+    planetRewards: {
+      EFFECT_TYPES: {
+        GAIN_RESOURCES: "gain_resources",
+        GAIN_DATA: "gain_data",
+        ALIEN_TRACE: "alien_trace",
+        DRAW_CARDS: "draw_cards",
+        PICK_CARD: "pick_card",
+        INCOME: "income",
+      },
+      buildPlanetLandRewardEffects: () => [
+        { type: "gain_resources", options: { gain: { score: 6 } } },
+      ],
+      buildOrbitRewardEffects: () => [
+        { type: "gain_resources", options: { gain: { score: 3 } } },
+      ],
+      buildSatelliteLandRewardEffects: () => [],
+    },
+    blueResources: { score: 81, credits: 2, energy: 1, publicity: 0, availableData: 0, handSize: 0 },
+    finalScoringState: {
+      tiles: {
+        final_a1: { id: "final_a1", marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }] },
+        final_b2: { id: "final_b2", marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }] },
+        final_d2: { id: "final_d2", marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }] },
+      },
+    },
+    finalFormulaIds: { final_a1: "a1", final_b2: "b2", final_d2: "d2" },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "pass") || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  harness.controller.runAiAutomationStep();
+  const candidates = turnChoices.flat();
+  assert.ok(candidates.some((candidate) => candidate.id === "orbit"), "ready Mercury orbit should be available");
+  assert.equal(
+    candidates.some((candidate) => candidate.id === "quickTrade" && candidate.tradeId === "credits-for-energy"),
+    false,
+    "AI should not spend the last orbit credit on a trade that still leaves landing energy short",
+  );
+}
+
+{
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
     pendingActionExecuted: true,
     recordMove: true,
     canPayForMove: true,

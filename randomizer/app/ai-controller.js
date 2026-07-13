@@ -14373,6 +14373,20 @@
         }, null);
 
       if (!best) return null;
+      const readyPlanetCashout = aiNumber(trade.cost?.credits) > 0
+        ? getMovableTokensForPlayer(player.id)
+          .map((rocket) => scoreAiFollowupMainActionAfterMove(
+            rocketActions.getRocketSectorCoordinate(rocket),
+            player,
+          ))
+          .filter((entry) => entry?.actionId && aiNumber(entry.score) > 0)
+          .sort((left, right) => aiNumber(right.score) - aiNumber(left.score))[0] || null
+        : null;
+      const orbitCost = abilities.planet.DEFAULT_ORBIT_COST || { credits: 1, energy: 1 };
+      const destroysReadyOrbitBeforeFullRecovery = readyPlanetCashout?.actionId === "orbit"
+        && Math.max(0, aiNumber(best.afterTradeGap)) > 0
+        && !players.canAfford(simulatedPlayer, orbitCost);
+      if (destroysReadyOrbitBeforeFullRecovery) return null;
       return {
         score: roundAiScore(best.score),
         plan: best,
