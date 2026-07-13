@@ -1119,8 +1119,46 @@ const huanyuResourceOpening = policy.chooseInitialSelection(huanyuResourceOpenin
 });
 assert.deepEqual(
   huanyuResourceOpening.openingPlan.topPlans[0].initialNumbers,
-  [11, 2],
-  "Huanyu should rank immediately usable credits and cards above deferred base income when choosing its opening",
+  [13, 2],
+  "Huanyu should rank two immediate scans plus usable credits above alien 2's lower-value first trace",
+);
+
+const weakHuanyuOrbitScanOpeningOffer = {
+  industryOptions: [{ id: "industry:huanyu.png", label: "寰宇超动力" }],
+  initialOptions: [
+    { id: "initial:3", label: "初始牌 3" },
+    { id: "initial:5", label: "初始牌 5" },
+    { id: "initial:13", label: "初始牌 13" },
+  ],
+};
+const weakHuanyuOrbitScanOpening = policy.chooseInitialSelection(weakHuanyuOrbitScanOpeningOffer, {
+  roundNumber: 1,
+  forcedIndustryCard: weakHuanyuOrbitScanOpeningOffer.industryOptions[0],
+  aiDifficulty: "weak_start",
+});
+assert.deepEqual(
+  weakHuanyuOrbitScanOpening.openingPlan.topPlans[0].initialNumbers,
+  [3, 13],
+  "weak Huanyu should prefer a real orbit plus two scans over a second orbit when the scores are otherwise tied",
+);
+
+const weakHuanyuSlotTwoTraceOpeningOffer = {
+  industryOptions: [{ id: "industry:huanyu.png", label: "寰宇超动力" }],
+  initialOptions: [
+    { id: "initial:10", label: "初始牌 10" },
+    { id: "initial:7", label: "初始牌 7" },
+    { id: "initial:3", label: "初始牌 3" },
+  ],
+};
+const weakHuanyuSlotTwoTraceOpening = policy.chooseInitialSelection(weakHuanyuSlotTwoTraceOpeningOffer, {
+  roundNumber: 1,
+  forcedIndustryCard: weakHuanyuSlotTwoTraceOpeningOffer.industryOptions[0],
+  aiDifficulty: "weak_start",
+});
+assert.deepEqual(
+  weakHuanyuSlotTwoTraceOpening.openingPlan.topPlans[0].initialNumbers,
+  [7, 3],
+  "opening valuation should use alien 2's real lower first-trace reward instead of the old generic trace constant",
 );
 
 assert.equal(policy.chooseTurnAction([
@@ -1435,6 +1473,8 @@ assert.equal(battleAnalysis.playerProfiles[0].playerId, "player-white");
 assert.equal(battleAnalysis.playerProfiles[0].metrics.mainActionCount, 1);
 assert.equal(battleAnalysis.playerProfiles[0].metrics.idleTurnCount, 0);
 assert.equal(battleAnalysis.playerProfiles[1].metrics.idleTurnCount, 1);
+assert.equal(battleAnalysis.scoreActionCorrelations.sampleCount, 2);
+assert.equal(battleAnalysis.scoreActionCorrelations.mainActionCount, 1);
 assert.equal(battleAnalysis.paceSummary.lowTail.playerId, "player-blue");
 assert.equal(battleAnalysis.playerProfiles[0].metrics.engineRatio, 0);
 assert.equal(battleAnalysis.winnerProfileDeltas.finalScore, 5);
@@ -1447,6 +1487,8 @@ assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-c
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-opening-plan-conversion"));
 assert.ok(battleAnalysis.recommendations.some((entry) => entry.id === "inspect-pass-reserve-resource-pressure"));
 const sampleBattleSummary = analytics.summarizeBattleReports([sampleBattleReport]);
+assert.equal(sampleBattleSummary.scoreActionCorrelations.sampleCount, 2);
+assert.equal(sampleBattleSummary.scoreActionCorrelations.mainActionCount, 1);
 assert.equal(sampleBattleSummary.openingPlanNearMissSamples[0].playerLabel, "白色");
 assert.equal(sampleBattleSummary.openingPlanConversionSamples[0].playerLabel, "白色");
 assert.equal(sampleBattleSummary.passReserveResourcePressureMissSamples[0].playerLabel, "蓝色");

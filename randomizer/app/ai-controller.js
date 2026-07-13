@@ -9024,21 +9024,16 @@
     function scoreAiHiddenAlienRevealTimingPremium(alienSlotId, placedCount, player = getCurrentPlayer()) {
       const slot = getAiAlienSlot(alienSlotId);
       if (!slot || slot.revealed) return 0;
-      const slotId = Math.round(aiNumber(alienSlotId));
       const round = getAiRoundNumber();
       const placed = Math.max(0, Math.min(3, Math.round(aiNumber(placedCount))));
       let value = 0;
 
-      if (slotId === 2) {
-        if (round <= 2) value += 3 + placed * 2.2 + (placed >= 2 ? 3.5 : 0);
-        else if (round === 3) value += 1.5 + placed * 1.6 + (placed >= 2 ? 4.5 : 0);
-        else value += placed >= 2 ? 2 : -2.5;
-
-        const firstAlienRevealed = Boolean(getAiAlienSlot(1)?.revealed);
-        if (firstAlienRevealed && round <= 3) value += 2.2;
-      }
-
-      if (placed >= 2 && round <= 3) value += 1.6;
+      // 两个隐藏槽位的揭示进度价值相同；槽位差异只来自 state 图真实即时奖励。
+      // 外星人 1 首痕迹为 5 分 + 1 宣传，外星人 2 为 3 分 + 1 宣传，
+      // 不能再用历史遗留的“2 号槽揭示加速”常数反向覆盖这 2 分差；但已经
+      // 放下 1/2 枚首痕迹的任一槽位仍保留补齐揭示价值，避免中途改线。
+      if (placed >= 2 && round <= 3) value += round <= 2 ? 9 : 7;
+      else if (placed === 1 && round <= 3) value += round <= 2 ? 4.5 : 3;
       if (round >= FINAL_ROUND_NUMBER && placed <= 1) value -= 2;
       return roundAiScore(value);
     }
@@ -18596,8 +18591,6 @@
       score += traceDemand * 0.45;
       score += ({ pink: 4, blue: 3.5, yellow: 3 })[traceType] || 0;
       score += scoreAiAlienGridPosition(scoringMode, traceType, position, label);
-      if (label.includes("首标记 2/3")) score += 10;
-      if (label.includes("首标记 1/3")) score += 4;
       if (label.includes("未揭示")) score += 3;
       if (label.includes("得分") || label.includes("分数")) score += 3;
       if (label.includes("精选")) score += 4.5;

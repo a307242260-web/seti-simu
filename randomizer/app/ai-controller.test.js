@@ -3345,6 +3345,92 @@ function makeYichangdianAlienState(options = {}) {
   const selected = [];
   const alienGameState = {
     aliens: {
+      1: makeHiddenAlienSlot({ pink: "white" }),
+      2: makeHiddenAlienSlot({ pink: "white" }),
+    },
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 1,
+    alienSlotIds: [1, 2],
+    alienGameState,
+    pendingAlienTraceAction: { targetPlayerId: "player-blue" },
+    alienTracePickerState: { mode: "basic", allowedTraceTypes: ["blue"] },
+    alienPickerButtons: [
+      makeButton(
+        { alienPickerStep: "basic", alienSlot: "1", traceType: "blue" },
+        "外星人 1 放置蓝色痕迹，首标记 1/3",
+        false,
+        () => selected.push("slot-1-blue"),
+      ),
+      makeButton(
+        { alienPickerStep: "basic", alienSlot: "2", traceType: "blue" },
+        "外星人 2 放置蓝色痕迹，首标记 1/3",
+        false,
+        () => selected.push("slot-2-blue"),
+      ),
+    ],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should resolve equal-progress hidden alien trace picker");
+  assert.deepEqual(selected, ["slot-1-blue"], "AI should prefer alien 1's higher real first-trace reward");
+}
+
+{
+  const selected = [];
+  const alienGameState = {
+    aliens: {
+      1: makeHiddenAlienSlot(),
+      2: makeHiddenAlienSlot({ yellow: "white" }),
+    },
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 1,
+    alienSlotIds: [1, 2],
+    alienGameState,
+    pendingAlienTraceAction: { targetPlayerId: "player-blue" },
+    alienTracePickerState: { mode: "basic", allowedTraceTypes: ["blue"] },
+    alienPickerButtons: [
+      makeButton(
+        { alienPickerStep: "basic", alienSlot: "1", traceType: "blue" },
+        "外星人 1 放置蓝色痕迹，首标记 0/3",
+        false,
+        () => selected.push("slot-1-blue"),
+      ),
+      makeButton(
+        { alienPickerStep: "basic", alienSlot: "2", traceType: "blue" },
+        "外星人 2 放置蓝色痕迹，首标记 1/3",
+        false,
+        () => selected.push("slot-2-blue"),
+      ),
+    ],
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "AI should resolve progressed hidden alien trace picker");
+  assert.deepEqual(selected, ["slot-2-blue"], "AI should continue a real reveal chain instead of restarting an empty slot");
+}
+
+{
+  const selected = [];
+  const alienGameState = {
+    aliens: {
       1: makeHiddenAlienSlot({ blue: "blue" }),
       2: makeHiddenAlienSlot({ yellow: "green", pink: "white" }),
     },

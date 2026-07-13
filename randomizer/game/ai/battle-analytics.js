@@ -118,6 +118,45 @@
     return Math.round(numeric(value) * 1000) / 1000;
   }
 
+  function pearsonCorrelation(items = [], leftValue = () => 0, rightValue = () => 0) {
+    const pairs = (items || [])
+      .map((item) => [Number(leftValue(item)), Number(rightValue(item))])
+      .filter(([left, right]) => Number.isFinite(left) && Number.isFinite(right));
+    if (pairs.length < 2) return 0;
+    const leftMean = pairs.reduce((total, pair) => total + pair[0], 0) / pairs.length;
+    const rightMean = pairs.reduce((total, pair) => total + pair[1], 0) / pairs.length;
+    let covariance = 0;
+    let leftVariance = 0;
+    let rightVariance = 0;
+    for (const [left, right] of pairs) {
+      const leftDelta = left - leftMean;
+      const rightDelta = right - rightMean;
+      covariance += leftDelta * rightDelta;
+      leftVariance += leftDelta * leftDelta;
+      rightVariance += rightDelta * rightDelta;
+    }
+    if (leftVariance <= 0 || rightVariance <= 0) return 0;
+    return roundRatio(covariance / Math.sqrt(leftVariance * rightVariance));
+  }
+
+  function buildScoreActionCorrelations(playerProfiles = []) {
+    const profiles = (playerProfiles || []).filter((profile) => Number.isFinite(Number(profile?.finalScore)));
+    const correlate = (metric) => pearsonCorrelation(
+      profiles,
+      (profile) => profile.finalScore,
+      (profile) => profile.metrics?.[metric],
+    );
+    return {
+      sampleCount: profiles.length,
+      mainActionCount: correlate("mainActionCount"),
+      quickStepCount: correlate("quickStepCount"),
+      playCardCount: correlate("playCardCount"),
+      researchTechCount: correlate("researchTechCount"),
+      scanCount: correlate("scanCount"),
+      analyzeCount: correlate("analyzeCount"),
+    };
+  }
+
   function nearestRankPercentile(values = [], ratio = 0.25) {
     const sorted = (values || [])
       .map(Number)
@@ -7775,6 +7814,7 @@
     opportunities.analyzeLowResourceReadyCashoutNearMiss = allAnalyzeLowResourceReadyCashoutNearMissSamples.length;
 
     const playerProfiles = buildPlayerProfiles(logs, playerResults);
+    const scoreActionCorrelations = buildScoreActionCorrelations(playerProfiles);
     const winnerProfileComparison = compareWinnerProfile(playerProfiles);
     const roundPaceSummary = buildRoundPaceSummary(playerProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(playerProfiles);
@@ -7889,6 +7929,7 @@
       actionCategoryCounts,
       actionCategoryRatios,
       playerActionCounts,
+      scoreActionCorrelations,
       candidateStats,
       candidateScoreStats: finalizeCandidateScoreStats(candidateScoreStats),
       topScoreGaps: buildTopScoreGaps(candidateScoreStats),
@@ -8433,6 +8474,7 @@
     const averageNonWinnerProfile = averageProfileMetrics(nonWinnerProfiles);
     const winnerProfileDeltas = diffProfileMetrics(averageWinnerProfile, averageNonWinnerProfile);
     const paceSummary = buildPaceSummary(allProfiles);
+    const scoreActionCorrelations = buildScoreActionCorrelations(allProfiles);
     const roundPaceSummary = buildRoundPaceSummary(allProfiles);
     const lowEngineThroughputSamples = buildLowEngineThroughputSamples(allProfiles);
     const highScoreNearMissSamples = sortHighScoreNearMissSamples(
@@ -8446,6 +8488,7 @@
     const summaryForRecommendations = {
       turnActionCount,
       actionCategoryRatios,
+      scoreActionCorrelations,
       candidateStats: mergedCandidateStats,
       candidateScoreStats: finalizeCandidateScoreStats(mergedCandidateScoreStats),
       topScoreGaps: buildTopScoreGaps(mergedCandidateScoreStats),
@@ -8519,6 +8562,7 @@
       actionCounts: mergedActionCounts,
       actionCategoryCounts: mergedActionCategoryCounts,
       actionCategoryRatios,
+      scoreActionCorrelations,
       typeCounts: mergedTypeCounts,
       candidateStats: mergedCandidateStats,
       candidateScoreStats: finalizeCandidateScoreStats(mergedCandidateScoreStats),

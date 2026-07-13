@@ -199,7 +199,12 @@
       summary.baseIncomeData += Number(effect.baseIncome?.availableData || 0);
       summary.scan += Number(effect.scan?.count || 0) + Number(effect.resources?.additionalPublicScan || 0);
       summary.incomeIncreases += Number(effect.incomeIncreaseCount || 0);
-      if (effect.alienTrace) summary.traces += 1;
+      if (effect.alienTrace) {
+        summary.traces += 1;
+        const alienSlotId = Math.round(Number(effect.alienTrace.alienSlotId) || 0);
+        // 首痕迹即时奖励：外星人 1 为 5 分 + 1 宣传，外星人 2 为 3 分 + 1 宣传。
+        summary.traceRewardValue += alienSlotId === 1 ? 7 : alienSlotId === 2 ? 5 : 6;
+      }
       if (effect.orbitPlanetId) summary.orbits += 1;
       summary.rawValue += getEffectResourcesValue(effect, options);
       return summary;
@@ -217,6 +222,7 @@
       scan: 0,
       incomeIncreases: 0,
       traces: 0,
+      traceRewardValue: 0,
       orbits: 0,
       rawValue: 0,
     });
@@ -226,13 +232,12 @@
     score += combined.incomeIncreases >= 3 ? 7 : combined.incomeIncreases === 2 ? 4.5 : combined.incomeIncreases;
     score += combined.scan >= 2 ? 6 : combined.scan * 1.8;
     score += combined.data >= 2 ? 5 : combined.data * 1.7;
-    score += combined.traces * 7;
+    score += combined.traceRewardValue;
     score += combined.orbits * 2.5;
     if (
       String(industry?.label || industry?.id || "").includes("寰宇超动力")
       && combined.traces <= 0
       && combined.orbits >= 1
-      && combined.data >= 1
       && combined.scan >= 2
     ) {
       score += 1.8;
