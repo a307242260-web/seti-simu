@@ -8827,6 +8827,9 @@
     const demandScore = scoreAiFinalScoreFormulaDemand(formulaId, demand);
     const b1FormulaState = formulaId === "b1" ? getAiB1FinalFormulaState(player) : null;
     const b2FormulaState = formulaId === "b2" ? getAiB2FinalFormulaState(player, context) : null;
+    const cFormulaPipeline = (formulaId === "c1" || formulaId === "c2")
+      ? getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand)
+      : null;
     const thresholds = Array.isArray(finalScoringState.thresholds) && finalScoringState.thresholds.length
       ? finalScoringState.thresholds
       : finalScoring.FINAL_SCORE_THRESHOLDS || [];
@@ -9037,6 +9040,7 @@
         b2FeasibilityPenalty: Math.round(b2FeasibilityPenalty * 100) / 100,
         b2OrbitLandCount: b2FormulaState ? b2FormulaState.orbitLandCount : 0,
         b2SectorWins: b2FormulaState ? b2FormulaState.sectorWins : 0,
+        cFormulaPipeline,
       },
     };
   }
@@ -36094,6 +36098,8 @@
             playerLabel: entry.playerLabel,
             message: entry.message,
           })),
+          finalScoreMarkDecisions: sample.finalScoreMarkDecisions || [],
+          grandStrategyPickDecisions: sample.grandStrategyPickDecisions || [],
           analysis: sample.analysis
             ? {
               actionCounts: sample.analysis.actionCounts,

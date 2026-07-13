@@ -425,7 +425,68 @@
           plannerShadow: compactAiAutoBattleLogValue(details.plannerShadow || null),
         };
       }
+      if (type === "final-score-mark") {
+        const candidates = Array.isArray(details.candidates)
+          ? details.candidates.filter((candidate) => candidate?.available !== false)
+          : [];
+        return {
+          pending: compactAiAutoBattleLogValue(details.pending || null),
+          selected: summarizeAiFinalScoreMarkCandidate(details.selected || details.mark || {}),
+          candidates: candidates.map(summarizeAiFinalScoreMarkCandidate),
+          mark: compactAiAutoBattleLogValue(details.mark || null),
+        };
+      }
+      if (type === "pick-card") {
+        const topPublicCandidates = Array.isArray(details.topPublicCandidates)
+          ? details.topPublicCandidates.slice(0, 5)
+          : [];
+        const selectedCard = details.card
+          ? summarizeAiAutoBattleLogCard(details.card)
+          : topPublicCandidates.find((candidate) => (
+            Number(candidate?.slotIndex) === Number(details.slotIndex)
+          )) || null;
+        return {
+          pendingType: details.pendingType || null,
+          tradeId: details.tradeId || null,
+          aiReason: details.aiReason || null,
+          aiPreferBlindDraw: details.aiPreferBlindDraw === true,
+          slotIndex: details.slotIndex ?? null,
+          score: details.score ?? null,
+          selectedCard,
+          skippedPublicCard: details.skippedPublicCard || null,
+          topPublicCandidates,
+        };
+      }
+      if (type === "play-card") {
+        const selected = details.selected || null;
+        return {
+          selectedLabel: details.selectedLabel || null,
+          handIndex: details.handIndex ?? selected?.handIndex ?? null,
+          card: details.card ? summarizeAiAutoBattleLogCard(details.card) : null,
+          selected: selected ? {
+            cardId: selected.cardId || null,
+            cardInstanceId: selected.cardInstanceId || null,
+            cardLabel: selected.cardLabel || details.selectedLabel || null,
+            price: selected.price ?? null,
+            typeCode: selected.typeCode ?? null,
+            score: selected.score ?? null,
+          } : null,
+        };
+      }
       return compactAiAutoBattleLogValue(details || {});
+    }
+
+    function summarizeAiAutoBattleLogCard(card = {}) {
+      return {
+        cardId: card.cardId || card.id || null,
+        cardInstanceId: card.id || null,
+        cardLabel: getAiCardDisplayLabel({ card, cardId: card.cardId || card.id || null })
+          || card.cardName
+          || card.label
+          || null,
+        price: getCardPrice(card),
+        typeCode: getCardTypeCode(card),
+      };
     }
 
     function createAiAutoBattleEntry(type, message, details = {}) {
@@ -21929,9 +21990,91 @@
       });
     }
 
+    function summarizeAiFinalScoreMarkCandidate(candidate = {}) {
+      const pipeline = candidate.scoreBreakdown?.cFormulaPipeline || null;
+      return {
+        tileId: candidate.tileId || null,
+        formulaId: candidate.formulaId || null,
+        slotIndex: candidate.slotIndex ?? null,
+        threshold: candidate.threshold ?? null,
+        baseValue: candidate.baseValue ?? null,
+        multiplier: candidate.multiplier ?? null,
+        immediateScore: candidate.immediateScore ?? null,
+        score: candidate.score ?? null,
+        scoreBreakdown: candidate.scoreBreakdown
+          ? {
+            zeroBaseLatePenalty: candidate.scoreBreakdown.zeroBaseLatePenalty,
+            weakCFormulaPenalty: candidate.scoreBreakdown.weakCFormulaPenalty,
+            b1FeasibilityPenalty: candidate.scoreBreakdown.b1FeasibilityPenalty,
+            b2FeasibilityPenalty: candidate.scoreBreakdown.b2FeasibilityPenalty,
+            cFormulaPipeline: pipeline
+              ? {
+                completedTaskCount: pipeline.completedTaskCount,
+                reservedTaskCount: pipeline.reservedTaskCount,
+                handTaskCount: pipeline.handTaskCount,
+                type3Reserved: pipeline.type3Reserved,
+                type3InHand: pipeline.type3InHand,
+                pipelineScale: pipeline.pipelineScale,
+                expectedNewTasks: pipeline.expectedNewTasks,
+                expectedNewType3: pipeline.expectedNewType3,
+                projectedBase: pipeline.projectedBase,
+              }
+              : null,
+          }
+          : null,
+      };
+    }
+
+    function summarizeAiFinalScoreMarkDecision(entry = {}) {
+      const candidates = Array.isArray(entry.details?.candidates)
+        ? entry.details.candidates.filter((candidate) => candidate?.available !== false)
+        : [];
+      return {
+        roundNumber: entry.roundNumber ?? null,
+        turnNumber: entry.turnNumber ?? null,
+        playerId: entry.playerId || null,
+        playerLabel: entry.playerLabel || null,
+        resources: entry.playerResources || null,
+        selected: summarizeAiFinalScoreMarkCandidate(entry.details?.selected || entry.details?.mark || {}),
+        candidates: candidates.map(summarizeAiFinalScoreMarkCandidate),
+      };
+    }
+
     function compactAiAutoBattleSample(report, gameIndex, options = {}) {
       const analysis = report?.analysis || null;
       const lowMarkPlayerDiagnosticsList = buildAiLowMarkPlayerDiagnostics(report);
+      const reportLogs = Array.isArray(report?.logs) ? report.logs : [];
+      const finalScoreMarkDecisions = Array.isArray(report?.logs)
+        ? reportLogs
+          .filter((entry) => entry?.type === "final-score-mark")
+          .map(summarizeAiFinalScoreMarkDecision)
+        : [];
+      const grandStrategyPickDecisions = reportLogs
+        .map((entry, index) => ({ entry, index }))
+        .filter(({ entry }) => (
+          entry?.type === "pick-card"
+          && entry.details?.pendingType === "industry_strategy_pick"
+        ))
+        .map(({ entry, index }) => {
+          const selectedCard = entry.details?.selectedCard || entry.details?.skippedPublicCard || null;
+          const selectedCardId = selectedCard?.cardInstanceId || selectedCard?.cardId || null;
+          const playedLater = Boolean(selectedCardId && reportLogs.slice(index + 1).some((laterEntry) => {
+            if (laterEntry?.type !== "play-card" || laterEntry.playerId !== entry.playerId) return false;
+            const played = laterEntry.details?.selected || laterEntry.details?.card || null;
+            const playedCardId = played?.cardInstanceId || played?.cardId || null;
+            return String(playedCardId || "") === String(selectedCardId);
+          }));
+          return {
+            roundNumber: entry.roundNumber ?? null,
+            turnNumber: entry.turnNumber ?? null,
+            playerId: entry.playerId || null,
+            playerLabel: entry.playerLabel || null,
+            selectedCard,
+            selectedScore: entry.details?.score ?? null,
+            playedLater,
+            topPublicCandidates: entry.details?.topPublicCandidates || [],
+          };
+        });
       return {
         gameIndex,
         summary: report?.lastSummary || null,
@@ -21941,6 +22084,8 @@
         pendingState: report?.pendingState || null,
         lowMarkPlayerDiagnostics: lowMarkPlayerDiagnosticsList[0] || null,
         lowMarkPlayerDiagnosticsList,
+        finalScoreMarkDecisions,
+        grandStrategyPickDecisions,
         tailLogs: Array.isArray(report?.logs) ? report.logs.slice(-5) : [],
         ...(options.includeLogs && Array.isArray(report?.logs) ? { logs: report.logs } : {}),
         analysis: analysis
