@@ -6923,6 +6923,101 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    turnNumber: 1,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    quickTrades: {
+      "credits-for-energy": {
+        id: "credits-for-energy",
+        label: "2 credits -> 1 energy",
+        cost: { credits: 2 },
+        gain: { energy: 1 },
+      },
+      "cards-for-energy": {
+        id: "cards-for-energy",
+        label: "2 cards -> 1 energy",
+        cost: { handSize: 2 },
+        gain: { energy: 1 },
+      },
+      "energy-for-credit": {
+        id: "energy-for-credit",
+        label: "2 energy -> 1 credit",
+        cost: { energy: 2 },
+        gain: { credits: 1 },
+      },
+    },
+    blueResources: { score: 47, credits: 5, energy: 5, publicity: 2, availableData: 0, handSize: 6 },
+    blueHand: Array.from({ length: 6 }, (_item, index) => ({
+      id: `terminal-trade-filler-${index}`,
+      cardName: `Terminal trade filler ${index}`,
+      price: 3,
+      typeCode: 1,
+      playEffects: [],
+    })),
+    finalScoringState: {
+      tiles: {
+        final_a1: {
+          id: "final_a1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+        final_b1: { id: "final_b1", marks: [] },
+        final_d1: { id: "final_d1", marks: [] },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b1: "b1",
+      final_d1: "d1",
+    },
+    scanEffects: {
+      EFFECT_TYPES: {
+        EARTH_SECTOR_SCAN: "earth_sector_scan",
+        IMPROVED_SECTOR_SCAN: "improved_sector_scan",
+        MERCURY_SECTOR_SCAN: "mercury_sector_scan",
+        PUBLIC_CARD_SCAN: "public_card_scan",
+        HAND_SCAN: "hand_scan",
+        SCAN_ACTION_4: "scan_action_4",
+      },
+      SCAN_COST: { credits: 1, energy: 2 },
+      getStandardScanCost: () => ({ credits: 1, energy: 2 }),
+      buildScanEffectQueue: () => [],
+      canExecuteScan: () => ({ ok: false, message: "no useful scan target" }),
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "pass") || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.notEqual(result?.blocked, true, "terminal no-cashout trade guard should not block the turn");
+  const genericRecoveryTrades = turnChoices
+    .flat()
+    .filter((candidate) => (
+      candidate.id === "quickTrade"
+      && candidate.valueBreakdown?.lateResourceRecoveryTrade
+      && ["credits-for-energy", "cards-for-energy", "energy-for-credit"].includes(candidate.tradeId)
+      && String(candidate.reason || "").startsWith("后期落后：")
+    ));
+  assert.deepEqual(
+    genericRecoveryTrades,
+    [],
+    "final round should not exchange resources without a concrete immediate recovery signal",
+  );
+}
+
+{
   const protection = createAiControllerHarness(null, { roundNumber: 4 })
     .controller.getAiFinalAnalyzeDirectScoreProtection;
   assert.equal(

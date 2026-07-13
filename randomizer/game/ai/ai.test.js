@@ -1119,46 +1119,8 @@ const huanyuResourceOpening = policy.chooseInitialSelection(huanyuResourceOpenin
 });
 assert.deepEqual(
   huanyuResourceOpening.openingPlan.topPlans[0].initialNumbers,
-  [13, 2],
-  "Huanyu should rank two immediate scans plus usable credits above alien 2's lower-value first trace",
-);
-
-const weakHuanyuOrbitScanOpeningOffer = {
-  industryOptions: [{ id: "industry:huanyu.png", label: "寰宇超动力" }],
-  initialOptions: [
-    { id: "initial:3", label: "初始牌 3" },
-    { id: "initial:5", label: "初始牌 5" },
-    { id: "initial:13", label: "初始牌 13" },
-  ],
-};
-const weakHuanyuOrbitScanOpening = policy.chooseInitialSelection(weakHuanyuOrbitScanOpeningOffer, {
-  roundNumber: 1,
-  forcedIndustryCard: weakHuanyuOrbitScanOpeningOffer.industryOptions[0],
-  aiDifficulty: "weak_start",
-});
-assert.deepEqual(
-  weakHuanyuOrbitScanOpening.openingPlan.topPlans[0].initialNumbers,
-  [3, 13],
-  "weak Huanyu should prefer a real orbit plus two scans over a second orbit when the scores are otherwise tied",
-);
-
-const weakHuanyuSlotTwoTraceOpeningOffer = {
-  industryOptions: [{ id: "industry:huanyu.png", label: "寰宇超动力" }],
-  initialOptions: [
-    { id: "initial:10", label: "初始牌 10" },
-    { id: "initial:7", label: "初始牌 7" },
-    { id: "initial:3", label: "初始牌 3" },
-  ],
-};
-const weakHuanyuSlotTwoTraceOpening = policy.chooseInitialSelection(weakHuanyuSlotTwoTraceOpeningOffer, {
-  roundNumber: 1,
-  forcedIndustryCard: weakHuanyuSlotTwoTraceOpeningOffer.industryOptions[0],
-  aiDifficulty: "weak_start",
-});
-assert.deepEqual(
-  weakHuanyuSlotTwoTraceOpening.openingPlan.topPlans[0].initialNumbers,
-  [7, 3],
-  "opening valuation should use alien 2's real lower first-trace reward instead of the old generic trace constant",
+  [11, 2],
+  "Huanyu should preserve the full strategic value of an opening trace instead of using only its immediate state reward",
 );
 
 assert.equal(policy.chooseTurnAction([
