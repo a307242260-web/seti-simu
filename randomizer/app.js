@@ -36205,6 +36205,8 @@
           stopOnBlocked: params.get("stopOnBlocked") !== "false",
           recordStrategyTuning: false,
           includeLogs: includeActionLogs,
+          retainAnalysis: includeDiagnostics || includeActionLogs,
+          includeSampleDiagnostics: includeDiagnostics || includeActionLogs,
           sequenceWindowTurns: 8,
           onStep: (progress) => {
             const step = Math.max(0, Math.round(Number(progress?.steps) || 0));

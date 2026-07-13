@@ -22148,14 +22148,17 @@
 
     function compactAiAutoBattleSample(report, gameIndex, options = {}) {
       const analysis = report?.analysis || null;
-      const lowMarkPlayerDiagnosticsList = buildAiLowMarkPlayerDiagnostics(report);
+      const includeDiagnostics = options.includeDiagnostics !== false;
+      const lowMarkPlayerDiagnosticsList = includeDiagnostics
+        ? buildAiLowMarkPlayerDiagnostics(report)
+        : [];
       const reportLogs = Array.isArray(report?.logs) ? report.logs : [];
-      const finalScoreMarkDecisions = Array.isArray(report?.logs)
+      const finalScoreMarkDecisions = includeDiagnostics && Array.isArray(report?.logs)
         ? reportLogs
           .filter((entry) => entry?.type === "final-score-mark")
           .map(summarizeAiFinalScoreMarkDecision)
         : [];
-      const grandStrategyPickDecisions = reportLogs
+      const grandStrategyPickDecisions = includeDiagnostics ? reportLogs
         .map((entry, index) => ({ entry, index }))
         .filter(({ entry }) => (
           entry?.type === "pick-card"
@@ -22202,8 +22205,8 @@
             laterCardUse,
             topPublicCandidates: entry.details?.topPublicCandidates || [],
           };
-        });
-      const grandStrategyPassiveDecisions = reportLogs
+        }) : [];
+      const grandStrategyPassiveDecisions = includeDiagnostics ? reportLogs
         .filter((entry) => entry?.type === "industry" && entry.details?.slotId)
         .map((entry) => ({
           roundNumber: entry.roundNumber ?? null,
@@ -22215,8 +22218,8 @@
           selectedScore: entry.details.score ?? null,
           rewardLabel: entry.details.rewardLabel || null,
           choices: entry.details.choices || [],
-        }));
-      const initialIncomeDiscardDecisions = reportLogs
+        })) : [];
+      const initialIncomeDiscardDecisions = includeDiagnostics ? reportLogs
         .filter((entry) => (
           entry?.type === "discard"
           && entry.details?.pendingType === "initial_income"
@@ -22230,7 +22233,7 @@
           selectedCards: entry.details?.selectedCards || [],
           incomeGainByIndex: entry.details?.incomeGainByIndex || [],
           incomeDiscardPreview: entry.details?.incomeDiscardPreview || null,
-        }));
+        })) : [];
       return {
         gameIndex,
         summary: report?.lastSummary || null,
@@ -22246,7 +22249,7 @@
         initialIncomeDiscardDecisions,
         tailLogs: Array.isArray(report?.logs) ? report.logs.slice(-5) : [],
         ...(options.includeLogs && Array.isArray(report?.logs) ? { logs: report.logs } : {}),
-        analysis: analysis
+        analysis: includeDiagnostics && analysis
           ? {
             turnActionCount: analysis.turnActionCount,
             actionCounts: analysis.actionCounts,
@@ -22330,6 +22333,8 @@
       const games = Math.min(100, Math.max(1, Math.round(Number(options.games) || 5)));
       const samples = [];
       const analyses = [];
+      const retainAnalysis = options.retainAnalysis !== false;
+      const includeSampleDiagnostics = options.includeSampleDiagnostics !== false;
       const stopOnBlocked = options.stopOnBlocked !== false;
 
       for (let index = 0; index < games; index += 1) {
@@ -22347,9 +22352,10 @@
         const analysis = options.sequenceWindowTurns != null
           ? ai?.analytics?.analyzeBattleReport?.(report, analysisOptions) || null
           : report.analysis || ai?.analytics?.analyzeBattleReport?.(report, analysisOptions) || null;
-        if (analysis) analyses.push(analysis);
+        if (analysis && retainAnalysis) analyses.push(analysis);
         samples.push(compactAiAutoBattleSample({ ...report, analysis }, index + 1, {
           includeLogs: options.includeLogs === true,
+          includeDiagnostics: includeSampleDiagnostics,
         }));
         if (stopOnBlocked && (
           report.lastSummary?.blocked
@@ -22361,7 +22367,7 @@
         }
       }
 
-      const summary = ai?.analytics?.summarizeBattleAnalyses
+      const summary = retainAnalysis && ai?.analytics?.summarizeBattleAnalyses
         ? ai.analytics.summarizeBattleAnalyses(analyses, { sequenceWindowTurns: options.sequenceWindowTurns })
         : null;
       const blockedGames = samples.filter((sample) => sample.summary?.blocked || sample.bugCount > 0).length;
