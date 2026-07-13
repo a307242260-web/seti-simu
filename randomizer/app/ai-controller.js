@@ -8004,6 +8004,38 @@
       return tradeSpecs
         .filter((spec) => spec.enabled)
         .map((spec) => {
+          const concreteRecoverySignal = (() => {
+            if (spec.tradeId === "credits-for-energy") {
+              return canScanAfterCreditsForEnergy
+                || canScanProgressAfterCreditsForEnergy
+                || aiNumber(launchMoveRecoveryByTrade[spec.tradeId]?.score) > 0
+                || aiNumber(planetCashoutRecoveryByTrade[spec.tradeId]?.score) > 0
+                || aiNumber(b2SectorScanUnlockByTrade[spec.tradeId]) > 0
+                || aiNumber(midgameAnalyzeUnlockByTrade[spec.tradeId]) > 0;
+            }
+            if (spec.tradeId === "cards-for-energy") {
+              return secondMarkAnalyzeEnergyRecovery
+                || canScanAfterCardsForEnergy
+                || canScanProgressAfterCardsForEnergy
+                || aiNumber(launchMoveRecoveryByTrade[spec.tradeId]?.score) > 0
+                || aiNumber(planetCashoutRecoveryByTrade[spec.tradeId]?.score) > 0
+                || aiNumber(b2SectorScanUnlockByTrade[spec.tradeId]) > 0
+                || aiNumber(midgameAnalyzeUnlockByTrade[spec.tradeId]) > 0;
+            }
+            if (spec.tradeId === "energy-for-credit") {
+              return canScanAfterEnergyForCredit
+                || secondMarkCreditRecovery
+                || thirdMarkCreditRecovery
+                || finalLowScoreEnergyForCreditScanUnlock
+                || aiNumber(b2SectorScanUnlockByTrade[spec.tradeId]) > 0;
+            }
+            return true;
+          })();
+          const genericFinalResourceRecovery = getAiRoundNumber() >= FINAL_ROUND_NUMBER
+            && canPrepareFinalThresholdAction
+            && ["credits-for-energy", "cards-for-energy", "energy-for-credit"].includes(spec.tradeId)
+            && String(spec.reason || "").startsWith("后期落后：");
+          if (genericFinalResourceRecovery && !concreteRecoverySignal) return null;
           const trade = quickTrades.getTradeAction(spec.tradeId);
           const check = quickTrades.canExecuteTrade?.(spec.tradeId, createActionContext()) || { ok: false };
           if (!trade || !check.ok) return null;
@@ -8030,6 +8062,7 @@
             preferBlindDraw: Boolean(spec.preferBlindDraw),
             valueBreakdown: {
               lateResourceRecoveryTrade: true,
+              concreteRecoverySignal,
               currentScore,
               finalMarkCount: finalMarks,
               nextFinalMarkThreshold: recoveryThreshold || null,
