@@ -9029,11 +9029,17 @@
       let value = 0;
 
       // 两个隐藏槽位的揭示进度价值相同；槽位差异只来自 state 图真实即时奖励。
-      // 外星人 1 首痕迹为 5 分 + 1 宣传，外星人 2 为 3 分 + 1 宣传，
-      // 不能再用历史遗留的“2 号槽揭示加速”常数反向覆盖这 2 分差；但已经
-      // 放下 1/2 枚首痕迹的任一槽位仍保留补齐揭示价值，避免中途改线。
-      if (placed >= 2 && round <= 3) value += round <= 2 ? 9 : 7;
-      else if (placed === 1 && round <= 3) value += round <= 2 ? 4.5 : 3;
+      // 0 进度不再给 2 号槽历史加速，因而由 1 号的 5 分对 2 号的 3 分打破平局。
+      // 已投入 1/2 枚首痕迹后，保留旧模型经实战形成的揭示链量级，但改成槽位无关。
+      if (round <= 2) {
+        if (placed >= 2) value += 12.5;
+        else if (placed === 1) value += 5.2;
+      } else if (round === 3) {
+        if (placed >= 2) value += 10.8;
+        else if (placed === 1) value += 3.1;
+      } else if (placed >= 2) {
+        value += 2;
+      }
       if (round >= FINAL_ROUND_NUMBER && placed <= 1) value -= 2;
       return roundAiScore(value);
     }
