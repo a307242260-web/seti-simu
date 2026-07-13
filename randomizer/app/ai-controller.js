@@ -12643,6 +12643,23 @@
       );
     }
 
+    function scoreAiHuanyuOrange2FutureMoveValue(candidate, player = getCurrentPlayer()) {
+      if (candidate?.tileId !== "orange2" || !player) return 0;
+      const industryLabel = String(getAiIndustryCard(player)?.label || "");
+      if (!industryLabel.includes("寰宇")) return 0;
+      const round = getAiRoundNumber();
+      if (round <= 1 || round > FINAL_ROUND_NUMBER) return 0;
+      const activeRocketCount = (rocketActions.getRocketsForPlayer?.(rocketState, player.id) || []).length;
+      if (activeRocketCount <= 0 || scoreAiOrange2MobilityNeed(player) <= 0) return 0;
+
+      // 每轮两个寰宇节点都只有 1 移动力；橙2会把离开小行星的门槛从 2 降为 1，
+      // 同时让进入小行星获得宣传。按尚未结算的节点计未来解锁，不影响已验证的首轮开局科技。
+      const currentRoundMoves = player.industryRoundMarkRound === round ? 0 : 2;
+      const futureRoundMoves = Math.max(0, FINAL_ROUND_NUMBER - round) * 2;
+      const remainingFreeMoves = currentRoundMoves + futureRoundMoves;
+      return roundAiScore(Math.min(5.2, remainingFreeMoves * 1.3));
+    }
+
     function isAiLandingEffect(effect) {
       if (!effect?.type) return false;
       return effect.type === cardEffects.EFFECT_TYPES.CARD_LAND
@@ -13741,6 +13758,7 @@
       if (techType === "blue") value += 1.5 + scoreAiBlueTechDataEngineValue(player) * 0.5;
       if (candidate?.tileId === "orange1") value += (getMovableTokensForPlayer(player?.id).length ? 1 : 4);
       if (candidate?.tileId === "orange2") value += scoreAiOrange2MobilityNeed(player) * 0.75;
+      value += scoreAiHuanyuOrange2FutureMoveValue(candidate, player);
       if (candidate?.tileId === "orange3") value += 4.8 + getAiMapDemand(demand.actions, "land") * 0.05;
       if (candidate?.tileId === "orange4") {
         const satelliteProfile = getAiOrange4SatellitePotentialProfile(player);
@@ -19653,6 +19671,7 @@
       candidate.valueBreakdown = {
         lateTechCatchupValue: scoreAiLateTechEngineCatchupValue(candidate, getCurrentPlayer()),
         lowTechCatchupValue: scoreAiLowTechBoardCatchupValue(candidate, getCurrentPlayer()),
+        huanyuOrange2FutureMoveValue: scoreAiHuanyuOrange2FutureMoveValue(candidate, getCurrentPlayer()),
       };
       if (candidate.tileId === "orange4") {
         candidate.valueBreakdown.orange4SatelliteProfile = getAiOrange4SatellitePotentialProfile(getCurrentPlayer());

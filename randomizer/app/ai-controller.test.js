@@ -77,6 +77,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     hand: options.blueHand || [],
     reservedCards: options.blueReservedCards || [],
     initialSelection: options.blueInitialSelection || null,
+    industryRoundMarkRound: options.blueIndustryRoundMarkRound ?? null,
     industryStrategyPassiveSlots: options.blueIndustryStrategyPassiveSlots || undefined,
     aiDifficulty: options.blueAiDifficulty || options.aiDifficulty || undefined,
     resources: { credits: 5, energy: 5, ...(options.blueResources || {}) },
@@ -7107,6 +7108,63 @@ function makeYichangdianAlienState(options = {}) {
     energyRefill,
     undefined,
     "energy-for-card should not consume the payment for a stronger already-ready scan",
+  );
+}
+
+{
+  const turnChoices = [];
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 2,
+    canStartMainAction: true,
+    blueInitialSelection: {
+      industry: { id: "industry:寰宇超动力", label: "寰宇超动力" },
+    },
+    blueResources: { score: 31, credits: 3, energy: 1, publicity: 6, handSize: 2 },
+    blueOwnedTechTiles: { orange4: true },
+    blueTechCounts: { orange: 1, purple: 0, blue: 0 },
+    movableTokens: [{ id: 1, playerId: "player-blue", sector: { x: 1, y: 1 } }],
+    takeableTechIds: ["orange2", "purple3"],
+    techStacks: {
+      orange2: { techType: "orange", stackIndex: 2, bonusId: "bonus_1p" },
+      purple3: { techType: "purple", stackIndex: 3, bonusId: "bonus_1p" },
+    },
+    finalScoringState: {
+      tiles: {
+        final_d1: {
+          id: "final_d1",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+      },
+    },
+    finalFormulaIds: { final_d1: "d1" },
+    finalSlotMultipliers: { d1: { 1: 11 } },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "pass") || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.notEqual(result?.blocked, true, "Huanyu orange2 comparison should remain executable");
+  const researchCandidate = turnChoices.flat().find((candidate) => candidate.id === "researchTech");
+  const orange2 = researchCandidate?.takeable?.find((candidate) => candidate.tileId === "orange2");
+  const purple3 = researchCandidate?.takeable?.find((candidate) => candidate.tileId === "purple3");
+  assert.equal(
+    orange2?.valueBreakdown?.huanyuOrange2FutureMoveValue,
+    5.2,
+    "round-two Huanyu orange2 should value the remaining one-point company moves",
+  );
+  assert.equal(
+    purple3?.valueBreakdown?.huanyuOrange2FutureMoveValue,
+    0,
+    "Huanyu company synergy should remain local to orange2",
   );
 }
 
