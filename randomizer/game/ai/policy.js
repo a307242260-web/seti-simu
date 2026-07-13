@@ -229,8 +229,18 @@
     // 初始痕迹还包含后续揭示链、任务和颜色供给价值，不能只按 state 图即时分折价。
     score += combined.traces * 7;
     score += combined.orbits * 2.5;
+    const isHuanyuSuperdrive = String(industry?.label || industry?.id || "").includes("寰宇超动力");
+    combined.huanyuUnsupportedSecondOrbitPenalty = isHuanyuSuperdrive
+      && combined.orbits >= 2
+      && combined.scan <= 0
+      && combined.traces <= 0
+      && combined.data <= 0
+      && combined.hand <= 0
+      ? 3.5
+      : 0;
+    score -= combined.huanyuUnsupportedSecondOrbitPenalty;
     if (
-      String(industry?.label || industry?.id || "").includes("寰宇超动力")
+      isHuanyuSuperdrive
       && combined.traces <= 0
       && combined.orbits >= 1
       && combined.data >= 1

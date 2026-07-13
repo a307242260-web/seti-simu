@@ -1123,6 +1123,29 @@ assert.deepEqual(
   "Huanyu should preserve the full strategic value of an opening trace instead of using only its immediate state reward",
 );
 
+const huanyuUnsupportedSecondOrbitOffer = {
+  industryOptions: [{ id: "industry:huanyu.png", label: "寰宇超动力" }],
+  initialOptions: [
+    { id: "initial:8", label: "初始牌 8" },
+    { id: "initial:5", label: "初始牌 5" },
+    { id: "initial:14", label: "初始牌 14" },
+  ],
+};
+const huanyuUnsupportedSecondOrbitOpening = policy.chooseInitialSelection(huanyuUnsupportedSecondOrbitOffer, {
+  roundNumber: 1,
+  forcedIndustryCard: huanyuUnsupportedSecondOrbitOffer.industryOptions[0],
+  aiDifficulty: "weak_start",
+});
+assert.deepEqual(
+  huanyuUnsupportedSecondOrbitOpening.openingPlan.topPlans[0].initialNumbers,
+  [8, 14],
+  "Huanyu should prefer an energy-and-card engine over a second unsupported opening orbit",
+);
+const huanyuUnsupportedSecondOrbitPlan = huanyuUnsupportedSecondOrbitOpening.openingPlan.topPlans.find(
+  (plan) => plan.initialNumbers.includes(8) && plan.initialNumbers.includes(5),
+);
+assert.equal(huanyuUnsupportedSecondOrbitPlan?.summary?.huanyuUnsupportedSecondOrbitPenalty, 3.5);
+
 assert.equal(policy.chooseTurnAction([
   { id: "orbit", available: true, score: 20, actionGraph: { net: 2 } },
   { id: "playCard", available: true, score: 1, actionGraph: { net: 9 } },
