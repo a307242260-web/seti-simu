@@ -22216,6 +22216,21 @@
           rewardLabel: entry.details.rewardLabel || null,
           choices: entry.details.choices || [],
         }));
+      const initialIncomeDiscardDecisions = reportLogs
+        .filter((entry) => (
+          entry?.type === "discard"
+          && entry.details?.pendingType === "initial_income"
+        ))
+        .map((entry) => ({
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || null,
+          resources: entry.playerResources || null,
+          selectedCards: entry.details?.selectedCards || [],
+          incomeGainByIndex: entry.details?.incomeGainByIndex || [],
+          incomeDiscardPreview: entry.details?.incomeDiscardPreview || null,
+        }));
       return {
         gameIndex,
         summary: report?.lastSummary || null,
@@ -22228,6 +22243,7 @@
         finalScoreMarkDecisions,
         grandStrategyPickDecisions,
         grandStrategyPassiveDecisions,
+        initialIncomeDiscardDecisions,
         tailLogs: Array.isArray(report?.logs) ? report.logs.slice(-5) : [],
         ...(options.includeLogs && Array.isArray(report?.logs) ? { logs: report.logs } : {}),
         analysis: analysis

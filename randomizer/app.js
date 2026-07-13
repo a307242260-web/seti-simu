@@ -36108,6 +36108,7 @@
           finalScoreMarkDecisions: sample.finalScoreMarkDecisions || [],
           grandStrategyPickDecisions: sample.grandStrategyPickDecisions || [],
           grandStrategyPassiveDecisions: sample.grandStrategyPassiveDecisions || [],
+          initialIncomeDiscardDecisions: sample.initialIncomeDiscardDecisions || [],
           ...(includeActionLogs ? {
             actionDecisionLogs: (sample.logs || [])
               .filter((entry) => entry?.type === "turn-action" || entry?.type === "tech-placement")
