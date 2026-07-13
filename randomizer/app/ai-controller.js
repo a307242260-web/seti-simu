@@ -795,6 +795,19 @@
       }, {});
     }
 
+    function getAiProbePlanetIds(player = getCurrentPlayer(), excludePlanetIds = []) {
+      if (!player) return [];
+      const excluded = new Set((excludePlanetIds || []).map(String));
+      const planetIds = new Set();
+      for (const rocket of rocketActions.getRocketsForPlayer?.(rocketState, player.id) || []) {
+        const coordinate = rocketActions.getRocketSectorCoordinate?.(rocket) || null;
+        const planetId = getAiPlanetAtCoordinate(coordinate)?.planetId || null;
+        if (!planetId || excluded.has(String(planetId))) continue;
+        planetIds.add(String(planetId));
+      }
+      return Array.from(planetIds);
+    }
+
     function getAiTaskConditionCurrentCount(condition = {}, player = null) {
       if (!condition || !player) return null;
       const type = condition.type || null;
@@ -821,6 +834,9 @@
         return aiNumber(endGameScoring?.countOrbitOrLandMarkers?.(player, planetStatsState, createActionContext()));
       }
       if (type === "landingCount") return countAiLandingMarkers(player);
+      if (type === "probesOnDifferentPlanets") {
+        return getAiProbePlanetIds(player, condition.excludePlanetIds || []).length;
+      }
       if (type === "completedSectorsByColor") {
         return aiNumber(endGameScoring?.countSectorWinsByColor?.(player, nebulaDataState, condition.color));
       }
@@ -1035,7 +1051,9 @@
       };
     }
 
-    function buildAiAutoBattleReport() {
+    function buildAiAutoBattleReport(options = {}) {
+      const includeAnalysis = options.includeAnalysis !== false;
+      const includeDiagnostics = options.includeDiagnostics !== false;
       const report = {
         enabled: aiAutoBattleState.enabled,
         running: aiAutoBattleState.running,
@@ -1052,17 +1070,19 @@
         strategyTuningHistory: getAiStrategyTuningHistory().slice(-10),
         strategyTuningRecommendation: getAiStrategyTuningRecommendation(),
       };
-      if (ai?.analytics?.analyzeBattleReport) {
+      if (includeAnalysis && ai?.analytics?.analyzeBattleReport) {
         report.analysis = ai.analytics.analyzeBattleReport(report);
       }
-      const lowMarkPlayerDiagnosticsList = buildAiLowMarkPlayerDiagnostics(report);
-      report.lowMarkPlayerDiagnostics = lowMarkPlayerDiagnosticsList[0] || null;
-      report.lowMarkPlayerDiagnosticsList = lowMarkPlayerDiagnosticsList;
+      if (includeDiagnostics) {
+        const lowMarkPlayerDiagnosticsList = buildAiLowMarkPlayerDiagnostics(report);
+        report.lowMarkPlayerDiagnostics = lowMarkPlayerDiagnosticsList[0] || null;
+        report.lowMarkPlayerDiagnosticsList = lowMarkPlayerDiagnosticsList;
+      }
       return report;
     }
 
-    function getAiAutoBattleReport() {
-      return structuredClone(buildAiAutoBattleReport());
+    function getAiAutoBattleReport(options = {}) {
+      return structuredClone(buildAiAutoBattleReport(options));
     }
 
     function getAiAutoBattleProgress() {
@@ -21866,7 +21886,10 @@
       aiAutoBattleState.running = false;
       aiAutoBattleState.lastSummary = summary;
       recordAiAutoBattleLog("finish", summary.message, summary);
-      return getAiAutoBattleReport();
+      return getAiAutoBattleReport({
+        includeAnalysis: options.retainAnalysis !== false && options.includeAnalysis !== false,
+        includeDiagnostics: options.includeSampleDiagnostics !== false && options.includeDiagnostics !== false,
+      });
     }
 
     function stopAiAutoBattle() {
@@ -22349,9 +22372,11 @@
           return report;
         }
         const analysisOptions = { sequenceWindowTurns: options.sequenceWindowTurns };
-        const analysis = options.sequenceWindowTurns != null
-          ? ai?.analytics?.analyzeBattleReport?.(report, analysisOptions) || null
-          : report.analysis || ai?.analytics?.analyzeBattleReport?.(report, analysisOptions) || null;
+        const analysis = retainAnalysis
+          ? options.sequenceWindowTurns != null
+            ? ai?.analytics?.analyzeBattleReport?.(report, analysisOptions) || null
+            : report.analysis || ai?.analytics?.analyzeBattleReport?.(report, analysisOptions) || null
+          : null;
         if (analysis && retainAnalysis) analyses.push(analysis);
         samples.push(compactAiAutoBattleSample({ ...report, analysis }, index + 1, {
           includeLogs: options.includeLogs === true,

@@ -30,6 +30,7 @@ function getBatchCdpEvaluateTimeoutMs(timeoutMs) {
 function parseArgs(argv) {
   const options = {
     seed: "ai-v2-baseline",
+    seeds: null,
     games: 5,
     activePlayerCount: 4,
     maxSteps: 2500,
@@ -51,8 +52,11 @@ function parseArgs(argv) {
     aiDifficulty: null,
     includeState: false,
     includeLogs: false,
+    lightweight: false,
+    sampleDiagnostics: false,
     timeoutMs: null,
     tmpRoot: process.env.SETI_AI_TMP_ROOT || os.tmpdir(),
+    root: REPO_ROOT,
   };
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -63,6 +67,12 @@ function parseArgs(argv) {
     switch (rawKey) {
       case "seed":
         options.seed = value;
+        break;
+      case "seeds":
+        options.seeds = String(value || "")
+          .split(",")
+          .map((item) => item.trim())
+          .filter(Boolean);
         break;
       case "games":
       case "activePlayerCount":
@@ -107,6 +117,14 @@ function parseArgs(argv) {
         options.includeLogs = true;
         if (inlineValue == null && value != null && !String(value).startsWith("--")) index -= 1;
         break;
+      case "lightweight":
+        options.lightweight = true;
+        if (inlineValue == null && value != null && !String(value).startsWith("--")) index -= 1;
+        break;
+      case "sampleDiagnostics":
+        options.sampleDiagnostics = true;
+        if (inlineValue == null && value != null && !String(value).startsWith("--")) index -= 1;
+        break;
       case "headed":
         options.headless = false;
         if (inlineValue == null && value != null && !String(value).startsWith("--")) index -= 1;
@@ -123,6 +141,9 @@ function parseArgs(argv) {
         break;
       case "tmpRoot":
         options.tmpRoot = value;
+        break;
+      case "root":
+        options.root = value;
         break;
       default:
         throw new Error(`Unknown option --${rawKey}`);
@@ -531,9 +552,13 @@ async function main() {
   const options = parseArgs(process.argv.slice(2));
   const debugPort = 10000 + Math.floor(Math.random() * 30000);
   const tmpRoot = path.resolve(options.tmpRoot || os.tmpdir());
+  const repoRoot = path.resolve(options.root || REPO_ROOT);
+  if (!fs.existsSync(path.join(repoRoot, "randomizer", "index.html"))) {
+    throw new Error(`Invalid repository root: ${repoRoot}`);
+  }
   fs.mkdirSync(tmpRoot, { recursive: true });
   const userDataDir = fs.mkdtempSync(path.join(tmpRoot, "seti-ai-chrome-"));
-  const { server, port: httpPort } = await startStaticServer(REPO_ROOT);
+  const { server, port: httpPort } = await startStaticServer(repoRoot);
   const chrome = await launchChrome(options.chrome, debugPort, userDataDir, options.headless);
   let cdp = null;
   const pageUrl = `http://127.0.0.1:${httpPort}/randomizer/index.html?aiRun=${Date.now()}`;
@@ -562,11 +587,23 @@ async function main() {
       return ready.result?.value === true;
     }, 60000);
     if (!pageReady) {
-      throw new Error("Timed out waiting for SetiRandomizer.runAiAutoBattleBatch");
+      const startupState = await cdp.send("Runtime.evaluate", {
+        expression: `JSON.stringify({
+          readyState: document.readyState,
+          hasSetiRandomizer: Boolean(window.SetiRandomizer),
+          hasBatch: Boolean(window.SetiRandomizer?.runAiAutoBattleBatch),
+          bodyText: String(document.body?.innerText || "").slice(0, 500),
+        })`,
+        returnByValue: true,
+      }).catch(() => null);
+      throw new Error(
+        `Timed out waiting for SetiRandomizer.runAiAutoBattleBatch; startup=${startupState?.result?.value || "unavailable"}; console=${JSON.stringify(consoleMessages.slice(-10))}`,
+      );
     }
 
     const batchOptions = {
       seed: options.seed,
+      seeds: options.seeds?.length ? options.seeds : undefined,
       games: options.games,
       activePlayerCount: options.activePlayerCount,
       aiDifficulty: options.aiDifficulty || undefined,
@@ -583,6 +620,8 @@ async function main() {
       mergeStrategyWeights: options.strategyWeights ? options.mergeStrategyWeights : undefined,
       resetStrategyWeights: options.resetStrategyWeights || undefined,
       includeLogs: options.includeLogs || undefined,
+      retainAnalysis: options.lightweight || options.sampleDiagnostics ? false : undefined,
+      includeSampleDiagnostics: options.lightweight ? false : options.sampleDiagnostics ? true : undefined,
       single: options.single,
       reset: options.single ? true : undefined,
     };

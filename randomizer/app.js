@@ -36186,7 +36186,7 @@
     const includeDiagnostics = params.get("diagnostics") === "1";
     const includeActionLogs = params.get("includeLogs") === "1";
     const suppressReadoutRender = params.get("renderReadout") !== "1";
-    window.setTimeout(async () => {
+    const runBatch = async () => {
       const previousSuppressReadoutRender = codexAiBatchSuppressReadoutRender;
       codexAiBatchSuppressReadoutRender = suppressReadoutRender;
       try {
@@ -36237,7 +36237,10 @@
       } finally {
         codexAiBatchSuppressReadoutRender = previousSuppressReadoutRender;
       }
-    }, 0);
+    };
+    const scheduleBatch = () => window.setTimeout(runBatch, 100);
+    if (document.readyState === "complete") scheduleBatch();
+    else window.addEventListener("load", scheduleBatch, { once: true });
   }
   maybeRunCodexAiBatchSmoke();
 

@@ -1906,6 +1906,43 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const differentPlanetTaskCard = {
+    id: "card-dlc7",
+    cardId: "dlc_7.png",
+    model: {
+      tasks: [{
+        id: "dlc7-two-planet-probes",
+        condition: { type: "probesOnDifferentPlanets", count: 2, excludePlanetIds: ["earth"] },
+        rewards: [{ type: "gain_resources", options: { gain: { credits: 2 } } }],
+      }],
+    },
+    cardEffectState: { completedTaskIds: [] },
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    blueReservedCards: [differentPlanetTaskCard],
+    movableTokens: [
+      { id: 1, playerId: "player-blue", color: "blue", kind: "standard", surface: "solar", sector: { x: 2, y: 1 } },
+    ],
+    planetLocations: [
+      { planetId: "earth", x: 1, y: 1 },
+      { planetId: "mars", x: 2, y: 1 },
+    ],
+  });
+  harness.controller.configureAiAutoBattle({
+    playerIds: [harness.blue.id],
+    suppressAutoSchedule: true,
+  });
+
+  const blueResult = harness.controller.getAiAutoBattleReport().playerResults
+    .find((player) => player.playerId === harness.blue.id);
+  const taskProgress = blueResult.reservedCards[0].tasks[0].condition;
+  assert.equal(taskProgress.currentCount, 1);
+  assert.equal(taskProgress.missingCount, 1);
+  assert.equal(taskProgress.met, false);
+}
+
+{
   const harness = createAiControllerHarness(null, {
     scanTargetPending: {
       type: "pay_credit_reward",
