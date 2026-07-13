@@ -1241,6 +1241,17 @@ assert.deepEqual(policy.chooseMovePaymentIndexes([
   preserveEnergy: false,
   roundNumber: 3,
 }), []);
+assert.deepEqual(policy.chooseMovePaymentIndexes([
+  { label: "普通牌" },
+  { label: "高价值移动牌" },
+  { label: "低价值移动牌" },
+], {
+  requiredMovePoints: 1,
+  availableEnergy: 2,
+  moveCardIndexes: [1, 2],
+  moveCardOpportunityCosts: { 1: 11.2, 2: 3.5 },
+  preserveEnergy: true,
+}), [2]);
 assert.deepEqual(policy.chooseDiscardIndexes([{ label: "b" }, { label: "a" }], 1), [1]);
 assert.deepEqual(policy.chooseDiscardIndexes([
   { label: "energy income" },

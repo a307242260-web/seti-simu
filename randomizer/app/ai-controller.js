@@ -5008,6 +5008,37 @@
       return (player?.hand || []).filter((card) => isMovePaymentCard(card));
     }
 
+    let aiMovePaymentCardEntryDepth = 0;
+
+    function listAiMovePaymentCardEntries(player = getCurrentPlayer()) {
+      const fallbackCost = Math.max(0, aiNumber(getAiResourceValuesForRound().handSize));
+      const canScorePlay = aiMovePaymentCardEntryDepth <= 0;
+      aiMovePaymentCardEntryDepth += 1;
+      try {
+        return (player?.hand || [])
+          .map((card, handIndex) => {
+            if (!isMovePaymentCard(card)) return null;
+            const playCandidate = canScorePlay ? buildAiPlayCardCandidate(card, handIndex, player) : null;
+            return {
+              card,
+              handIndex,
+              playCandidate,
+              opportunityCost: Math.max(
+                fallbackCost,
+                getAiDiscardedCardOpportunityCost(card, playCandidate),
+              ),
+            };
+          })
+          .filter(Boolean)
+          .sort((left, right) => (
+            aiNumber(left.opportunityCost) - aiNumber(right.opportunityCost)
+            || left.handIndex - right.handIndex
+          ));
+      } finally {
+        aiMovePaymentCardEntryDepth -= 1;
+      }
+    }
+
     function getAiLaunchPaymentCost(options = {}) {
       return ai?.valuation?.getLaunchPaymentCost
         ? ai.valuation.getLaunchPaymentCost(options)
@@ -5022,17 +5053,20 @@
       const points = Math.max(0, Math.round(aiNumber(requiredMovePoints)));
       const values = getAiResourceValuesForRound();
       const energy = Math.max(0, Math.round(aiNumber(player?.resources?.energy)));
-      const cardCount = getAiMovePaymentCards(player).length;
+      const paymentCards = listAiMovePaymentCardEntries(player);
       const preserveEnergy = Boolean(options.preserveEnergy);
       let remainingEnergy = energy;
-      let remainingCards = cardCount;
+      let cardIndex = 0;
       let total = 0;
       let energySpent = 0;
       let cardSpent = 0;
+      const selectedCardIndexes = [];
       for (let point = 0; point < points; point += 1) {
-        if (remainingCards > 0 && (preserveEnergy || remainingEnergy <= 0)) {
-          total += values.handSize;
-          remainingCards -= 1;
+        const paymentCard = paymentCards[cardIndex] || null;
+        if (paymentCard && (preserveEnergy || remainingEnergy <= 0)) {
+          total += Math.max(values.handSize, aiNumber(paymentCard.opportunityCost));
+          selectedCardIndexes.push(paymentCard.handIndex);
+          cardIndex += 1;
           cardSpent += 1;
         } else if (remainingEnergy > 0) {
           total += values.energy;
@@ -5047,6 +5081,7 @@
         cost: total,
         energySpent,
         cardSpent,
+        selectedCardIndexes,
         remainingEnergy: Math.max(0, energy - energySpent),
       };
     }
@@ -5102,16 +5137,6 @@
     }
 
     function scoreAiMovePaymentCost(player = getCurrentPlayer(), requiredMovePoints = MOVE_ENERGY_COST) {
-      if (ai?.valuation?.getMovePaymentCost) {
-        return ai.valuation.getMovePaymentCost({
-          player,
-          hand: player?.hand || [],
-          movePaymentCards: getAiMovePaymentCards(player),
-          availableEnergy: player?.resources?.energy || 0,
-          requiredMovePoints,
-          resourceValues: getAiResourceValuesForRound(),
-        });
-      }
       return estimateAiMovePayment(player, requiredMovePoints).cost;
     }
 
@@ -17465,6 +17490,10 @@
       const moveCardIndexes = (currentPlayer?.hand || [])
         .map((card, index) => (isMovePaymentCard(card) ? index : null))
         .filter((index) => index != null);
+      const moveCardEntries = listAiMovePaymentCardEntries(currentPlayer);
+      const moveCardOpportunityCosts = Object.fromEntries(
+        moveCardEntries.map((entry) => [entry.handIndex, roundAiScore(entry.opportunityCost)]),
+      );
       const rocket = (rocketState.rockets || [])
         .find((item) => Number(item.id) === Number(state.pendingMovePayment.rocketId)) || null;
       const from = rocket ? rocketActions.getRocketSectorCoordinate(rocket) : null;
@@ -17492,6 +17521,7 @@
         requiredMovePoints,
         availableEnergy,
         moveCardIndexes,
+        moveCardOpportunityCosts,
         roundNumber: turnState.roundNumber,
         preserveEnergy: preserveEnergyForRouteCashout,
       }) || [];
@@ -17502,6 +17532,22 @@
         deltaY: state.pendingMovePayment.deltaY,
         requiredMovePoints,
         selectedHandIndices: state.pendingMovePayment.selectedHandIndices,
+        selectedCards: state.pendingMovePayment.selectedHandIndices
+          .map((handIndex) => {
+            const entry = moveCardEntries.find((candidate) => candidate.handIndex === Number(handIndex));
+            const card = entry?.card || currentPlayer.hand?.[handIndex] || null;
+            if (!card) return null;
+            return {
+              handIndex,
+              cardId: card.cardId || card.id || null,
+              cardInstanceId: card.id || null,
+              cardLabel: cards.getCardLabel?.(card) || card.cardName || card.label || null,
+              opportunityCost: roundAiScore(entry?.opportunityCost),
+              playScore: entry?.playCandidate ? roundAiScore(entry.playCandidate.score) : null,
+            };
+          })
+          .filter(Boolean),
+        moveCardOpportunityCosts,
         energyCost: Math.max(0, requiredMovePoints - state.pendingMovePayment.selectedHandIndices.length),
         preserveEnergy: preserveEnergyForRouteCashout,
         preserveEnergyForRouteCashout,
@@ -22092,7 +22138,7 @@
                 ? [laterEntry.details?.selected || laterEntry.details?.card || null]
                 : laterEntry.type === "card-corner"
                   ? [laterEntry.details?.action || null]
-                  : laterEntry.type === "discard"
+                : laterEntry.type === "discard" || laterEntry.type === "move-payment"
                     ? (laterEntry.details?.selectedCards || [])
                     : [];
               const usedCard = usedCards.find((card) => {

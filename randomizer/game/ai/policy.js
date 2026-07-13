@@ -446,7 +446,11 @@
     return (request.moveCardIndexes || [])
       .filter((index) => Number.isInteger(Number(index)) && hand[Number(index)])
       .map((index) => Number(index))
-      .sort((left, right) => left - right)
+      .sort((left, right) => (
+        Number(request.moveCardOpportunityCosts?.[left] ?? 0)
+          - Number(request.moveCardOpportunityCosts?.[right] ?? 0)
+        || left - right
+      ))
       .slice(0, neededCards);
   }
 
