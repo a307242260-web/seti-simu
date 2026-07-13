@@ -473,6 +473,20 @@
           } : null,
         };
       }
+      if (type === "industry" && details.slotId) {
+        return {
+          slotId: details.slotId,
+          score: details.score ?? null,
+          rewardLabel: details.rewardLabel || null,
+          choices: Array.isArray(details.choices)
+            ? details.choices.map((choice) => ({
+              slotId: choice?.slotId || null,
+              score: choice?.score ?? null,
+              rewardLabel: choice?.rewardLabel || null,
+            }))
+            : [],
+        };
+      }
       return compactAiAutoBattleLogValue(details || {});
     }
 
@@ -17405,14 +17419,15 @@
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择宇宙战略集团奖励槽` };
       }
-      const selected = (pending.slotIds || [])
+      const rankedChoices = (pending.slotIds || [])
         .map((slotId) => ({
           slotId,
           score: scoreAiStrategyPassiveSlotChoice(slotId, player),
           rewardLabel: industry?.getStrategySlotRewardLabel?.(slotId) || "",
         }))
         .filter((entry) => entry.slotId && Number.isFinite(Number(entry.score)))
-        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null;
+        .sort((left, right) => Number(right.score || 0) - Number(left.score || 0));
+      const selected = rankedChoices[0] || null;
       if (!selected) {
         return { ok: false, blocked: true, message: "AI 没有可选的宇宙战略集团奖励槽" };
       }
@@ -17421,7 +17436,7 @@
         slotId: selected.slotId,
         score: selected.score,
         rewardLabel: selected.rewardLabel,
-        choices: pending.slotIds || [],
+        choices: rankedChoices,
       });
       return confirmStrategyPassiveSlotChoice(selected.slotId);
     }
@@ -22075,6 +22090,19 @@
             topPublicCandidates: entry.details?.topPublicCandidates || [],
           };
         });
+      const grandStrategyPassiveDecisions = reportLogs
+        .filter((entry) => entry?.type === "industry" && entry.details?.slotId)
+        .map((entry) => ({
+          roundNumber: entry.roundNumber ?? null,
+          turnNumber: entry.turnNumber ?? null,
+          playerId: entry.playerId || null,
+          playerLabel: entry.playerLabel || null,
+          resources: entry.playerResources || null,
+          selectedSlotId: entry.details.slotId,
+          selectedScore: entry.details.score ?? null,
+          rewardLabel: entry.details.rewardLabel || null,
+          choices: entry.details.choices || [],
+        }));
       return {
         gameIndex,
         summary: report?.lastSummary || null,
@@ -22086,6 +22114,7 @@
         lowMarkPlayerDiagnosticsList,
         finalScoreMarkDecisions,
         grandStrategyPickDecisions,
+        grandStrategyPassiveDecisions,
         tailLogs: Array.isArray(report?.logs) ? report.logs.slice(-5) : [],
         ...(options.includeLogs && Array.isArray(report?.logs) ? { logs: report.logs } : {}),
         analysis: analysis

@@ -36100,6 +36100,7 @@
           })),
           finalScoreMarkDecisions: sample.finalScoreMarkDecisions || [],
           grandStrategyPickDecisions: sample.grandStrategyPickDecisions || [],
+          grandStrategyPassiveDecisions: sample.grandStrategyPassiveDecisions || [],
           analysis: sample.analysis
             ? {
               actionCounts: sample.analysis.actionCounts,
