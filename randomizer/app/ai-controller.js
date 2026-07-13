@@ -137,7 +137,6 @@
       handleAmibaSymbolChoice,
       handleAmibaTraceRemovalChoice,
       handleAomomoCardGainChoice,
-      handleAomomoFossilMoveLandCountChoice,
       handleBanrenmaBonusChoice,
       handleBanrenmaCardConditionChoice,
       handleBanrenmaCardGainChoice,
@@ -2363,6 +2362,33 @@
       const finalRoundTradePick = pendingType === "trade"
         && getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && !closeThirdFinalMarkPick;
+      const finalRoundGrandStrategyRecoveryPick = pendingType === "industry_strategy_pick"
+        && getAiRoundNumber() >= FINAL_ROUND_NUMBER
+        && nextThreshold
+        && currentScore < nextThreshold
+        && countAiFinalMarksForPlayer(player) < 3;
+      if (finalRoundGrandStrategyRecoveryPick) {
+        const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+        const immediatePlayValue = Math.max(0, aiNumber(playCandidate?.score));
+        const directScoreGain = Math.max(0, aiNumber(playCandidate?.directScoreGain));
+        const thresholdCashout = playCandidate
+          && currentScore + directScoreGain >= nextThreshold
+          ? (nextThreshold >= 70 ? 20 : 16)
+          : 0;
+        const price = Math.max(0, aiNumber(getCardPrice(card)));
+        const credits = Math.max(0, aiNumber(player?.resources?.credits));
+        const unreachablePenalty = playCandidate
+          ? 0
+          : Math.min(30, 12 + Math.max(0, price - credits) * 5);
+        return immediatePlayValue * 0.9
+          + thresholdCashout
+          + directScoreGain * 0.55
+          + (playCandidate ? 2.5 : playableValue * 0.1)
+          + cornerValue * 0.18
+          + incomeValue * 0.12
+          + (typeCode === 3 ? 1 : 0)
+          - unreachablePenalty;
+      }
       if (finalRoundTradePick) {
         const playCandidate = buildAiPlayCardCandidate(card, -1, player);
         const immediatePlayValue = Math.max(0, aiNumber(playCandidate?.score));
@@ -17477,16 +17503,6 @@
           choice,
         });
         return handlePayCreditChoice(choice);
-      }
-
-      if (pendingType === "aomomo_fossil_move_land_count") {
-        const count = Math.max(0, Math.round(Number(pending.maxCount) || 0));
-        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 选择奥陌陌化石兑换 ${count} 次`, {
-          logPlayerId: player.id,
-          exchangeCount: count,
-          movementPoints: count * Math.max(1, Math.round(Number(pending.movementPerExchange) || 2)),
-        });
-        return handleAomomoFossilMoveLandCountChoice(count);
       }
 
       if (pendingType === "discard_corner_repeat") {

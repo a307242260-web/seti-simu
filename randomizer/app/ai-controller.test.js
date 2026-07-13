@@ -1317,6 +1317,80 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
+  const turnChoices = [];
+  const strategyIndustry = { id: "industry:宇宙大战略集团", label: "宇宙大战略集团" };
+  const unreachableScoreCard = {
+    id: "strategy-unreachable-score",
+    cardId: "strategy-unreachable-score",
+    cardName: "Unreachable score card",
+    price: 3,
+    typeCode: 2,
+    playEffects: [{ type: "gain_resources", options: { gain: { score: 15 } } }],
+  };
+  const thresholdRecoveryCard = {
+    id: "strategy-threshold-recovery",
+    cardId: "strategy-threshold-recovery",
+    cardName: "Threshold recovery card",
+    price: 0,
+    typeCode: 1,
+    playEffects: [{ type: "gain_resources", options: { gain: { score: 3 } } }],
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    blueInitialSelection: { industry: strategyIndustry },
+    blueIndustryStrategyPassiveSlots: { yellow: false, red: false, blue: false },
+    blueResources: { score: 47, credits: 0, energy: 1, publicity: 2, handSize: 1 },
+    publicCards: [unreachableScoreCard, thresholdRecoveryCard],
+    finalScoringState: {
+      tiles: {
+        a: {
+          id: "a",
+          marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }],
+        },
+      },
+    },
+    industry: {
+      STRATEGY_PASSIVE_SLOT_IDS: ["yellow", "red", "blue"],
+      getIndustryActionMarkerLayout: () => ({ percentX: 9, percentY: 77, radiusPercent: 4.9 }),
+      canMarkIndustryAction: () => ({ ok: true }),
+      getIndustryDefinition: () => ({
+        label: "宇宙大战略集团",
+        activeAbilityId: "strategy_pick_card",
+        passiveIds: ["strategy_passive_reward_slots", "grand_strategy_round_start"],
+      }),
+      playerHasStrategyPassive: () => true,
+      hasGrandStrategyRoundStart: () => true,
+      getStrategySlotReward: () => null,
+      getStrategySlotRewardLabel: () => "",
+    },
+    onChooseTurnAction: (candidates) => turnChoices.push(candidates),
+    chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "industry") || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.equal(result.ok, true, "grand strategy recovery pick should remain executable");
+  const industryCandidate = turnChoices
+    .flat()
+    .find((candidate) => candidate.id === "industry" && candidate.abilityId === "strategy_pick_card");
+  assert.equal(
+    industryCandidate.valueBreakdown?.industryPublicPick?.bestCard?.cardId,
+    "strategy-threshold-recovery",
+    "final-round grand strategy should prefer a playable threshold card over a higher unreachable score card",
+  );
+}
+
+{
   const makeSolarPanelCard = () => ({
     id: "dlc_27.png",
     cardId: "dlc_27.png",
