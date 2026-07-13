@@ -1750,6 +1750,18 @@
         logPlayerId: player.id || null,
         logPlayerColor: player.color || null,
         selectedIndexes: state.pendingDiscardAction.selectedIndexes,
+        selectedCards: state.pendingDiscardAction.selectedIndexes
+          .map((handIndex) => {
+            const card = player.hand?.[handIndex] || null;
+            if (!card) return null;
+            return {
+              handIndex,
+              cardId: card.cardId || card.id || null,
+              cardInstanceId: card.id || null,
+              cardLabel: cards.getCardLabel?.(card) || card.cardName || card.label || null,
+            };
+          })
+          .filter(Boolean),
         pendingType,
         incomeGainByIndex,
         incomeDiscardPreview,
@@ -22073,12 +22085,33 @@
         .map(({ entry, index }) => {
           const selectedCard = entry.details?.selectedCard || entry.details?.skippedPublicCard || null;
           const selectedCardId = selectedCard?.cardInstanceId || selectedCard?.cardId || null;
-          const playedLater = Boolean(selectedCardId && reportLogs.slice(index + 1).some((laterEntry) => {
-            if (laterEntry?.type !== "play-card" || laterEntry.playerId !== entry.playerId) return false;
-            const played = laterEntry.details?.selected || laterEntry.details?.card || null;
-            const playedCardId = played?.cardInstanceId || played?.cardId || null;
-            return String(playedCardId || "") === String(selectedCardId);
-          }));
+          const laterCardUse = selectedCardId
+            ? reportLogs.slice(index + 1).map((laterEntry) => {
+              if (laterEntry?.playerId !== entry.playerId) return null;
+              const usedCards = laterEntry.type === "play-card"
+                ? [laterEntry.details?.selected || laterEntry.details?.card || null]
+                : laterEntry.type === "card-corner"
+                  ? [laterEntry.details?.action || null]
+                  : laterEntry.type === "discard"
+                    ? (laterEntry.details?.selectedCards || [])
+                    : [];
+              const usedCard = usedCards.find((card) => {
+                const usedCardId = card?.cardInstanceId || card?.cardId || null;
+                return String(usedCardId || "") === String(selectedCardId);
+              }) || null;
+              if (!usedCard) return null;
+              return {
+                type: laterEntry.type,
+                roundNumber: laterEntry.roundNumber ?? null,
+                turnNumber: laterEntry.turnNumber ?? null,
+                actionId: laterEntry.details?.action?.id || null,
+                reason: laterEntry.details?.action?.reason || laterEntry.details?.pendingType || null,
+                tradeId: laterEntry.details?.tradeId || laterEntry.details?.action?.tradeId || null,
+                score: laterEntry.details?.action?.score ?? laterEntry.details?.selected?.score ?? null,
+              };
+            }).find(Boolean)
+            : null;
+          const playedLater = laterCardUse?.type === "play-card";
           return {
             roundNumber: entry.roundNumber ?? null,
             turnNumber: entry.turnNumber ?? null,
@@ -22087,6 +22120,7 @@
             selectedCard,
             selectedScore: entry.details?.score ?? null,
             playedLater,
+            laterCardUse,
             topPublicCandidates: entry.details?.topPublicCandidates || [],
           };
         });
