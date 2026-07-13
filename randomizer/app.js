@@ -36041,6 +36041,7 @@
   function summarizeCodexAiBatchResult(result, options = {}) {
     const samples = Array.isArray(result?.samples) ? result.samples : [];
     const includeDiagnostics = Boolean(options.includeDiagnostics);
+    const includeActionLogs = Boolean(options.includeActionLogs);
     const playerResults = samples.flatMap((sample) => sample.playerResults || []);
     const scores = playerResults
       .map((entry) => Number(entry.finalScore))
@@ -36107,6 +36108,22 @@
           finalScoreMarkDecisions: sample.finalScoreMarkDecisions || [],
           grandStrategyPickDecisions: sample.grandStrategyPickDecisions || [],
           grandStrategyPassiveDecisions: sample.grandStrategyPassiveDecisions || [],
+          ...(includeActionLogs ? {
+            actionDecisionLogs: (sample.logs || [])
+              .filter((entry) => entry?.type === "turn-action" || entry?.type === "tech-placement")
+              .map((entry) => ({
+                type: entry.type,
+                roundNumber: entry.roundNumber,
+                turnNumber: entry.turnNumber,
+                playerId: entry.playerId,
+                playerLabel: entry.playerLabel,
+                message: entry.message,
+                resources: entry.playerResources,
+                action: entry.details?.action || null,
+                candidates: entry.details?.candidates || [],
+                details: entry.type === "tech-placement" ? entry.details : null,
+              })),
+          } : {}),
           analysis: sample.analysis
             ? {
               actionCounts: sample.analysis.actionCounts,
@@ -36166,6 +36183,7 @@
       .filter(Boolean)
       .slice(0, games);
     const includeDiagnostics = params.get("diagnostics") === "1";
+    const includeActionLogs = params.get("includeLogs") === "1";
     const suppressReadoutRender = params.get("renderReadout") !== "1";
     window.setTimeout(async () => {
       const previousSuppressReadoutRender = codexAiBatchSuppressReadoutRender;
@@ -36185,6 +36203,7 @@
           stepDelayMs: 0,
           stopOnBlocked: params.get("stopOnBlocked") !== "false",
           recordStrategyTuning: false,
+          includeLogs: includeActionLogs,
           sequenceWindowTurns: 8,
           onStep: (progress) => {
             const step = Math.max(0, Math.round(Number(progress?.steps) || 0));
@@ -36202,7 +36221,10 @@
           },
         });
         output.dataset.status = result?.ok ? "ok" : "failed";
-        output.textContent = JSON.stringify(summarizeCodexAiBatchResult(result, { includeDiagnostics }), null, 2);
+        output.textContent = JSON.stringify(summarizeCodexAiBatchResult(result, {
+          includeDiagnostics,
+          includeActionLogs,
+        }), null, 2);
       } catch (error) {
         output.dataset.status = "error";
         output.textContent = JSON.stringify({

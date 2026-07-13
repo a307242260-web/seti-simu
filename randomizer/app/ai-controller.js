@@ -436,6 +436,32 @@
           mark: compactAiAutoBattleLogValue(details.mark || null),
         };
       }
+      if (type === "tech-placement") {
+        const summarizeTechCandidate = (candidate = {}) => ({
+          tileId: candidate.tileId || null,
+          techType: candidate.techType || null,
+          stackIndex: candidate.stackIndex ?? null,
+          bonusId: candidate.bonusId || null,
+          firstTake: candidate.firstTake === true,
+          remaining: candidate.remaining ?? null,
+          score: roundAiScore(aiNumber(candidate.score)),
+          directScoreGain: roundAiScore(aiNumber(candidate.directScoreGain)),
+          finalFormulaDeltas: candidate.finalFormulaDeltas || {},
+          plan: candidate.plan ? {
+            actionId: candidate.plan.actionId || null,
+            score: roundAiScore(aiNumber(candidate.plan.score)),
+          } : null,
+          valueBreakdown: candidate.valueBreakdown || {},
+        });
+        return {
+          tileId: details.tileId || null,
+          blueSlot: details.blueSlot ?? null,
+          selected: summarizeTechCandidate(details.selected || {}),
+          candidates: Array.isArray(details.candidates)
+            ? details.candidates.map(summarizeTechCandidate)
+            : [],
+        };
+      }
       if (type === "pick-card") {
         const topPublicCandidates = Array.isArray(details.topPublicCandidates)
           ? details.topPublicCandidates.slice(0, 5)
@@ -13809,10 +13835,11 @@
       const beforeD2 = Math.floor(Math.max(0, techCount) / 2);
       const afterD2 = Math.floor((Math.max(0, techCount) + 1) / 2);
       const d1Immediate = Math.max(0, afterD1 - beforeD1);
+      const d1Setup = d1Immediate > 0 || aiNumber(techCounts[techType]) !== beforeD1 ? 0 : 0.35;
       const d2Immediate = Math.max(0, afterD2 - beforeD2);
       return {
-        d1: d1Immediate,
-        d2: d2Immediate,
+        d1: d1Immediate || d1Setup,
+        d2: d2Immediate || 0.35,
       };
     }
 

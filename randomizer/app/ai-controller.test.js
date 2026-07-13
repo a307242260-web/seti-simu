@@ -4446,11 +4446,11 @@ function makeYichangdianAlienState(options = {}) {
     "low-tech D1 tail should receive an explicit lowTechCatchupValue",
   );
   assert.ok(
-    researchCandidate.takeable.every((candidate) => (
-      Number(candidate.finalFormulaDeltas?.d1 || 0) === 0
-      && Number(candidate.finalFormulaDeltas?.d2 || 0) === 0
+    researchCandidate.takeable.some((candidate) => (
+      Number(candidate.finalFormulaDeltas?.d1 || 0) > 0
+      || Number(candidate.finalFormulaDeltas?.d2 || 0) > 0
     )),
-    "research candidates that do not cross the real D1/D2 formula boundary should have zero final marginal",
+    "low-tech D1 tail should retain setup deltas for future research planning",
   );
   const passCandidate = turnChoices.flat().find((candidate) => candidate.id === "pass");
   assert.ok(
