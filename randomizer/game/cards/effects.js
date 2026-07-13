@@ -1180,13 +1180,14 @@
     "b_11.webp": withSource("b_11.webp", {
       cardType: 0,
       playEffects: Object.freeze([
-        cardMoveEffect("b11-move", "1移动；若访问小行星获得1数据", {
-          afterEventRewards: Object.freeze([{
-            eventType: "visitAsteroid",
-            onceKey: "b11-asteroid-data",
-            effect: gainDataEffect("b11-asteroid-data", "小行星飞掠：访问小行星获得1数据", 1),
-          }]),
+        registerEventBonusEffect("b11-turn-asteroid-data", "本回合访问小行星获得1数据", {
+          duration: "turn",
+          eventType: "visitAsteroid",
+          onceKey: "b11-asteroid-data",
+          icon: "data",
+          rewards: [gainDataEffect("b11-asteroid-data", "小行星飞掠：访问小行星获得1数据", 1)],
         }),
+        cardMoveEffect("b11-move", "1移动"),
       ]),
     }),
     "b_12.webp": withSource("b_12.webp", {
@@ -1342,14 +1343,14 @@
     "b_24.webp": withSource("b_24.webp", {
       cardType: 0,
       playEffects: Object.freeze([
-        cardMoveEffect("b24-move", "2移动；若访问彗星获得4分", {
-          movementPoints: 2,
-          afterEventRewards: Object.freeze([{
-            eventType: "visitComet",
-            onceKey: "b24-comet-score",
-            effect: gainResourcesEffect("b24-comet-score", "彗星遭遇：访问彗星获得4分", { score: 4 }),
-          }]),
+        registerEventBonusEffect("b24-turn-comet-score", "本回合访问彗星获得4分", {
+          duration: "turn",
+          eventType: "visitComet",
+          onceKey: "b24-comet-score",
+          icon: "score",
+          rewards: [gainResourcesEffect("b24-comet-score", "彗星遭遇：访问彗星获得4分", { score: 4 })],
         }),
+        cardMoveEffect("b24-move", "2移动", { movementPoints: 2 }),
       ]),
     }),
     "b_25.webp": withSource("b_25.webp", {
@@ -1750,15 +1751,15 @@
     "b_62.webp": withSource("b_62.webp", {
       cardType: 0,
       playEffects: Object.freeze([
-        cardMoveEffect("b62-move", "2移动；若访问木星获得4分", {
-          movementPoints: 2,
-          afterEventRewards: Object.freeze([{
-            eventType: "visitPlanet",
-            planetIds: Object.freeze(["jupiter"]),
-            onceKey: "b62-jupiter-score",
-            effect: gainResourcesEffect("b62-jupiter-score", "访问木星：4分", { score: 4 }),
-          }]),
+        registerEventBonusEffect("b62-turn-jupiter-score", "本回合访问木星获得4分", {
+          duration: "turn",
+          eventType: "visitPlanet",
+          includePlanetIds: ["jupiter"],
+          onceKey: "b62-jupiter-score",
+          icon: "score",
+          rewards: [gainResourcesEffect("b62-jupiter-score", "访问木星：4分", { score: 4 })],
         }),
+        cardMoveEffect("b62-move", "2移动", { movementPoints: 2 }),
       ]),
     }),
     "b_63.webp": withSource("b_63.webp", {
@@ -1859,7 +1860,10 @@
     }),
     "b_73.webp": withSource("b_73.webp", {
       cardType: 0,
-      playEffects: Object.freeze([cardMoveEffect("b73-move", "2移动；若访问火星获得4分", { movementPoints: 2, afterEventRewards: [{ eventType: "visitPlanet", planetIds: ["mars"], onceKey: "b73-mars-score", effect: gainResourcesEffect("b73-mars-score", "访问火星：4分", { score: 4 }) }] })]),
+      playEffects: Object.freeze([
+        registerEventBonusEffect("b73-turn-mars-score", "本回合访问火星获得4分", { duration: "turn", eventType: "visitPlanet", includePlanetIds: ["mars"], onceKey: "b73-mars-score", icon: "score", rewards: [gainResourcesEffect("b73-mars-score", "访问火星：4分", { score: 4 })] }),
+        cardMoveEffect("b73-move", "2移动", { movementPoints: 2 }),
+      ]),
     }),
     "b_74.webp": withSource("b_74.webp", {
       cardType: 3,
@@ -1873,7 +1877,10 @@
     }),
     "b_76.webp": withSource("b_76.webp", {
       cardType: 0,
-      playEffects: Object.freeze([cardMoveEffect("b76-move", "2移动；若访问水星获得4分", { movementPoints: 2, afterEventRewards: [{ eventType: "visitPlanet", planetIds: ["mercury"], onceKey: "b76-mercury-score", effect: gainResourcesEffect("b76-mercury-score", "访问水星：4分", { score: 4 }) }] })]),
+      playEffects: Object.freeze([
+        registerEventBonusEffect("b76-turn-mercury-score", "本回合访问水星获得4分", { duration: "turn", eventType: "visitPlanet", includePlanetIds: ["mercury"], onceKey: "b76-mercury-score", icon: "score", rewards: [gainResourcesEffect("b76-mercury-score", "访问水星：4分", { score: 4 })] }),
+        cardMoveEffect("b76-move", "2移动", { movementPoints: 2 }),
+      ]),
     }),
     "b_77.webp": withSource("b_77.webp", {
       cardType: 2,
@@ -2034,7 +2041,10 @@
     }),
     "b_108.webp": withSource("b_108.webp", {
       cardType: 0,
-      playEffects: Object.freeze([cardMoveEffect("b108-move", "3移动；若访问土星获得6分", { movementPoints: 3, afterEventRewards: [{ eventType: "visitPlanet", planetIds: ["saturn"], onceKey: "b108-saturn-score", effect: gainResourcesEffect("b108-score", "访问土星：6分", { score: 6 }) }] })]),
+      playEffects: Object.freeze([
+        registerEventBonusEffect("b108-turn-saturn-score", "本回合访问土星获得6分", { duration: "turn", eventType: "visitPlanet", includePlanetIds: ["saturn"], onceKey: "b108-saturn-score", icon: "score", rewards: [gainResourcesEffect("b108-score", "访问土星：6分", { score: 6 })] }),
+        cardMoveEffect("b108-move", "3移动", { movementPoints: 3 }),
+      ]),
     }),
     "b_109.webp": withSource("b_109.webp", {
       cardType: 0,
@@ -2124,11 +2134,17 @@
     }),
     "b_124.webp": withSource("b_124.webp", {
       cardType: 0,
-      playEffects: Object.freeze([cardMoveEffect("b124-move", "2移动（无视小行星出入限制）", { movementPoints: 2, ignoreAsteroidRestriction: true })]),
+      playEffects: Object.freeze([
+        registerEventBonusEffect("b124-turn-ignore-asteroid", "本回合移动无视小行星移动力惩罚", { duration: "turn", eventType: "move", icon: "movement", movementModifiers: { ignoreAsteroidRestriction: true } }),
+        cardMoveEffect("b124-move", "2移动", { movementPoints: 2 }),
+      ]),
     }),
     "b_125.webp": withSource("b_125.webp", {
       cardType: 0,
-      playEffects: Object.freeze([cardMoveEffect("b125-move", "1移动；同环移动奖励3分+1宣传", { movementPoints: 1, sameRingReward: gainResourcesEffect("b125-same-ring-reward", "同环移动：3分+1宣传", { score: 3, publicity: 1 }) })]),
+      playEffects: Object.freeze([
+        registerEventBonusEffect("b125-turn-same-ring-reward", "本回合同环移动获得3分和1宣传", { duration: "turn", eventType: "move", sameRingOnly: true, onceKey: "b125-same-ring-reward", icon: "score", rewards: [gainResourcesEffect("b125-same-ring-reward", "同环移动：3分+1宣传", { score: 3, publicity: 1 })] }),
+        cardMoveEffect("b125-move", "1移动", { movementPoints: 1 }),
+      ]),
     }),
     "b_126.webp": withSource("b_126.webp", {
       cardType: 2,
@@ -2157,7 +2173,10 @@
     }),
     "b_131.webp": withSource("b_131.webp", {
       cardType: 0,
-      playEffects: Object.freeze([cardMoveEffect("b131-move", "2移动；若访问金星获得3分", { movementPoints: 2, afterEventRewards: [{ eventType: "visitPlanet", planetIds: ["venus"], onceKey: "b131-venus-score", effect: gainResourcesEffect("b131-score", "访问金星：3分", { score: 3 }) }] })]),
+      playEffects: Object.freeze([
+        registerEventBonusEffect("b131-turn-venus-score", "本回合访问金星获得3分", { duration: "turn", eventType: "visitPlanet", includePlanetIds: ["venus"], onceKey: "b131-venus-score", icon: "score", rewards: [gainResourcesEffect("b131-score", "访问金星：3分", { score: 3 })] }),
+        cardMoveEffect("b131-move", "2移动", { movementPoints: 2 }),
+      ]),
     }),
     "b_132.webp": withSource("b_132.webp", {
       cardType: 0,

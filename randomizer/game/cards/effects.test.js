@@ -380,9 +380,11 @@ assert.equal(cardEffects.getCardModel("dlc_31.png").endGameScoring.kind, "planet
 assert.equal(cardEffects.getCardModel("dlc_39.png").endGameScoring.kind, "allOrbitOrLand");
 
 const b11Effects = cardEffects.buildPlayEffects({ cardId: "b_11.webp" });
-assert.equal(b11Effects.length, 1);
-assert.equal(b11Effects[0].type, cardEffects.EFFECT_TYPES.CARD_MOVE);
-assert.equal(b11Effects[0].options.afterEventRewards[0].eventType, "visitAsteroid");
+assert.equal(b11Effects.length, 2);
+assert.equal(b11Effects[0].type, cardEffects.EFFECT_TYPES.REGISTER_EVENT_BONUS);
+assert.equal(b11Effects[0].options.bonus.duration, "turn");
+assert.equal(b11Effects[0].options.bonus.eventType, "visitAsteroid");
+assert.equal(b11Effects[1].type, cardEffects.EFFECT_TYPES.CARD_MOVE);
 
 const b13Effects = cardEffects.buildPlayEffects({ cardId: "b_13.webp" });
 assert.equal(b13Effects.length, 4);
@@ -548,10 +550,12 @@ assert.equal(b23Effects[0].type, cardEffects.EFFECT_TYPES.DISCARD_PUBLIC_CORNER_
 assert.equal(b23Effects[0].options.count, 3);
 
 const b24Effects = cardEffects.buildPlayEffects({ cardId: "b_24.webp" });
-assert.equal(b24Effects.length, 1);
-assert.equal(b24Effects[0].type, cardEffects.EFFECT_TYPES.CARD_MOVE);
-assert.equal(b24Effects[0].options.movementPoints, 2);
-assert.equal(b24Effects[0].options.afterEventRewards[0].onceKey, "b24-comet-score");
+assert.equal(b24Effects.length, 2);
+assert.equal(b24Effects[0].type, cardEffects.EFFECT_TYPES.REGISTER_EVENT_BONUS);
+assert.equal(b24Effects[0].options.bonus.duration, "turn");
+assert.equal(b24Effects[0].options.bonus.onceKey, "b24-comet-score");
+assert.equal(b24Effects[1].type, cardEffects.EFFECT_TYPES.CARD_MOVE);
+assert.equal(b24Effects[1].options.movementPoints, 2);
 
 for (const [cardId, planetId] of Object.entries({
   "b_72.webp": "mars",
@@ -735,27 +739,38 @@ assert.equal(cardEffects.collectMatchingTriggers(b140Player, { type: "cardCorner
 assert.equal(cardEffects.collectMatchingTriggers(b140Player, { type: "income", cardId: "b_72.webp" }).length, 0);
 
 const preservedMoves = cardEffects.consolidateCardMoveEffects([
-  cardEffects.buildPlayEffects({ cardId: "b_24.webp" })[0],
-  cardEffects.buildPlayEffects({ cardId: "b_11.webp" })[0],
+  cardEffects.buildPlayEffects({ cardId: "b_24.webp" })[1],
+  cardEffects.buildPlayEffects({ cardId: "b_11.webp" })[1],
 ]);
 assert.equal(preservedMoves.length, 2);
 assert.equal(preservedMoves[0].options.movementPoints, 2);
 assert.equal(preservedMoves[1].options.movementPoints, 1);
 
 const b124Effects = cardEffects.buildPlayEffects({ cardId: "b_124.webp" });
-assert.equal(b124Effects.length, 1);
-assert.equal(b124Effects[0].options.movementPoints, 2);
-assert.equal(b124Effects[0].options.ignoreAsteroidRestriction, true);
+assert.equal(b124Effects.length, 2);
+assert.equal(b124Effects[0].type, cardEffects.EFFECT_TYPES.REGISTER_EVENT_BONUS);
+assert.equal(b124Effects[0].options.bonus.duration, "turn");
+assert.equal(b124Effects[0].options.bonus.movementModifiers.ignoreAsteroidRestriction, true);
+assert.equal(b124Effects[1].options.movementPoints, 2);
+assert.equal(b124Effects[1].options.ignoreAsteroidRestriction, undefined);
 const rawB124Split = cardEffects.consolidateCardMoveEffects([
-  cardEffects.getCardModel("b_124.webp").playEffects[0],
+  cardEffects.getCardModel("b_124.webp").playEffects[1],
 ]);
 assert.equal(rawB124Split.length, 1);
 assert.deepEqual(rawB124Split.map((effect) => effect.options.movementPoints), [2]);
 
 const b108Effects = cardEffects.buildPlayEffects({ cardId: "b_108.webp" });
-assert.equal(b108Effects.length, 1);
-assert.deepEqual(b108Effects.map((effect) => effect.options.movementPoints), [3]);
-assert.equal(b108Effects[0].options.afterEventRewards[0].onceKey, "b108-saturn-score");
+assert.equal(b108Effects.length, 2);
+assert.equal(b108Effects[0].options.bonus.duration, "turn");
+assert.equal(b108Effects[0].options.bonus.onceKey, "b108-saturn-score");
+assert.equal(b108Effects[1].options.movementPoints, 3);
+
+const b125Effects = cardEffects.buildPlayEffects({ cardId: "b_125.webp" });
+assert.equal(b125Effects.length, 2);
+assert.equal(b125Effects[0].options.bonus.duration, "turn");
+assert.equal(b125Effects[0].options.bonus.eventType, "move");
+assert.equal(b125Effects[0].options.bonus.sameRingOnly, true);
+assert.equal(b125Effects[1].options.movementPoints, 1);
 
 const b87Effects = cardEffects.buildPlayEffects({ cardId: "b_87.webp" });
 assert.equal(b87Effects.length, 2);
@@ -873,7 +888,7 @@ assert.equal(cardEffects.buildPlayEffects({ cardId: "b_55.webp" })[0].options.sk
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_55.webp" })[0].options.skipBonus, true);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_58.webp" })[1].options.includeAdjacent, true);
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_61.webp" })[0].type, cardEffects.EFFECT_TYPES.PLANET_SECTOR_SCAN);
-assert.equal(cardEffects.buildPlayEffects({ cardId: "b_62.webp" })[0].options.afterEventRewards[0].planetIds[0], "jupiter");
+assert.equal(cardEffects.buildPlayEffects({ cardId: "b_62.webp" })[0].options.bonus.includePlanetIds[0], "jupiter");
 assert.equal(cardEffects.buildPlayEffects({ cardId: "b_64.webp" }).filter((effect) => (
   effect.type === cardEffects.EFFECT_TYPES.PROBE_SECTOR_SCAN
 )).length, 2);
@@ -1274,6 +1289,13 @@ assert.equal(aomomo5Effects.length, 2);
 assert.equal(aomomo5Effects[0].type, cardEffects.EFFECT_TYPES.CARD_MOVE);
 assert.equal(aomomo5Effects[0].options.movementPoints, 4);
 assert.equal(aomomo5Effects[1].type, aomomo.EFFECT_VISIT_AOMOMO_THIS_TURN_FOSSIL);
+
+const aomomo6Exchange = aomomo.buildImmediateEffects(6)[0];
+assert.equal(aomomo6Exchange.type, aomomo.EFFECT_FOSSIL_FOR_MOVE_AND_LAND);
+assert.equal(aomomo6Exchange.options.costPerExchange, 1);
+assert.equal(aomomo6Exchange.options.movementPerExchange, 2);
+assert.equal(aomomo6Exchange.options.cost, undefined);
+assert.equal(aomomo6Exchange.options.movement, undefined);
 
 const aomomo9Effects = cardEffects.buildPlayEffects({ cardId: "aomomo_9.webp" });
 assert.equal(aomomo9Effects.length, 2);

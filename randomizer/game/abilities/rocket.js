@@ -536,7 +536,15 @@
         providedMovePoints,
         rewards: rewardNotes,
       },
-      events,
+      events: [{
+        type: "move",
+        rocketId,
+        playerId: currentPlayer.id,
+        source: options.source || "move",
+        from: geometry.from,
+        to: geometry.to,
+        sameRing: Number(geometry.from?.y) === Number(geometry.to?.y),
+      }, ...events],
       rocket: moveResult.rocket,
     };
   }

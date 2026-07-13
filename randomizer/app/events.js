@@ -66,6 +66,7 @@
       handleChongTaskCompletionChoice,
       handleAmibaCardGainChoice,
       handleAomomoCardGainChoice,
+      handleAomomoFossilMoveLandCountChoice,
       handleAmibaSymbolChoice,
       handleAmibaTraceRemovalChoice,
       handleRunezuCardGainChoice,
@@ -304,6 +305,12 @@
     });
     els.scanTargetActions?.addEventListener("click", (event) => {
       if (blockManualAiSharedOverlayInputIfNeeded?.()) return;
+
+      const aomomoFossilMoveCount = event.target.closest("[data-aomomo-fossil-move-count]");
+      if (aomomoFossilMoveCount && !aomomoFossilMoveCount.disabled) {
+        handleAomomoFossilMoveLandCountChoice(aomomoFossilMoveCount.dataset.aomomoFossilMoveCount);
+        return;
+      }
 
       const debugSectorButton = event.target.closest("[data-debug-sector-scan-step]");
       if (debugSectorButton && !debugSectorButton.disabled) {
@@ -605,6 +612,7 @@
         handleDrawnHandScanSkip();
         return;
       }
+      if (state.pendingScanTargetAction?.type === "aomomo_fossil_move_land_count") return;
       closeScanTargetPicker();
     });
     els.scanTargetOverlay?.addEventListener("click", (event) => {
@@ -682,6 +690,7 @@
           handleDrawnHandScanSkip();
           return;
         }
+        if (state.pendingScanTargetAction?.type === "aomomo_fossil_move_land_count") return;
         closeScanTargetPicker();
       }
     });

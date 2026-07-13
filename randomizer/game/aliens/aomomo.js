@@ -581,7 +581,13 @@
           effect("aomomo-5-visit-fossil", EFFECT_VISIT_AOMOMO_THIS_TURN_FOSSIL, "奥陌陌5：本回合访问奥陌陌得1化石", "aomomoFossil", { count: 1 }),
         ];
       case 6:
-        return [effect("aomomo-6-move-land", EFFECT_FOSSIL_FOR_MOVE_AND_LAND, "奥陌陌6：可移除1化石移动2并登陆", "movement", { cost: 1, movement: 2 })];
+        return [effect(
+          "aomomo-6-move-land",
+          EFFECT_FOSSIL_FOR_MOVE_AND_LAND,
+          "奥陌陌6：选择化石兑换量，每个化石换2移动，然后登陆",
+          "movement",
+          { costPerExchange: 1, movementPerExchange: 2 },
+        )];
       case 7:
         return [
           effect("aomomo-7-launch", "launch", "奥陌陌7：发射", "launch", { skipCost: true, cost: {}, source: "aomomo" }),

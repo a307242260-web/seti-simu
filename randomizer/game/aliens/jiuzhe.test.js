@@ -109,6 +109,42 @@ assert.equal(
 );
 
 {
+  const marker = () => ({ playerId: white.id, playerColor: white.color });
+  const aomomoConditionState = state.createDefaultAlienState();
+  aomomoConditionState.aomomo = {
+    orbitMarkers: [marker()],
+    landingMarkers: [marker(), marker()],
+  };
+  const aomomoConditionContext = {
+    alienGameState: aomomoConditionState,
+    planetStatsState: {
+      planets: {
+        mars: {
+          orbitMarkers: [marker(), marker()],
+          landingMarkers: [marker(), marker()],
+          satelliteLandings: [marker()],
+        },
+      },
+    },
+  };
+  assert.equal(
+    jiuzhe.isCardConditionMet({ index: 1 }, white, aomomoConditionContext),
+    true,
+    "Aomomo orbit and landing markers should count together on the Aomomo planet for Jiuzhe card 1",
+  );
+  assert.equal(
+    jiuzhe.isCardConditionMet({ index: 7 }, white, aomomoConditionContext),
+    true,
+    "Aomomo landing markers should count toward Jiuzhe card 7",
+  );
+  assert.equal(
+    jiuzhe.isCardConditionMet({ index: 10 }, white, aomomoConditionContext),
+    true,
+    "Aomomo orbit markers should count toward Jiuzhe card 10",
+  );
+}
+
+{
   const progressPlayer = {
     id: "player-progress",
     color: "green",

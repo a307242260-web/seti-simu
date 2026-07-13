@@ -244,6 +244,9 @@ function launchToPlanet(context, planetId) {
     deltaY: 0,
   });
   assert.equal(result.ok, true);
+  const moveEvent = result.events.find((event) => event.type === "move");
+  assert.ok(moveEvent, "every probe movement should emit a move event for turn-long card effects");
+  assert.equal(moveEvent.sameRing, true);
   assert.equal(currentPlayer(context).resources.publicity, 0);
   assert.ok(result.events.some((event) => event.type === "visitPlanet" && event.planetId === "earth"));
 }

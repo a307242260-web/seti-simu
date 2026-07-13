@@ -537,6 +537,30 @@
       ));
   }
 
+  function orderSectorIdsByPlayerWinPriority(state, sectorIds, player) {
+    const playerKeys = new Set([
+      player?.id,
+      player?.playerId,
+      player?.color,
+      player?.playerColor,
+    ].filter(Boolean).map(String));
+    return (sectorIds || [])
+      .map((sectorId, index) => {
+        const normalizedSectorId = normalizeSettlementSectorId(sectorId);
+        const winner = normalizedSectorId === AOMOMO_NEBULA_ID
+          ? null
+          : getSectorRanking(state, normalizedSectorId)[0] || null;
+        const wonByPlayer = Boolean(winner && [
+          winner.playerId,
+          winner.playerKey,
+          winner.playerColor,
+        ].filter(Boolean).some((key) => playerKeys.has(String(key))));
+        return { sectorId, index, wonByPlayer };
+      })
+      .sort((left, right) => Number(right.wonByPlayer) - Number(left.wonByPlayer) || left.index - right.index)
+      .map((entry) => entry.sectorId);
+  }
+
   function settleSector(state, sectorId, options = {}) {
     const normalizedSectorId = normalizeSettlementSectorId(sectorId);
     if (!isSectorReadyToSettle(state, normalizedSectorId)) {
@@ -772,6 +796,7 @@
     isSectorReadyToSettle,
     getSectorTokenStats,
     getSectorRanking,
+    orderSectorIdsByPlayerWinPriority,
     getSettlementWinMarkerSlot,
     listSectorWinRecords,
     settleSector,

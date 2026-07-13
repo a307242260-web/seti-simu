@@ -455,6 +455,29 @@ assert.equal(extraSettleResult.winner.playerColor, "blue");
 assert.equal(extraSettleResult.second.playerColor, "green");
 assert.equal(data.listSectorExtraMarks(extraMarkState, "sector-1-a").length, 0);
 
+const settlementOrderState = data.createDefaultNebulaDataState();
+const currentOrderPlayer = { id: "player-blue", color: "blue", colorLabel: "蓝色", resources: { score: 0 } };
+const otherOrderPlayer = { id: "player-green", color: "green", colorLabel: "绿色", resources: { score: 0 } };
+for (const [sectorId, winner] of [
+  ["sector-1-a", otherOrderPlayer],
+  ["sector-1-b", currentOrderPlayer],
+  ["aomomo", otherOrderPlayer],
+]) {
+  data.fillNebulaData(settlementOrderState, sectorId, { source: "test" });
+  while (data.getNextReplaceableNebulaToken(settlementOrderState, sectorId)) {
+    data.replaceNextNebulaDataToken(settlementOrderState, sectorId, winner);
+  }
+}
+assert.deepEqual(
+  data.orderSectorIdsByPlayerWinPriority(
+    settlementOrderState,
+    ["sector-1-a", "aomomo", "sector-1-b"],
+    currentOrderPlayer,
+  ),
+  ["sector-1-b", "sector-1-a", "aomomo"],
+  "completed sectors won by the current player should be settled before other-player and winnerless sectors",
+);
+
 data.updateNebulaTokenPosition(nebulaDataState, "sector-2-a", 1, {
   percentX: 12.34,
   percentY: 56.78,

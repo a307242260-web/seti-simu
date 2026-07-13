@@ -269,6 +269,7 @@
     isSectorReadyToSettle: nebulaState.isSectorReadyToSettle,
     getSectorTokenStats: nebulaState.getSectorTokenStats,
     getSectorRanking: nebulaState.getSectorRanking,
+    orderSectorIdsByPlayerWinPriority: nebulaState.orderSectorIdsByPlayerWinPriority,
     getSettlementWinMarkerSlot: nebulaState.getSettlementWinMarkerSlot,
     listSectorWinRecords: nebulaState.listSectorWinRecords,
     settleSector: nebulaState.settleSector,

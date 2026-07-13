@@ -593,9 +593,24 @@
     return Object.keys(ownedTiles).filter((tileId) => ownedTiles[tileId] && String(tileId).startsWith(techType)).length;
   }
 
-  function countOrbitMarkers(player, planetStatsState) {
+  function countAomomoMarkers(player, context = {}, kind = "all") {
     const playerKeys = getPlayerKeys(player);
+    const aomomoState = context?.alienGameState?.aomomo || {};
     let count = 0;
+    if (kind === "all" || kind === "orbit") {
+      count += (aomomoState.orbitMarkers || [])
+        .filter((marker) => markerBelongsToPlayer(marker, playerKeys)).length;
+    }
+    if (kind === "all" || kind === "land") {
+      count += (aomomoState.landingMarkers || [])
+        .filter((marker) => markerBelongsToPlayer(marker, playerKeys)).length;
+    }
+    return count;
+  }
+
+  function countOrbitMarkers(player, planetStatsState, context = {}) {
+    const playerKeys = getPlayerKeys(player);
+    let count = countAomomoMarkers(player, context, "orbit");
     for (const planet of Object.values(planetStatsState?.planets || {})) {
       count += (planet.orbitMarkers || []).filter((marker) => markerBelongsToPlayer(marker, playerKeys)).length;
     }
@@ -614,7 +629,7 @@
 
   function countLandingMarkers(player, planetStatsState, context = {}) {
     const playerKeys = getPlayerKeys(player);
-    let count = countPlutoMarkers(player, context, "land");
+    let count = countPlutoMarkers(player, context, "land") + countAomomoMarkers(player, context, "land");
     for (const planet of Object.values(planetStatsState?.planets || {})) {
       count += (planet.landingMarkers || []).filter((marker) => markerBelongsToPlayer(marker, playerKeys)).length;
       count += (planet.satelliteLandings || []).filter((marker) => markerBelongsToPlayer(marker, playerKeys)).length;
@@ -624,7 +639,10 @@
 
   function maxSamePlanetOrbitOrLand(player, planetStatsState, context = {}) {
     const playerKeys = getPlayerKeys(player);
-    let max = countPlutoMarkers(player, context, "all");
+    let max = Math.max(
+      countPlutoMarkers(player, context, "all"),
+      countAomomoMarkers(player, context, "all"),
+    );
     for (const planet of Object.values(planetStatsState?.planets || {})) {
       const count = [
         ...(planet.orbitMarkers || []),
@@ -792,7 +810,7 @@
         current = countOtherAlienTraces(player, context.alienGameState);
         break;
       case "orbitCount":
-        current = countOrbitMarkers(player, context.planetStatsState) + countPlutoMarkers(player, context, "orbit");
+        current = countOrbitMarkers(player, context.planetStatsState, context) + countPlutoMarkers(player, context, "orbit");
         break;
       case "completedTasks":
         current = Number(player?.completedTaskCount) || 0;
