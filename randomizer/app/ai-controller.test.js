@@ -10100,6 +10100,11 @@ function makeYichangdianAlienState(options = {}) {
     { orange: 2, blue: 1, purple: 1 },
     "autobattle player results should expose tech type counts for D1 diagnostics",
   );
+  assert.deepEqual(
+    blueResult.traceTypeCounts,
+    { yellow: 0, pink: 0, blue: 0 },
+    "autobattle player results should expose per-type alien traces for B1 diagnostics",
+  );
 }
 
 {

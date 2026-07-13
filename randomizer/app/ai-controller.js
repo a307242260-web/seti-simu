@@ -989,6 +989,7 @@
           reservedCards: summarizeAiResultCards(player.reservedCards, player),
           techCount: countAiPlayerTech(player),
           techTypeCounts: getAiPlayerTechTypeCounts(player),
+          traceTypeCounts: getAiB1TraceCounts(player),
           finalMarkCount: finalMarks.length,
           finalFormulas: finalMarks.map((entry) => entry.formulaId),
           finalFormulaProgress,
