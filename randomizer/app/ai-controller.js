@@ -850,6 +850,7 @@
         return {
           playerId: player.id,
           playerLabel: player.colorLabel || player.name || player.id,
+          companyLabel: getAiIndustryCard(player)?.label || null,
           color: player.color,
           finalScore: finalScoreBreakdown.totalScore ?? player.resources?.score ?? 0,
           baseScore: finalScoreBreakdown.baseScore ?? player.resources?.score ?? 0,
@@ -7690,11 +7691,66 @@
           + Math.min(12, bestImmediateMainCashoutScore * 0.18)
           + Math.min(6, bestImmediateMainCashoutDirectScore * 0.16)
         : 0;
+      const readyScanCheck = mainActionOpen
+        ? scanEffects?.canExecuteScan?.(player, { standardAction: true })
+        : null;
+      const rawReadyScanCandidate = readyScanCheck?.ok
+        ? candidates.find((candidate) => candidate?.id === "scan" && candidate.available !== false) || null
+        : null;
+      const readyScanScore = (() => {
+        if (!rawReadyScanCandidate) return 0;
+        const fallbackScore = Math.max(0, aiNumber(rawReadyScanCandidate.score));
+        if (!ai?.actionGraph?.buildActionGraph) return fallbackScore;
+        const markedFinalFormulas = getAiMarkedFinalFormulaEntries(player);
+        const traceCompetition = getAiTraceCompetitionState(player);
+        const graphCandidates = ai.actionGraph.buildActionGraph(
+          [rawReadyScanCandidate],
+          {
+            playerState,
+            turnState,
+            alienGameState,
+            finalScoringState,
+            currentPlayer: player,
+            aiMarkedFinalFormulas: markedFinalFormulas,
+            aiTraceCompetition: traceCompetition,
+          },
+          player.id,
+          {
+            markedFormulas: markedFinalFormulas,
+            hasMarkedFinalTile: markedFinalFormulas.length > 0,
+            traceCompetition,
+          },
+        );
+        const graphCandidate = Array.isArray(graphCandidates) ? graphCandidates[0] : null;
+        if (!graphCandidate) return fallbackScore;
+        const adjusted = adjustAiActionGraphCandidateForStyle(
+          rawReadyScanCandidate,
+          adjustAiActionGraphCandidate(rawReadyScanCandidate, graphCandidate, player),
+          player,
+          markedFinalFormulas,
+        );
+        return Math.max(0, aiNumber(adjusted?.net ?? adjusted?.breakdown?.net ?? fallbackScore));
+      })();
+      const shouldPreserveReadyScanOverRefill = (tradeId) => {
+        if (readyScanScore < 27 || bestPublicTradeCardScore >= readyScanScore - 6) return false;
+        const trade = quickTrades.getTradeAction(tradeId);
+        const simulatedPlayer = trade ? createAiPlayerAfterQuickTrade(player, trade) : null;
+        if (!simulatedPlayer) return false;
+        const simulatedCredits = Math.max(0, aiNumber(simulatedPlayer.resources?.credits));
+        const simulatedEnergy = Math.max(0, aiNumber(simulatedPlayer.resources?.energy));
+        return simulatedCredits < scanCreditCost
+          || simulatedEnergy < scanEnergyCost
+          || !scanEffects?.canExecuteScan?.(simulatedPlayer, { standardAction: true })?.ok;
+      };
+      const finalLowHandCreditRefillBlocksReadyScan = shouldPreserveReadyScanOverRefill("credits-for-card");
+      const finalLowHandEnergyRefillBlocksReadyScan = shouldPreserveReadyScanOverRefill("energy-for-card");
       const finalLowHandCreditRefill = finalLowHandPublicRefill
         && credits >= 2
+        && !finalLowHandCreditRefillBlocksReadyScan
         && isPublicRefillStillPositiveAfterQuickTrade("credits-for-card");
       const finalLowHandEnergyRefill = finalLowHandPublicRefill
         && energy >= 2
+        && !finalLowHandEnergyRefillBlocksReadyScan
         && isPublicRefillStillPositiveAfterQuickTrade("energy-for-card");
       const finalHighScorePreserveLastCredits = finalHighScorePublicRefill
         && publicity >= 3
@@ -8153,6 +8209,9 @@
               finalHighScoreAvoidCreditEnergyTrap,
               finalLowHandCreditRefill,
               finalLowHandEnergyRefill,
+              readyScanScore: roundAiScore(readyScanScore),
+              finalLowHandCreditRefillBlocksReadyScan,
+              finalLowHandEnergyRefillBlocksReadyScan,
               finalHighScorePreserveLastCredits,
               finalHighScoreCreditRefill,
               finalHighScoreEnergyRefill,
@@ -21889,6 +21948,7 @@
             turnActionCount: analysis.turnActionCount,
             actionCounts: analysis.actionCounts,
             actionCategoryRatios: analysis.actionCategoryRatios,
+            playerProfiles: analysis.playerProfiles,
             opportunities: analysis.opportunities,
             passOpportunitySamples: analysis.passOpportunitySamples,
             passResourceLockSamples: analysis.passResourceLockSamples,

@@ -6998,6 +6998,113 @@ function makeYichangdianAlienState(options = {}) {
 
 {
   const turnChoices = [];
+  const selectedActions = [];
+  const publicScoreCard = {
+    id: "ready-scan-refill-card",
+    cardName: "Ready scan refill card",
+    price: 1,
+    playEffects: [{ type: "gain_resources", options: { gain: { score: 3 } } }],
+  };
+  const harness = createAiControllerHarness(null, {
+    currentPlayerColor: "blue",
+    roundNumber: 4,
+    turnNumber: 9,
+    canStartMainAction: true,
+    realisticCanAfford: true,
+    recordQuickTrade: true,
+    aiDifficulty: "weak_start",
+    quickTrades: {
+      "energy-for-card": {
+        id: "energy-for-card",
+        label: "2 energy -> 1 card",
+        cost: { energy: 2 },
+        gain: { handSize: 1 },
+      },
+    },
+    publicCards: [publicScoreCard],
+    blueResources: { score: 110, credits: 1, energy: 2, publicity: 0, availableData: 0, handSize: 0 },
+    blueHand: [],
+    finalScoringState: {
+      tiles: {
+        final_a1: { id: "final_a1", marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 25 }] },
+        final_b1: { id: "final_b1", marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 50 }] },
+        final_d2: { id: "final_d2", marks: [{ playerId: "player-blue", slotIndex: 1, threshold: 70 }] },
+      },
+    },
+    finalFormulaIds: {
+      final_a1: "a1",
+      final_b1: "b1",
+      final_d2: "d2",
+    },
+    scanEffects: {
+      EFFECT_TYPES: {
+        EARTH_SECTOR_SCAN: "earth_sector_scan",
+        IMPROVED_SECTOR_SCAN: "improved_sector_scan",
+        MERCURY_SECTOR_SCAN: "mercury_sector_scan",
+        PUBLIC_CARD_SCAN: "public_card_scan",
+        HAND_SCAN: "hand_scan",
+        SCAN_ACTION_4: "scan_action_4",
+      },
+      SCAN_COST: { credits: 1, energy: 2 },
+      getStandardScanCost: () => ({ credits: 1, energy: 2 }),
+      buildScanEffectQueue: () => [{ type: "earth_sector_scan" }],
+      canExecuteScan: (player) => (
+        Number(player?.resources?.credits || 0) >= 1 && Number(player?.resources?.energy || 0) >= 2
+          ? { ok: true }
+          : { ok: false, message: "scan resources missing" }
+      ),
+    },
+    buildSectorScanChoicesForX: (sectorX) => [{
+      nebulaId: "ready-scan-nebula",
+      sectorX,
+      label: "Ready scan nebula",
+    }],
+    data: {
+      getNextReplaceableNebulaToken: () => ({ slotIndex: 18 }),
+      getNebulaCapacity: () => 3,
+      getNebulaSlotScoreReward: (_nebulaId, slotIndex) => Number(slotIndex || 0),
+      getNebulaColor: () => "blue",
+      listNebulaTokens: () => [],
+      listSectorExtraMarks: () => [],
+      getSectorTokenStats: () => ({}),
+    },
+    onChooseTurnAction: (candidates, selected) => {
+      turnChoices.push(candidates);
+      selectedActions.push(selected);
+    },
+    chooseTurnAction: (candidates) => candidates
+      .slice()
+      .filter((candidate) => candidate.available !== false)
+      .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null,
+  });
+  assert.equal(
+    harness.controller.configureAiAutoBattle({
+      playerIds: [harness.blue.id],
+      aiDifficulty: "weak_start",
+      suppressAutoSchedule: true,
+    }).ok,
+    true,
+  );
+
+  const result = harness.controller.runAiAutomationStep();
+  assert.notEqual(result?.blocked, true, "ready scan resource protection should not block the turn");
+  assert.equal(
+    selectedActions[0]?.id,
+    "scan",
+    "AI should cash out the ready scan before refilling a card",
+  );
+  const energyRefill = turnChoices[0]?.find((candidate) => (
+    candidate.id === "quickTrade" && candidate.tradeId === "energy-for-card"
+  ));
+  assert.equal(
+    energyRefill,
+    undefined,
+    "energy-for-card should not consume the payment for a stronger already-ready scan",
+  );
+}
+
+{
+  const turnChoices = [];
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",
     roundNumber: 4,
