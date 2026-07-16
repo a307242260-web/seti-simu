@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-17
+- source_issue: SETI-27
+- observation: 通过 `issue_transition.py` 写入包含 shell 变量的 `verification_command` 时，若命令参数由外层双引号包裹，`$test` 会在写 metadata 前被当前 shell 展开，造成记录与实际验证命令不一致；应使用能保留字面量的引用方式，并在收口前核对 metadata。
+- evidence: SETI-27 的第二次 `start` timeline 将预期的 `node "$test"` 记录成 `node ""`，而实际工作树与 staged 快照全量回归均使用了正确循环命令并通过。
+- promote_to: none
+- promotion_status: candidate
+- decision: 记录为 coding 流程候选经验；当前仅一次命令引用失真，不修改 issue-workflow 或 agent prompt，等待后续同类 metadata 写入是否复现。
+
+- date: 2026-07-17
 - source_issue: SETI-26
 - observation: 从大型闭包迁出 runtime 时，`node --check` 只能证明语法成立，不能证明显式 context 覆盖了普通函数体和嵌套回调里的全部自由变量；至少要执行 select/confirm/cancel/rollback 等代表性路径，才能发现缺失注入。
 - evidence: SETI-26 首轮模块语法检查通过，但定向执行科技选择路径时暴露 `renderRunezuBoardSymbols` 未注入；随后按函数体补齐 `renderWheels`、`beginCardSelection`、跨 runtime 延迟回调等依赖，工作树与 staged 独立快照全量回归才通过。提交 `8963b38`。

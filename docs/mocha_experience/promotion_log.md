@@ -115,3 +115,24 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: `git diff --cached --check`；临时 checkout-index 快照执行 `node --check randomizer/app.js` 与全部 tracked `randomizer/**/*.test.js`。
 - observed_outcome: SETI-25 工作树保留既有 AI/headless 改动，本 issue staged 快照独立通过语法和全量 tracked 回归。
 - keep_or_revise: 保留并观察后续 5 次；若只在重叠文件场景触发且持续避免误提交，则维持。
+- date: 2026-07-17
+- source: SETI-27
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航
+- target_component: none
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 记录 issue metadata 中 shell 变量被外层双引号提前展开的引用风险。
+- applied_change: 仅新增 coding experience 与本决策契约，不修改 issue-workflow、agent prompt、watcher 或 loop template。
+- expected_effect: 后续写入复杂 verification_command 时能保留命令字面量，并在收口前发现 metadata 与实际执行证据不一致。
+- evaluation_window: 后续 3 次包含 shell 循环或变量的 verification_command 写入
+- success_signal: metadata 中的 `$test` 等变量保持原样，且 verification_result 能准确对应实际执行命令。
+- rollback_condition: 若后续证明状态执行器统一改为结构化命令参数或自动转义，导致该观察不再适用，则合并或删除该候选。
+- risk: 单次引用错误可能来自调用层而非 issue-workflow，本轮直接升级规则会过拟合。
+- evidence_before: `checkpoint/mocha_issue_timeline/SETI-27.jsonl` 第二条记录中的 verification_command 已由 `node "$test"` 变为 `node ""`；实际两轮全量测试日志均正常逐文件执行。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate，暂不升级组件。
+- applied_at: 2026-07-17
+- verification: 核对 SETI-27 timeline、issue metadata 与本轮实际 shell 回归输出。
+- observed_outcome: 已识别并将在最终 verification_result 中以实际命令和结果覆盖，不将失真 metadata 当作验收证据。
+- keep_or_revise: 保持 candidate，等待后续 3 次复杂 verification_command 写入复审。
