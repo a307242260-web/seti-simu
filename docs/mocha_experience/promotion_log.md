@@ -49,3 +49,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: 人工核对 timeline、metadata 与评论线程一致。
 - observed_outcome: 已明确识别这次收口偏差来自 self-review 误用 `in_review`。
 - keep_or_revise: 等重复证据；若再出现同类偏差，再升级 issue-workflow。
+
+- date: 2026-07-16
+- source: SETI-23
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航
+- target_component: none
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 记录共享 dirty worktree 下“工作树验证”和“仅含本次 staged 快照验证”必须区分的候选经验。
+- applied_change: 仅新增经验与决策契约，不修改 git-workflow、issue-workflow 或 agent prompt。
+- expected_effect: 后续重叠文件提交时更早发现 staged 内容依赖他人未提交修复，且不会为获得独立提交而误卷入他人改动。
+- evaluation_window: 后续 3 次共享树重叠文件提交
+- success_signal: 提交前能明确报告工作树与 staged 快照各自验证结果，且提交不包含他人改动。
+- rollback_condition: 如果后续证明临时 HEAD 快照构造成本显著高于收益，或 git 原生 staged 检查已足以覆盖，则维持 candidate 并合并为更轻量规则。
+- risk: 单次案例含一个既有 HEAD TDZ，直接升级可能把偶发基线问题泛化为所有提交的重型流程。
+- evidence_before: SETI-23 的 staged diff、临时 HEAD 快照 DOM 烟测结果与提交 `9414cc4`；共享工作树保留了未提交的 TDZ 修复且 DOM 烟测通过。
+- owner_or_agent_decision: 记录 candidate，不升级长期组件。
+- applied_at: 2026-07-16
+- verification: 核对 `git diff --cached --stat`、共享工作树状态、临时 HEAD 快照全量 Node 回归及两次 DOM 脚本顺序烟测结果。
+- observed_outcome: 本次提交只包含 effect 重构；其他 agent/user 改动仍完整保留在工作树，且差异可由 `git status --short` 查看。
+- keep_or_revise: 等重复证据后再决定是否升级提交前检查模板。

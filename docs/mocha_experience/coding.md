@@ -21,3 +21,11 @@
 - promote_to: issue_workflow
 - promotion_status: candidate
 - decision: 先作为流程候选经验记录；后续若再次出现“self-review 导致伪 in_review”的收口偏差，再考虑把 `done` 前置检查或 `review_pass` 约束升级到 issue-workflow。
+
+- date: 2026-07-16
+- source_issue: SETI-23
+- observation: 在共享 dirty worktree 中重构与他人改动重叠的文件时，验证工作树通过并不能证明本次 staged 快照独立成立；提交前应同时检查 staged diff，并在需要时从 HEAD 构造仅含本次改动的快照验证，避免卷入他人改动或把其修复误算为本次交付。
+- evidence: SETI-23 提交 `9414cc4` 通过临时 HEAD 快照构造只暂存 effect 重构；共享工作树 DOM 烟测通过，而仅含本次 staged 内容的快照暴露了 HEAD 已有的 `syncFinalScorePendingMarks` TDZ，证明两种验证回答的问题不同。
+- promote_to: none
+- promotion_status: candidate
+- decision: 先保留为共享树 coding 经验候选；待后续同类重叠提交再次出现，再评估是否固化为提交前检查模板。
