@@ -20,13 +20,14 @@
 - `randomizer/app/constants.js`：app 层静态配置、图标路径、奖励表和 UI 参数。
 - `randomizer/app/dom.js`：固定 DOM 元素注册表。
 - `randomizer/app/events.js`：app 层事件绑定、overlay 点击分发、拖拽绑定与 resize 入口。
+- `randomizer/app/debug-runtime.js`：debug / calibration / quick sector scan / failsafe / alien reveal 调试入口与开发辅助壳层。
 - `randomizer/app/start-screen.js`：开始界面选项同步、继续游戏入口与新局启动壳层。
 - `randomizer/app/turn-flow.js`：新局初始化、随机化装配与 round / turn 推进壳层。
 - `randomizer/app/alien-ui.js`：外星人揭示提示、痕迹 picker、方舟用途分流与各物种痕迹放置模式 UI 壳层。
 - `randomizer/app/action-log-export.js`：终局行动日志 Markdown 导出格式与文件名生成。
-- `randomizer/app/public-api.js`：调试和外部脚本使用的 `window.SetiRandomizer` API 组装。
+- `randomizer/app/public-api.js`：调试、AI 验证和外部脚本使用的 `window.SetiRandomizer` API 组装。
 - `randomizer/app/ai-controller.js`：AI 自动机、策略权重、批跑/AB 测试与 AI 决策控制器。
-- `randomizer/app.js`：主 UI、设置流程、回合流程、效果队列、行动日志、AI 控制器接线与各模块编排入口。
+- `randomizer/app.js`：主 UI、设置流程、回合流程、效果队列、AI 控制器接线与各模块编排入口；保留顶层状态与跨模块调度。
 - `randomizer/style.css`：页面布局、交互聚焦、高亮与各区视觉状态。
 - `randomizer/solar-system/layout.js`：太阳系盘面坐标、扇区、星云与内容类型定义。
 - `randomizer/solar-system/core.js`：太阳系渲染与旋转相关核心逻辑。
@@ -49,6 +50,7 @@
 
 - 改回合、PASS、主行动锁定、效果栏或日志：先读 `randomizer/app.js` 和 `randomizer/game/history/**`。
 - 改 app 框架、脚本依赖、常量、DOM、事件绑定或公开 API：先读 `docs/app-architecture.md` 和 `randomizer/app/**`。
+- 改 debug 面板、failsafe、快速扇区扫描、外星人调试揭示或校准入口：先读 `randomizer/app/debug-runtime.js` 和 `docs/app-topdown-architecture.md`。
 - 改发射、移动、环绕、登陆或星球奖励：先读 `randomizer/game/abilities/**`、`randomizer/game/actions/planet-rewards.js`、`randomizer/game/rockets.js`。
 - 改扫描、星云、数据池或扇区结算：先读 `randomizer/game/actions/scan-effects.js` 和 `randomizer/game/data/**`。
 - 改打牌、任务卡、弃牌角标或卡牌 DSL：先读 `randomizer/game/cards/**` 和卡牌相关文档。

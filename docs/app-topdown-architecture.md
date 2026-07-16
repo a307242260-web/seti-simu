@@ -199,16 +199,15 @@ index.html
 
 ### 3.5 调试与开发辅助逻辑
 
-`app.js` 还保留大量 debug / calibration / cheats：
+这部分已经收口到 `randomizer/app/debug-runtime.js`，当前负责：
 
-- reveal alien for debug
-- fill nebula data
-- sector win debug
-- debug gain card / income / score
-- 各 alien 校准入口
-- 坐标 readout / token size / marker layout 调试
+- debug player switch / debug 面板开合
+- quick sector scan / fill nebula data / sector win debug
+- debug gain card / income / score / data
+- reveal alien for debug / 各 alien 校准入口
+- failsafe AI takeover / force skip turn
 
-这些内容很适合最终再做一次“debug-runtime / calibration-runtime”收口。
+`app.js` 里仍会保留少量为其他模块服务的共享 helper，例如 state readout 行拼装、token size 计算依赖和部分坐标调试数据源；但具体的开发辅助入口已经不再直接堆在顶层。
 
 ## 4. 现在已经拆出来的逻辑图
 
@@ -241,6 +240,9 @@ index.html
   - `game-recovery.js`
   - `action-briefing.js`
 
+- debug / devtools 域
+  - `debug-runtime.js`
+
 - bootstrap / API / AI 域
   - `bootstrap.js`
   - `public-api.js`
@@ -250,9 +252,6 @@ index.html
 ### 4.2 还没有完全独立的块
 
 - render-runtime
-  - 目前大部分仍在 `app.js`
-
-- debug-runtime
   - 目前大部分仍在 `app.js`
 
 - player panel / board visual runtime
@@ -288,6 +287,7 @@ App Flow Modules
   - alien-ui.js
   - alien-runtime.js
   - alien-trace-reward-flow.js
+  - debug-runtime.js
 
 App Support Modules
   - action-log-runtime.js
@@ -325,21 +325,17 @@ Game Rules
 - “问题还在不在于没有拆计划”：
   - 不在。现在的问题已经从“没有拆分计划”变成“哪些剩余 glue 还值得继续下沉，哪些应接受留在 composition root”。
 
-换句话说，当前阶段不是继续补新的大类子 issue，而是：
+换句话说，当前阶段已经进入尾声，剩余重点是：
 
 1. 用 top-down 视角确认 app 层最终目标结构
 2. 识别 `app.js` 剩余逻辑中哪些属于：
    - 可继续模块化的 render/debug/runtime
    - 应保留在顶层的 composition glue
-3. 在这一步确认之后，再决定最后一轮收口和文档更新
+3. 在边界稳定后继续做最后一轮 render / final UI 收口与文档同步
 
 ## 7. 与 `AGENTS.md` 的关系
 
-这份文档是给后续重写 `AGENTS.md` 准备的中间稿。
-
-在“架构确认 + 重构完成收口”之前，`AGENTS.md` 仍应保持快速导航角色，不在里面塞进这份 top-down 长文。
-
-等确认收口后，再把 `AGENTS.md` 重写成：
+`AGENTS.md` 现在应该保持快速导航角色，不在里面塞进这份 top-down 长文；但它需要：
 
 - 更薄的入口导航
 - 指向这份架构文档
