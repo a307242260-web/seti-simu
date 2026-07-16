@@ -14,6 +14,14 @@
 
 ## Entries
 
+- date: 2026-07-17
+- source_issue: SETI-26
+- observation: 从大型闭包迁出 runtime 时，`node --check` 只能证明语法成立，不能证明显式 context 覆盖了普通函数体和嵌套回调里的全部自由变量；至少要执行 select/confirm/cancel/rollback 等代表性路径，才能发现缺失注入。
+- evidence: SETI-26 首轮模块语法检查通过，但定向执行科技选择路径时暴露 `renderRunezuBoardSymbols` 未注入；随后按函数体补齐 `renderWheels`、`beginCardSelection`、跨 runtime 延迟回调等依赖，工作树与 staged 独立快照全量回归才通过。提交 `8963b38`。
+- promote_to: none
+- promotion_status: candidate
+- decision: 作为 runtime 拆分验证候选经验保留；当前只有一次迁移证据，不修改 agent prompt 或 loop template，等待后续同类拆分复现后再评估升级。
+
 - date: 2026-07-16
 - source_issue: SETI-7
 - observation: 对已经实现完成、验证完成且没有待 owner 拍板事项的 coding issue，如果 `reviewer` 仍指向自己，就不应走 `review_pass -> in_review`；这会制造伪 review 状态，增加额外追问成本。
