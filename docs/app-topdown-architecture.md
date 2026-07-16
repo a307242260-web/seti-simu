@@ -89,9 +89,14 @@ index.html
 
 - 手牌 / 出牌 / 移动支付
   - `app/hand-flow.js`
+  - `app/card-runtime.js`
 
 - 公共牌 / 扫描
   - `app/scan-flow.js`
+
+- 收入 / 卡牌任务与触发
+  - `app/income-runtime.js`
+  - `app/card-trigger-runtime.js`
 
 - 效果队列 / 历史流
   - `app/effect-flow.js`
@@ -166,11 +171,11 @@ index.html
 
 ### 3.3 卡牌、收入、公司、终局等跨模块流程
 
-`app.js` 里还保留着一些跨模块编排域：
+卡牌交互、收入、扫描和任务/触发的具体运行分支已迁入 `card-runtime.js`、`income-runtime.js`、`scan-flow.js` 与 `card-trigger-runtime.js`。`app.js` 只保留这些 runtime 与效果队列、AI、历史和渲染层之间的 context 注入及跨 flow continuation。
 
-- 收入流程与轮开始收益编排
+仍留在 `app.js` 的跨模块域主要是：
+
 - 公司牌 1x 能力和被动奖励的总控
-- 部分 card trigger / task completion / score source 接线
 - final score pending mark、终局结果汇总和展示
 - Pluto、行业被动、特殊 company / alien 分支的 app 层 glue
 
