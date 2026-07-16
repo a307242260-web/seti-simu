@@ -44,12 +44,21 @@
     gameRecoveryModule,
     runtimeModule,
     refreshModule,
+    handFlowModule,
+    startScreenModule,
+    turnFlowModule,
     scanFlowModule,
   } = dependencies;
 
   const actionLogExport = window.SetiAppActionLogExport;
   if (!actionLogExport) {
     throw new Error("Missing SETI app dependency: SetiAppActionLogExport");
+  }
+  if (!startScreenModule) {
+    throw new Error("Missing SETI app dependency: SetiAppStartScreen");
+  }
+  if (!turnFlowModule) {
+    throw new Error("Missing SETI app dependency: SetiAppTurnFlow");
   }
 
   const appConstants = window.SetiAppConstants.createAppConstants(dependencies);
@@ -113,6 +122,7 @@
     players: players.PLAYER_COLOR_IDS.map((color) => ({ color })),
     currentPlayerColor: players.DEFAULT_PLAYER_COLOR,
   });
+  const createTurnState = turnFlowModule.createTurnState;
   const turnState = createTurnState(playerState.players, {
     activePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
     currentPlayerId: playerState.currentPlayerId,
@@ -203,6 +213,148 @@
     renderFinalScoreBoard,
     renderRunezuBoardSymbols,
   });
+  const handFlowHelpers = handFlowModule.createHandFlow({
+    pendingState,
+    cardState,
+    rocketState,
+    alienGameState,
+    turnState,
+    solarState,
+    els,
+    players,
+    cards,
+    quickTrades,
+    data,
+    industry,
+    abilities,
+    historyCommands,
+    quickActionHistory,
+    scanEffects,
+    fangzhou,
+    runezu,
+    solar,
+    rocketActions,
+    MOVE_ENERGY_COST,
+    HISTORY_SOURCE_QUICK,
+    SCORE_SOURCE_KEYS,
+    getCurrentPlayer,
+    getPlayerById,
+    getPlayerByColor,
+    getGameplayLockReason,
+    isTechTilePickingActive,
+    isCardSelectionActive,
+    isDiscardSelectionActive,
+    isPlayCardSelectionActive,
+    isIndustryHandSelectionActive,
+    hasActivePendingSubFlow,
+    getHandCardPlayActionForCard,
+    getCardCornerQuickActionForCard,
+    canUseCardCornerQuickAction,
+    shouldQueueCardCornerMoveQuickAction,
+    canPayForMove,
+    getRequiredMovePointsForUi,
+    isMovePaymentCard,
+    playerHasMovePaymentCard,
+    hasPlayableFutureSpanCard,
+    getStandardPlayCardActionBlockReason,
+    getCardPlayCost,
+    formatCardPlayCost,
+    handleHandCardPlay,
+    getPlayCardBeforePlayerSnapshot,
+    restoreObjectSnapshot,
+    releaseFutureSpanAfterPlayWithHistory,
+    markActionPending,
+    renderPlayerHand,
+    renderPlayerStats,
+    renderPublicCards,
+    renderInitialSelectionArea,
+    renderAlienPanels,
+    renderStateReadout,
+    updatePublicCardControls,
+    updatePlayerHandPanelTitle,
+    updateActionButtons,
+    setQuickPanelOpen,
+    syncInteractionFocusChrome,
+    openScanTargetPicker,
+    getPublicScanChoicesForCard,
+    executeFreeMoveForScanAction4,
+    executeFreeMoveForCardCorner,
+    executeFreeMoveForCardTrigger,
+    executeIndustryFreeMove,
+    createActionContext,
+    recordMoveActionHistory,
+    renderRocketElement,
+    clearMoveRocketHighlight,
+    beginQuickActionStep,
+    completeQuickActionStep,
+    clearHistoryStepOrderForSource,
+    addScoreSourceFromGain,
+    isAlienFamilyCard,
+    applyFangzhouCard1Rewards,
+    applyRunezuSymbolReward,
+    settleCardTasksAfterEffect,
+    formatCardCornerRewardMessage,
+    createCardCornerTriggerEventFields,
+    canStartCardCornerFreeMove,
+    beginCardCornerFreeMove,
+    startCardCornerMoveEffectFlow,
+    rollbackPendingIndustryQuickAction,
+    continuePendingDataPlacementAfterBonus,
+    applyIncomeFromCard,
+    beginEffectHistoryStep,
+    recordHistoryCommand,
+    getCurrentActionEffect,
+    completeCurrentActionEffect,
+    isIncomeDiscardActionType,
+    scrollToPlayerCommandPanel,
+    blockManualAiMovePayment,
+    blockIncompatiblePendingQuickAction,
+    recordQuickHistoryCommand,
+    recordQuickTradeCompletion,
+    formatPlanetRewardGain,
+    getDiscardCornerRewardMultiplier,
+    requestAnimationFrame,
+  });
+  ({
+    syncDiscardSelectionChrome,
+    isHandScanSelectionActive,
+    syncHandScanSelectionChrome,
+    cancelHandScanSelection,
+    isMovePaymentSelectionActive,
+    getMovePaymentPlayer,
+    isMovePaymentLockedForAiAutomation,
+    beginSupplementalMovePayment,
+    syncMovePaymentChrome,
+    scrollToPlayerHandPanel,
+    cancelMovePaymentSelection,
+    beginMovePaymentSelection,
+    handleHandCardMovePayment,
+    confirmMovePayment,
+    syncPlayCardSelectionChrome,
+    getPendingPlayCardSelection,
+    handlePlayCardSelect,
+    confirmPlayCardSelection,
+    getPendingHandCardPlayAction,
+    cancelHandCardPlayAction,
+    clearHandCardContextActions,
+    cancelHandCardContextActions,
+    confirmHandCardPlayAction,
+    getPendingCardCornerQuickAction,
+    syncCardCornerQuickActionChrome,
+    cancelCardCornerQuickAction,
+    handleHandCardCornerQuickAction,
+    confirmCardCornerQuickAction,
+    beginDiscardSelection,
+    cancelDiscardSelection,
+    completeDiscardSelection,
+    finalizePendingDiscardSelection,
+    handleHandCardDiscard,
+    beginPlayCardSelection,
+    cancelPlayCardSelection,
+    handleFutureSpanCardPlay,
+    handleFutureSpanPlayCardSelect,
+    handleHandScanCardClick,
+  } = handFlowHelpers);
   const scanFlowHelpers = scanFlowModule.createScanFlowHelpers({
     cards,
     players,
@@ -334,6 +486,199 @@
       rounds: PASS_RESERVE_ROUNDS,
       activePlayerCount: turnState.activePlayerCount || DEFAULT_ACTIVE_PLAYER_COUNT,
       random: options.random || Math.random,
+    });
+  }
+
+  const turnFlowController = turnFlowModule.createTurnFlowController({
+    players,
+    turnState,
+    playerState,
+    uiRuntimeState,
+    solarState,
+    nebulaDataState,
+    alienGameState,
+    finalScoringState,
+    rocketState,
+    planetStatsState,
+    techGameState,
+    cardState,
+    setupSelectionState,
+    pendingState,
+    cards,
+    industry,
+    finalScoring,
+    solar,
+    data,
+    aliens,
+    rocketActions,
+    planetStats,
+    tech,
+    cardTaskStateModule,
+    clearTransientStateForRecovery,
+    restoreMutableObject,
+    createTurnState,
+    resetScanRunSequence,
+    resetActionLog,
+    randomizeWheels,
+    randomizeSectors,
+    fillNebulaDataBoard,
+    renderWheels,
+    renderSectorNebulaDataBoard,
+    randomizeFinalScores,
+    randomizeAliens,
+    renderRoundStatus,
+    renderRotateStateToken,
+    renderDebugPlayerSwitch,
+    refreshHelpers,
+    cancelIndustryAbilityFlow,
+    closeFinalResultDialog,
+    preparePassReservePilesForCurrentGame,
+    initializeCardGame,
+    configureDefaultAiOpponent: (...args) => configureDefaultAiOpponent(...args),
+    startInitialSelection,
+    renderStateReadout,
+    resize,
+    clearPersistentGameState,
+    schedulePersistentGameStateSave,
+    seedDefaultReferenceRockets,
+    getPlayerById,
+    computePlayerFinalScoreBreakdown,
+    defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
+    defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
+    defaultInitialHandCount: DEFAULT_INITIAL_HAND_COUNT,
+    finalRoundNumber: FINAL_ROUND_NUMBER,
+    finalScoreIds: FINAL_SCORE_IDS,
+    aomomoClearNebulaId: aomomo?.NEBULA_ID || null,
+    normalizeAiDifficulty(value) {
+      return startScreenModule.normalizeAiDifficulty(value, {
+        weakStartValue: AI_DIFFICULTY_WEAK_START,
+        defaultValue: AI_DIFFICULTY_LAUGHABLE,
+      });
+    },
+    startScreenState,
+    historyStepOrder,
+    cardTaskState,
+    els,
+    setPersistentGameSaveSuspended(value) {
+      persistentGameSaveSuspended = Boolean(value);
+    },
+  });
+  const startScreenController = startScreenModule.createStartScreenController({
+    startScreenState,
+    els,
+    actionLogState,
+    alienTypeIds: aliens.ALIEN_TYPE_IDS || [],
+    minAlienRevealPoolSize: aliens.MIN_ALIEN_REVEAL_POOL_SIZE || 2,
+    industryCardFiles: INDUSTRY_CARD_FILES,
+    minIndustryPoolSize: MIN_START_INDUSTRY_POOL_SIZE,
+    continueEnabled: START_SCREEN_CONTINUE_ENABLED,
+    defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
+    aiDifficultyWeakStart: AI_DIFFICULTY_WEAK_START,
+    aiDifficultyDefault: AI_DIFFICULTY_LAUGHABLE,
+    hasPersistentGameState,
+    restorePersistentGameState,
+    refreshAfterGameRecovery,
+    schedulePersistentGameStateSave,
+    closeActionBriefing,
+    setDebugOpen,
+    setReportTab,
+    resize,
+    setLogOpen,
+    startNewGame,
+  });
+
+  function getActiveOrderedPlayerIds() {
+    return turnFlowModule.getActiveOrderedPlayerIds(turnState);
+  }
+
+  function getRoundOrderPlayerIds() {
+    return turnFlowModule.getRoundOrderPlayerIds(turnState);
+  }
+
+  function syncStartScreenDebugOption() {
+    return startScreenController.syncDebugOption();
+  }
+
+  function syncStartScreenActionLogOption() {
+    return startScreenController.syncActionLogOption();
+  }
+
+  function syncStartScreenAlienOptions() {
+    return startScreenController.syncAlienOptions();
+  }
+
+  function handleStartAlienOptionChange(event) {
+    return startScreenController.handleAlienOptionChange(event);
+  }
+
+  function syncStartScreenIndustryOptions() {
+    return startScreenController.syncIndustryOptions();
+  }
+
+  function handleStartIndustryOptionChange(event) {
+    return startScreenController.handleIndustryOptionChange(event);
+  }
+
+  function updateStartScreenContinueButton() {
+    return startScreenController.updateContinueButton();
+  }
+
+  function setDebugToolsEnabled(enabled) {
+    return startScreenController.setDebugToolsEnabled(enabled);
+  }
+
+  function applyStartScreenOptions() {
+    return startScreenController.applyOptions();
+  }
+
+  function closeStartScreen() {
+    return startScreenController.closeStartScreen();
+  }
+
+  function startNewGameFromStartScreen() {
+    return startScreenController.startNewGameFromStartScreen();
+  }
+
+  function continueGameFromStartScreen() {
+    return startScreenController.continueGameFromStartScreen();
+  }
+
+  function setTurnStatePlayerOrder(playerIds, options = {}) {
+    return turnFlowController.setTurnStatePlayerOrder(playerIds, options);
+  }
+
+  function randomizePlayerTurnOrder() {
+    return turnFlowController.randomizePlayerTurnOrder();
+  }
+
+  function beginNextRound() {
+    return turnFlowController.beginNextRound();
+  }
+
+  function getDisplayedTurnNumber(rawTurnNumber = turnState.turnNumber) {
+    return turnFlowController.getDisplayedTurnNumber(rawTurnNumber);
+  }
+
+  function getActionCycleNumber() {
+    return turnFlowController.getActionCycleNumber();
+  }
+
+  function advanceTurnAfterPlayerAction(playerId, options = {}) {
+    return turnFlowController.advanceTurnAfterPlayerAction(playerId, options);
+  }
+
+  function startNewGame(options = {}) {
+    return turnFlowController.startNewGame(options);
+  }
+
+  function randomizeAll() {
+    return turnFlowController.randomizeAll();
+  }
+
+  function normalizeAiDifficulty(value) {
+    return startScreenModule.normalizeAiDifficulty(value, {
+      weakStartValue: AI_DIFFICULTY_WEAK_START,
+      defaultValue: AI_DIFFICULTY_LAUGHABLE,
     });
   }
 
@@ -755,62 +1100,6 @@
     const selection = player?.initialSelection;
     if (!selection) return [];
     return selection.industry ? [selection.industry] : [];
-  }
-
-  function createTurnState(sourcePlayers, options = {}) {
-    const playerIds = (Array.isArray(sourcePlayers) ? sourcePlayers : [])
-      .map((player) => player?.id)
-      .filter(Boolean);
-    const requestedCount = Math.max(1, Math.round(Number(options.activePlayerCount) || 1));
-    const activePlayerCount = Math.min(requestedCount, playerIds.length || 1);
-    const currentPlayerId = playerIds.includes(options.currentPlayerId) ? options.currentPlayerId : playerIds[0];
-    const activePlayerIds = activePlayerCount === 1 && currentPlayerId
-      ? [currentPlayerId]
-      : playerIds.slice(0, activePlayerCount);
-
-    return {
-      roundNumber: 1,
-      turnNumber: 1,
-      actionCycleNumber: 1,
-      activePlayerCount,
-      turnOrderPlayerIds: playerIds,
-      activePlayerIds,
-      startPlayerId: activePlayerIds[0] || currentPlayerId || null,
-      passedPlayerIds: [],
-      completedTurnPlayerIds: [],
-      cardTurnEventBonuses: [],
-      visitedPlanetsByPlayerId: {},
-      gameEnded: false,
-      gameEndReason: null,
-    };
-  }
-
-  function shufflePlayerIds(playerIds) {
-    const result = [...playerIds];
-    for (let index = result.length - 1; index > 0; index -= 1) {
-      const pickIndex = Math.floor(Math.random() * (index + 1));
-      [result[index], result[pickIndex]] = [result[pickIndex], result[index]];
-    }
-    return result;
-  }
-
-  function rotatePlayerIds(playerIds, startPlayerId) {
-    if (!playerIds.length) return [];
-    const startIndex = Math.max(0, playerIds.indexOf(startPlayerId));
-    return [...playerIds.slice(startIndex), ...playerIds.slice(0, startIndex)];
-  }
-
-  function getActiveOrderedPlayerIds() {
-    const activeSet = new Set(turnState.activePlayerIds);
-    return turnState.turnOrderPlayerIds.filter((playerId) => activeSet.has(playerId));
-  }
-
-  function getRoundOrderPlayerIds() {
-    const activeOrderedIds = getActiveOrderedPlayerIds();
-    const startPlayerId = activeOrderedIds.includes(turnState.startPlayerId)
-      ? turnState.startPlayerId
-      : activeOrderedIds[0];
-    return rotatePlayerIds(activeOrderedIds, startPlayerId);
   }
 
   function getPlayerRoundOrderNumber(playerId) {
@@ -2665,189 +2954,8 @@
     return !els.appWrap?.classList.contains("state-log-disabled");
   }
 
-  function syncStartScreenDebugOption() {
-    const enabled = Boolean(els.startDebugEnabled?.checked);
-    if (els.startDebugToggleText) {
-      els.startDebugToggleText.textContent = enabled ? "开启" : "关闭";
-    }
-  }
-
-  function syncStartScreenActionLogOption() {
-    const enabled = els.startActionLogEnabled ? Boolean(els.startActionLogEnabled.checked) : true;
-    startScreenState.actionBriefingEnabled = enabled;
-    if (els.startActionLogToggleText) {
-      els.startActionLogToggleText.textContent = enabled ? "开启" : "关闭";
-    }
-    if (!enabled) closeActionBriefing();
-    return enabled;
-  }
-
-  function getStartAlienCheckboxes() {
-    return [...(els.startAlienCheckboxes || [])];
-  }
-
-  function getSelectedStartAlienIds() {
-    const selected = new Set(getStartAlienCheckboxes()
-      .filter((checkbox) => checkbox.checked)
-      .map((checkbox) => checkbox.dataset.startAlienId)
-      .filter(Boolean));
-    const alienIds = (aliens.ALIEN_TYPE_IDS || []).filter((alienId) => selected.has(alienId));
-    return alienIds.length >= (aliens.MIN_ALIEN_REVEAL_POOL_SIZE || 2)
-      ? alienIds
-      : [...(aliens.ALIEN_TYPE_IDS || [])];
-  }
-
-  function syncStartScreenAlienOptions() {
-    const checkboxes = getStartAlienCheckboxes();
-    const minSelected = aliens.MIN_ALIEN_REVEAL_POOL_SIZE || 2;
-    const checkedCount = checkboxes.filter((checkbox) => checkbox.checked).length;
-    for (const checkbox of checkboxes) {
-      const locked = checkbox.checked && checkedCount <= minSelected;
-      checkbox.disabled = locked;
-      checkbox.closest(".start-screen-alien-choice")?.classList.toggle("is-locked", locked);
-    }
-    startScreenState.selectedAlienIds = getSelectedStartAlienIds();
-  }
-
-  function handleStartAlienOptionChange(event) {
-    const checkbox = event?.target?.closest?.("[data-start-alien-id]");
-    if (!checkbox) return;
-    const minSelected = aliens.MIN_ALIEN_REVEAL_POOL_SIZE || 2;
-    const checkedCount = getStartAlienCheckboxes().filter((item) => item.checked).length;
-    if (checkedCount < minSelected) {
-      checkbox.checked = true;
-    }
-    syncStartScreenAlienOptions();
-  }
-
-  function getStartIndustryCheckboxes() {
-    return [...(els.startIndustryCheckboxes || [])];
-  }
-
-  function getSelectedStartIndustryLabels() {
-    const selected = new Set(getStartIndustryCheckboxes()
-      .filter((checkbox) => checkbox.checked)
-      .map((checkbox) => checkbox.dataset.startIndustryLabel)
-      .filter(Boolean));
-    const industryLabels = INDUSTRY_CARD_FILES
-      .map(stripAssetExtension)
-      .filter((label) => selected.has(label));
-    return industryLabels.length >= MIN_START_INDUSTRY_POOL_SIZE
-      ? industryLabels
-      : INDUSTRY_CARD_FILES.map(stripAssetExtension);
-  }
-
-  function syncStartScreenIndustryOptions() {
-    const checkboxes = getStartIndustryCheckboxes();
-    const checkedCount = checkboxes.filter((checkbox) => checkbox.checked).length;
-    for (const checkbox of checkboxes) {
-      const locked = checkbox.checked && checkedCount <= MIN_START_INDUSTRY_POOL_SIZE;
-      checkbox.disabled = locked;
-      checkbox.closest(".start-screen-company-choice")?.classList.toggle("is-locked", locked);
-    }
-    startScreenState.selectedIndustryLabels = getSelectedStartIndustryLabels();
-  }
-
-  function handleStartIndustryOptionChange(event) {
-    const checkbox = event?.target?.closest?.("[data-start-industry-label]");
-    if (!checkbox) return;
-    const checkedCount = getStartIndustryCheckboxes().filter((item) => item.checked).length;
-    if (checkedCount < MIN_START_INDUSTRY_POOL_SIZE) {
-      checkbox.checked = true;
-    }
-    syncStartScreenIndustryOptions();
-  }
-
-  function updateStartScreenContinueButton() {
-    const canContinue = START_SCREEN_CONTINUE_ENABLED && hasPersistentGameState();
-    startScreenState.continueAvailable = canContinue;
-    if (els.startScreenContinueButton) {
-      els.startScreenContinueButton.hidden = !START_SCREEN_CONTINUE_ENABLED;
-      els.startScreenContinueButton.setAttribute("aria-hidden", String(!START_SCREEN_CONTINUE_ENABLED));
-      els.startScreenContinueButton.disabled = !canContinue;
-      els.startScreenContinueButton.setAttribute("aria-disabled", String(!canContinue));
-    }
-    return canContinue;
-  }
-
-  function setDebugToolsEnabled(enabled) {
-    const isEnabled = Boolean(enabled);
-    startScreenState.debugToolsEnabled = isEnabled;
-    els.appWrap?.classList.toggle("debug-tools-disabled", !isEnabled);
-    els.appWrap?.classList.toggle("state-log-disabled", !isEnabled);
-    syncStartScreenDebugOption();
-    if (!isEnabled) {
-      setDebugOpen(false);
-      setReportTab("action");
-    } else {
-      setReportTab(actionLogState.activeReportTab || "action");
-    }
-    resize();
-  }
-
-  function normalizeStartPlayerCount(value) {
-    const count = Math.round(Number(value) || DEFAULT_ACTIVE_PLAYER_COUNT);
-    return count === 3 ? 3 : DEFAULT_ACTIVE_PLAYER_COUNT;
-  }
-
-  function normalizeAiDifficulty(value) {
-    return String(value || "") === AI_DIFFICULTY_WEAK_START
-      ? AI_DIFFICULTY_WEAK_START
-      : AI_DIFFICULTY_LAUGHABLE;
-  }
-
   function isWeakStartAiDifficulty(player) {
     return player?.aiDifficulty === AI_DIFFICULTY_WEAK_START;
-  }
-
-  function applyStartScreenOptions() {
-    syncStartScreenAlienOptions();
-    syncStartScreenIndustryOptions();
-    syncStartScreenActionLogOption();
-    startScreenState.aiDifficulty = normalizeAiDifficulty(els.startAiDifficulty?.value);
-    if (els.startAiDifficulty) {
-      els.startAiDifficulty.value = startScreenState.aiDifficulty;
-    }
-    startScreenState.activePlayerCount = normalizeStartPlayerCount(els.startPlayerCount?.value);
-    if (els.startPlayerCount) {
-      els.startPlayerCount.value = String(startScreenState.activePlayerCount);
-    }
-    setDebugToolsEnabled(Boolean(els.startDebugEnabled?.checked));
-  }
-
-  function closeStartScreen() {
-    if (els.startScreen) {
-      els.startScreen.hidden = true;
-      els.startScreen.setAttribute("aria-hidden", "true");
-    }
-    setLogOpen(false);
-    resize();
-  }
-
-  function startNewGameFromStartScreen() {
-    startScreenState.entered = true;
-    applyStartScreenOptions();
-    startNewGame({
-      activePlayerCount: startScreenState.activePlayerCount,
-      aiDifficulty: startScreenState.aiDifficulty,
-      clearStorage: true,
-      message: "新游戏已开始，请完成初始选择。",
-    });
-    closeStartScreen();
-  }
-
-  function continueGameFromStartScreen() {
-    if (!updateStartScreenContinueButton()) return;
-    const restoreResult = restorePersistentGameState();
-    if (!restoreResult?.ok) {
-      updateStartScreenContinueButton();
-      return;
-    }
-    startScreenState.entered = true;
-    applyStartScreenOptions();
-    closeStartScreen();
-    refreshAfterGameRecovery(restoreResult.message || "已恢复上次保存的局面");
-    schedulePersistentGameStateSave({ label: "继续后状态" });
   }
 
   function setReportTab(tab) {
@@ -2866,44 +2974,6 @@
     if (els.stateReadout) els.stateReadout.hidden = !stateActive;
     if (els.actionLogReadout) els.actionLogReadout.hidden = stateActive;
     if (!stateActive) renderActionLog();
-  }
-
-  function setTurnStatePlayerOrder(playerIds, options = {}) {
-    const validPlayerIds = playerIds.filter((playerId) => getPlayerById(playerId));
-    if (!validPlayerIds.length) return;
-
-    const activePlayerCount = Math.min(
-      Math.max(1, Math.round(Number(options.activePlayerCount) || turnState.activePlayerCount || 1)),
-      validPlayerIds.length,
-    );
-
-    turnState.turnOrderPlayerIds = validPlayerIds;
-    turnState.activePlayerCount = activePlayerCount;
-    turnState.activePlayerIds = validPlayerIds.slice(0, activePlayerCount);
-    turnState.startPlayerId = turnState.activePlayerIds[0] || validPlayerIds[0];
-    turnState.roundNumber = 1;
-    turnState.turnNumber = 1;
-    turnState.actionCycleNumber = 1;
-    turnState.passedPlayerIds = [];
-    turnState.completedTurnPlayerIds = [];
-    turnState.cardTurnEventBonuses = [];
-    turnState.visitedPlanetsByPlayerId = {};
-    turnState.gameEnded = false;
-    turnState.gameEndReason = null;
-    uiRuntimeState.finalResultAutoOpened = false;
-    closeFinalResultDialog({ silent: true });
-    playerState.currentPlayerId = turnState.startPlayerId;
-    preparePassReservePilesForCurrentGame();
-  }
-
-  function randomizePlayerTurnOrder() {
-    const playerIds = playerState.players.map((player) => player.id);
-    const defaultPlayerId = playerState.players.find((player) => player.color === DEFAULT_INITIAL_PLAYER_COLOR)?.id;
-    const shuffledIds = shufflePlayerIds(playerIds.filter((playerId) => playerId !== defaultPlayerId));
-    const orderedIds = defaultPlayerId ? [defaultPlayerId, ...shuffledIds] : shufflePlayerIds(playerIds);
-    setTurnStatePlayerOrder(orderedIds, {
-      activePlayerCount: turnState.activePlayerCount || DEFAULT_ACTIVE_PLAYER_COUNT,
-    });
   }
 
   function isPlayerPassedThisRound(playerId) {
@@ -2967,72 +3037,6 @@
     };
   }
 
-  function advanceRoundStartPlayer() {
-    const activeOrderedIds = getActiveOrderedPlayerIds();
-    if (!activeOrderedIds.length) return null;
-
-    const currentStartIndex = activeOrderedIds.includes(turnState.startPlayerId)
-      ? activeOrderedIds.indexOf(turnState.startPlayerId)
-      : 0;
-    turnState.startPlayerId = activeOrderedIds[(currentStartIndex + 1) % activeOrderedIds.length];
-    return turnState.startPlayerId;
-  }
-
-  function beginNextRound() {
-    cards.discardUnusedPassReserveCards(cardState, turnState.roundNumber);
-    industry?.resetAllRoundIndustryRuntimeState?.(playerState.players);
-    turnState.roundNumber += 1;
-    turnState.turnNumber = 1;
-    turnState.actionCycleNumber = 1;
-    turnState.passedPlayerIds = [];
-    turnState.completedTurnPlayerIds = [];
-    turnState.cardTurnEventBonuses = [];
-    turnState.visitedPlanetsByPlayerId = {};
-    const nextStartPlayerId = advanceRoundStartPlayer();
-    playerState.currentPlayerId = nextStartPlayerId || turnState.activePlayerIds[0] || playerState.currentPlayerId;
-    return { roundAdvanced: true, turnAdvanced: true, nextPlayerId: playerState.currentPlayerId };
-  }
-
-  function getDisplayedTurnNumber(rawTurnNumber = turnState.turnNumber) {
-    const activePlayerCount = Math.max(
-      1,
-      (turnState.activePlayerIds || []).length
-        || Math.round(Number(turnState.activePlayerCount) || 0)
-        || DEFAULT_ACTIVE_PLAYER_COUNT,
-    );
-    const raw = Math.max(1, Math.round(Number(rawTurnNumber) || 1));
-    return Math.floor((raw - 1) / activePlayerCount) + 1;
-  }
-
-  function getActionCycleNumber() {
-    const value = Math.max(1, Math.round(Number(turnState.actionCycleNumber) || 1));
-    if (turnState.actionCycleNumber !== value) turnState.actionCycleNumber = value;
-    return value;
-  }
-
-  function advanceActionCycleNumber() {
-    turnState.actionCycleNumber = getActionCycleNumber() + 1;
-    return turnState.actionCycleNumber;
-  }
-
-  function clearCardTurnEventBonusesForPlayer(playerId) {
-    if (!Array.isArray(turnState.cardTurnEventBonuses)) {
-      turnState.cardTurnEventBonuses = [];
-      return;
-    }
-    turnState.cardTurnEventBonuses = turnState.cardTurnEventBonuses
-      .filter((bonus) => bonus.playerId !== playerId);
-  }
-
-  function clearTurnVisitedPlanetsForPlayer(playerId) {
-    if (!playerId) return;
-    if (!turnState.visitedPlanetsByPlayerId || typeof turnState.visitedPlanetsByPlayerId !== "object") {
-      turnState.visitedPlanetsByPlayerId = {};
-      return;
-    }
-    delete turnState.visitedPlanetsByPlayerId[playerId];
-  }
-
   function ensureTurnVisitedPlanetsByPlayerId() {
     if (!turnState.visitedPlanetsByPlayerId || typeof turnState.visitedPlanetsByPlayerId !== "object") {
       turnState.visitedPlanetsByPlayerId = {};
@@ -3067,55 +3071,6 @@
       undo() {
         turnState.visitedPlanetsByPlayerId = structuredClone(beforeVisits);
       },
-    };
-  }
-
-  function advanceTurnAfterPlayerAction(playerId, options = {}) {
-    if (!playerId) return { roundAdvanced: false, turnAdvanced: false, nextPlayerId: playerState.currentPlayerId };
-
-    if (options.passed && !turnState.passedPlayerIds.includes(playerId)) {
-      turnState.passedPlayerIds.push(playerId);
-    }
-    clearCardTurnEventBonusesForPlayer(playerId);
-    clearTurnVisitedPlanetsForPlayer(playerId);
-    if (!turnState.completedTurnPlayerIds.includes(playerId)) {
-      turnState.completedTurnPlayerIds.push(playerId);
-    }
-
-    const completedCycleInfo = {
-      completedActionCycle: true,
-      completedActionCycleRoundNumber: turnState.roundNumber,
-      completedActionCycleNumber: getActionCycleNumber(),
-      completedActionCycleTurnNumber: getDisplayedTurnNumber(),
-      completedActionCycleRawTurnNumber: turnState.turnNumber,
-      completedActionCyclePlayerIds: [...(turnState.completedTurnPlayerIds || [])],
-    };
-
-    if (haveAllActivePlayersPassed() && isFinalRound()) {
-      return finishGameAfterFinalPass();
-    }
-
-    if (haveAllActivePlayersPassed()) {
-      return { ...beginNextRound(), ...completedCycleInfo };
-    }
-
-    const nextPlayerId = getNextEligiblePlayerId(playerId);
-    if (nextPlayerId) {
-      playerState.currentPlayerId = nextPlayerId;
-      turnState.turnNumber += 1;
-      return { roundAdvanced: false, turnAdvanced: true, nextPlayerId };
-    }
-
-    turnState.turnNumber += 1;
-    turnState.completedTurnPlayerIds = [];
-    advanceActionCycleNumber();
-    const firstEligiblePlayerId = getFirstEligiblePlayerId();
-    playerState.currentPlayerId = firstEligiblePlayerId || playerState.currentPlayerId;
-    return {
-      roundAdvanced: false,
-      turnAdvanced: true,
-      nextPlayerId: playerState.currentPlayerId,
-      ...completedCycleInfo,
     };
   }
 
@@ -35003,110 +34958,6 @@
       const variant = finalScoring.getTileVariant(finalScoringState, id);
       img.src = `../assets/final/final_${id}${variant}.png`;
       img.alt = `终局计分 ${id.toUpperCase()}${variant}`;
-    });
-  }
-
-  function resetGameStateForNewGame(options = {}) {
-    const activePlayerCount = Math.min(
-      Math.max(1, Math.round(Number(options.activePlayerCount) || DEFAULT_ACTIVE_PLAYER_COUNT)),
-      players.PLAYER_COLOR_IDS.length,
-    );
-
-    clearTransientStateForRecovery();
-    restoreMutableObject(solarState, solar.createBaselineState());
-    restoreMutableObject(nebulaDataState, data.createDefaultNebulaDataState());
-    restoreMutableObject(alienGameState, aliens.createDefaultAlienState());
-    restoreMutableObject(finalScoringState, finalScoring.createFinalScoringState(FINAL_SCORE_IDS));
-    restoreMutableObject(playerState, players.createPlayerState({
-      players: players.PLAYER_COLOR_IDS.map((color) => ({ color })),
-      currentPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
-    }));
-    restoreMutableObject(turnState, createTurnState(playerState.players, {
-      activePlayerCount,
-      currentPlayerId: playerState.currentPlayerId,
-    }));
-    restoreMutableObject(rocketState, rocketActions.createRocketState());
-    restoreMutableObject(planetStatsState, planetStats.createPlanetStatsState());
-    restoreMutableObject(techGameState, tech.createState());
-    restoreMutableObject(cardState, cards.createCardState());
-    restoreMutableObject(cardTaskState, cardTaskStateModule.createTaskState());
-    restoreMutableObject(setupSelectionState, {
-      phase: "selecting",
-      currentPlayerId: null,
-      offersByPlayerId: {},
-      confirmedPlayerIds: [],
-    });
-    historyStepOrder.length = 0;
-    resetScanRunSequence();
-    resetActionLog();
-  }
-
-  function startNewGame(options = {}) {
-    persistentGameSaveSuspended = true;
-    try {
-      const aiDifficulty = normalizeAiDifficulty(options.aiDifficulty ?? startScreenState.aiDifficulty);
-      startScreenState.aiDifficulty = aiDifficulty;
-      if (els.startAiDifficulty) {
-        els.startAiDifficulty.value = aiDifficulty;
-      }
-      if (options.clearStorage !== false) {
-        clearPersistentGameState();
-      }
-      resetGameStateForNewGame(options);
-      seedDefaultReferenceRockets();
-      randomizeAll();
-      initializeCardGame(DEFAULT_INITIAL_HAND_COUNT);
-      configureDefaultAiOpponent({ aiDifficulty });
-      startInitialSelection();
-      rocketState.statusNote = options.message || "新游戏已开始，请完成初始选择。";
-      renderStateReadout();
-      resize();
-    } finally {
-      persistentGameSaveSuspended = false;
-    }
-    schedulePersistentGameStateSave({ force: true, label: "新游戏开始" });
-    return { ok: true, message: rocketState.statusNote };
-  }
-
-  function randomizeAll() {
-    els.spinButton?.classList.remove("pulsin");
-    resetActionLog();
-    pendingState.jiuzheCardPlay = null;
-    pendingState.jiuzheOpportunityOpen = false;
-    pendingState.jiuzheOpportunityQueue = [];
-    pendingState.banrenmaCardGain = null;
-    pendingState.banrenmaOpportunity = null;
-    pendingState.banrenmaOpportunityQueue = [];
-    pendingState.aomomoCardGain = null;
-    pendingState.runezuCardGain = null;
-    pendingState.runezuSymbolBranch = null;
-    pendingState.runezuFaceSymbolPlacement = null;
-    industry?.resetAllIndustryActionMarks?.(playerState.players);
-    cancelIndustryAbilityFlow({ silent: true });
-    randomizePlayerTurnOrder();
-    randomizeWheels();
-    randomizeSectors();
-    fillNebulaDataBoard({ source: "setup", replace: true });
-    solarState.aomomoActive = false;
-    if (aomomo?.NEBULA_ID) data.clearNebulaData(nebulaDataState, aomomo.NEBULA_ID);
-    renderWheels();
-    renderSectorNebulaDataBoard();
-    randomizeFinalScores();
-    randomizeAliens();
-    tech.setupBoardBonuses(techGameState);
-    renderRoundStatus();
-    renderRotateStateToken();
-    renderDebugPlayerSwitch();
-    refreshHelpers.refreshBoardState({
-      includeSectorNebula: false,
-      includeFinalScore: true,
-      includeTech: true,
-    });
-    refreshHelpers.refreshPlayerPanels();
-    refreshHelpers.refreshAfterPendingChange({
-      includeQuickPanel: false,
-      includeEffectBar: false,
-      includeStateReadout: true,
     });
   }
 
