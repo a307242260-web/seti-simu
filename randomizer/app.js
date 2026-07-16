@@ -51,6 +51,7 @@
     startScreenModule,
     turnFlowModule,
     scanFlowModule,
+    alienRuntimeModule,
     alienUiModule,
   } = dependencies;
 
@@ -444,11 +445,16 @@
     quickTrades,
     data,
     industry,
+    cardEffects,
     abilities,
     historyCommands,
     quickActionHistory,
     scanEffects,
     fangzhou,
+    banrenma,
+    chong,
+    amiba,
+    aomomo,
     runezu,
     solar,
     rocketActions,
@@ -477,13 +483,13 @@
     getStandardPlayCardActionBlockReason,
     getCardPlayCost,
     formatCardPlayCost,
-    handleHandCardPlay,
     getPlayCardBeforePlayerSnapshot,
     restoreObjectSnapshot,
     releaseFutureSpanAfterPlayWithHistory,
     markActionPending,
     renderPlayerHand,
     renderPlayerStats,
+    renderReservedCardsFromTaskState,
     renderPublicCards,
     renderInitialSelectionArea,
     renderAlienPanels,
@@ -518,6 +524,18 @@
     startCardCornerMoveEffectFlow,
     rollbackPendingIndustryQuickAction,
     continuePendingDataPlacementAfterBonus,
+    applyIndustryPlayCardPassives,
+    buildPlayCardEffectFlowQueue,
+    createImmediatePlayCardEvent,
+    createPlayCardEvent,
+    recordPlayCardStart,
+    startPlayCardEffectFlow,
+    appendIndustryPlayPassiveStatus,
+    recordMainActionIrreversibleBarrier,
+    renderFangzhouCardDisplays,
+    getFangzhouCard1RewardTargetOptions,
+    getTargetPlayerOptions,
+    buildFangzhouCard1EffectQueue,
     applyIncomeFromCard,
     beginEffectHistoryStep,
     recordHistoryCommand,
@@ -525,6 +543,7 @@
     completeCurrentActionEffect,
     isIncomeDiscardActionType,
     scrollToPlayerCommandPanel,
+    getCardTypeCode,
     blockManualAiMovePayment,
     blockIncompatiblePendingQuickAction,
     recordQuickHistoryCommand,
@@ -613,6 +632,14 @@
     resolvePlayerReference,
     getFlowMarkedNebulaIds,
   });
+  function confirmAlienTracePlacement(...args) {
+    return alienRuntimeHelpers.confirmAlienTracePlacement(...args);
+  }
+
+  function confirmFangzhouTracePlacement(...args) {
+    return alienRuntimeHelpers.confirmFangzhouTracePlacement(...args);
+  }
+
   const alienUiHelpers = alienUiModule.createAlienUiHelpers({
     document,
     structuredClone,
@@ -699,6 +726,128 @@
     hasAlienTracePanelPlacementTarget,
     isAlienTracePickerChoiceAllowed,
   } = alienUiHelpers;
+  const alienRuntimeHelpers = alienRuntimeModule.createAlienRuntimeHelpers({
+    structuredClone,
+    aliens,
+    players,
+    data,
+    cardEffects,
+    historyCommands,
+    jiuzhe,
+    yichangdian,
+    fangzhou,
+    banrenma,
+    chong,
+    amiba,
+    aomomo,
+    runezu,
+    pendingState,
+    alienGameState,
+    playerState,
+    rocketState,
+    solarState,
+    nebulaDataState,
+    techGameState,
+    HISTORY_SOURCE_MAIN,
+    getCurrentPlayer,
+    getActivePlayers,
+    getPlayerById,
+    getPlayerByColor,
+    getPlayerActionLabel,
+    resolvePlayerReference,
+    getEarthSectorCoordinate,
+    isDebugAlienTraceMode,
+    isAlienTracePickerChoiceAllowed,
+    getAvailableDataTokenCount,
+    renderAlienPanels,
+    renderPlayerStats,
+    renderPlayerHand,
+    renderReservedCards,
+    renderReservedCardsFromTaskState,
+    renderRockets,
+    renderStateReadout,
+    renderWheels,
+    renderSectorNebulaDataBoard,
+    renderFangzhouCardDisplays,
+    updateActionButtons,
+    closeAlienTracePicker,
+    clearAlienTracePlacementMode,
+    maybeRevealAlienAfterTrace,
+    createActionLogImpactSnapshot,
+    beginEffectHistoryStep,
+    recordHistoryCommand,
+    getCurrentActionEffect,
+    completeCurrentActionEffect,
+    beginQuickActionStep,
+    recordQuickHistoryCommand,
+    completeQuickActionStep,
+    settleCardTasksAfterEffect,
+    maybeContinueAlienRevealQueuedOpportunities,
+    maybeContinuePendingTurnEndRevealFlow,
+    markCurrentActionIrreversible,
+    appendActionLogStep,
+    queueJiuzheOpportunitiesForPlayer,
+    queueBanrenmaOpportunitiesForPlayer,
+    recordAlienTraceScore,
+    formatPlanetRewardGain,
+    appendRevealCardGrantMessage,
+    getRevealIrreversible,
+    buildAlienTraceEvent,
+    maybeRestoreAlienLabPanelForTrace,
+    beginCardSelection,
+    enqueueFangzhouCard1RewardEffects,
+    applyYichangdianRewardToPlayer,
+    applyFangzhouTraceRewardToPlayer,
+    getAlienTraceScoreSourceKey,
+    applyBanrenmaRewardToPlayer,
+    applyAomomoRewardToPlayer,
+    applyChongRewardToPlayer,
+    applyAmibaRewardToPlayer,
+    applyRunezuRewardToPlayer,
+    applyJiuzheRewardToPlayer,
+    openYichangdianCardGainDialog,
+    openBanrenmaCardGainDialog,
+    openAomomoCardGainDialog,
+    openChongRewardFollowUps,
+    openAmibaRewardFollowUps,
+    openRunezuRewardFollowUps,
+    isJiuzheTracePlacementMode,
+    isYichangdianTracePlacementMode,
+    isFangzhouTracePlacementMode,
+    isBanrenmaTracePlacementMode,
+    isChongTracePlacementMode,
+    isAmibaTracePlacementMode,
+    isAomomoTracePlacementMode,
+    isRunezuTracePlacementMode,
+    canPlaceJiuzheTrace,
+    canPlaceYichangdianTrace,
+    canPlaceFangzhouTrace,
+    canPlaceBanrenmaTrace,
+    canPlaceChongTrace,
+    canPlaceAmibaTrace,
+    canPlaceAomomoTrace,
+    canPlaceRunezuTrace,
+  });
+  const {
+    handleJiuzheRevealSideEffects,
+    handleYichangdianRevealSideEffects,
+    handleFangzhouRevealSideEffects,
+    handleBanrenmaRevealSideEffects,
+    handleChongRevealSideEffects,
+    handleAmibaRevealSideEffects,
+    handleAomomoRevealSideEffects,
+    handleRunezuRevealSideEffects,
+    handleAlienRevealSideEffects,
+    getAlienTraceActionPlayer,
+    confirmYichangdianTracePlacement,
+    confirmBanrenmaTracePlacement,
+    confirmAomomoTracePlacement,
+    confirmChongTracePlacement,
+    confirmAmibaTracePlacement,
+    confirmRunezuTracePlacement,
+    confirmJiuzheTracePlacement,
+    settleTurnEndAlienRevealEntries,
+  } = alienRuntimeHelpers;
 
   function getPlayerHandPanelTitleHint() {
     if (isDiscardSelectionActive()) {
@@ -5603,573 +5752,6 @@
       renderStateReadout();
     }
     return result;
-  }
-
-  function handleHandCardPlay(handIndex) {
-    if (!isPlayCardSelectionActive()) return;
-
-    const currentPlayer = getCurrentPlayer();
-    const removeIndex = Math.round(handIndex);
-    const card = currentPlayer?.hand?.[removeIndex];
-    if (!card) {
-      rocketState.statusNote = "无效的手牌位置";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    if (fangzhou?.isFangzhouCard2?.(card)) {
-      return handleFangzhouCard2Play(removeIndex);
-    }
-    if (banrenma?.isBanrenmaCard?.(card)) {
-      return handleBanrenmaCardPlay(removeIndex);
-    }
-    if (chong?.isChongCard?.(card)) {
-      return handleChongCardPlay(removeIndex);
-    }
-    if (amiba?.isAmibaCard?.(card)) {
-      return handleAmibaCardPlay(removeIndex);
-    }
-    if (aomomo?.isAomomoCard?.(card)) {
-      return handleAomomoCardPlay(removeIndex);
-    }
-    if (runezu?.isRunezuCard?.(card)) {
-      return handleRunezuCardPlay(removeIndex);
-    }
-
-    const cost = getCardPlayCost(card);
-    if (!players.canAfford(currentPlayer, cost)) {
-      rocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
-    const beforeCardState = {
-      publicCards: cardState.publicCards.slice(),
-      discardPile: (cardState.discardPile || []).slice(),
-    };
-    const spendResult = players.spendResources(currentPlayer, cost);
-    if (!spendResult.ok) {
-      rocketState.statusNote = spendResult.message;
-      renderStateReadout();
-      return spendResult;
-    }
-
-    const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
-    if (!removeResult.ok) {
-      players.gainResources(currentPlayer, cost);
-      rocketState.statusNote = removeResult.message;
-      renderStateReadout();
-      return removeResult;
-    }
-
-    const playedCard = removeResult.card;
-    const typeCode = getCardTypeCode(playedCard);
-    const model = cardEffects.getCardModel?.(playedCard);
-    const shouldReserve = [1, 2, 3].includes(typeCode) || Boolean(model?.reserveAfterPlay);
-    const playEffects = cardEffects.buildPlayEffects(playedCard);
-    const temporaryTasks = cardEffects.getTemporaryTasks(playedCard);
-    if (shouldReserve) {
-      if (!Array.isArray(currentPlayer.reservedCards)) currentPlayer.reservedCards = [];
-      cardEffects.ensureCardEffectState(playedCard);
-      currentPlayer.reservedCards.push(playedCard);
-    } else {
-      cards.addToDiscardPile(cardState, playedCard);
-    }
-
-    cards.setPlayCardSelectionActive(cardState, false);
-    pendingState.playCardSelection = null;
-    rocketState.statusNote = shouldReserve
-      ? `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`
-      : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
-    const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode);
-    const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
-    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
-    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
-    syncPlayCardSelectionChrome();
-    renderPlayerStats();
-    recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState);
-    if (playFlowQueue.effects.length) {
-      startPlayCardEffectFlow("play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
-        actionType: "playCard",
-        card: playedCard,
-        temporaryTasks,
-        industryPlayedCard: playedCard,
-        deferredEndEffects: playFlowQueue.deferredEndEffects,
-        immediatePlayCardEvent,
-        playCardEvent,
-      });
-    } else {
-      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
-      settleCardTasksAfterEffect({
-        events: [playCardEvent],
-        render: false,
-      });
-      markActionPending();
-      updateActionButtons();
-      renderStateReadout();
-    }
-    appendIndustryPlayPassiveStatus(industryPassiveResult);
-    return {
-      ok: true,
-      card: playedCard,
-      reserved: shouldReserve,
-      message: rocketState.statusNote,
-    };
-  }
-
-  function handleChongCardPlay(handIndex) {
-    if (!chong) return { ok: false, message: "虫族模块未加载" };
-    const currentPlayer = getCurrentPlayer();
-    const removeIndex = Math.round(handIndex);
-    const card = currentPlayer?.hand?.[removeIndex];
-    if (!card) {
-      rocketState.statusNote = "无效的手牌位置";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const cost = getCardPlayCost(card);
-    if (!players.canAfford(currentPlayer, cost)) {
-      rocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
-    const beforeAlienState = structuredClone(alienGameState);
-    const beforeCardState = {
-      publicCards: cardState.publicCards.slice(),
-      discardPile: (cardState.discardPile || []).slice(),
-    };
-    const spendResult = players.spendResources(currentPlayer, cost);
-    if (!spendResult.ok) {
-      rocketState.statusNote = spendResult.message;
-      renderStateReadout();
-      return spendResult;
-    }
-
-    const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
-    if (!removeResult.ok) {
-      players.gainResources(currentPlayer, cost);
-      rocketState.statusNote = removeResult.message;
-      renderStateReadout();
-      return removeResult;
-    }
-
-    const playedCard = removeResult.card;
-    playedCard.chongCard = true;
-    playedCard.chongTask = playedCard.chongTask || chong.getCardTask(playedCard);
-    if (!Array.isArray(currentPlayer.reservedCards)) currentPlayer.reservedCards = [];
-    cardEffects.ensureCardEffectState(playedCard);
-    currentPlayer.reservedCards.push(playedCard);
-
-    const playEffects = chong.buildImmediateEffects(playedCard);
-
-    cards.setPlayCardSelectionActive(cardState, false);
-    pendingState.playCardSelection = null;
-    rocketState.statusNote = `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`;
-    const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, getCardTypeCode(playedCard));
-    const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
-    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
-    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
-    syncPlayCardSelectionChrome();
-    renderPlayerStats();
-    renderReservedCardsFromTaskState();
-    recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
-    if (playFlowQueue.effects.length) {
-      startPlayCardEffectFlow("chong-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
-        actionType: "playCard",
-        card: playedCard,
-        temporaryTasks: [],
-        industryPlayedCard: playedCard,
-        deferredEndEffects: playFlowQueue.deferredEndEffects,
-        immediatePlayCardEvent,
-        playCardEvent,
-      });
-    } else {
-      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
-      settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
-      markActionPending();
-      updateActionButtons();
-      renderStateReadout();
-    }
-    appendIndustryPlayPassiveStatus(industryPassiveResult);
-    return {
-      ok: true,
-      card: playedCard,
-      reserved: true,
-      message: rocketState.statusNote,
-    };
-  }
-
-  function handleAmibaCardPlay(handIndex) {
-    if (!amiba) return { ok: false, message: "阿米巴模块未加载" };
-    const currentPlayer = getCurrentPlayer();
-    const removeIndex = Math.round(handIndex);
-    const card = currentPlayer?.hand?.[removeIndex];
-    if (!card) {
-      rocketState.statusNote = "无效的手牌位置";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const cost = getCardPlayCost(card);
-    if (!players.canAfford(currentPlayer, cost)) {
-      rocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
-    const beforeAlienState = structuredClone(alienGameState);
-    const beforeCardState = {
-      publicCards: cardState.publicCards.slice(),
-      discardPile: (cardState.discardPile || []).slice(),
-    };
-    const spendResult = players.spendResources(currentPlayer, cost);
-    if (!spendResult.ok) {
-      rocketState.statusNote = spendResult.message;
-      renderStateReadout();
-      return spendResult;
-    }
-
-    const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
-    if (!removeResult.ok) {
-      players.gainResources(currentPlayer, cost);
-      rocketState.statusNote = removeResult.message;
-      renderStateReadout();
-      return removeResult;
-    }
-
-    const playedCard = removeResult.card;
-    playedCard.amibaCard = true;
-    playedCard.amibaTask = playedCard.amibaTask || amiba.getCardTask(playedCard);
-    const typeCode = getCardTypeCode(playedCard);
-    const shouldReserve = [1, 2, 3].includes(typeCode);
-    if (shouldReserve) {
-      if (!Array.isArray(currentPlayer.reservedCards)) currentPlayer.reservedCards = [];
-      cardEffects.ensureCardEffectState(playedCard);
-      currentPlayer.reservedCards.push(playedCard);
-    } else {
-      cards.addToDiscardPile(cardState, playedCard);
-    }
-
-    const playEffects = amiba.buildImmediateEffects(playedCard);
-
-    cards.setPlayCardSelectionActive(cardState, false);
-    pendingState.playCardSelection = null;
-    rocketState.statusNote = shouldReserve
-      ? `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`
-      : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
-    const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode);
-    const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
-    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
-    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
-    syncPlayCardSelectionChrome();
-    renderPlayerStats();
-    renderReservedCardsFromTaskState();
-    recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
-    if (playFlowQueue.effects.length) {
-      startPlayCardEffectFlow("amiba-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
-        actionType: "playCard",
-        card: playedCard,
-        temporaryTasks: [],
-        industryPlayedCard: playedCard,
-        deferredEndEffects: playFlowQueue.deferredEndEffects,
-        immediatePlayCardEvent,
-        playCardEvent,
-      });
-    } else {
-      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
-      settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
-      markActionPending();
-      updateActionButtons();
-      renderStateReadout();
-    }
-    appendIndustryPlayPassiveStatus(industryPassiveResult);
-    return {
-      ok: true,
-      card: playedCard,
-      reserved: shouldReserve,
-      message: rocketState.statusNote,
-    };
-  }
-
-  function handleAomomoCardPlay(handIndex) {
-    if (!aomomo) return { ok: false, message: "奥陌陌模块未加载" };
-    const currentPlayer = getCurrentPlayer();
-    const removeIndex = Math.round(handIndex);
-    const card = currentPlayer?.hand?.[removeIndex];
-    if (!card) {
-      rocketState.statusNote = "无效的手牌位置";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const cost = getCardPlayCost(card);
-    if (!players.canAfford(currentPlayer, cost)) {
-      rocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
-    const beforeAlienState = structuredClone(alienGameState);
-    const beforeCardState = {
-      publicCards: cardState.publicCards.slice(),
-      discardPile: (cardState.discardPile || []).slice(),
-    };
-    const spendResult = players.spendResources(currentPlayer, cost);
-    if (!spendResult.ok) {
-      rocketState.statusNote = spendResult.message;
-      renderStateReadout();
-      return spendResult;
-    }
-
-    const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
-    if (!removeResult.ok) {
-      players.gainResources(currentPlayer, cost);
-      rocketState.statusNote = removeResult.message;
-      renderStateReadout();
-      return removeResult;
-    }
-
-    const playedCard = removeResult.card;
-    playedCard.aomomoCard = true;
-    const typeCode = getCardTypeCode(playedCard);
-    const shouldReserve = [1, 2, 3].includes(typeCode);
-    if (shouldReserve) {
-      if (!Array.isArray(currentPlayer.reservedCards)) currentPlayer.reservedCards = [];
-      cardEffects.ensureCardEffectState(playedCard);
-      currentPlayer.reservedCards.push(playedCard);
-    } else {
-      cards.addToDiscardPile(cardState, playedCard);
-    }
-
-    const playEffects = aomomo.buildImmediateEffects(playedCard);
-
-    cards.setPlayCardSelectionActive(cardState, false);
-    pendingState.playCardSelection = null;
-    rocketState.statusNote = shouldReserve
-      ? `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`
-      : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
-    const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode);
-    const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
-    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
-    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
-    syncPlayCardSelectionChrome();
-    renderPlayerStats();
-    renderReservedCardsFromTaskState();
-    recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
-    if (playFlowQueue.effects.length) {
-      startPlayCardEffectFlow("aomomo-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
-        actionType: "playCard",
-        card: playedCard,
-        temporaryTasks: [],
-        industryPlayedCard: playedCard,
-        deferredEndEffects: playFlowQueue.deferredEndEffects,
-        immediatePlayCardEvent,
-        playCardEvent,
-      });
-    } else {
-      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
-      settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
-      markActionPending();
-      updateActionButtons();
-      renderStateReadout();
-    }
-    appendIndustryPlayPassiveStatus(industryPassiveResult);
-    return {
-      ok: true,
-      card: playedCard,
-      reserved: shouldReserve,
-      message: rocketState.statusNote,
-    };
-  }
-
-  function handleRunezuCardPlay(handIndex) {
-    if (!runezu) return { ok: false, message: "符文族模块未加载" };
-    const currentPlayer = getCurrentPlayer();
-    const removeIndex = Math.round(handIndex);
-    const card = currentPlayer?.hand?.[removeIndex];
-    if (!card) {
-      rocketState.statusNote = "无效的手牌位置";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const cost = getCardPlayCost(card);
-    if (!players.canAfford(currentPlayer, cost)) {
-      rocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
-    const beforeAlienState = structuredClone(alienGameState);
-    const beforeCardState = {
-      publicCards: cardState.publicCards.slice(),
-      discardPile: (cardState.discardPile || []).slice(),
-    };
-    const spendResult = players.spendResources(currentPlayer, cost);
-    if (!spendResult.ok) {
-      rocketState.statusNote = spendResult.message;
-      renderStateReadout();
-      return spendResult;
-    }
-
-    const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
-    if (!removeResult.ok) {
-      players.gainResources(currentPlayer, cost);
-      rocketState.statusNote = removeResult.message;
-      renderStateReadout();
-      return removeResult;
-    }
-
-    const playedCard = removeResult.card;
-    playedCard.runezuCard = true;
-    playedCard.runezuTask = playedCard.runezuTask || runezu.getCardTask(playedCard);
-    const typeCode = getCardTypeCode(playedCard);
-    const shouldReserve = [1, 2, 3].includes(typeCode);
-    if (shouldReserve) {
-      if (!Array.isArray(currentPlayer.reservedCards)) currentPlayer.reservedCards = [];
-      cardEffects.ensureCardEffectState(playedCard);
-      currentPlayer.reservedCards.push(playedCard);
-    } else {
-      cards.addToDiscardPile(cardState, playedCard);
-    }
-
-    const playEffects = runezu.buildImmediateEffects(playedCard);
-
-    cards.setPlayCardSelectionActive(cardState, false);
-    pendingState.playCardSelection = null;
-    rocketState.statusNote = shouldReserve
-      ? `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`
-      : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
-    const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode);
-    const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
-    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
-    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
-    syncPlayCardSelectionChrome();
-    renderPlayerStats();
-    renderReservedCardsFromTaskState();
-    recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
-    if (playFlowQueue.effects.length) {
-      startPlayCardEffectFlow("runezu-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
-        actionType: "playCard",
-        card: playedCard,
-        temporaryTasks: [],
-        industryPlayedCard: playedCard,
-        deferredEndEffects: playFlowQueue.deferredEndEffects,
-        immediatePlayCardEvent,
-        playCardEvent,
-      });
-    } else {
-      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
-      settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
-      markActionPending();
-      updateActionButtons();
-      renderStateReadout();
-    }
-    appendIndustryPlayPassiveStatus(industryPassiveResult);
-    return {
-      ok: true,
-      card: playedCard,
-      reserved: shouldReserve,
-      message: rocketState.statusNote,
-    };
-  }
-
-  function handleBanrenmaCardPlay(handIndex) {
-    if (!banrenma) return { ok: false, message: "半人马模块未加载" };
-    const currentPlayer = getCurrentPlayer();
-    const removeIndex = Math.round(handIndex);
-    const card = currentPlayer?.hand?.[removeIndex];
-    if (!card) {
-      rocketState.statusNote = "无效的手牌位置";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const cost = getCardPlayCost(card);
-    if (!players.canAfford(currentPlayer, cost)) {
-      rocketState.statusNote = `资源不足：${cards.getCardLabel(card)} 需要 ${formatCardPlayCost(cost)}`;
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
-    const beforeAlienState = structuredClone(alienGameState);
-    const beforeCardState = {
-      publicCards: cardState.publicCards.slice(),
-      discardPile: (cardState.discardPile || []).slice(),
-    };
-    const spendResult = players.spendResources(currentPlayer, cost);
-    if (!spendResult.ok) {
-      rocketState.statusNote = spendResult.message;
-      renderStateReadout();
-      return spendResult;
-    }
-
-    const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
-    if (!removeResult.ok) {
-      players.gainResources(currentPlayer, cost);
-      rocketState.statusNote = removeResult.message;
-      renderStateReadout();
-      return removeResult;
-    }
-
-    const playedCard = removeResult.card;
-    if (!Array.isArray(currentPlayer.reservedCards)) currentPlayer.reservedCards = [];
-    cardEffects.ensureCardEffectState(playedCard);
-    const threshold = (Number(currentPlayer.resources?.score) || 0) + banrenma.SCORE_MARK_DELTA;
-    const scoreMark = banrenma.addScoreMark(alienGameState, currentPlayer, threshold, "card", {
-      cardInstanceId: playedCard.id,
-      cardIndex: playedCard.alienCardId ?? banrenma.getCardDefinition(playedCard)?.index ?? null,
-    });
-    playedCard.banrenmaCard = true;
-    playedCard.banrenmaThreshold = threshold;
-    playedCard.banrenmaScoreMarkId = scoreMark?.id || null;
-    currentPlayer.reservedCards.push(playedCard);
-
-    const playEffects = banrenma.buildImmediateEffects(playedCard);
-
-    cards.setPlayCardSelectionActive(cardState, false);
-    pendingState.playCardSelection = null;
-    rocketState.statusNote = `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`;
-    const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, getCardTypeCode(playedCard));
-    const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects);
-    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
-    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
-    syncPlayCardSelectionChrome();
-    renderPlayerStats();
-    renderReservedCardsFromTaskState();
-    recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
-    if (playFlowQueue.effects.length) {
-      startPlayCardEffectFlow("banrenma-play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
-        actionType: "playCard",
-        card: playedCard,
-        temporaryTasks: [],
-        industryPlayedCard: playedCard,
-        deferredEndEffects: playFlowQueue.deferredEndEffects,
-        immediatePlayCardEvent,
-        playCardEvent,
-      });
-    } else {
-      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
-      settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
-      markActionPending();
-      updateActionButtons();
-      renderStateReadout();
-    }
-    appendIndustryPlayPassiveStatus(industryPassiveResult);
-    return {
-      ok: true,
-      card: playedCard,
-      reserved: true,
-      message: rocketState.statusNote,
-    };
   }
 
   function beginCardSelection(pendingAction = null) {
@@ -19210,123 +18792,6 @@
     }
     els.scanTargetOverlay.hidden = false;
     return { ok: true };
-  }
-
-  function handleFangzhouCard2Play(handIndex) {
-    const currentPlayer = getCurrentPlayer();
-    const removeIndex = Math.round(handIndex);
-    const card = currentPlayer?.hand?.[removeIndex];
-    if (!card) {
-      rocketState.statusNote = "无效的手牌位置";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const futureSpanFreePlay = Boolean(card.futureSpanFreePlay);
-    const cost = futureSpanFreePlay ? {} : fangzhou.CARD2_PLAY_COST;
-    if (Object.keys(cost).length && !players.canAfford(currentPlayer, cost)) {
-      rocketState.statusNote = `信用点不足：方舟牌需要 ${cost.credits} 信用点`;
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const beforePlayer = getPlayCardBeforePlayerSnapshot(currentPlayer);
-    const beforeAlienState = structuredClone(alienGameState);
-    const beforeCardState = {
-      publicCards: cardState.publicCards.slice(),
-      discardPile: (cardState.discardPile || []).slice(),
-    };
-    const spendResult = Object.keys(cost).length ? players.spendResources(currentPlayer, cost) : { ok: true };
-    if (!spendResult.ok) return spendResult;
-
-    const removeResult = cards.discardFromHandAtIndex(currentPlayer, removeIndex);
-    if (!removeResult.ok) {
-      if (Object.keys(cost).length) players.gainResources(currentPlayer, cost);
-      return removeResult;
-    }
-    const playedCard = removeResult.card;
-    cards.addToDiscardPile(cardState, playedCard);
-
-    cards.setPlayCardSelectionActive(cardState, false);
-    pendingState.playCardSelection = null;
-
-    const flipResult = fangzhou.flipCard1Reward(alienGameState, "advanced");
-    if (!flipResult.ok) {
-      restoreObjectSnapshot(currentPlayer, beforePlayer);
-      restoreObjectSnapshot(alienGameState, beforeAlienState);
-      cardState.publicCards = beforeCardState.publicCards.slice();
-      cardState.discardPile = beforeCardState.discardPile.slice();
-      cards.setPlayCardSelectionActive(cardState, true);
-      pendingState.playCardSelection = { source: "hand", handIndex: removeIndex, cardId: card.id };
-      rocketState.statusNote = flipResult.message || "方舟高级奖励无法结算";
-      syncPlayCardSelectionChrome();
-      renderPlayerStats();
-      renderPlayerHand();
-      renderAlienPanels();
-      renderPublicCards();
-      updatePublicCardControls();
-      updateActionButtons();
-      renderStateReadout();
-      return flipResult;
-    }
-
-    renderFangzhouCardDisplays();
-    const targetOptions = getFangzhouCard1RewardTargetOptions(flipResult, getTargetPlayerOptions(currentPlayer));
-    const fangzhouEffects = buildFangzhouCard1EffectQueue(
-      flipResult.effect,
-      flipResult.label || `打出 ${cards.getCardLabel(playedCard)}`,
-    ).map((effect) => ({
-      ...effect,
-      options: {
-        ...(effect.options || {}),
-        ...targetOptions,
-      },
-    }));
-    const typeCode = getCardTypeCode(playedCard);
-    rocketState.statusNote = `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
-    const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode);
-    const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, fangzhouEffects);
-    const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
-    const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
-
-    syncPlayCardSelectionChrome();
-    renderAlienPanels();
-    renderPlayerStats();
-    renderPlayerHand();
-    renderPublicCards();
-    updatePublicCardControls();
-    recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState);
-    recordMainActionIrreversibleBarrier(
-      "方舟奖励牌",
-      "方舟奖励牌翻开新牌",
-      "fangzhou_card1_flip",
-    );
-    if (playFlowQueue.effects.length) {
-      startPlayCardEffectFlow("fangzhou-card2-play-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
-        actionType: "playCard",
-        card: playedCard,
-        temporaryTasks: [],
-        industryPlayedCard: playedCard,
-        deferredEndEffects: playFlowQueue.deferredEndEffects,
-        immediatePlayCardEvent,
-        playCardEvent,
-      });
-    } else {
-      settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
-      settleCardTasksAfterEffect({ events: [playCardEvent], render: false });
-      markActionPending();
-      updateActionButtons();
-      renderStateReadout();
-    }
-    appendIndustryPlayPassiveStatus(industryPassiveResult);
-    return {
-      ok: true,
-      card: playedCard,
-      reserved: false,
-      flipResult,
-      followUps: fangzhouEffects,
-      message: rocketState.statusNote,
-    };
   }
 
   function findPlayerForJiuzheEntry(entry) {

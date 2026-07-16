@@ -52,6 +52,7 @@ function createCards() {
 }
 
 function createBaseContext(player, overrides = {}) {
+  const events = overrides.events || {};
   const cardState = overrides.cardState || {
     playCardSelectionActive: false,
     discardSelectionActive: false,
@@ -79,6 +80,7 @@ function createBaseContext(player, overrides = {}) {
   };
 
   return {
+    events,
     pendingState,
     cardState,
     rocketState,
@@ -91,6 +93,13 @@ function createBaseContext(player, overrides = {}) {
         return (Number(currentPlayer.resources.credits || 0) >= Number(cost.credits || 0))
           && (Number(currentPlayer.resources.energy || 0) >= Number(cost.energy || 0));
       },
+      spendResources(currentPlayer, cost = {}) {
+        if (!this.canAfford(currentPlayer, cost)) return { ok: false, message: "资源不足" };
+        for (const [key, value] of Object.entries(cost)) {
+          currentPlayer.resources[key] = Number(currentPlayer.resources[key] || 0) - Number(value || 0);
+        }
+        return { ok: true };
+      },
       gainResources(currentPlayer, gain = {}) {
         for (const [key, value] of Object.entries(gain)) {
           currentPlayer.resources[key] = Number(currentPlayer.resources[key] || 0) + Number(value || 0);
@@ -101,6 +110,20 @@ function createBaseContext(player, overrides = {}) {
     quickTrades: {
       finalizeTradeAfterDiscard() {
         return { ok: true, message: "交易完成" };
+      },
+    },
+    cardEffects: {
+      getCardModel(card) {
+        return card?.model || null;
+      },
+      buildPlayEffects(card) {
+        return card?.playEffects || [];
+      },
+      getTemporaryTasks(card) {
+        return card?.temporaryTasks || [];
+      },
+      ensureCardEffectState(card) {
+        card.effectStateReady = true;
       },
     },
     data: {
@@ -139,8 +162,12 @@ function createBaseContext(player, overrides = {}) {
       commitSession() {},
     },
     scanEffects: {},
-    fangzhou: null,
-    runezu: null,
+    fangzhou: overrides.fangzhou || null,
+    banrenma: overrides.banrenma || null,
+    chong: overrides.chong || null,
+    amiba: overrides.amiba || null,
+    aomomo: overrides.aomomo || null,
+    runezu: overrides.runezu || null,
     solar: {},
     rocketActions: {
       canMoveRocket() {
@@ -231,9 +258,14 @@ function createBaseContext(player, overrides = {}) {
       Object.assign(target, structuredClone(snapshot));
     },
     releaseFutureSpanAfterPlayWithHistory() {},
-    markActionPending() {},
+    markActionPending() {
+      events.markedPending = (events.markedPending || 0) + 1;
+    },
     renderPlayerHand() {},
     renderPlayerStats() {},
+    renderReservedCardsFromTaskState() {
+      events.renderReservedCards = (events.renderReservedCards || 0) + 1;
+    },
     renderPublicCards() {},
     renderInitialSelectionArea() {},
     renderAlienPanels() {},
@@ -296,7 +328,44 @@ function createBaseContext(player, overrides = {}) {
     startCardCornerMoveEffectFlow() {},
     rollbackPendingIndustryQuickAction() {},
     continuePendingDataPlacementAfterBonus() {},
+    applyIndustryPlayCardPassives() {
+      return { ok: true };
+    },
+    buildPlayCardEffectFlowQueue(_player, _card, effects) {
+      return { effects: effects || [], deferredEndEffects: [] };
+    },
+    createImmediatePlayCardEvent(card, player, cost) {
+      return { type: "immediatePlayCard", cardId: card.id, playerId: player.id, cost };
+    },
+    createPlayCardEvent(card, player, cost) {
+      return { type: "playCard", cardId: card.id, playerId: player.id, cost };
+    },
+    recordPlayCardStart(_player, card) {
+      events.recordedPlayCard = card.id;
+    },
+    startPlayCardEffectFlow(flowId, label, effects, payload) {
+      events.startedPlayFlow = { flowId, label, effects, payload };
+    },
+    appendIndustryPlayPassiveStatus(result) {
+      events.lastIndustryPassiveResult = result;
+    },
+    recordMainActionIrreversibleBarrier(label, message, code) {
+      events.irreversibleBarrier = { label, message, code };
+    },
+    renderFangzhouCardDisplays() {
+      events.renderFangzhou = (events.renderFangzhou || 0) + 1;
+    },
+    getFangzhouCard1RewardTargetOptions() {
+      return { targetPlayerId: player.id };
+    },
+    getTargetPlayerOptions() {
+      return [{ id: player.id }];
+    },
+    buildFangzhouCard1EffectQueue(effect, label) {
+      return [{ id: "fangzhou-effect", label, options: { effect } }];
+    },
     applyIncomeFromCard() {
+      events.incomeApplied = (events.incomeApplied || 0) + 1;
       return { ok: true, message: "收入完成" };
     },
     beginEffectHistoryStep() {},
@@ -309,6 +378,9 @@ function createBaseContext(player, overrides = {}) {
       return type === "income";
     },
     scrollToPlayerCommandPanel() {},
+    getCardTypeCode(card) {
+      return Number(card?.typeCode || 0);
+    },
     blockManualAiMovePayment() {
       return { ok: false, blocked: true };
     },
@@ -402,6 +474,100 @@ function createBaseContext(player, overrides = {}) {
   assert.equal(result.ok, true);
   assert.equal(player.hand.length, 0);
   assert.equal(player.resources.publicity, 2);
+}
+
+{
+  const player = {
+    id: "player-1",
+    color: "white",
+    resources: { credits: 3, energy: 0, handSize: 1 },
+    hand: [{ id: "play-card", label: "普通牌", price: 2, typeCode: 4 }],
+  };
+  const context = createBaseContext(player);
+  const handFlow = createHandFlow(context);
+  assert.equal(handFlow.beginPlayCardSelection().ok, true);
+  assert.equal(handFlow.handlePlayCardSelect(0).ok, true);
+  const result = handFlow.confirmPlayCardSelection();
+  assert.equal(result.ok, true);
+  assert.equal(player.resources.credits, 1);
+  assert.equal(player.hand.length, 0);
+  assert.equal(context.cardState.discardPile.length, 1);
+}
+
+{
+  const player = {
+    id: "player-1",
+    color: "white",
+    resources: { credits: 3, energy: 0, score: 1, handSize: 1 },
+    hand: [{ id: "alien-card", label: "虫牌", price: 1, typeCode: 2 }],
+    reservedCards: [],
+  };
+  const context = createBaseContext(player, {
+    chong: {
+      isChongCard(card) {
+        return card.id === "alien-card";
+      },
+      getCardTask() {
+        return { id: "task-1" };
+      },
+      buildImmediateEffects() {
+        return [{ id: "effect-1" }];
+      },
+    },
+  });
+  const handFlow = createHandFlow(context);
+  assert.equal(handFlow.beginPlayCardSelection().ok, true);
+  assert.equal(handFlow.handlePlayCardSelect(0).ok, true);
+  const result = handFlow.confirmPlayCardSelection();
+  assert.equal(result.ok, true);
+  assert.equal(player.hand.length, 0);
+  assert.equal(player.reservedCards.length, 1);
+  assert.equal(player.reservedCards[0].chongCard, true);
+  assert.equal(context.events.startedPlayFlow.flowId, "chong-play-card-effects");
+}
+
+{
+  const player = {
+    id: "player-1",
+    color: "white",
+    resources: { credits: 5, energy: 0, handSize: 1 },
+    hand: [{ id: "fangzhou-2", label: "方舟高级牌" }],
+  };
+  const context = createBaseContext(player, {
+    fangzhou: {
+      CARD2_PLAY_COST: { credits: 3 },
+      isFangzhouCard2(card) {
+        return card.id === "fangzhou-2";
+      },
+      flipCard1Reward() {
+        return { ok: true, effect: { id: "reward-1" }, label: "翻开奖励" };
+      },
+    },
+  });
+  const handFlow = createHandFlow(context);
+  assert.equal(handFlow.beginPlayCardSelection().ok, true);
+  assert.equal(handFlow.handlePlayCardSelect(0).ok, true);
+  const result = handFlow.confirmPlayCardSelection();
+  assert.equal(result.ok, true);
+  assert.equal(player.resources.credits, 2);
+  assert.equal(context.cardState.discardPile.length, 1);
+  assert.equal(context.events.startedPlayFlow.flowId, "fangzhou-card2-play-effects");
+  assert.equal(context.events.irreversibleBarrier.code, "fangzhou_card1_flip");
+}
+
+{
+  const player = {
+    id: "player-1",
+    color: "white",
+    resources: { credits: 0, energy: 0, handSize: 1 },
+    hand: [{ id: "income-card", label: "收入牌" }],
+  };
+  const context = createBaseContext(player);
+  const handFlow = createHandFlow(context);
+  assert.equal(handFlow.beginDiscardSelection(1, { type: "income", player }).ok, true);
+  const result = handFlow.handleHandCardDiscard(0);
+  assert.equal(result.ok, true);
+  assert.equal(context.events.incomeApplied, 1);
 }
 
 console.log("hand-flow tests passed");
