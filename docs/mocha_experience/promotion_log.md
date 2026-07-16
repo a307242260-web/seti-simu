@@ -71,3 +71,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: 核对 `git diff --cached --stat`、共享工作树状态、临时 HEAD 快照全量 Node 回归及两次 DOM 脚本顺序烟测结果。
 - observed_outcome: 已连续两次实现“只提交本 issue 文件、保留其他 agent/user dirty 改动”，且 staged 快照能独立通过对应全量回归。
 - keep_or_revise: 保持 candidate；完成第 3 次相似重叠提交后复审是否升级提交前检查模板。
+
+- date: 2026-07-16
+- source: SETI-23, SETI-24, SETI-25
+- promoted_to: agent_prompt
+- promotion_decision: promote
+- target_agent: 领航及遵循仓库根 AGENTS.md 的 coding agent
+- target_component: 共享 dirty worktree 提交前验证规则
+- target_file: AGENTS.md
+- remote_skill_id: none
+- change: 将“重叠文件提交必须验证仅含本次 staged 内容的独立快照”从 coding candidate 升级为仓库级 agent prompt 规则。
+- applied_change: 在 `AGENTS.md` 的 Agent 工作约定中新增 staged 独立快照验证要求，并明确不得把他人未提交修复当作本次验收证据。
+- expected_effect: 后续共享树重叠提交能同时证明工作树集成状态和本次提交快照独立成立，减少误卷他人改动与不可复现提交。
+- evaluation_window: 后续 5 次共享 dirty worktree 重叠提交
+- success_signal: 提交仅包含当前 issue 改动，且 staged 快照验证结果可复现；不再出现依赖他人未提交文件才通过的提交。
+- rollback_condition: 若连续 5 次显示临时 staged 快照构造成本明显高于收益，或仓库切换为隔离 worktree 使规则不再适用，则删除或降级该条 prompt。
+- risk: staged 快照构造会增加提交前耗时；若机械使用于完全不重叠的改动会造成不必要成本。
+- evidence_before: SETI-23 `9414cc4`、SETI-24 `ff667a3`，以及 SETI-25 的 `app.js` 独立 staged blob、`git diff --cached` 和临时 checkout-index 全量 tracked 回归。
+- owner_or_agent_decision: 领航依据既有 candidate 的“三次相似提交”评估窗口自决 promote。
+- applied_at: 2026-07-16
+- verification: `git diff --cached --check`；临时 checkout-index 快照执行 `node --check randomizer/app.js` 与全部 tracked `randomizer/**/*.test.js`。
+- observed_outcome: SETI-25 工作树保留既有 AI/headless 改动，本 issue staged 快照独立通过语法和全量 tracked 回归。
+- keep_or_revise: 保留并观察后续 5 次；若只在重叠文件场景触发且持续避免误提交，则维持。

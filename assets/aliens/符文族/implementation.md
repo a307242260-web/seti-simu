@@ -7,7 +7,8 @@
 - 专属规则：`randomizer/game/aliens/runezu.js`。
 - 坐标：`randomizer/game/aliens/placement.js` 中的 `RUNEZU_TRACE_MARKER_SLOTS`、`RUNEZU_PANEL_SYMBOL_MARKER_SLOTS`、`RUNEZU_FACE_SYMBOL_SLOT_MARKER_SLOTS`。
 - 渲染：`randomizer/game/aliens/render.js`。
-- UI 流程、奖励、牌效、调试按钮：`randomizer/app.js`。
+- UI dialog、奖励、symbol 分支与面板渲染：`randomizer/app/aliens/species-runtime.js`。
+- 调试按钮和跨域牌效装配：`randomizer/app.js`。
 - 终局符号计分与符文族终局牌：`randomizer/game/end-game-scoring.js`。
 
 ## 专属状态

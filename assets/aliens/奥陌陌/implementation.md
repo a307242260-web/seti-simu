@@ -9,7 +9,8 @@
 - 正面渲染与拖动覆盖：`randomizer/game/aliens/render.js`
 - 奥陌陌星球：`randomizer/solar-system/layout.js`、`randomizer/solar-system/core.js`
 - 奥陌陌星云数据：`randomizer/game/data/nebula-state.js`、`randomizer/game/data/nebula-render.js`
-- 揭示、调试、卡牌选择与效果队列：`randomizer/app.js`
+- 物种奖励、卡牌选择 dialog 与面板渲染：`randomizer/app/aliens/species-runtime.js`
+- 揭示调试和跨域效果队列装配：`randomizer/app.js`
 
 ## 运行时状态
 

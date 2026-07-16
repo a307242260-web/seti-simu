@@ -23,9 +23,9 @@
 - decision: 先作为流程候选经验记录；后续若再次出现“self-review 导致伪 in_review”的收口偏差，再考虑把 `done` 前置检查或 `review_pass` 约束升级到 issue-workflow。
 
 - date: 2026-07-16
-- source_issue: SETI-23, SETI-24
+- source_issue: SETI-23, SETI-24, SETI-25
 - observation: 在共享 dirty worktree 中重构与他人改动重叠的文件时，验证工作树通过并不能证明本次 staged 快照独立成立；提交前应同时检查 staged diff，并在需要时从 HEAD 构造仅含本次改动的快照验证，避免卷入他人改动或把其修复误算为本次交付。
-- evidence: SETI-23 提交 `9414cc4` 通过临时 HEAD 快照隔离 effect 重构并识别工作树与 staged 验证差异；SETI-24 提交 `ff667a3` 再次从 HEAD 构造独立 staged 快照，完整保留共享树 7 个既有 dirty 文件，并让 14 个本 issue 文件的全量 tracked 测试独立通过。
-- promote_to: none
-- promotion_status: candidate
-- decision: 已获得第二次同类成功证据，继续保留为 candidate；完成 3 次相似重叠提交的评估窗口后，再决定是否固化为提交前检查模板。
+- evidence: SETI-23 提交 `9414cc4` 通过临时 HEAD 快照隔离 effect 重构并识别工作树与 staged 验证差异；SETI-24 提交 `ff667a3` 再次从 HEAD 构造独立 staged 快照；SETI-25 在 `app.js` 与其他 agent 改动重叠时，以 HEAD 构造仅含本 issue 的 staged blob，并在临时 checkout-index 快照运行全量 tracked 测试。
+- promote_to: agent_prompt
+- promotion_status: promote
+- decision: 三次连续重叠提交均证明 staged 独立验证能避免卷入他人改动或误用工作树修复，已达到预设评估窗口；将规则写入仓库根 `AGENTS.md`。

@@ -11,6 +11,7 @@
 - `AGENTS.md` 只维护快速导航和关键路径；长机制说明放在 `docs/mechanics-reference.md`。
 - 当前没有 `package.json` 或构建步骤；验证以 `node --check` 和 Node 测试脚本为主。
 - 代码和资产路径以仓库根目录为基准。
+- 共享 dirty worktree 中若本次修改与他人改动重叠同一文件，提交前除工作树回归外，还必须验证仅含本次 staged 内容的独立快照；不得把他人未提交修复当作本次验收证据。
 
 ## 代码地图
 
@@ -28,6 +29,7 @@
 - `randomizer/app/income-runtime.js`：卡牌收入、轮开始收入和公司轮开始收益运行时。
 - `randomizer/app/scan-flow.js`：扫描目标、扇区结算、延迟补牌与公共牌/手牌扫描运行时。
 - `randomizer/app/alien-ui.js`：外星人揭示提示、痕迹 picker、方舟用途分流与各物种痕迹放置模式 UI 壳层。
+- `randomizer/app/aliens/species-runtime.js`：八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 与具体面板渲染；通过显式 context 接收 app 编排依赖。
 - `randomizer/app/action-log-export.js`：终局行动日志 Markdown 导出格式与文件名生成。
 - `randomizer/app/public-api.js`：调试、AI 验证和外部脚本使用的 `window.SetiRandomizer` API 组装。
 - `randomizer/app/ai-controller.js`：AI 自动机、策略权重、批跑/AB 测试与 AI 决策控制器。
