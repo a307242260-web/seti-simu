@@ -22,6 +22,7 @@
     Object.freeze({ key: "effectFlowModule", globalName: "SetiAppEffectFlow" }),
     Object.freeze({ key: "handFlowModule", globalName: "SetiAppHandFlow" }),
     Object.freeze({ key: "scanFlowModule", globalName: "SetiAppScanFlow" }),
+    Object.freeze({ key: "alienUiModule", globalName: "SetiAppAlienUi" }),
     Object.freeze({ key: "solar", globalName: "SetiSolarSystem" }),
     Object.freeze({ key: "players", globalName: "SetiPlayers" }),
     Object.freeze({ key: "rocketActions", globalName: "SetiRocketActions" }),
