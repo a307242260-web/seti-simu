@@ -194,17 +194,17 @@ index.html
 
 所以还没有被完全压成更薄的模块边界。
 
-### 3.4 渲染层仍有大量顶层函数
+### 3.4 渲染层已形成独立 runtime
 
-当前 `app.js` 仍直接承载大量 render 函数，包括：
+具体 DOM 构建已集中到 `app/render-runtime.js`，包括：
 
 - board / wheel / sector / rotate token
 - rocket / marker / planets reference / alien board marker
 - public cards / hand / reserved cards / opponent stats
 - final score board / final result dialog
-- state readout / debug 面板 / hover preview
+- state readout / hover preview / 坐标与 marker 适配
 
-也就是说，业务流程拆出去了很多，但视图渲染层还没有被完全分到独立的 render-runtime 子模块。
+`app.js` 保留 render schedule、刷新组合和跨流程回调注入，不再重复实现上述节点构建。debug 面板的具体实现由 `debug-runtime.js` 承接，行动日志列表与 tab DOM 由 `action-log-runtime.js` 承接。
 
 ### 3.5 调试与开发辅助逻辑
 
@@ -258,13 +258,10 @@ index.html
   - `ai-controller.js`
   - `headless-env.js`
 
-### 4.2 还没有完全独立的块
+### 4.2 仍保留在顶层的块
 
-- render-runtime
-  - 目前大部分仍在 `app.js`
-
-- player panel / board visual runtime
-  - 仍与顶层状态和 action button 刷新强耦合
+- render schedule / refresh glue
+  - 具体 DOM 已在 `render-runtime`，顶层仍负责跨 runtime 刷新顺序
 
 - final scoring / final result UI runtime
   - 规则在 `game/**`，但面板编排和展示仍主要在 `app.js`

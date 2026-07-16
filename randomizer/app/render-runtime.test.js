@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createRenderRuntime } = require("./render-runtime");
+const { createRenderRuntime, createCoordinateRuntime } = require("./render-runtime");
 
 function createClassList(element) {
   const values = new Set();
@@ -541,6 +541,57 @@ function createContext(overrides = {}) {
   assert.equal(context.dataPlayerBoardCalls, 1);
   assert.equal(context.queueJiuzheCalls, 1);
   assert.equal(context.queueBanrenmaCalls, 1);
+}
+
+{
+  const rocketState = { rockets: [], nextRocketId: 1, activeRocketId: null, statusNote: "old" };
+  let renderCalls = 0;
+  const runtime = createCoordinateRuntime({
+    els: {
+      wheelWrap: { getBoundingClientRect: () => ({ left: 0, top: 0, width: 100, height: 100 }) },
+      planetsReferenceImage: {
+        naturalWidth: 1000,
+        naturalHeight: 1000,
+        getAttribute() { return null; },
+        getBoundingClientRect: () => ({ left: 0, top: 0, right: 100, bottom: 100, width: 100, height: 100 }),
+      },
+    },
+    solar: {
+      GLOBAL_COORDINATE_SYSTEM: { size: 1000 },
+      createSolarSnapshot: () => ({ planetLocations: [{ planetId: "earth", x: 3, y: 4 }] }),
+    },
+    solarState: {},
+    rocketActions: {
+      normalizeBoardPoint: (point) => point,
+      normalizePlanetsReferencePoint: (point) => ({ ...point, x: point.percentX * 10, y: point.percentY * 10 }),
+      getPolarPointFromBoardPoint: (point) => point,
+      getBoardPointFromPolarPoint: (point) => point,
+      placeRocketAtPlanetsReferencePoint() {},
+      removeRocket() {},
+      formatRocketLabel: (rocket) => `#${rocket.id}`,
+      getRocketsForPlayer: (state, playerId) => state.rockets.filter((rocket) => rocket.playerId === playerId),
+      createRocketSnapshot: (rocket) => ({ id: rocket.id }),
+    },
+    rocketState,
+    planetReferenceLayout: {
+      PLANET_ORDER: [],
+      buildReferenceData: () => ({ ok: true }),
+    },
+    planetStats: {},
+    planetStatsState: {},
+    referencePlacementKindLabels: { orbit: "环绕" },
+    planetsReferenceSize: { width: 1000, height: 1000 },
+    rocketSurface: { SOLAR: "solar", PLANETS_REFERENCE: "planets" },
+    removeRocketElement() {},
+    renderRockets() { renderCalls += 1; },
+  });
+
+  assert.equal(runtime.getReferencePlacementName({ planetName: "地球", kind: "orbit", sequence: 2 }), "地球 环绕2");
+  assert.deepEqual(runtime.getEarthSectorCoordinate(), { x: 3, y: 4 });
+  assert.equal(runtime.isClientPositionInsidePlanetsReference(50, 50), true);
+  runtime.seedDefaultReferenceRockets();
+  assert.equal(renderCalls, 1);
+  assert.equal(rocketState.statusNote, null);
 }
 
 console.log("render-runtime tests passed");

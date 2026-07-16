@@ -11,6 +11,279 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
+  function createCardHoverPreviewRuntime(context = {}) {
+    const windowRef = context.window || root;
+    const documentRef = context.document || root.document;
+    let preview = null;
+    let previewImage = null;
+    let previewAnchor = null;
+    let listenersBound = false;
+
+    function position(anchor = previewAnchor) {
+      if (!anchor || !preview || !preview.classList.contains("is-visible")) return;
+
+      const anchorRect = anchor.getBoundingClientRect();
+      const previewRect = preview.getBoundingClientRect();
+      const margin = 12;
+      const previewWidth = previewRect.width || 260;
+      const previewHeight = previewRect.height || 360;
+      const viewportWidth = windowRef.innerWidth || documentRef.documentElement.clientWidth || 0;
+      const viewportHeight = windowRef.innerHeight || documentRef.documentElement.clientHeight || 0;
+      const maxLeft = Math.max(margin, viewportWidth - previewWidth - margin);
+      let left = anchorRect.left + (anchorRect.width / 2) - (previewWidth / 2);
+      let top = anchorRect.top - previewHeight - margin;
+      let placement = "above";
+
+      if (top < margin) {
+        top = anchorRect.bottom + margin;
+        placement = "below";
+      }
+      if (top + previewHeight > viewportHeight - margin) {
+        top = Math.max(margin, viewportHeight - previewHeight - margin);
+      }
+
+      left = Math.min(Math.max(margin, left), maxLeft);
+      preview.dataset.placement = placement;
+      preview.style.left = `${Math.round(left)}px`;
+      preview.style.top = `${Math.round(top)}px`;
+    }
+
+    function hide(anchor) {
+      if (anchor && previewAnchor && anchor !== previewAnchor) return;
+      if (preview) {
+        preview.classList.remove("is-visible");
+        preview.classList.remove("card-hover-preview--pass-reserve");
+        preview.classList.remove("card-hover-preview--action-briefing");
+        preview.style.visibility = "";
+      }
+      previewAnchor = null;
+    }
+
+    function bindListeners() {
+      if (listenersBound) return;
+      listenersBound = true;
+      windowRef.addEventListener("resize", () => position(), { passive: true });
+      windowRef.addEventListener("scroll", () => position(), { passive: true, capture: true });
+      documentRef.addEventListener("pointerdown", () => hide(), { capture: true });
+      documentRef.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") hide();
+      }, { capture: true });
+    }
+
+    function ensure() {
+      if (preview && previewImage) return preview;
+      preview = documentRef.createElement("div");
+      preview.className = "card-hover-preview";
+      preview.setAttribute("aria-hidden", "true");
+      previewImage = documentRef.createElement("img");
+      previewImage.alt = "";
+      previewImage.decoding = "async";
+      previewImage.onload = () => position();
+      preview.append(previewImage);
+      documentRef.body.append(preview);
+      bindListeners();
+      return preview;
+    }
+
+    function show(anchor, src, label) {
+      if (!anchor || !src) return;
+      const element = ensure();
+      previewAnchor = anchor;
+      previewImage.src = src;
+      previewImage.alt = label || "";
+      element.classList.toggle(
+        "card-hover-preview--pass-reserve",
+        Boolean(anchor.closest?.(".pass-reserve-selection-overlay")),
+      );
+      element.classList.toggle(
+        "card-hover-preview--action-briefing",
+        Boolean(anchor.closest?.(".action-briefing-overlay")),
+      );
+      element.style.visibility = "hidden";
+      element.classList.add("is-visible");
+      position(anchor);
+      element.style.visibility = "";
+    }
+
+    function attach(anchor, src, label) {
+      if (!anchor || !src) return anchor;
+      const cardLabel = label || "";
+      anchor.addEventListener("pointerenter", () => show(anchor, src, cardLabel));
+      anchor.addEventListener("pointerleave", () => hide(anchor));
+      anchor.addEventListener("pointermove", () => position(anchor));
+      anchor.addEventListener("focus", () => show(anchor, src, cardLabel));
+      anchor.addEventListener("blur", () => hide(anchor));
+      return anchor;
+    }
+
+    return { attach, show, hide, position, ensure };
+  }
+
+  function createCoordinateRuntime(context = {}) {
+    const {
+      els,
+      solar,
+      solarState,
+      rocketActions,
+      rocketState,
+      planetReferenceLayout,
+      planetStats,
+      planetStatsState,
+      referencePlacementKindLabels,
+      planetsReferenceSize,
+      rocketSurface,
+      removeRocketElement,
+      renderRockets,
+    } = context;
+
+    function getReferencePlacementKindLabel(kind) {
+      return referencePlacementKindLabels[kind] || kind || "贴图";
+    }
+    function getReferencePlacementName(placement) {
+      if (!placement) return null;
+      if (placement.kind === "satellite") return `${placement.parentPlanetName} ${placement.satelliteName}`;
+      const index = placement.sequence ? placement.sequence : "";
+      return `${placement.planetName} ${getReferencePlacementKindLabel(placement.kind)}${index}`;
+    }
+    function buildPlanetOrbitLandReferenceData() { return planetReferenceLayout.buildReferenceData(); }
+    function isPlanetMarkerRocket(rocket) { return Boolean(rocket?.referencePlacement?.isPlanetMarker); }
+    function getBoardPointFromClientPosition(clientX, clientY) {
+      const rect = els.wheelWrap.getBoundingClientRect();
+      const size = solar.GLOBAL_COORDINATE_SYSTEM.size;
+      return rocketActions.normalizeBoardPoint({
+        x: ((clientX - rect.left) / rect.width) * size,
+        y: ((clientY - rect.top) / rect.height) * size,
+      });
+    }
+    function getPlanetsReferenceDimensions() {
+      return {
+        width: els.planetsReferenceImage.naturalWidth
+          || Number(els.planetsReferenceImage.getAttribute("width"))
+          || planetsReferenceSize.width,
+        height: els.planetsReferenceImage.naturalHeight
+          || Number(els.planetsReferenceImage.getAttribute("height"))
+          || planetsReferenceSize.height,
+      };
+    }
+    function isPointInsideRect(clientX, clientY, rect) {
+      return clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom;
+    }
+    function isClientPositionInsidePlanetsReference(clientX, clientY) {
+      if (!els.planetsReferenceImage) return false;
+      return isPointInsideRect(clientX, clientY, els.planetsReferenceImage.getBoundingClientRect());
+    }
+    function getPlanetsReferencePointFromClientPosition(clientX, clientY) {
+      const rect = els.planetsReferenceImage.getBoundingClientRect();
+      const dimensions = getPlanetsReferenceDimensions();
+      return rocketActions.normalizePlanetsReferencePoint({
+        percentX: ((clientX - rect.left) / rect.width) * 100,
+        percentY: ((clientY - rect.top) / rect.height) * 100,
+        width: dimensions.width,
+        height: dimensions.height,
+      });
+    }
+    function formatBoardPoint(point) { return point ? `[${point.x.toFixed(2)},${point.y.toFixed(2)}]` : "无"; }
+    function getPolarPointFromBoardPoint(point) { return rocketActions.getPolarPointFromBoardPoint(point); }
+    function getBoardPointFromPolarPoint(point) { return rocketActions.getBoardPointFromPolarPoint(point); }
+    function getPolarPointFromClientPosition(clientX, clientY) {
+      return getPolarPointFromBoardPoint(getBoardPointFromClientPosition(clientX, clientY));
+    }
+    function formatPolarPoint(point) {
+      return point ? `[r=${point.radius.toFixed(2)},a=${point.angleDegrees.toFixed(2)}]` : "无";
+    }
+    function formatSectorCoordinate(resolution) {
+      return resolution?.sectorCoordinate
+        ? `[${resolution.sectorCoordinate.x},${resolution.sectorCoordinate.y}]`
+        : "无";
+    }
+    function formatPlanetsReferencePoint(point) {
+      return point
+        ? `planets贴图[${point.x.toFixed(2)},${point.y.toFixed(2)}] ${point.percentX.toFixed(2)}%,${point.percentY.toFixed(2)}%`
+        : "planets贴图 无";
+    }
+    function isRocketOnPlanetsReference(rocket) {
+      return (rocket?.surface || rocketSurface.SOLAR) === rocketSurface.PLANETS_REFERENCE;
+    }
+    function createDefaultReferencePlacementInput(placement) {
+      return { x: placement.x, y: placement.y, width: planetsReferenceSize.width, height: planetsReferenceSize.height };
+    }
+    function createPlanetMarkerPlacement(slot, markerState) {
+      const common = {
+        x: slot.x,
+        y: slot.y,
+        isPlanetMarker: true,
+        playerId: markerState.playerId,
+        color: markerState.color,
+        referenceOffsetTokenWidths: markerState.referenceOffsetTokenWidths || 0,
+      };
+      return slot.satelliteId
+        ? { ...common, parentPlanetId: slot.parentPlanetId, parentPlanetName: slot.parentPlanetName, satelliteId: slot.satelliteId, satelliteName: slot.satelliteName, kind: "satellite" }
+        : { ...common, planetId: slot.planetId, planetName: slot.planetName, kind: slot.kind, sequence: slot.sequence, angleOffsetDegrees: slot.angleOffsetDegrees, center: slot.center };
+    }
+    function createPlanetMarkerRocket(slot, markerState) {
+      const placement = createPlanetMarkerPlacement(slot, markerState);
+      const rocket = { id: rocketState.nextRocketId, playerId: markerState.playerId, color: markerState.color, referencePlacement: placement };
+      rocketState.nextRocketId += 1;
+      rocketState.rockets.push(rocket);
+      rocketActions.placeRocketAtPlanetsReferencePoint(rocketState, rocket.id, createDefaultReferencePlacementInput(placement));
+      return rocket;
+    }
+    function removePlanetMarkerRockets() {
+      rocketState.rockets.filter(isPlanetMarkerRocket).forEach((rocket) => {
+        rocketActions.removeRocket(rocketState, rocket.id);
+        removeRocketElement(rocket.id);
+      });
+    }
+    function syncPlanetOrbitLandMarkers() {
+      removePlanetMarkerRockets();
+      for (const planetId of planetReferenceLayout.PLANET_ORDER) {
+        for (const marker of planetStats.getPlanetOrbitMarkers(planetStatsState, planetId)) {
+          const slot = planetReferenceLayout.getPlanetSlot(planetId, "orbit", marker.sequence);
+          if (slot) createPlanetMarkerRocket(slot, marker);
+        }
+        for (const marker of planetStats.getPlanetLandingMarkers(planetStatsState, planetId)) {
+          const slot = planetReferenceLayout.getPlanetSlot(planetId, "land", marker.displaySlot || marker.sequence);
+          if (slot) createPlanetMarkerRocket(slot, marker);
+        }
+        for (const marker of planetStats.getSatelliteLandingMarkers(planetStatsState, planetId)) {
+          const slot = planetReferenceLayout.getSatellitePlacement(planetId, marker.satelliteId);
+          if (slot) createPlanetMarkerRocket(slot, marker);
+        }
+      }
+      renderRockets();
+    }
+    function seedDefaultReferenceRockets() {
+      if (rocketState.rockets.length) return;
+      rocketState.activeRocketId = null;
+      rocketState.statusNote = null;
+      syncPlanetOrbitLandMarkers();
+    }
+    function formatRocketLabel(rocket) { return rocketActions.formatRocketLabel(rocket); }
+    function getMovableTokensForPlayer(playerId) {
+      return rocketActions.getMovableTokensForPlayer
+        ? rocketActions.getMovableTokensForPlayer(rocketState, playerId)
+        : rocketActions.getRocketsForPlayer(rocketState, playerId);
+    }
+    function createRocketSnapshot(rocket) { return rocketActions.createRocketSnapshot(rocket); }
+    function getEarthSectorCoordinate() {
+      const earth = solar.createSolarSnapshot(solarState).planetLocations.find((planet) => planet.planetId === "earth");
+      if (!earth) throw new Error("Earth position was not found in the current solar snapshot");
+      return { x: earth.x, y: earth.y };
+    }
+
+    return {
+      getReferencePlacementKindLabel, getReferencePlacementName, buildPlanetOrbitLandReferenceData,
+      isPlanetMarkerRocket, getBoardPointFromClientPosition, getPlanetsReferenceDimensions,
+      isPointInsideRect, isClientPositionInsidePlanetsReference, getPlanetsReferencePointFromClientPosition,
+      formatBoardPoint, getPolarPointFromBoardPoint, getBoardPointFromPolarPoint,
+      getPolarPointFromClientPosition, formatPolarPoint, formatSectorCoordinate,
+      formatPlanetsReferencePoint, isRocketOnPlanetsReference, createDefaultReferencePlacementInput,
+      createPlanetMarkerPlacement, createPlanetMarkerRocket, removePlanetMarkerRockets,
+      syncPlanetOrbitLandMarkers, seedDefaultReferenceRockets, formatRocketLabel,
+      getMovableTokensForPlayer, createRocketSnapshot, getEarthSectorCoordinate,
+    };
+  }
+
   function createRenderRuntime(context = {}) {
     const document = context.document || root.document;
     const ImageCtor = context.Image || root.Image;
@@ -1337,5 +1610,7 @@
 
   return {
     createRenderRuntime,
+    createCardHoverPreviewRuntime,
+    createCoordinateRuntime,
   };
 });

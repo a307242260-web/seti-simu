@@ -93,4 +93,51 @@ assert.equal(importState.entries[0].id, 1);
 assert.equal(importState.nextEntryId, 2);
 assert.equal(importState.draft, null);
 
+function createViewElement() {
+  return {
+    children: [],
+    dataset: {},
+    className: "",
+    classList: { contains() { return false; }, toggle() {} },
+    append(...nodes) { this.children.push(...nodes); },
+    replaceChildren(...nodes) { this.children = nodes; },
+    setAttribute() {},
+  };
+}
+
+{
+  const actionLogReadout = createViewElement();
+  const document = {
+    createElement: createViewElement,
+    createTextNode(text) { return { textContent: text }; },
+  };
+  const state = {
+    entries: [{
+      id: 7,
+      roundNumber: 2,
+      turnNumber: 3,
+      playerLabel: "白色玩家",
+      actionType: "scan",
+      actionLabel: "扫描",
+      steps: [{ source: "main", text: "扫描星云", undoable: true }],
+    }],
+    activeReportTab: "action",
+  };
+  const view = actionLogRuntime.createActionLogViewRuntime({
+    document,
+    els: { actionLogReadout, appWrap: createViewElement() },
+    players: { CARD_BACK_SRC: "back.png" },
+    uiRuntimeState: {},
+    actionLogState: state,
+    historySourceMain: "main",
+    sourceLabels: {},
+    attachCardHoverPreview() {},
+  });
+
+  view.renderActionLog();
+  assert.equal(actionLogReadout.children.length, 1);
+  assert.equal(actionLogReadout.children[0].className, "action-log-list");
+  assert.equal(actionLogReadout.children[0].children[0].dataset.actionLogId, "7");
+}
+
 console.log("action-log-runtime tests passed");

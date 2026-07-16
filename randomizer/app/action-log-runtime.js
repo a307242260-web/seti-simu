@@ -72,6 +72,80 @@
     };
   }
 
+  function optionsFromHistoryStep(step = {}) {
+    return {
+      stepId: step.id || null,
+      undoable: step.undoable !== false,
+      irreversibleCode: step.irreversibleCode || null,
+      irreversibleReason: step.irreversibleReason || null,
+      playedCard: step.playedCard || null,
+      briefing: step.briefing || null,
+    };
+  }
+
+  function pickNumericFields(source = {}, keys = []) {
+    return Object.fromEntries(keys.map((key) => [key, Number(source?.[key]) || 0]));
+  }
+
+  function createImpactSnapshot(player, options = {}) {
+    if (!player) return null;
+    return {
+      playerId: player.id || null,
+      resources: pickNumericFields(player.resources || {}, options.resourceKeys),
+      income: pickNumericFields(player.income || {}, options.incomeKeys),
+      completedTaskCount: Number(player.completedTaskCount) || 0,
+    };
+  }
+
+  function formatSignedDelta(value) {
+    const rounded = Math.round(Number(value) * 100) / 100;
+    return `${rounded > 0 ? "+" : ""}${rounded}`;
+  }
+
+  function createDeltaEntries(before = {}, after = {}, keys = [], labels = {}) {
+    return keys.map((key) => {
+      const delta = (Number(after?.[key]) || 0) - (Number(before?.[key]) || 0);
+      const label = labels[key] || key;
+      return delta ? { key, label, delta, text: `${label}${formatSignedDelta(delta)}` } : null;
+    }).filter(Boolean);
+  }
+
+  function isDeltaRepresentedInDetail(detail, entry, units = {}) {
+    const compactDetail = compactText(detail);
+    if (!compactDetail || !entry?.delta) return false;
+    const absDelta = Math.abs(entry.delta);
+    const sign = entry.delta > 0 ? "+" : "-";
+    const label = compactText(entry.label);
+    const unit = compactText(units[entry.key] || entry.label);
+    const candidates = [`${label}${sign}${absDelta}`, `${sign}${absDelta}${label}`];
+    if (entry.delta > 0) {
+      candidates.push(`${label}+${absDelta}`);
+      if (unit) candidates.push(`${absDelta}${unit}`, `+${absDelta}${unit}`, `获得${absDelta}${unit}`);
+    } else if (unit) {
+      candidates.push(`-${absDelta}${unit}`, `支付${absDelta}${unit}`, `消耗${absDelta}${unit}`);
+    }
+    return candidates.some((candidate) => candidate && compactDetail.includes(candidate));
+  }
+
+  function formatImpact(before, after, options = {}) {
+    if (!before || !after || (before.playerId && after.playerId && before.playerId !== after.playerId)) return "";
+    const groups = [];
+    const detailText = normalizeText(options.detailText);
+    const appendGroup = (label, previous, next, keys) => {
+      const parts = createDeltaEntries(previous, next, keys, options.labels)
+        .filter((entry) => !isDeltaRepresentedInDetail(detailText, entry, options.units))
+        .map((entry) => entry.text);
+      if (parts.length) groups.push(`${label}：${parts.join("、")}`);
+    };
+    appendGroup("资源", before.resources, after.resources, options.resourceKeys);
+    appendGroup("收入", before.income, after.income, options.incomeKeys);
+    const taskDelta = (Number(after.completedTaskCount) || 0) - (Number(before.completedTaskCount) || 0);
+    if (taskDelta && !compactText(detailText).includes(`完成任务${formatSignedDelta(taskDelta)}`)) {
+      groups.push(`完成任务${formatSignedDelta(taskDelta)}`);
+    }
+    return groups.join("；");
+  }
+
   function normalizeBriefingSnapshot(briefing, options = {}) {
     if (!briefing || typeof briefing !== "object") return null;
     const snapshot = {};
@@ -253,12 +327,175 @@
     };
   }
 
+  function createActionLogViewRuntime(context = {}) {
+    const {
+      document,
+      els,
+      players,
+      uiRuntimeState,
+      actionLogState,
+      historySourceMain,
+      sourceLabels,
+      attachCardHoverPreview,
+    } = context;
+
+    function getEntryTitle(entry) {
+      return entry.title || `第${entry.roundNumber}轮 第${entry.turnNumber}回合`;
+    }
+
+    function formatIrreversibleSuffix(step) {
+      const reason = normalizeText(step?.irreversibleReason);
+      if (!reason) return "";
+      const compactReason = compactText(reason);
+      const targets = [step?.text, step?.detail, step?.label]
+        .map(compactText)
+        .filter(Boolean);
+      const isDuplicate = targets.some((target) => (
+        target === compactReason
+        || target.endsWith(`：${compactReason}`)
+        || target.endsWith(`:${compactReason}`)
+      ));
+      return isDuplicate ? "（不可撤销）" : `（不可撤销：${reason}）`;
+    }
+
+    function appendTextWithPlayedCard(container, text, playedCard) {
+      const card = createPlayedCardSnapshot(playedCard, { getCardLabel: context.getCardLabel });
+      if (!card?.label) {
+        container.append(document.createTextNode(text));
+        return;
+      }
+      const matchIndex = text.indexOf(card.label);
+      if (matchIndex < 0) {
+        container.append(document.createTextNode(text));
+        return;
+      }
+      if (matchIndex > 0) container.append(document.createTextNode(text.slice(0, matchIndex)));
+
+      const cardNode = document.createElement("span");
+      cardNode.className = "action-log-played-card";
+      cardNode.tabIndex = 0;
+      cardNode.setAttribute("role", "img");
+      cardNode.setAttribute("aria-label", `打出卡牌：${card.label}`);
+      const name = document.createElement("span");
+      name.className = "action-log-played-card-name";
+      name.textContent = card.label;
+      attachCardHoverPreview(cardNode, card.src || players.CARD_BACK_SRC, card.label);
+      cardNode.append(name);
+      container.append(cardNode);
+
+      const endIndex = matchIndex + card.label.length;
+      if (endIndex < text.length) container.append(document.createTextNode(text.slice(endIndex)));
+    }
+
+    function getEntryMetaText(entry) {
+      const playerLabel = entry.playerLabel || "未知玩家";
+      const actionLabel = entry.actionLabel || "本回合行动";
+      if (entry.actionType === "quick") return `${playerLabel} · 快速行动`;
+      if (entry.actionType === "initialSelection") return `${playerLabel} · ${actionLabel}`;
+      return `${playerLabel} · 主要行动：${actionLabel}`;
+    }
+
+    function getStepPrefix(step, displayIndex = null) {
+      if (step?.source === historySourceMain) return `效果${displayIndex || 1}`;
+      return sourceLabels[step?.source] || "行动";
+    }
+
+    function createEffectTextNode(step, displayIndex = null) {
+      const text = document.createElement("span");
+      text.className = "action-log-effect-text";
+      const line = `${getStepPrefix(step, displayIndex)}：${step.text}${formatIrreversibleSuffix(step)}`;
+      appendTextWithPlayedCard(text, line, step.playedCard);
+      return text;
+    }
+
+    function createEntryElement(entry) {
+      const article = document.createElement("article");
+      article.className = "action-log-entry";
+      article.dataset.actionLogId = String(entry.id);
+      const header = document.createElement("div");
+      header.className = "action-log-entry-header";
+      const title = document.createElement("div");
+      title.className = "action-log-entry-title";
+      title.textContent = getEntryTitle(entry);
+      const sequence = document.createElement("div");
+      sequence.className = "action-log-entry-sequence";
+      sequence.textContent = `#${entry.id}`;
+      const meta = document.createElement("div");
+      meta.className = "action-log-entry-meta";
+      meta.textContent = getEntryMetaText(entry);
+      header.append(title, sequence, meta);
+
+      const list = document.createElement("ol");
+      list.className = "action-log-effects";
+      let mainEffectIndex = 0;
+      entry.steps.forEach((step, index) => {
+        const item = document.createElement("li");
+        item.className = `action-log-effect action-log-effect-${step.source || "main"}`;
+        const displayIndex = step.source === historySourceMain ? (mainEffectIndex += 1) : index + 1;
+        const indexNode = document.createElement("span");
+        indexNode.className = "action-log-effect-index";
+        indexNode.textContent = String(index + 1);
+        item.append(indexNode, createEffectTextNode(step, displayIndex));
+        list.append(item);
+      });
+      article.append(header, list);
+      return article;
+    }
+
+    function renderActionLog() {
+      if (uiRuntimeState.codexAiBatchSuppressReadoutRender || !els.actionLogReadout) return;
+      const entries = actionLogState.entries;
+      if (!entries.length) {
+        const empty = document.createElement("p");
+        empty.className = "action-log-empty";
+        empty.textContent = "暂无已确认的行动。";
+        els.actionLogReadout.replaceChildren(empty);
+        return;
+      }
+      const list = document.createElement("div");
+      list.className = "action-log-list";
+      for (const entry of entries.slice().reverse()) list.append(createEntryElement(entry));
+      els.actionLogReadout.replaceChildren(list);
+    }
+
+    function isDebugToolsEnabled() {
+      return !els.appWrap?.classList.contains("debug-tools-disabled");
+    }
+
+    function isStateLogEnabled() {
+      return !els.appWrap?.classList.contains("state-log-disabled");
+    }
+
+    function setReportTab(tab) {
+      const stateLogEnabled = isStateLogEnabled();
+      const nextTab = stateLogEnabled && tab !== "action" ? "state" : "action";
+      actionLogState.activeReportTab = nextTab;
+      const stateActive = nextTab === "state";
+      if (els.stateLogTab) {
+        els.stateLogTab.hidden = !stateLogEnabled;
+        els.stateLogTab.setAttribute("aria-hidden", String(!stateLogEnabled));
+      }
+      els.stateLogTab?.classList.toggle("is-active", stateActive);
+      els.actionLogTab?.classList.toggle("is-active", !stateActive);
+      els.stateLogTab?.setAttribute("aria-selected", String(stateActive));
+      els.actionLogTab?.setAttribute("aria-selected", String(!stateActive));
+      if (els.stateReadout) els.stateReadout.hidden = !stateActive;
+      if (els.actionLogReadout) els.actionLogReadout.hidden = stateActive;
+      if (!stateActive) renderActionLog();
+    }
+
+    return { renderActionLog, setReportTab, isDebugToolsEnabled, isStateLogEnabled };
+  }
+
   return {
     normalizeText,
     compactText,
     simplifyDetailForLabel,
     composeStepText,
     createPlayedCardSnapshot,
+    optionsFromHistoryStep,
+    createImpactSnapshot,
+    formatImpact,
     normalizeBriefingSnapshot,
     normalizeStep,
     ensureDraft,
@@ -266,5 +503,6 @@
     importEntries,
     createEntryFromDraft,
     createConfirmedEntry,
+    createActionLogViewRuntime,
   };
 });

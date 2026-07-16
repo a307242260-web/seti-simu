@@ -42,7 +42,7 @@
 - `randomizer/app/aliens/species-runtime.js`：处理物种奖励、外星人牌获取、虫族任务、九折/半人马机会、符文 symbol、followup 和具体面板渲染。模块不得抓取 `app.js` 闭包，所有状态、规则模块和 continuation 均由 `createAlienSpeciesRuntime(context)` 显式注入。
 - `randomizer/app/tech-runtime.js`：处理科技供应区选择、蓝槽 picker、确认/取消/undo 恢复和海盗科技标记交互；规则判断仍委托 `game/tech/**` 与 `game/industry/**`。
 - `randomizer/app/industry-runtime.js`：处理公司能力与被动的 UI/pending/history 编排；公司规则、数值和文案继续由 `game/industry/**` 提供。
-- `randomizer/app/action-log-runtime.js`：只处理行动日志草稿、步骤、entry 与导入组装；通过显式参数接收 turn/player/history 上下文，不直接抓 app 闭包。
+- `randomizer/app/action-log-runtime.js`：处理行动日志草稿、步骤、entry、导入组装及日志列表/tab 的 DOM 展示；通过显式参数接收 turn/player/history 与 view 上下文，不直接抓 app 闭包。
 - `randomizer/app/action-log-export.js`：只做纯 Markdown 格式化和文件名生成，不读 DOM、不读取隐藏牌序，也不触发浏览器下载。
 - `randomizer/app/game-recovery.js`：只处理恢复快照、本地存档包和恢复流程适配；状态恢复和 UI 刷新通过显式回调注入。
 - `randomizer/app/public-api.js`：只组装 `window.SetiRandomizer` 暴露面。新增调试 API 时优先改这里，保持 API 与运行态编排分离。
@@ -56,11 +56,12 @@
 - `randomizer/app/income-runtime.js`：弃牌收入、收入资源发放、轮开始公司收益和原教旨主义轮开始收入队列。
 - `randomizer/app/scan-flow.js`：公共牌/手牌扫描、扫描目标、扇区结算、延迟补牌及扫描收尾；扫描 pending 的确认、取消和续跑在该 flow 内完成。
 - `randomizer/app.js`：编排层。可以组合规则模块、维护跨 flow 调度和注入 context，但不应再新增卡牌/收入/扫描/任务触发具体分支，或大段静态配置、DOM 查询、事件绑定、公开 API 与 AI 策略逻辑。
+- `randomizer/app/render-runtime.js`：承接卡牌 hover、玩家/对手面板、手牌/保留牌、数据板、状态读出、火箭/marker、棋盘坐标转换与引用贴图适配；`app.js` 只保留渲染调度和跨 flow 刷新组合。
 
 ## 仍需拆分的高耦合区
 
 - AI 自动机已通过 `createAiController(context)` 迁入 `randomizer/app/ai-controller.js`，但它仍通过一组显式回调调用 app 的 UI 流程。后续若要继续解耦，应优先把“读取局面”“列出候选”“执行选择”下沉为更窄的决策总线，而不是在 AI 模块里直接新增 DOM 选择逻辑。
-- 行动日志和恢复快照当前仍跨越日志渲染、全局状态克隆、临时 pending 清理和全 UI 刷新。拆分时不能只移动渲染函数；应先形成 `action-log` 状态/渲染模块和 `recovery` 状态恢复模块两个边界。
+- 行动日志状态与 DOM 展示已经由 `action-log-runtime` 接管，恢复快照与持久化包由 `game-recovery` 接管；`app.js` 仍保留跨全部 pending 状态的恢复清理与全 UI 刷新调度。
 - 卡牌、收入、扫描和任务触发的 `pending*` 已按 runtime/flow 收口；新增相关选择应扩展所属 runtime，并通过 `app.js` 注入跨域 continuation，避免重新把具体确认/取消分支堆回总装配层。
 
 ## 后续拆分原则
