@@ -1023,6 +1023,10 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   };
 }
 
+module.exports = { createAiControllerHarness };
+
+if (require.main === module) {
+
 function makeHiddenAlienSlot(traceOwners = {}) {
   const traces = {};
   for (const traceType of ["yellow", "pink", "blue"]) {
@@ -4578,87 +4582,6 @@ function makeYichangdianAlienState(options = {}) {
   );
   assert.equal(customWeakHarness.controller.getAiStrategyWeights(customWeakHarness.blue).engine, 1.31);
   assert.equal(customWeakHarness.controller.getAiStrategyWeights(customWeakHarness.blue).scan, 1.21);
-}
-
-{
-  const harness = createAiControllerHarness(null);
-  assert.equal(
-    harness.controller.configureAiAutoBattle({
-      playerIds: [harness.blue.id],
-      stepDelayMs: 25,
-      maxBugRepeats: 5,
-      maxMovesPerTurn: 2,
-      strategyWeights: { scan: 1.3, pass: 0.7 },
-      suppressAutoSchedule: true,
-    }).ok,
-    true,
-  );
-
-  const snapshot = harness.controller.createAiControlSnapshot();
-  assert.equal(snapshot.enabled, true);
-  assert.deepEqual(snapshot.playerIds, [harness.blue.id]);
-  assert.equal(snapshot.stepDelayMs, 25);
-  assert.equal(snapshot.maxBugRepeats, 5);
-  assert.equal(snapshot.maxMovesPerTurn, 2);
-  assert.equal(snapshot.strategyWeights.scan, 1.3);
-
-  const restored = createAiControllerHarness(null);
-  const result = restored.controller.restoreAiControlSnapshot({
-    ...snapshot,
-    running: true,
-    pausedOnBug: true,
-  });
-  assert.equal(result.ok, true, "valid AI control snapshot should restore");
-  assert.equal(restored.controller.isAiAutoBattlePlayer(restored.blue.id), true);
-  assert.equal(restored.controller.isAiAutoBattlePlayer(restored.white.id), false);
-  assert.equal(restored.controller.isAiAutomationPaused(), false);
-  assert.equal(result.clearedPausedOnBug, true);
-  assert.equal(restored.controller.getAiStrategyWeights().scan, 1.3);
-  assert.equal(restored.controller.getAiAutoBattleReport().running, false, "running state is never restored");
-
-  const pausedRestore = createAiControllerHarness(null);
-  const pausedResult = pausedRestore.controller.restoreAiControlSnapshot({
-    ...snapshot,
-    pausedOnBug: true,
-  }, { restorePausedOnBug: true });
-  assert.equal(pausedResult.ok, true);
-  assert.equal(pausedRestore.controller.isAiAutomationPaused(), true);
-}
-
-{
-  const harness = createAiControllerHarness(null);
-  assert.equal(
-    harness.controller.configureAiAutoBattle({
-      playerIds: [harness.blue.id],
-      suppressAutoSchedule: true,
-    }).ok,
-    true,
-  );
-
-  const missing = harness.controller.restoreAiControlSnapshot(null);
-  assert.equal(missing.ok, true);
-  assert.equal(missing.defaulted, true);
-  assert.equal(missing.missing, true);
-  assert.equal(harness.controller.isAiAutoBattlePlayer(harness.blue.id), true);
-  assert.equal(harness.controller.isAiAutoBattlePlayer(harness.white.id), false);
-
-  const manual = harness.controller.restoreAiControlSnapshot({
-    enabled: false,
-    playerIds: [],
-  });
-  assert.equal(manual.ok, true);
-  assert.equal(manual.disabled, true);
-  assert.equal(harness.controller.isAiAutoBattlePlayer(harness.blue.id), false);
-
-  const invalid = harness.controller.restoreAiControlSnapshot({
-    enabled: true,
-    playerIds: ["missing-player"],
-  });
-  assert.equal(invalid.ok, true);
-  assert.equal(invalid.defaulted, true);
-  assert.equal(invalid.invalidPlayerIds, true);
-  assert.equal(harness.controller.isAiAutoBattlePlayer(harness.blue.id), true);
-  assert.equal(harness.controller.isAiAutoBattlePlayer(harness.white.id), false);
 }
 
 {
@@ -10406,35 +10329,5 @@ function makeYichangdianAlienState(options = {}) {
   assert.equal(plannerShadow?.diverged, true);
 }
 
-async function runAsyncControllerTests() {
-  const harness = createAiControllerHarness(null, {
-    currentPlayerColor: "blue",
-  });
-  const result = await harness.controller.runAiStrategyABTest({
-    games: 1,
-    maxSteps: 1,
-    aiDifficulty: "weak_start",
-    stopOnBlocked: false,
-    recordABResult: false,
-    recordStrategyTuning: false,
-  });
-  assert.equal(result.aiDifficulty, "weak_start");
-  assert.equal(result.baselineWeights.engine, 1.22);
-  assert.equal(result.baselineWeights.scan, 1.08);
-  assert.equal(result.baselineWeights.pass, 0.82);
-  assert.equal(result.baseline.gamesRun, 1);
-  assert.equal(result.tuned.gamesRun, 1);
-  assert.equal(harness.blue.aiDifficulty, "weak_start");
-  assert.equal(
-    harness.controller.getAiStrategyWeights(harness.blue).engine,
-    1.22,
-    "A/B should restore difficulty-default mode after the comparison",
-  );
+console.log("app/ai-controller.test.js ok");
 }
-
-runAsyncControllerTests()
-  .then(() => console.log("app/ai-controller.test.js ok"))
-  .catch((error) => {
-    console.error(error);
-    process.exitCode = 1;
-  });

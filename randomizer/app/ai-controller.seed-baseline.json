@@ -1,0 +1,36 @@
+{
+  "schemaVersion": "seti-ai-seed-baseline-v1",
+  "seed": "seti-ai-characterization-v1",
+  "config": {
+    "activePlayerCount": 4,
+    "aiDifficulty": "laughable",
+    "policy": "pass-then-end-turn"
+  },
+  "terminalSummary": {
+    "terminal": true,
+    "completionRate": 1,
+    "steps": 32,
+    "scores": [
+      11,
+      5,
+      7,
+      3
+    ],
+    "bugCount": 0,
+    "blocked": false
+  },
+  "keyActionSequence": [
+    "pass",
+    "end-turn",
+    "pass",
+    "end-turn",
+    "pass",
+    "end-turn",
+    "pass",
+    "end-turn"
+  ],
+  "actionCounts": {
+    "pass": 16,
+    "end-turn": 16
+  }
+}
