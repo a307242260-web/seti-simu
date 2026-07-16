@@ -9,6 +9,38 @@
 - 顶层行动通过 `action-runtime` 分发，pending/effect 由 AI 自动机直接调用运行时处理函数收敛，不依赖用户点击。
 - Node composition 通过 `randomizer/app/view-adapter.js` 注入 no-op view adapter；运行时不创建或安装 `document`、DOM 元素、overlay、`localStorage`、`Image`。
 - `randomizer/app/headless-env.test.js` 覆盖无 DOM 启动、固定 seed 的完整 4 人局、terminal、replay 重放一致性和 actor 校验。
+- 最小训练入口为 `tools/run_self_play_training.js`：串行运行多局 self-play，以 action kind 的 Monte Carlo value table 作为第一版弱 baseline，输出逐步 JSONL，并在局间边界原子保存训练 checkpoint。
+
+训练示例：
+
+```bash
+node tools/run_self_play_training.js \
+  --episodes 2 \
+  --seed baseline-v1 \
+  --checkpoint checkpoint/self-play/baseline-v1.json \
+  --log checkpoint/self-play/baseline-v1.jsonl
+```
+
+从同一游标继续训练：
+
+```bash
+node tools/run_self_play_training.js \
+  --episodes 2 \
+  --resume checkpoint/self-play/baseline-v1.json \
+  --log checkpoint/self-play/baseline-v1-resumed.jsonl
+```
+
+只加载 checkpoint 评测、不更新 agent：
+
+```bash
+node tools/run_self_play_training.js \
+  --episodes 1 \
+  --resume checkpoint/self-play/baseline-v1.json \
+  --evaluate \
+  --log checkpoint/self-play/baseline-v1-eval.jsonl
+```
+
+训练 checkpoint 固定在 episode 边界，包含配置、下一局游标、trainer 独立随机状态、agent 参数与累计统计；因此跨进程恢复不会依赖 headless env 的进程内随机闭包。逐步日志记录 `seed / action / reward / legalMask / terminal / actorPlayerId`，局摘要记录终局分数、阻塞原因、非法动作次数与 action 尝试数。
 
 传统脚本仍以 `globalThis` 作为模块注册表，Node 启动时临时把 `window` 名称指向该注册表以兼容 `window.Seti*` 命名空间；这里没有浏览器对象或 DOM 能力。`app.js` 根据 `SetiHeadlessRuntimeConfig` 选择 no-op view adapter，跳过固定 DOM 收集、事件绑定、渲染、浏览器持久化和首屏 shell 初始化。
 

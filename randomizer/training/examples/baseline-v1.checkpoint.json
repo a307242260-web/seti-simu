@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "seti-self-play-checkpoint-v1",
+  "checkpointBoundary": "episode",
+  "config": {
+    "seed": "seti-baseline-v1",
+    "activePlayerCount": 4,
+    "aiDifficulty": "laughable",
+    "maxSteps": 100
+  },
+  "nextEpisodeIndex": 1,
+  "randomState": 2124467023,
+  "agent": {
+    "schemaVersion": "seti-action-kind-agent-v1",
+    "algorithm": "action_kind_monte_carlo",
+    "learningRate": 0.15,
+    "epsilon": 0,
+    "episodesTrained": 1,
+    "actionValues": {
+      "pass": 6.631726900399969,
+      "end-turn": 6.6280143460881655
+    },
+    "actionVisits": {
+      "pass": 16,
+      "end-turn": 16
+    }
+  },
+  "stats": {
+    "completedEpisodes": 1,
+    "terminalEpisodes": 1,
+    "blockedEpisodes": 0,
+    "totalSteps": 32,
+    "illegalActionAttempts": 0,
+    "totalActionAttempts": 32,
+    "summary": {
+      "completedEpisodes": 1,
+      "terminalEpisodes": 1,
+      "blockedEpisodes": 0,
+      "totalSteps": 32,
+      "illegalActionAttempts": 0,
+      "illegalActionRate": 0,
+      "blockRate": 0
+    }
+  }
+}
