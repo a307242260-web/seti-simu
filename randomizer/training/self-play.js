@@ -170,10 +170,11 @@ function runEpisode(options) {
     maxSteps,
     evaluate,
     logPath,
+    episodeSeed: explicitEpisodeSeed,
   } = options;
   const env = envFactory();
   const trajectory = [];
-  const episodeSeed = `${seed}:${episodeIndex}`;
+  const episodeSeed = explicitEpisodeSeed ?? `${seed}:${episodeIndex}`;
   let observation = null;
   let blockedReason = null;
   let illegalActionAttempts = 0;
@@ -334,6 +335,7 @@ module.exports = {
   createBaselineAgent,
   createRandomState,
   readCheckpoint,
+  runEpisode,
   runSelfPlay,
   writeCheckpoint,
 };

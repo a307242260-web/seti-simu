@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-17
+- source_issue: SETI-18
+- observation: 预计运行超过数分钟的固定 seed 评测，应在每局结束时输出 `completed/total`、seed、终局、阻塞和步数；只在整批结束后输出会把正常高 CPU 运行误判为死锁，也无法定位慢 seed。
+- evidence: SETI-18 首次 20 局 baseline 运行 14 分钟无输出后被中止；补充逐局进度后，单局确认约 48 秒、32 步终局，完整 20 局随后全部完成并生成固定报告。
+- promote_to: none
+- promotion_status: candidate
+- decision: 进度输出已在本 issue 的评测 CLI 内实现，但目前只有一次长批次证据；记录为 coding candidate，不升级 agent prompt、loop template 或 watcher，待后续不同 checkpoint 的长评测复验。
+
+- date: 2026-07-17
 - source_issue: SETI-16
 - observation: headless simulator 的完成标准应区分“规则/决策可在 Node 中直接推进”和“用宿主 shim 把浏览器 composition root 跑起来”；后者可用于迁移期定位，但不应继续靠补 DOM 行为扩张，最终边界应是 runtime composition + 可注入 no-op view adapter。
 - evidence: SETI-16 owner 明确拒绝 fake DOM 并要求完成拆分；随后 `headless-env.js` 删除 400 余行 fake window/document/element，composition 注入 `view-adapter.js`，完整 4 人局、终局分摘要和 replay 在全局无 `document` 条件下通过，工作树与 staged 独立快照全量回归通过。

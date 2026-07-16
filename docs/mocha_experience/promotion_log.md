@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-17
+- source: SETI-18
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航
+- target_component: RL 评测运行与可观测性实践
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 记录长时间固定 seed 评测需要逐局输出完成进度与 seed/终局/阻塞/步数摘要。
+- applied_change: 更新 coding experience 与本决策契约；在 `tools/run_rl_evaluation.js` 增加逐局 stderr 进度，不修改 agent prompt、loop template、watcher 或 issue-workflow。
+- expected_effect: 后续长批次能区分正常高 CPU 执行与无进展，并能直接定位慢 seed，减少不必要中止和重跑。
+- evaluation_window: 后续 3 次使用不同 checkpoint 的 20 局或更大固定 seed 评测
+- success_signal: 长批次至少每局产生一次进度，执行者无需中止即可判断前进状态，且异常局能由最后一个 seed 定位。
+- rollback_condition: 若 headless 单局耗时稳定降到秒级，或评测由统一任务调度器提供等价进度与超时诊断，则合并或删除该候选。
+- risk: 每局一行 stderr 可能增加 CI 日志噪声，但 20 局规模有限且不污染机器读取的 stdout JSON。
+- evidence_before: SETI-18 首次完整 baseline 运行 14 分钟无任何输出后被中止；单 seed 随后证实约 48 秒正常终局，说明无输出不足以判断死锁。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate，暂不升级长期组件。
+- applied_at: 2026-07-17
+- verification: 补充进度后完整运行 `stable-200-v1` 的 20 个 seed，每局均输出进度并最终生成报告；全量 `randomizer/**/*.test.js` 通过。
+- observed_outcome: 20/20 局均以 32 步终局、无阻塞，运行期间可持续看到 1/20 至 20/20 的前进状态。
+- keep_or_revise: 保持 candidate；待 3 次不同 checkpoint 长评测后复审是否需要升级为通用 loop 规则。
+
+- date: 2026-07-17
 - source: SETI-16
 - promoted_to: none
 - promotion_decision: candidate

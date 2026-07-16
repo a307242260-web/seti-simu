@@ -1,0 +1,1380 @@
+{
+  "schemaVersion": "seti-rl-evaluation-report-v1",
+  "protocol": {
+    "seedPoolId": "stable-200-v1",
+    "seedPoolSchemaVersion": "seti-rl-evaluation-seed-pool-v1",
+    "activePlayerCount": 4,
+    "maxSteps": 100,
+    "percentileMethod": "nearest-rank",
+    "scorePopulation": "all_terminal_seats",
+    "acceptance": {
+      "minimumGames": 20,
+      "meanScore": 200,
+      "p25": 180,
+      "p50": 200,
+      "completionRate": 1,
+      "maxIllegalActionRate": 0,
+      "maxBlockRate": 0
+    }
+  },
+  "checkpoint": {
+    "path": "randomizer/training/examples/baseline-v1.checkpoint.json",
+    "schemaVersion": "seti-self-play-checkpoint-v1",
+    "agentSchemaVersion": "seti-action-kind-agent-v1",
+    "algorithm": "action_kind_monte_carlo",
+    "episodesTrained": 1
+  },
+  "metrics": {
+    "games": 20,
+    "expectedScoreCount": 80,
+    "scoreCount": 80,
+    "meanScore": 7.1875,
+    "p25": 6,
+    "p50": 7,
+    "p75": 8,
+    "minScore": 4,
+    "maxScore": 11,
+    "terminalGames": 20,
+    "completionRate": 1,
+    "blockedGames": 0,
+    "blockRate": 0,
+    "illegalActionAttempts": 0,
+    "totalActionAttempts": 640,
+    "illegalActionRate": 0
+  },
+  "acceptance": {
+    "passed": false,
+    "checks": {
+      "minimumGames": true,
+      "completeScoreSet": true,
+      "meanScore": false,
+      "p25": false,
+      "p50": false,
+      "completionRate": true,
+      "illegalActionRate": true,
+      "blockRate": true
+    }
+  },
+  "games": [
+    {
+      "index": 0,
+      "seed": "seti-rl-eval-v1-01",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        8,
+        6,
+        7,
+        6
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 16,
+          "energy": 17,
+          "publicity": 2,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 6,
+          "finalScore": 6,
+          "credits": 14,
+          "energy": 10,
+          "publicity": 5,
+          "availableData": 4,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 16,
+          "energy": 18,
+          "publicity": 2,
+          "availableData": 4,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 6,
+          "finalScore": 6,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 8,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "seed": "seti-rl-eval-v1-02",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        7,
+        7,
+        9,
+        4
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 18,
+          "energy": 6,
+          "publicity": 6,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 20,
+          "energy": 17,
+          "publicity": 3,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 9,
+          "finalScore": 9,
+          "credits": 21,
+          "energy": 13,
+          "publicity": 1,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 4,
+          "finalScore": 4,
+          "credits": 15,
+          "energy": 10,
+          "publicity": 7,
+          "availableData": 1,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "seed": "seti-rl-eval-v1-03",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        7,
+        8,
+        8,
+        7
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 14,
+          "energy": 10,
+          "publicity": 6,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 16,
+          "energy": 13,
+          "publicity": 2,
+          "availableData": 2,
+          "handCount": 9,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 12,
+          "energy": 17,
+          "publicity": 1,
+          "availableData": 4,
+          "handCount": 9,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 9,
+          "availableData": 1,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "seed": "seti-rl-eval-v1-04",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        9,
+        8,
+        4,
+        4
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 9,
+          "finalScore": 9,
+          "credits": 22,
+          "energy": 13,
+          "publicity": 3,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 16,
+          "energy": 18,
+          "publicity": 1,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 4,
+          "finalScore": 4,
+          "credits": 18,
+          "energy": 10,
+          "publicity": 5,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 4,
+          "finalScore": 4,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 8,
+          "availableData": 4,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "seed": "seti-rl-eval-v1-05",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        9,
+        7,
+        5,
+        7
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 9,
+          "finalScore": 9,
+          "credits": 18,
+          "energy": 17,
+          "publicity": 3,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 16,
+          "energy": 17,
+          "publicity": 1,
+          "availableData": 4,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 5,
+          "finalScore": 5,
+          "credits": 18,
+          "energy": 10,
+          "publicity": 6,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 16,
+          "energy": 9,
+          "publicity": 8,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "seed": "seti-rl-eval-v1-06",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        8,
+        11,
+        5,
+        4
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 18,
+          "energy": 6,
+          "publicity": 7,
+          "availableData": 1,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 11,
+          "finalScore": 11,
+          "credits": 20,
+          "energy": 13,
+          "publicity": 4,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 5,
+          "finalScore": 5,
+          "credits": 20,
+          "energy": 13,
+          "publicity": 1,
+          "availableData": 6,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 4,
+          "finalScore": 4,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 8,
+          "availableData": 1,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "seed": "seti-rl-eval-v1-07",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        7,
+        8,
+        10,
+        4
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 20,
+          "energy": 6,
+          "publicity": 7,
+          "availableData": 1,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 16,
+          "energy": 21,
+          "publicity": 2,
+          "availableData": 2,
+          "handCount": 7,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 10,
+          "finalScore": 10,
+          "credits": 20,
+          "energy": 13,
+          "publicity": 3,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 4,
+          "finalScore": 4,
+          "credits": 15,
+          "energy": 10,
+          "publicity": 7,
+          "availableData": 1,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "seed": "seti-rl-eval-v1-08",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        6,
+        8,
+        8,
+        6
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 6,
+          "finalScore": 6,
+          "credits": 16,
+          "energy": 17,
+          "publicity": 1,
+          "availableData": 2,
+          "handCount": 9,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 16,
+          "energy": 18,
+          "publicity": 1,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 14,
+          "energy": 10,
+          "publicity": 7,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 6,
+          "finalScore": 6,
+          "credits": 15,
+          "energy": 13,
+          "publicity": 8,
+          "availableData": 3,
+          "handCount": 7,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "seed": "seti-rl-eval-v1-09",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        8,
+        9,
+        7,
+        7
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 20,
+          "energy": 13,
+          "publicity": 2,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 9,
+          "finalScore": 9,
+          "credits": 22,
+          "energy": 13,
+          "publicity": 3,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 18,
+          "energy": 7,
+          "publicity": 6,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 9,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "seed": "seti-rl-eval-v1-10",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        11,
+        8,
+        7,
+        4
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 11,
+          "finalScore": 11,
+          "credits": 13,
+          "energy": 21,
+          "publicity": 3,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 14,
+          "energy": 10,
+          "publicity": 7,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 20,
+          "energy": 13,
+          "publicity": 1,
+          "availableData": 4,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 4,
+          "finalScore": 4,
+          "credits": 19,
+          "energy": 9,
+          "publicity": 8,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "seed": "seti-rl-eval-v1-11",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        7,
+        8,
+        10,
+        6
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 18,
+          "energy": 17,
+          "publicity": 2,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 14,
+          "energy": 11,
+          "publicity": 6,
+          "availableData": 1,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 10,
+          "finalScore": 10,
+          "credits": 17,
+          "energy": 17,
+          "publicity": 2,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 6,
+          "finalScore": 6,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 10,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "seed": "seti-rl-eval-v1-12",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        6,
+        7,
+        10,
+        7
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 6,
+          "finalScore": 6,
+          "credits": 20,
+          "energy": 17,
+          "publicity": 2,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 19,
+          "energy": 6,
+          "publicity": 5,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 10,
+          "finalScore": 10,
+          "credits": 22,
+          "energy": 13,
+          "publicity": 4,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 15,
+          "energy": 10,
+          "publicity": 9,
+          "availableData": 1,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "seed": "seti-rl-eval-v1-13",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        8,
+        4,
+        7,
+        5
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 18,
+          "energy": 17,
+          "publicity": 3,
+          "availableData": 1,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 4,
+          "finalScore": 4,
+          "credits": 14,
+          "energy": 10,
+          "publicity": 5,
+          "availableData": 6,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 16,
+          "energy": 18,
+          "publicity": 2,
+          "availableData": 0,
+          "handCount": 9,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 5,
+          "finalScore": 5,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 7,
+          "availableData": 4,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "seed": "seti-rl-eval-v1-14",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        5,
+        7,
+        10,
+        6
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 5,
+          "finalScore": 5,
+          "credits": 16,
+          "energy": 17,
+          "publicity": 1,
+          "availableData": 2,
+          "handCount": 9,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 14,
+          "energy": 11,
+          "publicity": 5,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 10,
+          "finalScore": 10,
+          "credits": 16,
+          "energy": 17,
+          "publicity": 3,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 6,
+          "finalScore": 6,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 8,
+          "availableData": 3,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "seed": "seti-rl-eval-v1-15",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        8,
+        11,
+        7,
+        7
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 20,
+          "energy": 17,
+          "publicity": 4,
+          "availableData": 2,
+          "handCount": 7,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 11,
+          "finalScore": 11,
+          "credits": 20,
+          "energy": 13,
+          "publicity": 4,
+          "availableData": 1,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 18,
+          "energy": 6,
+          "publicity": 6,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 15,
+          "energy": 10,
+          "publicity": 9,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "seed": "seti-rl-eval-v1-16",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        9,
+        7,
+        4,
+        8
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 9,
+          "finalScore": 9,
+          "credits": 16,
+          "energy": 17,
+          "publicity": 4,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 20,
+          "energy": 13,
+          "publicity": 1,
+          "availableData": 4,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 4,
+          "finalScore": 4,
+          "credits": 20,
+          "energy": 10,
+          "publicity": 6,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 10,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "seed": "seti-rl-eval-v1-17",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        6,
+        8,
+        10,
+        6
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 6,
+          "finalScore": 6,
+          "credits": 16,
+          "energy": 17,
+          "publicity": 1,
+          "availableData": 6,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 14,
+          "energy": 10,
+          "publicity": 7,
+          "availableData": 1,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 10,
+          "finalScore": 10,
+          "credits": 16,
+          "energy": 14,
+          "publicity": 4,
+          "availableData": 0,
+          "handCount": 9,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 6,
+          "finalScore": 6,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 8,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "seed": "seti-rl-eval-v1-18",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        10,
+        10,
+        6,
+        5
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 10,
+          "finalScore": 10,
+          "credits": 9,
+          "energy": 21,
+          "publicity": 2,
+          "availableData": 0,
+          "handCount": 9,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 10,
+          "finalScore": 10,
+          "credits": 20,
+          "energy": 18,
+          "publicity": 3,
+          "availableData": 1,
+          "handCount": 7,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 6,
+          "finalScore": 6,
+          "credits": 14,
+          "energy": 10,
+          "publicity": 5,
+          "availableData": 4,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 5,
+          "finalScore": 5,
+          "credits": 17,
+          "energy": 9,
+          "publicity": 8,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "seed": "seti-rl-eval-v1-19",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        8,
+        9,
+        4,
+        7
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 18,
+          "energy": 18,
+          "publicity": 3,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 9,
+          "finalScore": 9,
+          "credits": 16,
+          "energy": 17,
+          "publicity": 2,
+          "availableData": 3,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 4,
+          "finalScore": 4,
+          "credits": 18,
+          "energy": 10,
+          "publicity": 5,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 9,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "seed": "seti-rl-eval-v1-20",
+      "steps": 32,
+      "terminal": true,
+      "blocked": false,
+      "blockedReason": null,
+      "illegalActionAttempts": 0,
+      "totalActionAttempts": 32,
+      "scores": [
+        9,
+        8,
+        5,
+        7
+      ],
+      "players": [
+        {
+          "playerId": "player-blue",
+          "color": "blue",
+          "score": 9,
+          "finalScore": 9,
+          "credits": 16,
+          "energy": 18,
+          "publicity": 1,
+          "availableData": 2,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-green",
+          "color": "green",
+          "score": 8,
+          "finalScore": 8,
+          "credits": 14,
+          "energy": 11,
+          "publicity": 7,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-brown",
+          "color": "brown",
+          "score": 5,
+          "finalScore": 5,
+          "credits": 16,
+          "energy": 17,
+          "publicity": 1,
+          "availableData": 6,
+          "handCount": 8,
+          "reservedCount": 0
+        },
+        {
+          "playerId": "player-white",
+          "color": "white",
+          "score": 7,
+          "finalScore": 7,
+          "credits": 15,
+          "energy": 9,
+          "publicity": 9,
+          "availableData": 0,
+          "handCount": 8,
+          "reservedCount": 0
+        }
+      ]
+    }
+  ]
+}

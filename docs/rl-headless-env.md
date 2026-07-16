@@ -10,6 +10,7 @@
 - Node composition 通过 `randomizer/app/view-adapter.js` 注入 no-op view adapter；运行时不创建或安装 `document`、DOM 元素、overlay、`localStorage`、`Image`。
 - `randomizer/app/headless-env.test.js` 覆盖无 DOM 启动、固定 seed 的完整 4 人局、terminal、replay 重放一致性和 actor 校验。
 - 最小训练入口为 `tools/run_self_play_training.js`：串行运行多局 self-play，以 action kind 的 Monte Carlo value table 作为第一版弱 baseline，输出逐步 JSONL，并在局间边界原子保存训练 checkpoint。
+- 固定评测入口为 `tools/run_rl_evaluation.js`：加载任意 self-play checkpoint，在冻结的 20 局四人 seed pool 上输出均分、P25/P50/P75、完局率、非法动作率、阻塞率，以及可机器判定的“稳定 200 分”结论。
 
 训练示例：
 
@@ -41,6 +42,40 @@ node tools/run_self_play_training.js \
 ```
 
 训练 checkpoint 固定在 episode 边界，包含配置、下一局游标、trainer 独立随机状态、agent 参数与累计统计；因此跨进程恢复不会依赖 headless env 的进程内随机闭包。逐步日志记录 `seed / action / reward / legalMask / terminal / actorPlayerId`，局摘要记录终局分数、阻塞原因、非法动作次数与 action 尝试数。
+
+### 固定评测与“稳定 200 分”协议
+
+默认协议文件为 `randomizer/training/evaluation/stable-200-v1.seeds.json`。协议冻结 20 个 seed，每个 seed 都必须跑完整 4 人局，统计总体为 80 个终局席位；分位数使用 nearest-rank。不得删除低分局、只跑 seed 子集或把未终局时的实时分计入分数总体。
+
+“稳定 200 分”同时满足以下条件才判为 PASS：
+
+- 20/20 局正常终局，80/80 个席位有终局分；
+- 80 席均分不低于 200，P25 不低于 180，P50 不低于 200；
+- 非法动作率为 0，阻塞率为 0。
+
+均分定义“达到 200”，P25/P50 防止少量高分掩盖低尾，完局/非法/阻塞门槛保证分数不是以牺牲运行可靠性换取。P75 作为观察指标输出，但不设单独门槛。修改 seed、样本数、分位数方法或门槛必须发布新的协议 id，不能原地改写 `stable-200-v1`。
+
+评测任意 checkpoint：
+
+```bash
+node tools/run_rl_evaluation.js \
+  --checkpoint randomizer/training/examples/baseline-v1.checkpoint.json \
+  --report checkpoint/evaluation/candidate.json \
+  --log checkpoint/evaluation/candidate.jsonl
+```
+
+命令在未通过稳定 200 门槛时退出码为 `2`，运行错误退出码为 `1`。完整 JSON 报告保留每局 seed、四席分数、步数、阻塞原因和 checkpoint 身份；JSONL 保留逐步 action 与 legal mask，因此可用报告先定位具体局，再按 `seed + action 序列` 回放。与历史 checkpoint 对比时追加：
+
+```bash
+node tools/run_rl_evaluation.js \
+  --checkpoint checkpoint/self-play/candidate.json \
+  --baseline-report randomizer/training/evaluation/baseline-v1.report.json \
+  --report checkpoint/evaluation/candidate-vs-baseline.json
+```
+
+对比接口拒绝不同 seed pool 的报告，避免把 seed 漂移误当成模型变化。仓库内的 `baseline-v1.report.json` 是当前 action-kind baseline 的固定协议结果，只是回归基线，不代表已经达到 200 分。
+
+当前仓库 baseline checkpoint 的 20 局实跑结果为：80 席均分 `7.1875`、P25 `6`、P50 `7`、P75 `8`，20/20 局终局，非法动作率与阻塞率均为 `0`。可靠性门槛通过，但分数门槛未通过，因此协议结论为 `FAIL`；这组低分与该 checkpoint 只学习到 PASS / end-turn 的弱基线定位一致。
 
 传统脚本仍以 `globalThis` 作为模块注册表，Node 启动时临时把 `window` 名称指向该注册表以兼容 `window.Seti*` 命名空间；这里没有浏览器对象或 DOM 能力。`app.js` 根据 `SetiHeadlessRuntimeConfig` 选择 no-op view adapter，跳过固定 DOM 收集、事件绑定、渲染、浏览器持久化和首屏 shell 初始化。
 
