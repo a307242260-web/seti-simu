@@ -12,6 +12,7 @@
   "use strict";
 
   function createAlienSpeciesRuntime(context = {}) {
+    const headless = context.headless === true;
     const {
       actionHistory,
       alienGameState,
@@ -562,6 +563,7 @@ function renderBanrenmaBonusMarkers() {
   }
 
 function renderAlienPanels() {
+    if (headless) return;
     aliens.renderAllAlienBackImages(getAlienBackImage, alienGameState);
     aliens.renderAllAlienTraceMarkers(getAlienTraceLayer, alienGameState, {
       tokenSrc: aliens.ALIEN_TRACE_TOKEN_SRC,

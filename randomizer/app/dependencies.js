@@ -70,6 +70,7 @@
   ]);
   const OPTIONAL_GLOBALS = Object.freeze([
     Object.freeze({ key: "debugRuntimeModule", globalName: "SetiAppDebugRuntime" }),
+    Object.freeze({ key: "viewAdapterModule", globalName: "SetiAppViewAdapter" }),
   ]);
 
   function collectDependencies(source = root) {

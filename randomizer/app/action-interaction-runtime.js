@@ -12,6 +12,7 @@
   "use strict";
 
   function createActionInteractionRuntime(context) {
+    const headless = context.headless === true;
     const {
       HISTORY_SOURCE_MAIN,
       SCORE_SOURCE_KEYS,
@@ -607,6 +608,7 @@
   }
 
   function scheduleRenderMoveArrows() {
+    if (headless) return;
     moveArrowRenderFrame += 1;
     const frameId = moveArrowRenderFrame;
     requestAnimationFrame(() => {

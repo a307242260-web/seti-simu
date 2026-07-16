@@ -22,417 +22,6 @@ function createSeededRandom(seed) {
   };
 }
 
-function createClassList() {
-  const set = new Set();
-  return {
-    add(...tokens) {
-      tokens.filter(Boolean).forEach((token) => set.add(token));
-    },
-    remove(...tokens) {
-      tokens.forEach((token) => set.delete(token));
-    },
-    toggle(token, force) {
-      if (force === true) {
-        set.add(token);
-        return true;
-      }
-      if (force === false) {
-        set.delete(token);
-        return false;
-      }
-      if (set.has(token)) {
-        set.delete(token);
-        return false;
-      }
-      set.add(token);
-      return true;
-    },
-    contains(token) {
-      return set.has(token);
-    },
-    toString() {
-      return [...set].join(" ");
-    },
-  };
-}
-
-function createStyle() {
-  const values = new Map();
-  return {
-    setProperty(name, value) {
-      values.set(name, String(value));
-    },
-    removeProperty(name) {
-      values.delete(name);
-    },
-    getPropertyValue(name) {
-      return values.get(name) || "";
-    },
-  };
-}
-
-function createFakeElement(tagName = "div", options = {}) {
-  const listeners = new Map();
-  const children = [];
-  const element = {
-    tagName: String(tagName || "div").toUpperCase(),
-    id: options.id || "",
-    className: options.className || "",
-    dataset: { ...(options.dataset || {}) },
-    style: createStyle(),
-    classList: createClassList(),
-    children,
-    childNodes: children,
-    get options() {
-      return children;
-    },
-    parentNode: null,
-    ownerDocument: null,
-    hidden: false,
-    disabled: false,
-    checked: Boolean(options.checked),
-    value: options.value || "",
-    textContent: options.textContent || "",
-    innerHTML: "",
-    attributes: {},
-    appendChild(child) {
-      if (!child) return child;
-      child.parentNode = element;
-      children.push(child);
-      return child;
-    },
-    append(...nodes) {
-      nodes.flat().forEach((node) => element.appendChild(node));
-    },
-    replaceChildren(...nodes) {
-      children.length = 0;
-      nodes.flat().forEach((node) => element.appendChild(node));
-    },
-    removeChild(child) {
-      const index = children.indexOf(child);
-      if (index >= 0) children.splice(index, 1);
-      if (child) child.parentNode = null;
-      return child;
-    },
-    remove() {
-      element.parentNode?.removeChild?.(element);
-    },
-    setAttribute(name, value) {
-      element.attributes[name] = String(value);
-      if (name === "id") element.id = String(value);
-      if (name === "class") element.className = String(value);
-    },
-    getAttribute(name) {
-      return Object.prototype.hasOwnProperty.call(element.attributes, name)
-        ? element.attributes[name]
-        : null;
-    },
-    removeAttribute(name) {
-      delete element.attributes[name];
-    },
-    addEventListener(type, handler) {
-      if (!listeners.has(type)) listeners.set(type, []);
-      listeners.get(type).push(handler);
-    },
-    dispatchEvent(event) {
-      const evt = event || {};
-      evt.target = evt.target || element;
-      evt.currentTarget = element;
-      const handlers = listeners.get(evt.type) || [];
-      handlers.forEach((handler) => handler(evt));
-      return true;
-    },
-    click() {
-      if (element.disabled) return;
-      element.dispatchEvent({ type: "click", target: element, preventDefault() {}, stopPropagation() {} });
-    },
-    closest(selector) {
-      return element.matches(selector) ? element : null;
-    },
-    contains(node) {
-      return node === element || children.includes(node);
-    },
-    matches(selector) {
-      const text = String(selector || "");
-      if (!text) return false;
-      if (text.startsWith("#")) return element.id === text.slice(1);
-      if (text.startsWith(".")) return String(element.className || "").split(/\s+/).includes(text.slice(1));
-      const dataMatch = text.match(/\[data-([a-z0-9-]+)(?:=\"?([^\]\"]+)\"?)?\]/i);
-      if (dataMatch) {
-        const key = dataMatch[1].replace(/-([a-z0-9])/g, (_all, char) => char.toUpperCase());
-        if (!Object.prototype.hasOwnProperty.call(element.dataset, key)) return false;
-        return dataMatch[2] == null || String(element.dataset[key]) === dataMatch[2];
-      }
-      return false;
-    },
-    querySelector() {
-      return null;
-    },
-    querySelectorAll() {
-      return [];
-    },
-    getBoundingClientRect() {
-      return { left: 0, top: 0, width: 0, height: 0, right: 0, bottom: 0 };
-    },
-    focus() {},
-    blur() {},
-    scrollIntoView() {},
-    cloneNode() {
-      return createFakeElement(tagName, options);
-    },
-  };
-  if (element.className) {
-    element.className.split(/\s+/).filter(Boolean).forEach((token) => element.classList.add(token));
-  }
-  return element;
-}
-
-function createFakeDocument() {
-  const byId = new Map();
-  const selectorLists = new Map();
-  const listeners = new Map();
-  const body = createFakeElement("body", { id: "body" });
-  const document = {
-    readyState: "complete",
-    body,
-    documentElement: createFakeElement("html"),
-    createElement(tagName) {
-      const element = createFakeElement(tagName);
-      element.ownerDocument = document;
-      return element;
-    },
-    createDocumentFragment() {
-      return createFakeElement("#fragment");
-    },
-    createTextNode(text) {
-      return { nodeType: 3, textContent: String(text || "") };
-    },
-    addEventListener(type, handler) {
-      if (!listeners.has(type)) listeners.set(type, []);
-      listeners.get(type).push(handler);
-    },
-    dispatchEvent(event) {
-      const handlers = listeners.get(event?.type) || [];
-      handlers.forEach((handler) => handler(event));
-      return true;
-    },
-    getElementById(id) {
-      const key = String(id || "");
-      if (!byId.has(key)) {
-        const element = createFakeElement("div", { id: key });
-        element.ownerDocument = document;
-        byId.set(key, element);
-      }
-      return byId.get(key);
-    },
-    querySelector(selector) {
-      const list = selectorLists.get(String(selector)) || [];
-      return list[0] || null;
-    },
-    querySelectorAll(selector) {
-      return selectorLists.get(String(selector)) || [];
-    },
-  };
-  body.ownerDocument = document;
-
-  function registerId(id, options = {}) {
-    const element = document.getElementById(id);
-    Object.assign(element.dataset, options.dataset || {});
-    if (options.className) {
-      element.className = options.className;
-      options.className.split(/\s+/).filter(Boolean).forEach((token) => element.classList.add(token));
-    }
-    if (options.value != null) element.value = options.value;
-    if (options.checked != null) element.checked = Boolean(options.checked);
-    return element;
-  }
-
-  function registerSelector(selector, elements) {
-    selectorLists.set(selector, elements);
-    return elements;
-  }
-
-  registerSelector(".app-wrap", [registerId("app-wrap", { className: "app-wrap debug-collapsed log-collapsed debug-tools-disabled state-log-disabled" })]);
-  registerSelector(".planets-reference img", [createFakeElement("img")]);
-  registerSelector(".land-target-label", [createFakeElement("label")]);
-
-  const alienPanels = [1, 2].map((slot) => createFakeElement("section", {
-    className: "alien-panel",
-    dataset: { alienSlot: String(slot) },
-  }));
-  const alienTraceLayers = [1, 2].map((slot) => createFakeElement("div", {
-    className: "alien-trace-layer",
-    dataset: { alienSlot: String(slot) },
-  }));
-  const alienJiuzheLayers = [1, 2].map((slot) => createFakeElement("div", {
-    className: "alien-jiuzhe-trace-layer",
-    dataset: { alienSlot: String(slot) },
-  }));
-  const thresholds = [1, 2].map((slot) => createFakeElement("div", {
-    className: "alien-jiuzhe-thresholds",
-    dataset: { alienSlot: String(slot) },
-  }));
-  const finalScoreTiles = ["a", "b", "c", "d"].map((id) => createFakeElement("img", {
-    className: "final-score-tile",
-    dataset: { finalId: id },
-  }));
-  const finalScoreWraps = ["a", "b", "c", "d"].map((id) => createFakeElement("button", {
-    className: "final-score-tile-wrap",
-    dataset: { finalId: id },
-  }));
-  registerSelector(".alien-panel", alienPanels);
-  registerSelector(".alien-trace-layer", alienTraceLayers);
-  registerSelector(".alien-jiuzhe-trace-layer", alienJiuzheLayers);
-  registerSelector(".alien-jiuzhe-thresholds", thresholds);
-  registerSelector(".alien-yichangdian-card-area", [createFakeElement("div"), createFakeElement("div")]);
-  registerSelector(".alien-fangzhou-card-area", [createFakeElement("div"), createFakeElement("div")]);
-  registerSelector(".alien-banrenma-card-area", [createFakeElement("div"), createFakeElement("div")]);
-  registerSelector(".alien-chong-card-area", [createFakeElement("div"), createFakeElement("div")]);
-  registerSelector(".alien-amiba-card-area", [createFakeElement("div"), createFakeElement("div")]);
-  registerSelector(".alien-aomomo-card-area", [createFakeElement("div"), createFakeElement("div")]);
-  registerSelector(".alien-runezu-card-area", [createFakeElement("div"), createFakeElement("div")]);
-  registerSelector(".alien-banrenma-scoremarks", [createFakeElement("div"), createFakeElement("div")]);
-  registerSelector(".final-score-tile-wrap", finalScoreWraps);
-  registerSelector(".final-score-tile", finalScoreTiles);
-  registerSelector(".tech-tile[data-tech-id]", []);
-
-  const startAlienIds = ["九折", "半人马", "奥陌陌", "异常点", "方舟", "符文族", "虫", "阿米巴"];
-  const startAlienCheckboxes = startAlienIds.map((alienId, index) => {
-    const element = registerId(`start-alien-${index + 1}`, {
-      dataset: { startAlienId: alienId },
-      checked: true,
-    });
-    element.closest = (selector) => {
-      if (selector === ".start-screen-alien-choice") return createFakeElement("label", { className: "start-screen-alien-choice" });
-      return element.matches(selector) ? element : null;
-    };
-    return element;
-  });
-  registerSelector("[data-start-alien-id]", startAlienCheckboxes);
-
-  const startIndustryLabels = [
-    "层云核心",
-    "芬威克研究中心",
-    "赫利昂联合体",
-    "寰宇动力",
-    "任务中继站",
-    "哨兵探测网络",
-    "深空探测",
-    "图灵系统",
-    "未来跨度研究所",
-    "异星实验室",
-    "宇宙战略集团",
-    "原教旨主义",
-    "星际海盗",
-  ];
-  const startIndustryCheckboxes = startIndustryLabels.map((label, index) => {
-    const element = registerId(`start-industry-${index + 1}`, {
-      dataset: { startIndustryLabel: label },
-      checked: true,
-    });
-    element.closest = (selector) => {
-      if (selector === ".start-screen-company-choice") return createFakeElement("label", { className: "start-screen-company-choice" });
-      return element.matches(selector) ? element : null;
-    };
-    return element;
-  });
-  registerSelector("[data-start-industry-label]", startIndustryCheckboxes);
-
-  registerId("start-ai-difficulty", { value: "laughable" });
-  registerId("start-player-count", { value: "4" });
-  registerId("start-debug-enabled", { checked: false });
-  registerId("start-action-log-enabled", { checked: true });
-  registerId("start-screen-start-button");
-  registerId("start-screen-continue-button");
-  registerId("start-screen");
-  registerId("start-debug-toggle-text");
-  registerId("start-action-log-toggle-text");
-  registerId("start-alien-options");
-  registerId("start-industry-options");
-
-  return document;
-}
-
-function createFakeWindow(document) {
-  const storage = new Map();
-  const listeners = new Map();
-  return {
-    document,
-    location: { search: "" },
-    navigator: { userAgent: "node-headless" },
-    URLSearchParams,
-    structuredClone,
-    addEventListener(type, handler) {
-      if (!listeners.has(type)) listeners.set(type, []);
-      listeners.get(type).push(handler);
-    },
-    dispatchEvent(event) {
-      const handlers = listeners.get(event?.type) || [];
-      handlers.forEach((handler) => handler(event));
-    },
-    setTimeout,
-    clearTimeout,
-    requestAnimationFrame(callback) {
-      return setTimeout(() => callback(Date.now()), 0);
-    },
-    cancelAnimationFrame(id) {
-      clearTimeout(id);
-    },
-    getComputedStyle() {
-      return {
-        getPropertyValue() {
-          return "0";
-        },
-      };
-    },
-    localStorage: {
-      getItem(key) {
-        return storage.has(key) ? storage.get(key) : null;
-      },
-      setItem(key, value) {
-        storage.set(key, String(value));
-      },
-      removeItem(key) {
-        storage.delete(key);
-      },
-    },
-    Blob,
-    Image: class FakeImage {
-      constructor() {
-        this.width = 512;
-        this.height = 512;
-        this.onload = null;
-        this.onerror = null;
-        this._listeners = new Map();
-      }
-
-      set src(value) {
-        this._src = value;
-        const loadListeners = this._listeners.get("load") || [];
-        if (typeof this.onload === "function") {
-          setTimeout(() => this.onload(), 0);
-        }
-        loadListeners.forEach((handler) => setTimeout(() => handler(), 0));
-      }
-
-      get src() {
-        return this._src || "";
-      }
-
-      addEventListener(type, handler) {
-        if (!this._listeners.has(type)) this._listeners.set(type, []);
-        this._listeners.get(type).push(handler);
-      }
-    },
-    URL: {
-      createObjectURL() {
-        return "blob:headless";
-      },
-      revokeObjectURL() {},
-    },
-  };
-}
-
 function getScriptPaths() {
   const htmlPath = path.resolve(__dirname, "..", "index.html");
   const html = fs.readFileSync(htmlPath, "utf8");
@@ -440,7 +29,7 @@ function getScriptPaths() {
     .map((match) => path.resolve(path.dirname(htmlPath), match[1].split("?")[0]));
 }
 
-function loadBrowserBundle(windowRef) {
+function loadBrowserBundle(rootRef) {
   const scriptPaths = getScriptPaths();
   for (const scriptPath of scriptPaths) {
     delete require.cache[scriptPath];
@@ -450,18 +39,23 @@ function loadBrowserBundle(windowRef) {
     require(scriptPath);
     for (const key of Object.keys(globalThis)) {
       if (key.startsWith("Seti")) {
-        windowRef[key] = globalThis[key];
+        rootRef[key] = globalThis[key];
       }
     }
   }
   require(appScriptPath);
-  return windowRef.SetiRandomizer;
+  return rootRef.SetiRandomizer;
 }
 
 function buildObservation(api, seed) {
   const turnState = api.getTurnState();
   const playerState = api.getPlayerState();
   const currentPlayer = api.getCurrentPlayer();
+  const finalScoreByPlayerId = new Map(
+    turnState.gameEnded
+      ? (api.getFinalScoreSummaries?.() || []).map((summary) => [summary.playerId, summary])
+      : [],
+  );
   return {
     schemaVersion: "seti-rl-observation-v1",
     seed: seed ?? null,
@@ -474,6 +68,9 @@ function buildObservation(api, seed) {
       playerId: player.id,
       color: player.color,
       score: player.resources?.score || 0,
+      finalScore: turnState.gameEnded
+        ? (finalScoreByPlayerId.get(player.id)?.totalScore ?? null)
+        : null,
       credits: player.resources?.credits || 0,
       energy: player.resources?.energy || 0,
       publicity: player.resources?.publicity || 0,
@@ -565,25 +162,30 @@ function createHeadlessEnv() {
   let config = null;
   let replaySteps = [];
   let restoreRandom = null;
+  let restoreHost = null;
 
   function boot(resetConfig = {}) {
-    const fakeDocument = createFakeDocument();
-    const fakeWindow = createFakeWindow(fakeDocument);
-    global.window = fakeWindow;
-    global.document = fakeDocument;
-    globalThis.window = fakeWindow;
-    globalThis.document = fakeDocument;
-    global.requestAnimationFrame = fakeWindow.requestAnimationFrame;
-    global.cancelAnimationFrame = fakeWindow.cancelAnimationFrame;
-    global.getComputedStyle = fakeWindow.getComputedStyle;
-    global.Image = fakeWindow.Image;
+    const previousWindow = Object.prototype.hasOwnProperty.call(globalThis, "window")
+      ? globalThis.window
+      : undefined;
+    const hadWindow = Object.prototype.hasOwnProperty.call(globalThis, "window");
+    const previousConfig = globalThis.SetiHeadlessRuntimeConfig;
+    const hadConfig = Object.prototype.hasOwnProperty.call(globalThis, "SetiHeadlessRuntimeConfig");
+    globalThis.window = globalThis;
+    globalThis.SetiHeadlessRuntimeConfig = { enabled: true };
+    restoreHost = () => {
+      if (hadWindow) globalThis.window = previousWindow;
+      else delete globalThis.window;
+      if (hadConfig) globalThis.SetiHeadlessRuntimeConfig = previousConfig;
+      else delete globalThis.SetiHeadlessRuntimeConfig;
+    };
     const originalRandom = Math.random;
     const seededRandom = createSeededRandom(resetConfig.seed);
     Math.random = seededRandom;
     restoreRandom = () => {
       Math.random = originalRandom;
     };
-    api = loadBrowserBundle(fakeWindow);
+    api = loadBrowserBundle(globalThis);
     const startResult = api.startNewGame({
       activePlayerCount: resetConfig.activePlayerCount || 4,
       aiDifficulty: resetConfig.aiDifficulty || "laughable",
@@ -617,6 +219,7 @@ function createHeadlessEnv() {
   return {
     reset(resetConfig = {}) {
       restoreRandom?.();
+      restoreHost?.();
       seed = resetConfig.seed ?? "seti-headless";
       config = {
         seed,
@@ -777,6 +380,8 @@ function createHeadlessEnv() {
     dispose() {
       restoreRandom?.();
       restoreRandom = null;
+      restoreHost?.();
+      restoreHost = null;
     },
   };
 }

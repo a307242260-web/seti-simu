@@ -13,6 +13,7 @@
 
   function createFinalUiRuntime(context = {}) {
     const document = context.document || root.document;
+    const headless = Boolean(context.headless);
     const {
       els,
       players,
@@ -98,6 +99,7 @@
     }
 
     function renderFinalScoreBoard() {
+      if (headless) return;
       const currentPlayer = getCurrentPlayer();
       const pending = finalScoring.getNextPendingMarkForPlayer(finalScoringState, currentPlayer?.id);
 
@@ -337,6 +339,7 @@
     }
 
     function renderFinalResultDialog() {
+      if (headless) return;
       if (!els.finalResultHead || !els.finalResultBody) return;
       const summaries = buildFinalResultPlayerSummaries();
       const items = getFinalResultScoreItems(summaries);

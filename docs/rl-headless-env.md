@@ -7,9 +7,10 @@
 - Node 入口：`randomizer/app/headless-env.js`，通过 `createHeadlessEnv()` 创建单局环境。
 - 已实现 `reset / observe / legalActions / step / isTerminal / getReplay / loadReplay / createCheckpoint / loadCheckpoint / dispose`。
 - 顶层行动通过 `action-runtime` 分发，pending/effect 由 AI 自动机直接调用运行时处理函数收敛，不依赖用户点击。
-- `randomizer/app/headless-env.test.js` 覆盖固定 seed 的完整 4 人局、terminal、replay 重放一致性和 actor 校验。
+- Node composition 通过 `randomizer/app/view-adapter.js` 注入 no-op view adapter；运行时不创建或安装 `document`、DOM 元素、overlay、`localStorage`、`Image`。
+- `randomizer/app/headless-env.test.js` 覆盖无 DOM 启动、固定 seed 的完整 4 人局、terminal、replay 重放一致性和 actor 校验。
 
-当前 Node 启动仍需要一个最小 view host 来装配传统浏览器 bundle；它不参与动作选择或规则结算，但说明 composition root 尚未完全摆脱 DOM 形状。后续若继续提高训练吞吐，应把 runtime composition 再抽成可直接注入 no-op view adapter 的 Node 入口，而不是继续扩充浏览器宿主模拟。
+传统脚本仍以 `globalThis` 作为模块注册表，Node 启动时临时把 `window` 名称指向该注册表以兼容 `window.Seti*` 命名空间；这里没有浏览器对象或 DOM 能力。`app.js` 根据 `SetiHeadlessRuntimeConfig` 选择 no-op view adapter，跳过固定 DOM 收集、事件绑定、渲染、浏览器持久化和首屏 shell 初始化。
 
 ## 1. 设计目标
 

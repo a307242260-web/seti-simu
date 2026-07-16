@@ -37,6 +37,7 @@
       cardState,
       actionHistory,
       setupSelectionState,
+      buildFinalResultPlayerSummaries,
       randomizeAll,
       rotateSolarOrbit,
       launchRocketForCurrentPlayer,
@@ -397,6 +398,16 @@
         return result;
       },
       getPlayerState: () => structuredClone(playerState),
+      getFinalScoreSummaries: () => structuredClone(
+        typeof buildFinalResultPlayerSummaries === "function"
+          ? buildFinalResultPlayerSummaries().map((summary) => ({
+            playerId: summary.player?.id || null,
+            baseScore: Number(summary.breakdown?.baseScore) || 0,
+            totalScore: Number(summary.breakdown?.totalScore) || 0,
+            breakdown: summary.breakdown || null,
+          }))
+          : [],
+      ),
       getTurnState: () => structuredClone({
         ...turnState,
         roundOrderPlayerIds: getRoundOrderPlayerIds(),

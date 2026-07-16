@@ -37,18 +37,18 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - target_file: docs/mocha_experience/coding.md
 - remote_skill_id: none
 - change: 记录“Node 可运行的浏览器宿主适配”和“真正去 DOM 的 runtime composition”必须分开验收，宿主 shim 只作为迁移期 parity 工具。
-- applied_change: 仅新增 coding experience、决策契约，并在 `docs/rl-headless-env.md` 写清当前实现边界；不修改 agent prompt、loop template、watcher 或 issue-workflow。
+- applied_change: 更新 coding experience 与本决策契约；实现 `view-adapter.js` 并从 headless 入口删除 fake DOM，不修改 agent prompt、loop template、watcher 或 issue-workflow。
 - expected_effect: 后续 headless/训练吞吐工作不会把继续补 DOM 形状误当成规则内核抽离，并能明确选择迁移期 parity 或最终纯 runtime 目标。
 - evaluation_window: 下一次 Node runtime composition 抽离与一轮浏览器/headless parity 验证
 - success_signal: Node 入口可通过注入 no-op view adapter 完成 reset 到 terminal，且不新增 element/overlay 行为；浏览器与 Node 对同 seed/action 序列终局摘要一致。
 - rollback_condition: 若传统 bundle 被整体替换为天然同构的 runtime composition，或项目明确只保留浏览器内批跑，则合并或删除该迁移期候选。
 - risk: 过早追求完全去 DOM 可能迫使一次性重写大量 composition 接线；因此当前只记录边界，不阻塞已验证的 action/replay MVP。
-- evidence_before: SETI-16 owner 关于“不应该堆 fake DOM，应由网页控件和模拟器共同调用 action”的评论；本轮 `headless-env.test.js` 的完整 4 人 terminal/replay 证据；`headless-env.js` 中仍存在最小 view host。
+- evidence_before: SETI-16 owner 关于“不应该堆 fake DOM，应由网页控件和模拟器共同调用 action”以及“进行拆分”的评论；改造前 `headless-env.js` 中仍有 400 余行 fake window/document/element。
 - owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate，暂不升级长期组件。
 - applied_at: 2026-07-17
-- verification: 核对 SETI-16 完整评论、timeline、metadata、全量测试输出和 headless 实现 diff；未发现 watcher 兜底事件。
-- observed_outcome: 顶层行动与 pending 可在 Node 中由 action/runtime 直接推进并完成 replay，但 composition root 的 view host 残余已被显式记录，未伪装成最终纯 runtime。
-- keep_or_revise: 保持 candidate；待下一次 composition 抽离后复审。
+- verification: 核对 SETI-16 完整评论、timeline、metadata、实现 diff；工作树与 staged 独立快照均通过 `node --check` 和全量 Node 测试；浏览器 skill 因控制通道缺少 sandbox 元数据未能执行真实页面 smoke；未发现 watcher 兜底事件目录。
+- observed_outcome: Node composition 注入 no-op view adapter 后不创建 `document`、DOM 元素、overlay、localStorage 或 Image；固定 seed 4 人局、现有终局结算总分摘要与 replay 均通过，fake DOM 实现已删除。
+- keep_or_revise: 保持 candidate；核心 no-op composition 成功，待浏览器控制通道恢复后补 browser/headless parity，再决定是否升级为长期 loop 验收规则。
 
 - date: 2026-07-17
 - source: SETI-2

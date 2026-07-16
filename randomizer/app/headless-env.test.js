@@ -25,13 +25,21 @@ function playFastFourPlayerGame(seed) {
 }
 
 const seed = "headless-four-player-smoke-v1";
+assert.equal(globalThis.document, undefined, "Node headless 启动前不应存在 document");
 const sourceEnv = playFastFourPlayerGame(seed);
+assert.equal(globalThis.document, undefined, "Node headless 运行时不应安装 fake document");
 const replay = sourceEnv.getReplay();
 assert.equal(replay.seed, seed);
 assert.equal(replay.steps.length > 0, true);
 assert.equal(replay.finalStateSummary.terminal, true);
+assert.equal(
+  replay.finalStateSummary.players.every((player) => Number.isFinite(player.finalScore)),
+  true,
+  "terminal observation 应包含现有终局结算生成的总分",
+);
 
 sourceEnv.dispose();
+assert.equal(globalThis.document, undefined, "dispose 后不应残留 document");
 
 const replayEnv = createHeadlessEnv();
 const replayObservation = replayEnv.loadReplay(replay);
@@ -39,6 +47,7 @@ assert.equal(replayEnv.isTerminal(), true);
 assert.deepEqual(replayObservation, replay.finalStateSummary);
 assert.deepEqual(replayEnv.getReplay().steps, replay.steps);
 replayEnv.dispose();
+assert.equal(globalThis.document, undefined, "replay dispose 后不应残留 document");
 
 const actorValidationEnv = createHeadlessEnv();
 actorValidationEnv.reset({ seed: "headless-actor-validation", activePlayerCount: 4 });

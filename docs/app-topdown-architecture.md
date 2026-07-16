@@ -24,7 +24,7 @@
 
 1. `solar-system/**` 与 `game/**` 注册规则层全局模块。
 2. 独立 app runtime 注册 `window.SetiApp*`：
-   - 基础设施：`dependencies`、`constants`、`dom`、`runtime`、`refresh`、`events`
+   - 基础设施：`dependencies`、`constants`、`dom`、`view-adapter`、`runtime`、`refresh`、`events`
    - 交互/流程：`start-screen`、`turn-flow`、`turn-end-flow`、`hand-flow`、`scan-flow`
    - 行动：`action-runtime`、`action-interaction-runtime`
    - effect：`effect-flow`、`effect-choice-flow`、`effects/**`
@@ -110,6 +110,7 @@
 
 - `public-api.js` 组装 `window.SetiRandomizer`，`app.js` 只提供显式 context。
 - `headless-env.js` 提供 headless observation/action/replay 适配；它通过公开 API 和注入回调工作，不读取 `app.js` 局部实现。
+- `view-adapter.js` 为 Node composition 提供 no-op render/log/hover 接口和空集合，不创建 fake DOM；浏览器 composition 仍使用 `dom.js`、真实 render runtime 与 events。
 - `ai-controller.js` 通过 state getter/setter 与动作回调访问 app 状态；迁移不得复制 pending 状态。
 - 新 runtime 均同时支持 `window.SetiApp*` 和 `module.exports`，便于传统浏览器加载与 Node 回归。
 

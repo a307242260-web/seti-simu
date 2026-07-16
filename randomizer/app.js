@@ -47,6 +47,7 @@
     runtimeModule,
     refreshModule,
     renderRuntimeModule,
+    viewAdapterModule,
     debugRuntimeModule,
     finalUiRuntimeModule,
     finalScoreAiRuntimeModule,
@@ -68,6 +69,13 @@
     alienRuntimeModule,
     alienUiModule,
   } = dependencies;
+  const headlessMode = Boolean(window.SetiHeadlessRuntimeConfig?.enabled);
+  const viewAdapter = headlessMode ? viewAdapterModule.createNoopViewAdapter() : null;
+  const document = headlessMode ? null : window.document;
+  const Image = headlessMode ? null : window.Image;
+  const Blob = window.Blob;
+  const requestAnimationFrame = viewAdapter?.scheduleFrame || window.requestAnimationFrame.bind(window);
+  const getComputedStyle = viewAdapter?.getComputedStyle || window.getComputedStyle.bind(window);
 
   const alienSpeciesRuntimeModule = window.SetiAppAlienSpeciesRuntime;
   const techRuntimeModule = window.SetiAppTechRuntime;
@@ -560,8 +568,9 @@
     playerBoardTechLayer: null,
   };
 
-  const els = window.SetiAppDom.collectElements(document);
-  const cardHoverPreviewRuntime = renderRuntimeModule.createCardHoverPreviewRuntime({ window, document });
+  const els = viewAdapter?.els || window.SetiAppDom.collectElements(document);
+  const cardHoverPreviewRuntime = viewAdapter?.hoverRuntime
+    || renderRuntimeModule.createCardHoverPreviewRuntime({ window, document });
   const attachCardHoverPreview = cardHoverPreviewRuntime.attach;
   const hideCardHoverPreview = cardHoverPreviewRuntime.hide;
   const coordinateRuntime = renderRuntimeModule.createCoordinateRuntime({
@@ -608,7 +617,8 @@
     createRocketSnapshot,
     getEarthSectorCoordinate,
   } = coordinateRuntime;
-  const actionLogViewRuntime = actionLogRuntimeModule.createActionLogViewRuntime({
+  const actionLogViewRuntime = viewAdapter?.actionLogViewRuntime
+    || actionLogRuntimeModule.createActionLogViewRuntime({
     document,
     els,
     players,
@@ -618,14 +628,14 @@
     sourceLabels: ACTION_LOG_SOURCE_LABELS,
     attachCardHoverPreview,
     getCardLabel: cards.getCardLabel,
-  });
+    });
   const {
     renderActionLog,
     setReportTab,
     isDebugToolsEnabled,
     isStateLogEnabled,
   } = actionLogViewRuntime;
-  const renderRuntime = renderRuntimeModule.createRenderRuntime({
+  const renderRuntime = viewAdapter?.renderRuntime || renderRuntimeModule.createRenderRuntime({
     document,
     Image,
     solar,
@@ -786,6 +796,7 @@
     renderRotateStateToken,
   } = renderRuntime;
   const finalUiRuntime = finalUiRuntimeModule.createFinalUiRuntime({
+    headless: headlessMode,
     document,
     els,
     players,
@@ -1452,6 +1463,7 @@
   }
 
   const alienUiHelpers = alienUiModule.createAlienUiHelpers({
+    headless: headlessMode,
     document,
     structuredClone,
     alienTraceRewardFlow,
@@ -3295,6 +3307,7 @@
   }
 
   function getPersistentGameStorage() {
+    if (headlessMode) return null;
     return gameRecoveryModule.getPersistentGameStorage(window);
   }
 
@@ -3358,6 +3371,7 @@
   }
 
   function schedulePersistentGameStateSave(options = {}) {
+    if (headlessMode) return;
     if (persistentGameSaveSuspended) return;
     if (persistentGameSaveTimer) {
       window.clearTimeout(persistentGameSaveTimer);
@@ -5273,6 +5287,7 @@
   }
 
   function renderActionEffectBar() {
+    if (headlessMode) return;
     if (!els.actionEffectBar || !els.actionEffectList) return;
 
     if (!pendingState.actionEffectFlow) {
@@ -6395,6 +6410,7 @@
   }
 
   function resize() {
+    if (headlessMode) return;
     const h = window.innerHeight;
     const boardWidth = els.boardShell.clientWidth || window.innerWidth;
     const boardHeight = h - 160;
@@ -7537,6 +7553,7 @@
   } = industryRuntime;
 
   const techRuntime = techRuntimeModule.createTechRuntime({
+      headless: headlessMode,
       Array: typeof Array === "undefined" ? undefined : Array,
       Boolean: typeof Boolean === "undefined" ? undefined : Boolean,
       HISTORY_SOURCE_MAIN: typeof HISTORY_SOURCE_MAIN === "undefined" ? undefined : HISTORY_SOURCE_MAIN,
@@ -8373,6 +8390,7 @@
   }
 
   function updateActionButtons() {
+    if (headlessMode) return;
     syncFinalResultButton();
     const context = createActionContext();
     const gameplayLockReason = getGameplayLockReason();
@@ -8504,10 +8522,12 @@
   }
 
   function isQuickPanelOpen() {
+    if (headlessMode) return false;
     return !els.quickActionsPanel.hidden;
   }
 
   function setQuickPanelOpen(open) {
+    if (headlessMode) return;
     if (open && getGameplayLockReason()) return;
     if (open) cancelHandCardContextActions({ silent: true });
     els.quickActionsPanel.hidden = !open;
@@ -8531,6 +8551,7 @@
   }
 
   actionInteractionRuntime = actionInteractionRuntimeModule.createActionInteractionRuntime({
+    headless: headlessMode,
     HISTORY_SOURCE_MAIN,
     SCORE_SOURCE_KEYS,
     abilities,
@@ -8592,6 +8613,7 @@
   });
 
   function updateQuickPanel() {
+    if (headlessMode) return;
     if (!isQuickPanelOpen()) return;
     updateQuickTradeButtons();
   }
@@ -9433,6 +9455,7 @@
   };
 
   alienSpeciesRuntime = alienSpeciesRuntimeModule.createAlienSpeciesRuntime({
+    headless: headlessMode,
     actionHistory,
     alienGameState,
     aliens,
@@ -9556,7 +9579,7 @@
     yichangdianAnomalyMarkerElements,
   });
 
-  window.SetiAppEvents.bindAppEvents({
+  if (!headlessMode) window.SetiAppEvents.bindAppEvents({
     window,
     document,
     state: appEventState,
@@ -9772,7 +9795,7 @@
   window.SetiAppBootstrap.initializeAppBootstrap({
     root: window,
     document,
-    initializeShell() {
+    initializeShell: headlessMode ? null : function initializeShell() {
       setTokenAssetSizes();
       syncStartScreenDebugOption();
       syncStartScreenActionLogOption();
@@ -9809,6 +9832,7 @@
       cardState,
       actionHistory,
       setupSelectionState,
+      buildFinalResultPlayerSummaries,
       randomizeAll,
       rotateSolarOrbit,
       launchRocketForCurrentPlayer,

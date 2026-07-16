@@ -16,11 +16,11 @@
 
 - date: 2026-07-17
 - source_issue: SETI-16
-- observation: headless simulator 的完成标准应区分“规则/决策可在 Node 中直接推进”和“用宿主 shim 把浏览器 composition root 跑起来”；后者可用于迁移期 parity，但不应继续靠补 DOM 行为扩张，最终边界应是 runtime composition + 可注入 no-op view adapter。
-- evidence: SETI-16 owner 评论明确否定继续堆 fake DOM，并要求浏览器控件与模拟器共同调用 action；本轮完整 4 人局与 replay 已能通过 action runtime 推进，但 `headless-env.js` 启动传统 bundle 时仍保留最小 view host，`docs/rl-headless-env.md` 已明确该残余边界。
+- observation: headless simulator 的完成标准应区分“规则/决策可在 Node 中直接推进”和“用宿主 shim 把浏览器 composition root 跑起来”；后者可用于迁移期定位，但不应继续靠补 DOM 行为扩张，最终边界应是 runtime composition + 可注入 no-op view adapter。
+- evidence: SETI-16 owner 明确拒绝 fake DOM 并要求完成拆分；随后 `headless-env.js` 删除 400 余行 fake window/document/element，composition 注入 `view-adapter.js`，完整 4 人局、终局分摘要和 replay 在全局无 `document` 条件下通过，工作树与 staged 独立快照全量回归通过。
 - promote_to: none
 - promotion_status: candidate
-- decision: 记录为架构迁移候选经验，不升级 agent prompt 或 loop template；等待下一次抽离 Node runtime composition 时验证 no-op view adapter 是否能完全取代宿主 shim。
+- decision: no-op view adapter 已验证能取代宿主 shim，但真实浏览器烟测因浏览器控制通道环境错误未能执行；保持 candidate，不升级 agent prompt 或 loop template，待补一次 browser/headless parity 后复审。
 
 - date: 2026-07-17
 - source_issue: SETI-27

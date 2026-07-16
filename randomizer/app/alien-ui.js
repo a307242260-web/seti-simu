@@ -20,6 +20,7 @@
 
   function createAlienUiHelpers(context = {}) {
     const documentRef = context.document || root.document;
+    const headless = Boolean(context.headless);
     const structuredClone = context.structuredClone || root.structuredClone;
     const alienTraceRewardFlow = context.alienTraceRewardFlow || {};
     const aliens = context.aliens || {};
@@ -370,7 +371,7 @@
       if (pending?.element?.parentNode) {
         pending.element.remove();
       }
-      documentRef.querySelectorAll(".alien-reveal-notice-overlay").forEach((node) => node.remove());
+      documentRef?.querySelectorAll(".alien-reveal-notice-overlay").forEach((node) => node.remove());
       pendingState.alienRevealConfirmation = null;
 
       if (pendingState.alienTracePickerState?.mode === "reveal-confirm") {
@@ -399,6 +400,17 @@
       }
 
       closeAlienRevealConfirmationOverlay();
+
+      if (headless) {
+        pendingState.alienRevealConfirmation = { entries, element: null };
+        return {
+          ok: true,
+          awaitingConfirmation: false,
+          noticeVisible: false,
+          entries,
+          message: entries.map((entry) => entry.title).join("；"),
+        };
+      }
 
       const overlay = documentRef.createElement("div");
       overlay.className = "alien-reveal-notice-overlay";

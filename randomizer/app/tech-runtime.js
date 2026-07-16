@@ -12,6 +12,7 @@
   "use strict";
 
   function createTechRuntime(context = {}) {
+    const headless = context.headless === true;
     const {
       Array,
       Boolean,
@@ -483,6 +484,7 @@
     }
 
     function renderTechBoard() {
+      if (headless) return;
       syncTechRenderContext();
       const currentPlayer = getInterfacePlayer();
       tech.renderAll(techGameState, techRenderContext, els.techTiles, {
