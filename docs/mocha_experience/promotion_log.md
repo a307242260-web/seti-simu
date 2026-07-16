@@ -51,7 +51,7 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - keep_or_revise: 等重复证据；若再出现同类偏差，再升级 issue-workflow。
 
 - date: 2026-07-16
-- source: SETI-23
+- source: SETI-23, SETI-24
 - promoted_to: none
 - promotion_decision: candidate
 - target_agent: 领航
@@ -65,9 +65,9 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - success_signal: 提交前能明确报告工作树与 staged 快照各自验证结果，且提交不包含他人改动。
 - rollback_condition: 如果后续证明临时 HEAD 快照构造成本显著高于收益，或 git 原生 staged 检查已足以覆盖，则维持 candidate 并合并为更轻量规则。
 - risk: 单次案例含一个既有 HEAD TDZ，直接升级可能把偶发基线问题泛化为所有提交的重型流程。
-- evidence_before: SETI-23 的 staged diff、临时 HEAD 快照 DOM 烟测结果与提交 `9414cc4`；共享工作树保留了未提交的 TDZ 修复且 DOM 烟测通过。
+- evidence_before: SETI-23 的 staged diff、临时 HEAD 快照与提交 `9414cc4`；SETI-24 的入口/收口 dirty diff、独立 staged 快照全量 tracked 测试与提交 `ff667a3`。
 - owner_or_agent_decision: 记录 candidate，不升级长期组件。
 - applied_at: 2026-07-16
 - verification: 核对 `git diff --cached --stat`、共享工作树状态、临时 HEAD 快照全量 Node 回归及两次 DOM 脚本顺序烟测结果。
-- observed_outcome: 本次提交只包含 effect 重构；其他 agent/user 改动仍完整保留在工作树，且差异可由 `git status --short` 查看。
-- keep_or_revise: 等重复证据后再决定是否升级提交前检查模板。
+- observed_outcome: 已连续两次实现“只提交本 issue 文件、保留其他 agent/user dirty 改动”，且 staged 快照能独立通过对应全量回归。
+- keep_or_revise: 保持 candidate；完成第 3 次相似重叠提交后复审是否升级提交前检查模板。
