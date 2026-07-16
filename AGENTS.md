@@ -28,6 +28,8 @@
 - `randomizer/app/card-trigger-runtime.js`：卡牌任务、触发匹配、奖励队列和确认/取消/续跑运行时。
 - `randomizer/app/income-runtime.js`：卡牌收入、轮开始收入和公司轮开始收益运行时。
 - `randomizer/app/scan-flow.js`：扫描目标、扇区结算、延迟补牌与公共牌/手牌扫描运行时。
+- `randomizer/app/tech-runtime.js`：科技选择、蓝槽确认、取消/撤销恢复与海盗科技标记运行时。
+- `randomizer/app/industry-runtime.js`：公司 1x、被动奖励、picker、pending 与 quick history 回滚运行时。
 - `randomizer/app/alien-ui.js`：外星人揭示提示、痕迹 picker、方舟用途分流与各物种痕迹放置模式 UI 壳层。
 - `randomizer/app/aliens/species-runtime.js`：八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 与具体面板渲染；通过显式 context 接收 app 编排依赖。
 - `randomizer/app/action-log-export.js`：终局行动日志 Markdown 导出格式与文件名生成。

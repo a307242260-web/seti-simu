@@ -94,6 +94,10 @@ index.html
 - 公共牌 / 扫描
   - `app/scan-flow.js`
 
+- 科技 / 公司
+  - `app/tech-runtime.js`
+  - `app/industry-runtime.js`
+
 - 收入 / 卡牌任务与触发
   - `app/income-runtime.js`
   - `app/card-trigger-runtime.js`
@@ -175,7 +179,7 @@ index.html
 
 仍留在 `app.js` 的跨模块域主要是：
 
-- 公司牌 1x 能力和被动奖励的总控
+- 科技与公司 runtime 的依赖注入及跨域 continuation
 - final score pending mark、终局结果汇总和展示
 - Pluto、行业被动、特殊 company / alien 分支的 app 层 glue
 
