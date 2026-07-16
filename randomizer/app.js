@@ -40,6 +40,7 @@
     aiRaceModel,
     ai,
     alienTraceRewardFlow,
+    actionRuntimeModule,
     actionLogRuntimeModule,
     gameRecoveryModule,
     runtimeModule,
@@ -66,6 +67,9 @@
   }
   if (!turnFlowModule) {
     throw new Error("Missing SETI app dependency: SetiAppTurnFlow");
+  }
+  if (!actionRuntimeModule) {
+    throw new Error("Missing SETI app dependency: SetiAppActionRuntime");
   }
   if (!effectFlowModule) {
     throw new Error("Missing SETI app dependency: SetiAppEffectFlow");
@@ -1244,6 +1248,90 @@
     setLogOpen,
     startNewGame,
   });
+  const actionRuntimeController = actionRuntimeModule.createActionRuntime({
+    setupSelectionState,
+    playerState,
+    turnState,
+    pendingState,
+    rocketState,
+    startScreenState,
+    actionLogState,
+    INITIAL_SELECTION_REQUIRED,
+    INITIAL_CARD_COUNT,
+    INITIAL_SELECTION_CARD_SIZE,
+    MIN_START_INDUSTRY_POOL_SIZE,
+    INITIAL_SELECTION_INDUSTRY_OPTION_COUNT,
+    INDUSTRY_CARD_FILES,
+    HISTORY_SOURCE_SETUP,
+    ACTION_LOG_DEFAULT_LABELS,
+    stripAssetExtension,
+    shuffleList,
+    getCurrentPlayer,
+    getPlayerById,
+    getPlayerLabelById,
+    ensurePublicCardsFilledRespectingDelayedRefills,
+    renderReservedCards,
+    renderPublicCards,
+    renderDebugPlayerSwitch,
+    renderPlayerStats,
+    renderPlayerHand,
+    renderTechBoard,
+    renderSectorNebulaDataBoard,
+    syncPlanetOrbitLandMarkers,
+    renderAlienPanels,
+    renderRockets,
+    syncInteractionFocusChrome,
+    updateActionButtons,
+    renderStateReadout,
+    schedulePersistentGameStateSave,
+    resolveInitialSelectionEffects,
+    applyIndustryRoundStartBonuses,
+    startInitialIncomeEffectFlow,
+    applyIndustryStartupPassives,
+    appendConfirmedActionLogEntry,
+    isInitialIncomeFlowActive,
+    renderActionLog,
+    refreshLatestActionLogRecoverySnapshot,
+    scrollToPlayerCommandPanel,
+    normalizeActionLogText,
+    industry,
+    canStartMainAction,
+    getMainActionStartBlockReason,
+    getAnalyzeActionOptionsForPlayer,
+    createActionLogImpactSnapshot,
+    abilities,
+    createActionContext,
+    actions,
+    removeRocketElement,
+    syncPlanetOrbitLandMarkersAfterAction: syncPlanetOrbitLandMarkers,
+    startPlanetRewardEffectFlow,
+    startLaunchSectorFinishEffectFlow,
+    settleCardTasksAfterEffect,
+    maybeAutoExecuteAomomoRewardEffects,
+    startResearchTechEffectFlow,
+    syncTechSelectionChrome,
+    finalizeTechTakeResult,
+    renderRocketElement,
+    recordAtomicActionHistory,
+    startAnalyzeDataRewardFlow,
+    executeActionEffect,
+    getCurrentActionEffect,
+    maybeApplyIndustryLaunchScan,
+    maybeConsumeAlienLabPanelForMainAction,
+    markActionPending,
+    beginScanAction: (...args) => beginScanAction(...args),
+    beginPlayCardSelection: (...args) => beginPlayCardSelection(...args),
+    researchTechForCurrentPlayer: (...args) => researchTechForCurrentPlayer(...args),
+    orbitForCurrentPlayer: (...args) => orbitForCurrentPlayer(...args),
+    landForCurrentPlayer: (...args) => landForCurrentPlayer(...args),
+    analyzeDataForCurrentPlayer: (...args) => analyzeDataForCurrentPlayer(...args),
+    passForCurrentPlayer: (...args) => passForCurrentPlayer(...args),
+    endCurrentTurn: (...args) => endCurrentTurn(...args),
+    blockManualAiPendingInputIfNeeded,
+    getCurrentActionEffectIndex: () => pendingState.actionEffectFlow?.currentIndex,
+    runQuickTrade,
+    confirmDataPlacement,
+  });
 
   function getActiveOrderedPlayerIds() {
     return turnFlowModule.getActiveOrderedPlayerIds(turnState);
@@ -1376,72 +1464,27 @@
   }
 
   function getInitialSelectionPlayerIds() {
-    const activeIds = Array.isArray(turnState.activePlayerIds)
-      ? turnState.activePlayerIds.filter((playerId) => getPlayerById(playerId))
-      : [];
-    if (activeIds.length) return activeIds;
-    return playerState.currentPlayerId ? [playerState.currentPlayerId] : [];
+    return actionRuntimeController.getInitialSelectionPlayerIds();
   }
 
   function isInitialSelectionActive() {
-    return setupSelectionState.phase === "selecting";
+    return actionRuntimeController.isInitialSelectionActive();
   }
 
   function getInitialSelectionOffer(playerId = playerState.currentPlayerId) {
-    return setupSelectionState.offersByPlayerId[playerId] || null;
+    return actionRuntimeController.getInitialSelectionOffer(playerId);
   }
 
   function isInitialSelectionConfirmed(playerId = playerState.currentPlayerId) {
-    return setupSelectionState.confirmedPlayerIds.includes(playerId)
-      || Boolean(getInitialSelectionOffer(playerId)?.confirmed);
+    return actionRuntimeController.isInitialSelectionConfirmed(playerId);
   }
 
   function canConfirmInitialSelection(offer) {
-    return Boolean(
-      offer?.selectedIndustryId
-      && Array.isArray(offer.selectedInitialIds)
-      && offer.selectedInitialIds.length === INITIAL_SELECTION_REQUIRED.initial,
-    );
+    return actionRuntimeController.canConfirmInitialSelection(offer);
   }
 
   function startInitialSelection() {
-    const playerIds = getInitialSelectionPlayerIds();
-    const industryOffersByPlayerId = createIndustrySelectionOffers(playerIds);
-    const initialDeck = shuffleList(
-      Array.from({ length: INITIAL_CARD_COUNT }, (_item, index) => createInitialSelectionCard(index + 1)),
-    );
-
-    setupSelectionState.phase = playerIds.length ? "selecting" : "complete";
-    setupSelectionState.currentPlayerId = playerIds[0] || null;
-    setupSelectionState.offersByPlayerId = {};
-    setupSelectionState.confirmedPlayerIds = [];
-
-    playerIds.forEach((playerId, index) => {
-      const player = getPlayerById(playerId);
-      if (player) player.initialSelection = null;
-      setupSelectionState.offersByPlayerId[playerId] = {
-        playerId,
-        industryOptions: industryOffersByPlayerId[playerId] || [],
-        initialOptions: initialDeck.slice(index * 3, index * 3 + 3),
-        selectedIndustryId: null,
-        selectedInitialIds: [],
-        confirmed: false,
-      };
-    });
-
-    if (setupSelectionState.currentPlayerId) {
-      playerState.currentPlayerId = setupSelectionState.currentPlayerId;
-      rocketState.statusNote = "请完成初始选择：公司 2 选 1，初始牌 3 选 2。";
-    }
-
-    ensurePublicCardsFilledRespectingDelayedRefills();
-    renderReservedCards();
-    renderPublicCards();
-    renderDebugPlayerSwitch();
-    renderPlayerStats();
-    updateActionButtons();
-    renderStateReadout();
-    schedulePersistentGameStateSave({ label: "初始选择开始" });
+    return actionRuntimeController.startInitialSelection();
   }
 
   function normalizeStartIndustryLabels(industryLabels) {
@@ -1479,8 +1522,7 @@
   }
 
   function getCardFromInitialOffer(offer, kind, cardId) {
-    const options = kind === "industry" ? offer?.industryOptions : offer?.initialOptions;
-    return (options || []).find((card) => card.id === cardId) || null;
+    return actionRuntimeController.getCardFromInitialOffer(offer, kind, cardId);
   }
 
   function getInitialEffectLogSource(result) {
@@ -1516,27 +1558,7 @@
   }
 
   function handleInitialSelectionCardClick(kind, cardId) {
-    if (!isInitialSelectionActive()) return;
-
-    const playerId = playerState.currentPlayerId;
-    const offer = getInitialSelectionOffer(playerId);
-    if (!offer || offer.confirmed) return;
-
-    if (kind === "industry") {
-      offer.selectedIndustryId = cardId;
-    } else if (kind === "initial") {
-      const selected = offer.selectedInitialIds;
-      const existingIndex = selected.indexOf(cardId);
-      if (existingIndex >= 0) {
-        selected.splice(existingIndex, 1);
-      } else if (selected.length < INITIAL_SELECTION_REQUIRED.initial) {
-        selected.push(cardId);
-      }
-    }
-
-    renderReservedCards();
-    renderStateReadout();
-    schedulePersistentGameStateSave({ label: "初始选择更新" });
+    return actionRuntimeController.handleInitialSelectionCardClick(kind, cardId);
   }
 
   function recordInitialSelectionActionLog(player, selectedIndustry, selectedInitialCards, initialResult = null) {
@@ -1570,106 +1592,7 @@
   }
 
   function confirmInitialSelectionForCurrentPlayer() {
-    if (!isInitialSelectionActive()) return;
-
-    const player = getCurrentPlayer();
-    const offer = getInitialSelectionOffer(player?.id);
-    if (!player || !offer || offer.confirmed) return;
-
-    if (!canConfirmInitialSelection(offer)) {
-      rocketState.statusNote = "初始选择未完成：请选择 1 张公司和 2 张初始牌。";
-      renderStateReadout();
-      return;
-    }
-
-    const selectedIndustry = getCardFromInitialOffer(offer, "industry", offer.selectedIndustryId);
-    const selectedInitialCards = offer.selectedInitialIds
-      .map((cardId) => getCardFromInitialOffer(offer, "initial", cardId))
-      .filter(Boolean);
-
-    offer.confirmed = true;
-    if (!setupSelectionState.confirmedPlayerIds.includes(player.id)) {
-      setupSelectionState.confirmedPlayerIds.push(player.id);
-    }
-    player.initialSelection = {
-      industry: selectedIndustry ? { ...selectedIndustry } : null,
-      removedInitialCards: selectedInitialCards.map((card) => ({ ...card })),
-    };
-
-    if (industry?.shouldInitializeStrategyPassiveMarkers?.(player)) {
-      industry.initializeStrategyPassiveMarkers(player);
-    }
-    if (industry?.shouldInitializeHeliosPassiveMarkers?.(player)) {
-      industry.initializeHeliosPassiveMarkers(player);
-    }
-    if (industry?.shouldInitializeAlienLabPanels?.(player)) {
-      industry.initializeAlienLabPanels(player);
-    }
-    if (industry?.shouldInitializeFutureSpan?.(player)) {
-      industry.initializeFutureSpanState(player);
-    }
-    if (industry?.shouldInitializePiratesRaidMarkers?.(player)) {
-      industry.initializePiratesRaidMarkers(player);
-    }
-
-    const remainingPlayerId = getInitialSelectionPlayerIds()
-      .find((playerId) => !isInitialSelectionConfirmed(playerId));
-    let initialSelectionCompleted = false;
-    if (remainingPlayerId) {
-      recordInitialSelectionActionLog(player, selectedIndustry, selectedInitialCards);
-      setupSelectionState.currentPlayerId = remainingPlayerId;
-      playerState.currentPlayerId = remainingPlayerId;
-      rocketState.statusNote = `已确认 ${player.colorLabel}玩家，轮到 ${getPlayerLabelById(remainingPlayerId)} 初始选择。`;
-    } else {
-      initialSelectionCompleted = true;
-      setupSelectionState.phase = "complete";
-      setupSelectionState.currentPlayerId = null;
-      playerState.currentPlayerId = turnState.startPlayerId || playerState.currentPlayerId;
-      const initialResult = resolveInitialSelectionEffects();
-      const roundStartResult = applyIndustryRoundStartBonuses(turnState.roundNumber, { appendLog: false });
-      const initialLogResult = roundStartResult.results.length
-        ? {
-          ...(initialResult || { ok: roundStartResult.ok, results: [], message: "" }),
-          ok: Boolean((initialResult?.ok ?? true) && roundStartResult.ok),
-          results: [
-            ...(initialResult?.results || []),
-            ...roundStartResult.results,
-          ],
-          message: [initialResult?.message, roundStartResult.message].filter(Boolean).join("；"),
-        }
-        : initialResult;
-      recordInitialSelectionActionLog(player, selectedIndustry, selectedInitialCards, initialLogResult);
-      const incomeStarted = startInitialIncomeEffectFlow(initialResult?.pendingIncomeIncreases || []);
-      applyIndustryStartupPassives();
-      if (!incomeStarted) {
-        rocketState.statusNote = initialResult?.message
-          ? `所有玩家已完成初始选择，${initialResult.message}，游戏开始。`
-          : "所有玩家已完成初始选择，游戏开始。";
-      }
-    }
-
-    renderDebugPlayerSwitch();
-    renderPlayerStats();
-    renderTechBoard();
-    renderSectorNebulaDataBoard();
-    syncPlanetOrbitLandMarkers();
-    renderAlienPanels();
-    renderPublicCards();
-    renderPlayerHand();
-    renderRockets();
-    syncInteractionFocusChrome();
-    updateActionButtons();
-    renderStateReadout();
-    if (initialSelectionCompleted) {
-      scrollToPlayerCommandPanel();
-    }
-    if (isInitialIncomeFlowActive()) {
-      const latestEntry = actionLogState.entries[actionLogState.entries.length - 1];
-      if (latestEntry) delete latestEntry.recoverySnapshot;
-      renderActionLog();
-    } else {
-      refreshLatestActionLogRecoverySnapshot("初始选择后状态");
-    }
+    return actionRuntimeController.confirmInitialSelectionForCurrentPlayer();
   }
 
   function resolveInitialSelectionEffects() {
@@ -2055,6 +1978,7 @@
     confirmTechBlueSlotChoice,
     createActionContext,
     createTurnState,
+    dispatchRuntimeAction: (request) => actionRuntimeController.dispatchAction(request),
     drawCardForCurrentPlayer,
     endCurrentTurn,
     recoverPendingActionFromOpenHistoryForAi,
@@ -17662,13 +17586,7 @@
   }
 
   function handleActionEffectButtonClick(effectIndex) {
-    if (!pendingState.actionEffectFlow) return;
-    if (Number(effectIndex) !== pendingState.actionEffectFlow.currentIndex) return;
-
-    const effect = getCurrentActionEffect();
-    const blocked = blockManualAiPendingInputIfNeeded(null, {}, "效果结算", effect);
-    if (blocked) return blocked;
-    executeActionEffect(effect);
+    return actionRuntimeController.handleActionEffectButtonClick(effectIndex);
   }
 
   function beginScanAction() {
@@ -28589,101 +28507,7 @@
   }
 
   function runAction(actionId, actionOptions) {
-    if (!canStartMainAction()) {
-      rocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const abilityByAction = {
-      launch: "launchProbe",
-      orbit: "orbitProbe",
-      land: "landProbe",
-      analyze: "analyzeData",
-    };
-    const abilityId = abilityByAction[actionId];
-    const resolvedActionOptions = actionId === "analyze"
-      ? getAnalyzeActionOptionsForPlayer(getCurrentPlayer(), actionOptions)
-      : actionOptions;
-    const actionLogBefore = createActionLogImpactSnapshot();
-    const result = abilityId
-      ? abilities.executeAbility(abilityId, createActionContext(), resolvedActionOptions)
-      : actionId === "researchTech"
-        ? abilities.executeAbility("researchTechPrepare", createActionContext(), resolvedActionOptions)
-        : actions.execute(actionId, createActionContext(), resolvedActionOptions);
-
-    let startedRewardFlow = false;
-
-    if (result.ok && result.markerKind) {
-      if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);
-      syncPlanetOrbitLandMarkers();
-      renderAlienPanels();
-      if (actionId === "orbit" || actionId === "land") {
-        startedRewardFlow = startPlanetRewardEffectFlow(actionId, result);
-        if (startedRewardFlow) {
-          settleCardTasksAfterEffect({ events: result.events, render: false });
-          maybeAutoExecuteAomomoRewardEffects();
-        }
-      }
-    } else if (actionId === "researchTech") {
-      if (result.awaitingTileSelection) {
-        rocketState.statusNote = result.message;
-        startResearchTechEffectFlow(result, { logBefore: actionLogBefore });
-        syncTechSelectionChrome();
-        renderTechBoard();
-        updateActionButtons();
-      } else if (result.tileId) {
-        rocketState.statusNote = result.message;
-        finalizeTechTakeResult(result);
-        return result;
-      } else if (!result.ok) {
-        rocketState.statusNote = result.message;
-      }
-    } else {
-      if (result.rocket) renderRocketElement(result.rocket);
-      if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);
-    }
-
-    if (result.ok && actionId === "analyze") {
-      recordAtomicActionHistory(actionId, ACTION_LOG_DEFAULT_LABELS.analyze, result, {
-        logBefore: actionLogBefore,
-      });
-      startedRewardFlow = startAnalyzeDataRewardFlow();
-      if (startedRewardFlow) {
-        executeActionEffect(getCurrentActionEffect());
-      }
-      settleCardTasksAfterEffect({ events: result.events, render: false });
-      renderPlayerStats();
-      updateActionButtons();
-      renderStateReadout();
-      return result;
-    }
-
-    if (result.ok && !result.awaitingTileSelection && !startedRewardFlow) {
-      if (actionId === "launch") {
-        maybeApplyIndustryLaunchScan(result);
-        maybeConsumeAlienLabPanelForMainAction("launch", result);
-        rocketState.statusNote = result.message;
-        startedRewardFlow = startLaunchSectorFinishEffectFlow(result);
-      }
-      if (startedRewardFlow) {
-        settleCardTasksAfterEffect({ events: result.events, render: false });
-      } else {
-        if (abilityId && result.undoable !== false) {
-          recordAtomicActionHistory(actionId, result.message || actionId, result, {
-            logBefore: actionLogBefore,
-          });
-        } else {
-          markActionPending();
-        }
-        settleCardTasksAfterEffect({ events: result.events, render: false });
-      }
-    }
-
-    renderPlayerStats();
-    updateActionButtons();
-    renderStateReadout();
-    return result;
+    return actionRuntimeController.runAction(actionId, actionOptions);
   }
 
   function getRocketCoordinateReadoutLines() {

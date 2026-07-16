@@ -99,6 +99,7 @@
       createActionContext,
       createTurnState,
       drawCardForCurrentPlayer,
+      dispatchRuntimeAction,
       endCurrentTurn,
       recoverPendingActionFromOpenHistoryForAi,
       executeActionEffect,
@@ -21342,6 +21343,19 @@
     }
 
     function executeAiTurnAction(action, currentPlayer = getCurrentPlayer()) {
+      if (typeof dispatchRuntimeAction === "function" && [
+        "end-turn",
+        "launch",
+        "researchTech",
+        "orbit",
+        "land",
+        "scan",
+        "analyze",
+        "playCard",
+        "pass",
+      ].includes(action?.id)) {
+        return dispatchRuntimeAction({ kind: action.id, payload: action });
+      }
       if (action.id === "end-turn") {
         endCurrentTurn();
         return { ok: true, progressed: true, action };
@@ -21442,10 +21456,14 @@
       };
     }
 
-    function runAiTurnActionDecision() {
-      const currentPlayer = getCurrentPlayer();
+    function buildAiTurnActionCandidates(currentPlayer = getCurrentPlayer()) {
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}不是电脑玩家` };
+        return {
+          ok: false,
+          blocked: true,
+          message: `${currentPlayer?.colorLabel || "当前玩家"}不是电脑玩家`,
+          candidates: [],
+        };
       }
       const rawCandidates = enumerateAiTurnActions();
       const markedFinalFormulas = getAiMarkedFinalFormulaEntries(currentPlayer);
@@ -21488,7 +21506,20 @@
           };
         })
         : rawCandidates;
-      const candidates = applyAiTurnActionSelectionPressure(graphAdjustedCandidates);
+      return {
+        ok: true,
+        currentPlayer,
+        rawCandidates,
+        graphState,
+        candidates: applyAiTurnActionSelectionPressure(graphAdjustedCandidates),
+      };
+    }
+
+    function runAiTurnActionDecision() {
+      const currentPlayer = getCurrentPlayer();
+      const buildResult = buildAiTurnActionCandidates(currentPlayer);
+      if (!buildResult.ok) return buildResult;
+      const { rawCandidates, graphState, candidates } = buildResult;
       let selectableCandidates = candidates;
       const rejectedActions = [];
       const maxAttempts = Math.max(1, candidates.length);
@@ -21722,102 +21753,176 @@
       return runAiActionEffectStep();
     }
 
+    function runAiNonTurnAutomationStep() {
+      if (!ai?.policy) return { ok: false, blocked: true, message: "SetiAI 未加载" };
+      if (isGameEnded()) return { ok: true, done: true, message: "游戏已结束" };
+
+      const alienUseResult = runAiAlienUseDecision();
+      if (alienUseResult) return alienUseResult;
+
+      const alienTraceResult = runAiAlienTraceDecision();
+      if (alienTraceResult) return alienTraceResult;
+
+      if (!isActionEffectFlowActive()) {
+        const earlyReadyBanrenmaResult = runAiReadyBanrenmaOpportunityOpenDecision();
+        if (earlyReadyBanrenmaResult) return earlyReadyBanrenmaResult;
+      }
+
+      const initialResult = chooseInitialSelectionForAiPlayer();
+      if (initialResult) return initialResult;
+
+      const discardResult = runAiDiscardDecision();
+      if (discardResult) return discardResult;
+
+      const passReserveResult = runAiPassReserveDecision();
+      if (passReserveResult) return passReserveResult;
+
+      const finalScoreMarkResult = runAiFinalScoreMarkDecision();
+      if (finalScoreMarkResult) return finalScoreMarkResult;
+
+      const cardSelectionResult = runAiCardSelectionDecision();
+      if (cardSelectionResult) return cardSelectionResult;
+
+      if (!isActionEffectFlowActive()) {
+        const techSelectionResult = runAiResearchTechSelectionDecision();
+        if (techSelectionResult) return techSelectionResult;
+      }
+
+      const handScanResult = runAiHandScanDecision();
+      if (handScanResult) return handScanResult;
+
+      const playCardResult = runAiPlayCardSelectionDecision();
+      if (playCardResult) return playCardResult;
+
+      const movePaymentResult = runAiMovePaymentDecision();
+      if (movePaymentResult) return movePaymentResult;
+
+      const landTargetResult = runAiLandTargetDecision();
+      if (landTargetResult) return landTargetResult;
+
+      const dataPlacementResult = runAiDataPlacementDecision();
+      if (dataPlacementResult) return dataPlacementResult;
+
+      const scanTargetResult = runAiScanTargetDecision();
+      if (scanTargetResult) return scanTargetResult;
+
+      const strategyPassiveSlotResult = runAiStrategyPassiveSlotChoiceDecision();
+      if (strategyPassiveSlotResult) return strategyPassiveSlotResult;
+
+      const effectMoveResult = runAiActionEffectMoveDecision();
+      if (effectMoveResult) return effectMoveResult;
+
+      if (isActionEffectFlowActive() && !hasActivePendingSubFlow()) {
+        const activeEffectResult = runAiActionEffectStep();
+        if (activeEffectResult) return activeEffectResult;
+      }
+
+      const readyBanrenmaResult = runAiReadyBanrenmaOpportunityOpenDecision();
+      if (readyBanrenmaResult) return readyBanrenmaResult;
+
+      const cardTriggerResult = runAiCardTriggerDecision();
+      if (cardTriggerResult) return cardTriggerResult;
+
+      const cardTriggerMoveResult = runAiCardTriggerFreeMoveDecision();
+      if (cardTriggerMoveResult) return cardTriggerMoveResult;
+
+      const cardCornerMoveResult = runAiCardCornerFreeMoveDecision();
+      if (cardCornerMoveResult) return cardCornerMoveResult;
+
+      const industryFreeMoveResult = runAiIndustryFreeMoveDecision();
+      if (industryFreeMoveResult) return industryFreeMoveResult;
+
+      const scanAction4Result = runAiScanAction4Decision();
+      if (scanAction4Result) return scanAction4Result;
+
+      const readyCardTaskResult = runAiReadyCardTaskOpenDecision();
+      if (readyCardTaskResult) return readyCardTaskResult;
+
+      const cardTaskResult = runAiCardTaskCompletionDecision();
+      if (cardTaskResult) return cardTaskResult;
+
+      const effectResult = runAiActionEffectStep();
+      if (effectResult) return effectResult;
+
+      if (hasActivePendingSubFlow()) {
+        return { ok: false, blocked: true, message: "AI 遇到尚未收口的 pending 流程" };
+      }
+
+      return { ok: true, idle: true, message: "已推进到顶层决策点" };
+    }
+
+    function resolveAiAutomationToTurnBoundary(options = {}) {
+      const maxSteps = Math.max(1, Math.round(Number(options.maxSteps) || 500));
+      const steps = [];
+      for (let index = 0; index < maxSteps; index += 1) {
+        const result = runAiNonTurnAutomationStep();
+        if (result) steps.push(result);
+        if (!result || result.idle || result.done || result.blocked || result.bug || result.ok === false) {
+          return {
+            ok: result ? result.ok !== false : true,
+            steps,
+            final: result || { ok: true, idle: true, message: "已推进到顶层决策点" },
+          };
+        }
+      }
+      return {
+        ok: false,
+        blocked: true,
+        message: `推进到顶层决策点超过 ${maxSteps} 步仍未收敛`,
+        steps,
+      };
+    }
+
+    function matchesAiTurnActionSelector(candidate = {}, selector = {}) {
+      if (!selector || typeof selector !== "object") return false;
+      if (selector.id && candidate.id !== selector.id) return false;
+      if (selector.tradeId && candidate.tradeId !== selector.tradeId) return false;
+      if (selector.cardId && candidate.cardId !== selector.cardId) return false;
+      if (selector.cardInstanceId && candidate.cardInstanceId !== selector.cardInstanceId) return false;
+      if (selector.handIndex != null && Number(candidate.handIndex) !== Number(selector.handIndex)) return false;
+      if (selector.blueSlot != null && Number(candidate.blueSlot) !== Number(selector.blueSlot)) return false;
+      if (selector.target && JSON.stringify(candidate.target || null) !== JSON.stringify(selector.target)) return false;
+      return true;
+    }
+
+    function runAiSelectedTurnAction(selector = {}, options = {}) {
+      const currentPlayer = getCurrentPlayer();
+      const buildResult = buildAiTurnActionCandidates(currentPlayer);
+      if (!buildResult.ok) return buildResult;
+      const candidates = buildResult.candidates || [];
+      const action = Number.isInteger(selector?.candidateIndex)
+        ? candidates[selector.candidateIndex] || null
+        : candidates.find((candidate) => matchesAiTurnActionSelector(candidate, selector)) || null;
+      if (!action) {
+        return {
+          ok: false,
+          blocked: true,
+          message: "未找到匹配的顶层行动候选",
+          candidates,
+        };
+      }
+      const actionResult = executeAiTurnAction(action, currentPlayer);
+      if (actionResult?.ok === false || options.resolveToTurnBoundary === false) {
+        return {
+          ...actionResult,
+          action,
+          candidates,
+        };
+      }
+      const resolution = resolveAiAutomationToTurnBoundary(options);
+      return {
+        ok: resolution.ok !== false,
+        progressed: true,
+        action,
+        actionResult,
+        resolution,
+      };
+    }
+
     function runAiAutomationStep() {
       try {
-        if (!ai?.policy) return { ok: false, blocked: true, message: "SetiAI 未加载" };
-        if (isGameEnded()) return { ok: true, done: true, message: "游戏已结束" };
-
-        const alienUseResult = runAiAlienUseDecision();
-        if (alienUseResult) return alienUseResult;
-
-        const alienTraceResult = runAiAlienTraceDecision();
-        if (alienTraceResult) return alienTraceResult;
-
-        if (!isActionEffectFlowActive()) {
-          const earlyReadyBanrenmaResult = runAiReadyBanrenmaOpportunityOpenDecision();
-          if (earlyReadyBanrenmaResult) return earlyReadyBanrenmaResult;
-        }
-
-        const initialResult = chooseInitialSelectionForAiPlayer();
-        if (initialResult) return initialResult;
-
-        const discardResult = runAiDiscardDecision();
-        if (discardResult) return discardResult;
-
-        const passReserveResult = runAiPassReserveDecision();
-        if (passReserveResult) return passReserveResult;
-
-        const finalScoreMarkResult = runAiFinalScoreMarkDecision();
-        if (finalScoreMarkResult) return finalScoreMarkResult;
-
-        const cardSelectionResult = runAiCardSelectionDecision();
-        if (cardSelectionResult) return cardSelectionResult;
-
-        if (!isActionEffectFlowActive()) {
-          const techSelectionResult = runAiResearchTechSelectionDecision();
-          if (techSelectionResult) return techSelectionResult;
-        }
-
-        const handScanResult = runAiHandScanDecision();
-        if (handScanResult) return handScanResult;
-
-        const playCardResult = runAiPlayCardSelectionDecision();
-        if (playCardResult) return playCardResult;
-
-        const movePaymentResult = runAiMovePaymentDecision();
-        if (movePaymentResult) return movePaymentResult;
-
-        const landTargetResult = runAiLandTargetDecision();
-        if (landTargetResult) return landTargetResult;
-
-        const dataPlacementResult = runAiDataPlacementDecision();
-        if (dataPlacementResult) return dataPlacementResult;
-
-        const scanTargetResult = runAiScanTargetDecision();
-        if (scanTargetResult) return scanTargetResult;
-
-        const strategyPassiveSlotResult = runAiStrategyPassiveSlotChoiceDecision();
-        if (strategyPassiveSlotResult) return strategyPassiveSlotResult;
-
-        const effectMoveResult = runAiActionEffectMoveDecision();
-        if (effectMoveResult) return effectMoveResult;
-
-        if (isActionEffectFlowActive() && !hasActivePendingSubFlow()) {
-          const activeEffectResult = runAiActionEffectStep();
-          if (activeEffectResult) return activeEffectResult;
-        }
-
-        const readyBanrenmaResult = runAiReadyBanrenmaOpportunityOpenDecision();
-        if (readyBanrenmaResult) return readyBanrenmaResult;
-
-        const cardTriggerResult = runAiCardTriggerDecision();
-        if (cardTriggerResult) return cardTriggerResult;
-
-        const cardTriggerMoveResult = runAiCardTriggerFreeMoveDecision();
-        if (cardTriggerMoveResult) return cardTriggerMoveResult;
-
-        const cardCornerMoveResult = runAiCardCornerFreeMoveDecision();
-        if (cardCornerMoveResult) return cardCornerMoveResult;
-
-        const industryFreeMoveResult = runAiIndustryFreeMoveDecision();
-        if (industryFreeMoveResult) return industryFreeMoveResult;
-
-        const scanAction4Result = runAiScanAction4Decision();
-        if (scanAction4Result) return scanAction4Result;
-
-        const readyCardTaskResult = runAiReadyCardTaskOpenDecision();
-        if (readyCardTaskResult) return readyCardTaskResult;
-
-        const cardTaskResult = runAiCardTaskCompletionDecision();
-        if (cardTaskResult) return cardTaskResult;
-
-        const effectResult = runAiActionEffectStep();
-        if (effectResult) return effectResult;
-
-        if (hasActivePendingSubFlow()) {
-          return { ok: false, blocked: true, message: "AI 遇到尚未收口的 pending 流程" };
-        }
-
+        const nonTurnResult = runAiNonTurnAutomationStep();
+        if (nonTurnResult && !nonTurnResult.idle) return nonTurnResult;
         return runAiTurnActionDecision();
       } catch (error) {
         const entry = recordAiAutoBattleBug(error?.message || String(error), {
@@ -22776,13 +22881,17 @@
       isAiB2SectorScanRaceLost,
       isAiAutomationPaused,
       isAiAutoBattlePlayer,
+      buildAiTurnActionCandidates,
       listCardTriggerFreeMoveCandidates,
       recordAiAutoBattleLog,
+      resolveAiAutomationToTurnBoundary,
       resetAiStrategyWeights,
       restoreAiControlSnapshot,
       runAiAutoBattle,
       runAiAutoBattleBatch,
       runAiAutomationStep,
+      runAiNonTurnAutomationStep,
+      runAiSelectedTurnAction,
       runAiStrategyABTest,
       runAiStrategyTuningCycle,
       scheduleAiAutoStepIfNeeded,

@@ -13,6 +13,7 @@
 
   const REQUIRED_GLOBALS = Object.freeze([
     Object.freeze({ key: "alienTraceRewardFlow", globalName: "SetiAppAlienTraceRewardFlow" }),
+    Object.freeze({ key: "actionRuntimeModule", globalName: "SetiAppActionRuntime" }),
     Object.freeze({ key: "actionLogRuntimeModule", globalName: "SetiAppActionLogRuntime" }),
     Object.freeze({ key: "gameRecoveryModule", globalName: "SetiAppGameRecovery" }),
     Object.freeze({ key: "runtimeModule", globalName: "SetiAppRuntime" }),
