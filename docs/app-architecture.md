@@ -2,6 +2,8 @@
 
 本文档说明浏览器入口层的职责边界。这里的 app 指 `randomizer/index.html` 加载后由 `randomizer/app/**` 和 `randomizer/app.js` 组成的页面装配层；核心规则仍以 `randomizer/game/**` 为准。
 
+如果你需要看“当前 app 层到底还剩哪些逻辑、top-down 模块该怎么拆”，优先再读 [docs/app-topdown-architecture.md](./app-topdown-architecture.md)。
+
 ## 当前加载层次
 
 1. `randomizer/index.html` 按传统 `<script>` 顺序加载，无构建步骤，也不使用 ES module。
