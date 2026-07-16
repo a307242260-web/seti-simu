@@ -64,6 +64,7 @@
 - `docs/card-modeling-dsl-spec.md`：卡牌描述转换为可执行 DSL 的规范。
 - `docs/alien-design.md`：外星人通用设计总结与新增外星人检查清单。
 - `docs/ai-design.md`：电脑玩家 AI 的当前唯一设计文档（控制器接口、价值模型、目标系统、回合规划、自博弈验证），后续开发以此为准。
+- `docs/rl-headless-env.md`：RL headless env 契约、observation/action/replay schema 与当前浏览器实现映射。
 - `assets/final/final_detail.md`：终局计分 a/b/c/d 板块的规则公式。
 - `assets/industry/industry-abilities.md`：公司牌主动/被动能力设计与建模说明。
 
