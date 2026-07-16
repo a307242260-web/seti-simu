@@ -21,8 +21,9 @@
 13. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
 14. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
 15. `randomizer/app/ai-controller.js` 封装 AI 自动机、策略权重、批跑/AB 测试和 AI 决策控制器。
-16. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
-17. `randomizer/app.js` 保留运行态、流程编排、效果队列、渲染调度和各控制器接线。
+16. `randomizer/app/effects/**` 按移动扫描、奖励选择、外星人和顶层分发四个域注册具体 effect executors。
+17. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
+18. `randomizer/app.js` 保留运行态、流程编排、效果队列、渲染调度和各控制器接线。
 
 ## 文件职责
 
@@ -40,6 +41,10 @@
 - `randomizer/app/game-recovery.js`：只处理恢复快照、本地存档包和恢复流程适配；状态恢复和 UI 刷新通过显式回调注入。
 - `randomizer/app/public-api.js`：只组装 `window.SetiRandomizer` 暴露面。新增调试 API 时优先改这里，保持 API 与运行态编排分离。
 - `randomizer/app/ai-controller.js`：AI 层。内部维护 AI 批跑状态、策略权重和需求缓存；需要读取 app pending 状态时通过 `state` getter/setter，不要在模块内复制 pending 值。
+- `randomizer/app/effects/movement-scan.js`：移动、行星落点、轨道/登陆、扇区扫描和相关选择执行器。
+- `randomizer/app/effects/rewards.js`：资源、数据、抽牌、条件奖励、手牌选择和科技/扫描奖励执行器。
+- `randomizer/app/effects/aliens.js`：异常点、虫和奥陌陌的效果执行器及 continuation 适配。
+- `randomizer/app/effects/dispatcher.js`：卡牌、星球奖励、科技、公司和扫描 effect 的顶层分发；不得在 `app.js` 重建巨型 type switch。
 - `randomizer/app.js`：编排层。可以组合规则模块、维护运行时 pending 状态和刷新 UI，但不应再新增大段静态配置、散落的 DOM 查询清单、事件绑定清单、公开 API 清单或 AI 策略逻辑。
 
 ## 仍需拆分的高耦合区
