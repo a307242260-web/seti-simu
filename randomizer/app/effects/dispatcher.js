@@ -150,6 +150,7 @@
       recordAbilityCommands,
       recordHistoryCommand,
       recordTechBonusScore,
+      renderDebugPlayerSwitch,
       renderPlayerHand,
       renderPlayerStats,
       renderRockets,
@@ -367,6 +368,13 @@
     function openInitialIncomeEffect(effect) {
       const playerId = effect?.options?.playerId;
       const incomePlayer = getPlayerById(playerId) || getCurrentPlayer();
+
+      if (incomePlayer?.id) {
+        playerState.currentPlayerId = incomePlayer.id;
+        renderDebugPlayerSwitch();
+        renderPlayerStats();
+        renderPlayerHand();
+      }
 
       const result = beginDiscardSelection(1, {
         type: "initial_income",

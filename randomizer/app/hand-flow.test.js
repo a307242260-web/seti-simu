@@ -293,6 +293,10 @@ function createBaseContext(player, overrides = {}) {
     executeIndustryFreeMove() {
       return { ok: true };
     },
+    executeCardEffectMove(_deltaX, _deltaY, _rocketId, payment) {
+      events.cardEffectMovePayment = payment;
+      return { ok: true, payment };
+    },
     createActionContext() {
       return {};
     },
@@ -457,6 +461,35 @@ function createBaseContext(player, overrides = {}) {
   const player = {
     id: "player-1",
     color: "white",
+    resources: { credits: 0, energy: 1, handSize: 0 },
+    hand: [],
+  };
+  const events = {};
+  const pendingState = {
+    movePayment: {
+      player,
+      deltaX: 1,
+      deltaY: 0,
+      rocketId: 7,
+      requiredMovePoints: 1,
+      selectedHandIndices: [],
+      cardMoveEffectContext: { terrainRequired: 2, poolUsed: 1 },
+    },
+  };
+  const context = createBaseContext(player, { events, pendingState });
+  const handFlow = createHandFlow(context);
+  const result = handFlow.confirmMovePayment({ automated: true });
+  assert.equal(result.ok, true);
+  assert.equal(events.cardEffectMovePayment.terrainRequired, 2);
+  assert.equal(events.cardEffectMovePayment.poolUsed, 1);
+  assert.equal(events.cardEffectMovePayment.energyCost, 1);
+  assert.equal(pendingState.movePayment, null);
+}
+
+{
+  const player = {
+    id: "player-1",
+    color: "white",
     resources: { credits: 0, energy: 0, handSize: 1, publicity: 0 },
     hand: [{
       id: "corner-card",
@@ -568,6 +601,39 @@ function createBaseContext(player, overrides = {}) {
   const result = handFlow.handleHandCardDiscard(0);
   assert.equal(result.ok, true);
   assert.equal(context.events.incomeApplied, 1);
+}
+
+{
+  const player = {
+    id: "player-1",
+    color: "white",
+    resources: { credits: 0, energy: 0, handSize: 1 },
+    hand: [{ id: "initial-income-card", label: "初始收入牌" }],
+  };
+  const effect = { id: "initial-income-player-1-1", status: "active", result: null };
+  const context = createBaseContext(player);
+  context.isIncomeDiscardActionType = (type) => type === "initial_income";
+  context.getCurrentActionEffect = () => effect;
+  context.completeCurrentActionEffect = () => {
+    context.events.completedInitialIncome = (context.events.completedInitialIncome || 0) + 1;
+    effect.status = "completed";
+  };
+  context.applyIncomeFromCard = () => ({
+    ok: true,
+    gain: { credits: 1 },
+    message: "初始收入完成",
+  });
+  const handFlow = createHandFlow(context);
+  assert.equal(handFlow.beginDiscardSelection(1, {
+    type: "initial_income",
+    player,
+    fromEffectFlow: true,
+  }).ok, true);
+  const result = handFlow.handleHandCardDiscard(0);
+  assert.equal(result.ok, true);
+  assert.equal(context.events.completedInitialIncome, 1);
+  assert.equal(effect.status, "completed");
+  assert.equal(effect.result.payload.gain.credits, 1);
 }
 
 console.log("hand-flow tests passed");

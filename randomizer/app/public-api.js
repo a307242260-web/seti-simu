@@ -83,7 +83,11 @@
       revealAomomoForDebug,
       revealRunezuForDebug,
       randomizeAliens,
+      startNewGame,
       startInitialSelection,
+      getInitialSelectionOffer,
+      handleInitialSelectionCardClick,
+      confirmInitialSelectionForCurrentPlayer,
       configureAiAutoBattle,
       configureAiStrategyWeights,
       resetAiStrategyWeights,
@@ -99,6 +103,10 @@
       runAiStrategyTuningCycle,
       stopAiAutoBattle,
       runAiAutomationStep,
+      runAiNonTurnAutomationStep,
+      runAiSelectedTurnAction,
+      buildAiTurnActionCandidates,
+      resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,
       getAiAutoBattleAnalysis,
@@ -144,6 +152,7 @@
       toggleCheatMode,
       researchTechForCurrentPlayer,
       finalizeTechTakeResult,
+      dispatchRuntimeAction,
     } = context;
 
     return {
@@ -246,8 +255,12 @@
         return result;
       },
       randomizeAliens,
+      startNewGame,
       startInitialSelection,
       getInitialSelectionState: () => structuredClone(setupSelectionState),
+      getInitialSelectionOffer: (playerId) => structuredClone(getInitialSelectionOffer?.(playerId) || null),
+      selectInitialSelectionCard: (kind, cardId) => handleInitialSelectionCardClick?.(kind, cardId),
+      confirmInitialSelection: () => confirmInitialSelectionForCurrentPlayer?.(),
       configureAiAutoBattle,
       configureAiStrategyWeights,
       resetAiStrategyWeights,
@@ -263,6 +276,31 @@
       runAiStrategyTuningCycle,
       stopAiAutoBattle,
       runAiAutoBattleStep: runAiAutomationStep,
+      runAiPendingStep: runAiNonTurnAutomationStep,
+      resolveAiToTurnBoundary: resolveAiAutomationToTurnBoundary,
+      runAiSelectedTurnAction,
+      listAiTurnActionCandidates: () => {
+        const result = buildAiTurnActionCandidates();
+        if (!result?.ok) return result;
+        return {
+          ...result,
+          candidates: (result.candidates || []).map((candidate, candidateIndex) => ({
+            candidateIndex,
+            id: candidate.id || null,
+            kind: candidate.kind || null,
+            label: candidate.label || null,
+            score: candidate.score ?? null,
+            reason: candidate.reason || null,
+            tradeId: candidate.tradeId || null,
+            cardId: candidate.cardId || null,
+            cardInstanceId: candidate.cardInstanceId || null,
+            handIndex: candidate.handIndex ?? null,
+            blueSlot: candidate.blueSlot ?? null,
+            target: structuredClone(candidate.target || null),
+            available: candidate.available !== false,
+          })),
+        };
+      },
       getAiAutoBattleProgress,
       getAiAutoBattleReport,
       getAiAutoBattleAnalysis,
@@ -371,6 +409,7 @@
       createRecoverySnapshot: createGameRecoverySnapshot,
       restoreRecoverySnapshot: applyGameRecoverySnapshot,
       recoverFromActionLog,
+      dispatchRuntimeAction,
       getPlanetStatsState: () => structuredClone(planetStatsState),
       getCurrentPlayer: () => structuredClone(getCurrentPlayer()),
       getAiDebugState: () => structuredClone({

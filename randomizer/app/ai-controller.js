@@ -87,6 +87,7 @@
       confirmDataPlacement,
       confirmDiscardAnyForIncome,
       confirmInitialSelectionForCurrentPlayer,
+      confirmAlienRevealNotice,
       confirmLandTargetPicker,
       confirmMovePayment,
       confirmPassReserveSelection,
@@ -228,6 +229,7 @@
     const aiAutoBattleState = {
       enabled: false,
       running: false,
+      manualDrive: false,
       playerIds: [],
       aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
       logs: [],
@@ -1420,6 +1422,7 @@
       return Boolean(
         aiAutoBattleState.enabled
         && !aiAutoBattleState.running
+        && !aiAutoBattleState.manualDrive
         && !aiAutoStepSuspended
         && !aiAutoStepPausedOnBug
         && !aiAutoStepScheduled
@@ -1545,6 +1548,9 @@
         }
         if (options.stepDelayMs != null) {
           aiAutoBattleState.stepDelayMs = Math.max(0, Math.round(Number(options.stepDelayMs) || 0));
+        }
+        if (options.manualDrive != null) {
+          aiAutoBattleState.manualDrive = options.manualDrive === true;
         }
         aiAutoBattleState.compactLogs = options.compactLogs === true;
         if (options.maxBugRepeats != null) {
@@ -18243,7 +18249,15 @@
           selected,
           candidates,
         });
-        return executeFreeMoveForScanAction4(selected.deltaX, selected.deltaY, selected.rocketId);
+        const result = executeFreeMoveForScanAction4(selected.deltaX, selected.deltaY, selected.rocketId);
+        if (result?.ok !== false) return result;
+        skipCurrentActionEffect?.();
+        return {
+          ok: true,
+          progressed: true,
+          skipped: true,
+          message: `免费移动执行失败，已跳过：${result.message || "未知原因"}`,
+        };
       }
 
       const ctx = state.pendingActionEffectFlow.cardMoveEffect;
@@ -18275,7 +18289,15 @@
         selected,
         candidates,
       });
-      return executeCardMoveForEffect(selected.deltaX, selected.deltaY, selected.rocketId);
+      const result = executeCardMoveForEffect(selected.deltaX, selected.deltaY, selected.rocketId);
+      if (result?.ok !== false) return result;
+      skipCurrentActionEffect?.();
+      return {
+        ok: true,
+        progressed: true,
+        skipped: true,
+        message: `卡牌移动执行失败，已跳过：${result.message || "未知原因"}`,
+      };
     }
 
     function runAiCardCornerFreeMoveDecision() {
@@ -19052,7 +19074,14 @@
 
       const target = chooseAiAlienTraceTarget(player);
       if (!target?.button) {
-        return { ok: false, blocked: true, message: "AI 没有可用外星人痕迹目标" };
+        const message = "AI 没有可用外星人痕迹目标，已跳过当前效果";
+        recordAiAutoBattleLog("alien-trace-skip", message, {
+          logPlayerId: player.id || null,
+          logPlayerColor: player.color || null,
+          mode: state.alienTracePickerState?.mode || null,
+        });
+        skipCurrentActionEffect?.();
+        return { ok: true, progressed: true, skipped: true, message };
       }
       const button = target.button;
       const traceType = getAiAlienTraceTargetTraceType(target);
@@ -21694,7 +21723,23 @@
         effectId: effect.id || null,
         effectType: effect.type || null,
       });
-      return executeActionEffect(effect);
+      const result = executeActionEffect(effect);
+      if (
+        result?.ok === false
+        && (
+          effect.type === cardEffects.EFFECT_TYPES.CARD_MOVE
+          || effect.type === cardEffects.EFFECT_TYPES.FREE_MOVE
+        )
+      ) {
+        skipCurrentActionEffect?.();
+        return {
+          ok: true,
+          progressed: true,
+          skipped: true,
+          message: `${effect.label || "移动效果"}执行失败，已跳过：${result.message || "未知原因"}`,
+        };
+      }
+      return result;
     }
 
     function hasAiPendingDecisionForCurrentEffect(pending = getAiAutoBattlePendingState()) {
@@ -21756,6 +21801,14 @@
     function runAiNonTurnAutomationStep() {
       if (!ai?.policy) return { ok: false, blocked: true, message: "SetiAI 未加载" };
       if (isGameEnded()) return { ok: true, done: true, message: "游戏已结束" };
+
+      if (state.pendingAlienRevealConfirmation) {
+        return confirmAlienRevealNotice?.() || {
+          ok: false,
+          blocked: true,
+          message: "AI 无法确认外星人揭示",
+        };
+      }
 
       const alienUseResult = runAiAlienUseDecision();
       if (alienUseResult) return alienUseResult;

@@ -85,6 +85,7 @@
       executeFreeMoveForCardCorner,
       executeFreeMoveForCardTrigger,
       executeIndustryFreeMove,
+      executeCardEffectMove,
       createActionContext,
       recordMoveActionHistory,
       renderRocketElement,
@@ -441,8 +442,18 @@
 
       const pending = pendingState.movePayment;
       const supplementalMoveContext = pending.supplementalMoveContext || null;
+      const cardMoveEffectContext = pending.cardMoveEffectContext || null;
       pendingState.movePayment = null;
       syncMovePaymentChrome();
+
+      if (cardMoveEffectContext) {
+        return executeCardEffectMove(pending.deltaX, pending.deltaY, pending.rocketId, {
+          terrainRequired: cardMoveEffectContext.terrainRequired,
+          poolUsed: cardMoveEffectContext.poolUsed,
+          energyCost,
+          discardCommand,
+        });
+      }
 
       if (supplementalMoveContext?.type === "scan_action_4") {
         return executeFreeMoveForScanAction4(pending.deltaX, pending.deltaY, pending.rocketId, {
@@ -1043,6 +1054,19 @@
 
       if (isIncomeDiscardActionType(pending?.type)) {
         const incomeResult = applyIncomeFromCard(pending.player || getCurrentPlayer(), discardedCards[0]);
+        if (pending.type === "initial_income" && incomeResult.ok && pending.fromEffectFlow) {
+          const effect = getCurrentActionEffect();
+          if (effect) {
+            effect.result = {
+              ok: true,
+              undoable: false,
+              irreversible: incomeResult.irreversible || null,
+              message: incomeResult.message,
+              payload: { gain: incomeResult.gain, card: discardedCards[0] },
+            };
+            completeCurrentActionEffect();
+          }
+        }
         rocketState.statusNote = incomeResult.ok ? incomeResult.message : (incomeResult.message || "收入失败");
         renderPlayerStats();
         renderPublicCards();

@@ -2,6 +2,15 @@
 
 本文定义 SETI 第一阶段强化学习 headless 环境的统一契约。目标不是直接实现 simulator，而是给后续 `simulator / training harness / evaluation harness` 提供唯一上游接口，避免继续围绕浏览器 UI、overlay 按钮或临时 pending 结构各自发明协议。
 
+## 当前实现
+
+- Node 入口：`randomizer/app/headless-env.js`，通过 `createHeadlessEnv()` 创建单局环境。
+- 已实现 `reset / observe / legalActions / step / isTerminal / getReplay / loadReplay / createCheckpoint / loadCheckpoint / dispose`。
+- 顶层行动通过 `action-runtime` 分发，pending/effect 由 AI 自动机直接调用运行时处理函数收敛，不依赖用户点击。
+- `randomizer/app/headless-env.test.js` 覆盖固定 seed 的完整 4 人局、terminal、replay 重放一致性和 actor 校验。
+
+当前 Node 启动仍需要一个最小 view host 来装配传统浏览器 bundle；它不参与动作选择或规则结算，但说明 composition root 尚未完全摆脱 DOM 形状。后续若继续提高训练吞吐，应把 runtime composition 再抽成可直接注入 no-op view adapter 的 Node 入口，而不是继续扩充浏览器宿主模拟。
+
 ## 1. 设计目标
 
 - 训练环境只暴露公开信息与当前决策必需的自有私有信息。

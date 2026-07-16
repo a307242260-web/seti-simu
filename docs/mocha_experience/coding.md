@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-17
+- source_issue: SETI-16
+- observation: headless simulator 的完成标准应区分“规则/决策可在 Node 中直接推进”和“用宿主 shim 把浏览器 composition root 跑起来”；后者可用于迁移期 parity，但不应继续靠补 DOM 行为扩张，最终边界应是 runtime composition + 可注入 no-op view adapter。
+- evidence: SETI-16 owner 评论明确否定继续堆 fake DOM，并要求浏览器控件与模拟器共同调用 action；本轮完整 4 人局与 replay 已能通过 action runtime 推进，但 `headless-env.js` 启动传统 bundle 时仍保留最小 view host，`docs/rl-headless-env.md` 已明确该残余边界。
+- promote_to: none
+- promotion_status: candidate
+- decision: 记录为架构迁移候选经验，不升级 agent prompt 或 loop template；等待下一次抽离 Node runtime composition 时验证 no-op view adapter 是否能完全取代宿主 shim。
+
+- date: 2026-07-17
 - source_issue: SETI-27
 - observation: 通过 `issue_transition.py` 写入包含 shell 变量的 `verification_command` 时，若命令参数由外层双引号包裹，`$test` 会在写 metadata 前被当前 shell 展开，造成记录与实际验证命令不一致；应使用能保留字面量的引用方式，并在收口前核对 metadata。
 - evidence: SETI-27 的第二次 `start` timeline 将预期的 `node "$test"` 记录成 `node ""`，而实际工作树与 staged 快照全量回归均使用了正确循环命令并通过。
