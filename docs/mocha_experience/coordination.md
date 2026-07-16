@@ -12,6 +12,16 @@
 - promotion_status:
 - decision:
 
+## 2026-07-17：串行子 issue 按自身依赖逐项解锁
+
+- date: 2026-07-17
+- source_issue: SETI-14
+- observation: 父 issue 的阶段拆解只负责表达总体顺序；每次解锁 backlog 子 issue 时，仍需读取所有等待项的自身描述，并以其中声明的依赖为准。若描述与父级拆解冲突，应保持 backlog 并先确认，不能按父级摘要直接推进。
+- evidence: SETI-16 完成后的系统线程 `4cf797c6-5827-407a-ad7e-ba7a5f1fb155` 与 SETI-15 完成后的线程 `ebfab6b9-5c59-446b-b52b-c1bfbf2f76ac` 均要求逐项核对；实际核对后先只解锁依赖 headless simulator 的 SETI-15，继续保留依赖 baseline/checkpoint 的 SETI-18，待 SETI-15 完成后才解锁 SETI-18。
+- promote_to: none
+- promotion_status: candidate
+- decision: 当前证据来自一个四阶段串行父 issue，先保留为 coordination 候选经验，不修改 issue-workflow；后续观察 3 个含 backlog 依赖链的父 issue。
+
 ## 2026-07-17：大型拆分用结果硬门槛验收
 
 - date: 2026-07-17

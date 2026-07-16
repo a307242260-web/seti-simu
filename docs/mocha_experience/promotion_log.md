@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-17
+- source: SETI-14
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航
+- target_component: 串行子 issue 解锁实践
+- target_file: docs/mocha_experience/coordination.md
+- remote_skill_id: none
+- change: 记录 backlog 子 issue 必须按自身描述中的依赖逐项解锁；若与父级拆解冲突则保持 backlog 并先确认。
+- applied_change: 仅更新 coordination experience 与本决策契约，不修改 issue-workflow、watcher、loop template 或 agent prompt。
+- expected_effect: 避免父级摘要掩盖子项额外前置，减少越级启动、重复返工和并发写入冲突。
+- evaluation_window: 后续 3 个包含两个或以上 backlog 依赖项的父 issue
+- success_signal: 每次子项完成后都能列出等待项自身依赖与满足证据；未满足或冲突项保持 backlog，满足项才触发 run。
+- rollback_condition: 若平台后续提供结构化依赖图并在状态提升时自动强校验，或连续 3 个父 issue 证明逐项读取没有额外发现，则合并或删除该候选。
+- risk: 每次阶段完成都读取全部等待项会增加少量协调成本；子项很多时应优先使用结构化列表和紧凑字段读取。
+- evidence_before: SETI-14 的系统线程 `4cf797c6-5827-407a-ad7e-ba7a5f1fb155`、`ebfab6b9-5c59-446b-b52b-c1bfbf2f76ac`；SETI-14 timeline 中 SETI-16→SETI-15→SETI-18 的 wait_child 变化。
+- owner_or_agent_decision: 领航按父 issue harness-evolve closeout 自决记录 candidate，暂不升级长期组件。
+- applied_at: 2026-07-17
+- verification: 核对 SETI-14 全部子 issue 描述、终态、timeline 与触发线程；SETI-15 仅在 SETI-16 完成后启动，SETI-18 仅在 SETI-15 完成后启动。
+- observed_outcome: 四个子 issue 最终全部完成，串行推进过程中未越级启动，也未发现描述与父级拆解冲突。
+- keep_or_revise: 保持 candidate；待 3 个同类父 issue 后复审是否升级为 issue-workflow 提醒或结构化依赖检查。
+
+- date: 2026-07-17
 - source: SETI-18
 - promoted_to: none
 - promotion_decision: candidate
