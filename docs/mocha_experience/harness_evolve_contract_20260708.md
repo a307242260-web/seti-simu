@@ -21,4 +21,3 @@
 ## 决策要求
 
 任何 candidate、promote 或 reject 都必须在 `promotion_log.md` 记录来源、目标、改动、预期效果、验证窗口、成功信号、回滚条件和最终判断。watcher 只能提醒或标记问题，不能替 owner 或 agent 做业务决策。
-
