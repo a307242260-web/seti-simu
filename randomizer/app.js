@@ -40,6 +40,8 @@
     aiRaceModel,
     ai,
     alienTraceRewardFlow,
+    actionLogRuntimeModule,
+    gameRecoveryModule,
     runtimeModule,
     refreshModule,
   } = dependencies;
@@ -1225,27 +1227,17 @@
   }
 
   function normalizeActionLogText(text) {
-    return String(text || "")
-      .replace(/\s+/g, " ")
-      .trim();
+    return actionLogRuntimeModule.normalizeText(text);
   }
 
   function compactActionLogText(text) {
-    return normalizeActionLogText(text).replace(/\s+/g, "");
+    return actionLogRuntimeModule.compactText(text);
   }
 
   function createActionLogPlayedCardSnapshot(card) {
-    if (!card) return null;
-    const label = normalizeActionLogText(card.label || cards.getCardLabel(card));
-    const src = card.src || null;
-    if (!label && !src) return null;
-    return {
-      id: card.id || null,
-      cardId: card.cardId || null,
-      label,
-      cardName: card.cardName || label,
-      src,
-    };
+    return actionLogRuntimeModule.createPlayedCardSnapshot(card, {
+      getCardLabel: cards.getCardLabel,
+    });
   }
 
   function bindCardHoverPreviewRepositioning() {
@@ -1361,68 +1353,27 @@
   }
 
   function simplifyActionLogDetailForLabel(label, detail) {
-    const cleanDetail = normalizeActionLogText(detail);
-    if (!cleanDetail) return "";
-    const compactLabel = compactActionLogText(label).replace(/奖励/g, "");
-    if (!compactLabel) return cleanDetail;
-    const parts = cleanDetail
-      .split("；")
-      .map(normalizeActionLogText)
-      .filter(Boolean)
-      .filter((part) => {
-        const redundantKey = getActionLogDetailPartRedundantKey(part);
-        return !redundantKey || !compactLabel.includes(redundantKey);
-      });
-    return parts.join("；");
+    return actionLogRuntimeModule.simplifyDetailForLabel(label, detail);
   }
 
   function composeActionLogStepText(label, detail) {
-    const cleanLabel = normalizeActionLogText(label);
-    const cleanDetail = simplifyActionLogDetailForLabel(cleanLabel, detail);
-    if (!cleanDetail || cleanDetail === cleanLabel) return cleanLabel || "行动效果";
-    if (cleanDetail.startsWith(`${cleanLabel}：`) || cleanDetail.startsWith(`${cleanLabel}:`)) {
-      return cleanDetail;
-    }
-    if (!cleanLabel) return cleanDetail;
-    return `${cleanLabel}：${cleanDetail}`;
+    return actionLogRuntimeModule.composeStepText(label, detail);
   }
 
   function normalizeActionLogBriefingSnapshot(briefing) {
-    if (!briefing || typeof briefing !== "object") return null;
-    const snapshot = {};
-    if (Array.isArray(briefing.scanTargets)) {
-      const scanTargets = briefing.scanTargets
-        .map((target) => {
-          if (!target || typeof target !== "object") return null;
-          const x = Number.isFinite(Number(target.x ?? target.sectorX))
-            ? solar.mod8(Number(target.x ?? target.sectorX))
-            : null;
-          const nebulaId = normalizeActionLogText(target.nebulaId);
-          const label = normalizeActionLogText(target.label || (nebulaId ? data.getNebulaLabel?.(nebulaId) : ""));
-          if (x == null && !label && !nebulaId) return null;
-          return { x, nebulaId: nebulaId || null, label: label || null };
-        })
-        .filter(Boolean);
-      if (scanTargets.length) snapshot.scanTargets = scanTargets;
-    }
-    return Object.keys(snapshot).length ? snapshot : null;
+    return actionLogRuntimeModule.normalizeBriefingSnapshot(briefing, {
+      normalizeSectorX: solar.mod8,
+      getNebulaLabel: data.getNebulaLabel,
+    });
   }
 
   function normalizeActionLogStep(source, label, detail = null, options = {}) {
-    const text = composeActionLogStepText(label, detail);
-    if (!text) return null;
-    return {
-      stepId: options.stepId || options.id || null,
-      source,
-      text,
-      label: normalizeActionLogText(label),
-      detail: normalizeActionLogText(detail),
-      undoable: options.undoable !== false,
-      irreversibleCode: options.irreversibleCode || null,
-      irreversibleReason: normalizeActionLogText(options.irreversibleReason),
-      playedCard: createActionLogPlayedCardSnapshot(options.playedCard),
-      briefing: normalizeActionLogBriefingSnapshot(options.briefing),
-    };
+    return actionLogRuntimeModule.normalizeStep(source, label, detail, {
+      ...options,
+      getCardLabel: cards.getCardLabel,
+      normalizeSectorX: solar.mod8,
+      getNebulaLabel: data.getNebulaLabel,
+    });
   }
 
   function actionLogOptionsFromHistoryStep(step = {}) {
@@ -1543,44 +1494,17 @@
   }
 
   function ensureActionLogDraft(options = {}) {
-    const player = options.player || getCurrentPlayer();
-    const playerId = options.playerId || player?.id || playerState.currentPlayerId || null;
-    const playerLabel = options.playerLabel || getPlayerLabelById(playerId);
-    const actionCycleNumber = getActionCycleNumber();
-    const isSameTurnDraft = actionLogState.draft
-      && actionLogState.draft.roundNumber === turnState.roundNumber
-      && actionLogState.draft.rawTurnNumber === turnState.turnNumber
-      && actionLogState.draft.playerId === playerId;
-
-    if (!isSameTurnDraft) {
-      actionLogState.draft = {
-        roundNumber: turnState.roundNumber,
-        turnNumber: turnState.turnNumber,
-        rawTurnNumber: turnState.turnNumber,
-        actionCycleNumber,
-        playerId,
-        playerLabel,
-        actionType: null,
-        actionLabel: "本回合行动",
-        steps: [],
-      };
-    }
-
-    if (options.actionType) {
-      const draft = actionLogState.draft;
-      const shouldReplaceAction = options.source !== HISTORY_SOURCE_QUICK
-        || !draft.actionType
-        || draft.actionType === "quick";
-      if (shouldReplaceAction) {
-        draft.actionType = options.actionType;
-        draft.actionLabel = getActionLogActionLabel(options.actionType, options.label);
-      }
-    } else if (!actionLogState.draft.actionType && options.source === HISTORY_SOURCE_QUICK) {
-      actionLogState.draft.actionType = "quick";
-      actionLogState.draft.actionLabel = ACTION_LOG_DEFAULT_LABELS.quick;
-    }
-
-    return actionLogState.draft;
+    return actionLogRuntimeModule.ensureDraft(actionLogState, {
+      getCurrentPlayer,
+      currentPlayerId: playerState.currentPlayerId,
+      roundNumber: turnState.roundNumber,
+      turnNumber: turnState.turnNumber,
+      getPlayerLabelById,
+      getActionCycleNumber,
+      getActionLogActionLabel,
+      historySourceQuick: HISTORY_SOURCE_QUICK,
+      defaultQuickLabel: ACTION_LOG_DEFAULT_LABELS.quick,
+    }, options);
   }
 
   function startActionLogDraft(actionType, label, options = {}) {
@@ -1638,11 +1562,11 @@
   }
 
   function pruneEmptyActionLogDraft() {
-    const draft = actionLogState.draft;
-    if (!draft) return;
-    if (!draft.steps.length && !actionHistory.hasSession() && !quickActionHistory.hasSession() && !pendingState.actionExecuted) {
-      actionLogState.draft = null;
-    }
+    actionLogRuntimeModule.pruneEmptyDraft(actionLogState, {
+      hasMainHistorySession: () => actionHistory.hasSession(),
+      hasQuickHistorySession: () => quickActionHistory.hasSession(),
+      actionExecuted: pendingState.actionExecuted,
+    });
   }
 
   function resetActionLog() {
@@ -1654,16 +1578,14 @@
   }
 
   function createGameRecoverySnapshot(meta = {}) {
-    return {
+    return gameRecoveryModule.createGameRecoverySnapshot({
       version: GAME_RECOVERY_VERSION,
-      meta: {
-        roundNumber: turnState.roundNumber,
-        turnNumber: turnState.turnNumber,
-        actionCycleNumber: getActionCycleNumber(),
-        currentPlayerId: playerState.currentPlayerId,
-        entryId: meta.entryId ?? null,
-        label: meta.label || null,
-      },
+      roundNumber: turnState.roundNumber,
+      turnNumber: turnState.turnNumber,
+      actionCycleNumber: getActionCycleNumber(),
+      currentPlayerId: playerState.currentPlayerId,
+      entryId: meta.entryId ?? null,
+      label: meta.label || null,
       state: {
         solarState: structuredClone(solarState),
         nebulaDataState: structuredClone(nebulaDataState),
@@ -1681,7 +1603,7 @@
       runtime: {
         aiControl: createAiControlSnapshot(),
       },
-    };
+    });
   }
 
   function attachRecoverySnapshotToActionLogEntry(entry, label = null) {
@@ -1703,62 +1625,42 @@
   }
 
   function normalizeRecoverableActionLogEntry(entry, options = {}) {
-    const includeRecovery = options.includeRecovery !== false;
-    const clone = structuredClone(entry);
-    if (!includeRecovery) {
-      delete clone.recoverySnapshot;
-    }
-    return clone;
+    return gameRecoveryModule.normalizeRecoverableActionLogEntry(entry, options);
   }
 
   function getRecoverableActionLog(options = {}) {
-    return actionLogState.entries.map((entry) => normalizeRecoverableActionLogEntry(entry, options));
+    return gameRecoveryModule.getRecoverableActionLogEntries(actionLogState.entries, options);
   }
 
   function createActionLogRecoveryPackage(options = {}) {
-    return {
+    return gameRecoveryModule.createActionLogRecoveryPackage({
       version: GAME_RECOVERY_VERSION,
-      latestSnapshot: createGameRecoverySnapshot({ label: "当前局面" }),
-      entries: getRecoverableActionLog({ includeRecovery: options.includeRecovery !== false }),
-    };
+      entries: actionLogState.entries,
+      includeRecovery: options.includeRecovery !== false,
+      createSnapshot: createGameRecoverySnapshot,
+    });
   }
 
   function getPersistentGameStorage() {
-    try {
-      return window.localStorage || null;
-    } catch (error) {
-      return null;
-    }
+    return gameRecoveryModule.getPersistentGameStorage(window);
   }
 
   function readPersistentGamePackage() {
-    const storage = getPersistentGameStorage();
-    if (!storage) return null;
-    try {
-      const raw = storage.getItem(PERSISTENT_GAME_STORAGE_KEY);
-      if (!raw) return null;
-      const parsed = JSON.parse(raw);
-      return parsed && typeof parsed === "object" ? parsed : null;
-    } catch (error) {
-      storage.removeItem(PERSISTENT_GAME_STORAGE_KEY);
-      return null;
-    }
+    return gameRecoveryModule.readPersistentGamePackage(
+      getPersistentGameStorage(),
+      PERSISTENT_GAME_STORAGE_KEY,
+    );
   }
 
   function hasPersistentGameState() {
-    const saved = readPersistentGamePackage();
-    return Boolean(saved?.latestSnapshot || saved?.snapshot);
+    return gameRecoveryModule.hasPersistentGameState(readPersistentGamePackage());
   }
 
   function clearPersistentGameState() {
-    const storage = getPersistentGameStorage();
-    if (!storage) return false;
-    try {
-      storage.removeItem(PERSISTENT_GAME_STORAGE_KEY);
-      return true;
-    } catch (error) {
-      return false;
-    }
+    return gameRecoveryModule.clearPersistentGameState(
+      getPersistentGameStorage(),
+      PERSISTENT_GAME_STORAGE_KEY,
+    );
   }
 
   function isPersistentGameStateStable() {
@@ -1776,13 +1678,13 @@
   }
 
   function createPersistentGamePackage(label = "本地自动保存") {
-    return {
+    return gameRecoveryModule.createPersistentGamePackage({
       version: GAME_RECOVERY_VERSION,
-      savedAt: new Date().toISOString(),
-      latestSnapshot: createGameRecoverySnapshot({ label }),
-      entries: getRecoverableActionLog({ includeRecovery: false }),
+      label,
+      entries: actionLogState.entries,
       activeReportTab: actionLogState.activeReportTab,
-    };
+      createSnapshot: createGameRecoverySnapshot,
+    });
   }
 
   function savePersistentGameStateNow(options = {}) {
@@ -1952,25 +1854,11 @@
   }
 
   function getRecoveryEntriesFromInput(logOrPackage) {
-    if (Array.isArray(logOrPackage)) return logOrPackage;
-    if (Array.isArray(logOrPackage?.entries)) return logOrPackage.entries;
-    return [];
+    return gameRecoveryModule.getRecoveryEntriesFromInput(logOrPackage);
   }
 
   function getRecoverySnapshotFromLog(logOrPackage, options = {}) {
-    const entries = getRecoveryEntriesFromInput(logOrPackage);
-    if (!entries.length) {
-      return logOrPackage?.latestSnapshot || logOrPackage?.baseSnapshot || null;
-    }
-    if (options.entryId != null) {
-      const match = entries.find((entry) => entry.id === options.entryId || String(entry.id) === String(options.entryId));
-      return match?.recoverySnapshot || null;
-    }
-    const index = Number.isInteger(options.index)
-      ? options.index
-      : entries.length - 1;
-    const entry = entries[Math.max(0, Math.min(entries.length - 1, index))];
-    return entry?.recoverySnapshot || null;
+    return gameRecoveryModule.getRecoverySnapshotFromLog(logOrPackage, options);
   }
 
   function clearTransientStateForRecovery() {
@@ -2099,70 +1987,35 @@
   }
 
   function applyGameRecoverySnapshot(snapshot, options = {}) {
-    const state = snapshot?.state || snapshot;
-    if (!state) {
-      return { ok: false, message: "行动日志中没有可恢复快照" };
-    }
-    const slices = {
-      solarState,
-      nebulaDataState,
-      alienGameState,
-      finalScoringState,
-      playerState,
-      turnState,
-      rocketState,
-      planetStatsState,
-      techGameState,
-      cardState,
-      cardTaskState,
-      setupSelectionState,
-    };
-    for (const [key, target] of Object.entries(slices)) {
-      if (state[key] != null) {
-        restoreMutableObject(target, state[key]);
-      }
-    }
-    getActionCycleNumber();
-    clearTransientStateForRecovery();
-    const aiControlResult = restoreAiControlSnapshot(snapshot?.runtime?.aiControl || null, {
-      missingMessage: "旧存档未包含电脑配置，已按默认人机对局恢复",
+    return gameRecoveryModule.applyGameRecoverySnapshot(snapshot, {
+      ...options,
+      stateSlices: {
+        solarState,
+        nebulaDataState,
+        alienGameState,
+        finalScoringState,
+        playerState,
+        turnState,
+        rocketState,
+        planetStatsState,
+        techGameState,
+        cardState,
+        cardTaskState,
+        setupSelectionState,
+      },
+      restoreMutableObject,
+      onAfterStateRestored: () => {
+        getActionCycleNumber();
+        clearTransientStateForRecovery();
+      },
+      restoreAiControlSnapshot,
+      refreshAfterGameRecovery,
+      getRecoveryMessage: () => rocketState.statusNote,
     });
-    const baseMessage = options.message || "已从行动日志恢复局面";
-    const recoveryMessage = aiControlResult?.missing
-      || aiControlResult?.invalidPlayerIds
-      || aiControlResult?.clearedPausedOnBug
-      ? `${baseMessage}；${aiControlResult.message}`
-      : baseMessage;
-    refreshAfterGameRecovery(recoveryMessage);
-    return {
-      ok: true,
-      snapshotVersion: snapshot.version || null,
-      aiControl: aiControlResult,
-      message: rocketState.statusNote,
-    };
   }
 
   function importActionLogEntries(entries, options = {}) {
-    const normalizedEntries = (entries || [])
-      .map((entry) => structuredClone(entry))
-      .filter((entry) => entry && entry.id != null);
-    if (options.truncateToEntryId != null) {
-      const index = normalizedEntries.findIndex((entry) => (
-        entry.id === options.truncateToEntryId || String(entry.id) === String(options.truncateToEntryId)
-      ));
-      actionLogState.entries = index >= 0
-        ? normalizedEntries.slice(0, index + 1)
-        : normalizedEntries;
-    } else if (Number.isInteger(options.truncateToIndex)) {
-      actionLogState.entries = normalizedEntries.slice(0, options.truncateToIndex + 1);
-    } else {
-      actionLogState.entries = normalizedEntries;
-    }
-    actionLogState.nextEntryId = actionLogState.entries.reduce(
-      (max, entry) => Math.max(max, Math.round(Number(entry.id)) || 0),
-      0,
-    ) + 1;
-    actionLogState.draft = null;
+    actionLogRuntimeModule.importEntries(actionLogState, entries, options);
   }
 
   function recoverFromActionLog(logOrPackage, options = {}) {
@@ -2183,30 +2036,15 @@
   }
 
   function commitActionLogDraft(options = {}) {
-    const draft = actionLogState.draft;
-    if (!draft) return null;
-    const hasSteps = draft.steps.length > 0;
-    const shouldCommit = hasSteps || options.force;
-    if (!shouldCommit) {
-      actionLogState.draft = null;
+    const entry = actionLogRuntimeModule.createEntryFromDraft(actionLogState, {
+      getDisplayedTurnNumber,
+      getActionCycleNumber,
+      getActionLogActionLabel,
+    }, options);
+    if (!entry && !actionLogState.draft) {
       renderActionLog();
       return null;
     }
-
-    const rawTurnNumber = draft.rawTurnNumber ?? draft.turnNumber;
-    const entry = {
-      id: actionLogState.nextEntryId,
-      roundNumber: draft.roundNumber,
-      turnNumber: getDisplayedTurnNumber(rawTurnNumber),
-      rawTurnNumber,
-      actionCycleNumber: draft.actionCycleNumber ?? getActionCycleNumber(),
-      playerId: draft.playerId,
-      playerLabel: draft.playerLabel,
-      actionType: draft.actionType || options.actionType || "turn",
-      actionLabel: draft.actionLabel || getActionLogActionLabel(options.actionType, options.actionLabel),
-      passed: Boolean(options.passed),
-      steps: draft.steps.map((step) => ({ ...step })),
-    };
     attachRecoverySnapshotToActionLogEntry(entry, "行动提交后状态");
     actionLogState.nextEntryId += 1;
     actionLogState.entries.push(entry);
@@ -2218,33 +2056,17 @@
   }
 
   function appendConfirmedActionLogEntry(entryInput) {
-    const player = entryInput.player || getCurrentPlayer();
-    const playerId = entryInput.playerId || player?.id || null;
-    const rawTurnNumber = entryInput.rawTurnNumber ?? entryInput.turnNumber ?? turnState.turnNumber;
-    const entry = {
-      id: actionLogState.nextEntryId,
-      roundNumber: entryInput.roundNumber ?? turnState.roundNumber,
-      turnNumber: getDisplayedTurnNumber(rawTurnNumber),
-      rawTurnNumber,
-      actionCycleNumber: entryInput.actionCycleNumber ?? getActionCycleNumber(),
-      title: entryInput.title || null,
-      playerId,
-      playerLabel: entryInput.playerLabel || getPlayerLabelById(playerId),
-      actionType: entryInput.actionType || "turn",
-      actionLabel: getActionLogActionLabel(entryInput.actionType, entryInput.actionLabel),
-      passed: Boolean(entryInput.passed),
-      steps: (entryInput.steps || []).map((step) => ({
-        stepId: step.stepId || null,
-        source: step.source || HISTORY_SOURCE_MAIN,
-        text: normalizeActionLogText(step.text || composeActionLogStepText(step.label, step.detail)),
-        label: normalizeActionLogText(step.label),
-        detail: normalizeActionLogText(step.detail),
-        undoable: step.undoable !== false,
-        irreversibleCode: step.irreversibleCode || null,
-        irreversibleReason: normalizeActionLogText(step.irreversibleReason),
-        playedCard: createActionLogPlayedCardSnapshot(step.playedCard),
-      })).filter((step) => step.text),
-    };
+    const entry = actionLogRuntimeModule.createConfirmedEntry(actionLogState, entryInput, {
+      getCurrentPlayer,
+      roundNumber: turnState.roundNumber,
+      turnNumber: turnState.turnNumber,
+      getDisplayedTurnNumber,
+      getActionCycleNumber,
+      getPlayerLabelById,
+      getActionLogActionLabel,
+      historySourceMain: HISTORY_SOURCE_MAIN,
+      getCardLabel: cards.getCardLabel,
+    });
     attachRecoverySnapshotToActionLogEntry(entry, entry.title || "已确认日志后状态");
     actionLogState.nextEntryId += 1;
     actionLogState.entries.push(entry);

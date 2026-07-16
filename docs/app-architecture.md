@@ -12,9 +12,11 @@
 6. `randomizer/app/dom.js` 集中查询页面上的固定 DOM 节点。
 7. `randomizer/app/events.js` 绑定页面事件、overlay 点击分发、拖拽回调和 resize 入口。
 8. `randomizer/app/action-log-export.js` 生成行动日志 Markdown 和下载文件名。
-9. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
-10. `randomizer/app/ai-controller.js` 封装 AI 自动机、策略权重、批跑/AB 测试和 AI 决策控制器。
-11. `randomizer/app.js` 保留运行态、流程编排、效果队列、渲染调度、行动日志和各控制器接线。
+9. `randomizer/app/action-log-runtime.js` 封装行动日志 draft/entry 组装与日志导入等纯运行时逻辑。
+10. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
+11. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
+12. `randomizer/app/ai-controller.js` 封装 AI 自动机、策略权重、批跑/AB 测试和 AI 决策控制器。
+13. `randomizer/app.js` 保留运行态、流程编排、效果队列、渲染调度和各控制器接线。
 
 ## 文件职责
 
@@ -23,7 +25,9 @@
 - `randomizer/app/constants.js`：只放静态常量和依赖派生常量。不要在这里读写游戏状态、DOM 或 pending 流程。
 - `randomizer/app/dom.js`：只收集固定 DOM 元素和 NodeList。新增 HTML id、overlay、按钮或常驻区域时先在这里登记。
 - `randomizer/app/events.js`：只做事件到 app 回调的路由。新增按钮、overlay、拖拽入口时优先改这里；不要在这里实现规则结算。
+- `randomizer/app/action-log-runtime.js`：只处理行动日志草稿、步骤、entry 与导入组装；通过显式参数接收 turn/player/history 上下文，不直接抓 app 闭包。
 - `randomizer/app/action-log-export.js`：只做纯 Markdown 格式化和文件名生成，不读 DOM、不读取隐藏牌序，也不触发浏览器下载。
+- `randomizer/app/game-recovery.js`：只处理恢复快照、本地存档包和恢复流程适配；状态恢复和 UI 刷新通过显式回调注入。
 - `randomizer/app/public-api.js`：只组装 `window.SetiRandomizer` 暴露面。新增调试 API 时优先改这里，保持 API 与运行态编排分离。
 - `randomizer/app/ai-controller.js`：AI 层。内部维护 AI 批跑状态、策略权重和需求缓存；需要读取 app pending 状态时通过 `state` getter/setter，不要在模块内复制 pending 值。
 - `randomizer/app.js`：编排层。可以组合规则模块、维护运行时 pending 状态和刷新 UI，但不应再新增大段静态配置、散落的 DOM 查询清单、事件绑定清单、公开 API 清单或 AI 策略逻辑。
