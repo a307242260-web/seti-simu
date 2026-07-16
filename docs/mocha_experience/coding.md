@@ -23,12 +23,12 @@
 - decision: 记录为 coding 流程候选经验；当前仅一次命令引用失真，不修改 issue-workflow 或 agent prompt，等待后续同类 metadata 写入是否复现。
 
 - date: 2026-07-17
-- source_issue: SETI-26
-- observation: 从大型闭包迁出 runtime 时，`node --check` 只能证明语法成立，不能证明显式 context 覆盖了普通函数体和嵌套回调里的全部自由变量；至少要执行 select/confirm/cancel/rollback 等代表性路径，才能发现缺失注入。
-- evidence: SETI-26 首轮模块语法检查通过，但定向执行科技选择路径时暴露 `renderRunezuBoardSymbols` 未注入；随后按函数体补齐 `renderWheels`、`beginCardSelection`、跨 runtime 延迟回调等依赖，工作树与 staged 独立快照全量回归才通过。提交 `8963b38`。
+- source_issue: SETI-26, SETI-28
+- observation: 从大型闭包迁出 runtime 时，`node --check` 与模块级 Node 回归只能证明语法和已建模路径成立，不能证明显式 context、传统脚本初始化顺序和嵌套回调里的全部自由变量；至少要执行代表性 runtime 路径，并在改动脚本装配时补真实浏览器首屏 smoke。
+- evidence: SETI-26 首轮语法检查通过后，科技选择路径暴露 `renderRunezuBoardSymbols` 未注入；SETI-28 两轮全量 Node 回归通过后，浏览器首屏仍连续暴露 runtime TDZ、漏导出和漏迁移 helper，修复后公开 API 155 个入口及“开始游戏”路径无异常。
 - promote_to: none
 - promotion_status: candidate
-- decision: 作为 runtime 拆分验证候选经验保留；当前只有一次迁移证据，不修改 agent prompt 或 loop template，等待后续同类拆分复现后再评估升级。
+- decision: 保持 candidate，不修改 agent prompt 或 loop template；当前已累计两次同类迁移证据，等待第 3 次 runtime 拆分后按既定评估窗口复审。
 
 - date: 2026-07-16
 - source_issue: SETI-7

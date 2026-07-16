@@ -24,6 +24,9 @@
 - `randomizer/app/debug-runtime.js`：debug / calibration / quick sector scan / failsafe / alien reveal 调试入口与开发辅助壳层。
 - `randomizer/app/start-screen.js`：开始界面选项同步、继续游戏入口与新局启动壳层。
 - `randomizer/app/turn-flow.js`：新局初始化、随机化装配与 round / turn 推进壳层。
+- `randomizer/app/turn-end-flow.js`：PASS 必做效果、回合末外星人揭示、收入与跨轮收尾。
+- `randomizer/app/action-interaction-runtime.js`：冥王星行动、移动箭头 UI 与数据放置 picker。
+- `randomizer/app/final-score-ai-runtime.js`：终局板块 AI 估值、可行性惩罚与竞速调整。
 - `randomizer/app/card-runtime.js`：手牌出牌、弃牌角标、公共牌选择、PASS 预留与卡牌移动运行时。
 - `randomizer/app/card-trigger-runtime.js`：卡牌任务、触发匹配、奖励队列和确认/取消/续跑运行时。
 - `randomizer/app/income-runtime.js`：卡牌收入、轮开始收入和公司轮开始收益运行时。
@@ -35,7 +38,7 @@
 - `randomizer/app/action-log-export.js`：终局行动日志 Markdown 导出格式与文件名生成。
 - `randomizer/app/public-api.js`：调试、AI 验证和外部脚本使用的 `window.SetiRandomizer` API 组装。
 - `randomizer/app/ai-controller.js`：AI 自动机、策略权重、批跑/AB 测试与 AI 决策控制器。
-- `randomizer/app.js`：主 UI、设置流程、回合流程、效果队列、AI 控制器接线与各模块编排入口；保留顶层状态与跨模块调度。
+- `randomizer/app.js`：composition root、顶层状态、跨 flow continuation、统一刷新与控制器接线；不再承载已迁移域的成片具体实现。
 - `randomizer/app/effects/**`：按移动扫描、奖励选择、外星人和顶层分发拆分的具体 effect executors。
 - `randomizer/style.css`：页面布局、交互聚焦、高亮与各区视觉状态。
 - `randomizer/solar-system/layout.js`：太阳系盘面坐标、扇区、星云与内容类型定义。

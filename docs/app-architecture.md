@@ -14,7 +14,7 @@
 6. `randomizer/app/dom.js` 集中查询页面上的固定 DOM 节点。
 7. `randomizer/app/events.js` 绑定页面事件、overlay 点击分发、拖拽回调和 resize 入口。
 8. `randomizer/app/start-screen.js` 处理开始界面选项同步、入口按钮和继续游戏恢复。
-9. `randomizer/app/turn-flow.js` 处理 turnState 初始化、新局随机化和 round / turn 推进壳层。
+9. `randomizer/app/turn-flow.js` 处理 turnState 初始化、新局随机化和 round / turn 推进壳层；`turn-end-flow.js` 处理 PASS 队列、回合末外星人揭示与跨轮收尾。
 10. `randomizer/app/card-runtime.js`、`card-trigger-runtime.js`、`income-runtime.js` 与 `scan-flow.js` 承接卡牌交互、任务触发、收入和扫描运行域。
 11. `randomizer/app/tech-runtime.js` 与 `industry-runtime.js` 承接科技选择、公司能力、被动奖励及其 pending/history 回滚运行域。
 12. `randomizer/app/action-briefing.js` 封装 AI 行动简报的条目归纳、scan 目标摘要和 overlay 渲染控制器。
@@ -22,11 +22,12 @@
 14. `randomizer/app/action-log-runtime.js` 封装行动日志 draft/entry 组装与日志导入等纯运行时逻辑。
 15. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
 16. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
-17. `randomizer/app/ai-controller.js` 封装 AI 自动机、策略权重、批跑/AB 测试和 AI 决策控制器。
+17. `randomizer/app/ai-controller.js` 封装 AI 自动机、策略权重、批跑/AB 测试和 AI 决策控制器；`final-score-ai-runtime.js` 单独承接终局板块估值与竞速模型适配。
 18. `randomizer/app/effects/**` 按移动扫描、奖励选择、外星人和顶层分发四个域注册具体 effect executors。
 19. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
 20. `randomizer/app/aliens/species-runtime.js` 封装八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 和具体面板渲染，通过显式 context 接收跨域依赖。
-21. `randomizer/app.js` 保留运行态、跨域流程编排、效果队列、渲染调度和各控制器接线。
+21. `randomizer/app/action-interaction-runtime.js` 承接冥王星行动、移动箭头 UI 与数据放置 picker。
+22. `randomizer/app.js` 保留运行态、跨域流程编排、效果队列、渲染调度和各控制器接线；严格验收后为 9,930 行。
 
 ## 文件职责
 
@@ -37,6 +38,9 @@
 - `randomizer/app/events.js`：只做事件到 app 回调的路由。新增按钮、overlay、拖拽入口时优先改这里；不要在这里实现规则结算。
 - `randomizer/app/start-screen.js`：只处理开始界面选项、继续游戏入口和新局入口壳层；不要在这里新增规则结算或复制恢复逻辑。
 - `randomizer/app/turn-flow.js`：只处理 turnState 初始化、新局随机化和回合推进壳层；不要在这里复制核心规则实现。
+- `randomizer/app/turn-end-flow.js`：处理 PASS 必做效果队列、回合末外星人揭示 continuation、收入与跨轮刷新；通过显式 context 调用所属规则/runtime。
+- `randomizer/app/action-interaction-runtime.js`：处理冥王星交互、移动箭头和数据放置 picker；不拥有规则状态，所有状态和 continuation 均由 composition root 注入。
+- `randomizer/app/final-score-ai-runtime.js`：处理终局板块候选估值、可行性惩罚和竞速调整；不维护 AI 自动机状态。
 - `randomizer/app/action-briefing.js`：只处理 AI 行动简报的数据归纳、摘要文案和 overlay 开关；不要在这里执行规则结算或直接修改行动日志源数据。
 - `randomizer/app/alien-ui.js`：只处理外星人揭示弹层、痕迹选择器、方舟分流和“进入某物种放置模式”的 UI 壳层；不实现物种奖励、dialog 或具体面板渲染。
 - `randomizer/app/aliens/species-runtime.js`：处理物种奖励、外星人牌获取、虫族任务、九折/半人马机会、符文 symbol、followup 和具体面板渲染。模块不得抓取 `app.js` 闭包，所有状态、规则模块和 continuation 均由 `createAlienSpeciesRuntime(context)` 显式注入。
@@ -55,12 +59,14 @@
 - `randomizer/app/card-trigger-runtime.js`：任务就绪、1 型触发、任务确认、奖励队列和触发后的续跑；不在 `app.js` 复制任务/触发分支。
 - `randomizer/app/income-runtime.js`：弃牌收入、收入资源发放、轮开始公司收益和原教旨主义轮开始收入队列。
 - `randomizer/app/scan-flow.js`：公共牌/手牌扫描、扫描目标、扇区结算、延迟补牌及扫描收尾；扫描 pending 的确认、取消和续跑在该 flow 内完成。
-- `randomizer/app.js`：编排层。可以组合规则模块、维护跨 flow 调度和注入 context，但不应再新增卡牌/收入/扫描/任务触发具体分支，或大段静态配置、DOM 查询、事件绑定、公开 API 与 AI 策略逻辑。
+- `randomizer/app.js`：composition root 与跨 flow 顶层总控。可以维护状态所有权、组合规则模块、调度 continuation 和注入 context，但不应再新增卡牌/收入/扫描/任务触发、外星人/公司/debug、具体渲染、公开 API 或 AI 策略正文。
 - `randomizer/app/render-runtime.js`：承接卡牌 hover、玩家/对手面板、手牌/保留牌、数据板、状态读出、火箭/marker、棋盘坐标转换与引用贴图适配；`app.js` 只保留渲染调度和跨 flow 刷新组合。
 
 ## 仍需拆分的高耦合区
 
 - AI 自动机已通过 `createAiController(context)` 迁入 `randomizer/app/ai-controller.js`，但它仍通过一组显式回调调用 app 的 UI 流程。后续若要继续解耦，应优先把“读取局面”“列出候选”“执行选择”下沉为更窄的决策总线，而不是在 AI 模块里直接新增 DOM 选择逻辑。
+- `randomizer/app/aliens/species-runtime.js` 当前 4,367 行，边界是八物种共用机会队列、dialog、followup 与面板运行域；后续应按物种或 rewards/dialogs/render 子域继续拆，并保持共用队列单一所有者。
+- `randomizer/app/ai-controller.js` 约 22,960 行，是既有超大控制器；终局板块估值已迁至 `final-score-ai-runtime.js`，后续按 observation/candidates/decision/batch analytics 拆分。
 - 行动日志状态与 DOM 展示已经由 `action-log-runtime` 接管，恢复快照与持久化包由 `game-recovery` 接管；`app.js` 仍保留跨全部 pending 状态的恢复清理与全 UI 刷新调度。
 - 卡牌、收入、扫描和任务触发的 `pending*` 已按 runtime/flow 收口；新增相关选择应扩展所属 runtime，并通过 `app.js` 注入跨域 continuation，避免重新把具体确认/取消分支堆回总装配层。
 

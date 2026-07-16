@@ -1,27 +1,8 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
 const raceModel = require("./race-model");
-
-function loadAppNamedFunction(functionName) {
-  const source = fs.readFileSync(path.join(__dirname, "..", "..", "app.js"), "utf8");
-  const start = source.indexOf(`function ${functionName}(`);
-  assert.ok(start >= 0, `app.js should define ${functionName}`);
-  const bodyStart = source.indexOf("{", start);
-  let depth = 0;
-  for (let index = bodyStart; index < source.length; index += 1) {
-    if (source[index] === "{") depth += 1;
-    if (source[index] !== "}") continue;
-    depth -= 1;
-    if (depth === 0) {
-      const functionSource = source.slice(start, index + 1);
-      return Function(`"use strict"; return (${functionSource});`)();
-    }
-  }
-  assert.fail(`could not extract ${functionName} from app.js`);
-}
+const { createFinalScoreAiRuntime } = require("../../app/final-score-ai-runtime");
 
 {
   const order = raceModel.buildActionWindowOrder({
@@ -135,7 +116,7 @@ function loadAppNamedFunction(functionName) {
 }
 
 {
-  const scoreB2RaceAdjustment = loadAppNamedFunction("scoreAiB2FinalTileRaceAdjustment");
+  const { scoreAiB2FinalTileRaceAdjustment: scoreB2RaceAdjustment } = createFinalScoreAiRuntime({});
   assert.equal(
     scoreB2RaceAdjustment("b2", 2, true, 16, 0, 8),
     8,

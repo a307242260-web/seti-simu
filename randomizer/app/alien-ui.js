@@ -1207,6 +1207,7 @@
       canPlaceRunezuTrace,
       canPlaceRunezuFaceSymbol,
       canPlaceStateTrace,
+      canPlaceAnyStateExtraTrace,
       closeAlienTracePicker,
       openAlienTracePicker,
       beginAlienTraceBoardPlacement,

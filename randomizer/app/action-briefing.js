@@ -323,10 +323,34 @@
       "createActionLogPlayedCardSnapshot",
       context.createActionLogPlayedCardSnapshot,
     );
-    const appendActionLogTextWithPlayedCard = requireFunction(
-      "appendActionLogTextWithPlayedCard",
-      context.appendActionLogTextWithPlayedCard,
-    );
+    const attachCardHoverPreview = context.attachCardHoverPreview || (() => {});
+    const appendActionLogTextWithPlayedCard = context.appendActionLogTextWithPlayedCard
+      || ((container, text, playedCard) => {
+        const card = createActionLogPlayedCardSnapshot(playedCard);
+        if (!card?.label || !String(text).includes(card.label)) {
+          container.append(documentRef.createTextNode(text));
+          return;
+        }
+        const matchIndex = text.indexOf(card.label);
+        if (matchIndex > 0) {
+          container.append(documentRef.createTextNode(text.slice(0, matchIndex)));
+        }
+        const cardNode = documentRef.createElement("span");
+        cardNode.className = "action-log-played-card";
+        cardNode.tabIndex = 0;
+        cardNode.setAttribute("role", "img");
+        cardNode.setAttribute("aria-label", `打出卡牌：${card.label}`);
+        const name = documentRef.createElement("span");
+        name.className = "action-log-played-card-name";
+        name.textContent = card.label;
+        attachCardHoverPreview(cardNode, card.src || context.cardBackSrc || "", card.label);
+        cardNode.append(name);
+        container.append(cardNode);
+        const endIndex = matchIndex + card.label.length;
+        if (endIndex < text.length) {
+          container.append(documentRef.createTextNode(text.slice(endIndex)));
+        }
+      });
     const hideCardHoverPreview = requireFunction("hideCardHoverPreview", context.hideCardHoverPreview);
     const scheduleAiAutoStepIfNeeded = requireFunction(
       "scheduleAiAutoStepIfNeeded",

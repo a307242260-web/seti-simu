@@ -1536,6 +1536,7 @@
       handleAomomoRevealSideEffects,
       handleRunezuRevealSideEffects,
       handleAlienRevealSideEffects,
+      failMissingAlienTraceTargetPlayer,
       getAlienTraceActionPlayer,
       confirmAlienTracePlacement,
       confirmYichangdianTracePlacement,

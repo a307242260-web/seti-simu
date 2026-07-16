@@ -1,348 +1,134 @@
-# App Top-Down 拆解图
+# App Top-Down 最终架构
 
-本文档回答两个问题：
+本文档记录浏览器 app 层的最终源码边界。页面仍采用传统 `<script>` 顺序加载；规则语义以 `randomizer/game/**` 为准，`randomizer/app/**` 负责 UI 运行域，`randomizer/app.js` 是 composition root 与跨 flow 顶层总控。
 
-1. 现在 `randomizer/app.js` 和 `randomizer/app/**` 里到底还有哪些逻辑。
-2. 站在 top-down 视角，浏览器 app 层已经拆成了哪些模块、还剩哪些顶层胶水没有收口。
+## 1. 行数预算与迁移结果
 
-这里的 “app 层” 指 `randomizer/index.html` 加载后，由 `randomizer/app/**`、`randomizer/app.js`、页面 DOM 和 `window.SetiRandomizer` 共同组成的浏览器装配层。规则语义仍以 `randomizer/game/**` 为准。
+五个迁移域启动前，`randomizer/app.js` 为 29,573 行（`9414cc4^`）；各阶段收口后依次为：
 
-## 1. 顶层视角
+| 阶段 | app.js 行数 | 主要迁移 |
+|---|---:|---|
+| 迁移前 | 29,573 | 单文件承载具体 effect、卡牌、外星人、科技/公司、渲染/日志 |
+| effect executors | 25,248 | `app/effects/**` |
+| card/income/scan/trigger | 19,772 | `card-runtime`、`income-runtime`、`scan-flow`、`card-trigger-runtime` |
+| alien species runtime | 16,035 | `app/aliens/species-runtime.js` |
+| tech/industry runtime | 13,558 | `tech-runtime.js`、`industry-runtime.js` |
+| render/log runtime | 11,997 | `render-runtime.js`、`action-log-runtime.js` 等 |
+| 最终严格验收 | 9,930 | `final-score-ai-runtime.js`、`turn-end-flow.js`、`action-interaction-runtime.js` |
 
-从上往下看，当前浏览器端可以拆成 5 层：
+最终结果低于 10,000 行硬门槛。新增的三个收口模块分别为 1,122、547、1,045 行，均低于约 3,000 行的单文件预算。
 
-1. 页面壳与脚本加载
-2. app 基础设施层
-3. app 业务编排模块层
-4. `app.js` 顶层编排 / 渲染 / 胶水层
-5. `game/**` 规则层
+## 2. 加载与装配顺序
 
-可以用下面这个结构来理解：
+`randomizer/index.html` 的加载顺序保持为：
 
-```text
-index.html
-  -> solar-system/** + game/** 全局模块
-  -> app/dependencies.js
-  -> app/constants.js / dom.js / runtime.js / refresh.js
-  -> app/start-screen.js / turn-flow.js / hand-flow.js / scan-flow.js
-  -> app/effect-flow.js / effect-choice-flow.js
-  -> app/action-log-*.js / game-recovery.js / action-briefing.js
-  -> app/alien-ui.js / alien-runtime.js
-  -> app/bootstrap.js / public-api.js / ai-controller.js
-  -> app.js
-       -> 组装运行时状态
-       -> 注入模块上下文
-       -> 承接剩余高耦合流程
-       -> 统一驱动 render / pending / quick action / debug / API
+1. `solar-system/**` 与 `game/**` 注册规则层全局模块。
+2. 独立 app runtime 注册 `window.SetiApp*`：
+   - 基础设施：`dependencies`、`constants`、`dom`、`runtime`、`refresh`、`events`
+   - 交互/流程：`start-screen`、`turn-flow`、`turn-end-flow`、`hand-flow`、`scan-flow`
+   - 行动：`action-runtime`、`action-interaction-runtime`
+   - effect：`effect-flow`、`effect-choice-flow`、`effects/**`
+   - 卡牌/科技/公司：`card-runtime`、`card-trigger-runtime`、`income-runtime`、`tech-runtime`、`industry-runtime`
+   - 外星人：`alien-runtime`、`alien-ui`、`aliens/species-runtime`
+   - 展示/恢复：`render-runtime`、`final-ui-runtime`、`action-log-runtime`、`game-recovery`
+   - AI/API：`final-score-ai-runtime`、`ai-controller`、`public-api`、`headless-env`
+3. `app.js` 调用 `SetiAppDependencies.collectDependencies(window)`，创建状态并把显式 context 注入各 runtime。
+4. `bootstrap` 与 `public-api` 完成事件、`window.SetiRandomizer` 和 headless 入口装配。
+
+`app/dependencies.js` 是必需全局模块的权威表；`dependencies.test.js` 与 `script-loading.test.js` 分别校验全局依赖契约和 HTML 脚本文件存在性。
+
+## 3. 各迁移域最终归属
+
+### Effect
+
+- `effects/movement-scan.js`：移动、落点、轨道/登陆、扇区扫描执行器。
+- `effects/rewards.js`：资源、数据、抽牌、条件、科技和扫描奖励。
+- `effects/aliens.js`：外星人 effect 与 continuation。
+- `effects/dispatcher.js`：顶层 effect type 分发。
+- `effect-flow.js` / `effect-choice-flow.js`：队列、history step 与选择器生命周期。
+
+`app.js` 只保留 executor context 注入、跨 flow continuation 和少量兼容转发，不再保留巨型 type switch 或成片 effect 实现。
+
+### Card / income / scan / trigger
+
+- `card-runtime.js`：出牌、弃牌角标、公共牌、PASS 预留与卡牌移动。
+- `card-trigger-runtime.js`：任务、1 型触发、奖励队列与续跑。
+- `income-runtime.js`：收入与轮开始收益。
+- `scan-flow.js`：扫描目标、扇区结算、延迟补牌。
+- `hand-flow.js`：手牌/支付选择与相关交互状态。
+
+`app.js` 只连接这些 runtime 与 action/effect/history/render 层。
+
+### Alien
+
+- `alien-runtime.js`：通用揭示、痕迹与队列适配。
+- `alien-ui.js`：揭示提示、痕迹 picker 与物种放置模式。
+- `aliens/species-runtime.js`：八个物种的奖励、牌/任务 dialog、followup 与面板实现。
+- `turn-end-flow.js`：回合末批量揭示及其阻塞 continuation。
+
+`app.js` 只保留显式 context、跨 runtime 转发和顶层状态所有权，不保留物种实现正文。
+
+### Tech / industry
+
+- `tech-runtime.js`：科技选择、蓝槽、确认/取消/undo。
+- `industry-runtime.js`：公司主动/被动、picker、pending 与 history 回滚。
+- 公司规则与数值仍由 `game/industry/**` 提供。
+
+`app.js` 只负责把公司/科技 runtime 接入主要行动、effect 和刷新总线。
+
+### Render / debug / log
+
+- `render-runtime.js`：玩家、卡牌、数据、火箭、marker、坐标转换和引用贴图。
+- `final-ui-runtime.js`：终局计分与结果 UI。
+- `action-log-runtime.js`：日志 draft/entry、导入与 DOM 展示。
+- `debug-runtime.js`：debug、calibration、quick sector scan、failsafe 与 reveal 调试入口。
+- `action-interaction-runtime.js`：移动箭头、冥王星交互、数据放置 picker。
+- `final-score-ai-runtime.js`：终局板块 AI 估值、可行性惩罚与竞速调整。
+
+`app.js` 只保留统一刷新调度、顶层事件路由所需转发和 controller 装配。
+
+## 4. app.js 最终职责
+
+`randomizer/app.js` 允许保留：
+
+1. 状态所有权：`solarState`、`playerState`、`turnState`、`rocketState`、`cardState`、`alienGameState` 与 runtime pending。
+2. Composition root：收集依赖、创建 runtime/controller、注入显式 context。
+3. 跨 flow 总控：主要行动、快速行动、effect/history、AI 与回合推进之间的 continuation。
+4. 统一刷新与兼容转发：组合 `render*`、`update*`，向传统事件/API 暴露稳定函数名。
+5. 少量仍需同时触及多域状态的恢复、撤销和顶层行动事务胶水。
+
+不得重新加入：
+
+- 具体 effect type switch；
+- 卡牌/收入/扫描/任务触发分支正文；
+- 外星人物种、科技、公司或 debug 的成片实现；
+- 玩家/卡牌/外星人面板的节点构建；
+- AI 策略公式、公开 API 列表或 headless schema 实现；
+- 大段静态常量、固定 DOM 查询或事件绑定。
+
+## 5. Public API 与 headless 边界
+
+- `public-api.js` 组装 `window.SetiRandomizer`，`app.js` 只提供显式 context。
+- `headless-env.js` 提供 headless observation/action/replay 适配；它通过公开 API 和注入回调工作，不读取 `app.js` 局部实现。
+- `ai-controller.js` 通过 state getter/setter 与动作回调访问 app 状态；迁移不得复制 pending 状态。
+- 新 runtime 均同时支持 `window.SetiApp*` 和 `module.exports`，便于传统浏览器加载与 Node 回归。
+
+## 6. 超大文件与残余风险
+
+- `app/aliens/species-runtime.js` 为 4,367 行，超过约 3,000 行。它不是本轮新增文件；当前边界是“八物种共用机会队列、dialog 与渲染 context 的单一物种运行域”。后续继续拆时，应按物种或 `rewards/dialogs/render` 子域拆分，并保持共用队列只有一个所有者。
+- `app/ai-controller.js` 约 22,960 行，同样是既有超大文件。终局板块估值已迁到 `final-score-ai-runtime.js`；后续应按 observation/candidates/decision/batch analytics 拆分，避免把新策略继续堆回控制器。
+- `app.js` 虽已低于预算，仍是 9,930 行的大型 composition root。后续只允许按明确跨域边界继续减小，不以压缩格式或复制状态换取行数。
+- 浏览器行为依赖传统脚本顺序；新增 runtime 必须同步更新 `index.html`、`dependencies.js` 和依赖测试。
+
+## 7. 验证基线
+
+每次跨模块变更至少执行：
+
+```bash
+node --check randomizer/app.js
+rg --files randomizer -g '*.test.js' | sort | while IFS= read -r test; do
+  node "$test" || exit $?
+done
 ```
 
-## 2. 当前模块分层
-
-### 2.1 页面壳
-
-- `randomizer/index.html`
-  - 负责页面骨架、各类面板 DOM、overlay 容器、调试区和 action bar。
-  - 按传统 `<script>` 顺序加载，没有 bundler，也不是 ES module。
-
-### 2.2 基础设施层
-
-这些模块不直接定义玩法规则，主要负责 app 的底座。
-
-- `randomizer/app/dependencies.js`
-  - 收集所有 `window.Seti*` 依赖，校验脚本顺序。
-  - 现在已经把 app 层和 `game/**`、`solar-system/**` 的依赖关系显式列出来。
-
-- `randomizer/app/constants.js`
-  - app 静态常量、图标路径、奖励表、UI 参数。
-
-- `randomizer/app/dom.js`
-  - 固定 DOM 引用注册表。
-
-- `randomizer/app/runtime.js`
-  - 统一运行态容器。
-  - 当前至少收拢了：
-    - `pending`
-    - `actionLog`
-    - `actionBriefing`
-    - `startScreen`
-    - `selection`
-    - `ui`
-
-- `randomizer/app/refresh.js`
-  - 高频刷新组合：
-    - `refreshPlayerPanels`
-    - `refreshActionState`
-    - `refreshBoardState`
-    - `refreshAfterPendingChange`
-
-- `randomizer/app/events.js`
-  - 页面事件绑定和 route。
-  - 把 overlay / resize / 拖拽 / pointer 之类入口统一收在一处。
-
-### 2.3 业务编排模块层
-
-这层已经承接了原先 `app.js` 里最容易形成独立边界的大块逻辑。
-
-- 启动与回合壳层
-  - `app/start-screen.js`
-  - `app/turn-flow.js`
-
-- 手牌 / 出牌 / 移动支付
-  - `app/hand-flow.js`
-  - `app/card-runtime.js`
-
-- 公共牌 / 扫描
-  - `app/scan-flow.js`
-
-- 科技 / 公司
-  - `app/tech-runtime.js`
-  - `app/industry-runtime.js`
-
-- 收入 / 卡牌任务与触发
-  - `app/income-runtime.js`
-  - `app/card-trigger-runtime.js`
-
-- 效果队列 / 历史流
-  - `app/effect-flow.js`
-  - `app/effect-choice-flow.js`
-
-- 外星人 app 层
-  - `app/alien-ui.js`
-  - `app/alien-runtime.js`
-  - `app/alien-trace-reward-flow.js`
-
-- 行动日志 / 恢复 / 导出
-  - `app/action-log-runtime.js`
-  - `app/action-log-export.js`
-  - `app/game-recovery.js`
-  - `app/action-briefing.js`
-
-- 调试 / API / 启动 glue
-  - `app/bootstrap.js`
-  - `app/public-api.js`
-  - `app/ai-controller.js`
-  - `app/headless-env.js`
-
-### 2.4 `app.js` 当前角色
-
-`app.js` 现在已经不再是“把所有东西都写进去”的唯一实现文件，但它仍然是 app 层最大的总装配点。
-
-当前它主要承担 4 类职责：
-
-1. 组装全局依赖和运行态
-2. 连接各 app 模块与 `game/**`
-3. 保留尚未完全独立的高耦合流程
-4. 承担大量渲染 / 调试 / 状态读出 glue
-
-### 2.5 `game/**` 规则层
-
-- `randomizer/game/**`
-  - 仍是规则实现主层。
-  - 发射、移动、扫描、科技、外星人规则、公司牌、历史回滚、卡牌 DSL、数据池等核心语义都在这里。
-
-## 3. `app.js` 里现在还剩哪些逻辑
-
-虽然很多块已经迁出，但 `app.js` 还保留着几类“高耦合编排胶水”。
-
-### 3.1 初始化与总装配
-
-文件开头仍负责：
-
-- 从 `SetiAppDependencies` 收集依赖
-- 创建 `solarState`、`playerState`、`turnState`、`rocketState`、`cardState`、`alienGameState` 等大状态
-- 构造 `runtime`、`refreshHelpers`
-- 创建并注入各 helper/controller 的 context
-- 挂接 DOM、常量、历史栈和 pending 状态
-
-这部分本质上是“app composition root”。
-
-### 3.2 剩余的玩家交互编排
-
-尽管 `hand-flow`、`scan-flow`、`effect-choice-flow` 已经拆出，`app.js` 里仍留有不少顶层交互 glue：
-
-- 各类 pending 之间的切换与兜底取消
-- 多个 flow 之间的继续执行 / 中断 / 收尾
-- 一些需要同时读写：
-  - `pendingState`
-  - `rocketState.statusNote`
-  - `actionHistory`
-  - `quickActionHistory`
-  - `render*`
-  - `updateActionButtons`
-  的流程总控
-
-典型还留在 `app.js` 的，就是“一个选择器结束后，要不要继续下一个 effect / quick action / turn-end flow”的决策 glue。
-
-### 3.3 卡牌、收入、公司、终局等跨模块流程
-
-卡牌交互、收入、扫描和任务/触发的具体运行分支已迁入 `card-runtime.js`、`income-runtime.js`、`scan-flow.js` 与 `card-trigger-runtime.js`。`app.js` 只保留这些 runtime 与效果队列、AI、历史和渲染层之间的 context 注入及跨 flow continuation。
-
-仍留在 `app.js` 的跨模块域主要是：
-
-- 科技与公司 runtime 的依赖注入及跨域 continuation
-- final score pending mark、终局结果汇总和展示
-- Pluto、行业被动、特殊 company / alien 分支的 app 层 glue
-
-这些逻辑的问题不是“规则没拆”，而是它们仍然同时碰：
-
-- 玩家状态
-- 历史记录
-- UI 状态
-- action log
-- effect flow
-- quick action
-
-所以还没有被完全压成更薄的模块边界。
-
-### 3.4 渲染层已形成独立 runtime
-
-具体 DOM 构建已集中到 `app/render-runtime.js`，包括：
-
-- board / wheel / sector / rotate token
-- rocket / marker / planets reference / alien board marker
-- public cards / hand / reserved cards / opponent stats
-- final score board / final result dialog
-- state readout / hover preview / 坐标与 marker 适配
-
-`app.js` 保留 render schedule、刷新组合和跨流程回调注入，不再重复实现上述节点构建。debug 面板的具体实现由 `debug-runtime.js` 承接，行动日志列表与 tab DOM 由 `action-log-runtime.js` 承接。
-
-### 3.5 调试与开发辅助逻辑
-
-这部分已经收口到 `randomizer/app/debug-runtime.js`，当前负责：
-
-- debug player switch / debug 面板开合
-- quick sector scan / fill nebula data / sector win debug
-- debug gain card / income / score / data
-- reveal alien for debug / 各 alien 校准入口
-- failsafe AI takeover / force skip turn
-
-`app.js` 里仍会保留少量为其他模块服务的共享 helper，例如 state readout 行拼装、token size 计算依赖和部分坐标调试数据源；但具体的开发辅助入口已经不再直接堆在顶层。
-
-## 4. 现在已经拆出来的逻辑图
-
-如果从“业务域”视角看，当前 app 层已经形成下面这些块：
-
-### 4.1 已经相对独立的块
-
-- 启动入口域
-  - `start-screen.js`
-  - `turn-flow.js`
-
-- 手牌交互域
-  - `hand-flow.js`
-
-- 公共牌 / 扫描域
-  - `scan-flow.js`
-
-- 效果执行域
-  - `effect-flow.js`
-  - `effect-choice-flow.js`
-
-- 外星人 app 域
-  - `alien-ui.js`
-  - `alien-runtime.js`
-  - `alien-trace-reward-flow.js`
-
-- 日志 / 恢复 / 导出域
-  - `action-log-runtime.js`
-  - `action-log-export.js`
-  - `game-recovery.js`
-  - `action-briefing.js`
-
-- debug / devtools 域
-  - `debug-runtime.js`
-
-- bootstrap / API / AI 域
-  - `bootstrap.js`
-  - `public-api.js`
-  - `ai-controller.js`
-  - `headless-env.js`
-
-### 4.2 仍保留在顶层的块
-
-- render schedule / refresh glue
-  - 具体 DOM 已在 `render-runtime`，顶层仍负责跨 runtime 刷新顺序
-
-- final scoring / final result UI runtime
-  - 规则在 `game/**`，但面板编排和展示仍主要在 `app.js`
-
-## 5. 当前 top-down 模块架构建议
-
-如果按 top-down 再整理一层，当前最合理的 app 架构可以写成：
-
-```text
-App Shell
-  - index.html
-  - style.css
-
-App Infrastructure
-  - dependencies.js
-  - constants.js
-  - dom.js
-  - runtime.js
-  - refresh.js
-  - events.js
-
-App Flow Modules
-  - start-screen.js
-  - turn-flow.js
-  - hand-flow.js
-  - scan-flow.js
-  - effect-flow.js
-  - effect-choice-flow.js
-  - alien-ui.js
-  - alien-runtime.js
-  - alien-trace-reward-flow.js
-  - debug-runtime.js
-
-App Support Modules
-  - action-log-runtime.js
-  - action-log-export.js
-  - game-recovery.js
-  - action-briefing.js
-  - ai-controller.js
-  - public-api.js
-  - bootstrap.js
-  - headless-env.js
-
-App Composition Root
-  - app.js
-
-Game Rules
-  - game/**
-```
-
-其中 `app.js` 的理想终态应该是：
-
-- 只保留 composition root
-- 少量顶层 render schedule
-- 极少量跨模块 glue
-
-而不是继续承载成千上万行具体流程和渲染细节。
-
-## 6. 当前重构完成度判断
-
-按今天代码现状看：
-
-- “模块边界是否已经形成”：
-  - 是，已经形成了。
-- “`app.js` 是否仍然过大”：
-  - 是，仍然过大。
-- “问题还在不在于没有拆计划”：
-  - 不在。现在的问题已经从“没有拆分计划”变成“哪些剩余 glue 还值得继续下沉，哪些应接受留在 composition root”。
-
-换句话说，当前阶段已经进入尾声，剩余重点是：
-
-1. 用 top-down 视角确认 app 层最终目标结构
-2. 识别 `app.js` 剩余逻辑中哪些属于：
-   - 可继续模块化的 render/debug/runtime
-   - 应保留在顶层的 composition glue
-3. 在边界稳定后继续做最后一轮 render / final UI 收口与文档同步
-
-## 7. 与 `AGENTS.md` 的关系
-
-`AGENTS.md` 现在应该保持快速导航角色，不在里面塞进这份 top-down 长文；但它需要：
-
-- 更薄的入口导航
-- 指向这份架构文档
-- 反映最终确认后的 app 层模块边界
+涉及脚本顺序、DOM、首屏或公开 API 时，还要用真实浏览器加载 `randomizer/index.html`，确认无初始化异常并检查 `window.SetiRandomizer` 可用。

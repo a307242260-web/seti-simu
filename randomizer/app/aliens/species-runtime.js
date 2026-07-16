@@ -14,14 +14,10 @@
   function createAlienSpeciesRuntime(context = {}) {
     const {
       actionHistory,
-      addFangzhouUnlockedCardToHand,
       alienGameState,
       aliens,
       amiba,
       aomomo,
-      appendAlienTraceAfterRewardMessage,
-      applyAlienStateExtraTraceReward,
-      applyAlienTraceAfterReward,
       Array,
       banrenma,
       BANRENMA_PANEL_BONUS_EFFECT_TYPE,
@@ -66,6 +62,7 @@
       failMissingAlienTraceTargetPlayer,
       fangzhou,
       finishAutomaticRewardEffect,
+      formatPlanetRewardGain,
       getAlienCardGainIrreversible,
       getAlienTraceActionPlayer,
       getCurrentActionEffect,
@@ -107,6 +104,7 @@
       playerState,
       quickActionHistory,
       recordHistoryCommand,
+      recordAlienTraceScore,
       recordQuickHistoryCommand,
       removeReservedCardToDiscard,
       removeRocketElement,
@@ -137,6 +135,55 @@
       yichangdian,
       yichangdianAnomalyMarkerElements,
     } = context;
+
+    function addFangzhouUnlockedCardToHand(player, handCard) {
+      if (!player || !handCard) return false;
+      if (!Array.isArray(player.hand)) player.hand = [];
+      player.hand.push(handCard);
+      if (player.resources) player.resources.handSize = player.hand.length;
+      return true;
+    }
+
+    function applyAlienStateExtraTraceReward(alienSlotId, traceType, player, placementResult) {
+      if (!placementResult?.ok || !placementResult.extraOnly) return null;
+      const reward = aliens.getExtraTraceReward?.(alienSlotId, traceType);
+      const gain = reward?.gain || null;
+      if (!gain || !Object.values(gain).some((value) => Number(value) !== 0)) return null;
+      players.gainResources(player, gain);
+      recordAlienTraceScore(player, traceType, gain);
+      return {
+        kind: "stateExtraTraceReward",
+        reward,
+        gain: { ...gain },
+        message: `${aliens.getAlienSlotLabel(alienSlotId)} state额外痕迹奖励：${formatPlanetRewardGain(gain) || "无奖励"}`,
+      };
+    }
+
+    function applyAlienTraceAfterReward(pending, player, traceType) {
+      const reward = pending?.afterTraceReward;
+      if (!reward || reward.kind !== "traceCountScore") return null;
+      const scorePer = Math.max(0, Math.round(Number(reward.scorePer) || 1));
+      const count = Math.max(0, Math.round(Number(
+        cardEffects.countTraceMarkers?.(player, alienGameState, traceType) || 0,
+      )));
+      const gain = { score: count * scorePer };
+      if (gain.score > 0) {
+        players.gainResources(player, gain);
+        recordAlienTraceScore(player, traceType, gain);
+      }
+      return {
+        kind: reward.kind,
+        count,
+        gain,
+        message: `${aliens.getTraceTypeLabel(traceType)}痕迹 ${count} 个：${formatPlanetRewardGain(gain) || "无奖励"}`,
+      };
+    }
+
+    function appendAlienTraceAfterRewardMessage(afterReward) {
+      if (afterReward?.message) {
+        rocketState.statusNote = `${rocketState.statusNote ? `${rocketState.statusNote}；` : ""}${afterReward.message}`;
+      }
+    }
 
 function getAlienTraceLayer(alienSlotId) {
     return [...els.alienTraceLayers].find(

@@ -14,15 +14,17 @@
   const REQUIRED_GLOBALS = Object.freeze([
     Object.freeze({ key: "alienTraceRewardFlow", globalName: "SetiAppAlienTraceRewardFlow" }),
     Object.freeze({ key: "actionRuntimeModule", globalName: "SetiAppActionRuntime" }),
+    Object.freeze({ key: "actionInteractionRuntimeModule", globalName: "SetiAppActionInteractionRuntime" }),
     Object.freeze({ key: "actionLogRuntimeModule", globalName: "SetiAppActionLogRuntime" }),
     Object.freeze({ key: "gameRecoveryModule", globalName: "SetiAppGameRecovery" }),
     Object.freeze({ key: "runtimeModule", globalName: "SetiAppRuntime" }),
     Object.freeze({ key: "refreshModule", globalName: "SetiAppRefresh" }),
     Object.freeze({ key: "renderRuntimeModule", globalName: "SetiAppRenderRuntime" }),
-    Object.freeze({ key: "debugRuntimeModule", globalName: "SetiAppDebugRuntime" }),
     Object.freeze({ key: "finalUiRuntimeModule", globalName: "SetiAppFinalUiRuntime" }),
+    Object.freeze({ key: "finalScoreAiRuntimeModule", globalName: "SetiAppFinalScoreAiRuntime" }),
     Object.freeze({ key: "startScreenModule", globalName: "SetiAppStartScreen" }),
     Object.freeze({ key: "turnFlowModule", globalName: "SetiAppTurnFlow" }),
+    Object.freeze({ key: "turnEndFlowModule", globalName: "SetiAppTurnEndFlow" }),
     Object.freeze({ key: "actionBriefingModule", globalName: "SetiAppActionBriefing" }),
     Object.freeze({ key: "effectFlowModule", globalName: "SetiAppEffectFlow" }),
     Object.freeze({ key: "effectChoiceFlowModule", globalName: "SetiAppEffectChoiceFlow" }),
@@ -66,6 +68,9 @@
     Object.freeze({ key: "aiRaceModel", globalName: "SetiAIRaceModel" }),
     Object.freeze({ key: "ai", globalName: "SetiAI" }),
   ]);
+  const OPTIONAL_GLOBALS = Object.freeze([
+    Object.freeze({ key: "debugRuntimeModule", globalName: "SetiAppDebugRuntime" }),
+  ]);
 
   function collectDependencies(source = root) {
     const dependencies = {};
@@ -77,6 +82,10 @@
         missing.push(entry.globalName);
       }
       dependencies[entry.key] = value;
+    }
+
+    for (const entry of OPTIONAL_GLOBALS) {
+      dependencies[entry.key] = source[entry.globalName] || null;
     }
 
     if (missing.length) {

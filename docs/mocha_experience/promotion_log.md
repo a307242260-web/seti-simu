@@ -29,7 +29,7 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-17
-- source: SETI-26
+- source: SETI-26, SETI-28
 - promoted_to: none
 - promotion_decision: candidate
 - target_agent: 领航
@@ -39,16 +39,16 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - change: 记录“闭包迁出后不能只做语法检查，需执行代表性 runtime 路径覆盖显式 context 与嵌套回调依赖”的候选经验。
 - applied_change: 仅新增 coding experience 与本决策契约，不修改 agent prompt、loop template、watcher 或 issue-workflow。
 - expected_effect: 后续拆分大型 runtime 时更早发现缺失注入与跨 runtime TDZ，减少浏览器初始化或交互阶段才暴露的 ReferenceError/TypeError。
-- evaluation_window: 后续 3 次 app runtime 拆分
+- evaluation_window: 3 次 app runtime 拆分；SETI-28 为第 2 次复现证据
 - success_signal: 每次拆分都包含至少一条代表性 pending/confirm/cancel/rollback 执行路径，且提交后不再出现缺失 context 注入。
 - rollback_condition: 若后续三次拆分证明现有全量测试天然覆盖所有 runtime 路径，或显式 context 被统一依赖容器替代，则合并或删除该候选规则。
 - risk: 单次复杂迁移可能高估定向 harness 的普适成本，直接升级会让简单模块拆分承担过重验证。
-- evidence_before: SETI-26 首轮 `node --check` 通过后，`tech-runtime.test.js` 执行选择路径暴露 `renderRunezuBoardSymbols` 缺失；补齐普通函数体、嵌套回调与跨 runtime 延迟依赖后，工作树及 `/tmp/seti-26-index.Zd3glL` 全量回归通过。
+- evidence_before: SETI-26 首轮 `node --check` 通过后，`tech-runtime.test.js` 暴露 `renderRunezuBoardSymbols` 缺失；SETI-28 全量 Node 回归通过后，真实浏览器首屏仍暴露 TDZ、漏导出和漏迁移 helper，说明脚本装配变更必须补浏览器路径。
 - owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate，暂不升级组件。
 - applied_at: 2026-07-17
 - verification: 核对 `8963b38` 的 runtime diff、定向测试及 staged 独立快照全量回归结果。
-- observed_outcome: 已通过定向路径补齐 context，并保持 `app.js` 净减少 2477 行、规则与文案不变。
-- keep_or_revise: 保持 candidate，等待后续 3 次同类 runtime 拆分复审。
+- observed_outcome: SETI-26 通过定向路径补齐 context；SETI-28 在公开 API 装配和“开始游戏”浏览器路径补齐初始化依赖，`app.js` 降至 10,000 行以内。
+- keep_or_revise: 保持 candidate；累计 2 次同类证据，等待第 3 次 runtime 拆分复审。
 
 - date: 2026-07-16
 - source: SETI-7

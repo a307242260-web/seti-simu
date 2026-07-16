@@ -41,6 +41,7 @@
     ai,
     alienTraceRewardFlow,
     actionRuntimeModule,
+    actionInteractionRuntimeModule,
     actionLogRuntimeModule,
     gameRecoveryModule,
     runtimeModule,
@@ -48,6 +49,7 @@
     renderRuntimeModule,
     debugRuntimeModule,
     finalUiRuntimeModule,
+    finalScoreAiRuntimeModule,
     actionBriefingModule,
     effectFlowModule,
     effectChoiceFlowModule,
@@ -58,6 +60,7 @@
     handFlowModule,
     startScreenModule,
     turnFlowModule,
+    turnEndFlowModule,
     scanFlowModule,
     incomeRuntimeModule,
     cardRuntimeModule,
@@ -146,6 +149,56 @@
   const FUNDAMENTALISM_ROUND_START_ROUNDS = Object.freeze([2, 3, 4]);
   const AI_DIFFICULTY_LAUGHABLE = "laughable";
   const AI_DIFFICULTY_WEAK_START = "weak_start";
+  let finalScoreAiRuntime = null;
+  let turnEndFlow = null;
+  let actionInteractionRuntime = null;
+  function runAiFinalScoreMarkDecision(...args) {
+    return finalScoreAiRuntime?.runAiFinalScoreMarkDecision(...args) || null;
+  }
+  function createPassEvent(...args) { return turnEndFlow?.createPassEvent(...args); }
+  function executePassFirstRotateEffect(...args) { return turnEndFlow?.executePassFirstRotateEffect(...args); }
+  function executePassHandLimitEffect(...args) { return turnEndFlow?.executePassHandLimitEffect(...args); }
+  function passForCurrentPlayer(...args) { return turnEndFlow?.passForCurrentPlayer(...args); }
+  function maybeResumeTurnEndAfterReveal(...args) { return turnEndFlow?.maybeResumeTurnEndAfterReveal(...args); }
+  function maybeContinuePendingTurnEndRevealFlow(...args) {
+    return turnEndFlow?.maybeContinuePendingTurnEndRevealFlow(...args);
+  }
+  function maybeContinueAlienRevealQueuedOpportunities(...args) {
+    return turnEndFlow?.maybeContinueAlienRevealQueuedOpportunities(...args);
+  }
+  function endCurrentTurn(...args) { return turnEndFlow?.endCurrentTurn(...args); }
+  function getPlutoReservedCards(...args) { return actionInteractionRuntime?.getPlutoReservedCards(...args) || []; }
+  function ensurePlutoCardEffectState(...args) { return actionInteractionRuntime?.ensurePlutoCardEffectState(...args); }
+  function getPlutoActionState(...args) { return actionInteractionRuntime?.getPlutoActionState(...args); }
+  function addPlutoMarker(...args) { return actionInteractionRuntime?.addPlutoMarker(...args); }
+  function removePlutoMarker(...args) { return actionInteractionRuntime?.removePlutoMarker(...args); }
+  function collectPlutoMarkers(...args) { return actionInteractionRuntime?.collectPlutoMarkers(...args) || []; }
+  function buildPlutoMarkerContext(...args) { return actionInteractionRuntime?.buildPlutoMarkerContext(...args) || { plutoMarkers: [] }; }
+  function playerHasOwnPlutoLanding(...args) { return Boolean(actionInteractionRuntime?.playerHasOwnPlutoLanding(...args)); }
+  function buildPlutoMarkerRemovalChoices(...args) { return actionInteractionRuntime?.buildPlutoMarkerRemovalChoices(...args) || []; }
+  function getPlutoCandidateRockets(...args) { return actionInteractionRuntime?.getPlutoCandidateRockets(...args) || []; }
+  function getPlutoActionCost(...args) { return actionInteractionRuntime?.getPlutoActionCost(...args) || {}; }
+  function getAvailablePlutoAction(...args) { return actionInteractionRuntime?.getAvailablePlutoAction(...args) || { ok: false }; }
+  function executePlutoAction(...args) { return actionInteractionRuntime?.executePlutoAction(...args); }
+  function getCurrentPlanetActionPlacement(...args) { return actionInteractionRuntime?.getCurrentPlanetActionPlacement(...args) || { ok: false }; }
+  function getPlutoChoiceActionLabel(...args) { return actionInteractionRuntime?.getPlutoChoiceActionLabel(...args); }
+  function formatPlutoChoiceLabel(...args) { return actionInteractionRuntime?.formatPlutoChoiceLabel(...args); }
+  function openPlutoActionChoicePicker(...args) { return actionInteractionRuntime?.openPlutoActionChoicePicker(...args); }
+  function scheduleRenderMoveArrows(...args) { return actionInteractionRuntime?.scheduleRenderMoveArrows(...args); }
+  function clearMoveRocketHighlight(...args) { return actionInteractionRuntime?.clearMoveRocketHighlight(...args); }
+  function activateMoveMode(...args) { return actionInteractionRuntime?.activateMoveMode(...args) || false; }
+  function deactivateMoveMode(...args) { return actionInteractionRuntime?.deactivateMoveMode(...args); }
+  function closeDataPlacePicker(...args) { return actionInteractionRuntime?.closeDataPlacePicker(...args); }
+  function isDataPoolFull(...args) { return Boolean(actionInteractionRuntime?.isDataPoolFull(...args)); }
+  function getAutoDataPlacementCheck(...args) { return actionInteractionRuntime?.getAutoDataPlacementCheck(...args) || { ok: false }; }
+  function openDataPlacePicker(...args) { return actionInteractionRuntime?.openDataPlacePicker(...args); }
+  function openAutoDataPlacementPrompt(...args) { return actionInteractionRuntime?.openAutoDataPlacementPrompt(...args); }
+  function continuePendingDataPlacementAfterBonus(...args) {
+    return actionInteractionRuntime?.continuePendingDataPlacementAfterBonus(...args);
+  }
+  function skipPendingDataPlacement(...args) { return actionInteractionRuntime?.skipPendingDataPlacement(...args); }
+  function cancelDataPlacePicker(...args) { return actionInteractionRuntime?.cancelDataPlacePicker(...args); }
+  function confirmDataPlacement(...args) { return actionInteractionRuntime?.confirmDataPlacement(...args); }
   const SCORE_SOURCE_KEYS = Object.freeze({
     INITIAL: "initialScore",
     SCAN: "scanScore",
@@ -510,6 +563,7 @@
   const els = window.SetiAppDom.collectElements(document);
   const cardHoverPreviewRuntime = renderRuntimeModule.createCardHoverPreviewRuntime({ window, document });
   const attachCardHoverPreview = cardHoverPreviewRuntime.attach;
+  const hideCardHoverPreview = cardHoverPreviewRuntime.hide;
   const coordinateRuntime = renderRuntimeModule.createCoordinateRuntime({
     els,
     solar,
@@ -637,7 +691,7 @@
     getDisplayedTurnNumber,
     isGameEnded,
     createInitialSelectionPicker,
-    createCompanyCardSummary,
+    createCompanyCardSummary: (...args) => createCompanyCardSummary?.(...args),
     getPlayerCompanyBaseIncome,
     createPlayerNameStat,
     createStatSeparator,
@@ -650,8 +704,8 @@
     buildPlayerFangzhouStatNodes,
     updatePlayerHandPanelTitle,
     renderReservedCardsFromTaskState: (...args) => renderReservedCardsFromTaskState(...args),
-    syncFinalScorePendingMarks,
-    renderFinalScoreBoard,
+    syncFinalScorePendingMarks: (...args) => syncFinalScorePendingMarks?.(...args),
+    renderFinalScoreBoard: (...args) => renderFinalScoreBoard?.(...args),
     queueJiuzheOpportunitiesForPlayer,
     maybeOpenQueuedJiuzheOpportunity,
     queueBanrenmaOpportunitiesForPlayer,
@@ -667,8 +721,8 @@
     getPendingCardCornerQuickAction: (...args) => getPendingCardCornerQuickAction?.(...args),
     getPendingHandCardPlayAction: (...args) => getPendingHandCardPlayAction?.(...args),
     canUseCardCornerQuickAction: (...args) => canUseCardCornerQuickAction(...args),
-    isIndustryHandSelectionActive,
-    isIndustryFutureSpanHandSelectionActive,
+    isIndustryHandSelectionActive: (...args) => isIndustryHandSelectionActive?.(...args),
+    isIndustryFutureSpanHandSelectionActive: (...args) => isIndustryFutureSpanHandSelectionActive?.(...args),
     isFutureSpanEligibleHandCard: (...args) => isFutureSpanEligibleHandCard(...args),
     getFutureSpanDeltaForCard: (...args) => getFutureSpanDeltaForCard(...args),
     isMovePaymentCard: (...args) => isMovePaymentCard?.(...args),
@@ -699,7 +753,7 @@
     getInitialSelectionReadoutLines,
     getPlayerReadoutLines,
     getPlanetStatsReadoutLines,
-    scheduleAiAutoStepIfNeeded,
+    scheduleAiAutoStepIfNeeded: (...args) => scheduleAiAutoStepIfNeeded?.(...args),
     getRocketCoordinateReadoutLines,
     selectDefaultRocketForCurrentPlayer,
     syncInteractionFocusChrome,
@@ -707,7 +761,7 @@
     getPublicCardHeight,
     isCardSelectionActive,
     isPublicCardMultiSelectActive,
-    isAiAutoBattlePlayer,
+    isAiAutoBattlePlayer: (...args) => isAiAutoBattlePlayer?.(...args),
   });
   const {
     setTokenAssetSizes,
@@ -752,20 +806,20 @@
     getActivePlayers,
     getDisplayedTurnNumber,
     getNormalTokenAssetForPlayer,
-    getHistoryForSource,
+    getHistoryForSource: (...args) => getHistoryForSource?.(...args),
     createActionLogImpactSnapshot,
-    appendActionLogStep,
-    actionLogOptionsFromHistoryStep,
-    rememberHistoryStep,
+    appendActionLogStep: (...args) => appendActionLogStep?.(...args),
+    actionLogOptionsFromHistoryStep: (...args) => actionLogOptionsFromHistoryStep?.(...args),
+    rememberHistoryStep: (...args) => rememberHistoryStep?.(...args),
     historyCommands,
-    queueStateReadoutRender,
+    queueStateReadoutRender: (...args) => queueStateReadoutRender?.(...args),
     computePlayerFinalScoreBreakdown,
     getPlayerScoreSource,
     updateActionButtons,
     renderPlayerStats,
     isGameEnded,
     isPlayerPassedThisRound,
-    countPlayerOwnedTech: countPlayerOwnedTechForActionLogExport,
+    countPlayerOwnedTech: (...args) => countPlayerOwnedTechForActionLogExport?.(...args),
   });
   const {
     syncFinalScorePendingMarks,
@@ -787,12 +841,18 @@
     updateQuickPanel,
     updateActionButtons,
     renderStateReadout,
-    renderTechBoard,
+    renderTechBoard: (...args) => renderTechBoard?.(...args),
     renderSectorNebulaDataBoard,
     renderFinalScoreBoard,
     renderRunezuBoardSymbols,
   });
-  const createActionBriefingStepMetadata = actionBriefingModule.createActionBriefingStepMetadata;
+  const createActionBriefingStepMetadata = (result, options = {}) => (
+    actionBriefingModule.createActionBriefingStepMetadata(result, {
+      solar,
+      data,
+      ...options,
+    })
+  );
   const effectFlowHelpers = effectFlowModule.createEffectFlowHelpers({
     pendingState,
     uiRuntimeState,
@@ -856,7 +916,8 @@
     getAomomoCurrentX,
     normalizeActionLogText,
     createActionLogPlayedCardSnapshot,
-    appendActionLogTextWithPlayedCard,
+    attachCardHoverPreview,
+    cardBackSrc: players.CARD_BACK_SRC,
     hideCardHoverPreview,
     scheduleAiAutoStepIfNeeded: () => scheduleAiAutoStepIfNeeded?.(),
     setReportTab,
@@ -1045,11 +1106,11 @@
     getPlayerById,
     getPlayerByColor,
     getGameplayLockReason,
-    isTechTilePickingActive,
+    isTechTilePickingActive: (...args) => isTechTilePickingActive?.(...args),
     isCardSelectionActive,
     isDiscardSelectionActive,
     isPlayCardSelectionActive,
-    isIndustryHandSelectionActive,
+    isIndustryHandSelectionActive: (...args) => isIndustryHandSelectionActive?.(...args),
     hasActivePendingSubFlow,
     getHandCardPlayActionForCard: (...args) => getHandCardPlayActionForCard(...args),
     getCardCornerQuickActionForCard: (...args) => getCardCornerQuickActionForCard(...args),
@@ -1084,7 +1145,7 @@
     executeFreeMoveForScanAction4,
     executeFreeMoveForCardCorner,
     executeFreeMoveForCardTrigger,
-    executeIndustryFreeMove,
+    executeIndustryFreeMove: (...args) => executeIndustryFreeMove?.(...args),
     executeCardEffectMove,
     createActionContext,
     recordMoveActionHistory,
@@ -1103,15 +1164,15 @@
     canStartCardCornerFreeMove: (...args) => canStartCardCornerFreeMove(...args),
     beginCardCornerFreeMove,
     startCardCornerMoveEffectFlow: (...args) => startCardCornerMoveEffectFlow(...args),
-    rollbackPendingIndustryQuickAction,
+    rollbackPendingIndustryQuickAction: (...args) => rollbackPendingIndustryQuickAction?.(...args),
     continuePendingDataPlacementAfterBonus,
-    applyIndustryPlayCardPassives,
-    buildPlayCardEffectFlowQueue,
+    applyIndustryPlayCardPassives: (...args) => applyIndustryPlayCardPassives?.(...args),
+    buildPlayCardEffectFlowQueue: (...args) => buildPlayCardEffectFlowQueue?.(...args),
     createImmediatePlayCardEvent: (...args) => createImmediatePlayCardEvent(...args),
     createPlayCardEvent: (...args) => createPlayCardEvent(...args),
     recordPlayCardStart,
     startPlayCardEffectFlow,
-    appendIndustryPlayPassiveStatus,
+    appendIndustryPlayPassiveStatus: (...args) => appendIndustryPlayPassiveStatus?.(...args),
     recordMainActionIrreversibleBarrier,
     renderFangzhouCardDisplays,
     getFangzhouCard1RewardTargetOptions,
@@ -1215,7 +1276,7 @@
     endEffectHistoryStep,
     recordHistoryCommand,
     recordAbilityCommands,
-    isTechTilePickingActive,
+    isTechTilePickingActive: (...args) => isTechTilePickingActive?.(...args),
     isCardSelectionActive,
     isDiscardSelectionActive,
     isPlayCardSelectionActive,
@@ -1239,7 +1300,7 @@
     activateNextActionEffect,
     getPendingOwnerFields,
     withPendingOwnerPlayer,
-    confirmIndustryHeliosRemoveTech,
+    confirmIndustryHeliosRemoveTech: (...args) => confirmIndustryHeliosRemoveTech?.(...args),
     isActionEffectFlowActive,
     skipActionEffectWithMessage,
     getCurrentActionEffect,
@@ -1249,7 +1310,7 @@
     markCurrentActionIrreversible,
     syncInteractionFocusChrome,
     openYichangdianCornerPicker,
-    rollbackPendingIndustryQuickAction,
+    rollbackPendingIndustryQuickAction: (...args) => rollbackPendingIndustryQuickAction?.(...args),
     beginCardSelection: (...args) => beginCardSelection(...args),
   });
   ({
@@ -1452,6 +1513,7 @@
     canPlaceRunezuTrace,
     canPlaceRunezuFaceSymbol,
     canPlaceStateTrace,
+    canPlaceAnyStateExtraTrace,
     closeAlienTracePicker,
     openAlienTracePicker,
     beginAlienTraceBoardPlacement,
@@ -1543,7 +1605,7 @@
     appendRevealCardGrantMessage,
     getRevealIrreversible,
     buildAlienTraceEvent: (...args) => buildAlienTraceEvent?.(...args),
-    maybeRestoreAlienLabPanelForTrace,
+    maybeRestoreAlienLabPanelForTrace: (...args) => maybeRestoreAlienLabPanelForTrace?.(...args),
     beginCardSelection: (...args) => beginCardSelection(...args),
     enqueueFangzhouCard1RewardEffects,
     applyYichangdianRewardToPlayer,
@@ -1588,6 +1650,7 @@
     handleAomomoRevealSideEffects,
     handleRunezuRevealSideEffects,
     handleAlienRevealSideEffects,
+    failMissingAlienTraceTargetPlayer,
     getAlienTraceActionPlayer,
     confirmYichangdianTracePlacement,
     confirmBanrenmaTracePlacement,
@@ -1734,7 +1797,7 @@
     renderRotateStateToken,
     renderDebugPlayerSwitch,
     refreshHelpers,
-    cancelIndustryAbilityFlow,
+    cancelIndustryAbilityFlow: (...args) => cancelIndustryAbilityFlow?.(...args),
     closeFinalResultDialog,
     preparePassReservePilesForCurrentGame,
     initializeCardGame,
@@ -1817,7 +1880,7 @@
     renderDebugPlayerSwitch,
     renderPlayerStats,
     renderPlayerHand,
-    renderTechBoard,
+    renderTechBoard: (...args) => renderTechBoard?.(...args),
     renderSectorNebulaDataBoard,
     syncPlanetOrbitLandMarkers,
     renderAlienPanels,
@@ -1827,7 +1890,7 @@
     renderStateReadout,
     schedulePersistentGameStateSave,
     resolveInitialSelectionEffects,
-    applyIndustryRoundStartBonuses,
+    applyIndustryRoundStartBonuses: (...args) => applyIndustryRoundStartBonuses?.(...args),
     startInitialIncomeEffectFlow,
     applyIndustryStartupPassives,
     appendConfirmedActionLogEntry,
@@ -1847,19 +1910,19 @@
     removeRocketElement,
     syncPlanetOrbitLandMarkersAfterAction: syncPlanetOrbitLandMarkers,
     startPlanetRewardEffectFlow,
-    startLaunchSectorFinishEffectFlow,
+    startLaunchSectorFinishEffectFlow: (...args) => startLaunchSectorFinishEffectFlow?.(...args),
     settleCardTasksAfterEffect: (...args) => settleCardTasksAfterEffect(...args),
     maybeAutoExecuteAomomoRewardEffects,
     startResearchTechEffectFlow,
-    syncTechSelectionChrome,
-    finalizeTechTakeResult,
+    syncTechSelectionChrome: (...args) => syncTechSelectionChrome?.(...args),
+    finalizeTechTakeResult: (...args) => finalizeTechTakeResult?.(...args),
     renderRocketElement,
     recordAtomicActionHistory,
     startAnalyzeDataRewardFlow,
     executeActionEffect,
     getCurrentActionEffect,
-    maybeApplyIndustryLaunchScan,
-    maybeConsumeAlienLabPanelForMainAction,
+    maybeApplyIndustryLaunchScan: (...args) => maybeApplyIndustryLaunchScan?.(...args),
+    maybeConsumeAlienLabPanelForMainAction: (...args) => maybeConsumeAlienLabPanelForMainAction?.(...args),
     markActionPending,
     beginScanAction: (...args) => beginScanAction(...args),
     beginPlayCardSelection: (...args) => beginPlayCardSelection(...args),
@@ -2435,6 +2498,7 @@
     get pendingStrategyPassiveSlotChoice() { return pendingState.strategyPassiveSlotChoice; },
     get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
     get alienTracePickerState() { return pendingState.alienTracePickerState; },
+    get pendingAlienRevealConfirmation() { return pendingState.alienRevealConfirmation; },
   };
 
   const aiController = window.SetiAppAiController.createAiController({
@@ -2499,7 +2563,7 @@
     canBlindDraw: (...args) => canBlindDraw(...args),
     canPayForMove,
     canStartMainAction,
-    cancelTechSelection,
+    cancelTechSelection: (...args) => cancelTechSelection?.(...args),
     clearTransientStateForRecovery,
     closeScanTargetPicker,
     computePlayerFinalScoreBreakdown,
@@ -2509,6 +2573,11 @@
     confirmDiscardAnyForIncome,
     confirmHandCardPlayAction,
     confirmInitialSelectionForCurrentPlayer,
+    confirmAlienRevealNotice: () => {
+      const result = confirmAlienRevealNotice();
+      maybeContinuePendingTurnEndRevealFlow();
+      return result;
+    },
     confirmLandTargetPicker,
     confirmMovePayment,
     confirmPassReserveSelection: (...args) => confirmPassReserveSelection(...args),
@@ -2516,8 +2585,8 @@
     confirmProbeSectorScanSelection,
     confirmPublicScanSelection,
     confirmScanTarget,
-    confirmStrategyPassiveSlotChoice,
-    confirmTechBlueSlotChoice,
+    confirmStrategyPassiveSlotChoice: (...args) => confirmStrategyPassiveSlotChoice?.(...args),
+    confirmTechBlueSlotChoice: (...args) => confirmTechBlueSlotChoice?.(...args),
     createActionContext,
     createTurnState,
     dispatchRuntimeAction: (request) => actionRuntimeController.dispatchAction(request),
@@ -2529,9 +2598,9 @@
     executeFreeMoveForCardCorner,
     executeFreeMoveForCardTrigger,
     executeFreeMoveForScanAction4,
-    executeIndustryFreeMove,
+    executeIndustryFreeMove: (...args) => executeIndustryFreeMove?.(...args),
     finalizePendingDiscardSelection,
-    finishIndustryAbilityFlow,
+    finishIndustryAbilityFlow: (...args) => finishIndustryAbilityFlow?.(...args),
     formatRocketLabel,
     getActivePlayers,
     getAlienTraceActionPlayer,
@@ -2553,7 +2622,7 @@
     getPublicScanChoicesForCard,
     getReadyCardTasks,
     getRequiredMovePointsForUi,
-    getResearchTechSelectionOptions,
+    getResearchTechSelectionOptions: (...args) => getResearchTechSelectionOptions?.(...args),
     getSectorContentForMove,
     getSectorXsMatchingCondition,
     handleAmibaCardGainChoice,
@@ -2567,7 +2636,7 @@
     handleChongCardGainChoice,
     handleChongFossilChoice,
     handleChongTaskCompletionChoice,
-    handleCompanyActionMarkerClick,
+    handleCompanyActionMarkerClick: (...args) => handleCompanyActionMarkerClick?.(...args),
     handleConditionalSectorChoice,
     handleDiscardCornerRepeatChoice,
     handleDiscardIncomeCardChoice,
@@ -2588,12 +2657,12 @@
     handleRemoveOrbitToProbeChoice,
     handleRemovePlanetMarkerChoice,
     handleReturnUnfinishedTaskChoice,
-    handleIndustryDeepspaceHandClick,
+    handleIndustryDeepspaceHandClick: (...args) => handleIndustryDeepspaceHandClick?.(...args),
     handleRunezuCardGainChoice,
     handleRunezuFaceSymbolChoice,
     handleRunezuSymbolBranchChoice,
     handleScanAction4Choice,
-    handleSupplyTechTileClick,
+    handleSupplyTechTileClick: (...args) => handleSupplyTechTileClick?.(...args),
     handleYichangdianCardGainChoice,
     handleYichangdianCornerChoice,
     hasActivePendingSubFlow,
@@ -2604,15 +2673,15 @@
     isDiscardSelectionActive,
     isGameEnded,
     isHandScanSelectionActive,
-    isIndustryHandSelectionActive,
+    isIndustryHandSelectionActive: (...args) => isIndustryHandSelectionActive?.(...args),
     isInitialSelectionActive,
     isMovePaymentCard,
     isMovePaymentSelectionActive,
     isPlayCardSelectionActive,
     isPublicScanMultiSelectActive,
     isUiBlockingAiAutomation: isActionBriefingOpen,
-    isTechTileOwnedByOtherPlayer,
-    isTechTilePickingActive,
+    isTechTileOwnedByOtherPlayer: (...args) => isTechTileOwnedByOtherPlayer?.(...args),
+    isTechTilePickingActive: (...args) => isTechTilePickingActive?.(...args),
     landForCurrentPlayer,
     moveRocket,
     orbitForCurrentPlayer,
@@ -2623,7 +2692,7 @@
     pickPublicCardForCurrentPlayer,
     randomizeAll,
     renderStateReadout,
-    researchTechForCurrentPlayer,
+    researchTechForCurrentPlayer: (...args) => researchTechForCurrentPlayer?.(...args),
     resetActionLog,
     resetScanRunSequence,
     restoreMutableObject,
@@ -2702,7 +2771,7 @@
     cards,
     clearMoveRocketHighlight,
     clearHistoryStepOrderForSource,
-    commitIrreversibleIndustryQuickAction,
+    commitIrreversibleIndustryQuickAction: (...args) => commitIrreversibleIndustryQuickAction?.(...args),
     completeCurrentActionEffect,
     completeQuickActionStep,
     continueAfterCardTriggerResolution: (...args) => continueAfterCardTriggerResolution(...args),
@@ -2715,8 +2784,8 @@
     document,
     els,
     fangzhou,
-    finalizeIndustryDeepspaceSwap,
-    finishIndustryAbilityFlow,
+    finalizeIndustryDeepspaceSwap: (...args) => finalizeIndustryDeepspaceSwap?.(...args),
+    finishIndustryAbilityFlow: (...args) => finishIndustryAbilityFlow?.(...args),
     formatPlanetRewardGain,
     endEffectHistoryStep,
     getCurrentPlayer,
@@ -2737,11 +2806,11 @@
     isCardSelectionActive,
     isDiscardSelectionActive,
     isHandScanSelectionActive,
-    isIndustryHandSelectionActive,
+    isIndustryHandSelectionActive: (...args) => isIndustryHandSelectionActive?.(...args),
     isMovePaymentLockedForAiAutomation,
     isMovePaymentSelectionActive,
     isPlayCardSelectionActive,
-    isTechTilePickingActive,
+    isTechTilePickingActive: (...args) => isTechTilePickingActive?.(...args),
     keepExistingMainActionPendingAfterChongTask,
     markCurrentActionIrreversible,
     maybeApplyCardMoveDistinctEventReward,
@@ -2765,7 +2834,7 @@
     renderStateReadout,
     rocketState,
     rocketActions,
-    rollbackPendingIndustryQuickAction,
+    rollbackPendingIndustryQuickAction: (...args) => rollbackPendingIndustryQuickAction?.(...args),
     runezu,
     selectDefaultRocketForCurrentPlayer,
     scrollToPlayerHandPanel,
@@ -2923,7 +2992,7 @@
     listCardTriggerFreeMoveCandidates,
     listReadyChongTransportCandidates,
     markCurrentActionIrreversibleForSource,
-    maybeApplyIndustryLaunchScan,
+    maybeApplyIndustryLaunchScan: (...args) => maybeApplyIndustryLaunchScan?.(...args),
     nebulaDataState,
     openAmibaSymbolChoiceDialog,
     pendingState,
@@ -4119,1073 +4188,34 @@
     ));
   }
 
-  function getAiFinalScoreFormulaPotential(formulaId) {
-    switch (formulaId) {
-      case "a1":
-        return 2.6;
-      case "a2":
-        return 3.2;
-      case "b1":
-        return 3.6;
-      case "b2":
-        return 4;
-      case "c1":
-        return 3.4;
-      case "c2":
-        return 3.8;
-      case "d1":
-        return 5.2;
-      case "d2":
-        return 5.5;
-      default:
-        return 2;
-    }
-  }
-
-  function scoreAiFinalScoreFormulaDemand(formulaId, demand = {}) {
-    let value = aiNumber(demand.final) * 0.12;
-    if (formulaId === "a1" || formulaId === "a2") {
-      value += getAiMapDemand(demand.resources, "credits") * 0.08;
-      value += getAiMapDemand(demand.resources, "energy") * 0.08;
-      value += getAiMapDemand(demand.resources, "handSize") * 0.06;
-      return applyAiStrategyWeight(value, "engine", 0.35);
-    }
-    if (formulaId === "b1") {
-      value += sumAiDemandMap(demand.traceTypes) * 0.14;
-      value += getAiMapDemand(demand.actions, "scan") * 0.08;
-      return applyAiStrategyWeight(value, "scan", 0.35);
-    }
-    if (formulaId === "b2") {
-      value += getAiMapDemand(demand.actions, "orbit") * 0.16;
-      value += getAiMapDemand(demand.actions, "land") * 0.16;
-      value += getAiMapDemand(demand.actions, "scan") * 0.12;
-      value += sumAiDemandMap(demand.scanColors) * 0.08;
-      return applyAiStrategyWeight(value, "orbitLand", 0.45);
-    }
-    if (formulaId === "c1" || formulaId === "c2") {
-      value += aiNumber(demand.task) * 0.22;
-      value += getAiMapDemand(demand.actions, "playCard") * 0.12;
-      value = applyAiStrategyWeight(value, "task", 0.5);
-      return applyAiStrategyWeight(value, "playCard", 0.25);
-    }
-    if (formulaId === "d1" || formulaId === "d2") {
-      value += sumAiDemandMap(demand.techTypes) * 0.18;
-      value += getAiMapDemand(demand.actions, "researchTech") * 0.18;
-      return applyAiStrategyWeight(value, "tech", 0.55);
-    }
-    return value;
-  }
-
-  function getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand = {}) {
-    if (!player || (formulaId !== "c1" && formulaId !== "c2")) return null;
-    const countOpenTasks = (card) => {
-      const model = cardEffects?.getCardModel?.(card) || null;
-      const completed = new Set(card?.cardEffectState?.completedTaskIds || []);
-      return (model?.tasks || []).filter((task) => task?.id && !completed.has(task.id)).length;
-    };
-    const reservedCards = Array.isArray(player.reservedCards) ? player.reservedCards : [];
-    const hand = Array.isArray(player.hand) ? player.hand : [];
-    const reservedTaskCount = reservedCards.reduce((total, card) => total + countOpenTasks(card), 0);
-    const handTaskCount = hand.reduce((total, card) => total + countOpenTasks(card), 0);
-    const type3Reserved = endGameScoring?.countType3Cards
-      ? Math.max(0, Math.round(aiNumber(endGameScoring.countType3Cards(player, getCardTypeCode))))
-      : reservedCards.reduce((total, card) => total + (Math.round(aiNumber(getCardTypeCode(card))) === 3 ? 1 : 0), 0);
-    const type3InHand = hand.reduce((total, card) => (
-      total + (Math.round(aiNumber(getCardTypeCode(card))) === 3 ? 1 : 0)
-    ), 0);
-    const currentBase = Math.max(0, Math.round(aiNumber(baseValue)));
-    const completedTaskCount = Math.max(0, aiNumber(player.completedTaskCount));
-    const roundNumber = Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1));
-    const taskDemand = aiNumber(demand.task) + getAiMapDemand(demand.actions, "playCard") * 0.8;
-    const visibleTaskPipeline = reservedTaskCount + handTaskCount * 0.35;
-    const visibleType3Pipeline = type3Reserved + type3InHand * 0.45;
-    const cPipeline = formulaId === "c1"
-      ? visibleTaskPipeline
-      : visibleTaskPipeline + visibleType3Pipeline;
-    const demandPipeline = Math.max(0, taskDemand) * (formulaId === "c1" ? 0.018 : 0.026);
-    const pipelineScale = Math.min(1, Math.max(0, (cPipeline + demandPipeline) / (formulaId === "c1" ? 2.5 : 2)));
-    const rawActionWindow = roundNumber >= FINAL_ROUND_NUMBER
-      ? (formulaId === "c1" ? 0.35 : 0.85)
-      : roundNumber === 3
-        ? (formulaId === "c1" ? 0.75 : 1.45)
-        : (formulaId === "c1" ? 1.15 : 2.1);
-    const actionWindow = rawActionWindow * pipelineScale;
-    const expectedNewTasks = Math.min(
-      7,
-      reservedTaskCount * (formulaId === "c1" ? 0.48 : 0.78)
-        + handTaskCount * (formulaId === "c1" ? 0.18 : 0.34)
-        + Math.max(0, taskDemand) * (formulaId === "c1" ? 0.018 : 0.034)
-        + actionWindow,
-    );
-    const expectedNewType3 = formulaId === "c2"
-      ? Math.min(
-        4,
-        type3InHand * (roundNumber >= FINAL_ROUND_NUMBER ? 0.42 : 0.68)
-          + Math.max(0, taskDemand) * 0.012,
-      )
-      : 0;
-
-    let projectedBase = currentBase;
-    if (formulaId === "c1") {
-      projectedBase = Math.max(
-        currentBase,
-        Math.floor(completedTaskCount + expectedNewTasks),
-      );
-    } else {
-      projectedBase = Math.max(
-        currentBase,
-        Math.floor((
-          completedTaskCount
-          + type3Reserved
-          + expectedNewTasks
-          + expectedNewType3
-        ) / 2),
-      );
-    }
-
-    return {
-      currentBase,
-      completedTaskCount,
-      reservedTaskCount,
-      handTaskCount,
-      type3Reserved,
-      type3InHand,
-      taskDemand,
-      visibleTaskPipeline,
-      visibleType3Pipeline,
-      cPipeline,
-      demandPipeline,
-      pipelineScale,
-      actionWindow,
-      expectedNewTasks,
-      expectedNewType3,
-      projectedBase,
-    };
-  }
-
-  function scoreAiFinalScoreFormulaGrowth(formulaId, player, slotIndex, baseValue, demand = {}) {
-    if (!player || !endGameScoring?.getSlotMultiplier) return 0;
-    if (!["c1", "c2", "d1", "d2"].includes(formulaId)) return 0;
-    const slot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
-
-    const remainingRounds = Math.max(1, aiNumber(getAiRemainingRoundWeight()));
-    const roundNumber = Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1));
-    const currentBase = Math.max(0, Math.round(aiNumber(baseValue)));
-
-    if (formulaId === "c1" || formulaId === "c2") {
-      const cPipelineState = getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand);
-      if (!cPipelineState) return 0;
-      const {
-        currentBase: pipelineCurrentBase,
-        pipelineScale,
-        expectedNewTasks,
-        expectedNewType3,
-        projectedBase,
-      } = cPipelineState;
-      if (currentBase <= 0 && pipelineScale < 0.12) return 0;
-      const baseGain = Math.max(0, projectedBase - pipelineCurrentBase);
-      if (baseGain <= 0 && currentBase > 0) return 0;
-      const multiplier = Math.max(0, aiNumber(endGameScoring.getSlotMultiplier(formulaId, slot)));
-      const growthValue = baseGain * multiplier;
-      const firstSlotPremium = slot === 1 && roundNumber <= 3
-        ? Math.min(
-          formulaId === "c1" ? 5 : 9,
-          (formulaId === "c2" ? 3.6 : 1.8) + expectedNewTasks * (formulaId === "c1" ? 0.38 : 0.65) + expectedNewType3 * 0.5,
-        )
-        : slot === 2 && roundNumber <= 3
-          ? Math.min(formulaId === "c1" ? 2 : 3.5, expectedNewTasks * 0.28 + expectedNewType3 * 0.25)
-          : 0;
-      const zeroBaseFloor = currentBase <= 0 && roundNumber <= 3
-        ? Math.min(
-          formulaId === "c1" ? 1.4 : 3.2,
-          (expectedNewTasks * (formulaId === "c1" ? 0.22 : 0.38) + expectedNewType3 * 0.28) * pipelineScale,
-        )
-        : 0;
-      return Math.min(24, growthValue * (formulaId === "c1" ? 0.48 : 0.68) + firstSlotPremium + zeroBaseFloor);
-    }
-
-    if (!endGameScoring?.countOwnedTech) return 0;
-    if (slot >= 3) return 0;
-    const techCounts = ["orange", "purple", "blue"].map((techType) => (
-      Math.max(0, Math.round(aiNumber(endGameScoring.countOwnedTech(player, techType))))
-    ));
-    const totalTech = techCounts.reduce((total, count) => total + count, 0);
-    const hasCheatLab = player?.industryCard?.id === "industry:作弊实验室"
-      || player?.industryCard?.label === "作弊实验室";
-    const publicity = Math.max(0, aiNumber(player.resources?.publicity));
-    const techDemand = sumAiDemandMap(demand.techTypes) + getAiMapDemand(demand.actions, "researchTech");
-    const resourceBoost = publicity >= (hasCheatLab ? 4 : 6) ? 0.65 : publicity >= 3 ? 0.35 : 0;
-    const demandBoost = Math.min(1.4, Math.max(0, techDemand) * 0.045);
-    const expectedNewTech = Math.min(
-      5,
-      Math.max(0, (remainingRounds - 0.35) * (hasCheatLab ? 1.25 : 0.85) + resourceBoost + demandBoost),
-    );
-    if (expectedNewTech <= 0) return 0;
-
-    let projectedBase = currentBase;
-    if (formulaId === "d2") {
-      projectedBase = Math.floor((totalTech + expectedNewTech) / 2);
-    } else {
-      const projected = [...techCounts].sort((left, right) => left - right);
-      let remainingTech = expectedNewTech;
-      while (remainingTech >= 1) {
-        projected[0] += 1;
-        projected.sort((left, right) => left - right);
-        remainingTech -= 1;
-      }
-      projectedBase = projected[0];
-    }
-
-    const baseGain = Math.max(0, projectedBase - currentBase);
-    if (baseGain <= 0 && currentBase > 0) return 0;
-
-    const multiplier = Math.max(0, aiNumber(endGameScoring.getSlotMultiplier(formulaId, slot)));
-    const growthValue = baseGain * multiplier;
-    const firstSlotPremium = slot === 1 && roundNumber <= 3
-      ? Math.min(8, (formulaId === "d2" ? 3.2 : 2.4) + expectedNewTech * 0.7)
-      : 0;
-    const zeroBaseFloor = currentBase <= 0 && roundNumber <= 3
-      ? Math.min(4.5, expectedNewTech * (formulaId === "d2" ? 0.9 : 0.65))
-      : 0;
-    return Math.min(22, growthValue * 0.74 + firstSlotPremium + zeroBaseFloor);
-  }
-
-  function scoreAiWeakCFinalFormulaPenalty(formulaId, player, slotIndex, thresholdValue, baseValue, growthPotentialScore, demand = {}) {
-    if (formulaId !== "c1" && formulaId !== "c2") return 0;
-    const roundNumber = Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1));
-    const threshold = Math.max(0, aiNumber(thresholdValue));
-
-    const cPipelineState = getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand);
-    if (!cPipelineState) return 0;
-    const slot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
-    const currentBase = Math.max(0, cPipelineState.currentBase);
-    const projectedBase = Math.max(currentBase, aiNumber(cPipelineState.projectedBase));
-    const pipelineStrength = Math.max(0, cPipelineState.cPipeline + cPipelineState.demandPipeline);
-    const earlySpeculativeWindow = threshold < 50 && roundNumber <= 2;
-    if (earlySpeculativeWindow && currentBase > 0) return 0;
-    const finalWindow = threshold >= 70 || roundNumber >= FINAL_ROUND_NUMBER;
-    const lateWindowScale = finalWindow
-      ? 1
-      : threshold >= 50 || roundNumber >= 3
-        ? 0.72
-        : earlySpeculativeWindow
-          ? (slot === 1 ? 0.55 : slot === 2 ? 0.32 : 0.22)
-          : 0.38;
-    if (lateWindowScale <= 0) return 0;
-
-    const targetBase = earlySpeculativeWindow
-      ? (formulaId === "c1"
-        ? (slot === 1 ? 2.1 : slot === 2 ? 1.55 : 1.2)
-        : (slot === 1 ? 1.65 : slot === 2 ? 1.25 : 1))
-      : (formulaId === "c1"
-        ? (slot === 1
-          ? (finalWindow ? 4.5 : 4)
-          : slot === 2
-            ? (finalWindow ? 3.5 : 3)
-            : (finalWindow ? 3 : 2.5))
-        : (slot === 1
-          ? (finalWindow ? 3.5 : 3)
-          : slot === 2
-            ? (finalWindow ? 3 : 2.5)
-            : (finalWindow ? 2.4 : 2)));
-    const realizedTarget = earlySpeculativeWindow
-      ? (formulaId === "c1"
-        ? (slot === 1 ? 0.9 : 0.7)
-        : (slot === 1 ? 0.7 : 0.55))
-      : (formulaId === "c1"
-        ? (finalWindow ? 3 : 2.5)
-        : (finalWindow ? 2.2 : 1.8));
-    const shortfall = Math.max(0, targetBase - projectedBase);
-    const realizedShortfall = Math.max(0, realizedTarget - currentBase);
-    if (shortfall <= 0 && realizedShortfall <= 0) return 0;
-
-    const weakPipelineLimit = earlySpeculativeWindow
-      ? (formulaId === "c1" ? 0.9 : 0.75)
-      : (formulaId === "c1"
-        ? (finalWindow ? 1.8 : 1.35)
-        : (finalWindow ? 1.45 : 1.1));
-    let penalty = shortfall * (formulaId === "c1" ? 5.4 : 4.2) * lateWindowScale;
-    penalty += realizedShortfall * (formulaId === "c1" ? 2.4 : 1.8) * lateWindowScale;
-
-    if (pipelineStrength < weakPipelineLimit && currentBase < realizedTarget) {
-      penalty += (formulaId === "c1" ? 5 : 3.5) * lateWindowScale;
-    }
-    if (finalWindow && currentBase <= (formulaId === "c1" ? 2 : 1) && projectedBase < targetBase) {
-      penalty += (formulaId === "c1" ? 4 : 3) * lateWindowScale;
-    }
-
-    const growthValue = Math.max(0, aiNumber(growthPotentialScore));
-    if (growthValue >= 6) penalty *= 0.48;
-    else if (growthValue >= 4) penalty *= 0.65;
-    else if (growthValue >= 2.5) penalty *= 0.82;
-
-    if (slot >= 3) penalty *= 0.86;
-    return Math.min(finalWindow ? 26 : 20, Math.max(0, penalty));
-  }
-
-  function getAiZeroBaseCFinalSpeculationScale(formulaId, player, slotIndex, thresholdValue, baseValue, demand = {}) {
-    if (formulaId !== "c1" && formulaId !== "c2") return null;
-    if (Math.max(0, aiNumber(baseValue)) > 0) return null;
-    const cPipelineState = getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand);
-    if (!cPipelineState) return null;
-
-    const roundNumber = Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1));
-    const threshold = Math.max(0, aiNumber(thresholdValue));
-    const slot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
-    const projectedBase = Math.max(0, aiNumber(cPipelineState.projectedBase));
-    const cPipeline = Math.max(0, aiNumber(cPipelineState.cPipeline));
-    const concretePipeline = Math.max(0,
-      aiNumber(cPipelineState.completedTaskCount)
-        + aiNumber(cPipelineState.reservedTaskCount)
-        + aiNumber(cPipelineState.type3Reserved)
-        + aiNumber(cPipelineState.handTaskCount) * 0.35
-        + aiNumber(cPipelineState.type3InHand) * 0.3,
-    );
-
-    if (threshold <= 25 && roundNumber <= 2 && slot === 1) {
-      const targetProjectedBase = formulaId === "c1" ? 2 : 2;
-      if (projectedBase >= targetProjectedBase || concretePipeline >= targetProjectedBase + 0.35) return null;
-      if (cPipeline >= (formulaId === "c1" ? 2 : 2.25)) return 0.34;
-      if (cPipeline >= (formulaId === "c1" ? 1.25 : 1.35)) return 0.26;
-      return 0.18;
-    }
-
-    if (threshold >= 50 || roundNumber >= 3) {
-      if (projectedBase <= 0 && cPipeline < 1) return 0.08;
-      if (projectedBase < (formulaId === "c1" ? 2 : 1) && cPipeline < 1.6) return 0.14;
-    }
-
-    return null;
-  }
-
-  function getAiB1FinalFormulaState(player) {
-    const traceTypes = aliens?.TRACE_TYPES?.length ? aliens.TRACE_TYPES : ["yellow", "pink", "blue"];
-    const counts = {};
-    for (const traceType of traceTypes) {
-      counts[traceType] = endGameScoring?.countTraceMarkers
-        ? Math.max(0, Math.round(aiNumber(endGameScoring.countTraceMarkers(player, alienGameState, traceType))))
-        : 0;
-    }
-    const values = traceTypes.map((traceType) => counts[traceType] || 0);
-    const minTrace = values.length ? Math.min(...values) : 0;
-    const totalTrace = values.reduce((total, count) => total + count, 0);
-    const missingTypes = traceTypes.filter((traceType) => (counts[traceType] || 0) <= 0);
-    return {
-      counts,
-      minTrace,
-      totalTrace,
-      missingTypes,
-    };
-  }
-
-  function scoreAiB1FinalFormulaFeasibilityPenalty(
-    formulaId,
-    player,
-    slotIndex,
-    thresholdValue,
-    baseValue,
-    demand = {},
-    b1State = null,
-  ) {
-    if (formulaId !== "b1" || !player) return 0;
-    if (Math.max(0, aiNumber(baseValue)) > 0) return 0;
-
-    const state = b1State || getAiB1FinalFormulaState(player);
-    const missingTypes = state.missingTypes || [];
-    if (!missingTypes.length) return 0;
-
-    const threshold = Math.max(0, aiNumber(thresholdValue));
-    const roundNumber = Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1));
-    if (threshold < 50 && roundNumber <= 2) return 0;
-
-    const slot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
-    const totalTrace = Math.max(0, aiNumber(state.totalTrace));
-    const allTraceDemand = sumAiDemandMap(demand.traceTypes);
-    const missingTraceDemand = missingTypes.reduce((total, traceType) => (
-      total + getAiMapDemand(demand.traceTypes, traceType)
-    ), 0);
-    const actionPipeline = getAiMapDemand(demand.actions, "analyze") * 0.45
-      + getAiMapDemand(demand.actions, "land") * 0.32
-      + getAiMapDemand(demand.actions, "scan") * 0.22
-      + getAiMapDemand(demand.actions, "playCard") * 0.14;
-    const tracePipeline = missingTraceDemand * 0.16 + allTraceDemand * 0.06 + actionPipeline;
-    const lateScale = threshold >= 70 || roundNumber >= FINAL_ROUND_NUMBER
-      ? 1.28
-      : threshold >= 50 || roundNumber >= 3
-        ? 1
-        : 0.55;
-    const slotScale = slot === 1 ? 1 : slot === 2 ? 0.82 : 0.62;
-    let penalty = (
-      5.8
-      + missingTypes.length * 3
-      + Math.max(0, 3 - totalTrace) * 0.85
-    ) * lateScale * slotScale;
-
-    if (threshold >= 70) penalty += 3 * lateScale;
-    if (roundNumber >= FINAL_ROUND_NUMBER && missingTypes.length >= 2) penalty += 2.5 * lateScale;
-
-    if (tracePipeline >= 5) penalty *= 0.58;
-    else if (tracePipeline >= 3) penalty *= 0.74;
-    else if (tracePipeline < 1.5) penalty += (1.5 - tracePipeline) * 1.4 * lateScale;
-
-    return Math.round(Math.min(threshold >= 70 ? 26 : 18, Math.max(0, penalty)) * 100) / 100;
-  }
-
-  function getAiB2FinalFormulaState(player, context = {}) {
-    if (!player || !endGameScoring) {
-      return { orbitLandCount: 0, sectorWins: 0 };
-    }
-    return {
-      orbitLandCount: endGameScoring.countOrbitOrLandMarkers
-        ? Math.max(0, Math.round(aiNumber(endGameScoring.countOrbitOrLandMarkers(
-          player,
-          context.planetStatsState,
-          context,
-        ))))
-        : 0,
-      sectorWins: endGameScoring.countSectorWins
-        ? Math.max(0, Math.round(aiNumber(endGameScoring.countSectorWins(
-          player,
-          context.nebulaDataState,
-        ))))
-        : 0,
-    };
-  }
-
-  function scoreAiB2FinalFormulaFeasibilityPenalty(
-    formulaId,
-    player,
-    slotIndex,
-    thresholdValue,
-    baseValue,
-    demand = {},
-    b2State = null,
-  ) {
-    if (formulaId !== "b2" || !player) return 0;
-    if (Math.max(0, aiNumber(baseValue)) > 0) return 0;
-
-    const state = b2State || getAiB2FinalFormulaState(player, createActionContext());
-    const orbitLandCount = Math.max(0, aiNumber(state.orbitLandCount));
-    const sectorWins = Math.max(0, aiNumber(state.sectorWins));
-    const missingSectorSide = sectorWins <= 0;
-    const missingOrbitLandSide = orbitLandCount <= 0;
-    if (!missingSectorSide && !missingOrbitLandSide) return 0;
-
-    const slot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
-    const threshold = Math.max(0, aiNumber(thresholdValue));
-    const roundNumber = Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1));
-    const scanDemand = getAiMapDemand(demand.actions, "scan")
-      + sumAiDemandMap(demand.scanColors) * 0.35
-      + getAiMapDemand(demand.traceTypes, "pink") * 0.15
-      + getAiMapDemand(demand.traceTypes, "blue") * 0.08;
-    const routeDemand = getAiMapDemand(demand.actions, "orbit")
-      + getAiMapDemand(demand.actions, "land")
-      + getAiMapDemand(demand.actions, "move") * 0.35;
-    const lateScale = threshold >= 70 || roundNumber >= FINAL_ROUND_NUMBER
-      ? 1.35
-      : threshold >= 50 || roundNumber >= 3
-        ? 1.05
-        : 0.82;
-    const slotScale = slot === 1 ? 1 : slot === 2 ? 0.75 : 0.55;
-    let penalty = 0;
-
-    if (missingSectorSide) {
-      const imbalance = Math.max(0, orbitLandCount - sectorWins);
-      penalty += (7.5 + Math.min(6, imbalance * 1.35)) * lateScale * slotScale;
-      if (scanDemand < 4) penalty += (4 - scanDemand) * 1.15 * lateScale;
-      if (threshold <= 25 && roundNumber <= 2 && slot === 1 && routeDemand > scanDemand + 1) {
-        penalty += 3.5;
-      }
-      if (threshold <= 25 && roundNumber <= 2 && scanDemand >= 7) {
-        penalty *= 0.65;
-      }
-    }
-
-    if (missingOrbitLandSide) {
-      const movableRocketCount = typeof getMovableTokensForPlayer === "function"
-        ? getMovableTokensForPlayer(player.id).length
-        : 0;
-      const routePipeline = routeDemand + movableRocketCount * 0.5;
-      const imbalance = Math.max(0, sectorWins - orbitLandCount);
-      penalty += (5.5 + Math.min(4, imbalance * 0.9)) * lateScale * slotScale;
-      if (routePipeline < 3) penalty += (3 - routePipeline) * 0.9 * lateScale;
-      if (threshold <= 25 && roundNumber <= 2 && routePipeline >= 6) {
-        penalty *= 0.75;
-      }
-    }
-
-    if (missingSectorSide && missingOrbitLandSide) penalty += 3 * lateScale;
-    return Math.round(Math.min(threshold >= 50 ? 24 : 17, Math.max(0, penalty)) * 100) / 100;
-  }
-
-  function hasAiPlayerClaimedFinalThreshold(playerId, threshold) {
-    if (!playerId) return false;
-    return (finalScoring.listMarks?.(finalScoringState) || []).some((mark) => (
-      mark?.playerId === playerId && Number(mark?.threshold) === Number(threshold)
-    ));
-  }
-
-  const AI_B2_FINAL_TILE_RACE_SCORE_PER_ACTION = 8;
-  const AI_B2_FINAL_TILE_RACE_OPPONENT_SCORE_WINDOW = 15;
-  const AI_B2_FINAL_TILE_RACE_MAX_SCORE_ADJUSTMENT = 8;
-
-  function scoreAiB2FinalTileRaceAdjustment(
-    formulaId,
-    slotIndex,
-    opponentExpectedFirst,
-    exclusiveValueAtRisk,
-    weightedLegacyCompetitionScore,
-    maxScoreAdjustment = 8,
-  ) {
-    const slot = Math.max(1, Math.round(Number(slotIndex) || 1));
-    if (formulaId !== "b2" || slot >= 3 || !opponentExpectedFirst) return 0;
-    const risk = Number(exclusiveValueAtRisk);
-    const legacy = Number(weightedLegacyCompetitionScore);
-    const cap = Math.max(0, Number(maxScoreAdjustment) || 0);
-    const protectedValue = Math.min(cap, Number.isFinite(risk) ? Math.max(0, risk) : 0);
-    return Math.min(
-      cap,
-      Math.max(0, protectedValue - (Number.isFinite(legacy) ? Math.max(0, legacy) : 0)),
-    );
-  }
-
-  function getAiFinalTileRaceThresholds() {
-    return Array.isArray(finalScoringState.thresholds) && finalScoringState.thresholds.length
-      ? [...finalScoringState.thresholds]
-      : [...(finalScoring.FINAL_SCORE_THRESHOLDS || [])];
-  }
-
-  function getAiFinalTileRaceTarget(player, options = {}) {
-    if (!player) return null;
-    const minimumThreshold = Math.max(0, aiNumber(options.minimumThreshold));
-    const pending = (finalScoring.getPendingMarksForPlayer?.(finalScoringState, player.id) || [])
-      .find((entry) => aiNumber(entry?.threshold) > minimumThreshold);
-    if (pending) {
-      return {
-        threshold: aiNumber(pending.threshold),
-        deficit: 0,
-        pending: true,
-      };
-    }
-
-    const score = Math.max(0, aiNumber(player.resources?.score));
-    const threshold = getAiFinalTileRaceThresholds().find((entry) => (
-      aiNumber(entry) > minimumThreshold
-      && !hasAiPlayerClaimedFinalThreshold(player.id, entry)
-    ));
-    if (threshold == null) return null;
-    return {
-      threshold: aiNumber(threshold),
-      deficit: Math.max(0, aiNumber(threshold) - score),
-      pending: false,
-    };
-  }
-
-  function estimateAiFinalTileRaceEta(target, orderAdjustment = 0) {
-    if (!target) return Infinity;
-    if (target.pending || aiNumber(target.deficit) <= 0) return 0;
-    const actionCount = Math.max(
-      1,
-      Math.ceil(aiNumber(target.deficit) / AI_B2_FINAL_TILE_RACE_SCORE_PER_ACTION),
-    );
-    return Math.max(0, actionCount + aiNumber(orderAdjustment));
-  }
-
-  function getAiFinalTileRaceActionWindow(player) {
-    if (!player?.id || !aiRaceModel?.buildActionWindowOrder) return [];
-    const completedPlayerIds = [...(turnState.completedTurnPlayerIds || [])];
-    if (!completedPlayerIds.some((playerId) => String(playerId) === String(player.id))) {
-      completedPlayerIds.push(player.id);
-    }
-    return aiRaceModel.buildActionWindowOrder({
-      ...turnState,
-      completedTurnPlayerIds: completedPlayerIds,
-    }, player.id);
-  }
-
-  function getAiB2FinalTileRaceBase(baseValue, b2State = null) {
-    const currentBase = Math.max(0, aiNumber(baseValue));
-    const orbitLandCount = Math.max(0, aiNumber(b2State?.orbitLandCount));
-    const sectorWins = Math.max(0, aiNumber(b2State?.sectorWins));
-    if (orbitLandCount === sectorWins) return Math.max(currentBase, orbitLandCount);
-    const oneStepBase = orbitLandCount > sectorWins
-      ? Math.min(orbitLandCount, sectorWins + 1)
-      : Math.min(orbitLandCount + 1, sectorWins);
-    return Math.max(currentBase, oneStepBase);
-  }
-
-  function buildAiB2FinalTileDeferRace(
-    tileId,
-    formulaId,
-    slotIndex,
-    player,
-    pending,
-    baseValue,
-    b2State = null,
-  ) {
-    const currentSlot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
-    if (
-      formulaId !== "b2"
-      || currentSlot >= 3
-      || !player?.id
-      || !pending
-      || !aiRaceModel?.estimateRaceOutcome
-      || !endGameScoring?.getSlotMultiplier
-    ) return null;
-
-    const currentMultiplier = Math.max(
-      0,
-      aiNumber(endGameScoring.getSlotMultiplier(formulaId, currentSlot)),
-    );
-    const fallbackMultiplier = Math.max(
-      0,
-      aiNumber(endGameScoring.getSlotMultiplier(formulaId, currentSlot + 1)),
-    );
-    const multiplierGap = Math.max(0, currentMultiplier - fallbackMultiplier);
-    if (multiplierGap <= 0) return null;
-
-    const actionWindowOpponentIds = getAiFinalTileRaceActionWindow(player);
-    const actionWindowIndexById = new Map(actionWindowOpponentIds.map((playerId, index) => (
-      [String(playerId), index]
-    )));
-    const actorTarget = getAiFinalTileRaceTarget(player, {
-      minimumThreshold: aiNumber(pending.threshold),
-    });
-    const actorEta = estimateAiFinalTileRaceEta(actorTarget);
-    const activeIds = Array.isArray(turnState.activePlayerIds) && turnState.activePlayerIds.length
-      ? turnState.activePlayerIds
-      : playerState.players.map((entry) => entry.id).filter(Boolean);
-    const activeIdSet = new Set(activeIds.map((playerId) => String(playerId)));
-    const passedIdSet = new Set((turnState.passedPlayerIds || []).map((playerId) => String(playerId)));
-    const opponentEtas = [];
-
-    for (const opponent of playerState.players || []) {
-      if (!opponent?.id || String(opponent.id) === String(player.id)) continue;
-      if (activeIdSet.size && !activeIdSet.has(String(opponent.id))) continue;
-      if (passedIdSet.has(String(opponent.id))) continue;
-      if (finalScoring.hasPlayerMarkedTile?.(finalScoringState, tileId, opponent.id)) continue;
-
-      const target = getAiFinalTileRaceTarget(opponent);
-      if (!target) continue;
-      if (!target.pending && aiNumber(target.deficit) > AI_B2_FINAL_TILE_RACE_OPPONENT_SCORE_WINDOW) continue;
-      const actionWindowIndex = actionWindowIndexById.get(String(opponent.id));
-      const actsBeforeActorNext = actionWindowIndex != null;
-      const orderAdjustment = target.pending ? 0 : (actsBeforeActorNext ? -0.25 : 0.25);
-      opponentEtas.push({
-        playerId: opponent.id,
-        eta: estimateAiFinalTileRaceEta(target, orderAdjustment),
-        threshold: target.threshold,
-        scoreDeficit: target.deficit,
-        pending: target.pending,
-        actionWindowIndex: actsBeforeActorNext ? actionWindowIndex : null,
-        actsBeforeActorNext,
-      });
-    }
-
-    const raceBase = getAiB2FinalTileRaceBase(baseValue, b2State);
-    const exclusiveValue = raceBase * currentMultiplier;
-    const fallbackValue = raceBase * fallbackMultiplier;
-    const outcome = aiRaceModel.estimateRaceOutcome({
-      actorEta,
-      opponentEtas,
-      reusableValue: 0,
-      exclusiveValue,
-      fallbackValue,
-    });
-    const opponentExpectedFirst = Boolean(outcome?.contested && !outcome?.actorWins);
-    const protectedValue = opponentExpectedFirst
-      ? Math.min(
-        AI_B2_FINAL_TILE_RACE_MAX_SCORE_ADJUSTMENT,
-        Math.max(0, aiNumber(outcome?.exclusiveValueAtRisk)),
-      )
-      : 0;
-
-    return {
-      tileId,
-      formulaId,
-      slotIndex: currentSlot,
-      etaBasis: `public-score-deficit-per-${AI_B2_FINAL_TILE_RACE_SCORE_PER_ACTION}-points`,
-      opponentScoreWindow: AI_B2_FINAL_TILE_RACE_OPPONENT_SCORE_WINDOW,
-      actionWindowOpponentIds,
-      actorTarget,
-      actorEta: Number.isFinite(actorEta) ? actorEta : null,
-      actorUnreachable: !Number.isFinite(actorEta),
-      opponentEtas,
-      outcome: outcome?.outcome || null,
-      fastestOpponentEta: Number.isFinite(outcome?.fastestOpponentEta)
-        ? outcome.fastestOpponentEta
-        : null,
-      fastestOpponentIds: outcome?.fastestOpponentIds || [],
-      currentMultiplier,
-      fallbackMultiplier,
-      multiplierGap,
-      raceBase,
-      reusableValue: 0,
-      exclusiveValue,
-      fallbackValue,
-      raceAdjustedValue: aiNumber(outcome?.raceAdjustedValue),
-      exclusiveValueAtRisk: Math.max(0, aiNumber(outcome?.exclusiveValueAtRisk)),
-      opponentExpectedFirst,
-      protectedValue,
-      maxScoreAdjustment: AI_B2_FINAL_TILE_RACE_MAX_SCORE_ADJUSTMENT,
-    };
-  }
-
-  function scoreAiFinalScoreTileCompetition(tileId, formulaId, slotIndex, player, context) {
-    if (!tileId || !formulaId || !player || !endGameScoring?.getSlotMultiplier) return 0;
-    const currentSlot = Math.max(1, Math.round(aiNumber(slotIndex) || 1));
-    if (currentSlot >= 3) return 0;
-    const currentMultiplier = Math.max(0, aiNumber(endGameScoring.getSlotMultiplier(formulaId, currentSlot)));
-    const nextMultiplier = Math.max(0, aiNumber(endGameScoring.getSlotMultiplier(formulaId, currentSlot + 1)));
-    const multiplierGap = Math.max(0, currentMultiplier - nextMultiplier);
-    if (multiplierGap <= 0) return 0;
-
-    const thresholds = Array.isArray(finalScoringState.thresholds) && finalScoringState.thresholds.length
-      ? finalScoringState.thresholds
-      : finalScoring.FINAL_SCORE_THRESHOLDS || [];
-    let score = 0;
-    const activeIds = Array.isArray(turnState.activePlayerIds) && turnState.activePlayerIds.length
-      ? turnState.activePlayerIds
-      : playerState.players.map((entry) => entry.id).filter(Boolean);
-
-    for (const opponentId of activeIds) {
-      if (!opponentId || opponentId === player.id) continue;
-      const opponent = getPlayerById(opponentId);
-      if (!opponent) continue;
-      if (finalScoring.hasPlayerMarkedTile?.(finalScoringState, tileId, opponent.id)) continue;
-
-      const opponentScore = Math.max(0, aiNumber(opponent.resources?.score));
-      const nextThreshold = thresholds.find((threshold) => (
-        opponentScore < aiNumber(threshold)
-        && !hasAiPlayerClaimedFinalThreshold(opponent.id, threshold)
-      )) || null;
-      const pendingCount = finalScoring.getPendingMarksForPlayer?.(finalScoringState, opponent.id)?.length || 0;
-      let readiness = pendingCount > 0 ? 1.15 : 0;
-      if (nextThreshold != null) {
-        const deficit = Math.max(0, aiNumber(nextThreshold) - opponentScore);
-        if (deficit <= 0) readiness = Math.max(readiness, 1.15);
-        else if (deficit <= 8) readiness = Math.max(readiness, 0.75);
-        else if (deficit <= 15 && Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1)) >= 3) {
-          readiness = Math.max(readiness, 0.4);
-        }
-      }
-      if (readiness <= 0) continue;
-
-      const opponentBase = Math.max(0, aiNumber(endGameScoring.getFormulaBaseValue(
-        formulaId,
-        opponent,
-        context,
-        { getCardTypeCode },
-      )));
-      const formulaPotential = getAiFinalScoreFormulaPotential(formulaId);
-      const immediateSwing = opponentBase * multiplierGap;
-      const slotUrgency = currentSlot === 1 ? 5 : 2.2;
-      score += readiness * Math.min(
-        18,
-        slotUrgency + immediateSwing * 0.45 + formulaPotential * 0.75,
-      );
-    }
-
-    return score;
-  }
-
-  function getAiFinalScoreTileCandidate(tileId, player = getCurrentPlayer()) {
-    if (!tileId || !player || !finalScoring?.canMarkTile || !endGameScoring?.getFormulaId) {
-      return null;
-    }
-    const pending = finalScoring.getNextPendingMarkForPlayer(finalScoringState, player.id);
-    if (!pending) return null;
-
-    const check = finalScoring.canMarkTile(finalScoringState, tileId, player);
-    if (!check.ok) {
-      return {
-        tileId,
-        available: false,
-        reason: check.message || "不可标记",
-      };
-    }
-
-    const variant = finalScoring.getTileVariant(finalScoringState, tileId);
-    const formulaId = endGameScoring.getFormulaId(tileId, variant);
-    const context = {
-      ...createActionContext(),
-      finalScoringState,
-      cardEffects,
-      getCardTypeCode,
-    };
-    const baseValue = Math.max(0, aiNumber(endGameScoring.getFormulaBaseValue(
-      formulaId,
-      player,
-      context,
-      { getCardTypeCode },
-    )));
-    const multiplier = Math.max(0, aiNumber(endGameScoring.getSlotMultiplier(formulaId, check.slotIndex)));
-    const immediateScore = baseValue * multiplier;
-    const demand = getAiStrategyDemand(player);
-    const demandScore = scoreAiFinalScoreFormulaDemand(formulaId, demand);
-    const b1FormulaState = formulaId === "b1" ? getAiB1FinalFormulaState(player) : null;
-    const b2FormulaState = formulaId === "b2" ? getAiB2FinalFormulaState(player, context) : null;
-    const cFormulaPipeline = (formulaId === "c1" || formulaId === "c2")
-      ? getAiFinalScoreCFormulaPipeline(formulaId, player, baseValue, demand)
-      : null;
-    const thresholds = Array.isArray(finalScoringState.thresholds) && finalScoringState.thresholds.length
-      ? finalScoringState.thresholds
-      : finalScoring.FINAL_SCORE_THRESHOLDS || [];
-    const lastThreshold = Math.max(...thresholds.map((threshold) => aiNumber(threshold)));
-    const isLastThreshold = aiNumber(pending.threshold) >= lastThreshold;
-    const roundNumber = aiNumber(turnState.roundNumber);
-    const thresholdValue = aiNumber(pending.threshold);
-    const isLateMarker = isLastThreshold || roundNumber >= 4;
-    const speculationScale = isLateMarker ? 0.35 : 1;
-    const rawCurrentBaseSpeculationScale = baseValue > 0
-      ? 1
-      : (isLateMarker || thresholdValue >= 50)
-        ? 0.18
-        : roundNumber >= 3
-          ? 0.1
-          : 0.45;
-    const zeroBaseCSpeculationScale = getAiZeroBaseCFinalSpeculationScale(
-      formulaId,
-      player,
-      check.slotIndex,
-      thresholdValue,
-      baseValue,
-      demand,
-    );
-    const currentBaseSpeculationScale = zeroBaseCSpeculationScale == null
-      ? rawCurrentBaseSpeculationScale
-      : Math.min(rawCurrentBaseSpeculationScale, zeroBaseCSpeculationScale);
-    const effectiveSpeculationScale = speculationScale * currentBaseSpeculationScale;
-    const secondSlotSpeculationScale = baseValue > 0
-      ? Math.max(0.5, effectiveSpeculationScale)
-      : Math.max(0.25, effectiveSpeculationScale);
-    const immediateScoreWeight = isLateMarker ? 2.25 : 1;
-    const remainingRoundWeight = Math.min(1.6, 0.7 + getAiRemainingRoundWeight() * 0.15);
-    const formulaPotentialScore = getAiFinalScoreFormulaPotential(formulaId) * remainingRoundWeight * effectiveSpeculationScale;
-    const incomePotentialScore = 0;
-    const growthSpeculationFloor = (
-      (formulaId === "c1" || formulaId === "c2")
-      && baseValue <= 0
-    )
-      ? Math.max(0.08, currentBaseSpeculationScale)
-      : 0.45;
-    const growthPotentialScore = scoreAiFinalScoreFormulaGrowth(
-      formulaId,
-      player,
-      check.slotIndex,
-      baseValue,
-      demand,
-    ) * Math.max(growthSpeculationFloor, effectiveSpeculationScale);
-    const potentialScore = formulaPotentialScore + incomePotentialScore + growthPotentialScore;
-    const firstSlotPriorityScore = Number(check.slotIndex) === 1
-      ? 14 * effectiveSpeculationScale
-      : Number(check.slotIndex) === 2
-        ? 3 * secondSlotSpeculationScale
-        : 0;
-    const familyPriorityScore = tileId === "c" || tileId === "d" ? 3.5 * effectiveSpeculationScale : 0;
-    const activeOpponentCount = (turnState.activePlayerIds || [])
-      .filter((playerId) => playerId && playerId !== player.id)
-      .length;
-    const competitiveSlotSwingScore = Number(check.slotIndex) === 1
-      ? (8 + activeOpponentCount * 2.5 + Math.min(8, potentialScore * 0.85 + immediateScore * 0.18)) * effectiveSpeculationScale
-      : Number(check.slotIndex) === 2
-        ? (2 + activeOpponentCount * 0.8 + Math.min(3.5, potentialScore * 0.35)) * secondSlotSpeculationScale
-        : 0;
-    const opponentCompetitionScore = scoreAiFinalScoreTileCompetition(
-      tileId,
-      formulaId,
-      check.slotIndex,
-      player,
-      context,
-    ) * Math.max(0.35, effectiveSpeculationScale);
-    const finalTileRace = buildAiB2FinalTileDeferRace(
-      tileId,
-      formulaId,
-      check.slotIndex,
-      player,
-      pending,
-      baseValue,
-      b2FormulaState,
-    );
-    const slotPriorityScore = firstSlotPriorityScore
-      + familyPriorityScore
-      + competitiveSlotSwingScore
-      + Math.max(0, 3 - Number(check.slotIndex || 3)) * 1.15
-      + multiplier * 0.18;
-    const thresholdScore = Math.max(0, aiNumber(pending.threshold)) * 0.015;
-    const rawZeroBaseLatePenalty = aiValuation?.estimateFinalTileZeroBasePenalty
-      ? aiValuation.estimateFinalTileZeroBasePenalty({
-        formulaId,
-        baseValue,
-        threshold: thresholdValue,
-        roundNumber,
-        finalRoundNumber: FINAL_ROUND_NUMBER,
-        slotIndex: check.slotIndex,
-      })
-      : 0;
-    const zeroBaseLatePenalty = (
-      (formulaId === "c1" || formulaId === "c2")
-      && growthPotentialScore > 0
-    )
-      ? rawZeroBaseLatePenalty * (formulaId === "c1" ? 0.72 : 0.45)
-      : rawZeroBaseLatePenalty;
-    const unsupportedCFormulaPenalty = (
-      (formulaId === "c1" || formulaId === "c2")
-      && baseValue <= 0
-      && growthPotentialScore < 1
-    )
-      ? (isLateMarker ? 18 : thresholdValue >= 50 ? 14 : 8)
-      : 0;
-    const weakCFormulaPenalty = scoreAiWeakCFinalFormulaPenalty(
-      formulaId,
-      player,
-      check.slotIndex,
-      thresholdValue,
-      baseValue,
-      growthPotentialScore,
-      demand,
-    );
-    const b1FeasibilityPenalty = scoreAiB1FinalFormulaFeasibilityPenalty(
-      formulaId,
-      player,
-      check.slotIndex,
-      thresholdValue,
-      baseValue,
-      demand,
-      b1FormulaState,
-    );
-    const b2FeasibilityPenalty = scoreAiB2FinalFormulaFeasibilityPenalty(
-      formulaId,
-      player,
-      check.slotIndex,
-      thresholdValue,
-      baseValue,
-      demand,
-      b2FormulaState,
-    );
-    const weightedScore = applyAiStrategyWeight(
-      immediateScore * immediateScoreWeight
-        + demandScore
-        + potentialScore
-        + slotPriorityScore
-        + opponentCompetitionScore
-        + thresholdScore
-        - zeroBaseLatePenalty
-        - unsupportedCFormulaPenalty
-        - weakCFormulaPenalty
-        - b1FeasibilityPenalty
-        - b2FeasibilityPenalty,
-      "final",
-      0.85,
-    );
-    const weightedLegacyCompetitionScore = applyAiStrategyWeight(
-      opponentCompetitionScore,
-      "final",
-      0.85,
-    );
-    const finalTileRaceScoreAdjustment = scoreAiB2FinalTileRaceAdjustment(
-      formulaId,
-      check.slotIndex,
-      finalTileRace?.opponentExpectedFirst,
-      finalTileRace?.exclusiveValueAtRisk,
-      weightedLegacyCompetitionScore,
-      AI_B2_FINAL_TILE_RACE_MAX_SCORE_ADJUSTMENT,
-    );
-    const score = weightedScore + finalTileRaceScoreAdjustment;
-
-    return {
-      tileId,
-      variant,
-      formulaId,
-      available: true,
-      slotIndex: check.slotIndex,
-      threshold: pending.threshold,
-      baseValue,
-      multiplier,
-      immediateScore: Math.round(immediateScore * 100) / 100,
-      score: Math.round(score * 100) / 100,
-      scoreBreakdown: {
-        immediateScore: Math.round(immediateScore * 100) / 100,
-        immediateScoreWeight: Math.round(immediateScoreWeight * 100) / 100,
-        demandScore: Math.round(demandScore * 100) / 100,
-        potentialScore: Math.round(potentialScore * 100) / 100,
-        formulaPotentialScore: Math.round(formulaPotentialScore * 100) / 100,
-        incomePotentialScore: Math.round(incomePotentialScore * 100) / 100,
-        growthPotentialScore: Math.round(growthPotentialScore * 100) / 100,
-        speculationScale: Math.round(speculationScale * 100) / 100,
-        rawCurrentBaseSpeculationScale: Math.round(rawCurrentBaseSpeculationScale * 100) / 100,
-        zeroBaseCSpeculationScale: zeroBaseCSpeculationScale == null
-          ? null
-          : Math.round(zeroBaseCSpeculationScale * 100) / 100,
-        currentBaseSpeculationScale: Math.round(currentBaseSpeculationScale * 100) / 100,
-        effectiveSpeculationScale: Math.round(effectiveSpeculationScale * 100) / 100,
-        slotPriorityScore: Math.round(slotPriorityScore * 100) / 100,
-        firstSlotPriorityScore: Math.round(firstSlotPriorityScore * 100) / 100,
-        familyPriorityScore: Math.round(familyPriorityScore * 100) / 100,
-        competitiveSlotSwingScore: Math.round(competitiveSlotSwingScore * 100) / 100,
-        opponentCompetitionScore: Math.round(opponentCompetitionScore * 100) / 100,
-        weightedLegacyCompetitionScore: Math.round(weightedLegacyCompetitionScore * 100) / 100,
-        finalTileRaceScoreAdjustment: Math.round(finalTileRaceScoreAdjustment * 100) / 100,
-        finalTileRace,
-        thresholdScore: Math.round(thresholdScore * 100) / 100,
-        rawZeroBaseLatePenalty: Math.round(rawZeroBaseLatePenalty * 100) / 100,
-        zeroBaseLatePenalty: Math.round(zeroBaseLatePenalty * 100) / 100,
-        unsupportedCFormulaPenalty: Math.round(unsupportedCFormulaPenalty * 100) / 100,
-        weakCFormulaPenalty: Math.round(weakCFormulaPenalty * 100) / 100,
-        b1FeasibilityPenalty: Math.round(b1FeasibilityPenalty * 100) / 100,
-        b1TraceCounts: b1FormulaState ? b1FormulaState.counts : null,
-        b1MissingTraceTypes: b1FormulaState ? b1FormulaState.missingTypes : [],
-        b2FeasibilityPenalty: Math.round(b2FeasibilityPenalty * 100) / 100,
-        b2OrbitLandCount: b2FormulaState ? b2FormulaState.orbitLandCount : 0,
-        b2SectorWins: b2FormulaState ? b2FormulaState.sectorWins : 0,
-        cFormulaPipeline,
-      },
-    };
-  }
-
-  function listAiFinalScoreTileCandidates(player = getCurrentPlayer()) {
-    return FINAL_SCORE_IDS
-      .map((tileId) => getAiFinalScoreTileCandidate(tileId, player))
-      .filter(Boolean)
-      .sort((left, right) => (
-        aiNumber(right.score) - aiNumber(left.score)
-        || aiNumber(right.immediateScore) - aiNumber(left.immediateScore)
-        || String(left.tileId).localeCompare(String(right.tileId))
-      ));
-  }
-
-  function runAiFinalScoreMarkDecision() {
-    syncFinalScorePendingMarks();
-    const currentPlayer = getCurrentPlayer();
-    const pending = finalScoring.getNextPendingMarkForPlayer(finalScoringState, currentPlayer?.id);
-    if (!pending) return null;
-    if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-      return {
-        ok: false,
-        blocked: true,
-        message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择终局计分板块`,
-      };
-    }
-
-    const candidates = listAiFinalScoreTileCandidates(currentPlayer);
-    const selected = candidates.find((candidate) => candidate.available);
-    if (!selected) {
-      return {
-        ok: false,
-        blocked: true,
-        message: `${currentPlayer.colorLabel}AI 没有可标记的终局计分板块`,
-      };
-    }
-
-    const result = handleFinalScoreTileClick(selected.tileId);
-    recordAiAutoBattleLog("final-score-mark", `${currentPlayer.colorLabel}AI 标记终局板块 ${selected.tileId.toUpperCase()}`, {
-      pending,
-      selected,
-      candidates,
-      mark: result.mark || null,
-    });
-    return result;
-  }
+  finalScoreAiRuntime = finalScoreAiRuntimeModule.createFinalScoreAiRuntime({
+    FINAL_ROUND_NUMBER,
+    FINAL_SCORE_IDS,
+    aiNumber,
+    aiRaceModel,
+    aiValuation,
+    aliens,
+    alienGameState,
+    applyAiStrategyWeight,
+    cardEffects,
+    createActionContext,
+    endGameScoring,
+    finalScoring,
+    finalScoringState,
+    getAiMapDemand,
+    getAiRemainingRoundWeight,
+    getAiStrategyDemand,
+    getCardTypeCode,
+    getCurrentPlayer,
+    getPlayerById,
+    handleFinalScoreTileClick,
+    isAiAutoBattlePlayer,
+    playerState,
+    recordAiAutoBattleLog,
+    sumAiDemandMap,
+    syncFinalScorePendingMarks,
+    turnState,
+  });
 
 
   function runDebugQuickSectorScan(playerId, sectorId, count) {
@@ -7041,10 +6071,6 @@
     return effectExecutors.applyAomomoScanCostAndBonus(...args);
   }
 
-  function openAlienTraceRewardEffect(...args) {
-    return effectExecutors.openAlienTraceRewardEffect(...args);
-  }
-
   function executeActionEffectForOwner(...args) {
     return effectExecutors.executeActionEffectForOwner(...args);
   }
@@ -7109,13 +6135,13 @@
     ensureCardFlowEventBonuses,
     ensurePlutoCardEffectState,
     executeBanrenmaPanelBonusEffect,
-    executeIndustryHeliosPassiveRewardEffect,
-    executeIndustryPiratesRaidLaunchEffect,
-    executeIndustryPiratesRaidMarkerEffect,
-    executeIndustryPiratesRaidPublicityEffect,
-    executeIndustrySentinelCornerEffect,
-    executeIndustryStrategyPassiveRewardEffect,
-    executeIndustryStratusCornerEffect,
+    executeIndustryHeliosPassiveRewardEffect: (...args) => executeIndustryHeliosPassiveRewardEffect?.(...args),
+    executeIndustryPiratesRaidLaunchEffect: (...args) => executeIndustryPiratesRaidLaunchEffect?.(...args),
+    executeIndustryPiratesRaidMarkerEffect: (...args) => executeIndustryPiratesRaidMarkerEffect?.(...args),
+    executeIndustryPiratesRaidPublicityEffect: (...args) => executeIndustryPiratesRaidPublicityEffect?.(...args),
+    executeIndustrySentinelCornerEffect: (...args) => executeIndustrySentinelCornerEffect?.(...args),
+    executeIndustryStrategyPassiveRewardEffect: (...args) => executeIndustryStrategyPassiveRewardEffect?.(...args),
+    executeIndustryStratusCornerEffect: (...args) => executeIndustryStratusCornerEffect?.(...args),
     executeJiuzheThresholdCardEffect,
     executePassFirstRotateEffect,
     executePassHandLimitEffect,
@@ -7155,7 +6181,7 @@
     getPublicScanChoicesForCard,
     getPublicScanIconForScanCode,
     getPublicScanMaxSelectable,
-    getResearchTechSelectionPayload,
+    getResearchTechSelectionPayload: (...args) => getResearchTechSelectionPayload?.(...args),
     getSectorContentForMove,
     getSectorScanTargetLabel,
     hasAlienTracePanelPlacementTarget,
@@ -7169,13 +6195,13 @@
     jiuzhe,
     launchRocketForScanAction4,
     markCurrentActionIrreversible,
-    maybeApplyIndustryLaunchScan,
+    maybeApplyIndustryLaunchScan: (...args) => maybeApplyIndustryLaunchScan?.(...args),
     maybeCompleteActionEffectFromScan,
-    maybeConsumeAlienLabPanelForMainAction,
+    maybeConsumeAlienLabPanelForMainAction: (...args) => maybeConsumeAlienLabPanelForMainAction?.(...args),
     nebulaDataState,
     nebulaHasScannableData,
     normalizeResourceCost,
-    onTechTileTaken,
+    onTechTileTaken: (...args) => onTechTileTaken?.(...args),
     openAmibaSymbolChoiceDialog,
     openAmibaTraceRemovalDialog,
     openAomomoCardGainDialog,
@@ -7202,6 +6228,7 @@
     removeRocketElement,
     renderActionEffectBar,
     renderAlienPanels,
+    renderDebugPlayerSwitch,
     renderPlayerHand,
     renderPlayerStats,
     renderPublicCards,
@@ -7212,7 +6239,7 @@
     renderRunezuBoardSymbols,
     renderSectorNebulaDataBoard,
     renderStateReadout,
-    renderTechBoard,
+    renderTechBoard: (...args) => renderTechBoard?.(...args),
     renderWheels,
     replaceNebulaDataForCurrentPlayer,
     resolvePlayerReference,
@@ -7222,13 +6249,13 @@
     rocketState,
     runezu,
     scanEffects,
-    shouldSkipCurrentResearchTechCost,
+    shouldSkipCurrentResearchTechCost: (...args) => shouldSkipCurrentResearchTechCost?.(...args),
     skipActionEffectWithMessage,
     solar,
     solarState,
     syncHandScanSelectionChrome,
     syncPlanetOrbitLandMarkers,
-    syncTechSelectionChrome,
+    syncTechSelectionChrome: (...args) => syncTechSelectionChrome?.(...args),
     tech,
     turnState,
     uiRuntimeState,
@@ -7553,6 +6580,47 @@
   function openRunezuSymbolBranchDialog(...args) { return alienSpeciesRuntime.openRunezuSymbolBranchDialog(...args); }
   function handleRunezuSymbolBranchChoice(...args) { return alienSpeciesRuntime.handleRunezuSymbolBranchChoice(...args); }
   function alignAlienPanelsToPlanets(...args) { return alienSpeciesRuntime.alignAlienPanelsToPlanets(...args); }
+  function triggerYichangdianAnomalyForEarthX(earthX) {
+    const anomaly = yichangdian?.getAnomalyBySectorX?.(alienGameState, earthX);
+    const alienSlotId = alienGameState.yichangdian?.revealedSlotId;
+    if (!anomaly || !alienSlotId) {
+      yichangdian?.updateNextAnomaly?.(alienGameState, earthX);
+      return null;
+    }
+    const traceEntry = yichangdian.getTopTraceEntry(alienGameState, alienSlotId, anomaly.traceType);
+    const player = findPlayerForYichangdianEntry(traceEntry);
+    const reward = yichangdian.getAnomalyReward(anomaly.markerId);
+    if (!player || !reward) return null;
+
+    anomaly.triggeredCount = Math.max(0, Math.round(Number(anomaly.triggeredCount) || 0)) + 1;
+    const rewardResult = applyYichangdianRewardToPlayer(
+      player,
+      reward,
+      `异常点 ${anomaly.markerId}`,
+    );
+    if (reward.pickCard) {
+      beginCardSelection({
+        type: "yichangdian_anomaly_pick",
+        player,
+        allowBlindDraw: true,
+        effectLabel: `异常点 ${anomaly.markerId}`,
+      });
+    }
+    yichangdian.updateNextAnomaly(alienGameState, earthX);
+    return {
+      ok: rewardResult.ok,
+      anomaly,
+      playerId: player.id,
+      reward,
+      events: [{
+        type: "yichangdianAnomaly",
+        playerId: player.id,
+        markerId: anomaly.markerId,
+      }],
+      message: rewardResult.message,
+    };
+  }
+
   function setLogOpen(open) {
     if (open && !isStateLogEnabled()) {
       setReportTab("action");
@@ -8871,424 +7939,6 @@
     button.setAttribute("aria-disabled", String(!enabled));
   }
 
-  function getPlutoReservedCards(player = getCurrentPlayer()) {
-    return (player?.reservedCards || []).filter((card) => cardEffects.getCardModel?.(card)?.pluto);
-  }
-
-  function getAllPlutoReservedCardEntries() {
-    return (playerState.players || []).flatMap((player) => (
-      getPlutoReservedCards(player).map((card) => ({ player, card }))
-    ));
-  }
-
-  function ensurePlutoCardEffectState(card) {
-    if (!card) return null;
-    let state = cardEffects.ensureCardEffectState(card);
-    if (!state) {
-      const modelCardId = cardEffects.getCardId?.(card) || card.cardId || card.id || "b_139.webp";
-      if (!card.cardEffectState || card.cardEffectState.modelCardId !== modelCardId) {
-        card.cardEffectState = {
-          modelCardId,
-          consumedTriggerIds: [],
-          completedTaskIds: [],
-        };
-      }
-      state = card.cardEffectState;
-    }
-    if (!Array.isArray(state.consumedTriggerIds)) state.consumedTriggerIds = [];
-    if (!Array.isArray(state.completedTaskIds)) state.completedTaskIds = [];
-    if (!state.pluto) state.pluto = {};
-    const pluto = state.pluto;
-    if (!Array.isArray(pluto.orbitMarkers)) {
-      const orbitCount = Math.max(0, Math.round(Number(pluto.orbitCount) || (pluto.orbitDone ? 1 : 0)));
-      pluto.orbitMarkers = Array.from({ length: orbitCount }, (_, index) => ({
-        kind: "orbit",
-        sequence: index + 1,
-      }));
-    }
-    if (!Array.isArray(pluto.landingMarkers)) {
-      const landCount = Math.max(0, Math.round(Number(pluto.landCount) || (pluto.landDone ? 1 : 0)));
-      pluto.landingMarkers = Array.from({ length: landCount }, (_, index) => ({
-        kind: "land",
-        sequence: index + 1,
-      }));
-    }
-    pluto.orbitDone = pluto.orbitMarkers.length > 0;
-    pluto.landDone = pluto.landingMarkers.length > 0;
-    pluto.orbitCount = pluto.orbitMarkers.length;
-    pluto.landCount = pluto.landingMarkers.length;
-    return state;
-  }
-
-  function getPlutoActionState(card) {
-    const state = ensurePlutoCardEffectState(card);
-    if (!state) return { orbitDone: false, landDone: false };
-    return state.pluto;
-  }
-
-  function getNextPlutoMarkerSequence(markers) {
-    return (markers || []).reduce((max, marker) => Math.max(max, Math.round(Number(marker.sequence) || 0)), 0) + 1;
-  }
-
-  function getPlutoMarkerSector(rocket) {
-    const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
-    return coordinate ? { sectorX: coordinate.x, sectorY: coordinate.y } : {};
-  }
-
-  function addPlutoMarker(card, actionType, player, options = {}) {
-    const state = getPlutoActionState(card);
-    const list = actionType === "orbit" ? state.orbitMarkers : state.landingMarkers;
-    if (!options.allowDuplicate && list.length > 0) {
-      return { ok: false, message: actionType === "orbit" ? "冥王星已环绕" : "冥王星已登陆" };
-    }
-    const marker = {
-      kind: actionType,
-      planetId: "pluto",
-      sequence: getNextPlutoMarkerSequence(list),
-      playerId: player?.id || null,
-      playerColor: player?.color || null,
-      color: player?.color || null,
-      cardId: card?.id || null,
-      ...getPlutoMarkerSector(options.rocket),
-    };
-    list.push(marker);
-    state.orbitDone = state.orbitMarkers.length > 0;
-    state.landDone = state.landingMarkers.length > 0;
-    state.orbitCount = state.orbitMarkers.length;
-    state.landCount = state.landingMarkers.length;
-    return { ok: true, marker };
-  }
-
-  function removePlutoMarker(choice, player, owner = "current") {
-    const entry = getAllPlutoReservedCardEntries().find((item) => item.card.id === choice.cardId);
-    if (!entry) return { ok: false, message: "没有可移除的冥王星标记" };
-    if (owner !== "any" && entry.player?.id !== player?.id) {
-      return { ok: false, message: "只能移除自己的冥王星标记" };
-    }
-    const state = getPlutoActionState(entry.card);
-    const list = choice.kind === "plutoOrbit" ? state.orbitMarkers : state.landingMarkers;
-    const markerIndex = list.findIndex((marker) => Number(marker.sequence) === Number(choice.sequence));
-    if (markerIndex < 0) return { ok: false, message: "没有可移除的冥王星标记" };
-    const [marker] = list.splice(markerIndex, 1);
-    state.orbitDone = state.orbitMarkers.length > 0;
-    state.landDone = state.landingMarkers.length > 0;
-    state.orbitCount = state.orbitMarkers.length;
-    state.landCount = state.landingMarkers.length;
-    return { ok: true, marker, card: entry.card, ownerPlayer: entry.player, message: "已移除冥王星标记" };
-  }
-
-  function collectPlutoMarkers() {
-    const markers = [];
-    for (const { player, card } of getAllPlutoReservedCardEntries()) {
-      const state = getPlutoActionState(card);
-      for (const marker of state.orbitMarkers || []) {
-        markers.push({
-          ...marker,
-          kind: "orbit",
-          planetId: "pluto",
-          cardId: card.id,
-          playerId: marker.playerId || player.id,
-          playerColor: marker.playerColor || player.color,
-          color: marker.color || player.color,
-        });
-      }
-      for (const marker of state.landingMarkers || []) {
-        markers.push({
-          ...marker,
-          kind: "land",
-          planetId: "pluto",
-          cardId: card.id,
-          playerId: marker.playerId || player.id,
-          playerColor: marker.playerColor || player.color,
-          color: marker.color || player.color,
-        });
-      }
-    }
-    return markers;
-  }
-
-  function buildPlutoMarkerContext() {
-    return { plutoMarkers: collectPlutoMarkers() };
-  }
-
-  function playerHasOwnPlutoLanding(player) {
-    return collectPlutoMarkers().some((marker) => marker.kind === "land" && markerBelongsToPlayer(marker, player));
-  }
-
-  function buildPlutoMarkerRemovalChoices(owner, markerKinds) {
-    const currentPlayer = getCurrentPlayer();
-    const choices = [];
-    for (const { player, card } of getAllPlutoReservedCardEntries()) {
-      if (owner !== "any" && player?.id !== currentPlayer?.id) continue;
-      const state = getPlutoActionState(card);
-      if (markerKinds.has("orbit")) {
-        for (const marker of state.orbitMarkers || []) {
-          choices.push({
-            id: `plutoOrbit:${card.id}:${marker.sequence}`,
-            kind: "plutoOrbit",
-            planetId: "pluto",
-            cardId: card.id,
-            sequence: marker.sequence,
-            sectorX: marker.sectorX,
-            sectorY: marker.sectorY,
-            label: `冥王星 环绕 ${marker.sequence}`,
-            description: `${markerOwnerLabel(marker.playerId ? marker : player)}标记`,
-          });
-        }
-      }
-      if (markerKinds.has("land")) {
-        for (const marker of state.landingMarkers || []) {
-          choices.push({
-            id: `plutoLand:${card.id}:${marker.sequence}`,
-            kind: "plutoLand",
-            planetId: "pluto",
-            cardId: card.id,
-            sequence: marker.sequence,
-            label: `冥王星 登陆 ${marker.sequence}`,
-            description: `${markerOwnerLabel(marker.playerId ? marker : player)}标记`,
-          });
-        }
-      }
-    }
-    return choices;
-  }
-
-  function getPlutoCandidateRockets(player = getCurrentPlayer(), options = {}) {
-    const preferredRocketId = options.preferredRocketId ?? rocketState.activeRocketId ?? null;
-    const candidates = (rocketState.rockets || []).filter((rocket) => {
-      if (rocket.playerId !== player?.id) return false;
-      const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
-      return Number(coordinate?.y) === 4;
-    });
-    if (preferredRocketId == null) return candidates;
-    return candidates.sort((left, right) => {
-      if (left.id === preferredRocketId) return -1;
-      if (right.id === preferredRocketId) return 1;
-      return 0;
-    });
-  }
-
-  function getPlutoActionCost(actionType, card) {
-    if (actionType === "orbit") return { ...abilities.planet.DEFAULT_ORBIT_COST };
-    const currentPlayer = getCurrentPlayer();
-    const state = getPlutoActionState(card);
-    let energy = abilities.planet.BASE_LAND_ENERGY_COST;
-    if (state.orbitDone) energy -= 1;
-    if (players.playerOwnsTech(currentPlayer, "orange3", createActionContext())) {
-      energy -= abilities.planet.ORANGE3_LAND_DISCOUNT;
-    }
-    return energy > 0 ? { energy } : {};
-  }
-
-  function getAvailablePlutoAction(actionType, options = {}) {
-    const currentPlayer = getCurrentPlayer();
-    const card = getPlutoReservedCards(currentPlayer).find((item) => {
-      const state = getPlutoActionState(item);
-      return actionType === "orbit" ? !state.orbitDone : !state.landDone;
-    });
-    if (!card) return { ok: false, message: "没有可用的冥王星保留牌" };
-    const rockets = getPlutoCandidateRockets(currentPlayer, options);
-    if (!rockets.length) return { ok: false, message: "没有 y=4 的己方探测器可前往冥王星" };
-    const cost = getPlutoActionCost(actionType, card);
-    if (!players.canAfford(currentPlayer, cost)) {
-      return { ok: false, message: `资源不足，需要 ${players.formatResourceCost(cost)}` };
-    }
-    return { ok: true, card, rocket: rockets[0], cost };
-  }
-
-  function executePlutoAction(actionType, options = {}) {
-    if (!canStartMainAction()) {
-      rocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-    const available = getAvailablePlutoAction(actionType, options);
-    if (!available.ok) {
-      rocketState.statusNote = available.message;
-      renderStateReadout();
-      return available;
-    }
-    const currentPlayer = getCurrentPlayer();
-    const beforePlayer = structuredClone(currentPlayer);
-    const beforeRocketState = structuredClone(rocketState);
-    const beforeCard = structuredClone(available.card);
-    const spendResult = players.spendResources(currentPlayer, available.cost);
-    if (!spendResult.ok) {
-      rocketState.statusNote = spendResult.message;
-      renderStateReadout();
-      return spendResult;
-    }
-    const removeResult = rocketActions.removeRocket(rocketState, available.rocket.id);
-    if (!removeResult.ok) {
-      players.gainResources(currentPlayer, available.cost);
-      rocketState.statusNote = removeResult.message;
-      renderStateReadout();
-      return removeResult;
-    }
-    const markerResult = addPlutoMarker(available.card, actionType, currentPlayer, {
-      rocket: available.rocket,
-    });
-    if (!markerResult.ok) {
-      restoreMutableObject(currentPlayer, beforePlayer);
-      restoreMutableObject(rocketState, beforeRocketState);
-      rocketState.statusNote = markerResult.message;
-      renderStateReadout();
-      return markerResult;
-    }
-    if (actionType === "orbit") {
-      players.incrementPlayerOrbitCount(playerState, currentPlayer.id);
-    }
-    const actionLabel = actionType === "orbit" ? "环绕冥王星" : "登陆冥王星";
-    const result = {
-      ok: true,
-      undoable: true,
-      message: `${actionLabel}，消耗 ${players.formatResourceCost(available.cost) || "0"}，移除 R${available.rocket.id}`,
-      commands: [
-        historyCommands.createRestorePlayerCommand(currentPlayer, beforePlayer, "恢复冥王星行动前玩家状态"),
-        historyCommands.createRestoreRocketStateCommand(rocketState, beforeRocketState, "恢复冥王星行动前探测器状态"),
-        historyCommands.createRestoreObjectCommand(available.card, beforeCard, "恢复冥王星卡牌状态"),
-      ],
-      events: [{
-        type: actionType,
-        planetId: "pluto",
-        playerId: currentPlayer.id,
-        playerColor: currentPlayer.color,
-        source: "pluto",
-      }],
-      removedRocketId: available.rocket.id,
-      planetId: "pluto",
-      markerKind: actionType === "orbit" ? "pluto-orbit" : "pluto-land",
-      markerSequence: markerResult.marker.sequence,
-    };
-    removeRocketElement(available.rocket.id);
-    recordAtomicActionHistory(actionType, actionLabel, result);
-    const rewardEffects = buildPlutoRewardEffectsForAction(actionType);
-    rocketState.statusNote = result.message;
-    renderPlayerStats();
-    renderReservedCardsFromTaskState();
-    updateActionButtons();
-    renderStateReadout();
-    const startedRewardFlow = startCardEffectFlow(
-      `pluto-${actionType}-rewards`,
-      actionLabel,
-      rewardEffects,
-      { actionType, historySource: HISTORY_SOURCE_MAIN, consumesMainAction: true },
-    );
-    const settlement = settleCardTasksAfterEffect({ events: result.events, render: false });
-    renderPlayerStats();
-    renderReservedCardsFromTaskState();
-    updateActionButtons();
-    renderStateReadout();
-    return startedRewardFlow
-      || Boolean(settlement?.type1Result)
-      || hasActiveCardTriggerResolution()
-      || isActionEffectFlowActive();
-  }
-
-  function getCurrentPlanetActionPlacement(context = createActionContext()) {
-    return actionShared?.getRocketPlanet?.(context) || { ok: false };
-  }
-
-  function getPlutoChoiceActionLabel(actionType) {
-    return actionType === "orbit" ? "环绕" : "登陆";
-  }
-
-  function formatPlutoChoiceLabel(actionType, available, effect = null) {
-    const actionLabel = getPlutoChoiceActionLabel(actionType);
-    const costLabel = players.formatResourceCost(available?.cost || {}) || "0";
-    const rocketLabel = available?.rocket?.id != null ? `R${available.rocket.id}` : "探测器";
-    const rewardSummary = buildPlutoChoiceRewardSummary(actionType, effect);
-    return `${actionLabel}冥王星${rewardSummary ? ` - 奖励：${rewardSummary}` : ""}（${rocketLabel}，${costLabel}）`;
-  }
-
-  function buildPlutoActionChoiceOptions(actionType) {
-    const context = createActionContext();
-    const actionLabel = getPlutoChoiceActionLabel(actionType);
-    const normalCheck = actionType === "orbit"
-      ? abilities.planet.getOrbitOptions(context)
-      : abilities.planet.getLandOptions(context);
-    const placement = getCurrentPlanetActionPlacement(context);
-    const preferredRocketId = normalCheck?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
-    const plutoCheck = getAvailablePlutoAction(actionType, { preferredRocketId });
-    const choices = [];
-
-    if (normalCheck.ok) {
-      if (actionType === "orbit") {
-        choices.push(...normalCheck.choices.map((choice) => ({
-          ...choice,
-          kind: "normal",
-        })));
-      } else {
-        const landOptions = abilities.planet.getLandOptions(context);
-        if (landOptions.ok) {
-          choices.push(...landOptions.choices.map((choice) => ({
-            ...choice,
-            kind: "normal",
-          })));
-        }
-      }
-    }
-
-    if (plutoCheck.ok) {
-      choices.push({
-        kind: "pluto",
-        label: formatPlutoChoiceLabel(actionType, plutoCheck),
-        preferredRocketId,
-      });
-    }
-
-    if (!choices.length) {
-      return {
-        ok: false,
-        message: normalCheck.message || plutoCheck.message || `当前无法${actionLabel}`,
-      };
-    }
-
-    return {
-      ok: true,
-      actionType,
-      title: `选择${actionLabel}目标`,
-      selectLabel: `${actionLabel}到`,
-      confirmText: `确认${actionLabel}`,
-      planet: { planetId: `pluto-${actionType}-choice`, name: `${actionLabel}目标` },
-      choices,
-      needsChoice: choices.length > 1,
-      defaultTarget: choices[0].target,
-    };
-  }
-
-  function openPlutoActionChoicePicker(actionType) {
-    const options = buildPlutoActionChoiceOptions(actionType);
-    if (!options.ok) {
-      rocketState.statusNote = options.message;
-      renderPlayerStats();
-      updateActionButtons();
-      renderStateReadout();
-      return { ok: false, message: options.message };
-    }
-    if (options.choices.length === 1) {
-      const [choice] = options.choices;
-      return choice.kind === "pluto"
-        ? executePlutoAction(actionType, { preferredRocketId: choice.preferredRocketId })
-        : runAction(actionType, actionType === "land"
-          ? { target: choice.target, rocketId: choice.rocketId }
-          : { rocketId: choice.rocketId });
-    }
-    openLandTargetPicker({
-      ...options,
-      getOptions: () => buildPlutoActionChoiceOptions(actionType),
-      onConfirm: (choice) => (
-        choice.kind === "pluto"
-          ? executePlutoAction(actionType, { preferredRocketId: choice.preferredRocketId })
-          : runAction(actionType, actionType === "land"
-            ? { target: choice.target, rocketId: choice.rocketId }
-            : { rocketId: choice.rocketId })
-      ),
-    });
-    rocketState.statusNote = `请选择${getPlutoChoiceActionLabel(actionType)}目标`;
-    renderStateReadout();
-    return { ok: true, pendingChoice: true };
-  }
 
   function markActionPending() {
     pendingState.actionExecuted = true;
@@ -9415,396 +8065,79 @@
     return !getMainActionStartBlockReason();
   }
 
-  function createPassEvent(player) {
-    return {
-      type: "pass",
-      playerId: player?.id || null,
-      playerColor: player?.color || null,
-      source: "pass",
-    };
-  }
-
-  function createRequiredPassEffect(node) {
-    return {
-      ...node,
-      undoable: node.undoable ?? true,
-      options: {
-        ...(node.options || {}),
-        required: true,
-        skippable: false,
-      },
-    };
-  }
-
-  function buildPassEffectQueue(player) {
-    const effects = [];
-    if (industry?.shouldLaunchAfterPassWithHuanyuSuperdrive?.(player)) {
-      if (isWeakStartAiDifficulty(player)) {
-        effects.push(createRequiredPassEffect({
-          id: "pass-huanyu-superdrive-credit",
-          type: planetRewards.EFFECT_TYPES.GAIN_RESOURCES,
-          icon: "credits",
-          label: "寰宇超动力：PASS 后获得 1 信用点",
-          options: {
-            gain: { credits: 1 },
-            targetPlayerId: player?.id || null,
-            targetPlayerColor: player?.color || null,
-          },
-        }));
-      } else {
-        effects.push(createRequiredPassEffect({
-          id: "pass-huanyu-superdrive-launch",
-          type: "industry_huanyu_superdrive_launch",
-          icon: "launch",
-          label: "寰宇超动力：PASS 后额外发射",
-          options: {
-            skipCost: true,
-            ignoreRocketLimit: true,
-          },
-        }));
-      }
-    }
-
-    if (isFinalRound()) return effects;
-
-    const handCount = Array.isArray(player?.hand) ? player.hand.length : 0;
-    const discardCount = Math.max(0, handCount - PASS_HAND_LIMIT);
-
-    if (discardCount > 0) {
-      effects.push(createRequiredPassEffect({
-        id: "pass-hand-limit",
-        type: "pass_hand_limit",
-        icon: "discard",
-        label: `PASS：弃至 ${PASS_HAND_LIMIT} 张手牌`,
-        options: { discardCount },
-      }));
-    }
-
-    if ((turnState.passedPlayerIds || []).length === 0) {
-      effects.push(createRequiredPassEffect({
-        id: "pass-first-rotate",
-        type: "pass_first_rotate",
-        icon: "rotate",
-        label: "首位 PASS：太阳系旋转",
-      }));
-    }
-
-    if (PASS_RESERVE_ROUNDS.includes(turnState.roundNumber)) {
-      effects.push(createRequiredPassEffect({
-        id: "pass-reserve-pick",
-        type: "pass_reserve_pick",
-        icon: "pick_card",
-        label: "PASS 预留精选",
-        options: { roundNumber: turnState.roundNumber },
-      }));
-    }
-
-    return effects;
-  }
-
-  function beginPassActionSession(currentPlayer) {
-    pendingState.passPlayerId = currentPlayer.id;
-    startActionLogDraft("pass", "PASS", { source: HISTORY_SOURCE_MAIN, player: currentPlayer });
-    actionHistory.beginSession("pass", "PASS");
-    actionHistory.beginStep({
-      source: HISTORY_SOURCE_MAIN,
-      type: "action_start",
-      label: `${currentPlayer.colorLabel}玩家 PASS`,
-      effectIndex: -1,
-      logBefore: createActionLogImpactSnapshot(currentPlayer),
-    });
-    uiRuntimeState.effectStepActive = true;
-    completePendingActionStep();
-  }
-
-  function settlePassEventAfterEffects(player) {
-    if (isFinalRound()) {
-      return {
-        ok: true,
-        skipped: true,
-        message: "最终轮 PASS 不触发额外效果",
-      };
-    }
-
-    return settleCardTasksAfterEffect({
-      events: [createPassEvent(player)],
-      render: false,
-    });
-  }
-
-  function executePassHandLimitEffect(effect) {
-    const currentPlayer = getCurrentPlayer();
-    const discardCount = Math.max(0, (currentPlayer?.hand?.length || 0) - PASS_HAND_LIMIT);
-    if (discardCount <= 0) {
-      effect.result = {
-        ok: true,
-        undoable: true,
-        message: `PASS 手牌上限：已不超过 ${PASS_HAND_LIMIT} 张`,
-      };
-      rocketState.statusNote = effect.result.message;
-      completeCurrentActionEffect();
-      renderStateReadout();
-      return effect.result;
-    }
-
-    const result = beginDiscardSelection(discardCount, {
-      type: "pass_hand_limit",
-      player: currentPlayer,
-      required: true,
-      fromEffectFlow: true,
-      effectLabel: effect.label,
-      beforePlayerState: structuredClone(currentPlayer),
-      beforeCardState: structuredClone(cardState),
-    });
-    if (!result.ok) {
-      rocketState.statusNote = result.message;
-      renderStateReadout();
-    }
-    return result;
-  }
-
-  function executePassFirstRotateEffect(effect) {
-    const beforeSolarState = structuredClone(solarState);
-    const beforeRocketState = structuredClone(rocketState);
-    const beforePlayerState = structuredClone(playerState);
-    const beforeAlienState = structuredClone(alienGameState);
-    const beforeCardState = structuredClone(cardState);
-
-    beginEffectHistoryStep(effect.label);
-    const result = rotateSolarOrbit(1);
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-      solarState,
-      beforeSolarState,
-      "恢复 PASS 旋转前太阳系状态",
-    ));
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-      rocketState,
-      beforeRocketState,
-      "恢复 PASS 旋转前火箭状态",
-    ));
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-      playerState,
-      beforePlayerState,
-      "恢复 PASS 旋转前玩家状态",
-    ));
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-      alienGameState,
-      beforeAlienState,
-      "恢复 PASS 旋转前外星人状态",
-    ));
-    recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-      cardState,
-      beforeCardState,
-      "恢复 PASS 旋转前牌区",
-    ));
-
-    const anomalyPickOpen = isCardSelectionActive()
-      && pendingState.cardSelectionAction?.type === "yichangdian_anomaly_pick";
-    if (anomalyPickOpen) {
-      pendingState.cardSelectionAction.fromEffectFlow = true;
-      pendingState.cardSelectionAction.effectResult = {
-        ok: result.ok,
-        undoable: true,
-        message: result.message,
-        payload: result.payload || null,
-        events: result.events || [],
-      };
-      rocketState.statusNote = result.message;
-      updateActionButtons();
-      renderStateReadout();
-      return result;
-    }
-
-    effect.result = {
-      ok: result.ok,
-      undoable: true,
-      message: result.message,
-      payload: result.payload || null,
-      events: result.events || [],
-    };
-    rocketState.statusNote = result.message;
-    completeCurrentActionEffect();
-    renderStateReadout();
-    return result;
-  }
-
-  function passForCurrentPlayer() {
-    if (!canStartMainAction()) {
-      rocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-
-    const currentPlayer = getCurrentPlayer();
-    if (!currentPlayer) {
-      return { ok: false, message: "没有当前玩家" };
-    }
-
-    beginPassActionSession(currentPlayer);
-    const passEffects = buildPassEffectQueue(currentPlayer);
-    if (passEffects.length) {
-      pendingState.actionEffectFlow = abilities.chain.startAbilityChain(
-        "pass",
-        "PASS",
-        passEffects,
-      );
-      pendingState.actionEffectFlow.actionType = "pass";
-      pendingState.actionEffectFlow.playerId = currentPlayer.id;
-      assignEffectFlowOwner(pendingState.actionEffectFlow, pendingState.actionEffectFlow.playerId);
-      pendingState.actionEffectFlow.passEvent = createPassEvent(currentPlayer);
-      pendingState.actionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
-      pendingState.actionEffectFlow.consumesMainAction = true;
-      els.appWrap?.classList.toggle("action-effect-flow-active", true);
-      rocketState.statusNote = "PASS：请依次点击必做效果";
-      activateNextActionEffect();
-      return { ok: true, message: rocketState.statusNote };
-    }
-
-    const passSettlement = settlePassEventAfterEffects(currentPlayer);
-    if (hasActiveCardTriggerResolution() || isActionEffectFlowActive()) {
-      updateActionButtons();
-      renderStateReadout();
-      return { ok: true, message: passSettlement?.type1Result?.message || rocketState.statusNote };
-    }
-
-    rocketState.statusNote = `${currentPlayer.colorLabel}玩家选择 PASS，请点击回合结束确认`;
-    updateActionButtons();
-    renderStateReadout();
-    return { ok: true, message: rocketState.statusNote };
-  }
-
-  function applyPassTurnEndIncome(player) {
-    if (!player || isFinalRound()) return null;
-
-    const result = applyIncomeResourcesForPlayer(player, { label: "PASS 收入" });
-    appendActionLogStep(HISTORY_SOURCE_MAIN, "PASS 收入", result.message, {
-      player,
-      undoable: false,
-      irreversibleReason: "回合结束确认后结算",
-    });
-    return result;
-  }
-
-  function listReadyAlienRevealSlotIds() {
-    return (aliens.ALIEN_SLOT_IDS || [])
-      .filter((alienSlotId) => {
-        const slot = aliens.getAlienSlot(alienGameState, alienSlotId);
-        return aliens.isAlienReadyToReveal?.(slot);
-      });
-  }
-
-  function maybeContinuePendingTurnEndRevealFlow() {
-    if (!pendingState.turnEndAfterRevealContinuation) return null;
-    return maybeContinueAlienRevealQueuedOpportunities();
-  }
-
-  function maybeContinueAlienRevealQueuedOpportunities() {
-    const jiuzheOpenResult = maybeOpenQueuedJiuzheOpportunity();
-    if (jiuzheOpenResult?.ok) {
-      scheduleAiAutoStepIfNeeded();
-      return { ok: true, opened: true, result: jiuzheOpenResult };
-    }
-    const banrenmaOpenResult = maybeOpenQueuedBanrenmaOpportunity();
-    if (banrenmaOpenResult?.ok) {
-      scheduleAiAutoStepIfNeeded();
-      return { ok: true, opened: true, result: banrenmaOpenResult };
-    }
-    return maybeResumeTurnEndAfterReveal();
-  }
-
-  function finishCurrentTurnAfterAlienReveal({
-    endingPlayer,
-    endingPlayerId,
-    didPass,
-    turnEndReveal,
-  }) {
-    if (turnEndReveal?.count && hasTurnEndRevealBlockingSubFlow()) {
-      return queueTurnEndAfterRevealContinuation({
-        endingPlayer,
-        endingPlayerId,
-        didPass,
-        turnEndReveal,
-      });
-    }
-    pendingState.turnEndAfterRevealContinuation = null;
-    const passIncomeResult = didPass ? applyPassTurnEndIncome(endingPlayer) : null;
-    commitActionLogDraft({
-      passed: didPass,
-      actionType: didPass ? "pass" : actionHistory.getSessionInfo()?.actionType,
-      actionLabel: didPass ? "PASS" : actionHistory.getSessionInfo()?.label,
-    });
-    actionHistory.commitSession();
-    clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
-    if (quickActionHistory.hasSession()) {
-      quickActionHistory.commitSession();
-      clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
-    }
-    clearActionEffectFlow();
-    clearActionPending();
-    const advanceResult = advanceTurnAfterPlayerAction(endingPlayerId, { passed: didPass });
-    const roundStartResult = advanceResult.roundAdvanced
-      ? applyIndustryRoundStartBonuses(turnState.roundNumber, { appendLog: true })
-      : null;
-    const nextPlayer = getCurrentPlayer();
-    selectDefaultRocketForCurrentPlayer();
-    renderDebugPlayerSwitch();
-    renderRoundStatus();
-    const displayedTurnNumber = getDisplayedTurnNumber();
-    const turnAdvanceMessage = advanceResult.gameEnded
-      ? `第 ${turnState.roundNumber} 轮所有玩家已 PASS，游戏结束，进行终局计分${advanceResult.finalScoreLines?.length ? `：${advanceResult.finalScoreLines.join("；")}` : ""}`
-      : advanceResult.roundAdvanced
-      ? `所有玩家已 PASS，进入第 ${turnState.roundNumber} 轮第 ${displayedTurnNumber} 回合，当前玩家：${nextPlayer?.colorLabel || ""}玩家`
-      : advanceResult.turnAdvanced
-        ? `进入第 ${turnState.roundNumber} 轮第 ${displayedTurnNumber} 回合，当前玩家：${nextPlayer?.colorLabel || ""}玩家`
-        : `回合已结束，当前玩家：${nextPlayer?.colorLabel || ""}玩家`;
-    rocketState.statusNote = [
-      turnAdvanceMessage,
-      passIncomeResult?.message || null,
-      roundStartResult?.message || null,
-      turnEndReveal?.message || null,
-    ].filter(Boolean).join("；");
-    renderPlayerStats();
-    renderAlienPanels();
-    renderTechBoard();
-    renderRockets();
-    renderPublicCards();
-    renderReservedCards();
-    renderInitialSelectionArea();
-    updatePublicCardControls();
-    updateActionButtons();
-    renderStateReadout();
-    if (!advanceResult.gameEnded) {
-      maybeStartFundamentalismRoundStartIncomeFlow(nextPlayer, turnState.roundNumber);
-      maybeOpenActionBriefingForCompletedCycle(advanceResult);
-    }
-    refreshLatestActionLogRecoverySnapshot("回合结束后状态");
-    if (advanceResult.gameEnded) {
-      maybeAutoOpenFinalResultDialog();
-    }
-  }
-
-  function endCurrentTurn() {
-    if (!pendingState.actionExecuted || isActionEffectFlowActive() || hasActivePendingSubFlow()) return;
-    const endingPlayer = getCurrentPlayer();
-    const endingPlayerId = endingPlayer?.id || null;
-    const didPass = pendingState.passPlayerId === endingPlayerId;
-
-    if (industry?.expireStrategyPlayInteractionOnTurnEnd?.(endingPlayer, turnState.roundNumber)?.cleared) {
-      renderInitialSelectionArea();
-    }
-    industry?.clearTuringBorrowedTech?.(endingPlayer);
-    industry?.clearSentinelPlayCornerState?.(endingPlayer);
-
-    endEffectHistoryStep();
-    const turnEndContext = { endingPlayer, endingPlayerId, didPass };
-    const turnEndReveal = revealReadyAliensAtTurnEnd(endingPlayer, {
-      confirmBeforeSideEffects: true,
-    });
-    finishCurrentTurnAfterAlienReveal({
-      ...turnEndContext,
-      turnEndReveal,
-    });
-  }
+  turnEndFlow = turnEndFlowModule.createTurnEndFlow({
+    HISTORY_SOURCE_MAIN,
+    HISTORY_SOURCE_QUICK,
+    PASS_HAND_LIMIT,
+    PASS_RESERVE_ROUNDS,
+    abilities,
+    actionHistory,
+    activateNextActionEffect,
+    advanceTurnAfterPlayerAction,
+    alienGameState,
+    aliens,
+    appendActionLogStep,
+    applyIncomeResourcesForPlayer,
+    applyIndustryRoundStartBonuses,
+    assignEffectFlowOwner,
+    beginDiscardSelection,
+    beginEffectHistoryStep,
+    buildAlienRevealNoticeEntry,
+    cardState,
+    clearActionEffectFlow,
+    clearActionPending,
+    clearHistoryStepOrderForSource,
+    commitActionLogDraft,
+    completeCurrentActionEffect,
+    completePendingActionStep,
+    createActionLogImpactSnapshot,
+    els,
+    endEffectHistoryStep,
+    getCurrentPlayer,
+    getDisplayedTurnNumber,
+    hasActiveCardTriggerResolution,
+    hasActivePendingSubFlow,
+    historyCommands,
+    industry,
+    isActionEffectFlowActive,
+    isCardSelectionActive,
+    isFinalRound,
+    isWeakStartAiDifficulty,
+    maybeAutoOpenFinalResultDialog,
+    maybeOpenActionBriefingForCompletedCycle,
+    maybeOpenQueuedBanrenmaOpportunity,
+    maybeOpenQueuedJiuzheOpportunity,
+    maybeStartFundamentalismRoundStartIncomeFlow,
+    openAlienRevealConfirmation,
+    pendingState,
+    planetRewards,
+    playerState,
+    quickActionHistory,
+    recordHistoryCommand,
+    refreshLatestActionLogRecoverySnapshot,
+    renderAlienPanels,
+    renderDebugPlayerSwitch,
+    renderInitialSelectionArea,
+    renderPlayerStats,
+    renderPublicCards,
+    renderReservedCards,
+    renderRockets,
+    renderRoundStatus,
+    renderStateReadout,
+    renderTechBoard,
+    rocketState,
+    rotateSolarOrbit,
+    scheduleAiAutoStepIfNeeded,
+    selectDefaultRocketForCurrentPlayer,
+    settleCardTasksAfterEffect,
+    settleTurnEndAlienRevealEntries,
+    solarState,
+    startActionLogDraft,
+    turnState,
+    uiRuntimeState,
+    updateActionButtons,
+    updatePublicCardControls,
+  });
 
   function undoPendingAction() {
     if (isTechActionSelectionActive()) {
@@ -9989,222 +8322,6 @@
     }
   }
 
-  let moveArrowRenderFrame = 0;
-
-  function getMoveArrowDirectionRotation(angleDegrees, kind) {
-    const rad = angleDegrees * (Math.PI / 180);
-    let dx;
-    let dy;
-    if (kind === "out") {
-      dx = Math.cos(rad);
-      dy = Math.sin(rad);
-    } else if (kind === "in") {
-      dx = -Math.cos(rad);
-      dy = -Math.sin(rad);
-    } else if (kind === "cw") {
-      dx = -Math.sin(rad);
-      dy = Math.cos(rad);
-    } else {
-      dx = Math.sin(rad);
-      dy = -Math.cos(rad);
-    }
-    return Math.atan2(dy, dx) * (180 / Math.PI);
-  }
-
-  function getRocketPolarAnchor(rocket) {
-    const sector = rocketActions.getRocketSectorCoordinate(rocket);
-    if (!sector) return null;
-
-    const radius = Number(rocket.radius);
-    const angleDegrees = Number(rocket.angleDegrees);
-    if (Number.isFinite(radius) && Number.isFinite(angleDegrees)) {
-      return { sector, radius, angleDegrees };
-    }
-
-    if (Number.isInteger(rocket.slotIndex)) {
-      const slot = solar.getSectorLaunchSlot(sector.x, sector.y, rocket.slotIndex);
-      return {
-        sector,
-        radius: slot.radius,
-        angleDegrees: slot.angleDegrees,
-      };
-    }
-
-    const boardPoint = getBoardPointFromPolarPoint(rocket);
-    const polar = solar.globalPointToPolarPoint(boardPoint);
-    return {
-      sector,
-      radius: polar.radius,
-      angleDegrees: polar.angleDegrees,
-    };
-  }
-
-  function getMoveArrowOffsets(anchor) {
-    const boundary = solar.getSectorCoordinateBoundary(anchor.sector.x, anchor.sector.y);
-    const radialSpan = boundary.polarBoundary.outerRadius - boundary.polarBoundary.innerRadius;
-    const angleSpan = Math.abs(
-      boundary.polarBoundary.endAngleDegrees - boundary.polarBoundary.startAngleDegrees,
-    );
-
-    const boardSize = solar.GLOBAL_COORDINATE_SYSTEM.size;
-    const wheelPx = Math.max(1, els.wheelWrap?.clientWidth || boardSize);
-    const rocketHalfPx = ((tokenWidths.rocket || 41) * 1.2) / 2;
-    const arrowHalfPx = 15;
-    const clearanceBoard = (rocketHalfPx + arrowHalfPx + 6) * (boardSize / wheelPx);
-
-    const radialOffset = Math.max(30, radialSpan * 0.42) + clearanceBoard * 0.7;
-    const tangentialAngle = Math.max(
-      11,
-      angleSpan * 0.2,
-      (Math.atan(clearanceBoard / Math.max(anchor.radius, 1)) * 180) / Math.PI,
-    );
-
-    return {
-      radius: radialOffset,
-      angle: tangentialAngle,
-    };
-  }
-
-  function buildMoveArrowSpecs(rocket) {
-    const anchor = getRocketPolarAnchor(rocket);
-    if (!anchor) return [];
-
-    const { sector, radius, angleDegrees } = anchor;
-    const offsets = getMoveArrowOffsets(anchor);
-    const size = solar.GLOBAL_COORDINATE_SYSTEM.size;
-    const specs = [];
-
-    const push = (kind, deltaX, deltaY, pointRadius, pointAngle) => {
-      const board = solar.polarToGlobalPoint(pointRadius, pointAngle);
-      const labels = {
-        out: "向外移动一个扇区",
-        in: "向内移动一个扇区",
-        cw: "顺时针移动",
-        ccw: "逆时针移动",
-      };
-      specs.push({
-        kind,
-        deltaX,
-        deltaY,
-        left: `${(board.x / size) * 100}%`,
-        top: `${(board.y / size) * 100}%`,
-        rotation: getMoveArrowDirectionRotation(pointAngle, kind),
-        ariaLabel: labels[kind],
-      });
-    };
-
-    if (sector.y < rocketActions.SECTOR_RING_MAX) {
-      push("out", 0, 1, radius + offsets.radius, angleDegrees);
-    }
-    if (sector.y > rocketActions.SECTOR_RING_MIN) {
-      push("in", 0, -1, radius - offsets.radius, angleDegrees);
-    }
-    push("cw", 1, 0, radius, angleDegrees + offsets.angle);
-    push("ccw", -1, 0, radius, angleDegrees - offsets.angle);
-    return specs;
-  }
-
-  function scheduleRenderMoveArrows() {
-    moveArrowRenderFrame += 1;
-    const frameId = moveArrowRenderFrame;
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        if (frameId !== moveArrowRenderFrame) return;
-        renderMoveArrows();
-      });
-    });
-  }
-
-  function renderMoveArrows() {
-    if (!els.moveArrowLayer) return;
-
-    if (uiRuntimeState.moveHighlightRocketId == null) {
-      moveArrowRenderFrame += 1;
-      els.moveArrowLayer.hidden = true;
-      els.moveArrowLayer.replaceChildren();
-      return;
-    }
-
-    const rocket = rocketState.rockets.find((item) => item.id === uiRuntimeState.moveHighlightRocketId);
-    if (!rocket || !(rocketActions.isMovablePlayerToken?.(rocket) || rocketActions.isControllablePlayerRocket(rocket))) {
-      deactivateMoveMode();
-      return;
-    }
-
-    const specs = buildMoveArrowSpecs(rocket);
-    els.moveArrowLayer.hidden = false;
-    els.moveArrowLayer.replaceChildren(...specs.map((spec) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = `move-arrow-button move-arrow-${spec.kind}`;
-      button.dataset.moveX = String(spec.deltaX);
-      button.dataset.moveY = String(spec.deltaY);
-      button.style.left = spec.left;
-      button.style.top = spec.top;
-      button.style.setProperty("--move-arrow-rotation", `${spec.rotation}deg`);
-      button.setAttribute("aria-label", spec.ariaLabel);
-      button.title = spec.ariaLabel;
-      button.innerHTML = '<span class="move-arrow-glyph" aria-hidden="true"></span>';
-      return button;
-    }));
-  }
-
-  function syncMoveModeChrome() {
-    els.appWrap?.classList.toggle("move-mode-active", uiRuntimeState.moveHighlightRocketId != null);
-    syncInteractionFocusChrome();
-    renderRockets();
-  }
-
-  function updateMoveRocketHighlight(rocketId) {
-    const previousId = uiRuntimeState.moveHighlightRocketId;
-    uiRuntimeState.moveHighlightRocketId = rocketId;
-
-    if (previousId != null && previousId !== rocketId) {
-      const previousRocket = rocketState.rockets.find((item) => item.id === previousId);
-      if (previousRocket) renderRocketElement(previousRocket);
-    }
-
-    if (rocketId != null) {
-      const rocket = rocketState.rockets.find((item) => item.id === rocketId);
-      if (rocket) renderRocketElement(rocket);
-    }
-
-    syncMoveModeChrome();
-    scheduleRenderMoveArrows();
-  }
-
-  function clearMoveRocketHighlight() {
-    updateMoveRocketHighlight(null);
-  }
-
-  function activateMoveMode(rocketId) {
-    if (!Number.isInteger(rocketId) || rocketId <= 0) return false;
-
-    const currentPlayer = getCurrentPlayer();
-    const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer.id);
-    if (!rocketsForPlayer.some((rocket) => rocket.id === rocketId)) return false;
-
-    const cardMoveEffect = pendingState.actionEffectFlow?.cardMoveEffect?.effect || null;
-    const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(cardMoveEffect, rocketId);
-    if (!huanyuRocketCheck.ok) {
-      rocketState.statusNote = huanyuRocketCheck.message;
-      renderStateReadout();
-      return false;
-    }
-
-    rocketActions.setActiveRocket(rocketState, rocketId);
-    updateMoveRocketHighlight(rocketId);
-    renderStateReadout();
-    return true;
-  }
-
-  function deactivateMoveMode() {
-    if (isMovePaymentSelectionActive()) {
-      cancelMovePaymentSelection();
-    }
-    clearMoveRocketHighlight();
-    renderRockets();
-  }
 
   function setQuickActionButtonEnabled(enabled, reason) {
     els.actionQuickButton.disabled = !enabled;
@@ -10411,302 +8528,66 @@
     });
   }
 
-  function closeDataPlacePicker(options = {}) {
-    if (!els.dataPlaceOverlay) return;
-    els.dataPlaceOverlay.hidden = true;
-    if (!options.keepPending) pendingState.dataPlaceAction = null;
-  }
-
-  function shouldPromptDataPlaceChoice(choices) {
-    return abilities.data.needsPlacementChoice(choices);
-  }
-
-  function getDataPoolCount(player) {
-    const dataState = data.ensurePlayerDataState?.(player) || player?.dataState || {};
-    return Array.isArray(dataState.poolTokens)
-      ? dataState.poolTokens.length
-      : Math.max(0, Math.round(Number(player?.resources?.availableData) || 0));
-  }
-
-  function isDataPoolFull(player) {
-    return getDataPoolCount(player) >= players.RESOURCE_LIMITS.availableData;
-  }
-
-  function getAutoDataPlacementCheck(player) {
-    if (!isDataPoolFull(player)) return { ok: false, reason: "not_full" };
-    const placeCheck = data.canPlaceAnyData?.(player);
-    if (!placeCheck?.ok) {
-      return {
-        ok: false,
-        reason: "no_place",
-        message: placeCheck?.message || "数据池已满，且没有可用的数据放置位置",
-      };
-    }
-    return { ok: true, choices: placeCheck.choices || data.listPlaceDataChoices(player) };
-  }
-
-  function openDataPlacePicker(options = {}) {
-    if (!els.dataPlaceOverlay || !els.dataPlaceActions) return;
-
-    const player = options.player || getCurrentPlayer();
-    const choiceResult = abilities.data.listPlacementChoices(player);
-    if (!choiceResult.ok) {
-      rocketState.statusNote = choiceResult.message;
-      renderStateReadout();
-      return;
-    }
-
-    const choices = choiceResult.choices;
-    const forcePrompt = Boolean(options.forcePrompt);
-    pendingState.dataPlaceAction = options.pendingAction
-      ? {
-        ...getPendingOwnerFields(options.pendingAction.effect || null, player),
-        ...options.pendingAction,
-      }
-      : null;
-    if (!forcePrompt && !shouldPromptDataPlaceChoice(choices)) {
-      const [choice] = choices;
-      confirmDataPlacement(choice.target, choice.blueSlot);
-      return;
-    }
-
-    if (els.dataPlaceSubtitle) {
-      els.dataPlaceSubtitle.textContent = options.subtitle
-        || "请选择将数据放入第一排，或放入满足条件的蓝色科技下方。";
-    }
-
-    const choiceButtons = choices.map((choice) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "data-place-option-button";
-      button.dataset.placeTarget = choice.target;
-      if (choice.blueSlot != null) {
-        button.dataset.blueSlot = String(choice.blueSlot);
-      }
-      button.innerHTML = `${choice.label}<small>${choice.description}</small>`;
-      return button;
-    });
-    if (options.allowSkip) {
-      const skip = document.createElement("button");
-      skip.type = "button";
-      skip.className = "data-place-option-button";
-      skip.dataset.placeSkip = "true";
-      skip.innerHTML = `${options.skipLabel || "跳过"}<small>${options.skipDescription || "不获得本次数据"}</small>`;
-      choiceButtons.push(skip);
-    }
-
-    els.dataPlaceActions.replaceChildren(...choiceButtons);
-
-    els.dataPlaceOverlay.hidden = false;
-  }
-
-  function openAutoDataPlacementPrompt(effect, player, options = {}) {
-    const check = getAutoDataPlacementCheck(player);
-    if (!check.ok) return check;
-    const beforePlayerState = structuredClone(player);
-    const beforeCardState = structuredClone(cardState);
-    const pendingAction = {
-      type: "auto_data_place_before_gain",
-      effect,
-      playerId: player?.id || null,
-      playerColor: player?.color || null,
-      beforePlayerState,
-      beforeCardState,
-      messages: [],
-      restoreRecorded: false,
-      onAfterPlacement: options.onAfterPlacement,
-      onSkip: options.onSkip,
-    };
-    openDataPlacePicker({
-      player,
-      forcePrompt: true,
-      allowSkip: true,
-      skipLabel: options.skipLabel || "跳过获得数据",
-      skipDescription: options.skipDescription || "不放置数据，也不获得这次数据",
-      subtitle: options.subtitle
-        || "可先放置 1 个数据空出数据池位置，再获得本次数据；也可以跳过本次数据获得。",
-      pendingAction,
-    });
-    rocketState.statusNote = options.statusNote || "数据池已满：请先放置数据，或跳过本次数据获得";
-    renderStateReadout();
-    return { ok: true, awaitingDataPlacement: true, message: rocketState.statusNote };
-  }
-
-  function getPendingDataPlacementPlayer(pending = pendingState.dataPlaceAction) {
-    return getPendingOwnerPlayer(pending, pending?.effect || null);
-  }
-
-  function ensurePendingDataPlacementEffectStep(pending, player) {
-    if (!pending?.effect) return;
-    if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(pending.effect.label);
-    if (!pending.restoreRecorded) {
-      recordHistoryCommand(historyCommands.createRestorePlayerCommand(
-        player,
-        pending.beforePlayerState,
-        "恢复自动放置数据前玩家状态",
-      ));
-      pending.restoreRecorded = true;
-    }
-  }
-
-  function applyAutoDataPlacementSlotBonuses(player, placeResult, pending) {
-    const bonuses = getPlaceDataSlotBonuses(placeResult);
-    const messages = [];
-    for (const bonus of bonuses) {
-      if (bonus.type === "income") {
-        const incomeStart = beginDiscardSelection(1, {
-          type: "place_data_income",
-          player,
-          beforePlayerState: pending.beforePlayerState,
-          beforeCardState: pending.beforeCardState,
-          effectLabel: pending.effect?.label || "自动放置数据",
-          fromEffectFlow: true,
-          autoDataPlacement: true,
-        });
-        if (!incomeStart.ok) {
-          messages.push(incomeStart.message);
-          continue;
-        }
-        pending.messages.push(...messages);
-        return { ok: true, pendingIncome: true, messages };
-      }
-
-      if (bonus.type === "choose_card") {
-        const selectionStart = beginCardSelection({
-          type: "place_data_choose_card",
-          player,
-          beforePlayerState: pending.beforePlayerState,
-          beforeCardState: pending.beforeCardState,
-          fromEffectFlow: true,
-          autoDataPlacement: true,
-        });
-        if (!selectionStart.ok) {
-          messages.push(selectionStart.message);
-          continue;
-        }
-        pending.messages.push(...messages);
-        return { ok: true, pendingCardSelection: true, messages };
-      }
-
-      if (bonus.type === "publicity") {
-        players.gainResources(player, { publicity: bonus.publicity });
-        messages.push(`获得 ${bonus.publicity} 宣传`);
-      } else if (bonus.type === "score") {
-        players.gainResources(player, { score: bonus.score });
-        addPlayerScoreSource(player, SCORE_SOURCE_KEYS.BLUE_TECH, bonus.score);
-        messages.push(`获得 ${bonus.score} 分`);
-      } else if (bonus.type === "credits") {
-        players.gainResources(player, { credits: bonus.credits });
-        messages.push(`获得 ${bonus.credits} 信用点`);
-      } else if (bonus.type === "energy") {
-        players.gainResources(player, { energy: bonus.energy });
-        messages.push(`获得 ${bonus.energy} 能量`);
-      }
-    }
-    return { ok: true, pendingIncome: false, pendingCardSelection: false, messages };
-  }
-
-  function continuePendingDataPlacementAfterBonus(message = null) {
-    const pending = pendingState.dataPlaceAction;
-    if (!pending) return null;
-    if (message) pending.messages.push(message);
-    pendingState.dataPlaceAction = null;
-    if (typeof pending.onAfterPlacement === "function") {
-      return pending.onAfterPlacement({
-        messages: pending.messages.filter(Boolean),
-        restoreRecorded: pending.restoreRecorded,
-        beforePlayerState: pending.beforePlayerState,
-      });
-    }
-    return null;
-  }
-
-  function confirmPendingDataPlacement(target, blueSlot) {
-    const pending = pendingState.dataPlaceAction;
-    const player = getPendingDataPlacementPlayer(pending);
-    closeDataPlacePicker({ keepPending: true });
-    return withPendingOwnerPlayer(pending, () => {
-    ensurePendingDataPlacementEffectStep(pending, player);
-
-    const result = abilities.executeAbility("placeData", createActionContext(), {
-      target,
-      blueSlot,
-    });
-    if (!result.ok) {
-      rocketState.statusNote = result.message;
-      renderStateReadout();
-      return result;
-    }
-
-    pending.messages.push(result.message);
-    const bonusResult = applyAutoDataPlacementSlotBonuses(player, result, pending);
-    if (bonusResult.pendingIncome || bonusResult.pendingCardSelection) {
-      rocketState.statusNote = bonusResult.pendingIncome
-        ? `${result.message}，请选择 1 张手牌获得收入`
-        : `${result.message}，请选择 1 张公共牌`;
-      renderPlayerStats();
-      renderStateReadout();
-      return result;
-    }
-    pending.messages.push(...(bonusResult.messages || []));
-    renderPlayerStats();
-    renderInitialSelectionArea();
-    return continuePendingDataPlacementAfterBonus();
-    });
-  }
-
-  function skipPendingDataPlacement() {
-    const pending = pendingState.dataPlaceAction;
-    if (!pending) {
-      closeDataPlacePicker();
-      return null;
-    }
-    closeDataPlacePicker({ keepPending: true });
-    pendingState.dataPlaceAction = null;
-    if (typeof pending.onSkip === "function") {
-      return pending.onSkip({
-        beforePlayerState: pending.beforePlayerState,
-      });
-    }
-    return null;
-  }
-
-  function cancelDataPlacePicker() {
-    if (pendingState.dataPlaceAction) return skipPendingDataPlacement();
-    closeDataPlacePicker();
-    rocketState.statusNote = "已取消放置数据";
-    renderStateReadout();
-    return { ok: true, canceled: true };
-  }
-
-  function confirmDataPlacement(target, blueSlot) {
-    if (pendingState.dataPlaceAction) {
-      return confirmPendingDataPlacement(target, blueSlot);
-    }
-    closeDataPlacePicker();
-    const blocked = blockIncompatiblePendingQuickAction("place-data");
-    if (blocked) return blocked;
-    const player = getCurrentPlayer();
-    const result = abilities.executeAbility("placeData", createActionContext(), {
-      target,
-      blueSlot,
-    });
-    rocketState.statusNote = result.message;
-    if (result.ok) {
-      const bonusResult = recordPlaceDataActionHistory(player, result);
-      if (bonusResult?.message && !bonusResult.pendingIncome) {
-        rocketState.statusNote = `${result.message}（${bonusResult.message}）`;
-      } else if (bonusResult?.pendingIncome) {
-        rocketState.statusNote = `${result.message}，请选择 1 张手牌获得收入`;
-      } else if (bonusResult?.ok === false && bonusResult.message) {
-        rocketState.statusNote = `${result.message}（${bonusResult.message}）`;
-      }
-    }
-    renderPlayerStats();
-    updateActionButtons();
-    renderStateReadout();
-    return result;
-  }
+  actionInteractionRuntime = actionInteractionRuntimeModule.createActionInteractionRuntime({
+    HISTORY_SOURCE_MAIN,
+    SCORE_SOURCE_KEYS,
+    abilities,
+    actionShared,
+    addPlayerScoreSource,
+    beginCardSelection,
+    beginDiscardSelection,
+    beginEffectHistoryStep,
+    blockIncompatiblePendingQuickAction,
+    buildPlutoChoiceRewardSummary,
+    buildPlutoRewardEffectsForAction,
+    canStartMainAction,
+    cancelMovePaymentSelection,
+    cardEffects,
+    cardState,
+    createActionContext,
+    data,
+    els,
+    getBoardPointFromPolarPoint,
+    getCurrentPlayer,
+    getMainActionStartBlockReason,
+    getMovableTokensForPlayer,
+    getPendingOwnerFields,
+    getPendingOwnerPlayer,
+    getPlaceDataSlotBonuses,
+    hasActiveCardTriggerResolution,
+    historyCommands,
+    isActionEffectFlowActive,
+    isMovePaymentSelectionActive,
+    markerBelongsToPlayer,
+    markerOwnerLabel,
+    openLandTargetPicker,
+    pendingState,
+    playerState,
+    players,
+    recordAtomicActionHistory,
+    recordHistoryCommand,
+    recordPlaceDataActionHistory,
+    removeRocketElement,
+    renderInitialSelectionArea,
+    renderPlayerStats,
+    renderReservedCardsFromTaskState,
+    renderRocketElement,
+    renderRockets,
+    renderStateReadout,
+    restoreMutableObject,
+    rocketActions,
+    rocketState,
+    runAction,
+    settleCardTasksAfterEffect,
+    solar,
+    startCardEffectFlow,
+    syncInteractionFocusChrome,
+    tokenWidths,
+    uiRuntimeState,
+    updateActionButtons,
+    validateIndustryHuanyuMoveRocket,
+    withPendingOwnerPlayer,
+  });
 
   function updateQuickPanel() {
     if (!isQuickPanelOpen()) return;
@@ -11374,7 +9255,55 @@
     }
   }
 
-  const debugRuntimeController = debugRuntimeModule.createDebugRuntime({
+  function createFallbackDebugRuntimeController() {
+    const noopResult = { ok: false, message: "调试模块未加载" };
+    const noop = () => noopResult;
+    const noopFocus = () => {};
+    return {
+      setDebugOpen() {},
+      setDebugPlayerMenuOpen() {},
+      renderDebugPlayerSwitch() {},
+      switchCurrentPlayerColor: noop,
+      selectDefaultRocketForCurrentPlayer() {
+        return null;
+      },
+      handleDebugQuickSectorScanChoice: noop,
+      openDebugQuickSectorScanPicker: noop,
+      runDebugQuickSectorScan: noop,
+      setDebugAlienTraceModeActive: noop,
+      toggleDebugAlienTraceMode: noop,
+      enableDebugAlienTraceModeForReveal: noop,
+      addDebugIncome: noop,
+      addDebugData: noop,
+      addDebugScore: noop,
+      addDebugCardByInput: noop,
+      promptDebugGainCard: noop,
+      revealJiuzheForDebug: noop,
+      revealYichangdianForDebug: noop,
+      revealFangzhouForDebug: noop,
+      revealBanrenmaForDebug: noop,
+      revealChongForDebug: noop,
+      revealAmibaForDebug: noop,
+      revealAomomoForDebug: noop,
+      revealRunezuForDebug: noop,
+      logAomomoDebugCoordinates() {},
+      fillNebulaDataBoard: noop,
+      fillDebugNebulaData: noop,
+      toggleSectorWinDebug: noop,
+      handleAiTakeoverFailsafe: noop,
+      handleForceSkipTurnFailsafe: noop,
+      renderAfterFailsafeControl() {},
+      getFailsafePendingOwnerPlayer() {
+        return null;
+      },
+      createFocusDebugCalibrationHandler() {
+        return noopFocus;
+      },
+    };
+  }
+
+  const debugRuntimeController = typeof debugRuntimeModule?.createDebugRuntime === "function"
+    ? debugRuntimeModule.createDebugRuntime({
     window,
     document,
     els,
@@ -11470,7 +9399,8 @@
     applyIndustryRoundStartBonuses,
     activateAomomoBoard,
     resize,
-  });
+  })
+    : createFallbackDebugRuntimeController();
   const focusDebugCalibration = debugRuntimeController.createFocusDebugCalibrationHandler();
 
   const appEventState = {
@@ -11502,14 +9432,10 @@
 
   alienSpeciesRuntime = alienSpeciesRuntimeModule.createAlienSpeciesRuntime({
     actionHistory,
-    addFangzhouUnlockedCardToHand,
     alienGameState,
     aliens,
     amiba,
     aomomo,
-    appendAlienTraceAfterRewardMessage,
-    applyAlienStateExtraTraceReward,
-    applyAlienTraceAfterReward,
     Array,
     banrenma,
     BANRENMA_PANEL_BONUS_EFFECT_TYPE,
@@ -11554,6 +9480,7 @@
     failMissingAlienTraceTargetPlayer,
     fangzhou,
     finishAutomaticRewardEffect,
+    formatPlanetRewardGain,
     getAlienCardGainIrreversible,
     getAlienTraceActionPlayer,
     getCurrentActionEffect,
@@ -11595,6 +9522,7 @@
     playerState,
     quickActionHistory,
     recordHistoryCommand,
+    recordAlienTraceScore,
     recordQuickHistoryCommand,
     removeReservedCardToDiscard,
     removeRocketElement,
@@ -11927,7 +9855,11 @@
       revealAomomoForDebug,
       revealRunezuForDebug,
       randomizeAliens,
+      startNewGame,
       startInitialSelection,
+      getInitialSelectionOffer,
+      handleInitialSelectionCardClick,
+      confirmInitialSelectionForCurrentPlayer,
       configureAiAutoBattle,
       configureAiStrategyWeights,
       resetAiStrategyWeights,
@@ -11966,6 +9898,7 @@
       endCurrentTurn,
       passForCurrentPlayer,
       runAction,
+      dispatchRuntimeAction: (request) => actionRuntimeController.dispatchAction(request),
       runQuickTrade,
       toggleQuickPanel,
       moveRocket,
