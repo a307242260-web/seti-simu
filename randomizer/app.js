@@ -44,6 +44,7 @@
     gameRecoveryModule,
     runtimeModule,
     refreshModule,
+    renderRuntimeModule,
     actionBriefingModule,
     effectFlowModule,
     effectChoiceFlowModule,
@@ -119,6 +120,23 @@
   const FUNDAMENTALISM_ROUND_START_ROUNDS = Object.freeze([2, 3, 4]);
   const AI_DIFFICULTY_LAUGHABLE = "laughable";
   const AI_DIFFICULTY_WEAK_START = "weak_start";
+  const SCORE_SOURCE_KEYS = Object.freeze({
+    INITIAL: "initialScore",
+    SCAN: "scanScore",
+    TECH_BONUS: "techBonusScore",
+    BLUE_TECH: "blueTechScore",
+    CARD_QUICK: "cardQuickScore",
+    CARD_EFFECT: "cardEffectScore",
+    TASK_CARD: "taskCardScore",
+    ORBIT: "orbitScore",
+    LAND: "landScore",
+    ALIEN_TRACE_PINK: "alienTracePinkScore",
+    ALIEN_TRACE_YELLOW: "alienTraceYellowScore",
+    ALIEN_TRACE_BLUE: "alienTraceBlueScore",
+    ALIEN_CARD_QUICK: "alienCardQuickScore",
+    ALIEN_EFFECT: "alienEffectScore",
+    INDUSTRY_EFFECT: "industryEffectScore",
+  });
   const tokenWidths = {
     rocket: null,
     orbit: null,
@@ -199,6 +217,144 @@
   };
 
   const els = window.SetiAppDom.collectElements(document);
+  const renderRuntime = renderRuntimeModule.createRenderRuntime({
+    document,
+    Image,
+    solar,
+    players,
+    rocketActions,
+    planetStats,
+    planetReferenceLayout,
+    endGameScoring,
+    finalScoring,
+    data,
+    aliens,
+    jiuzhe,
+    yichangdian,
+    chong,
+    aomomo,
+    runezu,
+    industry,
+    solarState,
+    playerState,
+    rocketState,
+    nebulaDataState,
+    planetStatsState,
+    alienGameState,
+    finalScoringState,
+    turnState,
+    uiRuntimeState,
+    tokenWidths,
+    techRenderContext,
+    sectorElements,
+    yichangdianAnomalyMarkerElements,
+    chongPlanetFossilMarkerElements,
+    chongFossilOwnerTokenElements,
+    runezuBoardSymbolElements,
+    els,
+    ROCKET_IMAGE_SCALE,
+    REFERENCE_ORBIT_IMAGE_SCALE,
+    REFERENCE_LANDDING_IMAGE_SCALE,
+    RESOURCE_ICON_SRC,
+    OPPONENT_SECTOR_WIN_STATS,
+    OPPONENT_TECH_TYPES,
+    ROTATE_STATE_SLOTS,
+    pendingState,
+    cardState,
+    tech,
+    techGameState,
+    actionHistory,
+    quickActionHistory,
+    getCurrentPlayer,
+    getInterfacePlayer,
+    getActivePlayers,
+    getPlayerById,
+    getPlayerByColor,
+    getPlayerRoundOrderNumber,
+    getPlayerDisplayLabel,
+    isPlayerPassedThisRound,
+    isInitialSelectionActive,
+    getInitialSelectionOffer,
+    getCurrentInitialSelectionCards,
+    isInitialSelectionConfirmed,
+    getInitialSelectionPlayerIds,
+    getCardFromInitialOffer,
+    getPlayerLabelById,
+    getDisplayedTurnNumber,
+    isGameEnded,
+    createInitialSelectionPicker,
+    createCompanyCardSummary,
+    getPlayerCompanyBaseIncome,
+    createPlayerNameStat,
+    createStatSeparator,
+    createStatIcon,
+    createInlineIconValue,
+    createPlayerStatsRow,
+    buildPlayerResourceStatNodes,
+    buildPlayerIncomeStatNodes,
+    buildPlayerRunezuStatNodes,
+    buildPlayerFangzhouStatNodes,
+    updatePlayerHandPanelTitle,
+    renderReservedCardsFromTaskState,
+    syncFinalScorePendingMarks,
+    renderFinalScoreBoard,
+    queueJiuzheOpportunitiesForPlayer,
+    maybeOpenQueuedJiuzheOpportunity,
+    queueBanrenmaOpportunitiesForPlayer,
+    maybeOpenQueuedBanrenmaOpportunity,
+    computePlayerFinalScoreBreakdown,
+    buildPlutoMarkerContext,
+    getCardTypeCode,
+    buildProbeLocationIndex,
+    isDiscardSelectionActive,
+    isPlayCardSelectionActive,
+    isMovePaymentSelectionActive,
+    isHandScanSelectionActive,
+    getPendingCardCornerQuickAction,
+    getPendingHandCardPlayAction,
+    canUseCardCornerQuickAction,
+    isIndustryHandSelectionActive,
+    isIndustryFutureSpanHandSelectionActive,
+    isFutureSpanEligibleHandCard,
+    getFutureSpanDeltaForCard,
+    isMovePaymentCard,
+    getCardCornerQuickActionForCard,
+    getHandCardPlayActionForCard,
+    getPendingPlayCardSelection,
+    getCardPlayCost,
+    formatCardPlayCost,
+    getPublicScanChoicesForCard,
+    attachCardHoverPreview,
+    ensurePublicCardsFilledRespectingDelayedRefills,
+    updatePublicCardControls,
+    canBlindDraw,
+    getPlanetName,
+    getBoardPointFromPolarPoint,
+    getReferencePlacementName,
+    formatPlanetsReferencePoint,
+    formatPolarPoint,
+    formatBoardPoint,
+    getNormalTokenAssetForPlayer,
+    isRocketOnPlanetsReference,
+    isPlanetMarkerRocket,
+    isRocketMoveCandidate,
+    isRocketMoveMuted,
+    handleRocketPointerDown,
+    getChongPlanetLabel,
+    getTurnReadoutLines,
+    getInitialSelectionReadoutLines,
+    getPlayerReadoutLines,
+    getPlanetStatsReadoutLines,
+    scheduleAiAutoStepIfNeeded,
+    getRocketCoordinateReadoutLines,
+    selectDefaultRocketForCurrentPlayer,
+    syncInteractionFocusChrome,
+    placeDataToBlueSlot,
+    getPublicCardHeight,
+    isCardSelectionActive,
+    isPublicCardMultiSelectActive,
+    isAiAutoBattlePlayer,
+  });
   const refreshHelpers = refreshModule.createRefreshHelpers({
     renderPlayerStats,
     renderAlienPanels,
@@ -278,10 +434,10 @@
     createActionLogPlayedCardSnapshot,
     appendActionLogTextWithPlayedCard,
     hideCardHoverPreview,
-    scheduleAiAutoStepIfNeeded,
+    scheduleAiAutoStepIfNeeded: () => scheduleAiAutoStepIfNeeded?.(),
     setReportTab,
     setLogOpen,
-    isAiAutoBattlePlayer,
+    isAiAutoBattlePlayer: (...args) => isAiAutoBattlePlayer?.(...args),
     getPlayerById,
     getPlayerLabelById,
     getPlayerColorDefinition: players.getPlayerColorDefinition,
@@ -661,7 +817,7 @@
     renderAlienPanels,
     renderStateReadout,
     getCurrentPlayer,
-    getAlienTraceActionPlayer,
+    getAlienTraceActionPlayer: (...args) => getAlienTraceActionPlayer?.(...args),
     getAvailableDataTokenCount,
     resolvePlayerReference,
     confirmFangzhouCard2Unlock,
@@ -1981,6 +2137,7 @@
     getAiAutoBattleAnalysis,
     getAiAutoBattleProgress,
     getAiAutoBattleReport,
+    buildAiTurnActionCandidates,
     getAiMapDemand,
     getAiRemainingRoundWeight,
     getAiStrategyDemand,
@@ -1993,11 +2150,14 @@
     isAiAutoBattlePlayer,
     listCardTriggerFreeMoveCandidates,
     recordAiAutoBattleLog,
+    resolveAiAutomationToTurnBoundary,
     resetAiStrategyWeights,
     restoreAiControlSnapshot,
     runAiAutoBattle,
     runAiAutoBattleBatch,
     runAiAutomationStep,
+    runAiNonTurnAutomationStep,
+    runAiSelectedTurnAction,
     runAiStrategyABTest,
     runAiStrategyTuningCycle,
     scheduleAiAutoStepIfNeeded,
@@ -6760,62 +6920,7 @@
   }
 
   function renderPublicCards() {
-    if (!els.publicCardRow) return;
-
-    ensurePublicCardsFilledRespectingDelayedRefills();
-
-    const selectionActive = isCardSelectionActive();
-    const publicCardMultiSelect = isPublicCardMultiSelectActive();
-    const selectedPublicSlots = pendingState.cardSelectionAction?.selectedSlots || [];
-    els.publicCardRow.replaceChildren(...cardState.publicCards.map((card, index) => {
-      const slot = document.createElement("div");
-      slot.className = "public-card-slot";
-      slot.dataset.publicSlot = String(index);
-      const label = card?.cardName || `公共牌 ${index + 1}`;
-
-      if (!card) {
-        slot.classList.add("is-empty");
-        slot.setAttribute("aria-hidden", "true");
-        return slot;
-      }
-
-      if (selectionActive) {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "public-card";
-        button.dataset.publicSlot = String(index);
-        button.classList.add("is-selectable");
-        if (publicCardMultiSelect && selectedPublicSlots.includes(index)) {
-          button.classList.add("is-selected");
-        }
-        button.setAttribute("aria-label", label);
-
-        const image = document.createElement("img");
-        image.src = card.src;
-        image.alt = "";
-        image.width = 747;
-        image.height = 1040;
-        image.decoding = "async";
-        image.setAttribute("aria-hidden", "true");
-        button.append(image);
-        attachCardHoverPreview(button, card.src, label);
-        slot.append(button);
-        return slot;
-      }
-
-      const image = document.createElement("img");
-      image.className = "public-card";
-      image.src = card.src;
-      image.alt = label;
-      image.width = 747;
-      image.height = 1040;
-      image.decoding = "async";
-      attachCardHoverPreview(image, card.src, label);
-      slot.append(image);
-      return slot;
-    }));
-
-    updatePublicCardControls();
+    return renderRuntime.renderPublicCards();
   }
 
   function handlePublicCardClick(slotIndex) {
@@ -23396,30 +23501,7 @@
   }
 
   function setTokenAssetSizes() {
-    const currentPlayer = getCurrentPlayer();
-    const color = players.getPlayerColorDefinition(currentPlayer.color);
-    let pendingLoads = 3;
-    const finalizeTokenSizes = () => {
-      pendingLoads -= 1;
-      if (pendingLoads === 0) renderRockets();
-    };
-
-    loadTokenWidth(color.rocketAsset, ROCKET_IMAGE_SCALE, 205, (width) => {
-      tokenWidths.rocket = width;
-      els.tokenLayer.style.setProperty("--rocket-width", `${width}px`);
-      els.planetsTokenLayer.style.setProperty("--rocket-width", `${width}px`);
-      finalizeTokenSizes();
-    });
-    loadTokenWidth(color.satelliteAsset, REFERENCE_ORBIT_IMAGE_SCALE, 927, (width) => {
-      tokenWidths.orbit = width;
-      els.planetsTokenLayer.style.setProperty("--reference-orbit-width", `${width}px`);
-      finalizeTokenSizes();
-    });
-    loadTokenWidth(color.landdingAsset, REFERENCE_LANDDING_IMAGE_SCALE, 927, (width) => {
-      tokenWidths.landding = width;
-      els.planetsTokenLayer.style.setProperty("--reference-land-width", `${width}px`);
-      finalizeTokenSizes();
-    });
+    return renderRuntime.setTokenAssetSizes();
   }
 
   function applyTokenWidth(element, rocket) {
@@ -23475,174 +23557,23 @@
   }
 
   function renderRocketElement(rocket) {
-    let element = document.getElementById(`rocket-${rocket.id}`);
-    const color = getRocketColorDefinition(rocket);
-
-    if (!element) {
-      element = document.createElement("img");
-      element.className = "rocket-token";
-      element.id = `rocket-${rocket.id}`;
-      element.draggable = false;
-      element.dataset.rocketId = String(rocket.id);
-      element.addEventListener("pointerdown", handleRocketPointerDown);
-      els.tokenLayer.appendChild(element);
-    }
-
-    const layer = isRocketOnPlanetsReference(rocket) ? els.planetsTokenLayer : els.tokenLayer;
-    if (layer && element.parentElement !== layer) layer.appendChild(element);
-
-    const referencePlacement = rocket.referencePlacement || null;
-    const referenceLabel = getReferencePlacementName(referencePlacement);
-    const tokenTypeLabel = getTokenTypeLabel(rocket);
-    element.src = getTokenAssetForRocket(rocket, color);
-    const rocketLabel = formatRocketLabel(rocket);
-    element.alt = referenceLabel
-      ? `${referenceLabel} ${color.label}${tokenTypeLabel} ${rocketLabel}`
-      : `${color.label}${tokenTypeLabel} ${rocketLabel}`;
-    element.dataset.playerId = rocket.playerId || "";
-    element.dataset.playerColor = color.id;
-    element.dataset.referencePlanet = referencePlacement?.planetId || "";
-    element.dataset.referenceParentPlanet = referencePlacement?.parentPlanetId || "";
-    element.dataset.referenceSatellite = referencePlacement?.satelliteId || "";
-    element.dataset.referenceKind = referencePlacement?.kind || "";
-    element.style.setProperty("--rocket-glow", color.glowColor);
-    element.classList.toggle("is-dragging", rocketState.draggingRocketId === rocket.id);
-    element.classList.toggle("is-reference-placed", isRocketOnPlanetsReference(rocket));
-    element.classList.toggle("is-default-reference", Boolean(referencePlacement?.isDefault));
-    element.classList.toggle("is-reference-orbit", referencePlacement?.kind === "orbit");
-    element.classList.toggle("is-reference-land", referencePlacement?.kind === "land");
-    element.classList.toggle("is-reference-satellite", referencePlacement?.kind === "satellite");
-    element.classList.toggle("is-planet-marker", Boolean(referencePlacement?.isPlanetMarker));
-    const referenceOffset = Number(referencePlacement?.referenceOffsetTokenWidths) || 0;
-    element.classList.toggle("is-reference-offset", Boolean(referenceOffset));
-    if (referenceOffset) {
-      element.style.setProperty("--reference-offset-token-widths", String(referenceOffset));
-    } else {
-      element.style.removeProperty("--reference-offset-token-widths");
-    }
-    element.classList.toggle("is-chong-fossil", isChongFossilToken(rocket));
-    element.classList.toggle("is-chong-delivered", Boolean(rocket.chongDelivered || rocket.cargo?.delivered));
-    element.classList.toggle("is-move-target", rocket.id === uiRuntimeState.moveHighlightRocketId);
-    element.classList.toggle("is-move-candidate", isRocketMoveCandidate(rocket));
-    element.classList.toggle("is-move-muted", isRocketMoveMuted(rocket));
-    element.classList.toggle(
-      "is-move-selectable",
-      rocket.playerId === getInterfacePlayer()?.id
-        && (rocketActions.isMovablePlayerToken?.(rocket) || rocketActions.isControllablePlayerRocket(rocket)),
-    );
-
-    if (isRocketOnPlanetsReference(rocket)) {
-      applyTokenWidth(element, rocket);
-      const referencePoint = rocket.planetsReference || { percentX: 50, percentY: 50 };
-      element.style.left = `${referencePoint.percentX}%`;
-      element.style.top = `${referencePoint.percentY}%`;
-      element.title = referenceLabel
-        ? `${referenceLabel} ${rocketLabel} ${formatPlanetsReferencePoint(referencePoint)}`
-        : formatPlanetsReferencePoint(referencePoint);
-      return;
-    }
-
-    applyTokenWidth(element, rocket);
-
-    const boardPoint = getBoardPointFromPolarPoint(rocket);
-    element.style.left = `${boardPoint.x / 10}%`;
-    element.style.top = `${boardPoint.y / 10}%`;
-    element.title = referenceLabel
-      ? `${referenceLabel} ${rocketLabel} ${formatPolarPoint(rocket)} ${formatBoardPoint(boardPoint)}`
-      : `${formatPolarPoint(rocket)} ${formatBoardPoint(boardPoint)}`;
-    if (isChongFossilToken(rocket) && (rocket.chongDelivered || rocket.cargo?.delivered)) {
-      element.title = `${element.title} · 已送达，点击对应虫族任务牌完成`;
-    }
-    if (isChongFossilToken(rocket)) renderChongFossilOwnerTokenForRocket(rocket);
+    return renderRuntime.renderRocketElement(rocket);
   }
 
   function renderChongFossilOwnerTokenForRocket(rocket, activeKeys = null) {
-    if (!els.tokenLayer || !isChongFossilToken(rocket) || isRocketOnPlanetsReference(rocket)) return null;
-
-    const key = String(rocket.id);
-    if (activeKeys) activeKeys.add(key);
-    let element = chongFossilOwnerTokenElements.get(key);
-    if (!element) {
-      element = document.createElement("img");
-      element.className = "chong-fossil-owner-token";
-      element.draggable = false;
-      element.dataset.chongFossilOwnerToken = key;
-      element.dataset.rocketId = key;
-      chongFossilOwnerTokenElements.set(key, element);
-      els.tokenLayer.appendChild(element);
-    }
-    if (element.parentElement !== els.tokenLayer) els.tokenLayer.appendChild(element);
-
-    const player = getPlayerById(rocket.playerId) || { color: rocket.color };
-    const color = getRocketColorDefinition(rocket);
-    const boardPoint = getBoardPointFromPolarPoint(rocket);
-    element.src = getNormalTokenAssetForPlayer(player);
-    element.alt = `${color.label}化石归属标记 ${formatRocketLabel(rocket)}`;
-    element.title = element.alt;
-    element.style.left = `${boardPoint.x / 10}%`;
-    element.style.top = `${boardPoint.y / 10}%`;
-    return element;
+    return renderRuntime.renderChongFossilOwnerTokenForRocket(rocket, activeKeys);
   }
 
   function renderChongFossilOwnerTokens() {
-    if (!els.tokenLayer) return;
-    const activeKeys = new Set();
-    for (const rocket of rocketState.rockets) {
-      renderChongFossilOwnerTokenForRocket(rocket, activeKeys);
-    }
-    for (const [key, element] of chongFossilOwnerTokenElements.entries()) {
-      if (activeKeys.has(key)) continue;
-      element.remove();
-      chongFossilOwnerTokenElements.delete(key);
-    }
+    return renderRuntime.renderChongFossilOwnerTokens();
   }
 
   function renderRockets() {
-    const activeIds = new Set(rocketState.rockets.map((rocket) => rocket.id));
-    els.tokenLayer?.querySelectorAll(".rocket-token").forEach((element) => {
-      const rocketId = Number(element.dataset.rocketId);
-      if (!activeIds.has(rocketId)) element.remove();
-    });
-    els.planetsTokenLayer?.querySelectorAll(".rocket-token").forEach((element) => {
-      const rocketId = Number(element.dataset.rocketId);
-      if (!activeIds.has(rocketId)) element.remove();
-    });
-    rocketState.rockets.forEach(renderRocketElement);
-    renderYichangdianAnomalyMarkers();
-    renderChongPlanetFossilMarkers();
-    renderChongFossilOwnerTokens();
-    renderPiratesRaidPlanetMarkers();
-    renderRunezuBoardSymbols();
+    return renderRuntime.renderRockets();
   }
 
   function renderPiratesRaidPlanetMarkers() {
-    const layer = els.planetsTokenLayer;
-    if (!layer) return;
-    layer.querySelectorAll(".pirates-raid-planet-marker").forEach((element) => element.remove());
-    if (!industry?.listPiratesRaidPlanetMarkers) return;
-
-    const markerSrc = industry.PIRATES_RAID_MARKER_SRC || "../assets/industry/掠夺标记.png";
-    for (const player of playerState.players || []) {
-      if (!industry.shouldShowPiratesRaidMarkers?.(player)) continue;
-      for (const marker of industry.listPiratesRaidPlanetMarkers(player)) {
-        const center = planetReferenceLayout.PLANET_REFERENCE_CENTERS?.[marker.planetId];
-        if (!center) continue;
-        const element = document.createElement("img");
-        element.className = "pirates-raid-planet-marker";
-        element.src = markerSrc;
-        element.alt = "";
-        element.decoding = "async";
-        element.draggable = false;
-        element.dataset.playerId = marker.playerId || player.id || "";
-        element.dataset.playerColor = marker.playerColor || player.color || "";
-        element.dataset.planetId = marker.planetId;
-        element.dataset.techTileId = marker.tileId;
-        element.title = `星际海盗：${marker.tileId} 掠夺标记 @ ${getPlanetName(marker.planetId)}`;
-        element.style.left = `${((center.x - 70) / planetReferenceLayout.PLANETS_REFERENCE_SIZE.width) * 100}%`;
-        element.style.top = `${(center.y / planetReferenceLayout.PLANETS_REFERENCE_SIZE.height) * 100}%`;
-        layer.append(element);
-      }
-    }
+    return renderRuntime.renderPiratesRaidPlanetMarkers();
   }
 
   function getYichangdianAnomalyKey(anomaly) {
@@ -23655,41 +23586,7 @@
   }
 
   function renderYichangdianAnomalyMarkers() {
-    if (!els.tokenLayer || !yichangdian) return;
-    const anomalies = alienGameState.yichangdian?.anomalies || [];
-    const activeKeys = new Set();
-
-    for (const anomaly of anomalies) {
-      const key = getYichangdianAnomalyKey(anomaly);
-      activeKeys.add(key);
-      let element = yichangdianAnomalyMarkerElements.get(key);
-      if (!element) {
-        element = document.createElement("img");
-        element.className = "yichangdian-anomaly-marker";
-        element.draggable = false;
-        yichangdianAnomalyMarkerElements.set(key, element);
-        els.tokenLayer.appendChild(element);
-      }
-      if (element.parentElement !== els.tokenLayer) els.tokenLayer.appendChild(element);
-      const point = getYichangdianAnomalyBoardPoint(anomaly);
-      element.style.left = `${point.x / 10}%`;
-      element.style.top = `${point.y / 10}%`;
-      element.dataset.boardX = String(point.x);
-      element.dataset.boardY = String(point.y);
-      element.src = anomaly.src || yichangdian.getAnomalyMarkerSrc(anomaly.markerId);
-      element.alt = `异常 ${anomaly.markerId}`;
-      element.dataset.anomalyKey = key;
-      element.dataset.markerId = anomaly.markerId;
-      element.dataset.sectorX = String(anomaly.sectorX);
-      element.dataset.sectorY = String(anomaly.y || 4);
-      element.title = `${yichangdian.formatAnomalyLabel(anomaly)} @ [${point.x.toFixed(2)},${point.y.toFixed(2)}]`;
-    }
-
-    for (const [key, element] of yichangdianAnomalyMarkerElements.entries()) {
-      if (activeKeys.has(key)) continue;
-      element.remove();
-      yichangdianAnomalyMarkerElements.delete(key);
-    }
+    return renderRuntime.renderYichangdianAnomalyMarkers();
   }
 
   function getChongPlanetFossilMarkerKey(planetId) {
@@ -23713,66 +23610,7 @@
   }
 
   function renderChongPlanetFossilMarkers() {
-    if (!els.tokenLayer || !chong) return;
-    const cState = alienGameState.chong;
-    const activeKeys = new Set();
-    const revealed = Boolean(cState?.revealInitialized && cState.revealedSlotId);
-    const planetLocations = revealed
-      ? solar.createSolarSnapshot(solarState).planetLocations
-      : [];
-
-    for (const planetId of ["jupiter", "saturn"]) {
-      const planetLocation = planetLocations.find((planet) => planet.planetId === planetId);
-      if (!planetLocation) continue;
-      const fossils = chong.getAvailablePlanetFossils(alienGameState, planetId);
-      if (!fossils.length) continue;
-      const key = getChongPlanetFossilMarkerKey(planetId);
-      activeKeys.add(key);
-      let element = chongPlanetFossilMarkerElements.get(key);
-      if (!element) {
-        element = document.createElement("div");
-        element.className = "chong-planet-fossil-marker";
-        const image = document.createElement("img");
-        image.className = "chong-planet-fossil-marker-image";
-        image.draggable = false;
-        image.decoding = "async";
-        const count = document.createElement("span");
-        count.className = "chong-planet-fossil-count";
-        element.append(image, count);
-        chongPlanetFossilMarkerElements.set(key, element);
-        els.tokenLayer.appendChild(element);
-      }
-      if (element.parentElement !== els.tokenLayer) els.tokenLayer.appendChild(element);
-      const point = getChongPlanetFossilPoint(planetLocation);
-      element.style.left = `${point.x / 10}%`;
-      element.style.top = `${point.y / 10}%`;
-      let image = element.querySelector(".chong-planet-fossil-marker-image");
-      if (!image) {
-        image = document.createElement("img");
-        image.className = "chong-planet-fossil-marker-image";
-        image.draggable = false;
-        image.decoding = "async";
-        element.prepend(image);
-      }
-      image.src = chong.FOSSIL_BACK_SRC;
-      image.alt = `${getChongPlanetLabel(planetId)}化石背面`;
-      let count = element.querySelector(".chong-planet-fossil-count");
-      if (!count) {
-        count = document.createElement("span");
-        count.className = "chong-planet-fossil-count";
-        element.appendChild(count);
-      }
-      count.textContent = String(fossils.length);
-      element.dataset.chongPlanetId = planetId;
-      element.dataset.chongPlanetFossilCount = String(fossils.length);
-      element.title = `${getChongPlanetLabel(planetId)}化石背面 x${fossils.length}`;
-    }
-
-    for (const [key, element] of chongPlanetFossilMarkerElements.entries()) {
-      if (activeKeys.has(key)) continue;
-      element.remove();
-      chongPlanetFossilMarkerElements.delete(key);
-    }
+    return renderRuntime.renderChongPlanetFossilMarkers();
   }
 
   function getRunezuBoardSymbolKey(sourceSymbol) {
@@ -23870,20 +23708,7 @@
   }
 
   function renderRunezuBoardSymbols() {
-    if (!runezu) return;
-    const activeKeys = new Set();
-    const sourceSymbols = alienGameState.runezu?.revealInitialized
-      ? runezu.listSourceSymbols(alienGameState)
-      : [];
-    for (const sourceSymbol of sourceSymbols) {
-      mountRunezuBoardLayerSymbol(sourceSymbol, activeKeys);
-      mountRunezuTechSymbol(sourceSymbol, activeKeys);
-    }
-    for (const [key, element] of runezuBoardSymbolElements.entries()) {
-      if (activeKeys.has(key)) continue;
-      element.remove();
-      runezuBoardSymbolElements.delete(key);
-    }
+    return renderRuntime.renderRunezuBoardSymbols();
   }
 
   function createStatText(label, value) {
@@ -24157,23 +23982,6 @@
     return nodes;
   }
 
-  const SCORE_SOURCE_KEYS = Object.freeze({
-    INITIAL: "initialScore",
-    SCAN: "scanScore",
-    TECH_BONUS: "techBonusScore",
-    BLUE_TECH: "blueTechScore",
-    CARD_QUICK: "cardQuickScore",
-    CARD_EFFECT: "cardEffectScore",
-    TASK_CARD: "taskCardScore",
-    ORBIT: "orbitScore",
-    LAND: "landScore",
-    ALIEN_TRACE_PINK: "alienTracePinkScore",
-    ALIEN_TRACE_YELLOW: "alienTraceYellowScore",
-    ALIEN_TRACE_BLUE: "alienTraceBlueScore",
-    ALIEN_CARD_QUICK: "alienCardQuickScore",
-    ALIEN_EFFECT: "alienEffectScore",
-    INDUSTRY_EFFECT: "industryEffectScore",
-  });
   const SCORE_SOURCE_KEY_SET = new Set(Object.values(SCORE_SOURCE_KEYS));
   const FINAL_RESULT_PLAYER_COLOR_ORDER = Object.freeze(["white", "brown", "blue", "green"]);
 
@@ -24747,45 +24555,7 @@
   }
 
   function renderOpponentStats() {
-    if (!els.opponentStatGrid) return;
-
-    const currentPlayerId = getCurrentPlayer()?.id || playerState.currentPlayerId;
-    const activePlayers = getActivePlayers().length ? getActivePlayers() : playerState.players;
-    const cards = activePlayers.map((player) => {
-      const color = players.getPlayerColorDefinition(player.color);
-      const finalScoreBreakdown = computePlayerFinalScoreBreakdown(player);
-      const card = document.createElement("article");
-      card.className = "opponent-stat-card";
-      card.dataset.playerId = player.id;
-      if (player.id === currentPlayerId) {
-        card.classList.add("is-current");
-      }
-      card.style.setProperty("--player-color", color.uiColor);
-
-      const resourcesRow = createOpponentStatRow("opponent-stat-row-resources");
-      resourcesRow.append(...buildPlayerResourceStatNodes(player, { includeHandSize: true }));
-
-      const incomeRow = createOpponentStatRow("opponent-stat-row-income");
-      incomeRow.append(...buildPlayerIncomeStatNodes(player));
-      const jiuzheRow = createOpponentJiuzheRow(player);
-      const runezuRow = createOpponentRunezuSymbolRow(player);
-
-      card.append(
-        createOpponentPlayerHeaderRow(player, player.resources.score, finalScoreBreakdown.totalScore),
-        resourcesRow,
-        incomeRow,
-        ...(jiuzheRow ? [jiuzheRow] : []),
-        ...(runezuRow && !runezuRow.hidden ? [runezuRow] : []),
-        ...OPPONENT_TECH_TYPES.map(({ type, prefix, color: techColor }) => (
-          createOpponentTechRow(player, type, prefix, techColor)
-        )),
-        createOpponentSummaryRow(player),
-        createOpponentAlienTraceRow(player),
-      );
-      return card;
-    });
-
-    els.opponentStatGrid.replaceChildren(...cards);
+    return renderRuntime.renderOpponentStats();
   }
 
   function layoutCardFan(fan, cardCount) {
@@ -24837,159 +24607,11 @@
   }
 
   function renderPlayerHand() {
-    if (!els.playerHandFan || !els.playerHandPanel) return;
-
-    const currentPlayer = getInterfacePlayer();
-    const hand = Array.isArray(currentPlayer.hand) ? currentPlayer.hand : [];
-    const actualCurrentPlayer = getCurrentPlayer();
-    const discardActive = isDiscardSelectionActive() && pendingState.discardAction?.player?.id === currentPlayer?.id;
-    const playActive = isPlayCardSelectionActive() && actualCurrentPlayer?.id === currentPlayer?.id;
-    const movePaymentActive = isMovePaymentSelectionActive() && pendingState.movePayment?.player?.id === currentPlayer?.id;
-    const handScanActive = isHandScanSelectionActive() && pendingState.handScanAction?.player?.id === currentPlayer?.id;
-    const cardCornerAction = getPendingCardCornerQuickAction();
-    const handCardPlayAction = getPendingHandCardPlayAction();
-    const cardCornerActionEnabled = actualCurrentPlayer?.id === currentPlayer?.id && canUseCardCornerQuickAction();
-    const handScanPickIndex = pendingState.scanTargetAction?.type === "hand_scan"
-      && Number.isInteger(Number(pendingState.scanTargetAction.handIndex))
-      ? Number(pendingState.scanTargetAction.handIndex)
-      : null;
-    const handPickActive = discardActive
-      || playActive
-      || movePaymentActive
-      || handScanActive
-      || isIndustryHandSelectionActive()
-      || handScanPickIndex != null
-      || cardCornerActionEnabled;
-    els.playerHandPanel.classList.toggle("is-empty", hand.length === 0);
-    els.playerHandPanel.classList.toggle("card-corner-action-ready", Boolean(cardCornerAction || handCardPlayAction));
-    layoutPlayerHandFan(hand.length);
-    els.playerHandFan.replaceChildren(...hand.map((card, index) => {
-      const label = card.cardName || (card.faceUp ? `手牌 ${index + 1}` : `手牌背面 ${index + 1}`);
-
-      if (handPickActive && !(handScanPickIndex != null && index !== handScanPickIndex)) {
-        const playCost = getCardPlayCost(card);
-        const formattedPlayCost = formatCardPlayCost(playCost);
-        const affordable = players.canAfford(currentPlayer, playCost);
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "player-hand-card-button";
-        button.style.setProperty("--card-index", String(index + 1));
-        button.dataset.handIndex = String(index);
-        if (discardActive) {
-          button.classList.add("is-selectable");
-          if (pendingState.discardAction?.selectedIndexes?.includes(index)) {
-            button.classList.add("is-selected");
-          }
-          button.setAttribute("aria-label", label);
-        } else if (handScanActive) {
-          const scanChoices = getPublicScanChoicesForCard(card);
-          if (scanChoices.ok) {
-            button.classList.add("is-scan-card");
-            button.setAttribute("aria-label", `${label}（扫描牌，点击弃除并扫描）`);
-            button.title = `${scanChoices.scanLabel}：点击后选择星云`;
-          } else {
-            button.classList.add("is-scan-card-muted");
-            button.disabled = true;
-            button.setAttribute("aria-label", label);
-            button.title = scanChoices.message;
-          }
-        } else if (handScanPickIndex != null) {
-          button.classList.add("is-scan-card", "is-selected");
-          button.disabled = true;
-          button.setAttribute("aria-label", `${label}（扫描中）`);
-        } else if (isIndustryFutureSpanHandSelectionActive()) {
-          const eligible = isFutureSpanEligibleHandCard(card);
-          if (eligible) {
-            const targetDelta = getFutureSpanDeltaForCard(card);
-            button.classList.add("is-industry-hand-card");
-            button.setAttribute("aria-label", `${label}（未来跨度：扣下并设置目标分）`);
-            button.title = `未来跨度：目标分 +${targetDelta}`;
-          } else {
-            button.classList.add("is-industry-hand-card-muted");
-            button.disabled = true;
-            button.setAttribute("aria-label", label);
-            button.title = "未来跨度只能选择费用为信用点的手牌";
-          }
-        } else if (isIndustryHandSelectionActive()) {
-          button.classList.add("is-industry-hand-card");
-          button.setAttribute("aria-label", `${label}（深空探测：选择交换手牌）`);
-          button.title = "深空探测：点击选择要交换的手牌";
-        } else if (movePaymentActive) {
-          if (isMovePaymentCard(card)) {
-            button.classList.add("is-move-card");
-            if ((pendingState.movePayment?.selectedHandIndices || []).includes(index)) {
-              button.classList.add("is-selected");
-            }
-            button.setAttribute("aria-label", `${label}（移动牌，点击选择弃置）`);
-            button.title = "弃置此牌以支付移动";
-          } else {
-            button.classList.add("is-move-card-muted");
-            button.disabled = true;
-            button.setAttribute("aria-label", label);
-          }
-        } else if (cardCornerActionEnabled) {
-          const action = getCardCornerQuickActionForCard(card);
-          const playAction = getHandCardPlayActionForCard(card, actualCurrentPlayer);
-          const selected = cardCornerAction?.card?.id === card.id
-            || handCardPlayAction?.card?.id === card.id;
-          if (action || playAction) {
-            if (action) button.classList.add("is-corner-action-card");
-            if (playAction) button.classList.add("is-hand-play-card");
-            if (selected) button.classList.add("is-selected");
-            const actionLabels = [
-              playAction ? `打出，费用 ${formattedPlayCost}` : null,
-              action ? action.label : null,
-            ].filter(Boolean).join("；");
-            button.setAttribute("aria-label", `${label}（${actionLabels}）`);
-            button.title = selected
-              ? `${actionLabels}：点击上方按钮确认，或再次点击取消`
-              : `${actionLabels}：点击选择`;
-          } else {
-            button.classList.add("is-corner-action-card-muted");
-            button.setAttribute("aria-label", label);
-            button.title = "这张牌没有可用的手牌快捷操作";
-          }
-        } else if (playActive) {
-          const selected = getPendingPlayCardSelection()?.handIndex === index;
-          button.classList.add(affordable ? "is-playable" : "is-unaffordable");
-          if (selected) button.classList.add("is-selected");
-          button.setAttribute("aria-label", `${label}，费用 ${formattedPlayCost}`);
-          button.title = affordable
-            ? selected
-              ? `已选择 ${label}，点击上方「打出」确认，或再次点击取消选择`
-              : `选择 ${label}，费用 ${formattedPlayCost}`
-            : `资源不足，需要 ${formattedPlayCost}`;
-        } else {
-          button.setAttribute("aria-label", label);
-        }
-
-        const image = document.createElement("img");
-        image.src = card.src || players.CARD_BACK_SRC;
-        image.alt = "";
-        image.width = 747;
-        image.height = 1040;
-        image.decoding = "async";
-        image.setAttribute("aria-hidden", "true");
-        button.append(image);
-        attachCardHoverPreview(button, card.src || players.CARD_BACK_SRC, label);
-        return button;
-      }
-
-      const image = document.createElement("img");
-      image.className = "player-hand-card";
-      image.src = card.src || players.CARD_BACK_SRC;
-      image.alt = label;
-      image.width = 747;
-      image.height = 1040;
-      image.decoding = "async";
-      image.style.setProperty("--card-index", String(index + 1));
-      attachCardHoverPreview(image, card.src || players.CARD_BACK_SRC, label);
-      return image;
-    }));
+    return renderRuntime.renderPlayerHand();
   }
 
   function renderReservedCards() {
-    renderReservedCardsFromTaskState();
+    return renderRuntime.renderReservedCards();
   }
 
   function createReservedCardRow(rowType, label) {
@@ -25138,45 +24760,7 @@
   }
 
   function renderInitialSelectionArea() {
-    if (!els.initialSelectionArea) return;
-
-    if (isInitialSelectionActive()) {
-      const setupPlayer = getCurrentPlayer();
-      if (!isAiAutoBattlePlayer(setupPlayer?.id)) {
-        const offer = getInitialSelectionOffer(setupPlayer?.id);
-        els.initialSelectionArea.hidden = false;
-        els.initialSelectionArea.replaceChildren(createInitialSelectionPicker(offer));
-        syncInteractionFocusChrome();
-        return;
-      }
-    }
-
-    const currentPlayer = getInterfacePlayer();
-    const selectedCards = getCurrentInitialSelectionCards(currentPlayer);
-    if (!selectedCards.length) {
-      els.initialSelectionArea.hidden = true;
-      els.initialSelectionArea.replaceChildren();
-      syncInteractionFocusChrome();
-      return;
-    }
-
-    els.initialSelectionArea.hidden = false;
-    const summary = document.createElement("div");
-    summary.className = "initial-selection-company-slot";
-    const [companyCard] = selectedCards;
-    const hasTuringBorrowedTech = companyCard?.label === "图灵系统"
-      && Boolean(industry?.getBorrowedTechTileId?.(currentPlayer, turnState.roundNumber, turnState.turnNumber));
-    if (companyCard?.label === "未来跨度研究所") {
-      summary.classList.add("has-company-below-card-markers");
-      if (industry?.hasFutureSpanCard?.(currentPlayer)) {
-        summary.classList.add("has-future-span-card-below");
-      }
-    } else if (industry?.shouldShowAlienLabPanels?.(currentPlayer) || hasTuringBorrowedTech) {
-      summary.classList.add("has-company-below-card-markers");
-    }
-    summary.replaceChildren(createCompanyCardSummary(companyCard, currentPlayer));
-    els.initialSelectionArea.replaceChildren(summary);
-    syncInteractionFocusChrome();
+    return renderRuntime.renderInitialSelectionArea();
   }
 
   function applyIndustryStartupPassives() {
@@ -27182,58 +26766,11 @@
   }
 
   function renderPlayerDataBoard() {
-    const currentPlayer = getInterfacePlayer();
-    data.renderPlayerDataTokens(currentPlayer, els.playerBoardDataLayer, {
-      onPlace: (blueSlot) => {
-        placeDataToBlueSlot(blueSlot);
-      },
-    });
+    return renderRuntime.renderPlayerDataBoard();
   }
 
   function renderPlayerStats() {
-    const currentPlayer = getInterfacePlayer();
-    const resources = currentPlayer.resources;
-    const finalScoreBreakdown = computePlayerFinalScoreBreakdown(currentPlayer);
-
-    syncFinalScorePendingMarks();
-    renderFinalScoreBoard();
-
-    const mainStats = [
-      createPlayerNameStat(currentPlayer, resources.score, finalScoreBreakdown.totalScore),
-      createStatSeparator(),
-      ...buildPlayerResourceStatNodes(currentPlayer),
-      createStatSeparator(),
-      ...buildPlayerIncomeStatNodes(currentPlayer, { showBasePlusIncrease: true }),
-    ];
-    const runezuStats = buildPlayerRunezuStatNodes(currentPlayer);
-    const fangzhouStats = buildPlayerFangzhouStatNodes(currentPlayer);
-    const statRows = [
-      createPlayerStatsRow("player-stats-main-row", mainStats),
-    ];
-
-    if (fangzhouStats.length) {
-      statRows.push(createPlayerStatsRow("player-stats-fangzhou-row", fangzhouStats));
-    }
-
-    if (runezuStats.length) {
-      const label = document.createElement("span");
-      label.className = "player-stat player-stat-runezu-label";
-      label.textContent = "符文族";
-      statRows.push(createPlayerStatsRow("player-stats-runezu-row", [label, ...runezuStats]));
-    }
-
-    els.playerStats.replaceChildren(...statRows);
-    renderOpponentStats();
-    updatePlayerHandPanelTitle();
-    renderPlayerHand();
-    renderReservedCards();
-    renderPlayerDataBoard();
-    if (!isInitialSelectionActive()) {
-      queueJiuzheOpportunitiesForPlayer(currentPlayer);
-      maybeOpenQueuedJiuzheOpportunity();
-      queueBanrenmaOpportunitiesForPlayer(currentPlayer);
-      maybeOpenQueuedBanrenmaOpportunity();
-    }
+    return renderRuntime.renderPlayerStats();
   }
 
   function getPlayerReadoutLines() {
@@ -30342,18 +29879,7 @@
   }
 
   function renderSectorNebulaDataBoard() {
-    for (const sectorId of [1, 2, 3, 4]) {
-      const sectorElement = sectorElements[sectorId];
-      if (sectorElement) {
-        data.renderSectorNebulaData(sectorId, sectorElement, nebulaDataState, {
-          showDebugWinMarkers: uiRuntimeState.sectorWinDebugActive,
-        });
-      }
-    }
-    data.renderAomomoNebulaData?.(els.tokenLayer, nebulaDataState, solarState, {
-      solarApi: solar,
-      forceVisible: Boolean(solarState.aomomoActive),
-    });
+    return renderRuntime.renderSectorNebulaDataBoard();
   }
 
   function moveRocket(deltaX, deltaY, rocketId, options = {}) {
@@ -30437,91 +29963,15 @@
   }
 
   function renderWheels() {
-    for (let w = 1; w <= 4; w += 1) {
-      els.wheels[w].style.transform = stepsToTransform(solarState.wheelSteps[w]);
-    }
-    if (els.wheels[3]) {
-      els.wheels[3].style.backgroundImage = solarState.aomomoActive && aomomo?.WHEEL3_AMM_SRC
-        ? `url("${aomomo.WHEEL3_AMM_SRC}")`
-        : "";
-    }
+    return renderRuntime.renderWheels();
   }
 
   function renderSectors() {
-    for (const sectorId of [1, 2, 3, 4]) {
-      delete sectorElements[sectorId];
-    }
-
-    for (let slot = 1; slot <= 4; slot += 1) {
-      const wrap = els.sectorWraps[slot];
-      wrap.innerHTML = "";
-      const sectorId = solarState.sectorBySlot[slot];
-      if (!sectorId) continue;
-
-      const sector = document.createElement("div");
-      sector.className = `sector sector-${sectorId}`;
-      sector.dataset.sectorId = String(sectorId);
-      sector.dataset.boardSlot = String(slot);
-      wrap.appendChild(sector);
-      sectorElements[sectorId] = sector;
-    }
-
-    renderSectorNebulaDataBoard();
+    return renderRuntime.renderSectors();
   }
 
   function renderStateReadout() {
-    if (uiRuntimeState.codexAiBatchSuppressReadoutRender) return;
-    const snapshot = solar.createSolarSnapshot(solarState);
-    const axisLine = "坐标轴 x0=中线上方偏右第一块，顺时针递增";
-    const wheelLine = [1, 2, 3, 4]
-      .map((w) => `W${w}=${solar.mod8(solarState.wheelSteps[w])}`)
-      .join("  ");
-    const planetLine = snapshot.planetLocations
-      .map((planet) => `${planet.name}[${planet.x},${planet.y}]`)
-      .join("  ");
-    const nebulaLine = snapshot.nebulaRelations
-      .map((relation) => relation.displayText)
-      .join("  ");
-    const visibleCounts = Object.entries(snapshot.statistics.visibleMeaningfulContentCounts)
-      .map(([label, count]) => `${label}=${count}`)
-      .join("  ");
-    els.stateReadout.textContent = [
-      axisLine,
-      `版图位置 ${wheelLine}`,
-      `行星 ${planetLine}`,
-      `星云 ${nebulaLine}`,
-      `可见统计 ${visibleCounts}`,
-      "",
-      ...getTurnReadoutLines(),
-      "",
-      ...getInitialSelectionReadoutLines(),
-      "",
-      ...getPlayerReadoutLines(),
-      "",
-      ...finalScoring.getReadoutLines(finalScoringState),
-      "",
-      ...getPlanetStatsReadoutLines(),
-      "",
-      "可见坐标",
-      formatVisibleCoordinateGroups(snapshot.visibleCoordinateGroups),
-      "",
-      ...getRocketCoordinateReadoutLines(),
-      "",
-      ...tech.getReadoutLines(techGameState, playerState),
-      "",
-      ...data.getReadoutLines(playerState),
-      "",
-      ...data.getNebulaReadoutLines(nebulaDataState),
-      "",
-      ...data.getSectorSettlementReadoutLines(nebulaDataState),
-      "",
-      ...aliens.getReadoutLines(alienGameState),
-      "",
-      ...(industry.getReadoutLines?.(getInterfacePlayer(), turnState.roundNumber) || []),
-      ...(actionHistory.hasSession() ? ["", "行动指令栈", ...actionHistory.getTrace()] : []),
-      ...(quickActionHistory.hasSession() ? ["", "快速行动指令栈", ...quickActionHistory.getTrace()] : []),
-    ].join("\n");
-    scheduleAiAutoStepIfNeeded();
+    return renderRuntime.renderStateReadout();
   }
 
   function formatNamedCoordinates(items) {
@@ -30583,12 +30033,7 @@
   }
 
   function renderRotateStateToken() {
-    if (!els.roundStatusToken) return;
-
-    const slot = ROTATE_STATE_SLOTS[getRotateStateSlotIndex(solarState.rotation.rotationCount)];
-    els.roundStatusToken.style.setProperty("--rotate-token-x", `${slot.percentX}%`);
-    els.roundStatusToken.style.setProperty("--rotate-token-y", `${slot.percentY}%`);
-    els.roundStatusToken.dataset.slotId = slot.id;
+    return renderRuntime.renderRotateStateToken();
   }
 
   function rotateSolarOrbit(count) {
@@ -31019,6 +30464,10 @@
       runAiStrategyTuningCycle,
       stopAiAutoBattle,
       runAiAutomationStep,
+      runAiNonTurnAutomationStep,
+      runAiSelectedTurnAction,
+      buildAiTurnActionCandidates,
+      resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,
       getAiAutoBattleAnalysis,
@@ -31032,7 +30481,7 @@
       cancelDiscardSelection,
       cancelPlayCardSelection,
       pickPublicCardForCurrentPlayer,
-      handleHandCardPlay,
+      handleHandCardPlay: confirmHandCardPlayAction,
       discardCardFromCurrentPlayer,
       undoPendingAction,
       endCurrentTurn,
