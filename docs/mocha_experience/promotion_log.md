@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-17
+- source: SETI-2
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航
+- target_component: none
+- target_file: docs/mocha_experience/coordination.md
+- remote_skill_id: none
+- change: 记录大型单文件拆分必须以职责拆账、原实现删除、净减行数和真实浏览器路径作为父级结果硬门槛。
+- applied_change: 仅新增 coordination experience 与本决策契约，不修改 issue-workflow、agent prompt、watcher 或 loop template。
+- expected_effect: 后续大型重构更早识别“只建立模块边界但原实现仍滞留”的伪完成，避免在源文件仍远超职责预算时过早关单。
+- evaluation_window: 后续 2 个大型单文件或跨域重构父 issue
+- success_signal: 子 issue 描述包含可量化源文件结果与原实现删除标准，父级总验收能在关单前给出职责拆账、行数预算和真实运行路径证据。
+- rollback_condition: 若后续重构不适合以行数衡量，或职责迁移可由更准确的静态边界检查完全替代，则将行数门槛降为可选证据并修订该候选。
+- risk: 行数是代理指标，机械追求净减可能诱发压缩格式或把巨石平移到新文件；必须与职责和模块体积检查结合使用。
+- evidence_before: SETI-2 owner 对 `app.js` 拆分后仍约 2.9 万行的纠偏；SETI-23 至 SETI-27 的分域硬门槛；SETI-28 的 29,573→9,930 行、模块低于 3,000 行、全量 Node 与 Chrome smoke 结果。
+- owner_or_agent_decision: 领航按父 issue harness-evolve closeout 自决记录 candidate，暂不升级长期组件。
+- applied_at: 2026-07-17
+- verification: 核对 SETI-2 评论与 timeline、21 个子 issue 终态、SETI-28 metadata 和提交 `2ca0312` 验收结论。
+- observed_outcome: 五个迁移域均达到各自行数/职责硬门槛，最终 `app.js` 低于 10,000 行，父级未再次以“模块存在”替代真实迁移验收。
+- keep_or_revise: 保持 candidate；待后续 2 个同类父 issue 验证其适用性。
+
+- date: 2026-07-17
 - source: SETI-26, SETI-28
 - promoted_to: none
 - promotion_decision: candidate
