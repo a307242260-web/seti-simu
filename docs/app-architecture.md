@@ -13,13 +13,14 @@
 7. `randomizer/app/events.js` 绑定页面事件、overlay 点击分发、拖拽回调和 resize 入口。
 8. `randomizer/app/start-screen.js` 处理开始界面选项同步、入口按钮和继续游戏恢复。
 9. `randomizer/app/turn-flow.js` 处理 turnState 初始化、新局随机化和 round / turn 推进壳层。
-10. `randomizer/app/action-log-export.js` 生成行动日志 Markdown 和下载文件名。
-11. `randomizer/app/action-log-runtime.js` 封装行动日志 draft/entry 组装与日志导入等纯运行时逻辑。
-12. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
-13. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
-14. `randomizer/app/ai-controller.js` 封装 AI 自动机、策略权重、批跑/AB 测试和 AI 决策控制器。
-15. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
-16. `randomizer/app.js` 保留运行态、流程编排、效果队列、渲染调度和各控制器接线。
+10. `randomizer/app/action-briefing.js` 封装 AI 行动简报的条目归纳、scan 目标摘要和 overlay 渲染控制器。
+11. `randomizer/app/action-log-export.js` 生成行动日志 Markdown 和下载文件名。
+12. `randomizer/app/action-log-runtime.js` 封装行动日志 draft/entry 组装与日志导入等纯运行时逻辑。
+13. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
+14. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
+15. `randomizer/app/ai-controller.js` 封装 AI 自动机、策略权重、批跑/AB 测试和 AI 决策控制器。
+16. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
+17. `randomizer/app.js` 保留运行态、流程编排、效果队列、渲染调度和各控制器接线。
 
 ## 文件职责
 
@@ -30,6 +31,7 @@
 - `randomizer/app/events.js`：只做事件到 app 回调的路由。新增按钮、overlay、拖拽入口时优先改这里；不要在这里实现规则结算。
 - `randomizer/app/start-screen.js`：只处理开始界面选项、继续游戏入口和新局入口壳层；不要在这里新增规则结算或复制恢复逻辑。
 - `randomizer/app/turn-flow.js`：只处理 turnState 初始化、新局随机化和回合推进壳层；不要在这里复制核心规则实现。
+- `randomizer/app/action-briefing.js`：只处理 AI 行动简报的数据归纳、摘要文案和 overlay 开关；不要在这里执行规则结算或直接修改行动日志源数据。
 - `randomizer/app/alien-ui.js`：只处理外星人揭示弹层、痕迹选择器、方舟分流和“进入某物种放置模式”的 UI 壳层；真正的痕迹落点结算、奖励和历史记录仍留在 `app.js` / `game/aliens/**`。
 - `randomizer/app/action-log-runtime.js`：只处理行动日志草稿、步骤、entry 与导入组装；通过显式参数接收 turn/player/history 上下文，不直接抓 app 闭包。
 - `randomizer/app/action-log-export.js`：只做纯 Markdown 格式化和文件名生成，不读 DOM、不读取隐藏牌序，也不触发浏览器下载。

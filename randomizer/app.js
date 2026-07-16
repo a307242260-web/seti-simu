@@ -44,6 +44,7 @@
     gameRecoveryModule,
     runtimeModule,
     refreshModule,
+    actionBriefingModule,
     effectFlowModule,
     handFlowModule,
     startScreenModule,
@@ -163,18 +164,6 @@
   const HISTORY_SOURCE_MAIN = "main";
   const HISTORY_SOURCE_QUICK = "quick";
   const HISTORY_SOURCE_SETUP = "setup";
-  const ACTION_BRIEFING_MAX_ITEMS = 3;
-  const ACTION_BRIEFING_MAX_CYCLES = 8;
-  const ACTION_BRIEFING_MAIN_ACTION_TYPES = new Set([
-    "launch",
-    "orbit",
-    "land",
-    "scan",
-    "analyze",
-    "playCard",
-    "researchTech",
-    "pass",
-  ]);
   const SCAN_TARGET_ACTION_LAYOUT_CLASSES = Object.freeze([
     "jiuzhe-card-grid",
     "fangzhou-card-grid",
@@ -218,6 +207,7 @@
     renderFinalScoreBoard,
     renderRunezuBoardSymbols,
   });
+  const createActionBriefingStepMetadata = actionBriefingModule.createActionBriefingStepMetadata;
   const effectFlowHelpers = effectFlowModule.createEffectFlowHelpers({
     pendingState,
     uiRuntimeState,
@@ -266,6 +256,34 @@
     withEffectExecutionPlayer,
     executeActionEffectForOwner,
   });
+  const actionBriefingHelpers = actionBriefingModule.createActionBriefingHelpers({
+    window,
+    document,
+    els,
+    actionBriefingState,
+    startScreenState,
+    turnState,
+    HISTORY_SOURCE_MAIN,
+    solar,
+    solarState,
+    data,
+    aomomo,
+    getAomomoCurrentX,
+    normalizeActionLogText,
+    createActionLogPlayedCardSnapshot,
+    appendActionLogTextWithPlayedCard,
+    hideCardHoverPreview,
+    scheduleAiAutoStepIfNeeded,
+    setReportTab,
+    setLogOpen,
+    isAiAutoBattlePlayer,
+    getPlayerById,
+    getPlayerLabelById,
+    getPlayerColorDefinition: players.getPlayerColorDefinition,
+    getDisplayedTurnNumber,
+    getActionCycleNumber,
+    isGameEnded,
+  });
   let getEffectHistorySource;
   let shouldIrreversibleBlockCurrentMainAction;
   let markCurrentActionIrreversibleForSource;
@@ -295,6 +313,14 @@
   let activateNextActionEffectIfIdle;
   let completeCurrentActionEffect;
   let executeActionEffect;
+  let resetActionBriefingState;
+  let rememberActionBriefingEntry;
+  let openActionBriefing;
+  let closeActionBriefing;
+  let openActionBriefingDetailLog;
+  let isActionBriefingEnabled;
+  let isActionBriefingOpen;
+  let maybeOpenActionBriefingForCompletedCycle;
   ({
     getEffectHistorySource,
     shouldIrreversibleBlockCurrentMainAction,
@@ -326,6 +352,16 @@
     completeCurrentActionEffect,
     executeActionEffect,
   } = effectFlowHelpers);
+  ({
+    resetActionBriefingState,
+    rememberActionBriefingEntry,
+    openActionBriefing,
+    closeActionBriefing,
+    openActionBriefingDetailLog,
+    isActionBriefingEnabled,
+    isActionBriefingOpen,
+    maybeOpenActionBriefingForCompletedCycle,
+  } = actionBriefingHelpers);
   const handFlowHelpers = handFlowModule.createHandFlow({
     pendingState,
     cardState,
@@ -2746,403 +2782,6 @@
       list.append(createActionLogEntryElement(entry));
     }
     els.actionLogReadout.replaceChildren(list);
-  }
-
-  function resetActionBriefingState() {
-    actionBriefingState.aiMainActions = [];
-    actionBriefingState.lastShownTurnKey = null;
-    actionBriefingState.pendingTurnKey = null;
-    actionBriefingState.pendingAiResume = false;
-    closeActionBriefing();
-  }
-
-  function isActionBriefingMainActionEntry(entry) {
-    return Boolean(
-      entry?.playerId
-      && ACTION_BRIEFING_MAIN_ACTION_TYPES.has(entry.actionType)
-      && isAiAutoBattlePlayer(entry.playerId)
-    );
-  }
-
-  function getActionBriefingActionName(entry) {
-    switch (entry?.actionType) {
-      case "launch":
-        return "发射";
-      case "orbit":
-        return "环绕";
-      case "land":
-        return "登陆";
-      case "scan":
-        return "扫描";
-      case "analyze":
-        return "分析";
-      case "playCard":
-        return "打牌";
-      case "researchTech":
-        return "科技行动";
-      case "pass":
-        return "PASS";
-      default:
-        return normalizeActionLogText(entry?.actionLabel || "主要行动");
-    }
-  }
-
-  function getActionBriefingStepTexts(entry) {
-    return (entry?.steps || [])
-      .filter((step) => !step?.source || step.source === HISTORY_SOURCE_MAIN)
-      .flatMap((step) => [step.text, step.label, step.detail])
-      .map(normalizeActionLogText)
-      .filter(Boolean);
-  }
-
-  function findActionBriefingPlayedCard(entry) {
-    for (const step of entry?.steps || []) {
-      const card = createActionLogPlayedCardSnapshot(step?.playedCard);
-      if (card?.label) return card;
-    }
-    return null;
-  }
-
-  function trimActionBriefingPunctuation(text) {
-    return normalizeActionLogText(text).replace(/[。；，、\s]+$/g, "");
-  }
-
-  function extractActionBriefingTravelTarget(entry, verb) {
-    const pattern = new RegExp(`(?:^|[：:；])${verb}\\s*([^，；。:：]+)`);
-    for (const text of getActionBriefingStepTexts(entry)) {
-      const match = text.match(pattern);
-      if (!match?.[1]) continue;
-      const target = trimActionBriefingPunctuation(match[1]);
-      if (target && !target.includes("奖励") && !target.includes("行动")) return target;
-    }
-    return "";
-  }
-
-  function getActionBriefingNebulaLocations() {
-    const locations = solar.getNebulaLocations?.(solarState.sectorBySlot) || [];
-    const result = locations.map((location) => ({
-      id: location.id || null,
-      label: location.label || data.getNebulaLabel?.(location.id) || location.id || "星云",
-      x: Number.isFinite(Number(location.x)) ? Number(location.x) : null,
-    }));
-    const aomomoLabel = data.getNebulaLabel?.(aomomo?.NEBULA_ID || "aomomo") || "奥陌陌";
-    const aomomoX = typeof getAomomoCurrentX === "function" ? getAomomoCurrentX() : null;
-    result.push({
-      id: aomomo?.NEBULA_ID || "aomomo",
-      label: aomomoLabel,
-      x: Number.isFinite(Number(aomomoX)) ? Number(aomomoX) : null,
-    });
-    return result;
-  }
-
-  function createActionBriefingStepMetadata(result) {
-    if (!result || typeof result !== "object") return null;
-    const targets = [];
-    const seen = new Set();
-    const hasSignalMarkedEvent = Array.isArray(result.events)
-      && result.events.some((event) => event?.type === "signalMarked");
-
-    const addTarget = (target) => {
-      if (!target || typeof target !== "object") return;
-      const nebulaId = normalizeActionLogText(target.nebulaId);
-      if (!nebulaId && !hasSignalMarkedEvent) return;
-      const x = Number.isFinite(Number(target.x ?? target.sectorX))
-        ? solar.mod8(Number(target.x ?? target.sectorX))
-        : null;
-      const label = normalizeActionLogText(target.label || (nebulaId ? data.getNebulaLabel?.(nebulaId) : ""));
-      if (x == null && !nebulaId && !label) return;
-      const key = `${x ?? "x"}:${nebulaId || label || ""}`;
-      if (seen.has(key)) return;
-      seen.add(key);
-      targets.push({ x, nebulaId: nebulaId || null, label: label || null });
-    };
-
-    addTarget(result.payload);
-    addTarget(result);
-    for (const event of result.events || []) {
-      if (event?.type === "signalMarked") addTarget(event);
-    }
-
-    return targets.length ? { scanTargets: targets } : null;
-  }
-
-  function addActionBriefingScanTarget(targets, seen, target) {
-    if (!target) return;
-    const x = Number.isFinite(Number(target.x)) ? Number(target.x) : null;
-    const label = trimActionBriefingPunctuation(target.label || "");
-    const key = `${x ?? "x"}:${label || ""}`;
-    if (seen.has(key)) return;
-    seen.add(key);
-    targets.push({ x, label });
-  }
-
-  function listActionBriefingScanTargets(entry) {
-    const targets = [];
-    const seen = new Set();
-
-    for (const step of entry?.steps || []) {
-      if (step?.source && step.source !== HISTORY_SOURCE_MAIN) continue;
-      for (const target of step?.briefing?.scanTargets || []) {
-        addActionBriefingScanTarget(targets, seen, {
-          x: target.x,
-          label: target.label || (target.nebulaId ? data.getNebulaLabel?.(target.nebulaId) : ""),
-        });
-      }
-    }
-
-    const haystack = getActionBriefingStepTexts(entry).join("；");
-    if (!haystack) return targets;
-
-    for (const location of getActionBriefingNebulaLocations()) {
-      if ((location.label && haystack.includes(location.label)) || (location.id && haystack.includes(location.id))) {
-        addActionBriefingScanTarget(targets, seen, location);
-      }
-    }
-
-    for (const match of haystack.matchAll(/扇区\s*\[?([0-7])\]?/g)) {
-      const x = Number(match[1]);
-      if (!targets.some((target) => target.x === x)) {
-        addActionBriefingScanTarget(targets, seen, { x, label: "" });
-      }
-    }
-
-    return targets;
-  }
-
-  function formatActionBriefingScanTargets(targets) {
-    return targets
-      .map((target) => (
-        Number.isFinite(Number(target.x))
-          ? `扇区[${Number(target.x)}]${target.label || ""}`
-          : (target.label || "星云")
-      ))
-      .filter(Boolean)
-      .join("、");
-  }
-
-  function getActionBriefingDetailText(entry, playedCard) {
-    switch (entry?.actionType) {
-      case "orbit": {
-        const target = extractActionBriefingTravelTarget(entry, "环绕");
-        return target ? `环绕了${target}` : "";
-      }
-      case "land": {
-        const target = extractActionBriefingTravelTarget(entry, "登陆");
-        return target ? `登陆了${target}` : "";
-      }
-      case "scan": {
-        const targets = listActionBriefingScanTargets(entry);
-        const targetText = formatActionBriefingScanTargets(targets);
-        return targetText ? `扫描了${targetText}` : "";
-      }
-      case "playCard":
-        return playedCard?.label ? `打出了${playedCard.label}` : "";
-      default:
-        return "";
-    }
-  }
-
-  function createActionBriefingItemFromEntry(entry) {
-    if (!isActionBriefingMainActionEntry(entry)) return null;
-    const player = getPlayerById(entry.playerId);
-    const color = players.getPlayerColorDefinition(player?.color);
-    const playedCard = entry.actionType === "playCard" ? findActionBriefingPlayedCard(entry) : null;
-    return {
-      entryId: entry.id,
-      roundNumber: entry.roundNumber,
-      turnNumber: entry.turnNumber,
-      rawTurnNumber: entry.rawTurnNumber ?? entry.turnNumber,
-      actionCycleNumber: entry.actionCycleNumber ?? null,
-      playerId: entry.playerId,
-      playerLabel: player?.colorLabel || entry.playerLabel || getPlayerLabelById(entry.playerId) || "电脑玩家",
-      playerColor: player?.color || null,
-      playerColorValue: color?.uiColor || "rgba(232, 244, 255, 0.78)",
-      actionType: entry.actionType,
-      actionName: getActionBriefingActionName(entry),
-      detailText: getActionBriefingDetailText(entry, playedCard),
-      playedCard,
-    };
-  }
-
-  function getActionBriefingCycleKey(roundNumber, actionCycleNumber, turnNumber = null) {
-    const cycleNumber = actionCycleNumber ?? (turnNumber != null ? `turn:${turnNumber}` : "");
-    return `${roundNumber ?? ""}:${cycleNumber}`;
-  }
-
-  function getActionBriefingItemCycleKey(item) {
-    return getActionBriefingCycleKey(item?.roundNumber, item?.actionCycleNumber, item?.turnNumber);
-  }
-
-  function getActionBriefingPlayerKey(item) {
-    return item?.playerId || item?.playerColor || item?.playerLabel || "";
-  }
-
-  function pruneActionBriefingHistory() {
-    const cycleKeys = [];
-    for (const item of actionBriefingState.aiMainActions) {
-      const cycleKey = getActionBriefingItemCycleKey(item);
-      if (cycleKey && !cycleKeys.includes(cycleKey)) cycleKeys.push(cycleKey);
-    }
-    if (cycleKeys.length <= ACTION_BRIEFING_MAX_CYCLES) return;
-    const keepCycleKeys = new Set(cycleKeys.slice(-ACTION_BRIEFING_MAX_CYCLES));
-    actionBriefingState.aiMainActions = actionBriefingState.aiMainActions
-      .filter((item) => keepCycleKeys.has(getActionBriefingItemCycleKey(item)));
-  }
-
-  function rememberActionBriefingEntry(entry) {
-    const item = createActionBriefingItemFromEntry(entry);
-    if (!item) return null;
-    const cycleKey = getActionBriefingItemCycleKey(item);
-    const playerKey = getActionBriefingPlayerKey(item);
-    actionBriefingState.aiMainActions = actionBriefingState.aiMainActions
-      .filter((existing) => {
-        if (existing.entryId === item.entryId) return false;
-        return !(
-          getActionBriefingItemCycleKey(existing) === cycleKey
-          && getActionBriefingPlayerKey(existing) === playerKey
-        );
-      });
-    actionBriefingState.aiMainActions.push(item);
-    pruneActionBriefingHistory();
-    return item;
-  }
-
-  function getActionBriefingTurnKey(advanceResult = null) {
-    return [
-      turnState.roundNumber,
-      getDisplayedTurnNumber(),
-      advanceResult?.completedActionCycleRoundNumber || "",
-      advanceResult?.completedActionCycleNumber || "",
-      advanceResult?.completedActionCycleTurnNumber || "",
-    ].join(":");
-  }
-
-  function formatActionBriefingLead(item) {
-    const playerLabel = item?.playerLabel || "电脑玩家";
-    const actionName = item?.actionName || "主要行动";
-    return actionName === "PASS"
-      ? `${playerLabel}进行了 PASS`
-      : `${playerLabel}进行了${actionName}`;
-  }
-
-  function createActionBriefingItemElement(item) {
-    const row = document.createElement("li");
-    row.className = "action-briefing-item";
-
-    const marker = document.createElement("span");
-    marker.className = "action-briefing-player-marker";
-    marker.style.setProperty("--player-color", item.playerColorValue || "rgba(232, 244, 255, 0.78)");
-    marker.setAttribute("aria-hidden", "true");
-
-    const text = document.createElement("span");
-    text.className = "action-briefing-text";
-    text.append(document.createTextNode(formatActionBriefingLead(item)));
-    if (item.detailText) {
-      text.append(document.createTextNode("，"));
-      appendActionLogTextWithPlayedCard(text, item.detailText, item.playedCard);
-    }
-    text.append(document.createTextNode("。"));
-
-    row.append(marker, text);
-    return row;
-  }
-
-  function openActionBriefing(items, turnKey, options = {}) {
-    if (!els.actionBriefingOverlay || !els.actionBriefingList || !els.actionBriefingConfirm) return false;
-    const visibleItems = (items || []).filter(Boolean);
-    if (!visibleItems.length) return false;
-    if (els.actionBriefingRoundLabel) {
-      els.actionBriefingRoundLabel.textContent = options.roundLabel || "";
-      els.actionBriefingRoundLabel.hidden = !options.roundLabel;
-    }
-    els.actionBriefingList.replaceChildren(...visibleItems.map(createActionBriefingItemElement));
-    els.actionBriefingOverlay.hidden = false;
-    els.actionBriefingOverlay.setAttribute("aria-hidden", "false");
-    actionBriefingState.pendingTurnKey = turnKey || null;
-    actionBriefingState.pendingAiResume = Boolean(options.resumeAiAfterClose);
-    window.setTimeout(() => els.actionBriefingConfirm?.focus?.(), 0);
-    return true;
-  }
-
-  function closeActionBriefing() {
-    const shouldResumeAi = Boolean(actionBriefingState.pendingAiResume);
-    hideCardHoverPreview();
-    if (els.actionBriefingOverlay) {
-      els.actionBriefingOverlay.hidden = true;
-      els.actionBriefingOverlay.setAttribute("aria-hidden", "true");
-    }
-    if (els.actionBriefingRoundLabel) {
-      els.actionBriefingRoundLabel.textContent = "";
-      els.actionBriefingRoundLabel.hidden = true;
-    }
-    els.actionBriefingList?.replaceChildren();
-    actionBriefingState.pendingTurnKey = null;
-    actionBriefingState.pendingAiResume = false;
-    if (shouldResumeAi) scheduleAiAutoStepIfNeeded();
-  }
-
-  function openActionBriefingDetailLog() {
-    setReportTab("action");
-    setLogOpen(true);
-    closeActionBriefing();
-  }
-
-  function isActionBriefingEnabled() {
-    return startScreenState.actionBriefingEnabled !== false;
-  }
-
-  function isActionBriefingOpen() {
-    return Boolean(els.actionBriefingOverlay && !els.actionBriefingOverlay.hidden);
-  }
-
-  function getActionBriefingItemsForCompletedCycle(advanceResult) {
-    if (!advanceResult?.completedActionCycle) return [];
-    const roundNumber = advanceResult.completedActionCycleRoundNumber;
-    const turnNumber = advanceResult.completedActionCycleTurnNumber;
-    const cycleKey = getActionBriefingCycleKey(
-      roundNumber,
-      advanceResult.completedActionCycleNumber,
-      turnNumber,
-    );
-    const latestByPlayerKey = new Map();
-    for (const item of actionBriefingState.aiMainActions) {
-      if (getActionBriefingItemCycleKey(item) !== cycleKey) continue;
-      const playerKey = getActionBriefingPlayerKey(item);
-      if (!playerKey) continue;
-      latestByPlayerKey.set(playerKey, item);
-    }
-
-    const orderedItems = [];
-    for (const playerId of advanceResult.completedActionCyclePlayerIds || []) {
-      const player = getPlayerById(playerId);
-      const playerKey = getActionBriefingPlayerKey({
-        playerId,
-        playerColor: player?.color || null,
-        playerLabel: player?.colorLabel || null,
-      });
-      if (!playerKey || !latestByPlayerKey.has(playerKey)) continue;
-      orderedItems.push(latestByPlayerKey.get(playerKey));
-      latestByPlayerKey.delete(playerKey);
-    }
-
-    return [...orderedItems, ...latestByPlayerKey.values()]
-      .slice(0, ACTION_BRIEFING_MAX_ITEMS);
-  }
-
-  function maybeOpenActionBriefingForCompletedCycle(advanceResult) {
-    if (!isActionBriefingEnabled()) return false;
-    if (!advanceResult?.completedActionCycle || isGameEnded()) return false;
-    const items = getActionBriefingItemsForCompletedCycle(advanceResult);
-    if (!items.length) return false;
-    const turnKey = getActionBriefingTurnKey(advanceResult);
-    if (actionBriefingState.lastShownTurnKey === turnKey) return false;
-    const roundLabel = `第${getActionCycleNumber()}回合：`;
-    if (!openActionBriefing(items, turnKey, {
-      roundLabel,
-      resumeAiAfterClose: true,
-    })) return false;
-    actionBriefingState.lastShownTurnKey = turnKey;
-    return true;
   }
 
   function isDebugToolsEnabled() {
