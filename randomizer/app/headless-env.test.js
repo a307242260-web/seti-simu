@@ -1,8 +1,13 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const { createHeadlessEnv } = require("./headless-env");
 const { TURN_ACTION_FAMILIES, CONDITIONAL_FAMILIES } = require("./headless-contract");
+
+const headlessEnvSource = fs.readFileSync(__filename.replace(/\.test\.js$/, ".js"), "utf8");
+assert.equal(headlessEnvSource.includes("buildAiTurnActionCandidates"), false, "legalActions 热路径不得构建 heuristic candidates");
+assert.equal(headlessEnvSource.includes("runAiSelectedTurnAction"), false, "step 热路径不得二次构建 selector candidates");
 
 function chooseFastTerminalAction(actions) {
   return actions.find((action) => action.family === "pass")
@@ -90,6 +95,9 @@ assert.match(wrongActor.error, /动作执行者不匹配/);
 const illegal = observationEnv.step({ ...legalAction, actionId: "not-legal" });
 assert.equal(illegal.ok, false);
 assert.match(illegal.error, /不在当前 legalActions/);
+const stale = observationEnv.step({ ...legalAction, stateVersion: legalAction.stateVersion - 1 });
+assert.equal(stale.ok, false);
+assert.match(stale.error, /动作版本已失效/);
 
 const checkpoint = observationEnv.createCheckpoint();
 const checkpointObservation = observationEnv.observe();

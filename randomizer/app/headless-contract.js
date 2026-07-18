@@ -40,7 +40,12 @@ const ACTION_FAMILY_INDEX = Object.freeze(Object.fromEntries(
 const ACTION_COVERAGE_MATRIX = Object.freeze(TURN_ACTION_FAMILIES.map((family) => Object.freeze({
   family,
   legacyId: Object.keys(LEGACY_FAMILY_BY_ID).find((id) => LEGACY_FAMILY_BY_ID[id] === family),
-  characterization: "legal_enumeration_and_selector_execution",
+  characterization: "headless_rule_enumeration_and_prevalidated_execution",
+})));
+
+const CONDITIONAL_COVERAGE_MATRIX = Object.freeze(CONDITIONAL_FAMILIES.map((family) => Object.freeze({
+  family,
+  characterization: "semantic_decision_boundary",
 })));
 
 function clone(value) {
@@ -219,6 +224,7 @@ module.exports = {
   LEGACY_FAMILY_BY_ID,
   ACTION_FAMILY_INDEX,
   ACTION_COVERAGE_MATRIX,
+  CONDITIONAL_COVERAGE_MATRIX,
   normalizeTurnCandidate,
   sanitizeCard,
   sanitizePublicPlayer,

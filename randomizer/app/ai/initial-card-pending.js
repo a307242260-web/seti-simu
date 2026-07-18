@@ -247,7 +247,8 @@
         ? (player.hand || []).map((card) => cards.getIncomeGainForCard?.(card) || null)
         : null;
       const incomePlanningEntries = incomeGainByIndex ? getAiIncomeFinalFormulaEntries(player) : [];
-      const dynamicIncomeIndexes = incomeGainByIndex
+      const useHeadlessRuleKernel = globalThis.SetiHeadlessRuntimeConfig?.ruleKernel === true;
+      const dynamicIncomeIndexes = incomeGainByIndex && !useHeadlessRuleKernel
         ? chooseAiIncomeDiscardIndexes(player, count, incomeGainByIndex, incomePlanningEntries)
         : null;
       const tradeDiscardIndexes = !dynamicIncomeIndexes && pendingType === "trade"

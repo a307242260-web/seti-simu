@@ -19,11 +19,11 @@
       AI_DIFFICULTY_WEAK_START, FINAL_ROUND_NUMBER, actions, adjustAiActionGraphCandidate, adjustAiActionGraphCandidateForStyle, ai, aiNumber, alienGameState,
       analyzeDataForCurrentPlayer, applyAiStrategyWeight, applyAiTurnActionSelectionPressure, beginPlayCardSelection, beginScanAction, buildAiAnalyzeActionValueBreakdown, buildAiEarlyNoMainPublicRefillDiagnostic, buildAiFinalHighScorePassRecoveryDiagnostic,
       buildAiFinalLowHandPassRecoveryDiagnostic, buildAiIndustryCandidate, buildAiResearchTechCandidate, buildAiResourceLockTradePreviews, buildAiScanActionTargetPreview, canAiAnalyzeData, canStartMainAction, confirmDataPlacement,
-      createActionContext, dispatchRuntimeAction, endCurrentTurn, finalScoringState, getAiAnalyzeEnergyCost, getAiBestLandDirectScoreGain, getAiCardDisplayLabel, getAiMarkedFinalFormulaEntries,
+      AI_MOVE_DIRECTIONS, aliens, canAiMoveThisTurn, cards, createActionContext, data, dispatchRuntimeAction, endCurrentTurn, finalScoringState, getAiAnalyzeEnergyCost, getAiBestLandDirectScoreGain, getAiCardDisplayLabel, getAiMarkedFinalFormulaEntries,
       getAiNextMissingFinalScoreThreshold, getAiOrbitDirectScoreGain, getAiRoundNumber, getAiScanDirectScoreGain, getAiStrategyWeight, getAiTraceCompetitionState, getCurrentPlayer, handleCompanyActionMarkerClick,
-      hasActivePendingSubFlow, isActionEffectFlowActive, isAiAutoBattlePlayer, landForCurrentPlayer, listAiCardCornerQuickCandidates, listAiDataPlacementCandidates, listAiEmergencyAnalyzeEnergyTradeCandidates, listAiFinalAnalyzeEnergyTradeCandidates,
+      getMovableTokensForPlayer, hasActivePendingSubFlow, industry, isActionEffectFlowActive, isAiAutoBattlePlayer, landForCurrentPlayer, listAiCardCornerQuickCandidates, listAiDataPlacementCandidates, listAiEmergencyAnalyzeEnergyTradeCandidates, listAiFinalAnalyzeEnergyTradeCandidates,
       listAiFinalReadyTaskCreditChainTradeCandidates, listAiLateResourceRecoveryTradeCandidates, listAiMainUnlockTradeCandidates, listAiMoveCandidates, listAiPlayCardCandidates, listAiResourceLockMainUnlockTradeCandidates, listAiRunezuFaceSymbolQuickCandidates, listAiThirdFinalMarkResourceTradeCandidates,
-      orbitForCurrentPlayer, passForCurrentPlayer, playerState, recordAiAutoBattleLog, recoverPendingActionFromOpenHistoryForAi, researchTechForCurrentPlayer, roundAiScore, runAction,
+      orbitForCurrentPlayer, passForCurrentPlayer, playerState, quickTrades, recordAiAutoBattleLog, recoverPendingActionFromOpenHistoryForAi, researchTechForCurrentPlayer, roundAiScore, runezu, runAction,
       runAiCardCornerQuickActionDecision, runAiMoveActionDecision, runAiRunezuFaceSymbolQuickActionDecision, runQuickTrade, scanEffects, scoreAiLandAction, scoreAiLaunchTurnCandidateValue, scoreAiOrbitAction,
       scoreAiPassAction, scoreAiPostLaunchMovePlan, scoreAiScanAction, scoreAiScanEnergyReservationPenalty, scoreAiScanPriorityFloor, scoreAiWeakEarlyB2SetupScanTieBreak, scoreAiWeakFinalB2TargetedScanTieBreak, shouldAiProtectB2SectorScanFromPlanetCap,
       state, turnState,
@@ -451,6 +451,122 @@
       return candidates;
     }
 
+    function enumerateHeadlessTurnActions() {
+      const actionContext = createActionContext();
+      const currentPlayer = getCurrentPlayer();
+      if (!currentPlayer || !isAiAutoBattlePlayer(currentPlayer.id)) return [];
+      if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return [];
+
+      const candidates = [];
+      const add = (candidate) => {
+        if (candidate?.available !== false) candidates.push({ ...candidate, available: true });
+      };
+
+      if (!state.pendingActionExecuted && canStartMainAction()) {
+        for (const id of ["launch", "orbit", "land", "researchTech"]) {
+          const check = actions.canExecute(id, actionContext);
+          if (!check?.ok) continue;
+          add({
+            id,
+            kind: "main",
+            planetId: check.planet?.planetId || null,
+            choices: check.choices || null,
+            takeable: check.takeable || null,
+          });
+        }
+        const scanCheck = scanEffects.canExecuteScan(currentPlayer, { standardAction: true });
+        if (scanCheck?.ok) add({ id: "scan", kind: "main" });
+        const analyzeCheck = canAiAnalyzeData(currentPlayer);
+        if (analyzeCheck?.ok) add({ id: "analyze", kind: "main" });
+        for (const [handIndex, card] of (currentPlayer.hand || []).entries()) {
+          add({
+            id: "playCard",
+            kind: "main",
+            handIndex,
+            cardId: card?.cardId || card?.id || null,
+            cardInstanceId: card?.instanceId || null,
+          });
+        }
+      }
+
+      if (canAiMoveThisTurn?.(currentPlayer.id)) {
+        for (const rocket of getMovableTokensForPlayer?.(currentPlayer.id) || []) {
+          for (const direction of AI_MOVE_DIRECTIONS || []) {
+            add({
+              id: "move",
+              kind: "quick",
+              rocketId: rocket.id,
+              direction: direction.id,
+              deltaX: direction.deltaX,
+              deltaY: direction.deltaY,
+            });
+          }
+        }
+      }
+
+      for (const trade of quickTrades?.TRADE_ACTIONS || []) {
+        if (quickTrades.canExecuteTrade(trade.id, actionContext)?.ok) {
+          add({ id: "quickTrade", kind: "quick", tradeId: trade.id });
+        }
+      }
+
+      const dataCheck = data?.canPlaceAnyData?.(currentPlayer);
+      for (const choice of dataCheck?.ok ? (dataCheck.choices || data.listPlaceDataChoices?.(currentPlayer) || []) : []) {
+        add({
+          id: "placeData",
+          kind: "quick",
+          target: choice.target || null,
+          blueSlot: choice.blueSlot ?? null,
+          placementSlot: choice.placementSlot ?? null,
+        });
+      }
+
+      const industryCard = currentPlayer.initialSelection?.industry || null;
+      const industryLayout = industry?.getIndustryActionMarkerLayout?.(industryCard);
+      const industryCheck = industry?.canMarkIndustryAction?.(currentPlayer, turnState.roundNumber, {
+        turnNumber: turnState.turnNumber,
+        hasMarker: Boolean(industryLayout),
+        industryCard,
+      });
+      if (industryCheck?.ok) {
+        add({ id: "industry", kind: "quick", industryCard });
+      }
+
+      for (const [handIndex, card] of (currentPlayer.hand || []).entries()) {
+        const resourceReward = cards?.getDiscardActionRewardForCard?.(card);
+        const moveReward = cards?.getDiscardActionMoveRewardForCard?.(card);
+        if (!resourceReward && !moveReward) continue;
+        add({
+          id: "cardCorner",
+          kind: "quick",
+          handIndex,
+          cardId: card?.cardId || card?.id || null,
+          cardInstanceId: card?.instanceId || null,
+        });
+      }
+
+      for (const alienSlotId of aliens?.ALIEN_SLOT_IDS || []) {
+        if (!runezu?.isRunezuRevealedSlot?.(alienGameState, alienSlotId)) continue;
+        for (const position of runezu.FACE_SYMBOL_POSITIONS || []) {
+          const check = runezu.canPlaceFaceSymbol?.(alienGameState, position, currentPlayer);
+          for (const choice of check?.ok ? (check.choices || []) : []) {
+            add({
+              id: "runezuFaceSymbol",
+              kind: "quick",
+              alienSlotId: Number(alienSlotId),
+              position: Number(check.position),
+              symbolId: choice.symbolId,
+            });
+          }
+        }
+      }
+
+      add(state.pendingActionExecuted
+        ? { id: "end-turn", kind: "end-turn" }
+        : { id: "pass", kind: "pass" });
+      return candidates;
+    }
+
 
     function executeAiTurnAction(action, currentPlayer = getCurrentPlayer()) {
       if (typeof dispatchRuntimeAction === "function" && [
@@ -715,6 +831,7 @@
 
     return {
       enumerateAiTurnActions,
+      enumerateHeadlessTurnActions,
       executeAiTurnAction,
       shouldRetryAiTurnAction,
       rejectAiTurnActionCandidate,
@@ -725,14 +842,14 @@
   }
 
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
-    "AI_DIFFICULTY_WEAK_START", "FINAL_ROUND_NUMBER", "actions", "adjustAiActionGraphCandidate", "adjustAiActionGraphCandidateForStyle", "ai", "aiNumber", "alienGameState",
+    "AI_DIFFICULTY_WEAK_START", "AI_MOVE_DIRECTIONS", "FINAL_ROUND_NUMBER", "actions", "adjustAiActionGraphCandidate", "adjustAiActionGraphCandidateForStyle", "ai", "aiNumber", "alienGameState", "aliens", "canAiMoveThisTurn", "cards",
     "analyzeDataForCurrentPlayer", "applyAiStrategyWeight", "applyAiTurnActionSelectionPressure", "beginPlayCardSelection", "beginScanAction", "buildAiAnalyzeActionValueBreakdown", "buildAiEarlyNoMainPublicRefillDiagnostic", "buildAiFinalHighScorePassRecoveryDiagnostic",
     "buildAiFinalLowHandPassRecoveryDiagnostic", "buildAiIndustryCandidate", "buildAiResearchTechCandidate", "buildAiResourceLockTradePreviews", "buildAiScanActionTargetPreview", "canAiAnalyzeData", "canStartMainAction", "confirmDataPlacement",
-    "createActionContext", "dispatchRuntimeAction", "endCurrentTurn", "finalScoringState", "getAiAnalyzeEnergyCost", "getAiBestLandDirectScoreGain", "getAiCardDisplayLabel", "getAiMarkedFinalFormulaEntries",
+    "createActionContext", "data", "dispatchRuntimeAction", "endCurrentTurn", "finalScoringState", "getAiAnalyzeEnergyCost", "getAiBestLandDirectScoreGain", "getAiCardDisplayLabel", "getAiMarkedFinalFormulaEntries", "getMovableTokensForPlayer",
     "getAiNextMissingFinalScoreThreshold", "getAiOrbitDirectScoreGain", "getAiRoundNumber", "getAiScanDirectScoreGain", "getAiStrategyWeight", "getAiTraceCompetitionState", "getCurrentPlayer", "handleCompanyActionMarkerClick",
-    "hasActivePendingSubFlow", "isActionEffectFlowActive", "isAiAutoBattlePlayer", "landForCurrentPlayer", "listAiCardCornerQuickCandidates", "listAiDataPlacementCandidates", "listAiEmergencyAnalyzeEnergyTradeCandidates", "listAiFinalAnalyzeEnergyTradeCandidates",
+    "hasActivePendingSubFlow", "industry", "isActionEffectFlowActive", "isAiAutoBattlePlayer", "landForCurrentPlayer", "listAiCardCornerQuickCandidates", "listAiDataPlacementCandidates", "listAiEmergencyAnalyzeEnergyTradeCandidates", "listAiFinalAnalyzeEnergyTradeCandidates",
     "listAiFinalReadyTaskCreditChainTradeCandidates", "listAiLateResourceRecoveryTradeCandidates", "listAiMainUnlockTradeCandidates", "listAiMoveCandidates", "listAiPlayCardCandidates", "listAiResourceLockMainUnlockTradeCandidates", "listAiRunezuFaceSymbolQuickCandidates", "listAiThirdFinalMarkResourceTradeCandidates",
-    "orbitForCurrentPlayer", "passForCurrentPlayer", "playerState", "recordAiAutoBattleLog", "recoverPendingActionFromOpenHistoryForAi", "researchTechForCurrentPlayer", "roundAiScore", "runAction",
+    "orbitForCurrentPlayer", "passForCurrentPlayer", "playerState", "quickTrades", "recordAiAutoBattleLog", "recoverPendingActionFromOpenHistoryForAi", "researchTechForCurrentPlayer", "roundAiScore", "runezu", "runAction",
     "runAiCardCornerQuickActionDecision", "runAiMoveActionDecision", "runAiRunezuFaceSymbolQuickActionDecision", "runQuickTrade", "scanEffects", "scoreAiLandAction", "scoreAiLaunchTurnCandidateValue", "scoreAiOrbitAction",
     "scoreAiPassAction", "scoreAiPostLaunchMovePlan", "scoreAiScanAction", "scoreAiScanEnergyReservationPenalty", "scoreAiScanPriorityFloor", "scoreAiWeakEarlyB2SetupScanTieBreak", "scoreAiWeakFinalB2TargetedScanTieBreak", "shouldAiProtectB2SectorScanFromPlanetCap",
     "state", "turnState",

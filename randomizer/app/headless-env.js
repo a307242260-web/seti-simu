@@ -146,61 +146,10 @@ function buildReward(beforePlayer, afterPlayer, terminal) {
   };
 }
 
-function createActionSelector(action) {
-  const payload = action?.payload || {};
-  return {
-    candidateIndex: action.candidateIndex ?? action.maskIndex,
-    id: action.id || action.kind || action.actionId,
-    tradeId: action.tradeId ?? payload.tradeId,
-    cardId: action.cardId ?? payload.cardId,
-    cardInstanceId: action.cardInstanceId ?? payload.cardInstanceId,
-    handIndex: action.handIndex ?? payload.handIndex,
-    blueSlot: action.blueSlot ?? payload.blueSlot,
-    target: action.target || null,
-  };
-}
-
 function getActionPhase(kind) {
   if (kind === "end-turn") return "turn_control";
   if (["move", "quickTrade", "industry", "cardCorner", "placeData"].includes(kind)) return "quick";
   return "main";
-}
-
-function completeInitialSelections(api) {
-  const initialSelectionState = api.getInitialSelectionState?.();
-  const requiredInitialCount = Math.max(
-    1,
-    Math.round(Number(initialSelectionState?.offersByPlayerId?.[initialSelectionState.currentPlayerId]?.selectedInitialIds?.length) || 0),
-  );
-  while (true) {
-    const selectionState = api.getInitialSelectionState?.();
-    if (!selectionState || selectionState.phase !== "selecting" || !selectionState.currentPlayerId) {
-      return;
-    }
-    const offer = api.getInitialSelectionOffer?.(selectionState.currentPlayerId);
-    if (!offer) {
-      throw new Error(`初始选择缺少玩家 ${selectionState.currentPlayerId} 的 offer`);
-    }
-    const selectedIndustry = offer.selectedIndustryId || offer.industryOptions?.[0]?.id || null;
-    if (!selectedIndustry) {
-      throw new Error(`玩家 ${selectionState.currentPlayerId} 初始公司候选为空`);
-    }
-    api.selectInitialSelectionCard?.("industry", selectedIndustry);
-    const initialOptionIds = (offer.initialOptions || [])
-      .slice(0, Math.max(2, requiredInitialCount || 2))
-      .map((card) => card?.id)
-      .filter(Boolean);
-    if (initialOptionIds.length < 2) {
-      throw new Error(`玩家 ${selectionState.currentPlayerId} 初始牌候选不足`);
-    }
-    for (const cardId of initialOptionIds) {
-      api.selectInitialSelectionCard?.("initial", cardId);
-    }
-    const confirmResult = api.confirmInitialSelection?.();
-    if (confirmResult?.ok === false) {
-      throw new Error(confirmResult.message || "确认初始选择失败");
-    }
-  }
 }
 
 function createHeadlessEnv() {
@@ -211,6 +160,9 @@ function createHeadlessEnv() {
   let environmentEvents = [];
   let legalActionSelectors = new Map();
   let lastLegalActions = null;
+  let lastObservation = null;
+  let stateVersion = 0;
+  let decisionVersion = 0;
   let restoreRandom = null;
   let restoreHost = null;
   let seededRandom = null;
@@ -236,7 +188,7 @@ function createHeadlessEnv() {
     const previousConfig = globalThis.SetiHeadlessRuntimeConfig;
     const hadConfig = Object.prototype.hasOwnProperty.call(globalThis, "SetiHeadlessRuntimeConfig");
     globalThis.window = globalThis;
-    globalThis.SetiHeadlessRuntimeConfig = { enabled: true };
+    globalThis.SetiHeadlessRuntimeConfig = { enabled: true, ruleKernel: true };
     restoreHost = () => {
       if (hadWindow) globalThis.window = previousWindow;
       else delete globalThis.window;
@@ -249,7 +201,7 @@ function createHeadlessEnv() {
     restoreRandom = () => {
       Math.random = originalRandom;
     };
-    api = loadBrowserBundle(globalThis);
+    if (!api) api = loadBrowserBundle(globalThis);
     const startResult = api.startNewGame({
       activePlayerCount: resetConfig.activePlayerCount || 4,
       aiDifficulty: resetConfig.aiDifficulty || "laughable",
@@ -267,7 +219,17 @@ function createHeadlessEnv() {
       manualDrive: true,
       suppressAutoSchedule: true,
     });
+    const setupSelectionStartedAt = performance.now();
+    while (api.getInitialSelectionState?.()?.phase === "selecting") {
+      const selectionResult = api.chooseHeadlessInitialSelection?.();
+      if (selectionResult?.ok === false) {
+        throw new Error(selectionResult.message || "headless 初始选择失败");
+      }
+    }
+    recordDuration("setupSelectionMilliseconds", setupSelectionStartedAt);
+    const resetDrainStartedAt = performance.now();
     const initialResolution = api.resolveAiToTurnBoundary({ maxSteps: 2000 });
+    recordDuration("resetDrainMilliseconds", resetDrainStartedAt);
     if (initialResolution?.ok === false) {
       const failure = initialResolution.final || initialResolution;
       const pendingState = api.getAiAutoBattleProgress?.().pendingState || null;
@@ -298,11 +260,18 @@ function createHeadlessEnv() {
       environmentEvents = [];
       legalActionSelectors = new Map();
       lastLegalActions = null;
+      lastObservation = null;
+      stateVersion = 1;
+      decisionVersion = 1;
       diagnostics = {
         bootMilliseconds: 0,
+        setupSelectionMilliseconds: 0,
+        resetDrainMilliseconds: 0,
         legalActionsMilliseconds: 0,
         observationMilliseconds: 0,
         actionExecutionMilliseconds: 0,
+        transitionMilliseconds: 0,
+        effectDrainMilliseconds: 0,
         replayMilliseconds: 0,
         legalActionsCalls: 0,
         observationCalls: 0,
@@ -312,7 +281,8 @@ function createHeadlessEnv() {
       boot(config);
       recordDuration("bootMilliseconds", bootStartedAt);
       const legalActions = this.legalActions();
-      return buildTimedObservation(undefined, legalActions);
+      lastObservation = buildTimedObservation(undefined, legalActions);
+      return structuredClone(lastObservation);
     },
     observe(viewerPlayerId) {
       const legalActions = this.legalActions(viewerPlayerId);
@@ -320,7 +290,13 @@ function createHeadlessEnv() {
     },
     legalActions(viewerPlayerId) {
       const startedAt = performance.now();
-      const result = api.listAiTurnActionCandidates();
+      const cachedActorPlayerId = lastLegalActions?.[0]?.actorPlayerId || null;
+      if (lastLegalActions && (!viewerPlayerId || viewerPlayerId === cachedActorPlayerId)) {
+        recordDuration("legalActionsMilliseconds", startedAt);
+        diagnostics.legalActionsCalls += 1;
+        return structuredClone(lastLegalActions);
+      }
+      const result = api.listHeadlessTurnActionCandidates();
       if (!result?.ok) {
         lastLegalActions = [];
         recordDuration("legalActionsMilliseconds", startedAt);
@@ -341,7 +317,9 @@ function createHeadlessEnv() {
         .sort((left, right) => left.action.actionId.localeCompare(right.action.actionId));
       actions.forEach((entry, maskIndex) => {
         entry.action.maskIndex = maskIndex;
-        legalActionSelectors.set(entry.action.actionId, createActionSelector(entry.candidate));
+        entry.action.stateVersion = stateVersion;
+        entry.action.decisionVersion = decisionVersion;
+        legalActionSelectors.set(entry.action.actionId, structuredClone(entry.candidate));
       });
       const normalizedActions = actions.map((entry) => entry.action);
       lastLegalActions = normalizedActions;
@@ -351,7 +329,10 @@ function createHeadlessEnv() {
     },
     step(action) {
       const currentLegalActions = lastLegalActions || this.legalActions();
-      const beforeObservation = buildTimedObservation(action?.actorPlayerId, currentLegalActions);
+      const beforeObservation = lastObservation
+        && (!action?.actorPlayerId || lastObservation.decision?.actorPlayerId === action.actorPlayerId)
+        ? lastObservation
+        : buildTimedObservation(action?.actorPlayerId, currentLegalActions);
       const beforePlayerState = api.getPlayerState();
       const actorPlayerId = beforeObservation.decision?.actorPlayerId || null;
       const beforePlayer = (beforePlayerState.players || []).find((player) => player.id === actorPlayerId) || null;
@@ -382,10 +363,39 @@ function createHeadlessEnv() {
           error: `动作不在当前 legalActions：${action?.actionId || "<missing>"}`,
         };
       }
+      if (Number(action?.stateVersion) !== stateVersion || Number(action?.decisionVersion) !== decisionVersion) {
+        return {
+          ok: false,
+          actionId: action?.actionId || null,
+          actorPlayerId,
+          reward: buildReward(beforePlayer, beforePlayer, false),
+          done: this.isTerminal(),
+          observation: beforeObservation,
+          legalActions: currentLegalActions,
+          replayEvent: null,
+          error: `动作版本已失效：期望 state=${stateVersion}/decision=${decisionVersion}`,
+        };
+      }
       let result;
       const actionStartedAt = performance.now();
       try {
-        result = api.runAiSelectedTurnAction(selector, { maxSteps: 2000 });
+        const transitionStartedAt = performance.now();
+        const actionResult = api.executeHeadlessTurnAction(selector, { resolveToTurnBoundary: false });
+        recordDuration("transitionMilliseconds", transitionStartedAt);
+        if (actionResult?.ok === false) {
+          result = actionResult;
+        } else {
+          const drainStartedAt = performance.now();
+          const resolution = api.resolveAiToTurnBoundary({ maxSteps: 2000 });
+          recordDuration("effectDrainMilliseconds", drainStartedAt);
+          result = {
+            ok: resolution?.ok !== false,
+            progressed: true,
+            action: selector,
+            actionResult,
+            resolution,
+          };
+        }
       } catch (error) {
         result = { ok: false, message: error?.stack || error?.message || String(error) };
       }
@@ -420,10 +430,15 @@ function createHeadlessEnv() {
           error: errorMessage,
         };
       }
+      stateVersion += 1;
+      decisionVersion += 1;
+      lastLegalActions = null;
+      legalActionSelectors = new Map();
       const afterPlayerState = api.getPlayerState();
       const afterPlayer = (afterPlayerState.players || []).find((player) => player.id === actorPlayerId) || null;
       const postLegalActions = this.legalActions();
       const observation = buildTimedObservation(undefined, postLegalActions);
+      lastObservation = observation;
       const done = Boolean(observation.terminal);
       const reward = buildReward(beforePlayer, afterPlayer, done);
       const replayStartedAt = performance.now();
@@ -498,6 +513,7 @@ function createHeadlessEnv() {
         throw new Error(`不支持的 checkpoint schema：${checkpoint?.schemaVersion || "missing"}`);
       }
       if (Array.isArray(checkpoint.replaySteps)) {
+        api = null;
         this.reset({
           ...(checkpoint.config || {}),
           seed: checkpoint?.replayCursor?.seed ?? checkpoint?.config?.seed ?? "seti-headless",

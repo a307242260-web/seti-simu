@@ -6,6 +6,7 @@ const {
   CONDITIONAL_FAMILIES,
   LEGACY_FAMILY_BY_ID,
   ACTION_COVERAGE_MATRIX,
+  CONDITIONAL_COVERAGE_MATRIX,
   normalizeTurnCandidate,
   sanitizeAlienPublicState,
   sanitizeTechSupply,
@@ -17,6 +18,8 @@ assert.deepEqual(CONDITIONAL_FAMILIES, [
   "choose_final_scoring", "accept_optional_effect",
 ]);
 assert.equal(ACTION_COVERAGE_MATRIX.length, 15);
+assert.equal(CONDITIONAL_COVERAGE_MATRIX.length, 7);
+assert.deepEqual(CONDITIONAL_COVERAGE_MATRIX.map((entry) => entry.family), CONDITIONAL_FAMILIES);
 
 for (const entry of ACTION_COVERAGE_MATRIX) {
   assert.ok(entry.legacyId, `${entry.family} 应有 runtime selector 映射`);

@@ -107,6 +107,9 @@
       runAiNonTurnAutomationStep,
       runAiSelectedTurnAction,
       buildAiTurnActionCandidates,
+      chooseInitialSelectionForAiPlayer,
+      enumerateHeadlessTurnActions,
+      executeAiTurnAction,
       resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,
@@ -311,6 +314,26 @@
             target: structuredClone(candidate.target || null),
             available: candidate.available !== false,
           })),
+        };
+      },
+      listHeadlessTurnActionCandidates: () => ({
+        ok: true,
+        currentPlayer: structuredClone(getCurrentPlayer()),
+        candidates: structuredClone(enumerateHeadlessTurnActions()),
+      }),
+      chooseHeadlessInitialSelection: () => chooseInitialSelectionForAiPlayer(),
+      executeHeadlessTurnAction: (action, options = {}) => {
+        const actionResult = executeAiTurnAction(structuredClone(action), getCurrentPlayer());
+        if (actionResult?.ok === false || options.resolveToTurnBoundary === false) {
+          return { ...actionResult, action };
+        }
+        const resolution = resolveAiAutomationToTurnBoundary(options);
+        return {
+          ok: resolution.ok !== false,
+          progressed: true,
+          action,
+          actionResult,
+          resolution,
         };
       },
       getAiAutoBattleProgress,
