@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-19
+- source: SETI-51, SETI-52
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及共享工作树中的 coding agent
+- target_component: 私有 index 文件模式保真实践
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 修订私有 `GIT_INDEX_FILE` 候选：既有路径的 cache entry 必须继承 HEAD tree mode，不能统一硬编码 `100644`；提交前同时检查 name-status 与 mode change。
+- applied_change: 更新 coding experience 与本决策契约；SETI-52 用后续提交 `33a0ddc` 恢复两个 CLI 的 `100755`，不修改 git-workflow、agent prompt、loop template、watcher、issue-workflow 或项目记忆。
+- expected_effect: 私有 index 在隔离并行内容的同时保持可执行位、symlink 等 tree 元数据，不再产生内容无差异但 CLI 失去执行权限的提交。
+- evaluation_window: 后续 2 次包含可执行文件或非 100644 tree entry 的私有 index 提交
+- success_signal: commit diff 不出现非预期 mode change；CLI 仍可直接执行，且文件清单与 issue 范围一致。
+- rollback_condition: 若平台提供隔离 worktree/index，或统一提交工具自动继承 tree entry mode，则删除手工 cacheinfo 约束并改用平台能力。
+- risk: 从旧 HEAD 读取 mode 仍可能遗漏并行任务刚改变的预期权限；必须基于提交时最新 HEAD 并把 mode diff 纳入复核。
+- evidence_before: SETI-52 提交 `5bc287a` 的内容验证与 benchmark 均通过，但 `git show --stat` 显示两个原可执行工具从 100755 变为 100644；说明只核对 blob 内容不足以证明提交保真。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 修订既有 candidate；当前两次私有 index 经验不足以升级长期组件。
+- applied_at: 2026-07-19
+- verification: `git show --summary 5bc287a` 复现降权；`git show --summary 33a0ddc` 确认恢复 100755；工具内容 blob 未改变。
+- observed_outcome: 两个 CLI 的执行权限已恢复，历史保持追加式修正；后续私有 index 流程将继承 HEAD mode。
+- keep_or_revise: 保持 candidate；观察 2 次非普通文件模式提交后再决定是否升级 git-workflow。
+
+- date: 2026-07-19
 - source: SETI-36, SETI-48
 - promoted_to: none
 - promotion_decision: candidate

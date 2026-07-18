@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-19
+- source_issue: SETI-51, SETI-52
+- observation: 私有 `GIT_INDEX_FILE` 能隔离并行 staging，但更新既有文件时不能统一硬编码 `100644`；必须从当前 HEAD tree 继承每个路径的 mode，否则脚本内容与测试全绿仍可能把可执行 CLI 静默降权。新文件才按交付类型显式选择 `100644/100755`。
+- evidence: SETI-51 用私有 index 成功避免内容错配；SETI-52 首次隔离提交将原为 `100755` 的 `tools/benchmark_rl_workers.js` 与 `tools/rl_worker_client.py` 写成 `100644`，`git show --stat` 明确显示 mode change。后续从 HEAD blob 恢复 `100755` 并以提交 `33a0ddc` 修正，未改写历史。
+- promote_to: none
+- promotion_status: candidate
+- decision: 修订 SETI-51 的共享 index 竞态候选，补充“继承 tree mode”前置检查；再观察后续 2 次含可执行文件的私有 index 提交，不修改 git-workflow、agent prompt、loop template 或 watcher。
+
+- date: 2026-07-19
 - source_issue: SETI-36, SETI-48
 - observation: 显式 runtime context 中的 `null` 可以表示“此宿主刻意禁用该依赖”，不能用 `context.document || root.document` 把它误判为缺项；可选宿主依赖应仅在 `undefined` 时回退，并用会计数且抛错的 poison getter 覆盖 reset/step/replay/checkpoint/dispose，证明没有隐式读取浏览器全局。
 - evidence: SETI-36 的 `REQUIRED_CONTEXT_KEYS` fail-fast 已证明 composition 需要区分漏注入与显式可选值；SETI-48 在 app 明确传入 `document: null` 后，final-ui、action-briefing、alien-ui、debug-runtime、bootstrap 五处 `|| root.document` 仍读取 poison getter。改为仅 `undefined` 回退后，document/localStorage/Image/requestAnimationFrame/getComputedStyle/alert/confirm/prompt 在全路径访问计数均为 0，独立 HEAD 全量测试通过。
