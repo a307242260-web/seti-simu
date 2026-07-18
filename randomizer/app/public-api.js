@@ -114,6 +114,7 @@
       enumerateHeadlessConditionalActions,
       executeHeadlessConditionalAction,
       advanceHeadlessDeterministicState,
+      executeHeadlessCurrentActionEffect,
       skipHeadlessCurrentActionEffect,
       resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
@@ -340,6 +341,7 @@
         executeHeadlessConditionalAction(structuredClone(action))
       ),
       advanceHeadlessDeterministicState: () => advanceHeadlessDeterministicState(),
+      executeHeadlessCurrentActionEffect: () => executeHeadlessCurrentActionEffect(),
       skipHeadlessActionEffect: () => skipHeadlessCurrentActionEffect(),
       executeHeadlessTurnAction: (action, options = {}) => {
         const actionResult = executeAiTurnAction(

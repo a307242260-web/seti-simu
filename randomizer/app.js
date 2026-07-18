@@ -1551,6 +1551,7 @@
     handleFangzhouTraceSlotPlacement,
     getEligibleAlienSlotIdsForTraceEffect,
     getAlienTraceChoiceSlotIds,
+    getFangzhouUnlockableTraceTypes,
     hasAlienTracePanelPlacementTarget,
     isAlienTracePickerChoiceAllowed,
   } = alienUiHelpers;
@@ -9009,6 +9010,41 @@
     if (!headlessMode) return { actorPlayer: null, candidates: [] };
     const scanTargetPending = pendingState.scanTargetAction;
     if (scanTargetPending) {
+      if (scanTargetPending.type === "discard_corner_repeat") {
+        return {
+          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          candidates: (scanTargetPending.choices || []).map((card) => ({
+            id: "conditionalChoice",
+            family: "choose_card",
+            label: cards.getCardLabel(card),
+            target: { kind: "discard-corner-repeat", choiceId: card.id, cardId: card.id },
+            cardInstanceId: card.id,
+          })),
+        };
+      }
+      if (scanTargetPending.type === "return_unfinished_task") {
+        return {
+          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          candidates: (scanTargetPending.choices || []).map((card) => ({
+            id: "conditionalChoice",
+            family: "choose_card",
+            label: cards.getCardLabel(card),
+            target: { kind: "return-unfinished-task", choiceId: card.id, cardId: card.id },
+            cardInstanceId: card.id,
+          })),
+        };
+      }
+      if (scanTargetPending.type === "remove_orbit_to_probe") {
+        return {
+          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          candidates: (scanTargetPending.choices || []).map((choice) => ({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: choice.label || "移除环绕标记",
+            target: { kind: "remove-orbit-to-probe", choiceId: choice.id, planetId: choice.planetId },
+          })),
+        };
+      }
       if (scanTargetPending.type === "discard_any_income") {
         const player = getHeadlessConditionalPlayer(scanTargetPending);
         const selected = new Set(scanTargetPending.selectedCardIds || []);
@@ -9115,6 +9151,124 @@
     if (pendingState.movePayment) {
       return enumerateHeadlessMovePaymentActions(pendingState.movePayment);
     }
+    if (isTechTilePickingActive()) {
+      const player = getCurrentPlayer();
+      const pendingTileId = techGameState.ui.pendingTileId;
+      if (pendingTileId) {
+        return {
+          actorPlayer: player,
+          candidates: tech.getAvailableBlueSlots(player?.techState).map((blueSlot) => ({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `蓝色科技槽位 ${blueSlot}`,
+            target: {
+              kind: "research-tech-blue-slot",
+              choiceId: String(blueSlot),
+              slotId: String(blueSlot),
+            },
+            blueSlot,
+          })),
+        };
+      }
+      const selectionOptions = getResearchTechSelectionOptions();
+      const candidates = tech.listTakeableTiles(
+        techGameState.board,
+        player?.techState,
+        { techTypes: techGameState.ui.allowedTechTypes },
+      ).flatMap((tileId) => {
+        if (industry?.isTechBlockedByPirates?.(player, tileId)) return [];
+        if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(tileId)) return [];
+        return [{
+          id: "conditionalChoice",
+          family: "choose_target",
+          label: `研究科技 ${tileId}`,
+          target: { kind: "research-tech-tile", choiceId: tileId, tileId },
+          tileId,
+        }];
+      });
+      if (!candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "跳过无可用科技的效果",
+          target: { kind: "skip-research-tech", choiceId: "skip" },
+        });
+      }
+      return { actorPlayer: player, candidates };
+    }
+    const dataPlacePending = pendingState.dataPlaceAction;
+    if (dataPlacePending) {
+      const player = getHeadlessConditionalPlayer(dataPlacePending);
+      const candidates = (data.listPlaceDataChoices?.(player) || []).map((choice, choiceIndex) => ({
+        id: "conditionalChoice",
+        family: "choose_target",
+        label: choice.label || `放置数据 ${choiceIndex + 1}`,
+        target: {
+          kind: "pending-data-placement",
+          choiceId: `${choice.target}:${choice.blueSlot ?? ""}`,
+          slotId: choice.target,
+        },
+        placementTarget: choice.target,
+        blueSlot: choice.blueSlot ?? null,
+      }));
+      candidates.push({
+        id: "conditionalChoice",
+        family: "accept_optional_effect",
+        label: "跳过本次数据获得",
+        target: { kind: "skip-pending-data-placement", choiceId: "skip" },
+      });
+      return { actorPlayer: player, candidates };
+    }
+    const cardTriggerMovePending = pendingState.cardTriggerFreeMove;
+    if (cardTriggerMovePending) {
+      const player = getCurrentPlayer();
+      const providedMovePoints = Math.max(0, Math.round(Number(
+        cardTriggerMovePending.match?.effect?.options?.movementPoints ?? 1
+      ) || 0));
+      const candidates = [];
+      for (const rocket of getMovableTokensForPlayer(player?.id) || []) {
+        for (const direction of [
+          { id: "out", deltaX: 0, deltaY: 1 },
+          { id: "cw", deltaX: 1, deltaY: 0 },
+          { id: "ccw", deltaX: -1, deltaY: 0 },
+          { id: "in", deltaX: 0, deltaY: -1 },
+        ]) {
+          if (!rocketActions.canMoveRocket(rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          const terrainRequired = getRequiredMovePointsForUi(
+            player,
+            rocket.id,
+            direction.deltaX,
+            direction.deltaY,
+            cardTriggerMovePending.match?.effect?.options || {},
+          );
+          const supplemental = Math.max(0, terrainRequired - providedMovePoints);
+          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `${formatRocketLabel(rocket)} ${direction.id}`,
+            target: {
+              kind: "card-trigger-free-move",
+              choiceId: `${rocket.id}:${direction.id}`,
+              rocketId: rocket.id,
+              direction: direction.id,
+            },
+            rocketId: rocket.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          });
+        }
+      }
+      if (!candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "取消无法执行的卡牌触发",
+          target: { kind: "skip-card-trigger-free-move", choiceId: "skip" },
+        });
+      }
+      return { actorPlayer: player, candidates };
+    }
     const cardMovePending = pendingState.actionEffectFlow?.cardMoveEffect;
     if (cardMovePending) {
       const effect = cardMovePending.effect || getCurrentActionEffect();
@@ -9160,6 +9314,14 @@
           family: "accept_optional_effect",
           label: "结束剩余移动",
           target: { kind: "finish-card-effect-move", choiceId: "finish" },
+        });
+      }
+      if (!candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "跳过无可用路径的移动效果",
+          target: { kind: "skip-card-effect-move", choiceId: "skip" },
         });
       }
       return { actorPlayer: player, candidates };
@@ -9302,8 +9464,13 @@
         };
       }
       const selectedSlots = new Set(cardPending.selectedSlots || []);
+      const maxSelectable = Math.max(1, Math.round(Number(cardPending.maxSelectable) || 1));
       const candidates = (cardState.publicCards || []).flatMap((card, slotIndex) => (
-        card && !selectedSlots.has(slotIndex) ? [{
+        card
+          && !selectedSlots.has(slotIndex)
+          && selectedSlots.size < maxSelectable
+          && (cardPending.type !== "public_scan" || getPublicScanChoicesForCard(card)?.ok)
+          ? [{
           id: "conditionalChoice",
           family: "choose_card",
           label: cards.getCardLabel(card),
@@ -9325,6 +9492,17 @@
           family: "choose_branch",
           label: "确认弃除公共牌",
           target: { kind: "confirm-public-corner-discard", choiceId: "confirm" },
+        });
+      }
+      if (
+        cardPending.type === "public_scan"
+        && selectedSlots.size >= getPublicScanMinSelectable(cardPending)
+      ) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "choose_branch",
+          label: "确认公共牌扫描",
+          target: { kind: "confirm-public-scan", choiceId: "confirm" },
         });
       }
       if (allowsBlindDrawInSelection() && canBlindDraw()) {
@@ -9364,6 +9542,54 @@
 
     const tracePending = pendingState.alienTraceAction;
     const picker = pendingState.alienTracePickerState;
+    if (tracePending && picker?.mode === "fangzhou-destination") {
+      const player = getHeadlessConditionalPlayer(picker);
+      const alienSlotId = Number(picker.selectedAlienSlotId || 0);
+      const traceTypes = getFangzhouUnlockableTraceTypes(
+        alienSlotId,
+        picker.allowedTraceTypes || aliens.TRACE_TYPES,
+        player,
+      );
+      const candidates = [];
+      if (hasAlienTracePanelPlacementTarget(picker.allowedAlienSlotIds || null, picker.allowedTraceTypes || aliens.TRACE_TYPES, player)) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "choose_branch",
+          label: "放到外星人面板",
+          target: { kind: "fangzhou-trace-destination", choiceId: "panel" },
+          destination: "panel",
+        });
+      }
+      for (const traceType of traceTypes) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "choose_branch",
+          label: `解锁${aliens.getTraceTypeLabel(traceType)}方舟牌`,
+          target: { kind: "fangzhou-trace-destination", choiceId: `unlock:${traceType}`, traceType },
+          destination: "unlock",
+          traceType,
+        });
+      }
+      return { actorPlayer: player, candidates };
+    }
+    if (tracePending && picker?.mode === "fangzhou-unlock-color") {
+      const player = getHeadlessConditionalPlayer(picker);
+      const traceTypes = getFangzhouUnlockableTraceTypes(
+        Number(picker.selectedAlienSlotId || 0),
+        picker.allowedTraceTypes || aliens.TRACE_TYPES,
+        player,
+      );
+      return {
+        actorPlayer: player,
+        candidates: traceTypes.map((traceType) => ({
+          id: "conditionalChoice",
+          family: "choose_branch",
+          label: `解锁${aliens.getTraceTypeLabel(traceType)}方舟牌`,
+          target: { kind: "fangzhou-unlock-color", choiceId: traceType, traceType },
+          traceType,
+        })),
+      };
+    }
     if (tracePending && picker?.mode === "trace-board") {
       const slotIds = getAlienTraceChoiceSlotIds(picker.allowedAlienSlotIds);
       const traceTypes = picker.allowedTraceTypes?.length ? picker.allowedTraceTypes : aliens.TRACE_TYPES;
@@ -9393,6 +9619,38 @@
   }
 
   function executeHeadlessConditionalAction(action) {
+    if (isTechTilePickingActive() && action?.target?.kind === "research-tech-tile") {
+      return handleSupplyTechTileClick(action.tileId || action.target.tileId);
+    }
+    if (isTechTilePickingActive() && action?.target?.kind === "research-tech-blue-slot") {
+      return confirmTechBlueSlotChoice(Number(action.blueSlot ?? action.target.slotId));
+    }
+    if (isTechTilePickingActive() && action?.target?.kind === "skip-research-tech") {
+      cancelTechSelection();
+      if (isActionEffectFlowActive()) skipCurrentActionEffect();
+      return { ok: true, progressed: true, skipped: true, message: "已跳过无可用科技的效果" };
+    }
+    if (pendingState.alienTracePickerState?.mode === "fangzhou-destination" && action?.target?.kind === "fangzhou-trace-destination") {
+      return handleFangzhouTraceDestinationChoice(action.destination, action.traceType || null);
+    }
+    if (pendingState.alienTracePickerState?.mode === "fangzhou-unlock-color" && action?.target?.kind === "fangzhou-unlock-color") {
+      return handleFangzhouUnlockTraceChoice(action.traceType || action.target.traceType);
+    }
+    if (pendingState.scanTargetAction?.type === "discard_corner_repeat" && action?.target?.kind === "discard-corner-repeat") {
+      return handleDiscardCornerRepeatChoice(action.cardInstanceId || action.target.cardId);
+    }
+    if (pendingState.scanTargetAction?.type === "return_unfinished_task" && action?.target?.kind === "return-unfinished-task") {
+      return handleReturnUnfinishedTaskChoice(action.cardInstanceId || action.target.cardId);
+    }
+    if (pendingState.scanTargetAction?.type === "remove_orbit_to_probe" && action?.target?.kind === "remove-orbit-to-probe") {
+      return handleRemoveOrbitToProbeChoice(action.target.choiceId);
+    }
+    if (pendingState.dataPlaceAction && action?.target?.kind === "pending-data-placement") {
+      return confirmDataPlacement(action.placementTarget, action.blueSlot);
+    }
+    if (pendingState.dataPlaceAction && action?.target?.kind === "skip-pending-data-placement") {
+      return skipPendingDataPlacement() || { ok: true, progressed: true, skipped: true, message: "已跳过本次数据获得" };
+    }
     if (pendingState.scanTargetAction?.type === "discard_any_income" && action?.target?.kind === "discard-income-card") {
       return handleDiscardIncomeCardChoice(action.cardInstanceId || action.target.cardId);
     }
@@ -9419,11 +9677,30 @@
     if (pendingState.actionEffectFlow?.cardMoveEffect && action?.target?.kind === "card-effect-move") {
       return executeCardMoveForEffect(action.deltaX, action.deltaY, action.rocketId);
     }
+    if (pendingState.cardTriggerFreeMove && action?.target?.kind === "card-trigger-free-move") {
+      return executeFreeMoveForCardTrigger(action.deltaX, action.deltaY, action.rocketId);
+    }
+    if (pendingState.cardTriggerFreeMove && action?.target?.kind === "skip-card-trigger-free-move") {
+      const pending = pendingState.cardTriggerFreeMove;
+      const player = getCurrentPlayer();
+      if (pending.beforePlayer) restoreObjectSnapshot(player, pending.beforePlayer);
+      if (pending.beforeCardState) restoreObjectSnapshot(cardState, pending.beforeCardState);
+      pendingState.cardTriggerFreeMove = null;
+      rocketState.activeRocketId = null;
+      clearMoveRocketHighlight();
+      deactivateMoveMode();
+      continueAfterCardTriggerResolution();
+      return { ok: true, progressed: true, skipped: true, message: "已取消无法执行的卡牌触发" };
+    }
     if (pendingState.actionEffectFlow?.cardMoveEffect && action?.target?.kind === "finish-card-effect-move") {
       const finished = finishCurrentCardMoveEffectEarly();
       return finished
         ? { ok: true, progressed: true, message: "已结束剩余移动" }
         : { ok: false, message: "当前不能结束移动效果" };
+    }
+    if (pendingState.actionEffectFlow?.cardMoveEffect && action?.target?.kind === "skip-card-effect-move") {
+      skipCurrentActionEffect();
+      return { ok: true, progressed: true, skipped: true, message: "已跳过无可用路径的移动效果" };
     }
     if (pendingState.cardCornerFreeMove && action?.target?.kind === "card-corner-free-move") {
       return executeFreeMoveForCardCorner(action.deltaX, action.deltaY, action.rocketId);
@@ -9465,6 +9742,9 @@
       && action?.target?.kind === "confirm-public-corner-discard"
     ) {
       return confirmPublicCornerDiscardSelection();
+    }
+    if (pendingState.cardSelectionAction?.type === "public_scan" && action?.target?.kind === "confirm-public-scan") {
+      return confirmPublicScanSelection();
     }
     if (pendingState.cardSelectionAction?.type === "industry_deepspace_hand" && action?.target?.kind === "hand-card") {
       return handleIndustryDeepspaceHandClick(Number(action.handIndex ?? action.target.handIndex));
@@ -9531,6 +9811,15 @@
       return { ok: true, progressed: true, skipped: true, message };
     }
     return null;
+  }
+
+  function executeHeadlessCurrentActionEffect() {
+    if (!headlessMode) return { ok: false, message: "仅 headless 模式可直接推进效果" };
+    const effect = getCurrentActionEffect();
+    if (!effect || effect.status !== "active") {
+      return { ok: false, message: "没有可直接推进的活动效果" };
+    }
+    return executeActionEffect(effect);
   }
 
   function launchRocketForCurrentPlayer() {
@@ -10559,6 +10848,7 @@
       enumerateHeadlessConditionalActions,
       executeHeadlessConditionalAction,
     advanceHeadlessDeterministicState,
+    executeHeadlessCurrentActionEffect,
     skipHeadlessCurrentActionEffect,
       resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,

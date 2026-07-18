@@ -745,8 +745,6 @@
   }
 
   function openDataPlacePicker(options = {}) {
-    if (!els.dataPlaceOverlay || !els.dataPlaceActions) return;
-
     const player = options.player || getCurrentPlayer();
     const choiceResult = abilities.data.listPlacementChoices(player);
     if (!choiceResult.ok) {
@@ -763,6 +761,9 @@
         ...options.pendingAction,
       }
       : null;
+    if (!els.dataPlaceOverlay || !els.dataPlaceActions) {
+      return { ok: true, pendingChoice: true, choices };
+    }
     if (!forcePrompt && !shouldPromptDataPlaceChoice(choices)) {
       const [choice] = choices;
       confirmDataPlacement(choice.target, choice.blueSlot);

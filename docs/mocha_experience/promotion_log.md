@@ -28,6 +28,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 
 ## Entries
 
+- date: 2026-07-19
+- source: SETI-40
+- promoted_to: none
+- promotion_decision: reject
+- target_agent: 领航
+- target_component: coding loop 持续执行习惯
+- target_file: none
+- remote_skill_id: none
+- change: 评估是否需要新增“无待拍板事项时不得在阶段性进度处停止”的 agent prompt 或 issue-workflow 规则。
+- applied_change: 仅在 `docs/mocha_experience/coding.md` 记录执行偏差及本决策契约；不修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。
+- expected_effect: 后续复盘能区分“规则缺失”和“已有规则未执行”，避免为单次执行偏差堆叠重复约束。
+- evaluation_window: 本次收口即时判断；若后续不同 agent 在相同明确规则下再次出现两次同类中断，再重新评估可机械提醒的 loop signal。
+- success_signal: 后续有明确 `next_action` 且无真实 blocker 的 coding run 持续推进到验收完成，不再由成员追问后才恢复。
+- rollback_condition: 若事实证明现有 runtime prompt/仓库规则未覆盖该场景，或跨 agent 重复发生达到重新评估窗口，则将 reject 改为 candidate 并选择明确目标组件。
+- risk: 仅记录不新增规则不能机械阻止再次发生；但重复 prompt 会增加噪声且不能修复执行纪律。
+- evidence_before: SETI-40 三条成员评论连续指出返工在无待确认事项时停止；现有 runtime prompt 已要求 terminal condition 持续执行，仓库 `AGENTS.md` 也要求真正开工/返工并维护 `next_action`。
+- owner_or_agent_decision: 领航依据评论、timeline、metadata 与当前规则自决 reject；确认本轮无需 owner 拍板并持续执行到完整验收。
+- applied_at: 2026-07-19
+- verification: uniform-random 100 局为 100/100 terminal、0 step limit、0 失败、49,518 次决策、293 decisions/s；`node --check randomizer/app.js` 与 randomizer 全部 `*.test.js` 通过。
+- observed_outcome: 剩余科技选择、无路径移动与长尾条件流完成迁移，headless 热路径不再调用 `runAiPendingStep` 或 `runHeadlessActionEffectStep`。
+- keep_or_revise: 保持 reject；若达到上述跨 agent 重复窗口再修订。
+
 - date: 2026-07-18
 - source: SETI-14, SETI-36
 - promoted_to: none

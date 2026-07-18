@@ -502,15 +502,18 @@
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一张未完成的 1/2 型保留任务卡返回手牌。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-      els.scanTargetActions.replaceChildren(...choices.map((card) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "scan-target-option-button";
-        button.dataset.returnTaskCardId = card.id;
-        button.innerHTML = `${cards.getCardLabel(card)}<small>返回手牌</small>`;
-        return button;
-      }));
-      els.scanTargetOverlay.hidden = false;
+      if (document && els.scanTargetActions) {
+        const buttons = choices.map((card) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "scan-target-option-button";
+          button.dataset.returnTaskCardId = card.id;
+          button.innerHTML = `${cards.getCardLabel(card)}<small>返回手牌</small>`;
+          return button;
+        });
+        els.scanTargetActions.replaceChildren(...buttons);
+      }
+      if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = false;
       rocketState.statusNote = `${effect.label}：请选择任务卡`;
       renderStateReadout();
       return { ok: true, pendingChoice: true, message: rocketState.statusNote };

@@ -14,6 +14,14 @@
 
 ## Entries
 
+- date: 2026-07-19
+- source_issue: SETI-40
+- observation: coding issue 已有明确验收门槛、`next_action` 且没有 owner 决策或新增权限需求时，阶段性提交与进度评论不能替代持续执行；agent 应直接续跑到门槛通过或出现真实 blocker。
+- evidence: SETI-40 返工期间先后在评论 `c3aedb02-e789-4230-aeaa-85a7f30b9d56`、`b11be42c-6e15-42fa-9c81-c74a96ebe7a4`、`56c6e824-2497-4ebc-a7cc-e4dc8e61ff9a` 被成员追问为何停止；本轮无需新增确认即继续迁移剩余 conditional、切断两条 AI resolver fallback，并完成 uniform-random 100/100 terminal、0 失败、293 decisions/s 与全量 Node 回归。
+- promote_to: none
+- promotion_status: rejected
+- decision: 现有 agent prompt 的 autonomy/persistence 与仓库 `AGENTS.md` 已明确要求在安全范围内持续推进，本次属于未遵守既有规则，不是缺少长期组件；保留复盘证据但不重复修改 prompt、loop template、watcher 或 issue-workflow。
+
 - date: 2026-07-18
 - source_issue: SETI-38, SETI-40
 - observation: RL/checkpoint 恢复测试不能只覆盖 opening 或零 action 快照；至少应在真实 policy action 后比较 observation、legalActions、reward/replay cursor。常驻 runtime 可复用普通 episode，但跨 seed 后加载 checkpoint 应以 fresh runtime 按 journal 重放，避免传统全局模块闭包残留污染恢复结果。

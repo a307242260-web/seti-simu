@@ -606,6 +606,7 @@
     }
 
     function renderAlienTracePickerButtons(choices, pickerStep) {
+      if (!documentRef || !els.alienTraceActions) return choices;
       els.alienTraceActions.replaceChildren(...choices.map((choice) => {
         const button = documentRef.createElement("button");
         button.type = "button";
@@ -911,6 +912,7 @@
         });
       }
 
+      if (!documentRef || !els.alienTraceActions) return choices;
       els.alienTraceActions.replaceChildren(...choices.map((choice) => {
         const button = documentRef.createElement("button");
         button.type = "button";
@@ -940,6 +942,9 @@
         selectedAlienSlotId: Number(alienSlotId),
         allowedTraceTypes: unlockableTraceTypes,
       };
+      if (!documentRef || !els.alienTraceActions) {
+        return { ok: true, pendingChoice: true, message: "请选择要解锁的方舟牌" };
+      }
       els.alienTraceActions.replaceChildren(...unlockableTraceTypes.map((traceType) => {
         const button = documentRef.createElement("button");
         button.type = "button";
@@ -1241,6 +1246,7 @@
       handleFangzhouTraceSlotPlacement,
       getEligibleAlienSlotIdsForTraceEffect,
       getAlienTraceChoiceSlotIds,
+      getFangzhouUnlockableTraceTypes,
       hasAlienTracePanelPlacementTarget,
       isAlienTracePickerChoiceAllowed,
     };

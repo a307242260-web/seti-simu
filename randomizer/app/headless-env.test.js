@@ -8,6 +8,8 @@ const { TURN_ACTION_FAMILIES, CONDITIONAL_FAMILIES } = require("./headless-contr
 const headlessEnvSource = fs.readFileSync(__filename.replace(/\.test\.js$/, ".js"), "utf8");
 assert.equal(headlessEnvSource.includes("buildAiTurnActionCandidates"), false, "legalActions 热路径不得构建 heuristic candidates");
 assert.equal(headlessEnvSource.includes("runAiSelectedTurnAction"), false, "step 热路径不得二次构建 selector candidates");
+assert.equal(headlessEnvSource.includes("runAiPendingStep"), false, "effect drain 热路径不得回退浏览器 pending resolver");
+assert.equal(headlessEnvSource.includes("runHeadlessActionEffectStep"), false, "effect drain 热路径不得调用 heuristic AI effect resolver");
 
 function chooseFastTerminalAction(actions) {
   return actions.find((action) => action.family === "pass")

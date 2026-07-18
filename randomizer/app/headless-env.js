@@ -264,7 +264,7 @@ function createHeadlessEnv() {
         continue;
       }
       if (api.getAiAutoBattleProgress?.().pendingState?.actionEffectFlowActive) {
-        const effectResult = api.runHeadlessActionEffectStep?.();
+        const effectResult = api.executeHeadlessCurrentActionEffect?.();
         steps.push(effectResult);
         if (!effectResult) {
           return { ok: false, final: { message: "活动效果未产生确定性推进结果" }, steps };
@@ -277,9 +277,11 @@ function createHeadlessEnv() {
         }
         continue;
       }
-      const result = api.runAiPendingStep();
-      steps.push(result);
-      if (result?.ok === false) return { ok: false, final: result, steps };
+      return {
+        ok: false,
+        final: { message: "存在未迁移的 headless pending 状态，拒绝回退浏览器 AI resolver" },
+        steps,
+      };
     }
     return { ok: false, final: { message: `确定性效果推进超过 ${maxSteps} 步` }, steps };
   }
