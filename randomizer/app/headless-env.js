@@ -40,6 +40,18 @@ function createSeededRandom(seed) {
   return seededRandom;
 }
 
+function createDeterministicDate(seed, NativeDate = Date) {
+  const epochMilliseconds = NativeDate.UTC(2020, 0, 1) + hashSeed(seed) * 1000;
+  function DeterministicDate(...args) {
+    if (!new.target) return new NativeDate(epochMilliseconds).toString();
+    return args.length ? new NativeDate(...args) : new NativeDate(epochMilliseconds);
+  }
+  Object.setPrototypeOf(DeterministicDate, NativeDate);
+  DeterministicDate.prototype = NativeDate.prototype;
+  DeterministicDate.now = () => epochMilliseconds;
+  return DeterministicDate;
+}
+
 function getScriptPaths() {
   const htmlPath = path.resolve(__dirname, "..", "index.html");
   const html = fs.readFileSync(htmlPath, "utf8");
@@ -399,13 +411,16 @@ function createHeadlessEnv() {
     const hadWindow = Object.prototype.hasOwnProperty.call(globalThis, "window");
     const previousConfig = globalThis.SetiHeadlessRuntimeConfig;
     const hadConfig = Object.prototype.hasOwnProperty.call(globalThis, "SetiHeadlessRuntimeConfig");
+    const NativeDate = globalThis.Date;
     globalThis.window = globalThis;
+    globalThis.Date = createDeterministicDate(resetConfig.seed, NativeDate);
     globalThis.SetiHeadlessRuntimeConfig = { enabled: true, ruleKernel: true };
     restoreHost = () => {
       if (hadWindow) globalThis.window = previousWindow;
       else delete globalThis.window;
       if (hadConfig) globalThis.SetiHeadlessRuntimeConfig = previousConfig;
       else delete globalThis.SetiHeadlessRuntimeConfig;
+      globalThis.Date = NativeDate;
     };
     const originalRandom = Math.random;
     seededRandom = createSeededRandom(resetConfig.seed);
