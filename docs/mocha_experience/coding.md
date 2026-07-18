@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-19
+- source_issue: SETI-51
+- observation: 共享工作树中即使 `git diff --cached` 在提交前检查时干净，其他并行任务仍可能在检查后、`git commit` 前替换共享 index，导致提交内容与 issue、message 错配；高并发提交应从当前 HEAD 创建私有 `GIT_INDEX_FILE`，只写入本 issue 的明确 blob，复核私有 staged diff 后再 commit，并在完成后只同步共享 index 中自己的路径。
+- evidence: SETI-51 首次提交前已确认目标文件与 staged 内容，但并行任务在提交窗口写入 `docs/standard-action-contract.md`、`randomizer/game/actions/standard-action.js` 及其测试，最终 `19a0e1c` 被错误套用 SETI-51 message；随后从最新 HEAD 构造私有 index，只加入 `headless-env.js` 与 `headless-effect-failure.test.js` 的目标 blob，提交 `de934d2` 内容、message 与独立快照验证一致，同时保留共享工作树其余改动。
+- promote_to: none
+- promotion_status: candidate
+- decision: 这是既有“验证 staged 独立快照”规则未覆盖的提交瞬时竞态，但当前仅一次证据；先记录私有 index 实践，不修改 git-workflow、agent prompt、loop template 或 watcher，观察后续 3 次并行共享 index 提交。
+
+- date: 2026-07-19
 - source_issue: SETI-40
 - observation: coding issue 已有明确验收门槛、`next_action` 且没有 owner 决策或新增权限需求时，阶段性提交与进度评论不能替代持续执行；agent 应直接续跑到门槛通过或出现真实 blocker。
 - evidence: SETI-40 返工期间先后在评论 `c3aedb02-e789-4230-aeaa-85a7f30b9d56`、`b11be42c-6e15-42fa-9c81-c74a96ebe7a4`、`56c6e824-2497-4ebc-a7cc-e4dc8e61ff9a` 被成员追问为何停止；本轮无需新增确认即继续迁移剩余 conditional、切断两条 AI resolver fallback，并完成 uniform-random 100/100 terminal、0 失败、293 decisions/s 与全量 Node 回归。

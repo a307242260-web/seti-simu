@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-19
+- source: SETI-51
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及共享工作树中的 coding agent
+- target_component: 并行共享 index 提交实践
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 记录提交前检查与 `git commit` 之间共享 index 仍可能被并行任务替换；并行高风险窗口使用基于最新 HEAD 的私有 `GIT_INDEX_FILE`，只装入明确 blob 并复核私有 staged diff。
+- applied_change: 仅更新 coding experience 与本决策契约；SETI-51 后续使用私有 index 生成正确提交 `de934d2`，不修改 git-workflow、agent prompt、loop template、watcher、issue-workflow 或项目记忆。
+- expected_effect: 后续并行提交不会把其他任务刚写入共享 index 的文件套用当前 issue message，也不会为修正错配而回滚他人代码。
+- evaluation_window: 后续 3 次存在并行 staging/commit 的共享工作树提交
+- success_signal: 私有 staged 文件清单、commit diff 与 issue 范围一致；不再出现 message 与内容错配或共享 index 被意外清空。
+- rollback_condition: 若平台隔离每个 agent 的 index/worktree，或后续证明私有 index 基于旧 HEAD 会遗漏并行已提交历史，则停止手工方案并改用平台隔离或提交前串行锁。
+- risk: 私有 index 若未以最新 HEAD 初始化，可能生成缺少并行提交父内容的快照；每次必须先确认 HEAD、`read-tree HEAD` 并复核 commit diff。
+- evidence_before: SETI-51 在目标 staged 检查后，提交 `19a0e1c` 实际包含另一个任务的标准行动文档/实现/测试；未回滚该提交，随后以最新 HEAD 私有 index 只加入 SETI-51 两个目标 blob，生成 `de934d2`，完整 HEAD 回归通过。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate；单次竞态不足以升级长期组件。
+- applied_at: 2026-07-19
+- verification: 核对 `git show --stat 19a0e1c`、`git show --stat de934d2`、私有 staged 文件清单与独立 HEAD 快照全量 randomizer Node 回归；`de934d2` 仅含 SETI-51 两个目标文件。
+- observed_outcome: 正确实现已独立提交并推送，其他任务文件与共享工作树改动均保留；错误 message 的既有提交未做破坏性改写。
+- keep_or_revise: 保持 candidate；完成 3 次并行共享 index 提交后决定是否升级 git-workflow 或改为平台级隔离。
+
+- date: 2026-07-19
 - source: SETI-40
 - promoted_to: none
 - promotion_decision: reject
