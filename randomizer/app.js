@@ -8982,6 +8982,7 @@
       pendingState.handScanAction,
       pendingState.passReserveSelection,
       pendingState.movePayment,
+      pendingState.dataPlaceAction,
       pendingState.cardTriggerFreeMove,
       pendingState.actionEffectFlow?.cardMoveEffect,
       pendingState.cardCornerFreeMove,

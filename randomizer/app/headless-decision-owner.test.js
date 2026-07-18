@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { buildDecision } = require("./headless-env");
+const { buildDecision, createHeadlessEnv } = require("./headless-env");
 
 function createApi(ownerState, currentPlayerId = "player-blue") {
   return {
@@ -73,5 +73,29 @@ const ended = buildDecision({
   getTurnState: () => ({ gameEnded: true, currentPlayerId: "player-blue" }),
 }, []);
 assert.equal(ended, null);
+
+const replaySource = createHeadlessEnv();
+const replayConfig = { seed: "decision-owner-replay-parity", activePlayerCount: 4 };
+const preObservation = replaySource.reset(replayConfig);
+const chosenAction = replaySource.legalActions()[0];
+const stepResult = replaySource.step(chosenAction);
+assert.equal(stepResult.ok, true);
+const replay = replaySource.getReplay();
+replaySource.dispose();
+
+const replayTarget = createHeadlessEnv();
+const replayPreObservation = replayTarget.reset(replayConfig);
+assert.deepEqual(
+  replayPreObservation.decision,
+  preObservation.decision,
+  "replay 前 decision owner context 必须一致",
+);
+const replayPostObservation = replayTarget.loadReplay(replay);
+assert.deepEqual(
+  replayPostObservation.decision,
+  stepResult.observation.decision,
+  "replay 后 decision owner context 必须一致",
+);
+replayTarget.dispose();
 
 console.log("headless decision owner tests passed");
