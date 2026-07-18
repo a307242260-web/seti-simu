@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-19
+- source: SETI-45
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及负责跨模块架构总控的 coordination agent
+- target_component: 架构总控拆单前的现有 issue 覆盖审计实践
+- target_file: docs/mocha_experience/coordination.md
+- remote_skill_id: none
+- change: 记录“新建架构总控前先按能力、依赖和状态盘点已有 issue；保留原层级、映射覆盖，只为真实缺口建子项”的候选经验。
+- applied_change: 仅更新 coordination experience 与本决策契约；SETI-90 已在描述中映射 SETI-30、56、62/69、71/87、72/80、14/39/41，不修改现有 issue 的 parent/status，也不修改 watcher、issue-workflow、agent prompt 或项目记忆。
+- expected_effect: 后续架构讨论转实施时减少重复建单、双总控争抢同一热路径和为展示方便破坏既有父子触发链的问题。
+- evaluation_window: 后续 2 个同时覆盖至少 3 条既有 issue 链路的架构总控建单。
+- success_signal: 新总控能明确列出复用、前置、缺口和非目标；没有重复实现 issue，既有 owner/assignee 与完成触发链保持有效，热路径所有权可查询。
+- rollback_condition: 若平台提供原生跨 issue 依赖图与范围去重检查，或两次后续实践证明手工审计遗漏率仍高，则合并到平台能力或修订为机械化清单。
+- risk: 只做映射而不 reparent 可能让总控不能自动收到外部 issue 完成事件；必须结合既有跨父级 waiting_on candidate，为关键依赖补明确续跑检查。
+- evidence_before: SETI-45 owner 评论 `13e932c0-a1fc-4fb6-921d-de892147469a`；SETI 全项目 86 个 issue 审计；SETI-90 描述中的现有工作映射与缺口阶段。
+- owner_or_agent_decision: 领航按 owner 明确工作方式反馈和 harness-evolve closeout 自决记录 candidate；单次证据不足以升级长期组件。
+- applied_at: 2026-07-19
+- verification: 核对 SETI-30、56、62/69、71/87、72/80、14/39/41 的 title、status、parent、description 与 metadata；确认创建后的 SETI-90 为 SETI-45 子 issue，且未修改任何既有 issue 的 parent/status。
+- observed_outcome: SETI-90 已建立统一机器玩家总控，只新增公共契约与缺口范围；RL、标准组件、浏览器宿主和状态迁移工作继续沿原 issue 链推进。
+- keep_or_revise: 保持 candidate；完成 2 次后续多链路总控审计后决定是否提升 coordination loop template。
+
+- date: 2026-07-19
 - source: SETI-51, SETI-52
 - promoted_to: none
 - promotion_decision: candidate

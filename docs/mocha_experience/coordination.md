@@ -12,6 +12,16 @@
 - promotion_status:
 - decision:
 
+## 2026-07-19：架构总控建单前先做现有 issue 覆盖审计
+
+- date: 2026-07-19
+- source_issue: SETI-45
+- observation: 从架构讨论进入实施总控前，应先按目标能力、接口依赖和当前状态盘点现有 issue；已有工作保留原父子结构并在新总控中做覆盖映射，只对真实缺口新建子项，避免重开实现、强行 reparent 或让两个总控同时拥有同一热路径。
+- evidence: owner 在 SETI-45 评论 `13e932c0-a1fc-4fb6-921d-de892147469a` 明确要求建总控时检查现有 issue，因为部分工作已经推进；实际审计确认 SETI-30、56、62/69、71/87、72/80、14/39/41 已分别覆盖启发式分层、标准组件、训练链与浏览器推理，SETI-90 因此只补公共机器玩家契约与缺口验收，并保留原有层级。
+- promote_to: none
+- promotion_status: candidate
+- decision: 当前为一次 AI 架构总控拆单证据，先记录 coordination candidate，不修改 issue-workflow、watcher 或 agent prompt；后续观察 2 个跨多条在途链路的新总控建单，若仍能稳定减少重复 issue 和所有权冲突，再评估是否提升为 coordination loop template。
+
 ## 2026-07-18：跨父级 waiting_on 不会自动建立完成触发
 
 - date: 2026-07-18
