@@ -576,3 +576,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: SETI-60 提交快照 `node --check randomizer/app.js` 与 129/129 randomizer Node 测试通过；系统 Chrome `--headless=new --dump-dom http://127.0.0.1:8760/smoke.html` 返回结构化 `ok=true`。
 - observed_outcome: 本次在不安装新依赖、不打开用户 profile、不修改共享工作树验收内容的前提下补齐真实 Chrome 装配/API smoke；in-app Browser 原通道仍不可用。
 - keep_or_revise: 保持 candidate；完成 3 次同类兜底后评估是否值得进入 coding loop 模板，任何交互/视觉任务仍坚持标准 browser 控制。
+
+- date: 2026-07-19
+- source: SETI-61（续 SETI-51）
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及共享工作树中的 coding agent
+- target_component: 并行共享 index 提交实践
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 补充“独立 staged 快照通过后仍需在 commit 后核对实际文件清单”的第二次竞态证据；高并发提交优先私有 index/平台提交锁。
+- applied_change: 仅追加 coding experience 与本决策契约；生产实现以追加提交 `17df650` 修正，不修改 git-workflow、agent prompt、loop template、watcher、issue-workflow 或项目记忆。
+- expected_effect: 提交内容若被并行 index 写入改变，会在 push/关单前由实际 commit 文件清单检查发现并追加修正。
+- evaluation_window: SETI-51、SETI-61 已累计 2 次；再观察 1 次并行 staging/commit 的共享工作树提交
+- success_signal: commit 文件清单、diff、message 与 issue 范围一致；不再出现 staged 已验证但实际 commit 缺 hunk 或卷入他人文件。
+- rollback_condition: 若平台提供隔离 worktree/index 或提交锁，则删除手工竞态防护并改用平台能力；若私有 index 基于旧 HEAD 造成遗漏，则必须在最新 HEAD 重建。
+- risk: 提交后检查只能发现、不能预防竞态；追加修正会形成多提交历史，长期仍应优先平台隔离。
+- evidence_before: `32813e3` 未包含 staged 的 `headless-env.js`，而 `17df650` 补齐 top-level/conditional 分流与兼容排序；两次提交组合后的最新 HEAD 独立快照全量 0 失败。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决保持 candidate；尚未达到三次升级窗口。
+- applied_at: 2026-07-19
+- verification: `git show --name-only 32813e3`、`git show --stat 17df650`；最新 HEAD + 本 issue staged 快照执行 `node --check randomizer/app.js` 与全部 tracked `randomizer/**/*.test.js`，0 失败。
+- observed_outcome: 缺失 hunk在 push 前被发现并补交，其他 agent 的工作树与提交均保留。
+- keep_or_revise: 保持 candidate；下一次同类竞态触发升级评估。

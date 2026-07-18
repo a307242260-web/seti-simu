@@ -133,3 +133,11 @@
 - promote_to: none
 - promotion_status: candidate
 - decision: 当前只有一次成功兜底证据，且 headless Chrome 不覆盖视觉交互；记录为 coding candidate，不修改 browser skill、agent prompt、loop template、issue-workflow 或 watcher，后续 3 次同类通道故障观察兜底稳定性。
+
+- date: 2026-07-19
+- source_issue: SETI-61（续 SETI-51）
+- observation: SETI-51 记录的共享 index 提交瞬时竞态再次复现：即使独立 staged 快照全量通过，commit 前的并行提交仍可能让已 staged 的目标 hunk 消失；提交后必须立即以 `git show --name-only/--stat` 对照预期文件清单，且高并发窗口优先使用私有 index 或平台提交锁。
+- evidence: SETI-61 的 staged 独立快照为 0 失败，但并行提交发生后首个提交 `32813e3` 未包含目标 `randomizer/app/headless-env.js`；提交后立即核对发现缺口，以 `17df650` 追加该 hunk，最新 HEAD + 本 issue staged 快照再次全量 0 失败，未回滚其他 agent 改动。
+- promote_to: none
+- promotion_status: candidate
+- decision: 与 SETI-51 合计两次独立证据，仍未达到三次升级窗口；保留 candidate，下一次复现时评估升级 git-workflow、agent prompt 或平台级隔离。
