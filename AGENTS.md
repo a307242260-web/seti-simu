@@ -39,7 +39,9 @@
 - `randomizer/app/action-log-export.js`：终局行动日志 Markdown 导出格式与文件名生成。
 - `randomizer/app/public-api.js`：调试、AI 验证和外部脚本使用的 `window.SetiRandomizer` API 组装。
 - `randomizer/app/ai/control-runtime.js`：AI 控制状态、难度/权重配置、快照恢复、pending owner 与自动调度的单一所有者。
-- `randomizer/app/ai-controller.js`：AI resolver、批跑/AB 测试与决策控制器；控制 API 转发给 `app/ai/control-runtime.js`。
+- `randomizer/app/ai-controller.js`：AI resolver 与决策控制器；控制、日志/报告和实验 API 分别转发给 `app/ai/**` 领域 runtime。
+- `randomizer/app/ai/battle-log.js`、`battle-report.js`：AI 对战日志、bug、结果/pending 汇总及报告 schema。
+- `randomizer/app/ai/tuning-history.js`、`experiment-runner.js`：调参历史持久化/推荐与单局、batch、A/B、tuning cycle runner。
 - `randomizer/training/self-play.js`：Node self-play 训练、action-kind baseline、逐步 JSONL 与 episode checkpoint。
 - `tools/run_self_play_training.js`：训练、恢复和评测命令行入口。
 - `randomizer/app.js`：composition root、顶层状态、跨 flow continuation、统一刷新与控制器接线；不再承载已迁移域的成片具体实现。

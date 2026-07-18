@@ -23,7 +23,7 @@
 14. `randomizer/app/action-log-runtime.js` 封装行动日志 draft/entry 组装与日志导入等纯运行时逻辑。
 15. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
 16. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
-17. `randomizer/app/ai/control-runtime.js` 封装 AI 控制状态、难度/权重、快照/恢复、pending owner 与调度；`ai-controller.js` 注入该 runtime 并保留 resolver、批跑/AB 与公开 API 转发；`final-score-ai-runtime.js` 单独承接终局板块估值与竞速模型适配。
+17. `randomizer/app/ai/control-runtime.js` 封装 AI 控制状态、难度/权重、快照/恢复、pending owner 与调度；`battle-log.js`、`battle-report.js`、`tuning-history.js`、`experiment-runner.js` 分别承接日志、报告、调参历史与实验 runner；`ai-controller.js` 注入这些 runtime 并保留 resolver 与稳定 API 转发；`final-score-ai-runtime.js` 单独承接终局板块估值与竞速模型适配。
 18. `randomizer/app/effects/**` 按移动扫描、奖励选择、外星人和顶层分发四个域注册具体 effect executors。
 19. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
 20. `randomizer/app/aliens/species-runtime.js` 封装八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 和具体面板渲染，通过显式 context 接收跨域依赖。
@@ -53,7 +53,11 @@
 - `randomizer/app/game-recovery.js`：只处理恢复快照、本地存档包和恢复流程适配；状态恢复和 UI 刷新通过显式回调注入。
 - `randomizer/app/public-api.js`：只组装 `window.SetiRandomizer` 暴露面。新增调试 API 时优先改这里，保持 API 与运行态编排分离。
 - `randomizer/app/ai/control-runtime.js`：AI 控制层。唯一持有 `aiAutoBattleState`、scheduler 标志与策略权重；通过显式 `state` getter 和回调读取 pending、执行自动步骤，不复制 app pending 或 resolver 状态。
-- `randomizer/app/ai-controller.js`：AI 决策层。注入 `control-runtime`，保留具体 resolver、候选估值、批跑/AB 与控制 API 转发，不再拥有控制状态、配置、快照或 scheduler 函数体。
+- `randomizer/app/ai/battle-log.js`：AI 对战日志 compact、entry、bug 计数与玩家/比分快照。
+- `randomizer/app/ai/battle-report.js`：player result、pending state、report/progress/analysis schema；不执行对战步骤。
+- `randomizer/app/ai/tuning-history.js`：调参历史的 localStorage 持久化、A/B 摘要、推荐与应用入口。
+- `randomizer/app/ai/experiment-runner.js`：单局自动对战、batch、同 seed A/B、tuning cycle 与样本诊断压缩。
+- `randomizer/app/ai-controller.js`：AI 决策层。注入 `app/ai/**` runtime，保留具体 resolver、候选估值和稳定 API 转发，不再拥有控制状态、日志/报告、调参历史或实验 runner 函数体。
 - `randomizer/app/effects/movement-scan.js`：移动、行星落点、轨道/登陆、扇区扫描和相关选择执行器。
 - `randomizer/app/effects/rewards.js`：资源、数据、抽牌、条件奖励、手牌选择和科技/扫描奖励执行器。
 - `randomizer/app/effects/aliens.js`：异常点、虫和奥陌陌的效果执行器及 continuation 适配。
@@ -70,7 +74,7 @@
 
 - AI 控制状态与调度已迁入 `randomizer/app/ai/control-runtime.js`；具体 resolver 仍由 `createAiController(context)` 通过显式回调调用 app 的 UI 流程。后续若要继续解耦，应优先把“读取局面”“列出候选”“执行选择”下沉为更窄的决策总线，而不是在 AI 模块里直接新增 DOM 选择逻辑。
 - `randomizer/app/aliens/species-runtime.js` 当前 4,367 行，边界是八物种共用机会队列、dialog、followup 与面板运行域；后续应按物种或 rewards/dialogs/render 子域继续拆，并保持共用队列单一所有者。
-- `randomizer/app/ai-controller.js` 在 Stage 1 后约 22,434 行；控制 runtime 已迁至 659 行的 `app/ai/control-runtime.js`，终局板块估值已迁至 `final-score-ai-runtime.js`，后续继续按 observation/candidates/decision/batch analytics 拆分。
+- `randomizer/app/ai-controller.js` 在 Stage 2 后约 21,089 行；控制、日志、报告、调参历史与实验 runner 已迁至 `app/ai/**`，后续继续按 observation/candidates/decision 拆分。
 - 行动日志状态与 DOM 展示已经由 `action-log-runtime` 接管，恢复快照与持久化包由 `game-recovery` 接管；`app.js` 仍保留跨全部 pending 状态的恢复清理与全 UI 刷新调度。
 - 卡牌、收入、扫描和任务触发的 `pending*` 已按 runtime/flow 收口；新增相关选择应扩展所属 runtime，并通过 `app.js` 注入跨域 continuation，避免重新把具体确认/取消分支堆回总装配层。
 
@@ -89,6 +93,13 @@
 - 策略权重与 seed：迁出权重默认值、`get/normalize/configure/resetAiStrategyWeights`、难度默认权重选择、`hash/create/runWithAiRandomSeed` 与 `getAiBatchSeed`。
 - 快照与调度：迁出 `create/restoreAiControlSnapshot`、恢复 fallback/disable、pending owner/automation player 判定、自动运行开关、`schedule/runScheduledAiAutoStep`。
 - 保持边界：具体 pending resolver、候选估值、自动对战循环、批跑/A/B/调参仍在 `ai-controller.js`；runtime 只通过显式 state/getter/callback 注入访问它们。
+
+## AI Stage 2 迁移记录
+
+- 行数：`app/ai-controller.js` 从 22,434 行降为 21,089 行；新增 `battle-log.js` 223 行、`battle-report.js` 175 行、`tuning-history.js` 221 行、`experiment-runner.js` 932 行，均低于 3,000 行边界。
+- 日志/报告：迁出日志 compact/record/bug、player result、pending 汇总与 report/progress/analysis schema。
+- 调参/runner：迁出 history persistence、recommendation/apply，以及 single battle、batch、同 seed A/B 和 tuning cycle。
+- 保持边界：controller API、默认值、seed 派生、权重恢复、bug/block 判定和报告 schema 保持不变；controller 只以显式 context 装配领域 runtime。
 
 ## 验证要求
 
