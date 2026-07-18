@@ -1956,6 +1956,63 @@
     getCurrentActionEffectIndex: () => pendingState.actionEffectFlow?.currentIndex,
     runQuickTrade,
     confirmDataPlacement,
+    standardActionAdapter: actions.createStandardAdapter({
+      stage2Actions: {
+        scan: {
+          label: "扫描",
+          getOptions(context) {
+            const player = players.getCurrentPlayer(context.playerState);
+            const check = canStartMainAction()
+              ? scanEffects.canExecuteScan(player, { standardAction: true })
+              : { ok: false, message: getMainActionStartBlockReason() };
+            return check.ok ? { ok: true, choices: [{ target: { kind: "standard-scan" }, label: "扫描" }] } : check;
+          },
+          canExecute(context) { return this.getOptions(context); },
+          execute() { return beginScanAction(); },
+        },
+        analyze: {
+          label: "分析",
+          getOptions(context) {
+            const player = players.getCurrentPlayer(context.playerState);
+            const check = canStartMainAction() ? canAnalyzeDataForPlayer(player) : { ok: false, message: getMainActionStartBlockReason() };
+            return check.ok ? { ok: true, choices: [{ target: { kind: "computer", requiredSlot: data.ANALYZE_REQUIRED_COMPUTER_SLOT }, payload: getAnalyzeActionOptionsForPlayer(player), label: "分析" }] } : check;
+          },
+          canExecute(context) { return this.getOptions(context); },
+          execute() { return analyzeDataForCurrentPlayer(); },
+        },
+        playCard: {
+          label: "打牌",
+          getOptions(context) {
+            if (!canStartMainAction()) return { ok: false, message: getMainActionStartBlockReason() };
+            const player = players.getCurrentPlayer(context.playerState);
+            const choices = (player?.hand || []).map((card, handIndex) => ({ card, handIndex, cost: getCardPlayCost(card) }))
+              .filter(({ cost }) => players.canAfford(player, cost))
+              .map(({ card, handIndex, cost }) => ({ target: { cardInstanceId: card.id }, payload: { cost, handIndex }, label: cards.getCardLabel(card) }));
+            return choices.length ? { ok: true, choices } : { ok: false, message: "没有可支付的手牌" };
+          },
+          canExecute(context, option) {
+            const choices = this.getOptions(context);
+            return choices.ok && choices.choices.some((choice) => choice.target.cardInstanceId === option.target?.cardInstanceId)
+              ? { ok: true }
+              : { ok: false, message: "手牌身份或费用已失效" };
+          },
+          execute(context, option) {
+            const player = players.getCurrentPlayer(context.playerState);
+            const handIndex = (player?.hand || []).findIndex((card) => card.id === option.target.cardInstanceId);
+            const start = beginPlayCardSelection();
+            if (!start?.ok) return start;
+            const selected = handlePlayCardSelect(handIndex);
+            return selected?.ok === false ? selected : confirmPlayCardSelection();
+          },
+        },
+        pass: {
+          label: "PASS",
+          getOptions() { return canStartMainAction() ? { ok: true, choices: [{ target: { kind: "pass" }, label: "PASS" }] } : { ok: false, message: getMainActionStartBlockReason() }; },
+          canExecute() { return this.getOptions(); },
+          execute() { return passForCurrentPlayer(); },
+        },
+      },
+    }),
   });
 
   function getActiveOrderedPlayerIds() {
@@ -10274,10 +10331,10 @@
         landForCurrentPlayer();
         break;
       case "action-scan-button":
-        beginScanAction();
+        actionRuntimeController.dispatchAction("scan");
         break;
       case "action-analyze-button":
-        analyzeDataForCurrentPlayer();
+        actionRuntimeController.dispatchAction("analyze");
         break;
       case "action-play-card-button":
         beginPlayCardSelection();
@@ -10623,6 +10680,7 @@
     cancelLandTargetPicker,
     toggleQuickPanel,
     passForCurrentPlayer,
+    dispatchRuntimeAction: (request) => actionRuntimeController.dispatchAction(request),
     endCurrentTurn,
     undoPendingAction,
     runQuickTrade,
@@ -10758,7 +10816,12 @@
     cancelCardSelection,
     confirmPublicScanSelection,
     cancelDiscardSelection,
-    confirmPlayCardSelection,
+    confirmPlayCardSelection: () => {
+      const pending = getPendingPlayCardSelection();
+      return pending?.card?.id
+        ? actionRuntimeController.dispatchAction({ kind: "play_card", payload: { cardInstanceId: pending.card.id } })
+        : confirmPlayCardSelection();
+    },
     cancelPlayCardSelection,
     confirmHandCardPlayAction,
     confirmCardCornerQuickAction,

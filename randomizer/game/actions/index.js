@@ -46,6 +46,7 @@
   function createStandardRegistry(options = {}) {
     return standardAction.createReferenceRegistry(ACTIONS, {
       getAuthority: options.getAuthority || getDefaultAuthority,
+      stage2Actions: options.stage2Actions || null,
     });
   }
 
@@ -70,6 +71,14 @@
   function execute(actionId, context, options) {
     const action = getAction(actionId);
     if (!action) return { ok: false, actionId, message: `未知行动: ${actionId}` };
+    if (
+      actionId === "researchTech"
+      && options?.selectionOnly
+      && options.tileId
+      && options.blueSlot == null
+    ) {
+      return action.execute(context, options);
+    }
     const family = actionId === "researchTech" ? "research_tech" : actionId;
     const selector = actionId === "land"
       ? {

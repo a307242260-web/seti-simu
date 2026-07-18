@@ -138,7 +138,11 @@
       if (action.stateVersion !== authority.stateVersion || action.decisionVersion !== authority.decisionVersion) {
         return fail("STANDARD_ACTION_STALE", "action 已过期", { authority });
       }
-      const current = enumerate(context, { actorId: authority.actorId, family: action.family })
+      const current = enumerate(context, {
+        actorId: authority.actorId,
+        family: action.family,
+        ...(action.payload == null ? {} : { payload: action.payload }),
+      })
         .find((candidate) => candidate.actionId === action.actionId);
       if (!current || !sameAction(current, action)) {
         return fail("STANDARD_ACTION_NOT_LEGAL", "action 不在当前合法候选中");
@@ -297,9 +301,52 @@
     ]);
   }
 
+  function createOptionDefinition(family, action) {
+    if (!action?.getOptions || !action?.canExecute || !action?.execute) {
+      throw new TypeError(`${family} Standard Action 缺少 getOptions/canExecute/execute`);
+    }
+    return {
+      family,
+      label: action.label || family,
+      enumerate(context) {
+        const result = action.getOptions(context);
+        if (!result?.ok) return [];
+        return (result.choices || []).map((choice) => ({
+          target: choice.target || null,
+          payload: choice.payload || {},
+          summary: choice.label || action.label || family,
+        }));
+      },
+      validate(context, descriptor) {
+        return action.canExecute(context, {
+          target: descriptor.target || null,
+          payload: descriptor.payload || {},
+        });
+      },
+      execute(context, descriptor) {
+        return action.execute(context, {
+          target: descriptor.target || null,
+          payload: descriptor.payload || {},
+        });
+      },
+    };
+  }
+
+  function createStage2Definitions(actions = {}) {
+    return Object.freeze([
+      createOptionDefinition("scan", actions.scan),
+      createOptionDefinition("analyze", actions.analyze),
+      createOptionDefinition("play_card", actions.playCard || actions.play_card),
+      createOptionDefinition("pass", actions.pass),
+    ]);
+  }
+
   function createReferenceRegistry(referenceActions, options = {}) {
     const registry = createRegistry(options);
     for (const definition of createReferenceDefinitions(referenceActions)) registry.register(definition);
+    if (options.stage2Actions) {
+      for (const definition of createStage2Definitions(options.stage2Actions)) registry.register(definition);
+    }
     return registry;
   }
 
@@ -340,6 +387,8 @@
     createLandDefinition,
     createResearchTechDefinition,
     createReferenceDefinitions,
+    createOptionDefinition,
+    createStage2Definitions,
     createReferenceRegistry,
     createRegistryAdapter,
   });

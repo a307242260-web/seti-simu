@@ -49,6 +49,7 @@
       cancelLandTargetPicker,
       toggleQuickPanel,
       passForCurrentPlayer,
+      dispatchRuntimeAction,
       endCurrentTurn,
       undoPendingAction,
       runQuickTrade,
@@ -256,7 +257,7 @@
     els.actionQuickButton.addEventListener("click", toggleQuickPanel);
     els.actionPassButton?.addEventListener("click", () => {
       if (els.actionPassButton.disabled) return;
-      passForCurrentPlayer();
+      dispatchRuntimeAction?.("pass") || passForCurrentPlayer();
     });
     els.actionConfirmButton?.addEventListener("click", () => {
       if (els.actionConfirmButton.disabled) return;

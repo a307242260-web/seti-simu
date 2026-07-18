@@ -113,6 +113,7 @@
       getCurrentActionEffectIndex,
       runQuickTrade,
       confirmDataPlacement,
+      standardActionAdapter,
     } = context;
 
     function createIndustrySelectionCard(fileName) {
@@ -552,6 +553,20 @@
         : { ...(request || {}) };
       const kind = action.kind || action.id || null;
       const payload = action.payload || fallbackOptions || {};
+      const standardFamily = {
+        scan: "scan",
+        analyze: "analyze",
+        playCard: "play_card",
+        play_card: "play_card",
+        pass: "pass",
+      }[kind];
+      if (standardFamily && standardActionAdapter) {
+        return standardActionAdapter.executeLegacy(
+          createActionContext(),
+          standardFamily,
+          payload.cardInstanceId ? { cardInstanceId: payload.cardInstanceId } : {},
+        );
+      }
       switch (kind) {
         case "launch":
           return runAction("launch", payload);

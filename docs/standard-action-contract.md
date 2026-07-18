@@ -46,11 +46,11 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 | `launch` | main | `game/actions/launch` | reference | 参考合约已证明 enumerate/validate/execute 共用 `canExecute/execute` |
 | `orbit` | main | Standard Action registry；app/headless adapter | reference | rocket/planet target 由 registry 枚举；唯一规则执行器为 `game/actions/orbit` |
 | `land` | main | Standard Action registry；app/headless adapter | reference | rocket/planet/satellite target 由 registry 枚举；唯一规则执行器为 `game/actions/land` |
-| `scan` | main | `app/scan-flow` + `game/actions/scan-effects` | app-runtime | 拆出目标枚举、支付、sector/card scan 和延迟结算 |
-| `analyze` | main | abilities/effect/app runtime | app-runtime | 统一数据来源、资源校验和分析奖励链 |
+| `scan` | main | Standard Action registry；scan-flow adapter | reference | registry 统一入口与支付合法性；sector/card 多选继续外显 pending |
+| `analyze` | main | Standard Action registry；ability/effect adapter | reference | 数据来源固定为 computer/requiredSlot，费用写入 payload |
 | `research_tech` | main | Standard Action registry；app/headless adapter | reference | tile/blue slot 是稳定 target；唯一规则执行器为 `game/actions/research-tech` |
-| `play_card` | main | `app/card-runtime` | app-runtime | 统一手牌目标、费用、卡牌 DSL 与 trigger continuation |
-| `pass` | main | card/turn-end runtime | app-runtime | 统一预留牌选择、必做效果与 passed 状态事务 |
+| `play_card` | main | Standard Action registry；hand-flow adapter | reference | cardInstanceId 稳定枚举，费用绑定 payload；DSL/trigger 为确定性 continuation |
+| `pass` | main | Standard Action registry；turn-end adapter | reference | PASS 主动作统一；预留牌/必做效果仍由对应 owner 外显，不由 policy 代选 |
 | `move` | quick | abilities + interaction/AI runtime | app-runtime | 统一 rocket、方向、移动力与补充支付 |
 | `quick_trade` | quick | `game/actions/quick-trades` + app | legacy-shared | registry 枚举 trade id，复用唯一交易执行器 |
 | `industry` | quick | `app/industry-runtime` + `game/industry` | app-runtime | 统一 1x 使用标志、picker、不可逆 history |
@@ -71,6 +71,8 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 四个参考 action 的 composition 由 `game/actions/index.js#createStandardRegistry` 提供；浏览器与 headless 只应持有 `createStandardAdapter()` 返回的 `enumerate/execute/executeLegacy`。`executeLegacy` 在多目标时返回 `STANDARD_ACTION_AMBIGUOUS`，不得沿用旧入口的默认首项语义。orbit/land 的目标分别固定为 `rocketId + planetId` 与 `rocketId + planetId + type/satelliteId`；research 的目标固定为 `tileId + blueSlot`。完整 conditional registry 和 effect drain 仍属于阶段 4，本阶段不把静态 conditional family 标成行为完成。
 
 阶段 1 行为证据：`randomizer/game/actions/standard-action-reference.test.js` 对四个 family 做同 checkpoint 全候选 fork，覆盖多 rocket、主星/卫星、科技 tile/blue slot；同时断言 stale、越权、篡改 target 时玩家状态、盘面、RNG cursor、history 与 replay 均不变化，并以两个独立 adapter 对同一 actionId 做结果/状态 parity。
+
+阶段 2 行为证据：`randomizer/game/actions/standard-action-stage2.test.js` 对 scan/analyze/play_card/pass 做完整 family 枚举与同 checkpoint 全 legal fork，覆盖两张非等价手牌、稳定费用 payload、stale 无副作用、双 adapter parity 与 legacy 多选 fail-closed。浏览器主动作与 AI executor 都经 `action-runtime.dispatchAction` 进入同一 adapter；后续 pending 保持独立 owner/replay 边界。
 
 ## Proof obligations
 
