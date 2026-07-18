@@ -1,0 +1,212 @@
+# SETI Effect Session Runtime 契约与迁移总图
+
+## 目标、边界与当前完成度
+
+Effect Session 是 Standard Action 与浏览器/训练宿主之间唯一共享的流程执行协议。SETI-56 负责 Action family、合法项和业务 handler；本契约从 Action 已被接受并生成 Effect Group 开始，负责队列顺序、外部选择、快速行动、working state、提交/回滚、事件和 replay journal。
+
+阶段 0/1 reference core 位于 `randomizer/game/effects/session-runtime.js`。它已冻结数据与状态机并用纯 Node 行为测试证明核心调度语义，但尚未声称浏览器旧 pending 热路径已迁移。未迁移路径只能由后续显式 adapter 接入或 fail-closed，不能把 reference core 的存在当作领域迁移完成证据。
+
+核心的禁止依赖：DOM、overlay/button、localStorage、render callback、AI valuation/planner、具体 Policy、领域 continuation。宿主可以注册纯 executor、提交 Action/Decision、读取可见投影和持久化稳定结果，不能在 runtime 外偷偷推进规则。
+
+## 数据契约
+
+所有公开 envelope 使用 `schemaVersion=seti-effect-session-v1`。
+
+### Effect Group
+
+```js
+{
+  groupId,                 // session 内稳定 id
+  kind,                    // action | quick | spawned | internal
+  ownerId,
+  action,                  // 原 Standard Action 的可序列化副本
+  effects: [Effect]
+}
+```
+
+Effect Group 内的原始顺序就是规则顺序。宿主或 executor 不得按 UI 布局、估值或 effect type 重排。
+
+### Effect / DecisionEffect
+
+```js
+{
+  effectId,
+  groupId,
+  groupKind,
+  type,                    // executor registry key
+  kind,                    // effect | decision
+  ownerId,
+  decisionKind,
+  allowQuickActions,
+  payload,
+  source                   // parentEffectId / priority 等 provenance
+}
+```
+
+Effect 与 DecisionEffect 都是纯数据，不携带闭包、DOM、Policy 或宿主 callback。`effectId` 是 decision/replay/stale validation 的身份；显示 label 不参与身份。
+
+普通 executor 接受 workingState 的克隆，必须返回：
+
+```js
+{
+  ok: true,
+  nextState,
+  events: [],
+  spawnedEffects: [],
+  rng: [],
+  history: [],
+  log: null,
+  irreversible: null
+}
+```
+
+缺失 `nextState`、未知 executor、executor 抛错或未知 spawned priority 都结构化失败。executor 无法直接持有并修改 session 内部 workingState；runtime 只采纳返回的 `nextState` 副本。
+
+Decision executor 额外实现：
+
+- `getLegalChoices(workingState, effect)`：只读枚举当前合法项。
+- `resolveDecision(workingState, effect, choice)`：仅执行 runtime 已重新确认仍合法的提交项，并返回普通 Effect result。
+
+Decision submission 必须同时匹配 `decisionId` 与 `decisionVersion`。快速行动或其他 workingState 变化会推进 revision，使旧提交明确返回 `EFFECT_DECISION_STALE`。
+
+### Effect Session
+
+```js
+{
+  sessionId,
+  phase,
+  baseVersion,
+  baseState,
+  workingState,
+  committedState,
+  queue,
+  revision,
+  journal: {
+    actions, decisions, events, rng, history, logs
+  },
+  irreversibleBarrier,
+  failure
+}
+```
+
+`baseState`、`workingState`、`committedState` 互不共享可变引用。session 内渲染和 Policy observation 都由 `observe()` 对同一 workingState 做 viewer-specific projection；正式权威状态只在 `completed` 后由宿主原子替换。
+
+## 状态机
+
+| phase | 进入条件 | 允许操作 | 退出条件 |
+|---|---|---|---|
+| `idle` | 宿主无活跃 session；不是 session 对象内部 phase | 枚举/提交 Standard Action | `dispatchAction` 创建 session |
+| `session_open` | 克隆 committedState，捕获 baseVersion | Action 生成 Effect Group | group 合法后进入 `action_accepted` |
+| `action_accepted` | 初始队列已建立 | `advance/drain`；允许的边界可 quick interrupt | 执行首 Effect、等待输入或提交 |
+| `effect_running` | runtime 正同步执行一个确定性 Effect | 宿主不可重入 | 结果原子采纳后进入 `draining` |
+| `awaiting_input` | 队首是 DecisionEffect | `inspect/observe/resolveDecision`；若声明允许可 quick interrupt | 合法 decision、abort 或 interrupt |
+| `interrupting` | Quick Action group 插在当前 Effect 前 | 执行 quick group；禁止嵌套 interrupt | 内部 resume marker 恢复原 Effect |
+| `draining` | 队列仍有确定性 Effect/trigger | `advance/drain`；显式允许的边界可 quick interrupt | decision、queue empty 或失败 |
+| `committing` | queue empty 且无 awaiting decision/trigger | 版本校验、不变量校验、journal 固化 | `completed` 或失败分流 |
+| `completed` | current version 与 baseVersion 一致且不变量通过 | 读取稳定 committedState/result | 终态 |
+| `aborted` | 屏障前失败/宿主中止 | 读取 failure 和恢复后的 baseState | 终态 |
+| `irreversible_locked` | 已越过隐藏信息/外部副作用屏障后失败 | 读取 failure、barrier 和 journal，进入恢复流程 | 终态；不得伪装回滚 |
+
+`advance()` 每次最多执行一个 Effect 或内部 resume 边界；`drain()` 只循环确定性步骤，到 `awaiting_input` 或终态停止，并有强制步数上限。DecisionEffect 绝不由 drain 自动选第一项。
+
+## 队列、插入和快速行动排序
+
+一个 Effect 成功后先从队首移除，再把它返回的 spawnedEffects 插在原队列之前。稳定优先级为：
+
+1. `direct`：当前 Effect 的规则内直接子效果。
+2. `trigger`：由当前结果触发的被动/任务等效果。
+3. `deferred`：声明为当前 Effect 之后、原队列之前的延迟结算。
+4. 原 Effect Group 的后续节点。
+
+同一优先级保持 executor 返回顺序；多级嵌套按深度优先执行，因此子节点产生的新 direct child 先于其同级后续节点。未知 priority 直接 abort，不猜测顺序。
+
+Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_running`。宿主必须显式确认普通边界允许中断；DecisionEffect 只有 `allowQuickActions=true` 才允许。runtime 把 quick group 和内部 resume marker 插到当前 Effect 之前；quick group 与其 spawned children 清空后，恢复原队列。当前实现 fail-closed 拒绝嵌套 quick interrupt。
+
+若原节点是 DecisionEffect，恢复时基于最新 workingState 再跑 `getLegalChoices` 并推进 revision。interrupt 前的 `decisionVersion` 立即失效；宿主必须展示/消费新 snapshot。
+
+## 事务、journal 与不可撤销语义
+
+- beginSession 捕获 committedState 的深拷贝与 `baseVersion`。
+- 每个 executor 只看到 workingState 克隆，成功结果作为一次原子 revision 采纳。
+- queue 非空、队首 DecisionEffect、未消化 spawned trigger 时都不会进入 commit。
+- commit 前重新读取权威 committedState 版本并运行全局不变量；冲突或不变量失败按失败语义处理。
+- 屏障前任何失败恢复 `workingState=baseState`，清空 queue，终态为 `aborted`。
+- executor 对抽牌、翻牌、外星人揭示或已发出的外部副作用返回 `irreversible`。屏障后失败保留 workingState/journal 并进入 `irreversible_locked`，交由宿主执行恢复协议，不能丢弃状态后声称撤销成功。
+- RNG/result 必须由实际随机 executor 写入 `journal.rng`；Policy decision 写入 `journal.decisions`；确定性事件写入 `journal.events`。replay 层据此区分外部 timestep 与环境 drain。
+
+## 浏览器与训练共用宿主 API
+
+| API | 宿主职责 | runtime 保证 |
+|---|---|---|
+| `registerExecutor(type, executor)` | 在装配时注册纯规则 executor | 重复 type 和无效接口 fail-fast |
+| `dispatchAction(committedState, action, createEffectGroup)` | 提交已验证 Standard Action 与 group builder | 创建隔离 session，不修改输入 state |
+| `inspect(session)` | UI/worker 查询 phase、queue、decision、failure | 不暴露可变内部引用 |
+| `advance(session)` | 调试、动画或逐 Effect replay 推进一步 | 单 Effect 原子执行，不跨策略边界 |
+| `drain(session)` | 浏览器/训练消化确定性流程 | 到 decision/terminal 停止，带上界 |
+| `resolveDecision(session, submission)` | 玩家或 Policy 提交同一个标准 Decision | 重新校验 id/version/legal choice |
+| `dispatchQuickAction(session, action, builder, options)` | 在规则允许边界提交 Quick Action | 插入、恢复、decision revalidation |
+| `observe(session, viewer)` | 浏览器渲染或训练 observation | 两端基于同一 workingState 投影 |
+| `abort(session, reason)` | 宿主取消或恢复流程 | 屏障前回滚；屏障后拒绝伪回滚 |
+
+浏览器 adapter 的目标形态是 `click -> Standard Action/Decision -> runtime`，render 只消费 `observe()`。训练 adapter 的目标形态是 `step(action) -> dispatch/resolve -> drain -> observation/reward/replay`。两者不得各自拥有 pending resolver。
+
+## 旧流程覆盖矩阵
+
+下表以 `randomizer/app/runtime.js#createPendingState` 的 52 项字段为权威 inventory。`adapter` 表示后续只能通过有时限兼容层映射成 Effect/DecisionEffect；`session-owned` 表示迁移后由 session/journal/phase 直接取代；`host-only` 表示纯显示/序号状态可留在宿主，但不得推进规则。
+
+| 领域 | 当前字段 | 标准阶段/目标 | 首批迁移 |
+|---|---|---|---|
+| 通用选择 | `discardAction`, `cardSelectionAction`, `passReserveSelection`, `passReserveSelectionDismissed` | DecisionEffect；dismiss 是 choice 而非旁路 flag | 卡牌/支付阶段 |
+| 扫描 | `scanTargetAction`, `probeSectorScanAction`, `probeLocationRewardAction`, `publicScanQueue`, `scanRunSequence`, `handScanAction` | target/reward DecisionEffect + nested Effect；序号转 journal id | 扫描代表链 |
+| 外星人痕迹 | `alienTraceAction`, `alienTracePickerState`, `alienRevealConfirmation`, `turnEndAfterRevealContinuation` | DecisionEffect + reveal Effect/barrier + spawned continuation | 外星人/回合末阶段 |
+| 登陆 | `landTargetAction` | Standard Action target 或 DecisionEffect adapter | Standard Action 后续 |
+| 卡牌触发 | `cardTriggerAction`, `cardTriggerFreeMove`, `type1TriggerEvents`, `cardTaskCompletion` | trigger priority + DecisionEffect；事件进 journal | 打牌代表链 |
+| 九折 | `jiuzheCardPlay`, `jiuzheOpportunityOpen`, `jiuzheOpportunityQueue` | card DecisionEffect + spawned trigger queue | 外星人批次 |
+| 异常点 | `yichangdianCardGain`, `yichangdianCornerAction` | card/reward DecisionEffect | 外星人批次 |
+| 半人马 | `banrenmaCardGain`, `banrenmaOpportunity`, `banrenmaOpportunityQueue` | DecisionEffect + trigger queue | 外星人批次 |
+| 虫族 | `chongCardGain`, `chongFossilChoice`, `chongTaskCompletion` | card/reward/task DecisionEffect | 外星人批次 |
+| 阿米巴 | `amibaCardGain`, `amibaSymbolChoice`, `amibaTraceRemoval` | card/branch/target DecisionEffect | 外星人批次 |
+| 奥陌陌 | `aomomoCardGain` | card DecisionEffect | 外星人批次 |
+| 符文族 | `runezuCardGain`, `runezuSymbolBranch`, `runezuFaceSymbolPlacement` | card/branch/placement DecisionEffect | 外星人批次 |
+| 策略/海盗 | `strategyPassiveSlotChoice`, `piratesRaidPlacement` | reward/target DecisionEffect | 公司能力批次 |
+| 旧 Action 流 | `actionExecuted`, `passPlayerId`, `actionEffectFlow`, `actionHasIrreversibleBarrier`, `actionIrreversibleReason` | phase/owner/queue/barrier，全部 session-owned | 研究科技参考链起步 |
+| 移动/手牌支付 | `movePayment`, `playCardSelection`, `futureSpanPlayBeforePlayer`, `handCardPlayAction`, `cardCornerQuickAction`, `cardCornerFreeMove` | payment/card DecisionEffect + quick interrupt | 打牌/quick 阶段 |
+| 数据/公司 | `dataPlaceAction`, `industryAbility` | target/reward DecisionEffect + Effect group | quick action 阶段 |
+
+当前 inventory 之外仍有 app 模块 continuation、UI runtime flag、两个 action history、refresh 调度和 AI pending resolver。迁移矩阵验收不能只看 52 字段减少，还必须证明以下旧责任从已迁移热路径不可达：
+
+- `abilities.chain` 不再作为第二套队列/插入状态机。
+- `actionHistory` / `quickActionHistory` 不再各自决定事务边界，改为消费 session journal。
+- `renderAll`、overlay callback 和 DOM click 不再调用领域 continuation 推进规则。
+- AI automation 不再按 pending priority 选择或自动 resolve 多选项。
+- headless 未识别 pending 不再 recover/skip；显式返回 unsupported 并停止。
+
+## Proof obligations 与证据计划
+
+| ID | 可证伪命题 | 最小反例 | 阶段 1 证据 | 完整迁移证据 |
+|---|---|---|---|---|
+| ES-01 顺序 | 任意 group 及嵌套 spawnedEffects 严格按 direct→trigger→deferred→原队列执行 | trigger 抢在直接奖励前，或嵌套 child 跑到 sibling 后 | nested order 行为测试 | 研究/扫描/打牌固定 trace |
+| ES-02 原子 Effect | executor 失败前不采纳半个 nextState | executor 先改 session 引用再抛错 | clone boundary + thrown rollback test | 领域 executor mutation spy |
+| ES-03 Decision owner | 多个非等价项必停在 owner 的 awaiting_input | drain 取首项或 AI resolver 代选 | choose-tech pause test | 每 conditional family 多选合约，resolver spy=0 |
+| ES-04 stale | workingState 变化后旧 decisionId/version 不可执行 | quick action 删除 target 后仍接受旧按钮 | interrupt/revalidation test | 每可中断 DecisionEffect stale fork |
+| ES-05 commit gate | queue、decision、trigger 任一未清空不得替换 committedState | effect 1 后 UI/headless 已读到正式状态 | awaiting commit test | adapter 原子替换 spy + parity |
+| ES-06 rollback | 屏障前任一失败回到完整 baseState，journal 不产生成功 commit | effect 2 异常污染资源 | executor/invariant/version failure tests | 多 slice checkpoint parity |
+| ES-07 barrier | 隐藏信息已暴露后 abort 不得伪回滚 | reveal 后恢复旧牌堆让玩家重抽 | RNG + irreversible_locked test | 抽牌/翻牌/揭示 replay recovery |
+| ES-08 parity | 浏览器与 Policy 对相同 Action/Decision trace 得到同 effect 顺序、投影源、结果和 journal | 两端各跑一套 resolver | viewer projection shared-state test | browser/headless fixed trace parity |
+| ES-09 fail-closed | 未注册 executor/未知 priority/超限 drain 都停止并带诊断 | 静默跳过旧 effect 后 commit | unknown executor + loop limit tests | 未迁移 pending 注入 + forbidden-call spy |
+| ES-10 version | commit 时权威版本必须仍等于 baseVersion | 并发 session 覆盖更新状态 | version conflict test | 双 session race/checkpoint test |
+
+阶段 1 的测试文件是 `randomizer/game/effects/session-runtime.test.js`。它是 reference model 的行为证据，不替代后续领域状态可达性、真实 Chrome、headless parity、完整对局和性能证据。
+
+## 分阶段迁移与冲突边界
+
+1. 阶段 0/1（SETI-62 总控）：冻结本契约与 reference core；不改 SETI-56 的 action handler 热路径。
+2. 阶段 2：研究科技贯穿链。Standard Action 仍由 SETI-56 registry 拥有；本阶段只把 rotate→decision→placement→reward continuation 映射为 Effect Group。
+3. 阶段 3：扫描与打牌代表链，验证 nested trigger 和多个 DecisionEffect。
+4. 阶段 4：统一 Quick Action boundary、interrupt/resume 和所有可中断 decision 的 stale validation。
+5. 阶段 5：把 main/quick history、RNG/replay、undo 与 irreversible barrier 收口到 session journal。
+6. 阶段 6：浏览器 adapter 只负责 dispatch/observe/render，删除对应 DOM continuation。
+7. 阶段 7：headless/training adapter 只负责 Standard Action/Decision 与 observation/reward/replay，删除 policy/resolver drain。
+8. 阶段 8：迁移剩余 pending/外星人/公司能力，做 inventory=0 或 host-only/adapter 有明确到期日的审计，再完成 parity、性能和完整对局。
+
+任何阶段更新矩阵状态时必须同时给出：真实状态构造、Effect/Decision 枚举、执行 trace、旧路径调用为零、失败语义和 replay/checkpoint 证据。只修改 label、删除字段或跑通一条 happy path不能升级为 completed。
