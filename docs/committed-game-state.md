@@ -4,7 +4,7 @@
 
 `CommittedGameState` 是浏览器、headless 与训练环境共同使用的唯一“已经成立的游戏事实”。它是按领域分片的根对象，不是巨型平面对象。`StateStore` 是替换该根对象的唯一入口；Action、Effect Session、UI、AI、history 和宿主环境只能读取隔离快照，或在工作副本上计算候选状态。
 
-Stage 0/1 已冻结 reference schema、所有权、版本、验证、序列化与 compare-and-commit 语义。Stage 2 由 `randomizer/game/state/legacy-state-adapter.js` 在 recovery/headless 持久化边界把旧 12 个可变切片一次性转换为 v1。Stage 3 由 `randomizer/game/state/low-coupling-slices.js` 净化 match/turn、solar、planet、nebula/data、alien 与 final scoring，并为这些切片提供领域 invariant 和 working-copy bridge；Action/Effect 的生产提交调度仍留给 Stage 6，不在本阶段提前双写旧权威。
+Stage 0/1 已冻结 reference schema、所有权、版本、验证、序列化与 compare-and-commit 语义。Stage 2 由 `randomizer/game/state/legacy-state-adapter.js` 在 recovery/headless 持久化边界把旧 12 个可变切片一次性转换为 v1。Stage 3 由 `randomizer/game/state/low-coupling-slices.js` 净化 match/turn、solar、planet、nebula/data、alien 与 final scoring。Stage 4 由 `randomizer/game/state/high-coupling-slices.js` 净化 players/pieces/cards/tech、统一领域实例编号与跨切片 invariant，并提供同一 working copy 的协调 bridge；Action/Effect 的生产提交调度仍留给 Stage 6，不在本阶段提前双写旧权威。
 
 ```text
 StateStore (唯一 committed owner)
@@ -62,6 +62,25 @@ Browser and training hosts own projections, observations and policy/UI state.
 | `finalScoringState.pendingMarks` | session-owned | 永不提交；legacy projection 只给空 session 容器 |
 
 Stage 3 不净化 `players/pieces/cards/tech` 的内部字段；它们由 Stage 4 接管。`pieces` 仅作为本阶段跨切片引用的只读一端，用于校验棋子 id/owner、active rocket 和 planet reference。
+
+## Stage 4 高耦合切片 ownership
+
+`high-coupling-slices.js` 接管 `players/pieces/cards/tech`，并允许 `planets` 作为棋子转环绕/登陆标记时的协调切片。`mutateHighCouplingSlices()` 只生成一个 working copy；现有 cards、rocket、planet、tech 领域函数可在投影上完成一次行为，净化后通过一次 compare-and-commit 替换根状态。该 bridge 不拥有 Effect Session queue、Standard Action 语义或 app continuation。
+
+| 旧字段 / 行为 | v1 ownership | 净化 / 不变量 |
+|---|---|---|
+| `playerState.players` 资源、手牌、预留牌、科技归属 | committed `players` | 玩家 id/颜色唯一；资源非负；`handSize` 与 hand 一致；展示 label/asset 排除 |
+| `rocketState.rockets/activeRocketId/playerRocketSequences` | committed `pieces` | 棋子 id 唯一；owner、active、玩家序号有效；`Set` 保存为排序数组 |
+| `rocketState.nextRocketId` | committed `meta.sequences.rocket` | 必须覆盖现有领域 id；`statusNote`、token asset、label 排除 |
+| 星球转换的 `pieceId/sourcePieceId` | committed `planets` cross-reference | 保留棋子的 marker 必须引用现有 piece；消费棋子的 marker 要求 source piece 已从 pieces 移除 |
+| 卡实例、公共牌、弃牌、PASS 预留、牌库顺序 | committed `players/cards` | 实例 `id` 全局唯一；同一 `cardId` 只能位于一个容器；牌库不得与 live/discard 重叠 |
+| `cardState.ui/selection*` | session/host-owned | 保存时删除，直接提交时 fail-closed |
+| `cardTaskState` | derived | 由 committed snapshot 或 working candidate 的 reserved cards + card effect protocol 调用 `rebuildCardTaskIndex()` 重建，永不序列化 |
+| 科技 supply stack 与玩家 `techState` | committed `tech/players` | stack id、remaining/depleted、首拿 owner、owned tile 与蓝槽唯一性一致 |
+| `techGameState.ui/pending/selected/allowed*` | session/host-owned | 保存时删除，直接提交时 fail-closed |
+| `setupSelectionState` | setup session-owned | 仍只由 setup session 持有；确认后的玩家/对局事实才进入 committed state |
+
+Stage 4 没有改写 cards/tech/rocket 的生产入口，也不把旧对象与 committed root 双写。新存档和 recovery v2 统一先过 Stage 3 + Stage 4 purifier；legacy projection 需要科技旧接口时把 committed `tech` 投影回 `{ board, ui }`，其中 `ui` 只来自宿主。
 
 ## API 与失败语义
 
@@ -131,13 +150,26 @@ Stage 3 在 reference core 之上追加：
 
 固定行为 trace 位于 `randomizer/game/state/low-coupling-slices.test.js`。它调用现有 solar、planet、alien、final-scoring 领域函数，而不是只检查静态 schema；浏览器装配仍由 recovery adapter 的脚本顺序和真实 Chrome smoke 验证。
 
+## Stage 4 proof obligations
+
+| 验收条款 | 可证伪命题 | 最小反例 | 责任点 | 证据 |
+|---|---|---|---|---|
+| players/cards/tech 多切片原子提交 | 研究科技与卡牌移动在同一版本同时可见；任一不变量失败则全部 bytes 不变 | supply 已减但玩家未取得，或手牌已移出但弃牌未进入 | 高耦合 working-copy bridge + StateStore CAS | 现有 tech/cards 领域函数组合 trace、失败前后 canonical bytes |
+| 棋子与星球一致 | piece 转 marker 后 source piece 不再存在；保留 piece reference 时目标必须存在 | marker.sourcePieceId 与 pieces 同时存在 | pieces/planets cross invariant | removeRocket + addPlanetOrbitMarker 单提交 trace；负向 mismatch |
+| 实例与领域编号唯一 | card instance、piece id 以及玩家棋子序号在各自领域全局唯一，sequence 覆盖已知 id | 同一实例复制到 hand/discard，或重复 playerSequence | purifier + high-coupling validator | 容器遍历反例与 meta sequence 断言 |
+| UI/选择/派生索引不持久化 | tech/card UI、rocket statusNote、setup session、card task index 不出现在 serialized bytes | working candidate 注入 pendingTileId 或 readyType2Tasks | ownership purifier + direct validator | 净化断言、直接提交 fail-closed、序列化字符串检查 |
+| 任务索引可重建 | 对 committed snapshot 与未提交 working candidate，索引分别反映各自 reserved cards 且不修改 committed | working 删除 reserved card 后索引仍沿用 committed cache | `rebuildCardTaskIndex` | committed/working 双输入测试 |
+| 恢复与并发稳定 | serialize→deserialize 完全等价；同基线仅首个 writer 成功 | stale writer 覆盖资源/科技/牌位置 | high-coupling store + recovery adapter | round-trip + stale writer trace |
+
+固定 trace 位于 `randomizer/game/state/high-coupling-slices.test.js`。它刻意调用现有 `tech/board-state`、`tech/player-tech`、`cards/deck`、`rockets` 与 `planet-stats` 领域函数，证明的是行为组合和一次根提交，不以静态 ownership label 代替执行证据。
+
 ## 分阶段覆盖矩阵与删除条件
 
 | 阶段 | 旧来源 | 单向 adapter 目标 | 删除/切换条件 |
 |---|---|---|---|
 | 2 | recovery/headless `state` 12 切片 | v1 root（明确排除 runtime 与 cardTask 派生索引） | round-trip、旧版/缺字段/损坏恢复通过；没有双向双写 |
 | 3 | solar/turn/planet/nebula/alien/final scoring | `low-coupling-slices.js` 纯领域切片与 legacy working-copy bridge | 已完成：行为 parity、跨切片 invariant、失败零污染与恢复测试 |
-| 4 | players/rockets/cards/tech | players/pieces/cards/tech | UI 字段、`statusNote`、task index 迁出；实例 id 纳管 |
+| 4 | players/rockets/cards/tech | players/pieces/cards/tech | 已完成：UI 字段、`statusNote`、task index 迁出；实例 id、领域 sequence 与跨切片 invariant 纳管 |
 | 5 | `Math.random`、模块序列、cache | meta.rngState/sequences 或派生层 | 同实例 A/A、A/B/A 和非零 checkpoint fork parity |
 | 6 | Effect Session working state | `beginWorkingCopy` + `compareAndCommit` | 已迁移 session 不再直接替换旧切片 |
 | 7 | browser/headless/RL 读写入口 | projection/observation from same schema | 已迁移路径旧直写、UI/AI resolver 调用为 0 |

@@ -3,21 +3,26 @@
 
   let stateStore = root.SetiStateStore;
   let lowCouplingState = root.SetiLowCouplingState;
+  let highCouplingState = root.SetiHighCouplingState;
   if (!stateStore && typeof require === "function") {
     stateStore = require("./state-store");
   }
   if (!lowCouplingState && typeof require === "function") {
     lowCouplingState = require("./low-coupling-slices");
   }
+  if (!highCouplingState && typeof require === "function") {
+    highCouplingState = require("./high-coupling-slices");
+  }
 
-  const api = factory(stateStore, lowCouplingState);
+  const api = factory(stateStore, lowCouplingState, highCouplingState);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiLegacyStateAdapter = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (stateStore, lowCouplingState) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (stateStore, lowCouplingState, highCouplingState) {
   "use strict";
 
   if (!stateStore) throw new Error("SetiStateStore is required before SetiLegacyStateAdapter");
   if (!lowCouplingState) throw new Error("SetiLowCouplingState is required before SetiLegacyStateAdapter");
+  if (!highCouplingState) throw new Error("SetiHighCouplingState is required before SetiLegacyStateAdapter");
 
   const LEGACY_RECOVERY_VERSION = 1;
   const COMMITTED_RECOVERY_VERSION = 2;
@@ -110,7 +115,7 @@
   }
 
   function createBootstrapStore() {
-    return lowCouplingState.createLowCouplingStateStore(stateStore.createCommittedGameState({
+    return highCouplingState.createHighCouplingStateStore(stateStore.createCommittedGameState({
       gameId: "legacy-adapter-bootstrap",
       rulesetVersion: "legacy-recovery-v1",
       seed: "legacy-adapter-bootstrap",
@@ -157,7 +162,7 @@
         return failure("LEGACY_SEQUENCE_INVALID", "rocketState.nextRocketId 必须是非负安全整数");
       }
 
-      const committed = lowCouplingState.purifyLowCouplingSlices(stateStore.createCommittedGameState({
+      const committed = highCouplingState.purifyHighCouplingSlices(stateStore.createCommittedGameState({
         stateVersion: 0,
         gameId: options.gameId || `legacy-recovery-${snapshot.meta?.entryId ?? "current"}`,
         rulesetVersion: options.rulesetVersion || "legacy-recovery-v1",
@@ -188,7 +193,7 @@
   function serializeLegacySnapshot(input, options = {}) {
     const adapted = adaptLegacySnapshot(input, options);
     if (!adapted.ok) return adapted;
-    const store = lowCouplingState.createLowCouplingStateStore(adapted.state);
+    const store = highCouplingState.createHighCouplingStateStore(adapted.state);
     return store.serialize();
   }
 
@@ -218,7 +223,7 @@
       return failure("STATE_DESERIALIZE_FAILED", error?.message || "状态 JSON 损坏");
     }
     try {
-      return createBootstrapStore().deserialize(lowCouplingState.purifyLowCouplingSlices(parsedCommitted));
+      return createBootstrapStore().deserialize(highCouplingState.purifyHighCouplingSlices(parsedCommitted));
     } catch (error) {
       return failure("STATE_LOW_COUPLING_MIGRATION_FAILED", error?.message || "低耦合切片净化失败");
     }
@@ -253,7 +258,7 @@
           },
           planetStatsState: projectPlanetState(state.planets),
           techGameState: {
-            ...clonePlain(state.tech),
+            board: clonePlain(state.tech),
             ui: clonePlain(hostState.techGameState?.ui || {}),
           },
           cardState: {
