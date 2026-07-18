@@ -82,8 +82,8 @@ node tools/run_rl_evaluation.js \
 ## 1. 设计目标
 
 - 训练环境只暴露公开信息与当前决策必需的自有私有信息。
-- 一切可执行内容都统一成 `action`，不再区分“主按钮点击”“overlay 按钮点击”“确认弹窗”。
-- `legalActions` 必须覆盖主行动、快速行动、子选择、效果确认和 recover/end-turn。
+- policy action 只表示会改变游戏状态或未来收益的真实策略选择，不把 UI 确认、效果队列推进或错误恢复伪装成模型决策。
+- `legalActions` 必须覆盖主行动、快速行动及有多个非等价结果的条件选择；确定性结算和技术状态推进由环境自动完成。
 - 单局必须可按 `seed + 初始配置 + action 序列` 复盘；必要时可从 checkpoint 恢复。
 - owner 语义必须稳定：执行者永远是 `pending owner -> effect owner -> current player` 解析出的玩家，而不是当前 UI 可见玩家。
 
@@ -127,9 +127,10 @@ interface SetiHeadlessEnv {
 
 语义：
 
-- 只接受一条离散动作。
-- 动作可以是顶层行动，也可以是 pending 子选择或效果确认。
+- 只接受一条离散 policy action。
+- 动作可以是顶层回合行动，也可以是随机信息揭示后才出现的语义化条件选择。
 - 必须校验 `action.actorPlayerId` 是否等于当前 `decision.actorPlayerId`。
+- 执行后自动推进所有确定性规则结算，直到终局或下一个真实策略决策点。
 
 输出：
 
@@ -260,82 +261,76 @@ interface SetiHeadlessEnv {
   - planner shadow
   - battle analytics 产物
 
-## 5. Action Schema
+## 5. Policy Action Schema
+
+模型动作采用三层语义：顶层动作族、动作参数、条件策略决策。`setup / pending / effect_resolution / recover` 是环境内部技术阶段，不是 policy action taxonomy。
 
 统一动作结构：
 
 ```js
 {
-  schemaVersion: "seti-rl-action-v1",
+  schemaVersion: "seti-rl-action-v2",
   actionId: string,
   actorPlayerId: string,
-  phase: "setup" | "main" | "quick" | "pending_choice" | "effect_resolution" | "turn_control",
-  kind: string,
+  decisionType: "turn_action" | "conditional_choice",
+  family: string,
   target?: ActionTarget,
   payload?: Record<string, unknown>,
 }
 ```
 
-### 5.1 顶层 `phase`
+### 5.1 顶层回合动作族
 
-- `setup`
-  - 初始选择、初始弃牌、强制公司/起始卡确认。
-- `main`
-  - `launch / orbit / land / scan / analyze / playCard / researchTech / pass`
-- `quick`
-  - `move / quickTrade / industry / cardCorner / runezuFaceSymbol / placeData / end-turn`
-- `pending_choice`
-  - overlay 子选择、目标选择、弃牌选择、支付选择、科技槽位选择、任务确认、外星人选择。
-- `effect_resolution`
-  - 当前 effect 链中的 `execute / skip / confirm`。
-- `turn_control`
-  - `recover_pending_action / end_turn_after_recovery`
+正常回合边界共有 15 个稳定动作族：
 
-### 5.2 `kind`
+- 主行动 / PASS：`launch / orbit / land / scan / analyze / research_tech / play_card / pass`。
+- 快速行动 / 结束行动：`move / quick_trade / industry / card_corner / place_data / runezu_face_symbol / end_turn`。
 
-`kind` 是稳定枚举，不直接暴露 UI handler 名。第一阶段建议最小集合：
+`pass` 表示退出本轮；`end_turn` 表示已经完成主行动后停止追加快速行动。二者不能合并。
 
-- 顶层行动：
-  - `launch`
-  - `orbit`
-  - `land`
-  - `scan`
-  - `analyze`
-  - `play_card`
-  - `research_tech`
-  - `pass`
-  - `move`
-  - `quick_trade`
-  - `industry_once`
-  - `place_data`
-  - `end_turn`
-- setup：
-  - `confirm_initial_selection`
-  - `discard_card`
-  - `confirm_pass_reserve`
-- 通用 pending：
-  - `select_public_card`
-  - `select_hand_card`
-  - `select_scan_target`
-  - `select_land_target`
-  - `select_probe_sector`
-  - `select_probe_reward`
-  - `select_tech_tile`
-  - `select_tech_slot`
-  - `select_card_trigger`
-  - `select_task_completion`
-  - `select_alien_choice`
-  - `select_trace_target`
-  - `pay_move_cost`
-  - `pay_credit`
-  - `discard_any_income`
-  - `skip_optional`
-  - `confirm_effect`
-  - `skip_effect`
-- recovery：
-  - `recover_pending_action`
+### 5.2 动作参数
 
-### 5.3 `target`
+具体目标和支付等差异属于父动作参数，不另造顶层动作族。例如：
+
+- `play_card(card_instance_id, mode, targets...)`
+- `research_tech(tile_id, slot_id, bonus_target...)`
+- `move(rocket_id, direction_or_path, payment...)`
+- `scan(source, sector_or_nebula_or_target...)`
+- `orbit(rocket_id, planet_id)` / `land(rocket_id, planet_or_satellite_id)`
+- `quick_trade(trade_id, discarded_cards...)`
+- `card_corner(card_instance_id, corner, target...)`
+- `pass(reserved_card_id | null)`
+
+父动作执行前已经可见的参数应直接平铺成完整 legal candidate，不能由旧 heuristic 在 wrapper 内继续代选。
+
+### 5.3 条件策略决策
+
+只有父动作执行后揭示了新随机信息，且存在两个以上会产生不同游戏状态或未来收益的合法选项，才产生新的 `conditional_choice` timestep。`family` 使用业务语义，不暴露 pending 类型名：
+
+- `choose_card`
+- `choose_target`
+- `choose_payment`
+- `choose_reward`
+- `choose_branch`
+- `choose_final_scoring`
+- `accept_optional_effect`
+
+若只有一个合法选项，环境直接执行，不产生 timestep。
+
+### 5.4 环境自动推进事件
+
+以下内容可以记录到 replay 的 environment event，但不得出现在 policy `legalActions()`：
+
+- 首版 `setup`：由 scenario 或 seed 配置公司与起始牌；未来 opening policy 单独建模。
+- 收入、抽牌、洗牌、轮次切换、效果队列推进及其他确定性规则结算。
+- `confirm`、关闭提示、overlay 点击等纯 UI 交互。
+- 唯一合法选项、确定性的 effect execute/continue。
+- `recover_pending_action`、错误恢复、replay flush。
+- 没有实际放弃权的 `skip`；存在真实取舍时改为 `accept_optional_effect`。
+
+统一判定标准：**至少两个合法选项会产生不同游戏状态或未来收益，才是策略决策；其余全部由环境推进。**
+
+### 5.5 `target`
 
 为 action mask 稳定编码，target 必须结构化，不传文案：
 
@@ -352,7 +347,7 @@ interface SetiHeadlessEnv {
 - `traceType`
 - `choiceId`
 
-### 5.4 `payload`
+### 5.6 `payload`
 
 只放目标不足以表达的补充参数，例如：
 
@@ -371,8 +366,8 @@ interface SetiHeadlessEnv {
 {
   actionId: string,
   actorPlayerId: string,
-  phase: string,
-  kind: string,
+  decisionType: "turn_action" | "conditional_choice",
+  family: string,
   target?: ActionTarget,
   payload?: Record<string, unknown>,
   maskIndex: number,
@@ -385,7 +380,8 @@ interface SetiHeadlessEnv {
 - `maskIndex` 在同一 `schemaVersion` 下稳定。
 - 若某类动作是参数化动作，mask 可以是“模板动作 + 参数表”，也可以直接平铺成离散候选；第一阶段优先平铺，减少训练端解释成本。
 - 当前无决策权的玩家看不到可执行动作。
-- 同一步的可选 `skip` 必须显式出现在 mask 中，不能靠缺省超时。
+- 只有会改变结果的可选放弃才以 `accept_optional_effect` 显式进入 mask；纯确认/跳过由环境推进。
+- 技术 pending 名、旧 heuristic `candidate.score`、UI handler 和 DOM 字段不得进入候选特征。
 
 ## 7. Decision Owner 语义
 
