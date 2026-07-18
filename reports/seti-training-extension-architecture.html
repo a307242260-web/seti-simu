@@ -171,8 +171,8 @@
         <a href="#status">当前现状</a>
         <a href="#issues">在途 issue</a>
         <a href="#risks">冲突风险</a>
-        <a href="#decisions">待讨论</a>
-        <a href="#proposal">推进建议</a>
+        <a href="#decisions">已确认</a>
+        <a href="#proposal">推进安排</a>
       </nav>
     </header>
 
@@ -180,7 +180,7 @@
       <div class="section-head"><div class="section-no">01</div><div><h2>目标边界：训练宿主通过一个窄 Env 端口接共享内核</h2><p>外延内部可以分三层管理，但共享内核只看见 Env Adapter 提交的标准 Action / Decision。</p></div></div>
       <div class="architecture">
         <article class="host training">
-          <div class="host-title"><strong>训练版本外延</strong><span class="tag moving">已有实现，边界待冻结</span></div>
+          <div class="host-title"><strong>训练版本外延</strong><span class="tag now">三层边界已确认</span></div>
           <div class="layers">
             <div class="layer learn"><b>③ Learning System</b><span>Policy / Value、BC warm start、Masked PPO、对手池、评测、模型 checkpoint</span></div>
             <div class="layer infra"><b>② Sampling Infrastructure</b><span>并行 worker、JSONL IPC、batch inference、轨迹、数据集、故障恢复、吞吐</span></div>
@@ -239,9 +239,9 @@
           <tr><td>Env API</td><td><code>randomizer/app/headless-env.js</code></td><td><span class="state run">可运行</span></td><td>StateStore + Effect Session 上的纯 adapter</td><td>仍通过 app runtime 装配，接口需在底层迁移时保持兼容。</td></tr>
           <tr><td>Observation</td><td>v1 schema，public / self / decision / history / terminal</td><td><span class="state run">已成形</span></td><td>统一从 committed / working state 按 viewer 投影</td><td>字段所有权与 BrowserProjection 的共用投影原语尚未冻结。</td></tr>
           <tr><td>Legal + Step</td><td>headless rule enumeration + 预验证 action 直执行</td><td><span class="state run">已优化</span></td><td>直接消费 Standard Action / Decision registry</td><td>SETI-60 已完成七类条件决策与 deterministic drain；还需随全链路集成验收。</td></tr>
-          <tr><td>Reward / Done</td><td>即时分差、资源变化、终局分；终局后返回 done</td><td><span class="state run">基础可用</span></td><td>共享内核给事实，Env 给训练信号，Trainer 决定优化目标</td><td>dense shaping、相对名次、多人 credit assignment 仍需讨论冻结。</td></tr>
+          <tr><td>Reward / Done</td><td>即时分差、资源变化、终局分；终局后返回 done</td><td><span class="state run">分工已确认</span></td><td>共享内核给事实，Env 给稳定 reward schema，Trainer 配置 shaping</td><td>先按该边界推进；dense shaping、相对名次与多人 credit assignment 根据实际训练结果迭代。</td></tr>
           <tr><td>Replay / Checkpoint</td><td>seed + action sequence、episode checkpoint、worker 恢复</td><td><span class="state run">已有</span></td><td>统一 StateStore snapshot + session / RNG journal</td><td>会受 SETI-62、SETI-71 的最终 journal/schema 影响。</td></tr>
-          <tr><td>Trainer</td><td>heuristic demonstrations → BC/value → masked PPO</td><td><span class="state risk">在途</span></td><td>只依赖版本化 Env / IPC，不感知浏览器与 heuristic 内部</td><td>示范 smoke 尚未跑通，学习收益尚未形成证据。</td></tr>
+          <tr><td>Trainer</td><td>heuristic demonstrations → BC/value → masked PPO</td><td><span class="state risk">扩展训练暂等</span></td><td>只依赖版本化 Env / IPC，不感知浏览器与 heuristic 内部</td><td>4/4 demonstration、BC handoff、三臂 PPO smoke 已通过；32 局与多 seed A/B 等待 Env/checkpoint 重构提交稳定。</td></tr>
         </tbody>
       </table>
     </section>
@@ -252,7 +252,7 @@
         <thead><tr><th>Issue</th><th>作用</th><th>状态</th><th>当前动作</th><th>对训练外延的影响</th></tr></thead>
         <tbody>
           <tr><td>SETI-14</td><td>强化学习路线与实施总协调</td><td><span class="state run">IN PROGRESS</span></td><td>等待 SETI-39</td><td>承载现有训练实验，不应被共享内核重构吞并。</td></tr>
-          <tr><td>SETI-39</td><td>demonstration、BC/value warm start、Masked PPO</td><td><span class="state risk">IN PROGRESS</span></td><td>修复 <code>research_tech_select</code>，再跑 4 局 demonstration smoke</td><td>直接验证学习层是否成立；当前最具体的训练阻塞点。</td></tr>
+          <tr><td>SETI-39</td><td>demonstration、BC/value warm start、Masked PPO</td><td><span class="state risk">BLOCKED</span></td><td>4 局 smoke 已通过；等待 SETI-61、SETI-82</td><td>两条在途链同时改写 <code>headless-env.js</code> / checkpoint 契约，先避免生成不可复现的混合版本数据。</td></tr>
           <tr><td>SETI-56</td><td>Standard Action 总控</td><td><span class="state run">IN PROGRESS</span></td><td>SETI-60 已完成；准备 SETI-61 全链路收口</td><td>决定 Env 接收和枚举的唯一动作语言。</td></tr>
           <tr><td>SETI-62</td><td>Effect Session 总控</td><td><span class="state run">IN PROGRESS</span></td><td>应解锁 SETI-64 研究科技参考链</td><td>决定 step 内部推进、working observation、journal 与 commit；metadata 仍写等待已完成的 SETI-59，需同步。</td></tr>
           <tr><td>SETI-71</td><td>CommittedGameState / StateStore 总控</td><td><span class="state run">IN PROGRESS</span></td><td>等待 SETI-82</td><td>决定 observation、checkpoint 和多环境实例的事实来源。</td></tr>
@@ -261,7 +261,7 @@
           <tr><td>SETI-45</td><td>完整架构与演进边界讨论</td><td><span class="state run">IN PROGRESS</span></td><td>本轮整理训练版本外延</td><td>只负责形成共识和拆分，不直接实现训练或内核迁移。</td></tr>
         </tbody>
       </table>
-      <p style="margin-top: 10px">已完成且作为基础证据：SETI-38（worker / IPC）、SETI-40（移除 heuristic / resolver 热路径）、SETI-55（Gate B 22/22 训练放行）、SETI-60（七类条件决策与 deterministic drain）。执行状态为 2026-07-19 06:44 的实时快照。</p>
+      <p style="margin-top: 10px">已完成且作为基础证据：SETI-38（worker / IPC）、SETI-40（移除 heuristic / resolver 热路径）、SETI-55（Gate B 22/22 训练放行）、SETI-60（七类条件决策与 deterministic drain）。执行状态为 2026-07-19 06:56 的实时快照。</p>
     </section>
 
     <section id="risks">
@@ -274,24 +274,24 @@
     </section>
 
     <section id="decisions">
-      <div class="section-head"><div class="section-no">07</div><div><h2>这轮建议只拍板三个边界</h2><p>先确定训练宿主的外沿与共享内核接口，不在本轮讨论网络结构、超参数或最终部署。</p></div></div>
+      <div class="section-head"><div class="section-no">07</div><div><h2>本轮已确认的三个边界</h2><p>训练宿主外沿、reward 责任分工和与重构链路的协调原则已经确认；暂不扩展到网络结构、超参数或最终部署。</p></div></div>
       <div class="decision-grid">
-        <article class="decision-card recommend"><span class="num">1</span><h3>“训练版本外延”是否包含三层？</h3><p>建议包含：Env Adapter、Sampling Infrastructure、Learning System。三层都属于训练产品，但只有 Env Adapter 直接接共享游戏内核。</p></article>
-        <article class="decision-card"><span class="num">2</span><h3>Reward 的事实与优化怎样分工？</h3><p>建议共享内核只产出规则事件、资源/分数变化和终局结果；Env 形成稳定 reward schema；Trainer 可配置 shaping，但不得把 shaping 写回规则与 observation。</p></article>
-        <article class="decision-card"><span class="num">3</span><h3>现有训练与内核重构怎样并行？</h3><p>建议 SETI-39 继续完成最小 BC/PPO 实验；同时把修复限定在共享 decision 合法性，不扩大 Env v1；新架构总控只负责协议冻结和迁移，不重做训练算法。</p></article>
+        <article class="decision-card recommend"><span class="num">1</span><h3>训练版本外延包含三层</h3><p>Env Adapter、Sampling Infrastructure、Learning System 都属于训练产品；只有 Env Adapter 直接接共享游戏内核。</p></article>
+        <article class="decision-card recommend"><span class="num">2</span><h3>Reward 先按三段式分工</h3><p>共享内核产出规则事件、资源/分数变化和终局结果；Env 形成稳定 reward schema；Trainer 配置 shaping，但不得把 shaping 写回规则与 observation。后续根据训练结果调整。</p></article>
+        <article class="decision-card recommend"><span class="num">3</span><h3>训练正常跑，冲突时等重构</h3><p>SETI-39 不因架构讨论停工；当 Standard Action / StateStore 正在改写 Env 与 checkpoint 热路径时，暂缓生成正式数据，依赖稳定后从干净版本续跑。</p></article>
       </div>
     </section>
 
     <section id="proposal">
-      <div class="section-head"><div class="section-no">08</div><div><h2>推进建议：先冻结端口，再建立训练宿主总控</h2><p>保留现有训练实验的执行连续性，同时给后续架构迁移一个清楚的 owner。</p></div></div>
+      <div class="section-head"><div class="section-no">08</div><div><h2>推进安排：保留 smoke 证据，重构稳定后继续扩展训练</h2><p>训练链不是重做，而是在已通过的最小闭环上继续扩展；正式数据必须来自干净、版本明确的 Env。</p></div></div>
       <div class="proposal">
         <article class="proposal-main">
-          <h3>建议顺序</h3>
+          <h3>确认后的执行顺序</h3>
           <ol>
-            <li><strong>本轮先确认上面三个边界。</strong>不立即改 reward、网络或 worker。</li>
-            <li><strong>SETI-39 继续处理当前最小阻塞。</strong><code>research_tech_select</code> 修复必须复用 SETI-60 的标准 decision 语义，禁止 trainer / heuristic fallback。</li>
-            <li><strong>确认后新建“训练宿主外延总控”。</strong>冻结 Env v1、Observation、Action encoding、Reward/Done、checkpoint/replay、worker/trainer 分层与迁移 proof；关联 SETI-14/39，但不搬动正在执行的任务。</li>
-            <li><strong>选研究科技作为第一条贯穿验收链。</strong>同一 Action / Decision trace 同时证明浏览器、headless、worker 与 trainer 数据一致。</li>
+            <li><strong>保留已通过的训练基线。</strong>commit <code>243fd05</code> 已证明 4/4 demonstration、2682 records、replay parity、BC handoff 和三臂 PPO smoke。</li>
+            <li><strong>当前暂停 expanded 数据生成。</strong>SETI-61 与 SETI-82 都有运行中的 agent，并同时改写 Env / checkpoint 契约；不从未提交混合工作树生成正式 dataset。</li>
+            <li><strong>依赖稳定后立即恢复 SETI-39。</strong>从干净 <code>dev</code>、冻结 Env schema 和明确 commit 生成 32 局 demonstration，再跑多 seed 同预算 BC-init / random-init PPO A/B。</li>
+            <li><strong>后续再决定是否另建训练宿主外延总控。</strong>若建立，只负责 Env / Observation / Reward / checkpoint / worker / trainer 分层与迁移 proof，不重做训练算法。</li>
           </ol>
         </article>
         <aside class="proposal-side">
