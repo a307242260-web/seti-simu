@@ -5,7 +5,7 @@ const { performance } = require("node:perf_hooks");
 const { HeadlessWorkerPool } = require("../randomizer/training/worker-pool");
 
 function parseArgs(argv) {
-  const options = { workers: 1, gamesPerWorker: 1, maxSteps: 100, timeoutMs: 180000 };
+  const options = { workers: 1, gamesPerWorker: 1, maxSteps: 200, timeoutMs: 180000 };
   const keys = new Map([
     ["--workers", "workers"],
     ["--games-per-worker", "gamesPerWorker"],
@@ -98,6 +98,7 @@ async function measureEnvironment(options) {
       })));
       resetMilliseconds += performance.now() - resetStartedAt;
       const states = new Map();
+      const lastActions = new Map();
       for (const item of resetBatch) {
         if (!item.ok) throw new Error(`worker ${item.workerId} reset 失败：${item.error.message}`);
         states.set(item.workerId, item.result);
@@ -111,6 +112,9 @@ async function measureEnvironment(options) {
           operation: "step",
           payload: { action: chooseFastAction(state.legalActions) },
         })));
+        for (const [workerId, state] of active) {
+          lastActions.set(workerId, chooseFastAction(state.legalActions));
+        }
         stepMilliseconds += performance.now() - stepStartedAt;
         for (const item of stepBatch) {
           if (!item.ok) throw new Error(`worker ${item.workerId} step 失败：${item.error.message}`);
@@ -123,7 +127,18 @@ async function measureEnvironment(options) {
         }
       }
       if ([...states.values()].some((state) => !state.terminal)) {
-        throw new Error(`存在 episode 未在 ${options.maxSteps} 步内终局`);
+        const stalled = [];
+        for (const [workerId, state] of states.entries()) {
+          if (state.terminal) continue;
+          const checkpoint = await pool.request(workerId, "checkpoint");
+          stalled.push({
+            episode: `benchmark-${game}-${workerId}`,
+            seed: `worker-benchmark-v1:${game}:${workerId}`,
+            cursor: checkpoint?.replayCursor?.stepIndex ?? null,
+            lastAction: lastActions.get(workerId) || null,
+          });
+        }
+        throw new Error(`存在 episode 未在 ${options.maxSteps} 步内终局：${JSON.stringify(stalled)}`);
       }
     }
     const diagnosticBatch = await pool.batch(Array.from({ length: options.workers }, (_, workerId) => ({
@@ -160,7 +175,7 @@ async function main() {
   const options = parseArgs(process.argv.slice(2));
   const report = {
     schemaVersion: "seti-rl-worker-benchmark-v1",
-    command: `node tools/benchmark_rl_workers.js --workers ${options.workers} --games-per-worker ${options.gamesPerWorker}`,
+    command: `node tools/benchmark_rl_workers.js --workers ${options.workers} --games-per-worker ${options.gamesPerWorker} --max-steps ${options.maxSteps}`,
     nodeVersion: process.version,
     serializationIdle: measureSerialization(),
     inferenceIdle: await measureInferenceIdle(options.workers),

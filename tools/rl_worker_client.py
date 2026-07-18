@@ -12,6 +12,7 @@ from typing import Any
 
 
 SCHEMA_VERSION = "seti-rl-ipc-v1"
+DEFAULT_MAX_STEPS = 200
 
 
 class WorkerProtocolError(RuntimeError):
@@ -94,7 +95,7 @@ def choose_fast_action(actions: list[dict[str, Any]]) -> dict[str, Any]:
     )
 
 
-def smoke(workers: int, episodes: int) -> dict[str, Any]:
+def smoke(workers: int, episodes: int, max_steps: int = DEFAULT_MAX_STEPS) -> dict[str, Any]:
     completed = 0
     illegal = 0
     with SetiWorkerClient(workers=workers) as client:
@@ -119,11 +120,13 @@ def smoke(workers: int, episodes: int) -> dict[str, Any]:
                 for worker_id in active
             ])
             states = {item["workerId"]: item["result"] for item in reset_results if item["ok"]}
-            for _ in range(100):
+            last_actions: dict[int, dict[str, Any]] = {}
+            for _ in range(max_steps):
                 pending = [worker_id for worker_id, state in states.items() if not state["terminal"]]
                 if not pending:
                     break
                 actions = {worker_id: choose_fast_action(states[worker_id]["legalActions"]) for worker_id in pending}
+                last_actions.update(actions)
                 stepped = client.batch([
                     {
                         "workerId": worker_id,
@@ -142,7 +145,22 @@ def smoke(workers: int, episodes: int) -> dict[str, Any]:
                         "terminal": item["result"]["done"],
                     }
             if not all(state["terminal"] for state in states.values()):
-                raise RuntimeError("episode did not finish within 100 decisions")
+                stalled = []
+                for worker_id, state in states.items():
+                    if state["terminal"]:
+                        continue
+                    checkpoint = client.worker_request(worker_id, "checkpoint")
+                    episode_index = start + worker_id
+                    stalled.append({
+                        "episode": f"smoke-{episode_index}",
+                        "seed": f"python-ipc-smoke:{episode_index}",
+                        "cursor": checkpoint.get("replayCursor", {}).get("stepIndex"),
+                        "lastAction": last_actions.get(worker_id),
+                    })
+                raise RuntimeError(
+                    f"episode did not finish within {max_steps} decisions: "
+                    f"{json.dumps(stalled, ensure_ascii=False, separators=(',', ':'))}"
+                )
             artifacts = []
             for operation in ("replay", "checkpoint"):
                 artifacts.extend(client.batch([
@@ -158,15 +176,24 @@ def smoke(workers: int, episodes: int) -> dict[str, Any]:
                     raise RuntimeError(f"artifact episode mismatch: {actual_episode} != {expected_episode}")
             completed += len(states)
             print(f"[rl-worker-smoke] completed={completed}/{episodes} illegal={illegal}", file=sys.stderr, flush=True)
-        return {"server": info, "episodes": completed, "illegalActions": illegal, "ok": completed == episodes}
+        return {
+            "server": info,
+            "episodes": completed,
+            "illegalActions": illegal,
+            "maxSteps": max_steps,
+            "ok": completed == episodes,
+        }
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--episodes", type=int, default=1)
+    parser.add_argument("--max-steps", type=int, default=DEFAULT_MAX_STEPS)
     args = parser.parse_args()
-    print(json.dumps(smoke(args.workers, args.episodes), ensure_ascii=False, indent=2))
+    if args.max_steps < 1:
+        parser.error("--max-steps must be a positive integer")
+    print(json.dumps(smoke(args.workers, args.episodes, args.max_steps), ensure_ascii=False, indent=2))
 
 
 if __name__ == "__main__":

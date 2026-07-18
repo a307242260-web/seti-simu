@@ -4,12 +4,17 @@
 const { performance } = require("node:perf_hooks");
 const { createHeadlessEnv } = require("../randomizer/app/headless-env");
 
-function parseGames(argv) {
-  const index = argv.indexOf("--games");
-  if (index < 0) return 3;
-  const games = Number(argv[index + 1]);
-  if (!Number.isInteger(games) || games < 1) throw new Error("--games 必须是正整数");
-  return games;
+function parseArgs(argv) {
+  const options = { games: 3, maxSteps: 200 };
+  const keys = new Map([["--games", "games"], ["--max-steps", "maxSteps"]]);
+  for (let index = 0; index < argv.length; index += 1) {
+    const key = keys.get(argv[index]);
+    if (!key) throw new Error(`未知参数：${argv[index]}`);
+    const value = Number(argv[++index]);
+    if (!Number.isInteger(value) || value < 1) throw new Error(`${argv[index - 1]} 必须是正整数`);
+    options[key] = value;
+  }
+  return options;
 }
 
 function chooseFastAction(actions) {
@@ -20,21 +25,34 @@ function chooseFastAction(actions) {
 }
 
 function main() {
-  const games = parseGames(process.argv.slice(2));
+  const options = parseArgs(process.argv.slice(2));
   let decisions = 0;
   const startedAt = performance.now();
-  for (let gameIndex = 0; gameIndex < games; gameIndex += 1) {
+  for (let gameIndex = 0; gameIndex < options.games; gameIndex += 1) {
     const env = createHeadlessEnv();
+    const seed = `headless-benchmark-v2:${gameIndex}`;
+    let lastAction = null;
     try {
-      env.reset({ seed: `headless-benchmark-v2:${gameIndex}`, activePlayerCount: 4 });
-      for (let step = 0; step < 100 && !env.isTerminal(); step += 1) {
+      env.reset({ seed, activePlayerCount: 4 });
+      for (let step = 0; step < options.maxSteps && !env.isTerminal(); step += 1) {
         const action = chooseFastAction(env.legalActions());
         if (!action) throw new Error(`第 ${gameIndex + 1} 局第 ${step} 步没有合法动作`);
+        lastAction = action;
         const result = env.step(action);
         if (!result.ok) throw new Error(result.error || "headless step 失败");
         decisions += 1;
       }
-      if (!env.isTerminal()) throw new Error(`第 ${gameIndex + 1} 局未在 100 步内终局`);
+      if (!env.isTerminal()) {
+        const cursor = env.createCheckpoint()?.replayCursor?.stepIndex ?? null;
+        throw new Error(
+          `episode 未在 ${options.maxSteps} 步内终局：${JSON.stringify({
+            episode: `headless-benchmark-${gameIndex}`,
+            seed,
+            cursor,
+            lastAction,
+          })}`,
+        );
+      }
     } finally {
       env.dispose();
     }
@@ -42,11 +60,12 @@ function main() {
   const elapsedSeconds = (performance.now() - startedAt) / 1000;
   process.stdout.write(`${JSON.stringify({
     schemaVersion: "seti-rl-headless-benchmark-v1",
-    games,
+    games: options.games,
+    maxSteps: options.maxSteps,
     decisions,
     elapsedSeconds: Math.round(elapsedSeconds * 1000) / 1000,
     decisionsPerSecond: Math.round((decisions / elapsedSeconds) * 1000) / 1000,
-    command: `node tools/benchmark_headless_env.js --games ${games}`,
+    command: `node tools/benchmark_headless_env.js --games ${options.games} --max-steps ${options.maxSteps}`,
   }, null, 2)}\n`);
 }
 

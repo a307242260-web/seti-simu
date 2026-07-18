@@ -113,7 +113,7 @@ node tools/run_rl_worker_server.js --workers 4 --timeout-ms 120000
 Python smoke：
 
 ```bash
-python3 tools/rl_worker_client.py --workers 2 --episodes 2
+python3 tools/rl_worker_client.py --workers 2 --episodes 2 --max-steps 200
 ```
 
 2026-07-18 使用 `python3 tools/rl_worker_client.py --workers 4 --episodes 100` 完成真实连续 smoke：100/100 局 terminal，非法动作 0、阻塞 0；每局均读取完整 replay 与 checkpoint，并校验 `episodeId` 一致，期间未出现 timeout、worker crash、schema mismatch 或 backpressure。
@@ -127,8 +127,8 @@ worker 的等待队列有界；队列满返回 `backpressure`。每个请求有 
 分项 benchmark 同时报告 JSON 序列化空载、批量 inference 空载、reset/boot、step-only 与包含 boot 的 aggregate decision/s：
 
 ```bash
-node tools/benchmark_rl_workers.js --workers 1 --games-per-worker 1
-node tools/benchmark_rl_workers.js --workers 4 --games-per-worker 1
+node tools/benchmark_rl_workers.js --workers 1 --games-per-worker 1 --max-steps 200
+node tools/benchmark_rl_workers.js --workers 4 --games-per-worker 1 --max-steps 200
 ```
 
 aggregate 目标为 `>= 50 decision/s`。未达标时命令退出码为 `2`，JSON 报告仍完整输出，必须保留 `resetSeconds / stepSeconds / serializationIdle / inferenceIdle` 来区分 composition boot、环境推进、IPC 序列化和模型空载；不得只报告总耗时或用增大 batch 等待窗口制造吞吐假提升。
@@ -144,7 +144,7 @@ aggregate 目标为 `>= 50 decision/s`。未达标时命令退出码为 `2`，JS
 使用固定的 PASS/end-turn 快速终局策略测量环境协议开销；命令会输出局数、policy decision 数、耗时和 decision/s：
 
 ```bash
-node tools/benchmark_headless_env.js --games 3
+node tools/benchmark_headless_env.js --games 3 --max-steps 200
 ```
 
 基准只用于同机同进程版本间复测，不代表训练策略质量；吞吐优化不得删减 observation、owner 校验、replay 或自动结算语义。
