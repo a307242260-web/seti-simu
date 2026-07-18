@@ -125,3 +125,11 @@
 - promote_to: agent_prompt
 - promotion_status: promote
 - decision: 三次连续重叠提交均证明 staged 独立验证能避免卷入他人改动或误用工作树修复，已达到预设评估窗口；将规则写入仓库根 `AGENTS.md`。
+
+- date: 2026-07-19
+- source_issue: SETI-16, SETI-60
+- observation: 当 in-app Browser 因运行环境缺少 sandbox 元数据而无法建立控制通道时，非交互式本地页面验收可在明确报告通道故障后，使用隔离 HEAD 快照、本地静态服务与系统 headless Chrome 继续验证真实脚本装配和公开 API；该兜底不能替代需要视觉或交互定位的 browser 测试。
+- evidence: SETI-16 因同类 browser 控制通道故障未能执行真实页面 smoke；SETI-60 再次遇到 `sandboxPolicy` 元数据缺失后，在仅含提交内容的隔离快照启动本地服务，以系统 Chrome `--headless=new --dump-dom` 验证首屏标题、七类 conditional family、公开枚举/执行 API 和空 pending 返回，结果 `ok=true`，同时 129/129 Node 回归通过。
+- promote_to: none
+- promotion_status: candidate
+- decision: 当前只有一次成功兜底证据，且 headless Chrome 不覆盖视觉交互；记录为 coding candidate，不修改 browser skill、agent prompt、loop template、issue-workflow 或 watcher，后续 3 次同类通道故障观察兜底稳定性。

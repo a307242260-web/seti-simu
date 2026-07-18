@@ -554,3 +554,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: `reports/seti-game-flow-architecture.html` 已经 Playwright 1440×1000 截图检查；脚本语法与 HTML diff 检查通过；`http://127.0.0.1:8770/reports/seti-game-flow-architecture.html` 返回 HTTP 200，服务由 `com.multica.seti-report-8770` 托管。
 - observed_outcome: 本轮报告已按 9 个一级阶段、行动内部接棒机制、成熟度矩阵和四个风险区组织；等待 owner 对内容边界与清晰度反馈。
 - keep_or_revise: 保持 candidate；累计后续 2 次同类反馈后决定是否升级为 exploratory research loop 的固定交付模板。
+
+- date: 2026-07-19
+- source: SETI-16, SETI-60
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及需要验证本地浏览器原型的 coding agent
+- target_component: 本地真实浏览器 smoke 兜底实践
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 记录 in-app Browser 因 sandbox 元数据缺失不可用时，可在报告通道故障后，以隔离 HEAD 快照、本地静态服务和系统 headless Chrome 完成非交互式脚本装配/API smoke。
+- applied_change: 仅更新 coding experience 与本决策契约；不修改 browser skill、agent prompt、loop template、issue-workflow、watcher 或 project memory。
+- expected_effect: 后续同类平台通道故障不会直接跳过真实浏览器装配证据，同时不会把共享 dirty 工作树或用户浏览器状态带入验收。
+- evaluation_window: 后续 3 次 in-app Browser 控制通道因环境问题不可用、但任务只需非交互式本地 smoke 的 coding issue
+- success_signal: 隔离快照与系统 Chrome smoke 可稳定返回页面标题、目标公开 API/DOM 断言，且提交快照全量 Node 同时通过；不安装依赖、不复用用户 profile。
+- rollback_condition: 若 in-app Browser 通道恢复稳定，或系统 Chrome CLI 在目标环境不可用/无法捕获所需错误，则停止兜底并恢复标准 browser 路径；涉及视觉、点击、输入或跨页面状态时不得套用。
+- risk: `--dump-dom` 只能证明页面加载后的 DOM/API 状态，不能覆盖视觉布局、真实交互可达性或全部 console 异步错误；只能用于契约明确的非交互 smoke。
+- evidence_before: SETI-16 browser 控制通道因 sandbox 元数据缺失而未能执行真实页面；SETI-60 同类错误再次出现后，系统 Chrome 在隔离提交快照返回 `ok=true`、标题 `SETI 太阳系随机器`、七类 conditional family 完整、公开 conditional API 可调用且空 pending 候选为 0。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate；证据不足以修改长期组件。
+- applied_at: 2026-07-19
+- verification: SETI-60 提交快照 `node --check randomizer/app.js` 与 129/129 randomizer Node 测试通过；系统 Chrome `--headless=new --dump-dom http://127.0.0.1:8760/smoke.html` 返回结构化 `ok=true`。
+- observed_outcome: 本次在不安装新依赖、不打开用户 profile、不修改共享工作树验收内容的前提下补齐真实 Chrome 装配/API smoke；in-app Browser 原通道仍不可用。
+- keep_or_revise: 保持 candidate；完成 3 次同类兜底后评估是否值得进入 coding loop 模板，任何交互/视觉任务仍坚持标准 browser 控制。
