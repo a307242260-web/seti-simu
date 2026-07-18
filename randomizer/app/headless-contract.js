@@ -156,13 +156,19 @@ function sanitizeCard(card) {
   });
 }
 
-function sanitizePublicPlayer(player, finalScore) {
+function sanitizePublicPlayer(player, finalScoreSummary) {
   const resources = player?.resources || {};
+  const summary = finalScoreSummary && typeof finalScoreSummary === "object"
+    ? finalScoreSummary
+    : { totalScore: finalScoreSummary };
   return {
     playerId: player?.id || null,
     color: player?.color || null,
+    playerLabel: player?.colorLabel || player?.name || player?.id || null,
     score: Number(resources.score) || 0,
-    finalScore: finalScore ?? null,
+    finalScore: summary.totalScore ?? null,
+    scoreBreakdown: summary.breakdown ? clone(summary.breakdown) : null,
+    scoreSources: summary.breakdown ? clone(player?.scoreSources || {}) : null,
     credits: Number(resources.credits) || 0,
     energy: Number(resources.energy) || 0,
     publicity: Number(resources.publicity) || 0,

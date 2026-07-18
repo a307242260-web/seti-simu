@@ -17,6 +17,7 @@ function printHelp() {
   --checkpoint-every N      每 N 局写 checkpoint（默认 1）
   --resume PATH             从 checkpoint 恢复 agent、统计与 episode 游标
   --log PATH                逐步 JSONL 日志
+  --report-dir PATH         每局 HTML 总结目录（默认与日志或 checkpoint 相邻的 reports）
   --evaluate                只评测，不更新 agent
   --max-steps N             单局最大决策步数（默认 100）
   --epsilon NUMBER          训练探索率（默认 0.1）
@@ -36,6 +37,7 @@ function parseArgs(argv) {
     ["--checkpoint-every", "checkpointEvery"],
     ["--resume", "resumeFrom"],
     ["--log", "logPath"],
+    ["--report-dir", "reportDirectory"],
     ["--max-steps", "maxSteps"],
     ["--epsilon", "epsilon"],
     ["--learning-rate", "learningRate"],
@@ -76,6 +78,14 @@ function main() {
   if (options.checkpointPath) options.checkpointPath = path.resolve(options.checkpointPath);
   if (options.resumeFrom) options.resumeFrom = path.resolve(options.resumeFrom);
   if (options.logPath) options.logPath = path.resolve(options.logPath);
+  if (!options.reportDirectory) {
+    const artifactPath = options.logPath || options.checkpointPath || options.resumeFrom;
+    options.reportDirectory = artifactPath
+      ? path.join(path.dirname(artifactPath), "reports")
+      : path.resolve("checkpoint/self-play/reports");
+  } else {
+    options.reportDirectory = path.resolve(options.reportDirectory);
+  }
   const result = runSelfPlay(options);
   console.log(JSON.stringify(result, null, 2));
 }

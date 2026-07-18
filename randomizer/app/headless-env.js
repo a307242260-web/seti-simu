@@ -104,7 +104,7 @@ function buildObservation(api, seed, viewerPlayerId, legalActions = []) {
       activePlayerIds: (playerState.players || []).map((player) => player.id),
       players: (playerState.players || []).map((player) => sanitizePublicPlayer(
         player,
-        turnState.gameEnded ? (finalScoreByPlayerId.get(player.id)?.totalScore ?? null) : null,
+        turnState.gameEnded ? (finalScoreByPlayerId.get(player.id) || null) : null,
       )),
       board: {
         rockets: api.getRocketCoordinates?.() || [],

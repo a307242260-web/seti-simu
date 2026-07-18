@@ -62,6 +62,7 @@ function createFakeEnv() {
         reward: {
           immediateScoreDelta: action.kind === "scan" ? 1 : 0,
           terminalScoreDelta: 0,
+          resourceDelta: { energy: 1, availableData: action.kind === "scan" ? 1 : 0 },
         },
         done: terminal,
         observation: observation(),
@@ -92,6 +93,7 @@ function createBlockedEnv() {
 const temporaryDirectory = fs.mkdtempSync(path.join(os.tmpdir(), "seti-self-play-"));
 const checkpointPath = path.join(temporaryDirectory, "checkpoint.json");
 const logPath = path.join(temporaryDirectory, "steps.jsonl");
+const reportDirectory = path.join(temporaryDirectory, "reports");
 
 const firstRun = runSelfPlay({
   episodes: 2,
@@ -99,6 +101,7 @@ const firstRun = runSelfPlay({
   epsilon: 0,
   checkpointPath,
   logPath,
+  reportDirectory,
   envFactory: createFakeEnv,
 });
 assert.equal(firstRun.nextEpisodeIndex, 2);
@@ -112,6 +115,10 @@ assert.deepEqual(firstRun.stats, {
   blockRate: 0,
 });
 assert.equal(firstRun.agent.episodesTrained, 2);
+assert.deepEqual(firstRun.reportPaths, [
+  path.join(reportDirectory, "episode-00000.html"),
+  path.join(reportDirectory, "episode-00001.html"),
+]);
 
 const checkpoint = readCheckpoint(checkpointPath);
 assert.equal(checkpoint.schemaVersion, CHECKPOINT_SCHEMA);
@@ -162,6 +169,12 @@ assert.equal(stepRecord.legalMask.length, 2);
 assert.equal(typeof stepRecord.reward.immediateScoreDelta, "number");
 assert.equal(typeof stepRecord.terminal, "boolean");
 assert.ok(logRecords.some((record) => record.type === "episode_summary"));
+const episodeSummary = logRecords.find((record) => record.type === "episode_summary");
+assert.equal(episodeSummary.reportPath, path.join(reportDirectory, "episode-00000.html"));
+const reportHtml = fs.readFileSync(episodeSummary.reportPath, "utf8");
+assert.match(reportHtml, /单局训练总结/);
+assert.match(reportHtml, /获取资源量/);
+assert.match(reportHtml, /行动次数/);
 
 fs.rmSync(temporaryDirectory, { recursive: true, force: true });
 

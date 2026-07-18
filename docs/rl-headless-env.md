@@ -47,6 +47,8 @@ node tools/run_self_play_training.js \
 
 训练 checkpoint 固定在 episode 边界，包含配置、下一局游标、trainer 独立随机状态、agent 参数与累计统计；因此跨进程恢复不会依赖 headless env 的进程内随机闭包。逐步日志记录 `seed / action / reward / legalMask / terminal / actorPlayerId`，局摘要记录终局分数、阻塞原因、非法动作次数与 action 尝试数。
 
+每局训练或评测完成后还会生成独立 HTML 可视化总结。默认写到日志或 checkpoint 同级的 `reports/`；两者都未指定时写到 `checkpoint/self-play/reports/`，可用 `--report-dir` 覆盖。报告按玩家展示最终总分、终局板块/卡牌与蓝科/着陆/环绕/任务等分类得分、逐步累计的正向资源获取量及各行动族次数；它只消费 episode 终局数据，不参与 agent 更新与训练推进。
+
 ### 固定评测与“稳定 200 分”协议
 
 默认协议文件为 `randomizer/training/evaluation/stable-200-v1.seeds.json`。协议冻结 20 个 seed，每个 seed 都必须跑完整 4 人局，统计总体为 80 个终局席位；分位数使用 nearest-rank。不得删除低分局、只跑 seed 子集或把未终局时的实时分计入分数总体。

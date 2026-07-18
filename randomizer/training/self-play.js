@@ -3,6 +3,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { createHeadlessEnv } = require("../app/headless-env");
+const { buildEpisodeReport, writeEpisodeReport } = require("./episode-report");
 
 const CHECKPOINT_SCHEMA = "seti-self-play-checkpoint-v1";
 const LOG_SCHEMA = "seti-self-play-log-v1";
@@ -223,6 +224,7 @@ function runEpisode(options) {
         actorPlayerId: result.actorPlayerId,
         action: structuredClone(action),
         rewardValue: flattenReward(result.reward),
+        resourceDelta: structuredClone(result.reward?.resourceDelta || {}),
       });
       appendJsonLine(logPath, {
         schemaVersion: LOG_SCHEMA,
@@ -256,6 +258,8 @@ function runEpisode(options) {
       totalActionAttempts,
       players: observation?.publicState?.players || observation?.players || [],
     };
+    const episodeReport = buildEpisodeReport(summary, trajectory);
+    summary.reportPath = writeEpisodeReport(options.reportDirectory, episodeReport);
     appendJsonLine(logPath, summary);
     return summary;
   } finally {
@@ -290,6 +294,7 @@ function runSelfPlay(options = {}) {
   };
   const envFactory = options.envFactory || createHeadlessEnv;
   let nextEpisodeIndex = startEpisodeIndex;
+  const reportPaths = [];
 
   for (let offset = 0; offset < config.episodes; offset += 1) {
     const episodeIndex = startEpisodeIndex + offset;
@@ -301,6 +306,7 @@ function runSelfPlay(options = {}) {
       episodeIndex,
       evaluate: Boolean(options.evaluate),
       logPath: options.logPath,
+      reportDirectory: options.reportDirectory,
     });
     stats.completedEpisodes += 1;
     stats.terminalEpisodes += summary.terminal ? 1 : 0;
@@ -308,6 +314,7 @@ function runSelfPlay(options = {}) {
     stats.totalSteps += summary.steps;
     stats.illegalActionAttempts += summary.illegalActionAttempts;
     stats.totalActionAttempts += summary.totalActionAttempts;
+    if (summary.reportPath) reportPaths.push(summary.reportPath);
     nextEpisodeIndex = episodeIndex + 1;
     if (options.checkpointPath && (
       nextEpisodeIndex % config.checkpointEvery === 0
@@ -324,6 +331,7 @@ function runSelfPlay(options = {}) {
     agent: cloneAgent(agent),
     nextEpisodeIndex,
     stats: createSummary(stats),
+    reportPaths,
   };
 }
 

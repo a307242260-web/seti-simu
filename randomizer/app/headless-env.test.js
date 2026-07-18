@@ -53,6 +53,16 @@ assert.equal(
   true,
   "terminal observation 应包含现有终局结算生成的总分",
 );
+assert.equal(
+  replay.finalStateSummary.publicState.players.every((player) => (
+    player.scoreBreakdown
+    && Number.isFinite(player.scoreBreakdown.totalScore)
+    && player.scoreSources
+    && typeof player.scoreSources === "object"
+  )),
+  true,
+  "terminal observation 应包含训练报告所需的终局分类与计分来源",
+);
 assert.equal(Array.isArray(replay.environmentEvents), true);
 assert.equal(replay.steps.every((step) => Array.isArray(step.environmentEvents)), true);
 
