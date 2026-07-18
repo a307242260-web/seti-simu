@@ -3661,7 +3661,7 @@
         clearTransientStateForRecovery();
       },
       restoreAiControlSnapshot,
-      refreshAfterGameRecovery,
+      refreshAfterGameRecovery: options.skipRefresh ? null : refreshAfterGameRecovery,
       getRecoveryMessage: () => rocketState.statusNote,
     });
   }

@@ -1,14 +1,18 @@
-# SETI RL Headless Env 契约（第一阶段）
+# SETI RL Headless Env / Harness v2 契约
 
 本文定义 SETI 第一阶段强化学习 headless 环境的统一契约。目标不是直接实现 simulator，而是给后续 `simulator / training harness / evaluation harness` 提供唯一上游接口，避免继续围绕浏览器 UI、overlay 按钮或临时 pending 结构各自发明协议。
 
 ## 当前实现
 
 - Node 入口：`randomizer/app/headless-env.js`，通过 `createHeadlessEnv()` 创建单局环境。
-- 已实现 `reset / observe / legalActions / step / isTerminal / getReplay / loadReplay / createCheckpoint / loadCheckpoint / dispose`。
+- 已实现 `reset / observe(viewer) / legalActions(viewer) / step / isTerminal / getReplay / loadReplay / createCheckpoint / loadCheckpoint / dispose`。
+- `randomizer/app/headless-contract.js` 固化 15 个顶层动作族、7 个 conditional family、旧 runtime selector 映射、稳定 action feature 与 observation 公私域 sanitizer。
+- `legalActions()` 输出 `seti-rl-action-v2`，不再暴露 `candidate.score`、`actionGraph.net`、planner/UI 字段；非 decision owner 请求时返回空数组，`step()` 同时校验 actor 与当前 legal action id。
+- observation 已按 `publicState / selfState / decision` 分域；公开玩家仅保留资源、计数与公开科技，自己的手牌/预留牌才进入 `selfState`，牌库顺序、未来科技 bonus、未揭示外星人身份不进入观测。
+- replay 分开记录 policy `steps` 与自动结算 `environmentEvents`；checkpoint 额外保存随机数状态，可在 fresh env 中恢复且不触发浏览器渲染。
 - 顶层行动通过 `action-runtime` 分发，pending/effect 由 AI 自动机直接调用运行时处理函数收敛，不依赖用户点击。
 - Node composition 通过 `randomizer/app/view-adapter.js` 注入 no-op view adapter；运行时不创建或安装 `document`、DOM 元素、overlay、`localStorage`、`Image`。
-- `randomizer/app/headless-env.test.js` 覆盖无 DOM 启动、固定 seed 的完整 4 人局、terminal、replay 重放一致性和 actor 校验。
+- `randomizer/app/headless-contract.test.js` 建立 15 动作族覆盖矩阵与 conditional taxonomy characterization；`randomizer/app/headless-env.test.js` 覆盖无 DOM 启动、固定 seed 完整 4 人局、terminal、replay/checkpoint parity、owner/非法动作拒绝以及观测反泄漏。
 - 最小训练入口为 `tools/run_self_play_training.js`：串行运行多局 self-play，以 action kind 的 Monte Carlo value table 作为第一版弱 baseline，输出逐步 JSONL，并在局间边界原子保存训练 checkpoint。
 - 固定评测入口为 `tools/run_rl_evaluation.js`：加载任意 self-play checkpoint，在冻结的 20 局四人 seed pool 上输出均分、P25/P50/P75、完局率、非法动作率、阻塞率，以及可机器判定的“稳定 200 分”结论。
 
@@ -78,6 +82,18 @@ node tools/run_rl_evaluation.js \
 当前仓库 baseline checkpoint 的 20 局实跑结果为：80 席均分 `7.1875`、P25 `6`、P50 `7`、P75 `8`，20/20 局终局，非法动作率与阻塞率均为 `0`。可靠性门槛通过，但分数门槛未通过，因此协议结论为 `FAIL`；这组低分与该 checkpoint 只学习到 PASS / end-turn 的弱基线定位一致。
 
 传统脚本仍以 `globalThis` 作为模块注册表，Node 启动时临时把 `window` 名称指向该注册表以兼容 `window.Seti*` 命名空间；这里没有浏览器对象或 DOM 能力。`app.js` 根据 `SetiHeadlessRuntimeConfig` 选择 no-op view adapter，跳过固定 DOM 收集、事件绑定、渲染、浏览器持久化和首屏 shell 初始化。
+
+### 单进程 decision/s 基线
+
+使用固定的 PASS/end-turn 快速终局策略测量环境协议开销；命令会输出局数、policy decision 数、耗时和 decision/s：
+
+```bash
+node tools/benchmark_headless_env.js --games 3
+```
+
+基准只用于同机同进程版本间复测，不代表训练策略质量；吞吐优化不得删减 observation、owner 校验、replay 或自动结算语义。
+
+2026-07-18 在当前工作区（Node `v22.22.0`）的单局 smoke 基线：`32 decisions / 104.735s = 0.306 decision/s`，复测命令为 `node tools/benchmark_headless_env.js --games 1`。该数值明确表明当前 composition boot 与逐步全量派生观测仍是下游吞吐优化的首要目标。
 
 ## 1. 设计目标
 

@@ -57,9 +57,9 @@ function chooseAction(agent, legalActions, random, options = {}) {
     return legalActions[Math.floor(random.next() * legalActions.length)] || legalActions[0];
   }
   let best = legalActions[0];
-  let bestValue = Number(agent.actionValues[best.kind] || 0);
+  let bestValue = Number(agent.actionValues[best.family || best.kind] || 0);
   for (const action of legalActions.slice(1)) {
-    const value = Number(agent.actionValues[action.kind] || 0);
+    const value = Number(agent.actionValues[action.family || action.kind] || 0);
     if (value > bestValue) {
       best = action;
       bestValue = value;
@@ -75,13 +75,13 @@ function flattenReward(reward) {
 
 function updateAgent(agent, trajectory, terminalObservation) {
   const finalScores = new Map(
-    (terminalObservation?.players || []).map((player) => [
+    (terminalObservation?.publicState?.players || terminalObservation?.players || []).map((player) => [
       player.playerId,
       Number(player.finalScore ?? player.score ?? 0),
     ]),
   );
   for (const step of trajectory) {
-    const kind = step.action.kind || "unknown";
+    const kind = step.action.family || step.action.kind || "unknown";
     const terminalScore = finalScores.get(step.actorPlayerId) || 0;
     const target = step.rewardValue + terminalScore;
     const current = Number(agent.actionValues[kind] || 0);
@@ -95,7 +95,7 @@ function buildLegalMask(legalActions) {
   return legalActions.map((action) => ({
     maskIndex: action.maskIndex,
     actionId: action.actionId,
-    kind: action.kind,
+    family: action.family || action.kind,
     actorPlayerId: action.actorPlayerId,
   }));
 }
@@ -254,7 +254,7 @@ function runEpisode(options) {
       blockedReason,
       illegalActionAttempts,
       totalActionAttempts,
-      players: observation?.players || [],
+      players: observation?.publicState?.players || observation?.players || [],
     };
     appendJsonLine(logPath, summary);
     return summary;

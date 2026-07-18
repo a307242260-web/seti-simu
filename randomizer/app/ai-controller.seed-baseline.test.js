@@ -5,8 +5,8 @@ const baseline = require("./ai-controller.seed-baseline.json");
 const { createHeadlessEnv } = require("./headless-env");
 
 function chooseBaselineAction(actions) {
-  return actions.find((action) => action.kind === "pass")
-    || actions.find((action) => action.kind === "end-turn")
+  return actions.find((action) => action.family === "pass")
+    || actions.find((action) => action.family === "end_turn")
     || actions[0]
     || null;
 }
@@ -37,7 +37,7 @@ for (
     failures.push(`第 ${stepIndex} 步没有合法行动`);
     break;
   }
-  actionSequence.push(action.kind);
+  actionSequence.push(action.payload?.sourceActionType || action.family);
   const result = env.step(action);
   if (!result.ok) {
     failures.push(result.error || `第 ${stepIndex} 步执行失败`);
@@ -50,7 +50,7 @@ const actual = {
   terminal: env.isTerminal(),
   completionRate: env.isTerminal() ? 1 : 0,
   steps: actionSequence.length,
-  scores: observation.players.map((player) => player.score),
+  scores: observation.publicState.players.map((player) => player.score),
   bugCount: failures.length,
   blocked: failures.length > 0 || !env.isTerminal(),
 };

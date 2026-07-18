@@ -2,6 +2,16 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const {
+  OBSERVATION_SCHEMA_VERSION,
+  normalizeTurnCandidate,
+  sanitizeCard,
+  sanitizePublicPlayer,
+  sanitizeSelfPlayer,
+  sanitizeAlienPublicState,
+  sanitizeTechSupply,
+  sanitizeFinalScoringState,
+} = require("./headless-contract");
 
 function hashSeed(seed) {
   const text = String(seed ?? "seti-headless");
@@ -15,11 +25,16 @@ function hashSeed(seed) {
 
 function createSeededRandom(seed) {
   let state = hashSeed(seed) || 1;
-  return function seededRandom() {
+  function seededRandom() {
     state = Math.imul(state ^ (state >>> 15), 1 | state);
     state ^= state + Math.imul(state ^ (state >>> 7), 61 | state);
     return ((state ^ (state >>> 14)) >>> 0) / 4294967296;
+  }
+  seededRandom.getState = () => state >>> 0;
+  seededRandom.setState = (nextState) => {
+    state = Number(nextState) >>> 0;
   };
+  return seededRandom;
 }
 
 function getScriptPaths() {
@@ -47,37 +62,68 @@ function loadBrowserBundle(rootRef) {
   return rootRef.SetiRandomizer;
 }
 
-function buildObservation(api, seed) {
+function buildDecision(api, legalActions) {
+  const turnState = api.getTurnState();
+  if (turnState.gameEnded) return null;
+  const actorPlayerId = legalActions[0]?.actorPlayerId || turnState.currentPlayerId || null;
+  if (!actorPlayerId) return null;
+  return {
+    actorPlayerId,
+    effectOwnerPlayerId: null,
+    currentPlayerId: turnState.currentPlayerId || null,
+    source: "current_player",
+    decisionType: "turn_action",
+    choiceCount: legalActions.length,
+  };
+}
+
+function buildObservation(api, seed, viewerPlayerId, legalActions = []) {
   const turnState = api.getTurnState();
   const playerState = api.getPlayerState();
   const currentPlayer = api.getCurrentPlayer();
+  const perspectivePlayerId = viewerPlayerId || legalActions[0]?.actorPlayerId
+    || turnState.currentPlayerId || currentPlayer?.id || null;
   const finalScoreByPlayerId = new Map(
     turnState.gameEnded
       ? (api.getFinalScoreSummaries?.() || []).map((summary) => [summary.playerId, summary])
       : [],
   );
   return {
-    schemaVersion: "seti-rl-observation-v1",
+    schemaVersion: OBSERVATION_SCHEMA_VERSION,
     seed: seed ?? null,
-    currentPlayerId: turnState.currentPlayerId || currentPlayer?.id || null,
-    roundNumber: turnState.roundNumber,
-    turnNumber: turnState.turnNumber,
-    actionCycleNumber: turnState.actionCycleNumber,
+    perspectivePlayerId,
+    publicState: {
+      roundNumber: turnState.roundNumber,
+      turnNumber: turnState.turnNumber,
+      actionCycleNumber: turnState.actionCycleNumber,
+      currentPlayerId: turnState.currentPlayerId || currentPlayer?.id || null,
+      passedPlayerIds: [...(turnState.passedPlayerIds || [])],
+      completedTurnPlayerIds: [...(turnState.completedTurnPlayerIds || [])],
+      activePlayerIds: (playerState.players || []).map((player) => player.id),
+      players: (playerState.players || []).map((player) => sanitizePublicPlayer(
+        player,
+        turnState.gameEnded ? (finalScoreByPlayerId.get(player.id)?.totalScore ?? null) : null,
+      )),
+      board: {
+        rockets: api.getRocketCoordinates?.() || [],
+        planets: api.getPlanetStatsState?.() || {},
+        solarSystem: api.getSolarSnapshot?.() || {},
+        publicCards: (api.cardState?.publicCards || []).map(sanitizeCard),
+        discardCount: (api.cardState?.discardPile || []).length,
+        techSupply: sanitizeTechSupply(api.getTechSnapshot?.()),
+        aliens: sanitizeAlienPublicState(api.getAlienState?.()),
+        finalScoring: sanitizeFinalScoringState(api.getFinalScoringState?.()),
+      },
+      pending: buildDecision(api, legalActions),
+    },
+    selfState: sanitizeSelfPlayer(
+      (playerState.players || []).find((player) => player.id === perspectivePlayerId) || null,
+    ),
+    decision: buildDecision(api, legalActions),
+    actionHistorySummary: {
+      count: (api.getActionLog?.() || []).length,
+    },
     terminal: Boolean(turnState.gameEnded),
-    players: (playerState.players || []).map((player) => ({
-      playerId: player.id,
-      color: player.color,
-      score: player.resources?.score || 0,
-      finalScore: turnState.gameEnded
-        ? (finalScoreByPlayerId.get(player.id)?.totalScore ?? null)
-        : null,
-      credits: player.resources?.credits || 0,
-      energy: player.resources?.energy || 0,
-      publicity: player.resources?.publicity || 0,
-      availableData: player.resources?.availableData || 0,
-      handCount: (player.hand || []).length,
-      reservedCount: (player.reservedCards || []).length,
-    })),
   };
 }
 
@@ -161,8 +207,11 @@ function createHeadlessEnv() {
   let seed = null;
   let config = null;
   let replaySteps = [];
+  let environmentEvents = [];
+  let legalActionSelectors = new Map();
   let restoreRandom = null;
   let restoreHost = null;
+  let seededRandom = null;
 
   function boot(resetConfig = {}) {
     const previousWindow = Object.prototype.hasOwnProperty.call(globalThis, "window")
@@ -180,7 +229,7 @@ function createHeadlessEnv() {
       else delete globalThis.SetiHeadlessRuntimeConfig;
     };
     const originalRandom = Math.random;
-    const seededRandom = createSeededRandom(resetConfig.seed);
+    seededRandom = createSeededRandom(resetConfig.seed);
     Math.random = seededRandom;
     restoreRandom = () => {
       Math.random = originalRandom;
@@ -227,39 +276,38 @@ function createHeadlessEnv() {
         aiDifficulty: resetConfig.aiDifficulty || "laughable",
       };
       replaySteps = [];
+      environmentEvents = [];
+      legalActionSelectors = new Map();
       boot(config);
-      return buildObservation(api, seed);
+      const legalActions = this.legalActions();
+      return buildObservation(api, seed, undefined, legalActions);
     },
-    observe() {
-      return buildObservation(api, seed);
+    observe(viewerPlayerId) {
+      const legalActions = this.legalActions(viewerPlayerId);
+      return buildObservation(api, seed, viewerPlayerId, legalActions);
     },
-    legalActions() {
+    legalActions(viewerPlayerId) {
       const result = api.listAiTurnActionCandidates();
       if (!result?.ok) return [];
-      return (result.candidates || [])
+      const actorPlayerId = result.currentPlayer?.id || api.getTurnState().currentPlayerId || null;
+      if (viewerPlayerId && viewerPlayerId !== actorPlayerId) return [];
+      legalActionSelectors = new Map();
+      const actions = (result.candidates || [])
         .filter((candidate) => candidate.available !== false)
-        .map((candidate) => ({
-        actionId: `${candidate.id || "candidate"}:${candidate.candidateIndex}`,
-        actorPlayerId: result.currentPlayer?.id || api.getTurnState().currentPlayerId || null,
-        phase: getActionPhase(candidate.id),
-        kind: candidate.id || null,
-        target: candidate.target || null,
-        payload: {
-          tradeId: candidate.tradeId || null,
-          cardId: candidate.cardId || null,
-          cardInstanceId: candidate.cardInstanceId || null,
-          handIndex: candidate.handIndex ?? null,
-          blueSlot: candidate.blueSlot ?? null,
-        },
-        maskIndex: candidate.candidateIndex,
-        summary: candidate.label || candidate.id || "action",
-        score: candidate.score ?? null,
-        }));
+        .map((candidate) => ({ candidate, action: normalizeTurnCandidate(candidate, actorPlayerId) }))
+        .filter((entry) => entry.action)
+        .sort((left, right) => left.action.actionId.localeCompare(right.action.actionId));
+      actions.forEach((entry, maskIndex) => {
+        entry.action.maskIndex = maskIndex;
+        legalActionSelectors.set(entry.action.actionId, createActionSelector(entry.candidate));
+      });
+      return actions.map((entry) => entry.action);
     },
     step(action) {
-      const beforeObservation = buildObservation(api, seed);
+      const currentLegalActions = this.legalActions();
+      const beforeObservation = buildObservation(api, seed, action?.actorPlayerId, currentLegalActions);
       const beforePlayerState = api.getPlayerState();
-      const actorPlayerId = beforeObservation.currentPlayerId;
+      const actorPlayerId = beforeObservation.decision?.actorPlayerId || null;
       const beforePlayer = (beforePlayerState.players || []).find((player) => player.id === actorPlayerId) || null;
       if (action?.actorPlayerId && action.actorPlayerId !== actorPlayerId) {
         return {
@@ -274,7 +322,20 @@ function createHeadlessEnv() {
           error: `动作执行者不匹配：期望 ${actorPlayerId}，收到 ${action.actorPlayerId}`,
         };
       }
-      const selector = createActionSelector(action || {});
+      const selector = legalActionSelectors.get(action?.actionId);
+      if (!selector) {
+        return {
+          ok: false,
+          actionId: action?.actionId || null,
+          actorPlayerId,
+          reward: buildReward(beforePlayer, beforePlayer, false),
+          done: this.isTerminal(),
+          observation: beforeObservation,
+          legalActions: currentLegalActions,
+          replayEvent: null,
+          error: `动作不在当前 legalActions：${action?.actionId || "<missing>"}`,
+        };
+      }
       let result;
       try {
         result = api.runAiSelectedTurnAction(selector, { maxSteps: 2000 });
@@ -304,7 +365,7 @@ function createHeadlessEnv() {
           actorPlayerId,
           reward: buildReward(beforePlayer, beforePlayer, false),
           done: this.isTerminal(),
-          observation: buildObservation(api, seed),
+          observation: this.observe(actorPlayerId),
           legalActions: this.legalActions(),
           replayEvent: null,
           error: errorMessage,
@@ -312,17 +373,27 @@ function createHeadlessEnv() {
       }
       const afterPlayerState = api.getPlayerState();
       const afterPlayer = (afterPlayerState.players || []).find((player) => player.id === actorPlayerId) || null;
-      const observation = buildObservation(api, seed);
+      const postLegalActions = this.legalActions();
+      const observation = buildObservation(api, seed, undefined, postLegalActions);
       const done = Boolean(observation.terminal);
       const reward = buildReward(beforePlayer, afterPlayer, done);
+      const stepEnvironmentEvents = (result.resolution?.steps || []).map((event, eventIndex) => ({
+        eventIndex: environmentEvents.length + eventIndex,
+        type: event?.done ? "terminal" : event?.skipped ? "auto_skip" : "automatic_resolution",
+        ownerPlayerId: event?.playerId || event?.actorPlayerId || null,
+        sourceActionType: action.family || null,
+        irreversible: event?.irreversible || null,
+      }));
+      environmentEvents.push(...stepEnvironmentEvents);
       const replayEvent = {
         stepIndex: replaySteps.length,
         actorPlayerId,
         action: structuredClone(action || {}),
         reward,
-        preDecision: { actorPlayerId },
-        postDecision: observation.terminal ? null : { actorPlayerId: observation.currentPlayerId },
-        publicSummary: observation,
+        preDecision: beforeObservation.decision,
+        postDecision: observation.decision,
+        publicSummary: observation.publicState,
+        environmentEvents: stepEnvironmentEvents,
       };
       replaySteps.push(replayEvent);
       return {
@@ -332,7 +403,7 @@ function createHeadlessEnv() {
         reward,
         done,
         observation,
-        legalActions: this.legalActions(),
+        legalActions: postLegalActions,
         replayEvent,
       };
     },
@@ -345,7 +416,8 @@ function createHeadlessEnv() {
         seed,
         config: structuredClone(config || {}),
         steps: structuredClone(replaySteps),
-        finalStateSummary: buildObservation(api, seed),
+        environmentEvents: structuredClone(environmentEvents),
+        finalStateSummary: this.observe(),
       };
     },
     loadReplay(replay) {
@@ -359,22 +431,37 @@ function createHeadlessEnv() {
           throw new Error(`replay 第 ${stepIndex} 步失败：${result.error || "未知错误"}`);
         }
       }
-      return buildObservation(api, seed);
+      return this.observe();
     },
     loadCheckpoint(checkpoint) {
-      api.restoreRecoverySnapshot(checkpoint?.coreState || checkpoint?.snapshot || checkpoint);
+      if (!api) {
+        const checkpointSeed = checkpoint?.replayCursor?.seed ?? checkpoint?.config?.seed ?? "seti-headless";
+        this.reset({ ...(checkpoint?.config || {}), seed: checkpointSeed });
+      }
+      api.restoreRecoverySnapshot(checkpoint?.coreState || checkpoint?.snapshot || checkpoint, { skipRefresh: true });
       replaySteps = Array.isArray(checkpoint?.replaySteps) ? structuredClone(checkpoint.replaySteps) : replaySteps;
-      return buildObservation(api, seed);
+      environmentEvents = Array.isArray(checkpoint?.environmentEvents)
+        ? structuredClone(checkpoint.environmentEvents)
+        : environmentEvents;
+      if (checkpoint?.runtimeState?.randomState != null) {
+        seededRandom?.setState(checkpoint.runtimeState.randomState);
+      }
+      return this.observe();
     },
     createCheckpoint() {
       return {
         schemaVersion: "seti-rl-checkpoint-v1",
         coreState: api.createRecoverySnapshot(),
+        runtimeState: {
+          randomState: seededRandom?.getState?.() ?? null,
+        },
+        config: structuredClone(config || {}),
         replayCursor: {
           seed,
           stepIndex: replaySteps.length,
         },
         replaySteps: structuredClone(replaySteps),
+        environmentEvents: structuredClone(environmentEvents),
       };
     },
     dispose() {
