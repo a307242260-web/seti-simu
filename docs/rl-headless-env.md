@@ -11,6 +11,7 @@
 - pending/conditional 边界在枚举顶层行动或执行 deterministic drain 之前先经过 inventory 审计；未知 pending key、已知 key 的未知 type、未知 conditional family 分别以稳定 `HEADLESS_UNSUPPORTED_PENDING`、`HEADLESS_UNSUPPORTED_PENDING_TYPE`、`HEADLESS_UNSUPPORTED_CONDITIONAL_FAMILY` 拒绝。诊断固定包含 `state/family/type/owner`，拒绝分支不枚举顶层行动，也不调用旧 resolver、DOM callback、recover 或 skip。
 - observation 已按 `publicState / selfState / decision` 分域；公开玩家仅保留资源、计数与公开科技，自己的手牌/预留牌才进入 `selfState`，牌库顺序、未来科技 bonus、未揭示外星人身份不进入观测。
 - replay 分开记录 policy `steps` 与自动结算 `environmentEvents`；checkpoint 额外保存随机数状态，可在 fresh env 中恢复且不触发浏览器渲染。
+- 终局 25/50/70 分 pending 由 `choose_final_scoring` 独立枚举与执行：多项由 pending owner 决策并写一条 policy replay，唯一合法板块由环境自动推进；headless 路径显式禁止调用旧 final-score AI resolver，标记时间使用稳定 replay 值。
 - 顶层行动保留已验证的原始规则 action，`step()` 不再调用 `buildAiTurnActionCandidates / runAiSelectedTurnAction` 二次构建候选；transition 通过 `action-runtime` 分发，随后自动 drain pending/effect，不依赖用户点击。
 - Node composition 通过 `randomizer/app/view-adapter.js` 注入 no-op view adapter；运行时不创建或安装 `document`、DOM 元素、overlay、`localStorage`、`Image`。
 - `randomizer/app/headless-contract.test.js` 建立 15 动作族覆盖矩阵与 conditional taxonomy characterization；`randomizer/app/headless-env.test.js` 覆盖无 DOM 启动、固定 seed 完整 4 人局、terminal、replay/checkpoint parity、owner/非法动作拒绝以及观测反泄漏。

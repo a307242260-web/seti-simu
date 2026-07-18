@@ -165,6 +165,9 @@
   let turnEndFlow = null;
   let actionInteractionRuntime = null;
   function runAiFinalScoreMarkDecision(...args) {
+    if (headlessMode) {
+      throw new Error("headless 禁止调用 final-score AI resolver");
+    }
     return finalScoreAiRuntime?.runAiFinalScoreMarkDecision(...args) || null;
   }
   function createPassEvent(...args) { return turnEndFlow?.createPassEvent(...args); }
@@ -8978,7 +8981,13 @@
 
   function getHeadlessDecisionOwnerState(enumeratedActor = null) {
     const currentPlayer = getCurrentPlayer();
+    const finalScorePlayer = enumeratedActor || currentPlayer;
+    const finalScorePending = finalScoring.getNextPendingMarkForPlayer(
+      finalScoringState,
+      finalScorePlayer?.id,
+    );
     const activePending = [
+      finalScorePending ? { ...finalScorePending, player: finalScorePlayer } : null,
       pendingState.scanTargetAction,
       pendingState.handScanAction,
       pendingState.passReserveSelection,

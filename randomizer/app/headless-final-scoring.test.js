@@ -60,6 +60,8 @@ assert.deepEqual(
   ["a", "b"],
 );
 assert.equal(multiOpening.decision.actorPlayerId, multi.playerId, "终局计分 owner 应为当前 pending 玩家");
+assert.equal(multiOpening.decision.pendingOwnerPlayerId, multi.playerId);
+assert.equal(multiOpening.decision.source, "pending_owner");
 assert.equal(multiOpening.decision.decisionType, "conditional_choice");
 assert.equal(multiOpening.decision.choiceCount, 2, "两个合法板块必须保留独立 policy step");
 
@@ -124,5 +126,6 @@ const executeSource = appSource.slice(
 );
 assert.equal(enumerateSource.includes("runAiFinalScoreMarkDecision"), false, "枚举不得回退 final-score AI resolver");
 assert.equal(executeSource.includes("runAiFinalScoreMarkDecision"), false, "执行不得回退 final-score AI resolver");
+assert.match(appSource, /headless 禁止调用 final-score AI resolver/, "headless composition 应禁用旧 resolver");
 
 console.log("headless final-scoring tests passed");
