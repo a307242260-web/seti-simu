@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-18
+- source_issue: SETI-38
+- observation: RL/checkpoint 恢复测试不能只覆盖 opening 或零 action 快照；至少应在真实 policy action 后比较 observation、legalActions、reward/replay cursor，因为 core snapshot 可能恢复公开状态却漏掉影响候选枚举的 runtime-derived 状态。
+- evidence: SETI-38 新增 worker checkpoint fresh-load 测试时，opening checkpoint 既有测试通过，但执行一步后的 core snapshot 恢复把同一决策点 legal action `choiceCount` 从 3 漂到 11；改为按 checkpoint 的 seed/config/action journal 确定性 replay 后，IPC/direct observation、legalActions、reward 和 artifact metadata parity 均通过。
+- promote_to: none
+- promotion_status: candidate
+- decision: 当前只有 headless Harness v2 一次非零 action checkpoint 证据，先作为 coding candidate；不修改 agent prompt、loop template、watcher 或 issue-workflow，后续 3 个搜索/采样/checkpoint 任务观察是否复现。
+
+- date: 2026-07-18
 - source_issue: SETI-36
 - observation: 通过 `REQUIRED_CONTEXT_KEYS` 声明窄 context 的 runtime，controller composition 不应静默过滤缺失键；应在创建 runtime 前 fail-fast 并列出缺项，否则漏接线只会在低频深层分支以 `undefined` 或 `ReferenceError` 暴露。
 - evidence: SETI-36 将 `pickAiAppRuntimeContext` 从静默 `.filter()` 改为缺项校验后，controller characterization 立即暴露深空交换阈值未注入，固定 seed bootstrap 又暴露 `app.js` 未向 controller 传 `cancelCardTriggerChoice`；补齐后工作树与仅 staged 快照全量 tracked Node 回归均通过。

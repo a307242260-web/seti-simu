@@ -81,6 +81,56 @@ node tools/run_rl_evaluation.js \
 
 当前仓库 baseline checkpoint 的 20 局实跑结果为：80 席均分 `7.1875`、P25 `6`、P50 `7`、P75 `8`，20/20 局终局，非法动作率与阻塞率均为 `0`。可靠性门槛通过，但分数门槛未通过，因此协议结论为 `FAIL`；这组低分与该 checkpoint 只学习到 PASS / end-turn 的弱基线定位一致。
 
+### Python / PyTorch 常驻采样层
+
+并行采样使用 `worker_threads`，每个 worker 拥有独立 Node isolate、seed、环境、replay 和进程级随机状态。不能把多个 `createHeadlessEnv()` 放在同一 isolate 并发：传统 runtime 仍以 `globalThis` 注册模块，并在局内临时接管 `Math.random`。worker 常驻且可连续 reset 多局，不会按 decision 重启 Node。
+
+Python 通过版本化 JSONL 长连接访问：
+
+```bash
+node tools/run_rl_worker_server.js --workers 4 --timeout-ms 120000
+```
+
+每行请求都必须包含：
+
+```json
+{"schemaVersion":"seti-rl-ipc-v1","requestId":1,"operation":"server_info","payload":{}}
+```
+
+服务端回复保持同一 `requestId`，成功时返回 `result`，失败时返回稳定的 `error.code/message/details`。支持的顶层 operation：
+
+- `server_info`：返回 worker 数、持久化能力与恢复策略。
+- `worker_request`：向一个 worker 发送 `reset/state/step/checkpoint/load_checkpoint/replay/dispose`。
+- `batch`：并发向多个 worker 发送一批请求；结果按 `batchIndex` 对齐并逐项报告错误，适合一次 PyTorch forward 后批量 step。
+- `shutdown`：排空在途请求并关闭 worker。
+
+`tools/rl_worker_client.py` 是仅依赖 Python 标准库的最小客户端，可直接被 PyTorch sampler 包装：先对全部 worker 批量 `reset` 或 `state`，把返回的 observation/legalActions 组 batch 做一次 inference，再把选择的完整 legal action 批量 `step`。协议不内置 PPO、value update 或模型格式。
+
+Python smoke：
+
+```bash
+python3 tools/rl_worker_client.py --workers 2 --episodes 2
+```
+
+2026-07-18 使用 `python3 tools/rl_worker_client.py --workers 4 --episodes 100` 完成真实连续 smoke：100/100 局 terminal，非法动作 0、阻塞 0；每局均读取完整 replay 与 checkpoint，并校验 `episodeId` 一致，期间未出现 timeout、worker crash、schema mismatch 或 backpressure。
+
+worker 的等待队列有界；队列满返回 `backpressure`。每个请求有 deadline；超时返回 `timeout` 并终止、重建对应 worker。异常退出返回 `worker_crash`。worker pool 为每个未完成 episode 保留 `reset config + 已确认成功的 action journal`，下一次请求前在新 isolate 自动重放；恢复失败单独返回 `worker_recovery_failed`，不会把旧局轨迹接到新状态。非法 action 返回 `illegal_action`，schema 不符返回 `schema_mismatch`，二者都不会写入恢复 journal。
+
+每个 reset 可携带 `episodeId/policyVersion/opponentIdentity/seat/seed`；这些字段随完整 replay 和 checkpoint 返回，step 轨迹由同一 `episodeId + replay stepIndex` 关联。checkpoint 含完整 replay cursor/action/environment event 和随机状态，可以在 fresh worker 中恢复。
+
+### Worker 吞吐闸门
+
+分项 benchmark 同时报告 JSON 序列化空载、批量 inference 空载、reset/boot、step-only 与包含 boot 的 aggregate decision/s：
+
+```bash
+node tools/benchmark_rl_workers.js --workers 1 --games-per-worker 1
+node tools/benchmark_rl_workers.js --workers 4 --games-per-worker 1
+```
+
+aggregate 目标为 `>= 50 decision/s`。未达标时命令退出码为 `2`，JSON 报告仍完整输出，必须保留 `resetSeconds / stepSeconds / serializationIdle / inferenceIdle` 来区分 composition boot、环境推进、IPC 序列化和模型空载；不得只报告总耗时或用增大 batch 等待窗口制造吞吐假提升。
+
+2026-07-18 当前机器（Node `v22.22.0`）实测：单 worker 为 `32 decisions / 43.252s = 0.740 decision/s`，双 worker 为 `64 decisions / 51.840s = 1.235 decision/s`，未达到 50 decision/s 闸门。单 worker 分项中 boot `1.263s`、legal action enumeration `20.802s`、action execution `20.781s`、observation `0.344s`、replay `0.0003s`；JSON 序列化与 inference 空载均为百万级 decision/s。已通过复用同一决策点的稳定 legal action/selector，把单 worker 从优化前的 `0.490` 提升到 `0.740 decision/s`，但剩余瓶颈明确在规则域 candidate enumeration 和 action execution。下一步优化应对 `listAiTurnActionCandidates` 做规则域 profiling、按未变化状态切片增量派生或 memoization，并拆解 `runAiSelectedTurnAction` 内自动结算；没有证据支持继续压缩 JSONL 或扩大 batch 等待窗口。
+
 传统脚本仍以 `globalThis` 作为模块注册表，Node 启动时临时把 `window` 名称指向该注册表以兼容 `window.Seti*` 命名空间；这里没有浏览器对象或 DOM 能力。`app.js` 根据 `SetiHeadlessRuntimeConfig` 选择 no-op view adapter，跳过固定 DOM 收集、事件绑定、渲染、浏览器持久化和首屏 shell 初始化。
 
 ### 单进程 decision/s 基线

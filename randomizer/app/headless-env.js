@@ -2,6 +2,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const { performance } = require("node:perf_hooks");
 const {
   OBSERVATION_SCHEMA_VERSION,
   normalizeTurnCandidate,
@@ -209,9 +210,23 @@ function createHeadlessEnv() {
   let replaySteps = [];
   let environmentEvents = [];
   let legalActionSelectors = new Map();
+  let lastLegalActions = null;
   let restoreRandom = null;
   let restoreHost = null;
   let seededRandom = null;
+  let diagnostics = null;
+
+  function recordDuration(key, startedAt) {
+    diagnostics[key] += performance.now() - startedAt;
+  }
+
+  function buildTimedObservation(viewerPlayerId, legalActions) {
+    const startedAt = performance.now();
+    const observation = buildObservation(api, seed, viewerPlayerId, legalActions);
+    recordDuration("observationMilliseconds", startedAt);
+    diagnostics.observationCalls += 1;
+    return observation;
+  }
 
   function boot(resetConfig = {}) {
     const previousWindow = Object.prototype.hasOwnProperty.call(globalThis, "window")
@@ -274,23 +289,50 @@ function createHeadlessEnv() {
         seed,
         activePlayerCount: resetConfig.activePlayerCount || 4,
         aiDifficulty: resetConfig.aiDifficulty || "laughable",
+        episodeId: resetConfig.episodeId || null,
+        policyVersion: resetConfig.policyVersion || null,
+        opponentIdentity: resetConfig.opponentIdentity || null,
+        seat: resetConfig.seat ?? null,
       };
       replaySteps = [];
       environmentEvents = [];
       legalActionSelectors = new Map();
+      lastLegalActions = null;
+      diagnostics = {
+        bootMilliseconds: 0,
+        legalActionsMilliseconds: 0,
+        observationMilliseconds: 0,
+        actionExecutionMilliseconds: 0,
+        replayMilliseconds: 0,
+        legalActionsCalls: 0,
+        observationCalls: 0,
+        actionExecutionCalls: 0,
+      };
+      const bootStartedAt = performance.now();
       boot(config);
+      recordDuration("bootMilliseconds", bootStartedAt);
       const legalActions = this.legalActions();
-      return buildObservation(api, seed, undefined, legalActions);
+      return buildTimedObservation(undefined, legalActions);
     },
     observe(viewerPlayerId) {
       const legalActions = this.legalActions(viewerPlayerId);
-      return buildObservation(api, seed, viewerPlayerId, legalActions);
+      return buildTimedObservation(viewerPlayerId, legalActions);
     },
     legalActions(viewerPlayerId) {
+      const startedAt = performance.now();
       const result = api.listAiTurnActionCandidates();
-      if (!result?.ok) return [];
+      if (!result?.ok) {
+        lastLegalActions = [];
+        recordDuration("legalActionsMilliseconds", startedAt);
+        diagnostics.legalActionsCalls += 1;
+        return [];
+      }
       const actorPlayerId = result.currentPlayer?.id || api.getTurnState().currentPlayerId || null;
-      if (viewerPlayerId && viewerPlayerId !== actorPlayerId) return [];
+      if (viewerPlayerId && viewerPlayerId !== actorPlayerId) {
+        recordDuration("legalActionsMilliseconds", startedAt);
+        diagnostics.legalActionsCalls += 1;
+        return [];
+      }
       legalActionSelectors = new Map();
       const actions = (result.candidates || [])
         .filter((candidate) => candidate.available !== false)
@@ -301,11 +343,15 @@ function createHeadlessEnv() {
         entry.action.maskIndex = maskIndex;
         legalActionSelectors.set(entry.action.actionId, createActionSelector(entry.candidate));
       });
-      return actions.map((entry) => entry.action);
+      const normalizedActions = actions.map((entry) => entry.action);
+      lastLegalActions = normalizedActions;
+      recordDuration("legalActionsMilliseconds", startedAt);
+      diagnostics.legalActionsCalls += 1;
+      return normalizedActions;
     },
     step(action) {
-      const currentLegalActions = this.legalActions();
-      const beforeObservation = buildObservation(api, seed, action?.actorPlayerId, currentLegalActions);
+      const currentLegalActions = lastLegalActions || this.legalActions();
+      const beforeObservation = buildTimedObservation(action?.actorPlayerId, currentLegalActions);
       const beforePlayerState = api.getPlayerState();
       const actorPlayerId = beforeObservation.decision?.actorPlayerId || null;
       const beforePlayer = (beforePlayerState.players || []).find((player) => player.id === actorPlayerId) || null;
@@ -337,11 +383,14 @@ function createHeadlessEnv() {
         };
       }
       let result;
+      const actionStartedAt = performance.now();
       try {
         result = api.runAiSelectedTurnAction(selector, { maxSteps: 2000 });
       } catch (error) {
         result = { ok: false, message: error?.stack || error?.message || String(error) };
       }
+      recordDuration("actionExecutionMilliseconds", actionStartedAt);
+      diagnostics.actionExecutionCalls += 1;
       if (result?.ok === false) {
         const baseErrorMessage = result.message
           || result.resolution?.final?.message
@@ -374,9 +423,10 @@ function createHeadlessEnv() {
       const afterPlayerState = api.getPlayerState();
       const afterPlayer = (afterPlayerState.players || []).find((player) => player.id === actorPlayerId) || null;
       const postLegalActions = this.legalActions();
-      const observation = buildObservation(api, seed, undefined, postLegalActions);
+      const observation = buildTimedObservation(undefined, postLegalActions);
       const done = Boolean(observation.terminal);
       const reward = buildReward(beforePlayer, afterPlayer, done);
+      const replayStartedAt = performance.now();
       const stepEnvironmentEvents = (result.resolution?.steps || []).map((event, eventIndex) => ({
         eventIndex: environmentEvents.length + eventIndex,
         type: event?.done ? "terminal" : event?.skipped ? "auto_skip" : "automatic_resolution",
@@ -396,6 +446,7 @@ function createHeadlessEnv() {
         environmentEvents: stepEnvironmentEvents,
       };
       replaySteps.push(replayEvent);
+      recordDuration("replayMilliseconds", replayStartedAt);
       return {
         ok: true,
         actionId: action?.actionId || action?.id || null,
@@ -410,10 +461,19 @@ function createHeadlessEnv() {
     isTerminal() {
       return Boolean(api?.getTurnState?.().gameEnded);
     },
+    getDiagnostics() {
+      return structuredClone(diagnostics || {});
+    },
     getReplay() {
       return {
         schemaVersion: "seti-rl-replay-v1",
         seed,
+        episodeMetadata: {
+          episodeId: config?.episodeId || null,
+          policyVersion: config?.policyVersion || null,
+          opponentIdentity: config?.opponentIdentity || null,
+          seat: config?.seat ?? null,
+        },
         config: structuredClone(config || {}),
         steps: structuredClone(replaySteps),
         environmentEvents: structuredClone(environmentEvents),
@@ -434,6 +494,25 @@ function createHeadlessEnv() {
       return this.observe();
     },
     loadCheckpoint(checkpoint) {
+      if (!checkpoint || checkpoint.schemaVersion !== "seti-rl-checkpoint-v1") {
+        throw new Error(`不支持的 checkpoint schema：${checkpoint?.schemaVersion || "missing"}`);
+      }
+      if (Array.isArray(checkpoint.replaySteps)) {
+        this.reset({
+          ...(checkpoint.config || {}),
+          seed: checkpoint?.replayCursor?.seed ?? checkpoint?.config?.seed ?? "seti-headless",
+        });
+        for (const [stepIndex, replayStep] of checkpoint.replaySteps.entries()) {
+          const replayResult = this.step(replayStep.action);
+          if (!replayResult.ok) {
+            throw new Error(`checkpoint replay 第 ${stepIndex} 步失败：${replayResult.error || "未知错误"}`);
+          }
+        }
+        if (checkpoint?.runtimeState?.randomState != null) {
+          seededRandom?.setState(checkpoint.runtimeState.randomState);
+        }
+        return this.observe();
+      }
       if (!api) {
         const checkpointSeed = checkpoint?.replayCursor?.seed ?? checkpoint?.config?.seed ?? "seti-headless";
         this.reset({ ...(checkpoint?.config || {}), seed: checkpointSeed });
@@ -443,6 +522,8 @@ function createHeadlessEnv() {
       environmentEvents = Array.isArray(checkpoint?.environmentEvents)
         ? structuredClone(checkpoint.environmentEvents)
         : environmentEvents;
+      config = structuredClone(checkpoint?.config || config || {});
+      seed = checkpoint?.replayCursor?.seed ?? config.seed ?? seed;
       if (checkpoint?.runtimeState?.randomState != null) {
         seededRandom?.setState(checkpoint.runtimeState.randomState);
       }
@@ -459,6 +540,12 @@ function createHeadlessEnv() {
         replayCursor: {
           seed,
           stepIndex: replaySteps.length,
+        },
+        episodeMetadata: {
+          episodeId: config?.episodeId || null,
+          policyVersion: config?.policyVersion || null,
+          opponentIdentity: config?.opponentIdentity || null,
+          seat: config?.seat ?? null,
         },
         replaySteps: structuredClone(replaySteps),
         environmentEvents: structuredClone(environmentEvents),

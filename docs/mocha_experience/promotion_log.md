@@ -358,6 +358,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - keep_or_revise: 已提升并进入 5 次迁移观察窗口；若验证成本失衡或自动化覆盖替代手工 smoke，再修订规则。
 
 - date: 2026-07-18
+- source: SETI-38
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航
+- target_component: RL/checkpoint 恢复验证实践
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 记录 checkpoint 恢复必须覆盖至少一个真实 policy action，并比较 observation、legalActions、reward/replay cursor；opening/零 action 恢复不足以证明 runtime-derived 状态完整。
+- applied_change: 仅更新 coding experience 与本决策契约；不修改 agent prompt、loop template、watcher、issue-workflow 或 project memory。
+- expected_effect: 后续采样、搜索和 checkpoint 工作能在交付前发现“公开状态看似恢复但候选枚举漂移”的轨迹污染风险。
+- evaluation_window: 后续 3 个涉及非零 action checkpoint、搜索分支恢复或 worker crash recovery 的 coding issue
+- success_signal: 每个相关任务均至少用一个非零 action checkpoint 比较 observation/legalActions 与 replay cursor，且不再由 opening-only 测试漏过 runtime-derived 状态漂移。
+- rollback_condition: 若环境 checkpoint 改为完整、类型化且可静态证明覆盖全部 runtime state，或连续 3 个相关任务证明 opening parity 已能机械覆盖同等风险，则合并或删除该候选。
+- risk: 确定性 action replay 的恢复成本随 episode 长度增长，不应把它误当作最终高性能中间 checkpoint 方案；当前优先保证轨迹真值，后续仍需补完整 runtime snapshot。
+- evidence_before: SETI-38 的 `headless-worker.integration.test.js` 首次在执行一步后 fresh-load checkpoint，暴露恢复后 legal action `choiceCount` 从 3 漂到 11；既有 `headless-env.test.js` 仅覆盖 opening checkpoint 因而未发现。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate，暂不升级长期组件。
+- applied_at: 2026-07-18
+- verification: `node randomizer/app/headless-worker.integration.test.js`、`node randomizer/app/headless-env.test.js` 与全量 `randomizer/**/*.test.js` 均通过；4-worker 真实连续 100 局 smoke 为 100/100 terminal、非法动作 0。
+- observed_outcome: 带 replay cursor 的 checkpoint 改为 reset+policy action replay 后，非零 action 的 observation/legalActions/reward parity 与 replay/checkpoint episode metadata 关联通过。
+- keep_or_revise: 保持 candidate；待后续 3 个 checkpoint/search/recovery issue 复审是否升级为 coding loop 模板。
+
+- date: 2026-07-18
 - source: SETI-7, SETI-32, SETI-30
 - promoted_to: agent_prompt
 - promotion_decision: promote
