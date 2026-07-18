@@ -323,10 +323,21 @@ function drainHeadlessDeterministicEffects(api, maxSteps = 2000) {
         return { ok: false, final: { message: "活动效果未产生确定性推进结果" }, steps };
       }
       if (effectResult?.ok === false) {
-        const skipResult = api.skipHeadlessActionEffect?.();
-        steps.push(skipResult);
-        if (skipResult?.ok) continue;
-        return { ok: false, final: effectResult, steps };
+        const pendingState = api.getAiAutoBattleProgress?.().pendingState || {};
+        const currentEffect = pendingState.currentEffect || {};
+        const owner = api.getHeadlessDecisionOwnerState?.() || null;
+        const failure = {
+          ...buildHeadlessUnsupportedError({
+            code: "HEADLESS_EFFECT_EXECUTION_FAILED",
+            state: "action_effect",
+            type: currentEffect.type || effectResult.type || "unknown",
+            owner,
+          }),
+          effectId: currentEffect.id || effectResult.effectId || "unknown",
+          cause: effectResult.message || null,
+        };
+        failure.message = `${failure.message} effect=${failure.effectId}${failure.cause ? ` cause=${failure.cause}` : ""}`;
+        return { ok: false, final: failure, steps };
       }
       continue;
     }
