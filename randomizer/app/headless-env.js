@@ -552,14 +552,20 @@ function createHeadlessEnv() {
       legalActionSelectors = new Map();
       const actions = (result.candidates || [])
         .filter((candidate) => candidate.available !== false)
-        .map((candidate) => ({
-          candidate,
-          action: candidate.family
-            ? normalizeConditionalCandidate(candidate, actorPlayerId)
-            : normalizeTurnCandidate(candidate, actorPlayerId),
-        }))
+        .map((candidate) => {
+          const conditional = candidate.standardAction?.phase === "conditional";
+          return {
+            candidate,
+            action: conditional
+              ? normalizeConditionalCandidate(candidate, actorPlayerId)
+              : normalizeTurnCandidate(candidate, actorPlayerId),
+            sortActionId: conditional
+              ? normalizeConditionalCandidate({ ...candidate, standardAction: null }, actorPlayerId)?.actionId
+              : candidate.actionId,
+          };
+        })
         .filter((entry) => entry.action)
-        .sort((left, right) => left.action.actionId.localeCompare(right.action.actionId));
+        .sort((left, right) => left.sortActionId.localeCompare(right.sortActionId));
       actions.forEach((entry, maskIndex) => {
         entry.action.maskIndex = maskIndex;
         entry.action.stateVersion = stateVersion;
