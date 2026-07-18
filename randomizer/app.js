@@ -2012,6 +2012,151 @@
           execute() { return passForCurrentPlayer(); },
         },
       },
+      stage3Actions: {
+        move: {
+          label: "移动",
+          getOptions(context) {
+            if (hasActivePendingSubFlow()) return { ok: false, message: "请先完成当前选择" };
+            const player = players.getCurrentPlayer(context.playerState);
+            const directions = [
+              { id: "out", deltaX: 0, deltaY: 1 },
+              { id: "cw", deltaX: 1, deltaY: 0 },
+              { id: "ccw", deltaX: -1, deltaY: 0 },
+              { id: "in", deltaX: 0, deltaY: -1 },
+            ];
+            const choices = (getMovableTokensForPlayer(player?.id) || []).flatMap((rocket) => directions
+              .map((direction) => ({
+                rocket,
+                direction,
+                requiredMovePoints: getRequiredMovePointsForUi(player, rocket.id, direction.deltaX, direction.deltaY),
+              }))
+              .filter(({ rocket, direction, requiredMovePoints }) => (
+                rocketActions.canMoveRocket(rocketState, rocket.id, direction.deltaX, direction.deltaY).ok
+                && canPayForMove(player, requiredMovePoints).ok
+              ))
+              .map(({ rocket, direction, requiredMovePoints }) => ({
+                target: { rocketId: rocket.id, deltaX: direction.deltaX, deltaY: direction.deltaY },
+                payload: { requiredMovePoints },
+                label: `移动火箭 ${rocket.id} ${direction.id}`,
+              })));
+            return choices.length ? { ok: true, choices } : { ok: false, message: "没有合法移动目标" };
+          },
+          canExecute(context) { return this.getOptions(context); },
+          execute(_context, option) {
+            return moveRocket(option.target.deltaX, option.target.deltaY, option.target.rocketId);
+          },
+        },
+        quickTrade: {
+          label: "快速交易",
+          getOptions(context) {
+            const choices = quickTrades.TRADE_ACTIONS
+              .filter((trade) => quickTrades.canExecuteTrade(trade.id, context).ok)
+              .map((trade) => ({
+                target: { tradeId: trade.id },
+                payload: { cost: trade.cost, gain: trade.gain },
+                label: trade.label,
+              }));
+            return choices.length ? { ok: true, choices } : { ok: false, message: "没有可执行的快速交易" };
+          },
+          canExecute(context) { return this.getOptions(context); },
+          execute(_context, option) { return runQuickTrade(option.target.tradeId); },
+        },
+        industry: {
+          label: "公司 1x",
+          getOptions(context) {
+            const player = players.getCurrentPlayer(context.playerState);
+            const companyCard = player?.initialSelection?.industry || null;
+            const layout = industry.getIndustryActionMarkerLayout?.(companyCard);
+            const markCheck = industry.canMarkIndustryAction?.(player, turnState.roundNumber, {
+              turnNumber: turnState.turnNumber,
+              hasMarker: Boolean(layout),
+              industryCard: companyCard,
+              requireIndustryCard: true,
+            });
+            const abilityCheck = industry.prepareActiveAbility?.(player, companyCard?.label);
+            if (!markCheck?.ok || !abilityCheck?.ok) return markCheck?.ok ? abilityCheck : markCheck;
+            return { ok: true, choices: [{ target: { companyLabel: companyCard.label }, label: companyCard.label }] };
+          },
+          canExecute(context) { return this.getOptions(context); },
+          execute(context) {
+            const companyCard = players.getCurrentPlayer(context.playerState)?.initialSelection?.industry;
+            return handleCompanyActionMarkerClick(companyCard) || { ok: true, progressed: true };
+          },
+        },
+        cardCorner: {
+          label: "弃牌角标",
+          getOptions(context) {
+            if (!canUseCardCornerQuickAction()) return { ok: false, message: "当前无法使用卡牌快速行动" };
+            const player = players.getCurrentPlayer(context.playerState);
+            const choices = (player?.hand || []).map((card, handIndex) => ({ card, handIndex, action: getCardCornerQuickActionForCard(card) }))
+              .filter(({ action }) => Boolean(action))
+              .map(({ card, handIndex, action }) => ({
+                target: { cardInstanceId: card.id },
+                payload: { handIndex, actionKind: action.actionKind, symbolId: action.symbolId || null },
+                label: action.label,
+              }));
+            return choices.length ? { ok: true, choices } : { ok: false, message: "没有可用弃牌角标" };
+          },
+          canExecute(context) { return this.getOptions(context); },
+          execute(context, option) {
+            const player = players.getCurrentPlayer(context.playerState);
+            const handIndex = (player?.hand || []).findIndex((card) => card.id === option.target.cardInstanceId);
+            const selected = handleHandCardCornerQuickAction(handIndex);
+            return selected?.ok === false ? selected : confirmCardCornerQuickAction();
+          },
+        },
+        placeData: {
+          label: "放置数据",
+          getOptions(context) {
+            const player = players.getCurrentPlayer(context.playerState);
+            const result = abilities.data.listPlacementChoices(player);
+            const choices = (result.choices || []).map((choice) => ({
+              target: { target: choice.target, blueSlot: choice.blueSlot ?? null },
+              label: choice.label || "放置数据",
+            }));
+            return result.ok && choices.length ? { ok: true, choices } : { ok: false, message: result.message || "没有数据放置目标" };
+          },
+          canExecute(context) { return this.getOptions(context); },
+          execute(_context, option) { return confirmDataPlacement(option.target.target, option.target.blueSlot); },
+        },
+        runezuFaceSymbol: {
+          label: "符文族面部符号",
+          getOptions(context) {
+            const player = players.getCurrentPlayer(context.playerState);
+            const choices = (aliens.ALIEN_SLOT_IDS || []).flatMap((alienSlotId) => (
+              runezu.isRunezuRevealedSlot(alienGameState, alienSlotId)
+                ? (runezu.FACE_SYMBOL_POSITIONS || []).flatMap((position) => {
+                  const check = runezu.canPlaceFaceSymbol(alienGameState, position, player);
+                  return (check.ok ? check.choices : []).map((choice) => ({
+                    target: { alienSlotId: Number(alienSlotId), position: Number(position), symbolId: choice.symbolId },
+                    label: `${runezu.formatSymbolLabel(choice.symbolId)} → ${position}`,
+                  }));
+                })
+                : []
+            ));
+            return choices.length ? { ok: true, choices } : { ok: false, message: "没有可放置的符文族面部符号" };
+          },
+          canExecute(context) { return this.getOptions(context); },
+          execute(_context, option) {
+            const opened = openRunezuFaceSymbolPlacement(option.target.alienSlotId, option.target.position);
+            return opened?.ok === false ? opened : handleRunezuFaceSymbolChoice(option.target.symbolId);
+          },
+        },
+        endTurn: {
+          label: "结束回合",
+          getOptions() {
+            const legal = pendingState.actionExecuted && !isActionEffectFlowActive() && !hasActivePendingSubFlow();
+            return legal
+              ? { ok: true, choices: [{ target: { kind: "end-turn" }, label: "结束回合" }] }
+              : { ok: false, message: "主行动未完成或仍有待决选择" };
+          },
+          canExecute() { return this.getOptions(); },
+          execute() {
+            endCurrentTurn();
+            return { ok: true, progressed: true };
+          },
+        },
+      },
     }),
   });
 

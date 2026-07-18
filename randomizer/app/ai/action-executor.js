@@ -589,6 +589,17 @@
 
 
     function executeAiTurnAction(action, currentPlayer = getCurrentPlayer(), options = {}) {
+      const standardStage3Ids = [
+        "move", "quickTrade", "industry", "cardCorner", "placeData", "runezuFaceSymbol", "end-turn",
+      ];
+      if (
+        options.bypassRuntimeDispatch !== true
+        && typeof dispatchRuntimeAction === "function"
+        && standardStage3Ids.includes(action?.id)
+      ) {
+        const validation = dispatchRuntimeAction({ kind: action.id, payload: action, validateOnly: true });
+        if (validation?.ok === false) return validation;
+      }
       if (options.bypassRuntimeDispatch !== true && typeof dispatchRuntimeAction === "function" && [
         "end-turn",
         "launch",
@@ -599,7 +610,7 @@
         "analyze",
         "playCard",
         "pass",
-      ].includes(action?.id)) {
+      ].includes(action?.id) && !standardStage3Ids.includes(action?.id)) {
         return dispatchRuntimeAction({ kind: action.id, payload: action });
       }
       if (action.id === "end-turn") {

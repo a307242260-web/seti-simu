@@ -559,13 +559,47 @@
         playCard: "play_card",
         play_card: "play_card",
         pass: "pass",
+        move: "move",
+        quickTrade: "quick_trade",
+        quick_trade: "quick_trade",
+        industry: "industry",
+        cardCorner: "card_corner",
+        card_corner: "card_corner",
+        placeData: "place_data",
+        place_data: "place_data",
+        runezuFaceSymbol: "runezu_face_symbol",
+        runezu_face_symbol: "runezu_face_symbol",
+        "end-turn": "end_turn",
+        end_turn: "end_turn",
       }[kind];
       if (standardFamily && standardActionAdapter) {
-        return standardActionAdapter.executeLegacy(
+        const selector = standardFamily === "quick_trade"
+          ? { tradeId: payload.tradeId }
+          : standardFamily === "industry"
+            ? { companyLabel: payload.companyLabel || payload.industryCard?.label }
+            : standardFamily === "card_corner"
+              ? { cardInstanceId: payload.cardInstanceId || payload.cardId }
+              : standardFamily === "move"
+                ? { rocketId: payload.rocketId, deltaX: payload.deltaX, deltaY: payload.deltaY }
+                : standardFamily === "place_data"
+                  ? { target: payload.target, blueSlot: payload.blueSlot ?? null }
+                  : standardFamily === "runezu_face_symbol"
+                    ? { alienSlotId: payload.alienSlotId, position: payload.position, symbolId: payload.symbolId }
+                    : payload.cardInstanceId
+                      ? { cardInstanceId: payload.cardInstanceId }
+                      : {};
+        const standardResult = action.validateOnly === true && standardActionAdapter.resolveLegacy
+          ? standardActionAdapter.resolveLegacy(
+            createActionContext(),
+            standardFamily,
+            selector,
+          )
+          : standardActionAdapter.executeLegacy(
           createActionContext(),
           standardFamily,
-          payload.cardInstanceId ? { cardInstanceId: payload.cardInstanceId } : {},
+          selector,
         );
+        return standardResult;
       }
       switch (kind) {
         case "launch":

@@ -47,6 +47,7 @@
     return standardAction.createReferenceRegistry(ACTIONS, {
       getAuthority: options.getAuthority || getDefaultAuthority,
       stage2Actions: options.stage2Actions || null,
+      stage3Actions: options.stage3Actions || null,
     });
   }
 

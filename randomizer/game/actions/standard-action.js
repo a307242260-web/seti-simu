@@ -341,11 +341,26 @@
     ]);
   }
 
+  function createStage3Definitions(actions = {}) {
+    return Object.freeze([
+      createOptionDefinition("move", actions.move),
+      createOptionDefinition("quick_trade", actions.quickTrade || actions.quick_trade),
+      createOptionDefinition("industry", actions.industry),
+      createOptionDefinition("card_corner", actions.cardCorner || actions.card_corner),
+      createOptionDefinition("place_data", actions.placeData || actions.place_data),
+      createOptionDefinition("runezu_face_symbol", actions.runezuFaceSymbol || actions.runezu_face_symbol),
+      createOptionDefinition("end_turn", actions.endTurn || actions.end_turn),
+    ]);
+  }
+
   function createReferenceRegistry(referenceActions, options = {}) {
     const registry = createRegistry(options);
     for (const definition of createReferenceDefinitions(referenceActions)) registry.register(definition);
     if (options.stage2Actions) {
       for (const definition of createStage2Definitions(options.stage2Actions)) registry.register(definition);
+    }
+    if (options.stage3Actions) {
+      for (const definition of createStage3Definitions(options.stage3Actions)) registry.register(definition);
     }
     return registry;
   }
@@ -358,7 +373,7 @@
     function execute(context, action) {
       return registry.execute(context, action);
     }
-    function executeLegacy(context, family, selector = {}, request = {}) {
+    function resolveLegacy(context, family, selector = {}, request = {}) {
       const candidates = registry.enumerate(context, { ...request, family });
       const matches = candidates.filter((candidate) => Object.entries(selector).every(([key, value]) => (
         stableSerialize(candidate.target?.[key]) === stableSerialize(value)
@@ -370,9 +385,14 @@
           matches.length ? `${family} legacy adapter 无法唯一确定 action` : `${family} legacy adapter 没有合法 action`,
         );
       }
-      return registry.execute(context, matches[0]);
+      const validation = registry.validate(context, matches[0]);
+      return validation.ok ? { ok: true, action: matches[0] } : validation;
     }
-    return Object.freeze({ enumerate, execute, executeLegacy });
+    function executeLegacy(context, family, selector = {}, request = {}) {
+      const resolved = resolveLegacy(context, family, selector, request);
+      return resolved.ok ? registry.execute(context, resolved.action) : resolved;
+    }
+    return Object.freeze({ enumerate, execute, resolveLegacy, executeLegacy });
   }
 
   return Object.freeze({
@@ -389,6 +409,7 @@
     createReferenceDefinitions,
     createOptionDefinition,
     createStage2Definitions,
+    createStage3Definitions,
     createReferenceRegistry,
     createRegistryAdapter,
   });

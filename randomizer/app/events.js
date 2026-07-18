@@ -261,7 +261,7 @@
     });
     els.actionConfirmButton?.addEventListener("click", () => {
       if (els.actionConfirmButton.disabled) return;
-      endCurrentTurn();
+      dispatchRuntimeAction?.("end-turn") || endCurrentTurn();
     });
     els.actionUndoButton?.addEventListener("click", () => {
       if (els.actionUndoButton.disabled) return;
@@ -276,7 +276,8 @@
     els.quickActionsTrades.addEventListener("click", (event) => {
       const button = event.target.closest("[data-quick-trade]");
       if (!button || button.disabled) return;
-      runQuickTrade(button.dataset.quickTrade);
+      dispatchRuntimeAction?.({ kind: "quick_trade", payload: { tradeId: button.dataset.quickTrade } })
+        || runQuickTrade(button.dataset.quickTrade);
     });
     els.playerBoardDataLayer?.addEventListener("click", (event) => {
       const token = event.target.closest(".data-token-pool");

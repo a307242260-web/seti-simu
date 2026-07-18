@@ -51,13 +51,13 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 | `research_tech` | main | Standard Action registry；app/headless adapter | reference | tile/blue slot 是稳定 target；唯一规则执行器为 `game/actions/research-tech` |
 | `play_card` | main | Standard Action registry；hand-flow adapter | reference | cardInstanceId 稳定枚举，费用绑定 payload；DSL/trigger 为确定性 continuation |
 | `pass` | main | Standard Action registry；turn-end adapter | reference | PASS 主动作统一；预留牌/必做效果仍由对应 owner 外显，不由 policy 代选 |
-| `move` | quick | abilities + interaction/AI runtime | app-runtime | 统一 rocket、方向、移动力与补充支付 |
-| `quick_trade` | quick | `game/actions/quick-trades` + app | legacy-shared | registry 枚举 trade id，复用唯一交易执行器 |
-| `industry` | quick | `app/industry-runtime` + `game/industry` | app-runtime | 统一 1x 使用标志、picker、不可逆 history |
-| `card_corner` | quick | `app/card-runtime` | app-runtime | 统一弃牌、角标效果、移动 continuation |
-| `place_data` | quick | interaction runtime + `game/data` | app-runtime | 统一槽位候选、bonus、history 与无目标语义 |
-| `runezu_face_symbol` | quick | alien species runtime | app-runtime | 统一符号来源、面板目标、分支与痕迹奖励 |
-| `end_turn` | turn_control | turn flow / AI executor | app-runtime | 只在无待决策且主行动完成时合法，统一 owner 推进 |
+| `move` | quick | Standard Action registry；interaction adapter | reference | rocket、方向和移动支付入口固定，补充支付继续外显 pending |
+| `quick_trade` | quick | Standard Action registry；`game/actions/quick-trades` | reference | registry 枚举 trade id，复用唯一交易执行器 |
+| `industry` | quick | Standard Action registry；industry adapter | reference | 统一公司身份、1x 使用标志、picker 与不可逆 history |
+| `card_corner` | quick | Standard Action registry；hand-flow adapter | reference | 统一卡牌实例、角标效果与移动 continuation |
+| `place_data` | quick | Standard Action registry；data ability adapter | reference | 统一槽位候选、bonus、history 与无目标语义 |
+| `runezu_face_symbol` | quick | Standard Action registry；alien adapter | reference | 统一符号来源、面板目标、分支与痕迹奖励 |
+| `end_turn` | turn_control | Standard Action registry；turn-end adapter | reference | 只在无待决策且主行动完成时合法，统一 owner 推进 |
 | `choose_card` | conditional | 多种 pending / overlay | taxonomy-only | 稳定 card/slot 身份，多选必须独立 replay step |
 | `choose_target` | conditional | move/scan/alien pending | taxonomy-only | 按目标类型注册 handler，禁止 UI callback 代执行 |
 | `choose_payment` | conditional | discard/resource pending | taxonomy-only | 支付集合与资源版本绑定，禁止执行时重选 |
@@ -73,6 +73,8 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 阶段 1 行为证据：`randomizer/game/actions/standard-action-reference.test.js` 对四个 family 做同 checkpoint 全候选 fork，覆盖多 rocket、主星/卫星、科技 tile/blue slot；同时断言 stale、越权、篡改 target 时玩家状态、盘面、RNG cursor、history 与 replay 均不变化，并以两个独立 adapter 对同一 actionId 做结果/状态 parity。
 
 阶段 2 行为证据：`randomizer/game/actions/standard-action-stage2.test.js` 对 scan/analyze/play_card/pass 做完整 family 枚举与同 checkpoint 全 legal fork，覆盖两张非等价手牌、稳定费用 payload、stale 无副作用、双 adapter parity 与 legacy 多选 fail-closed。浏览器主动作与 AI executor 都经 `action-runtime.dispatchAction` 进入同一 adapter；后续 pending 保持独立 owner/replay 边界。
+
+阶段 3 行为证据：`randomizer/game/actions/standard-action-stage3.test.js` 对 move/quick_trade/industry/card_corner/place_data/runezu_face_symbol/end_turn 做完整 family 枚举与同 checkpoint 全 legal fork，覆盖快速行动不消耗主行动、公司 1x、显式支付、history source、stale/越权/重复/无目标 fail-closed，以及浏览器/Policy adapter parity。浏览器快速交易与回合结束、AI 七类执行都经 `action-runtime.dispatchAction` 进入同一 registry；AI valuation 与候选评分保持在 adapter 外。
 
 ## Proof obligations
 
