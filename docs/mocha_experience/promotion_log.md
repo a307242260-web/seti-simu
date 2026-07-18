@@ -161,7 +161,7 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - keep_or_revise: 保持 candidate；累计 2 次同类证据，等待第 3 次 runtime 拆分复审。
 
 - date: 2026-07-16
-- source: SETI-7
+- source: SETI-7, SETI-32
 - promoted_to: issue_workflow
 - promotion_decision: candidate
 - target_agent: 领航
@@ -175,12 +175,12 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - success_signal: 不再出现 reviewer 指向自己、但 issue 仍停在 `in_review` 的收口结果。
 - rollback_condition: 如果后续发现该模式在真实双人 review 流程中会误伤正常状态流转，则维持 candidate 不升级。
 - risk: 单个案例证据仍偏少，直接升级成 workflow 规则可能过拟合。
-- evidence_before: `checkpoint/mocha_issue_timeline/SETI-7.jsonl` 的 `review_pass` 记录；成员评论“这个issue为什么没有自动置为done？”、“置为in-review，你是想谁来review说什么？”
+- evidence_before: SETI-7 timeline 的 self-review 记录与成员两次追问；SETI-32 timeline 的 `owner_review` 记录，以及成员评论 `c683fc30-b907-47c4-a30c-564d5776d441` 明确要求“完成之后，没有要review的自动置为done哇”。
 - owner_or_agent_decision: 先记 candidate，不立即改规则。
 - applied_at: 2026-07-16
-- verification: 人工核对 timeline、metadata 与评论线程一致。
-- observed_outcome: 已明确识别这次收口偏差来自 self-review 误用 `in_review`。
-- keep_or_revise: 等重复证据；若再出现同类偏差，再升级 issue-workflow。
+- verification: 人工核对 SETI-7、SETI-32 timeline、metadata 与对应评论线程一致；SETI-32 已按成员明确确认改走 `done`。
+- observed_outcome: 同类“无待拍板却误挂 review”已复现 2 次，分别来自 self-review 与不必要的 owner review。
+- keep_or_revise: 保持 candidate；按 3 次相似收口的既定评估窗口观察，若第 3 次复现则升级 issue-workflow 的 done 前置检查。
 
 - date: 2026-07-16
 - source: SETI-23, SETI-24

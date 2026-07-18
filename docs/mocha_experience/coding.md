@@ -55,12 +55,12 @@
 - decision: 三次 app runtime 拆分均证明语法检查不足以覆盖显式 context、嵌套回调与传统脚本装配；已将“领域代表路径 + 全量 Node + Chrome smoke”写入仓库根 `AGENTS.md` 的 coding 规则。
 
 - date: 2026-07-16
-- source_issue: SETI-7
+- source_issue: SETI-7, SETI-32
 - observation: 对已经实现完成、验证完成且没有待 owner 拍板事项的 coding issue，如果 `reviewer` 仍指向自己，就不应走 `review_pass -> in_review`；这会制造伪 review 状态，增加额外追问成本。
-- evidence: `checkpoint/mocha_issue_timeline/SETI-7.jsonl` 中 `review_pass` 把 issue 从 `in_progress` 置为 `in_review`，同时 `reviewer` 仍为 `13e5c469-264f-4a3c-837d-2cbc26bbba19`；随后成员在评论中追问“这个issue为什么没有自动置为done？”与“置为in-review，你是想谁来review说什么？”
+- evidence: SETI-7 中 `review_pass` 把已完成 issue 置为 self-review，成员追问“这个issue为什么没有自动置为done？”；SETI-32 已完成并全量验证后又误走 `owner_review`，成员再次纠偏“完成之后，没有要review的自动置为done哇”。
 - promote_to: issue_workflow
 - promotion_status: candidate
-- decision: 先作为流程候选经验记录；后续若再次出现“self-review 导致伪 in_review”的收口偏差，再考虑把 `done` 前置检查或 `review_pass` 约束升级到 issue-workflow。
+- decision: 已出现第 2 次同类收口偏差，继续保持 candidate 并按原定 3 次评估窗口观察；本次立即改为 `done`，若第 3 次复现则升级 issue-workflow 的 done 前置检查。
 
 - date: 2026-07-16
 - source_issue: SETI-23, SETI-24, SETI-25
