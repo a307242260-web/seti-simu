@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-18
+- source_issue: SETI-36
+- observation: 通过 `REQUIRED_CONTEXT_KEYS` 声明窄 context 的 runtime，controller composition 不应静默过滤缺失键；应在创建 runtime 前 fail-fast 并列出缺项，否则漏接线只会在低频深层分支以 `undefined` 或 `ReferenceError` 暴露。
+- evidence: SETI-36 将 `pickAiAppRuntimeContext` 从静默 `.filter()` 改为缺项校验后，controller characterization 立即暴露深空交换阈值未注入，固定 seed bootstrap 又暴露 `app.js` 未向 controller 传 `cancelCardTriggerChoice`；补齐后工作树与仅 staged 快照全量 tracked Node 回归均通过。
+- promote_to: none
+- promotion_status: candidate
+- decision: 当前证据来自同一次 AI controller 总收口，先记录为 coding candidate；不修改 agent prompt、loop template、watcher 或 issue-workflow，后续 3 次显式 context runtime 装配观察是否复现。
+
+- date: 2026-07-18
 - source_issue: SETI-34
 - observation: 在 zsh 中用 `tests=$(...)` 后直接 `for test in $tests` 不会按换行自动拆分文件列表，会把全部测试路径当成一个参数；全量 Node 回归应使用 `rg ... | while IFS= read -r test`（或 zsh 数组）逐文件执行。
 - evidence: SETI-34 首轮全量命令把 100 余个 `.test.js` 路径拼成一个模块名并报 `MODULE_NOT_FOUND`；改为 `while IFS= read -r test` 后从 app、headless、game/ai、aliens 到 training 的全部测试逐个执行并以 exit 0 完成。

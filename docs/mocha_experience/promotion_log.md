@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-18
+- source: SETI-36
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航
+- target_component: 显式 runtime context 装配实践
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 记录声明 `REQUIRED_CONTEXT_KEYS` 的 runtime 应由 composition 在创建时 fail-fast 校验缺项，不能静默过滤后把失败推迟到深层分支。
+- applied_change: 仅更新 coding experience 与本决策契约；生产代码已在本 issue 内加入 controller context 完整性校验，但不修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。
+- expected_effect: 后续 runtime 拆分能在 controller bootstrap/characterization 阶段直接列出漏注入依赖，减少低频 pending 分支才出现的 `undefined`、`ReferenceError` 或错误 fallback。
+- evaluation_window: 后续 3 次使用显式 `REQUIRED_CONTEXT_KEYS` 的 app runtime 新增或迁移
+- success_signal: 每次 composition 创建均能证明 required keys 完整，且提交后不再出现声明了依赖但 controller/app 入口漏接线的问题。
+- rollback_condition: 若后续统一依赖容器、静态类型或构建期依赖图能自动保证同等完整性，则合并或删除该候选。
+- risk: 对刻意允许可选依赖的 runtime 机械要求全部非空可能误伤 fallback；当前校验只要求键存在，可选值仍可显式为 `undefined`。
+- evidence_before: SETI-36 首次 fail-fast 校验在 controller harness 中列出缺失键；补齐 harness 后，固定 seed bootstrap 进一步定位生产 `app.js` 漏传 `cancelCardTriggerChoice`，同时发现深空交换阈值未进入 runtime binding。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate，暂不升级长期组件。
+- applied_at: 2026-07-18
+- verification: `node --check randomizer/app.js`、固定 seed、headless、公开 API contract、四份 controller 集成测试及 randomizer 全量 tracked Node 测试在工作树和仅 staged 快照均通过；提交 `ec2af1c` 已推送 dev。
+- observed_outcome: composition 校验在提交前拦截并定位两处生产接线缺口，补齐后基线摘要、pending 顺序与公开 API 契约保持通过。
+- keep_or_revise: 保持 candidate；等待 3 次后续显式 context runtime 迁移再评估是否升级 coding loop 模板。
+
+- date: 2026-07-18
 - source: SETI-34
 - promoted_to: none
 - promotion_decision: candidate
