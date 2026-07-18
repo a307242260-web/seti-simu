@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-19
+- source_issue: SETI-36, SETI-48
+- observation: 显式 runtime context 中的 `null` 可以表示“此宿主刻意禁用该依赖”，不能用 `context.document || root.document` 把它误判为缺项；可选宿主依赖应仅在 `undefined` 时回退，并用会计数且抛错的 poison getter 覆盖 reset/step/replay/checkpoint/dispose，证明没有隐式读取浏览器全局。
+- evidence: SETI-36 的 `REQUIRED_CONTEXT_KEYS` fail-fast 已证明 composition 需要区分漏注入与显式可选值；SETI-48 在 app 明确传入 `document: null` 后，final-ui、action-briefing、alien-ui、debug-runtime、bootstrap 五处 `|| root.document` 仍读取 poison getter。改为仅 `undefined` 回退后，document/localStorage/Image/requestAnimationFrame/getComputedStyle/alert/confirm/prompt 在全路径访问计数均为 0，独立 HEAD 全量测试通过。
+- promote_to: none
+- promotion_status: candidate
+- decision: 已有两类显式 context 证据，但静态类型或统一依赖容器可能提供更轻的长期约束；保持 candidate，再观察 1 个 null sentinel/宿主依赖迁移 issue，不修改 agent prompt、loop template、watcher 或 issue-workflow。
+
+- date: 2026-07-19
 - source_issue: SETI-51
 - observation: 共享工作树中即使 `git diff --cached` 在提交前检查时干净，其他并行任务仍可能在检查后、`git commit` 前替换共享 index，导致提交内容与 issue、message 错配；高并发提交应从当前 HEAD 创建私有 `GIT_INDEX_FILE`，只写入本 issue 的明确 blob，复核私有 staged diff 后再 commit，并在完成后只同步共享 index 中自己的路径。
 - evidence: SETI-51 首次提交前已确认目标文件与 staged 内容，但并行任务在提交窗口写入 `docs/standard-action-contract.md`、`randomizer/game/actions/standard-action.js` 及其测试，最终 `19a0e1c` 被错误套用 SETI-51 message；随后从最新 HEAD 构造私有 index，只加入 `headless-env.js` 与 `headless-effect-failure.test.js` 的目标 blob，提交 `de934d2` 内容、message 与独立快照验证一致，同时保留共享工作树其余改动。
