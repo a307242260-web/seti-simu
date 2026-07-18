@@ -16,11 +16,11 @@
 
 - date: 2026-07-19
 - source_issue: SETI-45
-- observation: 面向 owner 的架构探索应一次只呈现一个业务边界，并优先使用清晰的架构图/流程图与可直接打开的 HTML 链接；技术分层、装饰性视觉或仅交付本地 Markdown 会让 owner 无法判断实际业务组成。
-- evidence: SETI-45 评论 `e427888a-66c2-4452-8b23-d2d1cf1e96cc` 要求逐边界讨论和 HTML 直达链接；`1eacdd35-9691-4dd0-bbae-8b493b816903` 明确纠偏“只需要清晰的架构设计图 / 流程图”；`9b3f9052-e920-4014-98a4-b5a8c883aca4` 暴露会话内临时服务退出导致链接失效；本轮 `reports/seti-game-flow-architecture.html` 按单一流程边界交付并由用户会话托管服务返回 HTTP 200。
+- observation: 面向 owner 的架构探索仍应一次只讨论一个业务边界，但不能把“可直接打开”误解为固定复用大标题、彩色卡片墙和长篇阶段总结的 HTML 模板；视觉包装和冗长总结会遮蔽架构判断本身。
+- evidence: SETI-45 评论 `1eacdd35-9691-4dd0-bbae-8b493b816903` 要求清晰架构图 / 流程图；后续评论 `94c2d631-78a1-4ca6-9d05-3dda8ef2c657` 明确否定 `reports/seti-ai-policy-architecture.html` 的样式和总结，并要求不再使用。
 - promote_to: none
-- promotion_status: candidate
-- decision: 先作为 SETI 架构讨论的展示方式候选保留，不升级 agent prompt 或 loop template；再观察 2 次同类架构边界讨论是否仍稳定要求同一交付形态。
+- promotion_status: rejected
+- decision: 撤回固定 HTML 展示候选；保留“单边界讨论”，后续默认只给朴素架构图和短结论，不复用现有报告样式，也不预设必须使用 HTML。
 
 - date: 2026-07-19
 - source_issue: SETI-42（复盘 SETI-40，并以 SETI-36 做反例检查）

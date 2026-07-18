@@ -536,24 +536,24 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - date: 2026-07-19
 - source: SETI-45
 - promoted_to: none
-- promotion_decision: candidate
+- promotion_decision: reject
 - target_agent: 领航
 - target_component: 架构探索结果展示实践
 - target_file: docs/mocha_experience/exploratory_research.md
 - remote_skill_id: none
-- change: 记录“一次只讨论一个业务边界，以清晰架构图/流程图为主，并通过持久本地服务交付可直接打开的 HTML”这一展示候选。
-- applied_change: 仅更新 exploratory_research experience 与本决策契约；本轮报告按该方式生成并沿用用户会话托管的 8770 服务，不修改 agent prompt、loop template、watcher、issue-workflow 或 project memory。
-- expected_effect: owner 能直接看到并逐项确认当前业务组成、主链和高耦合点，减少因技术抽象、视觉包装或失效链接造成的返工。
+- change: 撤回“单边界架构讨论固定使用现有 HTML 模板”的展示候选；保留单边界原则，输出形式改为朴素架构图和短结论，按当轮需要选择载体。
+- applied_change: 更新 exploratory_research experience 与本决策契约为 reject；不删除历史报告，不修改 agent prompt、loop template、watcher、issue-workflow 或 project memory。
+- expected_effect: 后续讨论减少夸张标题、彩色卡片墙和长篇阶段总结，owner 能更快聚焦边界、依赖和待决策项。
 - evaluation_window: 后续 2 次 SETI 架构边界讨论
-- success_signal: 每轮首次交付即提供单边界、业务语义优先、可打开的 HTML 架构图/流程图，owner 不再纠偏内容过宽、视觉喧宾夺主或链接不可访问。
-- rollback_condition: 若 owner 后续明确改用文档、Figma、Medici 或其它交付通道，或连续 2 次认为 HTML 图不如文字讨论有效，则修订或删除该候选。
-- risk: 过度追求图形化可能压缩关键代码证据；报告仍需保留证据入口、现状/问题区分和可复核数字。
-- evidence_before: SETI-45 评论 `e427888a-66c2-4452-8b23-d2d1cf1e96cc`、`1eacdd35-9691-4dd0-bbae-8b493b816903`、`9b3f9052-e920-4014-98a4-b5a8c883aca4`；本轮触发评论 `27c4fa76-d7b7-4bd5-9467-6ad93f5f5027` 明确要求“整体流程衔接，一样给我 HTML 报告”。
-- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate，暂不升级长期组件。
+- success_signal: 首次交付无需再因样式、总结冗长或固定 HTML 模板返工，反馈聚焦架构内容。
+- rollback_condition: 若 owner 后续明确指定新的可复用视觉模板，则以该模板重建新的候选，不恢复当前 HTML 样式。
+- risk: 过度精简可能丢失必要证据；短结论仍需保留当前事实、目标边界和待确认项。
+- evidence_before: SETI-45 评论 `1eacdd35-9691-4dd0-bbae-8b493b816903` 要求清晰架构图 / 流程图；`reports/seti-ai-policy-architecture.html` 延用模板后，评论 `94c2d631-78a1-4ca6-9d05-3dda8ef2c657` 明确评价样式和总结不应再使用。
+- owner_or_agent_decision: owner 明确要求停止使用；领航据此将 candidate 改为 reject。
 - applied_at: 2026-07-19
-- verification: `reports/seti-game-flow-architecture.html` 已经 Playwright 1440×1000 截图检查；脚本语法与 HTML diff 检查通过；`http://127.0.0.1:8770/reports/seti-game-flow-architecture.html` 返回 HTTP 200，服务由 `com.multica.seti-report-8770` 托管。
-- observed_outcome: 本轮报告已按 9 个一级阶段、行动内部接棒机制、成熟度矩阵和四个风险区组织；等待 owner 对内容边界与清晰度反馈。
-- keep_or_revise: 保持 candidate；累计后续 2 次同类反馈后决定是否升级为 exploratory research loop 的固定交付模板。
+- verification: 核对触发评论、既有 experience 与报告截图；确认反馈针对现有 HTML 样式和总结方式，而非撤销已讨论的架构结论。
+- observed_outcome: 固定 HTML 展示候选在评估窗口内收到明确负面反馈，已停止复用。
+- keep_or_revise: reject；后续若有 owner 指定的新格式，作为全新候选评估。
 
 - date: 2026-07-19
 - source: SETI-16, SETI-60
