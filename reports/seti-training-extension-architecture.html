@@ -252,7 +252,7 @@
         <thead><tr><th>Issue</th><th>作用</th><th>状态</th><th>当前动作</th><th>对训练外延的影响</th></tr></thead>
         <tbody>
           <tr><td>SETI-14</td><td>强化学习路线与实施总协调</td><td><span class="state run">IN PROGRESS</span></td><td>等待 SETI-39</td><td>承载现有训练实验，不应被共享内核重构吞并。</td></tr>
-          <tr><td>SETI-39</td><td>demonstration、BC/value warm start、Masked PPO</td><td><span class="state risk">BLOCKED</span></td><td>4 局 smoke 已通过；等待 SETI-61、SETI-82</td><td>两条在途链同时改写 <code>headless-env.js</code> / checkpoint 契约，先避免生成不可复现的混合版本数据。</td></tr>
+          <tr><td>SETI-39</td><td>demonstration、BC/value warm start、Masked PPO</td><td><span class="state risk">BLOCKED</span></td><td>4 局 smoke 已通过；等待 SETI-61</td><td>SETI-82 已完成；Standard Action 收口仍在改写 <code>headless-env.js</code> 热路径，先避免生成不可复现的混合版本数据。</td></tr>
           <tr><td>SETI-56</td><td>Standard Action 总控</td><td><span class="state run">IN PROGRESS</span></td><td>SETI-60 已完成；准备 SETI-61 全链路收口</td><td>决定 Env 接收和枚举的唯一动作语言。</td></tr>
           <tr><td>SETI-62</td><td>Effect Session 总控</td><td><span class="state run">IN PROGRESS</span></td><td>应解锁 SETI-64 研究科技参考链</td><td>决定 step 内部推进、working observation、journal 与 commit；metadata 仍写等待已完成的 SETI-59，需同步。</td></tr>
           <tr><td>SETI-71</td><td>CommittedGameState / StateStore 总控</td><td><span class="state run">IN PROGRESS</span></td><td>等待 SETI-82</td><td>决定 observation、checkpoint 和多环境实例的事实来源。</td></tr>
@@ -289,7 +289,7 @@
           <h3>确认后的执行顺序</h3>
           <ol>
             <li><strong>保留已通过的训练基线。</strong>commit <code>243fd05</code> 已证明 4/4 demonstration、2682 records、replay parity、BC handoff 和三臂 PPO smoke。</li>
-            <li><strong>当前暂停 expanded 数据生成。</strong>SETI-61 与 SETI-82 都有运行中的 agent，并同时改写 Env / checkpoint 契约；不从未提交混合工作树生成正式 dataset。</li>
+            <li><strong>当前暂停 expanded 数据生成。</strong>SETI-82 已完成；SETI-61 仍有运行中的 agent 并改写 Standard Action / Env 热路径，不从未提交混合工作树生成正式 dataset。</li>
             <li><strong>依赖稳定后立即恢复 SETI-39。</strong>从干净 <code>dev</code>、冻结 Env schema 和明确 commit 生成 32 局 demonstration，再跑多 seed 同预算 BC-init / random-init PPO A/B。</li>
             <li><strong>后续再决定是否另建训练宿主外延总控。</strong>若建立，只负责 Env / Observation / Reward / checkpoint / worker / trainer 分层与迁移 proof，不重做训练算法。</li>
           </ol>
