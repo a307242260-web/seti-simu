@@ -23,7 +23,7 @@
 14. `randomizer/app/action-log-runtime.js` 封装行动日志 draft/entry 组装与日志导入等纯运行时逻辑。
 15. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
 16. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
-17. `randomizer/app/ai/control-runtime.js` 封装 AI 控制状态、难度/权重、快照/恢复、pending owner 与调度；`battle-log.js`、`battle-report.js`、`tuning-history.js`、`experiment-runner.js` 分别承接日志、报告、调参历史与实验 runner；`ai-controller.js` 注入这些 runtime 并保留 resolver 与稳定 API 转发；`final-score-ai-runtime.js` 单独承接终局板块估值与竞速模型适配。
+17. `randomizer/app/ai/control-runtime.js` 封装 AI 控制状态、难度/权重、快照/恢复、pending owner 与调度；`initial-card-pending.js`、`interaction-pending.js`、`action-executor.js`、`automation-runtime.js` 承接 pending resolver、顶层行动执行与优先级编排；`ai-controller.js` 只装配这些 runtime 并转发稳定 API。
 18. `randomizer/app/effects/**` 按移动扫描、奖励选择、外星人和顶层分发四个域注册具体 effect executors。
 19. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
 20. `randomizer/app/aliens/species-runtime.js` 封装八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 和具体面板渲染，通过显式 context 接收跨域依赖。
@@ -57,7 +57,11 @@
 - `randomizer/app/ai/battle-report.js`：player result、pending state、report/progress/analysis schema；不执行对战步骤。
 - `randomizer/app/ai/tuning-history.js`：调参历史的 localStorage 持久化、A/B 摘要、推荐与应用入口。
 - `randomizer/app/ai/experiment-runner.js`：单局自动对战、batch、同 seed A/B、tuning cycle 与样本诊断压缩。
-- `randomizer/app/ai-controller.js`：AI 编排 adapter。注入 `app/ai/**` runtime 与 `game/ai/**` 规则域，保留 pending resolver、DOM 交互、顶层行动执行和稳定 API 转发，不再拥有控制状态、日志/报告、实验 runner 或成片纯估值/候选函数体。
+- `randomizer/app/ai/initial-card-pending.js`：初始选择、收入弃牌、PASS 预留、公共牌/手牌选择、卡牌触发/任务与打牌 pending resolver。
+- `randomizer/app/ai/interaction-pending.js`：数据、移动支付、登陆、扫描、科技、公司免费移动与外星人 pending resolver；只通过筛选后的显式 context 调用 app flow，不持有 pending 状态。
+- `randomizer/app/ai/action-executor.js`：顶层候选汇总、重试诊断与行动执行器；不拥有回合或 pending 状态。
+- `randomizer/app/ai/automation-runtime.js`：非回合 pending 优先级、效果恢复、选定行动执行和 `runAiAutomationStep` 编排。
+- `randomizer/app/ai-controller.js`：AI 装配 adapter。注入 `app/ai/**` runtime 与 `game/ai/**` 规则域并转发稳定 API，不再包含 resolver、行动 executor、控制状态、日志/报告、实验 runner 或成片纯估值/候选函数体。
 - `randomizer/app/effects/movement-scan.js`：移动、行星落点、轨道/登陆、扇区扫描和相关选择执行器。
 - `randomizer/app/effects/rewards.js`：资源、数据、抽牌、条件奖励、手牌选择和科技/扫描奖励执行器。
 - `randomizer/app/effects/aliens.js`：异常点、虫和奥陌陌的效果执行器及 continuation 适配。
@@ -72,9 +76,9 @@
 
 ## 仍需拆分的高耦合区
 
-- AI 控制状态与调度位于 `randomizer/app/ai/control-runtime.js`；纯估值、目标/需求、规划、竞速和候选构建位于 `randomizer/game/ai/**`。具体 resolver 仍由 `createAiController(context)` 通过显式回调调用 app UI 流程，game AI 模块不得读取 DOM。
+- AI 控制状态与调度位于 `randomizer/app/ai/control-runtime.js`；pending resolver 与 action executor 位于 `randomizer/app/ai/**`；纯估值、目标/需求、规划、竞速和候选构建位于 `randomizer/game/ai/**`。app AI runtime 通过窄显式 context 调用 UI flow，game AI 模块不得读取 DOM。
 - `randomizer/app/aliens/species-runtime.js` 当前 4,367 行，边界是八物种共用机会队列、dialog、followup 与面板运行域；后续应按物种或 rewards/dialogs/render 子域继续拆，并保持共用队列单一所有者。
-- `randomizer/app/ai-controller.js` 在 Stage 3 后为 5,686 行；16 个只读规则域均低于 3,000 行，逐域清单、行数与删除证据见 `docs/ai-domain-migration-stage3.md`。
+- `randomizer/app/ai-controller.js` 在 Stage 4 后为 1,961 行；四个 pending/action runtime 均低于 3,000 行，清单、行数与删除证据见 `docs/ai-pending-migration-stage4.md`。
 - 行动日志状态与 DOM 展示已经由 `action-log-runtime` 接管，恢复快照与持久化包由 `game-recovery` 接管；`app.js` 仍保留跨全部 pending 状态的恢复清理与全 UI 刷新调度。
 - 卡牌、收入、扫描和任务触发的 `pending*` 已按 runtime/flow 收口；新增相关选择应扩展所属 runtime，并通过 `app.js` 注入跨域 continuation，避免重新把具体确认/取消分支堆回总装配层。
 
@@ -106,6 +110,13 @@
 - 规则边界：资源/收入/交易、卡牌/任务、扫描/数据、路线/星球、科技、终局节奏与外星人估值均通过显式 context 迁入 `game/ai/**`；app 层只保留 pending、DOM、确认/执行和顶层行动 adapter。
 - 行数：`app/ai-controller.js` 从 21,089 行降为 5,686 行；`app/ai-controller.test.js` 从 10,295 行降为 1,033 行，完整集成回归迁至 `ai-controller.integration.test.js`。
 - 删除证据：`game/ai/ai-domain-migration.test.js` 校验迁移函数体不再出现在控制器、生产模块不读 DOM、单模块少于 3,000 行且浏览器入口已装配。
+
+## AI Stage 4 迁移记录
+
+- resolver：初始/收入/弃牌/PASS/卡牌选择与触发迁入 `initial-card-pending.js`；移动、扫描、数据、科技、公司与外星人 pending 迁入 `interaction-pending.js`。
+- executor：顶层候选执行迁入 `action-executor.js`，pending 优先级、效果恢复与 `runAiAutomationStep` 迁入 `automation-runtime.js`。
+- 状态边界：pending 与回合状态继续由 `app.js` 单一持有；四个模块只接收按 `REQUIRED_CONTEXT_KEYS` 筛选后的显式 context。
+- 删除证据：控制器 5,686 → 1,961 行；`app/ai/pending-domain-migration.test.js` 校验函数体删除、浏览器装配、行数和状态所有权。
 
 ## 验证要求
 
