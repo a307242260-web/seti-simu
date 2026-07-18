@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SETI 训练版本外延｜现状与推进边界</title>
+  <style>
+    :root {
+      --bg: #f4f3ef;
+      --paper: #fffefa;
+      --ink: #171a18;
+      --muted: #626861;
+      --line: #c8ccc5;
+      --core: #dcebdd;
+      --env: #dce9f2;
+      --infra: #f3e7ca;
+      --learn: #eadff0;
+      --risk: #f0ded8;
+      --green: #2e6446;
+      --blue: #315f7a;
+      --amber: #8f621f;
+      --purple: #69477b;
+      --red: #8c4438;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.55;
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 960px; margin-bottom: 14px; font-size: clamp(34px, 5vw, 62px); line-height: 1.06; letter-spacing: -.045em; }
+    h2 { margin-bottom: 8px; font-size: clamp(25px, 3vw, 38px); line-height: 1.16; }
+    h3 { margin-bottom: 7px; font-size: 17px; }
+    p { color: var(--muted); }
+    code, .mono { font-family: "SFMono-Regular", Consolas, monospace; }
+    code { font-size: .88em; }
+    a { color: inherit; }
+
+    .page { width: min(1420px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 70px; }
+    .hero { padding: 34px; border: 2px solid var(--ink); background: var(--paper); }
+    .eyebrow { margin-bottom: 12px; color: var(--blue); font: 800 12px/1.2 "SFMono-Regular", Consolas, monospace; letter-spacing: .1em; text-transform: uppercase; }
+    .lede { max-width: 1050px; margin-bottom: 0; font-size: 18px; }
+    .verdict { display: grid; grid-template-columns: 190px minmax(0, 1fr); margin-top: 24px; border: 1px solid var(--ink); }
+    .verdict b { display: grid; place-items: center; padding: 16px; color: white; background: var(--ink); font-size: 18px; }
+    .verdict p { margin: 0; padding: 16px 18px; color: var(--ink); background: var(--core); }
+    nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    nav a { padding: 7px 11px; border: 1px solid var(--line); text-decoration: none; font-size: 13px; }
+
+    section { margin-top: 54px; scroll-margin-top: 18px; }
+    .section-head { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 14px; margin-bottom: 20px; }
+    .section-no { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--ink); background: var(--paper); font: 800 14px/1 "SFMono-Regular", Consolas, monospace; }
+    .section-head p { max-width: 920px; margin-bottom: 0; }
+
+    .architecture { display: grid; grid-template-columns: 1fr 78px 1.2fr; align-items: stretch; gap: 0; }
+    .host { padding: 22px; border: 2px solid var(--ink); background: var(--paper); }
+    .host.training { background: #fbfaf6; }
+    .host.shared { background: var(--core); }
+    .host-title { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid var(--ink); }
+    .host-title strong { font-size: 22px; }
+    .tag { align-self: center; padding: 3px 7px; border: 1px solid currentColor; font: 750 11px/1.4 "SFMono-Regular", Consolas, monospace; white-space: nowrap; }
+    .tag.now { color: var(--green); }
+    .tag.moving { color: var(--amber); }
+    .layers { display: grid; gap: 9px; }
+    .layer { padding: 13px 15px; border: 1px solid var(--ink); background: var(--paper); }
+    .layer.env { background: var(--env); }
+    .layer.infra { background: var(--infra); }
+    .layer.learn { background: var(--learn); }
+    .layer b { display: block; margin-bottom: 3px; }
+    .layer span { display: block; color: var(--muted); font-size: 13px; }
+    .bridge { display: grid; place-items: center; text-align: center; }
+    .bridge div { font: 800 13px/1.5 "SFMono-Regular", Consolas, monospace; }
+    .bridge i { display: block; margin: 7px 0; font-style: normal; font-size: 28px; }
+
+    .boundary { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--ink); background: var(--paper); }
+    .boundary-card { min-height: 235px; padding: 20px; border-right: 1px solid var(--line); }
+    .boundary-card:last-child { border-right: 0; }
+    .boundary-card.shared { background: var(--core); }
+    .boundary-card.env { background: var(--env); }
+    .boundary-card.infra { background: var(--infra); }
+    .boundary-card.learn { background: var(--learn); }
+    .boundary-card .mono { display: block; margin-bottom: 18px; font-size: 11px; font-weight: 800; }
+    .boundary-card ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+
+    .step-flow { display: grid; grid-template-columns: repeat(11, auto); align-items: stretch; min-width: 1200px; }
+    .step-shell { padding: 22px; border: 1px solid var(--ink); background: var(--paper); overflow-x: auto; }
+    .step { width: 142px; min-height: 124px; padding: 13px; border: 1px solid var(--ink); background: var(--paper); }
+    .step.shared { background: var(--core); }
+    .step.env { background: var(--env); }
+    .step.policy { background: var(--learn); }
+    .step b { display: block; margin-bottom: 7px; }
+    .step small { color: var(--muted); line-height: 1.35; }
+    .arrow { display: grid; place-items: center; width: 38px; font-size: 22px; }
+    .return { margin-top: 12px; padding: 11px 14px; border: 1px dashed var(--ink); text-align: center; background: var(--infra); font-size: 13px; }
+
+    .status-strip { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--ink); background: var(--paper); }
+    .status-item { padding: 18px; border-right: 1px solid var(--line); }
+    .status-item:last-child { border-right: 0; }
+    .status-item b { display: block; margin-bottom: 5px; font-size: 25px; }
+    .status-item span { color: var(--muted); font-size: 13px; }
+
+    table { width: 100%; border-collapse: collapse; border: 1px solid var(--ink); background: var(--paper); }
+    th, td { padding: 13px 14px; text-align: left; vertical-align: top; border: 1px solid var(--line); }
+    th { background: #e9ebe6; font-size: 13px; }
+    td { font-size: 14px; }
+    td:nth-child(1) { width: 11%; font-weight: 800; }
+    td:nth-child(2) { width: 27%; }
+    td:nth-child(3) { width: 16%; }
+    td:nth-child(4) { width: 21%; }
+    td:nth-child(5) { width: 25%; }
+    .state { display: inline-block; padding: 3px 7px; border: 1px solid currentColor; font: 800 11px/1.3 "SFMono-Regular", Consolas, monospace; }
+    .state.run { color: var(--blue); }
+    .state.done { color: var(--green); }
+    .state.risk { color: var(--red); }
+
+    .risk-grid, .decision-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .risk-card, .decision-card { padding: 20px; border: 1px solid var(--ink); background: var(--paper); }
+    .risk-card { border-top: 6px solid var(--red); }
+    .risk-card p, .decision-card p { margin-bottom: 0; font-size: 14px; }
+    .decision-card.recommend { background: var(--core); border-width: 2px; }
+    .decision-card .num { display: inline-grid; place-items: center; width: 28px; height: 28px; margin-bottom: 13px; color: white; background: var(--ink); font: 800 12px/1 "SFMono-Regular", Consolas, monospace; }
+
+    .proposal { display: grid; grid-template-columns: 1.25fr .75fr; gap: 14px; }
+    .proposal-main, .proposal-side { padding: 23px; border: 2px solid var(--ink); background: var(--paper); }
+    .proposal-main { background: var(--core); }
+    .proposal-side { color: white; background: var(--ink); }
+    .proposal-side p { color: #d8ddd8; }
+    .proposal ul { margin-bottom: 0; padding-left: 20px; }
+    footer { margin-top: 36px; padding-top: 17px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+
+    @media (max-width: 980px) {
+      .architecture, .proposal { grid-template-columns: 1fr; gap: 12px; }
+      .bridge { min-height: 64px; }
+      .bridge i { transform: rotate(90deg); }
+      .boundary { grid-template-columns: repeat(2, 1fr); }
+      .boundary-card:nth-child(2) { border-right: 0; }
+      .boundary-card:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .status-strip { grid-template-columns: repeat(2, 1fr); }
+      .status-item:nth-child(2) { border-right: 0; }
+      .status-item:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .risk-grid, .decision-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .page { width: min(100% - 22px, 1420px); }
+      .hero { padding: 23px; }
+      .verdict { grid-template-columns: 1fr; }
+      .boundary, .status-strip { grid-template-columns: 1fr; }
+      .boundary-card, .status-item { border-right: 0; border-bottom: 1px solid var(--line); }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="eyebrow">SETI Architecture Review · Training Extension · 2026-07-19</div>
+      <h1>训练版本外延：一条 Env 边界，三层训练宿主</h1>
+      <p class="lede">玩家版与训练版继续共享同一套游戏状态、Action、Effect/Decision 流程和规则。训练版真正新增的，不是第二套游戏，而是环境适配、采样基础设施和学习系统三层外延。</p>
+      <div class="verdict">
+        <b>阶段判断</b>
+        <p><strong>当前训练链已经能跑：</strong>headless env、合法动作、observation、worker/IPC、replay/checkpoint 和 PyTorch 训练器都已有实现或在途；但这些能力仍建立在迁移中的 app runtime 上，尚未收敛到刚刚确定的 Standard Action / Effect Session / StateStore 稳定端口。</p>
+      </div>
+      <nav>
+        <a href="#architecture">目标边界</a>
+        <a href="#ownership">职责归属</a>
+        <a href="#timestep">单步协议</a>
+        <a href="#status">当前现状</a>
+        <a href="#issues">在途 issue</a>
+        <a href="#risks">冲突风险</a>
+        <a href="#decisions">待讨论</a>
+        <a href="#proposal">推进建议</a>
+      </nav>
+    </header>
+
+    <section id="architecture">
+      <div class="section-head"><div class="section-no">01</div><div><h2>目标边界：训练宿主通过一个窄 Env 端口接共享内核</h2><p>外延内部可以分三层管理，但共享内核只看见 Env Adapter 提交的标准 Action / Decision。</p></div></div>
+      <div class="architecture">
+        <article class="host training">
+          <div class="host-title"><strong>训练版本外延</strong><span class="tag moving">已有实现，边界待冻结</span></div>
+          <div class="layers">
+            <div class="layer learn"><b>③ Learning System</b><span>Policy / Value、BC warm start、Masked PPO、对手池、评测、模型 checkpoint</span></div>
+            <div class="layer infra"><b>② Sampling Infrastructure</b><span>并行 worker、JSONL IPC、batch inference、轨迹、数据集、故障恢复、吞吐</span></div>
+            <div class="layer env"><b>① Env Adapter</b><span>reset / observe / legalActions / step / done / replay / checkpoint</span></div>
+          </div>
+        </article>
+        <div class="bridge"><div>Observation<br>Legal Actions<i>⇄</i>Action / Decision</div></div>
+        <article class="host shared">
+          <div class="host-title"><strong>共享游戏内核</strong><span class="tag moving">正在标准化</span></div>
+          <div class="layers">
+            <div class="layer"><b>Standard Action</b><span>15 个顶层动作 + 7 类条件决策；唯一合法性与执行语义</span></div>
+            <div class="layer"><b>Effect Session</b><span>working state、queue、deterministic drain、DecisionEffect、commit / abort</span></div>
+            <div class="layer"><b>Committed StateStore</b><span>唯一权威事实、版本、RNG、原子提交、恢复</span></div>
+            <div class="layer"><b>Game Lifecycle + Rules</b><span>建局、轮次、终局，以及卡牌 / 科技 / 公司 / 外星人规则</span></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="ownership">
+      <div class="section-head"><div class="section-no">02</div><div><h2>四层职责：什么共享，什么只属于训练</h2><p>最重要的边界是：环境不能为了训练方便复制规则，Policy 也不能接管合法性、确定性结算或 hidden information。</p></div></div>
+      <div class="boundary">
+        <article class="boundary-card shared"><span class="mono">SHARED CORE</span><h3>规则事实与状态推进</h3><ul><li>合法 Action / Decision</li><li>actor / owner 语义</li><li>Effect 顺序与确定性 drain</li><li>权威状态、RNG、终局事实</li><li>事件与 replay journal</li></ul></article>
+        <article class="boundary-card env"><span class="mono">ENV ADAPTER</span><h3>训练可消费的协议</h3><ul><li>按 viewer 生成 observation</li><li>Action 编码与 action mask</li><li>reset / step / done 映射</li><li>把规则结果整理为 reward signal</li><li>checkpoint / replay API</li></ul></article>
+        <article class="boundary-card infra"><span class="mono">SAMPLING</span><h3>规模化采样</h3><ul><li>常驻隔离 worker</li><li>IPC schema 与背压</li><li>批量 inference 协调</li><li>episode / trajectory 数据</li><li>超时、崩溃、恢复与吞吐</li></ul></article>
+        <article class="boundary-card learn"><span class="mono">LEARNING</span><h3>模型与优化</h3><ul><li>Policy / Value 网络</li><li>BC demonstration warm start</li><li>Masked PPO 更新</li><li>对手池、座位轮换、评测</li><li>模型 checkpoint 与导出</li></ul></article>
+      </div>
+    </section>
+
+    <section id="timestep">
+      <div class="section-head"><div class="section-no">03</div><div><h2>一个训练 timestep 应怎样闭环</h2><p>Policy 只在真正存在多个非等价选择时介入；UI 确认、唯一选项和内部效果推进都不应占用模型决策步。</p></div></div>
+      <div class="step-shell">
+        <div class="step-flow">
+          <div class="step shared"><b>共享内核停在决策点</b><small>顶层 Action 或 DecisionEffect；owner 已确定。</small></div><div class="arrow">→</div>
+          <div class="step env"><b>生成 Observation</b><small>公开信息 + 当前玩家私有信息；不泄漏未来与对手隐藏信息。</small></div><div class="arrow">→</div>
+          <div class="step env"><b>枚举 Legal Actions</b><small>稳定 actionId / maskIndex；不带 heuristic score。</small></div><div class="arrow">→</div>
+          <div class="step policy"><b>Policy 选择</b><small>输出一条标准 Action / Decision；记录 logits、log-prob、value。</small></div><div class="arrow">→</div>
+          <div class="step shared"><b>执行并自动 drain</b><small>规则内核推进确定性 Effect，直到下一决策点或终局。</small></div><div class="arrow">→</div>
+          <div class="step env"><b>返回 StepResult</b><small>新 observation、legal actions、reward、done、replay event。</small></div>
+        </div>
+        <div class="return">下一决策点继续循环；终局时 flush 最后结算与 replay 后才 <code>done = true</code></div>
+      </div>
+    </section>
+
+    <section id="status">
+      <div class="section-head"><div class="section-no">04</div><div><h2>当前现状：链路已跑通，稳定架构端口还没接完</h2><p>这里区分“当前已有能力”和“目标架构是否就位”，避免把训练能跑等同于边界已经稳定。</p></div></div>
+      <div class="status-strip">
+        <div class="status-item"><b>22 / 22</b><span>RL 环境 Gate B 硬契约已通过，已放行正式训练。</span></div>
+        <div class="status-item"><b>100 / 100</b><span>worker smoke 完整终局，非法动作与阻塞为 0。</span></div>
+        <div class="status-item"><b>336.205/s</b><span>四 worker 最近冻结闸门吞吐；单 worker 130.135/s。</span></div>
+        <div class="status-item"><b>1 个关键失败点</b><span>SETI-39 当前卡在 <code>research_tech_select</code> 合法性，尚未完成 BC/PPO 首轮验证。</span></div>
+      </div>
+      <table style="margin-top: 16px">
+        <thead><tr><th>能力</th><th>当前实现</th><th>现状判断</th><th>目标端口</th><th>主要缺口</th></tr></thead>
+        <tbody>
+          <tr><td>Env API</td><td><code>randomizer/app/headless-env.js</code></td><td><span class="state run">可运行</span></td><td>StateStore + Effect Session 上的纯 adapter</td><td>仍通过 app runtime 装配，接口需在底层迁移时保持兼容。</td></tr>
+          <tr><td>Observation</td><td>v1 schema，public / self / decision / history / terminal</td><td><span class="state run">已成形</span></td><td>统一从 committed / working state 按 viewer 投影</td><td>字段所有权与 BrowserProjection 的共用投影原语尚未冻结。</td></tr>
+          <tr><td>Legal + Step</td><td>headless rule enumeration + 预验证 action 直执行</td><td><span class="state run">已优化</span></td><td>直接消费 Standard Action / Decision registry</td><td>SETI-60 已完成七类条件决策与 deterministic drain；还需随全链路集成验收。</td></tr>
+          <tr><td>Reward / Done</td><td>即时分差、资源变化、终局分；终局后返回 done</td><td><span class="state run">基础可用</span></td><td>共享内核给事实，Env 给训练信号，Trainer 决定优化目标</td><td>dense shaping、相对名次、多人 credit assignment 仍需讨论冻结。</td></tr>
+          <tr><td>Replay / Checkpoint</td><td>seed + action sequence、episode checkpoint、worker 恢复</td><td><span class="state run">已有</span></td><td>统一 StateStore snapshot + session / RNG journal</td><td>会受 SETI-62、SETI-71 的最终 journal/schema 影响。</td></tr>
+          <tr><td>Trainer</td><td>heuristic demonstrations → BC/value → masked PPO</td><td><span class="state risk">在途</span></td><td>只依赖版本化 Env / IPC，不感知浏览器与 heuristic 内部</td><td>示范 smoke 尚未跑通，学习收益尚未形成证据。</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="issues">
+      <div class="section-head"><div class="section-no">05</div><div><h2>正在执行的 issue：两条主线同时影响训练外延</h2><p>一条是“把训练真正跑起来”，另一条是“把训练所依赖的共享内核标准化”。当前不宜把它们误当成同一项工作。</p></div></div>
+      <table>
+        <thead><tr><th>Issue</th><th>作用</th><th>状态</th><th>当前动作</th><th>对训练外延的影响</th></tr></thead>
+        <tbody>
+          <tr><td>SETI-14</td><td>强化学习路线与实施总协调</td><td><span class="state run">IN PROGRESS</span></td><td>等待 SETI-39</td><td>承载现有训练实验，不应被共享内核重构吞并。</td></tr>
+          <tr><td>SETI-39</td><td>demonstration、BC/value warm start、Masked PPO</td><td><span class="state risk">IN PROGRESS</span></td><td>修复 <code>research_tech_select</code>，再跑 4 局 demonstration smoke</td><td>直接验证学习层是否成立；当前最具体的训练阻塞点。</td></tr>
+          <tr><td>SETI-56</td><td>Standard Action 总控</td><td><span class="state run">IN PROGRESS</span></td><td>SETI-60 已完成；准备 SETI-61 全链路收口</td><td>决定 Env 接收和枚举的唯一动作语言。</td></tr>
+          <tr><td>SETI-62</td><td>Effect Session 总控</td><td><span class="state run">IN PROGRESS</span></td><td>应解锁 SETI-64 研究科技参考链</td><td>决定 step 内部推进、working observation、journal 与 commit；metadata 仍写等待已完成的 SETI-59，需同步。</td></tr>
+          <tr><td>SETI-71</td><td>CommittedGameState / StateStore 总控</td><td><span class="state run">IN PROGRESS</span></td><td>等待 SETI-82</td><td>决定 observation、checkpoint 和多环境实例的事实来源。</td></tr>
+          <tr><td>SETI-82</td><td>recovery / headless checkpoint 单向适配</td><td><span class="state run">IN PROGRESS</span></td><td>盘点 StateStore v1 与现有 checkpoint 边界</td><td>当前最直接的架构接点：让训练 checkpoint 迁向统一事实源。</td></tr>
+          <tr><td>SETI-72</td><td>浏览器 View / Input Adapter 总控</td><td><span class="state run">IN PROGRESS</span></td><td>等待 SETI-71 reference contract</td><td>不直接实现训练，但会证明浏览器与训练是共享内核两侧对称外延。</td></tr>
+          <tr><td>SETI-45</td><td>完整架构与演进边界讨论</td><td><span class="state run">IN PROGRESS</span></td><td>本轮整理训练版本外延</td><td>只负责形成共识和拆分，不直接实现训练或内核迁移。</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top: 10px">已完成且作为基础证据：SETI-38（worker / IPC）、SETI-40（移除 heuristic / resolver 热路径）、SETI-55（Gate B 22/22 训练放行）、SETI-60（七类条件决策与 deterministic drain）。执行状态为 2026-07-19 06:44 的实时快照。</p>
+    </section>
+
+    <section id="risks">
+      <div class="section-head"><div class="section-no">06</div><div><h2>当前三个推进风险</h2><p>问题不是“训练有没有代码”，而是训练代码和共享内核迁移怎样避免互相拖垮。</p></div></div>
+      <div class="risk-grid">
+        <article class="risk-card"><h3>协议稳定、底层迁移</h3><p><code>headless-env.js</code> 已被 trainer / worker 消费，但底层正从 app runtime 迁向 Action / Session / StateStore。应冻结 Env v1 外部行为，用 adapter 吸收底层变化，避免训练器跟着重写。</p></article>
+        <article class="risk-card"><h3>两套“条件选择”再次分叉</h3><p>SETI-39 当前失败点与 SETI-60 刚完成的 decision family 重叠。若 trainer 局部补 heuristic fallback，会重新制造训练专属规则；修复必须落在共享 Action / Decision 合法性。</p></article>
+        <article class="risk-card"><h3>训练指标掩盖架构缺口</h3><p>吞吐、100 局终局和 PPO loss 只能证明链路局部工作，不能证明 hidden information、replay parity、working-state observation 与最终共享边界正确。</p></article>
+      </div>
+    </section>
+
+    <section id="decisions">
+      <div class="section-head"><div class="section-no">07</div><div><h2>这轮建议只拍板三个边界</h2><p>先确定训练宿主的外沿与共享内核接口，不在本轮讨论网络结构、超参数或最终部署。</p></div></div>
+      <div class="decision-grid">
+        <article class="decision-card recommend"><span class="num">1</span><h3>“训练版本外延”是否包含三层？</h3><p>建议包含：Env Adapter、Sampling Infrastructure、Learning System。三层都属于训练产品，但只有 Env Adapter 直接接共享游戏内核。</p></article>
+        <article class="decision-card"><span class="num">2</span><h3>Reward 的事实与优化怎样分工？</h3><p>建议共享内核只产出规则事件、资源/分数变化和终局结果；Env 形成稳定 reward schema；Trainer 可配置 shaping，但不得把 shaping 写回规则与 observation。</p></article>
+        <article class="decision-card"><span class="num">3</span><h3>现有训练与内核重构怎样并行？</h3><p>建议 SETI-39 继续完成最小 BC/PPO 实验；同时把修复限定在共享 decision 合法性，不扩大 Env v1；新架构总控只负责协议冻结和迁移，不重做训练算法。</p></article>
+      </div>
+    </section>
+
+    <section id="proposal">
+      <div class="section-head"><div class="section-no">08</div><div><h2>推进建议：先冻结端口，再建立训练宿主总控</h2><p>保留现有训练实验的执行连续性，同时给后续架构迁移一个清楚的 owner。</p></div></div>
+      <div class="proposal">
+        <article class="proposal-main">
+          <h3>建议顺序</h3>
+          <ol>
+            <li><strong>本轮先确认上面三个边界。</strong>不立即改 reward、网络或 worker。</li>
+            <li><strong>SETI-39 继续处理当前最小阻塞。</strong><code>research_tech_select</code> 修复必须复用 SETI-60 的标准 decision 语义，禁止 trainer / heuristic fallback。</li>
+            <li><strong>确认后新建“训练宿主外延总控”。</strong>冻结 Env v1、Observation、Action encoding、Reward/Done、checkpoint/replay、worker/trainer 分层与迁移 proof；关联 SETI-14/39，但不搬动正在执行的任务。</li>
+            <li><strong>选研究科技作为第一条贯穿验收链。</strong>同一 Action / Decision trace 同时证明浏览器、headless、worker 与 trainer 数据一致。</li>
+          </ol>
+        </article>
+        <aside class="proposal-side">
+          <h3>明确暂不做</h3>
+          <p>不另起第二套 simulator；不让 heuristic 进入 PPO rollout；不把 UI confirm 当 policy action；不在共享内核未稳定时扩展 Env v2；不以 PPO 能更新或单局高分替代协议 parity。</p>
+        </aside>
+      </div>
+    </section>
+
+    <footer>证据快照：<code>docs/rl-headless-env.md</code>、<code>randomizer/app/headless-env.js</code>、<code>randomizer/training/**</code>、SETI-14 / 38 / 39 / 40 / 55 / 56 / 60 / 62 / 71 / 72。状态截至 2026-07-19，本报告用于边界讨论，不代表最终架构已验收。</footer>
+  </main>
+</body>
+</html>
