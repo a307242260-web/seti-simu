@@ -4,6 +4,8 @@
 
 如果你需要看“当前 app 层到底还剩哪些逻辑、top-down 模块该怎么拆”，优先再读 [docs/app-topdown-architecture.md](./app-topdown-architecture.md)。
 
+浏览器逐步剥离为纯 View、Input Adapter 与 ViewState 的目标契约、可见性边界、所有权矩阵和 proof obligations，见 [docs/browser-host-ui.md](./browser-host-ui.md)。迁移期间本文件描述的是现状装配边界，后者描述目标宿主边界与分阶段删除条件。
+
 ## 当前加载层次
 
 1. `randomizer/index.html` 按传统 `<script>` 顺序加载，无构建步骤，也不使用 ES module。
