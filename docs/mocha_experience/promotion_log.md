@@ -536,24 +536,24 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - date: 2026-07-19
 - source: SETI-45
 - promoted_to: none
-- promotion_decision: reject
+- promotion_decision: candidate
 - target_agent: 领航
 - target_component: 架构探索结果展示实践
 - target_file: docs/mocha_experience/exploratory_research.md
 - remote_skill_id: none
-- change: 撤回“单边界架构讨论固定使用现有 HTML 模板”的展示候选；保留单边界原则，输出形式改为朴素架构图和短结论，按当轮需要选择载体。
-- applied_change: 更新 exploratory_research experience 与本决策契约为 reject；不删除历史报告，不修改 agent prompt、loop template、watcher、issue-workflow 或 project memory。
-- expected_effect: 后续讨论减少夸张标题、彩色卡片墙和长篇阶段总结，owner 能更快聚焦边界、依赖和待决策项。
+- change: 修订展示候选为“单边界架构讨论继续提供 HTML，但禁用 huashu-design；改用朴素技术文档布局、清晰主图和短结论”。
+- applied_change: 更新 exploratory_research experience 与本决策契约为 candidate；重绘 `reports/seti-ai-policy-architecture.html`，不修改 agent prompt、loop template、watcher、issue-workflow 或 project memory。
+- expected_effect: owner 保留可直接打开的架构材料，同时页面不再因模板化视觉和冗长总结遮蔽边界、依赖与待决策项。
 - evaluation_window: 后续 2 次 SETI 架构边界讨论
-- success_signal: 首次交付无需再因样式、总结冗长或固定 HTML 模板返工，反馈聚焦架构内容。
-- rollback_condition: 若 owner 后续明确指定新的可复用视觉模板，则以该模板重建新的候选，不恢复当前 HTML 样式。
-- risk: 过度精简可能丢失必要证据；短结论仍需保留当前事实、目标边界和待确认项。
-- evidence_before: SETI-45 评论 `1eacdd35-9691-4dd0-bbae-8b493b816903` 要求清晰架构图 / 流程图；`reports/seti-ai-policy-architecture.html` 延用模板后，评论 `94c2d631-78a1-4ca6-9d05-3dda8ef2c657` 明确评价样式和总结不应再使用。
-- owner_or_agent_decision: owner 明确要求停止使用；领航据此将 candidate 改为 reject。
+- success_signal: 后续首次交付仍有可访问 HTML，且无需再因 huashu-design、标题尺度、卡片墙或总结冗长返工。
+- rollback_condition: 若 owner 后续明确指定新视觉模板或不再需要 HTML，则按新要求修订；不恢复当前已否定模板。
+- risk: 技术文档式页面可能过于克制或在窄屏表格上需要横向滚动；主架构图必须优先保持可读，细节表可退居其次。
+- evidence_before: 评论 `94c2d631-78a1-4ca6-9d05-3dda8ef2c657` 否定旧样式，`2f0c05ee-6307-4703-a501-f23ca67d3d4e` 明确 HTML 仍是必需载体，只禁用 huashu-design。
+- owner_or_agent_decision: owner 明确修正交付口径；领航据此将 reject 修订为有边界的 candidate。
 - applied_at: 2026-07-19
-- verification: 核对触发评论、既有 experience 与报告截图；确认反馈针对现有 HTML 样式和总结方式，而非撤销已讨论的架构结论。
-- observed_outcome: 固定 HTML 展示候选在评估窗口内收到明确负面反馈，已停止复用。
-- keep_or_revise: reject；后续若有 owner 指定的新格式，作为全新候选评估。
+- verification: 新版报告 HTTP 200；系统 Chrome 1440×2200 与 430×3000 截图检查通过；页面使用常规标题、中性灰白、直线汇合图、职责表和三个短待确认项。
+- observed_outcome: HTML 载体已保留，huashu-design 已移除；新版等待 owner 对清晰度继续反馈。
+- keep_or_revise: 修订为 candidate；观察后续 2 次 SETI 架构边界讨论，再决定是否形成固定 exploratory research 交付模板。
 
 - date: 2026-07-19
 - source: SETI-16, SETI-60
