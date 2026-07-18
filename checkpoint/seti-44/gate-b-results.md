@@ -1,117 +1,96 @@
-# SETI-44 Gate B：RL 环境正向验收结果
+# SETI-55 Gate B：RL 环境整改后放行复验
 
-> 审计时间：2026-07-19（Asia/Shanghai）
-> 基线：`dev@c3e4cc2` 加共享工作树现状
-> 结论：**不放行训练/评测。** 22 项中 PASS 7、FAIL 10、UNKNOWN 5；所有硬契约必须 PASS，性能和终局率不能覆盖 FAIL/UNKNOWN。
+> 复验时间：2026-07-19（Asia/Shanghai）
+> 基线：`dev@c7aca66` 纯净工作树
+> 结论：**O01–O22 全部 PASS，放行正式训练、checkpoint 横向评测和常驻 worker 采样。**
 
-## 1. 结果总表
+本报告取代 SETI-44 的初始 Gate B 结果。初审发现的 10 个 FAIL、5 个 UNKNOWN 已由 SETI-46～54、SETI-57、SETI-58、SETI-63 修复或补齐与量词匹配的证据；性能与终局率只作为附加门槛，不替代硬契约。
 
-| ID | 结果 | 证据与可复跑命令/依据 |
+## 1. O01–O22 最终结果
+
+| ID | 结果 | 最终证据 |
 |---|---|---|
-| O01 reset/seed/config/episode 隔离 | **FAIL** | 同 env `seti44-repeat` 第一次 opening+legal digest `10c293...33b`，第二次 `774a79...8a7f`；fresh env 恢复第一次 digest。同 env A/B/A 还漂移牌、轮盘、火箭、痕迹和 choiceCount。见 SETI-53。 |
-| O02 observation/viewer 隔离 | **PASS** | core snapshot 注入 `SETI44_OPPONENT_SECRET`、`SETI44_DECK_SECRET`、`SETI44_ALIEN_SECRET`；当前 viewer observation 三者均不出现，对手自己的 selfState 可见自己的 canary；非 owner legal=[]。现有 `headless-env.test.js` 同时通过 schema/key 检查。 |
-| O03 decision owner 真值 | **FAIL** | cursor 22 的 conditional 输出 `source=effect_owner` 但 `effectOwnerPlayerId=null`；源码 `buildDecision()` 按 decisionType 近似推断，而非 pending→effect→current 真值链。见 SETI-49。 |
-| O04 legal 稳定/版本/mask | **PASS** | seed `seti44-mask-property` 连续 106 个决策点重复 legal 完全相同、actionId 无重复；wrong owner/unknown/stale 均拒绝。 |
-| O05 legal→executable 全称合约 | **UNKNOWN** | seed `seti44-all-legal` 在 40 个连续 checkpoint 对 356 个 legal action 做 fresh restore+fork，0 失败；但只触达 12 个 family，不能外推所有 family/状态。 |
-| O06 15 顶层 family 行为覆盖 | **UNKNOWN** | 本轮真实轨迹触达 launch/orbit/scan/analyze/research/play/pass/move/trade/industry/card-corner/place-data/end-turn 等，但未形成 15 family 各自的独立 reachable fixture、execute、transition、replay 全链证据；land/runezu 尤其缺证据。 |
-| O07 7 conditional family 行为覆盖 | **FAIL** | `choose_final_scoring` 仅有契约常量，未找到行为 producer；其余 family 也未全部形成多选 fixture。见 SETI-47。 |
-| O08 唯一项自动推进 | **FAIL** | seed `seti44-coverage` cursor 22 暴露唯一 `choose_payment:8d5507ea551a5a0f`，`choiceCount=1` 且仍为 policy legal action。见 SETI-46。 |
-| O09 deterministic drain/禁 policy fallback | **FAIL** | 禁用 heuristic/resolver 的现有源码断言通过，但 effect executor 返回失败时 drain 会调用 `skipHeadlessActionEffect()` 并在 skip 成功后继续，违反失败不得 recover/skip 掩盖。见 SETI-51。 |
-| O10 禁浏览器/DOM/UI 依赖 | **FAIL** | 对 `document/localStorage/Image` 安装访问即抛错 getter，reset 在 `randomizer/app/final-ui-runtime.js:15` 读取 `root.document`。现有“未安装 fake document”不足以证明调用为 0。见 SETI-48。 |
-| O11 未迁移/未知 fail-closed | **FAIL** | 未知路径只有通用文案，错误不稳定包含 state/family/type/owner；pending detection 与 conditional enumerator 不是同一 exhaustive inventory，无法证明未知 key 不穿透。见 SETI-50。 |
-| O12 reward/terminal score 真值 | **UNKNOWN** | 快速终局最后一步 reward 与基础分未出现矛盾，但没有构造“终局公式产生非零增量”的 oracle，也没有逐 family reward delta 证据；不得按 PASS。 |
-| O13 terminal/round/turn/非法终局动作 | **FAIL** | 两个快速终局 seed 在 `isTerminal()=true` 后 `legalActions()` 仍返回 9/10 个动作（含 pass）；step 仅因 actor=null 偶然拒绝，cursor 未增。见 SETI-54。 |
-| O14 非法动作原子性 | **PASS** | wrong owner、unknown actionId、stale version 三类 step 前后 checkpoint 完全相同，replay/RNG/cursor 未变。 |
-| O15 非零 replay 恢复 | **PASS** | seed `seti44-nonzero` 执行 1 个真实 `choose_payment` 后，fresh `loadReplay()` 的 observation/legal/cursor 与源完全一致。 |
-| O16 非零 checkpoint 恢复 | **PASS** | 同一非零轨迹 cursor=1，fresh `loadCheckpoint()` 的 observation/legal 与源完全一致，恢复 cursor=1。 |
-| O17 worker/direct parity | **PASS** | `node randomizer/app/headless-worker.integration.test.js`：同 config opening、一次真实 step、reward/observation/legal、非零 checkpoint/replay parity 全通过。 |
-| O18 timeout/crash/恢复/跨 episode | **UNKNOWN** | fake worker 的 crash/timeout/action journal 测试通过，但真实 env 没有故障注入；且 O01 已证明常驻同 env reset 污染，不能把 fake 恢复当真实 PASS。 |
-| O19 背压 | **UNKNOWN** | 代码存在 `maxPending`/`backpressure`，但现有测试没有并发填满真实或 fake worker 队列的精确断言；不得仅凭源码标 PASS。 |
-| O20 determinism/metamorphic | **FAIL** | fresh env 同 seed 的完整 94 步轨迹/replay 完全一致，非零 replay/checkpoint parity 也通过；但同 env 同 seed reset 不一致（O01），所以总体 determinism 失败。 |
-| O21 长轨迹/单多 worker 可靠性 | **FAIL** | 官方 `python3 tools/rl_worker_client.py --workers 4 --episodes 100` 首批即因 100 步上限失败；相同 4 seed 提高审计上限到 200 后分别 98/99/94/103 步终局。工具假阴性见 SETI-52；常驻 reset 污染见 SETI-53。 |
-| O22 单/多 worker 性能 | **PASS** | 使用不截断合法局的 `--max-steps 200`：1 worker×10 局 1006 decisions，aggregate `140.672/s`；4 worker×10 局 4045 decisions，aggregate `284.559/s`，均 ≥50/s。默认 100 步命令仍因 SETI-52 失败。 |
+| O01 reset/seed/config/episode 隔离 | **PASS** | `headless-env.test.js` 覆盖同 env A/A、A/B/A、fresh env 与 replay；SETI-53 清理模块级 seed/episode 遗留，重复 reset 的 opening/legal/checkpoint 一致。 |
+| O02 observation/viewer 隔离 | **PASS** | `headless-env.test.js` 的 schema/key 与 viewer canary；对手私有牌、牌堆和异族私有字段不泄露，非 owner legal 为空。 |
+| O03 decision owner 真值 | **PASS** | `headless-decision-owner.test.js` 覆盖 pending → effect owner → current player 真值链，SETI-49 移除按 decisionType 猜 owner 的旁路。 |
+| O04 legal 稳定/版本/mask | **PASS** | `headless-legality.test.js`、`headless-env.test.js`：同 checkpoint 重复枚举稳定，actionId 唯一；wrong owner、unknown、stale version 均拒绝。 |
+| O05 legal→executable 全称合约 | **PASS** | SETI-57/58 将所有顶层 family 收敛到标准 action registry；`standard-action*.test.js` 对注册、可执行、transition/replay 负责，`headless-legality.test.js` 与 worker 全局轨迹验证 legal mask 只由该 registry 产出。 |
+| O06 15 顶层 family 行为覆盖 | **PASS** | `standard-action.test.js`、`standard-action-reference.test.js`、`standard-action-stage2.test.js` 与 `actions.test.js`/`rockets*.test.js`/`industry*.test.js`/`runezu.test.js` 覆盖 launch、orbit、land、research、scan、analyze、play、pass、move、quick_trade、industry、card_corner、place_data、runezu、end_turn 的独立执行路径。 |
+| O07 7 conditional family 行为覆盖 | **PASS** | `headless-conditional-drain.test.js` 明确运行 7 个 family；SETI-47 为 `choose_final_scoring` 增加真实 producer、多选 fixture 与最终分数行为断言。 |
+| O08 唯一项自动推进 | **PASS** | `headless-conditional-drain.test.js` 证明 choiceCount=1 由 deterministic drain 自动推进，不再作为 policy action 外显。 |
+| O09 deterministic drain/禁 policy fallback | **PASS** | `headless-effect-failure.test.js` 注入 executor 失败并断言原错误直接抛出、无 skip/recover；SETI-51 删除失败后自动 skip 的掩盖路径。 |
+| O10 禁浏览器/DOM/UI 依赖 | **PASS** | `headless-no-browser-globals.test.js` 对 document/localStorage/Image 安装 poison getter，完整 reset/step/terminal 访问计数为 0；SETI-48 切断 final UI 读取。 |
+| O11 未迁移/未知 fail-closed | **PASS** | `headless-fail-closed.test.js` 对未知 pending/family/type/owner 逐类断言稳定结构化错误；inventory 与 enumerator 同源。 |
+| O12 reward/terminal score 真值 | **PASS** | `headless-final-scoring.test.js`、`end-game-scoring.test.js`、`final-scoring.test.js` 以非零终局公式 oracle 核对 finalScore/scoreBreakdown；step reward 为前后状态增量，训练端另消费最终总分，二者职责无重算。 |
+| O13 terminal/round/turn/非法终局动作 | **PASS** | `headless-terminal.test.js` 运行真实终局，断言 terminal 后 legal=[]、任意 step 拒绝且 checkpoint/cursor/RNG 不变。 |
+| O14 非法动作原子性 | **PASS** | `headless-env.test.js` 对 wrong owner、unknown actionId、stale version 比较完整 checkpoint/replay/RNG/cursor，均无变化。 |
+| O15 非零 replay 恢复 | **PASS** | `headless-env.test.js` 与 `headless-worker.integration.test.js` 在真实 action 后 loadReplay，observation/legal/cursor 完全一致。 |
+| O16 非零 checkpoint 恢复 | **PASS** | 同上，在非零 cursor loadCheckpoint 后 observation/legal/checkpoint/RNG/cursor 完全一致。 |
+| O17 worker/direct parity | **PASS** | `headless-worker.integration.test.js` 核对 opening、step reward、observation/legal、非零 checkpoint/replay 的 direct/worker parity。 |
+| O18 timeout/crash/恢复/跨 episode | **PASS** | `worker-pool.test.js` 覆盖 timeout/journal；`headless-worker-resilience.test.js` 强制 terminate 真实 worker，generation 重建后 observation/legal/完整 checkpoint/RNG/cursor/replay 全一致。SETI-63 固定 headless Date 元数据。 |
+| O19 背压 | **PASS** | `headless-worker-resilience.test.js` 在真实 worker 队列填满 maxPending 后断言 backpressure；`worker-pool.test.js` 覆盖释放与后续请求。 |
+| O20 determinism/metamorphic | **PASS** | `headless-env.test.js` 的 fresh A/A、同 env A/A、A/B/A、checkpoint/replay；`headless-worker-resilience.test.js` 再验证崩溃恢复后的完整状态确定性。 |
+| O21 长轨迹/单多 worker 可靠性 | **PASS** | `python3 tools/rl_worker_client.py --workers 4 --episodes 100`：100/100 在 200 decisions 上限内终局，illegal=0，无协议错误或 worker 恢复失败。 |
+| O22 单/多 worker 性能 | **PASS** | 1 worker×10 局：1006 decisions，130.135/s；4 worker×10 局：4045 decisions，336.205/s，均超过 50 decisions/s。 |
 
-统计：契约项严格计数为 **7 PASS / 10 FAIL / 5 UNKNOWN**。全量回归是工程基线，不计入 22 项契约，也不替代任一 FAIL/UNKNOWN。
+统计：**22 PASS / 0 FAIL / 0 UNKNOWN**。
 
-## 2. 关键可复现证据
+## 2. 可复跑命令与结果
 
-### 2.1 唯一 conditional 错误外显
+### 2.1 语法与全量回归
 
-```text
-seed=seti44-coverage
-cursor=22
-actionId=choose_payment:8d5507ea551a5a0f
-decisionType=conditional_choice
-choiceCount=1
-summary=消耗 1 能量
+```bash
+node --check randomizer/app.js
+for test_file in $(rg --files randomizer -g '*.test.js' | sort); do
+  node "$test_file" || exit
+done
 ```
 
-### 2.2 同 env reset 污染
+结果：`randomizer` 下全部 `.test.js` 逐个通过，包含标准行动、条件链、fail-closed、终局、重放、真实 worker 恢复及训练协议。
 
-```text
-seed=seti44-repeat
-same env reset #1 digest = 10c293544f5f777abab01397440d2d011b78bee937fda7bd370d2fb36a21333b
-same env reset #2 digest = 774a79fda3bcbcefccf20f56373e1b3c092dba08c3d9e3f5755d8885ffb08a7f
-fresh env digest         = 10c293544f5f777abab01397440d2d011b78bee937fda7bd370d2fb36a21333b
-```
-
-### 2.3 terminal 仍有 mask
-
-```text
-seed=seti44-determinism: 94 steps, terminal=true, terminalLegalCount=9
-seed=seti44-terminal-actions: 106 steps, terminal=true, terminalLegalCount=10
-terminal 后第一个动作 family=pass；step 因 expected actor=null 被拒绝，cursor 保持 106
-```
-
-### 2.4 worker 默认 smoke 假失败与真实步数
+### 2.2 100 局持久 worker smoke
 
 ```bash
 python3 tools/rl_worker_client.py --workers 4 --episodes 100
-# RuntimeError: episode did not finish within 100 decisions
 ```
 
-同一首批 seed 用相同 fast policy、审计上限 200：
-
-```text
-python-ipc-smoke:0 = 98 steps terminal
-python-ipc-smoke:1 = 99 steps terminal
-python-ipc-smoke:2 = 94 steps terminal
-python-ipc-smoke:3 = 103 steps terminal
+```json
+{
+  "episodes": 100,
+  "illegalActions": 0,
+  "maxSteps": 200,
+  "ok": true
+}
 ```
 
-### 2.5 性能
+### 2.3 性能
 
 ```bash
 node tools/benchmark_rl_workers.js --workers 1 --games-per-worker 10 --max-steps 200
 node tools/benchmark_rl_workers.js --workers 4 --games-per-worker 10 --max-steps 200
 ```
 
-结果：单 worker `140.672 decision/s`，四 worker `284.559 decision/s`；serialization/inference idle 均为百万级/s，瓶颈仍在环境但已过 50/s 门槛。
+| 模式 | 局数 | decisions | aggregate decisions/s | 50/s 门槛 |
+|---|---:|---:|---:|---|
+| 1 worker | 10 | 1006 | 130.135 | PASS |
+| 4 workers | 40 | 4045 | 336.205 | PASS |
 
-## 3. 工程回归
-
-```bash
-node --check randomizer/app.js
-tests=(${(f)"$(rg --files randomizer | rg '\.test\.js$' | sort)"})
-for test_file in $tests; do node "$test_file" || exit $?; done
-```
-
-结果：`randomizer` 下全部 `.test.js` 逐个通过。该结果只说明现有回归未退化；已被本审计的 singleton、DOM poison、repeat reset、terminal mask 反例证明，现有测试集不足以作为训练放行证据。
-
-## 4. 缺陷子 issue
+## 3. 整改闭环
 
 - SETI-46：唯一 conditional 自动推进。
-- SETI-47：`choose_final_scoring` 行为 family。
-- SETI-48：切断 headless `document` 读取。
+- SETI-47：7 类 conditional 与真实终局计分选择。
+- SETI-48：headless 禁止 DOM/UI 读取。
 - SETI-49：decision owner 真值链。
 - SETI-50：未知 pending/family 结构化 fail-closed。
-- SETI-51：effect 执行失败不得自动 skip。
-- SETI-52：worker smoke/benchmark 过期 100 步上限。
-- SETI-53：同 env 重复 reset 的 seed/episode 隔离（urgent）。
-- SETI-54：terminal 后 legalActions 必须为空。
+- SETI-51：effect 失败不再自动 skip。
+- SETI-52：smoke/benchmark 采用可配置 200 步预算与可定位失败诊断。
+- SETI-53：同 env 重复 reset 的 seed/episode 隔离。
+- SETI-54：terminal 后 legalActions 为空且 step 原子拒绝。
+- SETI-57/58：15 类顶层动作收敛到标准 action registry，并补齐 family 行为契约。
+- SETI-63：真实 worker 崩溃恢复的完整 checkpoint parity 与真实背压。
 
-## 5. 放行判断
+## 4. 放行判断与残余风险
 
-当前环境**不得用于正式训练、checkpoint 横向评测或宣称可复现的常驻 worker 采样**。最优先阻断项是 SETI-53（同 env reset 污染），随后是 SETI-46/47/49/54 的决策与终局语义；SETI-48/50/51 是架构禁区与 fail-closed 门槛。SETI-52 只修验证工具假阴性，不能改变环境正确性结论。
+Gate B 硬契约及性能门槛全部通过，环境可用于正式训练、checkpoint 横向评测和常驻 worker 采样。当前没有已知阻断项。
 
-重新放行必须满足：上述高优先级子 issue 修复并为 O01–O22 全部补齐与量词匹配的 PASS 证据；不得以 284.559 decision/s、全量 Node 回归或 200 步内终局替代硬契约。
+残余风险属于持续工程监控：规则扩展时必须同步标准 action registry、conditional inventory 与对应行为 fixture；性能数字受机器负载影响，但本次最低单 worker 结果仍为门槛的 2.6 倍。
