@@ -14,6 +14,14 @@
 
 ## Entries
 
+- date: 2026-07-18
+- source_issue: SETI-31
+- observation: 对刻意不改生产行为的 characterization / Stage 0 交付，收口摘要应先说明“本阶段不会产生页面或玩法变化”，再用新增护栏、可拦截的回归类型和后续迁移用途解释价值；只列测试文件、行数和通过项，容易让 reviewer 误以为没有实际产出。
+- evidence: SETI-31 首次交付摘要以新增契约测试、固定 seed 基线和验证结果为主后，成员追问“看起来基本没变哇，实际你做了啥？”；补充说明本阶段硬边界、400 行新增/112 行迁移及后续能阻断的 API/schema/owner 漂移后，成员回复“那就收”。
+- promote_to: none
+- promotion_status: candidate
+- decision: 当前只有一次 Stage 0 沟通反馈，记录为 coding candidate，不修改 agent prompt、loop template 或 issue-workflow；后续 3 个“行为不变但增加迁移护栏”的交付中观察是否仍需同类澄清。
+
 - date: 2026-07-17
 - source_issue: SETI-18
 - observation: 预计运行超过数分钟的固定 seed 评测，应在每局结束时输出 `completed/total`、seed、终局、阻塞和步数；只在整批结束后输出会把正常高 CPU 运行误判为死锁，也无法定位慢 seed。

@@ -28,6 +28,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 
 ## Entries
 
+- date: 2026-07-18
+- source: SETI-31
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航
+- target_component: characterization / Stage 0 交付说明实践
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 记录“行为不变的安全网交付应先声明无可见变化，再解释新增护栏、可拦截回归和后续迁移用途”的呈现候选经验。
+- applied_change: 仅更新 coding experience 与本决策契约，不修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。
+- expected_effect: reviewer 能快速区分“刻意冻结行为”和“没有产出”，减少仅因页面或生产文件未变化而产生的重复追问。
+- evaluation_window: 后续 3 个以 characterization、baseline 或迁移护栏为主要产出的 coding issue
+- success_signal: 首次交付摘要即可让 reviewer 明确本阶段的无变化边界、具体新增防线和下一阶段用途，不再追问“实际做了什么”。
+- rollback_condition: 若后续 3 个同类 issue 的常规结果摘要均能直接被理解，或该前置说明显著增加重复信息，则合并到既有交付模板或删除候选。
+- risk: 过度解释“为什么没变化”可能掩盖真正的实现与验证结果；摘要仍需保留提交、契约范围和可复跑证据。
+- evidence_before: SETI-31 评论线程 `403a11bf-4fff-4812-bc3f-06e7c3d7bac3` 下成员追问“看起来基本没变哇，实际你做了啥？”；澄清 Stage 0 边界、400 行新增/112 行迁移和可阻断漂移后，成员在 `cc9ccf09-6416-4dac-ace9-e5faeeb256e3` 明确回复“那就收”。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate，暂不升级长期组件。
+- applied_at: 2026-07-18
+- verification: 核对 SETI-31 触发线程、recent 评论、metadata、timeline、提交 `46ee159`、固定 seed 基线及 watcher 兜底事件；未发现 watcher 事件。
+- observed_outcome: 补充以“本阶段刻意不改玩法”为首的价值解释后，成员接受 Stage 0 基线并授权关单。
+- keep_or_revise: 保持 candidate；待 3 个同类安全网交付后复审是否需要升级为 coding loop 的结果呈现模板。
+
 - date: 2026-07-17
 - source: SETI-14
 - promoted_to: none
