@@ -40,11 +40,16 @@ async function execute(operation, payload = {}) {
     case "step": {
       const result = requireEnv().step(payload.action);
       if (!result.ok) {
-        throw new IpcError(IPC_ERROR_CODES.ILLEGAL_ACTION, result.error || "动作执行失败", {
+        throw new IpcError(
+          result.code === "HEADLESS_TERMINAL" ? IPC_ERROR_CODES.TERMINAL : IPC_ERROR_CODES.ILLEGAL_ACTION,
+          result.error || "动作执行失败",
+          {
           actionId: payload.action?.actionId || null,
           actorPlayerId: result.actorPlayerId || null,
           legalActionIds: (result.legalActions || []).map((action) => action.actionId),
-        });
+          headlessCode: result.code || null,
+          },
+        );
       }
       return result;
     }

@@ -507,6 +507,13 @@ function createHeadlessEnv() {
     },
     legalActions(viewerPlayerId) {
       const startedAt = performance.now();
+      if (this.isTerminal()) {
+        legalActionSelectors = new Map();
+        lastLegalActions = [];
+        recordDuration("legalActionsMilliseconds", startedAt);
+        diagnostics.legalActionsCalls += 1;
+        return [];
+      }
       const cachedActorPlayerId = lastLegalActions?.[0]?.actorPlayerId || null;
       if (lastLegalActions && (!viewerPlayerId || viewerPlayerId === cachedActorPlayerId)) {
         recordDuration("legalActionsMilliseconds", startedAt);
@@ -551,6 +558,26 @@ function createHeadlessEnv() {
       return normalizedActions;
     },
     step(action) {
+      if (this.isTerminal()) {
+        legalActionSelectors = new Map();
+        lastLegalActions = [];
+        const terminalObservation = lastObservation?.terminal
+          ? structuredClone(lastObservation)
+          : buildTimedObservation(undefined, []);
+        lastObservation = terminalObservation;
+        return {
+          ok: false,
+          code: "HEADLESS_TERMINAL",
+          actionId: action?.actionId || action?.id || null,
+          actorPlayerId: null,
+          reward: buildReward(null, null, true),
+          done: true,
+          observation: terminalObservation,
+          legalActions: [],
+          replayEvent: null,
+          error: "环境已终局，不能继续执行动作",
+        };
+      }
       const currentLegalActions = lastLegalActions || this.legalActions();
       const beforeObservation = lastObservation
         && (!action?.actorPlayerId || lastObservation.decision?.actorPlayerId === action.actorPlayerId)

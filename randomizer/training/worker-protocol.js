@@ -6,6 +6,7 @@ const IPC_ERROR_CODES = Object.freeze({
   ILLEGAL_ACTION: "illegal_action",
   INVALID_REQUEST: "invalid_request",
   SCHEMA_MISMATCH: "schema_mismatch",
+  TERMINAL: "terminal",
   TIMEOUT: "timeout",
   WORKER_CRASH: "worker_crash",
   WORKER_RECOVERY_FAILED: "worker_recovery_failed",
