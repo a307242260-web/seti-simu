@@ -85,4 +85,14 @@ assert.equal(unknownResult.final.code, "HEADLESS_UNSUPPORTED_CONDITIONAL_FAMILY"
 assert.match(unknownResult.final.message, /family=unknown_family/);
 assert.deepEqual(unknown.executed, [], "未知 conditional family 不得自动执行");
 
+const bounded = createHarness("choose_branch", 1);
+bounded.api.listHeadlessConditionalActionCandidates = () => ({
+  actorPlayer: bounded.actorPlayer,
+  candidates: bounded.candidates,
+});
+const boundedResult = drainHeadlessDeterministicEffects(bounded.api, 3);
+assert.equal(boundedResult.ok, false, "不收敛的 deterministic drain 必须在上界失败");
+assert.match(boundedResult.final.message, /超过 3 步/);
+assert.equal(bounded.executed.length, 3, "drain 不得执行超过显式步数上界");
+
 console.log(`headless conditional drain tests passed (${CONDITIONAL_FAMILIES.length} families)`);

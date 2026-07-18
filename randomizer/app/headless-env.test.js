@@ -10,6 +10,8 @@ assert.equal(headlessEnvSource.includes("buildAiTurnActionCandidates"), false, "
 assert.equal(headlessEnvSource.includes("runAiSelectedTurnAction"), false, "step 热路径不得二次构建 selector candidates");
 assert.equal(headlessEnvSource.includes("runAiPendingStep"), false, "effect drain 热路径不得回退浏览器 pending resolver");
 assert.equal(headlessEnvSource.includes("runHeadlessActionEffectStep"), false, "effect drain 热路径不得调用 heuristic AI effect resolver");
+assert.equal(headlessEnvSource.includes("skipHeadlessActionEffect"), false, "effect drain 热路径不得按旧 skip 旁路吞掉失败");
+assert.equal(headlessEnvSource.includes("recoverPendingAction"), false, "effect drain 热路径不得回退 recover 旁路");
 
 function chooseFastTerminalAction(actions) {
   return actions.find((action) => action.family === "pass")

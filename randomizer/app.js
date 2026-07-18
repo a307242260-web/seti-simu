@@ -9258,7 +9258,7 @@
     };
   }
 
-  function enumerateHeadlessConditionalActions() {
+  function enumerateLegacyHeadlessConditionalActions() {
     if (!headlessMode) return { actorPlayer: null, candidates: [] };
     syncFinalScorePendingMarks();
     const finalScorePlayer = getCurrentPlayer();
@@ -9891,7 +9891,7 @@
     return { actorPlayer: null, candidates: [] };
   }
 
-  function executeHeadlessConditionalAction(action) {
+  function executeLegacyHeadlessConditionalAction(action) {
     if (action?.target?.kind === "final-score-tile") {
       return handleFinalScoreTileClick(action.target.choiceId);
     }
@@ -10038,6 +10038,92 @@
       return handleStateTraceSlotPlacement(Number(action.alienSlotId ?? action.target.slotId), action.traceType || action.target.traceType);
     }
     return { ok: false, message: "条件动作与当前 pending 状态不匹配" };
+  }
+
+  function createHeadlessConditionalActionProvider(family) {
+    return {
+      label: family,
+      getOptions() {
+        const enumerated = enumerateLegacyHeadlessConditionalActions();
+        const choices = (enumerated.candidates || [])
+          .filter((candidate) => candidate.family === family)
+          .map((candidate) => ({
+            target: structuredClone(candidate.target || null),
+            payload: { legacyAction: structuredClone(candidate) },
+            label: candidate.label || family,
+          }));
+        return choices.length
+          ? { ok: true, choices }
+          : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: `${family} 当前没有合法候选` };
+      },
+      canExecute() {
+        return { ok: true };
+      },
+      execute(_context, descriptor) {
+        return executeLegacyHeadlessConditionalAction(
+          structuredClone(descriptor.payload?.legacyAction || null),
+        );
+      },
+    };
+  }
+
+  const headlessConditionalStandardAdapter = actions.createStandardAdapter({
+    getAuthority(context) {
+      return context.standardActionAuthority;
+    },
+    stage4Actions: Object.fromEntries(
+      actions.standardAction.CONDITIONAL_FAMILIES.map((family) => [
+        family,
+        createHeadlessConditionalActionProvider(family),
+      ]),
+    ),
+  });
+
+  function createHeadlessConditionalStandardContext(actorPlayer) {
+    return {
+      ...createActionContext(),
+      standardActionAuthority: {
+        actorId: actorPlayer?.id || null,
+        stateVersion: 0,
+        decisionVersion: 0,
+      },
+    };
+  }
+
+  function enumerateHeadlessConditionalActions() {
+    const legacy = enumerateLegacyHeadlessConditionalActions();
+    const actorPlayer = legacy.actorPlayer || null;
+    if (!actorPlayer?.id || !(legacy.candidates || []).length) {
+      return { actorPlayer, candidates: [] };
+    }
+    const context = createHeadlessConditionalStandardContext(actorPlayer);
+    const candidates = headlessConditionalStandardAdapter.enumerate(context)
+      .filter((standardAction) => standardAction.phase === "conditional")
+      .map((standardAction) => ({
+        ...structuredClone(standardAction.payload?.legacyAction || {}),
+        id: "conditionalChoice",
+        family: standardAction.family,
+        label: standardAction.summary,
+        target: structuredClone(standardAction.target || null),
+        standardAction,
+      }));
+    return { actorPlayer, candidates };
+  }
+
+  function executeHeadlessConditionalAction(action) {
+    const standardAction = action?.standardAction || null;
+    if (!standardAction || standardAction.family !== action?.family) {
+      return {
+        ok: false,
+        code: "STANDARD_ACTION_SCHEMA_MISMATCH",
+        message: "条件动作缺少匹配的 Standard Action descriptor",
+      };
+    }
+    const actorPlayer = getHeadlessDecisionOwnerState()?.actorPlayer || null;
+    return headlessConditionalStandardAdapter.execute(
+      createHeadlessConditionalStandardContext(actorPlayer),
+      standardAction,
+    );
   }
 
   function advanceHeadlessDeterministicState() {

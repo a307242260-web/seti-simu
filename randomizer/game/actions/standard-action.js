@@ -353,6 +353,19 @@
     ]);
   }
 
+  function createConditionalDefinition(family, action) {
+    if (!CONDITIONAL_FAMILIES.includes(family)) {
+      throw new TypeError(`未知 conditional Standard Action family: ${family}`);
+    }
+    return createOptionDefinition(family, action);
+  }
+
+  function createStage4Definitions(actions = {}) {
+    return Object.freeze(CONDITIONAL_FAMILIES.map((family) => (
+      createConditionalDefinition(family, actions[family])
+    )));
+  }
+
   function createReferenceRegistry(referenceActions, options = {}) {
     const registry = createRegistry(options);
     for (const definition of createReferenceDefinitions(referenceActions)) registry.register(definition);
@@ -361,6 +374,9 @@
     }
     if (options.stage3Actions) {
       for (const definition of createStage3Definitions(options.stage3Actions)) registry.register(definition);
+    }
+    if (options.stage4Actions) {
+      for (const definition of createStage4Definitions(options.stage4Actions)) registry.register(definition);
     }
     return registry;
   }
@@ -410,6 +426,8 @@
     createOptionDefinition,
     createStage2Definitions,
     createStage3Definitions,
+    createConditionalDefinition,
+    createStage4Definitions,
     createReferenceRegistry,
     createRegistryAdapter,
   });

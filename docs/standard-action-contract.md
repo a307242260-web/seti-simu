@@ -58,13 +58,13 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 | `place_data` | quick | Standard Action registry；data ability adapter | reference | 统一槽位候选、bonus、history 与无目标语义 |
 | `runezu_face_symbol` | quick | Standard Action registry；alien adapter | reference | 统一符号来源、面板目标、分支与痕迹奖励 |
 | `end_turn` | turn_control | Standard Action registry；turn-end adapter | reference | 只在无待决策且主行动完成时合法，统一 owner 推进 |
-| `choose_card` | conditional | 多种 pending / overlay | taxonomy-only | 稳定 card/slot 身份，多选必须独立 replay step |
-| `choose_target` | conditional | move/scan/alien pending | taxonomy-only | 按目标类型注册 handler，禁止 UI callback 代执行 |
-| `choose_payment` | conditional | discard/resource pending | taxonomy-only | 支付集合与资源版本绑定，禁止执行时重选 |
-| `choose_reward` | conditional | effect/industry/alien pending | taxonomy-only | 奖励 identity 与后续 effect chain 稳定 |
-| `choose_branch` | conditional | card/alien/confirm pending | taxonomy-only | 分支必须语义化，禁止按钮文案作为协议 |
-| `choose_final_scoring` | conditional | final scoring runtime | taxonomy-only | 独立 owner、候选、replay 与 terminal 结算 |
-| `accept_optional_effect` | conditional | skip/confirm pending | taxonomy-only | 明确 `accept/skip` payload，禁止默认取首项 |
+| `choose_card` | conditional | Standard Action registry；card pending adapter | reference | 稳定 card/slot 身份，多选保持独立 replay step |
+| `choose_target` | conditional | Standard Action registry；move/scan/alien pending adapter | reference | 按目标类型枚举，registry 入口禁止 UI callback 代执行 |
+| `choose_payment` | conditional | Standard Action registry；discard/resource pending adapter | reference | 支付集合绑定 descriptor 与 authority，执行时重新校验 |
+| `choose_reward` | conditional | Standard Action registry；effect/industry/alien pending adapter | reference | 奖励 identity 与后续 effect chain 稳定 |
+| `choose_branch` | conditional | Standard Action registry；card/alien/confirm pending adapter | reference | 分支使用语义化 target，禁止按钮文案作为协议 |
+| `choose_final_scoring` | conditional | Standard Action registry；final scoring runtime | reference | 独立 owner、候选、replay 与 terminal 结算 |
+| `accept_optional_effect` | conditional | Standard Action registry；optional effect adapter | reference | 明确 `accept/skip` target，禁止默认取首项 |
 
 迁移顺序：先以 launch/orbit/land/research_tech 固化参考模式；再迁 scan/analyze/play_card/pass；再迁全部 quick action 与 end_turn；最后统一 conditional registry 和 deterministic drain。后续阶段只能把矩阵状态升级为有行为证据的状态，不得仅修改标签。
 
@@ -75,6 +75,8 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 阶段 2 行为证据：`randomizer/game/actions/standard-action-stage2.test.js` 对 scan/analyze/play_card/pass 做完整 family 枚举与同 checkpoint 全 legal fork，覆盖两张非等价手牌、稳定费用 payload、stale 无副作用、双 adapter parity 与 legacy 多选 fail-closed。浏览器主动作与 AI executor 都经 `action-runtime.dispatchAction` 进入同一 adapter；后续 pending 保持独立 owner/replay 边界。
 
 阶段 3 行为证据：`randomizer/game/actions/standard-action-stage3.test.js` 对 move/quick_trade/industry/card_corner/place_data/runezu_face_symbol/end_turn 做完整 family 枚举与同 checkpoint 全 legal fork，覆盖快速行动不消耗主行动、公司 1x、显式支付、history source、stale/越权/重复/无目标 fail-closed，以及浏览器/Policy adapter parity。浏览器快速交易与回合结束、AI 七类执行都经 `action-runtime.dispatchAction` 进入同一 registry；AI valuation 与候选评分保持在 adapter 外。
+
+阶段 4 行为证据：`randomizer/game/actions/standard-action-stage4.test.js` 对七类 conditional family 建立真实 `enumerate/validate/execute` definition，逐类覆盖两个非等价候选、owner、独立 decision version、stale 与零选项；`randomizer/app/headless-conditional-drain.test.js` 覆盖唯一候选自动推进、多候选策略边界、replay environment event 与 drain 上界；`randomizer/app/headless-fail-closed.test.js` 覆盖未知 pending/type/family，并以 spy 证明 resolver/DOM/recover/skip 调用为零。headless app 仅通过 registry adapter 暴露与执行 conditional descriptor，确定性 drain 不再按 UI 文案触发 skip。
 
 ## Proof obligations
 
