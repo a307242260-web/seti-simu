@@ -13,7 +13,7 @@
 
   function createDebugRuntime(context = {}) {
     const windowRef = context.window || root;
-    const documentRef = context.document || root.document;
+    const documentRef = context.document !== undefined ? context.document : root.document;
     const {
       els,
       players,
