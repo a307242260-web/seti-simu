@@ -16,11 +16,11 @@
 
 - date: 2026-07-18
 - source_issue: SETI-30, SETI-33
-- observation: owner 明确调整父级任务的验收口径时，应同步修改父 issue、全部已完成/进行中/待执行子 issue 的验收描述，并清理依赖被取消步骤的 blocker；仓库通用验证建议不能反向覆盖该父子任务的显式契约。
-- evidence: SETI-33 因父级原“真实 Chrome smoke”要求被置为 blocked；owner 随后在评论 `ab028e00-f08d-4245-99cc-b9b46c17ab9f` 明确“代码要，但是不要真实环境验收的步骤了，包括父 issue 下的其他子 issue”，需要一次性同步 SETI-30 与 SETI-31 至 SETI-36，而非只改单个子 issue。
+- observation: owner 明确调整父级任务的验收口径时，应同步修改父 issue、全部已完成/进行中/待执行子 issue 的验收描述，并通过 issue-workflow 一并清理依赖被取消步骤的 blocker 和 blocked 状态；仓库通用验证建议不能反向覆盖该父子任务的显式契约。
+- evidence: SETI-33 因父级原“真实 Chrome smoke”要求被置为 blocked；owner 在评论 `ab028e00-f08d-4245-99cc-b9b46c17ab9f` 明确取消 SETI-30 全部子 issue 的真实环境验收后，首轮只更新描述和 blocker metadata、未同步 status，成员随即在 `9ff1c760-58b1-48a3-a31d-fd292e6d33bc` 追问“那为什么这个issue还在已阻塞？”。
 - promote_to: none
 - promotion_status: candidate
-- decision: 当前只有一个父子重构链的明确反馈，先记录为 coordination candidate；不修改仓库通用 runtime 验证规则，也不升级 issue-workflow，后续观察 2 个父级验收口径变更是否再次出现漏同步或陈旧 blocker。
+- decision: 当前只有一个父子重构链的明确反馈，先记录为 coordination candidate；既有 issue-workflow 已支持 start/done 并清理 stale blocker，本次直接按现有流程纠正，不修改仓库通用 runtime 验证规则或 workflow 组件，后续观察 2 个父级验收口径变更。
 
 ## 2026-07-17：串行子 issue 按自身依赖逐项解锁
 

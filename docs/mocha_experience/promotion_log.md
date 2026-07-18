@@ -36,19 +36,19 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - target_component: 父子 issue 验收契约同步实践
 - target_file: docs/mocha_experience/coordination.md
 - remote_skill_id: none
-- change: 记录“父级验收口径被 owner 调整时，需同步全部子 issue 并清理依赖旧口径的 blocker；任务显式契约优先于仓库通用建议”的候选经验。
+- change: 记录“父级验收口径被 owner 调整时，需同步全部子 issue，并通过 issue-workflow 同时清理依赖旧口径的 blocker 与 blocked 状态；任务显式契约优先于仓库通用建议”的候选经验。
 - applied_change: 仅更新 coordination experience 与本决策契约；不修改仓库根 AGENTS.md、issue-workflow、watcher、loop template 或 agent prompt。
 - expected_effect: 后续父级验收范围变更能一次覆盖整个子树，避免已取消步骤继续出现在待执行子项或把已完成代码错误挂成 blocked。
 - evaluation_window: 后续 2 个包含多个子 issue 的父级验收口径变更
-- success_signal: 父级范围变更后，全部直属子 issue 的描述与活跃 blocker 在同一轮完成一致性检查，不再需要 owner 二次补充“包括其他子 issue”。
+- success_signal: 父级范围变更后，全部直属子 issue 的描述、活跃 blocker 和 status 在同一轮完成一致性检查，不再需要 owner 二次补充范围或追问为何仍处于 blocked。
 - rollback_condition: 若后续平台提供继承式验收契约并自动同步子树，或连续 2 次父级变更均无需人工传播，则合并或删除该候选。
 - risk: 机械覆盖子 issue 可能误删某个阶段独有的必要验证；同步时必须逐项保留 Node、固定 seed、代表性 runtime 和 API 契约等非真实环境证据。
-- evidence_before: SETI-33 timeline 的 `blocked_external` 记录显示唯一 blocker 为 in-app Browser 环境；owner 评论 `ab028e00-f08d-4245-99cc-b9b46c17ab9f` 明确保留代码并取消 SETI-30 全部子 issue 的真实环境验收步骤。
+- evidence_before: SETI-33 timeline 的 `blocked_external` 记录显示唯一 blocker 为 in-app Browser 环境；owner 评论 `ab028e00-f08d-4245-99cc-b9b46c17ab9f` 明确保留代码并取消 SETI-30 全部子 issue 的真实环境验收步骤；首轮未同步 status 后，评论 `9ff1c760-58b1-48a3-a31d-fd292e6d33bc` 直接指出 issue 仍显示已阻塞。
 - owner_or_agent_decision: 领航按 harness-evolve 规则自决记录 candidate，暂不升级长期组件。
 - applied_at: 2026-07-18
-- verification: 核对 SETI-30、SETI-31 至 SETI-36 描述、SETI-33 评论线程、metadata、timeline；确认 watcher 兜底事件中无 SETI-33 记录。
-- observed_outcome: SETI-30 与 SETI-31 至 SETI-36 的验收描述已统一为 Node/headless、固定 seed、代表性 runtime 与 API 契约验证，并明确不要求真实浏览器或其他真实环境验收。
-- keep_or_revise: 保持 candidate；待后续 2 个父级验收变更后复审是否需要升级为 issue-workflow 的子树一致性提醒。
+- verification: 核对 SETI-30、SETI-31 至 SETI-36 描述、SETI-33 评论线程、metadata、timeline；确认 watcher 兜底事件中无 SETI-33 记录，并用 issue_transition start/done 纠正 SETI-33 状态。
+- observed_outcome: SETI-30 与 SETI-31 至 SETI-36 的验收描述已统一为 Node/headless、固定 seed、代表性 runtime 与 API 契约验证；SETI-33 首轮漏同步的 blocked 状态在成员指出后已按现有 workflow 纠正并收口。
+- keep_or_revise: 修订后保持 candidate；现有 issue-workflow 能正确处理该场景，待后续 2 个父级验收变更观察是否仍需增加子树一致性提醒。
 
 - date: 2026-07-18
 - source: SETI-31
