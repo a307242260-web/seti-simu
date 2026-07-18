@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SETI Game Lifecycle 边界</title>
+  <style>
+    :root {
+      --ink: #20242a;
+      --muted: #5c6570;
+      --line: #b9c1ca;
+      --soft: #f4f6f8;
+      --blue: #285d8e;
+      --blue-soft: #edf4fa;
+      --amber: #8b5d16;
+      --amber-soft: #fbf5e9;
+      --paper: #fff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    main { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 44px 0 72px; }
+    header { padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    h1 { margin: 0 0 8px; font-size: 30px; line-height: 1.25; letter-spacing: -.02em; }
+    h2 { margin: 0 0 14px; font-size: 21px; line-height: 1.35; }
+    h3 { margin: 0 0 7px; font-size: 16px; }
+    p { margin: 0; color: var(--muted); }
+    code { font-family: "SFMono-Regular", Consolas, monospace; font-size: .9em; }
+    section { margin-top: 38px; }
+    .meta { margin-bottom: 8px; color: var(--blue); font: 600 12px/1.4 "SFMono-Regular", Consolas, monospace; }
+    .summary { max-width: 920px; }
+
+    .finding { padding: 14px 16px; border-left: 3px solid var(--amber); background: var(--amber-soft); color: #4c463c; }
+    .finding b { color: #3d3529; }
+
+    .current-grid { display: grid; grid-template-columns: 1fr 56px 1.15fr 56px 1fr; align-items: stretch; }
+    .box { padding: 17px 18px; border: 1px solid var(--line); background: var(--paper); }
+    .box ul { margin: 8px 0 0; padding-left: 19px; color: var(--muted); }
+    .box .path { display: block; margin-top: 9px; color: var(--blue); font: 12px/1.5 "SFMono-Regular", Consolas, monospace; }
+    .arrow { display: grid; place-items: center; color: #78828e; font-size: 24px; }
+    .mixed { border-color: #b58a45; background: #fffdf8; }
+
+    .machine { padding: 24px; border: 1px solid var(--line); background: #fbfcfd; }
+    .states { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); align-items: center; gap: 10px; }
+    .state { min-height: 88px; padding: 13px 12px; border: 1px solid #7f8995; background: var(--paper); text-align: center; }
+    .state b { display: block; margin-bottom: 3px; font-size: 14px; }
+    .state span { color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .state.active { border-color: var(--blue); background: var(--blue-soft); }
+    .state.end { border-width: 2px; }
+    .state-arrow { text-align: center; color: #77818d; font-size: 19px; }
+    .branch-note { margin-top: 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .branch-note div { padding: 12px 14px; border: 1px solid #c9cfd6; background: var(--paper); color: var(--muted); font-size: 13px; }
+    .branch-note b { color: var(--ink); }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 12px 14px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--soft); font-size: 13px; }
+    td:first-child { width: 20%; font-weight: 600; }
+    td:nth-child(2) { width: 36%; }
+    td { color: #46505b; }
+    .yes { color: #23653d; font-weight: 600; }
+    .no { color: #8b3c3c; font-weight: 600; }
+
+    .contract { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .contract article { padding: 17px 18px; border: 1px solid var(--line); }
+    .contract ul { margin: 8px 0 0; padding-left: 19px; color: var(--muted); }
+
+    .issues { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .issue { padding: 14px 16px; border: 1px solid var(--line); }
+    .issue b { display: block; margin-bottom: 4px; }
+    .issue p { font-size: 13px; }
+    .tag { display: inline-block; margin-left: 6px; padding: 1px 7px; border: 1px solid #bdc5ce; color: #5d6671; font: 11px/1.5 "SFMono-Regular", Consolas, monospace; vertical-align: 1px; }
+
+    .decisions { border: 1px solid var(--line); }
+    .decision { display: grid; grid-template-columns: 42px 1fr; gap: 14px; padding: 15px 17px; border-bottom: 1px solid var(--line); }
+    .decision:last-child { border-bottom: 0; }
+    .decision .n { color: var(--blue); font: 700 13px/1.6 "SFMono-Regular", Consolas, monospace; }
+    .decision p { margin-top: 3px; font-size: 14px; }
+    footer { margin-top: 38px; padding-top: 14px; border-top: 1px solid var(--line); color: #77808b; font-size: 12px; }
+
+    @media (max-width: 820px) {
+      main { width: min(100% - 24px, 1120px); padding-top: 28px; }
+      .current-grid { grid-template-columns: 1fr; gap: 10px; }
+      .arrow { transform: rotate(90deg); min-height: 24px; }
+      .states { grid-template-columns: 1fr; }
+      .state-arrow { transform: rotate(90deg); }
+      .branch-note, .contract, .issues { grid-template-columns: 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="meta">SETI / ARCHITECTURE NOTE / LIFECYCLE-01</div>
+    <h1>Game Lifecycle：从建局到终局的共享状态机</h1>
+    <p class="summary">下一块需要统一的不是某个行动，而是“一局游戏何时处于 setup、谁可以行动、何时结束当前回合、何时跨轮、何时进入终局”。浏览器与训练版应共享同一生命周期事实；UI、自动调度和训练循环只消费生命周期给出的稳定决策边界。</p>
+  </header>
+
+  <section>
+    <div class="finding"><b>当前判断：</b>回合状态已经进入 StateStore，PASS / end_turn 已进入 Standard Action，但生命周期推进仍主要是 app 壳层。`turn-flow.js` 同时负责建局重置、随机化、发牌接线、轮次推进和终局摘要；`turn-end-flow.js` 同时负责规则副作用、history、pending continuation、渲染和下一玩家调度。headless reset 仍加载浏览器 bundle 并调用 `startNewGame()`，说明两种运行形态尚未共享一个独立 Lifecycle Runtime。</div>
+  </section>
+
+  <section>
+    <h2>当前结构</h2>
+    <div class="current-grid">
+      <article class="box">
+        <h3>Browser / Headless Host</h3>
+        <ul><li>开始界面或 env reset 发起建局</li><li>浏览器刷新、持久化、AI 调度</li><li>headless 目前仍装载浏览器 API</li></ul>
+        <span class="path">start-screen.js · headless-env.js</span>
+      </article>
+      <div class="arrow">→</div>
+      <article class="box mixed">
+        <h3>App Lifecycle Shell</h3>
+        <ul><li>新局重置、随机化、初始选择</li><li>当前玩家、PASS、轮转、跨轮</li><li>外星人揭示、收入、history、刷新</li><li>最终轮判断与终局结果打开</li></ul>
+        <span class="path">turn-flow.js · turn-end-flow.js · app.js</span>
+      </article>
+      <div class="arrow">→</div>
+      <article class="box">
+        <h3>Shared Components</h3>
+        <ul><li>StateStore 已持有 turn/match 事实</li><li>Action 已统一 pass / end_turn</li><li>Effect Session 将接管长尾 continuation</li><li>计分规则已有纯 game 模块</li></ul>
+        <span class="path">game/state/** · game/actions/** · game/end-game-scoring.js</span>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>目标状态机</h2>
+    <div class="machine">
+      <div class="states">
+        <div class="state"><b>CREATED</b><span>GameFactory 生成初始状态<br>固定 config / seed / schema</span></div>
+        <div class="state-arrow">→</div>
+        <div class="state"><b>SETUP</b><span>公司、初始牌等标准 Decision<br>全部完成后进入首轮</span></div>
+        <div class="state-arrow">→</div>
+        <div class="state active"><b>TURN READY</b><span>唯一 actor<br>允许 Action / Decision</span></div>
+        <div class="state-arrow">→</div>
+      </div>
+      <div class="states" style="margin-top:10px">
+        <div class="state"><b>TURN CLOSING</b><span>Effect Session 处理回合末 hook<br>未完成时不可换 actor</span></div>
+        <div class="state-arrow">→</div>
+        <div class="state"><b>NEXT BOUNDARY</b><span>下一玩家 / 跨轮 / 终局<br>由同一规则决定</span></div>
+        <div class="state-arrow">→</div>
+        <div class="state"><b>ROUND START</b><span>清理 round scope<br>执行 round-start hooks</span></div>
+        <div class="state-arrow">↘</div>
+        <div class="state end"><b>GAME ENDED</b><span>终局原因与冻结结果<br>不再产生 legal action</span></div>
+      </div>
+      <div class="branch-note">
+        <div><b>继续游戏：</b>TURN CLOSING 完成后若本轮未结束，选择下一 eligible actor，回到 TURN READY。</div>
+        <div><b>跨轮或终局：</b>全员 PASS 后只允许进入 ROUND START 或 GAME ENDED，不由 Browser / Policy 自行判断。</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>职责边界</h2>
+    <table>
+      <thead><tr><th>组件</th><th>负责</th><th>明确不负责</th></tr></thead>
+      <tbody>
+        <tr><td>GameFactory</td><td>按 config、seed、规则版本创建完整初始 committed state；建立玩家、牌库、盘面和 setup 决策</td><td><span class="no">不读取 DOM，不调浏览器刷新，不选择玩家决策</span></td></tr>
+        <tr><td>Game Lifecycle</td><td><span class="yes">唯一 lifecycle phase、actor、轮次、PASS 集合、跨轮与终局条件</span>；输出结构化 transition/events</td><td>不执行具体行动效果，不渲染，不调度 AI / trainer</td></tr>
+        <tr><td>Effect Session</td><td>在 lifecycle transition 内按顺序执行 PASS、turn-end、round-end、round-start、game-end hooks；处理 Decision 与中断恢复</td><td><span class="no">不自行决定下一玩家、轮次或游戏是否结束</span></td></tr>
+        <tr><td>StateStore</td><td>保存 lifecycle committed fact 与 session working state；compare-and-commit、恢复、版本和 invariant</td><td>不定义生命周期业务规则，不持有 UI 派生状态</td></tr>
+        <tr><td>Browser / Training Host</td><td>启动 runtime、展示或采样、在 TURN READY 请求 human/Policy action、消费 events 与终局结果</td><td><span class="no">不复制 turn advance，不绕过 lifecycle 强行换 actor</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>最小公共契约</h2>
+    <div class="contract">
+      <article>
+        <h3>输入命令</h3>
+        <ul>
+          <li><code>createGame(config, seed)</code></li>
+          <li><code>submitSetupDecision(decision)</code></li>
+          <li><code>completeTurn({ actorId, passed })</code></li>
+          <li><code>resumeLifecycle(decision)</code>：继续被 hook 阻塞的 transition</li>
+        </ul>
+      </article>
+      <article>
+        <h3>输出边界</h3>
+        <ul>
+          <li><code>phase / round / actor / stateVersion</code></li>
+          <li><code>LifecycleTransition</code>：before、after、reason、events</li>
+          <li>下一项 Standard Action / Decision，或明确 terminal</li>
+          <li>相同 state、command、decision、RNG journal 得到相同结果</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>现有 issue 已覆盖什么</h2>
+    <div class="issues">
+      <article class="issue"><b>SETI-5 <span class="tag">done</span></b><p>完成 start screen / new game / turn flow 的 app 模块拆分，但目标是无行为迁移，不是共享生命周期内核。</p></article>
+      <article class="issue"><b>SETI-58 / SETI-59 <span class="tag">done</span></b><p>PASS 与 end_turn 已进入 Standard Action，提供生命周期触发入口，不应重复定义。</p></article>
+      <article class="issue"><b>SETI-62 / SETI-70 <span class="tag">in progress / backlog</span></b><p>Effect Session 会迁移 PASS、回合末和长尾 continuation；Lifecycle 需要复用它执行 hook，不另造 pending 系统。</p></article>
+      <article class="issue"><b>SETI-71 / SETI-83 <span class="tag">in progress / done</span></b><p>turn/match 状态与 invariant 已进入统一 StateStore；Lifecycle 应成为该切片唯一写入者。</p></article>
+      <article class="issue"><b>SETI-72 / SETI-79 <span class="tag">in progress / backlog</span></b><p>Browser Host 会统一 Action Bar、PASS 与效果进度；只展示和提交，不拥有 turn advance。</p></article>
+      <article class="issue"><b>SETI-16 / RL env <span class="tag">done / evolving</span></b><p>headless 已能完整终局，但 reset 仍加载浏览器 bundle。独立 Lifecycle 是浏览器与训练真正同核的缺口。</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>这轮只确认三件事</h2>
+    <div class="decisions">
+      <div class="decision"><div class="n">01</div><div><h3>Lifecycle 是否属于共享 game core</h3><p>建议确认。浏览器与训练宿主只能消费同一 lifecycle state / transition，不再各自维护 setup、轮转和 terminal 判断。</p></div></div>
+      <div class="decision"><div class="n">02</div><div><h3>副作用如何接入</h3><p>建议 Lifecycle 只决定阶段和顺序，PASS / turn-end / round-start / game-end 的具体规则 hook 全部交给 Effect Session；hook 未完成时不得提交下一 actor。</p></div></div>
+      <div class="decision"><div class="n">03</div><div><h3>建局边界</h3><p>建议 GameFactory 负责从 config + seed 生成初始 state；Lifecycle 从 SETUP 开始拥有阶段推进。浏览器存档、动画、对话框和训练 reset 都留在各自 Host。</p></div></div>
+    </div>
+  </section>
+
+  <footer>依据 `randomizer/app/turn-flow.js`、`turn-end-flow.js`、`headless-env.js`、StateStore turn slice、Standard Action 与现有 SETI issue 状态整理。此页只讨论 Game Lifecycle 一级边界，不在本轮设计具体 hook registry、文件拆分或迁移排期。</footer>
+</main>
+</body>
+</html>
