@@ -41,6 +41,34 @@ async function main() {
     assert.deepEqual(restored.legalActions, workerStep.legalActions);
     const restoredReplay = await pool.request(0, "replay");
     assert.equal(restoredReplay.episodeMetadata.policyVersion, "parity-policy");
+
+    const workerGeneration = pool.getSlot(0).generation;
+    for (let episodeIndex = 0; episodeIndex < 100; episodeIndex += 1) {
+      const seed = `worker-reset-isolation-${episodeIndex}`;
+      const episodeConfig = {
+        seed,
+        activePlayerCount: 4,
+        episodeId: `worker-reset-isolation-${episodeIndex}`,
+      };
+      const freshDirect = createHeadlessEnv();
+      try {
+        const freshOpening = freshDirect.reset(episodeConfig);
+        const persistentWorkerOpening = await pool.request(0, "reset", { config: episodeConfig });
+        assert.deepEqual(
+          persistentWorkerOpening.observation,
+          freshOpening,
+          `常驻 worker 第 ${episodeIndex} 局 opening 必须与 fresh direct 一致`,
+        );
+        assert.deepEqual(
+          persistentWorkerOpening.legalActions,
+          freshDirect.legalActions(),
+          `常驻 worker 第 ${episodeIndex} 局 legalActions 必须与 fresh direct 一致`,
+        );
+      } finally {
+        freshDirect.dispose();
+      }
+    }
+    assert.equal(pool.getSlot(0).generation, workerGeneration, "100 局 reset 不得通过重启 worker 绕过隔离");
   } finally {
     direct.dispose();
     await pool.close();

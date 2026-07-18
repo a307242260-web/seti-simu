@@ -202,7 +202,7 @@ function createHeadlessEnv() {
     restoreRandom = () => {
       Math.random = originalRandom;
     };
-    if (!api) api = loadBrowserBundle(globalThis);
+    api = loadBrowserBundle(globalThis);
     const startResult = api.startNewGame({
       activePlayerCount: resetConfig.activePlayerCount || 4,
       aiDifficulty: resetConfig.aiDifficulty || "laughable",

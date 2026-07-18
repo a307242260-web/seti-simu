@@ -31,8 +31,7 @@ async function execute(operation, payload = {}) {
     case "ping":
       return { pid: process.pid };
     case "reset": {
-      env?.dispose?.();
-      env = createHeadlessEnv();
+      env ||= createHeadlessEnv();
       const observation = env.reset(payload.config || {});
       return { observation, legalActions: env.legalActions(), terminal: env.isTerminal() };
     }

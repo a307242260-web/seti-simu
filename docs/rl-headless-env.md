@@ -85,7 +85,7 @@ node tools/run_rl_evaluation.js \
 
 ### Python / PyTorch 常驻采样层
 
-并行采样使用 `worker_threads`，每个 worker 拥有独立 Node isolate、seed、环境、replay 和进程级随机状态。不能把多个 `createHeadlessEnv()` 放在同一 isolate 并发：传统 runtime 仍以 `globalThis` 注册模块，并在局内临时接管 `Math.random`。worker 常驻且可连续 reset 多局，不会按 decision 重启 Node。
+并行采样使用 `worker_threads`，每个 worker 拥有独立 Node isolate、seed、环境、replay 和进程级随机状态。不能把多个 `createHeadlessEnv()` 放在同一 isolate 并发：传统 runtime 仍以 `globalThis` 注册模块，并在局内临时接管 `Math.random`。worker 常驻且复用同一个 `createHeadlessEnv()` 实例连续 reset 多局，不会按 episode 或 decision 重启 Node。每次 reset 会在同一 isolate 内重建浏览器模块/runtime 注册表并重新安装 seed RNG，确保同实例 A/A、A/B/A 与 fresh A 的 observation、legalActions、replay cursor 和 RNG 一致，同时清空上一局的 action log、pending、缓存与稳定 id 状态。
 
 Python 通过版本化 JSONL 长连接访问：
 

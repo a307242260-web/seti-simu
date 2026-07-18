@@ -40,6 +40,42 @@ function collectKeys(value, output = []) {
   return output;
 }
 
+function captureOpening(env, config) {
+  const observation = env.reset(config);
+  const legalActions = env.legalActions();
+  const replay = env.getReplay();
+  const checkpoint = env.createCheckpoint();
+  return {
+    observation,
+    legalActions,
+    replayCursor: checkpoint.replayCursor,
+    randomState: checkpoint.runtimeState.randomState,
+    replaySteps: replay.steps,
+    environmentEvents: replay.environmentEvents,
+  };
+}
+
+const repeatConfig = { seed: "seti44-repeat", activePlayerCount: 4 };
+const repeatEnv = createHeadlessEnv();
+const firstA = captureOpening(repeatEnv, repeatConfig);
+const firstAction = repeatEnv.legalActions()[0];
+assert.equal(repeatEnv.step(firstAction).ok, true, "reset 隔离夹具应先污染 replay/runtime 状态");
+const secondA = captureOpening(repeatEnv, repeatConfig);
+assert.deepEqual(secondA, firstA, "同 env A/A 必须完整复现 opening、legal、cursor 与 RNG");
+const openingB = captureOpening(repeatEnv, { ...repeatConfig, seed: "seti44-other" });
+assert.notDeepEqual(openingB.observation, firstA.observation, "不同 seed 必须产生可区分 opening");
+const thirdA = captureOpening(repeatEnv, repeatConfig);
+assert.deepEqual(thirdA, firstA, "同 env A/B/A 的中间 episode 不得污染 A");
+repeatEnv.dispose();
+
+const freshRepeatEnv = createHeadlessEnv();
+assert.deepEqual(
+  captureOpening(freshRepeatEnv, repeatConfig),
+  firstA,
+  "fresh A 必须与同 env reset 后的 A 完整一致",
+);
+freshRepeatEnv.dispose();
+
 const seed = "headless-four-player-smoke-v2";
 assert.equal(globalThis.document, undefined, "Node headless 启动前不应存在 document");
 const sourceEnv = playFastFourPlayerGame(seed);
