@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SETI AI / Policy 决策系统｜边界讨论</title>
+  <style>
+    :root{--bg:#f3f2ed;--paper:#fffefa;--ink:#191b19;--muted:#626862;--line:#c8ccc5;--core:#dcebdd;--policy:#e7e0f0;--host:#f2e7cb;--train:#dce9f2;--risk:#f0ded8;--green:#2e6446;--purple:#69477b;--amber:#8b611d;--blue:#315f7a;--red:#8c4438}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);background:var(--bg);font-family:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.55}h1,h2,h3,p{margin-top:0}h1{max-width:1050px;margin-bottom:14px;font-size:clamp(34px,5vw,62px);line-height:1.06;letter-spacing:-.045em}h2{margin-bottom:8px;font-size:clamp(25px,3vw,38px);line-height:1.16}h3{margin-bottom:7px;font-size:17px}p{color:var(--muted)}code,.mono{font-family:"SFMono-Regular",Consolas,monospace}code{font-size:.88em}a{color:inherit}.page{width:min(1420px,calc(100% - 40px));margin:0 auto;padding:32px 0 70px}.hero{padding:34px;border:2px solid var(--ink);background:var(--paper)}.eyebrow{margin-bottom:12px;color:var(--purple);font:800 12px/1.2 "SFMono-Regular",Consolas,monospace;letter-spacing:.1em;text-transform:uppercase}.lede{max-width:1100px;margin-bottom:0;font-size:18px}.verdict{display:grid;grid-template-columns:190px minmax(0,1fr);margin-top:24px;border:1px solid var(--ink)}.verdict b{display:grid;place-items:center;padding:16px;color:white;background:var(--ink);font-size:18px}.verdict p{margin:0;padding:16px 18px;color:var(--ink);background:var(--policy)}nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}nav a{padding:7px 11px;border:1px solid var(--line);text-decoration:none;font-size:13px}section{margin-top:54px;scroll-margin-top:18px}.section-head{display:grid;grid-template-columns:48px minmax(0,1fr);gap:14px;margin-bottom:20px}.section-no{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--ink);background:var(--paper);font:800 14px/1 "SFMono-Regular",Consolas,monospace}.section-head p{max-width:980px;margin-bottom:0}
+    .architecture{display:grid;grid-template-columns:1fr 78px 1.15fr;align-items:stretch}.box{padding:22px;border:2px solid var(--ink);background:var(--paper)}.box.policy{background:var(--policy)}.box.core{background:var(--core)}.box-title{display:flex;justify-content:space-between;gap:10px;margin-bottom:16px;padding-bottom:11px;border-bottom:1px solid var(--ink)}.box-title strong{font-size:22px}.tag{align-self:center;padding:3px 7px;border:1px solid currentColor;font:750 11px/1.4 "SFMono-Regular",Consolas,monospace;white-space:nowrap}.tag.target{color:var(--purple)}.tag.stable{color:var(--green)}.layers{display:grid;gap:9px}.layer{padding:13px 15px;border:1px solid var(--ink);background:var(--paper)}.layer.host{background:var(--host)}.layer.train{background:var(--train)}.layer b{display:block;margin-bottom:3px}.layer span{display:block;color:var(--muted);font-size:13px}.bridge{display:grid;place-items:center;text-align:center}.bridge div{font:800 12px/1.5 "SFMono-Regular",Consolas,monospace}.bridge i{display:block;margin:7px 0;font-style:normal;font-size:28px}.rule{margin-top:14px;padding:11px 13px;border:1px dashed var(--ink);background:var(--paper);font-size:13px}
+    .flow-wrap{padding:22px;border:1px solid var(--ink);background:var(--paper);overflow-x:auto}.flow{display:grid;grid-template-columns:repeat(9,auto);align-items:stretch;min-width:990px}.step{width:180px;min-height:140px;padding:14px;border:1px solid var(--ink);background:var(--paper)}.step.core{background:var(--core)}.step.policy{background:var(--policy)}.step.host{background:var(--host)}.step b{display:block;margin-bottom:7px}.step small{color:var(--muted);line-height:1.4}.arrow{display:grid;place-items:center;width:38px;font-size:22px}.split-note{display:grid;grid-template-columns:1fr 1fr;margin-top:14px;border:1px solid var(--ink)}.split-note div{padding:14px}.split-note div:first-child{background:var(--policy);border-right:1px solid var(--ink)}.split-note div:last-child{background:var(--host)}
+    .ownership{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--ink);background:var(--paper)}.owner{min-height:250px;padding:20px;border-right:1px solid var(--line)}.owner:last-child{border-right:0}.owner.core{background:var(--core)}.owner.policy{background:var(--policy)}.owner.host{background:var(--host)}.owner.train{background:var(--train)}.owner .mono{display:block;margin-bottom:18px;font-size:11px;font-weight:800}.owner ul{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:13px}
+    table{width:100%;border-collapse:collapse;border:1px solid var(--ink);background:var(--paper)}th,td{padding:13px 14px;text-align:left;vertical-align:top;border:1px solid var(--line)}th{background:#e9ebe6;font-size:13px}td{font-size:14px}td:first-child{font-weight:800}.state{display:inline-block;padding:3px 7px;border:1px solid currentColor;font:800 11px/1.3 "SFMono-Regular",Consolas,monospace}.state.good{color:var(--green)}.state.partial{color:var(--amber)}.state.gap{color:var(--red)}
+    .issue-grid,.risk-grid,.decision-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.card{padding:20px;border:1px solid var(--ink);background:var(--paper)}.card h3{display:flex;justify-content:space-between;gap:8px}.card p{margin-bottom:0;font-size:14px}.card.direct{border-top:6px solid var(--purple)}.card.indirect{border-top:6px solid var(--blue)}.card.wait{border-top:6px solid var(--amber)}.risk-card{border-top:6px solid var(--red)}.decision-card.recommend{background:var(--policy);border-width:2px}.num{display:inline-grid;place-items:center;width:28px;height:28px;margin-bottom:13px;color:white;background:var(--ink);font:800 12px/1 "SFMono-Regular",Consolas,monospace}.proposal{display:grid;grid-template-columns:1.3fr .7fr;gap:14px}.proposal-main,.proposal-side{padding:23px;border:2px solid var(--ink);background:var(--paper)}.proposal-main{background:var(--policy)}.proposal-side{color:white;background:var(--ink)}.proposal-side p{color:#d8ddd8}.proposal ul{margin-bottom:0;padding-left:20px}footer{margin-top:36px;padding-top:17px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}
+    @media(max-width:980px){.architecture,.proposal{grid-template-columns:1fr;gap:12px}.bridge{min-height:64px}.bridge i{transform:rotate(90deg)}.ownership{grid-template-columns:repeat(2,1fr)}.owner:nth-child(2){border-right:0}.owner:nth-child(-n+2){border-bottom:1px solid var(--line)}.issue-grid,.risk-grid,.decision-grid{grid-template-columns:1fr}}@media(max-width:640px){.page{width:min(100% - 22px,1420px)}.hero{padding:23px}.verdict,.ownership,.split-note{grid-template-columns:1fr}.owner{border-right:0;border-bottom:1px solid var(--line)}.split-note div:first-child{border-right:0;border-bottom:1px solid var(--ink)}table{display:block;overflow-x:auto}}
+  </style>
+</head>
+<body>
+<main class="page">
+  <header class="hero">
+    <div class="eyebrow">SETI Architecture Review · AI / Policy · 2026-07-19</div>
+    <h1>AI / Policy：把“做什么”与“何时执行”分开</h1>
+    <p class="lede">现有启发式 AI 的估值、目标、规划和选择已经大量迁入无 DOM 的 <code>game/ai/**</code>；但候选汇总、行动执行、pending 解析和自动调度仍被统称为 AI。目标不是重写策略，而是把可替换的决策脑收敛为一个只读 Policy 端口。</p>
+    <div class="verdict"><b>阶段判断</b><p><strong>AI 决策域已经成形，统一 Policy 边界尚未形成。</strong> 浏览器启发式 AI 与训练 Learned Policy 应消费同一份 Observation / Legal Choice，并输出同一种标准 Action / Decision；规则执行归共享内核，轮到谁、何时请求决策归宿主自动化。</p></div>
+    <nav><a href="#target">目标边界</a><a href="#flow">决策链路</a><a href="#ownership">职责归属</a><a href="#current">当前映射</a><a href="#issues">在途 issue</a><a href="#risks">风险</a><a href="#decisions">待确认</a><a href="#proposal">推进建议</a></nav>
+  </header>
+
+  <section id="target">
+    <div class="section-head"><div class="section-no">01</div><div><h2>目标边界：Policy 只选择，不执行</h2><p>同一 Policy 既可服务浏览器电脑席位，也可服务 headless 评测；Learned Policy 在采样时也走同一接口。差异只在决策实现，不在规则或动作协议。</p></div></div>
+    <div class="architecture">
+      <article class="box policy"><div class="box-title"><strong>可替换 Policy</strong><span class="tag target">只读决策</span></div><div class="layers">
+        <div class="layer"><b>Heuristic Policy</b><span>目标、需求、候选特征、估值、浅规划、selection pressure、tie-break</span></div>
+        <div class="layer"><b>Learned Policy</b><span>action mask、模型 inference、hidden state、logits / value；不含 optimizer</span></div>
+        <div class="layer train"><b>Offline Teacher / Evaluation</b><span>启发式示范、A/B、战报、对手配置；调用 Policy，但不改变规则接口</span></div>
+      </div><div class="rule"><strong>PolicyPort：</strong>输入 DecisionContext，输出一个 actionId / decision choice + diagnostics；无 DOM、无状态写入、无规则 fallback。</div></article>
+      <div class="bridge"><div>Observation<br>Legal Choices<i>⇄</i>Policy Decision</div></div>
+      <article class="box core"><div class="box-title"><strong>共享内核 + 宿主</strong><span class="tag stable">执行归这里</span></div><div class="layers">
+        <div class="layer"><b>Observation / Legal Choice Projection</b><span>按 viewer 暴露信息；基于 Standard Action / Decision 枚举，不携带 heuristic score</span></div>
+        <div class="layer"><b>Action / Effect Session / StateStore</b><span>唯一 legality、执行、确定性推进、commit / abort 与 replay</span></div>
+        <div class="layer host"><b>Host Automation</b><span>席位调度、决策点检测、超时/重试、提交 PolicyDecision；不做策略估值</span></div>
+      </div><div class="rule"><strong>关键约束：</strong>浏览器和训练可以有不同宿主，但不能各自拥有第二套候选合法性或效果执行。</div></article>
+    </div>
+  </section>
+
+  <section id="flow">
+    <div class="section-head"><div class="section-no">02</div><div><h2>一条决策链：从规则决策点到标准提交</h2><p>现状中“构建启发式候选”和“执行候选”粘在 app runtime；目标链把中间的策略计算完整包进 Policy。</p></div></div>
+    <div class="flow-wrap"><div class="flow">
+      <div class="step core"><b>规则停在决策点</b><small>当前 actor / decision owner 和 version 已确定。</small></div><div class="arrow">→</div>
+      <div class="step core"><b>投影上下文</b><small>Observation + Legal Choices；隐藏信息隔离、ID 稳定。</small></div><div class="arrow">→</div>
+      <div class="step policy"><b>Policy 选择</b><small>启发式估值/规划，或模型 inference；输出单个 choice。</small></div><div class="arrow">→</div>
+      <div class="step host"><b>宿主提交</b><small>校验 owner / version / choice ID；不二次选候选。</small></div><div class="arrow">→</div>
+      <div class="step core"><b>共享内核执行</b><small>Action / Decision 执行，确定性 drain，直到下一个真实决策点。</small></div>
+    </div><div class="split-note"><div><strong>决策脑负责：</strong>选择偏好、长期目标、价值估计、探索与诊断。</div><div><strong>自动机负责：</strong>发现轮到哪个席位、请求决策、提交、错误与生命周期管理。</div></div></div>
+  </section>
+
+  <section id="ownership">
+    <div class="section-head"><div class="section-no">03</div><div><h2>四层职责：不要再用“AI”一个词包住全部</h2><p>建议后续讨论和 issue 命名都显式使用 Policy、Host Automation、Shared Core、Training Infrastructure。</p></div></div>
+    <div class="ownership">
+      <article class="owner core"><span class="mono">SHARED CORE</span><h3>规则事实</h3><ul><li>Observation 可见性</li><li>Legal Action / Decision</li><li>合法性与执行</li><li>Effect drain 与提交</li><li>事件、RNG、replay 事实</li></ul></article>
+      <article class="owner policy"><span class="mono">POLICY</span><h3>选择偏好</h3><ul><li>候选特征与估值</li><li>目标 / 需求 / 规划</li><li>启发式或模型推理</li><li>tie-break / exploration</li><li>只读 diagnostics</li></ul></article>
+      <article class="owner host"><span class="mono">HOST AUTOMATION</span><h3>调度与提交</h3><ul><li>电脑席位开关与配置</li><li>决策点 / owner 检测</li><li>调用 PolicyPort</li><li>版本校验与提交</li><li>超时、失败和生命周期</li></ul></article>
+      <article class="owner train"><span class="mono">TRAINING INFRA</span><h3>学习与规模</h3><ul><li>rollout / worker</li><li>optimizer / PPO / BC</li><li>trajectory / checkpoint</li><li>对手池与评测</li><li>模型发布与版本</li></ul></article>
+    </div>
+  </section>
+
+  <section id="current">
+    <div class="section-head"><div class="section-no">04</div><div><h2>当前代码映射：哪里已经清楚，哪里仍混合</h2><p>以下来自当前仓库实现与 <code>docs/ai-design.md</code>、<code>docs/ai-domain-migration-stage3.md</code>、<code>docs/rl-headless-env.md</code>。</p></div></div>
+    <table><thead><tr><th>能力</th><th>当前落点</th><th>成熟度</th><th>目标归属 / 说明</th></tr></thead><tbody>
+      <tr><td>启发式估值与规划</td><td><code>game/ai/**</code>：valuation、goals、planner、action-graph、各领域候选与 selection-pressure</td><td><span class="state good">边界较好</span></td><td>Heuristic Policy 内部；保持无 DOM、显式 context、只读返回。</td></tr>
+      <tr><td>顶层候选构建与选择</td><td><code>app/ai/action-executor.js</code> 同时枚举、构图、加压、调用 policy，并处理执行失败重试</td><td><span class="state partial">混合</span></td><td>合法候选归共享内核，评分选择归 Policy，提交/重试归 Host。</td></tr>
+      <tr><td>pending / 子决策</td><td><code>app/ai/initial-card-pending.js</code>、<code>interaction-pending.js</code> 仍按流程类型直接解析</td><td><span class="state gap">高耦合</span></td><td>规则枚举 Decision choices；Policy 选择；宿主仅提交。唯一等价选项由内核自动推进。</td></tr>
+      <tr><td>自动调度</td><td><code>app/ai/control-runtime.js</code> + <code>automation-runtime.js</code></td><td><span class="state partial">可复用</span></td><td>保留为 Browser Host Automation，但移除估值、规则 fallback 和 DOM resolver。</td></tr>
+      <tr><td>学习型决策</td><td>headless env + Python trainer；legalActions 已明确不构建 actionGraph / valuation / planner</td><td><span class="state partial">链路已跑</span></td><td>模型 inference 适配 PolicyPort；optimizer、worker、rollout 继续留在训练外延。</td></tr>
+      <tr><td>战报与调参</td><td><code>app/ai/battle-*.js</code>、<code>tuning-history.js</code>、<code>experiment-runner.js</code></td><td><span class="state good">已有资产</span></td><td>归 Policy Evaluation；通过策略版本和 diagnostics 观测，不侵入 PolicyPort。</td></tr>
+    </tbody></table>
+  </section>
+
+  <section id="issues">
+    <div class="section-head"><div class="section-no">05</div><div><h2>在途 issue：有相邻改造，但尚无一项完整承接 Policy 边界</h2><p>这意味着现在先确认契约最合适；实施时应避免与 Standard Action 热路径并行改同一段代码。</p></div></div>
+    <div class="issue-grid">
+      <article class="card direct"><h3>SETI-61 <span class="state partial">in progress</span></h3><p>Standard Action 阶段 5。它将提供浏览器、训练和 Policy 共用的 actionId / execute 语义，是 PolicyPort 的直接前置。</p></article>
+      <article class="card wait"><h3>SETI-39 <span class="state partial">blocked</span></h3><p>学习型 Policy 实验已完成示范、回放与三臂 PPO smoke；按已确认安排继续等待 SETI-61 热路径稳定后再跑 32 局与 A/B。</p></article>
+      <article class="card direct"><h3>SETI-14 <span class="state partial">in progress</span></h3><p>RL 路线协调。适合承接 Learned Policy 对统一 PolicyPort 的接入顺序，而非重定义规则动作。</p></article>
+      <article class="card indirect"><h3>SETI-72 / 71 <span class="state partial">in progress</span></h3><p>Browser UI 与 StateStore 总控。最终会清掉 AI 对 DOM/picker 与影子状态的依赖，提供稳定 Observation 来源。</p></article>
+      <article class="card indirect"><h3>SETI-62 <span class="state partial">in progress</span></h3><p>Effect Session 总控。DecisionEffect 收敛后，pending resolver 才能从“第二套规则执行器”退化为标准选择提交。</p></article>
+      <article class="card direct"><h3>SETI-45 <span class="state good">讨论载体</span></h3><p>本轮只确认 AI / Policy 边界，不直接启动大规模迁移；确认后再拆独立 total-control issue。</p></article>
+    </div>
+  </section>
+
+  <section id="risks">
+    <div class="section-head"><div class="section-no">06</div><div><h2>三个必须提前封住的风险</h2></div></div>
+    <div class="risk-grid">
+      <article class="card risk-card"><h3>启发式信息泄漏</h3><p><code>candidate.score</code>、planner shadow、未来信息不能混入共享 Observation / Legal Choice，否则 Learned Policy 学到的是老师答案而不是规则事实。</p></article>
+      <article class="card risk-card"><h3>自动机成为第二规则引擎</h3><p>pending resolver 若继续自行判断合法性、代选非等价分支、直接写状态，会让浏览器 AI 和训练环境产生不同游戏。</p></article>
+      <article class="card risk-card"><h3>接口被启发式形状绑死</h3><p>PolicyPort 若要求 actionGraph、breakdown 或具体 planner 对象，Learned Policy 将被迫模拟启发式内部结构；这些只能是实现私有 diagnostics。</p></article>
+    </div>
+  </section>
+
+  <section id="decisions">
+    <div class="section-head"><div class="section-no">07</div><div><h2>本轮建议确认三件事</h2><p>确认的是长期边界，不是一次性迁移范围；现有启发式行为、权重和训练算法均不在本轮调整。</p></div></div>
+    <div class="decision-grid">
+      <article class="card decision-card recommend"><span class="num">A</span><h3>AI 是否只指决策 Policy？</h3><p><strong>建议：是。</strong> Policy 只读选择；automation / scheduler 是宿主能力，规则执行是共享内核能力。现有“AI”代码按三者逐步归位。</p></article>
+      <article class="card decision-card recommend"><span class="num">B</span><h3>启发式与学习型是否共用端口？</h3><p><strong>建议：共用。</strong> 输入统一 DecisionContext，输出统一 PolicyDecision；实现内部允许完全不同，也允许附带各自 diagnostics。</p></article>
+      <article class="card decision-card recommend"><span class="num">C</span><h3>现有启发式资产如何保留？</h3><p><strong>建议：三种身份。</strong> 作为浏览器 Heuristic Policy、训练 demonstration teacher、固定评测对手；不作为 Learned Policy 的规则兜底或 observation 特征。</p></article>
+    </div>
+  </section>
+
+  <section id="proposal">
+    <div class="section-head"><div class="section-no">08</div><div><h2>推进建议：先包一层适配，再搬边界</h2></div></div>
+    <div class="proposal"><article class="proposal-main"><h3>建议顺序</h3><ol><li>等 SETI-61 稳定 Standard Action / Decision ID，冻结最小 <code>DecisionContext → PolicyDecision</code> 契约。</li><li>先给现有启发式 AI 和现有 Learned Policy 各包一个 adapter，固定种子与 replay 必须不变。</li><li>再把 app 层候选选择、pending 选择逐项移入 Heuristic Policy，把执行/调度留给 Host。</li><li>最后让浏览器 AI 席位、headless 评测和训练 rollout 都通过同一 PolicyPort 接入。</li></ol></article><aside class="proposal-side"><h3>本轮不做</h3><p>不改启发式权重，不改 PPO / reward，不重写 AI，不在 SETI-61 热路径未稳定时迁移 action-executor，也不把 battle tooling 塞进 Policy 核心。</p></aside></div>
+  </section>
+  <footer>证据：当前仓库 <code>randomizer/game/ai/**</code>、<code>randomizer/app/ai/**</code>、<code>docs/ai-design.md</code>、<code>docs/ai-domain-migration-stage3.md</code>、<code>docs/rl-headless-env.md</code>，以及 2026-07-19 在途 issue 状态。</footer>
+</main>
+</body>
+</html>
