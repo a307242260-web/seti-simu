@@ -334,3 +334,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: SETI-32 通过 `node --check randomizer/app.js`、全量 `randomizer/**/*.test.js`、Stage 0 characterization/固定 seed 基线，以及项目自带 Chrome/CDP 一步 smoke（`gamesRun=1`、`blockedGames=0`）。
 - observed_outcome: 新 `app/ai/control-runtime.js` 的显式注入、传统 script 加载、公开控制 API、快照/调度和固定 seed 行为均通过；领域测试在全量回归前发现并修复唯一漏注入 helper。
 - keep_or_revise: 已提升并进入 5 次迁移观察窗口；若验证成本失衡或自动化覆盖替代手工 smoke，再修订规则。
+
+- date: 2026-07-18
+- source: SETI-7, SETI-32, SETI-30
+- promoted_to: agent_prompt
+- promotion_decision: promote
+- target_agent: 领航及遵循仓库根 AGENTS.md 的 coding agent
+- target_component: coding issue 收口状态规则
+- target_file: AGENTS.md
+- remote_skill_id: none
+- change: coding issue 已实现、验收通过且无待 owner 拍板事项时直接 done，不设 self-review，不以等待明确收口指令继续停在 in_progress。
+- applied_change: 在仓库根 `AGENTS.md` 新增直接 done 的收口规则，并把 `docs/mocha_experience/coding.md` 的三次证据候选升级为 promote。
+- expected_effect: 完成态与 issue 状态同步，减少成员追问和无意义的 review/等待回合。
+- evaluation_window: 后续 5 个完成且无待拍板事项的 coding issue
+- success_signal: 验收完成后同一轮进入 done，且不出现 reviewer 指向自己或 next_action 为等待明确收口指令。
+- rollback_condition: 若项目引入强制双人 review，或直接 done 导致未完成验收被误关，则改为仅在结构化 verification_result 与 decision 齐全时触发。
+- risk: 执行者可能把“无待拍板”判断过宽；必须先完成验证、harness-evolve closeout，并写明 decision。
+- evidence_before: SETI-7 self-review 后成员追问；SETI-32 不必要 owner review 后成员纠偏；SETI-30 全部 Stage 0-5 完成且父级复核通过后仍停在 in_progress，成员再次追问。
+- owner_or_agent_decision: 领航依据既有 candidate 的三次评估窗口与 SETI-30 成员明确反馈自决 promote。
+- applied_at: 2026-07-18
+- verification: `rg` 核对 AGENTS.md 新规则与 coding experience 状态；SETI-30 父级独立复核通过 61 个 AI JS 语法检查及 109 个 tracked Node 测试。
+- observed_outcome: SETI-30 将在本轮写入最终 decision 并直接收口 done，不再保留伪等待状态。
+- keep_or_revise: 保留并观察后续 5 个 coding issue；若出现过早关单则收窄到 verification_result、decision 和无 reviewer 三项同时满足。

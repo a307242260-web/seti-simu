@@ -70,13 +70,13 @@
 - promotion_status: promote
 - decision: 三次 app runtime 拆分均证明语法检查不足以覆盖显式 context、嵌套回调与传统脚本装配；已将“领域代表路径 + 全量 Node + Chrome smoke”写入仓库根 `AGENTS.md` 的 coding 规则。
 
-- date: 2026-07-16
-- source_issue: SETI-7, SETI-32
-- observation: 对已经实现完成、验证完成且没有待 owner 拍板事项的 coding issue，如果 `reviewer` 仍指向自己，就不应走 `review_pass -> in_review`；这会制造伪 review 状态，增加额外追问成本。
-- evidence: SETI-7 中 `review_pass` 把已完成 issue 置为 self-review，成员追问“这个issue为什么没有自动置为done？”；SETI-32 已完成并全量验证后又误走 `owner_review`，成员再次纠偏“完成之后，没有要review的自动置为done哇”。
-- promote_to: issue_workflow
-- promotion_status: candidate
-- decision: 已出现第 2 次同类收口偏差，继续保持 candidate 并按原定 3 次评估窗口观察；本次立即改为 `done`，若第 3 次复现则升级 issue-workflow 的 done 前置检查。
+- date: 2026-07-18
+- source_issue: SETI-7, SETI-32, SETI-30
+- observation: 对已经实现完成、验收通过且没有待 owner 拍板事项的 coding issue，应直接收口为 `done`；不得把自己设为 reviewer，也不得以“等待明确收口指令”为由继续停在 `in_progress`。
+- evidence: SETI-7 因 self-review 未自动 done；SETI-32 因不必要的 owner review 停留；SETI-30 的全部子 issue 与父级验收均完成后仍保持 `in_progress`，成员再次追问状态与结论。
+- promote_to: agent_prompt
+- promotion_status: promote
+- decision: 已达到既定 3 次评估窗口；将直接 done 的收口前置检查写入仓库根 `AGENTS.md`，后续没有真实 reviewer/owner 决策时不再制造伪等待状态。
 
 - date: 2026-07-16
 - source_issue: SETI-23, SETI-24, SETI-25

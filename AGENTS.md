@@ -10,6 +10,7 @@
 - 机制、状态模型、能力流程或资料路径发生变化时，同步更新对应文档。
 - `AGENTS.md` 只维护快速导航和关键路径；长机制说明放在 `docs/mechanics-reference.md`。
 - 当前没有 `package.json` 或构建步骤；验证以 `node --check` 和 Node 测试脚本为主。
+- coding issue 已实现、验收通过且没有待 owner 拍板事项时，直接按 issue-workflow 收口为 `done`；不得把自己设为 reviewer，也不得因“等待明确收口指令”继续停在 `in_progress`。
 - 从大型闭包迁出 runtime 或修改传统脚本顺序时，除语法与全量 Node 回归外，必须补迁移域代表性执行路径和真实 Chrome smoke，覆盖显式 context、嵌套回调与浏览器装配。
 - 代码和资产路径以仓库根目录为基准。
 - 共享 dirty worktree 中若本次修改与他人改动重叠同一文件，提交前除工作树回归外，还必须验证仅含本次 staged 内容的独立快照；不得把他人未提交修复当作本次验收证据。
