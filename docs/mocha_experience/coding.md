@@ -22,13 +22,13 @@
 - promotion_status: rejected
 - decision: 现有 agent prompt 的 autonomy/persistence 与仓库 `AGENTS.md` 已明确要求在安全范围内持续推进，本次属于未遵守既有规则，不是缺少长期组件；保留复盘证据但不重复修改 prompt、loop template、watcher 或 issue-workflow。
 
-- date: 2026-07-18
-- source_issue: SETI-38, SETI-40
-- observation: RL/checkpoint 恢复测试不能只覆盖 opening 或零 action 快照；至少应在真实 policy action 后比较 observation、legalActions、reward/replay cursor。常驻 runtime 可复用普通 episode，但跨 seed 后加载 checkpoint 应以 fresh runtime 按 journal 重放，避免传统全局模块闭包残留污染恢复结果。
-- evidence: SETI-38 的非零 action checkpoint 首次暴露恢复后 legal action `choiceCount` 从 3 漂到 11；SETI-40 为提升吞吐复用 bundle 后，`reset(other_seed) -> load_checkpoint` 再次使 observation/board/RNG parity 大幅漂移。恢复分支强制 fresh bundle 后，IPC/direct observation、legalActions、reward、replay metadata 与全量 Node 回归通过，同时普通 episode 继续复用 runtime。
-- promote_to: none
-- promotion_status: candidate
-- decision: 已在两个连续 RL issue 复现，保持 coding candidate；不修改 agent prompt、loop template、watcher 或 issue-workflow，再观察 1 个搜索/采样/checkpoint 任务后决定是否升级 coding loop。
+- date: 2026-07-19
+- source_issue: SETI-38, SETI-40, SETI-44
+- observation: RL/checkpoint 恢复测试不能只覆盖 opening 或零 action 快照；至少应在真实 policy action 后比较 observation、legalActions、reward/replay cursor。常驻 runtime 的 episode 隔离还必须分别验证 fresh A/fresh A、同实例 A/A 与同实例 A/B/A；fresh env 可复现不能证明复用实例的模块级状态、RNG、id counter 和 cache 已被 reset 清空。
+- evidence: SETI-38 的非零 action checkpoint 首次暴露恢复后 legal action `choiceCount` 从 3 漂到 11；SETI-40 的 `reset(other_seed) -> load_checkpoint` 使 observation/board/RNG parity 大幅漂移；SETI-44 中 fresh env 的 `seti44-repeat` digest 两次均为 `10c293...33b`，但同一 env 第一次/第二次 reset 分别为 `10c293...33b` 与 `774a79...8a7f`，A/B/A 还漂移牌、轮盘、火箭、痕迹和 choiceCount。
+- promote_to: loop_template
+- promotion_status: promote
+- decision: 三个连续 RL issue 已覆盖非零 checkpoint、跨 seed 恢复与同实例 episode reset 三类污染；达到既定第三次评估窗口，将 fresh/复用实例隔离矩阵写入 `docs/implementation-proof-obligations.md`，不修改 watcher、issue-workflow、agent prompt 或 project memory。
 
 - date: 2026-07-18
 - source_issue: SETI-36

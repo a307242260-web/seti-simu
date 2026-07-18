@@ -444,3 +444,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: 人工逐条从 SETI-40 原始契约推出四个缺口，并用 SETI-36 `REQUIRED_CONTEXT_KEYS` 迁移复跑模板；检查文档包含七字段义务模板、四维矩阵、六层验证责任和十一项 review checklist。
 - observed_outcome: 待后续 3 个适用 issue 观察；本次模板已能在不依赖 SETI-39 下游随机测试的前提下生成与实际缺陷一致的四个反例义务。
 - keep_or_revise: 保留并进入 3 个 issue 的评估窗口；达到自动门禁升级条件或回滚条件时更新本条。
+
+- date: 2026-07-19
+- source: SETI-38, SETI-40, SETI-44
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: 领航及遵循仓库 proof obligations 的 coding agent
+- target_component: RL 常驻 runtime / checkpoint / episode 隔离验证 loop
+- target_file: docs/implementation-proof-obligations.md；docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 将既有“非零 checkpoint + fresh replay”candidate 扩展为 fresh A/A、同实例 A/A、同实例 A/B/A、非零 checkpoint fork、crash recovery 五格隔离矩阵，并加入 implementation review checklist。
+- applied_change: 更新 `docs/implementation-proof-obligations.md`，明确每次新建 env 只能证明冷启动 determinism，复用 runtime 必须验证 reset 清空模块闭包、RNG、id counter、cache、pending 与日志；把 `docs/mocha_experience/coding.md` 的 SETI-38/40 candidate 升级为 SETI-38/40/44 promote。
+- expected_effect: 后续常驻 worker、搜索分支和 checkpoint 实现能在交付前发现“fresh env 可复现但同实例 reset 污染”的问题，不再由长批训练首次暴露跨 episode 串状态。
+- evaluation_window: 后续 5 个涉及常驻 worker、runtime reset、checkpoint、搜索 fork 或 crash recovery 的 issue
+- success_signal: 相关 issue 均执行适用的五格矩阵；同 seed 的同实例 A/A 与 A/B/A observation/legal/replay/RNG parity 成立，且不再出现 opening-only 或 fresh-only 测试通过后才发现跨局污染。
+- rollback_condition: 若环境迁移为无模块单例的纯状态函数，或统一测试 runner 已机械覆盖全部五格并能静态保证 reset 完备，则把手工矩阵收敛为 runner 引用；若矩阵对非复用环境造成无效成本，则仅保留在常驻 runtime 触发条件下。
+- risk: 完整 observation 深比较可能受明确允许的 episodeId/时间字段影响，验证需先规范化这些非状态字段；不得为了通过矩阵忽略真实 action id、RNG 或 board 差异。
+- evidence_before: SETI-38 非零 checkpoint 暴露 `choiceCount` 漂移；SETI-40 跨 seed 后 load_checkpoint 漂移；SETI-44 `seti44-repeat` 的 fresh digest 两次一致为 `10c293...33b`，同 env 第二次 reset 却变为 `774a79...8a7f`，并在 A/B/A 中出现牌、轮盘、火箭、痕迹与 choiceCount 漂移。
+- owner_or_agent_decision: 领航依据既有 candidate 的“再观察 1 个相关 issue”窗口与 SETI-44 独立反例自决 promote；不需要 owner 逐条拍板。
+- applied_at: 2026-07-19
+- verification: `rg` 检查 proof obligations 已包含五格隔离矩阵和 checklist；SETI-44 Gate A/B 报告完整记录 O01/O15/O16/O18/O20/O21，`node --check randomizer/app.js` 与 randomizer 全部 `.test.js` 通过，但同实例 reset 反例稳定失败并已拆 SETI-53。
+- observed_outcome: 模板已能区分“fresh determinism PASS”和“same-instance isolation FAIL”；待后续修复 issue 使用矩阵验证实际拦截效果。
+- keep_or_revise: 保留并进入 5 个相关 issue 的观察窗口；若统一 runner 落地则将手工命令替换为 runner，不删除隔离语义。
