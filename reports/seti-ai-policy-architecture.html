@@ -78,8 +78,8 @@
   <section id="issues">
     <div class="section-head"><div class="section-no">05</div><div><h2>在途 issue：有相邻改造，但尚无一项完整承接 Policy 边界</h2><p>这意味着现在先确认契约最合适；实施时应避免与 Standard Action 热路径并行改同一段代码。</p></div></div>
     <div class="issue-grid">
-      <article class="card direct"><h3>SETI-61 <span class="state partial">in progress</span></h3><p>Standard Action 阶段 5。它将提供浏览器、训练和 Policy 共用的 actionId / execute 语义，是 PolicyPort 的直接前置。</p></article>
-      <article class="card wait"><h3>SETI-39 <span class="state partial">blocked</span></h3><p>学习型 Policy 实验已完成示范、回放与三臂 PPO smoke；按已确认安排继续等待 SETI-61 热路径稳定后再跑 32 局与 A/B。</p></article>
+      <article class="card direct"><h3>SETI-61 <span class="state good">done</span></h3><p>Standard Action 阶段 5 已完成，浏览器、训练和 Policy 共用 actionId / execute 的直接前置已解除；PolicyPort 应复用其稳定契约。</p></article>
+      <article class="card wait"><h3>SETI-39 <span class="state partial">待恢复</span></h3><p>学习型 Policy 实验已完成示范、回放与三臂 PPO smoke；当前仍显示 blocked / waiting_on SETI-61，但前置已完成，应按 owner 既定安排恢复 32 局与 A/B。</p></article>
       <article class="card direct"><h3>SETI-14 <span class="state partial">in progress</span></h3><p>RL 路线协调。适合承接 Learned Policy 对统一 PolicyPort 的接入顺序，而非重定义规则动作。</p></article>
       <article class="card indirect"><h3>SETI-72 / 71 <span class="state partial">in progress</span></h3><p>Browser UI 与 StateStore 总控。最终会清掉 AI 对 DOM/picker 与影子状态的依赖，提供稳定 Observation 来源。</p></article>
       <article class="card indirect"><h3>SETI-62 <span class="state partial">in progress</span></h3><p>Effect Session 总控。DecisionEffect 收敛后，pending resolver 才能从“第二套规则执行器”退化为标准选择提交。</p></article>
@@ -107,7 +107,7 @@
 
   <section id="proposal">
     <div class="section-head"><div class="section-no">08</div><div><h2>推进建议：先包一层适配，再搬边界</h2></div></div>
-    <div class="proposal"><article class="proposal-main"><h3>建议顺序</h3><ol><li>等 SETI-61 稳定 Standard Action / Decision ID，冻结最小 <code>DecisionContext → PolicyDecision</code> 契约。</li><li>先给现有启发式 AI 和现有 Learned Policy 各包一个 adapter，固定种子与 replay 必须不变。</li><li>再把 app 层候选选择、pending 选择逐项移入 Heuristic Policy，把执行/调度留给 Host。</li><li>最后让浏览器 AI 席位、headless 评测和训练 rollout 都通过同一 PolicyPort 接入。</li></ol></article><aside class="proposal-side"><h3>本轮不做</h3><p>不改启发式权重，不改 PPO / reward，不重写 AI，不在 SETI-61 热路径未稳定时迁移 action-executor，也不把 battle tooling 塞进 Policy 核心。</p></aside></div>
+    <div class="proposal"><article class="proposal-main"><h3>建议顺序</h3><ol><li>基于已完成的 SETI-61 Standard Action / Decision ID，冻结最小 <code>DecisionContext → PolicyDecision</code> 契约。</li><li>先给现有启发式 AI 和现有 Learned Policy 各包一个 adapter，固定种子与 replay 必须不变。</li><li>再把 app 层候选选择、pending 选择逐项移入 Heuristic Policy，把执行/调度留给 Host。</li><li>最后让浏览器 AI 席位、headless 评测和训练 rollout 都通过同一 PolicyPort 接入。</li></ol></article><aside class="proposal-side"><h3>本轮不做</h3><p>不改启发式权重，不改 PPO / reward，不重写 AI；在独立实施 issue 完成热路径归属核对前不迁移 action-executor，也不把 battle tooling 塞进 Policy 核心。</p></aside></div>
   </section>
   <footer>证据：当前仓库 <code>randomizer/game/ai/**</code>、<code>randomizer/app/ai/**</code>、<code>docs/ai-design.md</code>、<code>docs/ai-domain-migration-stage3.md</code>、<code>docs/rl-headless-env.md</code>，以及 2026-07-19 在途 issue 状态。</footer>
 </main>
