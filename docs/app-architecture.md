@@ -57,7 +57,7 @@
 - `randomizer/app/ai/battle-report.js`：player result、pending state、report/progress/analysis schema；不执行对战步骤。
 - `randomizer/app/ai/tuning-history.js`：调参历史的 localStorage 持久化、A/B 摘要、推荐与应用入口。
 - `randomizer/app/ai/experiment-runner.js`：单局自动对战、batch、同 seed A/B、tuning cycle 与样本诊断压缩。
-- `randomizer/app/ai-controller.js`：AI 决策层。注入 `app/ai/**` runtime，保留具体 resolver、候选估值和稳定 API 转发，不再拥有控制状态、日志/报告、调参历史或实验 runner 函数体。
+- `randomizer/app/ai-controller.js`：AI 编排 adapter。注入 `app/ai/**` runtime 与 `game/ai/**` 规则域，保留 pending resolver、DOM 交互、顶层行动执行和稳定 API 转发，不再拥有控制状态、日志/报告、实验 runner 或成片纯估值/候选函数体。
 - `randomizer/app/effects/movement-scan.js`：移动、行星落点、轨道/登陆、扇区扫描和相关选择执行器。
 - `randomizer/app/effects/rewards.js`：资源、数据、抽牌、条件奖励、手牌选择和科技/扫描奖励执行器。
 - `randomizer/app/effects/aliens.js`：异常点、虫和奥陌陌的效果执行器及 continuation 适配。
@@ -72,9 +72,9 @@
 
 ## 仍需拆分的高耦合区
 
-- AI 控制状态与调度已迁入 `randomizer/app/ai/control-runtime.js`；具体 resolver 仍由 `createAiController(context)` 通过显式回调调用 app 的 UI 流程。后续若要继续解耦，应优先把“读取局面”“列出候选”“执行选择”下沉为更窄的决策总线，而不是在 AI 模块里直接新增 DOM 选择逻辑。
+- AI 控制状态与调度位于 `randomizer/app/ai/control-runtime.js`；纯估值、目标/需求、规划、竞速和候选构建位于 `randomizer/game/ai/**`。具体 resolver 仍由 `createAiController(context)` 通过显式回调调用 app UI 流程，game AI 模块不得读取 DOM。
 - `randomizer/app/aliens/species-runtime.js` 当前 4,367 行，边界是八物种共用机会队列、dialog、followup 与面板运行域；后续应按物种或 rewards/dialogs/render 子域继续拆，并保持共用队列单一所有者。
-- `randomizer/app/ai-controller.js` 在 Stage 2 后约 21,089 行；控制、日志、报告、调参历史与实验 runner 已迁至 `app/ai/**`，后续继续按 observation/candidates/decision 拆分。
+- `randomizer/app/ai-controller.js` 在 Stage 3 后为 5,686 行；16 个只读规则域均低于 3,000 行，逐域清单、行数与删除证据见 `docs/ai-domain-migration-stage3.md`。
 - 行动日志状态与 DOM 展示已经由 `action-log-runtime` 接管，恢复快照与持久化包由 `game-recovery` 接管；`app.js` 仍保留跨全部 pending 状态的恢复清理与全 UI 刷新调度。
 - 卡牌、收入、扫描和任务触发的 `pending*` 已按 runtime/flow 收口；新增相关选择应扩展所属 runtime，并通过 `app.js` 注入跨域 continuation，避免重新把具体确认/取消分支堆回总装配层。
 
@@ -100,6 +100,12 @@
 - 日志/报告：迁出日志 compact/record/bug、player result、pending 汇总与 report/progress/analysis schema。
 - 调参/runner：迁出 history persistence、recommendation/apply，以及 single battle、batch、同 seed A/B 和 tuning cycle。
 - 保持边界：controller API、默认值、seed 派生、权重恢复、bug/block 判定和报告 schema 保持不变；controller 只以显式 context 装配领域 runtime。
+
+## AI Stage 3 迁移记录
+
+- 规则边界：资源/收入/交易、卡牌/任务、扫描/数据、路线/星球、科技、终局节奏与外星人估值均通过显式 context 迁入 `game/ai/**`；app 层只保留 pending、DOM、确认/执行和顶层行动 adapter。
+- 行数：`app/ai-controller.js` 从 21,089 行降为 5,686 行；`app/ai-controller.test.js` 从 10,295 行降为 1,033 行，完整集成回归迁至 `ai-controller.integration.test.js`。
+- 删除证据：`game/ai/ai-domain-migration.test.js` 校验迁移函数体不再出现在控制器、生产模块不读 DOM、单模块少于 3,000 行且浏览器入口已装配。
 
 ## 验证要求
 

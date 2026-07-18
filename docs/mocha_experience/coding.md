@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-18
+- source_issue: SETI-34
+- observation: 在 zsh 中用 `tests=$(...)` 后直接 `for test in $tests` 不会按换行自动拆分文件列表，会把全部测试路径当成一个参数；全量 Node 回归应使用 `rg ... | while IFS= read -r test`（或 zsh 数组）逐文件执行。
+- evidence: SETI-34 首轮全量命令把 100 余个 `.test.js` 路径拼成一个模块名并报 `MODULE_NOT_FOUND`；改为 `while IFS= read -r test` 后从 app、headless、game/ai、aliens 到 training 的全部测试逐个执行并以 exit 0 完成。
+- promote_to: none
+- promotion_status: candidate
+- decision: 当前是一次 shell 驱动层证据，记录为 coding candidate，不修改 agent prompt、loop template 或 watcher；后续 3 次 zsh 全量回归观察是否复现或是否值得收口成仓库脚本。
+
+- date: 2026-07-18
 - source_issue: SETI-31
 - observation: 对刻意不改生产行为的 characterization / Stage 0 交付，收口摘要应先说明“本阶段不会产生页面或玩法变化”，再用新增护栏、可拦截的回归类型和后续迁移用途解释价值；只列测试文件、行数和通过项，容易让 reviewer 误以为没有实际产出。
 - evidence: SETI-31 首次交付摘要以新增契约测试、固定 seed 基线和验证结果为主后，成员追问“看起来基本没变哇，实际你做了啥？”；补充说明本阶段硬边界、400 行新增/112 行迁移及后续能阻断的 API/schema/owner 漂移后，成员回复“那就收”。
