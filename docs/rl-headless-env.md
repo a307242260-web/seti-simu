@@ -6,13 +6,13 @@
 
 - Node 入口：`randomizer/app/headless-env.js`，通过 `createHeadlessEnv()` 创建单局环境。
 - 已实现 `reset / observe(viewer) / legalActions(viewer) / step / isTerminal / getReplay / loadReplay / createCheckpoint / loadCheckpoint / dispose`。
-- `randomizer/app/headless-contract.js` 固化 15 个顶层动作族、7 个 conditional family、旧 runtime selector 映射、稳定 action feature 与 observation 公私域 sanitizer。
-- `legalActions()` 输出 `seti-rl-action-v2`，直接调用 headless rule enumeration，不构建 actionGraph、valuation、selection pressure 或 planner；非 decision owner 请求时返回空数组。动作携带 `stateVersion / decisionVersion`，`step()` 同时校验 actor、版本与当前 legal action id。
+- `randomizer/app/headless-contract.js` 固化 15 个顶层动作族、7 个 conditional family、稳定 action feature 与 observation 公私域 sanitizer；旧 selector 映射只保留为存量 replay/诊断兼容面。
+- `legalActions()` 输出 `seti-rl-action-v2`，候选来自 app 与浏览器共享的 Standard Action adapter，不构建 actionGraph、valuation、selection pressure、planner 或第二套 legality。RL envelope 补充 mask/feature 与环境版本，但沿用 registry `actionId`；`step()` 校验 actor、版本与当前 legal action id 后，把保存的完整 Standard Action descriptor 交回同一 `registry.execute`。
 - pending/conditional 边界在枚举顶层行动或执行 deterministic drain 之前先经过 inventory 审计；未知 pending key、已知 key 的未知 type、未知 conditional family 分别以稳定 `HEADLESS_UNSUPPORTED_PENDING`、`HEADLESS_UNSUPPORTED_PENDING_TYPE`、`HEADLESS_UNSUPPORTED_CONDITIONAL_FAMILY` 拒绝。诊断固定包含 `state/family/type/owner`，拒绝分支不枚举顶层行动，也不调用旧 resolver、DOM callback、recover 或 skip。
 - observation 已按 `publicState / selfState / decision` 分域；公开玩家仅保留资源、计数与公开科技，自己的手牌/预留牌才进入 `selfState`，牌库顺序、未来科技 bonus、未揭示外星人身份不进入观测。
 - replay 分开记录 policy `steps` 与自动结算 `environmentEvents`；checkpoint 额外保存随机数状态，可在 fresh env 中恢复且不触发浏览器渲染。
 - 终局 25/50/70 分 pending 由 `choose_final_scoring` 独立枚举与执行：多项由 pending owner 决策并写一条 policy replay，唯一合法板块由环境自动推进；headless 路径显式禁止调用旧 final-score AI resolver，标记时间使用稳定 replay 值。
-- 顶层行动保留已验证的原始规则 action，`step()` 不再调用 `buildAiTurnActionCandidates / runAiSelectedTurnAction` 二次构建候选；transition 通过 `action-runtime` 分发，随后自动 drain pending/effect，不依赖用户点击。
+- 顶层与 conditional 行动都保留已验证的 Standard Action descriptor；`step()` 不调用 `buildAiTurnActionCandidates / runAiSelectedTurnAction` 二次构建候选，也不使用 `bypassRuntimeDispatch` switch。transition 通过 `action-runtime -> registry.execute`，随后自动 drain pending/effect，不依赖用户点击。
 - Node composition 通过 `randomizer/app/view-adapter.js` 注入 no-op view adapter；运行时不创建或安装 `document`、DOM 元素、overlay、`localStorage`、`Image`。
 - `randomizer/app/headless-contract.test.js` 建立 15 动作族覆盖矩阵与 conditional taxonomy characterization；`randomizer/app/headless-env.test.js` 覆盖无 DOM 启动、固定 seed 完整 4 人局、terminal、replay/checkpoint parity、owner/非法动作拒绝以及观测反泄漏。
 - 最小训练入口为 `tools/run_self_play_training.js`：串行运行多局 self-play，以 action kind 的 Monte Carlo value table 作为第一版弱 baseline，输出逐步 JSONL，并在局间边界原子保存训练 checkpoint。
@@ -136,6 +136,8 @@ aggregate 目标为 `>= 50 decision/s`。未达标时命令退出码为 `2`，JS
 2026-07-18 当前机器（Node `v22.22.0`）实测：单 worker 为 `32 decisions / 43.252s = 0.740 decision/s`，双 worker 为 `64 decisions / 51.840s = 1.235 decision/s`，未达到 50 decision/s 闸门。单 worker 分项中 boot `1.263s`、legal action enumeration `20.802s`、action execution `20.781s`、observation `0.344s`、replay `0.0003s`；JSON 序列化与 inference 空载均为百万级 decision/s。已通过复用同一决策点的稳定 legal action/selector，把单 worker 从优化前的 `0.490` 提升到 `0.740 decision/s`，但剩余瓶颈明确在规则域 candidate enumeration 和 action execution。下一步优化应对 `listAiTurnActionCandidates` 做规则域 profiling、按未变化状态切片增量派生或 memoization，并拆解 `runAiSelectedTurnAction` 内自动结算；没有证据支持继续压缩 JSONL 或扩大 batch 等待窗口。
 
 2026-07-19 切换到 headless rule enumeration、轻量收入弃牌规则与预验证 action 直执行后，同机常驻 10 局实测：单 worker `320 decisions / 3.725s = 85.897 decision/s`（step-only `101.166/s`），四 worker `1280 decisions / 6.200s = 206.464 decision/s`（step-only `245.234/s`）。单 worker 末局分项为 setup selection `8.676ms`、reset drain `12.778ms`、legality `5.900ms`、transition `26.054ms`、effect drain `96.087ms`、observation `165.092ms`；100 局四 worker smoke 为 100/100 terminal、非法动作 0、阻塞/worker crash 0。训练闸门按常驻多局窗口通过，单次冷启动仍包含浏览器模块装配成本。
+
+2026-07-19 Standard Action 全链路集成后的同机复测（Node `v22.22.0`）：单 worker `91 decisions / 0.598s = 152.194 decision/s`（step-only `195.657/s`），四 worker `399 decisions / 1.257s = 317.522 decision/s`（step-only `361.876/s`），均通过 `>=50 decision/s` 闸门。该基线使用 registry descriptor 直接枚举/执行并沿用 actionId；单 worker 分项为 legality `36.962ms`、transition `180.202ms`、effect drain `51.946ms`、observation `90.065ms`，用于后续兼容层删除和性能回归对比。
 
 传统脚本仍以 `globalThis` 作为模块注册表，Node 启动时临时把 `window` 名称指向该注册表以兼容 `window.Seti*` 命名空间；这里没有浏览器对象或 DOM 能力。`app.js` 根据 `SetiHeadlessRuntimeConfig` 选择 no-op view adapter，跳过固定 DOM 收集、事件绑定、渲染、浏览器持久化和首屏 shell 初始化。
 

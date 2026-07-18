@@ -73,6 +73,7 @@ GameState 快照
 - 批跑 / A/B / 调参入口走 `configureAiAutoBattle()`、`runAiAutomationStep()`、`runAiAutoBattleBatch()`、`runAiStrategyABTest()`、`runAiStrategyTuningCycle()`；未显式传 `activePlayerCount` 时按 4 人局重置。
 - `runAiStrategyABTest()` 必须透传当前 `aiDifficulty`，`weak_start` 基线使用真实低难度默认权重；A/B 验收同时比较全席均分、每局最低分均值、P25、270+ 席位数、270+ 赢家局数、最高分、完成率、未完成局、阻塞和 bug。赢家均分单独上升、但全席或低尾下降时不得判定为改进；A/B 结束后必须恢复进入测试前的“难度默认权重 / 显式自定义权重”模式。
 - `runAiAutomationStep()` 是唯一推进器，先收口外星人使用、外星人痕迹和半人马就绪机会，再按“初始选择 / 弃牌 / PASS 预留 / 终局标记 / 公共牌选择 / 科技放置 / 扫描 / 打牌 / 移动支付 / 登陆 / 数据放置 / 共用扫描弹窗 / 效果链 / 顶层行动”的顺序推进其余 pending 状态。
+- AI 估值可以继续产生分数、reason、actionGraph 和 planner shadow，但这些字段只用于选择，不进入 Standard Action identity、合法性或执行输入。训练 Policy 的候选由 `action-runtime` 的 Standard Action adapter 直接枚举，选中的完整 descriptor 交回同一 `registry.execute`；不得再经 headless 专用 `canExecute` 清单、重算 actionId 或 `bypassRuntimeDispatch` switch 执行。
 - AI 专用强制公司牌（当前默认席位顺序为寰宇超动力、宇宙大战略集团、作弊实验室）必须作为开局规划的真实公司输入；初始牌组合、`openingPlan` 摘要、目标和 `aiStyle` 都按实际被确认的公司重算，避免使用未选择公司牌的资源结构污染后续策略。
 - 顶层行动候选仍由现有规则入口判断可用性，策略层优先读取 `actionGraph.net`，旧 `candidate.score` 只作为 fallback 与 tie-breaker。L3 规划器目前以影子模式对同一候选生成“快速 -> 主行动 -> 快速”的静态链，并把与实际策略的首行动分歧写入 `turn-action.plannerShadow`；在固定种子证明某类链能提升而不破坏高分局前，影子结果不直接改写实际选择。
 - 子决策以 `runAi*Decision()` 族函数处理；每个 AI pending 分支必须返回 `progressed`、`skipped` 或明确 `blocked`，不能把自动批跑永久停在需要人工点击的状态。
@@ -83,7 +84,7 @@ GameState 快照
 - 1 类任务卡触发只在当前事件窗口内可选；AI 若因火箭上限、资源不足或无合法目标无法发动某个触发，应取消本次触发选择并等待下次同类事件，不得消耗触发槽，也不得把自动批跑阻塞在不可执行触发上。
 - PASS 预留牌默认仍保持原顺序；只有第 2 轮出现 0 信用点、0 能量或 1 手牌以内的硬资源锁，且预留牌堆里有能补对应短板的收入牌时，才启用 `scoreAiPassReserveCard` 排序，避免早期资源滚动被随机牌序截断。
 - PASS 预留日志现在额外记录 `passReserveResourcePressurePreview` 与 `passReserveResourcePressureMiss`：前者忽略“仅第 2 轮启用”的行为门槛，用来识别第 1/3/4 轮是否也存在 0 信用点、0 能量或低手牌且牌堆有对应收入牌的窗口，并列出最多 6 张能补短板的收入候选；后者表示该窗口当前只被记录、未用于排序，且选中牌本身也不是预览收入候选。批跑分析会输出 `passReserveResourcePressureMissSamples`，用于后续筛更窄的可验证窗口，不能直接把 PASS 预留排序扩到所有轮次。
-- AI 不直接改规则状态；真正执行仍走人类同路径的 `runAction()`、`beginScanAction()`、`beginPlayCardSelection()`、`researchTechForCurrentPlayer()`、`passForCurrentPlayer()` 等入口。
+- AI 不直接改规则状态；顶层与 conditional 策略选择最终都提交 Standard Action descriptor。迁移期浏览器 AI 的估值 candidate 仍可通过 action-runtime 的显式 selector adapter 转成 descriptor，规则执行只发生在 registry family handler 中。
 - 随机性通过现有 seeded 批跑入口和可注入 `random` 的规则函数复现；不能为了 AI 策略在估值阶段消耗真实随机结果。
 
 ---

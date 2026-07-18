@@ -255,6 +255,7 @@ UI 布局：
 - 主行动效果完成时通过 `endEffectHistoryStep` 或不可撤销效果的补充记录写入 draft；快速行动完成时通过 `completeQuickActionStep` 写入 draft。step 会比较执行前后的当前玩家资源、收入、手牌数、分数和完成任务数，并把尚未在效果文本中表达过的变化追加到日志明细中。
 - 日志 step 会记录 `stepId`、`source`、`undoable`、`irreversibleReason`；打牌 step 额外记录 `playedCard` 快照用于在日志中高亮牌名并 hover/focus 预览牌面。撤销时按 `stepId` 精确删除 draft 中对应记录，避免主/快速行动交错时删错日志。
 - 撤销快速行动会删除 draft 中最近的快速行动记录；撤销主要行动效果会删除最近的主要行动记录；回滚整个主要行动会删除 draft 中所有主要行动记录但保留尚未撤销的快速行动记录。若最近步骤是不可撤销屏障，只提示原因，不会越过屏障撤销更早步骤。
+- 主行动、快速行动、回合控制和条件选择统一使用 22 个 Standard Action family。浏览器与训练端对同一合法 descriptor 共享 `actionId`、owner、target/payload 与 registry executor；history/undo/irreversible 仍由 family handler 及其 continuation 写入，UI、Policy 和 AI 估值不得自行预扣资源、补写 history 或代替多选 owner。
 - 确认后不可撤销的精选/拿牌效果会写入不可撤销屏障，并在日志中显示原因；公司 1x 中任务中继站、芬威克、未来跨度、宇宙战略等公共牌精选补牌能力也按 quick 日志记录 `不可撤销：公共牌补牌翻出新牌`。
 - 每条已确认的稳定行动日志 entry 会附带 `recoverySnapshot`，保存该日志确认后的完整游戏状态切片（含隐藏牌序、外星人状态、火箭、科技、星云、玩家、任务状态、AI 控制配置等，不递归保存日志本身）。最后一名玩家确认初始选择后若进入“初始收入增加”效果流，该条日志会暂时不暴露恢复快照，直到初始收入全部完成后刷新为稳定恢复点。`window.SetiRandomizer.getActionLogRecoveryPackage()` 可导出含恢复快照的日志包；`window.SetiRandomizer.recoverFromActionLog(logOrPackage, { entryId/index })` 会取对应日志快照恢复局面，并清空所有进行中的 overlay/选择流程。恢复点定位为“某条已确认日志之后”的稳定局面；调试入口仍不保证完整日志语义。
 - 浏览器会把最近稳定局面自动保存到本地 `localStorage`。保存点要求当前没有进行中的主行动、快速行动、效果队列或选择弹窗，因此若刷新发生在半步流程中，会回到上一个稳定保存点。页面加载时先显示开始界面，不会自动恢复或新开；点击「开始游戏」会清除本地进度并新开一局，点击「继续游戏(beta)」才会恢复上次保存的局面和当时的人类/电脑控制配置。旧存档若没有 AI 控制配置，或快照里的电脑席位无法解析，会按默认人机入口恢复白色人类与其余电脑席位；显式保存为全手动的快照仍按全手动恢复。旧的 AI 阻塞暂停不会跨继续游戏保留，避免修复后仍停在由玩家控制电脑的状态。没有可恢复局面时，「继续游戏(beta)」保持禁用。

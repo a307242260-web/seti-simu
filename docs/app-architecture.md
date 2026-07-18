@@ -6,6 +6,8 @@
 
 浏览器逐步剥离为纯 View、Input Adapter 与 ViewState 的目标契约、可见性边界、所有权矩阵和 proof obligations，见 [docs/browser-host-ui.md](./browser-host-ui.md)。迁移期间本文件描述的是现状装配边界，后者描述目标宿主边界与分阶段删除条件。
 
+Standard Action 的 app 装配边界由 `app/action-runtime.js` 统一承载：浏览器 intent 只能经显式 legacy selector 解析为唯一 descriptor，训练宿主通过 `standard_enumerate` 直接取得同一 adapter 的 descriptor，并把完整 descriptor 交回 `registry.execute`。`app/ai/action-executor.js` 不再为 headless 维护第二套 legality；`app/headless-contract.js` 只补 RL feature、mask 与版本字段，必须沿用 registry 的 `actionId`。UI picker、AI valuation 和训练 policy 都不得在 adapter 外预扣资源或执行规则。
+
 ## 当前加载层次
 
 1. `randomizer/index.html` 按传统 `<script>` 顺序加载，无构建步骤，也不使用 ES module。
@@ -61,7 +63,7 @@
 - `randomizer/app/ai/experiment-runner.js`：单局自动对战、batch、同 seed A/B、tuning cycle 与样本诊断压缩。
 - `randomizer/app/ai/initial-card-pending.js`：初始选择、收入弃牌、PASS 预留、公共牌/手牌选择、卡牌触发/任务与打牌 pending resolver。
 - `randomizer/app/ai/interaction-pending.js`：数据、移动支付、登陆、扫描、科技、公司免费移动与外星人 pending resolver；只通过筛选后的显式 context 调用 app flow，不持有 pending 状态。
-- `randomizer/app/ai/action-executor.js`：顶层候选汇总、重试诊断与行动执行器；不拥有回合或 pending 状态。
+- `randomizer/app/ai/action-executor.js`：浏览器 AI 的估值候选汇总、重试诊断与行动执行器；headless 枚举/执行只转发 Standard Action descriptor，不拥有第二套 legality、回合或 pending 状态。
 - `randomizer/app/ai/automation-runtime.js`：非回合 pending 优先级、效果恢复、选定行动执行和 `runAiAutomationStep` 编排。
 - `randomizer/app/ai-controller.js`：AI 装配 adapter。注入 `app/ai/**` runtime 与 `game/ai/**` 规则域并转发稳定 API，不再包含 resolver、行动 executor、控制状态、日志/报告、实验 runner 或成片纯估值/候选函数体。
 - `randomizer/app/effects/movement-scan.js`：移动、行星落点、轨道/登陆、扇区扫描和相关选择执行器。

@@ -32,6 +32,21 @@ for (const family of CONDITIONAL_FAMILIES) {
   assert.equal(action.actionFeature.phase, "conditional");
 }
 
+const sharedConditional = normalizeConditionalCandidate({
+  standardAction: {
+    schemaVersion: "seti-standard-action-v1",
+    actionId: "choose_reward:shared-action-id",
+    actorId: "player-blue",
+    family: "choose_reward",
+    phase: "conditional",
+    target: { kind: "reward", choiceId: "energy" },
+    payload: { amount: 1 },
+    summary: "获得能量",
+  },
+}, "wrong-fallback-owner");
+assert.equal(sharedConditional.actionId, "choose_reward:shared-action-id");
+assert.equal(sharedConditional.actorPlayerId, "player-blue");
+
 for (const entry of ACTION_COVERAGE_MATRIX) {
   assert.ok(entry.legacyId, `${entry.family} 应有 runtime selector 映射`);
   const action = normalizeTurnCandidate({
@@ -56,6 +71,21 @@ for (const entry of ACTION_COVERAGE_MATRIX) {
 }
 
 assert.deepEqual(Object.values(LEGACY_FAMILY_BY_ID), TURN_ACTION_FAMILIES);
+const sharedTurn = normalizeTurnCandidate({
+  standardAction: {
+    schemaVersion: "seti-standard-action-v1",
+    actionId: "move:shared-action-id",
+    actorId: "player-white",
+    family: "move",
+    phase: "quick",
+    target: { rocketId: 7, deltaX: 1, deltaY: 0 },
+    payload: { requiredMovePoints: 1 },
+    summary: "移动",
+  },
+}, "wrong-fallback-owner");
+assert.equal(sharedTurn.actionId, "move:shared-action-id", "训练 actionId 必须沿用浏览器 registry identity");
+assert.equal(sharedTurn.actorPlayerId, "player-white");
+assert.equal(sharedTurn.actionFeature.phase, "quick");
 const hiddenAlien = sanitizeAlienPublicState({
   revealPoolAlienIds: ["secret-next-alien"],
   aliens: { 1: { revealed: false, assignedAlienId: "secret-next-alien", traces: { blue: { firstPlaced: false } } } },

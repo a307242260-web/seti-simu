@@ -452,143 +452,34 @@
     }
 
     function enumerateHeadlessTurnActions() {
-      const actionContext = createActionContext();
       const currentPlayer = getCurrentPlayer();
       if (!currentPlayer || !isAiAutoBattlePlayer(currentPlayer.id)) return [];
       if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return [];
-
-      const candidates = [];
-      const add = (candidate) => {
-        if (candidate?.available !== false) candidates.push({ ...candidate, available: true });
-      };
-
-      if (!state.pendingActionExecuted && canStartMainAction()) {
-        for (const id of ["launch", "orbit", "land", "researchTech"]) {
-          const check = actions.canExecute(id, actionContext);
-          if (!check?.ok) continue;
-          add({
-            id,
-            kind: "main",
-            planetId: check.planet?.planetId || null,
-            choices: check.choices || null,
-            takeable: check.takeable || null,
-          });
-        }
-        const scanCheck = scanEffects.canExecuteScan(currentPlayer, { standardAction: true });
-        if (scanCheck?.ok && globalThis.SetiHeadlessRuntimeConfig?.scanTransitionKernel === true) {
-          add({ id: "scan", kind: "main" });
-        }
-        const analyzeCheck = canAiAnalyzeData(currentPlayer);
-        if (analyzeCheck?.ok) add({ id: "analyze", kind: "main" });
-        for (const [handIndex, card] of (currentPlayer.hand || []).entries()) {
-          if (!players.canAfford(currentPlayer, getCardPlayCost(card))) continue;
-          add({
-            id: "playCard",
-            kind: "main",
-            handIndex,
-            cardId: card?.cardId || card?.id || null,
-            cardInstanceId: card?.instanceId || null,
-          });
-        }
-      }
-
-      if (canAiMoveThisTurn?.(currentPlayer.id)) {
-        for (const rocket of getMovableTokensForPlayer?.(currentPlayer.id) || []) {
-          for (const direction of AI_MOVE_DIRECTIONS || []) {
-            const moveCheck = rocketActions?.canMoveRocket?.(
-              actionContext.rocketState,
-              rocket.id,
-              direction.deltaX,
-              direction.deltaY,
-            );
-            if (!moveCheck?.ok) continue;
-            const requiredMovePoints = getRequiredMovePointsForUi(
-              currentPlayer,
-              rocket.id,
-              direction.deltaX,
-              direction.deltaY,
-            );
-            if (!canPayForMove(currentPlayer, requiredMovePoints)?.ok) continue;
-            add({
-              id: "move",
-              kind: "quick",
-              rocketId: rocket.id,
-              direction: direction.id,
-              deltaX: direction.deltaX,
-              deltaY: direction.deltaY,
-              requiredMovePoints,
-            });
-          }
-        }
-      }
-
-      for (const trade of quickTrades?.TRADE_ACTIONS || []) {
-        if (quickTrades.canExecuteTrade(trade.id, actionContext)?.ok) {
-          add({ id: "quickTrade", kind: "quick", tradeId: trade.id });
-        }
-      }
-
-      const dataCheck = data?.canPlaceAnyData?.(currentPlayer);
-      for (const choice of dataCheck?.ok ? (dataCheck.choices || data.listPlaceDataChoices?.(currentPlayer) || []) : []) {
-        add({
-          id: "placeData",
-          kind: "quick",
-          target: choice.target || null,
-          blueSlot: choice.blueSlot ?? null,
-          placementSlot: choice.placementSlot ?? null,
-        });
-      }
-
-      const industryCard = currentPlayer.initialSelection?.industry || null;
-      const industryLayout = industry?.getIndustryActionMarkerLayout?.(industryCard);
-      const industryCheck = industry?.canMarkIndustryAction?.(currentPlayer, turnState.roundNumber, {
-        turnNumber: turnState.turnNumber,
-        hasMarker: Boolean(industryLayout),
-        industryCard,
-      });
-      if (industryCheck?.ok) {
-        add({ id: "industry", kind: "quick", industryCard });
-      }
-
-      const cardCornerHand = canUseCardCornerQuickAction() ? (currentPlayer.hand || []) : [];
-      for (const [handIndex, card] of cardCornerHand.entries()) {
-        const resourceReward = cards?.getDiscardActionRewardForCard?.(card);
-        const moveReward = cards?.getDiscardActionMoveRewardForCard?.(card);
-        if (!resourceReward && !moveReward) continue;
-        if (moveReward && !resourceReward && !(getMovableTokensForPlayer?.(currentPlayer.id) || []).length) continue;
-        add({
-          id: "cardCorner",
-          kind: "quick",
-          handIndex,
-          cardId: card?.cardId || card?.id || null,
-          cardInstanceId: card?.instanceId || null,
-        });
-      }
-
-      for (const alienSlotId of aliens?.ALIEN_SLOT_IDS || []) {
-        if (!runezu?.isRunezuRevealedSlot?.(alienGameState, alienSlotId)) continue;
-        for (const position of runezu.FACE_SYMBOL_POSITIONS || []) {
-          const check = runezu.canPlaceFaceSymbol?.(alienGameState, position, currentPlayer);
-          for (const choice of check?.ok ? (check.choices || []) : []) {
-            add({
-              id: "runezuFaceSymbol",
-              kind: "quick",
-              alienSlotId: Number(alienSlotId),
-              position: Number(check.position),
-              symbolId: choice.symbolId,
-            });
-          }
-        }
-      }
-
-      add(state.pendingActionExecuted
-        ? { id: "end-turn", kind: "end-turn" }
-        : { id: "pass", kind: "pass" });
-      return candidates;
+      const result = dispatchRuntimeAction?.({ kind: "standard_enumerate" });
+      if (!result?.ok) return [];
+      return (result.candidates || [])
+        .filter((standardAction) => standardAction.phase !== "conditional")
+        .map((standardAction) => ({
+          id: standardAction.family,
+          kind: standardAction.phase,
+          family: standardAction.family,
+          actionId: standardAction.actionId,
+          actorId: standardAction.actorId,
+          target: structuredClone(standardAction.target || null),
+          payload: structuredClone(standardAction.payload || {}),
+          standardAction: structuredClone(standardAction),
+          available: true,
+          label: standardAction.summary,
+        }));
     }
 
 
     function executeAiTurnAction(action, currentPlayer = getCurrentPlayer(), options = {}) {
+      const standardDescriptor = action?.standardAction
+        || (action?.schemaVersion === "seti-standard-action-v1" ? action : null);
+      if (standardDescriptor && typeof dispatchRuntimeAction === "function") {
+        return dispatchRuntimeAction({ standardAction: standardDescriptor });
+      }
       const standardStage3Ids = [
         "move", "quickTrade", "industry", "cardCorner", "placeData", "runezuFaceSymbol", "end-turn",
       ];

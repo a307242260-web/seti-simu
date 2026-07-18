@@ -135,6 +135,31 @@ const runtime = createActionRuntime({
   getCurrentActionEffectIndex: () => 0,
   runQuickTrade: (tradeId, options) => ({ ok: true, tradeId, options }),
   confirmDataPlacement: (target, blueSlot) => ({ ok: true, target, blueSlot }),
+  standardActionAdapter: {
+    enumerate(_context, request) {
+      calls.push(["standard-enumerate", request]);
+      return [{
+        schemaVersion: "seti-standard-action-v1",
+        actionId: "scan:shared-action-id",
+        actorId: "p2",
+        family: "scan",
+        phase: "main",
+        stateVersion: 0,
+        decisionVersion: 0,
+        target: { kind: "standard-scan" },
+        payload: {},
+        summary: "扫描",
+      }];
+    },
+    execute(_context, action) {
+      calls.push(["standard-execute", action.actionId]);
+      return { ok: true, action };
+    },
+    executeLegacy(_context, family, selector) {
+      calls.push(["standard-legacy", family, selector]);
+      return { ok: true, tradeId: selector.tradeId };
+    },
+  },
 });
 
 runtime.startInitialSelection();
@@ -165,5 +190,17 @@ assert.equal(calls.some((entry) => Array.isArray(entry) && entry[0] === "execute
 
 const quickTradeResult = runtime.dispatchAction({ kind: "quick_trade", payload: { tradeId: "trade-1", keep: true } });
 assert.equal(quickTradeResult.tradeId, "trade-1");
+
+const standardListing = runtime.dispatchAction({ kind: "standard_enumerate" });
+assert.equal(standardListing.ok, true);
+assert.equal(standardListing.candidates[0].actionId, "scan:shared-action-id");
+const standardExecution = runtime.dispatchAction({
+  standardAction: structuredClone(standardListing.candidates[0]),
+});
+assert.equal(standardExecution.ok, true);
+assert.deepEqual(
+  calls.filter((entry) => Array.isArray(entry) && entry[0] === "standard-execute").at(-1),
+  ["standard-execute", "scan:shared-action-id"],
+);
 
 console.log("action-runtime tests passed");

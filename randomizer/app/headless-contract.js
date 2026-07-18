@@ -95,6 +95,34 @@ function stableActionId(actorPlayerId, family, target, payload) {
 }
 
 function normalizeTurnCandidate(candidate, actorPlayerId) {
+  const standardAction = candidate?.standardAction
+    || (candidate?.schemaVersion === "seti-standard-action-v1" ? candidate : null);
+  if (standardAction && TURN_ACTION_FAMILIES.includes(standardAction.family)) {
+    const family = standardAction.family;
+    const target = clone(standardAction.target || undefined);
+    const legacyId = Object.keys(LEGACY_FAMILY_BY_ID)
+      .find((id) => LEGACY_FAMILY_BY_ID[id] === family);
+    const payload = compactObject({
+      ...(clone(standardAction.payload || {})),
+      sourceActionType: legacyId,
+    });
+    return compactObject({
+      schemaVersion: ACTION_SCHEMA_VERSION,
+      actionId: standardAction.actionId,
+      actorPlayerId: standardAction.actorId || actorPlayerId,
+      decisionType: "turn_action",
+      family,
+      target,
+      payload,
+      actionFeature: {
+        familyIndex: ACTION_FAMILY_INDEX[family],
+        phase: standardAction.phase,
+        hasTarget: Boolean(target && Object.keys(target).length),
+        hasPayload: Boolean(payload && Object.keys(payload).length),
+      },
+      summary: standardAction.summary || family,
+    });
+  }
   const family = LEGACY_FAMILY_BY_ID[candidate?.id];
   if (!family) return null;
   const target = normalizeTarget(candidate.target);
@@ -118,6 +146,29 @@ function normalizeTurnCandidate(candidate, actorPlayerId) {
 }
 
 function normalizeConditionalCandidate(candidate, actorPlayerId) {
+  const standardAction = candidate?.standardAction
+    || (candidate?.schemaVersion === "seti-standard-action-v1" ? candidate : null);
+  if (standardAction && CONDITIONAL_FAMILIES.includes(standardAction.family)) {
+    const family = standardAction.family;
+    const target = clone(standardAction.target || undefined);
+    const payload = clone(standardAction.payload || undefined);
+    return compactObject({
+      schemaVersion: ACTION_SCHEMA_VERSION,
+      actionId: standardAction.actionId,
+      actorPlayerId: standardAction.actorId || actorPlayerId,
+      decisionType: "conditional_choice",
+      family,
+      target,
+      payload,
+      actionFeature: {
+        familyIndex: ACTION_FAMILY_INDEX[family],
+        phase: "conditional",
+        hasTarget: Boolean(target && Object.keys(target).length),
+        hasPayload: Boolean(payload && Object.keys(payload).length),
+      },
+      summary: standardAction.summary || family,
+    });
+  }
   const family = candidate?.family;
   if (!CONDITIONAL_FAMILIES.includes(family)) return null;
   const target = normalizeTarget(candidate.target);

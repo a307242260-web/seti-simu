@@ -551,6 +551,26 @@
       const action = typeof request === "string"
         ? { kind: request, payload: fallbackOptions || null }
         : { ...(request || {}) };
+      if (action.kind === "standard_enumerate") {
+        if (!standardActionAdapter) {
+          return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE", candidates: [] };
+        }
+        return {
+          ok: true,
+          candidates: standardActionAdapter.enumerate(
+            createActionContext(),
+            action.payload || {},
+          ),
+        };
+      }
+      const standardDescriptor = action.standardAction
+        || (action.schemaVersion === "seti-standard-action-v1" ? action : null);
+      if (standardDescriptor) {
+        if (!standardActionAdapter) {
+          return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
+        }
+        return standardActionAdapter.execute(createActionContext(), standardDescriptor);
+      }
       const kind = action.kind || action.id || null;
       const payload = action.payload || fallbackOptions || {};
       const standardFamily = {

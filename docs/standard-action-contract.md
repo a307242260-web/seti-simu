@@ -78,6 +78,10 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 
 阶段 4 行为证据：`randomizer/game/actions/standard-action-stage4.test.js` 对七类 conditional family 建立真实 `enumerate/validate/execute` definition，逐类覆盖两个非等价候选、owner、独立 decision version、stale 与零选项；`randomizer/app/headless-conditional-drain.test.js` 覆盖唯一候选自动推进、多候选策略边界、replay environment event 与 drain 上界；`randomizer/app/headless-fail-closed.test.js` 覆盖未知 pending/type/family，并以 spy 证明 resolver/DOM/recover/skip 调用为零。headless app 仅通过 registry adapter 暴露与执行 conditional descriptor，确定性 drain 不再按 UI 文案触发 skip。
 
+阶段 5 集成证据：`randomizer/game/actions/standard-action-stage5.test.js` 结构化证明 headless 顶层枚举只调用 `action-runtime` 的 `standard_enumerate`、执行只提交完整 descriptor，且训练 contract 沿用 registry `actionId`；`randomizer/app/action-runtime.test.js` 覆盖 descriptor 枚举/直执行；`randomizer/app/headless-contract.test.js` 覆盖顶层与 conditional identity parity；headless legality、conditional drain、fail-closed、owner、终局和 worker integration 共同覆盖下一决策、事件/replay 与常驻宿主路径。
+
+残余兼容面限定为单向 adapter：浏览器 DOM intent 与浏览器 AI 估值 candidate 仍以旧 kind/selector 进入 `action-runtime.executeLegacy`，多目标必须返回 `STANDARD_ACTION_AMBIGUOUS`；conditional provider 的 `payload.legacyAction` 仍承接存量 pending handler。它们不得被训练 Policy 枚举或作为 action identity/合法性来源，后续删除条件是对应 Browser Host / Effect Session owner 完成迁移并以调用计数证明旧 selector 为零。
+
 ## Proof obligations
 
 | 验收条款 | 可证伪命题 | 最小反例 | 必需证据 |
