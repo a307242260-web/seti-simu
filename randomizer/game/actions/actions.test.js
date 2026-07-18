@@ -302,6 +302,29 @@ const researchStart = actions.execute("researchTech", researchContext);
 assert.equal(researchStart.ok, true);
 assert.equal(researchStart.awaitingTileSelection, true);
 
+const blueSelectionContext = createContext();
+const blueSelectionPlayer = players.getCurrentPlayer(blueSelectionContext.playerState);
+const blueSelectionPublicity = blueSelectionPlayer.resources.publicity;
+const blueSelection = actions.execute("researchTech", blueSelectionContext, {
+  tileId: "blue1",
+  selectionOnly: true,
+});
+assert.equal(blueSelection.ok, true);
+assert.equal(blueSelection.needsBlueSlotChoice, true);
+assert.deepEqual(blueSelection.availableSlots, [1, 2, 3, 4]);
+assert.equal(
+  blueSelectionPlayer.resources.publicity,
+  blueSelectionPublicity,
+  "蓝槽尚未选择时 selection-only 不得提前扣费",
+);
+const blueSelectionConfirmed = actions.execute("researchTech", blueSelectionContext, {
+  tileId: "blue1",
+  blueSlot: 2,
+  selectionOnly: true,
+});
+assert.equal(blueSelectionConfirmed.ok, true, blueSelectionConfirmed.message);
+assert.equal(blueSelectionConfirmed.blueSlot, 2);
+
 const researchTake = actions.execute("researchTech", researchContext, { tileId: "purple1" });
 assert.equal(researchTake.ok, true);
 assert.equal(researchTake.techType, "purple");

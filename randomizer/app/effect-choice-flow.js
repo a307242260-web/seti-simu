@@ -164,9 +164,13 @@
       const xs = getSectorXsMatchingCondition(effect.options?.condition, player)
         .filter(sectorXHasAvailableScanTarget);
       if (!xs.length) {
-        rocketState.statusNote = `${effect.label}：没有符合条件的扇区`;
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return finishAutomaticRewardEffect(effect, {
+          ok: true,
+          skipped: true,
+          undoable: true,
+          message: `${effect.label}：没有符合条件的扇区，已跳过`,
+          payload: { sectorXs: [] },
+        });
       }
       const repeat = Math.max(1, Math.round(Number(effect.options?.cornerRepeat || effect.options?.repeat || 1)));
       if (effect.options?.allMatching) {
@@ -214,6 +218,10 @@
         button.innerHTML = `扇区 ${sectorX}<small>自己信号 ${countPlayerSignalsInSectorX(player, sectorX)} 个</small>`;
         return button;
       }));
+      if (!opened && !els.scanTargetActions) {
+        rocketState.statusNote = `${effect.label}：请选择扇区`;
+        return { ok: true, pendingChoice: true, message: rocketState.statusNote };
+      }
       if (!opened) return { ok: false, message: "无法打开条件扇区选择" };
       rocketState.statusNote = `${effect.label}：请选择扇区`;
       renderStateReadout();

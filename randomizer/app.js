@@ -3200,6 +3200,7 @@
     formatPlanetRewardGain,
     getCardTriggerFreeMoveEffect,
     getCardTypeCode,
+    getChongPlanetLabel,
     getCurrentPlayer,
     getCurrentInitialSelectionCards,
     getEarthSectorCoordinate,
@@ -5529,10 +5530,14 @@
     if (!headlessMode || !current || current.status !== "active") {
       return { ok: false, message: "没有可跳过的活动效果" };
     }
-    if (current.options?.skippable === false || current.required) {
-      return { ok: false, message: `${current.label} 必须完成，不能跳过` };
+    if (finishCurrentCardMoveEffectEarly()) {
+      return { ok: true, progressed: true, skipped: true, message: `已结束：${current.label}` };
     }
     skipCurrentActionEffect();
+    if (current.status === "active") {
+      cleanupSkippedActionEffect(current);
+      completeCurrentActionEffect("skipped");
+    }
     return { ok: true, progressed: true, skipped: true, message: `已跳过：${current.label}` };
   }
 
@@ -5890,6 +5895,7 @@
 
   function openScanAction4Picker() {
     if (!els.scanAction4Overlay || !els.scanAction4Actions) {
+      if (headlessMode) return handleScanAction4Choice("skip");
       return { ok: false, message: "无法打开发射/移动选择" };
     }
 
@@ -6072,13 +6078,20 @@
     }
     const rocketsForPlayer = getMovableTokensForCardMoveEffect(effect, currentPlayer?.id);
     if (!rocketsForPlayer.length) {
-      rocketState.statusNote = isIndustryHuanyuMoveEffect(effect)
+      const message = isIndustryHuanyuMoveEffect(effect)
         ? `${effect.label}：没有可移动的另一枚火箭，可点击跳过`
-        : "没有可移动的飞船";
+        : `${effect.label || "移动"}：没有可移动的飞船，已跳过`;
       deactivateMoveMode();
+      if (!isIndustryHuanyuMoveEffect(effect)) {
+        return skipActionEffectWithMessage(effect, message, {
+          reason: "没有可移动的飞船",
+          abilityId: "moveProbe",
+        });
+      }
+      rocketState.statusNote = message;
       renderActionEffectBar();
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message };
     }
 
     if (!pendingState.actionEffectFlow.cardMoveEffect
@@ -9199,6 +9212,7 @@
       pendingState.actionEffectFlow?.cardMoveEffect,
       pendingState.cardCornerFreeMove,
       pendingState.strategyPassiveSlotChoice,
+      pendingState.chongFossilChoice,
       pendingState.discardAction,
       pendingState.cardSelectionAction,
       pendingState.landTargetAction,
@@ -9281,8 +9295,61 @@
         )),
       };
     }
+    const chongFossilPending = pendingState.chongFossilChoice;
+    if (chongFossilPending) {
+      return {
+        actorPlayer: getHeadlessConditionalPlayer(chongFossilPending),
+        candidates: (chongFossilPending.fossilIds || []).map((fossilId) => ({
+          id: "conditionalChoice",
+          family: "choose_reward",
+          label: `虫族化石 ${fossilId}`,
+          target: { kind: "chong-fossil-choice", choiceId: fossilId },
+          fossilId,
+        })),
+      };
+    }
+    const runezuFacePending = pendingState.runezuFaceSymbolPlacement;
+    if (runezuFacePending) {
+      return {
+        actorPlayer: getPlayerById(runezuFacePending.playerId) || getCurrentPlayer(),
+        candidates: (runezuFacePending.choices || []).map((choice) => ({
+          id: "conditionalChoice",
+          family: "choose_reward",
+          label: choice.label || choice.symbolId,
+          target: {
+            kind: "runezu-face-symbol-choice",
+            choiceId: choice.symbolId,
+          },
+          symbolId: choice.symbolId,
+        })),
+      };
+    }
+    const runezuBranchPending = pendingState.runezuSymbolBranch;
+    if (runezuBranchPending) {
+      return {
+        actorPlayer: getHeadlessConditionalPlayer(runezuBranchPending),
+        candidates: (runezuBranchPending.branches || []).map((branch, index) => ({
+          id: "conditionalChoice",
+          family: "choose_branch",
+          label: branch.label || `符文分支 ${index + 1}`,
+          target: { kind: "runezu-symbol-branch", choiceId: String(index) },
+        })),
+      };
+    }
     const scanTargetPending = pendingState.scanTargetAction;
     if (scanTargetPending) {
+      if (scanTargetPending.type === "conditional_sector_scan") {
+        return {
+          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          candidates: (scanTargetPending.sectorXs || []).map((sectorX) => ({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `条件扫描扇区 ${sectorX}`,
+            target: { kind: "conditional-sector", choiceId: String(sectorX), sectorX },
+            sectorX,
+          })),
+        };
+      }
       if (scanTargetPending.type === "discard_corner_repeat") {
         return {
           actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
@@ -9863,7 +9930,7 @@
         })),
       };
     }
-    if (tracePending && picker?.mode === "trace-board") {
+    if (picker?.mode === "trace-board") {
       const slotIds = getAlienTraceChoiceSlotIds(picker.allowedAlienSlotIds);
       const traceTypes = picker.allowedTraceTypes?.length ? picker.allowedTraceTypes : aliens.TRACE_TYPES;
       const candidates = [];
@@ -9886,17 +9953,36 @@
           });
         }
       }
-      return { actorPlayer: getHeadlessConditionalPlayer(tracePending), candidates };
+      return { actorPlayer: getHeadlessConditionalPlayer(tracePending || picker), candidates };
     }
     return { actorPlayer: null, candidates: [] };
   }
 
   function executeLegacyHeadlessConditionalAction(action) {
+    if (pendingState.scanTargetAction?.type === "conditional_sector_scan" && action?.target?.kind === "conditional-sector") {
+      return handleConditionalSectorChoice(action.sectorX ?? action.target.sectorX ?? action.target.choiceId);
+    }
+    if (pendingState.chongFossilChoice && action?.target?.kind === "chong-fossil-choice") {
+      return handleChongFossilChoice(action.fossilId || action.target.choiceId);
+    }
+    if (pendingState.runezuSymbolBranch && action?.target?.kind === "runezu-symbol-branch") {
+      return handleRunezuSymbolBranchChoice(action.target.choiceId);
+    }
+    if (pendingState.runezuFaceSymbolPlacement && action?.target?.kind === "runezu-face-symbol-choice") {
+      return handleRunezuFaceSymbolChoice(action.symbolId || action.target.choiceId);
+    }
     if (action?.target?.kind === "final-score-tile") {
       return handleFinalScoreTileClick(action.target.choiceId);
     }
     if (isTechTilePickingActive() && action?.target?.kind === "research-tech-tile") {
-      return handleSupplyTechTileClick(action.tileId || action.target.tileId);
+      const result = handleSupplyTechTileClick(
+        action.tileId || action.target.tileId || action.target.choiceId,
+      );
+      if (result?.ok !== false && techGameState.ui.pendingTileId) {
+        const blueSlot = tech.getAvailableBlueSlots(getCurrentPlayer()?.techState)?.[0];
+        if (blueSlot != null) return confirmTechBlueSlotChoice(blueSlot);
+      }
+      return result;
     }
     if (isTechTilePickingActive() && action?.target?.kind === "research-tech-blue-slot") {
       return confirmTechBlueSlotChoice(Number(action.blueSlot ?? action.target.slotId));
@@ -10034,7 +10120,10 @@
     if (pendingState.landTargetAction && action?.target?.kind === "land-target") {
       return confirmLandTargetChoice(Number(action.choiceIndex ?? action.target.choiceId));
     }
-    if (pendingState.alienTraceAction && action?.target?.kind === "alien-state-trace") {
+    if (
+      (pendingState.alienTraceAction || pendingState.alienTracePickerState?.mode === "trace-board")
+      && action?.target?.kind === "alien-state-trace"
+    ) {
       return handleStateTraceSlotPlacement(Number(action.alienSlotId ?? action.target.slotId), action.traceType || action.target.traceType);
     }
     return { ok: false, message: "条件动作与当前 pending 状态不匹配" };

@@ -56,6 +56,7 @@
       formatPlanetRewardGain,
       getCardTriggerFreeMoveEffect,
       getCardTypeCode,
+      getChongPlanetLabel,
       getCurrentPlayer,
       getCurrentInitialSelectionCards,
       getEarthSectorCoordinate,

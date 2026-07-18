@@ -101,6 +101,7 @@
       runezu,
       scanEffects,
       solar,
+      skipActionEffectWithMessage,
       syncHandScanSelectionChrome,
       syncTechSelectionChrome,
       turnState,
@@ -846,6 +847,13 @@
       });
       if (!result.ok) {
         endEffectHistoryStep();
+        if (/火箭数量已达上限|资源不足/.test(String(result.message || ""))) {
+          return skipActionEffectWithMessage(
+            effect,
+            `${effect.label || "发射奖励"}：${result.message}，已跳过`,
+            { reason: result.message || null, abilityId: result.abilityId || "launchProbe" },
+          );
+        }
         rocketState.statusNote = result.message;
         renderStateReadout();
         return result;

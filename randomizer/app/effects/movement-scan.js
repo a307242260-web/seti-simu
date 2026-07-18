@@ -665,9 +665,11 @@
       const preferredRocketId = placement?.ok ? placement.rocket?.id : null;
       const pluto = getAvailablePlutoEffectAction("land", effect, { preferredRocketId });
       if (!landOptions.ok && !pluto.ok) {
-        rocketState.statusNote = landOptions.message;
-        renderStateReadout();
-        return landOptions;
+        return skipActionEffectWithMessage(
+          effect,
+          `${effect.label || "登陆"}：${landOptions.message || "没有可用登陆目标"}，已跳过`,
+          { reason: landOptions.message || null, abilityId: "land" },
+        );
       }
       const currentPlayer = getCurrentPlayer();
       const choices = [];

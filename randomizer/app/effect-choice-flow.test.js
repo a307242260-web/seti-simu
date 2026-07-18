@@ -17,7 +17,7 @@ function makeButton() {
   };
 }
 
-function createHarness() {
+function createHarness(overrides = {}) {
   const player = {
     id: "p1",
     color: "white",
@@ -202,9 +202,28 @@ function createHarness() {
     restoreMutableObject() {},
     getSectorContentForMove: () => "asteroid",
     isAsteroidContent: (content) => content === "asteroid",
+    ...overrides,
   });
 
   return { helper, pendingState, rocketState, calls, els, player };
+}
+
+{
+  const { helper, calls } = createHarness({
+    cardEffects: {
+      EFFECT_TYPES: { SECTOR_X_SCAN: "sector_x_scan" },
+      getMatchingConditionalSectorXs: () => [],
+    },
+  });
+  const result = helper.executeConditionalSectorScanEffect({
+    id: "cond-empty",
+    label: "条件扫描",
+    options: { condition: { type: "none" } },
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.skipped, true);
+  assert.match(result.message, /没有符合条件的扇区，已跳过/);
+  assert.equal(calls.finished.length, 1);
 }
 
 {

@@ -140,6 +140,20 @@ const blueOneActions = researchActions.filter((action) => action.target.tileId =
 assert.ok(blueOneActions.length > 1, "每个可用蓝槽应成为独立、稳定的目标");
 assert.equal(new Set(blueOneActions.map((action) => action.target.blueSlot)).size, blueOneActions.length);
 
+{
+  const selectionContext = createContext();
+  const selectionRegistry = createRegistry();
+  const selectionActions = selectionRegistry.enumerate(selectionContext, {
+    family: "research_tech",
+    payload: { selectionOnly: true, skipCost: true, techTypes: ["orange"] },
+  });
+  assert.ok(selectionActions.length, "科技效果内的 selection-only 请求应产生候选");
+  assert.ok(selectionActions.every((action) => action.payload.selectionOnly === true));
+  const selectionResult = selectionRegistry.execute(selectionContext, selectionActions[0]);
+  assert.equal(selectionResult.ok, true, selectionResult.message);
+  assert.equal(selectionResult.payload.techType, "orange");
+}
+
 for (const scenario of [
   { family: "launch", create: () => createContext() },
   { family: "orbit", create: () => createContext({ planetIds: ["mars", "jupiter"] }) },

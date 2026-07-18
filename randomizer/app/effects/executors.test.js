@@ -48,3 +48,36 @@ const { createEffectDispatcher } = require("./dispatcher");
 
   console.log("effect executor tests passed");
 })();
+
+(() => {
+  const calls = [];
+  const executors = createEffectRewardExecutors({
+    abilities: {
+      executeAbility() {
+        return {
+          ok: false,
+          abilityId: "launchProbe",
+          message: "火箭数量已达上限（2/2）",
+        };
+      },
+    },
+    beginEffectHistoryStep: () => calls.push("begin"),
+    createActionContext: () => ({}),
+    endEffectHistoryStep: () => calls.push("end"),
+    renderStateReadout: () => calls.push("render"),
+    rocketState: {},
+    skipActionEffectWithMessage(effect, message, payload) {
+      calls.push({ effect, message, payload });
+      return { ok: true, skipped: true, message };
+    },
+  });
+  const effect = { label: "科技奖励发射", options: { skipCost: true }, status: "active" };
+  const result = executors.executeLaunchRewardEffect(effect);
+  assert.equal(result.ok, true);
+  assert.equal(result.skipped, true);
+  assert.match(result.message, /火箭数量已达上限.*已跳过/);
+  assert.deepEqual(calls.slice(0, 2), ["begin", "end"]);
+  assert.equal(calls[2].effect, effect);
+
+  console.log("launch reward saturation tests passed");
+})();

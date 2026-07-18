@@ -2537,9 +2537,7 @@ function closeChongTaskCompletionDialog() {
   }
 
 function openChongFossilChoiceDialog(options = {}) {
-    if (!chong || !els.scanTargetOverlay || !els.scanTargetActions) {
-      return { ok: false, message: "无法打开虫族化石选择窗口" };
-    }
+    if (!chong) return { ok: false, message: "虫族规则模块未初始化" };
     const player = options.player || getCurrentPlayer();
     if (!player) return { ok: false, message: "没有当前玩家" };
 
@@ -2566,7 +2564,13 @@ function openChongFossilChoiceDialog(options = {}) {
       beforePlayerState: options.beforePlayerState || structuredClone(playerState),
       beforeAlienState: options.beforeAlienState || structuredClone(alienGameState),
       beforeCardState: options.beforeCardState || structuredClone(cardState),
+      fossilIds: fossils.map((fossil) => fossil.fossilId),
     };
+
+    rocketState.statusNote = "虫族化石：请选择 1 枚化石";
+    if (!els.scanTargetOverlay || !els.scanTargetActions || typeof document === "undefined") {
+      return { ok: true, awaitingChoice: true, fossils, message: rocketState.statusNote };
+    }
 
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = options.title || "选择虫族化石";
     if (els.scanTargetSubtitle) {
@@ -2609,7 +2613,6 @@ function openChongFossilChoiceDialog(options = {}) {
     }
     els.scanTargetActions.replaceChildren(...nodes);
     els.scanTargetOverlay.hidden = false;
-    rocketState.statusNote = "虫族化石：请选择 1 枚化石";
     renderAlienPanels();
     renderStateReadout();
     return { ok: true, awaitingChoice: true, fossils, message: rocketState.statusNote };
@@ -3973,7 +3976,7 @@ function closeRunezuFaceSymbolPlacement() {
   }
 
 function openRunezuFaceSymbolPlacement(alienSlotId, position) {
-    if (!runezu || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!runezu) {
       return { ok: false, message: "无法打开符文族 symbol 放置窗口" };
     }
     const currentPlayer = getCurrentPlayer();
@@ -3989,7 +3992,11 @@ function openRunezuFaceSymbolPlacement(alienSlotId, position) {
       playerId: currentPlayer.id,
       beforeAlienState: structuredClone(alienGameState),
       beforePlayerState: structuredClone(playerState),
+      choices: structuredClone(check.choices || []),
     };
+    if (!els.scanTargetOverlay || !els.scanTargetActions) {
+      return { ok: true, awaitingChoice: true, message: "符文族黑圈：请选择要放置的 symbol" };
+    }
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = "符文族黑圈";
     if (els.scanTargetSubtitle) {
       els.scanTargetSubtitle.textContent = `选择 1 个 symbol 放入${runezu.formatFaceSymbolSlotLabel(check.position)}并结算奖励。`;
@@ -4095,7 +4102,7 @@ function closeRunezuSymbolBranchDialog() {
   }
 
 function openRunezuSymbolBranchDialog(effect) {
-    if (!runezu || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!runezu) {
       return { ok: false, message: "无法打开符文族分支选择" };
     }
     const branches = effect.options?.branches || [];
@@ -4106,6 +4113,9 @@ function openRunezuSymbolBranchDialog(effect) {
       beforeAlienState: structuredClone(alienGameState),
       beforePlayerState: structuredClone(playerState),
     };
+    if (!els.scanTargetOverlay || !els.scanTargetActions) {
+      return { ok: true, awaitingChoice: true, message: "符文族：请选择一组 symbol 奖励" };
+    }
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = "符文族符文奖励";
     if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一组 symbol，按黑圈映射依次结算奖励。";
     if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
