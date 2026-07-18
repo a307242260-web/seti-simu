@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SETI 权威游戏状态现状</title>
+  <style>
+    :root {
+      --bg: #f1efe8; --paper: #fffdf8; --ink: #191b18; --muted: #66685f;
+      --line: #c8c4b8; --strong: #292c27; --green: #335f4a; --green-soft: #dce8de;
+      --amber: #99651d; --amber-soft: #f4e5c8; --red: #8d4337; --red-soft: #efdcd6;
+      --blue: #355d78; --blue-soft: #dce8ef; --gray: #e9e7e0;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; color: var(--ink); background: var(--bg);
+      background-image: linear-gradient(rgba(25,27,24,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(25,27,24,.025) 1px, transparent 1px);
+      background-size: 24px 24px; font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; line-height: 1.58;
+    }
+    code, .mono { font-family: "SFMono-Regular", Consolas, monospace; }
+    .page { width: min(1360px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 72px; }
+    .masthead { display: grid; grid-template-columns: minmax(0,1fr) 310px; gap: 28px; padding: 34px; border: 2px solid var(--strong); background: var(--paper); box-shadow: 8px 8px 0 rgba(41,44,39,.14); }
+    .eyebrow { margin-bottom: 12px; color: var(--green); font: 800 12px/1.4 "SFMono-Regular", Consolas, monospace; letter-spacing: .08em; text-transform: uppercase; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 850px; margin-bottom: 14px; font-size: clamp(34px,5vw,62px); line-height: 1.05; letter-spacing: -.045em; }
+    h2 { margin-bottom: 8px; font-size: clamp(26px,3vw,38px); line-height: 1.15; }
+    h3 { margin-bottom: 7px; font-size: 18px; }
+    p { color: var(--muted); }
+    .lede { max-width: 900px; margin-bottom: 0; font-size: 18px; }
+    .verdict { display: flex; flex-direction: column; justify-content: space-between; padding: 20px; color: white; background: var(--strong); }
+    .verdict small { color: #cfd2ca; }
+    .verdict strong { display: block; margin: 16px 0; font-size: 23px; line-height: 1.3; }
+    .verdict .grade { font: 800 48px/1 "SFMono-Regular", Consolas, monospace; }
+    nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    nav a { padding: 7px 11px; border: 1px solid var(--line); color: var(--ink); background: rgba(255,253,248,.82); text-decoration: none; font-size: 13px; }
+    section { margin-top: 54px; scroll-margin-top: 20px; }
+    .section-head { display: grid; grid-template-columns: 52px minmax(0,1fr); gap: 16px; margin-bottom: 22px; }
+    .section-index { display: grid; place-items: center; width: 50px; height: 50px; border: 1px solid var(--strong); background: var(--paper); font: 800 14px/1 "SFMono-Regular", Consolas, monospace; }
+    .section-head p { max-width: 900px; margin-bottom: 0; }
+    .summary { display: grid; grid-template-columns: repeat(4,1fr); border: 1px solid var(--strong); background: var(--paper); }
+    .summary > div { min-height: 145px; padding: 20px; border-right: 1px solid var(--line); }
+    .summary > div:last-child { border-right: 0; }
+    .summary b { display: block; margin-bottom: 8px; font-size: 31px; line-height: 1; }
+    .summary span { display: block; color: var(--muted); font-size: 13px; }
+    .summary strong { display: block; margin-top: 13px; font-size: 14px; }
+    .architecture { padding: 24px; border: 1px solid var(--strong); background: var(--paper); overflow-x: auto; }
+    .arch-grid { display: grid; grid-template-columns: 1fr 58px 1.25fr 58px 1fr; align-items: stretch; min-width: 980px; }
+    .arch-box { padding: 20px; border: 1px solid var(--strong); }
+    .arch-box.runtime { background: var(--red-soft); }
+    .arch-box.root { background: var(--green-soft); }
+    .arch-box.derived { background: var(--blue-soft); }
+    .arch-box ul { margin: 12px 0 0; padding-left: 19px; color: var(--muted); font-size: 13px; }
+    .arrow { display: grid; place-items: center; font-size: 24px; }
+    .snapshot { grid-column: 1 / -1; margin-top: 14px; padding: 14px 18px; border: 1px dashed var(--strong); background: #f7f4ec; text-align: center; }
+    .snapshot strong { color: var(--green); }
+    .callout { margin-top: 14px; padding: 16px 18px; border-left: 5px solid var(--amber); background: var(--amber-soft); color: #533c19; }
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    button { padding: 7px 12px; border: 1px solid var(--strong); color: var(--ink); background: var(--paper); font: inherit; font-size: 13px; cursor: pointer; }
+    button.active { color: white; background: var(--strong); }
+    table { width: 100%; border-collapse: collapse; border: 1px solid var(--strong); background: var(--paper); }
+    th, td { padding: 13px 14px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--gray); font-size: 13px; }
+    td { font-size: 14px; }
+    td:first-child { width: 18%; font-weight: 750; }
+    td:nth-child(2) { width: 22%; }
+    td:nth-child(3) { width: 27%; }
+    td:nth-child(4) { width: 23%; }
+    td:last-child { width: 10%; }
+    tr[hidden] { display: none; }
+    .badge { display: inline-block; padding: 3px 7px; border: 1px solid currentColor; font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .pure { color: var(--green); } .mixed { color: var(--amber); } .derived { color: var(--blue); }
+    .truth-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
+    .truth-card { min-height: 245px; padding: 20px; border: 1px solid var(--strong); background: var(--paper); }
+    .truth-card .mono { display: block; margin-bottom: 22px; color: var(--muted); font-size: 11px; letter-spacing: .07em; }
+    .truth-card ul { margin-bottom: 0; padding-left: 19px; color: var(--muted); font-size: 14px; }
+    .risk-stack { border: 1px solid var(--strong); background: var(--paper); }
+    .risk { display: grid; grid-template-columns: 54px 210px minmax(0,1fr) 220px; border-bottom: 1px solid var(--line); }
+    .risk:last-child { border-bottom: 0; }
+    .risk > div { padding: 16px; }
+    .rank { display: grid; place-items: center; border-right: 1px solid var(--line); font: 800 18px/1 "SFMono-Regular", Consolas, monospace; }
+    .risk-title { border-right: 1px solid var(--line); font-weight: 800; }
+    .risk-body { color: var(--muted); }
+    .risk-impact { border-left: 1px solid var(--line); font-size: 13px; }
+    .target { display: grid; grid-template-columns: 1fr 70px 1fr 70px 1fr; align-items: stretch; padding: 24px; border: 2px solid var(--strong); background: var(--paper); }
+    .target-box { padding: 20px; border: 1px solid var(--strong); }
+    .target-box.commit { background: var(--green-soft); }
+    .target-box.session { background: var(--amber-soft); }
+    .target-box.view { background: var(--blue-soft); }
+    .target-box p { margin-bottom: 0; font-size: 13px; }
+    .decision { display: grid; grid-template-columns: minmax(0,1fr) 350px; gap: 18px; }
+    .decision > div { padding: 24px; border: 2px solid var(--strong); background: var(--paper); }
+    .decision .question { color: white; background: var(--strong); }
+    .decision .question p { color: #d7d9d2; }
+    .evidence { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+    .evidence a { display: block; padding: 13px 15px; border: 1px solid var(--line); color: var(--ink); background: var(--paper); text-decoration: none; }
+    .evidence span { display: block; color: var(--muted); font-size: 12px; }
+    footer { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    @media (max-width: 980px) {
+      .masthead, .decision { grid-template-columns: 1fr; }
+      .summary { grid-template-columns: repeat(2,1fr); }
+      .summary > div:nth-child(2) { border-right: 0; }
+      .summary > div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .truth-grid { grid-template-columns: 1fr; }
+      .risk { grid-template-columns: 48px 1fr; }
+      .risk-title { border-right: 0; }
+      .risk-body, .risk-impact { grid-column: 1 / -1; border-top: 1px solid var(--line); border-left: 0; }
+      .target { grid-template-columns: 1fr; gap: 10px; }
+      .target .arrow { transform: rotate(90deg); }
+      .evidence { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div>
+        <div class="eyebrow">SETI Architecture Review · Authoritative State</div>
+        <h1>权威游戏状态：现在是一组事实，不是一个整体</h1>
+        <p class="lede">当前实现已经有明确的规则事实来源，也能稳定保存和供 headless 训练复用；但它由 <strong>12 个顶层可变切片</strong>组成，部分切片混有 UI / 可重算信息，尚未形成带版本、事务边界与确定性保证的统一 <code>GameState</code>。</p>
+        <nav>
+          <a href="#boundary">当前边界</a><a href="#inventory">状态清单</a><a href="#truth">三类状态</a><a href="#risks">主要问题</a><a href="#target">与 Session 衔接</a><a href="#decision">阶段结论</a>
+        </nav>
+      </div>
+      <aside class="verdict">
+        <small>现状判断</small>
+        <strong>单一逻辑真相<br>分散物理所有权</strong>
+        <div><span class="grade">B−</span><br><small>可用、可恢复、可复用；尚未标准化</small></div>
+      </aside>
+    </header>
+
+    <section id="boundary">
+      <div class="section-head"><div class="section-index">01</div><div><h2>权威边界现在在哪里</h2><p><code>app.js</code> 创建并持有状态对象，各领域模块通过显式 context 取得引用并直接修改。<code>createGameRecoverySnapshot()</code> 把 12 个切片组合起来，是目前最接近“权威状态根”的实际定义。</p></div></div>
+      <div class="summary">
+        <div><b>12</b><span>进入恢复快照的核心切片</span><strong>事实上的持久化根</strong></div>
+        <div><b>1</b><span>浏览器与 headless 共用的规则实现</span><strong>没有第二套模拟器状态</strong></div>
+        <div><b>0</b><span>统一 GameState aggregate</span><strong>没有统一 schema / stateVersion</strong></div>
+        <div><b>Stable</b><span>仅稳定边界允许本地保存</span><strong>执行中状态暂不落盘</strong></div>
+      </div>
+      <div class="architecture" style="margin-top:18px">
+        <div class="arch-grid">
+          <div class="arch-box runtime"><h3>运行态（不应直接成为棋局事实）</h3><ul><li>pending / 当前 effect flow</li><li>action & quick history session</li><li>AI 控制、日志草稿、overlay / picker</li><li>DOM、渲染缓存、调试模式</li></ul></div>
+          <div class="arrow">→</div>
+          <div class="arch-box root"><h3>12 个 core_state 切片</h3><ul><li>太阳系、玩家、轮次、火箭、星球</li><li>星云数据、科技、卡牌、任务卡</li><li>外星人、终局计分、开局选择</li><li>由 <code>app.js</code> 统一装配，但非单对象</li></ul></div>
+          <div class="arrow">→</div>
+          <div class="arch-box derived"><h3>派生视图</h3><ul><li>legal actions / observation</li><li>计分摘要、AI 估值</li><li>渲染结构、可见位置</li><li>原则上可由状态重新计算</li></ul></div>
+          <div class="snapshot"><strong>恢复快照 = 12 个 core_state + aiControl</strong>　｜　恢复前先清空 pending、effect、history、选择 UI，再整对象回填并全量刷新</div>
+        </div>
+      </div>
+      <div class="callout"><strong>准确说法：</strong>当前不是“没有权威状态”，而是“权威状态已存在，但它的边界由快照代码和调用约定定义，尚未由独立数据模型定义”。</div>
+    </section>
+
+    <section id="inventory">
+      <div class="section-head"><div class="section-index">02</div><div><h2>12 个切片分别负责什么</h2><p>下表按“纯规则事实 / 混合状态 / 可重算索引”标注。可用筛选器快速查看真正需要进入未来 <code>CommittedGameState</code> 的部分。</p></div></div>
+      <div class="controls"><button class="active" data-filter="all">全部 12 项</button><button data-filter="pure">纯规则事实</button><button data-filter="mixed">混有运行/UI</button><button data-filter="derived">可重算候选</button></div>
+      <table>
+        <thead><tr><th>切片</th><th>决定的事实</th><th>当前内容</th><th>边界观察</th><th>性质</th></tr></thead>
+        <tbody>
+          <tr data-kind="pure"><td><code>solarState</code></td><td>太阳系当前几何局面</td><td>轮盘步数/旋转、扇区槽位、奥陌陌激活</td><td>结构紧凑，位置快照可由它派生</td><td><span class="badge pure">纯</span></td></tr>
+          <tr data-kind="pure"><td><code>playerState</code></td><td>玩家私有与公开资产</td><td>资源、收入、手牌、预留牌、科技、分数来源、当前玩家</td><td>核心领域事实最集中；当前玩家所有权也放在这里</td><td><span class="badge pure">纯</span></td></tr>
+          <tr data-kind="pure"><td><code>turnState</code></td><td>轮次、顺位和游戏终止</td><td>round/turn/actionCycle、活跃/Pass/完成玩家、访问记录、终局标志</td><td>当前玩家不在此处，需与 <code>playerState</code> 协同</td><td><span class="badge pure">纯</span></td></tr>
+          <tr data-kind="pure"><td><code>nebulaDataState</code></td><td>星云与扇区的数据控制权</td><td>数据 token、额外标记、扇区结算与玩家胜场</td><td>含部分统计缓存，但仍以棋盘事实为主</td><td><span class="badge pure">纯</span></td></tr>
+          <tr data-kind="pure"><td><code>alienGameState</code></td><td>外星人揭示与痕迹占有</td><td>揭示池、两个外星人槽、三色痕迹、额外标记</td><td>清晰的领域聚合</td><td><span class="badge pure">纯</span></td></tr>
+          <tr data-kind="pure"><td><code>finalScoringState</code></td><td>终局板块配置与占位</td><td>阈值、板块 variant、marks、pendingMarks</td><td><code>pendingMarks</code> 语义介于事实与流程中间</td><td><span class="badge pure">较纯</span></td></tr>
+          <tr data-kind="pure"><td><code>planetStatsState</code></td><td>各星球环绕/登陆占位</td><td>数量、玩家 marker、卫星登陆</td><td>与火箭落点需保持跨切片一致</td><td><span class="badge pure">纯</span></td></tr>
+          <tr data-kind="mixed"><td><code>rocketState</code></td><td>探测器位置与控制</td><td>火箭列表、活动火箭、编号序列、<code>statusNote</code></td><td>棋子事实与展示提示同处一个对象</td><td><span class="badge mixed">混合</span></td></tr>
+          <tr data-kind="mixed"><td><code>techGameState</code></td><td>科技供应板</td><td><code>board</code> + 选择、作弊、pending tile、状态文案等 <code>ui</code></td><td>最明确的规则状态 / UI 状态混装</td><td><span class="badge mixed">混合</span></td></tr>
+          <tr data-kind="mixed"><td><code>cardState</code></td><td>公共牌、牌库、弃牌与 PASS 预留堆</td><td>牌堆事实 + 选择/弃牌/出牌开关 <code>ui</code></td><td>恢复快照会把临时选择标志一起保存</td><td><span class="badge mixed">混合</span></td></tr>
+          <tr data-kind="derived"><td><code>cardTaskState</code></td><td>当前可触发任务的查询索引</td><td>ready tasks、按卡牌索引、当前玩家预留任务摘要</td><td>由玩家卡牌与任务完成状态刷新生成，适合移出 core</td><td><span class="badge derived">派生</span></td></tr>
+          <tr data-kind="mixed"><td><code>setupSelectionState</code></td><td>开局选择过程</td><td>公司/初始牌候选、步骤与当前选择</td><td>开局中是流程事实；建局完成后应退出长期棋局核心</td><td><span class="badge mixed">阶段性</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="truth">
+      <div class="section-head"><div class="section-index">03</div><div><h2>真正需要区分的三类状态</h2><p>现在代码中已经隐约存在这三层，但类型和所有权没有把它们强制隔离。</p></div></div>
+      <div class="truth-grid">
+        <article class="truth-card"><span class="mono">A · DURABLE FACTS</span><h3>已提交的棋局事实</h3><p>如果关掉界面再打开，仍应原样成立；任何合法行动与计分都以它为输入。</p><ul><li>玩家资产、牌与科技</li><li>棋盘位置、轮次与顺位</li><li>痕迹、终局板块、数据控制</li><li>未来应成为 <code>CommittedGameState</code></li></ul></article>
+        <article class="truth-card"><span class="mono">B · SESSION FACTS</span><h3>当前 Effect Session 的工作事实</h3><p>执行中必须真实可见，但只有整条队列成功结束后才升级为已提交事实。</p><ul><li><code>workingState</code></li><li>effectQueue / cursor</li><li>DecisionEffect 的输入等待</li><li>撤销边界与不可逆标记</li></ul></article>
+        <article class="truth-card"><span class="mono">C · RUNTIME / PROJECTION</span><h3>宿主运行态与派生视图</h3><p>不应改变规则结论；可在恢复后重建，或由玩家版/训练版分别拥有。</p><ul><li>overlay、picker、选择高亮</li><li>AI policy / 自动调度</li><li>legal actions、observation</li><li>日志文案、DOM 和渲染缓存</li></ul></article>
+      </div>
+    </section>
+
+    <section id="risks">
+      <div class="section-head"><div class="section-index">04</div><div><h2>现状的 5 个主要问题</h2><p>这些问题不是说当前规则不可用，而是说明它还不足以直接作为玩家版与训练版长期复用的稳定契约。</p></div></div>
+      <div class="risk-stack">
+        <div class="risk"><div class="rank">1</div><div class="risk-title">没有统一 schema</div><div class="risk-body">12 个变量名 + 快照拼装顺序就是事实契约；没有独立 <code>GameState</code> 类型、schemaVersion、stateVersion 和集中校验。</div><div class="risk-impact">新增状态容易漏存、漏恢复、漏 observation</div></div>
+        <div class="risk"><div class="rank">2</div><div class="risk-title">跨切片原子性靠流程保证</div><div class="risk-body">拿科技、环绕/登陆、卡牌移动等都会同时修改多个对象；中途失败是否留下半成品，主要由调用顺序和 history 命令约束。</div><div class="risk-impact">正由 Effect Session 重构补齐</div></div>
+        <div class="risk"><div class="rank">3</div><div class="risk-title">核心切片不够纯</div><div class="risk-body">科技/卡牌直接包含 <code>ui</code>，火箭含展示文案，任务卡状态可由别的事实重算；持久化边界大于规则边界。</div><div class="risk-impact">玩家 UI 与训练宿主难以真正解耦</div></div>
+        <div class="risk"><div class="rank">4</div><div class="risk-title">确定性状态仍有闭包外溢</div><div class="risk-body">模块级自增序列、缓存与 <code>Math.random</code> 仍存在。headless 通过每次 reset 重建模块注册表与 seed RNG 来清理，而不是只恢复 core_state。</div><div class="risk-impact">单靠 12 切片尚不能保证任意点确定性续跑</div></div>
+        <div class="risk"><div class="rank">5</div><div class="risk-title">只能保存稳定边界</div><div class="risk-body">本地保存明确拒绝 pending、effect、日志草稿或 history session 活跃的时刻；恢复还会先清空全部瞬时流程。</div><div class="risk-impact">当前存档表达的是 committed snapshot，不是 session checkpoint</div></div>
+      </div>
+    </section>
+
+    <section id="target">
+      <div class="section-head"><div class="section-index">05</div><div><h2>与 Effect Session 的自然衔接</h2><p>无需推翻现有领域状态。重点是给这批状态增加一个明确容器，把执行中副本和宿主视图区分开。</p></div></div>
+      <div class="target">
+        <div class="target-box commit"><h3>CommittedGameState</h3><p>纯规则事实；带 <code>schemaVersion / stateVersion / rngState</code>；玩家版与训练版共同读取。</p></div>
+        <div class="arrow">→</div>
+        <div class="target-box session"><h3>EffectSession</h3><p>从 committed 克隆出 <code>workingState</code>；队列顺序执行，DecisionEffect 可暂停；完成后原子替换 committed。</p></div>
+        <div class="arrow">→</div>
+        <div class="target-box view"><h3>Host Projections</h3><p>浏览器生成 UI view，训练端生成 observation / legal actions；都不能反向成为规则真相。</p></div>
+      </div>
+      <div class="callout"><strong>建议保留的资产：</strong>现有 12 切片的领域拆分大部分是合理的；改造重点不是合并成一个巨型平面对象，而是用一个根对象明确纳管、净化字段，并建立唯一提交入口。</div>
+    </section>
+
+    <section id="decision">
+      <div class="section-head"><div class="section-index">06</div><div><h2>阶段结论与下一项决策</h2><p>这份现状足以进入状态模型的目标边界讨论，但还不代表应立即另开一轮大重构。</p></div></div>
+      <div class="decision">
+        <div><h3>阶段结论</h3><ul><li>当前权威状态的事实根，是恢复快照列出的 12 个切片。</li><li>它能支撑当前浏览器存档，并已作为 headless <code>core_state</code> 的基础。</li><li>其中真正的长期规则状态约 8–9 组；科技/卡牌需剥离 UI，任务卡状态应评估改为派生索引，开局选择只在 setup session 内权威。</li><li>未来统一根应管理领域切片，而不是取代领域切片。</li></ul></div>
+        <div class="question"><h3>建议下一步只拍板一件事</h3><p><strong>是否确认：</strong>以现有 12 切片为迁移起点，目标上拆成 <code>CommittedGameState + EffectSession + HostRuntime/DerivedView</code> 三层？</p><p>确认后，再在 SETI-62 中定义根 schema、首批净化字段和兼容迁移顺序。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-head"><div class="section-index">07</div><div><h2>代码证据</h2><p>报告判断来自当前仓库实现，不是理想化分层。</p></div></div>
+      <div class="evidence">
+        <a href="../randomizer/app.js"><strong>randomizer/app.js</strong><span>12 个顶层状态对象、恢复快照、稳定保存门槛</span></a>
+        <a href="../randomizer/app/turn-flow.js"><strong>randomizer/app/turn-flow.js</strong><span>新局重置、跨切片状态持有与回合推进</span></a>
+        <a href="../randomizer/game/tech/index.js"><strong>randomizer/game/tech/index.js</strong><span>科技 board 与 ui 混装的直接证据</span></a>
+        <a href="../randomizer/game/cards/deck.js"><strong>randomizer/game/cards/deck.js</strong><span>卡牌事实与选择 UI 混装</span></a>
+        <a href="../randomizer/game/cards/task-state.js"><strong>randomizer/game/cards/task-state.js</strong><span>任务卡可重算查询索引</span></a>
+        <a href="../docs/rl-headless-env.md"><strong>docs/rl-headless-env.md</strong><span>core/runtime/derived 三层契约与确定性隔离约束</span></a>
+      </div>
+    </section>
+    <footer>SETI 架构讨论报告 · 权威游戏状态现状 · 2026-07-19</footer>
+  </main>
+  <script>
+    const buttons = [...document.querySelectorAll('[data-filter]')];
+    const rows = [...document.querySelectorAll('tbody tr[data-kind]')];
+    buttons.forEach((button) => button.addEventListener('click', () => {
+      buttons.forEach((item) => item.classList.toggle('active', item === button));
+      rows.forEach((row) => { row.hidden = button.dataset.filter !== 'all' && row.dataset.kind !== button.dataset.filter; });
+    }));
+  </script>
+</body>
+</html>
