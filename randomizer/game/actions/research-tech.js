@@ -24,6 +24,12 @@
   const ACTION_ID = "researchTech";
   const ACTION_LABEL = "科技";
 
+  function restoreObject(target, snapshot) {
+    if (!target || !snapshot) return;
+    for (const key of Object.keys(target)) delete target[key];
+    Object.assign(target, structuredClone(snapshot));
+  }
+
   function getPlayerTechState(context) {
     const currentPlayer = players.getCurrentPlayer(context.playerState);
     if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
@@ -44,6 +50,28 @@
     return allowedTechTypes ? { techTypes: allowedTechTypes } : {};
   }
 
+  function getResearchOptions(context, options = {}) {
+    const check = canExecute(context, options);
+    if (!check.ok) return check;
+
+    const currentPlayer = players.getCurrentPlayer(context.playerState);
+    const choices = check.takeable.flatMap((tileId) => {
+      if (catalog.getTechType(tileId) !== "blue") {
+        return [{ tileId, blueSlot: null, label: `研究 ${tileId}` }];
+      }
+      return resolver.getAvailableBlueSlots(currentPlayer.techState).map((blueSlot) => ({
+        tileId,
+        blueSlot,
+        label: `研究 ${tileId}（蓝槽 ${blueSlot}）`,
+      }));
+    });
+    return {
+      ...check,
+      choices,
+      needsChoice: choices.length > 1,
+    };
+  }
+
   function canExecute(context, options = {}) {
     const playerResult = getPlayerTechState(context);
     if (!playerResult.ok) return playerResult;
@@ -51,7 +79,7 @@
     const board = context.techBoardState;
     if (!board) return { ok: false, message: "科技版图状态未初始化" };
 
-    const cheatMode = Boolean(context.techUiState?.cheatModeEnabled);
+    const cheatMode = Boolean(context.techUiState?.cheatModeEnabled || options.skipCost);
     const researchCost = resolver.getResearchPublicityCost?.(playerResult.currentPlayer)
       ?? catalog.RESEARCH_PUBLICITY_COST;
     if (!cheatMode && !players.canAfford(playerResult.currentPlayer, { publicity: researchCost })) {
@@ -76,6 +104,61 @@
   function execute(context, options = {}) {
     if (options.tileId) {
       const techTypeOptions = buildTechTypeOptions(options);
+      if (options.selectionOnly) {
+        const playerResult = getPlayerTechState(context);
+        if (!playerResult.ok) return playerResult;
+        const snapshots = {
+          player: structuredClone(playerResult.currentPlayer),
+          board: structuredClone(context.techBoardState),
+          ui: context.techUiState ? structuredClone(context.techUiState) : null,
+        };
+        const researchCost = resolver.getResearchPublicityCost?.(playerResult.currentPlayer)
+          ?? catalog.RESEARCH_PUBLICITY_COST;
+        if (!options.skipCost && !context.techUiState?.cheatModeEnabled) {
+          const spend = players.spendResources(playerResult.currentPlayer, { publicity: researchCost });
+          if (!spend.ok) return spend;
+        }
+        const result = resolver.selectTechTile(context, {
+          tileId: options.tileId,
+          blueSlot: options.blueSlot,
+          ...techTypeOptions,
+        });
+        if (!result.ok || result.needsBlueSlotChoice) {
+          restoreObject(playerResult.currentPlayer, snapshots.player);
+          restoreObject(context.techBoardState, snapshots.board);
+          restoreObject(context.techUiState, snapshots.ui);
+          return result;
+        }
+        if (context.techUiState) {
+          context.techUiState.techSelectionActive = false;
+          context.techUiState.pendingTileId = null;
+          context.techUiState.allowedTechTypes = null;
+        }
+        return {
+          ...result,
+          actionId: ACTION_ID,
+          abilityId: "researchTechSelect",
+          undoable: true,
+          commands: [{
+            label: "选择科技片",
+            describe: "恢复选择科技片前状态",
+            undo() {
+              restoreObject(playerResult.currentPlayer, snapshots.player);
+              restoreObject(context.techBoardState, snapshots.board);
+              restoreObject(context.techUiState, snapshots.ui);
+            },
+          }],
+          cost: options.skipCost ? {} : { publicity: researchCost },
+          payload: {
+            tileId: result.tileId,
+            techType: result.techType,
+            bonusId: result.bonusId,
+            blueSlot: result.blueSlot,
+            firstTake: result.firstTake,
+          },
+          events: [],
+        };
+      }
       return resolver.executeTakeTech(context, {
         tileId: options.tileId,
         blueSlot: options.blueSlot,
@@ -109,6 +192,7 @@
   return Object.freeze({
     id: ACTION_ID,
     label: ACTION_LABEL,
+    getResearchOptions,
     canExecute,
     execute,
   });

@@ -7630,6 +7630,7 @@
       Math: typeof Math === "undefined" ? undefined : Math,
       Number: typeof Number === "undefined" ? undefined : Number,
       String: typeof String === "undefined" ? undefined : String,
+      actions: typeof actions === "undefined" ? undefined : actions,
       abilities: typeof abilities === "undefined" ? undefined : abilities,
       actionHistory: typeof actionHistory === "undefined" ? undefined : actionHistory,
       beginCardSelection: typeof beginCardSelection === "undefined" ? undefined : beginCardSelection,

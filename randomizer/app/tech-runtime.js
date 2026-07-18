@@ -21,6 +21,7 @@
       Math,
       Number,
       String,
+      actions,
       abilities,
       actionHistory,
       beginCardSelection,
@@ -578,9 +579,12 @@
         tileId,
         skipCost: shouldSkipCurrentResearchTechCost(),
       };
+      if (actions?.createStandardAdapter) options.selectionOnly = true;
       if (blueSlot != null) options.blueSlot = blueSlot;
 
-      const result = abilities.executeAbility("researchTechSelect", createActionContext(), options);
+      const result = actions?.createStandardAdapter
+        ? actions.execute("researchTech", createActionContext(), options)
+        : abilities.executeAbility("researchTechSelect", createActionContext(), options);
       if (result.needsBlueSlotChoice) {
         techGameState.ui.pendingTileId = tileId;
         openTechBlueSlotPicker(result);

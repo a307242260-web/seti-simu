@@ -4,7 +4,7 @@
 
 Standard Action 是浏览器控件与训练 Policy 之间唯一共享的游戏决策协议。两端只选择语义 action；候选枚举、执行前校验、状态事务、规则结算和下一个决策边界均由无 DOM 的游戏层负责。
 
-当前阶段冻结协议和 proof obligations，不宣称 15+7 family 已完成行为迁移。`randomizer/app/headless-contract.js` 的 family label 与 normalize 层只能作为兼容适配，不能作为规则覆盖证据。参考实现位于 `randomizer/game/actions/standard-action.js`；`launch` 已通过真实 `canExecute/execute` 进入 registry，后续 family 必须沿同一边界迁入。
+当前阶段冻结协议和 proof obligations，不宣称 15+7 family 已完成行为迁移。`randomizer/app/headless-contract.js` 的 family label 与 normalize 层只能作为兼容适配，不能作为规则覆盖证据。参考实现位于 `randomizer/game/actions/standard-action.js`；`launch`、`orbit`、`land`、`research_tech` 已通过真实 `canExecute/execute` 进入 registry，后续 family 必须沿同一边界迁入。
 
 ## Action envelope
 
@@ -44,11 +44,11 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 | family | phase | 当前 owner / 入口 | 状态 | 迁移依赖与验收重点 |
 |---|---|---|---|---|
 | `launch` | main | `game/actions/launch` | reference | 参考合约已证明 enumerate/validate/execute 共用 `canExecute/execute` |
-| `orbit` | main | `game/actions/orbit` + app Pluto flow | legacy-shared | 统一 rocket target、奖励 effect 与 history |
-| `land` | main | `game/actions/land` + app Pluto flow | legacy-shared | 统一 planet/satellite target、奖励与 trace followup |
+| `orbit` | main | Standard Action registry；app/headless adapter | reference | rocket/planet target 由 registry 枚举；唯一规则执行器为 `game/actions/orbit` |
+| `land` | main | Standard Action registry；app/headless adapter | reference | rocket/planet/satellite target 由 registry 枚举；唯一规则执行器为 `game/actions/land` |
 | `scan` | main | `app/scan-flow` + `game/actions/scan-effects` | app-runtime | 拆出目标枚举、支付、sector/card scan 和延迟结算 |
 | `analyze` | main | abilities/effect/app runtime | app-runtime | 统一数据来源、资源校验和分析奖励链 |
-| `research_tech` | main | `game/actions/research-tech` + tech runtime | legacy-shared | 将 tile/blue slot 显式化为 conditional action |
+| `research_tech` | main | Standard Action registry；app/headless adapter | reference | tile/blue slot 是稳定 target；唯一规则执行器为 `game/actions/research-tech` |
 | `play_card` | main | `app/card-runtime` | app-runtime | 统一手牌目标、费用、卡牌 DSL 与 trigger continuation |
 | `pass` | main | card/turn-end runtime | app-runtime | 统一预留牌选择、必做效果与 passed 状态事务 |
 | `move` | quick | abilities + interaction/AI runtime | app-runtime | 统一 rocket、方向、移动力与补充支付 |
@@ -67,6 +67,10 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 | `accept_optional_effect` | conditional | skip/confirm pending | taxonomy-only | 明确 `accept/skip` payload，禁止默认取首项 |
 
 迁移顺序：先以 launch/orbit/land/research_tech 固化参考模式；再迁 scan/analyze/play_card/pass；再迁全部 quick action 与 end_turn；最后统一 conditional registry 和 deterministic drain。后续阶段只能把矩阵状态升级为有行为证据的状态，不得仅修改标签。
+
+四个参考 action 的 composition 由 `game/actions/index.js#createStandardRegistry` 提供；浏览器与 headless 只应持有 `createStandardAdapter()` 返回的 `enumerate/execute/executeLegacy`。`executeLegacy` 在多目标时返回 `STANDARD_ACTION_AMBIGUOUS`，不得沿用旧入口的默认首项语义。orbit/land 的目标分别固定为 `rocketId + planetId` 与 `rocketId + planetId + type/satelliteId`；research 的目标固定为 `tileId + blueSlot`。完整 conditional registry 和 effect drain 仍属于阶段 4，本阶段不把静态 conditional family 标成行为完成。
+
+阶段 1 行为证据：`randomizer/game/actions/standard-action-reference.test.js` 对四个 family 做同 checkpoint 全候选 fork，覆盖多 rocket、主星/卫星、科技 tile/blue slot；同时断言 stale、越权、篡改 target 时玩家状态、盘面、RNG cursor、history 与 replay 均不变化，并以两个独立 adapter 对同一 actionId 做结果/状态 parity。
 
 ## Proof obligations
 

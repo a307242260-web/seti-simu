@@ -19,7 +19,7 @@
   }
 
   function createAlienUiHelpers(context = {}) {
-    const documentRef = context.document !== undefined ? context.document : root.document;
+    const documentRef = context.document || root.document;
     const headless = Boolean(context.headless);
     const structuredClone = context.structuredClone || root.structuredClone;
     const alienTraceRewardFlow = context.alienTraceRewardFlow || {};

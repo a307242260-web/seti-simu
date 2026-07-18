@@ -152,7 +152,7 @@
 
   function maybeRunCodexAiBatchSmoke(context = {}) {
     const targetRoot = context.root || root;
-    const document = context.document !== undefined ? context.document : targetRoot?.document;
+    const document = context.document || targetRoot?.document;
     if (!document || typeof targetRoot?.URLSearchParams !== "function") return false;
     const params = new targetRoot.URLSearchParams(targetRoot.location?.search || "");
     const rawGames = params.get("codexAiBatch") ?? params.get("codex_ai_batch");

@@ -444,9 +444,11 @@
       }
 
       const abilityByAction = {
-        launch: "launchProbe",
-        orbit: "orbitProbe",
-        land: "landProbe",
+        ...(actions?.createStandardAdapter ? {} : {
+          launch: "launchProbe",
+          orbit: "orbitProbe",
+          land: "landProbe",
+        }),
         analyze: "analyzeData",
       };
       const abilityId = abilityByAction[actionId];
@@ -517,7 +519,7 @@
         if (startedRewardFlow) {
           settleCardTasksAfterEffect?.({ events: result.events, render: false });
         } else {
-          if (abilityId && result.undoable !== false) {
+          if ((abilityId || result.commands?.length) && result.undoable !== false) {
             recordAtomicActionHistory?.(actionId, result.message || actionId, result, {
               logBefore: actionLogBefore,
             });

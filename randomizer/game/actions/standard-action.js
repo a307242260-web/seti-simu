@@ -194,6 +194,140 @@
     };
   }
 
+  function assertReferenceAction(action, family, optionMethod = null) {
+    if (!action?.canExecute || !action?.execute || (optionMethod && typeof action[optionMethod] !== "function")) {
+      throw new TypeError(`${family} reference action 缺少统一规则接口`);
+    }
+  }
+
+  function createOrbitDefinition(orbitAction) {
+    assertReferenceAction(orbitAction, "orbit", "getOrbitOptions");
+    return {
+      family: "orbit",
+      label: orbitAction.label || "环绕",
+      enumerate(context) {
+        const options = orbitAction.getOrbitOptions(context);
+        if (!options.ok) return [];
+        return options.choices.map((choice) => ({
+          target: { rocketId: choice.rocketId, planetId: choice.planetId },
+          summary: choice.label,
+        }));
+      },
+      validate(context, action) {
+        return orbitAction.getOrbitOptions(context, { rocketId: action.target?.rocketId });
+      },
+      execute(context, action) {
+        return orbitAction.execute(context, { rocketId: action.target.rocketId });
+      },
+    };
+  }
+
+  function createLandDefinition(landAction) {
+    assertReferenceAction(landAction, "land", "getLandOptions");
+    return {
+      family: "land",
+      label: landAction.label || "登陆",
+      enumerate(context) {
+        const options = landAction.getLandOptions(context);
+        if (!options.ok) return [];
+        return options.choices.map((choice) => ({
+          target: {
+            rocketId: choice.rocketId,
+            planetId: choice.planetId,
+            type: choice.target.type,
+            ...(choice.target.satelliteId ? { satelliteId: choice.target.satelliteId } : {}),
+          },
+          summary: choice.label,
+        }));
+      },
+      validate(context, action) {
+        return landAction.getLandOptions(context, { rocketId: action.target?.rocketId });
+      },
+      execute(context, action) {
+        return landAction.execute(context, {
+          rocketId: action.target.rocketId,
+          target: {
+            type: action.target.type,
+            ...(action.target.satelliteId ? { satelliteId: action.target.satelliteId } : {}),
+          },
+        });
+      },
+    };
+  }
+
+  function createResearchTechDefinition(researchTechAction) {
+    assertReferenceAction(researchTechAction, "research_tech", "getResearchOptions");
+    return {
+      family: "research_tech",
+      label: researchTechAction.label || "科技",
+      enumerate(context, { request }) {
+        const options = researchTechAction.getResearchOptions(context, request?.payload || {});
+        if (!options.ok) return [];
+        return options.choices.map((choice) => ({
+          target: {
+            tileId: choice.tileId,
+            ...(choice.blueSlot == null ? {} : { blueSlot: choice.blueSlot }),
+          },
+          payload: {
+            ...(request?.payload || {}),
+            ...(options.allowedTechTypes ? { allowedTechTypes: [...options.allowedTechTypes] } : {}),
+          },
+          summary: choice.label,
+        }));
+      },
+      validate(context, action) {
+        return researchTechAction.canExecute(context, action.payload || {});
+      },
+      execute(context, action) {
+        return researchTechAction.execute(context, {
+          ...(action.payload || {}),
+          tileId: action.target.tileId,
+          blueSlot: action.target.blueSlot ?? null,
+        });
+      },
+    };
+  }
+
+  function createReferenceDefinitions(referenceActions = {}) {
+    return Object.freeze([
+      createLaunchDefinition(referenceActions.launch),
+      createOrbitDefinition(referenceActions.orbit),
+      createLandDefinition(referenceActions.land),
+      createResearchTechDefinition(referenceActions.researchTech || referenceActions.research_tech),
+    ]);
+  }
+
+  function createReferenceRegistry(referenceActions, options = {}) {
+    const registry = createRegistry(options);
+    for (const definition of createReferenceDefinitions(referenceActions)) registry.register(definition);
+    return registry;
+  }
+
+  function createRegistryAdapter(registry) {
+    if (!registry?.enumerate || !registry?.execute) throw new TypeError("Standard Action adapter 需要 registry");
+    function enumerate(context, request = {}) {
+      return registry.enumerate(context, request);
+    }
+    function execute(context, action) {
+      return registry.execute(context, action);
+    }
+    function executeLegacy(context, family, selector = {}, request = {}) {
+      const candidates = registry.enumerate(context, { ...request, family });
+      const matches = candidates.filter((candidate) => Object.entries(selector).every(([key, value]) => (
+        stableSerialize(candidate.target?.[key]) === stableSerialize(value)
+        || stableSerialize(candidate.payload?.[key]) === stableSerialize(value)
+      )));
+      if (matches.length !== 1) {
+        return fail(
+          matches.length ? "STANDARD_ACTION_AMBIGUOUS" : "STANDARD_ACTION_NOT_LEGAL",
+          matches.length ? `${family} legacy adapter 无法唯一确定 action` : `${family} legacy adapter 没有合法 action`,
+        );
+      }
+      return registry.execute(context, matches[0]);
+    }
+    return Object.freeze({ enumerate, execute, executeLegacy });
+  }
+
   return Object.freeze({
     SCHEMA_VERSION,
     TOP_LEVEL_FAMILIES,
@@ -202,5 +336,11 @@
     PHASE_BY_FAMILY,
     createRegistry,
     createLaunchDefinition,
+    createOrbitDefinition,
+    createLandDefinition,
+    createResearchTechDefinition,
+    createReferenceDefinitions,
+    createReferenceRegistry,
+    createRegistryAdapter,
   });
 });

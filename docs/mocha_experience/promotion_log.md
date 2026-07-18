@@ -29,28 +29,6 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-19
-- source: SETI-36, SETI-48
-- promoted_to: none
-- promotion_decision: candidate
-- target_agent: 领航
-- target_component: 显式 runtime context 与无宿主依赖验证实践
-- target_file: docs/mocha_experience/coding.md
-- remote_skill_id: none
-- change: 扩展 SETI-36 显式 context 候选：`null` 作为禁用依赖哨兵必须保留，只有 `undefined` 才允许回退 root；用 poison getter 证明 headless 全生命周期零浏览器全局访问。
-- applied_change: 更新 coding experience 与本决策契约；生产模块已在 SETI-48 中修正五处 document fallback，不修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。
-- expected_effect: 后续无 DOM/runtime composition 不会因 `||` 回退偷偷重新读取宿主全局，漏注入与显式禁用也能保持不同语义。
-- evaluation_window: SETI-36 与 SETI-48 已累计 2 次；再观察 1 个显式可选 context、null sentinel 或无宿主 runtime 迁移 issue
-- success_signal: composition 对缺项 fail-fast、对显式 null 不回退；poison getter 在 reset/step/replay/checkpoint/dispose 全路径保持 0。
-- rollback_condition: 若统一类型化依赖容器在构建期区分 required/optional/disabled 并机械禁止 root fallback，则将手工 poison 测试收敛为容器契约；若 null 被项目统一定义为“缺省”，则改用专用 disabled sentinel。
-- risk: 机械把所有 `||` 改为 undefined 检查会改变空字符串、0、false 的既有默认语义；本候选只适用于明确允许 null 禁用的宿主依赖。
-- evidence_before: SETI-36 fail-fast 曾发现漏注入；SETI-48 初始 poison 测试依次在 final-ui、action-briefing、alien-ui、debug-runtime、bootstrap 读取 `root.document`，尽管 composition 已显式传 null。
-- owner_or_agent_decision: 领航按 harness-evolve closeout 自决保持 candidate；达到第三个独立适用 issue 后再评估是否提升 loop template。
-- applied_at: 2026-07-19
-- verification: `node randomizer/app/headless-no-browser-globals.test.js` 覆盖 reset/step/loadReplay/loadCheckpoint/dispose，九类 poison getter 访问均为 0；独立 HEAD 的 randomizer 全量测试通过。
-- observed_outcome: 五个 runtime 保留浏览器缺省行为，同时 headless 不再读取 document 或其他浏览器/UI 全局。
-- keep_or_revise: 保持 candidate；等待第 3 个显式可选依赖迁移证据。
-
-- date: 2026-07-19
 - source: SETI-51
 - promoted_to: none
 - promotion_decision: candidate

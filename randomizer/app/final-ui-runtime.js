@@ -12,8 +12,8 @@
   "use strict";
 
   function createFinalUiRuntime(context = {}) {
+    const document = context.document || root.document;
     const headless = Boolean(context.headless);
-    const document = headless ? null : (context.document || root.document);
     const {
       els,
       players,

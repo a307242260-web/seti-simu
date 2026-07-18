@@ -207,6 +207,12 @@
     const currentPlayer = placement.currentPlayer;
     const planetId = placement.planet.planetId;
     const energyCost = getEnergyCost(context, planetId);
+    const snapshots = {
+      player: structuredClone(currentPlayer),
+      rocketState: structuredClone(context.rocketState),
+      planetStatsState: structuredClone(context.planetStatsState),
+      alienGameState: context.alienGameState ? structuredClone(context.alienGameState) : null,
+    };
 
     const aomomoApi = getAomomo();
     const isAomomoPlanet = isAomomoPlanetId(planetId);
@@ -311,6 +317,29 @@
       markerSequence,
       satelliteId,
       cost: { energy: energyCost },
+      rewardMarkerSequence: markerSequence,
+      undoable: true,
+      commands: [{
+        label: "登陆",
+        describe: "恢复登陆前状态",
+        undo() {
+          Object.assign(currentPlayer, structuredClone(snapshots.player));
+          Object.assign(context.rocketState, structuredClone(snapshots.rocketState));
+          Object.assign(context.planetStatsState, structuredClone(snapshots.planetStatsState));
+          if (context.alienGameState && snapshots.alienGameState) {
+            Object.assign(context.alienGameState, structuredClone(snapshots.alienGameState));
+          }
+        },
+      }],
+      events: [{
+        type: "land",
+        planetId,
+        markerKind,
+        satelliteId,
+        playerId: currentPlayer.id || null,
+        playerColor: currentPlayer.color || null,
+        source: "land",
+      }],
     };
   }
 

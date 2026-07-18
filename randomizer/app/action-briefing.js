@@ -312,7 +312,7 @@
 
   function createActionBriefingHelpers(context = {}) {
     const windowRef = context.window || root;
-    const documentRef = context.document !== undefined ? context.document : root.document;
+    const documentRef = context.document || root.document;
     const els = context.els || {};
     const actionBriefingState = context.actionBriefingState || {};
     const startScreenState = context.startScreenState || {};
