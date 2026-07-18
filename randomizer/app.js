@@ -2762,6 +2762,7 @@
     runAiAutoBattle,
     runAiAutoBattleBatch,
     runAiAutomationStep,
+    runAiActionEffectStep,
     runAiNonTurnAutomationStep,
     runAiSelectedTurnAction,
     runAiStrategyABTest,
@@ -2818,6 +2819,7 @@
     getMovableTokensForPlayer,
     getRequiredMovePointsForUi,
     getPlayerById,
+    getPublicScanSelectionInstruction: (...args) => getPublicScanSelectionInstruction?.(...args) || "请选择公共牌",
     handlePublicCornerDiscardCardClick,
     handlePublicScanCardClick,
     hasActivePendingSubFlow,
@@ -4331,6 +4333,50 @@
     return { ok: true, message: rocketState.statusNote };
   }
 
+  function confirmPublicCornerDiscardSelection() {
+    const pending = pendingState.cardSelectionAction;
+    if (pending?.type !== "card_public_corner_discard") {
+      return { ok: false, message: "当前不是公共牌角标弃除" };
+    }
+    const selectedSlots = [...new Set(pending.selectedSlots || [])].sort((a, b) => a - b);
+    const minSelectable = getPublicCardMultiSelectMinSelectable(pending);
+    if (selectedSlots.length < minSelectable) {
+      return { ok: false, message: `请至少选择 ${minSelectable} 张公共牌` };
+    }
+    const selectedCards = selectedSlots.map((slotIndex) => cardState.publicCards[slotIndex]);
+    if (selectedCards.some((card) => !card)) {
+      return { ok: false, message: "所选公共牌已不可用" };
+    }
+
+    const effect = pending.effect || getCurrentActionEffect();
+    const player = pending.player || getEffectOwnerPlayer(effect) || getCurrentPlayer();
+    beginEffectHistoryStep(effect?.label || pending.effectLabel || "公共牌角标弃除");
+    const rewards = selectedCards.map((card, cardIndex) => {
+      cardState.publicCards[selectedSlots[cardIndex]] = null;
+      cards.addToDiscardPile(cardState, card);
+      return applyCardCornerRewardFromCard(player, card, {
+        source: "card_public_corner_discard",
+        insertMoveIntoCurrentFlow: true,
+        effectId: `${effect?.id || "public-corner-discard"}-${cardIndex + 1}`,
+      });
+    });
+    cards.ensurePublicCardsFilled(cardState, playerState);
+    markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
+    cards.setSelectionActive(cardState, false);
+    pendingState.cardSelectionAction = null;
+    syncCardSelectionChrome();
+    return finishAutomaticRewardEffect(effect, {
+      ok: true,
+      undoable: false,
+      irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
+      message: `${effect?.label || pending.effectLabel || "公共牌角标弃除"}：${selectedCards.map((card) => cards.getCardLabel(card)).join("、")}`,
+      payload: {
+        cardIds: selectedCards.map((card) => card.id),
+        rewards,
+      },
+    }, [renderPlayerStats, renderPublicCards]);
+  }
+
 
   function isActionEffectFlowActive() {
     return pendingState.actionEffectFlow != null;
@@ -5270,6 +5316,18 @@
     endEffectHistoryStep();
     rocketState.statusNote = `已跳过：${current.label}`;
     completeCurrentActionEffect("skipped");
+  }
+
+  function skipHeadlessCurrentActionEffect() {
+    const current = getCurrentActionEffect();
+    if (!headlessMode || !current || current.status !== "active") {
+      return { ok: false, message: "没有可跳过的活动效果" };
+    }
+    if (current.options?.skippable === false || current.required) {
+      return { ok: false, message: `${current.label} 必须完成，不能跳过` };
+    }
+    skipCurrentActionEffect();
+    return { ok: true, progressed: true, skipped: true, message: `已跳过：${current.label}` };
   }
 
   function skipActionEffectWithMessage(effect, message, payload = {}) {
@@ -7942,6 +8000,7 @@
   }
 
   function removeRocketElement(rocketId) {
+    if (headlessMode || !document) return;
     const element = document.getElementById(`rocket-${rocketId}`);
     if (element) element.remove();
     const chongOwnerToken = chongFossilOwnerTokenElements.get(String(rocketId));
@@ -8915,8 +8974,286 @@
     }) || getEffectOwnerPlayer(pending?.effect) || getCurrentPlayer();
   }
 
+  function enumerateHeadlessMovePaymentActions(movePending) {
+    const player = movePending.player || getHeadlessConditionalPlayer(movePending);
+    const required = Math.max(0, Math.round(Number(movePending.requiredMovePoints) || 0));
+    const moveCardIndexes = (player?.hand || []).flatMap((card, handIndex) => (
+      isMovePaymentCard(card) ? [handIndex] : []
+    ));
+    const subsets = [[]];
+    for (const handIndex of moveCardIndexes) {
+      for (const selected of [...subsets]) {
+        if (selected.length < required) subsets.push([...selected, handIndex]);
+      }
+    }
+    return {
+      actorPlayer: player,
+      candidates: subsets.flatMap((selectedHandIndices) => {
+        const energyCost = Math.max(0, required - selectedHandIndices.length);
+        if (!players.canAfford(player, { energy: energyCost })) return [];
+        const choiceId = selectedHandIndices.length ? selectedHandIndices.join(",") : "energy";
+        return [{
+          id: "conditionalChoice",
+          family: "choose_payment",
+          label: selectedHandIndices.length
+            ? `弃 ${selectedHandIndices.length} 张移动牌${energyCost ? ` + ${energyCost} 能量` : ""}`
+            : `消耗 ${energyCost} 能量`,
+          target: { kind: "move-payment", choiceId },
+          selectedHandIndices,
+        }];
+      }),
+    };
+  }
+
   function enumerateHeadlessConditionalActions() {
     if (!headlessMode) return { actorPlayer: null, candidates: [] };
+    const scanTargetPending = pendingState.scanTargetAction;
+    if (scanTargetPending) {
+      if (scanTargetPending.type === "discard_any_income") {
+        const player = getHeadlessConditionalPlayer(scanTargetPending);
+        const selected = new Set(scanTargetPending.selectedCardIds || []);
+        const candidates = (player?.hand || []).flatMap((card) => (
+          selected.has(card.id) ? [] : [{
+            id: "conditionalChoice",
+            family: "choose_card",
+            label: cards.getCardLabel(card),
+            target: { kind: "discard-income-card", choiceId: card.id, cardId: card.id },
+            cardInstanceId: card.id,
+          }]
+        ));
+        candidates.push({
+          id: "conditionalChoice",
+          family: "choose_branch",
+          label: "确认收入弃牌",
+          target: { kind: "confirm-discard-income", choiceId: "confirm" },
+        });
+        return { actorPlayer: player, candidates };
+      }
+      if (scanTargetPending.type === "pay_credit_reward") {
+        const player = getHeadlessConditionalPlayer(scanTargetPending);
+        const candidates = [];
+        if (players.canAfford(player, { credits: 1 })) {
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_payment",
+            label: "支付 1 信用",
+            target: { kind: "pay-credit-reward", choiceId: "pay" },
+          });
+        }
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "跳过支付",
+          target: { kind: "pay-credit-reward", choiceId: "skip" },
+        });
+        return { actorPlayer: player, candidates };
+      }
+      return {
+        actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+        candidates: (scanTargetPending.choices || []).flatMap((choice, choiceIndex) => (
+          choice?.disabled ? [] : [{
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: choice.label || `扫描目标 ${choiceIndex + 1}`,
+            target: {
+              kind: "scan-target",
+              choiceId: String(choiceIndex),
+              sectorX: choice.sectorX,
+              nebulaId: choice.nebulaId,
+            },
+            nebulaId: choice.nebulaId,
+            sectorX: choice.sectorX,
+          }]
+        )),
+      };
+    }
+    const handScanPending = pendingState.handScanAction;
+    if (handScanPending) {
+      const player = handScanPending.player || getHeadlessConditionalPlayer(handScanPending);
+      const candidates = (player?.hand || []).flatMap((card, handIndex) => (
+        getPublicScanChoicesForCard(card)?.ok ? [{
+          id: "conditionalChoice",
+          family: "choose_card",
+          label: cards.getCardLabel(card),
+          target: {
+            kind: "hand-scan-card",
+            choiceId: String(handIndex),
+            cardId: card.cardId || card.id || null,
+            handIndex,
+          },
+          handIndex,
+        }] : []
+      ));
+      if (handScanPending.optional || !candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "跳过手牌扫描",
+          target: { kind: "skip-hand-scan", choiceId: "skip" },
+        });
+      }
+      return { actorPlayer: player, candidates };
+    }
+    const passReservePending = pendingState.passReserveSelection;
+    if (passReservePending) {
+      const player = getPlayerById(passReservePending.playerId) || getCurrentPlayer();
+      return {
+        actorPlayer: player,
+        candidates: getPassReserveSelectionCards().map((card) => ({
+          id: "conditionalChoice",
+          family: "choose_card",
+          label: cards.getCardLabel(card),
+          target: {
+            kind: "pass-reserve-card",
+            choiceId: card.id,
+            cardId: card.cardId || card.id || null,
+          },
+          cardInstanceId: card.id,
+        })),
+      };
+    }
+    if (pendingState.movePayment) {
+      return enumerateHeadlessMovePaymentActions(pendingState.movePayment);
+    }
+    const cardMovePending = pendingState.actionEffectFlow?.cardMoveEffect;
+    if (cardMovePending) {
+      const effect = cardMovePending.effect || getCurrentActionEffect();
+      const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+      const candidates = [];
+      for (const rocket of getMovableTokensForCardMoveEffect(effect, player?.id) || []) {
+        for (const direction of [
+          { id: "out", deltaX: 0, deltaY: 1 },
+          { id: "cw", deltaX: 1, deltaY: 0 },
+          { id: "ccw", deltaX: -1, deltaY: 0 },
+          { id: "in", deltaX: 0, deltaY: -1 },
+        ]) {
+          if (!validateIndustryHuanyuMoveRocket(effect, rocket.id)?.ok) continue;
+          if (!rocketActions.canMoveRocket(rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          const terrainRequired = getRequiredMovePointsForUi(
+            player,
+            rocket.id,
+            direction.deltaX,
+            direction.deltaY,
+            effect?.options || {},
+          );
+          const supplemental = Math.max(0, terrainRequired - Math.max(0, cardMovePending.poolRemaining || 0));
+          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `${formatRocketLabel(rocket)} ${direction.id}`,
+            target: {
+              kind: "card-effect-move",
+              choiceId: `${rocket.id}:${direction.id}`,
+              rocketId: rocket.id,
+              direction: direction.id,
+            },
+            rocketId: rocket.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          });
+        }
+      }
+      if (cardMovePending.moved) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "结束剩余移动",
+          target: { kind: "finish-card-effect-move", choiceId: "finish" },
+        });
+      }
+      return { actorPlayer: player, candidates };
+    }
+    const cardCornerMovePending = pendingState.cardCornerFreeMove;
+    if (cardCornerMovePending) {
+      const player = getCurrentPlayer();
+      const providedMovePoints = Math.max(0, Math.round(Number(
+        cardCornerMovePending.action?.moveReward?.movementPoints
+          ?? cardCornerMovePending.action?.movementPoints
+          ?? 1
+      ) || 0));
+      const candidates = [];
+      for (const rocket of getMovableTokensForPlayer(player?.id) || []) {
+        for (const direction of [
+          { id: "out", deltaX: 0, deltaY: 1 },
+          { id: "cw", deltaX: 1, deltaY: 0 },
+          { id: "ccw", deltaX: -1, deltaY: 0 },
+          { id: "in", deltaX: 0, deltaY: -1 },
+        ]) {
+          if (!rocketActions.canMoveRocket(rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          const terrainRequired = getRequiredMovePointsForUi(
+            player,
+            rocket.id,
+            direction.deltaX,
+            direction.deltaY,
+          );
+          const supplemental = Math.max(0, terrainRequired - providedMovePoints);
+          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `${formatRocketLabel(rocket)} ${direction.id}`,
+            target: {
+              kind: "card-corner-free-move",
+              choiceId: `${rocket.id}:${direction.id}`,
+              rocketId: rocket.id,
+              direction: direction.id,
+            },
+            rocketId: rocket.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          });
+        }
+      }
+      if (!candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "跳过无法执行的免费移动",
+          target: { kind: "skip-card-corner-free-move", choiceId: "skip" },
+        });
+      }
+      return { actorPlayer: player, candidates };
+    }
+    if (isPlayCardSelectionActive()) {
+      const player = getCurrentPlayer();
+      return {
+        actorPlayer: player,
+        candidates: (player?.hand || []).flatMap((card, handIndex) => {
+          const cost = getCardPlayCost(card);
+          if (!players.canAfford(player, cost)) return [];
+          return [{
+            id: "conditionalChoice",
+            family: "choose_card",
+            label: cards.getCardLabel(card),
+            target: {
+              kind: "play-hand-card",
+              choiceId: String(handIndex),
+              cardId: card.cardId || card.id || null,
+              handIndex,
+            },
+            handIndex,
+          }];
+        }),
+      };
+    }
+    const strategySlotPending = pendingState.strategyPassiveSlotChoice;
+    if (strategySlotPending) {
+      return {
+        actorPlayer: getHeadlessConditionalPlayer(strategySlotPending),
+        candidates: (strategySlotPending.slotIds || []).map((slotId) => ({
+          id: "conditionalChoice",
+          family: "choose_reward",
+          label: industry.getStrategyPassiveSlotLabel?.(slotId) || slotId,
+          target: {
+            kind: "strategy-passive-slot",
+            choiceId: slotId,
+            slotId,
+          },
+          slotId,
+        })),
+      };
+    }
     const discardPending = pendingState.discardAction;
     if (discardPending) {
       const player = discardPending.player || getHeadlessConditionalPlayer(discardPending);
@@ -8941,8 +9278,32 @@
     }
     const cardPending = pendingState.cardSelectionAction;
     if (cardPending) {
+      if (["industry_deepspace_hand", "industry_future_hand"].includes(cardPending.type)) {
+        const player = cardPending.player || getHeadlessConditionalPlayer(cardPending);
+        return {
+          actorPlayer: player,
+          candidates: (player?.hand || []).flatMap((card, handIndex) => (
+            cardPending.type === "industry_future_hand" && !isFutureSpanEligibleHandCard(card)
+              ? []
+              : [{
+                id: "conditionalChoice",
+                family: "choose_card",
+                label: cards.getCardLabel(card),
+                target: {
+                  kind: "hand-card",
+                  choiceId: String(handIndex),
+                  cardId: card.cardId || card.id || null,
+                  handIndex,
+                },
+                handIndex,
+                pendingType: cardPending.type,
+              }]
+          )),
+        };
+      }
+      const selectedSlots = new Set(cardPending.selectedSlots || []);
       const candidates = (cardState.publicCards || []).flatMap((card, slotIndex) => (
-        card ? [{
+        card && !selectedSlots.has(slotIndex) ? [{
           id: "conditionalChoice",
           family: "choose_card",
           label: cards.getCardLabel(card),
@@ -8955,6 +9316,17 @@
           slotIndex,
         }] : []
       ));
+      if (
+        cardPending.type === "card_public_corner_discard"
+        && selectedSlots.size >= getPublicCardMultiSelectMinSelectable(cardPending)
+      ) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "choose_branch",
+          label: "确认弃除公共牌",
+          target: { kind: "confirm-public-corner-discard", choiceId: "confirm" },
+        });
+      }
       if (allowsBlindDrawInSelection() && canBlindDraw()) {
         candidates.push({
           id: "conditionalChoice",
@@ -9021,6 +9393,65 @@
   }
 
   function executeHeadlessConditionalAction(action) {
+    if (pendingState.scanTargetAction?.type === "discard_any_income" && action?.target?.kind === "discard-income-card") {
+      return handleDiscardIncomeCardChoice(action.cardInstanceId || action.target.cardId);
+    }
+    if (pendingState.scanTargetAction?.type === "discard_any_income" && action?.target?.kind === "confirm-discard-income") {
+      return confirmDiscardAnyForIncome();
+    }
+    if (pendingState.scanTargetAction?.type === "pay_credit_reward" && action?.target?.kind === "pay-credit-reward") {
+      return handlePayCreditChoice(action.target.choiceId);
+    }
+    if (pendingState.scanTargetAction && action?.target?.kind === "scan-target") {
+      return confirmScanTarget(action.nebulaId, action.sectorX);
+    }
+    if (pendingState.passReserveSelection && action?.target?.kind === "pass-reserve-card") {
+      selectPassReserveCard(action.cardInstanceId || action.target.choiceId);
+      return confirmPassReserveSelection();
+    }
+    if (pendingState.handScanAction && action?.target?.kind === "hand-scan-card") {
+      return handleHandScanCardClick(Number(action.handIndex ?? action.target.handIndex));
+    }
+    if (pendingState.handScanAction && action?.target?.kind === "skip-hand-scan") {
+      skipCurrentActionEffect();
+      return { ok: true, progressed: true, skipped: true, message: "已跳过手牌扫描" };
+    }
+    if (pendingState.actionEffectFlow?.cardMoveEffect && action?.target?.kind === "card-effect-move") {
+      return executeCardMoveForEffect(action.deltaX, action.deltaY, action.rocketId);
+    }
+    if (pendingState.actionEffectFlow?.cardMoveEffect && action?.target?.kind === "finish-card-effect-move") {
+      const finished = finishCurrentCardMoveEffectEarly();
+      return finished
+        ? { ok: true, progressed: true, message: "已结束剩余移动" }
+        : { ok: false, message: "当前不能结束移动效果" };
+    }
+    if (pendingState.cardCornerFreeMove && action?.target?.kind === "card-corner-free-move") {
+      return executeFreeMoveForCardCorner(action.deltaX, action.deltaY, action.rocketId);
+    }
+    if (pendingState.cardCornerFreeMove && action?.target?.kind === "skip-card-corner-free-move") {
+      const pending = pendingState.cardCornerFreeMove;
+      pendingState.cardCornerFreeMove = null;
+      rocketState.activeRocketId = null;
+      clearMoveRocketHighlight();
+      deactivateMoveMode();
+      settleCardTasksAfterEffect({ events: pending.deferredEvents || [], render: false });
+      if (pending.finishIndustryFlowAfterMove) {
+        finishIndustryAbilityFlow(pending.afterMoveStatus || "公司 1x 行动：已跳过无法执行的免费移动");
+      }
+      return { ok: true, progressed: true, skipped: true, message: "已跳过无法执行的免费移动" };
+    }
+    if (pendingState.movePayment && action?.target?.kind === "move-payment") {
+      pendingState.movePayment.selectedHandIndices = [...(action.selectedHandIndices || [])];
+      return confirmMovePayment({ automated: true });
+    }
+    if (isPlayCardSelectionActive() && action?.target?.kind === "play-hand-card") {
+      const selectResult = handlePlayCardSelect(Number(action.handIndex ?? action.target.handIndex));
+      if (selectResult?.ok === false) return selectResult;
+      return confirmPlayCardSelection();
+    }
+    if (pendingState.strategyPassiveSlotChoice && action?.target?.kind === "strategy-passive-slot") {
+      return confirmStrategyPassiveSlotChoice(action.slotId || action.target.slotId);
+    }
     if (pendingState.discardAction && action?.target?.kind === "discard-hand-card") {
       const result = handleHandCardDiscard(Number(action.handIndex ?? action.target.handIndex));
       return result || { ok: true, progressed: true, message: "已选择弃牌" };
@@ -9028,6 +9459,18 @@
     if (pendingState.cardSelectionAction && action?.target?.kind === "public-card") {
       const result = handlePublicCardClick(Number(action.slotIndex ?? action.target.slotId));
       return result || { ok: true, progressed: true, message: "已选择公共牌" };
+    }
+    if (
+      pendingState.cardSelectionAction?.type === "card_public_corner_discard"
+      && action?.target?.kind === "confirm-public-corner-discard"
+    ) {
+      return confirmPublicCornerDiscardSelection();
+    }
+    if (pendingState.cardSelectionAction?.type === "industry_deepspace_hand" && action?.target?.kind === "hand-card") {
+      return handleIndustryDeepspaceHandClick(Number(action.handIndex ?? action.target.handIndex));
+    }
+    if (pendingState.cardSelectionAction?.type === "industry_future_hand" && action?.target?.kind === "hand-card") {
+      return handleIndustryFutureSpanHandClick(Number(action.handIndex ?? action.target.handIndex));
     }
     if (pendingState.cardSelectionAction && action?.target?.kind === "blind-draw") {
       return drawCardForCurrentPlayer({ fromSelection: true });
@@ -9039,6 +9482,55 @@
       return handleStateTraceSlotPlacement(Number(action.alienSlotId ?? action.target.slotId), action.traceType || action.target.traceType);
     }
     return { ok: false, message: "条件动作与当前 pending 状态不匹配" };
+  }
+
+  function advanceHeadlessDeterministicState() {
+    if (!headlessMode) return null;
+    const industryPending = pendingState.industryAbility;
+    if (industryPending && !pendingState.cardSelectionAction) {
+      const player = getCurrentPlayer();
+      const retryByFlowType = {
+        strategy_pick: () => beginCardSelection({
+          type: "industry_strategy_pick",
+          player,
+          allowBlindDraw: false,
+        }),
+        future_span_pick: () => beginCardSelection({
+          type: "industry_future_pick",
+          player,
+          allowBlindDraw: false,
+          advanceAmount: industryPending.advanceAmount,
+        }),
+        deepspace_swap: () => {
+          pendingState.cardSelectionAction = {
+            type: "industry_deepspace_hand",
+            player,
+            allowBlindDraw: false,
+          };
+          cards.setSelectionActive(cardState, true);
+          return { ok: true, message: industryPending.message };
+        },
+      };
+      const retry = retryByFlowType[industryPending.flowType];
+      if (retry) {
+        const result = retry();
+        if (result?.ok !== false) {
+          return { ok: true, progressed: true, message: result?.message || industryPending.message };
+        }
+      }
+    }
+    const cardPending = pendingState.cardSelectionAction;
+    if (
+      cardPending?.type?.startsWith?.("industry_")
+      && !(cardState.publicCards || []).some(Boolean)
+      && !(allowsBlindDrawInSelection() && canBlindDraw())
+    ) {
+      const label = pendingState.industryAbility?.label || "公司 1x";
+      const message = `${label}：公共牌区与牌库均无牌，精选效果落空`;
+      finishIndustryAbilityFlow(message);
+      return { ok: true, progressed: true, skipped: true, message };
+    }
+    return null;
   }
 
   function launchRocketForCurrentPlayer() {
@@ -10057,6 +10549,7 @@
       runAiStrategyTuningCycle,
       stopAiAutoBattle,
       runAiAutomationStep,
+      runAiActionEffectStep,
       runAiNonTurnAutomationStep,
       runAiSelectedTurnAction,
       buildAiTurnActionCandidates,
@@ -10065,6 +10558,8 @@
       executeAiTurnAction,
       enumerateHeadlessConditionalActions,
       executeHeadlessConditionalAction,
+    advanceHeadlessDeterministicState,
+    skipHeadlessCurrentActionEffect,
       resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,

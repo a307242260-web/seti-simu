@@ -56,6 +56,7 @@
       getMovableTokensForPlayer,
       getRequiredMovePointsForUi,
       getPlayerById,
+      getPublicScanSelectionInstruction,
       handlePublicCornerDiscardCardClick,
       handlePublicScanCardClick,
       hasActivePendingSubFlow,

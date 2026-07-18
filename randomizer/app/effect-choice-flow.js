@@ -289,7 +289,7 @@
       pendingState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "discard_any_income", effect, selectedCardIds: [] };
       setOverlayContent(effect.label, "选择任意数量手牌，确认后弃掉并逐张结算收入图标。");
       renderDiscardIncomePicker();
-      els.scanTargetOverlay.hidden = false;
+      if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = false;
       rocketState.statusNote = `${effect.label}：请选择要弃掉的手牌`;
       renderStateReadout();
       return { ok: true, pendingChoice: true, message: rocketState.statusNote };

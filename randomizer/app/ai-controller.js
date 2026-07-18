@@ -1961,6 +1961,7 @@
       restoreAiControlSnapshot,
       runAiAutoBattle,
       runAiAutoBattleBatch,
+      runAiActionEffectStep,
       runAiAutomationStep,
       runAiNonTurnAutomationStep,
       runAiSelectedTurnAction,

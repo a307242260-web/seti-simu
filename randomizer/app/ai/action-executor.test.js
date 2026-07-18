@@ -71,6 +71,31 @@ function createContext(overrides = {}) {
 }
 
 {
+  const calls = [];
+  const runtime = moduleEntry.createActionExecutor(createContext({
+    beginPlayCardSelection: () => {
+      calls.push("begin");
+      return { ok: true };
+    },
+    handlePlayCardSelect: (handIndex) => {
+      calls.push(`select:${handIndex}`);
+      return { ok: true };
+    },
+    confirmPlayCardSelection: () => {
+      calls.push("confirm");
+      return { ok: true, played: true };
+    },
+  }));
+  const result = runtime.executeAiTurnAction(
+    { id: "playCard", handIndex: 2 },
+    undefined,
+    { bypassRuntimeDispatch: true },
+  );
+  assert.equal(result.played, true, "headless 打牌应执行预校验候选，不应只打开选择态");
+  assert.deepEqual(calls, ["begin", "select:2", "confirm"]);
+}
+
+{
   const logs = [];
   let dispatched = null;
   const runtime = moduleEntry.createActionExecutor(createContext({

@@ -1658,6 +1658,15 @@
 
     function openStrategyPassiveSlotChoice(effect, player, slotIds) {
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
+        if (globalThis.SetiHeadlessRuntimeConfig?.enabled) {
+          pendingState.strategyPassiveSlotChoice = {
+            effectId: effect.id,
+            slotIds: [...slotIds],
+            playerId: player?.id || null,
+            playerColor: player?.color || null,
+          };
+          return { ok: true, pendingChoice: true, undoable: true, message: "宇宙战略集团：请选择奖励槽" };
+        }
         rocketState.statusNote = "宇宙战略集团：无法打开奖励槽选择";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
@@ -1718,7 +1727,12 @@
       const check = industry?.canInteractStrategyPlaySlot?.(player, slotId, turnState.roundNumber);
       if (!check?.ok) {
         industry?.clearStrategyPlayInteraction?.(player);
-        effect.result = { ok: false, undoable: true, message: check?.message || "无法领取奖励" };
+        effect.result = {
+          ok: true,
+          skipped: true,
+          undoable: true,
+          message: check?.message || "无法领取奖励",
+        };
         completeCurrentActionEffect("skipped");
         renderInitialSelectionArea();
         renderStateReadout();

@@ -258,6 +258,25 @@ function createHeadlessEnv() {
       if (turn.candidates?.length || api.getTurnState().gameEnded) {
         return { ok: true, boundary: api.getTurnState().gameEnded ? "terminal" : "turn_action", steps };
       }
+      const deterministicResult = api.advanceHeadlessDeterministicState?.();
+      if (deterministicResult?.progressed) {
+        steps.push(deterministicResult);
+        continue;
+      }
+      if (api.getAiAutoBattleProgress?.().pendingState?.actionEffectFlowActive) {
+        const effectResult = api.runHeadlessActionEffectStep?.();
+        steps.push(effectResult);
+        if (!effectResult) {
+          return { ok: false, final: { message: "活动效果未产生确定性推进结果" }, steps };
+        }
+        if (effectResult?.ok === false) {
+          const skipResult = api.skipHeadlessActionEffect?.();
+          steps.push(skipResult);
+          if (skipResult?.ok) continue;
+          return { ok: false, final: effectResult, steps };
+        }
+        continue;
+      }
       const result = api.runAiPendingStep();
       steps.push(result);
       if (result?.ok === false) return { ok: false, final: result, steps };

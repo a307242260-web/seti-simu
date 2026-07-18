@@ -1282,7 +1282,13 @@
     }
 
     function closeScanTargetPicker(options = {}) {
-      if (!els.scanTargetOverlay) return;
+      if (!els.scanTargetOverlay) {
+        if (pendingState.publicScanQueue && !options.forcePublicScanQueueClose) return;
+        if (options.forcePublicScanQueueClose) pendingState.publicScanQueue = null;
+        pendingState.scanTargetAction = null;
+        pendingState.strategyPassiveSlotChoice = null;
+        return;
+      }
       if (pendingState.publicScanQueue) {
         if (options.forcePublicScanQueueClose) {
           pendingState.publicScanQueue = null;
@@ -1436,13 +1442,18 @@
 
     function openScanTargetPicker(config) {
       if (openScanTargetPickerOverride) return openScanTargetPickerOverride(config);
-      if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开扫描目标选择" };
-
       config = config || {};
       pendingState.scanTargetAction = {
         ...getPendingOwnerFields(config.effect || null),
         ...config,
       };
+      if (!els.scanTargetOverlay || !els.scanTargetActions) {
+        if (globalThis.SetiHeadlessRuntimeConfig?.enabled) {
+          return { ok: true, pendingChoice: true, message: config.subtitle || "请选择扫描目标" };
+        }
+        pendingState.scanTargetAction = null;
+        return { ok: false, message: "无法打开扫描目标选择" };
+      }
       if (els.scanTargetTitle) {
         els.scanTargetTitle.textContent = config.title || "选择扫描目标";
       }

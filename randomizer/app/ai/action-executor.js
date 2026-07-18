@@ -18,12 +18,12 @@
     const {
       AI_DIFFICULTY_WEAK_START, FINAL_ROUND_NUMBER, actions, adjustAiActionGraphCandidate, adjustAiActionGraphCandidateForStyle, ai, aiNumber, alienGameState,
       analyzeDataForCurrentPlayer, applyAiStrategyWeight, applyAiTurnActionSelectionPressure, beginPlayCardSelection, beginScanAction, buildAiAnalyzeActionValueBreakdown, buildAiEarlyNoMainPublicRefillDiagnostic, buildAiFinalHighScorePassRecoveryDiagnostic,
-      buildAiFinalLowHandPassRecoveryDiagnostic, buildAiIndustryCandidate, buildAiResearchTechCandidate, buildAiResourceLockTradePreviews, buildAiScanActionTargetPreview, canAiAnalyzeData, canStartMainAction, confirmDataPlacement,
-      AI_MOVE_DIRECTIONS, aliens, canAiMoveThisTurn, canUseCardCornerQuickAction, cards, createActionContext, data, dispatchRuntimeAction, endCurrentTurn, finalScoringState, getAiAnalyzeEnergyCost, getAiBestLandDirectScoreGain, getAiCardDisplayLabel, getAiMarkedFinalFormulaEntries,
-      getAiNextMissingFinalScoreThreshold, getAiOrbitDirectScoreGain, getAiRoundNumber, getAiScanDirectScoreGain, getAiStrategyWeight, getAiTraceCompetitionState, getCurrentPlayer, handleCompanyActionMarkerClick,
+      buildAiFinalLowHandPassRecoveryDiagnostic, buildAiIndustryCandidate, buildAiResearchTechCandidate, buildAiResourceLockTradePreviews, buildAiScanActionTargetPreview, canAiAnalyzeData, canPayForMove, canStartMainAction, confirmDataPlacement,
+      AI_MOVE_DIRECTIONS, aliens, canAiMoveThisTurn, canUseCardCornerQuickAction, cards, confirmPlayCardSelection, createActionContext, data, dispatchRuntimeAction, endCurrentTurn, finalScoringState, getAiAnalyzeEnergyCost, getAiBestLandDirectScoreGain, getAiCardDisplayLabel, getAiMarkedFinalFormulaEntries, handlePlayCardSelect,
+      getAiNextMissingFinalScoreThreshold, getAiOrbitDirectScoreGain, getAiRoundNumber, getAiScanDirectScoreGain, getAiStrategyWeight, getAiTraceCompetitionState, getCardPlayCost, getCurrentPlayer, getRequiredMovePointsForUi, handleCompanyActionMarkerClick,
       getMovableTokensForPlayer, hasActivePendingSubFlow, industry, isActionEffectFlowActive, isAiAutoBattlePlayer, landForCurrentPlayer, listAiCardCornerQuickCandidates, listAiDataPlacementCandidates, listAiEmergencyAnalyzeEnergyTradeCandidates, listAiFinalAnalyzeEnergyTradeCandidates,
       listAiFinalReadyTaskCreditChainTradeCandidates, listAiLateResourceRecoveryTradeCandidates, listAiMainUnlockTradeCandidates, listAiMoveCandidates, listAiPlayCardCandidates, listAiResourceLockMainUnlockTradeCandidates, listAiRunezuFaceSymbolQuickCandidates, listAiThirdFinalMarkResourceTradeCandidates,
-      orbitForCurrentPlayer, passForCurrentPlayer, playerState, quickTrades, recordAiAutoBattleLog, recoverPendingActionFromOpenHistoryForAi, researchTechForCurrentPlayer, rocketActions, roundAiScore, runezu, runAction,
+      moveRocket, orbitForCurrentPlayer, passForCurrentPlayer, players, playerState, quickTrades, recordAiAutoBattleLog, recoverPendingActionFromOpenHistoryForAi, researchTechForCurrentPlayer, rocketActions, roundAiScore, runezu, runAction,
       runAiCardCornerQuickActionDecision, runAiMoveActionDecision, runAiRunezuFaceSymbolQuickActionDecision, runQuickTrade, scanEffects, scoreAiLandAction, scoreAiLaunchTurnCandidateValue, scoreAiOrbitAction,
       scoreAiPassAction, scoreAiPostLaunchMovePlan, scoreAiScanAction, scoreAiScanEnergyReservationPenalty, scoreAiScanPriorityFloor, scoreAiWeakEarlyB2SetupScanTieBreak, scoreAiWeakFinalB2TargetedScanTieBreak, shouldAiProtectB2SectorScanFromPlanetCap,
       state, turnState,
@@ -481,6 +481,7 @@
         const analyzeCheck = canAiAnalyzeData(currentPlayer);
         if (analyzeCheck?.ok) add({ id: "analyze", kind: "main" });
         for (const [handIndex, card] of (currentPlayer.hand || []).entries()) {
+          if (!players.canAfford(currentPlayer, getCardPlayCost(card))) continue;
           add({
             id: "playCard",
             kind: "main",
@@ -501,6 +502,13 @@
               direction.deltaY,
             );
             if (!moveCheck?.ok) continue;
+            const requiredMovePoints = getRequiredMovePointsForUi(
+              currentPlayer,
+              rocket.id,
+              direction.deltaX,
+              direction.deltaY,
+            );
+            if (!canPayForMove(currentPlayer, requiredMovePoints)?.ok) continue;
             add({
               id: "move",
               kind: "quick",
@@ -508,6 +516,7 @@
               direction: direction.id,
               deltaX: direction.deltaX,
               deltaY: direction.deltaY,
+              requiredMovePoints,
             });
           }
         }
@@ -546,6 +555,7 @@
         const resourceReward = cards?.getDiscardActionRewardForCard?.(card);
         const moveReward = cards?.getDiscardActionMoveRewardForCard?.(card);
         if (!resourceReward && !moveReward) continue;
+        if (moveReward && !resourceReward && !(getMovableTokensForPlayer?.(currentPlayer.id) || []).length) continue;
         add({
           id: "cardCorner",
           kind: "quick",
@@ -578,8 +588,8 @@
     }
 
 
-    function executeAiTurnAction(action, currentPlayer = getCurrentPlayer()) {
-      if (typeof dispatchRuntimeAction === "function" && [
+    function executeAiTurnAction(action, currentPlayer = getCurrentPlayer(), options = {}) {
+      if (options.bypassRuntimeDispatch !== true && typeof dispatchRuntimeAction === "function" && [
         "end-turn",
         "launch",
         "researchTech",
@@ -615,7 +625,11 @@
         return analyzeDataForCurrentPlayer();
       }
       if (action.id === "playCard") {
-        return beginPlayCardSelection();
+        const startResult = beginPlayCardSelection();
+        if (startResult?.ok === false || options.bypassRuntimeDispatch !== true) return startResult;
+        const selectResult = handlePlayCardSelect(action.handIndex);
+        if (selectResult?.ok === false) return selectResult;
+        return confirmPlayCardSelection();
       }
       if (action.id === "cardCorner") {
         return runAiCardCornerQuickActionDecision(action);
@@ -631,7 +645,9 @@
         return result || { ok: true, progressed: true, action };
       }
       if (action.id === "move") {
-        return runAiMoveActionDecision(action);
+        return options.bypassRuntimeDispatch === true
+          ? moveRocket(action.deltaX, action.deltaY, action.rocketId, { automated: true })
+          : runAiMoveActionDecision(action);
       }
       if (action.id === "placeData") {
         return confirmDataPlacement(action.target, action.blueSlot);
@@ -852,14 +868,14 @@
   }
 
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
-    "AI_DIFFICULTY_WEAK_START", "AI_MOVE_DIRECTIONS", "FINAL_ROUND_NUMBER", "actions", "adjustAiActionGraphCandidate", "adjustAiActionGraphCandidateForStyle", "ai", "aiNumber", "alienGameState", "aliens", "canAiMoveThisTurn", "canUseCardCornerQuickAction", "cards",
+    "AI_DIFFICULTY_WEAK_START", "AI_MOVE_DIRECTIONS", "FINAL_ROUND_NUMBER", "actions", "adjustAiActionGraphCandidate", "adjustAiActionGraphCandidateForStyle", "ai", "aiNumber", "alienGameState", "aliens", "canAiMoveThisTurn", "canUseCardCornerQuickAction", "cards", "confirmPlayCardSelection",
     "analyzeDataForCurrentPlayer", "applyAiStrategyWeight", "applyAiTurnActionSelectionPressure", "beginPlayCardSelection", "beginScanAction", "buildAiAnalyzeActionValueBreakdown", "buildAiEarlyNoMainPublicRefillDiagnostic", "buildAiFinalHighScorePassRecoveryDiagnostic",
-    "buildAiFinalLowHandPassRecoveryDiagnostic", "buildAiIndustryCandidate", "buildAiResearchTechCandidate", "buildAiResourceLockTradePreviews", "buildAiScanActionTargetPreview", "canAiAnalyzeData", "canStartMainAction", "confirmDataPlacement",
+    "buildAiFinalLowHandPassRecoveryDiagnostic", "buildAiIndustryCandidate", "buildAiResearchTechCandidate", "buildAiResourceLockTradePreviews", "buildAiScanActionTargetPreview", "canAiAnalyzeData", "canPayForMove", "canStartMainAction", "confirmDataPlacement",
     "createActionContext", "data", "dispatchRuntimeAction", "endCurrentTurn", "finalScoringState", "getAiAnalyzeEnergyCost", "getAiBestLandDirectScoreGain", "getAiCardDisplayLabel", "getAiMarkedFinalFormulaEntries", "getMovableTokensForPlayer",
-    "getAiNextMissingFinalScoreThreshold", "getAiOrbitDirectScoreGain", "getAiRoundNumber", "getAiScanDirectScoreGain", "getAiStrategyWeight", "getAiTraceCompetitionState", "getCurrentPlayer", "handleCompanyActionMarkerClick",
+    "getAiNextMissingFinalScoreThreshold", "getAiOrbitDirectScoreGain", "getAiRoundNumber", "getAiScanDirectScoreGain", "getAiStrategyWeight", "getAiTraceCompetitionState", "getCardPlayCost", "getCurrentPlayer", "getRequiredMovePointsForUi", "handleCompanyActionMarkerClick", "handlePlayCardSelect",
     "hasActivePendingSubFlow", "industry", "isActionEffectFlowActive", "isAiAutoBattlePlayer", "landForCurrentPlayer", "listAiCardCornerQuickCandidates", "listAiDataPlacementCandidates", "listAiEmergencyAnalyzeEnergyTradeCandidates", "listAiFinalAnalyzeEnergyTradeCandidates",
     "listAiFinalReadyTaskCreditChainTradeCandidates", "listAiLateResourceRecoveryTradeCandidates", "listAiMainUnlockTradeCandidates", "listAiMoveCandidates", "listAiPlayCardCandidates", "listAiResourceLockMainUnlockTradeCandidates", "listAiRunezuFaceSymbolQuickCandidates", "listAiThirdFinalMarkResourceTradeCandidates",
-    "orbitForCurrentPlayer", "passForCurrentPlayer", "playerState", "quickTrades", "recordAiAutoBattleLog", "recoverPendingActionFromOpenHistoryForAi", "researchTechForCurrentPlayer", "rocketActions", "roundAiScore", "runezu", "runAction",
+    "moveRocket", "orbitForCurrentPlayer", "passForCurrentPlayer", "players", "playerState", "quickTrades", "recordAiAutoBattleLog", "recoverPendingActionFromOpenHistoryForAi", "researchTechForCurrentPlayer", "rocketActions", "roundAiScore", "runezu", "runAction",
     "runAiCardCornerQuickActionDecision", "runAiMoveActionDecision", "runAiRunezuFaceSymbolQuickActionDecision", "runQuickTrade", "scanEffects", "scoreAiLandAction", "scoreAiLaunchTurnCandidateValue", "scoreAiOrbitAction",
     "scoreAiPassAction", "scoreAiPostLaunchMovePlan", "scoreAiScanAction", "scoreAiScanEnergyReservationPenalty", "scoreAiScanPriorityFloor", "scoreAiWeakEarlyB2SetupScanTieBreak", "scoreAiWeakFinalB2TargetedScanTieBreak", "shouldAiProtectB2SectorScanFromPlanetCap",
     "state", "turnState",

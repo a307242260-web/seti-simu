@@ -600,7 +600,7 @@
     }
 
     function confirmTechBlueSlotChoice(blueSlot) {
-      const tileId = els.techBlueSlotOverlay?.dataset.tileId;
+      const tileId = els.techBlueSlotOverlay?.dataset.tileId || techGameState.ui.pendingTileId;
       if (!tileId) return { ok: false, message: "没有待放置的蓝色科技" };
 
       closeTechBlueSlotPicker();

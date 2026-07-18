@@ -104,6 +104,7 @@
       runAiStrategyTuningCycle,
       stopAiAutoBattle,
       runAiAutomationStep,
+      runAiActionEffectStep,
       runAiNonTurnAutomationStep,
       runAiSelectedTurnAction,
       buildAiTurnActionCandidates,
@@ -112,6 +113,8 @@
       executeAiTurnAction,
       enumerateHeadlessConditionalActions,
       executeHeadlessConditionalAction,
+      advanceHeadlessDeterministicState,
+      skipHeadlessCurrentActionEffect,
       resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,
@@ -283,6 +286,7 @@
       stopAiAutoBattle,
       runAiAutoBattleStep: runAiAutomationStep,
       runAiPendingStep: runAiNonTurnAutomationStep,
+      runHeadlessActionEffectStep: runAiActionEffectStep,
       resolveAiToTurnBoundary: resolveAiAutomationToTurnBoundary,
       runAiSelectedTurnAction,
       listAiTurnActionCandidates: () => {
@@ -335,8 +339,14 @@
       executeHeadlessConditionalAction: (action) => (
         executeHeadlessConditionalAction(structuredClone(action))
       ),
+      advanceHeadlessDeterministicState: () => advanceHeadlessDeterministicState(),
+      skipHeadlessActionEffect: () => skipHeadlessCurrentActionEffect(),
       executeHeadlessTurnAction: (action, options = {}) => {
-        const actionResult = executeAiTurnAction(structuredClone(action), getCurrentPlayer());
+        const actionResult = executeAiTurnAction(
+          structuredClone(action),
+          getCurrentPlayer(),
+          { bypassRuntimeDispatch: true },
+        );
         if (actionResult?.ok === false || options.resolveToTurnBoundary === false) {
           return { ...actionResult, action };
         }
