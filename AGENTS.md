@@ -10,6 +10,7 @@
 - 机制、状态模型、能力流程或资料路径发生变化时，同步更新对应文档。
 - `AGENTS.md` 只维护快速导航和关键路径；长机制说明放在 `docs/mechanics-reference.md`。
 - 当前没有 `package.json` 或构建步骤；验证以 `node --check` 和 Node 测试脚本为主。
+- 跨模块状态机、规则内核或 runtime 迁移开工前，按 `docs/implementation-proof-obligations.md` 将验收条款转成可证伪义务和分层证据；静态 coverage label 不算行为完成证据。
 - coding issue 已实现、验收通过且没有待 owner 拍板事项时，直接按 issue-workflow 收口为 `done`；不得把自己设为 reviewer，也不得因“等待明确收口指令”继续停在 `in_progress`。
 - 从大型闭包迁出 runtime 或修改传统脚本顺序时，除语法与全量 Node 回归外，必须补迁移域代表性执行路径和真实 Chrome smoke，覆盖显式 context、嵌套回调与浏览器装配。
 - 代码和资产路径以仓库根目录为基准。
@@ -91,6 +92,7 @@
 - `docs/alien-design.md`：外星人通用设计总结与新增外星人检查清单。
 - `docs/ai-design.md`：电脑玩家 AI 的当前唯一设计文档（控制器接口、价值模型、目标系统、回合规划、自博弈验证），后续开发以此为准。
 - `docs/rl-headless-env.md`：RL headless env 契约、observation/action/replay schema 与当前浏览器实现映射。
+- `docs/implementation-proof-obligations.md`：跨模块状态机/迁移任务的验收条款正向推导、proof obligation、检查问题与分层证据模板。
 - `assets/final/final_detail.md`：终局计分 a/b/c/d 板块的规则公式。
 - `assets/industry/industry-abilities.md`：公司牌主动/被动能力设计与建模说明。
 

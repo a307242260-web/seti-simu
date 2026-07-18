@@ -422,3 +422,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: `rg` 核对 AGENTS.md 新规则与 coding experience 状态；SETI-30 父级独立复核通过 61 个 AI JS 语法检查及 109 个 tracked Node 测试。
 - observed_outcome: SETI-30 将在本轮写入最终 decision 并直接收口 done，不再保留伪等待状态。
 - keep_or_revise: 保留并观察后续 5 个 coding issue；若出现过早关单则收窄到 verification_result、decision 和无 reviewer 三项同时满足。
+
+- date: 2026-07-19
+- source: SETI-42（SETI-40 失效链；SETI-36 反例检查）
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: 领航及遵循仓库根 AGENTS.md 的 coding agent
+- target_component: 跨模块状态机/迁移 implementation review loop
+- target_file: docs/implementation-proof-obligations.md；AGENTS.md
+- remote_skill_id: none
+- change: 将验收条款先转成可证伪 proof obligation，并按状态 × action family × decision owner × fallback 禁区建立完备性矩阵；要求全称、否定和决策所有权命题使用与量词匹配的证据。
+- applied_change: 新增 `docs/implementation-proof-obligations.md`，包含正向推导模板、SETI-40 失效链、验证分层、SETI-36 非过拟合检查和最小 review checklist；根 `AGENTS.md` 增加触发规则与文档入口。
+- expected_effect: 类似 legal→executable 断裂、静态 conditional coverage、旧 resolver fallback、未知状态静默迁移和漏 context 注入能在设计/实现检查阶段被反例或局部合约阻断，而不是由下游随机轨迹首次定义。
+- evaluation_window: 后续 3 个跨模块状态机、规则内核或 runtime 迁移 issue
+- success_signal: 开工前能逐项给出 proof obligation/反例/实现落点/证据；review 不再以静态 label 或单条 happy path证明 family 完成；下游测试不再首次发现边界契约缺口。
+- rollback_condition: 若后续 3 个适用 issue 显示矩阵和模板没有比现有机制文档增加有效发现，或文档成本导致简单迁移被过度流程化，则收窄触发条件或降级为 candidate；若出现第二个独立状态机同类缺陷，则升级为可复用自动门禁。
+- risk: 模板可能诱发形式化填表但不构造真实反例；因此完成条件要求可失败命题与量词匹配证据，并明确简单局部改动不触发。
+- evidence_before: SETI-40 原始契约已明确已验证 action、conditional decision owner、禁止 resolver/policy 热路径和未迁移不得 fallback，但首轮仍以 PASS 优先 smoke、静态 family label、终局/吞吐证明完成；SETI-39 审计随后构造最小反例。SETI-36 独立迁移案例中，composition fail-fast 正向检查实际提前发现两处漏接线。
+- owner_or_agent_decision: 领航依据 SETI-40 的完整失败链与 SETI-36 的正向反例自决 promote 到 loop_template；流程中断和最终 transition 已有现行规则，拒绝重复升级 issue-workflow/watcher。
+- applied_at: 2026-07-19
+- verification: 人工逐条从 SETI-40 原始契约推出四个缺口，并用 SETI-36 `REQUIRED_CONTEXT_KEYS` 迁移复跑模板；检查文档包含七字段义务模板、四维矩阵、六层验证责任和十一项 review checklist。
+- observed_outcome: 待后续 3 个适用 issue 观察；本次模板已能在不依赖 SETI-39 下游随机测试的前提下生成与实际缺陷一致的四个反例义务。
+- keep_or_revise: 保留并进入 3 个 issue 的评估窗口；达到自动门禁升级条件或回滚条件时更新本条。
