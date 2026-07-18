@@ -97,6 +97,52 @@ function createLegacySnapshot(overrides = {}) {
   assert.equal(recovered.state.meta.schemaVersion, stateStore.SCHEMA_VERSION);
 })();
 
+(function testStageTwoCommittedSnapshotsArePurifiedOnTheStageThreeBoundary() {
+  const source = createLegacySnapshot({
+    solarState: {
+      wheelSteps: [0, 1, 2, 3, 0],
+      rotation: { wheel1Steps: 1, wheel2Steps: 2, wheel3Steps: 3, wheel4Steps: 0 },
+    },
+    planetStatsState: {
+      planets: {
+        mars: {
+          orbits: 1,
+          landings: 0,
+          orbitMarkers: [{ sequence: 1, displayed: true, displaySlot: 1, playerId: "p1" }],
+          landingMarkers: [],
+          satelliteLandings: [],
+        },
+      },
+    },
+  });
+  const stageTwo = stateStore.createCommittedGameState({
+    gameId: "stage-two",
+    rulesetVersion: "legacy-recovery-v1",
+    seed: 82,
+    rngState: { owner: "test" },
+    sequences: { rocket: 9 },
+    match: {},
+    turn: { ...source.state.turnState, currentPlayerId: "p2" },
+    players: { players: [{ id: "p1" }, { id: "p2" }] },
+    solarSystem: source.state.solarState,
+    pieces: { rockets: [], playerRocketSequences: {} },
+    planets: source.state.planetStatsState,
+    data: {}, cards: {}, tech: {}, aliens: {}, finalScoring: { pendingMarks: [] },
+  });
+  const recovered = adapter.deserializeRecoverySnapshot({
+    version: 2,
+    committedState: JSON.stringify(stageTwo),
+  });
+  assert.equal(recovered.ok, true);
+  assert.equal(Object.hasOwn(recovered.state.solarSystem, "wheelSteps"), false);
+  assert.equal(Object.hasOwn(recovered.state.planets.planets.mars, "orbits"), false);
+  assert.equal(Object.hasOwn(recovered.state.finalScoring, "pendingMarks"), false);
+  const projected = adapter.projectCommittedStateToLegacySlices(recovered.state);
+  assert.deepEqual(projected.state.solarState.wheelSteps, [0, 1, 2, 3, 0]);
+  assert.equal(projected.state.planetStatsState.planets.mars.orbits, 1);
+  assert.equal(projected.state.planetStatsState.planets.mars.orbitMarkers[0].sequence, 1);
+})();
+
 (function testFailClosedMatrix() {
   const missing = createLegacySnapshot();
   delete missing.state.planetStatsState;

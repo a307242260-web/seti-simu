@@ -2,17 +2,22 @@
   "use strict";
 
   let stateStore = root.SetiStateStore;
+  let lowCouplingState = root.SetiLowCouplingState;
   if (!stateStore && typeof require === "function") {
     stateStore = require("./state-store");
   }
+  if (!lowCouplingState && typeof require === "function") {
+    lowCouplingState = require("./low-coupling-slices");
+  }
 
-  const api = factory(stateStore);
+  const api = factory(stateStore, lowCouplingState);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiLegacyStateAdapter = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (stateStore) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (stateStore, lowCouplingState) {
   "use strict";
 
   if (!stateStore) throw new Error("SetiStateStore is required before SetiLegacyStateAdapter");
+  if (!lowCouplingState) throw new Error("SetiLowCouplingState is required before SetiLegacyStateAdapter");
 
   const LEGACY_RECOVERY_VERSION = 1;
   const COMMITTED_RECOVERY_VERSION = 2;
@@ -31,14 +36,14 @@
     "setupSelectionState",
   ]);
   const FIELD_OWNERSHIP = Object.freeze({
-    solarState: "committed:solarSystem",
-    nebulaDataState: "committed:data",
-    alienGameState: "committed:aliens",
+    solarState: "committed:solarSystem; derived:wheelSteps",
+    nebulaDataState: "committed:data; derived:playerTokenCounts/lastReplaced*; host-only:labels/assets/layout",
+    alienGameState: "committed:aliens; host-only:labels/assets/display",
     finalScoringState: "committed:finalScoring; session-owned:pendingMarks",
     playerState: "committed:players; legacy-adapter:currentPlayerId->turn.currentPlayerId",
     turnState: "committed:turn",
     rocketState: "committed:pieces; legacy-adapter:nextRocketId/playerRocketSequences; host-only:statusNote",
-    planetStatsState: "committed:planets",
+    planetStatsState: "committed:planets markers; derived:orbits/landings/marker display",
     techGameState: "committed:tech.board; host-only:ui",
     cardState: "committed:cards; host-only:ui",
     cardTaskState: "derived:excluded",
@@ -105,7 +110,7 @@
   }
 
   function createBootstrapStore() {
-    return stateStore.createStateStore(stateStore.createCommittedGameState({
+    return lowCouplingState.createLowCouplingStateStore(stateStore.createCommittedGameState({
       gameId: "legacy-adapter-bootstrap",
       rulesetVersion: "legacy-recovery-v1",
       seed: "legacy-adapter-bootstrap",
@@ -152,7 +157,7 @@
         return failure("LEGACY_SEQUENCE_INVALID", "rocketState.nextRocketId 必须是非负安全整数");
       }
 
-      const committed = stateStore.createCommittedGameState({
+      const committed = lowCouplingState.purifyLowCouplingSlices(stateStore.createCommittedGameState({
         stateVersion: 0,
         gameId: options.gameId || `legacy-recovery-${snapshot.meta?.entryId ?? "current"}`,
         rulesetVersion: options.rulesetVersion || "legacy-recovery-v1",
@@ -170,7 +175,7 @@
         tech: omit(legacy.techGameState, ["ui"]),
         aliens: clonePlain(legacy.alienGameState),
         finalScoring: omit(legacy.finalScoringState, ["pendingMarks"]),
-      });
+      }));
       const deserialized = createBootstrapStore().deserialize(committed);
       return deserialized.ok
         ? { ...deserialized, sourceVersion: LEGACY_RECOVERY_VERSION }
@@ -183,7 +188,7 @@
   function serializeLegacySnapshot(input, options = {}) {
     const adapted = adaptLegacySnapshot(input, options);
     if (!adapted.ok) return adapted;
-    const store = stateStore.createStateStore(adapted.state);
+    const store = lowCouplingState.createLowCouplingStateStore(adapted.state);
     return store.serialize();
   }
 
@@ -206,7 +211,17 @@
     if (typeof snapshot.committedState !== "string") {
       return failure("RECOVERY_COMMITTED_STATE_MISSING", "恢复快照缺少 committedState JSON");
     }
-    return createBootstrapStore().deserialize(snapshot.committedState);
+    let parsedCommitted;
+    try {
+      parsedCommitted = JSON.parse(snapshot.committedState);
+    } catch (error) {
+      return failure("STATE_DESERIALIZE_FAILED", error?.message || "状态 JSON 损坏");
+    }
+    try {
+      return createBootstrapStore().deserialize(lowCouplingState.purifyLowCouplingSlices(parsedCommitted));
+    } catch (error) {
+      return failure("STATE_LOW_COUPLING_MIGRATION_FAILED", error?.message || "低耦合切片净化失败");
+    }
   }
 
   function projectCommittedStateToLegacySlices(committedState, options = {}) {
@@ -218,8 +233,8 @@
       return {
         ok: true,
         state: {
-          solarState: clonePlain(state.solarSystem),
-          nebulaDataState: clonePlain(state.data),
+          solarState: projectSolarState(state.solarSystem),
+          nebulaDataState: projectDataState(state.data),
           alienGameState: clonePlain(state.aliens),
           finalScoringState: {
             ...clonePlain(state.finalScoring),
@@ -236,7 +251,7 @@
             playerRocketSequences: restoreSequenceSets(state.pieces.playerRocketSequences),
             statusNote: hostState.rocketState?.statusNote ?? null,
           },
-          planetStatsState: clonePlain(state.planets),
+          planetStatsState: projectPlanetState(state.planets),
           techGameState: {
             ...clonePlain(state.tech),
             ui: clonePlain(hostState.techGameState?.ui || {}),
@@ -252,15 +267,114 @@
     }
   }
 
+  function mutateLegacyLowCouplingSlices(store, mutator, options = {}) {
+    if (!store || typeof store.getSnapshot !== "function") throw new TypeError("必须传入 StateStore");
+    if (typeof mutator !== "function") throw new TypeError("mutator 必须是函数");
+    const snapshot = store.getSnapshot();
+    const projected = projectCommittedStateToLegacySlices(snapshot, options);
+    if (!projected.ok) return projected;
+    const legacy = {
+      solarState: projected.state.solarState,
+      turnState: { ...projected.state.turnState, currentPlayerId: snapshot.turn.currentPlayerId ?? null },
+      planetStatsState: projected.state.planetStatsState,
+      nebulaDataState: projected.state.nebulaDataState,
+      alienGameState: projected.state.alienGameState,
+      finalScoringState: projected.state.finalScoringState,
+    };
+    let mutationResult;
+    try {
+      mutationResult = mutator(legacy);
+    } catch (error) {
+      return failure("STATE_MUTATOR_FAILED", error?.message || "旧领域行为适配失败");
+    }
+    return lowCouplingState.mutateLowCouplingSlices(store, (_slices, workingState) => {
+      workingState.solarSystem = lowCouplingState.purifyLowCouplingSlices({
+        ...snapshot,
+        solarSystem: legacy.solarState,
+      }).solarSystem;
+      workingState.turn = lowCouplingState.purifyLowCouplingSlices({
+        ...snapshot,
+        turn: legacy.turnState,
+      }).turn;
+      workingState.planets = lowCouplingState.purifyLowCouplingSlices({
+        ...snapshot,
+        planets: legacy.planetStatsState,
+      }).planets;
+      workingState.data = lowCouplingState.purifyLowCouplingSlices({
+        ...snapshot,
+        data: legacy.nebulaDataState,
+      }).data;
+      workingState.aliens = lowCouplingState.purifyLowCouplingSlices({
+        ...snapshot,
+        aliens: legacy.alienGameState,
+      }).aliens;
+      workingState.finalScoring = lowCouplingState.purifyLowCouplingSlices({
+        ...snapshot,
+        finalScoring: legacy.finalScoringState,
+      }).finalScoring;
+      return mutationResult;
+    });
+  }
+
+  function projectSolarState(source) {
+    const solar = clonePlain(source || {});
+    if (isPlainObject(solar.rotation)) {
+      solar.wheelSteps = [0, 1, 2, 3, 4].map((wheelId) => (
+        wheelId === 0 ? 0 : Number(solar.rotation[`wheel${wheelId}Steps`] || 0)
+      ));
+    }
+    return solar;
+  }
+
+  function projectPlanetState(source) {
+    const planets = clonePlain(source || {});
+    for (const record of Object.values(planets.planets || {})) {
+      if (!isPlainObject(record)) continue;
+      for (const key of ["orbitMarkers", "landingMarkers"]) {
+        if (!Array.isArray(record[key])) record[key] = [];
+        record[key].forEach((marker, index) => {
+          marker.sequence = index + 1;
+          marker.displayed = true;
+          marker.displaySlot = index + 1;
+        });
+      }
+      if (!Array.isArray(record.satelliteLandings)) record.satelliteLandings = [];
+      record.orbits = record.orbitMarkers.length;
+      record.landings = record.landingMarkers.length;
+    }
+    return planets;
+  }
+
+  function projectDataState(source) {
+    const data = clonePlain(source || {});
+    for (const bucket of Object.values(data.nebulae || {})) {
+      if (!isPlainObject(bucket)) continue;
+      const counts = {};
+      let last = null;
+      for (const token of bucket.tokens || []) {
+        const color = token.replacedByPlayerColor || token.playerColor || null;
+        if (color) counts[color] = (counts[color] || 0) + 1;
+        if (color) last = token;
+      }
+      bucket.playerTokenCounts = counts;
+      bucket.lastReplacedPlayerId = last?.replacedByPlayerId || last?.playerId || null;
+      bucket.lastReplacedPlayerColor = last?.replacedByPlayerColor || last?.playerColor || null;
+      bucket.lastReplacedPlayerLabel = null;
+    }
+    return data;
+  }
+
   return Object.freeze({
     LEGACY_RECOVERY_VERSION,
     COMMITTED_RECOVERY_VERSION,
     LEGACY_STATE_SLICES,
     FIELD_OWNERSHIP,
+    LOW_COUPLING_FIELD_OWNERSHIP: lowCouplingState.FIELD_OWNERSHIP,
     ADAPTER_CONTRACT,
     adaptLegacySnapshot,
     serializeLegacySnapshot,
     deserializeRecoverySnapshot,
     projectCommittedStateToLegacySlices,
+    mutateLegacyLowCouplingSlices,
   });
 });
