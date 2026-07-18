@@ -5,6 +5,7 @@ const path = require("node:path");
 const { performance } = require("node:perf_hooks");
 const {
   OBSERVATION_SCHEMA_VERSION,
+  CONDITIONAL_FAMILIES,
   normalizeTurnCandidate,
   normalizeConditionalCandidate,
   sanitizeCard,
@@ -153,6 +154,93 @@ function getActionPhase(kind) {
   return "main";
 }
 
+function drainHeadlessDeterministicEffects(api, maxSteps = 2000) {
+  const steps = [];
+  for (let index = 0; index < maxSteps; index += 1) {
+    const conditional = api.listHeadlessConditionalActionCandidates?.()
+      || { ok: true, candidates: [] };
+    const conditionalCandidates = (conditional.candidates || [])
+      .filter((candidate) => candidate?.available !== false);
+    if (conditionalCandidates.length > 1) {
+      return {
+        ok: true,
+        boundary: "conditional_choice",
+        actorPlayer: structuredClone(conditional.actorPlayer || null),
+        candidates: structuredClone(conditionalCandidates),
+        steps,
+      };
+    }
+    if (conditionalCandidates.length === 1) {
+      const candidate = conditionalCandidates[0];
+      if (!CONDITIONAL_FAMILIES.includes(candidate?.family)) {
+        return {
+          ok: false,
+          final: { message: `未支持的单选 conditional family：${candidate?.family || "<missing>"}` },
+          steps,
+        };
+      }
+      const actionResult = api.executeHeadlessConditionalAction?.(structuredClone(candidate));
+      const automaticStep = {
+        ok: actionResult?.ok !== false,
+        progressed: actionResult?.ok !== false,
+        automaticConditionalChoice: true,
+        family: candidate.family,
+        actorPlayerId: conditional.actorPlayer?.id || null,
+        target: structuredClone(candidate.target || null),
+        actionResult,
+      };
+      steps.push(automaticStep);
+      if (actionResult?.ok === false) {
+        return { ok: false, final: actionResult, steps };
+      }
+      continue;
+    }
+    const turn = api.listHeadlessTurnActionCandidates();
+    if (turn.candidates?.length || api.getTurnState().gameEnded) {
+      return { ok: true, boundary: api.getTurnState().gameEnded ? "terminal" : "turn_action", steps };
+    }
+    const deterministicResult = api.advanceHeadlessDeterministicState?.();
+    if (deterministicResult?.progressed) {
+      steps.push(deterministicResult);
+      continue;
+    }
+    if (api.getAiAutoBattleProgress?.().pendingState?.actionEffectFlowActive) {
+      const effectResult = api.executeHeadlessCurrentActionEffect?.();
+      steps.push(effectResult);
+      if (!effectResult) {
+        return { ok: false, final: { message: "活动效果未产生确定性推进结果" }, steps };
+      }
+      if (effectResult?.ok === false) {
+        const skipResult = api.skipHeadlessActionEffect?.();
+        steps.push(skipResult);
+        if (skipResult?.ok) continue;
+        return { ok: false, final: effectResult, steps };
+      }
+      continue;
+    }
+    return {
+      ok: false,
+      final: { message: "存在未迁移的 headless pending 状态，拒绝回退浏览器 AI resolver" },
+      steps,
+    };
+  }
+  return { ok: false, final: { message: `确定性效果推进超过 ${maxSteps} 步` }, steps };
+}
+
+function buildEnvironmentEvents(resolution, startIndex, sourceActionType = null) {
+  return (resolution?.steps || []).map((event, eventIndex) => ({
+    eventIndex: startIndex + eventIndex,
+    type: event?.automaticConditionalChoice
+      ? "automatic_conditional_choice"
+      : event?.done ? "terminal" : event?.skipped ? "auto_skip" : "automatic_resolution",
+    family: event?.family || null,
+    target: event?.target || null,
+    ownerPlayerId: event?.actorPlayerId || event?.playerId || null,
+    sourceActionType,
+    irreversible: event?.irreversible || null,
+  }));
+}
+
 function createHeadlessEnv() {
   let api = null;
   let seed = null;
@@ -241,6 +329,7 @@ function createHeadlessEnv() {
         `${failure.message || "headless reset 未能推进到首个决策点"}${pendingSummary}`,
       );
     }
+    environmentEvents.push(...buildEnvironmentEvents(initialResolution, environmentEvents.length));
   }
 
   function getConditionalCandidates() {
@@ -248,42 +337,7 @@ function createHeadlessEnv() {
   }
 
   function drainDeterministicEffects(maxSteps = 2000) {
-    const steps = [];
-    for (let index = 0; index < maxSteps; index += 1) {
-      const conditional = getConditionalCandidates();
-      if (conditional.candidates?.length) {
-        return { ok: true, boundary: "conditional_choice", steps };
-      }
-      const turn = api.listHeadlessTurnActionCandidates();
-      if (turn.candidates?.length || api.getTurnState().gameEnded) {
-        return { ok: true, boundary: api.getTurnState().gameEnded ? "terminal" : "turn_action", steps };
-      }
-      const deterministicResult = api.advanceHeadlessDeterministicState?.();
-      if (deterministicResult?.progressed) {
-        steps.push(deterministicResult);
-        continue;
-      }
-      if (api.getAiAutoBattleProgress?.().pendingState?.actionEffectFlowActive) {
-        const effectResult = api.executeHeadlessCurrentActionEffect?.();
-        steps.push(effectResult);
-        if (!effectResult) {
-          return { ok: false, final: { message: "活动效果未产生确定性推进结果" }, steps };
-        }
-        if (effectResult?.ok === false) {
-          const skipResult = api.skipHeadlessActionEffect?.();
-          steps.push(skipResult);
-          if (skipResult?.ok) continue;
-          return { ok: false, final: effectResult, steps };
-        }
-        continue;
-      }
-      return {
-        ok: false,
-        final: { message: "存在未迁移的 headless pending 状态，拒绝回退浏览器 AI resolver" },
-        steps,
-      };
-    }
-    return { ok: false, final: { message: `确定性效果推进超过 ${maxSteps} 步` }, steps };
+    return drainHeadlessDeterministicEffects(api, maxSteps);
   }
 
   return {
@@ -496,13 +550,11 @@ function createHeadlessEnv() {
       const done = Boolean(observation.terminal);
       const reward = buildReward(beforePlayer, afterPlayer, done);
       const replayStartedAt = performance.now();
-      const stepEnvironmentEvents = (result.resolution?.steps || []).map((event, eventIndex) => ({
-        eventIndex: environmentEvents.length + eventIndex,
-        type: event?.done ? "terminal" : event?.skipped ? "auto_skip" : "automatic_resolution",
-        ownerPlayerId: event?.playerId || event?.actorPlayerId || null,
-        sourceActionType: action.family || null,
-        irreversible: event?.irreversible || null,
-      }));
+      const stepEnvironmentEvents = buildEnvironmentEvents(
+        result.resolution,
+        environmentEvents.length,
+        action.family || null,
+      );
       environmentEvents.push(...stepEnvironmentEvents);
       const replayEvent = {
         stepIndex: replaySteps.length,
@@ -631,5 +683,7 @@ function createHeadlessEnv() {
 }
 
 module.exports = {
+  buildEnvironmentEvents,
   createHeadlessEnv,
+  drainHeadlessDeterministicEffects,
 };
