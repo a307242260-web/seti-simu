@@ -48,6 +48,7 @@
       runezu,
       aiRaceModel,
       ai,
+      aiControlRuntimeModule,
       solarState,
       nebulaDataState,
       alienGameState,
@@ -220,63 +221,6 @@
 
     const AI_STRATEGY_TUNING_HISTORY_STORAGE_KEY = "seti-ai-strategy-tuning-history-v1";
     const AI_MAX_CARD_CORNER_MOVES_PER_TURN = 1;
-    const AI_DIFFICULTY_LAUGHABLE = "laughable";
-    const AI_DIFFICULTY_WEAK_START = "weak_start";
-    const AI_DIFFICULTY_LABELS = Object.freeze({
-      [AI_DIFFICULTY_LAUGHABLE]: "令人发笑的",
-      [AI_DIFFICULTY_WEAK_START]: "开始弱小的",
-    });
-    const aiAutoBattleState = {
-      enabled: false,
-      running: false,
-      manualDrive: false,
-      playerIds: [],
-      aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
-      logs: [],
-      bugs: [],
-      bugCounts: {},
-      turnMoveCounts: {},
-      turnCardCornerMoveCounts: {},
-      maxBugRepeats: 3,
-      maxMovesPerTurn: 1,
-      stepDelayMs: 0,
-      compactLogs: false,
-      lastSummary: null,
-      strategyTuningHistory: [],
-      strategyTuningHistoryLoaded: false,
-      nextStrategyTuningHistoryId: 1,
-    };
-    let aiAutoStepScheduled = false;
-    let aiAutoStepInProgress = false;
-    let aiAutoStepPausedOnBug = false;
-    let aiAutoStepSuspended = false;
-
-    function normalizeAiDifficulty(value) {
-      return String(value || "") === AI_DIFFICULTY_WEAK_START
-        ? AI_DIFFICULTY_WEAK_START
-        : AI_DIFFICULTY_LAUGHABLE;
-    }
-
-    function getAiDifficultyLabel(value = aiAutoBattleState.aiDifficulty) {
-      const difficulty = normalizeAiDifficulty(value);
-      return AI_DIFFICULTY_LABELS[difficulty] || AI_DIFFICULTY_LABELS[AI_DIFFICULTY_LAUGHABLE];
-    }
-
-    function applyAiDifficultyToPlayer(player, difficulty = aiAutoBattleState.aiDifficulty) {
-      if (!player) return;
-      const normalized = normalizeAiDifficulty(difficulty);
-      player.aiDifficulty = normalized;
-      player.aiDifficultyLabel = getAiDifficultyLabel(normalized);
-    }
-
-    function applyAiDifficultyToPlayerIds(playerIds = [], difficulty = aiAutoBattleState.aiDifficulty) {
-      const normalized = normalizeAiDifficulty(difficulty);
-      aiAutoBattleState.aiDifficulty = normalized;
-      for (const playerId of playerIds) {
-        applyAiDifficultyToPlayer(getPlayerById(playerId), normalized);
-      }
-      return normalized;
-    }
     const AI_MOVE_DIRECTIONS = Object.freeze([
       Object.freeze({ id: "out", label: "向外", deltaX: 0, deltaY: 1, score: 5 }),
       Object.freeze({ id: "cw", label: "顺时针", deltaX: 1, deltaY: 0, score: 2 }),
@@ -315,49 +259,6 @@
       uranus: Object.freeze([3, 4]),
       neptune: Object.freeze([3, 4]),
     });
-    const AI_STRATEGY_WEIGHT_KEYS = Object.freeze([
-      "engine",
-      "playCard",
-      "tech",
-      "scan",
-      "route",
-      "move",
-      "orbitLand",
-      "task",
-      "final",
-      "pass",
-    ]);
-    const AI_STRATEGY_WEIGHT_DEFAULTS = Object.freeze({
-      ...AI_STRATEGY_WEIGHT_KEYS.reduce((weights, key) => ({ ...weights, [key]: 1 }), {}),
-      engine: 1.30,
-      playCard: 1.44,
-      tech: 1.16,
-      scan: 1.18,
-      route: 0.76,
-      move: 0.74,
-      orbitLand: 1.00,
-      task: 1.24,
-      final: 1.34,
-      pass: 0.78,
-    });
-    const AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS = Object.freeze({
-      ...AI_STRATEGY_WEIGHT_KEYS.reduce((weights, key) => ({ ...weights, [key]: 1 }), {}),
-      engine: 1.22,
-      playCard: 1.40,
-      tech: 1.14,
-      scan: 1.08,
-      route: 0.80,
-      move: 0.78,
-      orbitLand: 1.02,
-      task: 1.22,
-      final: 1.28,
-      pass: 0.82,
-    });
-    function getAiStrategyWeightDefaultsForDifficulty(difficulty) {
-      return normalizeAiDifficulty(difficulty) === AI_DIFFICULTY_WEAK_START
-        ? AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS
-        : AI_STRATEGY_WEIGHT_DEFAULTS;
-    }
     const AI_CHEAT_LAB_INDUSTRY_LABEL = "作弊实验室";
     const AI_CHEAT_LAB_INDUSTRY_ID = "industry:作弊实验室";
     const AI_CHEAT_LAB_INDUSTRY_SRC = "../assets/industry/异星实验室.png";
@@ -369,9 +270,67 @@
     const AI_GRAND_STRATEGY_INDUSTRY_SRC = "../assets/industry/宇宙战略集团.png";
     const AI_STYLE_IDS = Object.freeze(["scanner", "route", "task", "tech", "balanced"]);
     const AI_STYLE_SEAT_ORDER = Object.freeze(["route", "scanner", "task", "tech", "balanced"]);
-    let aiStrategyWeights = { ...AI_STRATEGY_WEIGHT_DEFAULTS };
-    let aiStrategyWeightsUseDifficultyDefaults = true;
     let aiStrategyDemandCache = null;
+
+    const resolvedAiControlRuntimeModule = aiControlRuntimeModule
+      || root.SetiAppAiControlRuntime
+      || (typeof require === "function" ? require("./ai/control-runtime") : null);
+    if (!resolvedAiControlRuntimeModule?.createAiControlRuntime) {
+      throw new Error("createAiController requires SetiAppAiControlRuntime");
+    }
+    const aiControlRuntime = resolvedAiControlRuntimeModule.createAiControlRuntime({
+      window: windowRef,
+      state,
+      playerState,
+      turnState,
+      rocketState,
+      DEFAULT_ACTIVE_PLAYER_COUNT,
+      DEFAULT_INITIAL_PLAYER_COLOR,
+      getCurrentActionEffect,
+      getCurrentPlayer,
+      getEffectOwnerPlayer,
+      getPlayerByColor,
+      getPlayerById,
+      getPlayerLabelById,
+      isGameEnded,
+      isUiBlockingAiAutomation,
+      isIndustryHandSelectionActive,
+      recordAiAutoBattleLog: (...args) => recordAiAutoBattleLog(...args),
+      recordAiAutoBattleBug: (...args) => recordAiAutoBattleBug(...args),
+      renderStateReadout,
+      runAiAutomationStep: (...args) => runAiAutomationStep(...args),
+      resetGameForAiAutoBattle: (...args) => resetGameForAiAutoBattle(...args),
+      resetAiStrategyDemandCache: () => { aiStrategyDemandCache = null; },
+      setTurnStatePlayerOrder,
+      startInitialSelection,
+      updateActionButtons,
+    });
+    const {
+      AI_DIFFICULTY_WEAK_START,
+      aiAutoBattleState,
+      applyAiDifficultyToPlayer,
+      configureAiAutoBattle,
+      configureAiStrategyWeights,
+      configureDefaultAiOpponent,
+      createAiControlSnapshot,
+      getAiAutoBattlePlayerIds,
+      getAiDifficultyLabel,
+      getAiStrategyWeight,
+      getAiStrategyWeightDefaultsForDifficulty,
+      getAiStrategyWeights,
+      getConfiguredAiStrategyWeights,
+      getPendingOwnerPlayer,
+      isAiAutomationPaused,
+      isAiAutoBattlePlayer,
+      normalizeAiDifficulty,
+      normalizeAiStrategyWeights,
+      resetAiStrategyWeights,
+      restoreAiControlSnapshot,
+      runWithAiRandomSeed,
+      getAiBatchSeed,
+      scheduleAiAutoStepIfNeeded,
+      usesDifficultyDefaultStrategyWeights,
+    } = aiControlRuntime;
 
     function getAiAutoBattleScoreSnapshot() {
       return getActivePlayers().map((player) => ({
@@ -1061,7 +1020,7 @@
       const report = {
         enabled: aiAutoBattleState.enabled,
         running: aiAutoBattleState.running,
-        pausedOnBug: aiAutoStepPausedOnBug,
+        pausedOnBug: isAiAutomationPaused(),
         playerIds: aiAutoBattleState.playerIds,
         aiDifficulty: aiAutoBattleState.aiDifficulty,
         aiDifficultyLabel: getAiDifficultyLabel(),
@@ -1094,7 +1053,7 @@
       return {
         enabled: aiAutoBattleState.enabled,
         running: aiAutoBattleState.running,
-        pausedOnBug: aiAutoStepPausedOnBug,
+        pausedOnBug: isAiAutomationPaused(),
         logCount: aiAutoBattleState.logs.length,
         bugCount: aiAutoBattleState.bugs.length,
         lastSummary: summary
@@ -1117,351 +1076,12 @@
       return structuredClone(buildAiAutoBattleReport().analysis || null);
     }
 
-    function getAiAutoBattlePlayerIds() {
-      return aiAutoBattleState.playerIds.filter((playerId) => getPlayerById(playerId));
-    }
-
-    function isAiAutoBattlePlayer(playerId = playerState.currentPlayerId) {
-      return aiAutoBattleState.enabled
-        && getAiAutoBattlePlayerIds().includes(playerId);
-    }
-
-    function isAiAutomationPaused() {
-      return Boolean(aiAutoStepPausedOnBug);
-    }
-
-    function disableAiControlForRecovery(message = "AI 自动控制已禁用") {
-      aiAutoBattleState.enabled = false;
-      aiAutoBattleState.running = false;
-      aiAutoBattleState.playerIds = [];
-      aiAutoStepScheduled = false;
-      aiAutoStepInProgress = false;
-      aiAutoStepPausedOnBug = false;
-      aiAutoStepSuspended = false;
-      return {
-        ok: true,
-        disabled: true,
-        message,
-      };
-    }
-
-    function restoreDefaultAiControlForRecovery(message = "旧存档未包含电脑配置，已按默认人机对局恢复") {
-      const result = configureDefaultAiOpponent();
-      if (!result?.ok) {
-        return {
-          ...disableAiControlForRecovery(result?.message || "默认电脑配置不可用，已按全手动恢复"),
-          defaulted: true,
-        };
-      }
-      return {
-        ok: true,
-        enabled: true,
-        defaulted: true,
-        playerIds: [...result.playerIds],
-        pausedOnBug: false,
-        message,
-      };
-    }
-
-    function createAiControlSnapshot() {
-      return {
-        version: 1,
-        enabled: Boolean(aiAutoBattleState.enabled),
-        playerIds: getAiAutoBattlePlayerIds(),
-        pausedOnBug: false,
-        lastPausedOnBug: Boolean(aiAutoStepPausedOnBug),
-        stepDelayMs: Math.max(0, Math.round(Number(aiAutoBattleState.stepDelayMs) || 0)),
-        maxBugRepeats: Math.max(1, Math.round(Number(aiAutoBattleState.maxBugRepeats) || 1)),
-        maxMovesPerTurn: Math.max(0, Math.round(Number(aiAutoBattleState.maxMovesPerTurn) || 0)),
-        aiDifficulty: aiAutoBattleState.aiDifficulty,
-        strategyWeights: getAiStrategyWeights(),
-      };
-    }
-
-    function restoreAiControlSnapshot(snapshot, options = {}) {
-      aiAutoBattleState.running = false;
-      aiAutoStepScheduled = false;
-      aiAutoStepInProgress = false;
-      aiAutoStepSuspended = false;
-
-      if (!snapshot || typeof snapshot !== "object") {
-        return {
-          ...restoreDefaultAiControlForRecovery(
-            options.missingMessage || "恢复快照未包含电脑配置，已按默认人机对局恢复",
-          ),
-          missing: true,
-        };
-      }
-
-      if (snapshot.strategyWeights && typeof snapshot.strategyWeights === "object") {
-        configureAiStrategyWeights(snapshot.strategyWeights, { merge: false });
-      }
-      if (snapshot.stepDelayMs != null) {
-        aiAutoBattleState.stepDelayMs = Math.max(0, Math.round(Number(snapshot.stepDelayMs) || 0));
-      }
-      if (snapshot.maxBugRepeats != null) {
-        aiAutoBattleState.maxBugRepeats = Math.max(1, Math.round(Number(snapshot.maxBugRepeats) || 1));
-      }
-      if (snapshot.maxMovesPerTurn != null) {
-        aiAutoBattleState.maxMovesPerTurn = Math.max(0, Math.round(Number(snapshot.maxMovesPerTurn) || 0));
-      }
-      const aiDifficulty = normalizeAiDifficulty(snapshot.aiDifficulty);
-
-      if (!snapshot.enabled) {
-        return disableAiControlForRecovery("电脑配置已恢复为全手动");
-      }
-
-      const playerIds = Array.isArray(snapshot.playerIds)
-        ? [...new Set(snapshot.playerIds.map((playerId) => getPlayerById(playerId)?.id).filter(Boolean))]
-        : [];
-      if (!playerIds.length) {
-        return {
-          ...restoreDefaultAiControlForRecovery("恢复快照中的电脑玩家无效，已按默认人机对局恢复"),
-          invalidPlayerIds: true,
-        };
-      }
-
-      aiAutoBattleState.enabled = true;
-      aiAutoBattleState.playerIds = playerIds;
-      applyAiDifficultyToPlayerIds(playerIds, aiDifficulty);
-      aiAutoStepPausedOnBug = options.restorePausedOnBug === true
-        ? Boolean(snapshot.pausedOnBug)
-        : false;
-      const clearedPausedOnBug = Boolean(snapshot.pausedOnBug) && !aiAutoStepPausedOnBug;
-      return {
-        ok: true,
-        enabled: true,
-        playerIds: [...playerIds],
-        pausedOnBug: aiAutoStepPausedOnBug,
-        clearedPausedOnBug,
-        message: clearedPausedOnBug ? "电脑配置已恢复，已清除旧阻塞暂停" : "电脑配置已恢复",
-      };
-    }
-
     function isAiIncomeDiscardType(type) {
       return AI_INCOME_DISCARD_TYPES.has(String(type || ""));
     }
 
     function getPlayerAgentLabel(playerId) {
       return isAiAutoBattlePlayer(playerId) ? "电脑" : "人类";
-    }
-
-    function getDefaultHumanPlayerId() {
-      return getPlayerByColor(DEFAULT_INITIAL_PLAYER_COLOR)?.id
-        || turnState.startPlayerId
-        || playerState.currentPlayerId
-        || null;
-    }
-
-    function getDefaultAiOpponentPlayerIds() {
-      const humanPlayerId = getDefaultHumanPlayerId();
-      const activeIds = (turnState.activePlayerIds || []).filter((playerId) => getPlayerById(playerId));
-      const opponents = activeIds.filter((playerId) => playerId !== humanPlayerId);
-      if (opponents.length) return opponents;
-      return playerState.players
-        .filter((player) => player.id !== humanPlayerId)
-        .slice(0, Math.max(0, DEFAULT_ACTIVE_PLAYER_COUNT - 1))
-        .map((player) => player.id);
-    }
-
-    function configureDefaultAiOpponent(options = {}) {
-      const aiPlayerIds = getDefaultAiOpponentPlayerIds();
-      if (!aiPlayerIds.length) return { ok: false, message: "没有可用的默认电脑玩家" };
-      const aiDifficulty = applyAiDifficultyToPlayerIds(aiPlayerIds, options.aiDifficulty);
-      aiAutoBattleState.enabled = true;
-      aiAutoBattleState.playerIds = aiPlayerIds;
-      aiAutoStepPausedOnBug = false;
-      recordAiAutoBattleLog("config", `默认电脑玩家：${aiPlayerIds.map(getPlayerLabelById).join("、")}；难度：${getAiDifficultyLabel(aiDifficulty)}`, {
-        playerIds: aiPlayerIds,
-        humanPlayerId: getDefaultHumanPlayerId(),
-        aiDifficulty,
-        aiDifficultyLabel: getAiDifficultyLabel(aiDifficulty),
-        mode: "default-human-vs-ai",
-      });
-      return { ok: true, playerIds: [...aiPlayerIds], aiDifficulty, message: "默认人机对局已配置" };
-    }
-
-    function resolveAiAutoBattlePlayerIds(options = {}) {
-      const requested = Array.isArray(options.playerIds)
-        ? options.playerIds
-        : Array.isArray(options.colors)
-          ? options.colors
-          : [];
-      const resolved = requested
-        .map((reference) => (
-          getPlayerById(reference)
-          || getPlayerByColor(reference)
-          || null
-        ))
-        .filter(Boolean)
-        .map((player) => player.id);
-      if (resolved.length) return [...new Set(resolved)];
-
-      const requestedCount = Math.max(
-        1,
-        Math.round(Number(options.activePlayerCount) || turnState.activePlayerCount || DEFAULT_ACTIVE_PLAYER_COUNT),
-      );
-      return (turnState.activePlayerIds || [])
-        .filter((playerId) => getPlayerById(playerId))
-        .slice(0, requestedCount);
-    }
-
-    function setAiAutoBattlePlayers(options = {}) {
-      const playerIds = resolveAiAutoBattlePlayerIds(options);
-      if (!playerIds.length) {
-        return { ok: false, message: "没有可配置为电脑玩家的玩家" };
-      }
-      const aiDifficulty = applyAiDifficultyToPlayerIds(playerIds, options.aiDifficulty);
-      aiAutoBattleState.enabled = true;
-      aiAutoBattleState.playerIds = playerIds;
-      aiAutoStepPausedOnBug = false;
-      recordAiAutoBattleLog("config", `电脑玩家：${playerIds.map(getPlayerLabelById).join("、")}；难度：${getAiDifficultyLabel(aiDifficulty)}`, {
-        playerIds,
-        aiDifficulty,
-        aiDifficultyLabel: getAiDifficultyLabel(aiDifficulty),
-      });
-      return { ok: true, playerIds: [...playerIds], aiDifficulty, message: "电脑玩家已配置" };
-    }
-
-    function getPendingPlayerId(pending) {
-      const playerId = pending?.playerId
-        || pending?.targetPlayerId
-        || pending?.player?.id
-        || null;
-      if (playerId) return playerId;
-      const playerColor = pending?.playerColor
-        || pending?.targetPlayerColor
-        || pending?.player?.color
-        || null;
-      return playerColor ? getPlayerByColor(playerColor)?.id || null : null;
-    }
-
-    function shouldUseAlienTracePickerOwnerForAutomation(picker) {
-      const mode = String(picker?.mode || "");
-      return Boolean(
-        mode
-        && mode !== "debug-direct"
-        && mode !== "reveal-confirm"
-        && getPendingPlayerId(picker)
-      );
-    }
-
-    function getEffectOwnerPlayerSafe(effect) {
-      return effect ? getEffectOwnerPlayer(effect) : null;
-    }
-
-    function getPendingOwnerPlayer(pending, fallbackEffect = null) {
-      const pendingPlayerId = getPendingPlayerId(pending);
-      if (pendingPlayerId) return getPlayerById(pendingPlayerId) || null;
-      return getEffectOwnerPlayerSafe(pending?.effect || fallbackEffect)
-        || getCurrentPlayer();
-    }
-
-    function getPendingAlienAutomationPlayerId() {
-      const pendingEntries = [
-        state.pendingAlienTraceAction,
-        shouldUseAlienTracePickerOwnerForAutomation(state.alienTracePickerState)
-          ? state.alienTracePickerState
-          : null,
-        state.pendingJiuzheCardPlay?.reason === "view" ? null : state.pendingJiuzheCardPlay,
-        state.pendingYichangdianCardGain,
-        state.pendingYichangdianCornerAction,
-        state.pendingBanrenmaCardGain,
-        state.pendingBanrenmaOpportunity,
-        state.pendingChongCardGain,
-        state.pendingChongFossilChoice,
-        state.pendingChongTaskCompletion,
-        state.pendingAmibaCardGain,
-        state.pendingAmibaSymbolChoice,
-        state.pendingAmibaTraceRemoval,
-        state.pendingAomomoCardGain,
-        state.pendingRunezuCardGain,
-        state.pendingRunezuFaceSymbolPlacement,
-        state.pendingRunezuSymbolBranch,
-      ];
-      for (const pending of pendingEntries) {
-        const playerId = getPendingPlayerId(pending);
-        if (playerId) return playerId;
-      }
-      return null;
-    }
-
-    function getPendingAutomationPlayerId() {
-      if (state.pendingDiscardAction?.player?.id) return state.pendingDiscardAction.player.id;
-      if (state.pendingCardSelectionAction?.player?.id) return state.pendingCardSelectionAction.player.id;
-      if (state.pendingPassReserveSelection?.playerId) return state.pendingPassReserveSelection.playerId;
-      if (state.pendingHandScanAction?.player?.id) return state.pendingHandScanAction.player.id;
-      if (state.pendingMovePayment?.player?.id) return state.pendingMovePayment.player.id;
-      if (state.pendingCardTaskCompletion) {
-        const playerId = getPendingPlayerId(state.pendingCardTaskCompletion);
-        if (playerId) return playerId;
-      }
-      const sharedPendingEntries = [
-        state.pendingScanTargetAction,
-        state.pendingProbeSectorScanAction,
-        state.pendingProbeLocationRewardAction,
-        state.pendingLandTargetAction,
-        state.pendingDataPlaceAction,
-      ];
-      for (const pending of sharedPendingEntries) {
-        const playerId = getPendingPlayerId(pending);
-        if (playerId) return playerId;
-        const effectOwner = getEffectOwnerPlayerSafe(pending?.effect);
-        if (effectOwner?.id) return effectOwner.id;
-      }
-      const alienPendingPlayerId = getPendingAlienAutomationPlayerId();
-      if (alienPendingPlayerId) return alienPendingPlayerId;
-      const effectOwner = getCurrentActionEffect()
-        ? getEffectOwnerPlayer(getCurrentActionEffect())
-        : null;
-      return effectOwner?.id || playerState.currentPlayerId;
-    }
-
-    function shouldAutoRunCurrentAiPlayer() {
-      const automationPlayerId = getPendingAutomationPlayerId();
-      return Boolean(
-        aiAutoBattleState.enabled
-        && !aiAutoBattleState.running
-        && !aiAutoBattleState.manualDrive
-        && !aiAutoStepSuspended
-        && !aiAutoStepPausedOnBug
-        && !aiAutoStepScheduled
-        && !aiAutoStepInProgress
-        && !isUiBlockingAiAutomation()
-        && !isGameEnded()
-        && isAiAutoBattlePlayer(automationPlayerId),
-      );
-    }
-
-    function scheduleAiAutoStepIfNeeded() {
-      if (!shouldAutoRunCurrentAiPlayer()) return;
-      aiAutoStepScheduled = true;
-      const delay = Math.max(0, Math.round(Number(aiAutoBattleState.stepDelayMs) || 0));
-      windowRef.setTimeout(runScheduledAiAutoStep, delay);
-    }
-
-    function runScheduledAiAutoStep() {
-      aiAutoStepScheduled = false;
-      if (!shouldAutoRunCurrentAiPlayer()) return;
-
-      aiAutoStepInProgress = true;
-      const result = runAiAutomationStep();
-      aiAutoStepInProgress = false;
-
-      if (result?.blocked || result?.ok === false) {
-        aiAutoStepPausedOnBug = true;
-        const bug = recordAiAutoBattleBug(result.message || "默认 AI 自动行动阻塞", {
-          result,
-          mode: "default-human-vs-ai",
-        });
-        rocketState.statusNote = `电脑玩家阻塞：${bug.message}`;
-        renderStateReadout();
-        return;
-      }
-
-      if (!result?.done && !isGameEnded()) {
-        scheduleAiAutoStepIfNeeded();
-      }
     }
 
     function resetGameForAiAutoBattle(options = {}) {
@@ -1512,63 +1132,6 @@
         playerIds: [...turnState.activePlayerIds],
         message: "AI 自动对战新局已重置",
       };
-    }
-
-    function configureAiAutoBattle(options = {}) {
-      aiStrategyDemandCache = null;
-      aiAutoStepSuspended = true;
-      try {
-        if (options.resetStrategyWeights) {
-          resetAiStrategyWeights();
-        }
-        if (options.strategyTuning) {
-          applyAiStrategyTuning(options.strategyTuning);
-        }
-        if (options.strategyWeights) {
-          const strategyDifficulty = normalizeAiDifficulty(options.aiDifficulty || aiAutoBattleState.aiDifficulty);
-          const mergeStrategyWeights = options.mergeStrategyWeights !== false;
-          const strategyMergeBase = mergeStrategyWeights
-            && aiStrategyWeightsUseDifficultyDefaults
-            && strategyDifficulty === AI_DIFFICULTY_WEAK_START
-              ? AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS
-              : null;
-          configureAiStrategyWeights(options.strategyWeights, {
-            merge: mergeStrategyWeights,
-            ...(strategyMergeBase ? { baseWeights: strategyMergeBase } : {}),
-          });
-        }
-        if (options.reset) {
-          const resetResult = resetGameForAiAutoBattle(options);
-          if (!resetResult.ok) return resetResult;
-        }
-        if (options.activePlayerCount && !options.reset) {
-          const playerIds = playerState.players.map((player) => player.id);
-          setTurnStatePlayerOrder(playerIds, { activePlayerCount: options.activePlayerCount });
-          startInitialSelection();
-        }
-        if (options.stepDelayMs != null) {
-          aiAutoBattleState.stepDelayMs = Math.max(0, Math.round(Number(options.stepDelayMs) || 0));
-        }
-        if (options.manualDrive != null) {
-          aiAutoBattleState.manualDrive = options.manualDrive === true;
-        }
-        aiAutoBattleState.compactLogs = options.compactLogs === true;
-        if (options.maxBugRepeats != null) {
-          aiAutoBattleState.maxBugRepeats = Math.max(1, Math.round(Number(options.maxBugRepeats) || 1));
-        }
-        if (options.maxMovesPerTurn != null) {
-          aiAutoBattleState.maxMovesPerTurn = Math.max(0, Math.round(Number(options.maxMovesPerTurn) || 0));
-        }
-        const configResult = setAiAutoBattlePlayers(options);
-        updateActionButtons();
-        renderStateReadout();
-        return configResult;
-      } finally {
-        aiAutoStepSuspended = false;
-        if (!options.suppressAutoSchedule) {
-          scheduleAiAutoStepIfNeeded();
-        }
-      }
     }
 
     function getOrderedAiAutoBattlePlayerIds() {
@@ -3361,104 +2924,15 @@
       return Math.round(aiNumber(value) * 1000) / 1000;
     }
 
-    function normalizeAiStrategyWeights(weights = {}, options = {}) {
-      const explicitBase = options.baseWeights && typeof options.baseWeights === "object"
-        ? options.baseWeights
-        : null;
-      const base = options.merge === false
-        ? (explicitBase || AI_STRATEGY_WEIGHT_DEFAULTS)
-        : (explicitBase || aiStrategyWeights);
-      const normalized = {};
-      for (const key of AI_STRATEGY_WEIGHT_KEYS) {
-        const value = Number(weights?.[key] ?? base[key] ?? AI_STRATEGY_WEIGHT_DEFAULTS[key]);
-        normalized[key] = Math.round(Math.min(1.6, Math.max(0.6, Number.isFinite(value) ? value : 1)) * 1000) / 1000;
-      }
-      return normalized;
-    }
-
-    function configureAiStrategyWeights(weights = {}, options = {}) {
-      aiStrategyWeights = normalizeAiStrategyWeights(weights, options);
-      aiStrategyWeightsUseDifficultyDefaults = options.useDifficultyDefaults === true;
-      aiStrategyDemandCache = null;
-      return {
-        ok: true,
-        weights: { ...aiStrategyWeights },
-      };
-    }
-
-    function resetAiStrategyWeights() {
-      return configureAiStrategyWeights(AI_STRATEGY_WEIGHT_DEFAULTS, {
-        merge: false,
-        useDifficultyDefaults: true,
-      });
-    }
-
     function applyAiStrategyTuning(tuning = {}) {
       const weights = tuning?.weights || tuning;
       return configureAiStrategyWeights(weights, { merge: true });
-    }
-
-    function getAiActiveStrategyWeights(player = getCurrentPlayer()) {
-      const difficulty = player?.aiDifficulty || aiAutoBattleState.aiDifficulty;
-      if (aiStrategyWeightsUseDifficultyDefaults) return getAiStrategyWeightDefaultsForDifficulty(difficulty);
-      return aiStrategyWeights;
-    }
-
-    function getAiStrategyWeights(player = getCurrentPlayer()) {
-      return { ...getAiActiveStrategyWeights(player) };
-    }
-
-    function getAiStrategyWeight(key, player = getCurrentPlayer()) {
-      const weights = getAiActiveStrategyWeights(player);
-      const value = Number(weights?.[key]);
-      return Number.isFinite(value) ? value : 1;
     }
 
     function applyAiStrategyWeight(value, key, strength = 1) {
       const amount = aiNumber(value);
       const weight = getAiStrategyWeight(key);
       return amount * (1 + (weight - 1) * Math.max(0, aiNumber(strength)));
-    }
-
-    function hashAiSeed(seed) {
-      const text = String(seed ?? "seti-ai");
-      let hash = 2166136261;
-      for (let index = 0; index < text.length; index += 1) {
-        hash ^= text.charCodeAt(index);
-        hash = Math.imul(hash, 16777619);
-      }
-      return hash >>> 0;
-    }
-
-    function createAiSeededRandom(seed) {
-      let state = hashAiSeed(seed);
-      return function seededRandom() {
-        state = (state + 0x6D2B79F5) >>> 0;
-        let value = state;
-        value = Math.imul(value ^ (value >>> 15), value | 1);
-        value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
-        return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
-      };
-    }
-
-    async function runWithAiRandomSeed(seed, callback) {
-      if (seed == null || seed === "") return callback();
-      const originalRandom = Math.random;
-      Math.random = createAiSeededRandom(seed);
-      try {
-        return await callback();
-      } finally {
-        Math.random = originalRandom;
-      }
-    }
-
-    function getAiBatchSeed(options = {}, index = 0) {
-      if (Array.isArray(options.seeds) && options.seeds.length) {
-        return options.seeds[index % options.seeds.length];
-      }
-      const baseSeed = options.seed ?? options.randomSeed ?? null;
-      if (baseSeed == null || baseSeed === "") return null;
-      return `${baseSeed}:${index + 1}`;
     }
 
     function getAiResourceValuesForRound() {
@@ -22655,8 +22129,8 @@
         seeds.push(`${seedBase}:${seeds.length + 1}`);
       }
 
-      const originalWeights = { ...aiStrategyWeights };
-      const originalWeightsUseDifficultyDefaults = aiStrategyWeightsUseDifficultyDefaults;
+      const originalWeights = getConfiguredAiStrategyWeights();
+      const originalWeightsUseDifficultyDefaults = usesDifficultyDefaultStrategyWeights();
       const aiDifficulty = normalizeAiDifficulty(options.aiDifficulty || aiAutoBattleState.aiDifficulty);
       const difficultyDefaultWeights = getAiStrategyWeightDefaultsForDifficulty(aiDifficulty);
       const baselineWeights = normalizeAiStrategyWeights(
@@ -22777,8 +22251,8 @@
       if (aiAutoBattleState.running) {
         return { ok: false, message: "AI 自动对战已经在运行" };
       }
-      const originalWeights = { ...aiStrategyWeights };
-      const originalWeightsUseDifficultyDefaults = aiStrategyWeightsUseDifficultyDefaults;
+      const originalWeights = getConfiguredAiStrategyWeights();
+      const originalWeightsUseDifficultyDefaults = usesDifficultyDefaultStrategyWeights();
       const aiDifficulty = normalizeAiDifficulty(options.aiDifficulty || aiAutoBattleState.aiDifficulty);
       const difficultyDefaultWeights = getAiStrategyWeightDefaultsForDifficulty(aiDifficulty);
       const baselineWeights = normalizeAiStrategyWeights(

@@ -246,3 +246,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: 核对 SETI-27 timeline、issue metadata 与本轮实际 shell 回归输出。
 - observed_outcome: 已识别并将在最终 verification_result 中以实际命令和结果覆盖，不将失真 metadata 当作验收证据。
 - keep_or_revise: 保持 candidate，等待后续 3 次复杂 verification_command 写入复审。
+
+- date: 2026-07-18
+- source: SETI-26, SETI-28, SETI-32
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: 领航及遵循仓库根 AGENTS.md 的 coding agent
+- target_component: app runtime 拆分验证 loop
+- target_file: AGENTS.md
+- remote_skill_id: none
+- change: 将大型闭包 runtime 拆分的验证从“语法 + 模块测试”提升为“迁移域代表性执行路径 + 全量 Node + 真实 Chrome smoke”。
+- applied_change: 在仓库根 `AGENTS.md` 的 Agent 工作约定新增 runtime/传统脚本迁移验证规则，并把 `docs/mocha_experience/coding.md` 的三次证据候选升级为 promote。
+- expected_effect: 在提交前同时覆盖显式 context、嵌套回调自由变量、传统 script 顺序和浏览器 composition，减少 Node 全绿后才出现的初始化或交互回归。
+- evaluation_window: 后续 5 次 `randomizer/app/**` runtime 拆分或传统 script 顺序变更
+- success_signal: 每次相关迁移均有领域执行证据和 Chrome smoke，且提交后不再出现漏注入、TDZ、漏导出或脚本顺序导致的首屏故障。
+- rollback_condition: 若仓库切换为统一模块打包且静态依赖图、类型检查与浏览器集成测试能自动覆盖同等风险，则删除或改写该手工 loop 规则。
+- risk: Chrome smoke 增加少量验证时间；对不涉及 runtime 或脚本装配的普通模块改动不应机械触发。
+- evidence_before: SETI-26 漏注入 helper、SETI-28 浏览器 TDZ/漏导出/漏 helper、SETI-32 首轮契约测试暴露单玩家难度 helper 漏注入；三次均发生在大型闭包迁出或传统脚本装配变更中。
+- owner_or_agent_decision: 领航依据 coding candidate 预设的“三次 runtime 拆分”评估窗口自决 promote。
+- applied_at: 2026-07-18
+- verification: SETI-32 通过 `node --check randomizer/app.js`、全量 `randomizer/**/*.test.js`、Stage 0 characterization/固定 seed 基线，以及项目自带 Chrome/CDP 一步 smoke（`gamesRun=1`、`blockedGames=0`）。
+- observed_outcome: 新 `app/ai/control-runtime.js` 的显式注入、传统 script 加载、公开控制 API、快照/调度和固定 seed 行为均通过；领域测试在全量回归前发现并修复唯一漏注入 helper。
+- keep_or_revise: 已提升并进入 5 次迁移观察窗口；若验证成本失衡或自动化覆盖替代手工 smoke，再修订规则。

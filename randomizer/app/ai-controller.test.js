@@ -4547,44 +4547,6 @@ function makeYichangdianAlienState(options = {}) {
 }
 
 {
-  const defaultHarness = createAiControllerHarness(null);
-  assert.equal(
-    defaultHarness.controller.configureAiAutoBattle({
-      playerIds: [defaultHarness.blue.id],
-      suppressAutoSchedule: true,
-    }).ok,
-    true,
-  );
-  assert.equal(defaultHarness.controller.getAiStrategyWeights().engine, 1.3);
-  assert.equal(defaultHarness.controller.getAiStrategyWeights().scan, 1.18);
-
-  const weakHarness = createAiControllerHarness(null);
-  assert.equal(
-    weakHarness.controller.configureAiAutoBattle({
-      playerIds: [weakHarness.blue.id],
-      aiDifficulty: "weak_start",
-      suppressAutoSchedule: true,
-    }).ok,
-    true,
-  );
-  assert.equal(weakHarness.controller.getAiStrategyWeights(weakHarness.blue).engine, 1.22);
-  assert.equal(weakHarness.controller.getAiStrategyWeights(weakHarness.blue).scan, 1.08);
-
-  const customWeakHarness = createAiControllerHarness(null);
-  assert.equal(
-    customWeakHarness.controller.configureAiAutoBattle({
-      playerIds: [customWeakHarness.blue.id],
-      aiDifficulty: "weak_start",
-      strategyWeights: { engine: 1.31, scan: 1.21 },
-      suppressAutoSchedule: true,
-    }).ok,
-    true,
-  );
-  assert.equal(customWeakHarness.controller.getAiStrategyWeights(customWeakHarness.blue).engine, 1.31);
-  assert.equal(customWeakHarness.controller.getAiStrategyWeights(customWeakHarness.blue).scan, 1.21);
-}
-
-{
   const turnChoices = [];
   const harness = createAiControllerHarness(null, {
     currentPlayerColor: "blue",

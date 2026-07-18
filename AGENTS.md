@@ -10,6 +10,7 @@
 - 机制、状态模型、能力流程或资料路径发生变化时，同步更新对应文档。
 - `AGENTS.md` 只维护快速导航和关键路径；长机制说明放在 `docs/mechanics-reference.md`。
 - 当前没有 `package.json` 或构建步骤；验证以 `node --check` 和 Node 测试脚本为主。
+- 从大型闭包迁出 runtime 或修改传统脚本顺序时，除语法与全量 Node 回归外，必须补迁移域代表性执行路径和真实 Chrome smoke，覆盖显式 context、嵌套回调与浏览器装配。
 - 代码和资产路径以仓库根目录为基准。
 - 共享 dirty worktree 中若本次修改与他人改动重叠同一文件，提交前除工作树回归外，还必须验证仅含本次 staged 内容的独立快照；不得把他人未提交修复当作本次验收证据。
 
@@ -37,7 +38,8 @@
 - `randomizer/app/aliens/species-runtime.js`：八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 与具体面板渲染；通过显式 context 接收 app 编排依赖。
 - `randomizer/app/action-log-export.js`：终局行动日志 Markdown 导出格式与文件名生成。
 - `randomizer/app/public-api.js`：调试、AI 验证和外部脚本使用的 `window.SetiRandomizer` API 组装。
-- `randomizer/app/ai-controller.js`：AI 自动机、策略权重、批跑/AB 测试与 AI 决策控制器。
+- `randomizer/app/ai/control-runtime.js`：AI 控制状态、难度/权重配置、快照恢复、pending owner 与自动调度的单一所有者。
+- `randomizer/app/ai-controller.js`：AI resolver、批跑/AB 测试与决策控制器；控制 API 转发给 `app/ai/control-runtime.js`。
 - `randomizer/training/self-play.js`：Node self-play 训练、action-kind baseline、逐步 JSONL 与 episode checkpoint。
 - `tools/run_self_play_training.js`：训练、恢复和评测命令行入口。
 - `randomizer/app.js`：composition root、顶层状态、跨 flow continuation、统一刷新与控制器接线；不再承载已迁移域的成片具体实现。

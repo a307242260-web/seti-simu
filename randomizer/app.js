@@ -51,6 +51,7 @@
     debugRuntimeModule,
     finalUiRuntimeModule,
     finalScoreAiRuntimeModule,
+    aiControlRuntimeModule,
     actionBriefingModule,
     effectFlowModule,
     effectChoiceFlowModule,
@@ -89,6 +90,9 @@
   }
   if (!turnFlowModule) {
     throw new Error("Missing SETI app dependency: SetiAppTurnFlow");
+  }
+  if (!aiControlRuntimeModule) {
+    throw new Error("Missing SETI app dependency: SetiAppAiControlRuntime");
   }
   if (!actionRuntimeModule) {
     throw new Error("Missing SETI app dependency: SetiAppActionRuntime");
@@ -2545,6 +2549,7 @@
     runezu,
     aiRaceModel,
     ai,
+    aiControlRuntimeModule,
     solarState,
     nebulaDataState,
     alienGameState,
