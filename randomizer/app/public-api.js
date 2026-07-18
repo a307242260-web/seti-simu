@@ -113,6 +113,7 @@
       executeAiTurnAction,
       enumerateHeadlessConditionalActions,
       executeHeadlessConditionalAction,
+      getHeadlessDecisionOwnerState,
       advanceHeadlessDeterministicState,
       executeHeadlessCurrentActionEffect,
       skipHeadlessCurrentActionEffect,
@@ -330,12 +331,17 @@
       }),
       listHeadlessConditionalActionCandidates: () => {
         const result = enumerateHeadlessConditionalActions();
+        const decisionOwner = getHeadlessDecisionOwnerState?.(result.actorPlayer || null) || null;
         return {
           ok: true,
-          actorPlayer: structuredClone(result.actorPlayer || null),
+          actorPlayer: structuredClone(decisionOwner?.actorPlayer || result.actorPlayer || null),
+          decisionOwner: structuredClone(decisionOwner),
           candidates: structuredClone(result.candidates || []),
         };
       },
+      getHeadlessDecisionOwnerState: (actorPlayer = null) => (
+        structuredClone(getHeadlessDecisionOwnerState?.(actorPlayer) || null)
+      ),
       chooseHeadlessInitialSelection: () => chooseInitialSelectionForAiPlayer(),
       executeHeadlessConditionalAction: (action) => (
         executeHeadlessConditionalAction(structuredClone(action))

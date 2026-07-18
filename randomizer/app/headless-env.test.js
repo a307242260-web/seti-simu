@@ -138,9 +138,15 @@ assert.ok([...TURN_ACTION_FAMILIES, ...CONDITIONAL_FAMILIES].includes(legalActio
 assert.equal(actorObservation.decision.decisionType, legalAction.decisionType);
 assert.equal(CONDITIONAL_FAMILIES.some((family) => family.startsWith("pending")), false);
 
+const checkpointBeforeWrongActor = observationEnv.createCheckpoint();
 const wrongActor = observationEnv.step({ ...legalAction, actorPlayerId: "not-the-current-player" });
 assert.equal(wrongActor.ok, false);
 assert.match(wrongActor.error, /动作执行者不匹配/);
+assert.deepEqual(
+  observationEnv.createCheckpoint(),
+  checkpointBeforeWrongActor,
+  "wrong actor 必须原子拒绝且不改变 checkpoint/replay/RNG",
+);
 const illegal = observationEnv.step({ ...legalAction, actionId: "not-legal" });
 assert.equal(illegal.ok, false);
 assert.match(illegal.error, /不在当前 legalActions/);

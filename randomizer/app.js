@@ -8975,6 +8975,45 @@
     }) || getEffectOwnerPlayer(pending?.effect) || getCurrentPlayer();
   }
 
+  function getHeadlessDecisionOwnerState(enumeratedActor = null) {
+    const currentPlayer = getCurrentPlayer();
+    const activePending = [
+      pendingState.scanTargetAction,
+      pendingState.handScanAction,
+      pendingState.passReserveSelection,
+      pendingState.movePayment,
+      pendingState.cardTriggerFreeMove,
+      pendingState.actionEffectFlow?.cardMoveEffect,
+      pendingState.cardCornerFreeMove,
+      pendingState.strategyPassiveSlotChoice,
+      pendingState.discardAction,
+      pendingState.cardSelectionAction,
+      pendingState.landTargetAction,
+      pendingState.alienTraceAction,
+      pendingState.alienTracePickerState,
+    ].find(Boolean) || null;
+    const pendingOwner = activePending?.player || resolvePlayerReference({
+      playerId: activePending?.playerId || activePending?.targetPlayerId || null,
+      playerColor: activePending?.playerColor || activePending?.targetPlayerColor || null,
+    });
+    const effect = activePending?.effect || (
+      pendingState.actionEffectFlow ? getCurrentActionEffect() : null
+    );
+    const effectOwner = effect ? getEffectOwnerPlayer(effect) : null;
+    const actorPlayer = pendingOwner || effectOwner || enumeratedActor || currentPlayer || null;
+    const source = pendingOwner
+      ? "pending_owner"
+      : effectOwner ? "effect_owner" : "current_player";
+    return {
+      actorPlayer,
+      actorPlayerId: actorPlayer?.id || null,
+      pendingOwnerPlayerId: pendingOwner?.id || null,
+      effectOwnerPlayerId: effectOwner?.id || null,
+      currentPlayerId: currentPlayer?.id || null,
+      source,
+    };
+  }
+
   function enumerateHeadlessMovePaymentActions(movePending) {
     const player = movePending.player || getHeadlessConditionalPlayer(movePending);
     const required = Math.max(0, Math.round(Number(movePending.requiredMovePoints) || 0));
@@ -10847,6 +10886,7 @@
       executeAiTurnAction,
       enumerateHeadlessConditionalActions,
       executeHeadlessConditionalAction,
+      getHeadlessDecisionOwnerState,
     advanceHeadlessDeterministicState,
     executeHeadlessCurrentActionEffect,
     skipHeadlessCurrentActionEffect,

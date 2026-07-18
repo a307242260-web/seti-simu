@@ -68,13 +68,20 @@ function loadBrowserBundle(rootRef) {
 function buildDecision(api, legalActions) {
   const turnState = api.getTurnState();
   if (turnState.gameEnded) return null;
-  const actorPlayerId = legalActions[0]?.actorPlayerId || turnState.currentPlayerId || null;
+  const owner = api.getHeadlessDecisionOwnerState?.(
+    legalActions[0]?.actorPlayerId ? { id: legalActions[0].actorPlayerId } : null,
+  ) || null;
+  const actorPlayerId = owner?.actorPlayerId
+    || legalActions[0]?.actorPlayerId
+    || turnState.currentPlayerId
+    || null;
   if (!actorPlayerId) return null;
   return {
     actorPlayerId,
-    effectOwnerPlayerId: null,
-    currentPlayerId: turnState.currentPlayerId || null,
-    source: legalActions[0]?.decisionType === "conditional_choice" ? "effect_owner" : "current_player",
+    pendingOwnerPlayerId: owner?.pendingOwnerPlayerId || null,
+    effectOwnerPlayerId: owner?.effectOwnerPlayerId || null,
+    currentPlayerId: owner?.currentPlayerId || turnState.currentPlayerId || null,
+    source: owner?.source || "current_player",
     decisionType: legalActions[0]?.decisionType || "turn_action",
     choiceCount: legalActions.length,
   };
@@ -684,6 +691,7 @@ function createHeadlessEnv() {
 
 module.exports = {
   buildEnvironmentEvents,
+  buildDecision,
   createHeadlessEnv,
   drainHeadlessDeterministicEffects,
 };

@@ -36,6 +36,18 @@ const aiMethods = {
   getAiAutoBattleProgress: () => ({ running: false }),
   getAiAutoBattleReport: () => ({ bugs: [] }),
   getAiAutoBattleAnalysis: () => ({ samples: [] }),
+  enumerateHeadlessConditionalActions: () => ({
+    actorPlayer: { id: "player-green" },
+    candidates: [{ family: "choose_card", target: { choiceId: "one" } }],
+  }),
+  getHeadlessDecisionOwnerState: () => ({
+    actorPlayer: { id: "player-green" },
+    actorPlayerId: "player-green",
+    pendingOwnerPlayerId: "player-green",
+    effectOwnerPlayerId: "player-brown",
+    currentPlayerId: "player-blue",
+    source: "pending_owner",
+  }),
 };
 
 const api = createPublicApi({
@@ -50,6 +62,12 @@ assert.equal(api.runAiSelectedTurnAction, aiMethods.runAiSelectedTurnAction);
 assert.equal(api.startAiAutoBattle, aiMethods.runAiAutoBattle);
 assert.equal(api.runAiAutoBattleBatch, aiMethods.runAiAutoBattleBatch);
 assert.equal(api.getAiAutoBattleReport, aiMethods.getAiAutoBattleReport);
+assert.deepEqual(api.listHeadlessConditionalActionCandidates(), {
+  ok: true,
+  actorPlayer: { id: "player-green" },
+  decisionOwner: aiMethods.getHeadlessDecisionOwnerState(),
+  candidates: [{ family: "choose_card", target: { choiceId: "one" } }],
+});
 
 assert.deepEqual(api.listAiTurnActionCandidates(), {
   ok: true,
