@@ -8,6 +8,7 @@
 - 已实现 `reset / observe(viewer) / legalActions(viewer) / step / isTerminal / getReplay / loadReplay / createCheckpoint / loadCheckpoint / dispose`。
 - `randomizer/app/headless-contract.js` 固化 15 个顶层动作族、7 个 conditional family、旧 runtime selector 映射、稳定 action feature 与 observation 公私域 sanitizer。
 - `legalActions()` 输出 `seti-rl-action-v2`，直接调用 headless rule enumeration，不构建 actionGraph、valuation、selection pressure 或 planner；非 decision owner 请求时返回空数组。动作携带 `stateVersion / decisionVersion`，`step()` 同时校验 actor、版本与当前 legal action id。
+- pending/conditional 边界在枚举顶层行动或执行 deterministic drain 之前先经过 inventory 审计；未知 pending key、已知 key 的未知 type、未知 conditional family 分别以稳定 `HEADLESS_UNSUPPORTED_PENDING`、`HEADLESS_UNSUPPORTED_PENDING_TYPE`、`HEADLESS_UNSUPPORTED_CONDITIONAL_FAMILY` 拒绝。诊断固定包含 `state/family/type/owner`，拒绝分支不枚举顶层行动，也不调用旧 resolver、DOM callback、recover 或 skip。
 - observation 已按 `publicState / selfState / decision` 分域；公开玩家仅保留资源、计数与公开科技，自己的手牌/预留牌才进入 `selfState`，牌库顺序、未来科技 bonus、未揭示外星人身份不进入观测。
 - replay 分开记录 policy `steps` 与自动结算 `environmentEvents`；checkpoint 额外保存随机数状态，可在 fresh env 中恢复且不触发浏览器渲染。
 - 顶层行动保留已验证的原始规则 action，`step()` 不再调用 `buildAiTurnActionCandidates / runAiSelectedTurnAction` 二次构建候选；transition 通过 `action-runtime` 分发，随后自动 drain pending/effect，不依赖用户点击。

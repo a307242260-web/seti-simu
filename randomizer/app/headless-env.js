@@ -161,11 +161,123 @@ function getActionPhase(kind) {
   return "main";
 }
 
+const HEADLESS_PENDING_INVENTORY_KEYS = Object.freeze([
+  "pendingScanTargetType", "pendingPublicScanQueue", "pendingHandScan", "pendingPassReserve",
+  "pendingCardSelection", "pendingPlayCardSelection", "pendingMovePayment", "pendingCardTrigger",
+  "pendingCardTriggerFreeMove", "pendingCardCornerFreeMove", "pendingCardTaskCompletion",
+  "pendingStrategyPassiveSlotChoice", "pendingJiuzheCardPlay", "pendingYichangdianCardGain",
+  "pendingYichangdianCornerAction", "pendingBanrenmaCardGain", "pendingBanrenmaOpportunity",
+  "pendingChongTaskCompletion", "pendingChongCardGain", "pendingChongFossilChoice",
+  "pendingAmibaCardGain", "pendingAmibaSymbolChoice", "pendingAmibaTraceRemoval",
+  "pendingAomomoCardGain", "pendingRunezuCardGain", "pendingRunezuSymbolBranch",
+  "pendingRunezuFaceSymbolPlacement", "pendingAlienTrace", "pendingLandTarget",
+  "pendingScanAction4", "pendingDataPlacement", "pendingDataPlacementAction",
+  "pendingActionEffectCardMove", "pendingActionEffectFreeMove", "pendingIndustryAbility",
+  "pendingIndustryFreeMove", "pendingIndustryHandSelection",
+]);
+
+const HEADLESS_SCAN_TARGET_TYPES = Object.freeze([
+  "conditional_sector_scan", "discard_any_income", "pay_credit_reward",
+  "discard_corner_repeat", "remove_orbit_to_probe", "return_unfinished_task",
+  "public_scan", "hand_scan", "sector_scan", "industry_pirates_raid_launch",
+]);
+
+function buildHeadlessUnsupportedError({ code, state, family = null, type = null, owner = null }) {
+  const normalizedOwner = owner?.actorPlayerId || owner?.actorPlayer?.id || owner || null;
+  return {
+    code,
+    state,
+    family,
+    type,
+    owner: normalizedOwner,
+    message: [
+      code,
+      `state=${state || "unknown"}`,
+      `family=${family || "unknown"}`,
+      `type=${type || "unknown"}`,
+      `owner=${normalizedOwner || "unknown"}`,
+    ].join(" "),
+  };
+}
+
+function inspectHeadlessPendingState(api, conditional = null) {
+  const pendingState = api.getAiAutoBattleProgress?.().pendingState || {};
+  const owner = api.getHeadlessDecisionOwnerState?.(conditional?.actorPlayer || null) || null;
+  const unknownPendingKey = Object.keys(pendingState).find((key) => (
+    key.startsWith("pending")
+    && !HEADLESS_PENDING_INVENTORY_KEYS.includes(key)
+    && Boolean(pendingState[key])
+  ));
+  if (unknownPendingKey) {
+    return {
+      ok: false,
+      error: buildHeadlessUnsupportedError({
+        code: "HEADLESS_UNSUPPORTED_PENDING",
+        state: unknownPendingKey,
+        type: typeof pendingState[unknownPendingKey] === "object"
+          ? pendingState[unknownPendingKey]?.type || "unknown"
+          : typeof pendingState[unknownPendingKey],
+        owner,
+      }),
+    };
+  }
+  if (
+    pendingState.pendingScanTargetType
+    && !HEADLESS_SCAN_TARGET_TYPES.includes(pendingState.pendingScanTargetType)
+  ) {
+    return {
+      ok: false,
+      error: buildHeadlessUnsupportedError({
+        code: "HEADLESS_UNSUPPORTED_PENDING_TYPE",
+        state: "pendingScanTargetType",
+        type: pendingState.pendingScanTargetType,
+        owner,
+      }),
+    };
+  }
+  const unsupportedCandidate = (conditional?.candidates || []).find((candidate) => (
+    candidate?.available !== false && !CONDITIONAL_FAMILIES.includes(candidate?.family)
+  ));
+  if (unsupportedCandidate) {
+    return {
+      ok: false,
+      error: buildHeadlessUnsupportedError({
+        code: "HEADLESS_UNSUPPORTED_CONDITIONAL_FAMILY",
+        state: "conditional_choice",
+        family: unsupportedCandidate.family || "missing",
+        type: unsupportedCandidate.target?.kind || unsupportedCandidate.id || "unknown",
+        owner,
+      }),
+    };
+  }
+  return { ok: true, pendingState, owner };
+}
+
+function getHeadlessLegalBoundary(api) {
+  const conditional = api.listHeadlessConditionalActionCandidates?.()
+    || { ok: true, candidates: [] };
+  const inspection = inspectHeadlessPendingState(api, conditional);
+  if (!inspection.ok) return { ok: false, error: inspection.error, candidates: [] };
+  const candidates = (conditional.candidates || []).filter((candidate) => candidate?.available !== false);
+  if (candidates.length) {
+    return {
+      ok: true,
+      decisionType: "conditional_choice",
+      currentPlayer: conditional.actorPlayer || null,
+      candidates,
+    };
+  }
+  const turn = api.listHeadlessTurnActionCandidates();
+  return { ...turn, decisionType: "turn_action" };
+}
+
 function drainHeadlessDeterministicEffects(api, maxSteps = 2000) {
   const steps = [];
   for (let index = 0; index < maxSteps; index += 1) {
     const conditional = api.listHeadlessConditionalActionCandidates?.()
       || { ok: true, candidates: [] };
+    const inspection = inspectHeadlessPendingState(api, conditional);
+    if (!inspection.ok) return { ok: false, final: inspection.error, steps };
     const conditionalCandidates = (conditional.candidates || [])
       .filter((candidate) => candidate?.available !== false);
     if (conditionalCandidates.length > 1) {
@@ -179,13 +291,6 @@ function drainHeadlessDeterministicEffects(api, maxSteps = 2000) {
     }
     if (conditionalCandidates.length === 1) {
       const candidate = conditionalCandidates[0];
-      if (!CONDITIONAL_FAMILIES.includes(candidate?.family)) {
-        return {
-          ok: false,
-          final: { message: `未支持的单选 conditional family：${candidate?.family || "<missing>"}` },
-          steps,
-        };
-      }
       const actionResult = api.executeHeadlessConditionalAction?.(structuredClone(candidate));
       const automaticStep = {
         ok: actionResult?.ok !== false,
@@ -339,10 +444,6 @@ function createHeadlessEnv() {
     environmentEvents.push(...buildEnvironmentEvents(initialResolution, environmentEvents.length));
   }
 
-  function getConditionalCandidates() {
-    return api.listHeadlessConditionalActionCandidates?.() || { ok: true, candidates: [] };
-  }
-
   function drainDeterministicEffects(maxSteps = 2000) {
     return drainHeadlessDeterministicEffects(api, maxSteps);
   }
@@ -401,11 +502,9 @@ function createHeadlessEnv() {
         diagnostics.legalActionsCalls += 1;
         return structuredClone(lastLegalActions);
       }
-      const conditional = getConditionalCandidates();
-      const result = conditional.candidates?.length
-        ? { ok: true, currentPlayer: conditional.actorPlayer, candidates: conditional.candidates }
-        : api.listHeadlessTurnActionCandidates();
+      const result = getHeadlessLegalBoundary(api);
       if (!result?.ok) {
+        diagnostics.lastError = result?.error || null;
         lastLegalActions = [];
         recordDuration("legalActionsMilliseconds", startedAt);
         diagnostics.legalActionsCalls += 1;
@@ -692,6 +791,8 @@ function createHeadlessEnv() {
 module.exports = {
   buildEnvironmentEvents,
   buildDecision,
+  getHeadlessLegalBoundary,
   createHeadlessEnv,
   drainHeadlessDeterministicEffects,
+  inspectHeadlessPendingState,
 };

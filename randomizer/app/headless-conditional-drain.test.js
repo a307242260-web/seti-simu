@@ -81,7 +81,8 @@ for (const family of CONDITIONAL_FAMILIES) {
 const unknown = createHarness("unknown_family", 1);
 const unknownResult = drainHeadlessDeterministicEffects(unknown.api);
 assert.equal(unknownResult.ok, false, "未知 conditional family 必须 fail-closed");
-assert.match(unknownResult.final.message, /未支持的单选 conditional family/);
+assert.equal(unknownResult.final.code, "HEADLESS_UNSUPPORTED_CONDITIONAL_FAMILY");
+assert.match(unknownResult.final.message, /family=unknown_family/);
 assert.deepEqual(unknown.executed, [], "未知 conditional family 不得自动执行");
 
 console.log(`headless conditional drain tests passed (${CONDITIONAL_FAMILIES.length} families)`);
