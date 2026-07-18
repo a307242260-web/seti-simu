@@ -488,3 +488,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: `rg` 检查 proof obligations 已包含五格隔离矩阵和 checklist；SETI-44 Gate A/B 报告完整记录 O01/O15/O16/O18/O20/O21，`node --check randomizer/app.js` 与 randomizer 全部 `.test.js` 通过，但同实例 reset 反例稳定失败并已拆 SETI-53。
 - observed_outcome: 模板已能区分“fresh determinism PASS”和“same-instance isolation FAIL”；待后续修复 issue 使用矩阵验证实际拦截效果。
 - keep_or_revise: 保留并进入 5 个相关 issue 的观察窗口；若统一 runner 落地则将手工命令替换为 runner，不删除隔离语义。
+
+- date: 2026-07-19
+- source: SETI-45
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航
+- target_component: 架构探索结果展示实践
+- target_file: docs/mocha_experience/exploratory_research.md
+- remote_skill_id: none
+- change: 记录“一次只讨论一个业务边界，以清晰架构图/流程图为主，并通过持久本地服务交付可直接打开的 HTML”这一展示候选。
+- applied_change: 仅更新 exploratory_research experience 与本决策契约；本轮报告按该方式生成并沿用用户会话托管的 8770 服务，不修改 agent prompt、loop template、watcher、issue-workflow 或 project memory。
+- expected_effect: owner 能直接看到并逐项确认当前业务组成、主链和高耦合点，减少因技术抽象、视觉包装或失效链接造成的返工。
+- evaluation_window: 后续 2 次 SETI 架构边界讨论
+- success_signal: 每轮首次交付即提供单边界、业务语义优先、可打开的 HTML 架构图/流程图，owner 不再纠偏内容过宽、视觉喧宾夺主或链接不可访问。
+- rollback_condition: 若 owner 后续明确改用文档、Figma、Medici 或其它交付通道，或连续 2 次认为 HTML 图不如文字讨论有效，则修订或删除该候选。
+- risk: 过度追求图形化可能压缩关键代码证据；报告仍需保留证据入口、现状/问题区分和可复核数字。
+- evidence_before: SETI-45 评论 `e427888a-66c2-4452-8b23-d2d1cf1e96cc`、`1eacdd35-9691-4dd0-bbae-8b493b816903`、`9b3f9052-e920-4014-98a4-b5a8c883aca4`；本轮触发评论 `27c4fa76-d7b7-4bd5-9467-6ad93f5f5027` 明确要求“整体流程衔接，一样给我 HTML 报告”。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate，暂不升级长期组件。
+- applied_at: 2026-07-19
+- verification: `reports/seti-game-flow-architecture.html` 已经 Playwright 1440×1000 截图检查；脚本语法与 HTML diff 检查通过；`http://127.0.0.1:8770/reports/seti-game-flow-architecture.html` 返回 HTTP 200，服务由 `com.multica.seti-report-8770` 托管。
+- observed_outcome: 本轮报告已按 9 个一级阶段、行动内部接棒机制、成熟度矩阵和四个风险区组织；等待 owner 对内容边界与清晰度反馈。
+- keep_or_revise: 保持 candidate；累计后续 2 次同类反馈后决定是否升级为 exploratory research loop 的固定交付模板。

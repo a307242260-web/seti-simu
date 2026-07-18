@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SETI 游戏整体流程衔接现状</title>
+  <style>
+    :root {
+      --bg: #f2f0ea;
+      --paper: #fffdf8;
+      --ink: #171916;
+      --muted: #66685f;
+      --line: #c8c4b8;
+      --strong: #292c27;
+      --green: #335f4a;
+      --green-soft: #dce8de;
+      --amber: #9a651d;
+      --amber-soft: #f4e5c8;
+      --red: #8c4337;
+      --red-soft: #efdcd6;
+      --blue: #355d78;
+      --blue-soft: #dce8ef;
+      --gray-soft: #e9e7e0;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(23, 25, 22, .025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(23, 25, 22, .025) 1px, transparent 1px),
+        var(--bg);
+      background-size: 24px 24px;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.58;
+    }
+
+    a { color: inherit; }
+    code {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: .88em;
+    }
+
+    .page {
+      width: min(1380px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 32px 0 72px;
+    }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 290px;
+      gap: 28px;
+      padding: 34px;
+      border: 2px solid var(--strong);
+      background: var(--paper);
+      box-shadow: 8px 8px 0 rgba(41, 44, 39, .14);
+    }
+
+    .eyebrow, .section-index, .mono {
+      font-family: "SFMono-Regular", Consolas, monospace;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow { margin-bottom: 12px; color: var(--green); font-size: 12px; font-weight: 800; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { max-width: 850px; margin-bottom: 14px; font-size: clamp(34px, 5vw, 62px); line-height: 1.05; letter-spacing: -.045em; }
+    h2 { margin-bottom: 8px; font-size: clamp(26px, 3vw, 38px); line-height: 1.15; letter-spacing: -.025em; }
+    h3 { margin-bottom: 7px; font-size: 18px; }
+    p { color: var(--muted); }
+    .lede { max-width: 920px; margin-bottom: 0; font-size: 18px; }
+
+    .verdict {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      color: #f9f7f0;
+      background: var(--strong);
+    }
+    .verdict small { color: #cfd2ca; }
+    .verdict strong { display: block; margin: 16px 0; font-size: 24px; line-height: 1.25; }
+    .verdict .score { font: 800 52px/1 "SFMono-Regular", Consolas, monospace; }
+
+    nav { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    nav a {
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      color: var(--ink);
+      background: rgba(255, 253, 248, .82);
+      text-decoration: none;
+      font-size: 13px;
+    }
+    nav a:hover { border-color: var(--strong); }
+
+    section { margin-top: 54px; scroll-margin-top: 20px; }
+    .section-head { display: grid; grid-template-columns: 58px minmax(0, 1fr); gap: 16px; align-items: start; margin-bottom: 22px; }
+    .section-index { display: grid; place-items: center; width: 50px; height: 50px; border: 1px solid var(--strong); background: var(--paper); font-weight: 800; }
+    .section-head p { max-width: 880px; margin-bottom: 0; }
+
+    .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--strong); background: var(--paper); }
+    .summary-item { min-height: 150px; padding: 20px; border-right: 1px solid var(--line); }
+    .summary-item:last-child { border-right: 0; }
+    .summary-item b { display: block; margin-bottom: 8px; font-size: 30px; line-height: 1; }
+    .summary-item span { display: block; color: var(--muted); font-size: 13px; }
+    .summary-item strong { display: block; margin-top: 13px; font-size: 15px; }
+
+    .flow-shell { padding: 24px; border: 1px solid var(--strong); background: var(--paper); overflow-x: auto; }
+    .flow { display: grid; grid-template-columns: repeat(17, auto); align-items: stretch; min-width: 1360px; }
+    .flow-node {
+      width: 126px;
+      min-height: 122px;
+      padding: 13px;
+      border: 1.5px solid var(--strong);
+      background: var(--gray-soft);
+      text-align: left;
+      cursor: pointer;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .flow-node:hover, .flow-node.active { transform: translateY(-3px); box-shadow: 0 5px 0 rgba(41, 44, 39, .14); }
+    .flow-node.phase-start { background: var(--blue-soft); }
+    .flow-node.phase-turn { background: var(--green-soft); }
+    .flow-node.phase-action { background: var(--amber-soft); }
+    .flow-node.phase-end { background: var(--red-soft); }
+    .flow-node b { display: block; margin-bottom: 7px; }
+    .flow-node small { color: var(--muted); line-height: 1.35; }
+    .arrow { display: grid; place-items: center; width: 34px; font-size: 21px; }
+    .flow-detail { margin-top: 18px; min-height: 104px; padding: 17px 19px; border: 1px dashed var(--strong); background: #f6f3eb; }
+    .flow-detail strong { display: block; margin-bottom: 6px; }
+    .flow-detail p { margin-bottom: 0; }
+
+    .handoff-map {
+      display: grid;
+      grid-template-columns: 1fr 70px 1fr 70px 1fr;
+      align-items: stretch;
+      padding: 24px;
+      border: 1px solid var(--strong);
+      background: var(--paper);
+    }
+    .handoff-box { padding: 19px; border: 1px solid var(--strong); }
+    .handoff-box.core { background: var(--green-soft); }
+    .handoff-box.effect { background: var(--amber-soft); }
+    .handoff-box.choice { background: var(--red-soft); }
+    .handoff-box ul { margin: 10px 0 0; padding-left: 18px; color: var(--muted); font-size: 13px; }
+    .handoff-arrow { display: grid; place-items: center; font-size: 24px; }
+    .return-line { grid-column: 1 / -1; margin-top: 14px; padding: 12px 16px; border: 1px dashed var(--strong); text-align: center; background: #f7f5ef; }
+
+    .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+    .filter {
+      padding: 7px 12px;
+      border: 1px solid var(--strong);
+      color: var(--ink);
+      background: var(--paper);
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .filter.active { color: white; background: var(--strong); }
+
+    table { width: 100%; border-collapse: collapse; border: 1px solid var(--strong); background: var(--paper); }
+    th, td { padding: 13px 14px; text-align: left; vertical-align: top; border: 1px solid var(--line); }
+    th { background: var(--gray-soft); font-size: 13px; }
+    td { font-size: 14px; }
+    td:nth-child(1) { width: 14%; font-weight: 750; }
+    td:nth-child(2) { width: 18%; }
+    td:nth-child(3) { width: 27%; }
+    td:nth-child(4) { width: 31%; }
+    td:nth-child(5) { width: 10%; }
+    tr[hidden] { display: none; }
+
+    .badge { display: inline-block; padding: 3px 7px; border: 1px solid currentColor; font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .badge.strong { color: var(--green); }
+    .badge.medium { color: var(--amber); }
+    .badge.weak { color: var(--red); }
+
+    .cross-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .cross-card { min-height: 240px; padding: 20px; border: 1px solid var(--strong); background: var(--paper); }
+    .cross-card .mono { display: block; margin-bottom: 24px; color: var(--muted); font-size: 11px; }
+    .cross-card p { margin-bottom: 12px; font-size: 14px; }
+    .cross-card code { display: block; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--ink); }
+
+    .risk-stack { border: 1px solid var(--strong); background: var(--paper); }
+    .risk-row { display: grid; grid-template-columns: 54px 190px minmax(0, 1fr) 190px; border-bottom: 1px solid var(--line); }
+    .risk-row:last-child { border-bottom: 0; }
+    .risk-rank, .risk-title, .risk-body, .risk-impact { padding: 16px; }
+    .risk-rank { display: grid; place-items: center; border-right: 1px solid var(--line); font: 800 18px/1 "SFMono-Regular", Consolas, monospace; }
+    .risk-title { border-right: 1px solid var(--line); font-weight: 800; }
+    .risk-body { color: var(--muted); }
+    .risk-impact { border-left: 1px solid var(--line); font-size: 13px; }
+
+    .decision { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 18px; }
+    .decision-main, .decision-side { padding: 24px; border: 2px solid var(--strong); background: var(--paper); }
+    .decision-main strong { color: var(--green); }
+    .decision-side { color: white; background: var(--strong); }
+    .decision-side p { color: #d7d9d2; }
+    .decision ul { margin-bottom: 0; padding-left: 20px; }
+
+    .evidence { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .evidence a { display: block; padding: 13px 15px; border: 1px solid var(--line); background: var(--paper); text-decoration: none; }
+    .evidence a:hover { border-color: var(--strong); }
+    .evidence span { display: block; color: var(--muted); font-size: 12px; }
+    footer { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+
+    @media (max-width: 980px) {
+      .masthead, .decision { grid-template-columns: 1fr; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .summary-item:nth-child(2) { border-right: 0; }
+      .summary-item:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .handoff-map { grid-template-columns: 1fr; gap: 10px; }
+      .handoff-arrow { transform: rotate(90deg); }
+      .return-line { grid-column: auto; }
+      .cross-grid { grid-template-columns: 1fr; }
+      .risk-row { grid-template-columns: 48px 1fr; }
+      .risk-title { border-right: 0; }
+      .risk-body, .risk-impact { grid-column: 1 / -1; border-top: 1px solid var(--line); border-left: 0; }
+    }
+
+    @media (max-width: 620px) {
+      .page { width: min(100% - 22px, 1380px); }
+      .masthead { padding: 24px; }
+      .summary-grid, .evidence { grid-template-columns: 1fr; }
+      .summary-item { border-right: 0; border-bottom: 1px solid var(--line); }
+      .summary-item:last-child { border-bottom: 0; }
+      table { display: block; overflow-x: auto; }
+    }
+
+    @media print {
+      body { background: white; }
+      .page { width: 100%; padding: 0; }
+      nav, .controls { display: none; }
+      section { break-inside: avoid; }
+      .masthead { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div>
+        <div class="eyebrow">SETI Architecture Review · Game Flow</div>
+        <h1>游戏整体流程衔接：主链已成形，接棒层仍分散</h1>
+        <p class="lede">本报告只讨论「一局游戏怎样从启动走到终局，以及各阶段怎样把控制权交给下一阶段」。结论基于当前仓库代码、架构文档与测试入口，不把理想设计当成现状。</p>
+        <nav>
+          <a href="#overview">一句话现状</a>
+          <a href="#spine">运行时主链</a>
+          <a href="#handoff">接棒机制</a>
+          <a href="#matrix">组成与成熟度</a>
+          <a href="#crosscut">横切流程</a>
+          <a href="#risks">主要问题</a>
+          <a href="#decision">阶段判断</a>
+        </nav>
+      </div>
+      <aside class="verdict">
+        <small class="mono">当前整体成熟度</small>
+        <strong>能完整跑通，但还不是一台边界清晰的流程状态机。</strong>
+        <div>
+          <div class="score">B−</div>
+          <small>流程覆盖较完整 / 衔接协议不统一</small>
+        </div>
+      </aside>
+    </header>
+
+    <section id="overview">
+      <div class="section-head">
+        <div class="section-index">01</div>
+        <div><h2>一句话现状</h2><p>SETI 已经有完整的「建局 → 行动 → 条件选择 → 回合收尾 → 跨轮 → 终局」主链，风险不在缺少步骤，而在同一条链上同时存在 effect queue、52 项 pending/runtime 字段、continuation 回调和手工刷新四套衔接语言。</p></div>
+      </div>
+      <div class="summary-grid">
+        <div class="summary-item"><b>9</b><span>可辨认的一级流程阶段</span><strong>从页面启动到终局结算</strong></div>
+        <div class="summary-item"><b>52</b><span><code>createPendingState()</code> 字段</span><strong>选择、队列、锁与 continuation 混在同一容器</strong></div>
+        <div class="summary-item"><b>10,984</b><span><code>randomizer/app.js</code> 当前行数</span><strong>composition root 仍承担大量跨流程接线</strong></div>
+        <div class="summary-item"><b>1</b><span>共享权威游戏状态主干</span><strong>浏览器、AI 与 headless 没有各自复制一套规则状态</strong></div>
+      </div>
+    </section>
+
+    <section id="spine">
+      <div class="section-head">
+        <div class="section-index">02</div>
+        <div><h2>当前运行时主链</h2><p>点击任一节点可查看它的主要所有者和交接方式。颜色表示阶段性质，不表示好坏。</p></div>
+      </div>
+      <div class="flow-shell">
+        <div class="flow" aria-label="SETI 当前游戏流程主链">
+          <button class="flow-node phase-start active" data-detail="页面脚本完成依赖检查并装配 runtime、render、action、AI 等控制器；app.js 是 composition root。"><b>1. 启动装配</b><small>依赖校验<br>控制器接线</small></button><div class="arrow">→</div>
+          <button class="flow-node phase-start" data-detail="start-screen 收集人数、AI、公司池、外星人池等选项；可见的继续游戏入口目前被 START_SCREEN_CONTINUE_ENABLED=false 关闭。"><b>2. 开始界面</b><small>选项同步<br>新局入口</small></button><div class="arrow">→</div>
+          <button class="flow-node phase-start" data-detail="turn-flow.startNewGame / randomizeAll 重置权威状态、随机盘面与牌区，然后进入初始公司牌和初始牌选择。"><b>3. 建局设置</b><small>状态重置<br>盘面随机化</small></button><div class="arrow">→</div>
+          <button class="flow-node phase-start" data-detail="玩家依次确认公司与初始牌，resolveInitialSelectionEffects 结算开局效果，再由 startInitialIncomeEffectFlow 进入初始收入效果链。"><b>4. 初始选择</b><small>公司与初始牌<br>初始收入</small></button><div class="arrow">→</div>
+          <button class="flow-node phase-turn" data-detail="turn-flow 维护 roundNumber、turnNumber、行动周期、已 PASS 玩家与当前玩家；新轮时插入公司轮开始收益等节点。"><b>5. 回合就绪</b><small>当前玩家<br>行动门禁</small></button><div class="arrow">→</div>
+          <button class="flow-node phase-action" data-detail="玩家或 AI 选择主行动、快速行动或 PASS。action runtime 正在成为统一入口，但部分 UI 仍直接调用领域函数。"><b>6. 行动发起</b><small>主行动 / 快速<br>PASS</small></button><div class="arrow">→</div>
+          <button class="flow-node phase-action" data-detail="能力结果被包装为 actionEffectFlow，按 effect 顺序执行；每个 effect 可能同步完成，也可能打开目标选择、卡牌选择、移动支付等 pending 子流程。"><b>7. 效果与选择</b><small>effect queue<br>pending 子流程</small></button><div class="arrow">→</div>
+          <button class="flow-node phase-turn" data-detail="效果完成后写 history 与行动日志；可撤销时保留事务命令，不可撤销时建立 barrier。玩家确认回合结束后才提交 session。"><b>8. 提交与收尾</b><small>撤销 / 日志<br>外星揭示</small></button><div class="arrow">→</div>
+          <button class="flow-node phase-end" data-detail="turn-end-flow 推进下一玩家；所有玩家 PASS 后进入下一轮，最终轮全部 PASS 则 finishGameAfterFinalPass 并打开终局统计。"><b>9. 跨轮与终局</b><small>下一玩家<br>终局计分</small></button>
+        </div>
+        <div class="flow-detail" id="flow-detail"><strong>1. 启动装配</strong><p>页面脚本完成依赖检查并装配 runtime、render、action、AI 等控制器；<code>app.js</code> 是 composition root。</p></div>
+      </div>
+    </section>
+
+    <section id="handoff">
+      <div class="section-head">
+        <div class="section-index">03</div>
+        <div><h2>一项行动内部怎样接棒</h2><p>这是当前最关键的衔接模型：主行动不是一次函数调用结束，而是不断在「规则执行」与「等待选择」之间往返，直到 effect chain 完成。</p></div>
+      </div>
+      <div class="handoff-map">
+        <div class="handoff-box core"><h3>Action / Ability</h3><p>校验合法性、支付成本、改变权威状态、产出事件与后续 effects。</p><ul><li>主行动 / 快速行动 / 卡牌</li><li>历史 session 在这里开始</li><li>结果可同步，也可要求后续交互</li></ul></div>
+        <div class="handoff-arrow">→</div>
+        <div class="handoff-box effect"><h3><code>actionEffectFlow</code></h3><p>统一的顺序效果队列，保存当前 index、owner、history source 与延迟结算数据。</p><ul><li>执行当前 effect</li><li>自动奖励可连续推进</li><li>复杂 effect 暂停并转交 pending</li></ul></div>
+        <div class="handoff-arrow">→</div>
+        <div class="handoff-box choice"><h3><code>pendingState.*</code></h3><p>目标、卡牌、移动、痕迹、科技、外星人机会等条件选择的实际控制权。</p><ul><li>UI、AI、headless 都要识别 owner</li><li>完成后清 pending</li><li>显式调用 continue / resume 回到效果链</li></ul></div>
+        <div class="return-line"><b>返回路径：</b>选择确认 → 记录 result / history → <code>completeCurrentActionEffect()</code> → 下一个 effect → <code>finishActionEffectFlow()</code> → 回合结束确认</div>
+      </div>
+    </section>
+
+    <section id="matrix">
+      <div class="section-head">
+        <div class="section-index">04</div>
+        <div><h2>流程组成与当前成熟度</h2><p>「成熟」指职责、入口、状态与完成条件是否清晰，不等同于规则是否丰富。</p></div>
+      </div>
+      <div class="controls" aria-label="成熟度筛选">
+        <button class="filter active" data-filter="all">全部</button>
+        <button class="filter" data-filter="strong">较成熟</button>
+        <button class="filter" data-filter="medium">可用但耦合</button>
+        <button class="filter" data-filter="weak">明显分散</button>
+      </div>
+      <table>
+        <thead><tr><th>流程组成</th><th>主要所有者</th><th>已经做到</th><th>当前衔接问题</th><th>判断</th></tr></thead>
+        <tbody>
+          <tr data-level="strong"><td>启动与建局</td><td><code>start-screen.js</code><br><code>turn-flow.js</code></td><td>选项采集、新局重置、随机化和初始玩家顺序已有独立控制器。</td><td>浏览器「继续游戏」按钮仍关闭；恢复能力存在，但未成为正式产品入口。</td><td><span class="badge strong">较成熟</span></td></tr>
+          <tr data-level="medium"><td>初始选择与收入</td><td><code>app.js</code><br><code>income-runtime.js</code></td><td>公司/初始牌依次确认，开局效果和收入都能进入效果节点。</td><td>初始选择 orchestration 仍集中在 app.js，和通用行动流不是同一套入口。</td><td><span class="badge medium">可用但耦合</span></td></tr>
+          <tr data-level="strong"><td>轮次与玩家推进</td><td><code>turn-flow.js</code></td><td>当前玩家、PASS 集合、行动周期、跨轮和最终轮判定集中管理。</td><td>新轮业务奖励仍由 app/turn-end 侧显式追加，controller 只负责骨架。</td><td><span class="badge strong">较成熟</span></td></tr>
+          <tr data-level="medium"><td>行动入口</td><td><code>action-runtime.js</code><br>各 domain runtime</td><td>统一 action port 已开始落地；UI、AI 和 headless 都能执行顶层行动。</td><td>仍存在按钮直接调用领域函数、旧入口与标准 Action 并存的过渡态。</td><td><span class="badge medium">可用但耦合</span></td></tr>
+          <tr data-level="medium"><td>效果链</td><td><code>effect-flow.js</code><br><code>app.js</code></td><td>顺序执行、owner、历史来源、自动奖励、延迟扇区结算已有共同载体。</td><td><code>finishActionEffectFlow()</code> 仍承载大量领域收尾分支，是主要汇流点。</td><td><span class="badge medium">可用但耦合</span></td></tr>
+          <tr data-level="weak"><td>条件选择 / pending</td><td><code>runtime.js</code><br>多个 flow/runtime</td><td>覆盖卡牌、移动、扫描、痕迹、科技、外星人与公司等复杂选择。</td><td>52 个字段同时表达队列、锁、owner、选择与 continuation；完成协议依领域而异。</td><td><span class="badge weak">明显分散</span></td></tr>
+          <tr data-level="medium"><td>提交、撤销与日志</td><td><code>game/history/**</code><br>action log</td><td>主行动/快速行动分 session，支持事务撤销、不可撤销 barrier 与恢复快照。</td><td>history、effect、pending、日志草稿四者的稳定边界依靠编排约定维持。</td><td><span class="badge medium">可用但耦合</span></td></tr>
+          <tr data-level="medium"><td>PASS 与回合结束</td><td><code>turn-end-flow.js</code></td><td>PASS 必做效果、手牌上限、旋转、收入、外星人揭示和下一玩家已集中。</td><td>外星揭示会打开多种子流程，需专门 <code>turnEndAfterRevealContinuation</code> 恢复收尾。</td><td><span class="badge medium">可用但耦合</span></td></tr>
+          <tr data-level="strong"><td>终局与统计</td><td><code>final-scoring.js</code><br><code>end-game-scoring.js</code></td><td>最终轮结束判定、终局板块、卡牌与外星人计分均有稳定入口和统计 UI。</td><td>主要风险不是流程缺失，而是得分来源持续扩展时需保持口径同步。</td><td><span class="badge strong">较成熟</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="crosscut">
+      <div class="section-head">
+        <div class="section-index">05</div>
+        <div><h2>三条横切流程</h2><p>它们不属于某一个回合阶段，却在每次接棒时决定系统是否能继续运行。</p></div>
+      </div>
+      <div class="cross-grid">
+        <article class="cross-card"><span class="mono">Crosscut A · Render</span><h3>渲染与交互锁</h3><p><code>refresh.js</code> 已提供板面、玩家面板和行动状态三个聚合刷新入口。</p><p>但领域 flow 仍经常手工调用若干 render/update 函数，pending 打开或关闭时需要同步 CSS focus、按钮禁用与 overlay。</p><code>状态变化 → 多个 render/update → AI 调度</code></article>
+        <article class="cross-card"><span class="mono">Crosscut B · Automation</span><h3>AI 与 headless 推进</h3><p>AI automation 先处理 pending，再处理 effect，再选择顶层行动；headless 也枚举顶层与条件动作。</p><p>好处是共享同一权威状态；代价是自动化层必须认识大部分 pending 类型和它们的优先级。</p><code>pending owner → legal conditional action → execute → next boundary</code></article>
+        <article class="cross-card"><span class="mono">Crosscut C · Recovery</span><h3>日志、存档与恢复</h3><p>稳定边界会生成 recovery snapshot 并延迟写入 localStorage；处于 effect、pending、history session 中时拒绝覆盖稳定存档。</p><p>恢复时清空所有 transient state，再整体刷新 UI。这是安全的，但意味着当前模型只能恢复到确认边界，不能恢复任意半流程。</p><code>stable boundary → snapshot → clear transient → refresh</code></article>
+      </div>
+    </section>
+
+    <section id="risks">
+      <div class="section-head">
+        <div class="section-index">06</div>
+        <div><h2>当前最影响演进的四个问题</h2><p>按对整体流程衔接的影响排序；不是本轮直接重构清单。</p></div>
+      </div>
+      <div class="risk-stack">
+        <div class="risk-row"><div class="risk-rank">01</div><div class="risk-title">pending 不是单一状态机</div><div class="risk-body">52 个字段中混有互斥选择、并行队列、状态锁、序号和 continuation。调用方通过「哪些字段非空」推断当前流程位置。</div><div class="risk-impact"><b>影响：</b>新增规则容易漏 UI、AI、headless 或恢复清理。</div></div>
+        <div class="risk-row"><div class="risk-rank">02</div><div class="risk-title">完成协议不统一</div><div class="risk-body">有的子流程调用 <code>completeCurrentActionEffect</code>，有的调用领域 continuation，有的清字段后再显式刷新/调度。</div><div class="risk-impact"><b>影响：</b>「选完但没继续」「继续两次」是典型跨模块风险。</div></div>
+        <div class="risk-row"><div class="risk-rank">03</div><div class="risk-title">app.js 仍是总接线板</div><div class="risk-body">模块已大量拆出，但 composition root 仍持有权威状态、owner 解析、效果完成、恢复、刷新和公共 API 装配。</div><div class="risk-impact"><b>影响：</b>局部模块边界清晰，跨流程边界仍难单独测试。</div></div>
+        <div class="risk-row"><div class="risk-rank">04</div><div class="risk-title">渲染是命令式副作用</div><div class="risk-body">刷新 helpers 减少了重复，但流程完成后仍需记住要刷新哪些面板、按钮、overlay 和 AI step。</div><div class="risk-impact"><b>影响：</b>规则正确时仍可能出现界面或自动化停滞。</div></div>
+      </div>
+    </section>
+
+    <section id="decision">
+      <div class="section-head">
+        <div class="section-index">07</div>
+        <div><h2>阶段判断与下一讨论点</h2><p>本轮先确认事实和边界，不在报告里偷跑成重构方案。</p></div>
+      </div>
+      <div class="decision">
+        <div class="decision-main">
+          <h3>阶段判断</h3>
+          <p><strong>SETI 当前有一条真实、完整、可运行的游戏流程主链。</strong>轮次推进、效果队列、历史事务、终局结算都已经有明确骨架；因此不应该另起炉灶重写总流程。</p>
+          <p>真正需要收口的是「接棒协议」：顶层行动怎样进入 effect，effect 怎样打开 pending，pending 完成后怎样恢复，最终怎样提交、刷新、保存并交给 AI/下一玩家。</p>
+          <h3>建议下一轮只讨论三个边界</h3>
+          <ul>
+            <li><b>流程状态：</b>当前究竟处于 setup / idle / action / effect / choice / turn-end / game-end 哪一阶段？</li>
+            <li><b>统一完成信号：</b>一个 pending 完成后，应该返回什么结果，由谁决定下一跳？</li>
+            <li><b>稳定边界：</b>哪些点允许提交 history、保存快照、切玩家与交给自动化？</li>
+          </ul>
+        </div>
+        <aside class="decision-side">
+          <h3>本轮不建议做</h3>
+          <p>不直接引入新框架，不把所有 pending 一次性改成单一大枚举，也不把领域 UI 全部强推成声明式渲染。</p>
+          <h3>理由</h3>
+          <p>现有规则复杂度高、覆盖面广；应先定义接棒契约，再按高频链路逐段迁移，否则会把已跑通的领域流程重新搅在一起。</p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="evidence">
+      <div class="section-head">
+        <div class="section-index">08</div>
+        <div><h2>主要证据入口</h2><p>以下均为仓库内当前实现；报告中的数字和判断可从这些入口复核。</p></div>
+      </div>
+      <div class="evidence">
+        <a href="../randomizer/app.js"><b>randomizer/app.js</b><span>composition root、effect 完成、恢复、公共 API 与跨流程编排</span></a>
+        <a href="../randomizer/app/turn-flow.js"><b>randomizer/app/turn-flow.js</b><span>轮次、当前玩家、PASS 集合与跨轮推进</span></a>
+        <a href="../randomizer/app/turn-end-flow.js"><b>randomizer/app/turn-end-flow.js</b><span>PASS、外星揭示、回合结束与 continuation</span></a>
+        <a href="../randomizer/app/runtime.js"><b>randomizer/app/runtime.js</b><span>52 项 pending/runtime 字段的定义</span></a>
+        <a href="../randomizer/app/effect-flow.js"><b>randomizer/app/effect-flow.js</b><span>效果链、history step、owner 与自动推进</span></a>
+        <a href="../randomizer/app/refresh.js"><b>randomizer/app/refresh.js</b><span>板面、玩家面板与行动状态聚合刷新</span></a>
+        <a href="../randomizer/app/ai/automation-runtime.js"><b>randomizer/app/ai/automation-runtime.js</b><span>AI 对 pending / effect / 顶层行动的推进次序</span></a>
+        <a href="../randomizer/app/headless-env.js"><b>randomizer/app/headless-env.js</b><span>headless 决策边界、条件动作枚举与执行</span></a>
+      </div>
+    </section>
+
+    <footer>SETI 架构讨论报告 · 生成于 2026-07-19 · 范围：当前游戏整体流程组成、衔接方式与成熟度，不含实施承诺。</footer>
+  </main>
+
+  <script>
+    const detail = document.getElementById('flow-detail');
+    document.querySelectorAll('.flow-node').forEach((node) => {
+      node.addEventListener('click', () => {
+        document.querySelectorAll('.flow-node').forEach((item) => item.classList.remove('active'));
+        node.classList.add('active');
+        detail.innerHTML = `<strong>${node.querySelector('b').textContent}</strong><p>${node.dataset.detail}</p>`;
+      });
+    });
+
+    document.querySelectorAll('.filter').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.filter').forEach((item) => item.classList.remove('active'));
+        button.classList.add('active');
+        const filter = button.dataset.filter;
+        document.querySelectorAll('tbody tr').forEach((row) => {
+          row.hidden = filter !== 'all' && row.dataset.level !== filter;
+        });
+      });
+    });
+  </script>
+</body>
+</html>
