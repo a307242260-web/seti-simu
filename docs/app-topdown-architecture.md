@@ -111,13 +111,13 @@
 - `public-api.js` 组装 `window.SetiRandomizer`，`app.js` 只提供显式 context。
 - `headless-env.js` 提供 headless observation/action/replay 适配；它通过公开 API 和注入回调工作，不读取 `app.js` 局部实现。
 - `view-adapter.js` 为 Node composition 提供 no-op render/log/hover 接口和空集合，不创建 fake DOM；浏览器 composition 仍使用 `dom.js`、真实 render runtime 与 events。
-- `ai-controller.js` 通过 state getter/setter 与动作回调访问 app 状态；迁移不得复制 pending 状态。
+- `ai-controller.js` 只装配 `app/ai/**` runtime 与 `game/ai/**` 规则域，通过 state getter/setter 与动作回调访问 app 状态；它按各 runtime 的 `REQUIRED_CONTEXT_KEYS` 校验显式 context，迁移不得复制 pending 状态。
 - 新 runtime 均同时支持 `window.SetiApp*` 和 `module.exports`，便于传统浏览器加载与 Node 回归。
 
 ## 6. 超大文件与残余风险
 
 - `app/aliens/species-runtime.js` 为 4,367 行，超过约 3,000 行。它不是本轮新增文件；当前边界是“八物种共用机会队列、dialog 与渲染 context 的单一物种运行域”。后续继续拆时，应按物种或 `rewards/dialogs/render` 子域拆分，并保持共用队列只有一个所有者。
-- `app/ai-controller.js` 约 22,960 行，同样是既有超大文件。终局板块估值已迁到 `final-score-ai-runtime.js`；后续应按 observation/candidates/decision/batch analytics 拆分，避免把新策略继续堆回控制器。
+- `app/ai-controller.js` 已从 22,960 行收口至 1,968 行；pending resolver、automation、action executor、控制状态、日志/报告/实验与纯规则域均已拆出。后续不得把策略或 resolver 正文重新堆回 controller。
 - `app.js` 虽已低于预算，仍是 9,930 行的大型 composition root。后续只允许按明确跨域边界继续减小，不以压缩格式或复制状态换取行数。
 - 浏览器行为依赖传统脚本顺序；新增 runtime 必须同步更新 `index.html`、`dependencies.js` 和依赖测试。
 

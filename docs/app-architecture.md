@@ -78,7 +78,7 @@
 
 - AI 控制状态与调度位于 `randomizer/app/ai/control-runtime.js`；pending resolver 与 action executor 位于 `randomizer/app/ai/**`；纯估值、目标/需求、规划、竞速和候选构建位于 `randomizer/game/ai/**`。app AI runtime 通过窄显式 context 调用 UI flow，game AI 模块不得读取 DOM。
 - `randomizer/app/aliens/species-runtime.js` 当前 4,367 行，边界是八物种共用机会队列、dialog、followup 与面板运行域；后续应按物种或 rewards/dialogs/render 子域继续拆，并保持共用队列单一所有者。
-- `randomizer/app/ai-controller.js` 在 Stage 4 后为 1,961 行；四个 pending/action runtime 均低于 3,000 行，清单、行数与删除证据见 `docs/ai-pending-migration-stage4.md`。
+- `randomizer/app/ai-controller.js` 在 Stage 5 收口后为 1,968 行；四个 pending/action runtime 均低于 3,000 行，controller context 缺项会在装配时直接失败。最终行数、测试拆分与删除证据见 `docs/ai-controller-migration-stage5.md`。
 - 行动日志状态与 DOM 展示已经由 `action-log-runtime` 接管，恢复快照与持久化包由 `game-recovery` 接管；`app.js` 仍保留跨全部 pending 状态的恢复清理与全 UI 刷新调度。
 - 卡牌、收入、扫描和任务触发的 `pending*` 已按 runtime/flow 收口；新增相关选择应扩展所属 runtime，并通过 `app.js` 注入跨域 continuation，避免重新把具体确认/取消分支堆回总装配层。
 
@@ -117,6 +117,12 @@
 - executor：顶层候选执行迁入 `action-executor.js`，pending 优先级、效果恢复与 `runAiAutomationStep` 迁入 `automation-runtime.js`。
 - 状态边界：pending 与回合状态继续由 `app.js` 单一持有；四个模块只接收按 `REQUIRED_CONTEXT_KEYS` 筛选后的显式 context。
 - 删除证据：控制器 5,686 → 1,961 行；`app/ai/pending-domain-migration.test.js` 校验函数体删除、浏览器装配、行数和状态所有权。
+
+## AI Stage 5 收口记录
+
+- composition：controller 按 runtime 的 `REQUIRED_CONTEXT_KEYS` 严格校验并注入 context，缺失依赖不再被静默过滤；深空换牌阈值按既有口径 `10` 补入显式 binding。
+- 测试：10,295 行集成测试拆为 pending、alien、action、strategy 四份 2,500 行以内的领域回归，共享 harness/fixture 独立维护；automation 与 action executor 增加直接模块契约测试。
+- 最终边界：controller 22,960 → 1,968 行，稳定 API、headless/public API 调用方式、固定 seed 摘要与 pending 顺序保持不变；完整证据见 `docs/ai-controller-migration-stage5.md`。
 
 ## 验证要求
 

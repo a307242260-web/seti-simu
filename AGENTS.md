@@ -41,7 +41,7 @@
 - `randomizer/app/ai/control-runtime.js`：AI 控制状态、难度/权重配置、快照恢复、pending owner 与自动调度的单一所有者。
 - `randomizer/app/ai/initial-card-pending.js`、`interaction-pending.js`：按初始/卡牌与交互域拆分的 pending resolver，通过窄 context 调用 app flow。
 - `randomizer/app/ai/action-executor.js`、`automation-runtime.js`：顶层行动执行、pending 优先级与自动化步骤编排。
-- `randomizer/app/ai-controller.js`：AI runtime/rule domain 装配与稳定 API adapter；不再承载 resolver/executor 函数体。
+- `randomizer/app/ai-controller.js`：AI runtime/rule domain 装配、`REQUIRED_CONTEXT_KEYS` 完整性校验与稳定 API adapter；不再承载 resolver/executor 函数体。
 - `randomizer/game/ai/*-valuation.js`、`*-candidates.js`、`action-value.js`、`demand-card.js`、`route-planet.js` 等：按资源、卡牌、路线、扫描、科技、终局和外星人拆分的只读 AI 规则域；完整迁移清单见 `docs/ai-domain-migration-stage3.md`。
 - `randomizer/app/ai/battle-log.js`、`battle-report.js`：AI 对战日志、bug、结果/pending 汇总及报告 schema。
 - `randomizer/app/ai/tuning-history.js`、`experiment-runner.js`：调参历史持久化/推荐与单局、batch、A/B、tuning cycle runner。

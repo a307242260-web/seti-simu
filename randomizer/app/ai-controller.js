@@ -272,6 +272,7 @@
     const AI_GRAND_STRATEGY_INDUSTRY_LABEL = "宇宙大战略集团";
     const AI_GRAND_STRATEGY_INDUSTRY_ID = "industry:宇宙大战略集团";
     const AI_GRAND_STRATEGY_INDUSTRY_SRC = "../assets/industry/宇宙战略集团.png";
+    const AI_DEEPSPACE_SWAP_MIN_SCORE = 10;
     const AI_STYLE_IDS = Object.freeze(["scanner", "route", "task", "tech", "balanced"]);
     const AI_STYLE_SEAT_ORDER = Object.freeze(["route", "scanner", "task", "tech", "balanced"]);
 
@@ -411,6 +412,7 @@
       AI_GRAND_STRATEGY_INDUSTRY_LABEL,
       AI_GRAND_STRATEGY_INDUSTRY_ID,
       AI_GRAND_STRATEGY_INDUSTRY_SRC,
+      AI_DEEPSPACE_SWAP_MIN_SCORE,
       AI_STYLE_IDS,
       AI_STYLE_SEAT_ORDER,
     };
@@ -1332,10 +1334,15 @@
     };
 
     function pickAiAppRuntimeContext(moduleApi) {
+      const requiredKeys = moduleApi.REQUIRED_CONTEXT_KEYS || [];
+      const missingKeys = requiredKeys.filter(
+        (key) => !Object.prototype.hasOwnProperty.call(aiAppRuntimeBindings, key),
+      );
+      if (missingKeys.length) {
+        throw new Error(`AI app runtime context 缺少依赖：${missingKeys.join(", ")}`);
+      }
       return Object.fromEntries(
-        (moduleApi.REQUIRED_CONTEXT_KEYS || [])
-          .filter((key) => Object.prototype.hasOwnProperty.call(aiAppRuntimeBindings, key))
-          .map((key) => [key, aiAppRuntimeBindings[key]]),
+        requiredKeys.map((key) => [key, aiAppRuntimeBindings[key]]),
       );
     }
 

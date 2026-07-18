@@ -2,7 +2,7 @@
 
 本文件是电脑玩家（AI 自动机）的**当前唯一权威文档**，覆盖控制器接口、价值模型、目标系统、回合规划、自博弈验证和后续路线。旧的接口契约文档与成本收益草稿已经合并进本文，不再单独维护。
 
-- **控制器接口**：浏览器内由 `randomizer/app/ai/control-runtime.js` 持有电脑玩家配置、控制快照与自动调度，`randomizer/app/ai-controller.js` 推进 pending 子决策、执行顶层行动并转发控制 API、暴露批跑 / A/B / 调参入口；规则估值层集中在 `randomizer/game/ai/**`。
+- **控制器接口**：浏览器内由 `randomizer/app/ai/control-runtime.js` 持有电脑玩家配置、控制快照与自动调度，`randomizer/app/ai/automation-runtime.js` 推进 pending，`randomizer/app/ai/action-executor.js` 选择并执行顶层行动；`randomizer/app/ai-controller.js` 只装配这些 runtime、规则域并转发稳定控制/批跑 API。规则估值层集中在 `randomizer/game/ai/**`。
 - **规则域装配**：资源/交易、卡牌/任务、路线/星球、扫描/数据、科技/行动、终局节奏、选择压力和外星人估值按领域拆在 `randomizer/game/ai/**`，通过显式 context 注入；完整函数清单见 `docs/ai-domain-migration-stage3.md`，这些模块不读取 DOM。
 - **大脑层**：价值模型、目标系统、回合规划器，以及它们如何把“当前可行动内容的实时成本/收益”和“长线达成目标的动态收益”统一成一条决策链路。
 - **核心规则**：
@@ -453,8 +453,10 @@ Goal = {
 
 ```
 randomizer/
-├─ app/ai/control-runtime.js # 控制状态、配置、快照、pending owner、scheduler 与 seed helper
-├─ app/ai-controller.js # resolver、批跑/A/B/调参入口与控制 API 转发
+├─ app/ai/control-runtime.js    # 控制状态、配置、快照、pending owner、scheduler 与 seed helper
+├─ app/ai/automation-runtime.js # pending 优先级、效果恢复与唯一自动步骤推进器
+├─ app/ai/action-executor.js    # 顶层候选汇总、选择、执行与失败重试
+├─ app/ai-controller.js         # runtime/rule composition 与稳定 API adapter
 └─ game/ai/
    ├─ valuation.js        # L1：资源折算 / 收入净值 / 终局边际 / 状态估值
    ├─ race-model.js       # 跨层：公开行动窗口 / ETA / 独占收益与失败备选

@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const path = require("node:path");
-const { createAiControllerHarness } = require("./ai-controller.test");
+const { createAiControllerHarness } = require("./ai-controller-test-harness");
 
 const controllerPath = path.resolve(__dirname, "ai-controller.js");
 delete globalThis.SetiAppAiController;

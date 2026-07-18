@@ -24,6 +24,9 @@
 ```bash
 node randomizer/app/ai/pending-domain-migration.test.js
 node randomizer/app/ai-controller.characterization.test.js
-node randomizer/app/ai-controller.integration.test.js
+node randomizer/app/ai-controller.pending.integration.test.js
+node randomizer/app/ai-controller.alien.integration.test.js
+node randomizer/app/ai-controller.action.integration.test.js
+node randomizer/app/ai-controller.strategy.integration.test.js
 node randomizer/app/ai-controller.seed-baseline.test.js
 ```

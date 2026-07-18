@@ -48,4 +48,10 @@ assert.doesNotMatch(
   "顶层 executor 与自动化编排函数体应真实迁出控制器",
 );
 
+assert.match(
+  controllerSource,
+  /AI app runtime context 缺少依赖/,
+  "controller composition 应在装配时拒绝缺失的窄 context 依赖",
+);
+
 console.log("app/ai/pending-domain-migration.test.js ok");

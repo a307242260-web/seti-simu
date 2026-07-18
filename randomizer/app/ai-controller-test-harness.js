@@ -1,6 +1,5 @@
 "use strict";
 
-const assert = require("node:assert/strict");
 const { createAiController } = require("./ai-controller");
 const aomomo = require("../game/aliens/aomomo");
 const amiba = require("../game/aliens/amiba");
@@ -326,6 +325,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     runezu,
     yichangdian,
     aomomo,
+    amiba,
     cards: {
       createCardState: () => ({}),
       getCardLabel: (card) => card?.cardName || card?.label || card?.cardId || card?.id || "card",
@@ -607,16 +607,20 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   };
 
   const noopNames = [
+    "activateNextActionEffect",
     "allowsBlindDrawInSelection",
     "analyzeDataForCurrentPlayer",
     "beginPlayCardSelection",
     "beginScanAction",
     "cancelTechSelection",
+    "cancelCardTriggerChoice",
     "clearTransientStateForRecovery",
+    "closeScanTargetPicker",
     "confirmCardTaskCompletion",
     "confirmCardCornerQuickAction",
     "confirmDataPlacement",
     "confirmInitialSelectionForCurrentPlayer",
+    "confirmAlienRevealNotice",
     "confirmLandTargetPicker",
     "confirmMovePayment",
     "confirmPassReserveSelection",
@@ -653,6 +657,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     "handleOptionalHandScanChoice",
     "handlePlayCardSelect",
     "handlePublicCardClick",
+    "handlePublicCornerDiscardCardClick",
     "handlePublicScanCardClick",
     "handleIndustryDeepspaceHandClick",
     "handleRunezuCardGainChoice",
@@ -686,6 +691,8 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     "updateActionButtons",
   ];
   for (const name of noopNames) context[name] = () => null;
+  context.dispatchRuntimeAction = undefined;
+  context.recoverPendingActionFromOpenHistoryForAi = undefined;
   if (options.recordBanrenmaChoices) {
     context.handleBanrenmaBonusChoice = (choice) => {
       noteHandled({ type: "banrenma-bonus", choice: String(choice) });
@@ -1023,11 +1030,4 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   };
 }
 
-module.exports = { createAiControllerHarness };
-
-if (require.main === module) {
-  const harness = createAiControllerHarness(null);
-  assert.equal(typeof harness.controller.runAiAutomationStep, "function");
-  assert.equal(typeof harness.controller.configureAiAutoBattle, "function");
-  console.log("app/ai-controller.test.js ok");
-}
+module.exports = { createAiControllerHarness, makeActionList, makeButton };
