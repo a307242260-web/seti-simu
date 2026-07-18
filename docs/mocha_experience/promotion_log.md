@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-18
+- source: SETI-14, SETI-36
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航
+- target_component: 跨父级 issue 依赖续跑实践
+- target_file: docs/mocha_experience/coordination.md
+- remote_skill_id: none
+- change: 记录 `waiting_on` 不会自动建立依赖完成触发；跨父级等待必须补可验证的 watcher、通知或轮询路径。
+- applied_change: 仅更新 coordination experience 与本决策契约；本轮人工恢复 SETI-14 并清理已完成等待项，不修改 watcher、issue-workflow、agent prompt 或 loop template。
+- expected_effect: 后续跨父级依赖不会把 metadata 提示误当成事件订阅，能够在声明等待时同时确认依赖完成后的恢复机制。
+- evaluation_window: 后续 2 次等待另一个父级下 issue 的场景
+- success_signal: 外部依赖转为 done 后，等待 issue 在同一事件链或约定轮询窗口内恢复，且不再由 owner 追问后才继续。
+- rollback_condition: 若平台后续让 `waiting_on` 原生建立完成订阅，或结构化依赖图统一替代 metadata 等待字段，则合并或删除该候选。
+- risk: 对所有 `waiting_on` 做高频轮询会产生噪声和额外 run；若后续升级，应只提醒“目标已 done 且等待 issue 仍停留”的确定性状态。
+- evidence_before: SETI-14 metadata 在 SETI-36 完成前已为 `waiting_on=SETI-36`；SETI-36 隶属 SETI-30，并于 2026-07-18 12:20:52 done；SETI-14 没有收到子 issue 完成事件，成员在评论 `d721a9d6-7a09-40a8-89a0-9189040f555a` 明确指出未自动继续。
+- owner_or_agent_decision: 领航承认本轮将提示字段误当成触发关系，按 harness-evolve 自决记录 candidate，暂不升级长期组件。
+- applied_at: 2026-07-18
+- verification: 核对 SETI-14/SETI-36 的 parent、status、metadata、完成时间和触发线程；通过 issue-workflow `start` 恢复 SETI-14，确认 SETI-36 后 headless、self-play、evaluation 定向回归通过。
+- observed_outcome: SETI-14 已恢复到 RL 方案假设验证阶段；实测 baseline-v1 单局 38 步正常终局，耗时 67.51 秒，为后续训练方案补充采样吞吐证据。
+- keep_or_revise: 保持 candidate；累计 2 次跨父级等待证据后再决定是否增加 watcher 确定性提醒。
+
+- date: 2026-07-18
 - source: SETI-36
 - promoted_to: none
 - promotion_decision: candidate

@@ -12,6 +12,16 @@
 - promotion_status:
 - decision:
 
+## 2026-07-18：跨父级 waiting_on 不会自动建立完成触发
+
+- date: 2026-07-18
+- source_issue: SETI-14, SETI-36
+- observation: `waiting_on=<ISSUE>` 只是当前等待对象的结构化提示，不能替代父子关系、子 issue 完成通知或其他显式续跑触发；等待另一个父级下的 issue 时，必须在依赖完成后有可验证的 watcher/通知/轮询路径，否则依赖即使变成 done，等待 issue 也不会自动恢复。
+- evidence: SETI-14 在 2026-07-18 12:20 前写入 `waiting_on=SETI-36`，但 SETI-36 的真实父 issue 是 SETI-30；SETI-36 于 12:20:52 收口后只触发其父级链路，SETI-14 直到成员评论 `d721a9d6-7a09-40a8-89a0-9189040f555a` 追问才恢复。
+- promote_to: none
+- promotion_status: candidate
+- decision: 当前仅一次跨父级依赖漏续跑证据，先记录 coordination candidate，不直接修改 watcher 或 issue-workflow；后续观察 2 次跨父级等待，若复现则评估增加“waiting_on 已 done 但等待 issue 未恢复”的 watcher 提醒。
+
 ## 2026-07-18：父级验收口径变更需同步覆盖全部子项
 
 - date: 2026-07-18
