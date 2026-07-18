@@ -178,7 +178,7 @@
         initialSelection: "初始选择",
         quick: "快速行动",
       }),
-      GAME_RECOVERY_VERSION: 1,
+      GAME_RECOVERY_VERSION: 2,
       PUBLIC_SCAN_MAX_BONUS_CARDS: 2,
       DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT: 10,
       PUBLIC_SCAN_TARGETS_BY_CODE: Object.freeze({

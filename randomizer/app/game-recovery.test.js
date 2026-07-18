@@ -3,25 +3,45 @@
 const assert = require("node:assert/strict");
 const recovery = require("./game-recovery");
 
+function createLegacyState(overrides = {}) {
+  return {
+    solarState: {},
+    nebulaDataState: {},
+    alienGameState: {},
+    finalScoringState: { pendingMarks: [] },
+    playerState: { players: [], currentPlayerId: "player-blue" },
+    turnState: {},
+    rocketState: { nextRocketId: 1, playerRocketSequences: {}, statusNote: null },
+    planetStatsState: {},
+    techGameState: { board: {}, ui: {} },
+    cardState: { ui: {} },
+    cardTaskState: {},
+    setupSelectionState: {},
+    ...overrides,
+  };
+}
+
 const snapshot = recovery.createGameRecoverySnapshot({
-  version: "v1",
+  version: 2,
   roundNumber: 4,
   turnNumber: 7,
   actionCycleNumber: 3,
   currentPlayerId: "player-blue",
   entryId: 9,
   label: "恢复点",
-  state: {
+  state: createLegacyState({
     playerState: { currentPlayerId: "player-blue" },
-  },
+  }),
   runtime: {
     aiControl: { enabled: true },
   },
 });
 
-assert.equal(snapshot.version, "v1");
+assert.equal(snapshot.version, 2);
 assert.equal(snapshot.meta.label, "恢复点");
-assert.deepEqual(snapshot.state.playerState, { currentPlayerId: "player-blue" });
+assert.equal(typeof snapshot.committedState, "string");
+assert.equal(Object.hasOwn(snapshot, "state"), false);
+assert.equal(snapshot.committedState.includes("aiControl"), false);
 
 const pack = recovery.createActionLogRecoveryPackage({
   version: "v1",
@@ -58,11 +78,11 @@ const slices = {
 };
 const restored = [];
 const result = recovery.applyGameRecoverySnapshot({
-  version: "v1",
-  state: {
+  version: 1,
+  state: createLegacyState({
     playerState: { currentPlayerId: "after" },
     turnState: { roundNumber: 4 },
-  },
+  }),
   runtime: {
     aiControl: { enabled: false },
   },
@@ -85,7 +105,8 @@ const result = recovery.applyGameRecoverySnapshot({
 });
 
 assert.equal(result.ok, true);
-assert.equal(result.snapshotVersion, "v1");
+assert.equal(result.snapshotVersion, 1);
+assert.equal(result.committedSchemaVersion, "seti-committed-game-state-v1");
 assert.equal(slices.playerState.currentPlayerId, "after");
 assert.equal(slices.turnState.roundNumber, 4);
 assert.deepEqual(restored, [
@@ -94,5 +115,19 @@ assert.deepEqual(restored, [
   "after-state",
   "已从行动日志恢复局面",
 ]);
+
+const untouched = structuredClone(slices);
+const rejected = recovery.applyGameRecoverySnapshot({
+  version: 999,
+  committedState: "{}",
+}, {
+  stateSlices: slices,
+  restoreMutableObject() {
+    throw new Error("fail-closed 不得修改切片");
+  },
+});
+assert.equal(rejected.ok, false);
+assert.equal(rejected.code, "RECOVERY_SNAPSHOT_VERSION_UNSUPPORTED");
+assert.deepEqual(slices, untouched);
 
 console.log("game-recovery tests passed");

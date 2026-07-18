@@ -4,7 +4,7 @@
 
 `CommittedGameState` 是浏览器、headless 与训练环境共同使用的唯一“已经成立的游戏事实”。它是按领域分片的根对象，不是巨型平面对象。`StateStore` 是替换该根对象的唯一入口；Action、Effect Session、UI、AI、history 和宿主环境只能读取隔离快照，或在工作副本上计算候选状态。
 
-本阶段冻结 reference schema、所有权、版本、验证、序列化与 compare-and-commit 语义，但不把旧 12 个可变切片立即双写到新存储。旧切片接入、领域净化和宿主迁移必须在后续阶段通过单向 adapter 渐进完成；在 adapter 覆盖矩阵完成前，`StateStore` 不是生产热路径的第二事实源。
+Stage 0/1 已冻结 reference schema、所有权、版本、验证、序列化与 compare-and-commit 语义。Stage 2 由 `randomizer/game/state/legacy-state-adapter.js` 在 recovery/headless 持久化边界把旧 12 个可变切片一次性转换为 v1；运行时仍不双写两份权威状态，`StateStore` 也尚未成为 Action/Effect 的生产热路径。
 
 ```text
 StateStore (唯一 committed owner)
@@ -99,3 +99,25 @@ reference core 直接强制以下不变量：
 | 8 | 遗留 adapter 与旧存档 | current schema | inventory 全部 deleted/store-owned/host-only/有到期日 adapter |
 
 阶段 2 开始前必须把每个旧字段标成 `committed`、`session-owned`、`host-only`、`derived` 或 `legacy-adapter`，并为 adapter 写唯一 source/target 与到期条件。任何双写方案都不得作为长期兼容策略。
+
+## Stage 2 recovery/headless adapter
+
+唯一 source 是 recovery snapshot v1 的 `state` 12 切片，唯一 target 是 `seti-committed-game-state-v1`。新 recovery snapshot v2 和 headless checkpoint 的 `coreState` 只保存 `StateStore.serialize()` 产生的 `committedState` JSON；旧 `state` 不随新格式双写。删除条件是所有受支持持久化产物均已升级到 committed schema，且不再需要读取 v1 存档。
+
+| 旧字段 | 分类 | v1 target / 处理 |
+|---|---|---|
+| `solarState` | committed | `solarSystem` |
+| `nebulaDataState` | committed | `data` |
+| `alienGameState` | committed | `aliens` |
+| `finalScoringState` | committed + session-owned | 永久事实进 `finalScoring`；`pendingMarks` 排除 |
+| `playerState` | committed + legacy-adapter | 玩家资产进 `players`；`currentPlayerId` 归 `turn` |
+| `turnState` | committed | `turn` |
+| `rocketState` | committed + host-only + legacy-adapter | 棋子进 `pieces`；`statusNote` 排除；`nextRocketId` 归 `meta.sequences.rocket`；`Set` 显式转排序数组 |
+| `planetStatsState` | committed | `planets` |
+| `techGameState` | committed + host-only | `board` 等永久事实进 `tech`；`ui` 排除 |
+| `cardState` | committed + host-only | 牌实例/牌序进 `cards`；`ui` 排除 |
+| `cardTaskState` | derived | 排除；由卡牌事实/任务协议重建 |
+| `setupSelectionState` | session-owned | 排除；只保留已写入玩家/对局事实的确认结果 |
+| `runtime.aiControl` | host-only | 不进入 committed state；仍由宿主协议独立持有 |
+
+读取路径先按 recovery version 分流：v1 调用 adapter 后进入 `StateStore.deserialize/migrate`，v2 直接反序列化 `committedState`；缺版本、未知版本、损坏 JSON、缺切片或非法 Set/序列均在修改旧可变切片前拒绝。headless checkpoint 的 replay journal 仍是独立协议：有 journal 时通过 reset+replay 重建 session-owned 决策状态，无 journal 的稳定 core checkpoint 则经同一 recovery 反序列化路径恢复。

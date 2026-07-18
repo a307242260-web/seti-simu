@@ -8,12 +8,20 @@
   }
 
   root.SetiAppGameRecovery = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
+  let legacyStateAdapter = root.SetiLegacyStateAdapter;
+  if (!legacyStateAdapter && typeof require === "function") {
+    legacyStateAdapter = require("../game/state/legacy-state-adapter");
+  }
+  if (!legacyStateAdapter) {
+    throw new Error("SetiLegacyStateAdapter is required before SetiAppGameRecovery");
+  }
+
   function createGameRecoverySnapshot(options = {}) {
-    return {
-      version: options.version || null,
+    const legacySnapshot = {
+      version: legacyStateAdapter.LEGACY_RECOVERY_VERSION,
       meta: {
         roundNumber: options.roundNumber ?? null,
         turnNumber: options.turnNumber ?? null,
@@ -22,7 +30,23 @@
         entryId: options.entryId ?? null,
         label: options.label || null,
       },
-      state: structuredClone(options.state || {}),
+      state: options.state,
+    };
+    const serialized = legacyStateAdapter.serializeLegacySnapshot(legacySnapshot, {
+      gameId: options.gameId,
+      rulesetVersion: options.rulesetVersion,
+      seed: options.seed,
+      rngState: options.rngState,
+    });
+    if (!serialized.ok) {
+      const error = new TypeError(`无法创建 recovery committed snapshot: ${serialized.code}`);
+      error.validation = serialized;
+      throw error;
+    }
+    return {
+      version: legacyStateAdapter.COMMITTED_RECOVERY_VERSION,
+      meta: legacySnapshot.meta,
+      committedState: serialized.serialized,
       runtime: structuredClone(options.runtime || {}),
     };
   }
@@ -118,10 +142,26 @@
   }
 
   function applyGameRecoverySnapshot(snapshot, options = {}) {
-    const state = snapshot?.state || snapshot;
-    if (!state) {
-      return { ok: false, message: "行动日志中没有可恢复快照" };
+    const deserialized = legacyStateAdapter.deserializeRecoverySnapshot(snapshot, {
+      gameId: options.gameId,
+      rulesetVersion: options.rulesetVersion,
+      seed: options.seed,
+      rngState: options.rngState,
+    });
+    if (!deserialized.ok) {
+      return {
+        ok: false,
+        code: deserialized.code,
+        message: deserialized.message || "行动日志恢复快照无效",
+      };
     }
+    const projected = legacyStateAdapter.projectCommittedStateToLegacySlices(deserialized.state, {
+      hostState: options.stateSlices,
+    });
+    if (!projected.ok) {
+      return { ok: false, code: projected.code, message: projected.message };
+    }
+    const state = projected.state;
     const slices = options.stateSlices || {};
     for (const [key, target] of Object.entries(slices)) {
       if (state[key] != null) {
@@ -141,7 +181,8 @@
     options.refreshAfterGameRecovery?.(recoveryMessage);
     return {
       ok: true,
-      snapshotVersion: snapshot.version || null,
+      snapshotVersion: typeof snapshot === "string" ? null : snapshot.version || null,
+      committedSchemaVersion: deserialized.state.meta.schemaVersion,
       aiControl: aiControlResult,
       message: options.getRecoveryMessage?.() || recoveryMessage,
     };

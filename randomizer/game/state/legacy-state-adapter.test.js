@@ -1,0 +1,121 @@
+"use strict";
+
+const assert = require("node:assert/strict");
+const stateStore = require("./state-store");
+const adapter = require("./legacy-state-adapter");
+
+function createLegacySnapshot(overrides = {}) {
+  return {
+    version: 1,
+    meta: { entryId: 7, currentPlayerId: "p2" },
+    state: {
+      solarState: { rotation: 3 },
+      nebulaDataState: { pool: ["d1"] },
+      alienGameState: { aliens: { 1: { revealed: true } } },
+      finalScoringState: { tiles: { a: { marks: [] } }, pendingMarks: [{ id: "decision" }] },
+      playerState: { players: [{ id: "p1" }, { id: "p2" }], currentPlayerId: "p2" },
+      turnState: { roundNumber: 3, turnNumber: 8 },
+      rocketState: {
+        nextRocketId: 9,
+        activeRocketId: "rocket-8",
+        rockets: [{ id: "rocket-8", playerId: "p2" }],
+        playerRocketSequences: { p1: new Set([3, 1]), p2: new Set([2]) },
+        statusNote: "仅供 UI 展示",
+      },
+      planetStatsState: { mars: { orbiters: ["p1"] } },
+      techGameState: { board: { supply: ["t1"] }, ui: { pendingTileId: "t1" } },
+      cardState: { drawPileCardIds: ["c2", "c1"], ui: { selectionActive: true } },
+      cardTaskState: { byCardId: { c1: { progress: 2 } } },
+      setupSelectionState: { active: true, selectedIndustryId: "industry-a" },
+      ...overrides,
+    },
+    runtime: { aiControl: { enabled: true } },
+  };
+}
+
+(function testOwnershipAndDeletionContractAreExplicit() {
+  assert.equal(adapter.ADAPTER_CONTRACT.target, stateStore.SCHEMA_VERSION);
+  assert.match(adapter.ADAPTER_CONTRACT.source, /12 legacy state slices/);
+  assert.match(adapter.ADAPTER_CONTRACT.deleteWhen, /no supported v1 artifact remains/);
+  assert.equal(adapter.FIELD_OWNERSHIP.cardTaskState, "derived:excluded");
+  assert.equal(adapter.FIELD_OWNERSHIP.setupSelectionState, "session-owned:excluded");
+  assert.equal(adapter.FIELD_OWNERSHIP["runtime.aiControl"], "host-only:excluded");
+})();
+
+(function testLegacyToCommittedToLegacyRoundTrip() {
+  const source = createLegacySnapshot();
+  const adapted = adapter.adaptLegacySnapshot(source, {
+    seed: 82,
+    rngState: { algorithm: "test", state: 123 },
+  });
+  assert.equal(adapted.ok, true);
+  assert.equal(adapted.state.meta.schemaVersion, stateStore.SCHEMA_VERSION);
+  assert.equal(adapted.state.meta.sequences.rocket, 9);
+  assert.deepEqual(adapted.state.pieces.playerRocketSequences, { p1: [1, 3], p2: [2] });
+  assert.equal(adapted.state.turn.currentPlayerId, "p2");
+  assert.equal(Object.hasOwn(adapted.state.players, "currentPlayerId"), false);
+  assert.equal(Object.hasOwn(adapted.state.pieces, "statusNote"), false);
+  assert.equal(Object.hasOwn(adapted.state.tech, "ui"), false);
+  assert.equal(Object.hasOwn(adapted.state.cards, "ui"), false);
+  assert.equal(Object.hasOwn(adapted.state.finalScoring, "pendingMarks"), false);
+  assert.equal(JSON.stringify(adapted.state).includes("aiControl"), false);
+  assert.equal(JSON.stringify(adapted.state).includes("cardTaskState"), false);
+  assert.equal(JSON.stringify(adapted.state).includes("setupSelectionState"), false);
+
+  const projected = adapter.projectCommittedStateToLegacySlices(adapted.state, {
+    hostState: {
+      rocketState: { statusNote: "host note" },
+      techGameState: { ui: { cheatModeEnabled: true } },
+      cardState: { ui: { selectionActive: false } },
+    },
+  });
+  assert.equal(projected.ok, true);
+  assert.deepEqual(projected.state.solarState, source.state.solarState);
+  assert.deepEqual(projected.state.playerState, source.state.playerState);
+  assert.deepEqual(projected.state.turnState, source.state.turnState);
+  assert.deepEqual(projected.state.rocketState.playerRocketSequences, source.state.rocketState.playerRocketSequences);
+  assert.equal(projected.state.rocketState.nextRocketId, 9);
+  assert.equal(projected.state.rocketState.statusNote, "host note");
+  assert.deepEqual(projected.state.techGameState.ui, { cheatModeEnabled: true });
+  assert.deepEqual(projected.state.cardState.ui, { selectionActive: false });
+  assert.deepEqual(projected.state.finalScoringState.pendingMarks, []);
+  assert.equal(Object.hasOwn(projected.state, "cardTaskState"), false);
+  assert.equal(Object.hasOwn(projected.state, "setupSelectionState"), false);
+})();
+
+(function testSerializationIsDeterministicAndExplicitlyDeserialized() {
+  const source = createLegacySnapshot();
+  const first = adapter.serializeLegacySnapshot(source);
+  const second = adapter.serializeLegacySnapshot(source);
+  assert.equal(first.ok, true);
+  assert.equal(first.serialized, second.serialized);
+  const recovered = adapter.deserializeRecoverySnapshot({
+    version: 2,
+    committedState: first.serialized,
+  });
+  assert.equal(recovered.ok, true);
+  assert.equal(recovered.state.meta.schemaVersion, stateStore.SCHEMA_VERSION);
+})();
+
+(function testFailClosedMatrix() {
+  const missing = createLegacySnapshot();
+  delete missing.state.planetStatsState;
+  assert.equal(adapter.adaptLegacySnapshot(missing).code, "LEGACY_STATE_SLICE_MISSING");
+  assert.equal(adapter.adaptLegacySnapshot("{bad json").code, "LEGACY_SNAPSHOT_JSON_INVALID");
+  assert.equal(adapter.adaptLegacySnapshot({ ...createLegacySnapshot(), version: 0 }).code,
+    "LEGACY_SNAPSHOT_VERSION_UNSUPPORTED");
+  assert.equal(adapter.deserializeRecoverySnapshot({ version: 999, committedState: "{}" }).code,
+    "RECOVERY_SNAPSHOT_VERSION_UNSUPPORTED");
+  assert.equal(adapter.deserializeRecoverySnapshot({ version: 2 }).code,
+    "RECOVERY_COMMITTED_STATE_MISSING");
+
+  const badSet = createLegacySnapshot({
+    rocketState: {
+      ...createLegacySnapshot().state.rocketState,
+      playerRocketSequences: { p1: { 1: true } },
+    },
+  });
+  assert.equal(adapter.adaptLegacySnapshot(badSet).code, "LEGACY_STATE_ADAPT_FAILED");
+})();
+
+console.log("legacy state adapter tests passed");

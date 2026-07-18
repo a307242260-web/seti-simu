@@ -3,6 +3,33 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const { createHeadlessEnv } = require("./headless-env");
+const legacyStateAdapter = require("../game/state/legacy-state-adapter");
+
+function readLegacyCheckpointState(checkpoint) {
+  const decoded = legacyStateAdapter.deserializeRecoverySnapshot(checkpoint.coreState);
+  assert.equal(decoded.ok, true, decoded.message || decoded.code);
+  const projected = legacyStateAdapter.projectCommittedStateToLegacySlices(decoded.state);
+  assert.equal(projected.ok, true, projected.message || projected.code);
+  return projected.state;
+}
+
+function writeLegacyCheckpointState(checkpoint, legacyState) {
+  const serialized = legacyStateAdapter.serializeLegacySnapshot({
+    version: legacyStateAdapter.LEGACY_RECOVERY_VERSION,
+    meta: checkpoint.coreState.meta,
+    state: {
+      ...legacyState,
+      cardTaskState: {},
+      setupSelectionState: {},
+    },
+  });
+  assert.equal(serialized.ok, true, serialized.message || serialized.code);
+  checkpoint.coreState = {
+    ...checkpoint.coreState,
+    version: legacyStateAdapter.COMMITTED_RECOVERY_VERSION,
+    committedState: serialized.serialized,
+  };
+}
 
 function advanceToTurnBoundary(env) {
   for (let index = 0; index < 100; index += 1) {
@@ -17,13 +44,14 @@ function advanceToTurnBoundary(env) {
 
 function buildFinalScoringCheckpoint(env, availableTileIds) {
   const checkpoint = env.createCheckpoint();
-  const playerState = checkpoint.coreState.state.playerState;
+  const legacyState = readLegacyCheckpointState(checkpoint);
+  const playerState = legacyState.playerState;
   const playerId = playerState.currentPlayerId;
   const player = playerState.players.find((candidate) => candidate.id === playerId);
   assert.ok(player, "checkpoint 应包含当前玩家");
   player.resources.score = 25;
 
-  for (const [tileId, tile] of Object.entries(checkpoint.coreState.state.finalScoringState.tiles)) {
+  for (const [tileId, tile] of Object.entries(legacyState.finalScoringState.tiles)) {
     tile.marks = availableTileIds.includes(tileId)
       ? []
       : [{
@@ -36,7 +64,8 @@ function buildFinalScoringCheckpoint(env, availableTileIds) {
         slot3Order: 1,
       }];
   }
-  checkpoint.coreState.state.finalScoringState.pendingMarks = [];
+  legacyState.finalScoringState.pendingMarks = [];
+  writeLegacyCheckpointState(checkpoint, legacyState);
   delete checkpoint.replaySteps;
   return { checkpoint, playerId };
 }
@@ -74,7 +103,7 @@ assert.equal(
   beforeCursor + 1,
   "执行 choose_final_scoring 后 replay cursor 必须 +1",
 );
-const selectedMark = multi.env.createCheckpoint().coreState.state.finalScoringState.tiles.b.marks
+const selectedMark = readLegacyCheckpointState(multi.env.createCheckpoint()).finalScoringState.tiles.b.marks
   .find((mark) => mark.playerId === multi.playerId && Number(mark.threshold) === 25);
 assert.ok(selectedMark, "所选终局板块应原子写入 25 分门槛标记");
 
@@ -105,7 +134,7 @@ assert.equal(
   singletonBeforeCursor,
   "环境自动项不得伪造 policy replay step",
 );
-const singletonMark = singleton.env.createCheckpoint().coreState.state.finalScoringState.tiles.a.marks
+const singletonMark = readLegacyCheckpointState(singleton.env.createCheckpoint()).finalScoringState.tiles.a.marks
   .find((mark) => mark.playerId === singleton.playerId && Number(mark.threshold) === 25);
 assert.ok(singletonMark, "唯一合法终局板块应由环境自动标记");
 const autoEvent = singleton.env.getReplay().environmentEvents.find((event) => (

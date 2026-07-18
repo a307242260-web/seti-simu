@@ -777,6 +777,7 @@ function createHeadlessEnv() {
       if (!checkpoint || checkpoint.schemaVersion !== "seti-rl-checkpoint-v1") {
         throw new Error(`不支持的 checkpoint schema：${checkpoint?.schemaVersion || "missing"}`);
       }
+      const persistedCoreState = checkpoint?.coreState || checkpoint?.snapshot || null;
       if (Array.isArray(checkpoint.replaySteps)) {
         api = null;
         this.reset({
@@ -798,7 +799,10 @@ function createHeadlessEnv() {
         const checkpointSeed = checkpoint?.replayCursor?.seed ?? checkpoint?.config?.seed ?? "seti-headless";
         this.reset({ ...(checkpoint?.config || {}), seed: checkpointSeed });
       }
-      api.restoreRecoverySnapshot(checkpoint?.coreState || checkpoint?.snapshot || checkpoint, { skipRefresh: true });
+      const restoreResult = api.restoreRecoverySnapshot(persistedCoreState || checkpoint, { skipRefresh: true });
+      if (!restoreResult?.ok) {
+        throw new Error(`checkpoint coreState 反序列化失败：${restoreResult?.code || restoreResult?.message || "unknown"}`);
+      }
       replaySteps = Array.isArray(checkpoint?.replaySteps) ? structuredClone(checkpoint.replaySteps) : replaySteps;
       environmentEvents = Array.isArray(checkpoint?.environmentEvents)
         ? structuredClone(checkpoint.environmentEvents)
