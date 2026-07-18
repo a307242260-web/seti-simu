@@ -9048,6 +9048,27 @@
 
   function enumerateHeadlessConditionalActions() {
     if (!headlessMode) return { actorPlayer: null, candidates: [] };
+    syncFinalScorePendingMarks();
+    const finalScorePlayer = getCurrentPlayer();
+    const finalScorePending = finalScoring.getNextPendingMarkForPlayer(
+      finalScoringState,
+      finalScorePlayer?.id,
+    );
+    if (finalScorePending) {
+      return {
+        actorPlayer: finalScorePlayer,
+        candidates: FINAL_SCORE_IDS.flatMap((tileId) => (
+          finalScoring.canMarkTile(finalScoringState, tileId, finalScorePlayer)?.ok
+            ? [{
+              id: "conditionalChoice",
+              family: "choose_final_scoring",
+              label: `终局板块 ${String(tileId).toUpperCase()}`,
+              target: { kind: "final-score-tile", choiceId: String(tileId) },
+            }]
+            : []
+        )),
+      };
+    }
     const scanTargetPending = pendingState.scanTargetAction;
     if (scanTargetPending) {
       if (scanTargetPending.type === "discard_corner_repeat") {
@@ -9659,6 +9680,9 @@
   }
 
   function executeHeadlessConditionalAction(action) {
+    if (action?.target?.kind === "final-score-tile") {
+      return handleFinalScoreTileClick(action.target.choiceId);
+    }
     if (isTechTilePickingActive() && action?.target?.kind === "research-tech-tile") {
       return handleSupplyTechTileClick(action.tileId || action.target.tileId);
     }

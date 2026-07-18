@@ -158,18 +158,24 @@
     function handleFinalScoreTileClick(tileId) {
       const currentPlayer = getCurrentPlayer();
       syncFinalScorePendingMarks();
+      const pending = finalScoring.getNextPendingMarkForPlayer(finalScoringState, currentPlayer?.id);
       const beforeFinalScoringState = root.structuredClone(finalScoringState);
 
       const result = finalScoring.markTile(finalScoringState, tileId, currentPlayer, {
         tokenSrc: getNormalTokenAssetForPlayer(currentPlayer),
+        placedAt: headless
+          ? `headless:${currentPlayer?.id || "unknown"}:${pending?.threshold || "unknown"}:${tileId}`
+          : undefined,
       });
 
       context.rocketState.statusNote = result.message;
       if (result.ok) recordFinalScoreMarkActionLog(result, currentPlayer, beforeFinalScoringState);
-      renderFinalScoreBoard();
-      renderPlayerStats();
-      updateActionButtons();
-      queueStateReadoutRender();
+      if (!headless) {
+        renderFinalScoreBoard();
+        renderPlayerStats();
+        updateActionButtons();
+        queueStateReadoutRender();
+      }
       return result;
     }
 

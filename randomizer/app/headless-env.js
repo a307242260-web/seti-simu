@@ -766,6 +766,21 @@ function createHeadlessEnv() {
       if (checkpoint?.runtimeState?.randomState != null) {
         seededRandom?.setState(checkpoint.runtimeState.randomState);
       }
+      legalActionSelectors = new Map();
+      lastLegalActions = null;
+      lastObservation = null;
+      stateVersion += 1;
+      decisionVersion += 1;
+      const restoredResolution = drainDeterministicEffects();
+      if (restoredResolution?.ok === false) {
+        const failure = restoredResolution.final || restoredResolution;
+        throw new Error(failure.message || "checkpoint 恢复后未能推进到合法决策点");
+      }
+      environmentEvents.push(...buildEnvironmentEvents(
+        restoredResolution,
+        environmentEvents.length,
+        "load_checkpoint",
+      ));
       return this.observe();
     },
     createCheckpoint() {
