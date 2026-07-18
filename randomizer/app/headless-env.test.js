@@ -86,7 +86,8 @@ const observationKeys = collectKeys(actorObservation);
 assert.equal(observationKeys.some((key) => ["actionGraph", "net", "plannerShadow", "drawPileCardIds", "recoverySnapshot", "ui", "overlay", "dataset"].includes(key)), false);
 const legalAction = observationEnv.legalActions()[0];
 assert.equal(legalAction.schemaVersion, "seti-rl-action-v2");
-assert.ok(TURN_ACTION_FAMILIES.includes(legalAction.family));
+assert.ok([...TURN_ACTION_FAMILIES, ...CONDITIONAL_FAMILIES].includes(legalAction.family));
+assert.equal(actorObservation.decision.decisionType, legalAction.decisionType);
 assert.equal(CONDITIONAL_FAMILIES.some((family) => family.startsWith("pending")), false);
 
 const wrongActor = observationEnv.step({ ...legalAction, actorPlayerId: "not-the-current-player" });

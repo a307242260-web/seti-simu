@@ -9,7 +9,7 @@
   "terminalSummary": {
     "terminal": true,
     "completionRate": 1,
-    "steps": 32,
+    "steps": 87,
     "scores": [
       11,
       5,
@@ -20,16 +20,17 @@
     "blocked": false
   },
   "keyActionSequence": [
-    "pass",
-    "end-turn",
-    "pass",
-    "end-turn",
-    "pass",
-    "end-turn",
-    "pass",
-    "end-turn"
+    "choose_payment",
+    "choose_payment",
+    "choose_payment",
+    "choose_payment",
+    "choose_payment",
+    "choose_payment",
+    "choose_payment",
+    "choose_payment"
   ],
   "actionCounts": {
+    "choose_payment": 55,
     "pass": 16,
     "end-turn": 16
   }

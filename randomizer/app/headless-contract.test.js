@@ -8,6 +8,7 @@ const {
   ACTION_COVERAGE_MATRIX,
   CONDITIONAL_COVERAGE_MATRIX,
   normalizeTurnCandidate,
+  normalizeConditionalCandidate,
   sanitizeAlienPublicState,
   sanitizeTechSupply,
 } = require("./headless-contract");
@@ -20,6 +21,16 @@ assert.deepEqual(CONDITIONAL_FAMILIES, [
 assert.equal(ACTION_COVERAGE_MATRIX.length, 15);
 assert.equal(CONDITIONAL_COVERAGE_MATRIX.length, 7);
 assert.deepEqual(CONDITIONAL_COVERAGE_MATRIX.map((entry) => entry.family), CONDITIONAL_FAMILIES);
+for (const family of CONDITIONAL_FAMILIES) {
+  const action = normalizeConditionalCandidate({
+    id: "conditionalChoice",
+    family,
+    target: { kind: "test-choice", choiceId: family },
+  }, "player-blue");
+  assert.equal(action.family, family);
+  assert.equal(action.decisionType, "conditional_choice");
+  assert.equal(action.actionFeature.phase, "conditional");
+}
 
 for (const entry of ACTION_COVERAGE_MATRIX) {
   assert.ok(entry.legacyId, `${entry.family} 应有 runtime selector 映射`);

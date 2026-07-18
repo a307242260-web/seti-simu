@@ -110,6 +110,8 @@
       chooseInitialSelectionForAiPlayer,
       enumerateHeadlessTurnActions,
       executeAiTurnAction,
+      enumerateHeadlessConditionalActions,
+      executeHeadlessConditionalAction,
       resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,
@@ -321,7 +323,18 @@
         currentPlayer: structuredClone(getCurrentPlayer()),
         candidates: structuredClone(enumerateHeadlessTurnActions()),
       }),
+      listHeadlessConditionalActionCandidates: () => {
+        const result = enumerateHeadlessConditionalActions();
+        return {
+          ok: true,
+          actorPlayer: structuredClone(result.actorPlayer || null),
+          candidates: structuredClone(result.candidates || []),
+        };
+      },
       chooseHeadlessInitialSelection: () => chooseInitialSelectionForAiPlayer(),
+      executeHeadlessConditionalAction: (action) => (
+        executeHeadlessConditionalAction(structuredClone(action))
+      ),
       executeHeadlessTurnAction: (action, options = {}) => {
         const actionResult = executeAiTurnAction(structuredClone(action), getCurrentPlayer());
         if (actionResult?.ok === false || options.resolveToTurnBoundary === false) {

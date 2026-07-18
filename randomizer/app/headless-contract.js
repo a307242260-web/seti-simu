@@ -117,6 +117,29 @@ function normalizeTurnCandidate(candidate, actorPlayerId) {
   });
 }
 
+function normalizeConditionalCandidate(candidate, actorPlayerId) {
+  const family = candidate?.family;
+  if (!CONDITIONAL_FAMILIES.includes(family)) return null;
+  const target = normalizeTarget(candidate.target);
+  const payload = normalizePayload(candidate);
+  return compactObject({
+    schemaVersion: ACTION_SCHEMA_VERSION,
+    actionId: stableActionId(actorPlayerId, family, target, payload),
+    actorPlayerId,
+    decisionType: "conditional_choice",
+    family,
+    target,
+    payload: Object.keys(payload).length ? payload : undefined,
+    actionFeature: {
+      familyIndex: ACTION_FAMILY_INDEX[family],
+      phase: "conditional",
+      hasTarget: Boolean(target && Object.keys(target).length),
+      hasPayload: Boolean(Object.keys(payload).length),
+    },
+    summary: candidate.label || family,
+  });
+}
+
 function sanitizeCard(card) {
   if (!card || typeof card !== "object") return null;
   return compactObject({
@@ -226,6 +249,7 @@ module.exports = {
   ACTION_COVERAGE_MATRIX,
   CONDITIONAL_COVERAGE_MATRIX,
   normalizeTurnCandidate,
+  normalizeConditionalCandidate,
   sanitizeCard,
   sanitizePublicPlayer,
   sanitizeSelfPlayer,

@@ -1923,8 +1923,8 @@
     abilities,
     createActionContext,
     actions,
-    removeRocketElement,
-    syncPlanetOrbitLandMarkersAfterAction: syncPlanetOrbitLandMarkers,
+    removeRocketElement: headlessMode ? () => {} : removeRocketElement,
+    syncPlanetOrbitLandMarkersAfterAction: headlessMode ? () => {} : syncPlanetOrbitLandMarkers,
     startPlanetRewardEffectFlow,
     startLaunchSectorFinishEffectFlow: (...args) => startLaunchSectorFinishEffectFlow?.(...args),
     settleCardTasksAfterEffect: (...args) => settleCardTasksAfterEffect(...args),
@@ -2580,6 +2580,7 @@
     canBlindDraw: (...args) => canBlindDraw(...args),
     canPayForMove,
     canStartMainAction,
+    canUseCardCornerQuickAction: (...args) => canUseCardCornerQuickAction(...args),
     cancelTechSelection: (...args) => cancelTechSelection?.(...args),
     clearTransientStateForRecovery,
     closeScanTargetPicker,
@@ -8833,6 +8834,16 @@
 
   function openLandTargetPicker(options) {
     if (!els.landTargetOverlay || !els.landTargetSelect) {
+      if (headlessMode && typeof options.onConfirm === "function") {
+        pendingState.landTargetAction = {
+          ...getPendingOwnerFields(options.effect || null, options.player || null),
+          effect: options.effect || null,
+          getOptions: options.getOptions,
+          onConfirm: options.onConfirm,
+          onCancel: options.onCancel,
+        };
+        return { ok: true, pending: true, message: "请选择登陆目标" };
+      }
       const choice = options.choices?.[0] || { target: options.defaultTarget };
       if (typeof options.onConfirm === "function") {
         return withPendingOwnerPlayer({
@@ -8872,9 +8883,12 @@
   }
 
   function confirmLandTargetPicker() {
+    return confirmLandTargetChoice(Number(els.landTargetSelect?.value));
+  }
+
+  function confirmLandTargetChoice(choiceIndex = 0) {
     const pending = pendingState.landTargetAction;
     return withPendingOwnerPlayer(pending, () => {
-    const choiceIndex = Number(els.landTargetSelect?.value);
     const options = typeof pending?.getOptions === "function"
       ? pending.getOptions()
       : abilities.planet.getLandOptions(createActionContext());
@@ -8892,6 +8906,139 @@
     }
     runAction("land", { target: choice.target, rocketId: choice.rocketId });
     });
+  }
+
+  function getHeadlessConditionalPlayer(pending) {
+    return resolvePlayerReference({
+      playerId: pending?.playerId || pending?.targetPlayerId || null,
+      playerColor: pending?.playerColor || pending?.targetPlayerColor || null,
+    }) || getEffectOwnerPlayer(pending?.effect) || getCurrentPlayer();
+  }
+
+  function enumerateHeadlessConditionalActions() {
+    if (!headlessMode) return { actorPlayer: null, candidates: [] };
+    const discardPending = pendingState.discardAction;
+    if (discardPending) {
+      const player = discardPending.player || getHeadlessConditionalPlayer(discardPending);
+      const selectedIndexes = new Set(discardPending.selectedIndexes || []);
+      return {
+        actorPlayer: player,
+        candidates: (player?.hand || []).flatMap((card, handIndex) => (
+          selectedIndexes.has(handIndex) ? [] : [{
+            id: "conditionalChoice",
+            family: "choose_payment",
+            label: cards.getCardLabel(card),
+            target: {
+              kind: "discard-hand-card",
+              choiceId: String(handIndex),
+              cardId: card.cardId || card.id || null,
+              handIndex,
+            },
+            handIndex,
+          }]
+        )),
+      };
+    }
+    const cardPending = pendingState.cardSelectionAction;
+    if (cardPending) {
+      const candidates = (cardState.publicCards || []).flatMap((card, slotIndex) => (
+        card ? [{
+          id: "conditionalChoice",
+          family: "choose_card",
+          label: cards.getCardLabel(card),
+          target: {
+            kind: "public-card",
+            choiceId: String(slotIndex),
+            slotId: String(slotIndex),
+            cardId: card.cardId || card.id || null,
+          },
+          slotIndex,
+        }] : []
+      ));
+      if (allowsBlindDrawInSelection() && canBlindDraw()) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "choose_card",
+          label: "盲抽",
+          target: { kind: "blind-draw", choiceId: "blind-draw" },
+        });
+      }
+      return {
+        actorPlayer: cardPending.player || getHeadlessConditionalPlayer(cardPending),
+        candidates,
+      };
+    }
+    const landPending = pendingState.landTargetAction;
+    if (landPending) {
+      const options = typeof landPending.getOptions === "function"
+        ? landPending.getOptions()
+        : abilities.planet.getLandOptions(createActionContext());
+      return {
+        actorPlayer: getHeadlessConditionalPlayer(landPending),
+        candidates: (options?.ok ? options.choices || [] : []).map((choice, choiceIndex) => ({
+          id: "conditionalChoice",
+          family: "choose_target",
+          choiceIndex,
+          label: choice.label || `登陆目标 ${choiceIndex + 1}`,
+          target: {
+            kind: "land-target",
+            choiceId: String(choiceIndex),
+            planetId: choice.target || null,
+            rocketId: choice.rocketId || null,
+          },
+        })),
+      };
+    }
+
+    const tracePending = pendingState.alienTraceAction;
+    const picker = pendingState.alienTracePickerState;
+    if (tracePending && picker?.mode === "trace-board") {
+      const slotIds = getAlienTraceChoiceSlotIds(picker.allowedAlienSlotIds);
+      const traceTypes = picker.allowedTraceTypes?.length ? picker.allowedTraceTypes : aliens.TRACE_TYPES;
+      const candidates = [];
+      for (const alienSlotId of slotIds) {
+        for (const traceType of traceTypes) {
+          if (!canPlaceStateTrace(alienSlotId, traceType, "first")
+            && !canPlaceStateTrace(alienSlotId, traceType, "extra")) continue;
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `${aliens.getAlienSlotLabel(alienSlotId)} ${aliens.getTraceTypeLabel(traceType)}`,
+            target: {
+              kind: "alien-state-trace",
+              choiceId: `${alienSlotId}:${traceType}`,
+              slotId: String(alienSlotId),
+              traceType,
+            },
+            alienSlotId: Number(alienSlotId),
+            traceType,
+          });
+        }
+      }
+      return { actorPlayer: getHeadlessConditionalPlayer(tracePending), candidates };
+    }
+    return { actorPlayer: null, candidates: [] };
+  }
+
+  function executeHeadlessConditionalAction(action) {
+    if (pendingState.discardAction && action?.target?.kind === "discard-hand-card") {
+      const result = handleHandCardDiscard(Number(action.handIndex ?? action.target.handIndex));
+      return result || { ok: true, progressed: true, message: "已选择弃牌" };
+    }
+    if (pendingState.cardSelectionAction && action?.target?.kind === "public-card") {
+      const result = handlePublicCardClick(Number(action.slotIndex ?? action.target.slotId));
+      return result || { ok: true, progressed: true, message: "已选择公共牌" };
+    }
+    if (pendingState.cardSelectionAction && action?.target?.kind === "blind-draw") {
+      return drawCardForCurrentPlayer({ fromSelection: true });
+    }
+    if (pendingState.landTargetAction && action?.target?.kind === "land-target") {
+      return confirmLandTargetChoice(Number(action.choiceIndex ?? action.target.choiceId));
+    }
+    if (pendingState.alienTraceAction && action?.target?.kind === "alien-state-trace") {
+      return handleStateTraceSlotPlacement(Number(action.alienSlotId ?? action.target.slotId), action.traceType || action.target.traceType);
+    }
+    return { ok: false, message: "条件动作与当前 pending 状态不匹配" };
   }
 
   function launchRocketForCurrentPlayer() {
@@ -9916,6 +10063,8 @@
       chooseInitialSelectionForAiPlayer,
       enumerateHeadlessTurnActions,
       executeAiTurnAction,
+      enumerateHeadlessConditionalActions,
+      executeHeadlessConditionalAction,
       resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,

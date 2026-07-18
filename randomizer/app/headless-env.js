@@ -6,6 +6,7 @@ const { performance } = require("node:perf_hooks");
 const {
   OBSERVATION_SCHEMA_VERSION,
   normalizeTurnCandidate,
+  normalizeConditionalCandidate,
   sanitizeCard,
   sanitizePublicPlayer,
   sanitizeSelfPlayer,
@@ -72,8 +73,8 @@ function buildDecision(api, legalActions) {
     actorPlayerId,
     effectOwnerPlayerId: null,
     currentPlayerId: turnState.currentPlayerId || null,
-    source: "current_player",
-    decisionType: "turn_action",
+    source: legalActions[0]?.decisionType === "conditional_choice" ? "effect_owner" : "current_player",
+    decisionType: legalActions[0]?.decisionType || "turn_action",
     choiceCount: legalActions.length,
   };
 }
@@ -228,7 +229,7 @@ function createHeadlessEnv() {
     }
     recordDuration("setupSelectionMilliseconds", setupSelectionStartedAt);
     const resetDrainStartedAt = performance.now();
-    const initialResolution = api.resolveAiToTurnBoundary({ maxSteps: 2000 });
+    const initialResolution = drainDeterministicEffects();
     recordDuration("resetDrainMilliseconds", resetDrainStartedAt);
     if (initialResolution?.ok === false) {
       const failure = initialResolution.final || initialResolution;
@@ -240,6 +241,28 @@ function createHeadlessEnv() {
         `${failure.message || "headless reset 未能推进到首个决策点"}${pendingSummary}`,
       );
     }
+  }
+
+  function getConditionalCandidates() {
+    return api.listHeadlessConditionalActionCandidates?.() || { ok: true, candidates: [] };
+  }
+
+  function drainDeterministicEffects(maxSteps = 2000) {
+    const steps = [];
+    for (let index = 0; index < maxSteps; index += 1) {
+      const conditional = getConditionalCandidates();
+      if (conditional.candidates?.length) {
+        return { ok: true, boundary: "conditional_choice", steps };
+      }
+      const turn = api.listHeadlessTurnActionCandidates();
+      if (turn.candidates?.length || api.getTurnState().gameEnded) {
+        return { ok: true, boundary: api.getTurnState().gameEnded ? "terminal" : "turn_action", steps };
+      }
+      const result = api.runAiPendingStep();
+      steps.push(result);
+      if (result?.ok === false) return { ok: false, final: result, steps };
+    }
+    return { ok: false, final: { message: `确定性效果推进超过 ${maxSteps} 步` }, steps };
   }
 
   return {
@@ -296,7 +319,10 @@ function createHeadlessEnv() {
         diagnostics.legalActionsCalls += 1;
         return structuredClone(lastLegalActions);
       }
-      const result = api.listHeadlessTurnActionCandidates();
+      const conditional = getConditionalCandidates();
+      const result = conditional.candidates?.length
+        ? { ok: true, currentPlayer: conditional.actorPlayer, candidates: conditional.candidates }
+        : api.listHeadlessTurnActionCandidates();
       if (!result?.ok) {
         lastLegalActions = [];
         recordDuration("legalActionsMilliseconds", startedAt);
@@ -312,7 +338,12 @@ function createHeadlessEnv() {
       legalActionSelectors = new Map();
       const actions = (result.candidates || [])
         .filter((candidate) => candidate.available !== false)
-        .map((candidate) => ({ candidate, action: normalizeTurnCandidate(candidate, actorPlayerId) }))
+        .map((candidate) => ({
+          candidate,
+          action: candidate.family
+            ? normalizeConditionalCandidate(candidate, actorPlayerId)
+            : normalizeTurnCandidate(candidate, actorPlayerId),
+        }))
         .filter((entry) => entry.action)
         .sort((left, right) => left.action.actionId.localeCompare(right.action.actionId));
       actions.forEach((entry, maskIndex) => {
@@ -380,13 +411,15 @@ function createHeadlessEnv() {
       const actionStartedAt = performance.now();
       try {
         const transitionStartedAt = performance.now();
-        const actionResult = api.executeHeadlessTurnAction(selector, { resolveToTurnBoundary: false });
+        const actionResult = action?.decisionType === "conditional_choice"
+          ? api.executeHeadlessConditionalAction(selector)
+          : api.executeHeadlessTurnAction(selector, { resolveToTurnBoundary: false });
         recordDuration("transitionMilliseconds", transitionStartedAt);
         if (actionResult?.ok === false) {
           result = actionResult;
         } else {
           const drainStartedAt = performance.now();
-          const resolution = api.resolveAiToTurnBoundary({ maxSteps: 2000 });
+          const resolution = drainDeterministicEffects();
           recordDuration("effectDrainMilliseconds", drainStartedAt);
           result = {
             ok: resolution?.ok !== false,
