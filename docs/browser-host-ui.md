@@ -261,14 +261,6 @@ reference projection 当前刻意采用保守白名单，未列入的 board/play
 9. 阶段 8：收敛 ViewState、恢复/刷新、local persistence、download、debug/failsafe 与 public API；删除 no-op view 对规则 callback 的遮蔽。
 10. 阶段 9：完成七类 UI parity、可访问性、性能、固定 trace、全量 Node、真实 Chrome 主路径/decision/recovery smoke 与完整对局，更新架构文档并审计 adapter inventory。
 
-### 阶段 6 Action Bar（SETI-79）
-
-`app/browser-host/action-bar.js` 将 `BrowserProjection.controls` 原样映射为主行动、Quick、PASS、结束回合和撤销控件，并只呈现 `feedback.progress` 的 Effect 进度。renderer/controller 不读取玩家资源、`pendingState`、history 或 effect queue，也不从 label/DOM 推断合法性；enabled Action 点击提交 projection 中原始 Standard Action descriptor，stale/disabled identity fail-closed。撤销通过带 `sessionId + sessionRevision` 的 Effect Session port 提交，不调用旧 `undoPendingAction`。
-
-Effect Session `inspect()` 现在明确公开 `controls.canUndo/undoDisabledReason/allowQuickActions` 与 `progress`。`canUndo` 由共享 undo frame、当前 phase 和 irreversible barrier 共同决定；Browser projection 只映射该结论。等待 Decision 时 Quick interrupt 仍由共享 runtime 执行并提升 revision，旧 Decision 提交仍由共享 stale 校验拒绝，UI 不改写 version 或自动重试。
-
-证据位于 `checkpoint/seti-79-proof-obligations.md`、`app/browser-host/action-bar.test.js`、Effect Session undo/barrier/progress 合约和 Browser Host Chrome smoke。旧页面 `events.js` 的传统 Action Bar callback 仍作为后续整页生产切换的兼容入口；新 Browser Host Action Bar 本身对领域 mutation/continuation 调用为 0。
-
 阶段 1 依赖 SETI-71 的 StateStore reference contract；阶段 3-7 依赖 SETI-62 对应领域 Effect Session 和 SETI-56 conditional Action/Decision 的行为迁移。共享文件发生重叠时，规则状态/Effect/Action 由对应总控 owner 修改，Browser Host 子 issue只改 projection、renderer、input、event/service adapter；集成点使用窄公开接口分提交接线。
 
 ## 每批完成门禁

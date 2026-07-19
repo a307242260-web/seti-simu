@@ -145,7 +145,7 @@
       target: clone(action.target || null),
       payload: clone(action.payload || {}),
       summary: action.summary || action.family,
-      disabledReason: action.disabledReason || null,
+      disabledReason: null,
     };
   }
 
@@ -249,15 +249,6 @@
       if (!Array.isArray(actions)) throw new TypeError("actionAdapter.enumerate() 必须返回数组");
       const normalizedActions = actions.map(normalizeAction);
       const decision = normalizeDecision(observation?.decision || inspection?.decision, viewer, decisionPresenter);
-      const quickAllowed = kind !== "session" || Boolean(
-        inspection?.controls?.allowQuickActions ?? decision?.allowQuickActions,
-      );
-      const projectedActions = normalizedActions.map((action) => (
-        action.phase === "quick" && !quickAllowed && !action.disabledReason
-          ? { ...action, disabledReason: "当前 Effect 边界不允许快速行动" }
-          : action
-      ));
-      const progress = clone(inspection?.progress || visible.feedback?.progress || null);
       const projectionId = `${kind}:${stableHash({ source, viewer, policyId })}`;
       return deepFreeze({
         schemaVersion: SCHEMA_VERSION,
@@ -271,21 +262,13 @@
         tech: clone(visible.tech || {}),
         aliens: clone(visible.aliens || {}),
         controls: {
-          actions: projectedActions.filter((action) => action.phase !== "quick"),
-          quickActions: projectedActions.filter((action) => action.phase === "quick"),
-          canUndo: Boolean(inspection?.controls?.canUndo ?? visible.controls?.canUndo),
-          undoDisabledReason: inspection?.controls?.undoDisabledReason
-            || visible.controls?.undoDisabledReason
-            || null,
-          canEndTurn: projectedActions.some((action) => (
-            action.family === "end_turn" && !action.disabledReason
-          )),
+          actions: normalizedActions.filter((action) => action.phase !== "quick"),
+          quickActions: normalizedActions.filter((action) => action.phase === "quick"),
+          canUndo: Boolean(visible.controls?.canUndo),
+          canEndTurn: normalizedActions.some((action) => action.family === "end_turn"),
         },
         decision,
-        feedback: {
-          ...clone(visible.feedback || { events: [], logs: [], progress: null, notices: [] }),
-          progress,
-        },
+        feedback: clone(visible.feedback || { events: [], logs: [], progress: null, notices: [] }),
       });
     }
 

@@ -304,17 +304,6 @@ function choose(host, id) {
   assert.deepEqual(animated.store.state(), automatic.store.state());
 })();
 
-(function testUndoPortUsesSharedEffectSessionFrame() {
-  const { host } = createHost({ autoDrain: false });
-  host.dispatchAction(action(host, "research_tech"));
-  assert.equal(host.advance().ok, true);
-  assert.equal(host.inspect().session.controls.canUndo, true);
-  assert.equal(host.inspect().session.currentEffect.type, "research_tech_session_choose");
-  assert.equal(host.undo().ok, true);
-  assert.equal(host.inspect().session.controls.canUndo, false);
-  assert.equal(host.inspect().session.currentEffect.type, "research_tech_session_rotate");
-})();
-
 (function testFailureRecoveryAndRenderPoisonDoNotPolluteCommittedState() {
   const initial = createState();
   const { host, store } = createHost({ failReward: true, renderPoison: true });
