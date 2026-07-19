@@ -26,8 +26,8 @@ runtime working projection；二者 owner=`SETI-71`、到期日=`2026-08-31`。
 - 定向：StateStore/Effect Session、headless checkpoint、headless integration、legacy/current
   recovery、authority inventory 全部通过。
 - 工作树全量 Node：157/160；3 个失败均位于其他任务正在修改的 heuristic/public API
-  baseline，纯 HEAD 对应既有测试通过，且不涉及本提交文件。最终以本 issue 私有索引独立快照
-  的全量结果为提交门禁。
+  baseline，纯 HEAD 对应既有测试通过，且不涉及本提交文件。本 issue 私有提交 `e6886e4`
+  独立快照全量 Node 163/163 通过。
 - inventory：state authority 6/6 合规，legacy effect inventory 52/52 合规；unknown、missing、
   undated、expired 均为 0。
 - headless benchmark：3 局、315 decisions、39.834 decisions/s，均在 200 步内终局。

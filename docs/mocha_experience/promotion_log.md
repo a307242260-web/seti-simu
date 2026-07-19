@@ -249,7 +249,7 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - keep_or_revise: 保持 candidate；完成 3 次并行共享 index 提交后决定是否升级 git-workflow 或改为平台级隔离。
 
 - date: 2026-07-19
-- source: SETI-40
+- source: SETI-40, SETI-88
 - promoted_to: none
 - promotion_decision: reject
 - target_agent: 领航
@@ -263,11 +263,11 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - success_signal: 后续有明确 `next_action` 且无真实 blocker 的 coding run 持续推进到验收完成，不再由成员追问后才恢复。
 - rollback_condition: 若事实证明现有 runtime prompt/仓库规则未覆盖该场景，或跨 agent 重复发生达到重新评估窗口，则将 reject 改为 candidate 并选择明确目标组件。
 - risk: 仅记录不新增规则不能机械阻止再次发生；但重复 prompt 会增加噪声且不能修复执行纪律。
-- evidence_before: SETI-40 三条成员评论连续指出返工在无待确认事项时停止；现有 runtime prompt 已要求 terminal condition 持续执行，仓库 `AGENTS.md` 也要求真正开工/返工并维护 `next_action`。
+- evidence_before: SETI-40 三条成员评论连续指出返工在无待确认事项时停止；SETI-88 在 SETI-81 已 done 后仍保留 stale blocked，并由成员评论 `c82de376-9696-4ae7-8744-ae53c790c07c`、`b9823496-fa37-4f02-a91c-34b5218ef012` 再次催促继续。现有 runtime prompt 已要求持续执行，仓库 `AGENTS.md` 也已要求无待拍板事项时直接推进和收口。
 - owner_or_agent_decision: 领航依据评论、timeline、metadata 与当前规则自决 reject；确认本轮无需 owner 拍板并持续执行到完整验收。
 - applied_at: 2026-07-19
-- verification: uniform-random 100 局为 100/100 terminal、0 step limit、0 失败、49,518 次决策、293 decisions/s；`node --check randomizer/app.js` 与 randomizer 全部 `*.test.js` 通过。
-- observed_outcome: 剩余科技选择、无路径移动与长尾条件流完成迁移，headless 热路径不再调用 `runAiPendingStep` 或 `runHeadlessActionEffectStep`。
+- verification: SETI-40 uniform-random 100/100 terminal、293 decisions/s；SETI-88 提交 `e6886e4` 独立快照 Node 163/163，3 局 benchmark 315 decisions，Chrome 776 步终局且 blocked=false/bugCount=0。
+- observed_outcome: SETI-40 完成剩余条件流迁移；SETI-88 在成员纠偏后立即解除 stale blocker并完成权威状态恢复边界、inventory 与全链路验收。两次均证明不需要新增规则即可继续，问题仍是执行纪律。
 - keep_or_revise: 保持 reject；若达到上述跨 agent 重复窗口再修订。
 
 - date: 2026-07-18
