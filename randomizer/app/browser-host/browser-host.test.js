@@ -20,6 +20,7 @@ const inputApi = require("./input-adapter");
     "browser-host/action-bar.js",
     "browser-host/resident-projection.js",
     "browser-host/resident-renderer.js",
+    "browser-host/browser-services.js",
     "browser-host/index.js",
     "app/dependencies.js",
   ].map((entry) => pageSource.indexOf(entry));

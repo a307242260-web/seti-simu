@@ -12,6 +12,7 @@
     root.SetiBrowserIndustryAlienDecisionUi,
     root.SetiBrowserResidentProjection,
     root.SetiBrowserResidentRenderer,
+    root.SetiBrowserServices,
   );
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiBrowserHost = api;
@@ -26,11 +27,12 @@
   industryAlienDecisionUi,
   residentProjection,
   residentRenderer,
+  browserServices,
 ) {
   "use strict";
 
-  if (!projectionAdapter || !viewStateStore || !inputAdapter || !policyInputAdapter || !actionBar || !decisionUi || !industryAlienDecisionUi || !residentProjection || !residentRenderer) {
-    throw new Error("SetiBrowserHost 缺少 projection/view-state/input/policy-input/action-bar/decision-ui/resident renderer module");
+  if (!projectionAdapter || !viewStateStore || !inputAdapter || !policyInputAdapter || !actionBar || !decisionUi || !industryAlienDecisionUi || !residentProjection || !residentRenderer || !browserServices) {
+    throw new Error("SetiBrowserHost 缺少 projection/view-state/input/policy-input/action-bar/decision-ui/resident renderer/browser services module");
   }
   return Object.freeze({
     SCHEMA_VERSION: "seti-browser-host-v1",
@@ -44,5 +46,6 @@
     industryAlienDecisionUi,
     residentProjection,
     residentRenderer,
+    browserServices,
   });
 });

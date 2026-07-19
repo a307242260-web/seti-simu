@@ -34,6 +34,22 @@
     };
   }
 
+  function validateSnapshot(snapshot) {
+    if (!snapshot || snapshot.schemaVersion !== SCHEMA_VERSION) {
+      return deepFreeze({ ok: false, code: "VIEW_STATE_SCHEMA_UNSUPPORTED" });
+    }
+    const expected = Object.keys(createInitialState()).sort();
+    const actual = Object.keys(snapshot).sort();
+    if (expected.length !== actual.length || expected.some((key, index) => key !== actual[index])) {
+      return deepFreeze({ ok: false, code: "VIEW_STATE_ROOT_FIELDS_INVALID" });
+    }
+    const required = ["overlay", "hover", "focus", "tabs", "scroll", "layout", "draft", "animation", "projection"];
+    if (required.some((key) => snapshot[key] == null || typeof snapshot[key] !== "object" || Array.isArray(snapshot[key]))) {
+      return deepFreeze({ ok: false, code: "VIEW_STATE_SNAPSHOT_INVALID" });
+    }
+    return deepFreeze({ ok: true });
+  }
+
   function uniqueStrings(values) {
     return [...new Set((Array.isArray(values) ? values : []).map(String))];
   }
@@ -154,14 +170,22 @@
       return publish({ type: "reset" });
     }
 
+    function restore(snapshot) {
+      const validation = validateSnapshot(snapshot);
+      if (!validation.ok) return validation;
+      state = clone(snapshot);
+      publish({ type: "restore" });
+      return deepFreeze({ ok: true });
+    }
+
     function subscribe(listener) {
       if (typeof listener !== "function") throw new TypeError("ViewState listener 必须是函数");
       listeners.add(listener);
       return () => listeners.delete(listener);
     }
 
-    return Object.freeze({ getSnapshot, dispatch, reconcileProjection, clear, subscribe });
+    return Object.freeze({ getSnapshot, dispatch, reconcileProjection, clear, validate: validateSnapshot, restore, subscribe });
   }
 
-  return Object.freeze({ SCHEMA_VERSION, createInitialState, createViewStateStore });
+  return Object.freeze({ SCHEMA_VERSION, createInitialState, validateSnapshot, createViewStateStore });
 });
