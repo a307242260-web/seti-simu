@@ -818,3 +818,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: `node tools/run_node_tests.js --list`；`node tools/run_node_tests.js --match legacy-flow-inventory`；隔离快照默认 runner，且与手写逐行执行的测试总数一致。
 - observed_outcome: 待后续 5 个 coding issue 观察；本 issue 已由 runner 机械确认新增 inventory 测试被发现并执行。
 - keep_or_revise: 保留并进入 5 个 issue 观察窗口；出现漏发现、错误过滤或进程污染时修订，标准框架可替代时回滚自建实现。
+
+- date: 2026-07-19
+- source: SETI-92
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及负责行为迁移验收的 coding agent
+- target_component: owner 放宽迁移 proof obligation 后的验收重写实践
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 记录 owner 明确接受行为变化后，应撤销失效的旧 trace parity 阻塞，同时用版本化迁移后基线和其余架构/合法性/完整流程门禁替代，不能只删测试。
+- applied_change: 仅追加 coding experience 与本决策契约；SETI-92 冻结新的 Heuristic Policy seed baseline，并保留公共 Policy 接线、legal-only、无执行职责、全量 Node 与 Chrome 完整对局验证；不修改长期组件。
+- expected_effect: 后续迁移任务遇到 owner 调整行为等价性要求时，agent 不会继续消耗时间拟合已废止轨迹，也不会因删除旧 parity 而失去可回归的行为水平证据。
+- evaluation_window: 后续 2 次 owner 明确放宽迁移 trace/state/score parity 的 coding issue
+- success_signal: issue metadata、next_action 与测试口径在同一 run 更新；旧 parity 不再阻塞；新基线含 provenance、seed、轨迹摘要和水平下限，架构与完整流程门禁继续通过。
+- rollback_condition: 若 owner 后续恢复逐步等价要求，或新基线无法区分明显水平退化，则恢复旧 parity 或补更强的统计水平评测；不得用本候选覆盖明确的业务验收。
+- risk: 单 seed 水平基线只防明显回退，不能证明总体策略强度；owner 的局部放宽也不能泛化为所有迁移默认允许行为变化。
+- evidence_before: SETI-92 评论 `5462c1ea-06ea-4024-8bb7-264d2f3f8602`、issue decision metadata、timeline 第 8 条，以及旧 456 步与新 460 步固定 seed 对照。
+- owner_or_agent_decision: owner 明确接受动作轨迹与分数变化；领航按 harness-evolve closeout 自决记录 candidate，不升级长期组件。
+- applied_at: 2026-07-19
+- verification: 新基线 seed `seti-92-policy-level-v1` 为 460 步、分数 `[61,69,36,29]`、trace `57e126dd…`；干净 HEAD 快照 Node 169/169，系统 Chrome seed `seti-92-browser-smoke` 763 步终局、blocked=false、bugCount=0、最低分 83。
+- observed_outcome: 公共 Heuristic Policy 浏览器接线和训练/评测入口均有回归证据，旧 456 步 parity 已不再阻塞，但行为水平仍由版本化新基线持续监控。
+- keep_or_revise: 保持 candidate；完成 2 次同类 owner 口径调整后评估是否进入 coding loop 模板。

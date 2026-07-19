@@ -165,3 +165,11 @@
 - promote_to: none
 - promotion_status: candidate
 - decision: 与 SETI-51 合计两次独立证据，仍未达到三次升级窗口；保留 candidate，下一次复现时评估升级 git-workflow、agent prompt 或平台级隔离。
+
+- date: 2026-07-19
+- source_issue: SETI-92
+- observation: 当 owner 明确放宽迁移的行为等价性证明义务时，应立即停止追逐已失效的旧 trace parity，并把验收改写为仍然有效的架构边界、合法性、完整流程与迁移后冻结基线；新基线必须记录版本、配置、seed、轨迹摘要和水平下限，不能只删除旧断言。
+- evidence: SETI-92 原要求固定 seed 旧 teacher 456 步与新 Policy trace/state/score parity；owner 评论 `5462c1ea-06ea-4024-8bb7-264d2f3f8602` 明确表示行为和分数变化无所谓、继续正常迁移。随后停止补旧状态投影，冻结公共 Heuristic Policy 的 460 步、`[61,69,36,29]`、trace `57e126dd…` 迁移后基线，并保留 legal-only、无 executor/pending/scheduler、浏览器接线、完整 Node 与 Chrome 对局门禁。
+- promote_to: none
+- promotion_status: candidate
+- decision: 当前只有一次 owner 主动放宽 proof obligation 的直接证据；记录候选，不修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。后续 2 次迁移任务出现同类验收口径调整时，再评估是否形成通用规则。
