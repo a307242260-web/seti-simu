@@ -106,6 +106,7 @@
       randomizeFinalScores,
       randomizeAliens,
       renderRoundStatus,
+      renderResidentDesktop,
       renderRotateStateToken,
       renderDebugPlayerSwitch,
       refreshHelpers,
@@ -422,6 +423,7 @@
         includeEffectBar: false,
         includeStateReadout: true,
       });
+      renderResidentDesktop?.();
     }
 
     function startNewGame(options = {}) {

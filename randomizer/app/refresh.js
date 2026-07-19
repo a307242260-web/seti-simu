@@ -29,6 +29,9 @@
     const renderTechBoard = requireFunction("renderTechBoard", context.renderTechBoard);
     const renderSectorNebulaDataBoard = requireFunction("renderSectorNebulaDataBoard", context.renderSectorNebulaDataBoard);
     const renderFinalScoreBoard = requireFunction("renderFinalScoreBoard", context.renderFinalScoreBoard);
+    const renderResidentDesktop = typeof context.renderResidentDesktop === "function"
+      ? context.renderResidentDesktop
+      : null;
 
     const renderRunezuBoardSymbols = typeof context.renderRunezuBoardSymbols === "function"
       ? context.renderRunezuBoardSymbols
@@ -38,6 +41,7 @@
       renderAlienPanels();
       renderRockets();
       renderPlayerStats();
+      renderResidentDesktop?.();
     }
 
     function refreshActionState(options = {}) {
@@ -53,6 +57,7 @@
       if (options.includeTech !== false) renderTechBoard();
       if (options.includeFinalScore !== false) renderFinalScoreBoard();
       if (options.includeStateReadout) renderStateReadout();
+      renderResidentDesktop?.();
     }
 
     function refreshAfterPendingChange(options = {}) {

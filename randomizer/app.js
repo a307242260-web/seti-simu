@@ -69,6 +69,7 @@
     cardTriggerRuntimeModule,
     alienRuntimeModule,
     alienUiModule,
+    browserHostModule,
   } = dependencies;
   const headlessMode = Boolean(window.SetiHeadlessRuntimeConfig?.enabled);
   const viewAdapter = headlessMode ? viewAdapterModule.createNoopViewAdapter() : null;
@@ -576,6 +577,36 @@
   };
 
   const els = viewAdapter?.els || window.SetiAppDom.collectElements(document);
+  const residentViewStateStore = !headlessMode && browserHostModule?.viewStateStore
+    ? browserHostModule.viewStateStore.createViewStateStore()
+    : null;
+  const residentDesktopRenderer = !headlessMode && browserHostModule?.residentRenderer
+    ? browserHostModule.residentRenderer.createResidentRenderer({ document, els })
+    : null;
+
+  function createResidentRenderInput() {
+    if (!residentDesktopRenderer || !residentViewStateStore) return null;
+    const projection = browserHostModule.residentProjection.createResidentProjection({
+      viewerPlayer: getInterfacePlayer(),
+      playerState,
+      turnState,
+      displayedTurn: getDisplayedTurnNumber(),
+      cardState,
+      solarState,
+      rocketState,
+      planetStatsState,
+      nebulaDataState,
+      finalScoringState,
+      techGameState,
+    });
+    residentViewStateStore.reconcileProjection(projection);
+    return { projection, viewState: residentViewStateStore.getSnapshot() };
+  }
+
+  function renderResidentDesktop() {
+    const input = createResidentRenderInput();
+    if (input) residentDesktopRenderer.renderAll(input);
+  }
   const cardHoverPreviewRuntime = viewAdapter?.hoverRuntime
     || renderRuntimeModule.createCardHoverPreviewRuntime({ window, document });
   const attachCardHoverPreview = cardHoverPreviewRuntime.attach;
@@ -863,6 +894,7 @@
     renderSectorNebulaDataBoard,
     renderFinalScoreBoard,
     renderRunezuBoardSymbols,
+    renderResidentDesktop,
   });
   const createActionBriefingStepMetadata = (result, options = {}) => (
     actionBriefingModule.createActionBriefingStepMetadata(result, {
@@ -1814,6 +1846,7 @@
     randomizeFinalScores,
     randomizeAliens,
     renderRoundStatus,
+    renderResidentDesktop,
     renderRotateStateToken,
     renderDebugPlayerSwitch,
     refreshHelpers,
@@ -4075,12 +4108,8 @@
   }
 
   function renderRoundStatus() {
-    if (els.roundStatusRound) {
-      els.roundStatusRound.textContent = isGameEnded() ? "游戏结束" : `第 ${turnState.roundNumber} 轮`;
-    }
-    if (els.roundStatusTurn) {
-      els.roundStatusTurn.textContent = isGameEnded() ? "终局计分" : `第 ${getDisplayedTurnNumber()} 回合`;
-    }
+    const input = createResidentRenderInput();
+    if (input) residentDesktopRenderer.renderRoundStatus(input);
   }
 
   function getTurnReadoutLines() {

@@ -59,9 +59,12 @@
 
   function defaultVisibilityPolicy(state, viewer) {
     const playerId = viewer.role === "player" ? viewer.playerId : null;
-    const playerEntries = state?.players && typeof state.players === "object"
-      ? Object.entries(state.players)
-      : [];
+    const playerSource = Array.isArray(state?.players?.players)
+      ? state.players.players
+      : (Array.isArray(state?.players) ? state.players : null);
+    const playerEntries = playerSource
+      ? playerSource.filter((player) => player?.id != null).map((player) => [String(player.id), player])
+      : (state?.players && typeof state.players === "object" ? Object.entries(state.players) : []);
     const players = {};
     for (const [id, player] of playerEntries) {
       players[id] = id === playerId
@@ -70,8 +73,12 @@
     }
 
     const cards = state?.cards || {};
-    const hands = cards.hands || cards.handByPlayer || {};
-    const reserved = cards.reserved || cards.reservedByPlayer || {};
+    const hands = cards.hands || cards.handByPlayer || Object.fromEntries(
+      playerEntries.map(([id, player]) => [id, player?.hand || []]),
+    );
+    const reserved = cards.reserved || cards.reservedByPlayer || Object.fromEntries(
+      playerEntries.map(([id, player]) => [id, player?.reservedCards || []]),
+    );
     const opponentCounts = {};
     for (const [id] of playerEntries) {
       if (id === playerId) continue;
@@ -87,22 +94,28 @@
         ...pick(state?.turn, ["round", "turn", "actionCycle", "currentPlayerId", "activePlayerId", "phase"]),
       },
       board: {
-        solarSystem: pick(state?.solarSystem, ["rotation", "visibleSectors", "publicMarkers"]),
-        pieces: pick(state?.pieces, ["public", "countsByPlayer"]),
-        planets: pick(state?.planets, ["public", "markers", "occupancy"]),
-        data: pick(state?.data, ["publicPool", "publicMarkers"]),
+        solarSystem: pick(state?.solarSystem || state?.board?.solarSystem, ["rotation", "visibleSectors", "publicMarkers"]),
+        pieces: {
+          ...pick(state?.pieces, ["public", "countsByPlayer"]),
+          ...(Array.isArray(state?.pieces?.rockets) ? { public: clone(state.pieces.rockets) } : {}),
+        },
+        planets: pick(state?.planets, ["public", "markers", "occupancy", "planets"]),
+        data: pick(state?.data, ["publicPool", "publicMarkers", "sectorPools", "computer"]),
         finalScoring: pick(state?.finalScoring, ["tiles", "publicMarkers", "scores"]),
       },
       players,
       cards: {
         hand: clone(hands[playerId] || []),
         reserved: clone(reserved[playerId] || []),
-        market: clone(cards.market || cards.publicMarket || []),
+        market: clone(cards.market || cards.publicMarket || cards.publicCards || []),
         discard: clone(cards.discard || cards.discardPile || []),
-        deckCount: countCollection(cards.deck),
+        deckCount: countCollection(cards.deck || cards.drawPileCardIds || cards.drawPile),
         opponentCounts,
       },
-      tech: pick(state?.tech, ["supply", "publicBoards", "tracks"]),
+      tech: {
+        ...pick(state?.tech, ["supply", "publicBoards", "tracks"]),
+        ...(state?.tech?.board && !state.tech.supply ? { supply: clone(state.tech.board) } : {}),
+      },
       aliens: pick(state?.aliens, ["revealed", "public", "traces", "boards"]),
       feedback: { events: [], logs: [], progress: null, notices: [] },
     };
