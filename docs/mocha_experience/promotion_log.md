@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-19
+- source: SETI-76（续 SETI-51/61/69/85）
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及共享工作树中使用私有 index 的 coding agent
+- target_component: 私有 index 的 parent-CAS 提交实践
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 补充“私有 index 的内容隔离不等于父提交原子性；长验证后提交前必须比较 base HEAD，父级变化则重建并复验，最终 ref 更新使用 old-HEAD compare-and-swap”的候选经验。
+- applied_change: 仅更新 coding experience 与本决策契约；事故提交以追加修复 `2bc8307` 恢复并行 `app.js` blob，不修改 AGENTS、git-workflow skill、agent prompt、loop template、watcher、issue-workflow 或项目记忆。
+- expected_effect: 后续高并发提交不会把验证期间新落地的父提交差异错误纳入当前 tree；CAS 失败会触发重新集成，而不是生成隐式回滚提交。
+- evaluation_window: 后续 2 次验证时长超过 30 秒且 HEAD 可能并行前进的私有 index 提交。
+- success_signal: private-index base 与最终 parent 一致，或 parent 变化后明确重建；commit 实际文件清单与 issue 范围一致，CAS 失败不移动 dev ref，且无需追加恢复他人 blob。
+- rollback_condition: 平台提供每 agent 隔离 worktree/branch、提交锁或原生原子提交工具后删除手工 CAS 候选；若 commit hook 必须通过 porcelain commit 才能运行，则改用提交锁而非 `commit-tree`。
+- risk: `commit-tree/update-ref` 可能绕过 porcelain hooks，且频繁重建会重复长回归；候选阶段只记录原子性要求，不规定唯一实现，优先平台锁或提交前短临界区。
+- evidence_before: SETI-76 的私有 index 最后基于 `a7052f0`，验证期间 HEAD 前进至 `d3c2ac7`；`c7921a6` 因旧 tree/新 parent 组合意外删除 SETI-39 的 24 行 `app.js`，提交后检查发现并以 old-ref CAS 追加 `2bc8307` 恢复。组合净 diff 不含 `app.js`。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate；既有规则已覆盖私有 index 与提交后核对，但 parent-CAS 只有本次直接证据，暂不升级长期组件。
+- applied_at: 2026-07-19
+- verification: `git diff d3c2ac7..2bc8307 -- randomizer/app.js` 为空；净 name-status 仅含 SETI-76 九个目标文件；最终 HEAD 独立快照 `node --check randomizer/app.js`、158/158 Node 与真实 Chrome scan/data/land smoke 通过；已推送 dev。
+- observed_outcome: 并行 SETI-39 内容完整保留，SETI-76 提交未改写历史；流程异常可由提交后清单发现并通过追加 CAS 修复恢复。
+- keep_or_revise: 保持 candidate；完成两次无事故高并发 CAS/重建提交后决定是否修订 AGENTS 或 git-workflow。
+
+- date: 2026-07-19
 - source: SETI-45
 - promoted_to: none
 - promotion_decision: candidate

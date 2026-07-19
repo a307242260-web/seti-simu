@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-19
+- source_issue: SETI-76（续 SETI-51/61/69/85）
+- observation: 私有 `GIT_INDEX_FILE` 即使从当时最新 HEAD 初始化，也会在长回归期间因并行提交而变成旧父树；随后直接 `git commit` 会以新的 HEAD 为 parent、却提交旧父树派生的 tree，把新父提交文件误显示为当前 issue 的删除/回滚。提交前必须再次比较 private-index base 与当前 HEAD；不一致就重建并复验，最终 ref 更新宜使用 old-HEAD compare-and-swap，失败后重新集成，不能继续提交旧 tree。
+- evidence: SETI-76 验证期间 HEAD 连续从 `3eb447f` 前进到 `d66348d`、`a7052f0`、`d3c2ac7`；私有 index 最后一次基于 `a7052f0`，普通 commit `c7921a6` 却挂到 `d3c2ac7`，意外把 SETI-39 的 24 行 `app.js` 变更回退。提交后 name-only/stat 立即发现，追加 CAS 修复 `2bc8307` 精确恢复父 blob；最终从 `d3c2ac7..2bc8307` 的净 diff 只剩 SETI-76 九个目标文件，158/158 Node 与 Chrome smoke 通过。
+- promote_to: none
+- promotion_status: candidate
+- decision: 这是已 promote 私有 index 规则仍缺少的 parent-CAS 原子性，但当前只有一次“验证期间 HEAD 前进后旧 tree 挂新 parent”的直接证据；先记录候选，不立即修改 AGENTS、git-workflow、watcher 或 issue-workflow。后续 2 次高并发私有 index 提交验证 CAS/重建方案后再决定是否升级。
+
+- date: 2026-07-19
 - source_issue: SETI-51, SETI-61, SETI-85, SETI-69
 - observation: 共享工作树的 index 在 staged 检查、独立快照验证与 commit 之间仍会被并行任务改写；高并发提交必须从最新 HEAD 创建私有 `GIT_INDEX_FILE`，且初始化与后续每条 index 命令都要在同一 shell segment 显式携带该变量，只装入本 issue 的明确 blob并在 commit 后核对实际文件清单。裸跑 `git read-tree HEAD` 会立即覆盖共享 staged 状态，不能靠下一条命令再补变量。
 - evidence: SETI-51 曾把其他任务文件套入当前 message；SETI-61 的目标 hunk 在并行 commit 后从实际提交消失；SETI-85 中已暂存目标被并行提交消费；SETI-69 首次初始化时漏传 `GIT_INDEX_FILE`，共享 staged 状态被清空，随后依据操作前 status、可恢复 blob 与明确路径恢复，并用正确私有 index 提交 `f318d52`，实际文件清单仅含本 issue 的 8 个目标文件。
