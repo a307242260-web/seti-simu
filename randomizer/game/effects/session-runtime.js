@@ -160,6 +160,7 @@
         journal: {
           actions: [],
           decisions: [],
+          effects: [],
           events: [],
           rng: [],
           history: [],
@@ -318,7 +319,13 @@
         });
       }
       session.queue.push(...group.effects);
-      session.journal.actions.push({ action: clone(action), groupId: group.groupId });
+      session.journal.actions.push({
+        action: clone(action),
+        groupId: group.groupId,
+        groupKind: "action",
+        quick: false,
+        revision: session.revision,
+      });
       session.phase = "action_accepted";
       if (session.queue.length === 0) return commit(session);
       return { ok: true, session, group };
@@ -365,6 +372,13 @@
           reason: result.irreversible.reason || "效果已向外暴露隐藏信息",
         };
       }
+      session.journal.effects.push({
+        effectId: effect.effectId,
+        groupId: effect.groupId,
+        groupKind: effect.groupKind,
+        type: effect.type,
+        revision: session.revision,
+      });
       return { ok: true, session, effect, result };
     }
 
@@ -372,11 +386,11 @@
       session.queue.shift();
       session.revision += 1;
       const effect = currentEffect(session);
-      if (!effect || effect.effectId !== marker.payload.decisionId) {
+      if (!effect || effect.effectId !== marker.payload.effectId) {
         return abort(session, {
           code: "EFFECT_INTERRUPT_RESUME_MISMATCH",
           message: "快速行动结束后找不到原 Effect",
-          expectedDecisionId: marker.payload.decisionId,
+          expectedEffectId: marker.payload.effectId,
           actualEffectId: effect?.effectId || null,
         });
       }
@@ -517,26 +531,39 @@
       let group;
       let markerGroup;
       const interruptedEffect = currentEffect(session);
+      const sequenceCheckpoint = {
+        nextEffectSequence: session.nextEffectSequence,
+        nextGroupSequence: session.nextGroupSequence,
+      };
       try {
         group = normalizeGroup({ ...rawGroup, action, kind: "quick" }, session, "quick");
         markerGroup = normalizeGroup({
           kind: "internal",
           effects: [{
             type: INTERNAL_RESUME_EFFECT,
-            payload: { decisionId: interruptedEffect.effectId },
+            payload: { effectId: interruptedEffect.effectId },
           }],
         }, session, "internal");
       } catch (error) {
+        session.nextEffectSequence = sequenceCheckpoint.nextEffectSequence;
+        session.nextGroupSequence = sequenceCheckpoint.nextGroupSequence;
         return fail("EFFECT_QUICK_GROUP_INVALID", error?.message || "Quick Action 生成了无效 Effect Group");
       }
       session.queue.unshift(...group.effects, markerGroup.effects[0]);
+      session.revision += 1;
       session.interruptContext = {
         effectId: interruptedEffect.effectId,
         kind: interruptedEffect.kind,
         decisionVersion: decision?.decisionVersion ?? null,
         quickGroupId: group.groupId,
       };
-      session.journal.actions.push({ action: clone(action), groupId: group.groupId, quick: true });
+      session.journal.actions.push({
+        action: clone(action),
+        groupId: group.groupId,
+        groupKind: "quick",
+        quick: true,
+        revision: session.revision,
+      });
       session.phase = "interrupting";
       return { ok: true, session, group };
     }
