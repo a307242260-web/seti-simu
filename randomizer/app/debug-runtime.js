@@ -1002,7 +1002,7 @@
         pendingState.runezuSymbolBranch,
         pendingState.runezuFaceSymbolPlacement,
         pendingState.strategyPassiveSlotChoice,
-        pendingState.piratesRaidPlacement,
+        decisionSessions?.peek?.("pirates_raid_placement"),
         uiRuntimeState.industryFreeMoveState,
       ];
       for (const pending of pendingEntries) {

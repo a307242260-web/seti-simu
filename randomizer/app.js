@@ -265,8 +265,10 @@
   const decisionSessions = runtime.decisions;
   const DATA_PLACEMENT_DECISION = "data_placement";
   const LAND_TARGET_DECISION = "land_target";
+  const PIRATES_RAID_DECISION = "pirates_raid_placement";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
+  const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
@@ -3828,7 +3830,7 @@
     pendingState.cardCornerFreeMove = null;
     decisionSessions.clear(DATA_PLACEMENT_DECISION);
     pendingState.industryAbility = null;
-    pendingState.piratesRaidPlacement = null;
+    decisionSessions.clear(PIRATES_RAID_DECISION);
     pendingState.strategyPassiveSlotChoice = null;
     uiRuntimeState.industryFreeMoveState = null;
     historyStepOrder.length = 0;
@@ -4236,7 +4238,7 @@
     if (isTechTilePickingActive() || techGameState?.ui?.industryBorrowMode) {
       return INTERACTION_FOCUS.TECH_PANEL;
     }
-    if (pendingState.piratesRaidPlacement) return INTERACTION_FOCUS.PLAYER_BOARD;
+    if (getPendingPiratesRaidDecision()) return INTERACTION_FOCUS.PLAYER_BOARD;
     if (isBoardRocketInteractionActive()) return INTERACTION_FOCUS.BOARD_ROCKETS;
     if ((canUseCardCornerQuickAction() && getPendingCardCornerQuickAction()) || getPendingHandCardPlayAction()) {
       return INTERACTION_FOCUS.HAND_CARDS;
@@ -5242,7 +5244,7 @@
       || pendingState.runezuSymbolBranch
       || pendingState.runezuFaceSymbolPlacement
       || pendingState.strategyPassiveSlotChoice
-      || pendingState.piratesRaidPlacement
+      || getPendingPiratesRaidDecision()
       || pendingState.cardTriggerFreeMove
       || pendingState.cardCornerFreeMove
       || (els.scanAction4Overlay && !els.scanAction4Overlay.hidden)
@@ -5537,8 +5539,8 @@
     pendingState.runezuSymbolBranch = null;
     pendingState.runezuFaceSymbolPlacement = null;
     pendingState.strategyPassiveSlotChoice = null;
-    if (pendingState.piratesRaidPlacement) {
-      pendingState.piratesRaidPlacement = null;
+    if (getPendingPiratesRaidDecision()) {
+      decisionSessions.clear(PIRATES_RAID_DECISION);
       renderTechBoard();
     }
   }
@@ -7926,6 +7928,7 @@
       confirmIndustryTuringBorrow: (...args) => confirmIndustryTuringBorrow(...args),
       countOwnedTechByType: (...args) => countOwnedTechByType(...args),
       createActionContext: (...args) => createActionContext(...args),
+      decisionSessions,
       document: typeof document === "undefined" ? undefined : document,
       els: typeof els === "undefined" ? undefined : els,
       endEffectHistoryStep: typeof endEffectHistoryStep === "undefined" ? undefined : endEffectHistoryStep,

@@ -56,7 +56,6 @@
     cardCornerQuickAction: null,
     cardCornerFreeMove: null,
     industryAbility: null,
-    piratesRaidPlacement: null,
   });
 
   const GROUPS = Object.freeze({
@@ -71,7 +70,7 @@
     amiba: ["amibaCardGain", "amibaSymbolChoice", "amibaTraceRemoval"],
     aomomo: ["aomomoCardGain"],
     runezu: ["runezuCardGain", "runezuSymbolBranch", "runezuFaceSymbolPlacement"],
-    strategy_pirates: ["strategyPassiveSlotChoice", "piratesRaidPlacement"],
+    strategy_pirates: ["strategyPassiveSlotChoice"],
     action_flow: ["actionEffectFlow"],
     movement_cards: ["movePayment", "playCardSelection", "handCardPlayAction", "cardCornerQuickAction", "cardCornerFreeMove"],
     data_industry: ["industryAbility"],

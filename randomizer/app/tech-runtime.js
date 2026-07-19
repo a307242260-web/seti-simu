@@ -39,6 +39,7 @@
       confirmIndustryTuringBorrow,
       countOwnedTechByType,
       createActionContext,
+      decisionSessions,
       document,
       els,
       endEffectHistoryStep,
@@ -90,6 +91,8 @@
       updateActionButtons,
       withPendingOwnerPlayer
     } = context;
+    const PIRATES_RAID_DECISION = "pirates_raid_placement";
+    const getPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
 
     function isTechActionSelectionActive() {
       return Boolean(techGameState.ui.techSelectionActive);
@@ -655,9 +658,9 @@
 
     function isPiratesRaidPlacementActiveForPlayer(player) {
       return Boolean(
-        pendingState.piratesRaidPlacement
+        getPiratesRaidDecision()
         && player
-        && pendingState.piratesRaidPlacement.playerId === player.id,
+        && getPiratesRaidDecision().playerId === player.id,
       );
     }
 
@@ -668,7 +671,7 @@
       if (!industry?.shouldShowPiratesRaidMarkers?.(player)) return;
 
       const active = isPiratesRaidPlacementActiveForPlayer(player);
-      const targetPlanetId = pendingState.piratesRaidPlacement?.planetId || null;
+      const targetPlanetId = getPiratesRaidDecision()?.planetId || null;
       const markerSrc = industry.PIRATES_RAID_MARKER_SRC || "../assets/industry/掠夺标记.png";
       for (const tileId of industry.listPiratesRaidBlockedTechTiles?.(player) || []) {
         const layout = tech.getPlacementLayout?.(tileId);
@@ -702,7 +705,7 @@
     function getCurrentPiratesRaidMarkerEffect() {
       const effect = getCurrentActionEffect();
       if (!effect || effect.type !== "industry_pirates_raid_marker" || effect.status !== "active") return null;
-      if (pendingState.piratesRaidPlacement && pendingState.piratesRaidPlacement.effectId !== effect.id) return null;
+      if (getPiratesRaidDecision() && getPiratesRaidDecision().effectId !== effect.id) return null;
       return effect;
     }
 
@@ -720,12 +723,12 @@
           reason: "no_pirates_raid_marker",
         });
       }
-      pendingState.piratesRaidPlacement = {
+      decisionSessions.open(PIRATES_RAID_DECISION, {
         effectId: effect.id,
         playerId: player.id,
         playerColor: player.color,
         planetId,
-      };
+      });
       rocketState.statusNote = `${effect.label}：请选择玩家面板上的掠夺标记放置到 ${getPlanetName(planetId)}`;
       renderTechBoard();
       syncInteractionFocusChrome();
@@ -735,11 +738,12 @@
 
     function handlePiratesRaidTechMarkerClick(tileId) {
       const effect = getCurrentPiratesRaidMarkerEffect();
-      if (!effect || !pendingState.piratesRaidPlacement) {
+      const pending = getPiratesRaidDecision();
+      if (!effect || !pending) {
         return { ok: false, message: "没有待放置的掠夺标记" };
       }
-      const player = getPlayerById(pendingState.piratesRaidPlacement.playerId);
-      const planetId = pendingState.piratesRaidPlacement.planetId;
+      const player = getPlayerById(pending.playerId);
+      const planetId = pending.planetId;
       const check = industry.canPlacePiratesRaidMarker?.(player, tileId, planetId);
       if (!check?.ok) {
         rocketState.statusNote = check?.message || "无法放置该掠夺标记";
@@ -761,7 +765,7 @@
         beforePlayer,
         "恢复星际海盗掠夺标记放置前玩家状态",
       ));
-      pendingState.piratesRaidPlacement = null;
+      decisionSessions.clear(PIRATES_RAID_DECISION);
       return finishAutomaticRewardEffect(effect, {
         ok: true,
         undoable: true,
