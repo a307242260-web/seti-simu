@@ -13,6 +13,7 @@
 
   function createHandFlow(context = {}) {
     const {
+      decisionSessions,
       pendingState,
       cardState,
       rocketState,
@@ -125,6 +126,22 @@
       scrollToPlayerCommandPanel,
       getCardTypeCode,
     } = context;
+    const HAND_CARD_PLAY_SESSION = "hand_card_play_action";
+    const CARD_CORNER_QUICK_SESSION = "card_corner_quick_action";
+    const peekHandCardPlayAction = () => decisionSessions.peek(HAND_CARD_PLAY_SESSION);
+    const peekCardCornerQuickAction = () => decisionSessions.peek(CARD_CORNER_QUICK_SESSION);
+    function setHandCardPlayAction(action) {
+      if (!action) return decisionSessions.clear(HAND_CARD_PLAY_SESSION);
+      const pending = peekHandCardPlayAction();
+      if (pending) return Object.assign(pending, action);
+      return decisionSessions.open(HAND_CARD_PLAY_SESSION, action);
+    }
+    function setCardCornerQuickAction(action) {
+      if (!action) return decisionSessions.clear(CARD_CORNER_QUICK_SESSION);
+      const pending = peekCardCornerQuickAction();
+      if (pending) return Object.assign(pending, action);
+      return decisionSessions.open(CARD_CORNER_QUICK_SESSION, action);
+    }
     let futureSpanPlayBeforePlayer = null;
 
     function getPlayCardBeforePlayerSnapshot(currentPlayer) {
@@ -536,8 +553,8 @@
     function syncPlayCardSelectionChrome() {
       const active = isPlayCardSelectionActive();
       if (active) {
-        pendingState.handCardPlayAction = null;
-        pendingState.cardCornerQuickAction = null;
+        setHandCardPlayAction(null);
+        setCardCornerQuickAction(null);
         if (els.handCardPlayActionButton) {
           els.handCardPlayActionButton.hidden = true;
           els.handCardPlayActionButton.disabled = true;
@@ -641,36 +658,37 @@
     }
 
     function getPendingHandCardPlayAction() {
-      if (!pendingState.handCardPlayAction) return null;
+      const pending = peekHandCardPlayAction();
+      if (!pending) return null;
       const currentPlayer = getCurrentPlayer();
       const hand = Array.isArray(currentPlayer?.hand) ? currentPlayer.hand : [];
-      let handIndex = Number(pendingState.handCardPlayAction.handIndex);
+      let handIndex = Number(pending.handIndex);
       let card = Number.isInteger(handIndex) ? hand[handIndex] : null;
-      if (!card || card.id !== pendingState.handCardPlayAction.cardId) {
-        handIndex = hand.findIndex((item) => item.id === pendingState.handCardPlayAction.cardId);
+      if (!card || card.id !== pending.cardId) {
+        handIndex = hand.findIndex((item) => item.id === pending.cardId);
         card = handIndex >= 0 ? hand[handIndex] : null;
       }
       const action = getHandCardPlayActionForCard(card, currentPlayer);
       if (!card || !action) {
-        pendingState.handCardPlayAction = null;
+        setHandCardPlayAction(null);
         return null;
       }
-      pendingState.handCardPlayAction = { handIndex, cardId: card.id, ...action };
-      return { ...pendingState.handCardPlayAction, card };
+      setHandCardPlayAction({ handIndex, cardId: card.id, ...action });
+      return { ...peekHandCardPlayAction(), card };
     }
 
     function cancelHandCardPlayAction(options = {}) {
-      if (!pendingState.handCardPlayAction) return;
-      pendingState.handCardPlayAction = null;
+      if (!peekHandCardPlayAction()) return;
+      setHandCardPlayAction(null);
       if (!options.silent) rocketState.statusNote = "已取消手牌打出";
       syncCardCornerQuickActionChrome();
       if (!options.silent) renderStateReadout();
     }
 
     function clearHandCardContextActions() {
-      const hadAction = Boolean(pendingState.handCardPlayAction || pendingState.cardCornerQuickAction);
-      pendingState.handCardPlayAction = null;
-      pendingState.cardCornerQuickAction = null;
+      const hadAction = Boolean(peekHandCardPlayAction() || peekCardCornerQuickAction());
+      setHandCardPlayAction(null);
+      setCardCornerQuickAction(null);
       return hadAction;
     }
 
@@ -708,22 +726,23 @@
     }
 
     function getPendingCardCornerQuickAction() {
-      if (!pendingState.cardCornerQuickAction) return null;
+      const pending = peekCardCornerQuickAction();
+      if (!pending) return null;
       const currentPlayer = getCurrentPlayer();
       const hand = Array.isArray(currentPlayer?.hand) ? currentPlayer.hand : [];
-      let handIndex = Number(pendingState.cardCornerQuickAction.handIndex);
+      let handIndex = Number(pending.handIndex);
       let card = Number.isInteger(handIndex) ? hand[handIndex] : null;
-      if (!card || card.id !== pendingState.cardCornerQuickAction.cardId) {
-        handIndex = hand.findIndex((item) => item.id === pendingState.cardCornerQuickAction.cardId);
+      if (!card || card.id !== pending.cardId) {
+        handIndex = hand.findIndex((item) => item.id === pending.cardId);
         card = handIndex >= 0 ? hand[handIndex] : null;
       }
       const action = getCardCornerQuickActionForCard(card);
       if (!card || !action) {
-        pendingState.cardCornerQuickAction = null;
+        setCardCornerQuickAction(null);
         return null;
       }
-      pendingState.cardCornerQuickAction = { handIndex, cardId: card.id, ...action };
-      return { ...pendingState.cardCornerQuickAction, card };
+      setCardCornerQuickAction({ handIndex, cardId: card.id, ...action });
+      return { ...peekCardCornerQuickAction(), card };
     }
 
     function syncCardCornerQuickActionChrome() {
@@ -754,8 +773,8 @@
     }
 
     function cancelCardCornerQuickAction(options = {}) {
-      if (!pendingState.cardCornerQuickAction) return;
-      pendingState.cardCornerQuickAction = null;
+      if (!peekCardCornerQuickAction()) return;
+      setCardCornerQuickAction(null);
       if (!options.silent) rocketState.statusNote = "已取消卡牌快速行动";
       syncCardCornerQuickActionChrome();
       if (!options.silent) renderStateReadout();
@@ -781,8 +800,8 @@
         return { ok: true, cancelled: true, message: rocketState.statusNote };
       }
 
-      pendingState.cardCornerQuickAction = cornerAction ? { handIndex: index, cardId: card.id, ...cornerAction } : null;
-      pendingState.handCardPlayAction = playAction ? { handIndex: index, cardId: card.id, ...playAction } : null;
+      setCardCornerQuickAction(cornerAction ? { handIndex: index, cardId: card.id, ...cornerAction } : null);
+      setHandCardPlayAction(playAction ? { handIndex: index, cardId: card.id, ...playAction } : null);
       setQuickPanelOpen(false);
       const availableActions = [
         playAction ? `打出（${formatCardPlayCost(playAction.cost)}）` : null,
@@ -846,7 +865,7 @@
           "恢复方舟弃牌快速行动前外星人状态",
         ));
         completeQuickActionStep();
-        pendingState.cardCornerQuickAction = null;
+        setCardCornerQuickAction(null);
         syncCardCornerQuickActionChrome();
         const rewardResult = applyFangzhouCard1Rewards(currentPlayer, context.getDiscardCornerRewardMultiplier?.(currentPlayer) || 1, "basic", "方舟弃牌基础奖励", {
           historySource: HISTORY_SOURCE_QUICK,
@@ -919,7 +938,7 @@
       ));
       completeQuickActionStep();
 
-      pendingState.cardCornerQuickAction = null;
+      setCardCornerQuickAction(null);
       syncCardCornerQuickActionChrome();
       const rewardText = action.actionKind === "move"
         ? [context.formatPlanetRewardGain?.(action.moveReward?.gain || {}), `${action.moveReward?.movementPoints || 1}移动`]

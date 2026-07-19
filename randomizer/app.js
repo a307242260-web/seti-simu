@@ -272,6 +272,8 @@
   const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
   const TURN_END_REVEAL_SESSION = "turn_end_after_reveal";
   const TYPE1_TRIGGER_QUEUE_SESSION = "type1_trigger_queue";
+  const HAND_CARD_PLAY_SESSION = "hand_card_play_action";
+  const CARD_CORNER_QUICK_SESSION = "card_corner_quick_action";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
@@ -1142,6 +1144,7 @@
     isAsteroidContent,
   });
   const handFlowHelpers = handFlowModule.createHandFlow({
+    decisionSessions,
     pendingState,
     cardState,
     rocketState,
@@ -3839,8 +3842,8 @@
     uiRuntimeState.moveHighlightRocketId = null;
     pendingState.movePayment = null;
     pendingState.playCardSelection = null;
-    pendingState.handCardPlayAction = null;
-    pendingState.cardCornerQuickAction = null;
+    decisionSessions.clear(HAND_CARD_PLAY_SESSION);
+    decisionSessions.clear(CARD_CORNER_QUICK_SESSION);
     pendingState.cardCornerFreeMove = null;
     decisionSessions.clear(DATA_PLACEMENT_DECISION);
     pendingState.industryAbility = null;
@@ -4690,10 +4693,10 @@
   }
 
   function blockIncompatiblePendingQuickAction(actionType) {
-    if (actionType !== "card-corner" && pendingState.cardCornerQuickAction) {
+    if (actionType !== "card-corner" && getPendingCardCornerQuickAction()) {
       cancelCardCornerQuickAction({ silent: true });
     }
-    if (pendingState.handCardPlayAction) {
+    if (getPendingHandCardPlayAction()) {
       cancelHandCardPlayAction({ silent: true });
     }
     if (hasActivePendingSubFlow()) {

@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { createHandFlow } = require("./hand-flow");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 
 function makeClassList() {
   return { toggle() {} };
@@ -65,8 +66,6 @@ function createBaseContext(player, overrides = {}) {
     discardAction: null,
     movePayment: null,
     handScanAction: null,
-    handCardPlayAction: null,
-    cardCornerQuickAction: null,
     futureSpanPlayBeforePlayer: null,
     actionEffectFlow: null,
   };
@@ -81,6 +80,7 @@ function createBaseContext(player, overrides = {}) {
 
   return {
     events,
+    decisionSessions: overrides.decisionSessions || createDecisionSessionStore(),
     pendingState,
     cardState,
     rocketState,
