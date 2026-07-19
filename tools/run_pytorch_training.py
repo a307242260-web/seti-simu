@@ -22,7 +22,7 @@ from pytorch_trainer import (  # noqa: E402
     DATASET_SCHEMA, ROLLOUT_SCHEMA, CandidatePolicy, RolloutStep, audit_dataset,
     canonical_json, load_checkpoint, ppo_update,
     ranks_from_scores, sanitized_action, save_checkpoint, sha256_text,
-    terminal_scores, train_bc,
+    stable_evaluation_metrics, evaluate_stable_acceptance, terminal_scores, train_bc,
 )
 
 
@@ -205,7 +205,9 @@ def export_demonstrations(args: argparse.Namespace) -> dict[str, Any]:
 
 def run_policy_episodes(model: CandidatePolicy, seeds: list[str], policy_version: str,
                         train: bool, output: Path | None = None, learning_rate: float = 3e-4,
-                        env_step_budget: int | None = None) -> dict[str, Any]:
+                        env_step_budget: int | None = None,
+                        max_turn_actions: int | None = None,
+                        show_progress: bool = False) -> dict[str, Any]:
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
     all_scores: list[float] = []
     all_ranks: list[int] = []
@@ -223,6 +225,8 @@ def run_policy_episodes(model: CandidatePolicy, seeds: list[str], policy_version
                 "seat": episode_index % 4, "compactReplay": True,
             }})
             steps: list[RolloutStep] = []
+            turn_actions = 0
+            turn_action_limit_exceeded = False
             for step_index in range(2000):
                 if state["terminal"]:
                     break
@@ -234,6 +238,10 @@ def run_policy_episodes(model: CandidatePolicy, seeds: list[str], policy_version
                     chosen_index = int(distribution.sample())
                     log_prob = float(distribution.log_prob(torch.tensor(chosen_index)))
                 chosen = candidates[chosen_index]
+                if chosen.get("decisionType") == "turn_action":
+                    turn_actions += 1
+                    if max_turn_actions is not None and turn_actions > max_turn_actions:
+                        turn_action_limit_exceeded = True
                 steps.append(RolloutStep(observation, candidates, chosen_index, log_prob,
                                          float(value), chosen["actorPlayerId"], policy_version))
                 evidence_lines.append(canonical_json({
@@ -273,8 +281,17 @@ def run_policy_episodes(model: CandidatePolicy, seeds: list[str], policy_version
             all_scores.extend(scores.values())
             all_ranks.extend(ranks.values())
             curve.append({"episode": episode_index + 1, "envSteps": env_steps,
+                          "seed": seed, "turnActions": turn_actions,
+                          "withinTurnActionLimit": not turn_action_limit_exceeded,
+                          "scores": scores,
                           "meanScore": sum(scores.values()) / len(scores),
                           "meanRank": sum(ranks.values()) / len(ranks)})
+            if show_progress:
+                print(
+                    f"[eval] {episode_index + 1}/{len(seeds)} seed={seed} "
+                    f"turnActions={turn_actions} scores={list(scores.values())}",
+                    file=sys.stderr,
+                )
             if train and env_step_budget is not None and env_steps >= env_step_budget:
                 break
     if output:
@@ -285,9 +302,73 @@ def run_policy_episodes(model: CandidatePolicy, seeds: list[str], policy_version
     return {"episodes": len(curve), "envSteps": env_steps, "sampledEnvSteps": sampled_env_steps,
             "meanScore": sum(all_scores) / max(1, len(all_scores)),
             "meanRank": sum(all_ranks) / max(1, len(all_ranks)), "illegalRate": 0.0,
+            "scores": all_scores,
             "entropy": sum(entropy_values) / max(1, len(entropy_values)),
             "approxKl": sum(kl_values) / max(1, len(kl_values)), "curve": curve,
             "rolloutEvidence": str(output) if output else None}
+
+
+def run_frozen_evaluation(args: argparse.Namespace) -> dict[str, Any]:
+    seed_pool = json.loads(args.seed_pool.read_text(encoding="utf-8"))
+    if seed_pool.get("schemaVersion") != "seti-rl-evaluation-seed-pool-v1":
+        raise ValueError("unsupported frozen evaluation seed pool schema")
+    if seed_pool.get("activePlayerCount") != 4:
+        raise ValueError("frozen evaluation only accepts four-player games")
+    seeds = [str(seed) for seed in seed_pool.get("seeds", [])]
+    if not seeds or len(seeds) != len(set(seeds)):
+        raise ValueError("frozen evaluation seeds must be non-empty and unique")
+    random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    model, payload = load_checkpoint(args.checkpoint)
+    args.output_dir.mkdir(parents=True, exist_ok=True)
+    result = run_policy_episodes(
+        model,
+        seeds,
+        f"pytorch-{seed_pool['id']}",
+        False,
+        args.output_dir / "rollout.jsonl",
+        max_turn_actions=int(seed_pool.get("maxSteps", 100)),
+        show_progress=True,
+    )
+    eligible_games = [game for game in result["curve"] if game["withinTurnActionLimit"]]
+    eligible_scores = [score for game in eligible_games for score in game["scores"].values()]
+    blocked_games = len(result["curve"]) - len(eligible_games)
+    metrics = stable_evaluation_metrics(
+        eligible_scores,
+        games=len(seeds),
+        terminal_games=len(eligible_games),
+        blocked_games=blocked_games,
+    )
+    report = {
+        "schemaVersion": "seti-pytorch-evaluation-report-v1",
+        "protocol": {
+            "seedPoolId": seed_pool["id"],
+            "seedPoolSchemaVersion": seed_pool["schemaVersion"],
+            "activePlayerCount": 4,
+            "maxTurnActions": int(seed_pool.get("maxSteps", 100)),
+            "percentileMethod": "nearest-rank",
+            "scorePopulation": "all_terminal_seats",
+            "acceptance": seed_pool.get("acceptance", {}),
+            "policyRngSeed": args.seed,
+        },
+        "checkpoint": {
+            "path": str(args.checkpoint),
+            "schemaVersion": payload.get("schemaVersion"),
+            "featureSchemaVersion": payload.get("featureSchemaVersion"),
+            "metadata": payload.get("metadata", {}),
+        },
+        "metrics": metrics,
+        "diagnosticTerminalMetrics": stable_evaluation_metrics(
+            result["scores"], games=len(seeds), terminal_games=result["episodes"]
+        ),
+        "acceptance": evaluate_stable_acceptance(metrics, seed_pool.get("acceptance", {})),
+        "games": result["curve"],
+        "rolloutEvidence": result["rolloutEvidence"],
+    }
+    (args.output_dir / "report.json").write_text(
+        json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    return report
 
 
 def run_experiment(args: argparse.Namespace) -> dict[str, Any]:
@@ -361,6 +442,13 @@ def main() -> None:
     experiment.add_argument("--episodes", type=int, default=4)
     experiment.add_argument("--env-steps", type=int, default=1500)
     experiment.add_argument("--seed", type=int, default=7)
+    evaluate = sub.add_parser("evaluate")
+    evaluate.add_argument("--checkpoint", type=Path, required=True)
+    evaluate.add_argument("--seed-pool", type=Path, default=(
+        ROOT / "randomizer" / "training" / "evaluation" / "stable-200-v2.seeds.json"
+    ))
+    evaluate.add_argument("--output-dir", type=Path, required=True)
+    evaluate.add_argument("--seed", type=int, default=7)
     args = parser.parse_args()
     if args.command == "export-demonstrations":
         frozen = {"smoke": 4, "expanded": 32}
@@ -370,8 +458,10 @@ def main() -> None:
         result = export_demonstrations(args)
     elif args.command == "train-bc":
         result = train_bc(args.dataset, args.checkpoint, epochs=args.epochs)
-    else:
+    elif args.command == "experiment":
         result = run_experiment(args)
+    else:
+        result = run_frozen_evaluation(args)
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 

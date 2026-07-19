@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-19
+- source: SETI-39
+- promoted_to: project_memory
+- promotion_decision: promote
+- target_agent: 领航
+- target_component: PyTorch checkpoint 冻结评测协议
+- target_file: randomizer/training/evaluation/stable-200-v2.seeds.json；docs/rl-headless-env.md；tools/run_pytorch_training.py
+- remote_skill_id: none
+- change: 评估是否发布新的冻结评测 protocol id，使 policy-owned conditional timestep 后的步数口径可覆盖正常完整局，同时保持 20 seed、80 席、分位数和非法/阻塞门槛可比较。
+- applied_change: 同 issue 并行提交 `01bc567` 新增不可变的 `stable-200-v2`，沿用 v1 的 20 seed/80 席与得分门槛，把 policy 决策上限提升为 1000，并更新项目评测文档/Node 默认入口；本提交新增 PyTorch `evaluate` 并默认读取 v2，v1 与历史 baseline 不变。
+- expected_effect: 在 owner 决定新协议前先阻止“同 seed 跑到终局就算冻结验收”的假阳性；未来协议明确 decision 粒度后，PyTorch 与 Node checkpoint 可按同一可执行口径比较。
+- evaluation_window: v1 的 20 seed 全量诊断、v2 发布决策与同一 PyTorch checkpoint 的 v2 完整复验；后续再用至少一个 Node checkpoint 交叉验证默认入口。
+- success_signal: 报告能同时机器判定完整 seed/80 席、步数上限、均分/P25/P50、完局、非法与阻塞；正常完整局不因计数粒度迁移系统性 20/20 超限。
+- rollback_condition: 若证明 v1 的 `maxSteps=100` 本来就不约束 policy decision、或当前 `turn_action` 计数错误包含了协议外事件，则撤销候选并修正适配器，不发布新协议。
+- risk: 放宽上限会改变吞吐和阻塞含义；原地改 v1 会破坏历史可比性；另建 v2 则需重新生成 baseline。
+- evidence_before: SETI-39 的 v1 全量评测中，20/20 局分别需要 307–377 个 policy-owned `turn_action` 才终局，严格口径 scoreCount=0、completionRate=0、blockRate=1；超步后的诊断终局分不能进入验收。
+- owner_or_agent_decision: 完整 20 seed 证据确认 v1 上限系统性阻断后，同 issue 并行交付选择发布 v2 而非原地改写 v1；领航复核 diff 后接受该决策并同步 PyTorch 入口。
+- applied_at: 2026-07-19
+- verification: `python3 tools/run_pytorch_training.py evaluate --checkpoint .../bc-expanded.pt --output-dir checkpoint/seti-39/stable-200-bc-only --seed 7`；20/20 均输出 seed、turnActions 与终局分，严格 acceptance=false。
+- observed_outcome: v1 严格拒绝 20/20 超限终局；v2 解除步数语义阻塞后可输出完整 80 席得分、分位数与机器 acceptance，未掩盖模型得分仍低于 200 的事实。
+- keep_or_revise: 保留 v2；v1 继续作为历史协议与旧 baseline 身份，不再作为新 checkpoint 默认入口。
+
+- date: 2026-07-19
 - source: SETI-72（续 SETI-14）
 - promoted_to: none
 - promotion_decision: candidate

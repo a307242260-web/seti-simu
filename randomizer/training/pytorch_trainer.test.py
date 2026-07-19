@@ -7,7 +7,8 @@ import torch
 
 from pytorch_trainer import (
     DATASET_SCHEMA, CandidatePolicy, audit_dataset, canonical_json, evaluate_bc,
-    load_checkpoint, load_encoded_dataset, sanitized_action, save_checkpoint, sha256_text,
+    evaluate_stable_acceptance, load_checkpoint, load_encoded_dataset, sanitized_action,
+    save_checkpoint, sha256_text, stable_evaluation_metrics,
 )
 
 
@@ -73,6 +74,18 @@ class TrainerContractTest(unittest.TestCase):
             self.assertEqual(len(encoded["train"]), 1)
             self.assertEqual(tuple(encoded["validation"][0].observation.shape), (256,))
             self.assertEqual(tuple(encoded["validation"][0].candidates.shape), (2, 256))
+
+    def test_stable_evaluation_uses_all_seats_and_nearest_rank(self):
+        scores = [180, 190, 200, 210] * 20
+        metrics = stable_evaluation_metrics(scores, games=20, terminal_games=20)
+        self.assertEqual(metrics["scoreCount"], 80)
+        self.assertEqual(metrics["p25"], 180)
+        self.assertEqual(metrics["p50"], 190)
+        result = evaluate_stable_acceptance(metrics, {
+            "minimumGames": 20, "meanScore": 190, "p25": 180, "p50": 190,
+            "completionRate": 1, "maxIllegalActionRate": 0, "maxBlockRate": 0,
+        })
+        self.assertTrue(result["passed"])
 
 
 if __name__ == "__main__":

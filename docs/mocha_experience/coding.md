@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-19
+- source_issue: SETI-39
+- observation: 冻结评测的 `maxSteps` 必须与当前 policy-owned decision 粒度一致；在 conditional 也成为独立 timestep 后，不能只把 PyTorch checkpoint 接入同一 seed/分数统计而忽略旧上限，否则会把超步后的终局分误计为合格样本。协议上限若已无法覆盖正常完整局，应发布新 protocol id，不能在适配器里静默放宽旧协议。
+- evidence: `stable-200-v1` 固定 `maxSteps=100`；SETI-39 的 BC-only PyTorch checkpoint 在完整 20 个冻结 seed 上每局需要 307–377 个 `turn_action`（另有 conditional timestep），20/20 均超过上限。严格报告因此为 completionRate=0、blockRate=1、scoreCount=0；仅作诊断的超步终局 80 席均分约 57，不能纳入验收。
+- promote_to: project_memory
+- promotion_status: promote
+- decision: 全量证据形成后，同 issue 并行交付 `01bc567` 已发布不可变的 `stable-200-v2`，沿用 20 seed/80 席与得分门槛，只把 policy 决策上限提升到 1000；PyTorch `evaluate` 默认同步到 v2，v1 及其历史 baseline 保持不变。
+
+- date: 2026-07-19
 - source_issue: SETI-76（续 SETI-51/61/69/85）
 - observation: 私有 `GIT_INDEX_FILE` 即使从当时最新 HEAD 初始化，也会在长回归期间因并行提交而变成旧父树；随后直接 `git commit` 会以新的 HEAD 为 parent、却提交旧父树派生的 tree，把新父提交文件误显示为当前 issue 的删除/回滚。提交前必须再次比较 private-index base 与当前 HEAD；不一致就重建并复验，最终 ref 更新宜使用 old-HEAD compare-and-swap，失败后重新集成，不能继续提交旧 tree。
 - evidence: SETI-76 验证期间 HEAD 连续从 `3eb447f` 前进到 `d66348d`、`a7052f0`、`d3c2ac7`；私有 index 最后一次基于 `a7052f0`，普通 commit `c7921a6` 却挂到 `d3c2ac7`，意外把 SETI-39 的 24 行 `app.js` 变更回退。提交后 name-only/stat 立即发现，追加 CAS 修复 `2bc8307` 精确恢复父 blob；最终从 `d3c2ac7..2bc8307` 的净 diff 只剩 SETI-76 九个目标文件，158/158 Node 与 Chrome smoke 通过。

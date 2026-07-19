@@ -121,6 +121,55 @@ def ranks_from_scores(scores: dict[str, float]) -> dict[str, int]:
     return {player_id: 1 + sum(other > score for other in scores.values()) for player_id, score in scores.items()}
 
 
+def percentile_nearest_rank(values: list[float], percentile: float) -> float | None:
+    if not values:
+        return None
+    ordered = sorted(values)
+    rank = max(1, math.ceil(percentile * len(ordered)))
+    return ordered[rank - 1]
+
+
+def stable_evaluation_metrics(scores: list[float], games: int, terminal_games: int,
+                              illegal_action_attempts: int = 0,
+                              blocked_games: int = 0) -> dict[str, Any]:
+    expected_scores = games * 4
+    return {
+        "games": games,
+        "expectedScoreCount": expected_scores,
+        "scoreCount": len(scores),
+        "meanScore": sum(scores) / len(scores) if scores else None,
+        "p25": percentile_nearest_rank(scores, 0.25),
+        "p50": percentile_nearest_rank(scores, 0.5),
+        "p75": percentile_nearest_rank(scores, 0.75),
+        "minScore": min(scores) if scores else None,
+        "maxScore": max(scores) if scores else None,
+        "terminalGames": terminal_games,
+        "completionRate": terminal_games / games if games else 0.0,
+        "blockedGames": blocked_games,
+        "blockRate": blocked_games / games if games else 0.0,
+        "illegalActionAttempts": illegal_action_attempts,
+        "illegalActionRate": 0.0,
+    }
+
+
+def evaluate_stable_acceptance(metrics: dict[str, Any], acceptance: dict[str, Any]) -> dict[str, Any]:
+    checks = {
+        "minimumGames": metrics["games"] >= int(acceptance.get("minimumGames", 0)),
+        "completeScoreSet": metrics["scoreCount"] == metrics["expectedScoreCount"],
+        "meanScore": metrics["meanScore"] is not None
+        and metrics["meanScore"] >= float(acceptance.get("meanScore", 200)),
+        "p25": metrics["p25"] is not None
+        and metrics["p25"] >= float(acceptance.get("p25", 180)),
+        "p50": metrics["p50"] is not None
+        and metrics["p50"] >= float(acceptance.get("p50", 200)),
+        "completionRate": metrics["completionRate"] >= float(acceptance.get("completionRate", 1)),
+        "illegalActionRate": metrics["illegalActionRate"]
+        <= float(acceptance.get("maxIllegalActionRate", 0)),
+        "blockRate": metrics["blockRate"] <= float(acceptance.get("maxBlockRate", 0)),
+    }
+    return {"passed": all(checks.values()), "checks": checks}
+
+
 class CandidatePolicy(nn.Module):
     def __init__(self, feature_dim: int = FEATURE_DIM, hidden_dim: int = 128):
         super().__init__()
