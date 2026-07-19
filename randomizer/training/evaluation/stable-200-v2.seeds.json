@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "seti-rl-evaluation-seed-pool-v1",
+  "id": "stable-200-v2",
+  "description": "冻结的 20 局四人评测池；单局允许最多 1000 次 policy 决策，任何 checkpoint 必须使用完整 seed 集，不得挑局。",
+  "activePlayerCount": 4,
+  "aiDifficulty": "laughable",
+  "maxSteps": 1000,
+  "seeds": [
+    "seti-rl-eval-v1-01",
+    "seti-rl-eval-v1-02",
+    "seti-rl-eval-v1-03",
+    "seti-rl-eval-v1-04",
+    "seti-rl-eval-v1-05",
+    "seti-rl-eval-v1-06",
+    "seti-rl-eval-v1-07",
+    "seti-rl-eval-v1-08",
+    "seti-rl-eval-v1-09",
+    "seti-rl-eval-v1-10",
+    "seti-rl-eval-v1-11",
+    "seti-rl-eval-v1-12",
+    "seti-rl-eval-v1-13",
+    "seti-rl-eval-v1-14",
+    "seti-rl-eval-v1-15",
+    "seti-rl-eval-v1-16",
+    "seti-rl-eval-v1-17",
+    "seti-rl-eval-v1-18",
+    "seti-rl-eval-v1-19",
+    "seti-rl-eval-v1-20"
+  ],
+  "acceptance": {
+    "minimumGames": 20,
+    "meanScore": 200,
+    "p25": 180,
+    "p50": 200,
+    "completionRate": 1,
+    "maxIllegalActionRate": 0,
+    "maxBlockRate": 0
+  }
+}

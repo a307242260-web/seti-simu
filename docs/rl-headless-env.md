@@ -54,7 +54,7 @@ node tools/run_self_play_training.js \
 
 ### 固定评测与“稳定 200 分”协议
 
-默认协议文件为 `randomizer/training/evaluation/stable-200-v1.seeds.json`。协议冻结 20 个 seed，每个 seed 都必须跑完整 4 人局，统计总体为 80 个终局席位；分位数使用 nearest-rank。不得删除低分局、只跑 seed 子集或把未终局时的实时分计入分数总体。
+默认协议文件为 `randomizer/training/evaluation/stable-200-v2.seeds.json`。协议沿用 v1 的 20 个冻结 seed，并将单局 policy 决策上限从只适合早期 PASS 基线的 100 提升为 1000；每个 seed 都必须跑完整 4 人局，统计总体为 80 个终局席位。分位数使用 nearest-rank。不得删除低分局、只跑 seed 子集或把未终局时的实时分计入分数总体。
 
 “稳定 200 分”同时满足以下条件才判为 PASS：
 
@@ -62,7 +62,7 @@ node tools/run_self_play_training.js \
 - 80 席均分不低于 200，P25 不低于 180，P50 不低于 200；
 - 非法动作率为 0，阻塞率为 0。
 
-均分定义“达到 200”，P25/P50 防止少量高分掩盖低尾，完局/非法/阻塞门槛保证分数不是以牺牲运行可靠性换取。P75 作为观察指标输出，但不设单独门槛。修改 seed、样本数、分位数方法或门槛必须发布新的协议 id，不能原地改写 `stable-200-v1`。
+均分定义“达到 200”，P25/P50 防止少量高分掩盖低尾，完局/非法/阻塞门槛保证分数不是以牺牲运行可靠性换取。P75 作为观察指标输出，但不设单独门槛。修改 seed、样本数、分位数方法、步数上限或门槛必须发布新的协议 id；`stable-200-v1` 与其历史基线报告保持不变。
 
 评测任意 checkpoint：
 

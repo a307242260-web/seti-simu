@@ -15,7 +15,7 @@ function printHelp() {
 
 选项：
   --checkpoint PATH        要评测的 self-play checkpoint（必填）
-  --seed-pool PATH         固定 seed pool（默认 stable-200-v1）
+  --seed-pool PATH         固定 seed pool（默认 stable-200-v2）
   --report PATH            写入完整 JSON 报告
   --log PATH               写入可逐步回放的 JSONL
   --baseline-report PATH   与同 seed pool 的历史报告比较
@@ -57,7 +57,7 @@ function main() {
     return;
   }
   if (!options.checkpointPath) throw new Error("必须传入 --checkpoint");
-  options.seedPoolPath ||= path.resolve(__dirname, "../randomizer/training/evaluation/stable-200-v1.seeds.json");
+  options.seedPoolPath ||= path.resolve(__dirname, "../randomizer/training/evaluation/stable-200-v2.seeds.json");
   if (options.baselineReportPath) {
     options.baselineReport = require(path.resolve(options.baselineReportPath));
   }

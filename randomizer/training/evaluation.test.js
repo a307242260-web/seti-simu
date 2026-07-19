@@ -160,4 +160,9 @@ assert.deepEqual(checkedInBaseline.metrics, {
 });
 assert.equal(checkedInBaseline.acceptance.passed, false);
 
+const currentStablePool = require("./evaluation/stable-200-v2.seeds.json");
+assert.equal(currentStablePool.id, "stable-200-v2");
+assert.equal(currentStablePool.maxSteps, 1000);
+assert.equal(currentStablePool.seeds.length, 20);
+
 console.log("training/evaluation tests passed");
