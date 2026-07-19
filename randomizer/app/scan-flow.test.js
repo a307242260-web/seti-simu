@@ -2,12 +2,12 @@
 
 const assert = require("node:assert/strict");
 const { createScanFlowHelpers } = require("./scan-flow");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 
 function createBaseHarness() {
   const pendingState = {
     actionEffectFlow: { delayedPublicRefills: [] },
     cardSelectionAction: null,
-    publicScanQueue: null,
     handScanAction: null,
   };
   const cardState = {
@@ -38,8 +38,10 @@ function createBaseHarness() {
     stateReadout: 0,
     discardPublic: [],
   };
+  const decisionSessions = createDecisionSessionStore();
 
   const helpers = createScanFlowHelpers({
+    decisionSessions,
     cards: {
       getCardLabel: (card) => card.cardName || card.id,
       setSelectionActive: (_state, active) => {
@@ -156,6 +158,7 @@ function createBaseHarness() {
     cardState,
     rocketState,
     player,
+    decisionSessions,
   };
 }
 
@@ -194,7 +197,7 @@ function createBaseHarness() {
 }
 
 {
-  const { helpers, pendingState, cardState, player, rocketState, calls } = createBaseHarness();
+  const { helpers, pendingState, cardState, player, rocketState, calls, decisionSessions } = createBaseHarness();
   pendingState.cardSelectionAction = {
     type: "public_scan",
     selectedSlots: [0, 1],
@@ -211,8 +214,8 @@ function createBaseHarness() {
   const result = helpers.confirmPublicScanSelection();
   assert.equal(result.ok, true);
   assert.equal(calls.discardPublic.length, 2);
-  assert.equal(pendingState.publicScanQueue.items.length, 2);
-  assert.equal(pendingState.publicScanQueue.deferPublicRefill, true);
+  assert.equal(decisionSessions.peek("public_scan_queue").items.length, 2);
+  assert.equal(decisionSessions.peek("public_scan_queue").deferPublicRefill, true);
   assert.match(rocketState.statusNote, /已弃除 2 张牌/);
   assert.equal(calls.picker.length, 1);
 }

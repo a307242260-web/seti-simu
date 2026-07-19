@@ -267,10 +267,12 @@
   const LAND_TARGET_DECISION = "land_target";
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
   const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
+  const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
   const getPendingStrategySlotDecision = () => decisionSessions.peek(STRATEGY_SLOT_DECISION);
+  const getPublicScanQueueSession = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
@@ -2734,7 +2736,7 @@
     get pendingScanTargetAction() { return pendingState.scanTargetAction; },
     get pendingProbeSectorScanAction() { return pendingState.probeSectorScanAction; },
     get pendingProbeLocationRewardAction() { return pendingState.probeLocationRewardAction; },
-    get pendingPublicScanQueue() { return pendingState.publicScanQueue; },
+    get pendingPublicScanQueue() { return getPublicScanQueueSession(); },
     get pendingHandScanAction() { return pendingState.handScanAction; },
     get pendingAlienTraceAction() { return pendingState.alienTraceAction; },
     get pendingLandTargetAction() { return getPendingLandTargetDecision(); },
@@ -3791,7 +3793,7 @@
     pendingState.passReserveSelectionDismissed = false;
     pendingState.scanTargetAction = null;
     pendingState.probeSectorScanAction = null;
-    pendingState.publicScanQueue = null;
+    decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
     pendingState.handScanAction = null;
     pendingState.alienTraceAction = null;
     decisionSessions.clear(LAND_TARGET_DECISION);
@@ -5225,7 +5227,7 @@
       pendingState.scanTargetAction
       || pendingState.probeSectorScanAction
       || pendingState.probeLocationRewardAction
-      || pendingState.publicScanQueue
+      || getPublicScanQueueSession()
       || pendingState.handScanAction
       || pendingState.passReserveSelection
       || (isCardSelectionActive() && (pendingState.actionEffectFlow || isCardTriggerPickSelectionActive()))
@@ -5479,7 +5481,7 @@
   }
 
   function cancelActiveEffectSubFlows() {
-    if (!pendingState.publicScanQueue) {
+    if (!getPublicScanQueueSession()) {
       closeScanTargetPicker({ forceYichangdianCornerClose: true });
     }
     if (els.landTargetOverlay && !els.landTargetOverlay.hidden) {
@@ -5487,7 +5489,7 @@
     }
     closeScanAction4Picker();
     closeAlienTracePicker();
-    pendingState.publicScanQueue = null;
+    decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
 
     if (isHandScanSelectionActive()) {
       pendingState.handScanAction = null;

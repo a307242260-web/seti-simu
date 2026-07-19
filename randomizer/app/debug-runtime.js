@@ -978,7 +978,7 @@
         pendingState.scanTargetAction,
         pendingState.probeSectorScanAction,
         pendingState.probeLocationRewardAction,
-        pendingState.publicScanQueue,
+        decisionSessions?.peek?.("public_scan_queue"),
         pendingState.handScanAction,
         pendingState.alienTraceAction,
         decisionSessions?.peek?.("land_target"),

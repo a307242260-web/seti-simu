@@ -37,6 +37,8 @@
 
     const pendingState = context.pendingState || {};
     const decisionSessions = context.decisionSessions;
+    const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
+    const getPublicScanQueue = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
     const cardState = context.cardState || {};
     const nebulaDataState = context.nebulaDataState || {};
     const alienGameState = context.alienGameState || {};
@@ -451,7 +453,7 @@
     }
 
     function openPublicScanNebulaPickerForCurrentQueueItem() {
-      const queue = pendingState.publicScanQueue;
+      const queue = getPublicScanQueue();
       if (!queue) return { ok: false, message: "没有待扫描的公共牌" };
       const item = queue.items[queue.currentIndex];
       if (!item) return { ok: false, message: "没有待扫描的公共牌" };
@@ -549,13 +551,13 @@
         });
       }
 
-      pendingState.publicScanQueue = {
+      decisionSessions.open(PUBLIC_SCAN_QUEUE_SESSION, {
         items,
         currentIndex: 0,
         fromEffectFlow,
         scanRunId: pending.scanRunId || null,
         deferPublicRefill: Boolean(pending.deferPublicRefill),
-      };
+      });
       rocketState.statusNote = `公共牌区扫描：已弃除 ${items.length} 张牌，请依次选择星云`;
       renderPlayerStats();
       renderPublicCards();
@@ -1284,17 +1286,17 @@
 
     function closeScanTargetPicker(options = {}) {
       if (!els.scanTargetOverlay) {
-        if (pendingState.publicScanQueue && !options.forcePublicScanQueueClose) return;
-        if (options.forcePublicScanQueueClose) pendingState.publicScanQueue = null;
+        if (getPublicScanQueue() && !options.forcePublicScanQueueClose) return;
+        if (options.forcePublicScanQueueClose) decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
         pendingState.scanTargetAction = null;
         pendingState.probeSectorScanAction = null;
         pendingState.probeLocationRewardAction = null;
         decisionSessions.clear("strategy_passive_slot");
         return;
       }
-      if (pendingState.publicScanQueue) {
+      if (getPublicScanQueue()) {
         if (options.forcePublicScanQueueClose) {
-          pendingState.publicScanQueue = null;
+          decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
         } else {
         rocketState.statusNote = "公共牌区扫描：请完成全部星云选择";
         renderStateReadout();
@@ -1561,7 +1563,7 @@
       }
 
       if (pending?.type === "public_scan") {
-        if (pending.queueMode && pendingState.publicScanQueue) {
+        if (pending.queueMode && getPublicScanQueue()) {
           const scanResult = replaceNebulaDataForCurrentPlayer(nebulaId, {
             prefix: `公共牌区扫描 ${cards.getCardLabel(pending.card)}`,
             source: scanSource,
@@ -1573,7 +1575,7 @@
             renderStateReadout();
             return scanResult;
           }
-          const queue = pendingState.publicScanQueue;
+          const queue = getPublicScanQueue();
           if (!Array.isArray(queue.events)) queue.events = [];
           queue.events.push(...(scanResult.events || []));
           queue.currentIndex += 1;
@@ -1586,7 +1588,7 @@
             openPublicScanNebulaPickerForCurrentQueueItem();
             return scanResult;
           }
-          pendingState.publicScanQueue = null;
+          decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
           closeScanTargetPicker();
           scanResult.events = queue.events.slice();
           rocketState.statusNote = scanResult.message;
