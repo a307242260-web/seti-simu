@@ -918,6 +918,22 @@ function createHeadlessEnv() {
         done: adapted.done,
       };
     },
+    runHeuristicPolicyDecision() {
+      const beforeActions = this.legalActions();
+      const beforeObservation = lastObservation || buildTimedObservation(undefined, beforeActions);
+      if (!beforeActions.length) throw new Error("Heuristic opponent 没有合法候选");
+      const selection = heuristicPolicyAdapter.select(beforeObservation, beforeActions, {
+        seed,
+        episodeId: config?.episodeId || null,
+      });
+      const result = this.step(selection.action);
+      if (!result.ok) throw new Error(result.error || "Heuristic opponent 执行失败");
+      return {
+        ...result,
+        policyDecision: selection.decision,
+        policyProvenance: heuristicPolicyAdapter.getProvenance(),
+      };
+    },
     getReplay() {
       return {
         schemaVersion: "seti-rl-replay-v1",
