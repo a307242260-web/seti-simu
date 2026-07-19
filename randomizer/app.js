@@ -269,12 +269,14 @@
   const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
   const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
   const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
+  const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
   const getPendingStrategySlotDecision = () => decisionSessions.peek(STRATEGY_SLOT_DECISION);
   const getPublicScanQueueSession = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
   const getPendingProbeSectorScanDecision = () => decisionSessions.peek(PROBE_SECTOR_SCAN_SESSION);
+  const getPendingProbeLocationRewardDecision = () => decisionSessions.peek(PROBE_LOCATION_REWARD_SESSION);
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
@@ -2738,7 +2740,7 @@
     get pendingPassReserveSelection() { return pendingState.passReserveSelection; },
     get pendingScanTargetAction() { return pendingState.scanTargetAction; },
     get pendingProbeSectorScanAction() { return getPendingProbeSectorScanDecision(); },
-    get pendingProbeLocationRewardAction() { return pendingState.probeLocationRewardAction; },
+    get pendingProbeLocationRewardAction() { return getPendingProbeLocationRewardDecision(); },
     get pendingPublicScanQueue() { return getPublicScanQueueSession(); },
     get pendingHandScanAction() { return pendingState.handScanAction; },
     get pendingAlienTraceAction() { return pendingState.alienTraceAction; },
@@ -3800,7 +3802,7 @@
     pendingState.handScanAction = null;
     pendingState.alienTraceAction = null;
     decisionSessions.clear(LAND_TARGET_DECISION);
-    pendingState.probeLocationRewardAction = null;
+    decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
     pendingState.cardTriggerAction = null;
     pendingState.cardTriggerFreeMove = null;
     pendingState.type1TriggerEvents = [];
@@ -5229,7 +5231,7 @@
     return Boolean(
       pendingState.scanTargetAction
       || getPendingProbeSectorScanDecision()
-      || pendingState.probeLocationRewardAction
+      || getPendingProbeLocationRewardDecision()
       || getPublicScanQueueSession()
       || pendingState.handScanAction
       || pendingState.passReserveSelection

@@ -17,7 +17,6 @@
     passReserveSelection: null,
     passReserveSelectionDismissed: false,
     scanTargetAction: null,
-    probeLocationRewardAction: null,
     scanRunSequence: 0,
     handScanAction: null,
     alienTraceAction: null,
@@ -57,7 +56,7 @@
 
   const GROUPS = Object.freeze({
     common_choice: ["discardAction", "cardSelectionAction", "passReserveSelection", "passReserveSelectionDismissed"],
-    scan: ["scanTargetAction", "probeLocationRewardAction", "scanRunSequence", "handScanAction"],
+    scan: ["scanTargetAction", "scanRunSequence", "handScanAction"],
     alien_trace: ["alienTraceAction", "alienTracePickerState", "alienRevealConfirmation", "turnEndAfterRevealContinuation"],
     card_trigger: ["cardTriggerAction", "cardTriggerFreeMove", "type1TriggerEvents", "cardTaskCompletion"],
     jiuzhe: ["jiuzheCardPlay", "jiuzheOpportunityOpen", "jiuzheOpportunityQueue"],

@@ -23,7 +23,9 @@
     const pendingState = context.pendingState || {};
     const decisionSessions = context.decisionSessions;
     const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
+    const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
     const getProbeSectorScanSession = () => decisionSessions.peek(PROBE_SECTOR_SCAN_SESSION);
+    const getProbeLocationRewardSession = () => decisionSessions.peek(PROBE_LOCATION_REWARD_SESSION);
     const els = context.els || {};
     const rocketState = context.rocketState || {};
     const cardState = context.cardState || {};
@@ -1080,7 +1082,7 @@
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         return finishProbeLocationReward(effect, choices[0]?.rocket);
       }
-      pendingState.probeLocationRewardAction = { ...getPendingOwnerFields(effect), effect, choices };
+      decisionSessions.open(PROBE_LOCATION_REWARD_SESSION, { ...getPendingOwnerFields(effect), effect, choices });
       setOverlayContent(effect.label, "选择一个己方探测器结算小行星位置奖励。");
       openOverlayWithButtons(choices.map(({ rocket }) => {
         const reward = computeProbeLocationReward(effect, rocket);
@@ -1115,11 +1117,11 @@
     }
 
     function handleProbeLocationRewardChoice(rocketId) {
-      const pending = pendingState.probeLocationRewardAction;
+      const pending = getProbeLocationRewardSession();
       if (!pending) return { ok: false, message: "没有待处理的探测器位置奖励" };
       const rocket = (pending.choices || []).find((choice) => Number(choice.rocket.id) === Number(rocketId))?.rocket;
       const effect = pending.effect;
-      pendingState.probeLocationRewardAction = null;
+      decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
       closeScanTargetPicker();
       if (!rocket) return { ok: false, message: "无效探测器" };
       return withPendingOwnerPlayer(pending, () => finishProbeLocationReward(effect, rocket));

@@ -151,6 +151,7 @@ function createHarness(overrides = {}) {
     closeScanTargetPicker() {
       pendingState.scanTargetAction = null;
       decisionSessions.clear("probe_sector_scan");
+      decisionSessions.clear("probe_location_reward");
       els.scanTargetOverlay.hidden = true;
     },
     renderStateReadout() {
@@ -287,13 +288,13 @@ function createHarness(overrides = {}) {
 }
 
 {
-  const { helper, pendingState, calls } = createHarness();
+  const { helper, decisionSessions, calls } = createHarness();
   helper.executeProbeLocationRewardEffect({
     id: "probe-location",
     label: "位置奖励",
     options: { asteroidData: 1, adjacentAsteroidData: 1 },
   });
-  assert.equal(pendingState.probeLocationRewardAction.choices.length, 2);
+  assert.equal(decisionSessions.peek("probe_location_reward").choices.length, 2);
   const result = helper.handleProbeLocationRewardChoice(1);
   assert.equal(result.ok, true);
   assert.equal(calls.history.length, 3);
