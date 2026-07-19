@@ -41,6 +41,11 @@
       resolveDecision: requireFunction(flow, "resolveDecision", `${family} flow`),
       abort: requireFunction(flow, "abort", `${family} flow`),
       interrupt: typeof flow.interrupt === "function" ? flow.interrupt.bind(flow) : null,
+      undoLastEffect: typeof flow.undoLastEffect === "function"
+        ? flow.undoLastEffect.bind(flow)
+        : (typeof flow.runtime?.undoLastEffect === "function"
+          ? flow.runtime.undoLastEffect.bind(flow.runtime)
+          : null),
     });
   }
 
@@ -252,6 +257,14 @@
       return afterRuntimeCall(active.flow.abort(active.session, clone(reason)), false);
     }
 
+    function undo() {
+      if (!active) return fail("EFFECT_HOST_SESSION_REQUIRED", "当前没有可撤销的 Effect Session");
+      if (!active.flow.undoLastEffect) {
+        return fail("EFFECT_HOST_UNDO_UNSUPPORTED", `${active.family} flow 未注册统一撤销端口`);
+      }
+      return afterRuntimeCall(active.flow.undoLastEffect(active.session), false);
+    }
+
     function inspect() {
       const session = active ? active.flow.inspect(active.session) : null;
       return clone({
@@ -279,6 +292,7 @@
       advance,
       drain,
       abort,
+      undo,
       inspect,
       render,
       dispose() {

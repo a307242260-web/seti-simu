@@ -269,6 +269,34 @@ function actionGroup(effects) {
   assert.deepEqual(dispatched.session.journal.rng, [{ cursor: 4, result: "alien-x" }]);
 })();
 
+(function testInspectPublishesUndoBarrierAndEffectProgress() {
+  const { runtime } = createHarness();
+  const dispatched = runtime.dispatchAction(
+    { version: 1, value: 0, legalTechs: [] },
+    { family: "test" },
+    actionGroup([
+      { type: "add", payload: { amount: 1 } },
+      { type: "reveal" },
+      { type: "add", payload: { amount: 2 } },
+    ]),
+  );
+  runtime.advance(dispatched.session);
+  const beforeBarrier = runtime.inspect(dispatched.session);
+  assert.equal(beforeBarrier.controls.canUndo, true);
+  assert.deepEqual(beforeBarrier.progress, {
+    completedEffects: 1,
+    remainingEffects: 2,
+    totalEffects: 3,
+    currentEffectId: beforeBarrier.currentEffect.effectId,
+    currentEffectType: "reveal",
+  });
+  runtime.advance(dispatched.session);
+  const afterBarrier = runtime.inspect(dispatched.session);
+  assert.equal(afterBarrier.controls.canUndo, false);
+  assert.equal(afterBarrier.controls.undoDisabledReason, "不可越过隐藏信息屏障撤销");
+  assert.equal(runtime.undoLastEffect(dispatched.session).code, "EFFECT_UNDO_IRREVERSIBLE_BARRIER");
+})();
+
 (function testConcurrentCommittedVersionConflict() {
   const harness = createHarness();
   const dispatched = harness.runtime.dispatchAction(

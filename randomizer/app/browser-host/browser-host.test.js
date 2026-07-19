@@ -16,6 +16,7 @@ const inputApi = require("./input-adapter");
     "browser-host/projection-adapter.js",
     "browser-host/view-state-store.js",
     "browser-host/input-adapter.js",
+    "browser-host/action-bar.js",
     "browser-host/resident-projection.js",
     "browser-host/resident-renderer.js",
     "browser-host/index.js",
@@ -128,6 +129,8 @@ function createState() {
       return {
         ok: true, sessionId: "session-1", phase: "awaiting_input", baseVersion: 0,
         revision: 4, decision,
+        controls: { canUndo: false, undoDisabledReason: "不可越过隐藏信息屏障撤销", allowQuickActions: true },
+        progress: { completedEffects: 2, remainingEffects: 1, totalEffects: 3, currentEffectType: "choose-tech" },
       };
     },
     observe(_session, viewer) {
@@ -146,6 +149,20 @@ function createState() {
   const adapter = projectionApi.createBrowserProjectionAdapter({
     stateStore: { getSnapshot() { storeReads += 1; return createState(); } },
     sessionRuntime,
+    actionAdapter: {
+      enumerate() {
+        return [
+          {
+            schemaVersion: "seti-standard-action-v1", actionId: "pass:session", family: "pass", phase: "main",
+            actorId: "p1", stateVersion: 0, decisionVersion: 4, summary: "PASS",
+          },
+          {
+            schemaVersion: "seti-standard-action-v1", actionId: "quick_trade:session", family: "quick_trade", phase: "quick",
+            actorId: "p1", stateVersion: 0, decisionVersion: 4, summary: "快速交易", disabledReason: "信用点不足",
+          },
+        ];
+      },
+    },
   });
   const ownerProjection = adapter.projectSession({}, {
     viewer: { viewerId: "viewer-p1", playerId: "p1", role: "player" },
@@ -157,6 +174,11 @@ function createState() {
   assert.equal(ownerProjection.source.sessionRevision, 4);
   assert.equal(ownerProjection.players.p1.resources.credits, 2);
   assert.deepEqual(ownerProjection.decision.choices.map((choice) => choice.choiceId), ["orange-1", "blue-1"]);
+  assert.equal(ownerProjection.controls.actions[0].actionId, "pass:session");
+  assert.equal(ownerProjection.controls.quickActions[0].disabledReason, "信用点不足");
+  assert.equal(ownerProjection.controls.canUndo, false);
+  assert.equal(ownerProjection.controls.undoDisabledReason, "不可越过隐藏信息屏障撤销");
+  assert.equal(ownerProjection.feedback.progress.currentEffectType, "choose-tech");
   const spectator = adapter.projectSession({}, {
     viewer: { viewerId: "viewer-s", playerId: "p2", role: "spectator" },
   });

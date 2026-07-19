@@ -278,6 +278,15 @@
       if (!session) return fail("EFFECT_SESSION_REQUIRED", "缺少 Effect Session");
       const effect = currentEffect(session);
       const decision = session.phase === "awaiting_input" ? getDecisionSnapshot(session, effect) : null;
+      const undoFrame = session.undoFrames[session.undoFrames.length - 1] || null;
+      const undoCrossesBarrier = Boolean(
+        undoFrame
+        && session.irreversibleBarrier
+        && stableSerialize(session.irreversibleBarrier) !== stableSerialize(undoFrame.irreversibleBarrierBefore),
+      );
+      const canUndo = Boolean(undoFrame) && !undoCrossesBarrier
+        && !["effect_running", "committing", "completed", "aborted", "irreversible_locked"].includes(session.phase);
+      const completedEffects = session.journal.effects.length;
       return {
         ok: !session.failure,
         schemaVersion: SCHEMA_VERSION,
@@ -288,6 +297,24 @@
         queueLength: session.queue.length,
         currentEffect: effect ? clone(effect) : null,
         decision,
+        controls: {
+          canUndo,
+          undoDisabledReason: canUndo
+            ? null
+            : (undoCrossesBarrier
+              ? "不可越过隐藏信息屏障撤销"
+              : (undoFrame ? "只能在 Effect 边界撤销" : "没有可撤销的 Effect")),
+          allowQuickActions: Boolean(
+            decision?.ok === true && decision.allowQuickActions
+          ),
+        },
+        progress: {
+          completedEffects,
+          remainingEffects: session.queue.length,
+          totalEffects: completedEffects + session.queue.length,
+          currentEffectId: effect?.effectId || null,
+          currentEffectType: effect?.type || null,
+        },
         irreversibleBarrier: clone(session.irreversibleBarrier),
         failure: clone(session.failure),
       };

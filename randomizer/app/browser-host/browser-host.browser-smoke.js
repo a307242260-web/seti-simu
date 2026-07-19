@@ -72,6 +72,36 @@
     assert(round.textContent === "第 2 轮" && turn.textContent === "第 3 回合", "常驻 round/turn renderer 失败");
     assert(market.querySelector("[data-card-id='public']"), "常驻公共牌 renderer 失败");
     assert(tokens.querySelector("[data-piece-id='r1']"), "常驻太阳系 renderer 失败");
+    const actionBarRoot = document.createElement("nav");
+    document.body.append(actionBarRoot);
+    const actionCalls = [];
+    const actionBarController = SetiBrowserHost.actionBar.createActionBarController({
+      dispatchIntent(intent) { actionCalls.push(intent); return { ok: true }; },
+      dispatchUndo(command) { actionCalls.push({ kind: "undo", command }); return { ok: true }; },
+    });
+    const actionBarRenderer = SetiBrowserHost.actionBar.createActionBarRenderer({
+      document, root: actionBarRoot, controller: actionBarController,
+    });
+    actionBarRenderer.render({
+      projectionId: "chrome-action-bar",
+      source: { kind: "session", sessionId: "chrome-s1", sessionRevision: 9 },
+      controls: {
+        actions: [
+          { schemaVersion: "seti-standard-action-v1", actionId: "launch:chrome", family: "launch", phase: "main", summary: "发射" },
+          { schemaVersion: "seti-standard-action-v1", actionId: "pass:chrome", family: "pass", phase: "main", summary: "PASS" },
+          { schemaVersion: "seti-standard-action-v1", actionId: "end_turn:chrome", family: "end_turn", phase: "control", summary: "结束回合", disabledReason: "效果未完成" },
+        ],
+        quickActions: [{ schemaVersion: "seti-standard-action-v1", actionId: "quick_trade:chrome", family: "quick_trade", phase: "quick", summary: "快速交易" }],
+        canUndo: true,
+      },
+      feedback: { progress: { completedEffects: 1, remainingEffects: 1, totalEffects: 2, currentEffectType: "choose-tech" } },
+    });
+    actionBarRoot.querySelector("[data-action-id='launch:chrome']").click();
+    actionBarRoot.querySelector("[data-action-bar-intent='undo']").click();
+    assert(actionCalls[0].action.actionId === "launch:chrome", "主行动未提交原 Standard Action");
+    assert(actionCalls[1].command.sessionRevision === 9, "撤销未携带 session identity");
+    assert(actionBarRoot.querySelector("[data-action-id='end_turn:chrome']").disabled, "结束回合 disabled reason 丢失");
+    assert(actionBarRoot.querySelector("[data-action-bar-progress]").textContent.includes("1/2"), "Effect 进度映射失败");
     document.body.dataset.result = "passed";
     output.textContent = JSON.stringify({ ok: true, projectionId: projection.projectionId });
   } catch (error) {
