@@ -1861,6 +1861,7 @@
     cardState,
     setupSelectionState,
     pendingState,
+    decisionSessions,
     cards,
     industry,
     finalScoring,
@@ -2770,17 +2771,17 @@
     get pendingLandTargetAction() { return getPendingLandTargetDecision(); },
     get pendingDataPlaceAction() { return getPendingDataPlacementDecision(); },
     get pendingJiuzheCardPlay() { return pendingState.jiuzheCardPlay; },
-    get pendingYichangdianCardGain() { return pendingState.yichangdianCardGain; },
+    get pendingYichangdianCardGain() { return decisionSessions.peek("yichangdian_card_gain"); },
     get pendingYichangdianCornerAction() { return pendingState.yichangdianCornerAction; },
-    get pendingBanrenmaCardGain() { return pendingState.banrenmaCardGain; },
+    get pendingBanrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
     get pendingBanrenmaOpportunity() { return pendingState.banrenmaOpportunity; },
-    get pendingChongCardGain() { return pendingState.chongCardGain; },
+    get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
     get pendingChongFossilChoice() { return pendingState.chongFossilChoice; },
-    get pendingAmibaCardGain() { return pendingState.amibaCardGain; },
+    get pendingAmibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
     get pendingAmibaSymbolChoice() { return pendingState.amibaSymbolChoice; },
     get pendingAmibaTraceRemoval() { return pendingState.amibaTraceRemoval; },
-    get pendingAomomoCardGain() { return pendingState.aomomoCardGain; },
-    get pendingRunezuCardGain() { return pendingState.runezuCardGain; },
+    get pendingAomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
+    get pendingRunezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
     get pendingRunezuSymbolBranch() { return pendingState.runezuSymbolBranch; },
     get pendingRunezuFaceSymbolPlacement() { return pendingState.runezuFaceSymbolPlacement; },
     get pendingCardTriggerAction() { return getPendingCardTriggerAction(); },
@@ -3835,19 +3836,19 @@
     pendingState.jiuzheCardPlay = null;
     pendingState.jiuzheOpportunityOpen = false;
     pendingState.jiuzheOpportunityQueue = [];
-    pendingState.yichangdianCardGain = null;
+    decisionSessions.clear("yichangdian_card_gain");
     pendingState.yichangdianCornerAction = null;
-    pendingState.banrenmaCardGain = null;
+    decisionSessions.clear("banrenma_card_gain");
     pendingState.banrenmaOpportunity = null;
     pendingState.banrenmaOpportunityQueue = [];
-    pendingState.chongCardGain = null;
+    decisionSessions.clear("chong_card_gain");
     pendingState.chongFossilChoice = null;
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
-    pendingState.amibaCardGain = null;
+    decisionSessions.clear("amiba_card_gain");
     pendingState.amibaSymbolChoice = null;
     pendingState.amibaTraceRemoval = null;
-    pendingState.aomomoCardGain = null;
-    pendingState.runezuCardGain = null;
+    decisionSessions.clear("aomomo_card_gain");
+    decisionSessions.clear("runezu_card_gain");
     pendingState.runezuSymbolBranch = null;
     pendingState.runezuFaceSymbolPlacement = null;
     pendingState.alienTracePickerState = null;
@@ -5264,18 +5265,18 @@
       || getPendingCardTriggerAction()
       || getPendingCardTaskCompletion()
       || (pendingState.jiuzheCardPlay && pendingState.jiuzheCardPlay.reason !== "view")
-      || pendingState.yichangdianCardGain
+      || decisionSessions.peek("yichangdian_card_gain")
       || pendingState.yichangdianCornerAction
-      || pendingState.banrenmaCardGain
+      || decisionSessions.peek("banrenma_card_gain")
       || pendingState.banrenmaOpportunity
       || getPendingChongTaskCompletion()
-      || pendingState.chongCardGain
+      || decisionSessions.peek("chong_card_gain")
       || pendingState.chongFossilChoice
-      || pendingState.amibaCardGain
+      || decisionSessions.peek("amiba_card_gain")
       || pendingState.amibaSymbolChoice
       || pendingState.amibaTraceRemoval
-      || pendingState.aomomoCardGain
-      || pendingState.runezuCardGain
+      || decisionSessions.peek("aomomo_card_gain")
+      || decisionSessions.peek("runezu_card_gain")
       || pendingState.runezuSymbolBranch
       || pendingState.runezuFaceSymbolPlacement
       || getPendingStrategySlotDecision()
@@ -5563,14 +5564,14 @@
     decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
     pendingState.yichangdianCornerAction = null;
-    pendingState.chongCardGain = null;
+    decisionSessions.clear("chong_card_gain");
     pendingState.chongFossilChoice = null;
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
-    pendingState.amibaCardGain = null;
+    decisionSessions.clear("amiba_card_gain");
     pendingState.amibaSymbolChoice = null;
     pendingState.amibaTraceRemoval = null;
-    pendingState.aomomoCardGain = null;
-    pendingState.runezuCardGain = null;
+    decisionSessions.clear("aomomo_card_gain");
+    decisionSessions.clear("runezu_card_gain");
     pendingState.runezuSymbolBranch = null;
     pendingState.runezuFaceSymbolPlacement = null;
     decisionSessions.clear(STRATEGY_SLOT_DECISION);
@@ -10918,17 +10919,17 @@
   const appEventState = {
     get pendingChongTaskCompletion() { return getPendingChongTaskCompletion(); },
     get pendingChongFossilChoice() { return pendingState.chongFossilChoice; },
-    get pendingChongCardGain() { return pendingState.chongCardGain; },
+    get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
     get pendingAmibaTraceRemoval() { return pendingState.amibaTraceRemoval; },
     get pendingAmibaSymbolChoice() { return pendingState.amibaSymbolChoice; },
-    get pendingAmibaCardGain() { return pendingState.amibaCardGain; },
-    get pendingAomomoCardGain() { return pendingState.aomomoCardGain; },
+    get pendingAmibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
+    get pendingAomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
     get pendingRunezuFaceSymbolPlacement() { return pendingState.runezuFaceSymbolPlacement; },
     get pendingRunezuSymbolBranch() { return pendingState.runezuSymbolBranch; },
-    get pendingRunezuCardGain() { return pendingState.runezuCardGain; },
-    get pendingBanrenmaCardGain() { return pendingState.banrenmaCardGain; },
+    get pendingRunezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
+    get pendingBanrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
     get pendingBanrenmaOpportunity() { return pendingState.banrenmaOpportunity; },
-    get pendingYichangdianCardGain() { return pendingState.yichangdianCardGain; },
+    get pendingYichangdianCardGain() { return decisionSessions.peek("yichangdian_card_gain"); },
     get pendingJiuzheCardPlay() { return pendingState.jiuzheCardPlay; },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get alienTracePickerState() { return pendingState.alienTracePickerState; },

@@ -1313,11 +1313,11 @@
       decisionSessions.clear("card_trigger_action");
       decisionSessions.clear("card_task_completion");
       decisionSessions.clear("chong_task_completion");
-      pendingState.amibaCardGain = null;
+      decisionSessions.clear("amiba_card_gain");
       pendingState.amibaSymbolChoice = null;
       pendingState.amibaTraceRemoval = null;
-      pendingState.aomomoCardGain = null;
-      pendingState.runezuCardGain = null;
+      decisionSessions.clear("aomomo_card_gain");
+      decisionSessions.clear("runezu_card_gain");
       pendingState.runezuSymbolBranch = null;
       pendingState.runezuFaceSymbolPlacement = null;
       decisionSessions.clear("strategy_passive_slot");

@@ -139,6 +139,24 @@
     } = context;
     const getCardTaskCompletion = () => decisionSessions.peek("card_task_completion");
     const getChongTaskCompletion = () => decisionSessions.peek("chong_task_completion");
+    const replaceDecisionSession = (kind, session) => {
+      if (session == null) return decisionSessions.clear(kind);
+      return decisionSessions.open(kind, session);
+    };
+    const alienCardGainSessions = {
+      get runezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
+      set runezuCardGain(session) { replaceDecisionSession("runezu_card_gain", session); },
+      get amibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
+      set amibaCardGain(session) { replaceDecisionSession("amiba_card_gain", session); },
+      get aomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
+      set aomomoCardGain(session) { replaceDecisionSession("aomomo_card_gain", session); },
+      get yichangdianCardGain() { return decisionSessions.peek("yichangdian_card_gain"); },
+      set yichangdianCardGain(session) { replaceDecisionSession("yichangdian_card_gain", session); },
+      get banrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
+      set banrenmaCardGain(session) { replaceDecisionSession("banrenma_card_gain", session); },
+      get chongCardGain() { return decisionSessions.peek("chong_card_gain"); },
+      set chongCardGain(session) { replaceDecisionSession("chong_card_gain", session); },
+    };
 
     function addFangzhouUnlockedCardToHand(player, handCard) {
       if (!player || !handCard) return false;
@@ -1427,7 +1445,7 @@ function claimRunezuSourceSymbolWithHistory(sourceType, sourceId, player, histor
   }
 
 function closeRunezuCardGainDialog() {
-    pendingState.runezuCardGain = null;
+    alienCardGainSessions.runezuCardGain = null;
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -1437,7 +1455,7 @@ function openRunezuCardGainDialog(options = {}) {
     }
     const state = runezu.ensureRunezuState(alienGameState);
     if (state.displayedCardIndex == null) runezu.drawDisplayedCardIndex?.(alienGameState);
-    pendingState.runezuCardGain = {
+    alienCardGainSessions.runezuCardGain = {
       playerId: options.player?.id || getCurrentPlayer()?.id || null,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "符文族外星人牌",
@@ -1480,7 +1498,7 @@ function openRunezuCardGainDialog(options = {}) {
   }
 
 function finishRunezuCardGain(message, result = null) {
-    const pending = pendingState.runezuCardGain;
+    const pending = alienCardGainSessions.runezuCardGain;
     const irreversible = getAlienCardGainIrreversible(result);
     closeRunezuCardGainDialog();
     if (pending?.fromEffectFlow && getCurrentActionEffect()) {
@@ -1540,8 +1558,8 @@ function finishRunezuCardGain(message, result = null) {
   }
 
 function handleRunezuCardGainChoice(choice) {
-    if (!pendingState.runezuCardGain) return { ok: false, message: "没有符文族牌获取流程" };
-    const pending = pendingState.runezuCardGain;
+    if (!alienCardGainSessions.runezuCardGain) return { ok: false, message: "没有符文族牌获取流程" };
+    const pending = alienCardGainSessions.runezuCardGain;
     const player = getPlayerById(pending.playerId) || getCurrentPlayer();
     if (!player) return { ok: false, message: "找不到符文族牌获取玩家" };
     if (choice === "cancel") {
@@ -1559,7 +1577,7 @@ function handleRunezuCardGainChoice(choice) {
   }
 
 function closeAmibaCardGainDialog() {
-    pendingState.amibaCardGain = null;
+    alienCardGainSessions.amibaCardGain = null;
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -1569,7 +1587,7 @@ function openAmibaCardGainDialog(options = {}) {
     }
     const state = amiba.ensureAmibaState(alienGameState);
     if (state.displayedCardIndex == null) amiba.drawDisplayedCardIndex(alienGameState);
-    pendingState.amibaCardGain = {
+    alienCardGainSessions.amibaCardGain = {
       playerId: options.player?.id || getCurrentPlayer()?.id || null,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "阿米巴外星人牌",
@@ -1612,7 +1630,7 @@ function openAmibaCardGainDialog(options = {}) {
   }
 
 function finishAmibaCardGain(message, result = null) {
-    const pending = pendingState.amibaCardGain;
+    const pending = alienCardGainSessions.amibaCardGain;
     const irreversible = getAlienCardGainIrreversible(result);
     closeAmibaCardGainDialog();
     if (pending?.fromEffectFlow && getCurrentActionEffect()) {
@@ -1672,8 +1690,8 @@ function finishAmibaCardGain(message, result = null) {
   }
 
 function handleAmibaCardGainChoice(choice) {
-    if (!pendingState.amibaCardGain) return { ok: false, message: "没有阿米巴牌获取流程" };
-    const pending = pendingState.amibaCardGain;
+    if (!alienCardGainSessions.amibaCardGain) return { ok: false, message: "没有阿米巴牌获取流程" };
+    const pending = alienCardGainSessions.amibaCardGain;
     const player = getPlayerById(pending.playerId) || getCurrentPlayer();
     if (!player) return { ok: false, message: "找不到阿米巴牌获取玩家" };
     if (choice === "cancel") {
@@ -1691,7 +1709,7 @@ function handleAmibaCardGainChoice(choice) {
   }
 
 function closeAomomoCardGainDialog() {
-    pendingState.aomomoCardGain = null;
+    alienCardGainSessions.aomomoCardGain = null;
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -1701,7 +1719,7 @@ function openAomomoCardGainDialog(options = {}) {
     }
     const state = aomomo.ensureAomomoState(alienGameState);
     if (state.displayedCardIndex == null) aomomo.drawDisplayedCardIndex(alienGameState);
-    pendingState.aomomoCardGain = {
+    alienCardGainSessions.aomomoCardGain = {
       playerId: options.player?.id || getCurrentPlayer()?.id || null,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "奥陌陌外星人牌",
@@ -1745,7 +1763,7 @@ function openAomomoCardGainDialog(options = {}) {
   }
 
 function finishAomomoCardGain(message, result = null) {
-    const pending = pendingState.aomomoCardGain;
+    const pending = alienCardGainSessions.aomomoCardGain;
     const irreversible = getAlienCardGainIrreversible(result);
     closeAomomoCardGainDialog();
     if (pending?.fromEffectFlow && getCurrentActionEffect()) {
@@ -1809,8 +1827,8 @@ function finishAomomoCardGain(message, result = null) {
   }
 
 function handleAomomoCardGainChoice(choice) {
-    if (!pendingState.aomomoCardGain) return { ok: false, message: "没有奥陌陌牌获取流程" };
-    const pending = pendingState.aomomoCardGain;
+    if (!alienCardGainSessions.aomomoCardGain) return { ok: false, message: "没有奥陌陌牌获取流程" };
+    const pending = alienCardGainSessions.aomomoCardGain;
     const player = getPlayerById(pending.playerId) || getCurrentPlayer();
     if (!player) return { ok: false, message: "找不到奥陌陌牌获取玩家" };
     if (choice === "cancel") {
@@ -2116,7 +2134,7 @@ function applyChongFossilRewardToPlayer(player, fossilId, label = "虫族化石"
   }
 
 function closeYichangdianCardGainDialog() {
-    pendingState.yichangdianCardGain = null;
+    alienCardGainSessions.yichangdianCardGain = null;
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -2126,7 +2144,7 @@ function openYichangdianCardGainDialog(options = {}) {
     }
     const player = options.player || getCurrentPlayer();
     if (!player) return { ok: false, message: "没有当前玩家" };
-    pendingState.yichangdianCardGain = {
+    alienCardGainSessions.yichangdianCardGain = {
       playerId: player.id,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "异常点外星人牌",
@@ -2172,7 +2190,7 @@ function openYichangdianCardGainDialog(options = {}) {
   }
 
 function finishYichangdianCardGain(message, result = null) {
-    const pending = pendingState.yichangdianCardGain;
+    const pending = alienCardGainSessions.yichangdianCardGain;
     const irreversible = getAlienCardGainIrreversible(result);
     closeYichangdianCardGainDialog();
     rocketState.statusNote = message;
@@ -2197,8 +2215,8 @@ function finishYichangdianCardGain(message, result = null) {
   }
 
 function handleYichangdianCardGainChoice(choice) {
-    if (!pendingState.yichangdianCardGain) return { ok: false, message: "没有异常点牌获取流程" };
-    const pending = pendingState.yichangdianCardGain;
+    if (!alienCardGainSessions.yichangdianCardGain) return { ok: false, message: "没有异常点牌获取流程" };
+    const pending = alienCardGainSessions.yichangdianCardGain;
     const player = getPlayerById(pending.playerId) || getCurrentPlayer();
     if (!player) return { ok: false, message: "找不到异常点牌玩家" };
 
@@ -2241,7 +2259,7 @@ function handleYichangdianCardGainChoice(choice) {
   }
 
 function closeBanrenmaCardGainDialog() {
-    pendingState.banrenmaCardGain = null;
+    alienCardGainSessions.banrenmaCardGain = null;
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -2251,7 +2269,7 @@ function openBanrenmaCardGainDialog(options = {}) {
     }
     const player = options.player || getCurrentPlayer();
     if (!player) return { ok: false, message: "没有当前玩家" };
-    pendingState.banrenmaCardGain = {
+    alienCardGainSessions.banrenmaCardGain = {
       playerId: player.id,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "半人马外星人牌",
@@ -2294,7 +2312,7 @@ function openBanrenmaCardGainDialog(options = {}) {
   }
 
 function finishBanrenmaCardGain(message, result = null) {
-    const pending = pendingState.banrenmaCardGain;
+    const pending = alienCardGainSessions.banrenmaCardGain;
     const irreversible = getAlienCardGainIrreversible(result);
     const baseResult = pending?.baseResult || null;
     const combinedMessage = [baseResult?.message, message].filter(Boolean).join("；") || message;
@@ -2322,8 +2340,8 @@ function finishBanrenmaCardGain(message, result = null) {
   }
 
 function handleBanrenmaCardGainChoice(choice) {
-    if (!pendingState.banrenmaCardGain) return { ok: false, message: "没有半人马牌获取流程" };
-    const pending = pendingState.banrenmaCardGain;
+    if (!alienCardGainSessions.banrenmaCardGain) return { ok: false, message: "没有半人马牌获取流程" };
+    const pending = alienCardGainSessions.banrenmaCardGain;
     const player = getPlayerById(pending.playerId) || getCurrentPlayer();
     if (!player) return { ok: false, message: "找不到半人马牌玩家" };
 
@@ -2366,7 +2384,7 @@ function handleBanrenmaCardGainChoice(choice) {
   }
 
 function closeChongCardGainDialog() {
-    pendingState.chongCardGain = null;
+    alienCardGainSessions.chongCardGain = null;
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -2376,7 +2394,7 @@ function openChongCardGainDialog(options = {}) {
     }
     const state = chong.ensureChongState(alienGameState);
     if (state.displayedCardIndex == null) chong.drawDisplayedCardIndex(alienGameState);
-    pendingState.chongCardGain = {
+    alienCardGainSessions.chongCardGain = {
       playerId: options.player?.id || getCurrentPlayer()?.id || null,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "虫族外星人牌",
@@ -2419,7 +2437,7 @@ function openChongCardGainDialog(options = {}) {
   }
 
 function finishChongCardGain(message, result = null) {
-    const pending = pendingState.chongCardGain;
+    const pending = alienCardGainSessions.chongCardGain;
     const irreversible = getAlienCardGainIrreversible(result);
     closeChongCardGainDialog();
     if (pending?.fromEffectFlow && getCurrentActionEffect()) {
@@ -2477,8 +2495,8 @@ function finishChongCardGain(message, result = null) {
   }
 
 function handleChongCardGainChoice(choice) {
-    if (!pendingState.chongCardGain) return { ok: false, message: "没有虫族牌获取流程" };
-    const pending = pendingState.chongCardGain;
+    if (!alienCardGainSessions.chongCardGain) return { ok: false, message: "没有虫族牌获取流程" };
+    const pending = alienCardGainSessions.chongCardGain;
     const player = getPlayerById(pending.playerId) || getCurrentPlayer();
     if (!player) return { ok: false, message: "找不到虫族牌获取玩家" };
     if (choice === "cancel") {
@@ -3313,18 +3331,18 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
       pendingState.jiuzheCardPlay?.reason === "view"
         ? null
         : { pending: pendingState.jiuzheCardPlay, label: "九折牌" },
-      pendingState.yichangdianCardGain ? { pending: pendingState.yichangdianCardGain, label: "异常点外星人牌" } : null,
+      alienCardGainSessions.yichangdianCardGain ? { pending: alienCardGainSessions.yichangdianCardGain, label: "异常点外星人牌" } : null,
       pendingState.yichangdianCornerAction ? { pending: pendingState.yichangdianCornerAction, label: "异常点角标" } : null,
-      pendingState.banrenmaCardGain ? { pending: pendingState.banrenmaCardGain, label: "半人马外星人牌" } : null,
+      alienCardGainSessions.banrenmaCardGain ? { pending: alienCardGainSessions.banrenmaCardGain, label: "半人马外星人牌" } : null,
       pendingState.banrenmaOpportunity ? { pending: pendingState.banrenmaOpportunity, label: "半人马奖励" } : null,
-      pendingState.chongCardGain ? { pending: pendingState.chongCardGain, label: "虫族外星人牌" } : null,
+      alienCardGainSessions.chongCardGain ? { pending: alienCardGainSessions.chongCardGain, label: "虫族外星人牌" } : null,
       pendingState.chongFossilChoice ? { pending: pendingState.chongFossilChoice, label: "虫族化石" } : null,
       getChongTaskCompletion() ? { pending: getChongTaskCompletion(), label: "虫族任务" } : null,
-      pendingState.amibaCardGain ? { pending: pendingState.amibaCardGain, label: "阿米巴外星人牌" } : null,
+      alienCardGainSessions.amibaCardGain ? { pending: alienCardGainSessions.amibaCardGain, label: "阿米巴外星人牌" } : null,
       pendingState.amibaSymbolChoice ? { pending: pendingState.amibaSymbolChoice, label: "阿米巴 symbol" } : null,
       pendingState.amibaTraceRemoval ? { pending: pendingState.amibaTraceRemoval, label: "阿米巴痕迹移除" } : null,
-      pendingState.aomomoCardGain ? { pending: pendingState.aomomoCardGain, label: "奥陌陌外星人牌" } : null,
-      pendingState.runezuCardGain ? { pending: pendingState.runezuCardGain, label: "符文族外星人牌" } : null,
+      alienCardGainSessions.aomomoCardGain ? { pending: alienCardGainSessions.aomomoCardGain, label: "奥陌陌外星人牌" } : null,
+      alienCardGainSessions.runezuCardGain ? { pending: alienCardGainSessions.runezuCardGain, label: "符文族外星人牌" } : null,
       pendingState.runezuFaceSymbolPlacement ? { pending: pendingState.runezuFaceSymbolPlacement, label: "符文族黑圈" } : null,
       pendingState.runezuSymbolBranch ? { pending: pendingState.runezuSymbolBranch, label: "符文族符文奖励" } : null,
     ];
@@ -3559,7 +3577,7 @@ function openBanrenmaOpportunityDialog(player, opportunity) {
   }
 
 function maybeOpenQueuedBanrenmaOpportunity() {
-    if (pendingState.banrenmaOpportunity || pendingState.banrenmaCardGain) return null;
+    if (pendingState.banrenmaOpportunity || alienCardGainSessions.banrenmaCardGain) return null;
     if (isActionEffectFlowActive()) return null;
     if (hasActivePendingSubFlow()) return null;
     if (els.scanTargetOverlay && !els.scanTargetOverlay.hidden) return null;
@@ -3579,7 +3597,7 @@ function maybeOpenQueuedBanrenmaOpportunity() {
 
 function openBanrenmaReadyOpportunityForPlayer(player, options = {}) {
     if (!banrenma || !player) return null;
-    if (pendingState.banrenmaOpportunity || pendingState.banrenmaCardGain) return null;
+    if (pendingState.banrenmaOpportunity || alienCardGainSessions.banrenmaCardGain) return null;
     if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return null;
     const panelMark = banrenma.getPendingPanelMark(alienGameState, player);
     if (panelMark && banrenma.getAvailableBonusPositions(alienGameState).length) {

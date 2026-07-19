@@ -83,6 +83,7 @@
       cardState,
       setupSelectionState,
       pendingState,
+      decisionSessions,
       cards,
       industry,
       finalScoring,
@@ -389,11 +390,11 @@
       pendingState.jiuzheCardPlay = null;
       pendingState.jiuzheOpportunityOpen = false;
       pendingState.jiuzheOpportunityQueue = [];
-      pendingState.banrenmaCardGain = null;
+      decisionSessions?.clear?.("banrenma_card_gain");
       pendingState.banrenmaOpportunity = null;
       pendingState.banrenmaOpportunityQueue = [];
-      pendingState.aomomoCardGain = null;
-      pendingState.runezuCardGain = null;
+      decisionSessions?.clear?.("aomomo_card_gain");
+      decisionSessions?.clear?.("runezu_card_gain");
       pendingState.runezuSymbolBranch = null;
       pendingState.runezuFaceSymbolPlacement = null;
       industry?.resetAllIndustryActionMarks?.(playerState.players);

@@ -400,7 +400,7 @@
       pendingState.alienRevealConfirmation
       || pendingState.jiuzheCardPlay
       || pendingState.banrenmaOpportunity
-      || pendingState.banrenmaCardGain
+      || decisionSessions.peek("banrenma_card_gain")
       || pendingState.alienTraceAction
       || pendingState.alienTracePickerState
       || isActionEffectFlowActive()
