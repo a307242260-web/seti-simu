@@ -730,3 +730,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: 修订 HTML parse PASS；`turn-flow.test.js`、`start-screen.test.js` 通过；系统 Chrome 1440×3200 与 430×4200 渲染检查通过。
 - observed_outcome: 修订版已能用同一条 end_turn 链路说明 Effect Session 与 Lifecycle Rules 的调用关系，并显式列出 8 项缺口及归属；等待 owner 对澄清度反馈。
 - keep_or_revise: 保持 candidate；观察后续 2 次重叠架构讨论后决定是否形成 exploratory research 固定模板。
+
+- date: 2026-07-19
+- source: SETI-34, SETI-86, SETI-70
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: 领航及在 SETI 仓库执行 Node 回归的 coding agent
+- target_component: 仓库默认 Node 测试执行入口
+- target_file: tools/run_node_tests.js；AGENTS.md；docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 把易受 zsh/PowerShell 列表拆分语义影响的手写测试循环替换为跨 shell Node runner，统一递归发现、排序、逐文件执行、失败汇总和测试总数输出。
+- applied_change: 新增 `tools/run_node_tests.js`，支持 `--list`、`--match`、`--exclude`；根 `AGENTS.md` 默认回归改为 `node tools/run_node_tests.js`；既有 coding candidate 升级为 promote。
+- expected_effect: 后续全量回归不会把测试清单当成单个模块，也不会在 0 项测试时误报绿灯；工作树与隔离快照使用同一入口。
+- evaluation_window: 后续 5 个 coding issue 的工作树与隔离快照全量回归
+- success_signal: runner 每次输出 `total>0`，测试逐文件执行且失败文件清晰列出；不再出现 shell 列表拆分导致的 `MODULE_NOT_FOUND` 或 0 项假通过。
+- rollback_condition: 若仓库引入 package manager/test framework 提供等价的跨平台 discovery、逐文件隔离和汇总，则删除自建 runner 并把 AGENTS.md 切换到标准命令；若 runner 的全量输出过多，则只收敛日志，不回滚非零计数与失败语义。
+- risk: `spawnSync` 串行执行会保留现有耗时且输出较多；本次不并行化，避免共享全局/端口测试互相污染。
+- evidence_before: SETI-34 首轮把 100 余路径拼成单参数；SETI-86 对 143 个路径复现；SETI-70 首轮 zsh 数组写法输出 `passed=0 failed=0 total=0`，实际逐行执行后为 148 项且发现既有 baseline 失败。
+- owner_or_agent_decision: 领航依据既有 candidate 的“第 3 次复现即评估统一 runner”窗口与本 issue harness-evolve closeout 自决 promote。
+- applied_at: 2026-07-19
+- verification: `node tools/run_node_tests.js --list`；`node tools/run_node_tests.js --match legacy-flow-inventory`；隔离快照默认 runner，且与手写逐行执行的测试总数一致。
+- observed_outcome: 待后续 5 个 coding issue 观察；本 issue 已由 runner 机械确认新增 inventory 测试被发现并执行。
+- keep_or_revise: 保留并进入 5 个 issue 观察窗口；出现漏发现、错误过滤或进程污染时修订，标准框架可替代时回滚自建实现。

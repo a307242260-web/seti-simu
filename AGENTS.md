@@ -116,8 +116,10 @@
 
 ```powershell
 node --check randomizer/app.js
-$tests = rg --files randomizer | Where-Object { $_ -match '\.test\.js$' } | Sort-Object; foreach ($test in $tests) { node $test; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } }
+node tools/run_node_tests.js
 ```
+
+`tools/run_node_tests.js` 跨 shell 逐文件执行测试并输出汇总；可用 `--list`、`--match <路径子串>`、`--exclude <路径子串>` 做清单与定向验证，避免 zsh/PowerShell 的列表拆分差异。
 
 需要额外检查能力/历史基础语法时：
 

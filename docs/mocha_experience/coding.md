@@ -71,12 +71,12 @@
 - decision: 当前证据来自同一次 AI controller 总收口，先记录为 coding candidate；不修改 agent prompt、loop template、watcher 或 issue-workflow，后续 3 次显式 context runtime 装配观察是否复现。
 
 - date: 2026-07-18
-- source_issue: SETI-34, SETI-86
-- observation: 在 zsh 中用 `tests=$(...)` 后直接 `for test in $tests` 不会按换行自动拆分文件列表，会把全部测试路径当成一个参数；全量 Node 回归应使用 `rg ... | while IFS= read -r test`（或 zsh 数组）逐文件执行。
-- evidence: SETI-34 首轮全量命令把 100 余个 `.test.js` 路径拼成一个模块名并报 `MODULE_NOT_FOUND`；SETI-86 再次用同形 `tests=$(...)` + `for` 把 143 个路径作为单个模块参数。两次都改为 `while IFS= read -r test` 后逐文件执行并以 exit 0 完成。
-- promote_to: none
-- promotion_status: candidate
-- decision: 已累计两次独立 coding issue 证据，仍保持 candidate；不修改 agent prompt、loop template 或 watcher，再出现 1 次同类误用时评估收口为仓库统一测试脚本。
+- source_issue: SETI-34, SETI-86, SETI-70
+- observation: 在 zsh 中手写命令替换/数组循环容易把全部测试路径拼成一个参数，或像 SETI-70 首轮那样得到空数组却输出 `total=0`；全量 Node 回归应统一由跨 shell runner 逐文件执行并输出非零总数汇总。
+- evidence: SETI-34 将 100 余个路径拼成单个 `MODULE_NOT_FOUND` 参数；SETI-86 对 143 个路径复现；SETI-70 首轮 zsh 数组写法未执行任何测试并输出 `passed=0 failed=0 total=0`，改用逐行循环后实际发现 148 项及既有 baseline 失败。三次独立 issue 达到预设升级窗口。
+- promote_to: loop_template
+- promotion_status: promote
+- decision: 新增 `tools/run_node_tests.js`，并把根 `AGENTS.md` 默认全量验证切换到该 runner；保留 `--list/--match/--exclude`，不修改 watcher 或 issue-workflow。
 
 - date: 2026-07-18
 - source_issue: SETI-31
