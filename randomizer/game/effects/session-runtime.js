@@ -12,6 +12,7 @@
   "use strict";
 
   const SCHEMA_VERSION = "seti-effect-session-v1";
+  const CHECKPOINT_SCHEMA_VERSION = "seti-effect-session-checkpoint-v1";
   const INTERNAL_RESUME_EFFECT = "@@seti/resume-interrupted-decision";
   const TERMINAL_PHASES = new Set(["completed", "aborted", "irreversible_locked"]);
   const SPAWN_PRIORITY = Object.freeze({ direct: 0, trigger: 1, deferred: 2 });
@@ -165,6 +166,7 @@
           rng: [],
           history: [],
           logs: [],
+          replay: [],
         },
         failure: null,
         irreversibleBarrier: null,
@@ -172,7 +174,52 @@
         nextEffectSequence: 0,
         nextGroupSequence: 0,
         interruptContext: null,
+        undoFrames: [],
       };
+    }
+
+    function appendReplayStep(session, kind, payload) {
+      const cursor = session.journal.replay.length;
+      session.journal.replay.push({
+        cursor,
+        kind,
+        confirmed: true,
+        ...clone(payload),
+      });
+      return cursor + 1;
+    }
+
+    function captureUndoFrame(session, effect) {
+      const journalLengths = {};
+      for (const [key, entries] of Object.entries(session.journal)) {
+        if (Array.isArray(entries)) journalLengths[key] = entries.length;
+      }
+      return {
+        effectId: effect.effectId,
+        stateBefore: cloneState(session.workingState),
+        queueBefore: clone(session.queue),
+        revisionBefore: session.revision,
+        phaseBefore: session.phase,
+        journalLengths,
+        irreversibleBarrierBefore: clone(session.irreversibleBarrier),
+        interruptContextBefore: clone(session.interruptContext),
+        nextEffectSequenceBefore: session.nextEffectSequence,
+        nextGroupSequenceBefore: session.nextGroupSequence,
+      };
+    }
+
+    function restoreUndoFrame(session, frame) {
+      session.workingState = cloneState(frame.stateBefore);
+      session.queue = clone(frame.queueBefore);
+      session.revision = frame.revisionBefore;
+      session.phase = frame.phaseBefore;
+      session.irreversibleBarrier = clone(frame.irreversibleBarrierBefore);
+      session.interruptContext = clone(frame.interruptContextBefore);
+      session.nextEffectSequence = frame.nextEffectSequenceBefore;
+      session.nextGroupSequence = frame.nextGroupSequenceBefore;
+      for (const [key, length] of Object.entries(frame.journalLengths)) {
+        if (Array.isArray(session.journal[key])) session.journal[key].length = length;
+      }
     }
 
     function isActive(session) {
@@ -326,12 +373,17 @@
         quick: false,
         revision: session.revision,
       });
+      appendReplayStep(session, "action", {
+        action,
+        groupId: group.groupId,
+        groupKind: "action",
+      });
       session.phase = "action_accepted";
       if (session.queue.length === 0) return commit(session);
       return { ok: true, session, group };
     }
 
-    function applyResult(session, effect, result) {
+    function applyResult(session, effect, result, undoFrame = null) {
       if (!result || result.ok !== true || !("nextState" in result)) {
         return abort(session, {
           code: result?.code || "EFFECT_EXECUTION_FAILED",
@@ -379,6 +431,7 @@
         type: effect.type,
         revision: session.revision,
       });
+      if (undoFrame) session.undoFrames.push(undoFrame);
       return { ok: true, session, effect, result };
     }
 
@@ -426,6 +479,7 @@
           type: effect.type,
         });
       }
+      const undoFrame = captureUndoFrame(session, effect);
       session.phase = session.interruptContext ? "interrupting" : "effect_running";
       let result;
       try {
@@ -438,7 +492,7 @@
           type: effect.type,
         });
       }
-      const applied = applyResult(session, effect, result);
+      const applied = applyResult(session, effect, result, undoFrame);
       if (!applied.ok) return applied;
       if (session.queue.length === 0) return commit(session);
       session.phase = session.interruptContext ? "interrupting" : "draining";
@@ -485,6 +539,7 @@
       if (!legalChoice) {
         return fail("EFFECT_DECISION_NOT_LEGAL", "提交项不在最新 legal choices 中", { decision: snapshot });
       }
+      const undoFrame = captureUndoFrame(session, effect);
       let result;
       try {
         result = executor.resolveDecision(cloneState(session.workingState), effect, clone(legalChoice));
@@ -494,14 +549,20 @@
           message: error?.message || `${effect.type} decision resolver 抛出异常`,
         });
       }
+      const applied = applyResult(session, effect, result, undoFrame);
+      if (!applied.ok) return applied;
       session.journal.decisions.push({
         decisionId: snapshot.decisionId,
         decisionVersion: snapshot.decisionVersion,
         ownerId: snapshot.ownerId,
         choice: clone(legalChoice),
       });
-      const applied = applyResult(session, effect, result);
-      if (!applied.ok) return applied;
+      appendReplayStep(session, "decision", {
+        decisionId: snapshot.decisionId,
+        decisionVersion: snapshot.decisionVersion,
+        ownerId: snapshot.ownerId,
+        choice: legalChoice,
+      });
       if (session.queue.length === 0) return commit(session);
       session.phase = "draining";
       return applied;
@@ -564,8 +625,96 @@
         quick: true,
         revision: session.revision,
       });
+      appendReplayStep(session, "action", {
+        action,
+        groupId: group.groupId,
+        groupKind: "quick",
+      });
       session.phase = "interrupting";
       return { ok: true, session, group };
+    }
+
+    function undoLastEffect(session) {
+      if (!isActive(session)) {
+        return fail("EFFECT_SESSION_NOT_ACTIVE", "Effect Session 不在可撤销状态");
+      }
+      if (["effect_running", "committing"].includes(session.phase)) {
+        return fail("EFFECT_UNDO_NOT_AT_BOUNDARY", "只能在 Effect 边界撤销");
+      }
+      const frame = session.undoFrames[session.undoFrames.length - 1];
+      if (!frame) return fail("EFFECT_UNDO_EMPTY", "没有可撤销的 Effect");
+      if (session.irreversibleBarrier
+        && stableSerialize(session.irreversibleBarrier) !== stableSerialize(frame.irreversibleBarrierBefore)) {
+        return fail("EFFECT_UNDO_IRREVERSIBLE_BARRIER", "不可越过隐藏信息屏障撤销", {
+          irreversibleBarrier: clone(session.irreversibleBarrier),
+        });
+      }
+      session.undoFrames.pop();
+      restoreUndoFrame(session, frame);
+      return { ok: true, session, effectId: frame.effectId };
+    }
+
+    function createCheckpoint(session) {
+      if (!session) return fail("EFFECT_SESSION_REQUIRED", "缺少 Effect Session");
+      if (["effect_running", "committing"].includes(session.phase)) {
+        return fail("EFFECT_CHECKPOINT_UNSAFE_PHASE", "同步 Effect 或提交期间不能建立 checkpoint");
+      }
+      const replayCursor = session.journal?.replay?.length;
+      if (!Number.isSafeInteger(replayCursor)) {
+        return fail("EFFECT_REPLAY_JOURNAL_INVALID", "session replay journal 无效");
+      }
+      return {
+        ok: true,
+        checkpoint: {
+          schemaVersion: CHECKPOINT_SCHEMA_VERSION,
+          replayCursor,
+          session: clone(session),
+        },
+      };
+    }
+
+    function restoreCheckpoint(checkpoint) {
+      if (!checkpoint || checkpoint.schemaVersion !== CHECKPOINT_SCHEMA_VERSION) {
+        return fail("EFFECT_CHECKPOINT_SCHEMA_UNSUPPORTED", "未知 Effect Session checkpoint schema");
+      }
+      const restored = clone(checkpoint.session);
+      if (!restored || restored.schemaVersion !== SCHEMA_VERSION) {
+        return fail("EFFECT_CHECKPOINT_SESSION_INVALID", "checkpoint 缺少合法 session");
+      }
+      const replay = restored.journal?.replay;
+      if (!Array.isArray(replay)
+        || checkpoint.replayCursor !== replay.length
+        || replay.some((entry, index) => entry?.cursor !== index || entry.confirmed !== true)) {
+        return fail("EFFECT_CHECKPOINT_REPLAY_CURSOR_MISMATCH", "checkpoint replay cursor 与已确认输入不一致");
+      }
+      if (!Array.isArray(restored.undoFrames)) {
+        return fail("EFFECT_CHECKPOINT_UNDO_INVALID", "checkpoint 缺少统一撤销帧");
+      }
+      return { ok: true, session: restored };
+    }
+
+    function getConfirmedReplay(source, fromCursor = 0) {
+      const checkpoint = source?.schemaVersion === CHECKPOINT_SCHEMA_VERSION ? source : null;
+      const session = checkpoint ? checkpoint.session : source;
+      const replay = session?.journal?.replay;
+      const cursor = Number(fromCursor);
+      const confirmedLimit = checkpoint ? checkpoint.replayCursor : replay?.length;
+      if (!Array.isArray(replay)
+        || replay.some((entry, index) => entry?.cursor !== index || entry.confirmed !== true)
+        || !Number.isSafeInteger(confirmedLimit)
+        || confirmedLimit < 0
+        || confirmedLimit > replay.length
+        || !Number.isSafeInteger(cursor)
+        || cursor < 0
+        || cursor > confirmedLimit) {
+        return fail("EFFECT_REPLAY_CURSOR_INVALID", "replay cursor 无效");
+      }
+      return {
+        ok: true,
+        fromCursor: cursor,
+        replayCursor: confirmedLimit,
+        steps: clone(replay.slice(cursor, confirmedLimit)),
+      };
     }
 
     return Object.freeze({
@@ -577,6 +726,10 @@
       drain,
       inspect,
       observe,
+      undoLastEffect,
+      createCheckpoint,
+      restoreCheckpoint,
+      getConfirmedReplay,
       abort: (session, reason = {}) => abort(session, {
         code: reason.code || "EFFECT_SESSION_ABORTED_BY_HOST",
         message: reason.message || "宿主中止 Effect Session",
@@ -586,6 +739,7 @@
 
   return Object.freeze({
     SCHEMA_VERSION,
+    CHECKPOINT_SCHEMA_VERSION,
     SPAWN_PRIORITY,
     createRuntime,
   });
