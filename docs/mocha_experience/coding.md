@@ -15,12 +15,12 @@
 ## Entries
 
 - date: 2026-07-19
-- source_issue: SETI-51, SETI-61, SETI-85
-- observation: 共享工作树的 index 在 staged 检查、独立快照验证与 commit 之间仍会被并行任务改写；达到第三次复现后，高并发提交不能继续依赖共享 index，应从最新 HEAD 创建私有 `GIT_INDEX_FILE`，只装入本 issue 的明确 blob，并在 commit 后核对实际文件清单。
-- evidence: SETI-51 曾把其他任务文件套入当前 message；SETI-61 的目标 hunk 在并行 commit 后从实际提交消失；SETI-85 中已暂存的 16 个目标文件被并行提交消费，随后外部 `app.js/action-executor.js` hunks 又进入共享 index，`git diff --cached --stat` 两次与预期不符。
+- source_issue: SETI-51, SETI-61, SETI-85, SETI-69
+- observation: 共享工作树的 index 在 staged 检查、独立快照验证与 commit 之间仍会被并行任务改写；高并发提交必须从最新 HEAD 创建私有 `GIT_INDEX_FILE`，且初始化与后续每条 index 命令都要在同一 shell segment 显式携带该变量，只装入本 issue 的明确 blob并在 commit 后核对实际文件清单。裸跑 `git read-tree HEAD` 会立即覆盖共享 staged 状态，不能靠下一条命令再补变量。
+- evidence: SETI-51 曾把其他任务文件套入当前 message；SETI-61 的目标 hunk 在并行 commit 后从实际提交消失；SETI-85 中已暂存目标被并行提交消费；SETI-69 首次初始化时漏传 `GIT_INDEX_FILE`，共享 staged 状态被清空，随后依据操作前 status、可恢复 blob 与明确路径恢复，并用正确私有 index 提交 `f318d52`，实际文件清单仅含本 issue 的 8 个目标文件。
 - promote_to: agent_prompt
 - promotion_status: promote
-- decision: 三个独立 coding issue 已达到既定第三次升级窗口；将私有 index 与 commit 后文件清单核对写入仓库根 `AGENTS.md`，不修改 watcher、issue-workflow 或 project memory。
+- decision: 既有规则已升级，但 SETI-69 暴露命令级防误用缺口；修订仓库根 `AGENTS.md`，明确禁止裸跑 `read-tree` 并要求每条命令原子携带私有 index 变量，不修改 watcher、issue-workflow 或 project memory。
 
 - date: 2026-07-19
 - source_issue: SETI-51, SETI-52

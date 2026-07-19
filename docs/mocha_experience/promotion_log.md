@@ -91,8 +91,30 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - owner_or_agent_decision: 领航依据既有候选的第三次复现升级窗口与本 issue harness-evolve closeout 自决 promote。
 - applied_at: 2026-07-19
 - verification: 核对三次 issue 的 commit/staged 证据；本 issue 使用最新 HEAD 私有 index，只装入 SETI-85 与 harness-evolve 目标 blob，并在 commit 后执行 `git show --name-only/--stat`。
-- observed_outcome: 待本次私有 index 提交及后续 5 次并行提交观察。
-- keep_or_revise: 已提升；若后续 5 次均能保持内容一致则保留，平台提供原生隔离后回滚手工规则。
+- observed_outcome: SETI-69 的隔离提交内容与文件清单正确，但初始化时一次漏传环境变量短暂覆盖共享 index，说明“使用私有 index”仍需收窄到每条命令的原子调用约束。
+- keep_or_revise: 修订并保留；加入禁止裸跑 `read-tree` 的命令级约束，后续 5 次继续观察；平台提供原生隔离后回滚手工规则。
+
+- date: 2026-07-19
+- source: SETI-69（续 SETI-51, SETI-61, SETI-85）
+- promoted_to: agent_prompt
+- promotion_decision: promote
+- target_agent: 领航及共享工作树中的 coding agent
+- target_component: 并行共享 index 提交规则
+- target_file: AGENTS.md
+- remote_skill_id: none
+- change: 将既有私有 index 规则收窄为命令级原子约束：初始化和后续每条 index 命令都必须在同一 shell segment 显式携带 `GIT_INDEX_FILE`，禁止裸跑 `git read-tree HEAD`。
+- applied_change: 修订 `AGENTS.md` 与既有 coding experience；不修改 git-workflow skill、watcher、issue-workflow 或 project memory。
+- expected_effect: agent 不会因计划“下一条命令再使用私有 index”而先覆盖共享 staged 状态；隔离提交与其他任务的 index 均保持完整。
+- evaluation_window: 后续 5 次使用私有 index 的共享工作树提交。
+- success_signal: 初始化前后共享 `git diff --cached` 不变；私有 staged diff 与实际 commit 文件清单一致；无需人工恢复其他任务的 staged blob。
+- rollback_condition: 平台提供每 agent 独立 index/worktree 或原子提交工具后删除手工规则；若显式变量仍易漏传，则改用只接受私有 index path 的仓库脚本封装。
+- risk: 环境变量前缀仍依赖调用者纪律；复杂多段 shell 命令可能只给首段变量，因此规则明确要求每个独立 git segment 携带。
+- evidence_before: SETI-69 在创建私有 index 时首条 `git read-tree HEAD` 漏传变量，共享 staged 状态从 `MM/M/D/A` 集合被清空；随后依据操作前 status 恢复明确 staged 文件，以对象库中最近 staged blob 恢复 `app.js`，并正确使用 `/tmp/seti69-private-20260719.index` 生成 `f318d52`。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决修订既有 promote；这是已提升规则的命令级缺口，不降级为新 candidate。
+- applied_at: 2026-07-19
+- verification: `git show --stat --summary f318d52` 仅含 SETI-69 八个文件；修复后的共享 status 恢复既有 staged 文件与 `app.js` staged/unstaged 双层状态；提交已推送 dev。
+- observed_outcome: 本次正确提交未卷入其他任务文件，共享工作树代码未回滚；共享 index 的明确 staged 内容已恢复，后续由对应 issue 继续核对其暂存边界。
+- keep_or_revise: 修订后保留 promote；按 5 次窗口观察，若仍发生漏传则升级为脚本封装。
 
 - date: 2026-07-19
 - source: SETI-45
