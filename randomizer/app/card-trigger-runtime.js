@@ -115,6 +115,7 @@
     } = context;
 
     const TYPE1_TRIGGER_QUEUE_SESSION = "type1_trigger_queue";
+    const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
     function getType1TriggerEvents() {
       return decisionSessions.peek(TYPE1_TRIGGER_QUEUE_SESSION)?.events || [];
     }
@@ -376,7 +377,7 @@
       return Boolean(
         pendingState.cardTriggerAction
         || pendingState.cardTriggerFreeMove
-        || pendingState.cardCornerFreeMove
+        || decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION)
         || isCardTriggerPickSelectionActive()
         || pendingState.amibaSymbolChoice?.triggerMatch
       );

@@ -40,6 +40,7 @@
       createCardTriggerProgressCommands,
       data,
       deactivateMoveMode,
+      decisionSessions,
       discardReservedCardIfFinished,
       document,
       els,
@@ -107,6 +108,12 @@
       turnState,
       updateActionButtons,
     } = context;
+    const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
+    const getCardCornerFreeMove = () => decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION);
+    function setCardCornerFreeMove(session) {
+      if (!session) return decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
+      return decisionSessions.open(CARD_CORNER_FREE_MOVE_SESSION, session);
+    }
 
     function getDiscardCornerRewardMultiplier(player = getCurrentPlayer()) {
       return industry?.shouldDoubleDiscardCornerRewards?.(player) ? 2 : 1;
@@ -201,7 +208,7 @@
         && !isMovePaymentSelectionActive()
         && !pendingState.industryAbility
         && !isIndustryHandSelectionActive()
-        && !pendingState.cardCornerFreeMove
+        && !getCardCornerFreeMove()
         && !hasActivePendingSubFlow();
     }
 
@@ -371,11 +378,11 @@
         return check;
       }
 
-      pendingState.cardCornerFreeMove = {
+      setCardCornerFreeMove({
         action,
         discardedCardLabel: cards.getCardLabel(discardedCard),
         deferredEvents,
-      };
+      });
       rocketState.statusNote = check.rocketsForPlayer.length > 1
         ? `${action.label}：请点击要免费移动的飞船`
         : `${action.label}：使用方向键免费移动飞船`;
@@ -1007,7 +1014,7 @@
         if (applied.ok && applied.pendingFreeMove) {
           const moveCheck = canStartCardCornerFreeMove();
           if (moveCheck.ok) {
-            pendingState.cardCornerFreeMove = {
+            setCardCornerFreeMove({
               action: {
                 label: "芬威克研究中心：免费移动",
                 movementPoints: applied.pendingFreeMove.movementPoints || 1,
@@ -1017,7 +1024,7 @@
               irreversibleIndustryFlow: true,
               industryLogLabel: "芬威克研究中心：精选",
               afterMoveStatus: rocketState.statusNote,
-            };
+            });
             if (moveCheck.rocketsForPlayer.length === 1) {
               activateMoveMode(moveCheck.rocketsForPlayer[0].id);
             } else {

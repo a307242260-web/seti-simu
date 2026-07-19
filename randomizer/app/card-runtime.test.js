@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { createCardRuntime } = require("./card-runtime");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 
 function createHarness() {
   const player = { id: "p1", hand: [] };
@@ -13,7 +14,9 @@ function createHarness() {
     passReserveSelectionDismissed: false,
   };
   const calls = { completed: 0, chrome: 0 };
+  const decisionSessions = createDecisionSessionStore();
   const runtime = createCardRuntime({
+    decisionSessions,
     pendingState,
     cardState,
     playerState: { players: [player] },
@@ -35,6 +38,7 @@ function createHarness() {
     getCurrentPlayer: () => player,
     getPlayerById: () => player,
     getCurrentActionEffect: () => effect,
+    getMovableTokensForPlayer: () => [{ id: "rocket-1" }],
     structuredClone,
     beginEffectHistoryStep: () => {},
     recordHistoryCommand: () => {},
@@ -52,9 +56,26 @@ function createHarness() {
     maybeContinuePendingTurnEndRevealFlow: () => {},
     renderStateReadout: () => {},
     continueAfterCardTriggerResolution: () => false,
+    activateMoveMode: () => {},
+    selectDefaultRocketForCurrentPlayer: () => {},
     syncPassReserveSelectionChrome: () => { calls.chrome += 1; },
   });
-  return { runtime, player, effect, pendingState, calls };
+  return { runtime, player, effect, pendingState, calls, decisionSessions };
+}
+
+{
+  const { runtime, pendingState, decisionSessions } = createHarness();
+  const result = runtime.beginCardCornerFreeMove(
+    { label: "免费移动", movementPoints: 1 },
+    { id: "card-1", label: "测试牌" },
+    [{ type: "card_discard" }],
+  );
+  assert.equal(result.ok, true);
+  const session = decisionSessions.peek("card_corner_free_move");
+  assert.equal(session.action.label, "免费移动");
+  assert.equal(session.discardedCardLabel, "测试牌");
+  assert.deepEqual(session.deferredEvents, [{ type: "card_discard" }]);
+  assert.equal(Object.hasOwn(pendingState, "cardCornerFreeMove"), false);
 }
 
 {

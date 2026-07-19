@@ -46,7 +46,6 @@
     actionEffectFlow: null,
     movePayment: null,
     playCardSelection: null,
-    cardCornerFreeMove: null,
     industryAbility: null,
   });
 
@@ -63,7 +62,7 @@
     aomomo: ["aomomoCardGain"],
     runezu: ["runezuCardGain", "runezuSymbolBranch", "runezuFaceSymbolPlacement"],
     action_flow: ["actionEffectFlow"],
-    movement_cards: ["movePayment", "playCardSelection", "cardCornerFreeMove"],
+    movement_cards: ["movePayment", "playCardSelection"],
     data_industry: ["industryAbility"],
   });
 

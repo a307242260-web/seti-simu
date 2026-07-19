@@ -274,6 +274,7 @@
   const TYPE1_TRIGGER_QUEUE_SESSION = "type1_trigger_queue";
   const HAND_CARD_PLAY_SESSION = "hand_card_play_action";
   const CARD_CORNER_QUICK_SESSION = "card_corner_quick_action";
+  const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
@@ -282,6 +283,7 @@
   const getPendingProbeSectorScanDecision = () => decisionSessions.peek(PROBE_SECTOR_SCAN_SESSION);
   const getPendingProbeLocationRewardDecision = () => decisionSessions.peek(PROBE_LOCATION_REWARD_SESSION);
   const getTurnEndAfterRevealSession = () => decisionSessions.peek(TURN_END_REVEAL_SESSION);
+  const getPendingCardCornerFreeMove = () => decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION);
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
@@ -2778,7 +2780,7 @@
     set effectStepActive(value) { uiRuntimeState.effectStepActive = value; },
     get pendingMovePayment() { return pendingState.movePayment; },
     get pendingPlayCardSelection() { return pendingState.playCardSelection; },
-    get pendingCardCornerFreeMove() { return pendingState.cardCornerFreeMove; },
+    get pendingCardCornerFreeMove() { return getPendingCardCornerFreeMove(); },
     get pendingIndustryAbility() { return pendingState.industryAbility; },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
@@ -3041,6 +3043,7 @@
     sumAiDemandMap,
   } = aiController;
   const cardRuntime = cardRuntimeModule.createCardRuntime({
+    decisionSessions,
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,
     SCORE_SOURCE_KEYS,
@@ -3844,7 +3847,7 @@
     pendingState.playCardSelection = null;
     decisionSessions.clear(HAND_CARD_PLAY_SESSION);
     decisionSessions.clear(CARD_CORNER_QUICK_SESSION);
-    pendingState.cardCornerFreeMove = null;
+    decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
     decisionSessions.clear(DATA_PLACEMENT_DECISION);
     pendingState.industryAbility = null;
     decisionSessions.clear(PIRATES_RAID_DECISION);
@@ -4238,7 +4241,7 @@
     return uiRuntimeState.moveHighlightRocketId != null
       || isIndustryFreeMoveActive()
       || Boolean(pendingState.cardTriggerFreeMove)
-      || Boolean(pendingState.cardCornerFreeMove)
+      || Boolean(getPendingCardCornerFreeMove())
       || Boolean(pendingState.actionEffectFlow?.freeMoveMode)
       || Boolean(pendingState.actionEffectFlow?.cardMoveEffect);
   }
@@ -4758,7 +4761,7 @@
 
 
   function executeFreeMoveForCardCorner(deltaX, deltaY, rocketId, payment = {}) {
-    const pending = pendingState.cardCornerFreeMove;
+    const pending = getPendingCardCornerFreeMove();
     if (!pending) return { ok: false, message: "没有待结算的弃牌移动" };
 
     const moveCheck = rocketActions.canMoveRocket(rocketState, rocketId, deltaX, deltaY);
@@ -4821,7 +4824,7 @@
       completeQuickActionStep();
     }
 
-    pendingState.cardCornerFreeMove = null;
+    decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
     rocketState.activeRocketId = null;
     clearMoveRocketHighlight();
     deactivateMoveMode();
@@ -5263,7 +5266,7 @@
       || getPendingStrategySlotDecision()
       || getPendingPiratesRaidDecision()
       || pendingState.cardTriggerFreeMove
-      || pendingState.cardCornerFreeMove
+      || getPendingCardCornerFreeMove()
       || (els.scanAction4Overlay && !els.scanAction4Overlay.hidden)
       || (els.landTargetOverlay && !els.landTargetOverlay.hidden)
       || (els.alienTraceOverlay && !els.alienTraceOverlay.hidden && pendingState.alienTracePickerState?.mode !== "reveal-confirm")
@@ -5291,9 +5294,9 @@
       cancelStrategyPassiveSlotChoice();
       return true;
     }
-    if (pendingState.cardCornerFreeMove?.finishIndustryFlowAfterMove) {
-      const pending = pendingState.cardCornerFreeMove;
-      pendingState.cardCornerFreeMove = null;
+    if (getPendingCardCornerFreeMove()?.finishIndustryFlowAfterMove) {
+      const pending = getPendingCardCornerFreeMove();
+      decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
       rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
@@ -5543,7 +5546,7 @@
     pendingState.cardTaskCompletion = null;
     pendingState.cardTriggerFreeMove = null;
     decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
-    pendingState.cardCornerFreeMove = null;
+    decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
     pendingState.yichangdianCornerAction = null;
     pendingState.chongCardGain = null;
     pendingState.chongFossilChoice = null;
@@ -9305,7 +9308,7 @@
       getPendingDataPlacementDecision(),
       pendingState.cardTriggerFreeMove,
       pendingState.actionEffectFlow?.cardMoveEffect,
-      pendingState.cardCornerFreeMove,
+      getPendingCardCornerFreeMove(),
       getPendingStrategySlotDecision(),
       pendingState.chongFossilChoice,
       pendingState.amibaSymbolChoice,
@@ -9823,7 +9826,7 @@
       }
       return { actorPlayer: player, candidates };
     }
-    const cardCornerMovePending = pendingState.cardCornerFreeMove;
+    const cardCornerMovePending = getPendingCardCornerFreeMove();
     if (cardCornerMovePending) {
       const player = getCurrentPlayer();
       const providedMovePoints = Math.max(0, Math.round(Number(
@@ -10189,8 +10192,8 @@
     },
     "card-corner-free-move": (action) => executeFreeMoveForCardCorner(action.deltaX, action.deltaY, action.target.rocketId),
     "skip-card-corner-free-move": () => {
-      const pending = pendingState.cardCornerFreeMove;
-      pendingState.cardCornerFreeMove = null;
+      const pending = getPendingCardCornerFreeMove();
+      decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
       rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
@@ -10618,7 +10621,7 @@
     if (
       pendingState.cardTriggerFreeMove
       || uiRuntimeState.industryFreeMoveState
-      || pendingState.cardCornerFreeMove
+      || getPendingCardCornerFreeMove()
       || pendingState.actionEffectFlow?.freeMoveMode
       || pendingState.actionEffectFlow?.cardMoveEffect
     ) return;
@@ -10919,7 +10922,7 @@
     get moveHighlightRocketId() { return uiRuntimeState.moveHighlightRocketId; },
     get pendingCardTriggerFreeMove() { return pendingState.cardTriggerFreeMove; },
     get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
-    get pendingCardCornerFreeMove() { return pendingState.cardCornerFreeMove; },
+    get pendingCardCornerFreeMove() { return getPendingCardCornerFreeMove(); },
     get pendingActionEffectFlow() { return pendingState.actionEffectFlow; },
     get pendingScanTargetAction() { return pendingState.scanTargetAction; },
   };
