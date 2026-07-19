@@ -62,6 +62,7 @@
       getEarthSectorCoordinate,
       getInterfacePlayer,
       getMovableTokensForPlayer,
+      getPendingOwnerFields,
       getPendingOwnerPlayer,
       getPlanetSectorCoordinate,
       getRequiredMovePointsForUi,
