@@ -99,6 +99,7 @@ barrierHistory.beginStep({
 const barrierStep = barrierHistory.endStep();
 assert.equal(barrierStep.undoable, false);
 assert.equal(barrierHistory.hasIrreversibleBarrier(), true);
+assert.equal(barrierHistory.getIrreversibleBarrier()?.irreversibleReason, "翻出新牌");
 assert.equal(barrierHistory.hasUndoableStep(), false, "barrier blocks previous undoable steps");
 assert.equal(barrierHistory.peekLastUndoableStep(), null);
 const blockedUndo = barrierHistory.undoLastStep();
@@ -118,6 +119,27 @@ assert.equal(barrierHistory.hasUndoableStep(), true);
 assert.equal(barrierHistory.peekLastUndoableStep()?.id, afterBarrier.id);
 const undoAfterBarrier = barrierHistory.undoLastStep();
 assert.equal(undoAfterBarrier.ok, true);
+
+const markedHistory = actionHistory.createActionHistory();
+markedHistory.beginSession("marked", "标记行动");
+markedHistory.beginStep({ source: "main", type: "effect", label: "抽牌" });
+const markedCurrent = markedHistory.markIrreversible({
+  code: "hidden_card_reveal",
+  irreversibleReason: "盲抽翻出新牌",
+});
+assert.equal(markedCurrent.undoable, false);
+assert.equal(markedHistory.getIrreversibleBarrier()?.irreversibleCode, "hidden_card_reveal");
+assert.equal(markedHistory.undoLastStep().ok, false);
+
+const laterBarrierHistory = actionHistory.createActionHistory();
+laterBarrierHistory.beginSession("later", "后续屏障");
+laterBarrierHistory.beginStep({ label: "旧屏障", undoable: false, irreversibleReason: "旧原因" });
+laterBarrierHistory.endStep();
+laterBarrierHistory.beginStep({ label: "后续可撤销步骤" });
+laterBarrierHistory.endStep();
+laterBarrierHistory.markIrreversible({ irreversibleReason: "新原因" });
+assert.equal(laterBarrierHistory.getIrreversibleBarrier()?.irreversibleReason, "新原因");
+assert.equal(laterBarrierHistory.hasUndoableStep(), false, "新屏障必须阻断旧屏障后的可撤销步骤");
 assert.equal(undoAfterBarrier.step.id, afterBarrier.id);
 assert.equal(value, 3);
 assert.equal(barrierHistory.hasUndoableStep(), false);

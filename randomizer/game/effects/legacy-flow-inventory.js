@@ -53,8 +53,6 @@
     actionExecuted: false,
     passPlayerId: null,
     actionEffectFlow: null,
-    actionHasIrreversibleBarrier: false,
-    actionIrreversibleReason: null,
     movePayment: null,
     playCardSelection: null,
     futureSpanPlayBeforePlayer: null,
@@ -80,7 +78,7 @@
     aomomo: ["aomomoCardGain"],
     runezu: ["runezuCardGain", "runezuSymbolBranch", "runezuFaceSymbolPlacement"],
     strategy_pirates: ["strategyPassiveSlotChoice", "piratesRaidPlacement"],
-    action_flow: ["actionExecuted", "passPlayerId", "actionEffectFlow", "actionHasIrreversibleBarrier", "actionIrreversibleReason"],
+    action_flow: ["actionExecuted", "passPlayerId", "actionEffectFlow"],
     movement_cards: ["movePayment", "playCardSelection", "futureSpanPlayBeforePlayer", "handCardPlayAction", "cardCornerQuickAction", "cardCornerFreeMove"],
     data_industry: ["dataPlaceAction", "industryAbility"],
   });

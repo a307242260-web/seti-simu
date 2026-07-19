@@ -52,6 +52,7 @@
       getPlanetName,
       getPlanetSectorCoordinate,
       getPlayerById,
+      getCurrentActionIrreversibleReason,
       hasCurrentMainActionIrreversibleBarrier,
       historyCommands,
       industry,
@@ -445,8 +446,9 @@
         return;
       }
       if (pendingState.actionEffectFlow?.actionType === "researchTech" && hasCurrentMainActionIrreversibleBarrier()) {
-        rocketState.statusNote = pendingState.actionIrreversibleReason
-          ? `不可撤销：${pendingState.actionIrreversibleReason}`
+        const irreversibleReason = getCurrentActionIrreversibleReason?.();
+        rocketState.statusNote = irreversibleReason
+          ? `不可撤销：${irreversibleReason}`
           : "当前科技行动已有不可撤销影响";
         syncTechSelectionChrome();
         renderTechBoard();

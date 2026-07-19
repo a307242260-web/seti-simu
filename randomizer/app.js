@@ -3819,8 +3819,6 @@
     pendingState.passPlayerId = null;
     pendingState.actionEffectFlow = null;
     clearCompletedEffectFlowForUndo();
-    pendingState.actionHasIrreversibleBarrier = false;
-    pendingState.actionIrreversibleReason = null;
     uiRuntimeState.effectStepActive = false;
     uiRuntimeState.moveHighlightRocketId = null;
     pendingState.movePayment = null;
@@ -7941,6 +7939,7 @@
       getPlanetName: (...args) => getPlanetName(...args),
       getPlanetSectorCoordinate: (...args) => getPlanetSectorCoordinate(...args),
       getPlayerById: (...args) => getPlayerById(...args),
+      getCurrentActionIrreversibleReason: () => getCurrentActionIrreversibleReason(),
       hasCurrentMainActionIrreversibleBarrier: (...args) => hasCurrentMainActionIrreversibleBarrier(...args),
       historyCommands: typeof historyCommands === "undefined" ? undefined : historyCommands,
       industry: typeof industry === "undefined" ? undefined : industry,
@@ -8320,12 +8319,20 @@
   }
 
   function markCurrentActionIrreversible(reason, code = "irreversible") {
-    pendingState.actionHasIrreversibleBarrier = true;
-    pendingState.actionIrreversibleReason = reason || pendingState.actionIrreversibleReason || "该步骤产生不可撤销影响";
+    const barrierReason = reason || getCurrentActionIrreversibleReason() || "该步骤产生不可撤销影响";
+    actionHistory.markIrreversible?.({
+      source: HISTORY_SOURCE_MAIN,
+      code,
+      irreversibleReason: barrierReason,
+    });
     return {
       code,
-      reason: pendingState.actionIrreversibleReason,
+      reason: barrierReason,
     };
+  }
+
+  function getCurrentActionIrreversibleReason() {
+    return actionHistory.getIrreversibleBarrier?.()?.irreversibleReason || null;
   }
 
   function markResultIrreversible(result, reason, code = "irreversible") {
@@ -8349,8 +8356,6 @@
     pendingState.actionExecuted = false;
     pendingState.passPlayerId = null;
     clearCompletedEffectFlowForUndo(HISTORY_SOURCE_MAIN);
-    pendingState.actionHasIrreversibleBarrier = false;
-    pendingState.actionIrreversibleReason = null;
   }
 
   function recoverPendingActionFromOpenHistoryForAi() {
@@ -8413,10 +8418,7 @@
   }
 
   function hasCurrentMainActionIrreversibleBarrier() {
-    return Boolean(
-      pendingState.actionHasIrreversibleBarrier
-      || actionHistory.hasIrreversibleBarrier?.(),
-    );
+    return Boolean(actionHistory.hasIrreversibleBarrier?.());
   }
 
   function getMainActionStartBlockReason() {
@@ -8595,8 +8597,9 @@
     const mainActionHasIrreversibleBarrier = hasCurrentMainActionIrreversibleBarrier();
 
     if (!latestUndoSource && mainActionHasIrreversibleBarrier) {
-      rocketState.statusNote = pendingState.actionIrreversibleReason
-        ? `不可撤销：${pendingState.actionIrreversibleReason}`
+      const irreversibleReason = getCurrentActionIrreversibleReason();
+      rocketState.statusNote = irreversibleReason
+        ? `不可撤销：${irreversibleReason}`
         : "当前行动已有不可撤销影响";
       updateActionButtons();
       renderStateReadout();
@@ -8604,8 +8607,9 @@
     }
 
     if (mainActionHasIrreversibleBarrier && !actionHistory.hasUndoableStep()) {
-      rocketState.statusNote = pendingState.actionIrreversibleReason
-        ? `不可撤销：${pendingState.actionIrreversibleReason}`
+      const irreversibleReason = getCurrentActionIrreversibleReason();
+      rocketState.statusNote = irreversibleReason
+        ? `不可撤销：${irreversibleReason}`
         : "当前行动已有不可撤销影响";
       updateActionButtons();
       renderStateReadout();

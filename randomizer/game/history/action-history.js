@@ -272,6 +272,35 @@
       return findLastBarrierIndex(session.steps) >= 0;
     }
 
+    function getIrreversibleBarrier() {
+      if (!session) return null;
+      if (session.currentStep && !isStepUndoable(session.currentStep)) return session.currentStep;
+      const barrierIndex = findLastBarrierIndex(session.steps);
+      return barrierIndex >= 0 ? session.steps[barrierIndex] : null;
+    }
+
+    function markIrreversible(meta = {}) {
+      if (!session) return null;
+      const irreversibleReason = normalizeIrreversibleReason({ ...meta, undoable: false });
+      if (session.currentStep) {
+        session.currentStep.undoable = false;
+        session.currentStep.irreversibleCode = meta.irreversibleCode || meta.code || "irreversible";
+        session.currentStep.irreversibleReason = irreversibleReason;
+        return session.currentStep;
+      }
+      const latest = session.steps[session.steps.length - 1] || null;
+      if (latest && !isStepUndoable(latest)) return latest;
+      beginStep({
+        source: meta.source || "main",
+        type: meta.type || "irreversible",
+        label: meta.label || "不可撤销影响",
+        undoable: false,
+        irreversibleCode: meta.irreversibleCode || meta.code || "irreversible",
+        irreversibleReason,
+      });
+      return endStep();
+    }
+
     function getTrace() {
       if (!session) return [];
       const lines = [`行动：${session.label}`];
@@ -329,6 +358,8 @@
       hasUndoableStep,
       peekLastUndoableStep,
       hasIrreversibleBarrier,
+      getIrreversibleBarrier,
+      markIrreversible,
       getTrace,
       listSteps,
     });

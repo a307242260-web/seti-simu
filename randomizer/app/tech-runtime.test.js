@@ -72,6 +72,7 @@ function createHarness() {
     els,
     getCurrentPlayer: () => ({ id: "p1", techState: {} }),
     getInterfacePlayer: () => ({ id: "p1", techState: {} }),
+    getCurrentActionIrreversibleReason: () => null,
     hasCurrentMainActionIrreversibleBarrier: () => false,
     pendingState,
     playerState: { players: [] },
