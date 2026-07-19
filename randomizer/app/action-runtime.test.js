@@ -2,6 +2,8 @@
 
 const assert = require("node:assert/strict");
 const { createActionRuntime } = require("./action-runtime");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
+const { attachDecisionState } = require("./test-decision-state");
 
 const players = [
   { id: "p1", color: "white", colorLabel: "白", resources: {} },
@@ -40,8 +42,11 @@ const state = {
 };
 
 const calls = [];
+const decisionSessions = createDecisionSessionStore();
+attachDecisionState(state.pendingState, decisionSessions);
 
 const runtime = createActionRuntime({
+  decisionSessions,
   setupSelectionState,
   ...state,
   INITIAL_SELECTION_REQUIRED: { initial: 2 },

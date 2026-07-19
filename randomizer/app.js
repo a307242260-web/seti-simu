@@ -263,6 +263,16 @@
   });
   const pendingState = runtime.pending;
   const decisionSessions = runtime.decisions;
+  const decisionState = decisionSessions.createFacade({
+    discardAction: "discard_action",
+    cardSelectionAction: "card_selection_action",
+    scanTargetAction: "scan_target_action",
+    handScanAction: "hand_scan_action",
+    alienTraceAction: "alien_trace_action",
+    alienTracePickerState: "alien_trace_picker_state",
+    alienRevealConfirmation: "alien_reveal_confirmation",
+    actionEffectFlow: "action_effect_flow",
+  });
   const DATA_PLACEMENT_DECISION = "data_placement";
   const LAND_TARGET_DECISION = "land_target";
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
@@ -709,6 +719,7 @@
     isStateLogEnabled,
   } = actionLogViewRuntime;
   const renderRuntime = viewAdapter?.renderRuntime || renderRuntimeModule.createRenderRuntime({
+    decisionSessions,
     document,
     Image,
     solar,
@@ -940,6 +951,7 @@
     })
   );
   const effectFlowHelpers = effectFlowModule.createEffectFlowHelpers({
+    decisionSessions,
     pendingState,
     uiRuntimeState,
     actionHistory,
@@ -1540,6 +1552,7 @@
   }
 
   const alienUiHelpers = alienUiModule.createAlienUiHelpers({
+    decisionSessions,
     headless: headlessMode,
     document,
     structuredClone,
@@ -1629,6 +1642,7 @@
     isAlienTracePickerChoiceAllowed,
   } = alienUiHelpers;
   const alienRuntimeHelpers = alienRuntimeModule.createAlienRuntimeHelpers({
+    decisionSessions,
     structuredClone,
     aliens,
     players,
@@ -1946,6 +1960,7 @@
     startNewGame,
   });
   const actionRuntimeController = actionRuntimeModule.createActionRuntime({
+    decisionSessions,
     setupSelectionState,
     playerState,
     turnState,
@@ -2025,7 +2040,7 @@
     passForCurrentPlayer: (...args) => passForCurrentPlayer(...args),
     endCurrentTurn: (...args) => endCurrentTurn(...args),
     blockManualAiPendingInputIfNeeded,
-    getCurrentActionEffectIndex: () => pendingState.actionEffectFlow?.currentIndex,
+    getCurrentActionEffectIndex: () => decisionState.actionEffectFlow?.currentIndex,
     runQuickTrade,
     confirmDataPlacement,
     standardActionAdapter: actions.createStandardAdapter({
@@ -2562,16 +2577,16 @@
     const effects = buildInitialIncomeEffectNodes(entries);
     if (!effects.length) return false;
 
-    pendingState.actionEffectFlow = abilities.chain.startAbilityChain(
+    decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
       "initialIncome",
       "初始收入增加",
       effects,
     );
-    pendingState.actionEffectFlow.actionType = "initialIncome";
-    pendingState.actionEffectFlow.playerId = effects[0]?.options?.playerId || null;
-    assignEffectFlowOwner(pendingState.actionEffectFlow, pendingState.actionEffectFlow.playerId);
+    decisionState.actionEffectFlow.actionType = "initialIncome";
+    decisionState.actionEffectFlow.playerId = effects[0]?.options?.playerId || null;
+    assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
 
-    const firstPlayer = getPlayerById(pendingState.actionEffectFlow.playerId);
+    const firstPlayer = getPlayerById(decisionState.actionEffectFlow.playerId);
     if (firstPlayer) {
       playerState.currentPlayerId = firstPlayer.id;
     }
@@ -2646,8 +2661,8 @@
 
   function getEffectOwnerPlayer(effect) {
     return getExplicitEffectOwnerPlayer(effect)
-      || getPlayerById(pendingState.actionEffectFlow?.defaultPlayerId)
-      || getPlayerById(pendingState.actionEffectFlow?.playerId)
+      || getPlayerById(decisionState.actionEffectFlow?.defaultPlayerId)
+      || getPlayerById(decisionState.actionEffectFlow?.playerId)
       || players.getCurrentPlayer(playerState);
   }
 
@@ -2682,9 +2697,9 @@
   }
 
   function setActiveEffectFlowOwner(effect) {
-    if (!pendingState.actionEffectFlow || !effect) return null;
+    if (!decisionState.actionEffectFlow || !effect) return null;
     const owner = getEffectOwnerPlayer(effect);
-    pendingState.actionEffectFlow.activePlayerId = owner?.id || null;
+    decisionState.actionEffectFlow.activePlayerId = owner?.id || null;
     return owner;
   }
 
@@ -2759,15 +2774,15 @@
   }
 
   const aiControllerState = {
-    get pendingDiscardAction() { return pendingState.discardAction; },
-    get pendingCardSelectionAction() { return pendingState.cardSelectionAction; },
+    get pendingDiscardAction() { return decisionState.discardAction; },
+    get pendingCardSelectionAction() { return decisionState.cardSelectionAction; },
     get pendingPassReserveSelection() { return getPendingPassReserveSelection(); },
-    get pendingScanTargetAction() { return pendingState.scanTargetAction; },
+    get pendingScanTargetAction() { return decisionState.scanTargetAction; },
     get pendingProbeSectorScanAction() { return getPendingProbeSectorScanDecision(); },
     get pendingProbeLocationRewardAction() { return getPendingProbeLocationRewardDecision(); },
     get pendingPublicScanQueue() { return getPublicScanQueueSession(); },
-    get pendingHandScanAction() { return pendingState.handScanAction; },
-    get pendingAlienTraceAction() { return pendingState.alienTraceAction; },
+    get pendingHandScanAction() { return decisionState.handScanAction; },
+    get pendingAlienTraceAction() { return decisionState.alienTraceAction; },
     get pendingLandTargetAction() { return getPendingLandTargetDecision(); },
     get pendingDataPlaceAction() { return getPendingDataPlacementDecision(); },
     get pendingJiuzheCardPlay() { return decisionSessions.peek("jiuzhe_card_play"); },
@@ -2789,7 +2804,7 @@
     get pendingCardTaskCompletion() { return getPendingCardTaskCompletion(); },
     get pendingChongTaskCompletion() { return getPendingChongTaskCompletion(); },
     get pendingActionExecuted() { return isActionPending(); },
-    get pendingActionEffectFlow() { return pendingState.actionEffectFlow; },
+    get pendingActionEffectFlow() { return decisionState.actionEffectFlow; },
     get actionHistoryHasSession() { return actionHistory.hasSession(); },
     get actionHistorySessionInfo() { return actionHistory.getSessionInfo?.() || null; },
     get effectStepActive() { return uiRuntimeState.effectStepActive; },
@@ -2800,8 +2815,8 @@
     get pendingIndustryAbility() { return decisionSessions.peek("industry_ability"); },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
-    get alienTracePickerState() { return pendingState.alienTracePickerState; },
-    get pendingAlienRevealConfirmation() { return pendingState.alienRevealConfirmation; },
+    get alienTracePickerState() { return decisionState.alienTracePickerState; },
+    get pendingAlienRevealConfirmation() { return decisionState.alienRevealConfirmation; },
   };
 
   const aiController = window.SetiAppAiController.createAiController({
@@ -3643,8 +3658,8 @@
     if (persistentGameSaveSuspended) return false;
     return !isActionPending()
       && !uiRuntimeState.effectStepActive
-      && !pendingState.actionEffectFlow
-      && !pendingState.alienRevealConfirmation
+      && !decisionState.actionEffectFlow
+      && !decisionState.alienRevealConfirmation
       && !getTurnEndAfterRevealSession()
       && !actionLogState.draft
       && !actionHistory.hasSession()
@@ -3818,15 +3833,15 @@
   }
 
   function clearTransientStateForRecovery() {
-    pendingState.discardAction = null;
-    pendingState.cardSelectionAction = null;
+    decisionState.discardAction = null;
+    decisionState.cardSelectionAction = null;
     decisionSessions.clear(PASS_RESERVE_SELECTION_SESSION);
     pendingState.passReserveSelectionDismissed = false;
-    pendingState.scanTargetAction = null;
+    decisionState.scanTargetAction = null;
     decisionSessions.clear(PROBE_SECTOR_SCAN_SESSION);
     decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
-    pendingState.handScanAction = null;
-    pendingState.alienTraceAction = null;
+    decisionState.handScanAction = null;
+    decisionState.alienTraceAction = null;
     decisionSessions.clear(LAND_TARGET_DECISION);
     decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
     decisionSessions.clear(CARD_TRIGGER_ACTION_SESSION);
@@ -3851,11 +3866,11 @@
     decisionSessions.clear("runezu_card_gain");
     decisionSessions.clear("runezu_symbol_branch");
     decisionSessions.clear("runezu_face_symbol_placement");
-    pendingState.alienTracePickerState = null;
+    decisionState.alienTracePickerState = null;
     closeAlienRevealConfirmationOverlay();
     decisionSessions.clear(TURN_END_REVEAL_SESSION);
     uiRuntimeState.debugAlienTraceModeActive = false;
-    pendingState.actionEffectFlow = null;
+    decisionState.actionEffectFlow = null;
     clearCompletedEffectFlowForUndo();
     uiRuntimeState.effectStepActive = false;
     uiRuntimeState.moveHighlightRocketId = null;
@@ -4182,26 +4197,26 @@
   }
 
   function allowsBlindDrawInSelection() {
-    return pendingState.cardSelectionAction?.allowBlindDraw !== false;
+    return decisionState.cardSelectionAction?.allowBlindDraw !== false;
   }
 
 
   function isPublicScanMultiSelectActive() {
     return isCardSelectionActive()
-      && pendingState.cardSelectionAction?.type === "public_scan"
-      && (pendingState.cardSelectionAction.maxSelectable ?? 1) > 1;
+      && decisionState.cardSelectionAction?.type === "public_scan"
+      && (decisionState.cardSelectionAction.maxSelectable ?? 1) > 1;
   }
 
   function isPublicCornerDiscardSelectionActive() {
     return isCardSelectionActive()
-      && pendingState.cardSelectionAction?.type === "card_public_corner_discard";
+      && decisionState.cardSelectionAction?.type === "card_public_corner_discard";
   }
 
   function isPublicCardMultiSelectActive() {
     return isPublicScanMultiSelectActive() || isPublicCornerDiscardSelectionActive();
   }
 
-  function getPublicCardMultiSelectMinSelectable(pending = pendingState.cardSelectionAction) {
+  function getPublicCardMultiSelectMinSelectable(pending = decisionState.cardSelectionAction) {
     if (pending?.type === "public_scan") return getPublicScanMinSelectable(pending);
     const maxSelectable = Math.max(1, Math.round(Number(pending?.maxSelectable) || 1));
     const requested = Math.max(1, Math.round(Number(pending?.minSelectable) || maxSelectable));
@@ -4213,10 +4228,10 @@
     const multi = isPublicCardMultiSelectActive();
     els.publicScanConfirm.hidden = !multi;
     if (!multi) return;
-    const count = pendingState.cardSelectionAction?.selectedSlots?.length || 0;
+    const count = decisionState.cardSelectionAction?.selectedSlots?.length || 0;
     const minSelectable = getPublicCardMultiSelectMinSelectable();
     els.publicScanConfirm.disabled = count < minSelectable;
-    const label = pendingState.cardSelectionAction?.type === "card_public_corner_discard"
+    const label = decisionState.cardSelectionAction?.type === "card_public_corner_discard"
       ? "确认弃除"
       : "确认扫描";
     els.publicScanConfirm.textContent = count > 0
@@ -4258,8 +4273,8 @@
       || isIndustryFreeMoveActive()
       || Boolean(getPendingCardTriggerFreeMove())
       || Boolean(getPendingCardCornerFreeMove())
-      || Boolean(pendingState.actionEffectFlow?.freeMoveMode)
-      || Boolean(pendingState.actionEffectFlow?.cardMoveEffect);
+      || Boolean(decisionState.actionEffectFlow?.freeMoveMode)
+      || Boolean(decisionState.actionEffectFlow?.cardMoveEffect);
   }
 
   function getInteractionFocusMode() {
@@ -4609,7 +4624,7 @@
       return { ok: false, message: rocketState.statusNote };
     }
 
-    const pending = pendingState.cardSelectionAction;
+    const pending = decisionState.cardSelectionAction;
     const maxSelectable = pending?.maxSelectable ?? 1;
     const selectedSlots = pending.selectedSlots || [];
     const existingIndex = selectedSlots.indexOf(index);
@@ -4636,7 +4651,7 @@
   }
 
   function confirmPublicCornerDiscardSelection() {
-    const pending = pendingState.cardSelectionAction;
+    const pending = decisionState.cardSelectionAction;
     if (pending?.type !== "card_public_corner_discard") {
       return { ok: false, message: "当前不是公共牌角标弃除" };
     }
@@ -4665,7 +4680,7 @@
     cards.ensurePublicCardsFilled(cardState, playerState);
     markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
     cards.setSelectionActive(cardState, false);
-    pendingState.cardSelectionAction = null;
+    decisionState.cardSelectionAction = null;
     syncCardSelectionChrome();
     return finishAutomaticRewardEffect(effect, {
       ok: true,
@@ -4681,11 +4696,11 @@
 
 
   function isActionEffectFlowActive() {
-    return pendingState.actionEffectFlow != null;
+    return decisionState.actionEffectFlow != null;
   }
 
   function isInitialIncomeFlowActive() {
-    return pendingState.actionEffectFlow?.actionType === "initialIncome";
+    return decisionState.actionEffectFlow?.actionType === "initialIncome";
   }
 
   function getGameplayLockReason() {
@@ -4929,16 +4944,16 @@
     if (runezuClaim?.ok) renderRunezuBoardSymbols();
     endEffectHistoryStep();
 
-    pendingState.actionEffectFlow = abilities.chain.startAbilityChain(
+    decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
       `${actionType}-rewards`,
       `${actionLabel}奖励`,
       rewardEffects,
     );
-    pendingState.actionEffectFlow.actionType = actionType;
-    pendingState.actionEffectFlow.playerId = actionOwner?.id || null;
-    assignEffectFlowOwner(pendingState.actionEffectFlow, pendingState.actionEffectFlow.playerId);
-    pendingState.actionEffectFlow.consumesMainAction = true;
-    pendingState.actionEffectFlow.autoExecuteAomomoRewards = isAomomoRewardFlow;
+    decisionState.actionEffectFlow.actionType = actionType;
+    decisionState.actionEffectFlow.playerId = actionOwner?.id || null;
+    assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
+    decisionState.actionEffectFlow.consumesMainAction = true;
+    decisionState.actionEffectFlow.autoExecuteAomomoRewards = isAomomoRewardFlow;
 
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
     rocketState.statusNote = `${actionLabel}：请依次点击奖励效果`;
@@ -4948,7 +4963,7 @@
 
   function shouldAutoExecuteAomomoRewardEffect(effect) {
     return Boolean(
-      pendingState.actionEffectFlow?.autoExecuteAomomoRewards
+      decisionState.actionEffectFlow?.autoExecuteAomomoRewards
       && effect?.status === "active"
       && AOMOMO_AUTO_REWARD_EFFECT_TYPES.has(effect.type)
       && !hasActiveEffectSubFlow()
@@ -4956,7 +4971,7 @@
   }
 
   function maybeAutoExecuteAomomoRewardEffects() {
-    if (uiRuntimeState.autoExecutingActionEffects || !pendingState.actionEffectFlow?.autoExecuteAomomoRewards) return false;
+    if (uiRuntimeState.autoExecutingActionEffects || !decisionState.actionEffectFlow?.autoExecuteAomomoRewards) return false;
     uiRuntimeState.autoExecutingActionEffects = true;
     let executed = false;
     try {
@@ -4966,7 +4981,7 @@
         const result = executeActionEffect(effect);
         executed = true;
         if (result?.awaitingChoice || result?.pendingChoice || result?.ok === false) return executed;
-        if (!pendingState.actionEffectFlow || pendingState.actionEffectFlow.completed || hasActiveEffectSubFlow()) return executed;
+        if (!decisionState.actionEffectFlow || decisionState.actionEffectFlow.completed || hasActiveEffectSubFlow()) return executed;
         const current = getCurrentActionEffect();
         if (current === effect && current?.status === "active") return executed;
       }
@@ -5000,7 +5015,7 @@
     if (!result?.ok || !result.awaitingTileSelection) return false;
 
     beginResearchTechActionSession(result, options);
-    pendingState.actionEffectFlow = abilities.chain.startAbilityChain(
+    decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
       "researchTech",
       "科技行动",
       [{
@@ -5017,11 +5032,11 @@
         undoable: true,
       }],
     );
-    pendingState.actionEffectFlow.actionType = "researchTech";
-    pendingState.actionEffectFlow.playerId = getCurrentPlayer()?.id || null;
-    pendingState.actionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
-    assignEffectFlowOwner(pendingState.actionEffectFlow, pendingState.actionEffectFlow.playerId);
-    pendingState.actionEffectFlow.consumesMainAction = true;
+    decisionState.actionEffectFlow.actionType = "researchTech";
+    decisionState.actionEffectFlow.playerId = getCurrentPlayer()?.id || null;
+    decisionState.actionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
+    assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
+    decisionState.actionEffectFlow.consumesMainAction = true;
 
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
     rocketState.statusNote = "科技：请选择要研究的科技片";
@@ -5212,10 +5227,10 @@
   }
 
   function revertEffectFlowAfterUndo(step) {
-    if (!pendingState.actionEffectFlow || !step) return;
+    if (!decisionState.actionEffectFlow || !step) return;
 
     if (isMainActionOpeningStep(step)) {
-      if (pendingState.actionEffectFlow.actionType === "researchTech") {
+      if (decisionState.actionEffectFlow.actionType === "researchTech") {
         clearResearchTechSelectionState();
       }
       clearActionEffectFlow();
@@ -5224,22 +5239,22 @@
 
     if (!Number.isInteger(step.effectIndex)) return;
 
-    const { effects } = pendingState.actionEffectFlow;
+    const { effects } = decisionState.actionEffectFlow;
     const effect = effects[step.effectIndex];
     if (!effect) return;
 
-    pruneEndOfFlowSettlementEffectsAfterUndo(pendingState.actionEffectFlow, step.effectIndex);
-    abilities.chain.removeInsertedNodesBySource?.(pendingState.actionEffectFlow, {
-      chainId: pendingState.actionEffectFlow.chainId || null,
+    pruneEndOfFlowSettlementEffectsAfterUndo(decisionState.actionEffectFlow, step.effectIndex);
+    abilities.chain.removeInsertedNodesBySource?.(decisionState.actionEffectFlow, {
+      chainId: decisionState.actionEffectFlow.chainId || null,
       effectId: step.effectId || effect.id || null,
       effectIndex: step.effectIndex,
       effectType: step.effectType || effect.type || null,
     });
-    pendingState.actionEffectFlow.completed = false;
+    decisionState.actionEffectFlow.completed = false;
     effect.status = "active";
     effect.result = null;
     effect.preHistoryCommandsApplied = false;
-    pendingState.actionEffectFlow.currentIndex = step.effectIndex;
+    decisionState.actionEffectFlow.currentIndex = step.effectIndex;
     for (let index = step.effectIndex + 1; index < effects.length; index += 1) {
       if (effects[index].status !== "pending") {
         effects[index].status = "pending";
@@ -5247,7 +5262,7 @@
       effects[index].preHistoryCommandsApplied = false;
     }
     cancelActiveEffectSubFlows();
-    if (pendingState.actionEffectFlow.actionType === "researchTech" && effect.type === "research_tech_select") {
+    if (decisionState.actionEffectFlow.actionType === "researchTech" && effect.type === "research_tech_select") {
       restoreResearchTechSelectionAfterUndo(effect);
     }
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
@@ -5255,13 +5270,13 @@
 
   function hasActiveEffectSubFlow() {
     return Boolean(
-      pendingState.scanTargetAction
+      decisionState.scanTargetAction
       || getPendingProbeSectorScanDecision()
       || getPendingProbeLocationRewardDecision()
       || getPublicScanQueueSession()
-      || pendingState.handScanAction
+      || decisionState.handScanAction
       || getPendingPassReserveSelection()
-      || (isCardSelectionActive() && (pendingState.actionEffectFlow || isCardTriggerPickSelectionActive()))
+      || (isCardSelectionActive() && (decisionState.actionEffectFlow || isCardTriggerPickSelectionActive()))
       || getPendingCardTriggerAction()
       || getPendingCardTaskCompletion()
       || (decisionSessions.peek("jiuzhe_card_play") && decisionSessions.peek("jiuzhe_card_play").reason !== "view")
@@ -5285,9 +5300,9 @@
       || getPendingCardCornerFreeMove()
       || (els.scanAction4Overlay && !els.scanAction4Overlay.hidden)
       || (els.landTargetOverlay && !els.landTargetOverlay.hidden)
-      || (els.alienTraceOverlay && !els.alienTraceOverlay.hidden && pendingState.alienTracePickerState?.mode !== "reveal-confirm")
-      || pendingState.actionEffectFlow?.cardMoveEffect
-      || pendingState.actionEffectFlow?.freeMoveMode
+      || (els.alienTraceOverlay && !els.alienTraceOverlay.hidden && decisionState.alienTracePickerState?.mode !== "reveal-confirm")
+      || decisionState.actionEffectFlow?.cardMoveEffect
+      || decisionState.actionEffectFlow?.freeMoveMode
       || Boolean(getPendingDataPlacementDecision()),
     );
   }
@@ -5302,7 +5317,7 @@
   }
 
   function cancelActivePendingSubFlows() {
-    if (pendingState.scanTargetAction?.type === "industry_remove_tech") {
+    if (decisionState.scanTargetAction?.type === "industry_remove_tech") {
       rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
       return true;
     }
@@ -5411,7 +5426,7 @@
   }
 
   function shouldRenderActionEffect(effect) {
-    if (pendingState.actionEffectFlow?.actionType !== "initialIncome") return true;
+    if (decisionState.actionEffectFlow?.actionType !== "initialIncome") return true;
     const owner = getEffectOwnerPlayer(effect);
     return !owner?.id || !isAiAutoBattlePlayer(owner.id);
   }
@@ -5459,7 +5474,7 @@
   }
 
   function clearActionEffectFlow() {
-    pendingState.actionEffectFlow = null;
+    decisionState.actionEffectFlow = null;
     closeLandTargetPicker();
     closeScanAction4Picker();
     renderActionEffectBar();
@@ -5523,20 +5538,20 @@
     decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
 
     if (isHandScanSelectionActive()) {
-      pendingState.handScanAction = null;
+      decisionState.handScanAction = null;
       syncHandScanSelectionChrome();
     }
 
-    if (isCardSelectionActive() && (pendingState.actionEffectFlow || isCardTriggerPickSelectionActive())) {
-      if (pendingState.cardSelectionAction?.type === "fundamentalism_exchange_pick") {
-        if (pendingState.cardSelectionAction.player && pendingState.cardSelectionAction.beforePlayerState) {
-          restoreObjectSnapshot(pendingState.cardSelectionAction.player, pendingState.cardSelectionAction.beforePlayerState);
+    if (isCardSelectionActive() && (decisionState.actionEffectFlow || isCardTriggerPickSelectionActive())) {
+      if (decisionState.cardSelectionAction?.type === "fundamentalism_exchange_pick") {
+        if (decisionState.cardSelectionAction.player && decisionState.cardSelectionAction.beforePlayerState) {
+          restoreObjectSnapshot(decisionState.cardSelectionAction.player, decisionState.cardSelectionAction.beforePlayerState);
         }
-        if (pendingState.cardSelectionAction.beforeCardState) {
-          restoreObjectSnapshot(cardState, pendingState.cardSelectionAction.beforeCardState);
+        if (decisionState.cardSelectionAction.beforeCardState) {
+          restoreObjectSnapshot(cardState, decisionState.cardSelectionAction.beforeCardState);
         }
       }
-      pendingState.cardSelectionAction = null;
+      decisionState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
     }
@@ -5547,12 +5562,12 @@
       syncPassReserveSelectionChrome();
     }
 
-    if (pendingState.actionEffectFlow?.freeMoveMode) {
-      pendingState.actionEffectFlow.freeMoveMode = false;
+    if (decisionState.actionEffectFlow?.freeMoveMode) {
+      decisionState.actionEffectFlow.freeMoveMode = false;
       deactivateMoveMode();
     }
-    if (pendingState.actionEffectFlow?.cardMoveEffect) {
-      pendingState.actionEffectFlow.cardMoveEffect = null;
+    if (decisionState.actionEffectFlow?.cardMoveEffect) {
+      decisionState.actionEffectFlow.cardMoveEffect = null;
       deactivateMoveMode();
     }
     if (getPendingDataPlacementDecision()) {
@@ -5590,7 +5605,7 @@
   }
 
   function skipCurrentActionEffect() {
-    if (!pendingState.actionEffectFlow) return;
+    if (!decisionState.actionEffectFlow) return;
 
     const current = getCurrentActionEffect();
     if (!current || current.status !== "active") return;
@@ -5607,7 +5622,7 @@
       renderStateReadout();
       return;
     }
-    if (pendingState.scanTargetAction?.type === "hand_scan" && pendingState.scanTargetAction.discardDrawnOnSkip) {
+    if (decisionState.scanTargetAction?.type === "hand_scan" && decisionState.scanTargetAction.discardDrawnOnSkip) {
       handleDrawnHandScanSkip();
       return;
     }
@@ -5664,7 +5679,7 @@
     if (headlessMode) return;
     if (!els.actionEffectBar || !els.actionEffectList) return;
 
-    if (!pendingState.actionEffectFlow) {
+    if (!decisionState.actionEffectFlow) {
       els.actionEffectBar.hidden = true;
       els.actionEffectList.replaceChildren();
       if (els.actionEffectSkipButton) els.actionEffectSkipButton.hidden = true;
@@ -5678,9 +5693,9 @@
     if (els.actionEffectSkipButton) {
       const finishingCardMove = Boolean(
         canSkip
-        && pendingState.actionEffectFlow?.cardMoveEffect
-        && pendingState.actionEffectFlow.cardMoveEffect.effect?.id === current?.id
-        && (pendingState.actionEffectFlow.cardMoveEffect.moved || current?.result)
+        && decisionState.actionEffectFlow?.cardMoveEffect
+        && decisionState.actionEffectFlow.cardMoveEffect.effect?.id === current?.id
+        && (decisionState.actionEffectFlow.cardMoveEffect.moved || current?.result)
       );
       els.actionEffectSkipButton.textContent = finishingCardMove ? "结束移动" : "跳过";
       els.actionEffectSkipButton.setAttribute(
@@ -5694,7 +5709,7 @@
       els.actionEffectSkipButton.disabled = !canSkip;
     }
 
-    const visibleEffects = pendingState.actionEffectFlow.effects
+    const visibleEffects = decisionState.actionEffectFlow.effects
       .map((effect, index) => ({ effect, index }))
       .filter(({ effect }) => shouldRenderActionEffect(effect));
     if (!visibleEffects.length) {
@@ -5729,12 +5744,12 @@
         badge.textContent = effect.badge;
         button.append(badge);
       } else if (
-        pendingState.actionEffectFlow?.cardMoveEffect?.effect?.id === effect.id
+        decisionState.actionEffectFlow?.cardMoveEffect?.effect?.id === effect.id
         && effect.status === "active"
       ) {
         const badge = document.createElement("span");
         badge.className = "action-effect-badge";
-        badge.textContent = String(pendingState.actionEffectFlow.cardMoveEffect.poolRemaining);
+        badge.textContent = String(decisionState.actionEffectFlow.cardMoveEffect.poolRemaining);
         button.append(badge);
       }
       return button;
@@ -5860,9 +5875,9 @@
   }
 
   function finishActionEffectFlow() {
-    if (!pendingState.actionEffectFlow) return;
+    if (!decisionState.actionEffectFlow) return;
 
-    const finishedFlow = pendingState.actionEffectFlow;
+    const finishedFlow = decisionState.actionEffectFlow;
     if (appendEndOfFlowSectorFinishEffects(finishedFlow)) {
       return;
     }
@@ -6089,7 +6104,7 @@
       return { ok: false, message: rocketState.statusNote };
     }
 
-    pendingState.actionEffectFlow.freeMoveMode = true;
+    decisionState.actionEffectFlow.freeMoveMode = true;
     rocketState.statusNote = rocketsForPlayer.length > 1
       ? "扫描效果：请点击要移动的飞船"
       : "扫描效果：使用方向键移动飞船";
@@ -6150,7 +6165,7 @@
     if (payment.discardCommand) recordHistoryCommand(payment.discardCommand);
     recordAbilityCommands(result);
 
-    pendingState.actionEffectFlow.freeMoveMode = false;
+    decisionState.actionEffectFlow.freeMoveMode = false;
     deactivateMoveMode();
     const current = getCurrentActionEffect();
     if (current) current.result = result;
@@ -6191,14 +6206,14 @@
       return { ok: false, message };
     }
 
-    if (!pendingState.actionEffectFlow.cardMoveEffect
-      || pendingState.actionEffectFlow.cardMoveEffect.effect?.id !== effect.id) {
+    if (!decisionState.actionEffectFlow.cardMoveEffect
+      || decisionState.actionEffectFlow.cardMoveEffect.effect?.id !== effect.id) {
       initCardMoveEffectState(effect);
     } else {
-      effect.badge = String(pendingState.actionEffectFlow.cardMoveEffect.poolRemaining);
+      effect.badge = String(decisionState.actionEffectFlow.cardMoveEffect.poolRemaining);
     }
 
-    const poolRemaining = pendingState.actionEffectFlow.cardMoveEffect.poolRemaining;
+    const poolRemaining = decisionState.actionEffectFlow.cardMoveEffect.poolRemaining;
     rocketState.statusNote = poolRemaining > 1
       ? `${effect.label}：剩余 ${poolRemaining} 点移动力，请点击要移动的飞船`
       : rocketsForPlayer.length > 1
@@ -6246,10 +6261,10 @@
     const rewards = effect.options?.afterEventRewards || [];
     if (!rewards.length || !moveResult?.events?.length) return [];
 
-    if (!pendingState.actionEffectFlow.cardEventRewardKeys) {
-      pendingState.actionEffectFlow.cardEventRewardKeys = [];
+    if (!decisionState.actionEffectFlow.cardEventRewardKeys) {
+      decisionState.actionEffectFlow.cardEventRewardKeys = [];
     }
-    const usedKeys = new Set(pendingState.actionEffectFlow.cardEventRewardKeys);
+    const usedKeys = new Set(decisionState.actionEffectFlow.cardEventRewardKeys);
     const applied = [];
 
     for (const reward of rewards) {
@@ -6266,7 +6281,7 @@
       applied.push(appliedReward);
       if (reward.onceKey) {
         usedKeys.add(reward.onceKey);
-        pendingState.actionEffectFlow.cardEventRewardKeys.push(reward.onceKey);
+        decisionState.actionEffectFlow.cardEventRewardKeys.push(reward.onceKey);
       }
     }
 
@@ -6282,23 +6297,23 @@
     if (!rewardEffect || fromY == null || toY == null || Number(fromY) !== Number(toY) || deltaX <= 0) {
       return null;
     }
-    if (!pendingState.actionEffectFlow.cardEventRewardKeys) pendingState.actionEffectFlow.cardEventRewardKeys = [];
+    if (!decisionState.actionEffectFlow.cardEventRewardKeys) decisionState.actionEffectFlow.cardEventRewardKeys = [];
     const key = `${effect.id || "card-move"}:same-ring`;
-    if (pendingState.actionEffectFlow.cardEventRewardKeys.includes(key)) return null;
+    if (decisionState.actionEffectFlow.cardEventRewardKeys.includes(key)) return null;
     const applied = applyCardMoveRewardEffect(rewardEffect, messageParts);
-    if (applied?.ok) pendingState.actionEffectFlow.cardEventRewardKeys.push(key);
+    if (applied?.ok) decisionState.actionEffectFlow.cardEventRewardKeys.push(key);
     return applied;
   }
 
   function maybeApplyCardMoveDistinctEventReward(effect, moveResult, messageParts) {
     const reward = effect.options?.distinctEventReward;
     if (!reward || !moveResult?.events?.length) return null;
-    if (!pendingState.actionEffectFlow.cardMoveDistinctEvents) pendingState.actionEffectFlow.cardMoveDistinctEvents = {};
-    if (!pendingState.actionEffectFlow.cardEventRewardKeys) pendingState.actionEffectFlow.cardEventRewardKeys = [];
+    if (!decisionState.actionEffectFlow.cardMoveDistinctEvents) decisionState.actionEffectFlow.cardMoveDistinctEvents = {};
+    if (!decisionState.actionEffectFlow.cardEventRewardKeys) decisionState.actionEffectFlow.cardEventRewardKeys = [];
     const key = reward.onceKey || `${effect.id || "card-move"}:distinct:${reward.eventType}`;
-    if (pendingState.actionEffectFlow.cardEventRewardKeys.includes(key)) return null;
-    if (!pendingState.actionEffectFlow.cardMoveDistinctEvents[key]) pendingState.actionEffectFlow.cardMoveDistinctEvents[key] = [];
-    const values = pendingState.actionEffectFlow.cardMoveDistinctEvents[key];
+    if (decisionState.actionEffectFlow.cardEventRewardKeys.includes(key)) return null;
+    if (!decisionState.actionEffectFlow.cardMoveDistinctEvents[key]) decisionState.actionEffectFlow.cardMoveDistinctEvents[key] = [];
+    const values = decisionState.actionEffectFlow.cardMoveDistinctEvents[key];
     const distinctBy = reward.distinctBy || "planetId";
 
     for (const event of moveResult.events || []) {
@@ -6310,7 +6325,7 @@
     const minCount = Math.max(1, Math.round(Number(reward.minCount) || 1));
     if (values.length < minCount) return null;
     const applied = applyCardMoveRewardEffect(reward.effect, messageParts);
-    if (applied?.ok) pendingState.actionEffectFlow.cardEventRewardKeys.push(key);
+    if (applied?.ok) decisionState.actionEffectFlow.cardEventRewardKeys.push(key);
     return applied;
   }
 
@@ -6765,7 +6780,7 @@
       );
     }
     const scanRunId = createScanRunId("main-scan");
-    pendingState.actionEffectFlow = abilities.chain.startAbilityChain(
+    decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
       "scan",
       "扫描行动",
       scanEffects.buildScanEffectQueue(currentPlayer, {
@@ -6777,10 +6792,10 @@
         turnNumber: turnState.turnNumber,
       }),
     );
-    pendingState.actionEffectFlow.playerId = currentPlayer.id;
-    assignEffectFlowOwner(pendingState.actionEffectFlow, pendingState.actionEffectFlow.playerId);
-    pendingState.actionEffectFlow.scanRunId = scanRunId;
-    pendingState.actionEffectFlow.scanActionEvent = {
+    decisionState.actionEffectFlow.playerId = currentPlayer.id;
+    assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
+    decisionState.actionEffectFlow.scanRunId = scanRunId;
+    decisionState.actionEffectFlow.scanActionEvent = {
       type: "scanAction",
       source: "main",
       scanRunId,
@@ -7483,7 +7498,7 @@
   function getScoreSourceKeyForGainEffect(effect) {
     const explicit = effect?.options?.scoreSourceKey;
     if (SCORE_SOURCE_KEY_SET.has(explicit)) return explicit;
-    const actionType = pendingState.actionEffectFlow?.actionType;
+    const actionType = decisionState.actionEffectFlow?.actionType;
     switch (actionType) {
       case "orbit":
         return SCORE_SOURCE_KEYS.ORBIT;
@@ -7493,7 +7508,7 @@
       case "cardTrigger":
         return SCORE_SOURCE_KEYS.TASK_CARD;
       case "playCard":
-        return isAlienFamilyCard(pendingState.actionEffectFlow?.card)
+        return isAlienFamilyCard(decisionState.actionEffectFlow?.card)
           ? SCORE_SOURCE_KEYS.ALIEN_EFFECT
           : SCORE_SOURCE_KEYS.CARD_EFFECT;
       case "banrenmaCondition":
@@ -8479,6 +8494,7 @@
   }
 
   turnEndFlow = turnEndFlowModule.createTurnEndFlow({
+    decisionSessions,
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,
     PASS_HAND_LIMIT,
@@ -8557,7 +8573,7 @@
 
   function undoPendingAction() {
     if (isTechActionSelectionActive()) {
-      const isResearchTechFlow = pendingState.actionEffectFlow?.actionType === "researchTech";
+      const isResearchTechFlow = decisionState.actionEffectFlow?.actionType === "researchTech";
       const shouldUseHistoryUndo = isResearchTechFlow
         && (actionHistory.hasUndoableStep() || hasCurrentMainActionIrreversibleBarrier());
       if (shouldUseHistoryUndo) {
@@ -8587,13 +8603,13 @@
 
     if (
       !latestUndoSource
-      && pendingState.actionEffectFlow?.historySource === HISTORY_SOURCE_QUICK
-      && !pendingState.actionEffectFlow.preHistoryCommandsApplied
-      && pendingState.actionEffectFlow.preHistoryCommands?.length
+      && decisionState.actionEffectFlow?.historySource === HISTORY_SOURCE_QUICK
+      && !decisionState.actionEffectFlow.preHistoryCommandsApplied
+      && decisionState.actionEffectFlow.preHistoryCommands?.length
     ) {
-      const flowLabel = pendingState.actionEffectFlow.label || "快速行动效果";
-      for (let index = pendingState.actionEffectFlow.preHistoryCommands.length - 1; index >= 0; index -= 1) {
-        pendingState.actionEffectFlow.preHistoryCommands[index]?.undo?.();
+      const flowLabel = decisionState.actionEffectFlow.label || "快速行动效果";
+      for (let index = decisionState.actionEffectFlow.preHistoryCommands.length - 1; index >= 0; index -= 1) {
+        decisionState.actionEffectFlow.preHistoryCommands[index]?.undo?.();
       }
       uiRuntimeState.effectStepActive = false;
       if (quickActionHistory.hasSession() && !quickActionHistory.hasUndoableStep()) {
@@ -8606,23 +8622,23 @@
     }
 
     if (latestUndoSource === HISTORY_SOURCE_QUICK) {
-      const undoingQuickEffectFlow = pendingState.actionEffectFlow?.historySource === HISTORY_SOURCE_QUICK;
+      const undoingQuickEffectFlow = decisionState.actionEffectFlow?.historySource === HISTORY_SOURCE_QUICK;
       const result = quickActionHistory.undoLastStep();
       if (result.ok) {
         uiRuntimeState.effectStepActive = false;
         forgetLastHistoryStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
         removeLastActionLogStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
-        const completedQuickEffectFlow = !pendingState.actionEffectFlow
+        const completedQuickEffectFlow = !decisionState.actionEffectFlow
           ? takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_QUICK)
           : null;
         if (completedQuickEffectFlow) {
-          pendingState.actionEffectFlow = completedQuickEffectFlow;
+          decisionState.actionEffectFlow = completedQuickEffectFlow;
           els.appWrap?.classList.toggle("action-effect-flow-active", true);
         }
-        if ((undoingQuickEffectFlow || completedQuickEffectFlow) && pendingState.actionEffectFlow) {
+        if ((undoingQuickEffectFlow || completedQuickEffectFlow) && decisionState.actionEffectFlow) {
           const effectIndex = result.step?.effectIndex;
           const hasRevertibleEffectStep = Number.isInteger(effectIndex)
-            && Boolean(pendingState.actionEffectFlow.effects?.[effectIndex]);
+            && Boolean(decisionState.actionEffectFlow.effects?.[effectIndex]);
           if (hasRevertibleEffectStep) {
             revertEffectFlowAfterUndo(result.step);
           } else {
@@ -8670,11 +8686,11 @@
         uiRuntimeState.effectStepActive = false;
         forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
         removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-        const completedMainEffectFlow = !pendingState.actionEffectFlow
+        const completedMainEffectFlow = !decisionState.actionEffectFlow
           ? takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_MAIN)
           : null;
         if (completedMainEffectFlow) {
-          pendingState.actionEffectFlow = completedMainEffectFlow;
+          decisionState.actionEffectFlow = completedMainEffectFlow;
           els.appWrap?.classList.toggle("action-effect-flow-active", true);
         }
         revertEffectFlowAfterUndo(result.step);
@@ -8715,7 +8731,7 @@
         removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
         const completedMainEffectFlow = takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_MAIN);
         if (completedMainEffectFlow) {
-          pendingState.actionEffectFlow = completedMainEffectFlow;
+          decisionState.actionEffectFlow = completedMainEffectFlow;
           els.appWrap?.classList.toggle("action-effect-flow-active", true);
           revertEffectFlowAfterUndo(result.step);
         }
@@ -9122,17 +9138,17 @@
     }
 
     if (result.awaitingDiscard) {
-      if (pendingState.discardAction) {
-        pendingState.discardAction.beforeTradeState = beforeState;
+      if (decisionState.discardAction) {
+        decisionState.discardAction.beforeTradeState = beforeState;
         if (
           options.preserveHandIndex !== null
           && options.preserveHandIndex !== undefined
           && options.preserveHandIndex !== ""
         ) {
-          pendingState.discardAction.preserveHandIndex = Number(options.preserveHandIndex);
+          decisionState.discardAction.preserveHandIndex = Number(options.preserveHandIndex);
         }
         if (options.aiReason) {
-          pendingState.discardAction.aiReason = options.aiReason;
+          decisionState.discardAction.aiReason = options.aiReason;
         }
       }
       rocketState.statusNote = result.message;
@@ -9141,13 +9157,13 @@
     }
 
     if (result.awaitingCardSelection) {
-      if (pendingState.cardSelectionAction) {
-        pendingState.cardSelectionAction.beforeTradeState = beforeState;
+      if (decisionState.cardSelectionAction) {
+        decisionState.cardSelectionAction.beforeTradeState = beforeState;
         if (options.preferBlindDraw) {
-          pendingState.cardSelectionAction.aiPreferBlindDraw = true;
+          decisionState.cardSelectionAction.aiPreferBlindDraw = true;
         }
         if (options.aiReason) {
-          pendingState.cardSelectionAction.aiReason = options.aiReason;
+          decisionState.cardSelectionAction.aiReason = options.aiReason;
         }
       }
       rocketState.statusNote = result.message;
@@ -9316,30 +9332,30 @@
     );
     const activePending = [
       finalScorePending ? { ...finalScorePending, player: finalScorePlayer } : null,
-      pendingState.scanTargetAction,
+      decisionState.scanTargetAction,
       getPendingProbeSectorScanDecision(),
-      pendingState.handScanAction,
+      decisionState.handScanAction,
       getPendingPassReserveSelection(),
       getPendingMovePayment(),
       getPendingDataPlacementDecision(),
       getPendingCardTriggerFreeMove(),
-      pendingState.actionEffectFlow?.cardMoveEffect,
+      decisionState.actionEffectFlow?.cardMoveEffect,
       getPendingCardCornerFreeMove(),
       getPendingStrategySlotDecision(),
       decisionSessions.peek("chong_fossil_choice"),
       decisionSessions.peek("amiba_symbol_choice"),
-      pendingState.discardAction,
-      pendingState.cardSelectionAction,
+      decisionState.discardAction,
+      decisionState.cardSelectionAction,
       getPendingLandTargetDecision(),
-      pendingState.alienTraceAction,
-      pendingState.alienTracePickerState,
+      decisionState.alienTraceAction,
+      decisionState.alienTracePickerState,
     ].find(Boolean) || null;
     const pendingOwner = activePending?.player || resolvePlayerReference({
       playerId: activePending?.playerId || activePending?.targetPlayerId || null,
       playerColor: activePending?.playerColor || activePending?.targetPlayerColor || null,
     });
     const effect = activePending?.effect || (
-      pendingState.actionEffectFlow ? getCurrentActionEffect() : null
+      decisionState.actionEffectFlow ? getCurrentActionEffect() : null
     );
     const effectOwner = effect ? getEffectOwnerPlayer(effect) : null;
     const actorPlayer = pendingOwner || effectOwner || enumeratedActor || currentPlayer || null;
@@ -9501,7 +9517,7 @@
         candidates,
       };
     }
-    const scanTargetPending = pendingState.scanTargetAction;
+    const scanTargetPending = decisionState.scanTargetAction;
     if (scanTargetPending) {
       if (scanTargetPending.type === "conditional_sector_scan") {
         return {
@@ -9619,7 +9635,7 @@
         )),
       };
     }
-    const handScanPending = pendingState.handScanAction;
+    const handScanPending = decisionState.handScanAction;
     if (handScanPending) {
       const player = handScanPending.player || getHeadlessConditionalPlayer(handScanPending);
       const candidates = (player?.hand || []).flatMap((card, handIndex) => (
@@ -9785,7 +9801,7 @@
       }
       return { actorPlayer: player, candidates };
     }
-    const cardMovePending = pendingState.actionEffectFlow?.cardMoveEffect;
+    const cardMovePending = decisionState.actionEffectFlow?.cardMoveEffect;
     if (cardMovePending) {
       const effect = cardMovePending.effect || getCurrentActionEffect();
       const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
@@ -9932,7 +9948,7 @@
         })),
       };
     }
-    const discardPending = pendingState.discardAction;
+    const discardPending = decisionState.discardAction;
     if (discardPending) {
       const player = discardPending.player || getHeadlessConditionalPlayer(discardPending);
       const selectedIndexes = new Set(discardPending.selectedIndexes || []);
@@ -9954,7 +9970,7 @@
         )),
       };
     }
-    const cardPending = pendingState.cardSelectionAction;
+    const cardPending = decisionState.cardSelectionAction;
     if (cardPending) {
       if (["industry_deepspace_hand", "industry_future_hand"].includes(cardPending.type)) {
         const player = cardPending.player || getHeadlessConditionalPlayer(cardPending);
@@ -10056,8 +10072,8 @@
       };
     }
 
-    const tracePending = pendingState.alienTraceAction;
-    const picker = pendingState.alienTracePickerState;
+    const tracePending = decisionState.alienTraceAction;
+    const picker = decisionState.alienTracePickerState;
     if (tracePending && picker?.mode === "fangzhou-destination") {
       const player = getHeadlessConditionalPlayer(picker);
       const alienSlotId = Number(picker.selectedAlienSlotId || 0);
@@ -10234,7 +10250,7 @@
       || { ok: true, progressed: true, message: "已选择公共牌" },
     "confirm-public-corner-discard": () => confirmPublicCornerDiscardSelection(),
     "confirm-public-scan": () => confirmPublicScanSelection(),
-    "hand-card": (action) => pendingState.cardSelectionAction?.type === "industry_deepspace_hand"
+    "hand-card": (action) => decisionState.cardSelectionAction?.type === "industry_deepspace_hand"
       ? handleIndustryDeepspaceHandClick(Number(action.target.handIndex))
       : handleIndustryFutureSpanHandClick(Number(action.target.handIndex)),
     "blind-draw": () => drawCardForCurrentPlayer({ fromSelection: true }),
@@ -10318,7 +10334,7 @@
   function advanceHeadlessDeterministicState() {
     if (!headlessMode) return null;
     const industryPending = decisionSessions.peek("industry_ability");
-    if (industryPending && !pendingState.cardSelectionAction) {
+    if (industryPending && !decisionState.cardSelectionAction) {
       const player = getCurrentPlayer();
       const retryByFlowType = {
         strategy_pick: () => beginCardSelection({
@@ -10333,7 +10349,7 @@
           advanceAmount: industryPending.advanceAmount,
         }),
         deepspace_swap: () => {
-          pendingState.cardSelectionAction = {
+          decisionState.cardSelectionAction = {
             type: "industry_deepspace_hand",
             player,
             allowBlindDraw: false,
@@ -10350,7 +10366,7 @@
         }
       }
     }
-    const cardPending = pendingState.cardSelectionAction;
+    const cardPending = decisionState.cardSelectionAction;
     if (
       cardPending?.type?.startsWith?.("industry_")
       && !(cardState.publicCards || []).some(Boolean)
@@ -10638,8 +10654,8 @@
       getPendingCardTriggerFreeMove()
       || uiRuntimeState.industryFreeMoveState
       || getPendingCardCornerFreeMove()
-      || pendingState.actionEffectFlow?.freeMoveMode
-      || pendingState.actionEffectFlow?.cardMoveEffect
+      || decisionState.actionEffectFlow?.freeMoveMode
+      || decisionState.actionEffectFlow?.cardMoveEffect
     ) return;
     deactivateMoveMode();
     renderStateReadout();
@@ -10932,15 +10948,15 @@
     get pendingYichangdianCardGain() { return decisionSessions.peek("yichangdian_card_gain"); },
     get pendingJiuzheCardPlay() { return decisionSessions.peek("jiuzhe_card_play"); },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
-    get alienTracePickerState() { return pendingState.alienTracePickerState; },
-    set alienTracePickerState(value) { pendingState.alienTracePickerState = value; },
-    get pendingAlienRevealConfirmation() { return pendingState.alienRevealConfirmation; },
+    get alienTracePickerState() { return decisionState.alienTracePickerState; },
+    set alienTracePickerState(value) { decisionState.alienTracePickerState = value; },
+    get pendingAlienRevealConfirmation() { return decisionState.alienRevealConfirmation; },
     get moveHighlightRocketId() { return uiRuntimeState.moveHighlightRocketId; },
     get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
     get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
     get pendingCardCornerFreeMove() { return getPendingCardCornerFreeMove(); },
-    get pendingActionEffectFlow() { return pendingState.actionEffectFlow; },
-    get pendingScanTargetAction() { return pendingState.scanTargetAction; },
+    get pendingActionEffectFlow() { return decisionState.actionEffectFlow; },
+    get pendingScanTargetAction() { return decisionState.scanTargetAction; },
   };
 
   alienSpeciesRuntime = alienSpeciesRuntimeModule.createAlienSpeciesRuntime({

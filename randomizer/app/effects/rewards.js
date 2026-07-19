@@ -109,6 +109,16 @@
       updateActionButtons,
       withPendingOwnerPlayer,
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
 
     function signalOwnerMatches(item, player) {
       const keys = getPlayerOwnerKeys(player);
@@ -158,7 +168,7 @@
     }
 
     function renderDiscardIncomePicker() {
-      const pending = pendingState.scanTargetAction;
+      const pending = decisionState.scanTargetAction;
       if (pending?.type !== "discard_any_income" || !els.scanTargetActions) return;
       const selected = new Set(pending.selectedCardIds || []);
       const currentPlayer = getPendingOwnerPlayer(pending, pending.effect);
@@ -503,7 +513,7 @@
           payload: { cardIds: [] },
         });
       }
-      pendingState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "return_unfinished_task", effect, choices };
+      decisionState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "return_unfinished_task", effect, choices };
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一张未完成的 1/2 型保留任务卡返回手牌。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -525,7 +535,7 @@
     }
 
     function handleReturnUnfinishedTaskChoice(cardId) {
-      const pending = pendingState.scanTargetAction;
+      const pending = decisionState.scanTargetAction;
       if (pending?.type !== "return_unfinished_task") return { ok: false, message: "没有待处理的任务卡回手" };
       const effect = pending.effect;
       closeScanTargetPicker();
@@ -952,8 +962,8 @@
         describe: "移除已登记的卡牌事件触发",
         undo() {
           turnState.cardTurnEventBonuses = structuredClone(beforeTurnBonuses);
-          if (pendingState.actionEffectFlow) {
-            pendingState.actionEffectFlow.cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
+          if (decisionState.actionEffectFlow) {
+            decisionState.actionEffectFlow.cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
           }
         },
       });
@@ -1056,7 +1066,7 @@
 
     function executeTuckPlayedCardToIncomeEffect(effect) {
       const currentPlayer = getCurrentPlayer();
-      const playedCard = pendingState.actionEffectFlow?.card;
+      const playedCard = decisionState.actionEffectFlow?.card;
       if (!currentPlayer || !playedCard) {
         rocketState.statusNote = "没有可放入收入区的当前卡牌";
         renderStateReadout();
@@ -1162,30 +1172,30 @@
     }
 
     function insertActionEffectsAfterCurrent(effects) {
-      if (!pendingState.actionEffectFlow || !effects?.length) return;
+      if (!decisionState.actionEffectFlow || !effects?.length) return;
       const insertedEffects = effects.filter(Boolean);
-      const insertIndex = Math.max(0, pendingState.actionEffectFlow.currentIndex + 1);
-      const insertionSource = abilities.chain.createInsertionSource?.(pendingState.actionEffectFlow) || null;
+      const insertIndex = Math.max(0, decisionState.actionEffectFlow.currentIndex + 1);
+      const insertionSource = abilities.chain.createInsertionSource?.(decisionState.actionEffectFlow) || null;
       const currentOwner = getCurrentActionEffect()
         ? getEffectOwnerPlayer(getCurrentActionEffect())
         : null;
       const ownerId = currentOwner?.id
-        || pendingState.actionEffectFlow.activePlayerId
-        || pendingState.actionEffectFlow.defaultPlayerId
-        || pendingState.actionEffectFlow.playerId
+        || decisionState.actionEffectFlow.activePlayerId
+        || decisionState.actionEffectFlow.defaultPlayerId
+        || decisionState.actionEffectFlow.playerId
         || null;
-      pendingState.actionEffectFlow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => {
+      decisionState.actionEffectFlow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => {
         const normalized = normalizeInsertedActionEffect(effect, ownerId, `inserted-card-effect-${insertIndex}-${index}`);
         return abilities.chain.markInsertedNode?.(normalized, insertionSource) || normalized;
       }));
-      pendingState.actionEffectFlow.completed = false;
+      decisionState.actionEffectFlow.completed = false;
     }
 
     function insertActionEffectsBeforeCurrent(effects) {
-      if (!pendingState.actionEffectFlow || !effects?.length) return false;
+      if (!decisionState.actionEffectFlow || !effects?.length) return false;
       const insertedEffects = effects.filter(Boolean);
       if (!insertedEffects.length) return false;
-      const flow = pendingState.actionEffectFlow;
+      const flow = decisionState.actionEffectFlow;
       const current = getCurrentActionEffect();
       const insertIndex = flow.completed
         ? Math.min(flow.effects.length, Math.max(0, flow.currentIndex + 1))
@@ -1231,7 +1241,7 @@
         renderStateReadout();
         return effect.result;
       }
-      pendingState.handScanAction = {
+      decisionState.handScanAction = {
         type: "hand_scan",
         player: currentPlayer,
         fromEffectFlow: true,
@@ -1264,7 +1274,7 @@
       skip.dataset.optionalHandScan = "skip";
       skip.innerHTML = "跳过<small>不执行这次弃牌扫描</small>";
       els.scanTargetActions.replaceChildren(start, skip);
-      pendingState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "optional_hand_scan", effect };
+      decisionState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "optional_hand_scan", effect };
       els.scanTargetOverlay.hidden = false;
       rocketState.statusNote = `${effect.label}：选择手牌或跳过`;
       renderStateReadout();
@@ -1272,7 +1282,7 @@
     }
 
     function handleOptionalHandScanChoice(choice) {
-      const pending = pendingState.scanTargetAction;
+      const pending = decisionState.scanTargetAction;
       if (pending?.type !== "optional_hand_scan") return { ok: false, message: "没有待处理的可选手牌扫描" };
       const effect = pending.effect;
       closeScanTargetPicker();
@@ -1442,7 +1452,7 @@
     }
 
     function executePlutoReserveEffect(effect) {
-      const card = pendingState.actionEffectFlow?.card;
+      const card = decisionState.actionEffectFlow?.card;
       if (card) {
         ensurePlutoCardEffectState(card).pluto = {
           ...(card.cardEffectState?.pluto || {}),

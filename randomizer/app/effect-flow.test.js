@@ -2,6 +2,8 @@
 
 const assert = require("node:assert/strict");
 const { createEffectFlowHelpers } = require("./effect-flow");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
+const { attachDecisionState } = require("./test-decision-state");
 
 function createHistoryHarness() {
   let nextStepId = 1;
@@ -52,6 +54,8 @@ function createHarness() {
     futureSpanPlayBeforePlayer: null,
     actionEffectFlow: null,
   };
+  const decisionSessions = createDecisionSessionStore();
+  attachDecisionState(pendingState, decisionSessions);
   const uiRuntimeState = {
     effectStepActive: false,
   };
@@ -127,6 +131,7 @@ function createHarness() {
     },
   };
   const helper = createEffectFlowHelpers({
+    decisionSessions,
     pendingState,
     uiRuntimeState,
     actionHistory,

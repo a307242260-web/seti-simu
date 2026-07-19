@@ -88,6 +88,16 @@
       updateActionButtons,
       updatePublicCardControls
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
 
     const TURN_END_REVEAL_SESSION = "turn_end_after_reveal";
     const getTurnEndAfterRevealSession = () => decisionSessions.peek(TURN_END_REVEAL_SESSION);
@@ -276,10 +286,10 @@
     ));
 
     const anomalyPickOpen = isCardSelectionActive()
-      && pendingState.cardSelectionAction?.type === "yichangdian_anomaly_pick";
+      && decisionState.cardSelectionAction?.type === "yichangdian_anomaly_pick";
     if (anomalyPickOpen) {
-      pendingState.cardSelectionAction.fromEffectFlow = true;
-      pendingState.cardSelectionAction.effectResult = {
+      decisionState.cardSelectionAction.fromEffectFlow = true;
+      decisionState.cardSelectionAction.effectResult = {
         ok: result.ok,
         undoable: true,
         message: result.message,
@@ -320,17 +330,17 @@
     beginPassActionSession(currentPlayer);
     const passEffects = buildPassEffectQueue(currentPlayer);
     if (passEffects.length) {
-      pendingState.actionEffectFlow = abilities.chain.startAbilityChain(
+      decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
         "pass",
         "PASS",
         passEffects,
       );
-      pendingState.actionEffectFlow.actionType = "pass";
-      pendingState.actionEffectFlow.playerId = currentPlayer.id;
-      assignEffectFlowOwner(pendingState.actionEffectFlow, pendingState.actionEffectFlow.playerId);
-      pendingState.actionEffectFlow.passEvent = createPassEvent(currentPlayer);
-      pendingState.actionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
-      pendingState.actionEffectFlow.consumesMainAction = true;
+      decisionState.actionEffectFlow.actionType = "pass";
+      decisionState.actionEffectFlow.playerId = currentPlayer.id;
+      assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
+      decisionState.actionEffectFlow.passEvent = createPassEvent(currentPlayer);
+      decisionState.actionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
+      decisionState.actionEffectFlow.consumesMainAction = true;
       els.appWrap?.classList.toggle("action-effect-flow-active", true);
       rocketState.statusNote = "PASS：请依次点击必做效果";
       activateNextActionEffect();
@@ -397,12 +407,12 @@
 
   function hasTurnEndRevealBlockingSubFlow() {
     return Boolean(
-      pendingState.alienRevealConfirmation
+      decisionState.alienRevealConfirmation
       || decisionSessions?.peek?.("jiuzhe_card_play")
       || decisionSessions?.peek?.("banrenma_opportunity")
       || decisionSessions.peek("banrenma_card_gain")
-      || pendingState.alienTraceAction
-      || pendingState.alienTracePickerState
+      || decisionState.alienTraceAction
+      || decisionState.alienTracePickerState
       || isActionEffectFlowActive()
       || hasActivePendingSubFlow()
     );

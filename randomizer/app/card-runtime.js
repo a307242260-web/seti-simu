@@ -108,6 +108,16 @@
       turnState,
       updateActionButtons,
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
     const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
     const PASS_RESERVE_SELECTION_SESSION = "pass_reserve_selection";
     const MOVE_PAYMENT_SESSION = "move_payment";
@@ -603,7 +613,7 @@
         return { ok: false, message: "请先完成移动" };
       }
 
-      pendingState.cardSelectionAction = pendingAction;
+      decisionState.cardSelectionAction = pendingAction;
       cards.setSelectionActive(cardState, true);
       rocketState.statusNote = pendingAction?.type === "public_scan"
         ? (pendingAction.maxSelectable ?? 1) > 1
@@ -645,8 +655,8 @@
     }
 
     function cancelCardSelection() {
-      const pending = pendingState.cardSelectionAction;
-      pendingState.cardSelectionAction = null;
+      const pending = decisionState.cardSelectionAction;
+      decisionState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
       if (pending?.type === "trade" && pending.player && pending.refundCost) {
         if (pending.beforeTradeState) {
@@ -777,8 +787,8 @@
       }
 
       cards.setSelectionActive(cardState, false);
-      const pending = pendingState.cardSelectionAction;
-      pendingState.cardSelectionAction = null;
+      const pending = decisionState.cardSelectionAction;
+      decisionState.cardSelectionAction = null;
       rocketState.statusNote = pending?.type === "trade"
         ? `快速交易精选：${cards.getCardLabel(result.card)}`
         : `获得卡牌：${cards.getCardLabel(result.card)}`;
@@ -828,7 +838,7 @@
               playerColor: pending.player?.color || getCurrentPlayer()?.color || null,
               techType: pending.selection?.techType || null,
               tileId: pending.selection?.tileId || null,
-              source: pendingState.actionEffectFlow?.actionType || "tech",
+              source: decisionState.actionEffectFlow?.actionType || "tech",
             }],
             payload: {
               card: result.card,
@@ -1204,15 +1214,15 @@
 
     function handlePublicCardClick(slotIndex) {
       if (!isCardSelectionActive()) return;
-      if (pendingState.cardSelectionAction?.type === "public_scan") {
+      if (decisionState.cardSelectionAction?.type === "public_scan") {
         handlePublicScanCardClick(slotIndex);
         return;
       }
-      if (pendingState.cardSelectionAction?.type === "card_public_corner_discard") {
+      if (decisionState.cardSelectionAction?.type === "card_public_corner_discard") {
         handlePublicCornerDiscardCardClick(slotIndex);
         return;
       }
-      if (pendingState.cardSelectionAction?.type === "industry_deepspace_public") {
+      if (decisionState.cardSelectionAction?.type === "industry_deepspace_public") {
         finalizeIndustryDeepspaceSwap(slotIndex);
         return;
       }
@@ -1421,7 +1431,7 @@
 
     function initCardMoveEffectState(effect) {
       const movementPoints = Math.max(1, Math.round(Number(effect.options?.movementPoints || 1)));
-      pendingState.actionEffectFlow.cardMoveEffect = {
+      decisionState.actionEffectFlow.cardMoveEffect = {
         effect,
         poolRemaining: movementPoints,
         deferredType1Events: [],
@@ -1447,9 +1457,9 @@
 
     function getCompletedIndustryHuanyuMoveRocketIds(effect) {
       const groupId = effect?.options?.industryHuanyuMoveGroupId || null;
-      if (!groupId || !pendingState.actionEffectFlow?.effects?.length) return new Set();
+      if (!groupId || !decisionState.actionEffectFlow?.effects?.length) return new Set();
       const used = new Set();
-      for (const candidate of pendingState.actionEffectFlow.effects) {
+      for (const candidate of decisionState.actionEffectFlow.effects) {
         if (!candidate || candidate === effect || candidate.id === effect.id) continue;
         if (candidate.options?.industryHuanyuMoveGroupId !== groupId) continue;
         if (candidate.status !== "completed" || candidate.result?.skipped) continue;
@@ -1509,7 +1519,7 @@
     }
 
     function executeCardEffectMove(deltaX, deltaY, rocketId, payment = {}) {
-      const ctx = pendingState.actionEffectFlow?.cardMoveEffect;
+      const ctx = decisionState.actionEffectFlow?.cardMoveEffect;
       const effect = ctx?.effect || getCurrentActionEffect();
       if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
 
@@ -1604,7 +1614,7 @@
       clearMoveRocketHighlight();
 
       if (ctx && ctx.poolRemaining > 0) {
-        pendingState.actionEffectFlow.cardMoveEffect = ctx;
+        decisionState.actionEffectFlow.cardMoveEffect = ctx;
         const currentPlayer = getCurrentPlayer();
         const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
         rocketState.statusNote = `${effect.label}：剩余 ${ctx.poolRemaining} 点移动力`;
@@ -1631,7 +1641,7 @@
         return effect.result;
       }
 
-      pendingState.actionEffectFlow.cardMoveEffect = null;
+      decisionState.actionEffectFlow.cardMoveEffect = null;
       deactivateMoveMode();
       effect.result = {
         ...result,
@@ -1652,7 +1662,7 @@
     }
 
     function finishCurrentCardMoveEffectEarly() {
-      const ctx = pendingState.actionEffectFlow?.cardMoveEffect;
+      const ctx = decisionState.actionEffectFlow?.cardMoveEffect;
       const current = getCurrentActionEffect();
       if (!ctx || !current || current.status !== "active" || ctx.effect?.id !== current.id) return false;
       if (!ctx.moved && !current.result) return false;
@@ -1666,7 +1676,7 @@
         ? `结束剩余 ${poolRemaining} 点移动力`
         : "移动已完成";
 
-      pendingState.actionEffectFlow.cardMoveEffect = null;
+      decisionState.actionEffectFlow.cardMoveEffect = null;
       current.badge = "";
       current.result = {
         ...(current.result || {}),
@@ -1692,7 +1702,7 @@
     }
 
     function requestCardEffectMove(deltaX, deltaY, rocketId) {
-      const ctx = pendingState.actionEffectFlow?.cardMoveEffect;
+      const ctx = decisionState.actionEffectFlow?.cardMoveEffect;
       const effect = ctx?.effect || getCurrentActionEffect();
       if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
 

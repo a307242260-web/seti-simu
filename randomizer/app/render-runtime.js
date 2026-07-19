@@ -135,6 +135,16 @@
       removeRocketElement,
       renderRockets,
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
 
     function getReferencePlacementKindLabel(kind) {
       return referencePlacementKindLabels[kind] || kind || "贴图";
@@ -415,6 +425,16 @@
       getAomomoCurrentX,
       queueStateReadoutRender,
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
 
     function loadTokenWidth(asset, scale, fallbackNaturalWidth, onLoad) {
       const image = new ImageCtor();
@@ -931,7 +951,7 @@
 
       const selectionActive = context.isCardSelectionActive();
       const publicCardMultiSelect = context.isPublicCardMultiSelectActive();
-      const selectedPublicSlots = context.pendingState.cardSelectionAction?.selectedSlots || [];
+      const selectedPublicSlots = decisionState.cardSelectionAction?.selectedSlots || [];
       els.publicCardRow.replaceChildren(...context.cardState.publicCards.map((card, index) => {
         const slot = document.createElement("div");
         slot.className = "public-card-slot";
@@ -1026,16 +1046,16 @@
       const currentPlayer = getInterfacePlayer();
       const hand = Array.isArray(currentPlayer.hand) ? currentPlayer.hand : [];
       const actualCurrentPlayer = getCurrentPlayer();
-      const discardActive = isDiscardSelectionActive() && context.pendingState.discardAction?.player?.id === currentPlayer?.id;
+      const discardActive = isDiscardSelectionActive() && decisionState.discardAction?.player?.id === currentPlayer?.id;
       const playActive = isPlayCardSelectionActive() && actualCurrentPlayer?.id === currentPlayer?.id;
       const movePaymentActive = isMovePaymentSelectionActive() && context.getPendingMovePayment()?.player?.id === currentPlayer?.id;
-      const handScanActive = isHandScanSelectionActive() && context.pendingState.handScanAction?.player?.id === currentPlayer?.id;
+      const handScanActive = isHandScanSelectionActive() && decisionState.handScanAction?.player?.id === currentPlayer?.id;
       const cardCornerAction = getPendingCardCornerQuickAction();
       const handCardPlayAction = getPendingHandCardPlayAction();
       const cardCornerActionEnabled = actualCurrentPlayer?.id === currentPlayer?.id && canUseCardCornerQuickAction();
-      const handScanPickIndex = context.pendingState.scanTargetAction?.type === "hand_scan"
-        && Number.isInteger(Number(context.pendingState.scanTargetAction.handIndex))
-        ? Number(context.pendingState.scanTargetAction.handIndex)
+      const handScanPickIndex = decisionState.scanTargetAction?.type === "hand_scan"
+        && Number.isInteger(Number(decisionState.scanTargetAction.handIndex))
+        ? Number(decisionState.scanTargetAction.handIndex)
         : null;
       const handPickActive = discardActive
         || playActive
@@ -1061,7 +1081,7 @@
           button.dataset.handIndex = String(index);
           if (discardActive) {
             button.classList.add("is-selectable");
-            if (context.pendingState.discardAction?.selectedIndexes?.includes(index)) {
+            if (decisionState.discardAction?.selectedIndexes?.includes(index)) {
               button.classList.add("is-selected");
             }
             button.setAttribute("aria-label", label);

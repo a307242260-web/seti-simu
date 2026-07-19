@@ -36,6 +36,16 @@
     const structuredClone = structuredCloneRef;
 
     const pendingState = context.pendingState || {};
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
     const decisionSessions = context.decisionSessions;
     const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
     const getPublicScanQueue = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
@@ -181,7 +191,7 @@
       return Math.min(1 + getPublicScanBonusSelectableCount(player), 3, filledSlots);
     }
 
-    function getPublicScanMinSelectable(pending = pendingState.cardSelectionAction) {
+    function getPublicScanMinSelectable(pending = decisionState.cardSelectionAction) {
       const maxSelectable = Math.max(1, Math.round(Number(pending?.maxSelectable) || 1));
       const requested = Math.max(1, Math.round(Number(pending?.minSelectable) || 1));
       return Math.min(maxSelectable, requested);
@@ -195,7 +205,7 @@
         : `最多选择 ${maxSelectable} 张公共牌，确认后依次扫描`;
     }
 
-    function ensureDelayedPublicRefills(flow = pendingState.actionEffectFlow) {
+    function ensureDelayedPublicRefills(flow = decisionState.actionEffectFlow) {
       if (!flow) return [];
       if (!Array.isArray(flow.delayedPublicRefills)) {
         flow.delayedPublicRefills = [];
@@ -204,10 +214,10 @@
     }
 
     function registerDelayedPublicRefill(scanRunId, slotIndex, card) {
-      if (!scanRunId || !pendingState.actionEffectFlow) return null;
+      if (!scanRunId || !decisionState.actionEffectFlow) return null;
       const index = Number(slotIndex);
       if (!Number.isInteger(index)) return null;
-      const list = ensureDelayedPublicRefills(pendingState.actionEffectFlow);
+      const list = ensureDelayedPublicRefills(decisionState.actionEffectFlow);
       const existing = list.find((item) => item.scanRunId === scanRunId && item.slotIndex === index);
       if (existing) {
         existing.card = card || existing.card || null;
@@ -224,19 +234,19 @@
       return entry;
     }
 
-    function getDelayedPublicRefillSlots(scanRunId, flow = pendingState.actionEffectFlow) {
+    function getDelayedPublicRefillSlots(scanRunId, flow = decisionState.actionEffectFlow) {
       return ensureDelayedPublicRefills(flow)
         .filter((item) => !scanRunId || item.scanRunId === scanRunId)
         .map((item) => ({ ...item }));
     }
 
-    function clearDelayedPublicRefillSlots(scanRunId, flow = pendingState.actionEffectFlow) {
+    function clearDelayedPublicRefillSlots(scanRunId, flow = decisionState.actionEffectFlow) {
       if (!flow || !Array.isArray(flow.delayedPublicRefills)) return;
       flow.delayedPublicRefills = flow.delayedPublicRefills
         .filter((item) => scanRunId && item.scanRunId !== scanRunId);
     }
 
-    function cloneDelayedPublicRefills(flow = pendingState.actionEffectFlow) {
+    function cloneDelayedPublicRefills(flow = decisionState.actionEffectFlow) {
       return Array.isArray(flow?.delayedPublicRefills)
         ? flow.delayedPublicRefills.map((item) => ({ ...item }))
         : [];
@@ -394,7 +404,7 @@
       return effects;
     }
 
-    function buildScanFinalizeFollowupEffects(_scanRunId, flow = pendingState.actionEffectFlow) {
+    function buildScanFinalizeFollowupEffects(_scanRunId, flow = decisionState.actionEffectFlow) {
       return [
         ...buildReadySectorFinishEffects({ nebulaIds: getFlowMarkedNebulaIds(flow) }),
       ];
@@ -433,7 +443,7 @@
         return scanChoices;
       }
 
-      pendingState.cardSelectionAction = null;
+      decisionState.cardSelectionAction = null;
       setSelectionActive(false);
       syncCardSelectionChrome();
       rocketState.statusNote = `公共牌区扫描：${getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
@@ -479,7 +489,7 @@
     }
 
     function confirmPublicScanSelection() {
-      const pending = pendingState.cardSelectionAction;
+      const pending = decisionState.cardSelectionAction;
       if (pending?.type !== "public_scan") {
         return { ok: false, message: "当前不是公共牌区扫描" };
       }
@@ -520,8 +530,8 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const fromEffectFlow = Boolean(pending.fromEffectFlow || pendingState.actionEffectFlow);
-      pendingState.cardSelectionAction = null;
+      const fromEffectFlow = Boolean(pending.fromEffectFlow || decisionState.actionEffectFlow);
+      decisionState.cardSelectionAction = null;
       setSelectionActive(false);
       syncCardSelectionChrome();
 
@@ -576,9 +586,9 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = pendingState.cardSelectionAction;
+      const pending = decisionState.cardSelectionAction;
       const maxSelectable = pending?.maxSelectable ?? 1;
-      const fromEffectFlow = Boolean(pending?.fromEffectFlow || pendingState.actionEffectFlow);
+      const fromEffectFlow = Boolean(pending?.fromEffectFlow || decisionState.actionEffectFlow);
 
       if (maxSelectable <= 1) {
         return beginPublicScanForSingleCard(index, card, {
@@ -652,7 +662,7 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      pendingState.handScanAction = { type: "hand_scan", player: currentPlayer };
+      decisionState.handScanAction = { type: "hand_scan", player: currentPlayer };
       rocketState.statusNote = "手牌扫描：请选择一张手牌弃除并扫描";
       syncHandScanSelectionChrome();
       updateActionButtons();
@@ -662,7 +672,7 @@
 
     function cancelHandScanSelection() {
       if (!isHandScanSelectionActive()) return;
-      pendingState.handScanAction = null;
+      decisionState.handScanAction = null;
       rocketState.statusNote = "已取消手牌扫描";
       syncHandScanSelectionChrome();
       updateActionButtons();
@@ -672,7 +682,7 @@
     function handleHandScanCardClick(handIndex) {
       if (!isHandScanSelectionActive()) return;
 
-      const fromEffectFlow = Boolean(pendingState.handScanAction?.fromEffectFlow || pendingState.actionEffectFlow);
+      const fromEffectFlow = Boolean(decisionState.handScanAction?.fromEffectFlow || decisionState.actionEffectFlow);
       const currentPlayer = getCurrentPlayer();
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];
@@ -689,7 +699,7 @@
         return scanChoices;
       }
 
-      pendingState.handScanAction = null;
+      decisionState.handScanAction = null;
       syncHandScanSelectionChrome();
       rocketState.statusNote = `手牌扫描：${getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
       renderStateReadout();
@@ -788,15 +798,15 @@
     }
 
     function appendSectorSettlementResultToFlow(settlementResult) {
-      if (!pendingState.actionEffectFlow || !settlementResult?.ok) return;
-      if (!pendingState.actionEffectFlow.sectorSettlementResult) {
-        pendingState.actionEffectFlow.sectorSettlementResult = {
+      if (!decisionState.actionEffectFlow || !settlementResult?.ok) return;
+      if (!decisionState.actionEffectFlow.sectorSettlementResult) {
+        decisionState.actionEffectFlow.sectorSettlementResult = {
           ok: true,
           settlements: [],
           message: "",
         };
       }
-      const aggregate = pendingState.actionEffectFlow.sectorSettlementResult;
+      const aggregate = decisionState.actionEffectFlow.sectorSettlementResult;
       aggregate.settlements.push(settlementResult);
       aggregate.message = aggregate.settlements.map((item) => item.message).join("；");
       aggregate.runezuSymbolClaims = [
@@ -845,8 +855,8 @@
     }
 
     function executeScanActionFinalizeEffect(effect) {
-      const scanRunId = effect.options?.scanRunId || pendingState.actionEffectFlow?.scanRunId || null;
-      const followups = buildScanFinalizeFollowupEffects(scanRunId, pendingState.actionEffectFlow);
+      const scanRunId = effect.options?.scanRunId || decisionState.actionEffectFlow?.scanRunId || null;
+      const followups = buildScanFinalizeFollowupEffects(scanRunId, decisionState.actionEffectFlow);
       if (followups.length) {
         insertActionEffectsAfterCurrent(followups);
       }
@@ -878,7 +888,7 @@
       const result = data.settleSector(nebulaDataState, sectorId, {
         players: playerState.players,
         getPlayerTokenSrc: getNormalTokenAssetForPlayer,
-        source: pendingState.actionEffectFlow?.actionType || "scan",
+        source: decisionState.actionEffectFlow?.actionType || "scan",
       });
       if (!result.ok) {
         endEffectHistoryStep();
@@ -971,7 +981,7 @@
     }
 
     function replenishDelayedPublicRefillSlots(scanRunId, slots, options = {}) {
-      const flow = options.flow || pendingState.actionEffectFlow;
+      const flow = options.flow || decisionState.actionEffectFlow;
       const slotIndexes = normalizeDelayedPublicRefillSlotIndexes(slots);
       if (!slotIndexes.length) {
         clearDelayedPublicRefillSlots(scanRunId, flow);
@@ -987,7 +997,7 @@
       const discardPileSnapshot = (cardState.discardPile || []).slice();
       const hasEffectIndex = Object.prototype.hasOwnProperty.call(options, "effectIndex");
       beginEffectHistoryStep(options.label || "补充公共牌区", {
-        effectIndex: hasEffectIndex ? options.effectIndex : pendingState.actionEffectFlow?.currentIndex ?? null,
+        effectIndex: hasEffectIndex ? options.effectIndex : decisionState.actionEffectFlow?.currentIndex ?? null,
         effectType: scanEffects.EFFECT_TYPES.SCAN_PUBLIC_REFILL,
       });
       const replenished = [];
@@ -1123,7 +1133,7 @@
       if (!effects.length) return false;
       flow.endOfFlowSettlementScheduled = true;
       flow.completed = false;
-      const ownerId = flow.playerId || flow.defaultPlayerId || pendingState.actionEffectFlow?.playerId || null;
+      const ownerId = flow.playerId || flow.defaultPlayerId || decisionState.actionEffectFlow?.playerId || null;
       const insertionSource = createEndOfFlowInsertionSource(flow);
       for (const effect of effects) {
         const node = {
@@ -1149,7 +1159,7 @@
       if (!deferredEffects.length) return false;
 
       const existingIds = new Set((flow.effects || []).map((effect) => effect?.id).filter(Boolean));
-      const ownerId = flow.playerId || flow.defaultPlayerId || pendingState.actionEffectFlow?.playerId || null;
+      const ownerId = flow.playerId || flow.defaultPlayerId || decisionState.actionEffectFlow?.playerId || null;
       const effectsToAppend = deferredEffects.filter((effect) => !effect.id || !existingIds.has(effect.id));
       if (!effectsToAppend.length) return false;
 
@@ -1288,7 +1298,7 @@
       if (!els.scanTargetOverlay) {
         if (getPublicScanQueue() && !options.forcePublicScanQueueClose) return;
         if (options.forcePublicScanQueueClose) decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
-        pendingState.scanTargetAction = null;
+        decisionState.scanTargetAction = null;
         decisionSessions.clear("probe_sector_scan");
         decisionSessions.clear("probe_location_reward");
         decisionSessions.clear("strategy_passive_slot");
@@ -1306,7 +1316,7 @@
       if (!options.forceYichangdianCornerClose && restoreYichangdianCornerPickerIfPending()) {
         return;
       }
-      if (!options.preserveIndustryAction && pendingState.scanTargetAction?.type === "industry_remove_tech") {
+      if (!options.preserveIndustryAction && decisionState.scanTargetAction?.type === "industry_remove_tech") {
         rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
         return;
       }
@@ -1322,7 +1332,7 @@
       decisionSessions.clear("runezu_face_symbol_placement");
       decisionSessions.clear("strategy_passive_slot");
       setScanTargetActionLayout();
-      pendingState.scanTargetAction = null;
+      decisionState.scanTargetAction = null;
       decisionSessions.clear("probe_sector_scan");
       decisionSessions.clear("probe_location_reward");
       els.scanTargetOverlay.hidden = true;
@@ -1448,7 +1458,7 @@
     function openScanTargetPicker(config) {
       if (openScanTargetPickerOverride) return openScanTargetPickerOverride(config);
       config = config || {};
-      pendingState.scanTargetAction = {
+      decisionState.scanTargetAction = {
         ...getPendingOwnerFields(config.effect || null),
         ...config,
       };
@@ -1456,7 +1466,7 @@
         if (globalThis.SetiHeadlessRuntimeConfig?.enabled) {
           return { ok: true, pendingChoice: true, message: config.subtitle || "请选择扫描目标" };
         }
-        pendingState.scanTargetAction = null;
+        decisionState.scanTargetAction = null;
         return { ok: false, message: "无法打开扫描目标选择" };
       }
       if (els.scanTargetTitle) {
@@ -1496,7 +1506,7 @@
     }
 
     function confirmScanTarget(nebulaId, sectorX) {
-      const pending = pendingState.scanTargetAction;
+      const pending = decisionState.scanTargetAction;
       return withPendingOwnerPlayer(pending, () => {
       closeScanTargetPicker({ preserveIndustryAction: true });
 
@@ -1709,7 +1719,7 @@
     }
 
     function handleDrawnHandScanSkip() {
-      const pending = pendingState.scanTargetAction;
+      const pending = decisionState.scanTargetAction;
       if (pending?.type !== "hand_scan" || !pending.discardDrawnOnSkip) {
         return { ok: false, message: "没有可跳过的盲抽弃牌扫描" };
       }

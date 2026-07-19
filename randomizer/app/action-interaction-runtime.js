@@ -74,6 +74,16 @@
       validateIndustryHuanyuMoveRocket,
       withPendingOwnerPlayer
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
     const DATA_PLACEMENT_DECISION = "data_placement";
 
     function getPendingDataPlacement() {
@@ -694,7 +704,7 @@
     const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer.id);
     if (!rocketsForPlayer.some((rocket) => rocket.id === rocketId)) return false;
 
-    const cardMoveEffect = pendingState.actionEffectFlow?.cardMoveEffect?.effect || null;
+    const cardMoveEffect = decisionState.actionEffectFlow?.cardMoveEffect?.effect || null;
     const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(cardMoveEffect, rocketId);
     if (!huanyuRocketCheck.ok) {
       rocketState.statusNote = huanyuRocketCheck.message;

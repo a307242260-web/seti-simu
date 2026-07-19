@@ -91,6 +91,16 @@
       updateActionButtons,
       withPendingOwnerPlayer
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
     const PIRATES_RAID_DECISION = "pirates_raid_placement";
     const getPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
 
@@ -108,8 +118,8 @@
     }
 
     function getResearchTechSelectionEffect() {
-      if (!pendingState.actionEffectFlow) return null;
-      return pendingState.actionEffectFlow.effects.find((effect) => (
+      if (!decisionState.actionEffectFlow) return null;
+      return decisionState.actionEffectFlow.effects.find((effect) => (
         effect.type === "research_tech_select"
         || effect.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH
       )) || null;
@@ -157,7 +167,7 @@
     }
 
     function appendResearchTechFollowupEffects(selectResult) {
-      if (!pendingState.actionEffectFlow) return;
+      if (!decisionState.actionEffectFlow) return;
       const selectionOptions = getResearchTechSelectionOptions();
       const owner = getEffectOwnerPlayer(getCurrentActionEffect()) || getCurrentPlayer();
       const ownerFields = {
@@ -165,17 +175,17 @@
         playerColor: owner?.color || null,
       };
 
-      const selectIndex = pendingState.actionEffectFlow.effects.findIndex((effect) => (
+      const selectIndex = decisionState.actionEffectFlow.effects.findIndex((effect) => (
         effect.type === "research_tech_select"
         || effect.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH
       ));
       const trailingEffects = selectIndex >= 0
-        ? pendingState.actionEffectFlow.effects
+        ? decisionState.actionEffectFlow.effects
           .slice(selectIndex + 1)
           .filter((effect) => !isGeneratedResearchTechFollowupEffect(effect))
         : [];
       if (selectIndex >= 0) {
-        pendingState.actionEffectFlow.effects.splice(selectIndex + 1);
+        decisionState.actionEffectFlow.effects.splice(selectIndex + 1);
       }
 
       const bonusId = selectResult.bonusId ?? selectResult.payload?.bonusId;
@@ -328,7 +338,7 @@
         followups.push(heliosEffect);
       }
 
-      pendingState.actionEffectFlow.effects.push(
+      decisionState.actionEffectFlow.effects.push(
         ...followups.map((effect) => ({
           ...effect,
           options: {
@@ -403,12 +413,12 @@
     }
 
     function restoreResearchTechSelectionAfterUndo(effect) {
-      const selectIndex = pendingState.actionEffectFlow?.effects?.indexOf(effect) ?? -1;
+      const selectIndex = decisionState.actionEffectFlow?.effects?.indexOf(effect) ?? -1;
       if (selectIndex >= 0) {
-        const trailingEffects = pendingState.actionEffectFlow.effects
+        const trailingEffects = decisionState.actionEffectFlow.effects
           .slice(selectIndex + 1)
           .filter((item) => !isGeneratedResearchTechFollowupEffect(item));
-        pendingState.actionEffectFlow.effects.splice(selectIndex + 1, pendingState.actionEffectFlow.effects.length, ...trailingEffects);
+        decisionState.actionEffectFlow.effects.splice(selectIndex + 1, decisionState.actionEffectFlow.effects.length, ...trailingEffects);
       }
       tech.setTechSelectionActive(techGameState, true);
       techGameState.ui.pendingTileId = null;
@@ -448,7 +458,7 @@
         renderStateReadout();
         return;
       }
-      if (pendingState.actionEffectFlow?.actionType === "researchTech" && hasCurrentMainActionIrreversibleBarrier()) {
+      if (decisionState.actionEffectFlow?.actionType === "researchTech" && hasCurrentMainActionIrreversibleBarrier()) {
         const irreversibleReason = getCurrentActionIrreversibleReason?.();
         rocketState.statusNote = irreversibleReason
           ? `不可撤销：${irreversibleReason}`
@@ -467,7 +477,7 @@
       closeTechBlueSlotPicker();
       techGameState.ui.statusNote = "";
       rocketState.statusNote = "";
-      if (pendingState.actionEffectFlow?.actionType === "researchTech") {
+      if (decisionState.actionEffectFlow?.actionType === "researchTech") {
         const rollbackResult = actionHistory.rollbackSession();
         if (!rollbackResult.ok) {
           rocketState.statusNote = rollbackResult.message || "当前科技行动不能取消";
@@ -802,7 +812,7 @@
       const groupId = `industry-pirates-raid-${turnState.roundNumber}-${turnState.turnNumber}`;
       const nodes = industry?.buildPiratesRaidLaunchEffectNodes?.(flow, { groupId }) || [];
       decisionSessions.clear("industry_ability");
-      pendingState.cardSelectionAction = null;
+      decisionState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
 
@@ -863,7 +873,7 @@
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      pendingState.scanTargetAction = { ...getPendingOwnerFields(effect, player), type: "industry_pirates_raid_launch", effect, choices };
+      decisionState.scanTargetAction = { ...getPendingOwnerFields(effect, player), type: "industry_pirates_raid_launch", effect, choices };
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label || "星际海盗";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一个已有掠夺标记主星上的己方环绕或登陆标记，移除后消耗 1 信用点并在该星球当前扇区免费发射。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -890,7 +900,7 @@
     }
 
     function handlePiratesRaidLaunchChoice(choiceId) {
-      const pending = pendingState.scanTargetAction;
+      const pending = decisionState.scanTargetAction;
       if (pending?.type !== "industry_pirates_raid_launch") {
         return { ok: false, message: "没有待处理的星际海盗发射" };
       }

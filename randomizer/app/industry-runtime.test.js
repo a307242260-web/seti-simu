@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const { createIndustryRuntime } = require("./industry-runtime.js");
 const { createDecisionSessionStore } = require("../game/effects/decision-session-store.js");
+const { attachDecisionState } = require("./test-decision-state");
 
 function noop() {}
 
@@ -19,6 +20,7 @@ function createHarness() {
     discardAction: { type: "industry_helios_income" },
     scanTargetAction: { type: "industry_remove_tech" },
   };
+  attachDecisionState(pendingState, decisionSessions);
   const uiRuntimeState = {
     effectStepActive: true,
     industryFreeMoveState: { movesLeft: 1 },

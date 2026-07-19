@@ -19,6 +19,12 @@ assert.equal(store.has("data_placement"), true);
 assert.equal(store.clear("data_placement").onConfirm, continuation);
 assert.equal(store.has("data_placement"), false);
 
+const state = store.createFacade({ discardAction: "discard_action" });
+state.discardAction = { playerId: "p3", cards: ["card-1"] };
+assert.deepEqual(state.discardAction.cards, ["card-1"]);
+state.discardAction = null;
+assert.equal(store.peek("discard_action"), null);
+
 store.open("land_target", { playerId: "p2" });
 store.clearAll();
 assert.equal(store.inspect("land_target"), null);

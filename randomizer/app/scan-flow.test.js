@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const { createScanFlowHelpers } = require("./scan-flow");
 const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
+const { attachDecisionState } = require("./test-decision-state");
 
 function createBaseHarness() {
   const pendingState = {
@@ -39,6 +40,7 @@ function createBaseHarness() {
     discardPublic: [],
   };
   const decisionSessions = createDecisionSessionStore();
+  attachDecisionState(pendingState, decisionSessions);
 
   const helpers = createScanFlowHelpers({
     decisionSessions,

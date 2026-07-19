@@ -105,6 +105,16 @@
       applyIndustryRoundStartBonuses,
       activateAomomoBoard,
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
 
     function setDebugOpen(open) {
       const nextOpen = Boolean(open) && !els?.appWrap?.classList.contains("debug-tools-disabled");
@@ -154,11 +164,11 @@
     }
 
     function clearPlayerScopedSelectionsForSwitch() {
-      pendingState.discardAction = null;
-      pendingState.cardSelectionAction = null;
+      decisionState.discardAction = null;
+      decisionState.cardSelectionAction = null;
       decisionSessions?.clear?.("pass_reserve_selection");
       pendingState.passReserveSelectionDismissed = false;
-      pendingState.handScanAction = null;
+      decisionState.handScanAction = null;
       decisionSessions?.clear?.("play_card_selection");
       cards.setSelectionActive(cardState, false);
       cards.setDiscardSelectionActive(cardState, false, 0);
@@ -423,7 +433,7 @@
         renderStateReadout?.();
         return { ok: false, message: rocketState.statusNote };
       }
-      pendingState.scanTargetAction = { type: "debug_quick_sector_scan" };
+      decisionState.scanTargetAction = { type: "debug_quick_sector_scan" };
       renderDebugQuickSectorScanPlayerStep();
       rocketState.statusNote = "快速扫描扇区：请选择玩家颜色";
       renderStateReadout?.();
@@ -434,15 +444,15 @@
       uiRuntimeState.debugAlienTraceModeActive = Boolean(active);
       if (uiRuntimeState.debugAlienTraceModeActive) {
         context.closeAlienTracePicker?.();
-        pendingState.alienTracePickerState = {
+        decisionState.alienTracePickerState = {
           mode: "debug-direct",
           allowedTraceTypes: aliens.TRACE_TYPES,
         };
         rocketState.statusNote = message
           || "调试：未揭示外星人请点击 state 面板痕迹位；已揭示请点击正面痕迹位或方舟保留牌解锁";
       } else {
-        if (pendingState.alienTracePickerState?.mode === "debug-direct") {
-          pendingState.alienTracePickerState = null;
+        if (decisionState.alienTracePickerState?.mode === "debug-direct") {
+          decisionState.alienTracePickerState = null;
         }
         rocketState.statusNote = message || "已退出调试获取外星人痕迹模式";
       }
@@ -957,12 +967,12 @@
     }
 
     function getActionEffectOwnerPlayerForFailsafe() {
-      if (!pendingState.actionEffectFlow) return null;
+      if (!decisionState.actionEffectFlow) return null;
       const effect = getCurrentActionEffect?.();
       return getExplicitEffectOwnerPlayer?.(effect)
-        || getPlayerById?.(pendingState.actionEffectFlow.activePlayerId)
-        || getPlayerById?.(pendingState.actionEffectFlow.playerId)
-        || getPlayerById?.(pendingState.actionEffectFlow.defaultPlayerId)
+        || getPlayerById?.(decisionState.actionEffectFlow.activePlayerId)
+        || getPlayerById?.(decisionState.actionEffectFlow.playerId)
+        || getPlayerById?.(decisionState.actionEffectFlow.defaultPlayerId)
         || null;
     }
 
@@ -972,15 +982,15 @@
 
       const pendingEntries = [
         decisionSessions?.peek?.("move_payment"),
-        pendingState.discardAction,
-        pendingState.cardSelectionAction,
+        decisionState.discardAction,
+        decisionState.cardSelectionAction,
         decisionSessions?.peek?.("pass_reserve_selection"),
-        pendingState.scanTargetAction,
+        decisionState.scanTargetAction,
         decisionSessions?.peek?.("probe_sector_scan"),
         decisionSessions?.peek?.("probe_location_reward"),
         decisionSessions?.peek?.("public_scan_queue"),
-        pendingState.handScanAction,
-        pendingState.alienTraceAction,
+        decisionState.handScanAction,
+        decisionState.alienTraceAction,
         decisionSessions?.peek?.("land_target"),
         decisionSessions?.peek?.("data_placement"),
         decisionSessions?.peek?.("card_trigger_action"),

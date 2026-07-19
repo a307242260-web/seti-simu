@@ -170,6 +170,16 @@
       turnState,
       updateActionButtons,
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
 
     function executeCardEffect(effect) {
       const types = cardEffects.EFFECT_TYPES;
@@ -332,7 +342,7 @@
 
     function openPickCardRewardEffect(effect) {
       const currentPlayer = getCurrentPlayer();
-      pendingState.cardSelectionAction = null;
+      decisionState.cardSelectionAction = null;
       const result = beginCardSelection({
         type: "planet_reward_pick_card",
         player: currentPlayer,
@@ -523,7 +533,7 @@
         playerColor: effect.options?.targetPlayerColor,
       }) || getEffectOwnerPlayer(effect) || getCurrentPlayer();
       const allowedAlienSlotIds = getEligibleAlienSlotIdsForTraceEffect(effect, targetPlayer, allowedTraceTypes);
-      pendingState.alienTraceAction = {
+      decisionState.alienTraceAction = {
         type: "planet_reward_alien_trace",
         beforeAlienState: structuredClone(alienGameState),
         beforePlayerState: structuredClone(playerState),
@@ -558,8 +568,8 @@
         }),
         finishNoTarget: () => {
           const message = `${effect.label}：没有合法外星人痕迹位置，奖励落空`;
-          pendingState.alienTraceAction = null;
-          pendingState.alienTracePickerState = null;
+          decisionState.alienTraceAction = null;
+          decisionState.alienTracePickerState = null;
           closeAlienTracePicker();
           return finishAutomaticRewardEffect(effect, {
             ok: true,
@@ -694,7 +704,7 @@
                 playerColor: getCurrentPlayer()?.color || null,
                 techType: selection?.techType || null,
                 tileId: selection?.tileId || null,
-                source: pendingState.actionEffectFlow?.actionType || "tech",
+                source: decisionState.actionEffectFlow?.actionType || "tech",
               },
             ];
           }
@@ -876,7 +886,7 @@
             renderStateReadout();
             return effect.result;
           }
-          pendingState.handScanAction = { type: "hand_scan", player: currentPlayer, fromEffectFlow: true };
+          decisionState.handScanAction = { type: "hand_scan", player: currentPlayer, fromEffectFlow: true };
           rocketState.statusNote = "手牌扫描：请选择一张手牌弃除并扫描";
           syncHandScanSelectionChrome();
           updateActionButtons();

@@ -113,6 +113,16 @@
       turnState,
       updateActionButtons,
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
 
     const TYPE1_TRIGGER_QUEUE_SESSION = "type1_trigger_queue";
     const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
@@ -388,7 +398,7 @@
     }
 
     function isCardTriggerPickSelectionActive() {
-      return isCardSelectionActive() && pendingState.cardSelectionAction?.type === "card_trigger_pick";
+      return isCardSelectionActive() && decisionState.cardSelectionAction?.type === "card_trigger_pick";
     }
 
     function hasActiveCardTriggerResolution() {
@@ -402,8 +412,8 @@
     }
 
     function isCardTriggerRewardFlowBusy() {
-      return pendingState.actionEffectFlow?.actionType === "cardTrigger"
-        && !pendingState.actionEffectFlow.completed;
+      return decisionState.actionEffectFlow?.actionType === "cardTrigger"
+        && !decisionState.actionEffectFlow.completed;
     }
 
     function getType1TriggerMatchesForEvent(player, event) {
@@ -445,7 +455,7 @@
         renderStateReadout();
         return true;
       }
-      if (pendingState.actionEffectFlow?.completed) {
+      if (decisionState.actionEffectFlow?.completed) {
         finishActionEffectFlow();
         return true;
       }
@@ -482,7 +492,7 @@
       return null;
     }
 
-    function ensureCardFlowEventBonuses(flow = pendingState.actionEffectFlow) {
+    function ensureCardFlowEventBonuses(flow = decisionState.actionEffectFlow) {
       if (!flow) return [];
       if (!Array.isArray(flow.cardFlowEventBonuses)) flow.cardFlowEventBonuses = [];
       return flow.cardFlowEventBonuses;
@@ -491,7 +501,7 @@
     function getActiveCardEventBonuses() {
       const currentPlayer = getCurrentPlayer();
       return [
-        ...ensureCardFlowEventBonuses(pendingState.actionEffectFlow),
+        ...ensureCardFlowEventBonuses(decisionState.actionEffectFlow),
         ...((turnState.cardTurnEventBonuses || []).filter((bonus) => bonus.playerId === currentPlayer?.id)),
       ];
     }
@@ -547,7 +557,7 @@
           historyLabel: bonus.label || "卡牌事件移动",
         },
       };
-      if (pendingState.actionEffectFlow) {
+      if (decisionState.actionEffectFlow) {
         insertActionEffectsAfterCurrent([moveEffect]);
       } else {
         startCardEffectFlow("card-event-bonus-move", bonus.label || "卡牌事件奖励", [moveEffect], {
@@ -567,7 +577,7 @@
       const currentPlayer = getCurrentPlayer();
       const beforePlayer = currentPlayer ? structuredClone(currentPlayer) : null;
       const beforeTurnBonuses = structuredClone(turnState.cardTurnEventBonuses || []);
-      const beforeFlowBonuses = structuredClone(pendingState.actionEffectFlow?.cardFlowEventBonuses || []);
+      const beforeFlowBonuses = structuredClone(decisionState.actionEffectFlow?.cardFlowEventBonuses || []);
       const messages = [];
       for (const event of events) {
         for (const bonus of bonuses) {
@@ -609,7 +619,7 @@
         }
       }
       if (messages.length) {
-        const source = pendingState.actionEffectFlow?.historySource
+        const source = decisionState.actionEffectFlow?.historySource
           || (quickActionHistory.hasSession() ? HISTORY_SOURCE_QUICK : HISTORY_SOURCE_MAIN);
         const history = ensureEffectHistorySession(source, "cardEventBonus", "卡牌事件触发奖励");
         history.beginStep({
@@ -630,8 +640,8 @@
           describe: "恢复卡牌事件触发计数",
           undo() {
             turnState.cardTurnEventBonuses = structuredClone(beforeTurnBonuses);
-            if (pendingState.actionEffectFlow) {
-              pendingState.actionEffectFlow.cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
+            if (decisionState.actionEffectFlow) {
+              decisionState.actionEffectFlow.cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
             }
           },
         });
@@ -1050,7 +1060,7 @@
       closeCardTriggerPicker();
       renderReservedCardsFromTaskState();
 
-      if (pendingState.actionEffectFlow) {
+      if (decisionState.actionEffectFlow) {
         insertActionEffectsBeforeCurrent(preparedEffects);
         rocketState.statusNote = `${label}：已加入效果队列`;
         renderActionEffectBar();

@@ -12,22 +12,14 @@
   const ADAPTER_OWNER = "SETI-72/browser-host-stages-5-9";
 
   const DEFAULTS = Object.freeze({
-    discardAction: null,
-    cardSelectionAction: null,
     passReserveSelectionDismissed: false,
-    scanTargetAction: null,
     scanRunSequence: 0,
-    handScanAction: null,
-    alienTraceAction: null,
-    alienTracePickerState: null,
-    alienRevealConfirmation: null,
-    actionEffectFlow: null,
   });
 
   const GROUPS = Object.freeze({
-    common_choice: ["discardAction", "cardSelectionAction", "passReserveSelectionDismissed"],
-    scan: ["scanTargetAction", "scanRunSequence", "handScanAction"],
-    alien_trace: ["alienTraceAction", "alienTracePickerState", "alienRevealConfirmation"],
+    common_choice: ["passReserveSelectionDismissed"],
+    scan: ["scanRunSequence"],
+    alien_trace: [],
     card_trigger: [],
     jiuzhe: [],
     yichangdian: [],
@@ -36,7 +28,7 @@
     amiba: [],
     aomomo: [],
     runezu: [],
-    action_flow: ["actionEffectFlow"],
+    action_flow: [],
     movement_cards: [],
     data_industry: [],
   });

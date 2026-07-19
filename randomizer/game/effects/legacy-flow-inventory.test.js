@@ -6,8 +6,8 @@ const path = require("node:path");
 const inventory = require("./legacy-flow-inventory");
 const appRuntime = require("../../app/runtime");
 
-assert.equal(inventory.INVENTORY.length, 10, "权威 inventory 必须只覆盖仍存续的 10 字段");
-assert.equal(new Set(inventory.INVENTORY.map((entry) => entry.field)).size, 10);
+assert.equal(inventory.INVENTORY.length, 2, "权威 inventory 必须只保留 2 个 host-only 字段");
+assert.equal(new Set(inventory.INVENTORY.map((entry) => entry.field)).size, 2);
 assert.equal(inventory.INVENTORY.every((entry) => ["host-only", "dated-adapter"].includes(entry.status)), true);
 assert.equal(inventory.INVENTORY
   .filter((entry) => entry.status === "dated-adapter")
@@ -16,22 +16,22 @@ assert.equal(inventory.INVENTORY
 const pending = appRuntime.createPendingState();
 const cleanAudit = inventory.auditLegacyPendingState(pending, { asOf: "2026-07-19" });
 assert.equal(cleanAudit.ok, true);
-assert.equal(cleanAudit.fieldCount, 10);
+assert.equal(cleanAudit.fieldCount, 2);
 assert.deepEqual(cleanAudit.activeAdapters, []);
 
-pending.discardAction = { id: "discard-1" };
+pending.passReserveSelectionDismissed = true;
 assert.deepEqual(
   inventory.auditLegacyPendingState(pending, { asOf: "2026-07-19" }).activeAdapters.sort(),
-  ["discardAction"],
+  [],
 );
 
 const unknown = { ...appRuntime.createPendingState(), surpriseResolver: true };
 assert.deepEqual(inventory.auditLegacyPendingState(unknown).unknownFields, ["surpriseResolver"]);
 const missing = appRuntime.createPendingState();
-delete missing.cardSelectionAction;
-assert.deepEqual(inventory.auditLegacyPendingState(missing).missingFields, ["cardSelectionAction"]);
-assert.equal(inventory.auditLegacyPendingState(appRuntime.createPendingState(), { asOf: "2026-09-01" }).ok, false,
-  "到期 adapter 必须机械失败，不能永久静默兼容");
+delete missing.scanRunSequence;
+assert.deepEqual(inventory.auditLegacyPendingState(missing).missingFields, ["scanRunSequence"]);
+assert.equal(inventory.auditLegacyPendingState(appRuntime.createPendingState(), { asOf: "2026-09-01" }).ok, true,
+  "host-only 字段无 adapter 到期日");
 
 const runtimeSource = fs.readFileSync(path.join(__dirname, "../../app/runtime.js"), "utf8");
 assert.match(runtimeSource, /legacyFlowInventory\.createLegacyPendingState\(\)/);

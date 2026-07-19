@@ -60,7 +60,22 @@
       sessions.clear();
     }
 
-    return Object.freeze({ open, peek, inspect, clear, has, clearAll });
+    function createFacade(definitions = {}) {
+      const facade = {};
+      for (const [field, kind] of Object.entries(definitions)) {
+        Object.defineProperty(facade, field, {
+          enumerable: true,
+          get: () => peek(kind),
+          set: (value) => {
+            if (value == null) clear(kind);
+            else open(kind, value);
+          },
+        });
+      }
+      return Object.freeze(facade);
+    }
+
+    return Object.freeze({ open, peek, inspect, clear, has, clearAll, createFacade });
   }
 
   return Object.freeze({ SCHEMA_VERSION, createDecisionSessionStore });

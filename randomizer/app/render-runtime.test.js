@@ -2,6 +2,8 @@
 
 const assert = require("node:assert/strict");
 const { createRenderRuntime, createCoordinateRuntime } = require("./render-runtime");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
+const { attachDecisionState } = require("./test-decision-state");
 
 function createClassList(element) {
   const values = new Set();
@@ -177,6 +179,8 @@ function createImageCtor() {
 }
 
 function createContext(overrides = {}) {
+  const decisionSessions = createDecisionSessionStore();
+  const pendingState = attachDecisionState({ cardSelectionAction: null }, decisionSessions);
   const document = overrides.document || createDocument();
   const els = overrides.els || {
     tokenLayer: createElement("div", document),
@@ -225,6 +229,7 @@ function createContext(overrides = {}) {
     techState: { ownedTiles: {} },
   };
   const context = {
+    decisionSessions,
     document,
     Image: createImageCtor(),
     els,
@@ -361,7 +366,7 @@ function createContext(overrides = {}) {
     OPPONENT_SECTOR_WIN_STATS: [],
     OPPONENT_TECH_TYPES: [],
     ROTATE_STATE_SLOTS: [{ id: "a", percentX: 10, percentY: 20 }, { id: "b", percentX: 30, percentY: 40 }],
-    pendingState: { cardSelectionAction: null },
+    pendingState,
     cardState: { publicCards: [] },
     tech: { getReadoutLines() { return []; } },
     techGameState: {},

@@ -126,6 +126,16 @@
       scrollToPlayerCommandPanel,
       getCardTypeCode,
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
     const HAND_CARD_PLAY_SESSION = "hand_card_play_action";
     const CARD_CORNER_QUICK_SESSION = "card_corner_quick_action";
     const PLAY_CARD_SELECTION_SESSION = "play_card_selection";
@@ -173,7 +183,7 @@
         els.discardSelectionBackdrop.setAttribute("aria-hidden", String(!active));
       }
       if (els.discardSelectionCancel) {
-        els.discardSelectionCancel.hidden = !active || Boolean(pendingState.discardAction?.required);
+        els.discardSelectionCancel.hidden = !active || Boolean(decisionState.discardAction?.required);
       }
       updatePlayerHandPanelTitle();
       if (active) setQuickPanelOpen(false);
@@ -183,7 +193,7 @@
     }
 
     function isHandScanSelectionActive() {
-      return pendingState.handScanAction != null;
+      return decisionState.handScanAction != null;
     }
 
     function syncHandScanSelectionChrome() {
@@ -204,7 +214,7 @@
 
     function cancelHandScanSelection() {
       if (!isHandScanSelectionActive()) return;
-      pendingState.handScanAction = null;
+      decisionState.handScanAction = null;
       rocketState.statusNote = "已取消手牌扫描";
       syncHandScanSelectionChrome();
       updateActionButtons();
@@ -1015,7 +1025,7 @@
         return { ok: false, message: `手牌不足，需要弃置 ${discardCount} 张牌` };
       }
 
-      pendingState.discardAction = { ...(pendingAction || {}), discarded: [], selectedIndexes: [] };
+      decisionState.discardAction = { ...(pendingAction || {}), discarded: [], selectedIndexes: [] };
       cards.setDiscardSelectionActive(cardState, true, discardCount);
       rocketState.statusNote = pendingAction?.type === "pass_hand_limit"
         ? `PASS：请选择 ${discardCount} 张手牌弃掉，保留 4 张`
@@ -1030,7 +1040,7 @@
 
     function cancelDiscardSelection() {
       if (!isDiscardSelectionActive()) return;
-      const pending = pendingState.discardAction;
+      const pending = decisionState.discardAction;
       if (pending?.required) {
         rocketState.statusNote = pending.type === "pass_hand_limit"
           ? "PASS 手牌上限弃牌必须完成"
@@ -1038,7 +1048,7 @@
         renderStateReadout();
         return;
       }
-      pendingState.discardAction = null;
+      decisionState.discardAction = null;
       cards.setDiscardSelectionActive(cardState, false, 0);
       if (pending?.type === "industry_helios_income") {
         return rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
@@ -1065,8 +1075,8 @@
     }
 
     function completeDiscardSelection(discardedCards) {
-      const pending = pendingState.discardAction;
-      pendingState.discardAction = null;
+      const pending = decisionState.discardAction;
+      decisionState.discardAction = null;
       cards.setDiscardSelectionActive(cardState, false, 0);
       syncDiscardSelectionChrome();
 
@@ -1079,8 +1089,8 @@
           tradePlayer,
         );
         rocketState.statusNote = tradeResult.ok ? tradeResult.message : (tradeResult.message || "交易失败");
-        if (tradeResult.ok && tradeResult.awaitingCardSelection && beforeState && pendingState.cardSelectionAction) {
-          pendingState.cardSelectionAction.beforeTradeState = beforeState;
+        if (tradeResult.ok && tradeResult.awaitingCardSelection && beforeState && decisionState.cardSelectionAction) {
+          decisionState.cardSelectionAction.beforeTradeState = beforeState;
         }
         if (tradeResult.ok && !tradeResult.awaitingCardSelection && beforeState) {
           context.recordQuickTradeCompletion?.(pending.tradeId, tradePlayer, beforeState);
@@ -1165,7 +1175,7 @@
     }
 
     function finalizePendingDiscardSelection() {
-      const pending = pendingState.discardAction;
+      const pending = decisionState.discardAction;
       const discardPlayer = pending?.player || getCurrentPlayer();
       const selected = [...(pending?.selectedIndexes || [])].sort((a, b) => b - a);
       const discarded = [...(pending?.discarded || [])];
@@ -1191,18 +1201,18 @@
       if (!isDiscardSelectionActive()) return;
       const index = Math.round(handIndex);
       const needed = cards.getDiscardRemaining(cardState);
-      if (!pendingState.discardAction) return;
-      if (!Array.isArray(pendingState.discardAction.selectedIndexes)) {
-        pendingState.discardAction.selectedIndexes = [];
+      if (!decisionState.discardAction) return;
+      if (!Array.isArray(decisionState.discardAction.selectedIndexes)) {
+        decisionState.discardAction.selectedIndexes = [];
       }
-      const selected = pendingState.discardAction.selectedIndexes;
+      const selected = decisionState.discardAction.selectedIndexes;
       const existingIndex = selected.indexOf(index);
       if (existingIndex >= 0) {
         selected.splice(existingIndex, 1);
         renderPlayerHand();
         rocketState.statusNote = selected.length > 0
           ? `弃牌：已选 ${selected.length}/${needed} 张`
-          : (isIncomeDiscardActionType(pendingState.discardAction.type)
+          : (isIncomeDiscardActionType(decisionState.discardAction.type)
             ? "收入：请选择手牌弃掉"
             : `弃牌：请选择 ${needed} 张手牌`);
         renderStateReadout();
@@ -1297,7 +1307,7 @@
         return result;
       }
 
-      if (!pendingState.actionEffectFlow?.futureSpanPlayedCard) {
+      if (!decisionState.actionEffectFlow?.futureSpanPlayedCard) {
         releaseFutureSpanAfterPlayWithHistory();
         markActionPending();
         updateActionButtons();
@@ -1742,7 +1752,7 @@
     function handleHandScanCardClick(handIndex) {
       if (!isHandScanSelectionActive()) return;
 
-      const fromEffectFlow = Boolean(pendingState.handScanAction?.fromEffectFlow || pendingState.actionEffectFlow);
+      const fromEffectFlow = Boolean(decisionState.handScanAction?.fromEffectFlow || decisionState.actionEffectFlow);
       const currentPlayer = getCurrentPlayer();
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];
@@ -1759,7 +1769,7 @@
         return scanChoices;
       }
 
-      pendingState.handScanAction = null;
+      decisionState.handScanAction = null;
       syncHandScanSelectionChrome();
       rocketState.statusNote = `手牌扫描：${cards.getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
       renderStateReadout();

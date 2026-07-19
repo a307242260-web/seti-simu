@@ -2,6 +2,8 @@
 
 const assert = require("node:assert/strict");
 const { createTechRuntime } = require("./tech-runtime.js");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
+const { attachDecisionState } = require("./test-decision-state");
 
 function createHarness() {
   const calls = [];
@@ -23,6 +25,8 @@ function createHarness() {
       effects: [],
     },
   };
+  const decisionSessions = createDecisionSessionStore();
+  attachDecisionState(pendingState, decisionSessions);
   const els = {
     techBlueSlotOverlay: {
       hidden: true,
@@ -47,6 +51,7 @@ function createHarness() {
     },
   };
   const context = {
+    decisionSessions,
     Array,
     Boolean,
     Math,

@@ -115,6 +115,16 @@
       confirmDataPlacement,
       standardActionAdapter,
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
 
     function createIndustrySelectionCard(fileName) {
       return {
@@ -538,7 +548,7 @@
     }
 
     function handleActionEffectButtonClick(effectIndex) {
-      if (!pendingState.actionEffectFlow) return;
+      if (!decisionState.actionEffectFlow) return;
       if (Number(effectIndex) !== getCurrentActionEffectIndex?.()) return;
 
       const effect = getCurrentActionEffect?.();

@@ -97,6 +97,16 @@
       withEffectExecutionPlayer,
       withPendingOwnerPlayer,
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
 
     function executeSectorScanAtPlanet(planetId, prefixLabel, effect = null) {
       const cost = effect?.options?.skipCost ? {} : (normalizeResourceCost(effect?.options?.cost) || {});
@@ -563,7 +573,7 @@
         return executeRemovePlanetMarkerChoice(effect, choices[0]);
       }
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        pendingState.scanTargetAction = {
+        decisionState.scanTargetAction = {
           ...getPendingOwnerFields(effect),
           type: "remove_planet_marker",
           effect,
@@ -571,7 +581,7 @@
         };
         return { ok: true, pendingChoice: true, message: effect.label };
       }
-      pendingState.scanTargetAction = {
+      decisionState.scanTargetAction = {
         ...getPendingOwnerFields(effect),
         type: "remove_planet_marker",
         effect,
@@ -595,7 +605,7 @@
     }
 
     function handleRemovePlanetMarkerChoice(choiceId) {
-      const pending = pendingState.scanTargetAction;
+      const pending = decisionState.scanTargetAction;
       if (pending?.type !== "remove_planet_marker") {
         return { ok: false, message: "没有待移除的星球标记" };
       }
@@ -623,9 +633,9 @@
       recordAbilityCommands(result);
       const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(effect));
       claimRunezuPlanetSymbolForTravelResult("land", result, actionOwner);
-      if (pendingState.actionEffectFlow) {
+      if (decisionState.actionEffectFlow) {
         const sector = getPlanetSectorCoordinate(result.planetId);
-        pendingState.actionEffectFlow.lastLanding = {
+        decisionState.actionEffectFlow.lastLanding = {
           planetId: result.planetId,
           sectorX: sector.x,
           hadOwnLandingMarker: Boolean(contextInfo.preOwnLandingMarker),
@@ -932,8 +942,8 @@
         beforeCard,
         "恢复冥王星卡牌行动前卡牌状态",
       ));
-      if (pendingState.actionEffectFlow && actionType === "land") {
-        pendingState.actionEffectFlow.lastLanding = {
+      if (decisionState.actionEffectFlow && actionType === "land") {
+        decisionState.actionEffectFlow.lastLanding = {
           planetId: "pluto",
           sectorX: markerResult.marker.sectorX,
           hadOwnLandingMarker: Boolean(contextInfo.preOwnLandingMarker),
@@ -1136,7 +1146,7 @@
     }
 
     function resolvePlayedCardReturnTarget(effect) {
-      const flow = pendingState.actionEffectFlow || {};
+      const flow = decisionState.actionEffectFlow || {};
       const playedCard = flow.card || null;
       const sourceInstanceId = playedCard?.id || flow.playCardEvent?.sourceCardInstanceId || null;
       const sourceCardId = playedCard?.cardId || flow.playCardEvent?.cardId || null;
@@ -1207,13 +1217,13 @@
         return (currentPlayer?.hand || []).length === 0;
       }
       if (condition.type === "lastLandingHadOwnMarker") {
-        return Boolean(pendingState.actionEffectFlow?.lastLanding?.hadOwnLandingMarker);
+        return Boolean(decisionState.actionEffectFlow?.lastLanding?.hadOwnLandingMarker);
       }
       if (condition.type === "lastLandingHadAnyMarker") {
-        return Boolean(pendingState.actionEffectFlow?.lastLanding?.hadAnyLandingMarker);
+        return Boolean(decisionState.actionEffectFlow?.lastLanding?.hadAnyLandingMarker);
       }
       if (condition.type === "flowMarkedNebula") {
-        const markedNebulaIds = getFlowMarkedNebulaIds(pendingState.actionEffectFlow);
+        const markedNebulaIds = getFlowMarkedNebulaIds(decisionState.actionEffectFlow);
         const requiredNebulaIds = condition.nebulaIds || condition.includeNebulaIds || [condition.nebulaId];
         return requiredNebulaIds.filter(Boolean).some((nebulaId) => markedNebulaIds.has(String(nebulaId)));
       }
@@ -1267,7 +1277,7 @@
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         return applyHandCornerChoice(effect, "publicity");
       }
-      pendingState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "hand_corner_reward", effect, counts };
+      decisionState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "hand_corner_reward", effect, counts };
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一种左上角快速行动类别，按当前手牌数量获得对应奖励。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -1332,7 +1342,7 @@
     }
 
     function handleHandCornerChoice(choice) {
-      const pending = pendingState.scanTargetAction;
+      const pending = decisionState.scanTargetAction;
       if (pending?.type !== "hand_corner_reward") return { ok: false, message: "没有待处理的手牌角标奖励" };
       const effect = pending.effect;
       closeScanTargetPicker();
@@ -1340,7 +1350,7 @@
     }
 
     function executeLandingSectorScanEffect(effect) {
-      const sectorX = pendingState.actionEffectFlow?.lastLanding?.sectorX;
+      const sectorX = decisionState.actionEffectFlow?.lastLanding?.sectorX;
       if (sectorX == null) {
         return finishAutomaticRewardEffect(effect, {
           ok: true,

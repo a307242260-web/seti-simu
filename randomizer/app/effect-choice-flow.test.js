@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const { createEffectChoiceFlowHelpers } = require("./effect-choice-flow");
 const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
+const { attachDecisionState } = require("./test-decision-state");
 
 function makeButton() {
   return {
@@ -42,6 +43,7 @@ function createHarness(overrides = {}) {
     },
   };
   const decisionSessions = createDecisionSessionStore();
+  attachDecisionState(pendingState, decisionSessions);
   const rocketState = {
     statusNote: "",
     rockets: [

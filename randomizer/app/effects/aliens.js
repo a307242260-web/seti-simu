@@ -84,6 +84,16 @@
       withEffectExecutionPlayer,
       yichangdian,
     } = context;
+    const decisionState = context.decisionSessions?.createFacade?.({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    }) || {};
     const getYichangdianCornerAction = () => decisionSessions.peek("yichangdian_corner_action");
 
     function countYichangdianAnomalySignals() {
@@ -643,7 +653,7 @@
 
     function executeChongTravelForPickupWithLandTarget(effect, landTarget = { type: "planet" }, options = {}) {
       if (!chong) return null;
-      if (pendingState.actionEffectFlow) pendingState.actionEffectFlow.chongPickupContext = null;
+      if (decisionState.actionEffectFlow) decisionState.actionEffectFlow.chongPickupContext = null;
 
       beginEffectHistoryStep(effect.label);
       let result = null;
@@ -693,11 +703,11 @@
         : [];
       if (rewardEffects.length) insertActionEffectsAfterCurrent(rewardEffects);
 
-      if (pendingState.actionEffectFlow) {
-        pendingState.actionEffectFlow.chongPickupContext = {
+      if (decisionState.actionEffectFlow) {
+        decisionState.actionEffectFlow.chongPickupContext = {
           planetId: result.planetId || null,
           actionEffectId: effect.id,
-          cardId: pendingState.actionEffectFlow.card?.id || null,
+          cardId: decisionState.actionEffectFlow.card?.id || null,
           cardIndex: effect.options?.cardIndex ?? null,
         };
       }
@@ -721,10 +731,10 @@
     function executeChongPickupFossilEffect(effect) {
       if (!chong) return null;
       const currentPlayer = getCurrentPlayer();
-      const card = pendingState.actionEffectFlow?.card || null;
+      const card = decisionState.actionEffectFlow?.card || null;
       const task = card?.chongTask || chong.getCardTask(effect.options?.cardIndex);
       const beforeAlienState = structuredClone(alienGameState);
-      const planetId = pendingState.actionEffectFlow?.chongPickupContext?.planetId || null;
+      const planetId = decisionState.actionEffectFlow?.chongPickupContext?.planetId || null;
 
       if (!planetId) {
         return finishChongFossilEffect(`${effect.label}：没有上一段登陆/环绕结果`, { planetId: null });
@@ -813,10 +823,10 @@
     }
 
     function getPriorActionEffectFlowIrreversible(effect) {
-      const effects = pendingState.actionEffectFlow?.effects || [];
+      const effects = decisionState.actionEffectFlow?.effects || [];
       if (!effects.length) return null;
-      let currentIndex = Number.isInteger(pendingState.actionEffectFlow?.currentIndex)
-        ? pendingState.actionEffectFlow.currentIndex
+      let currentIndex = Number.isInteger(decisionState.actionEffectFlow?.currentIndex)
+        ? decisionState.actionEffectFlow.currentIndex
         : effects.findIndex((item) => item === effect || (item?.id && item.id === effect?.id));
       if (!Number.isInteger(currentIndex) || currentIndex < 0) {
         currentIndex = effects.findIndex((item) => item === effect || (item?.id && item.id === effect?.id));
