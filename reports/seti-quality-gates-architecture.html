@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SETI 共享规则质量门禁</title>
+  <style>
+    :root {
+      --ink: #20242a;
+      --muted: #5c6570;
+      --line: #b9c1ca;
+      --soft: #f4f6f8;
+      --blue: #285d8e;
+      --blue-soft: #edf4fa;
+      --amber: #8b5d16;
+      --amber-soft: #fbf5e9;
+      --green: #23653d;
+      --red: #8b3c3c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    main { width: min(1160px, calc(100% - 40px)); margin: 0 auto; padding: 44px 0 72px; }
+    header { padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    h1 { margin: 0 0 8px; font-size: 30px; line-height: 1.25; letter-spacing: -.02em; }
+    h2 { margin: 0 0 14px; font-size: 21px; line-height: 1.35; }
+    h3 { margin: 0 0 5px; font-size: 15px; }
+    p { margin: 0; color: var(--muted); }
+    code { font-family: "SFMono-Regular", Consolas, monospace; font-size: .9em; }
+    section { margin-top: 38px; }
+    .meta { margin-bottom: 8px; color: var(--blue); font: 600 12px/1.4 "SFMono-Regular", Consolas, monospace; }
+    .summary { max-width: 970px; }
+    .finding { padding: 14px 16px; border-left: 3px solid var(--amber); background: var(--amber-soft); color: #4c463c; }
+    .finding b { color: #3d3529; }
+
+    .gates { display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; }
+    .gate { min-height: 164px; padding: 12px 11px; border: 1px solid var(--line); background: #fff; }
+    .gate .n { display: block; margin-bottom: 8px; color: var(--blue); font: 700 12px/1 "SFMono-Regular", Consolas, monospace; }
+    .gate p { font-size: 12px; line-height: 1.48; }
+    .gate .no { display: block; margin-top: 8px; color: var(--red); font-size: 11px; line-height: 1.4; }
+    .arrow { margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; text-align: center; }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 11px 13px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--soft); font-size: 13px; }
+    td { color: #46505b; }
+    td:first-child { width: 19%; font-weight: 600; color: var(--ink); }
+    .checks { white-space: nowrap; color: var(--blue); font: 600 12px/1.55 "SFMono-Regular", Consolas, monospace; }
+    .hard { color: var(--green); font-weight: 600; }
+
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .panel { padding: 16px 18px; border: 1px solid var(--line); }
+    .panel ul { margin: 8px 0 0; padding-left: 19px; color: var(--muted); }
+    .panel li + li { margin-top: 5px; }
+    .inventory { background: var(--blue-soft); border-color: #9db6cc; }
+    .gap { background: #fffaf8; }
+
+    .decisions { border: 1px solid var(--line); }
+    .decision { display: grid; grid-template-columns: 42px 1fr; gap: 14px; padding: 15px 17px; border-bottom: 1px solid var(--line); }
+    .decision:last-child { border-bottom: 0; }
+    .decision .n { color: var(--blue); font: 700 13px/1.6 "SFMono-Regular", Consolas, monospace; }
+    .decision p { margin-top: 3px; font-size: 14px; }
+    footer { margin-top: 38px; padding-top: 14px; border-top: 1px solid var(--line); color: #77808b; font-size: 12px; }
+
+    @media (max-width: 920px) {
+      .gates { grid-template-columns: repeat(2, 1fr); }
+      .gate:last-child { grid-column: 1 / -1; min-height: auto; }
+    }
+    @media (max-width: 620px) {
+      main { width: min(100% - 24px, 1160px); padding-top: 28px; }
+      h1 { font-size: 25px; }
+      .gates, .split { grid-template-columns: 1fr; }
+      .gate, .gate:last-child { grid-column: auto; min-height: auto; }
+      table { table-layout: fixed; font-size: 12px; line-height: 1.45; }
+      th, td { padding: 8px 6px; overflow-wrap: anywhere; }
+      td:first-child { width: 22%; }
+      .checks { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="meta">SETI / ARCHITECTURE NOTE / QUALITY-01</div>
+    <h1>改一条共享规则，怎样证明网页和训练都没坏</h1>
+    <p class="summary">共享 Runtime 把 Browser、Headless 和训练接到了同一套规则上，但“同一套规则”不能靠一个大测试命令证明。语法、局部行为、标准 Action、跨宿主一致、恢复、真实浏览器和机器玩家质量分别面对不同风险，需要分层门禁。</p>
+  </header>
+
+  <section>
+    <div class="finding"><b>阶段判断：</b>不需要再造一套独立测试框架；先冻结“改动类型 → 必须通过的证据层”。共享 Runtime 改动的硬门禁应是：同一 checkpoint、同一 seed、同一决策序列，在 Browser 与 Headless / Training 得到相同 committed state、合法选择、事件与 RNG journal。Chrome 终局只证明浏览器集成，AI 分数只证明策略质量，两者不能互相替代。</div>
+  </section>
+
+  <section>
+    <h2>七层证据，各自只回答一个问题</h2>
+    <div class="gates">
+      <article class="gate"><span class="n">G0</span><h3>静态与归属</h3><p><code>node --check</code>、依赖图、旧入口零调用、模块归属检查。</p><span class="no">不能证明规则行为正确。</span></article>
+      <article class="gate"><span class="n">G1</span><h3>领域行为</h3><p>纯规则函数、Effect executor、边界值、失败分支与不变量测试。</p><span class="no">不能证明装配后可执行。</span></article>
+      <article class="gate"><span class="n">G2</span><h3>Runtime 契约</h3><p>从同一 checkpoint 枚举全部 legal actions 并逐个 fork 执行；验证原子提交与 fail-closed。</p><span class="no">不能证明两个宿主一致。</span></article>
+      <article class="gate"><span class="n">G3</span><h3>跨宿主一致</h3><p>固定 seed 与决策 trace，对比状态、choices、events、RNG journal。</p><span class="no">不能证明中断后可续跑。</span></article>
+      <article class="gate"><span class="n">G4</span><h3>恢复与重放</h3><p>稳定点及 awaiting-decision 存档恢复；同 trace 续跑并对比结果。</p><span class="no">不能证明真实 DOM 可操作。</span></article>
+      <article class="gate"><span class="n">G5</span><h3>真实 Chrome</h3><p>脚本装配、事件绑定、Decision UI、投影刷新与完整终局 smoke。</p><span class="no">不能证明 AI 会玩得好。</span></article>
+      <article class="gate"><span class="n">G6</span><h3>策略与性能</h3><p>固定评估协议、模型版本、多 seed 分布、吞吐与 worker 恢复。</p><span class="no">不能反向替代规则正确性。</span></article>
+    </div>
+    <div class="arrow">由左到右不是重复覆盖，而是逐层补齐前一层看不到的风险。</div>
+  </section>
+
+  <section>
+    <h2>什么改动必须过哪些门</h2>
+    <table>
+      <thead><tr><th>改动类型</th><th>最低门禁</th><th>关键证据</th><th>不要求每次都做什么</th></tr></thead>
+      <tbody>
+        <tr><td>纯规则 / 新标准 Effect</td><td class="checks">G0 + G1 + G2</td><td>正反例、边界值、合法 Action 可执行、失败不污染 committed state。</td><td>若不改宿主、状态格式或 RNG，不必每次跑策略评估。</td></tr>
+        <tr><td>Action / Effect / State Runtime</td><td class="checks">G0–G4</td><td><span class="hard">G3 跨宿主 parity 为硬门禁</span>；涉及浏览器装配时再加 G5。</td><td>“Node 全绿”不能免除 parity 与恢复证据。</td></tr>
+        <tr><td>Browser View / Decision UI</td><td class="checks">G0 + 代表性 G2 + G5</td><td>真实 Chrome 操作代表性选择、恢复 pending UI 并完成一局。</td><td>UI smoke 不承担 AI 分数验收。</td></tr>
+        <tr><td>Headless / Training Adapter</td><td class="checks">G2 + G3 + G4 + G6</td><td>规则 trace 一致、checkpoint 连续、worker crash / timeout 恢复、吞吐基线。</td><td>吞吐提高不能掩盖规则输出漂移。</td></tr>
+        <tr><td>Policy / 模型 / 训练参数</td><td class="checks">接口 G2 + 独立 G6</td><td>合法选择与执行接口先正确，再用冻结协议比较多 seed 分数分布。</td><td>“能终局”不等于“策略变好”。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>当前基础够用，缺的是统一门禁映射</h2>
+    <div class="split">
+      <article class="panel inventory">
+        <h3>已有证据资产</h3>
+        <ul>
+          <li>当前工作树可找到 137 个 JavaScript 测试文件与 1 个 Python 训练测试文件；领域、app、headless、state、AI 和 training 已有较广覆盖。</li>
+          <li>已有固定 seed、RNG journal、checkpoint / replay、recovery、legal-action 与 worker resilience 测试。</li>
+          <li><code>tools/run_ai_autobattle_browser.js</code> 已能通过 CDP 驱动真实 Chrome。</li>
+          <li>现有 proof obligations 已提出全合法动作 fork、旧入口零调用、Chrome smoke 与 worker A/A、A/B/A。</li>
+        </ul>
+      </article>
+      <article class="panel gap">
+        <h3>仍然缺少的机械约束</h3>
+        <ul>
+          <li>测试很多但按历史 issue 分散，改动边界尚不能自动映射到必跑 Gate。</li>
+          <li>跨宿主 parity trace、恢复矩阵与真实 Chrome 还没有一个稳定的分层入口。</li>
+          <li>Chrome “能完成一局”、启发式/RL “分数达标”过去容易混成同一个 AI 验收。</li>
+          <li>全量 Node 适合回归兜底，但不能单独证明旧路径清零、Browser 装配或训练确定性。</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>本轮只需确认三点</h2>
+    <div class="decisions">
+      <div class="decision"><div class="n">01</div><div><h3>按改动类型选 Gate，不要求所有改动每次跑全部证据</h3><p>每个实现 issue 在开工时声明触及的边界和必跑 Gate，收口时逐项给证据；全量回归仍保留，但不替代专项证明。</p></div></div>
+      <div class="decision"><div class="n">02</div><div><h3>共享 Runtime 改动必须通过固定 seed 跨宿主 parity</h3><p>比较 committed state、合法选择、事件和 RNG journal；只比较“最终都能结束”不足以发现中途语义漂移。</p></div></div>
+      <div class="decision"><div class="n">03</div><div><h3>浏览器集成与机器玩家质量分开验收</h3><p>G5 回答页面是否真正可玩，G6 回答策略是否达到基线；训练吞吐与 worker 恢复也单列，不再用单局终局代替。</p></div></div>
+    </div>
+  </section>
+
+  <footer>证据范围：<code>randomizer/**/*.test.js</code>、<code>randomizer/training/pytorch_trainer.test.py</code>、<code>docs/implementation-proof-obligations.md</code>、<code>docs/standard-action-contract.md</code>、<code>docs/rl-headless-env.md</code>、<code>tools/run_ai_autobattle_browser.js</code>。本轮只冻结质量门禁边界，不新建测试框架，也不启动代码迁移。</footer>
+</main>
+</body>
+</html>
