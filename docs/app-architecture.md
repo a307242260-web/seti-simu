@@ -8,6 +8,8 @@
 
 Standard Action 的 app 装配边界由 `app/action-runtime.js` 统一承载：浏览器 DOM 的 `standard_intent` 只解析唯一 descriptor，浏览器 AI 与训练宿主直接取得完整 descriptor，并交回同一 `registry.execute`。`app/ai/action-executor.js` 不维护规则 switch；`app/headless-contract.js` 只补 RL feature、mask 与版本字段并沿用 registry `actionId`。UI picker、AI valuation 和训练 policy 都不得在 adapter 外预扣资源或执行规则。
 
+机器玩家公共选择边界位于 `game/ai/policy-port.js`：Browser/Headless Host 负责构造当前 viewer 的只读 `DecisionContext`、控制 deadline/AbortSignal/恢复失效，并在 `PolicyDecision` 返回后调用公共 validator；Policy 不依赖 app、DOM、Effect Session 或 StateStore。Host 只有在 validator 与 registry 复核通过后才能显式提交 descriptor。详见 `docs/policy-port-contract.md`。
+
 ## 当前加载层次
 
 1. `randomizer/index.html` 按传统 `<script>` 顺序加载，无构建步骤，也不使用 ES module。

@@ -222,6 +222,8 @@ interface SetiHeadlessEnv {
 }
 ```
 
+训练策略与浏览器启发式现在共享 `game/ai/policy-port.js` 的请求 envelope：Host 将本节 observation、当前 registry legal descriptors、seat/state/decision version 与确定性上下文封装为只读 `DecisionContext`；Policy 只返回 `PolicyDecision.actionId` 和版本化模型元数据。`step` 仍只接受 Host 经公共 validator 与 `registry.validate` 复核后的 Standard Action descriptor。超时、取消、恢复、stale 或迟到响应不会进入 `step` 或 replay；完整契约见 `docs/policy-port-contract.md`。
+
 ### 2.5 `isTerminal()`
 
 当且仅当游戏终局已确定，且没有待处理的终局标记、奖励结算、弃牌或 replay flush。
