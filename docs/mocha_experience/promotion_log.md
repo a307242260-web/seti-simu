@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-19
+- source: SETI-72（续 SETI-14）
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及负责串行子 issue 解锁的 coordination agent
+- target_component: backlog 子 issue 描述级依赖核验与依赖环解除实践
+- target_file: docs/mocha_experience/coordination.md
+- remote_skill_id: none
+- change: 扩展既有“按子 issue 自身描述逐项解锁”候选：发现描述级依赖环时先保持 backlog 并确认；获准解除后将依赖契约改写为单向，同时同步父级 waiting_on/decision_needed 与另一侧 blocker，不能只强制提升状态。
+- applied_change: 更新 coordination experience 与本决策契约；SETI-81 描述已明确基于 SETI-71 当前稳定公开接口开工，SETI-88/71 最终收口后置，SETI-72/88 metadata 已同步；不修改 issue-workflow、watcher、loop template、agent prompt 或项目记忆。
+- expected_effect: 后续阶段拆解既不会越过子项额外前置，也不会因两个总控互相等待而永久停滞；依赖解除决定能在描述、状态和当前 metadata 中保持一致。
+- evaluation_window: SETI-14、SETI-72 已累计 2 个父 issue；再观察 1 个包含两个以上 backlog 依赖项的父 issue。
+- success_signal: 每次解锁都列出子项自身依赖与满足证据；遇到环时先确认再形成单向依赖，启动项 run 可验证，等待侧 blocker 不含过期前置，且无需 owner 再次追问为何仍未推进。
+- rollback_condition: 若平台提供结构化依赖图、环检测和原子依赖重写，或第三个父 issue 证明人工逐项检查仍无法可靠发现环，则将本候选改为平台/脚本能力而不是继续增加文本规则。
+- risk: 人工把“最终接口稳定”改写为“当前公开接口稳定”可能掩盖真实不兼容；解除时必须保留 fail-closed 条款，发现具体接口缺口后按明确外部依赖阻塞，不能静默降级验收。
+- evidence_before: SETI-72 评论 `be63881d-15c6-4c65-bae8-3b52879d1917` 记录 SETI-81 ↔ SETI-88/71 显式依赖环；owner 评论 `072d5334-f6d0-454b-a629-545f259a3d7c` 要求解除；SETI-72 timeline 记录 SETI-73～81 的逐项 waiting_on 流转与 SETI-81 启动；SETI-81 checkpoint 记录最终验收。
+- owner_or_agent_decision: owner 明确授权解除循环依赖；领航将其作为既有 coordination candidate 的第二个父级证据，未达到第三个父 issue 的升级窗口。
+- applied_at: 2026-07-19
+- verification: SETI-81 run 启动后完成并进入 done；提交 `fa35c2b` 隔离 HEAD 复跑 `node --check randomizer/app.js`、162/162 Node 与 legacy inventory audit PASS；Chrome recovery/Decision/894 步完整对局证据见 `checkpoint/seti-81-proof-obligations.md`。
+- observed_outcome: 循环已从契约层解除，SETI-81 正常完成；SETI-88 保持单向等待 SETI-81，父级旧 decision_needed 已清除，九个 Browser Host 子 issue 全部 done。
+- keep_or_revise: 保持 candidate；再完成 1 个适用父 issue 后评估是否升级为 coordination loop template 或结构化依赖环检查。
+
+- date: 2026-07-19
 - source: SETI-76（续 SETI-51/61/69/85）
 - promoted_to: none
 - promotion_decision: candidate
