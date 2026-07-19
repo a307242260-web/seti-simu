@@ -4,17 +4,19 @@
   let policyPort = root.SetiPolicyPort;
   let standardAction = root.SetiStandardAction;
   let legacyPolicy = root.SetiAIPolicy;
+  let heuristicEvaluator = root.SetiHeuristicEvaluator;
 
-  if ((!policyPort || !standardAction || !legacyPolicy) && typeof require === "function") {
+  if ((!policyPort || !standardAction || !legacyPolicy || !heuristicEvaluator) && typeof require === "function") {
     policyPort = policyPort || require("./policy-port");
     standardAction = standardAction || require("../actions/standard-action");
     legacyPolicy = legacyPolicy || require("./policy");
+    heuristicEvaluator = heuristicEvaluator || require("./heuristic-evaluator");
   }
 
-  const api = factory(policyPort, standardAction, legacyPolicy);
+  const api = factory(policyPort, standardAction, legacyPolicy, heuristicEvaluator);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiHeuristicPolicy = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, legacyPolicy) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, legacyPolicy, heuristicEvaluator) {
   "use strict";
 
   const POLICY_TYPE = "heuristic";
@@ -174,6 +176,10 @@
   function createHeuristicPolicy(options = {}) {
     const difficulty = String(options.difficulty || DEFAULT_DIFFICULTY);
     const strategyWeights = normalizeWeights(options.strategyWeights);
+    const evaluateAction = options.evaluateAction || heuristicEvaluator?.evaluateAction;
+    if (typeof evaluateAction !== "function") {
+      throw new HeuristicPolicyError("HEURISTIC_POLICY_CONFIG_INVALID", "Heuristic Policy 缺少纯 action evaluator");
+    }
     const conditionalSelectors = Object.freeze({ ...(options.conditionalSelectors || {}) });
     for (const [family, selector] of Object.entries(conditionalSelectors)) {
       if (!standardAction.CONDITIONAL_FAMILIES.includes(family) || typeof selector !== "function") {
@@ -206,10 +212,14 @@
           conditionalSelectors,
         );
       } else {
-        const legacyCandidates = weighted.map((entry) => ({
-          ...toLegacyCandidate(entry.action),
-          score: (Number(entry.action.payload?.value) || 0) * entry.weight,
-        }));
+        const legacyCandidates = weighted.map((entry) => {
+          const evaluated = evaluateAction(context, entry.action);
+          return {
+            ...toLegacyCandidate(entry.action),
+            ...(evaluated || {}),
+            score: (Number(evaluated?.score) || 0) * entry.weight,
+          };
+        });
         const legacySelected = legacyPolicy.chooseTurnAction(legacyCandidates, {
           observation: context.observation,
           deterministicContext: context.deterministicContext,

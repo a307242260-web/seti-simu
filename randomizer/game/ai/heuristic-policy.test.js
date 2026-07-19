@@ -5,6 +5,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const policyPort = require("./policy-port");
 const standardAction = require("../actions/standard-action");
+const heuristicEvaluator = require("./heuristic-evaluator");
 
 const modulePath = path.resolve(__dirname, "heuristic-policy.js");
 delete require.cache[modulePath];
@@ -54,6 +55,29 @@ assert.deepEqual(policy.getProvenance(), {
   },
   configChecksum: policy.getProvenance().configChecksum,
 });
+
+{
+  const evaluatedContext = context([
+    descriptor("play_card", 0, { payload: { handIndex: 0 } }),
+    descriptor("research_tech", 1, { target: { tileId: "orange2" } }),
+  ], "visible-evaluator");
+  const cardEvaluation = heuristicEvaluator.evaluateAction(evaluatedContext, evaluatedContext.legalActions[0]);
+  assert.equal(cardEvaluation.resources.credits, 0);
+  assert.equal(cardEvaluation.roundNumber, 2);
+
+  const calls = [];
+  const evaluatedPolicy = heuristic.createHeuristicPolicy({
+    evaluateAction(decisionContext, action) {
+      calls.push({ requestId: decisionContext.requestId, actionId: action.actionId });
+      return { score: action.family === "research_tech" ? 20 : 0 };
+    },
+  });
+  assert.equal(evaluatedPolicy.decide(evaluatedContext).actionId, "research_tech:fixture-1");
+  assert.deepEqual(calls.map((entry) => entry.actionId), [
+    "play_card:fixture-0",
+    "research_tech:fixture-1",
+  ]);
+}
 
 {
   const decisionContext = context([
