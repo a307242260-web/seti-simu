@@ -1269,7 +1269,7 @@
     }
 
     function restoreYichangdianCornerPickerIfPending() {
-      if (!pendingState.yichangdianCornerAction) return false;
+      if (!decisionSessions.peek("yichangdian_corner_action")) return false;
       const result = openYichangdianCornerPicker();
       if (!result?.ok) {
         rocketState.statusNote = result?.message || "异常点：请完成角标选择";
@@ -1314,12 +1314,12 @@
       decisionSessions.clear("card_task_completion");
       decisionSessions.clear("chong_task_completion");
       decisionSessions.clear("amiba_card_gain");
-      pendingState.amibaSymbolChoice = null;
-      pendingState.amibaTraceRemoval = null;
+      decisionSessions.clear("amiba_symbol_choice");
+      decisionSessions.clear("amiba_trace_removal");
       decisionSessions.clear("aomomo_card_gain");
       decisionSessions.clear("runezu_card_gain");
-      pendingState.runezuSymbolBranch = null;
-      pendingState.runezuFaceSymbolPlacement = null;
+      decisionSessions.clear("runezu_symbol_branch");
+      decisionSessions.clear("runezu_face_symbol_placement");
       decisionSessions.clear("strategy_passive_slot");
       setScanTargetActionLayout();
       pendingState.scanTargetAction = null;

@@ -157,6 +157,20 @@
       get chongCardGain() { return decisionSessions.peek("chong_card_gain"); },
       set chongCardGain(session) { replaceDecisionSession("chong_card_gain", session); },
     };
+    const alienChoiceSessions = {
+      get yichangdianCornerAction() { return decisionSessions.peek("yichangdian_corner_action"); },
+      set yichangdianCornerAction(session) { replaceDecisionSession("yichangdian_corner_action", session); },
+      get chongFossilChoice() { return decisionSessions.peek("chong_fossil_choice"); },
+      set chongFossilChoice(session) { replaceDecisionSession("chong_fossil_choice", session); },
+      get amibaSymbolChoice() { return decisionSessions.peek("amiba_symbol_choice"); },
+      set amibaSymbolChoice(session) { replaceDecisionSession("amiba_symbol_choice", session); },
+      get amibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
+      set amibaTraceRemoval(session) { replaceDecisionSession("amiba_trace_removal", session); },
+      get runezuSymbolBranch() { return decisionSessions.peek("runezu_symbol_branch"); },
+      set runezuSymbolBranch(session) { replaceDecisionSession("runezu_symbol_branch", session); },
+      get runezuFaceSymbolPlacement() { return decisionSessions.peek("runezu_face_symbol_placement"); },
+      set runezuFaceSymbolPlacement(session) { replaceDecisionSession("runezu_face_symbol_placement", session); },
+    };
 
     function addFangzhouUnlockedCardToHand(player, handCard) {
       if (!player || !handCard) return false;
@@ -1846,7 +1860,7 @@ function handleAomomoCardGainChoice(choice) {
   }
 
 function closeAmibaSymbolChoiceDialog() {
-    pendingState.amibaSymbolChoice = null;
+    alienChoiceSessions.amibaSymbolChoice = null;
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -1858,7 +1872,7 @@ function openAmibaSymbolChoiceDialog(options = {}) {
     if (!player) return { ok: false, message: "没有当前玩家" };
     const region = options.region || options.effect?.options?.region || null;
     const symbols = amiba.listSymbolsInRegion(alienGameState, region);
-    pendingState.amibaSymbolChoice = {
+    alienChoiceSessions.amibaSymbolChoice = {
       region,
       playerId: player.id,
       fromEffectFlow: Boolean(options.fromEffectFlow),
@@ -1908,7 +1922,7 @@ function openAmibaSymbolChoiceDialog(options = {}) {
   }
 
 function finishAmibaSymbolChoice(message, payload = {}, options = {}) {
-    const pending = pendingState.amibaSymbolChoice;
+    const pending = alienChoiceSessions.amibaSymbolChoice;
     closeAmibaSymbolChoiceDialog();
     if (pending?.triggerMatch?.card && pending?.triggerMatch?.trigger && options.consumeTrigger !== false) {
       cardEffects.consumeTrigger(pending.triggerMatch.card, pending.triggerMatch.trigger.id);
@@ -1944,8 +1958,8 @@ function finishAmibaSymbolChoice(message, payload = {}, options = {}) {
   }
 
 function handleAmibaSymbolChoice(choice) {
-    if (!pendingState.amibaSymbolChoice) return { ok: false, message: "没有阿米巴 symbol 选择流程" };
-    const pending = pendingState.amibaSymbolChoice;
+    if (!alienChoiceSessions.amibaSymbolChoice) return { ok: false, message: "没有阿米巴 symbol 选择流程" };
+    const pending = alienChoiceSessions.amibaSymbolChoice;
     const player = getPlayerById(pending.playerId) || getCurrentPlayer();
     if (!player) return { ok: false, message: "找不到阿米巴 symbol 玩家" };
     if (choice === "cancel") {
@@ -2014,7 +2028,7 @@ function handleAmibaSymbolChoice(choice) {
   }
 
 function closeAmibaTraceRemovalDialog() {
-    pendingState.amibaTraceRemoval = null;
+    alienChoiceSessions.amibaTraceRemoval = null;
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -2025,7 +2039,7 @@ function openAmibaTraceRemovalDialog(effect) {
     const player = getCurrentPlayer();
     const alienSlotId = alienGameState.amiba?.revealedSlotId;
     const options = amiba.listPlayerTraceOptions(alienGameState, alienSlotId, player);
-    pendingState.amibaTraceRemoval = {
+    alienChoiceSessions.amibaTraceRemoval = {
       playerId: player.id,
       alienSlotId,
       effectLabel: effect.label,
@@ -2056,8 +2070,8 @@ function openAmibaTraceRemovalDialog(effect) {
   }
 
 function handleAmibaTraceRemovalChoice(choice) {
-    if (!pendingState.amibaTraceRemoval) return { ok: false, message: "没有阿米巴痕迹移除流程" };
-    const pending = pendingState.amibaTraceRemoval;
+    if (!alienChoiceSessions.amibaTraceRemoval) return { ok: false, message: "没有阿米巴痕迹移除流程" };
+    const pending = alienChoiceSessions.amibaTraceRemoval;
     const player = getPlayerById(pending.playerId) || getCurrentPlayer();
     if (!player) return { ok: false, message: "找不到阿米巴痕迹玩家" };
     if (choice === "cancel") {
@@ -2554,7 +2568,7 @@ function restoreMutableObject(target, snapshot) {
   }
 
 function closeChongFossilChoiceDialog() {
-    pendingState.chongFossilChoice = null;
+    alienChoiceSessions.chongFossilChoice = null;
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -2579,7 +2593,7 @@ function openChongFossilChoiceDialog(options = {}) {
     const fossils = Array.isArray(options.fossils)
       ? options.fossils.filter(Boolean)
       : planetIds.flatMap((planetId) => chong.getAvailablePlanetFossils(alienGameState, planetId));
-    pendingState.chongFossilChoice = {
+    alienChoiceSessions.chongFossilChoice = {
       mode: options.mode || "reward",
       playerId: player.id,
       planetIds,
@@ -2891,7 +2905,7 @@ function handleChongTaskCompletionChoice(choice) {
   }
 
 function handleChongFossilChoice(choice) {
-    const pending = pendingState.chongFossilChoice;
+    const pending = alienChoiceSessions.chongFossilChoice;
     if (!pending) return failChongTaskCompletion("没有虫族化石选择流程");
     const player = getPlayerById(pending.playerId) || getCurrentPlayer();
     if (!player) {
@@ -3332,19 +3346,19 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
         ? null
         : { pending: pendingState.jiuzheCardPlay, label: "九折牌" },
       alienCardGainSessions.yichangdianCardGain ? { pending: alienCardGainSessions.yichangdianCardGain, label: "异常点外星人牌" } : null,
-      pendingState.yichangdianCornerAction ? { pending: pendingState.yichangdianCornerAction, label: "异常点角标" } : null,
+      alienChoiceSessions.yichangdianCornerAction ? { pending: alienChoiceSessions.yichangdianCornerAction, label: "异常点角标" } : null,
       alienCardGainSessions.banrenmaCardGain ? { pending: alienCardGainSessions.banrenmaCardGain, label: "半人马外星人牌" } : null,
       pendingState.banrenmaOpportunity ? { pending: pendingState.banrenmaOpportunity, label: "半人马奖励" } : null,
       alienCardGainSessions.chongCardGain ? { pending: alienCardGainSessions.chongCardGain, label: "虫族外星人牌" } : null,
-      pendingState.chongFossilChoice ? { pending: pendingState.chongFossilChoice, label: "虫族化石" } : null,
+      alienChoiceSessions.chongFossilChoice ? { pending: alienChoiceSessions.chongFossilChoice, label: "虫族化石" } : null,
       getChongTaskCompletion() ? { pending: getChongTaskCompletion(), label: "虫族任务" } : null,
       alienCardGainSessions.amibaCardGain ? { pending: alienCardGainSessions.amibaCardGain, label: "阿米巴外星人牌" } : null,
-      pendingState.amibaSymbolChoice ? { pending: pendingState.amibaSymbolChoice, label: "阿米巴 symbol" } : null,
-      pendingState.amibaTraceRemoval ? { pending: pendingState.amibaTraceRemoval, label: "阿米巴痕迹移除" } : null,
+      alienChoiceSessions.amibaSymbolChoice ? { pending: alienChoiceSessions.amibaSymbolChoice, label: "阿米巴 symbol" } : null,
+      alienChoiceSessions.amibaTraceRemoval ? { pending: alienChoiceSessions.amibaTraceRemoval, label: "阿米巴痕迹移除" } : null,
       alienCardGainSessions.aomomoCardGain ? { pending: alienCardGainSessions.aomomoCardGain, label: "奥陌陌外星人牌" } : null,
       alienCardGainSessions.runezuCardGain ? { pending: alienCardGainSessions.runezuCardGain, label: "符文族外星人牌" } : null,
-      pendingState.runezuFaceSymbolPlacement ? { pending: pendingState.runezuFaceSymbolPlacement, label: "符文族黑圈" } : null,
-      pendingState.runezuSymbolBranch ? { pending: pendingState.runezuSymbolBranch, label: "符文族符文奖励" } : null,
+      alienChoiceSessions.runezuFaceSymbolPlacement ? { pending: alienChoiceSessions.runezuFaceSymbolPlacement, label: "符文族黑圈" } : null,
+      alienChoiceSessions.runezuSymbolBranch ? { pending: alienChoiceSessions.runezuSymbolBranch, label: "符文族符文奖励" } : null,
     ];
     return pendingEntries.find((entry) => entry?.pending && isPendingLockedForAiAutomation(entry.pending)) || null;
   }
@@ -3997,7 +4011,7 @@ function openRunezuRewardFollowUps(result, currentPlayer, pending, beforeAlienSt
   }
 
 function closeRunezuFaceSymbolPlacement() {
-    pendingState.runezuFaceSymbolPlacement = null;
+    alienChoiceSessions.runezuFaceSymbolPlacement = null;
     setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
@@ -4013,7 +4027,7 @@ function openRunezuFaceSymbolPlacement(alienSlotId, position) {
       renderStateReadout();
       return check;
     }
-    pendingState.runezuFaceSymbolPlacement = {
+    alienChoiceSessions.runezuFaceSymbolPlacement = {
       alienSlotId: Number(alienSlotId),
       position: check.position,
       playerId: currentPlayer.id,
@@ -4048,7 +4062,7 @@ function openRunezuFaceSymbolPlacement(alienSlotId, position) {
   }
 
 function handleRunezuFaceSymbolChoice(choice) {
-    const pending = pendingState.runezuFaceSymbolPlacement;
+    const pending = alienChoiceSessions.runezuFaceSymbolPlacement;
     if (!pending) return { ok: false, message: "没有符文族黑圈放置流程" };
     if (choice === "cancel") {
       closeRunezuFaceSymbolPlacement();
@@ -4123,7 +4137,7 @@ function executeRunezuSymbolRewardEffect(effect) {
   }
 
 function closeRunezuSymbolBranchDialog() {
-    pendingState.runezuSymbolBranch = null;
+    alienChoiceSessions.runezuSymbolBranch = null;
     setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
@@ -4133,7 +4147,7 @@ function openRunezuSymbolBranchDialog(effect) {
       return { ok: false, message: "无法打开符文族分支选择" };
     }
     const branches = effect.options?.branches || [];
-    pendingState.runezuSymbolBranch = {
+    alienChoiceSessions.runezuSymbolBranch = {
       ...getPendingOwnerFields(effect, getEffectOwnerPlayer(effect)),
       effect,
       branches,
@@ -4174,7 +4188,7 @@ function openRunezuSymbolBranchDialog(effect) {
   }
 
 function handleRunezuSymbolBranchChoice(choice) {
-    const pending = pendingState.runezuSymbolBranch;
+    const pending = alienChoiceSessions.runezuSymbolBranch;
     if (!pending) return { ok: false, message: "没有待选择的符文族分支" };
     const effect = pending.effect;
     if (choice === "cancel") {

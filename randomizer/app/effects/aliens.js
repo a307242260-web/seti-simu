@@ -31,6 +31,7 @@
       completeCurrentActionEffect,
       createActionContext,
       data,
+      decisionSessions,
       document,
       els,
       endEffectHistoryStep,
@@ -83,6 +84,7 @@
       withEffectExecutionPlayer,
       yichangdian,
     } = context;
+    const getYichangdianCornerAction = () => decisionSessions.peek("yichangdian_corner_action");
 
     function countYichangdianAnomalySignals() {
       if (!yichangdian) return 0;
@@ -269,7 +271,7 @@
     }
 
     function executeYichangdianDrawThenTwoCornersEffect(effect) {
-      if (pendingState.yichangdianCornerAction) {
+      if (getYichangdianCornerAction()) {
         return openYichangdianCornerPicker();
       }
 
@@ -284,7 +286,7 @@
         if (drawResult.ok) drawn.push(drawResult.card);
       }
       markCurrentActionIrreversible("盲抽翻出新牌", "hidden_card_reveal");
-      pendingState.yichangdianCornerAction = {
+      decisionSessions.open("yichangdian_corner_action", {
         effect,
         playerId: currentPlayer.id,
         phase: "discard",
@@ -293,14 +295,14 @@
         beforePlayerState,
         beforeCardState,
         messageParts: [`盲抽 ${drawn.length} 张`],
-      };
+      });
       renderPlayerHand();
       renderPlayerStats();
       return openYichangdianCornerPicker();
     }
 
     function getPendingYichangdianCornerCards() {
-      const pending = pendingState.yichangdianCornerAction;
+      const pending = getYichangdianCornerAction();
       const player = pending ? getPlayerById(pending.playerId) : null;
       if (!pending || !player) return [];
       const usedIds = new Set([pending.selectedDiscardCard?.id].filter(Boolean));
@@ -322,7 +324,7 @@
     }
 
     function openYichangdianCornerPicker() {
-      const pending = pendingState.yichangdianCornerAction;
+      const pending = getYichangdianCornerAction();
       if (!pending || !els.scanTargetOverlay || !els.scanTargetActions) {
         return { ok: false, message: "无法打开异常点角标选择" };
       }
@@ -354,7 +356,7 @@
     }
 
     function handleYichangdianCornerChoice(cardId) {
-      const pending = pendingState.yichangdianCornerAction;
+      const pending = getYichangdianCornerAction();
       const player = pending ? getPlayerById(pending.playerId) : null;
       if (!pending || !player) return { ok: false, message: "没有异常点角标选择流程" };
       const card = player.hand.find((item) => item.id === cardId);
@@ -385,7 +387,7 @@
         pending.beforeCardState,
         "恢复异常点盲抽角标前牌区状态",
       ));
-      pendingState.yichangdianCornerAction = null;
+      decisionSessions.clear("yichangdian_corner_action");
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
       return finishAutomaticRewardEffect(pending.effect, {
         ok: true,

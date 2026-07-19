@@ -395,8 +395,8 @@
       pendingState.banrenmaOpportunityQueue = [];
       decisionSessions?.clear?.("aomomo_card_gain");
       decisionSessions?.clear?.("runezu_card_gain");
-      pendingState.runezuSymbolBranch = null;
-      pendingState.runezuFaceSymbolPlacement = null;
+      decisionSessions?.clear?.("runezu_symbol_branch");
+      decisionSessions?.clear?.("runezu_face_symbol_placement");
       industry?.resetAllIndustryActionMarks?.(playerState.players);
       cancelIndustryAbilityFlow?.({ silent: true });
       randomizePlayerTurnOrder();

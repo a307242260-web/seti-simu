@@ -397,7 +397,7 @@
         || getCardTriggerFreeMove()
         || decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION)
         || isCardTriggerPickSelectionActive()
-        || pendingState.amibaSymbolChoice?.triggerMatch
+        || decisionSessions.peek("amiba_symbol_choice")?.triggerMatch
       );
     }
 

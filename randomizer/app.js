@@ -2772,18 +2772,18 @@
     get pendingDataPlaceAction() { return getPendingDataPlacementDecision(); },
     get pendingJiuzheCardPlay() { return pendingState.jiuzheCardPlay; },
     get pendingYichangdianCardGain() { return decisionSessions.peek("yichangdian_card_gain"); },
-    get pendingYichangdianCornerAction() { return pendingState.yichangdianCornerAction; },
+    get pendingYichangdianCornerAction() { return decisionSessions.peek("yichangdian_corner_action"); },
     get pendingBanrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
     get pendingBanrenmaOpportunity() { return pendingState.banrenmaOpportunity; },
     get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
-    get pendingChongFossilChoice() { return pendingState.chongFossilChoice; },
+    get pendingChongFossilChoice() { return decisionSessions.peek("chong_fossil_choice"); },
     get pendingAmibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
-    get pendingAmibaSymbolChoice() { return pendingState.amibaSymbolChoice; },
-    get pendingAmibaTraceRemoval() { return pendingState.amibaTraceRemoval; },
+    get pendingAmibaSymbolChoice() { return decisionSessions.peek("amiba_symbol_choice"); },
+    get pendingAmibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
     get pendingAomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
     get pendingRunezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
-    get pendingRunezuSymbolBranch() { return pendingState.runezuSymbolBranch; },
-    get pendingRunezuFaceSymbolPlacement() { return pendingState.runezuFaceSymbolPlacement; },
+    get pendingRunezuSymbolBranch() { return decisionSessions.peek("runezu_symbol_branch"); },
+    get pendingRunezuFaceSymbolPlacement() { return decisionSessions.peek("runezu_face_symbol_placement"); },
     get pendingCardTriggerAction() { return getPendingCardTriggerAction(); },
     get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
     get pendingCardTaskCompletion() { return getPendingCardTaskCompletion(); },
@@ -3837,20 +3837,20 @@
     pendingState.jiuzheOpportunityOpen = false;
     pendingState.jiuzheOpportunityQueue = [];
     decisionSessions.clear("yichangdian_card_gain");
-    pendingState.yichangdianCornerAction = null;
+    decisionSessions.clear("yichangdian_corner_action");
     decisionSessions.clear("banrenma_card_gain");
     pendingState.banrenmaOpportunity = null;
     pendingState.banrenmaOpportunityQueue = [];
     decisionSessions.clear("chong_card_gain");
-    pendingState.chongFossilChoice = null;
+    decisionSessions.clear("chong_fossil_choice");
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     decisionSessions.clear("amiba_card_gain");
-    pendingState.amibaSymbolChoice = null;
-    pendingState.amibaTraceRemoval = null;
+    decisionSessions.clear("amiba_symbol_choice");
+    decisionSessions.clear("amiba_trace_removal");
     decisionSessions.clear("aomomo_card_gain");
     decisionSessions.clear("runezu_card_gain");
-    pendingState.runezuSymbolBranch = null;
-    pendingState.runezuFaceSymbolPlacement = null;
+    decisionSessions.clear("runezu_symbol_branch");
+    decisionSessions.clear("runezu_face_symbol_placement");
     pendingState.alienTracePickerState = null;
     closeAlienRevealConfirmationOverlay();
     decisionSessions.clear(TURN_END_REVEAL_SESSION);
@@ -5266,19 +5266,19 @@
       || getPendingCardTaskCompletion()
       || (pendingState.jiuzheCardPlay && pendingState.jiuzheCardPlay.reason !== "view")
       || decisionSessions.peek("yichangdian_card_gain")
-      || pendingState.yichangdianCornerAction
+      || decisionSessions.peek("yichangdian_corner_action")
       || decisionSessions.peek("banrenma_card_gain")
       || pendingState.banrenmaOpportunity
       || getPendingChongTaskCompletion()
       || decisionSessions.peek("chong_card_gain")
-      || pendingState.chongFossilChoice
+      || decisionSessions.peek("chong_fossil_choice")
       || decisionSessions.peek("amiba_card_gain")
-      || pendingState.amibaSymbolChoice
-      || pendingState.amibaTraceRemoval
+      || decisionSessions.peek("amiba_symbol_choice")
+      || decisionSessions.peek("amiba_trace_removal")
       || decisionSessions.peek("aomomo_card_gain")
       || decisionSessions.peek("runezu_card_gain")
-      || pendingState.runezuSymbolBranch
-      || pendingState.runezuFaceSymbolPlacement
+      || decisionSessions.peek("runezu_symbol_branch")
+      || decisionSessions.peek("runezu_face_symbol_placement")
       || getPendingStrategySlotDecision()
       || getPendingPiratesRaidDecision()
       || getPendingCardTriggerFreeMove()
@@ -5563,17 +5563,17 @@
     decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
     decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
-    pendingState.yichangdianCornerAction = null;
+    decisionSessions.clear("yichangdian_corner_action");
     decisionSessions.clear("chong_card_gain");
-    pendingState.chongFossilChoice = null;
+    decisionSessions.clear("chong_fossil_choice");
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     decisionSessions.clear("amiba_card_gain");
-    pendingState.amibaSymbolChoice = null;
-    pendingState.amibaTraceRemoval = null;
+    decisionSessions.clear("amiba_symbol_choice");
+    decisionSessions.clear("amiba_trace_removal");
     decisionSessions.clear("aomomo_card_gain");
     decisionSessions.clear("runezu_card_gain");
-    pendingState.runezuSymbolBranch = null;
-    pendingState.runezuFaceSymbolPlacement = null;
+    decisionSessions.clear("runezu_symbol_branch");
+    decisionSessions.clear("runezu_face_symbol_placement");
     decisionSessions.clear(STRATEGY_SLOT_DECISION);
     if (getPendingPiratesRaidDecision()) {
       decisionSessions.clear(PIRATES_RAID_DECISION);
@@ -5595,7 +5595,7 @@
     const current = getCurrentActionEffect();
     if (!current || current.status !== "active") return;
     if (
-      pendingState.yichangdianCornerAction
+      decisionSessions.peek("yichangdian_corner_action")
       && current.type === cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS
     ) {
       openYichangdianCornerPicker();
@@ -9326,8 +9326,8 @@
       pendingState.actionEffectFlow?.cardMoveEffect,
       getPendingCardCornerFreeMove(),
       getPendingStrategySlotDecision(),
-      pendingState.chongFossilChoice,
-      pendingState.amibaSymbolChoice,
+      decisionSessions.peek("chong_fossil_choice"),
+      decisionSessions.peek("amiba_symbol_choice"),
       pendingState.discardAction,
       pendingState.cardSelectionAction,
       getPendingLandTargetDecision(),
@@ -9438,7 +9438,7 @@
         }),
       };
     }
-    const chongFossilPending = pendingState.chongFossilChoice;
+    const chongFossilPending = decisionSessions.peek("chong_fossil_choice");
     if (chongFossilPending) {
       return {
         actorPlayer: getHeadlessConditionalPlayer(chongFossilPending),
@@ -9451,7 +9451,7 @@
         })),
       };
     }
-    const runezuFacePending = pendingState.runezuFaceSymbolPlacement;
+    const runezuFacePending = decisionSessions.peek("runezu_face_symbol_placement");
     if (runezuFacePending) {
       return {
         actorPlayer: getPlayerById(runezuFacePending.playerId) || getCurrentPlayer(),
@@ -9467,7 +9467,7 @@
         })),
       };
     }
-    const runezuBranchPending = pendingState.runezuSymbolBranch;
+    const runezuBranchPending = decisionSessions.peek("runezu_symbol_branch");
     if (runezuBranchPending) {
       return {
         actorPlayer: getHeadlessConditionalPlayer(runezuBranchPending),
@@ -9479,7 +9479,7 @@
         })),
       };
     }
-    const amibaSymbolPending = pendingState.amibaSymbolChoice;
+    const amibaSymbolPending = decisionSessions.peek("amiba_symbol_choice");
     if (amibaSymbolPending) {
       const symbolSlotIds = amibaSymbolPending.symbolSlotIds || [];
       const candidates = symbolSlotIds.map((slotId) => ({
@@ -10918,14 +10918,14 @@
 
   const appEventState = {
     get pendingChongTaskCompletion() { return getPendingChongTaskCompletion(); },
-    get pendingChongFossilChoice() { return pendingState.chongFossilChoice; },
+    get pendingChongFossilChoice() { return decisionSessions.peek("chong_fossil_choice"); },
     get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
-    get pendingAmibaTraceRemoval() { return pendingState.amibaTraceRemoval; },
-    get pendingAmibaSymbolChoice() { return pendingState.amibaSymbolChoice; },
+    get pendingAmibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
+    get pendingAmibaSymbolChoice() { return decisionSessions.peek("amiba_symbol_choice"); },
     get pendingAmibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
     get pendingAomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
-    get pendingRunezuFaceSymbolPlacement() { return pendingState.runezuFaceSymbolPlacement; },
-    get pendingRunezuSymbolBranch() { return pendingState.runezuSymbolBranch; },
+    get pendingRunezuFaceSymbolPlacement() { return decisionSessions.peek("runezu_face_symbol_placement"); },
+    get pendingRunezuSymbolBranch() { return decisionSessions.peek("runezu_symbol_branch"); },
     get pendingRunezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
     get pendingBanrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
     get pendingBanrenmaOpportunity() { return pendingState.banrenmaOpportunity; },
