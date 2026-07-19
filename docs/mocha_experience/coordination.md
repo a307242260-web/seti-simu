@@ -52,12 +52,12 @@
 - promotion_status: candidate
 - decision: 当前证据来自一个四阶段串行父 issue，先保留为 coordination 候选经验，不修改 issue-workflow；后续观察 3 个含 backlog 依赖链的父 issue。
 
-## 2026-07-17：大型拆分用结果硬门槛验收
+## 2026-07-17：大型拆分与跨域重构用结果硬门槛验收
 
 - date: 2026-07-17
-- source_issue: SETI-2
-- observation: 大型单文件拆分不能以“模块已建立 + 测试通过”判定完成；父级验收需同时检查源文件职责拆账、原实现删除、净减行数目标，以及最终真实浏览器路径。
-- evidence: owner 在 SETI-2 指出拆分后 `app.js` 仍约 2.9 万行；随后 SETI-23 至 SETI-27 采用分域净减行数与删除原函数体硬门槛，SETI-28 最终确认 `app.js` 29,573→9,930 行、模块均低于 3,000 行，并通过 Node 与 Chrome smoke。
+- source_issue: SETI-2, SETI-56
+- observation: 大型单文件拆分或跨域重构不能以“新模块/统一协议已建立 + 测试通过”判定完成；父级验收需同时检查职责拆账、原实现与重复入口删除、生产代码净增量，以及最终真实浏览器路径。若目标删除量未达到，必须逐项列出保留代码及真实 caller，不能机械追求行数或把真实业务规则误删。
+- evidence: owner 在 SETI-2 指出拆分后 `app.js` 仍约 2.9 万行；随后 SETI-23 至 SETI-27 采用分域净减行数与删除原函数体硬门槛，SETI-28 最终确认 `app.js` 29,573→9,930 行、模块均低于 3,000 行，并通过 Node 与 Chrome smoke。SETI-56 首轮阶段 0～5 虽完成 22-family Standard Action 与 132/132 Node、Chrome 验证，但生产代码净增 992 行且仍保留 legacy executor/fallback；owner 在评论 `01e19754-d647-4082-94e4-692a8f556042` 明确要求清理后，追加 SETI-89，最终删除旧执行入口并使 legacy/bypass/public alias 生产引用归零、生产代码净减 133 行，同时对保留的真实 conditional 枚举给出 caller 说明。
 - promote_to: none
 - promotion_status: candidate
-- decision: 先作为 coordination 候选经验保留；当前证据集中在一个大型重构父 issue，不立即升级通用 loop template。
+- decision: 继续作为 coordination 候选经验保留；SETI-56 是 SETI-2 后第一个独立跨域重构证据，验证了“新协议完成不等于旧入口清理完成”，但尚未达到原定两个后续重构的评估窗口，不升级通用 loop template。

@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-19
+- source: SETI-56（续 SETI-2）
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及负责大型拆分或跨域重构父级验收的 coordination agent
+- target_component: 大型重构父级结果硬门槛实践
+- target_file: docs/mocha_experience/coordination.md
+- remote_skill_id: none
+- change: 将 SETI-2 的“大型拆分需检查原实现删除和净减行数”候选扩展到统一协议类跨域重构：除行为与全链路验证外，必须审计旧执行入口、生产净增量和真实 caller；未达到目标删除量时逐项解释保留业务代码。
+- applied_change: 更新 coordination experience 的既有 SETI-2 条目，补充 SETI-56/SETI-89 证据；不修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。
+- expected_effect: 后续大型重构不会把“新 registry/协议已可用”误报为完整迁移，父级能在关单前发现新旧双轨、wrapper 膨胀和无期限兼容债，同时避免为行数指标误删真实业务规则。
+- evaluation_window: SETI-56 为 SETI-2 后第 1 个独立后续证据；再观察 1 个大型单文件拆分或跨域统一协议重构父 issue。
+- success_signal: 后续父级验收同时给出行为覆盖、原实现/重复入口删除、生产净增量、残余 caller 和真实运行路径；无需 owner 在“功能完成”后再次追问旧代码是否清理。
+- rollback_condition: 若后续重构证明行数与入口计数无法表达真实职责迁移，或统一静态依赖/死代码分析能提供更准确门禁，则将净增量降为辅助证据，并以职责所有权和 caller 图替代。
+- risk: 行数是代理指标，机械追求净减可能压缩格式、平移巨石或误删真实 domain 枚举；必须与职责、行为证据和 caller 审计结合。
+- evidence_before: SETI-56 评论 `01e19754-d647-4082-94e4-692a8f556042` 的 owner 代码膨胀反馈；审计确认阶段 0～5 生产净增 992 行且保留 legacy conditional/AI/runtime fallback；SETI-89 提交 `58f36b6` 删除旧执行入口、使相关生产引用归零并净减 133 行，对约 686 行真实 conditional 枚举保留原因与 caller 作出说明。
+- owner_or_agent_decision: owner 明确要求清理无用旧代码；领航按 harness-evolve closeout 将其并入既有 coordination candidate，当前只有 1 个后续独立证据，不升级长期组件。
+- applied_at: 2026-07-19
+- verification: 核对 SETI-56 完整评论、timeline、metadata、六个子 issue 终态、SETI-89 decision/evidence 与提交 `58f36b6` 的生产增删统计和 legacy 零引用断言；watcher 兜底事件目录不存在。
+- observed_outcome: legacy 条件执行器、AI/runtime fallback、bypass 与旧 public alias 已删除，所有六个子 issue 均 done；owner 在获知残余 686 行属于真实业务枚举后明确“收工”。
+- keep_or_revise: 保持 candidate；完成下一个适用大型重构父 issue 后评估是否提升 coordination loop template。
+
+- date: 2026-07-19
 - source: SETI-51, SETI-61, SETI-85
 - promoted_to: agent_prompt
 - promotion_decision: promote
