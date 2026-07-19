@@ -23,7 +23,7 @@ function chooseFastTerminalAction(actions) {
 function playFastFourPlayerGame(seed) {
   const env = createHeadlessEnv();
   env.reset({ seed, activePlayerCount: 4 });
-  for (let stepIndex = 0; stepIndex < 100 && !env.isTerminal(); stepIndex += 1) {
+  for (let stepIndex = 0; stepIndex < 160 && !env.isTerminal(); stepIndex += 1) {
     const action = chooseFastTerminalAction(env.legalActions());
     assert.ok(action, `第 ${stepIndex} 步应存在合法动作`);
     const result = env.step(action);

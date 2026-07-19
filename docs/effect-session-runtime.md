@@ -4,7 +4,7 @@
 
 Effect Session 是 Standard Action 与浏览器/训练宿主之间唯一共享的流程执行协议。SETI-56 负责 Action family、合法项和业务 handler；本契约从 Action 已被接受并生成 Effect Group 开始，负责队列顺序、外部选择、快速行动、working state、提交/回滚、事件和 replay journal。
 
-阶段 0/1 reference core 位于 `randomizer/game/effects/session-runtime.js`。阶段 2 的研究科技贯穿参考链位于 `randomizer/game/effects/research-tech-session.js`，固定为 `旋转 → 科技 DecisionEffect → 放置 → 即时奖励 → commit`。阶段 3 的扫描与打牌代表链位于 `randomizer/game/effects/scan-card-session.js`：扫描固定覆盖 `多目标 DecisionEffect → 扫描 → 扇区 DecisionEffect → 参与奖励 → trigger → 延迟补牌`，打牌固定覆盖 `支付 DecisionEffect → 卡牌顺序效果 → 任务/被动 trigger → 新 DecisionEffect`。阶段 4 的 `randomizer/game/effects/quick-action-session.js` 把 Standard Action `phase=quick` descriptor 校验与 Effect interrupt 接到同一入口，拒绝 main/turn-control family 和旧 quick executor 旁路。阶段 5 在 reference core 内统一 main/quick history、确认输入 replay cursor、RNG/result、checkpoint/fork、Effect undo 和 irreversible barrier；行为矩阵位于 `randomizer/game/effects/session-journal.test.js`。这些阶段共同证明浏览器 UMD 与纯 Node 宿主使用同一 session、workingState、decision 和 journal trace；完整网页交互 adapter、训练 observation adapter 与其余旧 pending 热路径仍分别留给阶段 6/7/8，不能把代表链存在误报为这些阶段已经完成。
+阶段 0/1 reference core 位于 `randomizer/game/effects/session-runtime.js`。阶段 2 的研究科技贯穿参考链位于 `randomizer/game/effects/research-tech-session.js`，固定为 `旋转 → 科技 DecisionEffect → 放置 → 即时奖励 → commit`。阶段 3 的扫描与打牌代表链位于 `randomizer/game/effects/scan-card-session.js`：扫描固定覆盖 `多目标 DecisionEffect → 扫描 → 扇区 DecisionEffect → 参与奖励 → trigger → 延迟补牌`，打牌固定覆盖 `支付 DecisionEffect → 卡牌顺序效果 → 任务/被动 trigger → 新 DecisionEffect`。阶段 4 的 `randomizer/game/effects/quick-action-session.js` 把 Standard Action `phase=quick` descriptor 校验与 Effect interrupt 接到同一入口，拒绝 main/turn-control family 和旧 quick executor 旁路。阶段 5 在 reference core 内统一 main/quick history、确认输入 replay cursor、RNG/result、checkpoint/fork、Effect undo 和 irreversible barrier；行为矩阵位于 `randomizer/game/effects/session-journal.test.js`。阶段 6 的浏览器输入宿主位于 `randomizer/app/effect-session-host.js`。阶段 7 的训练宿主位于 `randomizer/app/headless-effect-session-host.js`：headless/worker 只提交 Standard Action/Decision，确定性推进、唯一选择和当前 Effect 都由同一 session drain，observation/legal choices 在 session `workingState` 对应的同步状态上投影，并把 session journal 固化到每个训练 replay step。其余领域 executor 与旧 pending 状态的彻底删除仍属于阶段 8，不能把阶段 7 的宿主统一误报为全部领域已经纯化。
 
 核心的禁止依赖：DOM、overlay/button、localStorage、render callback、AI valuation/planner、具体 Policy、领域 continuation。宿主可以注册纯 executor、提交 Action/Decision、读取可见投影和持久化稳定结果，不能在 runtime 外偷偷推进规则。
 
@@ -159,7 +159,7 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 | `createCheckpoint(session)` / `restoreCheckpoint(checkpoint)` | crash/timeout 前后保存或恢复非零 session | 只接受稳定边界与连续 confirmed replay cursor |
 | `getConfirmedReplay(sessionOrCheckpoint, cursor)` | 宿主读取 crash 后允许重放的外部输入 | 不返回等待中、失败或尚未原子采纳的 Decision |
 
-浏览器 adapter 的目标形态是 `click -> Standard Action/Decision -> runtime`，render 只消费 `observe()`。训练 adapter 的目标形态是 `step(action) -> dispatch/resolve -> drain -> observation/reward/replay`。两者不得各自拥有 pending resolver。
+浏览器 adapter 的目标形态是 `click -> Standard Action/Decision -> runtime`，render 只消费 `observe()`。训练 adapter 已固定为 `step(action) -> dispatch/resolve -> drain -> observation/reward/replay`，并由 `headless-effect-session-host` 统一 Action、Decision、deterministic Effect、checkpoint 和 confirmed journal；两端不得各自拥有 pending resolver。
 
 ## 旧流程覆盖矩阵
 

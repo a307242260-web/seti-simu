@@ -3,6 +3,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { performance } = require("node:perf_hooks");
+const { createHeadlessEffectSessionHost } = require("./headless-effect-session-host");
 const {
   OBSERVATION_SCHEMA_VERSION,
   CONDITIONAL_FAMILIES,
@@ -391,6 +392,7 @@ function createHeadlessEnv() {
   let restoreHost = null;
   let seededRandom = null;
   let diagnostics = null;
+  let effectSessionHost = null;
 
   function recordDuration(key, startedAt) {
     diagnostics[key] += performance.now() - startedAt;
@@ -398,7 +400,9 @@ function createHeadlessEnv() {
 
   function buildTimedObservation(viewerPlayerId, legalActions) {
     const startedAt = performance.now();
-    const observation = buildObservation(api, seed, viewerPlayerId, legalActions);
+    const observation = effectSessionHost
+      ? effectSessionHost.observe(viewerPlayerId)
+      : buildObservation(api, seed, viewerPlayerId, legalActions);
     recordDuration("observationMilliseconds", startedAt);
     diagnostics.observationCalls += 1;
     return observation;
@@ -454,8 +458,69 @@ function createHeadlessEnv() {
       }
     }
     recordDuration("setupSelectionMilliseconds", setupSelectionStartedAt);
+    effectSessionHost = createHeadlessEffectSessionHost({
+      synchronizeWorkingState: false,
+      captureState: () => ({
+        turnState: api.getTurnState(),
+        decisionOwner: api.getHeadlessDecisionOwnerState?.() || null,
+        pendingState: api.getAiAutoBattleProgress?.().pendingState || null,
+        rngState: {
+          algorithm: "seti-headless-mulberry32-v1",
+          state: seededRandom?.getState?.() ?? null,
+        },
+      }),
+      restoreState(snapshot) {
+        const restored = api.restoreRecoverySnapshot(snapshot, { skipRefresh: true });
+        if (restored?.ok !== false && Number.isSafeInteger(restored?.rngState?.state)) {
+          seededRandom?.setState(restored.rngState.state);
+        }
+        return restored;
+      },
+      inspectBoundary() {
+        const legal = getHeadlessLegalBoundary(api);
+        if (!legal?.ok) return legal;
+        const candidates = (legal.candidates || []).filter((candidate) => candidate?.available !== false);
+        if (candidates.length) {
+          return {
+            ...legal,
+            boundary: legal.decisionType === "conditional_choice" ? "conditional_choice" : "turn_action",
+          };
+        }
+        if (api.getTurnState().gameEnded) return { ...legal, boundary: "terminal" };
+        const pending = api.getAiAutoBattleProgress?.().pendingState || {};
+        return {
+          ...legal,
+          boundary: "draining",
+          actionEffectActive: Boolean(pending.actionEffectFlowActive),
+          currentEffect: structuredClone(pending.currentEffect || null),
+        };
+      },
+      executeAction: (action) => api.executeHeadlessTurnAction(action, { resolveToTurnBoundary: false }),
+      executeDecision: (action) => api.executeHeadlessConditionalAction(action),
+      advanceDeterministic: () => api.advanceHeadlessDeterministicState?.() || { progressed: false },
+      executeCurrentEffect: () => api.executeHeadlessCurrentActionEffect?.(),
+      projectObservation(_workingState, viewerPlayerId) {
+        const boundary = getHeadlessLegalBoundary(api);
+        const actorPlayerId = boundary?.currentPlayer?.id || api.getTurnState().currentPlayerId || null;
+        const projectedActions = (boundary?.candidates || []).map((candidate) => (
+          candidate.standardAction?.phase === "conditional"
+            ? normalizeConditionalCandidate(candidate, actorPlayerId)
+            : normalizeTurnCandidate(candidate, actorPlayerId)
+        )).filter(Boolean);
+        return buildObservation(api, seed, viewerPlayerId, projectedActions);
+      },
+    });
     const resetDrainStartedAt = performance.now();
-    const initialResolution = drainDeterministicEffects();
+    const initialSessionResult = effectSessionHost.beginDrain();
+    const initialResolution = {
+      ok: initialSessionResult?.ok !== false,
+      final: initialSessionResult?.ok === false ? initialSessionResult : null,
+      steps: (initialSessionResult?.events || []).map((event) => ({
+        ...event,
+        actorPlayerId: event.ownerPlayerId || null,
+        automaticConditionalChoice: event.type === "headless_automatic_decision",
+      })),
+    };
     recordDuration("resetDrainMilliseconds", resetDrainStartedAt);
     if (initialResolution?.ok === false) {
       const failure = initialResolution.final || initialResolution;
@@ -478,6 +543,7 @@ function createHeadlessEnv() {
     reset(resetConfig = {}) {
       restoreRandom?.();
       restoreHost?.();
+      effectSessionHost = null;
       seed = resetConfig.seed ?? "seti-headless";
       config = {
         seed,
@@ -535,7 +601,7 @@ function createHeadlessEnv() {
         diagnostics.legalActionsCalls += 1;
         return structuredClone(lastLegalActions);
       }
-      const result = getHeadlessLegalBoundary(api);
+      const result = effectSessionHost?.getBoundary?.() || getHeadlessLegalBoundary(api);
       if (!result?.ok) {
         diagnostics.lastError = result?.error || null;
         lastLegalActions = [];
@@ -651,15 +717,22 @@ function createHeadlessEnv() {
       const actionStartedAt = performance.now();
       try {
         const transitionStartedAt = performance.now();
-        const actionResult = action?.decisionType === "conditional_choice"
-          ? api.executeHeadlessConditionalAction(selector)
-          : api.executeHeadlessTurnAction(selector, { resolveToTurnBoundary: false });
+        const actionResult = effectSessionHost.submit(selector);
         recordDuration("transitionMilliseconds", transitionStartedAt);
         if (actionResult?.ok === false) {
           result = actionResult;
         } else {
           const drainStartedAt = performance.now();
-          const resolution = drainDeterministicEffects();
+          const resolution = {
+            ok: true,
+            boundary: actionResult.phase === "awaiting_input" ? "conditional_choice" : "turn_action",
+            steps: (actionResult.events || []).map((event) => ({
+              ...event,
+              actorPlayerId: event.ownerPlayerId || null,
+              automaticConditionalChoice: event.type === "headless_automatic_decision",
+            })),
+            effectSessionJournal: actionResult.journal || null,
+          };
           recordDuration("effectDrainMilliseconds", drainStartedAt);
           result = {
             ok: resolution?.ok !== false,
@@ -730,6 +803,7 @@ function createHeadlessEnv() {
         postDecision: observation.decision,
         publicSummary: observation.publicState,
         environmentEvents: stepEnvironmentEvents,
+        effectSessionJournal: structuredClone(result.resolution?.effectSessionJournal || null),
       };
       replaySteps.push(replayEvent);
       recordDuration("replayMilliseconds", replayStartedAt);
@@ -761,6 +835,7 @@ function createHeadlessEnv() {
           seat: config?.seat ?? null,
         },
         config: structuredClone(config || {}),
+        effectSessions: effectSessionHost?.getCompletedJournals?.() || [],
         steps: structuredClone(replaySteps),
         environmentEvents: structuredClone(environmentEvents),
         finalStateSummary: this.observe(),
@@ -811,6 +886,12 @@ function createHeadlessEnv() {
           throw new Error("checkpoint replay 后唯一序列与 committed meta 不一致");
         }
         seededRandom?.setState(committedMeta.rngState.state);
+        if (checkpoint.effectSessionCheckpoint) {
+          const restoredSession = effectSessionHost.restoreCheckpoint(checkpoint.effectSessionCheckpoint);
+          if (!restoredSession?.ok) {
+            throw new Error(restoredSession?.message || "checkpoint Effect Session 恢复失败");
+          }
+        }
         return this.observe();
       }
       if (!api) {
@@ -864,6 +945,8 @@ function createHeadlessEnv() {
           seed,
           stepIndex: replaySteps.length,
         },
+        effectSessionCheckpoint: effectSessionHost?.createCheckpoint?.() || null,
+        effectSessionJournals: effectSessionHost?.getCompletedJournals?.() || [],
         episodeMetadata: {
           episodeId: config?.episodeId || null,
           policyVersion: config?.policyVersion || null,
@@ -879,6 +962,7 @@ function createHeadlessEnv() {
       restoreRandom = null;
       restoreHost?.();
       restoreHost = null;
+      effectSessionHost = null;
     },
   };
 }

@@ -12,9 +12,9 @@
 - observation 已按 `publicState / selfState / decision` 分域；公开玩家仅保留资源、计数与公开科技，自己的手牌/预留牌才进入 `selfState`，牌库顺序、未来科技 bonus、未揭示外星人身份不进入观测。
 - replay 分开记录 policy `steps` 与自动结算 `environmentEvents`；checkpoint 将 RNG 与稳定编号统一保存到 `coreState.meta`，可在 fresh env 中恢复且不触发浏览器渲染。
 - 终局 25/50/70 分 pending 由 `choose_final_scoring` 独立枚举与执行：多项由 pending owner 决策并写一条 policy replay，唯一合法板块由环境自动推进；headless 路径显式禁止调用旧 final-score AI resolver，标记时间使用稳定 replay 值。
-- 顶层与 conditional 行动都保留已验证的 Standard Action descriptor；`step()` 不调用 AI candidate builder 二次构建候选。transition 只通过 `action-runtime -> registry.execute`，随后自动 drain pending/effect，不依赖用户点击；旧 runtime bypass 与 headless 专用 action switch 已删除。
+- 顶层与 conditional 行动都保留已验证的 Standard Action descriptor；`step()` 不调用 AI candidate builder 二次构建候选，而只向 `headless-effect-session-host` 提交 Standard Action/Decision。唯一选择、deterministic pending 和当前 Effect 由同一 Effect Session drain；每个 policy replay step 附带已确认的 session action/decision/effect/event journal，失败输入不进入 confirmed replay。
 - Node composition 通过 `randomizer/app/view-adapter.js` 注入 no-op view adapter；运行时不创建或安装 `document`、DOM 元素、overlay、`localStorage`、`Image`。
-- `randomizer/app/headless-contract.test.js` 建立 15 动作族覆盖矩阵与 conditional taxonomy characterization；`randomizer/app/headless-env.test.js` 覆盖无 DOM 启动、固定 seed 完整 4 人局、terminal、replay/checkpoint parity、owner/非法动作拒绝以及观测反泄漏。
+- `randomizer/app/headless-contract.test.js` 建立 15 动作族覆盖矩阵与 conditional taxonomy characterization；`headless-effect-session-host.test.js` 与 `headless-effect-session-integration.test.js` 覆盖未知 pending fail-closed、resolver/recover/skip 零调用、固定 trace journal、非零 checkpoint fork 和固定 seed 完整 4 人局；worker recovery 测试覆盖崩溃后只重放已确认 Action/Decision。
 - 最小训练入口为 `tools/run_self_play_training.js`：串行运行多局 self-play，以 action kind 的 Monte Carlo value table 作为第一版弱 baseline，输出逐步 JSONL，并在局间边界原子保存训练 checkpoint。
 - 固定评测入口为 `tools/run_rl_evaluation.js`：加载任意 self-play checkpoint，在冻结的 20 局四人 seed pool 上输出均分、P25/P50/P75、完局率、非法动作率、阻塞率，以及可机器判定的“稳定 200 分”结论。
 
