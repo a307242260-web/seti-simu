@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SETI 目标架构与演进路线</title>
+  <style>
+    :root {
+      --ink: #20242a;
+      --muted: #5d6671;
+      --line: #b9c1ca;
+      --soft: #f4f6f8;
+      --blue: #285d8e;
+      --blue-soft: #edf4fa;
+      --green: #23653d;
+      --green-soft: #eef7f1;
+      --amber: #8b5d16;
+      --amber-soft: #fbf5e9;
+      --red: #8b3c3c;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    main { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 44px 0 72px; }
+    header { padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+    h1 { margin: 0 0 8px; font-size: 30px; line-height: 1.25; letter-spacing: -.02em; }
+    h2 { margin: 0 0 14px; font-size: 21px; line-height: 1.35; }
+    h3 { margin: 0 0 6px; font-size: 15px; }
+    p { margin: 0; color: var(--muted); }
+    code { font-family: "SFMono-Regular", Consolas, monospace; font-size: .9em; }
+    section { margin-top: 38px; }
+    .meta { margin-bottom: 8px; color: var(--blue); font: 600 12px/1.4 "SFMono-Regular", Consolas, monospace; }
+    .summary { max-width: 900px; }
+    .finding { padding: 14px 16px; border-left: 3px solid var(--amber); background: var(--amber-soft); color: #4c463c; }
+    .finding b { color: #3d3529; }
+
+    .status-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .status { padding: 13px 14px; border: 1px solid var(--line); background: #fff; }
+    .status b { display: block; margin-bottom: 4px; }
+    .status p { font-size: 12px; line-height: 1.45; }
+    .tag { display: inline-block; margin-bottom: 7px; padding: 1px 7px; border: 1px solid var(--line); color: var(--muted); font: 700 10px/1.5 "SFMono-Regular", Consolas, monospace; }
+    .done { border-color: #9cbfa8; background: var(--green-soft); }
+    .done .tag { color: var(--green); border-color: #9cbfa8; }
+    .active .tag { color: var(--blue); border-color: #9db6cc; }
+    .waiting .tag { color: var(--amber); border-color: #cfb47f; }
+
+    .architecture { padding: 22px; border: 1px solid var(--line); background: #fbfcfd; }
+    .inputs, .outputs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .box { padding: 12px 14px; border: 1px solid #929ca7; background: #fff; text-align: center; }
+    .box b { display: block; margin-bottom: 3px; }
+    .box span { color: var(--muted); font-size: 12px; }
+    .arrow { padding: 8px 0; text-align: center; color: #7a838d; font-size: 19px; }
+    .adapters { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .adapter { border-color: var(--blue); background: var(--blue-soft); }
+    .core { display: grid; grid-template-columns: 1fr 28px 1fr 28px 1fr; align-items: stretch; }
+    .core .box { border-width: 2px; border-color: #4f5b67; }
+    .core .inline-arrow { align-self: center; text-align: center; color: #7a838d; }
+    .outside { margin-top: 12px; padding: 12px 14px; border: 1px dashed #929ca7; background: #fff; }
+    .outside b { color: var(--blue); }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 11px 13px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: var(--soft); font-size: 13px; }
+    td { color: #46505b; }
+    td:first-child { width: 12%; font-weight: 700; color: var(--ink); }
+    .priority { color: var(--red); font: 700 12px/1.5 "SFMono-Regular", Consolas, monospace; }
+    .later { color: var(--muted); }
+
+    .roadmap { border-left: 2px solid var(--line); margin-left: 14px; }
+    .stage { position: relative; margin-left: 22px; padding: 0 0 24px 18px; }
+    .stage:last-child { padding-bottom: 0; }
+    .stage::before { content: ""; position: absolute; left: -29px; top: 4px; width: 12px; height: 12px; border: 2px solid var(--blue); border-radius: 50%; background: #fff; }
+    .stage.now::before { background: var(--blue); }
+    .stage b { color: var(--ink); }
+    .stage p { margin-top: 4px; }
+
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .panel { padding: 16px 18px; border: 1px solid var(--line); }
+    .panel ul { margin: 8px 0 0; padding-left: 19px; color: var(--muted); }
+    .panel li + li { margin-top: 5px; }
+    .keep { background: var(--green-soft); border-color: #9cbfa8; }
+    .stop { background: #fffaf8; }
+
+    .decisions { border: 1px solid var(--line); }
+    .decision { display: grid; grid-template-columns: 42px 1fr; gap: 14px; padding: 15px 17px; border-bottom: 1px solid var(--line); }
+    .decision:last-child { border-bottom: 0; }
+    .decision .n { color: var(--blue); font: 700 13px/1.6 "SFMono-Regular", Consolas, monospace; }
+    .decision p { margin-top: 3px; font-size: 14px; }
+    footer { margin-top: 38px; padding-top: 14px; border-top: 1px solid var(--line); color: #77808b; font-size: 12px; }
+
+    @media (max-width: 860px) {
+      .status-grid { grid-template-columns: 1fr 1fr; }
+      .status:last-child { grid-column: 1 / -1; }
+      .inputs, .outputs, .adapters, .split { grid-template-columns: 1fr; }
+      .core { grid-template-columns: 1fr; }
+      .core .inline-arrow { padding: 5px 0; transform: rotate(90deg); }
+    }
+    @media (max-width: 620px) {
+      main { width: min(100% - 24px, 1120px); padding-top: 28px; }
+      h1 { font-size: 25px; }
+      .status-grid { grid-template-columns: 1fr; }
+      .status:last-child { grid-column: auto; }
+      .architecture { padding: 14px; }
+      table { table-layout: fixed; font-size: 12px; line-height: 1.45; }
+      th, td { padding: 8px 6px; overflow-wrap: anywhere; }
+      td:first-child { width: 14%; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="meta">SETI / ARCHITECTURE NOTE / ROADMAP-01</div>
+    <h1>最后一个讨论项：目标架构与演进路线</h1>
+    <p class="summary">这轮不再提出新的大重构。目标是把已经启动的 Standard Action、Effect Session、StateStore、Browser Host 和机器玩家接入口收成一条稳定主干，再删除旧的重复流程；后续玩法和 AI 能力都沿这条主干扩展。</p>
+  </header>
+
+  <section>
+    <div class="finding"><b>阶段判断：</b>SETI 的目标架构方向已经基本确定，当前最重要的不是再画一套更理想的系统，而是按依赖顺序完成现有总控、消除双轨所有权。完成标准看“规则是否只有一个执行入口、状态是否只有一个权威来源、宿主是否只做输入输出”，不再用文件行数、换框架或新增抽象数量衡量。</div>
+  </section>
+
+  <section>
+    <h2>当前路线已经走到哪里</h2>
+    <div class="status-grid">
+      <article class="status done"><span class="tag">DONE</span><b>Standard Action</b><p>SETI-56 已收口；旧执行入口、bypass 和 public alias 生产引用归零。</p></article>
+      <article class="status active"><span class="tag">IN PROGRESS</span><b>Effect Session</b><p>SETI-62 已有核心、代表链和 journal；正在接浏览器宿主，之后补训练宿主与剩余流程。</p></article>
+      <article class="status active"><span class="tag">IN PROGRESS</span><b>StateStore</b><p>SETI-71 已完成 schema、切片、不变量与 RNG；继续迁移高耦合状态和宿主投影。</p></article>
+      <article class="status waiting"><span class="tag">WAITING</span><b>Browser Host</b><p>SETI-72 契约与拆解已就绪，等待 StateStore reference contract 后开始正式迁移。</p></article>
+      <article class="status active"><span class="tag">IN PROGRESS</span><b>Machine Policy</b><p>SETI-90 已冻结公共 Policy 端口，正在独立化启发式机器玩家。</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>目标形态：一套规则内核，多个薄宿主</h2>
+    <div class="architecture">
+      <div class="inputs">
+        <div class="box"><b>真人玩家</b><span>点击、拖拽、选择</span></div>
+        <div class="box"><b>启发式机器玩家</b><span>估值、目标、规划</span></div>
+        <div class="box"><b>学习型机器玩家</b><span>版本化模型推理</span></div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="adapters">
+        <div class="box adapter"><b>Browser Input Adapter</b><span>DOM 输入 → Action / Decision</span></div>
+        <div class="box adapter"><b>Policy Port</b><span>Observation + Legal Set → 一个选择</span></div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="core">
+        <div class="box"><b>Standard Action</b><span>合法性与动作语义</span></div>
+        <div class="inline-arrow">→</div>
+        <div class="box"><b>Effect Session</b><span>顺序、选择、提交与恢复</span></div>
+        <div class="inline-arrow">→</div>
+        <div class="box"><b>StateStore</b><span>唯一权威状态与版本</span></div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="outputs">
+        <div class="box"><b>Browser Projection</b><span>只读页面展示</span></div>
+        <div class="box"><b>Observation</b><span>机器玩家可见输入</span></div>
+        <div class="box"><b>Replay / Checkpoint</b><span>训练、恢复与复盘</span></div>
+      </div>
+      <div class="outside"><b>训练系统在内核之外：</b>采样器、worker、PyTorch、优化器只消费 Observation / Action / Replay，并产出版本化模型；它们不进入浏览器，也不执行游戏规则。</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>技术债优先级</h2>
+    <table>
+      <thead><tr><th>优先级</th><th>先解决什么</th><th>为什么</th><th>明确不做什么</th></tr></thead>
+      <tbody>
+        <tr><td class="priority">P0</td><td>完成 Effect Session 与 StateStore 的在途迁移。</td><td>它们是 Browser、Headless、AI 和恢复共同依赖的主干；不先收口，其他层仍会各自维护 pending、continuation 和状态副本。</td><td>不新建另一套流程引擎或状态容器。</td></tr>
+        <tr><td class="priority">P1</td><td>让 Browser Host 和两类机器玩家只通过标准端口输入输出。</td><td>当前最大风险是 UI、AI resolver 与共享规则同时拥有合法项和流程推进权。</td><td>不让 AI 点击 DOM，不让 UI 直接结算规则。</td></tr>
+        <tr><td class="priority">P2</td><td>删除旧 pending、continuation、旁路 executor 和双写 adapter。</td><td>新接口“能用”不等于迁移完成；旧路径继续存在会让后续改动再次分叉。</td><td>不无限保留兼容层，不以改名代替删除。</td></tr>
+        <tr><td class="later">P3</td><td>在所有权稳定后再拆超大文件、整理脚本加载和局部模块。</td><td><code>app.js</code> 与外星人 runtime 仍大，但文件大小不是当前最危险的问题。</td><td>不为降行数平移巨石，不以更换前端框架作为前提。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>分阶段路线</h2>
+    <div class="roadmap">
+      <div class="stage now"><h3>阶段 A｜现在：收完共享主干</h3><p><b>SETI-62 + SETI-71</b> 按现有子 issue 串行推进；完成剩余 Effect 流程、训练宿主、StateStore 切片与投影契约。Standard Action 不重做。</p></div>
+      <div class="stage"><h3>阶段 B｜接宿主：浏览器与机器玩家归位</h3><p><b>SETI-72 + SETI-90</b> 消费同一 Action / Decision / State；页面只做 Projection + Input，启发式与学习型 Policy 只做选择。</p></div>
+      <div class="stage"><h3>阶段 C｜收双轨：删旧入口和兼容层</h3><p>逐域核对卡牌、科技、扫描、公司、外星人、回合与恢复；新旧路径不能长期并存，adapter 必须有明确删除条件。</p></div>
+      <div class="stage"><h3>阶段 D｜进入产品迭代</h3><p>新卡牌/公司/科技/外星人优先组合已有 Effects；全新能力实现标准 Effect。AI 水平、RL 训练和页面体验分别迭代，不再改规则内核边界。</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>保留与停止</h2>
+    <div class="split">
+      <article class="panel keep"><h3>继续保留</h3><ul><li>传统脚本加载和现有页面外观，可渐进迁移。</li><li><code>randomizer/game/**</code> 的领域模块与已有 Effects。</li><li>启发式机器玩家作为浏览器对手、teacher 和固定评测基线。</li><li>以单元测试为主；改到浏览器或训练链路时只补最小专项检查。</li></ul></article>
+      <article class="panel stop"><h3>停止继续扩张</h3><ul><li>在 <code>app.js</code> 或领域 runtime 中新增专用 pending / continuation。</li><li>Browser、Headless、AI 各维护一套动作合法性或执行流程。</li><li>为了理想分层再造新框架、extension registry 或第二套 runtime。</li><li>把训练器、worker、优化器带进浏览器玩家端。</li></ul></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>本轮只需确认三点</h2>
+    <div class="decisions">
+      <div class="decision"><div class="n">01</div><div><h3>不再开新的大架构总控</h3><p>以 SETI-62、71、72、90 为现有路线，缺口优先补到这些总控下，不重复建设。</p></div></div>
+      <div class="decision"><div class="n">02</div><div><h3>推进顺序是“共享主干 → 宿主接入 → 删除旧路”</h3><p>允许 Policy 独立化并行，但 Browser 正式迁移要等待 StateStore / Effect Session 稳定端口。</p></div></div>
+      <div class="decision"><div class="n">03</div><div><h3>以单一所有权收口，不追求一次性完美</h3><p>规则入口、流程推进、权威状态各只有一个所有者即可进入产品迭代；大文件、模块形式和视觉重构留作后续局部优化。</p></div></div>
+    </div>
+  </section>
+
+  <footer>证据范围：SETI-56 / 62 / 71 / 72 / 90 当前状态与 metadata；<code>docs/standard-action-contract.md</code>、<code>docs/effect-session-runtime.md</code>、<code>docs/browser-host-ui.md</code>、<code>docs/app-topdown-architecture.md</code>、<code>docs/ai-design.md</code>、<code>docs/rl-headless-env.md</code>。本轮只讨论目标边界与推进顺序，不直接启动新的代码重构。</footer>
+</main>
+</body>
+</html>
