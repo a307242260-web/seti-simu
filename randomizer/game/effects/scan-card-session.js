@@ -25,10 +25,14 @@
     throw new Error("SetiStandardAction is required before SetiScanCardSession");
   }
 
-  const ACTION_FAMILIES = Object.freeze(["scan", "play_card"]);
+  const ACTION_FAMILIES = Object.freeze(["scan", "play_card", "place_data", "land"]);
   const PENDING_FAMILY = Object.freeze({
     scan_target: "choose_target",
     scan_sector: "choose_target",
+    scan_participant_reward: "choose_reward",
+    data_placement: "choose_target",
+    land_target: "choose_target",
+    land_payment: "choose_payment",
     play_card_payment: "choose_payment",
     card_trigger_choice: null,
   });
@@ -38,6 +42,9 @@
     SETTLE_SCAN: "scan_card_session_settle_scan",
     PARTICIPANT_REWARD: "scan_card_session_participant_reward",
     DEFERRED_DRAW: "scan_card_session_deferred_draw",
+    PLACE_DATA: "scan_card_session_place_data",
+    PREPARE_LAND: "scan_card_session_prepare_land",
+    LAND: "scan_card_session_land",
     PLAY_CARD: "scan_card_session_play_card",
     CARD_EFFECT: "scan_card_session_card_effect",
     COLLECT_CARD_TRIGGERS: "scan_card_session_collect_card_triggers",
@@ -58,6 +65,11 @@
       throw new TypeError(`scan/card session adapter 缺少 ${key}()`);
     }
     return options[key];
+  }
+
+  function optionalFunction(options, key, fallback) {
+    if (options[key] == null) return fallback;
+    return requireFunction(options, key);
   }
 
   function normalizeDomainResult(result, fallbackMessage) {
@@ -169,7 +181,15 @@
     const settleScan = requireFunction(options, "settleScan");
     const buildScanFollowups = requireFunction(options, "buildScanFollowups");
     const applyParticipantReward = requireFunction(options, "applyParticipantReward");
+    const buildParticipantRewardPending = optionalFunction(options, "buildParticipantRewardPending", () => null);
     const drawDeferredCard = requireFunction(options, "drawDeferredCard");
+    const placeData = optionalFunction(options, "placeData", () => (
+      fail("PLACE_DATA_EFFECT_UNMIGRATED", "place_data 尚未配置 Effect Session executor")
+    ));
+    const buildLandPaymentPending = optionalFunction(options, "buildLandPaymentPending", () => null);
+    const land = optionalFunction(options, "land", () => (
+      fail("LAND_EFFECT_UNMIGRATED", "land 尚未配置 Effect Session executor")
+    ));
     const playCard = requireFunction(options, "playCard");
     const buildCardEffects = requireFunction(options, "buildCardEffects");
     const applyCardEffect = requireFunction(options, "applyCardEffect");
@@ -225,6 +245,34 @@
             type: EFFECT_TYPES.SETTLE_SCAN,
             ownerId: effect.ownerId,
             payload: { scan: clone(pending.scan), sectorAction: clone(choice) },
+          };
+        } else if (pending.type === "scan_participant_reward") {
+          nextEffect = {
+            type: EFFECT_TYPES.PARTICIPANT_REWARD,
+            ownerId: effect.ownerId,
+            payload: { ...clone(pending.reward || {}), rewardAction: clone(choice) },
+          };
+        } else if (pending.type === "data_placement") {
+          nextEffect = {
+            type: EFFECT_TYPES.PLACE_DATA,
+            ownerId: effect.ownerId,
+            payload: { action: clone(pending.action), placementAction: clone(choice) },
+          };
+        } else if (pending.type === "land_target") {
+          nextEffect = {
+            type: EFFECT_TYPES.PREPARE_LAND,
+            ownerId: effect.ownerId,
+            payload: { action: clone(pending.action), targetAction: clone(choice) },
+          };
+        } else if (pending.type === "land_payment") {
+          nextEffect = {
+            type: EFFECT_TYPES.LAND,
+            ownerId: effect.ownerId,
+            payload: {
+              action: clone(pending.action),
+              targetAction: clone(pending.targetAction),
+              paymentAction: clone(choice),
+            },
           };
         } else if (pending.type === "play_card_payment") {
           nextEffect = {
@@ -306,17 +354,69 @@
       return normalized;
     });
 
-    runtime.registerExecutor(EFFECT_TYPES.PARTICIPANT_REWARD, (state, effect) => (
-      normalizeDomainResult(
+    runtime.registerExecutor(EFFECT_TYPES.PARTICIPANT_REWARD, (state, effect) => {
+      if (!effect.payload.rewardAction) {
+        let rawPending;
+        try {
+          rawPending = buildParticipantRewardPending(clone(state), clone(effect.payload), effect);
+        } catch (error) {
+          return fail("SCAN_PARTICIPANT_REWARD_BUILD_FAILED", error?.message || "扫描参与奖励决策生成失败");
+        }
+        if (rawPending != null) {
+          return appendConditional({ ok: true, nextState: state, spawnedEffects: [] }, {
+            ...clone(rawPending),
+            type: "scan_participant_reward",
+            family: "choose_reward",
+            reward: clone(effect.payload),
+          }, effect.ownerId);
+        }
+      }
+      return normalizeDomainResult(
         applyParticipantReward(state, clone(effect.payload), effect),
         "扫描参与奖励执行失败",
-      )
-    ));
+      );
+    });
 
     runtime.registerExecutor(EFFECT_TYPES.DEFERRED_DRAW, (state, effect) => (
       normalizeDomainResult(
         drawDeferredCard(state, clone(effect.payload), effect),
         "扫描延迟补牌失败",
+      )
+    ));
+
+    runtime.registerExecutor(EFFECT_TYPES.PLACE_DATA, (state, effect) => (
+      normalizeDomainResult(
+        placeData(state, clone(effect.payload), effect),
+        "数据放置失败",
+      )
+    ));
+
+    runtime.registerExecutor(EFFECT_TYPES.PREPARE_LAND, (state, effect) => {
+      let rawPending;
+      try {
+        rawPending = buildLandPaymentPending(clone(state), clone(effect.payload), effect);
+      } catch (error) {
+        return fail("LAND_PAYMENT_BUILD_FAILED", error?.message || "登陆支付决策生成失败");
+      }
+      if (rawPending == null) {
+        return normalizeDomainResult(
+          land(state, { ...clone(effect.payload), paymentAction: null }, effect),
+          "登陆执行失败",
+        );
+      }
+      return appendConditional({ ok: true, nextState: state, spawnedEffects: [] }, {
+        ...clone(rawPending),
+        type: "land_payment",
+        family: "choose_payment",
+        action: clone(effect.payload.action),
+        targetAction: clone(effect.payload.targetAction),
+      }, effect.ownerId);
+    });
+
+    runtime.registerExecutor(EFFECT_TYPES.LAND, (state, effect) => (
+      normalizeDomainResult(
+        land(state, clone(effect.payload), effect),
+        "登陆执行失败",
       )
     ));
 
@@ -420,9 +520,17 @@
         );
       }
       const ownerId = action.actorId || null;
-      const pending = action.family === "scan"
-        ? { type: "scan_target", family: "choose_target", ownerId, action: clone(action) }
-        : { type: "play_card_payment", family: "choose_payment", ownerId, action: clone(action) };
+      const pendingByFamily = {
+        scan: { type: "scan_target", family: "choose_target" },
+        play_card: { type: "play_card_payment", family: "choose_payment" },
+        place_data: { type: "data_placement", family: "choose_target" },
+        land: { type: "land_target", family: "choose_target" },
+      };
+      const pending = {
+        ...pendingByFamily[action.family],
+        ownerId,
+        action: clone(action),
+      };
       const decision = createConditionalEffect(pending, ownerId);
       if (!decision.ok) return decision;
       return {

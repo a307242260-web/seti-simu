@@ -250,6 +250,12 @@ reference projection 当前刻意采用保守白名单，未列入的 board/play
 
 `projection-adapter.js` 使用与 Effect Session browser host 一致的稳定 choice identity，并把研究科技 choice 的显式 tile/slot presentation 映射到投影；renderer 不获得原 working state。生产传统脚本入口在 facade 前加载 Decision UI，实际规则推进仍由 SETI-62 的 Effect Session/browser host 端口完成。固定 Chrome trace 为 `rotate -> place:blue2:slot-b -> reward:score:3`，只产生一次原子 commit；UI take/reward/continuation spy 均为 0。quick interrupt 后旧 decision version 由共享 host 明确拒绝为 stale，adapter 只刷新、不重写或重试。
 
+### 阶段 4A 扫描、数据与登陆多选择链（SETI-76）
+
+`game/effects/scan-card-session.js` 的 action family 扩展为 `scan / play_card / place_data / land`。扫描链按 `target -> sector -> participant reward(owner p1...) -> participant reward(owner p2...) -> deferred draw` 运行：每个非等价项都是独立 DecisionEffect，参与者 owner 不从当前可见玩家推断；延迟补牌保持 deferred priority，并在揭示隐藏牌时写 RNG journal 与 irreversible barrier。数据放置是 board target Decision；登陆是 board target 后接 payment Decision，规则执行只发生在两个 choice 均被 session 接受之后。
+
+统一 Decision registry 新增 `board-target` 与 `payment` renderer。`projection-adapter.js` 只从 inspect choice 的 Standard Action target/payload 推导只读 presentation；renderer 输出的 choiceId 集合必须与同 revision 的 inspect choices 逐项相等。固定 Node/Chrome trace 覆盖两个扫描目标、两个扇区、两名参与者奖励、隐藏补牌、两个数据槽、两个登陆目标和两种支付；迁移模块对旧 scan/data/land pending owner、AI resolver 和 UI continuation 的引用/调用均为 0。证据见 `checkpoint/seti-76-proof-obligations.md`、`app/browser-host/scan-data-land-session.test.js` 与 `scan-data-land.browser-smoke.html`。
+
 1. 阶段 0（SETI-72 总控）：冻结本文契约、所有权/覆盖矩阵、proof obligations 和子 issue 依赖；不改共享规则热路径。
 2. 阶段 1：在 `app/browser-host/**` 建立纯 `BrowserProjectionAdapter`、`ViewStateStore`、`BrowserInputAdapter` reference core。只消费 SETI-71/62/56 的稳定公开接口，不读取旧闭包。
 3. 阶段 2：迁移常驻只读区域。优先 round/turn、玩家/对手统计、太阳系、终局板、科技/公共牌；不碰 pending/continuation。

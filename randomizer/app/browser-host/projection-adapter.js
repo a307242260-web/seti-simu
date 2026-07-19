@@ -159,10 +159,11 @@
     return identity == null ? `choice:${stableHash({ index, choice })}` : String(identity);
   }
 
-  function defaultDecisionPresenter(_rawDecision, choice, index) {
+  function defaultDecisionPresenter(rawDecision, choice, index) {
     const choiceId = choiceIdentity(choice, index);
-    const inferredPresentation = choice?.tileId != null
-      ? {
+    let inferredPresentation = null;
+    if (choice?.tileId != null) {
+      inferredPresentation = {
         tileId: choice.tileId,
         slotId: choice.slotId ?? null,
         tileLabel: choice.tileLabel ?? null,
@@ -170,8 +171,17 @@
         color: choice.color ?? null,
         image: choice.image ?? null,
         role: choice.role ?? null,
-      }
-      : (choice?.role == null ? null : { role: choice.role });
+      };
+    } else if (rawDecision?.decisionKind === "choose_target" && choice?.target) {
+      inferredPresentation = { targetRef: clone(choice.target) };
+    } else if (rawDecision?.decisionKind === "choose_payment") {
+      inferredPresentation = {
+        cost: clone(choice?.payload?.cost || choice?.target?.cost || choice?.target || null),
+        remaining: clone(choice?.payload?.remaining || null),
+      };
+    } else if (choice?.role != null) {
+      inferredPresentation = { role: choice.role };
+    }
     return {
       choiceId,
       label: choice?.label || choice?.summary || choice?.name || String(choice?.tileId || choiceId),

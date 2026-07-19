@@ -8,6 +8,8 @@
   "use strict";
 
   const TECH_KINDS = new Set(["research_tech_choice", "choose_tech", "choose_tech_slot"]);
+  const BOARD_KINDS = new Set(["choose_target", "scan_target", "scan_sector", "data_placement", "land_target"]);
+  const PAYMENT_KINDS = new Set(["choose_payment", "land_payment", "card_payment"]);
   const CANCEL_ROLES = new Set(["cancel", "skip"]);
 
   function clone(value) {
@@ -166,10 +168,44 @@
     };
   }
 
+  function renderBoardTarget({ decision }) {
+    return {
+      ok: true,
+      type: "board-target",
+      choices: decision.choices.filter((choice) => !isCancelChoice(choice)).map((choice) => ({
+        choiceId: choice.choiceId,
+        label: choice.label,
+        targetRef: clone(choice.presentation?.targetRef || null),
+        icon: choice.presentation?.icon || null,
+        disabledReason: choice.disabledReason,
+      })),
+    };
+  }
+
+  function renderPayment({ decision }) {
+    return {
+      ok: true,
+      type: "payment",
+      choices: decision.choices.filter((choice) => !isCancelChoice(choice)).map((choice) => ({
+        choiceId: choice.choiceId,
+        label: choice.label,
+        cost: clone(choice.presentation?.cost || null),
+        remaining: clone(choice.presentation?.remaining || null),
+        disabledReason: choice.disabledReason,
+      })),
+    };
+  }
+
   function createDefaultDecisionRegistry() {
     const registry = createDecisionRendererRegistry();
     registry.register("tech", renderTech, {
       matches: (decision) => TECH_KINDS.has(decision.kind) || decision.presentationHint === "tech",
+    });
+    registry.register("board-target", renderBoardTarget, {
+      matches: (decision) => BOARD_KINDS.has(decision.kind) || decision.presentationHint === "board-target",
+    });
+    registry.register("payment", renderPayment, {
+      matches: (decision) => PAYMENT_KINDS.has(decision.kind) || decision.presentationHint === "payment",
     });
     registry.register("generic", renderGeneric);
     return registry;
