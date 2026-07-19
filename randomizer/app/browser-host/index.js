@@ -7,6 +7,7 @@
     root.SetiBrowserInputAdapter,
     root.SetiBrowserActionBar,
     root.SetiBrowserDecisionUi,
+    root.SetiBrowserCardDecisionUi,
     root.SetiBrowserResidentProjection,
     root.SetiBrowserResidentRenderer,
   );
@@ -18,6 +19,7 @@
   inputAdapter,
   actionBar,
   decisionUi,
+  cardDecisionUi,
   residentProjection,
   residentRenderer,
 ) {
@@ -33,6 +35,7 @@
     inputAdapter,
     actionBar,
     decisionUi,
+    cardDecisionUi,
     residentProjection,
     residentRenderer,
   });
