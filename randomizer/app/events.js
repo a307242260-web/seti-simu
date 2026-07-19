@@ -257,11 +257,11 @@
     els.actionQuickButton.addEventListener("click", toggleQuickPanel);
     els.actionPassButton?.addEventListener("click", () => {
       if (els.actionPassButton.disabled) return;
-      dispatchRuntimeAction?.("pass") || passForCurrentPlayer();
+      dispatchRuntimeAction?.({ kind: "standard_intent", family: "pass" }) || passForCurrentPlayer();
     });
     els.actionConfirmButton?.addEventListener("click", () => {
       if (els.actionConfirmButton.disabled) return;
-      dispatchRuntimeAction?.("end-turn") || endCurrentTurn();
+      dispatchRuntimeAction?.({ kind: "standard_intent", family: "end_turn" }) || endCurrentTurn();
     });
     els.actionUndoButton?.addEventListener("click", () => {
       if (els.actionUndoButton.disabled) return;
@@ -276,7 +276,11 @@
     els.quickActionsTrades.addEventListener("click", (event) => {
       const button = event.target.closest("[data-quick-trade]");
       if (!button || button.disabled) return;
-      dispatchRuntimeAction?.({ kind: "quick_trade", payload: { tradeId: button.dataset.quickTrade } })
+      dispatchRuntimeAction?.({
+        kind: "standard_intent",
+        family: "quick_trade",
+        selector: { tradeId: button.dataset.quickTrade },
+      })
         || runQuickTrade(button.dataset.quickTrade);
     });
     els.playerBoardDataLayer?.addEventListener("click", (event) => {

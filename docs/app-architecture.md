@@ -6,7 +6,7 @@
 
 浏览器逐步剥离为纯 View、Input Adapter 与 ViewState 的目标契约、可见性边界、所有权矩阵和 proof obligations，见 [docs/browser-host-ui.md](./browser-host-ui.md)。迁移期间本文件描述的是现状装配边界，后者描述目标宿主边界与分阶段删除条件。
 
-Standard Action 的 app 装配边界由 `app/action-runtime.js` 统一承载：浏览器 intent 只能经显式 legacy selector 解析为唯一 descriptor，训练宿主通过 `standard_enumerate` 直接取得同一 adapter 的 descriptor，并把完整 descriptor 交回 `registry.execute`。`app/ai/action-executor.js` 不再为 headless 维护第二套 legality；`app/headless-contract.js` 只补 RL feature、mask 与版本字段，必须沿用 registry 的 `actionId`。UI picker、AI valuation 和训练 policy 都不得在 adapter 外预扣资源或执行规则。
+Standard Action 的 app 装配边界由 `app/action-runtime.js` 统一承载：浏览器 DOM 的 `standard_intent` 只解析唯一 descriptor，浏览器 AI 与训练宿主直接取得完整 descriptor，并交回同一 `registry.execute`。`app/ai/action-executor.js` 不维护规则 switch；`app/headless-contract.js` 只补 RL feature、mask 与版本字段并沿用 registry `actionId`。UI picker、AI valuation 和训练 policy 都不得在 adapter 外预扣资源或执行规则。
 
 ## 当前加载层次
 

@@ -206,13 +206,11 @@ for (const scenario of [
 }
 
 assert.equal(
-  standardAction.createRegistryAdapter(createRegistry()).executeLegacy(
-    createContext({ planetIds: ["mars", "jupiter"] }),
-    "orbit",
-    {},
+  standardAction.createRegistryAdapter(createRegistry()).resolveIntent(
+    createContext({ planetIds: ["mars", "jupiter"] }), "orbit", {},
   ).code,
   "STANDARD_ACTION_AMBIGUOUS",
-  "旧 adapter 不得在多目标时默认取第一项",
+  "intent resolver 不得在多目标时默认取第一项",
 );
 
 console.log("standard-action four-reference tests passed");

@@ -389,7 +389,7 @@
     function execute(context, action) {
       return registry.execute(context, action);
     }
-    function resolveLegacy(context, family, selector = {}, request = {}) {
+    function resolveIntent(context, family, selector = {}, request = {}) {
       const candidates = registry.enumerate(context, { ...request, family });
       const matches = candidates.filter((candidate) => Object.entries(selector).every(([key, value]) => (
         stableSerialize(candidate.target?.[key]) === stableSerialize(value)
@@ -398,17 +398,13 @@
       if (matches.length !== 1) {
         return fail(
           matches.length ? "STANDARD_ACTION_AMBIGUOUS" : "STANDARD_ACTION_NOT_LEGAL",
-          matches.length ? `${family} legacy adapter 无法唯一确定 action` : `${family} legacy adapter 没有合法 action`,
+          matches.length ? `${family} intent 无法唯一确定 action` : `${family} intent 没有合法 action`,
         );
       }
       const validation = registry.validate(context, matches[0]);
       return validation.ok ? { ok: true, action: matches[0] } : validation;
     }
-    function executeLegacy(context, family, selector = {}, request = {}) {
-      const resolved = resolveLegacy(context, family, selector, request);
-      return resolved.ok ? registry.execute(context, resolved.action) : resolved;
-    }
-    return Object.freeze({ enumerate, execute, resolveLegacy, executeLegacy });
+    return Object.freeze({ enumerate, execute, resolveIntent });
   }
 
   return Object.freeze({

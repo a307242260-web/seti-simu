@@ -473,98 +473,77 @@
         }));
     }
 
+    const STANDARD_FAMILY_BY_AI_ACTION_ID = Object.freeze({
+      launch: "launch",
+      orbit: "orbit",
+      land: "land",
+      researchTech: "research_tech",
+      scan: "scan",
+      analyze: "analyze",
+      playCard: "play_card",
+      pass: "pass",
+      move: "move",
+      quickTrade: "quick_trade",
+      industry: "industry",
+      cardCorner: "card_corner",
+      placeData: "place_data",
+      runezuFaceSymbol: "runezu_face_symbol",
+      "end-turn": "end_turn",
+    });
 
-    function executeAiTurnAction(action, currentPlayer = getCurrentPlayer(), options = {}) {
+    function standardActionMatchesAiCandidate(standardAction, candidate) {
+      const target = standardAction?.target || {};
+      const payload = standardAction?.payload || {};
+      const expected = {
+        rocketId: candidate.rocketId,
+        planetId: candidate.planetId,
+        tileId: candidate.tileId,
+        blueSlot: candidate.blueSlot,
+        tradeId: candidate.tradeId,
+        cardInstanceId: candidate.cardInstanceId || candidate.cardId,
+        companyLabel: candidate.companyLabel || candidate.industryCard?.label,
+        deltaX: candidate.deltaX,
+        deltaY: candidate.deltaY,
+        alienSlotId: candidate.alienSlotId,
+        position: candidate.position,
+        symbolId: candidate.symbolId,
+      };
+      if (candidate.id === "placeData" && candidate.target != null) expected.target = candidate.target;
+      return Object.entries(expected).every(([key, value]) => (
+        value == null || target[key] === value || payload[key] === value
+      ));
+    }
+
+    function attachStandardActionDescriptors(candidates) {
+      const listing = dispatchRuntimeAction?.({ kind: "standard_enumerate", candidates });
+      if (!listing?.ok || !Array.isArray(listing.candidates)) return candidates;
+      return (candidates || []).flatMap((candidate) => {
+        const family = STANDARD_FAMILY_BY_AI_ACTION_ID[candidate.id];
+        if (!family || candidate.available === false) return [candidate];
+        const familyActions = listing.candidates.filter((standardAction) => standardAction.family === family);
+        const matched = familyActions.filter((standardAction) => (
+          standardActionMatchesAiCandidate(standardAction, candidate)
+        ));
+        const descriptors = matched.length ? matched : familyActions;
+        return descriptors.map((standardAction) => ({
+          ...candidate,
+          standardAction: structuredClone(standardAction),
+        }));
+      });
+    }
+
+
+    function executeAiTurnAction(action) {
       const standardDescriptor = action?.standardAction
         || (action?.schemaVersion === "seti-standard-action-v1" ? action : null);
-      if (standardDescriptor && typeof dispatchRuntimeAction === "function") {
-        return dispatchRuntimeAction({ standardAction: standardDescriptor });
+      if (!standardDescriptor) {
+        return {
+          ok: false,
+          code: "STANDARD_ACTION_DESCRIPTOR_REQUIRED",
+          message: "AI 行动必须携带完整 Standard Action descriptor",
+        };
       }
-      const standardStage3Ids = [
-        "move", "quickTrade", "industry", "cardCorner", "placeData", "runezuFaceSymbol", "end-turn",
-      ];
-      if (
-        options.bypassRuntimeDispatch !== true
-        && typeof dispatchRuntimeAction === "function"
-        && standardStage3Ids.includes(action?.id)
-      ) {
-        const validation = dispatchRuntimeAction({ kind: action.id, payload: action, validateOnly: true });
-        if (validation?.ok === false) return validation;
-      }
-      if (options.bypassRuntimeDispatch !== true && typeof dispatchRuntimeAction === "function" && [
-        "end-turn",
-        "launch",
-        "researchTech",
-        "orbit",
-        "land",
-        "scan",
-        "analyze",
-        "playCard",
-        "pass",
-      ].includes(action?.id) && !standardStage3Ids.includes(action?.id)) {
-        return dispatchRuntimeAction({ kind: action.id, payload: action });
-      }
-      if (action.id === "end-turn") {
-        endCurrentTurn();
-        return { ok: true, progressed: true, action };
-      }
-      if (action.id === "launch") {
-        return runAction("launch");
-      }
-      if (action.id === "researchTech") {
-        return researchTechForCurrentPlayer();
-      }
-      if (action.id === "orbit") {
-        return orbitForCurrentPlayer();
-      }
-      if (action.id === "land") {
-        return landForCurrentPlayer();
-      }
-      if (action.id === "scan") {
-        return beginScanAction();
-      }
-      if (action.id === "analyze") {
-        return analyzeDataForCurrentPlayer();
-      }
-      if (action.id === "playCard") {
-        const startResult = beginPlayCardSelection();
-        if (startResult?.ok === false || options.bypassRuntimeDispatch !== true) return startResult;
-        const selectResult = handlePlayCardSelect(action.handIndex);
-        if (selectResult?.ok === false) return selectResult;
-        return confirmPlayCardSelection();
-      }
-      if (action.id === "cardCorner") {
-        return runAiCardCornerQuickActionDecision(action);
-      }
-      if (action.id === "runezuFaceSymbol") {
-        return runAiRunezuFaceSymbolQuickActionDecision(action);
-      }
-      if (action.id === "industry") {
-        recordAiAutoBattleLog("industry", `${currentPlayer.colorLabel}AI 使用公司 1x：${action.companyLabel}`, {
-          action,
-        });
-        const result = handleCompanyActionMarkerClick(action.industryCard);
-        return result || { ok: true, progressed: true, action };
-      }
-      if (action.id === "move") {
-        return options.bypassRuntimeDispatch === true
-          ? moveRocket(action.deltaX, action.deltaY, action.rocketId, { automated: true })
-          : runAiMoveActionDecision(action);
-      }
-      if (action.id === "placeData") {
-        return confirmDataPlacement(action.target, action.blueSlot);
-      }
-      if (action.id === "quickTrade") {
-        return runQuickTrade(action.tradeId, {
-          preserveHandIndex: action.preserveHandIndex,
-          aiReason: action.reason || null,
-          preferBlindDraw: action.preferBlindDraw === true,
-        });
-      }
-      if (action.id === "pass") {
-        return passForCurrentPlayer();
-      }
-      return { ok: false, message: `AI 尚不支持行动 ${action.id}` };
+      return dispatchRuntimeAction({ standardAction: standardDescriptor });
     }
 
     function shouldRetryAiTurnAction(action, result) {
@@ -660,12 +639,15 @@
           };
         })
         : rawCandidates;
+      const candidates = applyAiTurnActionSelectionPressure(
+        attachStandardActionDescriptors(graphAdjustedCandidates),
+      );
       return {
         ok: true,
         currentPlayer,
         rawCandidates,
         graphState,
-        candidates: applyAiTurnActionSelectionPressure(graphAdjustedCandidates),
+        candidates,
       };
     }
 

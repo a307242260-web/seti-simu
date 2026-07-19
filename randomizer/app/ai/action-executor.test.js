@@ -58,9 +58,10 @@ function createContext(overrides = {}) {
       return { ok: true, progressed: true, action };
     },
   }));
-  const result = runtime.executeAiTurnAction({ id: "scan", score: 12 });
+  const descriptor = { schemaVersion: "seti-standard-action-v1", family: "scan" };
+  const result = runtime.executeAiTurnAction({ id: "scan", score: 12, standardAction: descriptor });
   assert.equal(result.ok, true);
-  assert.deepEqual(dispatched, [{ kind: "scan", payload: { id: "scan", score: 12 } }]);
+  assert.deepEqual(dispatched, [{ standardAction: descriptor }]);
   assert.equal(runtime.shouldRetryAiTurnAction({ id: "scan" }, { ok: false }), true);
   assert.equal(runtime.shouldRetryAiTurnAction({ id: "pass" }, { ok: false }), false);
   assert.equal(
@@ -86,13 +87,9 @@ function createContext(overrides = {}) {
       return { ok: true, played: true };
     },
   }));
-  const result = runtime.executeAiTurnAction(
-    { id: "playCard", handIndex: 2 },
-    undefined,
-    { bypassRuntimeDispatch: true },
-  );
-  assert.equal(result.played, true, "headless 打牌应执行预校验候选，不应只打开选择态");
-  assert.deepEqual(calls, ["begin", "select:2", "confirm"]);
+  const result = runtime.executeAiTurnAction({ id: "playCard", handIndex: 2 });
+  assert.equal(result.code, "STANDARD_ACTION_DESCRIPTOR_REQUIRED");
+  assert.deepEqual(calls, [], "缺 descriptor 时不得进入旧打牌执行旁路");
 }
 
 {
@@ -105,6 +102,22 @@ function createContext(overrides = {}) {
       },
     },
     dispatchRuntimeAction: (action) => {
+      if (action.kind === "standard_enumerate") {
+        return {
+          ok: true,
+          candidates: [{
+            schemaVersion: "seti-standard-action-v1",
+            actionId: "end_turn:test",
+            actorId: "player-blue",
+            family: "end_turn",
+            phase: "quick",
+            stateVersion: 0,
+            decisionVersion: 0,
+            target: { kind: "end-turn" },
+            payload: {},
+          }],
+        };
+      }
       dispatched = action;
       return { ok: true, progressed: true };
     },
@@ -112,7 +125,7 @@ function createContext(overrides = {}) {
   }));
   const result = runtime.runAiTurnActionDecision();
   assert.equal(result.ok, true);
-  assert.equal(dispatched.kind, "end-turn");
+  assert.equal(dispatched.standardAction.family, "end_turn");
   assert.equal(logs[0].type, "turn-action");
   assert.equal(logs[0].details.action.id, "end-turn");
 }

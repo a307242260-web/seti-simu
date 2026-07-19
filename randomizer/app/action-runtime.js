@@ -555,13 +555,47 @@
         if (!standardActionAdapter) {
           return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE", candidates: [] };
         }
+        const standardContext = createActionContext();
+        if (action.payload?.actorId) {
+          standardContext.standardActionAuthority = {
+            actorId: action.payload.actorId,
+            stateVersion: action.payload.stateVersion ?? 0,
+            decisionVersion: action.payload.decisionVersion ?? 0,
+          };
+        }
         return {
           ok: true,
           candidates: standardActionAdapter.enumerate(
-            createActionContext(),
+            standardContext,
             action.payload || {},
           ),
         };
+      }
+      if (action.kind === "standard_resolve") {
+        if (!standardActionAdapter) {
+          return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
+        }
+        return standardActionAdapter.resolveIntent(
+          createActionContext(),
+          action.family,
+          action.selector || {},
+          action.payload || {},
+        );
+      }
+      if (action.kind === "standard_intent") {
+        if (!standardActionAdapter) {
+          return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
+        }
+        const standardContext = createActionContext();
+        const resolved = standardActionAdapter.resolveIntent(
+          standardContext,
+          action.family,
+          action.selector || {},
+          action.payload || {},
+        );
+        return resolved.ok
+          ? standardActionAdapter.execute(standardContext, resolved.action)
+          : resolved;
       }
       const standardDescriptor = action.standardAction
         || (action.schemaVersion === "seti-standard-action-v1" ? action : null);
@@ -569,86 +603,16 @@
         if (!standardActionAdapter) {
           return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
         }
-        return standardActionAdapter.execute(createActionContext(), standardDescriptor);
+        const standardContext = createActionContext();
+        standardContext.standardActionAuthority = {
+          actorId: standardDescriptor.actorId,
+          stateVersion: standardDescriptor.stateVersion,
+          decisionVersion: standardDescriptor.decisionVersion,
+        };
+        return standardActionAdapter.execute(standardContext, standardDescriptor);
       }
       const kind = action.kind || action.id || null;
-      const payload = action.payload || fallbackOptions || {};
-      const standardFamily = {
-        scan: "scan",
-        analyze: "analyze",
-        playCard: "play_card",
-        play_card: "play_card",
-        pass: "pass",
-        move: "move",
-        quickTrade: "quick_trade",
-        quick_trade: "quick_trade",
-        industry: "industry",
-        cardCorner: "card_corner",
-        card_corner: "card_corner",
-        placeData: "place_data",
-        place_data: "place_data",
-        runezuFaceSymbol: "runezu_face_symbol",
-        runezu_face_symbol: "runezu_face_symbol",
-        "end-turn": "end_turn",
-        end_turn: "end_turn",
-      }[kind];
-      if (standardFamily && standardActionAdapter) {
-        const selector = standardFamily === "quick_trade"
-          ? { tradeId: payload.tradeId }
-          : standardFamily === "industry"
-            ? { companyLabel: payload.companyLabel || payload.industryCard?.label }
-            : standardFamily === "card_corner"
-              ? { cardInstanceId: payload.cardInstanceId || payload.cardId }
-              : standardFamily === "move"
-                ? { rocketId: payload.rocketId, deltaX: payload.deltaX, deltaY: payload.deltaY }
-                : standardFamily === "place_data"
-                  ? { target: payload.target, blueSlot: payload.blueSlot ?? null }
-                  : standardFamily === "runezu_face_symbol"
-                    ? { alienSlotId: payload.alienSlotId, position: payload.position, symbolId: payload.symbolId }
-                    : payload.cardInstanceId
-                      ? { cardInstanceId: payload.cardInstanceId }
-                      : {};
-        const standardResult = action.validateOnly === true && standardActionAdapter.resolveLegacy
-          ? standardActionAdapter.resolveLegacy(
-            createActionContext(),
-            standardFamily,
-            selector,
-          )
-          : standardActionAdapter.executeLegacy(
-          createActionContext(),
-          standardFamily,
-          selector,
-        );
-        return standardResult;
-      }
       switch (kind) {
-        case "launch":
-          return runAction("launch", payload);
-        case "researchTech":
-        case "research_tech":
-          return researchTechForCurrentPlayer?.();
-        case "orbit":
-          return orbitForCurrentPlayer?.();
-        case "land":
-          return landForCurrentPlayer?.();
-        case "scan":
-          return beginScanAction?.();
-        case "analyze":
-          return analyzeDataForCurrentPlayer?.();
-        case "playCard":
-        case "play_card":
-          return beginPlayCardSelection?.();
-        case "pass":
-          return passForCurrentPlayer?.();
-        case "end-turn":
-        case "end_turn":
-          return endCurrentTurn?.();
-        case "quickTrade":
-        case "quick_trade":
-          return runQuickTrade?.(payload.tradeId, payload);
-        case "placeData":
-        case "place_data":
-          return confirmDataPlacement?.(payload.target, payload.blueSlot);
         case "confirmInitialSelection":
         case "confirm_initial_selection":
           return confirmInitialSelectionForCurrentPlayer();

@@ -155,9 +155,19 @@ const runtime = createActionRuntime({
       calls.push(["standard-execute", action.actionId]);
       return { ok: true, action };
     },
-    executeLegacy(_context, family, selector) {
-      calls.push(["standard-legacy", family, selector]);
-      return { ok: true, tradeId: selector.tradeId };
+    resolveIntent(_context, family, selector) {
+      calls.push(["standard-intent", family, selector]);
+      return {
+        ok: true,
+        action: {
+          schemaVersion: "seti-standard-action-v1",
+          actionId: `${family}:resolved`,
+          actorId: "p2",
+          family,
+          stateVersion: 0,
+          decisionVersion: 0,
+        },
+      };
     },
   },
 });
@@ -180,16 +190,19 @@ runtime.confirmInitialSelectionForCurrentPlayer();
 assert.equal(setupSelectionState.phase, "complete");
 assert.equal(state.rocketState.statusNote.includes("游戏开始"), true);
 
-const launchResult = runtime.dispatchAction({ kind: "launch" });
-assert.equal(launchResult.ok, true);
-assert.equal(calls.some((entry) => Array.isArray(entry) && entry[0] === "ability" && entry[1] === "launchProbe"), true);
+const unknownLegacyResult = runtime.dispatchAction({ kind: "launch" });
+assert.equal(unknownLegacyResult.ok, false);
 
 const effectResult = runtime.dispatchAction({ kind: "effect_step", effectIndex: 0 });
 assert.equal(effectResult.ok, true);
 assert.equal(calls.some((entry) => Array.isArray(entry) && entry[0] === "executeEffect"), true);
 
-const quickTradeResult = runtime.dispatchAction({ kind: "quick_trade", payload: { tradeId: "trade-1", keep: true } });
-assert.equal(quickTradeResult.tradeId, "trade-1");
+const quickTradeResult = runtime.dispatchAction({
+  kind: "standard_intent",
+  family: "quick_trade",
+  selector: { tradeId: "trade-1" },
+});
+assert.equal(quickTradeResult.ok, true);
 
 const standardListing = runtime.dispatchAction({ kind: "standard_enumerate" });
 assert.equal(standardListing.ok, true);

@@ -103,17 +103,18 @@
         ...(options.techTypes ? { techTypes: options.techTypes } : {}),
       }
       : {};
-    const adapted = createStandardAdapter().executeLegacy(
+    const adapter = createStandardAdapter();
+    const resolved = adapter.resolveIntent(
       context,
       family,
       selector,
       Object.keys(requestPayload).length ? { payload: requestPayload } : {},
     );
-    if (adapted.code === "STANDARD_ACTION_NOT_LEGAL" && Object.keys(selector).length === 0) {
+    if (resolved.code === "STANDARD_ACTION_NOT_LEGAL" && Object.keys(selector).length === 0) {
       return action.execute(context, options);
     }
     if (actionId === "researchTech" && !options?.tileId) return action.execute(context, options);
-    return adapted;
+    return resolved.ok ? adapter.execute(context, resolved.action) : resolved;
   }
 
   function getOrbitOptions(context) {

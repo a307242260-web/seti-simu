@@ -16,7 +16,7 @@ const enumerateSource = executorSource.slice(
   executorSource.indexOf("function enumerateHeadlessTurnActions()"),
   executorSource.indexOf("function executeAiTurnAction("),
 );
-assert.match(enumerateSource, /dispatchRuntimeAction\?\.\(\{ kind: "standard_enumerate" \}\)/);
+assert.match(enumerateSource, /dispatchRuntimeAction\?\.\(\{ kind: "standard_enumerate"/);
 assert.doesNotMatch(
   enumerateSource,
   /actions\.canExecute|quickTrades\.canExecuteTrade|canMoveRocket|canPlaceAnyData/,
@@ -34,7 +34,21 @@ const actionRuntimeSource = fs.readFileSync(
   "utf8",
 );
 assert.match(actionRuntimeSource, /standardActionAdapter\.enumerate/);
-assert.match(actionRuntimeSource, /standardActionAdapter\.execute\(createActionContext\(\), standardDescriptor\)/);
+assert.match(actionRuntimeSource, /standardActionAdapter\.execute\(standardContext, standardDescriptor\)/);
+assert.doesNotMatch(executorSource, /bypassRuntimeDispatch|if \(action\.id ===/);
+assert.doesNotMatch(actionRuntimeSource, /executeLegacy|resolveLegacy/);
+
+const appSource = fs.readFileSync(path.resolve(__dirname, "../../app.js"), "utf8");
+const publicApiSource = fs.readFileSync(path.resolve(__dirname, "../../app/public-api.js"), "utf8");
+for (const forbidden of [
+  "payload.legacyAction",
+  "enumerateLegacyHeadlessConditionalActions",
+  "executeLegacyHeadlessConditionalAction",
+  "bypassRuntimeDispatch",
+]) {
+  assert.equal(appSource.includes(forbidden) || executorSource.includes(forbidden) || publicApiSource.includes(forbidden), false, `${forbidden} 生产引用必须为 0`);
+}
+assert.doesNotMatch(publicApiSource, /runAiPendingStep\s*:|runHeadlessActionEffectStep\s*:/);
 
 const contractSource = fs.readFileSync(
   path.resolve(__dirname, "../../app/headless-contract.js"),

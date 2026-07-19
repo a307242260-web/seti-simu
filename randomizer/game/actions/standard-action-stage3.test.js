@@ -154,13 +154,13 @@ const policyState = createState();
 const browserAdapter = standardAction.createRegistryAdapter(createRegistry());
 const policyAdapter = standardAction.createRegistryAdapter(createRegistry());
 const validationOnlyState = createState();
-const validationOnly = browserAdapter.resolveLegacy(validationOnlyState, "industry", { companyLabel: "图灵系统" });
+const validationOnly = browserAdapter.resolveIntent(validationOnlyState, "industry", { companyLabel: "图灵系统" });
 assert.equal(validationOnly.ok, true);
 assert.deepEqual(validationOnlyState.executed, [], "AI legacy adapter validation must not execute or mutate state");
 const trade = browserAdapter.enumerate(browserState, { family: "quick_trade" })[0];
 assert.equal(browserAdapter.execute(browserState, trade).ok, true);
 assert.equal(policyAdapter.execute(policyState, trade).ok, true);
 assert.deepEqual(policyState, browserState);
-assert.equal(browserAdapter.executeLegacy(createState(), "move").code, "STANDARD_ACTION_AMBIGUOUS");
+assert.equal(browserAdapter.resolveIntent(createState(), "move").code, "STANDARD_ACTION_AMBIGUOUS");
 
 console.log("standard-action stage3 tests passed");

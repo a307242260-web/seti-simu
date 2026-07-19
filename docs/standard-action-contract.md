@@ -4,7 +4,7 @@
 
 Standard Action 是浏览器控件与训练 Policy 之间唯一共享的游戏决策协议。两端只选择语义 action；候选枚举、执行前校验、状态事务、规则结算和下一个决策边界均由无 DOM 的游戏层负责。
 
-当前阶段冻结协议和 proof obligations，不宣称 15+7 family 已完成行为迁移。`randomizer/app/headless-contract.js` 的 family label 与 normalize 层只能作为兼容适配，不能作为规则覆盖证据。参考实现位于 `randomizer/game/actions/standard-action.js`；`launch`、`orbit`、`land`、`research_tech` 已通过真实 `canExecute/execute` 进入 registry，后续 family 必须沿同一边界迁入。
+当前 15 个顶层 family 与 7 个 conditional family 均已进入同一个 app registry。浏览器 AI 与训练 Policy 选择完整 descriptor，并只通过 `registry.execute` 执行；条件动作由语义 provider 枚举、按 `target.kind` handler 执行。旧 kind switch、headless 条件总分派器、`payload.legacyAction`、`executeLegacy` 与 runtime bypass 已删除。
 
 ## Action envelope
 
@@ -39,7 +39,7 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 
 ## Registry 与迁移矩阵
 
-状态含义：`reference` 已进入 Standard Action registry 并有行为合约；`legacy-shared` 已有部分 `game/actions` 或 `abilities` 规则，但入口仍分裂；`app-runtime` 主要由 app/UI/AI runtime 执行；`taxonomy-only` 只有条件 family 分类，尚未形成完整统一执行器。
+状态含义：`reference` 表示已进入 Standard Action registry，并有 enumerate/validate/execute 行为合约。
 
 | family | phase | 当前 owner / 入口 | 状态 | 迁移依赖与验收重点 |
 |---|---|---|---|---|
@@ -66,13 +66,11 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 | `choose_final_scoring` | conditional | Standard Action registry；final scoring runtime | reference | 独立 owner、候选、replay 与 terminal 结算 |
 | `accept_optional_effect` | conditional | Standard Action registry；optional effect adapter | reference | 明确 `accept/skip` target，禁止默认取首项 |
 
-迁移顺序：先以 launch/orbit/land/research_tech 固化参考模式；再迁 scan/analyze/play_card/pass；再迁全部 quick action 与 end_turn；最后统一 conditional registry 和 deterministic drain。后续阶段只能把矩阵状态升级为有行为证据的状态，不得仅修改标签。
-
-四个参考 action 的 composition 由 `game/actions/index.js#createStandardRegistry` 提供；浏览器与 headless 只应持有 `createStandardAdapter()` 返回的 `enumerate/execute/executeLegacy`。`executeLegacy` 在多目标时返回 `STANDARD_ACTION_AMBIGUOUS`，不得沿用旧入口的默认首项语义。orbit/land 的目标分别固定为 `rocketId + planetId` 与 `rocketId + planetId + type/satelliteId`；research 的目标固定为 `tileId + blueSlot`。完整 conditional registry 和 effect drain 仍属于阶段 4，本阶段不把静态 conditional family 标成行为完成。
+`game/actions/index.js#createStandardRegistry` 提供 composition；adapter 只暴露 `enumerate/resolveIntent/execute`。`resolveIntent` 仅服务浏览器 DOM 的窄输入边界，多目标返回 `STANDARD_ACTION_AMBIGUOUS`；浏览器 AI、headless 与训练 Policy 不使用它。orbit/land 的目标分别固定为 `rocketId + planetId` 与 `rocketId + planetId + type/satelliteId`；research 的目标固定为 `tileId + blueSlot`。
 
 阶段 1 行为证据：`randomizer/game/actions/standard-action-reference.test.js` 对四个 family 做同 checkpoint 全候选 fork，覆盖多 rocket、主星/卫星、科技 tile/blue slot；同时断言 stale、越权、篡改 target 时玩家状态、盘面、RNG cursor、history 与 replay 均不变化，并以两个独立 adapter 对同一 actionId 做结果/状态 parity。
 
-阶段 2 行为证据：`randomizer/game/actions/standard-action-stage2.test.js` 对 scan/analyze/play_card/pass 做完整 family 枚举与同 checkpoint 全 legal fork，覆盖两张非等价手牌、稳定费用 payload、stale 无副作用、双 adapter parity 与 legacy 多选 fail-closed。浏览器主动作与 AI executor 都经 `action-runtime.dispatchAction` 进入同一 adapter；后续 pending 保持独立 owner/replay 边界。
+阶段 2 行为证据：`randomizer/game/actions/standard-action-stage2.test.js` 对 scan/analyze/play_card/pass 做完整 family 枚举与同 checkpoint 全 legal fork，覆盖两张非等价手牌、稳定费用 payload、stale 无副作用、双 adapter parity 与 intent 多选 fail-closed。浏览器主动作与 AI executor 都经 `action-runtime.dispatchAction` 进入同一 adapter；后续 pending 保持独立 owner/replay 边界。
 
 阶段 3 行为证据：`randomizer/game/actions/standard-action-stage3.test.js` 对 move/quick_trade/industry/card_corner/place_data/runezu_face_symbol/end_turn 做完整 family 枚举与同 checkpoint 全 legal fork，覆盖快速行动不消耗主行动、公司 1x、显式支付、history source、stale/越权/重复/无目标 fail-closed，以及浏览器/Policy adapter parity。浏览器快速交易与回合结束、AI 七类执行都经 `action-runtime.dispatchAction` 进入同一 registry；AI valuation 与候选评分保持在 adapter 外。
 
@@ -80,7 +78,7 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 
 阶段 5 集成证据：`randomizer/game/actions/standard-action-stage5.test.js` 结构化证明 headless 顶层枚举只调用 `action-runtime` 的 `standard_enumerate`、执行只提交完整 descriptor，且训练 contract 沿用 registry `actionId`；`randomizer/app/action-runtime.test.js` 覆盖 descriptor 枚举/直执行；`randomizer/app/headless-contract.test.js` 覆盖顶层与 conditional identity parity；headless legality、conditional drain、fail-closed、owner、终局和 worker integration 共同覆盖下一决策、事件/replay 与常驻宿主路径。
 
-残余兼容面限定为单向 adapter：浏览器 DOM intent 与浏览器 AI 估值 candidate 仍以旧 kind/selector 进入 `action-runtime.executeLegacy`，多目标必须返回 `STANDARD_ACTION_AMBIGUOUS`；conditional provider 的 `payload.legacyAction` 仍承接存量 pending handler。它们不得被训练 Policy 枚举或作为 action identity/合法性来源，后续删除条件是对应 Browser Host / Effect Session owner 完成迁移并以调用计数证明旧 selector 为零。
+残余兼容面只有浏览器 DOM 的 `standard_intent`：它把明确 family/selector 解析为唯一 descriptor 后立即进入同一 registry；多目标 fail-closed。AI、headless、Policy、conditional provider 和 public API 均不保留旧执行入口。
 
 ## Proof obligations
 

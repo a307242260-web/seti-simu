@@ -18,5 +18,5 @@ assert.equal(candidates.filter((item) => item.family === "play_card").length, 2)
 for (const candidate of candidates) { const fork = structuredClone(base); assert.equal(registry().execute(fork, candidate).ok, true); assert.equal(fork.executed.length, 1); }
 const staleContext = structuredClone(base); staleContext.stateVersion += 1; assert.equal(registry().execute(staleContext, candidates[0]).code, "STANDARD_ACTION_STALE"); assert.deepEqual(staleContext.executed, []);
 const browser = structuredClone(base); const policy = structuredClone(base); const browserAdapter = standardAction.createRegistryAdapter(registry()); const policyAdapter = standardAction.createRegistryAdapter(registry()); const cardAction = browserAdapter.enumerate(browser, { family: "play_card" })[1]; assert.equal(browserAdapter.execute(browser, cardAction).ok, true); assert.equal(policyAdapter.execute(policy, cardAction).ok, true); assert.deepEqual(policy, browser);
-assert.equal(browserAdapter.executeLegacy(structuredClone(base), "play_card").code, "STANDARD_ACTION_AMBIGUOUS");
+assert.equal(browserAdapter.resolveIntent(structuredClone(base), "play_card").code, "STANDARD_ACTION_AMBIGUOUS");
 console.log("standard-action stage2 tests passed");

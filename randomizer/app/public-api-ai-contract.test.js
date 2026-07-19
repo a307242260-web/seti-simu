@@ -56,7 +56,8 @@ const api = createPublicApi({
 });
 
 assert.equal(api.runAiAutoBattleStep, aiMethods.runAiAutomationStep);
-assert.equal(api.runAiPendingStep, aiMethods.runAiNonTurnAutomationStep);
+assert.equal("runAiPendingStep" in api, false);
+assert.equal("runHeadlessActionEffectStep" in api, false);
 assert.equal(api.resolveAiToTurnBoundary, aiMethods.resolveAiAutomationToTurnBoundary);
 assert.equal(api.runAiSelectedTurnAction, aiMethods.runAiSelectedTurnAction);
 assert.equal(api.startAiAutoBattle, aiMethods.runAiAutoBattle);

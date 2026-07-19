@@ -101,8 +101,8 @@ const executeEntry = appSource.slice(
   appSource.indexOf("function executeHeadlessConditionalAction(action)"),
   appSource.indexOf("function advanceHeadlessDeterministicState()"),
 );
-assert.match(enumerateEntry, /headlessConditionalStandardAdapter\.enumerate/, "条件枚举必须进入 registry adapter");
-assert.match(executeEntry, /headlessConditionalStandardAdapter\.execute/, "条件执行必须进入 registry adapter");
+assert.match(enumerateEntry, /actionRuntimeController\.dispatchAction/, "条件枚举必须进入共享 registry adapter");
+assert.match(executeEntry, /actionRuntimeController\.dispatchAction\(\{ standardAction \}\)/, "条件执行必须进入共享 registry adapter");
 assert.doesNotMatch(executeEntry, /onConfirm|querySelector|runAi|recover|skipCurrentActionEffect/, "registry 入口不得直接调用 UI/AI/recover/skip 旁路");
 
 console.log(`standard-action stage4 tests passed (${standardAction.CONDITIONAL_FAMILIES.length} families)`);

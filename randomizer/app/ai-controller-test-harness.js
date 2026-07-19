@@ -1016,6 +1016,82 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     };
   }
 
+  const familyById = {
+    launch: "launch", orbit: "orbit", land: "land", researchTech: "research_tech",
+    scan: "scan", analyze: "analyze", playCard: "play_card", pass: "pass",
+    move: "move", quickTrade: "quick_trade", industry: "industry", cardCorner: "card_corner",
+    placeData: "place_data", runezuFaceSymbol: "runezu_face_symbol", "end-turn": "end_turn",
+  };
+  context.dispatchRuntimeAction = (request) => {
+    if (request?.kind === "standard_enumerate") {
+      return {
+        ok: true,
+        candidates: (request.candidates || []).flatMap((candidate, index) => {
+          const family = familyById[candidate.id];
+          if (!family || candidate.available === false) return [];
+          return [{
+            schemaVersion: "seti-standard-action-v1",
+            actionId: `${family}:harness-${index}`,
+            actorId: context.getCurrentPlayer()?.id || null,
+            family,
+            phase: candidate.kind || "main",
+            stateVersion: 0,
+            decisionVersion: 0,
+            target: {
+              rocketId: candidate.rocketId,
+              planetId: candidate.planetId,
+              tileId: candidate.tileId,
+              blueSlot: candidate.blueSlot,
+              tradeId: candidate.tradeId,
+              cardInstanceId: candidate.cardInstanceId || candidate.cardId,
+              companyLabel: candidate.companyLabel || candidate.industryCard?.label,
+              deltaX: candidate.deltaX,
+              deltaY: candidate.deltaY,
+              alienSlotId: candidate.alienSlotId,
+              position: candidate.position,
+              symbolId: candidate.symbolId,
+              ...(candidate.id === "placeData" ? { target: candidate.target } : {}),
+            },
+            payload: { harnessCandidate: candidate },
+            summary: candidate.label || candidate.id,
+          }];
+        }),
+      };
+    }
+    const candidate = request?.standardAction?.payload?.harnessCandidate;
+    if (!candidate) return { ok: false, message: "测试 registry 缺少候选 descriptor" };
+    if (candidate.id === "end-turn") return context.endCurrentTurn() || { ok: true, progressed: true };
+    if (candidate.id === "launch") return context.runAction("launch") || { ok: true, progressed: true };
+    if (candidate.id === "researchTech") return context.researchTechForCurrentPlayer() || { ok: true, progressed: true };
+    if (candidate.id === "orbit") return context.orbitForCurrentPlayer() || { ok: true, progressed: true };
+    if (candidate.id === "land") return context.landForCurrentPlayer() || { ok: true, progressed: true };
+    if (candidate.id === "scan") return context.beginScanAction() || { ok: true, progressed: true };
+    if (candidate.id === "analyze") return context.analyzeDataForCurrentPlayer() || { ok: true, progressed: true };
+    if (candidate.id === "playCard") {
+      const started = context.beginPlayCardSelection();
+      if (started?.ok === false) return started;
+      const selected = context.handlePlayCardSelect(candidate.handIndex);
+      if (selected == null) return started;
+      return selected?.ok === false ? selected : context.confirmPlayCardSelection();
+    }
+    if (candidate.id === "cardCorner") {
+      const selected = context.handleHandCardCornerQuickAction(candidate.handIndex);
+      return selected?.ok === false ? selected : context.confirmCardCornerQuickAction();
+    }
+    if (candidate.id === "runezuFaceSymbol") {
+      const opened = context.openRunezuFaceSymbolPlacement(candidate.alienSlotId, candidate.position);
+      if (opened?.ok === false) return opened;
+      const selected = context.handleRunezuFaceSymbolChoice(candidate.symbolId);
+      return selected || opened || { ok: true, progressed: true };
+    }
+    if (candidate.id === "industry") return context.handleCompanyActionMarkerClick(candidate.industryCard) || { ok: true, progressed: true };
+    if (candidate.id === "move") return context.moveRocket(candidate.deltaX, candidate.deltaY, candidate.rocketId, { automated: true });
+    if (candidate.id === "placeData") return context.confirmDataPlacement(candidate.target, candidate.blueSlot);
+    if (candidate.id === "quickTrade") return context.runQuickTrade(candidate.tradeId, candidate);
+    if (candidate.id === "pass") return context.passForCurrentPlayer() || { ok: true, progressed: true };
+    return { ok: false, message: `测试 registry 未支持 ${candidate.id}` };
+  };
+
   return {
     white,
     blue,

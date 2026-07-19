@@ -287,8 +287,6 @@
       runAiStrategyTuningCycle,
       stopAiAutoBattle,
       runAiAutoBattleStep: runAiAutomationStep,
-      runAiPendingStep: runAiNonTurnAutomationStep,
-      runHeadlessActionEffectStep: runAiActionEffectStep,
       resolveAiToTurnBoundary: resolveAiAutomationToTurnBoundary,
       runAiSelectedTurnAction,
       listAiTurnActionCandidates: () => {
@@ -350,11 +348,7 @@
       executeHeadlessCurrentActionEffect: () => executeHeadlessCurrentActionEffect(),
       skipHeadlessActionEffect: () => skipHeadlessCurrentActionEffect(),
       executeHeadlessTurnAction: (action, options = {}) => {
-        const actionResult = executeAiTurnAction(
-          structuredClone(action),
-          getCurrentPlayer(),
-          { bypassRuntimeDispatch: true },
-        );
+        const actionResult = executeAiTurnAction(structuredClone(action));
         if (actionResult?.ok === false || options.resolveToTurnBoundary === false) {
           return { ...actionResult, action };
         }
