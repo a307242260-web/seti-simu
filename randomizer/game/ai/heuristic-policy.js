@@ -177,7 +177,11 @@
     const difficulty = String(options.difficulty || DEFAULT_DIFFICULTY);
     const strategyWeights = normalizeWeights(options.strategyWeights);
     const evaluateAction = options.evaluateAction || heuristicEvaluator?.evaluateAction;
-    if (typeof evaluateAction !== "function") {
+    const buildCandidates = options.buildCandidates || null;
+    if (buildCandidates != null && typeof buildCandidates !== "function") {
+      throw new HeuristicPolicyError("HEURISTIC_POLICY_CONFIG_INVALID", "buildCandidates 必须是纯函数");
+    }
+    if (!buildCandidates && typeof evaluateAction !== "function") {
       throw new HeuristicPolicyError("HEURISTIC_POLICY_CONFIG_INVALID", "Heuristic Policy 缺少纯 action evaluator");
     }
     const conditionalSelectors = Object.freeze({ ...(options.conditionalSelectors || {}) });
@@ -212,14 +216,41 @@
           conditionalSelectors,
         );
       } else {
-        const legacyCandidates = weighted.map((entry) => {
-          const evaluated = evaluateAction(context, entry.action);
-          return {
-            ...toLegacyCandidate(entry.action),
-            ...(evaluated || {}),
-            score: (Number(evaluated?.score) || 0) * entry.weight,
-          };
-        });
+        const legalByActionId = new Map(weighted.map((entry) => [entry.action.actionId, entry]));
+        const sourcedCandidates = buildCandidates ? buildCandidates(context) : null;
+        if (buildCandidates && !Array.isArray(sourcedCandidates)) {
+          throw new HeuristicPolicyError(
+            "HEURISTIC_POLICY_CANDIDATE_SOURCE_INVALID",
+            "同源 candidate source 必须返回数组",
+          );
+        }
+        const legacyCandidates = buildCandidates
+          ? sourcedCandidates.map((candidate) => {
+            const actionId = candidate?.actionId || candidate?.standardAction?.actionId || null;
+            const entry = legalByActionId.get(actionId);
+            if (!entry) {
+              throw new HeuristicPolicyError(
+                "HEURISTIC_POLICY_CANDIDATE_NOT_LEGAL",
+                `candidate source 返回非 legal action: ${actionId || "<missing>"}`,
+              );
+            }
+            return {
+              ...cloneVisible(candidate),
+              actionId,
+              score: (Number(candidate?.score) || 0) * entry.weight,
+            };
+          })
+          : weighted.map((entry) => {
+            const evaluated = evaluateAction(context, entry.action);
+            return {
+              ...toLegacyCandidate(entry.action),
+              ...(evaluated || {}),
+              score: (Number(evaluated?.score) || 0) * entry.weight,
+            };
+          });
+        if (!legacyCandidates.length) {
+          throw new HeuristicPolicyError("HEURISTIC_POLICY_NO_ENABLED_ACTION", "同源 candidate source 未返回可用候选");
+        }
         const legacySelected = legacyPolicy.chooseTurnAction(legacyCandidates, {
           observation: context.observation,
           deterministicContext: context.deterministicContext,

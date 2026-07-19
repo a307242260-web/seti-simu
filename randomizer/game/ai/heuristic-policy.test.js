@@ -93,6 +93,33 @@ assert.deepEqual(policy.getProvenance(), {
   assert.equal(decision.policy.version, heuristic.POLICY_VERSION);
 }
 
+{
+  const decisionContext = context([
+    descriptor("move", 0),
+    descriptor("play_card", 1),
+    descriptor("pass", 2),
+  ], "same-source-candidates");
+  const sourceCalls = [];
+  const sameSourcePolicy = heuristic.createHeuristicPolicy({
+    buildCandidates(receivedContext) {
+      sourceCalls.push(receivedContext);
+      return [
+        { id: "move", actionId: "move:fixture-0", score: 17, actionGraph: { net: 17 } },
+        { id: "playCard", actionId: "play_card:fixture-1", score: 23, actionGraph: { net: 23 } },
+        { id: "pass", actionId: "pass:fixture-2", score: -2, actionGraph: { net: -2 } },
+      ];
+    },
+  });
+  assert.equal(sameSourcePolicy.decide(decisionContext).actionId, "play_card:fixture-1");
+  assert.deepEqual(sourceCalls, [decisionContext], "同源策略链路只接收 DecisionContext");
+  assert.throws(
+    () => heuristic.createHeuristicPolicy({
+      buildCandidates: () => [{ id: "scan", actionId: "scan:not-legal", score: 999 }],
+    }).decide(decisionContext),
+    (error) => error.code === "HEURISTIC_POLICY_CANDIDATE_NOT_LEGAL",
+  );
+}
+
 for (const family of standardAction.ALL_FAMILIES) {
   const action = descriptor(family, 0);
   const decision = heuristic.createHeuristicPolicy().decide(context([action], `family-${family}`));
