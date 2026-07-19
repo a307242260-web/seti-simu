@@ -4,6 +4,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { performance } = require("node:perf_hooks");
 const { createHeadlessEffectSessionHost } = require("./headless-effect-session-host");
+const legacyStateAdapter = require("../game/state/legacy-state-adapter");
+const highCouplingState = require("../game/state/high-coupling-slices");
 const {
   OBSERVATION_SCHEMA_VERSION,
   CONDITIONAL_FAMILIES,
@@ -393,6 +395,7 @@ function createHeadlessEnv() {
   let seededRandom = null;
   let diagnostics = null;
   let effectSessionHost = null;
+  let stateStore = null;
 
   function recordDuration(key, startedAt) {
     diagnostics[key] += performance.now() - startedAt;
@@ -458,19 +461,34 @@ function createHeadlessEnv() {
       }
     }
     recordDuration("setupSelectionMilliseconds", setupSelectionStartedAt);
+    const initialRecovery = api.createRecoverySnapshot({ label: "headless StateStore bootstrap" });
+    const initialCommitted = legacyStateAdapter.deserializeRecoverySnapshot(initialRecovery);
+    if (!initialCommitted.ok) {
+      throw new Error(initialCommitted.message || `headless committed bootstrap 失败: ${initialCommitted.code}`);
+    }
+    stateStore = highCouplingState.createHighCouplingStateStore(initialCommitted.state);
     effectSessionHost = createHeadlessEffectSessionHost({
+      stateStore,
       synchronizeWorkingState: false,
-      captureState: () => ({
-        turnState: api.getTurnState(),
-        decisionOwner: api.getHeadlessDecisionOwnerState?.() || null,
-        pendingState: api.getAiAutoBattleProgress?.().pendingState || null,
-        rngState: {
+      captureState() {
+        const recovery = api.createRecoverySnapshot({ label: "headless Effect Session working" });
+        const captured = legacyStateAdapter.deserializeRecoverySnapshot(recovery);
+        if (!captured.ok) {
+          throw new Error(captured.message || `headless working candidate 失败: ${captured.code}`);
+        }
+        const candidate = structuredClone(captured.state);
+        candidate.meta.rngState = {
           algorithm: "seti-headless-mulberry32-v1",
           state: seededRandom?.getState?.() ?? null,
-        },
-      }),
-      restoreState(snapshot) {
-        const restored = api.restoreRecoverySnapshot(snapshot, { skipRefresh: true });
+        };
+        return candidate;
+      },
+      restoreState(committedState) {
+        const restored = api.restoreRecoverySnapshot({
+          version: legacyStateAdapter.COMMITTED_RECOVERY_VERSION,
+          committedState: JSON.stringify(committedState),
+          runtime: {},
+        }, { skipRefresh: true });
         if (restored?.ok !== false && Number.isSafeInteger(restored?.rngState?.state)) {
           seededRandom?.setState(restored.rngState.state);
         }
@@ -499,8 +517,13 @@ function createHeadlessEnv() {
       executeDecision: (action) => api.executeHeadlessConditionalAction(action),
       advanceDeterministic: () => api.advanceHeadlessDeterministicState?.() || { progressed: false },
       executeCurrentEffect: () => api.executeHeadlessCurrentActionEffect?.(),
-      projectObservation(_workingState, viewerPlayerId) {
-        const boundary = getHeadlessLegalBoundary(api);
+      projectObservation(_workingState, viewerPlayerId, sessionInspection = null) {
+        const boundary = sessionInspection?.decision
+          ? {
+            currentPlayer: { id: sessionInspection.decision.ownerId },
+            candidates: sessionInspection.decision.choices || [],
+          }
+          : getHeadlessLegalBoundary(api);
         const actorPlayerId = boundary?.currentPlayer?.id || api.getTurnState().currentPlayerId || null;
         const projectedActions = (boundary?.candidates || []).map((candidate) => (
           candidate.standardAction?.phase === "conditional"
@@ -544,6 +567,7 @@ function createHeadlessEnv() {
       restoreRandom?.();
       restoreHost?.();
       effectSessionHost = null;
+      stateStore = null;
       seed = resetConfig.seed ?? "seti-headless";
       config = {
         seed,
@@ -887,7 +911,10 @@ function createHeadlessEnv() {
         }
         seededRandom?.setState(committedMeta.rngState.state);
         if (checkpoint.effectSessionCheckpoint) {
-          const restoredSession = effectSessionHost.restoreCheckpoint(checkpoint.effectSessionCheckpoint);
+          const restoredSession = effectSessionHost.restoreCheckpoint(
+            checkpoint.effectSessionCheckpoint,
+            { restoreWorkingState: false },
+          );
           if (!restoredSession?.ok) {
             throw new Error(restoredSession?.message || "checkpoint Effect Session 恢复失败");
           }

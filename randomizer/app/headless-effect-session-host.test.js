@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const { createHeadlessEffectSessionHost } = require("./headless-effect-session-host");
+const { createCommittedGameState, createStateStore } = require("../game/state/state-store");
 
 function createHarness(options = {}) {
   let state = {
@@ -157,6 +158,44 @@ assert.equal(rejected.ok, false);
 assert.equal(rejected.session.phase, "aborted");
 assert.equal(rejected.session.failure.code, "HEADLESS_UNSUPPORTED_PENDING");
 assert.deepEqual(unknownHarness.calls, { resolver: 0, recover: 0, skip: 0 });
+
+{
+  let hostState = createCommittedGameState({
+    gameId: "headless-store-host",
+    rulesetVersion: "stage-7-test",
+    seed: "headless-store-host",
+    match: { phase: "turn", value: 0, trace: [] },
+  });
+  const authority = createStateStore(hostState);
+  let commitCount = 0;
+  authority.subscribe(() => { commitCount += 1; });
+  const host = createHeadlessEffectSessionHost({
+    stateStore: authority,
+    synchronizeWorkingState: false,
+    captureState: () => structuredClone(hostState),
+    restoreState(nextState) {
+      hostState = structuredClone(nextState);
+      return { ok: true };
+    },
+    inspectBoundary: () => ({ ok: true, boundary: "turn_action", candidates: [{ actionId: "pass:p1" }] }),
+    executeAction(action) {
+      hostState.match.value += 1;
+      hostState.match.trace.push(action.actionId);
+      return { ok: true };
+    },
+    executeDecision: () => ({ ok: true }),
+    advanceDeterministic: () => ({ ok: true, progressed: false }),
+    executeCurrentEffect: () => ({ ok: true }),
+    projectObservation: (state) => ({ value: state.match.value, trace: [...state.match.trace] }),
+  });
+  const result = host.submitAction({ actionId: "pass:p1", family: "pass", actorPlayerId: "p1" });
+  assert.equal(result.ok, true);
+  assert.equal(result.phase, "completed");
+  assert.equal(commitCount, 1, "headless action 只能由 Effect Session 触发一次 StateStore CAS");
+  assert.equal(authority.getSnapshot().meta.stateVersion, 1);
+  assert.deepEqual(authority.getSnapshot().match.trace, ["pass:p1"]);
+  assert.deepEqual(host.observe(), { value: 1, trace: ["pass:p1"] });
+}
 
 const source = fs.readFileSync(path.join(__dirname, "headless-effect-session-host.js"), "utf8");
 for (const forbidden of ["runAiPendingStep", "recoverPendingAction", "skipHeadlessActionEffect", "document."]) {

@@ -61,7 +61,10 @@
     }
     const stateStore = options.stateStore;
     const getSnapshot = requireFunction(stateStore, "getSnapshot", "Effect Session state store");
-    const compareAndCommit = requireFunction(stateStore, "compareAndCommit", "Effect Session state store");
+    const flowOwnsCommit = options.flowOwnsCommit === true;
+    const compareAndCommit = flowOwnsCommit
+      ? null
+      : requireFunction(stateStore, "compareAndCommit", "Effect Session state store");
     const renderProjection = typeof options.renderProjection === "function"
       ? options.renderProjection
       : () => undefined;
@@ -78,13 +81,13 @@
     let active = null;
     let stableResult = null;
     let lastRenderFailure = null;
+    let unsubscribeCommit = null;
 
     function getCommittedState() {
       const snapshot = getSnapshot();
-      if (!snapshot || !("state" in snapshot)) {
-        throw new TypeError("Effect Session state store snapshot 缺少 state");
-      }
-      return clone(snapshot.state);
+      const state = snapshot?.meta?.schemaVersion ? snapshot : snapshot?.state;
+      if (!state) throw new TypeError("Effect Session state store snapshot 缺少 committed state");
+      return clone(state);
     }
 
     function render() {
@@ -118,10 +121,12 @@
       const { family, session } = active;
       const sessionSnapshot = active.flow.inspect(session);
       if (session.phase === "completed") {
-        const committed = compareAndCommit(session.baseVersion, clone(session.committedState), {
-          sessionId: session.sessionId,
-          journal: clone(session.journal),
-        });
+        const committed = flowOwnsCommit
+          ? { ok: true, snapshot: getCommittedState() }
+          : compareAndCommit(session.baseVersion, clone(session.committedState), {
+            sessionId: session.sessionId,
+            journal: clone(session.journal),
+          });
         if (!committed?.ok) {
           const failedCommit = fail(
             committed?.code || "EFFECT_HOST_COMMIT_FAILED",
@@ -258,6 +263,12 @@
       });
     }
 
+    if (options.subscribeToCommits !== false && typeof stateStore.subscribe === "function") {
+      unsubscribeCommit = stateStore.subscribe(() => {
+        if (!active) render();
+      });
+    }
+
     return Object.freeze({
       enumerateActions,
       dispatchAction,
@@ -270,6 +281,10 @@
       abort,
       inspect,
       render,
+      dispose() {
+        unsubscribeCommit?.();
+        unsubscribeCommit = null;
+      },
     });
   }
 

@@ -37,11 +37,18 @@ function createHeadlessEffectSessionHost(options = {}) {
   const projectObservation = requireFunction(options, "projectObservation");
   const maxDrainSteps = Math.max(1, Number(options.maxDrainSteps || 2000));
   const synchronizeWorkingState = options.synchronizeWorkingState !== false;
+  const stateStore = options.stateStore || null;
   let stateVersion = 0;
   let activeSession = null;
   let completedJournals = [];
 
   function captureNextState(previousState) {
+    if (stateStore) {
+      const nextState = clone(captureState());
+      if (!nextState?.meta) throw new TypeError("Headless StateStore candidate 缺少 meta");
+      nextState.meta.stateVersion = previousState.meta.stateVersion;
+      return nextState;
+    }
     stateVersion = Math.max(stateVersion, Number(previousState?.stateVersion || 0)) + 1;
     return {
       stateVersion,
@@ -49,9 +56,9 @@ function createHeadlessEffectSessionHost(options = {}) {
     };
   }
 
-  function restoreWorkingState(workingState) {
-    if (!synchronizeWorkingState) return;
-    const restored = restoreState(clone(workingState?.snapshot));
+  function restoreWorkingState(workingState, force = false) {
+    if (!synchronizeWorkingState && !force) return;
+    const restored = restoreState(clone(stateStore ? workingState : workingState?.snapshot));
     if (restored?.ok === false) {
       const error = new Error(restored.message || "Headless workingState 恢复失败");
       error.code = restored.code || "HEADLESS_WORKING_STATE_RESTORE_FAILED";
@@ -71,6 +78,7 @@ function createHeadlessEffectSessionHost(options = {}) {
       decisionKind: boundary.family || boundary.candidates?.[0]?.family || "conditional_choice",
       payload: {
         family: boundary.family || boundary.candidates?.[0]?.family || null,
+        choices: clone(boundary.candidates || []),
       },
     };
   }
@@ -86,10 +94,13 @@ function createHeadlessEffectSessionHost(options = {}) {
 
   const runtime = effectSession.createRuntime({
     maxDrainSteps,
-    getStateVersion: (workingState) => workingState?.stateVersion ?? null,
-    projectState(workingState, viewer) {
+    stateStore,
+    getStateVersion: (workingState) => (
+      workingState?.meta?.stateVersion ?? workingState?.stateVersion ?? null
+    ),
+    projectState(workingState, viewer, sessionInspection) {
       restoreWorkingState(workingState);
-      return projectObservation(clone(workingState), viewer);
+      return projectObservation(clone(workingState), viewer, clone(sessionInspection));
     },
   });
 
@@ -177,6 +188,9 @@ function createHeadlessEffectSessionHost(options = {}) {
 
   runtime.registerExecutor(DECISION_EFFECT, {
     getLegalChoices(workingState, effect) {
+      if (Array.isArray(effect.payload?.choices) && effect.payload.choices.length >= 2) {
+        return clone(effect.payload.choices);
+      }
       restoreWorkingState(workingState);
       const boundary = inspectBoundary();
       if (boundary?.ok === false) throw new Error(boundary.error?.message || "Decision 枚举失败");
@@ -225,12 +239,11 @@ function createHeadlessEffectSessionHost(options = {}) {
 
   function submitAction(action) {
     if (activeSession) return fail("HEADLESS_EFFECT_SESSION_ACTIVE", "已有 Effect Session 等待 Decision");
-    const dispatched = runtime.dispatchAction(
-      createInitialState(),
-      clone(action),
-      () => ({ effects: [{ type: SUBMIT_EFFECT, payload: { action: clone(action) } }] }),
-      { ownerId: action?.actorPlayerId || action?.actorId || null },
-    );
+    const createGroup = () => ({ effects: [{ type: SUBMIT_EFFECT, payload: { action: clone(action) } }] });
+    const meta = { ownerId: action?.actorPlayerId || action?.actorId || null };
+    const dispatched = stateStore
+      ? runtime.dispatchStoredAction(clone(action), createGroup, meta)
+      : runtime.dispatchAction(createInitialState(), clone(action), createGroup, meta);
     if (!dispatched?.ok) return dispatched;
     activeSession = dispatched.session;
     const settled = settle(dispatched);
@@ -241,11 +254,10 @@ function createHeadlessEffectSessionHost(options = {}) {
   function beginDrain() {
     if (activeSession) return fail("HEADLESS_EFFECT_SESSION_ACTIVE", "已有 Effect Session 正在执行");
     const internalAction = { family: "environment_drain", phase: "internal", actorId: null };
-    const dispatched = runtime.dispatchAction(
-      createInitialState(),
-      internalAction,
-      () => ({ kind: "internal", effects: [deterministicEffect()] }),
-    );
+    const createGroup = () => ({ kind: "internal", effects: [deterministicEffect()] });
+    const dispatched = stateStore
+      ? runtime.dispatchStoredAction(internalAction, createGroup)
+      : runtime.dispatchAction(createInitialState(), internalAction, createGroup);
     if (!dispatched?.ok) return dispatched;
     activeSession = dispatched.session;
     activeSession.journal.actions = [];
@@ -300,10 +312,16 @@ function createHeadlessEffectSessionHost(options = {}) {
 
   function observe(viewer = null) {
     if (!activeSession) {
-      const state = captureCurrentState();
+      const state = stateStore ? stateStore.getSnapshot() : captureCurrentState();
+      restoreWorkingState(state);
       return projectObservation(clone(state), viewer);
     }
-    return runtime.observe(activeSession, viewer).state;
+    const inspected = runtime.inspect(activeSession);
+    const state = activeSession.phase === "completed"
+      ? activeSession.committedState
+      : activeSession.workingState;
+    restoreWorkingState(state);
+    return projectObservation(clone(state), viewer, clone(inspected));
   }
 
   function createCheckpoint() {
@@ -312,7 +330,7 @@ function createHeadlessEffectSessionHost(options = {}) {
     return checkpoint.ok ? checkpoint.checkpoint : checkpoint;
   }
 
-  function restoreCheckpoint(checkpoint) {
+  function restoreCheckpoint(checkpoint, restoreOptions = {}) {
     if (!checkpoint) {
       activeSession = null;
       return { ok: true, phase: "idle" };
@@ -320,8 +338,13 @@ function createHeadlessEffectSessionHost(options = {}) {
     const restored = runtime.restoreCheckpoint(clone(checkpoint));
     if (!restored?.ok) return restored;
     activeSession = restored.session;
-    stateVersion = Math.max(stateVersion, Number(activeSession.workingState?.stateVersion || 0));
-    restoreWorkingState(activeSession.workingState);
+    stateVersion = Math.max(
+      stateVersion,
+      Number(activeSession.workingState?.meta?.stateVersion ?? activeSession.workingState?.stateVersion ?? 0),
+    );
+    if (restoreOptions.restoreWorkingState !== false) {
+      restoreWorkingState(activeSession.workingState, true);
+    }
     return { ok: true, phase: activeSession.phase, session: activeSession };
   }
 
@@ -341,7 +364,9 @@ function createHeadlessEffectSessionHost(options = {}) {
     getBoundary,
     observe,
     inspect: () => activeSession ? runtime.inspect(activeSession) : { ok: true, phase: "idle" },
-    getWorkingState: () => clone(activeSession?.workingState || captureCurrentState()),
+    getWorkingState: () => clone(
+      activeSession?.workingState || (stateStore ? stateStore.getSnapshot() : captureCurrentState()),
+    ),
     getJournal: () => clone(activeSession?.journal || completedJournals.at(-1) || null),
     getCompletedJournals: () => clone(completedJournals),
     getConfirmedReplay: (cursor = 0) => activeSession

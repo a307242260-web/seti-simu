@@ -1134,9 +1134,9 @@
         id: playedCard.id,
         src: playedCard.src,
         cardId: playedCard.cardId,
-        discardActionCode: playedCard.discardActionCode,
-        incomeActionCode: playedCard.incomeActionCode,
-        scanActionCode: playedCard.scanActionCode,
+        discardActionCode: playedCard.discardActionCode ?? null,
+        incomeActionCode: playedCard.incomeActionCode ?? null,
+        scanActionCode: playedCard.scanActionCode ?? null,
       };
       player.industryPlayedCardRound = turnState.roundNumber;
       player.industryPlayedCardTurn = turnState.turnNumber;

@@ -1,6 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const { createCommittedGameState, createStateStore } = require("../game/state/state-store");
 const fs = require("node:fs");
 const path = require("node:path");
 const effectSession = require("../game/effects/session-runtime");
@@ -345,6 +346,30 @@ function choose(host, id) {
     assert.equal(source.includes(forbidden), false, `browser host 不得引用 ${forbidden}`);
   }
   assert.equal(effectSession.SCHEMA_VERSION, "seti-effect-session-v1");
+})();
+
+(function testRealStateStoreCommitSubscriptionRefreshesWithoutOwningFacts() {
+  const authority = createStateStore(createCommittedGameState({
+    gameId: "browser-store-host",
+    rulesetVersion: "stage-7-test",
+    seed: "browser-store-host",
+    turn: { currentPlayerId: "p1" },
+  }));
+  let renderedActor = null;
+  const host = createBrowserEffectSessionHost({
+    stateStore: authority,
+    actionRegistry: { enumerate: () => [], validate: () => ({ ok: true }) },
+    flows: {},
+    projectCommittedState: (state) => ({ actor: state.turn.currentPlayerId }),
+    renderProjection: (projection) => { renderedActor = projection.state.actor; },
+  });
+  const working = authority.beginWorkingCopy();
+  working.state.turn.currentPlayerId = "p2";
+  const committed = authority.compareAndCommit(working.baseVersion, working.state);
+  assert.equal(committed.ok, true);
+  assert.equal(renderedActor, "p2", "浏览器必须从 commit subscription 的 committed snapshot 刷新");
+  assert.equal(authority.getSnapshot().turn.currentPlayerId, "p2");
+  host.dispose();
 })();
 
 console.log("browser Effect Session host tests passed");
