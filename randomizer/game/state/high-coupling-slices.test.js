@@ -199,6 +199,10 @@ function bytes(store) {
     const result = store.compareAndCommit(working.baseVersion, working.state);
     assert.equal(result.ok, false, testCase.code);
     assert.equal(result.code, testCase.code, JSON.stringify(result));
+    if (testCase.code === "STATE_CARD_INSTANCE_ID_INVALID") {
+      assert.match(result.errors[0].message, /players\.players\[0\]\.hand\[0\]/);
+      assert.match(result.errors[0].message, /cards\.discardPile\[0\]/);
+    }
     assert.equal(bytes(store), before, testCase.code);
     assert.equal(store.getSnapshot().meta.stateVersion, 0);
   }
@@ -224,6 +228,37 @@ function bytes(store) {
   assert.equal(workingIndex.readyType2Tasks.length, 0);
   assert.equal(store.getSnapshot().players.players[0].reservedCards.length, 1);
   assert.equal(bytes(store).includes("readyType2Tasks"), false);
+})();
+
+(function testPlayerSpecificFangzhouCardsMayShareDefinitionButNotInstanceId() {
+  const state = createState();
+  const sharedDefinition = {
+    cardId: "fangzhou_blue_3",
+    set: "alien:方舟:card2",
+    fangzhouCard2: true,
+  };
+  state.players.players[1].hand.push({
+    ...sharedDefinition,
+    id: "fangzhou-card2-p2-blue-3",
+  });
+  state.players.players[1].resources.handSize = 1;
+  state.cards.discardPile.push({
+    ...sharedDefinition,
+    id: "fangzhou-card2-p1-blue-3",
+  });
+  const validStore = highCoupling.createHighCouplingStateStore(state);
+  assert.equal(validStore.validate(validStore.getSnapshot()).ok, true);
+
+  const invalid = createState();
+  invalid.cards.discardPile.push({
+    ...invalid.players.players[0].hand[0],
+    id: "different-instance-same-basic-card",
+  });
+  const result = highCoupling.createHighCouplingStateStore(createState()).validate(
+    highCoupling.purifyHighCouplingSlices(invalid),
+  );
+  assert.equal(result.ok, false);
+  assert.equal(result.code, "STATE_CARD_LOCATION_CONFLICT");
 })();
 
 (function testRecoveryAndStaleWriterParity() {

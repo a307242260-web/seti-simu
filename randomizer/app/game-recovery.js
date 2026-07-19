@@ -40,7 +40,11 @@
       sequences: options.sequences,
     });
     if (!serialized.ok) {
-      const error = new TypeError(`无法创建 recovery committed snapshot: ${serialized.code}`);
+      const firstError = serialized.errors?.[0] || null;
+      const diagnostic = firstError
+        ? ` path=${firstError.path || "$"} cause=${firstError.code || "unknown"}: ${firstError.message || "状态校验失败"}`
+        : serialized.message ? `: ${serialized.message}` : "";
+      const error = new TypeError(`无法创建 recovery committed snapshot: ${serialized.code}${diagnostic}`);
       error.validation = serialized;
       throw error;
     }

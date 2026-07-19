@@ -248,7 +248,7 @@ def run_policy_episodes(model: CandidatePolicy, seeds: list[str], policy_version
                 except Exception as error:
                     raise RuntimeError(
                         f"rollout step failed policy={policy_version} episode={episode_index} "
-                        f"seed={seed} step={step_index} action={chosen['family']}:{chosen['actionId']}: {error}"
+                        f"seed={seed} step={step_index} action={canonical_json(chosen)}: {error}"
                     ) from error
                 state = {"observation": result["observation"], "legalActions": result["legalActions"],
                          "terminal": result["done"]}

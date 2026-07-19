@@ -43,6 +43,20 @@ assert.equal(typeof snapshot.committedState, "string");
 assert.equal(Object.hasOwn(snapshot, "state"), false);
 assert.equal(snapshot.committedState.includes("aiControl"), false);
 
+assert.throws(() => recovery.createGameRecoverySnapshot({
+  state: createLegacyState({
+    playerState: {
+      currentPlayerId: "duplicate",
+      players: [{ id: "duplicate" }, { id: "duplicate" }],
+    },
+  }),
+}), (error) => {
+  assert.match(error.message, /STATE_MIGRATION_OUTPUT_INVALID/);
+  assert.match(error.message, /path=\$\.players\.players\[1\]\.id/);
+  assert.match(error.message, /cause=STATE_PLAYER_ID_INVALID/);
+  return true;
+});
+
 const pack = recovery.createActionLogRecoveryPackage({
   version: "v1",
   entries: [

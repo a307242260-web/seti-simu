@@ -257,25 +257,46 @@
   }
 
   function validateCards(state, errors) {
-    const instanceIds = new Set();
-    const cardIds = new Set();
+    const instanceLocations = new Map();
+    const cardLocations = new Map();
     visitCardInstances(state, (card, path) => {
       const instanceId = String(card?.id || "");
       const cardId = String(card?.cardId || "");
-      if (!instanceId || instanceIds.has(instanceId)) {
-        errors.push(error(`${path}.id`, "STATE_CARD_INSTANCE_ID_INVALID", "卡实例 id 必须存在且全局唯一"));
+      const sharedDefinitionAllowed = Boolean(
+        card?.fangzhouCard2 || card?.set === "alien:方舟:card2",
+      );
+      if (!instanceId || instanceLocations.has(instanceId)) {
+        const firstPath = instanceLocations.get(instanceId) || null;
+        errors.push(error(
+          `${path}.id`,
+          "STATE_CARD_INSTANCE_ID_INVALID",
+          firstPath
+            ? `卡实例 ${instanceId} 同时出现在 ${firstPath} 与 ${path}`
+            : "卡实例 id 必须存在且全局唯一",
+        ));
       }
-      instanceIds.add(instanceId);
-      if (cardId && cardIds.has(cardId)) {
-        errors.push(error(`${path}.cardId`, "STATE_CARD_LOCATION_CONFLICT", "同一卡牌不得同时位于多个容器"));
+      if (instanceId && !instanceLocations.has(instanceId)) instanceLocations.set(instanceId, path);
+      if (cardId && !sharedDefinitionAllowed && cardLocations.has(cardId)) {
+        errors.push(error(
+          `${path}.cardId`,
+          "STATE_CARD_LOCATION_CONFLICT",
+          `卡牌 ${cardId} 同时出现在 ${cardLocations.get(cardId)} 与 ${path}`,
+        ));
       }
-      if (cardId) cardIds.add(cardId);
+      if (cardId && !sharedDefinitionAllowed && !cardLocations.has(cardId)) {
+        cardLocations.set(cardId, path);
+      }
     });
     const drawIds = new Set();
     (state?.cards?.drawPileCardIds || []).forEach((rawId, index) => {
       const cardId = String(rawId || "");
-      if (!cardId || drawIds.has(cardId) || cardIds.has(cardId)) {
-        errors.push(error(`$.cards.drawPileCardIds[${index}]`, "STATE_CARD_LOCATION_CONFLICT", "牌库 cardId 必须唯一且不得出现在其他容器"));
+      if (!cardId || drawIds.has(cardId) || cardLocations.has(cardId)) {
+        const firstPath = cardLocations.get(cardId) || "$.cards.drawPileCardIds[earlier]";
+        errors.push(error(
+          `$.cards.drawPileCardIds[${index}]`,
+          "STATE_CARD_LOCATION_CONFLICT",
+          cardId ? `卡牌 ${cardId} 同时出现在 ${firstPath} 与牌库位置 ${index}` : "牌库 cardId 必须存在",
+        ));
       }
       drawIds.add(cardId);
     });
