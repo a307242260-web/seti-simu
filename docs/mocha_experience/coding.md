@@ -71,12 +71,12 @@
 - decision: 当前证据来自同一次 AI controller 总收口，先记录为 coding candidate；不修改 agent prompt、loop template、watcher 或 issue-workflow，后续 3 次显式 context runtime 装配观察是否复现。
 
 - date: 2026-07-18
-- source_issue: SETI-34
+- source_issue: SETI-34, SETI-86
 - observation: 在 zsh 中用 `tests=$(...)` 后直接 `for test in $tests` 不会按换行自动拆分文件列表，会把全部测试路径当成一个参数；全量 Node 回归应使用 `rg ... | while IFS= read -r test`（或 zsh 数组）逐文件执行。
-- evidence: SETI-34 首轮全量命令把 100 余个 `.test.js` 路径拼成一个模块名并报 `MODULE_NOT_FOUND`；改为 `while IFS= read -r test` 后从 app、headless、game/ai、aliens 到 training 的全部测试逐个执行并以 exit 0 完成。
+- evidence: SETI-34 首轮全量命令把 100 余个 `.test.js` 路径拼成一个模块名并报 `MODULE_NOT_FOUND`；SETI-86 再次用同形 `tests=$(...)` + `for` 把 143 个路径作为单个模块参数。两次都改为 `while IFS= read -r test` 后逐文件执行并以 exit 0 完成。
 - promote_to: none
 - promotion_status: candidate
-- decision: 当前是一次 shell 驱动层证据，记录为 coding candidate，不修改 agent prompt、loop template 或 watcher；后续 3 次 zsh 全量回归观察是否复现或是否值得收口成仓库脚本。
+- decision: 已累计两次独立 coding issue 证据，仍保持 candidate；不修改 agent prompt、loop template 或 watcher，再出现 1 次同类误用时评估收口为仓库统一测试脚本。
 
 - date: 2026-07-18
 - source_issue: SETI-31

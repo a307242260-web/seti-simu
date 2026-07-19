@@ -249,7 +249,7 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - keep_or_revise: 保持 candidate；等待 3 次后续显式 context runtime 迁移再评估是否升级 coding loop 模板。
 
 - date: 2026-07-18
-- source: SETI-34
+- source: SETI-34, SETI-86
 - promoted_to: none
 - promotion_decision: candidate
 - target_agent: 领航
@@ -257,18 +257,18 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - target_file: docs/mocha_experience/coding.md
 - remote_skill_id: none
 - change: 记录 zsh 标量命令替换不会按换行拆分测试路径，应以 `while IFS= read -r` 或数组逐文件执行的候选经验。
-- applied_change: 仅更新 coding experience 与本决策契约；不修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。
+- applied_change: 更新既有 coding experience 与本决策契约，加入 SETI-86 的第 2 次独立复现；不修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。
 - expected_effect: 后续全量回归不会把整份测试清单误传成单个模块路径，减少对代码失败的误判和无效重跑。
-- evaluation_window: 后续 3 次在 zsh 环境执行 randomizer 全量 Node 回归
+- evaluation_window: SETI-34、SETI-86 已累计 2 次；再观察 1 次 zsh 全量 Node 回归
 - success_signal: 测试路径逐行打印并逐文件执行，命令层不再出现包含换行的单个 `MODULE_NOT_FOUND` 路径。
 - rollback_condition: 若仓库新增统一测试 runner，或后续 3 次均不再通过 shell 动态枚举测试，则合并或删除该候选。
 - risk: 该问题属于 shell 语义而非项目机制，直接升级长期规则可能增加无关提示；因此只保留 candidate。
-- evidence_before: SETI-34 首轮 `tests=$(rg ...) ; for test in $tests` 将全部路径作为一个参数并 exit 1；修正后的 pipeline 逐个运行全部测试并 exit 0。
+- evidence_before: SETI-34 首轮 `tests=$(rg ...) ; for test in $tests` 将全部路径作为一个参数并 exit 1；SETI-86 同形命令再次把 143 个路径拼成单个 `MODULE_NOT_FOUND` 参数。修正后的 pipeline 与私有 index 独立快照均逐个运行全部测试并 exit 0。
 - owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录 candidate，暂不升级组件。
-- applied_at: 2026-07-18
-- verification: 核对首轮错误输出与修正后从 `action-briefing.test.js` 到 `training/self-play.test.js` 的完整逐文件日志；固定 seed、integration 与 migration boundary 均通过。
-- observed_outcome: 修正循环后全量回归无代码失败，说明首轮错误仅来自 zsh 列表拆分方式。
-- keep_or_revise: 保持 candidate；等待 3 次后续 zsh 全量回归再评估是否需要仓库级统一脚本。
+- applied_at: 2026-07-19
+- verification: 核对 SETI-86 首轮错误中的 143 路径单参数与修正后工作树/私有 index 独立快照完整逐文件日志；两轮均无代码失败。
+- observed_outcome: 第二次复现再次确认是 zsh 列表拆分语义而非代码失败；改用逐行读取后全量通过。
+- keep_or_revise: 保持 candidate；再出现 1 次同类误用时评估新增仓库级统一测试 runner。
 
 - date: 2026-07-18
 - source: SETI-30, SETI-33
