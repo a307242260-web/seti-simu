@@ -465,8 +465,8 @@ function createBaseContext(player, overrides = {}) {
     hand: [],
   };
   const events = {};
-  const pendingState = {
-    movePayment: {
+  const decisionSessions = createDecisionSessionStore();
+  decisionSessions.open("move_payment", {
       player,
       deltaX: 1,
       deltaY: 0,
@@ -474,16 +474,15 @@ function createBaseContext(player, overrides = {}) {
       requiredMovePoints: 1,
       selectedHandIndices: [],
       cardMoveEffectContext: { terrainRequired: 2, poolUsed: 1 },
-    },
-  };
-  const context = createBaseContext(player, { events, pendingState });
+  });
+  const context = createBaseContext(player, { events, decisionSessions });
   const handFlow = createHandFlow(context);
   const result = handFlow.confirmMovePayment({ automated: true });
   assert.equal(result.ok, true);
   assert.equal(events.cardEffectMovePayment.terrainRequired, 2);
   assert.equal(events.cardEffectMovePayment.poolUsed, 1);
   assert.equal(events.cardEffectMovePayment.energyCost, 1);
-  assert.equal(pendingState.movePayment, null);
+  assert.equal(decisionSessions.peek("move_payment"), null);
 }
 
 {

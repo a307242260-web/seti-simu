@@ -117,6 +117,18 @@
     const TYPE1_TRIGGER_QUEUE_SESSION = "type1_trigger_queue";
     const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
     const CARD_TRIGGER_FREE_MOVE_SESSION = "card_trigger_free_move";
+    const CARD_TRIGGER_ACTION_SESSION = "card_trigger_action";
+    const CARD_TASK_COMPLETION_SESSION = "card_task_completion";
+    const getCardTriggerAction = () => decisionSessions.peek(CARD_TRIGGER_ACTION_SESSION);
+    const getCardTaskCompletion = () => decisionSessions.peek(CARD_TASK_COMPLETION_SESSION);
+    function setCardTriggerAction(session) {
+      if (!session) return decisionSessions.clear(CARD_TRIGGER_ACTION_SESSION);
+      return decisionSessions.open(CARD_TRIGGER_ACTION_SESSION, session);
+    }
+    function setCardTaskCompletion(session) {
+      if (!session) return decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
+      return decisionSessions.open(CARD_TASK_COMPLETION_SESSION, session);
+    }
     const getCardTriggerFreeMove = () => decisionSessions.peek(CARD_TRIGGER_FREE_MOVE_SESSION);
     function setCardTriggerFreeMove(session) {
       if (!session) return decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
@@ -381,7 +393,7 @@
 
     function hasActiveCardTriggerResolution() {
       return Boolean(
-        pendingState.cardTriggerAction
+        getCardTriggerAction()
         || getCardTriggerFreeMove()
         || decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION)
         || isCardTriggerPickSelectionActive()
@@ -443,7 +455,7 @@
     }
 
     function cancelCardTriggerChoice() {
-      if (!pendingState.cardTriggerAction) return false;
+      if (!getCardTriggerAction()) return false;
       closeCardTriggerPicker();
       rocketState.statusNote = "已取消卡牌触发";
       continueAfterCardTriggerResolution();
@@ -1086,10 +1098,10 @@
       if (!ready) return { ok: false, message: "这张任务卡尚未满足完成条件" };
       if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开任务确认窗口" };
 
-      pendingState.cardTaskCompletion = {
+      setCardTaskCompletion({
         ...getPendingOwnerFields(null, player),
         ready,
-      };
+      });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = "完成任务";
       if (els.scanTargetSubtitle) {
         els.scanTargetSubtitle.textContent = `${cards.getCardLabel(ready.card)} 已满足条件，确认后结算奖励并移除。`;
@@ -1133,12 +1145,12 @@
     }
 
     function closeCardTaskCompletionPicker() {
-      pendingState.cardTaskCompletion = null;
+      setCardTaskCompletion(null);
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
     }
 
     function confirmCardTaskCompletion(choice = "confirm", options = {}) {
-      const pending = pendingState.cardTaskCompletion;
+      const pending = getCardTaskCompletion();
       if (!pending?.ready) return { ok: false, message: "没有待完成的任务" };
       const blocked = blockManualAiPendingInputIfNeeded(pending, options, "任务完成");
       if (blocked) return blocked;
@@ -1213,7 +1225,7 @@
       if (!matches?.length) return { ok: false, message: "没有可触发的卡牌" };
       if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开卡牌触发选择" };
 
-      pendingState.cardTriggerAction = { matches };
+      setCardTriggerAction({ matches });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = "卡牌触发";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择 1 个满足条件的触发效果结算。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -1232,7 +1244,7 @@
     }
 
     function closeCardTriggerPicker() {
-      pendingState.cardTriggerAction = null;
+      setCardTriggerAction(null);
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
     }
 
@@ -1433,7 +1445,7 @@
     }
 
     function handleCardTriggerChoice(choiceIndex) {
-      const matches = pendingState.cardTriggerAction?.matches || [];
+      const matches = getCardTriggerAction()?.matches || [];
       const match = matches[Number(choiceIndex)];
       closeCardTriggerPicker();
       if (!match) return { ok: false, message: "无效的卡牌触发选择" };

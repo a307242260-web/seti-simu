@@ -56,6 +56,7 @@
       createActionLogImpactSnapshot,
       data,
       debugRuntimeController,
+      decisionSessions,
       discardReservedCardIfFinished,
       document,
       els,
@@ -136,6 +137,8 @@
       yichangdian,
       yichangdianAnomalyMarkerElements,
     } = context;
+    const getCardTaskCompletion = () => decisionSessions.peek("card_task_completion");
+    const getChongTaskCompletion = () => decisionSessions.peek("chong_task_completion");
 
     function addFangzhouUnlockedCardToHand(player, handCard) {
       if (!player || !handCard) return false;
@@ -2538,7 +2541,7 @@ function closeChongFossilChoiceDialog() {
   }
 
 function closeChongTaskCompletionDialog() {
-    pendingState.chongTaskCompletion = null;
+    decisionSessions.clear("chong_task_completion");
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -2853,7 +2856,7 @@ function completeChongTransportTask(pending, player) {
   }
 
 function handleChongTaskCompletionChoice(choice) {
-    const pending = pendingState.chongTaskCompletion;
+    const pending = getChongTaskCompletion();
     if (!pending) return failChongTaskCompletion("没有虫族任务完成流程");
     const player = getPlayerById(pending.playerId) || getCurrentPlayer();
     if (!player) {
@@ -3306,7 +3309,7 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
     const pendingEntries = [
       pendingState.alienTraceAction ? { pending: pendingState.alienTraceAction, label: "外星人痕迹" } : null,
       tracePickerPending ? { pending: tracePickerPending, label: "外星人痕迹" } : null,
-      pendingState.cardTaskCompletion ? { pending: pendingState.cardTaskCompletion, label: "任务完成" } : null,
+      getCardTaskCompletion() ? { pending: getCardTaskCompletion(), label: "任务完成" } : null,
       pendingState.jiuzheCardPlay?.reason === "view"
         ? null
         : { pending: pendingState.jiuzheCardPlay, label: "九折牌" },
@@ -3316,7 +3319,7 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
       pendingState.banrenmaOpportunity ? { pending: pendingState.banrenmaOpportunity, label: "半人马奖励" } : null,
       pendingState.chongCardGain ? { pending: pendingState.chongCardGain, label: "虫族外星人牌" } : null,
       pendingState.chongFossilChoice ? { pending: pendingState.chongFossilChoice, label: "虫族化石" } : null,
-      pendingState.chongTaskCompletion ? { pending: pendingState.chongTaskCompletion, label: "虫族任务" } : null,
+      getChongTaskCompletion() ? { pending: getChongTaskCompletion(), label: "虫族任务" } : null,
       pendingState.amibaCardGain ? { pending: pendingState.amibaCardGain, label: "阿米巴外星人牌" } : null,
       pendingState.amibaSymbolChoice ? { pending: pendingState.amibaSymbolChoice, label: "阿米巴 symbol" } : null,
       pendingState.amibaTraceRemoval ? { pending: pendingState.amibaTraceRemoval, label: "阿米巴痕迹移除" } : null,

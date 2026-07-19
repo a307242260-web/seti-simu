@@ -1028,7 +1028,7 @@
       const actualCurrentPlayer = getCurrentPlayer();
       const discardActive = isDiscardSelectionActive() && context.pendingState.discardAction?.player?.id === currentPlayer?.id;
       const playActive = isPlayCardSelectionActive() && actualCurrentPlayer?.id === currentPlayer?.id;
-      const movePaymentActive = isMovePaymentSelectionActive() && context.pendingState.movePayment?.player?.id === currentPlayer?.id;
+      const movePaymentActive = isMovePaymentSelectionActive() && context.getPendingMovePayment()?.player?.id === currentPlayer?.id;
       const handScanActive = isHandScanSelectionActive() && context.pendingState.handScanAction?.player?.id === currentPlayer?.id;
       const cardCornerAction = getPendingCardCornerQuickAction();
       const handCardPlayAction = getPendingHandCardPlayAction();
@@ -1101,7 +1101,7 @@
           } else if (movePaymentActive) {
             if (isMovePaymentCard(card)) {
               button.classList.add("is-move-card");
-              if ((context.pendingState.movePayment?.selectedHandIndices || []).includes(index)) {
+              if ((context.getPendingMovePayment()?.selectedHandIndices || []).includes(index)) {
                 button.classList.add("is-selected");
               }
               button.setAttribute("aria-label", `${label}（移动牌，点击选择弃置）`);

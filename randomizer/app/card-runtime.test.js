@@ -86,21 +86,21 @@ function createHarness() {
 }
 
 {
-  const { runtime, player, effect, pendingState, calls } = createHarness();
-  pendingState.passReserveSelection = {
+  const { runtime, player, effect, pendingState, decisionSessions, calls } = createHarness();
+  decisionSessions.open("pass_reserve_selection", {
     effectId: effect.id,
     playerId: player.id,
     roundNumber: 2,
     selectedCardId: "reserve-1",
-  };
+  });
   const dismissed = runtime.dismissPassReserveSelectionOverlay();
   assert.equal(dismissed.dismissed, true);
-  assert.ok(pendingState.passReserveSelection);
+  assert.ok(decisionSessions.peek("pass_reserve_selection"));
 
   const result = runtime.confirmPassReserveSelection();
   assert.equal(result.ok, true);
   assert.equal(player.hand[0].id, "reserve-1");
-  assert.equal(pendingState.passReserveSelection, null);
+  assert.equal(decisionSessions.peek("pass_reserve_selection"), null);
   assert.equal(calls.completed, 1);
 }
 

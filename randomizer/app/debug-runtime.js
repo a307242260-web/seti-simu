@@ -156,10 +156,10 @@
     function clearPlayerScopedSelectionsForSwitch() {
       pendingState.discardAction = null;
       pendingState.cardSelectionAction = null;
-      pendingState.passReserveSelection = null;
+      decisionSessions?.clear?.("pass_reserve_selection");
       pendingState.passReserveSelectionDismissed = false;
       pendingState.handScanAction = null;
-      pendingState.playCardSelection = null;
+      decisionSessions?.clear?.("play_card_selection");
       cards.setSelectionActive(cardState, false);
       cards.setDiscardSelectionActive(cardState, false, 0);
       cards.setPlayCardSelectionActive(cardState, false);
@@ -971,10 +971,10 @@
       if (effectOwner) return effectOwner;
 
       const pendingEntries = [
-        pendingState.movePayment,
+        decisionSessions?.peek?.("move_payment"),
         pendingState.discardAction,
         pendingState.cardSelectionAction,
-        pendingState.passReserveSelection,
+        decisionSessions?.peek?.("pass_reserve_selection"),
         pendingState.scanTargetAction,
         decisionSessions?.peek?.("probe_sector_scan"),
         decisionSessions?.peek?.("probe_location_reward"),
@@ -983,9 +983,9 @@
         pendingState.alienTraceAction,
         decisionSessions?.peek?.("land_target"),
         decisionSessions?.peek?.("data_placement"),
-        pendingState.cardTriggerAction,
+        decisionSessions?.peek?.("card_trigger_action"),
         decisionSessions?.peek?.("card_trigger_free_move"),
-        pendingState.cardTaskCompletion,
+        decisionSessions?.peek?.("card_task_completion"),
         pendingState.jiuzheCardPlay,
         pendingState.yichangdianCardGain,
         pendingState.yichangdianCornerAction,
@@ -993,7 +993,7 @@
         pendingState.banrenmaOpportunity,
         pendingState.chongCardGain,
         pendingState.chongFossilChoice,
-        pendingState.chongTaskCompletion,
+        decisionSessions?.peek?.("chong_task_completion"),
         pendingState.amibaCardGain,
         pendingState.amibaSymbolChoice,
         pendingState.amibaTraceRemoval,

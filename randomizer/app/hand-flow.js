@@ -128,6 +128,18 @@
     } = context;
     const HAND_CARD_PLAY_SESSION = "hand_card_play_action";
     const CARD_CORNER_QUICK_SESSION = "card_corner_quick_action";
+    const PLAY_CARD_SELECTION_SESSION = "play_card_selection";
+    const MOVE_PAYMENT_SESSION = "move_payment";
+    const getMovePayment = () => decisionSessions.peek(MOVE_PAYMENT_SESSION);
+    function setMovePayment(session) {
+      if (!session) return decisionSessions.clear(MOVE_PAYMENT_SESSION);
+      return decisionSessions.open(MOVE_PAYMENT_SESSION, session);
+    }
+    const peekPlayCardSelection = () => decisionSessions.peek(PLAY_CARD_SELECTION_SESSION);
+    function setPlayCardSelection(session) {
+      if (!session) return decisionSessions.clear(PLAY_CARD_SELECTION_SESSION);
+      return decisionSessions.open(PLAY_CARD_SELECTION_SESSION, session);
+    }
     const peekHandCardPlayAction = () => decisionSessions.peek(HAND_CARD_PLAY_SESSION);
     const peekCardCornerQuickAction = () => decisionSessions.peek(CARD_CORNER_QUICK_SESSION);
     function setHandCardPlayAction(action) {
@@ -200,16 +212,17 @@
     }
 
     function isMovePaymentSelectionActive() {
-      return pendingState.movePayment != null;
+      return getMovePayment() != null;
     }
 
     function getMovePaymentPlayer() {
-      if (!pendingState.movePayment) return null;
-      const playerId = pendingState.movePayment.player?.id || pendingState.movePayment.playerId || null;
-      if (playerId) return getPlayerById(playerId) || pendingState.movePayment.player || null;
-      const playerColor = pendingState.movePayment.player?.color || pendingState.movePayment.playerColor || null;
-      if (playerColor) return getPlayerByColor(playerColor) || pendingState.movePayment.player || null;
-      return pendingState.movePayment.player || getCurrentPlayer();
+      const pending = getMovePayment();
+      if (!pending) return null;
+      const playerId = pending.player?.id || pending.playerId || null;
+      if (playerId) return getPlayerById(playerId) || pending.player || null;
+      const playerColor = pending.player?.color || pending.playerColor || null;
+      if (playerColor) return getPlayerByColor(playerColor) || pending.player || null;
+      return pending.player || getCurrentPlayer();
     }
 
     function isMovePaymentLockedForAiAutomation() {
@@ -220,7 +233,7 @@
       const active = isMovePaymentSelectionActive();
       const lockedForAi = isMovePaymentLockedForAiAutomation();
       const manualActive = active && !lockedForAi;
-      const preservesCardCornerMove = pendingState.movePayment?.supplementalMoveContext?.type === "card_corner_free_move";
+      const preservesCardCornerMove = getMovePayment()?.supplementalMoveContext?.type === "card_corner_free_move";
       if (active && !preservesCardCornerMove) cancelHandCardContextActions({ silent: true });
       els.appWrap?.classList.toggle("move-payment-selection-active", manualActive);
       els.playerHandPanel?.classList.toggle("move-payment-selection-active", manualActive);
@@ -277,7 +290,7 @@
         return payCheck;
       }
 
-      pendingState.movePayment = {
+      setMovePayment({
         player: currentPlayer,
         deltaX,
         deltaY,
@@ -287,7 +300,7 @@
         providedMovePoints,
         selectedHandIndices: [],
         supplementalMoveContext: options.context || null,
-      };
+      });
       rocketState.statusNote = options.message
         || `移动：已有 ${providedMovePoints} 点移动力，还需 ${paymentRequired} 点（可弃移动牌或用能量）`;
       syncMovePaymentChrome();
@@ -310,7 +323,7 @@
         return context.blockManualAiMovePayment();
       }
 
-      pendingState.movePayment = null;
+      setMovePayment(null);
       rocketState.statusNote = "已取消移动";
       syncMovePaymentChrome();
       updateActionButtons();
@@ -347,14 +360,14 @@
         return moveCheck;
       }
 
-      pendingState.movePayment = {
+      setMovePayment({
         player: currentPlayer,
         deltaX,
         deltaY,
         rocketId,
         requiredMovePoints,
         selectedHandIndices: [],
-      };
+      });
       rocketState.statusNote = requiredMovePoints > 1
         ? `移动：需要 ${requiredMovePoints} 点移动力，可选择移动牌，剩余用能量补齐`
         : "移动：选择移动牌弃置，或直接确认消耗 1 能量";
@@ -376,11 +389,12 @@
       const card = currentPlayer?.hand?.[index];
       if (!isMovePaymentCard(card)) return;
 
-      const selected = pendingState.movePayment.selectedHandIndices || [];
+      const pending = getMovePayment();
+      const selected = pending.selectedHandIndices || [];
       if (selected.includes(index)) {
-        pendingState.movePayment.selectedHandIndices = selected.filter((item) => item !== index);
-      } else if (selected.length < (pendingState.movePayment.requiredMovePoints || MOVE_ENERGY_COST)) {
-        pendingState.movePayment.selectedHandIndices = [...selected, index];
+        pending.selectedHandIndices = selected.filter((item) => item !== index);
+      } else if (selected.length < (pending.requiredMovePoints || MOVE_ENERGY_COST)) {
+        pending.selectedHandIndices = [...selected, index];
       }
       renderPlayerHand();
     }
@@ -397,8 +411,9 @@
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      const { requiredMovePoints = MOVE_ENERGY_COST } = pendingState.movePayment;
-      const selectedHandIndices = [...(pendingState.movePayment.selectedHandIndices || [])].sort((left, right) => left - right);
+      const activePayment = getMovePayment();
+      const { requiredMovePoints = MOVE_ENERGY_COST } = activePayment;
+      const selectedHandIndices = [...(activePayment.selectedHandIndices || [])].sort((left, right) => left - right);
       let paymentNote = "";
       let handSnapshot = null;
       let discardPileSnapshot = null;
@@ -455,7 +470,7 @@
           ? `${paymentNote}，消耗 ${energyCost} 能量`
           : `消耗 ${energyCost} 能量`;
       }
-      const providedMovePoints = Math.max(0, Math.round(Number(pendingState.movePayment.providedMovePoints) || 0));
+      const providedMovePoints = Math.max(0, Math.round(Number(activePayment.providedMovePoints) || 0));
       const totalMovementPoints = providedMovePoints + selectedMoveCards.length + energyCost;
       const moveOptions = {
         cost: energyCost > 0 ? { energy: energyCost } : {},
@@ -463,10 +478,10 @@
         historyLabel: `移动消耗 ${selectedMoveCards.length ? `${selectedMoveCards.length} 张移动牌` : ""}${selectedMoveCards.length && energyCost ? " + " : ""}${energyCost ? `${energyCost} 能量` : ""}`,
       };
 
-      const pending = pendingState.movePayment;
+      const pending = getMovePayment();
       const supplementalMoveContext = pending.supplementalMoveContext || null;
       const cardMoveEffectContext = pending.cardMoveEffectContext || null;
-      pendingState.movePayment = null;
+      setMovePayment(null);
       syncMovePaymentChrome();
 
       if (cardMoveEffectContext) {
@@ -587,28 +602,29 @@
     }
 
     function getPendingPlayCardSelection() {
-      if (!pendingState.playCardSelection || !isPlayCardSelectionActive()) return null;
+      const pending = peekPlayCardSelection();
+      if (!pending || !isPlayCardSelectionActive()) return null;
       const currentPlayer = getCurrentPlayer();
-      if (pendingState.playCardSelection.source === "future_span") {
+      if (pending.source === "future_span") {
         const card = industry?.getFutureSpanCard?.(currentPlayer);
-        if (!card || card.id !== pendingState.playCardSelection.cardId || !hasPlayableFutureSpanCard(currentPlayer)) {
-          pendingState.playCardSelection = null;
+        if (!card || card.id !== pending.cardId || !hasPlayableFutureSpanCard(currentPlayer)) {
+          setPlayCardSelection(null);
           return null;
         }
         return { source: "future_span", card };
       }
       const hand = Array.isArray(currentPlayer?.hand) ? currentPlayer.hand : [];
-      let handIndex = Number(pendingState.playCardSelection.handIndex);
+      let handIndex = Number(pending.handIndex);
       let card = Number.isInteger(handIndex) ? hand[handIndex] : null;
-      if (!card || card.id !== pendingState.playCardSelection.cardId) {
-        handIndex = hand.findIndex((item) => item.id === pendingState.playCardSelection.cardId);
+      if (!card || card.id !== pending.cardId) {
+        handIndex = hand.findIndex((item) => item.id === pending.cardId);
         card = handIndex >= 0 ? hand[handIndex] : null;
       }
       if (!card) {
-        pendingState.playCardSelection = null;
+        setPlayCardSelection(null);
         return null;
       }
-      pendingState.playCardSelection = { source: "hand", handIndex, cardId: card.id };
+      setPlayCardSelection({ source: "hand", handIndex, cardId: card.id });
       return { source: "hand", handIndex, card };
     }
 
@@ -631,10 +647,10 @@
 
       const current = getPendingPlayCardSelection();
       if (current?.handIndex === index) {
-        pendingState.playCardSelection = null;
+        setPlayCardSelection(null);
         rocketState.statusNote = "打牌：请选择一张手牌";
       } else {
-        pendingState.playCardSelection = { source: "hand", handIndex: index, cardId: card.id };
+        setPlayCardSelection({ source: "hand", handIndex: index, cardId: card.id });
         rocketState.statusNote = `打牌：已选择 ${cards.getCardLabel(card)}，点击「打出」确认`;
       }
 
@@ -1221,7 +1237,7 @@
         return { ok: false, message: rocketState.statusNote };
       }
       cards.setPlayCardSelectionActive(cardState, true);
-      pendingState.playCardSelection = null;
+      setPlayCardSelection(null);
       rocketState.statusNote = hasPlayableFutureSpanCard(currentPlayer)
         ? "打牌：请选择一张手牌或未来跨度目标牌"
         : "打牌：请选择一张手牌";
@@ -1233,7 +1249,7 @@
 
     function cancelPlayCardSelection() {
       if (!isPlayCardSelectionActive()) return;
-      pendingState.playCardSelection = null;
+      setPlayCardSelection(null);
       cards.setPlayCardSelectionActive(cardState, false);
       rocketState.statusNote = "已取消打牌";
       syncPlayCardSelectionChrome();
@@ -1363,7 +1379,7 @@
       }
 
       cards.setPlayCardSelectionActive(cardState, false);
-      pendingState.playCardSelection = null;
+      setPlayCardSelection(null);
       rocketState.statusNote = shouldReserve
         ? `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`
         : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
@@ -1464,7 +1480,7 @@
       const playEffects = buildImmediateEffects?.(playedCard) || [];
 
       cards.setPlayCardSelectionActive(cardState, false);
-      pendingState.playCardSelection = null;
+      setPlayCardSelection(null);
       rocketState.statusNote = reserved
         ? `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`
         : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
@@ -1613,7 +1629,7 @@
       cards.addToDiscardPile(cardState, playedCard);
 
       cards.setPlayCardSelectionActive(cardState, false);
-      pendingState.playCardSelection = null;
+      setPlayCardSelection(null);
 
       const flipResult = fangzhou.flipCard1Reward(alienGameState, "advanced");
       if (!flipResult.ok) {
@@ -1622,7 +1638,7 @@
         cardState.publicCards = beforeCardState.publicCards.slice();
         cardState.discardPile = beforeCardState.discardPile.slice();
         cards.setPlayCardSelectionActive(cardState, true);
-        pendingState.playCardSelection = { source: "hand", handIndex: removeIndex, cardId: card.id };
+        setPlayCardSelection({ source: "hand", handIndex: removeIndex, cardId: card.id });
         rocketState.statusNote = flipResult.message || "方舟高级奖励无法结算";
         syncPlayCardSelectionChrome();
         renderPlayerStats();
@@ -1710,10 +1726,10 @@
 
       const current = getPendingPlayCardSelection();
       if (current?.source === "future_span") {
-        pendingState.playCardSelection = null;
+        setPlayCardSelection(null);
         rocketState.statusNote = "打牌：请选择一张手牌或未来跨度目标牌";
       } else {
-        pendingState.playCardSelection = { source: "future_span", cardId: card.id };
+        setPlayCardSelection({ source: "future_span", cardId: card.id });
         rocketState.statusNote = `打牌：已选择未来跨度目标牌 ${cards.getCardLabel(card)}，点击「打出」确认`;
       }
 

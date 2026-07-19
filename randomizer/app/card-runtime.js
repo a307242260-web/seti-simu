@@ -109,6 +109,17 @@
       updateActionButtons,
     } = context;
     const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
+    const PASS_RESERVE_SELECTION_SESSION = "pass_reserve_selection";
+    const MOVE_PAYMENT_SESSION = "move_payment";
+    const getPassReserveSelection = () => decisionSessions.peek(PASS_RESERVE_SELECTION_SESSION);
+    function setPassReserveSelection(session) {
+      if (!session) return decisionSessions.clear(PASS_RESERVE_SELECTION_SESSION);
+      return decisionSessions.open(PASS_RESERVE_SELECTION_SESSION, session);
+    }
+    function setMovePayment(session) {
+      if (!session) return decisionSessions.clear(MOVE_PAYMENT_SESSION);
+      return decisionSessions.open(MOVE_PAYMENT_SESSION, session);
+    }
     const getCardCornerFreeMove = () => decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION);
     function setCardCornerFreeMove(session) {
       if (!session) return decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
@@ -1219,18 +1230,19 @@
     }
 
     function isPassReserveSelectionActive() {
-      return Boolean(pendingState.passReserveSelection);
+      return Boolean(getPassReserveSelection());
     }
 
     function getPassReserveSelectionCards() {
-      if (!pendingState.passReserveSelection) return [];
-      return cards.getPassReservePile(cardState, pendingState.passReserveSelection.roundNumber);
+      const pending = getPassReserveSelection();
+      if (!pending) return [];
+      return cards.getPassReservePile(cardState, pending.roundNumber);
     }
 
     function renderPassReserveSelection() {
       if (!els.passReserveSelectionGrid) return;
 
-      const pending = pendingState.passReserveSelection;
+      const pending = getPassReserveSelection();
       if (!pending) {
         els.passReserveSelectionGrid.replaceChildren();
         if (els.passReserveSelectionStatus) els.passReserveSelectionStatus.textContent = "";
@@ -1285,7 +1297,7 @@
         els.passReserveSelectionTitle.textContent = "PASS 预留精选";
       }
       if (visible && els.passReserveSelectionSubtitle) {
-        const round = pendingState.passReserveSelection?.roundNumber || turnState.roundNumber;
+        const round = getPassReserveSelection()?.roundNumber || turnState.roundNumber;
         const count = getPassReserveSelectionCards().length;
         els.passReserveSelectionSubtitle.textContent = `第 ${round} 轮 PASS：从剩余 ${count} 张预留牌中选择 1 张。`;
       }
@@ -1303,13 +1315,13 @@
       }
 
       if (
-        pendingState.passReserveSelection
-        && pendingState.passReserveSelection.effectId === (effect?.id || null)
-        && pendingState.passReserveSelection.playerId === (currentPlayer?.id || null)
-        && pendingState.passReserveSelection.roundNumber === roundNumber
+        getPassReserveSelection()
+        && getPassReserveSelection().effectId === (effect?.id || null)
+        && getPassReserveSelection().playerId === (currentPlayer?.id || null)
+        && getPassReserveSelection().roundNumber === roundNumber
       ) {
         pendingState.passReserveSelectionDismissed = false;
-        const selected = pile.find((card) => card.id === pendingState.passReserveSelection.selectedCardId);
+        const selected = pile.find((card) => card.id === getPassReserveSelection().selectedCardId);
         rocketState.statusNote = selected
           ? `PASS 预留精选：已选择 ${cards.getCardLabel(selected)}`
           : `PASS 预留精选：请选择 1 张牌（剩余 ${pile.length} 张）`;
@@ -1319,12 +1331,12 @@
         return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
       }
 
-      pendingState.passReserveSelection = {
+      setPassReserveSelection({
         effectId: effect?.id || null,
         playerId: currentPlayer?.id || null,
         roundNumber,
         selectedCardId: null,
-      };
+      });
       pendingState.passReserveSelectionDismissed = false;
       rocketState.statusNote = `PASS 预留精选：请选择 1 张牌（剩余 ${pile.length} 张）`;
       syncPassReserveSelectionChrome();
@@ -1334,7 +1346,7 @@
     }
 
     function dismissPassReserveSelectionOverlay(options = {}) {
-      if (!pendingState.passReserveSelection) return { ok: false, message: "当前没有 PASS 预留精选" };
+      if (!getPassReserveSelection()) return { ok: false, message: "当前没有 PASS 预留精选" };
       pendingState.passReserveSelectionDismissed = true;
       syncPassReserveSelectionChrome();
       rocketState.statusNote = "PASS 预留精选已临时关闭；再次点击效果栏的 PASS 预留精选可继续选择";
@@ -1343,18 +1355,18 @@
     }
 
     function selectPassReserveCard(cardId) {
-      if (!pendingState.passReserveSelection) return;
+      if (!getPassReserveSelection()) return;
       const pile = getPassReserveSelectionCards();
       const match = pile.find((card) => card.id === cardId);
       if (!match) return;
-      pendingState.passReserveSelection.selectedCardId = match.id;
+      getPassReserveSelection().selectedCardId = match.id;
       renderPassReserveSelection();
       rocketState.statusNote = `PASS 预留精选：已选择 ${cards.getCardLabel(match)}`;
       renderStateReadout();
     }
 
     function confirmPassReserveSelection() {
-      const pending = pendingState.passReserveSelection;
+      const pending = getPassReserveSelection();
       if (!pending?.selectedCardId) return { ok: false, message: "请先选择 PASS 预留牌" };
 
       const currentEffect = getCurrentActionEffect();
@@ -1394,7 +1406,7 @@
         message: result.message,
         payload: { card: result.card, roundNumber: pending.roundNumber },
       };
-      pendingState.passReserveSelection = null;
+      setPassReserveSelection(null);
       pendingState.passReserveSelectionDismissed = false;
       syncPassReserveSelectionChrome();
       rocketState.statusNote = result.message;
@@ -1718,7 +1730,7 @@
           return payCheck;
         }
 
-        pendingState.movePayment = {
+        setMovePayment({
           player: currentPlayer,
           deltaX,
           deltaY,
@@ -1729,7 +1741,7 @@
             terrainRequired,
             poolUsed,
           },
-        };
+        });
         rocketState.statusNote = poolUsed > 0
           ? `${effect.label}：卡牌移动力 ${poolUsed} 点，还需 ${paymentRequired} 点（可弃移动牌或用能量）`
           : `${effect.label}：需要 ${paymentRequired} 点移动力（可弃移动牌或用能量）`;

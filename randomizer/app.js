@@ -276,6 +276,12 @@
   const CARD_CORNER_QUICK_SESSION = "card_corner_quick_action";
   const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
   const CARD_TRIGGER_FREE_MOVE_SESSION = "card_trigger_free_move";
+  const CARD_TRIGGER_ACTION_SESSION = "card_trigger_action";
+  const CARD_TASK_COMPLETION_SESSION = "card_task_completion";
+  const CHONG_TASK_COMPLETION_SESSION = "chong_task_completion";
+  const PASS_RESERVE_SELECTION_SESSION = "pass_reserve_selection";
+  const PLAY_CARD_SELECTION_SESSION = "play_card_selection";
+  const MOVE_PAYMENT_SESSION = "move_payment";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
@@ -286,6 +292,12 @@
   const getTurnEndAfterRevealSession = () => decisionSessions.peek(TURN_END_REVEAL_SESSION);
   const getPendingCardCornerFreeMove = () => decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION);
   const getPendingCardTriggerFreeMove = () => decisionSessions.peek(CARD_TRIGGER_FREE_MOVE_SESSION);
+  const getPendingCardTriggerAction = () => decisionSessions.peek(CARD_TRIGGER_ACTION_SESSION);
+  const getPendingCardTaskCompletion = () => decisionSessions.peek(CARD_TASK_COMPLETION_SESSION);
+  const getPendingChongTaskCompletion = () => decisionSessions.peek(CHONG_TASK_COMPLETION_SESSION);
+  const getPendingPassReserveSelection = () => decisionSessions.peek(PASS_RESERVE_SELECTION_SESSION);
+  const getPendingPlayCardSelectionSession = () => decisionSessions.peek(PLAY_CARD_SELECTION_SESSION);
+  const getPendingMovePayment = () => decisionSessions.peek(MOVE_PAYMENT_SESSION);
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
@@ -739,6 +751,7 @@
     OPPONENT_TECH_TYPES,
     ROTATE_STATE_SLOTS,
     pendingState,
+    getPendingMovePayment,
     cardState,
     tech,
     techGameState,
@@ -1749,7 +1762,7 @@
       return "（请选择一张牌进行扫描）";
     }
     if (isMovePaymentSelectionActive() && !isMovePaymentLockedForAiAutomation()) {
-      const required = pendingState.movePayment?.requiredMovePoints || MOVE_ENERGY_COST;
+      const required = getPendingMovePayment()?.requiredMovePoints || MOVE_ENERGY_COST;
       return required > 1
         ? `（需 ${required} 点移动力：可选移动牌，剩余用能量补齐）`
         : "（可选移动牌弃置，或直接确认消耗 1 能量）";
@@ -2747,7 +2760,7 @@
   const aiControllerState = {
     get pendingDiscardAction() { return pendingState.discardAction; },
     get pendingCardSelectionAction() { return pendingState.cardSelectionAction; },
-    get pendingPassReserveSelection() { return pendingState.passReserveSelection; },
+    get pendingPassReserveSelection() { return getPendingPassReserveSelection(); },
     get pendingScanTargetAction() { return pendingState.scanTargetAction; },
     get pendingProbeSectorScanAction() { return getPendingProbeSectorScanDecision(); },
     get pendingProbeLocationRewardAction() { return getPendingProbeLocationRewardDecision(); },
@@ -2770,18 +2783,18 @@
     get pendingRunezuCardGain() { return pendingState.runezuCardGain; },
     get pendingRunezuSymbolBranch() { return pendingState.runezuSymbolBranch; },
     get pendingRunezuFaceSymbolPlacement() { return pendingState.runezuFaceSymbolPlacement; },
-    get pendingCardTriggerAction() { return pendingState.cardTriggerAction; },
+    get pendingCardTriggerAction() { return getPendingCardTriggerAction(); },
     get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
-    get pendingCardTaskCompletion() { return pendingState.cardTaskCompletion; },
-    get pendingChongTaskCompletion() { return pendingState.chongTaskCompletion; },
+    get pendingCardTaskCompletion() { return getPendingCardTaskCompletion(); },
+    get pendingChongTaskCompletion() { return getPendingChongTaskCompletion(); },
     get pendingActionExecuted() { return isActionPending(); },
     get pendingActionEffectFlow() { return pendingState.actionEffectFlow; },
     get actionHistoryHasSession() { return actionHistory.hasSession(); },
     get actionHistorySessionInfo() { return actionHistory.getSessionInfo?.() || null; },
     get effectStepActive() { return uiRuntimeState.effectStepActive; },
     set effectStepActive(value) { uiRuntimeState.effectStepActive = value; },
-    get pendingMovePayment() { return pendingState.movePayment; },
-    get pendingPlayCardSelection() { return pendingState.playCardSelection; },
+    get pendingMovePayment() { return getPendingMovePayment(); },
+    get pendingPlayCardSelection() { return getPendingPlayCardSelectionSession(); },
     get pendingCardCornerFreeMove() { return getPendingCardCornerFreeMove(); },
     get pendingIndustryAbility() { return pendingState.industryAbility; },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
@@ -3806,7 +3819,7 @@
   function clearTransientStateForRecovery() {
     pendingState.discardAction = null;
     pendingState.cardSelectionAction = null;
-    pendingState.passReserveSelection = null;
+    decisionSessions.clear(PASS_RESERVE_SELECTION_SESSION);
     pendingState.passReserveSelectionDismissed = false;
     pendingState.scanTargetAction = null;
     decisionSessions.clear(PROBE_SECTOR_SCAN_SESSION);
@@ -3815,10 +3828,10 @@
     pendingState.alienTraceAction = null;
     decisionSessions.clear(LAND_TARGET_DECISION);
     decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
-    pendingState.cardTriggerAction = null;
+    decisionSessions.clear(CARD_TRIGGER_ACTION_SESSION);
     decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
     decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
-    pendingState.cardTaskCompletion = null;
+    decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
     pendingState.jiuzheCardPlay = null;
     pendingState.jiuzheOpportunityOpen = false;
     pendingState.jiuzheOpportunityQueue = [];
@@ -3829,7 +3842,7 @@
     pendingState.banrenmaOpportunityQueue = [];
     pendingState.chongCardGain = null;
     pendingState.chongFossilChoice = null;
-    pendingState.chongTaskCompletion = null;
+    decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     pendingState.amibaCardGain = null;
     pendingState.amibaSymbolChoice = null;
     pendingState.amibaTraceRemoval = null;
@@ -3845,8 +3858,8 @@
     clearCompletedEffectFlowForUndo();
     uiRuntimeState.effectStepActive = false;
     uiRuntimeState.moveHighlightRocketId = null;
-    pendingState.movePayment = null;
-    pendingState.playCardSelection = null;
+    decisionSessions.clear(MOVE_PAYMENT_SESSION);
+    decisionSessions.clear(PLAY_CARD_SELECTION_SESSION);
     decisionSessions.clear(HAND_CARD_PLAY_SESSION);
     decisionSessions.clear(CARD_CORNER_QUICK_SESSION);
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
@@ -5246,16 +5259,16 @@
       || getPendingProbeLocationRewardDecision()
       || getPublicScanQueueSession()
       || pendingState.handScanAction
-      || pendingState.passReserveSelection
+      || getPendingPassReserveSelection()
       || (isCardSelectionActive() && (pendingState.actionEffectFlow || isCardTriggerPickSelectionActive()))
-      || pendingState.cardTriggerAction
-      || pendingState.cardTaskCompletion
+      || getPendingCardTriggerAction()
+      || getPendingCardTaskCompletion()
       || (pendingState.jiuzheCardPlay && pendingState.jiuzheCardPlay.reason !== "view")
       || pendingState.yichangdianCardGain
       || pendingState.yichangdianCornerAction
       || pendingState.banrenmaCardGain
       || pendingState.banrenmaOpportunity
-      || pendingState.chongTaskCompletion
+      || getPendingChongTaskCompletion()
       || pendingState.chongCardGain
       || pendingState.chongFossilChoice
       || pendingState.amibaCardGain
@@ -5527,8 +5540,8 @@
       syncCardSelectionChrome();
     }
 
-    if (pendingState.passReserveSelection) {
-      pendingState.passReserveSelection = null;
+    if (getPendingPassReserveSelection()) {
+      decisionSessions.clear(PASS_RESERVE_SELECTION_SESSION);
       pendingState.passReserveSelectionDismissed = false;
       syncPassReserveSelectionChrome();
     }
@@ -5544,15 +5557,15 @@
     if (getPendingDataPlacementDecision()) {
       closeDataPlacePicker();
     }
-    pendingState.cardTriggerAction = null;
-    pendingState.cardTaskCompletion = null;
+    decisionSessions.clear(CARD_TRIGGER_ACTION_SESSION);
+    decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
     decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
     decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
     pendingState.yichangdianCornerAction = null;
     pendingState.chongCardGain = null;
     pendingState.chongFossilChoice = null;
-    pendingState.chongTaskCompletion = null;
+    decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     pendingState.amibaCardGain = null;
     pendingState.amibaSymbolChoice = null;
     pendingState.amibaTraceRemoval = null;
@@ -9305,8 +9318,8 @@
       pendingState.scanTargetAction,
       getPendingProbeSectorScanDecision(),
       pendingState.handScanAction,
-      pendingState.passReserveSelection,
-      pendingState.movePayment,
+      getPendingPassReserveSelection(),
+      getPendingMovePayment(),
       getPendingDataPlacementDecision(),
       getPendingCardTriggerFreeMove(),
       pendingState.actionEffectFlow?.cardMoveEffect,
@@ -9632,7 +9645,7 @@
       }
       return { actorPlayer: player, candidates };
     }
-    const passReservePending = pendingState.passReserveSelection;
+    const passReservePending = getPendingPassReserveSelection();
     if (passReservePending) {
       const player = getPlayerById(passReservePending.playerId) || getCurrentPlayer();
       return {
@@ -9650,8 +9663,8 @@
         })),
       };
     }
-    if (pendingState.movePayment) {
-      return enumerateHeadlessMovePaymentActions(pendingState.movePayment);
+    if (getPendingMovePayment()) {
+      return enumerateHeadlessMovePaymentActions(getPendingMovePayment());
     }
     if (isTechTilePickingActive()) {
       const player = getCurrentPlayer();
@@ -10206,7 +10219,7 @@
       return { ok: true, progressed: true, skipped: true, message: "已跳过无法执行的免费移动" };
     },
     "move-payment": (action) => {
-      pendingState.movePayment.selectedHandIndices = [...(action.selectedHandIndices || [])];
+      getPendingMovePayment().selectedHandIndices = [...(action.selectedHandIndices || [])];
       return confirmMovePayment({ automated: true });
     },
     "play-hand-card": (action) => {
@@ -10903,7 +10916,7 @@
   const focusDebugCalibration = debugRuntimeController.createFocusDebugCalibrationHandler();
 
   const appEventState = {
-    get pendingChongTaskCompletion() { return pendingState.chongTaskCompletion; },
+    get pendingChongTaskCompletion() { return getPendingChongTaskCompletion(); },
     get pendingChongFossilChoice() { return pendingState.chongFossilChoice; },
     get pendingChongCardGain() { return pendingState.chongCardGain; },
     get pendingAmibaTraceRemoval() { return pendingState.amibaTraceRemoval; },
@@ -10930,6 +10943,7 @@
   };
 
   alienSpeciesRuntime = alienSpeciesRuntimeModule.createAlienSpeciesRuntime({
+    decisionSessions,
     headless: headlessMode,
     actionHistory,
     alienGameState,

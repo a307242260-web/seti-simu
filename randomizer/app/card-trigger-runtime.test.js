@@ -73,23 +73,23 @@ function createHarness() {
   runtime.enqueueType1TriggerEvents([{ type: "scan", sectorX: 2 }]);
   assert.deepEqual(decisionSessions.peek("type1_trigger_queue").events, [{ type: "scan", sectorX: 2 }]);
 
-  pendingState.cardTriggerAction = { matches: [{ id: "trigger" }] };
+  decisionSessions.open("card_trigger_action", { matches: [{ id: "trigger" }] });
   assert.equal(runtime.cancelCardTriggerChoice(), true);
-  assert.equal(pendingState.cardTriggerAction, null);
+  assert.equal(decisionSessions.peek("card_trigger_action"), null);
   assert.ok(calls.updated > 0);
 }
 
 {
-  const { runtime, player, cardState, pendingState, calls } = createHarness();
+  const { runtime, player, cardState, decisionSessions, calls } = createHarness();
   const card = { id: "task-card", label: "任务牌" };
   player.reservedCards.push(card);
-  pendingState.cardTaskCompletion = {
+  decisionSessions.open("card_task_completion", {
     ready: {
       card,
       task: { id: "task-1" },
       effects: [{ id: "reward", type: "gain_resources" }],
     },
-  };
+  });
   const result = runtime.confirmCardTaskCompletion();
   assert.equal(result, true);
   assert.equal(player.completedTaskCount, 1);
