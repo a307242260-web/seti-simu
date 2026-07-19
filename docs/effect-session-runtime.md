@@ -4,7 +4,7 @@
 
 Effect Session 是 Standard Action 与浏览器/训练宿主之间唯一共享的流程执行协议。SETI-56 负责 Action family、合法项和业务 handler；本契约从 Action 已被接受并生成 Effect Group 开始，负责队列顺序、外部选择、快速行动、working state、提交/回滚、事件和 replay journal。
 
-阶段 0/1 reference core 位于 `randomizer/game/effects/session-runtime.js`。阶段 2 的研究科技贯穿参考链位于 `randomizer/game/effects/research-tech-session.js`，固定为 `旋转 → 科技 DecisionEffect → 放置 → 即时奖励 → commit`。它已证明浏览器 UMD 与纯 Node 宿主使用同一 session、workingState、decision 和 journal trace；完整网页交互 adapter、训练 observation adapter 与其余旧 pending 热路径仍分别留给阶段 6/7/8，不能把参考链存在误报为这些阶段已经完成。
+阶段 0/1 reference core 位于 `randomizer/game/effects/session-runtime.js`。阶段 2 的研究科技贯穿参考链位于 `randomizer/game/effects/research-tech-session.js`，固定为 `旋转 → 科技 DecisionEffect → 放置 → 即时奖励 → commit`。阶段 3 的扫描与打牌代表链位于 `randomizer/game/effects/scan-card-session.js`：扫描固定覆盖 `多目标 DecisionEffect → 扫描 → 扇区 DecisionEffect → 参与奖励 → trigger → 延迟补牌`，打牌固定覆盖 `支付 DecisionEffect → 卡牌顺序效果 → 任务/被动 trigger → 新 DecisionEffect`。两阶段都证明浏览器 UMD 与纯 Node 宿主使用同一 session、workingState、decision 和 journal trace；完整网页交互 adapter、训练 observation adapter 与其余旧 pending 热路径仍分别留给阶段 6/7/8，不能把代表链存在误报为这些阶段已经完成。
 
 核心的禁止依赖：DOM、overlay/button、localStorage、render callback、AI valuation/planner、具体 Policy、领域 continuation。宿主可以注册纯 executor、提交 Action/Decision、读取可见投影和持久化稳定结果，不能在 runtime 外偷偷推进规则。
 
@@ -196,13 +196,13 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 | ES-09 fail-closed | 未注册 executor/未知 priority/超限 drain 都停止并带诊断 | 静默跳过旧 effect 后 commit | unknown executor + loop limit tests | 未迁移 pending 注入 + forbidden-call spy |
 | ES-10 version | commit 时权威版本必须仍等于 baseVersion | 并发 session 覆盖更新状态 | version conflict test | 双 session race/checkpoint test |
 
-阶段 1 的测试文件是 `randomizer/game/effects/session-runtime.test.js`。阶段 2 的测试文件是 `randomizer/game/effects/research-tech-session.test.js`，覆盖旋转后的 workingState 决策、owner、多节点 commit gate、失败回滚、旧队列/continuation 调用为零及浏览器/Node 固定 trace parity。它们是 reference model 的行为证据，不替代后续完整网页 adapter、真实领域状态可达性、训练 checkpoint、完整对局和性能证据。
+阶段 1 的测试文件是 `randomizer/game/effects/session-runtime.test.js`。阶段 2 的测试文件是 `randomizer/game/effects/research-tech-session.test.js`，覆盖旋转后的 workingState 决策、owner、多节点 commit gate、失败回滚、旧队列/continuation 调用为零及浏览器/Node 固定 trace parity。阶段 3 的测试文件是 `randomizer/game/effects/scan-card-session.test.js`，覆盖 SETI-60 Standard Action identity 映射、多次 DecisionEffect、direct/trigger/deferred/原队列稳定顺序、未知 pending/followup fail-closed、固定 journal replay 以及浏览器/Node workingState parity。它们是 reference model 的行为证据，不替代后续完整网页 adapter、真实领域状态可达性、训练 checkpoint、完整对局和性能证据。
 
 ## 分阶段迁移与冲突边界
 
 1. 阶段 0/1（SETI-62 总控）：冻结本契约与 reference core；不改 SETI-56 的 action handler 热路径。
 2. 阶段 2：研究科技贯穿链。Standard Action 仍由 SETI-56 registry 拥有；本阶段只把 rotate→decision→placement→reward continuation 映射为 Effect Group。
-3. 阶段 3：扫描与打牌代表链，验证 nested trigger 和多个 DecisionEffect。
+3. 阶段 3：扫描与打牌代表链已落地；SETI-60 conditional Action descriptor 直接作为 DecisionEffect choice/journal identity，nested trigger 和多个 DecisionEffect 已由固定 trace 与 replay 验证。完整网页热路径迁移仍归阶段 6/7。
 4. 阶段 4：统一 Quick Action boundary、interrupt/resume 和所有可中断 decision 的 stale validation。
 5. 阶段 5：把 main/quick history、RNG/replay、undo 与 irreversible barrier 收口到 session journal。
 6. 阶段 6：浏览器 adapter 只负责 dispatch/observe/render，删除对应 DOM continuation。
