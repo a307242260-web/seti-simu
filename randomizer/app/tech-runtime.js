@@ -801,7 +801,7 @@
     function startIndustryPiratesRaidLaunchFlow(flow, options = {}) {
       const groupId = `industry-pirates-raid-${turnState.roundNumber}-${turnState.turnNumber}`;
       const nodes = industry?.buildPiratesRaidLaunchEffectNodes?.(flow, { groupId }) || [];
-      pendingState.industryAbility = null;
+      decisionSessions.clear("industry_ability");
       pendingState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();

@@ -398,8 +398,8 @@
   function hasTurnEndRevealBlockingSubFlow() {
     return Boolean(
       pendingState.alienRevealConfirmation
-      || pendingState.jiuzheCardPlay
-      || pendingState.banrenmaOpportunity
+      || decisionSessions?.peek?.("jiuzhe_card_play")
+      || decisionSessions?.peek?.("banrenma_opportunity")
       || decisionSessions.peek("banrenma_card_gain")
       || pendingState.alienTraceAction
       || pendingState.alienTracePickerState

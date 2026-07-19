@@ -19,15 +19,9 @@
     scanRunSequence: 0,
     handScanAction: null,
     alienTraceAction: null,
-    jiuzheCardPlay: null,
-    jiuzheOpportunityOpen: false,
-    jiuzheOpportunityQueue: Object.freeze([]),
-    banrenmaOpportunity: null,
-    banrenmaOpportunityQueue: Object.freeze([]),
     alienTracePickerState: null,
     alienRevealConfirmation: null,
     actionEffectFlow: null,
-    industryAbility: null,
   });
 
   const GROUPS = Object.freeze({
@@ -35,16 +29,16 @@
     scan: ["scanTargetAction", "scanRunSequence", "handScanAction"],
     alien_trace: ["alienTraceAction", "alienTracePickerState", "alienRevealConfirmation"],
     card_trigger: [],
-    jiuzhe: ["jiuzheCardPlay", "jiuzheOpportunityOpen", "jiuzheOpportunityQueue"],
+    jiuzhe: [],
     yichangdian: [],
-    banrenma: ["banrenmaOpportunity", "banrenmaOpportunityQueue"],
+    banrenma: [],
     chong: [],
     amiba: [],
     aomomo: [],
     runezu: [],
     action_flow: ["actionEffectFlow"],
     movement_cards: [],
-    data_industry: ["industryAbility"],
+    data_industry: [],
   });
 
   const HOST_ONLY_FIELDS = new Set(["passReserveSelectionDismissed", "scanRunSequence"]);

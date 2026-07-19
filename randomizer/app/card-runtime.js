@@ -217,7 +217,7 @@
         && !isPlayCardSelectionActive()
         && !isHandScanSelectionActive()
         && !isMovePaymentSelectionActive()
-        && !pendingState.industryAbility
+        && !decisionSessions.peek("industry_ability")
         && !isIndustryHandSelectionActive()
         && !getCardCornerFreeMove()
         && !hasActivePendingSubFlow();

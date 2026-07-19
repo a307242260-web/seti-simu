@@ -2770,11 +2770,11 @@
     get pendingAlienTraceAction() { return pendingState.alienTraceAction; },
     get pendingLandTargetAction() { return getPendingLandTargetDecision(); },
     get pendingDataPlaceAction() { return getPendingDataPlacementDecision(); },
-    get pendingJiuzheCardPlay() { return pendingState.jiuzheCardPlay; },
+    get pendingJiuzheCardPlay() { return decisionSessions.peek("jiuzhe_card_play"); },
     get pendingYichangdianCardGain() { return decisionSessions.peek("yichangdian_card_gain"); },
     get pendingYichangdianCornerAction() { return decisionSessions.peek("yichangdian_corner_action"); },
     get pendingBanrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
-    get pendingBanrenmaOpportunity() { return pendingState.banrenmaOpportunity; },
+    get pendingBanrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
     get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
     get pendingChongFossilChoice() { return decisionSessions.peek("chong_fossil_choice"); },
     get pendingAmibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
@@ -2797,7 +2797,7 @@
     get pendingMovePayment() { return getPendingMovePayment(); },
     get pendingPlayCardSelection() { return getPendingPlayCardSelectionSession(); },
     get pendingCardCornerFreeMove() { return getPendingCardCornerFreeMove(); },
-    get pendingIndustryAbility() { return pendingState.industryAbility; },
+    get pendingIndustryAbility() { return decisionSessions.peek("industry_ability"); },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
     get alienTracePickerState() { return pendingState.alienTracePickerState; },
@@ -3833,14 +3833,14 @@
     decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
     decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
     decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
-    pendingState.jiuzheCardPlay = null;
-    pendingState.jiuzheOpportunityOpen = false;
-    pendingState.jiuzheOpportunityQueue = [];
+    decisionSessions.clear("jiuzhe_card_play");
+    decisionSessions.clear("jiuzhe_opportunity_open");
+    decisionSessions.clear("jiuzhe_opportunity_queue");
     decisionSessions.clear("yichangdian_card_gain");
     decisionSessions.clear("yichangdian_corner_action");
     decisionSessions.clear("banrenma_card_gain");
-    pendingState.banrenmaOpportunity = null;
-    pendingState.banrenmaOpportunityQueue = [];
+    decisionSessions.clear("banrenma_opportunity");
+    decisionSessions.clear("banrenma_opportunity_queue");
     decisionSessions.clear("chong_card_gain");
     decisionSessions.clear("chong_fossil_choice");
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
@@ -3865,7 +3865,7 @@
     decisionSessions.clear(CARD_CORNER_QUICK_SESSION);
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
     decisionSessions.clear(DATA_PLACEMENT_DECISION);
-    pendingState.industryAbility = null;
+    decisionSessions.clear("industry_ability");
     decisionSessions.clear(PIRATES_RAID_DECISION);
     decisionSessions.clear(STRATEGY_SLOT_DECISION);
     uiRuntimeState.industryFreeMoveState = null;
@@ -4719,7 +4719,7 @@
       cancelHandCardPlayAction({ silent: true });
     }
     if (hasActivePendingSubFlow()) {
-      rocketState.statusNote = pendingState.industryAbility || uiRuntimeState.industryFreeMoveState || isIndustryHandSelectionActive()
+      rocketState.statusNote = decisionSessions.peek("industry_ability") || uiRuntimeState.industryFreeMoveState || isIndustryHandSelectionActive()
         ? "请先完成或取消公司 1x 行动"
         : "请先完成或取消当前流程";
       renderStateReadout();
@@ -4830,7 +4830,7 @@
       return result;
     }
 
-    const recordInCurrentIndustryStep = Boolean(pending.industryQuickStepActive && pendingState.industryAbility);
+    const recordInCurrentIndustryStep = Boolean(pending.industryQuickStepActive && decisionSessions.peek("industry_ability"));
     if (!recordInCurrentIndustryStep) {
       beginQuickActionStep("card-corner-move", `卡牌快速行动：${pending.action.label}`);
     }
@@ -5264,11 +5264,11 @@
       || (isCardSelectionActive() && (pendingState.actionEffectFlow || isCardTriggerPickSelectionActive()))
       || getPendingCardTriggerAction()
       || getPendingCardTaskCompletion()
-      || (pendingState.jiuzheCardPlay && pendingState.jiuzheCardPlay.reason !== "view")
+      || (decisionSessions.peek("jiuzhe_card_play") && decisionSessions.peek("jiuzhe_card_play").reason !== "view")
       || decisionSessions.peek("yichangdian_card_gain")
       || decisionSessions.peek("yichangdian_corner_action")
       || decisionSessions.peek("banrenma_card_gain")
-      || pendingState.banrenmaOpportunity
+      || decisionSessions.peek("banrenma_opportunity")
       || getPendingChongTaskCompletion()
       || decisionSessions.peek("chong_card_gain")
       || decisionSessions.peek("chong_fossil_choice")
@@ -5296,7 +5296,7 @@
     return hasActiveEffectSubFlow()
       || isMovePaymentSelectionActive()
       || (els.dataPlaceOverlay && !els.dataPlaceOverlay.hidden)
-      || Boolean(pendingState.industryAbility)
+      || Boolean(decisionSessions.peek("industry_ability"))
       || Boolean(uiRuntimeState.industryFreeMoveState)
       || isIndustryHandSelectionActive();
   }
@@ -5317,7 +5317,7 @@
       clearMoveRocketHighlight();
       deactivateMoveMode();
       const message = `${pending.afterMoveStatus || "公司 1x 行动"}；已取消免费移动`;
-      if (pendingState.industryAbility) {
+      if (decisionSessions.peek("industry_ability")) {
         finishIndustryAbilityFlow(message);
       }
       if (pending.irreversibleIndustryFlow) {
@@ -5351,7 +5351,7 @@
       rocketState.statusNote = "已取消放置数据";
       return true;
     }
-    if (pendingState.industryAbility || uiRuntimeState.industryFreeMoveState || isIndustryHandSelectionActive()) {
+    if (decisionSessions.peek("industry_ability") || uiRuntimeState.industryFreeMoveState || isIndustryHandSelectionActive()) {
       rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
       return true;
     }
@@ -10317,7 +10317,7 @@
 
   function advanceHeadlessDeterministicState() {
     if (!headlessMode) return null;
-    const industryPending = pendingState.industryAbility;
+    const industryPending = decisionSessions.peek("industry_ability");
     if (industryPending && !pendingState.cardSelectionAction) {
       const player = getCurrentPlayer();
       const retryByFlowType = {
@@ -10356,7 +10356,7 @@
       && !(cardState.publicCards || []).some(Boolean)
       && !(allowsBlindDrawInSelection() && canBlindDraw())
     ) {
-      const label = pendingState.industryAbility?.label || "公司 1x";
+      const label = decisionSessions.peek("industry_ability")?.label || "公司 1x";
       const message = `${label}：公共牌区与牌库均无牌，精选效果落空`;
       finishIndustryAbilityFlow(message);
       return { ok: true, progressed: true, skipped: true, message };
@@ -10928,9 +10928,9 @@
     get pendingRunezuSymbolBranch() { return decisionSessions.peek("runezu_symbol_branch"); },
     get pendingRunezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
     get pendingBanrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
-    get pendingBanrenmaOpportunity() { return pendingState.banrenmaOpportunity; },
+    get pendingBanrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
     get pendingYichangdianCardGain() { return decisionSessions.peek("yichangdian_card_gain"); },
-    get pendingJiuzheCardPlay() { return pendingState.jiuzheCardPlay; },
+    get pendingJiuzheCardPlay() { return decisionSessions.peek("jiuzhe_card_play"); },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get alienTracePickerState() { return pendingState.alienTracePickerState; },
     set alienTracePickerState(value) { pendingState.alienTracePickerState = value; },

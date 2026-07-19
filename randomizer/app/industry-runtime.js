@@ -127,6 +127,13 @@
     } = context;
     const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
     const getStrategySlotDecision = () => decisionSessions.peek(STRATEGY_SLOT_DECISION);
+    const industryAbilitySession = {
+      get value() { return decisionSessions.peek("industry_ability"); },
+      set value(session) {
+        if (session == null) decisionSessions.clear("industry_ability");
+        else decisionSessions.open("industry_ability", session);
+      },
+    };
 
     function isIndustryHandSelectionActive() {
       return pendingState.cardSelectionAction?.type === "industry_deepspace_hand"
@@ -186,7 +193,7 @@
       if (uiRuntimeState.moveHighlightRocketId != null || uiRuntimeState.industryFreeMoveState) {
         deactivateMoveMode();
       }
-      pendingState.industryAbility = null;
+      industryAbilitySession.value = null;
       uiRuntimeState.industryFreeMoveState = null;
       syncIndustryHandSelectionChrome();
       syncInteractionFocusChrome();
@@ -231,7 +238,7 @@
         cards.setSelectionActive(cardState, false);
         syncCardSelectionChrome();
       }
-      pendingState.industryAbility = null;
+      industryAbilitySession.value = null;
       uiRuntimeState.industryFreeMoveState = null;
       if (uiRuntimeState.moveHighlightRocketId != null) {
         deactivateMoveMode();
@@ -247,8 +254,8 @@
     }
 
     function finishIndustryAbilityFlow(message) {
-      const flowType = pendingState.industryAbility?.flowType;
-      pendingState.industryAbility = null;
+      const flowType = industryAbilitySession.value?.flowType;
+      industryAbilitySession.value = null;
       uiRuntimeState.industryFreeMoveState = null;
       cards.setSelectionActive(cardState, false);
       pendingState.cardSelectionAction = null;
@@ -274,7 +281,7 @@
         return false;
       }
 
-      pendingState.industryAbility = { ...flow };
+      industryAbilitySession.value = { ...flow };
       switch (flow.flowType) {
         case "stratus_public_corners":
           return startIndustryStratusEffectFlow(flow, options);
@@ -338,7 +345,7 @@
 
     function startIndustryStratusEffectFlow(flow, options = {}) {
       const nodes = industry?.buildStratusPublicCornerEffectNodes?.(cards, cardState.publicCards) || [];
-      pendingState.industryAbility = null;
+      industryAbilitySession.value = null;
       pendingState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
@@ -379,7 +386,7 @@
         count: flow.exchangeCount ?? industry?.FUNDAMENTALISM_EXCHANGE_COUNT ?? 3,
         groupId,
       }) || [];
-      pendingState.industryAbility = null;
+      industryAbilitySession.value = null;
       pendingState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
@@ -533,7 +540,7 @@
       industry?.clearHeliosPassiveSlots?.(player);
       renderTechBoard();
       renderInitialSelectionArea();
-      pendingState.industryAbility = { flowType: "helios_remove_tech", removedTileId: tileId };
+      industryAbilitySession.value = { flowType: "helios_remove_tech", removedTileId: tileId };
       recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
         player,
         beforePlayer,
@@ -550,7 +557,7 @@
         restoreObjectSnapshot(player, beforePlayer);
         renderTechBoard();
         renderInitialSelectionArea();
-        pendingState.industryAbility = null;
+        industryAbilitySession.value = null;
         rollbackPendingIndustryQuickAction(incomeStart.message || "赫利昂联合体：收入无法结算，已撤回 1x 行动");
         return { ok: false, message: incomeStart.message || "赫利昂联合体：收入无法结算" };
       }
@@ -569,7 +576,7 @@
         count: flow.movesLeft ?? industry?.HUANYU_FREE_MOVE_COUNT ?? 2,
         groupId,
       }) || [];
-      pendingState.industryAbility = null;
+      industryAbilitySession.value = null;
       pendingState.cardSelectionAction = null;
       uiRuntimeState.industryFreeMoveState = null;
       cards.setSelectionActive(cardState, false);
@@ -706,7 +713,7 @@
               movedRocketIds: [...freeMoveStateBefore.movedRocketIds],
               label: freeMoveStateBefore.label,
             };
-            pendingState.industryAbility = {
+            industryAbilitySession.value = {
               flowType: "huanyu_free_moves",
               label: freeMoveStateBefore.label,
             };
@@ -750,7 +757,7 @@
         || isTechTilePickingActive()
         || isHandScanSelectionActive()
         || isMovePaymentSelectionActive()
-        || pendingState.industryAbility
+        || industryAbilitySession.value
         || uiRuntimeState.industryFreeMoveState
         || isIndustryHandSelectionActive()) {
         return { ok: false, message: "请先完成或取消当前流程" };

@@ -387,12 +387,12 @@
     function randomizeAll() {
       els?.spinButton?.classList.remove("pulsin");
       resetActionLog();
-      pendingState.jiuzheCardPlay = null;
-      pendingState.jiuzheOpportunityOpen = false;
-      pendingState.jiuzheOpportunityQueue = [];
+      decisionSessions?.clear?.("jiuzhe_card_play");
+      decisionSessions?.clear?.("jiuzhe_opportunity_open");
+      decisionSessions?.clear?.("jiuzhe_opportunity_queue");
       decisionSessions?.clear?.("banrenma_card_gain");
-      pendingState.banrenmaOpportunity = null;
-      pendingState.banrenmaOpportunityQueue = [];
+      decisionSessions?.clear?.("banrenma_opportunity");
+      decisionSessions?.clear?.("banrenma_opportunity_queue");
       decisionSessions?.clear?.("aomomo_card_gain");
       decisionSessions?.clear?.("runezu_card_gain");
       decisionSessions?.clear?.("runezu_symbol_branch");

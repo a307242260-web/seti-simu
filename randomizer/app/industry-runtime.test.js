@@ -2,13 +2,15 @@
 
 const assert = require("node:assert/strict");
 const { createIndustryRuntime } = require("./industry-runtime.js");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store.js");
 
 function noop() {}
 
 function createHarness() {
   const calls = [];
+  const decisionSessions = createDecisionSessionStore();
+  decisionSessions.open("industry_ability", { flowType: "deepspace_swap" });
   const pendingState = {
-    industryAbility: { flowType: "deepspace_swap" },
     cardSelectionAction: {
       type: "industry_deepspace_hand",
       player: { id: "p1" },
@@ -44,6 +46,7 @@ function createHarness() {
     },
     clearHistoryStepOrderForSource: (source) => calls.push(`clear:${source}`),
     deactivateMoveMode: () => calls.push("move-off"),
+    decisionSessions,
     els: {
       scanTargetOverlay: { hidden: false },
       scanTargetCancel: { hidden: true },
@@ -74,7 +77,7 @@ function createHarness() {
     uiRuntimeState,
     updateActionButtons: noop,
   };
-  return { calls, context, pendingState, techGameState, uiRuntimeState };
+  return { calls, context, decisionSessions, pendingState, techGameState, uiRuntimeState };
 }
 
 {
@@ -83,7 +86,7 @@ function createHarness() {
   const result = runtime.rollbackPendingIndustryQuickAction();
 
   assert.equal(result.ok, true);
-  assert.equal(harness.pendingState.industryAbility, null);
+  assert.equal(harness.decisionSessions.peek("industry_ability"), null);
   assert.equal(harness.pendingState.cardSelectionAction, null);
   assert.equal(harness.pendingState.discardAction, null);
   assert.equal(harness.pendingState.scanTargetAction, null);
@@ -103,7 +106,7 @@ function createHarness() {
   runtime.cancelIndustryAbilityFlow();
 
   assert.equal(harness.pendingState.cardSelectionAction, null);
-  assert.equal(harness.pendingState.industryAbility, null);
+  assert.equal(harness.decisionSessions.peek("industry_ability"), null);
   assert.equal(harness.techGameState.ui.industryBorrowMode, false);
   assert.equal(harness.uiRuntimeState.industryFreeMoveState, null);
   assert.ok(harness.calls.includes("refund:1"));
