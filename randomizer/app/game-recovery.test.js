@@ -21,6 +21,11 @@ function createLegacyState(overrides = {}) {
   };
 }
 
+function createRuntimeState(overrides = {}) {
+  const { cardTaskState, setupSelectionState, ...runtimeState } = createLegacyState(overrides);
+  return runtimeState;
+}
+
 const snapshot = recovery.createGameRecoverySnapshot({
   version: 2,
   roundNumber: 4,
@@ -29,7 +34,7 @@ const snapshot = recovery.createGameRecoverySnapshot({
   currentPlayerId: "player-blue",
   entryId: 9,
   label: "恢复点",
-  state: createLegacyState({
+  stateSlices: createRuntimeState({
     playerState: { currentPlayerId: "player-blue" },
   }),
   runtime: {
@@ -42,20 +47,12 @@ assert.equal(snapshot.meta.label, "恢复点");
 assert.equal(typeof snapshot.committedState, "string");
 assert.equal(Object.hasOwn(snapshot, "state"), false);
 assert.equal(snapshot.committedState.includes("aiControl"), false);
+assert.equal(snapshot.committedState.includes("cardTaskState"), false);
+assert.equal(snapshot.committedState.includes("setupSelectionState"), false);
 
 assert.throws(() => recovery.createGameRecoverySnapshot({
-  state: createLegacyState({
-    playerState: {
-      currentPlayerId: "duplicate",
-      players: [{ id: "duplicate" }, { id: "duplicate" }],
-    },
-  }),
-}), (error) => {
-  assert.match(error.message, /STATE_MIGRATION_OUTPUT_INVALID/);
-  assert.match(error.message, /path=\$\.players\.players\[1\]\.id/);
-  assert.match(error.message, /cause=STATE_PLAYER_ID_INVALID/);
-  return true;
-});
+  stateSlices: createLegacyState(),
+}), /CURRENT_RUNTIME_STATE_FORBIDDEN_SLICE/);
 
 const pack = recovery.createActionLogRecoveryPackage({
   version: "v1",

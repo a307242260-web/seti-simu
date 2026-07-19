@@ -37,9 +37,29 @@ function createLegacySnapshot(overrides = {}) {
   assert.equal(adapter.ADAPTER_CONTRACT.target, stateStore.SCHEMA_VERSION);
   assert.match(adapter.ADAPTER_CONTRACT.source, /12 legacy state slices/);
   assert.match(adapter.ADAPTER_CONTRACT.deleteWhen, /no supported v1 artifact remains/);
+  assert.equal(adapter.ADAPTER_CONTRACT.owner, "SETI-71");
+  assert.equal(adapter.ADAPTER_CONTRACT.expiresOn, "2026-08-31");
+  assert.equal(adapter.CURRENT_RUNTIME_ADAPTER_CONTRACT.owner, "SETI-71");
+  assert.equal(adapter.CURRENT_RUNTIME_ADAPTER_CONTRACT.expiresOn, "2026-08-31");
   assert.equal(adapter.FIELD_OWNERSHIP.cardTaskState, "derived:excluded");
   assert.equal(adapter.FIELD_OWNERSHIP.setupSelectionState, "session-owned:excluded");
   assert.equal(adapter.FIELD_OWNERSHIP["runtime.aiControl"], "host-only:excluded");
+})();
+
+(function testCurrentRuntimeBoundaryRejectsDerivedAndSessionSlices() {
+  const source = createLegacySnapshot().state;
+  const { cardTaskState, setupSelectionState, ...runtimeSlices } = source;
+  const adapted = adapter.adaptCurrentRuntimeStateSlices(runtimeSlices, {
+    seed: 82,
+    rngState: { algorithm: "test", state: 123 },
+  });
+  assert.equal(adapted.ok, true);
+  assert.equal(adapted.sourceVersion, "runtime-working-projection-v1");
+  assert.equal(JSON.stringify(adapted.state).includes("cardTaskState"), false);
+  assert.equal(JSON.stringify(adapted.state).includes("setupSelectionState"), false);
+  assert.equal(adapter.adaptCurrentRuntimeStateSlices(source).code, "CURRENT_RUNTIME_STATE_FORBIDDEN_SLICE");
+  assert.equal(adapter.adaptCurrentRuntimeStateSlices({ ...runtimeSlices, unknownState: {} }).code,
+    "CURRENT_RUNTIME_STATE_SLICE_UNKNOWN");
 })();
 
 (function testLegacyToCommittedToLegacyRoundTrip() {

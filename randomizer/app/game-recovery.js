@@ -20,24 +20,22 @@
   }
 
   function createGameRecoverySnapshot(options = {}) {
-    const legacySnapshot = {
-      version: legacyStateAdapter.LEGACY_RECOVERY_VERSION,
-      meta: {
-        roundNumber: options.roundNumber ?? null,
-        turnNumber: options.turnNumber ?? null,
-        actionCycleNumber: options.actionCycleNumber ?? null,
-        currentPlayerId: options.currentPlayerId ?? null,
-        entryId: options.entryId ?? null,
-        label: options.label || null,
-      },
-      state: options.state,
+    const meta = {
+      roundNumber: options.roundNumber ?? null,
+      turnNumber: options.turnNumber ?? null,
+      actionCycleNumber: options.actionCycleNumber ?? null,
+      currentPlayerId: options.currentPlayerId ?? null,
+      entryId: options.entryId ?? null,
+      label: options.label || null,
     };
-    const serialized = legacyStateAdapter.serializeLegacySnapshot(legacySnapshot, {
+    const serialized = legacyStateAdapter.serializeCurrentRuntimeStateSlices(options.stateSlices, {
       gameId: options.gameId,
       rulesetVersion: options.rulesetVersion,
       seed: options.seed,
       rngState: options.rngState,
       sequences: options.sequences,
+      currentPlayerId: meta.currentPlayerId,
+      entryId: meta.entryId,
     });
     if (!serialized.ok) {
       const firstError = serialized.errors?.[0] || null;
@@ -50,7 +48,7 @@
     }
     return {
       version: legacyStateAdapter.COMMITTED_RECOVERY_VERSION,
-      meta: legacySnapshot.meta,
+      meta,
       committedState: serialized.serialized,
       runtime: structuredClone(options.runtime || {}),
     };

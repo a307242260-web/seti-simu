@@ -40,6 +40,18 @@
     "cardTaskState",
     "setupSelectionState",
   ]);
+  const CURRENT_RUNTIME_STATE_SLICES = Object.freeze([
+    "solarState",
+    "nebulaDataState",
+    "alienGameState",
+    "finalScoringState",
+    "playerState",
+    "turnState",
+    "rocketState",
+    "planetStatsState",
+    "techGameState",
+    "cardState",
+  ]);
   const FIELD_OWNERSHIP = Object.freeze({
     solarState: "committed:solarSystem; derived:wheelSteps",
     nebulaDataState: "committed:data; derived:playerTokenCounts/lastReplaced*; host-only:labels/assets/layout",
@@ -59,7 +71,17 @@
     source: "SETI recovery/headless snapshot version 1 with exactly 12 legacy state slices",
     target: stateStore.SCHEMA_VERSION,
     direction: "deserialize legacy once, then use committed snapshot as authority",
+    owner: "SETI-71",
+    expiresOn: "2026-08-31",
     deleteWhen: "all persisted recovery/checkpoint artifacts are committed schema and no supported v1 artifact remains",
+  });
+  const CURRENT_RUNTIME_ADAPTER_CONTRACT = Object.freeze({
+    source: "browser runtime working projection with exactly 10 rule-bearing state slices",
+    target: stateStore.SCHEMA_VERSION,
+    direction: "project working state once at a stable recovery boundary, then serialize through StateStore",
+    owner: "SETI-71",
+    expiresOn: "2026-08-31",
+    deleteWhen: "browser rule domains consume the shared StateStore working copy without a legacy projection",
   });
 
   function isPlainObject(value) {
@@ -195,6 +217,52 @@
     if (!adapted.ok) return adapted;
     const store = highCouplingState.createHighCouplingStateStore(adapted.state);
     return store.serialize();
+  }
+
+  function adaptCurrentRuntimeStateSlices(input, options = {}) {
+    if (!isPlainObject(input)) {
+      return failure("CURRENT_RUNTIME_STATE_INVALID", "当前 runtime 状态必须是普通对象");
+    }
+    const missingSlices = CURRENT_RUNTIME_STATE_SLICES.filter((key) => !Object.hasOwn(input, key));
+    if (missingSlices.length) {
+      return failure("CURRENT_RUNTIME_STATE_SLICE_MISSING", `当前 runtime 状态缺少切片：${missingSlices.join(", ")}`, {
+        missingSlices,
+      });
+    }
+    const forbiddenSlices = ["cardTaskState", "setupSelectionState"].filter((key) => Object.hasOwn(input, key));
+    if (forbiddenSlices.length) {
+      return failure("CURRENT_RUNTIME_STATE_FORBIDDEN_SLICE", `当前 recovery 输入禁止包含：${forbiddenSlices.join(", ")}`, {
+        forbiddenSlices,
+      });
+    }
+    const unknownSlices = Object.keys(input).filter((key) => !CURRENT_RUNTIME_STATE_SLICES.includes(key));
+    if (unknownSlices.length) {
+      return failure("CURRENT_RUNTIME_STATE_SLICE_UNKNOWN", `当前 runtime 状态包含未知切片：${unknownSlices.join(", ")}`, {
+        unknownSlices,
+      });
+    }
+    const adapted = adaptLegacySnapshot({
+      version: LEGACY_RECOVERY_VERSION,
+      meta: {
+        entryId: options.entryId ?? null,
+        currentPlayerId: options.currentPlayerId ?? null,
+        seed: options.seed,
+        rngState: options.rngState,
+        sequences: options.sequences,
+      },
+      state: {
+        ...clonePlain(input),
+        cardTaskState: {},
+        setupSelectionState: {},
+      },
+    }, options);
+    return adapted.ok ? { ...adapted, sourceVersion: "runtime-working-projection-v1" } : adapted;
+  }
+
+  function serializeCurrentRuntimeStateSlices(input, options = {}) {
+    const adapted = adaptCurrentRuntimeStateSlices(input, options);
+    if (!adapted.ok) return adapted;
+    return highCouplingState.createHighCouplingStateStore(adapted.state).serialize();
   }
 
   function deserializeRecoverySnapshot(input, options = {}) {
@@ -373,11 +441,15 @@
     LEGACY_RECOVERY_VERSION,
     COMMITTED_RECOVERY_VERSION,
     LEGACY_STATE_SLICES,
+    CURRENT_RUNTIME_STATE_SLICES,
     FIELD_OWNERSHIP,
     LOW_COUPLING_FIELD_OWNERSHIP: lowCouplingState.FIELD_OWNERSHIP,
     ADAPTER_CONTRACT,
+    CURRENT_RUNTIME_ADAPTER_CONTRACT,
     adaptLegacySnapshot,
     serializeLegacySnapshot,
+    adaptCurrentRuntimeStateSlices,
+    serializeCurrentRuntimeStateSlices,
     deserializeRecoverySnapshot,
     projectCommittedStateToLegacySlices,
     mutateLegacyLowCouplingSlices,

@@ -3522,7 +3522,7 @@
         historyStep: actionHistoryModule.getNextHistoryStepSequence(),
         actionLog: actionLogState.nextEntryId,
       },
-      state: {
+      stateSlices: {
         solarState: structuredClone(solarState),
         nebulaDataState: structuredClone(nebulaDataState),
         alienGameState: structuredClone(alienGameState),
@@ -3533,8 +3533,6 @@
         planetStatsState: structuredClone(planetStatsState),
         techGameState: structuredClone(techGameState),
         cardState: structuredClone(cardState),
-        cardTaskState: structuredClone(cardTaskState),
-        setupSelectionState: structuredClone(setupSelectionState),
       },
       runtime: {
         aiControl: createAiControlSnapshot(),
@@ -3917,8 +3915,6 @@
         planetStatsState,
         techGameState,
         cardState,
-        cardTaskState,
-        setupSelectionState,
       },
       restoreMutableObject,
       restoreDeterministicState: (sequences) => {
