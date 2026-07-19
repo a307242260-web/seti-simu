@@ -1001,7 +1001,7 @@
         pendingState.runezuCardGain,
         pendingState.runezuSymbolBranch,
         pendingState.runezuFaceSymbolPlacement,
-        pendingState.strategyPassiveSlotChoice,
+        decisionSessions?.peek?.("strategy_passive_slot"),
         decisionSessions?.peek?.("pirates_raid_placement"),
         uiRuntimeState.industryFreeMoveState,
       ];

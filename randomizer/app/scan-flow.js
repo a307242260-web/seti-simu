@@ -36,6 +36,7 @@
     const structuredClone = structuredCloneRef;
 
     const pendingState = context.pendingState || {};
+    const decisionSessions = context.decisionSessions;
     const cardState = context.cardState || {};
     const nebulaDataState = context.nebulaDataState || {};
     const alienGameState = context.alienGameState || {};
@@ -1288,7 +1289,7 @@
         pendingState.scanTargetAction = null;
         pendingState.probeSectorScanAction = null;
         pendingState.probeLocationRewardAction = null;
-        pendingState.strategyPassiveSlotChoice = null;
+        decisionSessions.clear("strategy_passive_slot");
         return;
       }
       if (pendingState.publicScanQueue) {
@@ -1317,7 +1318,7 @@
       pendingState.runezuCardGain = null;
       pendingState.runezuSymbolBranch = null;
       pendingState.runezuFaceSymbolPlacement = null;
-      pendingState.strategyPassiveSlotChoice = null;
+      decisionSessions.clear("strategy_passive_slot");
       setScanTargetActionLayout();
       pendingState.scanTargetAction = null;
       pendingState.probeSectorScanAction = null;

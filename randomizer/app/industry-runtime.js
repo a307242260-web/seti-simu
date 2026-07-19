@@ -46,6 +46,7 @@
       completeCurrentActionEffect,
       completeQuickActionStep,
       createActionContext,
+      decisionSessions,
       createCardCornerTriggerEventFields,
       createInitialSelectionImage,
       data,
@@ -124,6 +125,8 @@
       uiRuntimeState,
       updateActionButtons
     } = context;
+    const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
+    const getStrategySlotDecision = () => decisionSessions.peek(STRATEGY_SLOT_DECISION);
 
     function isIndustryHandSelectionActive() {
       return pendingState.cardSelectionAction?.type === "industry_deepspace_hand"
@@ -1638,7 +1641,7 @@
     }
 
     function closeStrategyPassiveSlotChoicePicker() {
-      pendingState.strategyPassiveSlotChoice = null;
+      decisionSessions.clear(STRATEGY_SLOT_DECISION);
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
       renderActionEffectBar();
@@ -1647,8 +1650,8 @@
     }
 
     function cancelStrategyPassiveSlotChoice() {
-      if (!pendingState.strategyPassiveSlotChoice) return;
-      pendingState.strategyPassiveSlotChoice = null;
+      if (!getStrategySlotDecision()) return;
+      decisionSessions.clear(STRATEGY_SLOT_DECISION);
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
       rocketState.statusNote = "宇宙战略集团：已取消奖励槽选择，可重新点击效果或跳过";
@@ -1660,22 +1663,22 @@
     function openStrategyPassiveSlotChoice(effect, player, slotIds) {
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         if (globalThis.SetiHeadlessRuntimeConfig?.enabled) {
-          pendingState.strategyPassiveSlotChoice = {
+          decisionSessions.open(STRATEGY_SLOT_DECISION, {
             effectId: effect.id,
             slotIds: [...slotIds],
             playerId: player?.id || null,
             playerColor: player?.color || null,
-          };
+          });
           return { ok: true, pendingChoice: true, undoable: true, message: "宇宙战略集团：请选择奖励槽" };
         }
         rocketState.statusNote = "宇宙战略集团：无法打开奖励槽选择";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      pendingState.strategyPassiveSlotChoice = {
+      decisionSessions.open(STRATEGY_SLOT_DECISION, {
         effectId: effect.id,
         slotIds: [...slotIds],
-      };
+      });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = "宇宙战略集团";
       if (els.scanTargetSubtitle) {
         els.scanTargetSubtitle.textContent = "黑色扫描角标可选择一个空奖励槽触发。";
@@ -1700,7 +1703,7 @@
     }
 
     function confirmStrategyPassiveSlotChoice(slotId) {
-      const pending = pendingState.strategyPassiveSlotChoice;
+      const pending = getStrategySlotDecision();
       const effect = getCurrentActionEffect();
       if (!pending || !effect || effect.id !== pending.effectId || effect.type !== "industry_strategy_passive_reward") {
         cancelStrategyPassiveSlotChoice();

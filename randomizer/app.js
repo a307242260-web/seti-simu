@@ -266,9 +266,11 @@
   const DATA_PLACEMENT_DECISION = "data_placement";
   const LAND_TARGET_DECISION = "land_target";
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
+  const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
+  const getPendingStrategySlotDecision = () => decisionSessions.peek(STRATEGY_SLOT_DECISION);
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
@@ -1301,6 +1303,7 @@
     runezu,
     aomomo,
     historyCommands,
+    decisionSessions,
     document,
     structuredClone,
     pendingState,
@@ -2764,7 +2767,7 @@
     get pendingPlayCardSelection() { return pendingState.playCardSelection; },
     get pendingCardCornerFreeMove() { return pendingState.cardCornerFreeMove; },
     get pendingIndustryAbility() { return pendingState.industryAbility; },
-    get pendingStrategyPassiveSlotChoice() { return pendingState.strategyPassiveSlotChoice; },
+    get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
     get alienTracePickerState() { return pendingState.alienTracePickerState; },
     get pendingAlienRevealConfirmation() { return pendingState.alienRevealConfirmation; },
@@ -3831,7 +3834,7 @@
     decisionSessions.clear(DATA_PLACEMENT_DECISION);
     pendingState.industryAbility = null;
     decisionSessions.clear(PIRATES_RAID_DECISION);
-    pendingState.strategyPassiveSlotChoice = null;
+    decisionSessions.clear(STRATEGY_SLOT_DECISION);
     uiRuntimeState.industryFreeMoveState = null;
     historyStepOrder.length = 0;
     actionHistory.commitSession();
@@ -5243,7 +5246,7 @@
       || pendingState.runezuCardGain
       || pendingState.runezuSymbolBranch
       || pendingState.runezuFaceSymbolPlacement
-      || pendingState.strategyPassiveSlotChoice
+      || getPendingStrategySlotDecision()
       || getPendingPiratesRaidDecision()
       || pendingState.cardTriggerFreeMove
       || pendingState.cardCornerFreeMove
@@ -5270,7 +5273,7 @@
       rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
       return true;
     }
-    if (pendingState.strategyPassiveSlotChoice) {
+    if (getPendingStrategySlotDecision()) {
       cancelStrategyPassiveSlotChoice();
       return true;
     }
@@ -5538,7 +5541,7 @@
     pendingState.runezuCardGain = null;
     pendingState.runezuSymbolBranch = null;
     pendingState.runezuFaceSymbolPlacement = null;
-    pendingState.strategyPassiveSlotChoice = null;
+    decisionSessions.clear(STRATEGY_SLOT_DECISION);
     if (getPendingPiratesRaidDecision()) {
       decisionSessions.clear(PIRATES_RAID_DECISION);
       renderTechBoard();
@@ -7760,6 +7763,7 @@
       completeCurrentActionEffect: typeof completeCurrentActionEffect === "undefined" ? undefined : completeCurrentActionEffect,
       completeQuickActionStep: typeof completeQuickActionStep === "undefined" ? undefined : completeQuickActionStep,
       createActionContext: (...args) => createActionContext(...args),
+      decisionSessions,
       createCardCornerTriggerEventFields: typeof createCardCornerTriggerEventFields === "undefined" ? undefined : createCardCornerTriggerEventFields,
       createInitialSelectionImage: (...args) => createInitialSelectionImage(...args),
       data: typeof data === "undefined" ? undefined : data,
@@ -9286,7 +9290,7 @@
       pendingState.cardTriggerFreeMove,
       pendingState.actionEffectFlow?.cardMoveEffect,
       pendingState.cardCornerFreeMove,
-      pendingState.strategyPassiveSlotChoice,
+      getPendingStrategySlotDecision(),
       pendingState.chongFossilChoice,
       pendingState.amibaSymbolChoice,
       pendingState.discardAction,
@@ -9876,7 +9880,7 @@
         }),
       };
     }
-    const strategySlotPending = pendingState.strategyPassiveSlotChoice;
+    const strategySlotPending = getPendingStrategySlotDecision();
     if (strategySlotPending) {
       return {
         actorPlayer: getHeadlessConditionalPlayer(strategySlotPending),
@@ -10891,7 +10895,7 @@
     get pendingBanrenmaOpportunity() { return pendingState.banrenmaOpportunity; },
     get pendingYichangdianCardGain() { return pendingState.yichangdianCardGain; },
     get pendingJiuzheCardPlay() { return pendingState.jiuzheCardPlay; },
-    get pendingStrategyPassiveSlotChoice() { return pendingState.strategyPassiveSlotChoice; },
+    get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get alienTracePickerState() { return pendingState.alienTracePickerState; },
     set alienTracePickerState(value) { pendingState.alienTracePickerState = value; },
     get pendingAlienRevealConfirmation() { return pendingState.alienRevealConfirmation; },
