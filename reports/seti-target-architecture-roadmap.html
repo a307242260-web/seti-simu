@@ -117,22 +117,22 @@
 <main>
   <header>
     <div class="meta">SETI / ARCHITECTURE NOTE / ROADMAP-01</div>
-    <h1>最后一个讨论项：目标架构与演进路线</h1>
-    <p class="summary">这轮不再提出新的大重构。目标是把已经启动的 Standard Action、Effect Session、StateStore、Browser Host 和机器玩家接入口收成一条稳定主干，再删除旧的重复流程；后续玩法和 AI 能力都沿这条主干扩展。</p>
+    <h1>目标架构与演进路线（跟进版）</h1>
+    <p class="summary">这不是等待拍板后才启动的新重构：Standard Action、Effect Session、StateStore、Browser Host 和机器玩家接入口已经沿现有总控推进。本页跟踪主路线；GameRuntime 装配、多实例/reset 与持久化/replay 的总契约落在 <code>docs/game-runtime-persistence-contract.md</code>。</p>
   </header>
 
   <section>
-    <div class="finding"><b>阶段判断：</b>SETI 的目标架构方向已经基本确定，当前最重要的不是再画一套更理想的系统，而是按依赖顺序完成现有总控、消除双轨所有权。完成标准看“规则是否只有一个执行入口、状态是否只有一个权威来源、宿主是否只做输入输出”，不再用文件行数、换框架或新增抽象数量衡量。</div>
+    <div class="finding"><b>阶段判断：</b>不另开总控；按依赖顺序跟进现有实现并及时解锁下一阶段。完成标准看“规则是否只有一个执行入口、状态是否只有一个权威来源、宿主是否只做输入输出”，不再用文件行数、换框架或新增抽象数量衡量。</div>
   </section>
 
   <section>
     <h2>当前路线已经走到哪里</h2>
     <div class="status-grid">
       <article class="status done"><span class="tag">DONE</span><b>Standard Action</b><p>SETI-56 已收口；旧执行入口、bypass 和 public alias 生产引用归零。</p></article>
-      <article class="status active"><span class="tag">IN PROGRESS</span><b>Effect Session</b><p>SETI-62 已有核心、代表链和 journal；正在接浏览器宿主，之后补训练宿主与剩余流程。</p></article>
-      <article class="status active"><span class="tag">IN PROGRESS</span><b>StateStore</b><p>SETI-71 已完成 schema、切片、不变量与 RNG；继续迁移高耦合状态和宿主投影。</p></article>
+      <article class="status active"><span class="tag">IN PROGRESS</span><b>Effect Session</b><p>SETI-62 的 Stage 2-6 已完成；SETI-69 已解锁，正在接 headless / training 宿主。</p></article>
+      <article class="status active"><span class="tag">IN PROGRESS</span><b>StateStore</b><p>SETI-71 的 Stage 2-5 已完成；SETI-86 已解锁，正在接 Effect Session compare-and-commit。</p></article>
       <article class="status waiting"><span class="tag">WAITING</span><b>Browser Host</b><p>SETI-72 契约与拆解已就绪，等待 StateStore reference contract 后开始正式迁移。</p></article>
-      <article class="status active"><span class="tag">IN PROGRESS</span><b>Machine Policy</b><p>SETI-90 已冻结公共 Policy 端口，正在独立化启发式机器玩家。</p></article>
+      <article class="status active"><span class="tag">IN PROGRESS</span><b>Machine Policy</b><p>SETI-90 已冻结公共 Policy 端口；SETI-92 正在独立化启发式机器玩家。</p></article>
     </div>
   </section>
 
@@ -207,7 +207,7 @@
     </div>
   </section>
 
-  <footer>证据范围：SETI-56 / 62 / 71 / 72 / 90 当前状态与 metadata；<code>docs/standard-action-contract.md</code>、<code>docs/effect-session-runtime.md</code>、<code>docs/browser-host-ui.md</code>、<code>docs/app-topdown-architecture.md</code>、<code>docs/ai-design.md</code>、<code>docs/rl-headless-env.md</code>。本轮只讨论目标边界与推进顺序，不直接启动新的代码重构。</footer>
+  <footer>证据范围：SETI-56 / 62 / 68 / 71 / 72 / 86 / 90 / 92 当前状态与 metadata；<code>docs/game-runtime-persistence-contract.md</code>、<code>docs/standard-action-contract.md</code>、<code>docs/effect-session-runtime.md</code>、<code>docs/committed-game-state.md</code>、<code>docs/browser-host-ui.md</code>、<code>docs/policy-port-contract.md</code>。本页随现有迁移阶段更新，不建立新的实现总控。</footer>
 </main>
 </body>
 </html>
