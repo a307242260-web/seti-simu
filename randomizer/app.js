@@ -2123,6 +2123,9 @@
             const player = players.getCurrentPlayer(context.playerState);
             const choices = (player?.hand || []).map((card, handIndex) => ({ card, handIndex, action: getCardCornerQuickActionForCard(card) }))
               .filter(({ action }) => Boolean(action))
+              .filter(({ action }) => action.actionKind !== "move"
+                || shouldQueueCardCornerMoveQuickAction(action, player)
+                || canStartCardCornerFreeMove().ok)
               .map(({ card, handIndex, action }) => ({
                 target: { cardInstanceId: card.id },
                 payload: { handIndex, actionKind: action.actionKind, symbolId: action.symbolId || null },
@@ -6142,8 +6145,10 @@
         ? `${effect.label}：没有可移动的另一枚火箭，可点击跳过`
         : `${effect.label || "移动"}：没有可移动的飞船，已跳过`;
       deactivateMoveMode();
-      if (!isIndustryHuanyuMoveEffect(effect)) {
-        return skipActionEffectWithMessage(effect, message, {
+      if (!isIndustryHuanyuMoveEffect(effect) || headlessMode) {
+        return skipActionEffectWithMessage(effect, headlessMode
+          ? `${effect.label || "移动"}：没有可移动的飞船，已跳过`
+          : message, {
           reason: "没有可移动的飞船",
           abilityId: "moveProbe",
         });
@@ -9264,6 +9269,7 @@
     const activePending = [
       finalScorePending ? { ...finalScorePending, player: finalScorePlayer } : null,
       pendingState.scanTargetAction,
+      pendingState.probeSectorScanAction,
       pendingState.handScanAction,
       pendingState.passReserveSelection,
       pendingState.movePayment,
@@ -9355,6 +9361,34 @@
         )),
       };
     }
+    const probeSectorPending = pendingState.probeSectorScanAction;
+    if (probeSectorPending) {
+      const choices = probeSectorPending.choices || [];
+      const maxTargets = Math.max(1, Math.round(Number(probeSectorPending.effect?.options?.maxTargets) || 1));
+      const subsets = [];
+      const visit = (start, selected) => {
+        if (selected.length) subsets.push([...selected]);
+        if (selected.length >= maxTargets) return;
+        for (let index = start; index < choices.length; index += 1) {
+          selected.push(choices[index]);
+          visit(index + 1, selected);
+          selected.pop();
+        }
+      };
+      visit(0, []);
+      return {
+        actorPlayer: getHeadlessConditionalPlayer(probeSectorPending),
+        candidates: subsets.map((subset) => {
+          const rocketIds = subset.map((choice) => choice.rocket.id);
+          return {
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `选择探测器 ${rocketIds.join(",")}`,
+            target: { kind: "probe-sector-selection", choiceId: rocketIds.join(","), rocketIds },
+          };
+        }),
+      };
+    }
     const chongFossilPending = pendingState.chongFossilChoice;
     if (chongFossilPending) {
       return {
@@ -9442,6 +9476,17 @@
             family: "choose_target",
             label: choice.label || "移除环绕标记",
             target: { kind: "remove-orbit-to-probe", choiceId: choice.id, planetId: choice.planetId },
+          })),
+        };
+      }
+      if (scanTargetPending.type === "remove_planet_marker") {
+        return {
+          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          candidates: (scanTargetPending.choices || []).map((choice) => ({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: choice.label || "移除星球标记",
+            target: { kind: "remove-planet-marker", choiceId: choice.id },
           })),
         };
       }
@@ -10021,6 +10066,11 @@
   const HEADLESS_CONDITIONAL_HANDLERS = Object.freeze({
     "conditional-sector": (action) => handleConditionalSectorChoice(action.target.sectorX ?? action.target.choiceId),
     "chong-fossil-choice": (action) => handleChongFossilChoice(action.target.choiceId),
+    "probe-sector-selection": (action) => {
+      if (!pendingState.probeSectorScanAction) return { ok: false, message: "没有待处理的探测器扫描" };
+      pendingState.probeSectorScanAction.selectedRocketIds = [...(action.target.rocketIds || [])];
+      return confirmProbeSectorScanSelection();
+    },
     "runezu-symbol-branch": (action) => handleRunezuSymbolBranchChoice(action.target.choiceId),
     "runezu-face-symbol-choice": (action) => handleRunezuFaceSymbolChoice(action.target.choiceId),
     "final-score-tile": (action) => handleFinalScoreTileClick(action.target.choiceId),
@@ -10045,6 +10095,7 @@
     "discard-corner-repeat": (action) => handleDiscardCornerRepeatChoice(action.target.cardId),
     "return-unfinished-task": (action) => handleReturnUnfinishedTaskChoice(action.target.cardId),
     "remove-orbit-to-probe": (action) => handleRemoveOrbitToProbeChoice(action.target.choiceId),
+    "remove-planet-marker": (action) => handleRemovePlanetMarkerChoice(action.target.choiceId),
     "pending-data-placement": (action) => confirmDataPlacement(action.placementTarget, action.blueSlot),
     "skip-pending-data-placement": () => skipPendingDataPlacement()
       || { ok: true, progressed: true, skipped: true, message: "已跳过本次数据获得" },

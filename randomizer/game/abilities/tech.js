@@ -83,7 +83,12 @@
         ? "没有符合颜色限制的可研究科技板块"
         : "没有可研究的科技板块";
       if (context.techUiState) context.techUiState.statusNote = message;
-      return { ok: false, abilityId: "researchTechPrepare", message };
+      return {
+        ok: false,
+        abilityId: "researchTechPrepare",
+        reason: "no_takeable_tech",
+        message,
+      };
     }
 
     if (context.techUiState) {

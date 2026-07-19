@@ -29,7 +29,7 @@ let observation = env.reset({
 
 for (
   let stepIndex = 0;
-  stepIndex < 100 && !env.isTerminal();
+  stepIndex < 200 && !env.isTerminal();
   stepIndex += 1
 ) {
   const action = chooseBaselineAction(env.legalActions());

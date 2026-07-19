@@ -3,6 +3,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { performance } = require("node:perf_hooks");
+const { createHeuristicPolicyAdapter } = require("../training/heuristic-policy-adapter");
 const { createHeadlessEffectSessionHost } = require("./headless-effect-session-host");
 const legacyStateAdapter = require("../game/state/legacy-state-adapter");
 const highCouplingState = require("../game/state/high-coupling-slices");
@@ -193,7 +194,7 @@ const HEADLESS_PENDING_INVENTORY_KEYS = Object.freeze([
 
 const HEADLESS_SCAN_TARGET_TYPES = Object.freeze([
   "conditional_sector_scan", "discard_any_income", "pay_credit_reward",
-  "discard_corner_repeat", "remove_orbit_to_probe", "return_unfinished_task",
+  "discard_corner_repeat", "remove_orbit_to_probe", "remove_planet_marker", "return_unfinished_task",
   "public_scan", "hand_scan", "sector_scan", "industry_pirates_raid_launch",
 ]);
 
@@ -379,6 +380,33 @@ function buildEnvironmentEvents(resolution, startIndex, sourceActionType = null)
   }));
 }
 
+function jsonSafeClone(value) {
+  if (value === undefined) return null;
+  const seen = new WeakSet();
+  return JSON.parse(JSON.stringify(value, (_key, item) => {
+    if (typeof item === "function") return undefined;
+    if (item && typeof item === "object") {
+      if (seen.has(item)) return undefined;
+      seen.add(item);
+    }
+    return item;
+  }));
+}
+
+function compactEffectSessionJournal(journal) {
+  if (!journal) return null;
+  const replay = Array.isArray(journal.replay) ? journal.replay : [];
+  const lastConfirmed = replay.at(-1) || null;
+  return {
+    schemaVersion: "seti-effect-session-journal-compact-v1",
+    replayCursor: replay.length,
+    replay: lastConfirmed ? [structuredClone(lastConfirmed)] : [],
+    counts: Object.fromEntries(Object.entries(journal)
+      .filter(([, entries]) => Array.isArray(entries))
+      .map(([key, entries]) => [key, entries.length])),
+  };
+}
+
 function createHeadlessEnv() {
   let api = null;
   let seed = null;
@@ -394,6 +422,7 @@ function createHeadlessEnv() {
   let restoreHost = null;
   let seededRandom = null;
   let diagnostics = null;
+  let heuristicPolicyAdapter = null;
   let effectSessionHost = null;
   let stateStore = null;
 
@@ -577,7 +606,13 @@ function createHeadlessEnv() {
         policyVersion: resetConfig.policyVersion || null,
         opponentIdentity: resetConfig.opponentIdentity || null,
         seat: resetConfig.seat ?? null,
+        offlineTeacher: resetConfig.offlineTeacher === true,
+        compactReplay: resetConfig.compactReplay === true,
       };
+      heuristicPolicyAdapter = createHeuristicPolicyAdapter({
+        difficulty: resetConfig.aiDifficulty || "laughable",
+        strategyWeights: resetConfig.strategyWeights || {},
+      });
       replaySteps = [];
       environmentEvents = [];
       legalActionSelectors = new Map();
@@ -825,9 +860,11 @@ function createHeadlessEnv() {
         reward,
         preDecision: beforeObservation.decision,
         postDecision: observation.decision,
-        publicSummary: observation.publicState,
+        publicSummary: config?.compactReplay ? null : observation.publicState,
         environmentEvents: stepEnvironmentEvents,
-        effectSessionJournal: structuredClone(result.resolution?.effectSessionJournal || null),
+        effectSessionJournal: config?.compactReplay
+          ? compactEffectSessionJournal(result.resolution?.effectSessionJournal)
+          : structuredClone(result.resolution?.effectSessionJournal || null),
       };
       replaySteps.push(replayEvent);
       recordDuration("replayMilliseconds", replayStartedAt);
@@ -848,6 +885,39 @@ function createHeadlessEnv() {
     getDiagnostics() {
       return structuredClone(diagnostics || {});
     },
+    runOfflineTeacherDecision() {
+      if (!config?.offlineTeacher) {
+        throw new Error("offline teacher oracle 未启用");
+      }
+      const beforeActions = this.legalActions();
+      const beforeObservation = lastObservation || buildTimedObservation(undefined, beforeActions);
+      if (!beforeActions.length) throw new Error("offline teacher 没有合法候选");
+      const selection = heuristicPolicyAdapter.select(beforeObservation, beforeActions, {
+        seed,
+        episodeId: config?.episodeId || null,
+      });
+      const chosenAction = selection.action;
+      const teacherResult = {
+        decision: selection.decision,
+        provenance: heuristicPolicyAdapter.getProvenance(),
+      };
+      const teacherAdapter = heuristicPolicyAdapter.getProvenance().version;
+      const adapted = this.step(chosenAction);
+      if (!adapted.ok) {
+        throw new Error(`offline teacher canonical 执行失败：${adapted.error || "未知错误"}`);
+      }
+      return {
+        beforeObservation,
+        beforeActions,
+        teacherResult: jsonSafeClone(teacherResult),
+        teacherLogs: [],
+        teacherAdapter,
+        chosenAction,
+        observation: adapted.observation,
+        legalActions: adapted.legalActions,
+        done: adapted.done,
+      };
+    },
     getReplay() {
       return {
         schemaVersion: "seti-rl-replay-v1",
@@ -857,6 +927,7 @@ function createHeadlessEnv() {
           policyVersion: config?.policyVersion || null,
           opponentIdentity: config?.opponentIdentity || null,
           seat: config?.seat ?? null,
+          policyProvenance: heuristicPolicyAdapter?.getProvenance?.() || null,
         },
         config: structuredClone(config || {}),
         effectSessions: effectSessionHost?.getCompletedJournals?.() || [],
@@ -979,6 +1050,7 @@ function createHeadlessEnv() {
           policyVersion: config?.policyVersion || null,
           opponentIdentity: config?.opponentIdentity || null,
           seat: config?.seat ?? null,
+          policyProvenance: heuristicPolicyAdapter?.getProvenance?.() || null,
         },
         replaySteps: structuredClone(replaySteps),
         environmentEvents: structuredClone(environmentEvents),

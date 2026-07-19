@@ -471,10 +471,11 @@
       return choices;
     }
 
-    function getChongLandProbeOptions(effect, target) {
+    function getChongLandProbeOptions(effect, target, rocketId) {
       return {
         skipCost: true,
         target: target || { type: "planet" },
+        rocketId,
         source: "card",
         historyLabel: effect.label,
         allowSatelliteWithoutTech: Boolean(effect.options?.allowSatellite),
@@ -560,13 +561,16 @@
     function openChongLandTargetPicker(effect) {
       const options = getChongLandOptions(effect);
       if (!options.ok) {
-        rocketState.statusNote = options.message || "无法登陆";
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return finishAutomaticRewardEffect(effect, {
+          ok: true,
+          skipped: true,
+          message: `${effect.label}：${options.message || "无法登陆"}，已跳过`,
+          payload: { reason: "no_chong_land_target" },
+        });
       }
 
       if (options.choices.length <= 1) {
-        return executeChongTravelForPickupChoice(effect, { kind: "land", target: options.defaultTarget || options.choices[0].target });
+        return executeChongTravelForPickupChoice(effect, { ...options.choices[0], kind: "land" });
       }
 
       openLandTargetPicker({
@@ -593,9 +597,12 @@
     function openChongOrbitOrLandTargetPicker(effect) {
       const options = getChongOrbitOrLandOptions(effect);
       if (!options.ok) {
-        rocketState.statusNote = options.message || "无法环绕或登陆";
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return finishAutomaticRewardEffect(effect, {
+          ok: true,
+          skipped: true,
+          message: `${effect.label}：${options.message || "无法环绕或登陆"}，已跳过`,
+          payload: { reason: "no_chong_travel_target" },
+        });
       }
       if (options.choices.length <= 1) {
         return executeChongTravelForPickupChoice(effect, options.choices[0]);
@@ -647,15 +654,17 @@
         });
       } else {
         result = abilities.executeAbility("landProbe", createActionContext(), {
-          ...getChongLandProbeOptions(effect, landTarget),
+          ...getChongLandProbeOptions(effect, landTarget, options.rocketId),
         });
       }
 
       if (!result.ok) {
         endEffectHistoryStep();
-        rocketState.statusNote = result.message;
+        rocketState.statusNote = options.rocketId == null
+          ? result.message
+          : `${result.message}（请求火箭 R${options.rocketId}）`;
         renderStateReadout();
-        return result;
+        return { ...result, message: rocketState.statusNote };
       }
 
       const travelActionType = result.abilityId === "orbitProbe"

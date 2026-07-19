@@ -653,9 +653,13 @@
         .filter((card) => !effect.options?.excludeAlienCards || !isAlienFamilyCard(card))
         .filter((card) => cards.getDiscardActionRewardForCard(card) || cards.getDiscardActionMoveRewardForCard?.(card));
       if (!choices.length) {
-        rocketState.statusNote = `${effect.label}：没有可弃除并结算角标的非外星人卡`;
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return finishAutomaticRewardEffect(effect, {
+          ok: true,
+          skipped: true,
+          undoable: true,
+          message: `${effect.label}：没有可弃除并结算角标的非外星人卡，已跳过`,
+          payload: { cardIds: [] },
+        });
       }
       pendingState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "discard_corner_repeat", effect, choices };
       setOverlayContent(effect.label, "选择一张非外星人手牌弃掉，并重复结算其左上角奖励。");
@@ -778,9 +782,13 @@
     function executeRemoveOrbitToProbeEffect(effect) {
       const choices = buildOwnOrbitChoices();
       if (!choices.length) {
-        rocketState.statusNote = `${effect.label}：没有可移除的己方环绕标记`;
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return finishAutomaticRewardEffect(effect, {
+          ok: true,
+          skipped: true,
+          undoable: true,
+          message: `${effect.label}：没有可移除的己方环绕标记，已跳过`,
+          payload: { markerIds: [] },
+        });
       }
       pendingState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "remove_orbit_to_probe", effect, choices };
       setOverlayContent(effect.label, "选择一个己方环绕标记，移除后在该星球当前扇区放置探测器。");
@@ -962,15 +970,15 @@
     }
 
     function openProbeSectorScanPicker(effect, choices) {
-      if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        return { ok: false, message: "无法打开探测器扫描选择" };
-      }
       pendingState.probeSectorScanAction = {
         ...getPendingOwnerFields(effect),
         effect,
         choices,
         selectedRocketIds: [],
       };
+      if (!els.scanTargetOverlay || !els.scanTargetActions) {
+        return { ok: true, pendingChoice: true, message: effect.label };
+      }
       setOverlayContent(
         effect.label,
         Math.max(1, Math.round(Number(effect.options?.maxTargets) || 1)) > 1
@@ -985,9 +993,13 @@
     function executeProbeSectorScanEffect(effect) {
       const choices = getProbeSectorScanRockets(effect);
       if (!choices.length) {
-        rocketState.statusNote = `${effect.label}：没有位于太阳系扇区的合法探测器`;
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return finishAutomaticRewardEffect(effect, {
+          ok: true,
+          skipped: true,
+          undoable: true,
+          message: `${effect.label}：没有位于太阳系扇区的合法探测器，已跳过`,
+          payload: { rocketIds: [] },
+        });
       }
       const maxTargets = Math.max(1, Math.round(Number(effect.options?.maxTargets) || 1));
       if (choices.length === 1 && maxTargets === 1) {

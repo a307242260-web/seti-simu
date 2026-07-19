@@ -57,6 +57,8 @@ async function execute(operation, payload = {}) {
       return requireEnv().createCheckpoint();
     case "diagnostics":
       return requireEnv().getDiagnostics();
+    case "offline_teacher_decision":
+      return requireEnv().runOfflineTeacherDecision();
     case "load_checkpoint":
       return {
         observation: requireEnv().loadCheckpoint(payload.checkpoint),

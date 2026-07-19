@@ -495,9 +495,13 @@
       const currentPlayer = getCurrentPlayer();
       const choices = (currentPlayer?.reservedCards || []).filter((card) => isReservedTaskCardUnfinished(card, effect));
       if (!choices.length) {
-        rocketState.statusNote = `${effect.label}：没有未完成的 1/2 型任务卡`;
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return finishAutomaticRewardEffect(effect, {
+          ok: true,
+          skipped: true,
+          undoable: true,
+          message: `${effect.label}：没有未完成的 1/2 型任务卡，已跳过`,
+          payload: { cardIds: [] },
+        });
       }
       pendingState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "return_unfinished_task", effect, choices };
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
@@ -1620,6 +1624,14 @@
         source: "card",
       });
       if (!result.ok) {
+        if (result.reason === "no_takeable_tech") {
+          return finishAutomaticRewardEffect(effect, {
+            ok: true,
+            skipped: true,
+            message: `${effect.label}：${result.message}，已跳过`,
+            payload: { reason: result.reason },
+          });
+        }
         rocketState.statusNote = result.message;
         renderStateReadout();
         return result;

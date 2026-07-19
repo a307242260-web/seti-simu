@@ -550,15 +550,25 @@
     function openRemovePlanetMarkerPicker(effect) {
       const choices = buildPlanetMarkerRemovalChoices(effect);
       if (!choices.length) {
-        rocketState.statusNote = `${effect.label}：没有可移除的环绕或登陆标记`;
-        renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return finishAutomaticRewardEffect(effect, {
+          ok: true,
+          skipped: true,
+          undoable: true,
+          message: `${effect.label}：没有可移除的环绕或登陆标记，已跳过`,
+          payload: { markerIds: [] },
+        });
       }
       if (choices.length === 1) {
         return executeRemovePlanetMarkerChoice(effect, choices[0]);
       }
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        return { ok: false, message: "无法打开标记移除选择" };
+        pendingState.scanTargetAction = {
+          ...getPendingOwnerFields(effect),
+          type: "remove_planet_marker",
+          effect,
+          choices,
+        };
+        return { ok: true, pendingChoice: true, message: effect.label };
       }
       pendingState.scanTargetAction = {
         ...getPendingOwnerFields(effect),
@@ -1049,6 +1059,13 @@
       const normal = canExecuteNormalCardOrbit(effect, context);
       const preferredRocketId = normal?.defaultRocketId || null;
       const pluto = getAvailablePlutoEffectAction("orbit", effect, { preferredRocketId });
+      if (!normal.ok && !pluto.ok) {
+        return skipActionEffectWithMessage(
+          effect,
+          `${effect.label || "环绕"}：${normal.message || "没有可用环绕目标"}，已跳过`,
+          { reason: normal.message || null, abilityId: "orbitProbe" },
+        );
+      }
       const choices = [];
       if (normal.ok) {
         choices.push(...normal.choices.map((choice) => ({

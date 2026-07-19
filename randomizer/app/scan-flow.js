@@ -1286,6 +1286,8 @@
         if (pendingState.publicScanQueue && !options.forcePublicScanQueueClose) return;
         if (options.forcePublicScanQueueClose) pendingState.publicScanQueue = null;
         pendingState.scanTargetAction = null;
+        pendingState.probeSectorScanAction = null;
+        pendingState.probeLocationRewardAction = null;
         pendingState.strategyPassiveSlotChoice = null;
         return;
       }

@@ -173,4 +173,14 @@ function createHarness() {
   assert.equal(els.alienTraceActions.children[1].dataset.fangzhouDestination, "unlock");
 }
 
+{
+  const { helpers, pendingState, els } = createHarness();
+  pendingState.alienTracePickerState = { mode: "trace-board" };
+  pendingState.alienTraceAction = { targetPlayerId: "p1" };
+  els.alienTraceOverlay = null;
+  helpers.closeAlienTracePicker();
+  assert.equal(pendingState.alienTracePickerState, null);
+  assert.equal(pendingState.alienTraceAction, null);
+}
+
 console.log("alien-ui tests passed");

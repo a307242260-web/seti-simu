@@ -402,10 +402,13 @@
         beforeCardState: structuredClone(cardState),
       });
       if (!result.ok) {
-        rocketState.statusNote = result.message;
-        renderStateReadout();
-        effect.result = { ok: false, undoable: true, message: result.message };
-        completeCurrentActionEffect("skipped");
+        return finishAutomaticRewardEffect(effect, {
+          ok: true,
+          skipped: true,
+          undoable: true,
+          message: `${effect.label}：没有手牌可作为收入，已跳过`,
+          payload: { reason: result.message || null },
+        });
       }
       return result;
     }

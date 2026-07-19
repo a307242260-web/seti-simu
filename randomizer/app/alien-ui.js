@@ -279,10 +279,10 @@
     }
 
     function closeAlienTracePicker() {
-      if (!els.alienTraceOverlay) return;
-      els.alienTraceOverlay.hidden = true;
       pendingState.alienTracePickerState = null;
       pendingState.alienTraceAction = null;
+      if (!els.alienTraceOverlay) return;
+      els.alienTraceOverlay.hidden = true;
       if (els.alienTraceTitle) els.alienTraceTitle.textContent = "获取外星人标记";
       if (els.alienTraceSubtitle) {
         els.alienTraceSubtitle.classList.remove("alien-reveal-confirmation-text");
