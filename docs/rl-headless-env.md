@@ -10,7 +10,7 @@
 - `legalActions()` 输出 `seti-rl-action-v2`，候选来自 app 与浏览器共享的 Standard Action adapter，不构建 actionGraph、valuation、selection pressure、planner 或第二套 legality。RL envelope 补充 mask/feature 与环境版本，但沿用 registry `actionId`；`step()` 校验 actor、版本与当前 legal action id 后，把保存的完整 Standard Action descriptor 交回同一 `registry.execute`。
 - pending/conditional 边界在枚举顶层行动或执行 deterministic drain 之前先经过 inventory 审计；未知 pending key、已知 key 的未知 type、未知 conditional family 分别以稳定 `HEADLESS_UNSUPPORTED_PENDING`、`HEADLESS_UNSUPPORTED_PENDING_TYPE`、`HEADLESS_UNSUPPORTED_CONDITIONAL_FAMILY` 拒绝。诊断固定包含 `state/family/type/owner`，拒绝分支不枚举顶层行动，也不调用旧 resolver、DOM callback、recover 或 skip。
 - observation 已按 `publicState / selfState / decision` 分域；公开玩家仅保留资源、计数与公开科技，自己的手牌/预留牌才进入 `selfState`，牌库顺序、未来科技 bonus、未揭示外星人身份不进入观测。
-- replay 分开记录 policy `steps` 与自动结算 `environmentEvents`；checkpoint 额外保存随机数状态，可在 fresh env 中恢复且不触发浏览器渲染。
+- replay 分开记录 policy `steps` 与自动结算 `environmentEvents`；checkpoint 将 RNG 与稳定编号统一保存到 `coreState.meta`，可在 fresh env 中恢复且不触发浏览器渲染。
 - 终局 25/50/70 分 pending 由 `choose_final_scoring` 独立枚举与执行：多项由 pending owner 决策并写一条 policy replay，唯一合法板块由环境自动推进；headless 路径显式禁止调用旧 final-score AI resolver，标记时间使用稳定 replay 值。
 - 顶层与 conditional 行动都保留已验证的 Standard Action descriptor；`step()` 不调用 `buildAiTurnActionCandidates / runAiSelectedTurnAction` 二次构建候选，也不使用 `bypassRuntimeDispatch` switch。transition 通过 `action-runtime -> registry.execute`，随后自动 drain pending/effect，不依赖用户点击。
 - Node composition 通过 `randomizer/app/view-adapter.js` 注入 no-op view adapter；运行时不创建或安装 `document`、DOM 元素、overlay、`localStorage`、`Image`。
@@ -560,7 +560,6 @@ interface SetiHeadlessEnv {
 {
   schemaVersion: "seti-rl-checkpoint-v1",
   coreState: CoreState,
-  runtimeState: RuntimeState,
   replayCursor: {
     seed: string | number | null,
     stepIndex: number,
@@ -577,8 +576,9 @@ interface SetiHeadlessEnv {
 
 ### 11.1 状态快照
 
-- `createGameRecoverySnapshot()` -> `EnvCheckpoint.coreState + runtimeState.aiControl`
+- `createGameRecoverySnapshot()` -> `EnvCheckpoint.coreState`；`meta.rngState / meta.sequences` 是 RNG 与牌、火箭、数据、历史事件等稳定编号的唯一持久化权威
 - `applyGameRecoverySnapshot()` -> `loadCheckpoint()`
+- `loadCheckpoint()` 用 replay journal 重建不进入 committed schema 的 pending/continuation，再校验并恢复 committed meta；未知闭包序列、不可恢复 RNG 或 replay/meta 不一致均 fail-closed
 - `readPersistentGamePackage()` / `createPersistentGamePackage()` -> 本地继续游戏，不直接作为训练接口
 
 ### 11.2 顶层动作

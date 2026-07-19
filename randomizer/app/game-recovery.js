@@ -37,6 +37,7 @@
       rulesetVersion: options.rulesetVersion,
       seed: options.seed,
       rngState: options.rngState,
+      sequences: options.sequences,
     });
     if (!serialized.ok) {
       const error = new TypeError(`无法创建 recovery committed snapshot: ${serialized.code}`);
@@ -163,6 +164,15 @@
     }
     const state = projected.state;
     const slices = options.stateSlices || {};
+    try {
+      options.restoreDeterministicState?.(structuredClone(deserialized.state.meta.sequences));
+    } catch (error) {
+      return {
+        ok: false,
+        code: "RECOVERY_DETERMINISTIC_STATE_INVALID",
+        message: error?.message || "恢复确定性序列失败",
+      };
+    }
     for (const [key, target] of Object.entries(slices)) {
       if (state[key] != null) {
         options.restoreMutableObject?.(target, state[key]);
@@ -183,6 +193,8 @@
       ok: true,
       snapshotVersion: typeof snapshot === "string" ? null : snapshot.version || null,
       committedSchemaVersion: deserialized.state.meta.schemaVersion,
+      rngState: structuredClone(deserialized.state.meta.rngState),
+      sequences: structuredClone(deserialized.state.meta.sequences),
       aiControl: aiControlResult,
       message: options.getRecoveryMessage?.() || recoveryMessage,
     };

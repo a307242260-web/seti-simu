@@ -15,6 +15,18 @@
   const DEFAULT_TILE_IDS = Object.freeze(["a", "b", "c", "d"]);
   let markSequence = 0;
 
+  function getNextFinalMarkSequence() {
+    return markSequence + 1;
+  }
+
+  function restoreNextFinalMarkSequence(nextSequence) {
+    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
+      throw new TypeError("finalMark 序列必须是正安全整数");
+    }
+    markSequence = nextSequence - 1;
+    return getNextFinalMarkSequence();
+  }
+
   function normalizeTileId(tileId) {
     return String(tileId || "").trim().toLowerCase();
   }
@@ -329,6 +341,8 @@
     FINAL_SCORE_THRESHOLDS,
     DEFAULT_TILE_IDS,
     createFinalScoringState,
+    getNextFinalMarkSequence,
+    restoreNextFinalMarkSequence,
     ensureFinalScoringState,
     getReachedThresholds,
     syncPendingMarks,

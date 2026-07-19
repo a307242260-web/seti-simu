@@ -15,6 +15,7 @@
 - 从大型闭包迁出 runtime 或修改传统脚本顺序时，除语法与全量 Node 回归外，必须补迁移域代表性执行路径和真实 Chrome smoke，覆盖显式 context、嵌套回调与浏览器装配。
 - 代码和资产路径以仓库根目录为基准。
 - 共享 dirty worktree 中若本次修改与他人改动重叠同一文件，提交前除工作树回归外，还必须验证仅含本次 staged 内容的独立快照；不得把他人未提交修复当作本次验收证据。
+- 并行任务可能同时写共享 index 时，提交必须从最新 HEAD 创建私有 `GIT_INDEX_FILE`，只装入本 issue 的明确 blob；commit 后立即用 `git show --name-only/--stat` 核对实际文件清单与 issue 范围。
 
 ## 代码地图
 

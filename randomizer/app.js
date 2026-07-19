@@ -3470,6 +3470,16 @@
       currentPlayerId: playerState.currentPlayerId,
       entryId: meta.entryId ?? null,
       label: meta.label || null,
+      rngState: meta.rngState,
+      sequences: {
+        card: cards.getNextCardInstanceSequence(),
+        handCard: players.getNextHandCardSequence(),
+        finalMark: finalScoring.getNextFinalMarkSequence(),
+        dataToken: data.getNextDataTokenSequence(),
+        ...data.getDeterministicSequences(),
+        historyStep: actionHistoryModule.getNextHistoryStepSequence(),
+        actionLog: actionLogState.nextEntryId,
+      },
       state: {
         solarState: structuredClone(solarState),
         nebulaDataState: structuredClone(nebulaDataState),
@@ -3869,6 +3879,21 @@
         setupSelectionState,
       },
       restoreMutableObject,
+      restoreDeterministicState: (sequences) => {
+        const required = [
+          "card", "handCard", "finalMark", "dataToken", "nebulaToken",
+          "nebulaReplacement", "historyStep", "actionLog", "rocket",
+        ];
+        const missing = required.filter((key) => !Number.isSafeInteger(sequences?.[key]) || sequences[key] < 1);
+        if (missing.length) throw new TypeError(`恢复快照缺少合法确定性序列：${missing.join(", ")}`);
+        cards.restoreNextCardInstanceSequence(sequences.card);
+        players.restoreNextHandCardSequence(sequences.handCard);
+        finalScoring.restoreNextFinalMarkSequence(sequences.finalMark);
+        data.restoreNextDataTokenSequence(sequences.dataToken);
+        data.restoreDeterministicSequences(sequences);
+        actionHistoryModule.restoreNextHistoryStepSequence(sequences.historyStep);
+        actionLogState.nextEntryId = sequences.actionLog;
+      },
       onAfterStateRestored: () => {
         getActionCycleNumber();
         clearTransientStateForRecovery();

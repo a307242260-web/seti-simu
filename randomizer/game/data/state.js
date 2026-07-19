@@ -30,6 +30,18 @@
   const ANALYZE_REQUIRED_COMPUTER_SLOT = 6;
   let dataTokenSequence = 0;
 
+  function getNextDataTokenSequence() {
+    return dataTokenSequence + 1;
+  }
+
+  function restoreNextDataTokenSequence(nextSequence) {
+    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
+      throw new TypeError("dataToken 序列必须是正安全整数");
+    }
+    dataTokenSequence = nextSequence - 1;
+    return getNextDataTokenSequence();
+  }
+
   function createDefaultDataState() {
     return { poolTokens: [], placedTokens: [], discardedCount: 0 };
   }
@@ -596,6 +608,8 @@
     ANALYZE_ENERGY_COST,
     ANALYZE_REQUIRED_COMPUTER_SLOT,
     createDefaultDataState,
+    getNextDataTokenSequence,
+    restoreNextDataTokenSequence,
     normalizeDataState,
     ensurePlayerDataState,
     syncAvailableDataCount,

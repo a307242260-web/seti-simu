@@ -168,7 +168,7 @@
         rulesetVersion: options.rulesetVersion || "legacy-recovery-v1",
         seed: options.seed ?? snapshot.meta?.seed ?? "legacy-host-owned",
         rngState: options.rngState || snapshot.meta?.rngState || { owner: "legacy-host", state: null },
-        sequences: { rocket: nextRocketId },
+        sequences: { ...(options.sequences || snapshot.meta?.sequences || {}), rocket: nextRocketId },
         match: {},
         turn,
         players,

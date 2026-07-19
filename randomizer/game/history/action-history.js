@@ -13,6 +13,18 @@
 
   let nextHistoryStepId = 1;
 
+  function getNextHistoryStepSequence() {
+    return nextHistoryStepId;
+  }
+
+  function restoreNextHistoryStepSequence(nextSequence) {
+    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
+      throw new TypeError("historyStep 序列必须是正安全整数");
+    }
+    nextHistoryStepId = nextSequence;
+    return nextHistoryStepId;
+  }
+
   function createStepId() {
     const id = nextHistoryStepId;
     nextHistoryStepId += 1;
@@ -324,5 +336,7 @@
 
   return Object.freeze({
     createActionHistory,
+    getNextHistoryStepSequence,
+    restoreNextHistoryStepSequence,
   });
 });

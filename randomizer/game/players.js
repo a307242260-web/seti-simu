@@ -81,6 +81,18 @@
   let handCardSequence = 0;
   let scoreGainListener = null;
 
+  function getNextHandCardSequence() {
+    return handCardSequence + 1;
+  }
+
+  function restoreNextHandCardSequence(nextSequence) {
+    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
+      throw new TypeError("handCard 序列必须是正安全整数");
+    }
+    handCardSequence = nextSequence - 1;
+    return getNextHandCardSequence();
+  }
+
   function clamp(value, min, max) {
     return Math.min(max, Math.max(min, value));
   }
@@ -518,6 +530,8 @@
     normalizeIncome,
     normalizeScoreSources,
     createPlayer,
+    getNextHandCardSequence,
+    restoreNextHandCardSequence,
     createPlayerState,
     getCurrentPlayer,
     getPlayerColorDefinition,

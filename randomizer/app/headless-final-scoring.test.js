@@ -14,6 +14,7 @@ function readLegacyCheckpointState(checkpoint) {
 }
 
 function writeLegacyCheckpointState(checkpoint, legacyState) {
+  const committedMeta = JSON.parse(checkpoint.coreState.committedState).meta;
   const serialized = legacyStateAdapter.serializeLegacySnapshot({
     version: legacyStateAdapter.LEGACY_RECOVERY_VERSION,
     meta: checkpoint.coreState.meta,
@@ -22,6 +23,10 @@ function writeLegacyCheckpointState(checkpoint, legacyState) {
       cardTaskState: {},
       setupSelectionState: {},
     },
+  }, {
+    seed: committedMeta.seed,
+    rngState: committedMeta.rngState,
+    sequences: committedMeta.sequences,
   });
   assert.equal(serialized.ok, true, serialized.message || serialized.code);
   checkpoint.coreState = {

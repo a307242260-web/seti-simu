@@ -47,11 +47,14 @@ function captureOpening(env, config) {
   const legalActions = env.legalActions();
   const replay = env.getReplay();
   const checkpoint = env.createCheckpoint();
+  const committedState = JSON.parse(checkpoint.coreState.committedState);
   return {
     observation,
     legalActions,
     replayCursor: checkpoint.replayCursor,
-    randomState: checkpoint.runtimeState.randomState,
+    committedState: checkpoint.coreState.committedState,
+    rngState: committedState.meta.rngState,
+    sequences: committedState.meta.sequences,
     replaySteps: replay.steps,
     environmentEvents: replay.environmentEvents,
   };
@@ -157,6 +160,7 @@ assert.equal(stale.ok, false);
 assert.match(stale.error, /动作版本已失效/);
 
 const checkpoint = observationEnv.createCheckpoint();
+assert.equal(Object.hasOwn(checkpoint, "runtimeState"), false, "RNG 不得旁路存放在 runtimeState");
 const checkpointObservation = observationEnv.observe();
 const checkpointActions = observationEnv.legalActions();
 observationEnv.dispose();

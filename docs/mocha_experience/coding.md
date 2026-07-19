@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-19
+- source_issue: SETI-51, SETI-61, SETI-85
+- observation: 共享工作树的 index 在 staged 检查、独立快照验证与 commit 之间仍会被并行任务改写；达到第三次复现后，高并发提交不能继续依赖共享 index，应从最新 HEAD 创建私有 `GIT_INDEX_FILE`，只装入本 issue 的明确 blob，并在 commit 后核对实际文件清单。
+- evidence: SETI-51 曾把其他任务文件套入当前 message；SETI-61 的目标 hunk 在并行 commit 后从实际提交消失；SETI-85 中已暂存的 16 个目标文件被并行提交消费，随后外部 `app.js/action-executor.js` hunks 又进入共享 index，`git diff --cached --stat` 两次与预期不符。
+- promote_to: agent_prompt
+- promotion_status: promote
+- decision: 三个独立 coding issue 已达到既定第三次升级窗口；将私有 index 与 commit 后文件清单核对写入仓库根 `AGENTS.md`，不修改 watcher、issue-workflow 或 project memory。
+
+- date: 2026-07-19
 - source_issue: SETI-51, SETI-52
 - observation: 私有 `GIT_INDEX_FILE` 能隔离并行 staging，但更新既有文件时不能统一硬编码 `100644`；必须从当前 HEAD tree 继承每个路径的 mode，否则脚本内容与测试全绿仍可能把可执行 CLI 静默降权。新文件才按交付类型显式选择 `100644/100755`。
 - evidence: SETI-51 用私有 index 成功避免内容错配；SETI-52 首次隔离提交将原为 `100755` 的 `tools/benchmark_rl_workers.js` 与 `tools/rl_worker_client.py` 写成 `100644`，`git show --stat` 明确显示 mode change。后续从 HEAD blob 恢复 `100755` 并以提交 `33a0ddc` 修正，未改写历史。

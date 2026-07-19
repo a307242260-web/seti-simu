@@ -796,9 +796,21 @@ function createHeadlessEnv() {
             throw new Error(`checkpoint replay 第 ${stepIndex} 步失败：${replayResult.error || "未知错误"}`);
           }
         }
-        if (checkpoint?.runtimeState?.randomState != null) {
-          seededRandom?.setState(checkpoint.runtimeState.randomState);
+        let committedMeta;
+        try {
+          committedMeta = JSON.parse(persistedCoreState?.committedState || "").meta;
+        } catch (error) {
+          throw new Error(`checkpoint coreState 反序列化失败：${error?.message || "STATE_DESERIALIZE_FAILED"}`);
         }
+        if (committedMeta?.rngState?.algorithm !== "seti-headless-mulberry32-v1"
+          || !Number.isSafeInteger(committedMeta.rngState.state)) {
+          throw new Error("checkpoint coreState 缺少可恢复的 headless RNG 状态");
+        }
+        const rebuiltMeta = JSON.parse(this.createCheckpoint().coreState.committedState).meta;
+        if (JSON.stringify(rebuiltMeta.sequences) !== JSON.stringify(committedMeta.sequences)) {
+          throw new Error("checkpoint replay 后唯一序列与 committed meta 不一致");
+        }
+        seededRandom?.setState(committedMeta.rngState.state);
         return this.observe();
       }
       if (!api) {
@@ -815,9 +827,12 @@ function createHeadlessEnv() {
         : environmentEvents;
       config = structuredClone(checkpoint?.config || config || {});
       seed = checkpoint?.replayCursor?.seed ?? config.seed ?? seed;
-      if (checkpoint?.runtimeState?.randomState != null) {
-        seededRandom?.setState(checkpoint.runtimeState.randomState);
+      const committedRandomState = restoreResult?.rngState;
+      if (committedRandomState?.algorithm !== "seti-headless-mulberry32-v1"
+        || !Number.isSafeInteger(committedRandomState.state)) {
+        throw new Error("checkpoint coreState 缺少可恢复的 headless RNG 状态");
       }
+      seededRandom?.setState(committedRandomState.state);
       legalActionSelectors = new Map();
       lastLegalActions = null;
       lastObservation = null;
@@ -838,10 +853,12 @@ function createHeadlessEnv() {
     createCheckpoint() {
       return {
         schemaVersion: "seti-rl-checkpoint-v1",
-        coreState: api.createRecoverySnapshot(),
-        runtimeState: {
-          randomState: seededRandom?.getState?.() ?? null,
-        },
+        coreState: api.createRecoverySnapshot({
+          rngState: {
+            algorithm: "seti-headless-mulberry32-v1",
+            state: seededRandom?.getState?.() ?? null,
+          },
+        }),
         config: structuredClone(config || {}),
         replayCursor: {
           seed,

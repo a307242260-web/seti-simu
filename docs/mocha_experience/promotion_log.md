@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-19
+- source: SETI-51, SETI-61, SETI-85
+- promoted_to: agent_prompt
+- promotion_decision: promote
+- target_agent: 领航及共享工作树中的 coding agent
+- target_component: 并行共享 index 提交规则
+- target_file: AGENTS.md
+- remote_skill_id: none
+- change: 将“并行 staging/commit 时使用基于最新 HEAD 的私有 `GIT_INDEX_FILE`，且 commit 后核对实际文件清单”从 coding candidate 升级为仓库 agent 规则。
+- applied_change: 在仓库根 `AGENTS.md` 增加私有 index 与提交后 `git show --name-only/--stat` 核对要求；更新 coding experience，不修改 git-workflow skill、watcher、issue-workflow 或 project memory。
+- expected_effect: 并行任务不再互相消费或污染 staged 内容；commit message、实际文件清单和 issue 范围保持一致，且无需回滚他人提交。
+- evaluation_window: 后续 5 次存在并行 staging/commit 的共享工作树提交。
+- success_signal: 私有 staged diff、独立快照与实际 commit 文件清单一致；不再出现目标 hunk 消失、外部文件卷入或 message/内容错配。
+- rollback_condition: 若平台提供隔离 worktree/index 或提交锁，则删除手工私有 index 规则并改用平台能力；若私有 index 未基于最新 HEAD 导致遗漏，则收窄规则并强制重建。
+- risk: 私有 index 增加少量提交编排成本；若未从最新 HEAD `read-tree`，可能生成遗漏并行提交父内容的快照。
+- evidence_before: SETI-51 错配提交与私有 index 修正；SETI-61 staged hunk 被并行 commit 消费并追加修正；SETI-85 staged 目标被并行提交消费、共享 index 两次混入外部 hunks，独立快照同时暴露 HEAD 中另一个任务尚未提交的语法修复。
+- owner_or_agent_decision: 领航依据既有候选的第三次复现升级窗口与本 issue harness-evolve closeout 自决 promote。
+- applied_at: 2026-07-19
+- verification: 核对三次 issue 的 commit/staged 证据；本 issue 使用最新 HEAD 私有 index，只装入 SETI-85 与 harness-evolve 目标 blob，并在 commit 后执行 `git show --name-only/--stat`。
+- observed_outcome: 待本次私有 index 提交及后续 5 次并行提交观察。
+- keep_or_revise: 已提升；若后续 5 次均能保持内容一致则保留，平台提供原生隔离后回滚手工规则。
+
+- date: 2026-07-19
 - source: SETI-45
 - promoted_to: none
 - promotion_decision: candidate

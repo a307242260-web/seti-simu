@@ -79,6 +79,18 @@
 
   let cardInstanceSequence = 0;
 
+  function getNextCardInstanceSequence() {
+    return cardInstanceSequence + 1;
+  }
+
+  function restoreNextCardInstanceSequence(nextSequence) {
+    if (!Number.isSafeInteger(nextSequence) || nextSequence < 1) {
+      throw new TypeError("card 序列必须是正安全整数");
+    }
+    cardInstanceSequence = nextSequence - 1;
+    return getNextCardInstanceSequence();
+  }
+
   function getCardSrc(entry) {
     return `${CARD_BASE_PATH}/${entry.set}/split/${entry.card_id}`;
   }
@@ -792,6 +804,8 @@
     getCatalogEntryByInput,
     getCatalogEntriesByInputRange,
     createCardInstance,
+    getNextCardInstanceSequence,
+    restoreNextCardInstanceSequence,
     getCatalogEntryForCard,
     getIncomeCodeForCard,
     getIncomeGainForCard,

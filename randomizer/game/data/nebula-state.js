@@ -19,6 +19,24 @@
 
   let nebulaTokenSequence = 0;
   let nebulaReplacementSequence = 0;
+
+  function getDeterministicSequences() {
+    return {
+      nebulaToken: nebulaTokenSequence + 1,
+      nebulaReplacement: nebulaReplacementSequence + 1,
+    };
+  }
+
+  function restoreDeterministicSequences(sequences) {
+    for (const key of ["nebulaToken", "nebulaReplacement"]) {
+      if (!Number.isSafeInteger(sequences?.[key]) || sequences[key] < 1) {
+        throw new TypeError(`${key} 序列必须是正安全整数`);
+      }
+    }
+    nebulaTokenSequence = sequences.nebulaToken - 1;
+    nebulaReplacementSequence = sequences.nebulaReplacement - 1;
+    return getDeterministicSequences();
+  }
   const AOMOMO_NEBULA_ID = "aomomo";
   const NEBULA_SECOND_SLOT_INDEX = 2;
   const NEBULA_SECOND_SLOT_SCORE = 2;
@@ -782,6 +800,8 @@
     getNebulaSecondSlotScoreReward,
     getNebulaSlotScoreReward,
     createDefaultNebulaDataState,
+    getDeterministicSequences,
+    restoreDeterministicSequences,
     createDefaultSectorSettlementState,
     normalizeNebulaDataState,
     listNebulaTokens,
