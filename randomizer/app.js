@@ -9279,6 +9279,7 @@
       pendingState.cardCornerFreeMove,
       pendingState.strategyPassiveSlotChoice,
       pendingState.chongFossilChoice,
+      pendingState.amibaSymbolChoice,
       pendingState.discardAction,
       pendingState.cardSelectionAction,
       pendingState.landTargetAction,
@@ -9428,6 +9429,28 @@
           label: branch.label || `符文分支 ${index + 1}`,
           target: { kind: "runezu-symbol-branch", choiceId: String(index) },
         })),
+      };
+    }
+    const amibaSymbolPending = pendingState.amibaSymbolChoice;
+    if (amibaSymbolPending) {
+      const symbolSlotIds = amibaSymbolPending.symbolSlotIds || [];
+      const candidates = symbolSlotIds.map((slotId) => ({
+        id: "conditionalChoice",
+        family: "choose_reward",
+        label: `阿米巴 symbol ${slotId}`,
+        target: { kind: "amiba-symbol-choice", choiceId: String(slotId) },
+      }));
+      if (!candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "跳过空的阿米巴 symbol 奖励",
+          target: { kind: "amiba-symbol-choice", choiceId: "cancel" },
+        });
+      }
+      return {
+        actorPlayer: getHeadlessConditionalPlayer(amibaSymbolPending),
+        candidates,
       };
     }
     const scanTargetPending = pendingState.scanTargetAction;
@@ -10073,6 +10096,7 @@
     },
     "runezu-symbol-branch": (action) => handleRunezuSymbolBranchChoice(action.target.choiceId),
     "runezu-face-symbol-choice": (action) => handleRunezuFaceSymbolChoice(action.target.choiceId),
+    "amiba-symbol-choice": (action) => handleAmibaSymbolChoice(action.target.choiceId),
     "final-score-tile": (action) => handleFinalScoreTileClick(action.target.choiceId),
     "research-tech-tile": (action) => {
       const result = handleSupplyTechTileClick(action.target.tileId || action.target.choiceId);
