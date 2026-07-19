@@ -78,7 +78,7 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 
 阶段 5 集成证据：`randomizer/game/actions/standard-action-stage5.test.js` 结构化证明 headless 顶层枚举只调用 `action-runtime` 的 `standard_enumerate`、执行只提交完整 descriptor，且训练 contract 沿用 registry `actionId`；`randomizer/app/action-runtime.test.js` 覆盖 descriptor 枚举/直执行；`randomizer/app/headless-contract.test.js` 覆盖顶层与 conditional identity parity；headless legality、conditional drain、fail-closed、owner、终局和 worker integration 共同覆盖下一决策、事件/replay 与常驻宿主路径。
 
-残余兼容面只有浏览器 DOM 的 `standard_intent`：它把明确 family/selector 解析为唯一 descriptor 后立即进入同一 registry；多目标 fail-closed。AI、headless、Policy、conditional provider 和 public API 均不保留旧执行入口。
+残余兼容面只有浏览器 DOM 的 `standard_intent`：它把明确 family/selector 解析为唯一 descriptor 后立即进入同一 registry；多目标 fail-closed。Browser Host Policy 经 `browser-host/policy-input-adapter.js` 选择完整 descriptor，并与玩家共用 `BrowserInputAdapter` 的 Action/Decision submission；AI、headless、Policy、conditional provider 和 public API 均不保留旧执行入口。
 
 ## Proof obligations
 

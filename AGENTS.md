@@ -56,6 +56,7 @@
 - `tools/run_rl_worker_server.js`、`tools/rl_worker_client.py`：Node JSONL worker 服务与 Python 标准库客户端；`tools/benchmark_rl_workers.js` 为分项吞吐闸门。
 - `randomizer/app.js`：composition root、顶层状态、跨 flow continuation、统一刷新与控制器接线；不再承载已迁移域的成片具体实现。
 - `randomizer/game/effects/industry-alien-session.js`、`randomizer/app/browser-host/industry-alien-decision-ui.js`：公司与八种外星人的标准 Decision/Effect Session adapter 和只读领域 renderer；机会队列、痕迹奖励、followup、history/rollback 归 session，UI 只消费 projection。
+- `randomizer/app/browser-host/policy-input-adapter.js`：把公共 PolicyDecision 映射回与玩家相同的 Standard Action/Decision 输入端口；提交前重验 boundary，未知/stale fail-closed。
 - `randomizer/app/effects/**`：按移动扫描、奖励选择、外星人和顶层分发拆分的具体 effect executors。
 - `randomizer/style.css`：页面布局、交互聚焦、高亮与各区视觉状态。
 - `randomizer/solar-system/layout.js`：太阳系盘面坐标、扇区、星云与内容类型定义。

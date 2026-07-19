@@ -16,6 +16,7 @@ const inputApi = require("./input-adapter");
     "browser-host/projection-adapter.js",
     "browser-host/view-state-store.js",
     "browser-host/input-adapter.js",
+    "browser-host/policy-input-adapter.js",
     "browser-host/action-bar.js",
     "browser-host/resident-projection.js",
     "browser-host/resident-renderer.js",

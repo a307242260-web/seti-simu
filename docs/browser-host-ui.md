@@ -281,6 +281,23 @@ Effect Session `inspect()` 现在明确公开 `controls.canUndo/undoDisabledReas
 
 证据位于 `checkpoint/seti-79-proof-obligations.md`、`app/browser-host/action-bar.test.js`、Effect Session undo/barrier/progress 合约和 Browser Host Chrome smoke。旧页面 `events.js` 的传统 Action Bar callback 仍作为后续整页生产切换的兼容入口；新 Browser Host Action Bar 本身对领域 mutation/continuation 调用为 0。
 
+### 阶段 7 Policy 输入（SETI-80）
+
+`app/browser-host/policy-input-adapter.js` 把公共 `DecisionContext -> PolicyDecision`
+端口接到与玩家相同的 `BrowserInputAdapter.dispatchAction/submitDecision`。它只读取共享
+session 提供的 boundary、observation 与完整 Standard Action/Decision descriptor；不读取
+DOM、overlay、renderer、picker、旧 pending resolver 或领域 continuation。Policy 响应提交前
+会重新读取 boundary，逐项校验 owner、state/decision version、decision identity、family/phase
+与 actionId membership；异步 stale、未知 boundary/family/schema 和混合 authority 均
+fail-closed，且不会占用共享 replay cursor。
+
+Policy driver 每次只提交一个外部选择。确定性 Effect、唯一选择、触发顺序、commit、events、
+logs 与 replay 仍由 Effect Session drain 独占。玩家与 Policy 在同 session 上执行同一固定
+Action/Decision trace 的 state、effect 顺序、events/log/replay 完全等价；Node poison 与真实
+Chrome AI 展示 smoke 中 DOM/renderer/picker/pending resolver 调用均为 0。headless 固定 seed
+完整局在被 poison 的 `document` 下 549 个外部决策到达 terminal，产生 549 个 replay step 和
+367 个 Effect Session，未创建伪 DOM。
+
 阶段 1 依赖 SETI-71 的 StateStore reference contract；阶段 3-7 依赖 SETI-62 对应领域 Effect Session 和 SETI-56 conditional Action/Decision 的行为迁移。共享文件发生重叠时，规则状态/Effect/Action 由对应总控 owner 修改，Browser Host 子 issue只改 projection、renderer、input、event/service adapter；集成点使用窄公开接口分提交接线。
 
 ## 每批完成门禁
