@@ -4,7 +4,7 @@
 
 `CommittedGameState` 是浏览器、headless 与训练环境共同使用的唯一“已经成立的游戏事实”。它是按领域分片的根对象，不是巨型平面对象。`StateStore` 是替换该根对象的唯一入口；Action、Effect Session、UI、AI、history 和宿主环境只能读取隔离快照，或在工作副本上计算候选状态。
 
-Stage 0/1 已冻结 reference schema、所有权、版本、验证、序列化与 compare-and-commit 语义。Stage 2 由 `randomizer/game/state/legacy-state-adapter.js` 在 recovery/headless 持久化边界把旧 12 个可变切片一次性转换为 v1。Stage 3 由 `randomizer/game/state/low-coupling-slices.js` 净化 match/turn、solar、planet、nebula/data、alien 与 final scoring。Stage 4 由 `randomizer/game/state/high-coupling-slices.js` 净化 players/pieces/cards/tech、统一领域实例编号与跨切片 invariant，并提供同一 working copy 的协调 bridge；Action/Effect 的生产提交调度仍留给 Stage 6，不在本阶段提前双写旧权威。
+Stage 0/1 已冻结 reference schema、所有权、版本、验证、序列化与 compare-and-commit 语义。Stage 2 由 `randomizer/game/state/legacy-state-adapter.js` 在 recovery/headless 持久化边界把旧 12 个可变切片一次性转换为 v1。Stage 3 由 `randomizer/game/state/low-coupling-slices.js` 净化 match/turn、solar、planet、nebula/data、alien 与 final scoring。Stage 4 由 `randomizer/game/state/high-coupling-slices.js` 净化 players/pieces/cards/tech、统一领域实例编号与跨切片 invariant，并提供同一 working copy 的协调 bridge。Stage 6 已把 StateStore 作为 Effect Session 的一等可选端口：store-backed session 只从 `beginWorkingCopy()` 建立 base/working state，并且只有 queue 清空、无等待输入且 runtime 校验通过后才调用一次 `compareAndCommit()`；CAS 成功前 session 不进入 `completed`。
 
 ```text
 StateStore (唯一 committed owner)
@@ -89,7 +89,7 @@ Stage 4 没有改写 cards/tech/rocket 的生产入口，也不把旧对象与 c
 | `getSnapshot()` | 每次返回独立的深冻结副本；任何调用方都拿不到 committed 引用。 |
 | `beginWorkingCopy(baseVersion)` | 版本匹配时返回可变深拷贝；冲突返回 `STATE_VERSION_CONFLICT`。 |
 | `validate(candidate)` | 精确根 schema、meta、普通数据图、可序列化性及注入的领域不变量全部通过才 `ok`。 |
-| `compareAndCommit(baseVersion, candidate)` | 先隔离克隆、再校验；成功时整根替换并把 `stateVersion` 加一；任一失败时原状态逐字节等价。 |
+| `compareAndCommit(baseVersion, candidate, metadata?)` | 先隔离克隆、再校验；成功时整根替换并把 `stateVersion` 加一；可把 session id/journal 的纯数据副本随 commit event 发布；任一失败时原状态逐字节等价。 |
 | `serialize(candidate?)` | 校验后按 key 排序生成确定性 JSON；不读 localStorage。 |
 | `deserialize(input)` | 只负责解析、显式 migration chain 和最终校验；损坏/未知版本 fail-closed。 |
 | `migrate(candidate)` | 只运行调用方注册的 `schemaVersion -> next state` 迁移；无迁移器、循环、异常或无效输出均拒绝。 |
@@ -162,6 +162,14 @@ Stage 3 在 reference core 之上追加：
 | 恢复与并发稳定 | serialize→deserialize 完全等价；同基线仅首个 writer 成功 | stale writer 覆盖资源/科技/牌位置 | high-coupling store + recovery adapter | round-trip + stale writer trace |
 
 固定 trace 位于 `randomizer/game/state/high-coupling-slices.test.js`。它刻意调用现有 `tech/board-state`、`tech/player-tech`、`cards/deck`、`rockets` 与 `planet-stats` 领域函数，证明的是行为组合和一次根提交，不以静态 ownership label 代替执行证据。
+
+## Stage 6 Effect Session 原子提交
+
+`randomizer/game/effects/session-runtime.js` 的 `stateStore` 模式是唯一生产提交边界。`dispatchStoredAction()` 不接受宿主拼出的第二份权威状态，而是调用 `beginWorkingCopy()` 捕获同 schema candidate 和 baseVersion。确定性 Effect、DecisionEffect、quick interrupt、journal 与 barrier 都只修改 session working copy；只有稳定提交边界调用 CAS。
+
+CAS 成功返回的递增版本 snapshot 同时成为 `session.committedState`，随后 session 才进入 `completed`。commit event 的 `metadata.sessionId/journal` 是提交当刻的稳定审计副本，因此 event snapshot、session committedState 与 journal 可直接对齐。版本冲突、schema/invariant 拒绝、不可序列化 metadata、executor/decision 失败与 barrier failure 都不得调用旧切片替换入口；屏障前恢复 base working copy，屏障后保留 working/journal 进入 `irreversible_locked`，两者均不污染 StateStore。
+
+行为矩阵在 `randomizer/game/effects/state-store-session.test.js`：同版本双 session、研究科技/卡牌/盘面多切片、逐步骤 poison、invariant、barrier、commit event/journal 和旧直写 spy。浏览器 UMD 装配由 `state-store-session.browser-smoke.html` 验证。
 
 ## 分阶段覆盖矩阵与删除条件
 

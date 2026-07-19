@@ -360,15 +360,17 @@
       };
     }
 
-    function compareAndCommit(baseVersion, candidate) {
+    function compareAndCommit(baseVersion, candidate, metadata = null) {
       const currentVersion = committedState.meta.stateVersion;
       if (baseVersion !== currentVersion) {
         return { ok: false, code: "STATE_VERSION_CONFLICT", baseVersion, currentVersion };
       }
 
       let isolatedCandidate;
+      let isolatedMetadata;
       try {
         isolatedCandidate = clone(candidate);
+        isolatedMetadata = clone(metadata);
       } catch (error) {
         return { ok: false, code: "STATE_NOT_SERIALIZABLE", message: error?.message || "候选状态不可克隆" };
       }
@@ -395,6 +397,7 @@
         previousVersion: currentVersion,
         stateVersion: nextState.meta.stateVersion,
         snapshot: clone(nextState),
+        metadata: isolatedMetadata,
       });
       for (const listener of [...listeners]) {
         try {

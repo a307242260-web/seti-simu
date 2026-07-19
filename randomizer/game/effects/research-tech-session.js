@@ -103,6 +103,7 @@
       validateState: options.validateState,
       projectState: options.projectState,
       readCommittedState: options.readCommittedState,
+      stateStore: options.stateStore,
       maxDrainSteps: options.maxDrainSteps,
     });
 
@@ -210,6 +211,9 @@
     }
 
     function dispatch(committedState, action, meta = {}) {
+      if (options.stateStore) {
+        return runtime.dispatchStoredAction(action, createEffectGroup, meta);
+      }
       return runtime.dispatchAction(committedState, action, createEffectGroup, meta);
     }
 

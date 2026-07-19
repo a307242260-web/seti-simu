@@ -116,10 +116,16 @@
 
   function createRuntime(options = {}) {
     const cloneState = options.cloneState || clone;
-    const getStateVersion = options.getStateVersion || ((state) => state?.version ?? null);
+    const getStateVersion = options.getStateVersion
+      || ((state) => state?.meta?.stateVersion ?? state?.version ?? null);
     const validateState = options.validateState || (() => ({ ok: true }));
     const projectState = options.projectState || ((state) => cloneState(state));
-    const readCommittedState = options.readCommittedState || null;
+    const stateStore = options.stateStore || null;
+    const beginWorkingCopy = stateStore?.beginWorkingCopy?.bind(stateStore) || null;
+    const compareAndCommit = stateStore?.compareAndCommit?.bind(stateStore) || null;
+    const readCommittedState = options.readCommittedState
+      || stateStore?.getSnapshot?.bind(stateStore)
+      || null;
     const maxDrainSteps = Math.max(1, Number(options.maxDrainSteps) || 1000);
     const executors = new Map();
     let nextSessionSequence = 0;
@@ -129,6 +135,9 @@
     assertFunction(validateState, "validateState");
     assertFunction(projectState, "projectState");
     if (readCommittedState != null) assertFunction(readCommittedState, "readCommittedState");
+    if (stateStore && (!beginWorkingCopy || !compareAndCommit || !readCommittedState)) {
+      throw new TypeError("stateStore 必须实现 getSnapshot/beginWorkingCopy/compareAndCommit");
+    }
 
     function registerExecutor(type, executor) {
       if (!type) throw new TypeError("executor type 不能为空");
@@ -153,7 +162,7 @@
         schemaVersion: SCHEMA_VERSION,
         sessionId,
         phase: "session_open",
-        baseVersion: getStateVersion(committedState),
+        baseVersion: meta.baseVersion ?? getStateVersion(committedState),
         baseState,
         workingState: cloneState(baseState),
         committedState: null,
@@ -175,6 +184,7 @@
         nextGroupSequence: 0,
         interruptContext: null,
         undoFrames: [],
+        commitResult: null,
       };
     }
 
@@ -320,15 +330,17 @@
         return fail("EFFECT_SESSION_NOT_DRAINED", "Effect Queue 未清空，不能提交");
       }
       session.phase = "committing";
-      const authorityState = readCommittedState ? readCommittedState() : session.baseState;
-      const currentVersion = getStateVersion(authorityState);
-      if (currentVersion !== session.baseVersion) {
-        return abort(session, {
-          code: "EFFECT_SESSION_VERSION_CONFLICT",
-          message: "committedState 版本已变化，拒绝覆盖",
-          baseVersion: session.baseVersion,
-          currentVersion,
-        });
+      if (!compareAndCommit) {
+        const authorityState = readCommittedState ? readCommittedState() : session.baseState;
+        const currentVersion = getStateVersion(authorityState);
+        if (currentVersion !== session.baseVersion) {
+          return abort(session, {
+            code: "EFFECT_SESSION_VERSION_CONFLICT",
+            message: "committedState 版本已变化，拒绝覆盖",
+            baseVersion: session.baseVersion,
+            currentVersion,
+          });
+        }
       }
       const validation = validateState(cloneState(session.workingState), session);
       if (validation?.ok === false) {
@@ -338,9 +350,65 @@
           validation: clone(validation),
         });
       }
-      session.committedState = cloneState(session.workingState);
+      if (compareAndCommit) {
+        let committed;
+        try {
+          committed = compareAndCommit(session.baseVersion, cloneState(session.workingState), {
+            sessionId: session.sessionId,
+            journal: clone(session.journal),
+          });
+        } catch (error) {
+          return abort(session, {
+            code: "EFFECT_SESSION_COMMIT_THROWN",
+            message: error?.message || "StateStore compareAndCommit 抛出异常",
+          });
+        }
+        if (!committed?.ok) {
+          return abort(session, {
+            code: committed?.code || "EFFECT_SESSION_COMMIT_FAILED",
+            message: committed?.message || "StateStore compareAndCommit 拒绝提交",
+            commit: clone(committed),
+          });
+        }
+        if (!committed.snapshot) {
+          return abort(session, {
+            code: "EFFECT_SESSION_COMMIT_SNAPSHOT_MISSING",
+            message: "StateStore 提交成功但未返回 committed snapshot",
+          });
+        }
+        session.committedState = cloneState(committed.snapshot);
+        session.commitResult = clone(committed);
+      } else {
+        session.committedState = cloneState(session.workingState);
+      }
       session.phase = "completed";
       return { ok: true, session, committedState: cloneState(session.committedState) };
+    }
+
+    function dispatchStoredAction(action, createEffectGroup, meta = {}) {
+      if (!beginWorkingCopy) {
+        return fail("EFFECT_SESSION_STATE_STORE_REQUIRED", "runtime 未配置 StateStore");
+      }
+      let working;
+      try {
+        working = beginWorkingCopy(meta.baseVersion);
+      } catch (error) {
+        return fail(
+          "EFFECT_SESSION_WORKING_COPY_THROWN",
+          error?.message || "StateStore beginWorkingCopy 抛出异常",
+        );
+      }
+      if (!working?.ok) {
+        return fail(
+          working?.code || "EFFECT_SESSION_WORKING_COPY_FAILED",
+          working?.message || "StateStore 拒绝建立 working copy",
+          { working: clone(working) },
+        );
+      }
+      return dispatchAction(working.state, action, createEffectGroup, {
+        ...clone(meta),
+        baseVersion: working.baseVersion,
+      });
     }
 
     function dispatchAction(committedState, action, createEffectGroup, meta = {}) {
@@ -720,6 +788,7 @@
     return Object.freeze({
       registerExecutor,
       dispatchAction,
+      dispatchStoredAction,
       dispatchQuickAction,
       resolveDecision,
       advance,
