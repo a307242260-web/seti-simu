@@ -3,14 +3,16 @@
 
   let policyPort = root.SetiPolicyPort;
   let standardAction = root.SetiStandardAction;
-  if ((!policyPort || !standardAction) && typeof require === "function") {
+  let machinePlayerHost = root.SetiMachinePlayerHost;
+  if ((!policyPort || !standardAction || !machinePlayerHost) && typeof require === "function") {
     policyPort = policyPort || require("../../game/ai/policy-port");
     standardAction = standardAction || require("../../game/actions/standard-action");
+    machinePlayerHost = machinePlayerHost || require("../../game/ai/machine-player-host");
   }
-  const api = factory(policyPort, standardAction);
+  const api = factory(policyPort, standardAction, machinePlayerHost);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiBrowserPolicyInputAdapter = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, machinePlayerHost) {
   "use strict";
 
   const SCHEMA_VERSION = "seti-browser-policy-input-v1";
@@ -134,9 +136,7 @@
       throw new TypeError("PolicyInputAdapter 需要共享 Action/Decision input adapter");
     }
 
-    let requestOrdinal = 0;
-    let generation = 0;
-    let running = false;
+    let initializedSeatId = null;
     let lastResult = null;
 
     function readNormalizedBoundary() {
@@ -145,23 +145,6 @@
       } catch (error) {
         return fail("POLICY_INPUT_BOUNDARY_READ_FAILED", error?.message || "读取 Policy boundary 失败");
       }
-    }
-
-    function createContext(boundary) {
-      return policyPort.createDecisionContext({
-        requestId: `browser-policy:${boundary.actorId}:${boundary.stateVersion}:${boundary.decisionVersion}:${requestOrdinal}`,
-        seatId: boundary.actorId,
-        stateVersion: boundary.stateVersion,
-        decisionVersion: boundary.decisionVersion,
-        observation: readObservation(boundary.actorId),
-        legalActions: boundary.legalActions,
-        deterministicContext: {
-          inputSchemaVersion: SCHEMA_VERSION,
-          boundaryKind: boundary.kind,
-          decisionId: boundary.decisionId,
-          requestOrdinal,
-        },
-      });
     }
 
     function validateFreshBoundary(original, action) {
@@ -179,75 +162,121 @@
       return freeze({ ok: true, action: freshAction, boundary: fresh });
     }
 
+    const host = machinePlayerHost.createMachinePlayerHost({
+      requestPrefix: "browser-policy",
+      defaultDeadlineMs: options.defaultDeadlineMs,
+      now: options.now,
+      setTimer: options.setTimer,
+      clearTimer: options.clearTimer,
+      onPause: options.onPause,
+      onDiagnostic: options.onDiagnostic,
+      adapter: {
+        readDecisionInput(seatId) {
+          const boundary = readNormalizedBoundary();
+          if (!boundary.ok) return boundary;
+          if (boundary.kind === "terminal") {
+            return fail("POLICY_INPUT_TERMINAL", "终局没有机器玩家决策输入");
+          }
+          return freeze({
+            ok: true,
+            seatId,
+            stateVersion: boundary.stateVersion,
+            decisionVersion: boundary.decisionVersion,
+            authorityKey: `${boundary.kind}:${boundary.decisionId || ""}`,
+            observation: readObservation(seatId),
+            legalActions: boundary.legalActions,
+            deterministicContext: {
+              inputSchemaVersion: SCHEMA_VERSION,
+              boundaryKind: boundary.kind,
+              decisionId: boundary.decisionId,
+            },
+            boundary,
+          });
+        },
+        validateFresh(input, action) {
+          return validateFreshBoundary(input.boundary, action);
+        },
+        submit(action, input, submitContext) {
+          const fresh = submitContext.fresh;
+          return input.boundary.kind === "decision"
+            ? inputAdapter.submitDecision({
+              decisionId: fresh.boundary.decisionId,
+              decisionVersion: fresh.boundary.decisionVersion,
+              choice: clone(action),
+            })
+            : inputAdapter.dispatchAction(clone(action));
+        },
+      },
+    });
+
+    function initializeSeat(seatId) {
+      if (initializedSeatId === seatId) return null;
+      if (initializedSeatId != null) {
+        return fail("POLICY_INPUT_SEAT_DRIFT", `PolicyInputAdapter 已固定席位 ${initializedSeatId}`);
+      }
+      const provenance = typeof policy?.getProvenance === "function" ? policy.getProvenance() : null;
+      const declaredIdentity = options.policyIdentity || {
+        policyType: provenance?.type || options.policyType,
+        policyVersion: provenance?.version || options.policyVersion,
+        modelChecksum: provenance?.modelChecksum ?? options.modelChecksum ?? null,
+        config: provenance?.config || options.policyConfig || {},
+        configChecksum: provenance?.configChecksum,
+        seed: options.seed ?? provenance?.seed ?? null,
+      };
+      try {
+        host.initializeSeats([{
+          seatId,
+          primary: { policy, identity: declaredIdentity },
+          fallbacks: (options.policyFallbacks || []).map((fallback) => ({
+            ...fallback,
+            identity: fallback.identity || {
+              policyType: fallback.policyType,
+              policyVersion: fallback.policyVersion,
+              modelChecksum: fallback.modelChecksum ?? null,
+              config: fallback.config || {},
+              seed: fallback.seed ?? options.seed ?? null,
+            },
+          })),
+        }], { phase: options.initializationPhase || "new_game" });
+        initializedSeatId = seatId;
+        return null;
+      } catch (error) {
+        return fail(error?.code || "POLICY_INPUT_INITIALIZATION_FAILED", error?.message || "机器席位 Policy 初始化失败");
+      }
+    }
+
     async function runOnce(runOptions = {}) {
-      if (running) return fail("POLICY_INPUT_REQUEST_ACTIVE", "已有 Policy request 正在执行");
       const boundary = readNormalizedBoundary();
       if (!boundary.ok) return boundary;
       if (boundary.kind === "terminal") return freeze({ ok: true, done: true, terminal: boundary.terminal });
-
-      running = true;
-      const ownGeneration = generation;
-      let context;
-      try {
-        context = createContext(boundary);
-      } catch (error) {
-        running = false;
-        return fail(error?.code || "POLICY_INPUT_CONTEXT_FAILED", error?.message || "创建 DecisionContext 失败");
-      }
-      requestOrdinal += 1;
-      try {
-        const validated = await policyPort.runPolicy(policy, context, {
-          deadlineAt: runOptions.deadlineAt,
-          signal: runOptions.signal,
-          registry: {
-            validate(_runtimeContext, action) {
-              if (ownGeneration !== generation) {
-                return fail("POLICY_INPUT_INVALIDATED", "Policy input generation 已失效");
-              }
-              return validateFreshBoundary(boundary, action);
-            },
-          },
-          getRuntimeContext: () => ({ generation: ownGeneration }),
-        });
-        if (!validated?.ok) {
-          lastResult = validated;
-          return validated;
-        }
-        const fresh = validateFreshBoundary(boundary, validated.action);
-        if (!fresh.ok) {
-          lastResult = fresh;
-          return fresh;
-        }
-        const submission = boundary.kind === "decision"
-          ? inputAdapter.submitDecision({
-            decisionId: fresh.boundary.decisionId,
-            decisionVersion: fresh.boundary.decisionVersion,
-            choice: clone(fresh.action),
-          })
-          : inputAdapter.dispatchAction(clone(fresh.action));
+      const initializationFailure = initializeSeat(boundary.actorId);
+      if (initializationFailure) return initializationFailure;
+      lastResult = await host.requestDecision(boundary.actorId, runOptions);
+      if (lastResult?.ok) {
         lastResult = freeze({
-          ok: submission?.ok !== false,
+          ...clone(lastResult),
           kind: boundary.kind,
-          actionId: identity(fresh.action),
-          policyDecision: clone(validated.decision),
-          submission: clone(submission),
         });
-        return lastResult;
-      } catch (error) {
-        lastResult = fail(error?.code || "POLICY_INPUT_FAILED", error?.message || "Policy input 执行失败");
-        return lastResult;
-      } finally {
-        running = false;
       }
+      return lastResult;
     }
 
-    function invalidate() {
-      generation += 1;
-      return generation;
+    function invalidate(reason) {
+      return host.invalidate(reason || "Policy input generation 已失效");
     }
 
     function inspect() {
-      return freeze({ schemaVersion: SCHEMA_VERSION, requestOrdinal, generation, running, lastResult: clone(lastResult) });
+      const snapshot = host.inspect();
+      return freeze({
+        schemaVersion: SCHEMA_VERSION,
+        requestOrdinal: snapshot.requestOrdinal,
+        generation: snapshot.generation,
+        running: snapshot.activeRequests.length > 0,
+        paused: clone(snapshot.paused),
+        seats: clone(snapshot.seats),
+        diagnostics: clone(snapshot.diagnostics),
+        lastResult: clone(lastResult),
+      });
     }
 
     return Object.freeze({ runOnce, invalidate, inspect });

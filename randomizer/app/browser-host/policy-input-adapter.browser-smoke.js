@@ -55,6 +55,8 @@
     };
     const driver = SetiBrowserPolicyInputAdapter.createPolicyInputAdapter({
       policy,
+      policyType: "heuristic",
+      policyVersion: "chrome-fixed-v1",
       readBoundary: () => structuredClone(boundary),
       readObservation: () => ({ publicState: { status: status.textContent } }),
       inputAdapter: input,

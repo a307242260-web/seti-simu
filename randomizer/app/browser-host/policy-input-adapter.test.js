@@ -139,6 +139,8 @@ function createTracePolicy(actionIds) {
   const driver = policyInputApi.createPolicyInputAdapter({
     ...poisonedOptions,
     policy: createTracePolicy([ACTION.actionId, CHOICES[1].actionId]),
+    policyType: "heuristic",
+    policyVersion: "fixture-v1",
     readBoundary: ai.readBoundary,
     readObservation: ai.readObservation,
     inputAdapter: ai.input,
@@ -155,6 +157,8 @@ function createTracePolicy(actionIds) {
   let submissions = 0;
   const unknownDriver = policyInputApi.createPolicyInputAdapter({
     policy: createTracePolicy(["unknown"]),
+    policyType: "heuristic",
+    policyVersion: "fixture-v1",
     readBoundary: () => ({
       kind: "decision",
       actorId: "p1",
@@ -181,6 +185,8 @@ function createTracePolicy(actionIds) {
         })); });
       },
     },
+    policyType: "heuristic",
+    policyVersion: "fixture-v1",
     readBoundary: () => staleBoundary,
     readObservation: () => ({}),
     inputAdapter: { dispatchAction() { submissions += 1; }, submitDecision() { submissions += 1; } },

@@ -475,6 +475,7 @@ function createHeadlessEnv() {
       throw new Error(startResult.message || "headless startNewGame 失败");
     }
     const playerIds = (api.getPlayerState().players || []).map((player) => player.id);
+    heuristicPolicyAdapter.initializeSeats(playerIds, { phase: "new_game" });
     api.configureAiAutoBattle({
       playerIds,
       aiDifficulty: resetConfig.aiDifficulty || "laughable",
@@ -612,6 +613,7 @@ function createHeadlessEnv() {
       heuristicPolicyAdapter = createHeuristicPolicyAdapter({
         difficulty: resetConfig.aiDifficulty || "laughable",
         strategyWeights: resetConfig.strategyWeights || {},
+        seed,
       });
       replaySteps = [];
       environmentEvents = [];
@@ -892,17 +894,17 @@ function createHeadlessEnv() {
       const beforeActions = this.legalActions();
       const beforeObservation = lastObservation || buildTimedObservation(undefined, beforeActions);
       if (!beforeActions.length) throw new Error("offline teacher 没有合法候选");
-      const selection = heuristicPolicyAdapter.select(beforeObservation, beforeActions, {
+      const selection = heuristicPolicyAdapter.runDecision(beforeObservation, beforeActions, {
         seed,
         episodeId: config?.episodeId || null,
-      });
+      }, (chosenAction) => this.step(chosenAction));
       const chosenAction = selection.action;
       const teacherResult = {
         decision: selection.decision,
         provenance: heuristicPolicyAdapter.getProvenance(),
       };
       const teacherAdapter = heuristicPolicyAdapter.getProvenance().version;
-      const adapted = this.step(chosenAction);
+      const adapted = selection.submission?.result;
       if (!adapted.ok) {
         throw new Error(`offline teacher canonical 执行失败：${adapted.error || "未知错误"}`);
       }
@@ -922,11 +924,11 @@ function createHeadlessEnv() {
       const beforeActions = this.legalActions();
       const beforeObservation = lastObservation || buildTimedObservation(undefined, beforeActions);
       if (!beforeActions.length) throw new Error("Heuristic opponent 没有合法候选");
-      const selection = heuristicPolicyAdapter.select(beforeObservation, beforeActions, {
+      const selection = heuristicPolicyAdapter.runDecision(beforeObservation, beforeActions, {
         seed,
         episodeId: config?.episodeId || null,
-      });
-      const result = this.step(selection.action);
+      }, (chosenAction) => this.step(chosenAction));
+      const result = selection.submission?.result;
       if (!result.ok) throw new Error(result.error || "Heuristic opponent 执行失败");
       return {
         ...result,
@@ -1006,6 +1008,9 @@ function createHeadlessEnv() {
             throw new Error(restoredSession?.message || "checkpoint Effect Session 恢复失败");
           }
         }
+        if (checkpoint.machinePlayerHostSnapshot) {
+          heuristicPolicyAdapter.restoreHostSnapshot(checkpoint.machinePlayerHostSnapshot);
+        }
         return this.observe();
       }
       if (!api) {
@@ -1043,6 +1048,9 @@ function createHeadlessEnv() {
         environmentEvents.length,
         "load_checkpoint",
       ));
+      if (checkpoint.machinePlayerHostSnapshot) {
+        heuristicPolicyAdapter.restoreHostSnapshot(checkpoint.machinePlayerHostSnapshot);
+      }
       return this.observe();
     },
     createCheckpoint() {
@@ -1061,6 +1069,7 @@ function createHeadlessEnv() {
         },
         effectSessionCheckpoint: effectSessionHost?.createCheckpoint?.() || null,
         effectSessionJournals: effectSessionHost?.getCompletedJournals?.() || [],
+        machinePlayerHostSnapshot: heuristicPolicyAdapter?.createHostSnapshot?.() || null,
         episodeMetadata: {
           episodeId: config?.episodeId || null,
           policyVersion: config?.policyVersion || null,
