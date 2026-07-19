@@ -99,124 +99,110 @@
 <main>
   <header>
     <div class="meta">SETI / ARCHITECTURE NOTE / LIFECYCLE-01</div>
-    <h1>Game Lifecycle：从建局到终局的共享状态机</h1>
-    <p class="summary">下一块需要统一的不是某个行动，而是“一局游戏何时处于 setup、谁可以行动、何时结束当前回合、何时跨轮、何时进入终局”。浏览器与训练版应共享同一生命周期事实；UI、自动调度和训练循环只消费生命周期给出的稳定决策边界。</p>
+    <h1>Game Lifecycle 与流程衔接：不是两套系统</h1>
+    <p class="summary">“流程衔接”是已经确认的 Effect Session 总体方案；“Lifecycle”只是其中在 setup、换玩家、跨轮和终局边界调用的一组规则。上一版把它画成并列的新 runtime，造成了重复感，这里改为同一条执行链上的职责对照。</p>
   </header>
 
   <section>
-    <div class="finding"><b>当前判断：</b>回合状态已经进入 StateStore，PASS / end_turn 已进入 Standard Action，但生命周期推进仍主要是 app 壳层。`turn-flow.js` 同时负责建局重置、随机化、发牌接线、轮次推进和终局摘要；`turn-end-flow.js` 同时负责规则副作用、history、pending continuation、渲染和下一玩家调度。headless reset 仍加载浏览器 bundle 并调用 `startNewGame()`，说明两种运行形态尚未共享一个独立 Lifecycle Runtime。</div>
+    <div class="finding"><b>直接回答：</b>不应该再建一套 Lifecycle Runtime。Effect Session 回答“这次 Action 产生的效果、选择和触发如何按顺序跑完并提交”；Lifecycle Rules 回答“跑到回合边界后，下一位是谁、是否跨轮、是否终局”。Lifecycle Rules 应被 Effect Session 调用，结果写入同一个 working state，并随同一次 session 原子提交。</div>
   </section>
 
   <section>
-    <h2>当前结构</h2>
+    <h2>用一次 end_turn 看两者区别</h2>
     <div class="current-grid">
       <article class="box">
-        <h3>Browser / Headless Host</h3>
-        <ul><li>开始界面或 env reset 发起建局</li><li>浏览器刷新、持久化、AI 调度</li><li>headless 目前仍装载浏览器 API</li></ul>
-        <span class="path">start-screen.js · headless-env.js</span>
+        <h3>1. Standard Action</h3>
+        <ul><li>玩家或 Policy 提交 <code>end_turn</code></li><li>校验 actor、版本和当前合法性</li><li>只负责表达“我要结束回合”</li></ul>
+        <span class="path">SETI-56 / SETI-59</span>
       </article>
       <div class="arrow">→</div>
       <article class="box mixed">
-        <h3>App Lifecycle Shell</h3>
-        <ul><li>新局重置、随机化、初始选择</li><li>当前玩家、PASS、轮转、跨轮</li><li>外星人揭示、收入、history、刷新</li><li>最终轮判断与终局结果打开</li></ul>
-        <span class="path">turn-flow.js · turn-end-flow.js · app.js</span>
+        <h3>2. Effect Session（流程衔接）</h3>
+        <ul><li>打开 working state 与 journal</li><li>执行回合末揭示、收入、清理等 hooks</li><li>遇到选择就暂停并恢复</li><li>全部完成后才允许 commit</li></ul>
+        <span class="path">SETI-62 / SETI-70</span>
       </article>
       <div class="arrow">→</div>
       <article class="box">
-        <h3>Shared Components</h3>
-        <ul><li>StateStore 已持有 turn/match 事实</li><li>Action 已统一 pass / end_turn</li><li>Effect Session 将接管长尾 continuation</li><li>计分规则已有纯 game 模块</li></ul>
-        <span class="path">game/state/** · game/actions/** · game/end-game-scoring.js</span>
+        <h3>3. Lifecycle Rules（其中一段规则）</h3>
+        <ul><li>根据 PASS 集合选择下一 actor</li><li>判断继续本轮、进入下一轮或终局</li><li>返回结构化 transition / events</li><li>仍由 Effect Session 执行后续 hook 并提交</li></ul>
+        <span class="path">当前仍在 app/turn-flow.js</span>
       </article>
     </div>
   </section>
 
   <section>
-    <h2>目标状态机</h2>
+    <h2>两者的边界</h2>
     <div class="machine">
-      <div class="states">
-        <div class="state"><b>CREATED</b><span>GameFactory 生成初始状态<br>固定 config / seed / schema</span></div>
-        <div class="state-arrow">→</div>
-        <div class="state"><b>SETUP</b><span>公司、初始牌等标准 Decision<br>全部完成后进入首轮</span></div>
-        <div class="state-arrow">→</div>
-        <div class="state active"><b>TURN READY</b><span>唯一 actor<br>允许 Action / Decision</span></div>
-        <div class="state-arrow">→</div>
-      </div>
-      <div class="states" style="margin-top:10px">
-        <div class="state"><b>TURN CLOSING</b><span>Effect Session 处理回合末 hook<br>未完成时不可换 actor</span></div>
-        <div class="state-arrow">→</div>
-        <div class="state"><b>NEXT BOUNDARY</b><span>下一玩家 / 跨轮 / 终局<br>由同一规则决定</span></div>
-        <div class="state-arrow">→</div>
-        <div class="state"><b>ROUND START</b><span>清理 round scope<br>执行 round-start hooks</span></div>
-        <div class="state-arrow">↘</div>
-        <div class="state end"><b>GAME ENDED</b><span>终局原因与冻结结果<br>不再产生 legal action</span></div>
-      </div>
+      <table>
+        <thead><tr><th>问题</th><th>Effect Session（流程衔接）</th><th>Lifecycle Rules</th></tr></thead>
+        <tbody>
+          <tr><td>它管什么</td><td>Effect 顺序、Decision 暂停、快速行动插入、working state、journal、commit / abort</td><td>setup 是否完成、当前 actor、PASS 后下一位、跨轮、终局条件</td></tr>
+          <tr><td>何时运行</td><td>每次 Standard Action / Decision 都可能运行</td><td>只在 setup / turn-end / round-end / game-end 边界被 session 调用</td></tr>
+          <tr><td>状态放哪</td><td>session phase、queue、awaiting input 属 working/session state</td><td>round、actor、passed、gameEnded 属 committed turn/match state</td></tr>
+          <tr><td>谁调用谁</td><td><span class="yes">Effect Session 调用 Lifecycle Rules</span>，再继续 drain hooks</td><td>返回纯 transition 结果，不反向调 Host、DOM 或 Policy</td></tr>
+          <tr><td>是不是新总控</td><td>是现有 [SETI-62] 的标准流程总控</td><td><span class="no">不是；只是 SETI-62 需要补齐的一段规则边界</span></td></tr>
+        </tbody>
+      </table>
       <div class="branch-note">
-        <div><b>继续游戏：</b>TURN CLOSING 完成后若本轮未结束，选择下一 eligible actor，回到 TURN READY。</div>
-        <div><b>跨轮或终局：</b>全员 PASS 后只允许进入 ROUND START 或 GAME ENDED，不由 Browser / Policy 自行判断。</div>
+        <div><b>普通 Action：</b>Effect Session 跑效果、处理选择、提交；通常不需要调用 Lifecycle Rules。</div>
+        <div><b>PASS / end_turn：</b>Effect Session 在正确顺序调用 Lifecycle Rules，再跑 round-start / game-end hooks，最后一次性提交。</div>
       </div>
     </div>
   </section>
 
   <section>
-    <h2>职责边界</h2>
+    <h2>之前的流程衔接已经覆盖了什么</h2>
     <table>
-      <thead><tr><th>组件</th><th>负责</th><th>明确不负责</th></tr></thead>
+      <thead><tr><th>范围</th><th>已明确覆盖</th><th>当前状态</th></tr></thead>
       <tbody>
-        <tr><td>GameFactory</td><td>按 config、seed、规则版本创建完整初始 committed state；建立玩家、牌库、盘面和 setup 决策</td><td><span class="no">不读取 DOM，不调浏览器刷新，不选择玩家决策</span></td></tr>
-        <tr><td>Game Lifecycle</td><td><span class="yes">唯一 lifecycle phase、actor、轮次、PASS 集合、跨轮与终局条件</span>；输出结构化 transition/events</td><td>不执行具体行动效果，不渲染，不调度 AI / trainer</td></tr>
-        <tr><td>Effect Session</td><td>在 lifecycle transition 内按顺序执行 PASS、turn-end、round-end、round-start、game-end hooks；处理 Decision 与中断恢复</td><td><span class="no">不自行决定下一玩家、轮次或游戏是否结束</span></td></tr>
-        <tr><td>StateStore</td><td>保存 lifecycle committed fact 与 session working state；compare-and-commit、恢复、版本和 invariant</td><td>不定义生命周期业务规则，不持有 UI 派生状态</td></tr>
-        <tr><td>Browser / Training Host</td><td>启动 runtime、展示或采样、在 TURN READY 请求 human/Policy action、消费 events 与终局结果</td><td><span class="no">不复制 turn advance，不绕过 lifecycle 强行换 actor</span></td></tr>
+        <tr><td>Action 后流程</td><td>Effect Group / Queue、确定性 drain、DecisionEffect、嵌套触发</td><td><span class="yes">SETI-62 核心范围</span></td></tr>
+        <tr><td>事务边界</td><td>working state、原子 commit / abort、版本、不变量、不可逆 barrier</td><td><span class="yes">SETI-62 + SETI-71 已明确</span></td></tr>
+        <tr><td>中断恢复</td><td>快速行动插入、decision revalidation、history / replay / RNG journal</td><td><span class="yes">SETI-62 阶段 4/5</span></td></tr>
+        <tr><td>宿主接入</td><td>浏览器和训练都只提交 Action / Decision，消费 projection / observation</td><td><span class="yes">SETI-62 阶段 6/7，SETI-72 配合</span></td></tr>
+        <tr><td>PASS / 回合末</td><td>列入剩余 52 字段和长尾流程迁移</td><td><span class="yes">SETI-70 有范围</span>，但下表的宏观边界尚未写清</td></tr>
       </tbody>
     </table>
   </section>
 
   <section>
-    <h2>最小公共契约</h2>
-    <div class="contract">
-      <article>
-        <h3>输入命令</h3>
-        <ul>
-          <li><code>createGame(config, seed)</code></li>
-          <li><code>submitSetupDecision(decision)</code></li>
-          <li><code>completeTurn({ actorId, passed })</code></li>
-          <li><code>resumeLifecycle(decision)</code>：继续被 hook 阻塞的 transition</li>
-        </ul>
-      </article>
-      <article>
-        <h3>输出边界</h3>
-        <ul>
-          <li><code>phase / round / actor / stateVersion</code></li>
-          <li><code>LifecycleTransition</code>：before、after、reason、events</li>
-          <li>下一项 Standard Action / Decision，或明确 terminal</li>
-          <li>相同 state、command、decision、RNG journal 得到相同结果</li>
-        </ul>
-      </article>
-    </div>
+    <h2>尚未明确覆盖的 8 个缺口</h2>
+    <table>
+      <thead><tr><th>缺口</th><th>当前代码 / 契约现状</th><th>应归入哪里</th></tr></thead>
+      <tbody>
+        <tr><td>1. 建局工厂</td><td><code>startNewGame()</code> 同时做 reset、随机化、发牌、AI 配置、UI 刷新和存档；SETI-62 从 Action session 开始，没有定义 config + seed → 初始 state。</td><td>独立 GameFactory 边界；与 StateStore 初始化配合，不属于 Effect Queue。</td></tr>
+        <tr><td>2. Setup 完成条件</td><td><code>setupSelectionState</code> 独立存在；何时从初始选择进入首个正常 actor 没有进入 SETI-62 标准阶段。</td><td>新增 setup session / transition proof case，仍复用 DecisionEffect。</td></tr>
+        <tr><td>3. 宏观 phase</td><td>turn state 有 round / actor / passed / gameEnded，但没有统一 setup / playing / finishing / ended phase；调用方仍通过多个字段组合推断。</td><td>SETI-71 的 turn/match schema 与 invariant。</td></tr>
+        <tr><td>4. 下一 actor / 跨轮 / 终局纯规则</td><td><code>advanceTurnAfterPlayerAction()</code>、<code>beginNextRound()</code>、<code>finishGameAfterFinalPass()</code> 仍在 app/turn-flow；SETI-70 说迁 PASS/回合末，但没冻结谁是这些规则的唯一 owner。</td><td>作为 SETI-62/70 的 lifecycle transition executor；纯函数落 game core。</td></tr>
+        <tr><td>5. 跨阶段 hook 顺序</td><td>PASS 收入、外星揭示、round-start 公司收益、原教旨收入目前手工串接；只有 continuation，没有统一 hook 顺序契约。</td><td>SETI-62 Effect Queue / hook registry；Lifecycle Rules 只返回要进入哪条边界。</td></tr>
+        <tr><td>6. 原子换人</td><td>当前先提交 history、清 pending，再调用 turn advance，随后执行 round-start hook 和刷新；不能证明所有步骤与 actor 切换属于同一次 StateStore commit。</td><td>SETI-62 + SETI-71 的 end_turn 原子 proof obligation。</td></tr>
+        <tr><td>7. 恢复与 terminal 闭合</td><td>恢复多在稳定边界；终局还要等终局标记、奖励、弃牌和 replay flush。何时 legalActions 必须为空没有统一 core 判定。</td><td>SETI-62 session inspect + SETI-71 committed phase + RL/browser parity。</td></tr>
+        <tr><td>8. Host 启动去浏览器化</td><td>headless reset 仍加载 browser bundle 并调用 <code>startNewGame()</code>；Browser / Training 尚未共享独立 runtime 创建入口。</td><td>SETI-72 / training host 接入；消费同一 GameFactory 与 session runtime。</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <section>
-    <h2>现有 issue 已覆盖什么</h2>
+    <h2>怎么处理这些缺口</h2>
     <div class="issues">
-      <article class="issue"><b>SETI-5 <span class="tag">done</span></b><p>完成 start screen / new game / turn flow 的 app 模块拆分，但目标是无行为迁移，不是共享生命周期内核。</p></article>
-      <article class="issue"><b>SETI-58 / SETI-59 <span class="tag">done</span></b><p>PASS 与 end_turn 已进入 Standard Action，提供生命周期触发入口，不应重复定义。</p></article>
-      <article class="issue"><b>SETI-62 / SETI-70 <span class="tag">in progress / backlog</span></b><p>Effect Session 会迁移 PASS、回合末和长尾 continuation；Lifecycle 需要复用它执行 hook，不另造 pending 系统。</p></article>
-      <article class="issue"><b>SETI-71 / SETI-83 <span class="tag">in progress / done</span></b><p>turn/match 状态与 invariant 已进入统一 StateStore；Lifecycle 应成为该切片唯一写入者。</p></article>
-      <article class="issue"><b>SETI-72 / SETI-79 <span class="tag">in progress / backlog</span></b><p>Browser Host 会统一 Action Bar、PASS 与效果进度；只展示和提交，不拥有 turn advance。</p></article>
-      <article class="issue"><b>SETI-16 / RL env <span class="tag">done / evolving</span></b><p>headless 已能完整终局，但 reset 仍加载浏览器 bundle。独立 Lifecycle 是浏览器与训练真正同核的缺口。</p></article>
+      <article class="issue"><b>不建新的 Lifecycle 总控</b><p>宏观 transition 是流程衔接的一部分，另建并列 runtime 会与 SETI-62 争抢 session、turn-end 和 commit 所有权。</p></article>
+      <article class="issue"><b>补 SETI-62 / SETI-70</b><p>明确 lifecycle transition executor、hook 顺序、setup / end_turn proof cases 与原子提交验收。</p></article>
+      <article class="issue"><b>补 SETI-71</b><p>统一 committed macro phase、actor / round / terminal invariant，并让 lifecycle transition 成为唯一写入口。</p></article>
+      <article class="issue"><b>补 SETI-72 / Training Host</b><p>去掉 Host 自己的轮转与 terminal 判断；最终都从相同 runtime boundary 请求下一决策。</p></article>
+      <article class="issue"><b>GameFactory 单独评估</b><p>建局不是 Action 后 Effect Session；它可能需要独立子 issue，但应先确认 config、seed、初始 state 和 setup session 边界。</p></article>
+      <article class="issue"><b>SETI-5 保留为历史基线</b><p>它只完成 app.js 的无行为拆分，不把“文件已拆”误判为共享 game core 已完成。</p></article>
     </div>
   </section>
 
   <section>
-    <h2>这轮只确认三件事</h2>
+    <h2>修正后的结论</h2>
     <div class="decisions">
-      <div class="decision"><div class="n">01</div><div><h3>Lifecycle 是否属于共享 game core</h3><p>建议确认。浏览器与训练宿主只能消费同一 lifecycle state / transition，不再各自维护 setup、轮转和 terminal 判断。</p></div></div>
-      <div class="decision"><div class="n">02</div><div><h3>副作用如何接入</h3><p>建议 Lifecycle 只决定阶段和顺序，PASS / turn-end / round-start / game-end 的具体规则 hook 全部交给 Effect Session；hook 未完成时不得提交下一 actor。</p></div></div>
-      <div class="decision"><div class="n">03</div><div><h3>建局边界</h3><p>建议 GameFactory 负责从 config + seed 生成初始 state；Lifecycle 从 SETUP 开始拥有阶段推进。浏览器存档、动画、对话框和训练 reset 都留在各自 Host。</p></div></div>
+      <div class="decision"><div class="n">01</div><div><h3>没有第二套流程系统</h3><p>Lifecycle 只保留为纯规则/transition executor，嵌入 SETI-62；Effect Session 仍是唯一流程衔接 runtime。</p></div></div>
+      <div class="decision"><div class="n">02</div><div><h3>现有总控补边界，不重复建单</h3><p>SETI-62 补执行与原子性，SETI-71 补 committed phase / invariant，SETI-72 与 Training Host 补宿主接入。</p></div></div>
+      <div class="decision"><div class="n">03</div><div><h3>唯一可能独立的是 GameFactory</h3><p>config + seed → 初始 state 与 setup session 不属于普通 Action 后流程；先把契约讲清，再决定作为 SETI-62 子项还是单独实施 issue。</p></div></div>
     </div>
   </section>
 
-  <footer>依据 `randomizer/app/turn-flow.js`、`turn-end-flow.js`、`headless-env.js`、StateStore turn slice、Standard Action 与现有 SETI issue 状态整理。此页只讨论 Game Lifecycle 一级边界，不在本轮设计具体 hook registry、文件拆分或迁移排期。</footer>
+  <footer>修订依据：SETI-62 完整范围、既有流程衔接报告、`turn-flow.js`、`turn-end-flow.js`、`headless-env.js`、StateStore turn slice 与 Standard Action 契约。核心修正是把 Lifecycle 从“并列 runtime”降为 Effect Session 内调用的宏观 transition 规则。</footer>
 </main>
 </body>
 </html>

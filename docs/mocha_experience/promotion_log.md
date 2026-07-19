@@ -620,3 +620,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: `git show --name-only 32813e3`、`git show --stat 17df650`；最新 HEAD + 本 issue staged 快照执行 `node --check randomizer/app.js` 与全部 tracked `randomizer/**/*.test.js`，0 失败。
 - observed_outcome: 缺失 hunk在 push 前被发现并补交，其他 agent 的工作树与提交均保留。
 - keep_or_revise: 保持 candidate；下一次同类竞态触发升级评估。
+
+- date: 2026-07-19
+- source: SETI-45
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及负责跨模块架构探索的 agent
+- target_component: 重叠架构边界的结果展示实践
+- target_file: docs/mocha_experience/exploratory_research.md
+- remote_skill_id: none
+- change: 补充“新名词与既有总控重叠时，先判定新系统或子职责，再给具体执行链和已覆盖 / 未覆盖 / 归属矩阵”的架构展示候选。
+- applied_change: 修订 `reports/seti-game-lifecycle-architecture.html`，明确 Lifecycle Rules 由 SETI-62 Effect Session 调用，不再建立并列 runtime；列出 8 项真实缺口及 SETI-62/70、SETI-71、SETI-72、GameFactory 的归属。
+- expected_effect: owner 能在第一屏直接判断新概念是否增加 runtime/总控，并区分现有 issue 已覆盖范围与真正需要补的契约，减少重复建单和边界返工。
+- evaluation_window: 后续 2 次名称或职责与既有架构总控重叠的 SETI 架构讨论。
+- success_signal: 首次交付无需追问“与之前有什么区别、哪些没覆盖”，且缺口能直接映射到既有 issue 或明确的新边界。
+- rollback_condition: 若后续讨论完全无既有覆盖或 owner 明确只需独立愿景图，则不强制覆盖矩阵；若矩阵过长遮蔽主结论，则收敛到高风险缺口。
+- risk: 为求覆盖完整可能把报告写成 issue 清单；必须仍以一条具体业务链和一句边界结论为主，矩阵只解释差异。
+- evidence_before: SETI-45 首版 Lifecycle 报告与 owner 评论 `3d584b90-69aa-45cc-a048-2036d2bf9380`；SETI-62 既有流程衔接范围与修订后的 Lifecycle 报告。
+- owner_or_agent_decision: 领航依据 owner 的可理解性反馈与 harness-evolve closeout 自决记录 candidate；单次复现不足以升级长期组件。
+- applied_at: 2026-07-19
+- verification: 修订 HTML parse PASS；`turn-flow.test.js`、`start-screen.test.js` 通过；系统 Chrome 1440×3200 与 430×4200 渲染检查通过。
+- observed_outcome: 修订版已能用同一条 end_turn 链路说明 Effect Session 与 Lifecycle Rules 的调用关系，并显式列出 8 项缺口及归属；等待 owner 对澄清度反馈。
+- keep_or_revise: 保持 candidate；观察后续 2 次重叠架构讨论后决定是否形成 exploratory research 固定模板。

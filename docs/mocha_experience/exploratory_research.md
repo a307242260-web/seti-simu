@@ -29,3 +29,11 @@
 - promote_to: loop_template
 - promotion_status: promote
 - decision: 新增项目级 proof obligation 模板并在根 `AGENTS.md` 增加触发入口；不新增 watcher 或通用代码 runner，后者等待第二个独立状态机复现后再评估。
+
+- date: 2026-07-19
+- source_issue: SETI-45
+- observation: 架构探索提出的新名词若与已确认总控存在范围重叠，材料必须先回答“这是新系统还是现有系统内的子职责”，再用同一条具体执行链和“已覆盖 / 未覆盖 / 归属”矩阵说明差异；仅画一套独立目标架构会把补契约误读成另起 runtime。
+- evidence: SETI-45 首版 Lifecycle 报告把其画成与 Effect Session 并列的共享状态机，owner 评论 `3d584b90-69aa-45cc-a048-2036d2bf9380` 明确反馈看不懂与既有流程衔接的区别及缺口；修订报告以 `end_turn` 单链路、职责对照和 8 项缺口矩阵纠正。
+- promote_to: none
+- promotion_status: candidate
+- decision: 作为既有“单边界 + 技术文档式 HTML”候选的边界澄清补充；后续 2 次重叠架构讨论观察是否首次交付即可区分复用、补齐与新建，不修改 agent prompt、loop template、watcher 或 issue-workflow。
