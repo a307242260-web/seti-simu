@@ -22,6 +22,6 @@ state.selection.currentPlayerId = "player-white";
 assert.deepEqual(state.pending.discardAction, { count: 2 });
 assert.equal(state.actionLog.entries.length, 1);
 assert.equal(state.selection.currentPlayerId, "player-white");
-assert.deepEqual(state.pending.type1TriggerEvents, []);
+assert.equal(Object.hasOwn(state.pending, "type1TriggerEvents"), false);
 
 console.log("runtime tests passed");
