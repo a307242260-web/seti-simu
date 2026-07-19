@@ -6,8 +6,8 @@ const path = require("node:path");
 const inventory = require("./legacy-flow-inventory");
 const appRuntime = require("../../app/runtime");
 
-assert.equal(inventory.INVENTORY.length, 50, "权威 inventory 必须只覆盖仍存续的 50 字段");
-assert.equal(new Set(inventory.INVENTORY.map((entry) => entry.field)).size, 50);
+assert.equal(inventory.INVENTORY.length, 48, "权威 inventory 必须只覆盖仍存续的 48 字段");
+assert.equal(new Set(inventory.INVENTORY.map((entry) => entry.field)).size, 48);
 assert.equal(inventory.INVENTORY.every((entry) => ["host-only", "dated-adapter"].includes(entry.status)), true);
 assert.equal(inventory.INVENTORY
   .filter((entry) => entry.status === "dated-adapter")
@@ -16,14 +16,13 @@ assert.equal(inventory.INVENTORY
 const pending = appRuntime.createPendingState();
 const cleanAudit = inventory.auditLegacyPendingState(pending, { asOf: "2026-07-19" });
 assert.equal(cleanAudit.ok, true);
-assert.equal(cleanAudit.fieldCount, 50);
+assert.equal(cleanAudit.fieldCount, 48);
 assert.deepEqual(cleanAudit.activeAdapters, []);
 
 pending.jiuzheOpportunityQueue.push({ id: "opportunity-1" });
-pending.actionExecuted = true;
 assert.deepEqual(
   inventory.auditLegacyPendingState(pending, { asOf: "2026-07-19" }).activeAdapters.sort(),
-  ["actionExecuted", "jiuzheOpportunityQueue"],
+  ["jiuzheOpportunityQueue"],
 );
 
 const unknown = { ...appRuntime.createPendingState(), surpriseResolver: true };

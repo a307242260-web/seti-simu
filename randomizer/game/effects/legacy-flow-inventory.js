@@ -50,8 +50,6 @@
     alienTracePickerState: null,
     alienRevealConfirmation: null,
     turnEndAfterRevealContinuation: null,
-    actionExecuted: false,
-    passPlayerId: null,
     actionEffectFlow: null,
     movePayment: null,
     playCardSelection: null,
@@ -78,7 +76,7 @@
     aomomo: ["aomomoCardGain"],
     runezu: ["runezuCardGain", "runezuSymbolBranch", "runezuFaceSymbolPlacement"],
     strategy_pirates: ["strategyPassiveSlotChoice", "piratesRaidPlacement"],
-    action_flow: ["actionExecuted", "passPlayerId", "actionEffectFlow"],
+    action_flow: ["actionEffectFlow"],
     movement_cards: ["movePayment", "playCardSelection", "futureSpanPlayBeforePlayer", "handCardPlayAction", "cardCornerQuickAction", "cardCornerFreeMove"],
     data_industry: ["dataPlaceAction", "industryAbility"],
   });

@@ -58,10 +58,12 @@
   function createActionHistory() {
     let session = null;
 
-    function beginSession(actionType, label) {
+    function beginSession(actionType, label, meta = {}) {
       session = {
         actionType,
         label: label || actionType,
+        actionComplete: false,
+        passPlayerId: meta.passPlayerId || null,
         steps: [],
         currentStep: null,
       };
@@ -240,8 +242,21 @@
       return {
         actionType: session.actionType,
         label: session.label,
+        actionComplete: session.actionComplete,
+        passPlayerId: session.passPlayerId,
         stepCount: session.steps.length + (session.currentStep ? 1 : 0),
       };
+    }
+
+    function markActionComplete(meta = {}) {
+      if (!session) return null;
+      session.actionComplete = true;
+      if (meta.passPlayerId != null) session.passPlayerId = String(meta.passPlayerId);
+      return getSessionInfo();
+    }
+
+    function isActionComplete() {
+      return Boolean(session?.actionComplete);
     }
 
     function hasUndoableStep() {
@@ -355,6 +370,8 @@
       commitSession,
       hasSession,
       getSessionInfo,
+      markActionComplete,
+      isActionComplete,
       hasUndoableStep,
       peekLastUndoableStep,
       hasIrreversibleBarrier,

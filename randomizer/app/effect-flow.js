@@ -128,7 +128,7 @@
 
     function shouldIrreversibleBlockCurrentMainAction(source) {
       if (source !== HISTORY_SOURCE_QUICK) return true;
-      return Boolean(pendingState.actionExecuted || actionHistory.hasSession());
+      return Boolean(actionHistory.isActionComplete?.() || actionHistory.hasSession());
     }
 
     function markCurrentActionIrreversibleForSource(source, reason, code = "irreversible") {
@@ -357,7 +357,7 @@
         : [];
       pendingState.actionEffectFlow.preHistoryCommandsApplied = false;
       pendingState.actionEffectFlow.resumePendingActionExecuted = Boolean(
-        pendingState.actionExecuted
+        actionHistory.isActionComplete?.()
         || (
           pendingState.actionEffectFlow.historySource === HISTORY_SOURCE_QUICK
           && actionHistory.hasSession()

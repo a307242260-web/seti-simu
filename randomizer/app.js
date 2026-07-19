@@ -2181,7 +2181,7 @@
         endTurn: {
           label: "结束回合",
           getOptions() {
-            const legal = pendingState.actionExecuted && !isActionEffectFlowActive() && !hasActivePendingSubFlow();
+            const legal = isActionPending() && !isActionEffectFlowActive() && !hasActivePendingSubFlow();
             return legal
               ? { ok: true, choices: [{ target: { kind: "end-turn" }, label: "结束回合" }] }
               : { ok: false, message: "主行动未完成或仍有待决选择" };
@@ -2749,7 +2749,7 @@
     get pendingCardTriggerFreeMove() { return pendingState.cardTriggerFreeMove; },
     get pendingCardTaskCompletion() { return pendingState.cardTaskCompletion; },
     get pendingChongTaskCompletion() { return pendingState.chongTaskCompletion; },
-    get pendingActionExecuted() { return pendingState.actionExecuted; },
+    get pendingActionExecuted() { return isActionPending(); },
     get pendingActionEffectFlow() { return pendingState.actionEffectFlow; },
     get actionHistoryHasSession() { return actionHistory.hasSession(); },
     get actionHistorySessionInfo() { return actionHistory.getSessionInfo?.() || null; },
@@ -3492,7 +3492,7 @@
     actionLogRuntimeModule.pruneEmptyDraft(actionLogState, {
       hasMainHistorySession: () => actionHistory.hasSession(),
       hasQuickHistorySession: () => quickActionHistory.hasSession(),
-      actionExecuted: pendingState.actionExecuted,
+      actionExecuted: isActionPending(),
     });
   }
 
@@ -3601,7 +3601,7 @@
 
   function isPersistentGameStateStable() {
     if (persistentGameSaveSuspended) return false;
-    return !pendingState.actionExecuted
+    return !isActionPending()
       && !uiRuntimeState.effectStepActive
       && !pendingState.actionEffectFlow
       && !pendingState.alienRevealConfirmation
@@ -3815,8 +3815,6 @@
     closeAlienRevealConfirmationOverlay();
     pendingState.turnEndAfterRevealContinuation = null;
     uiRuntimeState.debugAlienTraceModeActive = false;
-    pendingState.actionExecuted = false;
-    pendingState.passPlayerId = null;
     pendingState.actionEffectFlow = null;
     clearCompletedEffectFlowForUndo();
     uiRuntimeState.effectStepActive = false;
@@ -7792,6 +7790,7 @@
       isFutureSpanEligibleHandCard: typeof isFutureSpanEligibleHandCard === "undefined" ? undefined : isFutureSpanEligibleHandCard,
       isHandScanSelectionActive: typeof isHandScanSelectionActive === "undefined" ? undefined : isHandScanSelectionActive,
       isInitialIncomeFlowActive: (...args) => isInitialIncomeFlowActive(...args),
+      isActionPending: () => isActionPending(),
       isMovePaymentSelectionActive: typeof isMovePaymentSelectionActive === "undefined" ? undefined : isMovePaymentSelectionActive,
       isPlayCardSelectionActive: (...args) => isPlayCardSelectionActive(...args),
       isTechTilePickingActive: (...args) => isTechTilePickingActive(...args),
@@ -8308,7 +8307,11 @@
 
 
   function markActionPending() {
-    pendingState.actionExecuted = true;
+    actionHistory.markActionComplete?.();
+  }
+
+  function isActionPending() {
+    return Boolean(actionHistory.isActionComplete?.());
   }
 
   function getIrreversibleReason(result, fallback = "该步骤产生不可撤销影响") {
@@ -8353,14 +8356,12 @@
   }
 
   function clearActionPending() {
-    pendingState.actionExecuted = false;
-    pendingState.passPlayerId = null;
     clearCompletedEffectFlowForUndo(HISTORY_SOURCE_MAIN);
   }
 
   function recoverPendingActionFromOpenHistoryForAi() {
     if (
-      pendingState.actionExecuted
+      isActionPending()
       || isActionEffectFlowActive()
       || hasActivePendingSubFlow()
       || !actionHistory.hasSession()
@@ -8400,7 +8401,7 @@
 
   function clearStaleFullyUndoneMainActionSession() {
     if (!actionHistory.hasSession()
-      || pendingState.actionExecuted
+      || isActionPending()
       || isActionEffectFlowActive()
       || actionHistory.hasUndoableStep()) {
       return false;
@@ -8414,7 +8415,7 @@
   function canUndoCurrentMainAction() {
     if (actionHistory.hasUndoableStep()) return true;
     if (hasCurrentMainActionIrreversibleBarrier()) return false;
-    return Boolean(pendingState.actionExecuted || isActionEffectFlowActive());
+    return Boolean(isActionPending() || isActionEffectFlowActive());
   }
 
   function hasCurrentMainActionIrreversibleBarrier() {
@@ -8424,7 +8425,7 @@
   function getMainActionStartBlockReason() {
     const gameplayLockReason = getGameplayLockReason();
     if (gameplayLockReason) return gameplayLockReason;
-    if (pendingState.actionExecuted) return "请先回合结束或撤销当前行动";
+    if (isActionPending()) return "请先回合结束或撤销当前行动";
     if (isActionEffectFlowActive()) return "请先完成当前行动的效果";
     if (actionHistory.hasSession()) return "请先回合结束或撤销当前行动";
     if (hasActivePendingSubFlow()) return "请先完成或取消当前流程";
@@ -8527,7 +8528,7 @@
       }
     }
     if (
-      !pendingState.actionExecuted
+      !isActionPending()
       && !isActionEffectFlowActive()
       && !actionHistory.hasUndoableStep()
       && !quickActionHistory.hasUndoableStep()
@@ -8683,7 +8684,7 @@
       return;
     }
 
-    if (pendingState.actionExecuted || actionHistory.hasSession()) {
+    if (isActionPending() || actionHistory.hasSession()) {
       const result = actionHistory.rollbackSession();
       if (result.ok) {
         uiRuntimeState.effectStepActive = false;
@@ -8726,7 +8727,7 @@
       return effectBlockedReason;
     }
 
-    if (pendingState.actionExecuted) {
+    if (isActionPending()) {
       const mainActionHasIrreversibleBarrier = hasCurrentMainActionIrreversibleBarrier();
       setTurnActionButtonState(els.actionPassButton, false);
       setTurnActionButtonState(els.actionConfirmButton, true, true);
@@ -8825,7 +8826,7 @@
       return;
     }
 
-    if (effectFlowLocked || pendingState.actionExecuted || actionHistoryLocked) {
+    if (effectFlowLocked || isActionPending() || actionHistoryLocked) {
       setActionButtonState(els.actionLaunchButton, false, pendingBlockedReason);
       setActionButtonState(els.actionOrbitButton, false, pendingBlockedReason);
       setActionButtonState(els.actionLandButton, false, pendingBlockedReason);

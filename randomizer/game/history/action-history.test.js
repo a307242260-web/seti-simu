@@ -53,6 +53,10 @@ assert.equal(history.hasSession(), false);
 
 const incremental = actionHistory.createActionHistory();
 incremental.beginSession("place-data", "放置数据");
+assert.equal(incremental.isActionComplete(), false);
+incremental.markActionComplete({ passPlayerId: "p1" });
+assert.equal(incremental.isActionComplete(), true);
+assert.equal(incremental.getSessionInfo()?.passPlayerId, "p1");
 incremental.beginStep({ type: "action", label: "放置数据" });
 incremental.record({
   label: "放置 1",

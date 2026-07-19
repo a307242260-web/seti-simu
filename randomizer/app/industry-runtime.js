@@ -79,6 +79,7 @@
       isFutureSpanEligibleHandCard,
       isHandScanSelectionActive,
       isInitialIncomeFlowActive,
+      isActionPending = () => false,
       isMovePaymentSelectionActive,
       isPlayCardSelectionActive,
       isTechTilePickingActive,
@@ -1237,7 +1238,7 @@
         return appendSentinelPlayCornerEffectsToFlow(nodes);
       }
 
-      if (!pendingState.actionExecuted) return false;
+      if (!isActionPending()) return false;
 
       return startCardEffectFlow(
         "industry-sentinel-corner",

@@ -176,7 +176,6 @@
   }
 
   function beginPassActionSession(currentPlayer) {
-    pendingState.passPlayerId = currentPlayer.id;
     startActionLogDraft("pass", "PASS", { source: HISTORY_SOURCE_MAIN, player: currentPlayer });
     actionHistory.beginSession("pass", "PASS");
     actionHistory.beginStep({
@@ -188,6 +187,7 @@
     });
     uiRuntimeState.effectStepActive = true;
     completePendingActionStep();
+    actionHistory.markActionComplete?.({ passPlayerId: currentPlayer.id });
   }
 
   function settlePassEventAfterEffects(player) {
@@ -509,10 +509,10 @@
   }
 
   function endCurrentTurn() {
-    if (!pendingState.actionExecuted || isActionEffectFlowActive() || hasActivePendingSubFlow()) return;
+    if (!actionHistory.isActionComplete?.() || isActionEffectFlowActive() || hasActivePendingSubFlow()) return;
     const endingPlayer = getCurrentPlayer();
     const endingPlayerId = endingPlayer?.id || null;
-    const didPass = pendingState.passPlayerId === endingPlayerId;
+    const didPass = actionHistory.getSessionInfo?.()?.passPlayerId === endingPlayerId;
 
     if (industry?.expireStrategyPlayInteractionOnTurnEnd?.(endingPlayer, turnState.roundNumber)?.cleared) {
       renderInitialSelectionArea();
