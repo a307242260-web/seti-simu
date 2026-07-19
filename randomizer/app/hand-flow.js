@@ -63,7 +63,6 @@
       getStandardPlayCardActionBlockReason,
       getCardPlayCost,
       formatCardPlayCost,
-      getPlayCardBeforePlayerSnapshot,
       restoreObjectSnapshot,
       releaseFutureSpanAfterPlayWithHistory,
       markActionPending,
@@ -126,6 +125,13 @@
       scrollToPlayerCommandPanel,
       getCardTypeCode,
     } = context;
+    let futureSpanPlayBeforePlayer = null;
+
+    function getPlayCardBeforePlayerSnapshot(currentPlayer) {
+      return futureSpanPlayBeforePlayer
+        ? structuredClone(futureSpanPlayBeforePlayer)
+        : structuredClone(currentPlayer);
+    }
 
     function syncDiscardSelectionChrome() {
       const active = isDiscardSelectionActive();
@@ -1239,13 +1245,13 @@
       currentPlayer.hand.push(playedCard);
       currentPlayer.resources.handSize = currentPlayer.hand.length;
       const handIndex = currentPlayer.hand.length - 1;
-      pendingState.futureSpanPlayBeforePlayer = beforePlayer;
+      futureSpanPlayBeforePlayer = beforePlayer;
 
       let result = null;
       try {
         result = handleHandCardPlay(handIndex);
       } finally {
-        pendingState.futureSpanPlayBeforePlayer = null;
+        futureSpanPlayBeforePlayer = null;
         delete playedCard.futureSpanFreePlay;
       }
 
@@ -1358,6 +1364,7 @@
           deferredEndEffects: playFlowQueue.deferredEndEffects,
           immediatePlayCardEvent,
           playCardEvent,
+          futureSpanPlayedCard: Boolean(playedCard.futureSpanFreePlay),
         });
       } else {
         settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
@@ -1459,6 +1466,7 @@
           deferredEndEffects: playFlowQueue.deferredEndEffects,
           immediatePlayCardEvent,
           playCardEvent,
+          futureSpanPlayedCard: Boolean(playedCard.futureSpanFreePlay),
         });
       } else {
         settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });
@@ -1648,6 +1656,7 @@
           deferredEndEffects: playFlowQueue.deferredEndEffects,
           immediatePlayCardEvent,
           playCardEvent,
+          futureSpanPlayedCard: Boolean(playedCard.futureSpanFreePlay),
         });
       } else {
         settleCardTasksAfterEffect({ events: [immediatePlayCardEvent], render: false });

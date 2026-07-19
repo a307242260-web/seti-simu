@@ -523,7 +523,6 @@
   let getCardPlayCreditCost;
   let createPlayCardEvent;
   let createImmediatePlayCardEvent;
-  let getPlayCardBeforePlayerSnapshot;
   let restoreObjectSnapshot;
   let getFutureSpanCreditPriceForCard;
   let getFutureSpanDeltaForCard;
@@ -1174,7 +1173,6 @@
     getStandardPlayCardActionBlockReason: (...args) => getStandardPlayCardActionBlockReason(...args),
     getCardPlayCost: (...args) => getCardPlayCost(...args),
     formatCardPlayCost: (...args) => formatCardPlayCost(...args),
-    getPlayCardBeforePlayerSnapshot: (...args) => getPlayCardBeforePlayerSnapshot(...args),
     restoreObjectSnapshot: (...args) => restoreObjectSnapshot(...args),
     releaseFutureSpanAfterPlayWithHistory,
     markActionPending,
@@ -3146,7 +3144,6 @@
     getCardPlayCreditCost,
     createPlayCardEvent,
     createImmediatePlayCardEvent,
-    getPlayCardBeforePlayerSnapshot,
     restoreObjectSnapshot,
     getFutureSpanCreditPriceForCard,
     getFutureSpanDeltaForCard,
@@ -3821,7 +3818,6 @@
     uiRuntimeState.moveHighlightRocketId = null;
     pendingState.movePayment = null;
     pendingState.playCardSelection = null;
-    pendingState.futureSpanPlayBeforePlayer = null;
     pendingState.handCardPlayAction = null;
     pendingState.cardCornerQuickAction = null;
     pendingState.cardCornerFreeMove = null;

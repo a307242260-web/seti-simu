@@ -53,7 +53,6 @@
     actionEffectFlow: null,
     movePayment: null,
     playCardSelection: null,
-    futureSpanPlayBeforePlayer: null,
     handCardPlayAction: null,
     cardCornerQuickAction: null,
     cardCornerFreeMove: null,
@@ -77,7 +76,7 @@
     runezu: ["runezuCardGain", "runezuSymbolBranch", "runezuFaceSymbolPlacement"],
     strategy_pirates: ["strategyPassiveSlotChoice", "piratesRaidPlacement"],
     action_flow: ["actionEffectFlow"],
-    movement_cards: ["movePayment", "playCardSelection", "futureSpanPlayBeforePlayer", "handCardPlayAction", "cardCornerQuickAction", "cardCornerFreeMove"],
+    movement_cards: ["movePayment", "playCardSelection", "handCardPlayAction", "cardCornerQuickAction", "cardCornerFreeMove"],
     data_industry: ["dataPlaceAction", "industryAbility"],
   });
 

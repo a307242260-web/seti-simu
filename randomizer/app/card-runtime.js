@@ -476,12 +476,6 @@
       return createPlayCardEvent(playedCard, player, cost, { timing: "after_play_card" });
     }
 
-    function getPlayCardBeforePlayerSnapshot(currentPlayer) {
-      return pendingState.futureSpanPlayBeforePlayer
-        ? structuredClone(pendingState.futureSpanPlayBeforePlayer)
-        : structuredClone(currentPlayer);
-    }
-
     function restoreObjectSnapshot(target, snapshot) {
       if (!target || !snapshot) return;
       for (const key of Object.keys(target)) delete target[key];
@@ -1772,7 +1766,6 @@
       getCardPlayCreditCost,
       createPlayCardEvent,
       createImmediatePlayCardEvent,
-      getPlayCardBeforePlayerSnapshot,
       restoreObjectSnapshot,
       getFutureSpanCreditPriceForCard,
       getFutureSpanDeltaForCard,

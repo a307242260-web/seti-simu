@@ -339,7 +339,7 @@
       pendingState.actionEffectFlow.playCardEvent = options.playCardEvent || null;
       pendingState.actionEffectFlow.industryPlayedCard = options.industryPlayedCard || options.card || null;
       pendingState.actionEffectFlow.futureSpanPlayedCard = Boolean(
-        options.futureSpanPlayedCard || pendingState.futureSpanPlayBeforePlayer,
+        options.futureSpanPlayedCard,
       );
       pendingState.actionEffectFlow.historySource = options.historySource || HISTORY_SOURCE_MAIN;
       pendingState.actionEffectFlow.consumesMainAction = options.consumesMainAction !== false;
