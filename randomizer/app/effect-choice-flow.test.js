@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { createEffectChoiceFlowHelpers } = require("./effect-choice-flow");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 
 function makeButton() {
   return {
@@ -40,6 +41,7 @@ function createHarness(overrides = {}) {
       ],
     },
   };
+  const decisionSessions = createDecisionSessionStore();
   const rocketState = {
     statusNote: "",
     rockets: [
@@ -72,6 +74,7 @@ function createHarness(overrides = {}) {
 
   const helper = createEffectChoiceFlowHelpers({
     document: { createElement: () => makeButton() },
+    decisionSessions,
     pendingState,
     els,
     rocketState,
@@ -147,7 +150,7 @@ function createHarness(overrides = {}) {
     withPendingOwnerPlayer: (_pending, run) => run(player),
     closeScanTargetPicker() {
       pendingState.scanTargetAction = null;
-      pendingState.probeSectorScanAction = null;
+      decisionSessions.clear("probe_sector_scan");
       els.scanTargetOverlay.hidden = true;
     },
     renderStateReadout() {
@@ -205,7 +208,7 @@ function createHarness(overrides = {}) {
     ...overrides,
   });
 
-  return { helper, pendingState, rocketState, calls, els, player };
+  return { helper, pendingState, decisionSessions, rocketState, calls, els, player };
 }
 
 {
@@ -269,14 +272,14 @@ function createHarness(overrides = {}) {
 }
 
 {
-  const { helper, pendingState, calls, els } = createHarness();
+  const { helper, decisionSessions, calls, els } = createHarness();
   const result = helper.executeProbeSectorScanEffect({
     id: "probe-sector",
     label: "探测器扫描",
     options: { maxTargets: 2, repeat: 1 },
   });
   assert.equal(result.ok, true);
-  assert.equal(pendingState.probeSectorScanAction.choices.length, 2);
+  assert.equal(decisionSessions.peek("probe_sector_scan").choices.length, 2);
   helper.handleProbeSectorScanChoice(1);
   helper.confirmProbeSectorScanSelection();
   assert.equal(calls.inserted.length, 1);

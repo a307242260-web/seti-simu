@@ -976,7 +976,7 @@
         pendingState.cardSelectionAction,
         pendingState.passReserveSelection,
         pendingState.scanTargetAction,
-        pendingState.probeSectorScanAction,
+        decisionSessions?.peek?.("probe_sector_scan"),
         pendingState.probeLocationRewardAction,
         decisionSessions?.peek?.("public_scan_queue"),
         pendingState.handScanAction,

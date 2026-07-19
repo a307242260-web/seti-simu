@@ -33,6 +33,7 @@
       completeCurrentActionEffect,
       createActionContext,
       data,
+      decisionSessions,
       document,
       effectChoiceFlowHelpers,
       els,
@@ -342,7 +343,7 @@
     }
 
     function renderProbeSectorScanPicker() {
-      const pending = pendingState.probeSectorScanAction;
+      const pending = decisionSessions.peek("probe_sector_scan");
       if (!pending || !els.scanTargetActions) return;
       const selected = new Set(pending.selectedRocketIds || []);
       const maxTargets = Math.max(1, Math.round(Number(pending.effect.options?.maxTargets) || 1));
@@ -372,12 +373,12 @@
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         return { ok: false, message: "无法打开探测器扫描选择" };
       }
-      pendingState.probeSectorScanAction = {
+      decisionSessions.open("probe_sector_scan", {
         ...getPendingOwnerFields(effect),
         effect,
         choices,
         selectedRocketIds: [],
-      };
+      });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) {
         const maxTargets = Math.max(1, Math.round(Number(effect.options?.maxTargets) || 1));

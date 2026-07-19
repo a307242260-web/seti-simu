@@ -21,6 +21,9 @@
   function createEffectChoiceFlowHelpers(context = {}) {
     const documentRef = context.document || null;
     const pendingState = context.pendingState || {};
+    const decisionSessions = context.decisionSessions;
+    const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
+    const getProbeSectorScanSession = () => decisionSessions.peek(PROBE_SECTOR_SCAN_SESSION);
     const els = context.els || {};
     const rocketState = context.rocketState || {};
     const cardState = context.cardState || {};
@@ -943,7 +946,7 @@
     }
 
     function renderProbeSectorScanPicker() {
-      const pending = pendingState.probeSectorScanAction;
+      const pending = getProbeSectorScanSession();
       if (!pending || !els.scanTargetActions) return;
       const selected = new Set(pending.selectedRocketIds || []);
       const maxTargets = Math.max(1, Math.round(Number(pending.effect.options?.maxTargets) || 1));
@@ -970,12 +973,12 @@
     }
 
     function openProbeSectorScanPicker(effect, choices) {
-      pendingState.probeSectorScanAction = {
+      decisionSessions.open(PROBE_SECTOR_SCAN_SESSION, {
         ...getPendingOwnerFields(effect),
         effect,
         choices,
         selectedRocketIds: [],
-      };
+      });
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         return { ok: true, pendingChoice: true, message: effect.label };
       }
@@ -1009,7 +1012,7 @@
     }
 
     function handleProbeSectorScanChoice(rocketId) {
-      const pending = pendingState.probeSectorScanAction;
+      const pending = getProbeSectorScanSession();
       if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };
       const id = Number(rocketId);
       const choice = pending.choices.find((item) => Number(item.rocket.id) === id);
@@ -1030,7 +1033,7 @@
     }
 
     function confirmProbeSectorScanSelection() {
-      const pending = pendingState.probeSectorScanAction;
+      const pending = getProbeSectorScanSession();
       if (!pending) return { ok: false, message: "没有待确认的探测器扫描" };
       const selected = new Set(pending.selectedRocketIds || []);
       const rockets = pending.choices

@@ -1289,7 +1289,7 @@
         if (getPublicScanQueue() && !options.forcePublicScanQueueClose) return;
         if (options.forcePublicScanQueueClose) decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
         pendingState.scanTargetAction = null;
-        pendingState.probeSectorScanAction = null;
+        decisionSessions.clear("probe_sector_scan");
         pendingState.probeLocationRewardAction = null;
         decisionSessions.clear("strategy_passive_slot");
         return;
@@ -1323,7 +1323,7 @@
       decisionSessions.clear("strategy_passive_slot");
       setScanTargetActionLayout();
       pendingState.scanTargetAction = null;
-      pendingState.probeSectorScanAction = null;
+      decisionSessions.clear("probe_sector_scan");
       pendingState.probeLocationRewardAction = null;
       els.scanTargetOverlay.hidden = true;
       if (els.scanTargetCancel) {

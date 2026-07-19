@@ -268,11 +268,13 @@
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
   const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
   const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
+  const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
   const getPendingStrategySlotDecision = () => decisionSessions.peek(STRATEGY_SLOT_DECISION);
   const getPublicScanQueueSession = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
+  const getPendingProbeSectorScanDecision = () => decisionSessions.peek(PROBE_SECTOR_SCAN_SESSION);
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
@@ -1070,6 +1072,7 @@
   } = actionBriefingHelpers);
   const effectChoiceFlowHelpers = effectChoiceFlowModule.createEffectChoiceFlowHelpers({
     document,
+    decisionSessions,
     pendingState,
     els,
     rocketState,
@@ -2734,7 +2737,7 @@
     get pendingCardSelectionAction() { return pendingState.cardSelectionAction; },
     get pendingPassReserveSelection() { return pendingState.passReserveSelection; },
     get pendingScanTargetAction() { return pendingState.scanTargetAction; },
-    get pendingProbeSectorScanAction() { return pendingState.probeSectorScanAction; },
+    get pendingProbeSectorScanAction() { return getPendingProbeSectorScanDecision(); },
     get pendingProbeLocationRewardAction() { return pendingState.probeLocationRewardAction; },
     get pendingPublicScanQueue() { return getPublicScanQueueSession(); },
     get pendingHandScanAction() { return pendingState.handScanAction; },
@@ -3792,7 +3795,7 @@
     pendingState.passReserveSelection = null;
     pendingState.passReserveSelectionDismissed = false;
     pendingState.scanTargetAction = null;
-    pendingState.probeSectorScanAction = null;
+    decisionSessions.clear(PROBE_SECTOR_SCAN_SESSION);
     decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
     pendingState.handScanAction = null;
     pendingState.alienTraceAction = null;
@@ -5225,7 +5228,7 @@
   function hasActiveEffectSubFlow() {
     return Boolean(
       pendingState.scanTargetAction
-      || pendingState.probeSectorScanAction
+      || getPendingProbeSectorScanDecision()
       || pendingState.probeLocationRewardAction
       || getPublicScanQueueSession()
       || pendingState.handScanAction
@@ -6495,6 +6498,7 @@
     createPublicScanPendingAction,
     createScanRunId,
     data,
+    decisionSessions,
     document,
     effectChoiceFlowHelpers,
     els,
@@ -9284,7 +9288,7 @@
     const activePending = [
       finalScorePending ? { ...finalScorePending, player: finalScorePlayer } : null,
       pendingState.scanTargetAction,
-      pendingState.probeSectorScanAction,
+      getPendingProbeSectorScanDecision(),
       pendingState.handScanAction,
       pendingState.passReserveSelection,
       pendingState.movePayment,
@@ -9377,7 +9381,7 @@
         )),
       };
     }
-    const probeSectorPending = pendingState.probeSectorScanAction;
+    const probeSectorPending = getPendingProbeSectorScanDecision();
     if (probeSectorPending) {
       const choices = probeSectorPending.choices || [];
       const maxTargets = Math.max(1, Math.round(Number(probeSectorPending.effect?.options?.maxTargets) || 1));
@@ -10105,8 +10109,9 @@
     "conditional-sector": (action) => handleConditionalSectorChoice(action.target.sectorX ?? action.target.choiceId),
     "chong-fossil-choice": (action) => handleChongFossilChoice(action.target.choiceId),
     "probe-sector-selection": (action) => {
-      if (!pendingState.probeSectorScanAction) return { ok: false, message: "没有待处理的探测器扫描" };
-      pendingState.probeSectorScanAction.selectedRocketIds = [...(action.target.rocketIds || [])];
+      const pending = getPendingProbeSectorScanDecision();
+      if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };
+      pending.selectedRocketIds = [...(action.target.rocketIds || [])];
       return confirmProbeSectorScanSelection();
     },
     "runezu-symbol-branch": (action) => handleRunezuSymbolBranchChoice(action.target.choiceId),
