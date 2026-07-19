@@ -275,6 +275,7 @@
   const HAND_CARD_PLAY_SESSION = "hand_card_play_action";
   const CARD_CORNER_QUICK_SESSION = "card_corner_quick_action";
   const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
+  const CARD_TRIGGER_FREE_MOVE_SESSION = "card_trigger_free_move";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
@@ -284,6 +285,7 @@
   const getPendingProbeLocationRewardDecision = () => decisionSessions.peek(PROBE_LOCATION_REWARD_SESSION);
   const getTurnEndAfterRevealSession = () => decisionSessions.peek(TURN_END_REVEAL_SESSION);
   const getPendingCardCornerFreeMove = () => decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION);
+  const getPendingCardTriggerFreeMove = () => decisionSessions.peek(CARD_TRIGGER_FREE_MOVE_SESSION);
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
@@ -2769,7 +2771,7 @@
     get pendingRunezuSymbolBranch() { return pendingState.runezuSymbolBranch; },
     get pendingRunezuFaceSymbolPlacement() { return pendingState.runezuFaceSymbolPlacement; },
     get pendingCardTriggerAction() { return pendingState.cardTriggerAction; },
-    get pendingCardTriggerFreeMove() { return pendingState.cardTriggerFreeMove; },
+    get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
     get pendingCardTaskCompletion() { return pendingState.cardTaskCompletion; },
     get pendingChongTaskCompletion() { return pendingState.chongTaskCompletion; },
     get pendingActionExecuted() { return isActionPending(); },
@@ -3814,7 +3816,7 @@
     decisionSessions.clear(LAND_TARGET_DECISION);
     decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
     pendingState.cardTriggerAction = null;
-    pendingState.cardTriggerFreeMove = null;
+    decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
     decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
     pendingState.cardTaskCompletion = null;
     pendingState.jiuzheCardPlay = null;
@@ -4240,7 +4242,7 @@
   function isBoardRocketInteractionActive() {
     return uiRuntimeState.moveHighlightRocketId != null
       || isIndustryFreeMoveActive()
-      || Boolean(pendingState.cardTriggerFreeMove)
+      || Boolean(getPendingCardTriggerFreeMove())
       || Boolean(getPendingCardCornerFreeMove())
       || Boolean(pendingState.actionEffectFlow?.freeMoveMode)
       || Boolean(pendingState.actionEffectFlow?.cardMoveEffect);
@@ -5265,7 +5267,7 @@
       || pendingState.runezuFaceSymbolPlacement
       || getPendingStrategySlotDecision()
       || getPendingPiratesRaidDecision()
-      || pendingState.cardTriggerFreeMove
+      || getPendingCardTriggerFreeMove()
       || getPendingCardCornerFreeMove()
       || (els.scanAction4Overlay && !els.scanAction4Overlay.hidden)
       || (els.landTargetOverlay && !els.landTargetOverlay.hidden)
@@ -5544,7 +5546,7 @@
     }
     pendingState.cardTriggerAction = null;
     pendingState.cardTaskCompletion = null;
-    pendingState.cardTriggerFreeMove = null;
+    decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
     decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
     pendingState.yichangdianCornerAction = null;
@@ -9306,7 +9308,7 @@
       pendingState.passReserveSelection,
       pendingState.movePayment,
       getPendingDataPlacementDecision(),
-      pendingState.cardTriggerFreeMove,
+      getPendingCardTriggerFreeMove(),
       pendingState.actionEffectFlow?.cardMoveEffect,
       getPendingCardCornerFreeMove(),
       getPendingStrategySlotDecision(),
@@ -9719,7 +9721,7 @@
       });
       return { actorPlayer: player, candidates };
     }
-    const cardTriggerMovePending = pendingState.cardTriggerFreeMove;
+    const cardTriggerMovePending = getPendingCardTriggerFreeMove();
     if (cardTriggerMovePending) {
       const player = getCurrentPlayer();
       const providedMovePoints = Math.max(0, Math.round(Number(
@@ -10172,11 +10174,11 @@
     "card-effect-move": (action) => executeCardMoveForEffect(action.deltaX, action.deltaY, action.target.rocketId),
     "card-trigger-free-move": (action) => executeFreeMoveForCardTrigger(action.deltaX, action.deltaY, action.target.rocketId),
     "skip-card-trigger-free-move": () => {
-      const pending = pendingState.cardTriggerFreeMove;
+      const pending = getPendingCardTriggerFreeMove();
       const player = getCurrentPlayer();
       if (pending.beforePlayer) restoreObjectSnapshot(player, pending.beforePlayer);
       if (pending.beforeCardState) restoreObjectSnapshot(cardState, pending.beforeCardState);
-      pendingState.cardTriggerFreeMove = null;
+      decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
       rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
@@ -10619,7 +10621,7 @@
     if (event.target.closest(".rocket-token") || event.target.closest(".move-arrow-button")) return;
     if (uiRuntimeState.moveHighlightRocketId == null) return;
     if (
-      pendingState.cardTriggerFreeMove
+      getPendingCardTriggerFreeMove()
       || uiRuntimeState.industryFreeMoveState
       || getPendingCardCornerFreeMove()
       || pendingState.actionEffectFlow?.freeMoveMode
@@ -10920,7 +10922,7 @@
     set alienTracePickerState(value) { pendingState.alienTracePickerState = value; },
     get pendingAlienRevealConfirmation() { return pendingState.alienRevealConfirmation; },
     get moveHighlightRocketId() { return uiRuntimeState.moveHighlightRocketId; },
-    get pendingCardTriggerFreeMove() { return pendingState.cardTriggerFreeMove; },
+    get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
     get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
     get pendingCardCornerFreeMove() { return getPendingCardCornerFreeMove(); },
     get pendingActionEffectFlow() { return pendingState.actionEffectFlow; },

@@ -116,6 +116,12 @@
 
     const TYPE1_TRIGGER_QUEUE_SESSION = "type1_trigger_queue";
     const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
+    const CARD_TRIGGER_FREE_MOVE_SESSION = "card_trigger_free_move";
+    const getCardTriggerFreeMove = () => decisionSessions.peek(CARD_TRIGGER_FREE_MOVE_SESSION);
+    function setCardTriggerFreeMove(session) {
+      if (!session) return decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
+      return decisionSessions.open(CARD_TRIGGER_FREE_MOVE_SESSION, session);
+    }
     function getType1TriggerEvents() {
       return decisionSessions.peek(TYPE1_TRIGGER_QUEUE_SESSION)?.events || [];
     }
@@ -376,7 +382,7 @@
     function hasActiveCardTriggerResolution() {
       return Boolean(
         pendingState.cardTriggerAction
-        || pendingState.cardTriggerFreeMove
+        || getCardTriggerFreeMove()
         || decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION)
         || isCardTriggerPickSelectionActive()
         || pendingState.amibaSymbolChoice?.triggerMatch
@@ -1358,14 +1364,14 @@
       if (!rocketsForPlayer.length) {
         return { ok: false, message: "没有可移动的飞船" };
       }
-      pendingState.cardTriggerFreeMove = {
+      setCardTriggerFreeMove({
         match,
         beforePlayer: structuredClone(currentPlayer),
         beforeCardState: {
           publicCards: cardState.publicCards.slice(),
           discardPile: (cardState.discardPile || []).slice(),
         },
-      };
+      });
       rocketState.statusNote = rocketsForPlayer.length > 1
         ? "卡牌触发：请点击要免费移动的飞船"
         : "卡牌触发：使用方向键免费移动飞船";
@@ -1435,7 +1441,7 @@
     }
 
     function executeFreeMoveForCardTrigger(deltaX, deltaY, rocketId, payment = {}) {
-      const pending = pendingState.cardTriggerFreeMove;
+      const pending = getCardTriggerFreeMove();
       if (!pending) return { ok: false, message: "没有待结算的卡牌免费移动" };
 
       const moveCheck = rocketActions.canMoveRocket(rocketState, rocketId, deltaX, deltaY);
@@ -1510,7 +1516,7 @@
       discardReservedCardIfFinished(getCurrentPlayer(), pending.match.card);
       completeQuickActionStep();
 
-      pendingState.cardTriggerFreeMove = null;
+      setCardTriggerFreeMove(null);
       rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
