@@ -64,11 +64,11 @@
 
 - date: 2026-07-19
 - source_issue: SETI-40, SETI-88, SETI-72
-- observation: coding issue 已有明确验收门槛、`next_action` 且没有 owner 决策或新增权限需求时，阶段性提交与进度评论不能替代持续执行；agent 应直接续跑到门槛通过或出现真实 blocker。
-- evidence: SETI-40 返工期间先后在三条评论中被成员追问为何停止；SETI-88 在 `waiting_on=SETI-81` 已完成后仍保留 stale blocked，成员通过评论 `c82de376-9696-4ae7-8744-ae53c790c07c`、`b9823496-fa37-4f02-a91c-34b5218ef012` 连续要求说明并继续。SETI-72 又在 SETI-88 已 done 后保留 stale waiting，成员评论 `7769c38a-cc78-4df0-b4b8-7fef7e1eab13`、`d12c957f-5510-4bec-acd2-86ef11f41d91` 要求清理依赖并继续；续跑随后发现两处真实 Card Trigger 浏览器装配缺口，提交 `0833de1` 后隔离 Node 164/164、Chrome 代表页与完整对局通过。
+- observation: coding issue 已有明确验收门槛、`next_action` 且没有 owner 决策或新增权限需求时，阶段性提交与进度评论不能替代持续执行；若验收由可递减债务计数定义，正数本身就是继续条件。批量迁移应按同域/同所有权形成可审计批次，批内跑定向证据、批末跑全量门禁，直到计数归零或出现有日志证据的真实 blocker。
+- evidence: SETI-40 返工期间先后在三条评论中被成员追问为何停止；SETI-88 在 `waiting_on=SETI-81` 已完成后仍保留 stale blocked，成员通过评论 `c82de376-9696-4ae7-8744-ae53c790c07c`、`b9823496-fa37-4f02-a91c-34b5218ef012` 连续要求说明并继续。SETI-72 又在 SETI-88 已 done 后保留 stale waiting；本次 owner 评论 `d68ef992-4d2c-4677-a29a-d5d8f1141cf6` 明确指出 32 项 dated adapter 时迁 2 项即停不合格，并指定同域 6～8 项批次。随后连续提交 `47687e0`、`96c2533`、`82679e6`、`71d9091`、`5c02439`，inventory 从 32 归零，保留 2 个 host-only，最终 Node 170/170 与真实 Chrome 完整对局通过。
 - promote_to: none
 - promotion_status: rejected
-- decision: 现有 agent prompt 的 autonomy/persistence 与仓库 `AGENTS.md` 已明确要求在安全范围内持续推进；SETI-72 再次属于同一 agent 未遵守既有规则，而不是缺少长期组件。维持 reject，不重复修改 prompt、loop template、watcher 或 issue-workflow；若后续不同 agent 也复现，再评估机械提醒。
+- decision: 现有 agent prompt 的 autonomy/persistence 与仓库 `AGENTS.md` 已明确要求在安全范围内持续推进；SETI-72 再次属于同一 agent 未遵守既有规则，而不是缺少长期组件。owner 给出的 6～8 项是本次迁移的执行粒度，不泛化为所有 coding issue 的固定批量。维持 reject，不重复修改 prompt、loop template、watcher 或 issue-workflow；若后续不同 agent 也复现，再评估机械提醒。
 
 - date: 2026-07-19
 - source_issue: SETI-38, SETI-40, SETI-44
