@@ -1830,7 +1830,7 @@ function closeAmibaSymbolChoiceDialog() {
   }
 
 function openAmibaSymbolChoiceDialog(options = {}) {
-    if (!amiba || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!amiba) {
       return { ok: false, message: "无法打开阿米巴 symbol 选择窗口" };
     }
     const player = options.player || getCurrentPlayer();
@@ -1846,7 +1846,13 @@ function openAmibaSymbolChoiceDialog(options = {}) {
       beforeAlienState: options.beforeAlienState || structuredClone(alienGameState),
       beforePlayerState: options.beforePlayerState || structuredClone(playerState),
       beforeCardState: options.beforeCardState || structuredClone(cardState),
+      symbolSlotIds: symbols.map((symbol) => symbol.slotId),
     };
+    if (!els.scanTargetOverlay || !els.scanTargetActions || !document?.createElement) {
+      rocketState.statusNote = "阿米巴 symbol：请选择一个 symbol";
+      renderStateReadout();
+      return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
+    }
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = "阿米巴 symbol";
     if (els.scanTargetSubtitle) {
       els.scanTargetSubtitle.textContent = `选择一个${amiba.formatRegionLabel(region)}区域内的 symbol 结算奖励。`;

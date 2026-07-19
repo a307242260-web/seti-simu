@@ -1972,6 +1972,16 @@
           }));
         options.push(...synthetic);
       }
+      if (flow.type === "amiba-symbol" && !options.some((option) => !option.disabled)) {
+        options.push(...(flow.pending?.symbolSlotIds || []).map((slotId, index) => ({
+          button: null,
+          index,
+          choice: String(slotId),
+          label: `阿米巴 symbol ${slotId}`,
+          disabled: false,
+          synthetic: true,
+        })));
+      }
       if (flow.type === "jiuzhe-card" && !options.some((option) => !option.disabled) && flow.pending?.reason !== "view") {
         options.push({
           button: null,
