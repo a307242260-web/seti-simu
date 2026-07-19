@@ -55,12 +55,12 @@
 - decision: 这是既有“验证 staged 独立快照”规则未覆盖的提交瞬时竞态，但当前仅一次证据；先记录私有 index 实践，不修改 git-workflow、agent prompt、loop template 或 watcher，观察后续 3 次并行共享 index 提交。
 
 - date: 2026-07-19
-- source_issue: SETI-40, SETI-88
+- source_issue: SETI-40, SETI-88, SETI-72
 - observation: coding issue 已有明确验收门槛、`next_action` 且没有 owner 决策或新增权限需求时，阶段性提交与进度评论不能替代持续执行；agent 应直接续跑到门槛通过或出现真实 blocker。
-- evidence: SETI-40 返工期间先后在三条评论中被成员追问为何停止；SETI-88 在 `waiting_on=SETI-81` 已完成后仍保留 stale blocked，成员通过评论 `c82de376-9696-4ae7-8744-ae53c790c07c`、`b9823496-fa37-4f02-a91c-34b5218ef012` 连续要求说明并继续。SETI-88 随后无需新增设计决策即完成提交 `e6886e4`、独立快照 Node 163/163、inventory、benchmark 与 Chrome 完整对局验收。
+- evidence: SETI-40 返工期间先后在三条评论中被成员追问为何停止；SETI-88 在 `waiting_on=SETI-81` 已完成后仍保留 stale blocked，成员通过评论 `c82de376-9696-4ae7-8744-ae53c790c07c`、`b9823496-fa37-4f02-a91c-34b5218ef012` 连续要求说明并继续。SETI-72 又在 SETI-88 已 done 后保留 stale waiting，成员评论 `7769c38a-cc78-4df0-b4b8-7fef7e1eab13`、`d12c957f-5510-4bec-acd2-86ef11f41d91` 要求清理依赖并继续；续跑随后发现两处真实 Card Trigger 浏览器装配缺口，提交 `0833de1` 后隔离 Node 164/164、Chrome 代表页与完整对局通过。
 - promote_to: none
 - promotion_status: rejected
-- decision: 现有 agent prompt 的 autonomy/persistence 与仓库 `AGENTS.md` 已明确要求在安全范围内持续推进；SETI-88 再次属于未遵守既有规则，而不是缺少长期组件。维持 reject，不重复修改 prompt、loop template、watcher 或 issue-workflow；若后续不同 agent 也复现，再评估机械提醒。
+- decision: 现有 agent prompt 的 autonomy/persistence 与仓库 `AGENTS.md` 已明确要求在安全范围内持续推进；SETI-72 再次属于同一 agent 未遵守既有规则，而不是缺少长期组件。维持 reject，不重复修改 prompt、loop template、watcher 或 issue-workflow；若后续不同 agent 也复现，再评估机械提醒。
 
 - date: 2026-07-19
 - source_issue: SETI-38, SETI-40, SETI-44

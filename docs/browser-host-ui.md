@@ -4,7 +4,7 @@
 
 Browser Host 是浏览器玩家端的宿主边界。它只把权威状态或活跃 Effect Session 投影成可见、只读的 `BrowserProjection`，把 DOM 输入转换成 Standard Action、Standard Decision 或纯 UI intent，并保存可丢弃、可重建的 `ViewState`。
 
-本阶段只冻结契约、所有权矩阵、proof obligations、迁移顺序和冲突边界，不宣称旧 UI 热路径已经迁移。当前 `randomizer/app.js`、`app/*-runtime.js`、`effect-choice-flow.js`、`events.js` 与 AI pending resolver 仍直接读取 `pendingState`、计算选项、确认后续跑规则或组织 continuation；后续必须按领域逐批替换，不能用本文档或静态类型名冒充行为完成证据。
+阶段 1～9 已完成 Browser Host reference core、常驻投影、统一 Decision UI、代表性领域链、Action Bar、Policy 输入与 Browser Services 的生产装配和分层验证。旧 UI 并未全部物理删除：当前 inventory 仍有 2 个 host-only 字段和 50 个由 `SETI-72/browser-host-stages-5-9` 负责、到期日为 `2026-08-31` 的 dated adapter；`app.js` 与传统 renderer/handler 仍保留这些兼容调用点。它们满足本 issue 明确的有 owner/到期日兼容门禁，但不能被表述为 legacy 零引用或老代码已全部清理；最终证据见 `checkpoint/seti-72-final-verification.md`。
 
 Browser Host 的上游边界是：
 
