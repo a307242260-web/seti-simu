@@ -84,7 +84,6 @@
       maybeApplyIndustryLaunchScan,
       nebulaDataState,
       openAmibaSymbolChoiceDialog,
-      pendingState,
       planetStatsState,
       playerHasOwnOrbitMarkerAtPlanet,
       playerState,

@@ -33,7 +33,6 @@
     const aomomo = context.aomomo || null;
     const runezu = context.runezu || null;
 
-    const pendingState = context.pendingState || {};
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",

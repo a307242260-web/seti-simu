@@ -37,7 +37,6 @@
       alienGameState,
       cardState,
       decisionSessions,
-      pendingState,
       uiRuntimeState,
       DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT = 10,
       getCurrentPlayer,
@@ -167,7 +166,7 @@
       decisionState.discardAction = null;
       decisionState.cardSelectionAction = null;
       decisionSessions?.clear?.("pass_reserve_selection");
-      pendingState.passReserveSelectionDismissed = false;
+      uiRuntimeState.passReserveSelectionDismissed = false;
       decisionState.handScanAction = null;
       decisionSessions?.clear?.("play_card_selection");
       cards.setSelectionActive(cardState, false);

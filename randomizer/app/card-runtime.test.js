@@ -12,14 +12,15 @@ function createHarness() {
   const pendingState = {
     cardSelectionAction: null,
     passReserveSelection: null,
-    passReserveSelectionDismissed: false,
   };
+  const uiRuntimeState = { passReserveSelectionDismissed: false };
   const calls = { completed: 0, chrome: 0 };
   const decisionSessions = createDecisionSessionStore();
   attachDecisionState(pendingState, decisionSessions);
   const runtime = createCardRuntime({
     decisionSessions,
     pendingState,
+    uiRuntimeState,
     cardState,
     playerState: { players: [player] },
     turnState: { roundNumber: 2 },
@@ -62,7 +63,7 @@ function createHarness() {
     selectDefaultRocketForCurrentPlayer: () => {},
     syncPassReserveSelectionChrome: () => { calls.chrome += 1; },
   });
-  return { runtime, player, effect, pendingState, calls, decisionSessions };
+  return { runtime, player, effect, pendingState, uiRuntimeState, calls, decisionSessions };
 }
 
 {
@@ -88,7 +89,7 @@ function createHarness() {
 }
 
 {
-  const { runtime, player, effect, pendingState, decisionSessions, calls } = createHarness();
+  const { runtime, player, effect, uiRuntimeState, decisionSessions, calls } = createHarness();
   decisionSessions.open("pass_reserve_selection", {
     effectId: effect.id,
     playerId: player.id,
@@ -97,12 +98,14 @@ function createHarness() {
   });
   const dismissed = runtime.dismissPassReserveSelectionOverlay();
   assert.equal(dismissed.dismissed, true);
+  assert.equal(uiRuntimeState.passReserveSelectionDismissed, true);
   assert.ok(decisionSessions.peek("pass_reserve_selection"));
 
   const result = runtime.confirmPassReserveSelection();
   assert.equal(result.ok, true);
   assert.equal(player.hand[0].id, "reserve-1");
   assert.equal(decisionSessions.peek("pass_reserve_selection"), null);
+  assert.equal(uiRuntimeState.passReserveSelectionDismissed, false);
   assert.equal(calls.completed, 1);
 }
 

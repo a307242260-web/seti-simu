@@ -87,7 +87,6 @@
       launchRocketForCurrentPlayer,
       openAutoDataPlacementPrompt,
       openScanTargetPicker,
-      pendingState,
       players,
       quickActionHistory,
       recordAbilityCommands,

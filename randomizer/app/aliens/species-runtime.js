@@ -99,7 +99,6 @@
       Object,
       openCardTaskCompletionPicker,
       openFangzhouTraceDestinationChoice,
-      pendingState,
       planetRewards,
       planetStatsState,
       players,

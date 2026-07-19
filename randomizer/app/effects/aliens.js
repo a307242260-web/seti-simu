@@ -60,7 +60,6 @@
       openChongFossilChoiceDialog,
       openLandTargetPicker,
       openScanTargetPicker,
-      pendingState,
       playerState,
       players,
       recordAbilityCommands,

@@ -9,7 +9,7 @@
 | S81-05 | download 只消费显式格式化内容 | download port 获得 StateStore 或隐藏牌序 | 无 `content` 请求 fail-closed；port 只收到 filename/content/mimeType |
 | S81-06 | debug/failsafe 与 public API 只经独立 command/facade | public API 泄漏 mutable store/session | frozen facade 无 store/session 引用；debug command port spy |
 | S81-07 | headless/runtime 导入不访问浏览器 service | Node import 读取 localStorage/document | Browser Services 构造前无浏览器全局读取；Node poison/全量回归 |
-| S81-08 | legacy inventory 每项可机械归类 | 未知/无 owner/过期 adapter 被忽略 | `tools/audit_effect_session_legacy.js` + inventory contract |
+| S81-08 | legacy inventory 在迁移完成后可整体删除 | host-only 豁免继续借用旧 pending schema | runtime 负向结构测试 + HTML/生产零引用 |
 | S81-09 | 七类正式 UI 的既有领域证据在最终装配仍成立 | 单项 Node 通过但主页面脚本缺失 | 全量 Node + Browser Host Chrome main/decision/recovery smoke |
 
 阶段 8 的恢复入口使用显式 `stateRestorePort.restore(validatedCommittedState)`，因为 `StateStore` 故意不暴露绕过 CAS 的原地替换；具体宿主在建局/加载边界替换 authority。旧 `game-recovery.js` 投影回 legacy slice 的生产兼容入口由 SETI-88 在本阶段接口稳定后删除，不得包装成新 Browser Services 的第二真相。
@@ -18,7 +18,7 @@
 
 - 私有索引独立快照：`node --check randomizer/app.js` 与全量 Node `162/162` 通过。
 - 共享工作树：排除 SETI-92 正在修改的 4 个 Heuristic baseline/contract 测试后 `155/155` 通过；4 个失败在独立快照均通过，不属于本提交。
-- inventory：52 项全部可机械归类，2 项 host-only、50 项带 owner/到期日 adapter，unknown/missing/expired 均为 0。
+- inventory：本阶段曾验证 52 项分类；SETI-72 最终收口已删除该迁移期 inventory、旧 pending 创建入口和专项 audit。
 - Chrome recovery：`browser-services.browser-smoke.html` 返回 `ok=true`，state/session/view 分协议恢复且 facade frozen。
 - Chrome Decision：研究科技固定 trace `rotate -> place:blue2:slot-b -> reward:score:3`，一次 commit，旧 continuation 调用为 0。
 - Chrome 完整对局：seed `seti81-chrome-complete`，894 步正常终局，blocked=false、bugCount=0，比分 97/129/192/94。

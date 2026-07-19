@@ -47,7 +47,6 @@
       markerBelongsToPlayer,
       markerOwnerLabel,
       openLandTargetPicker,
-      pendingState,
       playerState,
       players,
       recordAtomicActionHistory,

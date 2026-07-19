@@ -82,7 +82,6 @@
       techGameState,
       cardState,
       setupSelectionState,
-      pendingState,
       decisionSessions,
       cards,
       industry,

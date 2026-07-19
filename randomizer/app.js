@@ -261,7 +261,6 @@
     alienTypeIds: aliens.ALIEN_TYPE_IDS || [],
     industryCardFiles: INDUSTRY_CARD_FILES,
   });
-  const pendingState = runtime.pending;
   const decisionSessions = runtime.decisions;
   const decisionState = decisionSessions.createFacade({
     discardAction: "discard_action",
@@ -313,6 +312,7 @@
   const startScreenState = runtime.startScreen;
   const setupSelectionState = runtime.selection;
   const uiRuntimeState = runtime.ui;
+  const browserHostState = runtime.browserHost;
   const yichangdianAnomalyMarkerElements = new Map();
   const chongPlanetFossilMarkerElements = new Map();
   const chongFossilOwnerTokenElements = new Map();
@@ -761,7 +761,6 @@
     OPPONENT_SECTOR_WIN_STATS,
     OPPONENT_TECH_TYPES,
     ROTATE_STATE_SLOTS,
-    pendingState,
     getPendingMovePayment,
     cardState,
     tech,
@@ -952,7 +951,6 @@
   );
   const effectFlowHelpers = effectFlowModule.createEffectFlowHelpers({
     decisionSessions,
-    pendingState,
     uiRuntimeState,
     actionHistory,
     quickActionHistory,
@@ -1109,7 +1107,6 @@
   const effectChoiceFlowHelpers = effectChoiceFlowModule.createEffectChoiceFlowHelpers({
     document,
     decisionSessions,
-    pendingState,
     els,
     rocketState,
     cardState,
@@ -1174,7 +1171,6 @@
   });
   const handFlowHelpers = handFlowModule.createHandFlow({
     decisionSessions,
-    pendingState,
     cardState,
     rocketState,
     alienGameState,
@@ -1348,7 +1344,6 @@
     decisionSessions,
     document,
     structuredClone,
-    pendingState,
     cardState,
     nebulaDataState,
     alienGameState,
@@ -1566,7 +1561,6 @@
     amiba,
     aomomo,
     runezu,
-    pendingState,
     alienGameState,
     playerState,
     rocketState,
@@ -1657,7 +1651,6 @@
     amiba,
     aomomo,
     runezu,
-    pendingState,
     alienGameState,
     playerState,
     rocketState,
@@ -1874,7 +1867,6 @@
     techGameState,
     cardState,
     setupSelectionState,
-    pendingState,
     decisionSessions,
     cards,
     industry,
@@ -1964,7 +1956,6 @@
     setupSelectionState,
     playerState,
     turnState,
-    pendingState,
     rocketState,
     startScreenState,
     actionLogState,
@@ -2724,12 +2715,12 @@
   }
 
   function createScanRunId(prefix = "scan") {
-    pendingState.scanRunSequence += 1;
-    return `${prefix}-${pendingState.scanRunSequence}`;
+    browserHostState.scanRunSequence += 1;
+    return `${prefix}-${browserHostState.scanRunSequence}`;
   }
 
   function resetScanRunSequence() {
-    pendingState.scanRunSequence = 0;
+    browserHostState.scanRunSequence = 0;
   }
 
   function getActivePlayers() {
@@ -3144,7 +3135,7 @@
     maybeApplyCardMoveSameRingReward,
     maybeContinuePendingTurnEndRevealFlow,
     normalizeResourceCost,
-    pendingState,
+    uiRuntimeState,
     playerState,
     players,
     quickActionHistory,
@@ -3324,7 +3315,6 @@
     maybeApplyIndustryLaunchScan: (...args) => maybeApplyIndustryLaunchScan?.(...args),
     nebulaDataState,
     openAmibaSymbolChoiceDialog,
-    pendingState,
     planetStatsState,
     playerHasOwnOrbitMarkerAtPlanet,
     playerState,
@@ -3836,7 +3826,7 @@
     decisionState.discardAction = null;
     decisionState.cardSelectionAction = null;
     decisionSessions.clear(PASS_RESERVE_SELECTION_SESSION);
-    pendingState.passReserveSelectionDismissed = false;
+    uiRuntimeState.passReserveSelectionDismissed = false;
     decisionState.scanTargetAction = null;
     decisionSessions.clear(PROBE_SECTOR_SCAN_SESSION);
     decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
@@ -5558,7 +5548,7 @@
 
     if (getPendingPassReserveSelection()) {
       decisionSessions.clear(PASS_RESERVE_SELECTION_SESSION);
-      pendingState.passReserveSelectionDismissed = false;
+      uiRuntimeState.passReserveSelectionDismissed = false;
       syncPassReserveSelectionChrome();
     }
 
@@ -6627,7 +6617,6 @@
     openRunezuSymbolBranchDialog,
     openScanAction4Picker,
     openScanTargetPicker,
-    pendingState,
     planetReferenceLayout,
     planetRewards,
     planetStats,
@@ -7853,7 +7842,6 @@
       launchRocketForCurrentPlayer: (...args) => launchRocketForCurrentPlayer(...args),
       openAutoDataPlacementPrompt: (...args) => openAutoDataPlacementPrompt(...args),
       openScanTargetPicker: typeof openScanTargetPicker === "undefined" ? undefined : openScanTargetPicker,
-      pendingState: typeof pendingState === "undefined" ? undefined : pendingState,
       players: typeof players === "undefined" ? undefined : players,
       quickActionHistory: typeof quickActionHistory === "undefined" ? undefined : quickActionHistory,
       recordAbilityCommands: typeof recordAbilityCommands === "undefined" ? undefined : recordAbilityCommands,
@@ -8000,7 +7988,6 @@
       historyCommands: typeof historyCommands === "undefined" ? undefined : historyCommands,
       industry: typeof industry === "undefined" ? undefined : industry,
       normalizeResourceCost: (...args) => normalizeResourceCost(...args),
-      pendingState: typeof pendingState === "undefined" ? undefined : pendingState,
       planetRewards: typeof planetRewards === "undefined" ? undefined : planetRewards,
       playerState: typeof playerState === "undefined" ? undefined : playerState,
       players: typeof players === "undefined" ? undefined : players,
@@ -8541,7 +8528,6 @@
     maybeStartFundamentalismRoundStartIncomeFlow,
     openAlienRevealConfirmation,
     decisionSessions,
-    pendingState,
     planetRewards,
     playerState,
     quickActionHistory,
@@ -9000,7 +8986,6 @@
     markerOwnerLabel,
     openLandTargetPicker,
     decisionSessions,
-    pendingState,
     playerState,
     players,
     recordAtomicActionHistory,
@@ -10858,7 +10843,6 @@
     solar,
     cardState,
     decisionSessions,
-    pendingState,
     uiRuntimeState,
     DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT,
     rocketActions,
@@ -11046,7 +11030,6 @@
     Object,
     openCardTaskCompletionPicker,
     openFangzhouTraceDestinationChoice,
-    pendingState,
     planetRewards,
     planetStatsState,
     players,

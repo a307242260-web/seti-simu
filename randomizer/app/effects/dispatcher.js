@@ -144,7 +144,6 @@
       openRunezuSymbolBranchDialog,
       openScanAction4Picker,
       openScanTargetPicker,
-      pendingState,
       planetRewards,
       playerState,
       recordAbilityCommands,

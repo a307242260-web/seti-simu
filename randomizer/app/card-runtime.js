@@ -79,7 +79,7 @@
       maybeApplyCardMoveSameRingReward,
       maybeContinuePendingTurnEndRevealFlow,
       normalizeResourceCost,
-      pendingState,
+      uiRuntimeState,
       playerState,
       players,
       quickActionHistory,
@@ -1296,7 +1296,7 @@
 
     function syncPassReserveSelectionChrome() {
       const active = isPassReserveSelectionActive();
-      const visible = active && !pendingState.passReserveSelectionDismissed;
+      const visible = active && !uiRuntimeState.passReserveSelectionDismissed;
       els.appWrap?.classList.toggle("pass-reserve-selection-active", visible);
       if (!visible) hideCardHoverPreview();
       if (els.passReserveSelectionOverlay) {
@@ -1330,7 +1330,7 @@
         && getPassReserveSelection().playerId === (currentPlayer?.id || null)
         && getPassReserveSelection().roundNumber === roundNumber
       ) {
-        pendingState.passReserveSelectionDismissed = false;
+        uiRuntimeState.passReserveSelectionDismissed = false;
         const selected = pile.find((card) => card.id === getPassReserveSelection().selectedCardId);
         rocketState.statusNote = selected
           ? `PASS 预留精选：已选择 ${cards.getCardLabel(selected)}`
@@ -1347,7 +1347,7 @@
         roundNumber,
         selectedCardId: null,
       });
-      pendingState.passReserveSelectionDismissed = false;
+      uiRuntimeState.passReserveSelectionDismissed = false;
       rocketState.statusNote = `PASS 预留精选：请选择 1 张牌（剩余 ${pile.length} 张）`;
       syncPassReserveSelectionChrome();
       updateActionButtons();
@@ -1357,7 +1357,7 @@
 
     function dismissPassReserveSelectionOverlay(options = {}) {
       if (!getPassReserveSelection()) return { ok: false, message: "当前没有 PASS 预留精选" };
-      pendingState.passReserveSelectionDismissed = true;
+      uiRuntimeState.passReserveSelectionDismissed = true;
       syncPassReserveSelectionChrome();
       rocketState.statusNote = "PASS 预留精选已临时关闭；再次点击效果栏的 PASS 预留精选可继续选择";
       if (!options.silent) renderStateReadout();
@@ -1417,7 +1417,7 @@
         payload: { card: result.card, roundNumber: pending.roundNumber },
       };
       setPassReserveSelection(null);
-      pendingState.passReserveSelectionDismissed = false;
+      uiRuntimeState.passReserveSelectionDismissed = false;
       syncPassReserveSelectionChrome();
       rocketState.statusNote = result.message;
       renderPlayerHand();

@@ -58,7 +58,6 @@
       historyCommands,
       industry,
       normalizeResourceCost,
-      pendingState,
       planetRewards,
       playerState,
       players,

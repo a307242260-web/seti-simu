@@ -1,5 +1,7 @@
 # SETI-70 Effect Session 阶段 8 proof obligations
 
+> 历史说明：本文件记录阶段 8 的迁移期 inventory 门禁。SETI-72 最终收口已删除该 inventory、旧 pending 创建入口与专项 audit；以下条目仅保留当时证据，不代表当前架构仍允许字段白名单。
+
 | ID | 可证伪命题 | 最小反例 | 证据 |
 |---|---|---|---|
 | ES8-01 inventory 完备 | `createPendingState` 的每个字段恰好属于 deleted/session-owned/host-only/dated-adapter 之一 | app 新增第 53 个隐式 pending | `legacy-flow-inventory.test.js` 对 52 项集合双向等价与未知/缺失字段负测 |

@@ -65,7 +65,6 @@
       normalizeResourceCost,
       openLandTargetPicker,
       openScanTargetPicker,
-      pendingState,
       planetReferenceLayout,
       planetRewards,
       planetStats,

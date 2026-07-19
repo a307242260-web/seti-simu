@@ -289,8 +289,30 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - owner_or_agent_decision: 领航依据评论、timeline、metadata 与当前规则自决 reject；确认本轮无需 owner 拍板并持续执行到完整验收。
 - applied_at: 2026-07-19
 - verification: SETI-40 uniform-random 100/100 terminal、293 decisions/s；SETI-88 提交 `e6886e4` 独立快照 Node 163/163，3 局 benchmark 315 decisions，Chrome 776 步终局且 blocked=false/bugCount=0；SETI-72 从 32 项开始按域连续提交五个批次，最终 `node tools/audit_effect_session_legacy.js` 输出 total=2、hostOnly=2、datedAdapters=0，`node tools/run_node_tests.js` 为 170/170，Chrome seed `seti72-final-zero` 完整对局 ok=true、blockedGames=0、bugCounts={}。
-- observed_outcome: SETI-40 完成剩余条件流迁移；SETI-88、SETI-72 都在成员纠偏后解除 stale blocker/waiting 并完成全链路验收；SETI-72 在第二次同类纠偏后以 6、6、6、6、8 项的领域批次把 dated adapter 从 32 清零，保留 2 个 host-only。结果再次证明现有规则足以指导继续执行，6～8 项粒度是本任务的有效调度参数，不需要升级为跨任务长期组件。
+- observed_outcome: SETI-40 完成剩余条件流迁移；SETI-88、SETI-72 都在成员纠偏后解除 stale blocker/waiting 并完成全链路验收；SETI-72 以 6、6、6、6、8 项的领域批次把 dated adapter 从 32 清零，随后按 owner 新口径继续删除剩余 host-only 白名单与旧容器。持续执行规则仍有效，6～8 项粒度不升级为跨任务长期组件。
 - keep_or_revise: 保持 reject；若达到上述跨 agent 重复窗口再修订。
+
+- date: 2026-07-19
+- source: SETI-72 owner 评论 `6e6c07cf-7c63-4c20-a5b3-540d4a197bbe`
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: 领航及负责跨模块迁移收口的 coding agent
+- target_component: 迁移任务最终删除门禁
+- target_file: docs/implementation-proof-obligations.md
+- remote_skill_id: none
+- change: 在迁移 review checklist 增加“债务归零后，合法状态必须进入正式 owner store，并删除过渡 registry/schema/audit；不得靠 host-only/allowlist 豁免继续借用旧容器”。
+- applied_change: 已更新 `docs/implementation-proof-obligations.md`；SETI-72 同步迁移两项宿主状态并删除 legacy inventory、audit、HTML 接线与 runtime pending 创建入口。
+- expected_effect: 后续迁移不会把计数清零误当成旧架构物理删除，也不会因少数合法状态而永久保留过渡容器。
+- evaluation_window: 后续 3 个包含 adapter/compat registry 的跨模块迁移 issue 收口。
+- success_signal: 最终验收同时满足债务计数为 0、过渡 schema/registry/audit 零生产引用、合法保留状态有明确正式 owner；owner 无需再次追问为何仍保留旧代码。
+- rollback_condition: 若某迁移 registry 被证明是长期正式协议而非过渡基础设施，则不要求删除，但必须改名、重新文档化并由正式 owner 契约覆盖，不能继续以 legacy/temporary 名义存在。
+- risk: 过早删除 registry 可能失去迁移可观测性；只有债务确实为 0、行为证据通过且合法状态已迁入正式 owner 后才能执行。
+- evidence_before: SETI-72 曾以 `total=2 / hostOnly=2 / datedAdapters=0` 作为完成口径；owner 连续追问两项意义后明确要求旧代码全部清理，证明 host-only 豁免仍未满足其“老架构物理删除”验收意图。
+- owner_or_agent_decision: owner 明确收紧完成口径；领航依据代码边界和评论证据自决 promote 到项目迁移 loop template。
+- applied_at: 2026-07-19
+- verification: `runtime.test.js` 负向断言无 runtime.pending、无 legacy inventory 文件/HTML 接线/audit tool；`node tools/run_node_tests.js` 为 169/169；Chrome seed `seti72-legacy-container-zero` 完整对局 `ok=true`、`blockedGames=0`。
+- observed_outcome: SETI-72 隔离快照已物理删除过渡基础设施并通过 Node/Chrome 门禁；继续观察后续 3 个迁移 issue。
+- keep_or_revise: 当前保留；若误伤正式长期 registry，按 rollback_condition 收窄为“仅过渡基础设施”。
 
 - date: 2026-07-18
 - source: SETI-14, SETI-36

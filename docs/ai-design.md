@@ -4,7 +4,7 @@
 
 - **控制器接口**：浏览器内由 `randomizer/app/ai/control-runtime.js` 持有电脑玩家配置、控制快照与自动调度，`randomizer/app/ai/automation-runtime.js` 推进 pending，`randomizer/app/ai/action-executor.js` 选择并执行顶层行动；`randomizer/app/ai-controller.js` 只装配这些 runtime、规则域并转发稳定控制/批跑 API。规则估值层集中在 `randomizer/game/ai/**`。
 - **规则域装配**：资源/交易、卡牌/任务、路线/星球、扫描/数据、科技/行动、终局节奏、选择压力和外星人估值按领域拆在 `randomizer/game/ai/**`，通过显式 context 注入；完整函数清单见 `docs/ai-domain-migration-stage3.md`，这些模块不读取 DOM。
-- **Effect Session 边界**：训练 Policy 只提交 Standard Action/Decision，`headless-effect-session-host` 统一 deterministic drain、working observation 与 confirmed journal；Browser/Headless host 禁止回流旧 pending resolver/recover/skip。传统浏览器 AI 仍使用的 pending 字段统一登记在 `legacy-flow-inventory.js` 的带到期日 adapter 中，不得新增未登记 resolver。
+- **Effect Session 边界**：训练 Policy 只提交 Standard Action/Decision，`headless-effect-session-host` 统一 deterministic drain、working observation 与 confirmed journal；Browser/Headless host 禁止回流旧 pending resolver/recover/skip。旧 pending inventory 与创建入口已删除，不得恢复第二套 resolver 或通用 pending 容器。
 - **公共 Heuristic Policy**：`game/ai/heuristic-policy.js` 是浏览器席位、offline demonstration teacher 与冻结评测对手共用的版本化策略实现；浏览器通过 `browser-host/policy-input-adapter.js` 提交同一 Standard Action/Decision，训练与评测通过 `training/heuristic-policy-adapter.js` 使用同一实例与 provenance，不维护训练专用策略分叉。
 - **大脑层**：价值模型、目标系统、回合规划器，以及它们如何把“当前可行动内容的实时成本/收益”和“长线达成目标的动态收益”统一成一条决策链路。
 - **核心规则**：

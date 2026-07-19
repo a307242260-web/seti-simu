@@ -183,6 +183,7 @@ function createBaseContext() {
     cardState: {},
     pendingState,
     uiRuntimeState: {
+      passReserveSelectionDismissed: false,
       debugAlienTraceModeActive: false,
       sectorWinDebugActive: false,
       industryFreeMoveState: null,

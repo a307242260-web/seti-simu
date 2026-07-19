@@ -1,25 +1,19 @@
 (function (root, factory) {
   "use strict";
 
-  const legacyFlowInventory = typeof module === "object" && module.exports
-    ? require("../game/effects/legacy-flow-inventory")
-    : root.SetiLegacyFlowInventory;
   const decisionSessionStore = typeof module === "object" && module.exports
     ? require("../game/effects/decision-session-store")
     : root.SetiDecisionSessionStore;
-  const api = factory(root, legacyFlowInventory, decisionSessionStore);
+  const api = factory(root, decisionSessionStore);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAppRuntime = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (root, legacyFlowInventory, decisionSessionStore) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (root, decisionSessionStore) {
   "use strict";
 
-  if (!legacyFlowInventory?.createLegacyPendingState) {
-    throw new Error("缺少 SetiLegacyFlowInventory，无法创建受审计的 legacy pending adapter");
-  }
   if (!decisionSessionStore?.createDecisionSessionStore) {
     throw new Error("缺少 SetiDecisionSessionStore，无法创建标准 Decision Session");
   }
@@ -68,12 +62,9 @@
     };
   }
 
-  function createPendingState() {
-    return legacyFlowInventory.createLegacyPendingState();
-  }
-
   function createUiState() {
     return {
+      passReserveSelectionDismissed: false,
       debugAlienTraceModeActive: false,
       sectorWinDebugActive: false,
       completedEffectFlowsForUndo: {},
@@ -88,26 +79,31 @@
     };
   }
 
+  function createBrowserHostState() {
+    return {
+      scanRunSequence: 0,
+    };
+  }
+
   function createRuntime(options = {}) {
     return {
-      pending: createPendingState(),
       decisions: decisionSessionStore.createDecisionSessionStore(),
       actionLog: createActionLogState(),
       actionBriefing: createActionBriefingState(),
       startScreen: createStartScreenState(options),
       selection: createSelectionState(),
       ui: createUiState(),
+      browserHost: createBrowserHostState(),
     };
   }
 
   return {
     createRuntime,
-    createPendingState,
     createActionLogState,
     createActionBriefingState,
     createStartScreenState,
     createSelectionState,
     createUiState,
-    legacyFlowInventory,
+    createBrowserHostState,
   };
 });

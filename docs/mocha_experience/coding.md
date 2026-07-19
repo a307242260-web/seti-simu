@@ -65,10 +65,18 @@
 - date: 2026-07-19
 - source_issue: SETI-40, SETI-88, SETI-72
 - observation: coding issue 已有明确验收门槛、`next_action` 且没有 owner 决策或新增权限需求时，阶段性提交与进度评论不能替代持续执行；若验收由可递减债务计数定义，正数本身就是继续条件。批量迁移应按同域/同所有权形成可审计批次，批内跑定向证据、批末跑全量门禁，直到计数归零或出现有日志证据的真实 blocker。
-- evidence: SETI-40 返工期间先后在三条评论中被成员追问为何停止；SETI-88 在 `waiting_on=SETI-81` 已完成后仍保留 stale blocked，成员通过评论 `c82de376-9696-4ae7-8744-ae53c790c07c`、`b9823496-fa37-4f02-a91c-34b5218ef012` 连续要求说明并继续。SETI-72 又在 SETI-88 已 done 后保留 stale waiting；本次 owner 评论 `d68ef992-4d2c-4677-a29a-d5d8f1141cf6` 明确指出 32 项 dated adapter 时迁 2 项即停不合格，并指定同域 6～8 项批次。随后连续提交 `47687e0`、`96c2533`、`82679e6`、`71d9091`、`5c02439`，inventory 从 32 归零，保留 2 个 host-only，最终 Node 170/170 与真实 Chrome 完整对局通过。
+- evidence: SETI-40 返工期间先后在三条评论中被成员追问为何停止；SETI-88 在 `waiting_on=SETI-81` 已完成后仍保留 stale blocked，成员通过评论 `c82de376-9696-4ae7-8744-ae53c790c07c`、`b9823496-fa37-4f02-a91c-34b5218ef012` 连续要求说明并继续。SETI-72 又在 SETI-88 已 done 后保留 stale waiting；本次 owner 评论 `d68ef992-4d2c-4677-a29a-d5d8f1141cf6` 明确指出 32 项 dated adapter 时迁 2 项即停不合格，并指定同域 6～8 项批次。随后连续提交 `47687e0`、`96c2533`、`82679e6`、`71d9091`、`5c02439`，dated adapter 从 32 归零；owner 后续进一步要求删除剩余 host-only 白名单与旧容器。
 - promote_to: none
 - promotion_status: rejected
 - decision: 现有 agent prompt 的 autonomy/persistence 与仓库 `AGENTS.md` 已明确要求在安全范围内持续推进；SETI-72 再次属于同一 agent 未遵守既有规则，而不是缺少长期组件。owner 给出的 6～8 项是本次迁移的执行粒度，不泛化为所有 coding issue 的固定批量。维持 reject，不重复修改 prompt、loop template、watcher 或 issue-workflow；若后续不同 agent 也复现，再评估机械提醒。
+
+- date: 2026-07-19
+- source_issue: SETI-72
+- observation: 迁移债务计数归零不等于旧架构已删除；若过渡 registry/schema/audit 只剩“合法 host-only”豁免项，应先把这些状态迁入正式 owner store，再整体删除过渡基础设施。不能为了保留可接受的业务状态而继续保留旧容器和字段白名单。
+- evidence: SETI-72 先以 `total=2 / hostOnly=2 / datedAdapters=0` 汇报完成，随后 owner 在评论 `500867a4-646e-4023-bded-a5ac2934514a`、`cbb70177-bc6a-4e46-9cfb-61bdfe2d97d3` 连续追问两项为何存在，并在 `6e6c07cf-7c63-4c20-a5b3-540d4a197bbe` 明确要求老代码全部清理。最终将 overlay dismiss 与扫描序号迁入 `runtime.ui` / `runtime.browserHost`，删除旧 inventory、audit、HTML 接线和 runtime pending 创建入口。
+- promote_to: loop_template
+- promotion_status: promote
+- decision: 该反馈直接修正跨模块迁移的通用完成判据，且与既有“旧路径调用为 0”义务互补；已在 `docs/implementation-proof-obligations.md` 的最小 review checklist 增加“债务归零后删除过渡基础设施”门禁，不修改 watcher、issue-workflow、agent prompt 或 project memory。
 
 - date: 2026-07-19
 - source_issue: SETI-38, SETI-40, SETI-44

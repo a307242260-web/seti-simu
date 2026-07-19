@@ -75,7 +75,6 @@
       normalizeResourceCost,
       openAutoDataPlacementPrompt,
       openScanTargetPicker,
-      pendingState,
       planetReferenceLayout,
       planetStats,
       planetStatsState,
@@ -1421,26 +1420,7 @@
     }
 
     function openProbeLocationRewardPicker(effect, choices) {
-      if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        return finishProbeLocationReward(effect, choices[0]?.rocket);
-      }
-      pendingState.probeLocationRewardAction = { ...getPendingOwnerFields(effect), effect, choices };
-      if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
-      if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一个己方探测器结算小行星位置奖励。";
-      if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-      els.scanTargetActions.replaceChildren(...choices.map(({ rocket }) => {
-        const reward = computeProbeLocationReward(effect, rocket);
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "scan-target-option-button";
-        button.dataset.probeLocationRewardRocketId = String(rocket.id);
-        button.innerHTML = `R${rocket.id}<small>${reward.dataCount} 数据</small>`;
-        return button;
-      }));
-      els.scanTargetOverlay.hidden = false;
-      rocketState.statusNote = `${effect.label}：请选择探测器`;
-      renderStateReadout();
-      return { ok: true, pendingChoice: true, message: rocketState.statusNote };
+      return effectChoiceFlowHelpers.openProbeLocationRewardPicker(effect, choices);
     }
 
     function executeProbeLocationRewardEffect(effect) {

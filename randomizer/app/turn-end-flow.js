@@ -59,7 +59,6 @@
       maybeOpenQueuedJiuzheOpportunity,
       maybeStartFundamentalismRoundStartIncomeFlow,
       openAlienRevealConfirmation,
-      pendingState,
       planetRewards,
       playerState,
       quickActionHistory,

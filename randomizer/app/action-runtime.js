@@ -21,9 +21,6 @@
     if (!context.turnState) {
       throw new Error("createActionRuntime requires turnState");
     }
-    if (!context.pendingState) {
-      throw new Error("createActionRuntime requires pendingState");
-    }
     if (!context.rocketState) {
       throw new Error("createActionRuntime requires rocketState");
     }
@@ -32,7 +29,6 @@
       setupSelectionState,
       playerState,
       turnState,
-      pendingState,
       rocketState,
       INITIAL_SELECTION_REQUIRED = { initial: 2 },
       INITIAL_CARD_COUNT = 12,

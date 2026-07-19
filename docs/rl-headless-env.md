@@ -7,7 +7,7 @@
 - Node 入口：`randomizer/app/headless-env.js`，通过 `createHeadlessEnv()` 创建单局环境。
 - 已实现 `reset / observe(viewer) / legalActions(viewer) / step / isTerminal / getReplay / loadReplay / createCheckpoint / loadCheckpoint / dispose`。
 - `randomizer/app/headless-contract.js` 固化 15 个顶层动作族、7 个 conditional family、稳定 action feature 与 observation 公私域 sanitizer；旧 selector 映射只保留为存量 replay/诊断兼容面。
-- 传统 app 的 52 项 pending 由 `game/effects/legacy-flow-inventory.js` 单一登记；headless Effect Session host 不消费该容器。`tools/audit_effect_session_legacy.js` 会阻断未知/过期 adapter，并扫描 Browser/Headless host 的旧 resolver 回流。
+- 传统 app 的 pending inventory 与创建入口已删除；headless Effect Session host 只消费标准 Action/Decision/Effect Session，不加载浏览器宿主 UI 状态。
 - `legalActions()` 输出 `seti-rl-action-v2`，候选来自 app 与浏览器共享的 Standard Action adapter，不构建 actionGraph、valuation、selection pressure、planner 或第二套 legality。RL envelope 补充 mask/feature 与环境版本，但沿用 registry `actionId`；`step()` 校验 actor、版本与当前 legal action id 后，把保存的完整 Standard Action descriptor 交回同一 `registry.execute`。
 - pending/conditional 边界在枚举顶层行动或执行 deterministic drain 之前先经过 inventory 审计；未知 pending key、已知 key 的未知 type、未知 conditional family 分别以稳定 `HEADLESS_UNSUPPORTED_PENDING`、`HEADLESS_UNSUPPORTED_PENDING_TYPE`、`HEADLESS_UNSUPPORTED_CONDITIONAL_FAMILY` 拒绝。诊断固定包含 `state/family/type/owner`，拒绝分支不枚举顶层行动，也不调用旧 resolver、DOM callback、recover 或 skip。
 - observation 已按 `publicState / selfState / decision` 分域；公开玩家仅保留资源、计数与公开科技，自己的手牌/预留牌才进入 `selfState`，牌库顺序、未来科技 bonus、未揭示外星人身份不进入观测。

@@ -20,7 +20,6 @@
 
   function createEffectChoiceFlowHelpers(context = {}) {
     const documentRef = context.document || null;
-    const pendingState = context.pendingState || {};
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",

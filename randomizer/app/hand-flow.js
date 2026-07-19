@@ -14,7 +14,6 @@
   function createHandFlow(context = {}) {
     const {
       decisionSessions,
-      pendingState,
       cardState,
       rocketState,
       alienGameState,
