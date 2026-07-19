@@ -16,6 +16,14 @@
 
 - date: 2026-07-19
 - source_issue: SETI-45
+- observation: 面向 owner 讨论项目质量体系时，应先给出与项目规模匹配的最小默认口径，再说明少量例外；把所有风险维度展开成常驻多层门禁，会让简单的“主要靠单元测试”决策变得过度繁琐。
+- evidence: SETI-45 质量门禁报告提出七层验证与 Browser/Headless parity 硬门禁后，owner 评论 `3656d52e-efb1-442c-971e-ff18d91c13c7` 明确要求“主要靠单元测试就行”，并否定当前方案过于繁琐。
+- promote_to: none
+- promotion_status: candidate
+- decision: 后续质量体系讨论默认先写“单元测试为主”；只有改动直接涉及浏览器装配或训练链路时，才补对应的最小专项检查。当前仅一次明确反馈，不修改 agent prompt、loop template、watcher 或 issue-workflow，观察后续 2 次架构验收讨论。
+
+- date: 2026-07-19
+- source_issue: SETI-45
 - observation: 面向 owner 的架构探索应一次只讨论一个业务边界，并继续交付可直接打开的 HTML；但载体应是朴素技术文档和清晰架构图，不能复用 huashu-design 的大标题、彩色卡片墙和长篇阶段总结。
 - evidence: SETI-45 评论 `94c2d631-78a1-4ca6-9d05-3dda8ef2c657` 否定旧 HTML 样式；后续评论 `2f0c05ee-6307-4703-a501-f23ca67d3d4e` 明确修正为“仍需要 HTML，但不要 huashu-design 模板”；`reports/seti-ai-policy-architecture.html` 已按技术文档式布局重绘并完成桌面/窄屏检查。
 - promote_to: none

@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-19
+- source: SETI-45
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及负责项目架构探索的 agent
+- target_component: 架构探索中的质量体系呈现实践
+- target_file: docs/mocha_experience/exploratory_research.md
+- remote_skill_id: none
+- change: 记录“先给出与项目规模匹配的最小验证默认值，再列少量必要例外；不要把风险分类直接升级成常驻多层门禁”的候选经验。
+- applied_change: 仅新增 exploratory_research experience 与本决策契约；不修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。
+- expected_effect: 后续质量体系讨论能直接形成可执行的简洁口径，减少 owner 阅读和执行成本，避免用完整风险地图替代实际需要的最小验证方案。
+- evaluation_window: 后续 2 次项目级架构验收或质量门禁讨论。
+- success_signal: 首次方案以单元测试等单一默认值为主，只为实际高风险改动列最小例外，owner 不再反馈方案过于繁琐。
+- rollback_condition: 若后续重大跨宿主迁移仅靠单元测试连续漏掉集成回归，则保留简洁呈现，但为该类明确高风险任务恢复定向 parity 或浏览器 smoke，不恢复全量七层常驻门禁。
+- risk: 过度简化可能遗漏跨宿主、浏览器装配或训练恢复问题；因此候选口径保留按实际改动补最小专项检查的例外。
+- evidence_before: SETI-45 报告 `reports/seti-quality-gates-architecture.html` 提出七层验证与固定 seed 跨宿主 parity；owner 评论 `3656d52e-efb1-442c-971e-ff18d91c13c7` 明确要求主要依赖单元测试，并判断现方案过于繁琐。
+- owner_or_agent_decision: owner 已确定本项目质量体系主要靠单元测试；领航按 harness-evolve 规则将呈现与工作方式反馈记录为 candidate，不升级长期组件。
+- applied_at: 2026-07-19
+- verification: 核对 SETI-45 触发线程、当前 metadata 和质量门禁报告；确认旧 metadata 仍写“待 owner 确认”，需同步改为已确认的简化口径。
+- observed_outcome: 待后续两次适用讨论观察。
+- keep_or_revise: 保持 candidate；达到观察窗口后再决定是否合并进既有“单边界技术文档式 HTML”候选。
+
+- date: 2026-07-19
 - source: SETI-56（续 SETI-2）
 - promoted_to: none
 - promotion_decision: candidate
