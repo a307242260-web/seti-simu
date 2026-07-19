@@ -4,18 +4,24 @@
   const legacyFlowInventory = typeof module === "object" && module.exports
     ? require("../game/effects/legacy-flow-inventory")
     : root.SetiLegacyFlowInventory;
-  const api = factory(root, legacyFlowInventory);
+  const decisionSessionStore = typeof module === "object" && module.exports
+    ? require("../game/effects/decision-session-store")
+    : root.SetiDecisionSessionStore;
+  const api = factory(root, legacyFlowInventory, decisionSessionStore);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAppRuntime = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (root, legacyFlowInventory) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (root, legacyFlowInventory, decisionSessionStore) {
   "use strict";
 
   if (!legacyFlowInventory?.createLegacyPendingState) {
     throw new Error("缺少 SetiLegacyFlowInventory，无法创建受审计的 legacy pending adapter");
+  }
+  if (!decisionSessionStore?.createDecisionSessionStore) {
+    throw new Error("缺少 SetiDecisionSessionStore，无法创建标准 Decision Session");
   }
 
   function stripAssetExtension(value) {
@@ -85,6 +91,7 @@
   function createRuntime(options = {}) {
     return {
       pending: createPendingState(),
+      decisions: decisionSessionStore.createDecisionSessionStore(),
       actionLog: createActionLogState(),
       actionBriefing: createActionBriefingState(),
       startScreen: createStartScreenState(options),

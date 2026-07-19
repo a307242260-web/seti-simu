@@ -23,7 +23,6 @@
     scanRunSequence: 0,
     handScanAction: null,
     alienTraceAction: null,
-    landTargetAction: null,
     cardTriggerAction: null,
     cardTriggerFreeMove: null,
     type1TriggerEvents: Object.freeze([]),
@@ -56,7 +55,6 @@
     handCardPlayAction: null,
     cardCornerQuickAction: null,
     cardCornerFreeMove: null,
-    dataPlaceAction: null,
     industryAbility: null,
     piratesRaidPlacement: null,
   });
@@ -65,7 +63,6 @@
     common_choice: ["discardAction", "cardSelectionAction", "passReserveSelection", "passReserveSelectionDismissed"],
     scan: ["scanTargetAction", "probeSectorScanAction", "probeLocationRewardAction", "publicScanQueue", "scanRunSequence", "handScanAction"],
     alien_trace: ["alienTraceAction", "alienTracePickerState", "alienRevealConfirmation", "turnEndAfterRevealContinuation"],
-    landing: ["landTargetAction"],
     card_trigger: ["cardTriggerAction", "cardTriggerFreeMove", "type1TriggerEvents", "cardTaskCompletion"],
     jiuzhe: ["jiuzheCardPlay", "jiuzheOpportunityOpen", "jiuzheOpportunityQueue"],
     yichangdian: ["yichangdianCardGain", "yichangdianCornerAction"],
@@ -77,7 +74,7 @@
     strategy_pirates: ["strategyPassiveSlotChoice", "piratesRaidPlacement"],
     action_flow: ["actionEffectFlow"],
     movement_cards: ["movePayment", "playCardSelection", "handCardPlayAction", "cardCornerQuickAction", "cardCornerFreeMove"],
-    data_industry: ["dataPlaceAction", "industryAbility"],
+    data_industry: ["industryAbility"],
   });
 
   const HOST_ONLY_FIELDS = new Set(["passReserveSelectionDismissed", "scanRunSequence"]);

@@ -262,6 +262,11 @@
     industryCardFiles: INDUSTRY_CARD_FILES,
   });
   const pendingState = runtime.pending;
+  const decisionSessions = runtime.decisions;
+  const DATA_PLACEMENT_DECISION = "data_placement";
+  const LAND_TARGET_DECISION = "land_target";
+  const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
+  const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
@@ -2727,8 +2732,8 @@
     get pendingPublicScanQueue() { return pendingState.publicScanQueue; },
     get pendingHandScanAction() { return pendingState.handScanAction; },
     get pendingAlienTraceAction() { return pendingState.alienTraceAction; },
-    get pendingLandTargetAction() { return pendingState.landTargetAction; },
-    get pendingDataPlaceAction() { return pendingState.dataPlaceAction; },
+    get pendingLandTargetAction() { return getPendingLandTargetDecision(); },
+    get pendingDataPlaceAction() { return getPendingDataPlacementDecision(); },
     get pendingJiuzheCardPlay() { return pendingState.jiuzheCardPlay; },
     get pendingYichangdianCardGain() { return pendingState.yichangdianCardGain; },
     get pendingYichangdianCornerAction() { return pendingState.yichangdianCornerAction; },
@@ -3784,7 +3789,7 @@
     pendingState.publicScanQueue = null;
     pendingState.handScanAction = null;
     pendingState.alienTraceAction = null;
-    pendingState.landTargetAction = null;
+    decisionSessions.clear(LAND_TARGET_DECISION);
     pendingState.probeLocationRewardAction = null;
     pendingState.cardTriggerAction = null;
     pendingState.cardTriggerFreeMove = null;
@@ -3821,7 +3826,7 @@
     pendingState.handCardPlayAction = null;
     pendingState.cardCornerQuickAction = null;
     pendingState.cardCornerFreeMove = null;
-    pendingState.dataPlaceAction = null;
+    decisionSessions.clear(DATA_PLACEMENT_DECISION);
     pendingState.industryAbility = null;
     pendingState.piratesRaidPlacement = null;
     pendingState.strategyPassiveSlotChoice = null;
@@ -5245,7 +5250,7 @@
       || (els.alienTraceOverlay && !els.alienTraceOverlay.hidden && pendingState.alienTracePickerState?.mode !== "reveal-confirm")
       || pendingState.actionEffectFlow?.cardMoveEffect
       || pendingState.actionEffectFlow?.freeMoveMode
-      || Boolean(pendingState.dataPlaceAction),
+      || Boolean(getPendingDataPlacementDecision()),
     );
   }
 
@@ -5300,7 +5305,7 @@
       return true;
     }
     if (els.dataPlaceOverlay && !els.dataPlaceOverlay.hidden) {
-      if (pendingState.dataPlaceAction) {
+      if (getPendingDataPlacementDecision()) {
         cancelDataPlacePicker();
         return true;
       }
@@ -5512,7 +5517,7 @@
       pendingState.actionEffectFlow.cardMoveEffect = null;
       deactivateMoveMode();
     }
-    if (pendingState.dataPlaceAction) {
+    if (getPendingDataPlacementDecision()) {
       closeDataPlacePicker();
     }
     pendingState.cardTriggerAction = null;
@@ -8936,6 +8941,7 @@
     markerBelongsToPlayer,
     markerOwnerLabel,
     openLandTargetPicker,
+    decisionSessions,
     pendingState,
     playerState,
     players,
@@ -9160,14 +9166,14 @@
   }
 
   function closeLandTargetPicker() {
-    pendingState.landTargetAction = null;
+    decisionSessions.clear(LAND_TARGET_DECISION);
     if (!els.landTargetOverlay) return;
     els.landTargetOverlay.hidden = true;
     delete els.landTargetOverlay.dataset.planetId;
   }
 
   function cancelLandTargetPicker() {
-    const pending = pendingState.landTargetAction;
+    const pending = getPendingLandTargetDecision();
     closeLandTargetPicker();
     if (typeof pending?.onCancel === "function") {
       pending.onCancel();
@@ -9177,13 +9183,13 @@
   function openLandTargetPicker(options) {
     if (!els.landTargetOverlay || !els.landTargetSelect) {
       if (headlessMode && typeof options.onConfirm === "function") {
-        pendingState.landTargetAction = {
+        decisionSessions.open(LAND_TARGET_DECISION, {
           ...getPendingOwnerFields(options.effect || null, options.player || null),
           effect: options.effect || null,
           getOptions: options.getOptions,
           onConfirm: options.onConfirm,
           onCancel: options.onCancel,
-        };
+        });
         return { ok: true, pending: true, message: "请选择登陆目标" };
       }
       const choice = options.choices?.[0] || { target: options.defaultTarget };
@@ -9197,15 +9203,17 @@
       return;
     }
 
-    pendingState.landTargetAction = typeof options.onConfirm === "function"
-      ? {
+    if (typeof options.onConfirm === "function") {
+      decisionSessions.open(LAND_TARGET_DECISION, {
         ...getPendingOwnerFields(options.effect || null, options.player || null),
         effect: options.effect || null,
         getOptions: options.getOptions,
         onConfirm: options.onConfirm,
         onCancel: options.onCancel,
-      }
-      : null;
+      });
+    } else {
+      decisionSessions.clear(LAND_TARGET_DECISION);
+    }
     els.landTargetTitle.textContent = options.title || `选择登陆目标：${options.planet.name}`;
     if (els.landTargetLabel) {
       els.landTargetLabel.textContent = options.selectLabel || "登陆到";
@@ -9229,7 +9237,7 @@
   }
 
   function confirmLandTargetChoice(choiceIndex = 0) {
-    const pending = pendingState.landTargetAction;
+    const pending = getPendingLandTargetDecision();
     return withPendingOwnerPlayer(pending, () => {
     const options = typeof pending?.getOptions === "function"
       ? pending.getOptions()
@@ -9271,7 +9279,7 @@
       pendingState.handScanAction,
       pendingState.passReserveSelection,
       pendingState.movePayment,
-      pendingState.dataPlaceAction,
+      getPendingDataPlacementDecision(),
       pendingState.cardTriggerFreeMove,
       pendingState.actionEffectFlow?.cardMoveEffect,
       pendingState.cardCornerFreeMove,
@@ -9280,7 +9288,7 @@
       pendingState.amibaSymbolChoice,
       pendingState.discardAction,
       pendingState.cardSelectionAction,
-      pendingState.landTargetAction,
+      getPendingLandTargetDecision(),
       pendingState.alienTraceAction,
       pendingState.alienTracePickerState,
     ].find(Boolean) || null;
@@ -9662,7 +9670,7 @@
       }
       return { actorPlayer: player, candidates };
     }
-    const dataPlacePending = pendingState.dataPlaceAction;
+    const dataPlacePending = getPendingDataPlacementDecision();
     if (dataPlacePending) {
       const player = getHeadlessConditionalPlayer(dataPlacePending);
       const candidates = (data.listPlaceDataChoices?.(player) || []).map((choice, choiceIndex) => ({
@@ -9984,7 +9992,7 @@
         candidates,
       };
     }
-    const landPending = pendingState.landTargetAction;
+    const landPending = getPendingLandTargetDecision();
     if (landPending) {
       const options = typeof landPending.getOptions === "function"
         ? landPending.getOptions()
@@ -10790,6 +10798,7 @@
     solarState,
     solar,
     cardState,
+    decisionSessions,
     pendingState,
     uiRuntimeState,
     DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT,

@@ -31,6 +31,7 @@
       cardState,
       createActionContext,
       data,
+      decisionSessions,
       els,
       getBoardPointFromPolarPoint,
       getCurrentPlayer,
@@ -73,6 +74,11 @@
       validateIndustryHuanyuMoveRocket,
       withPendingOwnerPlayer
     } = context;
+    const DATA_PLACEMENT_DECISION = "data_placement";
+
+    function getPendingDataPlacement() {
+      return decisionSessions.peek(DATA_PLACEMENT_DECISION);
+    }
     let moveArrowRenderFrame = 0;
 
   function getPlutoReservedCards(player = getCurrentPlayer()) {
@@ -713,7 +719,7 @@
   function closeDataPlacePicker(options = {}) {
     if (!els.dataPlaceOverlay) return;
     els.dataPlaceOverlay.hidden = true;
-    if (!options.keepPending) pendingState.dataPlaceAction = null;
+    if (!options.keepPending) decisionSessions.clear(DATA_PLACEMENT_DECISION);
   }
 
   function shouldPromptDataPlaceChoice(choices) {
@@ -755,12 +761,14 @@
 
     const choices = choiceResult.choices;
     const forcePrompt = Boolean(options.forcePrompt);
-    pendingState.dataPlaceAction = options.pendingAction
-      ? {
+    if (options.pendingAction) {
+      decisionSessions.open(DATA_PLACEMENT_DECISION, {
         ...getPendingOwnerFields(options.pendingAction.effect || null, player),
         ...options.pendingAction,
-      }
-      : null;
+      });
+    } else {
+      decisionSessions.clear(DATA_PLACEMENT_DECISION);
+    }
     if (!els.dataPlaceOverlay || !els.dataPlaceActions) {
       return { ok: true, pendingChoice: true, choices };
     }
@@ -832,7 +840,7 @@
     return { ok: true, awaitingDataPlacement: true, message: rocketState.statusNote };
   }
 
-  function getPendingDataPlacementPlayer(pending = pendingState.dataPlaceAction) {
+  function getPendingDataPlacementPlayer(pending = getPendingDataPlacement()) {
     return getPendingOwnerPlayer(pending, pending?.effect || null);
   }
 
@@ -907,10 +915,10 @@
   }
 
   function continuePendingDataPlacementAfterBonus(message = null) {
-    const pending = pendingState.dataPlaceAction;
+    const pending = getPendingDataPlacement();
     if (!pending) return null;
     if (message) pending.messages.push(message);
-    pendingState.dataPlaceAction = null;
+    decisionSessions.clear(DATA_PLACEMENT_DECISION);
     if (typeof pending.onAfterPlacement === "function") {
       return pending.onAfterPlacement({
         messages: pending.messages.filter(Boolean),
@@ -922,7 +930,7 @@
   }
 
   function confirmPendingDataPlacement(target, blueSlot) {
-    const pending = pendingState.dataPlaceAction;
+    const pending = getPendingDataPlacement();
     const player = getPendingDataPlacementPlayer(pending);
     closeDataPlacePicker({ keepPending: true });
     return withPendingOwnerPlayer(pending, () => {
@@ -956,13 +964,13 @@
   }
 
   function skipPendingDataPlacement() {
-    const pending = pendingState.dataPlaceAction;
+    const pending = getPendingDataPlacement();
     if (!pending) {
       closeDataPlacePicker();
       return null;
     }
     closeDataPlacePicker({ keepPending: true });
-    pendingState.dataPlaceAction = null;
+    decisionSessions.clear(DATA_PLACEMENT_DECISION);
     if (typeof pending.onSkip === "function") {
       return pending.onSkip({
         beforePlayerState: pending.beforePlayerState,
@@ -972,7 +980,7 @@
   }
 
   function cancelDataPlacePicker() {
-    if (pendingState.dataPlaceAction) return skipPendingDataPlacement();
+    if (getPendingDataPlacement()) return skipPendingDataPlacement();
     closeDataPlacePicker();
     rocketState.statusNote = "已取消放置数据";
     renderStateReadout();
@@ -980,7 +988,7 @@
   }
 
   function confirmDataPlacement(target, blueSlot) {
-    if (pendingState.dataPlaceAction) {
+    if (getPendingDataPlacement()) {
       return confirmPendingDataPlacement(target, blueSlot);
     }
     closeDataPlacePicker();
