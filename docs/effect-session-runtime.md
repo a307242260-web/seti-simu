@@ -4,7 +4,7 @@
 
 Effect Session 是 Standard Action 与浏览器/训练宿主之间唯一共享的流程执行协议。SETI-56 负责 Action family、合法项和业务 handler；本契约从 Action 已被接受并生成 Effect Group 开始，负责队列顺序、外部选择、快速行动、working state、提交/回滚、事件和 replay journal。
 
-阶段 0/1 reference core 位于 `randomizer/game/effects/session-runtime.js`。阶段 2 的研究科技贯穿参考链位于 `randomizer/game/effects/research-tech-session.js`，固定为 `旋转 → 科技 DecisionEffect → 放置 → 即时奖励 → commit`。阶段 3 的扫描与打牌代表链位于 `randomizer/game/effects/scan-card-session.js`：扫描固定覆盖 `多目标 DecisionEffect → 扫描 → 扇区 DecisionEffect → 参与奖励 → trigger → 延迟补牌`，打牌固定覆盖 `支付 DecisionEffect → 卡牌顺序效果 → 任务/被动 trigger → 新 DecisionEffect`。阶段 4 的 `randomizer/game/effects/quick-action-session.js` 把 Standard Action `phase=quick` descriptor 校验与 Effect interrupt 接到同一入口，拒绝 main/turn-control family 和旧 quick executor 旁路。阶段 5 在 reference core 内统一 main/quick history、确认输入 replay cursor、RNG/result、checkpoint/fork、Effect undo 和 irreversible barrier；行为矩阵位于 `randomizer/game/effects/session-journal.test.js`。阶段 6 的浏览器输入宿主位于 `randomizer/app/effect-session-host.js`。阶段 7 的训练宿主位于 `randomizer/app/headless-effect-session-host.js`：headless/worker 只提交 Standard Action/Decision，确定性推进、唯一选择和当前 Effect 都由同一 session drain，observation/legal choices 在 session `workingState` 对应的同步状态上投影，并把 session journal 固化到每个训练 replay step。其余领域 executor 与旧 pending 状态的彻底删除仍属于阶段 8，不能把阶段 7 的宿主统一误报为全部领域已经纯化。
+阶段 0/1 reference core 位于 `randomizer/game/effects/session-runtime.js`。阶段 2 的研究科技贯穿参考链位于 `randomizer/game/effects/research-tech-session.js`，固定为 `旋转 → 科技 DecisionEffect → 放置 → 即时奖励 → commit`。阶段 3 的扫描与打牌代表链位于 `randomizer/game/effects/scan-card-session.js`：扫描固定覆盖 `多目标 DecisionEffect → 扫描 → 扇区 DecisionEffect → 参与奖励 → trigger → 延迟补牌`，打牌固定覆盖 `支付 DecisionEffect → 卡牌顺序效果 → 任务/被动 trigger → 新 DecisionEffect`。阶段 4 的 `randomizer/game/effects/quick-action-session.js` 把 Standard Action `phase=quick` descriptor 校验与 Effect interrupt 接到同一入口，拒绝 main/turn-control family 和旧 quick executor 旁路。阶段 5 在 reference core 内统一 main/quick history、确认输入 replay cursor、RNG/result、checkpoint/fork、Effect undo 和 irreversible barrier；行为矩阵位于 `randomizer/game/effects/session-journal.test.js`。阶段 6 的浏览器输入宿主位于 `randomizer/app/effect-session-host.js`。阶段 7 的训练宿主位于 `randomizer/app/headless-effect-session-host.js`：headless/worker 只提交 Standard Action/Decision，确定性推进、唯一选择和当前 Effect 都由同一 session drain，observation/legal choices 在 session `workingState` 对应的同步状态上投影，并把 session journal 固化到每个训练 replay step。阶段 8 已把旧 pending 创建入口收敛到 `legacy-flow-inventory.js`：52 项中 2 项为 host-only，其余 50 项是 owner 为 `SETI-72/browser-host-stages-5-9`、到期日为 `2026-08-31` 的单向兼容 adapter。`tools/audit_effect_session_legacy.js` 会列出剩余 callsite，并在未知字段、缺字段或 adapter 过期后非零退出；传统 app 兼容路径仍不得误报为 deleted/session-owned。
 
 核心的禁止依赖：DOM、overlay/button、localStorage、render callback、AI valuation/planner、具体 Policy、领域 continuation。宿主可以注册纯 executor、提交 Action/Decision、读取可见投影和持久化稳定结果，不能在 runtime 外偷偷推进规则。
 
@@ -163,7 +163,7 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 
 ## 旧流程覆盖矩阵
 
-下表以 `randomizer/app/runtime.js#createPendingState` 的 52 项字段为权威 inventory。`adapter` 表示后续只能通过有时限兼容层映射成 Effect/DecisionEffect；`session-owned` 表示迁移后由 session/journal/phase 直接取代；`host-only` 表示纯显示/序号状态可留在宿主，但不得推进规则。
+下表以 `randomizer/game/effects/legacy-flow-inventory.js` 的 52 项字段为权威 inventory；`randomizer/app/runtime.js#createPendingState` 只消费该清单，不再复制默认值。`dated-adapter` 表示只能在明确 owner/到期日内映射成 Effect/DecisionEffect；`session-owned` 表示迁移后由 session/journal/phase 直接取代；`host-only` 表示纯显示/序号状态可留在宿主，但不得推进规则。
 
 | 领域 | 当前字段 | 标准阶段/目标 | 首批迁移 |
 |---|---|---|---|
@@ -218,6 +218,6 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 5. 阶段 5：已把 main/quick history、RNG/replay、undo 与 irreversible barrier 收口到 reference session journal，并固化 checkpoint/fork 与 confirmed replay cursor；旧浏览器 history 热路径的删除仍属于阶段 6/8 adapter 迁移。
 6. 阶段 6：浏览器 adapter 只负责 dispatch/observe/render，删除对应 DOM continuation。
 7. 阶段 7：headless/training adapter 只负责 Standard Action/Decision 与 observation/reward/replay，删除 policy/resolver drain。
-8. 阶段 8：迁移剩余 pending/外星人/公司能力，做 inventory=0 或 host-only/adapter 有明确到期日的审计，再完成 parity、性能和完整对局。
+8. 阶段 8：已建立 52 字段的可执行 inventory 与过期门禁，收窄为 2 个 host-only + 50 个有明确 owner/到期日的 adapter；已迁移 Browser/Headless host 的旧 resolver 引用保持为 0。剩余传统 app callsite 由机械报告持续暴露，不能伪报为已删除。
 
 任何阶段更新矩阵状态时必须同时给出：真实状态构造、Effect/Decision 枚举、执行 trace、旧路径调用为零、失败语义和 replay/checkpoint 证据。只修改 label、删除字段或跑通一条 happy path不能升级为 completed。

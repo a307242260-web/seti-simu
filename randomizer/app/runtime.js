@@ -1,15 +1,22 @@
 (function (root, factory) {
   "use strict";
 
-  const api = factory(root);
+  const legacyFlowInventory = typeof module === "object" && module.exports
+    ? require("../game/effects/legacy-flow-inventory")
+    : root.SetiLegacyFlowInventory;
+  const api = factory(root, legacyFlowInventory);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAppRuntime = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (root, legacyFlowInventory) {
   "use strict";
+
+  if (!legacyFlowInventory?.createLegacyPendingState) {
+    throw new Error("缺少 SetiLegacyFlowInventory，无法创建受审计的 legacy pending adapter");
+  }
 
   function stripAssetExtension(value) {
     return String(value || "").replace(/\.[^./\\]+$/, "");
@@ -56,60 +63,7 @@
   }
 
   function createPendingState() {
-    return {
-      discardAction: null,
-      cardSelectionAction: null,
-      passReserveSelection: null,
-      passReserveSelectionDismissed: false,
-      scanTargetAction: null,
-      probeSectorScanAction: null,
-      probeLocationRewardAction: null,
-      publicScanQueue: null,
-      scanRunSequence: 0,
-      handScanAction: null,
-      alienTraceAction: null,
-      landTargetAction: null,
-      cardTriggerAction: null,
-      cardTriggerFreeMove: null,
-      type1TriggerEvents: [],
-      cardTaskCompletion: null,
-      jiuzheCardPlay: null,
-      jiuzheOpportunityOpen: false,
-      jiuzheOpportunityQueue: [],
-      yichangdianCardGain: null,
-      yichangdianCornerAction: null,
-      banrenmaCardGain: null,
-      banrenmaOpportunity: null,
-      banrenmaOpportunityQueue: [],
-      chongCardGain: null,
-      chongFossilChoice: null,
-      chongTaskCompletion: null,
-      amibaCardGain: null,
-      amibaSymbolChoice: null,
-      amibaTraceRemoval: null,
-      aomomoCardGain: null,
-      runezuCardGain: null,
-      runezuSymbolBranch: null,
-      runezuFaceSymbolPlacement: null,
-      strategyPassiveSlotChoice: null,
-      alienTracePickerState: null,
-      alienRevealConfirmation: null,
-      turnEndAfterRevealContinuation: null,
-      actionExecuted: false,
-      passPlayerId: null,
-      actionEffectFlow: null,
-      actionHasIrreversibleBarrier: false,
-      actionIrreversibleReason: null,
-      movePayment: null,
-      playCardSelection: null,
-      futureSpanPlayBeforePlayer: null,
-      handCardPlayAction: null,
-      cardCornerQuickAction: null,
-      cardCornerFreeMove: null,
-      dataPlaceAction: null,
-      industryAbility: null,
-      piratesRaidPlacement: null,
-    };
+    return legacyFlowInventory.createLegacyPendingState();
   }
 
   function createUiState() {
@@ -147,5 +101,6 @@
     createStartScreenState,
     createSelectionState,
     createUiState,
+    legacyFlowInventory,
   };
 });
