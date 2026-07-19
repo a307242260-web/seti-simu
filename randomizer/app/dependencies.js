@@ -69,6 +69,7 @@
     Object.freeze({ key: "ai", globalName: "SetiAI" }),
   ]);
   const OPTIONAL_GLOBALS = Object.freeze([
+    Object.freeze({ key: "browserHostModule", globalName: "SetiBrowserHost" }),
     Object.freeze({ key: "aiControlRuntimeModule", globalName: "SetiAppAiControlRuntime" }),
     Object.freeze({ key: "debugRuntimeModule", globalName: "SetiAppDebugRuntime" }),
     Object.freeze({ key: "effectSessionHostModule", globalName: "SetiAppEffectSessionHost" }),
