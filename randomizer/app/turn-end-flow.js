@@ -39,6 +39,7 @@
       completeCurrentActionEffect,
       completePendingActionStep,
       createActionLogImpactSnapshot,
+      decisionSessions,
       els,
       endEffectHistoryStep,
       getCurrentPlayer,
@@ -87,6 +88,9 @@
       updateActionButtons,
       updatePublicCardControls
     } = context;
+
+    const TURN_END_REVEAL_SESSION = "turn_end_after_reveal";
+    const getTurnEndAfterRevealSession = () => decisionSessions.peek(TURN_END_REVEAL_SESSION);
 
   function createPassEvent(player) {
     return {
@@ -405,7 +409,7 @@
   }
 
   function queueTurnEndAfterRevealContinuation(continuation) {
-    pendingState.turnEndAfterRevealContinuation = continuation;
+    decisionSessions.open(TURN_END_REVEAL_SESSION, continuation);
     rocketState.statusNote = continuation?.turnEndReveal?.message || "请先完成外星人揭示流程";
     updateActionButtons();
     renderStateReadout();
@@ -413,13 +417,13 @@
   }
 
   function maybeResumeTurnEndAfterReveal() {
-    const continuation = pendingState.turnEndAfterRevealContinuation;
+    const continuation = getTurnEndAfterRevealSession();
     if (!continuation || hasTurnEndRevealBlockingSubFlow()) return null;
     return finishCurrentTurnAfterAlienReveal(continuation);
   }
 
   function maybeContinuePendingTurnEndRevealFlow() {
-    if (!pendingState.turnEndAfterRevealContinuation) return null;
+    if (!getTurnEndAfterRevealSession()) return null;
     return maybeContinueAlienRevealQueuedOpportunities();
   }
 
@@ -451,7 +455,7 @@
         turnEndReveal,
       });
     }
-    pendingState.turnEndAfterRevealContinuation = null;
+    decisionSessions.clear(TURN_END_REVEAL_SESSION);
     const passIncomeResult = didPass ? applyPassTurnEndIncome(endingPlayer) : null;
     commitActionLogDraft({
       passed: didPass,

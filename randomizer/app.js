@@ -270,6 +270,7 @@
   const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
   const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
   const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
+  const TURN_END_REVEAL_SESSION = "turn_end_after_reveal";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
@@ -277,6 +278,7 @@
   const getPublicScanQueueSession = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
   const getPendingProbeSectorScanDecision = () => decisionSessions.peek(PROBE_SECTOR_SCAN_SESSION);
   const getPendingProbeLocationRewardDecision = () => decisionSessions.peek(PROBE_LOCATION_REWARD_SESSION);
+  const getTurnEndAfterRevealSession = () => decisionSessions.peek(TURN_END_REVEAL_SESSION);
   const actionLogState = runtime.actionLog;
   const actionBriefingState = runtime.actionBriefing;
   const startScreenState = runtime.startScreen;
@@ -3619,7 +3621,7 @@
       && !uiRuntimeState.effectStepActive
       && !pendingState.actionEffectFlow
       && !pendingState.alienRevealConfirmation
-      && !pendingState.turnEndAfterRevealContinuation
+      && !getTurnEndAfterRevealSession()
       && !actionLogState.draft
       && !actionHistory.hasSession()
       && !quickActionHistory.hasSession()
@@ -3827,7 +3829,7 @@
     pendingState.runezuFaceSymbolPlacement = null;
     pendingState.alienTracePickerState = null;
     closeAlienRevealConfirmationOverlay();
-    pendingState.turnEndAfterRevealContinuation = null;
+    decisionSessions.clear(TURN_END_REVEAL_SESSION);
     uiRuntimeState.debugAlienTraceModeActive = false;
     pendingState.actionEffectFlow = null;
     clearCompletedEffectFlowForUndo();
@@ -8498,6 +8500,7 @@
     maybeOpenQueuedJiuzheOpportunity,
     maybeStartFundamentalismRoundStartIncomeFlow,
     openAlienRevealConfirmation,
+    decisionSessions,
     pendingState,
     planetRewards,
     playerState,

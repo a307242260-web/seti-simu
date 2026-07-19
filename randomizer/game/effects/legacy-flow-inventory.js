@@ -44,7 +44,6 @@
     runezuFaceSymbolPlacement: null,
     alienTracePickerState: null,
     alienRevealConfirmation: null,
-    turnEndAfterRevealContinuation: null,
     actionEffectFlow: null,
     movePayment: null,
     playCardSelection: null,
@@ -57,7 +56,7 @@
   const GROUPS = Object.freeze({
     common_choice: ["discardAction", "cardSelectionAction", "passReserveSelection", "passReserveSelectionDismissed"],
     scan: ["scanTargetAction", "scanRunSequence", "handScanAction"],
-    alien_trace: ["alienTraceAction", "alienTracePickerState", "alienRevealConfirmation", "turnEndAfterRevealContinuation"],
+    alien_trace: ["alienTraceAction", "alienTracePickerState", "alienRevealConfirmation"],
     card_trigger: ["cardTriggerAction", "cardTriggerFreeMove", "type1TriggerEvents", "cardTaskCompletion"],
     jiuzhe: ["jiuzheCardPlay", "jiuzheOpportunityOpen", "jiuzheOpportunityQueue"],
     yichangdian: ["yichangdianCardGain", "yichangdianCornerAction"],
