@@ -8,6 +8,7 @@
     root.SetiBrowserActionBar,
     root.SetiBrowserDecisionUi,
     root.SetiBrowserCardDecisionUi,
+    root.SetiBrowserIndustryAlienDecisionUi,
     root.SetiBrowserResidentProjection,
     root.SetiBrowserResidentRenderer,
   );
@@ -20,12 +21,13 @@
   actionBar,
   decisionUi,
   cardDecisionUi,
+  industryAlienDecisionUi,
   residentProjection,
   residentRenderer,
 ) {
   "use strict";
 
-  if (!projectionAdapter || !viewStateStore || !inputAdapter || !actionBar || !decisionUi || !residentProjection || !residentRenderer) {
+  if (!projectionAdapter || !viewStateStore || !inputAdapter || !actionBar || !decisionUi || !industryAlienDecisionUi || !residentProjection || !residentRenderer) {
     throw new Error("SetiBrowserHost 缺少 projection/view-state/input/action-bar/decision-ui/resident renderer module");
   }
   return Object.freeze({
@@ -36,6 +38,7 @@
     actionBar,
     decisionUi,
     cardDecisionUi,
+    industryAlienDecisionUi,
     residentProjection,
     residentRenderer,
   });

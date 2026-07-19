@@ -161,6 +161,8 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 
 浏览器 adapter 的目标形态是 `click -> Standard Action/Decision -> runtime`，render 只消费 `observe()`。训练 adapter 已固定为 `step(action) -> dispatch/resolve -> drain -> observation/reward/replay`，并由 `headless-effect-session-host` 统一 Action、Decision、deterministic Effect、checkpoint 和 confirmed journal；两端不得各自拥有 pending resolver。
 
+公司/外星人领域 adapter 位于 `randomizer/game/effects/industry-alien-session.js`。它不新增第二套 choice identity：公司 picker、痕迹、机会、牌、任务和物种分支分别映射到既有 conditional Standard Action family，并以六类 `decisionKind` 暴露 presentation 语义。领域 followup 只能声明为 direct/trigger/deferred 的 Decision 或 Effect；未知 kind/species/family/followup 一律终止 session。八物种与公司行为矩阵、旧 resolver 零调用及 browser renderer 证据见 `checkpoint/seti-78-proof-obligations.md`。
+
 ## 旧流程覆盖矩阵
 
 下表以 `randomizer/game/effects/legacy-flow-inventory.js` 的 52 项字段为权威 inventory；`randomizer/app/runtime.js#createPendingState` 只消费该清单，不再复制默认值。`dated-adapter` 表示只能在明确 owner/到期日内映射成 Effect/DecisionEffect；`session-owned` 表示迁移后由 session/journal/phase 直接取代；`host-only` 表示纯显示/序号状态可留在宿主，但不得推进规则。

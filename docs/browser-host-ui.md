@@ -256,6 +256,12 @@ reference projection 当前刻意采用保守白名单，未列入的 board/play
 
 统一 Decision registry 新增 `board-target` 与 `payment` renderer。`projection-adapter.js` 只从 inspect choice 的 Standard Action target/payload 推导只读 presentation；renderer 输出的 choiceId 集合必须与同 revision 的 inspect choices 逐项相等。固定 Node/Chrome trace 覆盖两个扫描目标、两个扇区、两名参与者奖励、隐藏补牌、两个数据槽、两个登陆目标和两种支付；迁移模块对旧 scan/data/land pending owner、AI resolver 和 UI continuation 的引用/调用均为 0。证据见 `checkpoint/seti-76-proof-obligations.md`、`app/browser-host/scan-data-land-session.test.js` 与 `scan-data-land.browser-smoke.html`。
 
+### 阶段 5 公司与八种外星人 Decision（SETI-78）
+
+`game/effects/industry-alien-session.js` 把公司 picker、外星人痕迹放置、机会、牌获取、任务和物种分支归一为六类领域 Decision；choice 仍是 `choose_target / choose_reward / choose_card / choose_branch` 的 Standard Action identity。机会队列、痕迹奖励与物种 followup 只以 direct/trigger/deferred Effect 加入 session，领域 adapter 遇到未知 kind、species、family、followup 或 priority 时 fail-closed，不调用传统 `pendingState` resolver。
+
+`app/browser-host/industry-alien-decision-ui.js` 为六类 projection 注册 exhaustive presentation renderer。renderer 只消费可见 Decision choices，并原样保留 choiceId；不读取公司/物种规则、牌堆、pending、history 或 continuation。公司与八物种矩阵逐项构造两个以上非等价可执行 choice，验证 owner、独立 decision replay、固定奖励/followup 顺序、rollback/barrier、旧 industry/alien/species resolver 调用为 0。可见性、stale、ViewState 重建和真实 Chrome 公司→方舟痕迹固定链证据见 `checkpoint/seti-78-proof-obligations.md`、`game/effects/industry-alien-session.test.js`、`app/browser-host/industry-alien-decision-ui.test.js` 与对应 browser smoke。
+
 1. 阶段 0（SETI-72 总控）：冻结本文契约、所有权/覆盖矩阵、proof obligations 和子 issue 依赖；不改共享规则热路径。
 2. 阶段 1：在 `app/browser-host/**` 建立纯 `BrowserProjectionAdapter`、`ViewStateStore`、`BrowserInputAdapter` reference core。只消费 SETI-71/62/56 的稳定公开接口，不读取旧闭包。
 3. 阶段 2：迁移常驻只读区域。优先 round/turn、玩家/对手统计、太阳系、终局板、科技/公共牌；不碰 pending/continuation。
