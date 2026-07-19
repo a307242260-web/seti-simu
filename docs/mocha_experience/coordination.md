@@ -16,11 +16,11 @@
 
 - date: 2026-07-19
 - source_issue: SETI-45
-- observation: 从架构讨论进入实施总控前，应先按目标能力、接口依赖和当前状态盘点现有 issue；已有工作保留原父子结构并在新总控中做覆盖映射，只对真实缺口新建子项，避免重开实现、强行 reparent 或让两个总控同时拥有同一热路径。
-- evidence: owner 在 SETI-45 评论 `13e932c0-a1fc-4fb6-921d-de892147469a` 明确要求建总控时检查现有 issue，因为部分工作已经推进；实际审计确认 SETI-30、56、62/69、71/87、72/80、14/39/41 已分别覆盖启发式分层、标准组件、训练链与浏览器推理，SETI-90 因此只补公共机器玩家契约与缺口验收，并保留原有层级。
+- observation: 从架构讨论进入实施总控前，应先按目标能力、接口依赖和当前状态盘点现有 issue；已有工作保留原父子结构并做覆盖映射。若缺口已由在途链路实施，应补跨链总契约、纠正 stale 依赖并跟进解锁，而不是重开讨论或新建重复总控；只有真实无人负责的缺口才建新项。
+- evidence: owner 在 SETI-45 评论 `13e932c0-a1fc-4fb6-921d-de892147469a` 要求建总控前检查已推进工作，SETI-90 因此只补公共机器玩家契约并保留原层级；评论 `1d5c9b33-bb89-4dd2-a45a-5887ef8ea637` 进一步要求对已在推进的 GameRuntime/persistence 范围“落好文档，跟进推进”。本轮新增 `docs/game-runtime-persistence-contract.md`，未建新总控，并在核验显式前置后实际解锁 SETI-86、69。
 - promote_to: none
 - promotion_status: candidate
-- decision: 当前为一次 AI 架构总控拆单证据，先记录 coordination candidate，不修改 issue-workflow、watcher 或 agent prompt；后续观察 2 个跨多条在途链路的新总控建单，若仍能稳定减少重复 issue 和所有权冲突，再评估是否提升为 coordination loop template。
+- decision: 已获得第 1 个独立后续证据：跨 SETI-62/71/72/90 的缺口通过总契约和依赖续跑收敛，没有重复建单。保持 coordination candidate，不修改 issue-workflow、watcher 或 agent prompt；再观察 1 个跨多条在途链路的架构总控或总契约任务后评估是否提升为 coordination loop template。
 
 ## 2026-07-18：跨父级 waiting_on 不会自动建立完成触发
 
