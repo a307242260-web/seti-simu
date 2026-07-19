@@ -244,10 +244,16 @@ reference projection 当前刻意采用保守白名单，未列入的 board/play
 
 迁移证据位于 `checkpoint/seti-74-proof-obligations.md` 和 `app/browser-host/resident-renderer.test.js`：包括 renderer 禁用符号扫描、mutable source 隔离、同 projection 清空 DOM 后重建等价、真实 committed array slice、多 viewer hidden canary，以及真实 Chrome reference/生产首局 smoke。
 
+### 阶段 3 统一 Decision UI（SETI-75）
+
+`app/browser-host/decision-ui.js` 提供 generic shell、renderer registry、科技 presentation、语义 UI intent controller 与 DOM renderer。科技 tile 和蓝槽只对同一 `DecisionProjection.choices` 分组，不读取科技 catalog 枚举合法项；focus 只写 `ViewState`，confirm/cancel 只提交原 `decisionId + decisionVersion + choiceId`。shell 仅在 projection 明确包含 `presentation.role=cancel|skip` choice 时提供取消，`optional` 或关闭 DOM 不构成规则跳过。
+
+`projection-adapter.js` 使用与 Effect Session browser host 一致的稳定 choice identity，并把研究科技 choice 的显式 tile/slot presentation 映射到投影；renderer 不获得原 working state。生产传统脚本入口在 facade 前加载 Decision UI，实际规则推进仍由 SETI-62 的 Effect Session/browser host 端口完成。固定 Chrome trace 为 `rotate -> place:blue2:slot-b -> reward:score:3`，只产生一次原子 commit；UI take/reward/continuation spy 均为 0。quick interrupt 后旧 decision version 由共享 host 明确拒绝为 stale，adapter 只刷新、不重写或重试。
+
 1. 阶段 0（SETI-72 总控）：冻结本文契约、所有权/覆盖矩阵、proof obligations 和子 issue 依赖；不改共享规则热路径。
 2. 阶段 1：在 `app/browser-host/**` 建立纯 `BrowserProjectionAdapter`、`ViewStateStore`、`BrowserInputAdapter` reference core。只消费 SETI-71/62/56 的稳定公开接口，不读取旧闭包。
 3. 阶段 2：迁移常驻只读区域。优先 round/turn、玩家/对手统计、太阳系、终局板、科技/公共牌；不碰 pending/continuation。
-4. 阶段 3：建立统一 Decision shell/renderer registry，并与 SETI-62 的研究科技贯穿链同步迁移。规则/effect 文件归 SETI-62，浏览器 projection/renderer/input 文件归本总控子 issue。
+4. 阶段 3：统一 Decision shell/renderer registry 与研究科技代表链已建立；后续领域只注册 presentation renderer，不复制合法性或 continuation。
 5. 阶段 4：迁移扫描、打牌、数据、登陆多选择链。只有相应 Standard Action/Effect Session 领域链行为通过后，才删除 UI pending owner。
 6. 阶段 5：迁移公司与八种外星人 renderer；机会队列、followup、痕迹奖励顺序归 Effect Session，UI 只呈现 decision schema。
 7. 阶段 6：统一 Action bar、Quick Action、PASS、结束、撤销和效果进度；interrupt/revalidation/history/barrier 归共享流程。

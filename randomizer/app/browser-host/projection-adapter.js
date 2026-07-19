@@ -149,7 +149,38 @@
     };
   }
 
-  function normalizeDecision(rawDecision, viewer) {
+  function choiceIdentity(choice, index) {
+    const identity = choice?.actionId
+      ?? choice?.choiceId
+      ?? choice?.id
+      ?? choice?.tileId
+      ?? choice?.targetId
+      ?? choice?.value;
+    return identity == null ? `choice:${stableHash({ index, choice })}` : String(identity);
+  }
+
+  function defaultDecisionPresenter(_rawDecision, choice, index) {
+    const choiceId = choiceIdentity(choice, index);
+    const inferredPresentation = choice?.tileId != null
+      ? {
+        tileId: choice.tileId,
+        slotId: choice.slotId ?? null,
+        tileLabel: choice.tileLabel ?? null,
+        slotLabel: choice.slotLabel ?? null,
+        color: choice.color ?? null,
+        image: choice.image ?? null,
+        role: choice.role ?? null,
+      }
+      : (choice?.role == null ? null : { role: choice.role });
+    return {
+      choiceId,
+      label: choice?.label || choice?.summary || choice?.name || String(choice?.tileId || choiceId),
+      presentation: clone(choice?.presentation || inferredPresentation),
+      disabledReason: choice?.disabledReason || null,
+    };
+  }
+
+  function normalizeDecision(rawDecision, viewer, decisionPresenter) {
     if (!rawDecision || rawDecision.ok === false) return null;
     const ownerVisible = viewer.role === "player"
       && viewer.playerId != null
@@ -161,12 +192,9 @@
       kind: rawDecision.kind || rawDecision.decisionKind || "unknown",
       titleKey: rawDecision.titleKey || null,
       promptKey: rawDecision.promptKey || null,
-      choices: ownerVisible ? (rawDecision.choices || []).map((choice, index) => ({
-        choiceId: choice?.choiceId || choice?.id || `choice:${stableHash({ index, choice })}`,
-        label: choice?.label || choice?.summary || choice?.name || String(choice?.choiceId || choice?.id || index + 1),
-        presentation: clone(choice?.presentation || null),
-        disabledReason: choice?.disabledReason || null,
-      })) : [],
+      choices: ownerVisible ? (rawDecision.choices || []).map((choice, index) => (
+        decisionPresenter(rawDecision, clone(choice), index)
+      )) : [],
       minChoices: rawDecision.minChoices ?? 1,
       maxChoices: rawDecision.maxChoices ?? 1,
       optional: Boolean(rawDecision.optional),
@@ -181,6 +209,7 @@
     const actionAdapter = options.actionAdapter || null;
     const visibilityPolicy = options.visibilityPolicy || defaultVisibilityPolicy;
     const createActionContext = options.createActionContext || ((input) => input);
+    const decisionPresenter = options.decisionPresenter || defaultDecisionPresenter;
     const policyId = options.policyId || visibilityPolicy.policyId || "custom-viewer-policy";
     if (!stateStore?.getSnapshot) throw new TypeError("BrowserProjectionAdapter 需要 StateStore.getSnapshot()");
     if (sessionRuntime && (!sessionRuntime.inspect || !sessionRuntime.observe)) {
@@ -190,6 +219,7 @@
       throw new TypeError("actionAdapter 必须实现 enumerate()");
     }
     if (typeof visibilityPolicy !== "function") throw new TypeError("visibilityPolicy 必须是函数");
+    if (typeof decisionPresenter !== "function") throw new TypeError("decisionPresenter 必须是函数");
 
     function buildProjection({ kind, state, viewer, inspection = null, observation = null }) {
       const visible = visibilityPolicy(clone(state), clone(viewer), {
@@ -218,7 +248,7 @@
         : [];
       if (!Array.isArray(actions)) throw new TypeError("actionAdapter.enumerate() 必须返回数组");
       const normalizedActions = actions.map(normalizeAction);
-      const decision = normalizeDecision(observation?.decision || inspection?.decision, viewer);
+      const decision = normalizeDecision(observation?.decision || inspection?.decision, viewer, decisionPresenter);
       const projectionId = `${kind}:${stableHash({ source, viewer, policyId })}`;
       return deepFreeze({
         schemaVersion: SCHEMA_VERSION,
@@ -282,6 +312,7 @@
     SCHEMA_VERSION,
     POLICY_ID,
     defaultVisibilityPolicy,
+    defaultDecisionPresenter,
     createBrowserProjectionAdapter,
   });
 });
