@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { createCardTriggerRuntime } = require("./card-trigger-runtime");
+const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 
 function createHarness() {
   const player = {
@@ -12,15 +13,16 @@ function createHarness() {
   };
   const cardState = { publicCards: [], discardPile: [] };
   const pendingState = {
-    type1TriggerEvents: [],
     cardTriggerAction: null,
     cardTaskCompletion: null,
     actionEffectFlow: null,
   };
+  const decisionSessions = createDecisionSessionStore();
   const calls = { started: 0, updated: 0, rendered: 0 };
   const runtime = createCardTriggerRuntime({
     HISTORY_SOURCE_QUICK: "quick",
     pendingState,
+    decisionSessions,
     els: {},
     rocketState: { statusNote: "" },
     cardState,
@@ -63,13 +65,13 @@ function createHarness() {
       return true;
     },
   });
-  return { runtime, player, cardState, pendingState, calls };
+  return { runtime, player, cardState, pendingState, decisionSessions, calls };
 }
 
 {
-  const { runtime, pendingState, calls } = createHarness();
+  const { runtime, pendingState, decisionSessions, calls } = createHarness();
   runtime.enqueueType1TriggerEvents([{ type: "scan", sectorX: 2 }]);
-  assert.deepEqual(pendingState.type1TriggerEvents, [{ type: "scan", sectorX: 2 }]);
+  assert.deepEqual(decisionSessions.peek("type1_trigger_queue").events, [{ type: "scan", sectorX: 2 }]);
 
   pendingState.cardTriggerAction = { matches: [{ id: "trigger" }] };
   assert.equal(runtime.cancelCardTriggerChoice(), true);

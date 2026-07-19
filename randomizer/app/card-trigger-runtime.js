@@ -44,6 +44,7 @@
       createJiuzheReservedButton,
       createReservedCardButton,
       createReservedCardRow,
+      decisionSessions,
       data,
       deactivateMoveMode,
       document,
@@ -112,6 +113,11 @@
       turnState,
       updateActionButtons,
     } = context;
+
+    const TYPE1_TRIGGER_QUEUE_SESSION = "type1_trigger_queue";
+    function getType1TriggerEvents() {
+      return decisionSessions.peek(TYPE1_TRIGGER_QUEUE_SESSION)?.events || [];
+    }
 
     function buildCardTaskContext() {
       const probeLocationData = buildProbeLocationIndex();
@@ -353,7 +359,13 @@
 
     function enqueueType1TriggerEvents(events) {
       const normalized = (events || []).filter(Boolean).map(cloneType1TriggerEvent);
-      if (normalized.length) pendingState.type1TriggerEvents.push(...normalized);
+      if (!normalized.length) return;
+      let session = decisionSessions.peek(TYPE1_TRIGGER_QUEUE_SESSION);
+      if (!session) {
+        decisionSessions.open(TYPE1_TRIGGER_QUEUE_SESSION, { events: [] });
+        session = decisionSessions.peek(TYPE1_TRIGGER_QUEUE_SESSION);
+      }
+      session.events.push(...normalized);
     }
 
     function isCardTriggerPickSelectionActive() {
@@ -390,12 +402,14 @@
       enqueueType1TriggerEvents(events);
       if (hasActiveCardTriggerResolution() || isCardTriggerRewardFlowBusy()) return null;
 
-      while (pendingState.type1TriggerEvents.length) {
-        const event = pendingState.type1TriggerEvents.shift();
+      const queuedEvents = getType1TriggerEvents();
+      while (queuedEvents.length) {
+        const event = queuedEvents.shift();
         const matches = getType1TriggerMatchesForEvent(currentPlayer, event);
         if (!matches.length) continue;
         return matches.length === 1 ? applyCardTriggerMatch(matches[0]) : openCardTriggerPicker(matches);
       }
+      decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
       return null;
     }
 

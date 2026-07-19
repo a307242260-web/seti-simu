@@ -271,6 +271,7 @@
   const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
   const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
   const TURN_END_REVEAL_SESSION = "turn_end_after_reveal";
+  const TYPE1_TRIGGER_QUEUE_SESSION = "type1_trigger_queue";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
@@ -3211,6 +3212,7 @@
     requestCardEffectMove,
   } = cardRuntime);
   const cardTriggerRuntime = cardTriggerRuntimeModule.createCardTriggerRuntime({
+    decisionSessions,
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,
     SCORE_SOURCE_KEYS,
@@ -3807,7 +3809,7 @@
     decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
     pendingState.cardTriggerAction = null;
     pendingState.cardTriggerFreeMove = null;
-    pendingState.type1TriggerEvents = [];
+    decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
     pendingState.cardTaskCompletion = null;
     pendingState.jiuzheCardPlay = null;
     pendingState.jiuzheOpportunityOpen = false;
@@ -5537,7 +5539,7 @@
     pendingState.cardTriggerAction = null;
     pendingState.cardTaskCompletion = null;
     pendingState.cardTriggerFreeMove = null;
-    pendingState.type1TriggerEvents = [];
+    decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
     pendingState.cardCornerFreeMove = null;
     pendingState.yichangdianCornerAction = null;
     pendingState.chongCardGain = null;
