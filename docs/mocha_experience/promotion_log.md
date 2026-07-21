@@ -28,6 +28,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 
 ## Entries
 
+- date: 2026-07-21
+- source: owner 在 Codex 会话中直接要求将现有 Mocha watcher 兜底迁移到 SETI；部署前 SETI-14 对已完成 SETI-92 的 waiting_on 仍未自动解除
+- promoted_to: watcher_lint
+- promotion_decision: promote
+- target_agent: 领航
+- target_component: SETI Mocha issue watcher skill 与 5 分钟 autopilot
+- target_file: Mocha skill `affe4ad6-9c17-43f0-a34f-4e32eb78653b`；autopilot `121571af-90e0-4ffb-88a9-50c74dcc3c0e`；trigger `ac412594-62fd-4b29-a2db-59ed930fb6d8`；docs/mocha_experience/watcher.md
+- remote_skill_id: affe4ad6-9c17-43f0-a34f-4e32eb78653b
+- change: 以 fire watcher 的已运行规则为基线，为 SETI 建立作用域受限的 watcher，覆盖状态 lint、失败重跑、交接提醒、孤儿识别、明确依赖解阻和 30/60/90 分钟长运行可见性。
+- applied_change: 新建并分配 `mocha_issue_watcher` skill 给领航；新建 run-only autopilot，按 `*/5 * * * *`、Asia/Shanghai 启用；作用域仅为 SETI 前缀且 creator 为 owner/领航。失败 run 最多重跑两次；只有 waiting_on 中全部 SETI 依赖终态才自动解阻；无法安全续跑的孤儿只标 needs_owner；长运行只提醒。SETI 尚无受管通知代理，因此只留 issue 内提醒，不写 owner_notified_epoch。
+- expected_effect: SETI issue 不再因 failed run、已完成跨父级依赖或无在途 run 的陈旧状态长期停滞，同时不会因长运行被误判为失败而重复启动。
+- evaluation_window: 启用后 7 天或前 20 次定时 run，以先到者为准
+- success_signal: watcher run 无失败；只命中可机械证明的候选；已完成依赖在一个调度周期内续跑；failed run 自动恢复不超过两次；没有正常 todo 被启动、没有长运行被 rerun、没有重复评论风暴。
+- rollback_condition: 任一非 failed run 被自动重跑、存在未完成依赖却被解阻、同一签名重复评论超过一次、5 分钟扫描持续挤占领航业务并发，或出现 watcher 自触发循环时，立即禁用 trigger `ac412594-62fd-4b29-a2db-59ed930fb6d8`，保留 skill 做 dry-run 排查。
+- risk: watcher 评论会触发领航新 run；每 5 分钟扫描 96 个 issue 有运行成本；metadata 不完整可能产生提醒噪声；缺少受管 owner 通知代理意味着 needs_owner 暂时只能在 issue 内可见。
+- evidence_before: SETI autopilot list 为 0；仓库 watcher 经验已记录 waiting_on 不具备自动订阅；dry-run 扫描 96 个 scoped issue，只命中 SETI-14 waiting_on=SETI-92，且 SETI-92 为 done 并有完整 decision/verification_result。
+- owner_or_agent_decision: owner 明确要求迁移；按 harness-evolve guardrail 只迁移机械补救，不让 watcher 做业务判断，并保留通知通道隔离。
+- applied_at: 2026-07-21
+- verification: `python3 -m py_compile` 通过；本地 dry-run action_count=1；首次 autopilot run `0a5f7662-0bb0-4034-9d16-f38213b42e4d` completed、failure_reason=null；SETI-14 waiting_on/blocked_reason 清空并转 todo 触发续跑；定时 trigger enabled，next_run_at=2026-07-21T04:35:00Z。
+- observed_outcome: 首轮实际处理两项：SETI-14 明确依赖解阻、SETI-97 缺 loop_type 提醒；未创建业务 issue、未修改业务代码、未伪造 owner 通知。进入观察窗口。
+- keep_or_revise: 暂时保留；按 7 天/20 次窗口复核运行耗时、误报和自触发情况，命中 rollback_condition 时先停 trigger 再修订。
+
 - date: 2026-07-19
 - source: SETI-39
 - promoted_to: project_memory
