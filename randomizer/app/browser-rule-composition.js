@@ -371,6 +371,15 @@
         stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_state_invalid" });
         return deepFreeze(clone(validation));
       }
+      const committedSerialized = store.serialize(committedBoundary);
+      const candidateSerialized = store.serialize(candidate);
+      if (!candidateSerialized.ok) {
+        stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_serialize_failed" });
+        return deepFreeze(clone(candidateSerialized));
+      }
+      if (committedSerialized.ok && committedSerialized.serialized === candidateSerialized.serialized) {
+        return deepFreeze(clone(result));
+      }
       const committed = store.compareAndCommit(
         committedBoundary.meta.stateVersion,
         candidate,

@@ -275,6 +275,72 @@
     finalScoring,
     createTurnState,
   };
+  const BROWSER_DOMAIN_COMMANDS = Object.freeze({
+    scan_flow: new Set([
+      "getPublicScanMaxSelectable", "buildReadySectorFinishEffects", "buildScanFinalizeFollowupEffects",
+      "replaceNebulaDataForCurrentPlayer", "getSectorFinishWinnerTarget", "executeScanActionFinalizeEffect",
+      "executeSectorFinishScanEffect", "replenishDelayedPublicRefillSlots", "executeScanPublicRefillEffect",
+      "settleDelayedPublicRefillsAfterScanFlow", "buildEndOfFlowFollowupEffects",
+      "shouldAppendQueuedSectorFinishEffects", "appendEndOfFlowSectorFinishEffects", "discardPublicScanCard",
+      "discardHandScanCard", "finalizeScanSourceCard", "restoreYichangdianCornerPickerIfPending",
+      "closeScanTargetPicker", "nebulaHasScannableData", "buildNebulaScanChoice", "isAomomoActive",
+      "getAomomoPlanetLocation", "getAomomoCurrentX", "getNebulaCurrentX", "getSectorScanTargetLabel",
+      "buildAomomoScanChoiceForX", "hasAomomoScanAtX", "buildSectorScanChoicesForX",
+      "expandScanChoicesWithAomomoTargets", "confirmScanTarget", "handleDrawnHandScanSkip", "beginSectorScan",
+      "getSectorOpenDataCount", "getSectorReplacedCount", "getSectorExtraMarkCount", "getPublicScanChoicesForCard",
+      "hasHandScanTargetCard", "createPublicScanPendingAction", "beginPublicDeckScan", "beginPublicScanForSingleCard",
+      "confirmPublicScanSelection", "handlePublicScanCardClick", "beginHandScan", "cancelHandScanSelection",
+      "handleHandScanCardClick",
+    ]),
+    alien_ui: new Set([
+      "buildAlienRevealNoticeEntry", "getAlienTracePickerPlayer", "canPlaceJiuzheTrace",
+      "canPlaceYichangdianTrace", "canPlaceFangzhouTrace", "canPlaceBanrenmaTrace", "canPlaceChongTrace",
+      "canPlaceAmibaTrace", "canPlaceAomomoTrace", "canPlaceRunezuTrace", "canPlaceRunezuFaceSymbol",
+      "canPlaceStateTrace", "canPlaceAnyStateExtraTrace", "openAlienTracePicker", "beginAlienTraceBoardPlacement",
+      "beginJiuzheTraceGridPlacement", "beginYichangdianTraceGridPlacement", "beginFangzhouTraceGridPlacement",
+      "beginBanrenmaTraceGridPlacement", "beginAomomoTraceGridPlacement", "beginChongTraceGridPlacement",
+      "beginAmibaTraceGridPlacement", "beginRunezuTraceGridPlacement", "renderAlienTracePickerColorStep",
+      "openFangzhouTraceUseChoice", "openFangzhouTraceDestinationChoice", "handleFangzhouTraceDestinationChoice",
+      "handleFangzhouUnlockTraceChoice", "routeFangzhouAlienTraceGain", "handleStateTraceSlotPlacement",
+      "handleFangzhouTraceSlotPlacement", "getEligibleAlienSlotIdsForTraceEffect",
+      "getFangzhouUnlockableTraceTypes", "hasAlienTracePanelPlacementTarget",
+    ]),
+  });
+
+  function executeBrowserDomainCommand(workingRoot, command) {
+    const allowed = BROWSER_DOMAIN_COMMANDS[command.domain];
+    if (!allowed?.has(command.operation)) {
+      return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNKNOWN", message: `未知 Browser domain command: ${command.domain}.${command.operation}` };
+    }
+    const target = command.domain === "scan_flow"
+      ? scanFlowHelpers
+      : command.domain === "alien_ui" ? alienUiHelpers : null;
+    const method = target?.[command.operation];
+    if (typeof method !== "function") {
+      return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNAVAILABLE", message: `Browser domain command 未装配: ${command.domain}.${command.operation}` };
+    }
+    const value = method(workingRoot, ...(command.args || []));
+    return { ok: value?.ok !== false, value: cloneResidentPresentation(value) };
+  }
+
+  function callBrowserDomainCommand(domain, operation, args = []) {
+    if (headlessMode) {
+      const target = domain === "scan_flow"
+        ? scanFlowHelpers
+        : domain === "alien_ui" ? alienUiHelpers : null;
+      return target?.[operation]?.(browserRuleState, ...args);
+    }
+    try {
+      return browserRuleComposition.inputPort.submitHostCommand({
+        kind: "domain_command",
+        domain,
+        operation,
+        args,
+      }).value;
+    } catch (error) {
+      throw new Error(`${domain}.${operation}: ${error?.message || error}`, { cause: error });
+    }
+  }
   let getBrowserCommittedContext = () => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
@@ -388,6 +454,8 @@
         case "turn_randomize_all":
           turnFlowController.randomizeAll(workingRoot);
           return { ok: true };
+        case "domain_command":
+          return executeBrowserDomainCommand(workingRoot, command);
         default:
           return { ok: false, code: "BROWSER_HOST_COMMAND_UNKNOWN", message: `未知 Browser host command: ${command.kind}` };
       }
@@ -2163,51 +2231,51 @@
     cancelHandScanSelection,
     handleHandScanCardClick,
   } = scanFlowHelpers);
-  getPublicScanMaxSelectable = (...args) => scanFlowHelpers.getPublicScanMaxSelectable(browserRuleState, ...args);
-  buildReadySectorFinishEffects = (...args) => scanFlowHelpers.buildReadySectorFinishEffects(browserRuleState, ...args);
-  buildScanFinalizeFollowupEffects = (...args) => scanFlowHelpers.buildScanFinalizeFollowupEffects(browserRuleState, ...args);
-  replaceNebulaDataForCurrentPlayer = (...args) => scanFlowHelpers.replaceNebulaDataForCurrentPlayer(browserRuleState, ...args);
-  getSectorFinishWinnerTarget = (...args) => scanFlowHelpers.getSectorFinishWinnerTarget(browserRuleState, ...args);
-  executeScanActionFinalizeEffect = (...args) => scanFlowHelpers.executeScanActionFinalizeEffect(browserRuleState, ...args);
-  executeSectorFinishScanEffect = (...args) => scanFlowHelpers.executeSectorFinishScanEffect(browserRuleState, ...args);
-  replenishDelayedPublicRefillSlots = (...args) => scanFlowHelpers.replenishDelayedPublicRefillSlots(browserRuleState, ...args);
-  executeScanPublicRefillEffect = (...args) => scanFlowHelpers.executeScanPublicRefillEffect(browserRuleState, ...args);
-  settleDelayedPublicRefillsAfterScanFlow = (...args) => scanFlowHelpers.settleDelayedPublicRefillsAfterScanFlow(browserRuleState, ...args);
-  buildEndOfFlowFollowupEffects = (...args) => scanFlowHelpers.buildEndOfFlowFollowupEffects(browserRuleState, ...args);
-  shouldAppendQueuedSectorFinishEffects = (...args) => scanFlowHelpers.shouldAppendQueuedSectorFinishEffects(browserRuleState, ...args);
-  appendEndOfFlowSectorFinishEffects = (...args) => scanFlowHelpers.appendEndOfFlowSectorFinishEffects(browserRuleState, ...args);
-  discardPublicScanCard = (...args) => scanFlowHelpers.discardPublicScanCard(browserRuleState, ...args);
-  discardHandScanCard = (...args) => scanFlowHelpers.discardHandScanCard(browserRuleState, ...args);
-  finalizeScanSourceCard = (...args) => scanFlowHelpers.finalizeScanSourceCard(browserRuleState, ...args);
-  restoreYichangdianCornerPickerIfPending = (...args) => scanFlowHelpers.restoreYichangdianCornerPickerIfPending(browserRuleState, ...args);
-  closeScanTargetPicker = (...args) => scanFlowHelpers.closeScanTargetPicker(browserRuleState, ...args);
-  nebulaHasScannableData = (...args) => scanFlowHelpers.nebulaHasScannableData(browserRuleState, ...args);
-  buildNebulaScanChoice = (...args) => scanFlowHelpers.buildNebulaScanChoice(browserRuleState, ...args);
-  isAomomoActive = (...args) => scanFlowHelpers.isAomomoActive(browserRuleState, ...args);
-  getAomomoPlanetLocation = (...args) => scanFlowHelpers.getAomomoPlanetLocation(browserRuleState, ...args);
-  getAomomoCurrentX = (...args) => scanFlowHelpers.getAomomoCurrentX(browserRuleState, ...args);
-  getNebulaCurrentX = (...args) => scanFlowHelpers.getNebulaCurrentX(browserRuleState, ...args);
-  getSectorScanTargetLabel = (...args) => scanFlowHelpers.getSectorScanTargetLabel(browserRuleState, ...args);
-  buildAomomoScanChoiceForX = (...args) => scanFlowHelpers.buildAomomoScanChoiceForX(browserRuleState, ...args);
-  hasAomomoScanAtX = (...args) => scanFlowHelpers.hasAomomoScanAtX(browserRuleState, ...args);
-  buildSectorScanChoicesForX = (...args) => scanFlowHelpers.buildSectorScanChoicesForX(browserRuleState, ...args);
-  expandScanChoicesWithAomomoTargets = (...args) => scanFlowHelpers.expandScanChoicesWithAomomoTargets(browserRuleState, ...args);
-  confirmScanTarget = (...args) => scanFlowHelpers.confirmScanTarget(browserRuleState, ...args);
-  handleDrawnHandScanSkip = (...args) => scanFlowHelpers.handleDrawnHandScanSkip(browserRuleState, ...args);
-  beginSectorScan = (...args) => scanFlowHelpers.beginSectorScan(browserRuleState, ...args);
-  getSectorOpenDataCount = (...args) => scanFlowHelpers.getSectorOpenDataCount(browserRuleState, ...args);
-  getSectorReplacedCount = (...args) => scanFlowHelpers.getSectorReplacedCount(browserRuleState, ...args);
-  getSectorExtraMarkCount = (...args) => scanFlowHelpers.getSectorExtraMarkCount(browserRuleState, ...args);
-  getPublicScanChoicesForCard = (...args) => scanFlowHelpers.getPublicScanChoicesForCard(browserRuleState, ...args);
-  hasHandScanTargetCard = (...args) => scanFlowHelpers.hasHandScanTargetCard(browserRuleState, ...args);
-  createPublicScanPendingAction = (...args) => scanFlowHelpers.createPublicScanPendingAction(browserRuleState, ...args);
-  beginPublicDeckScan = (...args) => scanFlowHelpers.beginPublicDeckScan(browserRuleState, ...args);
-  beginPublicScanForSingleCard = (...args) => scanFlowHelpers.beginPublicScanForSingleCard(browserRuleState, ...args);
-  confirmPublicScanSelection = (...args) => scanFlowHelpers.confirmPublicScanSelection(browserRuleState, ...args);
-  handlePublicScanCardClick = (...args) => scanFlowHelpers.handlePublicScanCardClick(browserRuleState, ...args);
-  beginHandScan = (...args) => scanFlowHelpers.beginHandScan(browserRuleState, ...args);
-  cancelHandScanSelection = (...args) => scanFlowHelpers.cancelHandScanSelection(browserRuleState, ...args);
-  handleHandScanCardClick = (...args) => scanFlowHelpers.handleHandScanCardClick(browserRuleState, ...args);
+  getPublicScanMaxSelectable = (...args) => callBrowserDomainCommand("scan_flow", "getPublicScanMaxSelectable", args);
+  buildReadySectorFinishEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildReadySectorFinishEffects", args);
+  buildScanFinalizeFollowupEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildScanFinalizeFollowupEffects", args);
+  replaceNebulaDataForCurrentPlayer = (...args) => callBrowserDomainCommand("scan_flow", "replaceNebulaDataForCurrentPlayer", args);
+  getSectorFinishWinnerTarget = (...args) => callBrowserDomainCommand("scan_flow", "getSectorFinishWinnerTarget", args);
+  executeScanActionFinalizeEffect = (...args) => callBrowserDomainCommand("scan_flow", "executeScanActionFinalizeEffect", args);
+  executeSectorFinishScanEffect = (...args) => callBrowserDomainCommand("scan_flow", "executeSectorFinishScanEffect", args);
+  replenishDelayedPublicRefillSlots = (...args) => callBrowserDomainCommand("scan_flow", "replenishDelayedPublicRefillSlots", args);
+  executeScanPublicRefillEffect = (...args) => callBrowserDomainCommand("scan_flow", "executeScanPublicRefillEffect", args);
+  settleDelayedPublicRefillsAfterScanFlow = (...args) => callBrowserDomainCommand("scan_flow", "settleDelayedPublicRefillsAfterScanFlow", args);
+  buildEndOfFlowFollowupEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildEndOfFlowFollowupEffects", args);
+  shouldAppendQueuedSectorFinishEffects = (...args) => callBrowserDomainCommand("scan_flow", "shouldAppendQueuedSectorFinishEffects", args);
+  appendEndOfFlowSectorFinishEffects = (...args) => callBrowserDomainCommand("scan_flow", "appendEndOfFlowSectorFinishEffects", args);
+  discardPublicScanCard = (...args) => callBrowserDomainCommand("scan_flow", "discardPublicScanCard", args);
+  discardHandScanCard = (...args) => callBrowserDomainCommand("scan_flow", "discardHandScanCard", args);
+  finalizeScanSourceCard = (...args) => callBrowserDomainCommand("scan_flow", "finalizeScanSourceCard", args);
+  restoreYichangdianCornerPickerIfPending = (...args) => callBrowserDomainCommand("scan_flow", "restoreYichangdianCornerPickerIfPending", args);
+  closeScanTargetPicker = (...args) => callBrowserDomainCommand("scan_flow", "closeScanTargetPicker", args);
+  nebulaHasScannableData = (...args) => callBrowserDomainCommand("scan_flow", "nebulaHasScannableData", args);
+  buildNebulaScanChoice = (...args) => callBrowserDomainCommand("scan_flow", "buildNebulaScanChoice", args);
+  isAomomoActive = (...args) => callBrowserDomainCommand("scan_flow", "isAomomoActive", args);
+  getAomomoPlanetLocation = (...args) => callBrowserDomainCommand("scan_flow", "getAomomoPlanetLocation", args);
+  getAomomoCurrentX = (...args) => callBrowserDomainCommand("scan_flow", "getAomomoCurrentX", args);
+  getNebulaCurrentX = (...args) => callBrowserDomainCommand("scan_flow", "getNebulaCurrentX", args);
+  getSectorScanTargetLabel = (...args) => callBrowserDomainCommand("scan_flow", "getSectorScanTargetLabel", args);
+  buildAomomoScanChoiceForX = (...args) => callBrowserDomainCommand("scan_flow", "buildAomomoScanChoiceForX", args);
+  hasAomomoScanAtX = (...args) => callBrowserDomainCommand("scan_flow", "hasAomomoScanAtX", args);
+  buildSectorScanChoicesForX = (...args) => callBrowserDomainCommand("scan_flow", "buildSectorScanChoicesForX", args);
+  expandScanChoicesWithAomomoTargets = (...args) => callBrowserDomainCommand("scan_flow", "expandScanChoicesWithAomomoTargets", args);
+  confirmScanTarget = (...args) => callBrowserDomainCommand("scan_flow", "confirmScanTarget", args);
+  handleDrawnHandScanSkip = (...args) => callBrowserDomainCommand("scan_flow", "handleDrawnHandScanSkip", args);
+  beginSectorScan = (...args) => callBrowserDomainCommand("scan_flow", "beginSectorScan", args);
+  getSectorOpenDataCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorOpenDataCount", args);
+  getSectorReplacedCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorReplacedCount", args);
+  getSectorExtraMarkCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorExtraMarkCount", args);
+  getPublicScanChoicesForCard = (...args) => callBrowserDomainCommand("scan_flow", "getPublicScanChoicesForCard", args);
+  hasHandScanTargetCard = (...args) => callBrowserDomainCommand("scan_flow", "hasHandScanTargetCard", args);
+  createPublicScanPendingAction = (...args) => callBrowserDomainCommand("scan_flow", "createPublicScanPendingAction", args);
+  beginPublicDeckScan = (...args) => callBrowserDomainCommand("scan_flow", "beginPublicDeckScan", args);
+  beginPublicScanForSingleCard = (...args) => callBrowserDomainCommand("scan_flow", "beginPublicScanForSingleCard", args);
+  confirmPublicScanSelection = (...args) => callBrowserDomainCommand("scan_flow", "confirmPublicScanSelection", args);
+  handlePublicScanCardClick = (...args) => callBrowserDomainCommand("scan_flow", "handlePublicScanCardClick", args);
+  beginHandScan = (...args) => callBrowserDomainCommand("scan_flow", "beginHandScan", args);
+  cancelHandScanSelection = (...args) => callBrowserDomainCommand("scan_flow", "cancelHandScanSelection", args);
+  handleHandScanCardClick = (...args) => callBrowserDomainCommand("scan_flow", "handleHandScanCardClick", args);
   const incomeRuntime = incomeRuntimeModule.createIncomeRuntime({
     INCOME_GAIN_LABELS,
     players,
@@ -2353,40 +2421,40 @@
     hasAlienTracePanelPlacementTarget: hasAlienTracePanelPlacementTargetForRoot,
     isAlienTracePickerChoiceAllowed,
   } = alienUiHelpers;
-  const buildAlienRevealNoticeEntry = (...args) => buildAlienRevealNoticeEntryForRoot(browserRuleState, ...args);
-  const getAlienTracePickerPlayer = (...args) => getAlienTracePickerPlayerForRoot(browserRuleState, ...args);
-  const canPlaceJiuzheTrace = (...args) => canPlaceJiuzheTraceForRoot(browserRuleState, ...args);
-  const canPlaceYichangdianTrace = (...args) => canPlaceYichangdianTraceForRoot(browserRuleState, ...args);
-  const canPlaceFangzhouTrace = (...args) => canPlaceFangzhouTraceForRoot(browserRuleState, ...args);
-  const canPlaceBanrenmaTrace = (...args) => canPlaceBanrenmaTraceForRoot(browserRuleState, ...args);
-  const canPlaceChongTrace = (...args) => canPlaceChongTraceForRoot(browserRuleState, ...args);
-  const canPlaceAmibaTrace = (...args) => canPlaceAmibaTraceForRoot(browserRuleState, ...args);
-  const canPlaceAomomoTrace = (...args) => canPlaceAomomoTraceForRoot(browserRuleState, ...args);
-  const canPlaceRunezuTrace = (...args) => canPlaceRunezuTraceForRoot(browserRuleState, ...args);
-  const canPlaceRunezuFaceSymbol = (...args) => canPlaceRunezuFaceSymbolForRoot(browserRuleState, ...args);
-  const canPlaceStateTrace = (...args) => canPlaceStateTraceForRoot(browserRuleState, ...args);
-  const canPlaceAnyStateExtraTrace = (...args) => canPlaceAnyStateExtraTraceForRoot(browserRuleState, ...args);
-  const openAlienTracePicker = (...args) => openAlienTracePickerForRoot(browserRuleState, ...args);
-  const beginAlienTraceBoardPlacement = (...args) => beginAlienTraceBoardPlacementForRoot(browserRuleState, ...args);
-  const beginJiuzheTraceGridPlacement = (...args) => beginJiuzheTraceGridPlacementForRoot(browserRuleState, ...args);
-  const beginYichangdianTraceGridPlacement = (...args) => beginYichangdianTraceGridPlacementForRoot(browserRuleState, ...args);
-  const beginFangzhouTraceGridPlacement = (...args) => beginFangzhouTraceGridPlacementForRoot(browserRuleState, ...args);
-  const beginBanrenmaTraceGridPlacement = (...args) => beginBanrenmaTraceGridPlacementForRoot(browserRuleState, ...args);
-  const beginAomomoTraceGridPlacement = (...args) => beginAomomoTraceGridPlacementForRoot(browserRuleState, ...args);
-  const beginChongTraceGridPlacement = (...args) => beginChongTraceGridPlacementForRoot(browserRuleState, ...args);
-  const beginAmibaTraceGridPlacement = (...args) => beginAmibaTraceGridPlacementForRoot(browserRuleState, ...args);
-  const beginRunezuTraceGridPlacement = (...args) => beginRunezuTraceGridPlacementForRoot(browserRuleState, ...args);
-  const renderAlienTracePickerColorStep = (...args) => renderAlienTracePickerColorStepForRoot(browserRuleState, ...args);
-  const openFangzhouTraceUseChoice = (...args) => openFangzhouTraceUseChoiceForRoot(browserRuleState, ...args);
-  const openFangzhouTraceDestinationChoice = (...args) => openFangzhouTraceDestinationChoiceForRoot(browserRuleState, ...args);
-  const handleFangzhouTraceDestinationChoice = (...args) => handleFangzhouTraceDestinationChoiceForRoot(browserRuleState, ...args);
-  const handleFangzhouUnlockTraceChoice = (...args) => handleFangzhouUnlockTraceChoiceForRoot(browserRuleState, ...args);
-  const routeFangzhouAlienTraceGain = (...args) => routeFangzhouAlienTraceGainForRoot(browserRuleState, ...args);
-  const handleStateTraceSlotPlacement = (...args) => handleStateTraceSlotPlacementForRoot(browserRuleState, ...args);
-  const handleFangzhouTraceSlotPlacement = (...args) => handleFangzhouTraceSlotPlacementForRoot(browserRuleState, ...args);
-  const getEligibleAlienSlotIdsForTraceEffect = (...args) => getEligibleAlienSlotIdsForTraceEffectForRoot(browserRuleState, ...args);
-  const getFangzhouUnlockableTraceTypes = (...args) => getFangzhouUnlockableTraceTypesForRoot(browserRuleState, ...args);
-  const hasAlienTracePanelPlacementTarget = (...args) => hasAlienTracePanelPlacementTargetForRoot(browserRuleState, ...args);
+  const buildAlienRevealNoticeEntry = (...args) => callBrowserDomainCommand("alien_ui", "buildAlienRevealNoticeEntry", args);
+  const getAlienTracePickerPlayer = (...args) => callBrowserDomainCommand("alien_ui", "getAlienTracePickerPlayer", args);
+  const canPlaceJiuzheTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceJiuzheTrace", args);
+  const canPlaceYichangdianTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceYichangdianTrace", args);
+  const canPlaceFangzhouTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceFangzhouTrace", args);
+  const canPlaceBanrenmaTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceBanrenmaTrace", args);
+  const canPlaceChongTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceChongTrace", args);
+  const canPlaceAmibaTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceAmibaTrace", args);
+  const canPlaceAomomoTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceAomomoTrace", args);
+  const canPlaceRunezuTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceRunezuTrace", args);
+  const canPlaceRunezuFaceSymbol = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceRunezuFaceSymbol", args);
+  const canPlaceStateTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceStateTrace", args);
+  const canPlaceAnyStateExtraTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceAnyStateExtraTrace", args);
+  const openAlienTracePicker = (...args) => callBrowserDomainCommand("alien_ui", "openAlienTracePicker", args);
+  const beginAlienTraceBoardPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginAlienTraceBoardPlacement", args);
+  const beginJiuzheTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginJiuzheTraceGridPlacement", args);
+  const beginYichangdianTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginYichangdianTraceGridPlacement", args);
+  const beginFangzhouTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginFangzhouTraceGridPlacement", args);
+  const beginBanrenmaTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginBanrenmaTraceGridPlacement", args);
+  const beginAomomoTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginAomomoTraceGridPlacement", args);
+  const beginChongTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginChongTraceGridPlacement", args);
+  const beginAmibaTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginAmibaTraceGridPlacement", args);
+  const beginRunezuTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginRunezuTraceGridPlacement", args);
+  const renderAlienTracePickerColorStep = (...args) => callBrowserDomainCommand("alien_ui", "renderAlienTracePickerColorStep", args);
+  const openFangzhouTraceUseChoice = (...args) => callBrowserDomainCommand("alien_ui", "openFangzhouTraceUseChoice", args);
+  const openFangzhouTraceDestinationChoice = (...args) => callBrowserDomainCommand("alien_ui", "openFangzhouTraceDestinationChoice", args);
+  const handleFangzhouTraceDestinationChoice = (...args) => callBrowserDomainCommand("alien_ui", "handleFangzhouTraceDestinationChoice", args);
+  const handleFangzhouUnlockTraceChoice = (...args) => callBrowserDomainCommand("alien_ui", "handleFangzhouUnlockTraceChoice", args);
+  const routeFangzhouAlienTraceGain = (...args) => callBrowserDomainCommand("alien_ui", "routeFangzhouAlienTraceGain", args);
+  const handleStateTraceSlotPlacement = (...args) => callBrowserDomainCommand("alien_ui", "handleStateTraceSlotPlacement", args);
+  const handleFangzhouTraceSlotPlacement = (...args) => callBrowserDomainCommand("alien_ui", "handleFangzhouTraceSlotPlacement", args);
+  const getEligibleAlienSlotIdsForTraceEffect = (...args) => callBrowserDomainCommand("alien_ui", "getEligibleAlienSlotIdsForTraceEffect", args);
+  const getFangzhouUnlockableTraceTypes = (...args) => callBrowserDomainCommand("alien_ui", "getFangzhouUnlockableTraceTypes", args);
+  const hasAlienTracePanelPlacementTarget = (...args) => callBrowserDomainCommand("alien_ui", "hasAlienTracePanelPlacementTarget", args);
   const alienRuntimeHelpers = alienRuntimeModule.createAlienRuntimeHelpers({
     decisionSessions,
     structuredClone,
