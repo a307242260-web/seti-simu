@@ -30,11 +30,15 @@
   }
 
   function createBrowserServices(options = {}) {
+    const ruleLifecycle = options.ruleLifecycle || null;
     const stateStore = options.stateStore;
-    const serializeState = requireFunction(stateStore, "serialize", "Browser persistence StateStore");
-    const deserializeState = requireFunction(stateStore, "deserialize", "Browser persistence StateStore");
-    const restoreState = requireFunction(stateStore, "restore", "Browser persistence StateStore");
-    const getStateSnapshot = requireFunction(stateStore, "getSnapshot", "Browser persistence StateStore");
+    const saveRules = ruleLifecycle ? requireFunction(ruleLifecycle, "save", "Rule Composition lifecycle") : null;
+    const validateRules = ruleLifecycle ? requireFunction(ruleLifecycle, "validateRestore", "Rule Composition lifecycle") : null;
+    const restoreRules = ruleLifecycle ? requireFunction(ruleLifecycle, "restore", "Rule Composition lifecycle") : null;
+    const serializeState = ruleLifecycle ? null : requireFunction(stateStore, "serialize", "Browser persistence StateStore");
+    const deserializeState = ruleLifecycle ? null : requireFunction(stateStore, "deserialize", "Browser persistence StateStore");
+    const restoreState = ruleLifecycle ? null : requireFunction(stateStore, "restore", "Browser persistence StateStore");
+    const getStateSnapshot = ruleLifecycle ? null : requireFunction(stateStore, "getSnapshot", "Browser persistence StateStore");
     const sessionPort = options.sessionPort || null;
     const viewStateStore = options.viewStateStore || null;
     const storage = options.storage || null;
@@ -43,6 +47,25 @@
     const debugCommandPort = options.debugCommandPort || null;
 
     function capture() {
+      if (ruleLifecycle) {
+        const rules = saveRules();
+        if (!rules?.ok || !rules.envelope?.schemaVersion) {
+          return fail(rules?.code || "BROWSER_RULES_SAVE_FAILED", rules?.message || "Rule Composition save 失败");
+        }
+        const view = viewStateStore?.getSnapshot ? clone(viewStateStore.getSnapshot()) : null;
+        if (view && view.schemaVersion !== VIEW_SCHEMA_VERSION) {
+          return fail("BROWSER_VIEW_SCHEMA_UNSUPPORTED", "ViewState schema 不受支持");
+        }
+        return deepFreeze({
+          ok: true,
+          envelope: {
+            schemaVersion: SCHEMA_VERSION,
+            savedAt: (options.now?.() || new Date()).toISOString(),
+            rules: { schemaVersion: rules.envelope.schemaVersion, envelope: clone(rules.envelope) },
+            view: view == null ? null : { schemaVersion: view.schemaVersion, state: view },
+          },
+        });
+      }
       const state = serializeState();
       if (!state?.ok || typeof state.serialized !== "string") {
         return fail(state?.code || "BROWSER_STATE_SERIALIZE_FAILED", "StateStore serialize 失败", { cause: state || null });
@@ -73,11 +96,30 @@
       if (!envelope || envelope.schemaVersion !== SCHEMA_VERSION) {
         return fail("BROWSER_RECOVERY_SCHEMA_UNSUPPORTED", "Browser recovery envelope schema 不受支持");
       }
-      const unknownKeys = Object.keys(envelope).filter((key) => ![
-        "schemaVersion", "savedAt", "state", "session", "view",
-      ].includes(key));
+      const allowedKeys = ruleLifecycle
+        ? ["schemaVersion", "savedAt", "rules", "view"]
+        : ["schemaVersion", "savedAt", "state", "session", "view"];
+      const unknownKeys = Object.keys(envelope).filter((key) => !allowedKeys.includes(key));
       if (unknownKeys.length) {
         return fail("BROWSER_RECOVERY_FIELDS_UNSUPPORTED", "Browser recovery envelope 包含未知字段", { unknownKeys });
+      }
+      if (ruleLifecycle) {
+        if (!envelope.rules?.envelope || envelope.rules.schemaVersion !== envelope.rules.envelope.schemaVersion) {
+          return fail("BROWSER_RECOVERY_RULES_MISSING", "Browser recovery envelope 缺少 Rule Composition 存档");
+        }
+        const rules = validateRules(clone(envelope.rules.envelope));
+        if (!rules?.ok) return fail(rules?.code || "BROWSER_RECOVERY_RULES_INVALID", rules?.message || "Rule Composition 存档无效");
+        if (envelope.view != null) {
+          if (envelope.view.schemaVersion !== VIEW_SCHEMA_VERSION || envelope.view.state?.schemaVersion !== VIEW_SCHEMA_VERSION) {
+            return fail("BROWSER_RECOVERY_VIEW_INVALID", "ViewState schema 不受支持");
+          }
+          if (typeof viewStateStore?.validate !== "function" || typeof viewStateStore?.restore !== "function") {
+            return fail("BROWSER_RECOVERY_VIEW_PORT_MISSING", "存档包含 ViewState，但宿主没有恢复协议");
+          }
+          const viewValidation = viewStateStore.validate(clone(envelope.view.state));
+          if (!viewValidation?.ok) return fail(viewValidation?.code || "BROWSER_RECOVERY_VIEW_INVALID", viewValidation?.message || "ViewState snapshot 无效");
+        }
+        return { ok: true, rules: clone(envelope.rules.envelope), view: clone(envelope.view?.state ?? null) };
       }
       if (typeof envelope.state?.serialized !== "string") {
         return fail("BROWSER_RECOVERY_STATE_MISSING", "Browser recovery envelope 缺少 StateStore serialized state");
@@ -108,6 +150,26 @@
     function restore(envelope) {
       const validated = validateEnvelope(envelope);
       if (!validated.ok) return validated;
+      if (ruleLifecycle) {
+        const beforeRules = saveRules();
+        if (!beforeRules?.ok) return fail(beforeRules?.code || "BROWSER_RULES_SAVE_FAILED", beforeRules?.message || "恢复前 Rule Composition capture 失败");
+        const beforeView = viewStateStore?.getSnapshot ? clone(viewStateStore.getSnapshot()) : null;
+        const rulesResult = restoreRules(clone(validated.rules));
+        if (!rulesResult?.ok) return fail(rulesResult?.code || "BROWSER_RECOVERY_RULES_RESTORE_FAILED", rulesResult?.message || "Rule Composition restore 拒绝恢复");
+        const viewResult = validated.view != null ? viewStateStore.restore(validated.view) : viewStateStore?.clear?.();
+        if (viewResult?.ok === false) {
+          const rollback = restoreRules(clone(beforeRules.envelope));
+          if (rollback?.ok === false) throw new Error("Rule Composition 恢复回滚失败");
+          if (beforeView != null) viewStateStore?.restore?.(beforeView);
+          return fail(viewResult.code || "BROWSER_RECOVERY_VIEW_RESTORE_FAILED", viewResult.message || "ViewState restore port 拒绝恢复");
+        }
+        return deepFreeze({
+          ok: true,
+          stateVersion: rulesResult.projection?.stateVersion ?? null,
+          sessionRestored: Boolean(validated.rules.session),
+          viewRestored: validated.view != null,
+        });
+      }
       const capturedSession = sessionPort?.capture ? sessionPort.capture() : null;
       const before = {
         state: getStateSnapshot(),

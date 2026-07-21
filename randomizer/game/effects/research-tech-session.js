@@ -90,31 +90,19 @@
     }));
   }
 
-  function createResearchTechRuntime(options = {}) {
-    if (options.stateStore && typeof options.actionRegistry?.validate !== "function") {
-      throw new TypeError("research tech production session 缺少 Standard Action registry");
-    }
+  function createResearchTechDomain(options = {}) {
     const rotate = requireFunction(options, "rotate");
     const listChoices = requireFunction(options, "listChoices");
     const place = requireFunction(options, "place");
     const applyImmediateReward = requireFunction(options, "applyImmediateReward");
     const buildImmediateRewards = options.buildImmediateRewards || (() => []);
 
-    const runtime = effectSession.createRuntime({
-      cloneState: options.cloneState,
-      getStateVersion: options.getStateVersion,
-      validateState: options.validateState,
-      projectState: options.projectState,
-      readCommittedState: options.readCommittedState,
-      stateStore: options.stateStore,
-      maxDrainSteps: options.maxDrainSteps,
-    });
+    function install(registerExecutor) {
+      registerExecutor(EFFECT_TYPES.ROTATE, (state, effect) => (
+        normalizeDomainResult(rotate(state, effect), "研究科技旋转失败")
+      ));
 
-    runtime.registerExecutor(EFFECT_TYPES.ROTATE, (state, effect) => (
-      normalizeDomainResult(rotate(state, effect), "研究科技旋转失败")
-    ));
-
-    runtime.registerExecutor(EFFECT_TYPES.CHOOSE, {
+      registerExecutor(EFFECT_TYPES.CHOOSE, {
       getLegalChoices(state, effect) {
         const choices = listChoices(state, effect);
         if (!Array.isArray(choices)) {
@@ -145,9 +133,9 @@
           log: { type: "researchTechChoice", choice: clone(choice) },
         };
       },
-    });
+      });
 
-    runtime.registerExecutor(EFFECT_TYPES.PLACE, (state, effect) => {
+      registerExecutor(EFFECT_TYPES.PLACE, (state, effect) => {
       const normalized = normalizeDomainResult(
         place(state, clone(effect.payload.choice), effect),
         "研究科技放置失败",
@@ -174,14 +162,15 @@
       ));
       delete normalized.domainResult;
       return normalized;
-    });
+      });
 
-    runtime.registerExecutor(EFFECT_TYPES.IMMEDIATE_REWARD, (state, effect) => (
-      normalizeDomainResult(
-        applyImmediateReward(state, clone(effect.payload.reward), effect),
-        "研究科技即时奖励失败",
-      )
-    ));
+      registerExecutor(EFFECT_TYPES.IMMEDIATE_REWARD, (state, effect) => (
+        normalizeDomainResult(
+          applyImmediateReward(state, clone(effect.payload.reward), effect),
+          "研究科技即时奖励失败",
+        )
+      ));
+    }
 
     function createEffectGroup(_workingState, action) {
       if (action?.family !== ACTION_FAMILY) {
@@ -213,17 +202,37 @@
       };
     }
 
+    return Object.freeze({ install, createEffectGroup });
+  }
+
+  function createResearchTechRuntime(options = {}) {
+    if (options.stateStore && typeof options.actionRegistry?.validate !== "function") {
+      throw new TypeError("research tech production session 缺少 Standard Action registry");
+    }
+    const domain = createResearchTechDomain(options);
+    const runtime = options.runtime || effectSession.createRuntime({
+      cloneState: options.cloneState,
+      getStateVersion: options.getStateVersion,
+      validateState: options.validateState,
+      projectState: options.projectState,
+      readCommittedState: options.readCommittedState,
+      stateStore: options.stateStore,
+      maxDrainSteps: options.maxDrainSteps,
+    });
+    domain.install(runtime.registerExecutor);
+
     function dispatch(committedState, action, meta = {}) {
       if (options.stateStore) {
-        return runtime.dispatchStandardAction(action, options.actionRegistry, createEffectGroup, meta);
+        return runtime.dispatchStandardAction(action, options.actionRegistry, domain.createEffectGroup, meta);
       }
-      return runtime.dispatchAction(committedState, action, createEffectGroup, meta);
+      return runtime.dispatchAction(committedState, action, domain.createEffectGroup, meta);
     }
 
     return Object.freeze({
+      actionFamilies: Object.freeze([ACTION_FAMILY]),
       runtime,
       dispatch,
-      createEffectGroup,
+      createEffectGroup: domain.createEffectGroup,
       inspect: runtime.inspect,
       observe: runtime.observe,
       advance: runtime.advance,
@@ -236,6 +245,7 @@
   return Object.freeze({
     ACTION_FAMILY,
     EFFECT_TYPES,
+    createResearchTechDomain,
     createResearchTechRuntime,
   });
 });

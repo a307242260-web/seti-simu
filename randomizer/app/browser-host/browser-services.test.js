@@ -132,4 +132,43 @@ function createHarness() {
   subscription.dispose();
 })();
 
+(function testProductionPersistenceUsesOnlyRuleCompositionLifecycle() {
+  const view = viewApi.createViewStateStore();
+  let current = { schemaVersion: "seti-browser-rule-composition-save-v1", committedState: "state-a", session: null };
+  let restoreCalls = 0;
+  const lifecycle = {
+    save: () => ({ ok: true, envelope: structuredClone(current) }),
+    validateRestore(envelope) {
+      return envelope?.schemaVersion === current.schemaVersion
+        ? { ok: true }
+        : { ok: false, code: "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED" };
+    },
+    restore(envelope) {
+      restoreCalls += 1;
+      current = structuredClone(envelope);
+      return { ok: true, projection: { stateVersion: 7 } };
+    },
+  };
+  const services = servicesApi.createBrowserServices({ ruleLifecycle: lifecycle, viewStateStore: view });
+  const captured = services.capture();
+  assert.equal(captured.ok, true);
+  assert.equal(Object.hasOwn(captured.envelope, "state"), false, "生产存档不得绕过 composition 暴露 StateStore");
+  assert.equal(Object.hasOwn(captured.envelope, "session"), false, "生产存档不得在 composition 外拆分 session");
+  assert.equal(captured.envelope.rules.envelope.committedState, "state-a");
+
+  const invalid = structuredClone(captured.envelope);
+  invalid.rules.schemaVersion = "legacy-v0";
+  invalid.rules.envelope.schemaVersion = "legacy-v0";
+  assert.equal(services.restore(invalid).code, "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED");
+  assert.equal(restoreCalls, 0, "预验证失败不得调用 composition restore");
+
+  const valid = structuredClone(captured.envelope);
+  valid.rules.envelope.committedState = "state-b";
+  const restored = services.restore(valid);
+  assert.equal(restored.ok, true);
+  assert.equal(restored.stateVersion, 7);
+  assert.equal(restoreCalls, 1);
+  assert.equal(current.committedState, "state-b");
+})();
+
 console.log("Browser services stage 8 tests passed");

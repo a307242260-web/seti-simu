@@ -32,31 +32,59 @@
   function createBrowserRuleComposition(options = {}) {
     const stateStoreApi = options.stateStoreApi;
     const effectRuntimeApi = options.effectRuntimeApi;
-    const actionRegistry = options.actionRegistry;
+    const createActionRegistry = options.createActionRegistry;
     const createInitialState = options.createInitialState;
-    const createEffectGroup = options.createEffectGroup;
+    const fallbackEffectGroup = options.createEffectGroup;
     if (typeof stateStoreApi?.createStateStore !== "function") {
       throw new TypeError("Rule Composition 缺少 StateStore factory");
     }
     if (typeof effectRuntimeApi?.createRuntime !== "function") {
       throw new TypeError("Rule Composition 缺少 Effect runtime factory");
     }
-    if (!actionRegistry?.enumerate || !actionRegistry?.validate) {
-      throw new TypeError("Rule Composition 缺少唯一 Standard Action registry");
+    if (typeof createActionRegistry !== "function") {
+      throw new TypeError("Rule Composition 缺少 createActionRegistry()，registry 必须由 composition 内部创建");
     }
     if (typeof createInitialState !== "function") {
       throw new TypeError("Rule Composition 缺少 createInitialState()");
     }
-    if (typeof createEffectGroup !== "function") {
-      throw new TypeError("Rule Composition 缺少 createEffectGroup()");
+    if (typeof fallbackEffectGroup !== "function" && !(options.effectDomains || []).length) {
+      throw new TypeError("Rule Composition 缺少 production Effect domain 或 createEffectGroup()");
     }
 
-    let store = stateStoreApi.createStateStore(clone(createInitialState(clone(options.initialOptions || {}))));
+    if (typeof options.projectState !== "function") {
+      throw new TypeError("Rule Composition 缺少只读 projectState()，禁止向 Browser 暴露 canonical root");
+    }
+
+    const actionRegistry = createActionRegistry();
+    if (!actionRegistry?.enumerate || !actionRegistry?.validate) {
+      throw new TypeError("createActionRegistry() 未返回 Standard Action registry");
+    }
+    const storeOptions = Object.freeze({ invariantValidators: [...(options.invariantValidators || [])] });
+    let store = stateStoreApi.createStateStore(
+      clone(createInitialState(clone(options.initialOptions || {}))),
+      storeOptions,
+    );
     let runtime = null;
     let activeSession = null;
     let activeFamily = null;
     const listeners = new Set();
     let unsubscribeStore = null;
+    let effectDomainByFamily = new Map();
+
+    function actionContext(state) {
+      return typeof options.createActionContext === "function"
+        ? options.createActionContext(state)
+        : state;
+    }
+
+    function executeRegisteredAction(state, action) {
+      if (typeof actionRegistry.execute !== "function") {
+        return fail("RULE_COMPOSITION_ACTION_EXECUTOR_MISSING", "Standard Action registry 缺少 execute()");
+      }
+      const nextState = clone(state);
+      const result = actionRegistry.execute(actionContext(nextState), clone(action));
+      return result?.ok === false ? result : { ...clone(result), nextState };
+    }
 
     function publish(event) {
       const frozen = deepFreeze(clone(event));
@@ -75,20 +103,49 @@
         stateStore: store,
         validateState: (state) => store.validate(state),
         projectState: (state, viewer, inspection) => (
-          typeof options.projectState === "function"
-            ? options.projectState(clone(state), clone(viewer), clone(inspection))
-            : clone(state)
+          options.projectState(clone(state), clone(viewer), clone(inspection))
         ),
       });
-      for (const [type, executor] of Object.entries(options.effectExecutors || {})) {
-        next.registerExecutor(type, executor);
+      if (typeof options.installEffectExecutors === "function") {
+        options.installEffectExecutors(Object.freeze({
+          register: next.registerExecutor,
+          executeRegisteredAction,
+        }));
+      } else {
+        for (const [type, executor] of Object.entries(options.effectExecutors || {})) {
+          next.registerExecutor(type, executor);
+        }
       }
+      const nextDomains = new Map();
+      for (const descriptor of options.effectDomains || []) {
+        if (typeof descriptor?.create !== "function") {
+          throw new TypeError("Effect domain 缺少 create() factory");
+        }
+        const domain = descriptor.create({ ...(descriptor.options || {}), runtime: next });
+        if (typeof domain?.createEffectGroup !== "function") {
+          throw new TypeError("Effect domain 缺少 createEffectGroup()");
+        }
+        const families = descriptor.families || domain.actionFamilies || [];
+        for (const family of families) {
+          if (nextDomains.has(family)) throw new Error(`重复 Effect domain family: ${family}`);
+          nextDomains.set(family, domain);
+        }
+      }
+      effectDomainByFamily = nextDomains;
       return next;
+    }
+
+    function createProductionEffectGroup(workingState, action) {
+      const domain = effectDomainByFamily.get(action?.family);
+      if (domain) return domain.createEffectGroup(clone(workingState), clone(action));
+      return typeof fallbackEffectGroup === "function"
+        ? fallbackEffectGroup(clone(workingState), clone(action))
+        : fail("RULE_COMPOSITION_EFFECT_DOMAIN_MISSING", `没有 production Effect domain: ${action?.family || "<missing>"}`);
     }
 
     function installStore(initialState) {
       unsubscribeStore?.();
-      store = stateStoreApi.createStateStore(clone(initialState));
+      store = stateStoreApi.createStateStore(clone(initialState), storeOptions);
       runtime = createRuntime();
       activeSession = null;
       activeFamily = null;
@@ -100,9 +157,7 @@
 
     function committedProjection(viewer = null) {
       const state = store.getSnapshot();
-      const projected = typeof options.projectState === "function"
-        ? options.projectState(clone(state), clone(viewer), null)
-        : clone(state);
+      const projected = options.projectState(clone(state), clone(viewer), null);
       return deepFreeze({ phase: "idle", stateVersion: state.meta.stateVersion, state: projected });
     }
 
@@ -148,8 +203,11 @@
       if (activeSession) return fail("RULE_COMPOSITION_SESSION_ACTIVE", "已有规则 Session 正在执行");
       const dispatched = runtime.dispatchStandardAction(
         clone(action),
-        actionRegistry,
-        (workingState, acceptedAction) => createEffectGroup(clone(workingState), clone(acceptedAction)),
+        {
+          enumerate: (state, request) => actionRegistry.enumerate(actionContext(clone(state)), request),
+          validate: (state, candidate) => actionRegistry.validate(actionContext(clone(state)), candidate),
+        },
+        createProductionEffectGroup,
         { source: "browser-input", ...clone(submitOptions.metadata || {}) },
       );
       if (!dispatched?.ok) return deepFreeze(clone(dispatched));
@@ -162,7 +220,7 @@
     function submitActionById(actionId, submitOptions = {}) {
       if (activeSession) return fail("RULE_COMPOSITION_SESSION_ACTIVE", "已有规则 Session 正在执行");
       const committed = store.getSnapshot();
-      const action = (actionRegistry.enumerate(committed, clone(submitOptions.request || {})) || [])
+      const action = (actionRegistry.enumerate(actionContext(clone(committed)), clone(submitOptions.request || {})) || [])
         .find((candidate) => candidate.actionId === actionId);
       return action
         ? submitAction(action, submitOptions)
@@ -171,12 +229,12 @@
 
     function submitQuickAction(action, submitOptions = {}) {
       if (!activeSession) return submitAction(action, submitOptions);
-      const validation = actionRegistry.validate(clone(activeSession.workingState), clone(action));
+      const validation = actionRegistry.validate(actionContext(clone(activeSession.workingState)), clone(action));
       if (!validation?.ok) return deepFreeze(clone(validation));
       const result = runtime.dispatchQuickAction(
         activeSession,
         clone(action),
-        (workingState, acceptedAction) => createEffectGroup(clone(workingState), clone(acceptedAction)),
+        createProductionEffectGroup,
         { source: "browser-quick-input", ...clone(submitOptions.metadata || {}) },
       );
       return advanceSession(result, submitOptions.autoDrain !== false);
@@ -192,7 +250,7 @@
 
     function enumerateActions(request = {}) {
       const state = activeSession ? activeSession.workingState : store.getSnapshot();
-      return deepFreeze(clone(actionRegistry.enumerate(clone(state), clone(request)) || []));
+      return deepFreeze(clone(actionRegistry.enumerate(actionContext(clone(state)), clone(request)) || []));
     }
 
     function advance() {
@@ -220,7 +278,7 @@
       });
     }
 
-    function restore(envelope) {
+    function validateRestore(envelope) {
       if (envelope?.schemaVersion !== SAVE_SCHEMA_VERSION) {
         return fail("RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED", "旧版或未知 Browser 存档 schema 被拒绝");
       }
@@ -228,18 +286,25 @@
       if (!loaded?.ok) return deepFreeze(clone(loaded));
       let restoredSession = null;
       if (envelope.session != null) {
-        const temporaryStore = stateStoreApi.createStateStore(clone(loaded.state));
-        const temporaryRuntime = effectRuntimeApi.createRuntime({ stateStore: temporaryStore });
-        for (const [type, executor] of Object.entries(options.effectExecutors || {})) {
-          temporaryRuntime.registerExecutor(type, executor);
-        }
-        restoredSession = temporaryRuntime.restoreCheckpoint(clone(envelope.session));
+        restoredSession = runtime.restoreCheckpoint(clone(envelope.session));
         if (!restoredSession?.ok) return deepFreeze(clone(restoredSession));
+        if (restoredSession.session.baseVersion !== loaded.state.meta.stateVersion) {
+          return fail("RULE_COMPOSITION_SESSION_STALE", "Effect Session checkpoint 与 committed state 版本不一致", {
+            baseVersion: restoredSession.session.baseVersion,
+            stateVersion: loaded.state.meta.stateVersion,
+          });
+        }
       }
-      installStore(loaded.state);
-      if (restoredSession) {
+      return { ok: true, state: loaded.state, session: restoredSession?.session || null };
+    }
+
+    function restore(envelope) {
+      const validated = validateRestore(envelope);
+      if (!validated.ok) return validated;
+      installStore(validated.state);
+      if (validated.session) {
         const restored = runtime.restoreCheckpoint(clone(envelope.session));
-        if (!restored?.ok) return deepFreeze(clone(restored));
+        if (!restored?.ok) throw new Error("已预验证的 Effect Session 恢复失败");
         activeSession = restored.session;
         activeFamily = activeSession.journal?.actions?.[0]?.action?.family || null;
       }
@@ -268,7 +333,7 @@
       advance,
       abort,
     });
-    const lifecycle = Object.freeze({ newGame, save, restore });
+    const lifecycle = Object.freeze({ newGame, save, validateRestore, restore });
 
     return Object.freeze({
       SAVE_SCHEMA_VERSION,

@@ -200,7 +200,7 @@
     const applyTrigger = requireFunction(options, "applyTrigger");
     const buildTriggerDecision = options.buildTriggerDecision || (() => null);
 
-    const runtime = effectSession.createRuntime({
+    const runtime = options.runtime || effectSession.createRuntime({
       cloneState: options.cloneState,
       getStateVersion: options.getStateVersion,
       validateState: options.validateState,
@@ -603,6 +603,7 @@
     }
 
     return Object.freeze({
+      actionFamilies: ACTION_FAMILIES,
       runtime,
       dispatch,
       replayJournal,

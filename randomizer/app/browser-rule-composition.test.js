@@ -3,6 +3,7 @@
 const assert = require("node:assert/strict");
 const stateStoreApi = require("../game/state/state-store");
 const effectRuntimeApi = require("../game/effects/session-runtime");
+const researchTechSession = require("../game/effects/research-tech-session");
 const { createBrowserRuleComposition, SAVE_SCHEMA_VERSION } = require("./browser-rule-composition");
 
 function createState(value = 0) {
@@ -64,8 +65,12 @@ function createHarness(initialValue = 0) {
   const composition = createBrowserRuleComposition({
     stateStoreApi,
     effectRuntimeApi,
-    actionRegistry: createRegistry(),
+    createActionRegistry: createRegistry,
     createInitialState: (options) => createState(options.value ?? initialValue),
+    projectState: (state) => ({
+      match: structuredClone(state.match),
+      meta: { stateVersion: state.meta.stateVersion },
+    }),
     createEffectGroup(_state, action) {
       if (action.family === "scan") {
         return {
@@ -116,6 +121,7 @@ function createHarness(initialValue = 0) {
   assert.equal(commitEvents(), 1, "完整 Effect Queue 只允许一次 CAS");
   assert.equal(Object.hasOwn(composition, "compareAndCommit"), false);
   assert.equal(Object.hasOwn(composition, "getSnapshot"), false);
+  assert.equal(Object.hasOwn(composition, "actionRegistry"), false);
 }
 
 {
@@ -167,6 +173,78 @@ function createHarness(initialValue = 0) {
   assert.equal(composition.lifecycle.restore(saved.envelope).ok, true);
   assert.equal(composition.projection().state.match.value, 6);
   assert.equal(composition.lifecycle.restore({ schemaVersion: "legacy-v0" }).code, "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED");
+}
+
+{
+  let runtimeCreations = 0;
+  const sharedRuntimeApi = {
+    ...effectRuntimeApi,
+    createRuntime(options) {
+      runtimeCreations += 1;
+      return effectRuntimeApi.createRuntime(options);
+    },
+  };
+  const composition = createBrowserRuleComposition({
+    stateStoreApi,
+    effectRuntimeApi: sharedRuntimeApi,
+    createInitialState: () => createState(0),
+    projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
+    createActionRegistry() {
+      const registry = createRegistry();
+      return {
+        enumerate(state, request = {}) {
+          return request.family && request.family !== "research_tech"
+            ? []
+            : [{
+              schemaVersion: "seti-standard-action-v1",
+              family: "research_tech",
+              phase: "main",
+              actionId: `research_tech:default:${state.meta.stateVersion}`,
+              actorId: "player-1",
+              stateVersion: state.meta.stateVersion,
+              decisionVersion: 0,
+              target: { id: "default" },
+              payload: {},
+              summary: "research_tech",
+            }];
+        },
+        validate(state, action) {
+          const current = this.enumerate(state, { family: "research_tech" })[0];
+          return current?.actionId === action?.actionId ? { ok: true } : registry.validate(state, action);
+        },
+      };
+    },
+    effectDomains: [{
+      create: researchTechSession.createResearchTechRuntime,
+      families: [researchTechSession.ACTION_FAMILY],
+      options: {
+        rotate(state) {
+          state.match.rotation = (state.match.rotation || 0) + 1;
+          return { ok: true, nextState: state };
+        },
+        listChoices: () => [{ tileId: "blue1" }],
+        place(state, choice) {
+          state.match.tech = choice.tileId;
+          return { ok: true, nextState: state, placement: choice };
+        },
+        buildImmediateRewards: () => [],
+        applyImmediateReward: (state) => ({ ok: true, nextState: state }),
+      },
+    }],
+  });
+  assert.equal(runtimeCreations, 1, "production Effect domain 必须注册进 composition 唯一 runtime");
+  const action = composition.inputPort.enumerateActions({ family: "research_tech" })[0];
+  assert.equal(composition.inputPort.submitAction(action).ok, true);
+  const decision = composition.inspect().session.decision;
+  const completed = composition.inputPort.submitDecision({
+    decisionId: decision.decisionId,
+    decisionVersion: decision.decisionVersion,
+    choice: decision.choices[0],
+  });
+  assert.equal(completed.ok, true);
+  assert.equal(completed.phase, "completed");
+  assert.equal(composition.projection().state.match.tech, "blue1");
+  assert.equal(composition.projection().stateVersion, 1);
 }
 
 console.log("browser-rule-composition tests passed");

@@ -209,7 +209,7 @@
     const executeDecision = requireFunction(options, "executeDecision");
     const executeEffect = requireFunction(options, "executeEffect");
     const buildActionFlow = requireFunction(options, "buildActionFlow");
-    const runtime = effectSession.createRuntime({
+    const runtime = options.runtime || effectSession.createRuntime({
       cloneState: options.cloneState,
       getStateVersion: options.getStateVersion,
       validateState: options.validateState,
@@ -285,6 +285,8 @@
     }
 
     return Object.freeze({
+      actionFamilies: Object.freeze([...(options.actionFamilies || [])]),
+      createEffectGroup: buildGroup,
       dispatch,
       inspect: runtime.inspect,
       observe: runtime.observe,
