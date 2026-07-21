@@ -11,12 +11,26 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
-  let legacyStateAdapter = root.SetiLegacyStateAdapter;
-  if (!legacyStateAdapter && typeof require === "function") {
-    legacyStateAdapter = require("../game/state/legacy-state-adapter");
+  const RECOVERY_SNAPSHOT_VERSION = 2;
+
+  function failure(code, message, details = {}) {
+    return { ok: false, code, message, ...details };
   }
-  if (!legacyStateAdapter) {
-    throw new Error("SetiLegacyStateAdapter is required before SetiAppGameRecovery");
+
+  function parseRecoverySnapshot(input) {
+    if (typeof input !== "string") return { ok: true, snapshot: input };
+    try {
+      return { ok: true, snapshot: JSON.parse(input) };
+    } catch (error) {
+      return failure("RECOVERY_SNAPSHOT_JSON_INVALID", error?.message || "恢复快照 JSON 损坏");
+    }
+  }
+
+  function requireStateStore(options, method) {
+    if (typeof options.stateStore?.[method] !== "function") {
+      throw new TypeError(`GameRecovery 需要 StateStore.${method}()`);
+    }
+    return options.stateStore;
   }
 
   function createGameRecoverySnapshot(options = {}) {
@@ -28,15 +42,8 @@
       entryId: options.entryId ?? null,
       label: options.label || null,
     };
-    const serialized = legacyStateAdapter.serializeCurrentRuntimeStateSlices(options.stateSlices, {
-      gameId: options.gameId,
-      rulesetVersion: options.rulesetVersion,
-      seed: options.seed,
-      rngState: options.rngState,
-      sequences: options.sequences,
-      currentPlayerId: meta.currentPlayerId,
-      entryId: meta.entryId,
-    });
+    const stateStore = requireStateStore(options, "serialize");
+    const serialized = stateStore.serialize();
     if (!serialized.ok) {
       const firstError = serialized.errors?.[0] || null;
       const diagnostic = firstError
@@ -47,7 +54,7 @@
       throw error;
     }
     return {
-      version: legacyStateAdapter.COMMITTED_RECOVERY_VERSION,
+      version: RECOVERY_SNAPSHOT_VERSION,
       meta,
       committedState: serialized.serialized,
       runtime: structuredClone(options.runtime || {}),
@@ -145,12 +152,29 @@
   }
 
   function applyGameRecoverySnapshot(snapshot, options = {}) {
-    const deserialized = legacyStateAdapter.deserializeRecoverySnapshot(snapshot, {
-      gameId: options.gameId,
-      rulesetVersion: options.rulesetVersion,
-      seed: options.seed,
-      rngState: options.rngState,
-    });
+    const parsed = parseRecoverySnapshot(snapshot);
+    if (!parsed.ok) return parsed;
+    const envelope = parsed.snapshot;
+    if (!envelope || typeof envelope !== "object" || Array.isArray(envelope)) {
+      return failure("RECOVERY_SNAPSHOT_INVALID", "恢复快照必须是普通对象");
+    }
+    if (envelope.version !== RECOVERY_SNAPSHOT_VERSION) {
+      return failure(
+        "RECOVERY_SNAPSHOT_VERSION_UNSUPPORTED",
+        `不支持的恢复快照版本：${envelope.version ?? "missing"}`,
+        { version: envelope.version ?? null },
+      );
+    }
+    if (typeof envelope.committedState !== "string") {
+      return failure("RECOVERY_COMMITTED_STATE_MISSING", "恢复快照缺少 committedState JSON");
+    }
+    let stateStore;
+    try {
+      stateStore = requireStateStore(options, "deserialize");
+    } catch (error) {
+      return failure("RECOVERY_STATE_STORE_MISSING", error.message);
+    }
+    const deserialized = stateStore.deserialize(envelope.committedState);
     if (!deserialized.ok) {
       return {
         ok: false,
@@ -158,31 +182,20 @@
         message: deserialized.message || "行动日志恢复快照无效",
       };
     }
-    const projected = legacyStateAdapter.projectCommittedStateToLegacySlices(deserialized.state, {
-      hostState: options.stateSlices,
-    });
-    if (!projected.ok) {
-      return { ok: false, code: projected.code, message: projected.message };
-    }
-    const state = projected.state;
-    const slices = options.stateSlices || {};
     try {
+      const restored = options.restoreCommittedState?.(structuredClone(deserialized.state));
+      if (restored?.ok === false) return restored;
       options.restoreDeterministicState?.(structuredClone(deserialized.state.meta.sequences));
     } catch (error) {
       return {
         ok: false,
-        code: "RECOVERY_DETERMINISTIC_STATE_INVALID",
-        message: error?.message || "恢复确定性序列失败",
+        code: "RECOVERY_COMMITTED_STATE_RESTORE_FAILED",
+        message: error?.message || "恢复 committed state 失败",
       };
     }
-    for (const [key, target] of Object.entries(slices)) {
-      if (state[key] != null) {
-        options.restoreMutableObject?.(target, state[key]);
-      }
-    }
     options.onAfterStateRestored?.();
-    const aiControlResult = options.restoreAiControlSnapshot?.(snapshot?.runtime?.aiControl || null, {
-      missingMessage: "旧存档未包含电脑配置，已按默认人机对局恢复",
+    const aiControlResult = options.restoreAiControlSnapshot?.(envelope.runtime?.aiControl || null, {
+      missingMessage: "存档未包含电脑配置，已按默认人机对局恢复",
     });
     const baseMessage = options.message || "已从行动日志恢复局面";
     const recoveryMessage = aiControlResult?.missing
@@ -193,7 +206,7 @@
     options.refreshAfterGameRecovery?.(recoveryMessage);
     return {
       ok: true,
-      snapshotVersion: typeof snapshot === "string" ? null : snapshot.version || null,
+      snapshotVersion: envelope.version,
       committedSchemaVersion: deserialized.state.meta.schemaVersion,
       rngState: structuredClone(deserialized.state.meta.rngState),
       sequences: structuredClone(deserialized.state.meta.sequences),
@@ -203,6 +216,7 @@
   }
 
   return {
+    RECOVERY_SNAPSHOT_VERSION,
     createGameRecoverySnapshot,
     normalizeRecoverableActionLogEntry,
     getRecoverableActionLogEntries,

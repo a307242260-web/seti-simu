@@ -1,17 +1,11 @@
 (function (root, factory) {
   "use strict";
 
-  let legacyStateAdapter = root.SetiLegacyStateAdapter;
-  if (!legacyStateAdapter && typeof require === "function") {
-    legacyStateAdapter = require("./legacy-state-adapter");
-  }
-  const api = factory(legacyStateAdapter);
+  const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiStateAuthorityInventory = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (legacyStateAdapter) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
-
-  if (!legacyStateAdapter) throw new Error("SetiLegacyStateAdapter is required before SetiStateAuthorityInventory");
 
   const SCHEMA_VERSION = "seti-state-authority-inventory-v1";
   const INVENTORY = Object.freeze([
@@ -22,16 +16,6 @@
       expiresOn: null,
       source: "StateStore.getSnapshot/beginWorkingCopy",
       target: "StateStore.compareAndCommit",
-    }),
-    Object.freeze({
-      id: "legacy-recovery-v1-read",
-      status: "dated-adapter",
-      ...legacyStateAdapter.ADAPTER_CONTRACT,
-    }),
-    Object.freeze({
-      id: "browser-runtime-working-projection",
-      status: "dated-adapter",
-      ...legacyStateAdapter.CURRENT_RUNTIME_ADAPTER_CONTRACT,
     }),
     Object.freeze({
       id: "card-task-index",

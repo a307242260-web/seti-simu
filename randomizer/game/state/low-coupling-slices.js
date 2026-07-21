@@ -318,6 +318,18 @@
     return committed.ok ? { ...committed, result } : committed;
   }
 
+  function mutateOwnedLowCouplingSlices(store, mutator) {
+    return mutateLowCouplingSlices(store, (slices, workingState) => {
+      const result = mutator(slices, workingState);
+      const purified = purifyLowCouplingSlices(workingState);
+      for (const key of LOW_COUPLING_SLICES) {
+        workingState[key] = purified[key];
+        slices[key] = purified[key];
+      }
+      return result;
+    });
+  }
+
   return Object.freeze({
     LOW_COUPLING_SLICES,
     FIELD_OWNERSHIP,
@@ -326,5 +338,6 @@
     validateLowCouplingInvariants,
     createLowCouplingStateStore,
     mutateLowCouplingSlices,
+    mutateOwnedLowCouplingSlices,
   });
 });

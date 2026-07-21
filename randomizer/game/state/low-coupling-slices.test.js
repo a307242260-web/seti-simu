@@ -3,7 +3,6 @@
 const assert = require("node:assert/strict");
 const stateStore = require("./state-store");
 const lowCoupling = require("./low-coupling-slices");
-const adapter = require("./legacy-state-adapter");
 const solar = require("../../solar-system/core");
 const planetStats = require("../planet-stats");
 const alienState = require("../aliens/state");
@@ -151,7 +150,7 @@ function bytes(store) {
     });
     return "board-turn-alien-final";
   });
-  assert.equal(result.ok, true);
+  assert.equal(result.ok, true, JSON.stringify(result));
   assert.equal(result.stateVersion, 1);
   assert.equal(result.result, "board-turn-alien-final");
   assert.equal(before.meta.stateVersion, 0);
@@ -224,7 +223,7 @@ function bytes(store) {
   assert.equal(store.getSnapshot().turn.turnNumber, 4);
 })();
 
-(function testLegacyDomainBehaviorsRunAgainstOneWorkingCopyAndRecoverWithParity() {
+(function testDomainBehaviorsRunAgainstOneWorkingCopyAndRecoverWithParity() {
   const initial = createState();
   initial.planets = {
     planets: Object.fromEntries(planetStats.PLANET_IDS.map((planetId) => [planetId, {
@@ -239,22 +238,21 @@ function bytes(store) {
     tileVariants: { a: 1 },
   };
   const store = lowCoupling.createLowCouplingStateStore(initial);
-  const result = adapter.mutateLegacyLowCouplingSlices(store, (legacy) => {
-    const wheelIds = solar.getNextOrbitWheelIds(legacy.solarState.rotation.rotationCount);
-    const rotation = solar.applySolarOrbitRotation(legacy.solarState);
-    legacy.solarState.rotation = rotation;
-    legacy.solarState.wheelSteps = solar.rotationToWheelSteps(rotation);
-    legacy.turnState.turnNumber += 1;
-    legacy.turnState.currentPlayerId = "p2";
+  const result = lowCoupling.mutateOwnedLowCouplingSlices(store, (working) => {
+    const wheelIds = solar.getNextOrbitWheelIds(working.solarSystem.rotation.rotationCount);
+    const rotation = solar.applySolarOrbitRotation(working.solarSystem);
+    working.solarSystem.rotation = rotation;
+    working.turn.turnNumber += 1;
+    working.turn.currentPlayerId = "p2";
     assert.equal(planetStats.addPlanetOrbitMarker(
-      legacy.planetStatsState, "mars", { id: "p1", color: "blue" },
+      working.planets, "mars", { id: "p1", color: "blue" },
     ).ok, true);
     for (const traceType of ["yellow", "pink", "blue"]) {
-      assert.equal(alienState.placeFirstTrace(legacy.alienGameState, 1, traceType, "blue").ok, true);
+      assert.equal(alienState.placeFirstTrace(working.aliens, 1, traceType, "blue").ok, true);
     }
-    assert.equal(alienState.revealAlien(legacy.alienGameState, 1, "alien-a").ok, true);
+    assert.equal(alienState.revealAlien(working.aliens, 1, "alien-a").ok, true);
     assert.equal(finalScoring.placeDirectMarkAtSlot(
-      legacy.finalScoringState,
+      working.finalScoring,
       "a",
       { id: "p1", color: "blue", colorLabel: "蓝色" },
       1,
@@ -262,7 +260,7 @@ function bytes(store) {
     ).ok, true);
     return { wheelIds };
   });
-  assert.equal(result.ok, true);
+  assert.equal(result.ok, true, JSON.stringify(result));
   assert.equal(result.stateVersion, 1);
   assert.ok(result.result.wheelIds.length > 0);
   const committed = store.getSnapshot();
@@ -275,20 +273,16 @@ function bytes(store) {
   assert.equal(Object.hasOwn(committed.finalScoring.tiles.a.marks[0], "placedAt"), false);
 
   const serialized = store.serialize();
-  const recovered = adapter.deserializeRecoverySnapshot({
-    version: adapter.COMMITTED_RECOVERY_VERSION,
-    committedState: serialized.serialized,
-  });
+  const recovered = store.deserialize(serialized.serialized);
   assert.equal(recovered.ok, true);
   assert.deepEqual(recovered.state, committed);
-  const projected = adapter.projectCommittedStateToLegacySlices(recovered.state);
-  assert.equal(projected.ok, true);
-  assert.equal(projected.state.planetStatsState.planets.mars.orbits, 1);
-  assert.equal(projected.state.planetStatsState.planets.mars.orbitMarkers[0].sequence, 1);
-  assert.deepEqual(projected.state.solarState.wheelSteps, solar.rotationToWheelSteps(committed.solarSystem.rotation));
-  assert.equal(projected.state.alienGameState.aliens[1].revealed, true);
-  assert.equal(projected.state.finalScoringState.tiles.a.marks[0].playerId, "p1");
-  assert.deepEqual(projected.state.finalScoringState.pendingMarks, []);
+  assert.equal(recovered.state.planets.planets.mars.orbitMarkers.length, 1);
+  assert.deepEqual(
+    solar.rotationToWheelSteps(recovered.state.solarSystem.rotation),
+    solar.rotationToWheelSteps(committed.solarSystem.rotation),
+  );
+  assert.equal(recovered.state.aliens.aliens[1].revealed, true);
+  assert.equal(recovered.state.finalScoring.tiles.a.marks[0].playerId, "p1");
 })();
 
 console.log("low coupling state tests passed");

@@ -12,7 +12,7 @@ assert.equal(audit.undatedAdapters.length, 0);
 assert.equal(audit.expiredAdapters.length, 0);
 assert.deepEqual(
   inventory.INVENTORY.filter((entry) => entry.status === "dated-adapter").map((entry) => entry.id),
-  ["legacy-recovery-v1-read", "browser-runtime-working-projection"],
+  [],
 );
 
 const repositoryRoot = path.resolve(__dirname, "../../..");
@@ -25,5 +25,6 @@ assert.equal(result.status, 0, result.stderr || result.stdout);
 const report = JSON.parse(result.stdout);
 assert.equal(report.ok, true);
 assert.deepEqual(report.violations, []);
+assert.deepEqual(report.residualAdapters, []);
 
 console.log("state authority inventory tests passed");

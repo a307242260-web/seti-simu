@@ -71,6 +71,11 @@
     alienUiModule,
     browserHostModule,
   } = dependencies;
+  const stateStoreModule = window.SetiStateStore;
+  const highCouplingStateModule = window.SetiHighCouplingState;
+  if (!stateStoreModule || !highCouplingStateModule) {
+    throw new Error("Missing SETI StateStore runtime dependencies");
+  }
   const headlessMode = Boolean(window.SetiHeadlessRuntimeConfig?.enabled);
   const viewAdapter = headlessMode ? viewAdapterModule.createNoopViewAdapter() : null;
   const document = headlessMode ? null : window.document;
@@ -3550,36 +3555,45 @@
   }
 
   function createGameRecoverySnapshot(meta = {}) {
+    const sequences = {
+      card: cards.getNextCardInstanceSequence(),
+      handCard: players.getNextHandCardSequence(),
+      finalMark: finalScoring.getNextFinalMarkSequence(),
+      dataToken: data.getNextDataTokenSequence(),
+      ...data.getDeterministicSequences(),
+      historyStep: actionHistoryModule.getNextHistoryStepSequence(),
+      actionLog: actionLogState.nextEntryId,
+      rocket: rocketState.nextRocketId,
+    };
+    const committedState = highCouplingStateModule.purifyHighCouplingSlices(
+      stateStoreModule.createCommittedGameState({
+        gameId: "seti-browser-runtime",
+        rulesetVersion: "seti-runtime-v1",
+        seed: meta.seed ?? "browser-host",
+        rngState: meta.rngState || { owner: headlessMode ? "headless" : "browser", state: null },
+        sequences,
+        match: {},
+        turn: { ...structuredClone(turnState), currentPlayerId: playerState.currentPlayerId },
+        players: structuredClone(playerState),
+        solarSystem: structuredClone(solarState),
+        pieces: structuredClone(rocketState),
+        planets: structuredClone(planetStatsState),
+        data: structuredClone(nebulaDataState),
+        cards: structuredClone(cardState),
+        tech: structuredClone(techGameState),
+        aliens: structuredClone(alienGameState),
+        finalScoring: structuredClone(finalScoringState),
+      }),
+    );
+    const stateStore = highCouplingStateModule.createHighCouplingStateStore(committedState);
     return gameRecoveryModule.createGameRecoverySnapshot({
-      version: GAME_RECOVERY_VERSION,
+      stateStore,
       roundNumber: turnState.roundNumber,
       turnNumber: turnState.turnNumber,
       actionCycleNumber: getActionCycleNumber(),
       currentPlayerId: playerState.currentPlayerId,
       entryId: meta.entryId ?? null,
       label: meta.label || null,
-      rngState: meta.rngState,
-      sequences: {
-        card: cards.getNextCardInstanceSequence(),
-        handCard: players.getNextHandCardSequence(),
-        finalMark: finalScoring.getNextFinalMarkSequence(),
-        dataToken: data.getNextDataTokenSequence(),
-        ...data.getDeterministicSequences(),
-        historyStep: actionHistoryModule.getNextHistoryStepSequence(),
-        actionLog: actionLogState.nextEntryId,
-      },
-      stateSlices: {
-        solarState: structuredClone(solarState),
-        nebulaDataState: structuredClone(nebulaDataState),
-        alienGameState: structuredClone(alienGameState),
-        finalScoringState: structuredClone(finalScoringState),
-        playerState: structuredClone(playerState),
-        turnState: structuredClone(turnState),
-        rocketState: structuredClone(rocketState),
-        planetStatsState: structuredClone(planetStatsState),
-        techGameState: structuredClone(techGameState),
-        cardState: structuredClone(cardState),
-      },
       runtime: {
         aiControl: createAiControlSnapshot(),
       },
@@ -3943,21 +3957,74 @@
   }
 
   function applyGameRecoverySnapshot(snapshot, options = {}) {
+    const validationStore = highCouplingStateModule.createHighCouplingStateStore(
+      stateStoreModule.createCommittedGameState({
+        gameId: "seti-recovery-validation",
+        rulesetVersion: "seti-runtime-v1",
+        seed: "recovery-validation",
+        rngState: {},
+        sequences: {},
+      }),
+    );
     return gameRecoveryModule.applyGameRecoverySnapshot(snapshot, {
       ...options,
-      stateSlices: {
-        solarState,
-        nebulaDataState,
-        alienGameState,
-        finalScoringState,
-        playerState,
-        turnState,
-        rocketState,
-        planetStatsState,
-        techGameState,
-        cardState,
+      stateStore: validationStore,
+      restoreCommittedState: (state) => {
+        const statusNote = rocketState.statusNote;
+        const techUi = structuredClone(techGameState.ui || {});
+        const cardUi = structuredClone(cardState.ui || {});
+        restoreMutableObject(solarState, state.solarSystem);
+        if (solarState.rotation) {
+          solarState.wheelSteps = [0, 1, 2, 3, 4].map((wheelId) => (
+            wheelId === 0 ? 0 : Number(solarState.rotation[`wheel${wheelId}Steps`] || 0)
+          ));
+        }
+        restoreMutableObject(nebulaDataState, state.data);
+        for (const bucket of Object.values(nebulaDataState.nebulae || {})) {
+          const counts = {};
+          let last = null;
+          for (const token of bucket.tokens || []) {
+            const color = token.replacedByPlayerColor || token.playerColor || null;
+            if (color) counts[color] = (counts[color] || 0) + 1;
+            if (color) last = token;
+          }
+          bucket.playerTokenCounts = counts;
+          bucket.lastReplacedPlayerId = last?.replacedByPlayerId || last?.playerId || null;
+          bucket.lastReplacedPlayerColor = last?.replacedByPlayerColor || last?.playerColor || null;
+          bucket.lastReplacedPlayerLabel = null;
+        }
+        restoreMutableObject(alienGameState, state.aliens);
+        restoreMutableObject(finalScoringState, { ...state.finalScoring, pendingMarks: [] });
+        restoreMutableObject(playerState, { ...state.players, currentPlayerId: state.turn.currentPlayerId ?? null });
+        const restoredTurn = structuredClone(state.turn);
+        delete restoredTurn.currentPlayerId;
+        restoreMutableObject(turnState, restoredTurn);
+        restoreMutableObject(rocketState, {
+          ...state.pieces,
+          nextRocketId: state.meta.sequences.rocket,
+          playerRocketSequences: Object.fromEntries(Object.entries(
+            state.pieces.playerRocketSequences || {},
+          ).map(([playerId, values]) => [playerId, new Set(values)])),
+          statusNote,
+        });
+        restoreMutableObject(planetStatsState, state.planets);
+        for (const record of Object.values(planetStatsState.planets || {})) {
+          for (const key of ["orbitMarkers", "landingMarkers"]) {
+            if (!Array.isArray(record[key])) record[key] = [];
+            record[key].forEach((marker, index) => {
+              marker.sequence = index + 1;
+              marker.displayed = true;
+              marker.displaySlot = index + 1;
+            });
+          }
+          if (!Array.isArray(record.satelliteLandings)) record.satelliteLandings = [];
+          record.orbits = record.orbitMarkers.length;
+          record.landings = record.landingMarkers.length;
+        }
+        restoreMutableObject(techGameState, { board: state.tech, ui: techUi });
+        restoreMutableObject(cardState, { ...state.cards, ui: cardUi });
+        return { ok: true };
       },
-      restoreMutableObject,
       restoreDeterministicState: (sequences) => {
         const required = [
           "card", "handCard", "finalMark", "dataToken", "nebulaToken",

@@ -5,8 +5,8 @@ const path = require("node:path");
 const { performance } = require("node:perf_hooks");
 const { createHeuristicPolicyAdapter } = require("../training/heuristic-policy-adapter");
 const { createHeadlessEffectSessionHost } = require("./headless-effect-session-host");
-const legacyStateAdapter = require("../game/state/legacy-state-adapter");
 const highCouplingState = require("../game/state/high-coupling-slices");
+const { RECOVERY_SNAPSHOT_VERSION } = require("./game-recovery");
 const {
   OBSERVATION_SCHEMA_VERSION,
   CONDITIONAL_FAMILIES,
@@ -492,17 +492,17 @@ function createHeadlessEnv() {
     }
     recordDuration("setupSelectionMilliseconds", setupSelectionStartedAt);
     const initialRecovery = api.createRecoverySnapshot({ label: "headless StateStore bootstrap" });
-    const initialCommitted = legacyStateAdapter.deserializeRecoverySnapshot(initialRecovery);
-    if (!initialCommitted.ok) {
-      throw new Error(initialCommitted.message || `headless committed bootstrap 失败: ${initialCommitted.code}`);
+    try {
+      stateStore = highCouplingState.createHighCouplingStateStore(JSON.parse(initialRecovery.committedState));
+    } catch (error) {
+      throw new Error(error?.message || "headless committed bootstrap 失败");
     }
-    stateStore = highCouplingState.createHighCouplingStateStore(initialCommitted.state);
     effectSessionHost = createHeadlessEffectSessionHost({
       stateStore,
       synchronizeWorkingState: false,
       captureState() {
         const recovery = api.createRecoverySnapshot({ label: "headless Effect Session working" });
-        const captured = legacyStateAdapter.deserializeRecoverySnapshot(recovery);
+        const captured = stateStore.deserialize(recovery.committedState);
         if (!captured.ok) {
           throw new Error(captured.message || `headless working candidate 失败: ${captured.code}`);
         }
@@ -515,7 +515,7 @@ function createHeadlessEnv() {
       },
       restoreState(committedState) {
         const restored = api.restoreRecoverySnapshot({
-          version: legacyStateAdapter.COMMITTED_RECOVERY_VERSION,
+          version: RECOVERY_SNAPSHOT_VERSION,
           committedState: JSON.stringify(committedState),
           runtime: {},
         }, { skipRefresh: true });
