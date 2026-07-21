@@ -686,9 +686,7 @@ function createHeadlessEnv() {
             action: conditional
               ? normalizeConditionalCandidate(candidate, actorPlayerId)
               : normalizeTurnCandidate(candidate, actorPlayerId),
-            sortActionId: conditional
-              ? normalizeConditionalCandidate({ ...candidate, standardAction: null }, actorPlayerId)?.actionId
-              : candidate.actionId,
+            sortActionId: candidate.standardAction?.actionId || candidate.actionId,
           };
         })
         .filter((entry) => entry.action)

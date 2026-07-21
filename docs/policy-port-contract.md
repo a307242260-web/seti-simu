@@ -111,9 +111,9 @@ schema 为 `seti-policy-decision-v1`：
 | unknown family / pending | unsupported | shared runtime | fail-closed 并诊断 | heuristic/Host automation 静默兜底 |
 | timeout / cancel / stale / recovery | 旧 response | Host request session | 失效并忽略 | 执行、journal、旧 request 复活 |
 
-## 兼容面与删除条件
+## 当前生产边界
 
-本阶段没有引入 compatibility adapter 或第二执行入口。现有 `game/ai/policy.js` 的浏览器启发式 caller 继续由后续 Host 接线阶段迁移；它不被包装进公共端口，也不是本端口的 executor。删除条件是 Browser Host 与 headless/training Host 都直接构造 `DecisionContext` 并提交 `PolicyDecision` 后，逐 caller 删除旧的专用 `choose*` 调用。owner 分别为 Browser Host、Headless Host 和具体 Policy 实现 issue。
+Browser Host 与 headless/training Host 都直接构造 `DecisionContext` 并提交 `PolicyDecision`。公共 Heuristic Policy 不调用 `game/ai/policy.js` 的 setup/领域辅助选择，也不接收 candidate pipeline；其唯一输入是当前 observation 与 legal descriptors。Host 失败策略必须显式创建新的 request generation，不能单步调用 resolver 或取首项。
 
 ## Proof obligations 与证据
 

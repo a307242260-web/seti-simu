@@ -45,7 +45,7 @@
 - `randomizer/app/ai/initial-card-pending.js`、`interaction-pending.js`：按初始/卡牌与交互域拆分的 pending resolver，通过窄 context 调用 app flow。
 - `randomizer/app/ai/action-executor.js`、`automation-runtime.js`：顶层行动执行、pending 优先级与自动化步骤编排。
 - `randomizer/app/ai-controller.js`：AI runtime/rule domain 装配、`REQUIRED_CONTEXT_KEYS` 完整性校验与稳定 API adapter；不再承载 resolver/executor 函数体。
-- `randomizer/game/ai/*-valuation.js`、`*-candidates.js`、`action-value.js`、`demand-card.js`、`route-planet.js` 等：按资源、卡牌、路线、扫描、科技、终局和外星人拆分的只读 AI 规则域；完整迁移清单见 `docs/ai-domain-migration-stage3.md`。
+- `randomizer/game/ai/*-valuation.js`、`*-candidates.js`、`action-value.js`、`demand-card.js`、`route-planet.js` 等：按资源、卡牌、路线、扫描、科技、终局和外星人拆分的只读 AI 估值域；它们只产生评分/诊断，不创建公共 Action identity。
 - `randomizer/game/ai/policy-port.js`：启发式与 Learned Policy 共用的 `DecisionContext -> PolicyDecision` 契约、公共 validator 和请求失效语义；Policy 不在此执行规则。
 - `randomizer/game/ai/machine-player-host.js`：浏览器与 headless 共用的固定机器席位、Policy 请求代际、deadline/取消/去重和 fail-closed 提交协调器；详见 `docs/machine-player-host.md`。
 - `randomizer/game/ai/heuristic-policy.js`：无 DOM/Host 推进依赖的版本化 Heuristic Policy，实现公共端口并为浏览器席位、teacher 与冻结 opponent 提供同一 provenance。
@@ -120,6 +120,7 @@
 
 ```powershell
 node --check randomizer/app.js
+node tools/audit_state_authority.js
 node tools/run_node_tests.js
 ```
 

@@ -90,13 +90,8 @@
     return buildTurnPlans(candidates, state, playerId, options)[0] || null;
   }
 
-  function chooseTurnAction(candidates = [], state = {}, playerId = null, options = {}) {
-    return chooseTurnPlan(candidates, state, playerId, options)?.firstAction || null;
-  }
-
   return Object.freeze({
     buildTurnPlans,
     chooseTurnPlan,
-    chooseTurnAction,
   });
 });

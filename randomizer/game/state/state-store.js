@@ -27,7 +27,6 @@
     "finalScoring",
   ]);
   const DOMAIN_SLICES = Object.freeze(REQUIRED_ROOT_SLICES.filter((key) => key !== "meta"));
-  const MAX_MIGRATION_STEPS = 32;
 
   function isPlainObject(value) {
     if (value == null || typeof value !== "object") return false;
@@ -227,17 +226,11 @@
     const invariantValidators = Array.isArray(options.invariantValidators)
       ? [...options.invariantValidators]
       : [];
-    const migrations = new Map(Object.entries(options.migrations || {}));
     const listeners = new Set();
     let committedState;
 
     for (const validator of invariantValidators) {
       if (typeof validator !== "function") throw new TypeError("invariantValidators 必须只包含函数");
-    }
-    for (const [schemaVersion, migration] of migrations) {
-      if (!schemaVersion || typeof migration !== "function") {
-        throw new TypeError("migrations 必须是 schemaVersion -> function 映射");
-      }
     }
 
     function validate(candidate) {
@@ -260,64 +253,19 @@
         : { ok: true, schemaVersion: SCHEMA_VERSION, stateVersion: candidate.meta.stateVersion };
     }
 
-    function migrate(candidate) {
+    function loadCurrent(candidate) {
       let working;
       try {
         working = clone(candidate);
       } catch (error) {
-        return { ok: false, code: "STATE_MIGRATION_INPUT_INVALID", message: error?.message || "迁移输入不可克隆" };
-      }
-      const fromSchemaVersion = working?.meta?.schemaVersion ?? null;
-      const applied = [];
-      const visited = new Set();
-      while (working?.meta?.schemaVersion !== SCHEMA_VERSION) {
-        const currentSchemaVersion = working?.meta?.schemaVersion ?? null;
-        if (!currentSchemaVersion || visited.has(currentSchemaVersion) || applied.length >= MAX_MIGRATION_STEPS) {
-          return {
-            ok: false,
-            code: "STATE_MIGRATION_CYCLE_OR_LIMIT",
-            message: "状态迁移没有收敛到当前 schema",
-            fromSchemaVersion,
-            currentSchemaVersion,
-            applied,
-          };
-        }
-        const migration = migrations.get(currentSchemaVersion);
-        if (!migration) {
-          return {
-            ok: false,
-            code: "STATE_MIGRATION_MISSING",
-            message: `缺少从 ${currentSchemaVersion} 开始的迁移器`,
-            fromSchemaVersion,
-            currentSchemaVersion,
-            applied,
-          };
-        }
-        visited.add(currentSchemaVersion);
-        try {
-          const next = migration(clone(working));
-          if (!isPlainObject(next)) throw new TypeError("迁移器必须返回状态对象");
-          working = clone(next);
-        } catch (error) {
-          return {
-            ok: false,
-            code: "STATE_MIGRATION_FAILED",
-            message: error?.message || `从 ${currentSchemaVersion} 迁移失败`,
-            fromSchemaVersion,
-            currentSchemaVersion,
-            applied,
-          };
-        }
-        applied.push(currentSchemaVersion);
+        return { ok: false, code: "STATE_DESERIALIZE_FAILED", message: error?.message || "状态输入不可克隆" };
       }
       const validation = validate(working);
-      if (!validation.ok) return { ...validation, code: "STATE_MIGRATION_OUTPUT_INVALID", applied };
+      if (!validation.ok) return validation;
       return {
         ok: true,
         state: deepFreeze(clone(working)),
-        fromSchemaVersion,
-        toSchemaVersion: SCHEMA_VERSION,
-        applied: Object.freeze(applied),
+        schemaVersion: SCHEMA_VERSION,
       };
     }
 
@@ -328,10 +276,10 @@
       } catch (error) {
         return { ok: false, code: "STATE_DESERIALIZE_FAILED", message: error?.message || "状态 JSON 损坏" };
       }
-      return migrate(parsed);
+      return loadCurrent(parsed);
     }
 
-    const initial = migrate(initialState);
+    const initial = loadCurrent(initialState);
     if (!initial.ok) {
       const error = new TypeError(`初始 CommittedGameState 无效: ${initial.code}`);
       error.validation = initial;
@@ -435,7 +383,6 @@
       compareAndCommit,
       serialize,
       deserialize,
-      migrate,
       subscribe,
     });
   }

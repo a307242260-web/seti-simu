@@ -16,7 +16,7 @@
 | render/log runtime | 11,997 | `render-runtime.js`、`action-log-runtime.js` 等 |
 | 最终严格验收 | 9,930 | `final-score-ai-runtime.js`、`turn-end-flow.js`、`action-interaction-runtime.js` |
 
-最终结果低于 10,000 行硬门槛。新增的三个收口模块分别为 1,122、547、1,045 行，均低于约 3,000 行的单文件预算。
+该轮迁移收口时结果低于 10,000 行硬门槛。此后 StateStore/Browser Host/Policy 集成使当前 `app.js` 增至 11,532 行；历史门槛不能继续作为当前行数事实。新增职责必须继续进入明确 owner 模块，不能把规则或 selector 正文回填 composition root。
 
 ## 2. 加载与装配顺序
 
@@ -116,9 +116,9 @@
 
 ## 6. 超大文件与残余风险
 
-- `app/aliens/species-runtime.js` 为 4,367 行，超过约 3,000 行。它不是本轮新增文件；当前边界是“八物种共用机会队列、dialog 与渲染 context 的单一物种运行域”。后续继续拆时，应按物种或 `rewards/dialogs/render` 子域拆分，并保持共用队列只有一个所有者。
-- `app/ai-controller.js` 已从 22,960 行收口至 1,968 行；pending resolver、automation、action executor、控制状态、日志/报告/实验与纯规则域均已拆出。后续不得把策略或 resolver 正文重新堆回 controller。
-- `app.js` 虽已低于预算，仍是 9,930 行的大型 composition root。后续只允许按明确跨域边界继续减小，不以压缩格式或复制状态换取行数。
+- `app/aliens/species-runtime.js` 当前 4,455 行，超过约 3,000 行。当前边界是“八物种共用机会队列、dialog 与渲染 context 的单一物种运行域”。后续继续拆时，应按物种或 `rewards/dialogs/render` 子域拆分，并保持共用队列只有一个所有者。
+- `app/ai-controller.js` 当前 1,980 行；pending resolver、automation、action executor、控制状态、日志/报告/实验与纯规则域均已拆出。后续不得把策略或 resolver 正文重新堆回 controller。
+- `app.js` 当前 11,532 行，是大型 composition root。后续只允许按明确跨域边界继续减小，不以压缩格式或复制状态换取行数。
 - 浏览器行为依赖传统脚本顺序；新增 runtime 必须同步更新 `index.html`、`dependencies.js` 和依赖测试。
 
 ## 7. 验证基线

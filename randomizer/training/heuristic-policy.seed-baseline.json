@@ -10,7 +10,7 @@
   "terminal": true,
   "steps": 460,
   "scores": [61, 69, 36, 29],
-  "traceHash": "57e126dd4a4969cbbba622d0ce05764c0c70d9299905463c7cd4b39bf75fa8d1",
+  "traceHash": "d2e46582443a68f9d20116520b21a0facaaad260de75a88c9daa905bf0c2a4f4",
   "familyCounts": {
     "choose_payment": 16,
     "play_card": 24,

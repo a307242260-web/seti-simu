@@ -88,7 +88,7 @@ GameState 快照
 - 1 类任务卡触发只在当前事件窗口内可选；AI 若因火箭上限、资源不足或无合法目标无法发动某个触发，应取消本次触发选择并等待下次同类事件，不得消耗触发槽，也不得把自动批跑阻塞在不可执行触发上。
 - PASS 预留牌默认仍保持原顺序；只有第 2 轮出现 0 信用点、0 能量或 1 手牌以内的硬资源锁，且预留牌堆里有能补对应短板的收入牌时，才启用 `scoreAiPassReserveCard` 排序，避免早期资源滚动被随机牌序截断。
 - PASS 预留日志现在额外记录 `passReserveResourcePressurePreview` 与 `passReserveResourcePressureMiss`：前者忽略“仅第 2 轮启用”的行为门槛，用来识别第 1/3/4 轮是否也存在 0 信用点、0 能量或低手牌且牌堆有对应收入牌的窗口，并列出最多 6 张能补短板的收入候选；后者表示该窗口当前只被记录、未用于排序，且选中牌本身也不是预览收入候选。批跑分析会输出 `passReserveResourcePressureMissSamples`，用于后续筛更窄的可验证窗口，不能直接把 PASS 预留排序扩到所有轮次。
-- AI 不直接改规则状态；顶层与 conditional 策略选择最终都提交 Standard Action descriptor。迁移期浏览器 AI 的估值 candidate 仍可通过 action-runtime 的显式 selector adapter 转成 descriptor，规则执行只发生在 registry family handler 中。
+- AI 不直接改规则状态；顶层与 conditional 策略选择只消费 action-runtime 已枚举的完整 Standard Action descriptor，规则执行只发生在 registry family handler 中。估值 candidate、planner shadow 与诊断字段不得转换或替代公共 identity。
 - 随机性通过现有 seeded 批跑入口和可注入 `random` 的规则函数复现；不能为了 AI 策略在估值阶段消耗真实随机结果。
 
 ---
@@ -468,7 +468,7 @@ randomizer/
    ├─ action-graph.js     # L2：实时候选 {gain,cost,net,breakdown}
    ├─ planner.js          # L3：回合浅前瞻
    ├─ goals.js            # L4：目标系统 + 开局规划
-   ├─ evaluator.js        # 兼容层与轻量状态估值
+   ├─ evaluator.js        # 轻量状态估值
    ├─ policy.js           # 顶层行动与子决策选择
    ├─ policy-port.js      # Heuristic/Learned 公共只读决策端口与 validator
    ├─ battle-analytics.js # 可配置窗口序列挖掘 + 分数构成分桶
@@ -585,18 +585,9 @@ randomizer/
 
 ```powershell
 node --check randomizer/app.js
-node --check randomizer/app/ai-controller.js
-node --check randomizer/app/ai/control-runtime.js
-node --check randomizer/game/ai/valuation.js
-node --check randomizer/game/ai/race-model.js
-node --check randomizer/game/ai/action-graph.js
-node --check randomizer/game/ai/goals.js
-node --check randomizer/game/ai/planner.js
-node --check randomizer/game/ai/policy.js
-node --check randomizer/game/ai/battle-analytics.js
-node randomizer/game/ai/race-model.test.js
-node randomizer/game/ai/ai.test.js
-$tests = rg --files randomizer | Where-Object { $_ -match '\.test\.js$' } | Sort-Object; foreach ($test in $tests) { node $test; if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE } }
+node tools/audit_state_authority.js
+node tools/run_node_tests.js --match game/ai
+node tools/run_node_tests.js
 ```
 
 浏览器 smoke 与批跑入口使用 `runAiAutoBattleBatch`。

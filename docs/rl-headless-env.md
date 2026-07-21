@@ -6,10 +6,10 @@
 
 - Node 入口：`randomizer/app/headless-env.js`，通过 `createHeadlessEnv()` 创建单局环境。
 - 已实现 `reset / observe(viewer) / legalActions(viewer) / step / isTerminal / getReplay / loadReplay / createCheckpoint / loadCheckpoint / dispose`。
-- `randomizer/app/headless-contract.js` 固化 15 个顶层动作族、7 个 conditional family、稳定 action feature 与 observation 公私域 sanitizer；旧 selector 映射只保留为存量 replay/诊断兼容面。
+- `randomizer/app/headless-contract.js` 固化 15 个顶层动作族、7 个 conditional family、稳定 action feature 与 observation 公私域 sanitizer；只接受共享 registry 产生的 Standard Action descriptor，不从旧 id/candidate 生成 family、payload 或 action identity。
 - 传统 app 的 pending inventory 与创建入口已删除；headless Effect Session host 只消费标准 Action/Decision/Effect Session，不加载浏览器宿主 UI 状态。
 - `legalActions()` 输出 `seti-rl-action-v2`，候选来自 app 与浏览器共享的 Standard Action adapter，不构建 actionGraph、valuation、selection pressure、planner 或第二套 legality。RL envelope 补充 mask/feature 与环境版本，但沿用 registry `actionId`；`step()` 校验 actor、版本与当前 legal action id 后，把保存的完整 Standard Action descriptor 交回同一 `registry.execute`。
-- pending/conditional 边界在枚举顶层行动或执行 deterministic drain 之前先经过 inventory 审计；未知 pending key、已知 key 的未知 type、未知 conditional family 分别以稳定 `HEADLESS_UNSUPPORTED_PENDING`、`HEADLESS_UNSUPPORTED_PENDING_TYPE`、`HEADLESS_UNSUPPORTED_CONDITIONAL_FAMILY` 拒绝。诊断固定包含 `state/family/type/owner`，拒绝分支不枚举顶层行动，也不调用旧 resolver、DOM callback、recover 或 skip。
+- pending/conditional 边界在枚举顶层行动或执行 deterministic drain 之前先经过正式状态审计；未知 state/type/family 分别以稳定 `HEADLESS_UNSUPPORTED_PENDING`、`HEADLESS_UNSUPPORTED_PENDING_TYPE`、`HEADLESS_UNSUPPORTED_CONDITIONAL_FAMILY` 拒绝。诊断固定包含 `state/family/type/owner`，拒绝分支不枚举顶层行动，也不调用 resolver、DOM callback、recover 或 skip。
 - observation 已按 `publicState / selfState / decision` 分域；公开玩家仅保留资源、计数与公开科技，自己的手牌/预留牌才进入 `selfState`，牌库顺序、未来科技 bonus、未揭示外星人身份不进入观测。
 - replay 分开记录 policy `steps` 与自动结算 `environmentEvents`；checkpoint 将 RNG 与稳定编号统一保存到 `coreState.meta`，可在 fresh env 中恢复且不触发浏览器渲染。
 - 终局 25/50/70 分 pending 由 `choose_final_scoring` 独立枚举与执行：多项由 pending owner 决策并写一条 policy replay，唯一合法板块由环境自动推进；headless 路径显式禁止调用旧 final-score AI resolver，标记时间使用稳定 replay 值。
@@ -138,9 +138,9 @@ aggregate 目标为 `>= 50 decision/s`。未达标时命令退出码为 `2`，JS
 
 2026-07-19 切换到 headless rule enumeration、轻量收入弃牌规则与预验证 action 直执行后，同机常驻 10 局实测：单 worker `320 decisions / 3.725s = 85.897 decision/s`（step-only `101.166/s`），四 worker `1280 decisions / 6.200s = 206.464 decision/s`（step-only `245.234/s`）。单 worker 末局分项为 setup selection `8.676ms`、reset drain `12.778ms`、legality `5.900ms`、transition `26.054ms`、effect drain `96.087ms`、observation `165.092ms`；100 局四 worker smoke 为 100/100 terminal、非法动作 0、阻塞/worker crash 0。训练闸门按常驻多局窗口通过，单次冷启动仍包含浏览器模块装配成本。
 
-2026-07-19 Standard Action 全链路集成后的同机复测（Node `v22.22.0`）：单 worker `91 decisions / 0.598s = 152.194 decision/s`（step-only `195.657/s`），四 worker `399 decisions / 1.257s = 317.522 decision/s`（step-only `361.876/s`），均通过 `>=50 decision/s` 闸门。该基线使用 registry descriptor 直接枚举/执行并沿用 actionId；单 worker 分项为 legality `36.962ms`、transition `180.202ms`、effect drain `51.946ms`、observation `90.065ms`，用于后续兼容层删除和性能回归对比。
+2026-07-19 Standard Action 全链路集成后的同机复测（Node `v22.22.0`）：单 worker `91 decisions / 0.598s = 152.194 decision/s`（step-only `195.657/s`），四 worker `399 decisions / 1.257s = 317.522 decision/s`（step-only `361.876/s`），均通过 `>=50 decision/s` 闸门。该基线使用 registry descriptor 直接枚举/执行并沿用 actionId；单 worker分项为 legality `36.962ms`、transition `180.202ms`、effect drain `51.946ms`、observation `90.065ms`，用于性能回归对比。
 
-传统脚本仍以 `globalThis` 作为模块注册表，Node 启动时临时把 `window` 名称指向该注册表以兼容 `window.Seti*` 命名空间；这里没有浏览器对象或 DOM 能力。`app.js` 根据 `SetiHeadlessRuntimeConfig` 选择 no-op view adapter，跳过固定 DOM 收集、事件绑定、渲染、浏览器持久化和首屏 shell 初始化。
+传统脚本仍以 `globalThis` 作为模块注册表，Node 启动时把 `window` 名称指向同一注册表以加载 `window.Seti*` UMD 模块；这里没有浏览器对象或 DOM 能力。`app.js` 根据 `SetiHeadlessRuntimeConfig` 选择 no-op view adapter，跳过固定 DOM 收集、事件绑定、渲染、浏览器持久化和首屏 shell 初始化。
 
 ### 单进程 decision/s 基线
 
@@ -664,7 +664,7 @@ interface SetiHeadlessEnv {
 ## 13. 第一阶段落地建议
 
 1. 先做纯协议层
-   把当前浏览器 runtime 包一层 adapter，先输出 `observe/legalActions/step/getReplay/loadCheckpoint`。
+   由当前共享 runtime 直接输出 `observe/legalActions/step/getReplay/loadCheckpoint`。
 2. 先平铺动作，不做参数压缩
    减少训练端解释复杂度。
 3. 先只支持单步 replay 真值

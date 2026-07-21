@@ -28,7 +28,7 @@ recovery version 2 与 RL checkpoint `coreState` 只保存 `StateStore.serialize
 
 ## 机械门禁
 
-`randomizer/game/state/authority-inventory.js` 不含 `dated-adapter`、allowlist 或 expiry。
-`tools/audit_state_authority.js` 阻断旧 adapter 的 HTML/recovery/headless 引用、旧切片恢复输入，
+`randomizer/game/state/authority-inventory.js` 只允许 `status=formal`，并要求每项都有
+owner/source/target。`tools/audit_state_authority.js` 阻断禁用符号、文件和非当前 schema 恢复输入，
 并要求 recovery 同时存在 StateStore serializer/deserializer。proof obligations 与最小反例见
 `checkpoint/seti-98-proof-obligations.md`。

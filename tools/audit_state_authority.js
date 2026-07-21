@@ -11,9 +11,42 @@ const recoverySource = fs.readFileSync(path.join(repositoryRoot, "randomizer", "
 const htmlSource = fs.readFileSync(path.join(repositoryRoot, "randomizer", "index.html"), "utf8");
 const headlessSource = fs.readFileSync(path.join(repositoryRoot, "randomizer", "app", "headless-env.js"), "utf8");
 
-const inventoryAudit = inventory.auditInventory({
-  asOf: process.env.SETI_AUDIT_DATE || new Date().toISOString().slice(0, 10),
+const inventoryAudit = inventory.auditInventory();
+
+function listProductionFiles(directory) {
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const filePath = path.join(directory, entry.name);
+    if (entry.isDirectory()) return listProductionFiles(filePath);
+    if (!/\.(?:js|html)$/.test(entry.name)) return [];
+    if (/\.(?:test|browser-smoke)\.(?:js|html)$/.test(entry.name)) return [];
+    if (entry.name.includes("test-harness")) return [];
+    return [filePath];
+  });
+}
+
+const forbiddenSymbols = [
+  "legacy-state-adapter",
+  "SetiLegacyStateAdapter",
+  "projectCommittedStateToLegacySlices",
+  "projectLegacySlicesToCommittedState",
+  "toLegacyCandidate",
+  "chooseTurnAction",
+  "choosePlayCard",
+  "LEGACY_FAMILY_BY_ID",
+  "candidate-pipeline",
+  "options.migrations",
+];
+const productionFiles = listProductionFiles(path.join(repositoryRoot, "randomizer"));
+const forbiddenReferences = productionFiles.flatMap((filePath) => {
+  const source = fs.readFileSync(filePath, "utf8");
+  return forbiddenSymbols
+    .filter((symbol) => source.includes(symbol))
+    .map((symbol) => ({ file: path.relative(repositoryRoot, filePath), symbol }));
 });
+const forbiddenFiles = [
+  "randomizer/game/state/legacy-state-adapter.js",
+  "randomizer/game/ai/candidate-pipeline.js",
+].filter((relativePath) => fs.existsSync(path.join(repositoryRoot, relativePath)));
 const violations = {
   legacyStateAdapterReference: [htmlSource, recoverySource, headlessSource]
     .some((source) => source.includes("legacy-state-adapter") || source.includes("SetiLegacyStateAdapter")),
@@ -26,10 +59,15 @@ const violations = {
 const structuralViolations = Object.entries(violations).filter(([, failed]) => failed).map(([key]) => key);
 const report = {
   schemaVersion: inventory.SCHEMA_VERSION,
-  ok: inventoryAudit.ok && structuralViolations.length === 0,
+  ok: inventoryAudit.ok
+    && structuralViolations.length === 0
+    && forbiddenReferences.length === 0
+    && forbiddenFiles.length === 0,
   inventory: inventoryAudit,
   violations: structuralViolations,
-  residualAdapters: inventory.INVENTORY.filter((entry) => entry.status === "dated-adapter"),
+  forbiddenReferences,
+  forbiddenFiles,
+  residualInventory: inventory.INVENTORY,
 };
 
 process.stdout.write(`${JSON.stringify(report, null, 2)}\n`);

@@ -155,21 +155,9 @@ function committedBytes(store) {
   assert.equal(store.validate(working).code, "STATE_ACCESSOR_OR_HIDDEN_FIELD");
 })();
 
-(function testCanonicalSerializationAndExplicitMigration() {
+(function testCanonicalSerializationAndUnknownSchemaRejection() {
   const initial = createState();
-  const store = createStateStore(initial, {
-    migrations: {
-      "seti-committed-game-state-v0": (legacy) => ({
-        ...legacy,
-        meta: {
-          ...legacy.meta,
-          schemaVersion: SCHEMA_VERSION,
-          sequences: legacy.meta.sequences || {},
-        },
-        finalScoring: legacy.finalScoring || {},
-      }),
-    },
-  });
+  const store = createStateStore(initial);
   const serialized = store.serialize();
   assert.equal(serialized.ok, true);
   assert.equal(serialized.serialized, store.serialize(store.getSnapshot()).serialized);
@@ -178,20 +166,13 @@ function committedBytes(store) {
   assert.deepEqual(roundTrip.state, store.getSnapshot());
   assert.equal(store.deserialize("{broken").code, "STATE_DESERIALIZE_FAILED");
 
-  const legacy = createState();
-  legacy.meta.schemaVersion = "seti-committed-game-state-v0";
-  delete legacy.meta.sequences;
-  delete legacy.finalScoring;
-  const migrated = store.deserialize(JSON.stringify(legacy));
-  assert.equal(migrated.ok, true);
-  assert.deepEqual(migrated.applied, ["seti-committed-game-state-v0"]);
-  assert.equal(migrated.state.meta.schemaVersion, SCHEMA_VERSION);
-  assert.deepEqual(migrated.state.finalScoring, {});
-  assert.equal(Object.isFrozen(migrated.state), true);
-
-  const missing = createState();
-  missing.meta.schemaVersion = "unknown-v0";
-  assert.equal(store.deserialize(JSON.stringify(missing)).code, "STATE_MIGRATION_MISSING");
+  for (const schemaVersion of ["seti-committed-game-state-v0", "unknown-v0", null]) {
+    const rejected = createState();
+    rejected.meta.schemaVersion = schemaVersion;
+    const result = store.deserialize(JSON.stringify(rejected));
+    assert.equal(result.ok, false);
+    assert.equal(result.code, "STATE_SCHEMA_VERSION_UNSUPPORTED");
+  }
 })();
 
 (function testSubscriberCannotMutateOrRollbackCommittedState() {

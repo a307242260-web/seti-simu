@@ -194,7 +194,7 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 
 1. 阶段 0/1（SETI-62 总控）：冻结本契约与 reference core；不改 SETI-56 的 action handler 热路径。
 2. 阶段 2：研究科技贯穿链。Standard Action 仍由 SETI-56 registry 拥有；本阶段只把 rotate→decision→placement→reward continuation 映射为 Effect Group。
-3. 阶段 3：扫描与打牌代表链已落地；SETI-60 conditional Action descriptor 直接作为 DecisionEffect choice/journal identity，nested trigger 和多个 DecisionEffect 已由固定 trace 与 replay 验证。SETI-76 在同一 runtime 上补齐多参与者扫描奖励、延迟隐藏补牌、数据放置与登陆目标/支付链；Browser Host 只提交 inspect choices，旧 scan/data/land pending owner 与 continuation 在该迁移热路径为 0。完整旧网页兼容入口删除仍归阶段 6/7。
+3. 阶段 3：扫描与打牌代表链已落地；SETI-60 conditional Action descriptor 直接作为 DecisionEffect choice/journal identity，nested trigger 和多个 DecisionEffect 已由固定 trace 与 replay 验证。SETI-76 在同一 runtime 上补齐多参与者扫描奖励、延迟隐藏补牌、数据放置与登陆目标/支付链；Browser Host 只提交 inspect choices，scan/data/land 规则 owner 与 continuation 只在 Effect Session 内。
 4. 阶段 4：已统一 Quick Action boundary、interrupt/resume 和所有可中断 decision 的 stale validation；Standard Action quick descriptor 通过单一 coordinator 接入，main/quick journal 可区分。
 5. 阶段 5：已把 main/quick history、RNG/replay、undo 与 irreversible barrier 收口到 reference session journal，并固化 checkpoint/fork 与 confirmed replay cursor；旧浏览器 history 热路径的删除仍属于阶段 6/8 adapter 迁移。
 6. 阶段 6：浏览器 adapter 只负责 dispatch/observe/render，删除对应 DOM continuation。

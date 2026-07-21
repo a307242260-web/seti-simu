@@ -37,7 +37,7 @@ for (
     failures.push(`第 ${stepIndex} 步没有合法行动`);
     break;
   }
-  actionSequence.push(action.payload?.sourceActionType || action.family);
+  actionSequence.push(action.family);
   const result = env.step(action);
   if (!result.ok) {
     failures.push(result.error || `第 ${stepIndex} 步执行失败`);

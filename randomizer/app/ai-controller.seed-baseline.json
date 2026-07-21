@@ -33,6 +33,6 @@
     "choose_payment": 58,
     "pass": 16,
     "choose_card": 12,
-    "end-turn": 16
+    "end_turn": 16
   }
 }

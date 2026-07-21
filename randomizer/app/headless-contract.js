@@ -1,7 +1,5 @@
 "use strict";
 
-const crypto = require("node:crypto");
-
 const ACTION_SCHEMA_VERSION = "seti-rl-action-v2";
 const OBSERVATION_SCHEMA_VERSION = "seti-rl-observation-v1";
 
@@ -15,32 +13,14 @@ const CONDITIONAL_FAMILIES = Object.freeze([
   "choose_final_scoring", "accept_optional_effect",
 ]);
 
-const LEGACY_FAMILY_BY_ID = Object.freeze({
-  launch: "launch",
-  orbit: "orbit",
-  land: "land",
-  scan: "scan",
-  analyze: "analyze",
-  researchTech: "research_tech",
-  playCard: "play_card",
-  pass: "pass",
-  move: "move",
-  quickTrade: "quick_trade",
-  industry: "industry",
-  cardCorner: "card_corner",
-  placeData: "place_data",
-  runezuFaceSymbol: "runezu_face_symbol",
-  "end-turn": "end_turn",
-});
-
 const ACTION_FAMILY_INDEX = Object.freeze(Object.fromEntries(
   [...TURN_ACTION_FAMILIES, ...CONDITIONAL_FAMILIES].map((family, index) => [family, index]),
 ));
 
 const ACTION_COVERAGE_MATRIX = Object.freeze(TURN_ACTION_FAMILIES.map((family) => Object.freeze({
   family,
-  legacyId: Object.keys(LEGACY_FAMILY_BY_ID).find((id) => LEGACY_FAMILY_BY_ID[id] === family),
-  characterization: "headless_rule_enumeration_and_prevalidated_execution",
+  source: "standard_action_descriptor",
+  characterization: "shared_registry_enumeration_and_prevalidated_execution",
 })));
 
 const CONDITIONAL_COVERAGE_MATRIX = Object.freeze(CONDITIONAL_FAMILIES.map((family) => Object.freeze({
@@ -56,56 +36,18 @@ function compactObject(value) {
   return Object.fromEntries(Object.entries(value).filter(([, item]) => item != null));
 }
 
-function normalizeTarget(target) {
-  if (target == null) return undefined;
-  if (typeof target !== "object") return { choiceId: String(target) };
-  const allowed = [
-    "cardId", "handIndex", "publicCardSlot", "rocketId", "planetId", "satelliteId",
-    "sectorX", "sectorY", "nebulaId", "techTileId", "techSlotId", "traceType", "choiceId",
-    "kind", "row", "column", "slotId", "direction", "x", "y",
-  ];
-  return compactObject(Object.fromEntries(allowed.map((key) => [key, clone(target[key])])));
-}
-
-function normalizePayload(candidate) {
-  return compactObject({
-    tradeId: candidate.tradeId,
-    cardId: candidate.cardId,
-    cardInstanceId: candidate.cardInstanceId,
-    handIndex: candidate.handIndex,
-    blueSlot: candidate.blueSlot,
-    placementSlot: candidate.placementSlot,
-    rocketId: candidate.rocketId,
-    planetId: candidate.planetId,
-    direction: candidate.direction,
-    deltaX: candidate.deltaX,
-    deltaY: candidate.deltaY,
-    requiredMovePoints: candidate.requiredMovePoints,
-    alienSlotId: candidate.alienSlotId,
-    position: candidate.position,
-    symbolId: candidate.symbolId,
-    preserveHandIndex: candidate.preserveHandIndex,
-    sourceActionType: candidate.kind,
-  });
-}
-
-function stableActionId(actorPlayerId, family, target, payload) {
-  const body = JSON.stringify({ actorPlayerId, family, target: target || null, payload: payload || {} });
-  return `${family}:${crypto.createHash("sha256").update(body).digest("hex").slice(0, 16)}`;
-}
-
 function normalizeTurnCandidate(candidate, actorPlayerId) {
   const standardAction = candidate?.standardAction
     || (candidate?.schemaVersion === "seti-standard-action-v1" ? candidate : null);
-  if (standardAction && TURN_ACTION_FAMILIES.includes(standardAction.family)) {
+  if (
+    standardAction
+    && standardAction.schemaVersion === "seti-standard-action-v1"
+    && TURN_ACTION_FAMILIES.includes(standardAction.family)
+    && standardAction.phase !== "conditional"
+  ) {
     const family = standardAction.family;
     const target = clone(standardAction.target || undefined);
-    const legacyId = Object.keys(LEGACY_FAMILY_BY_ID)
-      .find((id) => LEGACY_FAMILY_BY_ID[id] === family);
-    const payload = compactObject({
-      ...(clone(standardAction.payload || {})),
-      sourceActionType: legacyId,
-    });
+    const payload = clone(standardAction.payload || undefined);
     return compactObject({
       schemaVersion: ACTION_SCHEMA_VERSION,
       actionId: standardAction.actionId,
@@ -123,32 +65,18 @@ function normalizeTurnCandidate(candidate, actorPlayerId) {
       summary: standardAction.summary || family,
     });
   }
-  const family = LEGACY_FAMILY_BY_ID[candidate?.id];
-  if (!family) return null;
-  const target = normalizeTarget(candidate.target);
-  const payload = normalizePayload(candidate);
-  return compactObject({
-    schemaVersion: ACTION_SCHEMA_VERSION,
-    actionId: stableActionId(actorPlayerId, family, target, payload),
-    actorPlayerId,
-    decisionType: "turn_action",
-    family,
-    target,
-    payload: Object.keys(payload).length ? payload : undefined,
-    actionFeature: {
-      familyIndex: ACTION_FAMILY_INDEX[family],
-      phase: family === "end_turn" ? "turn_control" : TURN_ACTION_FAMILIES.indexOf(family) >= 8 ? "quick" : "main",
-      hasTarget: Boolean(target && Object.keys(target).length),
-      hasPayload: Boolean(Object.keys(payload).length),
-    },
-    summary: candidate.label || family,
-  });
+  return null;
 }
 
 function normalizeConditionalCandidate(candidate, actorPlayerId) {
   const standardAction = candidate?.standardAction
     || (candidate?.schemaVersion === "seti-standard-action-v1" ? candidate : null);
-  if (standardAction && CONDITIONAL_FAMILIES.includes(standardAction.family)) {
+  if (
+    standardAction
+    && standardAction.schemaVersion === "seti-standard-action-v1"
+    && CONDITIONAL_FAMILIES.includes(standardAction.family)
+    && standardAction.phase === "conditional"
+  ) {
     const family = standardAction.family;
     const target = clone(standardAction.target || undefined);
     const payload = clone(standardAction.payload || undefined);
@@ -169,26 +97,7 @@ function normalizeConditionalCandidate(candidate, actorPlayerId) {
       summary: standardAction.summary || family,
     });
   }
-  const family = candidate?.family;
-  if (!CONDITIONAL_FAMILIES.includes(family)) return null;
-  const target = normalizeTarget(candidate.target);
-  const payload = normalizePayload(candidate);
-  return compactObject({
-    schemaVersion: ACTION_SCHEMA_VERSION,
-    actionId: stableActionId(actorPlayerId, family, target, payload),
-    actorPlayerId,
-    decisionType: "conditional_choice",
-    family,
-    target,
-    payload: Object.keys(payload).length ? payload : undefined,
-    actionFeature: {
-      familyIndex: ACTION_FAMILY_INDEX[family],
-      phase: "conditional",
-      hasTarget: Boolean(target && Object.keys(target).length),
-      hasPayload: Boolean(Object.keys(payload).length),
-    },
-    summary: candidate.label || family,
-  });
+  return null;
 }
 
 function sanitizeCard(card) {
@@ -301,7 +210,6 @@ module.exports = {
   OBSERVATION_SCHEMA_VERSION,
   TURN_ACTION_FAMILIES,
   CONDITIONAL_FAMILIES,
-  LEGACY_FAMILY_BY_ID,
   ACTION_FAMILY_INDEX,
   ACTION_COVERAGE_MATRIX,
   CONDITIONAL_COVERAGE_MATRIX,

@@ -4,7 +4,6 @@ const assert = require("node:assert/strict");
 const {
   TURN_ACTION_FAMILIES,
   CONDITIONAL_FAMILIES,
-  LEGACY_FAMILY_BY_ID,
   ACTION_COVERAGE_MATRIX,
   CONDITIONAL_COVERAGE_MATRIX,
   normalizeTurnCandidate,
@@ -23,9 +22,15 @@ assert.equal(CONDITIONAL_COVERAGE_MATRIX.length, 7);
 assert.deepEqual(CONDITIONAL_COVERAGE_MATRIX.map((entry) => entry.family), CONDITIONAL_FAMILIES);
 for (const family of CONDITIONAL_FAMILIES) {
   const action = normalizeConditionalCandidate({
-    id: "conditionalChoice",
-    family,
-    target: { kind: "test-choice", choiceId: family },
+    standardAction: {
+      schemaVersion: "seti-standard-action-v1",
+      actionId: `${family}:shared-action-id`,
+      actorId: "player-blue",
+      family,
+      phase: "conditional",
+      target: { kind: "test-choice", choiceId: family },
+      payload: {},
+    },
   }, "player-blue");
   assert.equal(action.family, family);
   assert.equal(action.decisionType, "conditional_choice");
@@ -48,29 +53,31 @@ assert.equal(sharedConditional.actionId, "choose_reward:shared-action-id");
 assert.equal(sharedConditional.actorPlayerId, "player-blue");
 
 for (const entry of ACTION_COVERAGE_MATRIX) {
-  assert.ok(entry.legacyId, `${entry.family} 应有 runtime selector 映射`);
+  assert.equal(entry.source, "standard_action_descriptor");
+  const phase = entry.family === "end_turn"
+    ? "turn_control"
+    : TURN_ACTION_FAMILIES.indexOf(entry.family) >= 8 ? "quick" : "main";
   const action = normalizeTurnCandidate({
-    id: entry.legacyId,
-    kind: entry.family === "end_turn" ? "end-turn" : "main",
-    rocketId: entry.family === "move" ? 7 : null,
-    direction: entry.family === "move" ? "clockwise" : null,
-    target: entry.family === "scan" ? { sectorX: 3 } : null,
+    standardAction: {
+      schemaVersion: "seti-standard-action-v1",
+      actionId: `${entry.family}:shared-action-id`,
+      actorId: "player-white",
+      family: entry.family,
+      phase,
+      target: entry.family === "scan" ? { sectorX: 3 } : null,
+      payload: entry.family === "move" ? { rocketId: 7, direction: "clockwise" } : {},
+    },
   }, "player-white");
   assert.equal(action.family, entry.family);
   assert.equal(action.decisionType, "turn_action");
   assert.equal(action.schemaVersion, "seti-rl-action-v2");
   assert.equal("score" in action, false);
   assert.equal("actionGraph" in action, false);
-  assert.deepEqual(action, normalizeTurnCandidate({
-    id: entry.legacyId,
-    kind: entry.family === "end_turn" ? "end-turn" : "main",
-    rocketId: entry.family === "move" ? 7 : null,
-    direction: entry.family === "move" ? "clockwise" : null,
-    target: entry.family === "scan" ? { sectorX: 3 } : null,
-  }, "player-white"), `${entry.family} action id/feature 应稳定`);
+  assert.equal(action.actionId, `${entry.family}:shared-action-id`);
 }
 
-assert.deepEqual(Object.values(LEGACY_FAMILY_BY_ID), TURN_ACTION_FAMILIES);
+assert.equal(normalizeTurnCandidate({ id: "move", kind: "quick" }, "player-white"), null);
+assert.equal(normalizeConditionalCandidate({ family: "choose_reward" }, "player-blue"), null);
 const sharedTurn = normalizeTurnCandidate({
   standardAction: {
     schemaVersion: "seti-standard-action-v1",

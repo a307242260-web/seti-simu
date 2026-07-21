@@ -7,58 +7,47 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const SCHEMA_VERSION = "seti-state-authority-inventory-v1";
+  const SCHEMA_VERSION = "seti-state-authority-inventory-v2";
   const INVENTORY = Object.freeze([
     Object.freeze({
       id: "committed-game-state-v1",
-      status: "store-owned",
+      status: "formal",
       owner: "StateStore",
-      expiresOn: null,
       source: "StateStore.getSnapshot/beginWorkingCopy",
       target: "StateStore.compareAndCommit",
     }),
     Object.freeze({
       id: "card-task-index",
-      status: "derived",
+      status: "formal",
       owner: "card task query runtime",
-      expiresOn: null,
       source: "CommittedGameState.cards/players",
       target: "rebuildCardTaskIndex",
     }),
     Object.freeze({
       id: "setup-selection",
-      status: "session-owned",
+      status: "formal",
       owner: "setup session",
-      expiresOn: null,
       source: "setup Decision/Effect Session",
       target: "confirmed match/players facts",
     }),
     Object.freeze({
       id: "card-tech-rocket-ui",
-      status: "host-only",
+      status: "formal",
       owner: "Browser ViewState",
-      expiresOn: null,
       source: "BrowserProjection/ViewState",
       target: "renderer only",
     }),
   ]);
 
-  function auditInventory(options = {}) {
-    const asOf = String(options.asOf || "").slice(0, 10);
+  function auditInventory() {
     const missingOwner = INVENTORY.filter((entry) => !entry.owner).map((entry) => entry.id);
-    const undatedAdapters = INVENTORY
-      .filter((entry) => entry.status === "dated-adapter" && !entry.expiresOn)
-      .map((entry) => entry.id);
-    const expiredAdapters = asOf
-      ? INVENTORY.filter((entry) => entry.expiresOn && entry.expiresOn < asOf).map((entry) => entry.id)
-      : [];
+    const nonFormal = INVENTORY.filter((entry) => entry.status !== "formal").map((entry) => entry.id);
     return Object.freeze({
-      ok: missingOwner.length === 0 && undatedAdapters.length === 0 && expiredAdapters.length === 0,
+      ok: missingOwner.length === 0 && nonFormal.length === 0,
       schemaVersion: SCHEMA_VERSION,
       total: INVENTORY.length,
       missingOwner,
-      undatedAdapters,
-      expiredAdapters,
+      nonFormal,
     });
   }
 
