@@ -8268,7 +8268,7 @@
     createAlienLabRestoreCommand,
     maybeConsumeAlienLabPanelForMainAction,
     maybeRestoreAlienLabPanelForTrace,
-    maybeApplyIndustryLaunchScan,
+    maybeApplyIndustryLaunchScan: maybeApplyIndustryLaunchScanForRoot,
     startLaunchSectorFinishEffectFlow,
     appendIndustryPlayPassiveStatus,
     getStrategyPassiveRewardIcon,
@@ -8298,6 +8298,7 @@
     handleStrategyPassiveSlotClick,
     handleCompanyActionMarkerClick
   } = industryRuntime;
+  const maybeApplyIndustryLaunchScan = (...args) => maybeApplyIndustryLaunchScanForRoot(browserRuleState, ...args);
 
   const techRuntime = techRuntimeModule.createTechRuntime({
       headless: headlessMode,
@@ -8313,10 +8314,11 @@
       actionHistory: typeof actionHistory === "undefined" ? undefined : actionHistory,
       beginCardSelection: typeof beginCardSelection === "undefined" ? undefined : beginCardSelection,
       beginEffectHistoryStep: typeof beginEffectHistoryStep === "undefined" ? undefined : beginEffectHistoryStep,
-      buildPlanetMarkerRemovalChoices: (...args) => buildPlanetMarkerRemovalChoices(...args),
+      buildPlutoMarkerRemovalChoices: (workingRoot, ...args) => (
+        actionInteractionRuntime?.buildPlutoMarkerRemovalChoices(workingRoot, ...args) || []
+      ),
       cancelIndustryAbilityFlow: (...args) => cancelIndustryAbilityFlow(...args),
       cardEffects: typeof cardEffects === "undefined" ? undefined : cardEffects,
-      cardState: typeof cardState === "undefined" ? undefined : cardState,
       cards: typeof cards === "undefined" ? undefined : cards,
       clearActionEffectFlow: (...args) => clearActionEffectFlow(...args),
       clearActionPending: (...args) => clearActionPending(...args),
@@ -8339,20 +8341,17 @@
       finishAutomaticRewardEffect: (...args) => finishAutomaticRewardEffect(...args),
       formatPlanetRewardGain: (...args) => formatPlanetRewardGain(...args),
       getCurrentActionEffect: typeof getCurrentActionEffect === "undefined" ? undefined : getCurrentActionEffect,
-      getCurrentPlayer: (...args) => getCurrentPlayer(...args),
-      getEffectOwnerPlayer: (...args) => getEffectOwnerPlayer(...args),
-      getInterfacePlayer: (...args) => getInterfacePlayer(...args),
-      getPendingOwnerFields: (...args) => getPendingOwnerFields(...args),
       getPlanetName: (...args) => getPlanetName(...args),
       getPlanetSectorCoordinate: (...args) => getPlanetSectorCoordinate(...args),
-      getPlayerById: (...args) => getPlayerById(...args),
       getCurrentActionIrreversibleReason: () => getCurrentActionIrreversibleReason(),
       hasCurrentMainActionIrreversibleBarrier: (...args) => hasCurrentMainActionIrreversibleBarrier(...args),
       historyCommands: typeof historyCommands === "undefined" ? undefined : historyCommands,
       industry: typeof industry === "undefined" ? undefined : industry,
+      maybeApplyIndustryLaunchScan: (workingRoot, ...args) => maybeApplyIndustryLaunchScanForRoot(workingRoot, ...args),
       normalizeResourceCost: (...args) => normalizeResourceCost(...args),
+      planetReferenceLayout: typeof planetReferenceLayout === "undefined" ? undefined : planetReferenceLayout,
       planetRewards: typeof planetRewards === "undefined" ? undefined : planetRewards,
-      playerState: typeof playerState === "undefined" ? undefined : playerState,
+      planetStats: typeof planetStats === "undefined" ? undefined : planetStats,
       players: typeof players === "undefined" ? undefined : players,
       recordAbilityCommands: typeof recordAbilityCommands === "undefined" ? undefined : recordAbilityCommands,
       recordHistoryCommand: typeof recordHistoryCommand === "undefined" ? undefined : recordHistoryCommand,
@@ -8366,7 +8365,9 @@
       renderSectorNebulaDataBoard: (...args) => renderSectorNebulaDataBoard(...args),
       renderStateReadout: (...args) => renderStateReadout(...args),
       renderWheels: (...args) => renderWheels(...args),
-      rocketState: typeof rocketState === "undefined" ? undefined : rocketState,
+      removePlutoMarker: (workingRoot, ...args) => actionInteractionRuntime.removePlutoMarker(workingRoot, ...args),
+      restoreObjectSnapshot: typeof restoreObjectSnapshot === "undefined" ? undefined : restoreObjectSnapshot,
+      rocketActions: typeof rocketActions === "undefined" ? undefined : rocketActions,
       runAction: (...args) => runAction(...args),
       setQuickPanelOpen: (...args) => setQuickPanelOpen(...args),
       skipActionEffectWithMessage: (...args) => skipActionEffectWithMessage(...args),
@@ -8374,18 +8375,16 @@
       structuredClone: typeof structuredClone === "undefined" ? undefined : structuredClone,
       syncCardSelectionChrome: (...args) => syncCardSelectionChrome(...args),
       syncInteractionFocusChrome: (...args) => syncInteractionFocusChrome(...args),
+      syncPlanetOrbitLandMarkers: (...args) => syncPlanetOrbitLandMarkers(...args),
       syncTechRenderContext: (...args) => syncTechRenderContext(...args),
       tech: typeof tech === "undefined" ? undefined : tech,
-      techGameState: typeof techGameState === "undefined" ? undefined : techGameState,
       techRenderContext: typeof techRenderContext === "undefined" ? undefined : techRenderContext,
-      turnState: typeof turnState === "undefined" ? undefined : turnState,
       uiRuntimeState: typeof uiRuntimeState === "undefined" ? undefined : uiRuntimeState,
       updateActionButtons: (...args) => updateActionButtons(...args),
-      withPendingOwnerPlayer: (...args) => withPendingOwnerPlayer(...args),
   });
   const {
-    isTechActionSelectionActive,
-    isTechTilePickingActive,
+    isTechActionSelectionActive: isTechActionSelectionActiveForRoot,
+    isTechTilePickingActive: isTechTilePickingActiveForRoot,
     isTechAwaitingConfirm,
     getResearchTechSelectionEffect,
     getResearchTechSelectionPayload,
@@ -8397,13 +8396,13 @@
     appendResearchTechFollowupEffects: appendResearchTechFollowupEffectsForRoot,
     onTechTileSelected: onTechTileSelectedForRoot,
     onTechTileTaken: onTechTileTakenForRoot,
-    syncTechSelectionChrome,
+    syncTechSelectionChrome: syncTechSelectionChromeForRoot,
     clearResearchTechSelectionState: clearResearchTechSelectionStateForRoot,
     restoreResearchTechSelectionAfterUndo: restoreResearchTechSelectionAfterUndoForRoot,
     cancelPendingResearchTechTileChoice: cancelPendingResearchTechTileChoiceForRoot,
     cancelTechSelection: cancelTechSelectionForRoot,
-    renderTechBoard,
-    closeTechBlueSlotPicker,
+    renderTechBoard: renderTechBoardForRoot,
+    closeTechBlueSlotPicker: closeTechBlueSlotPickerForRoot,
     openTechBlueSlotPicker: openTechBlueSlotPickerForRoot,
     finalizeTechTakeResult: finalizeTechTakeResultForRoot,
     commitResearchTechSelectionResult: commitResearchTechSelectionResultForRoot,
@@ -8413,19 +8412,24 @@
     isPiratesRaidPlacementActiveForPlayer,
     renderPiratesRaidTechMarkers,
     getCurrentPiratesRaidMarkerEffect,
-    executeIndustryPiratesRaidMarkerEffect,
-    handlePiratesRaidTechMarkerClick,
-    executeIndustryPiratesRaidPublicityEffect,
-    startIndustryPiratesRaidLaunchFlow,
-    buildPiratesRaidLaunchChoices,
-    executeIndustryPiratesRaidLaunchEffect,
+    executeIndustryPiratesRaidMarkerEffect: executeIndustryPiratesRaidMarkerEffectForRoot,
+    handlePiratesRaidTechMarkerClick: handlePiratesRaidTechMarkerClickForRoot,
+    executeIndustryPiratesRaidPublicityEffect: executeIndustryPiratesRaidPublicityEffectForRoot,
+    startIndustryPiratesRaidLaunchFlow: startIndustryPiratesRaidLaunchFlowForRoot,
+    buildPiratesRaidLaunchChoices: buildPiratesRaidLaunchChoicesForRoot,
+    executeIndustryPiratesRaidLaunchEffect: executeIndustryPiratesRaidLaunchEffectForRoot,
     getPiratesRaidLaunchCoordinate,
-    handlePiratesRaidLaunchChoice,
-    setCheatModeOpen,
-    toggleCheatMode,
+    handlePiratesRaidLaunchChoice: handlePiratesRaidLaunchChoiceForRoot,
+    setCheatModeOpen: setCheatModeOpenForRoot,
+    toggleCheatMode: toggleCheatModeForRoot,
     researchTechForCurrentPlayer,
     commitSelectedResearchTech
   } = techRuntime;
+  const isTechActionSelectionActive = (...args) => isTechActionSelectionActiveForRoot(browserRuleState, ...args);
+  const isTechTilePickingActive = (...args) => isTechTilePickingActiveForRoot(browserRuleState, ...args);
+  const syncTechSelectionChrome = (...args) => syncTechSelectionChromeForRoot(browserRuleState, ...args);
+  const renderTechBoard = (...args) => renderTechBoardForRoot(browserRuleState, ...args);
+  const closeTechBlueSlotPicker = (...args) => closeTechBlueSlotPickerForRoot(browserRuleState, ...args);
   const isTechTileOwnedByOtherPlayer = (...args) => isTechTileOwnedByOtherPlayerForRoot(browserRuleState, ...args);
   const appendResearchTechFollowupEffects = (...args) => appendResearchTechFollowupEffectsForRoot(browserRuleState, ...args);
   const onTechTileSelected = (...args) => onTechTileSelectedForRoot(browserRuleState, ...args);
@@ -8440,6 +8444,15 @@
   const selectResearchTechTileForCurrentFlow = (...args) => selectResearchTechTileForCurrentFlowForRoot(browserRuleState, ...args);
   const confirmTechBlueSlotChoice = (...args) => confirmTechBlueSlotChoiceForRoot(browserRuleState, ...args);
   const handleSupplyTechTileClick = (...args) => handleSupplyTechTileClickForRoot(browserRuleState, ...args);
+  const executeIndustryPiratesRaidMarkerEffect = (...args) => executeIndustryPiratesRaidMarkerEffectForRoot(browserRuleState, ...args);
+  const handlePiratesRaidTechMarkerClick = (...args) => handlePiratesRaidTechMarkerClickForRoot(browserRuleState, ...args);
+  const executeIndustryPiratesRaidPublicityEffect = (...args) => executeIndustryPiratesRaidPublicityEffectForRoot(browserRuleState, ...args);
+  const startIndustryPiratesRaidLaunchFlow = (...args) => startIndustryPiratesRaidLaunchFlowForRoot(browserRuleState, ...args);
+  const buildPiratesRaidLaunchChoices = (...args) => buildPiratesRaidLaunchChoicesForRoot(browserRuleState, ...args);
+  const executeIndustryPiratesRaidLaunchEffect = (...args) => executeIndustryPiratesRaidLaunchEffectForRoot(browserRuleState, ...args);
+  const handlePiratesRaidLaunchChoice = (...args) => handlePiratesRaidLaunchChoiceForRoot(browserRuleState, ...args);
+  const setCheatModeOpen = (...args) => setCheatModeOpenForRoot(browserRuleState, ...args);
+  const toggleCheatMode = (...args) => toggleCheatModeForRoot(browserRuleState, ...args);
 
   function createInitialSelectionPicker(offer) {
     const wrap = document.createElement("div");

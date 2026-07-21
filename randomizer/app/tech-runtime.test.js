@@ -71,6 +71,7 @@ function createHarness() {
         return { ok: false, message: `slot:${options.blueSlot}` };
       },
     },
+    beginEffectHistoryStep: () => {},
     cardEffects: { EFFECT_TYPES: { RESEARCH_TECH: "research_tech" } },
     createActionContext: (workingRoot) => ({ playerState: workingRoot.playerState }),
     document,
@@ -79,15 +80,29 @@ function createHarness() {
     getInterfacePlayer: () => ({ id: "p1", techState: {} }),
     getCurrentActionIrreversibleReason: () => null,
     hasCurrentMainActionIrreversibleBarrier: () => false,
+    finishAutomaticRewardEffect: (_effect, result) => result,
+    formatPlanetRewardGain: (gain) => `${gain.publicity || 0}宣传`,
+    historyCommands: {
+      createRestorePlayerCommand: () => ({ type: "restore-player" }),
+    },
+    industry: { PIRATES_RAID_PUBLICITY_GAIN: 3 },
     pendingState,
     playerState: { currentPlayerId: "p1", players: [{ id: "p1", techState: {} }] },
     players: {
       getCurrentPlayer: (state) => state.players.find((player) => player.id === state.currentPlayerId) || null,
+      gainResources(player, gain) {
+        player.resources ||= {};
+        for (const [key, value] of Object.entries(gain)) {
+          player.resources[key] = Number(player.resources[key] || 0) + Number(value || 0);
+        }
+      },
     },
+    recordHistoryCommand: () => {},
     renderStateReadout: () => calls.push({ type: "readout" }),
     renderRunezuBoardSymbols: () => {},
     rocketState: { statusNote: "" },
     setQuickPanelOpen: () => {},
+    structuredClone,
     syncInteractionFocusChrome: () => {},
     syncTechRenderContext: () => {},
     tech: {
@@ -182,6 +197,29 @@ function createHarness() {
     () => runtime.selectResearchTechTileForCurrentFlow(undefined, "blue1"),
     /explicit workingRoot/,
     "科技规则 operation 缺 root 必须立即失败",
+  );
+}
+
+{
+  const harness = createHarness();
+  harness.workingRoot.playerState.players[0].resources = { publicity: 0 };
+  const runtime = createTechRuntime(harness.context);
+  const isolatedRoot = structuredClone(harness.workingRoot);
+  const beforeBoundRoot = structuredClone(harness.workingRoot);
+
+  const result = runtime.executeIndustryPiratesRaidPublicityEffect(isolatedRoot, {
+    id: "pirates-publicity",
+    label: "星际海盗",
+    options: { gain: { publicity: 3 } },
+  });
+
+  assert.equal(result.ok, true);
+  assert.equal(isolatedRoot.playerState.players[0].resources.publicity, 3);
+  assert.deepEqual(harness.workingRoot, beforeBoundRoot, "海盗宣传奖励不得读取或写入闭包根");
+  assert.throws(
+    () => runtime.executeIndustryPiratesRaidPublicityEffect(undefined, {}),
+    /explicit workingRoot/,
+    "海盗规则 operation 缺 root 必须立即失败",
   );
 }
 

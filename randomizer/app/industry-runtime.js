@@ -146,6 +146,17 @@
       },
     };
 
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("industry-runtime operation requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
+
+    function getWorkingCurrentPlayer(workingRoot) {
+      return players.getCurrentPlayer(requireWorkingRoot(workingRoot).playerState);
+    }
+
     function isIndustryHandSelectionActive() {
       return decisionState.cardSelectionAction?.type === "industry_deepspace_hand"
         || decisionState.cardSelectionAction?.type === "industry_future_hand";
@@ -1002,11 +1013,12 @@
       return restoreResult;
     }
 
-    function maybeApplyIndustryLaunchScan(result) {
-      const player = getCurrentPlayer();
+    function maybeApplyIndustryLaunchScan(workingRoot, result) {
+      requireWorkingRoot(workingRoot);
+      const player = getWorkingCurrentPlayer(workingRoot);
       if (!result?.ok || !industry?.shouldScanEarthOnLaunch?.(player)) return result;
       const earth = getEarthSectorCoordinate();
-      const scanResult = abilities.executeAbility("scanSector", createActionContext(), {
+      const scanResult = abilities.executeAbility("scanSector", createActionContext(workingRoot), {
         sectorX: earth.x,
         skipCost: true,
         source: "industry",

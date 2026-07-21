@@ -27,9 +27,9 @@
       beginCardSelection,
       beginEffectHistoryStep,
       buildPlanetMarkerRemovalChoices,
+      buildPlutoMarkerRemovalChoices,
       cancelIndustryAbilityFlow,
       cardEffects,
-      cardState,
       cards,
       clearActionEffectFlow,
       clearActionPending,
@@ -46,20 +46,17 @@
       finishAutomaticRewardEffect,
       formatPlanetRewardGain,
       getCurrentActionEffect,
-      getCurrentPlayer,
-      getEffectOwnerPlayer,
-      getInterfacePlayer,
-      getPendingOwnerFields,
       getPlanetName,
       getPlanetSectorCoordinate,
-      getPlayerById,
       getCurrentActionIrreversibleReason,
       hasCurrentMainActionIrreversibleBarrier,
       historyCommands,
       industry,
+      maybeApplyIndustryLaunchScan,
       normalizeResourceCost,
+      planetReferenceLayout,
       planetRewards,
-      playerState,
+      planetStats,
       players,
       recordAbilityCommands,
       recordHistoryCommand,
@@ -73,7 +70,9 @@
       renderSectorNebulaDataBoard,
       renderStateReadout,
       renderWheels,
-      rocketState,
+      removePlutoMarker,
+      restoreObjectSnapshot,
+      rocketActions,
       runAction,
       setQuickPanelOpen,
       skipActionEffectWithMessage,
@@ -81,14 +80,12 @@
       structuredClone,
       syncCardSelectionChrome,
       syncInteractionFocusChrome,
+      syncPlanetOrbitLandMarkers,
       syncTechRenderContext,
       tech,
-      techGameState,
       techRenderContext,
-      turnState,
       uiRuntimeState,
       updateActionButtons,
-      withPendingOwnerPlayer
     } = context;
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
@@ -129,11 +126,126 @@
         : null;
     }
 
-    function isTechActionSelectionActive() {
+    function getWorkingEffectOwnerPlayer(workingRoot, effect = null) {
+      const explicit = resolveWorkingPlayerReference(workingRoot, {
+        playerId: effect?.options?.targetPlayerId || effect?.playerId || effect?.options?.playerId,
+        playerColor: effect?.options?.targetPlayerColor || effect?.playerColor || effect?.options?.playerColor,
+      });
+      return explicit
+        || resolveWorkingPlayerReference(workingRoot, {
+          playerId: decisionState.actionEffectFlow?.defaultPlayerId || decisionState.actionEffectFlow?.playerId,
+        })
+        || getWorkingCurrentPlayer(workingRoot);
+    }
+
+    function getWorkingPendingOwnerFields(workingRoot, effect = null, player = null) {
+      const owner = player || getWorkingEffectOwnerPlayer(workingRoot, effect);
+      return { playerId: owner?.id || null, playerColor: owner?.color || null };
+    }
+
+    function getPlayerOwnerKeys(player) {
+      return new Set([player?.id, player?.color].filter(Boolean));
+    }
+
+    function markerBelongsToPlayer(marker, player) {
+      const keys = getPlayerOwnerKeys(player);
+      return keys.has(marker?.playerId) || keys.has(marker?.color) || keys.has(marker?.playerColor);
+    }
+
+    function markerOwnerLabel(marker) {
+      const definition = players.getPlayerColorDefinition?.(marker?.color || marker?.playerColor);
+      return definition?.label || marker?.color || marker?.playerId || "未知玩家";
+    }
+
+    function buildWorkingPlanetMarkerRemovalChoices(workingRoot, effect) {
+      const { planetStatsState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
+      const owner = effect?.options?.owner || "current";
+      const markerKinds = new Set(effect?.options?.markerKinds || ["orbit", "land", "satelliteLand"]);
+      const choices = [];
+      const canUseMarker = (marker) => owner === "any" || markerBelongsToPlayer(marker, currentPlayer);
+
+      for (const planetId of planetReferenceLayout?.PLANET_ORDER || planetStats?.PLANET_IDS || []) {
+        const planetName = getPlanetName(planetId);
+        if (markerKinds.has("orbit")) {
+          for (const marker of planetStats.getPlanetOrbitMarkers(planetStatsState, planetId)) {
+            if (!canUseMarker(marker)) continue;
+            choices.push({
+              id: `orbit:${planetId}:${marker.sequence}`,
+              kind: "orbit",
+              planetId,
+              sequence: marker.sequence,
+              label: `${planetName} 环绕 ${marker.sequence}`,
+              description: `${markerOwnerLabel(marker)}标记`,
+            });
+          }
+        }
+        if (markerKinds.has("land")) {
+          for (const marker of planetStats.getPlanetLandingMarkers(planetStatsState, planetId)) {
+            if (!canUseMarker(marker)) continue;
+            choices.push({
+              id: `land:${planetId}:${marker.sequence}`,
+              kind: "land",
+              planetId,
+              sequence: marker.sequence,
+              label: `${planetName} 登陆 ${marker.sequence}`,
+              description: `${markerOwnerLabel(marker)}标记`,
+            });
+          }
+        }
+        if (markerKinds.has("satelliteLand")) {
+          for (const marker of planetStats.getSatelliteLandingMarkers(planetStatsState, planetId)) {
+            if (!canUseMarker(marker)) continue;
+            choices.push({
+              id: `satelliteLand:${planetId}:${marker.satelliteId}`,
+              kind: "satelliteLand",
+              planetId,
+              satelliteId: marker.satelliteId,
+              label: `${planetName} ${marker.satelliteName || marker.satelliteId}`,
+              description: `${markerOwnerLabel(marker)}卫星登陆标记`,
+            });
+          }
+        }
+      }
+      return [...choices, ...(buildPlutoMarkerRemovalChoices?.(workingRoot, owner, markerKinds) || [])];
+    }
+
+    function removeWorkingPlanetMarker(workingRoot, choice, player, owner = "current") {
+      const { planetStatsState } = requireWorkingRoot(workingRoot);
+      const markerRef = owner === "any" ? {} : { player };
+      if (choice.kind === "plutoOrbit" || choice.kind === "plutoLand") {
+        return removePlutoMarker(workingRoot, choice, player, owner);
+      }
+      if (choice.kind === "orbit") {
+        return planetStats.removePlanetOrbitMarker(planetStatsState, choice.planetId, {
+          sequence: choice.sequence,
+          ...markerRef,
+        });
+      }
+      if (choice.kind === "land") {
+        return planetStats.removePlanetLandingMarker(planetStatsState, choice.planetId, {
+          sequence: choice.sequence,
+          ...markerRef,
+        });
+      }
+      if (choice.kind === "satelliteLand") {
+        return planetStats.removeSatelliteLandingMarker(
+          planetStatsState,
+          choice.planetId,
+          choice.satelliteId,
+          markerRef,
+        );
+      }
+      return { ok: false, message: "未知标记类型" };
+    }
+
+    function isTechActionSelectionActive(workingRoot) {
+      const { techGameState } = requireWorkingRoot(workingRoot);
       return Boolean(techGameState.ui.techSelectionActive);
     }
 
-    function isTechTilePickingActive() {
+    function isTechTilePickingActive(workingRoot) {
+      const { techGameState } = requireWorkingRoot(workingRoot);
       const ui = techGameState.ui;
       return Boolean(ui.techSelectionActive && (!ui.selectedTileId || ui.pendingTileId));
     }
@@ -380,8 +492,8 @@
 
     function onTechTileSelected(workingRoot, result) {
       appendResearchTechFollowupEffects(workingRoot, result);
-      syncTechSelectionChrome();
-      renderTechBoard();
+      syncTechSelectionChrome(workingRoot);
+      renderTechBoard(workingRoot);
       renderActionEffectBar();
       updateActionButtons();
     }
@@ -405,14 +517,15 @@
       if (techEvent) {
         result.events = [...(result.events || []), techEvent];
       }
-      syncTechSelectionChrome();
-      renderTechBoard();
+      syncTechSelectionChrome(workingRoot);
+      renderTechBoard(workingRoot);
       renderActionEffectBar();
       updateActionButtons();
     }
 
-    function syncTechSelectionChrome() {
-      const active = isTechTilePickingActive() || Boolean(techGameState?.ui?.industryBorrowMode);
+    function syncTechSelectionChrome(workingRoot) {
+      const { techGameState } = requireWorkingRoot(workingRoot);
+      const active = isTechTilePickingActive(workingRoot) || Boolean(techGameState.ui?.industryBorrowMode);
       els.appWrap?.classList.toggle("tech-selection-active", active);
       if (els.techSelectionBackdrop) {
         els.techSelectionBackdrop.hidden = !active;
@@ -435,10 +548,10 @@
       techGameState.ui.selectedTileId = null;
       techGameState.ui.selectedBlueSlot = null;
       techGameState.ui.allowedTechTypes = null;
-      closeTechBlueSlotPicker();
+      closeTechBlueSlotPicker(workingRoot);
       techGameState.ui.statusNote = "";
-      syncTechSelectionChrome();
-      renderTechBoard();
+      syncTechSelectionChrome(workingRoot);
+      renderTechBoard(workingRoot);
     }
 
     function restoreResearchTechSelectionAfterUndo(workingRoot, effect) {
@@ -457,11 +570,11 @@
       if (Array.isArray(effect?.options?.allowedTechTypes)) {
         techGameState.ui.allowedTechTypes = [...effect.options.allowedTechTypes];
       }
-      closeTechBlueSlotPicker();
+      closeTechBlueSlotPicker(workingRoot);
       techGameState.ui.statusNote = "请选择要研究的科技板块";
       rocketState.statusNote = "科技：请选择要研究的科技片";
-      syncTechSelectionChrome();
-      renderTechBoard();
+      syncTechSelectionChrome(workingRoot);
+      renderTechBoard(workingRoot);
     }
 
     function cancelPendingResearchTechTileChoice(workingRoot) {
@@ -469,11 +582,11 @@
       techGameState.ui.pendingTileId = null;
       techGameState.ui.selectedTileId = null;
       techGameState.ui.selectedBlueSlot = null;
-      closeTechBlueSlotPicker();
+      closeTechBlueSlotPicker(workingRoot);
       techGameState.ui.statusNote = "请选择要研究的科技板块";
       rocketState.statusNote = "科技：请选择要研究的科技片";
-      syncTechSelectionChrome();
-      renderTechBoard();
+      syncTechSelectionChrome(workingRoot);
+      renderTechBoard(workingRoot);
       updateActionButtons();
       renderStateReadout();
     }
@@ -486,7 +599,7 @@
         techGameState.ui.statusNote = "";
         cancelIndustryAbilityFlow();
         rocketState.statusNote = "已取消图灵系统科技借用";
-        syncTechSelectionChrome();
+        syncTechSelectionChrome(workingRoot);
         renderStateReadout();
         return;
       }
@@ -495,8 +608,8 @@
         rocketState.statusNote = irreversibleReason
           ? `不可撤销：${irreversibleReason}`
           : "当前科技行动已有不可撤销影响";
-        syncTechSelectionChrome();
-        renderTechBoard();
+        syncTechSelectionChrome(workingRoot);
+        renderTechBoard(workingRoot);
         updateActionButtons();
         renderStateReadout();
         return;
@@ -506,15 +619,15 @@
       techGameState.ui.selectedTileId = null;
       techGameState.ui.selectedBlueSlot = null;
       techGameState.ui.allowedTechTypes = null;
-      closeTechBlueSlotPicker();
+      closeTechBlueSlotPicker(workingRoot);
       techGameState.ui.statusNote = "";
       rocketState.statusNote = "";
       if (decisionState.actionEffectFlow?.actionType === "researchTech") {
         const rollbackResult = actionHistory.rollbackSession();
         if (!rollbackResult.ok) {
           rocketState.statusNote = rollbackResult.message || "当前科技行动不能取消";
-          syncTechSelectionChrome();
-          renderTechBoard();
+          syncTechSelectionChrome(workingRoot);
+          renderTechBoard(workingRoot);
           updateActionButtons();
           renderStateReadout();
           return;
@@ -525,16 +638,17 @@
         clearActionEffectFlow();
       }
       clearActionPending();
-      syncTechSelectionChrome();
-      renderTechBoard();
+      syncTechSelectionChrome(workingRoot);
+      renderTechBoard(workingRoot);
       updateActionButtons();
       renderStateReadout();
     }
 
-    function renderTechBoard() {
+    function renderTechBoard(workingRoot) {
+      const { techGameState } = requireWorkingRoot(workingRoot);
       if (headless) return;
       syncTechRenderContext();
-      const currentPlayer = getInterfacePlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       tech.renderAll(techGameState, techRenderContext, els.techTiles, {
         currentPlayer,
         canTakeTile: (tileId) => {
@@ -542,7 +656,7 @@
           if (!tech.isSupplySelectionActive(techGameState.ui)) return false;
           if (industry?.isTechBlockedByPirates?.(currentPlayer, tileId)) return false;
           const selectionOptions = getResearchTechSelectionOptions();
-          if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer({ playerState }, tileId)) return false;
+          if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(workingRoot, tileId)) return false;
           return tech.resolver.canTakeTile(
             techGameState.board,
             currentPlayer.techState,
@@ -551,16 +665,17 @@
           ).ok;
         },
       });
-      syncTechSelectionChrome();
+      syncTechSelectionChrome(workingRoot);
       renderPiratesRaidTechMarkers(currentPlayer);
       renderRunezuBoardSymbols();
     }
 
-    function closeTechBlueSlotPicker() {
+    function closeTechBlueSlotPicker(workingRoot) {
+      requireWorkingRoot(workingRoot);
       if (!els.techBlueSlotOverlay) return;
       els.techBlueSlotOverlay.hidden = true;
       delete els.techBlueSlotOverlay.dataset.tileId;
-      renderTechBoard();
+      renderTechBoard(workingRoot);
     }
 
     function openTechBlueSlotPicker(workingRoot, request) {
@@ -579,7 +694,7 @@
       els.techBlueSlotOverlay.dataset.tileId = request.tileId;
       els.techBlueSlotOverlay.hidden = false;
       techGameState.ui.pendingTileId = request.tileId;
-      renderTechBoard();
+      renderTechBoard(workingRoot);
     }
 
     function finalizeTechTakeResult(workingRoot, result) {
@@ -587,15 +702,15 @@
       if (!result?.ok || result.needsBlueSlotChoice) return result;
 
       tech.setTechSelectionActive(techGameState, false);
-      closeTechBlueSlotPicker();
-      syncTechSelectionChrome();
+      closeTechBlueSlotPicker(workingRoot);
+      syncTechSelectionChrome(workingRoot);
       renderWheels();
       renderSectorNebulaDataBoard();
       renderRunezuBoardSymbols();
       renderRotateStateToken();
       if (result.freeLaunch?.rocket) renderRocketElement(result.freeLaunch.rocket);
       renderPlayerStats();
-      renderTechBoard();
+      renderTechBoard(workingRoot);
       updateActionButtons();
 
       if (result.awaitingCardSelection) {
@@ -652,7 +767,7 @@
       if (result.needsBlueSlotChoice) {
         techGameState.ui.pendingTileId = tileId;
         openTechBlueSlotPicker(workingRoot, result);
-        renderTechBoard();
+        renderTechBoard(workingRoot);
         renderStateReadout();
         return result;
       }
@@ -672,7 +787,7 @@
       const tileId = els.techBlueSlotOverlay?.dataset.tileId || techGameState.ui.pendingTileId;
       if (!tileId) return { ok: false, message: "没有待放置的蓝色科技" };
 
-      closeTechBlueSlotPicker();
+      closeTechBlueSlotPicker(workingRoot);
       return selectResearchTechTileForCurrentFlow(workingRoot, tileId, blueSlot);
     }
 
@@ -770,8 +885,9 @@
       return effect;
     }
 
-    function executeIndustryPiratesRaidMarkerEffect(effect) {
-      const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+    function executeIndustryPiratesRaidMarkerEffect(workingRoot, effect) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
+      const player = getWorkingEffectOwnerPlayer(workingRoot, effect);
       const planetId = effect.options?.planetId || null;
       if (!player || !planetId) {
         rocketState.statusNote = "星际海盗：缺少掠夺目标";
@@ -791,19 +907,20 @@
         planetId,
       });
       rocketState.statusNote = `${effect.label}：请选择玩家面板上的掠夺标记放置到 ${getPlanetName(planetId)}`;
-      renderTechBoard();
+      renderTechBoard(workingRoot);
       syncInteractionFocusChrome();
       renderStateReadout();
       return { ok: true, pendingChoice: true, message: rocketState.statusNote };
     }
 
-    function handlePiratesRaidTechMarkerClick(tileId) {
+    function handlePiratesRaidTechMarkerClick(workingRoot, tileId) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const effect = getCurrentPiratesRaidMarkerEffect();
       const pending = getPiratesRaidDecision();
       if (!effect || !pending) {
         return { ok: false, message: "没有待放置的掠夺标记" };
       }
-      const player = getPlayerById(pending.playerId);
+      const player = resolveWorkingPlayerReference(workingRoot, pending);
       const planetId = pending.planetId;
       const check = industry.canPlacePiratesRaidMarker?.(player, tileId, planetId);
       if (!check?.ok) {
@@ -835,8 +952,9 @@
       }, [renderTechBoard, renderRockets]);
     }
 
-    function executeIndustryPiratesRaidPublicityEffect(effect) {
-      const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+    function executeIndustryPiratesRaidPublicityEffect(workingRoot, effect) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
+      const player = getWorkingEffectOwnerPlayer(workingRoot, effect);
       if (!player) {
         rocketState.statusNote = "星际海盗：没有目标玩家";
         renderStateReadout();
@@ -859,7 +977,8 @@
       });
     }
 
-    function startIndustryPiratesRaidLaunchFlow(flow, options = {}) {
+    function startIndustryPiratesRaidLaunchFlow(workingRoot, flow, options = {}) {
+      const { cardState, rocketState, turnState } = requireWorkingRoot(workingRoot);
       const groupId = `industry-pirates-raid-${turnState.roundNumber}-${turnState.turnNumber}`;
       const nodes = industry?.buildPiratesRaidLaunchEffectNodes?.(flow, { groupId }) || [];
       decisionSessions.clear("industry_ability");
@@ -895,9 +1014,10 @@
       return started;
     }
 
-    function buildPiratesRaidLaunchChoices(effect) {
-      const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
-      return buildPlanetMarkerRemovalChoices({
+    function buildPiratesRaidLaunchChoices(workingRoot, effect) {
+      requireWorkingRoot(workingRoot);
+      const player = getWorkingEffectOwnerPlayer(workingRoot, effect);
+      return buildWorkingPlanetMarkerRemovalChoices(workingRoot, {
         options: {
           owner: "current",
           markerKinds: ["orbit", "land"],
@@ -910,21 +1030,22 @@
       ));
     }
 
-    function executeIndustryPiratesRaidLaunchEffect(effect) {
-      const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+    function executeIndustryPiratesRaidLaunchEffect(workingRoot, effect) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
+      const player = getWorkingEffectOwnerPlayer(workingRoot, effect);
       const cost = normalizeResourceCost(effect.options?.cost || industry?.PIRATES_RAID_ACTIVE_COST || { credits: 1 }) || {};
       if (!players.canAfford(player, cost)) {
         rocketState.statusNote = `星际海盗：资源不足，需要 ${players.formatResourceCost(cost)}`;
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      const choices = buildPiratesRaidLaunchChoices(effect);
+      const choices = buildPiratesRaidLaunchChoices(workingRoot, effect);
       if (!choices.length) {
         rocketState.statusNote = "星际海盗：没有位于已掠夺主星的己方环绕或登陆标记";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(effect, player), type: "industry_pirates_raid_launch", effect, choices };
+      decisionState.scanTargetAction = { ...getWorkingPendingOwnerFields(workingRoot, effect, player), type: "industry_pirates_raid_launch", effect, choices };
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label || "星际海盗";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一个已有掠夺标记主星上的己方环绕或登陆标记，移除后消耗 1 信用点并在该星球当前扇区免费发射。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -950,7 +1071,8 @@
       return getPlanetSectorCoordinate(choice.planetId);
     }
 
-    function handlePiratesRaidLaunchChoice(choiceId) {
+    function handlePiratesRaidLaunchChoice(workingRoot, choiceId) {
+      const { planetStatsState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const pending = decisionState.scanTargetAction;
       if (pending?.type !== "industry_pirates_raid_launch") {
         return { ok: false, message: "没有待处理的星际海盗发射" };
@@ -960,8 +1082,9 @@
       closeScanTargetPicker();
       if (!choice) return { ok: false, message: "无效标记" };
 
-      return withPendingOwnerPlayer(pending, () => {
-        const player = getCurrentPlayer();
+      const player = resolveWorkingPlayerReference(workingRoot, pending)
+        || getWorkingEffectOwnerPlayer(workingRoot, effect);
+      return (() => {
         const cost = normalizeResourceCost(effect.options?.cost || industry?.PIRATES_RAID_ACTIVE_COST || { credits: 1 }) || {};
         if (!players.canAfford(player, cost)) {
           rocketState.statusNote = `星际海盗：资源不足，需要 ${players.formatResourceCost(cost)}`;
@@ -989,7 +1112,7 @@
           renderStateReadout();
           return spend;
         }
-        const remove = removePlanetMarkerForChoice(choice, player, "current");
+        const remove = removeWorkingPlanetMarker(workingRoot, choice, player, "current");
         if (!remove.ok) {
           restoreObjectSnapshot(player, beforePlayer);
           if (beforePlayerState) restoreObjectSnapshot(playerState, beforePlayerState);
@@ -1051,7 +1174,7 @@
           }],
           payload: { rocketId: place.rocket?.id || null },
         };
-        maybeApplyIndustryLaunchScan(launchResult);
+        maybeApplyIndustryLaunchScan(workingRoot, launchResult);
         recordAbilityCommands(launchResult);
         renderRockets();
         syncPlanetOrbitLandMarkers();
@@ -1062,10 +1185,11 @@
           events: launchResult.events || [],
           payload: { choice, rocketId: place.rocket?.id || null, cost },
         }, [renderRockets]);
-      });
+      })();
     }
 
-    function setCheatModeOpen(open) {
+    function setCheatModeOpen(workingRoot, open) {
+      const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       tech.setCheatModeEnabled(techGameState, open);
       els.debugCheatButton?.setAttribute("aria-pressed", String(open));
       rocketState.statusNote = open ? "作弊模式：研究科技不消耗宣传" : "";
@@ -1073,8 +1197,9 @@
       renderStateReadout();
     }
 
-    function toggleCheatMode() {
-      setCheatModeOpen(!techGameState.ui.cheatModeEnabled);
+    function toggleCheatMode(workingRoot) {
+      const { techGameState } = requireWorkingRoot(workingRoot);
+      setCheatModeOpen(workingRoot, !techGameState.ui.cheatModeEnabled);
     }
 
     function researchTechForCurrentPlayer() {
