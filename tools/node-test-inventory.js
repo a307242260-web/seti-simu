@@ -13,6 +13,9 @@ function modulesFor(relative) {
   if (/headless-effect-failure\.test/.test(relative)) return ["uniqueEffectQueue"];
   if (/headless-(?:conditional-drain|decision-owner|effect-session-host|effect-session-worker-recovery|fail-closed|no-browser-globals|training-replay)\.test/.test(relative)) return ["uniqueSessionState"];
   if (/headless-state-checkpoint\.test/.test(relative)) return ["unifiedAuthorityState"];
+  if (/\/game\/rule-composition\.test/.test(relative)) {
+    return ["uniqueAction", "uniqueEffectQueue", "uniqueSessionState", "unifiedAuthorityState"];
+  }
   if (/\/training\/|\/game\/ai\/|\/app\/ai\/|headless-worker-resilience/.test(relative)) return ["robot"];
   if (/\/game\/effects\/|effect-session-host|decision-session-store/.test(relative)) return ["uniqueSessionState"];
   if (/\/app\/effects\/|effect-flow|effect-choice-flow/.test(relative)) return ["uniqueEffectQueue"];
@@ -101,6 +104,7 @@ randomizer/game/end-game-scoring.test.js
 randomizer/game/final-scoring.test.js
 randomizer/game/history/action-history.test.js
 randomizer/game/history/commands.test.js
+randomizer/game/rule-composition.test.js
 randomizer/game/planet-stats.test.js
 randomizer/game/players.test.js
 randomizer/game/rockets.move.test.js
