@@ -59,7 +59,7 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - target_file: Mocha skill `affe4ad6-9c17-43f0-a34f-4e32eb78653b`；autopilot `121571af-90e0-4ffb-88a9-50c74dcc3c0e`；docs/mocha_experience/watcher.md
 - remote_skill_id: affe4ad6-9c17-43f0-a34f-4e32eb78653b
 - change: 将 watcher 评论限定为“需要领航实际处理”的状态 lint/交接分支；owner 和长运行可见性只写 metadata，失败恢复与依赖解阻只 rerun，不先评论。
-- applied_change: 更新 watcher skill 说明与执行脚本；`needs_owner` 不再发 issue 评论，只维护 reminder signature/owner attention metadata，且 `reviewer=owner`/`needs_owner=true` 不进入领航 handoff 提醒；长运行只记录 30/60/90 分钟 bucket；failed/dependency 分支删除 rerun 前评论。autopilot 说明同步 owner metadata-only 边界。
+- applied_change: 更新 watcher skill 说明与执行脚本；`needs_owner` 不再发 issue 评论，只维护 reminder signature/owner attention metadata，且 `reviewer=owner`/`needs_owner=true` 不进入领航 handoff 提醒；owner/handoff 签名改用稳定业务字段，不再使用 watcher 自己会改写的 `issue.updated_at`；长运行只记录 30/60/90 分钟 bucket；failed/dependency 分支删除 rerun 前评论。autopilot 说明同步 owner metadata-only 边界。
 - expected_effect: 一个机械恢复事件最多产生一个领航 run；owner 阻塞和长运行观测不再占用领航并发或产生无效对话。
 - evaluation_window: 后续 10 次 watcher 命中或 7 天，以先到者为准
 - success_signal: owner/长运行分支无新 issue 评论和领航 run；failed/dependency 每次恢复只有一个 rerun；metadata 持续可查。
@@ -68,8 +68,8 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - evidence_before: `mocha issue comment add --help` 无 no-trigger/suppress-trigger 选项；SETI workspace 只有领航、无 notify-user/通知代理；SETI-95 的 owner 提醒评论唤醒了无事可做的领航 run。
 - owner_or_agent_decision: owner 要求优化该处；按不让领航代替 owner 决策、不伪造通知成功的边界执行。
 - applied_at: 2026-07-21
-- verification: 待补远程 skill 内容核对、脚本语法/dry-run/execute 与无额外领航 run 验证。
-- observed_outcome: 待观察。
+- verification: `python3 -m py_compile` 通过；远程 skill 文件 updated_at=2026-07-21T04:56:53Z；实际 execute 仅为 SETI-104/95 写入 `owner_pending_no_channel` 去重 metadata，紧接第二次 dry-run action_count=0；SETI-95 run 数执行前后均为 5，latest run 仍为 `06638bab-000e-441f-a0d4-1a308b6d6d10`，未新增领航 run。
+- observed_outcome: owner metadata-only 与稳定去重已用真实 issue 验证；其他分支进入 7 天/10 次命中观察窗口。
 - keep_or_revise: 暂保留；接入受管 owner 通知代理后，将 metadata-only 升级为代理外部通知，不回退到 issue 评论。
 
 - date: 2026-07-21
