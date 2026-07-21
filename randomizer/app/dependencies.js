@@ -17,6 +17,7 @@
     Object.freeze({ key: "primaryBoardActionExecutorModule", globalName: "SetiPrimaryBoardActionExecutor" }),
     Object.freeze({ key: "engineActionExecutorModule", globalName: "SetiEngineActionExecutor" }),
     Object.freeze({ key: "quickTurnActionExecutorModule", globalName: "SetiQuickTurnActionExecutor" }),
+    Object.freeze({ key: "conditionalActionExecutorModule", globalName: "SetiConditionalActionExecutor" }),
     Object.freeze({ key: "actionInteractionRuntimeModule", globalName: "SetiAppActionInteractionRuntime" }),
     Object.freeze({ key: "actionLogRuntimeModule", globalName: "SetiAppActionLogRuntime" }),
     Object.freeze({ key: "gameRecoveryModule", globalName: "SetiAppGameRecovery" }),

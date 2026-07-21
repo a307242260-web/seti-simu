@@ -44,6 +44,7 @@
     primaryBoardActionExecutorModule,
     engineActionExecutorModule,
     quickTurnActionExecutorModule,
+    conditionalActionExecutorModule,
     actionInteractionRuntimeModule,
     actionLogRuntimeModule,
     gameRecoveryModule,
@@ -318,6 +319,12 @@
     executeRunezuFaceSymbol: (workingRoot, descriptor) => executeStandardRunezuFaceSymbol(workingRoot, descriptor),
     executePass: (workingRoot, descriptor) => passForCurrentPlayer({ workingRoot, standardAction: descriptor }),
     executeEndTurn: (workingRoot, descriptor) => endCurrentTurn({ workingRoot, standardAction: descriptor }),
+  });
+  const conditionalActionExecutor = conditionalActionExecutorModule.createConditionalActionExecutor({
+    describeDecision: (workingRoot) => collectConditionalChoices(workingRoot),
+    executeChoice: (workingRoot, choice, decision) => (
+      executeProductionConditionalChoice(workingRoot, choice, decision)
+    ),
   });
   let actionRuntimeController = null;
   const runtime = runtimeModule.createRuntime({
@@ -2141,6 +2148,8 @@
     engineActionWorkingRoot: browserRuleState,
     quickTurnActionExecutor,
     quickTurnActionWorkingRoot: browserRuleState,
+    conditionalActionExecutor,
+    conditionalActionWorkingRoot: browserRuleState,
     actions,
     removeRocketElement: headlessMode ? () => {} : removeRocketElement,
     syncPlanetOrbitLandMarkersAfterAction: headlessMode ? () => {} : syncPlanetOrbitLandMarkers,
@@ -2358,7 +2367,7 @@
       stage4Actions: Object.fromEntries(
         actions.standardAction.CONDITIONAL_FAMILIES.map((family) => [
           family,
-          createHeadlessConditionalActionProvider(family),
+          createConditionalActionProvider(family),
         ]),
       ),
     }),
@@ -8286,6 +8295,7 @@
 
   function createActionContext() {
     const contextPlayerState = getActionContextPlayerState();
+    const decisionOwner = getHeadlessDecisionOwnerState?.() || null;
     return {
       solarState,
       playerState: contextPlayerState,
@@ -8300,6 +8310,11 @@
       turnState,
       stateVersion: browserRuleState.meta?.stateVersion ?? 0,
       decisionVersion: browserRuleState.match?.decisionVersion ?? 0,
+      standardActionAuthority: {
+        actorId: decisionOwner?.actorPlayerId || contextPlayerState.currentPlayerId || null,
+        stateVersion: browserRuleState.meta?.stateVersion ?? 0,
+        decisionVersion: browserRuleState.match?.decisionVersion ?? 0,
+      },
       ...buildPlutoMarkerContext(),
       roundNumber: turnState.roundNumber,
       turnNumber: turnState.turnNumber,
@@ -8348,6 +8363,11 @@
       turnState: workingRoot.turnState,
       stateVersion: workingRoot.meta?.stateVersion ?? 0,
       decisionVersion: workingRoot.match?.decisionVersion ?? 0,
+      standardActionAuthority: {
+        actorId,
+        stateVersion: workingRoot.meta?.stateVersion ?? 0,
+        decisionVersion: workingRoot.match?.decisionVersion ?? 0,
+      },
       roundNumber: workingRoot.turnState.roundNumber,
       turnNumber: workingRoot.turnState.turnNumber,
       getPlanetLocations: () => solar.createSolarSnapshot(workingRoot.solarState).planetLocations,
@@ -9428,9 +9448,10 @@
     };
   }
 
-  function collectHeadlessConditionalChoices() {
-    if (!headlessMode) return { actorPlayer: null, candidates: [] };
-    syncFinalScorePendingMarks();
+  function collectConditionalChoices(workingRoot = browserRuleState) {
+    if (workingRoot !== browserRuleState) {
+      return { actorPlayer: null, candidates: [], code: "CONDITIONAL_WORKING_ROOT_MISMATCH" };
+    }
     const finalScorePlayer = getCurrentPlayer();
     const finalScorePending = finalScoring.getNextPendingMarkForPlayer(
       finalScoringState,
@@ -10175,7 +10196,7 @@
     return { actorPlayer: null, candidates: [] };
   }
 
-  const HEADLESS_CONDITIONAL_HANDLERS = Object.freeze({
+  const CONDITIONAL_CHOICE_HANDLERS = Object.freeze({
     "conditional-sector": (action) => handleConditionalSectorChoice(action.target.sectorX ?? action.target.choiceId),
     "chong-fossil-choice": (action) => handleChongFossilChoice(action.target.choiceId),
     "probe-sector-selection": (action) => {
@@ -10285,45 +10306,54 @@
     ),
   });
 
-  function createHeadlessConditionalActionProvider(family) {
+  function executeProductionConditionalChoice(workingRoot, choice, decision) {
+    if (workingRoot !== browserRuleState) {
+      return {
+        ok: false,
+        code: "CONDITIONAL_WORKING_ROOT_MISMATCH",
+        message: "Conditional choice 必须写入当前 Browser Composition working root",
+      };
+    }
+    if (choice?.family == null || choice?.family !== decision?.choices?.find((entry) => (
+      entry.choiceId === choice.choiceId && entry.family === choice.family
+    ))?.family) {
+      return { ok: false, code: "CONDITIONAL_CHOICE_NOT_LEGAL", message: "Decision choice identity 已失效" };
+    }
+    const handler = CONDITIONAL_CHOICE_HANDLERS[choice.followup?.handlerId];
+    if (!handler) {
+      return { ok: false, code: "CONDITIONAL_FOLLOWUP_UNMIGRATED", message: "条件动作 followup handler 不存在" };
+    }
+    return handler({
+      ...structuredClone(choice.payload || {}),
+      family: choice.family,
+      target: structuredClone(choice.target || null),
+    });
+  }
+
+  function createConditionalActionProvider(family) {
     return {
       label: family,
       getOptions() {
-        const enumerated = collectHeadlessConditionalChoices();
-        const choices = (enumerated.candidates || [])
-          .filter((candidate) => candidate.family === family)
-          .map((candidate) => ({
-            target: structuredClone(candidate.target || null),
-            payload: Object.fromEntries(Object.entries(candidate).filter(([key]) => (
-              !["id", "family", "label", "target", "standardAction"].includes(key)
-            ))),
-            label: candidate.label || family,
-          }));
-        return choices.length
-          ? { ok: true, choices }
-          : { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: `${family} 当前没有合法候选` };
+        return conditionalActionExecutor.getOptions(browserRuleState, family);
       },
-      canExecute() {
-        return { ok: true };
+      canExecute(_context, descriptor) {
+        return conditionalActionExecutor.validate(browserRuleState, descriptor);
       },
-      execute(_context, descriptor) {
-        const handler = HEADLESS_CONDITIONAL_HANDLERS[descriptor.target?.kind];
-        if (!handler) {
-          return { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "条件动作 handler 不存在" };
-        }
-        return handler({
-          ...structuredClone(descriptor.payload || {}),
-          family: descriptor.family,
-          target: structuredClone(descriptor.target || null),
-        });
+      execute() {
+        return {
+          ok: false,
+          code: "CONDITIONAL_ACTION_EXECUTOR_REQUIRED",
+          message: "Conditional Standard Action 只允许由 working-root executor 执行",
+        };
       },
     };
   }
 
   function enumerateHeadlessConditionalActions() {
-    const decision = collectHeadlessConditionalChoices();
-    const actorPlayer = decision.actorPlayer || null;
-    if (!actorPlayer?.id || !(decision.candidates || []).length) {
+    syncFinalScorePendingMarks();
+    const decision = conditionalActionExecutor.inspect(browserRuleState);
+    const actorPlayer = decision?.ownerId ? getPlayerById(decision.ownerId) : null;
+    if (!actorPlayer?.id || !decision?.choices?.length) {
       return { actorPlayer, candidates: [] };
     }
     const listing = actionRuntimeController.dispatchAction({

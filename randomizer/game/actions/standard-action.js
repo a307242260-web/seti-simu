@@ -83,6 +83,7 @@
       decisionVersion: authority.decisionVersion,
       target,
       payload,
+      decision: clone(descriptor?.decision || null),
       summary: descriptor?.summary || definition.label || definition.family,
     });
   }
@@ -95,7 +96,8 @@
       && left?.stateVersion === right?.stateVersion
       && left?.decisionVersion === right?.decisionVersion
       && stableSerialize(left?.target || null) === stableSerialize(right?.target || null)
-      && stableSerialize(left?.payload || {}) === stableSerialize(right?.payload || {});
+      && stableSerialize(left?.payload || {}) === stableSerialize(right?.payload || {})
+      && stableSerialize(left?.decision || null) === stableSerialize(right?.decision || null);
   }
 
   function createRegistry(options = {}) {
@@ -314,6 +316,7 @@
         return (result.choices || []).map((choice) => ({
           target: choice.target || null,
           payload: choice.payload || {},
+          decision: choice.decision || null,
           summary: choice.label || action.label || family,
         }));
       },

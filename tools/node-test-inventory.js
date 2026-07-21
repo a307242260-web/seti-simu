@@ -57,6 +57,7 @@ randomizer/app/hand-flow.test.js
 randomizer/app/primary-board-action-executor.test.js
 randomizer/app/engine-action-executor.test.js
 randomizer/app/quick-turn-action-executor.test.js
+randomizer/app/conditional-action-executor.test.js
 randomizer/app/headless-conditional-drain.test.js
 randomizer/app/headless-decision-owner.test.js
 randomizer/app/headless-effect-failure.test.js
