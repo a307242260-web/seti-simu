@@ -8,6 +8,10 @@ function createFixture() {
   const root = {
     meta: { stateVersion: 5 },
     match: { decisionVersion: 9 },
+    finalScoringState: {},
+    techGameState: { board: {}, ui: {} },
+    rocketState: { rockets: [] },
+    cardState: { publicCards: [] },
   };
   const finalPlayer = { id: "final-owner" };
   const scanPlayer = { id: "scan-owner" };
@@ -24,8 +28,6 @@ function createFixture() {
   const domain = createConditionalDecisionDomain(() => {
     contextReads += 1;
     return {
-      browserRuleState: root,
-      finalScoringState: {},
       FINAL_SCORE_IDS: ["a", "b"],
       finalScoring: {
         getNextPendingMarkForPlayer: () => (state.finalPending ? { id: "pending-final" } : null),

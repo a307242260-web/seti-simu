@@ -134,7 +134,7 @@
     function getExecutionWorkingRoot(standardContext) {
       const required = [
         "solarState", "playerState", "cardState", "rocketState", "nebulaDataState",
-        "planetStatsState", "alienGameState", "techGameState", "turnState", "metaState", "matchState",
+        "planetStatsState", "alienGameState", "finalScoringState", "techGameState", "turnState", "metaState", "matchState",
       ];
       const missing = required.filter((key) => !standardContext?.[key]);
       if (missing.length) {
@@ -148,6 +148,7 @@
         nebulaDataState: standardContext.nebulaDataState,
         planetStatsState: standardContext.planetStatsState,
         alienGameState: standardContext.alienGameState,
+        finalScoringState: standardContext.finalScoringState,
         techGameState: standardContext.techGameState,
         turnState: standardContext.turnState,
         meta: standardContext.metaState,

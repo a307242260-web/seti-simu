@@ -9,9 +9,7 @@
 
   function createResolvedConditionalDecisionDomain(context) {
     const {
-      browserRuleState,
       finalScoring,
-      finalScoringState,
       FINAL_SCORE_IDS,
       getCurrentPlayer,
       getPendingProbeSectorScanDecision,
@@ -27,7 +25,6 @@
       getPendingMovePayment,
       isMovePaymentCard,
       isTechTilePickingActive,
-      techGameState,
       tech,
       industry,
       getResearchTechSelectionOptions,
@@ -39,7 +36,6 @@
       getPendingCardTriggerFreeMove,
       getMovableTokensForPlayer,
       rocketActions,
-      rocketState,
       getRequiredMovePointsForUi,
       canPayForMove,
       formatRocketLabel,
@@ -52,7 +48,6 @@
       getCardPlayCost,
       getPendingStrategySlotDecision,
       isFutureSpanEligibleHandCard,
-      cardState,
       getPublicCardMultiSelectMinSelectable,
       getPublicScanMinSelectable,
       allowsBlindDrawInSelection,
@@ -147,30 +142,20 @@
     };
   }
 
-  function usesResidentWorkingSlices(workingRoot) {
-    return Boolean(workingRoot
-      && workingRoot.playerState === browserRuleState.playerState
-      && workingRoot.turnState === browserRuleState.turnState
-      && workingRoot.cardState === browserRuleState.cardState
-      && workingRoot.rocketState === browserRuleState.rocketState
-      && workingRoot.techGameState === browserRuleState.techGameState
-      && workingRoot.alienGameState === browserRuleState.alienGameState);
-  }
-
-  function collectConditionalChoices(workingRoot = browserRuleState) {
-    if (!usesResidentWorkingSlices(workingRoot)) {
-      return { actorPlayer: null, candidates: [], code: "CONDITIONAL_WORKING_ROOT_MISMATCH" };
+  function collectConditionalChoices(workingRoot) {
+    if (!workingRoot || typeof workingRoot !== "object") {
+      throw new TypeError("Conditional Decision 需要显式 working root");
     }
     const finalScorePlayer = getCurrentPlayer();
     const finalScorePending = finalScoring.getNextPendingMarkForPlayer(
-      finalScoringState,
+      workingRoot.finalScoringState,
       finalScorePlayer?.id,
     );
     if (finalScorePending) {
       return {
         actorPlayer: finalScorePlayer,
         candidates: FINAL_SCORE_IDS.flatMap((tileId) => (
-          finalScoring.canMarkTile(finalScoringState, tileId, finalScorePlayer)?.ok
+          finalScoring.canMarkTile(workingRoot.finalScoringState, tileId, finalScorePlayer)?.ok
             ? [{
               id: "conditionalChoice",
               family: "choose_final_scoring",
@@ -440,7 +425,7 @@
     }
     if (isTechTilePickingActive()) {
       const player = getCurrentPlayer();
-      const pendingTileId = techGameState.ui.pendingTileId;
+      const pendingTileId = workingRoot.techGameState.ui.pendingTileId;
       if (pendingTileId) {
         return {
           actorPlayer: player,
@@ -459,9 +444,9 @@
       }
       const selectionOptions = getResearchTechSelectionOptions();
       const candidates = tech.listTakeableTiles(
-        techGameState.board,
+        workingRoot.techGameState.board,
         player?.techState,
-        { techTypes: techGameState.ui.allowedTechTypes },
+        { techTypes: workingRoot.techGameState.ui.allowedTechTypes },
       ).flatMap((tileId) => {
         if (industry?.isTechBlockedByPirates?.(player, tileId)) return [];
         if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(tileId)) return [];
@@ -520,7 +505,7 @@
           { id: "ccw", deltaX: -1, deltaY: 0 },
           { id: "in", deltaX: 0, deltaY: -1 },
         ]) {
-          if (!rocketActions.canMoveRocket(rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
           const terrainRequired = getRequiredMovePointsForUi(
             player,
             rocket.id,
@@ -569,7 +554,7 @@
           { id: "in", deltaX: 0, deltaY: -1 },
         ]) {
           if (!validateIndustryHuanyuMoveRocket(effect, rocket.id)?.ok) continue;
-          if (!rocketActions.canMoveRocket(rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
           const terrainRequired = getRequiredMovePointsForUi(
             player,
             rocket.id,
@@ -629,7 +614,7 @@
           { id: "ccw", deltaX: -1, deltaY: 0 },
           { id: "in", deltaX: 0, deltaY: -1 },
         ]) {
-          if (!rocketActions.canMoveRocket(rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
           const terrainRequired = getRequiredMovePointsForUi(
             player,
             rocket.id,
@@ -752,7 +737,7 @@
       }
       const selectedSlots = new Set(cardPending.selectedSlots || []);
       const maxSelectable = Math.max(1, Math.round(Number(cardPending.maxSelectable) || 1));
-      const candidates = (cardState.publicCards || []).flatMap((card, slotIndex) => (
+      const candidates = (workingRoot.cardState.publicCards || []).flatMap((card, slotIndex) => (
         card
           && !selectedSlots.has(slotIndex)
           && selectedSlots.size < maxSelectable
@@ -918,9 +903,9 @@
     "runezu-face-symbol-choice": (action) => handleRunezuFaceSymbolChoice(action.target.choiceId),
     "amiba-symbol-choice": (action) => handleAmibaSymbolChoice(action.target.choiceId),
     "final-score-tile": (action) => handleFinalScoreTileClick(action.target.choiceId),
-    "research-tech-tile": (action) => {
+    "research-tech-tile": (action, workingRoot) => {
       const result = handleSupplyTechTileClick(action.target.tileId || action.target.choiceId);
-      if (result?.ok !== false && techGameState.ui.pendingTileId) {
+      if (result?.ok !== false && workingRoot.techGameState.ui.pendingTileId) {
         const blueSlot = tech.getAvailableBlueSlots(getCurrentPlayer()?.techState)?.[0];
         if (blueSlot != null) return confirmTechBlueSlotChoice(blueSlot);
       }
@@ -958,13 +943,13 @@
     },
     "card-effect-move": (action) => executeCardMoveForEffect(action.deltaX, action.deltaY, action.target.rocketId),
     "card-trigger-free-move": (action) => executeFreeMoveForCardTrigger(action.deltaX, action.deltaY, action.target.rocketId),
-    "skip-card-trigger-free-move": () => {
+    "skip-card-trigger-free-move": (_action, workingRoot) => {
       const pending = getPendingCardTriggerFreeMove();
       const player = getCurrentPlayer();
       if (pending.beforePlayer) restoreObjectSnapshot(player, pending.beforePlayer);
-      if (pending.beforeCardState) restoreObjectSnapshot(cardState, pending.beforeCardState);
+      if (pending.beforeCardState) restoreObjectSnapshot(workingRoot.cardState, pending.beforeCardState);
       decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
-      rocketState.activeRocketId = null;
+      workingRoot.rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
       continueAfterCardTriggerResolution();
@@ -978,10 +963,10 @@
       return { ok: true, progressed: true, skipped: true, message: "已跳过无可用路径的移动效果" };
     },
     "card-corner-free-move": (action) => executeFreeMoveForCardCorner(action.deltaX, action.deltaY, action.target.rocketId),
-    "skip-card-corner-free-move": () => {
+    "skip-card-corner-free-move": (_action, workingRoot) => {
       const pending = getPendingCardCornerFreeMove();
       decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
-      rocketState.activeRocketId = null;
+      workingRoot.rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
       settleCardTasksAfterEffect({ events: pending.deferredEvents || [], render: false });
@@ -1016,12 +1001,8 @@
   });
 
   function executeProductionConditionalChoice(workingRoot, choice, decision) {
-    if (!usesResidentWorkingSlices(workingRoot)) {
-      return {
-        ok: false,
-        code: "CONDITIONAL_WORKING_ROOT_MISMATCH",
-        message: "Conditional choice 必须写入当前 Browser Composition working root",
-      };
+    if (!workingRoot || typeof workingRoot !== "object") {
+      return { ok: false, code: "CONDITIONAL_WORKING_ROOT_REQUIRED", message: "Conditional choice 缺少 working root" };
     }
     if (choice?.family == null || choice?.family !== decision?.choices?.find((entry) => (
       entry.choiceId === choice.choiceId && entry.family === choice.family
@@ -1036,7 +1017,7 @@
       ...structuredClone(choice.payload || {}),
       family: choice.family,
       target: structuredClone(choice.target || null),
-    });
+    }, workingRoot);
   }
 
 
