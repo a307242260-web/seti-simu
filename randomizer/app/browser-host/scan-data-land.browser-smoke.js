@@ -30,6 +30,22 @@
     let latestInspection = null;
     let commitCount = 0;
     const forbiddenCalls = { pendingOwner: 0, continuation: 0, aiResolver: 0 };
+    const store = {
+      getSnapshot: () => ({ state: structuredClone(committed) }),
+      beginWorkingCopy(baseVersion = committed.version) {
+        return baseVersion === committed.version
+          ? { ok: true, baseVersion, state: structuredClone(committed) }
+          : { ok: false, code: "STATE_VERSION_CONFLICT", baseVersion, currentVersion: committed.version };
+      },
+      compareAndCommit(baseVersion, nextState) {
+        assert(baseVersion === committed.version, "state version conflict");
+        committed = structuredClone(nextState);
+        committed.version = baseVersion + 1;
+        committed.stateVersion = baseVersion + 1;
+        commitCount += 1;
+        return { ok: true, snapshot: structuredClone(committed) };
+      },
+    };
 
     function listChoiceIds(state, pending) {
       const source = state.choices[pending.type];
@@ -79,7 +95,8 @@
     }
 
     const flow = SetiScanCardSession.createScanCardRuntime({
-      readCommittedState: () => structuredClone(committed),
+      stateStore: store,
+      actionRegistry: registry,
       enumerateConditional(state, pending) {
         return registry.enumerate({ state, pending }, { family: pending.family, actorId: pending.ownerId });
       },
@@ -131,17 +148,6 @@
       buildCardTriggers() { forbiddenCalls.continuation += 1; return []; },
       applyTrigger() { forbiddenCalls.continuation += 1; return { ok: false }; },
     });
-    const store = {
-      getSnapshot: () => ({ state: structuredClone(committed) }),
-      compareAndCommit(baseVersion, nextState) {
-        assert(baseVersion === committed.version, "state version conflict");
-        committed = structuredClone(nextState);
-        committed.version += 1;
-        committed.stateVersion = committed.version;
-        commitCount += 1;
-        return { ok: true };
-      },
-    };
     const viewStore = SetiBrowserViewStateStore.createViewStateStore();
     const projectionAdapter = SetiBrowserProjectionAdapter.createBrowserProjectionAdapter({
       stateStore: store,

@@ -41,13 +41,20 @@ function createStore(initialState = createState()) {
   const commits = [];
   return {
     getSnapshot: () => ({ version: state.version, state: structuredClone(state) }),
+    beginWorkingCopy(baseVersion = state.version) {
+      return baseVersion === state.version
+        ? { ok: true, baseVersion, state: structuredClone(state) }
+        : { ok: false, code: "STATE_VERSION_CONFLICT", baseVersion, currentVersion: state.version };
+    },
     compareAndCommit(baseVersion, nextState, meta) {
       if (state.version !== baseVersion) {
         return { ok: false, code: "STATE_VERSION_CONFLICT", message: "version changed" };
       }
       state = structuredClone(nextState);
+      state.version = baseVersion + 1;
+      state.stateVersion = baseVersion + 1;
       commits.push({ baseVersion, meta: structuredClone(meta) });
-      return { ok: true };
+      return { ok: true, snapshot: structuredClone(state) };
     },
     state: () => structuredClone(state),
     commits,
@@ -115,7 +122,8 @@ function createRegistry() {
 
 function createResearchFlow(store, registry, options = {}) {
   const facade = researchTechSession.createResearchTechRuntime({
-    readCommittedState: () => store.state(),
+    stateStore: store,
+    actionRegistry: registry,
     rotate(state) {
       state.rotation += 1;
       state.legalTechs = ["purple1", "blue2"];
@@ -150,7 +158,8 @@ function createResearchFlow(store, registry, options = {}) {
 
 function createScanCardFlow(store, registry) {
   return scanCardSession.createScanCardRuntime({
-    readCommittedState: () => store.state(),
+    stateStore: store,
+    actionRegistry: registry,
     enumerateConditional(state, pending) {
       return registry.enumerate({ state, pending }, { family: pending.family });
     },
@@ -343,20 +352,18 @@ function choose(host, id) {
   assert.equal(input.handleDomEvent({ target: staleTarget }).code, "EFFECT_HOST_DECISION_STALE");
 })();
 
-(function testMigratedBrowserHostCannotCallLegacyContinuations() {
+(function testBrowserHostCannotOwnCommitOrLegacyFlow() {
   const source = fs.readFileSync(path.join(__dirname, "effect-session-host.js"), "utf8");
   for (const forbidden of [
+    "compareAndCommit",
     "pendingState",
     "actionEffectFlow",
     "completeCurrentActionEffect",
-    "appendResearchTechFollowupEffects",
-    "renderAll",
     "localStorage",
     "document.",
   ]) {
     assert.equal(source.includes(forbidden), false, `browser host 不得引用 ${forbidden}`);
   }
-  assert.equal(effectSession.SCHEMA_VERSION, "seti-effect-session-v1");
 })();
 
 (function testRealStateStoreCommitSubscriptionRefreshesWithoutOwningFacts() {

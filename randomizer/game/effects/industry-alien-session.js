@@ -202,6 +202,9 @@
   }
 
   function createIndustryAlienRuntime(options = {}) {
+    if (options.stateStore && typeof options.actionRegistry?.validate !== "function") {
+      throw new TypeError("industry/alien production session 缺少 Standard Action registry");
+    }
     const enumerateDecision = requireFunction(options, "enumerateDecision");
     const executeDecision = requireFunction(options, "executeDecision");
     const executeEffect = requireFunction(options, "executeEffect");
@@ -275,6 +278,9 @@
     }
 
     function dispatch(state, action, meta = {}) {
+      if (options.stateStore) {
+        return runtime.dispatchStandardAction(action, options.actionRegistry, buildGroup, meta);
+      }
       return runtime.dispatchAction(clone(state), clone(action), buildGroup, clone(meta));
     }
 

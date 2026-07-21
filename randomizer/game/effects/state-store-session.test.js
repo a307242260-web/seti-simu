@@ -164,6 +164,13 @@ function dispatchSteps(runtime, family, steps, meta = {}) {
   const store = instrumentStore(authority);
   const research = createResearchTechRuntime({
     stateStore: store,
+    actionRegistry: {
+      validate(state, action) {
+        return state.meta.stateVersion === action.stateVersion
+          ? { ok: true }
+          : { ok: false, code: "STANDARD_ACTION_STALE", message: "action 已过期" };
+      },
+    },
     rotate(state) {
       state.solarSystem.rotation += 1;
       return { ok: true, nextState: state };
@@ -180,7 +187,11 @@ function dispatchSteps(runtime, family, steps, meta = {}) {
       return { ok: true, nextState: state };
     },
   });
-  const dispatched = research.dispatch(null, { family: "research_tech", actorId: "p1" });
+  const dispatched = research.dispatch(null, {
+    family: "research_tech",
+    actorId: "p1",
+    stateVersion: authority.getSnapshot().meta.stateVersion,
+  });
   assert.equal(research.drain(dispatched.session).ok, true);
   const decision = research.inspect(dispatched.session).decision;
   assert.deepEqual(decision.choices, [{ tileId: "orange-1" }]);
@@ -197,6 +208,55 @@ function dispatchSteps(runtime, family, steps, meta = {}) {
   assert.equal(committed.players.p1.resources.credits, 7);
   assert.equal(store.counters.compareAndCommit, 1);
   assert.equal(store.counters.legacyDirectWrite, 0);
+})();
+
+(function testStandardActionMustValidateBeforeQueueAndCommitOnce() {
+  const authority = createStateStore(createState());
+  const store = instrumentStore(authority);
+  const runtime = createMutationRuntime(store);
+  const before = committedBytes(authority);
+  let validationCalls = 0;
+  let groupCalls = 0;
+  const registry = {
+    validate(state, action) {
+      validationCalls += 1;
+      assert.equal(state.meta.stateVersion, authority.getSnapshot().meta.stateVersion);
+      return action.stateVersion === state.meta.stateVersion
+        ? { ok: true }
+        : { ok: false, code: "STANDARD_ACTION_STALE", message: "action 已过期" };
+    },
+  };
+  const buildGroup = (_state, action) => {
+    groupCalls += 1;
+    return {
+      effects: [{ type: "mutate", payload: { step: "research-pay", family: action.family } }],
+    };
+  };
+
+  const stale = runtime.dispatchStandardAction(
+    { family: "scan", actorId: "p1", stateVersion: 99 },
+    registry,
+    buildGroup,
+  );
+  assert.equal(stale.ok, false);
+  assert.equal(stale.code, "STANDARD_ACTION_STALE");
+  assert.equal(groupCalls, 0, "非法 Action 不得创建 Effect Group");
+  assert.equal(store.counters.compareAndCommit, 0);
+  assert.equal(committedBytes(authority), before);
+
+  const dispatched = runtime.dispatchStandardAction(
+    { family: "scan", actorId: "p1", stateVersion: 0 },
+    registry,
+    buildGroup,
+    { sessionId: "standard-main-chain" },
+  );
+  assert.equal(dispatched.ok, true);
+  assert.equal(validationCalls, 2);
+  assert.equal(groupCalls, 1);
+  assert.equal(committedBytes(authority), before, "queue drain 前权威状态必须不变");
+  assert.equal(runtime.drain(dispatched.session).ok, true);
+  assert.equal(dispatched.session.phase, "completed");
+  assert.equal(store.counters.compareAndCommit, 1, "完整 Session 只能提交一次");
 })();
 
 (function testEveryRepresentativeStepFailureLeavesCommittedBytesUnchanged() {

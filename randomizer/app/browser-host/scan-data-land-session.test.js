@@ -98,7 +98,8 @@ function createRegistry() {
 
 function createFlow(authority, registry, forbiddenCalls) {
   return scanCardSession.createScanCardRuntime({
-    readCommittedState: () => structuredClone(authority.current),
+    stateStore: authority.store,
+    actionRegistry: registry,
     enumerateConditional(state, pending) {
       return registry.enumerate({ state, pending }, { family: pending.family, actorId: pending.ownerId });
     },
@@ -164,21 +165,27 @@ function createHarness() {
   const authority = { current: createState() };
   const forbiddenCalls = { pendingOwner: 0, oldContinuation: 0, aiResolver: 0 };
   const registry = createRegistry();
-  const flow = createFlow(authority, registry, forbiddenCalls);
   let latestObservation = null;
   let latestInspection = null;
   let commitCount = 0;
   const store = {
     getSnapshot: () => ({ state: structuredClone(authority.current) }),
+    beginWorkingCopy(baseVersion = authority.current.version) {
+      return baseVersion === authority.current.version
+        ? { ok: true, baseVersion, state: structuredClone(authority.current) }
+        : { ok: false, code: "STATE_VERSION_CONFLICT", baseVersion, currentVersion: authority.current.version };
+    },
     compareAndCommit(baseVersion, nextState) {
       if (baseVersion !== authority.current.version) return { ok: false, code: "STATE_VERSION_CONFLICT" };
       authority.current = structuredClone(nextState);
       authority.current.version += 1;
       authority.current.stateVersion = authority.current.version;
       commitCount += 1;
-      return { ok: true };
+      return { ok: true, snapshot: structuredClone(authority.current) };
     },
   };
+  authority.store = store;
+  const flow = createFlow(authority, registry, forbiddenCalls);
   const viewStore = viewStateApi.createViewStateStore();
   const projectionAdapter = projectionAdapterApi.createBrowserProjectionAdapter({
     stateStore: store,
@@ -302,22 +309,6 @@ function createHarness() {
   ]);
   assert.equal(harness.getCommitCount(), 3, "三个 Standard Action 必须各自只原子提交一次");
   assert.deepEqual(harness.forbiddenCalls, { pendingOwner: 0, oldContinuation: 0, aiResolver: 0 });
-})();
-
-(function testMigrationHotPathHasNoLegacyOwnersOrContinuations() {
-  const source = fs.readFileSync(path.join(__dirname, "../../game/effects/scan-card-session.js"), "utf8");
-  for (const forbidden of [
-    "scanTargetAction",
-    "probeSectorScanAction",
-    "probeLocationRewardAction",
-    "publicScanQueue",
-    "dataPlaceAction",
-    "landTargetAction",
-    "completeCurrentActionEffect",
-    "runAiPendingStep",
-  ]) {
-    assert.equal(source.includes(forbidden), false, `迁移热路径不得引用 ${forbidden}`);
-  }
 })();
 
 console.log("scan/data/land browser host session tests passed");

@@ -438,6 +438,63 @@
       });
     }
 
+    function dispatchStandardAction(action, registry, createEffectGroup, meta = {}) {
+      if (!beginWorkingCopy || !compareAndCommit) {
+        return fail(
+          "EFFECT_STANDARD_ACTION_STORE_REQUIRED",
+          "Standard Action 生产入口必须绑定 StateStore",
+        );
+      }
+      if (!registry || typeof registry.validate !== "function") {
+        return fail(
+          "EFFECT_STANDARD_ACTION_REGISTRY_REQUIRED",
+          "Standard Action 生产入口缺少唯一 registry.validate",
+        );
+      }
+      if (typeof createEffectGroup !== "function") {
+        return fail(
+          "EFFECT_STANDARD_ACTION_GROUP_FACTORY_REQUIRED",
+          "Standard Action 生产入口缺少 Effect Group 构建器",
+        );
+      }
+
+      let working;
+      try {
+        working = beginWorkingCopy(meta.baseVersion);
+      } catch (error) {
+        return fail("EFFECT_STATE_WORKING_COPY_FAILED", error?.message || "StateStore working copy 创建失败");
+      }
+      if (!working?.ok) {
+        return fail(
+          working?.code || "EFFECT_STATE_WORKING_COPY_FAILED",
+          working?.message || "StateStore working copy 创建失败",
+          { stateStore: clone(working) },
+        );
+      }
+
+      let validation;
+      try {
+        validation = registry.validate(cloneState(working.state), clone(action));
+      } catch (error) {
+        return fail(
+          "EFFECT_STANDARD_ACTION_VALIDATION_FAILED",
+          error?.message || "Standard Action 校验失败",
+        );
+      }
+      if (!validation?.ok) {
+        return fail(
+          validation?.code || "EFFECT_STANDARD_ACTION_NOT_LEGAL",
+          validation?.message || "Standard Action 已过期或不合法",
+          { validation: clone(validation) },
+        );
+      }
+
+      return dispatchAction(working.state, action, createEffectGroup, {
+        ...clone(meta),
+        baseVersion: working.baseVersion,
+      });
+    }
+
     function dispatchAction(committedState, action, createEffectGroup, meta = {}) {
       assertFunction(createEffectGroup, "createEffectGroup");
       const session = createSession(committedState, meta);
@@ -816,6 +873,7 @@
       registerExecutor,
       dispatchAction,
       dispatchStoredAction,
+      dispatchStandardAction,
       dispatchQuickAction,
       resolveDecision,
       advance,

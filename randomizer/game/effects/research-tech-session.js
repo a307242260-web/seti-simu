@@ -91,6 +91,9 @@
   }
 
   function createResearchTechRuntime(options = {}) {
+    if (options.stateStore && typeof options.actionRegistry?.validate !== "function") {
+      throw new TypeError("research tech production session 缺少 Standard Action registry");
+    }
     const rotate = requireFunction(options, "rotate");
     const listChoices = requireFunction(options, "listChoices");
     const place = requireFunction(options, "place");
@@ -212,7 +215,7 @@
 
     function dispatch(committedState, action, meta = {}) {
       if (options.stateStore) {
-        return runtime.dispatchStoredAction(action, createEffectGroup, meta);
+        return runtime.dispatchStandardAction(action, options.actionRegistry, createEffectGroup, meta);
       }
       return runtime.dispatchAction(committedState, action, createEffectGroup, meta);
     }

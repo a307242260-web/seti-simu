@@ -66,10 +66,6 @@
     }
     const stateStore = options.stateStore;
     const getSnapshot = requireFunction(stateStore, "getSnapshot", "Effect Session state store");
-    const flowOwnsCommit = options.flowOwnsCommit === true;
-    const compareAndCommit = flowOwnsCommit
-      ? null
-      : requireFunction(stateStore, "compareAndCommit", "Effect Session state store");
     const renderProjection = typeof options.renderProjection === "function"
       ? options.renderProjection
       : () => undefined;
@@ -126,27 +122,12 @@
       const { family, session } = active;
       const sessionSnapshot = active.flow.inspect(session);
       if (session.phase === "completed") {
-        const committed = flowOwnsCommit
-          ? { ok: true, snapshot: getCommittedState() }
-          : compareAndCommit(session.baseVersion, clone(session.committedState), {
-            sessionId: session.sessionId,
-            journal: clone(session.journal),
-          });
-        if (!committed?.ok) {
-          const failedCommit = fail(
-            committed?.code || "EFFECT_HOST_COMMIT_FAILED",
-            committed?.message || "浏览器宿主原子提交失败",
-            { family, session: sessionSnapshot },
-          );
-          active = null;
-          render();
-          return publishStableResult(failedCommit);
-        }
+        const committedState = getCommittedState();
         const completed = {
           ok: true,
           phase: "completed",
           family,
-          committedState: clone(session.committedState),
+          committedState,
           journal: clone(session.journal),
         };
         active = null;

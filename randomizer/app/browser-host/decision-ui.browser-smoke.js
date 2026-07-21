@@ -25,11 +25,18 @@
     const forbiddenCalls = { takeTech: 0, reward: 0, continuation: 0 };
     const store = {
       getSnapshot: () => ({ state: structuredClone(committed) }),
+      beginWorkingCopy(baseVersion = committed.version) {
+        return baseVersion === committed.version
+          ? { ok: true, baseVersion, state: structuredClone(committed) }
+          : { ok: false, code: "STATE_VERSION_CONFLICT", baseVersion, currentVersion: committed.version };
+      },
       compareAndCommit(baseVersion, nextState) {
         if (baseVersion !== committed.version) return { ok: false, code: "STATE_VERSION_CONFLICT" };
         committed = structuredClone(nextState);
+        committed.version = baseVersion + 1;
+        committed.stateVersion = baseVersion + 1;
         commitCount += 1;
-        return { ok: true };
+        return { ok: true, snapshot: structuredClone(committed) };
       },
     };
     const actionRegistry = SetiStandardAction.createRegistry({
@@ -45,7 +52,8 @@
       execute: () => { throw new Error("Decision UI 不得调用 legacy action execute"); },
     }));
     const flow = SetiResearchTechSession.createResearchTechRuntime({
-      readCommittedState: () => structuredClone(committed),
+      stateStore: store,
+      actionRegistry,
       rotate(state) {
         state.trace.push("rotate");
         state.legalTechChoices = [

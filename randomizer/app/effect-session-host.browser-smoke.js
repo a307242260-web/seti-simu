@@ -25,11 +25,18 @@
     let commitCount = 0;
     return {
       getSnapshot: () => ({ state: structuredClone(committed) }),
+      beginWorkingCopy(baseVersion = committed.version) {
+        return baseVersion === committed.version
+          ? { ok: true, baseVersion, state: structuredClone(committed) }
+          : { ok: false, code: "VERSION_CONFLICT", baseVersion, currentVersion: committed.version };
+      },
       compareAndCommit(baseVersion, nextState) {
         if (committed.version !== baseVersion) return { ok: false, code: "VERSION_CONFLICT" };
         committed = structuredClone(nextState);
+        committed.version = baseVersion + 1;
+        committed.stateVersion = baseVersion + 1;
         commitCount += 1;
-        return { ok: true };
+        return { ok: true, snapshot: structuredClone(committed) };
       },
       state: () => structuredClone(committed),
       commits: () => commitCount,
@@ -61,7 +68,7 @@
 
   function flow(family, stateStore, actionRegistry, options = {}) {
     const runtime = SetiEffectSession.createRuntime({
-      readCommittedState: () => stateStore.state(),
+      stateStore,
       projectState: (workingState) => structuredClone(workingState),
     });
     runtime.registerExecutor("browser-smoke-mark", (workingState, effect) => {
@@ -101,8 +108,8 @@
       }
       return [decision("payment", ["energy", "data"]), mark("play"), mark("card-effect"), mark("trigger"), decision("trigger-reward", ["data", "score"])];
     }
-    function dispatch(committedState, action) {
-      return runtime.dispatchAction(committedState, action, () => ({
+    function dispatch(_committedState, action) {
+      return runtime.dispatchStandardAction(action, actionRegistry, () => ({
         kind: "action",
         ownerId: action.actorId,
         effects: effects(),

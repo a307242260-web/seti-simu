@@ -174,6 +174,9 @@
   }
 
   function createScanCardRuntime(options = {}) {
+    if (options.stateStore && typeof options.actionRegistry?.validate !== "function") {
+      throw new TypeError("scan/card production session 缺少 Standard Action registry");
+    }
     const enumerateConditional = requireFunction(options, "enumerateConditional");
     const executeConditional = requireFunction(options, "executeConditional");
     const runScan = requireFunction(options, "runScan");
@@ -549,7 +552,7 @@
 
     function dispatch(committedState, action, meta = {}) {
       if (options.stateStore) {
-        return runtime.dispatchStoredAction(action, createEffectGroup, meta);
+        return runtime.dispatchStandardAction(action, options.actionRegistry, createEffectGroup, meta);
       }
       return runtime.dispatchAction(committedState, action, createEffectGroup, meta);
     }
