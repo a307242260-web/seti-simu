@@ -39,9 +39,7 @@ randomizer/app/browser-host/browser-host.test.js
 randomizer/app/browser-host/browser-services.test.js
 randomizer/app/browser-host/card-decision-ui.test.js
 randomizer/app/browser-host/decision-ui.test.js
-randomizer/app/browser-host/heuristic-policy.integration.test.js
 randomizer/app/browser-host/industry-alien-decision-ui.test.js
-randomizer/app/browser-host/policy-input-adapter.test.js
 randomizer/app/browser-host/resident-renderer.test.js
 randomizer/app/browser-host/scan-data-land-session.test.js
 randomizer/app/browser-state-authority.test.js
@@ -71,7 +69,6 @@ randomizer/app/headless-state-checkpoint.test.js
 randomizer/app/headless-training-replay.test.js
 randomizer/app/income-runtime.test.js
 randomizer/app/industry-runtime.test.js
-randomizer/app/public-api-ai-contract.test.js
 randomizer/app/refresh.test.js
 randomizer/app/render-runtime.test.js
 randomizer/app/runtime.test.js
@@ -87,12 +84,6 @@ randomizer/game/actions/planet-rewards.test.js
 randomizer/game/actions/quick-trades.test.js
 randomizer/game/actions/scan-effects.test.js
 randomizer/game/actions/standard-action.test.js
-randomizer/game/ai/domain-units.test.js
-randomizer/game/ai/heuristic-evaluator.test.js
-randomizer/game/ai/machine-player-host.test.js
-randomizer/game/ai/policy-port.test.js
-randomizer/game/ai/race-model.test.js
-randomizer/game/ai/turn-candidate-enumerator.test.js
 randomizer/game/aliens/alien-card-identity.test.js
 randomizer/game/aliens/amiba.test.js
 randomizer/game/aliens/aomomo.test.js

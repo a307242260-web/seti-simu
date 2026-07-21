@@ -591,9 +591,7 @@ randomizer/
    ├─ selection-evaluator.js # setup / 支付 / 科技 / 外星人等 legal choice 的纯估值
    ├─ policy-port.js      # Heuristic/Learned 公共只读决策端口与 validator
    ├─ battle-analytics.js # 可配置窗口序列挖掘 + 分数构成分桶
-   ├─ index.js            # 浏览器/Node 模块汇总
-   ├─ race-model.test.js  # 竞速顺位、PASS、ETA 与备选收益回归
-   └─ ai.test.js          # 逐项回归
+   └─ index.js            # 浏览器/Node 模块汇总
 ```
 
 ---

@@ -117,7 +117,7 @@ Browser Host 与 headless/training Host 都直接构造 `DecisionContext` 并提
 
 ## Proof obligations 与证据
 
-实现位于 `randomizer/game/ai/policy-port.js`，契约测试为 `policy-port.test.js`：
+以下内容保留为后续机器人实现的设计义务，当前不作为已实现能力或单元测试证据：
 
 1. 同一 context/legal set 无差别传给 heuristic/learned fixture，二者只通过公共 validator 得到同一类 Standard Action descriptor；只有 Host 显式 `registry.execute` 才改变状态。
 2. 非法 action、decision schema、actor mismatch、stale stateVersion 均结构化拒绝。
