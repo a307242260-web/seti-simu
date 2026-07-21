@@ -13,8 +13,35 @@
     });
     const store = SetiStateStore.createStateStore(initial);
     const view = SetiBrowserViewStateStore.createViewStateStore();
+    const ruleLifecycle = {
+      save() {
+        const serialized = store.serialize();
+        return serialized.ok ? {
+          ok: true,
+          envelope: {
+            schemaVersion: "seti-browser-rule-composition-save-v1",
+            committedState: serialized.serialized,
+            session: null,
+          },
+        } : serialized;
+      },
+      validateRestore(envelope) {
+        if (envelope?.schemaVersion !== "seti-browser-rule-composition-save-v1") {
+          return { ok: false, code: "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED" };
+        }
+        return store.deserialize(envelope.committedState);
+      },
+      restore(envelope) {
+        const loaded = this.validateRestore(envelope);
+        if (!loaded.ok) return loaded;
+        const restored = store.restore(loaded.state);
+        return restored.ok
+          ? { ok: true, projection: { stateVersion: restored.stateVersion } }
+          : restored;
+      },
+    };
     const services = SetiBrowserServices.createBrowserServices({
-      stateStore: store,
+      ruleLifecycle,
       viewStateStore: view,
       storage: localStorage,
       downloadPort: { save() { return { ok: true }; } },

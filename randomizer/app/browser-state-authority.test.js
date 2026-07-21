@@ -75,20 +75,24 @@ function createAuthority() {
 
 (function testBootstrapAndSaveUseOneResidentAuthority() {
   const { authority, counters } = createAuthority();
-  const saved = authority.serialize();
+  const saved = authority.lifecycle.save();
   assert.equal(saved.ok, true);
   assert.deepEqual(counters(), { storeCreations: 1, legacyCommittedFactoryCalls: 0 });
-  assert.doesNotMatch(saved.serialized, /statusNote|selectionActive|industryBorrowMode/);
+  assert.equal(saved.envelope.schemaVersion, authority.RULE_SAVE_SCHEMA_VERSION);
+  assert.doesNotMatch(saved.envelope.committedState, /statusNote|selectionActive|industryBorrowMode/);
+  for (const legacyPort of ["serialize", "deserialize", "restore", "resetSession", "beginWorkingCopy", "compareAndCommit"]) {
+    assert.equal(Object.hasOwn(authority, legacyPort), false, `authority 不得向 Browser 暴露 ${legacyPort}`);
+  }
 })();
 
 (function testSnapshotIsolationAndOneVersionCommit() {
   const { authority } = createAuthority();
-  authority.serialize();
-  const before = authority.serialize();
+  authority.lifecycle.save();
+  const before = authority.lifecycle.save();
   const version = authority.getSnapshot().meta.stateVersion;
   const snapshot = authority.getSnapshot();
   assert.throws(() => { snapshot.turn.roundNumber = 99; }, TypeError);
-  assert.equal(authority.serialize().serialized, before.serialized);
+  assert.equal(authority.lifecycle.save().envelope.committedState, before.envelope.committedState);
 
   const player = authority.getActiveSession().workingState.playerState.players[0];
   const result = authority.runTransaction(() => { player.resources.credits += 1; });
@@ -99,8 +103,8 @@ function createAuthority() {
 
 (function testFailedMutationAndInvariantKeepBytesAndJournal() {
   const { authority } = createAuthority();
-  authority.serialize();
-  const before = authority.serialize().serialized;
+  authority.lifecycle.save();
+  const before = authority.lifecycle.save().envelope.committedState;
   const journal = {
     entries: ["base"],
     snapshot() { return [...this.entries]; },
@@ -111,7 +115,7 @@ function createAuthority() {
     throw new Error("step poison");
   }, { journal });
   assert.equal(thrown.code, "BROWSER_STATE_MUTATOR_FAILED");
-  assert.equal(authority.serialize().serialized, before);
+  assert.equal(authority.lifecycle.save().envelope.committedState, before);
   assert.deepEqual(journal.entries, ["base"]);
 
   journal.entries = ["base"];
@@ -120,21 +124,31 @@ function createAuthority() {
     working.playerState.currentPlayerId = "missing-player";
   }, { journal });
   assert.equal(rejected.ok, false);
-  assert.equal(authority.serialize().serialized, before);
+  assert.equal(authority.lifecycle.save().envelope.committedState, before);
   assert.deepEqual(journal.entries, ["base"]);
 })();
 
 (function testRecoveryRestoresResidentStoreAndKeepsNarrowReferenceIdentity() {
   const { authority, counters } = createAuthority();
-  authority.serialize();
+  authority.lifecycle.save();
   const playerReference = authority.getActiveSession().workingState.playerState;
-  const recovered = structuredClone(authority.getSnapshot());
+  const saved = authority.lifecycle.save().envelope;
+  const recovered = JSON.parse(saved.committedState);
   recovered.meta.stateVersion = 17;
-  const result = authority.restore(recovered);
+  const result = authority.lifecycle.restore({ ...saved, committedState: JSON.stringify(recovered) });
   assert.equal(result.ok, true);
   assert.equal(authority.getActiveSession().workingState.playerState, playerReference);
   assert.equal(authority.getSnapshot().meta.stateVersion, 17);
   assert.deepEqual(counters(), { storeCreations: 1, legacyCommittedFactoryCalls: 0 });
+})();
+
+(function testLifecycleRejectsOldAndExtendedSchemaWithoutMutation() {
+  const { authority } = createAuthority();
+  const before = authority.lifecycle.save().envelope.committedState;
+  assert.equal(authority.lifecycle.restore({ schemaVersion: "legacy-v0", committedState: before, session: null }).code, "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED");
+  assert.equal(authority.lifecycle.restore({ schemaVersion: authority.RULE_SAVE_SCHEMA_VERSION, committedState: before, session: null, state: {} }).code, "RULE_COMPOSITION_SAVE_FIELDS_UNSUPPORTED");
+  assert.equal(authority.lifecycle.restore({ schemaVersion: authority.RULE_SAVE_SCHEMA_VERSION, committedState: before, session: { id: "external" } }).code, "RULE_COMPOSITION_SESSION_SCHEMA_UNSUPPORTED");
+  assert.equal(authority.lifecycle.save().envelope.committedState, before);
 })();
 
 console.log("browser state authority tests passed");

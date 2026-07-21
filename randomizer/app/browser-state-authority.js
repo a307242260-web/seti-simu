@@ -7,6 +7,8 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  const RULE_SAVE_SCHEMA_VERSION = "seti-browser-rule-composition-save-v1";
+
   function clone(value) {
     return structuredClone(value);
   }
@@ -112,12 +114,65 @@
     }
 
     function restore(candidateState, metadata = null) {
+      const hydratedSession = clone(sessionState);
+      initialGameState.restoreSessionState(hydratedSession, candidateState, replaceMutableObject);
       const restored = store.restore(candidateState, metadata);
       if (!restored.ok) return restored;
-      initialGameState.restoreSessionState(sessionState, restored.snapshot, replaceMutableObject);
+      for (const key of Object.keys(hydratedSession)) {
+        if (key === "meta") sessionState.meta = clone(hydratedSession.meta);
+        else replaceMutableObject(sessionState[key], hydratedSession[key]);
+      }
       activeSession.baseVersion = restored.stateVersion;
       return restored;
     }
+
+    function saveLifecycle(overrides = {}) {
+      const serialized = serialize(overrides);
+      if (!serialized.ok) return serialized;
+      return {
+        ok: true,
+        envelope: {
+          schemaVersion: RULE_SAVE_SCHEMA_VERSION,
+          committedState: serialized.serialized,
+          session: null,
+        },
+      };
+    }
+
+    function validateLifecycleRestore(envelope) {
+      if (!envelope || envelope.schemaVersion !== RULE_SAVE_SCHEMA_VERSION) {
+        return { ok: false, code: "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED", message: "旧版或未知 Browser 存档 schema 被拒绝" };
+      }
+      const allowedKeys = ["schemaVersion", "committedState", "session"];
+      const unknownKeys = Object.keys(envelope).filter((key) => !allowedKeys.includes(key));
+      if (unknownKeys.length) {
+        return { ok: false, code: "RULE_COMPOSITION_SAVE_FIELDS_UNSUPPORTED", message: "Browser 规则存档包含未知字段", unknownKeys };
+      }
+      if (envelope.session != null) {
+        return { ok: false, code: "RULE_COMPOSITION_SESSION_SCHEMA_UNSUPPORTED", message: "当前规则 lifecycle 不接受外置 Session checkpoint" };
+      }
+      if (typeof envelope.committedState !== "string") {
+        return { ok: false, code: "RULE_COMPOSITION_COMMITTED_STATE_MISSING", message: "Browser 规则存档缺少 committedState" };
+      }
+      const loaded = store.deserialize(envelope.committedState);
+      return loaded.ok ? { ok: true, state: loaded.state, session: null } : loaded;
+    }
+
+    function restoreLifecycle(envelope) {
+      const validated = validateLifecycleRestore(envelope);
+      if (!validated.ok) return validated;
+      const restored = restore(validated.state, { source: "browser-rule-lifecycle" });
+      return restored.ok
+        ? { ok: true, projection: { phase: "idle", stateVersion: restored.stateVersion } }
+        : restored;
+    }
+
+    const lifecycle = Object.freeze({
+      newGame: resetSession,
+      save: saveLifecycle,
+      validateRestore: validateLifecycleRestore,
+      restore: restoreLifecycle,
+    });
 
     function runTransaction(mutator, transactionOptions = {}) {
       requireFunction(mutator, "transaction mutator");
@@ -158,14 +213,10 @@
 
     return Object.freeze({
       SCHEMA_VERSION: stateStoreApi.SCHEMA_VERSION,
+      RULE_SAVE_SCHEMA_VERSION,
+      lifecycle,
       getActiveSession: () => activeSession,
       getSnapshot: store.getSnapshot.bind(store),
-      beginWorkingCopy: store.beginWorkingCopy.bind(store),
-      compareAndCommit: store.compareAndCommit.bind(store),
-      validate: store.validate.bind(store),
-      deserialize: store.deserialize.bind(store),
-      restore,
-      serialize,
       subscribe(listener) {
         requireFunction(listener, "subscriber");
         listeners.add(listener);
@@ -175,7 +226,6 @@
         contextProvider = requireFunction(provider, "context provider");
       },
       settle,
-      resetSession,
       runTransaction,
     });
   }

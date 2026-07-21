@@ -267,6 +267,7 @@
     activePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
     finalScoreIds: FINAL_SCORE_IDS,
   });
+  const browserRuleLifecycle = browserStateAuthority.lifecycle;
   const browserRuleSession = browserStateAuthority.getActiveSession();
   const browserRuleState = browserRuleSession.workingState;
   const solarState = browserRuleState.solarState;
@@ -677,11 +678,11 @@
       stateSource: residentStateSource,
     })
     : null;
-  const residentBrowserServices = !headlessMode && browserHostModule?.browserServices
+  const residentBrowserServices = browserHostModule?.browserServices
     ? browserHostModule.browserServices.createBrowserServices({
-      stateStore: browserStateAuthority,
+      ruleLifecycle: browserRuleLifecycle,
       viewStateStore: residentViewStateStore,
-      storage: gameRecoveryModule.getPersistentGameStorage(window),
+      storage: headlessMode ? null : gameRecoveryModule.getPersistentGameStorage(window),
       storageKey: `${PERSISTENT_GAME_STORAGE_KEY}:browser-services`,
     })
     : null;
@@ -1935,9 +1936,7 @@
     planetStats,
     tech,
     cardTaskStateModule,
-    ruleLifecycle: {
-      newGame: (options) => browserStateAuthority.resetSession(options),
-    },
+    ruleLifecycle: browserRuleLifecycle,
     clearTransientStateForRecovery,
     restoreMutableObject,
     createTurnState,
@@ -2914,9 +2913,7 @@
     techGameState,
     cardState,
     cardTaskState,
-    ruleLifecycle: {
-      newGame: (options) => browserStateAuthority.resetSession(options),
-    },
+    ruleLifecycle: browserRuleLifecycle,
     historyStepOrder,
     els,
     DEFAULT_ACTIVE_PLAYER_COUNT,
@@ -3614,9 +3611,8 @@
 
   function createGameRecoverySnapshot(meta = {}) {
     return gameRecoveryModule.createGameRecoverySnapshot({
-      stateStore: browserStateAuthority,
       browserServices: residentBrowserServices,
-      serializeOptions: {
+      ruleLifecycleOptions: {
         seed: meta.seed ?? "browser-host",
         rngState: meta.rngState || { owner: headlessMode ? "headless" : "browser", state: null },
       },
@@ -3991,23 +3987,7 @@
   function applyGameRecoverySnapshot(snapshot, options = {}) {
     return gameRecoveryModule.applyGameRecoverySnapshot(snapshot, {
       ...options,
-      stateStore: browserStateAuthority,
       browserServices: residentBrowserServices,
-      restoreDeterministicState: (sequences) => {
-        const required = [
-          "card", "handCard", "finalMark", "dataToken", "nebulaToken",
-          "nebulaReplacement", "historyStep", "actionLog", "rocket",
-        ];
-        const missing = required.filter((key) => !Number.isSafeInteger(sequences?.[key]) || sequences[key] < 1);
-        if (missing.length) throw new TypeError(`恢复快照缺少合法确定性序列：${missing.join(", ")}`);
-        cards.restoreNextCardInstanceSequence(sequences.card);
-        players.restoreNextHandCardSequence(sequences.handCard);
-        finalScoring.restoreNextFinalMarkSequence(sequences.finalMark);
-        data.restoreNextDataTokenSequence(sequences.dataToken);
-        data.restoreDeterministicSequences(sequences);
-        actionHistoryModule.restoreNextHistoryStepSequence(sequences.historyStep);
-        actionLogState.nextEntryId = sequences.actionLog;
-      },
       onAfterStateRestored: () => {
         getActionCycleNumber();
         clearTransientStateForRecovery();

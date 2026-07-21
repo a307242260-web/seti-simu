@@ -57,6 +57,23 @@ function createDeterministicDate(seed, NativeDate = Date) {
   return DeterministicDate;
 }
 
+function getCompositionCommittedState(recoverySnapshot) {
+  const committedState = recoverySnapshot?.browserCheckpoint?.rules?.envelope?.committedState;
+  if (typeof committedState !== "string") {
+    throw new TypeError("headless recovery checkpoint 缺少 composition committedState");
+  }
+  return committedState;
+}
+
+function withCompositionCommittedState(recoverySnapshot, committedState) {
+  const next = structuredClone(recoverySnapshot);
+  if (!next?.browserCheckpoint?.rules?.envelope) {
+    throw new TypeError("headless recovery checkpoint 缺少 composition lifecycle envelope");
+  }
+  next.browserCheckpoint.rules.envelope.committedState = JSON.stringify(committedState);
+  return next;
+}
+
 function getScriptPaths() {
   const htmlPath = path.resolve(__dirname, "..", "index.html");
   const html = fs.readFileSync(htmlPath, "utf8");
@@ -494,7 +511,7 @@ function createHeadlessEnv() {
     recordDuration("setupSelectionMilliseconds", setupSelectionStartedAt);
     const initialRecovery = api.createRecoverySnapshot({ label: "headless StateStore bootstrap" });
     try {
-      stateStore = runtimeAuthority.create(highCouplingState, JSON.parse(initialRecovery.committedState));
+      stateStore = runtimeAuthority.create(highCouplingState, JSON.parse(getCompositionCommittedState(initialRecovery)));
     } catch (error) {
       throw new Error(error?.message || "headless committed bootstrap 失败");
     }
@@ -503,7 +520,7 @@ function createHeadlessEnv() {
       synchronizeWorkingState: false,
       captureState() {
         const recovery = api.createRecoverySnapshot({ label: "headless Effect Session working" });
-        const captured = stateStore.deserialize(recovery.committedState);
+        const captured = stateStore.deserialize(getCompositionCommittedState(recovery));
         if (!captured.ok) {
           throw new Error(captured.message || `headless working candidate 失败: ${captured.code}`);
         }
@@ -515,13 +532,13 @@ function createHeadlessEnv() {
         return candidate;
       },
       restoreState(committedState) {
-        const restored = api.restoreRecoverySnapshot({
-          version: RECOVERY_SNAPSHOT_VERSION,
-          committedState: JSON.stringify(committedState),
-          runtime: {},
-        }, { skipRefresh: true });
-        if (restored?.ok !== false && Number.isSafeInteger(restored?.rngState?.state)) {
-          seededRandom?.setState(restored.rngState.state);
+        const current = api.createRecoverySnapshot({ label: "headless Effect Session restore" });
+        const restored = api.restoreRecoverySnapshot(
+          withCompositionCommittedState(current, committedState),
+          { skipRefresh: true },
+        );
+        if (restored?.ok !== false && Number.isSafeInteger(committedState?.meta?.rngState?.state)) {
+          seededRandom?.setState(committedState.meta.rngState.state);
         }
         return restored;
       },
@@ -1016,7 +1033,16 @@ function createHeadlessEnv() {
         const checkpointSeed = checkpoint?.replayCursor?.seed ?? checkpoint?.config?.seed ?? "seti-headless";
         this.reset({ ...(checkpoint?.config || {}), seed: checkpointSeed });
       }
-      const restoreResult = api.restoreRecoverySnapshot(persistedCoreState || checkpoint, { skipRefresh: true });
+      let compositionRecovery = persistedCoreState || checkpoint;
+      if (compositionRecovery?.version === RECOVERY_SNAPSHOT_VERSION
+        && typeof compositionRecovery.committedState === "string"
+        && compositionRecovery.browserCheckpoint == null) {
+        compositionRecovery = withCompositionCommittedState(
+          api.createRecoverySnapshot({ label: "headless checkpoint restore" }),
+          JSON.parse(compositionRecovery.committedState),
+        );
+      }
+      const restoreResult = api.restoreRecoverySnapshot(compositionRecovery, { skipRefresh: true });
       if (!restoreResult?.ok) {
         throw new Error(`checkpoint coreState 反序列化失败：${restoreResult?.code || restoreResult?.message || "unknown"}`);
       }
@@ -1026,7 +1052,10 @@ function createHeadlessEnv() {
         : environmentEvents;
       config = structuredClone(checkpoint?.config || config || {});
       seed = checkpoint?.replayCursor?.seed ?? config.seed ?? seed;
-      const committedRandomState = restoreResult?.rngState;
+      let committedRandomState = null;
+      try {
+        committedRandomState = JSON.parse(getCompositionCommittedState(compositionRecovery)).meta?.rngState || null;
+      } catch (_error) { /* 由下方统一 fail-closed。 */ }
       if (committedRandomState?.algorithm !== "seti-headless-mulberry32-v1"
         || !Number.isSafeInteger(committedRandomState.state)) {
         throw new Error("checkpoint coreState 缺少可恢复的 headless RNG 状态");
@@ -1053,14 +1082,19 @@ function createHeadlessEnv() {
       return this.observe();
     },
     createCheckpoint() {
+      const recoverySnapshot = api.createRecoverySnapshot({
+        rngState: {
+          algorithm: "seti-headless-mulberry32-v1",
+          state: seededRandom?.getState?.() ?? null,
+        },
+      });
       return {
         schemaVersion: "seti-rl-checkpoint-v1",
-        coreState: api.createRecoverySnapshot({
-          rngState: {
-            algorithm: "seti-headless-mulberry32-v1",
-            state: seededRandom?.getState?.() ?? null,
-          },
-        }),
+        coreState: {
+          version: recoverySnapshot.version,
+          committedState: getCompositionCommittedState(recoverySnapshot),
+          runtime: structuredClone(recoverySnapshot.runtime || {}),
+        },
         config: structuredClone(config || {}),
         replayCursor: {
           seed,

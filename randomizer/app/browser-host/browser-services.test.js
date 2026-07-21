@@ -5,104 +5,129 @@ const stateApi = require("../../game/state/state-store");
 const viewApi = require("./view-state-store");
 const servicesApi = require("./browser-services");
 
-function createState(version = 0) {
+const RULE_SCHEMA = "seti-browser-rule-composition-save-v1";
+
+function createState(version = 0, gameId = "services") {
   return stateApi.createCommittedGameState({
-    stateVersion: version, gameId: "services", rulesetVersion: "v1", seed: 81,
+    stateVersion: version, gameId, rulesetVersion: "v1", seed: 81,
     rngState: {}, sequences: {}, match: {}, turn: {}, players: {}, solarSystem: {},
     pieces: {}, planets: {}, data: {}, cards: {}, tech: {}, aliens: {}, finalScoring: {},
   });
 }
 
-function createHarness() {
-  const residentStore = stateApi.createStateStore(createState());
-  const view = viewApi.createViewStateStore();
+function createHarness(options = {}) {
+  const store = stateApi.createStateStore(createState());
+  const view = options.viewStateStore || viewApi.createViewStateStore();
   const memory = new Map();
-  const calls = { state: 0, session: 0, debug: 0, downloads: [] };
-  let restoredState = null;
-  let sessionCheckpoint = { schemaVersion: "seti-effect-session-checkpoint-v1", session: { id: "s1" } };
-  const store = {
-    ...residentStore,
-    restore(state, metadata) {
-      calls.state += 1;
-      restoredState = structuredClone(state);
-      return residentStore.restore(state, metadata);
+  const calls = { validate: 0, restore: 0, debug: 0, downloads: [] };
+  let session = { id: "session-a" };
+  const lifecycle = {
+    save() {
+      const serialized = store.serialize();
+      return serialized.ok ? {
+        ok: true,
+        envelope: { schemaVersion: RULE_SCHEMA, committedState: serialized.serialized, session: structuredClone(session) },
+      } : serialized;
+    },
+    validateRestore(envelope) {
+      calls.validate += 1;
+      if (envelope?.schemaVersion !== RULE_SCHEMA) return { ok: false, code: "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED" };
+      const loaded = store.deserialize(envelope.committedState);
+      return loaded.ok ? { ok: true } : loaded;
+    },
+    restore(envelope) {
+      calls.restore += 1;
+      if (options.failRuleRestore) return { ok: false, code: "RULE_RESTORE_POISON" };
+      const loaded = store.deserialize(envelope.committedState);
+      if (!loaded.ok) return loaded;
+      const restored = store.restore(loaded.state);
+      if (!restored.ok) return restored;
+      session = structuredClone(envelope.session);
+      return { ok: true, projection: { stateVersion: restored.stateVersion } };
     },
   };
   const services = servicesApi.createBrowserServices({
-    stateStore: store,
-    sessionPort: {
-      capture: () => ({ ok: true, checkpoint: sessionCheckpoint }),
-      validate(checkpoint) { return checkpoint?.schemaVersion === sessionCheckpoint.schemaVersion ? { ok: true, checkpoint } : { ok: false, code: "SESSION_INVALID" }; },
-      restore(checkpoint) { calls.session += 1; sessionCheckpoint = structuredClone(checkpoint); return { ok: true }; },
-    },
+    ruleLifecycle: lifecycle,
     viewStateStore: view,
     storage: { getItem: (key) => memory.get(key) || null, setItem: (key, value) => memory.set(key, value), removeItem: (key) => memory.delete(key) },
     downloadPort: { save(request) { calls.downloads.push(structuredClone(request)); return { ok: true }; } },
     debugCommandPort: { dispatch(command) { calls.debug += 1; return { ok: true, command }; } },
     now: () => new Date("2026-07-19T00:00:00.000Z"),
   });
-  return { store, view, services, calls, memory, get restoredState() { return restoredState; } };
+  return { store, view, services, calls, memory };
 }
 
-(function testSeparatedSchemasRoundTripAndViewRebuild() {
+(function testCompositionEnvelopeRoundTripAndViewRebuild() {
   const harness = createHarness();
   harness.view.dispatch({ type: "overlay.set", activeId: "report" });
   const captured = harness.services.capture();
   assert.equal(captured.ok, true);
-  assert.equal(captured.envelope.schemaVersion, "seti-browser-services-v1");
-  assert.equal(typeof captured.envelope.state.serialized, "string");
-  assert.equal(captured.envelope.session.schemaVersion, "seti-effect-session-checkpoint-v1");
-  assert.equal(captured.envelope.view.schemaVersion, "seti-browser-host-v1");
+  assert.equal(captured.envelope.schemaVersion, servicesApi.SCHEMA_VERSION);
+  assert.equal(captured.envelope.rules.schemaVersion, RULE_SCHEMA);
+  assert.equal(typeof captured.envelope.rules.envelope.committedState, "string");
+  assert.equal(Object.hasOwn(captured.envelope, "state"), false);
+  assert.equal(Object.hasOwn(captured.envelope, "session"), false);
+  assert.equal(captured.envelope.view.schemaVersion, servicesApi.VIEW_SCHEMA_VERSION);
   harness.view.clear();
   const restored = harness.services.restore(captured.envelope);
   assert.deepEqual(restored, { ok: true, stateVersion: 0, sessionRestored: true, viewRestored: true });
-  assert.equal(harness.calls.state, 1);
-  assert.equal(harness.calls.session, 1);
-  assert.equal(harness.restoredState.meta.gameId, "services");
+  assert.equal(harness.calls.restore, 1);
   assert.equal(harness.view.getSnapshot().overlay.activeId, "report");
 })();
 
-(function testInvalidSessionFailsBeforeAnyStateMutation() {
-  const harness = createHarness();
-  const envelope = structuredClone(harness.services.capture().envelope);
-  envelope.session.checkpoint.schemaVersion = "unknown";
-  const result = harness.services.restore(envelope);
-  assert.equal(result.code, "SESSION_INVALID");
-  assert.equal(harness.calls.state, 0);
-  assert.equal(harness.calls.session, 0);
+(function testMissingLifecycleAndLegacyStateStoreFallbackAreRejected() {
+  assert.throws(() => servicesApi.createBrowserServices({}), /Rule Composition lifecycle 缺少 save/);
+  assert.throws(() => servicesApi.createBrowserServices({
+    stateStore: stateApi.createStateStore(createState()),
+  }), /Rule Composition lifecycle 缺少 save/);
 })();
 
-(function testInvalidViewFailsBeforeAnyStateMutation() {
+(function testOldEnvelopeFieldsAndRuleSchemaFailClosedBeforeRestore() {
+  const harness = createHarness();
+  const legacy = structuredClone(harness.services.capture().envelope);
+  legacy.state = { serialized: "legacy" };
+  legacy.session = { checkpoint: {} };
+  const oldFields = harness.services.restore(legacy);
+  assert.equal(oldFields.code, "BROWSER_RECOVERY_FIELDS_UNSUPPORTED");
+  assert.deepEqual([...oldFields.unknownKeys].sort(), ["session", "state"]);
+
+  const invalidRule = structuredClone(harness.services.capture().envelope);
+  invalidRule.rules.schemaVersion = "legacy-v0";
+  invalidRule.rules.envelope.schemaVersion = "legacy-v0";
+  assert.equal(harness.services.restore(invalidRule).code, "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED");
+  assert.equal(harness.calls.restore, 0, "预验证失败不得调用 composition restore");
+})();
+
+(function testInvalidViewFailsBeforeRuleMutation() {
   const harness = createHarness();
   const envelope = structuredClone(harness.services.capture().envelope);
   envelope.view.state.ruleState = { credits: 99 };
   const result = harness.services.restore(envelope);
   assert.equal(result.code, "VIEW_STATE_ROOT_FIELDS_INVALID");
-  assert.equal(harness.calls.state, 0);
-  assert.equal(harness.calls.session, 0);
+  assert.equal(harness.calls.restore, 0);
 })();
 
-(function testSessionRestoreFailureRollsBackStateSessionAndViewBytes() {
-  const harness = createHarness();
-  harness.view.dispatch({ type: "overlay.set", activeId: "before" });
-  const beforeState = harness.store.serialize().serialized;
-  const beforeView = JSON.stringify(harness.view.getSnapshot());
-  const envelope = structuredClone(harness.services.capture().envelope);
-  envelope.state.serialized = stateApi.createStateStore(createState(9)).serialize().serialized;
-  const originalRestore = harness.services.restore;
-  const failing = servicesApi.createBrowserServices({
-    stateStore: harness.store,
-    sessionPort: {
-      capture: () => ({ ok: true, checkpoint: { schemaVersion: "seti-effect-session-checkpoint-v1", session: { id: "before" } } }),
-      validate: (checkpoint) => ({ ok: true, checkpoint }),
-      restore: () => ({ ok: false, code: "SESSION_RESTORE_POISON" }),
+(function testViewRestoreFailureRollsBackCompositionBytes() {
+  const residentView = viewApi.createViewStateStore();
+  const rejectingView = {
+    getSnapshot: residentView.getSnapshot,
+    validate: residentView.validate,
+    clear: residentView.clear,
+    restore(snapshot) {
+      if (snapshot.overlay?.activeId === "poison") return { ok: false, code: "VIEW_RESTORE_POISON" };
+      return residentView.restore(snapshot);
     },
-    viewStateStore: harness.view,
-  }).restore(envelope);
-  assert.equal(failing.code, "SESSION_RESTORE_POISON");
-  assert.equal(harness.store.serialize().serialized, beforeState);
-  assert.equal(JSON.stringify(harness.view.getSnapshot()), beforeView);
-  assert.equal(typeof originalRestore, "function");
+  };
+  const harness = createHarness({ viewStateStore: rejectingView });
+  const beforeBytes = harness.store.serialize().serialized;
+  const envelope = structuredClone(harness.services.capture().envelope);
+  const changedStore = stateApi.createStateStore(createState(9, "changed"));
+  envelope.rules.envelope.committedState = changedStore.serialize().serialized;
+  envelope.view.state.overlay.activeId = "poison";
+  const result = harness.services.restore(envelope);
+  assert.equal(result.code, "VIEW_RESTORE_POISON");
+  assert.equal(harness.store.serialize().serialized, beforeBytes);
+  assert.equal(harness.calls.restore, 2, "失败后必须只经 lifecycle 回滚规则状态");
 })();
 
 (function testStorageDownloadDebugAndFacadeArePortsOnly() {
@@ -132,43 +157,4 @@ function createHarness() {
   subscription.dispose();
 })();
 
-(function testProductionPersistenceUsesOnlyRuleCompositionLifecycle() {
-  const view = viewApi.createViewStateStore();
-  let current = { schemaVersion: "seti-browser-rule-composition-save-v1", committedState: "state-a", session: null };
-  let restoreCalls = 0;
-  const lifecycle = {
-    save: () => ({ ok: true, envelope: structuredClone(current) }),
-    validateRestore(envelope) {
-      return envelope?.schemaVersion === current.schemaVersion
-        ? { ok: true }
-        : { ok: false, code: "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED" };
-    },
-    restore(envelope) {
-      restoreCalls += 1;
-      current = structuredClone(envelope);
-      return { ok: true, projection: { stateVersion: 7 } };
-    },
-  };
-  const services = servicesApi.createBrowserServices({ ruleLifecycle: lifecycle, viewStateStore: view });
-  const captured = services.capture();
-  assert.equal(captured.ok, true);
-  assert.equal(Object.hasOwn(captured.envelope, "state"), false, "生产存档不得绕过 composition 暴露 StateStore");
-  assert.equal(Object.hasOwn(captured.envelope, "session"), false, "生产存档不得在 composition 外拆分 session");
-  assert.equal(captured.envelope.rules.envelope.committedState, "state-a");
-
-  const invalid = structuredClone(captured.envelope);
-  invalid.rules.schemaVersion = "legacy-v0";
-  invalid.rules.envelope.schemaVersion = "legacy-v0";
-  assert.equal(services.restore(invalid).code, "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED");
-  assert.equal(restoreCalls, 0, "预验证失败不得调用 composition restore");
-
-  const valid = structuredClone(captured.envelope);
-  valid.rules.envelope.committedState = "state-b";
-  const restored = services.restore(valid);
-  assert.equal(restored.ok, true);
-  assert.equal(restored.stateVersion, 7);
-  assert.equal(restoreCalls, 1);
-  assert.equal(current.committedState, "state-b");
-})();
-
-console.log("Browser services stage 8 tests passed");
+console.log("Browser services composition lifecycle tests passed");
