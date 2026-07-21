@@ -89,7 +89,7 @@
       data,
       tech,
       cardTaskStateModule,
-      browserStateAuthority,
+      ruleLifecycle,
       clearTransientStateForRecovery,
       restoreMutableObject,
       resetScanRunSequence,
@@ -351,7 +351,7 @@
       );
 
       clearTransientStateForRecovery();
-      const resetResult = browserStateAuthority.resetSession({
+      const resetResult = ruleLifecycle.newGame({
         activePlayerCount,
         defaultInitialPlayerColor,
         finalScoreIds,

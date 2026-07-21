@@ -1935,7 +1935,9 @@
     planetStats,
     tech,
     cardTaskStateModule,
-    browserStateAuthority,
+    ruleLifecycle: {
+      newGame: (options) => browserStateAuthority.resetSession(options),
+    },
     clearTransientStateForRecovery,
     restoreMutableObject,
     createTurnState,
@@ -2912,7 +2914,9 @@
     techGameState,
     cardState,
     cardTaskState,
-    browserStateAuthority,
+    ruleLifecycle: {
+      newGame: (options) => browserStateAuthority.resetSession(options),
+    },
     historyStepOrder,
     els,
     DEFAULT_ACTIVE_PLAYER_COUNT,

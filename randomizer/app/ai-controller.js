@@ -64,7 +64,7 @@
       techGameState,
       cardState,
       cardTaskState,
-      browserStateAuthority,
+      ruleLifecycle,
       historyStepOrder,
       els,
       DEFAULT_ACTIVE_PLAYER_COUNT,
@@ -1852,7 +1852,7 @@
       aiAutoBattleState.turnMoveCounts = {};
       aiAutoBattleState.turnCardCornerMoveCounts = {};
       clearTransientStateForRecovery();
-      const resetResult = browserStateAuthority.resetSession({
+      const resetResult = ruleLifecycle.newGame({
         activePlayerCount,
         defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
         finalScoreIds: FINAL_SCORE_IDS,

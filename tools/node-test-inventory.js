@@ -95,6 +95,7 @@ randomizer/game/effects/industry-alien-session.test.js
 randomizer/game/effects/quick-action-session.test.js
 randomizer/game/effects/research-tech-session.test.js
 randomizer/game/effects/scan-card-session.test.js
+randomizer/game/effects/standard-action-session.test.js
 randomizer/game/effects/session-journal.test.js
 randomizer/game/effects/session-runtime.test.js
 randomizer/game/effects/state-store-session.test.js

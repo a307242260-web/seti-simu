@@ -23,6 +23,7 @@ assert.deepEqual(getRoundOrderPlayerIds({
 
 const turnState = createTurnState(basePlayers, { activePlayerCount: 3, currentPlayerId: "p1" });
 const playerState = { players: structuredClone(basePlayers), currentPlayerId: "p1" };
+let newGameCalls = 0;
 
 const controller = createTurnFlowController({
   players: {
@@ -82,6 +83,13 @@ const controller = createTurnFlowController({
   },
   cardTaskStateModule: {
     createTaskState: () => ({ tasks: [] }),
+  },
+  ruleLifecycle: {
+    newGame(options) {
+      newGameCalls += 1;
+      assert.equal(options.activePlayerCount, 3);
+      return { ok: true };
+    },
   },
   clearTransientStateForRecovery: () => {},
   restoreMutableObject: (target, source) => {
@@ -155,5 +163,8 @@ const gameEndAdvance = controller.advanceTurnAfterPlayerAction("p3", { passed: t
 assert.equal(gameEndAdvance.gameEnded, true);
 assert.equal(turnState.gameEnded, true);
 assert.deepEqual(gameEndAdvance.finalScoreLines, ["白：10 分", "黄：8 分", "蓝：8 分"]);
+
+controller.resetGameStateForNewGame({ activePlayerCount: 3 });
+assert.equal(newGameCalls, 1, "新局必须只经 Rule Composition lifecycle");
 
 console.log("turn-flow tests passed");

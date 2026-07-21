@@ -83,7 +83,13 @@
       }
       const nextState = clone(state);
       const result = actionRegistry.execute(actionContext(nextState), clone(action));
-      return result?.ok === false ? result : { ...clone(result), nextState };
+      if (!result || result.ok !== true) {
+        return result?.ok === false
+          ? result
+          : fail("RULE_COMPOSITION_ACTION_EXECUTION_FAILED", "Standard Action execute() 未返回成功结果");
+      }
+      const { commands: _hostUndoCommands, ...serializableResult } = result;
+      return { ...clone(serializableResult), nextState };
     }
 
     function publish(event) {
@@ -121,7 +127,11 @@
         if (typeof descriptor?.create !== "function") {
           throw new TypeError("Effect domain 缺少 create() factory");
         }
-        const domain = descriptor.create({ ...(descriptor.options || {}), runtime: next });
+        const domain = descriptor.create({
+          ...(descriptor.options || {}),
+          runtime: next,
+          executeRegisteredAction,
+        });
         if (typeof domain?.createEffectGroup !== "function") {
           throw new TypeError("Effect domain 缺少 createEffectGroup()");
         }
