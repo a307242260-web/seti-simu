@@ -184,17 +184,21 @@
     return finalScoreAiRuntime?.runAiFinalScoreMarkDecision(...args) || null;
   }
   function createPassEvent(...args) { return turnEndFlow?.createPassEvent(...args); }
-  function executePassFirstRotateEffect(...args) { return turnEndFlow?.executePassFirstRotateEffect(...args); }
-  function executePassHandLimitEffect(...args) { return turnEndFlow?.executePassHandLimitEffect(...args); }
-  function passForCurrentPlayer(...args) { return turnEndFlow?.passForCurrentPlayer(...args); }
-  function maybeResumeTurnEndAfterReveal(...args) { return turnEndFlow?.maybeResumeTurnEndAfterReveal(...args); }
+  function executePassFirstRotateEffect(...args) { return turnEndFlow?.executePassFirstRotateEffect(browserRuleState, ...args); }
+  function executePassHandLimitEffect(...args) { return turnEndFlow?.executePassHandLimitEffect(browserRuleState, ...args); }
+  function passForCurrentPlayer(execution = {}) {
+    return turnEndFlow?.passForCurrentPlayer(execution.workingRoot || browserRuleState, execution);
+  }
+  function maybeResumeTurnEndAfterReveal(...args) { return turnEndFlow?.maybeResumeTurnEndAfterReveal(browserRuleState, ...args); }
   function maybeContinuePendingTurnEndRevealFlow(...args) {
-    return turnEndFlow?.maybeContinuePendingTurnEndRevealFlow(...args);
+    return turnEndFlow?.maybeContinuePendingTurnEndRevealFlow(browserRuleState, ...args);
   }
   function maybeContinueAlienRevealQueuedOpportunities(...args) {
-    return turnEndFlow?.maybeContinueAlienRevealQueuedOpportunities(...args);
+    return turnEndFlow?.maybeContinueAlienRevealQueuedOpportunities(browserRuleState, ...args);
   }
-  function endCurrentTurn(...args) { return turnEndFlow?.endCurrentTurn(...args); }
+  function endCurrentTurn(execution = {}) {
+    return turnEndFlow?.endCurrentTurn(execution.workingRoot || browserRuleState, execution);
+  }
   function getPlutoReservedCards(...args) { return actionInteractionRuntime?.getPlutoReservedCards(...args) || []; }
   function ensurePlutoCardEffectState(...args) { return actionInteractionRuntime?.ensurePlutoCardEffectState(...args); }
   function getPlutoActionState(...args) { return actionInteractionRuntime?.getPlutoActionState(...args); }
@@ -8846,7 +8850,6 @@
     actionHistory,
     activateNextActionEffect,
     advanceTurnAfterPlayerAction,
-    alienGameState,
     aliens,
     appendActionLogStep,
     applyIncomeResourcesForPlayer,
@@ -8855,7 +8858,6 @@
     beginDiscardSelection,
     beginEffectHistoryStep,
     buildAlienRevealNoticeEntry,
-    cardState,
     canStartMainAction,
     clearActionEffectFlow,
     clearActionPending,
@@ -8885,7 +8887,6 @@
     openAlienRevealConfirmation,
     decisionSessions,
     planetRewards,
-    playerState,
     quickActionHistory,
     recordHistoryCommand,
     refreshLatestActionLogRecoverySnapshot,
@@ -8899,15 +8900,12 @@
     renderRoundStatus,
     renderStateReadout,
     renderTechBoard,
-    rocketState,
     rotateSolarOrbit,
     scheduleAiAutoStepIfNeeded,
     selectDefaultRocketForCurrentPlayer,
     settleCardTasksAfterEffect,
     settleTurnEndAlienRevealEntries,
-    solarState,
     startActionLogDraft,
-    turnState,
     uiRuntimeState,
     updateActionButtons,
     updatePublicCardControls,

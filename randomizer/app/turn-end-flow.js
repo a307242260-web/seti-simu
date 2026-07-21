@@ -21,7 +21,6 @@
       actionHistory,
       activateNextActionEffect,
       advanceTurnAfterPlayerAction,
-      alienGameState,
       aliens,
       appendActionLogStep,
       applyIncomeResourcesForPlayer,
@@ -30,7 +29,6 @@
       beginDiscardSelection,
       beginEffectHistoryStep,
       buildAlienRevealNoticeEntry,
-      cardState,
       canStartMainAction,
       clearActionEffectFlow,
       clearActionPending,
@@ -60,7 +58,6 @@
       maybeStartFundamentalismRoundStartIncomeFlow,
       openAlienRevealConfirmation,
       planetRewards,
-      playerState,
       quickActionHistory,
       recordHistoryCommand,
       refreshLatestActionLogRecoverySnapshot,
@@ -74,15 +71,12 @@
       renderRoundStatus,
       renderStateReadout,
       renderTechBoard,
-      rocketState,
       rotateSolarOrbit,
       scheduleAiAutoStepIfNeeded,
       selectDefaultRocketForCurrentPlayer,
       settleCardTasksAfterEffect,
       settleTurnEndAlienRevealEntries,
-      solarState,
       startActionLogDraft,
-      turnState,
       uiRuntimeState,
       updateActionButtons,
       updatePublicCardControls
@@ -100,6 +94,12 @@
 
     const TURN_END_REVEAL_SESSION = "turn_end_after_reveal";
     const getTurnEndAfterRevealSession = () => decisionSessions.peek(TURN_END_REVEAL_SESSION);
+
+  function requireWorkingRoot(workingRoot) {
+    if (!workingRoot || typeof workingRoot !== "object") {
+      throw new TypeError("turn-end operation requires an explicit workingRoot");
+    }
+  }
 
   function createPassEvent(player) {
     return {
@@ -122,7 +122,8 @@
     };
   }
 
-  function buildPassEffectQueue(player, actionTurnState = turnState) {
+  function buildPassEffectQueue(workingRoot, player) {
+    const actionTurnState = workingRoot.turnState;
     const effects = [];
     if (industry?.shouldLaunchAfterPassWithHuanyuSuperdrive?.(player)) {
       if (isWeakStartAiDifficulty(player)) {
@@ -203,7 +204,8 @@
     actionHistory.markActionComplete?.({ passPlayerId: currentPlayer.id });
   }
 
-  function settlePassEventAfterEffects(player, actionTurnState = turnState) {
+  function settlePassEventAfterEffects(workingRoot, player) {
+    const actionTurnState = workingRoot.turnState;
     if (isFinalRound(actionTurnState)) {
       return {
         ok: true,
@@ -218,8 +220,11 @@
     });
   }
 
-  function executePassHandLimitEffect(effect) {
-    const currentPlayer = getCurrentPlayer();
+  function executePassHandLimitEffect(workingRoot, effect) {
+    requireWorkingRoot(workingRoot);
+    const { cardState, rocketState } = workingRoot;
+    const currentPlayer = (workingRoot.playerState.players || [])
+      .find((player) => player.id === workingRoot.playerState.currentPlayerId);
     const discardCount = Math.max(0, (currentPlayer?.hand?.length || 0) - PASS_HAND_LIMIT);
     if (discardCount <= 0) {
       effect.result = {
@@ -249,7 +254,9 @@
     return result;
   }
 
-  function executePassFirstRotateEffect(effect) {
+  function executePassFirstRotateEffect(workingRoot, effect) {
+    requireWorkingRoot(workingRoot);
+    const { alienGameState, cardState, playerState, rocketState, solarState } = workingRoot;
     const beforeSolarState = structuredClone(solarState);
     const beforeRocketState = structuredClone(rocketState);
     const beforePlayerState = structuredClone(playerState);
@@ -314,12 +321,12 @@
     return result;
   }
 
-  function passForCurrentPlayer(execution = {}) {
-    const workingRoot = execution.workingRoot || null;
-    const actionPlayerState = workingRoot?.playerState || playerState;
-    const actionTurnState = workingRoot?.turnState || turnState;
-    const actionRocketState = workingRoot?.rocketState || rocketState;
-    if (!workingRoot && !canStartMainAction()) {
+  function passForCurrentPlayer(workingRoot, execution = {}) {
+    requireWorkingRoot(workingRoot);
+    const actionPlayerState = workingRoot.playerState;
+    const actionTurnState = workingRoot.turnState;
+    const actionRocketState = workingRoot.rocketState;
+    if (!execution.standardAction && !canStartMainAction()) {
       actionRocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
       renderStateReadout();
       return { ok: false, message: actionRocketState.statusNote };
@@ -332,7 +339,7 @@
     }
 
     beginPassActionSession(currentPlayer);
-    const passEffects = buildPassEffectQueue(currentPlayer, actionTurnState);
+    const passEffects = buildPassEffectQueue(workingRoot, currentPlayer);
     if (passEffects.length) {
       decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
         "pass",
@@ -351,7 +358,7 @@
       return { ok: true, message: actionRocketState.statusNote, effects: structuredClone(passEffects) };
     }
 
-    const passSettlement = settlePassEventAfterEffects(currentPlayer, actionTurnState);
+    const passSettlement = settlePassEventAfterEffects(workingRoot, currentPlayer);
     if (hasActiveCardTriggerResolution() || isActionEffectFlowActive()) {
       updateActionButtons();
       renderStateReadout();
@@ -364,7 +371,8 @@
     return { ok: true, message: actionRocketState.statusNote, events: [createPassEvent(currentPlayer)] };
   }
 
-  function applyPassTurnEndIncome(player, actionTurnState = turnState) {
+  function applyPassTurnEndIncome(workingRoot, player) {
+    const actionTurnState = workingRoot.turnState;
     if (!player || isFinalRound(actionTurnState)) return null;
 
     const result = applyIncomeResourcesForPlayer(player, { label: "PASS 收入" });
@@ -376,7 +384,8 @@
     return result;
   }
 
-  function listReadyAlienRevealSlotIds(actionAlienGameState = alienGameState) {
+  function listReadyAlienRevealSlotIds(workingRoot) {
+    const actionAlienGameState = workingRoot.alienGameState;
     return (aliens.ALIEN_SLOT_IDS || [])
       .filter((alienSlotId) => {
         const slot = aliens.getAlienSlot(actionAlienGameState, alienSlotId);
@@ -384,9 +393,9 @@
       });
   }
 
-  function revealReadyAliensAtTurnEnd(triggerPlayer, options = {}) {
-    const actionAlienGameState = options.workingRoot?.alienGameState || alienGameState;
-    const revealEntries = listReadyAlienRevealSlotIds(actionAlienGameState)
+  function revealReadyAliensAtTurnEnd(workingRoot, triggerPlayer, options = {}) {
+    const actionAlienGameState = workingRoot.alienGameState;
+    const revealEntries = listReadyAlienRevealSlotIds(workingRoot)
       .map((alienSlotId) => ({
         alienSlotId,
         revealResult: aliens.revealRandomAlien(actionAlienGameState, alienSlotId),
@@ -406,7 +415,7 @@
       ok: true,
       count: settledEntries.length,
       entries: settledEntries,
-      message: rocketState.statusNote,
+      message: workingRoot.rocketState.statusNote,
     };
   }
 
@@ -423,26 +432,29 @@
     );
   }
 
-  function queueTurnEndAfterRevealContinuation(continuation) {
+  function queueTurnEndAfterRevealContinuation(workingRoot, continuation) {
     decisionSessions.open(TURN_END_REVEAL_SESSION, continuation);
-    rocketState.statusNote = continuation?.turnEndReveal?.message || "请先完成外星人揭示流程";
+    workingRoot.rocketState.statusNote = continuation?.turnEndReveal?.message || "请先完成外星人揭示流程";
     updateActionButtons();
     renderStateReadout();
-    return { ok: true, pending: true, message: rocketState.statusNote };
+    return { ok: true, pending: true, message: workingRoot.rocketState.statusNote };
   }
 
-  function maybeResumeTurnEndAfterReveal() {
+  function maybeResumeTurnEndAfterReveal(workingRoot) {
+    requireWorkingRoot(workingRoot);
     const continuation = getTurnEndAfterRevealSession();
     if (!continuation || hasTurnEndRevealBlockingSubFlow()) return null;
-    return finishCurrentTurnAfterAlienReveal(continuation);
+    return finishCurrentTurnAfterAlienReveal(workingRoot, continuation);
   }
 
-  function maybeContinuePendingTurnEndRevealFlow() {
+  function maybeContinuePendingTurnEndRevealFlow(workingRoot) {
+    requireWorkingRoot(workingRoot);
     if (!getTurnEndAfterRevealSession()) return null;
-    return maybeContinueAlienRevealQueuedOpportunities();
+    return maybeContinueAlienRevealQueuedOpportunities(workingRoot);
   }
 
-  function maybeContinueAlienRevealQueuedOpportunities() {
+  function maybeContinueAlienRevealQueuedOpportunities(workingRoot) {
+    requireWorkingRoot(workingRoot);
     const jiuzheOpenResult = maybeOpenQueuedJiuzheOpportunity();
     if (jiuzheOpenResult?.ok) {
       scheduleAiAutoStepIfNeeded();
@@ -453,30 +465,29 @@
       scheduleAiAutoStepIfNeeded();
       return { ok: true, opened: true, result: banrenmaOpenResult };
     }
-    return maybeResumeTurnEndAfterReveal();
+    return maybeResumeTurnEndAfterReveal(workingRoot);
   }
 
-  function finishCurrentTurnAfterAlienReveal({
+  function finishCurrentTurnAfterAlienReveal(workingRoot, {
     endingPlayer,
     endingPlayerId,
     didPass,
     turnEndReveal,
-    workingRoot = null,
   }) {
-    const actionTurnState = workingRoot?.turnState || turnState;
-    const actionPlayerState = workingRoot?.playerState || playerState;
-    const actionRocketState = workingRoot?.rocketState || rocketState;
+    const actionTurnState = workingRoot.turnState;
+    const actionPlayerState = workingRoot.playerState;
+    const actionRocketState = workingRoot.rocketState;
+    const resolvedEndingPlayer = endingPlayer || (actionPlayerState.players || [])
+      .find((player) => player.id === endingPlayerId) || null;
     if (turnEndReveal?.count && hasTurnEndRevealBlockingSubFlow()) {
-      return queueTurnEndAfterRevealContinuation({
-        endingPlayer,
+      return queueTurnEndAfterRevealContinuation(workingRoot, {
         endingPlayerId,
         didPass,
         turnEndReveal,
-        workingRoot,
       });
     }
     decisionSessions.clear(TURN_END_REVEAL_SESSION);
-    const passIncomeResult = didPass ? applyPassTurnEndIncome(endingPlayer, actionTurnState) : null;
+    const passIncomeResult = didPass ? applyPassTurnEndIncome(workingRoot, resolvedEndingPlayer) : null;
     commitActionLogDraft({
       passed: didPass,
       actionType: didPass ? "pass" : actionHistory.getSessionInfo()?.actionType,
@@ -534,10 +545,10 @@
     return { ok: true, progressed: true, advanceResult, message: actionRocketState.statusNote };
   }
 
-  function endCurrentTurn(execution = {}) {
-    const workingRoot = execution.workingRoot || null;
-    const actionPlayerState = workingRoot?.playerState || playerState;
-    const actionTurnState = workingRoot?.turnState || turnState;
+  function endCurrentTurn(workingRoot, execution = {}) {
+    requireWorkingRoot(workingRoot);
+    const actionPlayerState = workingRoot.playerState;
+    const actionTurnState = workingRoot.turnState;
     if (!actionHistory.isActionComplete?.() || isActionEffectFlowActive() || hasActivePendingSubFlow()) {
       return { ok: false, message: "主行动未完成或仍有待决选择" };
     }
@@ -554,14 +565,12 @@
 
     endEffectHistoryStep();
     const turnEndContext = { endingPlayer, endingPlayerId, didPass };
-    const turnEndReveal = revealReadyAliensAtTurnEnd(endingPlayer, {
+    const turnEndReveal = revealReadyAliensAtTurnEnd(workingRoot, endingPlayer, {
       confirmBeforeSideEffects: true,
-      workingRoot,
     });
-    return finishCurrentTurnAfterAlienReveal({
+    return finishCurrentTurnAfterAlienReveal(workingRoot, {
       ...turnEndContext,
       turnEndReveal,
-      workingRoot,
     });
   }
 
