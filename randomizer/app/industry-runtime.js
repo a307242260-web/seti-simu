@@ -1089,15 +1089,15 @@
       };
     }
 
-    function buildStrategyPlayPassiveEffectNodes(player, playedCard) {
-      if (!industry?.isStrategyPlayInteractionActive?.(player, turnState.roundNumber)) return [];
-      const eligibleSlotIds = industry.getStrategyPlayEligibleSlotIds?.(player, turnState.roundNumber) || [];
+    function buildStrategyPlayPassiveEffectNodes(player, playedCard, actionTurnState) {
+      if (!industry?.isStrategyPlayInteractionActive?.(player, actionTurnState.roundNumber)) return [];
+      const eligibleSlotIds = industry.getStrategyPlayEligibleSlotIds?.(player, actionTurnState.roundNumber) || [];
       if (!eligibleSlotIds.length) return [];
       const scanCode = industry.getStrategyPlayScanCode?.(player);
       const needsSlotChoice = Number(scanCode) === 3 && eligibleSlotIds.length > 1;
       const slotId = needsSlotChoice
         ? null
-        : (industry.getAutomaticStrategyPlaySlotId?.(player, turnState.roundNumber) || eligibleSlotIds[0]);
+        : (industry.getAutomaticStrategyPlaySlotId?.(player, actionTurnState.roundNumber) || eligibleSlotIds[0]);
       const slotLabel = slotId
         ? (industry.getStrategyPassiveSlotLabel?.(slotId) || slotId)
         : "选择";
@@ -1128,7 +1128,7 @@
         actionTurnState.turnNumber,
         playedCard,
       ) || [];
-      const strategyEffects = buildStrategyPlayPassiveEffectNodes(player, playedCard);
+      const strategyEffects = buildStrategyPlayPassiveEffectNodes(player, playedCard, actionTurnState);
       return {
         immediateEffects: sentinelEffects,
         deferredEndEffects: strategyEffects,

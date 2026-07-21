@@ -115,4 +115,52 @@ function createHarness() {
   assert.ok(harness.calls.includes("move-off"));
 }
 
+{
+  const harness = createHarness();
+  const queriedRounds = [];
+  harness.context.turnState = { roundNumber: 9, turnNumber: 8 };
+  harness.context.industry = {
+    isStrategyPlayInteractionActive(_player, roundNumber) {
+      queriedRounds.push(roundNumber);
+      return roundNumber === 2;
+    },
+    getStrategyPlayEligibleSlotIds(_player, roundNumber) {
+      queriedRounds.push(roundNumber);
+      return roundNumber === 2 ? ["slot-a"] : [];
+    },
+    getStrategyPlayScanCode() {
+      return 1;
+    },
+    getAutomaticStrategyPlaySlotId(_player, roundNumber) {
+      queriedRounds.push(roundNumber);
+      return roundNumber === 2 ? "slot-a" : null;
+    },
+    getStrategyPassiveSlotLabel() {
+      return "测试槽";
+    },
+    getStrategySlotRewardLabel() {
+      return "摸牌";
+    },
+    getStrategySlotReward() {
+      return { pickCard: 1 };
+    },
+  };
+  const beforeBoundTurnState = structuredClone(harness.context.turnState);
+  const runtime = createIndustryRuntime(harness.context);
+  const result = runtime.buildIndustryPlayCardAppendEffects(
+    { id: "working-player" },
+    { id: "working-card" },
+    { workingRoot: { turnState: { roundNumber: 2, turnNumber: 3 } } },
+  );
+
+  assert.equal(result.deferredEndEffects.length, 1);
+  assert.equal(result.deferredEndEffects[0].options.slotId, "slot-a");
+  assert.deepEqual(queriedRounds, [2, 2, 2], "战略被动规则查询必须使用 working root 轮次");
+  assert.deepEqual(
+    harness.context.turnState,
+    beforeBoundTurnState,
+    "分离 working root 的 play_card 不得改写闭包绑定 turnState",
+  );
+}
+
 console.log("industry runtime tests passed");
