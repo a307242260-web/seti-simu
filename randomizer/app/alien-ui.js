@@ -57,12 +57,20 @@
       return (playerState.players || []).find((player) => player.id === playerState.currentPlayerId) || null;
     }
 
+    function resolveWorkingPlayerReference(workingRoot, reference = {}) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const playerId = reference.playerId || null;
+      const playerColor = reference.playerColor || null;
+      return (playerState.players || []).find((player) => (
+        (playerId && player.id === playerId)
+        || (playerColor && player.color === playerColor)
+      )) || null;
+    }
+
     const renderAlienPanels = requireFunction("renderAlienPanels", context.renderAlienPanels);
     const renderStateReadout = requireFunction("renderStateReadout", context.renderStateReadout);
-    const getCurrentPlayer = requireFunction("getCurrentPlayer", context.getCurrentPlayer);
     const getAlienTraceActionPlayer = requireFunction("getAlienTraceActionPlayer", context.getAlienTraceActionPlayer);
     const getAvailableDataTokenCount = requireFunction("getAvailableDataTokenCount", context.getAvailableDataTokenCount);
-    const resolvePlayerReference = requireFunction("resolvePlayerReference", context.resolvePlayerReference);
     const confirmFangzhouCard2Unlock = requireFunction("confirmFangzhouCard2Unlock", context.confirmFangzhouCard2Unlock);
     const confirmAlienTracePlacement = requireFunction("confirmAlienTracePlacement", context.confirmAlienTracePlacement);
     const confirmFangzhouTracePlacement = requireFunction("confirmFangzhouTracePlacement", context.confirmFangzhouTracePlacement);
@@ -1023,7 +1031,7 @@
         : (decisionState.alienTracePickerState?.allowedAlienSlotIds || null);
       const alienSlotId = options.alienSlotId || getFangzhouTraceChoiceSlotId(workingRoot, allowedAlienSlotIds);
       if (!alienSlotId) return null;
-      const currentPlayer = resolvePlayerReference({
+      const currentPlayer = resolveWorkingPlayerReference(workingRoot, {
         playerId: options.targetPlayerId || decisionState.alienTracePickerState?.targetPlayerId,
         playerColor: options.targetPlayerColor || decisionState.alienTracePickerState?.targetPlayerColor,
       }) || getAlienTracePickerPlayer(workingRoot);
