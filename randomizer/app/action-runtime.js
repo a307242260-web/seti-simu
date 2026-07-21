@@ -80,6 +80,8 @@
       createActionContext,
       primaryBoardActionExecutor,
       primaryBoardWorkingRoot,
+      engineActionExecutor,
+      engineActionWorkingRoot,
       actions,
       removeRocketElement,
       syncPlanetOrbitLandMarkersAfterAction = syncPlanetOrbitLandMarkers,
@@ -115,6 +117,7 @@
       standardActionAdapter,
     } = context;
     const PRIMARY_BOARD_FAMILIES = new Set(primaryBoardActionExecutor?.actionFamilies || []);
+    const ENGINE_ACTION_FAMILIES = new Set(engineActionExecutor?.actionFamilies || []);
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
@@ -448,6 +451,11 @@
     }
 
     function executeStandardDescriptor(standardContext, descriptor, executionOptions = null) {
+      if (ENGINE_ACTION_FAMILIES.has(descriptor?.family)) {
+        return engineActionExecutor.execute(engineActionWorkingRoot, descriptor, {
+          validate: (_workingRoot, action) => standardActionAdapter.validate(standardContext, action),
+        });
+      }
       if (!PRIMARY_BOARD_FAMILIES.has(descriptor?.family)) {
         return standardActionAdapter.execute(standardContext, descriptor);
       }
@@ -505,9 +513,24 @@
         analyze: "analyzeData",
       };
       const abilityId = abilityByAction[actionId];
-      const resolvedActionOptions = actionId === "analyze"
-        ? getAnalyzeActionOptionsForPlayer?.(getCurrentPlayer?.(), actionOptions)
+      const workingRoot = actionOptions?.workingRoot || null;
+      const standardDescriptor = actionOptions?.standardAction || null;
+      const cleanActionOptions = actionOptions && (workingRoot || standardDescriptor)
+        ? Object.fromEntries(Object.entries(actionOptions)
+          .filter(([key]) => key !== "workingRoot" && key !== "standardAction"))
         : actionOptions;
+      const resolvedActionOptions = actionId === "analyze"
+        ? getAnalyzeActionOptionsForPlayer?.(
+          workingRoot
+            ? (workingRoot.playerState.players || [])
+              .find((player) => player.id === workingRoot.playerState.currentPlayerId)
+            : getCurrentPlayer?.(),
+          cleanActionOptions,
+        )
+        : cleanActionOptions;
+      const actionContext = workingRoot
+        ? createActionContext(workingRoot, standardDescriptor)
+        : createActionContext();
       const actionLogBefore = createActionLogImpactSnapshot?.();
       const primaryExecution = PRIMARY_BOARD_FAMILIES.has(actionId) && actionId !== "move"
         ? resolvePrimaryBoardDescriptor(actionId, resolvedActionOptions)
@@ -515,10 +538,10 @@
       const result = primaryExecution
         ? (primaryExecution.ok ? primaryExecution.result : primaryExecution)
         : abilityId
-        ? abilities.executeAbility(abilityId, createActionContext(), resolvedActionOptions)
+        ? abilities.executeAbility(abilityId, actionContext, resolvedActionOptions)
         : actionId === "researchTech"
-          ? abilities.executeAbility("researchTechPrepare", createActionContext(), resolvedActionOptions)
-          : actions.execute(actionId, createActionContext(), resolvedActionOptions);
+          ? abilities.executeAbility("researchTechPrepare", actionContext, resolvedActionOptions)
+          : actions.execute(actionId, actionContext, resolvedActionOptions);
 
       let startedRewardFlow = false;
 

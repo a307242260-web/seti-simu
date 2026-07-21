@@ -690,6 +690,13 @@
       if (pending.source === "future_span") {
         return handleFutureSpanCardPlay();
       }
+      if (typeof context.dispatchStandardIntent === "function") {
+        return context.dispatchStandardIntent(
+          "play_card",
+          { cardInstanceId: pending.card.id },
+          { payload: { handIndex: pending.handIndex, cost: getCardPlayCost(pending.card) } },
+        );
+      }
       return handleHandCardPlay(pending.handIndex);
     }
 
@@ -1326,8 +1333,16 @@
       return result;
     }
 
-    function handleHandCardPlay(handIndex) {
+    function handleHandCardPlay(handIndex, execution = {}) {
       if (!isPlayCardSelectionActive()) return;
+
+      if (execution.workingRoot && (
+        execution.workingRoot.playerState !== context.playerState
+        || execution.workingRoot.cardState !== cardState
+        || execution.workingRoot.alienGameState !== alienGameState
+      )) {
+        return { ok: false, code: "PLAY_CARD_WORKING_ROOT_MISMATCH", message: "打牌 executor 收到非当前 working root" };
+      }
 
       const currentPlayer = getCurrentPlayer();
       const removeIndex = Math.round(handIndex);
@@ -1833,6 +1848,7 @@
       beginPlayCardSelection,
       cancelPlayCardSelection,
       handleFutureSpanCardPlay,
+      handleHandCardPlay,
       handleFutureSpanPlayCardSelect,
       handleHandScanCardClick,
     };

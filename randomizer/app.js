@@ -42,6 +42,7 @@
     alienTraceRewardFlow,
     actionRuntimeModule,
     primaryBoardActionExecutorModule,
+    engineActionExecutorModule,
     actionInteractionRuntimeModule,
     actionLogRuntimeModule,
     gameRecoveryModule,
@@ -286,6 +287,39 @@
     abilities,
     solar,
   });
+  const engineActionExecutor = engineActionExecutorModule.createEngineActionExecutor({
+    executors: {
+      research_tech(workingRoot, descriptor) {
+        const context = createActionContextForWorkingRoot(workingRoot, descriptor);
+        return actions.getAction("researchTech").execute(context, {
+          ...(descriptor.payload || {}),
+          tileId: descriptor.target?.tileId,
+          blueSlot: descriptor.target?.blueSlot ?? null,
+        });
+      },
+      scan(workingRoot, descriptor) {
+        return beginScanAction({ workingRoot, standardAction: descriptor });
+      },
+      analyze(workingRoot, descriptor) {
+        return runAction("analyze", {
+          ...(descriptor.payload || {}),
+          workingRoot,
+          standardAction: descriptor,
+        });
+      },
+      play_card(workingRoot, descriptor) {
+        const player = players.getCurrentPlayer(workingRoot.playerState);
+        const handIndex = (player?.hand || []).findIndex((card) => card.id === descriptor.target?.cardInstanceId);
+        if (!isPlayCardSelectionActive()) {
+          const started = beginPlayCardSelection();
+          if (!started?.ok) return started;
+        }
+        const selected = handlePlayCardSelect(handIndex);
+        if (selected?.ok === false) return selected;
+        return handleHandCardPlay(handIndex, { workingRoot, standardAction: descriptor });
+      },
+    },
+  });
   let actionRuntimeController = null;
   const runtime = runtimeModule.createRuntime({
     aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
@@ -414,6 +448,7 @@
   let getPendingPlayCardSelection;
   let handlePlayCardSelect;
   let confirmPlayCardSelection;
+  let handleHandCardPlay;
   let getPendingHandCardPlayAction;
   let cancelHandCardPlayAction;
   let clearHandCardContextActions;
@@ -1307,7 +1342,9 @@
     executeFreeMoveForCardTrigger: (...args) => executeFreeMoveForCardTrigger?.(...args),
     executeIndustryFreeMove: (...args) => executeIndustryFreeMove?.(...args),
     executeCardEffectMove: (...args) => executeCardEffectMove?.(...args),
-    createActionContext,
+    createActionContext: (workingRoot, descriptor) => (
+      workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
+    ),
     recordMoveActionHistory,
     executePrimaryBoardAction: (...args) => actionRuntimeController?.executePrimaryBoardAction(...args),
     renderRocketElement,
@@ -1347,6 +1384,10 @@
     isIncomeDiscardActionType,
     scrollToPlayerCommandPanel,
     getCardTypeCode: (...args) => getCardTypeCode(...args),
+    dispatchStandardIntent: (family, selector = {}, payload = {}) => (
+      actionRuntimeController?.dispatchAction({ kind: "standard_intent", family, selector, payload })
+      || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" }
+    ),
     blockManualAiMovePayment,
     blockIncompatiblePendingQuickAction,
     recordQuickHistoryCommand,
@@ -1392,6 +1433,7 @@
     beginPlayCardSelection,
     cancelPlayCardSelection,
     handleFutureSpanCardPlay,
+    handleHandCardPlay,
     handleFutureSpanPlayCardSelect,
     handleHandScanCardClick,
   } = handFlowHelpers);
@@ -2070,9 +2112,13 @@
     getAnalyzeActionOptionsForPlayer,
     createActionLogImpactSnapshot,
     abilities,
-    createActionContext,
+    createActionContext: (workingRoot, descriptor) => (
+      workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
+    ),
     primaryBoardActionExecutor,
     primaryBoardWorkingRoot: browserRuleState,
+    engineActionExecutor,
+    engineActionWorkingRoot: browserRuleState,
     actions,
     removeRocketElement: headlessMode ? () => {} : removeRocketElement,
     syncPlanetOrbitLandMarkersAfterAction: headlessMode ? () => {} : syncPlanetOrbitLandMarkers,
@@ -2116,7 +2162,7 @@
             return check.ok ? { ok: true, choices: [{ target: { kind: "standard-scan" }, label: "扫描" }] } : check;
           },
           canExecute(context) { return this.getOptions(context); },
-          execute() { return beginScanAction(); },
+          execute() { return { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED" }; },
         },
         analyze: {
           label: "分析",
@@ -2126,7 +2172,7 @@
             return check.ok ? { ok: true, choices: [{ target: { kind: "computer", requiredSlot: data.ANALYZE_REQUIRED_COMPUTER_SLOT }, payload: getAnalyzeActionOptionsForPlayer(player), label: "分析" }] } : check;
           },
           canExecute(context) { return this.getOptions(context); },
-          execute() { return analyzeDataForCurrentPlayer(); },
+          execute() { return { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED" }; },
         },
         playCard: {
           label: "打牌",
@@ -2144,14 +2190,7 @@
               ? { ok: true }
               : { ok: false, message: "手牌身份或费用已失效" };
           },
-          execute(context, option) {
-            const player = players.getCurrentPlayer(context.playerState);
-            const handIndex = (player?.hand || []).findIndex((card) => card.id === option.target.cardInstanceId);
-            const start = beginPlayCardSelection();
-            if (!start?.ok) return start;
-            const selected = handlePlayCardSelect(handIndex);
-            return selected?.ok === false ? selected : confirmPlayCardSelection();
-          },
+          execute() { return { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED" }; },
         },
         pass: {
           label: "PASS",
@@ -6723,7 +6762,7 @@
     return actionRuntimeController.handleActionEffectButtonClick(effectIndex);
   }
 
-  function beginScanAction() {
+  function beginScanAction(execution = {}) {
     if (!canStartMainAction()) {
       rocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
       renderStateReadout();
@@ -6762,7 +6801,8 @@
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
-    const currentPlayer = getCurrentPlayer();
+    const workingRoot = execution.workingRoot || browserRuleState;
+    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
     const check = scanEffects.canExecuteScan(currentPlayer, { standardAction: true });
     if (!check.ok) {
       rocketState.statusNote = check.message;
@@ -6773,9 +6813,13 @@
     startActionLogDraft("scan", "扫描行动", { source: HISTORY_SOURCE_MAIN, player: currentPlayer });
     actionHistory.beginSession("scan", "扫描行动");
     actionHistory.beginStep({ source: HISTORY_SOURCE_MAIN, type: "action-cost", label: "扫描费用" });
-    let costResult = abilities.executeAbility("payScanCost", createActionContext(), {
+    let costResult = abilities.executeAbility(
+      "payScanCost",
+      createActionContextForWorkingRoot(workingRoot, execution.standardAction),
+      {
       cost: scanEffects.getStandardScanCost(currentPlayer),
-    });
+      },
+    );
     if (!costResult.ok) {
       actionHistory.rollbackSession();
       clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
@@ -6804,9 +6848,9 @@
         includeFinalize: true,
         fullScanAction: true,
         scanRunId,
-        turnState,
-        roundNumber: turnState.roundNumber,
-        turnNumber: turnState.turnNumber,
+        turnState: workingRoot.turnState,
+        roundNumber: workingRoot.turnState.roundNumber,
+        turnNumber: workingRoot.turnState.turnNumber,
       }),
     );
     decisionState.actionEffectFlow.playerId = currentPlayer.id;
@@ -7830,6 +7874,9 @@
       completeCurrentActionEffect: typeof completeCurrentActionEffect === "undefined" ? undefined : completeCurrentActionEffect,
       completeQuickActionStep: typeof completeQuickActionStep === "undefined" ? undefined : completeQuickActionStep,
       createActionContext: (...args) => createActionContext(...args),
+      dispatchStandardIntent: (family, selector = {}, payload = {}) => (
+        actionRuntimeController.dispatchAction({ kind: "standard_intent", family, selector, payload })
+      ),
       decisionSessions,
       createCardCornerTriggerEventFields: typeof createCardCornerTriggerEventFields === "undefined" ? undefined : createCardCornerTriggerEventFields,
       createInitialSelectionImage: (...args) => createInitialSelectionImage(...args),
@@ -8352,6 +8399,33 @@
           player.techState = players.normalizePlayerTechState(null);
         }
       },
+    };
+  }
+
+  function createActionContextForWorkingRoot(workingRoot, descriptor = null) {
+    const context = createActionContext();
+    const actorId = descriptor?.actorId || workingRoot.playerState.currentPlayerId;
+    const actionPlayerState = actorId === workingRoot.playerState.currentPlayerId
+      ? workingRoot.playerState
+      : { ...workingRoot.playerState, currentPlayerId: actorId, players: workingRoot.playerState.players };
+    return {
+      ...context,
+      solarState: workingRoot.solarState,
+      playerState: actionPlayerState,
+      cardState: workingRoot.cardState,
+      rocketState: workingRoot.rocketState,
+      nebulaDataState: workingRoot.nebulaDataState,
+      planetStatsState: workingRoot.planetStatsState,
+      alienGameState: workingRoot.alienGameState,
+      techBoardState: workingRoot.techGameState.board,
+      techUiState: workingRoot.techGameState.ui,
+      techGameState: workingRoot.techGameState,
+      turnState: workingRoot.turnState,
+      stateVersion: workingRoot.meta?.stateVersion ?? 0,
+      decisionVersion: workingRoot.match?.decisionVersion ?? 0,
+      roundNumber: workingRoot.turnState.roundNumber,
+      turnNumber: workingRoot.turnState.turnNumber,
+      getPlanetLocations: () => solar.createSolarSnapshot(workingRoot.solarState).planetLocations,
     };
   }
 

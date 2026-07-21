@@ -597,7 +597,17 @@
       if (blueSlot != null) options.blueSlot = blueSlot;
 
       const result = actions?.createStandardAdapter
-        ? actions.execute("researchTech", createActionContext(), options)
+        ? context.dispatchStandardIntent?.(
+          "research_tech",
+          { tileId, ...(blueSlot == null ? {} : { blueSlot }) },
+          {
+            payload: {
+              selectionOnly: true,
+              skipCost: Boolean(options.skipCost),
+              ...(options.techTypes ? { techTypes: options.techTypes } : {}),
+            },
+          },
+        ) || { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED", message: "科技行动 executor 未装配" }
         : abilities.executeAbility("researchTechSelect", createActionContext(), options);
       if (result.needsBlueSlotChoice) {
         techGameState.ui.pendingTileId = tileId;

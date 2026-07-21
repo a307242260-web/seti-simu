@@ -45,6 +45,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/runtime.js`：创建 Decision Session、纯 UI 状态与 Browser Host 内部状态；不得恢复通用 `pending` 容器或把规则事实塞入 UI/host state。
 - `randomizer/app/browser-state-authority.js`：迁移期 Browser committed state owner；领域 factory 只创建 bootstrap/reset working candidate，规则窄引用只指向 working copy。对 Browser caller 仅暴露 `lifecycle.newGame/save/validateRestore/restore`，不再暴露 StateStore serialize/deserialize/restore 或 raw CAS；Browser Services 与 GameRecovery 只接受 composition save envelope，旧 StateStore-only schema fail-closed。UI/status、选择、日志和 Policy 状态不得进入其 committed root。
 - `randomizer/app/primary-board-action-executor.js`：四类盘面行动的 working-root 生产 executor；只接受显式 root、descriptor 与规则模块能力，原子保护失败路径，不拥有 UI、Decision 或 composition lifecycle。
+- `randomizer/app/engine-action-executor.js`：科技、扫描、分析、打牌四类引擎行动的 working-root 生产边界；Browser 与 AI 的 Standard Action descriptor 共用该原子入口，支付、目标校验及返回的 Effect/history/result 均绑定 caller 传入的 root，UI 只保留选择与渲染续接。
 - `randomizer/app/dependencies.js`：唯一的 app 入口依赖表。新增或删除 `window.Seti*` 依赖时先改这里，让脚本顺序错误能尽早报错。
 - `randomizer/app/browser-host/decision-ui.js`：统一 Decision shell、renderer registry、科技 presentation 与 focus/confirm/cancel intent；只消费 `BrowserProjection + ViewState`，不得枚举领域合法项或续跑 Effect queue。
 - `randomizer/app/browser-host/industry-alien-decision-ui.js`：公司与八物种的领域 presentation registry；只把标准 Decision choices 映射为公司、痕迹、机会、牌、任务和分支视图，不读取旧 pending 或领域 continuation。

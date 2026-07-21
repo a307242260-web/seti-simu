@@ -8,6 +8,7 @@ const { collectDependencies } = require("./dependencies");
     SetiAppAlienTraceRewardFlow: {},
     SetiAppActionRuntime: {},
     SetiPrimaryBoardActionExecutor: {},
+    SetiEngineActionExecutor: {},
     SetiAppActionInteractionRuntime: {},
     SetiAppActionLogRuntime: {},
     SetiAppGameRecovery: {},
