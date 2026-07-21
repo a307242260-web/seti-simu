@@ -244,6 +244,13 @@
       .map((entry) => {
         const evaluation = evaluate(context, entry.action) || {};
         const weightedEvaluation = { ...evaluation, score: (finiteNumber(evaluation.score) ?? 0) * entry.weight };
+        if (evaluation.evaluationModel === "expected-terminal-score-v1") {
+          return {
+            ...entry,
+            primary: weightedEvaluation.score,
+            fallback: weightedEvaluation.score,
+          };
+        }
         return {
           ...entry,
           primary: scoreTurnPrimary({ ...weightedEvaluation, family: entry.action.family }),

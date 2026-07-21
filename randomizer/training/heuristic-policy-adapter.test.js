@@ -35,7 +35,7 @@ const selected = adapter.select(observation, [
 assert.equal(selected.action.actionId, "land:fixture-1");
 assert.equal(selected.decision.actionId, selected.action.actionId);
 assert.equal(selected.context.legalActions.every(Object.isFrozen), true);
-assert.equal(adapter.getProvenance().version, "seti-heuristic-policy-v1");
+assert.equal(adapter.getProvenance().version, "seti-heuristic-policy-v2");
 assert.equal(adapter.inspectHost().seats[0].identity.seed, "adapter-seat-seed");
 assert.equal(adapter.inspectHost().diagnostics.at(-1).type, "decision_submitted");
 assert.equal(Object.hasOwn(adapter.createHostSnapshot(), "activeRequests"), false);

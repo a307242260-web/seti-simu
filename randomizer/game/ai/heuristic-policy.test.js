@@ -94,6 +94,7 @@ assert.deepEqual(policy.getProvenance(), {
   config: {
     difficulty: "weak_start",
     strategyWeights: { pass: 0.8, land: 1.2 },
+    evaluationParameters: require("./expected-score-evaluator").DEFAULT_PARAMETERS,
   },
   configChecksum: policy.getProvenance().configChecksum,
 });

@@ -4,21 +4,23 @@
   let policyPort = root.SetiPolicyPort;
   let standardAction = root.SetiStandardAction;
   let heuristicEvaluator = root.SetiHeuristicEvaluator;
+  let expectedScoreEvaluator = root.SetiExpectedScoreEvaluator;
 
-  if ((!policyPort || !standardAction || !heuristicEvaluator) && typeof require === "function") {
+  if ((!policyPort || !standardAction || !heuristicEvaluator || !expectedScoreEvaluator) && typeof require === "function") {
     policyPort = policyPort || require("./policy-port");
     standardAction = standardAction || require("../actions/standard-action");
     heuristicEvaluator = heuristicEvaluator || require("./heuristic-evaluator");
+    expectedScoreEvaluator = expectedScoreEvaluator || require("./expected-score-evaluator");
   }
 
-  const api = factory(policyPort, standardAction, heuristicEvaluator);
+  const api = factory(policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiHeuristicPolicy = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, heuristicEvaluator) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, heuristicEvaluator, expectedScoreEvaluator) {
   "use strict";
 
   const POLICY_TYPE = "heuristic";
-  const POLICY_VERSION = "seti-heuristic-policy-v1";
+  const POLICY_VERSION = "seti-heuristic-policy-v2";
   const DEFAULT_DIFFICULTY = "laughable";
   const KNOWN_FAMILIES = Object.freeze(new Set(standardAction.ALL_FAMILIES));
 
@@ -189,15 +191,18 @@
   function createHeuristicPolicy(options = {}) {
     const difficulty = String(options.difficulty || DEFAULT_DIFFICULTY);
     const strategyWeights = normalizeWeights(options.strategyWeights);
-    const evaluateAction = options.evaluateAction || heuristicEvaluator?.evaluateAction;
+    const evaluationParameters = expectedScoreEvaluator.mergeParameters(options.evaluationParameters);
+    const evaluateAction = options.evaluateAction || ((context, action) => (
+      expectedScoreEvaluator.evaluateAction(context, action, evaluationParameters)
+    ));
     if (typeof evaluateAction !== "function" || typeof heuristicEvaluator?.selectLegalAction !== "function") {
       throw new HeuristicPolicyError("HEURISTIC_POLICY_CONFIG_INVALID", "Heuristic Policy 缺少纯 action evaluator");
     }
     const provenance = Object.freeze({
       type: POLICY_TYPE,
       version: POLICY_VERSION,
-      config: Object.freeze({ difficulty, strategyWeights }),
-      configChecksum: stableHash({ difficulty, strategyWeights }),
+      config: Object.freeze({ difficulty, strategyWeights, evaluationParameters }),
+      configChecksum: stableHash({ difficulty, strategyWeights, evaluationParameters }),
     });
 
     function decide(context) {

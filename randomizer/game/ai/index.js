@@ -10,11 +10,12 @@
   let selectionEvaluator = root.SetiAISelectionEvaluator;
   let policyPort = root.SetiPolicyPort;
   let heuristicEvaluator = root.SetiHeuristicEvaluator;
+  let expectedScoreEvaluator = root.SetiExpectedScoreEvaluator;
   let heuristicPolicy = root.SetiHeuristicPolicy;
   let machinePlayerHost = root.SetiMachinePlayerHost;
   let analytics = root.SetiAIBattleAnalytics;
 
-  if ((!valuation || !goals || !raceModel || !actionGraph || !planner || !evaluator || !selectionEvaluator || !policyPort || !heuristicEvaluator || !heuristicPolicy || !machinePlayerHost || !analytics) && typeof require === "function") {
+  if ((!valuation || !goals || !raceModel || !actionGraph || !planner || !evaluator || !selectionEvaluator || !policyPort || !heuristicEvaluator || !expectedScoreEvaluator || !heuristicPolicy || !machinePlayerHost || !analytics) && typeof require === "function") {
     valuation = valuation || require("./valuation");
     goals = goals || require("./goals");
     raceModel = raceModel || require("./race-model");
@@ -24,19 +25,20 @@
     selectionEvaluator = selectionEvaluator || require("./selection-evaluator");
     policyPort = policyPort || require("./policy-port");
     heuristicEvaluator = heuristicEvaluator || require("./heuristic-evaluator");
+    expectedScoreEvaluator = expectedScoreEvaluator || require("./expected-score-evaluator");
     heuristicPolicy = heuristicPolicy || require("./heuristic-policy");
     machinePlayerHost = machinePlayerHost || require("./machine-player-host");
     analytics = analytics || require("./battle-analytics");
   }
 
-  const api = factory(valuation, goals, raceModel, actionGraph, planner, evaluator, selectionEvaluator, policyPort, heuristicEvaluator, heuristicPolicy, machinePlayerHost, analytics);
+  const api = factory(valuation, goals, raceModel, actionGraph, planner, evaluator, selectionEvaluator, policyPort, heuristicEvaluator, expectedScoreEvaluator, heuristicPolicy, machinePlayerHost, analytics);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAI = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (valuation, goals, raceModel, actionGraph, planner, evaluator, selectionEvaluator, policyPort, heuristicEvaluator, heuristicPolicy, machinePlayerHost, analytics) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (valuation, goals, raceModel, actionGraph, planner, evaluator, selectionEvaluator, policyPort, heuristicEvaluator, expectedScoreEvaluator, heuristicPolicy, machinePlayerHost, analytics) {
   "use strict";
 
   return Object.freeze({
@@ -49,6 +51,7 @@
     selectionEvaluator,
     policyPort,
     heuristicEvaluator,
+    expectedScoreEvaluator,
     heuristicPolicy,
     machinePlayerHost,
     analytics,
