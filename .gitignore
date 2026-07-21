@@ -2,5 +2,18 @@ graph_tool/
 # assets/cards/private/
 
 __pycache__/
+.venv*/
+.DS_Store
 rules/
 *.zip
+
+# Local Mocha runtime records.
+checkpoint/mocha_harness_closeout_events/
+checkpoint/mocha_issue_timeline/
+
+# Generated training data and model artifacts. Keep small proof/report files tracked explicitly.
+checkpoint/**/*.jsonl
+checkpoint/**/*.jsonl.*
+checkpoint/**/*.pt
+checkpoint/**/eval-*/
+checkpoint/**/smoke-*/
