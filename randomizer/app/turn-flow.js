@@ -70,17 +70,8 @@
   function createTurnFlowController(context = {}) {
     const {
       players,
-      turnState,
-      playerState,
       uiRuntimeState,
-      solarState,
-      nebulaDataState,
-      alienGameState,
       finalScoringState,
-      rocketState,
-      planetStatsState,
-      techGameState,
-      cardState,
       setupSelectionState,
       decisionSessions,
       cards,
@@ -133,8 +124,17 @@
       setPersistentGameSaveSuspended,
     } = context;
 
-    function setTurnStatePlayerOrder(playerIds, options = {}) {
-      const validPlayerIds = (playerIds || []).filter((playerId) => getPlayerById?.(playerId));
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("turn operation requires an explicit workingRoot");
+      }
+    }
+
+    function setTurnStatePlayerOrder(workingRoot, playerIds, options = {}) {
+      requireWorkingRoot(workingRoot);
+      const { turnState, playerState } = workingRoot;
+      const knownPlayerIds = new Set((playerState.players || []).map((player) => player.id));
+      const validPlayerIds = (playerIds || []).filter((playerId) => knownPlayerIds.has(playerId));
       if (!validPlayerIds.length) return;
 
       const activePlayerCount = Math.min(
@@ -158,89 +158,25 @@
       uiRuntimeState.finalResultAutoOpened = false;
       closeFinalResultDialog?.({ silent: true });
       playerState.currentPlayerId = turnState.startPlayerId;
-      preparePassReservePilesForCurrentGame?.();
+      preparePassReservePilesForCurrentGame?.(workingRoot);
     }
 
-    function randomizePlayerTurnOrder() {
+    function randomizePlayerTurnOrder(workingRoot) {
+      requireWorkingRoot(workingRoot);
+      const { turnState, playerState } = workingRoot;
       const playerIds = (playerState.players || []).map((player) => player.id);
       const defaultPlayerId = (playerState.players || [])
         .find((player) => player.color === defaultInitialPlayerColor)?.id;
       const shuffledIds = shufflePlayerIds(playerIds.filter((playerId) => playerId !== defaultPlayerId));
       const orderedIds = defaultPlayerId ? [defaultPlayerId, ...shuffledIds] : shufflePlayerIds(playerIds);
-      setTurnStatePlayerOrder(orderedIds, {
+      setTurnStatePlayerOrder(workingRoot, orderedIds, {
         activePlayerCount: turnState.activePlayerCount || defaultActivePlayerCount,
       });
     }
 
-    function isPlayerPassedThisRound(playerId) {
-      return (turnState.passedPlayerIds || []).includes(playerId);
-    }
-
-    function hasPlayerCompletedThisTurn(playerId) {
-      return (turnState.completedTurnPlayerIds || []).includes(playerId);
-    }
-
-    function getFirstEligiblePlayerId() {
-      return getRoundOrderPlayerIds(turnState).find((playerId) => !isPlayerPassedThisRound(playerId)) || null;
-    }
-
-    function getNextEligiblePlayerId(afterPlayerId) {
-      const order = getRoundOrderPlayerIds(turnState);
-      if (!order.length) return null;
-      const startIndex = order.includes(afterPlayerId) ? order.indexOf(afterPlayerId) : -1;
-
-      for (let offset = 1; offset <= order.length; offset += 1) {
-        const playerId = order[(startIndex + offset + order.length) % order.length];
-        if (!isPlayerPassedThisRound(playerId) && !hasPlayerCompletedThisTurn(playerId)) {
-          return playerId;
-        }
-      }
-
-      return null;
-    }
-
-    function haveAllActivePlayersPassed() {
-      return (turnState.activePlayerIds || []).length > 0
-        && turnState.activePlayerIds.every((playerId) => isPlayerPassedThisRound(playerId));
-    }
-
-    function isFinalRound() {
-      return Number(turnState.roundNumber) >= finalRoundNumber;
-    }
-
-    function buildFinalScoreSummaryLines() {
-      return (playerState.players || [])
-        .filter((player) => (turnState.activePlayerIds || []).includes(player.id))
-        .map((player) => {
-          const breakdown = computePlayerFinalScoreBreakdown(player);
-          return `${player.colorLabel || player.name || player.id}：${breakdown.totalScore} 分`;
-        });
-    }
-
-    function finishGameAfterFinalPass() {
-      turnState.gameEnded = true;
-      turnState.gameEndReason = "final_round_all_passed";
-      return {
-        roundAdvanced: false,
-        turnAdvanced: false,
-        gameEnded: true,
-        nextPlayerId: playerState.currentPlayerId,
-        finalScoreLines: buildFinalScoreSummaryLines(),
-      };
-    }
-
-    function advanceRoundStartPlayer() {
-      const activeOrderedIds = getActiveOrderedPlayerIds(turnState);
-      if (!activeOrderedIds.length) return null;
-
-      const currentStartIndex = activeOrderedIds.includes(turnState.startPlayerId)
-        ? activeOrderedIds.indexOf(turnState.startPlayerId)
-        : 0;
-      turnState.startPlayerId = activeOrderedIds[(currentStartIndex + 1) % activeOrderedIds.length];
-      return turnState.startPlayerId;
-    }
-
-    function beginNextRound() {
+    function beginNextRound(workingRoot) {
+      requireWorkingRoot(workingRoot);
+      const { cardState, playerState, turnState } = workingRoot;
       cards.discardUnusedPassReserveCards(cardState, turnState.roundNumber);
       industry?.resetAllRoundIndustryRuntimeState?.(playerState.players);
       turnState.roundNumber += 1;
@@ -250,12 +186,22 @@
       turnState.completedTurnPlayerIds = [];
       turnState.cardTurnEventBonuses = [];
       turnState.visitedPlanetsByPlayerId = {};
-      const nextStartPlayerId = advanceRoundStartPlayer();
+      const activeOrderedIds = getActiveOrderedPlayerIds(turnState);
+      let nextStartPlayerId = null;
+      if (activeOrderedIds.length) {
+        const currentStartIndex = activeOrderedIds.includes(turnState.startPlayerId)
+          ? activeOrderedIds.indexOf(turnState.startPlayerId)
+          : 0;
+        turnState.startPlayerId = activeOrderedIds[(currentStartIndex + 1) % activeOrderedIds.length];
+        nextStartPlayerId = turnState.startPlayerId;
+      }
       playerState.currentPlayerId = nextStartPlayerId || turnState.activePlayerIds[0] || playerState.currentPlayerId;
       return { roundAdvanced: true, turnAdvanced: true, nextPlayerId: playerState.currentPlayerId };
     }
 
-    function getDisplayedTurnNumber(rawTurnNumber = turnState.turnNumber) {
+    function getDisplayedTurnNumber(workingRoot, rawTurnNumber = workingRoot?.turnState?.turnNumber) {
+      requireWorkingRoot(workingRoot);
+      const { turnState } = workingRoot;
       const activePlayerCount = Math.max(
         1,
         (turnState.activePlayerIds || []).length
@@ -266,39 +212,19 @@
       return Math.floor((raw - 1) / activePlayerCount) + 1;
     }
 
-    function getActionCycleNumber() {
+    function getActionCycleNumber(workingRoot) {
+      requireWorkingRoot(workingRoot);
+      const { turnState } = workingRoot;
       const value = Math.max(1, Math.round(Number(turnState.actionCycleNumber) || 1));
       if (turnState.actionCycleNumber !== value) turnState.actionCycleNumber = value;
       return value;
     }
 
-    function advanceActionCycleNumber() {
-      turnState.actionCycleNumber = getActionCycleNumber() + 1;
-      return turnState.actionCycleNumber;
-    }
-
-    function clearCardTurnEventBonusesForPlayer(playerId) {
-      if (!Array.isArray(turnState.cardTurnEventBonuses)) {
-        turnState.cardTurnEventBonuses = [];
-        return;
-      }
-      turnState.cardTurnEventBonuses = turnState.cardTurnEventBonuses
-        .filter((bonus) => bonus.playerId !== playerId);
-    }
-
-    function clearTurnVisitedPlanetsForPlayer(playerId) {
-      if (!playerId) return;
-      if (!turnState.visitedPlanetsByPlayerId || typeof turnState.visitedPlanetsByPlayerId !== "object") {
-        turnState.visitedPlanetsByPlayerId = {};
-        return;
-      }
-      delete turnState.visitedPlanetsByPlayerId[playerId];
-    }
-
-    function advanceTurnAfterPlayerAction(playerId, options = {}) {
-      const actionTurnState = options.workingRoot?.turnState || turnState;
-      const actionPlayerState = options.workingRoot?.playerState || playerState;
-      const actionCardState = options.workingRoot?.cardState || cardState;
+    function advanceTurnAfterPlayerAction(workingRoot, playerId, options = {}) {
+      requireWorkingRoot(workingRoot);
+      const actionTurnState = workingRoot.turnState;
+      const actionPlayerState = workingRoot.playerState;
+      const actionCardState = workingRoot.cardState;
       const isPassed = (id) => (actionTurnState.passedPlayerIds || []).includes(id);
       const isCompleted = (id) => (actionTurnState.completedTurnPlayerIds || []).includes(id);
       const roundOrder = () => getRoundOrderPlayerIds(actionTurnState);
@@ -386,7 +312,7 @@
           finalScoreLines: (actionPlayerState.players || [])
             .filter((player) => (actionTurnState.activePlayerIds || []).includes(player.id))
             .map((player) => {
-              const breakdown = computePlayerFinalScoreBreakdown(player);
+              const breakdown = computePlayerFinalScoreBreakdown(workingRoot, player);
               return `${player.colorLabel || player.name || player.id}：${breakdown.totalScore} 分`;
             }),
         };
@@ -416,7 +342,8 @@
       };
     }
 
-    function resetGameStateForNewGame(options = {}) {
+    function resetGameStateForNewGame(workingRoot, options = {}) {
+      requireWorkingRoot(workingRoot);
       const activePlayerCount = Math.min(
         Math.max(1, Math.round(Number(options.activePlayerCount) || defaultActivePlayerCount)),
         players.PLAYER_COLOR_IDS.length,
@@ -443,7 +370,17 @@
       resetActionLog();
     }
 
-    function randomizeAll() {
+    function randomizeAll(workingRoot) {
+      requireWorkingRoot(workingRoot);
+      const {
+        alienGameState,
+        nebulaDataState,
+        planetStatsState,
+        playerState,
+        rocketState,
+        solarState,
+        techGameState,
+      } = workingRoot;
       els?.spinButton?.classList.remove("pulsin");
       resetActionLog();
       decisionSessions?.clear?.("jiuzhe_card_play");
@@ -458,7 +395,7 @@
       decisionSessions?.clear?.("runezu_face_symbol_placement");
       industry?.resetAllIndustryActionMarks?.(playerState.players);
       cancelIndustryAbilityFlow?.({ silent: true });
-      randomizePlayerTurnOrder();
+      randomizePlayerTurnOrder(workingRoot);
       randomizeWheels?.();
       randomizeSectors?.();
       fillNebulaDataBoard?.({ source: "setup", replace: true });
@@ -486,7 +423,9 @@
       renderResidentDesktop?.();
     }
 
-    function startNewGame(options = {}) {
+    function startNewGame(workingRoot, options = {}) {
+      requireWorkingRoot(workingRoot);
+      const { rocketState } = workingRoot;
       setPersistentGameSaveSuspended?.(true);
       try {
         const aiDifficulty = normalizeAiDifficulty(options.aiDifficulty ?? startScreenState?.aiDifficulty);
@@ -499,9 +438,9 @@
         if (options.clearStorage !== false) {
           clearPersistentGameState?.();
         }
-        resetGameStateForNewGame(options);
+        resetGameStateForNewGame(workingRoot, options);
         seedDefaultReferenceRockets?.();
-        randomizeAll();
+        randomizeAll(workingRoot);
         initializeCardGame?.(defaultInitialHandCount);
         configureDefaultAiOpponent?.({ aiDifficulty });
         startInitialSelection?.();

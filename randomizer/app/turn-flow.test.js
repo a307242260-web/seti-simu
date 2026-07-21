@@ -23,6 +23,17 @@ assert.deepEqual(getRoundOrderPlayerIds({
 
 const turnState = createTurnState(basePlayers, { activePlayerCount: 3, currentPlayerId: "p1" });
 const playerState = { players: structuredClone(basePlayers), currentPlayerId: "p1" };
+const workingRoot = {
+  turnState,
+  playerState,
+  cardState: {},
+  solarState: {},
+  nebulaDataState: {},
+  alienGameState: {},
+  rocketState: { statusNote: "" },
+  planetStatsState: {},
+  techGameState: {},
+};
 let newGameCalls = 0;
 
 const controller = createTurnFlowController({
@@ -37,17 +48,8 @@ const controller = createTurnFlowController({
       currentPlayerId: currentPlayerColor === "white" ? "p1" : "p2",
     }),
   },
-  turnState,
-  playerState,
   uiRuntimeState: { finalResultAutoOpened: true },
-  solarState: {},
-  nebulaDataState: {},
-  alienGameState: {},
   finalScoringState: {},
-  rocketState: { statusNote: "" },
-  planetStatsState: {},
-  techGameState: {},
-  cardState: {},
   setupSelectionState: {},
   pendingState: {},
   cards: {
@@ -115,7 +117,7 @@ const controller = createTurnFlowController({
   },
   cancelIndustryAbilityFlow: () => {},
   closeFinalResultDialog: () => {},
-  preparePassReservePilesForCurrentGame: () => {},
+  preparePassReservePilesForCurrentGame: (root) => assert.equal(root, workingRoot),
   initializeCardGame: () => {},
   configureDefaultAiOpponent: () => {},
   startInitialSelection: () => {},
@@ -124,8 +126,10 @@ const controller = createTurnFlowController({
   clearPersistentGameState: () => {},
   schedulePersistentGameStateSave: () => {},
   seedDefaultReferenceRockets: () => {},
-  getPlayerById: (playerId) => playerState.players.find((player) => player.id === playerId) || null,
-  computePlayerFinalScoreBreakdown: (player) => ({ totalScore: player.id === "p1" ? 10 : 8 }),
+  computePlayerFinalScoreBreakdown: (root, player) => {
+    assert.equal(root, workingRoot);
+    return { totalScore: player.id === "p1" ? 10 : 8 };
+  },
   defaultActivePlayerCount: 3,
   defaultInitialPlayerColor: "white",
   defaultInitialHandCount: 5,
@@ -139,14 +143,19 @@ const controller = createTurnFlowController({
   els: { spinButton: { classList: { remove() {} } }, startAiDifficulty: { value: "laughable" } },
 });
 
-const firstAdvance = controller.advanceTurnAfterPlayerAction("p1", { passed: false });
+assert.throws(
+  () => controller.advanceTurnAfterPlayerAction(null, "p1", { passed: false }),
+  /explicit workingRoot/,
+);
+
+const firstAdvance = controller.advanceTurnAfterPlayerAction(workingRoot, "p1", { passed: false });
 assert.equal(firstAdvance.nextPlayerId, "p2");
 assert.equal(turnState.turnNumber, 2);
 
 {
   const boundTurnBefore = structuredClone(turnState);
   const boundPlayerBefore = structuredClone(playerState);
-  const workingRoot = {
+  const isolatedWorkingRoot = {
     playerState: { players: structuredClone(basePlayers), currentPlayerId: "p1" },
     turnState: {
       ...createTurnState(basePlayers, { activePlayerCount: 3, currentPlayerId: "p1" }),
@@ -154,10 +163,10 @@ assert.equal(turnState.turnNumber, 2);
     },
     cardState: {},
   };
-  const result = controller.advanceTurnAfterPlayerAction("p1", { passed: false, workingRoot });
+  const result = controller.advanceTurnAfterPlayerAction(isolatedWorkingRoot, "p1", { passed: false });
   assert.equal(result.nextPlayerId, "p2");
-  assert.equal(workingRoot.turnState.turnNumber, 6);
-  assert.equal(workingRoot.playerState.currentPlayerId, "p2");
+  assert.equal(isolatedWorkingRoot.turnState.turnNumber, 6);
+  assert.equal(isolatedWorkingRoot.playerState.currentPlayerId, "p2");
   assert.deepEqual(turnState, boundTurnBefore, "生产 end_turn 不得推进闭包绑定 turnState");
   assert.deepEqual(playerState, boundPlayerBefore, "生产 end_turn 不得切换闭包绑定 current player");
 }
@@ -168,7 +177,7 @@ turnState.turnNumber = 3;
 turnState.actionCycleNumber = 1;
 turnState.completedTurnPlayerIds = ["p1", "p2"];
 playerState.currentPlayerId = "p3";
-const nextRoundAdvance = controller.advanceTurnAfterPlayerAction("p3", { passed: true });
+const nextRoundAdvance = controller.advanceTurnAfterPlayerAction(workingRoot, "p3", { passed: true });
 assert.equal(nextRoundAdvance.roundAdvanced, true);
 assert.equal(turnState.roundNumber, 2);
 assert.equal(turnState.turnNumber, 1);
@@ -178,12 +187,12 @@ turnState.roundNumber = 2;
 turnState.turnNumber = 2;
 turnState.completedTurnPlayerIds = ["p1", "p2"];
 playerState.currentPlayerId = "p3";
-const gameEndAdvance = controller.advanceTurnAfterPlayerAction("p3", { passed: true });
+const gameEndAdvance = controller.advanceTurnAfterPlayerAction(workingRoot, "p3", { passed: true });
 assert.equal(gameEndAdvance.gameEnded, true);
 assert.equal(turnState.gameEnded, true);
 assert.deepEqual(gameEndAdvance.finalScoreLines, ["白：10 分", "黄：8 分", "蓝：8 分"]);
 
-controller.resetGameStateForNewGame({ activePlayerCount: 3 });
+controller.resetGameStateForNewGame(workingRoot, { activePlayerCount: 3 });
 assert.equal(newGameCalls, 1, "新局必须只经 Rule Composition lifecycle");
 
 console.log("turn-flow tests passed");

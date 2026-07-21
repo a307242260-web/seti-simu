@@ -2287,30 +2287,21 @@
       cards.drawCardsToHand(cardState, playerState, player, handCount);
     }
     ensurePublicCardsFilledRespectingDelayedRefills();
-    preparePassReservePilesForCurrentGame();
+    preparePassReservePilesForCurrentGame(browserRuleState);
   }
 
-  function preparePassReservePilesForCurrentGame(options = {}) {
-    return cards.preparePassReservePiles(cardState, playerState, {
+  function preparePassReservePilesForCurrentGame(workingRoot, options = {}) {
+    return cards.preparePassReservePiles(workingRoot.cardState, workingRoot.playerState, {
       rounds: PASS_RESERVE_ROUNDS,
-      activePlayerCount: turnState.activePlayerCount || DEFAULT_ACTIVE_PLAYER_COUNT,
+      activePlayerCount: workingRoot.turnState.activePlayerCount || DEFAULT_ACTIVE_PLAYER_COUNT,
       random: options.random || Math.random,
     });
   }
 
   const turnFlowController = turnFlowModule.createTurnFlowController({
     players,
-    turnState,
-    playerState,
     uiRuntimeState,
-    solarState,
-    nebulaDataState,
-    alienGameState,
     finalScoringState,
-    rocketState,
-    planetStatsState,
-    techGameState,
-    cardState,
     setupSelectionState,
     decisionSessions,
     cards,
@@ -2352,8 +2343,9 @@
     clearPersistentGameState,
     schedulePersistentGameStateSave,
     seedDefaultReferenceRockets,
-    getPlayerById,
-    computePlayerFinalScoreBreakdown,
+    computePlayerFinalScoreBreakdown: (workingRoot, player) => (
+      computePlayerFinalScoreBreakdown(player, workingRoot)
+    ),
     defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
     defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
     defaultInitialHandCount: DEFAULT_INITIAL_HAND_COUNT,
@@ -2740,35 +2732,38 @@
   }
 
   function setTurnStatePlayerOrder(playerIds, options = {}) {
-    return turnFlowController.setTurnStatePlayerOrder(playerIds, options);
+    return turnFlowController.setTurnStatePlayerOrder(browserRuleState, playerIds, options);
   }
 
   function randomizePlayerTurnOrder() {
-    return turnFlowController.randomizePlayerTurnOrder();
+    return turnFlowController.randomizePlayerTurnOrder(browserRuleState);
   }
 
   function beginNextRound() {
-    return turnFlowController.beginNextRound();
+    return turnFlowController.beginNextRound(browserRuleState);
   }
 
   function getDisplayedTurnNumber(rawTurnNumber = turnState.turnNumber) {
-    return turnFlowController.getDisplayedTurnNumber(rawTurnNumber);
+    return turnFlowController.getDisplayedTurnNumber(browserRuleState, rawTurnNumber);
   }
 
   function getActionCycleNumber() {
-    return turnFlowController.getActionCycleNumber();
+    return turnFlowController.getActionCycleNumber(browserRuleState);
   }
 
   function advanceTurnAfterPlayerAction(playerId, options = {}) {
-    return turnFlowController.advanceTurnAfterPlayerAction(playerId, options);
+    const workingRoot = options.workingRoot || browserRuleState;
+    const operationOptions = { ...options };
+    delete operationOptions.workingRoot;
+    return turnFlowController.advanceTurnAfterPlayerAction(workingRoot, playerId, operationOptions);
   }
 
   function startNewGame(options = {}) {
-    return turnFlowController.startNewGame(options);
+    return turnFlowController.startNewGame(browserRuleState, options);
   }
 
   function randomizeAll() {
-    return turnFlowController.randomizeAll();
+    return turnFlowController.randomizeAll(browserRuleState);
   }
 
   function normalizeAiDifficulty(value) {
@@ -7842,16 +7837,16 @@
     return normalizeScoreSourceAmount(player?.scoreSources?.[key] || 0);
   }
 
-  function computePlayerFinalScoreBreakdown(player) {
+  function computePlayerFinalScoreBreakdown(player, workingRoot = browserRuleState) {
     const probeLocationData = buildProbeLocationIndex();
     return endGameScoring?.computePlayerFinalScore
       ? endGameScoring.computePlayerFinalScore({
         currentPlayer: player,
         finalScoringState,
-        playerState,
-        nebulaDataState,
-        alienGameState,
-        planetStatsState,
+        playerState: workingRoot.playerState,
+        nebulaDataState: workingRoot.nebulaDataState,
+        alienGameState: workingRoot.alienGameState,
+        planetStatsState: workingRoot.planetStatsState,
         ...buildPlutoMarkerContext(),
         probeLocations: probeLocationData.index,
         probeLocationDetails: probeLocationData.details,
