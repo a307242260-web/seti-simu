@@ -28,6 +28,7 @@ module.exports = Object.freeze({
   unit: lines(`
 randomizer/app/action-log-export.test.js
 randomizer/app/action-log-runtime.test.js
+randomizer/app/action-interaction-runtime.test.js
 randomizer/app/alien-runtime.test.js
 randomizer/app/alien-trace-reward-flow.test.js
 randomizer/app/alien-ui.test.js

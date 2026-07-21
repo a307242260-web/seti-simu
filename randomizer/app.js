@@ -199,38 +199,42 @@
   function endCurrentTurn(execution = {}) {
     return turnEndFlow?.endCurrentTurn(execution.workingRoot || browserRuleState, execution);
   }
-  function getPlutoReservedCards(...args) { return actionInteractionRuntime?.getPlutoReservedCards(...args) || []; }
+  function getPlutoReservedCards(...args) { return actionInteractionRuntime?.getPlutoReservedCards(browserRuleState, ...args) || []; }
   function ensurePlutoCardEffectState(...args) { return actionInteractionRuntime?.ensurePlutoCardEffectState(...args); }
   function getPlutoActionState(...args) { return actionInteractionRuntime?.getPlutoActionState(...args); }
   function addPlutoMarker(...args) { return actionInteractionRuntime?.addPlutoMarker(...args); }
-  function removePlutoMarker(...args) { return actionInteractionRuntime?.removePlutoMarker(...args); }
-  function collectPlutoMarkers(...args) { return actionInteractionRuntime?.collectPlutoMarkers(...args) || []; }
-  function buildPlutoMarkerContext(...args) { return actionInteractionRuntime?.buildPlutoMarkerContext(...args) || { plutoMarkers: [] }; }
-  function playerHasOwnPlutoLanding(...args) { return Boolean(actionInteractionRuntime?.playerHasOwnPlutoLanding(...args)); }
-  function buildPlutoMarkerRemovalChoices(...args) { return actionInteractionRuntime?.buildPlutoMarkerRemovalChoices(...args) || []; }
-  function getPlutoCandidateRockets(...args) { return actionInteractionRuntime?.getPlutoCandidateRockets(...args) || []; }
-  function getPlutoActionCost(...args) { return actionInteractionRuntime?.getPlutoActionCost(...args) || {}; }
-  function getAvailablePlutoAction(...args) { return actionInteractionRuntime?.getAvailablePlutoAction(...args) || { ok: false }; }
-  function executePlutoAction(...args) { return actionInteractionRuntime?.executePlutoAction(...args); }
-  function getCurrentPlanetActionPlacement(...args) { return actionInteractionRuntime?.getCurrentPlanetActionPlacement(...args) || { ok: false }; }
+  function removePlutoMarker(...args) { return actionInteractionRuntime?.removePlutoMarker(browserRuleState, ...args); }
+  function collectPlutoMarkers(...args) { return actionInteractionRuntime?.collectPlutoMarkers(browserRuleState, ...args) || []; }
+  function buildPlutoMarkerContext(...args) { return actionInteractionRuntime?.buildPlutoMarkerContext(browserRuleState, ...args) || { plutoMarkers: [] }; }
+  function playerHasOwnPlutoLanding(...args) { return Boolean(actionInteractionRuntime?.playerHasOwnPlutoLanding(browserRuleState, ...args)); }
+  function buildPlutoMarkerRemovalChoices(...args) { return actionInteractionRuntime?.buildPlutoMarkerRemovalChoices(browserRuleState, ...args) || []; }
+  function getPlutoCandidateRockets(...args) { return actionInteractionRuntime?.getPlutoCandidateRockets(browserRuleState, ...args) || []; }
+  function getPlutoActionCost(...args) { return actionInteractionRuntime?.getPlutoActionCost(browserRuleState, ...args) || {}; }
+  function getAvailablePlutoAction(...args) { return actionInteractionRuntime?.getAvailablePlutoAction(browserRuleState, ...args) || { ok: false }; }
+  function executePlutoAction(...args) { return actionInteractionRuntime?.executePlutoAction(browserRuleState, ...args); }
+  function getCurrentPlanetActionPlacement(...args) { return actionInteractionRuntime?.getCurrentPlanetActionPlacement(browserRuleState, ...args) || { ok: false }; }
   function getPlutoChoiceActionLabel(...args) { return actionInteractionRuntime?.getPlutoChoiceActionLabel(...args); }
   function formatPlutoChoiceLabel(...args) { return actionInteractionRuntime?.formatPlutoChoiceLabel(...args); }
-  function openPlutoActionChoicePicker(...args) { return actionInteractionRuntime?.openPlutoActionChoicePicker(...args); }
-  function scheduleRenderMoveArrows(...args) { return actionInteractionRuntime?.scheduleRenderMoveArrows(...args); }
-  function clearMoveRocketHighlight(...args) { return actionInteractionRuntime?.clearMoveRocketHighlight(...args); }
-  function activateMoveMode(...args) { return actionInteractionRuntime?.activateMoveMode(...args) || false; }
-  function deactivateMoveMode(...args) { return actionInteractionRuntime?.deactivateMoveMode(...args); }
+  function openPlutoActionChoicePicker(...args) { return actionInteractionRuntime?.openPlutoActionChoicePicker(browserRuleState, ...args); }
+  function scheduleRenderMoveArrows(...args) { return actionInteractionRuntime?.scheduleRenderMoveArrows(browserRuleState, ...args); }
+  function clearMoveRocketHighlight(...args) { return actionInteractionRuntime?.clearMoveRocketHighlight(browserRuleState, ...args); }
+  function activateMoveMode(...args) { return actionInteractionRuntime?.activateMoveMode(browserRuleState, ...args) || false; }
+  function deactivateMoveMode(...args) { return actionInteractionRuntime?.deactivateMoveMode(browserRuleState, ...args); }
   function closeDataPlacePicker(...args) { return actionInteractionRuntime?.closeDataPlacePicker(...args); }
   function isDataPoolFull(...args) { return Boolean(actionInteractionRuntime?.isDataPoolFull(...args)); }
   function getAutoDataPlacementCheck(...args) { return actionInteractionRuntime?.getAutoDataPlacementCheck(...args) || { ok: false }; }
-  function openDataPlacePicker(...args) { return actionInteractionRuntime?.openDataPlacePicker(...args); }
-  function openAutoDataPlacementPrompt(...args) { return actionInteractionRuntime?.openAutoDataPlacementPrompt(...args); }
+  function openDataPlacePicker(...args) { return actionInteractionRuntime?.openDataPlacePicker(browserRuleState, ...args); }
+  function openAutoDataPlacementPrompt(...args) { return actionInteractionRuntime?.openAutoDataPlacementPrompt(browserRuleState, ...args); }
   function continuePendingDataPlacementAfterBonus(...args) {
     return actionInteractionRuntime?.continuePendingDataPlacementAfterBonus(...args);
   }
   function skipPendingDataPlacement(...args) { return actionInteractionRuntime?.skipPendingDataPlacement(...args); }
-  function cancelDataPlacePicker(...args) { return actionInteractionRuntime?.cancelDataPlacePicker(...args); }
-  function confirmDataPlacement(...args) { return actionInteractionRuntime?.confirmDataPlacement(...args); }
+  function cancelDataPlacePicker(...args) { return actionInteractionRuntime?.cancelDataPlacePicker(browserRuleState, ...args); }
+  function confirmDataPlacement(...args) {
+    const execution = args[2] || {};
+    const workingRoot = execution.workingRoot || browserRuleState;
+    return actionInteractionRuntime?.confirmDataPlacement(workingRoot, args[0], args[1], execution);
+  }
   const SCORE_SOURCE_KEYS = Object.freeze({
     INITIAL: "initialScore",
     SCAN: "scanScore",
@@ -9321,16 +9325,13 @@
     canStartMainAction,
     cancelMovePaymentSelection,
     cardEffects,
-    cardState,
     createActionContext: (workingRoot, descriptor) => (
       workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
     ),
     data,
     els,
     getBoardPointFromPolarPoint,
-    getCurrentPlayer,
     getMainActionStartBlockReason,
-    getMovableTokensForPlayer,
     getPendingOwnerFields,
     getPendingOwnerPlayer,
     getPlaceDataSlotBonuses,
@@ -9342,7 +9343,6 @@
     markerOwnerLabel,
     openLandTargetPicker,
     decisionSessions,
-    playerState,
     players,
     recordAtomicActionHistory,
     recordHistoryCommand,
@@ -9356,7 +9356,6 @@
     renderStateReadout,
     restoreMutableObject,
     rocketActions,
-    rocketState,
     runAction,
     settleCardTasksAfterEffect,
     solar,

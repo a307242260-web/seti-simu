@@ -28,15 +28,12 @@
       canStartMainAction,
       cancelMovePaymentSelection,
       cardEffects,
-      cardState,
       createActionContext,
       data,
       decisionSessions,
       els,
       getBoardPointFromPolarPoint,
-      getCurrentPlayer,
       getMainActionStartBlockReason,
-      getMovableTokensForPlayer,
       getPendingOwnerFields,
       getPendingOwnerPlayer,
       getPlaceDataSlotBonuses,
@@ -47,7 +44,6 @@
       markerBelongsToPlayer,
       markerOwnerLabel,
       openLandTargetPicker,
-      playerState,
       players,
       recordAtomicActionHistory,
       recordHistoryCommand,
@@ -61,7 +57,6 @@
       renderStateReadout,
       restoreMutableObject,
       rocketActions,
-      rocketState,
       runAction,
       settleCardTasksAfterEffect,
       solar,
@@ -85,18 +80,32 @@
     }) || {};
     const DATA_PLACEMENT_DECISION = "data_placement";
 
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("action interaction operation requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
+
+    function getCurrentPlayerForRoot(workingRoot) {
+      requireWorkingRoot(workingRoot);
+      return players.getCurrentPlayer(workingRoot.playerState);
+    }
+
     function getPendingDataPlacement() {
       return decisionSessions.peek(DATA_PLACEMENT_DECISION);
     }
     let moveArrowRenderFrame = 0;
 
-  function getPlutoReservedCards(player = getCurrentPlayer()) {
+  function getPlutoReservedCards(workingRoot, player = getCurrentPlayerForRoot(workingRoot)) {
+    requireWorkingRoot(workingRoot);
     return (player?.reservedCards || []).filter((card) => cardEffects.getCardModel?.(card)?.pluto);
   }
 
-  function getAllPlutoReservedCardEntries() {
-    return (playerState.players || []).flatMap((player) => (
-      getPlutoReservedCards(player).map((card) => ({ player, card }))
+  function getAllPlutoReservedCardEntries(workingRoot) {
+    requireWorkingRoot(workingRoot);
+    return (workingRoot.playerState.players || []).flatMap((player) => (
+      getPlutoReservedCards(workingRoot, player).map((card) => ({ player, card }))
     ));
   }
 
@@ -178,8 +187,8 @@
     return { ok: true, marker };
   }
 
-  function removePlutoMarker(choice, player, owner = "current") {
-    const entry = getAllPlutoReservedCardEntries().find((item) => item.card.id === choice.cardId);
+  function removePlutoMarker(workingRoot, choice, player, owner = "current") {
+    const entry = getAllPlutoReservedCardEntries(workingRoot).find((item) => item.card.id === choice.cardId);
     if (!entry) return { ok: false, message: "没有可移除的冥王星标记" };
     if (owner !== "any" && entry.player?.id !== player?.id) {
       return { ok: false, message: "只能移除自己的冥王星标记" };
@@ -196,9 +205,10 @@
     return { ok: true, marker, card: entry.card, ownerPlayer: entry.player, message: "已移除冥王星标记" };
   }
 
-  function collectPlutoMarkers() {
+  function collectPlutoMarkers(workingRoot) {
+    requireWorkingRoot(workingRoot);
     const markers = [];
-    for (const { player, card } of getAllPlutoReservedCardEntries()) {
+    for (const { player, card } of getAllPlutoReservedCardEntries(workingRoot)) {
       const state = getPlutoActionState(card);
       for (const marker of state.orbitMarkers || []) {
         markers.push({
@@ -226,18 +236,18 @@
     return markers;
   }
 
-  function buildPlutoMarkerContext() {
-    return { plutoMarkers: collectPlutoMarkers() };
+  function buildPlutoMarkerContext(workingRoot) {
+    return { plutoMarkers: collectPlutoMarkers(workingRoot) };
   }
 
-  function playerHasOwnPlutoLanding(player) {
-    return collectPlutoMarkers().some((marker) => marker.kind === "land" && markerBelongsToPlayer(marker, player));
+  function playerHasOwnPlutoLanding(workingRoot, player) {
+    return collectPlutoMarkers(workingRoot).some((marker) => marker.kind === "land" && markerBelongsToPlayer(marker, player));
   }
 
-  function buildPlutoMarkerRemovalChoices(owner, markerKinds) {
-    const currentPlayer = getCurrentPlayer();
+  function buildPlutoMarkerRemovalChoices(workingRoot, owner, markerKinds) {
+    const currentPlayer = getCurrentPlayerForRoot(workingRoot);
     const choices = [];
-    for (const { player, card } of getAllPlutoReservedCardEntries()) {
+    for (const { player, card } of getAllPlutoReservedCardEntries(workingRoot)) {
       if (owner !== "any" && player?.id !== currentPlayer?.id) continue;
       const state = getPlutoActionState(card);
       if (markerKinds.has("orbit")) {
@@ -272,9 +282,10 @@
     return choices;
   }
 
-  function getPlutoCandidateRockets(player = getCurrentPlayer(), options = {}) {
-    const preferredRocketId = options.preferredRocketId ?? rocketState.activeRocketId ?? null;
-    const candidates = (rocketState.rockets || []).filter((rocket) => {
+  function getPlutoCandidateRockets(workingRoot, player = getCurrentPlayerForRoot(workingRoot), options = {}) {
+    requireWorkingRoot(workingRoot);
+    const preferredRocketId = options.preferredRocketId ?? workingRoot.rocketState.activeRocketId ?? null;
+    const candidates = (workingRoot.rocketState.rockets || []).filter((rocket) => {
       if (rocket.playerId !== player?.id) return false;
       const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
       return Number(coordinate?.y) === 4;
@@ -287,47 +298,50 @@
     });
   }
 
-  function getPlutoActionCost(actionType, card) {
+  function getPlutoActionCost(workingRoot, actionType, card) {
+    requireWorkingRoot(workingRoot);
     if (actionType === "orbit") return { ...abilities.planet.DEFAULT_ORBIT_COST };
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getCurrentPlayerForRoot(workingRoot);
     const state = getPlutoActionState(card);
     let energy = abilities.planet.BASE_LAND_ENERGY_COST;
     if (state.orbitDone) energy -= 1;
-    if (players.playerOwnsTech(currentPlayer, "orange3", createActionContext())) {
+    if (players.playerOwnsTech(currentPlayer, "orange3", createActionContext(workingRoot))) {
       energy -= abilities.planet.ORANGE3_LAND_DISCOUNT;
     }
     return energy > 0 ? { energy } : {};
   }
 
-  function getAvailablePlutoAction(actionType, options = {}) {
-    const currentPlayer = getCurrentPlayer();
-    const card = getPlutoReservedCards(currentPlayer).find((item) => {
+  function getAvailablePlutoAction(workingRoot, actionType, options = {}) {
+    const currentPlayer = getCurrentPlayerForRoot(workingRoot);
+    const card = getPlutoReservedCards(workingRoot, currentPlayer).find((item) => {
       const state = getPlutoActionState(item);
       return actionType === "orbit" ? !state.orbitDone : !state.landDone;
     });
     if (!card) return { ok: false, message: "没有可用的冥王星保留牌" };
-    const rockets = getPlutoCandidateRockets(currentPlayer, options);
+    const rockets = getPlutoCandidateRockets(workingRoot, currentPlayer, options);
     if (!rockets.length) return { ok: false, message: "没有 y=4 的己方探测器可前往冥王星" };
-    const cost = getPlutoActionCost(actionType, card);
+    const cost = getPlutoActionCost(workingRoot, actionType, card);
     if (!players.canAfford(currentPlayer, cost)) {
       return { ok: false, message: `资源不足，需要 ${players.formatResourceCost(cost)}` };
     }
     return { ok: true, card, rocket: rockets[0], cost };
   }
 
-  function executePlutoAction(actionType, options = {}) {
+  function executePlutoAction(workingRoot, actionType, options = {}) {
+    requireWorkingRoot(workingRoot);
+    const { playerState, rocketState } = workingRoot;
     if (!canStartMainAction()) {
       rocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
-    const available = getAvailablePlutoAction(actionType, options);
+    const available = getAvailablePlutoAction(workingRoot, actionType, options);
     if (!available.ok) {
       rocketState.statusNote = available.message;
       renderStateReadout();
       return available;
     }
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = getCurrentPlayerForRoot(workingRoot);
     const beforePlayer = structuredClone(currentPlayer);
     const beforeRocketState = structuredClone(rocketState);
     const beforeCard = structuredClone(available.card);
@@ -404,7 +418,8 @@
       || isActionEffectFlowActive();
   }
 
-  function getCurrentPlanetActionPlacement(context = createActionContext()) {
+  function getCurrentPlanetActionPlacement(workingRoot, context = createActionContext(workingRoot)) {
+    requireWorkingRoot(workingRoot);
     return actionShared?.getRocketPlanet?.(context) || { ok: false };
   }
 
@@ -420,15 +435,15 @@
     return `${actionLabel}冥王星${rewardSummary ? ` - 奖励：${rewardSummary}` : ""}（${rocketLabel}，${costLabel}）`;
   }
 
-  function buildPlutoActionChoiceOptions(actionType) {
-    const context = createActionContext();
+  function buildPlutoActionChoiceOptions(workingRoot, actionType) {
+    const context = createActionContext(requireWorkingRoot(workingRoot));
     const actionLabel = getPlutoChoiceActionLabel(actionType);
     const normalCheck = actionType === "orbit"
       ? abilities.planet.getOrbitOptions(context)
       : abilities.planet.getLandOptions(context);
-    const placement = getCurrentPlanetActionPlacement(context);
+    const placement = getCurrentPlanetActionPlacement(workingRoot, context);
     const preferredRocketId = normalCheck?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
-    const plutoCheck = getAvailablePlutoAction(actionType, { preferredRocketId });
+    const plutoCheck = getAvailablePlutoAction(workingRoot, actionType, { preferredRocketId });
     const choices = [];
 
     if (normalCheck.ok) {
@@ -476,8 +491,10 @@
     };
   }
 
-  function openPlutoActionChoicePicker(actionType) {
-    const options = buildPlutoActionChoiceOptions(actionType);
+  function openPlutoActionChoicePicker(workingRoot, actionType) {
+    requireWorkingRoot(workingRoot);
+    const { rocketState } = workingRoot;
+    const options = buildPlutoActionChoiceOptions(workingRoot, actionType);
     if (!options.ok) {
       rocketState.statusNote = options.message;
       renderPlayerStats();
@@ -488,17 +505,17 @@
     if (options.choices.length === 1) {
       const [choice] = options.choices;
       return choice.kind === "pluto"
-        ? executePlutoAction(actionType, { preferredRocketId: choice.preferredRocketId })
+        ? executePlutoAction(workingRoot, actionType, { preferredRocketId: choice.preferredRocketId })
         : runAction(actionType, actionType === "land"
           ? { target: choice.target, rocketId: choice.rocketId }
           : { rocketId: choice.rocketId });
     }
     openLandTargetPicker({
       ...options,
-      getOptions: () => buildPlutoActionChoiceOptions(actionType),
+      getOptions: () => buildPlutoActionChoiceOptions(workingRoot, actionType),
       onConfirm: (choice) => (
         choice.kind === "pluto"
-          ? executePlutoAction(actionType, { preferredRocketId: choice.preferredRocketId })
+          ? executePlutoAction(workingRoot, actionType, { preferredRocketId: choice.preferredRocketId })
           : runAction(actionType, actionType === "land"
             ? { target: choice.target, rocketId: choice.rocketId }
             : { rocketId: choice.rocketId })
@@ -622,19 +639,21 @@
     return specs;
   }
 
-  function scheduleRenderMoveArrows() {
+  function scheduleRenderMoveArrows(workingRoot) {
+    requireWorkingRoot(workingRoot);
     if (headless) return;
     moveArrowRenderFrame += 1;
     const frameId = moveArrowRenderFrame;
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         if (frameId !== moveArrowRenderFrame) return;
-        renderMoveArrows();
+        renderMoveArrows(workingRoot);
       });
     });
   }
 
-  function renderMoveArrows() {
+  function renderMoveArrows(workingRoot) {
+    requireWorkingRoot(workingRoot);
     if (!els.moveArrowLayer) return;
 
     if (uiRuntimeState.moveHighlightRocketId == null) {
@@ -644,9 +663,9 @@
       return;
     }
 
-    const rocket = rocketState.rockets.find((item) => item.id === uiRuntimeState.moveHighlightRocketId);
+    const rocket = workingRoot.rocketState.rockets.find((item) => item.id === uiRuntimeState.moveHighlightRocketId);
     if (!rocket || !(rocketActions.isMovablePlayerToken?.(rocket) || rocketActions.isControllablePlayerRocket(rocket))) {
-      deactivateMoveMode();
+      deactivateMoveMode(workingRoot);
       return;
     }
 
@@ -674,7 +693,9 @@
     renderRockets();
   }
 
-  function updateMoveRocketHighlight(rocketId) {
+  function updateMoveRocketHighlight(workingRoot, rocketId) {
+    requireWorkingRoot(workingRoot);
+    const { rocketState } = workingRoot;
     const previousId = uiRuntimeState.moveHighlightRocketId;
     uiRuntimeState.moveHighlightRocketId = rocketId;
 
@@ -689,18 +710,23 @@
     }
 
     syncMoveModeChrome();
-    scheduleRenderMoveArrows();
+    scheduleRenderMoveArrows(workingRoot);
   }
 
-  function clearMoveRocketHighlight() {
-    updateMoveRocketHighlight(null);
+  function clearMoveRocketHighlight(workingRoot) {
+    updateMoveRocketHighlight(workingRoot, null);
   }
 
-  function activateMoveMode(rocketId) {
+  function activateMoveMode(workingRoot, rocketId) {
+    requireWorkingRoot(workingRoot);
+    const { rocketState } = workingRoot;
     if (!Number.isInteger(rocketId) || rocketId <= 0) return false;
 
-    const currentPlayer = getCurrentPlayer();
-    const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer.id);
+    const currentPlayer = getCurrentPlayerForRoot(workingRoot);
+    const rocketsForPlayer = (rocketState.rockets || []).filter((rocket) => (
+      rocket.playerId === currentPlayer?.id
+      && (rocketActions.isMovablePlayerToken?.(rocket) || rocketActions.isControllablePlayerRocket(rocket))
+    ));
     if (!rocketsForPlayer.some((rocket) => rocket.id === rocketId)) return false;
 
     const cardMoveEffect = decisionState.actionEffectFlow?.cardMoveEffect?.effect || null;
@@ -712,16 +738,17 @@
     }
 
     rocketActions.setActiveRocket(rocketState, rocketId);
-    updateMoveRocketHighlight(rocketId);
+    updateMoveRocketHighlight(workingRoot, rocketId);
     renderStateReadout();
     return true;
   }
 
-  function deactivateMoveMode() {
+  function deactivateMoveMode(workingRoot) {
+    requireWorkingRoot(workingRoot);
     if (isMovePaymentSelectionActive()) {
       cancelMovePaymentSelection();
     }
-    clearMoveRocketHighlight();
+    clearMoveRocketHighlight(workingRoot);
     renderRockets();
   }
 
@@ -759,11 +786,12 @@
     return { ok: true, choices: placeCheck.choices || data.listPlaceDataChoices(player) };
   }
 
-  function openDataPlacePicker(options = {}) {
-    const player = options.player || getCurrentPlayer();
+  function openDataPlacePicker(workingRoot, options = {}) {
+    requireWorkingRoot(workingRoot);
+    const player = options.player || getCurrentPlayerForRoot(workingRoot);
     const choiceResult = abilities.data.listPlacementChoices(player);
     if (!choiceResult.ok) {
-      rocketState.statusNote = choiceResult.message;
+      workingRoot.rocketState.statusNote = choiceResult.message;
       renderStateReadout();
       return;
     }
@@ -783,7 +811,7 @@
     }
     if (!forcePrompt && !shouldPromptDataPlaceChoice(choices)) {
       const [choice] = choices;
-      confirmDataPlacement(choice.target, choice.blueSlot);
+      confirmDataPlacement(workingRoot, choice.target, choice.blueSlot);
       return;
     }
 
@@ -817,11 +845,12 @@
     els.dataPlaceOverlay.hidden = false;
   }
 
-  function openAutoDataPlacementPrompt(effect, player, options = {}) {
+  function openAutoDataPlacementPrompt(workingRoot, effect, player, options = {}) {
+    requireWorkingRoot(workingRoot);
     const check = getAutoDataPlacementCheck(player);
     if (!check.ok) return check;
     const beforePlayerState = structuredClone(player);
-    const beforeCardState = structuredClone(cardState);
+    const beforeCardState = structuredClone(workingRoot.cardState);
     const pendingAction = {
       type: "auto_data_place_before_gain",
       effect,
@@ -834,7 +863,7 @@
       onAfterPlacement: options.onAfterPlacement,
       onSkip: options.onSkip,
     };
-    openDataPlacePicker({
+    openDataPlacePicker(workingRoot, {
       player,
       forcePrompt: true,
       allowSkip: true,
@@ -844,9 +873,9 @@
         || "可先放置 1 个数据空出数据池位置，再获得本次数据；也可以跳过本次数据获得。",
       pendingAction,
     });
-    rocketState.statusNote = options.statusNote || "数据池已满：请先放置数据，或跳过本次数据获得";
+    workingRoot.rocketState.statusNote = options.statusNote || "数据池已满：请先放置数据，或跳过本次数据获得";
     renderStateReadout();
-    return { ok: true, awaitingDataPlacement: true, message: rocketState.statusNote };
+    return { ok: true, awaitingDataPlacement: true, message: workingRoot.rocketState.statusNote };
   }
 
   function getPendingDataPlacementPlayer(pending = getPendingDataPlacement()) {
@@ -938,19 +967,20 @@
     return null;
   }
 
-  function confirmPendingDataPlacement(target, blueSlot) {
+  function confirmPendingDataPlacement(workingRoot, target, blueSlot) {
+    requireWorkingRoot(workingRoot);
     const pending = getPendingDataPlacement();
     const player = getPendingDataPlacementPlayer(pending);
     closeDataPlacePicker({ keepPending: true });
     return withPendingOwnerPlayer(pending, () => {
     ensurePendingDataPlacementEffectStep(pending, player);
 
-    const result = abilities.executeAbility("placeData", createActionContext(), {
+    const result = abilities.executeAbility("placeData", createActionContext(workingRoot), {
       target,
       blueSlot,
     });
     if (!result.ok) {
-      rocketState.statusNote = result.message;
+      workingRoot.rocketState.statusNote = result.message;
       renderStateReadout();
       return result;
     }
@@ -958,7 +988,7 @@
     pending.messages.push(result.message);
     const bonusResult = applyAutoDataPlacementSlotBonuses(player, result, pending);
     if (bonusResult.pendingIncome || bonusResult.pendingCardSelection) {
-      rocketState.statusNote = bonusResult.pendingIncome
+      workingRoot.rocketState.statusNote = bonusResult.pendingIncome
         ? `${result.message}，请选择 1 张手牌获得收入`
         : `${result.message}，请选择 1 张公共牌`;
       renderPlayerStats();
@@ -988,26 +1018,25 @@
     return null;
   }
 
-  function cancelDataPlacePicker() {
+  function cancelDataPlacePicker(workingRoot) {
+    requireWorkingRoot(workingRoot);
     if (getPendingDataPlacement()) return skipPendingDataPlacement();
     closeDataPlacePicker();
-    rocketState.statusNote = "已取消放置数据";
+    workingRoot.rocketState.statusNote = "已取消放置数据";
     renderStateReadout();
     return { ok: true, canceled: true };
   }
 
-  function confirmDataPlacement(target, blueSlot, execution = {}) {
+  function confirmDataPlacement(workingRoot, target, blueSlot, execution = {}) {
+    requireWorkingRoot(workingRoot);
     if (getPendingDataPlacement()) {
-      return confirmPendingDataPlacement(target, blueSlot);
+      return confirmPendingDataPlacement(workingRoot, target, blueSlot);
     }
     closeDataPlacePicker();
     const blocked = blockIncompatiblePendingQuickAction("place-data");
     if (blocked) return blocked;
-    const workingRoot = execution.workingRoot || null;
-    const actionRocketState = workingRoot?.rocketState || rocketState;
-    const player = workingRoot
-      ? players.getCurrentPlayer(workingRoot.playerState)
-      : getCurrentPlayer();
+    const actionRocketState = workingRoot.rocketState;
+    const player = players.getCurrentPlayer(workingRoot.playerState);
     const result = abilities.executeAbility("placeData", createActionContext(
       workingRoot,
       execution.standardAction,
