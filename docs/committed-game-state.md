@@ -4,6 +4,8 @@
 
 `CommittedGameState` 是浏览器、headless 与训练环境共同使用的唯一“已经成立的游戏事实”。它是按领域分片的根对象，不是巨型平面对象。`StateStore` 是替换该根对象的唯一入口；Action、Effect Session、UI、AI、history 和宿主环境只能读取隔离快照，或在工作副本上计算候选状态。
 
+Browser composition 由 `app/browser-state-authority.js` 持有一个稳定 authority。启动时各领域 factory 只用于构造首个 working candidate；`app.js`、turn flow 和 AI reset 不再各自创建长期切片。传统规则函数收到的同名对象是 authority 当前 working copy 的窄引用，不是另一份 committed owner。行动完成、持久化或显式事务边界通过 CAS 提交；保存直接调用该长期 authority 的 `serialize()`。恢复会先用同一 authority 校验 serialized root，再在 recovery lifecycle 边界替换其内部 StateStore，并原位水合窄引用，以保持已装配 callback 的对象 identity。
+
 Stage 0/1 已冻结 reference schema、所有权、版本、验证、序列化与 compare-and-commit 语义。Stage 3/4 由 low/high coupling purifier 冻结各领域切片与跨切片 invariant。Stage 6 把 StateStore 作为 Effect Session 的一等端口：store-backed session 只从 `beginWorkingCopy()` 建立 base/working state，并且只有 queue 清空、无等待输入且 runtime 校验通过后才调用一次 `compareAndCommit()`。Stage 8 已删除旧 10/12-slice adapter；recovery/headless 只接受当前 committed schema。
 
 ```text

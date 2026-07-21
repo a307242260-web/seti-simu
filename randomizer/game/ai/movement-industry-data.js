@@ -31,6 +31,7 @@
       AI_MOVE_DIRECTIONS,
       AI_RESOURCE_VALUES,
       AI_DIFFICULTY_WEAK_START,
+      AI_DEEPSPACE_SWAP_MIN_SCORE,
       aiAutoBattleState,
     } = context;
     const aiNumber = (...args) => context.aiNumber(...args);

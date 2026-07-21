@@ -43,7 +43,9 @@
       label: options.label || null,
     };
     const stateStore = requireStateStore(options, "serialize");
-    const serialized = stateStore.serialize();
+    const serialized = options.serializeOptions
+      ? stateStore.serialize(options.serializeOptions)
+      : stateStore.serialize();
     if (!serialized.ok) {
       const firstError = serialized.errors?.[0] || null;
       const diagnostic = firstError

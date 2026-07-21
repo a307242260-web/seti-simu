@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "seti-browser-state-authority-smoke-v1",
+  "seed": "seti-107-independent",
+  "sourceCommitParent": "9f9111b",
+  "independentSnapshot": true,
+  "ok": true,
+  "blocked": false,
+  "gameEnded": true,
+  "steps": 456,
+  "bugCount": 0,
+  "playerScores": [24, 68, 56, 25],
+  "actionCounts": {
+    "industry": 9,
+    "playCard": 29,
+    "placeData": 36,
+    "end-turn": 57,
+    "scan": 7,
+    "researchTech": 10,
+    "launch": 2,
+    "move": 7,
+    "land": 6,
+    "pass": 16,
+    "analyze": 5,
+    "cardCorner": 7,
+    "orbit": 1,
+    "quickTrade": 14
+  },
+  "message": "游戏已结束"
+}

@@ -1095,6 +1095,10 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     return { ok: false, message: `测试 registry 未支持 ${candidate.id}` };
   };
 
+  context.browserStateAuthority = options.browserStateAuthority || {
+    resetWorking() { return { ok: true }; },
+  };
+
   return {
     white,
     blue,

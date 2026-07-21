@@ -86,16 +86,12 @@
       cards,
       industry,
       finalScoring,
-      solar,
       data,
-      aliens,
-      rocketActions,
-      planetStats,
       tech,
       cardTaskStateModule,
+      browserStateAuthority,
       clearTransientStateForRecovery,
       restoreMutableObject,
-      createTurnState: createTurnStateOverride = createTurnState,
       resetScanRunSequence,
       resetActionLog,
       randomizeWheels,
@@ -355,22 +351,14 @@
       );
 
       clearTransientStateForRecovery();
-      restoreMutableObject(solarState, solar.createBaselineState());
-      restoreMutableObject(nebulaDataState, data.createDefaultNebulaDataState());
-      restoreMutableObject(alienGameState, aliens.createDefaultAlienState());
-      restoreMutableObject(finalScoringState, finalScoring.createFinalScoringState(finalScoreIds));
-      restoreMutableObject(playerState, players.createPlayerState({
-        players: players.PLAYER_COLOR_IDS.map((color) => ({ color })),
-        currentPlayerColor: defaultInitialPlayerColor,
-      }));
-      restoreMutableObject(turnState, createTurnStateOverride(playerState.players, {
+      const resetResult = browserStateAuthority.resetWorking({
         activePlayerCount,
-        currentPlayerId: playerState.currentPlayerId,
-      }));
-      restoreMutableObject(rocketState, rocketActions.createRocketState());
-      restoreMutableObject(planetStatsState, planetStats.createPlanetStatsState());
-      restoreMutableObject(techGameState, tech.createState());
-      restoreMutableObject(cardState, cards.createCardState());
+        defaultInitialPlayerColor,
+        finalScoreIds,
+      });
+      if (!resetResult.ok) {
+        throw new Error(`StateStore 新局重置失败：${resetResult.code || "unknown"}`);
+      }
       restoreMutableObject(cardTaskState, cardTaskStateModule.createTaskState());
       restoreMutableObject(setupSelectionState, {
         phase: "selecting",
