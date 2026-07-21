@@ -195,7 +195,7 @@ const HEADLESS_PENDING_INVENTORY_KEYS = Object.freeze([
 const HEADLESS_SCAN_TARGET_TYPES = Object.freeze([
   "conditional_sector_scan", "discard_any_income", "pay_credit_reward",
   "discard_corner_repeat", "remove_orbit_to_probe", "remove_planet_marker", "return_unfinished_task",
-  "public_scan", "hand_scan", "sector_scan", "industry_pirates_raid_launch",
+  "public_scan", "hand_scan", "sector_scan", "industry_remove_tech", "industry_pirates_raid_launch",
 ]);
 
 function buildHeadlessUnsupportedError({ code, state, family = null, type = null, owner = null }) {

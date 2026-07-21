@@ -82,6 +82,10 @@ assert.equal(passives.getBorrowedTechTileId(turingPlayer, 2), null);
 assert.equal(passives.playerHasTechEffect(turingPlayer, "orange2"), true);
 assert.equal(passives.playerHasTechEffect(turingPlayer, "orange2", 2, 4), true);
 assert.equal(passives.playerHasTechEffect(turingPlayer, "orange2", 2, 5), false);
+const deepspacePlayer = { hand: [] };
+assert.equal(abilities.canStartActiveAbility(deepspacePlayer, "深空探测").ok, false);
+deepspacePlayer.hand.push({ id: "swap-card" });
+assert.equal(abilities.canStartActiveAbility(deepspacePlayer, "深空探测").ok, true);
 const turingClear = state.clearTuringBorrowedTech(turingPlayer);
 assert.equal(turingClear.cleared, true);
 assert.equal(turingPlayer.industryBorrowedTechTileId, null);
@@ -96,6 +100,19 @@ assert.equal(passives.getStandardLaunchCost(alienLabPlayer).credits, 1);
 assert.equal(passives.getStandardScanCost(alienLabPlayer).energy, 2);
 assert.equal(passives.getStandardScanCost(alienLabPlayer).credits, undefined);
 assert.equal(passives.getResearchPublicityCost(alienLabPlayer), 4);
+const heliosPlayer = {
+  initialSelection: { industry: { label: "赫利昂联合体" } },
+  techState: { ownedTiles: { blue1: true }, disabledTiles: {} },
+  hand: [{ id: "income-card" }],
+};
+assert.equal(abilities.canStartActiveAbility(heliosPlayer, "赫利昂联合体").ok, false);
+heliosPlayer.techState.ownedTiles.orange1 = true;
+assert.equal(abilities.canStartActiveAbility(heliosPlayer, "赫利昂联合体").ok, true);
+heliosPlayer.hand = [];
+assert.equal(abilities.canStartActiveAbility(heliosPlayer, "赫利昂联合体").ok, false);
+heliosPlayer.hand = [{ id: "income-card" }];
+heliosPlayer.techState.disabledTiles.orange1 = true;
+assert.equal(abilities.canStartActiveAbility(heliosPlayer, "赫利昂联合体").ok, false);
 state.initializeAlienLabPanels(alienLabPlayer);
 assert.equal(state.consumeAlienLabPanel(alienLabPlayer, "blue").changed, true);
 assert.equal(passives.getStandardLaunchCost(alienLabPlayer).credits, 2);

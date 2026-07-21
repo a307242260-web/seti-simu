@@ -397,11 +397,26 @@
       && (!player?.resources || player.resources.publicity < FENWICK_PUBLICITY_PICK_COST)) {
       return { ok: false, message: `宣传不足，需要 ${FENWICK_PUBLICITY_PICK_COST} 宣传` };
     }
+    if (prepared.abilityId === "deepspace_swap_cards" && !(player?.hand || []).length) {
+      return { ok: false, message: `${prepared.label}：没有手牌可与公共牌交换` };
+    }
     if (prepared.abilityId === "future_span_pick_advance") {
       const futureState = player?.industryFutureSpan;
       const targetScore = Number(futureState?.targetScore);
       if (!futureState?.card || futureState.playing || !Number.isFinite(targetScore)) {
         return { ok: false, message: `${prepared.label}：没有已标记的目标牌，无法使用该能力` };
+      }
+    }
+    if (prepared.abilityId === "helios_remove_tech_income") {
+      const ownedTiles = player?.techState?.ownedTiles || {};
+      const disabledTiles = player?.techState?.disabledTiles || {};
+      const hasRemovableTech = Object.entries(ownedTiles)
+        .some(([tileId, owned]) => owned && !disabledTiles[tileId] && !String(tileId).startsWith("blue"));
+      if (!hasRemovableTech) {
+        return { ok: false, message: `${prepared.label}：没有可无效的非蓝色科技` };
+      }
+      if (!(player?.hand || []).length) {
+        return { ok: false, message: `${prepared.label}：没有手牌可用于增加收入` };
       }
     }
     if (prepared.abilityId === "pirates_raid_launch") {

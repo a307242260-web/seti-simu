@@ -581,6 +581,17 @@
         return handleConditionalSectorChoice(button.dataset.conditionalSectorX);
       }
 
+      if (pendingType === "industry_remove_tech") {
+        const choice = (pending.choices || []).find((entry) => entry?.nebulaId) || null;
+        const tileId = choice?.nebulaId || chooseFirstAiButton("[data-nebula-id]")?.dataset?.nebulaId || null;
+        if (!tileId) return { ok: false, blocked: true, message: "AI 没有可无效的非蓝色科技" };
+        recordAiAutoBattleLog("industry", `${player.colorLabel}AI 选择赫利昂无效科技`, {
+          logPlayerId: player.id,
+          tileId,
+        });
+        return confirmScanTarget(tileId);
+      }
+
       const rareResult = runAiRareScanTargetDecision(pending, player);
       if (rareResult) return rareResult;
 
