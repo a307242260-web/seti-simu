@@ -326,6 +326,15 @@
     }
     getPlayers(state).forEach((player, playerIndex) => {
       const techState = player?.techState || {};
+      for (const legacyField of ["ownedTileByType", "blueBoardSlot"]) {
+        if (Object.hasOwn(techState, legacyField)) {
+          errors.push(error(
+            `$.players.players[${playerIndex}].techState.${legacyField}`,
+            "STATE_TECH_LEGACY_FIELD_FORBIDDEN",
+            `${legacyField} 已废弃；committed schema 只接受 ownedTiles/disabledTiles/blueBoardSlots`,
+          ));
+        }
+      }
       const occupiedSlots = new Set();
       for (const tileId of Object.keys(techState.ownedTiles || {}).filter((id) => techState.ownedTiles[id])) {
         if (!Object.hasOwn(stacks, tileId)) {

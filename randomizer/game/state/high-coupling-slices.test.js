@@ -177,6 +177,14 @@ function bytes(store) {
       mutate(slices) { slices.players.players[0].techState.ownedTiles.unknown = true; },
     },
     {
+      code: "STATE_TECH_LEGACY_FIELD_FORBIDDEN",
+      mutate(slices) { slices.players.players[0].techState.ownedTileByType = { blue: TECH_TILE_ID }; },
+    },
+    {
+      code: "STATE_TECH_LEGACY_FIELD_FORBIDDEN",
+      mutate(slices) { slices.players.players[0].techState.blueBoardSlot = 1; },
+    },
+    {
       code: "STATE_TECH_SUPPLY_OWNERSHIP_MISMATCH",
       mutate(slices) { slices.tech.stacks[TECH_TILE_ID].remaining -= 1; },
     },

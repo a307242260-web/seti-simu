@@ -191,7 +191,19 @@
     return { ownedTiles: {}, disabledTiles: {}, blueBoardSlots: {} };
   }
 
+  function rejectLegacyPlayerTechState(source) {
+    for (const field of ["ownedTileByType", "blueBoardSlot"]) {
+      if (source && Object.hasOwn(source, field)) {
+        const error = new TypeError(`techState.${field} 已废弃；只接受 ownedTiles/disabledTiles/blueBoardSlots`);
+        error.code = "PLAYER_TECH_LEGACY_FIELD_FORBIDDEN";
+        error.path = `$.techState.${field}`;
+        throw error;
+      }
+    }
+  }
+
   function normalizePlayerTechState(source) {
+    rejectLegacyPlayerTechState(source);
     const ownedTiles = {};
     const disabledTiles = {};
     const blueBoardSlots = {};
@@ -199,13 +211,6 @@
     if (source?.ownedTiles && typeof source.ownedTiles === "object") {
       for (const [tileId, owned] of Object.entries(source.ownedTiles)) {
         if (owned) ownedTiles[tileId] = true;
-      }
-    }
-
-    const legacy = source?.ownedTileByType;
-    if (legacy && typeof legacy === "object") {
-      for (const tileId of [legacy.blue, legacy.orange, legacy.purple]) {
-        if (tileId) ownedTiles[tileId] = true;
       }
     }
 
@@ -222,10 +227,6 @@
           blueBoardSlots[tileId] = normalizedSlot;
         }
       }
-    }
-
-    if (Number.isInteger(source?.blueBoardSlot) && ownedTiles.blue) {
-      blueBoardSlots.blue = source.blueBoardSlot;
     }
 
     return { ownedTiles, disabledTiles, blueBoardSlots };

@@ -13,6 +13,16 @@ require("./index");
 const tech = require("./index");
 const players = require("../players");
 const basicCards = require("../basic-cards");
+const playerTech = require("./player-tech");
+
+assert.throws(
+  () => playerTech.createPlayerTechState({ ownedTileByType: { orange: "orange1" } }),
+  (error) => error.code === "TECH_STATE_LEGACY_FIELD_FORBIDDEN" && error.path === "$.techState.ownedTileByType",
+);
+assert.throws(
+  () => playerTech.normalizePlayerTechState({ ownedTiles: { blue1: true }, blueBoardSlot: 2 }),
+  (error) => error.code === "TECH_STATE_LEGACY_FIELD_FORBIDDEN" && error.path === "$.techState.blueBoardSlot",
+);
 
 function createContext(publicity = 6) {
   const techGameState = tech.createState();

@@ -19,7 +19,7 @@
 
 ## 1. 当前版解决的问题
 
-当前 AI 是“单步贪心 + 被动 routeDemand”，主要短板（基于 `game/ai/policy.js`、`evaluator.js` 和 `app.js` 的 `scoreAi*` 链）：
+当前 AI 是“单步贪心 + 被动 routeDemand”，主要短板（基于公共 `heuristic-policy.js`、`evaluator.js` 和 `app.js` 的 `scoreAi*` 链）：
 
 | 短板 | 现状 | 当前对策 |
 |------|------|---------|
@@ -469,7 +469,7 @@ randomizer/
    ├─ planner.js          # L3：回合浅前瞻
    ├─ goals.js            # L4：目标系统 + 开局规划
    ├─ evaluator.js        # 轻量状态估值
-   ├─ policy.js           # 顶层行动与子决策选择
+   ├─ selection-evaluator.js # setup / 支付 / 科技 / 外星人等 legal choice 的纯估值
    ├─ policy-port.js      # Heuristic/Learned 公共只读决策端口与 validator
    ├─ battle-analytics.js # 可配置窗口序列挖掘 + 分数构成分桶
    ├─ index.js            # 浏览器/Node 模块汇总

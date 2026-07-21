@@ -6,7 +6,7 @@ const actionGraph = require("./action-graph");
 const planner = require("./planner");
 const evaluator = require("./evaluator");
 const heuristicEvaluator = require("./heuristic-evaluator");
-const policy = require("./policy");
+const selectionEvaluator = require("./selection-evaluator");
 const analytics = require("./battle-analytics");
 const appConstants = require("../../app/constants");
 const players = require("../players");
@@ -420,7 +420,7 @@ const pressuredYellowSupport = goals.scoreCandidateForGoals(
   { traceCompetition: { firstTrace: { yellow: { open: 0, revealed: 0 } }, yellowLandingPressure: 1 } },
 );
 assert.ok(pressuredYellowSupport < openYellowSupport * 0.5);
-assert.equal(policy.chooseAlienUseOption([
+assert.equal(selectionEvaluator.evaluateAlienUseOption([
   { choice: "12", label: "拥有3个橙色科技 · 14分 · 威胁6" },
   { choice: "0", label: "九折有6个痕迹 · 7分 · 威胁0" },
   { choice: "2", label: "完成2个蓝色扇区 · 12分 · 威胁4" },
@@ -1031,7 +1031,7 @@ const offer = {
     { id: "initial:21", label: "初始牌 21" },
   ],
 };
-const decision = policy.chooseInitialSelection(offer, { roundNumber: 1 });
+const decision = selectionEvaluator.evaluateInitialSelection(offer, { roundNumber: 1 });
 assert.ok(decision.industry);
 assert.equal(decision.initialCards.length, 2);
 assert.ok(decision.openingPlan);
@@ -1047,9 +1047,9 @@ const forcedIndustryOffer = {
     { id: "initial:20", label: "初始牌 20" },
   ],
 };
-const unforcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, { roundNumber: 1 });
+const unforcedOpening = selectionEvaluator.evaluateInitialSelection(forcedIndustryOffer, { roundNumber: 1 });
 assert.equal(unforcedOpening.industry.label, "图灵系统");
-const forcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
+const forcedOpening = selectionEvaluator.evaluateInitialSelection(forcedIndustryOffer, {
   roundNumber: 1,
   forcedIndustryCard: forcedIndustryOffer.industryOptions[1],
 });
@@ -1060,7 +1060,7 @@ assert.equal(forcedOpening.openingPlan.summary.energy, 2);
 assert.equal(forcedOpening.openingPlan.summary.baseIncomeCredits, 2);
 assert.equal(forcedOpening.openingPlan.summary.longTermCredits, 4);
 assert.ok(forcedOpening.openingPlan.topPlans.every((plan) => plan.industryLabel === "作弊实验室"));
-const weakForcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
+const weakForcedOpening = selectionEvaluator.evaluateInitialSelection(forcedIndustryOffer, {
   roundNumber: 1,
   forcedIndustryCard: forcedIndustryOffer.industryOptions[1],
   aiDifficulty: "weak_start",
@@ -1077,7 +1077,7 @@ const weakResearchOpeningOffer = {
     { id: "initial:16", label: "初始牌 16" },
   ],
 };
-const weakResearchOpening = policy.chooseInitialSelection(weakResearchOpeningOffer, {
+const weakResearchOpening = selectionEvaluator.evaluateInitialSelection(weakResearchOpeningOffer, {
   roundNumber: 1,
   forcedIndustryCard: weakResearchOpeningOffer.industryOptions[0],
   aiDifficulty: "weak_start",
@@ -1096,7 +1096,7 @@ const huanyuOpeningOffer = {
     { id: "initial:18", label: "初始牌 18" },
   ],
 };
-const huanyuOpening = policy.chooseInitialSelection(huanyuOpeningOffer, {
+const huanyuOpening = selectionEvaluator.evaluateInitialSelection(huanyuOpeningOffer, {
   roundNumber: 1,
   forcedIndustryCard: huanyuOpeningOffer.industryOptions[0],
 });
@@ -1114,7 +1114,7 @@ const huanyuResourceOpeningOffer = {
     { id: "initial:2", label: "初始牌 2" },
   ],
 };
-const huanyuResourceOpening = policy.chooseInitialSelection(huanyuResourceOpeningOffer, {
+const huanyuResourceOpening = selectionEvaluator.evaluateInitialSelection(huanyuResourceOpeningOffer, {
   roundNumber: 1,
   forcedIndustryCard: huanyuResourceOpeningOffer.industryOptions[0],
 });
@@ -1132,7 +1132,7 @@ const huanyuUnsupportedSecondOrbitOffer = {
     { id: "initial:14", label: "初始牌 14" },
   ],
 };
-const huanyuUnsupportedSecondOrbitOpening = policy.chooseInitialSelection(huanyuUnsupportedSecondOrbitOffer, {
+const huanyuUnsupportedSecondOrbitOpening = selectionEvaluator.evaluateInitialSelection(huanyuUnsupportedSecondOrbitOffer, {
   roundNumber: 1,
   forcedIndustryCard: huanyuUnsupportedSecondOrbitOffer.industryOptions[0],
   aiDifficulty: "weak_start",
@@ -1194,15 +1194,15 @@ assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "scan", available: true },
   { id: "playCard", available: true, playableCards: [{ price: 2, score: 4 }] },
 ])?.id, "playCard");
-assert.equal(policy.chooseResearchTechTile([
+assert.equal(selectionEvaluator.evaluateResearchTechTile([
   { tileId: "blue4", techType: "blue", bonusId: "bonus_1m", firstTake: false },
   { tileId: "orange1", techType: "orange", bonusId: "bonus_3f", firstTake: true },
 ])?.tileId, "orange1");
-assert.equal(policy.chooseResearchTechTile([
+assert.equal(selectionEvaluator.evaluateResearchTechTile([
   { tileId: "orange1", techType: "orange", score: 3 },
   { tileId: "purple4", techType: "purple", score: 9 },
 ])?.tileId, "purple4");
-assert.equal(policy.chooseResearchTechTile([
+assert.equal(selectionEvaluator.evaluateResearchTechTile([
   { tileId: "orange1", techType: "orange", score: 99, available: false },
   { tileId: "purple4", techType: "purple", score: 9, available: true },
 ])?.tileId, "purple4");
@@ -1210,9 +1210,9 @@ assert.equal(heuristicEvaluator.selectScoredItem([
   { cardId: "low.webp", price: 1, score: 1 },
   { cardId: "better.webp", price: 4, score: 5 },
 ], { mode: "card" })?.cardId, "better.webp");
-assert.equal(policy.chooseBlueTechSlot([3, 1, 2]), 1);
-assert.equal(policy.chooseBlueTechSlot([2, 0]), 0);
-assert.deepEqual(policy.chooseMovePaymentIndexes([
+assert.equal(selectionEvaluator.evaluateBlueTechSlot([3, 1, 2]), 1);
+assert.equal(selectionEvaluator.evaluateBlueTechSlot([2, 0]), 0);
+assert.deepEqual(selectionEvaluator.evaluateMovePaymentIndexes([
   { label: "普通牌" },
   { label: "移动牌 A" },
   { label: "移动牌 B" },
@@ -1223,7 +1223,7 @@ assert.deepEqual(policy.chooseMovePaymentIndexes([
   preserveEnergy: false,
   roundNumber: 3,
 }), [1]);
-assert.deepEqual(policy.chooseMovePaymentIndexes([
+assert.deepEqual(selectionEvaluator.evaluateMovePaymentIndexes([
   { label: "普通牌" },
   { label: "移动牌 A" },
 ], {
@@ -1232,7 +1232,7 @@ assert.deepEqual(policy.chooseMovePaymentIndexes([
   moveCardIndexes: [1],
   preserveEnergy: true,
 }), [1]);
-assert.deepEqual(policy.chooseMovePaymentIndexes([
+assert.deepEqual(selectionEvaluator.evaluateMovePaymentIndexes([
   { label: "普通牌" },
   { label: "移动牌 A" },
 ], {
@@ -1242,7 +1242,7 @@ assert.deepEqual(policy.chooseMovePaymentIndexes([
   preserveEnergy: false,
   roundNumber: 3,
 }), []);
-assert.deepEqual(policy.chooseMovePaymentIndexes([
+assert.deepEqual(selectionEvaluator.evaluateMovePaymentIndexes([
   { label: "普通牌" },
   { label: "高价值移动牌" },
   { label: "低价值移动牌" },
@@ -1253,8 +1253,8 @@ assert.deepEqual(policy.chooseMovePaymentIndexes([
   moveCardOpportunityCosts: { 1: 11.2, 2: 3.5 },
   preserveEnergy: true,
 }), [2]);
-assert.deepEqual(policy.chooseDiscardIndexes([{ label: "b" }, { label: "a" }], 1), [1]);
-assert.deepEqual(policy.chooseDiscardIndexes([
+assert.deepEqual(selectionEvaluator.evaluateDiscardIndexes([{ label: "b" }, { label: "a" }], 1), [1]);
+assert.deepEqual(selectionEvaluator.evaluateDiscardIndexes([
   { label: "energy income" },
   { label: "credit income" },
   { label: "hand income" },
@@ -1266,7 +1266,7 @@ assert.deepEqual(policy.chooseDiscardIndexes([
     { handSize: 1 },
   ],
 }), [1]);
-assert.deepEqual(policy.chooseDiscardIndexes([
+assert.deepEqual(selectionEvaluator.evaluateDiscardIndexes([
   { label: "energy income" },
   { label: "credit income" },
   { label: "hand income" },
@@ -1278,17 +1278,17 @@ assert.deepEqual(policy.chooseDiscardIndexes([
     2: { handSize: 1 },
   },
 }), [1, 0]);
-assert.equal(policy.chooseAlienUseOption([
+assert.equal(selectionEvaluator.evaluateAlienUseOption([
   { choice: "displayed", disabled: true },
   { choice: "blind" },
   { choice: "cancel" },
 ])?.choice, "blind");
-assert.equal(policy.chooseAlienUseOption([
+assert.equal(selectionEvaluator.evaluateAlienUseOption([
   { choice: "skip" },
   { choice: "2" },
   { choice: "0" },
 ])?.choice, "0");
-assert.equal(policy.chooseAlienUseOption([
+assert.equal(selectionEvaluator.evaluateAlienUseOption([
   { choice: "cancel" },
 ])?.choice, "cancel");
 

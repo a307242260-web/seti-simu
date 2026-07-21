@@ -22,7 +22,7 @@ function createContext(overrides = {}) {
     AI_DIFFICULTY_WEAK_START: "weak_start",
     FINAL_ROUND_NUMBER: 4,
     actions: { canExecute: () => ({ ok: false, message: "disabled" }) },
-    ai: { policy: {} },
+    ai: { heuristicPolicy: {}, selectionEvaluator: {} },
     aiNumber: (value) => Number(value || 0),
     alienGameState: {},
     finalScoringState: {},
@@ -96,11 +96,7 @@ function createContext(overrides = {}) {
   const logs = [];
   let dispatched = null;
   const runtime = moduleEntry.createActionExecutor(createContext({
-    ai: {
-      policy: {
-        chooseTurnAction: (candidates) => candidates.find((candidate) => candidate.id === "end-turn"),
-      },
-    },
+    ai: { heuristicPolicy: {}, selectionEvaluator: {} },
     dispatchRuntimeAction: (action) => {
       if (action.kind === "standard_enumerate") {
         return {

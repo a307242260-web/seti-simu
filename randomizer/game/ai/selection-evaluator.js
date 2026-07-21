@@ -15,7 +15,7 @@
     module.exports = api;
   }
 
-  root.SetiAIPolicy = api;
+  root.SetiAISelectionEvaluator = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function (evaluator, initialCards) {
   "use strict";
 
@@ -218,6 +218,7 @@
   }
 
   function getInitialPairs(cards = [], count = 2) {
+    if (count <= 0) return [[]];
     if (count <= 1) return (cards || []).map((card) => [card]);
     const pairs = [];
     for (let left = 0; left < cards.length; left += 1) {
@@ -228,7 +229,7 @@
     return pairs;
   }
 
-  function chooseInitialSelection(offer, options = {}) {
+  function evaluateInitialSelection(offer, options = {}) {
     const forcedIndustry = options.forcedIndustryCard || options.forcedIndustry || null;
     const industryOptions = forcedIndustry ? [forcedIndustry] : (offer?.industryOptions || []);
     const initialOptions = offer?.initialOptions || [];
@@ -316,7 +317,7 @@
     return INCOME_DISCARD_TYPES.has(type);
   }
 
-  function chooseDiscardIndexes(hand = [], count = 1, request = {}) {
+  function evaluateDiscardIndexes(hand = [], count = 1, request = {}) {
     const target = Math.max(0, Math.round(Number(count) || 0));
     const incomeRequest = isIncomeDiscardRequest(request);
     return hand
@@ -335,15 +336,15 @@
       .map((entry) => entry.index);
   }
 
-  function choosePassReserveCard(pile = []) {
+  function evaluatePassReserveCard(pile = []) {
     return pile[0] || null;
   }
 
-  function chooseResearchTechTile(candidates = []) {
+  function evaluateResearchTechTile(candidates = []) {
     return chooseBest(candidates.filter((candidate) => candidate?.available !== false), scoreResearchTechCandidate);
   }
 
-  function chooseBlueTechSlot(availableSlots = []) {
+  function evaluateBlueTechSlot(availableSlots = []) {
     const sorted = [...availableSlots]
       .map((slot) => Number(slot))
       .filter((slot) => Number.isInteger(slot))
@@ -351,7 +352,7 @@
     return sorted.length ? sorted[0] : null;
   }
 
-  function chooseMovePaymentIndexes(hand = [], request = {}) {
+  function evaluateMovePaymentIndexes(hand = [], request = {}) {
     const requiredMovePoints = Math.max(0, Math.round(Number(request.requiredMovePoints) || 0));
     const availableEnergy = Math.max(0, Math.round(Number(request.availableEnergy) || 0));
     const roundNumber = Math.max(1, Math.round(Number(request.roundNumber) || 1));
@@ -394,7 +395,7 @@
     return choice ? 25 : -Infinity;
   }
 
-  function chooseAlienUseOption(options = []) {
+  function evaluateAlienUseOption(options = []) {
     return (options || [])
       .map((option, index) => ({ option, index, score: scoreAlienUseOption(option) }))
       .filter((entry) => Number.isFinite(entry.score))
@@ -402,12 +403,17 @@
   }
 
   return Object.freeze({
-    chooseInitialSelection,
-    chooseDiscardIndexes,
-    choosePassReserveCard,
-    chooseResearchTechTile,
-    chooseBlueTechSlot,
-    chooseMovePaymentIndexes,
-    chooseAlienUseOption,
+    evaluateInitialSelection,
+    evaluateDiscardIndexes,
+    evaluatePassReserveCard,
+    evaluateResearchTechTile,
+    evaluateBlueTechSlot,
+    evaluateMovePaymentIndexes,
+    evaluateAlienUseOption,
+    scoreResearchTechCandidate,
+    scoreAlienUseOption,
+    scoreOpeningCombination,
+    getInitialPairs,
+    scoreIncomeGain,
   });
 });

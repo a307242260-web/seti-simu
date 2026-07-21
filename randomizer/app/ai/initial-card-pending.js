@@ -37,6 +37,22 @@
     } = context;
     const selectScoredItem = ai?.heuristicEvaluator?.selectScoredItem || heuristicEvaluator.selectScoredItem;
 
+    function decidePolicyChoice(family, player, decisionId, choices) {
+      return ai?.heuristicPolicy?.decideChoice?.({
+        seatId: player?.id,
+        family,
+        stateVersion: Math.max(0, Number(turnState.roundNumber) || 0),
+        decisionVersion: Math.max(0, Number(turnState.turnNumber) || 0),
+        decisionId,
+        requestId: `browser:${player?.id}:${decisionId}:${turnState.roundNumber || 0}:${turnState.turnNumber || 0}`,
+        observation: {
+          publicState: { roundNumber: turnState.roundNumber || 0 },
+          selfState: { playerId: player?.id || null },
+        },
+        choices,
+      }) || { ok: false, code: "HEURISTIC_POLICY_NOT_CONFIGURED", message: "公共 Heuristic Policy 未装配" };
+    }
+
     function getOrderedAiAutoBattlePlayerIds() {
       const aiIds = new Set(getAiAutoBattlePlayerIds());
       const ordered = (turnState.activePlayerIds || []).filter((playerId) => aiIds.has(playerId));
@@ -96,19 +112,49 @@
       if (!offer || offer.confirmed) return { ok: false, message: "没有可用初始选择" };
       const player = getPlayerById(playerId);
       if (player) applyAiDifficultyToPlayer(player);
-      const decision = ai?.policy?.chooseInitialSelection?.(offer, {
+      const selectionOptions = {
         roundNumber: turnState.roundNumber,
         player,
         aiDifficulty: player?.aiDifficulty,
-      }) || {};
-      const industryCard = decision.industry || offer.industryOptions?.[0] || null;
-      const initialSelection = decision.initialCards?.length
-        ? decision.initialCards
-        : (offer.initialOptions || []).slice(0, INITIAL_SELECTION_REQUIRED.initial);
+      };
+      const initialPairs = ai.selectionEvaluator.getInitialPairs(
+        offer.initialOptions || [],
+        INITIAL_SELECTION_REQUIRED.initial,
+      );
+      const openingPlans = (offer.industryOptions || []).flatMap((industry) => initialPairs.map((initialCards) => (
+        ai.selectionEvaluator.scoreOpeningCombination(industry, initialCards, selectionOptions)
+      ))).sort((left, right) => (
+        Number(right.score || 0) - Number(left.score || 0)
+        || String(left.industry?.id || "").localeCompare(String(right.industry?.id || ""))
+      ));
+      const policyResult = decidePolicyChoice("choose_branch", player, "initial-selection", openingPlans.map((plan, index) => ({
+        choiceId: `${plan.industry?.id || index}:${plan.initialCards.map((card) => card.id).join("+")}`,
+        value: Number(plan.score || 0),
+        target: {
+          industryId: plan.industry?.id || null,
+          initialIds: plan.initialCards.map((card) => card.id),
+        },
+        summary: `${plan.industry?.label || plan.industry?.id || "公司"} + 初始牌`,
+        plan,
+      })));
+      if (!policyResult.ok) {
+        return { ok: false, blocked: true, code: policyResult.code, message: policyResult.message };
+      }
+      const selectedPlan = policyResult.choice.plan;
+      const industryCard = selectedPlan.industry;
+      const initialSelection = selectedPlan.initialCards;
       if (!industryCard || initialSelection.length < INITIAL_SELECTION_REQUIRED.initial) {
         return { ok: false, message: "AI 初始选择候选不足" };
       }
-      const openingPlan = decision.openingPlan || null;
+      const evaluatedOpening = ai.selectionEvaluator.evaluateInitialSelection(offer, selectionOptions);
+      const openingPlan = evaluatedOpening.industry?.id === industryCard.id
+        ? evaluatedOpening.openingPlan
+        : {
+          score: Math.round(selectedPlan.score * 100) / 100,
+          goals: selectedPlan.goals,
+          summary: selectedPlan.summary,
+          topPlans: evaluatedOpening.openingPlan?.topPlans || [],
+        };
       const aiStyle = inferAiStyleFromOpening(openingPlan, industryCard, player);
       if (player) {
         player.aiStyle = aiStyle;
@@ -161,11 +207,27 @@
       const tradeDiscardIndexes = !dynamicIncomeIndexes && pendingType === "trade"
         ? chooseAiTradeDiscardIndexes(player, count, state.pendingDiscardAction)
         : null;
-      const selectedIndexes = dynamicIncomeIndexes || tradeDiscardIndexes || ai?.policy?.chooseDiscardIndexes?.(player.hand || [], count, {
+      const preferredIndexes = dynamicIncomeIndexes || tradeDiscardIndexes || ai?.selectionEvaluator?.evaluateDiscardIndexes?.(player.hand || [], count, {
         pendingType,
         incomeGainByIndex,
       })
-        || Array.from({ length: count }, (_item, index) => index);
+        || [];
+      const discardChoices = [[...preferredIndexes].sort((left, right) => left - right), ...(player.hand || []).map((_card, startIndex) => {
+        const indexes = Array.from({ length: count }, (_item, offset) => (startIndex + offset) % player.hand.length)
+          .sort((left, right) => left - right);
+        return indexes;
+      })].filter((indexes, index, all) => (
+        all.findIndex((other) => other.join(",") === indexes.join(",")) === index
+      ));
+      const discardPolicy = decidePolicyChoice("choose_card", player, `discard:${pendingType || "generic"}`, discardChoices.map((indexes) => ({
+        choiceId: indexes.join("+") || "none",
+        value: indexes.join(",") === [...preferredIndexes].sort((left, right) => left - right).join(",") ? 1 : 0,
+        target: { handIndexes: indexes },
+        summary: `弃牌 ${indexes.join(",")}`,
+        indexes,
+      })));
+      if (!discardPolicy.ok) return { ok: false, blocked: true, code: discardPolicy.code, message: discardPolicy.message };
+      const selectedIndexes = discardPolicy.choice.indexes;
       state.pendingDiscardAction.selectedIndexes = selectedIndexes.slice(0, count);
       const incomeDiscardPreview = incomeGainByIndex
         ? getAiIncomeDiscardPreview(player, count, pendingType, incomeGainByIndex, incomePlanningEntries, selectedIndexes)
@@ -222,7 +284,15 @@
           .filter((entry) => entry.card && Number.isFinite(entry.score))
           .sort((left, right) => right.score - left.score)
         : [];
-      const card = ranked[0]?.card || ai?.policy?.choosePassReserveCard?.(pile) || pile[0] || null;
+      const reservePolicy = decidePolicyChoice("choose_card", player, "pass-reserve", (pile || []).map((candidate, index) => ({
+        choiceId: candidate.id,
+        value: ranked.find((entry) => entry.card === candidate)?.score ?? -index,
+        target: { cardId: candidate.id },
+        summary: cards.getCardLabel?.(candidate) || candidate.cardName || candidate.id,
+        card: candidate,
+      })));
+      if (!reservePolicy.ok) return { ok: false, blocked: true, code: reservePolicy.code, message: reservePolicy.message };
+      const card = reservePolicy.choice.card;
       if (!card) return { ok: false, message: "PASS 预留牌堆为空" };
       selectPassReserveCard(card.id);
       recordAiAutoBattleLog("pass-reserve", `${player.colorLabel}AI 选择 PASS 预留牌`, {

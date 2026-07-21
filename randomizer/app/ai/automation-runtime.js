@@ -192,7 +192,9 @@
     }
 
     function runAiNonTurnAutomationStep() {
-      if (!ai?.policy) return { ok: false, blocked: true, message: "SetiAI 未加载" };
+      if (!ai?.heuristicPolicy || !ai?.selectionEvaluator) {
+        return { ok: false, blocked: true, message: "公共 Policy 决策模块未加载" };
+      }
       if (isGameEnded()) return { ok: true, done: true, message: "游戏已结束" };
 
       if (state.pendingAlienRevealConfirmation) {

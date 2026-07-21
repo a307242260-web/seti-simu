@@ -42,6 +42,32 @@
       scoreAiYichangdianAlienCardTracePriorityValue, scoreAiYichangdianTraceTimingValue, selectExecutableAiResearchTechCandidate, shouldAiPreserveEnergyForRouteCashout, skipCurrentActionEffect, solar, state, summarizeAiScanTargetChoiceEntry,
       tech, techGameState, turnState, yichangdian,
     } = context;
+
+    function decidePolicyChoice(family, player, decisionId, choices) {
+      return ai?.heuristicPolicy?.decideChoice?.({
+        seatId: player?.id,
+        family,
+        stateVersion: Math.max(0, Number(turnState.roundNumber) || 0),
+        decisionVersion: Math.max(0, Number(turnState.turnNumber) || 0),
+        decisionId,
+        requestId: `browser:${player?.id}:${decisionId}:${turnState.roundNumber || 0}:${turnState.turnNumber || 0}`,
+        observation: {
+          publicState: { roundNumber: turnState.roundNumber || 0 },
+          selfState: { playerId: player?.id || null },
+        },
+        choices,
+      }) || { ok: false, code: "HEURISTIC_POLICY_NOT_CONFIGURED", message: "公共 Heuristic Policy 未装配" };
+    }
+
+    function decideBlueSlot(player, availableSlots, decisionId) {
+      return decidePolicyChoice("choose_target", player, decisionId, availableSlots.map((slot) => ({
+        choiceId: String(slot),
+        value: -Number(slot),
+        target: { blueSlot: Number(slot) },
+        summary: `蓝色科技槽 ${slot}`,
+        slot: Number(slot),
+      })));
+    }
     const selectScoredItem = ai?.heuristicEvaluator?.selectScoredItem || heuristicEvaluator.selectScoredItem;
 
     function getAiMoveTurnKey(playerId = playerState.currentPlayerId) {
@@ -307,7 +333,7 @@
         routeTarget: routeScore.target,
         requiredMovePoints,
       });
-      const selectedHandIndices = ai?.policy?.chooseMovePaymentIndexes?.(currentPlayer.hand || [], {
+      const preferredHandIndices = ai?.selectionEvaluator?.evaluateMovePaymentIndexes?.(currentPlayer.hand || [], {
         requiredMovePoints,
         availableEnergy,
         moveCardIndexes,
@@ -315,6 +341,25 @@
         roundNumber: turnState.roundNumber,
         preserveEnergy: preserveEnergyForRouteCashout,
       }) || [];
+      const orderedMoveCards = [...moveCardIndexes].sort((left, right) => (
+        Number(moveCardOpportunityCosts[left] ?? 0) - Number(moveCardOpportunityCosts[right] ?? 0) || left - right
+      ));
+      const minimumCards = Math.max(0, requiredMovePoints - availableEnergy);
+      const paymentChoices = Array.from(
+        { length: Math.max(0, Math.min(requiredMovePoints, orderedMoveCards.length) - minimumCards) + 1 },
+        (_item, offset) => orderedMoveCards.slice(0, minimumCards + offset),
+      );
+      const paymentPolicy = decidePolicyChoice("choose_payment", currentPlayer, "move-payment", paymentChoices.map((indexes) => ({
+        choiceId: indexes.join("+") || "energy-only",
+        value: indexes.join(",") === preferredHandIndices.join(",")
+          ? 100
+          : -indexes.reduce((total, index) => total + Number(moveCardOpportunityCosts[index] || 0), 0),
+        target: { handIndexes: indexes },
+        summary: indexes.length ? `支付移动牌 ${indexes.join(",")}` : "仅支付能量",
+        indexes,
+      })));
+      if (!paymentPolicy.ok) return { ok: false, blocked: true, code: paymentPolicy.code, message: paymentPolicy.message };
+      const selectedHandIndices = paymentPolicy.choice.indexes;
       state.pendingMovePayment.selectedHandIndices = selectedHandIndices.slice(0, requiredMovePoints);
       recordAiAutoBattleLog("move-payment", `${currentPlayer.colorLabel}AI 确认移动支付`, {
         rocketId: state.pendingMovePayment.rocketId,
@@ -2034,12 +2079,16 @@
           break;
         }
         const candidateOptions = listAiAlienUseOptions(candidateFlow);
-        const candidateSelected = ai?.policy?.chooseAlienUseOption?.(candidateOptions, {
-          playerState,
-          turnState,
-          currentPlayer: candidatePlayer,
-          pendingType: candidateFlow.type,
-        }) || candidateOptions.find((option) => !option.disabled && option.choice !== "cancel" && option.choice !== "skip") || candidateOptions.find((option) => !option.disabled) || null;
+        const alienPolicy = decidePolicyChoice("choose_reward", candidatePlayer, `alien:${candidateFlow.type}`, candidateOptions
+          .filter((option) => !option.disabled)
+          .map((option, index) => ({
+            choiceId: `alien-option-${index}`,
+            value: ai.selectionEvaluator.scoreAlienUseOption(option),
+            target: { optionIndex: index },
+            summary: `外星人选项 ${index + 1}`,
+            option,
+          })));
+        const candidateSelected = alienPolicy.ok ? alienPolicy.choice.option : null;
         if (candidateSelected) {
           flow = candidateFlow;
           options = candidateOptions;
@@ -2100,11 +2149,9 @@
 
       if (techGameState.ui.pendingTileId) {
         const availableSlots = tech.getAvailableBlueSlots(currentPlayer.techState);
-        const blueSlot = ai?.policy?.chooseBlueTechSlot?.(availableSlots, {
-          currentPlayer,
-          techGameState,
-          effect,
-        }) || availableSlots[0] || null;
+        const blueSlotPolicy = decideBlueSlot(currentPlayer, availableSlots, `blue-slot:${techGameState.ui.pendingTileId}`);
+        if (!blueSlotPolicy.ok) return { ok: false, blocked: true, code: blueSlotPolicy.code, message: blueSlotPolicy.message };
+        const blueSlot = blueSlotPolicy.choice.slot;
         if (blueSlot == null) {
           return { ok: false, blocked: true, message: "AI 没有可用蓝色科技槽位" };
         }
@@ -2119,12 +2166,19 @@
       const candidates = techGameState.ui.industryBorrowMode
         ? listAiBorrowTechCandidates(currentPlayer)
         : listAiResearchTechCandidates(selectionOptions);
-      const policySelected = ai?.policy?.chooseResearchTechTile?.(candidates, {
-        currentPlayer,
-        turnState,
-        techGameState,
-        effect,
-      }) || null;
+      const techPolicy = decidePolicyChoice("choose_target", currentPlayer, `research-tech:${effect?.id || "generic"}`, candidates
+        .filter((candidate) => candidate?.available !== false)
+        .map((candidate) => ({
+          choiceId: candidate.tileId,
+          value: ai.selectionEvaluator.scoreResearchTechCandidate(candidate),
+          target: { tileId: candidate.tileId },
+          summary: candidate.label || candidate.tileId,
+          candidate,
+        })));
+      const policySelected = techPolicy.ok ? techPolicy.choice.candidate : null;
+      if (!techPolicy.ok && candidates.length) {
+        return { ok: false, blocked: true, code: techPolicy.code, message: techPolicy.message };
+      }
       const policyCheck = policySelected
         ? getAiResearchTechCandidateExecutionCheck(policySelected, currentPlayer, selectionOptions)
         : null;
@@ -2163,12 +2217,9 @@
       const result = handleSupplyTechTileClick(selected.tileId);
       if (result?.needsBlueSlotChoice) {
         const availableSlots = result.availableSlots || [];
-        const blueSlot = ai?.policy?.chooseBlueTechSlot?.(availableSlots, {
-          currentPlayer,
-          techGameState,
-          effect,
-          tileId: selected.tileId,
-        }) || availableSlots[0] || null;
+        const blueSlotPolicy = decideBlueSlot(currentPlayer, availableSlots, `blue-slot:${selected.tileId}`);
+        if (!blueSlotPolicy.ok) return { ok: false, blocked: true, code: blueSlotPolicy.code, message: blueSlotPolicy.message };
+        const blueSlot = blueSlotPolicy.choice.slot;
         if (blueSlot == null) return result;
         recordAiAutoBattleLog("tech-placement", `${currentPlayer.colorLabel}AI 选择蓝色科技槽位 ${blueSlot}`, {
           tileId: selected.tileId,

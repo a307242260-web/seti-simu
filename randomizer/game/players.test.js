@@ -4,6 +4,14 @@ const players = require("./players");
 assert.deepEqual(players.PLAYER_COLOR_IDS, ["blue", "green", "brown", "white"]);
 assert.equal(players.normalizePlayerColor("WHITE"), "white");
 assert.equal(players.normalizePlayerColor("unknown"), "white");
+assert.throws(
+  () => players.createPlayer({ techState: { ownedTileByType: { blue: "blue1" } } }),
+  (error) => error.code === "PLAYER_TECH_LEGACY_FIELD_FORBIDDEN" && error.path === "$.techState.ownedTileByType",
+);
+assert.throws(
+  () => players.normalizePlayerTechState({ ownedTiles: { blue1: true }, blueBoardSlot: 1 }),
+  (error) => error.code === "PLAYER_TECH_LEGACY_FIELD_FORBIDDEN" && error.path === "$.techState.blueBoardSlot",
+);
 
 const playerState = players.createPlayerState({
   currentPlayer: {

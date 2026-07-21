@@ -46,6 +46,48 @@ const policy = heuristic.createHeuristicPolicy({
   difficulty: "weak_start",
   strategyWeights: { pass: 0.8, land: 1.2 },
 });
+
+for (const family of ["choose_branch", "choose_card", "choose_target", "choose_payment", "choose_reward"]) {
+  const result = heuristic.decideChoice({
+    seatId: "player-blue",
+    family,
+    stateVersion: 4,
+    decisionVersion: 9,
+    decisionId: `migrated-${family}`,
+    choices: [
+      { choiceId: "left", value: 1, target: { side: "left" }, summary: "左" },
+      { choiceId: "right", value: 5, target: { side: "right" }, summary: "右" },
+    ],
+  });
+  assert.equal(result.ok, true, `${family} 必须经 DecisionContext -> PolicyDecision`);
+  assert.equal(result.choice.choiceId, "right");
+  assert.equal(result.context.legalActions.length, 2);
+  assert.equal(result.decision.policy.version, heuristic.POLICY_VERSION);
+}
+
+assert.equal(heuristic.decideChoice({ seatId: "", family: "choose_card", choices: [{ choiceId: "x", value: 1 }] }).code, "HEURISTIC_POLICY_CHOICE_OWNER_INVALID");
+assert.equal(heuristic.decideChoice({ seatId: "player-blue", family: "future_family", choices: [{ choiceId: "x", value: 1 }] }).code, "HEURISTIC_POLICY_UNSUPPORTED_FAMILY");
+assert.equal(heuristic.decideChoice({ seatId: "player-blue", family: "choose_card", choices: [] }).code, "HEURISTIC_POLICY_EMPTY_LEGAL_SET");
+{
+  const stale = heuristic.decideChoice({
+    seatId: "player-blue",
+    family: "choose_card",
+    stateVersion: 4,
+    decisionVersion: 9,
+    choices: [{ choiceId: "x", value: 1 }],
+    policy: {
+      decide(decisionContext) {
+        return { ...policyPort.createPolicyDecision(decisionContext, {
+          actionId: decisionContext.legalActions[0].actionId,
+          policyType: "heuristic",
+          policyVersion: heuristic.POLICY_VERSION,
+        }), decisionVersion: 8 };
+      },
+      getProvenance: () => ({ type: "heuristic", version: heuristic.POLICY_VERSION }),
+    },
+  });
+  assert.equal(stale.code, "POLICY_STALE");
+}
 assert.deepEqual(policy.getProvenance(), {
   type: "heuristic",
   version: heuristic.POLICY_VERSION,

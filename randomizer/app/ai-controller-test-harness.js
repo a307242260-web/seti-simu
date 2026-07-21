@@ -405,11 +405,8 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
           return selected;
         },
       },
-      policy: {
-        ...(options.useDefaultAlienUsePolicy
-          ? { chooseAlienUseOption: setiAi.policy.chooseAlienUseOption }
-          : {}),
-      },
+      heuristicPolicy: setiAi.heuristicPolicy,
+      selectionEvaluator: setiAi.selectionEvaluator,
       ...(options.aiValuation ? { valuation: options.aiValuation } : {}),
       ...(options.actionGraph ? { actionGraph: options.actionGraph } : {}),
       ...(options.aiPlanner ? { planner: options.aiPlanner } : {}),

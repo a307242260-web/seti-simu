@@ -18,7 +18,7 @@ function createContext(overrides = {}) {
   );
   return {
     ...context,
-    ai: { policy: {} },
+    ai: { heuristicPolicy: {}, selectionEvaluator: {} },
     cardEffects: {
       EFFECT_TYPES: {
         CARD_MOVE: "card_move",
