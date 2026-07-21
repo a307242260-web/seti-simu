@@ -56,6 +56,7 @@ function createHarness() {
     forgetLastHistoryStep: (source, id) => calls.push(`forget:${source}:${id}`),
     pendingState,
     players: {
+      getCurrentPlayer: (state) => state.players.find((player) => player.id === state.currentPlayerId) || null,
       gainResources: (_player, gain) => calls.push(`refund:${gain.publicity}`),
     },
     quickActionHistory,
@@ -79,13 +80,20 @@ function createHarness() {
     uiRuntimeState,
     updateActionButtons: noop,
   };
-  return { calls, context, decisionSessions, pendingState, techGameState, uiRuntimeState };
+  const workingRoot = {
+    cardState: context.cardState,
+    playerState: { currentPlayerId: "p1", players: [{ id: "p1", resources: {} }] },
+    rocketState: context.rocketState,
+    techGameState,
+    turnState: { roundNumber: 1, turnNumber: 1 },
+  };
+  return { calls, context, decisionSessions, pendingState, techGameState, uiRuntimeState, workingRoot };
 }
 
 {
   const harness = createHarness();
   const runtime = createIndustryRuntime(harness.context);
-  const result = runtime.rollbackPendingIndustryQuickAction();
+  const result = runtime.rollbackPendingIndustryQuickAction(harness.workingRoot);
 
   assert.equal(result.ok, true);
   assert.equal(harness.decisionSessions.peek("industry_ability"), null);
@@ -105,7 +113,7 @@ function createHarness() {
   const harness = createHarness();
   const runtime = createIndustryRuntime(harness.context);
 
-  runtime.cancelIndustryAbilityFlow();
+  runtime.cancelIndustryAbilityFlow(harness.workingRoot);
 
   assert.equal(harness.pendingState.cardSelectionAction, null);
   assert.equal(harness.decisionSessions.peek("industry_ability"), null);
@@ -148,9 +156,9 @@ function createHarness() {
   const beforeBoundTurnState = structuredClone(harness.context.turnState);
   const runtime = createIndustryRuntime(harness.context);
   const result = runtime.buildIndustryPlayCardAppendEffects(
+    { ...harness.workingRoot, turnState: { roundNumber: 2, turnNumber: 3 } },
     { id: "working-player" },
     { id: "working-card" },
-    { workingRoot: { turnState: { roundNumber: 2, turnNumber: 3 } } },
   );
 
   assert.equal(result.deferredEndEffects.length, 1);
@@ -160,6 +168,21 @@ function createHarness() {
     harness.context.turnState,
     beforeBoundTurnState,
     "分离 working root 的 play_card 不得改写闭包绑定 turnState",
+  );
+
+  const isolatedRoot = structuredClone(harness.workingRoot);
+  const beforeBoundPlayerState = structuredClone(harness.workingRoot.playerState);
+  runtime.applyIndustryPlayCardPassives(isolatedRoot, { id: "isolated-card" }, 1);
+  assert.equal(isolatedRoot.playerState.players[0].industryPlayedCardThisRound, true);
+  assert.deepEqual(
+    harness.workingRoot.playerState,
+    beforeBoundPlayerState,
+    "公司打牌被动不得读取或写入闭包 playerState",
+  );
+  assert.throws(
+    () => runtime.applyIndustryPlayCardPassives(undefined, {}, 1),
+    /explicit workingRoot/,
+    "公司规则 operation 缺 root 必须立即失败",
   );
 }
 

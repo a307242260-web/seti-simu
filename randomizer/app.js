@@ -314,10 +314,10 @@
     }),
     executeIndustry: (workingRoot, descriptor) => {
       const player = players.getCurrentPlayer(workingRoot.playerState);
-      return handleCompanyActionMarkerClick(player?.initialSelection?.industry, {
+      return handleCompanyActionMarkerClickForRoot(
         workingRoot,
-        standardAction: descriptor,
-      }) || { ok: true, progressed: true };
+        player?.initialSelection?.industry,
+      ) || { ok: true, progressed: true };
     },
     executeCardCorner: (workingRoot, descriptor) => executeStandardCardCornerAction(workingRoot, descriptor),
     executePlaceData: (workingRoot, descriptor) => confirmDataPlacement(
@@ -1692,13 +1692,13 @@
     startCardCornerMoveEffectFlow: (...args) => startCardCornerMoveEffectFlow(...args),
     rollbackPendingIndustryQuickAction: (...args) => rollbackPendingIndustryQuickAction?.(...args),
     continuePendingDataPlacementAfterBonus,
-    applyIndustryPlayCardPassives: (...args) => applyIndustryPlayCardPassives?.(...args),
-    buildPlayCardEffectFlowQueue: (...args) => buildPlayCardEffectFlowQueue?.(...args),
+    applyIndustryPlayCardPassives: (workingRoot, ...args) => applyIndustryPlayCardPassivesForRoot?.(workingRoot, ...args),
+    buildPlayCardEffectFlowQueue: (workingRoot, ...args) => buildPlayCardEffectFlowQueueForRoot?.(workingRoot, ...args),
     createImmediatePlayCardEvent: (...args) => createImmediatePlayCardEvent(...args),
     createPlayCardEvent: (...args) => createPlayCardEvent(...args),
     recordPlayCardStart,
     startPlayCardEffectFlow,
-    appendIndustryPlayPassiveStatus: (...args) => appendIndustryPlayPassiveStatus?.(...args),
+    appendIndustryPlayPassiveStatus: (workingRoot, ...args) => appendIndustryPlayPassiveStatusForRoot?.(workingRoot, ...args),
     recordMainActionIrreversibleBarrier,
     renderFangzhouCardDisplays,
     getFangzhouCard1RewardTargetOptions,
@@ -8144,7 +8144,6 @@
       beginSupplementalMovePayment: typeof beginSupplementalMovePayment === "undefined" ? undefined : beginSupplementalMovePayment,
       buildReadySectorFinishEffects: typeof buildReadySectorFinishEffects === "undefined" ? undefined : buildReadySectorFinishEffects,
       cardEffects: typeof cardEffects === "undefined" ? undefined : cardEffects,
-      cardState: typeof cardState === "undefined" ? undefined : cardState,
       cards: typeof cards === "undefined" ? undefined : cards,
       canStartMainAction: (...args) => canStartMainAction(...args),
       clearActionEffectFlow: (...args) => clearActionEffectFlow(...args),
@@ -8171,9 +8170,7 @@
       formatPlanetRewardGain: (...args) => formatPlanetRewardGain(...args),
       getAutoDataPlacementCheck: (...args) => getAutoDataPlacementCheck(...args),
       getCurrentActionEffect: typeof getCurrentActionEffect === "undefined" ? undefined : getCurrentActionEffect,
-      getCurrentPlayer: (...args) => getCurrentPlayer(...args),
       getEarthSectorCoordinate: (...args) => getEarthSectorCoordinate(...args),
-      getEffectOwnerPlayer: (...args) => getEffectOwnerPlayer(...args),
       getFutureSpanDeltaForCard: typeof getFutureSpanDeltaForCard === "undefined" ? undefined : getFutureSpanDeltaForCard,
       getGameplayLockReason: (...args) => getGameplayLockReason(...args),
       getMarkedNebulaIdsFromEvents: (...args) => getMarkedNebulaIdsFromEvents(...args),
@@ -8195,7 +8192,7 @@
       isActionPending: () => isActionPending(),
       isMovePaymentSelectionActive: typeof isMovePaymentSelectionActive === "undefined" ? undefined : isMovePaymentSelectionActive,
       isPlayCardSelectionActive: (...args) => isPlayCardSelectionActive(...args),
-      isTechTilePickingActive: (...args) => isTechTilePickingActive(...args),
+      isTechTilePickingActive: (workingRoot, ...args) => isTechTilePickingActiveForRoot(workingRoot, ...args),
       launchRocketForCurrentPlayer: (...args) => launchRocketForCurrentPlayer(...args),
       openAutoDataPlacementPrompt: (...args) => openAutoDataPlacementPrompt(...args),
       openScanTargetPicker: typeof openScanTargetPicker === "undefined" ? undefined : openScanTargetPicker,
@@ -8214,25 +8211,22 @@
       renderRockets: (...args) => renderRockets(...args),
       renderSectors: (...args) => renderSectors(...args),
       renderStateReadout: (...args) => renderStateReadout(...args),
-      renderTechBoard: (...args) => renderTechBoard(...args),
+      renderTechBoard: (workingRoot, ...args) => renderTechBoardForRoot(workingRoot, ...args),
       researchTechForCurrentPlayer: (...args) => researchTechForCurrentPlayer(...args),
       restoreObjectSnapshot: typeof restoreObjectSnapshot === "undefined" ? undefined : restoreObjectSnapshot,
       resultHasSignalMarkedEvent: (...args) => resultHasSignalMarkedEvent(...args),
       rocketActions: typeof rocketActions === "undefined" ? undefined : rocketActions,
-      rocketState: typeof rocketState === "undefined" ? undefined : rocketState,
       selectDefaultRocketForCurrentPlayer: (...args) => selectDefaultRocketForCurrentPlayer(...args),
       startCardEffectFlow: typeof startCardEffectFlow === "undefined" ? undefined : startCardEffectFlow,
-      startIndustryPiratesRaidLaunchFlow: (...args) => startIndustryPiratesRaidLaunchFlow(...args),
+      startIndustryPiratesRaidLaunchFlow: (workingRoot, ...args) => startIndustryPiratesRaidLaunchFlowForRoot(workingRoot, ...args),
       startPendingActionSession: typeof startPendingActionSession === "undefined" ? undefined : startPendingActionSession,
       structuredClone: typeof structuredClone === "undefined" ? undefined : structuredClone,
       syncCardSelectionChrome: (...args) => syncCardSelectionChrome(...args),
       syncDiscardSelectionChrome: typeof syncDiscardSelectionChrome === "undefined" ? undefined : syncDiscardSelectionChrome,
       syncIndustryHandSelectionChrome: (...args) => syncIndustryHandSelectionChrome(...args),
       syncInteractionFocusChrome: (...args) => syncInteractionFocusChrome(...args),
-      syncTechSelectionChrome: (...args) => syncTechSelectionChrome(...args),
+      syncTechSelectionChrome: (workingRoot, ...args) => syncTechSelectionChromeForRoot(workingRoot, ...args),
       tech: typeof tech === "undefined" ? undefined : tech,
-      techGameState: typeof techGameState === "undefined" ? undefined : techGameState,
-      turnState: typeof turnState === "undefined" ? undefined : turnState,
       uiRuntimeState: typeof uiRuntimeState === "undefined" ? undefined : uiRuntimeState,
       updateActionButtons: (...args) => updateActionButtons(...args),
   });
@@ -8240,65 +8234,111 @@
     isIndustryHandSelectionActive,
     isIndustryFutureSpanHandSelectionActive,
     isIndustryFreeMoveActive,
-    createIndustryActionRestoreCommand,
-    recordIndustryActionRestoreCommand,
-    clearIndustryRollbackUi,
-    rollbackPendingIndustryQuickAction,
-    cancelIndustryAbilityFlow,
-    finishIndustryAbilityFlow,
-    startIndustryAbilityFlow,
-    startIndustryStratusEffectFlow,
-    startIndustryFundamentalismExchangeFlow,
-    startIndustryPublicityPick,
-    beginIndustryTuringBorrow,
-    failIndustryTuringBorrow,
-    checkIndustryTuringBorrowTile,
-    confirmIndustryTuringBorrow,
-    openIndustryHeliosTechPicker,
-    confirmIndustryHeliosRemoveTech,
-    startIndustryHuanyuMoveEffectFlow,
-    beginIndustryHuanyuFreeMoves,
-    executeIndustryFreeMove,
-    canBeginIndustryFutureSpanHandSelection,
-    beginIndustryFutureSpanHandSelection,
-    handleIndustryFutureSpanHandClick,
-    handleIndustryDeepspaceHandClick,
-    finalizeIndustryDeepspaceSwap,
-    handleAlienLabPanelClick,
+    createIndustryActionRestoreCommand: createIndustryActionRestoreCommandForRoot,
+    recordIndustryActionRestoreCommand: recordIndustryActionRestoreCommandForRoot,
+    clearIndustryRollbackUi: clearIndustryRollbackUiForRoot,
+    rollbackPendingIndustryQuickAction: rollbackPendingIndustryQuickActionForRoot,
+    cancelIndustryAbilityFlow: cancelIndustryAbilityFlowForRoot,
+    finishIndustryAbilityFlow: finishIndustryAbilityFlowForRoot,
+    startIndustryAbilityFlow: startIndustryAbilityFlowForRoot,
+    startIndustryStratusEffectFlow: startIndustryStratusEffectFlowForRoot,
+    startIndustryFundamentalismExchangeFlow: startIndustryFundamentalismExchangeFlowForRoot,
+    startIndustryPublicityPick: startIndustryPublicityPickForRoot,
+    beginIndustryTuringBorrow: beginIndustryTuringBorrowForRoot,
+    failIndustryTuringBorrow: failIndustryTuringBorrowForRoot,
+    checkIndustryTuringBorrowTile: checkIndustryTuringBorrowTileForRoot,
+    confirmIndustryTuringBorrow: confirmIndustryTuringBorrowForRoot,
+    openIndustryHeliosTechPicker: openIndustryHeliosTechPickerForRoot,
+    confirmIndustryHeliosRemoveTech: confirmIndustryHeliosRemoveTechForRoot,
+    startIndustryHuanyuMoveEffectFlow: startIndustryHuanyuMoveEffectFlowForRoot,
+    beginIndustryHuanyuFreeMoves: beginIndustryHuanyuFreeMovesForRoot,
+    executeIndustryFreeMove: executeIndustryFreeMoveForRoot,
+    canBeginIndustryFutureSpanHandSelection: canBeginIndustryFutureSpanHandSelectionForRoot,
+    beginIndustryFutureSpanHandSelection: beginIndustryFutureSpanHandSelectionForRoot,
+    handleIndustryFutureSpanHandClick: handleIndustryFutureSpanHandClickForRoot,
+    handleIndustryDeepspaceHandClick: handleIndustryDeepspaceHandClickForRoot,
+    finalizeIndustryDeepspaceSwap: finalizeIndustryDeepspaceSwapForRoot,
+    handleAlienLabPanelClick: handleAlienLabPanelClickForRoot,
     createAlienLabRestoreCommand,
-    maybeConsumeAlienLabPanelForMainAction,
+    maybeConsumeAlienLabPanelForMainAction: maybeConsumeAlienLabPanelForMainActionForRoot,
     maybeRestoreAlienLabPanelForTrace,
     maybeApplyIndustryLaunchScan: maybeApplyIndustryLaunchScanForRoot,
-    startLaunchSectorFinishEffectFlow,
-    appendIndustryPlayPassiveStatus,
+    startLaunchSectorFinishEffectFlow: startLaunchSectorFinishEffectFlowForRoot,
+    appendIndustryPlayPassiveStatus: appendIndustryPlayPassiveStatusForRoot,
     getStrategyPassiveRewardIcon,
     snapshotStrategyPlayedCard,
     buildStrategyPlayPassiveEffectNodes,
-    buildIndustryPlayCardAppendEffects,
-    buildPlayCardEffectFlowQueue,
-    applyIndustryPlayCardPassives,
+    buildIndustryPlayCardAppendEffects: buildIndustryPlayCardAppendEffectsForRoot,
+    buildPlayCardEffectFlowQueue: buildPlayCardEffectFlowQueueForRoot,
+    applyIndustryPlayCardPassives: applyIndustryPlayCardPassivesForRoot,
     isIndustryIrreversibleFlow,
-    completeIndustryAbilityQuickStep,
-    commitIrreversibleIndustryQuickAction,
+    completeIndustryAbilityQuickStep: completeIndustryAbilityQuickStepForRoot,
+    commitIrreversibleIndustryQuickAction: commitIrreversibleIndustryQuickActionForRoot,
     appendSentinelPlayCornerEffectsToFlow,
-    tryInjectSentinelPlayCornerEffectAfterArm,
+    tryInjectSentinelPlayCornerEffectAfterArm: tryInjectSentinelPlayCornerEffectAfterArmForRoot,
     createIndustryCardCornerEvent,
-    executeIndustryStratusCornerEffect,
-    executeIndustrySentinelCornerEffect,
-    createCompanyCardSummary,
-    executeIndustryHeliosPassiveRewardEffect,
+    executeIndustryStratusCornerEffect: executeIndustryStratusCornerEffectForRoot,
+    executeIndustrySentinelCornerEffect: executeIndustrySentinelCornerEffectForRoot,
+    createCompanyCardSummary: createCompanyCardSummaryForRoot,
+    executeIndustryHeliosPassiveRewardEffect: executeIndustryHeliosPassiveRewardEffectForRoot,
     setStrategyPassiveRewardSlot,
-    getStrategyPassiveSelectableSlotIds,
+    getStrategyPassiveSelectableSlotIds: getStrategyPassiveSelectableSlotIdsForRoot,
     closeStrategyPassiveSlotChoicePicker,
-    cancelStrategyPassiveSlotChoice,
-    openStrategyPassiveSlotChoice,
-    confirmStrategyPassiveSlotChoice,
-    finishIndustryStrategyPassiveRewardEffect,
-    executeIndustryStrategyPassiveRewardEffect,
-    handleStrategyPassiveSlotClick,
-    handleCompanyActionMarkerClick
+    cancelStrategyPassiveSlotChoice: cancelStrategyPassiveSlotChoiceForRoot,
+    openStrategyPassiveSlotChoice: openStrategyPassiveSlotChoiceForRoot,
+    confirmStrategyPassiveSlotChoice: confirmStrategyPassiveSlotChoiceForRoot,
+    finishIndustryStrategyPassiveRewardEffect: finishIndustryStrategyPassiveRewardEffectForRoot,
+    executeIndustryStrategyPassiveRewardEffect: executeIndustryStrategyPassiveRewardEffectForRoot,
+    handleStrategyPassiveSlotClick: handleStrategyPassiveSlotClickForRoot,
+    handleCompanyActionMarkerClick: handleCompanyActionMarkerClickForRoot
   } = industryRuntime;
+  const createIndustryActionRestoreCommand = (...args) => createIndustryActionRestoreCommandForRoot(browserRuleState, ...args);
+  const recordIndustryActionRestoreCommand = (...args) => recordIndustryActionRestoreCommandForRoot(browserRuleState, ...args);
+  const clearIndustryRollbackUi = (...args) => clearIndustryRollbackUiForRoot(browserRuleState, ...args);
+  const rollbackPendingIndustryQuickAction = (...args) => rollbackPendingIndustryQuickActionForRoot(browserRuleState, ...args);
+  const cancelIndustryAbilityFlow = (...args) => cancelIndustryAbilityFlowForRoot(browserRuleState, ...args);
+  const finishIndustryAbilityFlow = (...args) => finishIndustryAbilityFlowForRoot(browserRuleState, ...args);
+  const startIndustryAbilityFlow = (...args) => startIndustryAbilityFlowForRoot(browserRuleState, ...args);
+  const startIndustryStratusEffectFlow = (...args) => startIndustryStratusEffectFlowForRoot(browserRuleState, ...args);
+  const startIndustryFundamentalismExchangeFlow = (...args) => startIndustryFundamentalismExchangeFlowForRoot(browserRuleState, ...args);
+  const startIndustryPublicityPick = (...args) => startIndustryPublicityPickForRoot(browserRuleState, ...args);
+  const beginIndustryTuringBorrow = (...args) => beginIndustryTuringBorrowForRoot(browserRuleState, ...args);
+  const failIndustryTuringBorrow = (...args) => failIndustryTuringBorrowForRoot(browserRuleState, ...args);
+  const checkIndustryTuringBorrowTile = (...args) => checkIndustryTuringBorrowTileForRoot(browserRuleState, ...args);
+  const confirmIndustryTuringBorrow = (...args) => confirmIndustryTuringBorrowForRoot(browserRuleState, ...args);
+  const openIndustryHeliosTechPicker = (...args) => openIndustryHeliosTechPickerForRoot(browserRuleState, ...args);
+  const confirmIndustryHeliosRemoveTech = (...args) => confirmIndustryHeliosRemoveTechForRoot(browserRuleState, ...args);
+  const startIndustryHuanyuMoveEffectFlow = (...args) => startIndustryHuanyuMoveEffectFlowForRoot(browserRuleState, ...args);
+  const beginIndustryHuanyuFreeMoves = (...args) => beginIndustryHuanyuFreeMovesForRoot(browserRuleState, ...args);
+  const executeIndustryFreeMove = (...args) => executeIndustryFreeMoveForRoot(browserRuleState, ...args);
+  const canBeginIndustryFutureSpanHandSelection = (...args) => canBeginIndustryFutureSpanHandSelectionForRoot(browserRuleState, ...args);
+  const beginIndustryFutureSpanHandSelection = (...args) => beginIndustryFutureSpanHandSelectionForRoot(browserRuleState, ...args);
+  const handleIndustryFutureSpanHandClick = (...args) => handleIndustryFutureSpanHandClickForRoot(browserRuleState, ...args);
+  const handleIndustryDeepspaceHandClick = (...args) => handleIndustryDeepspaceHandClickForRoot(browserRuleState, ...args);
+  const finalizeIndustryDeepspaceSwap = (...args) => finalizeIndustryDeepspaceSwapForRoot(browserRuleState, ...args);
+  const handleAlienLabPanelClick = (...args) => handleAlienLabPanelClickForRoot(browserRuleState, ...args);
+  const maybeConsumeAlienLabPanelForMainAction = (...args) => maybeConsumeAlienLabPanelForMainActionForRoot(browserRuleState, ...args);
   const maybeApplyIndustryLaunchScan = (...args) => maybeApplyIndustryLaunchScanForRoot(browserRuleState, ...args);
+  const startLaunchSectorFinishEffectFlow = (...args) => startLaunchSectorFinishEffectFlowForRoot(browserRuleState, ...args);
+  const appendIndustryPlayPassiveStatus = (...args) => appendIndustryPlayPassiveStatusForRoot(browserRuleState, ...args);
+  const buildIndustryPlayCardAppendEffects = (...args) => buildIndustryPlayCardAppendEffectsForRoot(browserRuleState, ...args);
+  const buildPlayCardEffectFlowQueue = (...args) => buildPlayCardEffectFlowQueueForRoot(browserRuleState, ...args);
+  const applyIndustryPlayCardPassives = (...args) => applyIndustryPlayCardPassivesForRoot(browserRuleState, ...args);
+  const completeIndustryAbilityQuickStep = (...args) => completeIndustryAbilityQuickStepForRoot(browserRuleState, ...args);
+  const commitIrreversibleIndustryQuickAction = (...args) => commitIrreversibleIndustryQuickActionForRoot(browserRuleState, ...args);
+  const tryInjectSentinelPlayCornerEffectAfterArm = (...args) => tryInjectSentinelPlayCornerEffectAfterArmForRoot(browserRuleState, ...args);
+  const executeIndustryStratusCornerEffect = (...args) => executeIndustryStratusCornerEffectForRoot(browserRuleState, ...args);
+  const executeIndustrySentinelCornerEffect = (...args) => executeIndustrySentinelCornerEffectForRoot(browserRuleState, ...args);
+  const createCompanyCardSummary = (...args) => createCompanyCardSummaryForRoot(browserRuleState, ...args);
+  const executeIndustryHeliosPassiveRewardEffect = (...args) => executeIndustryHeliosPassiveRewardEffectForRoot(browserRuleState, ...args);
+  const getStrategyPassiveSelectableSlotIds = (...args) => getStrategyPassiveSelectableSlotIdsForRoot(browserRuleState, ...args);
+  const cancelStrategyPassiveSlotChoice = (...args) => cancelStrategyPassiveSlotChoiceForRoot(browserRuleState, ...args);
+  const openStrategyPassiveSlotChoice = (...args) => openStrategyPassiveSlotChoiceForRoot(browserRuleState, ...args);
+  const confirmStrategyPassiveSlotChoice = (...args) => confirmStrategyPassiveSlotChoiceForRoot(browserRuleState, ...args);
+  const finishIndustryStrategyPassiveRewardEffect = (...args) => finishIndustryStrategyPassiveRewardEffectForRoot(browserRuleState, ...args);
+  const executeIndustryStrategyPassiveRewardEffect = (...args) => executeIndustryStrategyPassiveRewardEffectForRoot(browserRuleState, ...args);
+  const handleStrategyPassiveSlotClick = (...args) => handleStrategyPassiveSlotClickForRoot(browserRuleState, ...args);
+  const handleCompanyActionMarkerClick = (...args) => handleCompanyActionMarkerClickForRoot(browserRuleState, ...args);
 
   const techRuntime = techRuntimeModule.createTechRuntime({
       headless: headlessMode,

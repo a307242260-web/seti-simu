@@ -338,7 +338,7 @@ function createBaseContext(player, overrides = {}) {
     applyIndustryPlayCardPassives() {
       return { ok: true };
     },
-    buildPlayCardEffectFlowQueue(_player, _card, effects) {
+    buildPlayCardEffectFlowQueue(_workingRoot, _player, _card, effects) {
       return { effects: effects || [], deferredEndEffects: [] };
     },
     createImmediatePlayCardEvent(card, player, cost) {
@@ -353,7 +353,7 @@ function createBaseContext(player, overrides = {}) {
     startPlayCardEffectFlow(flowId, label, effects, payload) {
       events.startedPlayFlow = { flowId, label, effects, payload };
     },
-    appendIndustryPlayPassiveStatus(result) {
+    appendIndustryPlayPassiveStatus(_workingRoot, result) {
       events.lastIndustryPassiveResult = result;
     },
     recordMainActionIrreversibleBarrier(label, message, code) {

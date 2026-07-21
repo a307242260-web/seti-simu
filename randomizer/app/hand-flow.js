@@ -1450,8 +1450,8 @@
       actionRocketState.statusNote = shouldReserve
         ? `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`
         : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
-      const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode, { workingRoot });
-      const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects, { workingRoot });
+      const industryPassiveResult = applyIndustryPlayCardPassives(workingRoot, playedCard, typeCode);
+      const playFlowQueue = buildPlayCardEffectFlowQueue(workingRoot, currentPlayer, playedCard, playEffects);
       const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
       const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
       syncPlayCardSelectionChrome();
@@ -1478,7 +1478,7 @@
         updateActionButtons();
         renderStateReadout();
       }
-      appendIndustryPlayPassiveStatus(industryPassiveResult);
+      appendIndustryPlayPassiveStatus(workingRoot, industryPassiveResult);
       return {
         ok: true,
         card: playedCard,
@@ -1565,8 +1565,8 @@
       actionRocketState.statusNote = reserved
         ? `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，进入保留牌区`
         : `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
-      const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode, { workingRoot });
-      const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, playEffects, { workingRoot });
+      const industryPassiveResult = applyIndustryPlayCardPassives(workingRoot, playedCard, typeCode);
+      const playFlowQueue = buildPlayCardEffectFlowQueue(workingRoot, currentPlayer, playedCard, playEffects);
       const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
       const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
       syncPlayCardSelectionChrome();
@@ -1591,7 +1591,7 @@
         updateActionButtons();
         renderStateReadout();
       }
-      appendIndustryPlayPassiveStatus(industryPassiveResult);
+      appendIndustryPlayPassiveStatus(workingRoot, industryPassiveResult);
       return {
         ok: true,
         card: playedCard,
@@ -1762,8 +1762,8 @@
       }));
       const typeCode = getCardTypeCode(playedCard);
       actionRocketState.statusNote = `打出：${cards.getCardLabel(playedCard)}，支付 ${formatCardPlayCost(cost)}，已弃掉`;
-      const industryPassiveResult = applyIndustryPlayCardPassives(playedCard, typeCode, { workingRoot });
-      const playFlowQueue = buildPlayCardEffectFlowQueue(currentPlayer, playedCard, fangzhouEffects, { workingRoot });
+      const industryPassiveResult = applyIndustryPlayCardPassives(workingRoot, playedCard, typeCode);
+      const playFlowQueue = buildPlayCardEffectFlowQueue(workingRoot, currentPlayer, playedCard, fangzhouEffects);
       const immediatePlayCardEvent = createImmediatePlayCardEvent(playedCard, currentPlayer, cost);
       const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
 
@@ -1797,7 +1797,7 @@
         updateActionButtons();
         renderStateReadout();
       }
-      appendIndustryPlayPassiveStatus(industryPassiveResult);
+      appendIndustryPlayPassiveStatus(workingRoot, industryPassiveResult);
       return {
         ok: true,
         card: playedCard,
