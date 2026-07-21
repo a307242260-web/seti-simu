@@ -127,7 +127,109 @@ GameState 快照
 
 ### 3.2 状态估值
 
-`evaluate(state, playerId)` = 终局/实时分（复用 `endGameScoring.computePlayerFinalScore`，`end-game-scoring.js`）+ 资源折算 + **收入净值** + 手牌价值 + 保留牌价值 + **已激活目标的期望达成值**。
+首版比例只作为待校准参数 `θ₀`，不直接等同于所有局面的固定边际价值。公共 Heuristic Policy 内提供两个纯函数：
+
+```text
+evaluateState(observation, seatId, parameters) -> StateEvaluation
+evaluateAction(context, legalAction, parameters) -> ActionEvaluation
+```
+
+两者只读取当前席位可见的 `observation`、一个合法 Standard Action descriptor 和冻结参数，不读取 DOM、Host、旧 candidate score、`actionGraph` 或隐藏信息，也不执行规则。
+
+#### 3.2.1 统一目标：叶子盘面的预期终局分
+
+状态函数以预期终局分为唯一单位：
+
+```text
+V(s) = realized(s)
+     + lockedFinal(s)
+     + bestPlanPortfolio(s; θ)
+     + leftoverSalvage(s; θ)
+     + boundedCompetition(s; θ)
+     - risk(s; θ)
+```
+
+- `realized`：当前已经获得的分数，权重恒为 1。
+- `lockedFinal`：按当前公开盘面已经锁定的任务、3 型牌和终局板块分；只计当前状态下确定存在的部分。
+- `bestPlanPortfolio`：当前资源、手牌、科技、数据、探测器位置和剩余行动窗口可共同支撑的最佳行动链组合，不把每条理论路线全部相加。
+- `leftoverSalvage`：未被最佳行动链使用的剩余资源保底价值；首版比例主要在这里和缺失成本估算中作为先验，越接近终局且越缺兑现入口，折扣越大。
+- `boundedCompetition`：公开竞争的软修正，例如扇区、首痕迹、唯一卫星和终局板块槽位；它只修正自己的预期得分，幅度受上限约束，不把对手失分完整计成自己的收益。
+- `risk`：行动链未完成概率、随机结果方差、时序冲突和被抢先的折损。
+
+对一个合法行动，不再用“固定行动类别分 + 各种奖励常数”直接排序，而是比较行动后的叶子状态相对当前状态提升了多少：
+
+```text
+Q(s, a) = Σ_o P(o | s, a) × [V(leaf(s, a, o)) - V(s)]
+          - tempoCost(a)
+```
+
+`leaf` 由深度 2～3 的受限行动链搜索产生；确定性行动只有一个结果，抽牌、外星人揭示等随机行动只使用当前可见信息下的结果分布，不能偷看未来 RNG。`tempoCost` 只表示消耗主行动窗口、推迟一轮或迫使提前 PASS 的机会成本；支付掉的信用、能源、牌和数据已经体现在叶子状态里，不再重复扣一次。
+
+#### 3.2.2 行动链价值与互斥去重
+
+每条可兑现计划统一表示为：
+
+```text
+Plan = {
+  id,
+  consumes,          // 信用、能源、数据、具体卡牌、探测器、主行动窗口
+  produces,          // 直接分、资源、痕迹、科技、终局公式增量
+  stepsRemaining,
+  completionChance,
+  terminalGain,
+  opportunityCost,
+  riskPenalty,
+}
+
+planEV = completionChance × terminalGain
+       - opportunityCost
+       - riskPenalty
+```
+
+首批至少枚举两类计划：
+
+- 探测器链：发射 → 移动 → 环绕/登陆 → 行星分与黄色痕迹。
+- 扫描数据链：扫描 → 数据位/扇区竞争 → 填满计算机 → 分析 → 粉色或蓝色痕迹。
+
+`bestPlanPortfolio` 在资源约束下选择互相兼容的计划组合。同一信用、能源、数据、卡牌、探测器或主行动窗口只能被一个计划消费；一张牌只能按“打出、收入、角标、移动支付、交易、终局保留”中的单一最佳用途计价。数据若已经作为分析链前置，就不能同时再按完整库存价值加入 `leftoverSalvage`。直接得分、终局公式增量和痕迹奖励也按来源 id 去重。
+
+#### 3.2.3 动态边际与首版参数
+
+资源的实际边际值由初始先验乘以局面因子得到：
+
+```text
+marginal(resource, s) = prior(resource)
+                      × spendability(s)
+                      × scarcity(s)
+                      × timing(s)
+```
+
+- `spendability`：当前或可搜索深度内是否存在真实合法兑现入口。
+- `scarcity`：它是否补齐某条行动链的最后缺口；超过可用需求的库存不继续线性升值。
+- `timing`：早轮可滚动资源和收入更高，终局无兑现入口的剩余资源趋近保底残值。
+
+`θ₀` 使用 §3.1 的比例；所有局面因子先采用可解释的分段函数和有界范围，不在首版引入大量公司/牌名特例。
+
+#### 3.2.4 可解释输出与实际校准
+
+```text
+ActionEvaluation = {
+  score,                    // Q(s, a)
+  realizedDelta,
+  lockedFinalDelta,
+  selectedPlans,
+  leftoverSalvageDelta,
+  competitionDelta,
+  riskPenalty,
+  tempoCost,
+  parameterVersion,
+  reasonCodes,
+}
+```
+
+完整 breakdown 只用于 Policy 内部 trace 和离线评测；`PolicyDecision` 仍只返回合法 `actionId` 与有限诊断，不把评分图塞回公共动作 identity。
+
+校准按“先记录、后调整”进行：固定 `θ₀` 跑多 seed 完整局，记录每次候选的 breakdown、所选行动、后续是否完成对应计划和终局实际兑现；再用开发 seed 调整参数，在隔离 holdout 上检查完整局完成率、均分、低尾、赢家分、明显坏招和策略耗时。单一 seed 或单条高分路线不能改生产参数；每次只调整一组可解释参数，并保留旧版本做同 seed 配对 A/B。
 
 ### 3.3 收入净值（★ 核心修正）
 
