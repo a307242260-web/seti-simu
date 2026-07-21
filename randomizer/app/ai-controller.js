@@ -1852,7 +1852,7 @@
       aiAutoBattleState.turnMoveCounts = {};
       aiAutoBattleState.turnCardCornerMoveCounts = {};
       clearTransientStateForRecovery();
-      const resetResult = browserStateAuthority.resetWorking({
+      const resetResult = browserStateAuthority.resetSession({
         activePlayerCount,
         defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
         finalScoreIds: FINAL_SCORE_IDS,

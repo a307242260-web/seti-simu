@@ -1093,7 +1093,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   };
 
   context.browserStateAuthority = options.browserStateAuthority || {
-    resetWorking() { return { ok: true }; },
+    resetSession() { return { ok: true }; },
   };
 
   return {

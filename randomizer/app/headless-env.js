@@ -6,6 +6,7 @@ const { performance } = require("node:perf_hooks");
 const { createHeuristicPolicyAdapter } = require("../training/heuristic-policy-adapter");
 const { createHeadlessEffectSessionHost } = require("./headless-effect-session-host");
 const highCouplingState = require("../game/state/high-coupling-slices");
+const runtimeAuthority = require("../game/state/runtime-authority");
 const { RECOVERY_SNAPSHOT_VERSION } = require("./game-recovery");
 const {
   OBSERVATION_SCHEMA_VERSION,
@@ -493,7 +494,7 @@ function createHeadlessEnv() {
     recordDuration("setupSelectionMilliseconds", setupSelectionStartedAt);
     const initialRecovery = api.createRecoverySnapshot({ label: "headless StateStore bootstrap" });
     try {
-      stateStore = highCouplingState.createHighCouplingStateStore(JSON.parse(initialRecovery.committedState));
+      stateStore = runtimeAuthority.create(highCouplingState, JSON.parse(initialRecovery.committedState));
     } catch (error) {
       throw new Error(error?.message || "headless committed bootstrap 失败");
     }

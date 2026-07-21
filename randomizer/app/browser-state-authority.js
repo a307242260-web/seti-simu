@@ -26,7 +26,12 @@
     const modules = options.modules || {};
     const stateStoreApi = modules.stateStore;
     const highCouplingState = modules.highCouplingState;
-    requireFunction(stateStoreApi?.createCommittedGameState, "StateStore.createCommittedGameState");
+    const initialGameState = modules.initialGameState;
+    const runtimeAuthority = modules.runtimeAuthority;
+    requireFunction(initialGameState?.createSessionState, "InitialGameState.createSessionState");
+    requireFunction(initialGameState?.createCommittedCandidate, "InitialGameState.createCommittedCandidate");
+    requireFunction(initialGameState?.restoreSessionState, "InitialGameState.restoreSessionState");
+    requireFunction(runtimeAuthority?.create, "RuntimeAuthority.create");
     requireFunction(highCouplingState?.createHighCouplingStateStore, "createHighCouplingStateStore");
     requireFunction(highCouplingState?.purifyHighCouplingSlices, "purifyHighCouplingSlices");
 
@@ -34,58 +39,23 @@
     const listeners = new Set();
     let unsubscribeStore = null;
     let store = null;
+    const sessionState = initialGameState.createSessionState(modules, options);
+    const activeSession = {
+      schemaVersion: "seti-browser-rule-session-v1",
+      phase: "open",
+      baseVersion: 0,
+      workingState: sessionState,
+    };
 
-    function createWorkingSlices(input = {}) {
-      const playerState = modules.players.createPlayerState({
-        players: modules.players.PLAYER_COLOR_IDS.map((color) => ({ color })),
-        currentPlayerColor: input.defaultInitialPlayerColor,
-      });
-      return {
-        meta: {},
-        match: {},
-        turnState: modules.createTurnState(playerState.players, {
-          activePlayerCount: input.activePlayerCount,
-          currentPlayerId: playerState.currentPlayerId,
-        }),
-        playerState,
-        solarState: modules.solar.createBaselineState(),
-        rocketState: modules.rocketActions.createRocketState(),
-        planetStatsState: modules.planetStats.createPlanetStatsState(),
-        nebulaDataState: modules.data.createDefaultNebulaDataState(),
-        cardState: modules.cards.createCardState(),
-        techGameState: modules.tech.createState(),
-        alienGameState: modules.aliens.createDefaultAlienState(),
-        finalScoringState: modules.finalScoring.createFinalScoringState(input.finalScoreIds || []),
-      };
-    }
-
-    const working = createWorkingSlices(options);
-
-    function buildCandidate(overrides = {}) {
+    function candidate(overrides = {}) {
       const context = { ...contextProvider(), ...overrides };
-      const currentVersion = store?.getSnapshot?.().meta.stateVersion ?? 0;
-      return highCouplingState.purifyHighCouplingSlices({
-        meta: {
-          schemaVersion: stateStoreApi.SCHEMA_VERSION,
-          stateVersion: currentVersion,
-          gameId: context.gameId || "seti-browser-runtime",
-          rulesetVersion: context.rulesetVersion || "seti-runtime-v1",
-          seed: context.seed ?? "browser-host",
-          rngState: clone(context.rngState || { owner: context.headlessMode ? "headless" : "browser", state: null }),
-          sequences: clone(context.sequences || {}),
-        },
-        match: clone(working.match),
-        turn: { ...clone(working.turnState), currentPlayerId: working.playerState.currentPlayerId },
-        players: clone(working.playerState),
-        solarSystem: clone(working.solarState),
-        pieces: clone(working.rocketState),
-        planets: clone(working.planetStatsState),
-        data: clone(working.nebulaDataState),
-        cards: clone(working.cardState),
-        tech: clone(working.techGameState),
-        aliens: clone(working.alienGameState),
-        finalScoring: clone(working.finalScoringState),
-      });
+      const currentVersion = store?.getSnapshot?.().meta.stateVersion ?? activeSession.baseVersion;
+      return highCouplingState.purifyHighCouplingSlices(initialGameState.createCommittedCandidate(
+        sessionState,
+        context,
+        stateStoreApi.SCHEMA_VERSION,
+        currentVersion,
+      ));
     }
 
     function forwardStoreEvents() {
@@ -95,113 +65,84 @@
       });
     }
 
-    function installStore(candidate) {
-      store = highCouplingState.createHighCouplingStateStore(candidate);
+    function installStore(value) {
+      store = runtimeAuthority.create(highCouplingState, value);
+      activeSession.baseVersion = store.getSnapshot().meta.stateVersion;
       forwardStoreEvents();
-      working.meta = clone(store.getSnapshot().meta);
+      sessionState.meta = clone(store.getSnapshot().meta);
       return store;
     }
 
-    installStore(buildCandidate());
+    installStore(candidate());
 
-    function commit(metadata = null, overrides = {}) {
+    function settle(metadata = null, overrides = {}) {
       const before = store.getSnapshot();
-      const candidate = buildCandidate(overrides);
-      candidate.meta.stateVersion = before.meta.stateVersion;
+      const next = candidate(overrides);
+      next.meta.stateVersion = before.meta.stateVersion;
       const beforeSerialized = store.serialize(before);
-      const candidateSerialized = store.serialize(candidate);
-      if (beforeSerialized.ok && candidateSerialized.ok
-        && beforeSerialized.serialized === candidateSerialized.serialized) {
-        return {
-          ok: true,
-          noop: true,
-          previousVersion: before.meta.stateVersion,
-          stateVersion: before.meta.stateVersion,
-          snapshot: before,
-        };
+      const nextSerialized = store.serialize(next);
+      if (beforeSerialized.ok && nextSerialized.ok
+        && beforeSerialized.serialized === nextSerialized.serialized) {
+        return { ok: true, noop: true, previousVersion: before.meta.stateVersion, stateVersion: before.meta.stateVersion, snapshot: before };
       }
-      const result = store.compareAndCommit(before.meta.stateVersion, candidate, metadata);
-      if (result.ok) working.meta = clone(result.snapshot.meta);
+      const result = store.compareAndCommit(before.meta.stateVersion, next, metadata);
+      if (result.ok) {
+        activeSession.baseVersion = result.stateVersion;
+        sessionState.meta = clone(result.snapshot.meta);
+      }
       return result;
     }
 
     function serialize(overrides = {}) {
-      const committed = commit({ source: "browser-serialize" }, overrides);
-      return committed.ok ? store.serialize() : committed;
+      const settled = settle({ source: "browser-stable-boundary" }, overrides);
+      return settled.ok ? store.serialize() : settled;
     }
 
-    function resetWorking(resetOptions = {}) {
-      const next = createWorkingSlices({
+    function resetSession(resetOptions = {}) {
+      const next = initialGameState.createSessionState(modules, {
         defaultInitialPlayerColor: resetOptions.defaultInitialPlayerColor ?? options.defaultInitialPlayerColor,
         activePlayerCount: resetOptions.activePlayerCount ?? options.activePlayerCount,
         finalScoreIds: resetOptions.finalScoreIds ?? options.finalScoreIds,
       });
       for (const key of Object.keys(next)) {
         if (key === "meta") continue;
-        replaceMutableObject(working[key], next[key]);
+        replaceMutableObject(sessionState[key], next[key]);
       }
-      return commit({ source: "browser-new-game" }, resetOptions);
+      return settle({ source: "browser-new-game" }, resetOptions);
     }
 
-    function hydrateWorkingFromCommitted(state) {
-      const statusNote = working.rocketState.statusNote;
-      const techUi = clone(working.techGameState.ui || {});
-      const cardUi = clone(working.cardState.ui || {});
-      replaceMutableObject(working.solarState, state.solarSystem);
-      replaceMutableObject(working.nebulaDataState, state.data);
-      replaceMutableObject(working.alienGameState, state.aliens);
-      replaceMutableObject(working.finalScoringState, state.finalScoring);
-      replaceMutableObject(working.playerState, {
-        ...state.players,
-        currentPlayerId: state.turn.currentPlayerId ?? null,
-      });
-      const restoredTurn = clone(state.turn);
-      delete restoredTurn.currentPlayerId;
-      replaceMutableObject(working.turnState, restoredTurn);
-      replaceMutableObject(working.rocketState, {
-        ...state.pieces,
-        nextRocketId: state.meta.sequences.rocket,
-        playerRocketSequences: Object.fromEntries(Object.entries(
-          state.pieces.playerRocketSequences || {},
-        ).map(([playerId, values]) => [playerId, new Set(values)])),
-        statusNote,
-      });
-      replaceMutableObject(working.planetStatsState, state.planets);
-      replaceMutableObject(working.techGameState, { board: state.tech, ui: techUi });
-      replaceMutableObject(working.cardState, { ...state.cards, ui: cardUi });
-      working.meta = clone(state.meta);
-    }
-
-    function replaceCommitted(candidate) {
-      const purified = highCouplingState.purifyHighCouplingSlices(candidate);
-      const restored = store.restore(purified, { source: "browser-recovery" });
+    function restore(candidateState, metadata = null) {
+      const restored = store.restore(candidateState, metadata);
       if (!restored.ok) return restored;
-      const snapshot = restored.snapshot;
-      hydrateWorkingFromCommitted(snapshot);
-      return { ok: true, snapshot: store.getSnapshot() };
+      initialGameState.restoreSessionState(sessionState, restored.snapshot, replaceMutableObject);
+      activeSession.baseVersion = restored.stateVersion;
+      return restored;
     }
 
-    function runTransaction(mutator, options = {}) {
+    function runTransaction(mutator, transactionOptions = {}) {
       requireFunction(mutator, "transaction mutator");
       const beforeBytes = store.serialize();
-      const beforeWorking = clone(working);
-      const journal = options.journal || null;
+      const transaction = store.beginWorkingCopy(activeSession.baseVersion);
+      if (!transaction.ok) return transaction;
+      const baseVersion = transaction.baseVersion;
+      const beforeSession = clone(sessionState);
+      const journal = transactionOptions.journal || null;
       const journalBefore = journal && typeof journal.snapshot === "function" ? journal.snapshot() : null;
       try {
-        mutator(working);
+        mutator(sessionState);
       } catch (error) {
-        for (const key of Object.keys(beforeWorking)) {
-          if (key === "meta") working.meta = beforeWorking.meta;
-          else replaceMutableObject(working[key], beforeWorking[key]);
+        for (const key of Object.keys(beforeSession)) {
+          if (key === "meta") sessionState.meta = beforeSession.meta;
+          else replaceMutableObject(sessionState[key], beforeSession[key]);
         }
         if (journalBefore != null && typeof journal.restore === "function") journal.restore(journalBefore);
         return { ok: false, code: "BROWSER_STATE_MUTATOR_FAILED", message: error?.message || "Browser state mutator 失败" };
       }
-      const result = commit(options.metadata || { source: "browser-transaction" });
+      const result = settle(transactionOptions.metadata || { source: "browser-transaction" });
       if (!result.ok) {
-        for (const key of Object.keys(beforeWorking)) {
-          if (key === "meta") working.meta = beforeWorking.meta;
-          else replaceMutableObject(working[key], beforeWorking[key]);
+        for (const key of Object.keys(beforeSession)) {
+          if (key === "meta") sessionState.meta = beforeSession.meta;
+          else replaceMutableObject(sessionState[key], beforeSession[key]);
         }
         if (journalBefore != null && typeof journal.restore === "function") journal.restore(journalBefore);
         const afterBytes = store.serialize();
@@ -209,21 +150,21 @@
           throw new Error("BrowserStateAuthority 原子失败污染 committed bytes");
         }
       }
+      if (result.ok && result.previousVersion != null && result.previousVersion !== baseVersion) {
+        throw new Error("BrowserStateAuthority transaction baseVersion 漂移");
+      }
       return result;
     }
 
     return Object.freeze({
-      working,
-      getSnapshot: () => store.getSnapshot(),
-      beginWorkingCopy: (...args) => store.beginWorkingCopy(...args),
-      compareAndCommit: (...args) => store.compareAndCommit(...args),
-      validate: (...args) => store.validate(...args),
-      deserialize: (...args) => store.deserialize(...args),
-      restore: (...args) => {
-        const restored = store.restore(...args);
-        if (restored.ok) hydrateWorkingFromCommitted(restored.snapshot);
-        return restored;
-      },
+      SCHEMA_VERSION: stateStoreApi.SCHEMA_VERSION,
+      getActiveSession: () => activeSession,
+      getSnapshot: store.getSnapshot.bind(store),
+      beginWorkingCopy: store.beginWorkingCopy.bind(store),
+      compareAndCommit: store.compareAndCommit.bind(store),
+      validate: store.validate.bind(store),
+      deserialize: store.deserialize.bind(store),
+      restore,
       serialize,
       subscribe(listener) {
         requireFunction(listener, "subscriber");
@@ -233,10 +174,8 @@
       setContextProvider(provider) {
         contextProvider = requireFunction(provider, "context provider");
       },
-      commit,
-      resetWorking,
-      replaceCommitted,
-      hydrateWorkingFromCommitted,
+      settle,
+      resetSession,
       runTransaction,
     });
   }

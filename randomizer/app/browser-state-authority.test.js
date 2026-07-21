@@ -16,6 +16,8 @@ const tech = require("../game/tech");
 const aliens = require("../game/aliens");
 const finalScoring = require("../game/final-scoring");
 const turnFlow = require("./turn-flow");
+const initialGameState = require("../game/state/initial-game-state");
+const runtimeAuthority = require("../game/state/runtime-authority");
 
 function createAuthority() {
   let storeCreations = 0;
@@ -38,6 +40,8 @@ function createAuthority() {
     modules: {
       stateStore: poisonedStateStore,
       highCouplingState: instrumentedHighCoupling,
+      initialGameState,
+      runtimeAuthority,
       players,
       solar,
       rocketActions,
@@ -63,7 +67,7 @@ function createAuthority() {
       nebulaReplacement: 1,
       historyStep: 1,
       actionLog: 1,
-      rocket: authority.working.rocketState.nextRocketId,
+      rocket: authority.getActiveSession().workingState.rocketState.nextRocketId,
     },
   }));
   return { authority, counters: () => ({ storeCreations, legacyCommittedFactoryCalls }) };
@@ -86,7 +90,7 @@ function createAuthority() {
   assert.throws(() => { snapshot.turn.roundNumber = 99; }, TypeError);
   assert.equal(authority.serialize().serialized, before.serialized);
 
-  const player = authority.working.playerState.players[0];
+  const player = authority.getActiveSession().workingState.playerState.players[0];
   const result = authority.runTransaction(() => { player.resources.credits += 1; });
   assert.equal(result.ok, true);
   assert.equal(result.stateVersion, version + 1);
@@ -123,12 +127,12 @@ function createAuthority() {
 (function testRecoveryRestoresResidentStoreAndKeepsNarrowReferenceIdentity() {
   const { authority, counters } = createAuthority();
   authority.serialize();
-  const playerReference = authority.working.playerState;
+  const playerReference = authority.getActiveSession().workingState.playerState;
   const recovered = structuredClone(authority.getSnapshot());
   recovered.meta.stateVersion = 17;
-  const result = authority.replaceCommitted(recovered);
+  const result = authority.restore(recovered);
   assert.equal(result.ok, true);
-  assert.equal(authority.working.playerState, playerReference);
+  assert.equal(authority.getActiveSession().workingState.playerState, playerReference);
   assert.equal(authority.getSnapshot().meta.stateVersion, 17);
   assert.deepEqual(counters(), { storeCreations: 1, legacyCommittedFactoryCalls: 0 });
 })();

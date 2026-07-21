@@ -250,6 +250,8 @@
     modules: {
       stateStore: stateStoreModule,
       highCouplingState: highCouplingStateModule,
+      initialGameState: window.SetiInitialGameState,
+      runtimeAuthority: window.SetiRuntimeAuthority,
       players,
       solar,
       rocketActions,
@@ -265,18 +267,18 @@
     activePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
     finalScoreIds: FINAL_SCORE_IDS,
   });
-  const {
-    solarState,
-    nebulaDataState,
-    alienGameState,
-    finalScoringState,
-    playerState,
-    turnState,
-    rocketState,
-    planetStatsState,
-    techGameState,
-    cardState,
-  } = browserStateAuthority.working;
+  const browserRuleSession = browserStateAuthority.getActiveSession();
+  const browserRuleState = browserRuleSession.workingState;
+  const solarState = browserRuleState.solarState;
+  const nebulaDataState = browserRuleState.nebulaDataState;
+  const alienGameState = browserRuleState.alienGameState;
+  const finalScoringState = browserRuleState.finalScoringState;
+  const playerState = browserRuleState.playerState;
+  const turnState = browserRuleState.turnState;
+  const rocketState = browserRuleState.rocketState;
+  const planetStatsState = browserRuleState.planetStatsState;
+  const techGameState = browserRuleState.techGameState;
+  const cardState = browserRuleState.cardState;
   const runtime = runtimeModule.createRuntime({
     aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
     defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,

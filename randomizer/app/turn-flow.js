@@ -351,7 +351,7 @@
       );
 
       clearTransientStateForRecovery();
-      const resetResult = browserStateAuthority.resetWorking({
+      const resetResult = browserStateAuthority.resetSession({
         activePlayerCount,
         defaultInitialPlayerColor,
         finalScoreIds,
