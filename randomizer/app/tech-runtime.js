@@ -103,6 +103,32 @@
     const PIRATES_RAID_DECISION = "pirates_raid_placement";
     const getPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
 
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("tech-runtime operation requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
+
+    function getWorkingCurrentPlayer(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      return players.getCurrentPlayer(playerState);
+    }
+
+    function resolveWorkingPlayerReference(workingRoot, reference = {}) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const options = reference.options || {};
+      const playerId = reference.playerId || options.playerId || options.targetPlayerId || reference.id || null;
+      if (playerId) {
+        const player = (playerState.players || []).find((entry) => entry.id === playerId);
+        if (player) return player;
+      }
+      const playerColor = reference.playerColor || options.playerColor || options.targetPlayerColor || reference.color || null;
+      return playerColor
+        ? (playerState.players || []).find((entry) => entry.color === playerColor) || null
+        : null;
+    }
+
     function isTechActionSelectionActive() {
       return Boolean(techGameState.ui.techSelectionActive);
     }
@@ -133,8 +159,9 @@
       return getResearchTechSelectionEffect()?.options || {};
     }
 
-    function isTechTileOwnedByOtherPlayer(tileId) {
-      const currentPlayer = getCurrentPlayer();
+    function isTechTileOwnedByOtherPlayer(workingRoot, tileId) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       return (playerState.players || []).some((player) => (
         player?.id !== currentPlayer?.id
         && player?.techState?.ownedTiles?.[tileId]
@@ -165,10 +192,12 @@
       return currentCount + 1;
     }
 
-    function appendResearchTechFollowupEffects(selectResult) {
+    function appendResearchTechFollowupEffects(workingRoot, selectResult) {
+      requireWorkingRoot(workingRoot);
       if (!decisionState.actionEffectFlow) return;
       const selectionOptions = getResearchTechSelectionOptions();
-      const owner = getEffectOwnerPlayer(getCurrentActionEffect()) || getCurrentPlayer();
+      const owner = resolveWorkingPlayerReference(workingRoot, getCurrentActionEffect() || {})
+        || getWorkingCurrentPlayer(workingRoot);
       const ownerFields = {
         playerId: owner?.id || null,
         playerColor: owner?.color || null,
@@ -281,7 +310,7 @@
       }
 
       if (selectionOptions.afterResearchReward?.kind === "techTypeCountScore") {
-        const currentPlayer = getCurrentPlayer();
+        const currentPlayer = getWorkingCurrentPlayer(workingRoot);
         const scorePer = Math.max(0, Math.round(Number(selectionOptions.afterResearchReward.scorePer) || 1));
         const count = countOwnedTechByTypeAfterSelection(currentPlayer, techType, selectResult);
         followups.push({
@@ -297,7 +326,7 @@
       }
 
       if (selectionOptions.afterResearchReward?.kind === "resourceValueScore") {
-        const currentPlayer = getCurrentPlayer();
+        const currentPlayer = getWorkingCurrentPlayer(workingRoot);
         const resource = selectionOptions.afterResearchReward.resource || "publicity";
         const score = Math.max(0, Math.round(Number(currentPlayer?.resources?.[resource]) || 0));
         followups.push({
@@ -327,7 +356,7 @@
       }
 
       const heliosEffect = industry?.buildHeliosPassiveRewardEffect?.(
-        getCurrentPlayer(),
+        getWorkingCurrentPlayer(workingRoot),
         techType,
         selectResult.tileId || selectResult.payload?.tileId,
       );
@@ -349,16 +378,16 @@
       );
     }
 
-    function onTechTileSelected(result) {
-      appendResearchTechFollowupEffects(result);
+    function onTechTileSelected(workingRoot, result) {
+      appendResearchTechFollowupEffects(workingRoot, result);
       syncTechSelectionChrome();
       renderTechBoard();
       renderActionEffectBar();
       updateActionButtons();
     }
 
-    function onTechTileTaken(result) {
-      const player = getCurrentPlayer();
+    function onTechTileTaken(workingRoot, result) {
+      const player = getWorkingCurrentPlayer(workingRoot);
       if (industry?.shouldApplyTuringBlueTechPublicity?.(player, result.tileId)) {
         players.gainResources(player, { publicity: industry.getTuringBlueTechPublicityGain() });
         result.message = `${result.message}；图灵系统蓝色科技 +${industry.getTuringBlueTechPublicityGain()} 宣传`;
@@ -399,7 +428,8 @@
       syncInteractionFocusChrome();
     }
 
-    function clearResearchTechSelectionState() {
+    function clearResearchTechSelectionState(workingRoot) {
+      const { techGameState } = requireWorkingRoot(workingRoot);
       tech.setTechSelectionActive(techGameState, false);
       tech.cancelPendingTake(techGameState);
       techGameState.ui.selectedTileId = null;
@@ -411,7 +441,8 @@
       renderTechBoard();
     }
 
-    function restoreResearchTechSelectionAfterUndo(effect) {
+    function restoreResearchTechSelectionAfterUndo(workingRoot, effect) {
+      const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       const selectIndex = decisionState.actionEffectFlow?.effects?.indexOf(effect) ?? -1;
       if (selectIndex >= 0) {
         const trailingEffects = decisionState.actionEffectFlow.effects
@@ -433,7 +464,8 @@
       renderTechBoard();
     }
 
-    function cancelPendingResearchTechTileChoice() {
+    function cancelPendingResearchTechTileChoice(workingRoot) {
+      const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       techGameState.ui.pendingTileId = null;
       techGameState.ui.selectedTileId = null;
       techGameState.ui.selectedBlueSlot = null;
@@ -446,7 +478,8 @@
       renderStateReadout();
     }
 
-    function cancelTechSelection() {
+    function cancelTechSelection(workingRoot) {
+      const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       if (techGameState.ui.industryBorrowMode) {
         techGameState.ui.industryBorrowMode = false;
         tech.setTechSelectionActive(techGameState, false);
@@ -509,7 +542,7 @@
           if (!tech.isSupplySelectionActive(techGameState.ui)) return false;
           if (industry?.isTechBlockedByPirates?.(currentPlayer, tileId)) return false;
           const selectionOptions = getResearchTechSelectionOptions();
-          if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(tileId)) return false;
+          if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer({ playerState }, tileId)) return false;
           return tech.resolver.canTakeTile(
             techGameState.board,
             currentPlayer.techState,
@@ -530,7 +563,8 @@
       renderTechBoard();
     }
 
-    function openTechBlueSlotPicker(request) {
+    function openTechBlueSlotPicker(workingRoot, request) {
+      const { techGameState } = requireWorkingRoot(workingRoot);
       if (!els.techBlueSlotOverlay || !els.techBlueSlotActions || !els.techBlueSlotSubtitle) return;
 
       els.techBlueSlotSubtitle.textContent = `将 ${request.tileId} 放到蓝色科技位置`;
@@ -548,7 +582,8 @@
       renderTechBoard();
     }
 
-    function finalizeTechTakeResult(result) {
+    function finalizeTechTakeResult(workingRoot, result) {
+      const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       if (!result?.ok || result.needsBlueSlotChoice) return result;
 
       tech.setTechSelectionActive(techGameState, false);
@@ -574,7 +609,8 @@
       return result;
     }
 
-    function commitResearchTechSelectionResult(result) {
+    function commitResearchTechSelectionResult(workingRoot, result) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!result?.ok || result.needsBlueSlotChoice) return result;
       rocketState.statusNote = result.message;
       beginEffectHistoryStep(result.message || "选择科技片", { effectType: "research_tech_select" });
@@ -582,13 +618,14 @@
       rocketState.statusNote = result.message;
       const current = getCurrentActionEffect();
       if (current) current.result = result;
-      onTechTileSelected(result);
+      onTechTileSelected(workingRoot, result);
       completeCurrentActionEffect();
       renderStateReadout();
       return result;
     }
 
-    function selectResearchTechTileForCurrentFlow(tileId, blueSlot = null) {
+    function selectResearchTechTileForCurrentFlow(workingRoot, tileId, blueSlot = null) {
+      const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       const options = {
         tileId,
         skipCost: shouldSkipCurrentResearchTechCost(),
@@ -611,10 +648,10 @@
             },
           },
         ) || { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED", message: "科技行动 executor 未装配" }
-        : abilities.executeAbility("researchTechSelect", createActionContext(), options);
+        : abilities.executeAbility("researchTechSelect", createActionContext(workingRoot), options);
       if (result.needsBlueSlotChoice) {
         techGameState.ui.pendingTileId = tileId;
-        openTechBlueSlotPicker(result);
+        openTechBlueSlotPicker(workingRoot, result);
         renderTechBoard();
         renderStateReadout();
         return result;
@@ -627,24 +664,26 @@
         return result;
       }
 
-      return commitResearchTechSelectionResult(result);
+      return commitResearchTechSelectionResult(workingRoot, result);
     }
 
-    function confirmTechBlueSlotChoice(blueSlot) {
+    function confirmTechBlueSlotChoice(workingRoot, blueSlot) {
+      const { techGameState } = requireWorkingRoot(workingRoot);
       const tileId = els.techBlueSlotOverlay?.dataset.tileId || techGameState.ui.pendingTileId;
       if (!tileId) return { ok: false, message: "没有待放置的蓝色科技" };
 
       closeTechBlueSlotPicker();
-      return selectResearchTechTileForCurrentFlow(tileId, blueSlot);
+      return selectResearchTechTileForCurrentFlow(workingRoot, tileId, blueSlot);
     }
 
-    function handleSupplyTechTileClick(tileId) {
+    function handleSupplyTechTileClick(workingRoot, tileId) {
+      const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
       if (techGameState.ui.industryBorrowMode) {
         return confirmIndustryTuringBorrow(tileId);
       }
       if (!tech.isSupplySelectionActive(techGameState.ui)) return;
 
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (currentPlayer?.techState) {
         if (industry?.isTechBlockedByPirates?.(currentPlayer, tileId)) {
           const message = "星际海盗掠夺标记封锁了该科技";
@@ -654,7 +693,7 @@
           return { ok: false, message };
         }
         const selectionOptions = getResearchTechSelectionOptions();
-        if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(tileId)) {
+        if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(workingRoot, tileId)) {
           const message = "这张牌只能选择其他玩家已研究过的科技";
           techGameState.ui.statusNote = message;
           rocketState.statusNote = message;
@@ -675,7 +714,7 @@
         }
       }
 
-      return selectResearchTechTileForCurrentFlow(tileId);
+      return selectResearchTechTileForCurrentFlow(workingRoot, tileId);
     }
 
     function isPiratesRaidPlacementActiveForPlayer(player) {

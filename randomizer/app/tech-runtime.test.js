@@ -72,7 +72,7 @@ function createHarness() {
       },
     },
     cardEffects: { EFFECT_TYPES: { RESEARCH_TECH: "research_tech" } },
-    createActionContext: () => ({}),
+    createActionContext: (workingRoot) => ({ playerState: workingRoot.playerState }),
     document,
     els,
     getCurrentPlayer: () => ({ id: "p1", techState: {} }),
@@ -80,7 +80,10 @@ function createHarness() {
     getCurrentActionIrreversibleReason: () => null,
     hasCurrentMainActionIrreversibleBarrier: () => false,
     pendingState,
-    playerState: { players: [] },
+    playerState: { currentPlayerId: "p1", players: [{ id: "p1", techState: {} }] },
+    players: {
+      getCurrentPlayer: (state) => state.players.find((player) => player.id === state.currentPlayerId) || null,
+    },
     renderStateReadout: () => calls.push({ type: "readout" }),
     renderRunezuBoardSymbols: () => {},
     rocketState: { statusNote: "" },
@@ -105,6 +108,13 @@ function createHarness() {
     pendingState,
     rocketState: context.rocketState,
     techGameState,
+    workingRoot: {
+      cardState: {},
+      playerState: context.playerState,
+      rocketState: context.rocketState,
+      techGameState,
+      turnState: { roundNumber: 1, turnNumber: 1 },
+    },
   };
 }
 
@@ -112,12 +122,12 @@ function createHarness() {
   const harness = createHarness();
   const runtime = createTechRuntime(harness.context);
 
-  const selected = runtime.selectResearchTechTileForCurrentFlow("blue1");
+  const selected = runtime.selectResearchTechTileForCurrentFlow(harness.workingRoot, "blue1");
   assert.equal(selected.needsBlueSlotChoice, true);
   assert.equal(harness.els.techBlueSlotOverlay.hidden, false);
   assert.equal(harness.els.techBlueSlotOverlay.dataset.tileId, "blue1");
 
-  const confirmed = runtime.confirmTechBlueSlotChoice(2);
+  const confirmed = runtime.confirmTechBlueSlotChoice(harness.workingRoot, 2);
   assert.equal(confirmed.ok, false);
   assert.equal(confirmed.message, "slot:2");
   assert.deepEqual(
@@ -128,7 +138,7 @@ function createHarness() {
     ],
   );
 
-  runtime.cancelPendingResearchTechTileChoice();
+  runtime.cancelPendingResearchTechTileChoice(harness.workingRoot);
   assert.equal(harness.techGameState.ui.pendingTileId, null);
   assert.equal(harness.techGameState.ui.statusNote, "请选择要研究的科技板块");
 }
@@ -147,12 +157,32 @@ function createHarness() {
   const trailing = { type: "ordinary_followup", options: {} };
   harness.pendingState.actionEffectFlow.effects = [selectEffect, generated, trailing];
 
-  runtime.restoreResearchTechSelectionAfterUndo(selectEffect);
+  runtime.restoreResearchTechSelectionAfterUndo(harness.workingRoot, selectEffect);
 
   assert.deepEqual(harness.pendingState.actionEffectFlow.effects, [selectEffect, trailing]);
   assert.deepEqual(harness.techGameState.ui.allowedTechTypes, ["orange"]);
   assert.equal(harness.techGameState.ui.techSelectionActive, true);
   assert.equal(harness.rocketState.statusNote, "科技：请选择要研究的科技片");
+}
+
+{
+  const harness = createHarness();
+  const runtime = createTechRuntime(harness.context);
+  const isolatedRoot = structuredClone(harness.workingRoot);
+  const beforeBoundTech = structuredClone(harness.techGameState);
+  const beforeBoundRocket = structuredClone(harness.rocketState);
+
+  const selected = runtime.selectResearchTechTileForCurrentFlow(isolatedRoot, "blue1");
+
+  assert.equal(selected.needsBlueSlotChoice, true);
+  assert.equal(isolatedRoot.techGameState.ui.pendingTileId, "blue1");
+  assert.deepEqual(harness.techGameState, beforeBoundTech, "隔离 root 科技选择不得写入闭包 techGameState");
+  assert.deepEqual(harness.rocketState, beforeBoundRocket, "隔离 root 科技选择不得写入闭包 rocketState");
+  assert.throws(
+    () => runtime.selectResearchTechTileForCurrentFlow(undefined, "blue1"),
+    /explicit workingRoot/,
+    "科技规则 operation 缺 root 必须立即失败",
+  );
 }
 
 console.log("tech runtime tests passed");

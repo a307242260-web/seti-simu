@@ -8325,7 +8325,9 @@
       completeCurrentActionEffect: typeof completeCurrentActionEffect === "undefined" ? undefined : completeCurrentActionEffect,
       confirmIndustryTuringBorrow: (...args) => confirmIndustryTuringBorrow(...args),
       countOwnedTechByType: (...args) => countOwnedTechByType(...args),
-      createActionContext: (...args) => createActionContext(...args),
+      createActionContext: (workingRoot, descriptor) => (
+        workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
+      ),
       decisionSessions,
       dispatchStandardIntent: (family, selector = {}, payload = {}) => (
         actionRuntimeController?.dispatchAction({ kind: "standard_intent", family, selector, payload })
@@ -8388,26 +8390,26 @@
     getResearchTechSelectionEffect,
     getResearchTechSelectionPayload,
     getResearchTechSelectionOptions,
-    isTechTileOwnedByOtherPlayer,
+    isTechTileOwnedByOtherPlayer: isTechTileOwnedByOtherPlayerForRoot,
     shouldSkipCurrentResearchTechCost,
     isGeneratedResearchTechFollowupEffect,
     countOwnedTechByTypeAfterSelection,
-    appendResearchTechFollowupEffects,
-    onTechTileSelected,
-    onTechTileTaken,
+    appendResearchTechFollowupEffects: appendResearchTechFollowupEffectsForRoot,
+    onTechTileSelected: onTechTileSelectedForRoot,
+    onTechTileTaken: onTechTileTakenForRoot,
     syncTechSelectionChrome,
-    clearResearchTechSelectionState,
-    restoreResearchTechSelectionAfterUndo,
-    cancelPendingResearchTechTileChoice,
-    cancelTechSelection,
+    clearResearchTechSelectionState: clearResearchTechSelectionStateForRoot,
+    restoreResearchTechSelectionAfterUndo: restoreResearchTechSelectionAfterUndoForRoot,
+    cancelPendingResearchTechTileChoice: cancelPendingResearchTechTileChoiceForRoot,
+    cancelTechSelection: cancelTechSelectionForRoot,
     renderTechBoard,
     closeTechBlueSlotPicker,
-    openTechBlueSlotPicker,
-    finalizeTechTakeResult,
-    commitResearchTechSelectionResult,
-    selectResearchTechTileForCurrentFlow,
-    confirmTechBlueSlotChoice,
-    handleSupplyTechTileClick,
+    openTechBlueSlotPicker: openTechBlueSlotPickerForRoot,
+    finalizeTechTakeResult: finalizeTechTakeResultForRoot,
+    commitResearchTechSelectionResult: commitResearchTechSelectionResultForRoot,
+    selectResearchTechTileForCurrentFlow: selectResearchTechTileForCurrentFlowForRoot,
+    confirmTechBlueSlotChoice: confirmTechBlueSlotChoiceForRoot,
+    handleSupplyTechTileClick: handleSupplyTechTileClickForRoot,
     isPiratesRaidPlacementActiveForPlayer,
     renderPiratesRaidTechMarkers,
     getCurrentPiratesRaidMarkerEffect,
@@ -8424,6 +8426,20 @@
     researchTechForCurrentPlayer,
     commitSelectedResearchTech
   } = techRuntime;
+  const isTechTileOwnedByOtherPlayer = (...args) => isTechTileOwnedByOtherPlayerForRoot(browserRuleState, ...args);
+  const appendResearchTechFollowupEffects = (...args) => appendResearchTechFollowupEffectsForRoot(browserRuleState, ...args);
+  const onTechTileSelected = (...args) => onTechTileSelectedForRoot(browserRuleState, ...args);
+  const onTechTileTaken = (...args) => onTechTileTakenForRoot(browserRuleState, ...args);
+  const clearResearchTechSelectionState = (...args) => clearResearchTechSelectionStateForRoot(browserRuleState, ...args);
+  const restoreResearchTechSelectionAfterUndo = (...args) => restoreResearchTechSelectionAfterUndoForRoot(browserRuleState, ...args);
+  const cancelPendingResearchTechTileChoice = (...args) => cancelPendingResearchTechTileChoiceForRoot(browserRuleState, ...args);
+  const cancelTechSelection = (...args) => cancelTechSelectionForRoot(browserRuleState, ...args);
+  const openTechBlueSlotPicker = (...args) => openTechBlueSlotPickerForRoot(browserRuleState, ...args);
+  const finalizeTechTakeResult = (...args) => finalizeTechTakeResultForRoot(browserRuleState, ...args);
+  const commitResearchTechSelectionResult = (...args) => commitResearchTechSelectionResultForRoot(browserRuleState, ...args);
+  const selectResearchTechTileForCurrentFlow = (...args) => selectResearchTechTileForCurrentFlowForRoot(browserRuleState, ...args);
+  const confirmTechBlueSlotChoice = (...args) => confirmTechBlueSlotChoiceForRoot(browserRuleState, ...args);
+  const handleSupplyTechTileClick = (...args) => handleSupplyTechTileClickForRoot(browserRuleState, ...args);
 
   function createInitialSelectionPicker(offer) {
     const wrap = document.createElement("div");
