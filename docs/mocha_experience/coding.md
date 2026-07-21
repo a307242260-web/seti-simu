@@ -181,3 +181,11 @@
 - promote_to: none
 - promotion_status: candidate
 - decision: 当前只有一次 owner 主动放宽 proof obligation 的直接证据；记录候选，不修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。后续 2 次迁移任务出现同类验收口径调整时，再评估是否形成通用规则。
+
+- date: 2026-07-21
+- source_issue: SETI-95
+- observation: 训练流水线具备可执行入口、已有 checkpoint 或能恢复 dataset，不等于训练架构已经具备开工条件；当模型/数据/环境/评测/部署的职责边界与启动门槛尚未被 owner 接受时，应立即停止算力任务并以 `blocked_owner` 保留证据和恢复条件，不能用“先跑起来再看”替代架构澄清。
+- evidence: SETI-95 已完成一次 10 episode 阶段评测并交付 `6a6ce36`，随后因旧 next_action 不合理恢复 dataset 生成；owner 评论 `509d2494-623b-415d-aaa1-acd09204bfe1` 明确指出当前训练架构不清晰、要求先 block 且不要开始。生成任务在 20/32 时停止，issue 通过 `blocked_owner` 写明重启条件，不自动续跑 partial。
+- promote_to: none
+- promotion_status: candidate
+- decision: 这是一次明确的 owner 架构启动门槛反馈，但尚不足以修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆；先保留 candidate，后续 2 个涉及高成本训练/数据生成的 issue 观察是否同样需要“架构契约先于可执行流水线”的门禁。

@@ -884,3 +884,25 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: 新基线 seed `seti-92-policy-level-v1` 为 460 步、分数 `[61,69,36,29]`、trace `57e126dd…`；干净 HEAD 快照 Node 169/169，系统 Chrome seed `seti-92-browser-smoke` 763 步终局、blocked=false、bugCount=0、最低分 83。
 - observed_outcome: 公共 Heuristic Policy 浏览器接线和训练/评测入口均有回归证据，旧 456 步 parity 已不再阻塞，但行为水平仍由版本化新基线持续监控。
 - keep_or_revise: 保持 candidate；完成 2 次同类 owner 口径调整后评估是否进入 coding loop 模板。
+
+- date: 2026-07-21
+- source: SETI-95 评论 `509d2494-623b-415d-aaa1-acd09204bfe1`、issue metadata/timeline、`checkpoint/seti-95/review-10-summary.md`
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及负责高成本训练/数据生成的 coding agent
+- target_component: 训练架构开工门禁实践
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 记录“训练流水线可运行不代表架构已获准开工；模型、数据、环境、评测、部署边界与启动门槛未澄清时，应停止算力任务并以 blocked_owner 等待重新定义”的候选经验。
+- applied_change: 仅追加 coding experience 与本决策契约；SETI-95 已停止 dataset 恢复和训练，转为 blocked_owner，不修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。
+- expected_effect: 后续高成本训练任务不会把工具可执行性误当成架构授权，owner 对职责边界仍有疑问时能及时停止消耗并保留明确恢复条件。
+- evaluation_window: 后续 2 个涉及长训练、大规模 dataset 生成或冻结评测的 coding issue
+- success_signal: 开工前能明确模型/数据/环境/评测/部署边界与预算闸门；若 owner 认为架构未清晰，任务在继续消耗前进入结构化 blocked，且恢复需显式 start。
+- rollback_condition: 若后续项目统一发布并强制校验训练架构契约/模板，或连续 2 个相关 issue 证明现有 issue 描述已足够且该候选只增加重复沟通，则合并或删除本候选。
+- risk: 过度套用会把可逆的小规模探索也阻塞；只有 owner 明确要求暂停，或架构边界缺失会显著污染数据、模型或预算时才适用。
+- evidence_before: SETI-95 已有十轮 checkpoint 与可续跑 runner，但 owner 仍明确判断训练架构不清晰并要求先 block；收到指令时 expanded dataset 恢复已到 20/32，说明仅凭可执行入口继续推进会造成不必要算力和 1.6GB partial 产物。
+- owner_or_agent_decision: owner 明确要求 SETI-95 block 且暂不开始；领航按 harness-evolve 阶段收口自决记录 candidate，不升级长期组件。
+- applied_at: 2026-07-21
+- verification: `mocha issue get SETI-95 --output json` 显示 status=blocked、loop_stage=blocked、needs_owner=true，blocked_reason/next_action 与 owner 指令一致；进程检查无残留 export/training worker。
+- observed_outcome: dataset 恢复在 20/32 停止，未继续 BC、训练或评测；partial 保留为可恢复证据但不会自动续跑。
+- keep_or_revise: 保持 candidate；完成 2 个相关高成本任务观察后再决定是否形成 coding loop 门禁。
