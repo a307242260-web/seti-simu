@@ -78,6 +78,8 @@
       createActionLogImpactSnapshot,
       abilities,
       createActionContext,
+      primaryBoardActionExecutor,
+      primaryBoardWorkingRoot,
       actions,
       removeRocketElement,
       syncPlanetOrbitLandMarkersAfterAction = syncPlanetOrbitLandMarkers,
@@ -102,6 +104,7 @@
       researchTechForCurrentPlayer,
       orbitForCurrentPlayer,
       landForCurrentPlayer,
+      moveRocket,
       analyzeDataForCurrentPlayer,
       passForCurrentPlayer,
       endCurrentTurn,
@@ -111,6 +114,7 @@
       confirmDataPlacement,
       standardActionAdapter,
     } = context;
+    const PRIMARY_BOARD_FAMILIES = new Set(primaryBoardActionExecutor?.actionFamilies || []);
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
@@ -443,6 +447,48 @@
       schedulePersistentGameStateSave?.({ label: "初始选择确认" });
     }
 
+    function executeStandardDescriptor(standardContext, descriptor, executionOptions = null) {
+      if (!PRIMARY_BOARD_FAMILIES.has(descriptor?.family)) {
+        return standardActionAdapter.execute(standardContext, descriptor);
+      }
+      if (descriptor.family === "move") {
+        const validation = standardActionAdapter.validate(standardContext, descriptor);
+        if (!validation?.ok) return validation;
+        return moveRocket?.(
+          descriptor.target?.deltaX,
+          descriptor.target?.deltaY,
+          descriptor.target?.rocketId,
+          { automated: true, standardAction: descriptor },
+        ) || { ok: false, code: "PRIMARY_BOARD_MOVE_CALLER_MISSING", message: "移动 caller 未装配" };
+      }
+      return executePrimaryBoardAction(descriptor, executionOptions);
+    }
+
+    function executePrimaryBoardAction(descriptor, executionOptions = null, options = {}) {
+      if (!PRIMARY_BOARD_FAMILIES.has(descriptor?.family)) {
+        return { ok: false, code: "PRIMARY_BOARD_FAMILY_INVALID", message: `非 Primary Board family: ${descriptor?.family || "<missing>"}` };
+      }
+      return primaryBoardActionExecutor.execute(primaryBoardWorkingRoot, descriptor, {
+        ...(options.skipValidation ? {} : { validate: standardActionAdapter.validate }),
+        executionOptions,
+      });
+    }
+
+    function resolvePrimaryBoardDescriptor(actionId, actionOptions = {}) {
+      const selector = actionId === "land"
+        ? {
+          ...(actionOptions?.rocketId == null ? {} : { rocketId: Number(actionOptions.rocketId) }),
+          ...(actionOptions?.target?.type ? { type: actionOptions.target.type } : {}),
+          ...(actionOptions?.target?.satelliteId ? { satelliteId: actionOptions.target.satelliteId } : {}),
+        }
+        : (actionOptions?.rocketId == null ? {} : { rocketId: Number(actionOptions.rocketId) });
+      const standardContext = createActionContext();
+      const resolved = standardActionAdapter.resolveIntent(standardContext, actionId, selector);
+      return resolved.ok
+        ? { ok: true, result: executeStandardDescriptor(standardContext, resolved.action) }
+        : resolved;
+    }
+
     function runAction(actionId, actionOptions) {
       if (!canStartMainAction?.()) {
         rocketState.statusNote = getMainActionStartBlockReason?.() || "本回合已经开始或完成主要行动";
@@ -463,7 +509,12 @@
         ? getAnalyzeActionOptionsForPlayer?.(getCurrentPlayer?.(), actionOptions)
         : actionOptions;
       const actionLogBefore = createActionLogImpactSnapshot?.();
-      const result = abilityId
+      const primaryExecution = PRIMARY_BOARD_FAMILIES.has(actionId) && actionId !== "move"
+        ? resolvePrimaryBoardDescriptor(actionId, resolvedActionOptions)
+        : null;
+      const result = primaryExecution
+        ? (primaryExecution.ok ? primaryExecution.result : primaryExecution)
+        : abilityId
         ? abilities.executeAbility(abilityId, createActionContext(), resolvedActionOptions)
         : actionId === "researchTech"
           ? abilities.executeAbility("researchTechPrepare", createActionContext(), resolvedActionOptions)
@@ -600,7 +651,7 @@
           action.payload || {},
         );
         return resolved.ok
-          ? standardActionAdapter.execute(standardContext, resolved.action)
+          ? executeStandardDescriptor(standardContext, resolved.action)
           : resolved;
       }
       const standardDescriptor = action.standardAction
@@ -615,7 +666,7 @@
           stateVersion: standardDescriptor.stateVersion,
           decisionVersion: standardDescriptor.decisionVersion,
         };
-        return standardActionAdapter.execute(standardContext, standardDescriptor);
+        return executeStandardDescriptor(standardContext, standardDescriptor);
       }
       const kind = action.kind || action.id || null;
       switch (kind) {
@@ -642,6 +693,7 @@
       handleInitialSelectionCardClick,
       confirmInitialSelectionForCurrentPlayer,
       runAction,
+      executePrimaryBoardAction,
       handleActionEffectButtonClick,
       dispatchAction,
     };

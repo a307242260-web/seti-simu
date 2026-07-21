@@ -87,6 +87,7 @@
       executeCardEffectMove,
       createActionContext,
       recordMoveActionHistory,
+      executePrimaryBoardAction,
       renderRocketElement,
       clearMoveRocketHighlight,
       beginQuickActionStep,
@@ -339,7 +340,7 @@
       renderStateReadout();
     }
 
-    function beginMovePaymentSelection(deltaX, deltaY, rocketId) {
+    function beginMovePaymentSelection(deltaX, deltaY, rocketId, options = {}) {
       const blocked = context.blockIncompatiblePendingQuickAction?.("move");
       if (blocked) return blocked;
 
@@ -376,6 +377,7 @@
         rocketId,
         requiredMovePoints,
         selectedHandIndices: [],
+        standardAction: options.standardAction || null,
       });
       rocketState.statusNote = requiredMovePoints > 1
         ? `移动：需要 ${requiredMovePoints} 点移动力，可选择移动牌，剩余用能量补齐`
@@ -548,14 +550,23 @@
         return moveCheck;
       }
 
-      const moveResult = abilities.executeAbility("moveProbe", createActionContext(), {
-        ...moveOptions,
-        rocketId: pending.rocketId,
-        deltaX: pending.deltaX,
-        deltaY: pending.deltaY,
-      });
+      const moveResult = pending.standardAction && typeof executePrimaryBoardAction === "function"
+        ? executePrimaryBoardAction(pending.standardAction, moveOptions, { skipValidation: true })
+        : abilities.executeAbility("moveProbe", createActionContext(), {
+          ...moveOptions,
+          rocketId: pending.rocketId,
+          deltaX: pending.deltaX,
+          deltaY: pending.deltaY,
+        });
       if (!moveResult.ok && discardCommand) {
-        discardCommand.undo();
+        if (pending.standardAction) {
+          const restoredPlayer = getCurrentPlayer();
+          restoredPlayer.hand = handSnapshot.slice();
+          restoredPlayer.resources.handSize = restoredPlayer.hand.length;
+          cardState.discardPile = discardPileSnapshot.slice();
+        } else {
+          discardCommand.undo();
+        }
       }
       if (moveResult.rocket) renderRocketElement(moveResult.rocket);
       if (moveResult.ok) {

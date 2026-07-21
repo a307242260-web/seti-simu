@@ -41,6 +41,7 @@
     ai,
     alienTraceRewardFlow,
     actionRuntimeModule,
+    primaryBoardActionExecutorModule,
     actionInteractionRuntimeModule,
     actionLogRuntimeModule,
     gameRecoveryModule,
@@ -280,6 +281,12 @@
   const planetStatsState = browserRuleState.planetStatsState;
   const techGameState = browserRuleState.techGameState;
   const cardState = browserRuleState.cardState;
+  const primaryBoardActionExecutor = primaryBoardActionExecutorModule.createPrimaryBoardActionExecutor({
+    actions,
+    abilities,
+    solar,
+  });
+  let actionRuntimeController = null;
   const runtime = runtimeModule.createRuntime({
     aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
     defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
@@ -1302,6 +1309,7 @@
     executeCardEffectMove: (...args) => executeCardEffectMove?.(...args),
     createActionContext,
     recordMoveActionHistory,
+    executePrimaryBoardAction: (...args) => actionRuntimeController?.executePrimaryBoardAction(...args),
     renderRocketElement,
     clearMoveRocketHighlight,
     beginQuickActionStep,
@@ -2010,7 +2018,7 @@
     setLogOpen,
     startNewGame,
   });
-  const actionRuntimeController = actionRuntimeModule.createActionRuntime({
+  actionRuntimeController = actionRuntimeModule.createActionRuntime({
     decisionSessions,
     setupSelectionState,
     playerState,
@@ -2063,6 +2071,8 @@
     createActionLogImpactSnapshot,
     abilities,
     createActionContext,
+    primaryBoardActionExecutor,
+    primaryBoardWorkingRoot: browserRuleState,
     actions,
     removeRocketElement: headlessMode ? () => {} : removeRocketElement,
     syncPlanetOrbitLandMarkersAfterAction: headlessMode ? () => {} : syncPlanetOrbitLandMarkers,
@@ -2086,6 +2096,7 @@
     researchTechForCurrentPlayer: (...args) => researchTechForCurrentPlayer(...args),
     orbitForCurrentPlayer: (...args) => orbitForCurrentPlayer(...args),
     landForCurrentPlayer: (...args) => landForCurrentPlayer(...args),
+    moveRocket: (...args) => moveRocket(...args),
     analyzeDataForCurrentPlayer: (...args) => analyzeDataForCurrentPlayer(...args),
     passForCurrentPlayer: (...args) => passForCurrentPlayer(...args),
     endCurrentTurn: (...args) => endCurrentTurn(...args),
@@ -8315,6 +8326,8 @@
       techUiState: techGameState.ui,
       techGameState,
       turnState,
+      stateVersion: browserRuleState.meta?.stateVersion ?? 0,
+      decisionVersion: browserRuleState.match?.decisionVersion ?? 0,
       ...buildPlutoMarkerContext(),
       roundNumber: turnState.roundNumber,
       turnNumber: turnState.turnNumber,
@@ -10601,19 +10614,24 @@
       return { ok: false, rocket: null, message: rocketState.statusNote };
     }
 
-    return beginMovePaymentSelection(deltaX, deltaY, selectedRocketId);
-  }
-
-  function executeMoveRocket(deltaX, deltaY, rocketId) {
-    const selectedRocketId = rocketId ?? uiRuntimeState.moveHighlightRocketId ?? rocketState.activeRocketId;
-    const result = rocketActions.moveRocket(rocketState, selectedRocketId, deltaX, deltaY);
-    if (result.rocket) renderRocketElement(result.rocket);
-    if (result.ok) {
-      activateMoveMode(selectedRocketId);
+    const standardAction = options.standardAction || actionRuntimeController?.dispatchAction({
+      kind: "standard_resolve",
+      family: "move",
+      selector: {
+        rocketId: selectedRocketId,
+        deltaX,
+        deltaY,
+      },
+    })?.action || null;
+    if (!standardAction) {
+      rocketState.statusNote = "移动 intent 已失效";
+      renderStateReadout();
+      return { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: rocketState.statusNote };
     }
-    updateActionButtons();
-    renderStateReadout();
-    return result;
+
+    return beginMovePaymentSelection(deltaX, deltaY, selectedRocketId, {
+      standardAction,
+    });
   }
 
   function moveActiveRocket(deltaX, deltaY) {

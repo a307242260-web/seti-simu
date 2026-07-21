@@ -389,6 +389,9 @@
     function execute(context, action) {
       return registry.execute(context, action);
     }
+    function validate(context, action) {
+      return registry.validate(context, action);
+    }
     function resolveIntent(context, family, selector = {}, request = {}) {
       const candidates = registry.enumerate(context, { ...request, family });
       const matches = candidates.filter((candidate) => Object.entries(selector).every(([key, value]) => (
@@ -404,7 +407,7 @@
       const validation = registry.validate(context, matches[0]);
       return validation.ok ? { ok: true, action: matches[0] } : validation;
     }
-    return Object.freeze({ enumerate, execute, resolveIntent });
+    return Object.freeze({ enumerate, validate, execute, resolveIntent });
   }
 
   return Object.freeze({
