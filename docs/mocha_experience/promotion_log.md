@@ -1060,3 +1060,24 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 - verification: `mocha issue get SETI-95 --output json` 显示 status=blocked、loop_stage=blocked、needs_owner=true，blocked_reason/next_action 与 owner 指令一致；进程检查无残留 export/training worker。
 - observed_outcome: dataset 恢复在 20/32 停止，未继续 BC、训练或评测；partial 保留为可恢复证据但不会自动续跑。
 - keep_or_revise: 保持 candidate；完成 2 个相关高成本任务观察后再决定是否形成 coding loop 门禁。
+- date: 2026-07-21
+- source: SETI-106, SETI-110
+- promoted_to: watcher_lint
+- promotion_decision: promote
+- target_agent: 领航及负责 SETI 架构迁移与最终验收的 coding agent
+- target_component: 状态权威与依赖方向可执行审计
+- target_file: tools/audit_state_authority.js；tools/lib/state-authority-audit.js；randomizer/game/state/semantic-architecture-audit.test.js；docs/state-authority-audit.md
+- remote_skill_id: none
+- change: 将“禁用字符串为零”升级为全生产入口依赖/能力 inventory、唯一 owner/source/target/mutation gate、语义数据形状规则、接口 poison、StateStore commit trace 与九类负向 fixture；residual inventory 必须为空。
+- applied_change: `a0bda84` 重写 authority audit，覆盖 authority/write/read/projection/recovery/policy，阻断第二 root、直接 committed 写、改名 projection bridge、保存拼 root、恢复拆 root、双写、旧 Policy/schema 和未知 fallback；新增运行时 isolation/stale trace 与 Browser Projection poison。
+- expected_effect: 后续 adapter、helper 或字段改名不能绕过架构门禁；审计结论能同时证明正常生产路径和刻意注入反例，而不是仅证明已知旧名字消失。
+- evaluation_window: 后续 5 个涉及 StateStore、Effect Session、Browser Host、Machine Player Host/Policy 或 recovery 的 coding issue
+- success_signal: 每次正常 audit 为零且 relevant 负向 fixture 保持非零；新增生产入口进入 inventory；不再出现 audit ok 后由人工复核发现第二 owner、直接写、bridge、双写或 fallback。
+- rollback_condition: 若语义规则在后续 5 个 issue 中持续误报合法只读 projection/领域评分 fallback，收窄到 AST/dataflow 或显式 capability contract；不得回退为只扫描旧名字。
+- risk: 无 parser 的轻量结构规则可能遗漏跨文件别名或误判同名业务字段；以运行时 poison/trace、负向 fixture 和 reviewer proof obligations 共同补足，发现误报时收窄语义而非加永久豁免。
+- evidence_before: SETI-106 父单评论 `48084a7a-2b7f-40ac-8b52-abb3c721c6e4` 记录旧 audit ok 与十组传统 slice/约 1,654 处访问并存；SETI-107/109/108 的 owner、projection/recovery、Policy/schema 硬切提交为 `205e62b`、`9b9d0b7`/`851071b`、`397fa20`。
+- owner_or_agent_decision: SETI-110 契约明确要求记录“窄字符串审计误判语义完成”及 promotion decision；领航依据真实失效链与已落地自动门禁自决 promote 到 watcher_lint，不重复修改 loop_template、issue-workflow 或 agent prompt。
+- applied_at: 2026-07-21
+- verification: 共享树 Node 170/170、独立 `a0bda84` 快照 Node 169/169；193 个生产入口、5 个正式 owner、0 residual/violations；九类负向 fixture、commit trace、projection poison、checkpoint/replay/worker recovery/parity 均通过；真实 Chrome 四机器席位 494 步终局，blocked=false、bugCount=0。
+- observed_outcome: 窄字符串扫描被可执行语义门禁替代；正常仓库零违规，第二 root、直接写、改名 bridge、保存拼 root、恢复拆 root、双写、旧 Policy/schema 与未知 fallback 均被 fixture 稳定阻断。
+- keep_or_revise: 保留并进入 5 个 issue 观察窗口；若统一 JS parser 或依赖图基础设施落地，则迁移实现但保留 owner/dataflow/poison/trace/negative-fixture 语义。

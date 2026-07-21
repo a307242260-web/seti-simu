@@ -197,3 +197,10 @@
 - promote_to: none
 - promotion_status: candidate
 - decision: 这是一次明确的 owner 架构启动门槛反馈，但尚不足以修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆；先保留 candidate，后续 2 个涉及高成本训练/数据生成的 issue 观察是否同样需要“架构契约先于可执行流水线”的门禁。
+- date: 2026-07-21
+- source_issue: SETI-106, SETI-110
+- observation: 架构迁移审计若只扫描已知禁用字符串，会把接口改名误判为语义完成；唯一 owner、禁止直接写、projection/recovery/persistence 数据流和未知 fallback 必须转换为结构规则、接口 poison、运行时 commit trace 与可失败的负向 fixture。
+- evidence: SETI-106 开工时旧 `audit_state_authority.js` 返回 ok，但 Browser composition 仍长期持有十组传统可变 slice，`app.js + app/**` 约 1,654 处成员访问且恢复路径手工回填；SETI-110 提交 `a0bda84` 后审计覆盖 193 个生产 JS/HTML 入口，九类语义反例逐项非零，正常路径 residual/violations 为零，StateStore commit trace 与 projection poison 通过。
+- promote_to: watcher_lint
+- promotion_status: promote
+- decision: 既有 proof-obligation loop 已要求全称/否定命题使用匹配证据，但静态 audit 仍未机械执行该语义；本次把规则升级为仓库可执行 watcher_lint，保留字符串扫描仅作补充，不修改 issue-workflow 或 agent prompt。
