@@ -49,7 +49,7 @@
     actionInteractionRuntimeModule,
     actionLogRuntimeModule,
     gameRecoveryModule,
-    browserStateAuthorityModule,
+    browserRuleCompositionModule,
     runtimeModule,
     refreshModule,
     renderRuntimeModule,
@@ -80,7 +80,7 @@
   const stateStoreModule = window.SetiStateStore;
   const hostStateSourceModule = window.SetiHostStateSource;
   const highCouplingStateModule = window.SetiHighCouplingState;
-  if (!stateStoreModule || !hostStateSourceModule || !highCouplingStateModule || !browserStateAuthorityModule) {
+  if (!stateStoreModule || !hostStateSourceModule || !highCouplingStateModule || !browserRuleCompositionModule) {
     throw new Error("Missing SETI StateStore runtime dependencies");
   }
   const headlessMode = Boolean(window.SetiHeadlessRuntimeConfig?.enabled);
@@ -259,30 +259,145 @@
   };
   const sectorElements = {};
   const createTurnState = turnFlowModule.createTurnState;
-  const browserStateAuthority = browserStateAuthorityModule.createBrowserStateAuthority({
-    modules: {
-      stateStore: stateStoreModule,
-      highCouplingState: highCouplingStateModule,
-      initialGameState: window.SetiInitialGameState,
-      runtimeAuthority: window.SetiRuntimeAuthority,
-      players,
-      solar,
-      rocketActions,
-      planetStats,
-      data,
-      cards,
-      tech,
-      aliens,
-      finalScoring,
-      createTurnState,
-    },
-    defaultInitialPlayerColor: players.DEFAULT_PLAYER_COLOR,
-    activePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
-    finalScoreIds: FINAL_SCORE_IDS,
+  const initialGameStateModule = window.SetiInitialGameState;
+  const effectSessionRuntimeModule = window.SetiEffectSession;
+  const standardActionSessionModule = window.SetiStandardActionSession;
+  const standardActionModule = window.SetiStandardAction;
+  const browserRuleModules = {
+    players,
+    solar,
+    rocketActions,
+    planetStats,
+    data,
+    cards,
+    tech,
+    aliens,
+    finalScoring,
+    createTurnState,
+  };
+  let getBrowserCommittedContext = () => ({
+    gameId: "seti-browser-runtime",
+    rulesetVersion: "seti-runtime-v1",
+    seed: "browser-host",
+    headlessMode,
+    rngState: { owner: headlessMode ? "headless" : "browser", state: null },
+    sequences: {},
   });
-  const browserRuleLifecycle = browserStateAuthority.lifecycle;
-  const browserRuleSession = browserStateAuthority.getActiveSession();
-  const browserRuleState = browserRuleSession.workingState;
+
+  function createBrowserWorkingState(initialOptions = {}) {
+    return initialGameStateModule.createSessionState(browserRuleModules, {
+      defaultInitialPlayerColor: initialOptions.defaultInitialPlayerColor ?? players.DEFAULT_PLAYER_COLOR,
+      activePlayerCount: initialOptions.activePlayerCount ?? DEFAULT_ACTIVE_PLAYER_COUNT,
+      finalScoreIds: initialOptions.finalScoreIds ?? FINAL_SCORE_IDS,
+    });
+  }
+
+  function restoreBrowserWorkingState(target, source, metadata = {}) {
+    if (source?.playerState && source?.turnState) {
+      for (const key of Object.keys(source)) {
+        if (key === "meta") target.meta = structuredClone(metadata.committedState?.meta || source.meta || {});
+        else replaceBrowserMutableObject(target[key], source[key]);
+      }
+      return target;
+    }
+    initialGameStateModule.restoreSessionState(target, source, (resident, value) => {
+      for (const key of Reflect.ownKeys(resident || {})) delete resident[key];
+      Object.assign(resident, structuredClone(value || {}));
+      return resident;
+    });
+    if (metadata.reason === "restore") {
+      const sequences = source.meta?.sequences || {};
+      if (Number.isSafeInteger(sequences.card)) cards.restoreNextCardInstanceSequence(sequences.card);
+      if (Number.isSafeInteger(sequences.handCard)) players.restoreNextHandCardSequence(sequences.handCard);
+      if (Number.isSafeInteger(sequences.finalMark)) finalScoring.restoreNextFinalMarkSequence(sequences.finalMark);
+      if (Number.isSafeInteger(sequences.dataToken)) data.restoreNextDataTokenSequence(sequences.dataToken);
+      if (Number.isSafeInteger(sequences.nebulaToken)) data.restoreDeterministicSequences(sequences);
+      if (Number.isSafeInteger(sequences.historyStep)) actionHistoryModule.restoreNextHistoryStepSequence(sequences.historyStep);
+    }
+    return target;
+  }
+
+  function replaceBrowserMutableObject(target, source) {
+    if (!target || typeof target !== "object") throw new TypeError("Browser working state restore target 必须是对象");
+    const replacement = structuredClone(source || {});
+    for (const key of Reflect.ownKeys(target)) delete target[key];
+    Object.assign(target, replacement);
+    return target;
+  }
+
+  const browserRuleComposition = browserRuleCompositionModule.createBrowserRuleComposition({
+    stateStoreApi: {
+      createStateStore(initialState, options) {
+        return highCouplingStateModule.createHighCouplingStateStore(initialState, options);
+      },
+    },
+    effectRuntimeApi: effectSessionRuntimeModule,
+    createInitialState(_initialOptions, workingState) {
+      return highCouplingStateModule.purifyHighCouplingSlices(
+        initialGameStateModule.createCommittedCandidate(
+          workingState,
+          getBrowserCommittedContext(),
+          stateStoreModule.SCHEMA_VERSION,
+          0,
+        ),
+      );
+    },
+    stateAdapter: {
+      createWorkingState: createBrowserWorkingState,
+      createCommittedState(workingState, committedState, contextOverrides = {}) {
+        return highCouplingStateModule.purifyHighCouplingSlices(
+          initialGameStateModule.createCommittedCandidate(
+            workingState,
+            { ...getBrowserCommittedContext(), ...contextOverrides },
+            stateStoreModule.SCHEMA_VERSION,
+            committedState.meta.stateVersion,
+          ),
+        );
+      },
+      restoreWorkingState: restoreBrowserWorkingState,
+      onCommitted(workingState, committedState) {
+        workingState.meta = structuredClone(committedState.meta);
+      },
+    },
+    createActionRegistry() {
+      return {
+        enumerate(workingState, request = {}) {
+          return actionRuntimeController?.dispatchAction(
+            { kind: "standard_enumerate", payload: request },
+            null,
+            createActionContextForWorkingRoot(workingState),
+          )?.candidates || [];
+        },
+        validate(workingState, action) {
+          return actionRuntimeController?.dispatchAction(
+            { kind: "standard_validate", standardAction: action },
+            null,
+            createActionContextForWorkingRoot(workingState, action),
+          ) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE" };
+        },
+        execute(workingState, action) {
+          return actionRuntimeController?.executeStandardDescriptor(
+            createActionContextForWorkingRoot(workingState, action),
+            action,
+          ) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE" };
+        },
+      };
+    },
+    effectDomains: [{
+      create: standardActionSessionModule.createStandardActionDomain,
+      families: standardActionModule.ALL_FAMILIES,
+      options: { actionFamilies: standardActionModule.ALL_FAMILIES },
+    }],
+    projectState(state) {
+      return {
+        meta: { stateVersion: state.meta.stateVersion },
+        match: structuredClone(state.match),
+        turn: structuredClone(state.turn),
+      };
+    },
+  });
+  const browserRuleLifecycle = browserRuleComposition.lifecycle;
+  const browserRuleState = browserRuleComposition.getWorkingState();
   const solarState = browserRuleState.solarState;
   const nebulaDataState = browserRuleState.nebulaDataState;
   const alienGameState = browserRuleState.alienGameState;
@@ -330,6 +445,57 @@
     executeEndTurn: (workingRoot, descriptor) => endCurrentTurn({ workingRoot, standardAction: descriptor }),
   });
   let actionRuntimeController = null;
+  let browserActionStableRecoverySnapshot = null;
+  function dispatchBrowserRuleInput(request, fallbackOptions = null, explicitActionContext = null) {
+    const action = typeof request === "string"
+      ? { kind: request, payload: fallbackOptions || null }
+      : { ...(request || {}) };
+    if (headlessMode) {
+      return actionRuntimeController.dispatchAction(action, fallbackOptions, explicitActionContext);
+    }
+    const ensureStableRecoverySnapshot = () => {
+      if (browserRuleComposition.inspect().phase === "idle" && !browserActionStableRecoverySnapshot) {
+        browserActionStableRecoverySnapshot = createGameRecoverySnapshot({
+          label: "Standard Action 开始前稳定恢复点",
+        });
+      }
+    };
+    if (action.kind === "standard_enumerate") {
+      ensureStableRecoverySnapshot();
+      return {
+        ok: true,
+        candidates: browserRuleComposition.inputPort.enumerateActions(action.payload || {}),
+      };
+    }
+    if (action.kind === "standard_resolve" || action.kind === "standard_validate") {
+      return actionRuntimeController.dispatchAction(action, fallbackOptions, explicitActionContext);
+    }
+    let descriptor = action.standardAction
+      || (action.schemaVersion === standardActionModule.SCHEMA_VERSION ? action : null);
+    if (action.kind === "standard_intent") {
+      ensureStableRecoverySnapshot();
+      const resolved = actionRuntimeController.dispatchAction({
+        kind: "standard_resolve",
+        family: action.family,
+        selector: action.selector || {},
+        payload: action.payload || {},
+      }, fallbackOptions, explicitActionContext);
+      if (!resolved?.ok) return resolved;
+      descriptor = resolved.action;
+    }
+    if (descriptor) {
+      const opensSession = browserRuleComposition.inspect().phase === "idle";
+      if (opensSession) ensureStableRecoverySnapshot();
+      const result = descriptor.phase === "quick"
+        ? browserRuleComposition.inputPort.submitQuickAction(descriptor)
+        : browserRuleComposition.inputPort.submitAction(descriptor);
+      if (browserRuleComposition.inspect().phase === "idle") {
+        browserActionStableRecoverySnapshot = null;
+      }
+      return result;
+    }
+    return actionRuntimeController.dispatchAction(action, fallbackOptions, explicitActionContext);
+  }
   const runtime = runtimeModule.createRuntime({
     aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
     defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
@@ -506,12 +672,13 @@
   const cardTaskState = cardTaskStateModule.createTaskState();
   const actionHistory = actionHistoryModule.createActionHistory();
   const quickActionHistory = actionHistoryModule.createActionHistory();
-  browserStateAuthority.setContextProvider(() => ({
+  getBrowserCommittedContext = () => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
-    seed: "browser-host",
+    seed: browserRuleState.meta?.seed ?? "browser-host",
     headlessMode,
-    rngState: { owner: headlessMode ? "headless" : "browser", state: null },
+    rngState: structuredClone(browserRuleState.meta?.rngState
+      || { owner: headlessMode ? "headless" : "browser", state: null }),
     sequences: {
       card: cards.getNextCardInstanceSequence(),
       handCard: players.getNextHandCardSequence(),
@@ -522,7 +689,7 @@
       actionLog: actionLogState.nextEntryId,
       rocket: rocketState.nextRocketId,
     },
-  }));
+  });
   const HISTORY_SOURCE_MAIN = "main";
   const HISTORY_SOURCE_QUICK = "quick";
   const HISTORY_SOURCE_SETUP = "setup";
@@ -834,7 +1001,7 @@
     ? browserHostModule.residentRenderer.createResidentRenderer({ document, els })
     : null;
   const residentStateSource = hostStateSourceModule.createHostStateSource({
-    stateStore: browserStateAuthority,
+    stateStore: browserRuleComposition.stateSourcePort,
   });
   const residentProjectionAdapter = browserHostModule?.projectionAdapter
     ? browserHostModule.projectionAdapter.createBrowserProjectionAdapter({
@@ -1713,7 +1880,7 @@
     scrollToPlayerCommandPanel,
     getCardTypeCode: (...args) => getCardTypeCode(...args),
     dispatchStandardIntent: (family, selector = {}, payload = {}) => (
-      actionRuntimeController?.dispatchAction({ kind: "standard_intent", family, selector, payload })
+      dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
       || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" }
     ),
     blockManualAiMovePayment,
@@ -3422,7 +3589,7 @@
     createActionContext,
     aiRuntimePorts: {
       createActionContext: (workingRoot, descriptor) => createActionContextForWorkingRoot(workingRoot, descriptor),
-      dispatchRuntimeAction: (workingRoot, request) => actionRuntimeController.dispatchAction(
+      dispatchRuntimeAction: (workingRoot, request) => dispatchBrowserRuleInput(
         request,
         undefined,
         createActionContextForWorkingRoot(workingRoot, request?.payload || request),
@@ -3450,7 +3617,7 @@
       selectPassReserveCard: (workingRoot, ...args) => selectPassReserveCardForRoot(workingRoot, ...args),
     },
     createTurnState,
-    dispatchRuntimeAction: (request) => actionRuntimeController.dispatchAction(request),
+    dispatchRuntimeAction: (request) => dispatchBrowserRuleInput(request),
     drawCardForCurrentPlayer: (...args) => drawCardForCurrentPlayer(...args),
     endCurrentTurn,
     recoverPendingActionFromOpenHistoryForAi,
@@ -4251,10 +4418,17 @@
 
   function attachRecoverySnapshotToActionLogEntry(entry, label = null) {
     if (!entry) return null;
-    entry.recoverySnapshot = createGameRecoverySnapshot({
-      entryId: entry.id,
-      label: label || entry.actionLabel || entry.title || null,
-    });
+    const recoveryLabel = label || entry.actionLabel || entry.title || null;
+    if (browserActionStableRecoverySnapshot) {
+      entry.recoverySnapshot = structuredClone(browserActionStableRecoverySnapshot);
+      entry.recoverySnapshot.meta.entryId = entry.id;
+      entry.recoverySnapshot.meta.label = recoveryLabel;
+    } else {
+      entry.recoverySnapshot = createGameRecoverySnapshot({
+        entryId: entry.id,
+        label: recoveryLabel,
+      });
+    }
     return entry.recoverySnapshot;
   }
 
@@ -8383,7 +8557,7 @@
         workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
       ),
       dispatchStandardIntent: (family, selector = {}, payload = {}) => (
-        actionRuntimeController.dispatchAction({ kind: "standard_intent", family, selector, payload })
+        dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
       ),
       decisionSessions,
       createCardCornerTriggerEventFields: typeof createCardCornerTriggerEventFields === "undefined" ? undefined : createCardCornerTriggerEventFields,
@@ -8601,7 +8775,7 @@
       ),
       decisionSessions,
       dispatchStandardIntent: (family, selector = {}, payload = {}) => (
-        actionRuntimeController?.dispatchAction({ kind: "standard_intent", family, selector, payload })
+        dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
         || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" }
       ),
       document: typeof document === "undefined" ? undefined : document,
@@ -10080,7 +10254,7 @@
     if (!actorPlayer?.id || !decision?.choices?.length) {
       return { actorPlayer, candidates: [] };
     }
-    const listing = actionRuntimeController.dispatchAction({
+    const listing = dispatchBrowserRuleInput({
       kind: "standard_enumerate",
       payload: { actorId: actorPlayer.id },
     });
@@ -10107,7 +10281,7 @@
       };
     }
     const actorPlayer = getHeadlessDecisionOwnerState()?.actorPlayer || null;
-    return actionRuntimeController.dispatchAction({ standardAction });
+    return dispatchBrowserRuleInput({ standardAction });
   }
 
   function advanceHeadlessDeterministicState() {
@@ -10551,10 +10725,10 @@
         landForCurrentPlayer();
         break;
       case "action-scan-button":
-        actionRuntimeController.dispatchAction({ kind: "standard_intent", family: "scan" });
+        dispatchBrowserRuleInput({ kind: "standard_intent", family: "scan" });
         break;
       case "action-analyze-button":
-        actionRuntimeController.dispatchAction({ kind: "standard_intent", family: "analyze" });
+        dispatchBrowserRuleInput({ kind: "standard_intent", family: "analyze" });
         break;
       case "action-play-card-button":
         beginPlayCardSelection();
@@ -10889,7 +11063,7 @@
     cancelLandTargetPicker,
     toggleQuickPanel,
     passForCurrentPlayer,
-    dispatchRuntimeAction: (request) => actionRuntimeController.dispatchAction(request),
+    dispatchRuntimeAction: (request) => dispatchBrowserRuleInput(request),
     endCurrentTurn,
     undoPendingAction,
     runQuickTrade,
@@ -11028,7 +11202,7 @@
     confirmPlayCardSelection: () => {
       const pending = getPendingPlayCardSelection();
       return pending?.card?.id
-        ? actionRuntimeController.dispatchAction({
+        ? dispatchBrowserRuleInput({
           kind: "standard_intent",
           family: "play_card",
           selector: { cardInstanceId: pending.card.id },
@@ -11221,7 +11395,7 @@
       endCurrentTurn,
       passForCurrentPlayer,
       runAction,
-      dispatchRuntimeAction: (request) => actionRuntimeController.dispatchAction(request),
+      dispatchRuntimeAction: (request) => dispatchBrowserRuleInput(request),
       runQuickTrade,
       toggleQuickPanel,
       moveRocket,

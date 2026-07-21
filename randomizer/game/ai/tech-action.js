@@ -1015,13 +1015,14 @@
       };
     }
 
-    function scoreAiEnergyTradeLaunchMoveRecovery(player = getCurrentPlayer(), tradeId = null) {
+    function scoreAiEnergyTradeLaunchMoveRecovery(workingRoot, player = getCurrentPlayer(), tradeId = null) {
       if (
-        !player
+        !workingRoot
+        || !player
         || !tradeId
         || state.pendingActionExecuted
         || !canStartMainAction()
-        || !canAiMoveThisTurn(player.id)
+        || !canAiMoveThisTurn(workingRoot, player.id)
       ) {
         return null;
       }

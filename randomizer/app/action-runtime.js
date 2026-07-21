@@ -700,6 +700,22 @@
           action.payload || {},
         );
       }
+      if (action.kind === "standard_validate") {
+        if (!standardActionAdapter) {
+          return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
+        }
+        const descriptor = action.standardAction || action.action;
+        const standardContext = explicitActionContext || createActionContext();
+        standardContext.standardActionAuthority = {
+          actorId: descriptor?.actorId,
+          stateVersion: descriptor?.stateVersion,
+          decisionVersion: descriptor?.decisionVersion,
+        };
+        return standardActionAdapter.validate(
+          standardContext,
+          descriptor,
+        );
+      }
       if (action.kind === "standard_intent") {
         if (!standardActionAdapter) {
           return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
@@ -755,6 +771,7 @@
       confirmInitialSelectionForCurrentPlayer,
       runAction,
       executePrimaryBoardAction,
+      executeStandardDescriptor,
       handleActionEffectButtonClick,
       dispatchAction,
     };

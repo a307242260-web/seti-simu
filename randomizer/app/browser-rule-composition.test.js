@@ -1,6 +1,8 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const stateStoreApi = require("../game/state/state-store");
 const effectRuntimeApi = require("../game/effects/session-runtime");
 const researchTechSession = require("../game/effects/research-tech-session");
@@ -245,6 +247,77 @@ function createHarness(initialValue = 0) {
   assert.equal(completed.phase, "completed");
   assert.equal(composition.projection().state.match.tech, "blue1");
   assert.equal(composition.projection().stateVersion, 1);
+}
+
+{
+  let composition = null;
+  let unsafeCheckpoint = null;
+  composition = createBrowserRuleComposition({
+    stateStoreApi,
+    effectRuntimeApi,
+    createActionRegistry: createRegistry,
+    createInitialState: () => createState(0),
+    projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
+    createEffectGroup: () => ({ effects: [{ type: "checkpoint_probe" }] }),
+    effectExecutors: {
+      checkpoint_probe(state) {
+        unsafeCheckpoint = composition.lifecycle.save();
+        state.match.value += 1;
+        return { ok: true, nextState: state };
+      },
+    },
+  });
+  const action = composition.inputPort.enumerateActions({ family: "launch" })[0];
+  assert.equal(composition.inputPort.submitAction(action).ok, true);
+  assert.equal(unsafeCheckpoint.ok, false, "执行中的 unsafe checkpoint 不得伪装成成功存档");
+  assert.equal(unsafeCheckpoint.code, "EFFECT_CHECKPOINT_UNSAFE_PHASE");
+}
+
+{
+  let commitEvents = 0;
+  const replace = (target, source) => {
+    for (const key of Reflect.ownKeys(target)) delete target[key];
+    Object.assign(target, structuredClone(source));
+  };
+  const composition = createBrowserRuleComposition({
+    stateStoreApi,
+    effectRuntimeApi,
+    createActionRegistry: createRegistry,
+    createInitialState: (_options, workingState) => structuredClone(workingState),
+    stateAdapter: {
+      createWorkingState: () => createState(0),
+      createCommittedState: (workingState, committedState) => ({
+        ...structuredClone(workingState),
+        meta: structuredClone(committedState.meta),
+      }),
+      restoreWorkingState: replace,
+    },
+    projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
+    createEffectGroup: () => ({ effects: [{ type: "noop" }] }),
+    effectExecutors: { noop: (state) => ({ ok: true, nextState: state }) },
+  });
+  composition.stateSourcePort.subscribe(() => { commitEvents += 1; });
+  composition.getWorkingState().match.value = 9;
+  const before = composition.projection();
+  composition.inputPort.enumerateActions({ family: "launch" });
+  assert.deepEqual(composition.projection(), before, "枚举必须保持 committed projection 不变");
+  assert.equal(commitEvents, 0, "枚举不得隐式 compare-and-commit");
+}
+
+{
+  const appSource = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8");
+  const indexSource = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+  assert.equal(fs.existsSync(path.join(__dirname, "browser-state-authority.js")), false, "旧 authority 文件必须物理删除");
+  assert.match(appSource, /createBrowserRuleComposition\(/, "生产 app 必须实例化唯一 Rule Composition");
+  assert.doesNotMatch(appSource, /createBrowserStateAuthority\(/, "生产 app 不得实例化旧 BrowserStateAuthority");
+  assert.doesNotMatch(indexSource, /browser-state-authority\.js/, "生产脚本不得加载旧 authority owner");
+  assert.match(indexSource, /browser-rule-composition\.js/, "生产脚本必须加载 Rule Composition");
+  assert.match(appSource, /dispatchBrowserRuleInput\(\{ standardAction \}\)/, "AI conditional caller 必须进入 composition inputPort");
+  assert.doesNotMatch(appSource, /replaceMutableObject\?\.|if \(!browserRuleCompositionModule\.replaceMutableObject\)/, "working root restore 不得保留 optional helper 双协议");
+  const tradeSource = fs.readFileSync(path.join(__dirname, "../game/ai/trade-candidates.js"), "utf8");
+  assert.match(tradeSource, /canAiMoveThisTurn\(workingRoot, player\.id\)/, "AI trade candidates 必须显式传 workingRoot");
+  const standardActionSource = fs.readFileSync(path.join(__dirname, "../game/actions/standard-action.js"), "utf8");
+  assert.doesNotMatch(standardActionSource, /_compositionCheckpointVersion|comparableDecision/, "Action identity 不得忽略 decisionStateVersion");
 }
 
 console.log("browser-rule-composition tests passed");

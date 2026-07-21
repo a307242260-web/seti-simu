@@ -48,6 +48,7 @@ const composition = createBrowserRuleComposition({
           ok: true,
           message: "发射完成",
           commands: [{ undo() { throw new Error("宿主 undo closure 不得进入 committed root"); } }],
+          history: [{ undo() { throw new Error("legacy history closure 不得进入 Session result"); } }],
           events: [{ type: "launch" }],
         };
       },

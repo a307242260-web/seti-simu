@@ -1015,6 +1015,9 @@ function createHeadlessEnv() {
           throw new Error("checkpoint replay 后唯一序列与 committed meta 不一致");
         }
         seededRandom?.setState(committedMeta.rngState.state);
+        legalActionSelectors = new Map();
+        lastLegalActions = null;
+        lastObservation = null;
         if (checkpoint.effectSessionCheckpoint) {
           const restoredSession = effectSessionHost.restoreCheckpoint(
             checkpoint.effectSessionCheckpoint,

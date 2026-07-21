@@ -180,7 +180,7 @@
       };
     }
 
-    function applyAiTurnActionSelectionPressure(candidates = []) {
+    function applyAiTurnActionSelectionPressure(workingRoot, candidates = []) {
       const round = getAiRoundNumber();
       const currentPlayer = getCurrentPlayer();
       const repeatedNegativeResourceCardCorners = countAiRepeatedNegativeResourceCardCornersThisTurn(
@@ -600,7 +600,7 @@
       };
     }
 
-    function buildAiEarlyNoMainPublicRefillDiagnostic(player = getCurrentPlayer(), candidates = []) {
+    function buildAiEarlyNoMainPublicRefillDiagnostic(workingRoot, player = getCurrentPlayer(), candidates = []) {
       if (
         !player
         || state.pendingActionExecuted
@@ -630,7 +630,7 @@
       };
     }
 
-    function buildAiFinalLowHandPassRecoveryDiagnostic(player = getCurrentPlayer(), candidates = []) {
+    function buildAiFinalLowHandPassRecoveryDiagnostic(workingRoot, player = getCurrentPlayer(), candidates = []) {
       if (
         !player
         || getAiRoundNumber() < FINAL_ROUND_NUMBER
@@ -736,7 +736,7 @@
           score: roundAiScore(candidate.score),
           reason: candidate.reason || null,
         }));
-      const lateRecoveryPreviewCandidates = listAiLateResourceRecoveryTradeCandidates(player)
+      const lateRecoveryPreviewCandidates = listAiLateResourceRecoveryTradeCandidates(workingRoot, player)
         .slice(0, 5)
         .map((candidate) => ({
           id: candidate.id || null,
@@ -785,7 +785,7 @@
       };
     }
 
-    function buildAiFinalHighScorePassRecoveryDiagnostic(player = getCurrentPlayer(), candidates = []) {
+    function buildAiFinalHighScorePassRecoveryDiagnostic(workingRoot, player = getCurrentPlayer(), candidates = []) {
       if (
         !player
         || getAiRoundNumber() < FINAL_ROUND_NUMBER
@@ -898,7 +898,7 @@
           score: roundAiScore(candidate.score),
           reason: candidate.reason || null,
         }));
-      const lateRecoveryPreviewCandidates = listAiLateResourceRecoveryTradeCandidates(player)
+      const lateRecoveryPreviewCandidates = listAiLateResourceRecoveryTradeCandidates(workingRoot, player)
         .slice(0, 5)
         .map((candidate) => ({
           id: candidate.id || null,

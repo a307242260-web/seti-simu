@@ -289,7 +289,7 @@
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
     }
 
-    function listAiThirdFinalMarkResourceTradeCandidates(player = getCurrentPlayer()) {
+    function listAiThirdFinalMarkResourceTradeCandidates(workingRoot, player = getCurrentPlayer()) {
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -353,8 +353,8 @@
         && handSize <= 4
         && bestPublicTradeCardScore >= 12;
       const launchMoveRecoveryByTrade = {
-        "credits-for-energy": scoreAiEnergyTradeLaunchMoveRecovery(player, "credits-for-energy"),
-        "cards-for-energy": scoreAiEnergyTradeLaunchMoveRecovery(player, "cards-for-energy"),
+        "credits-for-energy": scoreAiEnergyTradeLaunchMoveRecovery(workingRoot, player, "credits-for-energy"),
+        "cards-for-energy": scoreAiEnergyTradeLaunchMoveRecovery(workingRoot, player, "cards-for-energy"),
       };
       const planetCashoutRecoveryByTrade = {
         "credits-for-energy": scoreAiEnergyTradePlanetCashoutRecovery(player, "credits-for-energy"),
@@ -1498,7 +1498,7 @@
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
     }
 
-    function listAiLateResourceRecoveryTradeCandidates(player = getCurrentPlayer(), candidates = []) {
+    function listAiLateResourceRecoveryTradeCandidates(workingRoot, player = getCurrentPlayer(), candidates = []) {
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -1523,7 +1523,7 @@
         : null;
       const shouldReservePlanetCashoutEnergy = Boolean(reservedPlanetCashoutEnergy);
       const mainActionOpen = canStartMainAction();
-      const moveActionOpen = canAiMoveThisTurn(player.id);
+      const moveActionOpen = canAiMoveThisTurn(workingRoot, player.id);
       const canSpendEnergyThisTurn = mainActionOpen || moveActionOpen;
       const finalMarkTargetCount = recoveryThreshold >= 70 ? 3 : 2;
       const canPrepareFinalThresholdAction = getAiRoundNumber() >= FINAL_ROUND_NUMBER
@@ -1532,8 +1532,8 @@
         && !(turnState.passedPlayerIds || []).includes(player.id);
       const canSpendEnergyForRecovery = canSpendEnergyThisTurn || canPrepareFinalThresholdAction;
       const launchMoveRecoveryByTrade = {
-        "credits-for-energy": scoreAiEnergyTradeLaunchMoveRecovery(player, "credits-for-energy"),
-        "cards-for-energy": scoreAiEnergyTradeLaunchMoveRecovery(player, "cards-for-energy"),
+        "credits-for-energy": scoreAiEnergyTradeLaunchMoveRecovery(workingRoot, player, "credits-for-energy"),
+        "cards-for-energy": scoreAiEnergyTradeLaunchMoveRecovery(workingRoot, player, "cards-for-energy"),
       };
       const bestLaunchMoveRecoveryScore = Math.max(
         0,

@@ -147,7 +147,10 @@
       })
         .find((candidate) => candidate.actionId === action.actionId);
       if (!current || !sameAction(current, action)) {
-        return fail("STANDARD_ACTION_NOT_LEGAL", "action 不在当前合法候选中");
+        return fail("STANDARD_ACTION_NOT_LEGAL", "action 不在当前合法候选中", {
+          submittedAction: action,
+          currentAction: current || null,
+        });
       }
       const result = definition.validate(context, action, { authority });
       return result?.ok === false ? result : { ok: true, definition, authority, current };
@@ -322,14 +325,24 @@
       },
       validate(context, descriptor) {
         return action.canExecute(context, {
+          family,
+          actorId: descriptor.actorId,
+          stateVersion: descriptor.stateVersion,
+          decisionVersion: descriptor.decisionVersion,
           target: descriptor.target || null,
           payload: descriptor.payload || {},
+          decision: descriptor.decision || null,
         });
       },
       execute(context, descriptor) {
         return action.execute(context, {
+          family,
+          actorId: descriptor.actorId,
+          stateVersion: descriptor.stateVersion,
+          decisionVersion: descriptor.decisionVersion,
           target: descriptor.target || null,
           payload: descriptor.payload || {},
+          decision: descriptor.decision || null,
         });
       },
     };

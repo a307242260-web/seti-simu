@@ -162,7 +162,7 @@
         actionGraph: ai?.actionGraph,
         adjust: adjustAiActionGraphCandidate,
         adjustForStyle: adjustAiActionGraphCandidateForStyle,
-        applySelectionPressure: applyAiTurnActionSelectionPressure,
+        applySelectionPressure: (candidates) => applyAiTurnActionSelectionPressure(workingRoot, candidates),
         selectScoredItem,
       });
       const { candidates, selectedAction } = pipelineResult;
@@ -218,13 +218,13 @@
           ? buildAiResourceLockTradePreviews(currentPlayer, selectableCandidates)
           : [];
         const earlyNoMainPublicRefillDiagnostic = action.id === "pass"
-          ? buildAiEarlyNoMainPublicRefillDiagnostic(currentPlayer, selectableCandidates)
+          ? buildAiEarlyNoMainPublicRefillDiagnostic(workingRoot, currentPlayer, selectableCandidates)
           : null;
         const finalLowHandPassRecoveryDiagnostic = action.id === "pass"
-          ? buildAiFinalLowHandPassRecoveryDiagnostic(currentPlayer, selectableCandidates)
+          ? buildAiFinalLowHandPassRecoveryDiagnostic(workingRoot, currentPlayer, selectableCandidates)
           : null;
         const finalHighScorePassRecoveryDiagnostic = action.id === "pass"
-          ? buildAiFinalHighScorePassRecoveryDiagnostic(currentPlayer, selectableCandidates)
+          ? buildAiFinalHighScorePassRecoveryDiagnostic(workingRoot, currentPlayer, selectableCandidates)
           : null;
         const plannerShadow = buildAiPlannerShadowDecision(selectableCandidates, graphState, currentPlayer, action);
         recordAiAutoBattleLog("turn-action", `${currentPlayer.colorLabel}AI 执行 ${action.id}`, {

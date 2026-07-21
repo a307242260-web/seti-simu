@@ -46,7 +46,7 @@
       if (state.pendingActionExecuted && !isActionEffectFlowActive() && !hasActivePendingSubFlow()) {
         const industryCandidate = buildAiIndustryCandidate(workingRoot, currentPlayer);
         if (industryCandidate) candidates.push(industryCandidate);
-        candidates.push(...listAiLateResourceRecoveryTradeCandidates(currentPlayer));
+        candidates.push(...listAiLateResourceRecoveryTradeCandidates(workingRoot, currentPlayer));
         candidates.push(...listAiMoveCandidates(workingRoot));
         candidates.push(...listAiDataPlacementCandidates(currentPlayer));
         candidates.push(...listAiRunezuFaceSymbolQuickCandidates(workingRoot, currentPlayer));
@@ -443,11 +443,11 @@
       if (industryCandidate) candidates.push(industryCandidate);
       candidates.push(...listAiEmergencyAnalyzeEnergyTradeCandidates(currentPlayer));
       candidates.push(...listAiFinalAnalyzeEnergyTradeCandidates(currentPlayer));
-      candidates.push(...listAiThirdFinalMarkResourceTradeCandidates(currentPlayer));
+      candidates.push(...listAiThirdFinalMarkResourceTradeCandidates(workingRoot, currentPlayer));
       candidates.push(...listAiMainUnlockTradeCandidates(currentPlayer, playCardCandidates, candidates));
       candidates.push(...listAiFinalReadyTaskCreditChainTradeCandidates(currentPlayer));
       candidates.push(...listAiResourceLockMainUnlockTradeCandidates(currentPlayer, candidates));
-      candidates.push(...listAiLateResourceRecoveryTradeCandidates(currentPlayer, candidates));
+      candidates.push(...listAiLateResourceRecoveryTradeCandidates(workingRoot, currentPlayer, candidates));
       candidates.push(...listAiDataPlacementCandidates(currentPlayer));
       candidates.push(...listAiRunezuFaceSymbolQuickCandidates(workingRoot, currentPlayer));
       candidates.push(...listAiCardCornerQuickCandidates(workingRoot, currentPlayer, playCardCandidates));

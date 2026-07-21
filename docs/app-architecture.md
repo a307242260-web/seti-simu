@@ -25,7 +25,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 7. `randomizer/app/view-adapter.js` 提供 Node composition 使用的 no-op view adapter；浏览器真实 DOM/render runtime 只通过 `BrowserProjection.resident` 的深冻结 selector 读取规则视图，生产装配不再注入长期规则 slice。
 8. `randomizer/app/events.js` 绑定页面事件、overlay 点击分发、拖拽回调和 resize 入口。
 8. `randomizer/app/start-screen.js` 处理开始界面选项同步、入口按钮和继续游戏恢复。
-9. `randomizer/app/browser-state-authority.js` 建立 Browser 唯一 StateStore 与 working-copy 窄引用；`randomizer/app/turn-flow.js` 通过该 authority 重置新局并处理随机化和 round / turn 推进壳层；`turn-end-flow.js` 处理 PASS 队列、回合末外星人揭示与跨轮收尾。
+9. `randomizer/app/browser-rule-composition.js` 建立 Browser 唯一 StateStore、Standard Action registry、Effect runtime 与 active Session；`randomizer/app/turn-flow.js` 只通过其 lifecycle 重置新局并处理随机化和 round / turn 推进壳层；`turn-end-flow.js` 处理 PASS 队列、回合末外星人揭示与跨轮收尾。
 10. `randomizer/app/card-runtime.js`、`card-trigger-runtime.js`、`income-runtime.js` 与 `scan-flow.js` 承接卡牌交互、任务触发、收入和扫描运行域。
 11. `randomizer/app/tech-runtime.js` 与 `industry-runtime.js` 承接科技选择、公司能力、被动奖励及其 pending/history 回滚运行域。
 12. `randomizer/app/action-briefing.js` 封装 AI 行动简报的条目归纳、scan 目标摘要和 overlay 渲染控制器。
@@ -44,7 +44,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 
 - `randomizer/app/runtime.js`：创建 Decision Session、纯 UI 状态与 Browser Host 内部状态；不得恢复通用 `pending` 容器或把规则事实塞入 UI/host state。
 - `randomizer/app/render-runtime.js`：传统 DOM renderer 的兼容外壳；生产 context 只接收 `getProjection()`、纯 ViewState 与显式 capability inventory 中的纯模块、DOM-only helper、标量/新 DTO selector、输入 callback，不接收 `browserRuleState/workingState/playerState/turnState/cardState/...` 或复合 root reader/writer。未分类能力在生产 bootstrap 时 fail-fast；对象型窄 selector 必须在 composition 边界返回新 identity。旧领域 readout 若会 normalize 输入，只能处理 projection 的一次性克隆；补牌、机会排队、AI 调度等规则推进不得由 renderer 触发。
-- `randomizer/app/browser-state-authority.js`：迁移期 Browser committed state owner；领域 factory 只创建 bootstrap/reset working candidate，规则窄引用只指向 working copy。对 Browser caller 仅暴露 `lifecycle.newGame/save/validateRestore/restore`，不再暴露 StateStore serialize/deserialize/restore 或 raw CAS；Browser Services 与 GameRecovery 只接受 composition save envelope，旧 StateStore-only schema fail-closed。UI/status、选择、日志和 Policy 状态不得进入其 committed root。
+- `randomizer/app/browser-rule-composition.js`：Browser 唯一规则 composition；内部独占 StateStore、Standard Action registry、Effect runtime 与 active Session，向生产 caller 只暴露 `inputPort`、只读 projection/state source 和 `lifecycle.newGame/save/validateRestore/restore`。稳定 working root 由 composition 内部 state adapter 原位水合，宿主不得执行 slices 回灌；Browser Services 与 GameRecovery 只接受 composition save envelope，旧 StateStore-only schema fail-closed。
 - `randomizer/app/primary-board-action-executor.js`：四类盘面行动的 working-root 生产 executor；只接受显式 root、descriptor 与规则模块能力，原子保护失败路径，不拥有 UI、Decision 或 composition lifecycle。
 - `randomizer/app/engine-action-executor.js`：科技、扫描、分析、打牌四类引擎行动的 working-root 生产边界；科技/分析在边界内直连规则 action/ability，扫描与打牌分别下沉到 `scan-flow.js` / `hand-flow.js` 的显式 root 入口，`app.js` 只负责装配。Browser 与 AI 的 Standard Action descriptor 共用该原子入口，支付、目标校验及返回的 Effect/history/result 均绑定 caller 传入的 root，UI 只保留选择与渲染续接。
 - `randomizer/app/quick-turn-action-executor.js`：快速交易、公司 1x、弃牌角标、放置数据、符文族面部 symbol、PASS 与结束回合的 working-root 生产边界。Browser/AI 的 descriptor 共用同一原子入口；Quick family 只写 caller root 与 quick history，不推进 turn，PASS 只完成主行动，只有 `end_turn` 推进 turn/current player；stale 与失败会恢复完整 working root。
@@ -60,7 +60,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/view-adapter.js`：定义 headless 的空元素集合与 no-op render/log/hover 接口；不得模拟 DOM 节点或把规则分支塞进 adapter。
 - `randomizer/app/events.js`：只做事件到 app 回调的路由。新增按钮、overlay、拖拽入口时优先改这里；不要在这里实现规则结算。
 - `randomizer/app/start-screen.js`：只处理开始界面选项、继续游戏入口和新局入口壳层；不要在这里新增规则结算或复制恢复逻辑。
-- `randomizer/app/turn-flow.js`：只通过 BrowserStateAuthority 重置新局，并处理随机化和回合推进壳层；不得再直接创建或恢复各领域长期 state。
+- `randomizer/app/turn-flow.js`：只通过 Browser Rule Composition lifecycle 重置新局，并处理随机化和回合推进壳层；不得再直接创建或恢复各领域长期 state。
 - `randomizer/app/turn-end-flow.js`：处理 PASS 必做效果队列、回合末外星人揭示 continuation、收入与跨轮刷新；通过显式 context 调用所属规则/runtime。
 - `randomizer/app/action-interaction-runtime.js`：处理冥王星交互、移动箭头和数据放置 picker；不拥有规则状态，所有状态和 continuation 均由 composition root 注入。
 - `randomizer/app/final-score-ai-runtime.js`：处理终局板块候选估值、可行性惩罚和竞速调整；不维护 AI 自动机状态。
