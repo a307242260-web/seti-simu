@@ -94,6 +94,15 @@
         reserved: countCollection(reserved[id]),
       };
     }
+    const solarSource = state?.solarSystem || {};
+    const rotationSource = solarSource.rotation || {};
+    const derivedWheelSteps = solarSource.wheelSteps || [
+      0,
+      Number(rotationSource.wheel1Steps) || 0,
+      Number(rotationSource.wheel2Steps) || 0,
+      Number(rotationSource.wheel3Steps) || 0,
+      Number(rotationSource.wheel4Steps) || 0,
+    ];
 
     return {
       match: {
@@ -137,6 +146,36 @@
         ...(state?.tech?.board && !state.tech.supply ? { supply: clone(state.tech.board) } : {}),
       },
       aliens: pick(state?.aliens, ["revealed", "public", "traces", "boards"]),
+      resident: {
+        turn: pick(state?.turn, [
+          "round", "turn", "roundNumber", "turnNumber", "actionCycle", "currentPlayerId",
+          "activePlayerId", "activePlayerIds", "turnOrderPlayerIds", "passedPlayerIds",
+          "completedTurnPlayerIds", "phase", "gameEnded", "gameEndReason",
+        ]),
+        players: {
+          currentPlayerId: state?.turn?.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
+          players: Object.values(players).map(clone),
+        },
+        solar: {
+          ...pick(solarSource, ["rotation", "sectorBySlot", "visibleSectors", "publicMarkers", "aomomoActive"]),
+          wheelSteps: clone(derivedWheelSteps),
+        },
+        pieces: clone(state?.pieces || {}),
+        planets: clone(state?.planets || {}),
+        data: clone(state?.data || {}),
+        cards: {
+          publicCards: clone(cards.publicCards || cards.publicMarket || cards.market || []),
+          publicMarket: clone(cards.publicMarket || cards.publicCards || cards.market || []),
+          discardPile: clone(cards.discardPile || cards.discard || []),
+          drawPileCount: countCollection(cards.drawPileCardIds || cards.drawPile || cards.deck),
+        },
+        tech: pick(state?.tech, ["board", "supply", "publicBoards", "tracks"]),
+        aliens: pick(state?.aliens, [
+          "revealed", "public", "traces", "boards", "jiuzhe", "yichangdian", "banrenma",
+          "fangzhou", "chong", "amiba", "aomomo", "runezu", "revealedSlotIds",
+        ]),
+        finalScoring: clone(state?.finalScoring || {}),
+      },
       feedback: { events: [], logs: [], progress: null, notices: [] },
     };
   }
@@ -309,6 +348,7 @@
         cards: clone(visible.cards || {}),
         tech: clone(visible.tech || {}),
         aliens: clone(visible.aliens || {}),
+        resident: clone(visible.resident || {}),
         controls: {
           actions: projectedActions.filter((action) => action.phase !== "quick"),
           quickActions: projectedActions.filter((action) => action.phase === "quick"),

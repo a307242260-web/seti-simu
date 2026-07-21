@@ -1,6 +1,8 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const { createRenderRuntime, createCoordinateRuntime } = require("./render-runtime");
 const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 const { attachDecisionState } = require("./test-decision-state");
@@ -329,20 +331,25 @@ function createContext(overrides = {}) {
     industry: {
       getReadoutLines() { return []; },
     },
-    solarState: {
-      wheelSteps: { 1: 1, 2: 2, 3: 3, 4: 4 },
-      sectorBySlot: { 1: 1, 2: 2, 3: null, 4: 4 },
-      rotation: { rotationCount: 1 },
-      aomomoActive: false,
+    testResident: {
+      solar: {
+        wheelSteps: { 1: 1, 2: 2, 3: 3, 4: 4 },
+        sectorBySlot: { 1: 1, 2: 2, 3: null, 4: 4 },
+        rotation: { rotationCount: 1 },
+        aomomoActive: false,
+      },
+      players: { currentPlayerId: "p1", players: [playerA, playerB] },
+      pieces: { rockets: [], draggingRocketId: null },
+      data: {},
+      planets: {},
+      aliens: {},
+      finalScoring: {},
+      turn: { roundNumber: 1, turnNumber: 1 },
+      cards: { publicCards: [] },
+      tech: {},
+      decisions: pendingState,
     },
-    playerState: { currentPlayerId: "p1", players: [playerA, playerB] },
-    rocketState: { rockets: [], draggingRocketId: null },
-    nebulaDataState: {},
-    planetStatsState: {},
-    alienGameState: {},
-    finalScoringState: {},
-    turnState: { roundNumber: 1, turnNumber: 1 },
-    uiRuntimeState: { moveHighlightRocketId: null, codexAiBatchSuppressReadoutRender: false },
+    viewState: { moveHighlightRocketId: null, codexAiBatchSuppressReadoutRender: false },
     tokenWidths: { rocket: null, orbit: null, landding: null },
     techRenderContext: { supplySlots: {} },
     sectorElements: {},
@@ -367,9 +374,7 @@ function createContext(overrides = {}) {
     OPPONENT_TECH_TYPES: [],
     ROTATE_STATE_SLOTS: [{ id: "a", percentX: 10, percentY: 20 }, { id: "b", percentX: 30, percentY: 40 }],
     pendingState,
-    cardState: { publicCards: [] },
     tech: { getReadoutLines() { return []; } },
-    techGameState: {},
     actionHistory: { hasSession() { return false; }, getTrace() { return []; } },
     quickActionHistory: { hasSession() { return false; }, getTrace() { return []; } },
     getCurrentPlayer() { return playerA; },
@@ -482,12 +487,25 @@ function createContext(overrides = {}) {
   Object.assign(context, overrides);
   context.els = els;
   context.document = document;
+  context.getProjection = () => {
+    const freeze = (value) => {
+      if (value == null || typeof value !== "object" || Object.isFrozen(value)) return value;
+      for (const child of Object.values(value)) freeze(child);
+      return Object.freeze(value);
+    };
+    return freeze({
+      schemaVersion: "seti-browser-host-v1",
+      projectionId: "render-runtime-test",
+      source: { kind: "committed", stateVersion: 1 },
+      resident: structuredClone(context.testResident),
+    });
+  };
   return context;
 }
 
 {
   const context = createContext();
-  context.cardState.publicCards = [
+  context.testResident.cards.publicCards = [
     { cardName: "A", src: "a.png" },
     { cardName: "B", src: "b.png" },
   ];
@@ -498,7 +516,7 @@ function createContext(overrides = {}) {
 
   runtime.renderPublicCards();
 
-  assert.equal(context.ensurePublicCardsFilledCalls, 1);
+  assert.equal(context.ensurePublicCardsFilledCalls, 0);
   assert.equal(context.els.publicCardRow.children.length, 2);
   assert.equal(context.els.publicCardRow.children[1].children[0].classList.contains("is-selected"), true);
   assert.equal(context.updatePublicCardControlsCalls, 1);
@@ -510,7 +528,7 @@ function createContext(overrides = {}) {
   stale.classList.add("rocket-token");
   stale.dataset.rocketId = "99";
   context.els.tokenLayer.appendChild(stale);
-  context.rocketState.rockets = [{ id: 1, playerId: "p1", color: "white" }];
+  context.testResident.pieces.rockets = [{ id: 1, playerId: "p1", color: "white" }];
   const runtime = createRenderRuntime(context);
 
   runtime.renderRockets();
@@ -544,8 +562,35 @@ function createContext(overrides = {}) {
   assert.equal(context.updatePlayerHandPanelTitleCalls, 1);
   assert.equal(context.renderReservedCardsCalls, 1);
   assert.equal(context.dataPlayerBoardCalls, 1);
-  assert.equal(context.queueJiuzheCalls, 1);
-  assert.equal(context.queueBanrenmaCalls, 1);
+  assert.equal(context.queueJiuzheCalls, 0);
+  assert.equal(context.queueBanrenmaCalls, 0);
+}
+
+{
+  const context = createContext();
+  for (const key of ["browserRuleState", "workingState", "playerState", "turnState", "cardState", "solarState"]) {
+    Object.defineProperty(context, key, {
+      configurable: true,
+      enumerable: true,
+      get() { throw new Error(`${key} poison getter touched`); },
+    });
+  }
+  assert.throws(() => createRenderRuntime(context), /拒绝长期规则 slice/);
+}
+
+{
+  const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
+  const start = appSource.indexOf("renderRuntimeModule.createRenderRuntime({");
+  const end = appSource.indexOf("\n  });", start);
+  assert.ok(start >= 0 && end > start, "必须存在生产 render-runtime 装配块");
+  const wiring = appSource.slice(start, end);
+  assert.match(wiring, /getProjection:/);
+  for (const key of [
+    "decisionSessions", "solarState", "playerState", "rocketState", "nebulaDataState",
+    "planetStatsState", "alienGameState", "finalScoringState", "turnState", "cardState", "techGameState",
+  ]) {
+    assert.doesNotMatch(wiring, new RegExp(`\\n\\s*${key}(?:,|:)`), `生产 renderer 不得注入 ${key}`);
+  }
 }
 
 {

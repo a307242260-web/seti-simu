@@ -297,6 +297,95 @@
   function createRenderRuntime(context = {}) {
     const document = context.document || root.document;
     const ImageCtor = context.Image || root.Image;
+    const legacySliceKeys = [
+      "browserRuleState", "workingState", "solarState", "playerState", "rocketState",
+      "nebulaDataState", "planetStatsState", "alienGameState", "finalScoringState",
+      "turnState", "cardState", "techGameState",
+    ].filter((key) => Object.hasOwn(context, key));
+    if (legacySliceKeys.length) {
+      throw new TypeError(`createRenderRuntime 拒绝长期规则 slice: ${legacySliceKeys.join(", ")}`);
+    }
+    if (typeof context.getProjection !== "function") {
+      throw new TypeError("createRenderRuntime 需要 getProjection() 只读 BrowserProjection provider");
+    }
+
+    let activeProjection = null;
+
+    function loadProjection() {
+      const projection = context.getProjection();
+      if (!projection || projection.schemaVersion !== "seti-browser-host-v1" || !projection.resident) {
+        throw new TypeError("createRenderRuntime 需要含 resident view 的 seti-browser-host-v1 BrowserProjection");
+      }
+      if (!Object.isFrozen(projection) || !Object.isFrozen(projection.resident)) {
+        throw new TypeError("createRenderRuntime 拒绝 mutable BrowserProjection");
+      }
+      return projection;
+    }
+
+    function readProjection() {
+      return activeProjection || loadProjection();
+    }
+
+    function withProjection(render) {
+      return function renderFromProjection(...args) {
+        const parentProjection = activeProjection;
+        if (!activeProjection) activeProjection = loadProjection();
+        try {
+          return render(...args);
+        } finally {
+          activeProjection = parentProjection;
+        }
+      };
+    }
+
+    function createReadonlySelector(section, fallback = {}) {
+      return new Proxy(fallback, {
+        get(_target, key) {
+          if (key === Symbol.toStringTag) return "BrowserProjectionSelector";
+          return (readProjection().resident[section] || fallback)[key];
+        },
+        has(_target, key) {
+          return key in (readProjection().resident[section] || fallback);
+        },
+        ownKeys() {
+          return Reflect.ownKeys(readProjection().resident[section] || fallback);
+        },
+        getOwnPropertyDescriptor(_target, key) {
+          const source = readProjection().resident[section] || fallback;
+          if (!Object.hasOwn(source, key)) return undefined;
+          return { configurable: true, enumerable: true, value: source[key], writable: false };
+        },
+        set() {
+          throw new TypeError(`BrowserProjection.${section} 是只读 selector`);
+        },
+        deleteProperty() {
+          throw new TypeError(`BrowserProjection.${section} 是只读 selector`);
+        },
+      });
+    }
+
+    function cloneResident(section, fallback = {}) {
+      return structuredClone(readProjection().resident[section] || fallback);
+    }
+
+    function clonePlayersForReadout() {
+      const snapshot = cloneResident("players", { players: [] });
+      for (const player of snapshot.players || []) {
+        player.techState = players.normalizePlayerTechState(player.techState);
+      }
+      return snapshot;
+    }
+
+    const solarState = createReadonlySelector("solar");
+    const playerState = createReadonlySelector("players", { players: [] });
+    const rocketState = createReadonlySelector("pieces", { rockets: [] });
+    const nebulaDataState = createReadonlySelector("data");
+    const planetStatsState = createReadonlySelector("planets");
+    const alienGameState = createReadonlySelector("aliens");
+    const turnState = createReadonlySelector("turn");
+    const cardState = createReadonlySelector("cards", { publicCards: [] });
+    const decisionState = createReadonlySelector("decisions");
+    const uiRuntimeState = context.viewState || {};
     const {
       solar,
       players,
@@ -313,15 +402,6 @@
       aomomo,
       runezu,
       industry,
-      solarState,
-      playerState,
-      rocketState,
-      nebulaDataState,
-      planetStatsState,
-      alienGameState,
-      finalScoringState,
-      turnState,
-      uiRuntimeState,
       tokenWidths,
       techRenderContext,
       sectorElements,
@@ -370,10 +450,6 @@
       renderReservedCardsFromTaskState,
       syncFinalScorePendingMarks,
       renderFinalScoreBoard,
-      queueJiuzheOpportunitiesForPlayer,
-      maybeOpenQueuedJiuzheOpportunity,
-      queueBanrenmaOpportunitiesForPlayer,
-      maybeOpenQueuedBanrenmaOpportunity,
       computePlayerFinalScoreBreakdown,
       buildPlutoMarkerContext,
       getCardTypeCode,
@@ -397,7 +473,6 @@
       formatCardPlayCost,
       getPublicScanChoicesForCard,
       attachCardHoverPreview,
-      ensurePublicCardsFilledRespectingDelayedRefills,
       updatePublicCardControls,
       canBlindDraw,
       getPlanetName,
@@ -417,7 +492,6 @@
       getInitialSelectionReadoutLines,
       getPlayerReadoutLines,
       getPlanetStatsReadoutLines,
-      scheduleAiAutoStepIfNeeded,
       getRocketCoordinateReadoutLines,
       selectDefaultRocketForCurrentPlayer,
       syncInteractionFocusChrome,
@@ -425,17 +499,6 @@
       getAomomoCurrentX,
       queueStateReadoutRender,
     } = context;
-    const decisionState = context.decisionSessions?.createFacade?.({
-      discardAction: "discard_action",
-      cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
-      alienTraceAction: "alien_trace_action",
-      alienTracePickerState: "alien_trace_picker_state",
-      alienRevealConfirmation: "alien_reveal_confirmation",
-      actionEffectFlow: "action_effect_flow",
-    }) || {};
-
     function loadTokenWidth(asset, scale, fallbackNaturalWidth, onLoad) {
       const image = new ImageCtor();
       const resolveWidth = (naturalWidth) => {
@@ -947,12 +1010,10 @@
     function renderPublicCards() {
       if (!els.publicCardRow) return;
 
-      ensurePublicCardsFilledRespectingDelayedRefills();
-
       const selectionActive = context.isCardSelectionActive();
       const publicCardMultiSelect = context.isPublicCardMultiSelectActive();
       const selectedPublicSlots = decisionState.cardSelectionAction?.selectedSlots || [];
-      els.publicCardRow.replaceChildren(...context.cardState.publicCards.map((card, index) => {
+      els.publicCardRow.replaceChildren(...cardState.publicCards.map((card, index) => {
         const slot = document.createElement("div");
         slot.className = "public-card-slot";
         slot.dataset.publicSlot = String(index);
@@ -1458,12 +1519,6 @@
       renderPlayerHand();
       renderReservedCards();
       renderPlayerDataBoard();
-      if (!isInitialSelectionActive()) {
-        queueJiuzheOpportunitiesForPlayer(currentPlayer);
-        maybeOpenQueuedJiuzheOpportunity();
-        queueBanrenmaOpportunitiesForPlayer(currentPlayer);
-        maybeOpenQueuedBanrenmaOpportunity();
-      }
     }
 
     function renderSectorNebulaDataBoard() {
@@ -1564,7 +1619,7 @@
         "",
         ...getPlayerReadoutLines(),
         "",
-        ...finalScoring.getReadoutLines(finalScoringState),
+        ...finalScoring.getReadoutLines(cloneResident("finalScoring")),
         "",
         ...getPlanetStatsReadoutLines(),
         "",
@@ -1573,21 +1628,20 @@
         "",
         ...getRocketCoordinateReadoutLines(),
         "",
-        ...context.tech.getReadoutLines(context.techGameState, playerState),
+        ...context.tech.getReadoutLines(cloneResident("tech"), clonePlayersForReadout()),
         "",
-        ...data.getReadoutLines(playerState),
+        ...data.getReadoutLines(clonePlayersForReadout()),
         "",
-        ...data.getNebulaReadoutLines(nebulaDataState),
+        ...data.getNebulaReadoutLines(cloneResident("data")),
         "",
-        ...data.getSectorSettlementReadoutLines(nebulaDataState),
+        ...data.getSectorSettlementReadoutLines(cloneResident("data")),
         "",
-        ...aliens.getReadoutLines(alienGameState),
+        ...aliens.getReadoutLines(cloneResident("aliens")),
         "",
         ...(industry.getReadoutLines?.(getInterfacePlayer(), turnState.roundNumber) || []),
         ...(context.actionHistory.hasSession() ? ["", "行动指令栈", ...context.actionHistory.getTrace()] : []),
         ...(context.quickActionHistory.hasSession() ? ["", "快速行动指令栈", ...context.quickActionHistory.getTrace()] : []),
       ].join("\n");
-      scheduleAiAutoStepIfNeeded();
     }
 
     function getRotateStateSlotIndex(rotationCount) {
@@ -1603,29 +1657,29 @@
       els.roundStatusToken.dataset.slotId = slot.id;
     }
 
-    return {
-      setTokenAssetSizes,
-      renderRocketElement,
-      renderChongFossilOwnerTokenForRocket,
-      renderChongFossilOwnerTokens,
-      renderPiratesRaidPlanetMarkers,
-      renderYichangdianAnomalyMarkers,
-      renderChongPlanetFossilMarkers,
-      renderRunezuBoardSymbols,
-      renderRockets,
-      renderPublicCards,
-      renderOpponentStats,
-      renderPlayerHand,
-      renderReservedCards,
-      renderInitialSelectionArea,
-      renderPlayerDataBoard,
-      renderPlayerStats,
-      renderSectorNebulaDataBoard,
-      renderWheels,
-      renderSectors,
-      renderStateReadout,
-      renderRotateStateToken,
-    };
+    return Object.freeze({
+      setTokenAssetSizes: withProjection(setTokenAssetSizes),
+      renderRocketElement: withProjection(renderRocketElement),
+      renderChongFossilOwnerTokenForRocket: withProjection(renderChongFossilOwnerTokenForRocket),
+      renderChongFossilOwnerTokens: withProjection(renderChongFossilOwnerTokens),
+      renderPiratesRaidPlanetMarkers: withProjection(renderPiratesRaidPlanetMarkers),
+      renderYichangdianAnomalyMarkers: withProjection(renderYichangdianAnomalyMarkers),
+      renderChongPlanetFossilMarkers: withProjection(renderChongPlanetFossilMarkers),
+      renderRunezuBoardSymbols: withProjection(renderRunezuBoardSymbols),
+      renderRockets: withProjection(renderRockets),
+      renderPublicCards: withProjection(renderPublicCards),
+      renderOpponentStats: withProjection(renderOpponentStats),
+      renderPlayerHand: withProjection(renderPlayerHand),
+      renderReservedCards: withProjection(renderReservedCards),
+      renderInitialSelectionArea: withProjection(renderInitialSelectionArea),
+      renderPlayerDataBoard: withProjection(renderPlayerDataBoard),
+      renderPlayerStats: withProjection(renderPlayerStats),
+      renderSectorNebulaDataBoard: withProjection(renderSectorNebulaDataBoard),
+      renderWheels: withProjection(renderWheels),
+      renderSectors: withProjection(renderSectors),
+      renderStateReadout: withProjection(renderStateReadout),
+      renderRotateStateToken: withProjection(renderRotateStateToken),
+    });
   }
 
   return {

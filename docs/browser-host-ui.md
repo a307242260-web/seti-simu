@@ -31,6 +31,8 @@ PolicyDecision ─> PolicyInputAdapter ─> 同一 Action / Decision port
 
 `resident-projection.js` 只校验/冻结规范 BrowserProjection（或显式 StateSource projector 结果），传统 `playerState/turnState/cardState/...` key 会结构化拒绝。`resident-renderer.js` 负责 round/turn、玩家公开统计、太阳系棋子、终局板、科技供应与公共牌。Decision renderer registry 负责 action bar、研究科技、扫描/数据/登陆、卡牌、公司和八种外星人 choice presentation。renderer 只接受 `{ projection, viewState }`。
 
+传统 `app/render-runtime.js` 的生产装配也遵循同一读取边界：它只保存 `getProjection()` provider 和 ViewState，通过 `BrowserProjection.resident` 的只读 selector 兼容尚未迁走的 DOM 细节。provider 会剥离 callback/executor，隐藏对手手牌与牌库顺序，并在一次 render 调用内固定同一 projection；不得把 mutable root 或长期 slice 换名塞回 context。会补数据、排机会或续跑 AI 的旧 render-time 副作用已经删除，规则 flow 必须在进入刷新前完成这些推进。
+
 ## 输入边界
 
 `app/browser-host/input-adapter.js` 路由三类互斥输入：

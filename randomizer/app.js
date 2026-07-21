@@ -852,10 +852,73 @@
     };
   }
 
+  function cloneResidentPresentation(value, seen = new WeakMap()) {
+    if (value == null || typeof value !== "object") {
+      return typeof value === "function" || typeof value === "symbol" ? undefined : value;
+    }
+    if (seen.has(value)) return undefined;
+    if (value instanceof Set) return [...value].map((item) => cloneResidentPresentation(item));
+    if (value instanceof Map) {
+      return Object.fromEntries([...value.entries()].map(([key, item]) => [
+        String(key), cloneResidentPresentation(item),
+      ]));
+    }
+    const output = Array.isArray(value) ? [] : {};
+    seen.set(value, output);
+    for (const [key, item] of Object.entries(value)) {
+      const cloned = cloneResidentPresentation(item, seen);
+      if (cloned !== undefined) output[key] = cloned;
+    }
+    return output;
+  }
+
   function createResidentRenderInput() {
     if (!residentDesktopRenderer || !residentViewStateStore || !residentProjectionAdapter) return null;
+    const viewer = getResidentViewer();
+    const decisions = decisionSessions.createFacade({
+      discardAction: "discard_action",
+      cardSelectionAction: "card_selection_action",
+      scanTargetAction: "scan_target_action",
+      handScanAction: "hand_scan_action",
+      alienTraceAction: "alien_trace_action",
+      alienTracePickerState: "alien_trace_picker_state",
+      alienRevealConfirmation: "alien_reveal_confirmation",
+      actionEffectFlow: "action_effect_flow",
+    });
+    const canonical = residentProjectionAdapter.projectSource({ viewer });
+    const projectedPlayers = (canonical.resident?.players?.players || []).map((projectedPlayer) => {
+      if (String(projectedPlayer?.id) !== viewer.playerId) return projectedPlayer;
+      return browserRuleState.playerState.players.find((player) => String(player?.id) === viewer.playerId)
+        || projectedPlayer;
+    });
     const projection = browserHostModule.residentProjection.createResidentProjection({
-      projection: residentProjectionAdapter.projectSource({ viewer: getResidentViewer() }),
+      projection: {
+        ...canonical,
+        resident: {
+          ...canonical.resident,
+          turn: structuredClone(browserRuleState.turnState),
+          players: {
+            currentPlayerId: browserRuleState.playerState.currentPlayerId,
+            players: structuredClone(projectedPlayers),
+          },
+          solar: structuredClone(browserRuleState.solarState),
+          pieces: structuredClone(browserRuleState.rocketState),
+          planets: structuredClone(browserRuleState.planetStatsState),
+          data: structuredClone(browserRuleState.nebulaDataState),
+          cards: {
+            ...canonical.resident.cards,
+            publicCards: structuredClone(browserRuleState.cardState.publicCards || []),
+            publicMarket: structuredClone(browserRuleState.cardState.publicCards || []),
+          },
+          tech: {
+            board: structuredClone(browserRuleState.techGameState.board || {}),
+            ui: structuredClone(browserRuleState.techGameState.ui || {}),
+          },
+          aliens: structuredClone(browserRuleState.alienGameState),
+          finalScoring: structuredClone(browserRuleState.finalScoringState),
+          decisions: cloneResidentPresentation(decisions),
+        },
+      },
     });
     if (projection.ok === false) throw new TypeError(`${projection.code}: ${projection.message}`);
     residentViewStateStore.reconcileProjection(projection);
@@ -933,7 +996,6 @@
     isStateLogEnabled,
   } = actionLogViewRuntime;
   const renderRuntime = viewAdapter?.renderRuntime || renderRuntimeModule.createRenderRuntime({
-    decisionSessions,
     document,
     Image,
     solar,
@@ -951,15 +1013,8 @@
     aomomo,
     runezu,
     industry,
-    solarState,
-    playerState,
-    rocketState,
-    nebulaDataState,
-    planetStatsState,
-    alienGameState,
-    finalScoringState,
-    turnState,
-    uiRuntimeState,
+    getProjection: () => createResidentRenderInput()?.projection,
+    viewState: uiRuntimeState,
     tokenWidths,
     techRenderContext,
     sectorElements,
@@ -976,9 +1031,7 @@
     OPPONENT_TECH_TYPES,
     ROTATE_STATE_SLOTS,
     getPendingMovePayment,
-    cardState,
     tech,
-    techGameState,
     actionHistory,
     quickActionHistory,
     getCurrentPlayer,
@@ -1014,10 +1067,6 @@
     renderReservedCardsFromTaskState: (...args) => renderReservedCardsFromTaskState(...args),
     syncFinalScorePendingMarks: (...args) => syncFinalScorePendingMarks?.(...args),
     renderFinalScoreBoard: (...args) => renderFinalScoreBoard?.(...args),
-    queueJiuzheOpportunitiesForPlayer,
-    maybeOpenQueuedJiuzheOpportunity,
-    queueBanrenmaOpportunitiesForPlayer,
-    maybeOpenQueuedBanrenmaOpportunity,
     computePlayerFinalScoreBreakdown,
     buildPlutoMarkerContext,
     getCardTypeCode: (...args) => getCardTypeCode(...args),
@@ -1041,7 +1090,6 @@
     formatCardPlayCost: (...args) => formatCardPlayCost(...args),
     getPublicScanChoicesForCard: (...args) => getPublicScanChoicesForCard(...args),
     attachCardHoverPreview,
-    ensurePublicCardsFilledRespectingDelayedRefills: (...args) => ensurePublicCardsFilledRespectingDelayedRefills(...args),
     updatePublicCardControls: (...args) => updatePublicCardControls(...args),
     canBlindDraw: (...args) => canBlindDraw(...args),
     getPlanetName,
@@ -1061,7 +1109,6 @@
     getInitialSelectionReadoutLines,
     getPlayerReadoutLines,
     getPlanetStatsReadoutLines,
-    scheduleAiAutoStepIfNeeded: (...args) => scheduleAiAutoStepIfNeeded?.(...args),
     getRocketCoordinateReadoutLines,
     selectDefaultRocketForCurrentPlayer,
     syncInteractionFocusChrome,
