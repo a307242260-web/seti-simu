@@ -147,8 +147,18 @@
     };
   }
 
+  function usesResidentWorkingSlices(workingRoot) {
+    return Boolean(workingRoot
+      && workingRoot.playerState === browserRuleState.playerState
+      && workingRoot.turnState === browserRuleState.turnState
+      && workingRoot.cardState === browserRuleState.cardState
+      && workingRoot.rocketState === browserRuleState.rocketState
+      && workingRoot.techGameState === browserRuleState.techGameState
+      && workingRoot.alienGameState === browserRuleState.alienGameState);
+  }
+
   function collectConditionalChoices(workingRoot = browserRuleState) {
-    if (workingRoot !== browserRuleState) {
+    if (!usesResidentWorkingSlices(workingRoot)) {
       return { actorPlayer: null, candidates: [], code: "CONDITIONAL_WORKING_ROOT_MISMATCH" };
     }
     const finalScorePlayer = getCurrentPlayer();
@@ -1006,7 +1016,7 @@
   });
 
   function executeProductionConditionalChoice(workingRoot, choice, decision) {
-    if (workingRoot !== browserRuleState) {
+    if (!usesResidentWorkingSlices(workingRoot)) {
       return {
         ok: false,
         code: "CONDITIONAL_WORKING_ROOT_MISMATCH",

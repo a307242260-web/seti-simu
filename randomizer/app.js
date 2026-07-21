@@ -1859,7 +1859,14 @@
       workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
     ),
     recordMoveActionHistory,
-    executePrimaryBoardAction: (...args) => actionRuntimeController?.executePrimaryBoardAction(...args),
+    executePrimaryBoardAction: (descriptor, executionOptions, options) => (
+      actionRuntimeController?.executePrimaryBoardAction(
+        createActionContextForWorkingRoot(browserRuleState, descriptor),
+        descriptor,
+        executionOptions,
+        options,
+      )
+    ),
     renderRocketElement,
     clearMoveRocketHighlight,
     beginQuickActionStep,
@@ -2718,13 +2725,9 @@
       workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
     ),
     primaryBoardActionExecutor,
-    primaryBoardWorkingRoot: browserRuleState,
     engineActionExecutor,
-    engineActionWorkingRoot: browserRuleState,
     quickTurnActionExecutor,
-    quickTurnActionWorkingRoot: browserRuleState,
     conditionalActionExecutor,
-    conditionalActionWorkingRoot: browserRuleState,
     actions,
     removeRocketElement: headlessMode ? () => {} : removeRocketElement,
     syncPlanetOrbitLandMarkersAfterAction: headlessMode ? () => {} : syncPlanetOrbitLandMarkers,
@@ -9149,6 +9152,8 @@
       techUiState: techGameState.ui,
       techGameState,
       turnState,
+      metaState: browserRuleState.meta,
+      matchState: browserRuleState.match,
       stateVersion: browserRuleState.meta?.stateVersion ?? 0,
       decisionVersion: browserRuleState.match?.decisionVersion ?? 0,
       standardActionAuthority: {
@@ -9202,6 +9207,8 @@
       techUiState: workingRoot.techGameState.ui,
       techGameState: workingRoot.techGameState,
       turnState: workingRoot.turnState,
+      metaState: workingRoot.meta,
+      matchState: workingRoot.match,
       stateVersion: workingRoot.meta?.stateVersion ?? 0,
       decisionVersion: workingRoot.match?.decisionVersion ?? 0,
       standardActionAuthority: {

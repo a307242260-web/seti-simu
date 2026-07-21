@@ -79,13 +79,9 @@
       abilities,
       createActionContext,
       primaryBoardActionExecutor,
-      primaryBoardWorkingRoot,
       engineActionExecutor,
-      engineActionWorkingRoot,
       quickTurnActionExecutor,
-      quickTurnActionWorkingRoot,
       conditionalActionExecutor,
-      conditionalActionWorkingRoot,
       actions,
       removeRocketElement,
       syncPlanetOrbitLandMarkersAfterAction = syncPlanetOrbitLandMarkers,
@@ -134,6 +130,30 @@
       alienRevealConfirmation: "alien_reveal_confirmation",
       actionEffectFlow: "action_effect_flow",
     }) || {};
+
+    function getExecutionWorkingRoot(standardContext) {
+      const required = [
+        "solarState", "playerState", "cardState", "rocketState", "nebulaDataState",
+        "planetStatsState", "alienGameState", "techGameState", "turnState", "metaState", "matchState",
+      ];
+      const missing = required.filter((key) => !standardContext?.[key]);
+      if (missing.length) {
+        throw new TypeError(`Standard Action context 缺少 working root slices: ${missing.join(", ")}`);
+      }
+      return {
+        solarState: standardContext.solarState,
+        playerState: standardContext.playerState,
+        cardState: standardContext.cardState,
+        rocketState: standardContext.rocketState,
+        nebulaDataState: standardContext.nebulaDataState,
+        planetStatsState: standardContext.planetStatsState,
+        alienGameState: standardContext.alienGameState,
+        techGameState: standardContext.techGameState,
+        turnState: standardContext.turnState,
+        meta: standardContext.metaState,
+        match: standardContext.matchState,
+      };
+    }
 
     function createIndustrySelectionCard(fileName) {
       return {
@@ -457,11 +477,12 @@
     }
 
     function executeStandardDescriptor(standardContext, descriptor, executionOptions = null) {
+      const workingRoot = getExecutionWorkingRoot(standardContext);
       if (CONDITIONAL_ACTION_FAMILIES.has(descriptor?.family)) {
-        return conditionalActionExecutor.execute(conditionalActionWorkingRoot, descriptor);
+        return conditionalActionExecutor.execute(workingRoot, descriptor);
       }
       if (QUICK_TURN_ACTION_FAMILIES.has(descriptor?.family)) {
-        return quickTurnActionExecutor.execute(quickTurnActionWorkingRoot, descriptor, {
+        return quickTurnActionExecutor.execute(workingRoot, descriptor, {
           validate: (workingRoot, action) => standardActionAdapter.validate(
             createActionContext(workingRoot, action),
             action,
@@ -470,7 +491,7 @@
       }
       if (ENGINE_ACTION_FAMILIES.has(descriptor?.family)) {
         const actionLogBefore = createActionLogImpactSnapshot?.();
-        const result = engineActionExecutor.execute(engineActionWorkingRoot, descriptor, {
+        const result = engineActionExecutor.execute(workingRoot, descriptor, {
           validate: (workingRoot, action) => standardActionAdapter.validate(
             createActionContext(workingRoot, action),
             action,
@@ -507,14 +528,14 @@
           { automated: true, standardAction: descriptor },
         ) || { ok: false, code: "PRIMARY_BOARD_MOVE_CALLER_MISSING", message: "移动 caller 未装配" };
       }
-      return executePrimaryBoardAction(descriptor, executionOptions);
+      return executePrimaryBoardAction(standardContext, descriptor, executionOptions);
     }
 
-    function executePrimaryBoardAction(descriptor, executionOptions = null, options = {}) {
+    function executePrimaryBoardAction(standardContext, descriptor, executionOptions = null, options = {}) {
       if (!PRIMARY_BOARD_FAMILIES.has(descriptor?.family)) {
         return { ok: false, code: "PRIMARY_BOARD_FAMILY_INVALID", message: `非 Primary Board family: ${descriptor?.family || "<missing>"}` };
       }
-      return primaryBoardActionExecutor.execute(primaryBoardWorkingRoot, descriptor, {
+      return primaryBoardActionExecutor.execute(getExecutionWorkingRoot(standardContext), descriptor, {
         ...(options.skipValidation ? {} : { validate: standardActionAdapter.validate }),
         executionOptions,
       });

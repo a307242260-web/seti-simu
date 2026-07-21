@@ -138,7 +138,8 @@ function createExecutor(trace = [], options = {}) {
 {
   const actionRuntimeSource = fs.readFileSync(path.join(__dirname, "action-runtime.js"), "utf8");
   assert.match(actionRuntimeSource, /ENGINE_ACTION_FAMILIES\.has\(descriptor\?\.family\)/);
-  assert.match(actionRuntimeSource, /engineActionExecutor\.execute\(engineActionWorkingRoot, descriptor/);
+  assert.match(actionRuntimeSource, /engineActionExecutor\.execute\(workingRoot, descriptor/);
+  assert.doesNotMatch(actionRuntimeSource, /engineActionWorkingRoot|primaryBoardWorkingRoot|quickTurnActionWorkingRoot|conditionalActionWorkingRoot/);
   const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
   assert.equal(/executors:\s*\{/.test(appSource), false, "app.js 不得保留四 family executor 函数体");
   assert.match(appSource, /executeScan: \(workingRoot, descriptor\) => executeMainScanAction\(workingRoot, descriptor\)/);
