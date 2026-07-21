@@ -24,7 +24,7 @@
 - `ai-controller-test-harness.js`：1,033 行，共享 controller 夹具。
 - `ai-controller-integration-fixtures.js`：119 行，共享外星人状态夹具。
 
-另新增 `app/ai/automation-runtime.test.js` 与 `app/ai/action-executor.test.js`，直接覆盖 pending 短路顺序、idle 后顶层选择、异常转 bug、selector、稳定 dispatch、retry 判断和 planner shadow。原 10k 测试巨石及重复 harness 已删除。
+原 10k 测试巨石及重复 harness 已删除。曾拆出的 `app/ai/automation-runtime.test.js` 与 `app/ai/action-executor.test.js` 也已在 SETI-116 删除，不再把自动化编排夹具当作单元回归。
 
 ## 删除与装配证据
 

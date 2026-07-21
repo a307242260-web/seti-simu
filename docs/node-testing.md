@@ -28,5 +28,6 @@ node tools/run_node_tests.js --match game/actions
 - 从保留的行为测试中移除迁移禁词、旧 continuation、脚本装配顺序等源码文本断言。
 - 将 `expected-score-evaluator.test.js`、`heuristic-policy.test.js` 去除源码扫描后作为行为 unit 保留；删除固定版面、固定 seed 整局和逐回合报告三套额外流程基线。
 - 删除 StateStore 源码架构扫描器及三套负向 fixture；唯一 owner、快照隔离、CAS 冲突和恢复拒绝继续由对应状态行为 unit 与唯一 full-flow 验证。
+- 删除 8 个浏览器自动化/观测工具测试与 6 个训练/worker 基础设施测试；这些套件不再作为机器人单元能力证据。自动化编排、日志/报告、调参、自博弈、评测与 worker 容错细节不再由默认 Node 回归验证。
 
 被删除的迁移、装配和“旧符号不存在”风险不再验证；业务规则与状态行为风险继续由对应 unit 和唯一 full-flow 覆盖。

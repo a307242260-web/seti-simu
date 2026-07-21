@@ -29,14 +29,6 @@ randomizer/app/action-briefing.test.js
 randomizer/app/action-log-export.test.js
 randomizer/app/action-log-runtime.test.js
 randomizer/app/action-runtime.test.js
-randomizer/app/ai/action-executor.test.js
-randomizer/app/ai/automation-runtime.test.js
-randomizer/app/ai/battle-log.test.js
-randomizer/app/ai/battle-report.test.js
-randomizer/app/ai/control-runtime.test.js
-randomizer/app/ai/experiment-runner.test.js
-randomizer/app/ai/interaction-pending.test.js
-randomizer/app/ai/tuning-history.test.js
 randomizer/app/alien-runtime.test.js
 randomizer/app/alien-trace-reward-flow.test.js
 randomizer/app/alien-ui.test.js
@@ -77,7 +69,6 @@ randomizer/app/headless-legality.test.js
 randomizer/app/headless-no-browser-globals.test.js
 randomizer/app/headless-state-checkpoint.test.js
 randomizer/app/headless-training-replay.test.js
-randomizer/app/headless-worker-resilience.test.js
 randomizer/app/income-runtime.test.js
 randomizer/app/industry-runtime.test.js
 randomizer/app/public-api-ai-contract.test.js
@@ -152,11 +143,6 @@ randomizer/game/state/state-store.test.js
 randomizer/game/tech/bonuses.test.js
 randomizer/game/tech/tech.test.js
 randomizer/solar-system/core.test.js
-randomizer/training/episode-report.test.js
-randomizer/training/evaluation.test.js
-randomizer/training/heuristic-policy-adapter.test.js
-randomizer/training/self-play.test.js
-randomizer/training/worker-pool.test.js
   `),
   fullFlow: ["randomizer/full-flow/standard-flow.test.js"],
   architectureModules: Object.freeze({
