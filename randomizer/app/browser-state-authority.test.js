@@ -120,7 +120,7 @@ function createAuthority() {
   assert.deepEqual(journal.entries, ["base"]);
 })();
 
-(function testRecoveryReplacesStoreAndKeepsNarrowReferenceIdentity() {
+(function testRecoveryRestoresResidentStoreAndKeepsNarrowReferenceIdentity() {
   const { authority, counters } = createAuthority();
   authority.serialize();
   const playerReference = authority.working.playerState;
@@ -130,7 +130,7 @@ function createAuthority() {
   assert.equal(result.ok, true);
   assert.equal(authority.working.playerState, playerReference);
   assert.equal(authority.getSnapshot().meta.stateVersion, 17);
-  assert.deepEqual(counters(), { storeCreations: 2, legacyCommittedFactoryCalls: 0 });
+  assert.deepEqual(counters(), { storeCreations: 1, legacyCommittedFactoryCalls: 0 });
 })();
 
 (function testCompositionHasNoLegacyStateOwnerConstruction() {

@@ -14,15 +14,22 @@ function createState(version = 0) {
 }
 
 function createHarness() {
-  const store = stateApi.createStateStore(createState());
+  const residentStore = stateApi.createStateStore(createState());
   const view = viewApi.createViewStateStore();
   const memory = new Map();
   const calls = { state: 0, session: 0, debug: 0, downloads: [] };
   let restoredState = null;
   let sessionCheckpoint = { schemaVersion: "seti-effect-session-checkpoint-v1", session: { id: "s1" } };
+  const store = {
+    ...residentStore,
+    restore(state, metadata) {
+      calls.state += 1;
+      restoredState = structuredClone(state);
+      return residentStore.restore(state, metadata);
+    },
+  };
   const services = servicesApi.createBrowserServices({
     stateStore: store,
-    stateRestorePort: { restore(state) { calls.state += 1; restoredState = structuredClone(state); return { ok: true }; } },
     sessionPort: {
       capture: () => ({ ok: true, checkpoint: sessionCheckpoint }),
       validate(checkpoint) { return checkpoint?.schemaVersion === sessionCheckpoint.schemaVersion ? { ok: true, checkpoint } : { ok: false, code: "SESSION_INVALID" }; },
@@ -73,6 +80,29 @@ function createHarness() {
   assert.equal(result.code, "VIEW_STATE_ROOT_FIELDS_INVALID");
   assert.equal(harness.calls.state, 0);
   assert.equal(harness.calls.session, 0);
+})();
+
+(function testSessionRestoreFailureRollsBackStateSessionAndViewBytes() {
+  const harness = createHarness();
+  harness.view.dispatch({ type: "overlay.set", activeId: "before" });
+  const beforeState = harness.store.serialize().serialized;
+  const beforeView = JSON.stringify(harness.view.getSnapshot());
+  const envelope = structuredClone(harness.services.capture().envelope);
+  envelope.state.serialized = stateApi.createStateStore(createState(9)).serialize().serialized;
+  const originalRestore = harness.services.restore;
+  const failing = servicesApi.createBrowserServices({
+    stateStore: harness.store,
+    sessionPort: {
+      capture: () => ({ ok: true, checkpoint: { schemaVersion: "seti-effect-session-checkpoint-v1", session: { id: "before" } } }),
+      validate: (checkpoint) => ({ ok: true, checkpoint }),
+      restore: () => ({ ok: false, code: "SESSION_RESTORE_POISON" }),
+    },
+    viewStateStore: harness.view,
+  }).restore(envelope);
+  assert.equal(failing.code, "SESSION_RESTORE_POISON");
+  assert.equal(harness.store.serialize().serialized, beforeState);
+  assert.equal(JSON.stringify(harness.view.getSnapshot()), beforeView);
+  assert.equal(typeof originalRestore, "function");
 })();
 
 (function testStorageDownloadDebugAndFacadeArePortsOnly() {

@@ -13,6 +13,10 @@
 
   const RECOVERY_SNAPSHOT_VERSION = 2;
 
+  function clone(value) {
+    return value == null ? value : structuredClone(value);
+  }
+
   function failure(code, message, details = {}) {
     return { ok: false, code, message, ...details };
   }
@@ -42,6 +46,20 @@
       entryId: options.entryId ?? null,
       label: options.label || null,
     };
+    if (options.browserServices?.capture) {
+      const captured = options.browserServices.capture();
+      if (!captured?.ok) {
+        const error = new TypeError(`无法创建 browser recovery checkpoint: ${captured?.code || "BROWSER_CAPTURE_FAILED"}`);
+        error.validation = captured;
+        throw error;
+      }
+      return {
+        version: RECOVERY_SNAPSHOT_VERSION,
+        meta,
+        browserCheckpoint: clone(captured.envelope),
+        runtime: structuredClone(options.runtime || {}),
+      };
+    }
     const stateStore = requireStateStore(options, "serialize");
     const serialized = options.serializeOptions
       ? stateStore.serialize(options.serializeOptions)
@@ -110,7 +128,11 @@
       const raw = storage.getItem(storageKey);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
-      return parsed && typeof parsed === "object" ? parsed : null;
+      if (!parsed || typeof parsed !== "object" || parsed.version !== RECOVERY_SNAPSHOT_VERSION) {
+        storage.removeItem(storageKey);
+        return null;
+      }
+      return parsed;
     } catch (error) {
       storage.removeItem(storageKey);
       return null;
@@ -118,7 +140,7 @@
   }
 
   function hasPersistentGameState(saved) {
-    return Boolean(saved?.latestSnapshot || saved?.snapshot);
+    return Boolean(saved?.version === RECOVERY_SNAPSHOT_VERSION && saved?.latestSnapshot);
   }
 
   function clearPersistentGameState(storage, storageKey) {
@@ -140,7 +162,7 @@
   function getRecoverySnapshotFromLog(logOrPackage, options = {}) {
     const entries = getRecoveryEntriesFromInput(logOrPackage);
     if (!entries.length) {
-      return logOrPackage?.latestSnapshot || logOrPackage?.baseSnapshot || null;
+      return logOrPackage?.latestSnapshot || null;
     }
     if (options.entryId != null) {
       const match = entries.find((entry) => entry.id === options.entryId || String(entry.id) === String(options.entryId));
@@ -167,12 +189,55 @@
         { version: envelope.version ?? null },
       );
     }
+    if (envelope.browserCheckpoint != null) {
+      const services = options.browserServices;
+      if (!services?.validateEnvelope || !services?.restore || !services?.capture) {
+        return failure("RECOVERY_BROWSER_SERVICES_MISSING", "Browser checkpoint 需要 Browser Services restore 协议");
+      }
+      const validated = services.validateEnvelope(envelope.browserCheckpoint);
+      if (!validated.ok) return validated;
+      const before = services.capture();
+      if (!before?.ok) return before;
+      const restored = services.restore(envelope.browserCheckpoint);
+      if (!restored.ok) return restored;
+      try {
+        options.restoreDeterministicState?.(structuredClone(validated.state.meta.sequences));
+      } catch (error) {
+        services.restore(before.envelope);
+        return failure(
+          "RECOVERY_COMMITTED_STATE_RESTORE_FAILED",
+          error?.message || "恢复 committed state 失败",
+        );
+      }
+      options.onAfterStateRestored?.();
+      const aiControlResult = options.restoreAiControlSnapshot?.(envelope.runtime?.aiControl || null, {
+        missingMessage: "存档未包含电脑配置，已按默认人机对局恢复",
+      });
+      const baseMessage = options.message || "已从行动日志恢复局面";
+      const recoveryMessage = aiControlResult?.missing
+        || aiControlResult?.invalidPlayerIds
+        || aiControlResult?.clearedPausedOnBug
+        ? `${baseMessage}；${aiControlResult.message}`
+        : baseMessage;
+      options.refreshAfterGameRecovery?.(recoveryMessage);
+      return {
+        ok: true,
+        snapshotVersion: envelope.version,
+        committedSchemaVersion: validated.state.meta.schemaVersion,
+        rngState: structuredClone(validated.state.meta.rngState),
+        sequences: structuredClone(validated.state.meta.sequences),
+        aiControl: aiControlResult,
+        message: options.getRecoveryMessage?.() || recoveryMessage,
+      };
+    }
     if (typeof envelope.committedState !== "string") {
       return failure("RECOVERY_COMMITTED_STATE_MISSING", "恢复快照缺少 committedState JSON");
     }
     let stateStore;
     try {
       stateStore = requireStateStore(options, "deserialize");
+      requireStateStore(options, "getSnapshot");
+      requireStateStore(options, "restore");
     } catch (error) {
       return failure("RECOVERY_STATE_STORE_MISSING", error.message);
     }
@@ -184,11 +249,15 @@
         message: deserialized.message || "行动日志恢复快照无效",
       };
     }
+    const beforeState = stateStore.getSnapshot();
+    const beforeRuntime = options.captureRuntimeState?.() ?? null;
+    const restored = stateStore.restore(structuredClone(deserialized.state), { source: "game-recovery" });
+    if (restored?.ok === false) return restored;
     try {
-      const restored = options.restoreCommittedState?.(structuredClone(deserialized.state));
-      if (restored?.ok === false) return restored;
       options.restoreDeterministicState?.(structuredClone(deserialized.state.meta.sequences));
     } catch (error) {
+      stateStore.restore(beforeState, { source: "game-recovery-rollback" });
+      try { options.restoreRuntimeState?.(beforeRuntime); } catch (_rollbackError) { /* 返回原始恢复错误。 */ }
       return {
         ok: false,
         code: "RECOVERY_COMMITTED_STATE_RESTORE_FAILED",

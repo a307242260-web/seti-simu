@@ -148,27 +148,9 @@
       const techUi = clone(working.techGameState.ui || {});
       const cardUi = clone(working.cardState.ui || {});
       replaceMutableObject(working.solarState, state.solarSystem);
-      if (working.solarState.rotation) {
-        working.solarState.wheelSteps = [0, 1, 2, 3, 4].map((wheelId) => (
-          wheelId === 0 ? 0 : Number(working.solarState.rotation[`wheel${wheelId}Steps`] || 0)
-        ));
-      }
       replaceMutableObject(working.nebulaDataState, state.data);
-      for (const bucket of Object.values(working.nebulaDataState.nebulae || {})) {
-        const counts = {};
-        let last = null;
-        for (const token of bucket.tokens || []) {
-          const color = token.replacedByPlayerColor || token.playerColor || null;
-          if (color) counts[color] = (counts[color] || 0) + 1;
-          if (color) last = token;
-        }
-        bucket.playerTokenCounts = counts;
-        bucket.lastReplacedPlayerId = last?.replacedByPlayerId || last?.playerId || null;
-        bucket.lastReplacedPlayerColor = last?.replacedByPlayerColor || last?.playerColor || null;
-        bucket.lastReplacedPlayerLabel = null;
-      }
       replaceMutableObject(working.alienGameState, state.aliens);
-      replaceMutableObject(working.finalScoringState, { ...state.finalScoring, pendingMarks: [] });
+      replaceMutableObject(working.finalScoringState, state.finalScoring);
       replaceMutableObject(working.playerState, {
         ...state.players,
         currentPlayerId: state.turn.currentPlayerId ?? null,
@@ -185,19 +167,6 @@
         statusNote,
       });
       replaceMutableObject(working.planetStatsState, state.planets);
-      for (const record of Object.values(working.planetStatsState.planets || {})) {
-        for (const key of ["orbitMarkers", "landingMarkers"]) {
-          if (!Array.isArray(record[key])) record[key] = [];
-          record[key].forEach((marker, index) => {
-            marker.sequence = index + 1;
-            marker.displayed = true;
-            marker.displaySlot = index + 1;
-          });
-        }
-        if (!Array.isArray(record.satelliteLandings)) record.satelliteLandings = [];
-        record.orbits = record.orbitMarkers.length;
-        record.landings = record.landingMarkers.length;
-      }
       replaceMutableObject(working.techGameState, { board: state.tech, ui: techUi });
       replaceMutableObject(working.cardState, { ...state.cards, ui: cardUi });
       working.meta = clone(state.meta);
@@ -205,12 +174,10 @@
 
     function replaceCommitted(candidate) {
       const purified = highCouplingState.purifyHighCouplingSlices(candidate);
-      const nextStore = highCouplingState.createHighCouplingStateStore(purified);
-      const snapshot = nextStore.getSnapshot();
+      const restored = store.restore(purified, { source: "browser-recovery" });
+      if (!restored.ok) return restored;
+      const snapshot = restored.snapshot;
       hydrateWorkingFromCommitted(snapshot);
-      unsubscribeStore?.();
-      store = nextStore;
-      forwardStoreEvents();
       return { ok: true, snapshot: store.getSnapshot() };
     }
 
@@ -252,6 +219,11 @@
       compareAndCommit: (...args) => store.compareAndCommit(...args),
       validate: (...args) => store.validate(...args),
       deserialize: (...args) => store.deserialize(...args),
+      restore: (...args) => {
+        const restored = store.restore(...args);
+        if (restored.ok) hydrateWorkingFromCommitted(restored.snapshot);
+        return restored;
+      },
       serialize,
       subscribe(listener) {
         requireFunction(listener, "subscriber");

@@ -8,6 +8,7 @@ const rendererApi = require("./resident-renderer");
 const viewStateApi = require("./view-state-store");
 const coreProjectionApi = require("./projection-adapter");
 const stateApi = require("../../game/state/state-store");
+const sourceApi = require("../../game/state/host-source");
 
 function createClassList(element) {
   const values = new Set();
@@ -78,28 +79,24 @@ function createFixture() {
 }
 
 function createProjection() {
-  return projectionApi.createResidentProjection({
-    projectionId: "fixed:seti-74",
-    viewerPlayer: {
-      id: "p1", name: "一号", color: "white", colorLabel: "白色",
-      resources: { score: 12, credits: 4, energy: 3 },
-      hand: [{ id: "own", cardId: "b_1.webp", src: "own.webp" }], reservedCards: [],
-    },
-    playerState: {
-      currentPlayerId: "p2",
-      players: [
-        { id: "p1", name: "一号", color: "white", colorLabel: "白色", resources: { score: 12, credits: 4 }, hand: [{ id: "own" }] },
-        { id: "p2", name: "二号", color: "brown", colorLabel: "棕色", resources: { score: 9, credits: 2 }, hand: [{ id: "HIDDEN_OPPONENT_CANARY" }] },
-      ],
-    },
-    turnState: { roundNumber: 2, gameEnded: false },
-    displayedTurn: 3,
-    cardState: { publicCards: [{ id: "public-1", cardName: "公开牌", src: "public.webp" }], drawPile: ["HIDDEN_DECK_CANARY"] },
-    solarState: { rotation: { rotationCount: 2 } },
-    rocketState: { rockets: [{ id: "r1", playerId: "p1", tokenSrc: "rocket.webp", x: 10, y: 20 }] },
-    finalScoringState: { tiles: { a: { marks: [{ id: "m1", slotIndex: 1, playerColor: "white", tokenSrc: "token.webp" }] } } },
-    techGameState: { board: { stacks: { blue1: { available: false } } } },
+  const state = stateApi.createCommittedGameState({
+    stateVersion: 7, gameId: "seti-109", rulesetVersion: "test", seed: 109, rngState: {}, sequences: {},
+    turn: { roundNumber: 2, turnNumber: 3, currentPlayerId: "p2" },
+    players: { currentPlayerId: "p2", players: [
+      { id: "p1", name: "一号", color: "white", colorLabel: "白色", resources: { score: 12, credits: 4 }, hand: [{ id: "own", cardId: "b_1.webp", src: "own.webp" }], reservedCards: [] },
+      { id: "p2", name: "二号", color: "brown", colorLabel: "棕色", resources: { score: 9, credits: 2 }, hand: [{ id: "HIDDEN_OPPONENT_CANARY" }] },
+    ] },
+    cards: { publicCards: [{ id: "public-1", cardName: "公开牌", src: "public.webp" }], drawPile: ["HIDDEN_DECK_CANARY"] },
+    solarSystem: { rotation: { rotationCount: 2 } },
+    pieces: { rockets: [{ id: "r1", playerId: "p1", tokenSrc: "rocket.webp", x: 10, y: 20 }] },
+    finalScoring: { tiles: { a: { marks: [{ id: "m1", slotIndex: 1, playerColor: "white", tokenSrc: "token.webp" }] } } },
+    tech: { board: { stacks: { blue1: { available: false } } } },
   });
+  const store = stateApi.createStateStore(state);
+  const source = sourceApi.createHostStateSource({ stateStore: store });
+  const canonical = coreProjectionApi.createBrowserProjectionAdapter({ stateSource: source })
+    .projectSource({ viewer: { viewerId: "browser:p1", playerId: "p1", role: "player" } });
+  return projectionApi.createResidentProjection({ projection: canonical });
 }
 
 (function testResidentProjectionAndRendererRebuildAreIsolated() {
@@ -112,6 +109,8 @@ function createProjection() {
   assert.equal(serialized.includes("HIDDEN_OPPONENT_CANARY"), false);
   assert.equal(serialized.includes("HIDDEN_DECK_CANARY"), false);
   assert.equal(Object.isFrozen(projection), true);
+  assert.equal(projection.source.stateVersion, 7);
+  assert.match(projection.projectionId, /^committed:/);
 
   const fixture = createFixture();
   const renderer = rendererApi.createResidentRenderer(fixture);
@@ -128,6 +127,17 @@ function createProjection() {
   assert.equal(fixture.els.roundStatusRound.textContent, "第 2 轮");
   assert.equal(fixture.els.publicCardRow.children[0].children[0].dataset.cardId, "public-1");
   assert.equal(fixture.els.techTiles[0].hidden, true);
+})();
+
+(function testLegacySliceInputRejectedWithoutReadingPoisonGetters() {
+  const legacy = {};
+  Object.defineProperty(legacy, "playerState", {
+    enumerable: true,
+    get() { throw new Error("legacy getter touched"); },
+  });
+  const rejected = projectionApi.createResidentProjection(legacy);
+  assert.equal(rejected.code, "RESIDENT_PROJECTION_LEGACY_SLICE_REJECTED");
+  assert.deepEqual(rejected.legacyKeys, ["playerState"]);
 })();
 
 (function testDefaultProjectionSupportsCommittedArraySlicesWithoutLeaks() {

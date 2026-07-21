@@ -11,10 +11,8 @@
     const store = SetiStateStore.createStateStore(initial);
     const view = SetiBrowserViewStateStore.createViewStateStore();
     view.dispatch({ type: "overlay.set", activeId: "recovery" });
-    let restored = null;
     const services = SetiBrowserServices.createBrowserServices({
       stateStore: store,
-      stateRestorePort: { restore(state) { restored = structuredClone(state); return { ok: true }; } },
       viewStateStore: view,
       storage: localStorage,
       downloadPort: { save() { return { ok: true }; } },
@@ -24,7 +22,7 @@
     view.clear();
     const loaded = services.load();
     assert(saved.ok && loaded.ok, "local persistence round-trip 失败");
-    assert(restored?.meta?.gameId === "browser-services-smoke", "StateStore restore port 未收到 committed state");
+    assert(store.getSnapshot().meta.gameId === "browser-services-smoke", "resident StateStore 未原位恢复 committed state");
     assert(view.getSnapshot().overlay.activeId === "recovery", "ViewState 独立恢复失败");
     const facade = services.createPublicFacade();
     assert(Object.isFrozen(facade) && !facade.stateStore, "public facade 泄漏 mutable authority");

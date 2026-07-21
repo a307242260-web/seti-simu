@@ -67,9 +67,16 @@
       : (state?.players && typeof state.players === "object" ? Object.entries(state.players) : []);
     const players = {};
     for (const [id, player] of playerEntries) {
-      players[id] = id === playerId
+      const visiblePlayer = id === playerId
         ? clone(player)
-        : pick(player, ["id", "name", "color", "score", "resources", "income", "passed", "eliminated"]);
+        : pick(player, ["id", "name", "color", "colorLabel", "score", "resources", "income", "passed", "eliminated"]);
+      players[id] = {
+        ...visiblePlayer,
+        id: String(player?.id ?? id),
+        handCount: countCollection(player?.hand),
+        reservedCount: countCollection(player?.reservedCards),
+        tech: clone(player?.techState?.ownedTiles || player?.tech || {}),
+      };
     }
 
     const cards = state?.cards || {};
@@ -92,9 +99,22 @@
       match: {
         ...pick(state?.match, ["status", "phase", "round", "turn", "activePlayerId", "currentPlayerId", "terminal", "winnerId"]),
         ...pick(state?.turn, ["round", "turn", "actionCycle", "currentPlayerId", "activePlayerId", "phase"]),
+        round: Number(state?.turn?.round ?? state?.turn?.roundNumber ?? state?.match?.round ?? 1),
+        turn: Number(state?.turn?.turn ?? state?.turn?.turnNumber ?? state?.match?.turn ?? 1),
+        currentPlayerId: state?.turn?.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
+        activePlayerId: state?.turn?.activePlayerId ?? state?.turn?.currentPlayerId ?? state?.players?.currentPlayerId ?? null,
+        terminal: Boolean(state?.turn?.gameEnded ?? state?.match?.terminal),
       },
       board: {
-        solarSystem: pick(state?.solarSystem || state?.board?.solarSystem, ["rotation", "visibleSectors", "publicMarkers"]),
+        solarSystem: {
+          ...pick(state?.solarSystem || state?.board?.solarSystem, ["rotation", "visibleSectors", "publicMarkers"]),
+          rotation: Number(
+            state?.solarSystem?.rotation?.rotationCount
+            ?? state?.solarSystem?.rotation?.rotation
+            ?? state?.solarSystem?.rotation
+            ?? 0
+          ) || 0,
+        },
         pieces: {
           ...pick(state?.pieces, ["public", "countsByPlayer"]),
           ...(Array.isArray(state?.pieces?.rockets) ? { public: clone(state.pieces.rockets) } : {}),
@@ -215,13 +235,16 @@
 
   function createBrowserProjectionAdapter(options = {}) {
     const stateStore = options.stateStore;
+    const stateSource = options.stateSource || null;
     const sessionRuntime = options.sessionRuntime;
     const actionAdapter = options.actionAdapter || null;
     const visibilityPolicy = options.visibilityPolicy || defaultVisibilityPolicy;
     const createActionContext = options.createActionContext || ((input) => input);
     const decisionPresenter = options.decisionPresenter || defaultDecisionPresenter;
     const policyId = options.policyId || visibilityPolicy.policyId || "custom-viewer-policy";
-    if (!stateStore?.getSnapshot) throw new TypeError("BrowserProjectionAdapter 需要 StateStore.getSnapshot()");
+    if (!stateStore?.getSnapshot && !stateSource?.read) {
+      throw new TypeError("BrowserProjectionAdapter 需要 StateStore.getSnapshot() 或 StateSource.read()");
+    }
     if (sessionRuntime && (!sessionRuntime.inspect || !sessionRuntime.observe)) {
       throw new TypeError("sessionRuntime 必须实现 inspect/observe");
     }
@@ -231,7 +254,7 @@
     if (typeof visibilityPolicy !== "function") throw new TypeError("visibilityPolicy 必须是函数");
     if (typeof decisionPresenter !== "function") throw new TypeError("decisionPresenter 必须是函数");
 
-    function buildProjection({ kind, state, viewer, inspection = null, observation = null }) {
+    function buildProjection({ kind, state, viewer, inspection = null, observation = null, sourceEnvelope = null }) {
       const visible = visibilityPolicy(clone(state), clone(viewer), {
         kind,
         inspection: clone(inspection),
@@ -241,7 +264,13 @@
         throw new TypeError("visibilityPolicy 必须返回普通投影对象");
       }
       const stateVersion = state?.meta?.stateVersion ?? inspection?.baseVersion ?? null;
-      const source = {
+      const source = sourceEnvelope ? {
+        kind: sourceEnvelope.kind,
+        stateVersion: sourceEnvelope.stateVersion,
+        sessionId: sourceEnvelope.sessionId ?? null,
+        sessionRevision: sourceEnvelope.sessionRevision ?? null,
+        phase: sourceEnvelope.phase,
+      } : {
         kind,
         stateVersion,
         sessionId: inspection?.sessionId || null,
@@ -300,9 +329,27 @@
     }
 
     function projectCommitted(input = {}) {
+      if (!stateStore?.getSnapshot) return projectSource(input);
       const viewer = assertViewer(input.viewer);
       const state = stateStore.getSnapshot();
       return buildProjection({ kind: "committed", state, viewer });
+    }
+
+    function projectSource(input = {}) {
+      if (!stateSource?.read) throw new TypeError("BrowserProjectionAdapter 未配置 StateSource");
+      const viewer = assertViewer(input.viewer);
+      const envelope = stateSource.read(viewer);
+      if (!envelope?.source || !envelope?.state) {
+        throw new TypeError("StateSource.read() 必须返回 source/state envelope");
+      }
+      const kind = envelope.source.kind === "working" ? "session" : "committed";
+      return buildProjection({
+        kind,
+        state: envelope.state,
+        viewer,
+        observation: { state: envelope.state, decision: envelope.decision || null },
+        sourceEnvelope: envelope.source,
+      });
     }
 
     function projectSession(session, input = {}) {
@@ -329,10 +376,11 @@
     }
 
     function project(input = {}) {
-      return input.session ? projectSession(input.session, input) : projectCommitted(input);
+      if (input.session) return projectSession(input.session, input);
+      return stateSource ? projectSource(input) : projectCommitted(input);
     }
 
-    return Object.freeze({ project, projectCommitted, projectSession });
+    return Object.freeze({ project, projectSource, projectCommitted, projectSession });
   }
 
   return Object.freeze({

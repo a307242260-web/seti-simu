@@ -362,6 +362,39 @@
       };
     }
 
+    function restore(candidate, metadata = null) {
+      const loaded = loadCurrent(candidate);
+      if (!loaded.ok) return loaded;
+      let isolatedMetadata;
+      try {
+        isolatedMetadata = clone(metadata);
+      } catch (error) {
+        return { ok: false, code: "STATE_NOT_SERIALIZABLE", message: error?.message || "恢复 metadata 不可克隆" };
+      }
+      const previousVersion = committedState.meta.stateVersion;
+      committedState = loaded.state;
+      const event = deepFreeze({
+        type: "restored",
+        previousVersion,
+        stateVersion: committedState.meta.stateVersion,
+        snapshot: clone(committedState),
+        metadata: isolatedMetadata,
+      });
+      for (const listener of [...listeners]) {
+        try {
+          listener(event);
+        } catch (error) {
+          // 恢复已经成立；宿主刷新异常不得制造半恢复。
+        }
+      }
+      return {
+        ok: true,
+        previousVersion,
+        stateVersion: committedState.meta.stateVersion,
+        snapshot: getSnapshot(),
+      };
+    }
+
     function serialize(candidate = committedState) {
       const validation = validate(candidate);
       if (!validation.ok) return validation;
@@ -381,6 +414,7 @@
       beginWorkingCopy,
       validate,
       compareAndCommit,
+      restore,
       serialize,
       deserialize,
       subscribe,

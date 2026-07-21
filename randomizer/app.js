@@ -73,8 +73,9 @@
     browserHostModule,
   } = dependencies;
   const stateStoreModule = window.SetiStateStore;
+  const hostStateSourceModule = window.SetiHostStateSource;
   const highCouplingStateModule = window.SetiHighCouplingState;
-  if (!stateStoreModule || !highCouplingStateModule || !browserStateAuthorityModule) {
+  if (!stateStoreModule || !hostStateSourceModule || !highCouplingStateModule || !browserStateAuthorityModule) {
     throw new Error("Missing SETI StateStore runtime dependencies");
   }
   const headlessMode = Boolean(window.SetiHeadlessRuntimeConfig?.enabled);
@@ -666,22 +667,38 @@
   const residentDesktopRenderer = !headlessMode && browserHostModule?.residentRenderer
     ? browserHostModule.residentRenderer.createResidentRenderer({ document, els })
     : null;
+  const residentStateSource = hostStateSourceModule.createHostStateSource({
+    stateStore: browserStateAuthority,
+  });
+  const residentProjectionAdapter = browserHostModule?.projectionAdapter
+    ? browserHostModule.projectionAdapter.createBrowserProjectionAdapter({
+      stateSource: residentStateSource,
+    })
+    : null;
+  const residentBrowserServices = !headlessMode && browserHostModule?.browserServices
+    ? browserHostModule.browserServices.createBrowserServices({
+      stateStore: browserStateAuthority,
+      viewStateStore: residentViewStateStore,
+      storage: gameRecoveryModule.getPersistentGameStorage(window),
+      storageKey: `${PERSISTENT_GAME_STORAGE_KEY}:browser-services`,
+    })
+    : null;
+
+  function getResidentViewer() {
+    const player = getInterfacePlayer();
+    return {
+      viewerId: `browser:${player?.id || "spectator"}`,
+      playerId: player?.id == null ? null : String(player.id),
+      role: player ? "player" : "spectator",
+    };
+  }
 
   function createResidentRenderInput() {
-    if (!residentDesktopRenderer || !residentViewStateStore) return null;
+    if (!residentDesktopRenderer || !residentViewStateStore || !residentProjectionAdapter) return null;
     const projection = browserHostModule.residentProjection.createResidentProjection({
-      viewerPlayer: getInterfacePlayer(),
-      playerState,
-      turnState,
-      displayedTurn: getDisplayedTurnNumber(),
-      cardState,
-      solarState,
-      rocketState,
-      planetStatsState,
-      nebulaDataState,
-      finalScoringState,
-      techGameState,
+      projection: residentProjectionAdapter.projectSource({ viewer: getResidentViewer() }),
     });
+    if (projection.ok === false) throw new TypeError(`${projection.code}: ${projection.message}`);
     residentViewStateStore.reconcileProjection(projection);
     return { projection, viewState: residentViewStateStore.getSnapshot() };
   }
@@ -3592,6 +3609,7 @@
   function createGameRecoverySnapshot(meta = {}) {
     return gameRecoveryModule.createGameRecoverySnapshot({
       stateStore: browserStateAuthority,
+      browserServices: residentBrowserServices,
       serializeOptions: {
         seed: meta.seed ?? "browser-host",
         rngState: meta.rngState || { owner: headlessMode ? "headless" : "browser", state: null },
@@ -3721,20 +3739,20 @@
 
   function restorePersistentGameState() {
     const saved = readPersistentGamePackage();
-    const snapshot = saved?.latestSnapshot || saved?.snapshot || null;
+    const snapshot = saved?.latestSnapshot || null;
     if (!snapshot) return { ok: false, message: "没有可恢复的本地存档" };
 
     persistentGameSaveSuspended = true;
     try {
-      if (Array.isArray(saved.entries)) {
-        importActionLogEntries(saved.entries);
-      }
       const result = applyGameRecoverySnapshot(snapshot, {
         message: "已恢复上次保存的局面",
       });
       if (!result.ok) {
         clearPersistentGameState();
         return result;
+      }
+      if (Array.isArray(saved.entries)) {
+        importActionLogEntries(saved.entries);
       }
       const latestEntry = actionLogState.entries[actionLogState.entries.length - 1] || null;
       if (latestEntry && !latestEntry.recoverySnapshot) {
@@ -3968,10 +3986,7 @@
     return gameRecoveryModule.applyGameRecoverySnapshot(snapshot, {
       ...options,
       stateStore: browserStateAuthority,
-      restoreCommittedState: (state) => {
-        browserStateAuthority.replaceCommitted(state);
-        return { ok: true };
-      },
+      browserServices: residentBrowserServices,
       restoreDeterministicState: (sequences) => {
         const required = [
           "card", "handCard", "finalMark", "dataToken", "nebulaToken",
@@ -4007,15 +4022,17 @@
     if (!snapshot) {
       return { ok: false, message: "行动日志中没有可恢复快照" };
     }
+    const result = applyGameRecoverySnapshot(snapshot, {
+      message: options.message || "已根据行动日志恢复局面",
+    });
+    if (!result.ok) return result;
     if (entries.length && options.restoreLog !== false) {
       importActionLogEntries(entries, {
         truncateToEntryId: options.entryId,
         truncateToIndex: Number.isInteger(options.index) ? options.index : null,
       });
     }
-    return applyGameRecoverySnapshot(snapshot, {
-      message: options.message || "已根据行动日志恢复局面",
-    });
+    return result;
   }
 
   function commitActionLogDraft(options = {}) {
@@ -11476,6 +11493,10 @@
       toggleCheatMode,
       researchTechForCurrentPlayer,
       finalizeTechTakeResult,
+      getBrowserProjection: headlessMode ? null : () => residentProjectionAdapter.projectSource({
+        viewer: getResidentViewer(),
+      }),
+      browserServices: residentBrowserServices?.createPublicFacade?.() || null,
     },
   });
 })();

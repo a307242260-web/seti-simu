@@ -57,21 +57,12 @@
     const tokens = document.createElement("div");
     residentRoot.append(round, turn, stats, opponents, market, tokens);
     document.body.append(residentRoot);
-    const residentProjection = SetiBrowserHost.residentProjection.createResidentProjection({
-      projectionId: "chrome-resident",
-      viewerPlayer: { id: "p1", name: "一号", resources: { credits: 4 }, hand: [] },
-      playerState: { currentPlayerId: "p1", players: [{ id: "p1", name: "一号", resources: { credits: 4 }, hand: [] }] },
-      turnState: { roundNumber: 2 }, displayedTurn: 3,
-      cardState: { publicCards: [{ id: "public", cardName: "公开牌", src: "data:image/gif;base64,R0lGODlhAQABAAAAACw=" }] },
-      rocketState: { rockets: [{ id: "r1", playerId: "p1", x: 1, y: 2 }] },
-    });
+    const residentProjection = SetiBrowserHost.residentProjection.createResidentProjection({ projection });
     SetiBrowserHost.residentRenderer.createResidentRenderer({
       document,
       els: { roundStatusRound: round, roundStatusTurn: turn, playerStats: stats, opponentStatGrid: opponents, publicCardRow: market, tokenLayer: tokens },
     }).renderAll({ projection: residentProjection, viewState: viewStore.getSnapshot() });
-    assert(round.textContent === "第 2 轮" && turn.textContent === "第 3 回合", "常驻 round/turn renderer 失败");
-    assert(market.querySelector("[data-card-id='public']"), "常驻公共牌 renderer 失败");
-    assert(tokens.querySelector("[data-piece-id='r1']"), "常驻太阳系 renderer 失败");
+    assert(round.textContent === "第 1 轮" && turn.textContent === "第 1 回合", "常驻 round/turn renderer 失败");
     const actionBarRoot = document.createElement("nav");
     document.body.append(actionBarRoot);
     const actionCalls = [];

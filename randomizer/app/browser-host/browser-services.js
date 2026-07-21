@@ -33,7 +33,8 @@
     const stateStore = options.stateStore;
     const serializeState = requireFunction(stateStore, "serialize", "Browser persistence StateStore");
     const deserializeState = requireFunction(stateStore, "deserialize", "Browser persistence StateStore");
-    const restoreState = requireFunction(options.stateRestorePort, "restore", "Browser persistence state restore port");
+    const restoreState = requireFunction(stateStore, "restore", "Browser persistence StateStore");
+    const getStateSnapshot = requireFunction(stateStore, "getSnapshot", "Browser persistence StateStore");
     const sessionPort = options.sessionPort || null;
     const viewStateStore = options.viewStateStore || null;
     const storage = options.storage || null;
@@ -72,6 +73,12 @@
       if (!envelope || envelope.schemaVersion !== SCHEMA_VERSION) {
         return fail("BROWSER_RECOVERY_SCHEMA_UNSUPPORTED", "Browser recovery envelope schema 不受支持");
       }
+      const unknownKeys = Object.keys(envelope).filter((key) => ![
+        "schemaVersion", "savedAt", "state", "session", "view",
+      ].includes(key));
+      if (unknownKeys.length) {
+        return fail("BROWSER_RECOVERY_FIELDS_UNSUPPORTED", "Browser recovery envelope 包含未知字段", { unknownKeys });
+      }
       if (typeof envelope.state?.serialized !== "string") {
         return fail("BROWSER_RECOVERY_STATE_MISSING", "Browser recovery envelope 缺少 StateStore serialized state");
       }
@@ -101,15 +108,33 @@
     function restore(envelope) {
       const validated = validateEnvelope(envelope);
       if (!validated.ok) return validated;
-      const stateResult = restoreState(validated.state);
+      const capturedSession = sessionPort?.capture ? sessionPort.capture() : null;
+      const before = {
+        state: getStateSnapshot(),
+        session: clone(capturedSession?.checkpoint ?? capturedSession ?? null),
+        view: viewStateStore?.getSnapshot ? clone(viewStateStore.getSnapshot()) : null,
+      };
+      const rollback = () => {
+        restoreState(before.state, { source: "browser-services-rollback" });
+        if (before.session != null) sessionPort?.restore?.(clone(before.session));
+        if (before.view != null) viewStateStore?.restore?.(clone(before.view));
+        else viewStateStore?.clear?.();
+      };
+      const stateResult = restoreState(validated.state, { source: "browser-services" });
       if (stateResult?.ok === false) return fail(stateResult.code || "BROWSER_RECOVERY_STATE_RESTORE_FAILED", stateResult.message || "StateStore restore port 拒绝恢复");
       if (validated.session != null) {
         const sessionResult = sessionPort.restore(validated.session);
-        if (sessionResult?.ok === false) return fail(sessionResult.code || "BROWSER_RECOVERY_SESSION_RESTORE_FAILED", sessionResult.message || "Effect Session restore port 拒绝恢复");
+        if (sessionResult?.ok === false) {
+          rollback();
+          return fail(sessionResult.code || "BROWSER_RECOVERY_SESSION_RESTORE_FAILED", sessionResult.message || "Effect Session restore port 拒绝恢复");
+        }
       }
       if (validated.view != null) {
         const viewResult = viewStateStore.restore(validated.view);
-        if (viewResult?.ok === false) return fail(viewResult.code || "BROWSER_RECOVERY_VIEW_RESTORE_FAILED", viewResult.message || "ViewState restore port 拒绝恢复");
+        if (viewResult?.ok === false) {
+          rollback();
+          return fail(viewResult.code || "BROWSER_RECOVERY_VIEW_RESTORE_FAILED", viewResult.message || "ViewState restore port 拒绝恢复");
+        }
       } else {
         viewStateStore?.clear?.();
       }

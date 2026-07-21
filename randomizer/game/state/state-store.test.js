@@ -197,4 +197,30 @@ function committedBytes(store) {
   unsubscribe();
 })();
 
+(function testRestoreKeepsResidentStoreAndSnapshotVersionFact() {
+  const store = createStateStore(createState());
+  const events = [];
+  store.subscribe((event) => events.push(event));
+  const restoredState = createState();
+  restoredState.meta.stateVersion = 23;
+  restoredState.turn.turn = 7;
+  const restored = store.restore(restoredState, { source: "checkpoint" });
+  assert.equal(restored.ok, true);
+  assert.equal(restored.previousVersion, 0);
+  assert.equal(restored.stateVersion, 23);
+  assert.equal(store.getSnapshot().turn.turn, 7);
+  assert.deepEqual({
+    type: events[0].type,
+    stateVersion: events[0].stateVersion,
+    metadata: events[0].metadata,
+  }, { type: "restored", stateVersion: 23, metadata: { source: "checkpoint" } });
+
+  const before = committedBytes(store);
+  const invalid = createState();
+  invalid.meta.schemaVersion = "unknown";
+  assert.equal(store.restore(invalid).code, "STATE_SCHEMA_VERSION_UNSUPPORTED");
+  assert.equal(committedBytes(store), before);
+  assert.equal(events.length, 1);
+})();
+
 console.log("state-store tests passed");

@@ -164,7 +164,15 @@
       researchTechForCurrentPlayer,
       finalizeTechTakeResult,
       dispatchRuntimeAction,
+      getBrowserProjection,
+      browserServices,
     } = context;
+
+    function readBrowserProjection() {
+      return typeof getBrowserProjection === "function"
+        ? structuredClone(getBrowserProjection())
+        : null;
+    }
 
     return {
       randomize: randomizeAll,
@@ -205,7 +213,9 @@
       getRunezuTraceLayoutOverrides: () => structuredClone(aliens.listRunezuTraceMarkerLayoutOverrides?.() || []),
       getRunezuPanelSymbolLayoutOverrides: () => structuredClone(aliens.listRunezuPanelSymbolMarkerLayoutOverrides?.() || []),
       getRunezuFaceSymbolLayoutOverrides: () => structuredClone(aliens.listRunezuFaceSymbolMarkerLayoutOverrides?.() || []),
-      getAlienState: () => structuredClone(alienGameState),
+      getBrowserProjection: () => readBrowserProjection(),
+      browserServices: browserServices || null,
+      getAlienState: () => readBrowserProjection()?.aliens || structuredClone(alienGameState),
       revealJiuzheForDebug,
       revealYichangdianForDebug,
       revealFangzhouForDebug,
@@ -214,7 +224,7 @@
       revealAmibaForDebug,
       revealAomomoForDebug,
       revealRunezuForDebug,
-      getFinalScoringState: () => structuredClone(finalScoringState),
+      getFinalScoringState: () => readBrowserProjection()?.board?.finalScoring || structuredClone(finalScoringState),
       markFinalScoreTile: handleFinalScoreTileClick,
       openAlienTracePicker,
       placeAlienFirstTrace: (alienSlotId, traceType, playerColor) => {
@@ -456,7 +466,13 @@
         renderStateReadout();
         return result;
       },
-      getPlayerState: () => structuredClone(playerState),
+      getPlayerState: () => {
+        const projection = readBrowserProjection();
+        return projection ? {
+          players: Object.values(projection.players || {}),
+          currentPlayerId: projection.match?.currentPlayerId ?? null,
+        } : structuredClone(playerState);
+      },
       getFinalScoreSummaries: () => structuredClone(
         typeof buildFinalResultPlayerSummaries === "function"
           ? buildFinalResultPlayerSummaries().map((summary) => ({
@@ -467,11 +483,11 @@
           }))
           : [],
       ),
-      getTurnState: () => structuredClone({
-        ...turnState,
-        roundOrderPlayerIds: getRoundOrderPlayerIds(),
-        currentPlayerId: playerState.currentPlayerId,
-      }),
+      getTurnState: () => readBrowserProjection()?.match || structuredClone({
+          ...turnState,
+          roundOrderPlayerIds: getRoundOrderPlayerIds(),
+          currentPlayerId: playerState.currentPlayerId,
+        }),
       getActionLog: (options = {}) => getRecoverableActionLog(options),
       getActionLogRecoveryPackage: createActionLogRecoveryPackage,
       getActionLogMarkdown,
@@ -480,9 +496,14 @@
       restoreRecoverySnapshot: applyGameRecoverySnapshot,
       recoverFromActionLog,
       dispatchRuntimeAction,
-      getPlanetStatsState: () => structuredClone(planetStatsState),
-      getCurrentPlayer: () => structuredClone(getCurrentPlayer()),
-      getAiDebugState: () => structuredClone({
+      getPlanetStatsState: () => readBrowserProjection()?.board?.planets || structuredClone(planetStatsState),
+      getCurrentPlayer: () => {
+        const projection = readBrowserProjection();
+        return projection
+          ? structuredClone(projection.players?.[projection.viewer?.playerId] || null)
+          : structuredClone(getCurrentPlayer());
+      },
+      getAiDebugState: () => readBrowserProjection() || structuredClone({
         playerState,
         turnState,
         rocketState,
@@ -491,7 +512,7 @@
         cardState,
         currentPlayerId: playerState.currentPlayerId,
       }),
-      getState: () => structuredClone({
+      getState: () => readBrowserProjection() || structuredClone({
         ...solarState,
         players: playerState.players,
         currentPlayerId: playerState.currentPlayerId,
@@ -503,7 +524,7 @@
       }),
       getSetupState,
       toggleCheatMode,
-      getTechSnapshot: () => tech.getSnapshot(techGameState),
+      getTechSnapshot: () => readBrowserProjection()?.tech || tech.getSnapshot(techGameState),
       researchTech: researchTechForCurrentPlayer,
       takeTechTile: (tileId, blueSlot) => {
         const result = blueSlot == null
