@@ -62,6 +62,7 @@
 - `randomizer/game/effects/industry-alien-session.js`、`randomizer/app/browser-host/industry-alien-decision-ui.js`：公司与八种外星人的标准 Decision/Effect Session adapter 和只读领域 renderer；机会队列、痕迹奖励、followup、history/rollback 归 session，UI 只消费 projection。
 - `randomizer/app/browser-host/policy-input-adapter.js`：把公共 PolicyDecision 映射回与玩家相同的 Standard Action/Decision 输入端口；提交前重验 boundary，未知/stale fail-closed。
 - `randomizer/app/effects/**`：按移动扫描、奖励选择、外星人和顶层分发拆分的具体 effect executors。
+- `randomizer/app/conditional-decision-domain.js`：条件动作的唯一生产定义；构建扫描/卡牌、公司/外星人、科技/终局等 Decision descriptor，并按显式 followup 执行规则 mutation。
 - `randomizer/style.css`：页面布局、交互聚焦、高亮与各区视觉状态。
 - `randomizer/solar-system/layout.js`：太阳系盘面坐标、扇区、星云与内容类型定义。
 - `randomizer/solar-system/core.js`：太阳系渲染与旋转相关核心逻辑。

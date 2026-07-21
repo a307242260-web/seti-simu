@@ -124,16 +124,17 @@
   }
 
   function createConditionalActionExecutor(options = {}) {
-    if (typeof options.describeDecision !== "function") {
-      throw new TypeError("Conditional executor 缺少 describeDecision(workingRoot)");
+    const domain = options.domain;
+    if (typeof domain?.describeDecision !== "function") {
+      throw new TypeError("Conditional executor 缺少 domain.describeDecision(workingRoot)");
     }
-    if (typeof options.executeChoice !== "function") {
-      throw new TypeError("Conditional executor 缺少 executeChoice(workingRoot, choice, decision)");
+    if (typeof domain?.executeChoice !== "function") {
+      throw new TypeError("Conditional executor 缺少 domain.executeChoice(workingRoot, choice, decision)");
     }
 
     function inspect(workingRoot) {
       try {
-        return normalizeRawDecision(workingRoot, options.describeDecision(workingRoot));
+        return normalizeRawDecision(workingRoot, domain.describeDecision(workingRoot));
       } catch (error) {
         return fail("CONDITIONAL_DECISION_INVALID", error?.message || "Conditional Decision 定义无效");
       }
@@ -208,7 +209,7 @@
       if (!validation.ok) return validation;
       const before = clone(workingRoot);
       try {
-        const result = options.executeChoice(
+        const result = domain.executeChoice(
           workingRoot,
           clone(validation.choice),
           clone(validation.decision),

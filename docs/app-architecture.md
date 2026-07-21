@@ -34,11 +34,11 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 15. `randomizer/app/game-recovery.js` 封装恢复快照、本地持久化包读写与恢复应用适配。
 16. `randomizer/app/public-api.js` 组装 `window.SetiRandomizer` 调试/外部脚本 API。
 17. `randomizer/app/ai/control-runtime.js` 封装 AI 控制状态、难度/权重、快照/恢复、pending owner 与调度；`initial-card-pending.js`、`interaction-pending.js`、`action-executor.js`、`automation-runtime.js` 承接 pending resolver、顶层行动执行与优先级编排；`ai-controller.js` 只装配这些 runtime 并转发稳定 API。
-18. `randomizer/app/effects/**` 按移动扫描、奖励选择、外星人和顶层分发四个域注册具体 effect executors。
+18. `randomizer/app/conditional-decision-domain.js` 构建条件动作的 owner/version/choices/followup；`conditional-action-executor.js` 只负责 descriptor 校验、stale 检查和失败原子恢复。`randomizer/app/effects/**` 继续按移动扫描、奖励选择、外星人和顶层分发四个域注册具体 effect executors。
 19. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
 20. `randomizer/app/aliens/species-runtime.js` 封装八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 和具体面板渲染，通过显式 context 接收跨域依赖。
 21. `randomizer/app/action-interaction-runtime.js` 承接冥王星行动、移动箭头 UI 与数据放置 picker。
-22. `randomizer/app.js` 保留 composition、跨域流程接线、渲染调度和各控制器装配；当前为 11,532 行。规则提交、Effect working state 与 Policy 请求分别由公共 owner 管理。
+22. `randomizer/app.js` 保留 composition、跨域流程接线、渲染调度和各控制器装配；当前为 10,736 行。规则提交、Effect working state 与 Policy 请求分别由公共 owner 管理。
 
 ## 文件职责
 
@@ -47,7 +47,8 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/primary-board-action-executor.js`：四类盘面行动的 working-root 生产 executor；只接受显式 root、descriptor 与规则模块能力，原子保护失败路径，不拥有 UI、Decision 或 composition lifecycle。
 - `randomizer/app/engine-action-executor.js`：科技、扫描、分析、打牌四类引擎行动的 working-root 生产边界；科技/分析在边界内直连规则 action/ability，扫描与打牌分别下沉到 `scan-flow.js` / `hand-flow.js` 的显式 root 入口，`app.js` 只负责装配。Browser 与 AI 的 Standard Action descriptor 共用该原子入口，支付、目标校验及返回的 Effect/history/result 均绑定 caller 传入的 root，UI 只保留选择与渲染续接。
 - `randomizer/app/quick-turn-action-executor.js`：快速交易、公司 1x、弃牌角标、放置数据、符文族面部 symbol、PASS 与结束回合的 working-root 生产边界。Browser/AI 的 descriptor 共用同一原子入口；Quick family 只写 caller root 与 quick history，不推进 turn，PASS 只完成主行动，只有 `end_turn` 推进 turn/current player；stale 与失败会恢复完整 working root。
-- `randomizer/app/conditional-action-executor.js`：七类 conditional family 的显式 Decision descriptor 与 working-root 生产边界。owner、domain version、choices 和 followup handler 同时固化；Browser、Policy 与 replay 提交同一个 Standard Action/Decision identity，stale、未知 followup、resolver 失败或异常都在 mutation 边界 fail-closed 并恢复完整 working root。宿主恢复产生的 composition stateVersion 不覆盖 Effect Session 内已确认的 domain decision identity。
+- `randomizer/app/conditional-decision-domain.js`：扫描/卡牌、公司/外星人、科技/终局等 conditional family 的 owner、choices 与 followup 唯一生产定义；通过显式 context 调用既有领域 continuation，不拥有第二份状态。
+- `randomizer/app/conditional-action-executor.js`：七类 conditional family 的 descriptor validation 与 working-root 原子边界。Browser、Policy 与 replay 提交同一个 Standard Action/Decision identity；stale、未知 followup、规则失败或异常均 fail-closed 并恢复完整 working root。宿主恢复产生的 composition stateVersion 不覆盖 Effect Session 内已确认的 domain decision identity。
 - `randomizer/app/dependencies.js`：唯一的 app 入口依赖表。新增或删除 `window.Seti*` 依赖时先改这里，让脚本顺序错误能尽早报错。
 - `randomizer/app/browser-host/decision-ui.js`：统一 Decision shell、renderer registry、科技 presentation 与 focus/confirm/cancel intent；只消费 `BrowserProjection + ViewState`，不得枚举领域合法项或续跑 Effect queue。
 - `randomizer/app/browser-host/industry-alien-decision-ui.js`：公司与八物种的领域 presentation registry；只把标准 Decision choices 映射为公司、痕迹、机会、牌、任务和分支视图，不读取旧 pending 或领域 continuation。

@@ -26,20 +26,22 @@ function createRoot() {
 
 function createExecutor(options = {}) {
   return createConditionalActionExecutor({
-    describeDecision(root) {
-      return {
-        actorPlayer: { id: root.pending.ownerId },
-        candidates: root.pending.choices,
-      };
-    },
-    executeChoice(root, choice, decision) {
-      assert.equal(root, options.expectedRoot || root, "executor 必须取得 caller working root");
-      assert.equal(decision.ownerId, "p1");
-      root.playerState.players[0].resources.score += choice.payload.reward.score;
-      root.pending = null;
-      if (options.fail) return { ok: false, code: "RULE_FAILED", message: "failed" };
-      if (options.throwError) throw new Error("boom");
-      return { ok: true, events: [{ type: "choice_resolved", family: choice.family }] };
+    domain: {
+      describeDecision(root) {
+        return {
+          actorPlayer: { id: root.pending.ownerId },
+          candidates: root.pending.choices,
+        };
+      },
+      executeChoice(root, choice, decision) {
+        assert.equal(root, options.expectedRoot || root, "executor 必须取得 caller working root");
+        assert.equal(decision.ownerId, "p1");
+        root.playerState.players[0].resources.score += choice.payload.reward.score;
+        root.pending = null;
+        if (options.fail) return { ok: false, code: "RULE_FAILED", message: "failed" };
+        if (options.throwError) throw new Error("boom");
+        return { ok: true, events: [{ type: "choice_resolved", family: choice.family }] };
+      },
     },
   });
 }
