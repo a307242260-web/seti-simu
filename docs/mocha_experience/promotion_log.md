@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-21
+- source: SETI-97 timeline、父级 metadata 与 SETI-98～103 状态
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及负责父 issue 拆单的 coordination agent
+- target_component: 并发父 issue 的 sibling 建单去重实践
+- target_file: docs/mocha_experience/coordination.md
+- remote_skill_id: none
+- change: 记录“父级入口读取与实际建单之间可能被并发 run 改写；创建前立即二次列出 siblings，创建后按目标/父级/status 对账，重复项在改代码前取消并修正 waiting_on”的候选实践。
+- applied_change: 仅新增 coordination experience 与本决策契约；SETI-101/102/103 已取消，SETI-98/100/99 原串行链保留并全部完成。不修改 issue-workflow、watcher、agent prompt、loop template 或项目记忆。
+- expected_effect: 后续同一父 issue 的并发 run 不会因数分钟前的空列表继续创建重复实施链；即使平台仍发生竞态，也能在重复 worker 改代码前止损并保持父级依赖唯一。
+- evaluation_window: 后续 2 个存在多个 run 同时处理父级拆单的 coordination issue，或下一次同类重复建单
+- success_signal: 建单前的即时 sibling 列表与建单后对账均有记录；同一目标只保留一个活跃 child/run，父级 `waiting_on` 指向唯一实施链，重复 issue 不产生代码提交。
+- rollback_condition: 平台提供原子 sibling 唯一键、幂等 create token 或父级拆单锁后，删除手工双重检查并改用平台能力；若二次读取仍无法阻止竞态，则升级为平台/脚本原子约束而不是增加更多文本提醒。
+- risk: 每次建单多一次列表读取有少量协调成本，目标相近但范围不同的合法 siblings 可能被误判为重复；对账必须同时比较父级、目标、边界、依赖和验收，不能只按标题去重。
+- evidence_before: SETI-97 本 run 首次读取时尚未看到实施子项，仓库盘点期间另一 run 创建 SETI-98/100/99；未二次读取便创建 SETI-101/102/103，随后父级最新 metadata 暴露已有链路。核对后保留先创建组、取消重复组，SETI-101 未产生代码提交。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录一次性 candidate；证据不足以升级长期组件。
+- applied_at: 2026-07-21
+- verification: 核对 SETI-97 timeline、完整评论、metadata，SETI-98～103 的 parent/status/description/runs；最终 SETI-98/100/99 均 done，SETI-101/102/103 均 cancelled，父级无 backlog sibling。
+- observed_outcome: 重复链在代码修改前停止，原严格串行链完成零兼容硬切与最终验收；本次未发生双提交或共享热路径冲突。
+- keep_or_revise: 保持 candidate；再出现 1 次同类竞态即评估机械 preflight 或平台幂等创建能力。
+
+- date: 2026-07-21
 - source: SETI-104 owner 评论 `53c760ac-6493-4699-b3d6-edd8807d3b0d`
 - promoted_to: none
 - promotion_decision: candidate

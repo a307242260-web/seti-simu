@@ -12,6 +12,16 @@
 - promotion_status:
 - decision:
 
+## 2026-07-21：并发总控拆单在创建前后都要做 sibling 去重
+
+- date: 2026-07-21
+- source_issue: SETI-97
+- observation: 同一父 issue 可能被多个 run 并发处理；入口时读取到“尚无子项”不能保证数分钟后的建单窗口仍成立。创建子 issue 前应立即重读父级 metadata / recent comments 并列出现有 siblings，创建后再按目标、父级和状态对账；若竞态仍生成重复项，应保留先创建且已接线的一组，在重复项开始改代码前取消并修正父级 `waiting_on`。
+- evidence: SETI-97 首轮读取后进入仓库盘点，另一并发 run 于 04:30:46 创建并启动 SETI-98、建立 SETI-100/99 backlog；本 run 未在 04:32:40 建单前二次读取，因而又创建 SETI-101/102/103，并使 SETI-101 短暂启动。父级 `wait_child` 返回的最新 `evidence_checkpoint` 暴露竞态后，立即核对两组描述与 runs，保留 SETI-98/100/99，取消重复组并把 `waiting_on` 恢复为 SETI-98；最终原串行链全部 done，重复项未产生代码提交。
+- promote_to: none
+- promotion_status: candidate
+- decision: 当前只有一次同父级并发拆单竞态，先记录 coordination candidate；不修改 issue-workflow、watcher、agent prompt 或 loop template。后续再出现 1 次同类重复建单，或平台提供原子 sibling 唯一键/创建幂等能力时，再评估升级为机械 preflight 或平台约束。
+
 ## 2026-07-21：产品目标对齐先给可核对的现状，再讨论删改
 
 - date: 2026-07-21
