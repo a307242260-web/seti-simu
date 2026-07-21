@@ -131,17 +131,4 @@ assert.equal(autoEvent?.ownerPlayerId, singleton.playerId, "自动事件应保�
 assert.equal(autoEvent?.target?.choiceId, "a");
 singleton.env.dispose();
 
-const appSource = fs.readFileSync(__filename.replace(/app\/headless-final-scoring\.test\.js$/, "app.js"), "utf8");
-const enumerateSource = appSource.slice(
-  appSource.indexOf("function enumerateHeadlessConditionalActions"),
-  appSource.indexOf("function executeHeadlessConditionalAction"),
-);
-const executeSource = appSource.slice(
-  appSource.indexOf("function executeHeadlessConditionalAction"),
-  appSource.indexOf("function getHeadlessDecisionOwnerState"),
-);
-assert.equal(enumerateSource.includes("runAiFinalScoreMarkDecision"), false, "枚举不得回退 final-score AI resolver");
-assert.equal(executeSource.includes("runAiFinalScoreMarkDecision"), false, "执行不得回退 final-score AI resolver");
-assert.match(appSource, /headless 禁止调用 final-score AI resolver/, "headless composition 应禁用旧 resolver");
-
 console.log("headless final-scoring tests passed");

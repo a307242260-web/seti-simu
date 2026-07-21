@@ -100,10 +100,6 @@ function createProjection() {
 }
 
 (function testResidentProjectionAndRendererRebuildAreIsolated() {
-  const source = fs.readFileSync(path.join(__dirname, "resident-renderer.js"), "utf8");
-  for (const forbidden of ["pendingState", "playerState", "cardState", "techGameState", "rocketState", "continuation"]) {
-    assert.equal(source.includes(forbidden), false, `renderer 不得读取 ${forbidden}`);
-  }
   const projection = createProjection();
   const serialized = JSON.stringify(projection);
   assert.equal(serialized.includes("HIDDEN_OPPONENT_CANARY"), false);

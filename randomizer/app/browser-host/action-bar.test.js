@@ -99,12 +99,4 @@ function projection(overrides = {}) {
   assert.equal(calls.undo.length, 1);
 })();
 
-(function testHandlerSourceHasNoLegacyMutationOrLegalityOwners() {
-  const source = fs.readFileSync(path.join(__dirname, "action-bar.js"), "utf8");
-  for (const forbidden of [
-    "pendingState", "actionHistory", "quickActionHistory", "runAction(",
-    "endCurrentTurn(", "passForCurrentPlayer(", "undoPendingAction(", "continuation",
-  ]) assert.equal(source.includes(forbidden), false, forbidden);
-})();
-
 console.log("browser action bar projection/input tests passed");

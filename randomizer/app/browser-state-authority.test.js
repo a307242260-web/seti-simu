@@ -133,15 +133,4 @@ function createAuthority() {
   assert.deepEqual(counters(), { storeCreations: 1, legacyCommittedFactoryCalls: 0 });
 })();
 
-(function testCompositionHasNoLegacyStateOwnerConstruction() {
-  const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
-  const turnFlowSource = fs.readFileSync(path.join(__dirname, "turn-flow.js"), "utf8");
-  const aiSource = fs.readFileSync(path.join(__dirname, "ai-controller.js"), "utf8");
-  const forbidden = /(?:solar|data|aliens|finalScoring|players|rocketActions|planetStats|cards|tech)\.create(?:Baseline|DefaultNebulaData|DefaultAlien|FinalScoring|Player|Rocket|PlanetStats|Card)?State\s*\(/;
-  assert.doesNotMatch(appSource, forbidden);
-  assert.doesNotMatch(turnFlowSource, forbidden);
-  assert.doesNotMatch(aiSource, forbidden);
-  assert.doesNotMatch(appSource, /createCommittedGameState\s*\(|createHighCouplingStateStore\s*\(/);
-})();
-
 console.log("browser state authority tests passed");

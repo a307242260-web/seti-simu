@@ -28,12 +28,4 @@ assert.equal(Object.hasOwn(state, "pending"), false);
 assert.equal(state.ui.passReserveSelectionDismissed, false);
 assert.equal(state.browserHost.scanRunSequence, 0);
 
-const repositoryRoot = path.resolve(__dirname, "../..");
-const runtimeSource = fs.readFileSync(path.join(__dirname, "runtime.js"), "utf8");
-const indexSource = fs.readFileSync(path.join(repositoryRoot, "randomizer/index.html"), "utf8");
-assert.equal(runtimeSource.includes("legacyFlowInventory"), false);
-assert.equal(indexSource.includes("legacy-flow-inventory"), false);
-assert.equal(fs.existsSync(path.join(repositoryRoot, "randomizer/game/effects/legacy-flow-inventory.js")), false);
-assert.equal(fs.existsSync(path.join(repositoryRoot, "tools/audit_effect_session_legacy.js")), false);
-
 console.log("runtime tests passed");

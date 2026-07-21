@@ -31,14 +31,6 @@ function projection(choices, overrides = {}) {
   };
 }
 
-(function testProductionAssemblyLoadsDecisionBeforeFacade() {
-  const source = fs.readFileSync(path.join(__dirname, "../../index.html"), "utf8");
-  const decisionPosition = source.indexOf("browser-host/decision-ui.js");
-  const facadePosition = source.indexOf("browser-host/index.js");
-  assert.equal(decisionPosition >= 0, true);
-  assert.equal(decisionPosition < facadePosition, true);
-})();
-
 (function testProjectionKeepsResearchTileIdentityAndPresentation() {
   const state = {
     meta: { stateVersion: 9 },
@@ -137,10 +129,6 @@ function projection(choices, overrides = {}) {
   assert.equal(controller.dispatchUiIntent({ type: "confirm" }, inputState).code, "EFFECT_DECISION_STALE");
   assert.deepEqual(calls, { takeTech: 0, reward: 0, continuation: 0 });
 
-  const source = fs.readFileSync(path.join(__dirname, "decision-ui.js"), "utf8");
-  for (const forbidden of ["pendingState", "completeCurrentActionEffect", "appendResearchTechFollowupEffects", "researchTechTake"] ) {
-    assert.equal(source.includes(forbidden), false, forbidden);
-  }
 })();
 
 (function testClearedViewStateRebuildPreservesChoiceSetWithoutRuleCalls() {

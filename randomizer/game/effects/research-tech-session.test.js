@@ -206,16 +206,4 @@ function runFixedTrace(api = researchTechSession) {
   assert.deepEqual(browserTrace, nodeTrace);
 })();
 
-(function testMigratedHotPathHasNoLegacyQueueOrContinuation() {
-  const source = fs.readFileSync(path.join(__dirname, "research-tech-session.js"), "utf8");
-  for (const forbidden of [
-    "actionEffectFlow",
-    "abilities.chain",
-    "appendResearchTechFollowupEffects",
-    "completeCurrentActionEffect",
-  ]) {
-    assert.equal(source.includes(forbidden), false, `迁移热路径不得引用 ${forbidden}`);
-  }
-})();
-
 console.log("research tech effect session tests passed");

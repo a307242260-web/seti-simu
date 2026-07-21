@@ -10,6 +10,7 @@
 - 机制、状态模型、能力流程或资料路径发生变化时，同步更新对应文档。
 - `AGENTS.md` 只维护快速导航和关键路径；长机制说明放在 `docs/mechanics-reference.md`。
 - 当前没有 `package.json` 或构建步骤；验证以 `node --check` 和 Node 测试脚本为主。
+- Node 测试只允许 unit 与唯一 full-flow 两类；分类、准入和完整流程 fixture 见 `docs/node-testing.md`。
 - 跨模块状态机、规则内核或 runtime 迁移开工前，按 `docs/implementation-proof-obligations.md` 将验收条款转成可证伪义务和分层证据；静态 coverage label 不算行为完成证据。
 - coding issue 已实现、验收通过且没有待 owner 拍板事项时，直接按 issue-workflow 收口为 `done`；不得把自己设为 reviewer，也不得因“等待明确收口指令”继续停在 `in_progress`。
 - 从大型闭包迁出 runtime 或修改传统脚本顺序时，除语法与全量 Node 回归外，必须补迁移域代表性执行路径和真实 Chrome smoke，覆盖显式 context、嵌套回调与浏览器装配。
@@ -126,7 +127,7 @@ node tools/audit_state_authority.js
 node tools/run_node_tests.js
 ```
 
-`tools/run_node_tests.js` 跨 shell 逐文件执行测试并输出汇总；可用 `--list`、`--match <路径子串>`、`--exclude <路径子串>` 做清单与定向验证，避免 zsh/PowerShell 的列表拆分差异。
+`tools/run_node_tests.js` 按显式清单执行 unit 与唯一 full-flow，并分别输出数量和耗时；可用 `--list`、`--match <路径子串>`、`--exclude <路径子串>` 做清单与定向验证。架构审计不混入默认 Node 回归。
 
 需要额外检查能力/历史基础语法时：
 

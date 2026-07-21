@@ -8,26 +8,6 @@ const projectionApi = require("./projection-adapter");
 const viewStateApi = require("./view-state-store");
 const inputApi = require("./input-adapter");
 
-(function testTraditionalScriptAssemblyContract() {
-  const dependenciesSource = fs.readFileSync(path.join(__dirname, "../dependencies.js"), "utf8");
-  const pageSource = fs.readFileSync(path.join(__dirname, "../../index.html"), "utf8");
-  assert.match(dependenciesSource, /key: "browserHostModule", globalName: "SetiBrowserHost"/);
-  const moduleOrder = [
-    "browser-host/projection-adapter.js",
-    "browser-host/view-state-store.js",
-    "browser-host/input-adapter.js",
-    "browser-host/policy-input-adapter.js",
-    "browser-host/action-bar.js",
-    "browser-host/resident-projection.js",
-    "browser-host/resident-renderer.js",
-    "browser-host/browser-services.js",
-    "browser-host/index.js",
-    "app/dependencies.js",
-  ].map((entry) => pageSource.indexOf(entry));
-  assert.equal(moduleOrder.every((position) => position >= 0), true);
-  assert.deepEqual(moduleOrder, [...moduleOrder].sort((left, right) => left - right));
-})();
-
 function createState() {
   return stateApi.createCommittedGameState({
     gameId: "seti-73",

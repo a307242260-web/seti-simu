@@ -390,19 +390,4 @@ function runCardTrace(api = scanCardSession) {
   assert.deepEqual(browserResult, nodeResult);
 })();
 
-(function testMigratedRepresentativeChainsHaveNoLegacyContinuation() {
-  const source = fs.readFileSync(path.join(__dirname, "scan-card-session.js"), "utf8");
-  for (const forbidden of [
-    "actionEffectFlow",
-    "abilities.chain",
-    "scanRunSequence",
-    "publicScanQueue",
-    "type1TriggerEvents",
-    "completeCurrentActionEffect",
-    "runAiPendingStep",
-  ]) {
-    assert.equal(source.includes(forbidden), false, `迁移热路径不得引用 ${forbidden}`);
-  }
-})();
-
 console.log("scan/card effect session tests passed");

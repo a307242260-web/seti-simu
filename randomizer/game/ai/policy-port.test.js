@@ -193,8 +193,6 @@ function decision(context, actionId, policyType = "heuristic") {
 }
 
 {
-  const source = fs.readFileSync(path.resolve(__dirname, "policy-port.js"), "utf8");
-  assert.doesNotMatch(source, /querySelector|history\.push|registry\.execute|StateStore|drainEffect|pickerResolver/);
   const poisonNames = ["document", "window", "renderer", "pickerResolver", "effectDrain", "stateStore"];
   const originals = new Map();
   let poisonReads = 0;

@@ -197,9 +197,4 @@ assert.deepEqual(unknownHarness.calls, { resolver: 0, recover: 0, skip: 0 });
   assert.deepEqual(host.observe(), { value: 1, trace: ["pass:p1"] });
 }
 
-const source = fs.readFileSync(path.join(__dirname, "headless-effect-session-host.js"), "utf8");
-for (const forbidden of ["runAiPendingStep", "recoverPendingAction", "skipHeadlessActionEffect", "document."]) {
-  assert.equal(source.includes(forbidden), false, `训练宿主不得引用 ${forbidden}`);
-}
-
 console.log("headless Effect Session host tests passed");

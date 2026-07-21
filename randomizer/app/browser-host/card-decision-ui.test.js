@@ -11,17 +11,6 @@ const decisionUiApi = require("./decision-ui");
 const cardDecisionUiApi = require("./card-decision-ui");
 const standardAction = require("../../game/actions/standard-action");
 
-(function testProductionAssemblyLoadsCardAdapterBeforeBrowserFacade() {
-  const pageSource = fs.readFileSync(path.join(__dirname, "../../index.html"), "utf8");
-  const cardPosition = pageSource.indexOf("browser-host/card-decision-ui.js");
-  const facadePosition = pageSource.indexOf("browser-host/index.js");
-  assert.equal(cardPosition >= 0, true);
-  assert.equal(cardPosition < facadePosition, true);
-  const facadeSource = fs.readFileSync(path.join(__dirname, "index.js"), "utf8");
-  assert.match(facadeSource, /root\.SetiBrowserCardDecisionUi/);
-  assert.match(facadeSource, /cardDecisionUi,/);
-})();
-
 function actionChoice(family, actorId, id, presentation = {}, extra = {}) {
   return {
     schemaVersion: standardAction.SCHEMA_VERSION,
@@ -169,12 +158,8 @@ function projectDecision(decision, viewer) {
   }]), { viewerId: "viewer-p1", playerId: "p1", role: "player" }), /Standard Action identity/);
 })();
 
-(function testBrowserScriptParityAndNoLegacyRuleDependencies() {
+(function testBrowserScriptParity() {
   const source = fs.readFileSync(path.join(__dirname, "card-decision-ui.js"), "utf8");
-  for (const forbidden of [
-    "pendingState", "cardSelectionAction", "cardTriggerAction", "continueAfterCardTriggerResolution",
-    "completeCurrentActionEffect", "players.gainResources", "cardEffects.consumeTrigger",
-  ]) assert.equal(source.includes(forbidden), false, `card Decision adapter 不得引用 ${forbidden}`);
   const context = vm.createContext({ structuredClone, globalThis: null });
   context.globalThis = context;
   vm.runInContext(source, context, { filename: "card-decision-ui.js" });
