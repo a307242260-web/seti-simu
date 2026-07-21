@@ -21,29 +21,64 @@
     }
     const {
       AI_MAX_CARD_CORNER_MOVES_PER_TURN, AI_MOVE_DIRECTIONS, AI_RESOURCE_VALUES, FINAL_ROUND_NUMBER, MOVE_ENERGY_COST, abilities, ai, aiAutoBattleState,
-      aiNumber, alienGameState, aliens, amiba, aomomo, applyAiStrategyWeight, banrenma, buildAiChongTransportMoveCandidate,
+      aiNumber, aliens, amiba, aomomo, applyAiStrategyWeight, banrenma, buildAiChongTransportMoveCandidate,
       buildAiPlayCardCandidate, buildSectorScanChoicesForX, canAiContinueCardMoveAfterStep, canAiPlanetAcceptLanding, canAiPlanetAcceptOrbit, canPayForMove, cancelTechSelection, cardEffects,
       cards, chong, chooseAiDataPlacementOptionFromButtons, chooseAiLandChoice, closeScanTargetPicker, confirmDataPlacement, confirmDiscardAnyForIncome, confirmLandTargetPicker,
       confirmMovePayment, confirmProbeSectorScanSelection, confirmScanTarget, confirmStrategyPassiveSlotChoice, confirmTechBlueSlotChoice, createActionContext, data, els,
       enrichAiAlienUseOptions, executeCardMoveForEffect, executeFreeMoveForCardCorner, executeFreeMoveForScanAction4, executeIndustryFreeMove, fangzhou, finishIndustryAbilityFlow, formatRocketLabel,
       getAiAlienCardConversionMultiplier, getAiAlienTraceRewardForValuation, getAiAlienTraceTargetDemandForSlot, getAiAvailableDataRoom, getAiDiscardedCardOpportunityCost, getAiMapDemand, getAiNextActionEffect, getAiNextMissingFinalScoreThreshold,
       getAiPlanetAtCoordinate, getAiResearchTechCandidateExecutionCheck, getAiResearchTechSelectionOptionsForEffect, getAiResourceValuesForRound, getAiRoundNumber, getAiStrategyDemand, getAlienTraceActionPlayer, getBestAiNebulaChoiceScore,
-      getCardPrice, getCurrentActionEffect, getCurrentPlayer, getEffectOwnerPlayer, getMovableTokensForPlayer, getPendingOwnerPlayer, getPlayerByColor, getPlayerById,
+      getCardPrice, getCurrentActionEffect,
       getPublicScanChoicesForCard, getRequiredMovePointsForUi, handleAmibaCardGainChoice, handleAmibaSymbolChoice, handleAmibaTraceRemovalChoice, handleAomomoCardGainChoice, handleBanrenmaBonusChoice, handleBanrenmaCardConditionChoice,
       handleBanrenmaCardGainChoice, handleChongCardGainChoice, handleChongFossilChoice, handleChongTaskCompletionChoice, handleConditionalSectorChoice, handleDiscardCornerRepeatChoice, handleDiscardIncomeCardChoice, handleHandCornerChoice,
       handleJiuzheCardChoice, handleJiuzheOpportunitySkip, handleOptionalHandScanChoice, handlePayCreditChoice, handleProbeLocationRewardChoice, handleProbeSectorScanChoice, handleRemoveOrbitToProbeChoice, handleRemovePlanetMarkerChoice,
       handleReturnUnfinishedTaskChoice, handleRunezuCardGainChoice, handleRunezuFaceSymbolChoice, handleRunezuSymbolBranchChoice, handleScanAction4Choice, handleSupplyTechTileClick, handleYichangdianCardGainChoice, handleYichangdianCornerChoice,
       industry, isActionEffectFlowActive, isAiAutoBattlePlayer, isAiChongFossilToken, isAiChongPickupPlanetId, isAiChongTravelEffect, isAiHiddenFirstTraceColorLost, isAiHiddenFirstTraceTakenByOpponent,
       isAiLandingEffect, isAiOpenHiddenFirstTraceTarget, isMovePaymentCard, isMovePaymentSelectionActive, isTechTilePickingActive, jiuzhe, listAiBorrowTechCandidates, listAiIndustryHuanyuMoveCandidates,
-      listAiResearchTechCandidates, moveRocket, playerState, players, rankAiScanTargetButtons, rankAiScanTargetChoices, recordAiAutoBattleLog, rocketActions,
-      rocketState, roundAiScore, runezu, scanEffects, scoreAiAlienTraceValue, scoreAiAomomoTraceTimingValue, scoreAiB1TraceMarginalValue, scoreAiBanrenmaTraceTimingValue,
+      listAiResearchTechCandidates, moveRocket, players, rankAiScanTargetButtons, rankAiScanTargetChoices, recordAiAutoBattleLog, rocketActions,
+      roundAiScore, runezu, scanEffects, scoreAiAlienTraceValue, scoreAiAomomoTraceTimingValue, scoreAiB1TraceMarginalValue, scoreAiBanrenmaTraceTimingValue,
       scoreAiCardCornerOpportunity, scoreAiFangzhouUnlockChoiceValue, scoreAiFinalSecondMarkNoDirectSetupPenalty, scoreAiHighCostPointConversionPenalty, scoreAiLandingAfterMove, scoreAiLateAlienCardConversionPenalty, scoreAiLaunchAction, scoreAiMoveArrivalRewardValue,
       scoreAiMovePaymentCost, scoreAiMoveTowardTargets, scoreAiMovementPathPenalty, scoreAiNearestActionablePlanetTimingPenalty, scoreAiPaceValueForDirectScore, scoreAiResourceBundle, scoreAiSecondFinalMarkNudgeValue, scoreAiThirdFinalMarkCashoutValue,
       scoreAiYichangdianAlienCardTracePriorityValue, scoreAiYichangdianTraceTimingValue, selectExecutableAiResearchTechCandidate, shouldAiPreserveEnergyForRouteCashout, skipCurrentActionEffect, solar, state, summarizeAiScanTargetChoiceEntry,
-      tech, techGameState, turnState, yichangdian,
+      tech, yichangdian,
     } = context;
 
-    function decidePolicyChoice(family, player, decisionId, choices) {
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") throw new TypeError("AI interaction pending requires an explicit workingRoot");
+      return workingRoot;
+    }
+
+    function getWorkingCurrentPlayer(workingRoot) {
+      return players.getCurrentPlayer(requireWorkingRoot(workingRoot).playerState);
+    }
+
+    function resolveWorkingPlayerById(workingRoot, playerId) {
+      return (requireWorkingRoot(workingRoot).playerState.players || []).find((player) => player.id === playerId) || null;
+    }
+
+    function resolveWorkingPlayerReference(workingRoot, reference = {}) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const options = reference.options || {};
+      const playerId = reference.playerId || options.playerId || options.targetPlayerId || null;
+      const playerColor = reference.playerColor || options.playerColor || options.targetPlayerColor || null;
+      return (playerState.players || []).find((player) => (
+        (playerId && player.id === playerId) || (playerColor && player.color === playerColor)
+      )) || null;
+    }
+
+    function getWorkingEffectOwnerPlayer(workingRoot, effect) {
+      return resolveWorkingPlayerReference(workingRoot, effect?.options || effect) || getWorkingCurrentPlayer(workingRoot);
+    }
+
+    function getWorkingMovableTokens(workingRoot, playerId) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
+      return rocketActions.getMovableTokensForPlayer
+        ? rocketActions.getMovableTokensForPlayer(rocketState, playerId)
+        : rocketActions.getRocketsForPlayer(rocketState, playerId);
+    }
+
+    function decidePolicyChoice(workingRoot, family, player, decisionId, choices) {
+      const { turnState } = requireWorkingRoot(workingRoot);
       return ai?.heuristicPolicy?.decideChoice?.({
         seatId: player?.id,
         family,
@@ -59,8 +94,8 @@
       }) || { ok: false, code: "HEURISTIC_POLICY_NOT_CONFIGURED", message: "公共 Heuristic Policy 未装配" };
     }
 
-    function decideBlueSlot(player, availableSlots, decisionId) {
-      return decidePolicyChoice("choose_target", player, decisionId, availableSlots.map((slot) => ({
+    function decideBlueSlot(workingRoot, player, availableSlots, decisionId) {
+      return decidePolicyChoice(workingRoot, "choose_target", player, decisionId, availableSlots.map((slot) => ({
         choiceId: String(slot),
         value: -Number(slot),
         target: { blueSlot: Number(slot) },
@@ -70,41 +105,42 @@
     }
     const selectScoredItem = ai?.heuristicEvaluator?.selectScoredItem || heuristicEvaluator.selectScoredItem;
 
-    function getAiMoveTurnKey(playerId = playerState.currentPlayerId) {
+    function getAiMoveTurnKey(workingRoot, playerId = requireWorkingRoot(workingRoot).playerState.currentPlayerId) {
+      const { turnState } = requireWorkingRoot(workingRoot);
       return `${turnState.roundNumber}:${turnState.turnNumber}:${playerId || "unknown"}`;
     }
 
-    function getAiMoveCountThisTurn(playerId = playerState.currentPlayerId) {
-      const key = getAiMoveTurnKey(playerId);
+    function getAiMoveCountThisTurn(workingRoot, playerId = requireWorkingRoot(workingRoot).playerState.currentPlayerId) {
+      const key = getAiMoveTurnKey(workingRoot, playerId);
       return Math.max(0, Math.round(Number(aiAutoBattleState.turnMoveCounts[key]) || 0));
     }
 
-    function incrementAiMoveCountThisTurn(playerId = playerState.currentPlayerId) {
-      const key = getAiMoveTurnKey(playerId);
-      aiAutoBattleState.turnMoveCounts[key] = getAiMoveCountThisTurn(playerId) + 1;
+    function incrementAiMoveCountThisTurn(workingRoot, playerId = requireWorkingRoot(workingRoot).playerState.currentPlayerId) {
+      const key = getAiMoveTurnKey(workingRoot, playerId);
+      aiAutoBattleState.turnMoveCounts[key] = getAiMoveCountThisTurn(workingRoot, playerId) + 1;
     }
 
-    function canAiMoveThisTurn(playerId = playerState.currentPlayerId) {
-      return getAiMoveCountThisTurn(playerId) < aiAutoBattleState.maxMovesPerTurn;
+    function canAiMoveThisTurn(workingRoot, playerId = requireWorkingRoot(workingRoot).playerState.currentPlayerId) {
+      return getAiMoveCountThisTurn(workingRoot, playerId) < aiAutoBattleState.maxMovesPerTurn;
     }
 
-    function getAiCardCornerMoveCountThisTurn(playerId = playerState.currentPlayerId) {
-      const key = getAiMoveTurnKey(playerId);
+    function getAiCardCornerMoveCountThisTurn(workingRoot, playerId = requireWorkingRoot(workingRoot).playerState.currentPlayerId) {
+      const key = getAiMoveTurnKey(workingRoot, playerId);
       return Math.max(0, Math.round(Number(aiAutoBattleState.turnCardCornerMoveCounts[key]) || 0));
     }
 
-    function incrementAiCardCornerMoveCountThisTurn(playerId = playerState.currentPlayerId) {
-      const key = getAiMoveTurnKey(playerId);
-      aiAutoBattleState.turnCardCornerMoveCounts[key] = getAiCardCornerMoveCountThisTurn(playerId) + 1;
+    function incrementAiCardCornerMoveCountThisTurn(workingRoot, playerId = requireWorkingRoot(workingRoot).playerState.currentPlayerId) {
+      const key = getAiMoveTurnKey(workingRoot, playerId);
+      aiAutoBattleState.turnCardCornerMoveCounts[key] = getAiCardCornerMoveCountThisTurn(workingRoot, playerId) + 1;
     }
 
-    function canAiUseCardCornerMoveThisTurn(playerId = playerState.currentPlayerId) {
-      return getAiCardCornerMoveCountThisTurn(playerId) < AI_MAX_CARD_CORNER_MOVES_PER_TURN;
+    function canAiUseCardCornerMoveThisTurn(workingRoot, playerId = requireWorkingRoot(workingRoot).playerState.currentPlayerId) {
+      return getAiCardCornerMoveCountThisTurn(workingRoot, playerId) < AI_MAX_CARD_CORNER_MOVES_PER_TURN;
     }
 
 
-    function getAiPendingDecisionPlayer(pending = null) {
-      return getPendingOwnerPlayer(pending, pending?.effect || getCurrentActionEffect?.() || null);
+    function getAiPendingDecisionPlayer(workingRoot, pending = null) {
+      return resolveWorkingPlayerReference(workingRoot, pending || pending?.effect || getCurrentActionEffect?.() || {});
     }
 
     function queryAiButtons(selector) {
@@ -175,7 +211,7 @@
         .sort((left, right) => right.score - left.score || left.index - right.index)[0]?.card || null;
     }
 
-    function chooseAiProbeSectorScanChoices(pending) {
+    function chooseAiProbeSectorScanChoices(workingRoot, pending) {
       const maxTargets = Math.max(1, Math.round(aiNumber(pending?.effect?.options?.maxTargets || 1)));
       return (pending?.choices || [])
         .map((choice, index) => {
@@ -183,7 +219,7 @@
           const scanScore = sectorX == null
             ? 0
             : getBestAiNebulaChoiceScore(buildSectorScanChoicesForX(sectorX), {
-              player: getAiPendingDecisionPlayer(pending),
+              player: getAiPendingDecisionPlayer(workingRoot, pending),
               pendingType: "probe_sector_scan",
               gainData: pending?.effect?.options?.gainData,
             });
@@ -212,10 +248,10 @@
         .sort((left, right) => right.score - left.score || left.index - right.index)[0]?.button || null;
     }
 
-    function runAiDataPlacementDecision() {
+    function runAiDataPlacementDecision(workingRoot) {
       if (!els.dataPlaceOverlay || els.dataPlaceOverlay.hidden) return null;
       const pending = state.pendingDataPlaceAction || null;
-      const player = getAiPendingDecisionPlayer(pending);
+      const player = getAiPendingDecisionPlayer(workingRoot, pending);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择数据放置` };
       }
@@ -239,7 +275,7 @@
       return confirmDataPlacement(selected.target, selected.blueSlot);
     }
 
-    function scoreAiStrategyPassiveSlotChoice(slotId, player = getCurrentPlayer()) {
+    function scoreAiStrategyPassiveSlotChoice(workingRoot, slotId, player = getWorkingCurrentPlayer(workingRoot)) {
       const reward = industry?.getStrategySlotReward?.(slotId) || null;
       if (!reward) return -Infinity;
       const bundle = {};
@@ -251,18 +287,19 @@
       return value;
     }
 
-    function runAiStrategyPassiveSlotChoiceDecision() {
+    function runAiStrategyPassiveSlotChoiceDecision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       const pending = state.pendingStrategyPassiveSlotChoice;
       if (!pending) return null;
       const effect = getCurrentActionEffect();
-      const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+      const player = getWorkingEffectOwnerPlayer(workingRoot, effect) || getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择宇宙战略集团奖励槽` };
       }
       const rankedChoices = (pending.slotIds || [])
         .map((slotId) => ({
           slotId,
-          score: scoreAiStrategyPassiveSlotChoice(slotId, player),
+          score: scoreAiStrategyPassiveSlotChoice(workingRoot, slotId, player),
           rewardLabel: industry?.getStrategySlotRewardLabel?.(slotId) || "",
         }))
         .filter((entry) => entry.slotId && Number.isFinite(Number(entry.score)))
@@ -281,9 +318,11 @@
       return confirmStrategyPassiveSlotChoice(selected.slotId);
     }
 
-    function runAiMovePaymentDecision() {
+    function runAiMovePaymentDecision(workingRoot) {
+      const { rocketState, turnState } = requireWorkingRoot(workingRoot);
       if (!isMovePaymentSelectionActive()) return null;
-      const currentPlayer = getPendingOwnerPlayer(state.pendingMovePayment);
+      const currentPlayer = getAiPendingDecisionPlayer(workingRoot, state.pendingMovePayment)
+        || getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工确认移动支付` };
       }
@@ -349,7 +388,7 @@
         { length: Math.max(0, Math.min(requiredMovePoints, orderedMoveCards.length) - minimumCards) + 1 },
         (_item, offset) => orderedMoveCards.slice(0, minimumCards + offset),
       );
-      const paymentPolicy = decidePolicyChoice("choose_payment", currentPlayer, "move-payment", paymentChoices.map((indexes) => ({
+      const paymentPolicy = decidePolicyChoice(workingRoot, "choose_payment", currentPlayer, "move-payment", paymentChoices.map((indexes) => ({
         choiceId: indexes.join("+") || "energy-only",
         value: indexes.join(",") === preferredHandIndices.join(",")
           ? 100
@@ -388,14 +427,14 @@
         preserveEnergyForRouteCashout,
       });
       const result = confirmMovePayment({ automated: true });
-      if (result?.ok) incrementAiMoveCountThisTurn(currentPlayer.id);
+      if (result?.ok) incrementAiMoveCountThisTurn(workingRoot, currentPlayer.id);
       return result || { ok: false, blocked: true, message: "AI 移动支付未产生结果" };
     }
 
-    function runAiLandTargetDecision() {
+    function runAiLandTargetDecision(workingRoot) {
       if (!els.landTargetOverlay || els.landTargetOverlay.hidden) return null;
       const pending = state.pendingLandTargetAction || null;
-      const player = getAiPendingDecisionPlayer(pending);
+      const player = getAiPendingDecisionPlayer(workingRoot, pending);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择登陆目标` };
       }
@@ -405,7 +444,7 @@
       }
       const options = typeof pending?.getOptions === "function"
         ? pending.getOptions()
-        : abilities.planet.getLandOptions(createActionContext());
+        : abilities.planet.getLandOptions(createActionContext(workingRoot));
       const selected = options?.ok
         ? chooseAiLandChoice(options.choices || [], player)
         : null;
@@ -431,14 +470,14 @@
       return result || { ok: true, progressed: true, message: "AI 已选择登陆目标" };
     }
 
-    function runAiProbeSectorScanDecision() {
+    function runAiProbeSectorScanDecision(workingRoot) {
       const pending = state.pendingProbeSectorScanAction || null;
       if (!pending) return null;
-      const player = getAiPendingDecisionPlayer(pending);
+      const player = getAiPendingDecisionPlayer(workingRoot, pending);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择探测器扇区扫描` };
       }
-      const selectedChoices = chooseAiProbeSectorScanChoices(pending);
+      const selectedChoices = chooseAiProbeSectorScanChoices(workingRoot, pending);
       if (!selectedChoices.length) {
         return { ok: false, blocked: true, message: "AI 没有可选探测器扇区扫描目标" };
       }
@@ -457,10 +496,10 @@
       return confirmProbeSectorScanSelection();
     }
 
-    function runAiProbeLocationRewardDecision() {
+    function runAiProbeLocationRewardDecision(workingRoot) {
       const pending = state.pendingProbeLocationRewardAction || null;
       if (!pending) return null;
-      const player = getAiPendingDecisionPlayer(pending);
+      const player = getAiPendingDecisionPlayer(workingRoot, pending);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择探测器位置奖励` };
       }
@@ -572,17 +611,17 @@
       return null;
     }
 
-    function runAiScanTargetDecision() {
+    function runAiScanTargetDecision(workingRoot) {
       if (!state.pendingScanTargetAction && (!els.scanTargetOverlay || els.scanTargetOverlay.hidden)) return null;
-      const probeSectorResult = runAiProbeSectorScanDecision();
+      const probeSectorResult = runAiProbeSectorScanDecision(workingRoot);
       if (probeSectorResult) return probeSectorResult;
-      const probeLocationResult = runAiProbeLocationRewardDecision();
+      const probeLocationResult = runAiProbeLocationRewardDecision(workingRoot);
       if (probeLocationResult) return probeLocationResult;
 
       const pending = state.pendingScanTargetAction || null;
       const pendingType = pending?.type || null;
       if (!pendingType) return null;
-      const player = getAiPendingDecisionPlayer(pending);
+      const player = getAiPendingDecisionPlayer(workingRoot, pending);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择扫描目标` };
       }
@@ -713,8 +752,9 @@
       return confirmScanTarget(button.dataset.nebulaId, button.dataset.sectorX);
     }
 
-    function buildAiEffectMoveCandidate(rocket, direction, index = 0, options = {}) {
-      const currentPlayer = options.player || getCurrentPlayer();
+    function buildAiEffectMoveCandidate(workingRoot, rocket, direction, index = 0, options = {}) {
+      const { alienGameState, rocketState, playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = options.player || getWorkingCurrentPlayer(workingRoot);
       const moveCheck = rocketActions.canMoveRocket(
         rocketState,
         rocket.id,
@@ -729,6 +769,7 @@
         ? 0
         : Math.max(0, Math.round(Number(explicitPoolRemaining) || 0));
       const terrainRequired = getRequiredMovePointsForUi(
+        workingRoot,
         currentPlayer,
         rocket.id,
         direction.deltaX,
@@ -936,32 +977,34 @@
       return used;
     }
 
-    function listAiEffectMoveCandidates(options = {}) {
-      const currentPlayer = options.player || getCurrentPlayer();
+    function listAiEffectMoveCandidates(workingRoot, options = {}) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = options.player || getWorkingCurrentPlayer(workingRoot);
       if (!currentPlayer) return [];
       const effect = options.effect || getCurrentActionEffect?.() || null;
       const usedHuanyuRocketIds = isAiIndustryHuanyuMoveEffect(effect)
         ? getAiCompletedIndustryHuanyuMoveRocketIds(effect)
         : null;
-      return getMovableTokensForPlayer(currentPlayer.id)
+      return getWorkingMovableTokens(workingRoot, currentPlayer.id)
         .filter((rocket) => !usedHuanyuRocketIds?.has(Number(rocket.id)))
         .flatMap((rocket, index) => AI_MOVE_DIRECTIONS
-          .map((direction) => buildAiEffectMoveCandidate(rocket, direction, index, {
+          .map((direction) => buildAiEffectMoveCandidate(workingRoot, rocket, direction, index, {
             ...options,
             effect,
           }))
           .filter(Boolean));
     }
 
-    function runAiActionEffectMoveDecision() {
+    function runAiActionEffectMoveDecision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (!state.pendingActionEffectFlow?.cardMoveEffect && !state.pendingActionEffectFlow?.freeMoveMode) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择移动路径` };
       }
 
       if (state.pendingActionEffectFlow.freeMoveMode) {
-        const candidates = listAiEffectMoveCandidates({ id: "freeMove", free: true });
+        const candidates = listAiEffectMoveCandidates(workingRoot, { id: "freeMove", free: true });
         const selected = selectScoredItem(candidates);
         if (!selected || aiNumber(selected.score) < 0) {
           const message = "AI 没有可用免费移动路径，跳过移动效果";
@@ -976,7 +1019,7 @@
           selected,
           candidates,
         });
-        const result = executeFreeMoveForScanAction4(selected.deltaX, selected.deltaY, selected.rocketId);
+        const result = executeFreeMoveForScanAction4(workingRoot, selected.deltaX, selected.deltaY, selected.rocketId);
         if (result?.ok !== false) return result;
         skipCurrentActionEffect?.();
         return {
@@ -990,7 +1033,7 @@
       const ctx = state.pendingActionEffectFlow.cardMoveEffect;
       const effect = ctx?.effect || getCurrentActionEffect();
       const nextEffect = getAiNextActionEffect();
-      const candidates = listAiEffectMoveCandidates({
+      const candidates = listAiEffectMoveCandidates(workingRoot, {
         id: "cardMove",
         effect,
         poolRemaining: ctx?.poolRemaining ?? effect?.options?.movementPoints ?? 1,
@@ -1012,7 +1055,7 @@
         selected,
         candidates,
       });
-      const result = executeCardMoveForEffect(selected.deltaX, selected.deltaY, selected.rocketId);
+      const result = executeCardMoveForEffect(workingRoot, selected.deltaX, selected.deltaY, selected.rocketId);
       if (result?.ok !== false) return result;
       skipCurrentActionEffect?.();
       return {
@@ -1023,15 +1066,16 @@
       };
     }
 
-    function runAiCardCornerFreeMoveDecision() {
+    function runAiCardCornerFreeMoveDecision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (!state.pendingCardCornerFreeMove) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工处理卡牌角标移动` };
       }
       const pending = state.pendingCardCornerFreeMove;
       const movementPoints = pending.action?.moveReward?.movementPoints || pending.action?.movementPoints || 1;
-      const candidates = listAiEffectMoveCandidates({
+      const candidates = listAiEffectMoveCandidates(workingRoot, {
         id: "cardCornerMove",
         free: true,
         poolRemaining: movementPoints,
@@ -1044,18 +1088,19 @@
         selected,
         candidates,
       });
-      const result = executeFreeMoveForCardCorner(selected.deltaX, selected.deltaY, selected.rocketId);
-      if (result?.ok) incrementAiCardCornerMoveCountThisTurn(currentPlayer.id);
+      const result = executeFreeMoveForCardCorner(workingRoot, selected.deltaX, selected.deltaY, selected.rocketId);
+      if (result?.ok) incrementAiCardCornerMoveCountThisTurn(workingRoot, currentPlayer.id);
       return result;
     }
 
-    function runAiIndustryFreeMoveDecision() {
+    function runAiIndustryFreeMoveDecision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (!state.industryFreeMoveState) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工处理公司免费移动` };
       }
-      const candidates = listAiIndustryHuanyuMoveCandidates();
+      const candidates = listAiIndustryHuanyuMoveCandidates(workingRoot);
       const selected = selectScoredItem(candidates);
       if (!selected || aiNumber(selected.score) < 0) {
         const message = `${state.industryFreeMoveState?.label || "公司免费移动"}：无正收益移动，结束剩余免费移动`;
@@ -1073,18 +1118,19 @@
         selected,
         candidates,
       });
-      return executeIndustryFreeMove(selected.deltaX, selected.deltaY, selected.rocketId);
+      return executeIndustryFreeMove(workingRoot, selected.deltaX, selected.deltaY, selected.rocketId);
     }
 
-    function listAiScanAction4Candidates(currentPlayer = getCurrentPlayer()) {
+    function listAiScanAction4Candidates(workingRoot, currentPlayer = getWorkingCurrentPlayer(workingRoot)) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!currentPlayer) return [];
       const candidates = [];
       const effect = getCurrentActionEffect?.() || null;
       const skipCost = Boolean(effect?.options?.skipCost);
-      const rocketLimit = abilities.rocket.getRocketLimitForPlayer(currentPlayer, createActionContext());
+      const rocketLimit = abilities.rocket.getRocketLimitForPlayer(currentPlayer, createActionContext(workingRoot));
       const activeRocketCount = rocketActions.getRocketsForPlayer
         ? rocketActions.getRocketsForPlayer(rocketState, currentPlayer.id).length
-        : getMovableTokensForPlayer(currentPlayer.id).length;
+        : getWorkingMovableTokens(workingRoot, currentPlayer.id).length;
       const canLaunch = activeRocketCount < rocketLimit
         && (skipCost || players.canAfford(currentPlayer, { energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY }));
       if (canLaunch) {
@@ -1107,7 +1153,7 @@
         });
       }
 
-      candidates.push(...listAiEffectMoveCandidates({
+      candidates.push(...listAiEffectMoveCandidates(workingRoot, {
         id: "move",
         free: true,
         poolRemaining: 1,
@@ -1124,14 +1170,15 @@
       return candidates;
     }
 
-    function runAiScanAction4Decision() {
+    function runAiScanAction4Decision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (!els.scanAction4Overlay || els.scanAction4Overlay.hidden) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工处理扫描发射/移动` };
       }
 
-      const candidates = listAiScanAction4Candidates(currentPlayer);
+      const candidates = listAiScanAction4Candidates(workingRoot, currentPlayer);
       const selected = selectScoredItem(candidates);
       if (!selected || aiNumber(selected.score) < 0) {
         const message = "AI 没有正收益的扫描发射/移动选择，跳过效果";
@@ -1150,7 +1197,7 @@
       if (selected.choice === "launch") {
         return handleScanAction4Choice("launch");
       }
-      return executeFreeMoveForScanAction4(selected.deltaX, selected.deltaY, selected.rocketId);
+      return executeFreeMoveForScanAction4(workingRoot, selected.deltaX, selected.deltaY, selected.rocketId);
     }
 
     function getAiAlienTraceButtons(selector, roots = []) {
@@ -1290,7 +1337,8 @@
       return 0;
     }
 
-    function getAiAlienTraceTargetReward(mode, traceType, position) {
+    function getAiAlienTraceTargetReward(workingRoot, mode, traceType, position) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!traceType || position == null) return null;
       const pos = Number(position);
       if (mode === "jiuzhe-grid") return jiuzhe?.getTraceReward?.(traceType, pos) || null;
@@ -1332,7 +1380,8 @@
       ));
     }
 
-    function hasAiFeasibleSimpleGridTraceTarget(alienModule, alienSlotId, allowedTraceTypes, options = {}) {
+    function hasAiFeasibleSimpleGridTraceTarget(workingRoot, alienModule, alienSlotId, allowedTraceTypes, options = {}) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const grid = alienModule?.getTraceGrid?.(alienGameState, alienSlotId);
       return hasAiFeasibleGridTraceTarget(alienModule, alienSlotId, allowedTraceTypes, (traceType, position) => {
         if (options.stackPosition === Number(position)) return true;
@@ -1340,7 +1389,8 @@
       });
     }
 
-    function hasAiFeasibleBanrenmaTraceTarget(alienSlotId, allowedTraceTypes, player) {
+    function hasAiFeasibleBanrenmaTraceTarget(workingRoot, alienSlotId, allowedTraceTypes, player) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)) return false;
       const grid = banrenma.getTraceGrid?.(alienGameState, alienSlotId);
       const availableData = getAiAvailableDataTokenCount(player);
@@ -1352,32 +1402,34 @@
       });
     }
 
-    function getAiBestSimpleGridTraceDirectScore(alienModule, mode, alienSlotId, traceType, options = {}) {
+    function getAiBestSimpleGridTraceDirectScore(workingRoot, alienModule, mode, alienSlotId, traceType, options = {}) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!alienModule || !traceType) return 0;
       const grid = alienModule.getTraceGrid?.(alienGameState, alienSlotId);
       return getAiAlienModuleTracePositions(alienModule, traceType).reduce((best, rawPosition) => {
         const position = Number(rawPosition);
         if (options.stackPosition !== position && grid?.[traceType]?.[position]) return best;
-        const reward = getAiAlienTraceTargetReward(mode, traceType, position);
+        const reward = getAiAlienTraceTargetReward(workingRoot, mode, traceType, position);
         return Math.max(best, Math.max(0, aiNumber(reward?.gain?.score)));
       }, 0);
     }
 
-    function getAiBestCheckedGridTraceDirectScore(alienModule, mode, alienSlotId, traceType, canPlace) {
+    function getAiBestCheckedGridTraceDirectScore(workingRoot, alienModule, mode, alienSlotId, traceType, canPlace) {
       if (!alienModule || !traceType || typeof canPlace !== "function") return 0;
       return getAiAlienModuleTracePositions(alienModule, traceType).reduce((best, rawPosition) => {
         const position = Number(rawPosition);
         if (!canPlace(traceType, position)) return best;
-        const reward = getAiAlienTraceTargetReward(mode, traceType, position);
+        const reward = getAiAlienTraceTargetReward(workingRoot, mode, traceType, position);
         return Math.max(best, Math.max(0, aiNumber(reward?.gain?.score)));
       }, 0);
     }
 
-    function getAiBestBanrenmaTraceDirectScore(alienSlotId, traceType, player) {
+    function getAiBestBanrenmaTraceDirectScore(workingRoot, alienSlotId, traceType, player) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)) return 0;
       const grid = banrenma.getTraceGrid?.(alienGameState, alienSlotId);
       const availableData = getAiAvailableDataTokenCount(player);
-      return getAiBestCheckedGridTraceDirectScore(banrenma, "banrenma-grid", alienSlotId, traceType, (item, position) => {
+      return getAiBestCheckedGridTraceDirectScore(workingRoot, banrenma, "banrenma-grid", alienSlotId, traceType, (item, position) => {
         const reward = banrenma.getTraceReward?.(item, Number(position));
         const requiredData = Math.max(0, Math.round(aiNumber(reward?.payData)));
         if (requiredData > availableData) return false;
@@ -1385,50 +1437,52 @@
       });
     }
 
-    function getAiBestRevealedAlienTraceDirectScoreForSlot(player, alienSlotId, traceType) {
+    function getAiBestRevealedAlienTraceDirectScoreForSlot(workingRoot, player, alienSlotId, traceType) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (jiuzhe?.isJiuzheRevealedSlot?.(alienGameState, alienSlotId)) {
-        return getAiBestSimpleGridTraceDirectScore(jiuzhe, "jiuzhe-grid", alienSlotId, traceType);
+        return getAiBestSimpleGridTraceDirectScore(workingRoot, jiuzhe, "jiuzhe-grid", alienSlotId, traceType);
       }
       if (yichangdian?.isYichangdianRevealedSlot?.(alienGameState, alienSlotId)) {
-        return getAiBestSimpleGridTraceDirectScore(yichangdian, "yichangdian-grid", alienSlotId, traceType, { stackPosition: 1 });
+        return getAiBestSimpleGridTraceDirectScore(workingRoot, yichangdian, "yichangdian-grid", alienSlotId, traceType, { stackPosition: 1 });
       }
       if (fangzhou?.isFangzhouRevealedSlot?.(alienGameState, alienSlotId)) {
-        return getAiBestCheckedGridTraceDirectScore(fangzhou, "fangzhou-grid", alienSlotId, traceType, (item, position) => (
+        return getAiBestCheckedGridTraceDirectScore(workingRoot, fangzhou, "fangzhou-grid", alienSlotId, traceType, (item, position) => (
           fangzhou.canPlaceFangzhouTrace?.(alienGameState, alienSlotId, item, position, player)?.ok
         ));
       }
       if (banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)) {
-        return getAiBestBanrenmaTraceDirectScore(alienSlotId, traceType, player);
+        return getAiBestBanrenmaTraceDirectScore(workingRoot, alienSlotId, traceType, player);
       }
       if (chong?.isChongRevealedSlot?.(alienGameState, alienSlotId)) {
-        return getAiBestCheckedGridTraceDirectScore(chong, "chong-grid", alienSlotId, traceType, (item, position) => (
+        return getAiBestCheckedGridTraceDirectScore(workingRoot, chong, "chong-grid", alienSlotId, traceType, (item, position) => (
           chong.canPlaceChongTrace?.(alienGameState, alienSlotId, item, position, player)?.ok
         ));
       }
       if (amiba?.isAmibaRevealedSlot?.(alienGameState, alienSlotId)) {
-        return getAiBestCheckedGridTraceDirectScore(amiba, "amiba-grid", alienSlotId, traceType, (item, position) => (
+        return getAiBestCheckedGridTraceDirectScore(workingRoot, amiba, "amiba-grid", alienSlotId, traceType, (item, position) => (
           amiba.canPlaceAmibaTrace?.(alienGameState, alienSlotId, item, position, player)?.ok
         ));
       }
       if (aomomo?.isAomomoRevealedSlot?.(alienGameState, alienSlotId)) {
-        return getAiBestCheckedGridTraceDirectScore(aomomo, "aomomo-grid", alienSlotId, traceType, (item, position) => (
+        return getAiBestCheckedGridTraceDirectScore(workingRoot, aomomo, "aomomo-grid", alienSlotId, traceType, (item, position) => (
           aomomo.canPlaceAomomoTrace?.(alienGameState, alienSlotId, item, position, player)?.ok
         ));
       }
       if (runezu?.isRunezuRevealedSlot?.(alienGameState, alienSlotId)) {
-        return getAiBestCheckedGridTraceDirectScore(runezu, "runezu-grid", alienSlotId, traceType, (item, position) => (
+        return getAiBestCheckedGridTraceDirectScore(workingRoot, runezu, "runezu-grid", alienSlotId, traceType, (item, position) => (
           runezu.canPlaceRunezuTrace?.(alienGameState, alienSlotId, item, position, player)?.ok
         ));
       }
       return 0;
     }
 
-    function hasAiFeasibleRevealedAlienTraceTarget(alienSlotId, allowedTraceTypes, player) {
+    function hasAiFeasibleRevealedAlienTraceTarget(workingRoot, alienSlotId, allowedTraceTypes, player) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (jiuzhe?.isJiuzheRevealedSlot?.(alienGameState, alienSlotId)) {
-        return hasAiFeasibleSimpleGridTraceTarget(jiuzhe, alienSlotId, allowedTraceTypes);
+        return hasAiFeasibleSimpleGridTraceTarget(workingRoot, jiuzhe, alienSlotId, allowedTraceTypes);
       }
       if (yichangdian?.isYichangdianRevealedSlot?.(alienGameState, alienSlotId)) {
-        return hasAiFeasibleSimpleGridTraceTarget(yichangdian, alienSlotId, allowedTraceTypes, { stackPosition: 1 });
+        return hasAiFeasibleSimpleGridTraceTarget(workingRoot, yichangdian, alienSlotId, allowedTraceTypes, { stackPosition: 1 });
       }
       if (fangzhou?.isFangzhouRevealedSlot?.(alienGameState, alienSlotId)) {
         const canPlaceOnPanel = hasAiFeasibleGridTraceTarget(fangzhou, alienSlotId, allowedTraceTypes, (traceType, position) => (
@@ -1440,7 +1494,7 @@
         return canPlaceOnPanel || canUnlockCard;
       }
       if (banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)) {
-        return hasAiFeasibleBanrenmaTraceTarget(alienSlotId, allowedTraceTypes, player);
+        return hasAiFeasibleBanrenmaTraceTarget(workingRoot, alienSlotId, allowedTraceTypes, player);
       }
       if (chong?.isChongRevealedSlot?.(alienGameState, alienSlotId)) {
         return hasAiFeasibleGridTraceTarget(chong, alienSlotId, allowedTraceTypes, (traceType, position) => (
@@ -1470,7 +1524,8 @@
       return [player.id, player.color, player.colorLabel].filter(Boolean).map(String);
     }
 
-    function listAiAlienTraceEntriesForSlot(alienSlotId, traceType) {
+    function listAiAlienTraceEntriesForSlot(workingRoot, alienSlotId, traceType) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const slotId = Number(alienSlotId);
       if (jiuzhe?.isJiuzheRevealedSlot?.(alienGameState, slotId)) return jiuzhe.listTraceEntries?.(alienGameState, slotId, traceType) || [];
       if (yichangdian?.isYichangdianRevealedSlot?.(alienGameState, slotId)) return yichangdian.listTraceEntries?.(alienGameState, slotId, traceType) || [];
@@ -1496,53 +1551,54 @@
       ].filter(Boolean).map(String).some((key) => keys.includes(key));
     }
 
-    function aiAlienSlotHasPlayerTrace(alienSlotId, traceType, player) {
-      return listAiAlienTraceEntriesForSlot(alienSlotId, traceType)
+    function aiAlienSlotHasPlayerTrace(workingRoot, alienSlotId, traceType, player) {
+      return listAiAlienTraceEntriesForSlot(workingRoot, alienSlotId, traceType)
         .some((entry) => aiAlienTraceEntryBelongsToPlayer(entry, player));
     }
 
-    function aiAlienSlotHasPlayerTraceSet(alienSlotId, traceTypes, player) {
-      return (traceTypes || []).every((traceType) => aiAlienSlotHasPlayerTrace(alienSlotId, traceType, player));
+    function aiAlienSlotHasPlayerTraceSet(workingRoot, alienSlotId, traceTypes, player) {
+      return (traceTypes || []).every((traceType) => aiAlienSlotHasPlayerTrace(workingRoot, alienSlotId, traceType, player));
     }
 
-    function getAiEligibleAlienSlotIdsForTraceEffect(effect, player, traceTypes) {
+    function getAiEligibleAlienSlotIdsForTraceEffect(workingRoot, effect, player, traceTypes) {
       const targetRule = effect?.options?.targetRule;
       if (!targetRule) return aliens.ALIEN_SLOT_IDS || [];
       return (aliens.ALIEN_SLOT_IDS || []).filter((alienSlotId) => {
         if (targetRule === "playerHasSameTrace") {
-          return (traceTypes || []).some((traceType) => aiAlienSlotHasPlayerTrace(alienSlotId, traceType, player));
+          return (traceTypes || []).some((traceType) => aiAlienSlotHasPlayerTrace(workingRoot, alienSlotId, traceType, player));
         }
         if (targetRule === "singleAlienTraceSet") {
           const requiredTypes = effect.options?.traceTypes || ["yellow", "pink", "blue"];
-          return aiAlienSlotHasPlayerTraceSet(alienSlotId, requiredTypes, player);
+          return aiAlienSlotHasPlayerTraceSet(workingRoot, alienSlotId, requiredTypes, player);
         }
         return true;
       });
     }
 
-    function canAiPlaceBasicAlienTrace(alienSlotId, traceType) {
+    function canAiPlaceBasicAlienTrace(workingRoot, alienSlotId, traceType) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const traceSlot = aliens.getAlienSlot?.(alienGameState, alienSlotId)?.traces?.[traceType];
       return Boolean(traceSlot) && !traceSlot.firstPlaced;
     }
 
-    function canAiResolveAlienTraceEffect(effect, player = getCurrentPlayer()) {
+    function canAiResolveAlienTraceEffect(workingRoot, effect, player = getWorkingCurrentPlayer(workingRoot)) {
       if (effect?.type !== "alien_trace") return true;
       const traceType = effect.options?.traceType || null;
       const allowedTraceTypes = traceType
         ? [traceType]
         : (effect.options?.allowedTraceTypes?.length ? effect.options.allowedTraceTypes : aliens.TRACE_TYPES || []);
-      const eligibleSlots = getAiEligibleAlienSlotIdsForTraceEffect(effect, player, allowedTraceTypes);
+      const eligibleSlots = getAiEligibleAlienSlotIdsForTraceEffect(workingRoot, effect, player, allowedTraceTypes);
       if (!eligibleSlots.length) return false;
       return eligibleSlots.some((alienSlotId) => {
         const slot = aliens.getAlienSlot?.(alienGameState, alienSlotId);
         if (slot?.revealed && slot?.alienId) {
-          return hasAiFeasibleRevealedAlienTraceTarget(alienSlotId, allowedTraceTypes, player);
+          return hasAiFeasibleRevealedAlienTraceTarget(workingRoot, alienSlotId, allowedTraceTypes, player);
         }
-        return allowedTraceTypes.some((item) => canAiPlaceBasicAlienTrace(alienSlotId, item));
+        return allowedTraceTypes.some((item) => canAiPlaceBasicAlienTrace(workingRoot, alienSlotId, item));
       });
     }
 
-    function canAiPlaceAlienGridTraceTarget(target, player = getCurrentPlayer()) {
+    function canAiPlaceAlienGridTraceTarget(workingRoot, target, player = getWorkingCurrentPlayer(workingRoot)) {
       if (target?.kind !== "grid-slot") return true;
       const button = target.button;
       const dataset = button?.dataset || {};
@@ -1583,9 +1639,9 @@
       return true;
     }
 
-    function scoreAiAlienTraceTarget(target, player) {
+    function scoreAiAlienTraceTarget(workingRoot, target, player) {
       if (!target?.button || target.button.disabled) return -Infinity;
-      if (!canAiPlaceAlienGridTraceTarget(target, player)) return -Infinity;
+      if (!canAiPlaceAlienGridTraceTarget(workingRoot, target, player)) return -Infinity;
       const label = String(target.button.textContent || target.button.title || "");
       const pickerMode = String(state.alienTracePickerState?.mode || "");
       const mode = getAiAlienTraceTargetMode(target, pickerMode);
@@ -1602,7 +1658,7 @@
         ? fangzhou?.getCard2UnlockTraceReward?.()
         : isStateExtraTraceTarget
           ? aliens?.getExtraTraceReward?.()
-        : getAiAlienTraceTargetReward(scoringMode, traceType, position);
+        : getAiAlienTraceTargetReward(workingRoot, scoringMode, traceType, position);
       const reward = getAiAlienTraceRewardForValuation(scoringMode, rawReward, player);
       const demand = getAiStrategyDemand(player);
       const alienSlot = Number(target.button.dataset.alienSlot || state.alienTracePickerState?.selectedAlienSlotId);
@@ -1642,7 +1698,7 @@
         target.kind === "picker"
         && mode !== "fangzhou-use"
         && Number.isFinite(alienSlot)
-        && !hasAiFeasibleRevealedAlienTraceTarget(
+        && !hasAiFeasibleRevealedAlienTraceTarget(workingRoot,
           alienSlot,
           state.alienTracePickerState?.allowedTraceTypes,
           player,
@@ -1749,7 +1805,7 @@
       return score;
     }
 
-    function chooseAiAlienTraceTarget(player) {
+    function chooseAiAlienTraceTarget(workingRoot, player) {
       const pickerMode = String(state.alienTracePickerState?.mode || "");
       let targets = [];
       if (pickerMode.endsWith("-grid")) {
@@ -1771,19 +1827,19 @@
         }
       }
       return targets
-        .map((target, index) => ({ ...target, index, score: scoreAiAlienTraceTarget(target, player) }))
+        .map((target, index) => ({ ...target, index, score: scoreAiAlienTraceTarget(workingRoot, target, player) }))
         .filter((target) => Number.isFinite(target.score))
         .sort((left, right) => right.score - left.score || left.index - right.index)[0] || null;
     }
 
-    function runAiAlienTraceDecision() {
+    function runAiAlienTraceDecision(workingRoot) {
       if (!state.pendingAlienTraceAction && (!state.alienTracePickerState || !state.alienTracePickerState.mode)) return null;
       const player = getAlienTraceActionPlayer(state.pendingAlienTraceAction || state.alienTracePickerState);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择外星人痕迹` };
       }
 
-      const target = chooseAiAlienTraceTarget(player);
+      const target = chooseAiAlienTraceTarget(workingRoot, player);
       if (!target?.button) {
         const message = "AI 没有可用外星人痕迹目标，已跳过当前效果";
         recordAiAutoBattleLog("alien-trace-skip", message, {
@@ -1813,17 +1869,20 @@
       return { ok: true, progressed: true, message: "AI 已选择外星人痕迹" };
     }
 
-    function getAiAlienPendingPlayer(pending = {}) {
+    function getAiAlienPendingPlayer(workingRoot, pending = {}) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       const explicitPlayerId = pending?.playerId || pending?.targetPlayerId || pending?.player?.id || null;
       const explicitPlayerColor = pending?.playerColor || pending?.targetPlayerColor || pending?.player?.color || null;
-      const ownerPlayerId = getEffectOwnerPlayer(pending?.effect)?.id
+      const ownerPlayerId = getWorkingEffectOwnerPlayer(workingRoot, pending?.effect)?.id
         || state.pendingActionEffectFlow?.playerId
         || playerState.currentPlayerId;
-      const explicitColorPlayer = explicitPlayerColor ? getPlayerByColor(explicitPlayerColor) : null;
-      return getPlayerById(explicitPlayerId)
+      const explicitColorPlayer = explicitPlayerColor
+        ? resolveWorkingPlayerReference(workingRoot, { playerColor: explicitPlayerColor })
+        : null;
+      return resolveWorkingPlayerById(workingRoot, explicitPlayerId)
         || explicitColorPlayer
-        || getPlayerById(ownerPlayerId)
-        || getCurrentPlayer();
+        || resolveWorkingPlayerById(workingRoot, ownerPlayerId)
+        || getWorkingCurrentPlayer(workingRoot);
     }
 
     function makeAiAlienChoiceFlow(type, label, pending, selector, datasetKey, handler, options = {}) {
@@ -1992,7 +2051,8 @@
     }
 
 
-    function listAiAlienUseOptions(flow) {
+    function listAiAlienUseOptions(workingRoot, flow) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const buttons = [...(els.scanTargetActions?.querySelectorAll(flow.selector) || [])];
       let options = buttons.map((button, index) => ({
         button,
@@ -2034,7 +2094,7 @@
         });
       }
       if (flow.type === "jiuzhe-card" && flow.pending?.reason !== "view") {
-        const player = getAiAlienPendingPlayer(flow.pending);
+        const player = getAiAlienPendingPlayer(workingRoot, flow.pending);
         const cost = flow.pending?.cost || {};
         const needsPayment = Object.keys(cost).length > 0;
         if (needsPayment && player && !players.canAfford(player, cost)) {
@@ -2066,20 +2126,20 @@
       return options;
     }
 
-    function runAiAlienUseDecision() {
+    function runAiAlienUseDecision(workingRoot) {
       const flows = getAiAlienUseFlows();
       if (!flows.length) return null;
       let flow = null;
       let options = [];
       let selected = null;
       for (const candidateFlow of flows) {
-        const candidatePlayer = getAiAlienPendingPlayer(candidateFlow.pending);
+        const candidatePlayer = getAiAlienPendingPlayer(workingRoot, candidateFlow.pending);
         if (!isAiAutoBattlePlayer(candidatePlayer?.id)) {
           flow = candidateFlow;
           break;
         }
-        const candidateOptions = listAiAlienUseOptions(candidateFlow);
-        const alienPolicy = decidePolicyChoice("choose_reward", candidatePlayer, `alien:${candidateFlow.type}`, candidateOptions
+        const candidateOptions = listAiAlienUseOptions(workingRoot, candidateFlow);
+        const alienPolicy = decidePolicyChoice(workingRoot, "choose_reward", candidatePlayer, `alien:${candidateFlow.type}`, candidateOptions
           .filter((option) => !option.disabled)
           .map((option, index) => ({
             choiceId: `alien-option-${index}`,
@@ -2098,7 +2158,7 @@
       }
       if (!flow && isActionEffectFlowActive()) return null;
       if (!flow) return { ok: false, blocked: true, message: "AI 没有可处理的外星人选项" };
-      const player = getAiAlienPendingPlayer(flow.pending);
+      const player = getAiAlienPendingPlayer(workingRoot, flow.pending);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工处理${flow.label}` };
       }
@@ -2129,8 +2189,9 @@
       return { ok: true, progressed: true, message: `AI 已处理${flow.label}` };
     }
 
-    function runAiMoveActionDecision(action) {
-      const currentPlayer = getCurrentPlayer();
+    function runAiMoveActionDecision(workingRoot, action) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!action?.rocketId) return { ok: false, message: "AI 移动缺少火箭" };
       recordAiAutoBattleLog("move", `${currentPlayer.colorLabel}AI 移动 ${action.rocketLabel || `R${action.rocketId}`} ${action.directionLabel}`, {
         action,
@@ -2139,9 +2200,10 @@
     }
 
 
-    function runAiResearchTechSelectionDecision(effect) {
+    function runAiResearchTechSelectionDecision(workingRoot, effect) {
+      const { techGameState, playerState } = requireWorkingRoot(workingRoot);
       if (!isTechTilePickingActive()) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择科技片` };
       }
@@ -2149,7 +2211,7 @@
 
       if (techGameState.ui.pendingTileId) {
         const availableSlots = tech.getAvailableBlueSlots(currentPlayer.techState);
-        const blueSlotPolicy = decideBlueSlot(currentPlayer, availableSlots, `blue-slot:${techGameState.ui.pendingTileId}`);
+        const blueSlotPolicy = decideBlueSlot(workingRoot, currentPlayer, availableSlots, `blue-slot:${techGameState.ui.pendingTileId}`);
         if (!blueSlotPolicy.ok) return { ok: false, blocked: true, code: blueSlotPolicy.code, message: blueSlotPolicy.message };
         const blueSlot = blueSlotPolicy.choice.slot;
         if (blueSlot == null) {
@@ -2160,13 +2222,13 @@
           availableSlots,
           blueSlot,
         });
-        return confirmTechBlueSlotChoice(blueSlot);
+        return confirmTechBlueSlotChoice(workingRoot, blueSlot);
       }
 
       const candidates = techGameState.ui.industryBorrowMode
-        ? listAiBorrowTechCandidates(currentPlayer)
+        ? listAiBorrowTechCandidates(workingRoot, currentPlayer)
         : listAiResearchTechCandidates(selectionOptions);
-      const techPolicy = decidePolicyChoice("choose_target", currentPlayer, `research-tech:${effect?.id || "generic"}`, candidates
+      const techPolicy = decidePolicyChoice(workingRoot, "choose_target", currentPlayer, `research-tech:${effect?.id || "generic"}`, candidates
         .filter((candidate) => candidate?.available !== false)
         .map((candidate) => ({
           choiceId: candidate.tileId,
@@ -2217,7 +2279,7 @@
       const result = handleSupplyTechTileClick(selected.tileId);
       if (result?.needsBlueSlotChoice) {
         const availableSlots = result.availableSlots || [];
-        const blueSlotPolicy = decideBlueSlot(currentPlayer, availableSlots, `blue-slot:${selected.tileId}`);
+        const blueSlotPolicy = decideBlueSlot(workingRoot, currentPlayer, availableSlots, `blue-slot:${selected.tileId}`);
         if (!blueSlotPolicy.ok) return { ok: false, blocked: true, code: blueSlotPolicy.code, message: blueSlotPolicy.message };
         const blueSlot = blueSlotPolicy.choice.slot;
         if (blueSlot == null) return result;
@@ -2226,7 +2288,7 @@
           availableSlots,
           blueSlot,
         });
-        return confirmTechBlueSlotChoice(blueSlot);
+        return confirmTechBlueSlotChoice(workingRoot, blueSlot);
       }
       return result;
     }
@@ -2314,26 +2376,26 @@
 
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
     "AI_MAX_CARD_CORNER_MOVES_PER_TURN", "AI_MOVE_DIRECTIONS", "AI_RESOURCE_VALUES", "FINAL_ROUND_NUMBER", "MOVE_ENERGY_COST", "abilities", "ai", "aiAutoBattleState",
-    "aiNumber", "alienGameState", "aliens", "amiba", "aomomo", "applyAiStrategyWeight", "banrenma", "buildAiChongTransportMoveCandidate",
+    "aiNumber", "aliens", "amiba", "aomomo", "applyAiStrategyWeight", "banrenma", "buildAiChongTransportMoveCandidate",
     "buildAiPlayCardCandidate", "buildSectorScanChoicesForX", "canAiContinueCardMoveAfterStep", "canAiPlanetAcceptLanding", "canAiPlanetAcceptOrbit", "canPayForMove", "cancelTechSelection", "cardEffects",
     "cards", "chong", "chooseAiDataPlacementOptionFromButtons", "chooseAiLandChoice", "closeScanTargetPicker", "confirmDataPlacement", "confirmDiscardAnyForIncome", "confirmLandTargetPicker",
     "confirmMovePayment", "confirmProbeSectorScanSelection", "confirmScanTarget", "confirmStrategyPassiveSlotChoice", "confirmTechBlueSlotChoice", "createActionContext", "data", "els",
     "enrichAiAlienUseOptions", "executeCardMoveForEffect", "executeFreeMoveForCardCorner", "executeFreeMoveForScanAction4", "executeIndustryFreeMove", "fangzhou", "finishIndustryAbilityFlow", "formatRocketLabel",
     "getAiAlienCardConversionMultiplier", "getAiAlienTraceRewardForValuation", "getAiAlienTraceTargetDemandForSlot", "getAiAvailableDataRoom", "getAiDiscardedCardOpportunityCost", "getAiMapDemand", "getAiNextActionEffect", "getAiNextMissingFinalScoreThreshold",
     "getAiPlanetAtCoordinate", "getAiResearchTechCandidateExecutionCheck", "getAiResearchTechSelectionOptionsForEffect", "getAiResourceValuesForRound", "getAiRoundNumber", "getAiStrategyDemand", "getAlienTraceActionPlayer", "getBestAiNebulaChoiceScore",
-    "getCardPrice", "getCurrentActionEffect", "getCurrentPlayer", "getEffectOwnerPlayer", "getMovableTokensForPlayer", "getPendingOwnerPlayer", "getPlayerByColor", "getPlayerById",
+    "getCardPrice", "getCurrentActionEffect",
     "getPublicScanChoicesForCard", "getRequiredMovePointsForUi", "handleAmibaCardGainChoice", "handleAmibaSymbolChoice", "handleAmibaTraceRemovalChoice", "handleAomomoCardGainChoice", "handleBanrenmaBonusChoice", "handleBanrenmaCardConditionChoice",
     "handleBanrenmaCardGainChoice", "handleChongCardGainChoice", "handleChongFossilChoice", "handleChongTaskCompletionChoice", "handleConditionalSectorChoice", "handleDiscardCornerRepeatChoice", "handleDiscardIncomeCardChoice", "handleHandCornerChoice",
     "handleJiuzheCardChoice", "handleJiuzheOpportunitySkip", "handleOptionalHandScanChoice", "handlePayCreditChoice", "handleProbeLocationRewardChoice", "handleProbeSectorScanChoice", "handleRemoveOrbitToProbeChoice", "handleRemovePlanetMarkerChoice",
     "handleReturnUnfinishedTaskChoice", "handleRunezuCardGainChoice", "handleRunezuFaceSymbolChoice", "handleRunezuSymbolBranchChoice", "handleScanAction4Choice", "handleSupplyTechTileClick", "handleYichangdianCardGainChoice", "handleYichangdianCornerChoice",
     "industry", "isActionEffectFlowActive", "isAiAutoBattlePlayer", "isAiChongFossilToken", "isAiChongPickupPlanetId", "isAiChongTravelEffect", "isAiHiddenFirstTraceColorLost", "isAiHiddenFirstTraceTakenByOpponent",
     "isAiLandingEffect", "isAiOpenHiddenFirstTraceTarget", "isMovePaymentCard", "isMovePaymentSelectionActive", "isTechTilePickingActive", "jiuzhe", "listAiBorrowTechCandidates", "listAiIndustryHuanyuMoveCandidates",
-    "listAiResearchTechCandidates", "moveRocket", "playerState", "players", "rankAiScanTargetButtons", "rankAiScanTargetChoices", "recordAiAutoBattleLog", "rocketActions",
-    "rocketState", "roundAiScore", "runezu", "scanEffects", "scoreAiAlienTraceValue", "scoreAiAomomoTraceTimingValue", "scoreAiB1TraceMarginalValue", "scoreAiBanrenmaTraceTimingValue",
+    "listAiResearchTechCandidates", "moveRocket", "players", "rankAiScanTargetButtons", "rankAiScanTargetChoices", "recordAiAutoBattleLog", "rocketActions",
+    "roundAiScore", "runezu", "scanEffects", "scoreAiAlienTraceValue", "scoreAiAomomoTraceTimingValue", "scoreAiB1TraceMarginalValue", "scoreAiBanrenmaTraceTimingValue",
     "scoreAiCardCornerOpportunity", "scoreAiFangzhouUnlockChoiceValue", "scoreAiFinalSecondMarkNoDirectSetupPenalty", "scoreAiHighCostPointConversionPenalty", "scoreAiLandingAfterMove", "scoreAiLateAlienCardConversionPenalty", "scoreAiLaunchAction", "scoreAiMoveArrivalRewardValue",
     "scoreAiMovePaymentCost", "scoreAiMoveTowardTargets", "scoreAiMovementPathPenalty", "scoreAiNearestActionablePlanetTimingPenalty", "scoreAiPaceValueForDirectScore", "scoreAiResourceBundle", "scoreAiSecondFinalMarkNudgeValue", "scoreAiThirdFinalMarkCashoutValue",
     "scoreAiYichangdianAlienCardTracePriorityValue", "scoreAiYichangdianTraceTimingValue", "selectExecutableAiResearchTechCandidate", "shouldAiPreserveEnergyForRouteCashout", "skipCurrentActionEffect", "solar", "state", "summarizeAiScanTargetChoiceEntry",
-    "tech", "techGameState", "turnState", "yichangdian",
+    "tech", "yichangdian",
   ]);
 
   return { createInteractionPendingRuntime, REQUIRED_CONTEXT_KEYS };

@@ -14,7 +14,7 @@ function modulesFor(relative) {
   if (/conditional-decision-domain\.test/.test(relative)) return ["uniqueAction"];
   if (/headless-(?:conditional-drain|decision-owner|effect-session-host|effect-session-worker-recovery|fail-closed|no-browser-globals|training-replay)\.test/.test(relative)) return ["uniqueSessionState"];
   if (/headless-state-checkpoint\.test/.test(relative)) return ["unifiedAuthorityState"];
-  if (/\/training\/|\/game\/ai\/|\/app\/ai\/|headless-worker-resilience/.test(relative)) return ["robot"];
+  if (/\/training\/|\/game\/ai\/|\/app\/ai\/|ai-runtime-root|headless-worker-resilience/.test(relative)) return ["robot"];
   if (/\/game\/effects\/|effect-session-host|decision-session-store/.test(relative)) return ["uniqueSessionState"];
   if (/\/app\/effects\/|effect-flow|effect-choice-flow/.test(relative)) return ["uniqueEffectQueue"];
   if (/\/game\/(?:actions|abilities|industry|aliens)\/|\/game\/(?:basic-cards|initial-cards)\.test|action-runtime|action-briefing/.test(relative)) return ["uniqueAction"];
@@ -29,6 +29,7 @@ module.exports = Object.freeze({
 randomizer/app/action-log-export.test.js
 randomizer/app/action-log-runtime.test.js
 randomizer/app/action-interaction-runtime.test.js
+randomizer/app/ai-runtime-root.test.js
 randomizer/app/alien-runtime.test.js
 randomizer/app/alien-trace-reward-flow.test.js
 randomizer/app/alien-ui.test.js

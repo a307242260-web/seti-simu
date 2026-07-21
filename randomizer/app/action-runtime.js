@@ -665,7 +665,7 @@
       return executeActionEffect?.(effect);
     }
 
-    function dispatchAction(request, fallbackOptions) {
+    function dispatchAction(request, fallbackOptions, explicitActionContext = null) {
       const action = typeof request === "string"
         ? { kind: request, payload: fallbackOptions || null }
         : { ...(request || {}) };
@@ -673,7 +673,7 @@
         if (!standardActionAdapter) {
           return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE", candidates: [] };
         }
-        const standardContext = createActionContext();
+        const standardContext = explicitActionContext || createActionContext();
         if (action.payload?.actorId) {
           standardContext.standardActionAuthority = {
             actorId: action.payload.actorId,
@@ -694,7 +694,7 @@
           return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
         }
         return standardActionAdapter.resolveIntent(
-          createActionContext(),
+          explicitActionContext || createActionContext(),
           action.family,
           action.selector || {},
           action.payload || {},
@@ -704,7 +704,7 @@
         if (!standardActionAdapter) {
           return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
         }
-        const standardContext = createActionContext();
+        const standardContext = explicitActionContext || createActionContext();
         const resolved = standardActionAdapter.resolveIntent(
           standardContext,
           action.family,
@@ -721,7 +721,7 @@
         if (!standardActionAdapter) {
           return { ok: false, code: "STANDARD_ACTION_ADAPTER_UNAVAILABLE" };
         }
-        const standardContext = createActionContext();
+        const standardContext = explicitActionContext || createActionContext();
         standardContext.standardActionAuthority = {
           actorId: standardDescriptor.actorId,
           stateVersion: standardDescriptor.stateVersion,

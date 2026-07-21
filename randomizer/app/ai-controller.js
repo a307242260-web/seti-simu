@@ -304,7 +304,7 @@
       recordAiAutoBattleLog: (...args) => recordAiAutoBattleLog(...args),
       recordAiAutoBattleBug: (...args) => recordAiAutoBattleBug(...args),
       renderStateReadout,
-      runAiAutomationStep: (...args) => runAiAutomationStep(...args),
+      runAiAutomationStep: (...args) => runAiAutomationStep(context.browserRuleState, ...args),
       resetGameForAiAutoBattle: (...args) => resetGameForAiAutoBattle(...args),
       resetAiStrategyDemandCache: (...args) => resetAiStrategyDemandCache(...args),
       setTurnStatePlayerOrder,
@@ -1139,8 +1139,8 @@
       getCardTypeCode,
       getActivePlayers,
       getAiIndustryCard,
-      runAiAutomationStep: (...args) => runAiAutomationStep(...args),
-      recoverAiIdleActionEffectStep: (...args) => recoverAiIdleActionEffectStep(...args),
+      runAiAutomationStep: (...args) => runAiAutomationStep(context.browserRuleState, ...args),
+      recoverAiIdleActionEffectStep: (...args) => recoverAiIdleActionEffectStep(context.browserRuleState, ...args),
       recordAiAutoBattleLog,
       recordAiAutoBattleBug,
       getAiAutoBattleReport,
@@ -1327,6 +1327,7 @@
       matchesAiTurnActionSelector: (...args) => matchesAiTurnActionSelector(...args),
       runAiSelectedTurnAction: (...args) => runAiSelectedTurnAction(...args),
       runAiAutomationStep: (...args) => runAiAutomationStep(...args),
+      ...(context.aiRuntimePorts || {}),
     };
 
     function pickAiAppRuntimeContext(moduleApi) {

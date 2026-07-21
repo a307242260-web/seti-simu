@@ -745,7 +745,8 @@
       return rankAiScanTargetChoices(choices, options)[0]?.choice || null;
     }
 
-    function scoreAiScanEnergyReservationPenalty(player = getCurrentPlayer()) {
+    function scoreAiScanEnergyReservationPenalty(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
+      if (!workingRoot || typeof workingRoot !== "object") throw new TypeError("AI scan valuation requires an explicit workingRoot");
       if (!player || getAiRoundNumber() > 2) return 0;
       const resources = player.resources || {};
       const currentEnergy = Math.max(0, aiNumber(resources.energy));
@@ -753,13 +754,16 @@
       const scanEnergyCost = Math.max(0, aiNumber(scanCost.energy));
       if (scanEnergyCost <= 0 || currentEnergy <= 0) return 0;
       const energyAfterScan = Math.max(0, currentEnergy - scanEnergyCost);
-      const movedThisTurn = getAiMoveCountThisTurn(player.id) > 0;
+      const movedThisTurn = getAiMoveCountThisTurn(workingRoot, player.id) > 0;
       const movedThenDrainedEnergyPenalty = movedThisTurn && energyAfterScan <= 0
         ? Math.min(11, 8 + getAiLiveScorePaceDeficit(player) * 0.06)
         : 0;
       const movePaymentCards = getAiMovePaymentCards(player).length;
-      const planets = solar.createSolarSnapshot(solarState).planetLocations || [];
-      const bestBlockedCashout = getMovableTokensForPlayer(player.id)
+      const planets = solar.createSolarSnapshot(workingRoot.solarState).planetLocations || [];
+      const movableTokens = rocketActions.getMovableTokensForPlayer
+        ? rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, player.id)
+        : rocketActions.getRocketsForPlayer(workingRoot.rocketState, player.id);
+      const bestBlockedCashout = movableTokens
         .reduce((best, rocket) => {
           const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
           if (!coordinate) return best;
@@ -771,7 +775,7 @@
               ? aiNumber(abilities.planet.DEFAULT_ORBIT_COST?.energy)
               : Infinity;
             const landEnergy = canAiPlanetAcceptLanding(planet.planetId, player)
-              ? abilities.planet.getLandEnergyCost(createActionContext(), planet.planetId)
+              ? abilities.planet.getLandEnergyCost(createActionContext(workingRoot), planet.planetId)
               : Infinity;
             const cashoutEnergy = Math.min(orbitEnergy, landEnergy);
             if (!Number.isFinite(cashoutEnergy) || cashoutEnergy <= 0) return innerBest;

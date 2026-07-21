@@ -3362,6 +3362,7 @@
     aiRaceModel,
     ai,
     aiControlRuntimeModule,
+    browserRuleState,
     solarState,
     nebulaDataState,
     alienGameState,
@@ -3419,6 +3420,35 @@
     confirmStrategyPassiveSlotChoice: (...args) => confirmStrategyPassiveSlotChoice?.(...args),
     confirmTechBlueSlotChoice: (...args) => confirmTechBlueSlotChoice?.(...args),
     createActionContext,
+    aiRuntimePorts: {
+      createActionContext: (workingRoot, descriptor) => createActionContextForWorkingRoot(workingRoot, descriptor),
+      dispatchRuntimeAction: (workingRoot, request) => actionRuntimeController.dispatchAction(
+        request,
+        undefined,
+        createActionContextForWorkingRoot(workingRoot, request?.payload || request),
+      ),
+      canBlindDraw: (workingRoot, ...args) => canBlindDrawForRoot(workingRoot, ...args),
+      cancelCardTriggerChoice: (workingRoot, ...args) => cancelCardTriggerChoiceForRoot(workingRoot, ...args),
+      confirmCardTaskCompletion: (workingRoot, ...args) => confirmCardTaskCompletionForRoot(workingRoot, ...args),
+      confirmPassReserveSelection: (workingRoot, ...args) => confirmPassReserveSelectionForRoot(workingRoot, ...args),
+      confirmTechBlueSlotChoice: (workingRoot, ...args) => confirmTechBlueSlotChoiceForRoot(workingRoot, ...args),
+      drawCardForCurrentPlayer: (workingRoot, ...args) => drawCardForCurrentPlayerForRoot(workingRoot, ...args),
+      executeCardMoveForEffect: (workingRoot, ...args) => executeCardMoveForEffectForRoot(workingRoot, ...args),
+      executeFreeMoveForCardCorner: (workingRoot, ...args) => executeFreeMoveForCardCornerForRoot(workingRoot, ...args),
+      executeFreeMoveForCardTrigger: (workingRoot, ...args) => executeFreeMoveForCardTriggerForRoot(workingRoot, ...args),
+      executeFreeMoveForScanAction4: (workingRoot, ...args) => executeFreeMoveForScanAction4ForRoot(workingRoot, ...args),
+      executeIndustryFreeMove: (workingRoot, ...args) => executeIndustryFreeMoveForRoot(workingRoot, ...args),
+      getRequiredMovePointsForUi: (workingRoot, ...args) => getRequiredMovePointsForUiForRoot(workingRoot, ...args),
+      getPassReserveSelectionCards: (workingRoot, ...args) => getPassReserveSelectionCardsForRoot(workingRoot, ...args),
+      getReadyCardTasks: (workingRoot, ...args) => getReadyCardTasksForRoot(workingRoot, ...args),
+      handleCardTriggerChoice: (workingRoot, ...args) => handleCardTriggerChoiceForRoot(workingRoot, ...args),
+      handlePublicCardClick: (workingRoot, ...args) => handlePublicCardClickForRoot(workingRoot, ...args),
+      openBanrenmaReadyOpportunityForPlayer: (workingRoot, ...args) => alienSpeciesRuntime.openBanrenmaReadyOpportunityForPlayer(workingRoot, ...args),
+      openCardTaskCompletionPicker: (workingRoot, ...args) => openCardTaskCompletionPickerForRoot(workingRoot, ...args),
+      openRunezuFaceSymbolPlacement: (workingRoot, ...args) => alienSpeciesRuntime.openRunezuFaceSymbolPlacement(workingRoot, ...args),
+      pickPublicCardForCurrentPlayer: (workingRoot, ...args) => pickPublicCardForCurrentPlayerForRoot(workingRoot, ...args),
+      selectPassReserveCard: (workingRoot, ...args) => selectPassReserveCardForRoot(workingRoot, ...args),
+    },
     createTurnState,
     dispatchRuntimeAction: (request) => actionRuntimeController.dispatchAction(request),
     drawCardForCurrentPlayer: (...args) => drawCardForCurrentPlayer(...args),
@@ -3452,7 +3482,7 @@
     getPlayerLabelById,
     getPublicScanChoicesForCard: (...args) => scanFlowHelpers.getPublicScanChoicesForCard(...args),
     getReadyCardTasks: (...args) => getReadyCardTasks?.(...args),
-    getRequiredMovePointsForUi,
+    getRequiredMovePointsForUi: (workingRoot, ...args) => getRequiredMovePointsForUiForRoot(workingRoot, ...args),
     getResearchTechSelectionOptions: (...args) => getResearchTechSelectionOptions?.(...args),
     getSectorContentForMove,
     getSectorXsMatchingCondition,
@@ -3553,10 +3583,10 @@
     getAiAutoBattleAnalysis,
     getAiAutoBattleProgress,
     getAiAutoBattleReport,
-    buildAiTurnActionCandidates,
-    chooseInitialSelectionForAiPlayer,
-    enumerateHeadlessTurnActions,
-    executeAiTurnAction,
+    buildAiTurnActionCandidates: buildAiTurnActionCandidatesForRoot,
+    chooseInitialSelectionForAiPlayer: chooseInitialSelectionForAiPlayerForRoot,
+    enumerateHeadlessTurnActions: enumerateHeadlessTurnActionsForRoot,
+    executeAiTurnAction: executeAiTurnActionForRoot,
     getAiMapDemand,
     getAiRemainingRoundWeight,
     getAiStrategyDemand,
@@ -3567,23 +3597,33 @@
     getPlayerAgentLabel,
     isAiAutomationPaused,
     isAiAutoBattlePlayer,
-    listCardTriggerFreeMoveCandidates,
+    listCardTriggerFreeMoveCandidates: listCardTriggerFreeMoveCandidatesForRoot,
     recordAiAutoBattleLog,
-    resolveAiAutomationToTurnBoundary,
+    resolveAiAutomationToTurnBoundary: resolveAiAutomationToTurnBoundaryForRoot,
     resetAiStrategyWeights,
     restoreAiControlSnapshot,
     runAiAutoBattle,
     runAiAutoBattleBatch,
-    runAiAutomationStep,
-    runAiActionEffectStep,
-    runAiNonTurnAutomationStep,
-    runAiSelectedTurnAction,
+    runAiAutomationStep: runAiAutomationStepForRoot,
+    runAiActionEffectStep: runAiActionEffectStepForRoot,
+    runAiNonTurnAutomationStep: runAiNonTurnAutomationStepForRoot,
+    runAiSelectedTurnAction: runAiSelectedTurnActionForRoot,
     runAiStrategyABTest,
     runAiStrategyTuningCycle,
     scheduleAiAutoStepIfNeeded,
     stopAiAutoBattle,
     sumAiDemandMap,
   } = aiController;
+  const buildAiTurnActionCandidates = (...args) => buildAiTurnActionCandidatesForRoot(browserRuleState, ...args);
+  const chooseInitialSelectionForAiPlayer = (...args) => chooseInitialSelectionForAiPlayerForRoot(browserRuleState, ...args);
+  const enumerateHeadlessTurnActions = (...args) => enumerateHeadlessTurnActionsForRoot(browserRuleState, ...args);
+  const executeAiTurnAction = (...args) => executeAiTurnActionForRoot(browserRuleState, ...args);
+  const listCardTriggerFreeMoveCandidates = (...args) => listCardTriggerFreeMoveCandidatesForRoot(browserRuleState, ...args);
+  const resolveAiAutomationToTurnBoundary = (...args) => resolveAiAutomationToTurnBoundaryForRoot(browserRuleState, ...args);
+  const runAiAutomationStep = (...args) => runAiAutomationStepForRoot(browserRuleState, ...args);
+  const runAiActionEffectStep = (...args) => runAiActionEffectStepForRoot(browserRuleState, ...args);
+  const runAiNonTurnAutomationStep = (...args) => runAiNonTurnAutomationStepForRoot(browserRuleState, ...args);
+  const runAiSelectedTurnAction = (...args) => runAiSelectedTurnActionForRoot(browserRuleState, ...args);
   const cardRuntime = cardRuntimeModule.createCardRuntime({
     decisionSessions,
     HISTORY_SOURCE_MAIN,
@@ -3884,7 +3924,7 @@
     isInitialSelectionActive,
     jiuzhe,
     layoutReservedCardRows,
-    listCardTriggerFreeMoveCandidates,
+    listCardTriggerFreeMoveCandidates: listCardTriggerFreeMoveCandidatesForRoot,
     listReadyChongTransportCandidates: (workingRoot, ...args) => listReadyChongTransportCandidatesForRoot(workingRoot, ...args),
     markCurrentActionIrreversibleForSource,
     maybeApplyIndustryLaunchScan: (workingRoot, ...args) => maybeApplyIndustryLaunchScanForRoot?.(workingRoot, ...args),
@@ -4991,17 +5031,21 @@
     return content?.kind === solar.layout.CONTENT_KIND.ASTEROID;
   }
 
-  function getRequiredMovePointsForUi(player, rocketId, deltaX, deltaY, options = {}) {
-    const rocket = rocketState.rockets.find((item) => item.id === rocketId);
+  function getRequiredMovePointsForUiForRoot(workingRoot, player, rocketId, deltaX, deltaY, options = {}) {
+    const rocket = workingRoot.rocketState.rockets.find((item) => item.id === rocketId);
     const from = rocketActions.getRocketSectorCoordinate(rocket);
     if (!from) return 1;
-    const fromContent = getSectorContentForMove(from);
+    const fromContent = solar.resolveVisibleContent(from.x, from.y, workingRoot.solarState)?.content || null;
     if (!options.ignoreAsteroidRestriction
       && isAsteroidContent(fromContent)
-      && !players.playerOwnsTech(player, "orange2", turnState)) {
+      && !players.playerOwnsTech(player, "orange2", workingRoot.turnState)) {
       return 2;
     }
     return 1;
+  }
+
+  function getRequiredMovePointsForUi(...args) {
+    return getRequiredMovePointsForUiForRoot(browserRuleState, ...args);
   }
 
   function canPayForMove(player, requiredMovePoints = MOVE_ENERGY_COST) {
@@ -5388,18 +5432,19 @@
   }
 
 
-  function executeFreeMoveForCardCorner(deltaX, deltaY, rocketId, payment = {}) {
+  function executeFreeMoveForCardCornerForRoot(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
+    const { playerState: workingPlayerState, rocketState: workingRocketState } = workingRoot;
     const pending = getPendingCardCornerFreeMove();
     if (!pending) return { ok: false, message: "没有待结算的弃牌移动" };
 
-    const moveCheck = rocketActions.canMoveRocket(rocketState, rocketId, deltaX, deltaY);
+    const moveCheck = rocketActions.canMoveRocket(workingRocketState, rocketId, deltaX, deltaY);
     if (!moveCheck.ok) {
-      rocketState.statusNote = moveCheck.message;
+      workingRocketState.statusNote = moveCheck.message;
       renderStateReadout();
       return moveCheck;
     }
 
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = players.getCurrentPlayer(workingPlayerState);
     const providedMovePoints = Math.max(
       0,
       Math.round(Number(
@@ -5425,7 +5470,7 @@
     }
 
     const energyCost = Math.max(0, Math.round(Number(payment.energyCost) || 0));
-    const result = abilities.executeAbility("moveProbe", createActionContext(), {
+    const result = abilities.executeAbility("moveProbe", createActionContextForWorkingRoot(workingRoot), {
       cost: energyCost > 0 ? { energy: energyCost } : {},
       movementPoints: Math.max(terrainRequired, providedMovePoints + energyCost),
       rocketId,
@@ -5437,7 +5482,7 @@
     if (result.rocket) renderRocketElement(result.rocket);
     if (!result.ok) {
       if (payment.discardCommand) payment.discardCommand.undo();
-      rocketState.statusNote = result.message;
+      workingRocketState.statusNote = result.message;
       renderStateReadout();
       return result;
     }
@@ -5453,13 +5498,13 @@
     }
 
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
-    rocketState.activeRocketId = null;
+    workingRocketState.activeRocketId = null;
     clearMoveRocketHighlight();
     deactivateMoveMode();
-    rocketState.statusNote = `卡牌快速行动：${pending.discardedCardLabel} ${pending.action.label}，${result.message}`;
+    workingRocketState.statusNote = `卡牌快速行动：${pending.discardedCardLabel} ${pending.action.label}，${result.message}`;
     const finishIndustryAfterMove = Boolean(pending.finishIndustryFlowAfterMove);
-    const industryFinishMessage = pending.afterMoveStatus || rocketState.statusNote;
-    settleCardTasksAfterEffect({ events: [...(result.events || []), ...(pending.deferredEvents || [])], render: false });
+    const industryFinishMessage = pending.afterMoveStatus || workingRocketState.statusNote;
+    settleCardTasksAfterEffectForRoot(workingRoot, { events: [...(result.events || []), ...(pending.deferredEvents || [])], render: false });
     if (finishIndustryAfterMove) {
       finishIndustryAbilityFlow(industryFinishMessage);
       if (pending.irreversibleIndustryFlow) {
@@ -5473,6 +5518,10 @@
     updateActionButtons();
     renderStateReadout();
     return result;
+  }
+
+  function executeFreeMoveForCardCorner(...args) {
+    return executeFreeMoveForCardCornerForRoot(browserRuleState, ...args);
   }
 
   function buildPlanetRewardEffectsWithIndustry(actionType, result, options = {}) {
@@ -6722,15 +6771,16 @@
     return { ok: true, message: rocketState.statusNote };
   }
 
-  function executeFreeMoveForScanAction4(deltaX, deltaY, rocketId, payment = {}) {
-    const moveCheck = rocketActions.canMoveRocket(rocketState, rocketId, deltaX, deltaY);
+  function executeFreeMoveForScanAction4ForRoot(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
+    const { playerState: workingPlayerState, rocketState: workingRocketState } = workingRoot;
+    const moveCheck = rocketActions.canMoveRocket(workingRocketState, rocketId, deltaX, deltaY);
     if (!moveCheck.ok) {
-      rocketState.statusNote = moveCheck.message;
+      workingRocketState.statusNote = moveCheck.message;
       renderStateReadout();
       return moveCheck;
     }
 
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = players.getCurrentPlayer(workingPlayerState);
     const providedMovePoints = Math.max(0, Math.round(Number(payment.providedMovePoints ?? 1) || 0));
     const terrainRequired = Number.isFinite(Number(payment.terrainRequired))
       ? Math.max(1, Math.round(Number(payment.terrainRequired)))
@@ -6750,7 +6800,7 @@
     const energyCost = Math.max(0, Math.round(Number(payment.energyCost) || 0));
     beginEffectHistoryStep("发射/移动");
 
-    const result = abilities.executeAbility("scanAction4", createActionContext(), {
+    const result = abilities.executeAbility("scanAction4", createActionContextForWorkingRoot(workingRoot), {
       choice: "move",
       cost: energyCost > 0 ? { energy: energyCost } : {},
       movementPoints: Math.max(terrainRequired, providedMovePoints + energyCost),
@@ -6762,7 +6812,7 @@
     if (!result.ok) {
       if (payment.discardCommand) payment.discardCommand.undo();
       endEffectHistoryStep();
-      rocketState.statusNote = result.message;
+      workingRocketState.statusNote = result.message;
       renderStateReadout();
       return result;
     }
@@ -6774,11 +6824,15 @@
     deactivateMoveMode();
     const current = getCurrentActionEffect();
     if (current) current.result = result;
-    rocketState.statusNote = `扫描效果：${result.message}`;
+    workingRocketState.statusNote = `扫描效果：${result.message}`;
     renderPlayerStats();
     completeCurrentActionEffect();
     renderStateReadout();
     return result;
+  }
+
+  function executeFreeMoveForScanAction4(...args) {
+    return executeFreeMoveForScanAction4ForRoot(browserRuleState, ...args);
   }
 
   function beginCardMoveEffect(effect) {
@@ -6934,8 +6988,12 @@
     return applied;
   }
 
-  function executeCardMoveForEffect(deltaX, deltaY, rocketId) {
-    return requestCardEffectMove(deltaX, deltaY, rocketId);
+  function executeCardMoveForEffectForRoot(workingRoot, deltaX, deltaY, rocketId) {
+    return requestCardEffectMoveForRoot(workingRoot, deltaX, deltaY, rocketId);
+  }
+
+  function executeCardMoveForEffect(...args) {
+    return executeCardMoveForEffectForRoot(browserRuleState, ...args);
   }
 
   function executeSectorXScanEffect(...args) {

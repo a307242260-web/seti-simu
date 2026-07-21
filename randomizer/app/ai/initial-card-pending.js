@@ -21,23 +21,37 @@
     }
     const {
       AI_DEEPSPACE_SWAP_MIN_SCORE, AI_STYLE_SEAT_ORDER, INITIAL_SELECTION_REQUIRED, abilities, ai, aiAutoBattleState, aiNumber,
-      alienGameState, aliens, allowsBlindDrawInSelection, amiba, applyAiDifficultyToPlayer, banrenma, canAiResolveAlienTraceEffect, canAiResolvePlayCardEffects,
-      canBlindDraw, cancelCardTriggerChoice, cardEffects, cardState, cards, chooseAiIncomeDiscardIndexes, chooseAiTradeDiscardIndexes, confirmCardCornerQuickAction,
+      aliens, allowsBlindDrawInSelection, amiba, applyAiDifficultyToPlayer, banrenma, canAiResolveAlienTraceEffect, canAiResolvePlayCardEffects,
+      canBlindDraw, cancelCardTriggerChoice, cardEffects, cards, chooseAiIncomeDiscardIndexes, chooseAiTradeDiscardIndexes, confirmCardCornerQuickAction,
       confirmCardTaskCompletion, confirmInitialSelectionForCurrentPlayer, confirmPassReserveSelection, confirmPlayCardSelection, confirmPublicScanSelection, createActionContext, drawCardForCurrentPlayer, executeFreeMoveForCardTrigger,
       finalizePendingDiscardSelection, getActivePlayers, getAiAutoBattlePendingState, getAiAutoBattlePlayerIds, getAiBestDeepspaceSwap, getAiBestHandScanIndex, getAiBestPublicScanSlots, getAiCardDisplayLabel,
       getAiDifficultyLabel, getAiIncomeDiscardPreview, getAiIncomeFinalFormulaEntries, getAiLaunchPaymentCost, getAiLiveScorePaceDeficit, getAiLowEngineCatchupProfile, getAiMarkedFinalFormulaEntries, getAiPassReserveResourcePressure,
-      getAiRoundNumber, getCardTypeCode, getCurrentPlayer, getInitialSelectionOffer, getPassReserveSelectionCards, getPendingOwnerPlayer, getPendingPlayCardSelection, getPlayerById,
+      getAiRoundNumber, getCardTypeCode, getInitialSelectionOffer, getPassReserveSelectionCards, getPendingPlayCardSelection,
       getPlayerLabelById, getReadyCardTasks, handleCardTriggerChoice, handleHandCardCornerQuickAction, handleHandScanCardClick, handleIndustryDeepspaceHandClick, handlePlayCardSelect, handlePublicCardClick,
       handlePublicCornerDiscardCardClick, handlePublicScanCardClick, hasActivePendingSubFlow, hasAiRunezuPassReservePressure, isActionEffectFlowActive, isAiAutoBattlePlayer, isAiIncomeDiscardType, isAiPassReservePreviewIncomeCandidate,
       isCardSelectionActive, isDiscardSelectionActive, isHandScanSelectionActive, isIndustryHandSelectionActive, isInitialSelectionActive, isPlayCardSelectionActive, isPublicScanMultiSelectActive, listAiEffectMoveCandidates,
-      listAiPlayCardCandidates, openBanrenmaReadyOpportunityForPlayer, openCardTaskCompletionPicker, openRunezuFaceSymbolPlacement, pickPublicCardForCurrentPlayer, playerState, players, recordAiAutoBattleLog,
-      rocketActions, rocketState, roundAiScore, runezu, scoreAiAlienTraceValue, scoreAiB1TraceMarginalValue, scoreAiChongTraceTaskProgressValue, scoreAiChongTransportCompletionValue,
+      listAiPlayCardCandidates, openBanrenmaReadyOpportunityForPlayer, openCardTaskCompletionPicker, openRunezuFaceSymbolPlacement, pickPublicCardForCurrentPlayer, players, recordAiAutoBattleLog,
+      rocketActions, roundAiScore, runezu, scoreAiAlienTraceValue, scoreAiB1TraceMarginalValue, scoreAiChongTraceTaskProgressValue, scoreAiChongTransportCompletionValue,
       scoreAiEffectValue, scoreAiPassReserveCard, scoreAiPublicPickCard, scoreAiRunezuFaceDependencyUnlockValue, scoreAiRunezuFaceRewardValue, scoreAiRunezuFaceSymbolPlacementChoice, scoreAiRunezuSpendSymbolFinalPenalty, selectPassReserveCard,
-      skipCurrentActionEffect, state, summarizeAiPublicPickCandidate, turnState,
+      skipCurrentActionEffect, state, summarizeAiPublicPickCandidate,
     } = context;
+
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") throw new TypeError("AI initial/card pending requires an explicit workingRoot");
+      return workingRoot;
+    }
+
+    function getWorkingCurrentPlayer(workingRoot) {
+      return players.getCurrentPlayer(requireWorkingRoot(workingRoot).playerState);
+    }
+
+    function resolveWorkingPlayerById(workingRoot, playerId) {
+      return (requireWorkingRoot(workingRoot).playerState.players || []).find((player) => player.id === playerId) || null;
+    }
     const selectScoredItem = ai?.heuristicEvaluator?.selectScoredItem || heuristicEvaluator.selectScoredItem;
 
-    function decidePolicyChoice(family, player, decisionId, choices) {
+    function decidePolicyChoice(workingRoot, family, player, decisionId, choices) {
+      const { turnState } = requireWorkingRoot(workingRoot);
       return ai?.heuristicPolicy?.decideChoice?.({
         seatId: player?.id,
         family,
@@ -53,7 +67,8 @@
       }) || { ok: false, code: "HEURISTIC_POLICY_NOT_CONFIGURED", message: "公共 Heuristic Policy 未装配" };
     }
 
-    function getOrderedAiAutoBattlePlayerIds() {
+    function getOrderedAiAutoBattlePlayerIds(workingRoot) {
+      const { turnState } = requireWorkingRoot(workingRoot);
       const aiIds = new Set(getAiAutoBattlePlayerIds());
       const ordered = (turnState.activePlayerIds || []).filter((playerId) => aiIds.has(playerId));
       for (const playerId of aiIds) {
@@ -62,18 +77,18 @@
       return ordered;
     }
 
-    function getAiStyleFallbackIndex(playerId) {
-      const orderedAiIds = getOrderedAiAutoBattlePlayerIds();
+    function getAiStyleFallbackIndex(workingRoot, playerId) {
+      const orderedAiIds = getOrderedAiAutoBattlePlayerIds(workingRoot);
       const index = orderedAiIds.indexOf(playerId);
       return index >= 0 ? index : 0;
     }
 
-    function getAiSeatStyle(playerId) {
-      const index = getAiStyleFallbackIndex(playerId);
+    function getAiSeatStyle(workingRoot, playerId) {
+      const index = getAiStyleFallbackIndex(workingRoot, playerId);
       return AI_STYLE_SEAT_ORDER[index % AI_STYLE_SEAT_ORDER.length] || "balanced";
     }
 
-    function inferAiStyleFromOpening(openingPlan = null, industryCard = null, player = null) {
+    function inferAiStyleFromOpening(workingRoot, openingPlan = null, industryCard = null, player = null) {
       const summary = openingPlan?.summary || {};
       const goals = openingPlan?.goals || {};
       const scanScore = aiNumber(summary.scan) * 1.2 + aiNumber(summary.data) * 0.5 + aiNumber(goals.GRAB_TRACE_PINK);
@@ -98,11 +113,12 @@
       if (scoredStyles[0]?.score >= 2.2 && scoredStyles[0].score >= scoredStyles[1]?.score + 0.45) {
         return scoredStyles[0].id;
       }
-      const fallback = getAiSeatStyle(player?.id);
+      const fallback = getAiSeatStyle(workingRoot, player?.id);
       return fallback || "balanced";
     }
 
-    function chooseInitialSelectionForAiPlayer() {
+    function chooseInitialSelectionForAiPlayer(workingRoot) {
+      const { playerState, turnState } = requireWorkingRoot(workingRoot);
       if (!isInitialSelectionActive()) return null;
       const playerId = playerState.currentPlayerId;
       if (!isAiAutoBattlePlayer(playerId)) {
@@ -110,7 +126,7 @@
       }
       const offer = getInitialSelectionOffer(playerId);
       if (!offer || offer.confirmed) return { ok: false, message: "没有可用初始选择" };
-      const player = getPlayerById(playerId);
+      const player = resolveWorkingPlayerById(workingRoot, playerId);
       if (player) applyAiDifficultyToPlayer(player);
       const selectionOptions = {
         roundNumber: turnState.roundNumber,
@@ -127,7 +143,7 @@
         Number(right.score || 0) - Number(left.score || 0)
         || String(left.industry?.id || "").localeCompare(String(right.industry?.id || ""))
       ));
-      const policyResult = decidePolicyChoice("choose_branch", player, "initial-selection", openingPlans.map((plan, index) => ({
+      const policyResult = decidePolicyChoice(workingRoot, "choose_branch", player, "initial-selection", openingPlans.map((plan, index) => ({
         choiceId: `${plan.industry?.id || index}:${plan.initialCards.map((card) => card.id).join("+")}`,
         value: Number(plan.score || 0),
         target: {
@@ -155,7 +171,7 @@
           summary: selectedPlan.summary,
           topPlans: evaluatedOpening.openingPlan?.topPlans || [],
         };
-      const aiStyle = inferAiStyleFromOpening(openingPlan, industryCard, player);
+      const aiStyle = inferAiStyleFromOpening(workingRoot, openingPlan, industryCard, player);
       if (player) {
         player.aiStyle = aiStyle;
       }
@@ -188,9 +204,10 @@
       return { ok: true, progressed: true, message: "AI 初始选择完成" };
     }
 
-    function runAiDiscardDecision() {
+    function runAiDiscardDecision(workingRoot) {
+      const { cardState, playerState } = requireWorkingRoot(workingRoot);
       if (!isDiscardSelectionActive() || !state.pendingDiscardAction) return null;
-      const player = state.pendingDiscardAction.player || getCurrentPlayer();
+      const player = state.pendingDiscardAction.player || getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工弃牌` };
       }
@@ -219,7 +236,7 @@
       })].filter((indexes, index, all) => (
         all.findIndex((other) => other.join(",") === indexes.join(",")) === index
       ));
-      const discardPolicy = decidePolicyChoice("choose_card", player, `discard:${pendingType || "generic"}`, discardChoices.map((indexes) => ({
+      const discardPolicy = decidePolicyChoice(workingRoot, "choose_card", player, `discard:${pendingType || "generic"}`, discardChoices.map((indexes) => ({
         choiceId: indexes.join("+") || "none",
         value: indexes.join(",") === [...preferredIndexes].sort((left, right) => left - right).join(",") ? 1 : 0,
         target: { handIndexes: indexes },
@@ -257,13 +274,14 @@
     }
 
 
-    function runAiPassReserveDecision() {
+    function runAiPassReserveDecision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (!state.pendingPassReserveSelection) return null;
-      const player = getPlayerById(state.pendingPassReserveSelection.playerId) || getCurrentPlayer();
+      const player = resolveWorkingPlayerById(workingRoot, state.pendingPassReserveSelection.playerId) || getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择 PASS 预留牌` };
       }
-      const pile = getPassReserveSelectionCards();
+      const pile = getPassReserveSelectionCards(workingRoot);
       const currentHandSize = Math.max(0, aiNumber(player?.resources?.handSize ?? (player?.hand || []).length));
       const runezuLowEnginePassReserve = currentHandSize <= 1
         && getAiLowEngineCatchupProfile(player).active
@@ -284,7 +302,7 @@
           .filter((entry) => entry.card && Number.isFinite(entry.score))
           .sort((left, right) => right.score - left.score)
         : [];
-      const reservePolicy = decidePolicyChoice("choose_card", player, "pass-reserve", (pile || []).map((candidate, index) => ({
+      const reservePolicy = decidePolicyChoice(workingRoot, "choose_card", player, "pass-reserve", (pile || []).map((candidate, index) => ({
         choiceId: candidate.id,
         value: ranked.find((entry) => entry.card === candidate)?.score ?? -index,
         target: { cardId: candidate.id },
@@ -294,7 +312,7 @@
       if (!reservePolicy.ok) return { ok: false, blocked: true, code: reservePolicy.code, message: reservePolicy.message };
       const card = reservePolicy.choice.card;
       if (!card) return { ok: false, message: "PASS 预留牌堆为空" };
-      selectPassReserveCard(card.id);
+      selectPassReserveCard(workingRoot, card.id);
       recordAiAutoBattleLog("pass-reserve", `${player.colorLabel}AI 选择 PASS 预留牌`, {
         card,
         runezuLowEnginePassReserve,
@@ -313,12 +331,13 @@
           score: Math.round(entry.score * 1000) / 1000,
         })),
       });
-      return confirmPassReserveSelection();
+      return confirmPassReserveSelection(workingRoot);
     }
-    function runAiCardSelectionDecision() {
+    function runAiCardSelectionDecision(workingRoot) {
+      const { cardState, playerState } = requireWorkingRoot(workingRoot);
       if (!isCardSelectionActive() && !isIndustryHandSelectionActive()) return null;
       const pending = state.pendingCardSelectionAction || {};
-      const player = pending.player || getCurrentPlayer();
+      const player = pending.player || getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工精选` };
       }
@@ -382,7 +401,7 @@
           handCard: selected.handCard,
           publicCard: selected.publicCard,
         });
-        return handlePublicCardClick(selected.slotIndex);
+        return handlePublicCardClick(workingRoot, selected.slotIndex);
       }
 
       if (pending.type === "card_public_corner_discard") {
@@ -393,7 +412,7 @@
           .map((card, slotIndex) => ({
             card,
             slotIndex,
-            score: scoreAiPublicPickCard(card, player, pending.type),
+            score: scoreAiPublicPickCard(card, player, pending.type, workingRoot),
           }))
           .filter((entry) => entry.card && Number.isFinite(Number(entry.score)))
           .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.slotIndex - right.slotIndex)
@@ -427,12 +446,12 @@
         .map((card, slotIndex) => ({
           card,
           slotIndex,
-          score: scoreAiPublicPickCard(card, player, pending.type || null),
+          score: scoreAiPublicPickCard(card, player, pending.type || null, workingRoot),
         }))
         .filter((entry) => entry.card && Number.isFinite(Number(entry.score)))
         .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.slotIndex - right.slotIndex);
       const selectedPublic = rankedPublic[0] || null;
-      if (pending.aiPreferBlindDraw && allowsBlindDrawInSelection() && canBlindDraw()) {
+      if (pending.aiPreferBlindDraw && allowsBlindDrawInSelection() && canBlindDraw(workingRoot)) {
         recordAiAutoBattleLog("pick-card", `${player.colorLabel}AI 盲抽 1 张牌`, {
           pendingType: pending.type || null,
           tradeId: pending.tradeId || null,
@@ -446,7 +465,7 @@
             .map((entry) => summarizeAiPublicPickCandidate(entry, player))
             .filter(Boolean),
         });
-        return drawCardForCurrentPlayer({ fromSelection: true });
+        return drawCardForCurrentPlayer(workingRoot, { fromSelection: true });
       }
       if (selectedPublic) {
         recordAiAutoBattleLog("pick-card", `${player.colorLabel}AI 精选公共牌 ${selectedPublic.slotIndex + 1}`, {
@@ -459,21 +478,22 @@
             .map((entry) => summarizeAiPublicPickCandidate(entry, player))
             .filter(Boolean),
         });
-        return pickPublicCardForCurrentPlayer(selectedPublic.slotIndex);
+        return pickPublicCardForCurrentPlayer(workingRoot, selectedPublic.slotIndex);
       }
-      if (allowsBlindDrawInSelection() && canBlindDraw()) {
+      if (allowsBlindDrawInSelection() && canBlindDraw(workingRoot)) {
         recordAiAutoBattleLog("pick-card", `${player.colorLabel}AI 盲抽 1 张牌`, {
           pendingType: pending.type || null,
         });
-        return drawCardForCurrentPlayer({ fromSelection: true });
+        return drawCardForCurrentPlayer(workingRoot, { fromSelection: true });
       }
       return { ok: false, blocked: true, message: "AI 没有可精选的公共牌" };
     }
 
-    function runAiHandScanDecision() {
+    function runAiHandScanDecision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (!isHandScanSelectionActive()) return null;
       const pending = state.pendingHandScanAction || {};
-      const player = pending.player || getCurrentPlayer();
+      const player = pending.player || getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择手牌扫描` };
       }
@@ -546,17 +566,18 @@
       return match.effect || null;
     }
 
-    function listCardTriggerFreeMoveCandidates(match) {
-      return listAiEffectMoveCandidates({
+    function listCardTriggerFreeMoveCandidates(workingRoot, match) {
+      return listAiEffectMoveCandidates(workingRoot, {
         id: "cardTriggerMove",
         free: true,
         effect: getCardTriggerFreeMoveEffect(match),
       });
     }
 
-    function getAiLaunchTriggerResolution(effect, player = getCurrentPlayer()) {
+    function getAiLaunchTriggerResolution(workingRoot, effect, player = getWorkingCurrentPlayer(workingRoot)) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (effect?.options?.ignoreRocketLimit !== true) {
-        const context = createActionContext();
+        const context = createActionContext(workingRoot);
         const rocketLimit = abilities.rocket.getRocketLimitForPlayer(player, context);
         const activeRocketCount = rocketActions.getRocketsForPlayer(rocketState, player?.id).length;
         if (activeRocketCount >= rocketLimit) {
@@ -576,12 +597,12 @@
       return { ok: true };
     }
 
-    function canAiResolveCardTriggerMatch(match) {
+    function canAiResolveCardTriggerMatch(workingRoot, match) {
       const type = match?.effect?.type || null;
       if (!type) return false;
       if (type === amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) return false;
       if (cardTriggerNeedsFreeMove(match)) {
-        return listCardTriggerFreeMoveCandidates(match).length > 0;
+        return listCardTriggerFreeMoveCandidates(workingRoot, match).length > 0;
       }
       if (type === "pick_card") return true;
       if (
@@ -594,7 +615,7 @@
         return canAiResolvePlayCardEffects([match.effect]).ok;
       }
       if (type === "launch") {
-        return getAiLaunchTriggerResolution(match.effect).ok;
+        return getAiLaunchTriggerResolution(workingRoot, match.effect).ok;
       }
       return [
         "gain_resources",
@@ -604,22 +625,23 @@
       ].includes(type);
     }
 
-    function runAiCardTriggerDecision() {
+    function runAiCardTriggerDecision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (!state.pendingCardTriggerAction) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择卡牌触发` };
       }
 
       const matches = state.pendingCardTriggerAction.matches || [];
-      const selectedIndex = matches.findIndex((match) => canAiResolveCardTriggerMatch(match));
+      const selectedIndex = matches.findIndex((match) => canAiResolveCardTriggerMatch(workingRoot, match));
       if (selectedIndex < 0) {
         const reasons = matches.map((match) => ({
           cardLabel: cards.getCardLabel(match?.card),
           effectType: match?.effect?.type || null,
           effectLabel: match?.effect?.label || null,
           reason: match?.effect?.type === "launch"
-            ? getAiLaunchTriggerResolution(match.effect, currentPlayer).message || null
+            ? getAiLaunchTriggerResolution(workingRoot, match.effect, currentPlayer).message || null
             : null,
         }));
         const message = "AI 取消本次不可发动的卡牌触发";
@@ -627,7 +649,7 @@
           matches: reasons,
         });
         if (typeof cancelCardTriggerChoice === "function") {
-          cancelCardTriggerChoice();
+          cancelCardTriggerChoice(workingRoot);
           return { ok: true, progressed: true, skipped: true, message, matches: reasons };
         }
         return {
@@ -645,17 +667,18 @@
         effectType: selected.effect?.type || null,
         optionCount: matches.length,
       });
-      return handleCardTriggerChoice(selectedIndex);
+      return handleCardTriggerChoice(workingRoot, selectedIndex);
     }
 
-    function runAiCardTriggerFreeMoveDecision() {
+    function runAiCardTriggerFreeMoveDecision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (!state.pendingCardTriggerFreeMove) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择卡牌触发移动` };
       }
 
-      const candidates = listCardTriggerFreeMoveCandidates(state.pendingCardTriggerFreeMove.match);
+      const candidates = listCardTriggerFreeMoveCandidates(workingRoot, state.pendingCardTriggerFreeMove.match);
       const selected = selectScoredItem(candidates);
       if (!selected) return { ok: false, blocked: true, message: "AI 没有可用卡牌触发移动路径" };
       recordAiAutoBattleLog("move-path", `${currentPlayer.colorLabel}AI 选择卡牌触发移动 ${selected.rocketLabel} ${selected.directionLabel}`, {
@@ -663,17 +686,21 @@
         candidates,
         effectType: state.pendingCardTriggerFreeMove.match?.effect?.type || null,
       });
-      return executeFreeMoveForCardTrigger(selected.deltaX, selected.deltaY, selected.rocketId);
+      return executeFreeMoveForCardTrigger(workingRoot, selected.deltaX, selected.deltaY, selected.rocketId);
     }
 
-    function runAiCardTaskCompletionDecision() {
+    function runAiCardTaskCompletionDecision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (!state.pendingCardTaskCompletion) return null;
-      const currentPlayer = getPendingOwnerPlayer(state.pendingCardTaskCompletion);
+      const pending = state.pendingCardTaskCompletion;
+      const currentPlayer = resolveWorkingPlayerById(workingRoot, pending.playerId || pending.ready?.playerId)
+        || (playerState.players || []).find((player) => (player.reservedCards || []).includes(pending.ready?.card))
+        || getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工确认任务完成` };
       }
       const ready = state.pendingCardTaskCompletion.ready || null;
-      const unsupportedEffect = (ready?.effects || []).find((effect) => !canAiResolveAlienTraceEffect(effect, currentPlayer));
+      const unsupportedEffect = (ready?.effects || []).find((effect) => !canAiResolveAlienTraceEffect(workingRoot, effect, currentPlayer));
       if (unsupportedEffect) {
         return {
           ok: false,
@@ -685,12 +712,12 @@
         cardLabel: cards.getCardLabel(ready?.card),
         effectTypes: (ready?.effects || []).map((effect) => effect?.type || null).filter(Boolean),
       });
-      return confirmCardTaskCompletion("confirm", { automated: true });
+      return confirmCardTaskCompletion(workingRoot, "confirm", { automated: true });
     }
 
-    function scoreAiReadyCardTask(ready, player = getCurrentPlayer()) {
+    function scoreAiReadyCardTask(workingRoot, ready, player = getWorkingCurrentPlayer(workingRoot)) {
       if (!ready) return -Infinity;
-      if ((ready.effects || []).some((effect) => !canAiResolveAlienTraceEffect(effect, player))) return -Infinity;
+      if ((ready.effects || []).some((effect) => !canAiResolveAlienTraceEffect(workingRoot, effect, player))) return -Infinity;
       const effectValue = (ready.effects || [])
         .reduce((total, effect) => total + scoreAiEffectValue(effect, { player }), 0);
       const directScore = (ready.effects || [])
@@ -711,16 +738,17 @@
       return effectValue + directScore * 0.35 + paceBonus;
     }
 
-    function runAiReadyCardTaskOpenDecision() {
+    function runAiReadyCardTaskOpenDecision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (state.pendingCardTaskCompletion || isActionEffectFlowActive() || hasActivePendingSubFlow()) return null;
       if (typeof getReadyCardTasks !== "function" || typeof openCardTaskCompletionPicker !== "function") return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) return null;
-      const selected = (getReadyCardTasks() || [])
+      const selected = (getReadyCardTasks(workingRoot) || [])
         .map((ready, index) => ({
           ready,
           index,
-          score: scoreAiReadyCardTask(ready, currentPlayer),
+          score: scoreAiReadyCardTask(workingRoot, ready, currentPlayer),
         }))
         .filter((entry) => entry.ready?.card && Number.isFinite(Number(entry.score)))
         .sort((left, right) => right.score - left.score || left.index - right.index)[0] || null;
@@ -731,12 +759,13 @@
         score: selected.score,
         effectTypes: (selected.ready.effects || []).map((effect) => effect?.type || null).filter(Boolean),
       });
-      return openCardTaskCompletionPicker(selected.ready.card, { player: currentPlayer });
+      return openCardTaskCompletionPicker(workingRoot, selected.ready.card, { player: currentPlayer });
     }
 
-    function getAiBanrenmaOpportunityPlayers() {
+    function getAiBanrenmaOpportunityPlayers(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (typeof openBanrenmaReadyOpportunityForPlayer !== "function") return [];
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const currentPlayerId = currentPlayer?.id || null;
       const activeAiPlayers = (getActivePlayers?.() || [])
         .filter((player) => player?.id && isAiAutoBattlePlayer(player.id));
@@ -746,8 +775,8 @@
       ].filter(Boolean);
     }
 
-    function scoreAiBanrenmaTraceEffectValue(effect, player = getCurrentPlayer()) {
-      if (!effect || !player || !canAiResolveAlienTraceEffect(effect, player)) return -Infinity;
+    function scoreAiBanrenmaTraceEffectValue(workingRoot, effect, player = getWorkingCurrentPlayer(workingRoot)) {
+      if (!effect || !player || !canAiResolveAlienTraceEffect(workingRoot, effect, player)) return -Infinity;
       const fixedTraceType = effect.options?.traceType || null;
       const traceTypes = fixedTraceType
         ? [fixedTraceType]
@@ -761,12 +790,12 @@
       ), -Infinity);
     }
 
-    function scoreAiExecutableBanrenmaEffects(effects = [], player = getCurrentPlayer()) {
+    function scoreAiExecutableBanrenmaEffects(workingRoot, effects = [], player = getWorkingCurrentPlayer(workingRoot)) {
       if (!player || !Array.isArray(effects) || !effects.length) return -Infinity;
       let value = 0;
       for (const effect of effects) {
         const effectValue = effect?.type === "alien_trace"
-          ? scoreAiBanrenmaTraceEffectValue(effect, player)
+          ? scoreAiBanrenmaTraceEffectValue(workingRoot, effect, player)
           : scoreAiEffectValue(effect, { player });
         if (!Number.isFinite(Number(effectValue))) return -Infinity;
         value += aiNumber(effectValue);
@@ -774,14 +803,16 @@
       return roundAiScore(value);
     }
 
-    function scoreAiReadyBanrenmaCardOpportunity(card, player = getCurrentPlayer(), markId = null) {
+    function scoreAiReadyBanrenmaCardOpportunity(workingRoot, card, player = getWorkingCurrentPlayer(workingRoot), markId = null) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!player || !banrenma?.isBanrenmaCard?.(card)) return -Infinity;
       const mark = banrenma.getReadyScoreMarkForCard?.(alienGameState, player, card, markId);
       if (!mark) return -Infinity;
-      return scoreAiExecutableBanrenmaEffects(banrenma.buildConditionEffects?.(card) || [], player);
+      return scoreAiExecutableBanrenmaEffects(workingRoot, banrenma.buildConditionEffects?.(card) || [], player);
     }
 
-    function listAiReadyBanrenmaCardOpportunities(player = getCurrentPlayer()) {
+    function listAiReadyBanrenmaCardOpportunities(workingRoot, player = getWorkingCurrentPlayer(workingRoot)) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       return (player?.reservedCards || [])
         .map((card, index) => {
           if (!banrenma?.isBanrenmaCard?.(card)) return null;
@@ -792,7 +823,7 @@
             cardId: card.id || null,
             markId: mark.id || null,
             index,
-            score: scoreAiReadyBanrenmaCardOpportunity(card, player, mark.id),
+            score: scoreAiReadyBanrenmaCardOpportunity(workingRoot, card, player, mark.id),
           };
         })
         .filter(Boolean)
@@ -803,14 +834,14 @@
         });
     }
 
-    function openAiPreferredBanrenmaCardOpportunity(player, includeCards, preferred = null) {
+    function openAiPreferredBanrenmaCardOpportunity(workingRoot, player, includeCards, preferred = null) {
       const reservedCards = player?.reservedCards;
       const preferredCardId = includeCards && preferred?.cardId ? preferred.cardId : null;
       const preferredIndex = preferredCardId && Array.isArray(reservedCards)
         ? reservedCards.findIndex((card) => card?.id === preferredCardId)
         : -1;
       if (preferredIndex <= 0) {
-        return openBanrenmaReadyOpportunityForPlayer(player, {
+        return openBanrenmaReadyOpportunityForPlayer(workingRoot, player, {
           includeCards,
           playerId: player?.id || null,
           playerColor: player?.color || null,
@@ -822,7 +853,7 @@
       const [preferredCard] = reservedCards.splice(preferredIndex, 1);
       reservedCards.unshift(preferredCard);
       try {
-        return openBanrenmaReadyOpportunityForPlayer(player, {
+        return openBanrenmaReadyOpportunityForPlayer(workingRoot, player, {
           includeCards,
           playerId: player?.id || null,
           playerColor: player?.color || null,
@@ -833,23 +864,24 @@
       }
     }
 
-    function runAiReadyBanrenmaOpportunityOpenDecision() {
+    function runAiReadyBanrenmaOpportunityOpenDecision(workingRoot) {
+      const { alienGameState, playerState } = requireWorkingRoot(workingRoot);
       if (state.pendingBanrenmaOpportunity || state.pendingBanrenmaCardGain) return null;
       if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return null;
-      const currentPlayerId = getCurrentPlayer()?.id || null;
-      for (const player of getAiBanrenmaOpportunityPlayers()) {
+      const currentPlayerId = getWorkingCurrentPlayer(workingRoot)?.id || null;
+      for (const player of getAiBanrenmaOpportunityPlayers(workingRoot)) {
         const includeCards = player.id === currentPlayerId;
         const hasPanelOpportunity = Boolean(
           banrenma?.getPendingPanelMark?.(alienGameState, player)
           && (banrenma?.getAvailableBonusPositions?.(alienGameState) || []).length,
         );
         const readyCardOpportunities = includeCards && !hasPanelOpportunity
-          ? listAiReadyBanrenmaCardOpportunities(player)
+          ? listAiReadyBanrenmaCardOpportunities(workingRoot, player)
           : [];
         const preferredCardOpportunity = readyCardOpportunities
           .find((entry) => Number.isFinite(Number(entry.score))) || null;
         if (readyCardOpportunities.length && !preferredCardOpportunity) continue;
-        const result = openAiPreferredBanrenmaCardOpportunity(
+        const result = openAiPreferredBanrenmaCardOpportunity(workingRoot,
           player,
           includeCards,
           preferredCardOpportunity,
@@ -880,7 +912,8 @@
       return null;
     }
 
-    function listAiRunezuFaceSymbolQuickCandidates(player = getCurrentPlayer()) {
+    function listAiRunezuFaceSymbolQuickCandidates(workingRoot, player = getWorkingCurrentPlayer(workingRoot)) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (
         !player
         || typeof openRunezuFaceSymbolPlacement !== "function"
@@ -930,17 +963,18 @@
       return candidates.sort((left, right) => right.score - left.score);
     }
 
-    function runAiRunezuFaceSymbolQuickActionDecision(action) {
+    function runAiRunezuFaceSymbolQuickActionDecision(workingRoot, action) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (!action || typeof openRunezuFaceSymbolPlacement !== "function") {
         return { ok: false, message: "AI 缺少符文族黑圈快速行动入口" };
       }
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       recordAiAutoBattleLog("alien-use", `${currentPlayer.colorLabel}AI 打开符文族黑圈`, {
         logPlayerId: currentPlayer.id || null,
         logPlayerColor: currentPlayer.color || null,
         action,
       });
-      return openRunezuFaceSymbolPlacement(action.alienSlotId, action.position);
+      return openRunezuFaceSymbolPlacement(workingRoot, action.alienSlotId, action.position);
     }
 
 
@@ -953,8 +987,9 @@
 
 
 
-    function runAiCardCornerQuickActionDecision(action) {
-      const currentPlayer = getCurrentPlayer();
+    function runAiCardCornerQuickActionDecision(workingRoot, action) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工确认卡牌快速行动` };
       }
@@ -970,9 +1005,10 @@
       return result || { ok: true, progressed: true, action };
     }
 
-    function runAiPlayCardSelectionDecision() {
+    function runAiPlayCardSelectionDecision(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       if (!isPlayCardSelectionActive()) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择打牌` };
       }
@@ -1039,19 +1075,19 @@
 
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
     "AI_DEEPSPACE_SWAP_MIN_SCORE", "AI_STYLE_SEAT_ORDER", "INITIAL_SELECTION_REQUIRED", "abilities", "ai", "aiAutoBattleState", "aiNumber",
-    "alienGameState", "aliens", "allowsBlindDrawInSelection", "amiba", "applyAiDifficultyToPlayer", "banrenma", "canAiResolveAlienTraceEffect", "canAiResolvePlayCardEffects",
-    "canBlindDraw", "cancelCardTriggerChoice", "cardEffects", "cardState", "cards", "chooseAiIncomeDiscardIndexes", "chooseAiTradeDiscardIndexes", "confirmCardCornerQuickAction",
+    "aliens", "allowsBlindDrawInSelection", "amiba", "applyAiDifficultyToPlayer", "banrenma", "canAiResolveAlienTraceEffect", "canAiResolvePlayCardEffects",
+    "canBlindDraw", "cancelCardTriggerChoice", "cardEffects", "cards", "chooseAiIncomeDiscardIndexes", "chooseAiTradeDiscardIndexes", "confirmCardCornerQuickAction",
     "confirmCardTaskCompletion", "confirmInitialSelectionForCurrentPlayer", "confirmPassReserveSelection", "confirmPlayCardSelection", "confirmPublicScanSelection", "createActionContext", "drawCardForCurrentPlayer", "executeFreeMoveForCardTrigger",
     "finalizePendingDiscardSelection", "getActivePlayers", "getAiAutoBattlePendingState", "getAiAutoBattlePlayerIds", "getAiBestDeepspaceSwap", "getAiBestHandScanIndex", "getAiBestPublicScanSlots", "getAiCardDisplayLabel",
     "getAiDifficultyLabel", "getAiIncomeDiscardPreview", "getAiIncomeFinalFormulaEntries", "getAiLaunchPaymentCost", "getAiLiveScorePaceDeficit", "getAiLowEngineCatchupProfile", "getAiMarkedFinalFormulaEntries", "getAiPassReserveResourcePressure",
-    "getAiRoundNumber", "getCardTypeCode", "getCurrentPlayer", "getInitialSelectionOffer", "getPassReserveSelectionCards", "getPendingOwnerPlayer", "getPendingPlayCardSelection", "getPlayerById",
+    "getAiRoundNumber", "getCardTypeCode", "getInitialSelectionOffer", "getPassReserveSelectionCards", "getPendingPlayCardSelection",
     "getPlayerLabelById", "getReadyCardTasks", "handleCardTriggerChoice", "handleHandCardCornerQuickAction", "handleHandScanCardClick", "handleIndustryDeepspaceHandClick", "handlePlayCardSelect", "handlePublicCardClick",
     "handlePublicCornerDiscardCardClick", "handlePublicScanCardClick", "hasActivePendingSubFlow", "hasAiRunezuPassReservePressure", "isActionEffectFlowActive", "isAiAutoBattlePlayer", "isAiIncomeDiscardType", "isAiPassReservePreviewIncomeCandidate",
     "isCardSelectionActive", "isDiscardSelectionActive", "isHandScanSelectionActive", "isIndustryHandSelectionActive", "isInitialSelectionActive", "isPlayCardSelectionActive", "isPublicScanMultiSelectActive", "listAiEffectMoveCandidates",
-    "listAiPlayCardCandidates", "openBanrenmaReadyOpportunityForPlayer", "openCardTaskCompletionPicker", "openRunezuFaceSymbolPlacement", "pickPublicCardForCurrentPlayer", "playerState", "players", "recordAiAutoBattleLog",
-    "rocketActions", "rocketState", "roundAiScore", "runezu", "scoreAiAlienTraceValue", "scoreAiB1TraceMarginalValue", "scoreAiChongTraceTaskProgressValue", "scoreAiChongTransportCompletionValue",
+    "listAiPlayCardCandidates", "openBanrenmaReadyOpportunityForPlayer", "openCardTaskCompletionPicker", "openRunezuFaceSymbolPlacement", "pickPublicCardForCurrentPlayer", "players", "recordAiAutoBattleLog",
+    "rocketActions", "roundAiScore", "runezu", "scoreAiAlienTraceValue", "scoreAiB1TraceMarginalValue", "scoreAiChongTraceTaskProgressValue", "scoreAiChongTransportCompletionValue",
     "scoreAiEffectValue", "scoreAiPassReserveCard", "scoreAiPublicPickCard", "scoreAiRunezuFaceDependencyUnlockValue", "scoreAiRunezuFaceRewardValue", "scoreAiRunezuFaceSymbolPlacementChoice", "scoreAiRunezuSpendSymbolFinalPenalty", "selectPassReserveCard",
-    "skipCurrentActionEffect", "state", "summarizeAiPublicPickCandidate", "turnState",
+    "skipCurrentActionEffect", "state", "summarizeAiPublicPickCandidate",
   ]);
 
   return { createInitialCardPendingRuntime, REQUIRED_CONTEXT_KEYS };

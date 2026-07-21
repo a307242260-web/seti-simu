@@ -22,7 +22,7 @@
       buildAiScanActionTargetPreview, canAiAnalyzeData, canStartMainAction, createActionContext,
       getAiAnalyzeEnergyCost, getAiBestLandDirectScoreGain, getAiCardDisplayLabel,
       getAiNextMissingFinalScoreThreshold, getAiOrbitDirectScoreGain, getAiRoundNumber,
-      getAiScanDirectScoreGain, getAiStrategyWeight, getCurrentPlayer, hasActivePendingSubFlow,
+      getAiScanDirectScoreGain, getAiStrategyWeight, hasActivePendingSubFlow,
       isActionEffectFlowActive, listAiCardCornerQuickCandidates, listAiDataPlacementCandidates,
       listAiEmergencyAnalyzeEnergyTradeCandidates, listAiFinalAnalyzeEnergyTradeCandidates,
       listAiFinalReadyTaskCreditChainTradeCandidates, listAiLateResourceRecoveryTradeCandidates,
@@ -33,21 +33,24 @@
       scoreAiPostLaunchMovePlan, scoreAiScanAction, scoreAiScanEnergyReservationPenalty,
       scoreAiScanPriorityFloor, scoreAiWeakEarlyB2SetupScanTieBreak,
       scoreAiWeakFinalB2TargetedScanTieBreak, shouldAiProtectB2SectorScanFromPlanetCap,
-      state, turnState,
+      players, state,
     } = bindings;
 
-    function enumerateAiTurnActions() {
-      const context = createActionContext();
-      const currentPlayer = getCurrentPlayer();
+    function enumerateAiTurnActions(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("AI turn candidate enumeration requires an explicit workingRoot");
+      }
+      const context = createActionContext(workingRoot);
+      const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
       const candidates = [];
       if (state.pendingActionExecuted && !isActionEffectFlowActive() && !hasActivePendingSubFlow()) {
-        const industryCandidate = buildAiIndustryCandidate(currentPlayer);
+        const industryCandidate = buildAiIndustryCandidate(workingRoot, currentPlayer);
         if (industryCandidate) candidates.push(industryCandidate);
         candidates.push(...listAiLateResourceRecoveryTradeCandidates(currentPlayer));
-        candidates.push(...listAiMoveCandidates());
+        candidates.push(...listAiMoveCandidates(workingRoot));
         candidates.push(...listAiDataPlacementCandidates(currentPlayer));
-        candidates.push(...listAiRunezuFaceSymbolQuickCandidates(currentPlayer));
-        candidates.push(...listAiCardCornerQuickCandidates(currentPlayer));
+        candidates.push(...listAiRunezuFaceSymbolQuickCandidates(workingRoot, currentPlayer));
+        candidates.push(...listAiCardCornerQuickCandidates(workingRoot, currentPlayer));
         candidates.push({
           id: "end-turn",
           kind: "end-turn",
@@ -153,8 +156,8 @@
           bestTechBonusId: bestTechCandidate?.bonusId || null,
         },
       });
-      const scanCheck = scanEffects.canExecuteScan(getCurrentPlayer(), { standardAction: true });
-      const preMoveCandidates = listAiMoveCandidates();
+      const scanCheck = scanEffects.canExecuteScan(currentPlayer, { standardAction: true });
+      const preMoveCandidates = listAiMoveCandidates(workingRoot);
       const bestMoveCandidate = preMoveCandidates.reduce((best, candidate) => (
         aiNumber(candidate?.score) > aiNumber(best?.score) ? candidate : best
       ), null);
@@ -257,7 +260,7 @@
         scanScore = Math.min(scanScore, weakFinalAnalyzeEnergyCap);
       }
       const scanEnergyReservationPenalty = scanCheck.ok
-        ? scoreAiScanEnergyReservationPenalty(currentPlayer)
+        ? scoreAiScanEnergyReservationPenalty(workingRoot, currentPlayer)
         : 0;
       if (scanEnergyReservationPenalty > 0) {
         scanScore = Math.max(0, scanScore - scanEnergyReservationPenalty);
@@ -313,7 +316,7 @@
         scoreCapReason: analyzeBreakdown?.scoreCapReason || null,
         valueBreakdown: analyzeBreakdown,
       });
-      const playCardCandidates = listAiPlayCardCandidates(getCurrentPlayer());
+      const playCardCandidates = listAiPlayCardCandidates(currentPlayer);
       const bestPlayCardCandidate = [...playCardCandidates]
         .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null;
       const bestPlayCardScore = Number(bestPlayCardCandidate?.score || 0);
@@ -383,7 +386,7 @@
         : null;
       const strongestPlanetScore = Math.max(0, aiNumber(strongestPlanetMain?.score));
       const strongestPlanetDirectScore = Math.max(0, aiNumber(strongestPlanetMain?.directScoreGain));
-      const needsFirstThresholdCatchup = Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1)) >= FINAL_ROUND_NUMBER
+      const needsFirstThresholdCatchup = Math.max(1, Math.round(aiNumber(workingRoot.turnState.roundNumber) || 1)) >= FINAL_ROUND_NUMBER
         && Math.max(0, aiNumber(currentPlayer?.resources?.score)) < 25;
       const finalCatchupMoveScoreCap = needsFirstThresholdCatchup && Number(strongestNonLaunchMain?.score || 0) >= 15
         ? Math.max(0, Number(strongestNonLaunchMain.score || 0) - 1)
@@ -436,7 +439,7 @@
         };
       });
       candidates.push(...moveCandidates);
-      const industryCandidate = buildAiIndustryCandidate(currentPlayer);
+      const industryCandidate = buildAiIndustryCandidate(workingRoot, currentPlayer);
       if (industryCandidate) candidates.push(industryCandidate);
       candidates.push(...listAiEmergencyAnalyzeEnergyTradeCandidates(currentPlayer));
       candidates.push(...listAiFinalAnalyzeEnergyTradeCandidates(currentPlayer));
@@ -446,8 +449,8 @@
       candidates.push(...listAiResourceLockMainUnlockTradeCandidates(currentPlayer, candidates));
       candidates.push(...listAiLateResourceRecoveryTradeCandidates(currentPlayer, candidates));
       candidates.push(...listAiDataPlacementCandidates(currentPlayer));
-      candidates.push(...listAiRunezuFaceSymbolQuickCandidates(currentPlayer));
-      candidates.push(...listAiCardCornerQuickCandidates(currentPlayer, playCardCandidates));
+      candidates.push(...listAiRunezuFaceSymbolQuickCandidates(workingRoot, currentPlayer));
+      candidates.push(...listAiCardCornerQuickCandidates(workingRoot, currentPlayer, playCardCandidates));
       candidates.push({
         id: "pass",
         kind: "pass",
@@ -469,7 +472,7 @@
     "buildAiScanActionTargetPreview", "canAiAnalyzeData", "canStartMainAction", "createActionContext",
     "getAiAnalyzeEnergyCost", "getAiBestLandDirectScoreGain", "getAiCardDisplayLabel",
     "getAiNextMissingFinalScoreThreshold", "getAiOrbitDirectScoreGain", "getAiRoundNumber",
-    "getAiScanDirectScoreGain", "getAiStrategyWeight", "getCurrentPlayer", "hasActivePendingSubFlow",
+    "getAiScanDirectScoreGain", "getAiStrategyWeight", "hasActivePendingSubFlow",
     "isActionEffectFlowActive", "listAiCardCornerQuickCandidates", "listAiDataPlacementCandidates",
     "listAiEmergencyAnalyzeEnergyTradeCandidates", "listAiFinalAnalyzeEnergyTradeCandidates",
     "listAiFinalReadyTaskCreditChainTradeCandidates", "listAiLateResourceRecoveryTradeCandidates",
@@ -479,7 +482,7 @@
     "scoreAiLaunchTurnCandidateValue", "scoreAiOrbitAction", "scoreAiPassAction",
     "scoreAiPostLaunchMovePlan", "scoreAiScanAction", "scoreAiScanEnergyReservationPenalty",
     "scoreAiScanPriorityFloor", "scoreAiWeakEarlyB2SetupScanTieBreak",
-    "scoreAiWeakFinalB2TargetedScanTieBreak", "shouldAiProtectB2SectorScanFromPlanetCap", "state", "turnState",
+    "scoreAiWeakFinalB2TargetedScanTieBreak", "shouldAiProtectB2SectorScanFromPlanetCap", "players", "state",
   ]);
 
   return Object.freeze({ createTurnCandidateEnumerator, REQUIRED_CONTEXT_KEYS });

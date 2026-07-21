@@ -14,6 +14,7 @@
   function createTechCandidates(context = {}) {
     const {
       actions,
+      players,
       scanEffects,
       tech,
       techGameState,
@@ -71,27 +72,27 @@
       return candidate;
     }
 
-    function scoreAiBorrowedTechImmediateValue(candidate, player = getCurrentPlayer()) {
+    function scoreAiBorrowedTechImmediateValue(workingRoot, candidate, player = players.getCurrentPlayer(workingRoot.playerState)) {
       if (!candidate || !player) return -Infinity;
       const techType = candidate.techType || "";
       const tileId = candidate.tileId || "";
       const demand = getAiStrategyDemand(player);
       const planScore = Math.max(0, aiNumber(candidate.plan?.score));
       let value = 1.5 + planScore * 1.15;
-      const context = createActionContext();
+      const actionContext = createActionContext(workingRoot);
 
       if (tileId === "orange1") {
-        const launchCheck = actions.canExecute("launch", context);
+        const launchCheck = actions.canExecute("launch", actionContext);
         if (launchCheck.ok) value += 2.5 + getAiMapDemand(demand.actions, "launch") * 0.12;
       }
       if (tileId === "orange2") {
-        const bestMoveScore = listAiMoveCandidates()
+        const bestMoveScore = listAiMoveCandidates(workingRoot)
           .reduce((best, move) => Math.max(best, aiNumber(move.score)), 0);
         value += Math.min(7, Math.max(0, bestMoveScore) * 0.18)
           + getAiMapDemand(demand.actions, "move") * 0.1;
       }
       if (tileId === "orange3" || tileId === "orange4") {
-        const landCheck = actions.canExecute("land", context);
+        const landCheck = actions.canExecute("land", actionContext);
         if (landCheck.ok) {
           value += 3.5
             + getAiMapDemand(demand.actions, "land") * 0.12
@@ -116,8 +117,8 @@
       return roundAiScore(value);
     }
 
-    function buildAiBorrowTechCandidate(tileId, player = getCurrentPlayer()) {
-      const stack = tech.getStack?.(techGameState.board, tileId) || null;
+    function buildAiBorrowTechCandidate(workingRoot, tileId, player = players.getCurrentPlayer(workingRoot.playerState)) {
+      const stack = tech.getStack?.(workingRoot.techGameState.board, tileId) || null;
       const candidate = {
         tileId,
         techType: stack?.techType || tech.getTechType?.(tileId) || null,
@@ -129,7 +130,7 @@
         directScoreGain: 0,
       };
       const check = tech.resolver.canTakeTile(
-        techGameState.board,
+        workingRoot.techGameState.board,
         player?.techState,
         tileId,
         { techTypes: ["orange", "purple"] },
@@ -137,20 +138,20 @@
       candidate.available = check.ok;
       candidate.reason = check.message || null;
       candidate.plan = scoreAiResearchTechRoutePlan(candidate, player);
-      candidate.score = scoreAiBorrowedTechImmediateValue(candidate, player);
+      candidate.score = scoreAiBorrowedTechImmediateValue(workingRoot, candidate, player);
       if (!check.ok) candidate.score -= 1000;
       return candidate;
     }
 
-    function listAiBorrowTechCandidates(player = getCurrentPlayer()) {
+    function listAiBorrowTechCandidates(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
       if (!player) return [];
-      createActionContext().ensurePlayerTechState(player);
+      createActionContext(workingRoot).ensurePlayerTechState(player);
       return tech.listTakeableTiles(
-        techGameState.board,
+        workingRoot.techGameState.board,
         player.techState,
         { techTypes: ["orange", "purple"] },
       )
-        .map((tileId) => buildAiBorrowTechCandidate(tileId, player))
+        .map((tileId) => buildAiBorrowTechCandidate(workingRoot, tileId, player))
         .filter((candidate) => candidate.available !== false)
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
     }

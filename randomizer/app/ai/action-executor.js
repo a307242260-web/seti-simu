@@ -24,27 +24,35 @@
       throw new Error("createActionExecutor requires explicit app context");
     }
     const {
-      AI_DIFFICULTY_WEAK_START, FINAL_ROUND_NUMBER, actions, adjustAiActionGraphCandidate, adjustAiActionGraphCandidateForStyle, ai, aiNumber, alienGameState,
+      AI_DIFFICULTY_WEAK_START, FINAL_ROUND_NUMBER, actions, adjustAiActionGraphCandidate, adjustAiActionGraphCandidateForStyle, ai, aiNumber,
       analyzeDataForCurrentPlayer, applyAiStrategyWeight, applyAiTurnActionSelectionPressure, beginPlayCardSelection, beginScanAction, buildAiAnalyzeActionValueBreakdown, buildAiEarlyNoMainPublicRefillDiagnostic, buildAiFinalHighScorePassRecoveryDiagnostic,
       buildAiFinalLowHandPassRecoveryDiagnostic, buildAiIndustryCandidate, buildAiResearchTechCandidate, buildAiResourceLockTradePreviews, buildAiScanActionTargetPreview, canAiAnalyzeData, canPayForMove, canStartMainAction, confirmDataPlacement,
-      AI_MOVE_DIRECTIONS, aliens, canAiMoveThisTurn, canUseCardCornerQuickAction, cards, confirmPlayCardSelection, createActionContext, data, dispatchRuntimeAction, endCurrentTurn, finalScoringState, getAiAnalyzeEnergyCost, getAiBestLandDirectScoreGain, getAiCardDisplayLabel, getAiMarkedFinalFormulaEntries, handlePlayCardSelect,
-      getAiNextMissingFinalScoreThreshold, getAiOrbitDirectScoreGain, getAiRoundNumber, getAiScanDirectScoreGain, getAiStrategyWeight, getAiTraceCompetitionState, getCardPlayCost, getCurrentPlayer, getRequiredMovePointsForUi, handleCompanyActionMarkerClick,
+      AI_MOVE_DIRECTIONS, aliens, canAiMoveThisTurn, canUseCardCornerQuickAction, cards, confirmPlayCardSelection, createActionContext, data, dispatchRuntimeAction, endCurrentTurn, getAiAnalyzeEnergyCost, getAiBestLandDirectScoreGain, getAiCardDisplayLabel, getAiMarkedFinalFormulaEntries, handlePlayCardSelect,
+      getAiNextMissingFinalScoreThreshold, getAiOrbitDirectScoreGain, getAiRoundNumber, getAiScanDirectScoreGain, getAiStrategyWeight, getAiTraceCompetitionState, getCardPlayCost, getRequiredMovePointsForUi, handleCompanyActionMarkerClick,
       getMovableTokensForPlayer, hasActivePendingSubFlow, industry, isActionEffectFlowActive, isAiAutoBattlePlayer, landForCurrentPlayer, listAiCardCornerQuickCandidates, listAiDataPlacementCandidates, listAiEmergencyAnalyzeEnergyTradeCandidates, listAiFinalAnalyzeEnergyTradeCandidates,
       listAiFinalReadyTaskCreditChainTradeCandidates, listAiLateResourceRecoveryTradeCandidates, listAiMainUnlockTradeCandidates, listAiMoveCandidates, listAiPlayCardCandidates, listAiResourceLockMainUnlockTradeCandidates, listAiRunezuFaceSymbolQuickCandidates, listAiThirdFinalMarkResourceTradeCandidates,
-      moveRocket, orbitForCurrentPlayer, passForCurrentPlayer, players, playerState, quickTrades, recordAiAutoBattleLog, recoverPendingActionFromOpenHistoryForAi, researchTechForCurrentPlayer, rocketActions, roundAiScore, runezu, runAction,
+      moveRocket, orbitForCurrentPlayer, passForCurrentPlayer, players, quickTrades, recordAiAutoBattleLog, recoverPendingActionFromOpenHistoryForAi, researchTechForCurrentPlayer, rocketActions, roundAiScore, runezu, runAction,
       runAiCardCornerQuickActionDecision, runAiMoveActionDecision, runAiRunezuFaceSymbolQuickActionDecision, runQuickTrade, scanEffects, scoreAiLandAction, scoreAiLaunchTurnCandidateValue, scoreAiOrbitAction,
       scoreAiPassAction, scoreAiPostLaunchMovePlan, scoreAiScanAction, scoreAiScanEnergyReservationPenalty, scoreAiScanPriorityFloor, scoreAiWeakEarlyB2SetupScanTieBreak, scoreAiWeakFinalB2TargetedScanTieBreak, shouldAiProtectB2SectorScanFromPlanetCap,
-      state, turnState,
+      state,
     } = context;
 
     const { enumerateAiTurnActions } = turnCandidateEnumerator.createTurnCandidateEnumerator(context);
     const selectScoredItem = ai?.heuristicEvaluator?.selectScoredItem || heuristicEvaluator.selectScoredItem;
 
-    function enumerateHeadlessTurnActions() {
-      const currentPlayer = getCurrentPlayer();
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("AI action executor requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
+
+    function enumerateHeadlessTurnActions(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = players.getCurrentPlayer(playerState);
       if (!currentPlayer || !isAiAutoBattlePlayer(currentPlayer.id)) return [];
       if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return [];
-      const result = dispatchRuntimeAction?.({ kind: "standard_enumerate" });
+      const result = dispatchRuntimeAction?.(workingRoot, { kind: "standard_enumerate" });
       if (!result?.ok) return [];
       return (result.candidates || [])
         .filter((standardAction) => standardAction.phase !== "conditional")
@@ -62,7 +70,8 @@
         }));
     }
 
-    function executeAiTurnAction(action) {
+    function executeAiTurnAction(workingRoot, action) {
+      requireWorkingRoot(workingRoot);
       const standardDescriptor = action?.standardAction
         || (action?.schemaVersion === "seti-standard-action-v1" ? action : null);
       if (!standardDescriptor) {
@@ -72,7 +81,7 @@
           message: "AI 行动必须携带完整 Standard Action descriptor",
         };
       }
-      return dispatchRuntimeAction({ standardAction: standardDescriptor });
+      return dispatchRuntimeAction(workingRoot, { standardAction: standardDescriptor });
     }
 
     function shouldRetryAiTurnAction(action, result) {
@@ -118,7 +127,7 @@
       };
     }
 
-    function buildAiTurnActionCandidates(currentPlayer = getCurrentPlayer()) {
+    function buildAiTurnActionCandidates(workingRoot, currentPlayer = players.getCurrentPlayer(requireWorkingRoot(workingRoot).playerState)) {
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
         return {
           ok: false,
@@ -127,19 +136,19 @@
           candidates: [],
         };
       }
-      const rawCandidates = enumerateAiTurnActions();
+      const rawCandidates = enumerateAiTurnActions(workingRoot);
       const markedFinalFormulas = getAiMarkedFinalFormulaEntries(currentPlayer);
       const traceCompetition = getAiTraceCompetitionState(currentPlayer);
       const graphState = {
-        playerState,
-        turnState,
-        alienGameState,
-        finalScoringState,
+        playerState: workingRoot.playerState,
+        turnState: workingRoot.turnState,
+        alienGameState: workingRoot.alienGameState,
+        finalScoringState: workingRoot.finalScoringState,
         currentPlayer,
         aiMarkedFinalFormulas: markedFinalFormulas,
         aiTraceCompetition: traceCompetition,
       };
-      const standardListing = dispatchRuntimeAction?.({ kind: "standard_enumerate", candidates: rawCandidates });
+      const standardListing = dispatchRuntimeAction?.(workingRoot, { kind: "standard_enumerate", candidates: rawCandidates });
       const pipelineResult = heuristicEvaluator.buildTurnDescriptorEvaluations({
         rawCandidates,
         graphState,
@@ -167,9 +176,9 @@
       };
     }
 
-    function runAiTurnActionDecision() {
-      const currentPlayer = getCurrentPlayer();
-      const buildResult = buildAiTurnActionCandidates(currentPlayer);
+    function runAiTurnActionDecision(workingRoot) {
+      const currentPlayer = players.getCurrentPlayer(requireWorkingRoot(workingRoot).playerState);
+      const buildResult = buildAiTurnActionCandidates(workingRoot, currentPlayer);
       if (!buildResult.ok) return buildResult;
       const { rawCandidates, graphState, candidates, selectedAction } = buildResult;
       let selectableCandidates = candidates;
@@ -227,7 +236,7 @@
           ...(finalLowHandPassRecoveryDiagnostic ? { finalLowHandPassRecoveryDiagnostic } : {}),
           ...(finalHighScorePassRecoveryDiagnostic ? { finalHighScorePassRecoveryDiagnostic } : {}),
         });
-        const result = executeAiTurnAction(action, currentPlayer);
+        const result = executeAiTurnAction(workingRoot, action, currentPlayer);
         if (shouldRetryAiTurnAction(action, result)) {
           rejectedActions.push({
             id: action.id || null,
@@ -266,17 +275,17 @@
   }
 
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
-    "AI_DIFFICULTY_WEAK_START", "AI_MOVE_DIRECTIONS", "FINAL_ROUND_NUMBER", "actions", "adjustAiActionGraphCandidate", "adjustAiActionGraphCandidateForStyle", "ai", "aiNumber", "alienGameState", "aliens", "canAiMoveThisTurn", "canUseCardCornerQuickAction", "cards", "confirmPlayCardSelection",
+    "AI_DIFFICULTY_WEAK_START", "AI_MOVE_DIRECTIONS", "FINAL_ROUND_NUMBER", "actions", "adjustAiActionGraphCandidate", "adjustAiActionGraphCandidateForStyle", "ai", "aiNumber", "aliens", "canAiMoveThisTurn", "canUseCardCornerQuickAction", "cards", "confirmPlayCardSelection",
     "analyzeDataForCurrentPlayer", "applyAiStrategyWeight", "applyAiTurnActionSelectionPressure", "beginPlayCardSelection", "beginScanAction", "buildAiAnalyzeActionValueBreakdown", "buildAiEarlyNoMainPublicRefillDiagnostic", "buildAiFinalHighScorePassRecoveryDiagnostic",
     "buildAiFinalLowHandPassRecoveryDiagnostic", "buildAiIndustryCandidate", "buildAiResearchTechCandidate", "buildAiResourceLockTradePreviews", "buildAiScanActionTargetPreview", "canAiAnalyzeData", "canPayForMove", "canStartMainAction", "confirmDataPlacement",
-    "createActionContext", "data", "dispatchRuntimeAction", "endCurrentTurn", "finalScoringState", "getAiAnalyzeEnergyCost", "getAiBestLandDirectScoreGain", "getAiCardDisplayLabel", "getAiMarkedFinalFormulaEntries", "getMovableTokensForPlayer",
-    "getAiNextMissingFinalScoreThreshold", "getAiOrbitDirectScoreGain", "getAiRoundNumber", "getAiScanDirectScoreGain", "getAiStrategyWeight", "getAiTraceCompetitionState", "getCardPlayCost", "getCurrentPlayer", "getRequiredMovePointsForUi", "handleCompanyActionMarkerClick", "handlePlayCardSelect",
+    "createActionContext", "data", "dispatchRuntimeAction", "endCurrentTurn", "getAiAnalyzeEnergyCost", "getAiBestLandDirectScoreGain", "getAiCardDisplayLabel", "getAiMarkedFinalFormulaEntries", "getMovableTokensForPlayer",
+    "getAiNextMissingFinalScoreThreshold", "getAiOrbitDirectScoreGain", "getAiRoundNumber", "getAiScanDirectScoreGain", "getAiStrategyWeight", "getAiTraceCompetitionState", "getCardPlayCost", "getRequiredMovePointsForUi", "handleCompanyActionMarkerClick", "handlePlayCardSelect",
     "hasActivePendingSubFlow", "industry", "isActionEffectFlowActive", "isAiAutoBattlePlayer", "landForCurrentPlayer", "listAiCardCornerQuickCandidates", "listAiDataPlacementCandidates", "listAiEmergencyAnalyzeEnergyTradeCandidates", "listAiFinalAnalyzeEnergyTradeCandidates",
     "listAiFinalReadyTaskCreditChainTradeCandidates", "listAiLateResourceRecoveryTradeCandidates", "listAiMainUnlockTradeCandidates", "listAiMoveCandidates", "listAiPlayCardCandidates", "listAiResourceLockMainUnlockTradeCandidates", "listAiRunezuFaceSymbolQuickCandidates", "listAiThirdFinalMarkResourceTradeCandidates",
-    "moveRocket", "orbitForCurrentPlayer", "passForCurrentPlayer", "players", "playerState", "quickTrades", "recordAiAutoBattleLog", "recoverPendingActionFromOpenHistoryForAi", "researchTechForCurrentPlayer", "rocketActions", "roundAiScore", "runezu", "runAction",
+    "moveRocket", "orbitForCurrentPlayer", "passForCurrentPlayer", "players", "quickTrades", "recordAiAutoBattleLog", "recoverPendingActionFromOpenHistoryForAi", "researchTechForCurrentPlayer", "rocketActions", "roundAiScore", "runezu", "runAction",
     "runAiCardCornerQuickActionDecision", "runAiMoveActionDecision", "runAiRunezuFaceSymbolQuickActionDecision", "runQuickTrade", "scanEffects", "scoreAiLandAction", "scoreAiLaunchTurnCandidateValue", "scoreAiOrbitAction",
     "scoreAiPassAction", "scoreAiPostLaunchMovePlan", "scoreAiScanAction", "scoreAiScanEnergyReservationPenalty", "scoreAiScanPriorityFloor", "scoreAiWeakEarlyB2SetupScanTieBreak", "scoreAiWeakFinalB2TargetedScanTieBreak", "shouldAiProtectB2SectorScanFromPlanetCap",
-    "state", "turnState",
+    "state",
   ]);
 
   return { createActionExecutor, REQUIRED_CONTEXT_KEYS };

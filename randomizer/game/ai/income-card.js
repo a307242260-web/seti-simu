@@ -669,7 +669,7 @@
         + scoreAiPublicityResearchTechSetupValue(immediateGain, player, { scale: 0.7 });
     }
 
-    function scoreAiPublicPickCard(card, player = getCurrentPlayer(), pendingType = null) {
+    function scoreAiPublicPickCard(card, player = getCurrentPlayer(), pendingType = null, workingRoot = null) {
       if (!card) return -Infinity;
       const incomeGain = cards.getIncomeGainForCard?.(card) || null;
       if (pendingType === "industry_mission_pick") {
@@ -680,6 +680,7 @@
       if (pendingType === "industry_fenwick_pick") {
         const reward = industry?.getCornerReward?.(cards, card) || null;
         const rewardValue = scoreAiIndustryCornerReward(card, reward, {
+          workingRoot,
           moveId: "industryFenwickMove",
         });
         return Number.isFinite(Number(rewardValue)) ? rewardValue + incomeValue * 0.15 : -Infinity;

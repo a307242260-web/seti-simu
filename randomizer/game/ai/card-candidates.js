@@ -573,7 +573,7 @@
       return d2Marginal > 0 ? d2Marginal * 0.85 : 2.5;
     }
 
-    function getAiCardCornerRewardValue(card, player = getCurrentPlayer()) {
+    function getAiCardCornerRewardValue(workingRoot, card, player = players.getCurrentPlayer(workingRoot.playerState)) {
       const resourceReward = cards.getDiscardActionRewardForCard(card);
       const moveReward = cards.getDiscardActionMoveRewardForCard?.(card);
       let value = 0;
@@ -583,7 +583,7 @@
       }
       if (moveReward) {
         value += scoreAiResourceBundle(moveReward.gain || {});
-        const moveCandidates = listAiEffectMoveCandidates({
+        const moveCandidates = listAiEffectMoveCandidates(workingRoot, {
           id: "cardCornerMovePreview",
           free: true,
           player,
@@ -735,11 +735,11 @@
       ));
     }
 
-    function buildAiCardCornerQuickCandidate(card, handIndex, currentPlayer, options = {}) {
+    function buildAiCardCornerQuickCandidate(workingRoot, card, handIndex, currentPlayer, options = {}) {
       if (!card) return null;
       const moveReward = cards.getDiscardActionMoveRewardForCard?.(card);
-      if (moveReward && !canAiUseCardCornerMoveThisTurn(currentPlayer?.id)) return null;
-      const reward = getAiCardCornerRewardValue(card, currentPlayer);
+      if (moveReward && !canAiUseCardCornerMoveThisTurn(workingRoot, currentPlayer?.id)) return null;
+      const reward = getAiCardCornerRewardValue(workingRoot, card, currentPlayer);
       if (!reward.resourceReward && !reward.moveReward) return null;
       if (!Number.isFinite(Number(reward.value))) return null;
       const directScoreGain = Math.max(
@@ -917,7 +917,7 @@
       };
     }
 
-    function listAiCardCornerQuickCandidates(currentPlayer = getCurrentPlayer(), playCardCandidates = null) {
+    function listAiCardCornerQuickCandidates(workingRoot, currentPlayer = players.getCurrentPlayer(workingRoot.playerState), playCardCandidates = null) {
       if (!currentPlayer || !handleHandCardCornerQuickAction || !confirmCardCornerQuickAction) return [];
       const hand = currentPlayer.hand || [];
       const playableCards = playCardCandidates || listAiPlayCardCandidates(currentPlayer);
@@ -926,7 +926,7 @@
         count + (playCandidateByIndex.has(index) ? 0 : 1)
       ), 0);
       return hand
-        .map((card, handIndex) => buildAiCardCornerQuickCandidate(card, handIndex, currentPlayer, {
+        .map((card, handIndex) => buildAiCardCornerQuickCandidate(workingRoot, card, handIndex, currentPlayer, {
           playCandidateByIndex,
           unplayableCount,
         }))

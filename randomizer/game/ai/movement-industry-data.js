@@ -93,8 +93,10 @@
     const shouldAiPreserveEnergyForRouteCashout = (...args) => context.shouldAiPreserveEnergyForRouteCashout(...args);
     const summarizeAiPublicPickCandidate = (...args) => context.summarizeAiPublicPickCandidate(...args);
 
-    function buildAiMoveCandidate(rocket, direction, index = 0) {
-      const currentPlayer = getCurrentPlayer();
+    function buildAiMoveCandidate(workingRoot, rocket, direction, index = 0) {
+      if (!workingRoot || typeof workingRoot !== "object") throw new TypeError("AI movement candidates require an explicit workingRoot");
+      const { playerState, rocketState } = workingRoot;
+      const currentPlayer = players.getCurrentPlayer(playerState);
       const moveCheck = rocketActions.canMoveRocket(
         rocketState,
         rocket.id,
@@ -104,6 +106,7 @@
       if (!moveCheck.ok) return null;
 
       const requiredMovePoints = getRequiredMovePointsForUi(
+        workingRoot,
         currentPlayer,
         rocket.id,
         direction.deltaX,
@@ -354,12 +357,16 @@
       };
     }
 
-    function listAiMoveCandidates() {
-      const currentPlayer = getCurrentPlayer();
-      if (!currentPlayer || !canAiMoveThisTurn(currentPlayer.id)) return [];
-      return getMovableTokensForPlayer(currentPlayer.id)
+    function listAiMoveCandidates(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") throw new TypeError("AI movement candidates require an explicit workingRoot");
+      const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
+      if (!currentPlayer || !canAiMoveThisTurn(workingRoot, currentPlayer.id)) return [];
+      const movableTokens = rocketActions.getMovableTokensForPlayer
+        ? rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, currentPlayer.id)
+        : rocketActions.getRocketsForPlayer(workingRoot.rocketState, currentPlayer.id);
+      return movableTokens
         .flatMap((rocket, index) => AI_MOVE_DIRECTIONS
-          .map((direction) => buildAiMoveCandidate(rocket, direction, index))
+          .map((direction) => buildAiMoveCandidate(workingRoot, rocket, direction, index))
           .filter(Boolean));
     }
 
@@ -367,12 +374,12 @@
       return player?.initialSelection?.industry || null;
     }
 
-    function getAiIndustryPublicPickProfile(player, pendingType = null) {
-      const ranked = (cardState.publicCards || [])
+    function getAiIndustryPublicPickProfile(workingRoot, player, pendingType = null) {
+      const ranked = (workingRoot.cardState.publicCards || [])
         .map((card, slotIndex) => ({
           card,
           slotIndex,
-          score: scoreAiPublicPickCard(card, player, pendingType),
+          score: scoreAiPublicPickCard(card, player, pendingType, workingRoot),
         }))
         .filter((entry) => entry.card && Number.isFinite(Number(entry.score)))
         .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.slotIndex - right.slotIndex);
@@ -385,11 +392,11 @@
       };
     }
 
-    function scoreAiIndustryPublicPick(player, pendingType = null) {
-      return getAiIndustryPublicPickProfile(player, pendingType).bestScore;
+    function scoreAiIndustryPublicPick(workingRoot, player, pendingType = null) {
+      return getAiIndustryPublicPickProfile(workingRoot, player, pendingType).bestScore;
     }
 
-    function summarizeAiStrategyPassiveSlots(player = getCurrentPlayer()) {
+    function summarizeAiStrategyPassiveSlots(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
       if (!player || !industry?.playerHasStrategyPassive?.(player)) return null;
       const slotIds = industry.STRATEGY_PASSIVE_SLOT_IDS || ["yellow", "red", "blue"];
       const slots = slotIds.map((slotId) => {
@@ -398,7 +405,7 @@
           slotId,
           occupied,
           rewardLabel: industry?.getStrategySlotRewardLabel?.(slotId) || "",
-          rewardValue: roundAiScore(scoreAiStrategyPassiveSlotChoice(slotId, player)),
+          rewardValue: roundAiScore(scoreAiStrategyPassiveSlotChoice(workingRoot, slotId, player)),
         };
       });
       return {
@@ -443,10 +450,10 @@
       return hasConcretePublicCard ? 0 : 16;
     }
 
-    function listAiCardCornerMoveCandidatesForReward(moveReward, options = {}) {
+    function listAiCardCornerMoveCandidatesForReward(workingRoot, moveReward, options = {}) {
       if (!moveReward) return [];
       const movementPoints = Math.max(1, Math.round(aiNumber(moveReward.movementPoints || 1)));
-      return listAiEffectMoveCandidates({
+      return listAiEffectMoveCandidates(workingRoot, {
         id: options.id || "industryCornerMove",
         free: true,
         poolRemaining: movementPoints,
@@ -462,7 +469,7 @@
         return scoreAiResourceBundle(resolvedReward.gain || {}) + dataValue;
       }
       if (resolvedReward.kind === "move") {
-        const candidates = listAiCardCornerMoveCandidatesForReward(resolvedReward, {
+        const candidates = listAiCardCornerMoveCandidatesForReward(options.workingRoot, resolvedReward, {
           id: options.moveId || "industryCornerMove",
         });
         if (!candidates.length) return -Infinity;
@@ -475,13 +482,14 @@
       return -Infinity;
     }
 
-    function scoreAiIndustryStratusCorners(player = getCurrentPlayer()) {
+    function scoreAiIndustryStratusCorners(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
       let total = 0;
       let rewardCount = 0;
-      for (const card of (cardState.publicCards || []).slice(0, 3)) {
+      for (const card of (workingRoot.cardState.publicCards || []).slice(0, 3)) {
         if (!card) continue;
         const reward = industry?.getCornerReward?.(cards, card);
         const rewardValue = scoreAiIndustryCornerReward(card, reward, {
+          workingRoot,
           allowMissing: true,
           moveId: "industryStratusMove",
         });
@@ -492,15 +500,15 @@
       return rewardCount > 0 && total > 0 ? total : -Infinity;
     }
 
-    function scoreAiIndustryTuringBorrow(player = getCurrentPlayer()) {
+    function scoreAiIndustryTuringBorrow(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
       if (!player || state.pendingActionExecuted || !canStartMainAction()) return -Infinity;
-      const best = listAiBorrowTechCandidates(player)[0] || null;
+      const best = listAiBorrowTechCandidates(workingRoot, player)[0] || null;
       const bestScore = Math.max(0, aiNumber(best?.score));
       return bestScore >= 5 ? bestScore : -Infinity;
     }
 
-    function listAiIndustryHuanyuMoveCandidates() {
-      return listAiEffectMoveCandidates({
+    function listAiIndustryHuanyuMoveCandidates(workingRoot) {
+      return listAiEffectMoveCandidates(workingRoot, {
         id: "industryMove",
         free: true,
         poolRemaining: 1,
@@ -509,8 +517,8 @@
         .filter((candidate) => !(state.industryFreeMoveState?.movedRocketIds || []).includes(candidate.rocketId));
     }
 
-    function scoreAiIndustryHuanyuMoves() {
-      const candidates = listAiIndustryHuanyuMoveCandidates()
+    function scoreAiIndustryHuanyuMoves(workingRoot) {
+      const candidates = listAiIndustryHuanyuMoveCandidates(workingRoot)
         .sort((left, right) => Number(right.score || 0) - Number(left.score || 0));
       const positiveCandidates = candidates.filter((candidate) => aiNumber(candidate.score) > 0);
       if (!positiveCandidates.length) return -Infinity;
@@ -519,7 +527,7 @@
         ? positiveCandidates.find((candidate) => String(candidate.rocketId) !== String(firstMove.rocketId)) || null
         : null;
       const plannedMoves = [firstMove, secondMove].filter(Boolean);
-      const ownsOrange2 = players.playerOwnsTech(getCurrentPlayer(), "orange2", createActionContext());
+      const ownsOrange2 = players.playerOwnsTech(players.getCurrentPlayer(workingRoot.playerState), "orange2", createActionContext(workingRoot));
       const asteroidStops = plannedMoves.filter((candidate) => (
         candidate
         && isAiAsteroidCoordinate(candidate.to)
@@ -547,12 +555,12 @@
       return 2 + bestSwap.score;
     }
 
-    function buildAiIndustryCandidate(player = getCurrentPlayer()) {
+    function buildAiIndustryCandidate(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
       const industryCard = getAiIndustryCard(player);
       if (!industry || !industryCard || !handleCompanyActionMarkerClick) return null;
       const layout = industry.getIndustryActionMarkerLayout?.(industryCard);
-      const check = industry.canMarkIndustryAction?.(player, turnState.roundNumber, {
-        turnNumber: turnState.turnNumber,
+      const check = industry.canMarkIndustryAction?.(player, workingRoot.turnState.roundNumber, {
+        turnNumber: workingRoot.turnState.turnNumber,
         hasMarker: Boolean(layout),
         industryCard,
       });
@@ -563,28 +571,28 @@
       let strategyPassiveSlots = null;
       let score = -Infinity;
       if (abilityId === "stratus_public_corners") {
-        score = 4 + scoreAiIndustryStratusCorners(player) * 0.85;
+        score = 4 + scoreAiIndustryStratusCorners(workingRoot, player) * 0.85;
       } else if (abilityId === "turing_borrow_tech") {
-        score = scoreAiIndustryTuringBorrow(player);
+        score = scoreAiIndustryTuringBorrow(workingRoot, player);
       } else if (abilityId === "sentinel_arm_play_corner") {
         score = scoreAiIndustrySentinelArm(player);
       } else if (abilityId === "huanyu_free_moves") {
-        score = scoreAiIndustryHuanyuMoves();
+        score = scoreAiIndustryHuanyuMoves(workingRoot);
       } else if (abilityId === "mission_publicity_pick_income") {
-        publicPickProfile = getAiIndustryPublicPickProfile(player, "industry_mission_pick");
+        publicPickProfile = getAiIndustryPublicPickProfile(workingRoot, player, "industry_mission_pick");
         score = players.canAfford(player, { publicity: industry.PUBLICITY_PICK_COST || 2 })
           ? publicPickProfile.bestScore - 3
           : -Infinity;
       } else if (abilityId === "fenwick_publicity_pick_corner") {
-        publicPickProfile = getAiIndustryPublicPickProfile(player, "industry_fenwick_pick");
+        publicPickProfile = getAiIndustryPublicPickProfile(workingRoot, player, "industry_fenwick_pick");
         score = players.canAfford(player, { publicity: industry.FENWICK_PUBLICITY_PICK_COST || 1 })
           ? publicPickProfile.bestScore - 3
           : -Infinity;
       } else if (abilityId === "deepspace_swap_cards") {
         score = scoreAiIndustryDeepspaceSwap(player);
       } else if (abilityId === "strategy_pick_card") {
-        publicPickProfile = getAiIndustryPublicPickProfile(player, "industry_strategy_pick");
-        strategyPassiveSlots = summarizeAiStrategyPassiveSlots(player);
+        publicPickProfile = getAiIndustryPublicPickProfile(workingRoot, player, "industry_strategy_pick");
+        strategyPassiveSlots = summarizeAiStrategyPassiveSlots(workingRoot, player);
         score = publicPickProfile.bestScore;
       }
       const earlyEmptyStrategyPickPenalty = abilityId === "strategy_pick_card"
