@@ -9,7 +9,7 @@
   "terminalSummary": {
     "terminal": true,
     "completionRate": 1,
-    "steps": 102,
+    "steps": 75,
     "scores": [
       11,
       5,
@@ -30,7 +30,7 @@
     "choose_payment"
   ],
   "actionCounts": {
-    "choose_payment": 58,
+    "choose_payment": 31,
     "pass": 16,
     "choose_card": 12,
     "end_turn": 16

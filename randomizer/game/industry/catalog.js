@@ -37,11 +37,7 @@
     "寰宇超动力": Object.freeze({
       label: "寰宇超动力",
       activeAbilityId: "huanyu_free_moves",
-      passiveIds: Object.freeze([
-        "huanyu_rocket_limit",
-        "huanyu_superdrive_round_start",
-        "huanyu_superdrive_pass_launch",
-      ]),
+      passiveIds: Object.freeze(["huanyu_rocket_limit"]),
     }),
     "赫利昂联合体": Object.freeze({
       label: "赫利昂联合体",
@@ -76,7 +72,7 @@
     "作弊实验室": Object.freeze({
       label: "作弊实验室",
       activeAbilityId: null,
-      passiveIds: Object.freeze(["alien_lab_panels", "cheat_lab_permanent_panels", "cheat_lab_round_start"]),
+      passiveIds: Object.freeze(["alien_lab_panels"]),
     }),
     "宇宙战略集团": Object.freeze({
       label: "宇宙战略集团",
@@ -86,7 +82,7 @@
     "宇宙大战略集团": Object.freeze({
       label: "宇宙大战略集团",
       activeAbilityId: "strategy_pick_card",
-      passiveIds: Object.freeze(["strategy_passive_reward_slots", "grand_strategy_round_start"]),
+      passiveIds: Object.freeze(["strategy_passive_reward_slots"]),
     }),
     "原教旨主义": Object.freeze({
       label: "原教旨主义",

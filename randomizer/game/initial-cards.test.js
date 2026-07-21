@@ -124,8 +124,8 @@ function initialCard(number) {
   assert.equal(player.resources.publicity, 1);
   assert.equal(player.resources.credits, 2);
   assert.equal(player.resources.energy, 2);
-  assert.equal(player.resources.handSize, 5);
-  assert.equal(result.incomeIncreaseCount, 5);
+  assert.equal(player.resources.handSize, 1);
+  assert.equal(result.incomeIncreaseCount, 3);
 }
 
 {
@@ -136,11 +136,11 @@ function initialCard(number) {
   const result = initialCards.resolveIndustryEffect(context, player, { label: "宇宙大战略集团" });
 
   assert.equal(result.ok, true);
-  assert.equal(player.resources.publicity, 5);
+  assert.equal(player.resources.publicity, 1);
   assert.equal(player.resources.credits, 4);
-  assert.equal(player.resources.energy, 3);
-  assert.equal(player.resources.handSize, 2);
-  assert.equal(result.incomeIncreaseCount, 3);
+  assert.equal(player.resources.energy, 2);
+  assert.equal(player.resources.handSize, 1);
+  assert.equal(result.incomeIncreaseCount, 2);
   assert.deepEqual(player.income, {
     credits: 2,
     energy: 1,
@@ -162,8 +162,8 @@ function initialCard(number) {
   assert.equal(player.resources.publicity, 1);
   assert.equal(player.resources.credits, 2);
   assert.equal(player.resources.energy, 2);
-  assert.equal(player.resources.handSize, 5);
-  assert.equal(result.incomeIncreaseCount, 4);
+  assert.equal(player.resources.handSize, 1);
+  assert.equal(result.incomeIncreaseCount, 3);
 }
 
 {
@@ -174,11 +174,11 @@ function initialCard(number) {
   const result = initialCards.resolveIndustryEffect(context, player, { label: "宇宙大战略集团" });
 
   assert.equal(result.ok, true);
-  assert.equal(player.resources.publicity, 4);
+  assert.equal(player.resources.publicity, 1);
   assert.equal(player.resources.credits, 4);
   assert.equal(player.resources.energy, 2);
-  assert.equal(player.resources.handSize, 2);
-  assert.equal(result.incomeIncreaseCount, 3);
+  assert.equal(player.resources.handSize, 1);
+  assert.equal(result.incomeIncreaseCount, 2);
 }
 
 {

@@ -52,21 +52,6 @@
     kepler22: "sector-3-a",
   });
   const INITIAL_TURN_ORDER_SCORES = Object.freeze([1, 2, 3, 4]);
-  const AI_DIFFICULTY_LAUGHABLE = "laughable";
-  const AI_DIFFICULTY_WEAK_START = "weak_start";
-  const GRAND_STRATEGY_LABEL = "宇宙大战略集团";
-  const GRAND_STRATEGY_DIFFICULTY_EXTRAS = Object.freeze({
-    [AI_DIFFICULTY_LAUGHABLE]: Object.freeze({
-      resources: Object.freeze({ publicity: 4, energy: 1 }),
-      blindDraw: 1,
-      incomeIncreaseCount: 1,
-    }),
-    [AI_DIFFICULTY_WEAK_START]: Object.freeze({
-      resources: Object.freeze({ publicity: 3 }),
-      blindDraw: 1,
-      incomeIncreaseCount: 1,
-    }),
-  });
   const RESOURCE_GAIN_LABELS = Object.freeze({
     score: "分",
     credits: "信用点",
@@ -215,8 +200,8 @@
     "作弊实验室": Object.freeze({
       label: "作弊实验室",
       resources: Object.freeze({ publicity: 1, credits: 2, energy: 2 }),
-      blindDraw: 5,
-      incomeIncreaseCount: 5,
+      blindDraw: 1,
+      incomeIncreaseCount: 3,
       baseIncome: Object.freeze({ credits: 2, energy: 1, handSize: 1 }),
     }),
     "宇宙战略集团": Object.freeze({
@@ -283,48 +268,9 @@
     return INDUSTRY_EFFECTS[label] || null;
   }
 
-  function mergeResourceGain(base = null, extra = null) {
-    const merged = { ...(base || {}) };
-    for (const [key, value] of Object.entries(extra || {})) {
-      merged[key] = (Number(merged[key]) || 0) + (Number(value) || 0);
-    }
-    return Object.freeze(merged);
-  }
-
-  function normalizeAiDifficulty(value) {
-    return String(value || "") === AI_DIFFICULTY_WEAK_START
-      ? AI_DIFFICULTY_WEAK_START
-      : AI_DIFFICULTY_LAUGHABLE;
-  }
-
-  function applyIndustryEffectExtra(effect, extra = null) {
-    if (!extra) return effect;
-    return {
-      ...effect,
-      resources: mergeResourceGain(effect.resources, extra.resources),
-      blindDraw: Math.max(0, Math.round(Number(effect.blindDraw) || 0))
-        + Math.max(0, Math.round(Number(extra.blindDraw) || 0)),
-      incomeIncreaseCount: Math.max(0, Math.round(Number(effect.incomeIncreaseCount) || 0))
-        + Math.max(0, Math.round(Number(extra.incomeIncreaseCount) || 0)),
-    };
-  }
-
   function getEffectiveIndustryEffect(cardOrLabel, player) {
-    const effect = getIndustryEffect(cardOrLabel);
-    if (!effect) return null;
-    if (effect.label === GRAND_STRATEGY_LABEL) {
-      return applyIndustryEffectExtra(
-        effect,
-        GRAND_STRATEGY_DIFFICULTY_EXTRAS[normalizeAiDifficulty(player?.aiDifficulty)],
-      );
-    }
-    if (player?.aiDifficulty === AI_DIFFICULTY_WEAK_START && effect.label === "作弊实验室") {
-      return {
-        ...effect,
-        incomeIncreaseCount: 4,
-      };
-    }
-    return effect;
+    void player;
+    return getIndustryEffect(cardOrLabel);
   }
 
   function getPlayerById(context, playerId) {

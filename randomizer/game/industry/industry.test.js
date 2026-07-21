@@ -52,14 +52,17 @@ assert.equal(catalog.hasImplementedActiveAbility("寰宇超动力"), true);
 assert.equal(catalog.hasImplementedActiveAbility("宇宙大战略集团"), true);
 assert.equal(catalog.hasImplementedActiveAbility("原教旨主义"), true);
 assert.equal(catalog.hasImplementedActiveAbility("星际海盗"), true);
+assert.deepEqual(catalog.getIndustryDefinition("寰宇超动力").passiveIds, ["huanyu_rocket_limit"]);
+assert.deepEqual(catalog.getIndustryDefinition("宇宙大战略集团").passiveIds, ["strategy_passive_reward_slots"]);
+assert.deepEqual(catalog.getIndustryDefinition("作弊实验室").passiveIds, ["alien_lab_panels"]);
 assert.equal(placement.hasIndustryActionMarker({ label: "原教旨主义" }), true);
 assert.equal(placement.getIndustryActionMarkerLayout("原教旨主义").percentY, 73.4);
 assert.equal(placement.hasIndustryActionMarker({ label: "星际海盗" }), true);
 assert.equal(passives.getRocketLimitBonus({ initialSelection: { industry: { label: "寰宇动力" } } }), 1);
 const huanyuSuperdrivePlayer = { initialSelection: { industry: { label: "寰宇超动力" } } };
 assert.equal(passives.getRocketLimitBonus(huanyuSuperdrivePlayer), 1);
-assert.equal(passives.hasHuanyuSuperdriveRoundStart(huanyuSuperdrivePlayer), true);
-assert.equal(passives.shouldLaunchAfterPassWithHuanyuSuperdrive(huanyuSuperdrivePlayer), true);
+assert.equal(passives.hasHuanyuSuperdriveRoundStart(huanyuSuperdrivePlayer), false);
+assert.equal(passives.shouldLaunchAfterPassWithHuanyuSuperdrive(huanyuSuperdrivePlayer), false);
 assert.equal(passives.getResearchPublicityCost({ initialSelection: { industry: { label: "芬威克研究中心" } } }), 5);
 const alienLabPlayer = { initialSelection: { industry: { label: "异星实验室" } }, resources: { score: 0 } };
 const cheatLabPlayer = { initialSelection: { industry: { label: "作弊实验室" } }, resources: { score: 0 } };
@@ -99,18 +102,18 @@ assert.equal(passives.getStandardLaunchCost(alienLabPlayer).credits, 2);
 assert.equal(state.restoreAlienLabPanelForTrace(alienLabPlayer, "blue").changed, true);
 assert.equal(passives.getStandardLaunchCost(alienLabPlayer).credits, 1);
 
-assert.equal(passives.hasPermanentAlienLabPanels(cheatLabPlayer), true);
-assert.equal(passives.hasCheatLabRoundStart(cheatLabPlayer), true);
+assert.equal(passives.hasPermanentAlienLabPanels(cheatLabPlayer), false);
+assert.equal(passives.hasCheatLabRoundStart(cheatLabPlayer), false);
 const cheatLabStartup = initialCards.getIndustryEffect("作弊实验室");
-assert.equal(cheatLabStartup.blindDraw, 5);
-assert.equal(cheatLabStartup.incomeIncreaseCount, 5);
+assert.equal(cheatLabStartup.blindDraw, 1);
+assert.equal(cheatLabStartup.incomeIncreaseCount, 3);
 assert.equal(passives.getStandardLaunchCost(cheatLabPlayer).credits, 1);
 assert.equal(passives.getStandardScanCost(cheatLabPlayer).energy, 2);
 assert.equal(passives.getStandardScanCost(cheatLabPlayer).credits, undefined);
 assert.equal(passives.getResearchPublicityCost(cheatLabPlayer), 4);
 state.initializeAlienLabPanels(cheatLabPlayer);
 assert.equal(state.consumeAlienLabPanel(cheatLabPlayer, "blue").changed, true);
-assert.equal(passives.getStandardLaunchCost(cheatLabPlayer).credits, 1);
+assert.equal(passives.getStandardLaunchCost(cheatLabPlayer).credits, 2);
 
 const strategyPlayer = {
   id: "white",
@@ -137,7 +140,7 @@ const grandStrategyPlayer = {
   initialSelection: { industry: { label: "宇宙大战略集团" } },
 };
 assert.equal(passives.shouldShowStrategyPassiveMarkers(grandStrategyPlayer), true);
-assert.equal(passives.hasGrandStrategyRoundStart(grandStrategyPlayer), true);
+assert.equal(passives.hasGrandStrategyRoundStart(grandStrategyPlayer), false);
 assert.equal(placement.hasIndustryActionMarker({ label: "宇宙大战略集团" }), true);
 assert.equal(placement.getIndustryActionMarkerLayout("宇宙大战略集团").percentY, 77.2);
 assert.equal(placement.hasStrategyPassiveMarkerSlots("宇宙大战略集团"), true);

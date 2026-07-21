@@ -20,8 +20,7 @@
       throw new Error("createInitialCardPendingRuntime requires explicit app context");
     }
     const {
-      AI_CHEAT_LAB_INDUSTRY_ID, AI_CHEAT_LAB_INDUSTRY_LABEL, AI_CHEAT_LAB_INDUSTRY_SRC, AI_DEEPSPACE_SWAP_MIN_SCORE, AI_GRAND_STRATEGY_INDUSTRY_ID, AI_GRAND_STRATEGY_INDUSTRY_LABEL, AI_GRAND_STRATEGY_INDUSTRY_SRC, AI_HUANYU_SUPERDRIVE_INDUSTRY_ID,
-      AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL, AI_HUANYU_SUPERDRIVE_INDUSTRY_SRC, AI_STYLE_SEAT_ORDER, INITIAL_SELECTION_REQUIRED, abilities, ai, aiAutoBattleState, aiNumber,
+      AI_DEEPSPACE_SWAP_MIN_SCORE, AI_STYLE_SEAT_ORDER, INITIAL_SELECTION_REQUIRED, abilities, ai, aiAutoBattleState, aiNumber,
       alienGameState, aliens, allowsBlindDrawInSelection, amiba, applyAiDifficultyToPlayer, banrenma, canAiResolveAlienTraceEffect, canAiResolvePlayCardEffects,
       canBlindDraw, cancelCardTriggerChoice, cardEffects, cardState, cards, chooseAiIncomeDiscardIndexes, chooseAiTradeDiscardIndexes, confirmCardCornerQuickAction,
       confirmCardTaskCompletion, confirmInitialSelectionForCurrentPlayer, confirmPassReserveSelection, confirmPlayCardSelection, confirmPublicScanSelection, createActionContext, drawCardForCurrentPlayer, executeFreeMoveForCardTrigger,
@@ -47,19 +46,6 @@
       return ordered;
     }
 
-    function getForcedAiIndustrySeatIndex(playerId) {
-      const orderedAiIds = getOrderedAiAutoBattlePlayerIds();
-      return orderedAiIds.indexOf(playerId);
-    }
-
-    function getForcedAiIndustryOffer(playerId, offer) {
-      const seatIndex = getForcedAiIndustrySeatIndex(playerId);
-      if (seatIndex < 0) return null;
-      if (seatIndex === 0) return ensureAiHuanyuSuperdriveIndustryOffer(offer);
-      if (seatIndex === 1) return ensureAiGrandStrategyIndustryOffer(offer);
-      return ensureAiCheatLabIndustryOffer(offer);
-    }
-
     function getAiStyleFallbackIndex(playerId) {
       const orderedAiIds = getOrderedAiAutoBattlePlayerIds();
       const index = orderedAiIds.indexOf(playerId);
@@ -72,10 +58,6 @@
     }
 
     function inferAiStyleFromOpening(openingPlan = null, industryCard = null, player = null) {
-      const industryLabel = String(industryCard?.label || "");
-      if (industryLabel === AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL) return "route";
-      if (industryLabel === AI_GRAND_STRATEGY_INDUSTRY_LABEL) return "task";
-
       const summary = openingPlan?.summary || {};
       const goals = openingPlan?.goals || {};
       const scanScore = aiNumber(summary.scan) * 1.2 + aiNumber(summary.data) * 0.5 + aiNumber(goals.GRAB_TRACE_PINK);
@@ -104,58 +86,6 @@
       return fallback || "balanced";
     }
 
-    function createAiHuanyuSuperdriveIndustryCard(offer) {
-      const template = Array.isArray(offer?.industryOptions) ? offer.industryOptions[0] : null;
-      return {
-        id: AI_HUANYU_SUPERDRIVE_INDUSTRY_ID,
-        kind: "industry",
-        label: AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL,
-        src: AI_HUANYU_SUPERDRIVE_INDUSTRY_SRC,
-        width: template?.width || 1382,
-        height: template?.height || 1054,
-        aiOnly: true,
-      };
-    }
-
-    function ensureAiHuanyuSuperdriveIndustryOffer(offer) {
-      if (!offer) return null;
-      if (!Array.isArray(offer.industryOptions)) offer.industryOptions = [];
-      const existing = offer.industryOptions.find((card) => (
-        card?.label === AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL
-        || card?.id === AI_HUANYU_SUPERDRIVE_INDUSTRY_ID
-      ));
-      if (existing) return existing;
-      const card = createAiHuanyuSuperdriveIndustryCard(offer);
-      offer.industryOptions.push(card);
-      return card;
-    }
-
-    function createAiGrandStrategyIndustryCard(offer) {
-      const template = Array.isArray(offer?.industryOptions) ? offer.industryOptions[0] : null;
-      return {
-        id: AI_GRAND_STRATEGY_INDUSTRY_ID,
-        kind: "industry",
-        label: AI_GRAND_STRATEGY_INDUSTRY_LABEL,
-        src: AI_GRAND_STRATEGY_INDUSTRY_SRC,
-        width: template?.width || 1382,
-        height: template?.height || 1054,
-        aiOnly: true,
-      };
-    }
-
-    function ensureAiGrandStrategyIndustryOffer(offer) {
-      if (!offer) return null;
-      if (!Array.isArray(offer.industryOptions)) offer.industryOptions = [];
-      const existing = offer.industryOptions.find((card) => (
-        card?.label === AI_GRAND_STRATEGY_INDUSTRY_LABEL
-        || card?.id === AI_GRAND_STRATEGY_INDUSTRY_ID
-      ));
-      if (existing) return existing;
-      const card = createAiGrandStrategyIndustryCard(offer);
-      offer.industryOptions.push(card);
-      return card;
-    }
-
     function chooseInitialSelectionForAiPlayer() {
       if (!isInitialSelectionActive()) return null;
       const playerId = playerState.currentPlayerId;
@@ -164,16 +94,14 @@
       }
       const offer = getInitialSelectionOffer(playerId);
       if (!offer || offer.confirmed) return { ok: false, message: "没有可用初始选择" };
-      const forcedIndustryCard = getForcedAiIndustryOffer(playerId, offer);
       const player = getPlayerById(playerId);
       if (player) applyAiDifficultyToPlayer(player);
       const decision = ai?.policy?.chooseInitialSelection?.(offer, {
         roundNumber: turnState.roundNumber,
-        forcedIndustryCard,
         player,
         aiDifficulty: player?.aiDifficulty,
       }) || {};
-      const industryCard = forcedIndustryCard || decision.industry || offer.industryOptions?.[0] || null;
+      const industryCard = decision.industry || offer.industryOptions?.[0] || null;
       const initialSelection = decision.initialCards?.length
         ? decision.initialCards
         : (offer.initialOptions || []).slice(0, INITIAL_SELECTION_REQUIRED.initial);
@@ -188,7 +116,7 @@
       if (player && openingPlan) {
         player.openingPlan = {
           ...structuredClone(openingPlan),
-          forcedIndustryLabel: industryCard.label || industryCard.id || null,
+          industryLabel: industryCard.label || industryCard.id || null,
           aiStyle,
           aiDifficulty: player.aiDifficulty,
           aiDifficultyLabel: player.aiDifficultyLabel,
@@ -212,32 +140,6 @@
       );
       confirmInitialSelectionForCurrentPlayer();
       return { ok: true, progressed: true, message: "AI 初始选择完成" };
-    }
-
-    function createAiCheatLabIndustryCard(offer) {
-      const template = Array.isArray(offer?.industryOptions) ? offer.industryOptions[0] : null;
-      return {
-        id: AI_CHEAT_LAB_INDUSTRY_ID,
-        kind: "industry",
-        label: AI_CHEAT_LAB_INDUSTRY_LABEL,
-        src: AI_CHEAT_LAB_INDUSTRY_SRC,
-        width: template?.width || 1382,
-        height: template?.height || 1054,
-        aiOnly: true,
-      };
-    }
-
-    function ensureAiCheatLabIndustryOffer(offer) {
-      if (!offer) return null;
-      if (!Array.isArray(offer.industryOptions)) offer.industryOptions = [];
-      const existing = offer.industryOptions.find((card) => (
-        card?.label === AI_CHEAT_LAB_INDUSTRY_LABEL
-        || card?.id === AI_CHEAT_LAB_INDUSTRY_ID
-      ));
-      if (existing) return existing;
-      const card = createAiCheatLabIndustryCard(offer);
-      offer.industryOptions.push(card);
-      return card;
     }
 
     function runAiDiscardDecision() {
@@ -1033,18 +935,10 @@
 
     return {
       getOrderedAiAutoBattlePlayerIds,
-      getForcedAiIndustrySeatIndex,
-      getForcedAiIndustryOffer,
       getAiStyleFallbackIndex,
       getAiSeatStyle,
       inferAiStyleFromOpening,
-      createAiHuanyuSuperdriveIndustryCard,
-      ensureAiHuanyuSuperdriveIndustryOffer,
-      createAiGrandStrategyIndustryCard,
-      ensureAiGrandStrategyIndustryOffer,
       chooseInitialSelectionForAiPlayer,
-      createAiCheatLabIndustryCard,
-      ensureAiCheatLabIndustryOffer,
       runAiDiscardDecision,
       runAiPassReserveDecision,
       runAiCardSelectionDecision,
@@ -1074,8 +968,7 @@
   }
 
   const REQUIRED_CONTEXT_KEYS = Object.freeze([
-    "AI_CHEAT_LAB_INDUSTRY_ID", "AI_CHEAT_LAB_INDUSTRY_LABEL", "AI_CHEAT_LAB_INDUSTRY_SRC", "AI_DEEPSPACE_SWAP_MIN_SCORE", "AI_GRAND_STRATEGY_INDUSTRY_ID", "AI_GRAND_STRATEGY_INDUSTRY_LABEL", "AI_GRAND_STRATEGY_INDUSTRY_SRC", "AI_HUANYU_SUPERDRIVE_INDUSTRY_ID",
-    "AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL", "AI_HUANYU_SUPERDRIVE_INDUSTRY_SRC", "AI_STYLE_SEAT_ORDER", "INITIAL_SELECTION_REQUIRED", "abilities", "ai", "aiAutoBattleState", "aiNumber",
+    "AI_DEEPSPACE_SWAP_MIN_SCORE", "AI_STYLE_SEAT_ORDER", "INITIAL_SELECTION_REQUIRED", "abilities", "ai", "aiAutoBattleState", "aiNumber",
     "alienGameState", "aliens", "allowsBlindDrawInSelection", "amiba", "applyAiDifficultyToPlayer", "banrenma", "canAiResolveAlienTraceEffect", "canAiResolvePlayCardEffects",
     "canBlindDraw", "cancelCardTriggerChoice", "cardEffects", "cardState", "cards", "chooseAiIncomeDiscardIndexes", "chooseAiTradeDiscardIndexes", "confirmCardCornerQuickAction",
     "confirmCardTaskCompletion", "confirmInitialSelectionForCurrentPlayer", "confirmPassReserveSelection", "confirmPlayCardSelection", "confirmPublicScanSelection", "createActionContext", "drawCardForCurrentPlayer", "executeFreeMoveForCardTrigger",

@@ -45,20 +45,16 @@ const {
     true,
   );
 
-  const expectedIndustries = [
-    [harness.blue.id, "industry:寰宇超动力", "寰宇超动力"],
-    [red.id, "industry:宇宙大战略集团", "宇宙大战略集团"],
-    [yellow.id, "industry:作弊实验室", "作弊实验室"],
-  ];
-  for (const [playerId, expectedId, expectedLabel] of expectedIndustries) {
+  for (const playerId of [harness.blue.id, red.id, yellow.id]) {
     harness.playerState.currentPlayerId = playerId;
     const result = harness.controller.runAiAutomationStep();
-    assert.equal(result.ok, true, `${expectedLabel} AI initial selection should complete`);
-    assert.equal(offers[playerId].selectedIndustryId, expectedId);
+    assert.equal(result.ok, true, "AI initial selection should complete from the dealt company offer");
+    assert.equal(offers[playerId].selectedIndustryId, `industry:baseline-${playerId}`);
     const selected = offers[playerId].industryOptions
       .find((card) => card.id === offers[playerId].selectedIndustryId);
-    assert.equal(selected?.label, expectedLabel);
-    assert.equal(selected?.aiOnly, true);
+    assert.equal(selected?.label, "层云核心");
+    assert.equal(selected?.aiOnly, undefined);
+    assert.equal(offers[playerId].industryOptions.length, 1, "AI must not inject a boosted company");
   }
 }
 

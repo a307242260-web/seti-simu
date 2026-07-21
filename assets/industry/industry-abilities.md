@@ -28,7 +28,7 @@
 
 ### 2. 正常对局（每轮一次 1x）
 
-- 除 **异星实验室** 和 AI 专用 **作弊实验室** 外，公司牌左下角有 1x 圆标（`placement.js`）；**未来跨度研究所** 既有普通每轮 1x 圆标，也有独立的 `wlkd_token` 专属快速行动标记。
+- 除 **异星实验室**（旧存档标签“作弊实验室”规则相同）外，公司牌左下角有 1x 圆标（`placement.js`）；**未来跨度研究所** 既有普通每轮 1x 圆标，也有独立的 `wlkd_token` 专属快速行动标记。
 - 每**轮**（`turnState.roundNumber` 轮号）每玩家最多放置 1 次 `normal_token`；`player.industryRoundMarkRound === turnState.roundNumber` 表示本轮已用。`player.industryRoundMarkTurn` 只记录标记发生的回合号，不参与刷新判定。
 - 未放置时牌面蓝色高亮（`is-action-marker-pending`）；放置后启动该公司 `buildActiveAbilityFlow`。
 - 回合结束时清空当前玩家的图灵借用；新轮开始时（所有玩家都 PASS 后）`resetAllRoundIndustryRuntimeState` 清空借用/武装等，**不**清零 `industryRoundMarkRound` / `industryRoundMarkTurn`（靠轮号比较判定可否再标记）。
@@ -41,10 +41,10 @@
 | `industryBorrowedTechTileId` / `industryBorrowedTechRound` / `industryBorrowedTechTurn` | 图灵系统：当前回合借用的科技片 id；带行动上下文时按 Round/Turn 精确判定；无显式上下文的同回合长链路按未清空的借用态生效 |
 | `industrySentinelArmedRound` / `industrySentinelArmedTurn` | 哨兵：当前回合已武装「打牌后弃牌角标」；必须与当前 Round/Turn 同时匹配 |
 | `industryHuanyuFreeMoveRound` / `industryHuanyuFreeMoveTurn` / `industryHuanyuFreeMovesLeft` / `industryHuanyuMovedRocketIds` | 旧寰宇免费移动运行时字段；当前主动效果改走快速行动效果队列，不再依赖这些字段 |
-| `industryHuanyuSuperdriveRoundStartRound` / `industryCheatLabRoundStartRound` / `industryGrandStrategyRoundStartRound` | AI 专用回合开始奖励/清槽的已结算轮号；防止同一轮因重渲染或初始选择/换轮钩子重复发放 |
+| `industryHuanyuSuperdriveRoundStartRound` / `industryCheatLabRoundStartRound` / `industryGrandStrategyRoundStartRound` | 旧存档兼容字段；当前公司目录不再注册对应回合开始补强，因此不会写入新值 |
 | `industryFundamentalismRoundStartIncomeRound` | 原教旨主义：第 2/3/4 轮玩家开始行动时收入效果的已结算轮号；防止同一轮重复触发 |
 | `industryPlayedCardThisRound` / `industryLastPlayedCardThisRound` / `industryPlayedCardRound` / `industryPlayedCardTurn` | 当前回合已打牌及牌快照（字段名沿用 ThisRound；回合结束清理，仅供哨兵补注入队） |
-| `industryAlienLabPanels` / `industryAlienLabInitialized` | 异星实验室/作弊实验室三色板块正反面；蓝=发射、黄=扫描、粉=科技；作弊实验室按永久正面处理 |
+| `industryAlienLabPanels` / `industryAlienLabInitialized` | 异星实验室及旧存档标签“作弊实验室”的三色板块正反面；蓝=发射、黄=扫描、粉=科技，均按标准规则翻面 |
 | `industryFutureSpan` / `industryFutureSpanInitialized` | 未来跨度专属标记状态：扣下的牌、目标分、是否正在打出 |
 | `industryPiratesRaid` / `industryPiratesRaidInitialized` | 星际海盗掠夺状态：仍封锁的橙/紫科技 id，以及已移动到 planets 图上的 `{ tileId, planetId }` 标记 |
 
@@ -60,18 +60,18 @@
 | 图灵系统 | `turing_borrow_tech` | `turing_borrow_tech` | 选择供应区一项橙色或紫色科技，**当前回合**借用其效果（不获得板块/bonus）；公司牌下方只复制显示该科技图标 |
 | 哨兵探测网络 | `sentinel_arm_play_corner` | `sentinel_arm_play_corner` | 武装当前回合；**打牌效果队列末尾**追加 `industry_sentinel_corner` 结算打出牌弃牌角标（非外星人） |
 | 寰宇动力 | `huanyu_free_moves` | `huanyu_free_moves` | 启动 2 个移动效果队列节点；每个节点提供 1 点移动力，已结算节点的火箭不能作为后续寰宇节点目标，可跳过任一节点 |
-| 寰宇超动力 | `huanyu_free_moves` | `huanyu_free_moves` | AI 专用；以寰宇动力为模板。“令人发笑的”难度每轮开始额外获得 1 能量、1 盲抽、1 宣传，且 PASS 后追加一次免费发射；“开始弱小的”难度每轮开始额外获得 1 能量、1 宣传，PASS 后改为获得 1 信用点 |
+| 寰宇超动力 | `huanyu_free_moves` | `huanyu_free_moves` | 旧存档兼容标签；能力与寰宇动力相同，无难度补强 |
 | 赫利昂联合体 | `helios_remove_tech_income` | `helios_remove_tech` → 弃牌收入 | 使一项非蓝科技失效 + 1 次收入（弃 1 张手牌按收入角标）；该科技仍视为拥有并参与科技数量计分 |
 | 任务中继站 | `mission_publicity_pick_income` | `mission_publicity_pick` | 消耗 2 宣传精选 1 张牌，获得其**收入角标**奖励（盲抽角标会盲抽 1 张） |
 | 芬威克研究中心 | `fenwick_publicity_pick_corner` | `fenwick_publicity_pick` | 消耗 1 宣传精选 1 张牌，获得**弃牌角标**（不弃牌）；若角标是移动，移动选择可取消但精选补牌仍不可撤销 |
 | 深空探测 | `deepspace_swap_cards` | `deepspace_swap` | 选手牌 1 张再选公共牌 1 张交换 |
 | 宇宙战略集团 | `strategy_pick_card` | `strategy_pick` | 精选 1 张公共牌（无额外资源）；确认精选后清除 3 个被动奖励槽 token |
-| 宇宙大战略集团 | `strategy_pick_card` | `strategy_pick` | AI 专用，默认分配给第 2 个 AI 电脑，不进入开始界面公司池；以宇宙战略集团为模板，精选 1 张公共牌（无额外资源），确认精选后清除 3 个被动奖励槽 token；每轮开始还会额外清空 3 个被动奖励槽 |
+| 宇宙大战略集团 | `strategy_pick_card` | `strategy_pick` | 旧存档兼容标签；能力与宇宙战略集团相同，无每轮自动清槽或难度补强 |
 | 未来跨度研究所 | `future_span_pick_advance` | `future_span_pick` | 若专属标记已有尚未打出的目标牌：精选 1 张公共牌，并将目标分提高 2 |
 | 原教旨主义 | `fundamentalism_score_exchange` | `fundamentalism_score_exchange` | 启动 3 个 `industry_fundamentalism_exchange` 节点；每个节点可跳过、可撤销，可在 3 分与 1 信用/1 能量/1 精选之间兑换，或用 1 信用/1 能量/弃 1 手牌换 3 分 |
 | 星际海盗 | `pirates_raid_launch` | `pirates_raid_launch` | 启动 1 个 `industry_pirates_raid_launch` 节点；选择一个已有掠夺标记主星上的己方环绕/登陆标记，移除并消耗 1 信用点，然后在该星球当前扇区免费发射 |
 | 异星实验室 | — | — | **无 1x 圆标**（`EXCLUDED_INDUSTRY_LABELS`） |
-| 作弊实验室 | — | — | AI 专用；复用异星实验室牌图，开局获得 5 张盲抽。“令人发笑的”难度开局 5 次收入增加、每轮开始额外获得 1 能量和 1 盲抽；“开始弱小的”难度开局 4 次收入增加、每轮开始只额外获得 1 能量；**无 1x 圆标**，三色板块永久正面 |
+| 作弊实验室 | — | — | 旧存档兼容标签；能力、开局效果和三色板块翻面规则均与异星实验室相同，无难度补强 |
 
 ### 未来跨度研究所
 
@@ -107,14 +107,11 @@
 | `turing_blue_tech_publicity` | 图灵系统 | 获取蓝色科技 +1 宣传 | `app.js` 科技放置后 |
 | `sentinel_launch_scan_earth` | 哨兵探测网络 | 发射后免费扫描地球扇区；若完成扇区则进入 `sector_finish_scan` 收尾 | `maybeApplyIndustryLaunchScan` / `startLaunchSectorFinishEffectFlow` |
 | `huanyu_rocket_limit` | 寰宇动力 | 火箭数量上限 +1 | `launch.js` / `rocket.js` |
-| `huanyu_superdrive_round_start` | 寰宇超动力 | “令人发笑的”难度每轮开始获得 1 能量、1 盲抽、1 宣传；“开始弱小的”难度每轮开始获得 1 能量、1 宣传；包括第一轮初始选择结算后 | `applyIndustryRoundStartBonuses` |
-| `huanyu_superdrive_pass_launch` | 寰宇超动力 | “令人发笑的”难度 PASS 效果队列末尾追加一次免费发射，忽略火箭上限；“开始弱小的”难度同位置改为 1 信用点 `gain_resources` 节点 | `buildPassEffectQueue` / `industry_huanyu_superdrive_launch` / `gain_resources` |
 | `mission_play_type_publicity` | 任务中继站 | 本玩家每当打出 1/2 型任务牌 +1 宣传 | `applyIndustryPlayCardPassives` |
 | `mission_startup_final_mark` | 任务中继站 | 开局终局 c 板块 3 号位标记 | `applyIndustryStartupPassives` |
 | `fenwick_research_cost` | 芬威克研究中心 | 研究科技宣传 5（默认 6） | `tech/resolver.js`、`abilities/tech.js` |
 | `deepspace_free_analyze` | 深空探测 | 分析数据不耗能量 | `abilities/data.js` |
 | `strategy_passive_reward_slots` | 宇宙战略集团 | 打牌后按扫描角标在打牌流程的动态后续效果全部结束后追加奖励槽节点；确认节点才放 token 并领奖，跳过不占槽；黑色角标多空槽时由玩家选择；已占槽位只能等 1x 快速行动确认精选后清理 | `applyIndustryPlayCardPassives` / `industry_strategy_passive_reward` |
-| `grand_strategy_round_start` | 宇宙大战略集团 | 每轮开始清空 3 个宇宙战略打牌奖励槽；“令人发笑的”难度每轮开始额外盲抽 1 张，“开始弱小的”难度每轮开始额外获得 1 宣传；包括第一轮初始选择结算后 | `applyIndustryRoundStartBonuses` |
 | `future_span_parking` | 未来跨度研究所 | 专属标记扣牌、目标分、达标后免费打出 | `app.js` 公司牌叠层与打牌流程 |
 | `fundamentalism_round_start_income` | 原教旨主义 | 第 2/3/4 轮该玩家开始行动时获得 1 个收入效果（弃 1 张手牌按收入角标增加收入并立即结算） | `maybeStartFundamentalismRoundStartIncomeFlow` / `industry_fundamentalism_income` |
 | `fundamentalism_disable_play_card_action` | 原教旨主义 | 不能使用标准“打牌”主要行动；九折等外星机制自己的打牌入口不受影响 | `beginPlayCardSelection` / `updateActionButtons` |
@@ -122,8 +119,6 @@
 | `fundamentalism_income_task_completion` | 原教旨主义 | 作为收入选择的 1/2 型任务牌视为完成任务，`completedTaskCount +1`，不额外获得分数；该任务可参与 final_c | `applyIncomeFromCard` |
 | `pirates_raid_markers` | 星际海盗 | 开局在 orange2-4、purple1-4 对应玩家科技板位置放掠夺标记并封锁这些科技；玩家环绕/登陆未掠夺主星后，必须选择一个掠夺标记移到该星球左侧，然后获得 3 宣传；卫星登陆不会触发；移走标记后该科技恢复可研究 | `renderPiratesRaidTechMarkers` / `buildPlanetRewardEffectsWithIndustry` / `industry_pirates_raid_marker` |
 | `alien_lab_panels` | 异星实验室 | 三色板块折扣：发射 1 信用点、扫描 2 能量、研究科技 4 宣传；正面板块可点击并等同触发对应主要行动；对应标准主行动后翻背，同色外星痕迹翻回正面 | `launch.js` / `scan-effects.js` / `tech/resolver.js` / `app.js` |
-| `cheat_lab_permanent_panels` | 作弊实验室 | AI 专用异星实验室强化：蓝/黄/粉三色板块永久按正面计费和渲染，执行发射/扫描/研究科技后不翻背 | `passives.js` / `render.js` / `app.js` / `ai-controller.js` |
-| `cheat_lab_round_start` | 作弊实验室 | “令人发笑的”难度每轮开始获得 1 能量和 1 盲抽；“开始弱小的”难度每轮开始只获得 1 能量；包括第一轮初始选择结算后。开局公司即时效果为 5 张盲抽，“令人发笑的”5 次收入增加，“开始弱小的”4 次收入增加 | `applyIndustryRoundStartBonuses` / `initial-cards.js` |
 
 图灵借用：只能选择供应区橙色或紫色科技。科技效果查询在拥有板块之外，带行动上下文时要求 `industryBorrowedTechTileId === tileId` 且借用的 Round/Turn 都等于当前行动上下文；无显式上下文的同回合长链路会按玩家身上未清空的借用态生效，直到回合结束清空。橙色科技经 `players.playerOwnsTech` 生效，紫色扫描科技经 `scan-effects.js` 的扫描队列构建生效。UI 会在公司牌下方复制显示对应科技图标用于提示，不从供应区拿走科技片，也不获得 bonus；回合结束会清空当前玩家借用状态并移除显示图标，新轮开始也会清空所有轮内借用状态。
 
@@ -168,7 +163,7 @@
 
 - **公司牌即时效果**（资源重设、盲抽、发射、扫描等）：`initial-cards.js` 在 `resolveInitialSelections` 中一次性结算。
 - 星际海盗开局特殊科技：直接消耗供应区 1 块 `orange1` 并放到玩家科技面板，不获得 bonus、不领取首拿 2 分、不旋转；`firstTakeClaimedBy` 保持空，因此对局中第一个正常获得橙色科技的玩家仍能领取首拿 2 分。初始效果为 3 信用点、2 能量、1 盲抽、2 次收入增加，默认收入 2 信用点、2 能量、1 盲抽。
-- 宇宙大战略集团开局以宇宙战略集团为基础模板（1 宣传、4 信用点、2 能量、1 盲抽、2 次收入增加，默认收入 2 信用点、1 能量、1 盲抽）。“令人发笑的”难度额外获得 4 宣传、1 能量、1 盲抽、1 次收入增加；“开始弱小的”难度额外获得 3 宣传、1 盲抽、1 次收入增加。
+- 旧存档兼容标签“寰宇超动力”“宇宙大战略集团”“作弊实验室”的开局效果分别与“寰宇动力”“宇宙战略集团”“异星实验室”一致，不再叠加任何难度资源。
 - **收入增加**：不即时给资源，而是生成 `pendingIncomeIncreases`，由 `startInitialIncomeEffectFlow` 排队；玩家弃 1 张手牌按该牌**收入角标**提升 `player.income` 并立即按新收入结算资源。
 - 任务中继站被动终局标记在 `applyIndustryStartupPassives` 中调用 `finalScoring.placeDirectMarkAtSlot(..., "c", ..., 3)`。
 
