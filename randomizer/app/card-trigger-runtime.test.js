@@ -21,6 +21,7 @@ function createHarness() {
   const calls = { started: 0, updated: 0, rendered: 0 };
   const runtime = createCardTriggerRuntime({
     HISTORY_SOURCE_QUICK: "quick",
+    SCORE_SOURCE_KEYS: { TASK_CARD: "task_card" },
     pendingState,
     decisionSessions,
     els: {},
@@ -64,6 +65,7 @@ function createHarness() {
       calls.started += 1;
       return true;
     },
+    formatChongGain: (gain) => Object.entries(gain).map(([key, value]) => `${key}:${value}`).join(" + "),
   });
   return { runtime, player, cardState, pendingState, decisionSessions, calls };
 }
@@ -96,6 +98,16 @@ function createHarness() {
   assert.equal(player.reservedCards.length, 0);
   assert.equal(cardState.discardPile[0], card);
   assert.equal(calls.started, 1);
+}
+
+{
+  const { runtime } = createHarness();
+  const effects = runtime.buildChongRewardQueueEffects(
+    { gain: { score: 2, energy: 1 } },
+    "chong-test",
+    "虫族测试",
+  );
+  assert.equal(effects[0].label, "虫族测试：score:2 + energy:1");
 }
 
 console.log("card-trigger-runtime tests passed");

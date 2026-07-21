@@ -9,6 +9,7 @@ const { collectDependencies } = require("./dependencies");
     SetiAppActionRuntime: {},
     SetiPrimaryBoardActionExecutor: {},
     SetiEngineActionExecutor: {},
+    SetiQuickTurnActionExecutor: {},
     SetiAppActionInteractionRuntime: {},
     SetiAppActionLogRuntime: {},
     SetiAppGameRecovery: {},

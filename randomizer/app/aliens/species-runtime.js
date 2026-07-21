@@ -1291,6 +1291,12 @@ function applyAomomoRewardToPlayer(player, reward, label = "奥陌陌奖励") {
     };
   }
 
+function formatAlienRewardGain(gain = {}) {
+    return players.formatResourceCost?.(gain) || Object.entries(gain)
+      .map(([key, value]) => `${key}:${value}`)
+      .join(" + ");
+  }
+
 function applyChongRewardToPlayer(player, reward, label = "虫族奖励") {
     if (!player || !reward) return { ok: false, message: "没有可结算的虫族奖励" };
     const messages = [];
@@ -1299,7 +1305,7 @@ function applyChongRewardToPlayer(player, reward, label = "虫族奖励") {
     const hasGain = Object.keys(gain).length > 0;
     if (hasGain) {
       players.gainResources(player, reward.gain);
-      messages.push(formatChongGain(reward.gain));
+      messages.push(formatAlienRewardGain(reward.gain));
     }
     const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
     if (dataCount > 0) {
@@ -1351,7 +1357,7 @@ function applyAmibaRewardToPlayer(player, reward, label = "阿米巴奖励") {
     let irreversible = null;
     if (Object.keys(reward.gain || {}).length) {
       players.gainResources(player, reward.gain);
-      messages.push(formatChongGain(reward.gain));
+      messages.push(formatAlienRewardGain(reward.gain));
     }
     const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
     if (dataCount > 0) {
@@ -1395,13 +1401,14 @@ function applyAmibaRewardToPlayer(player, reward, label = "阿米巴奖励") {
     };
   }
 
-function applyRunezuRewardToPlayer(player, reward, label = "符文族奖励") {
+function applyRunezuRewardToPlayer(player, reward, label = "符文族奖励", execution = {}) {
+    const actionAlienGameState = execution.workingRoot?.alienGameState || alienGameState;
     if (!player || !reward) return { ok: false, message: "没有可结算的符文族奖励" };
     const messages = [];
     let irreversible = null;
     if (Object.keys(reward.gain || {}).length) {
       players.gainResources(player, reward.gain);
-      messages.push(formatChongGain(reward.gain));
+      messages.push(formatAlienRewardGain(reward.gain));
     }
     const dataCount = Math.max(0, Math.round(Number(reward.dataCount) || 0));
     if (dataCount > 0) {
@@ -1416,14 +1423,14 @@ function applyRunezuRewardToPlayer(player, reward, label = "符文族奖励") {
     if (drawCount > 0) {
       let drawn = 0;
       for (let index = 0; index < drawCount; index += 1) {
-        const result = blindDrawCardForPlayer(player);
+        const result = blindDrawCardForPlayer(player, execution);
         if (result.ok) drawn += 1;
       }
       messages.push(`${drawn}/${drawCount}盲抽`);
       irreversible = { code: "hidden_card_reveal", reason: "盲抽翻出新牌" };
     }
     if (reward.panelSymbol && reward.panelSymbolSlotId) {
-      const symbolResult = runezu?.takePanelSymbol?.(alienGameState, reward.panelSymbolSlotId, player, {
+      const symbolResult = runezu?.takePanelSymbol?.(actionAlienGameState, reward.panelSymbolSlotId, player, {
         refill: Boolean(reward.refillPanelSymbol),
       });
       if (symbolResult?.ok) {
@@ -2588,7 +2595,11 @@ function formatChongFossilRewardSummary(fossilId) {
     const reward = chong?.getFossilReward?.(fossilId);
     if (!reward) return "未知奖励";
     const parts = [];
-    if (Object.keys(reward.gain || {}).length) parts.push(formatChongGain(reward.gain));
+    if (Object.keys(reward.gain || {}).length) {
+      parts.push(players.formatResourceCost?.(reward.gain) || Object.entries(reward.gain)
+        .map(([key, value]) => `${key}:${value}`)
+        .join(" + "));
+    }
     if (reward.dataCount) parts.push(`${reward.dataCount}数据`);
     if (reward.drawCards) parts.push(`${reward.drawCards}盲抽`);
     if (reward.pickCard) parts.push("精选1张牌");
@@ -4049,6 +4060,52 @@ function closeRunezuFaceSymbolPlacement() {
     alienChoiceSessions.runezuFaceSymbolPlacement = null;
     setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+}
+
+function executeStandardRunezuFaceSymbol(workingRoot, descriptor) {
+    const player = players.getCurrentPlayer(workingRoot?.playerState);
+    const actionAlienGameState = workingRoot?.alienGameState;
+    const actionRocketState = workingRoot?.rocketState || rocketState;
+    const position = Number(descriptor?.target?.position);
+    const symbolId = descriptor?.target?.symbolId;
+    const check = runezu?.canPlaceFaceSymbol?.(actionAlienGameState, position, player);
+    if (!check?.ok || !(check.choices || []).some((choice) => choice.symbolId === symbolId)) {
+      return check?.ok
+        ? { ok: false, code: "RUNEZU_FACE_SYMBOL_STALE", message: "符文族 symbol 选择已失效" }
+        : (check || { ok: false, message: "无法放置符文族 symbol" });
+    }
+    const beforeAlienState = structuredClone(actionAlienGameState);
+    const beforePlayerState = structuredClone(workingRoot.playerState);
+    const result = runezu.placePlayerSymbolOnFace(actionAlienGameState, position, player, symbolId);
+    if (!result.ok) return result;
+    const rewardResult = applyRunezuRewardToPlayer(
+      player,
+      result.reward,
+      `符文族${runezu.formatFaceSymbolSlotLabel(position)}`,
+      { workingRoot, standardAction: descriptor },
+    );
+    beginQuickActionStep("runezu-face-symbol", result.message);
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      actionAlienGameState,
+      beforeAlienState,
+      "恢复符文族黑圈放置前外星人状态",
+    ));
+    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
+      workingRoot.playerState,
+      beforePlayerState,
+      "恢复符文族黑圈放置前玩家状态",
+    ));
+    completeQuickActionStep(null, rewardResult.irreversible ? {
+      irreversibleCode: rewardResult.irreversible.code,
+      irreversibleReason: rewardResult.irreversible.reason,
+    } : {});
+    actionRocketState.statusNote = `${result.message}；${rewardResult.message}`;
+    renderAlienPanels();
+    renderPlayerStats();
+    renderPlayerHand();
+    updateActionButtons();
+    renderStateReadout();
+    return { ...result, rewardResult, message: actionRocketState.statusNote };
   }
 
 function openRunezuFaceSymbolPlacement(alienSlotId, position) {
@@ -4439,6 +4496,7 @@ function alignAlienPanelsToPlanets() {
       openAmibaRewardFollowUps,
       openRunezuRewardFollowUps,
       closeRunezuFaceSymbolPlacement,
+      executeStandardRunezuFaceSymbol,
       openRunezuFaceSymbolPlacement,
       handleRunezuFaceSymbolChoice,
       executeRunezuSymbolRewardEffect,

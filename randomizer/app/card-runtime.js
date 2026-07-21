@@ -1124,7 +1124,7 @@
       return result;
     }
 
-    function drawBasicCardToPlayer(player) {
+    function drawBasicCardToPlayer(player, execution = {}) {
       const target = player || getCurrentPlayer();
       if (!target) {
         return { ok: false, message: "没有当前玩家", card: null };
@@ -1134,11 +1134,15 @@
         target.hand = [];
       }
 
-      return cards.blindDraw(cardState, playerState, target);
+      return cards.blindDraw(
+        execution.workingRoot?.cardState || cardState,
+        execution.workingRoot?.playerState || playerState,
+        target,
+      );
     }
 
-    function blindDrawCardForPlayer(player) {
-      return drawBasicCardToPlayer(player);
+    function blindDrawCardForPlayer(player, execution = {}) {
+      return drawBasicCardToPlayer(player, execution);
     }
 
     function drawCardForCurrentPlayer(options = {}) {

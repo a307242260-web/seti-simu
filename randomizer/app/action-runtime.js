@@ -82,6 +82,8 @@
       primaryBoardWorkingRoot,
       engineActionExecutor,
       engineActionWorkingRoot,
+      quickTurnActionExecutor,
+      quickTurnActionWorkingRoot,
       actions,
       removeRocketElement,
       syncPlanetOrbitLandMarkersAfterAction = syncPlanetOrbitLandMarkers,
@@ -118,6 +120,7 @@
     } = context;
     const PRIMARY_BOARD_FAMILIES = new Set(primaryBoardActionExecutor?.actionFamilies || []);
     const ENGINE_ACTION_FAMILIES = new Set(engineActionExecutor?.actionFamilies || []);
+    const QUICK_TURN_ACTION_FAMILIES = new Set(quickTurnActionExecutor?.actionFamilies || []);
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
@@ -451,6 +454,14 @@
     }
 
     function executeStandardDescriptor(standardContext, descriptor, executionOptions = null) {
+      if (QUICK_TURN_ACTION_FAMILIES.has(descriptor?.family)) {
+        return quickTurnActionExecutor.execute(quickTurnActionWorkingRoot, descriptor, {
+          validate: (workingRoot, action) => standardActionAdapter.validate(
+            createActionContext(workingRoot, action),
+            action,
+          ),
+        });
+      }
       if (ENGINE_ACTION_FAMILIES.has(descriptor?.family)) {
         const actionLogBefore = createActionLogImpactSnapshot?.();
         const result = engineActionExecutor.execute(engineActionWorkingRoot, descriptor, {

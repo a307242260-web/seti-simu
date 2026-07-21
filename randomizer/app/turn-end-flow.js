@@ -122,7 +122,7 @@
     };
   }
 
-  function buildPassEffectQueue(player) {
+  function buildPassEffectQueue(player, actionTurnState = turnState) {
     const effects = [];
     if (industry?.shouldLaunchAfterPassWithHuanyuSuperdrive?.(player)) {
       if (isWeakStartAiDifficulty(player)) {
@@ -151,7 +151,7 @@
       }
     }
 
-    if (isFinalRound()) return effects;
+    if (isFinalRound(actionTurnState)) return effects;
 
     const handCount = Array.isArray(player?.hand) ? player.hand.length : 0;
     const discardCount = Math.max(0, handCount - PASS_HAND_LIMIT);
@@ -166,7 +166,7 @@
       }));
     }
 
-    if ((turnState.passedPlayerIds || []).length === 0) {
+    if ((actionTurnState.passedPlayerIds || []).length === 0) {
       effects.push(createRequiredPassEffect({
         id: "pass-first-rotate",
         type: "pass_first_rotate",
@@ -175,13 +175,13 @@
       }));
     }
 
-    if (PASS_RESERVE_ROUNDS.includes(turnState.roundNumber)) {
+    if (PASS_RESERVE_ROUNDS.includes(actionTurnState.roundNumber)) {
       effects.push(createRequiredPassEffect({
         id: "pass-reserve-pick",
         type: "pass_reserve_pick",
         icon: "pick_card",
         label: "PASS 预留精选",
-        options: { roundNumber: turnState.roundNumber },
+        options: { roundNumber: actionTurnState.roundNumber },
       }));
     }
 
@@ -203,8 +203,8 @@
     actionHistory.markActionComplete?.({ passPlayerId: currentPlayer.id });
   }
 
-  function settlePassEventAfterEffects(player) {
-    if (isFinalRound()) {
+  function settlePassEventAfterEffects(player, actionTurnState = turnState) {
+    if (isFinalRound(actionTurnState)) {
       return {
         ok: true,
         skipped: true,
@@ -314,20 +314,25 @@
     return result;
   }
 
-  function passForCurrentPlayer() {
-    if (!canStartMainAction()) {
-      rocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
+  function passForCurrentPlayer(execution = {}) {
+    const workingRoot = execution.workingRoot || null;
+    const actionPlayerState = workingRoot?.playerState || playerState;
+    const actionTurnState = workingRoot?.turnState || turnState;
+    const actionRocketState = workingRoot?.rocketState || rocketState;
+    if (!workingRoot && !canStartMainAction()) {
+      actionRocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: actionRocketState.statusNote };
     }
 
-    const currentPlayer = getCurrentPlayer();
+    const currentPlayer = (actionPlayerState.players || [])
+      .find((player) => player.id === (execution.standardAction?.actorId || actionPlayerState.currentPlayerId));
     if (!currentPlayer) {
       return { ok: false, message: "没有当前玩家" };
     }
 
     beginPassActionSession(currentPlayer);
-    const passEffects = buildPassEffectQueue(currentPlayer);
+    const passEffects = buildPassEffectQueue(currentPlayer, actionTurnState);
     if (passEffects.length) {
       decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
         "pass",
@@ -341,26 +346,26 @@
       decisionState.actionEffectFlow.historySource = HISTORY_SOURCE_MAIN;
       decisionState.actionEffectFlow.consumesMainAction = true;
       els.appWrap?.classList.toggle("action-effect-flow-active", true);
-      rocketState.statusNote = "PASS：请依次点击必做效果";
+      actionRocketState.statusNote = "PASS：请依次点击必做效果";
       activateNextActionEffect();
-      return { ok: true, message: rocketState.statusNote };
+      return { ok: true, message: actionRocketState.statusNote, effects: structuredClone(passEffects) };
     }
 
-    const passSettlement = settlePassEventAfterEffects(currentPlayer);
+    const passSettlement = settlePassEventAfterEffects(currentPlayer, actionTurnState);
     if (hasActiveCardTriggerResolution() || isActionEffectFlowActive()) {
       updateActionButtons();
       renderStateReadout();
-      return { ok: true, message: passSettlement?.type1Result?.message || rocketState.statusNote };
+      return { ok: true, message: passSettlement?.type1Result?.message || actionRocketState.statusNote };
     }
 
-    rocketState.statusNote = `${currentPlayer.colorLabel}玩家选择 PASS，请点击回合结束确认`;
+    actionRocketState.statusNote = `${currentPlayer.colorLabel}玩家选择 PASS，请点击回合结束确认`;
     updateActionButtons();
     renderStateReadout();
-    return { ok: true, message: rocketState.statusNote };
+    return { ok: true, message: actionRocketState.statusNote, events: [createPassEvent(currentPlayer)] };
   }
 
-  function applyPassTurnEndIncome(player) {
-    if (!player || isFinalRound()) return null;
+  function applyPassTurnEndIncome(player, actionTurnState = turnState) {
+    if (!player || isFinalRound(actionTurnState)) return null;
 
     const result = applyIncomeResourcesForPlayer(player, { label: "PASS 收入" });
     appendActionLogStep(HISTORY_SOURCE_MAIN, "PASS 收入", result.message, {
@@ -371,19 +376,20 @@
     return result;
   }
 
-  function listReadyAlienRevealSlotIds() {
+  function listReadyAlienRevealSlotIds(actionAlienGameState = alienGameState) {
     return (aliens.ALIEN_SLOT_IDS || [])
       .filter((alienSlotId) => {
-        const slot = aliens.getAlienSlot(alienGameState, alienSlotId);
+        const slot = aliens.getAlienSlot(actionAlienGameState, alienSlotId);
         return aliens.isAlienReadyToReveal?.(slot);
       });
   }
 
   function revealReadyAliensAtTurnEnd(triggerPlayer, options = {}) {
-    const revealEntries = listReadyAlienRevealSlotIds()
+    const actionAlienGameState = options.workingRoot?.alienGameState || alienGameState;
+    const revealEntries = listReadyAlienRevealSlotIds(actionAlienGameState)
       .map((alienSlotId) => ({
         alienSlotId,
-        revealResult: aliens.revealRandomAlien(alienGameState, alienSlotId),
+        revealResult: aliens.revealRandomAlien(actionAlienGameState, alienSlotId),
       }))
       .filter((entry) => entry.revealResult?.ok);
     if (!revealEntries.length) {
@@ -455,17 +461,22 @@
     endingPlayerId,
     didPass,
     turnEndReveal,
+    workingRoot = null,
   }) {
+    const actionTurnState = workingRoot?.turnState || turnState;
+    const actionPlayerState = workingRoot?.playerState || playerState;
+    const actionRocketState = workingRoot?.rocketState || rocketState;
     if (turnEndReveal?.count && hasTurnEndRevealBlockingSubFlow()) {
       return queueTurnEndAfterRevealContinuation({
         endingPlayer,
         endingPlayerId,
         didPass,
         turnEndReveal,
+        workingRoot,
       });
     }
     decisionSessions.clear(TURN_END_REVEAL_SESSION);
-    const passIncomeResult = didPass ? applyPassTurnEndIncome(endingPlayer) : null;
+    const passIncomeResult = didPass ? applyPassTurnEndIncome(endingPlayer, actionTurnState) : null;
     commitActionLogDraft({
       passed: didPass,
       actionType: didPass ? "pass" : actionHistory.getSessionInfo()?.actionType,
@@ -479,23 +490,24 @@
     }
     clearActionEffectFlow();
     clearActionPending();
-    const advanceResult = advanceTurnAfterPlayerAction(endingPlayerId, { passed: didPass });
+    const advanceResult = advanceTurnAfterPlayerAction(endingPlayerId, { passed: didPass, workingRoot });
     const roundStartResult = advanceResult.roundAdvanced
-      ? applyIndustryRoundStartBonuses(turnState.roundNumber, { appendLog: true })
+      ? applyIndustryRoundStartBonuses(actionTurnState.roundNumber, { appendLog: true })
       : null;
-    const nextPlayer = getCurrentPlayer();
+    const nextPlayer = (actionPlayerState.players || [])
+      .find((player) => player.id === actionPlayerState.currentPlayerId);
     selectDefaultRocketForCurrentPlayer();
     renderDebugPlayerSwitch();
     renderRoundStatus();
-    const displayedTurnNumber = getDisplayedTurnNumber();
+    const displayedTurnNumber = getDisplayedTurnNumber(actionTurnState.turnNumber);
     const turnAdvanceMessage = advanceResult.gameEnded
-      ? `第 ${turnState.roundNumber} 轮所有玩家已 PASS，游戏结束，进行终局计分${advanceResult.finalScoreLines?.length ? `：${advanceResult.finalScoreLines.join("；")}` : ""}`
+      ? `第 ${actionTurnState.roundNumber} 轮所有玩家已 PASS，游戏结束，进行终局计分${advanceResult.finalScoreLines?.length ? `：${advanceResult.finalScoreLines.join("；")}` : ""}`
       : advanceResult.roundAdvanced
-      ? `所有玩家已 PASS，进入第 ${turnState.roundNumber} 轮第 ${displayedTurnNumber} 回合，当前玩家：${nextPlayer?.colorLabel || ""}玩家`
+      ? `所有玩家已 PASS，进入第 ${actionTurnState.roundNumber} 轮第 ${displayedTurnNumber} 回合，当前玩家：${nextPlayer?.colorLabel || ""}玩家`
       : advanceResult.turnAdvanced
-        ? `进入第 ${turnState.roundNumber} 轮第 ${displayedTurnNumber} 回合，当前玩家：${nextPlayer?.colorLabel || ""}玩家`
+        ? `进入第 ${actionTurnState.roundNumber} 轮第 ${displayedTurnNumber} 回合，当前玩家：${nextPlayer?.colorLabel || ""}玩家`
         : `回合已结束，当前玩家：${nextPlayer?.colorLabel || ""}玩家`;
-    rocketState.statusNote = [
+    actionRocketState.statusNote = [
       turnAdvanceMessage,
       passIncomeResult?.message || null,
       roundStartResult?.message || null,
@@ -512,22 +524,29 @@
     updateActionButtons();
     renderStateReadout();
     if (!advanceResult.gameEnded) {
-      maybeStartFundamentalismRoundStartIncomeFlow(nextPlayer, turnState.roundNumber);
+      maybeStartFundamentalismRoundStartIncomeFlow(nextPlayer, actionTurnState.roundNumber);
       maybeOpenActionBriefingForCompletedCycle(advanceResult);
     }
     refreshLatestActionLogRecoverySnapshot("回合结束后状态");
     if (advanceResult.gameEnded) {
       maybeAutoOpenFinalResultDialog();
     }
+    return { ok: true, progressed: true, advanceResult, message: actionRocketState.statusNote };
   }
 
-  function endCurrentTurn() {
-    if (!actionHistory.isActionComplete?.() || isActionEffectFlowActive() || hasActivePendingSubFlow()) return;
-    const endingPlayer = getCurrentPlayer();
+  function endCurrentTurn(execution = {}) {
+    const workingRoot = execution.workingRoot || null;
+    const actionPlayerState = workingRoot?.playerState || playerState;
+    const actionTurnState = workingRoot?.turnState || turnState;
+    if (!actionHistory.isActionComplete?.() || isActionEffectFlowActive() || hasActivePendingSubFlow()) {
+      return { ok: false, message: "主行动未完成或仍有待决选择" };
+    }
+    const endingPlayer = (actionPlayerState.players || [])
+      .find((player) => player.id === (execution.standardAction?.actorId || actionPlayerState.currentPlayerId));
     const endingPlayerId = endingPlayer?.id || null;
     const didPass = actionHistory.getSessionInfo?.()?.passPlayerId === endingPlayerId;
 
-    if (industry?.expireStrategyPlayInteractionOnTurnEnd?.(endingPlayer, turnState.roundNumber)?.cleared) {
+    if (industry?.expireStrategyPlayInteractionOnTurnEnd?.(endingPlayer, actionTurnState.roundNumber)?.cleared) {
       renderInitialSelectionArea();
     }
     industry?.clearTuringBorrowedTech?.(endingPlayer);
@@ -537,10 +556,12 @@
     const turnEndContext = { endingPlayer, endingPlayerId, didPass };
     const turnEndReveal = revealReadyAliensAtTurnEnd(endingPlayer, {
       confirmBeforeSideEffects: true,
+      workingRoot,
     });
-    finishCurrentTurnAfterAlienReveal({
+    return finishCurrentTurnAfterAlienReveal({
       ...turnEndContext,
       turnEndReveal,
+      workingRoot,
     });
   }
 

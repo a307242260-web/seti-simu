@@ -857,24 +857,47 @@
       return { ok: true, message: rocketState.statusNote };
     }
 
-    function confirmCardCornerQuickAction() {
-      if (!canUseCardCornerQuickAction()) {
+    function executeStandardCardCornerAction(workingRoot, descriptor) {
+      const currentPlayer = players.getCurrentPlayer(workingRoot?.playerState);
+      const handIndex = (currentPlayer?.hand || [])
+        .findIndex((card) => card.id === descriptor?.target?.cardInstanceId);
+      const card = handIndex >= 0 ? currentPlayer.hand[handIndex] : null;
+      const cornerAction = getCardCornerQuickActionForCard(card);
+      if (!card || !cornerAction) {
+        return { ok: false, code: "CARD_CORNER_TARGET_STALE", message: "卡牌或弃牌角标已失效" };
+      }
+      return confirmCardCornerQuickAction({
+        workingRoot,
+        standardAction: descriptor,
+        action: { handIndex, cardId: card.id, ...cornerAction, card },
+      });
+    }
+
+    function confirmCardCornerQuickAction(execution = {}) {
+      if (!execution.workingRoot && !canUseCardCornerQuickAction()) {
         return { ok: false, message: "当前无法使用卡牌快速行动" };
       }
 
-      const action = getPendingCardCornerQuickAction();
-      const currentPlayer = getCurrentPlayer();
+      const workingRoot = execution.workingRoot || null;
+      const actionPlayerState = workingRoot?.playerState || context.playerState;
+      const actionCardState = workingRoot?.cardState || cardState;
+      const actionAlienGameState = workingRoot?.alienGameState || alienGameState;
+      const actionRocketState = workingRoot?.rocketState || rocketState;
+      const action = execution.action || getPendingCardCornerQuickAction();
+      const currentPlayer = workingRoot
+        ? players.getCurrentPlayer(actionPlayerState)
+        : getCurrentPlayer();
       if (!action || !currentPlayer) {
-        rocketState.statusNote = "没有待确认的卡牌快速行动";
+        actionRocketState.statusNote = "没有待确认的卡牌快速行动";
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: actionRocketState.statusNote };
       }
 
       const queueMoveEffect = shouldQueueCardCornerMoveQuickAction(action, currentPlayer);
       if (action.actionKind === "move" && !queueMoveEffect) {
         const moveCheck = canStartCardCornerFreeMove();
         if (!moveCheck.ok) {
-          rocketState.statusNote = moveCheck.message;
+          actionRocketState.statusNote = moveCheck.message;
           renderStateReadout();
           return moveCheck;
         }
@@ -882,7 +905,7 @@
 
       if (action.actionKind === "fangzhou_basic") {
         const beforePlayer = structuredClone(currentPlayer);
-        const beforeAlienState = structuredClone(alienGameState);
+        const beforeAlienState = structuredClone(actionAlienGameState);
         beginQuickActionStep("card-corner", `卡牌快速行动：${action.label}`);
         const discardResult = cards.discardFromHandAtIndex(currentPlayer, action.handIndex);
         if (!discardResult.ok) {
@@ -891,19 +914,19 @@
             quickActionHistory.commitSession();
             clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
           }
-          rocketState.statusNote = discardResult.message;
+          actionRocketState.statusNote = discardResult.message;
           syncCardCornerQuickActionChrome();
           renderStateReadout();
           return discardResult;
         }
-        cards.addToDiscardPile(cardState, discardResult.card);
+        cards.addToDiscardPile(actionCardState, discardResult.card);
         context.recordQuickHistoryCommand?.(historyCommands.createRestorePlayerCommand(
           currentPlayer,
           beforePlayer,
           "恢复方舟弃牌快速行动前玩家状态",
         ));
         context.recordQuickHistoryCommand?.(historyCommands.createRestoreObjectCommand(
-          alienGameState,
+          actionAlienGameState,
           beforeAlienState,
           "恢复方舟弃牌快速行动前外星人状态",
         ));
@@ -915,7 +938,7 @@
           consumesMainAction: false,
           scoreSourceKey: SCORE_SOURCE_KEYS.ALIEN_CARD_QUICK,
         });
-        rocketState.statusNote = `卡牌快速行动：弃除 ${cards.getCardLabel(discardResult.card)}，${rewardResult.message}`;
+        actionRocketState.statusNote = `卡牌快速行动：弃除 ${cards.getCardLabel(discardResult.card)}，${rewardResult.message}`;
         renderPlayerStats();
         renderPlayerHand();
         renderAlienPanels();
@@ -928,8 +951,8 @@
 
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
-        publicCards: cardState.publicCards.slice(),
-        discardPile: (cardState.discardPile || []).slice(),
+        publicCards: actionCardState.publicCards.slice(),
+        discardPile: (actionCardState.discardPile || []).slice(),
       };
 
       beginQuickActionStep("card-corner", `卡牌快速行动：${action.label}`);
@@ -940,13 +963,13 @@
           quickActionHistory.commitSession();
           clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
         }
-        rocketState.statusNote = discardResult.message;
+        actionRocketState.statusNote = discardResult.message;
         syncCardCornerQuickActionChrome();
         renderStateReadout();
         return discardResult;
       }
 
-      cards.addToDiscardPile(cardState, discardResult.card);
+      cards.addToDiscardPile(actionCardState, discardResult.card);
       if (Object.keys(action.reward?.gain || {}).length) {
         players.gainResources(currentPlayer, action.reward.gain);
         addScoreSourceFromGain(
@@ -975,7 +998,7 @@
         "恢复卡牌快速行动前玩家状态",
       ));
       context.recordQuickHistoryCommand?.(historyCommands.createRestorePublicCardsCommand(
-        cardState,
+        actionCardState,
         beforeCardState.publicCards,
         beforeCardState.discardPile,
       ));
@@ -998,7 +1021,7 @@
         playerColor: currentPlayer.color || null,
         source: "card_corner",
       };
-      rocketState.statusNote = `卡牌快速行动：弃除 ${cards.getCardLabel(discardResult.card)}，${rewardText}`;
+      actionRocketState.statusNote = `卡牌快速行动：弃除 ${cards.getCardLabel(discardResult.card)}，${rewardText}`;
       renderPlayerStats();
       renderPlayerHand();
       renderPublicCards();
@@ -1020,7 +1043,7 @@
         reward: action.reward,
         moveReward: action.moveReward,
         dataResults,
-        message: rocketState.statusNote,
+        message: actionRocketState.statusNote,
       };
     }
 
@@ -1886,6 +1909,7 @@
       getPendingCardCornerQuickAction,
       syncCardCornerQuickActionChrome,
       cancelCardCornerQuickAction,
+      executeStandardCardCornerAction,
       handleHandCardCornerQuickAction,
       confirmCardCornerQuickAction,
       beginDiscardSelection,

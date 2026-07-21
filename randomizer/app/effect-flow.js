@@ -314,11 +314,15 @@
       return null;
     }
 
-    function recordQuickTradeCompletion(tradeId, player, beforeState) {
+    function recordQuickTradeCompletion(tradeId, player, beforeState, options = {}) {
       const trade = context.quickTrades?.getTradeAction?.(tradeId);
       if (!trade || !beforeState) return;
       beginQuickActionStep("quick-trade", `快速交易：${trade.label}`);
-      recordQuickHistoryCommand(historyCommands.createRestoreTradeStateCommand(player, context.cardState, beforeState));
+      recordQuickHistoryCommand(historyCommands.createRestoreTradeStateCommand(
+        player,
+        options.workingRoot?.cardState || context.cardState,
+        beforeState,
+      ));
       completeQuickActionStep();
     }
 

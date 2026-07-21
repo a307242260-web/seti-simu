@@ -478,6 +478,40 @@ function createBaseContext(player, overrides = {}) {
 }
 
 {
+  const boundPlayer = {
+    id: "bound-player",
+    color: "white",
+    resources: { credits: 1, publicity: 0, handSize: 1 },
+    hand: [{ id: "bound-card", label: "闭包角标", cornerAction: { actionKind: "reward", label: "宣传", reward: { gain: { publicity: 2 } } } }],
+  };
+  const context = createBaseContext(boundPlayer);
+  const handFlow = createHandFlow(context);
+  const workingPlayer = structuredClone(boundPlayer);
+  workingPlayer.id = "working-player";
+  workingPlayer.hand[0].id = "working-card";
+  const workingRoot = {
+    playerState: { currentPlayerId: "working-player", players: [workingPlayer] },
+    cardState: { discardPile: [], publicCards: [] },
+    alienGameState: {},
+    rocketState: { statusNote: "" },
+    turnState: { roundNumber: 2, turnNumber: 7 },
+  };
+  const boundBefore = structuredClone({ player: boundPlayer, cardState: context.cardState });
+  const result = handFlow.executeStandardCardCornerAction(workingRoot, {
+    family: "card_corner",
+    actorId: "working-player",
+    target: { cardInstanceId: "working-card" },
+  });
+  assert.equal(result.ok, true);
+  assert.equal(workingPlayer.hand.length, 0);
+  assert.equal(workingPlayer.resources.publicity, 2);
+  assert.equal(workingRoot.cardState.discardPile[0].id, "working-card");
+  assert.equal(workingRoot.turnState.turnNumber, 7, "card_corner quick 不得消耗主行动或推进回合");
+  assert.deepEqual(boundPlayer, boundBefore.player, "生产 card_corner 不得写入闭包绑定玩家");
+  assert.deepEqual(context.cardState, boundBefore.cardState, "生产 card_corner 不得写入闭包绑定 cardState");
+}
+
+{
   const player = {
     id: "player-1",
     color: "white",

@@ -53,6 +53,7 @@
       fangzhou,
       finishActionEffectFlow,
       formatCardCornerRewardMessage,
+      formatChongGain,
       formatChongFossilRewardSummary,
       formatPlanetRewardGain,
       getCardTriggerFreeMoveEffect,

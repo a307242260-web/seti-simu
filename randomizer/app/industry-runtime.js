@@ -1911,25 +1911,30 @@
       renderStateReadout();
     }
 
-    function handleCompanyActionMarkerClick(companyCard) {
-      const gameplayLockReason = getGameplayLockReason();
+    function handleCompanyActionMarkerClick(companyCard, execution = {}) {
+      const workingRoot = execution.workingRoot || null;
+      const actionTurnState = workingRoot?.turnState || turnState;
+      const actionRocketState = workingRoot?.rocketState || rocketState;
+      const gameplayLockReason = workingRoot ? null : getGameplayLockReason();
       if (gameplayLockReason) {
-        rocketState.statusNote = gameplayLockReason;
+        actionRocketState.statusNote = gameplayLockReason;
         renderStateReadout();
         return { ok: false, message: gameplayLockReason };
       }
 
-      const player = getCurrentPlayer();
+      const player = workingRoot
+        ? players.getCurrentPlayer(workingRoot.playerState)
+        : getCurrentPlayer();
       const layout = industry?.getIndustryActionMarkerLayout?.(companyCard);
-      const check = industry?.canMarkIndustryAction?.(player, turnState.roundNumber, {
-        turnNumber: turnState.turnNumber,
+      const check = industry?.canMarkIndustryAction?.(player, actionTurnState.roundNumber, {
+        turnNumber: actionTurnState.turnNumber,
         hasMarker: Boolean(layout),
         industryCard: companyCard,
       });
       if (!check?.ok) {
-        rocketState.statusNote = check?.message || "无法放置公司行动标记";
+        actionRocketState.statusNote = check?.message || "无法放置公司行动标记";
         renderStateReadout();
-        return;
+        return { ok: false, message: actionRocketState.statusNote };
       }
 
       const companyLabel = companyCard.label || "公司牌";
@@ -1937,32 +1942,32 @@
       const abilityFlow = industry.buildActiveAbilityFlow(
         player,
         companyLabel,
-        turnState.roundNumber,
-        turnState.turnNumber,
+        actionTurnState.roundNumber,
+        actionTurnState.turnNumber,
       );
       if (!abilityFlow?.ok) {
         restoreObjectSnapshot(player, beforeIndustryPlayer);
         if (abilityFlow?.message && industry.hasImplementedActiveAbility?.(companyCard)) {
-          rocketState.statusNote = abilityFlow.message;
+          actionRocketState.statusNote = abilityFlow.message;
         } else {
-          rocketState.statusNote = "该公司 1x 行动暂未处理";
+          actionRocketState.statusNote = "该公司 1x 行动暂未处理";
         }
         renderStateReadout();
-        return;
+        return { ok: false, message: actionRocketState.statusNote };
       }
 
       if (abilityFlow.flowType === "stratus_public_corners"
         || abilityFlow.flowType === "huanyu_free_moves"
         || abilityFlow.flowType === "fundamentalism_score_exchange"
         || abilityFlow.flowType === "pirates_raid_launch") {
-        const result = industry.markIndustryAction(player, turnState.roundNumber, {
-          turnNumber: turnState.turnNumber,
+        const result = industry.markIndustryAction(player, actionTurnState.roundNumber, {
+          turnNumber: actionTurnState.turnNumber,
         });
         if (!result.ok) {
           restoreObjectSnapshot(player, beforeIndustryPlayer);
-          rocketState.statusNote = result.message;
+          actionRocketState.statusNote = result.message;
           renderStateReadout();
-          return;
+          return result;
         }
 
         const markerRestoreCommand = createIndustryActionRestoreCommand(
@@ -1975,16 +1980,16 @@
         if (!started) {
           markerRestoreCommand?.undo();
         } else {
-          rocketState.statusNote = abilityFlow.message || rocketState.statusNote;
+          actionRocketState.statusNote = abilityFlow.message || actionRocketState.statusNote;
         }
         renderInitialSelectionArea();
         renderStateReadout();
-        return;
+        return { ok: true, progressed: true, flow: abilityFlow, message: actionRocketState.statusNote };
       }
 
       beginQuickActionStep("industry-mark", `公司行动标记：${companyLabel}`);
-      const result = industry.markIndustryAction(player, turnState.roundNumber, {
-        turnNumber: turnState.turnNumber,
+      const result = industry.markIndustryAction(player, actionTurnState.roundNumber, {
+        turnNumber: actionTurnState.turnNumber,
       });
       if (!result.ok) {
         restoreObjectSnapshot(player, beforeIndustryPlayer);
@@ -1993,9 +1998,9 @@
           quickActionHistory.commitSession();
           clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
         }
-        rocketState.statusNote = result.message;
+        actionRocketState.statusNote = result.message;
         renderStateReadout();
-        return;
+        return result;
       }
 
       recordIndustryActionRestoreCommand(player, beforeIndustryPlayer, companyLabel);
@@ -2013,10 +2018,11 @@
         }
       }
       if (started) {
-        rocketState.statusNote = abilityFlow.message || rocketState.statusNote;
+        actionRocketState.statusNote = abilityFlow.message || actionRocketState.statusNote;
       }
       renderInitialSelectionArea();
       renderStateReadout();
+      return { ok: true, progressed: true, flow: abilityFlow, message: actionRocketState.statusNote };
     }
 
 

@@ -996,27 +996,34 @@
     return { ok: true, canceled: true };
   }
 
-  function confirmDataPlacement(target, blueSlot) {
+  function confirmDataPlacement(target, blueSlot, execution = {}) {
     if (getPendingDataPlacement()) {
       return confirmPendingDataPlacement(target, blueSlot);
     }
     closeDataPlacePicker();
     const blocked = blockIncompatiblePendingQuickAction("place-data");
     if (blocked) return blocked;
-    const player = getCurrentPlayer();
-    const result = abilities.executeAbility("placeData", createActionContext(), {
+    const workingRoot = execution.workingRoot || null;
+    const actionRocketState = workingRoot?.rocketState || rocketState;
+    const player = workingRoot
+      ? players.getCurrentPlayer(workingRoot.playerState)
+      : getCurrentPlayer();
+    const result = abilities.executeAbility("placeData", createActionContext(
+      workingRoot,
+      execution.standardAction,
+    ), {
       target,
       blueSlot,
     });
-    rocketState.statusNote = result.message;
+    actionRocketState.statusNote = result.message;
     if (result.ok) {
       const bonusResult = recordPlaceDataActionHistory(player, result);
       if (bonusResult?.message && !bonusResult.pendingIncome) {
-        rocketState.statusNote = `${result.message}（${bonusResult.message}）`;
+        actionRocketState.statusNote = `${result.message}（${bonusResult.message}）`;
       } else if (bonusResult?.pendingIncome) {
-        rocketState.statusNote = `${result.message}，请选择 1 张手牌获得收入`;
+        actionRocketState.statusNote = `${result.message}，请选择 1 张手牌获得收入`;
       } else if (bonusResult?.ok === false && bonusResult.message) {
-        rocketState.statusNote = `${result.message}（${bonusResult.message}）`;
+        actionRocketState.statusNote = `${result.message}（${bonusResult.message}）`;
       }
     }
     renderPlayerStats();

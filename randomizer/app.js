@@ -43,6 +43,7 @@
     actionRuntimeModule,
     primaryBoardActionExecutorModule,
     engineActionExecutorModule,
+    quickTurnActionExecutorModule,
     actionInteractionRuntimeModule,
     actionLogRuntimeModule,
     gameRecoveryModule,
@@ -296,6 +297,28 @@
     executeScan: (workingRoot, descriptor) => executeMainScanAction(workingRoot, descriptor),
     executePlayCard: (workingRoot, descriptor) => executeStandardPlayCard(workingRoot, descriptor),
   });
+  const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor({
+    executeQuickTrade: (workingRoot, descriptor) => runQuickTrade(descriptor.target?.tradeId, {
+      workingRoot,
+      standardAction: descriptor,
+    }),
+    executeIndustry: (workingRoot, descriptor) => {
+      const player = players.getCurrentPlayer(workingRoot.playerState);
+      return handleCompanyActionMarkerClick(player?.initialSelection?.industry, {
+        workingRoot,
+        standardAction: descriptor,
+      }) || { ok: true, progressed: true };
+    },
+    executeCardCorner: (workingRoot, descriptor) => executeStandardCardCornerAction(workingRoot, descriptor),
+    executePlaceData: (workingRoot, descriptor) => confirmDataPlacement(
+      descriptor.target?.target,
+      descriptor.target?.blueSlot,
+      { workingRoot, standardAction: descriptor },
+    ),
+    executeRunezuFaceSymbol: (workingRoot, descriptor) => executeStandardRunezuFaceSymbol(workingRoot, descriptor),
+    executePass: (workingRoot, descriptor) => passForCurrentPlayer({ workingRoot, standardAction: descriptor }),
+    executeEndTurn: (workingRoot, descriptor) => endCurrentTurn({ workingRoot, standardAction: descriptor }),
+  });
   let actionRuntimeController = null;
   const runtime = runtimeModule.createRuntime({
     aiDifficulty: AI_DIFFICULTY_LAUGHABLE,
@@ -426,6 +449,7 @@
   let confirmPlayCardSelection;
   let handleHandCardPlay;
   let executeStandardPlayCard;
+  let executeStandardCardCornerAction;
   let executeMainScanAction;
   let getPendingHandCardPlayAction;
   let cancelHandCardPlayAction;
@@ -1393,6 +1417,7 @@
     getPendingPlayCardSelection,
     handlePlayCardSelect,
     confirmPlayCardSelection,
+    executeStandardCardCornerAction,
     getPendingHandCardPlayAction,
     cancelHandCardPlayAction,
     clearHandCardContextActions,
@@ -1467,9 +1492,9 @@
     resolvePlayerReference,
     getFlowMarkedNebulaIds,
     normalizeResourceCost,
-    createActionContext: (workingRoot, descriptor) => (
-      workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
-    ),
+      createActionContext: (workingRoot, descriptor) => (
+        workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
+      ),
     canStartMainAction,
     getMainActionStartBlockReason,
     HISTORY_SOURCE_MAIN,
@@ -2114,6 +2139,8 @@
     primaryBoardWorkingRoot: browserRuleState,
     engineActionExecutor,
     engineActionWorkingRoot: browserRuleState,
+    quickTurnActionExecutor,
+    quickTurnActionWorkingRoot: browserRuleState,
     actions,
     removeRocketElement: headlessMode ? () => {} : removeRocketElement,
     syncPlanetOrbitLandMarkersAfterAction: headlessMode ? () => {} : syncPlanetOrbitLandMarkers,
@@ -2191,7 +2218,7 @@
           label: "PASS",
           getOptions() { return canStartMainAction() ? { ok: true, choices: [{ target: { kind: "pass" }, label: "PASS" }] } : { ok: false, message: getMainActionStartBlockReason() }; },
           canExecute() { return this.getOptions(); },
-          execute() { return passForCurrentPlayer(); },
+          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
         },
       },
       stage3Actions: {
@@ -2241,7 +2268,7 @@
             return choices.length ? { ok: true, choices } : { ok: false, message: "没有可执行的快速交易" };
           },
           canExecute(context) { return this.getOptions(context); },
-          execute(_context, option) { return runQuickTrade(option.target.tradeId); },
+          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
         },
         industry: {
           label: "公司 1x",
@@ -2260,10 +2287,7 @@
             return { ok: true, choices: [{ target: { companyLabel: companyCard.label }, label: companyCard.label }] };
           },
           canExecute(context) { return this.getOptions(context); },
-          execute(context) {
-            const companyCard = players.getCurrentPlayer(context.playerState)?.initialSelection?.industry;
-            return handleCompanyActionMarkerClick(companyCard) || { ok: true, progressed: true };
-          },
+          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
         },
         cardCorner: {
           label: "弃牌角标",
@@ -2283,12 +2307,7 @@
             return choices.length ? { ok: true, choices } : { ok: false, message: "没有可用弃牌角标" };
           },
           canExecute(context) { return this.getOptions(context); },
-          execute(context, option) {
-            const player = players.getCurrentPlayer(context.playerState);
-            const handIndex = (player?.hand || []).findIndex((card) => card.id === option.target.cardInstanceId);
-            const selected = handleHandCardCornerQuickAction(handIndex);
-            return selected?.ok === false ? selected : confirmCardCornerQuickAction();
-          },
+          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
         },
         placeData: {
           label: "放置数据",
@@ -2302,7 +2321,7 @@
             return result.ok && choices.length ? { ok: true, choices } : { ok: false, message: result.message || "没有数据放置目标" };
           },
           canExecute(context) { return this.getOptions(context); },
-          execute(_context, option) { return confirmDataPlacement(option.target.target, option.target.blueSlot); },
+          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
         },
         runezuFaceSymbol: {
           label: "符文族面部符号",
@@ -2322,10 +2341,7 @@
             return choices.length ? { ok: true, choices } : { ok: false, message: "没有可放置的符文族面部符号" };
           },
           canExecute(context) { return this.getOptions(context); },
-          execute(_context, option) {
-            const opened = openRunezuFaceSymbolPlacement(option.target.alienSlotId, option.target.position);
-            return opened?.ok === false ? opened : handleRunezuFaceSymbolChoice(option.target.symbolId);
-          },
+          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
         },
         endTurn: {
           label: "结束回合",
@@ -2336,10 +2352,7 @@
               : { ok: false, message: "主行动未完成或仍有待决选择" };
           },
           canExecute() { return this.getOptions(); },
-          execute() {
-            endCurrentTurn();
-            return { ok: true, progressed: true };
-          },
+          execute() { return { ok: false, code: "QUICK_TURN_EXECUTOR_REQUIRED" }; },
         },
       },
       stage4Actions: Object.fromEntries(
@@ -3389,6 +3402,7 @@
     fangzhou,
     finishActionEffectFlow,
     formatCardCornerRewardMessage,
+    formatChongGain,
     formatChongFossilRewardSummary,
     formatPlanetRewardGain,
     getCardTriggerFreeMoveEffect,
@@ -4143,8 +4157,8 @@
       && turnState.activePlayerIds.every((playerId) => isPlayerPassedThisRound(playerId));
   }
 
-  function isFinalRound() {
-    return Number(turnState.roundNumber) >= FINAL_ROUND_NUMBER;
+  function isFinalRound(candidateTurnState = turnState) {
+    return Number(candidateTurnState.roundNumber) >= FINAL_ROUND_NUMBER;
   }
 
   function isGameEnded() {
@@ -6954,6 +6968,7 @@
   function openAmibaRewardFollowUps(...args) { return alienSpeciesRuntime.openAmibaRewardFollowUps(...args); }
   function openRunezuRewardFollowUps(...args) { return alienSpeciesRuntime.openRunezuRewardFollowUps(...args); }
   function closeRunezuFaceSymbolPlacement(...args) { return alienSpeciesRuntime.closeRunezuFaceSymbolPlacement(...args); }
+  function executeStandardRunezuFaceSymbol(...args) { return alienSpeciesRuntime.executeStandardRunezuFaceSymbol(...args); }
   function openRunezuFaceSymbolPlacement(...args) { return alienSpeciesRuntime.openRunezuFaceSymbolPlacement(...args); }
   function handleRunezuFaceSymbolChoice(...args) { return alienSpeciesRuntime.handleRunezuFaceSymbolChoice(...args); }
   function executeRunezuSymbolRewardEffect(...args) { return alienSpeciesRuntime.executeRunezuSymbolRewardEffect(...args); }
@@ -7777,7 +7792,9 @@
       clearHistoryStepOrderForSource: typeof clearHistoryStepOrderForSource === "undefined" ? undefined : clearHistoryStepOrderForSource,
       completeCurrentActionEffect: typeof completeCurrentActionEffect === "undefined" ? undefined : completeCurrentActionEffect,
       completeQuickActionStep: typeof completeQuickActionStep === "undefined" ? undefined : completeQuickActionStep,
-      createActionContext: (...args) => createActionContext(...args),
+      createActionContext: (workingRoot, descriptor) => (
+        workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
+      ),
       dispatchStandardIntent: (family, selector = {}, payload = {}) => (
         actionRuntimeController.dispatchAction({ kind: "standard_intent", family, selector, payload })
       ),
@@ -8982,7 +8999,9 @@
     cancelMovePaymentSelection,
     cardEffects,
     cardState,
-    createActionContext,
+    createActionContext: (workingRoot, descriptor) => (
+      workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
+    ),
     data,
     els,
     getBoardPointFromPolarPoint,
@@ -9115,21 +9134,28 @@
   }
 
   function runQuickTrade(tradeId, options = {}) {
+    const workingRoot = options.workingRoot || browserRuleState;
+    const actionPlayerState = workingRoot.playerState;
+    const actionCardState = workingRoot.cardState;
+    const actionRocketState = workingRoot.rocketState;
     const blocked = blockIncompatiblePendingQuickAction("quick-trade");
     if (blocked) return blocked;
 
     const gameplayLockReason = getGameplayLockReason();
     if (gameplayLockReason) {
-      rocketState.statusNote = gameplayLockReason;
+      actionRocketState.statusNote = gameplayLockReason;
       renderStateReadout();
       return { ok: false, message: gameplayLockReason };
     }
 
-    const player = getCurrentPlayer();
-    const beforeState = historyCommands.captureTradeState(player, cardState);
-    const result = quickTrades.executeTrade(tradeId, createActionContext());
+    const player = players.getCurrentPlayer(actionPlayerState);
+    const beforeState = historyCommands.captureTradeState(player, actionCardState);
+    const result = quickTrades.executeTrade(
+      tradeId,
+      createActionContextForWorkingRoot(workingRoot, options.standardAction),
+    );
     if (!result.ok) {
-      rocketState.statusNote = result.message;
+      actionRocketState.statusNote = result.message;
       renderPlayerStats();
       updateActionButtons();
       renderStateReadout();
@@ -9150,7 +9176,7 @@
           decisionState.discardAction.aiReason = options.aiReason;
         }
       }
-      rocketState.statusNote = result.message;
+      actionRocketState.statusNote = result.message;
       renderStateReadout();
       return result;
     }
@@ -9165,13 +9191,13 @@
           decisionState.cardSelectionAction.aiReason = options.aiReason;
         }
       }
-      rocketState.statusNote = result.message;
+      actionRocketState.statusNote = result.message;
       renderStateReadout();
       return result;
     }
 
-    recordQuickTradeCompletion(tradeId, player, beforeState);
-    rocketState.statusNote = result.message;
+    recordQuickTradeCompletion(tradeId, player, beforeState, { workingRoot });
+    actionRocketState.statusNote = result.message;
     renderPlayerStats();
     renderPublicCards();
     updatePublicCardControls();

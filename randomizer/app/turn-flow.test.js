@@ -143,6 +143,25 @@ const firstAdvance = controller.advanceTurnAfterPlayerAction("p1", { passed: fal
 assert.equal(firstAdvance.nextPlayerId, "p2");
 assert.equal(turnState.turnNumber, 2);
 
+{
+  const boundTurnBefore = structuredClone(turnState);
+  const boundPlayerBefore = structuredClone(playerState);
+  const workingRoot = {
+    playerState: { players: structuredClone(basePlayers), currentPlayerId: "p1" },
+    turnState: {
+      ...createTurnState(basePlayers, { activePlayerCount: 3, currentPlayerId: "p1" }),
+      turnNumber: 5,
+    },
+    cardState: {},
+  };
+  const result = controller.advanceTurnAfterPlayerAction("p1", { passed: false, workingRoot });
+  assert.equal(result.nextPlayerId, "p2");
+  assert.equal(workingRoot.turnState.turnNumber, 6);
+  assert.equal(workingRoot.playerState.currentPlayerId, "p2");
+  assert.deepEqual(turnState, boundTurnBefore, "生产 end_turn 不得推进闭包绑定 turnState");
+  assert.deepEqual(playerState, boundPlayerBefore, "生产 end_turn 不得切换闭包绑定 current player");
+}
+
 turnState.passedPlayerIds = ["p1", "p2"];
 turnState.roundNumber = 1;
 turnState.turnNumber = 3;

@@ -296,50 +296,122 @@
     }
 
     function advanceTurnAfterPlayerAction(playerId, options = {}) {
-      if (!playerId) return { roundAdvanced: false, turnAdvanced: false, nextPlayerId: playerState.currentPlayerId };
+      const actionTurnState = options.workingRoot?.turnState || turnState;
+      const actionPlayerState = options.workingRoot?.playerState || playerState;
+      const actionCardState = options.workingRoot?.cardState || cardState;
+      const isPassed = (id) => (actionTurnState.passedPlayerIds || []).includes(id);
+      const isCompleted = (id) => (actionTurnState.completedTurnPlayerIds || []).includes(id);
+      const roundOrder = () => getRoundOrderPlayerIds(actionTurnState);
+      const displayedTurnNumber = (rawTurnNumber = actionTurnState.turnNumber) => {
+        const activePlayerCount = Math.max(
+          1,
+          (actionTurnState.activePlayerIds || []).length
+            || Math.round(Number(actionTurnState.activePlayerCount) || 0)
+            || defaultActivePlayerCount,
+        );
+        return Math.floor((Math.max(1, Math.round(Number(rawTurnNumber) || 1)) - 1) / activePlayerCount) + 1;
+      };
+      const actionCycleNumber = () => {
+        const value = Math.max(1, Math.round(Number(actionTurnState.actionCycleNumber) || 1));
+        if (actionTurnState.actionCycleNumber !== value) actionTurnState.actionCycleNumber = value;
+        return value;
+      };
+      const allPassed = () => (actionTurnState.activePlayerIds || []).length > 0
+        && actionTurnState.activePlayerIds.every(isPassed);
+      const nextEligible = (afterPlayerId) => {
+        const order = roundOrder();
+        if (!order.length) return null;
+        const startIndex = order.includes(afterPlayerId) ? order.indexOf(afterPlayerId) : -1;
+        for (let offset = 1; offset <= order.length; offset += 1) {
+          const id = order[(startIndex + offset + order.length) % order.length];
+          if (!isPassed(id) && !isCompleted(id)) return id;
+        }
+        return null;
+      };
+      const firstEligible = () => roundOrder().find((id) => !isPassed(id)) || null;
+      const beginActionNextRound = () => {
+        cards.discardUnusedPassReserveCards(actionCardState, actionTurnState.roundNumber);
+        industry?.resetAllRoundIndustryRuntimeState?.(actionPlayerState.players);
+        actionTurnState.roundNumber += 1;
+        actionTurnState.turnNumber = 1;
+        actionTurnState.actionCycleNumber = 1;
+        actionTurnState.passedPlayerIds = [];
+        actionTurnState.completedTurnPlayerIds = [];
+        actionTurnState.cardTurnEventBonuses = [];
+        actionTurnState.visitedPlanetsByPlayerId = {};
+        const activeIds = getActiveOrderedPlayerIds(actionTurnState);
+        if (activeIds.length) {
+          const startIndex = activeIds.includes(actionTurnState.startPlayerId)
+            ? activeIds.indexOf(actionTurnState.startPlayerId)
+            : 0;
+          actionTurnState.startPlayerId = activeIds[(startIndex + 1) % activeIds.length];
+        }
+        actionPlayerState.currentPlayerId = actionTurnState.startPlayerId
+          || actionTurnState.activePlayerIds?.[0]
+          || actionPlayerState.currentPlayerId;
+        return { roundAdvanced: true, turnAdvanced: true, nextPlayerId: actionPlayerState.currentPlayerId };
+      };
+      if (!playerId) return { roundAdvanced: false, turnAdvanced: false, nextPlayerId: actionPlayerState.currentPlayerId };
 
-      if (options.passed && !turnState.passedPlayerIds.includes(playerId)) {
-        turnState.passedPlayerIds.push(playerId);
+      if (options.passed && !isPassed(playerId)) {
+        actionTurnState.passedPlayerIds.push(playerId);
       }
-      clearCardTurnEventBonusesForPlayer(playerId);
-      clearTurnVisitedPlanetsForPlayer(playerId);
-      if (!turnState.completedTurnPlayerIds.includes(playerId)) {
-        turnState.completedTurnPlayerIds.push(playerId);
+      actionTurnState.cardTurnEventBonuses = (actionTurnState.cardTurnEventBonuses || [])
+        .filter((bonus) => bonus.playerId !== playerId);
+      if (!actionTurnState.visitedPlanetsByPlayerId || typeof actionTurnState.visitedPlanetsByPlayerId !== "object") {
+        actionTurnState.visitedPlanetsByPlayerId = {};
+      }
+      delete actionTurnState.visitedPlanetsByPlayerId[playerId];
+      if (!isCompleted(playerId)) {
+        actionTurnState.completedTurnPlayerIds.push(playerId);
       }
 
       const completedCycleInfo = {
         completedActionCycle: true,
-        completedActionCycleRoundNumber: turnState.roundNumber,
-        completedActionCycleNumber: getActionCycleNumber(),
-        completedActionCycleTurnNumber: getDisplayedTurnNumber(),
-        completedActionCycleRawTurnNumber: turnState.turnNumber,
-        completedActionCyclePlayerIds: [...(turnState.completedTurnPlayerIds || [])],
+        completedActionCycleRoundNumber: actionTurnState.roundNumber,
+        completedActionCycleNumber: actionCycleNumber(),
+        completedActionCycleTurnNumber: displayedTurnNumber(),
+        completedActionCycleRawTurnNumber: actionTurnState.turnNumber,
+        completedActionCyclePlayerIds: [...(actionTurnState.completedTurnPlayerIds || [])],
       };
 
-      if (haveAllActivePlayersPassed() && isFinalRound()) {
-        return finishGameAfterFinalPass();
+      if (allPassed() && Number(actionTurnState.roundNumber) >= finalRoundNumber) {
+        actionTurnState.gameEnded = true;
+        actionTurnState.gameEndReason = "final_round_all_passed";
+        return {
+          roundAdvanced: false,
+          turnAdvanced: false,
+          gameEnded: true,
+          nextPlayerId: actionPlayerState.currentPlayerId,
+          finalScoreLines: (actionPlayerState.players || [])
+            .filter((player) => (actionTurnState.activePlayerIds || []).includes(player.id))
+            .map((player) => {
+              const breakdown = computePlayerFinalScoreBreakdown(player);
+              return `${player.colorLabel || player.name || player.id}：${breakdown.totalScore} 分`;
+            }),
+        };
       }
 
-      if (haveAllActivePlayersPassed()) {
-        return { ...beginNextRound(), ...completedCycleInfo };
+      if (allPassed()) {
+        return { ...beginActionNextRound(), ...completedCycleInfo };
       }
 
-      const nextPlayerId = getNextEligiblePlayerId(playerId);
+      const nextPlayerId = nextEligible(playerId);
       if (nextPlayerId) {
-        playerState.currentPlayerId = nextPlayerId;
-        turnState.turnNumber += 1;
+        actionPlayerState.currentPlayerId = nextPlayerId;
+        actionTurnState.turnNumber += 1;
         return { roundAdvanced: false, turnAdvanced: true, nextPlayerId };
       }
 
-      turnState.turnNumber += 1;
-      turnState.completedTurnPlayerIds = [];
-      advanceActionCycleNumber();
-      const firstEligiblePlayerId = getFirstEligiblePlayerId();
-      playerState.currentPlayerId = firstEligiblePlayerId || playerState.currentPlayerId;
+      actionTurnState.turnNumber += 1;
+      actionTurnState.completedTurnPlayerIds = [];
+      actionTurnState.actionCycleNumber = actionCycleNumber() + 1;
+      const firstEligiblePlayerId = firstEligible();
+      actionPlayerState.currentPlayerId = firstEligiblePlayerId || actionPlayerState.currentPlayerId;
       return {
         roundAdvanced: false,
         turnAdvanced: true,
-        nextPlayerId: playerState.currentPlayerId,
+        nextPlayerId: actionPlayerState.currentPlayerId,
         ...completedCycleInfo,
       };
     }
