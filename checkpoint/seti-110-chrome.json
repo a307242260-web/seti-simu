@@ -1,0 +1,1015 @@
+{
+  "schemaVersion": "seti-110-chrome-evidence-v1",
+  "options": {
+    "seed": "seti-110-final-shared",
+    "games": 1,
+    "activePlayerCount": 4,
+    "maxSteps": 2500,
+    "stepDelayMs": 0,
+    "maxBugRepeats": 1,
+    "sequenceWindowTurns": 6,
+    "yieldEverySteps": 20,
+    "stopOnBlocked": true,
+    "single": false
+  },
+  "pageUrl": "http://127.0.0.1:49314/randomizer/index.html?aiRun=1784619464822",
+  "summary": {
+    "ok": true,
+    "gamesRequested": 1,
+    "gamesRun": 1,
+    "stoppedEarly": false,
+    "stoppedBeforeRound": null,
+    "blockedGames": 0,
+    "maxScore": 96,
+    "maxWinnerScore": 96,
+    "bestMinimumPlayerScore": 23,
+    "averageMinimumPlayerScore": 23,
+    "averageWinnerScore": 96,
+    "winnerScores": [
+      96
+    ],
+    "minimumPlayerScores": [
+      23
+    ],
+    "gamesAllPlayersAtLeast70": 0,
+    "actionCounts": {
+      "placeData": 44,
+      "scan": 8,
+      "industry": 14,
+      "end-turn": 60,
+      "playCard": 30,
+      "researchTech": 10,
+      "move": 8,
+      "orbit": 2,
+      "pass": 16,
+      "analyze": 6,
+      "cardCorner": 9,
+      "land": 7,
+      "launch": 1,
+      "quickTrade": 17
+    },
+    "opportunities": {
+      "passWithAvailableMain": 0,
+      "passWithResourceLockedHand": 0,
+      "openingPlanNearMiss": 0,
+      "openingPlanConversionGap": 2,
+      "passReserveResourcePressureMiss": 1,
+      "passReserveCriticalRoundThreeMiss": 0,
+      "earlyPassNoMain": 10,
+      "resourceLockMainUnlock": 0,
+      "resourceLockNoDirectScanUnlock": 0,
+      "resourceLockNoDiscardAnalyzeUnlock": 0,
+      "resourceLockWeakLaunchUnlock": 0,
+      "quickBeforePassNoMain": 1,
+      "preNoMainPassResourceDrain": 9,
+      "negativeCardCornerBeforeNoMainPass": 0,
+      "postPassQuickNoMain": 0,
+      "postPassQuickAfterPass": 0,
+      "postPassPaidMoveNoFollowup": 0,
+      "postPassThinHandNoFollowupMove": 0,
+      "finalLowHandPassNoRecovery": 0,
+      "finalHighScorePassNoRecovery": 0,
+      "finalPublicRefillShortfall": 0,
+      "negativeCardCornerGraphLift": 0,
+      "negativePlayCardGraphLift": 0,
+      "endTurnWithAvailableMove": 0,
+      "endTurnWithPositiveMove": 0,
+      "researchTechOverCompoundTechCard": 0,
+      "orange4RaceSensitiveTech": 0,
+      "playCardNearMiss": 0,
+      "b2ScanNearMiss": 0,
+      "b2TradeNearMiss": 0,
+      "midgameLowTechRouteEnergyTrade": 0,
+      "engineActionNearMiss": 9,
+      "analyzeLowResourceReadyCashoutNearMiss": 0,
+      "mainUnlockLowConcretePlay": 0,
+      "nonPositivePublicRefill": 0,
+      "highHandDrainEnergyTrade": 0,
+      "highHandDrainEnergyTradeUnfollowedPlan": 0,
+      "lastCardPreserveEnergyMove": 0,
+      "negativeThirdFinalMark": 0,
+      "d1TechBalanceBottleneck": 0,
+      "finalReadyTaskCreditShortfall": 0,
+      "finalReadyTaskTradeUnlockMiss": 0,
+      "nearCompleteTaskPressure": 3,
+      "selectedUnavailableCandidate": 0,
+      "selectedBelowBestScore": 9
+    },
+    "bugCounts": {},
+    "topScoreGaps": [
+      {
+        "actionId": "playCard",
+        "offered": 50,
+        "available": 50,
+        "selected": 30,
+        "bestAvailable": 36,
+        "missedAsBest": 6,
+        "offeredScoreTotal": 1536.289,
+        "availableScoreTotal": 1536.289,
+        "selectedScoreTotal": 1214.441,
+        "bestAvailableScoreTotal": 1261.723,
+        "missedGapTotal": 44.212,
+        "maxMissedGap": 13.764,
+        "averageOfferedScore": 30.726,
+        "averageAvailableScore": 30.726,
+        "averageSelectedScore": 40.481,
+        "averageBestAvailableScore": 35.048,
+        "averageMissedGap": 7.369
+      },
+      {
+        "actionId": "researchTech",
+        "offered": 38,
+        "available": 38,
+        "selected": 10,
+        "bestAvailable": 11,
+        "missedAsBest": 1,
+        "offeredScoreTotal": 2658.3,
+        "availableScoreTotal": 2658.3,
+        "selectedScoreTotal": 731.1,
+        "bestAvailableScoreTotal": 785.782,
+        "missedGapTotal": 3.101,
+        "maxMissedGap": 3.101,
+        "averageOfferedScore": 69.955,
+        "averageAvailableScore": 69.955,
+        "averageSelectedScore": 73.11,
+        "averageBestAvailableScore": 71.435,
+        "averageMissedGap": 3.101
+      },
+      {
+        "actionId": "placeData",
+        "offered": 93,
+        "available": 93,
+        "selected": 44,
+        "bestAvailable": 46,
+        "missedAsBest": 2,
+        "offeredScoreTotal": 1721.527,
+        "availableScoreTotal": 1721.527,
+        "selectedScoreTotal": 734.08,
+        "bestAvailableScoreTotal": 1062.077,
+        "missedGapTotal": 1.077,
+        "maxMissedGap": 1.031,
+        "averageOfferedScore": 18.511,
+        "averageAvailableScore": 18.511,
+        "averageSelectedScore": 16.684,
+        "averageBestAvailableScore": 23.089,
+        "averageMissedGap": 0.539
+      }
+    ]
+  },
+  "sample": {
+    "gameIndex": 1,
+    "seed": "seti-110-final-shared:1",
+    "summary": {
+      "ok": true,
+      "steps": 494,
+      "stopped": false,
+      "blocked": false,
+      "gameEnded": true,
+      "stoppedBeforeRound": null,
+      "seed": "seti-110-final-shared:1",
+      "message": "游戏已结束"
+    },
+    "bugCount": 0,
+    "playerResults": [
+      {
+        "playerId": "player-blue",
+        "playerLabel": "蓝色",
+        "companyLabel": "层云核心",
+        "color": "blue",
+        "finalScore": 96,
+        "baseScore": 64,
+        "tileScore": 25,
+        "cardScore": 7,
+        "resources": {
+          "score": 64,
+          "credits": 0,
+          "energy": 1,
+          "publicity": 1,
+          "availableData": 0,
+          "handSize": 0
+        },
+        "income": {
+          "credits": 5,
+          "energy": 3,
+          "handSize": 2,
+          "publicity": 0,
+          "availableData": 0,
+          "additionalPublicScan": 0
+        },
+        "completedTaskCount": 0,
+        "reservedCount": 7,
+        "handSize": 0,
+        "handCards": [],
+        "reservedCards": [
+          {
+            "id": "alien-amiba-1-1",
+            "cardId": "amiba_1.webp",
+            "label": "安全协议",
+            "price": 1,
+            "typeCode": 1,
+            "discardActionCode": 5,
+            "scanActionCode": 1,
+            "incomeCode": 0,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": [
+              "gain_resources"
+            ]
+          },
+          {
+            "id": "alien-amiba-8-2",
+            "cardId": "amiba_8.webp",
+            "label": "突破性理论",
+            "price": 1,
+            "typeCode": 2,
+            "discardActionCode": 5,
+            "scanActionCode": 1,
+            "incomeCode": 2,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": [
+              "gain_resources"
+            ]
+          },
+          {
+            "id": "alien-amiba-7-4",
+            "cardId": "amiba_7.webp",
+            "label": "基因组表征",
+            "price": 1,
+            "typeCode": 3,
+            "discardActionCode": 4,
+            "scanActionCode": 2,
+            "incomeCode": 0,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": [
+              "pick_card",
+              "amiba_choose_symbol_reward"
+            ]
+          },
+          {
+            "id": "card-67-0",
+            "cardId": "b_135.webp",
+            "label": "韦断特v克综合孔径射电|远锐",
+            "price": 3,
+            "typeCode": 2,
+            "discardActionCode": 1,
+            "scanActionCode": 0,
+            "incomeCode": 1,
+            "taskCount": 1,
+            "remainingTaskCount": 1,
+            "tasks": [
+              {
+                "id": "b135-same-color-sectors-task",
+                "completed": false,
+                "condition": {
+                  "type": "completedSameSectorColor",
+                  "targetCount": 2,
+                  "currentCount": 1,
+                  "missingCount": 1,
+                  "met": false,
+                  "resource": null,
+                  "planetId": null,
+                  "color": null,
+                  "traceType": null,
+                  "locationType": null
+                },
+                "rewardDirectScore": 9,
+                "rewardValue": 55.43
+              }
+            ],
+            "endGameScoring": false,
+            "effectTypes": [
+              "card_research_tech"
+            ]
+          },
+          {
+            "id": "card-41-pass-2-2",
+            "cardId": "b_100.webp",
+            "label": "观测南河",
+            "price": 2,
+            "typeCode": 3,
+            "discardActionCode": 0,
+            "scanActionCode": 0,
+            "incomeCode": 2,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": true,
+            "effectTypes": [
+              "card_scan_nebula",
+              "card_scan_nebula"
+            ]
+          },
+          {
+            "id": "card-70-0",
+            "cardId": "dlc_11.png",
+            "label": "八灵神星探测器",
+            "price": 3,
+            "typeCode": 2,
+            "discardActionCode": 1,
+            "scanActionCode": 1,
+            "incomeCode": 2,
+            "taskCount": 1,
+            "remainingTaskCount": 1,
+            "tasks": [
+              {
+                "id": "dlc11-asteroid-probe",
+                "completed": false,
+                "condition": {
+                  "type": "probeLocation",
+                  "targetCount": 1,
+                  "currentCount": null,
+                  "missingCount": null,
+                  "met": false,
+                  "resource": null,
+                  "planetId": null,
+                  "color": null,
+                  "traceType": null,
+                  "locationType": "asteroid"
+                },
+                "rewardDirectScore": 3,
+                "rewardValue": 21.33
+              }
+            ],
+            "endGameScoring": false,
+            "effectTypes": [
+              "launch",
+              "gain_resources"
+            ]
+          },
+          {
+            "id": "card-90-0",
+            "cardId": "b_134.webp",
+            "label": "旅行者2号任务",
+            "price": 0,
+            "typeCode": 1,
+            "discardActionCode": 2,
+            "scanActionCode": 0,
+            "incomeCode": 2,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": []
+          }
+        ],
+        "techCount": 5,
+        "techTypeCounts": {
+          "orange": 0,
+          "purple": 1,
+          "blue": 4
+        },
+        "traceTypeCounts": {
+          "yellow": 0,
+          "pink": 3,
+          "blue": 3
+        },
+        "finalMarkCount": 2,
+        "finalFormulas": [
+          "a1",
+          "d2"
+        ],
+        "finalFormulaProgress": {
+          "entries": [
+            {
+              "tileId": "a",
+              "variant": 1,
+              "formulaId": "a1",
+              "slotIndex": 1,
+              "multiplier": 5,
+              "threshold": 25,
+              "baseValue": 3,
+              "score": 15
+            },
+            {
+              "tileId": "d",
+              "variant": 2,
+              "formulaId": "d2",
+              "slotIndex": 2,
+              "multiplier": 5,
+              "threshold": 50,
+              "baseValue": 2,
+              "score": 10
+            }
+          ],
+          "b2": null
+        },
+        "b2Progress": null,
+        "rocketCount": 0,
+        "passed": true
+      },
+      {
+        "playerId": "player-green",
+        "playerLabel": "绿色",
+        "companyLabel": "图灵系统",
+        "color": "green",
+        "finalScore": 23,
+        "baseScore": 23,
+        "tileScore": 0,
+        "cardScore": 0,
+        "resources": {
+          "score": 23,
+          "credits": 1,
+          "energy": 1,
+          "publicity": 0,
+          "availableData": 0,
+          "handSize": 2
+        },
+        "income": {
+          "credits": 2,
+          "energy": 5,
+          "handSize": 3,
+          "publicity": 0,
+          "availableData": 1,
+          "additionalPublicScan": 0
+        },
+        "completedTaskCount": 1,
+        "reservedCount": 3,
+        "handSize": 2,
+        "handCards": [
+          {
+            "id": "card-42-pass-2-3",
+            "cardId": "b_103.webp",
+            "label": "量子计算机",
+            "price": 3,
+            "typeCode": 2,
+            "discardActionCode": 0,
+            "scanActionCode": 3,
+            "incomeCode": 2,
+            "taskCount": 1,
+            "remainingTaskCount": 1,
+            "tasks": [
+              {
+                "id": "b103-score-task",
+                "completed": false,
+                "condition": {
+                  "type": "resourceThreshold",
+                  "targetCount": 50,
+                  "currentCount": 23,
+                  "missingCount": 27,
+                  "met": false,
+                  "resource": "score",
+                  "planetId": null,
+                  "color": null,
+                  "traceType": null,
+                  "locationType": null
+                },
+                "rewardDirectScore": 0,
+                "rewardValue": 8.64
+              }
+            ],
+            "endGameScoring": false,
+            "effectTypes": [
+              "card_research_tech"
+            ]
+          },
+          {
+            "id": "card-95-0",
+            "cardId": "b_76.webp",
+            "label": "飞掠水星",
+            "price": 1,
+            "typeCode": 0,
+            "discardActionCode": 0,
+            "scanActionCode": 1,
+            "incomeCode": 1,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": [
+              "card_register_event_bonus",
+              "card_move"
+            ]
+          }
+        ],
+        "reservedCards": [
+          {
+            "id": "card-82-0",
+            "cardId": "dlc_26.png",
+            "label": "新型AI模型",
+            "price": 0,
+            "typeCode": 1,
+            "discardActionCode": 0,
+            "scanActionCode": 2,
+            "incomeCode": 0,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": []
+          },
+          {
+            "id": "card-98-0",
+            "cardId": "b_44.webp",
+            "label": "伽利略号任务",
+            "price": 0,
+            "typeCode": 1,
+            "discardActionCode": 2,
+            "scanActionCode": 1,
+            "incomeCode": 2,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": []
+          },
+          {
+            "id": "card-47-pass-3-3",
+            "cardId": "b_140.webp",
+            "label": "火星轨遒门户",
+            "price": 1,
+            "typeCode": 1,
+            "discardActionCode": 1,
+            "scanActionCode": 2,
+            "incomeCode": 0,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": []
+          }
+        ],
+        "techCount": 2,
+        "techTypeCounts": {
+          "orange": 0,
+          "purple": 0,
+          "blue": 2
+        },
+        "traceTypeCounts": {
+          "yellow": 0,
+          "pink": 1,
+          "blue": 1
+        },
+        "finalMarkCount": 0,
+        "finalFormulas": [],
+        "finalFormulaProgress": {
+          "entries": [],
+          "b2": null
+        },
+        "b2Progress": null,
+        "rocketCount": 0,
+        "passed": true
+      },
+      {
+        "playerId": "player-brown",
+        "playerLabel": "棕色",
+        "companyLabel": "寰宇动力",
+        "color": "brown",
+        "finalScore": 31,
+        "baseScore": 25,
+        "tileScore": 4,
+        "cardScore": 2,
+        "resources": {
+          "score": 25,
+          "credits": 0,
+          "energy": 1,
+          "publicity": 5,
+          "availableData": 0,
+          "handSize": 5
+        },
+        "income": {
+          "credits": 4,
+          "energy": 1,
+          "handSize": 2,
+          "publicity": 0,
+          "availableData": 0,
+          "additionalPublicScan": 0
+        },
+        "completedTaskCount": 1,
+        "reservedCount": 3,
+        "handSize": 5,
+        "handCards": [
+          {
+            "id": "card-12-0",
+            "cardId": "b_42.webp",
+            "label": "聚娈反应堆",
+            "price": 3,
+            "typeCode": 0,
+            "discardActionCode": 0,
+            "scanActionCode": 1,
+            "incomeCode": 1,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": [
+              "card_count_current_income_resource",
+              "card_tuck_played_card_to_income"
+            ]
+          },
+          {
+            "id": "alien-amiba-3-3",
+            "cardId": "amiba_3.webp",
+            "label": "极端条件测试",
+            "price": 0,
+            "typeCode": 0,
+            "discardActionCode": 3,
+            "scanActionCode": 3,
+            "incomeCode": 1,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": [
+              "amiba_remove_trace_for_region_reward"
+            ]
+          },
+          {
+            "id": "card-43-pass-2-4",
+            "cardId": "b_14.webp",
+            "label": "观测巴纳德星",
+            "price": 2,
+            "typeCode": 3,
+            "discardActionCode": 0,
+            "scanActionCode": 2,
+            "incomeCode": 1,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": true,
+            "effectTypes": [
+              "card_scan_nebula",
+              "card_scan_nebula"
+            ]
+          },
+          {
+            "id": "card-45-pass-3-1",
+            "cardId": "b_86.webp",
+            "label": "ala Telescope Constructior",
+            "price": 3,
+            "typeCode": 3,
+            "discardActionCode": 1,
+            "scanActionCode": 1,
+            "incomeCode": 0,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": true,
+            "effectTypes": [
+              "card_research_tech"
+            ]
+          },
+          {
+            "id": "card-85-0",
+            "cardId": "b_73.webp",
+            "label": "飞掠火星",
+            "price": 1,
+            "typeCode": 0,
+            "discardActionCode": 1,
+            "scanActionCode": 0,
+            "incomeCode": 1,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": [
+              "card_register_event_bonus",
+              "card_move"
+            ]
+          }
+        ],
+        "reservedCards": [
+          {
+            "id": "card-61-0",
+            "cardId": "b_81.webp",
+            "label": "近地小行星研究",
+            "price": 2,
+            "typeCode": 2,
+            "discardActionCode": 1,
+            "scanActionCode": 0,
+            "incomeCode": 1,
+            "taskCount": 1,
+            "remainingTaskCount": 1,
+            "tasks": [
+              {
+                "id": "b81-earth-adjacent-asteroid-task",
+                "completed": false,
+                "condition": {
+                  "type": "probeAdjacentEarthAsteroid",
+                  "targetCount": 1,
+                  "currentCount": null,
+                  "missingCount": null,
+                  "met": false,
+                  "resource": null,
+                  "planetId": null,
+                  "color": null,
+                  "traceType": null,
+                  "locationType": null
+                },
+                "rewardDirectScore": 5,
+                "rewardValue": 21.6
+              }
+            ],
+            "endGameScoring": false,
+            "effectTypes": [
+              "gain_resources"
+            ]
+          },
+          {
+            "id": "card-75-0",
+            "cardId": "b_30.webp",
+            "label": "深部地下中微子实验",
+            "price": 3,
+            "typeCode": 3,
+            "discardActionCode": 0,
+            "scanActionCode": 1,
+            "incomeCode": 0,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": true,
+            "effectTypes": [
+              "card_research_tech"
+            ]
+          },
+          {
+            "id": "card-54-0",
+            "cardId": "b_113.webp",
+            "label": "夏洛克光谱仪",
+            "price": 3,
+            "typeCode": 3,
+            "discardActionCode": 2,
+            "scanActionCode": 2,
+            "incomeCode": 1,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": true,
+            "effectTypes": [
+              "card_research_tech"
+            ]
+          }
+        ],
+        "techCount": 3,
+        "techTypeCounts": {
+          "orange": 1,
+          "purple": 0,
+          "blue": 2
+        },
+        "traceTypeCounts": {
+          "yellow": 1,
+          "pink": 0,
+          "blue": 0
+        },
+        "finalMarkCount": 1,
+        "finalFormulas": [
+          "a1"
+        ],
+        "finalFormulaProgress": {
+          "entries": [
+            {
+              "tileId": "a",
+              "variant": 1,
+              "formulaId": "a1",
+              "slotIndex": 2,
+              "multiplier": 4,
+              "threshold": 25,
+              "baseValue": 1,
+              "score": 4
+            }
+          ],
+          "b2": null
+        },
+        "b2Progress": null,
+        "rocketCount": 0,
+        "passed": true
+      },
+      {
+        "playerId": "player-white",
+        "playerLabel": "白色",
+        "companyLabel": "深空探测",
+        "color": "white",
+        "finalScore": 56,
+        "baseScore": 42,
+        "tileScore": 14,
+        "cardScore": 0,
+        "resources": {
+          "score": 42,
+          "credits": 1,
+          "energy": 0,
+          "publicity": 3,
+          "availableData": 0,
+          "handSize": 2
+        },
+        "income": {
+          "credits": 3,
+          "energy": 4,
+          "handSize": 2,
+          "publicity": 0,
+          "availableData": 0,
+          "additionalPublicScan": 1
+        },
+        "completedTaskCount": 0,
+        "reservedCount": 4,
+        "handSize": 2,
+        "handCards": [
+          {
+            "id": "card-73-0",
+            "cardId": "b_107.webp",
+            "label": "土星探测计划",
+            "price": 2,
+            "typeCode": 2,
+            "discardActionCode": 0,
+            "scanActionCode": 2,
+            "incomeCode": 2,
+            "taskCount": 1,
+            "remainingTaskCount": 1,
+            "tasks": [
+              {
+                "id": "b107-saturn-task",
+                "completed": false,
+                "condition": {
+                  "type": "planetOrbitOrLand",
+                  "targetCount": 1,
+                  "currentCount": 0,
+                  "missingCount": 1,
+                  "met": false,
+                  "resource": null,
+                  "planetId": "saturn",
+                  "color": null,
+                  "traceType": null,
+                  "locationType": null
+                },
+                "rewardDirectScore": 4,
+                "rewardValue": 19.04
+              }
+            ],
+            "endGameScoring": false,
+            "effectTypes": [
+              "card_planet_sector_scan",
+              "card_planet_sector_scan"
+            ]
+          },
+          {
+            "id": "card-92-0",
+            "cardId": "b_97.webp",
+            "label": "科学普及",
+            "price": 2,
+            "typeCode": 1,
+            "discardActionCode": 1,
+            "scanActionCode": 1,
+            "incomeCode": 0,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": [
+              "gain_resources"
+            ]
+          }
+        ],
+        "reservedCards": [
+          {
+            "id": "card-17-0",
+            "cardId": "b_127.webp",
+            "label": "天王星轨遒器与探测器",
+            "price": 2,
+            "typeCode": 2,
+            "discardActionCode": 0,
+            "scanActionCode": 1,
+            "incomeCode": 0,
+            "taskCount": 1,
+            "remainingTaskCount": 1,
+            "tasks": [
+              {
+                "id": "b127-uranus-task",
+                "completed": false,
+                "condition": {
+                  "type": "planetOrbitOrLand",
+                  "targetCount": 1,
+                  "currentCount": 0,
+                  "missingCount": 1,
+                  "met": false,
+                  "resource": null,
+                  "planetId": "uranus",
+                  "color": null,
+                  "traceType": null,
+                  "locationType": null
+                },
+                "rewardDirectScore": 3,
+                "rewardValue": 19.49
+              }
+            ],
+            "endGameScoring": false,
+            "effectTypes": [
+              "launch"
+            ]
+          },
+          {
+            "id": "card-36-pass-1-2",
+            "cardId": "b_92.webp",
+            "label": "先驱者11号任务",
+            "price": 0,
+            "typeCode": 1,
+            "discardActionCode": 2,
+            "scanActionCode": 0,
+            "incomeCode": 1,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": false,
+            "effectTypes": []
+          },
+          {
+            "id": "card-79-0",
+            "cardId": "b_85.webp",
+            "label": "ODINUS号任务",
+            "price": 3,
+            "typeCode": 2,
+            "discardActionCode": 1,
+            "scanActionCode": 3,
+            "incomeCode": 1,
+            "taskCount": 1,
+            "remainingTaskCount": 1,
+            "tasks": [
+              {
+                "id": "b85-outer-planets-task",
+                "completed": false,
+                "condition": {
+                  "type": "planetOrbitOrLandAll",
+                  "targetCount": 2,
+                  "currentCount": 0,
+                  "missingCount": 2,
+                  "met": false,
+                  "resource": null,
+                  "planetId": null,
+                  "planetIds": [
+                    "neptune",
+                    "uranus"
+                  ],
+                  "color": null,
+                  "traceType": null,
+                  "locationType": null
+                },
+                "rewardDirectScore": 5,
+                "rewardValue": 25.89
+              }
+            ],
+            "endGameScoring": false,
+            "effectTypes": [
+              "card_research_tech"
+            ]
+          },
+          {
+            "id": "card-48-pass-3-4",
+            "cardId": "b_128.webp",
+            "label": "观测织女星",
+            "price": 1,
+            "typeCode": 3,
+            "discardActionCode": 0,
+            "scanActionCode": 1,
+            "incomeCode": 0,
+            "taskCount": 0,
+            "remainingTaskCount": 0,
+            "tasks": [],
+            "endGameScoring": true,
+            "effectTypes": [
+              "card_scan_nebula"
+            ]
+          }
+        ],
+        "techCount": 5,
+        "techTypeCounts": {
+          "orange": 2,
+          "purple": 0,
+          "blue": 3
+        },
+        "traceTypeCounts": {
+          "yellow": 1,
+          "pink": 0,
+          "blue": 2
+        },
+        "finalMarkCount": 1,
+        "finalFormulas": [
+          "d2"
+        ],
+        "finalFormulaProgress": {
+          "entries": [
+            {
+              "tileId": "d",
+              "variant": 2,
+              "formulaId": "d2",
+              "slotIndex": 1,
+              "multiplier": 7,
+              "threshold": 25,
+              "baseValue": 2,
+              "score": 14
+            }
+          ],
+          "b2": null
+        },
+        "b2Progress": null,
+        "rocketCount": 0,
+        "passed": true
+      }
+    ]
+  },
+  "consoleMessages": []
+}

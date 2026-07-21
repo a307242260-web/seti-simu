@@ -190,15 +190,12 @@ Quick Action 只在同步 Effect 之间的边界插入，不能打断 `effect_ru
 
 阶段 1 的测试文件是 `randomizer/game/effects/session-runtime.test.js`。阶段 2 的测试文件是 `randomizer/game/effects/research-tech-session.test.js`，覆盖旋转后的 workingState 决策、owner、多节点 commit gate、失败回滚、旧队列/continuation 调用为零及浏览器/Node 固定 trace parity。阶段 3 的测试文件是 `randomizer/game/effects/scan-card-session.test.js`，覆盖 SETI-60 Standard Action identity 映射、多次 DecisionEffect、direct/trigger/deferred/原队列稳定顺序、未知 pending/followup fail-closed、固定 journal replay 以及浏览器/Node workingState parity。阶段 4 的测试文件是 `randomizer/game/effects/quick-action-session.test.js`，覆盖普通边界与 awaiting_input、中断当刻 stale、恢复重枚举、过期 choice 无副作用、quick 内 DecisionEffect、嵌套/非法 family/同步 Effect 重入/畸形 group fail-closed、main/quick journal 隔离、旧 executor 调用为零和浏览器/Policy 固定 trace parity。阶段 5 的测试文件是 `randomizer/game/effects/session-journal.test.js`，覆盖屏障前完整恢复、揭示后拒绝伪回滚、屏障后逐 Effect undo、main/quick 单一 history 与 replay cursor、失败 Decision 不入 journal、非零 checkpoint 双 fork RNG/cursor parity，以及 timeout 只暴露已确认 Action。它们是 reference model 的行为证据，不替代后续完整网页 adapter、真实领域状态可达性、训练 checkpoint、完整对局和性能证据。
 
-## 分阶段迁移与冲突边界
+## 当前边界
 
-1. 阶段 0/1（SETI-62 总控）：冻结本契约与 reference core；不改 SETI-56 的 action handler 热路径。
-2. 阶段 2：研究科技贯穿链。Standard Action 仍由 SETI-56 registry 拥有；本阶段只把 rotate→decision→placement→reward continuation 映射为 Effect Group。
-3. 阶段 3：扫描与打牌代表链已落地；SETI-60 conditional Action descriptor 直接作为 DecisionEffect choice/journal identity，nested trigger 和多个 DecisionEffect 已由固定 trace 与 replay 验证。SETI-76 在同一 runtime 上补齐多参与者扫描奖励、延迟隐藏补牌、数据放置与登陆目标/支付链；Browser Host 只提交 inspect choices，scan/data/land 规则 owner 与 continuation 只在 Effect Session 内。
-4. 阶段 4：已统一 Quick Action boundary、interrupt/resume 和所有可中断 decision 的 stale validation；Standard Action quick descriptor 通过单一 coordinator 接入，main/quick journal 可区分。
-5. 阶段 5：已把 main/quick history、RNG/replay、undo 与 irreversible barrier 收口到 reference session journal，并固化 checkpoint/fork 与 confirmed replay cursor；旧浏览器 history 热路径的删除仍属于阶段 6/8 adapter 迁移。
-6. 阶段 6：浏览器 adapter 只负责 dispatch/observe/render，删除对应 DOM continuation。
-7. 阶段 7：headless/training adapter 只负责 Standard Action/Decision 与 observation/reward/replay，删除 policy/resolver drain。
-8. 阶段 8：可到期 inventory 完成迁移期约束后已随旧 pending 容器一并删除；Browser/Headless host 的旧 resolver、inventory 和创建入口引用均为 0。
+- Standard Action registry 拥有 action identity、phase、枚举与校验；Effect Session 只执行已验证 descriptor。
+- 研究科技、扫描、打牌、Quick Action、公司与外星人均使用同一 queue/Decision/journal/commit gate。
+- Browser Host 只 dispatch/observe/render；Headless/Training Host 只处理 Standard Action/Decision、observation、reward、replay 与 checkpoint。
+- main/quick history、RNG/replay、undo、irreversible barrier 与 confirmed replay cursor 均归 Effect Session。
+- 未注册 executor、未知 priority/family、stale Decision 和超限 drain 结构化 fail-closed，不调用 resolver、recover 或 skip fallback。
 
-任何阶段更新矩阵状态时必须同时给出：真实状态构造、Effect/Decision 枚举、执行 trace、旧路径调用为零、失败语义和 replay/checkpoint 证据。只修改 label、删除字段或跑通一条 happy path不能升级为 completed。
+任何机制扩展都必须同时给出真实状态构造、Effect/Decision 枚举、执行 trace、禁止依赖调用为零、失败语义和 replay/checkpoint 证据。只修改 label、删除字段或跑通一条 happy path 不构成完成证据。

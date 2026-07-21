@@ -187,11 +187,11 @@ recovery snapshot v2 和 headless checkpoint 的 `coreState` 只保存 `StateSto
 
 读取路径只接受 v2 并直接反序列化 `committedState`；缺版本、未知版本、损坏 JSON、缺切片或非法序列均在修改 runtime 前拒绝。headless checkpoint 的 replay journal 仍是独立协议：有 journal 时通过 reset+replay 重建 session-owned 决策状态，无 journal的稳定 core checkpoint 经同一 recovery 边界恢复。
 
-## Stage 8 最终收口
+## 当前持久化边界
 
 新 recovery 写路径直接调用 StateStore 生成 v2 `committedState`；`cardTaskState` 与
 `setupSelectionState` 不属于 committed root。inventory 只列正式 owner/source/target，不含过渡字段。
 
 最终 inventory、跨 app/effect/AI/headless/RL/mechanics 的边界说明与机械审计见
-`docs/state-authority-stage8.md`；proof obligations 与验证证据见
-`checkpoint/seti-98-proof-obligations.md`。
+`docs/state-authority-audit.md`；proof obligations 与验证证据见
+`checkpoint/seti-110-proof-obligations.md`。
