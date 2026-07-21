@@ -13,9 +13,8 @@
 
 ## 收口规则
 
-1. 关闭 issue 前读取评论、metadata、验证证据和 `checkpoint/mocha_issue_timeline/<ISSUE>.jsonl`。
-2. 有可复用观察时，在对应分类文件新增或更新一条记录。
-3. `candidate`、`promote`、`reject` 都要在 `promotion_log.md` 写决策契约。
-4. 只有 `promote` 才修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。
-5. 没有值得沉淀的观察时，在 issue 收尾明确写“本 issue 无新增 harness-evolve 经验”。
-
+1. 普通 issue 关单使用 fast closeout：读当前 metadata、owner/member 相关评论、timeline 尾部与验证证据，不整库读取 experience store。
+2. 无新信号时，收尾明确写“本 issue 无新增 harness-evolve 经验”，不改仓库文档。
+3. 有可复用观察但无需立即修改长期组件时，用 `tools/record_harness_closeout_event.py` 追加轻量 JSONL，由定期 review 集中去重和决定 candidate/reject/promote。
+4. 只有需要立即 promotion 或正在执行定期 review 时，才读对应 category 命中段和 `promotion_log.md` 命中段、更新经验文档并写完整决策契约。
+5. 只有 `promote` 才修改 agent prompt、loop template、watcher、issue-workflow 或项目记忆。

@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-21
+- source: SETI-97 关单 run `710242be-8454-434e-94c7-e1d9f55aac61` 及 owner 对轻量化方案 1–4 的明确确认
+- promoted_to: loop_template
+- promotion_decision: promote
+- target_agent: 领航及负责 SETI 父 issue 收口的 agent
+- target_component: SETI harness-evolve fast closeout、issue-workflow 收工边界与领航收口职责
+- target_file: Mocha skill `fcad7ca1-2ce5-4d00-b298-fb72ae6d0841`；Mocha skill `6e816de3-7377-4f99-9a49-96473a47d039`；agent `13e5c469-264f-4a3c-837d-2cbc26bbba19`；tools/record_harness_closeout_event.py；docs/mocha_experience/README.md；docs/mocha_experience/harness_evolve_contract_20260708.md；docs/mocha_experience/coordination.md
+- remote_skill_id: fcad7ca1-2ce5-4d00-b298-fb72ae6d0841, 6e816de3-7377-4f99-9a49-96473a47d039
+- change: 将普通关单从“重跑子项全量验收 + 整库读写经验文档”改为“复用未漂移的子项证据 + 只验跨子项风险 + 轻量信号延后沉淀”。
+- applied_change: 新增 dated JSONL closeout event writer；更新 SETI 远程 harness-evolve 的分层读取、证据复用、升级条件和 deferred_review 流程；同步 issue-workflow 与领航职责，避免旧规则覆盖 fast closeout。
+- expected_effect: 证据完整的总控关单不再因重复全量测试和经验文档提交阻塞，同时保留验收可追溯、代码漂移检查和定期经验升级能力。
+- evaluation_window: 后续 10 个 SETI issue closeout，其中至少 2 个含子 issue 的总控
+- success_signal: 快速收口不整份读取 category/promotion log；未漂移证据不重跑同一全量/Chrome；有观察但无立即 promotion 时只落 JSONL；证据冲突或代码漂移仍能升级完整复验。
+- rollback_condition: 快速收口在 10 个 issue 内漏过任一真实代码回归、证据无法追溯，或 deferred event 未被定期 review 消费，则先恢复受影响类型的完整复验；不恢复无条件整库读取。
+- risk: 生产文件漂移判定不完整可能错误复用旧证据；JSONL 只落 checkpoint 若无定期 review 会堆积。因此保留矛盾/漂移/组合失败升级门禁和证据 commit 强制字段。
+- evidence_before: SETI-97 run 约 15 分 34 秒，实际 Headless 3 局只用 6.2 秒；SETI-99 已提供 Node/Headless/Chrome/零兼容证据，父 run 仍读取整套 skill、经验库和 proof，重跑验收并为一次并发拆单观察写 32 行经验提交。
+- owner_or_agent_decision: owner 明确认可证据复用、只验组合风险、harness 同步/异步分层和按命中读取 1–4 项，并要求修改 SETI harness skill 试运行。
+- applied_at: 2026-07-21
+- verification: skill-creator `quick_validate.py` 通过；event writer `py_compile`、dry-run 和 `/tmp` 实写/JSON 回读通过；远程 harness-evolve/issue-workflow/agent 分别 updated_at=2026-07-21T07:01:17Z。一次性只读 autopilot run `5b09f0bc-8a15-446f-aeb7-5f2f62960fe2` completed、failure_reason=null，未跑任何测试、未修改 issue/文件、未 commit/push；它仅读 timeline 尾部、proof 验证段和 rg 命中条目，并因 `90bd303` 改动 SETI-100 曾修改的 `initial-card-pending.js`、固定轨迹基线变化及 167/168 计数矛盾，正确输出 `full_revalidation: yes`。一次性 autopilot 已删除。
+- observed_outcome: fast closeout 把该回收审计从约 15 分 34 秒降到 2 分 15 秒，且未为提速跳过安全门禁；证据漂移与矛盾被正确识别为需完整复验。
+- keep_or_revise: 试运行后保留；按 10 个 closeout 窗口检查漂移识别、关单耗时与 deferred event 消费。
+
+- date: 2026-07-21
 - source: SETI-105；owner 在聊天中直接要求记录 `https://seti.ender-wiggin.com/zh-CN`，并说明其包含 SETI 卡牌、公司和起始卡内容
 - promoted_to: project_memory
 - promotion_decision: promote

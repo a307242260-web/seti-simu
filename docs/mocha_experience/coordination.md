@@ -12,6 +12,16 @@
 - promotion_status:
 - decision:
 
+## 2026-07-21：总控关单复用子项证据并延后经验沉淀
+
+- date: 2026-07-21
+- source_issue: SETI-97 关单 run 与 owner 后续反馈
+- observation: 总控已有完整子 issue 证据时，重跑同一全量测试和同步读写整个 experience store 不会提高验收强度，反而让业务收口被复盘流程阻塞。
+- evidence: SETI-97 run 约 15 分 34 秒，其中 Node 167/167 与 3 局 Headless 核心复验已通过，Headless 仅用 6.2 秒；主要步骤是读取 skill、整份经验库、timeline/三阶段 proof，随后写两份经验文档、commit 和 push。只读前向试运行 `5b09f0bc-8a15-446f-aeb7-5f2f62960fe2` 约 2 分 15 秒，未跑测试或修改状态，仍正确发现 SETI-104 改动了已验收 Policy 相关生产文件且 167/168 计数矛盾，因而升级完整复验。
+- promote_to: loop_template
+- promotion_status: promote
+- decision: 总控默认执行 fast closeout：复用完整且代码未漂移的子项证据，只跑组合风险检查；经验信号先落轻量 JSONL，由定期 review 集中去重与写决策契约。证据缺失、矛盾、相关生产文件变更或组合检查失败时仍升级完整复验。
+
 ## 2026-07-21：并发总控拆单在创建前后都要做 sibling 去重
 
 - date: 2026-07-21
