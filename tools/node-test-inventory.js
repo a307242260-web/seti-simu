@@ -40,6 +40,7 @@ randomizer/app/browser-host/decision-ui.test.js
 randomizer/app/browser-host/industry-alien-decision-ui.test.js
 randomizer/app/browser-host/resident-renderer.test.js
 randomizer/app/browser-host/scan-data-land-session.test.js
+randomizer/app/browser-rule-composition.test.js
 randomizer/app/browser-state-authority.test.js
 randomizer/app/card-runtime.test.js
 randomizer/app/card-trigger-runtime.test.js
