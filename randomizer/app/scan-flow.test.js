@@ -41,6 +41,15 @@ function createBaseHarness() {
   };
   const decisionSessions = createDecisionSessionStore();
   attachDecisionState(pendingState, decisionSessions);
+  const workingRoot = {
+    alienGameState: {},
+    cardState,
+    nebulaDataState: {},
+    playerState: { currentPlayerId: "p1", players: [player] },
+    rocketState,
+    solarState: { aomomoActive: false, sectorBySlot: {} },
+    turnState: { roundNumber: 1, turnNumber: 1 },
+  };
 
   const helpers = createScanFlowHelpers({
     decisionSessions,
@@ -197,6 +206,7 @@ function createBaseHarness() {
     rocketState,
     player,
     decisionSessions,
+    workingRoot,
   };
 }
 
@@ -214,8 +224,8 @@ function createBaseHarness() {
 }
 
 {
-  const { helpers } = createBaseHarness();
-  const effects = helpers.buildScanFinalizeFollowupEffects("run-1");
+  const { helpers, workingRoot } = createBaseHarness();
+  const effects = helpers.buildScanFinalizeFollowupEffects(workingRoot, "run-1");
   assert.equal(effects.length, 1);
   assert.equal(effects[0].type, "sector_finish_scan");
   assert.equal(effects[0].playerId, "p1");
@@ -223,10 +233,10 @@ function createBaseHarness() {
 }
 
 {
-  const { helpers, pendingState, cardState, rocketState, calls } = createBaseHarness();
+  const { helpers, pendingState, cardState, rocketState, calls, workingRoot } = createBaseHarness();
   pendingState.cardSelectionAction = { type: "public_scan", maxSelectable: 1 };
   cardState.publicCards = [{ id: "pub-1", cardName: "Public 1" }];
-  const result = helpers.handlePublicScanCardClick(0);
+  const result = helpers.handlePublicScanCardClick(workingRoot, 0);
   assert.equal(result.ok, true);
   assert.equal(pendingState.cardSelectionAction, null);
   assert.equal(calls.cardSync, 1);
@@ -235,7 +245,7 @@ function createBaseHarness() {
 }
 
 {
-  const { helpers, pendingState, cardState, player, rocketState, calls, decisionSessions } = createBaseHarness();
+  const { helpers, pendingState, cardState, player, rocketState, calls, decisionSessions, workingRoot } = createBaseHarness();
   pendingState.cardSelectionAction = {
     type: "public_scan",
     selectedSlots: [0, 1],
@@ -249,7 +259,7 @@ function createBaseHarness() {
     { id: "pub-1", cardName: "Public 1" },
     { id: "pub-2", cardName: "Public 2" },
   ];
-  const result = helpers.confirmPublicScanSelection();
+  const result = helpers.confirmPublicScanSelection(workingRoot);
   assert.equal(result.ok, true);
   assert.equal(calls.discardPublic.length, 2);
   assert.equal(decisionSessions.peek("public_scan_queue").items.length, 2);
@@ -259,25 +269,25 @@ function createBaseHarness() {
 }
 
 {
-  const { helpers, pendingState, player, rocketState, calls } = createBaseHarness();
+  const { helpers, pendingState, player, rocketState, calls, workingRoot } = createBaseHarness();
   player.hand = [{ id: "hand-1", cardName: "Hand 1" }];
-  const begin = helpers.beginHandScan();
+  const begin = helpers.beginHandScan(workingRoot);
   assert.equal(begin.ok, true);
   assert.equal(pendingState.handScanAction.type, "hand_scan");
   assert.equal(calls.handSync, 1);
   assert.match(rocketState.statusNote, /请选择一张手牌/);
 
-  helpers.cancelHandScanSelection();
+  helpers.cancelHandScanSelection(workingRoot);
   assert.equal(pendingState.handScanAction, null);
   assert.equal(calls.handSync, 2);
   assert.match(rocketState.statusNote, /已取消手牌扫描/);
 }
 
 {
-  const { helpers, pendingState, player, rocketState, calls } = createBaseHarness();
+  const { helpers, pendingState, player, rocketState, calls, workingRoot } = createBaseHarness();
   player.hand = [{ id: "hand-1", cardName: "Hand 1" }];
   pendingState.handScanAction = { type: "hand_scan", player };
-  const result = helpers.handleHandScanCardClick(0);
+  const result = helpers.handleHandScanCardClick(workingRoot, 0);
   assert.equal(result.ok, true);
   assert.equal(pendingState.handScanAction, null);
   assert.equal(calls.picker.length, 1);
@@ -312,6 +322,30 @@ function createBaseHarness() {
   assert.deepEqual(boundPlayer, beforeBoundPlayer, "生产 scan 不得写入闭包绑定玩家");
   assert.deepEqual(boundCardState, beforeBoundCardState, "生产 scan 不得写入闭包绑定 cardState");
   assert.deepEqual(boundRocketState, beforeBoundRocketState, "生产 scan 不得写入闭包绑定 rocketState");
+}
+
+{
+  const { helpers } = createBaseHarness();
+  assert.throws(
+    () => helpers.handlePublicScanCardClick(undefined, 0),
+    /explicit workingRoot/,
+    "stateful scan operation 缺 root 必须立即失败",
+  );
+}
+
+{
+  const { helpers, cardState: boundCardState, rocketState: boundRocketState, workingRoot } = createBaseHarness();
+  const beforeBoundCardState = structuredClone(boundCardState);
+  const beforeBoundRocketState = structuredClone(boundRocketState);
+  const isolatedRoot = structuredClone(workingRoot);
+  isolatedRoot.cardState.publicCards = [{ id: "isolated-card", cardName: "Isolated" }];
+
+  const result = helpers.handlePublicScanCardClick(isolatedRoot, 0);
+
+  assert.equal(result.ok, true);
+  assert.match(isolatedRoot.rocketState.statusNote, /Isolated/);
+  assert.deepEqual(boundCardState, beforeBoundCardState, "隔离 root 操作不得读取或写入绑定 cardState");
+  assert.deepEqual(boundRocketState, beforeBoundRocketState, "隔离 root 操作不得写入绑定 rocketState");
 }
 
 console.log("scan-flow tests passed");

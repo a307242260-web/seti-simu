@@ -1782,12 +1782,6 @@
     decisionSessions,
     document,
     structuredClone,
-    cardState,
-    nebulaDataState,
-    alienGameState,
-    solarState,
-    rocketState,
-    playerState,
     els,
     PUBLIC_SCAN_MAX_BONUS_CARDS,
     SECTOR_FINISH_ICON_BY_COLOR,
@@ -1939,6 +1933,51 @@
     cancelHandScanSelection,
     handleHandScanCardClick,
   } = scanFlowHelpers);
+  getPublicScanMaxSelectable = (...args) => scanFlowHelpers.getPublicScanMaxSelectable(browserRuleState, ...args);
+  buildReadySectorFinishEffects = (...args) => scanFlowHelpers.buildReadySectorFinishEffects(browserRuleState, ...args);
+  buildScanFinalizeFollowupEffects = (...args) => scanFlowHelpers.buildScanFinalizeFollowupEffects(browserRuleState, ...args);
+  replaceNebulaDataForCurrentPlayer = (...args) => scanFlowHelpers.replaceNebulaDataForCurrentPlayer(browserRuleState, ...args);
+  getSectorFinishWinnerTarget = (...args) => scanFlowHelpers.getSectorFinishWinnerTarget(browserRuleState, ...args);
+  executeScanActionFinalizeEffect = (...args) => scanFlowHelpers.executeScanActionFinalizeEffect(browserRuleState, ...args);
+  executeSectorFinishScanEffect = (...args) => scanFlowHelpers.executeSectorFinishScanEffect(browserRuleState, ...args);
+  replenishDelayedPublicRefillSlots = (...args) => scanFlowHelpers.replenishDelayedPublicRefillSlots(browserRuleState, ...args);
+  executeScanPublicRefillEffect = (...args) => scanFlowHelpers.executeScanPublicRefillEffect(browserRuleState, ...args);
+  settleDelayedPublicRefillsAfterScanFlow = (...args) => scanFlowHelpers.settleDelayedPublicRefillsAfterScanFlow(browserRuleState, ...args);
+  buildEndOfFlowFollowupEffects = (...args) => scanFlowHelpers.buildEndOfFlowFollowupEffects(browserRuleState, ...args);
+  shouldAppendQueuedSectorFinishEffects = (...args) => scanFlowHelpers.shouldAppendQueuedSectorFinishEffects(browserRuleState, ...args);
+  appendEndOfFlowSectorFinishEffects = (...args) => scanFlowHelpers.appendEndOfFlowSectorFinishEffects(browserRuleState, ...args);
+  discardPublicScanCard = (...args) => scanFlowHelpers.discardPublicScanCard(browserRuleState, ...args);
+  discardHandScanCard = (...args) => scanFlowHelpers.discardHandScanCard(browserRuleState, ...args);
+  finalizeScanSourceCard = (...args) => scanFlowHelpers.finalizeScanSourceCard(browserRuleState, ...args);
+  restoreYichangdianCornerPickerIfPending = (...args) => scanFlowHelpers.restoreYichangdianCornerPickerIfPending(browserRuleState, ...args);
+  closeScanTargetPicker = (...args) => scanFlowHelpers.closeScanTargetPicker(browserRuleState, ...args);
+  nebulaHasScannableData = (...args) => scanFlowHelpers.nebulaHasScannableData(browserRuleState, ...args);
+  buildNebulaScanChoice = (...args) => scanFlowHelpers.buildNebulaScanChoice(browserRuleState, ...args);
+  isAomomoActive = (...args) => scanFlowHelpers.isAomomoActive(browserRuleState, ...args);
+  getAomomoPlanetLocation = (...args) => scanFlowHelpers.getAomomoPlanetLocation(browserRuleState, ...args);
+  getAomomoCurrentX = (...args) => scanFlowHelpers.getAomomoCurrentX(browserRuleState, ...args);
+  getNebulaCurrentX = (...args) => scanFlowHelpers.getNebulaCurrentX(browserRuleState, ...args);
+  getSectorScanTargetLabel = (...args) => scanFlowHelpers.getSectorScanTargetLabel(browserRuleState, ...args);
+  buildAomomoScanChoiceForX = (...args) => scanFlowHelpers.buildAomomoScanChoiceForX(browserRuleState, ...args);
+  hasAomomoScanAtX = (...args) => scanFlowHelpers.hasAomomoScanAtX(browserRuleState, ...args);
+  buildSectorScanChoicesForX = (...args) => scanFlowHelpers.buildSectorScanChoicesForX(browserRuleState, ...args);
+  expandScanChoicesWithAomomoTargets = (...args) => scanFlowHelpers.expandScanChoicesWithAomomoTargets(browserRuleState, ...args);
+  confirmScanTarget = (...args) => scanFlowHelpers.confirmScanTarget(browserRuleState, ...args);
+  handleDrawnHandScanSkip = (...args) => scanFlowHelpers.handleDrawnHandScanSkip(browserRuleState, ...args);
+  beginSectorScan = (...args) => scanFlowHelpers.beginSectorScan(browserRuleState, ...args);
+  getSectorOpenDataCount = (...args) => scanFlowHelpers.getSectorOpenDataCount(browserRuleState, ...args);
+  getSectorReplacedCount = (...args) => scanFlowHelpers.getSectorReplacedCount(browserRuleState, ...args);
+  getSectorExtraMarkCount = (...args) => scanFlowHelpers.getSectorExtraMarkCount(browserRuleState, ...args);
+  getPublicScanChoicesForCard = (...args) => scanFlowHelpers.getPublicScanChoicesForCard(browserRuleState, ...args);
+  hasHandScanTargetCard = (...args) => scanFlowHelpers.hasHandScanTargetCard(browserRuleState, ...args);
+  createPublicScanPendingAction = (...args) => scanFlowHelpers.createPublicScanPendingAction(browserRuleState, ...args);
+  beginPublicDeckScan = (...args) => scanFlowHelpers.beginPublicDeckScan(browserRuleState, ...args);
+  beginPublicScanForSingleCard = (...args) => scanFlowHelpers.beginPublicScanForSingleCard(browserRuleState, ...args);
+  confirmPublicScanSelection = (...args) => scanFlowHelpers.confirmPublicScanSelection(browserRuleState, ...args);
+  handlePublicScanCardClick = (...args) => scanFlowHelpers.handlePublicScanCardClick(browserRuleState, ...args);
+  beginHandScan = (...args) => scanFlowHelpers.beginHandScan(browserRuleState, ...args);
+  cancelHandScanSelection = (...args) => scanFlowHelpers.cancelHandScanSelection(browserRuleState, ...args);
+  handleHandScanCardClick = (...args) => scanFlowHelpers.handleHandScanCardClick(browserRuleState, ...args);
   const incomeRuntime = incomeRuntimeModule.createIncomeRuntime({
     INCOME_GAIN_LABELS,
     players,

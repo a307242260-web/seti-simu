@@ -48,12 +48,6 @@
     const decisionSessions = context.decisionSessions;
     const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
     const getPublicScanQueue = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
-    const cardState = context.cardState || {};
-    const nebulaDataState = context.nebulaDataState || {};
-    const alienGameState = context.alienGameState || {};
-    const solarState = context.solarState || {};
-    const rocketState = context.rocketState || {};
-    const playerState = context.playerState || {};
     const els = context.els || {};
 
     const PUBLIC_SCAN_MAX_BONUS_CARDS = Number(context.PUBLIC_SCAN_MAX_BONUS_CARDS || 0);
@@ -168,11 +162,19 @@
     );
     const beginCardSelection = requireFunction("beginCardSelection", context.beginCardSelection);
 
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("scan-flow operation requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
+
     function getCardLabel(card) {
       return typeof cards.getCardLabel === "function" ? cards.getCardLabel(card) : String(card?.cardName || card?.id || "");
     }
 
-    function setSelectionActive(active) {
+    function setSelectionActive(workingRoot, active) {
+      const { cardState } = requireWorkingRoot(workingRoot);
       if (typeof cards.setSelectionActive === "function") {
         cards.setSelectionActive(cardState, active);
       }
@@ -185,7 +187,8 @@
       );
     }
 
-    function getPublicScanMaxSelectable(player) {
+    function getPublicScanMaxSelectable(workingRoot, player) {
+      const { cardState } = requireWorkingRoot(workingRoot);
       const filledSlots = (cardState.publicCards || []).filter(Boolean).length;
       return Math.min(1 + getPublicScanBonusSelectableCount(player), 3, filledSlots);
     }
@@ -255,7 +258,8 @@
       return SECTOR_FINISH_ICON_BY_COLOR[data.getNebulaColor?.(sectorId)] || "sector_finish_scan";
     }
 
-    function getSectorFinishWinnerTarget(sectorId) {
+    function getSectorFinishWinnerTarget(workingRoot, sectorId) {
+      const { nebulaDataState } = requireWorkingRoot(workingRoot);
       if (!sectorId || sectorId === aomomo?.NEBULA_ID) return null;
       const winner = data.getSectorRanking?.(nebulaDataState, sectorId)
         ?.find((entry) => Number(entry?.count) > 0) || null;
@@ -275,7 +279,8 @@
       };
     }
 
-    function buildReadySectorFinishEffects(options = {}) {
+    function buildReadySectorFinishEffects(workingRoot, options = {}) {
+      const { nebulaDataState } = requireWorkingRoot(workingRoot);
       const sectorFilter = options.nebulaIds
         ? new Set([...options.nebulaIds].map((sectorId) => String(sectorId)))
         : null;
@@ -283,7 +288,7 @@
         .filter((sectorId) => (!sectorFilter || sectorFilter.has(String(sectorId))))
         .filter((sectorId) => data.isSectorReadyToSettle(nebulaDataState, sectorId))
         .map((sectorId) => {
-          const target = getSectorFinishWinnerTarget(sectorId);
+          const target = getSectorFinishWinnerTarget(workingRoot, sectorId);
           return {
             type: scanEffects.EFFECT_TYPES.SECTOR_FINISH_SCAN,
             playerId: target?.playerId || null,
@@ -403,9 +408,9 @@
       return effects;
     }
 
-    function buildScanFinalizeFollowupEffects(_scanRunId, flow = decisionState.actionEffectFlow) {
+    function buildScanFinalizeFollowupEffects(workingRoot, _scanRunId, flow = decisionState.actionEffectFlow) {
       return [
-        ...buildReadySectorFinishEffects({ nebulaIds: getFlowMarkedNebulaIds(flow) }),
+        ...buildReadySectorFinishEffects(workingRoot, { nebulaIds: getFlowMarkedNebulaIds(flow) }),
       ];
     }
 
@@ -431,11 +436,12 @@
       return (flow.effects || []).some(isScanRelatedEffect);
     }
 
-    function beginPublicScanForSingleCard(index, card, optionsOrFromEffectFlow = false) {
+    function beginPublicScanForSingleCard(workingRoot, index, card, optionsOrFromEffectFlow = false) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const options = typeof optionsOrFromEffectFlow === "object"
         ? optionsOrFromEffectFlow
         : { fromEffectFlow: Boolean(optionsOrFromEffectFlow) };
-      const scanChoices = getPublicScanChoicesForCard(card);
+      const scanChoices = getPublicScanChoicesForCard(workingRoot, card);
       if (!scanChoices.ok) {
         rocketState.statusNote = scanChoices.message;
         renderStateReadout();
@@ -443,7 +449,7 @@
       }
 
       decisionState.cardSelectionAction = null;
-      setSelectionActive(false);
+      setSelectionActive(workingRoot, false);
       syncCardSelectionChrome();
       rocketState.statusNote = `公共牌区扫描：${getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
       renderStateReadout();
@@ -487,7 +493,8 @@
       });
     }
 
-    function confirmPublicScanSelection() {
+    function confirmPublicScanSelection(workingRoot) {
+      const { cardState, rocketState } = requireWorkingRoot(workingRoot);
       const pending = decisionState.cardSelectionAction;
       if (pending?.type !== "public_scan") {
         return { ok: false, message: "当前不是公共牌区扫描" };
@@ -512,7 +519,7 @@
           renderStateReadout();
           return { ok: false, message: rocketState.statusNote };
         }
-        const scanChoices = getPublicScanChoicesForCard(card);
+        const scanChoices = getPublicScanChoicesForCard(workingRoot, card);
         if (!scanChoices.ok) {
           rocketState.statusNote = scanChoices.message;
           renderStateReadout();
@@ -531,7 +538,7 @@
 
       const fromEffectFlow = Boolean(pending.fromEffectFlow || decisionState.actionEffectFlow);
       decisionState.cardSelectionAction = null;
-      setSelectionActive(false);
+      setSelectionActive(workingRoot, false);
       syncCardSelectionChrome();
 
       if (fromEffectFlow) {
@@ -552,7 +559,7 @@
       for (const slotIndex of discardOrder) {
         const item = items.find((entry) => entry.publicSlotIndex === slotIndex);
         if (!item) continue;
-        discardPublicScanCard({
+        discardPublicScanCard(workingRoot, {
           card: item.card,
           publicSlotIndex: slotIndex,
           scanRunId: pending.scanRunId || null,
@@ -576,7 +583,8 @@
       return openPublicScanNebulaPickerForCurrentQueueItem();
     }
 
-    function handlePublicScanCardClick(slotIndex) {
+    function handlePublicScanCardClick(workingRoot, slotIndex) {
+      const { cardState, rocketState } = requireWorkingRoot(workingRoot);
       const index = Number(slotIndex);
       const card = cardState.publicCards[index];
       if (!card) {
@@ -590,7 +598,7 @@
       const fromEffectFlow = Boolean(pending?.fromEffectFlow || decisionState.actionEffectFlow);
 
       if (maxSelectable <= 1) {
-        return beginPublicScanForSingleCard(index, card, {
+        return beginPublicScanForSingleCard(workingRoot, index, card, {
           fromEffectFlow,
           scanRunId: pending?.scanRunId || null,
           deferPublicRefill: Boolean(pending?.deferPublicRefill),
@@ -606,7 +614,7 @@
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       } else {
-        const scanChoices = getPublicScanChoicesForCard(card);
+        const scanChoices = getPublicScanChoicesForCard(workingRoot, card);
         if (!scanChoices.ok) {
           rocketState.statusNote = scanChoices.message;
           renderStateReadout();
@@ -627,7 +635,8 @@
       return { ok: true, message: rocketState.statusNote };
     }
 
-    function beginHandScan() {
+    function beginHandScan(workingRoot) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (isTechTilePickingActive()) {
         rocketState.statusNote = "请先完成科技选择";
         renderStateReadout();
@@ -669,7 +678,8 @@
       return { ok: true, message: rocketState.statusNote };
     }
 
-    function cancelHandScanSelection() {
+    function cancelHandScanSelection(workingRoot) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!isHandScanSelectionActive()) return;
       decisionState.handScanAction = null;
       rocketState.statusNote = "已取消手牌扫描";
@@ -678,7 +688,8 @@
       renderStateReadout();
     }
 
-    function handleHandScanCardClick(handIndex) {
+    function handleHandScanCardClick(workingRoot, handIndex) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!isHandScanSelectionActive()) return;
 
       const fromEffectFlow = Boolean(decisionState.handScanAction?.fromEffectFlow || decisionState.actionEffectFlow);
@@ -691,7 +702,7 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const scanChoices = getPublicScanChoicesForCard(card);
+      const scanChoices = getPublicScanChoicesForCard(workingRoot, card);
       if (!scanChoices.ok) {
         rocketState.statusNote = scanChoices.message;
         renderStateReadout();
@@ -720,7 +731,8 @@
       return /没有可替换的数据|已没有未替换的数据/.test(String(message || ""));
     }
 
-    function replaceNebulaDataForCurrentPlayer(nebulaId, options = {}) {
+    function replaceNebulaDataForCurrentPlayer(workingRoot, nebulaId, options = {}) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const currentPlayer = getCurrentPlayer();
       const cost = normalizeResourceCost(options.cost) || {};
       const hasCost = Object.keys(cost).length > 0;
@@ -743,7 +755,7 @@
         }
       }
 
-      const result = abilities.executeAbility("scanSector", createActionContext(), {
+      const result = abilities.executeAbility("scanSector", createActionContext(workingRoot), {
         ...options,
         nebulaId,
       });
@@ -853,9 +865,10 @@
       return abilityId.includes("scan");
     }
 
-    function executeScanActionFinalizeEffect(effect) {
+    function executeScanActionFinalizeEffect(workingRoot, effect) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const scanRunId = effect.options?.scanRunId || decisionState.actionEffectFlow?.scanRunId || null;
-      const followups = buildScanFinalizeFollowupEffects(scanRunId, decisionState.actionEffectFlow);
+      const followups = buildScanFinalizeFollowupEffects(workingRoot, scanRunId, decisionState.actionEffectFlow);
       if (followups.length) {
         insertActionEffectsAfterCurrent(followups);
       }
@@ -873,7 +886,8 @@
       return effect.result;
     }
 
-    function executeSectorFinishScanEffect(effect) {
+    function executeSectorFinishScanEffect(workingRoot, effect) {
+      const { alienGameState, nebulaDataState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const sectorId = effect.options?.sectorId;
       if (!sectorId) {
         rocketState.statusNote = "完成扇区缺少扇区ID";
@@ -979,7 +993,8 @@
         .sort((a, b) => a - b);
     }
 
-    function replenishDelayedPublicRefillSlots(scanRunId, slots, options = {}) {
+    function replenishDelayedPublicRefillSlots(workingRoot, scanRunId, slots, options = {}) {
+      const { cardState, playerState } = requireWorkingRoot(workingRoot);
       const flow = options.flow || decisionState.actionEffectFlow;
       const slotIndexes = normalizeDelayedPublicRefillSlotIndexes(slots);
       if (!slotIndexes.length) {
@@ -1024,9 +1039,10 @@
       };
     }
 
-    function executeScanPublicRefillEffect(effect) {
+    function executeScanPublicRefillEffect(workingRoot, effect) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const scanRunId = effect.options?.scanRunId || null;
-      const result = replenishDelayedPublicRefillSlots(scanRunId, effect.options?.slots || [], {
+      const result = replenishDelayedPublicRefillSlots(workingRoot, scanRunId, effect.options?.slots || [], {
         label: effect.label,
       });
       if (!normalizeDelayedPublicRefillSlotIndexes(effect.options?.slots || []).length) {
@@ -1039,7 +1055,8 @@
       return finishAutomaticRewardEffect(effect, result);
     }
 
-    function settleDelayedPublicRefillsAfterScanFlow(flow) {
+    function settleDelayedPublicRefillsAfterScanFlow(workingRoot, flow) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const scanRunId = flow?.scanRunId || null;
       const slots = getDelayedPublicRefillSlots(scanRunId, flow);
       if (!slots.length) {
@@ -1050,7 +1067,7 @@
         label: "补充公共牌区",
         undoable: false,
       };
-      const result = replenishDelayedPublicRefillSlots(scanRunId, slots, {
+      const result = replenishDelayedPublicRefillSlots(workingRoot, scanRunId, slots, {
         flow,
         label: syntheticEffect.label,
         effectIndex: null,
@@ -1063,16 +1080,16 @@
       return result;
     }
 
-    function buildEndOfFlowFollowupEffects(flow) {
+    function buildEndOfFlowFollowupEffects(workingRoot, flow) {
       if (!flow || flow.actionType === "initialIncome") return [];
       const effects = [];
       const markedNebulaIds = getFlowMarkedNebulaIds(flow);
       if (markedNebulaIds.size) {
-        effects.push(...buildReadySectorFinishEffects({ nebulaIds: markedNebulaIds }));
+        effects.push(...buildReadySectorFinishEffects(workingRoot, { nebulaIds: markedNebulaIds }));
       }
       if (isScanRelatedEffectFlow(flow)) {
         const queuedSectorIds = new Set(effects.map((effect) => String(effect.options?.sectorId || "")));
-        for (const effect of buildReadySectorFinishEffects()) {
+        for (const effect of buildReadySectorFinishEffects(workingRoot)) {
           const sectorId = String(effect.options?.sectorId || "");
           if (queuedSectorIds.has(sectorId)) continue;
           queuedSectorIds.add(sectorId);
@@ -1082,9 +1099,9 @@
       return effects;
     }
 
-    function shouldAppendQueuedSectorFinishEffects(flow) {
+    function shouldAppendQueuedSectorFinishEffects(workingRoot, flow) {
       if (!flow?.completed || flow.endOfFlowSettlementScheduled) return false;
-      return buildEndOfFlowFollowupEffects(flow).length > 0;
+      return buildEndOfFlowFollowupEffects(workingRoot, flow).length > 0;
     }
 
     function createEndOfFlowInsertionSource(flow) {
@@ -1126,9 +1143,9 @@
       return removed;
     }
 
-    function appendEndOfFlowSectorFinishEffects(flow) {
-      if (!shouldAppendQueuedSectorFinishEffects(flow)) return false;
-      const effects = buildEndOfFlowFollowupEffects(flow);
+    function appendEndOfFlowSectorFinishEffects(workingRoot, flow) {
+      if (!shouldAppendQueuedSectorFinishEffects(workingRoot, flow)) return false;
+      const effects = buildEndOfFlowFollowupEffects(workingRoot, flow);
       if (!effects.length) return false;
       flow.endOfFlowSettlementScheduled = true;
       flow.completed = false;
@@ -1175,7 +1192,8 @@
       return true;
     }
 
-    function discardPublicScanCard(pending) {
+    function discardPublicScanCard(workingRoot, pending) {
+      const { cardState, playerState } = requireWorkingRoot(workingRoot);
       if (discardPublicScanCardOverride) return discardPublicScanCardOverride(pending);
       const slotIndex = Number(pending?.publicSlotIndex);
       const card = pending?.card;
@@ -1219,7 +1237,8 @@
       };
     }
 
-    function discardHandScanCard(pending) {
+    function discardHandScanCard(workingRoot, pending) {
+      const { cardState } = requireWorkingRoot(workingRoot);
       const player = pending?.player || getCurrentPlayer();
       const handIndex = Number(pending?.handIndex);
       const card = pending?.card;
@@ -1249,14 +1268,15 @@
       };
     }
 
-    function finalizeScanSourceCard(pending, scanResult) {
+    function finalizeScanSourceCard(workingRoot, pending, scanResult) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!scanResult?.ok) return scanResult;
 
       let discardResult = null;
       if (pending?.type === "public_scan") {
-        discardResult = discardPublicScanCard(pending);
+        discardResult = discardPublicScanCard(workingRoot, pending);
       } else if (pending?.type === "hand_scan") {
-        discardResult = discardHandScanCard(pending);
+        discardResult = discardHandScanCard(workingRoot, pending);
       }
 
       if (discardResult?.ok) {
@@ -1277,7 +1297,8 @@
       return scanResult;
     }
 
-    function restoreYichangdianCornerPickerIfPending() {
+    function restoreYichangdianCornerPickerIfPending(workingRoot) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!decisionSessions.peek("yichangdian_corner_action")) return false;
       const result = openYichangdianCornerPicker();
       if (!result?.ok) {
@@ -1293,7 +1314,8 @@
       if (layoutClass) els.scanTargetActions.classList.add(layoutClass);
     }
 
-    function closeScanTargetPicker(options = {}) {
+    function closeScanTargetPicker(workingRoot, options = {}) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!els.scanTargetOverlay) {
         if (getPublicScanQueue() && !options.forcePublicScanQueueClose) return;
         if (options.forcePublicScanQueueClose) decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
@@ -1312,7 +1334,7 @@
         return;
         }
       }
-      if (!options.forceYichangdianCornerClose && restoreYichangdianCornerPickerIfPending()) {
+      if (!options.forceYichangdianCornerClose && restoreYichangdianCornerPickerIfPending(workingRoot)) {
         return;
       }
       if (!options.preserveIndustryAction && decisionState.scanTargetAction?.type === "industry_remove_tech") {
@@ -1342,11 +1364,13 @@
       syncInteractionFocusChrome();
     }
 
-    function nebulaHasScannableData(nebulaId) {
+    function nebulaHasScannableData(workingRoot, nebulaId) {
+      const { nebulaDataState } = requireWorkingRoot(workingRoot);
       return (data.listNebulaTokens(nebulaDataState, nebulaId) || []).length > 0;
     }
 
-    function buildNebulaScanChoice(nebulaId, extra = {}) {
+    function buildNebulaScanChoice(workingRoot, nebulaId, extra = {}) {
+      const { nebulaDataState } = requireWorkingRoot(workingRoot);
       const nextToken = data.getNextReplaceableNebulaToken(nebulaDataState, nebulaId);
       const tokens = data.listNebulaTokens(nebulaDataState, nebulaId);
       const label = data.getNebulaLabel(nebulaId);
@@ -1367,38 +1391,42 @@
       };
     }
 
-    function isAomomoActive() {
+    function isAomomoActive(workingRoot) {
+      const { alienGameState, solarState } = requireWorkingRoot(workingRoot);
       return Boolean(solarState.aomomoActive && aomomo?.isAomomoRevealedSlot?.(
         alienGameState,
         alienGameState.aomomo?.revealedSlotId,
       ));
     }
 
-    function getAomomoPlanetLocation() {
+    function getAomomoPlanetLocation(workingRoot) {
+      const { solarState } = requireWorkingRoot(workingRoot);
       if (!solarState.aomomoActive) return null;
       return solar.createSolarSnapshot(solarState).planetLocations
         .find((planet) => planet.planetId === aomomo?.PLANET_ID) || null;
     }
 
-    function getAomomoCurrentX() {
-      const location = getAomomoPlanetLocation();
+    function getAomomoCurrentX(workingRoot) {
+      const location = getAomomoPlanetLocation(workingRoot);
       return location ? solar.mod8(location.x) : null;
     }
 
-    function getNebulaCurrentX(nebulaId) {
+    function getNebulaCurrentX(workingRoot, nebulaId) {
+      const { solarState } = requireWorkingRoot(workingRoot);
       const found = solar.getNebulaLocations(solarState.sectorBySlot)
         .find((nebula) => nebula.id === nebulaId);
       return found ? solar.mod8(found.x) : null;
     }
 
-    function getSectorScanTargetLabel(sectorX) {
+    function getSectorScanTargetLabel(workingRoot, sectorX) {
+      const { solarState } = requireWorkingRoot(workingRoot);
       const x = solar.mod8(sectorX);
       const nebula = solar.getNebulaAtCoordinate(x, 5, solarState.sectorBySlot);
       return nebula?.label || `扇区${x}`;
     }
 
-    function buildAomomoScanChoiceForX(sectorX, extra = {}) {
-      return buildNebulaScanChoice(aomomo.NEBULA_ID, {
+    function buildAomomoScanChoiceForX(workingRoot, sectorX, extra = {}) {
+      return buildNebulaScanChoice(workingRoot, aomomo.NEBULA_ID, {
         sectorX,
         label: extra.label || `扇区 ${sectorX}：奥陌陌`,
         descriptionPrefix: extra.descriptionPrefix,
@@ -1406,23 +1434,24 @@
       });
     }
 
-    function hasAomomoScanAtX(sectorX) {
-      const currentX = getAomomoCurrentX();
-      return isAomomoActive() && currentX != null && solar.mod8(sectorX) === currentX;
+    function hasAomomoScanAtX(workingRoot, sectorX) {
+      const currentX = getAomomoCurrentX(workingRoot);
+      return isAomomoActive(workingRoot) && currentX != null && solar.mod8(sectorX) === currentX;
     }
 
-    function buildSectorScanChoicesForX(sectorX) {
+    function buildSectorScanChoicesForX(workingRoot, sectorX) {
+      const { solarState } = requireWorkingRoot(workingRoot);
       const x = solar.mod8(sectorX);
       const choices = [];
       const nebula = solar.getNebulaAtCoordinate(x, 5, solarState.sectorBySlot);
       if (nebula) {
-        choices.push(buildNebulaScanChoice(nebula.id, {
+        choices.push(buildNebulaScanChoice(workingRoot, nebula.id, {
           sectorX: x,
           label: `扇区 ${x}：${nebula.label}`,
         }));
       }
-      if (hasAomomoScanAtX(x)) {
-        choices.push(buildAomomoScanChoiceForX(x));
+      if (hasAomomoScanAtX(workingRoot, x)) {
+        choices.push(buildAomomoScanChoiceForX(workingRoot, x));
       }
       if (!choices.length) {
         choices.push({
@@ -1436,20 +1465,20 @@
       return choices;
     }
 
-    function expandScanChoicesWithAomomoTargets(choices) {
-      if (!isAomomoActive()) return choices;
+    function expandScanChoicesWithAomomoTargets(workingRoot, choices) {
+      if (!isAomomoActive(workingRoot)) return choices;
       const next = [];
       const seenAomomo = new Set();
       for (const choice of choices || []) {
         next.push(choice);
         const sectorX = choice?.sectorX != null
           ? Number(choice.sectorX)
-          : getNebulaCurrentX(choice?.nebulaId);
-        if (sectorX == null || !hasAomomoScanAtX(sectorX)) continue;
+          : getNebulaCurrentX(workingRoot, choice?.nebulaId);
+        if (sectorX == null || !hasAomomoScanAtX(workingRoot, sectorX)) continue;
         const key = solar.mod8(sectorX);
         if (seenAomomo.has(key) || choice.nebulaId === aomomo.NEBULA_ID) continue;
         seenAomomo.add(key);
-        next.push(buildAomomoScanChoiceForX(key));
+        next.push(buildAomomoScanChoiceForX(workingRoot, key));
       }
       return next;
     }
@@ -1504,10 +1533,11 @@
       return { ok: true, message: config.subtitle || "" };
     }
 
-    function confirmScanTarget(nebulaId, sectorX) {
+    function confirmScanTarget(workingRoot, nebulaId, sectorX) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const pending = decisionState.scanTargetAction;
       return withPendingOwnerPlayer(pending, () => {
-      closeScanTargetPicker({ preserveIndustryAction: true });
+      closeScanTargetPicker(workingRoot, { preserveIndustryAction: true });
 
       if (pending?.type === "industry_remove_tech") {
         return confirmIndustryHeliosRemoveTech(nebulaId);
@@ -1554,7 +1584,7 @@
           renderStateReadout();
           return result;
         }
-        let result = replaceNebulaDataForCurrentPlayer(nebulaId, {
+        let result = replaceNebulaDataForCurrentPlayer(workingRoot, nebulaId, {
           prefix: pending.title || (sectorX != null ? `扇区${sectorX}扫描` : "星云扫描"),
           source: scanSource,
           sectorX,
@@ -1573,7 +1603,7 @@
 
       if (pending?.type === "public_scan") {
         if (pending.queueMode && getPublicScanQueue()) {
-          const scanResult = replaceNebulaDataForCurrentPlayer(nebulaId, {
+          const scanResult = replaceNebulaDataForCurrentPlayer(workingRoot, nebulaId, {
             prefix: `公共牌区扫描 ${cards.getCardLabel(pending.card)}`,
             source: scanSource,
             sectorX,
@@ -1598,7 +1628,7 @@
             return scanResult;
           }
           decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
-          closeScanTargetPicker();
+          closeScanTargetPicker(workingRoot);
           scanResult.events = queue.events.slice();
           rocketState.statusNote = scanResult.message;
           renderSectors();
@@ -1610,7 +1640,7 @@
         }
 
         if (pending.deferPublicRefill && pending.scanRunId) {
-          let scanResult = replaceNebulaDataForCurrentPlayer(nebulaId, {
+          let scanResult = replaceNebulaDataForCurrentPlayer(workingRoot, nebulaId, {
             prefix: `公共牌区扫描 ${cards.getCardLabel(pending.card)}`,
             source: scanSource,
             sectorX,
@@ -1621,7 +1651,7 @@
             renderStateReadout();
             return scanResult;
           }
-          scanResult = finalizeScanSourceCard(pending, scanResult);
+          scanResult = finalizeScanSourceCard(workingRoot, pending, scanResult);
           rocketState.statusNote = scanResult.message;
           renderSectors();
           renderPlayerStats();
@@ -1633,7 +1663,7 @@
         }
 
         beginEffectHistoryStep(`公共牌区扫描 ${cards.getCardLabel(pending.card)}`);
-        const result = abilities.executeAbility("scanPublicCard", createActionContext(), {
+        const result = abilities.executeAbility("scanPublicCard", createActionContext(workingRoot), {
           nebulaId,
           prefix: `公共牌区扫描 ${cards.getCardLabel(pending.card)}`,
           source: scanSource,
@@ -1666,7 +1696,7 @@
 
       if (pending?.type === "hand_scan") {
         beginEffectHistoryStep(`手牌扫描 ${cards.getCardLabel(pending.card)}`);
-        const result = abilities.executeAbility("scanHandCard", createActionContext(), {
+        const result = abilities.executeAbility("scanHandCard", createActionContext(workingRoot), {
           nebulaId,
           prefix: `手牌扫描 ${cards.getCardLabel(pending.card)}`,
           source: scanSource,
@@ -1717,7 +1747,8 @@
       return player?.hand?.findIndex((card) => card.id === cardId) ?? -1;
     }
 
-    function handleDrawnHandScanSkip() {
+    function handleDrawnHandScanSkip(workingRoot) {
+      const { cardState, rocketState } = requireWorkingRoot(workingRoot);
       const pending = decisionState.scanTargetAction;
       if (pending?.type !== "hand_scan" || !pending.discardDrawnOnSkip) {
         return { ok: false, message: "没有可跳过的盲抽弃牌扫描" };
@@ -1731,7 +1762,7 @@
       }
 
       const effect = pending.effect || getCurrentActionEffect();
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       beginEffectHistoryStep(effect?.label || "跳过盲抽弃牌扫描");
       const discardResult = cards.discardFromHandAtIndex(player, handIndex);
       if (!discardResult.ok) {
@@ -1768,14 +1799,15 @@
       return result;
     }
 
-    function beginSectorScan() {
+    function beginSectorScan(workingRoot) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (isCardSelectionActive() || isDiscardSelectionActive() || isPlayCardSelectionActive() || isTechTilePickingActive()) {
         rocketState.statusNote = "请先完成当前选择";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const choices = Array.from({ length: 8 }, (_item, x) => buildSectorScanChoicesForX(x)).flat();
+      const choices = Array.from({ length: 8 }, (_item, x) => buildSectorScanChoicesForX(workingRoot, x)).flat();
 
       rocketState.statusNote = "扇区扫描：请选择 0-7 号扇区";
       renderStateReadout();
@@ -1787,7 +1819,8 @@
       });
     }
 
-    function getSectorOpenDataCount(sectorId) {
+    function getSectorOpenDataCount(workingRoot, sectorId) {
+      const { nebulaDataState } = requireWorkingRoot(workingRoot);
       return data.listNebulaTokens(nebulaDataState, sectorId)
         .filter((token) => !token.replacedByPlayerColor && !token.playerColor)
         .length;
@@ -1797,11 +1830,12 @@
       return data.getNebulaCapacity(sectorId);
     }
 
-    function getSectorReplacedCount(sectorId) {
-      return getSectorCapacity(sectorId) - getSectorOpenDataCount(sectorId);
+    function getSectorReplacedCount(workingRoot, sectorId) {
+      return getSectorCapacity(sectorId) - getSectorOpenDataCount(workingRoot, sectorId);
     }
 
-    function getSectorExtraMarkCount(sectorId) {
+    function getSectorExtraMarkCount(workingRoot, sectorId) {
+      const { nebulaDataState } = requireWorkingRoot(workingRoot);
       return typeof data.listSectorExtraMarks === "function"
         ? data.listSectorExtraMarks(nebulaDataState, sectorId).length
         : 0;
@@ -1811,7 +1845,7 @@
       return data.getNebulaLabel(sectorId);
     }
 
-    function getPublicScanChoicesForCard(card) {
+    function getPublicScanChoicesForCard(workingRoot, card) {
       if (getPublicScanChoicesForCardOverride) return getPublicScanChoicesForCardOverride(card);
       const scanCode = Number(card?.scanActionCode);
       const nebulaIds = PUBLIC_SCAN_TARGETS_BY_CODE[scanCode];
@@ -1826,12 +1860,15 @@
         ok: true,
         scanCode,
         scanLabel: PUBLIC_SCAN_CODE_LABELS[scanCode] || `扫描${scanCode}`,
-        choices: expandScanChoicesWithAomomoTargets(nebulaIds.map((nebulaId) => buildNebulaScanChoice(nebulaId))),
+        choices: expandScanChoicesWithAomomoTargets(
+          workingRoot,
+          nebulaIds.map((nebulaId) => buildNebulaScanChoice(workingRoot, nebulaId)),
+        ),
       };
     }
 
-    function hasHandScanTargetCard(player) {
-      return (player?.hand || []).some((card) => card && getPublicScanChoicesForCard(card).ok);
+    function hasHandScanTargetCard(workingRoot, player) {
+      return (player?.hand || []).some((card) => card && getPublicScanChoicesForCard(workingRoot, card).ok);
     }
 
     function getPublicScanIconForScanCode(scanCode) {
@@ -1849,10 +1886,11 @@
       }
     }
 
-    function createPublicScanPendingAction(player, fromEffectFlow = false, options = {}) {
+    function createPublicScanPendingAction(workingRoot, player, fromEffectFlow = false, options = {}) {
+      const { cardState } = requireWorkingRoot(workingRoot);
       const requestedMaxSelectable = Math.max(
         1,
-        Math.round(Number(options.maxSelectable || getPublicScanMaxSelectable(player))),
+        Math.round(Number(options.maxSelectable || getPublicScanMaxSelectable(workingRoot, player))),
       );
       const filledSlots = cardState.publicCards.filter(Boolean).length;
       const maxSelectable = Math.min(requestedMaxSelectable, Math.max(1, filledSlots));
@@ -1874,8 +1912,8 @@
       };
     }
 
-    function beginPublicDeckScan() {
-      return beginCardSelection(createPublicScanPendingAction(getCurrentPlayer()));
+    function beginPublicDeckScan(workingRoot) {
+      return beginCardSelection(createPublicScanPendingAction(workingRoot, getCurrentPlayer()));
     }
 
     function executeMainScanAction(workingRoot, descriptor) {
