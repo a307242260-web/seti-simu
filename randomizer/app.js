@@ -344,6 +344,14 @@
     },
     stateAdapter: {
       createWorkingState: createBrowserWorkingState,
+      createProjectionState(workingState, committedState) {
+        return initialGameStateModule.createCommittedCandidate(
+          workingState,
+          { ...getBrowserCommittedContext(), stateVersion: committedState.meta.stateVersion },
+          stateStoreModule.SCHEMA_VERSION,
+          committedState.meta.stateVersion,
+        );
+      },
       createCommittedState(workingState, committedState, contextOverrides = {}) {
         return highCouplingStateModule.purifyHighCouplingSlices(
           initialGameStateModule.createCommittedCandidate(
@@ -1000,9 +1008,7 @@
   const residentDesktopRenderer = !headlessMode && browserHostModule?.residentRenderer
     ? browserHostModule.residentRenderer.createResidentRenderer({ document, els })
     : null;
-  const residentStateSource = hostStateSourceModule.createHostStateSource({
-    stateStore: browserRuleComposition.stateSourcePort,
-  });
+  const residentStateSource = browserRuleComposition.stateSourcePort;
   const residentProjectionAdapter = browserHostModule?.projectionAdapter
     ? browserHostModule.projectionAdapter.createBrowserProjectionAdapter({
       stateSource: residentStateSource,
@@ -1046,13 +1052,28 @@
     return output;
   }
 
-  function createInitialSelectionProjection(viewer) {
+  function createResidentReadoutRoot(resident) {
+    return {
+      turnState: structuredClone(resident.turn || {}),
+      playerState: structuredClone(resident.players || { currentPlayerId: null, players: [] }),
+      solarState: structuredClone(resident.solar || {}),
+      rocketState: structuredClone(resident.pieces || {}),
+      planetStatsState: structuredClone(resident.planets || {}),
+      nebulaDataState: structuredClone(resident.data || {}),
+      cardState: structuredClone(resident.cards || {}),
+      techGameState: structuredClone(resident.tech || {}),
+      alienGameState: structuredClone(resident.aliens || {}),
+      finalScoringState: structuredClone(resident.finalScoring || {}),
+    };
+  }
+
+  function createInitialSelectionProjection(viewer, resident) {
     const active = setupSelectionState.phase === "selecting";
     const currentPlayerId = setupSelectionState.currentPlayerId == null
       ? null
       : String(setupSelectionState.currentPlayerId);
     const viewerPlayerId = viewer?.playerId == null ? null : String(viewer.playerId);
-    const projectedPlayer = browserRuleState.playerState.players.find(
+    const projectedPlayer = resident.players.players.find(
       (player) => String(player?.id) === viewerPlayerId,
     );
     const offer = active && currentPlayerId === viewerPlayerId
@@ -1067,12 +1088,12 @@
     };
   }
 
-  function createReservedCardProjection(viewer) {
+  function createReservedCardProjection(viewer, resident) {
     const viewerPlayerId = viewer?.playerId == null ? null : String(viewer.playerId);
-    const player = browserRuleState.playerState.players.find(
+    const player = resident.players.players.find(
       (entry) => String(entry?.id) === viewerPlayerId,
     ) || null;
-    const initialSelection = createInitialSelectionProjection(viewer);
+    const initialSelection = createInitialSelectionProjection(viewer, resident);
     const reservedCards = Array.isArray(player?.reservedCards) ? player.reservedCards : [];
     const readyByCardId = { ...(cardTaskState.readyType2ByCardId || {}) };
     for (const card of reservedCards) {
@@ -1111,7 +1132,7 @@
     const banrenmaItems = [];
     reservedCards.forEach((card, originalIndex) => {
       if (banrenma?.isBanrenmaCard?.(card)) {
-        const mark = banrenma.getPlayerScoreMarks?.(browserRuleState.alienGameState, player)
+        const mark = banrenma.getPlayerScoreMarks?.(resident.aliens, player)
           ?.find((entry) => entry.id === card.banrenmaScoreMarkId || entry.cardInstanceId === card.id);
         const threshold = mark?.threshold ?? card.banrenmaThreshold ?? "-";
         const ready = Number(player?.resources?.score || 0) >= Number(threshold);
@@ -1138,16 +1159,16 @@
       }
     });
 
-    const jiuzheCards = jiuzhe?.getPlayerJiuzheCards?.(browserRuleState.alienGameState, player) || [];
+    const jiuzheCards = jiuzhe?.getPlayerJiuzheCards?.(resident.aliens, player) || [];
     const jiuzheItem = jiuzheCards.length ? {
       kind: "jiuzhe",
       imageSrc: jiuzhe.CARD_BACK_SRC,
-      count: jiuzhe.countPlayedCards(browserRuleState.alienGameState, player),
+      count: jiuzhe.countPlayedCards(resident.aliens, player),
       playerId: player?.id || "",
       playerColor: player?.color || "",
     } : null;
     const debugFangzhouUnlock = isDebugAlienTraceMode?.() || false;
-    const fangzhouItems = (fangzhou?.getPlayerCard2Reserved?.(browserRuleState.alienGameState, player) || [])
+    const fangzhouItems = (fangzhou?.getPlayerCard2Reserved?.(resident.aliens, player) || [])
       .map((card) => ({
         kind: "fangzhou",
         traceType: card.traceType,
@@ -1203,18 +1224,15 @@
       cardCornerQuickAction: CARD_CORNER_QUICK_SESSION,
     });
     const canonical = residentProjectionAdapter.projectSource({ viewer });
-    const projectedPlayers = (canonical.resident?.players?.players || []).map((projectedPlayer) => {
-      if (String(projectedPlayer?.id) !== viewer.playerId) return projectedPlayer;
-      return browserRuleState.playerState.players.find((player) => String(player?.id) === viewer.playerId)
-        || projectedPlayer;
-    });
+    const readoutRoot = createResidentReadoutRoot(canonical.resident);
+    const projectedPlayers = canonical.resident?.players?.players || [];
     const finalScoreBreakdownsByPlayerId = Object.fromEntries(projectedPlayers.map((player) => [
       String(player.id),
-      cloneResidentPresentation(computePlayerFinalScoreBreakdown(player)),
+      cloneResidentPresentation(computePlayerFinalScoreBreakdown(player, readoutRoot)),
     ]));
     const interfacePlayer = projectedPlayers.find((player) => String(player?.id) === viewer.playerId)
       || projectedPlayers.find((player) => (
-        String(player?.id) === String(browserRuleState.playerState.currentPlayerId)
+        String(player?.id) === String(canonical.resident.players.currentPlayerId)
       ))
       || null;
     const handCount = Array.isArray(interfacePlayer?.hand)
@@ -1228,23 +1246,23 @@
         ...canonical,
         resident: {
           ...canonical.resident,
-          turn: structuredClone(browserRuleState.turnState),
+          turn: structuredClone(canonical.resident.turn),
           players: {
-            currentPlayerId: browserRuleState.playerState.currentPlayerId,
+            currentPlayerId: canonical.resident.players.currentPlayerId,
             players: structuredClone(projectedPlayers),
           },
-          solar: structuredClone(browserRuleState.solarState),
-          pieces: structuredClone(browserRuleState.rocketState),
-          planets: structuredClone(browserRuleState.planetStatsState),
-          data: structuredClone(browserRuleState.nebulaDataState),
+          solar: structuredClone(canonical.resident.solar),
+          pieces: structuredClone(canonical.resident.pieces),
+          planets: structuredClone(canonical.resident.planets),
+          data: structuredClone(canonical.resident.data),
           cards: {
             ...canonical.resident.cards,
-            publicCards: structuredClone(browserRuleState.cardState.publicCards || []),
-            publicMarket: structuredClone(browserRuleState.cardState.publicCards || []),
+            publicCards: structuredClone(canonical.resident.cards.publicCards || []),
+            publicMarket: structuredClone(canonical.resident.cards.publicCards || []),
             ui: {
-              selectionActive: Boolean(browserRuleState.cardState.ui?.selectionActive),
-              discardSelectionActive: Boolean(browserRuleState.cardState.ui?.discardSelectionActive),
-              playCardSelectionActive: Boolean(browserRuleState.cardState.ui?.playCardSelectionActive),
+              selectionActive: Boolean(canonical.resident.cards.ui?.selectionActive),
+              discardSelectionActive: Boolean(canonical.resident.cards.ui?.discardSelectionActive),
+              playCardSelectionActive: Boolean(canonical.resident.cards.ui?.playCardSelectionActive),
             },
             publicControls: {
               selectionActive,
@@ -1264,15 +1282,15 @@
             overLimit: handCount > 4,
             hint: getPlayerHandPanelTitleHint(),
           },
-          initialSelection: createInitialSelectionProjection(viewer),
-          reservedCards: createReservedCardProjection(viewer),
+          initialSelection: createInitialSelectionProjection(viewer, canonical.resident),
+          reservedCards: createReservedCardProjection(viewer, canonical.resident),
           tech: {
-            board: structuredClone(browserRuleState.techGameState.board || {}),
-            ui: structuredClone(browserRuleState.techGameState.ui || {}),
+            board: structuredClone(canonical.resident.tech.board || {}),
+            ui: structuredClone(canonical.resident.tech.ui || {}),
           },
-          aliens: structuredClone(browserRuleState.alienGameState),
+          aliens: structuredClone(canonical.resident.aliens),
           finalScoring: {
-            ...structuredClone(browserRuleState.finalScoringState),
+            ...structuredClone(canonical.resident.finalScoring),
             breakdownsByPlayerId: finalScoreBreakdownsByPlayerId,
           },
           decisions: cloneResidentPresentation(decisions),
@@ -4905,7 +4923,7 @@
     return (playerState.players || [])
       .filter((player) => turnState.activePlayerIds.includes(player.id))
       .map((player) => {
-        const breakdown = computePlayerFinalScoreBreakdown(player);
+        const breakdown = computePlayerFinalScoreBreakdown(player, browserRuleState);
         return `${player.colorLabel || player.name || player.id}：${breakdown.totalScore} 分`;
       });
   }
@@ -8285,17 +8303,18 @@
     return normalizeScoreSourceAmount(player?.scoreSources?.[key] || 0);
   }
 
-  function computePlayerFinalScoreBreakdown(player, workingRoot = browserRuleState) {
-    const probeLocationData = buildProbeLocationIndex();
+  function computePlayerFinalScoreBreakdown(player, workingRoot) {
+    if (!workingRoot) throw new TypeError("终局计分 readout 需要显式只读 root");
+    const probeLocationData = buildProbeLocationIndexForRoot(workingRoot);
     return endGameScoring?.computePlayerFinalScore
       ? endGameScoring.computePlayerFinalScore({
         currentPlayer: player,
-        finalScoringState,
+        finalScoringState: workingRoot.finalScoringState,
         playerState: workingRoot.playerState,
         nebulaDataState: workingRoot.nebulaDataState,
         alienGameState: workingRoot.alienGameState,
         planetStatsState: workingRoot.planetStatsState,
-        ...buildPlutoMarkerContext(),
+        ...(actionInteractionRuntime?.buildPlutoMarkerContext(workingRoot) || { plutoMarkers: [] }),
         probeLocations: probeLocationData.index,
         probeLocationDetails: probeLocationData.details,
         cardEffects,

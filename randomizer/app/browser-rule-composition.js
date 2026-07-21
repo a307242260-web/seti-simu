@@ -62,8 +62,9 @@
     }
     if (stateAdapter && (typeof stateAdapter.createWorkingState !== "function"
       || typeof stateAdapter.createCommittedState !== "function"
+      || typeof stateAdapter.createProjectionState !== "function"
       || typeof stateAdapter.restoreWorkingState !== "function")) {
-      throw new TypeError("Rule Composition stateAdapter 缺少 working/committed/restore 原子协议");
+      throw new TypeError("Rule Composition stateAdapter 缺少 working/committed/projection/restore 原子协议");
     }
     const storeOptions = Object.freeze({ invariantValidators: [...(options.invariantValidators || [])] });
     let workingState = stateAdapter
@@ -211,6 +212,26 @@
         phase: activeSession?.phase || "idle",
         family: activeFamily,
         session: activeSession ? runtime.inspect(activeSession) : null,
+      });
+    }
+
+    function readStateSource(viewer = null) {
+      const committed = store.getSnapshot();
+      const projectedState = stateAdapter
+        ? stateAdapter.createProjectionState(workingState, committed)
+        : (activeSession ? runtime.observe(activeSession, clone(viewer))?.state : committed);
+      const inspection = activeSession ? runtime.inspect(activeSession) : null;
+      const observation = activeSession ? runtime.observe(activeSession, clone(viewer)) : null;
+      return deepFreeze({
+        source: {
+          kind: activeSession ? "working" : "committed",
+          stateVersion: committed.meta.stateVersion,
+          sessionId: inspection?.sessionId || null,
+          sessionRevision: inspection?.revision ?? null,
+          phase: inspection?.phase || "idle",
+        },
+        state: clone(projectedState),
+        decision: clone(observation?.decision || inspection?.decision || null),
       });
     }
 
@@ -435,6 +456,12 @@
       },
       stateSourcePort: Object.freeze({
         getSnapshot: () => store.getSnapshot(),
+        read: readStateSource,
+        project(projector, viewer = null) {
+          if (typeof projector !== "function") throw new TypeError("Rule Composition state source projector 必须是函数");
+          const envelope = readStateSource(viewer);
+          return deepFreeze(clone(projector(envelope.state, clone(viewer), envelope)));
+        },
         subscribe(listener) {
           if (typeof listener !== "function") throw new TypeError("Rule Composition state source subscriber 必须是函数");
           return store.subscribe(listener);

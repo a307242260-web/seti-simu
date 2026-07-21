@@ -290,6 +290,7 @@ function createHarness(initialValue = 0) {
         ...structuredClone(workingState),
         meta: structuredClone(committedState.meta),
       }),
+      createProjectionState: (workingState) => structuredClone(workingState),
       restoreWorkingState: replace,
     },
     projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
@@ -298,6 +299,10 @@ function createHarness(initialValue = 0) {
   });
   composition.stateSourcePort.subscribe(() => { commitEvents += 1; });
   composition.getWorkingState().match.value = 9;
+  const source = composition.stateSourcePort.read({ viewerId: "test", role: "spectator" });
+  assert.equal(source.state.match.value, 9, "只读 StateSource 必须投影 resident working state");
+  assert.equal(Object.isFrozen(source), true, "StateSource envelope 必须冻结");
+  assert.notEqual(source.state, composition.getWorkingState(), "StateSource 不得泄露 mutable working root identity");
   const before = composition.projection();
   composition.inputPort.enumerateActions({ family: "launch" });
   assert.deepEqual(composition.projection(), before, "枚举必须保持 committed projection 不变");
