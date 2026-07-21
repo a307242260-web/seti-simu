@@ -288,37 +288,13 @@
     solar,
   });
   const engineActionExecutor = engineActionExecutorModule.createEngineActionExecutor({
-    executors: {
-      research_tech(workingRoot, descriptor) {
-        const context = createActionContextForWorkingRoot(workingRoot, descriptor);
-        return actions.getAction("researchTech").execute(context, {
-          ...(descriptor.payload || {}),
-          tileId: descriptor.target?.tileId,
-          blueSlot: descriptor.target?.blueSlot ?? null,
-        });
-      },
-      scan(workingRoot, descriptor) {
-        return beginScanAction({ workingRoot, standardAction: descriptor });
-      },
-      analyze(workingRoot, descriptor) {
-        return runAction("analyze", {
-          ...(descriptor.payload || {}),
-          workingRoot,
-          standardAction: descriptor,
-        });
-      },
-      play_card(workingRoot, descriptor) {
-        const player = players.getCurrentPlayer(workingRoot.playerState);
-        const handIndex = (player?.hand || []).findIndex((card) => card.id === descriptor.target?.cardInstanceId);
-        if (!isPlayCardSelectionActive()) {
-          const started = beginPlayCardSelection();
-          if (!started?.ok) return started;
-        }
-        const selected = handlePlayCardSelect(handIndex);
-        if (selected?.ok === false) return selected;
-        return handleHandCardPlay(handIndex, { workingRoot, standardAction: descriptor });
-      },
-    },
+    actions,
+    abilities,
+    players,
+    createActionContext: createActionContextForWorkingRoot,
+    getAnalyzeActionOptions: getAnalyzeActionOptionsForPlayer,
+    executeScan: (workingRoot, descriptor) => executeMainScanAction(workingRoot, descriptor),
+    executePlayCard: (workingRoot, descriptor) => executeStandardPlayCard(workingRoot, descriptor),
   });
   let actionRuntimeController = null;
   const runtime = runtimeModule.createRuntime({
@@ -449,6 +425,8 @@
   let handlePlayCardSelect;
   let confirmPlayCardSelection;
   let handleHandCardPlay;
+  let executeStandardPlayCard;
+  let executeMainScanAction;
   let getPendingHandCardPlayAction;
   let cancelHandCardPlayAction;
   let clearHandCardContextActions;
@@ -1432,6 +1410,7 @@
     handleHandCardDiscard,
     beginPlayCardSelection,
     cancelPlayCardSelection,
+    executeStandardPlayCard,
     handleFutureSpanCardPlay,
     handleHandCardPlay,
     handleFutureSpanPlayCardSelect,
@@ -1488,7 +1467,22 @@
     resolvePlayerReference,
     getFlowMarkedNebulaIds,
     normalizeResourceCost,
-    createActionContext,
+    createActionContext: (workingRoot, descriptor) => (
+      workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
+    ),
+    canStartMainAction,
+    getMainActionStartBlockReason,
+    HISTORY_SOURCE_MAIN,
+    startActionLogDraft,
+    actionHistory,
+    clearHistoryStepOrderForSource,
+    removeActionLogStepsBySource,
+    maybeConsumeAlienLabPanelForMainAction: (...args) => maybeConsumeAlienLabPanelForMainAction?.(...args),
+    rememberHistoryStep,
+    appendActionLogStep,
+    actionLogOptionsFromHistoryStep,
+    createScanRunId,
+    assignEffectFlowOwner,
     enrichScanResultEvents,
     renderSectors,
     insertActionEffectsAfterCurrent,
@@ -1517,6 +1511,7 @@
     beginCardSelection: (...args) => beginCardSelection(...args),
   });
   ({
+    executeMainScanAction,
     getPublicScanBonusSelectableCount,
     getPublicScanMaxSelectable,
     getPublicScanMinSelectable,
@@ -4800,7 +4795,16 @@
     return null;
   }
 
-  function recordPlayCardStart(player, card, beforePlayer, beforeCardState, beforeAlienState = null) {
+  function recordPlayCardStart(
+    player,
+    card,
+    beforePlayer,
+    beforeCardState,
+    beforeAlienState = null,
+    execution = {},
+  ) {
+    const actionCardState = execution.workingRoot?.cardState || cardState;
+    const actionAlienGameState = execution.workingRoot?.alienGameState || alienGameState;
     startActionLogDraft("playCard", "打牌行动", { source: HISTORY_SOURCE_MAIN, player });
     actionHistory.beginSession("playCard", "打牌行动");
     actionHistory.beginStep({
@@ -4818,13 +4822,13 @@
       "恢复打牌前玩家状态",
     ));
     recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
-      cardState,
+      actionCardState,
       beforeCardState.publicCards,
       beforeCardState.discardPile,
     ));
     if (beforeAlienState) {
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-        alienGameState,
+        actionAlienGameState,
         beforeAlienState,
         "恢复打牌前外星人状态",
       ));
@@ -6762,112 +6766,12 @@
     return actionRuntimeController.handleActionEffectButtonClick(effectIndex);
   }
 
-  function beginScanAction(execution = {}) {
-    if (!canStartMainAction()) {
-      rocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-    if (isActionEffectFlowActive()) {
-      return { ok: false, message: "请先完成当前行动的效果" };
-    }
-    if (isTechTilePickingActive()) {
-      rocketState.statusNote = "请先完成科技选择";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-    if (isCardSelectionActive()) {
-      rocketState.statusNote = "请先完成精选";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-    if (isDiscardSelectionActive()) {
-      rocketState.statusNote = "请先完成弃牌";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-    if (isPlayCardSelectionActive()) {
-      rocketState.statusNote = "请先完成打牌";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-    if (isMovePaymentSelectionActive()) {
-      rocketState.statusNote = "请先完成移动";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-    if (isHandScanSelectionActive()) {
-      rocketState.statusNote = "请先完成手牌扫描";
-      renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
-    }
-    const workingRoot = execution.workingRoot || browserRuleState;
-    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
-    const check = scanEffects.canExecuteScan(currentPlayer, { standardAction: true });
-    if (!check.ok) {
-      rocketState.statusNote = check.message;
-      renderStateReadout();
-      return check;
-    }
-
-    startActionLogDraft("scan", "扫描行动", { source: HISTORY_SOURCE_MAIN, player: currentPlayer });
-    actionHistory.beginSession("scan", "扫描行动");
-    actionHistory.beginStep({ source: HISTORY_SOURCE_MAIN, type: "action-cost", label: "扫描费用" });
-    let costResult = abilities.executeAbility(
-      "payScanCost",
-      createActionContextForWorkingRoot(workingRoot, execution.standardAction),
-      {
-      cost: scanEffects.getStandardScanCost(currentPlayer),
-      },
-    );
-    if (!costResult.ok) {
-      actionHistory.rollbackSession();
-      clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
-      removeActionLogStepsBySource(HISTORY_SOURCE_MAIN);
-      rocketState.statusNote = costResult.message;
-      renderStateReadout();
-      return costResult;
-    }
-    costResult = maybeConsumeAlienLabPanelForMainAction("scan", costResult);
-    recordAbilityCommands(costResult);
-    const costStep = actionHistory.endStep();
-    if (costStep) {
-      rememberHistoryStep(HISTORY_SOURCE_MAIN, costStep.id);
-      appendActionLogStep(
-        HISTORY_SOURCE_MAIN,
-        costStep.label,
-        costResult.message,
-        actionLogOptionsFromHistoryStep(costStep),
-      );
-    }
-    const scanRunId = createScanRunId("main-scan");
-    decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
-      "scan",
-      "扫描行动",
-      scanEffects.buildScanEffectQueue(currentPlayer, {
-        includeFinalize: true,
-        fullScanAction: true,
-        scanRunId,
-        turnState: workingRoot.turnState,
-        roundNumber: workingRoot.turnState.roundNumber,
-        turnNumber: workingRoot.turnState.turnNumber,
-      }),
-    );
-    decisionState.actionEffectFlow.playerId = currentPlayer.id;
-    assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
-    decisionState.actionEffectFlow.scanRunId = scanRunId;
-    decisionState.actionEffectFlow.scanActionEvent = {
-      type: "scanAction",
-      source: "main",
-      scanRunId,
-      playerId: currentPlayer.id,
-    };
-
-    els.appWrap?.classList.toggle("action-effect-flow-active", true);
-    rocketState.statusNote = "扫描：请依次点击能力效果";
-    renderPlayerStats();
-    activateNextActionEffect();
-    return { ok: true, message: rocketState.statusNote };
+  function beginScanAction() {
+    return actionRuntimeController?.dispatchAction({
+      kind: "standard_intent",
+      family: "scan",
+      selector: { kind: "standard-scan" },
+    }) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" };
   }
 
   function resize() {
@@ -8047,6 +7951,10 @@
       countOwnedTechByType: (...args) => countOwnedTechByType(...args),
       createActionContext: (...args) => createActionContext(...args),
       decisionSessions,
+      dispatchStandardIntent: (family, selector = {}, payload = {}) => (
+        actionRuntimeController?.dispatchAction({ kind: "standard_intent", family, selector, payload })
+        || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" }
+      ),
       document: typeof document === "undefined" ? undefined : document,
       els: typeof els === "undefined" ? undefined : els,
       endEffectHistoryStep: typeof endEffectHistoryStep === "undefined" ? undefined : endEffectHistoryStep,

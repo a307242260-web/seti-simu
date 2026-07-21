@@ -89,6 +89,9 @@ function createBaseContext(player, overrides = {}) {
     solarState: {},
     els: makeEls(),
     players: {
+      getCurrentPlayer(playerState) {
+        return playerState?.players?.find((entry) => entry.id === playerState.currentPlayerId) || null;
+      },
       canAfford(currentPlayer, cost = {}) {
         return (Number(currentPlayer.resources.credits || 0) >= Number(cost.credits || 0))
           && (Number(currentPlayer.resources.energy || 0) >= Number(cost.energy || 0));
@@ -435,6 +438,43 @@ function createBaseContext(player, overrides = {}) {
   assert.equal(result.ok, true);
   assert.equal(player.hand.length, 1);
   assert.equal(context.cardState.discardPile.length, 1);
+}
+
+{
+  const boundPlayer = {
+    id: "bound-player",
+    color: "white",
+    resources: { credits: 9, energy: 0, handSize: 1 },
+    hand: [{ id: "poison-card", label: "闭包毒牌", price: 1, typeCode: 4 }],
+  };
+  const context = createBaseContext(boundPlayer);
+  const handFlow = createHandFlow(context);
+  const workingPlayer = structuredClone(boundPlayer);
+  workingPlayer.id = "working-player";
+  workingPlayer.hand[0].id = "working-card";
+  const workingRoot = {
+    playerState: { currentPlayerId: "working-player", players: [workingPlayer] },
+    cardState: { playCardSelectionActive: false, discardSelectionActive: false, discardPile: [], publicCards: [] },
+    alienGameState: {},
+    rocketState: { statusNote: "" },
+    turnState: { roundNumber: 2, turnNumber: 3 },
+  };
+  const beforeBoundPlayer = structuredClone(boundPlayer);
+  const beforeBoundCardState = structuredClone(context.cardState);
+  const result = handFlow.executeStandardPlayCard(workingRoot, {
+    family: "play_card",
+    actorId: "working-player",
+    target: { cardInstanceId: "working-card" },
+  });
+  assert.equal(result.ok, true);
+  assert.equal(workingPlayer.resources.credits, 8);
+  assert.equal(workingPlayer.hand.length, 0);
+  assert.equal(workingRoot.cardState.discardPile[0].id, "working-card");
+  assert.equal(result.history[0].beforePlayer.id, "working-player");
+  assert.equal(result.history[0].beforeCardState.discardPile.length, 0);
+  assert.equal(result.events.every((event) => event.playerId === "working-player"), true);
+  assert.deepEqual(boundPlayer, beforeBoundPlayer, "生产 play_card 不得写入闭包绑定玩家");
+  assert.deepEqual(context.cardState, beforeBoundCardState, "生产 play_card 不得写入闭包绑定 cardState");
 }
 
 {

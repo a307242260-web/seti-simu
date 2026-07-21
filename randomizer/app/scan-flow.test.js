@@ -51,6 +51,7 @@ function createBaseHarness() {
       },
     },
     players: {
+      getCurrentPlayer: (state) => state.players.find((entry) => entry.id === state.currentPlayerId),
       canAfford: () => true,
       spendResources: (target, cost) => {
         target.spent = cost;
@@ -69,6 +70,22 @@ function createBaseHarness() {
         SECTOR_FINISH_SCAN: "sector_finish_scan",
         PUBLIC_CARD_SCAN: "public_card_scan",
       },
+      canExecuteScan: () => ({ ok: true }),
+      getStandardScanCost: () => ({ credits: 1 }),
+      buildScanEffectQueue: (_player, options) => [{ id: `scan-${options.scanRunId}`, status: "pending" }],
+    },
+    abilities: {
+      executeAbility(_abilityId, actionContext, options) {
+        const target = actionContext.playerState.players
+          .find((entry) => entry.id === actionContext.playerState.currentPlayerId);
+        target.resources.credits -= Number(options.cost.credits || 0);
+        return { ok: true, message: "扫描支付成功", cost: options.cost, commands: [{ type: "scan-cost" }] };
+      },
+      chain: {
+        startAbilityChain(id, label, effects) {
+          return { id, label, effects, currentIndex: 0 };
+        },
+      },
     },
     planetRewards: {
       EFFECT_TYPES: {
@@ -83,7 +100,8 @@ function createBaseHarness() {
     cardState,
     nebulaDataState: {},
     rocketState,
-    playerState: { players: [player] },
+    playerState: { currentPlayerId: "p1", players: [player] },
+    els: { appWrap: { classList: { toggle() {} } } },
     PUBLIC_SCAN_MAX_BONUS_CARDS: 2,
     SECTOR_FINISH_ICON_BY_COLOR: { blue: "blue_finish" },
     SECTOR_WIN_REWARDS: { n1: { first: [{ resource: "score", amount: 2 }] } },
@@ -124,7 +142,25 @@ function createBaseHarness() {
     resolvePlayerReference: (entry) => (entry?.playerId === "p1" ? player : null),
     getFlowMarkedNebulaIds: () => ["n1"],
     normalizeResourceCost: (cost) => cost || {},
-    createActionContext: () => ({}),
+    createActionContext: (workingRoot) => ({ playerState: workingRoot.playerState }),
+    canStartMainAction: () => true,
+    getMainActionStartBlockReason: () => null,
+    HISTORY_SOURCE_MAIN: "main",
+    startActionLogDraft: () => {},
+    actionHistory: {
+      beginSession: () => {},
+      beginStep: () => {},
+      endStep: () => ({ id: "scan-cost-step", label: "扫描费用" }),
+      rollbackSession: () => {},
+    },
+    clearHistoryStepOrderForSource: () => {},
+    removeActionLogStepsBySource: () => {},
+    maybeConsumeAlienLabPanelForMainAction: (_family, result) => result,
+    rememberHistoryStep: () => {},
+    appendActionLogStep: () => {},
+    actionLogOptionsFromHistoryStep: () => ({}),
+    createScanRunId: () => "production-run",
+    assignEffectFlowOwner: () => {},
     enrichScanResultEvents: () => {},
     renderSectors: () => {},
     insertActionEffectsAfterCurrent: () => {},
@@ -246,6 +282,36 @@ function createBaseHarness() {
   assert.equal(pendingState.handScanAction, null);
   assert.equal(calls.picker.length, 1);
   assert.match(rocketState.statusNote, /Hand 1/);
+}
+
+{
+  const { helpers, player: boundPlayer, cardState: boundCardState, rocketState: boundRocketState } = createBaseHarness();
+  boundPlayer.resources.credits = 99;
+  const beforeBoundPlayer = structuredClone(boundPlayer);
+  const beforeBoundCardState = structuredClone(boundCardState);
+  const beforeBoundRocketState = structuredClone(boundRocketState);
+  const workingPlayer = {
+    id: "working-player",
+    color: "blue",
+    resources: { credits: 4, additionalPublicScan: 0 },
+    hand: [],
+  };
+  const workingRoot = {
+    playerState: { currentPlayerId: "working-player", players: [workingPlayer] },
+    turnState: { roundNumber: 3, turnNumber: 5 },
+    rocketState: { statusNote: "" },
+  };
+  const result = helpers.executeMainScanAction(workingRoot, {
+    family: "scan",
+    actorId: "working-player",
+    target: { kind: "standard-scan" },
+  });
+  assert.equal(result.ok, true);
+  assert.equal(workingPlayer.resources.credits, 3);
+  assert.equal(result.effects[0].id, "scan-production-run");
+  assert.deepEqual(boundPlayer, beforeBoundPlayer, "生产 scan 不得写入闭包绑定玩家");
+  assert.deepEqual(boundCardState, beforeBoundCardState, "生产 scan 不得写入闭包绑定 cardState");
+  assert.deepEqual(boundRocketState, beforeBoundRocketState, "生产 scan 不得写入闭包绑定 rocketState");
 }
 
 console.log("scan-flow tests passed");

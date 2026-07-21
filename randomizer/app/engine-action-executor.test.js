@@ -30,19 +30,55 @@ function descriptor(family) {
   };
 }
 
-function createExecutor(trace = []) {
+function createExecutor(trace = [], options = {}) {
+  function apply(family, workingRoot, action) {
+    trace.push({ family, workingRoot, action });
+    workingRoot.playerState.players[0].resources.credits -= 1;
+    workingRoot.cardState.discardPile.push(family);
+    if (options.failFamily === family) {
+      workingRoot.playerState.players[0].resources.energy = 0;
+      return { ok: false, code: "RULE_FAILED", message: "failed" };
+    }
+    return {
+      ok: true,
+      effects: [{ type: `${family}_effect`, ownerId: action.actorId }],
+      history: [{ type: `${family}_history`, stateVersion: workingRoot.meta.stateVersion }],
+      result: { family, target: action.target.id },
+    };
+  }
   return createEngineActionExecutor({
-    executors: Object.fromEntries(ACTION_FAMILIES.map((family) => [family, (workingRoot, action) => {
-      trace.push({ family, workingRoot, action });
-      workingRoot.playerState.players[0].resources.credits -= 1;
-      workingRoot.cardState.discardPile.push(family);
-      return {
-        ok: true,
-        effects: [{ type: `${family}_effect`, ownerId: action.actorId }],
-        history: [{ type: `${family}_history`, stateVersion: workingRoot.meta.stateVersion }],
-        result: { family, target: action.target.id },
-      };
-    }])),
+    actions: {
+      getAction() {
+        return { execute(context, actionOptions) {
+          return apply("research_tech", context.workingRoot, {
+            ...context.descriptor,
+            target: { id: actionOptions.tileId || context.descriptor.target.id },
+          });
+        } };
+      },
+    },
+    abilities: {
+      executeAbility(_abilityId, context) {
+        return apply("analyze", context.workingRoot, context.descriptor);
+      },
+    },
+    players: {
+      getCurrentPlayer(playerState) {
+        return playerState.players.find((player) => player.id === playerState.currentPlayerId);
+      },
+    },
+    createActionContext(workingRoot, action) {
+      return { workingRoot, descriptor: action, playerState: workingRoot.playerState };
+    },
+    getAnalyzeActionOptions(_player, payload) {
+      return { ...payload };
+    },
+    executeScan(workingRoot, action) {
+      return apply("scan", workingRoot, action);
+    },
+    executePlayCard(workingRoot, action) {
+      return apply("play_card", workingRoot, action);
+    },
   });
 }
 
@@ -80,12 +116,7 @@ function createExecutor(trace = []) {
 }
 
 {
-  const executor = createEngineActionExecutor({
-    executors: Object.fromEntries(ACTION_FAMILIES.map((family) => [family, (workingRoot) => {
-      workingRoot.playerState.players[0].resources.energy = 0;
-      return { ok: false, code: "RULE_FAILED", message: "failed" };
-    }])),
-  });
+  const executor = createExecutor([], { failFamily: "play_card" });
   const workingRoot = root();
   const before = structuredClone(workingRoot);
   assert.equal(executor.execute(workingRoot, descriptor("play_card")).code, "RULE_FAILED");
@@ -109,9 +140,9 @@ function createExecutor(trace = []) {
   assert.match(actionRuntimeSource, /ENGINE_ACTION_FAMILIES\.has\(descriptor\?\.family\)/);
   assert.match(actionRuntimeSource, /engineActionExecutor\.execute\(engineActionWorkingRoot, descriptor/);
   const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
-  for (const family of ACTION_FAMILIES) {
-    assert.match(appSource, new RegExp(`${family}\\(workingRoot, descriptor\\)`));
-  }
+  assert.equal(/executors:\s*\{/.test(appSource), false, "app.js 不得保留四 family executor 函数体");
+  assert.match(appSource, /executeScan: \(workingRoot, descriptor\) => executeMainScanAction\(workingRoot, descriptor\)/);
+  assert.match(appSource, /executePlayCard: \(workingRoot, descriptor\) => executeStandardPlayCard\(workingRoot, descriptor\)/);
   assert.equal(
     /execute\(\) \{ return beginScanAction\(\); \}/.test(appSource),
     false,

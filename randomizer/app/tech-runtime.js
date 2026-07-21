@@ -596,7 +596,8 @@
       if (actions?.createStandardAdapter) options.selectionOnly = true;
       if (blueSlot != null) options.blueSlot = blueSlot;
 
-      const result = actions?.createStandardAdapter
+      const needsBlueSlotDecision = blueSlot == null && tech.getTechType?.(tileId) === "blue";
+      const result = actions?.createStandardAdapter && !needsBlueSlotDecision
         ? context.dispatchStandardIntent?.(
           "research_tech",
           { tileId, ...(blueSlot == null ? {} : { blueSlot }) },
@@ -604,7 +605,9 @@
             payload: {
               selectionOnly: true,
               skipCost: Boolean(options.skipCost),
-              ...(options.techTypes ? { techTypes: options.techTypes } : {}),
+              ...(techGameState.ui.allowedTechTypes
+                ? { techTypes: [...techGameState.ui.allowedTechTypes] }
+                : {}),
             },
           },
         ) || { ok: false, code: "ENGINE_ACTION_EXECUTOR_REQUIRED", message: "科技行动 executor 未装配" }

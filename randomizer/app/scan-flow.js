@@ -1877,7 +1877,101 @@
     function beginPublicDeckScan() {
       return beginCardSelection(createPublicScanPendingAction(getCurrentPlayer()));
     }
+
+    function executeMainScanAction(workingRoot, descriptor) {
+      const actionRocketState = workingRoot.rocketState;
+      const reject = (message, result = null) => {
+        actionRocketState.statusNote = message;
+        renderStateReadout();
+        return result || { ok: false, message };
+      };
+      if (!context.canStartMainAction()) {
+        return reject(context.getMainActionStartBlockReason() || "本回合已经开始或完成主要行动");
+      }
+      const pendingReason = [
+        [isActionEffectFlowActive(), "请先完成当前行动的效果"],
+        [isTechTilePickingActive(), "请先完成科技选择"],
+        [isCardSelectionActive(), "请先完成精选"],
+        [isDiscardSelectionActive(), "请先完成弃牌"],
+        [isPlayCardSelectionActive(), "请先完成打牌"],
+        [isMovePaymentSelectionActive(), "请先完成移动"],
+        [isHandScanSelectionActive(), "请先完成手牌扫描"],
+      ].find(([active]) => active)?.[1];
+      if (pendingReason) return reject(pendingReason);
+
+      const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
+      const check = scanEffects.canExecuteScan(currentPlayer, { standardAction: true });
+      if (!check.ok) return reject(check.message, check);
+
+      context.startActionLogDraft("scan", "扫描行动", {
+        source: context.HISTORY_SOURCE_MAIN,
+        player: currentPlayer,
+      });
+      context.actionHistory.beginSession("scan", "扫描行动");
+      context.actionHistory.beginStep({
+        source: context.HISTORY_SOURCE_MAIN,
+        type: "action-cost",
+        label: "扫描费用",
+      });
+      let costResult = abilities.executeAbility(
+        "payScanCost",
+        createActionContext(workingRoot, descriptor),
+        { cost: scanEffects.getStandardScanCost(currentPlayer) },
+      );
+      if (!costResult.ok) {
+        context.actionHistory.rollbackSession();
+        context.clearHistoryStepOrderForSource(context.HISTORY_SOURCE_MAIN);
+        context.removeActionLogStepsBySource(context.HISTORY_SOURCE_MAIN);
+        return reject(costResult.message, costResult);
+      }
+      costResult = context.maybeConsumeAlienLabPanelForMainAction("scan", costResult, currentPlayer);
+      recordAbilityCommands(costResult);
+      const costStep = context.actionHistory.endStep();
+      if (costStep) {
+        context.rememberHistoryStep(context.HISTORY_SOURCE_MAIN, costStep.id);
+        context.appendActionLogStep(
+          context.HISTORY_SOURCE_MAIN,
+          costStep.label,
+          costResult.message,
+          context.actionLogOptionsFromHistoryStep(costStep),
+        );
+      }
+      const scanRunId = context.createScanRunId("main-scan");
+      decisionState.actionEffectFlow = abilities.chain.startAbilityChain(
+        "scan",
+        "扫描行动",
+        scanEffects.buildScanEffectQueue(currentPlayer, {
+          includeFinalize: true,
+          fullScanAction: true,
+          scanRunId,
+          turnState: workingRoot.turnState,
+          roundNumber: workingRoot.turnState.roundNumber,
+          turnNumber: workingRoot.turnState.turnNumber,
+        }),
+      );
+      decisionState.actionEffectFlow.playerId = currentPlayer.id;
+      context.assignEffectFlowOwner(decisionState.actionEffectFlow, currentPlayer.id);
+      decisionState.actionEffectFlow.scanRunId = scanRunId;
+      decisionState.actionEffectFlow.scanActionEvent = {
+        type: "scanAction",
+        source: "main",
+        scanRunId,
+        playerId: currentPlayer.id,
+      };
+      els.appWrap?.classList.toggle("action-effect-flow-active", true);
+      actionRocketState.statusNote = "扫描：请依次点击能力效果";
+      renderPlayerStats();
+      activateNextActionEffect();
+      return {
+        ok: true,
+        message: actionRocketState.statusNote,
+        cost: costResult.cost || {},
+        history: costResult.commands || [],
+        effects: structuredClone(decisionState.actionEffectFlow.effects || []),
+      };
+    }
     return {
+      executeMainScanAction,
       getPublicScanBonusSelectableCount,
       getPublicScanMaxSelectable,
       getPublicScanMinSelectable,

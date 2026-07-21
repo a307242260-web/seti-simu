@@ -1119,12 +1119,13 @@
       }];
     }
 
-    function buildIndustryPlayCardAppendEffects(player, playedCard) {
+    function buildIndustryPlayCardAppendEffects(player, playedCard, execution = {}) {
+      const actionTurnState = execution.workingRoot?.turnState || turnState;
       const sentinelEffects = industry?.buildSentinelPlayCornerEffectNodes?.(
         cards,
         player,
-        turnState.roundNumber,
-        turnState.turnNumber,
+        actionTurnState.roundNumber,
+        actionTurnState.turnNumber,
         playedCard,
       ) || [];
       const strategyEffects = buildStrategyPlayPassiveEffectNodes(player, playedCard);
@@ -1134,8 +1135,8 @@
       };
     }
 
-    function buildPlayCardEffectFlowQueue(player, playedCard, playEffects) {
-      const industryAppendEffects = buildIndustryPlayCardAppendEffects(player, playedCard);
+    function buildPlayCardEffectFlowQueue(player, playedCard, playEffects, execution = {}) {
+      const industryAppendEffects = buildIndustryPlayCardAppendEffects(player, playedCard, execution);
       const immediateEffects = [
         ...(playEffects || []),
         ...(industryAppendEffects.immediateEffects || []),
@@ -1147,8 +1148,12 @@
       };
     }
 
-    function applyIndustryPlayCardPassives(playedCard, typeCode) {
-      const player = getCurrentPlayer();
+    function applyIndustryPlayCardPassives(playedCard, typeCode, execution = {}) {
+      const workingRoot = execution.workingRoot || null;
+      const actionTurnState = workingRoot?.turnState || turnState;
+      const player = workingRoot
+        ? players.getCurrentPlayer(workingRoot.playerState)
+        : getCurrentPlayer();
       const result = { publicityGained: 0, messages: [] };
       if (!player || !playedCard) return result;
       player.industryPlayedCardThisRound = true;
@@ -1160,8 +1165,8 @@
         incomeActionCode: playedCard.incomeActionCode ?? null,
         scanActionCode: playedCard.scanActionCode ?? null,
       };
-      player.industryPlayedCardRound = turnState.roundNumber;
-      player.industryPlayedCardTurn = turnState.turnNumber;
+      player.industryPlayedCardRound = actionTurnState.roundNumber;
+      player.industryPlayedCardTurn = actionTurnState.turnNumber;
       if (industry?.shouldGainPublicityOnType12Play?.(player) && [1, 2].includes(typeCode)) {
         const beforePublicity = Number(player.resources?.publicity) || 0;
         const publicityGain = industry.getMissionPlayPublicityGain();
@@ -1176,7 +1181,7 @@
       const strategyActivation = industry?.activateStrategyPlayInteraction?.(
         player,
         playedCard,
-        turnState.roundNumber,
+        actionTurnState.roundNumber,
       );
       if (strategyActivation?.ok) {
         if (strategyActivation.eligibleSlotIds?.length) {

@@ -51,11 +51,52 @@
   }
 
   function createEngineActionExecutor(options = {}) {
-    const executors = options.executors || {};
-    for (const family of ACTION_FAMILIES) {
-      if (typeof executors[family] !== "function") {
-        throw new TypeError(`Engine Action executor 缺少 ${family} 生产实现`);
+    const { actions, abilities, players } = options;
+    if (typeof actions?.getAction !== "function") {
+      throw new TypeError("Engine Action executor 缺少 actions registry");
+    }
+    if (typeof abilities?.executeAbility !== "function") {
+      throw new TypeError("Engine Action executor 缺少 abilities executor");
+    }
+    if (typeof players?.getCurrentPlayer !== "function") {
+      throw new TypeError("Engine Action executor 缺少 players capability");
+    }
+    if (typeof options.createActionContext !== "function") {
+      throw new TypeError("Engine Action executor 缺少 working-root action context factory");
+    }
+    if (typeof options.executeScan !== "function") {
+      throw new TypeError("Engine Action executor 缺少 scan production flow");
+    }
+    if (typeof options.executePlayCard !== "function") {
+      throw new TypeError("Engine Action executor 缺少 play_card production flow");
+    }
+
+    function executeFamily(workingRoot, descriptor) {
+      const context = options.createActionContext(workingRoot, descriptor);
+      if (descriptor.family === "research_tech") {
+        const action = actions.getAction("researchTech");
+        if (!action?.execute) return fail("ENGINE_ACTION_EXECUTOR_MISSING", "缺少 research_tech 生产 executor");
+        return action.execute(context, {
+          ...(descriptor.payload || {}),
+          tileId: descriptor.target?.tileId,
+          blueSlot: descriptor.target?.blueSlot ?? null,
+        });
       }
+      if (descriptor.family === "scan") {
+        return options.executeScan(workingRoot, clone(descriptor));
+      }
+      if (descriptor.family === "analyze") {
+        const player = players.getCurrentPlayer(context.playerState);
+        const actionOptions = typeof options.getAnalyzeActionOptions === "function"
+          ? options.getAnalyzeActionOptions(player, descriptor.payload || {}, workingRoot)
+          : { ...(descriptor.payload || {}) };
+        const result = abilities.executeAbility("analyzeData", context, actionOptions);
+        if (result?.ok && typeof options.afterAnalyze === "function") {
+          options.afterAnalyze(workingRoot, result, clone(descriptor));
+        }
+        return result;
+      }
+      return options.executePlayCard(workingRoot, clone(descriptor));
     }
 
     function execute(workingRoot, descriptor, executeOptions = {}) {
@@ -74,7 +115,7 @@
 
       const before = clone(workingRoot);
       try {
-        const result = executors[descriptor.family](workingRoot, clone(descriptor));
+        const result = executeFamily(workingRoot, clone(descriptor));
         if (!result?.ok) {
           restoreWorkingRoot(workingRoot, before);
           return result?.ok === false

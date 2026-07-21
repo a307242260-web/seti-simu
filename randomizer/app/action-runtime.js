@@ -452,9 +452,30 @@
 
     function executeStandardDescriptor(standardContext, descriptor, executionOptions = null) {
       if (ENGINE_ACTION_FAMILIES.has(descriptor?.family)) {
-        return engineActionExecutor.execute(engineActionWorkingRoot, descriptor, {
-          validate: (_workingRoot, action) => standardActionAdapter.validate(standardContext, action),
+        const actionLogBefore = createActionLogImpactSnapshot?.();
+        const result = engineActionExecutor.execute(engineActionWorkingRoot, descriptor, {
+          validate: (workingRoot, action) => standardActionAdapter.validate(
+            createActionContext(workingRoot, action),
+            action,
+          ),
         });
+        if (!result?.ok) return result;
+        if (descriptor.family === "research_tech" && result.tileId) {
+          rocketState.statusNote = result.message;
+          finalizeTechTakeResult?.(result);
+        }
+        if (descriptor.family === "analyze") {
+          recordAtomicActionHistory?.("analyze", ACTION_LOG_DEFAULT_LABELS.analyze, result, {
+            logBefore: actionLogBefore,
+          });
+          const startedRewardFlow = startAnalyzeDataRewardFlow?.();
+          if (startedRewardFlow) executeActionEffect?.(getCurrentActionEffect?.());
+          settleCardTasksAfterEffect?.({ events: result.events, render: false });
+          renderPlayerStats?.();
+          updateActionButtons?.();
+          renderStateReadout?.();
+        }
+        return result;
       }
       if (!PRIMARY_BOARD_FAMILIES.has(descriptor?.family)) {
         return standardActionAdapter.execute(standardContext, descriptor);
