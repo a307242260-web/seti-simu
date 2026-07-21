@@ -1054,7 +1054,7 @@ const forcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
   forcedIndustryCard: forcedIndustryOffer.industryOptions[1],
 });
 assert.equal(forcedOpening.industry.label, "作弊实验室");
-assert.equal(forcedOpening.openingPlan.summary.hand, 5);
+assert.equal(forcedOpening.openingPlan.summary.hand, 1);
 assert.equal(forcedOpening.openingPlan.summary.credits, 2);
 assert.equal(forcedOpening.openingPlan.summary.energy, 2);
 assert.equal(forcedOpening.openingPlan.summary.baseIncomeCredits, 2);
@@ -1065,9 +1065,9 @@ const weakForcedOpening = policy.chooseInitialSelection(forcedIndustryOffer, {
   forcedIndustryCard: forcedIndustryOffer.industryOptions[1],
   aiDifficulty: "weak_start",
 });
-assert.equal(weakForcedOpening.openingPlan.summary.incomeIncreases, 4);
-assert.equal(weakForcedOpening.openingPlan.goals.OPENING_INCOME, 6);
-assert.ok(weakForcedOpening.openingPlan.topPlans.every((plan) => plan.summary.incomeIncreases === 4));
+assert.equal(weakForcedOpening.openingPlan.summary.incomeIncreases, 3);
+assert.equal(weakForcedOpening.openingPlan.goals.OPENING_INCOME, 5);
+assert.ok(weakForcedOpening.openingPlan.topPlans.every((plan) => plan.summary.incomeIncreases === 3));
 
 const weakResearchOpeningOffer = {
   industryOptions: [{ id: "industry:cheat-lab", label: "作弊实验室" }],

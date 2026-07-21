@@ -2156,7 +2156,7 @@
               industryCard: companyCard,
               requireIndustryCard: true,
             });
-            const abilityCheck = industry.prepareActiveAbility?.(player, companyCard?.label);
+            const abilityCheck = industry.canStartActiveAbility?.(player, companyCard?.label);
             if (!markCheck?.ok || !abilityCheck?.ok) return markCheck?.ok ? abilityCheck : markCheck;
             return { ok: true, choices: [{ target: { companyLabel: companyCard.label }, label: companyCard.label }] };
           },

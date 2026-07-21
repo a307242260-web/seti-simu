@@ -385,6 +385,36 @@
     return { ok: true, abilityId: definition.activeAbilityId, label: definition.label };
   }
 
+  function canStartActiveAbility(player, companyLabel) {
+    const prepared = prepareActiveAbility(player, companyLabel);
+    if (!prepared.ok) return prepared;
+
+    if (prepared.abilityId === "mission_publicity_pick_income"
+      && (!player?.resources || player.resources.publicity < PUBLICITY_PICK_COST)) {
+      return { ok: false, message: `宣传不足，需要 ${PUBLICITY_PICK_COST} 宣传` };
+    }
+    if (prepared.abilityId === "fenwick_publicity_pick_corner"
+      && (!player?.resources || player.resources.publicity < FENWICK_PUBLICITY_PICK_COST)) {
+      return { ok: false, message: `宣传不足，需要 ${FENWICK_PUBLICITY_PICK_COST} 宣传` };
+    }
+    if (prepared.abilityId === "future_span_pick_advance") {
+      const futureState = player?.industryFutureSpan;
+      const targetScore = Number(futureState?.targetScore);
+      if (!futureState?.card || futureState.playing || !Number.isFinite(targetScore)) {
+        return { ok: false, message: `${prepared.label}：没有已标记的目标牌，无法使用该能力` };
+      }
+    }
+    if (prepared.abilityId === "pirates_raid_launch") {
+      if (!player?.resources || Number(player.resources.credits || 0) < PIRATES_RAID_ACTIVE_COST.credits) {
+        return { ok: false, message: `信用点不足，需要 ${PIRATES_RAID_ACTIVE_COST.credits} 信用点` };
+      }
+      if (!passives.hasAnyPiratesRaidPlanetMarker?.(player)) {
+        return { ok: false, message: `${prepared.label}：没有已有掠夺标记的主星` };
+      }
+    }
+    return prepared;
+  }
+
   function normalizeRoundNumber(roundNumber) {
     return Math.max(1, Math.round(Number(roundNumber) || 1));
   }
@@ -414,7 +444,7 @@
   }
 
   function buildActiveAbilityFlow(player, companyLabel, roundNumber, turnNumber = 1) {
-    const prepared = prepareActiveAbility(player, companyLabel);
+    const prepared = canStartActiveAbility(player, companyLabel);
     if (!prepared.ok) return prepared;
 
     const abilityId = prepared.abilityId;
@@ -463,9 +493,6 @@
           message: `${prepared.label}：请选择要无效的科技（不可选蓝色），确认后清除 3 个奖励槽标记并增加 1 次收入`,
         };
       case "mission_publicity_pick_income": {
-        if (!player?.resources || player.resources.publicity < PUBLICITY_PICK_COST) {
-          return { ok: false, message: `宣传不足，需要 ${PUBLICITY_PICK_COST} 宣传` };
-        }
         return {
           ok: true,
           abilityId,
@@ -476,9 +503,6 @@
         };
       }
       case "fenwick_publicity_pick_corner": {
-        if (!player?.resources || player.resources.publicity < FENWICK_PUBLICITY_PICK_COST) {
-          return { ok: false, message: `宣传不足，需要 ${FENWICK_PUBLICITY_PICK_COST} 宣传` };
-        }
         return {
           ok: true,
           abilityId,
@@ -497,11 +521,6 @@
           message: `${prepared.label}：请选择 1 张手牌，再选择 1 张公共牌交换`,
         };
       case "future_span_pick_advance": {
-        const futureState = player?.industryFutureSpan;
-        const targetScore = Number(futureState?.targetScore);
-        if (!futureState?.card || futureState.playing || !Number.isFinite(targetScore)) {
-          return { ok: false, message: `${prepared.label}：没有已标记的目标牌，无法使用该能力` };
-        }
         return {
           ok: true,
           abilityId,
@@ -529,12 +548,6 @@
           message: `${prepared.label}：请按效果栏结算 ${FUNDAMENTALISM_EXCHANGE_COUNT} 次分数/资源兑换`,
         };
       case "pirates_raid_launch":
-        if (!player?.resources || Number(player.resources.credits || 0) < PIRATES_RAID_ACTIVE_COST.credits) {
-          return { ok: false, message: `信用点不足，需要 ${PIRATES_RAID_ACTIVE_COST.credits} 信用点` };
-        }
-        if (!passives.hasAnyPiratesRaidPlanetMarker?.(player)) {
-          return { ok: false, message: `${prepared.label}：没有已有掠夺标记的主星` };
-        }
         return {
           ok: true,
           abilityId,
@@ -727,6 +740,7 @@
     applyCornerReward,
     applyIncomeResourcesFromCard,
     prepareActiveAbility,
+    canStartActiveAbility,
     armAbilityState,
     buildActiveAbilityFlow,
     isSentinelPlayCornerReady,

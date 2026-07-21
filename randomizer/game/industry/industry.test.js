@@ -487,9 +487,11 @@ const futurePlayer = {
 };
 assert.equal(passives.shouldShowFutureSpanPanel(futurePlayer), true);
 state.initializeFutureSpanState(futurePlayer);
+assert.equal(abilities.canStartActiveAbility(futurePlayer, "未来跨度研究所").ok, false);
 assert.equal(state.canParkFutureSpanCard(futurePlayer).ok, true);
 const park = state.parkFutureSpanCard(futurePlayer, futurePlayer.hand[0], 35);
 assert.equal(park.ok, true);
+assert.equal(abilities.canStartActiveAbility(futurePlayer, "未来跨度研究所").ok, true);
 assert.equal(state.isFutureSpanCardReady(futurePlayer), false);
 const futureFlow = abilities.buildActiveAbilityFlow(futurePlayer, "未来跨度研究所", 1);
 assert.equal(futureFlow.ok, true);

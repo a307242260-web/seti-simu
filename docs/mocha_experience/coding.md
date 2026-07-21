@@ -14,6 +14,14 @@
 
 ## Entries
 
+- date: 2026-07-21
+- source_issue: SETI-104
+- observation: 产品级机器人验收不能引用 PASS-first、first-legal 之类刻意绕开策略决策的终局基线；这类测试即使稳定终局、分数和 trace，也只证明最弱状态推进没有崩，不能证明机器人行为、强度或档位。若仓库已有真实 Policy 固定回归，应删除重复的伪 smoke，并只把真实 Policy、多 seed 分布和浏览器完整局作为机器人证据。
+- evidence: owner 在评论 `f2ab213b-167f-44fe-a1ff-fdc477150351` 追问该 smoke 能验证什么，并在 `088d91da-fa05-444e-a97b-67edfe96a346` 明确指出“优先pass的话，这个smoke完全无意义”；审计确认旧测试始终优先 PASS/结束回合。删除后复跑真实 Policy 基线立即暴露“未来跨度研究所”在无目标牌时仍被 Standard Action 枚举，导致 `industry` 连续 1957 次、2000 步不终局；补齐纯 legality 后真实 Policy 306 步终局，并实际覆盖打牌、科技、扫描、分析、移动、环绕和登陆。
+- promote_to: none
+- promotion_status: candidate
+- decision: 删除 PASS-first 测试及 JSON，迁移文档统一指向真实 Heuristic Policy 固定回归，并修复普通公司 1x 的可执行性枚举；真实 Policy 基线只作为确定性行为回归，不作为强度验收。当前作为一次 owner 反馈记录 candidate，不修改 agent prompt、watcher、issue-workflow 或项目记忆。后续再出现将非策略终局测试误报为机器人质量证据时，评估升级 proof obligation 的证据命名/口径门禁。
+
 - date: 2026-07-19
 - source_issue: SETI-39
 - observation: 冻结评测的 `maxSteps` 必须与当前 policy-owned decision 粒度一致；在 conditional 也成为独立 timestep 后，不能只把 PyTorch checkpoint 接入同一 seed/分数统计而忽略旧上限，否则会把超步后的终局分误计为合格样本。协议上限若已无法覆盖正常完整局，应发布新 protocol id，不能在适配器里静默放宽旧协议。

@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-21
+- source: SETI-104 owner 评论 `f2ab213b-167f-44fe-a1ff-fdc477150351`、`088d91da-fa05-444e-a97b-67edfe96a346` 与两组 seed baseline 代码审计
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及负责机器人验证的 coding agent
+- target_component: 机器人产品证据与 smoke 命名口径
+- target_file: docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 记录“PASS-first/first-legal 终局基线不能作为机器人行为、强度或档位证据；已有真实 Policy 回归时删除伪 smoke，并用真实 Policy、多 seed 分布和浏览器完整局分层验收”的候选实践。
+- applied_change: 删除 `randomizer/app/ai-controller.seed-baseline.test.js` 与对应 JSON；三份迁移文档改指 `training/heuristic-policy.seed-baseline.test.js`；修复无目标牌的未来跨度 1x 被错误枚举并无限空转，重冻无补强后的 306 步真实 Policy 确定性 trace。该基线明确不作为强度验收；不修改策略权重、agent prompt、watcher、issue-workflow 或项目记忆。
+- expected_effect: 后续交付不再用绕开策略决策的低分终局测试证明机器人质量，也不会因“固定 seed/固定分数”字样把基础状态推进误报为产品 smoke。
+- evaluation_window: 后续 3 个机器人行为、强度或评测 issue
+- success_signal: 收口证据明确区分规则/状态推进、真实 Policy 行为、多 seed 统计和浏览器体验；机器人质量结论不引用 PASS-first 或 first-legal trace。
+- rollback_condition: 若真实 Policy 基线无法覆盖某个独立 controller 状态推进契约，则新增按该契约命名的窄测试，但不得恢复“机器人 smoke/水平基线”命名或用其分数作产品结论。
+- risk: 删除旧 characterization 会减少一条最弱终局路径的精确 trace；现有 headless contract、terminal、replay 与真实 Heuristic Policy 完整局测试已覆盖其有价值部分，若发现独立缺口应补窄契约测试。
+- evidence_before: 旧测试的 chooser 明确优先 `pass`、其次 `end_turn`、否则第一个合法动作，四席仅 `[11,5,7,3]`。删除旧测试后，真实 Policy 首次复跑在“未来跨度研究所”无目标牌时连续选择 `industry`，2000 步未终局；修复 legality 后 306 步终局、逐席 `[29,22,17,22]`，这组单 seed 结果不能支持“当前无补强策略已达到产品档位”，也不能把确定性回归冒充强度验收。
+- owner_or_agent_decision: owner 明确判定 PASS-first smoke 完全无意义；领航接受并删除，不保留仅为迁移历史存在的无效测试。
+- applied_at: 2026-07-21
+- verification: `node randomizer/training/heuristic-policy.seed-baseline.test.js`、`node --check randomizer/app.js`、`node tools/audit_state_authority.js` 与 `node tools/run_node_tests.js` 全部通过；全量汇总 `passed=167 failed=0 total=167`。
+- observed_outcome: PASS-first 伪 smoke 已删除；真实 Policy 基线从无限重复 `industry` 恢复为 306 步终局，并保留 7 类非 PASS 核心行动覆盖。逐席 `[29,22,17,22]` 明确留作当前无补强行为快照，不宣称达到稳定档位。
+- keep_or_revise: 保持 candidate；观察后续 3 个机器人评测 issue 是否仍发生证据口径混淆。
+
+- date: 2026-07-21
 - source: SETI-97 timeline、父级 metadata 与 SETI-98～103 状态
 - promoted_to: none
 - promotion_decision: candidate

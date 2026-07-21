@@ -6,7 +6,7 @@
 - `randomizer/app/ai-controller.test.js`：10,295 行 → 1,033 行；完整控制器集成回归迁到 `ai-controller.integration.test.js`，characterization 继续复用轻量 harness。
 - 新增 16 个 `randomizer/game/ai/**` 生产模块，全部低于 3,000 行；每个模块都有独立 Node 测试。
 - app 层继续拥有 pending、DOM 选择、确认/执行、自动调度和顶层行动执行；game 层模块只接收显式 context/参数并返回估值、需求、诊断或候选。
-- 权重、阈值、候选顺序和 tie-break 未改；固定 seed 基线继续使用 `ai-controller.seed-baseline.json`。
+- 权重、阈值、候选顺序和 tie-break 未改。迁移期曾使用 `ai-controller.seed-baseline.json` 的 PASS-first 基线；该基线已在 SETI-104 删除，当前固定 seed 策略回归统一使用 `training/heuristic-policy.seed-baseline.json`。
 
 ## 删除证据
 
@@ -24,7 +24,7 @@
 node randomizer/game/ai/ai-domain-migration.test.js
 node randomizer/app/ai-controller.integration.test.js
 node randomizer/app/ai-controller.characterization.test.js
-node randomizer/app/ai-controller.seed-baseline.test.js
+node randomizer/training/heuristic-policy.seed-baseline.test.js
 ```
 
 ## 逐域函数清单

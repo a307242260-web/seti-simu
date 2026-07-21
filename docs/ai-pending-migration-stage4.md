@@ -28,5 +28,5 @@ node randomizer/app/ai-controller.pending.integration.test.js
 node randomizer/app/ai-controller.alien.integration.test.js
 node randomizer/app/ai-controller.action.integration.test.js
 node randomizer/app/ai-controller.strategy.integration.test.js
-node randomizer/app/ai-controller.seed-baseline.test.js
+node randomizer/training/heuristic-policy.seed-baseline.test.js
 ```

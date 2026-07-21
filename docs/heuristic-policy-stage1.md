@@ -30,6 +30,6 @@ Policy 身份固定为 `heuristic / seti-heuristic-policy-v1`。`getProvenance()
 
 浏览器 Host 与 headless Host 仍拥有请求 session、公共 validator、提交、deterministic drain 和 journal；Policy 实例没有这些方法。
 
-## 冻结水平基线
+## 固定策略行为基线
 
-`randomizer/training/heuristic-policy.seed-baseline.json` 冻结 `weak_start`、4 席、固定 seed 的完整 474 步 action trace hash、逐席终局分、family 计数和 policy provenance。测试不仅要求终局，还要求完整选择身份和逐席分数不漂移，并设置最低席位 20 分的退化下限；迁移期不得借更新 baseline 调整权重、阈值或候选排序。
+`randomizer/training/heuristic-policy.seed-baseline.json` 冻结 `weak_start`、4 席、固定 seed 的完整 306 步 action trace hash、逐席终局分、family 计数和 policy provenance。测试要求真实 Policy 终局、完整选择身份与逐席分数不漂移，并要求打牌、科技、扫描、分析、移动、环绕和登陆均真实发生，同时限制公司 1x 不得重复空转；它是确定性行为回归，不是机器人强度或稳定档位验收。产品水平必须另用多 seed 分布、低尾与浏览器完整局判断。

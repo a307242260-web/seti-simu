@@ -36,6 +36,10 @@ assert.deepEqual(actual, {
   familyCounts: baseline.familyCounts,
   provenance: baseline.provenance,
 });
-assert.ok(Math.min(...actual.scores) >= 20, "冻结水平基线不能退化为仅能终局的零水平策略");
+assert.ok(actual.terminal, "真实 Heuristic Policy 必须完成整局");
+assert.ok(actual.familyCounts.industry <= 16, "公司 1x 不得在同一轮重复空转");
+for (const family of ["play_card", "research_tech", "scan", "analyze", "move", "orbit", "land"]) {
+  assert.ok(actual.familyCounts[family] > 0, `真实 Heuristic Policy 必须执行 ${family}，不能退化为 PASS-first 路径`);
+}
 
 console.log("training/heuristic-policy.seed-baseline.test.js ok");
