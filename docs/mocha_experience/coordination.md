@@ -12,6 +12,16 @@
 - promotion_status:
 - decision:
 
+## 2026-07-21：skill 随附执行器必须给出可直接调用的解析入口
+
+- date: 2026-07-21
+- source_issue: owner 在 Codex 会话中连续反馈领航每轮都会先报“仓库内执行器路径不存在”，并纠正“不需要禁止搜索或播报，只要没有错误信息”
+- observation: skill 正文把随附脚本写成 `scripts/issue_transition.py` 时，agent 会从业务仓库根解析，先产生必现的文件不存在，再定位 skill 挂载目录。修复点应是把入口改为当前 runtime 可直接调用的绝对路径；不应再叠加“禁止搜索/禁止播报”这类表现层 prompt 约束。
+- evidence: SETI 远端 issue-workflow skill `6e816de3-7377-4f99-9a49-96473a47d039` 原正文全部使用仓库相对路径；本机 `/Users/bilibili/.codex/skills/issue-workflow/scripts/issue_transition.py` 存在且可执行。更新后一次性领航 run `83eebe43-ca25-4bc5-af10-12226e9dc619` 直接执行固定入口 `--help`，退出码 0、未发生路径探测。
+- promote_to: issue_workflow
+- promotion_status: promote
+- decision: SETI 远端 skill 与领航职责行统一改为绝对入口；撤销额外的“不要搜索/不要播报”prompt，只从根因上消除错误路径。观察后续 10 个 issue run，若本机 skill 路径因安装位置变化失效，则改为平台提供的动态 skill-root 变量，而不是恢复仓库相对路径。
+
 ## 2026-07-19：架构总控建单前先做现有 issue 覆盖审计
 
 - date: 2026-07-19

@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-21
+- source: owner 连续反馈领航每轮先报“issue-workflow 指定的仓库内执行器路径不存在”，并明确纠正无需“禁止搜索/禁止播报”硬约束，只需消除错误入口
+- promoted_to: issue_workflow
+- promotion_decision: promote
+- target_agent: 领航
+- target_component: SETI 远端 issue-workflow skill 的执行器解析入口与领航职责行
+- target_file: Mocha skill `6e816de3-7377-4f99-9a49-96473a47d039`；agent `13e5c469-264f-4a3c-837d-2cbc26bbba19` instructions；docs/mocha_experience/coordination.md
+- remote_skill_id: 6e816de3-7377-4f99-9a49-96473a47d039
+- change: 将会被业务仓库根错误解析的 `scripts/issue_transition.py` 改为当前 SETI runtime 已确认存在的 `/Users/bilibili/.codex/skills/issue-workflow/scripts/issue_transition.py`；不使用表现层禁止语句掩盖路径错误。
+- applied_change: 更新远端 skill 正文中的入口、timeline 说明和全部命令示例；更新领航职责第 3 条为同一绝对路径。曾短暂追加的“不要搜索/不要播报”独立 prompt 段已按 owner 纠正完整删除，skill 也只保留“固定入口已确认存在”的事实说明。
+- expected_effect: 领航执行 start/handoff/wait/review/done 时直接调用有效脚本，不再先访问仓库内不存在的 `scripts/issue_transition.py`，同时不靠限制中间播报来掩盖真实错误。
+- evaluation_window: 后续 10 个实际调用 issue-workflow 的 SETI issue run
+- success_signal: 10 个 run 均无 `No such file`、无“正在定位 skill 随附脚本”，transition 原子执行与 timeline 正常生成。
+- rollback_condition: 绝对路径在隔离 runtime 中不存在、权限变化或 SETI runtime 迁移到其他主机时，撤销硬编码并改用平台注入的动态 skill root/可执行器命令；不回退到业务仓库相对路径。
+- risk: 绝对路径绑定当前本机安装位置；但 SETI runtime 明确为本机 local，且该路径已由真实 agent run 验证。未来 runtime 迁移需同步更新。
+- evidence_before: 远端 skill 正文和领航 prompt 均写相对路径；本机目标文件为可执行文件；owner 报告该错误信息每轮重复出现。
+- owner_or_agent_decision: owner 要求解决真实路径错误，并否定额外的行为/话术硬约束；最终只保留根因修复。
+- applied_at: 2026-07-21
+- verification: 本机绝对入口 `--help` 退出码 0；远端 skill updated_at=2026-07-21T04:40:57Z；领航一次性 run `83eebe43-ca25-4bc5-af10-12226e9dc619` completed、failure_reason=null，结果为“固定入口可直接执行；未发生路径探测”；一次性测试 autopilot 已删除。
+- observed_outcome: 配置级和真实领航 run 均验证通过；等待后续 10 个真实 transition run 观察。
+- keep_or_revise: 保留根因修复；不保留“禁止搜索/禁止播报”prompt。若出现路径迁移问题，改为动态 skill root。
+
+- date: 2026-07-21
 - source: owner 在 Codex 会话中直接要求将现有 Mocha watcher 兜底迁移到 SETI；部署前 SETI-14 对已完成 SETI-92 的 waiting_on 仍未自动解除
 - promoted_to: watcher_lint
 - promotion_decision: promote
