@@ -191,6 +191,7 @@ function createContext(overrides = {}) {
     playerHandPanel: createElement("div", document),
     playerHandFan: createElement("div", document),
     reservedCardFan: createElement("div", document),
+    reservedCardPanel: createElement("section", document),
     initialSelectionArea: createElement("div", document),
     playerBoardDataLayer: createElement("div", document),
     playerStats: createElement("div", document),
@@ -210,6 +211,9 @@ function createContext(overrides = {}) {
       4: createElement("div", document),
     },
   };
+  const reservedTitle = createElement("div", document);
+  reservedTitle.className = "panel-title";
+  els.reservedCardPanel.append(reservedTitle);
   const playerA = {
     id: "p1",
     color: "white",
@@ -354,6 +358,16 @@ function createContext(overrides = {}) {
         publicCards: [],
         ui: { selectionActive: false, discardSelectionActive: false, playCardSelectionActive: false },
       },
+      initialSelection: { active: false, offer: null, selectedCards: [] },
+      reservedCards: {
+        title: "保留牌区 · 完成任务 0",
+        initialSelectionActive: false,
+        empty: true,
+        rows: [
+          { type: "task", label: "1、2型任务牌", items: [] },
+          { type: "final", label: "3型终局计分牌", items: [] },
+        ],
+      },
       tech: {},
       decisions: pendingState,
     },
@@ -388,12 +402,6 @@ function createContext(overrides = {}) {
     getPlayerRoundOrderNumber() { return 1; },
     getPlayerDisplayLabel(player) { return player.name; },
     isPlayerPassedThisRound() { return false; },
-    isInitialSelectionActive() { return false; },
-    getInitialSelectionOffer() { return null; },
-    getCurrentInitialSelectionCards() { return []; },
-    isInitialSelectionConfirmed() { return false; },
-    getInitialSelectionPlayerIds() { return []; },
-    getCardFromInitialOffer() { return null; },
     getPlayerLabelById() { return "白色"; },
     getDisplayedTurnNumber() { return 1; },
     isGameEnded() { return false; },
@@ -410,7 +418,7 @@ function createContext(overrides = {}) {
     buildPlayerRunezuStatNodes() { return []; },
     buildPlayerFangzhouStatNodes() { return []; },
     updatePlayerHandPanelTitle() { context.updatePlayerHandPanelTitleCalls += 1; },
-    renderReservedCardsFromTaskState() { context.renderReservedCardsCalls += 1; },
+    layoutReservedCardRows() { context.layoutReservedCardRowsCalls += 1; },
     renderFinalScoreBoard(input) {
       context.renderFinalScoreBoardCalls += 1;
       context.lastFinalScoreRenderInput = input;
@@ -465,7 +473,7 @@ function createContext(overrides = {}) {
     isPublicCardMultiSelectActive() { return false; },
     isAiAutoBattlePlayer() { return false; },
     updatePlayerHandPanelTitleCalls: 0,
-    renderReservedCardsCalls: 0,
+    layoutReservedCardRowsCalls: 0,
     renderFinalScoreBoardCalls: 0,
     lastFinalScoreRenderInput: null,
     queueJiuzheCalls: 0,
@@ -507,7 +515,8 @@ function createContext(overrides = {}) {
     "syncFinalScorePendingMarks", "computePlayerFinalScoreBreakdown",
     "getPendingMovePayment", "getPendingCardCornerQuickAction", "getPendingHandCardPlayAction",
     "getPendingPlayCardSelection", "isDiscardSelectionActive", "isPlayCardSelectionActive",
-    "isMovePaymentSelectionActive", "isHandScanSelectionActive",
+    "isMovePaymentSelectionActive", "isHandScanSelectionActive", "getInitialSelectionOffer",
+    "renderReservedCardsFromTaskState",
   ]) {
     Object.defineProperty(context, key, {
       configurable: true,
@@ -519,6 +528,8 @@ function createContext(overrides = {}) {
   runtime.renderPlayerHand();
   runtime.renderOpponentStats();
   runtime.renderPlayerStats();
+  runtime.renderReservedCards();
+  runtime.renderInitialSelectionArea();
   runtime.setTokenAssetSizes();
 }
 
@@ -579,7 +590,8 @@ function createContext(overrides = {}) {
   assert.equal(context.els.playerStats.children.length, 1);
   assert.equal(context.els.opponentStatGrid.children.length, 2);
   assert.equal(context.updatePlayerHandPanelTitleCalls, 1);
-  assert.equal(context.renderReservedCardsCalls, 1);
+  assert.equal(context.els.reservedCardFan.children.length, 2);
+  assert.equal(context.layoutReservedCardRowsCalls, 1);
   assert.equal(context.dataPlayerBoardCalls, 1);
   assert.equal(context.lastFinalScoreRenderInput.finalScoringState.legacyNormalizationProbe, true);
   assert.equal(context.testResident.finalScoring.legacyNormalizationProbe, undefined);
@@ -613,7 +625,8 @@ function createContext(overrides = {}) {
     "syncFinalScorePendingMarks", "computePlayerFinalScoreBreakdown",
     "getPendingMovePayment", "getPendingCardCornerQuickAction", "getPendingHandCardPlayAction",
     "getPendingPlayCardSelection", "isDiscardSelectionActive", "isPlayCardSelectionActive",
-    "isMovePaymentSelectionActive", "isHandScanSelectionActive",
+    "isMovePaymentSelectionActive", "isHandScanSelectionActive", "getInitialSelectionOffer",
+    "renderReservedCardsFromTaskState",
   ]) {
     assert.doesNotMatch(wiring, new RegExp(`\\n\\s*${key}(?:,|:)`), `生产 renderer 不得注入 ${key}`);
   }

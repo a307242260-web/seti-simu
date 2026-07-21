@@ -68,7 +68,7 @@
       markActionPending,
       renderPlayerHand,
       renderPlayerStats,
-      renderReservedCardsFromTaskState,
+      renderReservedCards,
       renderPublicCards,
       renderInitialSelectionArea,
       renderAlienPanels,
@@ -1571,7 +1571,7 @@
       const playCardEvent = createPlayCardEvent(playedCard, currentPlayer, cost);
       syncPlayCardSelectionChrome();
       renderPlayerStats();
-      renderReservedCardsFromTaskState?.();
+      renderReservedCards?.();
       recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState, { workingRoot });
       if (playFlowQueue.effects.length) {
         startPlayCardEffectFlow(flowId, `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {

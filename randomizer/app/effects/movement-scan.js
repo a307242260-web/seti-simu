@@ -81,7 +81,7 @@
       renderPlayerHand,
       renderPlayerStats,
       renderPublicCards,
-      renderReservedCardsFromTaskState,
+      renderReservedCards,
       renderRockets,
       renderStateReadout,
       replaceNebulaDataForCurrentPlayer,
@@ -554,7 +554,7 @@
         undoable: true,
         message: `${effect.label}：${choice.label}`,
         payload: { choice, removedMarker: result.marker },
-      }, [syncPlanetOrbitLandMarkers, renderReservedCardsFromTaskState]);
+      }, [syncPlanetOrbitLandMarkers, renderReservedCards]);
     }
 
     function openRemovePlanetMarkerPicker(effect) {
@@ -990,7 +990,7 @@
       };
       rocketState.statusNote = effect.result.message;
       renderRockets();
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
       renderPlayerStats();
       completeCurrentActionEffect();
       renderStateReadout();

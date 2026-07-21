@@ -65,7 +65,6 @@
     const renderPlayerStats = requireFunction("renderPlayerStats", context.renderPlayerStats);
     const renderPlayerHand = requireFunction("renderPlayerHand", context.renderPlayerHand);
     const renderReservedCards = requireFunction("renderReservedCards", context.renderReservedCards);
-    const renderReservedCardsFromTaskState = requireFunction("renderReservedCardsFromTaskState", context.renderReservedCardsFromTaskState);
     const renderRockets = requireFunction("renderRockets", context.renderRockets);
     const renderStateReadout = requireFunction("renderStateReadout", context.renderStateReadout);
     const renderWheels = requireFunction("renderWheels", context.renderWheels);
@@ -810,7 +809,7 @@
       renderAlienPanels();
       renderPlayerStats();
       renderPlayerHand();
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
 
       if (pending?.type === "planet_reward_alien_trace") {
         completeCurrentActionEffect();
@@ -927,7 +926,7 @@
       renderAlienPanels();
       renderPlayerStats();
       renderPlayerHand();
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
 
       if (result.reward?.pickAlienCard) {
         const openResult = openBanrenmaCardGainDialog({
@@ -1048,7 +1047,7 @@
       renderAlienPanels();
       renderPlayerStats();
       renderPlayerHand();
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
 
       if (result.reward?.pickAlienCard) {
         const openResult = openAomomoCardGainDialog({
@@ -1165,7 +1164,7 @@
       renderAlienPanels();
       renderPlayerStats();
       renderPlayerHand();
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
 
       const openedFollowUp = openChongRewardFollowUps(
         result,
@@ -1273,7 +1272,7 @@
       renderAlienPanels();
       renderPlayerStats();
       renderPlayerHand();
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
 
       const openedFollowUp = openAmibaRewardFollowUps(
         result,
@@ -1382,7 +1381,7 @@
       renderAlienPanels();
       renderPlayerStats();
       renderPlayerHand();
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
 
       const openedFollowUp = openRunezuRewardFollowUps(
         result,

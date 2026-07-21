@@ -83,7 +83,6 @@
       renderPlayerHand,
       renderPublicCards,
       renderReservedCards,
-      renderReservedCardsFromTaskState,
       renderAlienPanels,
       renderTechBoard,
       renderRockets,
@@ -460,7 +459,7 @@
         els.debugAlienTraceButton.setAttribute("aria-pressed", uiRuntimeState.debugAlienTraceModeActive ? "true" : "false");
       }
       renderAlienPanels?.();
-      renderReservedCardsFromTaskState?.();
+      renderReservedCards?.();
       updateActionButtons?.();
       renderStateReadout?.();
       return { ok: true, active: uiRuntimeState.debugAlienTraceModeActive, message: rocketState.statusNote };
@@ -707,7 +706,7 @@
       renderAlienPanels?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
-      renderReservedCardsFromTaskState?.();
+      renderReservedCards?.();
       renderStateReadout?.();
       return { ok: true, message: rocketState.statusNote };
     }
@@ -732,7 +731,7 @@
       renderRockets?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
-      renderReservedCardsFromTaskState?.();
+      renderReservedCards?.();
       renderStateReadout?.();
       return { ok: true, message: rocketState.statusNote };
     }
@@ -755,7 +754,7 @@
       renderAlienPanels?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
-      renderReservedCardsFromTaskState?.();
+      renderReservedCards?.();
       renderStateReadout?.();
       return { ok: true, message: rocketState.statusNote };
     }
@@ -778,7 +777,7 @@
       renderAlienPanels?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
-      renderReservedCardsFromTaskState?.();
+      renderReservedCards?.();
       renderStateReadout?.();
       return { ok: true, message: rocketState.statusNote };
     }
@@ -802,7 +801,7 @@
       renderRockets?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
-      renderReservedCardsFromTaskState?.();
+      renderReservedCards?.();
       renderStateReadout?.();
       return { ok: true, message: rocketState.statusNote };
     }
@@ -826,7 +825,7 @@
       renderAlienPanels?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
-      renderReservedCardsFromTaskState?.();
+      renderReservedCards?.();
       renderStateReadout?.();
       return { ok: true, message: rocketState.statusNote };
     }
@@ -872,7 +871,7 @@
       renderRockets?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
-      renderReservedCardsFromTaskState?.();
+      renderReservedCards?.();
       renderStateReadout?.();
       logAomomoDebugCoordinates(alienSlotId);
       return { ok: true, message: rocketState.statusNote };
@@ -903,7 +902,7 @@
       renderTechBoard?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
-      renderReservedCardsFromTaskState?.();
+      renderReservedCards?.();
       renderStateReadout?.();
       return { ok: true, message: rocketState.statusNote };
     }

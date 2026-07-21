@@ -460,12 +460,6 @@
       getPlayerRoundOrderNumber,
       getPlayerDisplayLabel,
       isPlayerPassedThisRound,
-      isInitialSelectionActive,
-      getInitialSelectionOffer,
-      getCurrentInitialSelectionCards,
-      isInitialSelectionConfirmed,
-      getInitialSelectionPlayerIds,
-      getCardFromInitialOffer,
       getPlayerLabelById,
       getDisplayedTurnNumber,
       isGameEnded,
@@ -482,7 +476,7 @@
       buildPlayerRunezuStatNodes,
       buildPlayerFangzhouStatNodes,
       updatePlayerHandPanelTitle,
-      renderReservedCardsFromTaskState,
+      layoutReservedCardRows,
       renderFinalScoreBoard,
       buildPlutoMarkerContext,
       getCardTypeCode,
@@ -1286,25 +1280,136 @@
     }
 
     function renderReservedCards() {
-      renderReservedCardsFromTaskState();
+      if (!els.reservedCardFan || !els.reservedCardPanel) return;
+      const presentation = readProjection().resident.reservedCards || { rows: [] };
+      const title = els.reservedCardPanel.querySelector(".panel-title");
+      if (title) title.textContent = presentation.title || "保留牌区";
+      els.reservedCardPanel.classList.toggle(
+        "is-initial-selection-active",
+        Boolean(presentation.initialSelectionActive),
+      );
+      els.reservedCardPanel.classList.toggle("is-empty", Boolean(presentation.empty));
+      renderInitialSelectionArea();
+      if (presentation.initialSelectionActive) {
+        els.reservedCardFan.replaceChildren();
+        return;
+      }
+
+      function createReservedRow(row) {
+        const element = document.createElement("div");
+        element.className = `reserved-card-row reserved-card-row-${row.type}`;
+        element.dataset.reservedRow = row.type;
+        element.setAttribute("aria-label", row.label);
+        element.replaceChildren(...(row.items || []).map((item, rowIndex) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `reserved-card-button reserved-card-button-${item.kind}`;
+          button.style.setProperty("--card-index", String(rowIndex + 1));
+          button.disabled = Boolean(item.disabled);
+          button.title = item.title || "";
+          if (item.kind === "regular") {
+            button.className = "reserved-card-button";
+            button.dataset.reservedIndex = String(item.originalIndex);
+            button.classList.toggle("is-task-ready", Boolean(item.ready));
+          } else if (item.kind === "jiuzhe") {
+            button.dataset.jiuzheCards = "true";
+            button.dataset.playerId = item.playerId || "";
+            button.dataset.playerColor = item.playerColor || "";
+            button.title = "查看九折牌";
+          } else if (item.kind === "fangzhou") {
+            button.dataset.fangzhouReserved = item.traceType || "";
+            if (item.debugUnlock) {
+              button.dataset.fangzhouUnlock = item.traceType || "";
+              button.classList.add("is-fangzhou-unlock-pending");
+            }
+          } else if (item.kind === "banrenma") {
+            button.dataset.banrenmaReservedIndex = String(item.originalIndex);
+            button.classList.toggle("is-banrenma-threshold-ready", Boolean(item.ready));
+          }
+
+          const image = document.createElement("img");
+          image.className = "player-hand-card reserved-card";
+          image.src = item.imageSrc || players.CARD_BACK_SRC;
+          image.alt = item.imageAlt || "保留牌";
+          image.width = 747;
+          image.height = 1040;
+          image.decoding = "async";
+          image.setAttribute("aria-hidden", "true");
+          button.append(image);
+          if (item.kind === "regular") {
+            attachCardHoverPreview(button, image.src, image.alt);
+            if (item.progressIndexes?.length) {
+              const badge = document.createElement("span");
+              badge.className = "reserved-card-trigger-badge";
+              badge.textContent = `已完成 ${item.progressIndexes.join("/")}`;
+              button.append(badge);
+            }
+            if (item.plutoState) {
+              const badge = document.createElement("span");
+              badge.className = "reserved-card-trigger-badge reserved-card-pluto-status-badge";
+              const orbitLine = document.createElement("span");
+              orbitLine.textContent = item.plutoState.orbitDone ? "已环绕" : "可环绕";
+              const landLine = document.createElement("span");
+              landLine.textContent = item.plutoState.landDone ? "已登陆" : "可登陆";
+              badge.append(orbitLine, landLine);
+              button.append(badge);
+            }
+            if (item.ready) {
+              const badge = document.createElement("span");
+              badge.className = "reserved-card-task-badge";
+              badge.textContent = "完成任务";
+              button.append(badge);
+            }
+          } else if (item.kind === "jiuzhe") {
+            const badge = document.createElement("span");
+            badge.className = "reserved-card-trigger-badge";
+            badge.textContent = String(item.count || 0);
+            button.append(badge);
+          } else if (item.kind === "banrenma") {
+            const threshold = document.createElement("span");
+            threshold.className = "reserved-card-banrenma-threshold-badge";
+            const icon = document.createElement("img");
+            icon.className = "reserved-card-banrenma-threshold-icon";
+            icon.src = item.thresholdIconSrc || "";
+            icon.alt = "";
+            icon.decoding = "async";
+            icon.setAttribute("aria-hidden", "true");
+            const value = document.createElement("span");
+            value.textContent = String(item.threshold);
+            threshold.append(icon, value);
+            button.append(threshold);
+            if (item.ready) {
+              const ready = document.createElement("span");
+              ready.className = "reserved-card-task-badge reserved-card-banrenma-ready-badge";
+              ready.textContent = "结算条件";
+              button.append(ready);
+            }
+          }
+          return button;
+        }));
+        return element;
+      }
+
+      els.reservedCardFan.replaceChildren(...(presentation.rows || []).map(createReservedRow));
+      layoutReservedCardRows?.();
     }
 
     function renderInitialSelectionArea() {
       if (!els.initialSelectionArea) return;
 
-      if (isInitialSelectionActive()) {
+      const selection = readProjection().resident.initialSelection || {};
+      if (selection.active) {
         const setupPlayer = cloneProjectedPlayer(getCurrentPlayer());
         if (!context.isAiAutoBattlePlayer(setupPlayer?.id)) {
-          const offer = getInitialSelectionOffer(setupPlayer?.id);
           els.initialSelectionArea.hidden = false;
-          els.initialSelectionArea.replaceChildren(createInitialSelectionPicker(offer));
+          els.initialSelectionArea.replaceChildren(createInitialSelectionPicker(selection.offer || null));
           syncInteractionFocusChrome();
           return;
         }
       }
 
       const currentPlayer = cloneProjectedPlayer(getInterfacePlayer());
-      const selectedCards = getCurrentInitialSelectionCards(currentPlayer);
+      const selectedCards = structuredClone(selection.selectedCards || []);
       if (!selectedCards.length) {
         els.initialSelectionArea.hidden = true;
         els.initialSelectionArea.replaceChildren();

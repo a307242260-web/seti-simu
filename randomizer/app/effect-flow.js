@@ -94,9 +94,9 @@
       "setActiveEffectFlowOwner",
       context.setActiveEffectFlowOwner,
     );
-    const renderReservedCardsFromTaskState = requireFunction(
-      "renderReservedCardsFromTaskState",
-      context.renderReservedCardsFromTaskState,
+    const renderReservedCards = requireFunction(
+      "renderReservedCards",
+      context.renderReservedCards,
     );
     const renderActionEffectBar = requireFunction("renderActionEffectBar", context.renderActionEffectBar);
     const updateActionButtons = requireFunction("updateActionButtons", context.updateActionButtons);
@@ -381,7 +381,7 @@
       }
 
       els.appWrap?.classList.toggle("action-effect-flow-active", true);
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
       rocketState.statusNote = `${label}：请依次点击效果`;
       if (options.activate !== false) {
         activateNextActionEffect();

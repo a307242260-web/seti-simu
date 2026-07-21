@@ -99,6 +99,7 @@
       renderPlayerHand,
       renderPlayerStats,
       renderPublicCards,
+      renderReservedCards,
       renderRocketElement,
       renderRockets,
       renderStateReadout,
@@ -287,99 +288,9 @@
         cardEffects,
       );
       if (options.render !== false) {
-        renderReservedCardsFromTaskState();
+        renderReservedCards();
       }
       return cardTaskState;
-    }
-
-    function renderReservedCardsFromTaskState() {
-      if (!els.reservedCardFan || !els.reservedCardPanel) return;
-
-      const currentPlayer = getInterfacePlayer();
-      const reservedCards = Array.isArray(currentPlayer?.reservedCards) ? currentPlayer.reservedCards : [];
-      cardTaskStateModule.refreshTaskState(
-        cardTaskState,
-        currentPlayer,
-        buildCardTaskContext(),
-        cardEffects,
-      );
-      const readyByCardId = cardTaskState.readyType2ByCardId;
-      const effectiveReadyByCardId = { ...(readyByCardId || {}) };
-      for (const card of reservedCards) {
-        const readyChongTask = getReadyChongTaskForReservedCard(card, currentPlayer);
-        if (readyChongTask) effectiveReadyByCardId[card.id] = readyChongTask;
-        const readyAmibaTask = getReadyAmibaTaskForReservedCard(card, currentPlayer);
-        if (readyAmibaTask) effectiveReadyByCardId[card.id] = readyAmibaTask;
-        const readyRunezuTask = getReadyRunezuTaskForReservedCard(card, currentPlayer);
-        if (readyRunezuTask) effectiveReadyByCardId[card.id] = readyRunezuTask;
-      }
-      const title = els.reservedCardPanel.querySelector(".panel-title");
-      if (title) {
-        title.textContent = isInitialSelectionActive()
-          ? `初始选择 · ${currentPlayer.colorLabel}玩家`
-          : `保留牌区 · 完成任务 ${currentPlayer.completedTaskCount || 0}`;
-      }
-      els.reservedCardPanel.classList.toggle("is-initial-selection-active", isInitialSelectionActive());
-      renderInitialSelectionArea();
-      els.reservedCardPanel.classList.toggle(
-        "is-empty",
-        !isInitialSelectionActive()
-          && reservedCards.length === 0
-          && !(jiuzhe?.getPlayerJiuzheCards?.(alienGameState, currentPlayer)?.length)
-          && !(fangzhou?.getPlayerCard2Reserved?.(alienGameState, currentPlayer)?.length)
-          && getCurrentInitialSelectionCards(currentPlayer).length === 0,
-      );
-
-      if (isInitialSelectionActive()) {
-        els.reservedCardFan.replaceChildren();
-        return;
-      }
-
-      const isBottomReservedCard = (card) => (
-        getCardTypeCode(card) === 3
-        || cardEffects.getCardModel?.(card)?.displayRow === "bottom"
-      );
-      const taskCards = [];
-      const finalTaskCards = [];
-      const banrenmaCards = [];
-      reservedCards.forEach((card, index) => {
-        const entry = { card, index };
-        if (banrenma?.isBanrenmaCard?.(card)) {
-          banrenmaCards.push(entry);
-        } else if (isBottomReservedCard(card)) {
-          finalTaskCards.push(entry);
-        } else {
-          taskCards.push(entry);
-        }
-      });
-
-      const taskRow = createReservedCardRow("task", "1、2型任务牌");
-      taskRow.replaceChildren(...taskCards.map((entry, rowIndex) => (
-        createReservedCardButton(entry.card, entry.index, rowIndex, effectiveReadyByCardId)
-      )));
-
-      const jiuzheButton = createJiuzheReservedButton(currentPlayer);
-      const fangzhouCards = createFangzhouReservedButtons(currentPlayer);
-      const banrenmaButtons = banrenmaCards.map((entry, rowIndex) => (
-        createBanrenmaReservedButton(entry.card, entry.index, rowIndex + (jiuzheButton ? 1 : 0) + fangzhouCards.length)
-      ));
-      const finalRow = createReservedCardRow("final", "3型终局计分牌与九折/方舟/半人马牌");
-      finalRow.replaceChildren(
-        ...(jiuzheButton ? [jiuzheButton] : []),
-        ...fangzhouCards,
-        ...banrenmaButtons,
-        ...finalTaskCards.map((entry, rowIndex) => (
-        createReservedCardButton(
-          entry.card,
-          entry.index,
-          rowIndex + (jiuzheButton ? 1 : 0) + fangzhouCards.length + banrenmaButtons.length,
-          effectiveReadyByCardId,
-        )
-        )),
-      );
-
-      els.reservedCardFan.replaceChildren(taskRow, finalRow);
-      layoutReservedCardRows();
     }
 
     function cloneType1TriggerEvent(event) {
@@ -680,7 +591,7 @@
         renderRockets();
         renderPlayerStats();
         renderPlayerHand();
-        renderReservedCardsFromTaskState();
+        renderReservedCards();
         renderStateReadout();
       }
       return arrivals;
@@ -1058,7 +969,7 @@
       if (!preparedEffects.length) return { ok: false, message: "卡牌触发没有可执行奖励" };
 
       closeCardTriggerPicker();
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
 
       if (decisionState.actionEffectFlow) {
         insertActionEffectsBeforeCurrent(preparedEffects);
@@ -1561,7 +1472,6 @@
       startTemporaryCardTaskRewardFlow,
       getReadyCardTasks,
       refreshCardTaskState,
-      renderReservedCardsFromTaskState,
       cloneType1TriggerEvent,
       enqueueType1TriggerEvents,
       isCardTriggerPickSelectionActive,

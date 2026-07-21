@@ -55,7 +55,7 @@
       removeRocketElement,
       renderInitialSelectionArea,
       renderPlayerStats,
-      renderReservedCardsFromTaskState,
+      renderReservedCards,
       renderRocketElement,
       renderRockets,
       renderStateReadout,
@@ -384,7 +384,7 @@
     const rewardEffects = buildPlutoRewardEffectsForAction(actionType);
     rocketState.statusNote = result.message;
     renderPlayerStats();
-    renderReservedCardsFromTaskState();
+    renderReservedCards();
     updateActionButtons();
     renderStateReadout();
     const startedRewardFlow = startCardEffectFlow(
@@ -395,7 +395,7 @@
     );
     const settlement = settleCardTasksAfterEffect({ events: result.events, render: false });
     renderPlayerStats();
-    renderReservedCardsFromTaskState();
+    renderReservedCards();
     updateActionButtons();
     renderStateReadout();
     return startedRewardFlow

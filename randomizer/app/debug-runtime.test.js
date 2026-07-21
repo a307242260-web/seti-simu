@@ -268,9 +268,6 @@ function createBaseContext() {
     renderReservedCards() {
       callLog.push("renderReservedCards");
     },
-    renderReservedCardsFromTaskState() {
-      callLog.push("renderReservedCardsFromTaskState");
-    },
     renderAlienPanels() {
       callLog.push("renderAlienPanels");
     },

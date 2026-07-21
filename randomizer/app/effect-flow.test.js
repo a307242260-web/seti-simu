@@ -200,7 +200,7 @@ function createHarness() {
     setActiveEffectFlowOwner(effect) {
       calls.activeOwner.push(effect.id);
     },
-    renderReservedCardsFromTaskState() {},
+    renderReservedCards() {},
     renderActionEffectBar() {
       calls.renderBar += 1;
     },

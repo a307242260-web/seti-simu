@@ -107,7 +107,7 @@ function createHarness(overrides = {}) {
     renderPlayerStats() {},
     renderPlayerHand() {},
     renderReservedCards() {},
-    renderReservedCardsFromTaskState() {},
+    renderReservedCards() {},
     renderRockets() {},
     renderStateReadout() {},
     renderWheels() {},

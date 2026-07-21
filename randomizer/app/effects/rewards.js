@@ -87,7 +87,7 @@
       renderPlayerHand,
       renderPlayerStats,
       renderPublicCards,
-      renderReservedCardsFromTaskState,
+      renderReservedCards,
       renderRocketElement,
       renderRockets,
       renderStateReadout,
@@ -561,7 +561,7 @@
         undoable: true,
         message: `${effect.label}：${cards.getCardLabel(card)} 返回手牌`,
         payload: { cardId: card.id },
-      }, [renderPlayerHand, renderReservedCardsFromTaskState]);
+      }, [renderPlayerHand, renderReservedCards]);
       });
     }
 
@@ -1445,7 +1445,7 @@
         undoable: true,
         message: `${effect.label}：已保留`,
         payload: { cardId: card?.id || null },
-      }, [renderReservedCardsFromTaskState]);
+      }, [renderReservedCards]);
     }
 
     function executeCardFixedNebulaScanEffect(effect) {

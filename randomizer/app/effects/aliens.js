@@ -70,7 +70,7 @@
       renderPlayerHand,
       renderPlayerStats,
       renderPublicCards,
-      renderReservedCardsFromTaskState,
+      renderReservedCards,
       renderRockets,
       renderStateReadout,
       replaceNebulaDataForCurrentPlayer,
@@ -857,7 +857,7 @@
           undoable: true,
           skipped: true,
           message: `${effect.label}：没有可清理的搬运化石`,
-        }, [renderAlienPanels, renderRockets, renderReservedCardsFromTaskState]);
+        }, [renderAlienPanels, renderRockets, renderReservedCards]);
       }
 
       const result = chong.completeTransportedFossil(alienGameState, rocketId, {
@@ -872,7 +872,7 @@
           skipped: true,
           message: `${effect.label}：${result.message}`,
           payload: { cleanup: result },
-        }, [renderAlienPanels, renderRockets, renderReservedCardsFromTaskState]);
+        }, [renderAlienPanels, renderRockets, renderReservedCards]);
       }
 
       const removeResult = rocketActions.removeRocket(rocketState, rocketId);
@@ -897,7 +897,7 @@
         irreversible: priorIrreversible,
         message: `${effect.label}：${result.message}；${removedText}`,
         payload: { cleanup: result, removedRocketId: removeResult.ok ? rocketId : null },
-      }, [renderAlienPanels, renderRockets, renderReservedCardsFromTaskState]);
+      }, [renderAlienPanels, renderRockets, renderReservedCards]);
     }
 
     function applyAomomoScanCostAndBonus(pending, result) {

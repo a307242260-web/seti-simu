@@ -266,7 +266,7 @@ function createBaseContext(player, overrides = {}) {
     },
     renderPlayerHand() {},
     renderPlayerStats() {},
-    renderReservedCardsFromTaskState() {
+    renderReservedCards() {
       events.renderReservedCards = (events.renderReservedCards || 0) + 1;
     },
     renderPublicCards() {},

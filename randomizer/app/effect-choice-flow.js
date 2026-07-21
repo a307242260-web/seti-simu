@@ -66,9 +66,9 @@
     const renderStateReadout = requireFunction("renderStateReadout", context.renderStateReadout);
     const renderPlayerHand = requireFunction("renderPlayerHand", context.renderPlayerHand);
     const renderPlayerStats = requireFunction("renderPlayerStats", context.renderPlayerStats);
-    const renderReservedCardsFromTaskState = requireFunction(
-      "renderReservedCardsFromTaskState",
-      context.renderReservedCardsFromTaskState,
+    const renderReservedCards = requireFunction(
+      "renderReservedCards",
+      context.renderReservedCards,
     );
     const renderRockets = requireFunction("renderRockets", context.renderRockets);
     const syncPlanetOrbitLandMarkers = requireFunction(
@@ -888,7 +888,7 @@
           undoable: true,
           message: `${effect.label}：${choice.label} -> ${place.message}`,
           payload: { choice, rocketId: place.rocket?.id || null },
-        }, [renderReservedCardsFromTaskState]);
+        }, [renderReservedCards]);
       });
     }
 

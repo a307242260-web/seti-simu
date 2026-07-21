@@ -112,7 +112,7 @@
       renderActionEffectBar,
       renderPlayerHand,
       renderPlayerStats,
-      renderReservedCardsFromTaskState,
+      renderReservedCards,
       renderRockets,
       renderRunezuBoardSymbols,
       renderStateReadout,
@@ -871,7 +871,7 @@ function confirmFangzhouCard2Unlock(alienSlotId, traceType) {
     renderAlienPanels();
     renderPlayerStats();
     renderPlayerHand();
-    renderReservedCardsFromTaskState();
+    renderReservedCards();
     updateActionButtons();
     renderStateReadout();
     return {
@@ -1875,7 +1875,7 @@ function finishAomomoCardGain(message, result = null) {
     renderAlienPanels();
     renderPlayerHand();
     renderPlayerStats();
-    renderReservedCardsFromTaskState();
+    renderReservedCards();
     updateActionButtons();
     maybeContinuePendingTurnEndRevealFlow();
     renderStateReadout();
@@ -1981,7 +1981,7 @@ function finishAmibaSymbolChoice(message, payload = {}, options = {}) {
       renderAlienPanels();
       renderPlayerStats();
       renderPlayerHand();
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
       completeCurrentActionEffect();
       renderStateReadout();
       return { ok: true, message, payload };
@@ -1990,7 +1990,7 @@ function finishAmibaSymbolChoice(message, payload = {}, options = {}) {
     renderAlienPanels();
     renderPlayerStats();
     renderPlayerHand();
-    renderReservedCardsFromTaskState();
+    renderReservedCards();
     if (pending?.triggerMatch && continueAfterCardTriggerResolution()) {
       return { ok: true, message, payload };
     }
@@ -2388,7 +2388,7 @@ function finishBanrenmaCardGain(message, result = null) {
     renderRockets();
     renderPlayerStats();
     renderPlayerHand();
-    renderReservedCardsFromTaskState();
+    renderReservedCards();
     updateActionButtons();
     maybeContinueAlienRevealQueuedOpportunities();
     renderStateReadout();
@@ -2745,7 +2745,7 @@ function keepExistingMainActionPendingAfterChongTask() {
 
 function failChongTaskCompletion(message) {
     rocketState.statusNote = message || "虫族任务完成失败";
-    renderReservedCardsFromTaskState();
+    renderReservedCards();
     updateActionButtons();
     renderStateReadout();
     return { ok: false, message: rocketState.statusNote };
@@ -2765,7 +2765,7 @@ function finishChongFossilEffect(message, payload = {}, options = {}) {
       renderRockets();
       renderPlayerStats();
       renderPlayerHand();
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
       completeCurrentActionEffect();
       renderStateReadout();
     } else {
@@ -2774,7 +2774,7 @@ function finishChongFossilEffect(message, payload = {}, options = {}) {
       renderRockets();
       renderPlayerStats();
       renderPlayerHand();
-      renderReservedCardsFromTaskState();
+      renderReservedCards();
       updateActionButtons();
       renderStateReadout();
     }
@@ -2832,7 +2832,7 @@ function completeChongTraceTaskWithFossil(pending, fossilId, player) {
     renderAlienPanels();
     renderPlayerStats();
     renderPlayerHand();
-    renderReservedCardsFromTaskState();
+    renderReservedCards();
     updateActionButtons();
     renderStateReadout();
     return { ok: true, message: finalMessage };
@@ -2927,7 +2927,7 @@ function completeChongTransportTask(pending, player) {
     renderRockets();
     renderPlayerStats();
     renderPlayerHand();
-    renderReservedCardsFromTaskState();
+    renderReservedCards();
     updateActionButtons();
     renderStateReadout();
     return { ok: true, message: finalMessage };
@@ -3944,7 +3944,7 @@ function handleBanrenmaCardConditionChoice(cardId) {
     rocketState.statusNote = `半人马条件：弃掉 ${cards.getCardLabel(removedCard)}`;
     renderPlayerStats();
     renderPlayerHand();
-    renderReservedCardsFromTaskState();
+    renderReservedCards();
     renderAlienPanels();
     updateActionButtons();
     renderStateReadout();
