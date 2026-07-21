@@ -1789,7 +1789,6 @@
     PUBLIC_SCAN_TARGETS_BY_CODE,
     PUBLIC_SCAN_CODE_LABELS,
     SCAN_TARGET_ACTION_LAYOUT_CLASSES,
-    getCurrentPlayer,
     renderStateReadout,
     renderPlayerStats,
     renderPublicCards: (...args) => renderPublicCards(...args),
@@ -1809,7 +1808,6 @@
     isPlayCardSelectionActive,
     isMovePaymentSelectionActive,
     isHandScanSelectionActive,
-    resolvePlayerReference,
     getFlowMarkedNebulaIds,
     normalizeResourceCost,
       createActionContext: (workingRoot, descriptor) => (

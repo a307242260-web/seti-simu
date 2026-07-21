@@ -66,7 +66,6 @@
       ? context.discardPublicScanCard
       : null;
 
-    const getCurrentPlayer = requireFunction("getCurrentPlayer", context.getCurrentPlayer);
     const renderStateReadout = requireFunction("renderStateReadout", context.renderStateReadout);
     const renderPlayerStats = requireFunction("renderPlayerStats", context.renderPlayerStats);
     const renderPublicCards = requireFunction("renderPublicCards", context.renderPublicCards);
@@ -86,7 +85,6 @@
     const isPlayCardSelectionActive = requireFunction("isPlayCardSelectionActive", context.isPlayCardSelectionActive);
     const isMovePaymentSelectionActive = requireFunction("isMovePaymentSelectionActive", context.isMovePaymentSelectionActive);
     const isHandScanSelectionActive = requireFunction("isHandScanSelectionActive", context.isHandScanSelectionActive);
-    const resolvePlayerReference = requireFunction("resolvePlayerReference", context.resolvePlayerReference);
     const getFlowMarkedNebulaIds = requireFunction("getFlowMarkedNebulaIds", context.getFlowMarkedNebulaIds);
     const normalizeResourceCost = requireFunction("normalizeResourceCost", context.normalizeResourceCost);
     const createActionContext = requireFunction("createActionContext", context.createActionContext);
@@ -167,6 +165,24 @@
         throw new TypeError("scan-flow operation requires an explicit workingRoot");
       }
       return workingRoot;
+    }
+
+    function getWorkingCurrentPlayer(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      return players.getCurrentPlayer(playerState);
+    }
+
+    function resolveWorkingPlayerReference(workingRoot, reference = {}) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const playerId = reference.playerId || reference.targetPlayerId || reference.id || null;
+      if (playerId) {
+        const player = (playerState.players || []).find((entry) => entry.id === playerId);
+        if (player) return player;
+      }
+      const playerColor = reference.playerColor || reference.targetPlayerColor || reference.color || null;
+      return playerColor
+        ? (playerState.players || []).find((entry) => entry.color === playerColor) || null
+        : null;
     }
 
     function getCardLabel(card) {
@@ -263,7 +279,7 @@
       if (!sectorId || sectorId === aomomo?.NEBULA_ID) return null;
       const winner = data.getSectorRanking?.(nebulaDataState, sectorId)
         ?.find((entry) => Number(entry?.count) > 0) || null;
-      const player = winner ? resolvePlayerReference(winner) : null;
+      const player = winner ? resolveWorkingPlayerReference(workingRoot, winner) : null;
       if (player) {
         return {
           playerId: player.id || null,
@@ -351,7 +367,8 @@
       };
     }
 
-    function buildSectorSettlementRewardEffects(settlement) {
+    function buildSectorSettlementRewardEffects(workingRoot, settlement) {
+      requireWorkingRoot(workingRoot);
       if (!settlement?.ok) return [];
       const sectorLabel = data.getNebulaLabel(settlement.sectorId);
       const effects = [];
@@ -359,7 +376,7 @@
 
       if (settlement.sectorId === aomomo?.NEBULA_ID) {
         for (const participant of participants) {
-          const player = resolvePlayerReference(participant);
+          const player = resolveWorkingPlayerReference(workingRoot, participant);
           if (!player) continue;
           effects.push(createTargetResourceEffect(
             `sector-${settlement.sectorId}-fossil-${player.id}-${settlement.settlementNumber}`,
@@ -373,7 +390,7 @@
       }
 
       for (const participant of participants) {
-        const player = resolvePlayerReference(participant);
+        const player = resolveWorkingPlayerReference(workingRoot, participant);
         if (!player) continue;
         effects.push(createTargetResourceEffect(
           `sector-${settlement.sectorId}-publicity-${player.id}-${settlement.settlementNumber}`,
@@ -384,7 +401,7 @@
         ));
       }
 
-      const winner = resolvePlayerReference(settlement.winner || {});
+      const winner = resolveWorkingPlayerReference(workingRoot, settlement.winner || {});
       const rewardConfig = SECTOR_WIN_REWARDS[settlement.sectorId];
       const rewards = rewardConfig?.[getSectorWinnerRewardKey(settlement)] || [];
       for (const reward of rewards) {
@@ -528,7 +545,8 @@
         items.push({ card, publicSlotIndex: slotIndex, scanChoices });
       }
 
-      const player = pending.player || getCurrentPlayer();
+      const player = resolveWorkingPlayerReference(workingRoot, pending.player || {})
+        || getWorkingCurrentPlayer(workingRoot);
       const extraUsed = pending.freeAdditionalPublicScans ? 0 : selectedSlots.length - 1;
       if (extraUsed > 0 && !players.canAfford(player, { additionalPublicScan: extraUsed })) {
         rocketState.statusNote = `额外公共扫描不足，需要 ${extraUsed} 个`;
@@ -663,7 +681,7 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!currentPlayer?.hand?.length) {
         rocketState.statusNote = "没有手牌可用于扫描";
         renderStateReadout();
@@ -693,7 +711,7 @@
       if (!isHandScanSelectionActive()) return;
 
       const fromEffectFlow = Boolean(decisionState.handScanAction?.fromEffectFlow || decisionState.actionEffectFlow);
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];
       if (!card) {
@@ -733,7 +751,7 @@
 
     function replaceNebulaDataForCurrentPlayer(workingRoot, nebulaId, options = {}) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const cost = normalizeResourceCost(options.cost) || {};
       const hasCost = Object.keys(cost).length > 0;
       if (hasCost && (!currentPlayer || !players.canAfford(currentPlayer, cost))) {
@@ -919,7 +937,7 @@
         return result;
       }
 
-      const winner = resolvePlayerReference(result.winner || {});
+      const winner = resolveWorkingPlayerReference(workingRoot, result.winner || {});
       if (winner) {
         effect.options = {
           ...(effect.options || {}),
@@ -957,7 +975,7 @@
       ));
 
       appendSectorSettlementResultToFlow(result);
-      const rewardEffects = buildSectorSettlementRewardEffects(result);
+      const rewardEffects = buildSectorSettlementRewardEffects(workingRoot, result);
       if (rewardEffects.length) {
         insertActionEffectsAfterCurrent(rewardEffects);
       }
@@ -1239,7 +1257,8 @@
 
     function discardHandScanCard(workingRoot, pending) {
       const { cardState } = requireWorkingRoot(workingRoot);
-      const player = pending?.player || getCurrentPlayer();
+      const player = resolveWorkingPlayerReference(workingRoot, pending?.player || {})
+        || getWorkingCurrentPlayer(workingRoot);
       const handIndex = Number(pending?.handIndex);
       const card = pending?.card;
       if (!player || !card || !Number.isInteger(handIndex)) {
@@ -1547,7 +1566,7 @@
 
       if (pending?.type === "sector_scan") {
         const cost = normalizeResourceCost(pending.cost) || {};
-        if (Object.keys(cost).length && !players.canAfford(getCurrentPlayer(), cost)) {
+        if (Object.keys(cost).length && !players.canAfford(getWorkingCurrentPlayer(workingRoot), cost)) {
           const message = `${pending.title || "扇区扫描"}：资源不足，需要 ${players.formatResourceCost(cost)}，已跳过`;
           return skipActionEffectWithMessage(pending.effect || getCurrentActionEffect(), message, {
             cost,
@@ -1753,7 +1772,8 @@
       if (pending?.type !== "hand_scan" || !pending.discardDrawnOnSkip) {
         return { ok: false, message: "没有可跳过的盲抽弃牌扫描" };
       }
-      const player = pending.player || getCurrentPlayer();
+      const player = resolveWorkingPlayerReference(workingRoot, pending.player || {})
+        || getWorkingCurrentPlayer(workingRoot);
       const handIndex = findPendingHandScanCardIndex(player, pending);
       if (handIndex < 0) {
         rocketState.statusNote = "找不到刚抽到的卡牌，无法跳过";
@@ -1913,7 +1933,7 @@
     }
 
     function beginPublicDeckScan(workingRoot) {
-      return beginCardSelection(createPublicScanPendingAction(workingRoot, getCurrentPlayer()));
+      return beginCardSelection(createPublicScanPendingAction(workingRoot, getWorkingCurrentPlayer(workingRoot)));
     }
 
     function executeMainScanAction(workingRoot, descriptor) {

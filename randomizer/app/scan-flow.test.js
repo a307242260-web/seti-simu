@@ -23,6 +23,7 @@ function createBaseHarness() {
     colorLabel: "白色",
     resources: {
       additionalPublicScan: 0,
+      credits: 3,
     },
     hand: [],
   };
@@ -38,6 +39,7 @@ function createBaseHarness() {
     publicControls: 0,
     stateReadout: 0,
     discardPublic: [],
+    abilityPlayers: [],
   };
   const decisionSessions = createDecisionSessionStore();
   attachDecisionState(pendingState, decisionSessions);
@@ -87,7 +89,8 @@ function createBaseHarness() {
       executeAbility(_abilityId, actionContext, options) {
         const target = actionContext.playerState.players
           .find((entry) => entry.id === actionContext.playerState.currentPlayerId);
-        target.resources.credits -= Number(options.cost.credits || 0);
+        calls.abilityPlayers.push(target);
+        target.resources.credits -= Number(options.cost?.credits || 0);
         return { ok: true, message: "扫描支付成功", cost: options.cost, commands: [{ type: "scan-cost" }] };
       },
       chain: {
@@ -114,7 +117,6 @@ function createBaseHarness() {
     PUBLIC_SCAN_MAX_BONUS_CARDS: 2,
     SECTOR_FINISH_ICON_BY_COLOR: { blue: "blue_finish" },
     SECTOR_WIN_REWARDS: { n1: { first: [{ resource: "score", amount: 2 }] } },
-    getCurrentPlayer: () => player,
     getPublicScanChoicesForCard: (card) => ({
       ok: true,
       scanCode: card.scanActionCode || 1,
@@ -148,7 +150,6 @@ function createBaseHarness() {
       calls.discardPublic.push(payload);
       return { ok: true };
     },
-    resolvePlayerReference: (entry) => (entry?.playerId === "p1" ? player : null),
     getFlowMarkedNebulaIds: () => ["n1"],
     normalizeResourceCost: (cost) => cost || {},
     createActionContext: (workingRoot) => ({ playerState: workingRoot.playerState }),
@@ -346,6 +347,58 @@ function createBaseHarness() {
   assert.match(isolatedRoot.rocketState.statusNote, /Isolated/);
   assert.deepEqual(boundCardState, beforeBoundCardState, "隔离 root 操作不得读取或写入绑定 cardState");
   assert.deepEqual(boundRocketState, beforeBoundRocketState, "隔离 root 操作不得写入绑定 rocketState");
+}
+
+{
+  const { helpers, pendingState, player: boundPlayer, workingRoot } = createBaseHarness();
+  boundPlayer.hand = [{ id: "bound-hand", cardName: "Bound Hand" }];
+  const beforeBoundPlayer = structuredClone(boundPlayer);
+  const isolatedRoot = structuredClone(workingRoot);
+  const isolatedPlayer = isolatedRoot.playerState.players[0];
+  isolatedPlayer.hand = [{ id: "isolated-hand", cardName: "Isolated Hand" }];
+
+  const result = helpers.beginHandScan(isolatedRoot);
+
+  assert.equal(result.ok, true);
+  assert.equal(pendingState.handScanAction.player, isolatedPlayer, "手牌扫描 pending 必须绑定 working root 玩家");
+  assert.deepEqual(boundPlayer, beforeBoundPlayer, "手牌扫描不得读取或改写闭包基线玩家");
+}
+
+{
+  const { helpers, calls, player: boundPlayer, workingRoot } = createBaseHarness();
+  const beforeBoundPlayer = structuredClone(boundPlayer);
+  const isolatedRoot = structuredClone(workingRoot);
+  const isolatedPlayer = isolatedRoot.playerState.players[0];
+
+  const result = helpers.replaceNebulaDataForCurrentPlayer(isolatedRoot, "n1");
+
+  assert.equal(result.ok, true);
+  assert.equal(calls.abilityPlayers.at(-1), isolatedPlayer, "星云替换 ability context 必须使用 working root 玩家");
+  assert.deepEqual(boundPlayer, beforeBoundPlayer, "星云替换不得读取或改写闭包基线玩家");
+}
+
+{
+  const { helpers, player: boundPlayer, workingRoot } = createBaseHarness();
+  boundPlayer.color = "white";
+  boundPlayer.colorLabel = "闭包白色";
+  const isolatedRoot = structuredClone(workingRoot);
+  const isolatedPlayer = isolatedRoot.playerState.players[0];
+  isolatedPlayer.color = "blue";
+  isolatedPlayer.colorLabel = "隔离蓝色";
+
+  const target = helpers.getSectorFinishWinnerTarget(isolatedRoot, "n1");
+  const rewards = helpers.buildSectorSettlementRewardEffects(isolatedRoot, {
+    ok: true,
+    sectorId: "n1",
+    settlementNumber: 1,
+    participants: [{ playerId: isolatedPlayer.id }],
+    winner: { playerId: isolatedPlayer.id },
+  });
+
+  assert.equal(target.playerColor, "blue", "扇区赢家必须从 working root 解析");
+  assert.equal(target.playerLabel, "隔离蓝色");
+  assert.ok(rewards.every((effect) => effect.playerColor === "blue"), "参与/赢家奖励必须指向 working root 玩家");
+  assert.match(rewards[0].label, /隔离蓝色/);
 }
 
 console.log("scan-flow tests passed");
