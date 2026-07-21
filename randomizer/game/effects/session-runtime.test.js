@@ -64,6 +64,16 @@ function actionGroup(effects) {
   return () => ({ groupId: "main", effects });
 }
 
+(function testEmptyEffectGroupFailsClosed() {
+  const { runtime } = createHarness();
+  const committed = { version: 1, value: 0, legalTechs: [] };
+  const result = runtime.dispatchAction(committed, { family: "test" }, actionGroup([]));
+  assert.equal(result.code, "EFFECT_GROUP_INVALID");
+  assert.equal(result.session.phase, "aborted");
+  assert.deepEqual(result.session.workingState, committed);
+  assert.deepEqual(result.session.journal.effects, []);
+})();
+
 (function testNestedInsertionOrderAndAtomicCommit() {
   const { runtime } = createHarness();
   const dispatched = runtime.dispatchAction(

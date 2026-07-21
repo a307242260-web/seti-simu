@@ -72,6 +72,7 @@
   function normalizeGroup(rawGroup, session, defaultKind = "action") {
     if (!rawGroup || typeof rawGroup !== "object") throw new TypeError("Effect Group 必须是对象");
     if (!Array.isArray(rawGroup.effects)) throw new TypeError("Effect Group.effects 必须是数组");
+    if (rawGroup.effects.length === 0) throw new TypeError("Effect Group.effects 不得为空");
     session.nextGroupSequence += 1;
     const group = {
       schemaVersion: SCHEMA_VERSION,
