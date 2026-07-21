@@ -293,6 +293,11 @@ function createHarness(initialValue = 0) {
       createProjectionState: (workingState) => structuredClone(workingState),
       restoreWorkingState: replace,
     },
+    executeHostCommand(workingState, command) {
+      if (command.kind !== "increment") return { ok: false, code: "UNKNOWN" };
+      workingState.match.value += command.amount;
+      return { ok: true, amount: command.amount };
+    },
     projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
     createEffectGroup: () => ({ effects: [{ type: "noop" }] }),
     effectExecutors: { noop: (state) => ({ ok: true, nextState: state }) },
@@ -307,6 +312,14 @@ function createHarness(initialValue = 0) {
   composition.inputPort.enumerateActions({ family: "launch" });
   assert.deepEqual(composition.projection(), before, "枚举必须保持 committed projection 不变");
   assert.equal(commitEvents, 0, "枚举不得隐式 compare-and-commit");
+  const commandResult = composition.inputPort.submitHostCommand({ kind: "increment", amount: 4 });
+  assert.equal(commandResult.ok, true);
+  assert.equal(commandResult.stateVersion, 1);
+  assert.equal(composition.stateSourcePort.read().state.match.value, 13);
+  assert.equal(commitEvents, 1, "宿主命令必须由 composition 统一执行一次 CAS");
+  const rejected = composition.inputPort.submitHostCommand({ kind: "unknown", amount: 99 });
+  assert.equal(rejected.ok, false);
+  assert.equal(composition.stateSourcePort.read().state.match.value, 13, "失败宿主命令必须零污染");
 }
 
 {

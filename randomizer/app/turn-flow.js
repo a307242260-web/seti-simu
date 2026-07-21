@@ -71,9 +71,7 @@
     const {
       players,
       uiRuntimeState,
-      finalScoringState,
       setupSelectionState,
-      decisionSessions,
       cards,
       industry,
       finalScoring,
@@ -215,9 +213,7 @@
     function getActionCycleNumber(workingRoot) {
       requireWorkingRoot(workingRoot);
       const { turnState } = workingRoot;
-      const value = Math.max(1, Math.round(Number(turnState.actionCycleNumber) || 1));
-      if (turnState.actionCycleNumber !== value) turnState.actionCycleNumber = value;
-      return value;
+      return Math.max(1, Math.round(Number(turnState.actionCycleNumber) || 1));
     }
 
     function advanceTurnAfterPlayerAction(workingRoot, playerId, options = {}) {
@@ -383,16 +379,6 @@
       } = workingRoot;
       els?.spinButton?.classList.remove("pulsin");
       resetActionLog();
-      decisionSessions?.clear?.("jiuzhe_card_play");
-      decisionSessions?.clear?.("jiuzhe_opportunity_open");
-      decisionSessions?.clear?.("jiuzhe_opportunity_queue");
-      decisionSessions?.clear?.("banrenma_card_gain");
-      decisionSessions?.clear?.("banrenma_opportunity");
-      decisionSessions?.clear?.("banrenma_opportunity_queue");
-      decisionSessions?.clear?.("aomomo_card_gain");
-      decisionSessions?.clear?.("runezu_card_gain");
-      decisionSessions?.clear?.("runezu_symbol_branch");
-      decisionSessions?.clear?.("runezu_face_symbol_placement");
       industry?.resetAllIndustryActionMarks?.(playerState.players);
       cancelIndustryAbilityFlow?.({ silent: true });
       randomizePlayerTurnOrder(workingRoot);

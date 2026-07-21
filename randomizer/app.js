@@ -367,6 +367,31 @@
         workingState.meta = structuredClone(committedState.meta);
       },
     },
+    executeHostCommand(workingRoot, command) {
+      switch (command.kind) {
+        case "turn_set_player_order":
+          turnFlowController.setTurnStatePlayerOrder(workingRoot, command.playerIds, command.options);
+          return { ok: true };
+        case "turn_randomize_player_order":
+          turnFlowController.randomizePlayerTurnOrder(workingRoot);
+          return { ok: true };
+        case "turn_begin_next_round":
+          return { ok: true, ...turnFlowController.beginNextRound(workingRoot) };
+        case "turn_advance_after_action":
+          return { ok: true, ...turnFlowController.advanceTurnAfterPlayerAction(
+            workingRoot,
+            command.playerId,
+            command.options,
+          ) };
+        case "turn_start_new_game":
+          return turnFlowController.startNewGame(workingRoot, command.options);
+        case "turn_randomize_all":
+          turnFlowController.randomizeAll(workingRoot);
+          return { ok: true };
+        default:
+          return { ok: false, code: "BROWSER_HOST_COMMAND_UNKNOWN", message: `未知 Browser host command: ${command.kind}` };
+      }
+    },
     createActionRegistry() {
       return {
         enumerate(workingState, request = {}) {
@@ -2596,9 +2621,7 @@
   const turnFlowController = turnFlowModule.createTurnFlowController({
     players,
     uiRuntimeState,
-    finalScoringState,
     setupSelectionState,
-    decisionSessions,
     cards,
     industry,
     finalScoring,
@@ -3023,38 +3046,56 @@
   }
 
   function setTurnStatePlayerOrder(playerIds, options = {}) {
-    return turnFlowController.setTurnStatePlayerOrder(browserRuleState, playerIds, options);
+    if (headlessMode) return turnFlowController.setTurnStatePlayerOrder(browserRuleState, playerIds, options);
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "turn_set_player_order",
+      playerIds,
+      options,
+    });
   }
 
   function randomizePlayerTurnOrder() {
-    return turnFlowController.randomizePlayerTurnOrder(browserRuleState);
+    if (headlessMode) return turnFlowController.randomizePlayerTurnOrder(browserRuleState);
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "turn_randomize_player_order" });
   }
 
   function beginNextRound() {
-    return turnFlowController.beginNextRound(browserRuleState);
+    if (headlessMode) return turnFlowController.beginNextRound(browserRuleState);
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "turn_begin_next_round" });
   }
 
-  function getDisplayedTurnNumber(rawTurnNumber = turnState.turnNumber) {
-    return turnFlowController.getDisplayedTurnNumber(browserRuleState, rawTurnNumber);
+  function getDisplayedTurnNumber(rawTurnNumber = null) {
+    const root = createStateSourceReadoutRoot();
+    return turnFlowController.getDisplayedTurnNumber(root, rawTurnNumber ?? root.turnState.turnNumber);
   }
 
   function getActionCycleNumber() {
-    return turnFlowController.getActionCycleNumber(browserRuleState);
+    return turnFlowController.getActionCycleNumber(createStateSourceReadoutRoot());
   }
 
   function advanceTurnAfterPlayerAction(playerId, options = {}) {
-    const workingRoot = options.workingRoot || browserRuleState;
+    if (options.workingRoot) {
+      const workingRoot = options.workingRoot;
+      const operationOptions = { ...options };
+      delete operationOptions.workingRoot;
+      return turnFlowController.advanceTurnAfterPlayerAction(workingRoot, playerId, operationOptions);
+    }
     const operationOptions = { ...options };
-    delete operationOptions.workingRoot;
-    return turnFlowController.advanceTurnAfterPlayerAction(workingRoot, playerId, operationOptions);
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "turn_advance_after_action",
+      playerId,
+      options: operationOptions,
+    });
   }
 
   function startNewGame(options = {}) {
-    return turnFlowController.startNewGame(browserRuleState, options);
+    if (headlessMode) return turnFlowController.startNewGame(browserRuleState, options);
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "turn_start_new_game", options });
   }
 
   function randomizeAll() {
-    return turnFlowController.randomizeAll(browserRuleState);
+    if (headlessMode) return turnFlowController.randomizeAll(browserRuleState);
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "turn_randomize_all" });
   }
 
   function normalizeAiDifficulty(value) {

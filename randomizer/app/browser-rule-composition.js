@@ -34,6 +34,7 @@
     const effectRuntimeApi = options.effectRuntimeApi;
     const createActionRegistry = options.createActionRegistry;
     const createInitialState = options.createInitialState;
+    const executeHostCommand = options.executeHostCommand;
     const stateAdapter = options.stateAdapter || null;
     const fallbackEffectGroup = options.createEffectGroup;
     if (typeof stateStoreApi?.createStateStore !== "function") {
@@ -335,6 +336,53 @@
       return advanceSession(runtime.abort(activeSession, clone(reason)), false);
     }
 
+    function submitHostCommand(command, submitOptions = {}) {
+      if (typeof executeHostCommand !== "function") {
+        return fail("RULE_COMPOSITION_HOST_COMMAND_UNAVAILABLE", "Rule Composition 未配置 Browser host command executor");
+      }
+      if (!command?.kind || typeof command.kind !== "string") {
+        return fail("RULE_COMPOSITION_HOST_COMMAND_INVALID", "Browser host command 缺少 kind");
+      }
+      const beforeWorkingState = stateAdapter ? clone(workingState) : null;
+      const committedBefore = store.getSnapshot();
+      let result;
+      try {
+        result = executeHostCommand(actionContext(clone(committedBefore)), clone(command));
+      } catch (error) {
+        if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_thrown" });
+        return fail("RULE_COMPOSITION_HOST_COMMAND_THROWN", error?.message || "Browser host command 执行异常");
+      }
+      if (!result || result.ok === false) {
+        if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_rejected" });
+        return result?.ok === false
+          ? deepFreeze(clone(result))
+          : fail("RULE_COMPOSITION_HOST_COMMAND_FAILED", "Browser host command 未返回成功结果");
+      }
+      if (activeSession || !stateAdapter || submitOptions.commit === false) {
+        return deepFreeze(clone(result));
+      }
+      const committedBoundary = store.getSnapshot();
+      const candidate = stateAdapter.createCommittedState(workingState, committedBoundary, {
+        source: "browser-host-command",
+        commandKind: command.kind,
+      });
+      const validation = store.validate(candidate);
+      if (!validation.ok) {
+        stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_state_invalid" });
+        return deepFreeze(clone(validation));
+      }
+      const committed = store.compareAndCommit(
+        committedBoundary.meta.stateVersion,
+        candidate,
+        { source: "browser-host-command", commandKind: command.kind },
+      );
+      if (!committed.ok) {
+        stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_commit_rejected" });
+        return deepFreeze(clone(committed));
+      }
+      return deepFreeze({ ...clone(result), stateVersion: store.getSnapshot().meta.stateVersion });
+    }
+
     function save(saveOptions = {}) {
       let committed = store.getSnapshot();
       let saveState = committed;
@@ -439,6 +487,7 @@
       submitActionById,
       submitQuickAction,
       submitDecision,
+      submitHostCommand,
       advance,
       abort,
     });
