@@ -11,6 +11,7 @@ function modulesFor(relative) {
   if (/browser-host\/(?:heuristic-policy\.integration|policy-input-adapter)\.test|public-api-ai-contract/.test(relative)) return ["webUi"];
   if (/headless-(?:contract|final-scoring|legality)\.test/.test(relative)) return ["uniqueAction"];
   if (/headless-effect-failure\.test/.test(relative)) return ["uniqueEffectQueue"];
+  if (/conditional-decision-domain\.test/.test(relative)) return ["uniqueAction"];
   if (/headless-(?:conditional-drain|decision-owner|effect-session-host|effect-session-worker-recovery|fail-closed|no-browser-globals|training-replay)\.test/.test(relative)) return ["uniqueSessionState"];
   if (/headless-state-checkpoint\.test/.test(relative)) return ["unifiedAuthorityState"];
   if (/\/training\/|\/game\/ai\/|\/app\/ai\/|headless-worker-resilience/.test(relative)) return ["robot"];
@@ -58,6 +59,7 @@ randomizer/app/primary-board-action-executor.test.js
 randomizer/app/engine-action-executor.test.js
 randomizer/app/quick-turn-action-executor.test.js
 randomizer/app/conditional-action-executor.test.js
+randomizer/app/conditional-decision-domain.test.js
 randomizer/app/headless-conditional-drain.test.js
 randomizer/app/headless-decision-owner.test.js
 randomizer/app/headless-effect-failure.test.js
