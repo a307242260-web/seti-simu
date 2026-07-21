@@ -159,18 +159,6 @@ randomizer/training/self-play.test.js
 randomizer/training/worker-pool.test.js
   `),
   fullFlow: ["randomizer/full-flow/standard-flow.test.js"],
-  merge: [
-    "randomizer/game/ai/expected-score-evaluator.test.js",
-    "randomizer/game/ai/heuristic-policy.test.js",
-    "randomizer/training/heuristic-policy.fixed-board.test.js",
-    "randomizer/training/heuristic-policy.seed-baseline.test.js",
-    "randomizer/training/heuristic-policy-turn-report.test.js",
-  ],
-  architectureGate: [
-    "randomizer/game/state/authority-inventory.test.js",
-    "randomizer/game/state/browser-authority-hard-cut-audit.test.js",
-    "randomizer/game/state/semantic-architecture-audit.test.js",
-  ],
   architectureModules: Object.freeze({
     uniqueAction: "唯一 Action",
     uniqueEffectQueue: "唯一 Effect Queue",

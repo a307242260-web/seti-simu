@@ -3,6 +3,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const standardAction = require("../actions/standard-action");
 const policyPort = require("./policy-port");
+const heuristicPolicy = require("./heuristic-policy");
 
 function createFixture() {
   const state = {
@@ -240,6 +241,45 @@ function decision(context, actionId, policyType = "heuristic") {
   assert.equal(recovered.accept(decision(context, context.legalActions[0].actionId), state).code, "POLICY_LATE_RESPONSE");
   assert.deepEqual(state.executed, []);
   assert.deepEqual(state.journal, []);
+}
+
+{
+  const legalActions = standardAction.ALL_FAMILIES.map((family, index) => ({
+    schemaVersion: policyPort.STANDARD_ACTION_SCHEMA_VERSION,
+    family,
+    phase: standardAction.PHASE_BY_FAMILY[family] || "conditional",
+    actionId: `${family}:fixture-${index}`,
+    actorId: "blue",
+    stateVersion: 7,
+    decisionVersion: 11,
+    target: { choiceId: String(index) },
+    payload: { value: index + 1, ...(family === "choose_card" ? { score: index + 1 } : {}) },
+    summary: `${family} ${index}`,
+  }));
+  const context = policyPort.createDecisionContext({
+    requestId: "heuristic-all-families",
+    seatId: "blue",
+    stateVersion: 7,
+    decisionVersion: 11,
+    observation: { publicState: { roundNumber: 2 }, selfState: { resources: { credits: 3, energy: 2 } } },
+    legalActions,
+    deterministicContext: { seed: "heuristic-unit", requestOrdinal: 1 },
+  });
+  const policy = heuristicPolicy.createHeuristicPolicy({ difficulty: "weak_start" });
+  const selected = policy.decide(context);
+  assert.ok(context.legalActions.some((action) => action.actionId === selected.actionId));
+  assert.equal(selected.policy.version, heuristicPolicy.POLICY_VERSION);
+  assert.throws(
+    () => policy.decide(policyPort.createDecisionContext({
+      requestId: "heuristic-empty",
+      seatId: "blue",
+      stateVersion: 7,
+      decisionVersion: 11,
+      observation: {},
+      legalActions: [],
+    })),
+    (error) => error.code === "HEURISTIC_POLICY_EMPTY_LEGAL_SET",
+  );
 }
 
 (async () => {

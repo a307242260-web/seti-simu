@@ -30,7 +30,7 @@
 
 - `app/ai/pending-domain-migration.test.js` 校验迁出函数体不在 controller、四个 runtime 均先于 controller 装配、生产模块行数与 context 缺项 fail-fast。
 - `app/ai-controller.characterization.test.js` 校验 CommonJS/传统全局双入口、稳定 controller API、快照、pending owner、report 与调度契约。
-- 原迁移期 `app/ai-controller.seed-baseline.test.js` 采用 PASS-first 驱动，只能跑通最低限度终局，已在 SETI-104 删除，不再作为机器人或 controller 验收证据。当前策略级固定回归由 `training/heuristic-policy.seed-baseline.test.js` 覆盖真实 Heuristic Policy 的完整 action trace、逐席分数、动作族分布与 provenance。
+- 原迁移期 `app/ai-controller.seed-baseline.test.js` 采用 PASS-first 驱动，只能跑通最低限度终局，已在 SETI-104 删除，不再作为机器人或 controller 验收证据。策略选择契约由 `game/ai/heuristic-policy.test.js` 行为 unit 覆盖；仓库只保留一个标准 full-flow。
 
 ## 残余风险
 

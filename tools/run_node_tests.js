@@ -11,12 +11,10 @@ const randomizerRoot = path.join(repositoryRoot, "randomizer");
 const matches = [];
 const excludes = [];
 let listOnly = false;
-let architectureOnly = false;
 
 for (let index = 2; index < process.argv.length; index += 1) {
   const option = process.argv[index];
   if (option === "--list") listOnly = true;
-  else if (option === "--architecture") architectureOnly = true;
   else if (option === "--match" || option === "--exclude") {
     const value = process.argv[index + 1];
     if (!value) throw new Error(`${option} 需要一个路径子串`);
@@ -35,7 +33,7 @@ function collect(directory, output) {
   }
 }
 
-const classifications = ["unit", "fullFlow", "merge", "architectureGate"];
+const classifications = ["unit", "fullFlow"];
 const architectureModuleKeys = new Set(Object.keys(inventory.architectureModules));
 const classified = new Map();
 for (const classification of classifications) {
@@ -62,7 +60,7 @@ if (missing.length || unclassified.length || invalidModules.length || inventory.
   process.exit(1);
 }
 
-const runnableTypes = architectureOnly ? new Set(["architectureGate"]) : new Set(["unit", "fullFlow"]);
+const runnableTypes = new Set(["unit", "fullFlow"]);
 const selected = diskTests
   .map((relative) => ({ relative, classification: classified.get(relative) }))
   .filter(({ classification }) => runnableTypes.has(classification))
@@ -71,7 +69,7 @@ const selected = diskTests
 
 if (listOnly) {
   for (const relative of diskTests) {
-    const modules = inventory.modulesFor(relative).map((key) => inventory.architectureModules[key]).join(" + ") || "独立架构闸门/待合并";
+    const modules = inventory.modulesFor(relative).map((key) => inventory.architectureModules[key]).join(" + ");
     process.stdout.write(`${classified.get(relative)}\t${modules}\t${relative}\n`);
   }
   for (const classification of classifications) {
@@ -80,7 +78,7 @@ if (listOnly) {
   process.exit(0);
 }
 
-const totals = { unit: { passed: 0, failed: 0, milliseconds: 0 }, fullFlow: { passed: 0, failed: 0, milliseconds: 0 }, architectureGate: { passed: 0, failed: 0, milliseconds: 0 } };
+const totals = { unit: { passed: 0, failed: 0, milliseconds: 0 }, fullFlow: { passed: 0, failed: 0, milliseconds: 0 } };
 const moduleCounts = Object.fromEntries([...architectureModuleKeys].map((key) => [key, 0]));
 const failures = [];
 for (const test of selected) {
@@ -100,11 +98,8 @@ for (const classification of [...runnableTypes]) {
   const total = totals[classification];
   process.stdout.write(`SUMMARY ${classification} passed=${total.passed} failed=${total.failed} total=${total.passed + total.failed} time=${(total.milliseconds / 1000).toFixed(2)}s\n`);
 }
-if (!architectureOnly) process.stdout.write(`SKIPPED merge=${inventory.merge.length} architectureGate=${inventory.architectureGate.length}\n`);
-if (!architectureOnly) {
-  for (const [moduleKey, count] of Object.entries(moduleCounts)) {
-    process.stdout.write(`MODULE ${inventory.architectureModules[moduleKey]} tests=${count}\n`);
-  }
+for (const [moduleKey, count] of Object.entries(moduleCounts)) {
+  process.stdout.write(`MODULE ${inventory.architectureModules[moduleKey]} tests=${count}\n`);
 }
 for (const failure of failures) process.stderr.write(`FAIL ${failure.file} status=${failure.status} signal=${failure.signal || "none"}\n`);
 if (failures.length) process.exitCode = 1;

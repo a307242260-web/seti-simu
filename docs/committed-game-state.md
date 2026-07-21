@@ -192,6 +192,5 @@ recovery snapshot v2 和 headless checkpoint 的 `coreState` 只保存 `StateSto
 新 recovery 写路径直接调用 StateStore 生成 v2 `committedState`；`cardTaskState` 与
 `setupSelectionState` 不属于 committed root。inventory 只列正式 owner/source/target，不含过渡字段。
 
-最终 inventory、跨 app/effect/AI/headless/RL/mechanics 的边界说明与机械审计见
-`docs/state-authority-audit.md`；proof obligations 与验证证据见
-`checkpoint/seti-110-proof-obligations.md`。
+跨 app/effect/AI/headless/RL/mechanics 的边界以本文件为准；唯一 owner、隔离快照、
+单次 CAS 与恢复拒绝由 StateStore/Effect Session 行为单元测试和固定完整流程验证。

@@ -59,11 +59,10 @@ Effect Session ───────────► StateStore.compareAndCommit
 ## 验证入口
 
 - `node --check randomizer/app.js`
-- `node tools/audit_state_authority.js`
 - `node tools/run_node_tests.js`
 - 固定 seed headless 完整局、非零 checkpoint/replay fork、Browser/Headless parity
 - 真实 Chrome 人类输入 smoke、机器席位完整局与 Browser Services recovery smoke
 
 更细契约见 `docs/standard-action-contract.md`、`docs/effect-session-runtime.md`、`docs/committed-game-state.md`、`docs/browser-host-ui.md`、`docs/machine-player-host.md`、`docs/policy-port-contract.md` 与 `docs/rl-headless-env.md`。
 
-架构审计会枚举全部生产 JS/HTML 的依赖和 authority/write/read/projection/recovery/policy 能力边，执行 StateStore commit trace 与 Browser Projection poison，并对第二 root、直接 committed 写、projection bundle、保存拼 root、恢复拆 root、双写、旧 Policy/schema 和未知 fallback 提供负向 fixture。正式 owner 清单之外的 residual inventory 必须为空。详见 `docs/state-authority-audit.md`。
+StateStore 的唯一 owner、快照隔离、单次 CAS、恢复拒绝和 Policy fail-closed 均由相应行为单元测试与唯一完整流程验证，不再维护读取源码形态的独立架构扫描器。

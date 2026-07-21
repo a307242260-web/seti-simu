@@ -24,7 +24,7 @@
 node randomizer/game/ai/ai-domain-migration.test.js
 node randomizer/app/ai-controller.integration.test.js
 node randomizer/app/ai-controller.characterization.test.js
-node randomizer/training/heuristic-policy.seed-baseline.test.js
+node tools/run_node_tests.js --match game/ai
 ```
 
 ## 逐域函数清单

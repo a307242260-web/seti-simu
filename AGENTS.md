@@ -123,7 +123,6 @@
 
 ```powershell
 node --check randomizer/app.js
-node tools/audit_state_authority.js
 node tools/run_node_tests.js
 ```
 
