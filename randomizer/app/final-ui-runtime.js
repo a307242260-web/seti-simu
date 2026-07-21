@@ -98,17 +98,18 @@
       return image;
     }
 
-    function renderFinalScoreBoard() {
+    function renderFinalScoreBoard(projected = null) {
       if (headless) return;
-      const currentPlayer = getCurrentPlayer();
-      const pending = finalScoring.getNextPendingMarkForPlayer(finalScoringState, currentPlayer?.id);
+      const projectedFinalScoringState = projected?.finalScoringState || finalScoringState;
+      const currentPlayer = projected?.currentPlayer || getCurrentPlayer();
+      const pending = finalScoring.getNextPendingMarkForPlayer(projectedFinalScoringState, currentPlayer?.id);
 
       els.finalScoreTileWraps.forEach((wrap) => {
         const tileId = wrap.dataset.finalId;
-        const tile = finalScoringState.tiles?.[tileId];
+        const tile = projectedFinalScoringState.tiles?.[tileId];
         const layer = wrap.querySelector(".final-score-token-layer");
         const canMark = pending
-          ? finalScoring.canMarkTile(finalScoringState, tileId, currentPlayer)
+          ? finalScoring.canMarkTile(projectedFinalScoringState, tileId, currentPlayer)
           : { ok: false };
 
         wrap.disabled = !canMark.ok;

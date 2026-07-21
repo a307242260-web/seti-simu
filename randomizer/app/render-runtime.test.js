@@ -343,9 +343,17 @@ function createContext(overrides = {}) {
       data: {},
       planets: {},
       aliens: {},
-      finalScoring: {},
+      finalScoring: {
+        breakdownsByPlayerId: {
+          p1: { totalScore: 13 },
+          p2: { totalScore: 8 },
+        },
+      },
       turn: { roundNumber: 1, turnNumber: 1 },
-      cards: { publicCards: [] },
+      cards: {
+        publicCards: [],
+        ui: { selectionActive: false, discardSelectionActive: false, playCardSelectionActive: false },
+      },
       tech: {},
       decisions: pendingState,
     },
@@ -377,11 +385,6 @@ function createContext(overrides = {}) {
     tech: { getReadoutLines() { return []; } },
     actionHistory: { hasSession() { return false; }, getTrace() { return []; } },
     quickActionHistory: { hasSession() { return false; }, getTrace() { return []; } },
-    getCurrentPlayer() { return playerA; },
-    getInterfacePlayer() { return playerA; },
-    getActivePlayers() { return [playerA, playerB]; },
-    getPlayerById(id) { return [playerA, playerB].find((player) => player.id === id) || null; },
-    getPlayerByColor(color) { return [playerA, playerB].find((player) => player.color === color) || null; },
     getPlayerRoundOrderNumber() { return 1; },
     getPlayerDisplayLabel(player) { return player.name; },
     isPlayerPassedThisRound() { return false; },
@@ -408,24 +411,18 @@ function createContext(overrides = {}) {
     buildPlayerFangzhouStatNodes() { return []; },
     updatePlayerHandPanelTitle() { context.updatePlayerHandPanelTitleCalls += 1; },
     renderReservedCardsFromTaskState() { context.renderReservedCardsCalls += 1; },
-    syncFinalScorePendingMarks() { context.syncFinalScorePendingMarksCalls += 1; },
-    renderFinalScoreBoard() { context.renderFinalScoreBoardCalls += 1; },
+    renderFinalScoreBoard(input) {
+      context.renderFinalScoreBoardCalls += 1;
+      context.lastFinalScoreRenderInput = input;
+      input.finalScoringState.legacyNormalizationProbe = true;
+    },
     queueJiuzheOpportunitiesForPlayer() { context.queueJiuzheCalls += 1; },
     maybeOpenQueuedJiuzheOpportunity() { context.openJiuzheCalls += 1; },
     queueBanrenmaOpportunitiesForPlayer() { context.queueBanrenmaCalls += 1; },
     maybeOpenQueuedBanrenmaOpportunity() { context.openBanrenmaCalls += 1; },
-    computePlayerFinalScoreBreakdown(player) {
-      return { totalScore: player.resources.score + 3 };
-    },
     buildPlutoMarkerContext() { return {}; },
     getCardTypeCode() { return ""; },
     buildProbeLocationIndex() { return { index: {}, details: [] }; },
-    isDiscardSelectionActive() { return false; },
-    isPlayCardSelectionActive() { return false; },
-    isMovePaymentSelectionActive() { return false; },
-    isHandScanSelectionActive() { return false; },
-    getPendingCardCornerQuickAction() { return null; },
-    getPendingHandCardPlayAction() { return null; },
     canUseCardCornerQuickAction() { return false; },
     isIndustryHandSelectionActive() { return false; },
     isIndustryFutureSpanHandSelectionActive() { return false; },
@@ -434,7 +431,6 @@ function createContext(overrides = {}) {
     isMovePaymentCard() { return false; },
     getCardCornerQuickActionForCard() { return null; },
     getHandCardPlayActionForCard() { return null; },
-    getPendingPlayCardSelection() { return null; },
     getCardPlayCost() { return {}; },
     formatCardPlayCost() { return "0"; },
     getPublicScanChoicesForCard() { return { ok: true, scanLabel: "扫描" }; },
@@ -470,8 +466,8 @@ function createContext(overrides = {}) {
     isAiAutoBattlePlayer() { return false; },
     updatePlayerHandPanelTitleCalls: 0,
     renderReservedCardsCalls: 0,
-    syncFinalScorePendingMarksCalls: 0,
     renderFinalScoreBoardCalls: 0,
+    lastFinalScoreRenderInput: null,
     queueJiuzheCalls: 0,
     openJiuzheCalls: 0,
     queueBanrenmaCalls: 0,
@@ -497,10 +493,33 @@ function createContext(overrides = {}) {
       schemaVersion: "seti-browser-host-v1",
       projectionId: "render-runtime-test",
       source: { kind: "committed", stateVersion: 1 },
+      viewer: { viewerId: "browser:p1", playerId: "p1", role: "player" },
       resident: structuredClone(context.testResident),
     });
   };
   return context;
+}
+
+{
+  const context = createContext();
+  for (const key of [
+    "getCurrentPlayer", "getInterfacePlayer", "getActivePlayers", "getPlayerById", "getPlayerByColor",
+    "syncFinalScorePendingMarks", "computePlayerFinalScoreBreakdown",
+    "getPendingMovePayment", "getPendingCardCornerQuickAction", "getPendingHandCardPlayAction",
+    "getPendingPlayCardSelection", "isDiscardSelectionActive", "isPlayCardSelectionActive",
+    "isMovePaymentSelectionActive", "isHandScanSelectionActive",
+  ]) {
+    Object.defineProperty(context, key, {
+      configurable: true,
+      enumerable: true,
+      get() { throw new Error(`${key} poison getter touched`); },
+    });
+  }
+  const runtime = createRenderRuntime(context);
+  runtime.renderPlayerHand();
+  runtime.renderOpponentStats();
+  runtime.renderPlayerStats();
+  runtime.setTokenAssetSizes();
 }
 
 {
@@ -562,6 +581,8 @@ function createContext(overrides = {}) {
   assert.equal(context.updatePlayerHandPanelTitleCalls, 1);
   assert.equal(context.renderReservedCardsCalls, 1);
   assert.equal(context.dataPlayerBoardCalls, 1);
+  assert.equal(context.lastFinalScoreRenderInput.finalScoringState.legacyNormalizationProbe, true);
+  assert.equal(context.testResident.finalScoring.legacyNormalizationProbe, undefined);
   assert.equal(context.queueJiuzheCalls, 0);
   assert.equal(context.queueBanrenmaCalls, 0);
 }
@@ -588,6 +609,11 @@ function createContext(overrides = {}) {
   for (const key of [
     "decisionSessions", "solarState", "playerState", "rocketState", "nebulaDataState",
     "planetStatsState", "alienGameState", "finalScoringState", "turnState", "cardState", "techGameState",
+    "getCurrentPlayer", "getInterfacePlayer", "getActivePlayers", "getPlayerById", "getPlayerByColor",
+    "syncFinalScorePendingMarks", "computePlayerFinalScoreBreakdown",
+    "getPendingMovePayment", "getPendingCardCornerQuickAction", "getPendingHandCardPlayAction",
+    "getPendingPlayCardSelection", "isDiscardSelectionActive", "isPlayCardSelectionActive",
+    "isMovePaymentSelectionActive", "isHandScanSelectionActive",
   ]) {
     assert.doesNotMatch(wiring, new RegExp(`\\n\\s*${key}(?:,|:)`), `生产 renderer 不得注入 ${key}`);
   }

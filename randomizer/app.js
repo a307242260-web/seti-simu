@@ -884,6 +884,10 @@
       alienTracePickerState: "alien_trace_picker_state",
       alienRevealConfirmation: "alien_reveal_confirmation",
       actionEffectFlow: "action_effect_flow",
+      movePayment: MOVE_PAYMENT_SESSION,
+      playCardSelection: PLAY_CARD_SELECTION_SESSION,
+      handCardPlayAction: HAND_CARD_PLAY_SESSION,
+      cardCornerQuickAction: CARD_CORNER_QUICK_SESSION,
     });
     const canonical = residentProjectionAdapter.projectSource({ viewer });
     const projectedPlayers = (canonical.resident?.players?.players || []).map((projectedPlayer) => {
@@ -891,6 +895,10 @@
       return browserRuleState.playerState.players.find((player) => String(player?.id) === viewer.playerId)
         || projectedPlayer;
     });
+    const finalScoreBreakdownsByPlayerId = Object.fromEntries(projectedPlayers.map((player) => [
+      String(player.id),
+      cloneResidentPresentation(computePlayerFinalScoreBreakdown(player)),
+    ]));
     const projection = browserHostModule.residentProjection.createResidentProjection({
       projection: {
         ...canonical,
@@ -909,13 +917,21 @@
             ...canonical.resident.cards,
             publicCards: structuredClone(browserRuleState.cardState.publicCards || []),
             publicMarket: structuredClone(browserRuleState.cardState.publicCards || []),
+            ui: {
+              selectionActive: Boolean(browserRuleState.cardState.ui?.selectionActive),
+              discardSelectionActive: Boolean(browserRuleState.cardState.ui?.discardSelectionActive),
+              playCardSelectionActive: Boolean(browserRuleState.cardState.ui?.playCardSelectionActive),
+            },
           },
           tech: {
             board: structuredClone(browserRuleState.techGameState.board || {}),
             ui: structuredClone(browserRuleState.techGameState.ui || {}),
           },
           aliens: structuredClone(browserRuleState.alienGameState),
-          finalScoring: structuredClone(browserRuleState.finalScoringState),
+          finalScoring: {
+            ...structuredClone(browserRuleState.finalScoringState),
+            breakdownsByPlayerId: finalScoreBreakdownsByPlayerId,
+          },
           decisions: cloneResidentPresentation(decisions),
         },
       },
@@ -1030,15 +1046,9 @@
     OPPONENT_SECTOR_WIN_STATS,
     OPPONENT_TECH_TYPES,
     ROTATE_STATE_SLOTS,
-    getPendingMovePayment,
     tech,
     actionHistory,
     quickActionHistory,
-    getCurrentPlayer,
-    getInterfacePlayer,
-    getActivePlayers,
-    getPlayerById,
-    getPlayerByColor,
     getPlayerRoundOrderNumber,
     getPlayerDisplayLabel,
     isPlayerPassedThisRound,
@@ -1065,18 +1075,10 @@
     buildPlayerFangzhouStatNodes,
     updatePlayerHandPanelTitle,
     renderReservedCardsFromTaskState: (...args) => renderReservedCardsFromTaskState(...args),
-    syncFinalScorePendingMarks: (...args) => syncFinalScorePendingMarks?.(...args),
     renderFinalScoreBoard: (...args) => renderFinalScoreBoard?.(...args),
-    computePlayerFinalScoreBreakdown,
     buildPlutoMarkerContext,
     getCardTypeCode: (...args) => getCardTypeCode(...args),
     buildProbeLocationIndex: (...args) => buildProbeLocationIndex(...args),
-    isDiscardSelectionActive: (...args) => isDiscardSelectionActive?.(...args),
-    isPlayCardSelectionActive: (...args) => isPlayCardSelectionActive?.(...args),
-    isMovePaymentSelectionActive: (...args) => isMovePaymentSelectionActive?.(...args),
-    isHandScanSelectionActive: (...args) => isHandScanSelectionActive?.(...args),
-    getPendingCardCornerQuickAction: (...args) => getPendingCardCornerQuickAction?.(...args),
-    getPendingHandCardPlayAction: (...args) => getPendingHandCardPlayAction?.(...args),
     canUseCardCornerQuickAction: (...args) => canUseCardCornerQuickAction(...args),
     isIndustryHandSelectionActive: (...args) => isIndustryHandSelectionActive?.(...args),
     isIndustryFutureSpanHandSelectionActive: (...args) => isIndustryFutureSpanHandSelectionActive?.(...args),
@@ -1085,7 +1087,6 @@
     isMovePaymentCard: (...args) => isMovePaymentCard?.(...args),
     getCardCornerQuickActionForCard: (...args) => getCardCornerQuickActionForCard(...args),
     getHandCardPlayActionForCard: (...args) => getHandCardPlayActionForCard(...args),
-    getPendingPlayCardSelection: (...args) => getPendingPlayCardSelection?.(...args),
     getCardPlayCost: (...args) => getCardPlayCost(...args),
     formatCardPlayCost: (...args) => formatCardPlayCost(...args),
     getPublicScanChoicesForCard: (...args) => getPublicScanChoicesForCard(...args),

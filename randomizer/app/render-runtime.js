@@ -376,6 +376,46 @@
       return snapshot;
     }
 
+    function getProjectedPlayers() {
+      const projectedPlayers = readProjection().resident.players?.players;
+      return Array.isArray(projectedPlayers) ? projectedPlayers : [];
+    }
+
+    function getPlayerById(playerId) {
+      return getProjectedPlayers().find((player) => String(player?.id) === String(playerId)) || null;
+    }
+
+    function getPlayerByColor(playerColor) {
+      return getProjectedPlayers().find((player) => player?.color === playerColor) || null;
+    }
+
+    function getCurrentPlayer() {
+      return getPlayerById(readProjection().resident.players?.currentPlayerId);
+    }
+
+    function getInterfacePlayer() {
+      const viewerPlayerId = readProjection().viewer?.role === "player"
+        ? readProjection().viewer.playerId
+        : null;
+      return getPlayerById(viewerPlayerId) || getCurrentPlayer();
+    }
+
+    function getActivePlayers() {
+      const activePlayerIds = new Set(
+        (readProjection().resident.turn?.activePlayerIds || []).map(String),
+      );
+      return getProjectedPlayers().filter((player) => activePlayerIds.has(String(player?.id)));
+    }
+
+    function getPlayerFinalScoreBreakdown(player) {
+      return readProjection().resident.finalScoring?.breakdownsByPlayerId?.[String(player?.id)]
+        || { totalScore: Number(player?.resources?.score) || 0 };
+    }
+
+    function cloneProjectedPlayer(player) {
+      return player ? structuredClone(player) : null;
+    }
+
     const solarState = createReadonlySelector("solar");
     const playerState = createReadonlySelector("players", { players: [] });
     const rocketState = createReadonlySelector("pieces", { rockets: [] });
@@ -417,11 +457,6 @@
       OPPONENT_SECTOR_WIN_STATS,
       OPPONENT_TECH_TYPES,
       ROTATE_STATE_SLOTS,
-      getCurrentPlayer,
-      getInterfacePlayer,
-      getActivePlayers,
-      getPlayerById,
-      getPlayerByColor,
       getPlayerRoundOrderNumber,
       getPlayerDisplayLabel,
       isPlayerPassedThisRound,
@@ -448,18 +483,10 @@
       buildPlayerFangzhouStatNodes,
       updatePlayerHandPanelTitle,
       renderReservedCardsFromTaskState,
-      syncFinalScorePendingMarks,
       renderFinalScoreBoard,
-      computePlayerFinalScoreBreakdown,
       buildPlutoMarkerContext,
       getCardTypeCode,
       buildProbeLocationIndex,
-      isDiscardSelectionActive,
-      isPlayCardSelectionActive,
-      isMovePaymentSelectionActive,
-      isHandScanSelectionActive,
-      getPendingCardCornerQuickAction,
-      getPendingHandCardPlayAction,
       canUseCardCornerQuickAction,
       isIndustryHandSelectionActive,
       isIndustryFutureSpanHandSelectionActive,
@@ -468,7 +495,6 @@
       isMovePaymentCard,
       getCardCornerQuickActionForCard,
       getHandCardPlayActionForCard,
-      getPendingPlayCardSelection,
       getCardPlayCost,
       formatCardPlayCost,
       getPublicScanChoicesForCard,
@@ -517,7 +543,7 @@
     }
 
     function setTokenAssetSizes() {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = cloneProjectedPlayer(getCurrentPlayer());
       const color = players.getPlayerColorDefinition(currentPlayer.color);
       let pendingLoads = 3;
       const finalizeTokenSizes = () => {
@@ -1104,15 +1130,21 @@
     function renderPlayerHand() {
       if (!els.playerHandFan || !els.playerHandPanel) return;
 
-      const currentPlayer = getInterfacePlayer();
+      const currentPlayer = cloneProjectedPlayer(getInterfacePlayer());
       const hand = Array.isArray(currentPlayer.hand) ? currentPlayer.hand : [];
-      const actualCurrentPlayer = getCurrentPlayer();
-      const discardActive = isDiscardSelectionActive() && decisionState.discardAction?.player?.id === currentPlayer?.id;
-      const playActive = isPlayCardSelectionActive() && actualCurrentPlayer?.id === currentPlayer?.id;
-      const movePaymentActive = isMovePaymentSelectionActive() && context.getPendingMovePayment()?.player?.id === currentPlayer?.id;
-      const handScanActive = isHandScanSelectionActive() && decisionState.handScanAction?.player?.id === currentPlayer?.id;
-      const cardCornerAction = getPendingCardCornerQuickAction();
-      const handCardPlayAction = getPendingHandCardPlayAction();
+      const actualCurrentPlayer = cloneProjectedPlayer(getCurrentPlayer());
+      const movePayment = decisionState.movePayment;
+      const playCardSelection = decisionState.playCardSelection;
+      const discardActive = Boolean(cardState.ui?.discardSelectionActive)
+        && decisionState.discardAction?.player?.id === currentPlayer?.id;
+      const playActive = Boolean(cardState.ui?.playCardSelectionActive)
+        && actualCurrentPlayer?.id === currentPlayer?.id;
+      const movePaymentActive = Boolean(movePayment)
+        && (movePayment.playerId || movePayment.player?.id) === currentPlayer?.id;
+      const handScanActive = Boolean(decisionState.handScanAction)
+        && decisionState.handScanAction?.player?.id === currentPlayer?.id;
+      const cardCornerAction = decisionState.cardCornerQuickAction;
+      const handCardPlayAction = decisionState.handCardPlayAction;
       const cardCornerActionEnabled = actualCurrentPlayer?.id === currentPlayer?.id && canUseCardCornerQuickAction();
       const handScanPickIndex = decisionState.scanTargetAction?.type === "hand_scan"
         && Number.isInteger(Number(decisionState.scanTargetAction.handIndex))
@@ -1182,7 +1214,7 @@
           } else if (movePaymentActive) {
             if (isMovePaymentCard(card)) {
               button.classList.add("is-move-card");
-              if ((context.getPendingMovePayment()?.selectedHandIndices || []).includes(index)) {
+              if ((movePayment.selectedHandIndices || []).includes(index)) {
                 button.classList.add("is-selected");
               }
               button.setAttribute("aria-label", `${label}（移动牌，点击选择弃置）`);
@@ -1195,8 +1227,8 @@
           } else if (cardCornerActionEnabled) {
             const action = getCardCornerQuickActionForCard(card);
             const playAction = getHandCardPlayActionForCard(card, actualCurrentPlayer);
-            const selected = cardCornerAction?.card?.id === card.id
-              || handCardPlayAction?.card?.id === card.id;
+            const selected = cardCornerAction?.cardId === card.id
+              || handCardPlayAction?.cardId === card.id;
             if (action || playAction) {
               if (action) button.classList.add("is-corner-action-card");
               if (playAction) button.classList.add("is-hand-play-card");
@@ -1215,7 +1247,7 @@
               button.title = "这张牌没有可用的手牌快捷操作";
             }
           } else if (playActive) {
-            const selected = getPendingPlayCardSelection()?.handIndex === index;
+            const selected = playCardSelection?.handIndex === index;
             button.classList.add(affordable ? "is-playable" : "is-unaffordable");
             if (selected) button.classList.add("is-selected");
             button.setAttribute("aria-label", `${label}，费用 ${formattedPlayCost}`);
@@ -1261,7 +1293,7 @@
       if (!els.initialSelectionArea) return;
 
       if (isInitialSelectionActive()) {
-        const setupPlayer = getCurrentPlayer();
+        const setupPlayer = cloneProjectedPlayer(getCurrentPlayer());
         if (!context.isAiAutoBattlePlayer(setupPlayer?.id)) {
           const offer = getInitialSelectionOffer(setupPlayer?.id);
           els.initialSelectionArea.hidden = false;
@@ -1271,7 +1303,7 @@
         }
       }
 
-      const currentPlayer = getInterfacePlayer();
+      const currentPlayer = cloneProjectedPlayer(getInterfacePlayer());
       const selectedCards = getCurrentInitialSelectionCards(currentPlayer);
       if (!selectedCards.length) {
         els.initialSelectionArea.hidden = true;
@@ -1300,7 +1332,7 @@
     }
 
     function renderPlayerDataBoard() {
-      const currentPlayer = getInterfacePlayer();
+      const currentPlayer = cloneProjectedPlayer(getInterfacePlayer());
       data.renderPlayerDataTokens(currentPlayer, els.playerBoardDataLayer, {
         onPlace: (blueSlot) => {
           context.placeDataToBlueSlot(blueSlot);
@@ -1443,10 +1475,12 @@
       if (!els.opponentStatGrid) return;
 
       const currentPlayerId = getCurrentPlayer()?.id || playerState.currentPlayerId;
-      const activePlayers = getActivePlayers().length ? getActivePlayers() : playerState.players;
-      const cards = activePlayers.map((player) => {
+      const projectedActivePlayers = getActivePlayers();
+      const activePlayers = projectedActivePlayers.length ? projectedActivePlayers : playerState.players;
+      const cards = activePlayers.map((projectedPlayer) => {
+        const player = cloneProjectedPlayer(projectedPlayer);
         const color = players.getPlayerColorDefinition(player.color);
-        const finalScoreBreakdown = computePlayerFinalScoreBreakdown(player);
+        const finalScoreBreakdown = getPlayerFinalScoreBreakdown(player);
         const card = document.createElement("article");
         card.className = "opponent-stat-card";
         card.dataset.playerId = player.id;
@@ -1482,12 +1516,14 @@
     }
 
     function renderPlayerStats() {
-      const currentPlayer = getInterfacePlayer();
+      const currentPlayer = cloneProjectedPlayer(getInterfacePlayer());
       const resources = currentPlayer.resources;
-      const finalScoreBreakdown = computePlayerFinalScoreBreakdown(currentPlayer);
+      const finalScoreBreakdown = getPlayerFinalScoreBreakdown(currentPlayer);
 
-      syncFinalScorePendingMarks();
-      renderFinalScoreBoard();
+      renderFinalScoreBoard({
+        currentPlayer,
+        finalScoringState: cloneResident("finalScoring"),
+      });
 
       const mainStats = [
         createPlayerNameStat(currentPlayer, resources.score, finalScoreBreakdown.totalScore),
