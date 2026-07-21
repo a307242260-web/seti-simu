@@ -1067,6 +1067,22 @@
     };
   }
 
+  function createStateSourceReadoutRoot() {
+    const state = browserRuleComposition.stateSourcePort.read().state;
+    return {
+      turnState: structuredClone(state.turn || {}),
+      playerState: structuredClone(state.players || { currentPlayerId: null, players: [] }),
+      solarState: structuredClone(state.solarSystem || {}),
+      rocketState: structuredClone(state.pieces || {}),
+      planetStatsState: structuredClone(state.planets || {}),
+      nebulaDataState: structuredClone(state.data || {}),
+      cardState: structuredClone(state.cards || {}),
+      techGameState: structuredClone(state.tech || {}),
+      alienGameState: structuredClone(state.aliens || {}),
+      finalScoringState: structuredClone(state.finalScoring || {}),
+    };
+  }
+
   function createInitialSelectionProjection(viewer, resident) {
     const active = setupSelectionState.phase === "selecting";
     const currentPlayerId = setupSelectionState.currentPlayerId == null
@@ -1090,9 +1106,11 @@
 
   function createReservedCardProjection(viewer, resident) {
     const viewerPlayerId = viewer?.playerId == null ? null : String(viewer.playerId);
-    const player = resident.players.players.find(
+    const projectedPlayer = resident.players.players.find(
       (entry) => String(entry?.id) === viewerPlayerId,
     ) || null;
+    const player = cloneResidentPresentation(projectedPlayer);
+    const alienReadoutState = cloneResidentPresentation(resident.aliens);
     const initialSelection = createInitialSelectionProjection(viewer, resident);
     const reservedCards = Array.isArray(player?.reservedCards) ? player.reservedCards : [];
     const readyByCardId = { ...(cardTaskState.readyType2ByCardId || {}) };
@@ -1132,7 +1150,7 @@
     const banrenmaItems = [];
     reservedCards.forEach((card, originalIndex) => {
       if (banrenma?.isBanrenmaCard?.(card)) {
-        const mark = banrenma.getPlayerScoreMarks?.(resident.aliens, player)
+        const mark = banrenma.getPlayerScoreMarks?.(alienReadoutState, player)
           ?.find((entry) => entry.id === card.banrenmaScoreMarkId || entry.cardInstanceId === card.id);
         const threshold = mark?.threshold ?? card.banrenmaThreshold ?? "-";
         const ready = Number(player?.resources?.score || 0) >= Number(threshold);
@@ -1159,16 +1177,16 @@
       }
     });
 
-    const jiuzheCards = jiuzhe?.getPlayerJiuzheCards?.(resident.aliens, player) || [];
+    const jiuzheCards = jiuzhe?.getPlayerJiuzheCards?.(alienReadoutState, player) || [];
     const jiuzheItem = jiuzheCards.length ? {
       kind: "jiuzhe",
       imageSrc: jiuzhe.CARD_BACK_SRC,
-      count: jiuzhe.countPlayedCards(resident.aliens, player),
+      count: jiuzhe.countPlayedCards(alienReadoutState, player),
       playerId: player?.id || "",
       playerColor: player?.color || "",
     } : null;
     const debugFangzhouUnlock = isDebugAlienTraceMode?.() || false;
-    const fangzhouItems = (fangzhou?.getPlayerCard2Reserved?.(resident.aliens, player) || [])
+    const fangzhouItems = (fangzhou?.getPlayerCard2Reserved?.(alienReadoutState, player) || [])
       .map((card) => ({
         kind: "fangzhou",
         traceType: card.traceType,
@@ -1521,7 +1539,9 @@
     rememberHistoryStep: (...args) => rememberHistoryStep?.(...args),
     historyCommands,
     queueStateReadoutRender: (...args) => queueStateReadoutRender?.(...args),
-    computePlayerFinalScoreBreakdown,
+    computePlayerFinalScoreBreakdown: (player) => (
+      computePlayerFinalScoreBreakdown(player, createStateSourceReadoutRoot())
+    ),
     getPlayerScoreSource,
     updateActionButtons,
     renderPlayerStats,
@@ -3586,7 +3606,9 @@
     cancelTechSelection: (...args) => cancelTechSelection?.(...args),
     clearTransientStateForRecovery,
     closeScanTargetPicker,
-    computePlayerFinalScoreBreakdown,
+    computePlayerFinalScoreBreakdown: (player) => (
+      computePlayerFinalScoreBreakdown(player, createStateSourceReadoutRoot())
+    ),
     confirmCardTaskCompletion: (...args) => confirmCardTaskCompletion?.(...args),
     confirmCardCornerQuickAction,
     confirmDataPlacement,
