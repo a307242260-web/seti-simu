@@ -184,56 +184,60 @@
     return finalScoreAiRuntime?.runAiFinalScoreMarkDecision(...args) || null;
   }
   function createPassEvent(...args) { return turnEndFlow?.createPassEvent(...args); }
-  function executePassFirstRotateEffect(...args) { return turnEndFlow?.executePassFirstRotateEffect(browserRuleState, ...args); }
-  function executePassHandLimitEffect(...args) { return turnEndFlow?.executePassHandLimitEffect(browserRuleState, ...args); }
+  function executePassFirstRotateEffect(...args) { return callBrowserDomainCommand("turn_end", "executePassFirstRotateEffect", args); }
+  function executePassHandLimitEffect(...args) { return callBrowserDomainCommand("turn_end", "executePassHandLimitEffect", args); }
   function passForCurrentPlayer(execution = {}) {
-    return turnEndFlow?.passForCurrentPlayer(execution.workingRoot || browserRuleState, execution);
+    if (execution.workingRoot) return turnEndFlow?.passForCurrentPlayer(execution.workingRoot, execution);
+    return callBrowserDomainCommand("turn_end", "passForCurrentPlayer", [execution]);
   }
-  function maybeResumeTurnEndAfterReveal(...args) { return turnEndFlow?.maybeResumeTurnEndAfterReveal(browserRuleState, ...args); }
+  function maybeResumeTurnEndAfterReveal(...args) { return callBrowserDomainCommand("turn_end", "maybeResumeTurnEndAfterReveal", args); }
   function maybeContinuePendingTurnEndRevealFlow(...args) {
-    return turnEndFlow?.maybeContinuePendingTurnEndRevealFlow(browserRuleState, ...args);
+    return callBrowserDomainCommand("turn_end", "maybeContinuePendingTurnEndRevealFlow", args);
   }
   function maybeContinueAlienRevealQueuedOpportunities(...args) {
-    return turnEndFlow?.maybeContinueAlienRevealQueuedOpportunities(browserRuleState, ...args);
+    return callBrowserDomainCommand("turn_end", "maybeContinueAlienRevealQueuedOpportunities", args);
   }
   function endCurrentTurn(execution = {}) {
-    return turnEndFlow?.endCurrentTurn(execution.workingRoot || browserRuleState, execution);
+    if (execution.workingRoot) return turnEndFlow?.endCurrentTurn(execution.workingRoot, execution);
+    return callBrowserDomainCommand("turn_end", "endCurrentTurn", [execution]);
   }
-  function getPlutoReservedCards(...args) { return actionInteractionRuntime?.getPlutoReservedCards(browserRuleState, ...args) || []; }
+  function getPlutoReservedCards(...args) { return callBrowserDomainCommand("action_interaction", "getPlutoReservedCards", args) || []; }
   function ensurePlutoCardEffectState(...args) { return actionInteractionRuntime?.ensurePlutoCardEffectState(...args); }
   function getPlutoActionState(...args) { return actionInteractionRuntime?.getPlutoActionState(...args); }
   function addPlutoMarker(...args) { return actionInteractionRuntime?.addPlutoMarker(...args); }
-  function removePlutoMarker(...args) { return actionInteractionRuntime?.removePlutoMarker(browserRuleState, ...args); }
-  function collectPlutoMarkers(...args) { return actionInteractionRuntime?.collectPlutoMarkers(browserRuleState, ...args) || []; }
-  function buildPlutoMarkerContext(...args) { return actionInteractionRuntime?.buildPlutoMarkerContext(browserRuleState, ...args) || { plutoMarkers: [] }; }
-  function playerHasOwnPlutoLanding(...args) { return Boolean(actionInteractionRuntime?.playerHasOwnPlutoLanding(browserRuleState, ...args)); }
-  function buildPlutoMarkerRemovalChoices(...args) { return actionInteractionRuntime?.buildPlutoMarkerRemovalChoices(browserRuleState, ...args) || []; }
-  function getPlutoCandidateRockets(...args) { return actionInteractionRuntime?.getPlutoCandidateRockets(browserRuleState, ...args) || []; }
-  function getPlutoActionCost(...args) { return actionInteractionRuntime?.getPlutoActionCost(browserRuleState, ...args) || {}; }
-  function getAvailablePlutoAction(...args) { return actionInteractionRuntime?.getAvailablePlutoAction(browserRuleState, ...args) || { ok: false }; }
-  function executePlutoAction(...args) { return actionInteractionRuntime?.executePlutoAction(browserRuleState, ...args); }
-  function getCurrentPlanetActionPlacement(...args) { return actionInteractionRuntime?.getCurrentPlanetActionPlacement(browserRuleState, ...args) || { ok: false }; }
+  function removePlutoMarker(...args) { return callBrowserDomainCommand("action_interaction", "removePlutoMarker", args); }
+  function collectPlutoMarkers(...args) { return callBrowserDomainCommand("action_interaction", "collectPlutoMarkers", args) || []; }
+  function buildPlutoMarkerContext(...args) { return callBrowserDomainCommand("action_interaction", "buildPlutoMarkerContext", args) || { plutoMarkers: [] }; }
+  function playerHasOwnPlutoLanding(...args) { return Boolean(callBrowserDomainCommand("action_interaction", "playerHasOwnPlutoLanding", args)); }
+  function buildPlutoMarkerRemovalChoices(...args) { return callBrowserDomainCommand("action_interaction", "buildPlutoMarkerRemovalChoices", args) || []; }
+  function getPlutoCandidateRockets(...args) { return callBrowserDomainCommand("action_interaction", "getPlutoCandidateRockets", args) || []; }
+  function getPlutoActionCost(...args) { return callBrowserDomainCommand("action_interaction", "getPlutoActionCost", args) || {}; }
+  function getAvailablePlutoAction(...args) { return callBrowserDomainCommand("action_interaction", "getAvailablePlutoAction", args) || { ok: false }; }
+  function executePlutoAction(...args) { return callBrowserDomainCommand("action_interaction", "executePlutoAction", args); }
+  function getCurrentPlanetActionPlacement(...args) { return callBrowserDomainCommand("action_interaction", "getCurrentPlanetActionPlacement", args) || { ok: false }; }
   function getPlutoChoiceActionLabel(...args) { return actionInteractionRuntime?.getPlutoChoiceActionLabel(...args); }
   function formatPlutoChoiceLabel(...args) { return actionInteractionRuntime?.formatPlutoChoiceLabel(...args); }
-  function openPlutoActionChoicePicker(...args) { return actionInteractionRuntime?.openPlutoActionChoicePicker(browserRuleState, ...args); }
-  function scheduleRenderMoveArrows(...args) { return actionInteractionRuntime?.scheduleRenderMoveArrows(browserRuleState, ...args); }
-  function clearMoveRocketHighlight(...args) { return actionInteractionRuntime?.clearMoveRocketHighlight(browserRuleState, ...args); }
-  function activateMoveMode(...args) { return actionInteractionRuntime?.activateMoveMode(browserRuleState, ...args) || false; }
-  function deactivateMoveMode(...args) { return actionInteractionRuntime?.deactivateMoveMode(browserRuleState, ...args); }
+  function openPlutoActionChoicePicker(...args) { return callBrowserDomainCommand("action_interaction", "openPlutoActionChoicePicker", args); }
+  function scheduleRenderMoveArrows(...args) { return callBrowserDomainCommand("action_interaction", "scheduleRenderMoveArrows", args); }
+  function clearMoveRocketHighlight(...args) { return callBrowserDomainCommand("action_interaction", "clearMoveRocketHighlight", args); }
+  function activateMoveMode(...args) { return callBrowserDomainCommand("action_interaction", "activateMoveMode", args) || false; }
+  function deactivateMoveMode(...args) { return callBrowserDomainCommand("action_interaction", "deactivateMoveMode", args); }
   function closeDataPlacePicker(...args) { return actionInteractionRuntime?.closeDataPlacePicker(...args); }
   function isDataPoolFull(...args) { return Boolean(actionInteractionRuntime?.isDataPoolFull(...args)); }
   function getAutoDataPlacementCheck(...args) { return actionInteractionRuntime?.getAutoDataPlacementCheck(...args) || { ok: false }; }
-  function openDataPlacePicker(...args) { return actionInteractionRuntime?.openDataPlacePicker(browserRuleState, ...args); }
-  function openAutoDataPlacementPrompt(...args) { return actionInteractionRuntime?.openAutoDataPlacementPrompt(browserRuleState, ...args); }
+  function openDataPlacePicker(...args) { return callBrowserDomainCommand("action_interaction", "openDataPlacePicker", args); }
+  function openAutoDataPlacementPrompt(...args) { return callBrowserDomainCommand("action_interaction", "openAutoDataPlacementPrompt", args); }
   function continuePendingDataPlacementAfterBonus(...args) {
     return actionInteractionRuntime?.continuePendingDataPlacementAfterBonus(...args);
   }
   function skipPendingDataPlacement(...args) { return actionInteractionRuntime?.skipPendingDataPlacement(...args); }
-  function cancelDataPlacePicker(...args) { return actionInteractionRuntime?.cancelDataPlacePicker(browserRuleState, ...args); }
+  function cancelDataPlacePicker(...args) { return callBrowserDomainCommand("action_interaction", "cancelDataPlacePicker", args); }
   function confirmDataPlacement(...args) {
     const execution = args[2] || {};
-    const workingRoot = execution.workingRoot || browserRuleState;
-    return actionInteractionRuntime?.confirmDataPlacement(workingRoot, args[0], args[1], execution);
+    if (execution.workingRoot) {
+      return actionInteractionRuntime?.confirmDataPlacement(execution.workingRoot, args[0], args[1], execution);
+    }
+    return callBrowserDomainCommand("action_interaction", "confirmDataPlacement", [args[0], args[1], execution]);
   }
   const SCORE_SOURCE_KEYS = Object.freeze({
     INITIAL: "initialScore",
@@ -305,6 +309,19 @@
       "handleFangzhouTraceSlotPlacement", "getEligibleAlienSlotIdsForTraceEffect",
       "getFangzhouUnlockableTraceTypes", "hasAlienTracePanelPlacementTarget",
     ]),
+    turn_end: new Set([
+      "executePassFirstRotateEffect", "executePassHandLimitEffect", "passForCurrentPlayer",
+      "maybeResumeTurnEndAfterReveal", "maybeContinuePendingTurnEndRevealFlow",
+      "maybeContinueAlienRevealQueuedOpportunities", "endCurrentTurn",
+    ]),
+    action_interaction: new Set([
+      "getPlutoReservedCards", "removePlutoMarker", "collectPlutoMarkers", "buildPlutoMarkerContext",
+      "playerHasOwnPlutoLanding", "buildPlutoMarkerRemovalChoices", "getPlutoCandidateRockets",
+      "getPlutoActionCost", "getAvailablePlutoAction", "executePlutoAction",
+      "getCurrentPlanetActionPlacement", "openPlutoActionChoicePicker", "scheduleRenderMoveArrows",
+      "clearMoveRocketHighlight", "activateMoveMode", "deactivateMoveMode", "openDataPlacePicker",
+      "openAutoDataPlacementPrompt", "cancelDataPlacePicker", "confirmDataPlacement",
+    ]),
   });
 
   function executeBrowserDomainCommand(workingRoot, command) {
@@ -314,7 +331,9 @@
     }
     const target = command.domain === "scan_flow"
       ? scanFlowHelpers
-      : command.domain === "alien_ui" ? alienUiHelpers : null;
+      : command.domain === "alien_ui" ? alienUiHelpers
+        : command.domain === "turn_end" ? turnEndFlow
+          : command.domain === "action_interaction" ? actionInteractionRuntime : null;
     const method = target?.[command.operation];
     if (typeof method !== "function") {
       return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNAVAILABLE", message: `Browser domain command 未装配: ${command.domain}.${command.operation}` };
@@ -327,7 +346,9 @@
     if (headlessMode) {
       const target = domain === "scan_flow"
         ? scanFlowHelpers
-        : domain === "alien_ui" ? alienUiHelpers : null;
+        : domain === "alien_ui" ? alienUiHelpers
+          : domain === "turn_end" ? turnEndFlow
+            : domain === "action_interaction" ? actionInteractionRuntime : null;
       return target?.[operation]?.(browserRuleState, ...args);
     }
     try {
