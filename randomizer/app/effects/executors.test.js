@@ -50,6 +50,31 @@ const { createEffectDispatcher } = require("./dispatcher");
 })();
 
 (() => {
+  const effectType = "public_card_scan";
+  const effect = { type: effectType, label: "扫描行动公共牌扫描", status: "active" };
+  let beganSelection = false;
+  const dispatcher = createEffectDispatcher({
+    cardEffects: { EFFECT_TYPES: {} },
+    scanEffects: { EFFECT_TYPES: { PUBLIC_CARD_SCAN: effectType } },
+    planetRewards: { EFFECT_TYPES: {} },
+    cardState: { publicCards: [] },
+    getPublicScanChoicesForCard: () => ({ ok: false }),
+    getCurrentPlayer: () => ({ id: "player-1" }),
+    beginCardSelection: () => { beganSelection = true; },
+    skipActionEffectWithMessage(_effect, message, payload) {
+      return { ok: true, skipped: true, message, payload };
+    },
+  });
+  const result = dispatcher.executeActionEffectForOwner(effect);
+  assert.equal(result.ok, true);
+  assert.equal(result.skipped, true);
+  assert.equal(result.payload.reason, "no_public_scan_candidate");
+  assert.equal(beganSelection, false);
+
+  console.log("scan-action public-scan empty-candidate tests passed");
+})();
+
+(() => {
   const calls = [];
   const executors = createEffectRewardExecutors({
     abilities: {
@@ -116,6 +141,28 @@ const { createEffectDispatcher } = require("./dispatcher");
   assert.equal(finished[0].effect, effect);
 
   console.log("card research-tech empty-candidate tests passed");
+})();
+
+(() => {
+  const calls = [];
+  const executors = createEffectRewardExecutors({
+    cardState: { publicCards: [] },
+    getPublicScanChoicesForCard: () => ({ ok: false }),
+    getCurrentPlayer: () => ({ id: "player-1" }),
+    skipActionEffectWithMessage(effect, message, payload) {
+      calls.push({ effect, message, payload });
+      return { ok: true, skipped: true, message, payload };
+    },
+  });
+  const effect = { label: "卡牌公共牌扫描", options: { repeat: 1 }, status: "active" };
+  const result = executors.openCardPublicScanEffect(effect);
+  assert.equal(result.ok, true);
+  assert.equal(result.skipped, true);
+  assert.equal(result.payload.reason, "no_public_scan_candidate");
+  assert.match(result.message, /公共牌区为空.*已跳过/);
+  assert.equal(calls.length, 1);
+
+  console.log("card public-scan empty-candidate tests passed");
 })();
 
 (() => {

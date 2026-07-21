@@ -1544,7 +1544,16 @@
     function openCardPublicScanEffect(effect) {
       const currentPlayer = getCurrentPlayer();
       const repeat = Math.max(1, Math.round(Number(effect.options?.repeat || 1)));
-      const filledSlots = cardState.publicCards.filter(Boolean).length;
+      const filledSlots = cardState.publicCards.filter((card) => (
+        card && (getPublicScanChoicesForCard(card)?.choices || []).length > 0
+      )).length;
+      if (filledSlots === 0) {
+        return skipActionEffectWithMessage(
+          effect,
+          `${effect.label}：公共牌区为空，已跳过`,
+          { reason: "no_public_scan_candidate" },
+        );
+      }
       const selectableCount = Math.min(repeat, Math.max(1, filledSlots));
       const scanRunId = effect.options?.scanRunId || createScanRunId(effect.id || "card-public-scan");
       effect.options = {

@@ -510,7 +510,9 @@
       const scanChoices = getPublicScanChoicesForCard(card);
       if (!scanChoices.ok) return -Infinity;
       const bestTargetScore = getBestAiNebulaChoiceScore(scanChoices.choices || [], options);
-      if (!Number.isFinite(bestTargetScore)) return -Infinity;
+      if (!Number.isFinite(bestTargetScore)) {
+        return (scanChoices.choices || []).length ? 0 : -Infinity;
+      }
       const handDiscardPenalty = options.fromHand
         ? Math.max(0, scoreAiPlayCardValue(card, { player: options.player || getCurrentPlayer() })) * 0.25
           + scoreAiCardCornerOpportunity(card) * 0.15
@@ -526,7 +528,8 @@
 
     function getAiBestPublicScanSlots(player = getCurrentPlayer(), options = {}) {
       const maxSelectable = Math.max(1, Math.round(aiNumber(options.maxSelectable || 1)));
-      return (cardState.publicCards || [])
+      const activeCardState = options.workingRoot?.cardState || cardState;
+      return (activeCardState.publicCards || [])
         .map((card, slotIndex) => ({
           slotIndex,
           card,

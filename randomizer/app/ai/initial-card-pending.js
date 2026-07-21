@@ -343,9 +343,16 @@
       }
 
       if (pending.type === "public_scan") {
-        const selectedSlots = getAiBestPublicScanSlots(player, {
+        const rankedSlots = getAiBestPublicScanSlots(player, {
           maxSelectable: pending.maxSelectable ?? 1,
+          workingRoot,
         });
+        const selectedSlots = rankedSlots.length
+          ? rankedSlots
+          : (cardState.publicCards || [])
+            .map((card, slotIndex) => card ? { card, slotIndex, score: null } : null)
+            .filter(Boolean)
+            .slice(0, Math.max(1, pending.maxSelectable ?? 1));
         if (!selectedSlots.length) return { ok: false, blocked: true, message: "AI 没有可扫描的公共牌" };
         recordAiAutoBattleLog("public-scan-card", `${player.colorLabel}AI 选择公共牌扫描`, {
           pendingType: pending.type,

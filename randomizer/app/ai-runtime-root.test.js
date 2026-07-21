@@ -71,6 +71,27 @@ const players = {
 }
 
 {
+  let observedRoot = null;
+  const rootB = createRoot("b", 2);
+  rootB.cardState.publicCards = [{ id: "public-b" }];
+  const runtime = createInitialCardPendingRuntime(contextWith({
+    ai: { heuristicEvaluator: { selectScoredItem: () => null } },
+    players,
+    state: { pendingCardSelectionAction: { type: "public_scan", player: rootB.playerState.players[0] } },
+    isCardSelectionActive: () => true,
+    isIndustryHandSelectionActive: () => false,
+    isAiAutoBattlePlayer: () => true,
+    getAiBestPublicScanSlots: (_player, options) => {
+      observedRoot = options.workingRoot;
+      return [];
+    },
+  }));
+  const result = runtime.runAiCardSelectionDecision(rootB);
+  assert.equal(result, null);
+  assert.equal(observedRoot, rootB);
+}
+
+{
   const calls = [];
   const runtime = createActionExecutor(contextWith({
     ai: { heuristicEvaluator: { selectScoredItem: () => null } },

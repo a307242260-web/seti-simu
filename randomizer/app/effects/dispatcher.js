@@ -122,6 +122,7 @@
       getEligibleAlienSlotIdsForTraceEffect,
       getPlayerById,
       getPublicScanMaxSelectable,
+      getPublicScanChoicesForCard,
       getResearchTechSelectionPayload,
       hasAlienTracePanelPlacementTarget,
       hasHandScanTargetCard,
@@ -857,6 +858,16 @@
           return executeSectorScanAtPlanet("mercury", effect.label, effect);
         case scanEffects.EFFECT_TYPES.PUBLIC_CARD_SCAN: {
           const scanPlayer = getCurrentPlayer();
+          const hasCandidate = (cardState.publicCards || []).some((card) => (
+            card && (getPublicScanChoicesForCard(card)?.choices || []).length > 0
+          ));
+          if (!hasCandidate) {
+            return skipActionEffectWithMessage(
+              effect,
+              `${effect.label || "公共牌区扫描"}：公共牌区为空，已跳过`,
+              { reason: "no_public_scan_candidate" },
+            );
+          }
           const scanRunId = effect.options?.scanRunId || null;
           const deferPublicRefill = Boolean(scanRunId && effect.options?.fullScanAction);
           const maxSelectable = getPublicScanMaxSelectable(scanPlayer);
