@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-21
+- source_issue: SETI-124（续 SETI-40/72/88）
+- observation: “队长负责复杂任务拆分”不能覆盖 coding issue 的直接实现职责。已冻结范围且下一步可在本机执行时，领航不得用只读审计、口头分组、阶段性门禁或局部小提交替代主实现；只有父级 coordination issue、owner 明确要求或真实独立工作面才允许拆子 issue。声称并行审计必须有真实派工记录，未完成且无 blocker 时不得主动结束 run。
+- evidence: SETI-124 run `bc7a12a7-d9ba-4f10-91f8-eca98ee0a60b` 明确说“按队长职责”拆成三组并行只读审计，但完整日志只有 34 次 exec 和 3 次 patch，没有任何派工调用；运行约 70 分钟后仅提交 `2f770ce` 的 1 行生产门禁与 10 行测试，15 个顶层 family、7 个 conditional family、Browser 长期 slices、旧 authority、保存恢复和 AI 旁路均未实施，run 却主动完成并把 issue 留在 in_progress。owner 随后明确要求修改领航 instruction 并重启任务。
+- promote_to: agent_prompt
+- promotion_status: promote
+- decision: 修订领航远端 instruction：拆单仅适用于父级协调或明确授权；coding issue 默认亲自连续实现；禁止无真实派工的“并行审计”表述；局部门禁、盘点和阶段性提交不构成完成或停止条件；有可执行 next_action 且无真实 blocker 时不得主动结束 run。以 SETI-123/124 重启后的连续执行作为首轮验证。
+
+- date: 2026-07-21
 - source_issue: SETI-104
 - observation: 产品级机器人验收不能引用 PASS-first、first-legal 之类刻意绕开策略决策的终局基线；这类测试即使稳定终局、分数和 trace，也只证明最弱状态推进没有崩，不能证明机器人行为、强度或档位。若仓库已有真实 Policy 固定回归，应删除重复的伪 smoke，并只把真实 Policy、多 seed 分布和浏览器完整局作为机器人证据。
 - evidence: owner 在评论 `f2ab213b-167f-44fe-a1ff-fdc477150351` 追问该 smoke 能验证什么，并在 `088d91da-fa05-444e-a97b-67edfe96a346` 明确指出“优先pass的话，这个smoke完全无意义”；审计确认旧测试始终优先 PASS/结束回合。删除后复跑真实 Policy 基线立即暴露“未来跨度研究所”在无目标牌时仍被 Standard Action 枚举，导致 `industry` 连续 1957 次、2000 步不终局；补齐纯 legality 后真实 Policy 306 步终局，并实际覆盖打牌、科技、扫描、分析、移动、环绕和登陆。

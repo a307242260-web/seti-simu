@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-21
+- source: SETI-124 run `bc7a12a7-d9ba-4f10-91f8-eca98ee0a60b`、提交 `2f770ce`、owner 对“按领队职责拆分但不实现”的直接反馈
+- promoted_to: agent_prompt
+- promotion_decision: promote
+- target_agent: 领航（`13e5c469-264f-4a3c-837d-2cbc26bbba19`）
+- target_component: coding issue 的直接实现、真实派工与持续执行职责
+- target_file: Mocha agent `13e5c469-264f-4a3c-837d-2cbc26bbba19` instructions；docs/mocha_experience/coding.md
+- remote_skill_id: none
+- change: 收窄“复杂任务拆子 issue”：只允许父级 coordination issue、owner 明确要求或可独立验收的真实工作面拆分；已冻结 coding issue 默认由领航亲自连续实现。禁止无实际派工却声称并行审计，禁止用盘点、门禁或局部小提交替代主实现并主动结束 run。
+- applied_change: 更新领航 instruction 的队长职责，加入 coding issue 直接实现、真实派工证据、阶段性产出不构成停止条件，以及存在可执行 next_action 且无 blocker 时不得主动结束 run；停止旧 prompt 下的 SETI-123/124 run 后重新启动。
+- expected_effect: 领航在具体 coding issue 中不再把“队长职责”解释成只拆分和审计；run 持续产生与冻结验收直接相关的生产代码，直到完成或出现有证据的真实 blocker。
+- evaluation_window: SETI-123/124 本轮重启，以及后续 5 个由领航直接负责的 coding issue
+- success_signal: 不再出现无派工记录的“并行审计”；阶段性盘点/小提交后仍在同一 run 继续主实现；若 run 结束，issue 已完成或 metadata 中存在可复现 blocker/外部等待。
+- rollback_condition: 若该规则阻止父级总控合理拆分独立工作面，或导致单个 run 在平台资源上限附近无法安全保存阶段成果，则保留“coding issue 亲自实现”，但允许有真实子 issue/派工记录的拆分，以及在明确 runtime 限制前结构化续跑。
+- risk: 过度限制拆分会降低大型任务并行度；因此只禁止以拆分代替当前 coding 主责和虚构并行，不禁止真实独立工作面由父级协调。
+- evidence_before: 领航 instruction 原文要求“复杂任务拆子 issue”；SETI-124 run seq 34 据此声称三组并行只读审计，但工具清单仅有 exec/patch，无派工工具；该轮约 70 分钟只落地 11 行空 Effect Group 门禁，完整 Browser 硬切未开始。SETI-40/72/88 已有相同“明确 next_action 却阶段停止”的历史证据，旧 promotion 曾因已有 persistence 规则而 reject，本次新增的是角色条款冲突与虚构并行证据。
+- owner_or_agent_decision: owner 明确要求修改领航 instruction，并要求重启相关任务；据此直接 promote 到该 agent prompt。
+- applied_at: 2026-07-21
+- verification: 读取更新后的 agent JSON，确认旧泛化拆单句已收窄且四项 coding 约束存在；取消旧 SETI-123/124 run，重启后确认新 task 均 running，并检查新 run 首轮行为。
+- observed_outcome: 待 SETI-123/124 重启后观察。
+- keep_or_revise: 进入本轮及后续 5 个 coding issue 观察窗口；若仍阶段性停工，优先分离总控 agent 与主程 agent，而不是继续堆叠 prompt。
+
+- date: 2026-07-21
 - source: SETI-97 关单 run `710242be-8454-434e-94c7-e1d9f55aac61` 及 owner 对轻量化方案 1–4 的明确确认
 - promoted_to: loop_template
 - promotion_decision: promote
