@@ -8,7 +8,12 @@ function modulesFor(relative) {
   if (relative === "randomizer/full-flow/standard-flow.test.js") {
     return ["uniqueAction", "uniqueEffectQueue", "uniqueSessionState", "unifiedAuthorityState"];
   }
-  if (/\/training\/|\/game\/ai\/|\/app\/ai\/|\/headless-|public-api-ai|heuristic-policy\.integration|policy-input-adapter/.test(relative)) return ["robot"];
+  if (/browser-host\/(?:heuristic-policy\.integration|policy-input-adapter)\.test|public-api-ai-contract/.test(relative)) return ["webUi"];
+  if (/headless-(?:contract|final-scoring|legality)\.test/.test(relative)) return ["uniqueAction"];
+  if (/headless-effect-failure\.test/.test(relative)) return ["uniqueEffectQueue"];
+  if (/headless-(?:conditional-drain|decision-owner|effect-session-host|effect-session-worker-recovery|fail-closed|no-browser-globals|training-replay)\.test/.test(relative)) return ["uniqueSessionState"];
+  if (/headless-state-checkpoint\.test/.test(relative)) return ["unifiedAuthorityState"];
+  if (/\/training\/|\/game\/ai\/|\/app\/ai\/|headless-worker-resilience/.test(relative)) return ["robot"];
   if (/\/game\/effects\/|effect-session-host|decision-session-store/.test(relative)) return ["uniqueSessionState"];
   if (/\/app\/effects\/|effect-flow|effect-choice-flow/.test(relative)) return ["uniqueEffectQueue"];
   if (/\/game\/(?:actions|abilities|industry|aliens)\/|\/game\/(?:basic-cards|initial-cards)\.test|action-runtime|action-briefing/.test(relative)) return ["uniqueAction"];
