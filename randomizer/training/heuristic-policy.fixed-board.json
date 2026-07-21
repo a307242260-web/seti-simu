@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "seti-heuristic-fixed-board-v1",
+  "boardId": "seti-104-board-v1",
+  "config": {
+    "seed": "seti-104-official-v1",
+    "activePlayerCount": 4,
+    "aiDifficulty": "weak_start",
+    "offlineTeacher": true,
+    "policyVersion": "seti-heuristic-policy-v2",
+    "opponentIdentity": "seti-heuristic-policy-v2"
+  },
+  "fingerprint": "e383f605e0626a6a04a124f280e3d62e1075696f36adbef1e38ca2ab182df1e0",
+  "summary": {
+    "rotation": [3, 7, 0, 1],
+    "sectorBySlot": [1, 3, 4, 2],
+    "planets": [
+      "earth@0,1", "mercury@4,1", "venus@6,1", "mars@1,2",
+      "jupiter@3,3", "saturn@7,3", "uranus@1,4", "neptune@4,4"
+    ],
+    "publicCards": ["b_23.webp", "b_111.webp", "b_137.webp"],
+    "openingOrbitOwners": {
+      "venus": "player-green",
+      "jupiter": "player-white",
+      "saturn": "player-blue"
+    }
+  }
+}

@@ -3,10 +3,12 @@
 const assert = require("node:assert/strict");
 const crypto = require("node:crypto");
 const baseline = require("./heuristic-policy.seed-baseline.json");
+const fixedBoard = require("./heuristic-policy.fixed-board.json");
 const { createHeadlessEnv } = require("../app/headless-env");
 
+assert.deepEqual(baseline.config, fixedBoard.config, "行为基线必须复用冻结版面配置");
 const env = createHeadlessEnv();
-env.reset(baseline.config);
+env.reset(fixedBoard.config);
 const trace = [];
 const familyCounts = {};
 
