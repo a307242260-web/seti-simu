@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-21
+- source: SETI-124 已升级 agent prompt 后的 runs `627968ce-3dbf-4f24-ab3b-2f6724adf9df`、`f0b69138-48a4-48bd-b5f0-c3db2eb87dde`，以及 owner 对持续人工催跑成本的反馈
+- promoted_to: issue_workflow
+- promotion_decision: candidate
+- target_agent: 领航（`13e5c469-264f-4a3c-837d-2cbc26bbba19`）及 SETI coding issue 执行编排
+- target_component: 未完成 coding run 的事件驱动续跑与中间 checkpoint 轻量化
+- target_file: 待定；候选为 issue-workflow continuation contract 与 Mocha task-completed hook，经验记录位于 `docs/mocha_experience/coding.md`
+- remote_skill_id: 待定
+- change: 当 run 正常结束但 issue 仍为 `in_progress`、`next_action` 非空且不存在 blocker、review、owner 决策或权限等待时，将其识别为 continuation，而不是合法停工；由任务完成事件触发下一 run，并禁止中间 continuation 重复执行 harness closeout、长评论和全历史读取。
+- applied_change: 仅记录 coding experience 和本候选决策契约；当前未修改 issue-workflow、watcher、agent prompt 或 Mocha 服务。SETI-124 的本次人工续跑仅用于继续交付，不算候选机制已落地。
+- expected_effect: 大型 coding issue 可以跨有限 run 连续完成，阶段 checkpoint 仍可保护代码，但不再需要 owner 或人工 watcher发现空闲后逐次催跑；同时减少每轮重复加载上下文造成的 token 消耗。
+- evaluation_window: SETI-124 剩余全部 runs；完成后再观察 2 个预计超过单次 run 的 coding issue。
+- success_signal: issue 未完成时 run 结束可在任务完成事件后自动续接；无并发双 run；中间 run 不写 harness closeout 和长篇重复评论；人工 rerun 次数为 0，最终仍满足完整验收后再 closeout。
+- rollback_condition: 自动续跑造成并发写冲突、失控 token 消耗、在真实 blocker/owner 决策时误启动，或连续 3 个 run 对同一 `next_action` 无实质 diff 时，停止自动续跑并改为结构化 blocked/人工诊断。
+- risk: `in_progress` 也可能表示有意暂停；必须同时检查当前无 running/queued task、无 blocker/review/waiting_on/decision_needed，并设置同一 issue 单飞和无进展熔断。事件驱动续跑仍会消耗模型额度，但比五分钟轮询 watcher 少空转。
+- evidence_before: 领航 prompt 已禁止阶段产出作为停止条件；run `f0b69138-48a4-48bd-b5f0-c3db2eb87dde` 仍在 162 条事件后以 `status=completed, error=null` 退出，退出前明确承认 `app.js`、旧 authority、长期 slices、Decision/CAS 旁路和 Chrome 验收未完成。该 run 重复读取完整 skill、评论和宽搜索，单个工具结果约 8 万 token 被截断；结束后 Mocha 未自动续跑，需人工执行 `mocha issue rerun SETI-124`。
+- owner_or_agent_decision: owner 要求从本次高成本推进中总结经验；当前证据证明 agent prompt promotion 不足，但自动续跑的安全门禁尚未经过完整 SETI-124 闭环，因此先记 candidate。
+- applied_at: 2026-07-21
+- verification: 已核对 run 状态、起止时间、`error=null`、末段消息、提交 `38dcaad`/`72c9eb7`、工作树和 issue metadata；人工 rerun 后新 task `eaf86bb3-78cc-46bd-9b23-9d58527255b9` 已进入 running。
+- observed_outcome: 待 SETI-124 完成后填写。
+- keep_or_revise: 保持 candidate；SETI-124 完成后根据人工续跑次数、重复上下文开销、是否出现并发冲突决定 promote、修订或 reject。
+
+- date: 2026-07-21
 - source: SETI-124 run `bc7a12a7-d9ba-4f10-91f8-eca98ee0a60b`、提交 `2f770ce`、owner 对“按领队职责拆分但不实现”的直接反馈
 - promoted_to: agent_prompt
 - promotion_decision: promote

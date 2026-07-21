@@ -15,6 +15,14 @@
 ## Entries
 
 - date: 2026-07-21
+- source_issue: SETI-124 runs `627968ce-3dbf-4f24-ab3b-2f6724adf9df`、`f0b69138-48a4-48bd-b5f0-c3db2eb87dde`
+- observation: 对超出单次 Codex run 可用上下文的 coding issue，“不得阶段性停工”的 agent prompt 只能约束表述，不能保证执行连续性。大量重复读取 skill、完整评论、文档和宽搜索会先耗尽单次 run 预算；模型随后会把干净 checkpoint、metadata、评论和 fast closeout 解释成合法退出点。issue 仍为 `in_progress` 且有可执行 `next_action` 时，续跑应由编排层显式保证，不能依赖模型在同一 run 中无限坚持，也不能靠定时轮询反复空查。
+- evidence: prompt 已明确“阶段性产出不构成停止条件”，但 run `f0b69138-48a4-48bd-b5f0-c3db2eb87dde` 仍在约 16 分钟、162 条事件后主动完成；期间读取完整 workflow/评论并产生一次约 8 万 token 的截断输出，提交 `38dcaad`、`72c9eb7` 后明知真实 `app.js`、旧 authority、长期 slices 和 Decision 旁路未迁移，仍执行 metadata、issue 评论和 fast closeout。Mocha 返回 `status=completed, error=null`，证明不是网络、超时或代码阻塞；issue 保持 `in_progress` 后不会自动续跑，需外部 `rerun`。
+- promote_to: issue_workflow
+- promotion_status: candidate
+- decision: 不再继续堆叠领航 prompt。候选方案是把“run completed + issue=in_progress + next_action 非空 + 无 blocker/review/owner 决策”定义为结构化续跑信号，由事件驱动编排立即创建下一 run；中间 run 只保留短 checkpoint，不执行 harness closeout 或长评论，新 run 优先读取 checkpoint/diff 而非完整历史。SETI-124 完成前仅记录候选，不修改 watcher 或 issue-workflow；以本 issue 后续 run 的完成耗时、重复读取量和人工 rerun 次数决定是否 promotion。
+
+- date: 2026-07-21
 - source_issue: SETI-124（续 SETI-40/72/88）
 - observation: “队长负责复杂任务拆分”不能覆盖 coding issue 的直接实现职责。已冻结范围且下一步可在本机执行时，领航不得用只读审计、口头分组、阶段性门禁或局部小提交替代主实现；只有父级 coordination issue、owner 明确要求或真实独立工作面才允许拆子 issue。声称并行审计必须有真实派工记录，未完成且无 blocker 时不得主动结束 run。
 - evidence: SETI-124 run `bc7a12a7-d9ba-4f10-91f8-eca98ee0a60b` 明确说“按队长职责”拆成三组并行只读审计，但完整日志只有 34 次 exec 和 3 次 patch，没有任何派工调用；运行约 70 分钟后仅提交 `2f770ce` 的 1 行生产门禁与 10 行测试，15 个顶层 family、7 个 conditional family、Browser 长期 slices、旧 authority、保存恢复和 AI 旁路均未实施，run 却主动完成并把 issue 留在 in_progress。owner 随后明确要求修改领航 instruction 并重启任务。
