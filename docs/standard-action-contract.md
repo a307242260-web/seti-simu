@@ -76,7 +76,7 @@ drain 必须有步数上界；未知 pending、未知 family、旧 resolver/reco
 
 阶段 4 行为证据：`randomizer/game/actions/standard-action-stage4.test.js` 对七类 conditional family 建立真实 `enumerate/validate/execute` definition，逐类覆盖两个非等价候选、owner、独立 decision version、stale 与零选项；`randomizer/app/headless-conditional-drain.test.js` 覆盖唯一候选自动推进、多候选策略边界、replay environment event 与 drain 上界；`randomizer/app/headless-fail-closed.test.js` 覆盖未知 pending/type/family，并以 spy 证明 resolver/DOM/recover/skip 调用为零。headless app 仅通过 registry adapter 暴露与执行 conditional descriptor，确定性 drain 不再按 UI 文案触发 skip。
 
-阶段 5 集成证据：`randomizer/game/actions/standard-action-stage5.test.js` 结构化证明 headless 顶层枚举只调用 `action-runtime` 的 `standard_enumerate`、执行只提交完整 descriptor，且训练 contract 沿用 registry `actionId`；`randomizer/app/action-runtime.test.js` 覆盖 descriptor 枚举/直执行；`randomizer/app/headless-contract.test.js` 覆盖顶层与 conditional identity parity；headless legality、conditional drain、fail-closed、owner、终局和 worker integration 共同覆盖下一决策、事件/replay 与常驻宿主路径。
+上述迁移阶段、descriptor 装配与 headless identity parity 证据不再作为 Action 单元测试保留；Action unit 只验证玩家可选择的主行动、快速行为和外星人标记产生的差异行为，跨模块组合由唯一 full-flow 验证。
 
 残余兼容面只有浏览器 DOM 的 `standard_intent`：它把明确 family/selector 解析为唯一 descriptor 后立即进入同一 registry；多目标 fail-closed。Browser Host Policy 经 `browser-host/policy-input-adapter.js` 选择完整 descriptor，并与玩家共用 `BrowserInputAdapter` 的 Action/Decision submission；AI、headless、Policy、conditional provider 和 public API 均不保留旧执行入口。
 

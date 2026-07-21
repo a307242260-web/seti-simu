@@ -15,7 +15,7 @@
 - 终局 25/50/70 分 pending 由 `choose_final_scoring` 独立枚举与执行：多项由 pending owner 决策并写一条 policy replay，唯一合法板块由环境自动推进；headless 路径显式禁止调用旧 final-score AI resolver，标记时间使用稳定 replay 值。
 - 顶层与 conditional 行动都保留已验证的 Standard Action descriptor；`step()` 不调用 AI candidate builder 二次构建候选，而只向 `headless-effect-session-host` 提交 Standard Action/Decision。唯一选择、deterministic pending 和当前 Effect 由同一 Effect Session drain；每个 policy replay step 附带已确认的 session action/decision/effect/event journal，失败输入不进入 confirmed replay。
 - Node composition 通过 `randomizer/app/view-adapter.js` 注入 no-op view adapter；运行时不创建或安装 `document`、DOM 元素、overlay、`localStorage`、`Image`。
-- `randomizer/app/headless-contract.test.js` 建立 15 动作族覆盖矩阵与 conditional taxonomy characterization；`headless-effect-session-host.test.js` 与 `headless-effect-session-integration.test.js` 覆盖未知 pending fail-closed、resolver/recover/skip 零调用、固定 trace journal、非零 checkpoint fork 和固定 seed 完整 4 人局；worker recovery 测试覆盖崩溃后只重放已确认 Action/Decision。
+- headless 的动作族覆盖矩阵与 taxonomy characterization 不再作为单元测试保留；默认 Node 回归只验证已设计的业务 unit 与唯一 full-flow。
 - 最小训练入口为 `tools/run_self_play_training.js`：串行运行多局 self-play，以 action kind 的 Monte Carlo value table 作为第一版弱 baseline，输出逐步 JSONL，并在局间边界原子保存训练 checkpoint。
 - 固定评测入口为 `tools/run_rl_evaluation.js`：加载任意 self-play checkpoint，在冻结的 20 局四人 seed pool 上输出均分、P25/P50/P75、完局率、非法动作率、阻塞率，以及可机器判定的“稳定 200 分”结论。
 

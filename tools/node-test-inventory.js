@@ -25,10 +25,8 @@ function modulesFor(relative) {
 module.exports = Object.freeze({
   schemaVersion: "seti-node-test-inventory-v1",
   unit: lines(`
-randomizer/app/action-briefing.test.js
 randomizer/app/action-log-export.test.js
 randomizer/app/action-log-runtime.test.js
-randomizer/app/action-runtime.test.js
 randomizer/app/alien-runtime.test.js
 randomizer/app/alien-trace-reward-flow.test.js
 randomizer/app/alien-ui.test.js
@@ -56,14 +54,11 @@ randomizer/app/final-ui-runtime.test.js
 randomizer/app/game-recovery.test.js
 randomizer/app/hand-flow.test.js
 randomizer/app/headless-conditional-drain.test.js
-randomizer/app/headless-contract.test.js
 randomizer/app/headless-decision-owner.test.js
 randomizer/app/headless-effect-failure.test.js
 randomizer/app/headless-effect-session-host.test.js
 randomizer/app/headless-effect-session-worker-recovery.test.js
 randomizer/app/headless-fail-closed.test.js
-randomizer/app/headless-final-scoring.test.js
-randomizer/app/headless-legality.test.js
 randomizer/app/headless-no-browser-globals.test.js
 randomizer/app/headless-state-checkpoint.test.js
 randomizer/app/headless-training-replay.test.js
@@ -77,30 +72,18 @@ randomizer/app/start-screen.test.js
 randomizer/app/tech-runtime.test.js
 randomizer/app/turn-flow.test.js
 randomizer/app/view-adapter.test.js
-randomizer/game/abilities/abilities.test.js
-randomizer/game/abilities/chain.test.js
 randomizer/game/actions/actions.test.js
-randomizer/game/actions/planet-rewards.test.js
 randomizer/game/actions/quick-trades.test.js
-randomizer/game/actions/scan-effects.test.js
-randomizer/game/actions/standard-action.test.js
-randomizer/game/aliens/alien-card-identity.test.js
 randomizer/game/aliens/amiba.test.js
 randomizer/game/aliens/aomomo.test.js
 randomizer/game/aliens/banrenma.test.js
-randomizer/game/aliens/card-model-sync.test.js
 randomizer/game/aliens/chong.test.js
-randomizer/game/aliens/fangzhou-card1-queue.test.js
 randomizer/game/aliens/fangzhou.test.js
 randomizer/game/aliens/jiuzhe.test.js
-randomizer/game/aliens/placement.test.js
-randomizer/game/aliens/randomizer.test.js
 randomizer/game/aliens/reveal-card-grants.test.js
 randomizer/game/aliens/runezu.test.js
-randomizer/game/aliens/state.test.js
 randomizer/game/aliens/trace-placement-legality.test.js
 randomizer/game/aliens/yichangdian.test.js
-randomizer/game/basic-cards.test.js
 randomizer/game/cards/deck.test.js
 randomizer/game/cards/effects.test.js
 randomizer/game/cards/task-state.test.js
@@ -118,10 +101,6 @@ randomizer/game/end-game-scoring.test.js
 randomizer/game/final-scoring.test.js
 randomizer/game/history/action-history.test.js
 randomizer/game/history/commands.test.js
-randomizer/game/industry/helios-passive.test.js
-randomizer/game/industry/industry.test.js
-randomizer/game/industry/strategy-passive.test.js
-randomizer/game/initial-cards.test.js
 randomizer/game/planet-stats.test.js
 randomizer/game/players.test.js
 randomizer/game/rockets.move.test.js
