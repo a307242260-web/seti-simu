@@ -29,6 +29,50 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-21
+- source: SETI-104 owner 评论 `53c760ac-6493-4699-b3d6-edd8807d3b0d`
+- promoted_to: none
+- promotion_decision: candidate
+- target_agent: 领航及负责既有产品能力目标对齐的 coordination agent
+- target_component: 产品目标对齐的现状说明与提案顺序
+- target_file: docs/mocha_experience/coordination.md
+- remote_skill_id: none
+- change: 记录“先拆清当前默认、规则补强、特殊内容分配和策略偏好，再讨论删除、调参及验收”的展示实践。
+- applied_change: 仅新增 coordination experience 与本决策契约；不修改 issue-workflow、agent prompt、loop template、watcher、项目记忆或机器人业务代码。
+- expected_effect: 后续产品目标对齐能让 owner 先基于同一份现状做决策，避免在尚未解释当前设置时直接给出阈值或改动方案。
+- evaluation_window: 后续 2 次涉及现有机器人、规则能力或默认配置的产品目标对齐 issue。
+- success_signal: 首次回复清楚区分当前默认、规则级补强和策略偏好，owner 无需再次要求“先说明现状”即可决定删改范围。
+- rollback_condition: 若后续两次 owner 都直接要求方案且认为现状说明冗余，则删除或合并本 candidate；若现状可由稳定自动报告直接生成，则改为引用报告而非手工展开。
+- risk: 对简单改动机械铺陈现状会增加阅读成本；仅在目标、默认或“强度”边界不清时适用，并保持结论优先。
+- evidence_before: SETI-104 首轮直接提出首发契约；owner 随后确认主角色/单档位，但要求在移除强度补强和 DIY 公司前先说明当前机器人设定。
+- owner_or_agent_decision: 领航按 harness-evolve closeout 自决记录一次性 candidate；证据不足以升级长期组件。
+- applied_at: 2026-07-21
+- verification: `rg -n "产品目标对齐先给可核对的现状|SETI-104 owner 评论" docs/mocha_experience/coordination.md docs/mocha_experience/promotion_log.md`
+- observed_outcome: 本轮已先审计默认席位、两档难度、三张 AI 专用公司及普通策略权重边界，再向 owner 说明现状；等待后续同类 issue 观察。
+- keep_or_revise: 保持 candidate；完成 2 次适用观察后决定是否升级或删除。
+
+- date: 2026-07-21
+- source: owner 追问 `needs_owner=true` 的 watcher 提醒为何不由领航处理；核对 SETI-95 后确认该 issue 是 owner 明确暂停的决策阻塞，评论却会额外唤醒无法代替 owner 决策的领航
+- promoted_to: watcher_lint
+- promotion_decision: promote
+- target_agent: 领航
+- target_component: SETI watcher 的评论与 rerun 触发边界
+- target_file: Mocha skill `affe4ad6-9c17-43f0-a34f-4e32eb78653b`；autopilot `121571af-90e0-4ffb-88a9-50c74dcc3c0e`；docs/mocha_experience/watcher.md
+- remote_skill_id: affe4ad6-9c17-43f0-a34f-4e32eb78653b
+- change: 将 watcher 评论限定为“需要领航实际处理”的状态 lint/交接分支；owner 和长运行可见性只写 metadata，失败恢复与依赖解阻只 rerun，不先评论。
+- applied_change: 更新 watcher skill 说明与执行脚本；`needs_owner` 不再发 issue 评论，只维护 reminder signature/owner attention metadata，且 `reviewer=owner`/`needs_owner=true` 不进入领航 handoff 提醒；长运行只记录 30/60/90 分钟 bucket；failed/dependency 分支删除 rerun 前评论。autopilot 说明同步 owner metadata-only 边界。
+- expected_effect: 一个机械恢复事件最多产生一个领航 run；owner 阻塞和长运行观测不再占用领航并发或产生无效对话。
+- evaluation_window: 后续 10 次 watcher 命中或 7 天，以先到者为准
+- success_signal: owner/长运行分支无新 issue 评论和领航 run；failed/dependency 每次恢复只有一个 rerun；metadata 持续可查。
+- rollback_condition: metadata 更新本身也会唤醒领航，或去掉评论后 rerun 不再可追溯时，先禁用 trigger 并改用平台原生非触发审计事件；不恢复双重触发。
+- risk: SETI 目前没有受管 owner 外部通知代理，所以 owner 待办仅在 issue metadata/列表中可见，时效性低于企微通知。
+- evidence_before: `mocha issue comment add --help` 无 no-trigger/suppress-trigger 选项；SETI workspace 只有领航、无 notify-user/通知代理；SETI-95 的 owner 提醒评论唤醒了无事可做的领航 run。
+- owner_or_agent_decision: owner 要求优化该处；按不让领航代替 owner 决策、不伪造通知成功的边界执行。
+- applied_at: 2026-07-21
+- verification: 待补远程 skill 内容核对、脚本语法/dry-run/execute 与无额外领航 run 验证。
+- observed_outcome: 待观察。
+- keep_or_revise: 暂保留；接入受管 owner 通知代理后，将 metadata-only 升级为代理外部通知，不回退到 issue 评论。
+
+- date: 2026-07-21
 - source: owner 连续反馈领航每轮先报“issue-workflow 指定的仓库内执行器路径不存在”，并明确纠正无需“禁止搜索/禁止播报”硬约束，只需消除错误入口
 - promoted_to: issue_workflow
 - promotion_decision: promote

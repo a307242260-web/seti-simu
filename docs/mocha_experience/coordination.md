@@ -12,6 +12,16 @@
 - promotion_status:
 - decision:
 
+## 2026-07-21：产品目标对齐先给可核对的现状，再讨论删改
+
+- date: 2026-07-21
+- source_issue: SETI-104
+- observation: 当 owner 要对齐机器人等既有产品能力的首发目标时，先说明当前默认席位、难度、规则补强、特殊内容分配和普通策略偏好的边界，再提出删除或调参方案；不能让目标提案替代现状说明，也不能把规则资源补强与策略权重混成同一类“强度”。
+- evidence: owner 在 SETI-104 评论 `53c760ac-6493-4699-b3d6-edd8807d3b0d` 先确认“浏览器默认机器人、稳定一个档位”，随后明确要求“先说明现在机器人的设定”，再处理移除强度补强和只保留非 DIY 公司。
+- promote_to: none
+- promotion_status: candidate
+- decision: 当前只有一次产品对齐中的展示顺序反馈，先记录 candidate，不修改 issue-workflow、agent prompt、loop template、watcher 或项目记忆；后续 2 次同类产品目标对齐若仍要求先补现状，再评估是否并入 coordination loop template。
+
 ## 2026-07-21：skill 随附执行器必须给出可直接调用的解析入口
 
 - date: 2026-07-21
