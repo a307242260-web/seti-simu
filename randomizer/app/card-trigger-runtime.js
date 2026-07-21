@@ -17,7 +17,6 @@
       activateMoveMode,
       activateNextActionEffectIfIdle,
       addScoreSourceFromGain,
-      alienGameState,
       aliens,
       amiba,
       appendActionLogStep,
@@ -28,7 +27,6 @@
       blockManualAiPendingInputIfNeeded,
       buildPlutoMarkerContext,
       cardEffects,
-      cardState,
       cardTaskState,
       cardTaskStateModule,
       cardTriggerNeedsFreeMove,
@@ -40,7 +38,6 @@
       createActionContext,
       createActionLogImpactSnapshot,
       createBanrenmaReservedButton,
-      createFangzhouReservedButtons,
       createJiuzheReservedButton,
       createReservedCardButton,
       createReservedCardRow,
@@ -59,13 +56,8 @@
       getCardTriggerFreeMoveEffect,
       getCardTypeCode,
       getChongPlanetLabel,
-      getCurrentPlayer,
-      getCurrentInitialSelectionCards,
       getEarthSectorCoordinate,
-      getInterfacePlayer,
-      getMovableTokensForPlayer,
       getPendingOwnerFields,
-      getPendingOwnerPlayer,
       getPlanetSectorCoordinate,
       getRequiredMovePointsForUi,
       getSectorContentForMove,
@@ -83,11 +75,9 @@
       listReadyChongTransportCandidates,
       markCurrentActionIrreversibleForSource,
       maybeApplyIndustryLaunchScan,
-      nebulaDataState,
       openAmibaSymbolChoiceDialog,
       planetStatsState,
       playerHasOwnOrbitMarkerAtPlanet,
-      playerState,
       players,
       quickActionHistory,
       recordAbilityCommands,
@@ -103,17 +93,48 @@
       renderRocketElement,
       renderRockets,
       renderStateReadout,
-      resolvePlayerReference,
       rocketActions,
-      rocketState,
       runezu,
-      selectDefaultRocketForCurrentPlayer,
       solar,
       startCardEffectFlow,
       structuredClone,
-      turnState,
       updateActionButtons,
     } = context;
+
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("card-trigger-runtime operation requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
+
+    function getWorkingCurrentPlayer(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      return players.getCurrentPlayer(playerState);
+    }
+
+    function resolveWorkingPlayerReference(workingRoot, reference = {}) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const options = reference.options || {};
+      const playerId = reference.playerId || options.playerId || options.targetPlayerId || null;
+      const playerColor = reference.playerColor || options.playerColor || options.targetPlayerColor || null;
+      return (playerState.players || []).find((player) => (
+        (playerId && player.id === playerId)
+        || (playerColor && player.color === playerColor)
+      )) || null;
+    }
+
+    function getWorkingEffectOwnerPlayer(workingRoot, effect) {
+      return resolveWorkingPlayerReference(workingRoot, effect?.options || effect)
+        || getWorkingCurrentPlayer(workingRoot);
+    }
+
+    function getWorkingMovableTokens(workingRoot, playerId) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
+      return rocketActions.getMovableTokensForPlayer
+        ? rocketActions.getMovableTokensForPlayer(rocketState, playerId)
+        : rocketActions.getRocketsForPlayer(rocketState, playerId);
+    }
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
@@ -149,20 +170,22 @@
       return decisionSessions.peek(TYPE1_TRIGGER_QUEUE_SESSION)?.events || [];
     }
 
-    function buildCardTaskContext() {
-      const probeLocationData = buildProbeLocationIndex();
+    function buildCardTaskContext(workingRoot) {
+      const { alienGameState, nebulaDataState } = requireWorkingRoot(workingRoot);
+      const probeLocationData = buildProbeLocationIndex(workingRoot);
       return {
         nebulaDataState,
         alienGameState,
         planetStatsState,
-        ...buildPlutoMarkerContext(),
+        ...buildPlutoMarkerContext(workingRoot),
         probeLocations: probeLocationData.index,
         probeLocationDetails: probeLocationData.details,
-        dataTotals: buildPlayerDataTotals(),
+        dataTotals: buildPlayerDataTotals(workingRoot),
       };
     }
 
-    function buildPlayerDataTotals() {
+    function buildPlayerDataTotals(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       const totals = {};
       for (const player of playerState.players || []) {
         const dataState = data.ensurePlayerDataState?.(player) || player?.dataState || {};
@@ -185,7 +208,8 @@
       if (!index[key].includes(locationType)) index[key].push(locationType);
     }
 
-    function buildProbeLocationIndex() {
+    function buildProbeLocationIndex(workingRoot) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const index = {};
       const details = [];
       const earth = getEarthSectorCoordinate();
@@ -252,21 +276,22 @@
       );
     }
 
-    function getReadyCardTasks() {
-      const currentPlayer = getCurrentPlayer();
+    function getReadyCardTasks(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!currentPlayer) return [];
       cardTaskStateModule.refreshTaskState(
         cardTaskState,
         currentPlayer,
-        buildCardTaskContext(),
+        buildCardTaskContext(workingRoot),
         cardEffects,
       );
       const regularTasks = cardTaskStateModule.getReadyType2Tasks(cardTaskState);
       const readyByCardId = new Map((regularTasks || []).map((ready) => [ready?.card?.id, ready]));
       for (const card of currentPlayer.reservedCards || []) {
-        const readyChongTask = getReadyChongTaskForReservedCard(card, currentPlayer);
-        const readyAmibaTask = readyChongTask ? null : getReadyAmibaTaskForReservedCard(card, currentPlayer);
-        const readyRunezuTask = readyChongTask || readyAmibaTask ? null : getReadyRunezuTaskForReservedCard(card, currentPlayer);
+        const readyChongTask = getReadyChongTaskForReservedCard(workingRoot, card, currentPlayer);
+        const readyAmibaTask = readyChongTask ? null : getReadyAmibaTaskForReservedCard(workingRoot, card, currentPlayer);
+        const readyRunezuTask = readyChongTask || readyAmibaTask ? null : getReadyRunezuTaskForReservedCard(workingRoot, card, currentPlayer);
         const readySpecialTask = readyChongTask || readyAmibaTask || readyRunezuTask;
         if (readySpecialTask?.card?.id && !readyByCardId.has(readySpecialTask.card.id)) {
           readyByCardId.set(readySpecialTask.card.id, readySpecialTask);
@@ -275,16 +300,17 @@
       return [...readyByCardId.values()];
     }
 
-    function refreshCardTaskState(options = {}) {
-      const currentPlayer = getCurrentPlayer();
+    function refreshCardTaskState(workingRoot, options = {}) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!currentPlayer) {
-        cardTaskStateModule.refreshTaskState(cardTaskState, null, buildCardTaskContext(), cardEffects);
+        cardTaskStateModule.refreshTaskState(cardTaskState, null, buildCardTaskContext(workingRoot), cardEffects);
         return cardTaskState;
       }
       cardTaskStateModule.refreshTaskState(
         cardTaskState,
         currentPlayer,
-        buildCardTaskContext(),
+        buildCardTaskContext(workingRoot),
         cardEffects,
       );
       if (options.render !== false) {
@@ -336,8 +362,9 @@
         ));
     }
 
-    function applyType1TriggerMatches(events = []) {
-      const currentPlayer = getCurrentPlayer();
+    function applyType1TriggerMatches(workingRoot, events = []) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!currentPlayer) return null;
       enqueueType1TriggerEvents(events);
       if (hasActiveCardTriggerResolution() || isCardTriggerRewardFlowBusy()) return null;
@@ -347,14 +374,14 @@
         const event = queuedEvents.shift();
         const matches = getType1TriggerMatchesForEvent(currentPlayer, event);
         if (!matches.length) continue;
-        return matches.length === 1 ? applyCardTriggerMatch(matches[0]) : openCardTriggerPicker(matches);
+        return matches.length === 1 ? applyCardTriggerMatch(workingRoot, matches[0]) : openCardTriggerPicker(workingRoot, matches);
       }
       decisionSessions.clear(TYPE1_TRIGGER_QUEUE_SESSION);
       return null;
     }
 
-    function continueAfterCardTriggerResolution() {
-      const type1Result = applyType1TriggerMatches([]);
+    function continueAfterCardTriggerResolution(workingRoot) {
+      const type1Result = applyType1TriggerMatches(workingRoot, []);
       if (type1Result || hasActiveCardTriggerResolution() || isCardTriggerRewardFlowBusy()) {
         updateActionButtons();
         renderStateReadout();
@@ -375,15 +402,17 @@
       return false;
     }
 
-    function cancelCardTriggerChoice() {
+    function cancelCardTriggerChoice(workingRoot) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!getCardTriggerAction()) return false;
       closeCardTriggerPicker();
       rocketState.statusNote = "已取消卡牌触发";
-      continueAfterCardTriggerResolution();
+      continueAfterCardTriggerResolution(workingRoot);
       return true;
     }
 
-    function buildAlienTraceEvent(alienSlotId, traceType, player, alienIdOverride = null) {
+    function buildAlienTraceEvent(workingRoot, alienSlotId, traceType, player, alienIdOverride = null) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const slot = aliens.getAlienSlot(alienGameState, Number(alienSlotId));
       return {
         type: "alienTrace",
@@ -409,8 +438,9 @@
       return flow.cardFlowEventBonuses;
     }
 
-    function getActiveCardEventBonuses() {
-      const currentPlayer = getCurrentPlayer();
+    function getActiveCardEventBonuses(workingRoot) {
+      const { turnState, playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       return [
         ...ensureCardFlowEventBonuses(decisionState.actionEffectFlow),
         ...((turnState.cardTurnEventBonuses || []).filter((bonus) => bonus.playerId === currentPlayer?.id)),
@@ -434,8 +464,9 @@
       return String(event?.[bonus.distinctBy] ?? "");
     }
 
-    function applyCardEventBonusReward(rewardEffect, sourceLabel) {
-      const currentPlayer = getCurrentPlayer();
+    function applyCardEventBonusReward(workingRoot, rewardEffect, sourceLabel) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!currentPlayer || !rewardEffect) return null;
       if (rewardEffect.type === "gain_resources") {
         const gain = rewardEffect.options?.gain || {};
@@ -453,8 +484,9 @@
       return null;
     }
 
-    function applyPublicityMoveFollowupBonus(event, bonus, messages) {
-      const currentPlayer = getCurrentPlayer();
+    function applyPublicityMoveFollowupBonus(workingRoot, event, bonus, messages) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!currentPlayer || !bonus.publicityToMoveFollowup) return false;
       if (Math.max(0, Number(event.publicityReward) || 0) <= 0) return false;
       const moveEffect = {
@@ -481,11 +513,12 @@
       return true;
     }
 
-    function processCardEventBonuses(events = []) {
+    function processCardEventBonuses(workingRoot, events = []) {
+      const { rocketState, turnState, playerState } = requireWorkingRoot(workingRoot);
       if (!events?.length) return [];
-      const bonuses = getActiveCardEventBonuses();
+      const bonuses = getActiveCardEventBonuses(workingRoot);
       if (!bonuses.length) return [];
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const beforePlayer = currentPlayer ? structuredClone(currentPlayer) : null;
       const beforeTurnBonuses = structuredClone(turnState.cardTurnEventBonuses || []);
       const beforeFlowBonuses = structuredClone(decisionState.actionEffectFlow?.cardFlowEventBonuses || []);
@@ -514,13 +547,13 @@
             if (bonus.claimedKeys.includes(bonus.onceKey)) continue;
             pendingOnceKey = bonus.onceKey;
           }
-          if (applyPublicityMoveFollowupBonus(event, bonus, messages)) {
+          if (applyPublicityMoveFollowupBonus(workingRoot, event, bonus, messages)) {
             if (pendingOnceKey) bonus.claimedKeys.push(pendingOnceKey);
             continue;
           }
           let appliedReward = false;
           for (const reward of bonus.rewards || []) {
-            const result = applyCardEventBonusReward(reward, bonus.label);
+            const result = applyCardEventBonusReward(workingRoot, reward, bonus.label);
             if (result?.ok) {
               appliedReward = true;
               messages.push(result.message);
@@ -573,7 +606,8 @@
       return messages;
     }
 
-    function processChongTransportArrivalEvents(events = []) {
+    function processChongTransportArrivalEvents(workingRoot, events = []) {
+      const { alienGameState, rocketState } = requireWorkingRoot(workingRoot);
       if (!chong || !events?.length) return [];
       const arrivals = [];
       for (const event of events) {
@@ -587,7 +621,7 @@
       }
       if (arrivals.length) {
         rocketState.statusNote = arrivals.map((item) => item.message).join("；");
-        renderAlienPanels();
+        renderAlienPanels(workingRoot);
         renderRockets();
         renderPlayerStats();
         renderPlayerHand();
@@ -611,7 +645,8 @@
       return `${Number(event.rocketId)}:${event.planetId}`;
     }
 
-    function buildChongPositionArrivalEvents(existingEvents = []) {
+    function buildChongPositionArrivalEvents(workingRoot, existingEvents = []) {
+      const { alienGameState, rocketState } = requireWorkingRoot(workingRoot);
       if (!chong?.listTransportArrivalEvents) return [];
       const existingKeys = new Set(
         (existingEvents || [])
@@ -629,22 +664,23 @@
       });
     }
 
-    function settleCardTasksAfterEffect(options = {}) {
+    function settleCardTasksAfterEffect(workingRoot, options = {}) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       const { events, skipType1 = false, type1Only = false, render = true } = options;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const normalizedEvents = (events || []).map((event) => (
         event?.type === "visitPlanet" && event.planetId
           ? { ...event, hasOwnOrbit: playerHasOwnOrbitMarkerAtPlanet(currentPlayer, event.planetId) }
           : event
       ));
-      const cardEventBonuses = type1Only ? [] : processCardEventBonuses(normalizedEvents);
+      const cardEventBonuses = type1Only ? [] : processCardEventBonuses(workingRoot, normalizedEvents);
       const chongEvents = type1Only
         ? []
-        : [...normalizedEvents, ...buildChongPositionArrivalEvents(normalizedEvents)];
-      const chongCompletions = type1Only ? [] : processChongTransportArrivalEvents(chongEvents);
+        : [...normalizedEvents, ...buildChongPositionArrivalEvents(workingRoot, normalizedEvents)];
+      const chongCompletions = type1Only ? [] : processChongTransportArrivalEvents(workingRoot, chongEvents);
       const runezuCompletions = [];
-      refreshCardTaskState({ render });
-      const type1Result = skipType1 ? null : applyType1TriggerMatches(normalizedEvents);
+      refreshCardTaskState(workingRoot, { render });
+      const type1Result = skipType1 ? null : applyType1TriggerMatches(workingRoot, normalizedEvents);
       if (!hasActiveCardTriggerResolution()) {
         activateNextActionEffectIfIdle();
       }
@@ -811,29 +847,29 @@
       return effects;
     }
 
-    function getReadyTaskForReservedCard(card, player = getCurrentPlayer()) {
+    function getReadyTaskForReservedCard(workingRoot, card, player = getWorkingCurrentPlayer(workingRoot)) {
       cardTaskStateModule.refreshTaskState(
         cardTaskState,
         player,
-        buildCardTaskContext(),
+        buildCardTaskContext(workingRoot),
         cardEffects,
       );
-      const readyChongTask = getReadyChongTaskForReservedCard(card, player);
+      const readyChongTask = getReadyChongTaskForReservedCard(workingRoot, card, player);
       if (readyChongTask) return readyChongTask;
-      const readyAmibaTask = getReadyAmibaTaskForReservedCard(card, player);
+      const readyAmibaTask = getReadyAmibaTaskForReservedCard(workingRoot, card, player);
       if (readyAmibaTask) return readyAmibaTask;
-      const readyRunezuTask = getReadyRunezuTaskForReservedCard(card, player);
+      const readyRunezuTask = getReadyRunezuTaskForReservedCard(workingRoot, card, player);
       if (readyRunezuTask) return readyRunezuTask;
       return cardTaskStateModule.getReadyType2ForCard(cardTaskState, card?.id) || null;
     }
 
-    function getReadyChongTaskForReservedCard(card, player = getCurrentPlayer()) {
+    function getReadyChongTaskForReservedCard(workingRoot, card, player = getWorkingCurrentPlayer(workingRoot)) {
       if (!chong?.isChongCard?.(card)) return null;
       if (card?.chongTaskCompleted) return null;
       const task = card.chongTask || chong.getCardTask(card);
       if (!task) return null;
       if (task.kind === "transport") {
-        const deliveredTransports = listReadyChongTransportCandidates(player, task);
+        const deliveredTransports = listReadyChongTransportCandidates(workingRoot, player, task);
         const deliveredTransport = deliveredTransports[0] || null;
         if (!deliveredTransport) return null;
         return {
@@ -855,7 +891,7 @@
       };
     }
 
-    function getReadyAmibaTaskForReservedCard(card, player = getCurrentPlayer()) {
+    function getReadyAmibaTaskForReservedCard(workingRoot, card, player = getWorkingCurrentPlayer(workingRoot)) {
       if (!amiba?.isAmibaCard?.(card)) return null;
       if (card?.amibaTaskCompleted) return null;
       const task = card.amibaTask || amiba.getCardTask(card);
@@ -871,7 +907,7 @@
       };
     }
 
-    function getReadyRunezuTaskForReservedCard(card, player = getCurrentPlayer()) {
+    function getReadyRunezuTaskForReservedCard(workingRoot, card, player = getWorkingCurrentPlayer(workingRoot)) {
       if (!runezu?.isRunezuCard?.(card)) return null;
       return runezu.getReadyThreeTraceTask?.(card, alienGameState, player) || null;
     }
@@ -887,7 +923,8 @@
       return player.completedTaskCount;
     }
 
-    function removeReservedCardToDiscard(player, card) {
+    function removeReservedCardToDiscard(workingRoot, player, card) {
+      const { cardState } = requireWorkingRoot(workingRoot);
       const index = player?.reservedCards?.findIndex((item) => item.id === card?.id) ?? -1;
       if (index < 0) return false;
       const [finishedCard] = player.reservedCards.splice(index, 1);
@@ -895,21 +932,23 @@
       return true;
     }
 
-    function discardReservedCardIfFinished(player, card) {
+    function discardReservedCardIfFinished(workingRoot, player, card) {
       if (!cardEffects.areAllTriggersConsumed(card)) return false;
-      if (!removeReservedCardToDiscard(player, card)) return false;
+      if (!removeReservedCardToDiscard(workingRoot, player, card)) return false;
       incrementCompletedTaskCount(player);
       return true;
     }
 
-    function createCardTriggerProgressSnapshot() {
+    function createCardTriggerProgressSnapshot(workingRoot) {
+      const { cardState, playerState } = requireWorkingRoot(workingRoot);
       return {
         playerState: structuredClone(playerState),
         cardState: structuredClone(cardState),
       };
     }
 
-    function createCardTriggerProgressCommands(snapshot, label = "卡牌触发") {
+    function createCardTriggerProgressCommands(workingRoot, snapshot, label = "卡牌触发") {
+      const { cardState, playerState } = requireWorkingRoot(workingRoot);
       if (!snapshot) return [];
       return [
         historyCommands.createRestoreObjectCommand(
@@ -925,20 +964,20 @@
       ];
     }
 
-    function consumeCardTriggerWithSnapshot(match, player = getCurrentPlayer(), label = "卡牌触发") {
-      const snapshot = createCardTriggerProgressSnapshot();
+    function consumeCardTriggerWithSnapshot(workingRoot, match, player = getWorkingCurrentPlayer(workingRoot), label = "卡牌触发") {
+      const snapshot = createCardTriggerProgressSnapshot(workingRoot);
       if (match?.card && match?.trigger) {
         cardEffects.consumeTrigger(match.card, match.trigger.id);
-        discardReservedCardIfFinished(player, match.card);
+        discardReservedCardIfFinished(workingRoot, player, match.card);
       }
       return {
         snapshot,
-        commands: createCardTriggerProgressCommands(snapshot, label),
+        commands: createCardTriggerProgressCommands(workingRoot, snapshot, label),
       };
     }
 
-    function confirmCardTriggerProgress(match, player = getCurrentPlayer(), label = "卡牌触发") {
-      const triggerProgress = consumeCardTriggerWithSnapshot(match, player, label);
+    function confirmCardTriggerProgress(workingRoot, match, player = getWorkingCurrentPlayer(workingRoot), label = "卡牌触发") {
+      const triggerProgress = consumeCardTriggerWithSnapshot(workingRoot, match, player, label);
       beginQuickActionStep("card-trigger-confirm", label);
       for (const command of triggerProgress.commands) {
         recordQuickHistoryCommand(command);
@@ -947,10 +986,11 @@
       return triggerProgress;
     }
 
-    function prepareCardTriggerRewardEffects(match, effects, label) {
+    function prepareCardTriggerRewardEffects(workingRoot, match, effects, label) {
+      const { playerState } = requireWorkingRoot(workingRoot);
       const rewardEffects = (effects || []).filter(Boolean);
       if (!rewardEffects.length) return [];
-      const triggerProgress = consumeCardTriggerWithSnapshot(match, getCurrentPlayer(), label);
+      const triggerProgress = consumeCardTriggerWithSnapshot(workingRoot, match, getWorkingCurrentPlayer(workingRoot), label);
       const prepared = rewardEffects.map((effect, index) => ({
         ...effect,
         id: effect.id || `${match?.trigger?.id || "card-trigger"}-effect-${index + 1}`,
@@ -962,10 +1002,11 @@
       return prepared;
     }
 
-    function queueCardTriggerRewardEffects(match, effects = [match?.effect]) {
+    function queueCardTriggerRewardEffects(workingRoot, match, effects = [match?.effect]) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!match?.card || !match?.trigger) return { ok: false, message: "没有可结算的卡牌触发" };
       const label = `卡牌触发：${match.effect?.label || "任务奖励"}`;
-      const preparedEffects = prepareCardTriggerRewardEffects(match, effects, label);
+      const preparedEffects = prepareCardTriggerRewardEffects(workingRoot, match, effects, label);
       if (!preparedEffects.length) return { ok: false, message: "卡牌触发没有可执行奖励" };
 
       closeCardTriggerPicker();
@@ -1001,13 +1042,14 @@
       return null;
     }
 
-    function openCardTaskCompletionPicker(card, options = {}) {
+    function openCardTaskCompletionPicker(workingRoot, card, options = {}) {
+      const { rocketState, playerState } = requireWorkingRoot(workingRoot);
       const player = options.player
-        || resolvePlayerReference({
+        || resolveWorkingPlayerReference(workingRoot, {
           playerId: options.playerId,
           playerColor: options.playerColor,
         })
-        || getCurrentPlayer();
+        || getWorkingCurrentPlayer(workingRoot);
       const blockReason = getCardTaskCompletionBlockReason();
       if (blockReason) {
         rocketState.statusNote = blockReason;
@@ -1015,7 +1057,7 @@
         return { ok: false, message: blockReason };
       }
 
-      const ready = getReadyTaskForReservedCard(card, player);
+      const ready = getReadyTaskForReservedCard(workingRoot, card, player);
       if (!ready) return { ok: false, message: "这张任务卡尚未满足完成条件" };
       if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开任务确认窗口" };
 
@@ -1070,7 +1112,8 @@
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
     }
 
-    function confirmCardTaskCompletion(choice = "confirm", options = {}) {
+    function confirmCardTaskCompletion(workingRoot, choice = "confirm", options = {}) {
+      const { cardState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const pending = getCardTaskCompletion();
       if (!pending?.ready) return { ok: false, message: "没有待完成的任务" };
       const blocked = blockManualAiPendingInputIfNeeded(pending, options, "任务完成");
@@ -1080,7 +1123,12 @@
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      const currentPlayer = getPendingOwnerPlayer(pending);
+      const currentPlayer = resolveWorkingPlayerReference(workingRoot, pending)
+        || getWorkingCurrentPlayer(workingRoot)
+        || (playerState.players || []).find((player) => (
+          (player.reservedCards || []).includes(pending.ready?.card)
+        ))
+        || null;
       let ready = pending.ready;
       if (ready.chongTask && ready.task?.kind === "transport" && choice !== "confirm") {
         const selectedTransport = (ready.deliveredTransports || [])
@@ -1110,7 +1158,7 @@
       } else {
         cardEffects.completeTask(ready.card, ready.task.id);
       }
-      removeReservedCardToDiscard(currentPlayer, ready.card);
+      removeReservedCardToDiscard(workingRoot, currentPlayer, ready.card);
       incrementCompletedTaskCount(currentPlayer);
 
       beginQuickActionStep("card-task", `完成任务：${cards.getCardLabel(ready.card)}`);
@@ -1142,7 +1190,8 @@
       );
     }
 
-    function openCardTriggerPicker(matches) {
+    function openCardTriggerPicker(workingRoot, matches) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!matches?.length) return { ok: false, message: "没有可触发的卡牌" };
       if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开卡牌触发选择" };
 
@@ -1169,8 +1218,9 @@
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
     }
 
-    function applyCardTriggerReward(match) {
-      const currentPlayer = getCurrentPlayer();
+    function applyCardTriggerReward(workingRoot, match) {
+      const { cardState, playerState, rocketState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!currentPlayer || !match?.card || !match.trigger) return { ok: false, message: "没有可结算的卡牌触发" };
 
       const beforePlayer = structuredClone(currentPlayer);
@@ -1215,16 +1265,16 @@
           );
         }
       } else if (effect.type === "launch") {
-        const launchResult = abilities.executeAbility("launchProbe", createActionContext(), {
+        const launchResult = abilities.executeAbility("launchProbe", createActionContext(workingRoot), {
           ...(effect.options || {}),
           source: "card_trigger",
           historyLabel: effect.label,
         });
         if (launchResult.rocket) renderRocketElement(launchResult.rocket);
         if (launchResult.ok) {
-          maybeApplyIndustryLaunchScan(launchResult);
+          maybeApplyIndustryLaunchScan(workingRoot, launchResult);
           recordAbilityCommands(launchResult);
-          settleCardTasksAfterEffect({ events: launchResult.events, render: false });
+          settleCardTasksAfterEffect(workingRoot, { events: launchResult.events, render: false });
         }
         result = launchResult;
       } else if (effect.type === cardEffects.EFFECT_TYPES.CARD_CORNER_EVENT_REWARD) {
@@ -1258,7 +1308,7 @@
 
       if (result.ok) {
         cardEffects.consumeTrigger(match.card, match.trigger.id);
-        discardReservedCardIfFinished(currentPlayer, match.card);
+        discardReservedCardIfFinished(workingRoot, currentPlayer, match.card);
         recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
           currentPlayer,
           beforePlayer,
@@ -1283,7 +1333,7 @@
       renderPublicCards();
       renderPlayerHand();
       if (result.ok) {
-        continueAfterCardTriggerResolution();
+        continueAfterCardTriggerResolution(workingRoot);
       } else {
         updateActionButtons();
         renderStateReadout();
@@ -1291,9 +1341,10 @@
       return result;
     }
 
-    function beginCardTriggerFreeMove(match) {
-      const currentPlayer = getCurrentPlayer();
-      const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
+    function beginCardTriggerFreeMove(workingRoot, match) {
+      const { cardState, rocketState, playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
+      const rocketsForPlayer = getWorkingMovableTokens(workingRoot, currentPlayer?.id);
       if (!rocketsForPlayer.length) {
         return { ok: false, message: "没有可移动的飞船" };
       }
@@ -1311,18 +1362,20 @@
       if (rocketsForPlayer.length === 1) {
         activateMoveMode(rocketsForPlayer[0].id);
       } else {
-        selectDefaultRocketForCurrentPlayer();
+        const fallbackRocket = rocketsForPlayer[rocketsForPlayer.length - 1] || null;
+        rocketState.activeRocketId = fallbackRocket?.id || null;
       }
       renderStateReadout();
       return { ok: true, message: rocketState.statusNote };
     }
 
-    function applyCardTriggerMatch(match) {
+    function applyCardTriggerMatch(workingRoot, match) {
+      const { alienGameState, cardState, playerState } = requireWorkingRoot(workingRoot);
       if (match?.effect?.type === amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
         closeCardTriggerPicker();
-        return openAmibaSymbolChoiceDialog({
+        return openAmibaSymbolChoiceDialog(workingRoot, {
           region: match.effect.options?.region,
-          player: getCurrentPlayer(),
+          player: getWorkingCurrentPlayer(workingRoot),
           triggerMatch: match,
           effectLabel: match.effect.label,
           beforeAlienState: structuredClone(alienGameState),
@@ -1332,48 +1385,49 @@
       }
       if (match?.effect?.type === "pick_card") {
         closeCardTriggerPicker();
-        return beginCardSelection({
+        return beginCardSelection(workingRoot, {
           type: "card_trigger_pick",
-          player: getCurrentPlayer(),
+          player: getWorkingCurrentPlayer(workingRoot),
           allowBlindDraw: true,
           triggerMatch: match,
-          triggerSnapshot: createCardTriggerProgressSnapshot(),
+          triggerSnapshot: createCardTriggerProgressSnapshot(workingRoot),
         });
       }
       if (match?.effect?.type === cardEffects.EFFECT_TYPES.FREE_MOVE) {
-        return queueCardTriggerRewardEffects(match, [match.effect]);
+        return queueCardTriggerRewardEffects(workingRoot, match, [match.effect]);
       }
       if (match?.effect?.type === cardEffects.EFFECT_TYPES.CARD_CORNER_EVENT_REWARD
         && match.event?.moveReward) {
-        return beginCardTriggerFreeMove({
+        return beginCardTriggerFreeMove(workingRoot, {
           ...match,
           effect: getCardTriggerFreeMoveEffect(match),
         });
       }
       if (match?.effect?.type === cardEffects.EFFECT_TYPES.CARD_CORNER_EVENT_REWARD) {
-        return applyCardTriggerReward(match);
+        return applyCardTriggerReward(workingRoot, match);
       }
       if (
         match?.effect?.type === runezu?.EFFECT_TYPES?.SYMBOL_REWARD
         || match?.effect?.type === runezu?.EFFECT_TYPES?.SYMBOL_BRANCH
       ) {
-        return queueCardTriggerRewardEffects(match, [match.effect]);
+        return queueCardTriggerRewardEffects(workingRoot, match, [match.effect]);
       }
       if (String(match?.effect?.type || "").startsWith("card_")) {
-        return queueCardTriggerRewardEffects(match, [match.effect]);
+        return queueCardTriggerRewardEffects(workingRoot, match, [match.effect]);
       }
-      return applyCardTriggerReward(match);
+      return applyCardTriggerReward(workingRoot, match);
     }
 
-    function handleCardTriggerChoice(choiceIndex) {
+    function handleCardTriggerChoice(workingRoot, choiceIndex) {
       const matches = getCardTriggerAction()?.matches || [];
       const match = matches[Number(choiceIndex)];
       closeCardTriggerPicker();
       if (!match) return { ok: false, message: "无效的卡牌触发选择" };
-      return applyCardTriggerMatch(match);
+      return applyCardTriggerMatch(workingRoot, match);
     }
 
-    function executeFreeMoveForCardTrigger(deltaX, deltaY, rocketId, payment = {}) {
+    function executeFreeMoveForCardTrigger(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
+      const { cardState, rocketState, playerState } = requireWorkingRoot(workingRoot);
       const pending = getCardTriggerFreeMove();
       if (!pending) return { ok: false, message: "没有待结算的卡牌免费移动" };
 
@@ -1384,7 +1438,7 @@
         return moveCheck;
       }
 
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const providedMovePoints = Math.max(
         0,
         Math.round(Number(payment.providedMovePoints ?? pending.match.effect.options?.movementPoints ?? 1) || 0),
@@ -1405,7 +1459,7 @@
       }
 
       const energyCost = Math.max(0, Math.round(Number(payment.energyCost) || 0));
-      const result = abilities.executeAbility("moveProbe", createActionContext(), {
+      const result = abilities.executeAbility("moveProbe", createActionContext(workingRoot), {
         cost: energyCost > 0 ? { energy: energyCost } : {},
         movementPoints: Math.max(terrainRequired, providedMovePoints + energyCost),
         rocketId,
@@ -1427,14 +1481,14 @@
         ? formatPlanetRewardGain(moveRewardGain)
         : "";
       if (Object.keys(moveRewardGain).length) {
-        const currentPlayer = getCurrentPlayer();
+        const currentPlayer = getWorkingCurrentPlayer(workingRoot);
         players.gainResources(currentPlayer, moveRewardGain);
         addScoreSourceFromGain(currentPlayer, SCORE_SOURCE_KEYS.TASK_CARD, moveRewardGain);
       }
 
       beginQuickActionStep("card-trigger-move", `卡牌触发：${pending.match.effect.label}`);
       recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
-        getCurrentPlayer(),
+        getWorkingCurrentPlayer(workingRoot),
         pending.beforePlayer,
         "恢复卡牌触发前玩家状态",
       ));
@@ -1446,7 +1500,7 @@
       if (payment.discardCommand) recordQuickHistoryCommand(payment.discardCommand);
       recordAbilityCommands(result, quickActionHistory);
       cardEffects.consumeTrigger(pending.match.card, pending.match.trigger.id);
-      discardReservedCardIfFinished(getCurrentPlayer(), pending.match.card);
+      discardReservedCardIfFinished(workingRoot, getWorkingCurrentPlayer(workingRoot), pending.match.card);
       completeQuickActionStep();
 
       setCardTriggerFreeMove(null);
@@ -1459,8 +1513,8 @@
       renderPlayerHand();
       updateActionButtons();
       renderStateReadout();
-      settleCardTasksAfterEffect({ events: result.events, render: false });
-      continueAfterCardTriggerResolution();
+      settleCardTasksAfterEffect(workingRoot, { events: result.events, render: false });
+      continueAfterCardTriggerResolution(workingRoot);
       return result;
     }
 

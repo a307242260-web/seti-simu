@@ -25,9 +25,6 @@ function createHarness() {
     pendingState,
     decisionSessions,
     els: {},
-    rocketState: { statusNote: "" },
-    cardState,
-    playerState: { players: [player] },
     cardEffects: {
       completeTask(card, taskId) {
         card.completedTaskId = taskId;
@@ -39,8 +36,13 @@ function createHarness() {
         state.discardPile.push(card);
       },
     },
+    data: {
+      ensurePlayerDataState: (target) => target.dataState || {},
+    },
     isCardSelectionActive: () => false,
-    getCurrentPlayer: () => null,
+    players: {
+      getCurrentPlayer: (state) => state.players.find((entry) => entry.id === state.currentPlayerId) || null,
+    },
     activateNextActionEffectIfIdle: () => false,
     finishActionEffectFlow: () => {},
     updateActionButtons: () => { calls.updated += 1; },
@@ -67,22 +69,46 @@ function createHarness() {
     },
     formatChongGain: (gain) => Object.entries(gain).map(([key, value]) => `${key}:${value}`).join(" + "),
   });
-  return { runtime, player, cardState, pendingState, decisionSessions, calls };
+  const workingRoot = {
+    alienGameState: {},
+    cardState,
+    nebulaDataState: {},
+    playerState: { currentPlayerId: null, players: [player] },
+    rocketState: { statusNote: "", rockets: [] },
+    turnState: { roundNumber: 1 },
+  };
+  return { runtime, workingRoot, player, cardState, pendingState, decisionSessions, calls };
 }
 
 {
-  const { runtime, pendingState, decisionSessions, calls } = createHarness();
+  const { runtime, workingRoot, player } = createHarness();
+  const isolatedPlayer = {
+    id: "p2",
+    color: "red",
+    dataState: { poolTokens: [{ id: "d1" }], placedTokens: [{ id: "d2" }] },
+  };
+  const isolatedRoot = {
+    ...workingRoot,
+    playerState: { currentPlayerId: isolatedPlayer.id, players: [isolatedPlayer] },
+  };
+  assert.deepEqual(runtime.buildPlayerDataTotals(isolatedRoot), { p2: 2, red: 2 });
+  assert.equal(Object.hasOwn(runtime.buildPlayerDataTotals(isolatedRoot), player.id), false);
+  assert.throws(() => runtime.buildPlayerDataTotals(null), /explicit workingRoot/);
+}
+
+{
+  const { runtime, workingRoot, pendingState, decisionSessions, calls } = createHarness();
   runtime.enqueueType1TriggerEvents([{ type: "scan", sectorX: 2 }]);
   assert.deepEqual(decisionSessions.peek("type1_trigger_queue").events, [{ type: "scan", sectorX: 2 }]);
 
   decisionSessions.open("card_trigger_action", { matches: [{ id: "trigger" }] });
-  assert.equal(runtime.cancelCardTriggerChoice(), true);
+  assert.equal(runtime.cancelCardTriggerChoice(workingRoot), true);
   assert.equal(decisionSessions.peek("card_trigger_action"), null);
   assert.ok(calls.updated > 0);
 }
 
 {
-  const { runtime, player, cardState, decisionSessions, calls } = createHarness();
+  const { runtime, workingRoot, player, cardState, decisionSessions, calls } = createHarness();
   const card = { id: "task-card", label: "任务牌" };
   player.reservedCards.push(card);
   decisionSessions.open("card_task_completion", {
@@ -92,7 +118,7 @@ function createHarness() {
       effects: [{ id: "reward", type: "gain_resources" }],
     },
   });
-  const result = runtime.confirmCardTaskCompletion();
+  const result = runtime.confirmCardTaskCompletion(workingRoot);
   assert.equal(result, true);
   assert.equal(player.completedTaskCount, 1);
   assert.equal(player.reservedCards.length, 0);

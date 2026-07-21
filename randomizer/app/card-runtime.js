@@ -792,7 +792,7 @@
       }
       syncCardSelectionChrome();
       renderPlayerStats();
-      if (pending?.type === "card_trigger_pick" && continueAfterCardTriggerResolution()) {
+      if (pending?.type === "card_trigger_pick" && continueAfterCardTriggerResolution(workingRoot)) {
         return;
       }
       updateActionButtons();
@@ -986,10 +986,10 @@
         beginQuickActionStep("card-trigger-pick", `卡牌触发：${match?.effect?.label || "精选"}`);
         if (match?.card && match?.trigger) {
           cardEffects.consumeTrigger(match.card, match.trigger.id);
-          discardReservedCardIfFinished(pending.player || getWorkingCurrentPlayer(workingRoot), match.card);
+          discardReservedCardIfFinished(workingRoot, pending.player || getWorkingCurrentPlayer(workingRoot), match.card);
         }
         rocketState.statusNote = `卡牌触发精选：${cards.getCardLabel(result.card)}`;
-        for (const command of createCardTriggerProgressCommands(pending.triggerSnapshot, "卡牌触发精选")) {
+        for (const command of createCardTriggerProgressCommands(workingRoot, pending.triggerSnapshot, "卡牌触发精选")) {
           recordQuickHistoryCommand(command);
         }
         completeQuickActionStep(rocketState.statusNote, {
@@ -997,7 +997,7 @@
           irreversibleCode: "hidden_card_reveal",
           irreversibleReason: "卡牌触发精选翻出新牌",
         });
-        continueAfterCardTriggerResolution();
+        continueAfterCardTriggerResolution(workingRoot);
       }
       if (pending?.type === "card_pick_corner_reward") {
         const player = pending.player || getWorkingCurrentPlayer(workingRoot);
@@ -1137,7 +1137,7 @@
       syncCardSelectionChrome();
       renderPublicCards();
       renderPlayerStats();
-      if (pending?.type === "card_trigger_pick" && continueAfterCardTriggerResolution()) {
+      if (pending?.type === "card_trigger_pick" && continueAfterCardTriggerResolution(workingRoot)) {
         return result;
       }
       updateActionButtons();
@@ -1631,7 +1631,7 @@
       if (sameRingReward) appliedRewards.push(sameRingReward);
       const distinctEventReward = maybeApplyCardMoveDistinctEventReward(effect, result, messageParts);
       if (distinctEventReward) appliedRewards.push(distinctEventReward);
-      const arrivalSettlement = settleCardTasksAfterEffect({ events: result.events, skipType1: true, render: false });
+      const arrivalSettlement = settleCardTasksAfterEffect(workingRoot, { events: result.events, skipType1: true, render: false });
       const completedTransportForMovedToken = (arrivalSettlement?.chongCompletions || [])
         .some((item) => Number(item.event?.rocketId) === Number(rocketId));
       if (completedTransportForMovedToken) {

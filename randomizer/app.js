@@ -3610,13 +3610,13 @@
     commitIrreversibleIndustryQuickAction: (...args) => commitIrreversibleIndustryQuickAction?.(...args),
     completeCurrentActionEffect,
     completeQuickActionStep,
-    continueAfterCardTriggerResolution: (...args) => continueAfterCardTriggerResolution(...args),
+    continueAfterCardTriggerResolution: (workingRoot, ...args) => continueAfterCardTriggerResolutionForRoot(workingRoot, ...args),
     continuePendingDataPlacementAfterBonus,
     createActionContext: (workingRoot, descriptor) => createActionContextForWorkingRoot(workingRoot, descriptor),
-    createCardTriggerProgressCommands: (...args) => createCardTriggerProgressCommands(...args),
+    createCardTriggerProgressCommands: (workingRoot, ...args) => createCardTriggerProgressCommandsForRoot(workingRoot, ...args),
     data,
     deactivateMoveMode,
-    discardReservedCardIfFinished: (...args) => discardReservedCardIfFinished(...args),
+    discardReservedCardIfFinished: (workingRoot, ...args) => discardReservedCardIfFinishedForRoot(workingRoot, ...args),
     document,
     els,
     fangzhou,
@@ -3669,7 +3669,7 @@
     rollbackPendingIndustryQuickAction: (...args) => rollbackPendingIndustryQuickAction?.(...args),
     runezu,
     scrollToPlayerHandPanel,
-    settleCardTasksAfterEffect: (...args) => settleCardTasksAfterEffect(...args),
+    settleCardTasksAfterEffect: (workingRoot, ...args) => settleCardTasksAfterEffectForRoot(workingRoot, ...args),
     startCardEffectFlow,
     structuredClone,
     syncCardSelectionChrome,
@@ -3831,18 +3831,16 @@
     activateMoveMode,
     activateNextActionEffectIfIdle,
     addScoreSourceFromGain,
-    alienGameState,
     aliens,
     amiba,
     appendActionLogStep,
     banrenma,
-    beginCardSelection,
+    beginCardSelection: (workingRoot, ...args) => beginCardSelectionForRoot(workingRoot, ...args),
     beginQuickActionStep,
     beginSupplementalMovePayment,
     blockManualAiPendingInputIfNeeded,
-    buildPlutoMarkerContext,
+    buildPlutoMarkerContext: (workingRoot, ...args) => actionInteractionRuntime.buildPlutoMarkerContext(workingRoot, ...args),
     cardEffects,
-    cardState,
     cardTaskState,
     cardTaskStateModule,
     cardTriggerNeedsFreeMove,
@@ -3851,10 +3849,9 @@
     clearMoveRocketHighlight,
     completeQuickActionStep,
     composeActionLogDetailWithImpact,
-    createActionContext,
+    createActionContext: (workingRoot, descriptor) => createActionContextForWorkingRoot(workingRoot, descriptor),
     createActionLogImpactSnapshot,
     createBanrenmaReservedButton,
-    createFangzhouReservedButtons,
     createJiuzheReservedButton,
     createReservedCardButton,
     createReservedCardRow,
@@ -3872,13 +3869,8 @@
     getCardTriggerFreeMoveEffect,
     getCardTypeCode,
     getChongPlanetLabel,
-    getCurrentPlayer,
-    getCurrentInitialSelectionCards,
     getEarthSectorCoordinate,
-    getInterfacePlayer,
-    getMovableTokensForPlayer,
     getPendingOwnerFields,
-    getPendingOwnerPlayer,
     getPlanetSectorCoordinate,
     getRequiredMovePointsForUi,
     getSectorContentForMove,
@@ -3893,21 +3885,19 @@
     jiuzhe,
     layoutReservedCardRows,
     listCardTriggerFreeMoveCandidates,
-    listReadyChongTransportCandidates,
+    listReadyChongTransportCandidates: (workingRoot, ...args) => listReadyChongTransportCandidatesForRoot(workingRoot, ...args),
     markCurrentActionIrreversibleForSource,
-    maybeApplyIndustryLaunchScan: (...args) => maybeApplyIndustryLaunchScan?.(...args),
-    nebulaDataState,
-    openAmibaSymbolChoiceDialog,
+    maybeApplyIndustryLaunchScan: (workingRoot, ...args) => maybeApplyIndustryLaunchScanForRoot?.(workingRoot, ...args),
+    openAmibaSymbolChoiceDialog: (workingRoot, ...args) => alienSpeciesRuntime.openAmibaSymbolChoiceDialog(workingRoot, ...args),
     planetStatsState,
     playerHasOwnOrbitMarkerAtPlanet,
-    playerState,
     players,
     quickActionHistory,
     recordAbilityCommands,
     recordQuickHistoryCommand,
     rememberHistoryStep,
     renderActionEffectBar,
-    renderAlienPanels,
+    renderAlienPanels: (workingRoot, ...args) => alienSpeciesRuntime.renderAlienPanels(workingRoot, ...args),
     renderInitialSelectionArea,
     renderPlayerHand,
     renderPlayerStats,
@@ -3916,15 +3906,11 @@
     renderRocketElement,
     renderRockets,
     renderStateReadout,
-    resolvePlayerReference,
     rocketActions,
-    rocketState,
     runezu,
-    selectDefaultRocketForCurrentPlayer,
     solar,
     startCardEffectFlow,
     structuredClone,
-    turnState,
     updateActionButtons,
   });
   ({
@@ -3990,6 +3976,78 @@
     handleCardTriggerChoice,
     executeFreeMoveForCardTrigger,
   } = cardTriggerRuntime);
+  const buildCardTaskContextForRoot = buildCardTaskContext;
+  buildCardTaskContext = (...args) => buildCardTaskContextForRoot(browserRuleState, ...args);
+  const buildPlayerDataTotalsForRoot = buildPlayerDataTotals;
+  buildPlayerDataTotals = (...args) => buildPlayerDataTotalsForRoot(browserRuleState, ...args);
+  const buildProbeLocationIndexForRoot = buildProbeLocationIndex;
+  buildProbeLocationIndex = (...args) => buildProbeLocationIndexForRoot(browserRuleState, ...args);
+  const getReadyCardTasksForRoot = getReadyCardTasks;
+  getReadyCardTasks = (...args) => getReadyCardTasksForRoot(browserRuleState, ...args);
+  const refreshCardTaskStateForRoot = refreshCardTaskState;
+  refreshCardTaskState = (...args) => refreshCardTaskStateForRoot(browserRuleState, ...args);
+  const applyType1TriggerMatchesForRoot = applyType1TriggerMatches;
+  applyType1TriggerMatches = (...args) => applyType1TriggerMatchesForRoot(browserRuleState, ...args);
+  const continueAfterCardTriggerResolutionForRoot = continueAfterCardTriggerResolution;
+  continueAfterCardTriggerResolution = (...args) => continueAfterCardTriggerResolutionForRoot(browserRuleState, ...args);
+  const cancelCardTriggerChoiceForRoot = cancelCardTriggerChoice;
+  cancelCardTriggerChoice = (...args) => cancelCardTriggerChoiceForRoot(browserRuleState, ...args);
+  const buildAlienTraceEventForRoot = buildAlienTraceEvent;
+  buildAlienTraceEvent = (...args) => buildAlienTraceEventForRoot(browserRuleState, ...args);
+  const getActiveCardEventBonusesForRoot = getActiveCardEventBonuses;
+  getActiveCardEventBonuses = (...args) => getActiveCardEventBonusesForRoot(browserRuleState, ...args);
+  const applyCardEventBonusRewardForRoot = applyCardEventBonusReward;
+  applyCardEventBonusReward = (...args) => applyCardEventBonusRewardForRoot(browserRuleState, ...args);
+  const applyPublicityMoveFollowupBonusForRoot = applyPublicityMoveFollowupBonus;
+  applyPublicityMoveFollowupBonus = (...args) => applyPublicityMoveFollowupBonusForRoot(browserRuleState, ...args);
+  const processCardEventBonusesForRoot = processCardEventBonuses;
+  processCardEventBonuses = (...args) => processCardEventBonusesForRoot(browserRuleState, ...args);
+  const processChongTransportArrivalEventsForRoot = processChongTransportArrivalEvents;
+  processChongTransportArrivalEvents = (...args) => processChongTransportArrivalEventsForRoot(browserRuleState, ...args);
+  const buildChongPositionArrivalEventsForRoot = buildChongPositionArrivalEvents;
+  buildChongPositionArrivalEvents = (...args) => buildChongPositionArrivalEventsForRoot(browserRuleState, ...args);
+  const settleCardTasksAfterEffectForRoot = settleCardTasksAfterEffect;
+  settleCardTasksAfterEffect = (...args) => settleCardTasksAfterEffectForRoot(browserRuleState, ...args);
+  const getReadyTaskForReservedCardForRoot = getReadyTaskForReservedCard;
+  getReadyTaskForReservedCard = (...args) => getReadyTaskForReservedCardForRoot(browserRuleState, ...args);
+  const getReadyChongTaskForReservedCardForRoot = getReadyChongTaskForReservedCard;
+  getReadyChongTaskForReservedCard = (...args) => getReadyChongTaskForReservedCardForRoot(browserRuleState, ...args);
+  const getReadyAmibaTaskForReservedCardForRoot = getReadyAmibaTaskForReservedCard;
+  getReadyAmibaTaskForReservedCard = (...args) => getReadyAmibaTaskForReservedCardForRoot(browserRuleState, ...args);
+  const getReadyRunezuTaskForReservedCardForRoot = getReadyRunezuTaskForReservedCard;
+  getReadyRunezuTaskForReservedCard = (...args) => getReadyRunezuTaskForReservedCardForRoot(browserRuleState, ...args);
+  const removeReservedCardToDiscardForRoot = removeReservedCardToDiscard;
+  removeReservedCardToDiscard = (...args) => removeReservedCardToDiscardForRoot(browserRuleState, ...args);
+  const discardReservedCardIfFinishedForRoot = discardReservedCardIfFinished;
+  discardReservedCardIfFinished = (...args) => discardReservedCardIfFinishedForRoot(browserRuleState, ...args);
+  const createCardTriggerProgressSnapshotForRoot = createCardTriggerProgressSnapshot;
+  createCardTriggerProgressSnapshot = (...args) => createCardTriggerProgressSnapshotForRoot(browserRuleState, ...args);
+  const createCardTriggerProgressCommandsForRoot = createCardTriggerProgressCommands;
+  createCardTriggerProgressCommands = (...args) => createCardTriggerProgressCommandsForRoot(browserRuleState, ...args);
+  const consumeCardTriggerWithSnapshotForRoot = consumeCardTriggerWithSnapshot;
+  consumeCardTriggerWithSnapshot = (...args) => consumeCardTriggerWithSnapshotForRoot(browserRuleState, ...args);
+  const confirmCardTriggerProgressForRoot = confirmCardTriggerProgress;
+  confirmCardTriggerProgress = (...args) => confirmCardTriggerProgressForRoot(browserRuleState, ...args);
+  const prepareCardTriggerRewardEffectsForRoot = prepareCardTriggerRewardEffects;
+  prepareCardTriggerRewardEffects = (...args) => prepareCardTriggerRewardEffectsForRoot(browserRuleState, ...args);
+  const queueCardTriggerRewardEffectsForRoot = queueCardTriggerRewardEffects;
+  queueCardTriggerRewardEffects = (...args) => queueCardTriggerRewardEffectsForRoot(browserRuleState, ...args);
+  const openCardTaskCompletionPickerForRoot = openCardTaskCompletionPicker;
+  openCardTaskCompletionPicker = (...args) => openCardTaskCompletionPickerForRoot(browserRuleState, ...args);
+  const confirmCardTaskCompletionForRoot = confirmCardTaskCompletion;
+  confirmCardTaskCompletion = (...args) => confirmCardTaskCompletionForRoot(browserRuleState, ...args);
+  const openCardTriggerPickerForRoot = openCardTriggerPicker;
+  openCardTriggerPicker = (...args) => openCardTriggerPickerForRoot(browserRuleState, ...args);
+  const applyCardTriggerRewardForRoot = applyCardTriggerReward;
+  applyCardTriggerReward = (...args) => applyCardTriggerRewardForRoot(browserRuleState, ...args);
+  const beginCardTriggerFreeMoveForRoot = beginCardTriggerFreeMove;
+  beginCardTriggerFreeMove = (...args) => beginCardTriggerFreeMoveForRoot(browserRuleState, ...args);
+  const applyCardTriggerMatchForRoot = applyCardTriggerMatch;
+  applyCardTriggerMatch = (...args) => applyCardTriggerMatchForRoot(browserRuleState, ...args);
+  const handleCardTriggerChoiceForRoot = handleCardTriggerChoice;
+  handleCardTriggerChoice = (...args) => handleCardTriggerChoiceForRoot(browserRuleState, ...args);
+  const executeFreeMoveForCardTriggerForRoot = executeFreeMoveForCardTrigger;
+  executeFreeMoveForCardTrigger = (...args) => executeFreeMoveForCardTriggerForRoot(browserRuleState, ...args);
 
   function getActionLogActionLabel(actionType, label) {
     return label || ACTION_LOG_DEFAULT_LABELS[actionType] || actionType || "本回合行动";
@@ -5979,22 +6037,26 @@
     return { x: planet.x, y: planet.y };
   }
 
-  function getRocketCurrentPlanetId(rocketId) {
-    const rocket = rocketState.rockets.find((item) => Number(item.id) === Number(rocketId));
+  function getRocketCurrentPlanetIdForRoot(workingRoot, rocketId) {
+    const rocket = workingRoot.rocketState.rockets.find((item) => Number(item.id) === Number(rocketId));
     const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
     if (!coordinate) return null;
-    const snapshot = solar.createSolarSnapshot(solarState);
+    const snapshot = solar.createSolarSnapshot(workingRoot.solarState);
     const planet = snapshot.planetLocations.find((item) => (
       Number(item.x) === Number(coordinate.x) && Number(item.y) === Number(coordinate.y)
     ));
     return planet?.planetId || null;
   }
 
-  function listReadyChongTransportCandidates(player, task) {
+  function getRocketCurrentPlanetId(rocketId) {
+    return getRocketCurrentPlanetIdForRoot(browserRuleState, rocketId);
+  }
+
+  function listReadyChongTransportCandidatesForRoot(workingRoot, player, task) {
     if (!chong?.listActiveTransports || task?.kind !== "transport") return [];
-    return chong.listActiveTransports(alienGameState, player)
+    return chong.listActiveTransports(workingRoot.alienGameState, player)
       .map((transport) => {
-        const currentPlanetId = getRocketCurrentPlanetId(transport.rocketId);
+        const currentPlanetId = getRocketCurrentPlanetIdForRoot(workingRoot, transport.rocketId);
         return {
           ...transport,
           currentPlanetId,
@@ -6006,6 +6068,10 @@
         };
       })
       .filter((transport) => transport.currentPlanetId === task.destinationPlanetId);
+  }
+
+  function listReadyChongTransportCandidates(player, task) {
+    return listReadyChongTransportCandidatesForRoot(browserRuleState, player, task);
   }
 
   function buildSectorScanChoicesForXs(sectorXs) {
