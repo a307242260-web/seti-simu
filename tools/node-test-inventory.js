@@ -4,6 +4,19 @@ function lines(value) {
   return value.trim().split(/\s+/).filter(Boolean);
 }
 
+function modulesFor(relative) {
+  if (relative === "randomizer/full-flow/standard-flow.test.js") {
+    return ["uniqueAction", "uniqueEffectQueue", "uniqueSessionState", "unifiedAuthorityState"];
+  }
+  if (/\/training\/|\/game\/ai\/|\/app\/ai\/|\/headless-|public-api-ai|heuristic-policy\.integration|policy-input-adapter/.test(relative)) return ["robot"];
+  if (/\/game\/effects\/|effect-session-host|decision-session-store/.test(relative)) return ["uniqueSessionState"];
+  if (/\/app\/effects\/|effect-flow|effect-choice-flow/.test(relative)) return ["uniqueEffectQueue"];
+  if (/\/game\/(?:actions|abilities|industry|aliens)\/|\/game\/(?:basic-cards|initial-cards)\.test|action-runtime|action-briefing/.test(relative)) return ["uniqueAction"];
+  if (/\/game\/(?:state|cards|data|tech|history)\/|\/game\/(?:players|rockets|rockets\.move|planet-stats|final-scoring|end-game-scoring)\.test|\/solar-system\//.test(relative)) return ["unifiedAuthorityState"];
+  if (/\/app\//.test(relative)) return ["webUi"];
+  return [];
+}
+
 module.exports = Object.freeze({
   schemaVersion: "seti-node-test-inventory-v1",
   unit: lines(`
@@ -146,10 +159,20 @@ randomizer/training/worker-pool.test.js
     "randomizer/game/ai/heuristic-policy.test.js",
     "randomizer/training/heuristic-policy.fixed-board.test.js",
     "randomizer/training/heuristic-policy.seed-baseline.test.js",
+    "randomizer/training/heuristic-policy-turn-report.test.js",
   ],
   architectureGate: [
     "randomizer/game/state/authority-inventory.test.js",
     "randomizer/game/state/browser-authority-hard-cut-audit.test.js",
     "randomizer/game/state/semantic-architecture-audit.test.js",
   ],
+  architectureModules: Object.freeze({
+    uniqueAction: "唯一 Action",
+    uniqueEffectQueue: "唯一 Effect Queue",
+    uniqueSessionState: "唯一 Session 状态",
+    unifiedAuthorityState: "统一权威状态",
+    webUi: "网页 UI",
+    robot: "机器人",
+  }),
+  modulesFor,
 });

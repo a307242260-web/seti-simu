@@ -36,6 +36,7 @@ function collect(directory, output) {
 }
 
 const classifications = ["unit", "fullFlow", "merge", "architectureGate"];
+const architectureModuleKeys = new Set(Object.keys(inventory.architectureModules));
 const classified = new Map();
 for (const classification of classifications) {
   for (const relative of inventory[classification]) {
@@ -49,9 +50,14 @@ collect(randomizerRoot, diskTests);
 diskTests.sort();
 const missing = [...classified.keys()].filter((relative) => !diskTests.includes(relative));
 const unclassified = diskTests.filter((relative) => !classified.has(relative));
-if (missing.length || unclassified.length || inventory.fullFlow.length !== 1) {
+const invalidModules = [...inventory.unit, ...inventory.fullFlow].filter((relative) => {
+  const modules = inventory.modulesFor(relative);
+  return modules.length === 0 || modules.some((moduleKey) => !architectureModuleKeys.has(moduleKey));
+});
+if (missing.length || unclassified.length || invalidModules.length || inventory.fullFlow.length !== 1) {
   if (missing.length) process.stderr.write(`清单文件不存在：\n${missing.join("\n")}\n`);
   if (unclassified.length) process.stderr.write(`未分类测试：\n${unclassified.join("\n")}\n`);
+  if (invalidModules.length) process.stderr.write(`未按 SETI-45 架构模块分类：\n${invalidModules.join("\n")}\n`);
   if (inventory.fullFlow.length !== 1) process.stderr.write(`full-flow 必须恰好一个，当前 ${inventory.fullFlow.length}\n`);
   process.exit(1);
 }
@@ -64,7 +70,10 @@ const selected = diskTests
   .filter(({ relative }) => excludes.every((value) => !relative.includes(value)));
 
 if (listOnly) {
-  for (const relative of diskTests) process.stdout.write(`${classified.get(relative)}\t${relative}\n`);
+  for (const relative of diskTests) {
+    const modules = inventory.modulesFor(relative).map((key) => inventory.architectureModules[key]).join(" + ") || "独立架构闸门/待合并";
+    process.stdout.write(`${classified.get(relative)}\t${modules}\t${relative}\n`);
+  }
   for (const classification of classifications) {
     process.stdout.write(`COUNT ${classification}=${inventory[classification].length}\n`);
   }
@@ -72,9 +81,11 @@ if (listOnly) {
 }
 
 const totals = { unit: { passed: 0, failed: 0, milliseconds: 0 }, fullFlow: { passed: 0, failed: 0, milliseconds: 0 }, architectureGate: { passed: 0, failed: 0, milliseconds: 0 } };
+const moduleCounts = Object.fromEntries([...architectureModuleKeys].map((key) => [key, 0]));
 const failures = [];
 for (const test of selected) {
   const startedAt = process.hrtime.bigint();
+  for (const moduleKey of inventory.modulesFor(test.relative)) moduleCounts[moduleKey] += 1;
   const result = spawnSync(process.execPath, [path.join(repositoryRoot, test.relative)], { cwd: repositoryRoot, stdio: "inherit" });
   const milliseconds = Number(process.hrtime.bigint() - startedAt) / 1e6;
   totals[test.classification].milliseconds += milliseconds;
@@ -90,5 +101,10 @@ for (const classification of [...runnableTypes]) {
   process.stdout.write(`SUMMARY ${classification} passed=${total.passed} failed=${total.failed} total=${total.passed + total.failed} time=${(total.milliseconds / 1000).toFixed(2)}s\n`);
 }
 if (!architectureOnly) process.stdout.write(`SKIPPED merge=${inventory.merge.length} architectureGate=${inventory.architectureGate.length}\n`);
+if (!architectureOnly) {
+  for (const [moduleKey, count] of Object.entries(moduleCounts)) {
+    process.stdout.write(`MODULE ${inventory.architectureModules[moduleKey]} tests=${count}\n`);
+  }
+}
 for (const failure of failures) process.stderr.write(`FAIL ${failure.file} status=${failure.status} signal=${failure.signal || "none"}\n`);
 if (failures.length) process.exitCode = 1;

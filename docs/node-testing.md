@@ -7,6 +7,8 @@
 
 不得新增读取生产源码后匹配字符串、函数名、行数或装配顺序的测试，也不得用“模块能加载”“导出存在”、迁移阶段编号或旧文件已删除代替业务契约。新增测试必须先登记到 `tools/node-test-inventory.js`；未登记、重复登记或 full-flow 数量不是一个时，runner 会直接失败。
 
+测试类型与架构归属是两个正交维度。每个 unit 必须按 SETI-45 已确认的组件归入“唯一 Action、唯一 Effect Queue、唯一 Session 状态、统一权威状态、网页 UI、机器人”之一；唯一 full-flow 同时覆盖前四个共享内部组件。不得用 Browser/Headless、runtime core 等实现名创造新的架构分类。
+
 ## 运行
 
 ```sh
