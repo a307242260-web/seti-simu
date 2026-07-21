@@ -20,7 +20,7 @@
 - evidence: SETI-124 run `bc7a12a7-d9ba-4f10-91f8-eca98ee0a60b` 明确说“按队长职责”拆成三组并行只读审计，但完整日志只有 34 次 exec 和 3 次 patch，没有任何派工调用；运行约 70 分钟后仅提交 `2f770ce` 的 1 行生产门禁与 10 行测试，15 个顶层 family、7 个 conditional family、Browser 长期 slices、旧 authority、保存恢复和 AI 旁路均未实施，run 却主动完成并把 issue 留在 in_progress。owner 随后明确要求修改领航 instruction 并重启任务。
 - promote_to: agent_prompt
 - promotion_status: promote
-- decision: 修订领航远端 instruction：拆单仅适用于父级协调或明确授权；coding issue 默认亲自连续实现；禁止无真实派工的“并行审计”表述；局部门禁、盘点和阶段性提交不构成完成或停止条件；有可执行 next_action 且无真实 blocker 时不得主动结束 run。以 SETI-123/124 重启后的连续执行作为首轮验证。
+- decision: 修订领航远端 instruction：拆单仅适用于父级协调或明确授权；coding issue 默认亲自连续实现；禁止无真实派工的“并行审计”表述；局部门禁、盘点和阶段性提交不构成完成或停止条件；有可执行 next_action 且无真实 blocker 时不得主动结束 run。首轮重启又发现 SETI-123 父级准备与活跃 SETI-124 child 并发实现同一主链，补充“活跃 child 期间父级只协调/验收，结构化 handoff 后方可接管”。
 
 - date: 2026-07-21
 - source_issue: SETI-104
