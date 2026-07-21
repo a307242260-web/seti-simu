@@ -88,6 +88,21 @@ for (const fixture of negativeFixtures) {
   );
 }
 
+const duplicateProductOwners = audit.inspectSourceSet([
+  {
+    relativePath: "randomizer/player-shell.js",
+    source: "let playerRuntime; function boot(seed) { playerRuntime = game.createStateStore(seed); }",
+  },
+  {
+    relativePath: "randomizer/training-shell.js",
+    source: "let trainingMirror; function sync(source) { trainingMirror = structuredClone(source.getSnapshot()); }",
+  },
+]);
+assert.ok(
+  duplicateProductOwners.violations.some((entry) => entry.code === "PRODUCT_EXTENT_DUPLICATE_RULE_AUTHORITY"),
+  "玩家版/训练版外延各自持有或同步规则状态应触发跨入口重复 authority",
+);
+
 const allowedFixtures = [
   {
     label: "只读 projection",
@@ -129,7 +144,7 @@ for (const fixture of allowedFixtures) {
   assert.deepEqual(codes(fixture.source), [], `${fixture.label} 不应误报`);
 }
 
-console.log(`browser authority hard-cut fixtures passed (${negativeFixtures.length} negative, ${allowedFixtures.length} allowed)`);
+console.log(`browser authority hard-cut fixtures passed (${negativeFixtures.length + 1} negative, ${allowedFixtures.length} allowed)`);
 
 if (process.argv.includes("--fixtures-only")) process.exit(0);
 

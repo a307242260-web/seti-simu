@@ -270,6 +270,62 @@ function collectCapabilityEntries(relativePath, source) {
   ));
 }
 
+function collectProductExtentAuthority(relativePath, source) {
+  if (isStateStoreKernel(source)) return [];
+  const evidence = [];
+  const residentStore = /\b([A-Za-z_$][\w$]*)\s*=\s*[A-Za-z_$][\w$]*(?:\s*\.\s*[A-Za-z_$][\w$]*)*\s*\.\s*create(?:HighCoupling)?StateStore\s*\(/g;
+  for (const match of source.matchAll(residentStore)) {
+    evidence.push({
+      file: relativePath,
+      line: lineAt(source, match.index),
+      binding: match[1],
+      kind: "resident-store",
+    });
+  }
+  const topLevelMutable = new Set([...source.matchAll(/^\s*let\s+([A-Za-z_$][\w$]*)\b/gm)].map((match) => match[1]));
+  for (const binding of topLevelMutable) {
+    const escaped = binding.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const mirror = new RegExp(`\\b${escaped}\\s*=\\s*(?:structuredClone|clone)\\s*\\([^;\\n]*\\bgetSnapshot\\s*\\(`).exec(source);
+    if (mirror) {
+      evidence.push({
+        file: relativePath,
+        line: lineAt(source, mirror.index),
+        binding,
+        kind: "snapshot-mirror",
+      });
+    }
+  }
+  return evidence;
+}
+
+function inspectSourceSet(entries) {
+  const violations = entries.flatMap(({ relativePath, source }) => inspectSource(relativePath, source));
+  const extentOwners = entries.flatMap(({ relativePath, source }) => (
+    collectProductExtentAuthority(relativePath, source)
+  ));
+  for (const owner of extentOwners) {
+    violations.push({
+      file: owner.file,
+      line: owner.line,
+      code: "PRODUCT_EXTENT_RULE_AUTHORITY",
+      message: `产品外延通过 ${owner.kind} 持有或同步规则状态`,
+      binding: owner.binding,
+      ownerKind: owner.kind,
+    });
+  }
+  const ownerFiles = [...new Set(extentOwners.map((entry) => entry.file))].sort();
+  if (ownerFiles.length >= 2) {
+    violations.push({
+      file: "<production-authority-graph>",
+      line: 1,
+      code: "PRODUCT_EXTENT_DUPLICATE_RULE_AUTHORITY",
+      message: `${ownerFiles.length} 个产品外延分别持有或同步规则状态`,
+      ownerFiles,
+    });
+  }
+  return { violations, extentOwners };
+}
+
 function auditRepository(repositoryRoot, overlays = {}) {
   const files = listProductionFiles(path.join(repositoryRoot, "randomizer"));
   const sources = files.map((absolutePath) => {
@@ -281,11 +337,12 @@ function auditRepository(repositoryRoot, overlays = {}) {
         : fs.readFileSync(absolutePath, "utf8"),
     };
   });
-  const violations = sources.flatMap(({ relativePath, source }) => inspectSource(relativePath, source));
+  const sourceSetAudit = inspectSourceSet(sources);
   return {
-    ok: violations.length === 0,
+    ok: sourceSetAudit.violations.length === 0,
     scannedFiles: sources.length,
-    violations,
+    violations: sourceSetAudit.violations,
+    productExtentOwners: sourceSetAudit.extentOwners,
     capabilityChain: sources.flatMap(({ relativePath, source }) => collectCapabilityEntries(relativePath, source)),
   };
 }
@@ -298,6 +355,8 @@ module.exports = Object.freeze({
   isEffectSessionKernel,
   isStateTransactionKernel,
   inspectSource,
+  collectProductExtentAuthority,
+  inspectSourceSet,
   collectCapabilityEntries,
   auditRepository,
 });

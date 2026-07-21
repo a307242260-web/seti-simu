@@ -30,8 +30,9 @@ StateStore 是 committed root 的唯一 owner。Effect Session 从 `beginWorking
 - 把分散 slice 拼成 canonical root，或把 committed root hydrate 回常驻 slice；
 - 从 working/slice 接口取得引用后在 Effect Session 外直接写；
 - 在 StateStore/Effect Session 边界外调用 CAS，或暴露额外 CAS 形成双提交路径。
+- 由玩家版、训练版等产品外延分别实例化 StateStore 或镜像 committed snapshot；两个产品只能消费同一游戏内部 runtime 的 StateSource/session 端口。
 
-`randomizer/game/state/browser-authority-hard-cut-audit.test.js --fixtures-only` 固定八类负向反例与三类允许形态（只读 projection、短生命周期 Effect Session workingState、StateStore 内部实现）。不带参数执行时还会扫描全部 production；在硬切完成前必须保持红灯，迁移完成后应自然转绿，不需增补路径白名单。当前假绿基线与 production authority/write/read/commit/restore 链图见 `checkpoint/seti-112-proof-obligations.md`。
+`randomizer/game/state/browser-authority-hard-cut-audit.test.js --fixtures-only` 固定九类负向反例与三类允许形态（只读 projection、短生命周期 Effect Session workingState、StateStore 内部实现）。不带参数执行时还会扫描全部 production；在硬切完成前必须保持红灯，迁移完成后应自然转绿，不需增补路径白名单。当前假绿基线与 production authority/write/read/commit/restore 链图见 `checkpoint/seti-112-proof-obligations.md`。
 
 ## 验证
 
