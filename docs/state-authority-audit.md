@@ -22,12 +22,24 @@ StateStore 是 committed root 的唯一 owner。Effect Session 从 `beginWorking
 
 审计还执行两类运行时证据：StateStore commit trace 证明 working-copy isolation、单版本提交和 stale 零污染；Browser Projection poison 证明传统 slice getter 不会被读取。负向 fixture 位于 `randomizer/game/state/semantic-architecture-audit.test.js`，九类注入必须逐项非零失败。
 
+## Browser authority hard-cut 门禁
+
+`tools/lib/browser-authority-hard-cut-audit.js` 在同一份生产入口集合上追加 Browser 硬切审计。它不按文件名或路径放行，而是按接口形态识别 StateStore kernel、Effect Session runtime/terminal host 与单次 working-copy transaction；其余模块不得：
+
+- 聚合并经 getter、Proxy 或 wrapper 暴露多个长期可变规则对象；
+- 把分散 slice 拼成 canonical root，或把 committed root hydrate 回常驻 slice；
+- 从 working/slice 接口取得引用后在 Effect Session 外直接写；
+- 在 StateStore/Effect Session 边界外调用 CAS，或暴露额外 CAS 形成双提交路径。
+
+`randomizer/game/state/browser-authority-hard-cut-audit.test.js --fixtures-only` 固定八类负向反例与三类允许形态（只读 projection、短生命周期 Effect Session workingState、StateStore 内部实现）。不带参数执行时还会扫描全部 production；在硬切完成前必须保持红灯，迁移完成后应自然转绿，不需增补路径白名单。当前假绿基线与 production authority/write/read/commit/restore 链图见 `checkpoint/seti-112-proof-obligations.md`。
+
 ## 验证
 
 ```bash
 node --check randomizer/app.js
 node tools/audit_state_authority.js
 node randomizer/game/state/semantic-architecture-audit.test.js
+node randomizer/game/state/browser-authority-hard-cut-audit.test.js
 node tools/run_node_tests.js
 ```
 

@@ -7,6 +7,7 @@ const inventory = require("../randomizer/game/state/authority-inventory");
 const stateStoreApi = require("../randomizer/game/state/state-store");
 const residentProjection = require("../randomizer/app/browser-host/resident-projection");
 const architectureAudit = require("./lib/state-authority-audit");
+const browserHardCutAudit = require("./lib/browser-authority-hard-cut-audit");
 
 const repositoryRoot = path.resolve(__dirname, "..");
 
@@ -88,12 +89,14 @@ const forbiddenFiles = [
   "randomizer/game/ai/candidate-pipeline.js",
 ].filter((relativePath) => fs.existsSync(path.join(repositoryRoot, relativePath)));
 const sourceAudit = architectureAudit.auditSources(repositoryRoot);
+const browserHardCut = browserHardCutAudit.auditRepository(repositoryRoot);
 const inventoryAudit = inventory.auditInventory();
 const commitTrace = runCommitTrace();
 const interfacePoison = runInterfacePoison();
 const entryAudit = auditBrowserScriptEntries(sourceAudit.inventory);
 const violations = [
   ...sourceAudit.violations,
+  ...browserHardCut.violations,
   ...forbiddenFiles.map((file) => ({ file, code: "FORBIDDEN_PRODUCTION_FILE", message: "旧 owner/policy 文件仍存在" })),
 ];
 
@@ -113,6 +116,7 @@ const report = {
   },
   runtimeCommitTrace: commitTrace,
   interfacePoison,
+  browserAuthorityHardCut: browserHardCut,
   violations,
   forbiddenFiles,
 };
