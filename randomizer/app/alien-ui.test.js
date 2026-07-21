@@ -115,7 +115,7 @@ function createHarness() {
     },
     pendingState,
     alienGameState,
-    playerState: { players: [player] },
+    playerState: { currentPlayerId: "p1", players: [player] },
     rocketState,
     els,
     renderAlienPanels: () => { calls.renderPanels += 1; },
@@ -124,7 +124,7 @@ function createHarness() {
     getAlienTraceActionPlayer: () => player,
     getAvailableDataTokenCount: () => 0,
     resolvePlayerReference: (ref) => ((ref?.playerId || ref?.playerColor) ? player : null),
-    confirmFangzhouCard2Unlock: (alienSlotId, traceType) => {
+    confirmFangzhouCard2Unlock: (_workingRoot, alienSlotId, traceType) => {
       calls.unlock.push({ alienSlotId, traceType });
       return { ok: true };
     },
@@ -137,12 +137,23 @@ function createHarness() {
     getPlayerColorDefinition: (color) => ({ label: color === "white" ? "白色" : color }),
   });
 
-  return { helpers, pendingState, rocketState, els, calls };
+  return {
+    helpers,
+    pendingState,
+    rocketState,
+    els,
+    calls,
+    workingRoot: {
+      alienGameState,
+      playerState: { currentPlayerId: "p1", players: [player] },
+      rocketState,
+    },
+  };
 }
 
 {
-  const { helpers, pendingState, els } = createHarness();
-  const result = helpers.openAlienTracePicker({ allowedTraceTypes: ["yellow"] });
+  const { helpers, pendingState, els, workingRoot } = createHarness();
+  const result = helpers.openAlienTracePicker(workingRoot, { allowedTraceTypes: ["yellow"] });
   assert.equal(result.ok, true);
   assert.equal(els.alienTraceOverlay.hidden, false);
   assert.deepEqual(pendingState.alienTracePickerState.allowedTraceTypes, ["yellow"]);
@@ -151,8 +162,8 @@ function createHarness() {
 }
 
 {
-  const { helpers, pendingState } = createHarness();
-  const notice = helpers.buildAlienRevealNoticeEntry(2, { alienId: "fangzhou" });
+  const { helpers, pendingState, workingRoot } = createHarness();
+  const notice = helpers.buildAlienRevealNoticeEntry(workingRoot, 2, { alienId: "fangzhou" });
   const result = helpers.openAlienRevealConfirmation([notice]);
   assert.equal(result.ok, true);
   assert.equal(result.noticeVisible, true);
@@ -163,14 +174,14 @@ function createHarness() {
 }
 
 {
-  const { helpers, pendingState, els } = createHarness();
+  const { helpers, pendingState, els, workingRoot } = createHarness();
   pendingState.alienTracePickerState = {
     allowedTraceTypes: ["yellow"],
     allowedAlienSlotIds: [2],
     targetPlayerId: "p1",
     targetPlayerColor: "white",
   };
-  const result = helpers.openFangzhouTraceDestinationChoice({ alienSlotId: 2, allowedTraceTypes: ["yellow"] });
+  const result = helpers.openFangzhouTraceDestinationChoice(workingRoot, { alienSlotId: 2, allowedTraceTypes: ["yellow"] });
   assert.equal(result.ok, true);
   assert.equal(pendingState.alienTracePickerState.mode, "fangzhou-destination");
   assert.equal(els.alienTraceActions.children.length, 2);

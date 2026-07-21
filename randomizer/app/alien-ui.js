@@ -43,10 +43,19 @@
       alienRevealConfirmation: "alien_reveal_confirmation",
       actionEffectFlow: "action_effect_flow",
     }) || {};
-    const alienGameState = context.alienGameState || {};
-    const playerState = context.playerState || {};
-    const rocketState = context.rocketState || {};
     const els = context.els || {};
+
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("alien-ui rule operation requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
+
+    function getWorkingCurrentPlayer(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      return (playerState.players || []).find((player) => player.id === playerState.currentPlayerId) || null;
+    }
 
     const renderAlienPanels = requireFunction("renderAlienPanels", context.renderAlienPanels);
     const renderStateReadout = requireFunction("renderStateReadout", context.renderStateReadout);
@@ -139,11 +148,12 @@
       return isAlienTracePlacementMode("runezu-grid");
     }
 
-    function getAlienTracePickerPlayer() {
-      return getAlienTraceActionPlayer(decisionState.alienTraceAction || decisionState.alienTracePickerState);
+    function getAlienTracePickerPlayer(workingRoot) {
+      return getAlienTraceActionPlayer(workingRoot, decisionState.alienTraceAction || decisionState.alienTracePickerState);
     }
 
-    function canPlaceJiuzheTrace(alienSlotId, traceType, position) {
+    function canPlaceJiuzheTrace(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!isJiuzheTracePlacementMode()) return false;
       if (!isAlienTracePlacementSlotAllowed(alienSlotId)) return false;
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
@@ -153,7 +163,8 @@
       return !grid?.[traceType]?.[position];
     }
 
-    function canPlaceYichangdianTrace(alienSlotId, traceType, position) {
+    function canPlaceYichangdianTrace(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!isYichangdianTracePlacementMode()) return false;
       if (!isAlienTracePlacementSlotAllowed(alienSlotId)) return false;
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
@@ -164,17 +175,18 @@
         alienSlotId,
         traceType,
         position,
-        getAlienTracePickerPlayer(),
+        getAlienTracePickerPlayer(workingRoot),
       )?.ok);
     }
 
-    function canPlaceFangzhouTrace(alienSlotId, traceType, position) {
+    function canPlaceFangzhouTrace(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!isFangzhouTracePlacementMode()) return false;
       if (!isAlienTracePlacementSlotAllowed(alienSlotId)) return false;
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
       if (!allowedTraceTypes.includes(traceType)) return false;
       if (!fangzhou?.isFangzhouRevealedSlot?.(alienGameState, alienSlotId)) return false;
-      const currentPlayer = getAlienTracePickerPlayer();
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       return fangzhou?.canPlaceFangzhouTrace?.(
         alienGameState,
         alienSlotId,
@@ -184,13 +196,14 @@
       )?.ok;
     }
 
-    function canPlaceBanrenmaTrace(alienSlotId, traceType, position) {
+    function canPlaceBanrenmaTrace(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!isBanrenmaTracePlacementMode()) return false;
       if (!isAlienTracePlacementSlotAllowed(alienSlotId)) return false;
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
       if (!allowedTraceTypes.includes(traceType)) return false;
       if (!banrenma?.isBanrenmaRevealedSlot?.(alienGameState, alienSlotId)) return false;
-      const currentPlayer = getAlienTracePickerPlayer();
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       return Boolean(banrenma?.canPlaceBanrenmaTrace?.(
         alienGameState,
         alienSlotId,
@@ -201,13 +214,14 @@
       )?.ok);
     }
 
-    function canPlaceChongTrace(alienSlotId, traceType, position) {
+    function canPlaceChongTrace(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!isChongTracePlacementMode()) return false;
       if (!isAlienTracePlacementSlotAllowed(alienSlotId)) return false;
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
       if (!allowedTraceTypes.includes(traceType)) return false;
       if (!chong?.isChongRevealedSlot?.(alienGameState, alienSlotId)) return false;
-      const currentPlayer = getAlienTracePickerPlayer();
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       return chong?.canPlaceChongTrace?.(
         alienGameState,
         alienSlotId,
@@ -217,13 +231,14 @@
       )?.ok;
     }
 
-    function canPlaceAmibaTrace(alienSlotId, traceType, position) {
+    function canPlaceAmibaTrace(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!isAmibaTracePlacementMode()) return false;
       if (!isAlienTracePlacementSlotAllowed(alienSlotId)) return false;
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
       if (!allowedTraceTypes.includes(traceType)) return false;
       if (!amiba?.isAmibaRevealedSlot?.(alienGameState, alienSlotId)) return false;
-      const currentPlayer = getAlienTracePickerPlayer();
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       return amiba?.canPlaceAmibaTrace?.(
         alienGameState,
         alienSlotId,
@@ -233,13 +248,14 @@
       )?.ok;
     }
 
-    function canPlaceAomomoTrace(alienSlotId, traceType, position) {
+    function canPlaceAomomoTrace(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!isAomomoTracePlacementMode()) return false;
       if (!isAlienTracePlacementSlotAllowed(alienSlotId)) return false;
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
       if (!allowedTraceTypes.includes(traceType)) return false;
       if (!aomomo?.isAomomoRevealedSlot?.(alienGameState, alienSlotId)) return false;
-      const currentPlayer = getAlienTracePickerPlayer();
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       return aomomo?.canPlaceAomomoTrace?.(
         alienGameState,
         alienSlotId,
@@ -249,13 +265,14 @@
       )?.ok;
     }
 
-    function canPlaceRunezuTrace(alienSlotId, traceType, position) {
+    function canPlaceRunezuTrace(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!isRunezuTracePlacementMode()) return false;
       if (!isAlienTracePlacementSlotAllowed(alienSlotId)) return false;
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
       if (!allowedTraceTypes.includes(traceType)) return false;
       if (!runezu?.isRunezuRevealedSlot?.(alienGameState, alienSlotId)) return false;
-      const currentPlayer = getAlienTracePickerPlayer();
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       return runezu?.canPlaceRunezuTrace?.(
         alienGameState,
         alienSlotId,
@@ -265,14 +282,16 @@
       )?.ok;
     }
 
-    function canPlaceRunezuFaceSymbol(alienSlotId, position) {
+    function canPlaceRunezuFaceSymbol(workingRoot, alienSlotId, position) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!runezu?.isRunezuRevealedSlot?.(alienGameState, alienSlotId)) return false;
       if (isActionEffectFlowActive() || isCardSelectionActive() || isDiscardSelectionActive()) return false;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       return runezu?.canPlaceFaceSymbol?.(alienGameState, position, currentPlayer)?.ok;
     }
 
-    function canPlaceStateTrace(alienSlotId, traceType, kind) {
+    function canPlaceStateTrace(workingRoot, alienSlotId, traceType, kind) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!shouldShowStateTraceSlots()) return false;
       if (!isAlienTracePlacementSlotAllowed(alienSlotId)) return false;
       const alienSlot = aliens.getAlienSlot(alienGameState, alienSlotId);
@@ -299,16 +318,18 @@
       if (els.alienTraceCancel) els.alienTraceCancel.hidden = false;
     }
 
-    function findPlayerForFirstTrace(traceSlot) {
+    function findPlayerForFirstTrace(workingRoot, traceSlot) {
       if (!traceSlot?.firstPlaced) return null;
-      return resolvePlayerReference({
-        playerId: traceSlot.ownerPlayerId || traceSlot.playerId || null,
-        playerColor: traceSlot.ownerPlayerColor || traceSlot.playerColor || null,
-      });
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const playerId = traceSlot.ownerPlayerId || traceSlot.playerId || null;
+      const playerColor = traceSlot.ownerPlayerColor || traceSlot.playerColor || null;
+      return (playerState.players || []).find((player) => (
+        (playerId && player.id === playerId) || (playerColor && player.color === playerColor)
+      )) || null;
     }
 
-    function formatRevealTraceOwnerLabel(traceSlot) {
-      const player = findPlayerForFirstTrace(traceSlot);
+    function formatRevealTraceOwnerLabel(workingRoot, traceSlot) {
+      const player = findPlayerForFirstTrace(workingRoot, traceSlot);
       if (player) return `玩家${player.colorLabel || player.name || player.id}`;
       const ownerColor = traceSlot?.ownerPlayerColor || traceSlot?.playerColor || null;
       const colorLabel = getPlayerColorDefinition(ownerColor)?.label || ownerColor;
@@ -323,7 +344,8 @@
       return `${label}${label.endsWith("外星人") ? "" : "外星人"}已被揭示！`;
     }
 
-    function buildAlienRevealNoticeEntry(alienSlotId, revealResult) {
+    function buildAlienRevealNoticeEntry(workingRoot, alienSlotId, revealResult) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const slot = aliens.getAlienSlot(alienGameState, alienSlotId);
       const alienId = revealResult?.alienId || slot?.alienId || slot?.assignedAlienId || null;
       const alienLabel = aliens.getAlienLabel?.(alienId) || alienId || "外星人";
@@ -335,7 +357,7 @@
         title: formatAlienRevealTitle(alienId),
         lines: traceTypes.map((traceType) => {
           const traceLabel = aliens.getTraceTypeLabel?.(traceType) || `${traceType}痕迹`;
-          const ownerLabel = formatRevealTraceOwnerLabel(slot?.traces?.[traceType]);
+          const ownerLabel = formatRevealTraceOwnerLabel(workingRoot, slot?.traces?.[traceType]);
           return { traceType, traceLabel, ownerLabel };
         }),
       };
@@ -463,7 +485,8 @@
       };
     }
 
-    function getAlienTracePlacementPreview(alienSlotId, traceType) {
+    function getAlienTracePlacementPreview(workingRoot, alienSlotId, traceType) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const alienSlot = aliens.getAlienSlot(alienGameState, alienSlotId);
       const traceSlot = alienSlot?.traces?.[traceType];
       const traceLabel = aliens.getTraceTypeLabel(traceType);
@@ -505,7 +528,8 @@
         || playerKeys.has(marker?.color);
     }
 
-    function listAlienTraceEntriesForSlot(alienSlotId, traceType) {
+    function listAlienTraceEntriesForSlot(workingRoot, alienSlotId, traceType) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const slotId = Number(alienSlotId);
       const traceSlot = aliens.getAlienSlot(alienGameState, slotId)?.traces?.[traceType];
       const stateEntries = traceSlot?.firstPlaced ? [traceSlot] : [];
@@ -543,18 +567,19 @@
       return stateEntries;
     }
 
-    function alienSlotHasPlayerTrace(alienSlotId, traceType, player) {
+    function alienSlotHasPlayerTrace(workingRoot, alienSlotId, traceType, player) {
       const playerKeys = getAlienTracePlayerKeys(player);
-      if (countStateTraceMarkersForSlot(alienSlotId, traceType, playerKeys) > 0) return true;
-      return listAlienTraceEntriesForSlot(alienSlotId, traceType)
+      if (countStateTraceMarkersForSlot(workingRoot, alienSlotId, traceType, playerKeys) > 0) return true;
+      return listAlienTraceEntriesForSlot(workingRoot, alienSlotId, traceType)
         .some((entry) => alienTraceMarkerBelongsToPlayer(entry, playerKeys));
     }
 
-    function alienSlotHasPlayerTraceSet(alienSlotId, traceTypes, player) {
-      return (traceTypes || []).every((traceType) => alienSlotHasPlayerTrace(alienSlotId, traceType, player));
+    function alienSlotHasPlayerTraceSet(workingRoot, alienSlotId, traceTypes, player) {
+      return (traceTypes || []).every((traceType) => alienSlotHasPlayerTrace(workingRoot, alienSlotId, traceType, player));
     }
 
-    function countStateTraceMarkersForSlot(alienSlotId, traceType, playerKeys) {
+    function countStateTraceMarkersForSlot(workingRoot, alienSlotId, traceType, playerKeys) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const traceSlot = aliens.getAlienSlot(alienGameState, Number(alienSlotId))?.traces?.[traceType];
       if (!traceSlot?.firstPlaced) return 0;
       let count = alienTraceMarkerBelongsToPlayer(traceSlot, playerKeys) ? 1 : 0;
@@ -567,7 +592,8 @@
       return count;
     }
 
-    function countAlienTraceMarkersForSlot(alienSlotId, player, traceTypes = null) {
+    function countAlienTraceMarkersForSlot(workingRoot, alienSlotId, player, traceTypes = null) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const playerKeys = getAlienTracePlayerKeys(player);
       const types = Array.isArray(traceTypes) && traceTypes.length
         ? traceTypes
@@ -575,8 +601,8 @@
       let count = 0;
       for (const traceType of types) {
         const traceSlot = aliens.getAlienSlot(alienGameState, Number(alienSlotId))?.traces?.[traceType];
-        count += countStateTraceMarkersForSlot(alienSlotId, traceType, playerKeys);
-        count += listAlienTraceEntriesForSlot(alienSlotId, traceType)
+        count += countStateTraceMarkersForSlot(workingRoot, alienSlotId, traceType, playerKeys);
+        count += listAlienTraceEntriesForSlot(workingRoot, alienSlotId, traceType)
           .filter((entry) => entry !== traceSlot)
           .filter((entry) => alienTraceMarkerBelongsToPlayer(entry, playerKeys))
           .length;
@@ -584,27 +610,29 @@
       return count;
     }
 
-    function getEligibleAlienSlotIdsForTraceEffect(effect, player, traceTypes) {
+    function getEligibleAlienSlotIdsForTraceEffect(workingRoot, effect, player, traceTypes) {
+      requireWorkingRoot(workingRoot);
       const targetRule = effect?.options?.targetRule;
       if (!targetRule) return null;
 
       return aliens.ALIEN_SLOT_IDS.filter((alienSlotId) => {
         if (targetRule === "playerHasSameTrace") {
-          return (traceTypes || []).some((traceType) => alienSlotHasPlayerTrace(alienSlotId, traceType, player));
+          return (traceTypes || []).some((traceType) => alienSlotHasPlayerTrace(workingRoot, alienSlotId, traceType, player));
         }
         if (targetRule === "singleAlienTraceSet") {
           const requiredTypes = effect.options?.traceTypes || ["yellow", "pink", "blue"];
-          return alienSlotHasPlayerTraceSet(alienSlotId, requiredTypes, player);
+          return alienSlotHasPlayerTraceSet(workingRoot, alienSlotId, requiredTypes, player);
         }
         if (targetRule === "singleAlienTraceCount") {
           const requiredCount = Math.max(1, Math.round(Number(effect.options?.requiredTraceCount || 3)));
-          return countAlienTraceMarkersForSlot(alienSlotId, player, effect.options?.traceTypes || null) >= requiredCount;
+          return countAlienTraceMarkersForSlot(workingRoot, alienSlotId, player, effect.options?.traceTypes || null) >= requiredCount;
         }
         return true;
       });
     }
 
-    function describeAlienSlotPickerStatus(alienSlotId) {
+    function describeAlienSlotPickerStatus(workingRoot, alienSlotId) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const alienSlot = aliens.getAlienSlot(alienGameState, alienSlotId);
       if (!alienSlot) return "无状态";
       if (alienSlot.revealed) {
@@ -632,8 +660,9 @@
       }));
     }
 
-    function renderAlienTracePickerAlienStep() {
-      const currentPlayer = getAlienTracePickerPlayer();
+    function renderAlienTracePickerAlienStep(workingRoot) {
+      requireWorkingRoot(workingRoot);
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
       const allowedAlienSlotIds = decisionState.alienTracePickerState?.allowedAlienSlotIds || null;
       const singleTraceType = allowedTraceTypes.length === 1 ? allowedTraceTypes[0] : null;
@@ -650,11 +679,11 @@
 
       const choices = aliens.ALIEN_SLOT_IDS.map((alienSlotId) => {
         const slotLabel = aliens.getAlienSlotLabel(alienSlotId);
-        const status = describeAlienSlotPickerStatus(alienSlotId);
+        const status = describeAlienSlotPickerStatus(workingRoot, alienSlotId);
         const targetAllowed = !allowedAlienSlotIds?.length || allowedAlienSlotIds.includes(Number(alienSlotId));
         const targetTitle = targetAllowed ? "" : "不符合本卡的外星人目标限制";
         if (singleTraceType) {
-          const preview = getAlienTracePlacementPreview(alienSlotId, singleTraceType);
+          const preview = getAlienTracePlacementPreview(workingRoot, alienSlotId, singleTraceType);
           return {
             alienSlotId,
             label: slotLabel,
@@ -675,8 +704,9 @@
       renderAlienTracePickerButtons(choices, "alien");
     }
 
-    function renderAlienTracePickerColorStep(alienSlotId) {
-      const currentPlayer = getAlienTracePickerPlayer();
+    function renderAlienTracePickerColorStep(workingRoot, alienSlotId) {
+      requireWorkingRoot(workingRoot);
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
       const slotLabel = aliens.getAlienSlotLabel(alienSlotId);
 
@@ -688,7 +718,7 @@
       }
 
       const choices = allowedTraceTypes.map((traceType) => {
-        const preview = getAlienTracePlacementPreview(alienSlotId, traceType);
+        const preview = getAlienTracePlacementPreview(workingRoot, alienSlotId, traceType);
         const targetAllowed = isAlienTracePickerSlotAllowed(alienSlotId);
         return {
           alienSlotId,
@@ -703,7 +733,8 @@
       renderAlienTracePickerButtons(choices, "color");
     }
 
-    function openAlienTracePicker(options = {}) {
+    function openAlienTracePicker(workingRoot, options = {}) {
+      requireWorkingRoot(workingRoot);
       if (!els.alienTraceOverlay || !els.alienTraceActions) {
         return { ok: false, message: "无法打开外星人标记选择" };
       }
@@ -724,12 +755,13 @@
         els.alienTraceSubtitle.classList.remove("alien-reveal-confirmation-text");
       }
       if (els.alienTraceCancel) els.alienTraceCancel.hidden = false;
-      renderAlienTracePickerAlienStep();
+      renderAlienTracePickerAlienStep(workingRoot);
       els.alienTraceOverlay.hidden = false;
       return { ok: true, message: "请选择外星人" };
     }
 
-    function beginAlienTraceBoardPlacement(options = {}) {
+    function beginAlienTraceBoardPlacement(workingRoot, options = {}) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const allowedTraceTypes = options.allowedTraceTypes?.length
         ? options.allowedTraceTypes
         : aliens.TRACE_TYPES;
@@ -744,7 +776,7 @@
         fangzhouDestinationResolved: Boolean(options.fangzhouDestinationResolved),
       };
       if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = true;
-      const currentPlayer = getAlienTracePickerPlayer();
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       const traceLabel = allowedTraceTypes.length === 1
         ? aliens.getTraceTypeLabel(allowedTraceTypes[0])
         : "对应颜色";
@@ -755,7 +787,8 @@
       return { ok: true, message: rocketState.statusNote };
     }
 
-    function beginPlacementMode(alienName, mode, alienSlotId, traceType = null) {
+    function beginPlacementMode(workingRoot, alienName, mode, alienSlotId, traceType = null) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const allowedTraceTypes = traceType
         ? [traceType]
         : (decisionState.alienTracePickerState?.allowedTraceTypes?.length
@@ -778,56 +811,58 @@
       return { ok: true, message: rocketState.statusNote };
     }
 
-    function beginJiuzheTraceGridPlacement(alienSlotId) {
-      return beginPlacementMode("九折", "jiuzhe-grid", alienSlotId);
+    function beginJiuzheTraceGridPlacement(workingRoot, alienSlotId) {
+      return beginPlacementMode(workingRoot, "九折", "jiuzhe-grid", alienSlotId);
     }
 
-    function beginYichangdianTraceGridPlacement(alienSlotId) {
-      return beginPlacementMode("异常点", "yichangdian-grid", alienSlotId);
+    function beginYichangdianTraceGridPlacement(workingRoot, alienSlotId) {
+      return beginPlacementMode(workingRoot, "异常点", "yichangdian-grid", alienSlotId);
     }
 
-    function beginFangzhouTraceGridPlacement(alienSlotId, traceType = null) {
-      return beginPlacementMode("方舟", "fangzhou-grid", alienSlotId, traceType);
+    function beginFangzhouTraceGridPlacement(workingRoot, alienSlotId, traceType = null) {
+      return beginPlacementMode(workingRoot, "方舟", "fangzhou-grid", alienSlotId, traceType);
     }
 
-    function beginBanrenmaTraceGridPlacement(alienSlotId) {
-      return beginPlacementMode("半人马", "banrenma-grid", alienSlotId);
+    function beginBanrenmaTraceGridPlacement(workingRoot, alienSlotId) {
+      return beginPlacementMode(workingRoot, "半人马", "banrenma-grid", alienSlotId);
     }
 
-    function beginAomomoTraceGridPlacement(alienSlotId) {
-      return beginPlacementMode("奥陌陌", "aomomo-grid", alienSlotId);
+    function beginAomomoTraceGridPlacement(workingRoot, alienSlotId) {
+      return beginPlacementMode(workingRoot, "奥陌陌", "aomomo-grid", alienSlotId);
     }
 
-    function beginChongTraceGridPlacement(alienSlotId) {
-      return beginPlacementMode("虫族", "chong-grid", alienSlotId);
+    function beginChongTraceGridPlacement(workingRoot, alienSlotId) {
+      return beginPlacementMode(workingRoot, "虫族", "chong-grid", alienSlotId);
     }
 
-    function beginAmibaTraceGridPlacement(alienSlotId) {
-      return beginPlacementMode("阿米巴", "amiba-grid", alienSlotId);
+    function beginAmibaTraceGridPlacement(workingRoot, alienSlotId) {
+      return beginPlacementMode(workingRoot, "阿米巴", "amiba-grid", alienSlotId);
     }
 
-    function beginRunezuTraceGridPlacement(alienSlotId) {
-      return beginPlacementMode("符文族", "runezu-grid", alienSlotId);
+    function beginRunezuTraceGridPlacement(workingRoot, alienSlotId) {
+      return beginPlacementMode(workingRoot, "符文族", "runezu-grid", alienSlotId);
     }
 
-    function canPlaceAnyStateExtraTrace(alienSlotId, traceType) {
+    function canPlaceAnyStateExtraTrace(workingRoot, alienSlotId, traceType) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const traceSlot = aliens.getAlienSlot(alienGameState, alienSlotId)?.traces?.[traceType];
       if (!traceSlot?.firstPlaced) return false;
       return isAlienTracePickerChoiceAllowed(alienSlotId, traceType);
     }
 
-    function getFangzhouTracePlacementAvailability(alienSlotId, traceType, placeTarget = null) {
-      const currentPlayer = getAlienTracePickerPlayer();
+    function getFangzhouTracePlacementAvailability(workingRoot, alienSlotId, traceType, placeTarget = null) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       const choiceAllowed = isAlienTracePickerChoiceAllowed(alienSlotId, traceType);
       if (placeTarget?.kind === "state") {
         return {
-          canPlace: canPlaceAnyStateExtraTrace(alienSlotId, traceType),
+          canPlace: canPlaceAnyStateExtraTrace(workingRoot, alienSlotId, traceType),
           canFacePlace: false,
-          canStatePlace: canPlaceAnyStateExtraTrace(alienSlotId, traceType),
+          canStatePlace: canPlaceAnyStateExtraTrace(workingRoot, alienSlotId, traceType),
         };
       }
       if (placeTarget?.kind === "fangzhou-trace" && placeTarget.position != null) {
-        const canFacePlace = Boolean(canPlaceFangzhouTrace(alienSlotId, traceType, Number(placeTarget.position)));
+        const canFacePlace = Boolean(canPlaceFangzhouTrace(workingRoot, alienSlotId, traceType, Number(placeTarget.position)));
         return { canPlace: canFacePlace, canFacePlace, canStatePlace: false };
       }
       const canFacePlace = choiceAllowed && Boolean(fangzhou?.canPlaceAnyFangzhouTrace?.(
@@ -836,7 +871,7 @@
         traceType,
         currentPlayer,
       ));
-      const canStatePlace = canPlaceAnyStateExtraTrace(alienSlotId, traceType);
+      const canStatePlace = canPlaceAnyStateExtraTrace(workingRoot, alienSlotId, traceType);
       return {
         canPlace: canFacePlace || canStatePlace,
         canFacePlace,
@@ -851,12 +886,14 @@
       );
     }
 
-    function getFangzhouTraceChoiceSlotId(allowedAlienSlotIds = null) {
+    function getFangzhouTraceChoiceSlotId(workingRoot, allowedAlienSlotIds = null) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       return getAlienTraceChoiceSlotIds(allowedAlienSlotIds)
         .find((alienSlotId) => fangzhou?.isFangzhouRevealedSlot?.(alienGameState, alienSlotId)) || null;
     }
 
-    function getFangzhouUnlockableTraceTypes(alienSlotId, allowedTraceTypes, player) {
+    function getFangzhouUnlockableTraceTypes(workingRoot, alienSlotId, allowedTraceTypes, player) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!alienSlotId) return [];
       const traceTypes = allowedTraceTypes?.length ? allowedTraceTypes : aliens.TRACE_TYPES;
       return traceTypes.filter((traceType) => (
@@ -864,10 +901,11 @@
       ));
     }
 
-    function canPlaceAlienTraceOnPanelWithoutMode(alienSlotId, traceType, player) {
+    function canPlaceAlienTraceOnPanelWithoutMode(workingRoot, alienSlotId, traceType, player) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const alienSlot = aliens.getAlienSlot(alienGameState, alienSlotId);
       if (!alienSlot) return false;
-      const statePreview = getAlienTracePlacementPreview(alienSlotId, traceType);
+      const statePreview = getAlienTracePlacementPreview(workingRoot, alienSlotId, traceType);
       if (!alienSlot.revealed) return statePreview.canPlace;
       if (statePreview.canPlace) return true;
       return Boolean(aliens.canPlaceAnyRevealedAlienTrace?.(
@@ -879,16 +917,18 @@
       ));
     }
 
-    function hasAlienTracePanelPlacementTarget(allowedAlienSlotIds, allowedTraceTypes, player) {
+    function hasAlienTracePanelPlacementTarget(workingRoot, allowedAlienSlotIds, allowedTraceTypes, player) {
+      requireWorkingRoot(workingRoot);
       const slotIds = getAlienTraceChoiceSlotIds(allowedAlienSlotIds);
       const traceTypes = allowedTraceTypes?.length ? allowedTraceTypes : aliens.TRACE_TYPES;
       return slotIds.some((alienSlotId) => traceTypes.some((traceType) => (
-        canPlaceAlienTraceOnPanelWithoutMode(alienSlotId, traceType, player)
+        canPlaceAlienTraceOnPanelWithoutMode(workingRoot, alienSlotId, traceType, player)
       )));
     }
 
-    function renderFangzhouTraceDestinationChoice(alienSlotId, unlockableTraceTypes, options = {}) {
-      const currentPlayer = getAlienTracePickerPlayer();
+    function renderFangzhouTraceDestinationChoice(workingRoot, alienSlotId, unlockableTraceTypes, options = {}) {
+      requireWorkingRoot(workingRoot);
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       const canPanelPlace = Boolean(options.canPanelPlace);
       if (els.alienTraceTitle) els.alienTraceTitle.textContent = "获取外星人标记";
       if (els.alienTraceSubtitle) {
@@ -936,9 +976,10 @@
       if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = false;
     }
 
-    function renderFangzhouUnlockTraceChoice(alienSlotId, traceTypes) {
-      const currentPlayer = getAlienTracePickerPlayer();
-      const unlockableTraceTypes = getFangzhouUnlockableTraceTypes(alienSlotId, traceTypes, currentPlayer);
+    function renderFangzhouUnlockTraceChoice(workingRoot, alienSlotId, traceTypes) {
+      requireWorkingRoot(workingRoot);
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
+      const unlockableTraceTypes = getFangzhouUnlockableTraceTypes(workingRoot, alienSlotId, traceTypes, currentPlayer);
       if (els.alienTraceTitle) els.alienTraceTitle.textContent = "解锁方舟牌";
       if (els.alienTraceSubtitle) {
         const playerText = currentPlayer?.colorLabel ? `${currentPlayer.colorLabel}玩家` : "当前玩家";
@@ -969,7 +1010,8 @@
       return { ok: true, message: "请选择要解锁的方舟牌" };
     }
 
-    function openFangzhouTraceDestinationChoice(options = {}) {
+    function openFangzhouTraceDestinationChoice(workingRoot, options = {}) {
+      requireWorkingRoot(workingRoot);
       const allowedTraceTypes = options.allowedTraceTypes?.length
         ? options.allowedTraceTypes
         : (decisionState.alienTracePickerState?.allowedTraceTypes?.length
@@ -979,16 +1021,17 @@
       const allowedAlienSlotIds = hasAllowedAlienSlotIdsOption
         ? alienTraceRewardFlow.resolveAllowedAlienSlotIds(options.allowedAlienSlotIds, null)
         : (decisionState.alienTracePickerState?.allowedAlienSlotIds || null);
-      const alienSlotId = options.alienSlotId || getFangzhouTraceChoiceSlotId(allowedAlienSlotIds);
+      const alienSlotId = options.alienSlotId || getFangzhouTraceChoiceSlotId(workingRoot, allowedAlienSlotIds);
       if (!alienSlotId) return null;
       const currentPlayer = resolvePlayerReference({
         playerId: options.targetPlayerId || decisionState.alienTracePickerState?.targetPlayerId,
         playerColor: options.targetPlayerColor || decisionState.alienTracePickerState?.targetPlayerColor,
-      }) || getAlienTracePickerPlayer();
-      const unlockableTraceTypes = getFangzhouUnlockableTraceTypes(alienSlotId, allowedTraceTypes, currentPlayer);
+      }) || getAlienTracePickerPlayer(workingRoot);
+      const unlockableTraceTypes = getFangzhouUnlockableTraceTypes(workingRoot, alienSlotId, allowedTraceTypes, currentPlayer);
       if (!unlockableTraceTypes.length) return null;
 
       const canPanelPlace = hasAlienTracePanelPlacementTarget(
+        workingRoot,
         allowedAlienSlotIds,
         allowedTraceTypes,
         currentPlayer,
@@ -1006,20 +1049,21 @@
       };
 
       if (canPanelPlace) {
-        renderFangzhouTraceDestinationChoice(alienSlotId, unlockableTraceTypes, { canPanelPlace });
+        renderFangzhouTraceDestinationChoice(workingRoot, alienSlotId, unlockableTraceTypes, { canPanelPlace });
         return { ok: true, message: "请选择方舟痕迹用途" };
       }
       if (unlockableTraceTypes.length === 1) {
-        return confirmFangzhouCard2Unlock(alienSlotId, unlockableTraceTypes[0]);
+        return confirmFangzhouCard2Unlock(workingRoot, alienSlotId, unlockableTraceTypes[0]);
       }
-      return renderFangzhouUnlockTraceChoice(alienSlotId, unlockableTraceTypes);
+      return renderFangzhouUnlockTraceChoice(workingRoot, alienSlotId, unlockableTraceTypes);
     }
 
-    function handleFangzhouTraceDestinationChoice(destination, traceType = null) {
+    function handleFangzhouTraceDestinationChoice(workingRoot, destination, traceType = null) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const alienSlotId = Number(decisionState.alienTracePickerState?.selectedAlienSlotId || alienGameState.fangzhou?.revealedSlotId || 0);
       if (!alienSlotId) return { ok: false, message: "没有可用的方舟槽位" };
       if (destination === "panel") {
-        return beginAlienTraceBoardPlacement({
+        return beginAlienTraceBoardPlacement(workingRoot, {
           allowedTraceTypes: decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES,
           allowedAlienSlotIds: decisionState.alienTracePickerState?.allowedAlienSlotIds || null,
           targetPlayerId: decisionState.alienTracePickerState?.targetPlayerId || null,
@@ -1029,8 +1073,9 @@
         });
       }
       if (destination === "unlock") {
-        if (traceType) return confirmFangzhouCard2Unlock(alienSlotId, traceType);
+        if (traceType) return confirmFangzhouCard2Unlock(workingRoot, alienSlotId, traceType);
         return renderFangzhouUnlockTraceChoice(
+          workingRoot,
           alienSlotId,
           decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES,
         );
@@ -1038,23 +1083,26 @@
       return { ok: false, message: "未知方舟痕迹用途" };
     }
 
-    function handleFangzhouUnlockTraceChoice(traceType) {
+    function handleFangzhouUnlockTraceChoice(workingRoot, traceType) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const alienSlotId = Number(decisionState.alienTracePickerState?.selectedAlienSlotId || alienGameState.fangzhou?.revealedSlotId || 0);
-      return confirmFangzhouCard2Unlock(alienSlotId, traceType);
+      return confirmFangzhouCard2Unlock(workingRoot, alienSlotId, traceType);
     }
 
-    function placeFangzhouTraceTarget(alienSlotId, traceType, placeTarget = null) {
+    function placeFangzhouTraceTarget(workingRoot, alienSlotId, traceType, placeTarget = null) {
+      requireWorkingRoot(workingRoot);
       if (placeTarget?.kind === "state") {
-        return confirmAlienTracePlacement(alienSlotId, traceType);
+        return confirmAlienTracePlacement(workingRoot, alienSlotId, traceType);
       }
       if (placeTarget?.kind === "fangzhou-trace" && placeTarget.position != null) {
-        return confirmFangzhouTracePlacement(alienSlotId, traceType, Number(placeTarget.position));
+        return confirmFangzhouTracePlacement(workingRoot, alienSlotId, traceType, Number(placeTarget.position));
       }
-      return beginFangzhouTraceGridPlacement(alienSlotId, traceType);
+      return beginFangzhouTraceGridPlacement(workingRoot, alienSlotId, traceType);
     }
 
-    function renderFangzhouTraceColorStep(alienSlotId) {
-      const currentPlayer = getAlienTracePickerPlayer();
+    function renderFangzhouTraceColorStep(workingRoot, alienSlotId) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
       const slotLabel = aliens.getAlienSlotLabel(alienSlotId);
 
@@ -1066,7 +1114,7 @@
       }
 
       const choices = allowedTraceTypes.map((type) => {
-        const placeAvailability = getFangzhouTracePlacementAvailability(alienSlotId, type);
+        const placeAvailability = getFangzhouTracePlacementAvailability(workingRoot, alienSlotId, type);
         const canPlace = placeAvailability.canPlace;
         const canUnlock = fangzhou?.canUnlockCard2ForTrace?.(alienGameState, currentPlayer, type);
         const actions = [];
@@ -1086,11 +1134,12 @@
       renderAlienTracePickerButtons(choices, "fangzhou-color");
     }
 
-    function renderFangzhouTraceUseChoice(alienSlotId, traceType, options = {}) {
-      const currentPlayer = getAlienTracePickerPlayer();
+    function renderFangzhouTraceUseChoice(workingRoot, alienSlotId, traceType, options = {}) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       const traceLabel = aliens.getTraceTypeLabel(traceType);
       const placeTarget = options.placeTarget || null;
-      const placeAvailability = getFangzhouTracePlacementAvailability(alienSlotId, traceType, placeTarget);
+      const placeAvailability = getFangzhouTracePlacementAvailability(workingRoot, alienSlotId, traceType, placeTarget);
       const canPlace = placeAvailability.canPlace;
       const canUnlock = fangzhou?.canUnlockCard2ForTrace?.(alienGameState, currentPlayer, traceType);
 
@@ -1151,10 +1200,11 @@
       if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = false;
     }
 
-    function openFangzhouTraceUseChoice(alienSlotId, traceType, options = {}) {
-      const currentPlayer = getAlienTracePickerPlayer();
+    function openFangzhouTraceUseChoice(workingRoot, alienSlotId, traceType, options = {}) {
+      const { alienGameState, rocketState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getAlienTracePickerPlayer(workingRoot);
       const placeTarget = options.placeTarget || null;
-      const placeAvailability = getFangzhouTracePlacementAvailability(alienSlotId, traceType, placeTarget);
+      const placeAvailability = getFangzhouTracePlacementAvailability(workingRoot, alienSlotId, traceType, placeTarget);
       const canPlace = placeAvailability.canPlace;
       const canUnlock = fangzhou?.canUnlockCard2ForTrace?.(alienGameState, currentPlayer, traceType);
 
@@ -1165,43 +1215,44 @@
           selectedAlienSlotId: Number(alienSlotId),
           selectedTraceType: traceType,
         };
-        renderFangzhouTraceUseChoice(alienSlotId, traceType, { placeTarget });
+        renderFangzhouTraceUseChoice(workingRoot, alienSlotId, traceType, { placeTarget });
         return { ok: true, message: "请选择放置痕迹或解锁卡牌" };
       }
       if (canUnlock) {
-        return confirmFangzhouCard2Unlock(alienSlotId, traceType);
+        return confirmFangzhouCard2Unlock(workingRoot, alienSlotId, traceType);
       }
       if (canPlace) {
-        return placeFangzhouTraceTarget(alienSlotId, traceType, placeTarget);
+        return placeFangzhouTraceTarget(workingRoot, alienSlotId, traceType, placeTarget);
       }
       rocketState.statusNote = `${aliens.getTraceTypeLabel(traceType)}痕迹无法放置或解锁`;
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
     }
 
-    function routeFangzhouAlienTraceGain(alienSlotId) {
+    function routeFangzhouAlienTraceGain(workingRoot, alienSlotId) {
+      requireWorkingRoot(workingRoot);
       const allowedTraceTypes = decisionState.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
-      const destinationChoice = openFangzhouTraceDestinationChoice({ alienSlotId, allowedTraceTypes });
+      const destinationChoice = openFangzhouTraceDestinationChoice(workingRoot, { alienSlotId, allowedTraceTypes });
       if (destinationChoice) return destinationChoice;
       if (allowedTraceTypes.length === 1) {
-        return openFangzhouTraceUseChoice(alienSlotId, allowedTraceTypes[0]);
+        return openFangzhouTraceUseChoice(workingRoot, alienSlotId, allowedTraceTypes[0]);
       }
       decisionState.alienTracePickerState = {
         ...decisionState.alienTracePickerState,
         mode: "fangzhou-color",
         selectedAlienSlotId: Number(alienSlotId),
       };
-      renderFangzhouTraceColorStep(alienSlotId);
+      renderFangzhouTraceColorStep(workingRoot, alienSlotId);
       if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = false;
       return { ok: true, message: "请选择方舟痕迹颜色" };
     }
 
-    function handleStateTraceSlotPlacement(alienSlotId, traceType) {
-      return confirmAlienTracePlacement(alienSlotId, traceType);
+    function handleStateTraceSlotPlacement(workingRoot, alienSlotId, traceType) {
+      return confirmAlienTracePlacement(workingRoot, alienSlotId, traceType);
     }
 
-    function handleFangzhouTraceSlotPlacement(alienSlotId, traceType, position) {
-      return confirmFangzhouTracePlacement(alienSlotId, traceType, position);
+    function handleFangzhouTraceSlotPlacement(workingRoot, alienSlotId, traceType, position) {
+      return confirmFangzhouTracePlacement(workingRoot, alienSlotId, traceType, position);
     }
 
     return {

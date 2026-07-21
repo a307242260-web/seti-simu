@@ -44,12 +44,37 @@
       alienRevealConfirmation: "alien_reveal_confirmation",
       actionEffectFlow: "action_effect_flow",
     }) || {};
-    const alienGameState = context.alienGameState || {};
-    const playerState = context.playerState || {};
-    const rocketState = context.rocketState || {};
-    const solarState = context.solarState || {};
-    const nebulaDataState = context.nebulaDataState || {};
-    const techGameState = context.techGameState || {};
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("alien-runtime operation requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
+
+    function getWorkingActivePlayers(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      return (playerState.activePlayerIds || [])
+        .map((playerId) => (playerState.players || []).find((player) => player.id === playerId))
+        .filter(Boolean);
+    }
+
+    function resolveWorkingPlayer(workingRoot, reference = {}) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const playerId = reference.playerId || reference.targetPlayerId || null;
+      if (playerId) {
+        const player = (playerState.players || []).find((entry) => entry.id === playerId);
+        if (player) return player;
+      }
+      const playerColor = reference.playerColor || reference.targetPlayerColor || null;
+      return playerColor
+        ? (playerState.players || []).find((entry) => entry.color === playerColor) || null
+        : null;
+    }
+
+    function getWorkingCurrentPlayer(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      return players.getCurrentPlayer(playerState);
+    }
 
     const getCurrentPlayer = requireFunction("getCurrentPlayer", context.getCurrentPlayer);
     const getActivePlayers = requireFunction("getActivePlayers", context.getActivePlayers);
@@ -144,13 +169,14 @@
       return parts.length ? `方舟揭示基础奖励：${parts.join("；")}` : null;
     }
 
-    function processFangzhouRevealBasicRewards() {
+    function processFangzhouRevealBasicRewards(workingRoot) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!fangzhou) return { ok: true, count: 0 };
       const rewards = [];
       while (alienGameState.fangzhou?.pendingRevealBasicRewards?.length) {
         const next = fangzhou.takeNextRevealBasicReward(alienGameState);
         if (!next.ok || !next.entry) break;
-        const player = getPlayerById(next.entry.playerId) || getPlayerByColor(next.entry.playerColor);
+        const player = resolveWorkingPlayer(workingRoot, next.entry);
         if (!player) continue;
         const flip = fangzhou.flipCard1Reward(alienGameState, "basic");
         if (!flip.ok) break;
@@ -175,17 +201,18 @@
       };
     }
 
-    function handleFangzhouRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
+    function handleFangzhouRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!fangzhou || !revealResult?.ok || revealResult.alienId !== fangzhou.ALIEN_ID) return null;
       const initResult = fangzhou.initializeFangzhouReveal(
         alienGameState,
         alienSlotId,
         triggerPlayer,
-        getActivePlayers(),
+        getWorkingActivePlayers(workingRoot),
       );
       const rewardResult = initResult.alreadyInitialized
         ? { ok: true, count: 0, rewards: [], message: null }
-        : processFangzhouRevealBasicRewards();
+        : processFangzhouRevealBasicRewards(workingRoot);
       const rewardMessages = rewardResult.message ? [rewardResult.message] : [];
       return {
         ...initResult,
@@ -195,28 +222,30 @@
       };
     }
 
-    function grantRevealCardsForFirstTraces(alienModule, label, alienSlotId) {
+    function grantRevealCardsForFirstTraces(workingRoot, alienModule, label, alienSlotId) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!aliens.grantAlienCardsForFirstTraces) {
         return { ok: false, totalExpected: 0, totalDrawn: 0, grants: [], message: "" };
       }
       return aliens.grantAlienCardsForFirstTraces(
         alienGameState,
         alienSlotId,
-        getActivePlayers(),
+        getWorkingActivePlayers(workingRoot),
         alienModule,
         { label },
       );
     }
 
-    function handleJiuzheRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
+    function handleJiuzheRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!jiuzhe || !revealResult?.ok || revealResult.alienId !== jiuzhe.ALIEN_ID) return null;
       const initResult = jiuzhe.initializeJiuzheReveal(
         alienGameState,
         alienSlotId,
         triggerPlayer,
-        getActivePlayers(),
+        getWorkingActivePlayers(workingRoot),
       );
-      for (const player of getActivePlayers()) {
+      for (const player of getWorkingActivePlayers(workingRoot)) {
         queueJiuzheOpportunitiesForPlayer(player);
       }
       return {
@@ -226,7 +255,8 @@
       };
     }
 
-    function handleYichangdianRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
+    function handleYichangdianRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!yichangdian || !revealResult?.ok || revealResult.alienId !== yichangdian.ALIEN_ID) return null;
       const earth = getEarthSectorCoordinate();
       const initResult = yichangdian.initializeYichangdianReveal(
@@ -237,7 +267,7 @@
       );
       const cardGrant = initResult.alreadyInitialized
         ? null
-        : grantRevealCardsForFirstTraces(yichangdian, "异常点", alienSlotId);
+        : grantRevealCardsForFirstTraces(workingRoot, yichangdian, "异常点", alienSlotId);
       return {
         ...initResult,
         cardGrant,
@@ -246,18 +276,19 @@
       };
     }
 
-    function handleBanrenmaRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
+    function handleBanrenmaRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!banrenma || !revealResult?.ok || revealResult.alienId !== banrenma.ALIEN_ID) return null;
       const initResult = banrenma.initializeBanrenmaReveal(
         alienGameState,
         alienSlotId,
         triggerPlayer,
-        getActivePlayers(),
+        getWorkingActivePlayers(workingRoot),
       );
       const cardGrant = initResult.alreadyInitialized
         ? null
-        : grantRevealCardsForFirstTraces(banrenma, "半人马", alienSlotId);
-      for (const player of getActivePlayers()) {
+        : grantRevealCardsForFirstTraces(workingRoot, banrenma, "半人马", alienSlotId);
+      for (const player of getWorkingActivePlayers(workingRoot)) {
         queueBanrenmaOpportunitiesForPlayer(player);
       }
       return {
@@ -268,7 +299,8 @@
       };
     }
 
-    function handleChongRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
+    function handleChongRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!chong || !revealResult?.ok || revealResult.alienId !== chong.ALIEN_ID) return null;
       const initResult = chong.initializeChongReveal(
         alienGameState,
@@ -277,7 +309,7 @@
       );
       const cardGrant = initResult.alreadyInitialized
         ? null
-        : grantRevealCardsForFirstTraces(chong, "虫族", alienSlotId);
+        : grantRevealCardsForFirstTraces(workingRoot, chong, "虫族", alienSlotId);
       return {
         ...initResult,
         cardGrant,
@@ -286,7 +318,8 @@
       };
     }
 
-    function handleAmibaRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
+    function handleAmibaRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!amiba || !revealResult?.ok || revealResult.alienId !== amiba.ALIEN_ID) return null;
       const initResult = amiba.initializeAmibaReveal(
         alienGameState,
@@ -295,7 +328,7 @@
       );
       const cardGrant = initResult.alreadyInitialized
         ? null
-        : grantRevealCardsForFirstTraces(amiba, "阿米巴", alienSlotId);
+        : grantRevealCardsForFirstTraces(workingRoot, amiba, "阿米巴", alienSlotId);
       return {
         ...initResult,
         cardGrant,
@@ -304,7 +337,8 @@
       };
     }
 
-    function activateAomomoBoard(options = {}) {
+    function activateAomomoBoard(workingRoot, options = {}) {
+      const { nebulaDataState, solarState } = requireWorkingRoot(workingRoot);
       solarState.aomomoActive = true;
       const existingTokens = data.listNebulaTokens(nebulaDataState, aomomo.NEBULA_ID);
       let fillResult = null;
@@ -320,7 +354,8 @@
       return fillResult;
     }
 
-    function handleAomomoRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
+    function handleAomomoRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!aomomo || !revealResult?.ok || revealResult.alienId !== aomomo.ALIEN_ID) return null;
       const initResult = aomomo.initializeAomomoReveal(
         alienGameState,
@@ -329,8 +364,8 @@
       );
       const cardGrant = initResult.alreadyInitialized
         ? null
-        : grantRevealCardsForFirstTraces(aomomo, "奥陌陌", alienSlotId);
-      const fillResult = activateAomomoBoard({ source: "aomomo_reveal" });
+        : grantRevealCardsForFirstTraces(workingRoot, aomomo, "奥陌陌", alienSlotId);
+      const fillResult = activateAomomoBoard(workingRoot, { source: "aomomo_reveal" });
       const fillMessage = fillResult?.ok ? `；${fillResult.message}` : "";
       const message = appendRevealCardGrantMessage(`${initResult.message}${fillMessage}`, cardGrant);
       return {
@@ -342,7 +377,8 @@
       };
     }
 
-    function handleRunezuRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
+    function handleRunezuRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer) {
+      const { alienGameState, techGameState } = requireWorkingRoot(workingRoot);
       if (!runezu || !revealResult?.ok || revealResult.alienId !== runezu.ALIEN_ID) return null;
       const initResult = runezu.initializeRunezuReveal(
         alienGameState,
@@ -352,7 +388,7 @@
       );
       const cardGrant = initResult.alreadyInitialized
         ? null
-        : grantRevealCardsForFirstTraces(runezu, "符文族", alienSlotId);
+        : grantRevealCardsForFirstTraces(workingRoot, runezu, "符文族", alienSlotId);
       return {
         ...initResult,
         cardGrant,
@@ -361,28 +397,31 @@
       };
     }
 
-    function handleAlienRevealSideEffects(alienSlotId, revealResult, triggerPlayer) {
-      return handleJiuzheRevealSideEffects(alienSlotId, revealResult, triggerPlayer)
-        || handleYichangdianRevealSideEffects(alienSlotId, revealResult, triggerPlayer)
-        || handleFangzhouRevealSideEffects(alienSlotId, revealResult, triggerPlayer)
-        || handleBanrenmaRevealSideEffects(alienSlotId, revealResult, triggerPlayer)
-        || handleChongRevealSideEffects(alienSlotId, revealResult, triggerPlayer)
-        || handleAmibaRevealSideEffects(alienSlotId, revealResult, triggerPlayer)
-        || handleAomomoRevealSideEffects(alienSlotId, revealResult, triggerPlayer)
-        || handleRunezuRevealSideEffects(alienSlotId, revealResult, triggerPlayer);
+    function handleAlienRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer) {
+      requireWorkingRoot(workingRoot);
+      return handleJiuzheRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer)
+        || handleYichangdianRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer)
+        || handleFangzhouRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer)
+        || handleBanrenmaRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer)
+        || handleChongRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer)
+        || handleAmibaRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer)
+        || handleAomomoRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer)
+        || handleRunezuRevealSideEffects(workingRoot, alienSlotId, revealResult, triggerPlayer);
     }
 
-    function getAlienTraceActionPlayer(pending, options = {}) {
-      const player = resolvePlayerReference({
+    function getAlienTraceActionPlayer(workingRoot, pending, options = {}) {
+      requireWorkingRoot(workingRoot);
+      const player = resolveWorkingPlayer(workingRoot, {
         playerId: pending?.targetPlayerId || decisionState.alienTracePickerState?.targetPlayerId,
         playerColor: pending?.targetPlayerColor || decisionState.alienTracePickerState?.targetPlayerColor,
       });
       if (player) return player;
-      if (options.allowFallback || isDebugAlienTraceMode()) return getCurrentPlayer();
+      if (options.allowFallback || isDebugAlienTraceMode()) return getWorkingCurrentPlayer(workingRoot);
       return null;
     }
 
-    function failMissingAlienTraceTargetPlayer() {
+    function failMissingAlienTraceTargetPlayer(workingRoot) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       rocketState.statusNote = "外星人痕迹缺少目标玩家，已中止放置";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
@@ -441,7 +480,8 @@
       return true;
     }
 
-    function maybeUnlockFangzhouCardForStateExtraTrace(alienSlotId, traceType, player, placementResult) {
+    function maybeUnlockFangzhouCardForStateExtraTrace(workingRoot, alienSlotId, traceType, player, placementResult) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       if (!placementResult?.ok || !placementResult.extraOnly) return null;
       if (!fangzhou?.isFangzhouRevealedSlot?.(alienGameState, alienSlotId)) return null;
       if (!fangzhou.canUnlockCard2ForTrace?.(alienGameState, player, traceType)) return null;
@@ -460,7 +500,8 @@
       };
     }
 
-    function applyAlienTraceAfterReward(pending, player, traceType) {
+    function applyAlienTraceAfterReward(workingRoot, pending, player, traceType) {
+      const { alienGameState } = requireWorkingRoot(workingRoot);
       const reward = pending?.afterTraceReward;
       if (!reward || reward.kind !== "traceCountScore") return null;
       const scorePer = Math.max(0, Math.round(Number(reward.scorePer) || 1));
@@ -480,13 +521,15 @@
       };
     }
 
-    function appendAlienTraceAfterRewardMessage(afterReward) {
+    function appendAlienTraceAfterRewardMessage(workingRoot, afterReward) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (afterReward?.message) {
         rocketState.statusNote = `${rocketState.statusNote ? `${rocketState.statusNote}；` : ""}${afterReward.message}`;
       }
     }
 
-    function recordPlacementHistory(beforeAlienState, beforePlayerState, alienMessage, playerMessage, options = {}) {
+    function recordPlacementHistory(workingRoot, beforeAlienState, beforePlayerState, alienMessage, playerMessage, options = {}) {
+      const { alienGameState, playerState } = requireWorkingRoot(workingRoot);
       const restoreAlien = historyCommands.createRestoreObjectCommand(
         alienGameState,
         beforeAlienState,
@@ -506,11 +549,12 @@
       recordHistoryCommand(restorePlayer);
     }
 
-    function confirmAlienTracePlacement(alienSlotId, traceType) {
+    function confirmAlienTracePlacement(workingRoot, alienSlotId, traceType) {
+      const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const inDebugMode = isDebugAlienTraceMode();
       const pending = decisionState.alienTraceAction;
-      const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
-      if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
+      const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
+      if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       if (!inDebugMode && !isAlienTracePickerChoiceAllowed(alienSlotId, traceType)) {
         rocketState.statusNote = "该外星人痕迹目标不符合当前卡牌限制";
         renderStateReadout();
@@ -536,14 +580,14 @@
         ? applyAlienStateExtraTraceReward(alienSlotId, traceType, currentPlayer, result)
         : null;
       const fangzhouStateExtraUnlock = result.ok
-        ? maybeUnlockFangzhouCardForStateExtraTrace(alienSlotId, traceType, currentPlayer, result)
+        ? maybeUnlockFangzhouCardForStateExtraTrace(workingRoot, alienSlotId, traceType, currentPlayer, result)
         : null;
       const revealResult = maybeRevealAlienAfterTrace(alienSlotId, result, { immediate: inDebugMode });
       const immediateRevealResult = revealResult?.delayed ? null : revealResult;
       const revealIrreversibleReason = immediateRevealResult?.ok
         ? "外星人揭示初始化随机内容"
         : null;
-      const revealSideEffect = handleAlienRevealSideEffects(alienSlotId, immediateRevealResult, currentPlayer);
+      const revealSideEffect = handleAlienRevealSideEffects(workingRoot, alienSlotId, immediateRevealResult, currentPlayer);
       const revealIrreversible = getRevealIrreversible(revealIrreversibleReason, revealSideEffect);
       rocketState.statusNote = [
         result.message,
@@ -559,11 +603,12 @@
       if (alienLabRestore?.changed) {
         rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
       }
-      const afterReward = result.ok ? applyAlienTraceAfterReward(pending, currentPlayer, traceType) : null;
-      appendAlienTraceAfterRewardMessage(afterReward);
+      const afterReward = result.ok ? applyAlienTraceAfterReward(workingRoot, pending, currentPlayer, traceType) : null;
+      appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
       if (pending?.type === "planet_reward_alien_trace" && result.ok) {
         beginEffectHistoryStep(pending.effectLabel || "外星人标记奖励", { logBefore: beforeLogSnapshot });
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复外星人标记奖励前状态",
@@ -594,6 +639,7 @@
           logBefore: beforeLogSnapshot,
         });
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复半人马痕迹奖励前外星人状态",
@@ -616,22 +662,23 @@
       return revealResult || result;
     }
 
-    function confirmYichangdianTracePlacement(alienSlotId, traceType, position) {
+    function confirmYichangdianTracePlacement(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const inDebugMode = isDebugAlienTraceMode();
       if (!yichangdian || (!isYichangdianTracePlacementMode() && !inDebugMode)) {
         rocketState.statusNote = "请先通过获取外星人标记进入异常点放置模式";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      if (!canPlaceYichangdianTrace(alienSlotId, traceType, position)) {
+      if (!canPlaceYichangdianTrace(workingRoot, alienSlotId, traceType, position)) {
         rocketState.statusNote = "该异常点痕迹位不可放置";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
 
       const pending = decisionState.alienTraceAction;
-      const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
-      if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
+      const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
+      if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
@@ -667,12 +714,13 @@
       if (alienLabRestore?.changed) {
         rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
       }
-      const afterReward = applyAlienTraceAfterReward(pending, currentPlayer, traceType);
-      appendAlienTraceAfterRewardMessage(afterReward);
+      const afterReward = applyAlienTraceAfterReward(workingRoot, pending, currentPlayer, traceType);
+      appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
         beginEffectHistoryStep(pending.effectLabel || "异常点痕迹奖励");
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复异常点痕迹奖励前外星人状态",
@@ -717,22 +765,23 @@
       return result;
     }
 
-    function confirmFangzhouTracePlacement(alienSlotId, traceType, position) {
+    function confirmFangzhouTracePlacement(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const inDebugMode = isDebugAlienTraceMode();
       if (!fangzhou || (!isFangzhouTracePlacementMode() && !inDebugMode)) {
         rocketState.statusNote = "请先通过获取外星人标记进入方舟放置模式";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      if (!canPlaceFangzhouTrace(alienSlotId, traceType, position)) {
+      if (!canPlaceFangzhouTrace(workingRoot, alienSlotId, traceType, position)) {
         rocketState.statusNote = "该方舟痕迹位不可放置";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
 
       const pending = decisionState.alienTraceAction;
-      const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
-      if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
+      const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
+      if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
@@ -769,12 +818,13 @@
       if (alienLabRestore?.changed) {
         rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
       }
-      const afterReward = applyAlienTraceAfterReward(pending, currentPlayer, traceType);
-      appendAlienTraceAfterRewardMessage(afterReward);
+      const afterReward = applyAlienTraceAfterReward(workingRoot, pending, currentPlayer, traceType);
+      appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
         beginEffectHistoryStep(pending.effectLabel || "方舟痕迹奖励");
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复方舟痕迹奖励前外星人状态",
@@ -793,6 +843,7 @@
       } else {
         beginQuickActionStep("fangzhou-trace", rocketState.statusNote);
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复方舟痕迹放置前外星人状态",
@@ -820,22 +871,23 @@
       return result;
     }
 
-    function confirmBanrenmaTracePlacement(alienSlotId, traceType, position) {
+    function confirmBanrenmaTracePlacement(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const inDebugMode = isDebugAlienTraceMode();
       if (!banrenma || (!isBanrenmaTracePlacementMode() && !inDebugMode)) {
         rocketState.statusNote = "请先通过获取外星人标记进入半人马放置模式";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      if (!canPlaceBanrenmaTrace(alienSlotId, traceType, position)) {
+      if (!canPlaceBanrenmaTrace(workingRoot, alienSlotId, traceType, position)) {
         rocketState.statusNote = "该半人马痕迹位不可放置";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
 
       const pending = decisionState.alienTraceAction;
-      const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
-      if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
+      const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
+      if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const rewardPreview = banrenma.getTraceReward(traceType, Number(position));
       if (rewardPreview?.payData && getAvailableDataTokenCount(currentPlayer) < rewardPreview.payData) {
         rocketState.statusNote = `数据不足：该位置需要 ${rewardPreview.payData} 数据`;
@@ -878,12 +930,13 @@
       if (alienLabRestore?.changed) {
         rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
       }
-      const afterReward = applyAlienTraceAfterReward(pending, currentPlayer, traceType);
-      appendAlienTraceAfterRewardMessage(afterReward);
+      const afterReward = applyAlienTraceAfterReward(workingRoot, pending, currentPlayer, traceType);
+      appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
         beginEffectHistoryStep(pending.effectLabel || "半人马痕迹奖励");
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复半人马痕迹奖励前外星人状态",
@@ -902,6 +955,7 @@
       } else if (pending?.type === "banrenma_bonus_alien_trace") {
         beginQuickActionStep("banrenma-trace", pending.effectLabel || "半人马痕迹奖励");
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复半人马痕迹奖励前外星人状态",
@@ -913,6 +967,7 @@
       } else {
         beginQuickActionStep("banrenma-trace", rocketState.statusNote);
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复半人马痕迹放置前外星人状态",
@@ -951,22 +1006,23 @@
       return result;
     }
 
-    function confirmAomomoTracePlacement(alienSlotId, traceType, position) {
+    function confirmAomomoTracePlacement(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const inDebugMode = isDebugAlienTraceMode();
       if (!aomomo || (!isAomomoTracePlacementMode() && !inDebugMode)) {
         rocketState.statusNote = "请先通过获取外星人标记进入奥陌陌放置模式";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      if (!canPlaceAomomoTrace(alienSlotId, traceType, position)) {
+      if (!canPlaceAomomoTrace(workingRoot, alienSlotId, traceType, position)) {
         rocketState.statusNote = "该奥陌陌痕迹位不可放置";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
 
       const pending = decisionState.alienTraceAction;
-      const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
-      if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
+      const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
+      if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const rewardPreview = aomomo.getTraceReward(traceType, Number(position));
       if (rewardPreview?.payFossils && !players.canAfford(currentPlayer, { aomomoFossils: rewardPreview.payFossils })) {
         rocketState.statusNote = `化石不足：该位置需要 ${rewardPreview.payFossils} 化石`;
@@ -1009,12 +1065,13 @@
       if (alienLabRestore?.changed) {
         rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
       }
-      const afterReward = applyAlienTraceAfterReward(pending, currentPlayer, traceType);
-      appendAlienTraceAfterRewardMessage(afterReward);
+      const afterReward = applyAlienTraceAfterReward(workingRoot, pending, currentPlayer, traceType);
+      appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
         beginEffectHistoryStep(pending.effectLabel || "奥陌陌痕迹奖励");
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复奥陌陌痕迹奖励前外星人状态",
@@ -1032,6 +1089,7 @@
       } else {
         beginQuickActionStep("aomomo-trace", rocketState.statusNote);
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复奥陌陌痕迹放置前外星人状态",
@@ -1073,22 +1131,23 @@
       return result;
     }
 
-    function confirmChongTracePlacement(alienSlotId, traceType, position) {
+    function confirmChongTracePlacement(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const inDebugMode = isDebugAlienTraceMode();
       if (!chong || (!isChongTracePlacementMode() && !inDebugMode)) {
         rocketState.statusNote = "请先通过获取外星人标记进入虫族放置模式";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      if (!canPlaceChongTrace(alienSlotId, traceType, position)) {
+      if (!canPlaceChongTrace(workingRoot, alienSlotId, traceType, position)) {
         rocketState.statusNote = "该虫族痕迹位不可放置";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
 
       const pending = decisionState.alienTraceAction;
-      const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
-      if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
+      const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
+      if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
@@ -1124,12 +1183,13 @@
       if (alienLabRestore?.changed) {
         rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
       }
-      const afterReward = applyAlienTraceAfterReward(pending, currentPlayer, traceType);
-      appendAlienTraceAfterRewardMessage(afterReward);
+      const afterReward = applyAlienTraceAfterReward(workingRoot, pending, currentPlayer, traceType);
+      appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
         beginEffectHistoryStep(pending.effectLabel || "虫族痕迹奖励");
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复虫族痕迹奖励前外星人状态",
@@ -1148,6 +1208,7 @@
       } else {
         beginQuickActionStep("chong-trace", rocketState.statusNote);
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复虫族痕迹放置前外星人状态",
@@ -1182,22 +1243,23 @@
       return result;
     }
 
-    function confirmAmibaTracePlacement(alienSlotId, traceType, position) {
+    function confirmAmibaTracePlacement(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const inDebugMode = isDebugAlienTraceMode();
       if (!amiba || (!isAmibaTracePlacementMode() && !inDebugMode)) {
         rocketState.statusNote = "请先通过获取外星人标记进入阿米巴放置模式";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      if (!canPlaceAmibaTrace(alienSlotId, traceType, position)) {
+      if (!canPlaceAmibaTrace(workingRoot, alienSlotId, traceType, position)) {
         rocketState.statusNote = "该阿米巴痕迹位不可放置";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
 
       const pending = decisionState.alienTraceAction;
-      const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
-      if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
+      const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
+      if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
@@ -1233,12 +1295,13 @@
       if (alienLabRestore?.changed) {
         rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
       }
-      const afterReward = applyAlienTraceAfterReward(pending, currentPlayer, traceType);
-      appendAlienTraceAfterRewardMessage(afterReward);
+      const afterReward = applyAlienTraceAfterReward(workingRoot, pending, currentPlayer, traceType);
+      appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
         beginEffectHistoryStep(pending.effectLabel || "阿米巴痕迹奖励");
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复阿米巴痕迹奖励前外星人状态",
@@ -1256,6 +1319,7 @@
       } else if (!inDebugMode) {
         beginQuickActionStep("amiba-trace", rocketState.statusNote);
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复阿米巴痕迹放置前外星人状态",
@@ -1290,22 +1354,23 @@
       return result;
     }
 
-    function confirmRunezuTracePlacement(alienSlotId, traceType, position) {
+    function confirmRunezuTracePlacement(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const inDebugMode = isDebugAlienTraceMode();
       if (!runezu || (!isRunezuTracePlacementMode() && !inDebugMode)) {
         rocketState.statusNote = "请先通过获取外星人标记进入符文族放置模式";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      if (!canPlaceRunezuTrace(alienSlotId, traceType, position)) {
+      if (!canPlaceRunezuTrace(workingRoot, alienSlotId, traceType, position)) {
         rocketState.statusNote = "该符文族痕迹位不可放置";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
 
       const pending = decisionState.alienTraceAction;
-      const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
-      if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
+      const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
+      if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
@@ -1341,12 +1406,13 @@
       if (alienLabRestore?.changed) {
         rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
       }
-      const afterReward = applyAlienTraceAfterReward(pending, currentPlayer, traceType);
-      appendAlienTraceAfterRewardMessage(afterReward);
+      const afterReward = applyAlienTraceAfterReward(workingRoot, pending, currentPlayer, traceType);
+      appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
         beginEffectHistoryStep(pending.effectLabel || "符文族痕迹奖励");
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复符文族痕迹奖励前外星人状态",
@@ -1365,6 +1431,7 @@
       } else if (!inDebugMode) {
         beginQuickActionStep("runezu-trace", rocketState.statusNote);
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复符文族痕迹放置前外星人状态",
@@ -1399,22 +1466,23 @@
       return result;
     }
 
-    function confirmJiuzheTracePlacement(alienSlotId, traceType, position) {
+    function confirmJiuzheTracePlacement(workingRoot, alienSlotId, traceType, position) {
+      const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       const inDebugMode = isDebugAlienTraceMode();
       if (!jiuzhe || (!isJiuzheTracePlacementMode() && !inDebugMode)) {
         rocketState.statusNote = "请先通过获取外星人标记进入九折放置模式";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      if (!canPlaceJiuzheTrace(alienSlotId, traceType, position)) {
+      if (!canPlaceJiuzheTrace(workingRoot, alienSlotId, traceType, position)) {
         rocketState.statusNote = "该九折痕迹位不可放置";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
 
       const pending = decisionState.alienTraceAction;
-      const currentPlayer = getAlienTraceActionPlayer(pending, { allowFallback: inDebugMode });
-      if (!currentPlayer) return failMissingAlienTraceTargetPlayer();
+      const currentPlayer = getAlienTraceActionPlayer(workingRoot, pending, { allowFallback: inDebugMode });
+      if (!currentPlayer) return failMissingAlienTraceTargetPlayer(workingRoot);
       const beforeAlienState = pending?.beforeAlienState || structuredClone(alienGameState);
       const beforePlayerState = pending?.beforePlayerState || structuredClone(playerState);
       if (!inDebugMode) {
@@ -1450,12 +1518,13 @@
       if (alienLabRestore?.changed) {
         rocketState.statusNote = `${rocketState.statusNote}；${alienLabRestore.message}`;
       }
-      const afterReward = applyAlienTraceAfterReward(pending, currentPlayer, traceType);
-      appendAlienTraceAfterRewardMessage(afterReward);
+      const afterReward = applyAlienTraceAfterReward(workingRoot, pending, currentPlayer, traceType);
+      appendAlienTraceAfterRewardMessage(workingRoot, afterReward);
 
       if (pending?.type === "planet_reward_alien_trace") {
         beginEffectHistoryStep(pending.effectLabel || "九折痕迹奖励");
         recordPlacementHistory(
+          workingRoot,
           beforeAlienState,
           beforePlayerState,
           "恢复九折痕迹奖励前外星人状态",
@@ -1499,11 +1568,12 @@
       return result;
     }
 
-    function settleTurnEndAlienRevealEntries(triggerPlayer, revealEntries) {
+    function settleTurnEndAlienRevealEntries(workingRoot, triggerPlayer, revealEntries) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const settledEntries = (revealEntries || []).map((entry) => {
         const sideEffect = entry.sideEffect !== undefined
           ? entry.sideEffect
-          : handleAlienRevealSideEffects(entry.alienSlotId, entry.revealResult, triggerPlayer);
+          : handleAlienRevealSideEffects(workingRoot, entry.alienSlotId, entry.revealResult, triggerPlayer);
         return {
           ...entry,
           sideEffect,

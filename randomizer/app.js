@@ -2030,11 +2030,11 @@
     beginIncomeForCurrentPlayer,
   } = incomeRuntime);
   function confirmAlienTracePlacement(...args) {
-    return alienRuntimeHelpers.confirmAlienTracePlacement(...args);
+    return alienRuntimeHelpers.confirmAlienTracePlacement(browserRuleState, ...args);
   }
 
   function confirmFangzhouTracePlacement(...args) {
-    return alienRuntimeHelpers.confirmFangzhouTracePlacement(...args);
+    return alienRuntimeHelpers.confirmFangzhouTracePlacement(browserRuleState, ...args);
   }
 
   const alienUiHelpers = alienUiModule.createAlienUiHelpers({
@@ -2052,19 +2052,16 @@
     amiba,
     aomomo,
     runezu,
-    alienGameState,
-    playerState,
-    rocketState,
     els,
     renderAlienPanels,
     renderStateReadout,
     getCurrentPlayer,
-    getAlienTraceActionPlayer: (...args) => getAlienTraceActionPlayer?.(...args),
+    getAlienTraceActionPlayer: (workingRoot, ...args) => getAlienTraceActionPlayerForRoot?.(workingRoot, ...args),
     getAvailableDataTokenCount,
     resolvePlayerReference,
-    confirmFangzhouCard2Unlock,
-    confirmAlienTracePlacement,
-    confirmFangzhouTracePlacement,
+    confirmFangzhouCard2Unlock: (_workingRoot, ...args) => confirmFangzhouCard2Unlock(...args),
+    confirmAlienTracePlacement: (workingRoot, ...args) => alienRuntimeHelpers.confirmAlienTracePlacement(workingRoot, ...args),
+    confirmFangzhouTracePlacement: (workingRoot, ...args) => alienRuntimeHelpers.confirmFangzhouTracePlacement(workingRoot, ...args),
     isDebugAlienTraceMode,
     isActionEffectFlowActive,
     isCardSelectionActive,
@@ -2072,7 +2069,7 @@
     getPlayerColorDefinition: (playerColor) => players.getPlayerColorDefinition(playerColor),
   });
   const {
-    buildAlienRevealNoticeEntry,
+    buildAlienRevealNoticeEntry: buildAlienRevealNoticeEntryForRoot,
     openAlienRevealConfirmation,
     closeAlienRevealConfirmationOverlay,
     confirmAlienRevealNotice,
@@ -2089,43 +2086,77 @@
     isAmibaTracePlacementMode,
     isAomomoTracePlacementMode,
     isRunezuTracePlacementMode,
-    getAlienTracePickerPlayer,
-    canPlaceJiuzheTrace,
-    canPlaceYichangdianTrace,
-    canPlaceFangzhouTrace,
-    canPlaceBanrenmaTrace,
-    canPlaceChongTrace,
-    canPlaceAmibaTrace,
-    canPlaceAomomoTrace,
-    canPlaceRunezuTrace,
-    canPlaceRunezuFaceSymbol,
-    canPlaceStateTrace,
-    canPlaceAnyStateExtraTrace,
+    getAlienTracePickerPlayer: getAlienTracePickerPlayerForRoot,
+    canPlaceJiuzheTrace: canPlaceJiuzheTraceForRoot,
+    canPlaceYichangdianTrace: canPlaceYichangdianTraceForRoot,
+    canPlaceFangzhouTrace: canPlaceFangzhouTraceForRoot,
+    canPlaceBanrenmaTrace: canPlaceBanrenmaTraceForRoot,
+    canPlaceChongTrace: canPlaceChongTraceForRoot,
+    canPlaceAmibaTrace: canPlaceAmibaTraceForRoot,
+    canPlaceAomomoTrace: canPlaceAomomoTraceForRoot,
+    canPlaceRunezuTrace: canPlaceRunezuTraceForRoot,
+    canPlaceRunezuFaceSymbol: canPlaceRunezuFaceSymbolForRoot,
+    canPlaceStateTrace: canPlaceStateTraceForRoot,
+    canPlaceAnyStateExtraTrace: canPlaceAnyStateExtraTraceForRoot,
     closeAlienTracePicker,
-    openAlienTracePicker,
-    beginAlienTraceBoardPlacement,
-    beginJiuzheTraceGridPlacement,
-    beginYichangdianTraceGridPlacement,
-    beginFangzhouTraceGridPlacement,
-    beginBanrenmaTraceGridPlacement,
-    beginAomomoTraceGridPlacement,
-    beginChongTraceGridPlacement,
-    beginAmibaTraceGridPlacement,
-    beginRunezuTraceGridPlacement,
-    renderAlienTracePickerColorStep,
-    openFangzhouTraceUseChoice,
-    openFangzhouTraceDestinationChoice,
-    handleFangzhouTraceDestinationChoice,
-    handleFangzhouUnlockTraceChoice,
-    routeFangzhouAlienTraceGain,
-    handleStateTraceSlotPlacement,
-    handleFangzhouTraceSlotPlacement,
-    getEligibleAlienSlotIdsForTraceEffect,
+    openAlienTracePicker: openAlienTracePickerForRoot,
+    beginAlienTraceBoardPlacement: beginAlienTraceBoardPlacementForRoot,
+    beginJiuzheTraceGridPlacement: beginJiuzheTraceGridPlacementForRoot,
+    beginYichangdianTraceGridPlacement: beginYichangdianTraceGridPlacementForRoot,
+    beginFangzhouTraceGridPlacement: beginFangzhouTraceGridPlacementForRoot,
+    beginBanrenmaTraceGridPlacement: beginBanrenmaTraceGridPlacementForRoot,
+    beginAomomoTraceGridPlacement: beginAomomoTraceGridPlacementForRoot,
+    beginChongTraceGridPlacement: beginChongTraceGridPlacementForRoot,
+    beginAmibaTraceGridPlacement: beginAmibaTraceGridPlacementForRoot,
+    beginRunezuTraceGridPlacement: beginRunezuTraceGridPlacementForRoot,
+    renderAlienTracePickerColorStep: renderAlienTracePickerColorStepForRoot,
+    openFangzhouTraceUseChoice: openFangzhouTraceUseChoiceForRoot,
+    openFangzhouTraceDestinationChoice: openFangzhouTraceDestinationChoiceForRoot,
+    handleFangzhouTraceDestinationChoice: handleFangzhouTraceDestinationChoiceForRoot,
+    handleFangzhouUnlockTraceChoice: handleFangzhouUnlockTraceChoiceForRoot,
+    routeFangzhouAlienTraceGain: routeFangzhouAlienTraceGainForRoot,
+    handleStateTraceSlotPlacement: handleStateTraceSlotPlacementForRoot,
+    handleFangzhouTraceSlotPlacement: handleFangzhouTraceSlotPlacementForRoot,
+    getEligibleAlienSlotIdsForTraceEffect: getEligibleAlienSlotIdsForTraceEffectForRoot,
     getAlienTraceChoiceSlotIds,
-    getFangzhouUnlockableTraceTypes,
-    hasAlienTracePanelPlacementTarget,
+    getFangzhouUnlockableTraceTypes: getFangzhouUnlockableTraceTypesForRoot,
+    hasAlienTracePanelPlacementTarget: hasAlienTracePanelPlacementTargetForRoot,
     isAlienTracePickerChoiceAllowed,
   } = alienUiHelpers;
+  const buildAlienRevealNoticeEntry = (...args) => buildAlienRevealNoticeEntryForRoot(browserRuleState, ...args);
+  const getAlienTracePickerPlayer = (...args) => getAlienTracePickerPlayerForRoot(browserRuleState, ...args);
+  const canPlaceJiuzheTrace = (...args) => canPlaceJiuzheTraceForRoot(browserRuleState, ...args);
+  const canPlaceYichangdianTrace = (...args) => canPlaceYichangdianTraceForRoot(browserRuleState, ...args);
+  const canPlaceFangzhouTrace = (...args) => canPlaceFangzhouTraceForRoot(browserRuleState, ...args);
+  const canPlaceBanrenmaTrace = (...args) => canPlaceBanrenmaTraceForRoot(browserRuleState, ...args);
+  const canPlaceChongTrace = (...args) => canPlaceChongTraceForRoot(browserRuleState, ...args);
+  const canPlaceAmibaTrace = (...args) => canPlaceAmibaTraceForRoot(browserRuleState, ...args);
+  const canPlaceAomomoTrace = (...args) => canPlaceAomomoTraceForRoot(browserRuleState, ...args);
+  const canPlaceRunezuTrace = (...args) => canPlaceRunezuTraceForRoot(browserRuleState, ...args);
+  const canPlaceRunezuFaceSymbol = (...args) => canPlaceRunezuFaceSymbolForRoot(browserRuleState, ...args);
+  const canPlaceStateTrace = (...args) => canPlaceStateTraceForRoot(browserRuleState, ...args);
+  const canPlaceAnyStateExtraTrace = (...args) => canPlaceAnyStateExtraTraceForRoot(browserRuleState, ...args);
+  const openAlienTracePicker = (...args) => openAlienTracePickerForRoot(browserRuleState, ...args);
+  const beginAlienTraceBoardPlacement = (...args) => beginAlienTraceBoardPlacementForRoot(browserRuleState, ...args);
+  const beginJiuzheTraceGridPlacement = (...args) => beginJiuzheTraceGridPlacementForRoot(browserRuleState, ...args);
+  const beginYichangdianTraceGridPlacement = (...args) => beginYichangdianTraceGridPlacementForRoot(browserRuleState, ...args);
+  const beginFangzhouTraceGridPlacement = (...args) => beginFangzhouTraceGridPlacementForRoot(browserRuleState, ...args);
+  const beginBanrenmaTraceGridPlacement = (...args) => beginBanrenmaTraceGridPlacementForRoot(browserRuleState, ...args);
+  const beginAomomoTraceGridPlacement = (...args) => beginAomomoTraceGridPlacementForRoot(browserRuleState, ...args);
+  const beginChongTraceGridPlacement = (...args) => beginChongTraceGridPlacementForRoot(browserRuleState, ...args);
+  const beginAmibaTraceGridPlacement = (...args) => beginAmibaTraceGridPlacementForRoot(browserRuleState, ...args);
+  const beginRunezuTraceGridPlacement = (...args) => beginRunezuTraceGridPlacementForRoot(browserRuleState, ...args);
+  const renderAlienTracePickerColorStep = (...args) => renderAlienTracePickerColorStepForRoot(browserRuleState, ...args);
+  const openFangzhouTraceUseChoice = (...args) => openFangzhouTraceUseChoiceForRoot(browserRuleState, ...args);
+  const openFangzhouTraceDestinationChoice = (...args) => openFangzhouTraceDestinationChoiceForRoot(browserRuleState, ...args);
+  const handleFangzhouTraceDestinationChoice = (...args) => handleFangzhouTraceDestinationChoiceForRoot(browserRuleState, ...args);
+  const handleFangzhouUnlockTraceChoice = (...args) => handleFangzhouUnlockTraceChoiceForRoot(browserRuleState, ...args);
+  const routeFangzhouAlienTraceGain = (...args) => routeFangzhouAlienTraceGainForRoot(browserRuleState, ...args);
+  const handleStateTraceSlotPlacement = (...args) => handleStateTraceSlotPlacementForRoot(browserRuleState, ...args);
+  const handleFangzhouTraceSlotPlacement = (...args) => handleFangzhouTraceSlotPlacementForRoot(browserRuleState, ...args);
+  const getEligibleAlienSlotIdsForTraceEffect = (...args) => getEligibleAlienSlotIdsForTraceEffectForRoot(browserRuleState, ...args);
+  const getFangzhouUnlockableTraceTypes = (...args) => getFangzhouUnlockableTraceTypesForRoot(browserRuleState, ...args);
+  const hasAlienTracePanelPlacementTarget = (...args) => hasAlienTracePanelPlacementTargetForRoot(browserRuleState, ...args);
   const alienRuntimeHelpers = alienRuntimeModule.createAlienRuntimeHelpers({
     decisionSessions,
     structuredClone,
@@ -2142,12 +2173,6 @@
     amiba,
     aomomo,
     runezu,
-    alienGameState,
-    playerState,
-    rocketState,
-    solarState,
-    nebulaDataState,
-    techGameState,
     HISTORY_SOURCE_MAIN,
     getCurrentPlayer,
     getActivePlayers,
@@ -2218,37 +2243,57 @@
     isAmibaTracePlacementMode,
     isAomomoTracePlacementMode,
     isRunezuTracePlacementMode,
-    canPlaceJiuzheTrace,
-    canPlaceYichangdianTrace,
-    canPlaceFangzhouTrace,
-    canPlaceBanrenmaTrace,
-    canPlaceChongTrace,
-    canPlaceAmibaTrace,
-    canPlaceAomomoTrace,
-    canPlaceRunezuTrace,
+    canPlaceJiuzheTrace: (workingRoot, ...args) => canPlaceJiuzheTraceForRoot(workingRoot, ...args),
+    canPlaceYichangdianTrace: (workingRoot, ...args) => canPlaceYichangdianTraceForRoot(workingRoot, ...args),
+    canPlaceFangzhouTrace: (workingRoot, ...args) => canPlaceFangzhouTraceForRoot(workingRoot, ...args),
+    canPlaceBanrenmaTrace: (workingRoot, ...args) => canPlaceBanrenmaTraceForRoot(workingRoot, ...args),
+    canPlaceChongTrace: (workingRoot, ...args) => canPlaceChongTraceForRoot(workingRoot, ...args),
+    canPlaceAmibaTrace: (workingRoot, ...args) => canPlaceAmibaTraceForRoot(workingRoot, ...args),
+    canPlaceAomomoTrace: (workingRoot, ...args) => canPlaceAomomoTraceForRoot(workingRoot, ...args),
+    canPlaceRunezuTrace: (workingRoot, ...args) => canPlaceRunezuTraceForRoot(workingRoot, ...args),
   });
   const {
-    handleJiuzheRevealSideEffects,
-    handleYichangdianRevealSideEffects,
-    handleFangzhouRevealSideEffects,
-    handleBanrenmaRevealSideEffects,
-    handleChongRevealSideEffects,
-    handleAmibaRevealSideEffects,
-    handleAomomoRevealSideEffects,
-    handleRunezuRevealSideEffects,
-    handleAlienRevealSideEffects,
-    failMissingAlienTraceTargetPlayer,
-    getAlienTraceActionPlayer,
-    confirmYichangdianTracePlacement,
-    confirmBanrenmaTracePlacement,
-    confirmAomomoTracePlacement,
-    confirmChongTracePlacement,
-    confirmAmibaTracePlacement,
-    confirmRunezuTracePlacement,
-    confirmJiuzheTracePlacement,
-    settleTurnEndAlienRevealEntries,
-    activateAomomoBoard,
+    handleJiuzheRevealSideEffects: handleJiuzheRevealSideEffectsForRoot,
+    handleYichangdianRevealSideEffects: handleYichangdianRevealSideEffectsForRoot,
+    handleFangzhouRevealSideEffects: handleFangzhouRevealSideEffectsForRoot,
+    handleBanrenmaRevealSideEffects: handleBanrenmaRevealSideEffectsForRoot,
+    handleChongRevealSideEffects: handleChongRevealSideEffectsForRoot,
+    handleAmibaRevealSideEffects: handleAmibaRevealSideEffectsForRoot,
+    handleAomomoRevealSideEffects: handleAomomoRevealSideEffectsForRoot,
+    handleRunezuRevealSideEffects: handleRunezuRevealSideEffectsForRoot,
+    handleAlienRevealSideEffects: handleAlienRevealSideEffectsForRoot,
+    failMissingAlienTraceTargetPlayer: failMissingAlienTraceTargetPlayerForRoot,
+    getAlienTraceActionPlayer: getAlienTraceActionPlayerForRoot,
+    confirmYichangdianTracePlacement: confirmYichangdianTracePlacementForRoot,
+    confirmBanrenmaTracePlacement: confirmBanrenmaTracePlacementForRoot,
+    confirmAomomoTracePlacement: confirmAomomoTracePlacementForRoot,
+    confirmChongTracePlacement: confirmChongTracePlacementForRoot,
+    confirmAmibaTracePlacement: confirmAmibaTracePlacementForRoot,
+    confirmRunezuTracePlacement: confirmRunezuTracePlacementForRoot,
+    confirmJiuzheTracePlacement: confirmJiuzheTracePlacementForRoot,
+    settleTurnEndAlienRevealEntries: settleTurnEndAlienRevealEntriesForRoot,
+    activateAomomoBoard: activateAomomoBoardForRoot,
   } = alienRuntimeHelpers;
+  const handleJiuzheRevealSideEffects = (...args) => handleJiuzheRevealSideEffectsForRoot(browserRuleState, ...args);
+  const handleYichangdianRevealSideEffects = (...args) => handleYichangdianRevealSideEffectsForRoot(browserRuleState, ...args);
+  const handleFangzhouRevealSideEffects = (...args) => handleFangzhouRevealSideEffectsForRoot(browserRuleState, ...args);
+  const handleBanrenmaRevealSideEffects = (...args) => handleBanrenmaRevealSideEffectsForRoot(browserRuleState, ...args);
+  const handleChongRevealSideEffects = (...args) => handleChongRevealSideEffectsForRoot(browserRuleState, ...args);
+  const handleAmibaRevealSideEffects = (...args) => handleAmibaRevealSideEffectsForRoot(browserRuleState, ...args);
+  const handleAomomoRevealSideEffects = (...args) => handleAomomoRevealSideEffectsForRoot(browserRuleState, ...args);
+  const handleRunezuRevealSideEffects = (...args) => handleRunezuRevealSideEffectsForRoot(browserRuleState, ...args);
+  const handleAlienRevealSideEffects = (...args) => handleAlienRevealSideEffectsForRoot(browserRuleState, ...args);
+  const failMissingAlienTraceTargetPlayer = (...args) => failMissingAlienTraceTargetPlayerForRoot(browserRuleState, ...args);
+  const getAlienTraceActionPlayer = (...args) => getAlienTraceActionPlayerForRoot(browserRuleState, ...args);
+  const confirmYichangdianTracePlacement = (...args) => confirmYichangdianTracePlacementForRoot(browserRuleState, ...args);
+  const confirmBanrenmaTracePlacement = (...args) => confirmBanrenmaTracePlacementForRoot(browserRuleState, ...args);
+  const confirmAomomoTracePlacement = (...args) => confirmAomomoTracePlacementForRoot(browserRuleState, ...args);
+  const confirmChongTracePlacement = (...args) => confirmChongTracePlacementForRoot(browserRuleState, ...args);
+  const confirmAmibaTracePlacement = (...args) => confirmAmibaTracePlacementForRoot(browserRuleState, ...args);
+  const confirmRunezuTracePlacement = (...args) => confirmRunezuTracePlacementForRoot(browserRuleState, ...args);
+  const confirmJiuzheTracePlacement = (...args) => confirmJiuzheTracePlacementForRoot(browserRuleState, ...args);
+  const settleTurnEndAlienRevealEntries = (...args) => settleTurnEndAlienRevealEntriesForRoot(browserRuleState, ...args);
+  const activateAomomoBoard = (...args) => activateAomomoBoardForRoot(browserRuleState, ...args);
 
   function getPlayerHandPanelTitleHint() {
     if (isDiscardSelectionActive()) {

@@ -31,7 +31,7 @@ function createHarness(overrides = {}) {
   const decisionSessions = createDecisionSessionStore();
   attachDecisionState(pendingState, decisionSessions);
   const player = { id: "p1", color: "white", resources: {}, hand: [] };
-  const playerState = { players: [player] };
+  const playerState = { currentPlayerId: "p1", activePlayerIds: ["p1"], players: [player] };
   const alienGameState = {
     fangzhou: {},
     aliens: {},
@@ -52,6 +52,7 @@ function createHarness(overrides = {}) {
       grantAlienCardsForFirstTraces: () => ({ ok: true, totalExpected: 1, totalDrawn: 1, message: "发 1 张外星人牌" }),
     },
     players: {
+      getCurrentPlayer: (state) => state.players.find((entry) => entry.id === state.currentPlayerId) || null,
       gainResources(target, gain) {
         for (const [key, value] of Object.entries(gain || {})) {
           target.resources[key] = (target.resources[key] || 0) + value;
@@ -199,12 +200,20 @@ function createHarness(overrides = {}) {
     player,
     rocketState,
     actionEffect,
+    workingRoot: {
+      alienGameState,
+      playerState,
+      rocketState,
+      solarState: context.solarState,
+      nebulaDataState: context.nebulaDataState,
+      techGameState: context.techGameState,
+    },
   };
 }
 
 {
-  const { helpers } = createHarness();
-  const result = helpers.handleAomomoRevealSideEffects(1, { ok: true, alienId: "aomomo" }, { id: "p1" });
+  const { helpers, workingRoot } = createHarness();
+  const result = helpers.handleAomomoRevealSideEffects(workingRoot, 1, { ok: true, alienId: "aomomo" }, { id: "p1" });
   assert.equal(result.ok, true);
   assert.equal(result.cardGrant.totalDrawn, 1);
   assert.match(result.message, /奥陌陌已揭示/);
@@ -212,8 +221,8 @@ function createHarness(overrides = {}) {
 }
 
 {
-  const { helpers, actionEffect, rocketState, player, calls } = createHarness();
-  const result = helpers.confirmAlienTracePlacement(1, "yellow");
+  const { helpers, actionEffect, rocketState, player, calls, workingRoot } = createHarness();
+  const result = helpers.confirmAlienTracePlacement(workingRoot, 1, "yellow");
   assert.equal(result.ok, true);
   assert.equal(actionEffect.result.ok, true);
   assert.equal(player.resources.score, 7);
@@ -222,16 +231,30 @@ function createHarness(overrides = {}) {
 }
 
 {
-  const { helpers, calls } = createHarness();
-  const result = helpers.confirmBanrenmaTracePlacement(1, "yellow", 2);
+  const { helpers, player, workingRoot } = createHarness();
+  const isolatedRoot = structuredClone(workingRoot);
+  const result = helpers.confirmAlienTracePlacement(isolatedRoot, 1, "yellow");
+  assert.equal(result.ok, true);
+  assert.equal(isolatedRoot.playerState.players[0].resources.score, 7);
+  assert.deepEqual(player.resources, {}, "隔离 root 痕迹奖励不得写入闭包 playerState");
+  assert.throws(
+    () => helpers.confirmAlienTracePlacement(undefined, 1, "yellow"),
+    /explicit workingRoot/,
+    "外星人规则 operation 缺 root 必须立即失败",
+  );
+}
+
+{
+  const { helpers, calls, workingRoot } = createHarness();
+  const result = helpers.confirmBanrenmaTracePlacement(workingRoot, 1, "yellow", 2);
   assert.equal(result.ok, true);
   assert.equal(calls.openBanrenma, 1);
   assert.equal(calls.continueReveal, 0);
 }
 
 {
-  const { helpers, calls, rocketState } = createHarness();
-  const settled = helpers.settleTurnEndAlienRevealEntries({ id: "p1" }, [
+  const { helpers, calls, rocketState, workingRoot } = createHarness();
+  const settled = helpers.settleTurnEndAlienRevealEntries(workingRoot, { id: "p1" }, [
     { alienSlotId: 1, revealResult: { ok: true, alienId: "aomomo", message: "揭示奥陌陌" } },
   ]);
   assert.equal(settled.length, 1);
