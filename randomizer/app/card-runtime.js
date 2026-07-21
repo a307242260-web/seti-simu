@@ -27,7 +27,6 @@
       canPayForMove,
       canStartMainAction,
       cardEffects,
-      cardState,
       cards,
       clearMoveRocketHighlight,
       clearHistoryStepOrderForSource,
@@ -49,14 +48,11 @@
       finishIndustryAbilityFlow,
       formatPlanetRewardGain,
       endEffectHistoryStep,
-      getCurrentPlayer,
       getCurrentActionEffect,
       getDelayedPublicRefillSlots,
       getGameplayLockReason,
       getMainActionStartBlockReason,
-      getMovableTokensForPlayer,
       getRequiredMovePointsForUi,
-      getPlayerById,
       getPublicScanSelectionInstruction,
       handlePublicCornerDiscardCardClick,
       handlePublicScanCardClick,
@@ -80,7 +76,6 @@
       maybeContinuePendingTurnEndRevealFlow,
       normalizeResourceCost,
       uiRuntimeState,
-      playerState,
       players,
       quickActionHistory,
       quickTrades,
@@ -94,20 +89,41 @@
       renderRocketElement,
       renderRuntime,
       renderStateReadout,
-      rocketState,
       rocketActions,
       rollbackPendingIndustryQuickAction,
       runezu,
-      selectDefaultRocketForCurrentPlayer,
       scrollToPlayerHandPanel,
       settleCardTasksAfterEffect,
       startCardEffectFlow,
       structuredClone,
       syncCardSelectionChrome,
       syncMovePaymentChrome,
-      turnState,
       updateActionButtons,
     } = context;
+
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        throw new TypeError("card-runtime operation requires an explicit workingRoot");
+      }
+      return workingRoot;
+    }
+
+    function getWorkingCurrentPlayer(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      return players.getCurrentPlayer(playerState);
+    }
+
+    function resolveWorkingPlayerById(workingRoot, playerId) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      return (playerState.players || []).find((player) => player.id === playerId) || null;
+    }
+
+    function getWorkingMovableTokens(workingRoot, playerId) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
+      return rocketActions.getMovableTokensForPlayer
+        ? rocketActions.getMovableTokensForPlayer(rocketState, playerId)
+        : rocketActions.getRocketsForPlayer(rocketState, playerId);
+    }
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
@@ -136,7 +152,7 @@
       return decisionSessions.open(CARD_CORNER_FREE_MOVE_SESSION, session);
     }
 
-    function getDiscardCornerRewardMultiplier(player = getCurrentPlayer()) {
+    function getDiscardCornerRewardMultiplier(workingRoot, player = getWorkingCurrentPlayer(workingRoot)) {
       return industry?.shouldDoubleDiscardCornerRewards?.(player) ? 2 : 1;
     }
 
@@ -169,7 +185,7 @@
       };
     }
 
-    function getCardCornerQuickActionForCard(card) {
+    function getCardCornerQuickActionForCard(workingRoot, card) {
       if (fangzhou?.isFangzhouCard2?.(card)) {
         return {
           actionKind: "fangzhou_basic",
@@ -189,7 +205,7 @@
 
       const resourceReward = cards.getDiscardActionRewardForCard(card);
       if (resourceReward) {
-        const rewardMultiplier = getDiscardCornerRewardMultiplier();
+        const rewardMultiplier = getDiscardCornerRewardMultiplier(workingRoot);
         const reward = multiplyDiscardActionReward(resourceReward, rewardMultiplier);
         return {
           actionKind: "resource",
@@ -201,7 +217,7 @@
 
       const moveReward = cards.getDiscardActionMoveRewardForCard?.(card);
       if (moveReward) {
-        const rewardMultiplier = getDiscardCornerRewardMultiplier();
+        const rewardMultiplier = getDiscardCornerRewardMultiplier(workingRoot);
         const reward = multiplyDiscardMoveReward(moveReward, rewardMultiplier);
         return {
           actionKind: "move",
@@ -214,7 +230,7 @@
       return null;
     }
 
-    function shouldQueueCardCornerMoveQuickAction(action, player = getCurrentPlayer()) {
+    function shouldQueueCardCornerMoveQuickAction(workingRoot, action, player = getWorkingCurrentPlayer(workingRoot)) {
       return action?.actionKind === "move"
         && Boolean(industry?.shouldDoubleDiscardCornerRewards?.(player));
     }
@@ -384,15 +400,17 @@
       };
     }
 
-    function canStartCardCornerFreeMove() {
-      const currentPlayer = getCurrentPlayer();
-      const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
+    function canStartCardCornerFreeMove(workingRoot) {
+      const { playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
+      const rocketsForPlayer = getWorkingMovableTokens(workingRoot, currentPlayer?.id);
       if (rocketsForPlayer.length > 0) return { ok: true, rocketsForPlayer };
       return { ok: false, rocketsForPlayer, message: "没有可移动的飞船" };
     }
 
-    function beginCardCornerFreeMove(action, discardedCard, deferredEvents = []) {
-      const check = canStartCardCornerFreeMove();
+    function beginCardCornerFreeMove(workingRoot, action, discardedCard, deferredEvents = []) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
+      const check = canStartCardCornerFreeMove(workingRoot);
       if (!check.ok) {
         rocketState.statusNote = check.message;
         renderStateReadout();
@@ -410,7 +428,7 @@
       if (check.rocketsForPlayer.length === 1) {
         activateMoveMode(check.rocketsForPlayer[0].id);
       } else {
-        selectDefaultRocketForCurrentPlayer();
+        selectDefaultRocketFromCandidates(workingRoot, check.rocketsForPlayer);
       }
       updateActionButtons();
       renderStateReadout();
@@ -446,7 +464,8 @@
       };
     }
 
-    function startCardCornerMoveEffectFlow(action, discardedCard, cornerEvent) {
+    function startCardCornerMoveEffectFlow(workingRoot, action, discardedCard, cornerEvent) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const moveEffect = buildQueuedCardCornerMoveEffect(action, discardedCard, cornerEvent);
       const started = startCardEffectFlow(
         "card-corner-quick-move",
@@ -543,15 +562,15 @@
         && Number.isFinite(Number(getFutureSpanDeltaForCard(card)));
     }
 
-    function hasFutureSpanEligibleHandCard(player = getCurrentPlayer()) {
+    function hasFutureSpanEligibleHandCard(workingRoot, player = getWorkingCurrentPlayer(workingRoot)) {
       return (player?.hand || []).some(isFutureSpanEligibleHandCard);
     }
 
-    function hasPlayableFutureSpanCard(player = getCurrentPlayer()) {
+    function hasPlayableFutureSpanCard(workingRoot, player = getWorkingCurrentPlayer(workingRoot)) {
       return industry?.isFutureSpanCardReady?.(player) === true;
     }
 
-    function getStandardPlayCardActionBlockReason(player = getCurrentPlayer()) {
+    function getStandardPlayCardActionBlockReason(workingRoot, player = getWorkingCurrentPlayer(workingRoot)) {
       return industry?.blocksStandardPlayCardAction?.(player)
         ? "原教旨主义：不能使用打牌主要行动"
         : null;
@@ -570,7 +589,7 @@
         : fallbackTypeCode;
     }
 
-    function getPlayCardSelectionBlockReason(player = getCurrentPlayer()) {
+    function getPlayCardSelectionBlockReason(workingRoot, player = getWorkingCurrentPlayer(workingRoot)) {
       if (!canStartMainAction()) {
         return getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
       }
@@ -579,12 +598,12 @@
       if (isDiscardSelectionActive()) return "请先完成弃牌";
       if (isHandScanSelectionActive()) return "请先完成手牌扫描";
       if (isMovePaymentSelectionActive()) return "请先完成移动";
-      return getStandardPlayCardActionBlockReason(player);
+      return getStandardPlayCardActionBlockReason(workingRoot, player);
     }
 
-    function getHandCardPlayActionForCard(card, player = getCurrentPlayer()) {
+    function getHandCardPlayActionForCard(workingRoot, card, player = getWorkingCurrentPlayer(workingRoot)) {
       if (!card) return null;
-      const blockReason = getPlayCardSelectionBlockReason(player);
+      const blockReason = getPlayCardSelectionBlockReason(workingRoot, player);
       if (blockReason) return null;
 
       const cost = getCardPlayCost(card);
@@ -596,7 +615,8 @@
       };
     }
 
-    function beginCardSelection(pendingAction = null) {
+    function beginCardSelection(workingRoot, pendingAction = null) {
+      const { cardState, rocketState } = requireWorkingRoot(workingRoot);
       if (isTechTilePickingActive()) {
         return { ok: false, message: "请先完成科技选择" };
       }
@@ -654,7 +674,8 @@
       return { ok: true, message: rocketState.statusNote };
     }
 
-    function cancelCardSelection() {
+    function cancelCardSelection(workingRoot) {
+      const { cardState, rocketState } = requireWorkingRoot(workingRoot);
       const pending = decisionState.cardSelectionAction;
       decisionState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
@@ -668,7 +689,7 @@
           rocketState.statusNote = "已取消精选，已恢复交易前状态";
           renderPlayerHand();
           renderPublicCards();
-          updatePublicCardControls();
+          updatePublicCardControls(workingRoot);
         } else {
           players.gainResources(pending.player, pending.refundCost);
           rocketState.statusNote = `已取消精选，已退回 ${players.formatResourceCost(pending.refundCost)}`;
@@ -779,7 +800,8 @@
       renderStateReadout();
     }
 
-    function finalizeCardSelectionResult(result) {
+    function finalizeCardSelectionResult(workingRoot, result) {
+      const { cardState, playerState, rocketState } = requireWorkingRoot(workingRoot);
       if (!result?.ok) {
         rocketState.statusNote = result?.message || "精选失败";
         renderStateReadout();
@@ -820,12 +842,12 @@
       }
       if (pending?.type === "tech_bonus_pick_card") {
         markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
-        const bonusResult = abilities.executeAbility("researchTechBonus", createActionContext(), {
+        const bonusResult = abilities.executeAbility("researchTechBonus", createActionContext(workingRoot), {
           bonusId: pending.bonusId,
           firstTake: Boolean(pending.firstTake),
           skipCardSelection: true,
         });
-        recordTechBonusScore(pending.player || getCurrentPlayer(), bonusResult);
+        recordTechBonusScore(pending.player || getWorkingCurrentPlayer(workingRoot), bonusResult);
         if (getCurrentActionEffect()) {
           getCurrentActionEffect().result = {
             ok: true,
@@ -834,8 +856,8 @@
             message: `${rocketState.statusNote}${bonusResult?.message ? `；${bonusResult.message}` : ""}`,
             events: [{
               type: "researchTech",
-              playerId: pending.player?.id || getCurrentPlayer()?.id || null,
-              playerColor: pending.player?.color || getCurrentPlayer()?.color || null,
+              playerId: pending.player?.id || getWorkingCurrentPlayer(workingRoot)?.id || null,
+              playerColor: pending.player?.color || getWorkingCurrentPlayer(workingRoot)?.color || null,
               techType: pending.selection?.techType || null,
               tileId: pending.selection?.tileId || null,
               source: decisionState.actionEffectFlow?.actionType || "tech",
@@ -964,7 +986,7 @@
         beginQuickActionStep("card-trigger-pick", `卡牌触发：${match?.effect?.label || "精选"}`);
         if (match?.card && match?.trigger) {
           cardEffects.consumeTrigger(match.card, match.trigger.id);
-          discardReservedCardIfFinished(pending.player || getCurrentPlayer(), match.card);
+          discardReservedCardIfFinished(pending.player || getWorkingCurrentPlayer(workingRoot), match.card);
         }
         rocketState.statusNote = `卡牌触发精选：${cards.getCardLabel(result.card)}`;
         for (const command of createCardTriggerProgressCommands(pending.triggerSnapshot, "卡牌触发精选")) {
@@ -978,7 +1000,7 @@
         continueAfterCardTriggerResolution();
       }
       if (pending?.type === "card_pick_corner_reward") {
-        const player = pending.player || getCurrentPlayer();
+        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
         const beforePlayer = pending.beforePlayerState || structuredClone(player);
         const beforeCardState = pending.beforeCardState || {
           publicCards: cardState.publicCards.slice(),
@@ -1012,7 +1034,7 @@
         completeCurrentActionEffect();
       }
       if (pending?.type === "industry_mission_pick") {
-        const player = pending.player || getCurrentPlayer();
+        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
         const incomeResult = industry.applyIncomeResourcesFromCard(cards, players, data, player, result.card, {
           blindDraw: blindDrawCardForPlayer,
         });
@@ -1023,7 +1045,7 @@
         commitIrreversibleIndustryQuickAction("任务中继站：精选", rocketState.statusNote);
       }
       if (pending?.type === "industry_fenwick_pick") {
-        const player = pending.player || getCurrentPlayer();
+        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
         const reward = industry.getCornerReward(cards, result.card);
         const applied = reward
           ? industry.applyCornerReward(players, data, player, reward)
@@ -1033,7 +1055,7 @@
           ? `芬威克研究中心：精选 ${cards.getCardLabel(result.card)}，${applied.message}`
           : applied.message;
         if (applied.ok && applied.pendingFreeMove) {
-          const moveCheck = canStartCardCornerFreeMove();
+          const moveCheck = canStartCardCornerFreeMove(workingRoot);
           if (moveCheck.ok) {
             setCardCornerFreeMove({
               action: {
@@ -1049,7 +1071,7 @@
             if (moveCheck.rocketsForPlayer.length === 1) {
               activateMoveMode(moveCheck.rocketsForPlayer[0].id);
             } else {
-              selectDefaultRocketForCurrentPlayer();
+              selectDefaultRocketFromCandidates(workingRoot, moveCheck.rocketsForPlayer);
             }
           } else {
             rocketState.statusNote = `${rocketState.statusNote}；${moveCheck.message}`;
@@ -1062,7 +1084,7 @@
         }
       }
       if (pending?.type === "industry_strategy_pick") {
-        const player = pending.player || getCurrentPlayer();
+        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
         if (player) {
           const beforePlayer = structuredClone(player);
           industry?.clearStrategyPassiveSlots?.(player);
@@ -1077,7 +1099,7 @@
         commitIrreversibleIndustryQuickAction("宇宙战略集团：精选", rocketState.statusNote);
       }
       if (pending?.type === "industry_future_pick") {
-        const player = pending.player || getCurrentPlayer();
+        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
         const advanceAmount = Math.round(Number(pending.advanceAmount ?? industry?.FUTURE_SPAN_PICK_ADVANCE_AMOUNT) || 2);
         const advanceResult = industry.advanceFutureSpanTarget?.(player, advanceAmount);
         rocketState.statusNote = advanceResult?.ok
@@ -1087,7 +1109,7 @@
         commitIrreversibleIndustryQuickAction("未来跨度研究所：精选", rocketState.statusNote);
       }
       if (pending?.type === "fundamentalism_exchange_pick") {
-        const player = pending.player || getCurrentPlayer();
+        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
         beginEffectHistoryStep(pending.effectLabel || "原教旨主义：精选兑换");
         recordHistoryCommand(historyCommands.createRestorePlayerCommand(
           player,
@@ -1111,7 +1133,7 @@
         }
         completeCurrentActionEffect();
       }
-      ensurePublicCardsFilledRespectingDelayedRefills();
+      ensurePublicCardsFilledRespectingDelayedRefills(workingRoot);
       syncCardSelectionChrome();
       renderPublicCards();
       renderPlayerStats();
@@ -1124,8 +1146,9 @@
       return result;
     }
 
-    function drawBasicCardToPlayer(player, execution = {}) {
-      const target = player || getCurrentPlayer();
+    function drawBasicCardToPlayer(workingRoot, player, execution = {}) {
+      const { cardState, playerState } = requireWorkingRoot(workingRoot);
+      const target = player || getWorkingCurrentPlayer(workingRoot);
       if (!target) {
         return { ok: false, message: "没有当前玩家", card: null };
       }
@@ -1135,20 +1158,21 @@
       }
 
       return cards.blindDraw(
-        execution.workingRoot?.cardState || cardState,
-        execution.workingRoot?.playerState || playerState,
+        cardState,
+        playerState,
         target,
       );
     }
 
-    function blindDrawCardForPlayer(player, execution = {}) {
-      return drawBasicCardToPlayer(player, execution);
+    function blindDrawCardForPlayer(workingRoot, player, execution = {}) {
+      return drawBasicCardToPlayer(workingRoot, player, execution);
     }
 
-    function drawCardForCurrentPlayer(options = {}) {
-      const currentPlayer = getCurrentPlayer();
+    function drawCardForCurrentPlayer(workingRoot, options = {}) {
+      const { rocketState, playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const fromSelection = Boolean(options.fromSelection);
-      const drawResult = blindDrawCardForPlayer(currentPlayer);
+      const drawResult = blindDrawCardForPlayer(workingRoot, currentPlayer);
 
       if (!drawResult.ok) {
         rocketState.statusNote = drawResult.message;
@@ -1157,37 +1181,39 @@
       }
 
       if (fromSelection) {
-        return finalizeCardSelectionResult(drawResult);
+        return finalizeCardSelectionResult(workingRoot, drawResult);
       }
 
       rocketState.statusNote = `盲抽：${cards.getCardLabel(drawResult.card)}`;
       renderPlayerStats();
       renderPublicCards();
-      updatePublicCardControls();
+      updatePublicCardControls(workingRoot);
       renderStateReadout();
       return { ok: true, card: drawResult.card, message: rocketState.statusNote };
     }
 
-    function pickPublicCardForCurrentPlayer(slotIndex) {
-      const currentPlayer = getCurrentPlayer();
+    function pickPublicCardForCurrentPlayer(workingRoot, slotIndex) {
+      const { cardState, playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const pickResult = cards.pickFromPublic(cardState, playerState, currentPlayer, slotIndex);
-      return finalizeCardSelectionResult(pickResult);
+      return finalizeCardSelectionResult(workingRoot, pickResult);
     }
 
     function discardCardFromCurrentPlayer() {
       return beginDiscardSelection(1);
     }
 
-    function canBlindDraw() {
+    function canBlindDraw(workingRoot) {
+      const { cardState, playerState } = requireWorkingRoot(workingRoot);
       return cards.getAvailablePool(cardState, playerState).length > 0;
     }
 
-    function updatePublicCardControls() {
+    function updatePublicCardControls(workingRoot) {
       if (!els.publicBlindDrawButton) return;
 
       const selectionActive = isCardSelectionActive();
       const allowsBlindDraw = allowsBlindDrawInSelection();
-      const canDraw = canBlindDraw();
+      const canDraw = canBlindDraw(workingRoot);
       const enabled = selectionActive && allowsBlindDraw && canDraw;
       els.publicBlindDrawButton.disabled = !enabled;
       els.publicBlindDrawButton.classList.toggle("is-selectable", enabled);
@@ -1206,7 +1232,8 @@
         .filter((slotIndex) => Number.isInteger(slotIndex));
     }
 
-    function ensurePublicCardsFilledRespectingDelayedRefills() {
+    function ensurePublicCardsFilledRespectingDelayedRefills(workingRoot) {
+      const { cardState, playerState } = requireWorkingRoot(workingRoot);
       return cards.ensurePublicCardsFilled(cardState, playerState, undefined, {
         skipSlotIndexes: getDelayedPublicRefillSlotIndexes(),
       });
@@ -1216,7 +1243,7 @@
       return renderRuntime.renderPublicCards();
     }
 
-    function handlePublicCardClick(slotIndex) {
+    function handlePublicCardClick(workingRoot, slotIndex) {
       if (!isCardSelectionActive()) return;
       if (decisionState.cardSelectionAction?.type === "public_scan") {
         handlePublicScanCardClick(slotIndex);
@@ -1230,30 +1257,32 @@
         finalizeIndustryDeepspaceSwap(slotIndex);
         return;
       }
-      pickPublicCardForCurrentPlayer(slotIndex);
+      pickPublicCardForCurrentPlayer(workingRoot, slotIndex);
     }
 
-    function handlePublicBlindDrawClick() {
+    function handlePublicBlindDrawClick(workingRoot) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!isCardSelectionActive()) return;
       if (!allowsBlindDrawInSelection()) {
         rocketState.statusNote = "本次精选不能盲抽，请从公共牌区选择";
         renderStateReadout();
         return;
       }
-      drawCardForCurrentPlayer({ fromSelection: true });
+      drawCardForCurrentPlayer(workingRoot, { fromSelection: true });
     }
 
     function isPassReserveSelectionActive() {
       return Boolean(getPassReserveSelection());
     }
 
-    function getPassReserveSelectionCards() {
+    function getPassReserveSelectionCards(workingRoot) {
+      const { cardState } = requireWorkingRoot(workingRoot);
       const pending = getPassReserveSelection();
       if (!pending) return [];
       return cards.getPassReservePile(cardState, pending.roundNumber);
     }
 
-    function renderPassReserveSelection() {
+    function renderPassReserveSelection(workingRoot) {
       if (!els.passReserveSelectionGrid) return;
 
       const pending = getPassReserveSelection();
@@ -1264,7 +1293,7 @@
         return;
       }
 
-      const pile = getPassReserveSelectionCards();
+      const pile = getPassReserveSelectionCards(workingRoot);
       const selectedCardId = pending.selectedCardId || null;
       els.passReserveSelectionGrid.replaceChildren(...pile.map((card) => {
         const button = document.createElement("button");
@@ -1298,7 +1327,8 @@
       }
     }
 
-    function syncPassReserveSelectionChrome() {
+    function syncPassReserveSelectionChrome(workingRoot) {
+      const { turnState } = requireWorkingRoot(workingRoot);
       const active = isPassReserveSelectionActive();
       const visible = active && !uiRuntimeState.passReserveSelectionDismissed;
       els.appWrap?.classList.toggle("pass-reserve-selection-active", visible);
@@ -1312,14 +1342,15 @@
       }
       if (visible && els.passReserveSelectionSubtitle) {
         const round = getPassReserveSelection()?.roundNumber || turnState.roundNumber;
-        const count = getPassReserveSelectionCards().length;
+        const count = getPassReserveSelectionCards(workingRoot).length;
         els.passReserveSelectionSubtitle.textContent = `第 ${round} 轮 PASS：从剩余 ${count} 张预留牌中选择 1 张。`;
       }
-      renderPassReserveSelection();
+      renderPassReserveSelection(workingRoot);
     }
 
-    function beginPassReserveSelection(effect) {
-      const currentPlayer = getCurrentPlayer();
+    function beginPassReserveSelection(workingRoot, effect) {
+      const { cardState, rocketState, turnState, playerState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const roundNumber = Math.round(Number(effect?.options?.roundNumber ?? turnState.roundNumber));
       const pile = cards.getPassReservePile(cardState, roundNumber);
       if (!pile.length) {
@@ -1339,7 +1370,7 @@
         rocketState.statusNote = selected
           ? `PASS 预留精选：已选择 ${cards.getCardLabel(selected)}`
           : `PASS 预留精选：请选择 1 张牌（剩余 ${pile.length} 张）`;
-        syncPassReserveSelectionChrome();
+        syncPassReserveSelectionChrome(workingRoot);
         updateActionButtons();
         renderStateReadout();
         return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
@@ -1353,33 +1384,36 @@
       });
       uiRuntimeState.passReserveSelectionDismissed = false;
       rocketState.statusNote = `PASS 预留精选：请选择 1 张牌（剩余 ${pile.length} 张）`;
-      syncPassReserveSelectionChrome();
+      syncPassReserveSelectionChrome(workingRoot);
       updateActionButtons();
       renderStateReadout();
       return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
     }
 
-    function dismissPassReserveSelectionOverlay(options = {}) {
+    function dismissPassReserveSelectionOverlay(workingRoot, options = {}) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!getPassReserveSelection()) return { ok: false, message: "当前没有 PASS 预留精选" };
       uiRuntimeState.passReserveSelectionDismissed = true;
-      syncPassReserveSelectionChrome();
+      syncPassReserveSelectionChrome(workingRoot);
       rocketState.statusNote = "PASS 预留精选已临时关闭；再次点击效果栏的 PASS 预留精选可继续选择";
       if (!options.silent) renderStateReadout();
       return { ok: true, dismissed: true, message: rocketState.statusNote };
     }
 
-    function selectPassReserveCard(cardId) {
+    function selectPassReserveCard(workingRoot, cardId) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       if (!getPassReserveSelection()) return;
-      const pile = getPassReserveSelectionCards();
+      const pile = getPassReserveSelectionCards(workingRoot);
       const match = pile.find((card) => card.id === cardId);
       if (!match) return;
       getPassReserveSelection().selectedCardId = match.id;
-      renderPassReserveSelection();
+      renderPassReserveSelection(workingRoot);
       rocketState.statusNote = `PASS 预留精选：已选择 ${cards.getCardLabel(match)}`;
       renderStateReadout();
     }
 
-    function confirmPassReserveSelection() {
+    function confirmPassReserveSelection(workingRoot) {
+      const { cardState, rocketState, playerState } = requireWorkingRoot(workingRoot);
       const pending = getPassReserveSelection();
       if (!pending?.selectedCardId) return { ok: false, message: "请先选择 PASS 预留牌" };
 
@@ -1388,7 +1422,7 @@
         return { ok: false, message: "当前 PASS 精选效果已失效" };
       }
 
-      const player = getPlayerById(pending.playerId) || getCurrentPlayer();
+      const player = resolveWorkingPlayerById(workingRoot, pending.playerId) || getWorkingCurrentPlayer(workingRoot);
       const beforePlayer = structuredClone(player);
       const beforeCardState = structuredClone(cardState);
       const result = cards.pickPassReserveCard(
@@ -1422,7 +1456,7 @@
       };
       setPassReserveSelection(null);
       uiRuntimeState.passReserveSelectionDismissed = false;
-      syncPassReserveSelectionChrome();
+      syncPassReserveSelectionChrome(workingRoot);
       rocketState.statusNote = result.message;
       renderPlayerHand();
       renderPlayerStats();
@@ -1488,8 +1522,8 @@
       return { ok: true };
     }
 
-    function getMovableTokensForCardMoveEffect(effect, playerId) {
-      const rocketsForPlayer = getMovableTokensForPlayer(playerId);
+    function getMovableTokensForCardMoveEffect(workingRoot, effect, playerId) {
+      const rocketsForPlayer = getWorkingMovableTokens(workingRoot, playerId);
       if (!isIndustryHuanyuMoveEffect(effect)) return rocketsForPlayer;
       const usedRocketIds = getCompletedIndustryHuanyuMoveRocketIds(effect);
       return rocketsForPlayer.filter((rocket) => !usedRocketIds.has(Number(rocket.id)));
@@ -1511,7 +1545,8 @@
       return total;
     }
 
-    function selectDefaultRocketFromCandidates(rocketsForPlayer) {
+    function selectDefaultRocketFromCandidates(workingRoot, rocketsForPlayer) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const currentRocket = rocketActions.getActiveRocket(rocketState);
       if (rocketsForPlayer.some((rocket) => rocket.id === currentRocket?.id)) {
         return currentRocket;
@@ -1522,7 +1557,8 @@
       return fallbackRocket;
     }
 
-    function executeCardEffectMove(deltaX, deltaY, rocketId, payment = {}) {
+    function executeCardEffectMove(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
+      const { rocketState, playerState } = requireWorkingRoot(workingRoot);
       const ctx = decisionState.actionEffectFlow?.cardMoveEffect;
       const effect = ctx?.effect || getCurrentActionEffect();
       if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
@@ -1536,7 +1572,7 @@
         return huanyuRocketCheck;
       }
 
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const effectCost = getCardMoveEffectCost(effect);
       if (Object.keys(effectCost).length && !players.canAfford(currentPlayer, effectCost)) {
         if (payment.discardCommand) payment.discardCommand.undo();
@@ -1559,7 +1595,7 @@
 
       beginEffectHistoryStep(effect.options?.historyLabel || effect.label);
 
-      const result = abilities.executeAbility("moveProbe", createActionContext(), {
+      const result = abilities.executeAbility("moveProbe", createActionContext(workingRoot), {
         cost: moveCost,
         movementPoints: terrainRequired,
         rocketId,
@@ -1619,8 +1655,8 @@
 
       if (ctx && ctx.poolRemaining > 0) {
         decisionState.actionEffectFlow.cardMoveEffect = ctx;
-        const currentPlayer = getCurrentPlayer();
-        const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
+        const currentPlayer = getWorkingCurrentPlayer(workingRoot);
+        const rocketsForPlayer = getWorkingMovableTokens(workingRoot, currentPlayer?.id);
         rocketState.statusNote = `${effect.label}：剩余 ${ctx.poolRemaining} 点移动力`;
         if (rocketsForPlayer.length === 1) {
           activateMoveMode(rocketsForPlayer[0].id);
@@ -1665,7 +1701,8 @@
       return effect.result;
     }
 
-    function finishCurrentCardMoveEffectEarly() {
+    function finishCurrentCardMoveEffectEarly(workingRoot) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
       const ctx = decisionState.actionEffectFlow?.cardMoveEffect;
       const current = getCurrentActionEffect();
       if (!ctx || !current || current.status !== "active" || ctx.effect?.id !== current.id) return false;
@@ -1705,7 +1742,8 @@
       return true;
     }
 
-    function requestCardEffectMove(deltaX, deltaY, rocketId) {
+    function requestCardEffectMove(workingRoot, deltaX, deltaY, rocketId) {
+      const { rocketState, playerState } = requireWorkingRoot(workingRoot);
       const ctx = decisionState.actionEffectFlow?.cardMoveEffect;
       const effect = ctx?.effect || getCurrentActionEffect();
       if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
@@ -1724,7 +1762,7 @@
         return moveCheck;
       }
 
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const effectCost = getCardMoveEffectCost(effect);
       if (Object.keys(effectCost).length && !players.canAfford(currentPlayer, effectCost)) {
         rocketState.statusNote = `${effect.label}：需要 ${players.formatResourceCost(effectCost)}，可点击跳过`;
@@ -1765,7 +1803,7 @@
         return { ok: true, message: rocketState.statusNote };
       }
 
-      return executeCardEffectMove(deltaX, deltaY, rocketId, {
+      return executeCardEffectMove(workingRoot, deltaX, deltaY, rocketId, {
         terrainRequired,
         poolUsed,
         energyCost: 0,

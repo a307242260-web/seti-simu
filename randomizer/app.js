@@ -3604,7 +3604,6 @@
     canPayForMove,
     canStartMainAction,
     cardEffects,
-    cardState,
     cards,
     clearMoveRocketHighlight,
     clearHistoryStepOrderForSource,
@@ -3613,7 +3612,7 @@
     completeQuickActionStep,
     continueAfterCardTriggerResolution: (...args) => continueAfterCardTriggerResolution(...args),
     continuePendingDataPlacementAfterBonus,
-    createActionContext,
+    createActionContext: (workingRoot, descriptor) => createActionContextForWorkingRoot(workingRoot, descriptor),
     createCardTriggerProgressCommands: (...args) => createCardTriggerProgressCommands(...args),
     data,
     deactivateMoveMode,
@@ -3625,14 +3624,11 @@
     finishIndustryAbilityFlow: (...args) => finishIndustryAbilityFlow?.(...args),
     formatPlanetRewardGain,
     endEffectHistoryStep,
-    getCurrentPlayer,
     getCurrentActionEffect,
     getDelayedPublicRefillSlots,
     getGameplayLockReason,
     getMainActionStartBlockReason,
-    getMovableTokensForPlayer,
     getRequiredMovePointsForUi,
-    getPlayerById,
     getPublicScanSelectionInstruction: (...args) => getPublicScanSelectionInstruction?.(...args) || "请选择公共牌",
     handlePublicCornerDiscardCardClick,
     handlePublicScanCardClick,
@@ -3656,7 +3652,6 @@
     maybeContinuePendingTurnEndRevealFlow,
     normalizeResourceCost,
     uiRuntimeState,
-    playerState,
     players,
     quickActionHistory,
     quickTrades,
@@ -3670,18 +3665,15 @@
     renderRocketElement,
     renderRuntime,
     renderStateReadout,
-    rocketState,
     rocketActions,
     rollbackPendingIndustryQuickAction: (...args) => rollbackPendingIndustryQuickAction?.(...args),
     runezu,
-    selectDefaultRocketForCurrentPlayer,
     scrollToPlayerHandPanel,
     settleCardTasksAfterEffect: (...args) => settleCardTasksAfterEffect(...args),
     startCardEffectFlow,
     structuredClone,
     syncCardSelectionChrome,
     syncMovePaymentChrome,
-    turnState,
     updateActionButtons,
   });
   ({
@@ -3759,6 +3751,76 @@
     finishCurrentCardMoveEffectEarly,
     requestCardEffectMove,
   } = cardRuntime);
+  const getDiscardCornerRewardMultiplierForRoot = getDiscardCornerRewardMultiplier;
+  getDiscardCornerRewardMultiplier = (...args) => getDiscardCornerRewardMultiplierForRoot(browserRuleState, ...args);
+  const getCardCornerQuickActionForCardForRoot = getCardCornerQuickActionForCard;
+  getCardCornerQuickActionForCard = (...args) => getCardCornerQuickActionForCardForRoot(browserRuleState, ...args);
+  const shouldQueueCardCornerMoveQuickActionForRoot = shouldQueueCardCornerMoveQuickAction;
+  shouldQueueCardCornerMoveQuickAction = (...args) => shouldQueueCardCornerMoveQuickActionForRoot(browserRuleState, ...args);
+  const canStartCardCornerFreeMoveForRoot = canStartCardCornerFreeMove;
+  canStartCardCornerFreeMove = (...args) => canStartCardCornerFreeMoveForRoot(browserRuleState, ...args);
+  const beginCardCornerFreeMoveForRoot = beginCardCornerFreeMove;
+  beginCardCornerFreeMove = (...args) => beginCardCornerFreeMoveForRoot(browserRuleState, ...args);
+  const startCardCornerMoveEffectFlowForRoot = startCardCornerMoveEffectFlow;
+  startCardCornerMoveEffectFlow = (...args) => startCardCornerMoveEffectFlowForRoot(browserRuleState, ...args);
+  const hasFutureSpanEligibleHandCardForRoot = hasFutureSpanEligibleHandCard;
+  hasFutureSpanEligibleHandCard = (...args) => hasFutureSpanEligibleHandCardForRoot(browserRuleState, ...args);
+  const hasPlayableFutureSpanCardForRoot = hasPlayableFutureSpanCard;
+  hasPlayableFutureSpanCard = (...args) => hasPlayableFutureSpanCardForRoot(browserRuleState, ...args);
+  const getStandardPlayCardActionBlockReasonForRoot = getStandardPlayCardActionBlockReason;
+  getStandardPlayCardActionBlockReason = (...args) => getStandardPlayCardActionBlockReasonForRoot(browserRuleState, ...args);
+  const getPlayCardSelectionBlockReasonForRoot = getPlayCardSelectionBlockReason;
+  getPlayCardSelectionBlockReason = (...args) => getPlayCardSelectionBlockReasonForRoot(browserRuleState, ...args);
+  const getHandCardPlayActionForCardForRoot = getHandCardPlayActionForCard;
+  getHandCardPlayActionForCard = (...args) => getHandCardPlayActionForCardForRoot(browserRuleState, ...args);
+  const beginCardSelectionForRoot = beginCardSelection;
+  beginCardSelection = (...args) => beginCardSelectionForRoot(browserRuleState, ...args);
+  const cancelCardSelectionForRoot = cancelCardSelection;
+  cancelCardSelection = (...args) => cancelCardSelectionForRoot(browserRuleState, ...args);
+  const finalizeCardSelectionResultForRoot = finalizeCardSelectionResult;
+  finalizeCardSelectionResult = (...args) => finalizeCardSelectionResultForRoot(browserRuleState, ...args);
+  const drawBasicCardToPlayerForRoot = drawBasicCardToPlayer;
+  drawBasicCardToPlayer = (...args) => drawBasicCardToPlayerForRoot(browserRuleState, ...args);
+  const blindDrawCardForPlayerForRoot = blindDrawCardForPlayer;
+  blindDrawCardForPlayer = (...args) => blindDrawCardForPlayerForRoot(browserRuleState, ...args);
+  const drawCardForCurrentPlayerForRoot = drawCardForCurrentPlayer;
+  drawCardForCurrentPlayer = (...args) => drawCardForCurrentPlayerForRoot(browserRuleState, ...args);
+  const pickPublicCardForCurrentPlayerForRoot = pickPublicCardForCurrentPlayer;
+  pickPublicCardForCurrentPlayer = (...args) => pickPublicCardForCurrentPlayerForRoot(browserRuleState, ...args);
+  const canBlindDrawForRoot = canBlindDraw;
+  canBlindDraw = (...args) => canBlindDrawForRoot(browserRuleState, ...args);
+  const updatePublicCardControlsForRoot = updatePublicCardControls;
+  updatePublicCardControls = (...args) => updatePublicCardControlsForRoot(browserRuleState, ...args);
+  const ensurePublicCardsFilledRespectingDelayedRefillsForRoot = ensurePublicCardsFilledRespectingDelayedRefills;
+  ensurePublicCardsFilledRespectingDelayedRefills = (...args) => ensurePublicCardsFilledRespectingDelayedRefillsForRoot(browserRuleState, ...args);
+  const handlePublicCardClickForRoot = handlePublicCardClick;
+  handlePublicCardClick = (...args) => handlePublicCardClickForRoot(browserRuleState, ...args);
+  const handlePublicBlindDrawClickForRoot = handlePublicBlindDrawClick;
+  handlePublicBlindDrawClick = (...args) => handlePublicBlindDrawClickForRoot(browserRuleState, ...args);
+  const getPassReserveSelectionCardsForRoot = getPassReserveSelectionCards;
+  getPassReserveSelectionCards = (...args) => getPassReserveSelectionCardsForRoot(browserRuleState, ...args);
+  const renderPassReserveSelectionForRoot = renderPassReserveSelection;
+  renderPassReserveSelection = (...args) => renderPassReserveSelectionForRoot(browserRuleState, ...args);
+  const syncPassReserveSelectionChromeForRoot = syncPassReserveSelectionChrome;
+  syncPassReserveSelectionChrome = (...args) => syncPassReserveSelectionChromeForRoot(browserRuleState, ...args);
+  const beginPassReserveSelectionForRoot = beginPassReserveSelection;
+  beginPassReserveSelection = (...args) => beginPassReserveSelectionForRoot(browserRuleState, ...args);
+  const dismissPassReserveSelectionOverlayForRoot = dismissPassReserveSelectionOverlay;
+  dismissPassReserveSelectionOverlay = (...args) => dismissPassReserveSelectionOverlayForRoot(browserRuleState, ...args);
+  const selectPassReserveCardForRoot = selectPassReserveCard;
+  selectPassReserveCard = (...args) => selectPassReserveCardForRoot(browserRuleState, ...args);
+  const confirmPassReserveSelectionForRoot = confirmPassReserveSelection;
+  confirmPassReserveSelection = (...args) => confirmPassReserveSelectionForRoot(browserRuleState, ...args);
+  const selectDefaultRocketFromCandidatesForRoot = selectDefaultRocketFromCandidates;
+  selectDefaultRocketFromCandidates = (...args) => selectDefaultRocketFromCandidatesForRoot(browserRuleState, ...args);
+  const executeCardEffectMoveForRoot = executeCardEffectMove;
+  executeCardEffectMove = (...args) => executeCardEffectMoveForRoot(browserRuleState, ...args);
+  const finishCurrentCardMoveEffectEarlyForRoot = finishCurrentCardMoveEffectEarly;
+  finishCurrentCardMoveEffectEarly = (...args) => finishCurrentCardMoveEffectEarlyForRoot(browserRuleState, ...args);
+  const requestCardEffectMoveForRoot = requestCardEffectMove;
+  requestCardEffectMove = (...args) => requestCardEffectMoveForRoot(browserRuleState, ...args);
+  const getMovableTokensForCardMoveEffectForRoot = getMovableTokensForCardMoveEffect;
+  getMovableTokensForCardMoveEffect = (...args) => getMovableTokensForCardMoveEffectForRoot(browserRuleState, ...args);
   const cardTriggerRuntime = cardTriggerRuntimeModule.createCardTriggerRuntime({
     decisionSessions,
     HISTORY_SOURCE_MAIN,

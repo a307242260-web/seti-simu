@@ -21,10 +21,6 @@ function createHarness() {
     decisionSessions,
     pendingState,
     uiRuntimeState,
-    cardState,
-    playerState: { players: [player] },
-    turnState: { roundNumber: 2 },
-    rocketState: { statusNote: "" },
     els: {},
     renderRuntime: { renderPublicCards: () => {} },
     hideCardHoverPreview: () => {},
@@ -36,12 +32,19 @@ function createHarness() {
         target.hand.push(card);
         return { ok: true, card, message: "PASS 精选完成" };
       },
+      blindDraw: (activeCardState, activePlayerState, target) => ({
+        ok: true,
+        card: { activeCardState, activePlayerState, target },
+      }),
     },
-    players: {},
-    getCurrentPlayer: () => player,
-    getPlayerById: () => player,
+    players: {
+      getCurrentPlayer: (state) => state.players.find((entry) => entry.id === state.currentPlayerId) || null,
+    },
     getCurrentActionEffect: () => effect,
-    getMovableTokensForPlayer: () => [{ id: "rocket-1" }],
+    rocketActions: {
+      getMovableTokensForPlayer: () => [{ id: "rocket-1" }],
+      getActiveRocket: () => null,
+    },
     structuredClone,
     beginEffectHistoryStep: () => {},
     recordHistoryCommand: () => {},
@@ -63,12 +66,35 @@ function createHarness() {
     selectDefaultRocketForCurrentPlayer: () => {},
     syncPassReserveSelectionChrome: () => { calls.chrome += 1; },
   });
-  return { runtime, player, effect, pendingState, uiRuntimeState, calls, decisionSessions };
+  const workingRoot = {
+    cardState,
+    playerState: { currentPlayerId: player.id, players: [player] },
+    turnState: { roundNumber: 2 },
+    rocketState: { statusNote: "" },
+  };
+  return { runtime, workingRoot, player, effect, pendingState, uiRuntimeState, calls, decisionSessions };
 }
 
 {
-  const { runtime, pendingState, decisionSessions } = createHarness();
+  const { runtime, workingRoot, player } = createHarness();
+  const isolatedPlayer = { id: "p2", hand: [] };
+  const isolatedRoot = {
+    ...workingRoot,
+    cardState: { publicCards: [{ id: "isolated-card" }], discardPile: [] },
+    playerState: { currentPlayerId: isolatedPlayer.id, players: [isolatedPlayer] },
+  };
+  const result = runtime.drawBasicCardToPlayer(isolatedRoot);
+  assert.equal(result.card.activeCardState, isolatedRoot.cardState);
+  assert.equal(result.card.activePlayerState, isolatedRoot.playerState);
+  assert.equal(result.card.target, isolatedPlayer);
+  assert.equal(player.hand.length, 0);
+  assert.throws(() => runtime.cancelCardSelection(null), /explicit workingRoot/);
+}
+
+{
+  const { runtime, workingRoot, pendingState, decisionSessions } = createHarness();
   const result = runtime.beginCardCornerFreeMove(
+    workingRoot,
     { label: "免费移动", movementPoints: 1 },
     { id: "card-1", label: "测试牌" },
     [{ type: "card_discard" }],
@@ -82,26 +108,26 @@ function createHarness() {
 }
 
 {
-  const { runtime, pendingState } = createHarness();
+  const { runtime, workingRoot, pendingState } = createHarness();
   pendingState.cardSelectionAction = { type: "public_scan" };
-  runtime.cancelCardSelection();
+  runtime.cancelCardSelection(workingRoot);
   assert.equal(pendingState.cardSelectionAction, null);
 }
 
 {
-  const { runtime, player, effect, uiRuntimeState, decisionSessions, calls } = createHarness();
+  const { runtime, workingRoot, player, effect, uiRuntimeState, decisionSessions, calls } = createHarness();
   decisionSessions.open("pass_reserve_selection", {
     effectId: effect.id,
     playerId: player.id,
     roundNumber: 2,
     selectedCardId: "reserve-1",
   });
-  const dismissed = runtime.dismissPassReserveSelectionOverlay();
+  const dismissed = runtime.dismissPassReserveSelectionOverlay(workingRoot);
   assert.equal(dismissed.dismissed, true);
   assert.equal(uiRuntimeState.passReserveSelectionDismissed, true);
   assert.ok(decisionSessions.peek("pass_reserve_selection"));
 
-  const result = runtime.confirmPassReserveSelection();
+  const result = runtime.confirmPassReserveSelection(workingRoot);
   assert.equal(result.ok, true);
   assert.equal(player.hand[0].id, "reserve-1");
   assert.equal(decisionSessions.peek("pass_reserve_selection"), null);
