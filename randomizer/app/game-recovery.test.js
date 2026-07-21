@@ -111,10 +111,29 @@ for (const rejectedSnapshot of [
 })();
 
 (function testBrowserActionLogCheckpointUsesBrowserServicesEnvelope() {
-  const browserStore = stateApi.createStateStore(createCommittedState());
   const view = viewApi.createViewStateStore();
   view.dispatch({ type: "overlay.set", activeId: "report" });
-  const services = servicesApi.createBrowserServices({ stateStore: browserStore, viewStateStore: view });
+  let ruleEnvelope = {
+    schemaVersion: "seti-browser-rule-composition-save-v1",
+    committedState: "round-4",
+    session: null,
+  };
+  let externalSequenceRestoreCalls = 0;
+  const services = servicesApi.createBrowserServices({
+    ruleLifecycle: {
+      save: () => ({ ok: true, envelope: structuredClone(ruleEnvelope) }),
+      validateRestore(envelope) {
+        return envelope?.schemaVersion === ruleEnvelope.schemaVersion
+          ? { ok: true }
+          : { ok: false, code: "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED" };
+      },
+      restore(envelope) {
+        ruleEnvelope = structuredClone(envelope);
+        return { ok: true, projection: { stateVersion: 11 } };
+      },
+    },
+    viewStateStore: view,
+  });
   const browserSnapshot = recovery.createGameRecoverySnapshot({
     browserServices: services,
     runtime: { aiControl: { enabled: false } },
@@ -122,14 +141,17 @@ for (const rejectedSnapshot of [
   assert.equal(Object.hasOwn(browserSnapshot, "committedState"), false);
   assert.equal(browserSnapshot.browserCheckpoint.schemaVersion, servicesApi.SCHEMA_VERSION);
 
-  const changed = createCommittedState({ stateVersion: 9, turn: { roundNumber: 1 } });
-  assert.equal(browserStore.restore(changed).ok, true);
+  ruleEnvelope.committedState = "round-1";
   view.clear();
   const browserResult = recovery.applyGameRecoverySnapshot(browserSnapshot, {
     browserServices: services,
+    restoreDeterministicState() { externalSequenceRestoreCalls += 1; },
   });
   assert.equal(browserResult.ok, true);
-  assert.equal(browserStore.getSnapshot().turn.roundNumber, 4);
+  assert.equal(ruleEnvelope.committedState, "round-4");
+  assert.equal(browserResult.stateVersion, 11);
+  assert.equal(browserResult.ruleSchemaVersion, "seti-browser-rule-composition-save-v1");
+  assert.equal(externalSequenceRestoreCalls, 0, "Browser 恢复不得在 composition 外回灌确定性序列");
   assert.equal(view.getSnapshot().overlay.activeId, "report");
 })();
 

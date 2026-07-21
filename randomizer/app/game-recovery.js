@@ -200,14 +200,20 @@
       if (!before?.ok) return before;
       const restored = services.restore(envelope.browserCheckpoint);
       if (!restored.ok) return restored;
-      try {
-        options.restoreDeterministicState?.(structuredClone(validated.state.meta.sequences));
-      } catch (error) {
-        services.restore(before.envelope);
-        return failure(
-          "RECOVERY_COMMITTED_STATE_RESTORE_FAILED",
-          error?.message || "恢复 committed state 失败",
-        );
+      // Browser 的 committed state、活跃 Session、RNG 与确定性序列都属于
+      // Rule Composition lifecycle。宿主不得从 validation 结果取出 root 后
+      // 再执行一次 restore-to-slices；否则恢复不再是一个原子边界。
+      // 旧 StateStore-only Browser envelope 仅保留迁移兼容，完成生产硬切后删除。
+      if (validated.state) {
+        try {
+          options.restoreDeterministicState?.(structuredClone(validated.state.meta.sequences));
+        } catch (error) {
+          services.restore(before.envelope);
+          return failure(
+            "RECOVERY_COMMITTED_STATE_RESTORE_FAILED",
+            error?.message || "恢复 committed state 失败",
+          );
+        }
       }
       options.onAfterStateRestored?.();
       const aiControlResult = options.restoreAiControlSnapshot?.(envelope.runtime?.aiControl || null, {
@@ -223,9 +229,9 @@
       return {
         ok: true,
         snapshotVersion: envelope.version,
-        committedSchemaVersion: validated.state.meta.schemaVersion,
-        rngState: structuredClone(validated.state.meta.rngState),
-        sequences: structuredClone(validated.state.meta.sequences),
+        ruleSchemaVersion: validated.rules?.schemaVersion || validated.state?.meta?.schemaVersion || null,
+        stateVersion: restored.stateVersion ?? null,
+        sessionRestored: Boolean(restored.sessionRestored),
         aiControl: aiControlResult,
         message: options.getRecoveryMessage?.() || recoveryMessage,
       };
