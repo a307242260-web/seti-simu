@@ -3,44 +3,24 @@
 
   let policyPort = root.SetiPolicyPort;
   let standardAction = root.SetiStandardAction;
-  let legacyPolicy = root.SetiAIPolicy;
   let heuristicEvaluator = root.SetiHeuristicEvaluator;
 
-  if ((!policyPort || !standardAction || !legacyPolicy || !heuristicEvaluator) && typeof require === "function") {
+  if ((!policyPort || !standardAction || !heuristicEvaluator) && typeof require === "function") {
     policyPort = policyPort || require("./policy-port");
     standardAction = standardAction || require("../actions/standard-action");
-    legacyPolicy = legacyPolicy || require("./policy");
     heuristicEvaluator = heuristicEvaluator || require("./heuristic-evaluator");
   }
 
-  const api = factory(policyPort, standardAction, legacyPolicy, heuristicEvaluator);
+  const api = factory(policyPort, standardAction, heuristicEvaluator);
   if (typeof module === "object" && module.exports) module.exports = api;
   root.SetiHeuristicPolicy = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, legacyPolicy, heuristicEvaluator) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (policyPort, standardAction, heuristicEvaluator) {
   "use strict";
 
   const POLICY_TYPE = "heuristic";
   const POLICY_VERSION = "seti-heuristic-policy-v1";
   const DEFAULT_DIFFICULTY = "laughable";
-  const LEGACY_ID_BY_FAMILY = Object.freeze({
-    launch: "launch",
-    orbit: "orbit",
-    land: "land",
-    scan: "scan",
-    analyze: "analyze",
-    research_tech: "researchTech",
-    play_card: "playCard",
-    pass: "pass",
-    move: "move",
-    quick_trade: "quickTrade",
-    industry: "industry",
-    card_corner: "cardCorner",
-    place_data: "placeData",
-    runezu_face_symbol: "runezuFaceSymbol",
-    end_turn: "end-turn",
-  });
   const KNOWN_FAMILIES = Object.freeze(new Set(standardAction.ALL_FAMILIES));
-  const OPTIONAL_NEGATIVE_TOKENS = Object.freeze(["cancel", "skip", "decline", "跳过", "取消", "放弃"]);
 
   class HeuristicPolicyError extends Error {
     constructor(code, message, details = {}) {
@@ -82,42 +62,6 @@
     return Object.freeze(result);
   }
 
-  function cloneVisible(value) {
-    return value == null ? value : structuredClone(value);
-  }
-
-  function toLegacyCandidate(action) {
-    return {
-      ...cloneVisible(action.payload || {}),
-      ...cloneVisible(action.target || {}),
-      id: LEGACY_ID_BY_FAMILY[action.family] || action.family,
-      family: action.family,
-      actionId: action.actionId,
-      kind: action.phase,
-      label: action.summary,
-      target: cloneVisible(action.target || null),
-      payload: cloneVisible(action.payload || {}),
-      available: true,
-    };
-  }
-
-  function optionalChoicePenalty(action) {
-    const text = `${action.summary || ""} ${stableSerialize(action.target || {})}`.toLowerCase();
-    return OPTIONAL_NEGATIVE_TOKENS.some((token) => text.includes(token)) ? -1000 : 0;
-  }
-
-  function numericChoiceScore(action) {
-    const candidates = [
-      action.payload?.value,
-      action.payload?.amount,
-      action.payload?.gain,
-      action.target?.value,
-      action.target?.amount,
-    ];
-    const value = candidates.map(Number).find(Number.isFinite);
-    return value == null ? 0 : value;
-  }
-
   function isObservationFeasible(context, action) {
     const isMoveLike = action.family === "move"
       || (action.family === "card_corner" && action.payload?.actionKind === "move");
@@ -128,30 +72,6 @@
       rocket?.playerId === context.seatId
       && rocket?.surface === "solar-board"
     ));
-  }
-
-  function chooseConditionalAction(actions, selectors) {
-    const preferredActionIds = new Set();
-    for (const family of new Set(actions.map((action) => action.family))) {
-      const familyActions = actions.filter((action) => action.family === family);
-      const selector = selectors[family];
-      let selected = null;
-      if (typeof selector === "function") {
-        selected = selector(Object.freeze([...familyActions]));
-      } else if (family === "choose_card") {
-        selected = legacyPolicy.choosePlayCard(familyActions.map(toLegacyCandidate));
-      }
-      if (selected?.actionId) preferredActionIds.add(selected.actionId);
-    }
-    return actions
-      .map((action, index) => ({
-        action,
-        index,
-        score: optionalChoicePenalty(action)
-          + numericChoiceScore(action)
-          + (preferredActionIds.has(action.actionId) ? 100 : 0),
-      }))
-      .sort((left, right) => right.score - left.score || left.index - right.index)[0]?.action || null;
   }
 
   function assertContext(context) {
@@ -171,24 +91,24 @@
         { families: unknownFamilies },
       );
     }
+    const malformed = context.legalActions.find((action) => (
+      standardAction.PHASE_BY_FAMILY[action.family] !== action.phase
+    ));
+    if (malformed) {
+      throw new HeuristicPolicyError(
+        "HEURISTIC_POLICY_DESCRIPTOR_INVALID",
+        `Heuristic Policy descriptor family/phase 不匹配: ${malformed.family}/${malformed.phase}`,
+        { actionId: malformed.actionId },
+      );
+    }
   }
 
   function createHeuristicPolicy(options = {}) {
     const difficulty = String(options.difficulty || DEFAULT_DIFFICULTY);
     const strategyWeights = normalizeWeights(options.strategyWeights);
     const evaluateAction = options.evaluateAction || heuristicEvaluator?.evaluateAction;
-    const buildCandidates = options.buildCandidates || null;
-    if (buildCandidates != null && typeof buildCandidates !== "function") {
-      throw new HeuristicPolicyError("HEURISTIC_POLICY_CONFIG_INVALID", "buildCandidates 必须是纯函数");
-    }
-    if (!buildCandidates && typeof evaluateAction !== "function") {
+    if (typeof evaluateAction !== "function" || typeof heuristicEvaluator?.selectLegalAction !== "function") {
       throw new HeuristicPolicyError("HEURISTIC_POLICY_CONFIG_INVALID", "Heuristic Policy 缺少纯 action evaluator");
-    }
-    const conditionalSelectors = Object.freeze({ ...(options.conditionalSelectors || {}) });
-    for (const [family, selector] of Object.entries(conditionalSelectors)) {
-      if (!standardAction.CONDITIONAL_FAMILIES.includes(family) || typeof selector !== "function") {
-        throw new HeuristicPolicyError("HEURISTIC_POLICY_CONFIG_INVALID", `conditional selector 配置无效: ${family}`);
-      }
     }
     const provenance = Object.freeze({
       type: POLICY_TYPE,
@@ -199,64 +119,13 @@
 
     function decide(context) {
       assertContext(context);
-      const weighted = context.legalActions.map((action, index) => ({
-        action,
-        index,
-        weight: strategyWeights[action.family] ?? 1,
-      })).filter((entry) => entry.weight > 0 && isObservationFeasible(context, entry.action));
-      if (!weighted.length) {
+      const selected = heuristicEvaluator.selectLegalAction(context, {
+        evaluateAction,
+        strategyWeights,
+        isFeasible: isObservationFeasible,
+      });
+      if (!selected && context.legalActions.some((action) => (strategyWeights[action.family] ?? 1) <= 0)) {
         throw new HeuristicPolicyError("HEURISTIC_POLICY_NO_ENABLED_ACTION", "配置禁用了当前全部 legal action");
-      }
-
-      const conditional = weighted.every((entry) => entry.action.phase === "conditional");
-      let selected = null;
-      if (conditional) {
-        selected = chooseConditionalAction(
-          weighted.map((entry) => entry.action),
-          conditionalSelectors,
-        );
-      } else {
-        const legalByActionId = new Map(weighted.map((entry) => [entry.action.actionId, entry]));
-        const sourcedCandidates = buildCandidates ? buildCandidates(context) : null;
-        if (buildCandidates && !Array.isArray(sourcedCandidates)) {
-          throw new HeuristicPolicyError(
-            "HEURISTIC_POLICY_CANDIDATE_SOURCE_INVALID",
-            "同源 candidate source 必须返回数组",
-          );
-        }
-        const legacyCandidates = buildCandidates
-          ? sourcedCandidates.map((candidate) => {
-            const actionId = candidate?.actionId || candidate?.standardAction?.actionId || null;
-            const entry = legalByActionId.get(actionId);
-            if (!entry) {
-              throw new HeuristicPolicyError(
-                "HEURISTIC_POLICY_CANDIDATE_NOT_LEGAL",
-                `candidate source 返回非 legal action: ${actionId || "<missing>"}`,
-              );
-            }
-            return {
-              ...cloneVisible(candidate),
-              actionId,
-              score: (Number(candidate?.score) || 0) * entry.weight,
-            };
-          })
-          : weighted.map((entry) => {
-            const evaluated = evaluateAction(context, entry.action);
-            return {
-              ...toLegacyCandidate(entry.action),
-              ...(evaluated || {}),
-              score: (Number(evaluated?.score) || 0) * entry.weight,
-            };
-          });
-        if (!legacyCandidates.length) {
-          throw new HeuristicPolicyError("HEURISTIC_POLICY_NO_ENABLED_ACTION", "同源 candidate source 未返回可用候选");
-        }
-        const legacySelected = legacyPolicy.chooseTurnAction(legacyCandidates, {
-          observation: context.observation,
-          deterministicContext: context.deterministicContext,
-          difficulty,
-        });
-        selected = weighted.find((entry) => entry.action.actionId === legacySelected?.actionId)?.action || null;
       }
       if (!selected) {
         throw new HeuristicPolicyError("HEURISTIC_POLICY_NO_SELECTION", "Heuristic Policy 未能选择 legal descriptor");

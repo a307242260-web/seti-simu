@@ -93,37 +93,13 @@ assert.deepEqual(policy.getProvenance(), {
   assert.equal(decision.policy.version, heuristic.POLICY_VERSION);
 }
 
-{
-  const decisionContext = context([
-    descriptor("move", 0),
-    descriptor("play_card", 1),
-    descriptor("pass", 2),
-  ], "same-source-candidates");
-  const sourceCalls = [];
-  const sameSourcePolicy = heuristic.createHeuristicPolicy({
-    buildCandidates(receivedContext) {
-      sourceCalls.push(receivedContext);
-      return [
-        { id: "move", actionId: "move:fixture-0", score: 17, actionGraph: { net: 17 } },
-        { id: "playCard", actionId: "play_card:fixture-1", score: 23, actionGraph: { net: 23 } },
-        { id: "pass", actionId: "pass:fixture-2", score: -2, actionGraph: { net: -2 } },
-      ];
-    },
-  });
-  assert.equal(sameSourcePolicy.decide(decisionContext).actionId, "play_card:fixture-1");
-  assert.deepEqual(sourceCalls, [decisionContext], "同源策略链路只接收 DecisionContext");
-  assert.throws(
-    () => heuristic.createHeuristicPolicy({
-      buildCandidates: () => [{ id: "scan", actionId: "scan:not-legal", score: 999 }],
-    }).decide(decisionContext),
-    (error) => error.code === "HEURISTIC_POLICY_CANDIDATE_NOT_LEGAL",
-  );
-}
-
 for (const family of standardAction.ALL_FAMILIES) {
-  const action = descriptor(family, 0);
-  const decision = heuristic.createHeuristicPolicy().decide(context([action], `family-${family}`));
-  assert.equal(decision.actionId, action.actionId, `${family} 必须只从 legal set 选择`);
+  const actions = [
+    descriptor(family, 0, { payload: { value: 1, ...(family === "choose_card" ? { score: 1 } : {}) } }),
+    descriptor(family, 1, { payload: { value: 5, ...(family === "choose_card" ? { score: 5 } : {}) } }),
+  ];
+  const decision = heuristic.createHeuristicPolicy().decide(context(actions, `family-${family}`));
+  assert.equal(decision.actionId, actions[1].actionId, `${family} 必须逐项估值且只从 legal set 选择`);
 }
 
 {
@@ -150,6 +126,10 @@ assert.throws(
   () => policy.decide(context([descriptor("future_family")], "unknown")),
   (error) => error.code === "HEURISTIC_POLICY_UNSUPPORTED_FAMILY" && error.families[0] === "future_family",
 );
+assert.throws(
+  () => policy.decide(context([descriptor("launch", 0, { phase: "conditional" })], "bad-phase")),
+  (error) => error.code === "HEURISTIC_POLICY_DESCRIPTOR_INVALID",
+);
 
 {
   const shared = heuristic.createHeuristicPolicy();
@@ -162,9 +142,27 @@ assert.throws(
 
 {
   const source = fs.readFileSync(modulePath, "utf8");
-  for (const forbidden of ["document.", "localStorage", "querySelector", "getElementById", "dispatchRuntimeAction", "runAiAutomationStep"]){
+  for (const forbidden of [
+    "document.", "localStorage", "querySelector", "getElementById", "dispatchRuntimeAction",
+    "runAiAutomationStep", "toLegacyCandidate", "chooseTurnAction", "choosePlayCard", "buildCandidates",
+  ]) {
     assert.equal(source.includes(forbidden), false, `Heuristic Policy 不得依赖 ${forbidden}`);
   }
+  const productionFiles = [
+    "../../app/ai/action-executor.js",
+    "../../app/ai/initial-card-pending.js",
+    "../../app/ai/interaction-pending.js",
+  ].map((relativePath) => fs.readFileSync(path.resolve(__dirname, relativePath), "utf8"));
+  for (const productionSource of productionFiles) {
+    assert.equal(productionSource.includes(".chooseTurnAction"), false, "app AI 生产路径不得调用旧 turn selector");
+    assert.equal(productionSource.includes(".choosePlayCard"), false, "app AI 生产路径不得调用旧 card selector");
+  }
+  assert.equal(fs.existsSync(path.resolve(__dirname, "candidate-pipeline.js")), false, "旧 candidate pipeline 必须物理删除");
+  assert.equal(
+    fs.readFileSync(path.resolve(__dirname, "../../index.html"), "utf8").includes("candidate-pipeline.js"),
+    false,
+    "浏览器装配不得继续加载旧 candidate pipeline",
+  );
 }
 
 console.log(`heuristic-policy tests passed (${standardAction.ALL_FAMILIES.length} families)`);

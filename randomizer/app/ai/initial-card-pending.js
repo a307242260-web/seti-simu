@@ -1,14 +1,18 @@
 (function (root, factory) {
   "use strict";
 
-  const api = factory();
+  let heuristicEvaluator = root.SetiHeuristicEvaluator;
+  if (!heuristicEvaluator && typeof require === "function") {
+    heuristicEvaluator = require("../../game/ai/heuristic-evaluator");
+  }
+  const api = factory(heuristicEvaluator);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAppAiInitialCardPending = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (heuristicEvaluator) {
   "use strict";
 
   function createInitialCardPendingRuntime(context) {
@@ -32,6 +36,7 @@
       scoreAiEffectValue, scoreAiPassReserveCard, scoreAiPublicPickCard, scoreAiRunezuFaceDependencyUnlockValue, scoreAiRunezuFaceRewardValue, scoreAiRunezuFaceSymbolPlacementChoice, scoreAiRunezuSpendSymbolFinalPenalty, selectPassReserveCard,
       skipCurrentActionEffect, state, summarizeAiPublicPickCandidate, turnState,
     } = context;
+    const selectScoredItem = ai?.heuristicEvaluator?.selectScoredItem || heuristicEvaluator.selectScoredItem;
 
     function getOrderedAiAutoBattlePlayerIds() {
       const aiIds = new Set(getAiAutoBattlePlayerIds());
@@ -679,11 +684,7 @@
       }
 
       const candidates = listCardTriggerFreeMoveCandidates(state.pendingCardTriggerFreeMove.match);
-      const selected = ai?.policy?.chooseTurnAction?.(candidates, {
-        playerState,
-        turnState,
-        currentPlayer,
-      }) || candidates[0] || null;
+      const selected = selectScoredItem(candidates);
       if (!selected) return { ok: false, blocked: true, message: "AI 没有可用卡牌触发移动路径" };
       recordAiAutoBattleLog("move-path", `${currentPlayer.colorLabel}AI 选择卡牌触发移动 ${selected.rocketLabel} ${selected.directionLabel}`, {
         selected,
@@ -1015,11 +1016,7 @@
         return confirmPlayCardSelection();
       }
       const candidates = listAiPlayCardCandidates(currentPlayer);
-      const selected = ai?.policy?.choosePlayCard?.(candidates, {
-        playerState,
-        turnState,
-        currentPlayer,
-      }) || candidates[0] || null;
+      const selected = selectScoredItem(candidates, { mode: "card" });
       if (!selected) {
         return { ok: false, blocked: true, message: "AI 没有可打出的普通手牌" };
       }

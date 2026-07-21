@@ -49,6 +49,7 @@
 - `randomizer/game/ai/policy-port.js`：启发式与 Learned Policy 共用的 `DecisionContext -> PolicyDecision` 契约、公共 validator 和请求失效语义；Policy 不在此执行规则。
 - `randomizer/game/ai/machine-player-host.js`：浏览器与 headless 共用的固定机器席位、Policy 请求代际、deadline/取消/去重和 fail-closed 提交协调器；详见 `docs/machine-player-host.md`。
 - `randomizer/game/ai/heuristic-policy.js`：无 DOM/Host 推进依赖的版本化 Heuristic Policy，实现公共端口并为浏览器席位、teacher 与冻结 opponent 提供同一 provenance。
+- `randomizer/game/ai/heuristic-evaluator.js`：直接从公共 observation/legal descriptors 计算策略分与稳定排序；不得恢复 legacy candidate 或 selector adapter。
 - `randomizer/app/ai/battle-log.js`、`battle-report.js`：AI 对战日志、bug、结果/pending 汇总及报告 schema。
 - `randomizer/app/ai/tuning-history.js`、`experiment-runner.js`：调参历史持久化/推荐与单局、batch、A/B、tuning cycle runner。
 - `randomizer/training/self-play.js`：Node self-play 训练、action-kind baseline、逐步 JSONL 与 episode checkpoint。

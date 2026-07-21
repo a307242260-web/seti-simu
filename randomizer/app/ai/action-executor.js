@@ -1,22 +1,22 @@
 (function (root, factory) {
   "use strict";
 
-  let candidatePipeline = root.SetiAICandidatePipeline;
-  if (!candidatePipeline && typeof require === "function") {
-    candidatePipeline = require("../../game/ai/candidate-pipeline");
+  let heuristicEvaluator = root.SetiHeuristicEvaluator;
+  if (!heuristicEvaluator && typeof require === "function") {
+    heuristicEvaluator = require("../../game/ai/heuristic-evaluator");
   }
   let turnCandidateEnumerator = root.SetiAITurnCandidateEnumerator;
   if (!turnCandidateEnumerator && typeof require === "function") {
     turnCandidateEnumerator = require("../../game/ai/turn-candidate-enumerator");
   }
-  const api = factory(candidatePipeline, turnCandidateEnumerator);
+  const api = factory(heuristicEvaluator, turnCandidateEnumerator);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAppAiActionExecutor = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function (candidatePipeline, turnCandidateEnumerator) {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (heuristicEvaluator, turnCandidateEnumerator) {
   "use strict";
 
   function createActionExecutor(context) {
@@ -38,6 +38,7 @@
     } = context;
 
     const { enumerateAiTurnActions } = turnCandidateEnumerator.createTurnCandidateEnumerator(context);
+    const selectScoredItem = ai?.heuristicEvaluator?.selectScoredItem || heuristicEvaluator.selectScoredItem;
 
     function enumerateHeadlessTurnActions() {
       const currentPlayer = getCurrentPlayer();
@@ -139,7 +140,7 @@
         aiTraceCompetition: traceCompetition,
       };
       const standardListing = dispatchRuntimeAction?.({ kind: "standard_enumerate", candidates: rawCandidates });
-      const pipelineResult = candidatePipeline.buildCandidatePipeline({
+      const pipelineResult = heuristicEvaluator.buildTurnDescriptorEvaluations({
         rawCandidates,
         graphState,
         currentPlayer,
@@ -153,7 +154,7 @@
         adjust: adjustAiActionGraphCandidate,
         adjustForStyle: adjustAiActionGraphCandidateForStyle,
         applySelectionPressure: applyAiTurnActionSelectionPressure,
-        policy: ai?.policy,
+        selectScoredItem,
       });
       const { candidates, selectedAction } = pipelineResult;
       return {
@@ -178,11 +179,7 @@
       for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
         const action = attempt === 0 && selectedAction
           ? selectedAction
-          : ai?.policy?.chooseTurnAction?.(selectableCandidates, {
-            playerState,
-            turnState,
-            currentPlayer,
-          }) || null;
+          : selectScoredItem(selectableCandidates);
         if (!action) {
           if (!rawCandidates.length && state.actionHistoryHasSession && !state.pendingActionExecuted) {
             const recovery = recoverPendingActionFromOpenHistoryForAi?.();

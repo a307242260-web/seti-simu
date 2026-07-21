@@ -16,7 +16,7 @@
     const choices = ["credit", "score"].map((reward) => ({
       schemaVersion: "seti-standard-action-v1", family: "choose_reward", phase: "conditional",
       actionId: `choose_reward:chrome-ai:${reward}`, actorId: "p1", stateVersion: 4, decisionVersion: 8,
-      target: { reward }, payload: {}, summary: reward,
+      target: { reward }, payload: { value: reward === "score" ? 5 : 1 }, summary: reward,
     }));
     let boundary = {
       kind: "action", actorId: "p1", stateVersion: 4, decisionVersion: 7, legalActions: [action],
@@ -42,21 +42,9 @@
       },
       viewStateStore: viewStore,
     });
-    const policy = {
-      decide(context) {
-        const selected = context.legalActions.at(-1);
-        return SetiPolicyPort.createPolicyDecision(context, {
-          actionId: selected.actionId,
-          policyType: "heuristic",
-          policyVersion: "chrome-fixed-v1",
-          diagnostics: { reasonCode: "chrome-ai-fixed-trace" },
-        });
-      },
-    };
+    const policy = SetiHeuristicPolicy.createHeuristicPolicy({ difficulty: "weak_start" });
     const driver = SetiBrowserPolicyInputAdapter.createPolicyInputAdapter({
       policy,
-      policyType: "heuristic",
-      policyVersion: "chrome-fixed-v1",
       readBoundary: () => structuredClone(boundary),
       readObservation: () => ({ publicState: { status: status.textContent } }),
       inputAdapter: input,

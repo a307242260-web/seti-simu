@@ -1,14 +1,18 @@
 (function (root, factory) {
   "use strict";
 
-  const api = factory();
+  let heuristicEvaluator = root.SetiHeuristicEvaluator;
+  if (!heuristicEvaluator && typeof require === "function") {
+    heuristicEvaluator = require("../../game/ai/heuristic-evaluator");
+  }
+  const api = factory(heuristicEvaluator);
 
   if (typeof module === "object" && module.exports) {
     module.exports = api;
   }
 
   root.SetiAppAiInteractionPending = api;
-})(typeof globalThis !== "undefined" ? globalThis : window, function () {
+})(typeof globalThis !== "undefined" ? globalThis : window, function (heuristicEvaluator) {
   "use strict";
 
   function createInteractionPendingRuntime(context) {
@@ -38,6 +42,7 @@
       scoreAiYichangdianAlienCardTracePriorityValue, scoreAiYichangdianTraceTimingValue, selectExecutableAiResearchTechCandidate, shouldAiPreserveEnergyForRouteCashout, skipCurrentActionEffect, solar, state, summarizeAiScanTargetChoiceEntry,
       tech, techGameState, turnState, yichangdian,
     } = context;
+    const selectScoredItem = ai?.heuristicEvaluator?.selectScoredItem || heuristicEvaluator.selectScoredItem;
 
     function getAiMoveTurnKey(playerId = playerState.currentPlayerId) {
       return `${turnState.roundNumber}:${turnState.turnNumber}:${playerId || "unknown"}`;
@@ -901,11 +906,7 @@
 
       if (state.pendingActionEffectFlow.freeMoveMode) {
         const candidates = listAiEffectMoveCandidates({ id: "freeMove", free: true });
-        const selected = ai?.policy?.chooseTurnAction?.(candidates, {
-          playerState,
-          turnState,
-          currentPlayer,
-        }) || candidates[0] || null;
+        const selected = selectScoredItem(candidates);
         if (!selected || aiNumber(selected.score) < 0) {
           const message = "AI 没有可用免费移动路径，跳过移动效果";
           recordAiAutoBattleLog("move-path-skip", `${currentPlayer.colorLabel}${message}`, {
@@ -939,11 +940,7 @@
         poolRemaining: ctx?.poolRemaining ?? effect?.options?.movementPoints ?? 1,
         nextEffect,
       });
-      const selected = ai?.policy?.chooseTurnAction?.(candidates, {
-        playerState,
-        turnState,
-        currentPlayer,
-      }) || candidates[0] || null;
+      const selected = selectScoredItem(candidates);
       if (!selected || aiNumber(selected.score) < 0) {
         const message = "AI 没有可用卡牌移动路径，跳过移动效果";
         recordAiAutoBattleLog("move-path-skip", `${currentPlayer.colorLabel}${message}`, {
@@ -983,11 +980,7 @@
         free: true,
         poolRemaining: movementPoints,
       });
-      const selected = ai?.policy?.chooseTurnAction?.(candidates, {
-        playerState,
-        turnState,
-        currentPlayer,
-      }) || candidates[0] || null;
+      const selected = selectScoredItem(candidates);
       if (!selected) {
         return { ok: false, blocked: true, message: "AI 没有可用卡牌角标移动路径" };
       }
@@ -1007,11 +1000,7 @@
         return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工处理公司免费移动` };
       }
       const candidates = listAiIndustryHuanyuMoveCandidates();
-      const selected = ai?.policy?.chooseTurnAction?.(candidates, {
-        playerState,
-        turnState,
-        currentPlayer,
-      }) || candidates[0] || null;
+      const selected = selectScoredItem(candidates);
       if (!selected || aiNumber(selected.score) < 0) {
         const message = `${state.industryFreeMoveState?.label || "公司免费移动"}：无正收益移动，结束剩余免费移动`;
         recordAiAutoBattleLog("industry", `${currentPlayer.colorLabel}AI 跳过公司剩余免费移动`, {
@@ -1087,11 +1076,7 @@
       }
 
       const candidates = listAiScanAction4Candidates(currentPlayer);
-      const selected = ai?.policy?.chooseTurnAction?.(candidates, {
-        playerState,
-        turnState,
-        currentPlayer,
-      }) || null;
+      const selected = selectScoredItem(candidates);
       if (!selected || aiNumber(selected.score) < 0) {
         const message = "AI 没有正收益的扫描发射/移动选择，跳过效果";
         recordAiAutoBattleLog("scan-action-4-skip", `${currentPlayer.colorLabel}${message}`, {

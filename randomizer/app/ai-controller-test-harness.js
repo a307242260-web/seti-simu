@@ -383,26 +383,29 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     },
     aiRaceModel: options.aiRaceModel,
     ai: {
-      policy: {
-        choosePlayCard: (candidates) => (
-          candidates
-            .slice()
-            .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0]
-          || null
-        ),
-        chooseTurnAction: (candidates) => {
-          const selected = options.chooseTurnAction
-            ? options.chooseTurnAction(candidates)
-            : (
-              candidates.find((candidate) => candidate.id === "runezuFaceSymbol")
-              || candidates.find((candidate) => candidate.available !== false)
+      heuristicEvaluator: {
+        selectScoredItem: (candidates, selectionOptions = {}) => {
+          const selected = selectionOptions.mode === "card"
+            ? (
+              candidates
+                .slice()
+                .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0]
               || null
-            );
-          if (typeof options.onChooseTurnAction === "function") {
+            )
+            : options.chooseTurnAction
+              ? options.chooseTurnAction(candidates)
+              : (
+                candidates.find((candidate) => candidate.id === "runezuFaceSymbol")
+                || candidates.find((candidate) => candidate.available !== false)
+                || null
+              );
+          if (selectionOptions.mode !== "card" && typeof options.onChooseTurnAction === "function") {
             options.onChooseTurnAction(candidates, selected);
           }
           return selected;
         },
+      },
+      policy: {
         ...(options.useDefaultAlienUsePolicy
           ? { chooseAlienUseOption: setiAi.policy.chooseAlienUseOption }
           : {}),

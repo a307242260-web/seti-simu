@@ -30,20 +30,6 @@
     return scored.length ? scored[0].item : null;
   }
 
-  const TURN_ACTION_SCORES = Object.freeze({
-    land: 7,
-    orbit: 6,
-    researchTech: 5,
-    playCard: 5,
-    launch: 4,
-    scan: 2.5,
-    analyze: 1,
-    placeData: 2,
-    move: 0,
-    "end-turn": 0,
-    pass: -12,
-  });
-
   const TECH_TYPE_SCORES = Object.freeze({
     orange: 8,
     purple: 7,
@@ -76,47 +62,6 @@
     return Number.isFinite(score) ? score : null;
   }
 
-  function getActionGraphNet(candidate) {
-    const graphNet = getFiniteScore(candidate?.actionGraph?.net);
-    if (graphNet != null) return graphNet;
-    return getFiniteScore(candidate?.net);
-  }
-
-  function getBestScore(items = [], scoreFn = () => 0) {
-    return (items || []).reduce((best, item) => {
-      const score = getFiniteScore(scoreFn(item));
-      return score == null ? best : Math.max(best, score);
-    }, -Infinity);
-  }
-
-  function scoreTurnAction(candidate) {
-    if (!candidate) return -Infinity;
-    const base = TURN_ACTION_SCORES[candidate.id] ?? 0;
-    const explicitScore = getFiniteScore(candidate.score);
-    let valueScore = explicitScore ?? 0;
-
-    if (candidate.id === "researchTech") {
-      const bestTechScore = getBestScore(candidate.takeable || [], scoreResearchTechCandidate);
-      if (Number.isFinite(bestTechScore)) {
-        valueScore = Math.max(valueScore, bestTechScore);
-      }
-    }
-
-    if (candidate.id === "playCard") {
-      const bestCardScore = getBestScore(candidate.playableCards || [], scorePlayCardCandidate);
-      if (Number.isFinite(bestCardScore)) {
-        valueScore = Math.max(valueScore, bestCardScore);
-      }
-    }
-
-    return base + valueScore;
-  }
-
-  function scoreTurnActionPrimary(candidate) {
-    const graphNet = getActionGraphNet(candidate);
-    return graphNet == null ? scoreTurnAction(candidate) : graphNet;
-  }
-
   function scoreResearchTechCandidate(candidate) {
     const explicitScore = getFiniteScore(candidate?.score);
     if (explicitScore != null) return explicitScore;
@@ -129,13 +74,6 @@
       + (TECH_BONUS_SCORES[bonusId] || 0)
       + firstTakeBonus
       + Math.max(0, 5 - stackIndex) * 0.1;
-  }
-
-  function scorePlayCardCandidate(candidate) {
-    const explicitScore = getFiniteScore(candidate?.score);
-    const price = Math.max(0, Math.round(Number(candidate?.price) || 0));
-    const priceTieBreaker = Math.max(0, 5 - price) * 0.2;
-    return (explicitScore ?? 0) + priceTieBreaker;
   }
 
   function getEffectResourcesValue(effect = {}, options = {}) {
@@ -336,22 +274,6 @@
     };
   }
 
-  function chooseTurnAction(candidates = []) {
-    const available = candidates.filter((candidate) => candidate?.available !== false);
-    return available
-      .map((candidate, index) => ({
-        candidate,
-        index,
-        primaryScore: scoreTurnActionPrimary(candidate),
-        fallbackScore: scoreTurnAction(candidate),
-      }))
-      .sort((left, right) => (
-        Number(right.primaryScore || 0) - Number(left.primaryScore || 0)
-        || Number(right.fallbackScore || 0) - Number(left.fallbackScore || 0)
-        || left.index - right.index
-      ))[0]?.candidate || null;
-  }
-
   const INCOME_DISCARD_TYPES = new Set([
     "income",
     "initial_income",
@@ -421,10 +343,6 @@
     return chooseBest(candidates.filter((candidate) => candidate?.available !== false), scoreResearchTechCandidate);
   }
 
-  function choosePlayCard(candidates = []) {
-    return chooseBest(candidates.filter((candidate) => candidate?.available !== false), scorePlayCardCandidate);
-  }
-
   function chooseBlueTechSlot(availableSlots = []) {
     const sorted = [...availableSlots]
       .map((slot) => Number(slot))
@@ -485,11 +403,9 @@
 
   return Object.freeze({
     chooseInitialSelection,
-    chooseTurnAction,
     chooseDiscardIndexes,
     choosePassReserveCard,
     chooseResearchTechTile,
-    choosePlayCard,
     chooseBlueTechSlot,
     chooseMovePaymentIndexes,
     chooseAlienUseOption,

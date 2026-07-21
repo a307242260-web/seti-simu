@@ -5,6 +5,7 @@ const goals = require("./goals");
 const actionGraph = require("./action-graph");
 const planner = require("./planner");
 const evaluator = require("./evaluator");
+const heuristicEvaluator = require("./heuristic-evaluator");
 const policy = require("./policy");
 const analytics = require("./battle-analytics");
 const appConstants = require("../../app/constants");
@@ -1000,7 +1001,7 @@ const movementGraph = actionGraph.buildActionGraph([
   { id: "move", kind: "quick", available: true, score: 99, gain: 2, cost: 12 },
   { id: "move", kind: "quick", available: true, score: 1, gain: 8, cost: 2 },
 ], {}, "p1", { goals: [] });
-assert.equal(policy.chooseTurnAction(movementGraph)?.gain, 8);
+assert.equal(heuristicEvaluator.selectScoredItem(movementGraph)?.gain, 8);
 
 const planned = planner.chooseTurnPlan([
   { id: "move", kind: "quick", available: true, score: 3 },
@@ -1146,50 +1147,50 @@ const huanyuUnsupportedSecondOrbitPlan = huanyuUnsupportedSecondOrbitOpening.ope
 );
 assert.equal(huanyuUnsupportedSecondOrbitPlan?.summary?.huanyuUnsupportedSecondOrbitPenalty, 3.5);
 
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "orbit", available: true, score: 20, actionGraph: { net: 2 } },
   { id: "playCard", available: true, score: 1, actionGraph: { net: 9 } },
 ])?.id, "playCard");
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "pass", available: true, score: 0, actionGraph: { net: -1 } },
   { id: "cardCorner", available: true, score: -2, actionGraph: { net: 4 } },
 ])?.id, "cardCorner");
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "pass", available: true },
   { id: "launch", available: true },
 ])?.id, "launch");
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "pass", available: true },
   { id: "researchTech", available: true, takeable: [{ tileId: "purple1" }] },
 ])?.id, "researchTech");
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "end-turn", available: true },
 ])?.id, "end-turn");
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "end-turn", available: true },
   { id: "move", available: true, score: 2 },
 ])?.id, "move");
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "end-turn", available: true },
   { id: "move", available: true, score: -1 },
 ])?.id, "end-turn");
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "move", available: true, score: 5 },
   { id: "orbit", available: true },
 ])?.id, "orbit");
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "pass", available: true },
   { id: "scan", available: true },
 ])?.id, "scan");
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "scan", available: true, score: 4 },
   { id: "analyze", available: true, score: 12 },
 ])?.id, "analyze");
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "end-turn", available: true },
   { id: "placeData", available: true, score: 8 },
 ])?.id, "placeData");
-assert.equal(policy.chooseTurnAction([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { id: "scan", available: true },
   { id: "playCard", available: true, playableCards: [{ price: 2, score: 4 }] },
 ])?.id, "playCard");
@@ -1205,10 +1206,10 @@ assert.equal(policy.chooseResearchTechTile([
   { tileId: "orange1", techType: "orange", score: 99, available: false },
   { tileId: "purple4", techType: "purple", score: 9, available: true },
 ])?.tileId, "purple4");
-assert.equal(policy.choosePlayCard([
+assert.equal(heuristicEvaluator.selectScoredItem([
   { cardId: "low.webp", price: 1, score: 1 },
   { cardId: "better.webp", price: 4, score: 5 },
-])?.cardId, "better.webp");
+], { mode: "card" })?.cardId, "better.webp");
 assert.equal(policy.chooseBlueTechSlot([3, 1, 2]), 1);
 assert.equal(policy.chooseBlueTechSlot([2, 0]), 0);
 assert.deepEqual(policy.chooseMovePaymentIndexes([
