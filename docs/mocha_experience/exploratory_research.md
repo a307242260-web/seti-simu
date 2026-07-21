@@ -14,6 +14,14 @@
 
 ## Entries
 
+- date: 2026-07-21
+- source_issue: SETI-105（owner 在聊天中直接提供 SETI Fan Hub 中文站点）
+- observation: 项目需要把 `https://seti.ender-wiggin.com/zh-CN` 作为可复用的卡牌资料入口，覆盖普通卡牌、公司（组织）牌和起始卡；第三方站点适合检索和录入，但规则歧义与版本差异仍需交叉核对。
+- evidence: owner 明确说明该站包含 SETI 卡牌、公司和起始卡内容；站点中文首页实际提供卡牌搜索，并含“起始卡”“组织”导航及来源、图标、收入、扇区、类型、文本和费用筛选。
+- promote_to: project_memory
+- promotion_status: promote
+- decision: 新增 `docs/card-data-sources.md` 并接入根 `AGENTS.md` 资料导航，让后续卡牌录入与核对任务可直接发现该入口；保留第三方资料源免责声明，不将其视为规则争议的唯一权威。
+
 - date: 2026-07-19
 - source_issue: SETI-45
 - observation: 面向 owner 讨论项目质量体系时，应先给出与项目规模匹配的最小默认口径，再说明少量例外；把所有风险维度展开成常驻多层门禁，会让简单的“主要靠单元测试”决策变得过度繁琐。

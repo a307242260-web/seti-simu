@@ -29,6 +29,28 @@ candidate、promote、reject 使用以下契约记录。一次性业务结论不
 ## Entries
 
 - date: 2026-07-21
+- source: SETI-105；owner 在聊天中直接要求记录 `https://seti.ender-wiggin.com/zh-CN`，并说明其包含 SETI 卡牌、公司和起始卡内容
+- promoted_to: project_memory
+- promotion_decision: promote
+- target_agent: 领航及后续负责卡牌录入、核对和机制实现的 agent
+- target_component: SETI 项目资料源导航
+- target_file: docs/card-data-sources.md；AGENTS.md
+- remote_skill_id: none
+- change: 将 SETI Fan Hub 中文入口及适用范围写入项目记忆，并明确第三方资料源的核对边界。
+- applied_change: 新增 `docs/card-data-sources.md`，记录中文入口、普通卡牌/公司（组织）牌/起始卡覆盖范围和检索能力；在根 `AGENTS.md` 的详细资料索引中增加入口。
+- expected_effect: 后续卡牌数据录入、名称核对和机制检索能直接发现统一资料入口，减少重复找站和来源遗漏。
+- evaluation_window: 后续 3 个卡牌录入、公司牌或起始卡核对任务
+- success_signal: 相关任务能从根导航定位该站点，并在存在规则歧义或版本差异时主动与实体卡、官方规则或项目内确认机制交叉核对。
+- rollback_condition: 站点长期不可用、内容覆盖与实际版本明显不符，或 owner 指定新的统一权威资料源时，更新或移除该入口并保留替代来源。
+- risk: 第三方站点可能更新、缺漏或存在翻译/版本差异；若被误当作唯一规则权威，可能把资料偏差带入实现。
+- evidence_before: owner 的直接资料说明；2026-07-21 打开中文首页可见卡牌搜索、“起始卡”“组织”导航，以及来源、行动图标、收入、扇区、卡牌类型、文本和费用筛选。
+- owner_or_agent_decision: owner 明确要求记录；领航将其升级到项目记忆，并增加第三方来源的交叉核对边界。
+- applied_at: 2026-07-21
+- verification: `rg -n "seti\.ender-wiggin\.com|card-data-sources" AGENTS.md docs/card-data-sources.md docs/mocha_experience/exploratory_research.md docs/mocha_experience/promotion_log.md`；中文首页访问成功。
+- observed_outcome: 资料源已进入独立文档和根导航，后续 agent 可从项目入口直接发现。
+- keep_or_revise: 保留；按站点可用性和后续卡牌任务反馈更新覆盖说明。
+
+- date: 2026-07-21
 - source: SETI-104 owner 评论 `f2ab213b-167f-44fe-a1ff-fdc477150351`、`088d91da-fa05-444e-a97b-67edfe96a346` 与两组 seed baseline 代码审计
 - promoted_to: none
 - promotion_decision: candidate

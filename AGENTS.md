@@ -92,6 +92,7 @@
 
 ## 详细资料索引
 
+- `docs/card-data-sources.md`：SETI 卡牌资料站导航；可查询普通卡牌、公司（组织）牌和起始卡等内容。
 - `docs/mechanics-reference.md`：从旧版 `AGENTS.md` 迁出的完整机制参考。
 - `docs/app-architecture.md`：浏览器 app 装配层、`randomizer/app/**` 边界与后续拆分原则。
 - `docs/effect-glossary.md`：效果术语表；不确定效果名含义时先查这里。
