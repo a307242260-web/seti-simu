@@ -885,6 +885,7 @@
       : null;
     return {
       active,
+      interactive: active && !isAiAutoBattlePlayer?.(currentPlayerId),
       currentPlayerId,
       offer,
       selectedCards: cloneResidentPresentation(getCurrentInitialSelectionCards(projectedPlayer)),
@@ -1036,6 +1037,17 @@
       String(player.id),
       cloneResidentPresentation(computePlayerFinalScoreBreakdown(player)),
     ]));
+    const interfacePlayer = projectedPlayers.find((player) => String(player?.id) === viewer.playerId)
+      || projectedPlayers.find((player) => (
+        String(player?.id) === String(browserRuleState.playerState.currentPlayerId)
+      ))
+      || null;
+    const handCount = Array.isArray(interfacePlayer?.hand)
+      ? interfacePlayer.hand.length
+      : Math.max(0, Math.round(Number(interfacePlayer?.resources?.handSize) || 0));
+    const selectionActive = Boolean(isCardSelectionActive?.());
+    const allowsBlindDraw = selectionActive && Boolean(allowsBlindDrawInSelection?.());
+    const blindDrawAvailable = Boolean(canBlindDraw?.());
     const projection = browserHostModule.residentProjection.createResidentProjection({
       projection: {
         ...canonical,
@@ -1059,6 +1071,23 @@
               discardSelectionActive: Boolean(browserRuleState.cardState.ui?.discardSelectionActive),
               playCardSelectionActive: Boolean(browserRuleState.cardState.ui?.playCardSelectionActive),
             },
+            publicControls: {
+              selectionActive,
+              multiSelectActive: Boolean(isPublicCardMultiSelectActive?.()),
+              blindDrawEnabled: selectionActive && allowsBlindDraw && blindDrawAvailable,
+              blindDrawReason: !selectionActive
+                ? "请先进入精选"
+                : !allowsBlindDraw
+                  ? "本次精选不能盲抽"
+                  : blindDrawAvailable
+                    ? "盲抽一张牌加入手牌"
+                    : "牌库已空",
+            },
+          },
+          handPanel: {
+            count: handCount,
+            overLimit: handCount > 4,
+            hint: getPlayerHandPanelTitleHint(),
           },
           initialSelection: createInitialSelectionProjection(viewer),
           reservedCards: createReservedCardProjection(viewer),
@@ -1153,6 +1182,7 @@
   const renderRuntime = viewAdapter?.renderRuntime || renderRuntimeModule.createRenderRuntime({
     document,
     Image,
+    enforceCapabilityInventory: true,
     solar,
     players,
     rocketActions,
@@ -1191,12 +1221,8 @@
     getPlayerRoundOrderNumber,
     getPlayerDisplayLabel,
     isPlayerPassedThisRound,
-    getPlayerLabelById,
-    getDisplayedTurnNumber,
-    isGameEnded,
     createInitialSelectionPicker,
     createCompanyCardSummary: (...args) => createCompanyCardSummary?.(...args),
-    getPlayerCompanyBaseIncome,
     createPlayerNameStat,
     createStatSeparator,
     createStatIcon,
@@ -1206,28 +1232,31 @@
     buildPlayerIncomeStatNodes,
     buildPlayerRunezuStatNodes,
     buildPlayerFangzhouStatNodes,
-    updatePlayerHandPanelTitle,
     layoutReservedCardRows,
     renderFinalScoreBoard: (...args) => renderFinalScoreBoard?.(...args),
-    buildPlutoMarkerContext,
-    getCardTypeCode: (...args) => getCardTypeCode(...args),
-    buildProbeLocationIndex: (...args) => buildProbeLocationIndex(...args),
+    buildPlutoMarkerContext: (...args) => renderRuntimeModule.cloneSelectorResult(buildPlutoMarkerContext(...args)),
     canUseCardCornerQuickAction: (...args) => canUseCardCornerQuickAction(...args),
     isIndustryHandSelectionActive: (...args) => isIndustryHandSelectionActive?.(...args),
     isIndustryFutureSpanHandSelectionActive: (...args) => isIndustryFutureSpanHandSelectionActive?.(...args),
     isFutureSpanEligibleHandCard: (...args) => isFutureSpanEligibleHandCard(...args),
     getFutureSpanDeltaForCard: (...args) => getFutureSpanDeltaForCard(...args),
     isMovePaymentCard: (...args) => isMovePaymentCard?.(...args),
-    getCardCornerQuickActionForCard: (...args) => getCardCornerQuickActionForCard(...args),
-    getHandCardPlayActionForCard: (...args) => getHandCardPlayActionForCard(...args),
-    getCardPlayCost: (...args) => getCardPlayCost(...args),
+    getCardCornerQuickActionForCard: (...args) => renderRuntimeModule.cloneSelectorResult(
+      getCardCornerQuickActionForCard(...args),
+    ),
+    getHandCardPlayActionForCard: (...args) => renderRuntimeModule.cloneSelectorResult(
+      getHandCardPlayActionForCard(...args),
+    ),
+    getCardPlayCost: (...args) => renderRuntimeModule.cloneSelectorResult(getCardPlayCost(...args)),
     formatCardPlayCost: (...args) => formatCardPlayCost(...args),
-    getPublicScanChoicesForCard: (...args) => getPublicScanChoicesForCard(...args),
+    getPublicScanChoicesForCard: (...args) => renderRuntimeModule.cloneSelectorResult(
+      getPublicScanChoicesForCard(...args),
+    ),
     attachCardHoverPreview,
-    updatePublicCardControls: (...args) => updatePublicCardControls(...args),
-    canBlindDraw: (...args) => canBlindDraw(...args),
     getPlanetName,
-    getBoardPointFromPolarPoint,
+    getBoardPointFromPolarPoint: (...args) => renderRuntimeModule.cloneSelectorResult(
+      getBoardPointFromPolarPoint(...args),
+    ),
     getReferencePlacementName,
     formatPlanetsReferencePoint,
     formatPolarPoint,
@@ -1244,13 +1273,9 @@
     getPlayerReadoutLines,
     getPlanetStatsReadoutLines,
     getRocketCoordinateReadoutLines,
-    selectDefaultRocketForCurrentPlayer,
     syncInteractionFocusChrome,
     placeDataToBlueSlot,
     getPublicCardHeight,
-    isCardSelectionActive,
-    isPublicCardMultiSelectActive,
-    isAiAutoBattlePlayer: (...args) => isAiAutoBattlePlayer?.(...args),
   });
   const {
     setTokenAssetSizes,

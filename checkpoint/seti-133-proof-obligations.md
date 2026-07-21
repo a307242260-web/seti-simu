@@ -32,3 +32,12 @@
 - Node：`node --check randomizer/app.js && node tools/run_node_tests.js`，95 unit + 1 full-flow PASS。
 - Chrome Browser Host/Action Bar smoke：`data-result=passed`，projection `committed:821545b5`；Decision UI smoke：`data-result=passed`，一次原子提交且 forbidden continuation 调用为 0。
 - Chrome 完整局：1 席 76 分、4 席最高 90 / 最低 37；两局 `blockedGames=0`，运行结果 `ok=true`。
+
+## 第三轮返工验收（production capability inventory）
+
+- `createRenderRuntime` 现在导出并强制执行完整 capability inventory：pure module、DOM-only helper、scalar/fresh DTO selector、input callback、DOM state 均唯一分类；未分类能力和 forbidden root reader/writer 在 production bootstrap 时 fail-fast。
+- `renderPublicCards` 直接消费冻结 projection 中的 `cards.publicControls`，`renderPlayerStats` 直接消费 `handPanel`；生产 context 删除 `updatePublicCardControls/updatePlayerHandPanelTitle/canBlindDraw/isCardSelectionActive/isPublicCardMultiSelectActive/isAiAutoBattlePlayer/selectDefaultRocketForCurrentPlayer`，并清除另外 9 项未使用能力。
+- 对象型窄 selector 在 composition 边界经 `cloneSelectorResult` 返回新 identity；unit 覆盖 nested identity 隔离。所有 forbidden inventory 项均以继承 poison getter 注入，实际调用 public/player/hand/opponent/reserved/initial/token renderer 时调用数为 0。
+- Node：`node --check randomizer/app.js && node tools/run_node_tests.js`，95 unit + 1 full-flow PASS。
+- Chrome Browser Host/Action Bar smoke：`data-result=passed`，projection `committed:821545b5`；Decision UI smoke：`data-result=passed`，一次原子提交且 forbidden continuation 调用为 0。
+- Chrome 完整局：1 席 63 分、4 席最高 99 / 最低 41；两局 `blockedGames=0`，运行结果 `ok=true`。

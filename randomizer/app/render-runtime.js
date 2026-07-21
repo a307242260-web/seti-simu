@@ -11,6 +11,58 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function (root) {
   "use strict";
 
+  const RENDER_CONTEXT_CAPABILITY_INVENTORY = Object.freeze({
+    platform: Object.freeze(["document", "Image", "getProjection", "viewState", "enforceCapabilityInventory"]),
+    pureModules: Object.freeze([
+      "solar", "players", "rocketActions", "planetStats", "planetReferenceLayout", "endGameScoring",
+      "finalScoring", "data", "aliens", "jiuzhe", "yichangdian", "chong", "aomomo", "runezu",
+      "industry", "tech", "actionHistory", "quickActionHistory",
+    ]),
+    domOnlyHelpers: Object.freeze([
+      "createInitialSelectionPicker", "createCompanyCardSummary", "createPlayerNameStat", "createStatSeparator",
+      "createStatIcon", "createInlineIconValue", "createPlayerStatsRow", "buildPlayerResourceStatNodes",
+      "buildPlayerIncomeStatNodes", "buildPlayerRunezuStatNodes", "buildPlayerFangzhouStatNodes",
+      "layoutReservedCardRows", "renderFinalScoreBoard", "attachCardHoverPreview", "getPublicCardHeight",
+    ]),
+    scalarOrFreshDtoSelectors: Object.freeze([
+      "getPlayerRoundOrderNumber", "getPlayerDisplayLabel", "isPlayerPassedThisRound", "buildPlutoMarkerContext",
+      "canUseCardCornerQuickAction", "isIndustryHandSelectionActive", "isIndustryFutureSpanHandSelectionActive",
+      "isFutureSpanEligibleHandCard", "getFutureSpanDeltaForCard", "isMovePaymentCard",
+      "getCardCornerQuickActionForCard", "getHandCardPlayActionForCard", "getCardPlayCost", "formatCardPlayCost",
+      "getPublicScanChoicesForCard", "getPlanetName", "getBoardPointFromPolarPoint", "getReferencePlacementName",
+      "formatPlanetsReferencePoint", "formatPolarPoint", "formatBoardPoint", "getNormalTokenAssetForPlayer",
+      "isRocketOnPlanetsReference", "isPlanetMarkerRocket", "isRocketMoveCandidate", "isRocketMoveMuted",
+      "getChongPlanetLabel", "getTurnReadoutLines", "getInitialSelectionReadoutLines", "getPlayerReadoutLines",
+      "getPlanetStatsReadoutLines", "getRocketCoordinateReadoutLines",
+    ]),
+    inputCallbacks: Object.freeze(["handleRocketPointerDown", "syncInteractionFocusChrome", "placeDataToBlueSlot"]),
+    domState: Object.freeze([
+      "tokenWidths", "techRenderContext", "sectorElements", "yichangdianAnomalyMarkerElements",
+      "chongPlanetFossilMarkerElements", "chongFossilOwnerTokenElements", "runezuBoardSymbolElements", "els",
+      "ROCKET_IMAGE_SCALE", "REFERENCE_ORBIT_IMAGE_SCALE", "REFERENCE_LANDDING_IMAGE_SCALE", "RESOURCE_ICON_SRC",
+      "OPPONENT_SECTOR_WIN_STATS", "OPPONENT_TECH_TYPES", "ROTATE_STATE_SLOTS",
+    ]),
+    forbidden: Object.freeze([
+      "browserRuleState", "workingState", "solarState", "playerState", "rocketState", "nebulaDataState",
+      "planetStatsState", "alienGameState", "finalScoringState", "turnState", "cardState", "techGameState",
+      "decisionSessions", "getCurrentPlayer", "getInterfacePlayer", "getActivePlayers", "getPlayerById",
+      "getPlayerByColor", "syncFinalScorePendingMarks", "computePlayerFinalScoreBreakdown", "getPendingMovePayment",
+      "getPendingCardCornerQuickAction", "getPendingHandCardPlayAction", "getPendingPlayCardSelection",
+      "isDiscardSelectionActive", "isPlayCardSelectionActive", "isMovePaymentSelectionActive",
+      "isHandScanSelectionActive", "getInitialSelectionOffer", "renderReservedCardsFromTaskState",
+      "updatePublicCardControls", "updatePlayerHandPanelTitle", "canBlindDraw", "selectDefaultRocketForCurrentPlayer",
+      "isCardSelectionActive", "isPublicCardMultiSelectActive", "isAiAutoBattlePlayer",
+      "ensurePublicCardsFilledRespectingDelayedRefills",
+    ]),
+  });
+  const ALLOWED_RENDER_CONTEXT_KEYS = new Set(Object.entries(RENDER_CONTEXT_CAPABILITY_INVENTORY)
+    .filter(([category]) => category !== "forbidden")
+    .flatMap(([, keys]) => keys));
+
+  function cloneSelectorResult(value) {
+    return value == null || typeof value !== "object" ? value : structuredClone(value);
+  }
+
   function createCardHoverPreviewRuntime(context = {}) {
     const windowRef = context.window || root;
     const documentRef = context.document || root.document;
@@ -297,13 +349,16 @@
   function createRenderRuntime(context = {}) {
     const document = context.document || root.document;
     const ImageCtor = context.Image || root.Image;
-    const legacySliceKeys = [
-      "browserRuleState", "workingState", "solarState", "playerState", "rocketState",
-      "nebulaDataState", "planetStatsState", "alienGameState", "finalScoringState",
-      "turnState", "cardState", "techGameState",
-    ].filter((key) => Object.hasOwn(context, key));
-    if (legacySliceKeys.length) {
-      throw new TypeError(`createRenderRuntime 拒绝长期规则 slice: ${legacySliceKeys.join(", ")}`);
+    const forbiddenCapabilities = RENDER_CONTEXT_CAPABILITY_INVENTORY.forbidden
+      .filter((key) => Object.hasOwn(context, key));
+    if (forbiddenCapabilities.length) {
+      throw new TypeError(`createRenderRuntime 拒绝规则 root reader/writer: ${forbiddenCapabilities.join(", ")}`);
+    }
+    if (context.enforceCapabilityInventory) {
+      const unknownCapabilities = Object.keys(context).filter((key) => !ALLOWED_RENDER_CONTEXT_KEYS.has(key));
+      if (unknownCapabilities.length) {
+        throw new TypeError(`createRenderRuntime 未分类 capability: ${unknownCapabilities.join(", ")}`);
+      }
     }
     if (typeof context.getProjection !== "function") {
       throw new TypeError("createRenderRuntime 需要 getProjection() 只读 BrowserProjection provider");
@@ -460,12 +515,8 @@
       getPlayerRoundOrderNumber,
       getPlayerDisplayLabel,
       isPlayerPassedThisRound,
-      getPlayerLabelById,
-      getDisplayedTurnNumber,
-      isGameEnded,
       createInitialSelectionPicker,
       createCompanyCardSummary,
-      getPlayerCompanyBaseIncome,
       createPlayerNameStat,
       createStatSeparator,
       createStatIcon,
@@ -475,12 +526,9 @@
       buildPlayerIncomeStatNodes,
       buildPlayerRunezuStatNodes,
       buildPlayerFangzhouStatNodes,
-      updatePlayerHandPanelTitle,
       layoutReservedCardRows,
       renderFinalScoreBoard,
       buildPlutoMarkerContext,
-      getCardTypeCode,
-      buildProbeLocationIndex,
       canUseCardCornerQuickAction,
       isIndustryHandSelectionActive,
       isIndustryFutureSpanHandSelectionActive,
@@ -493,8 +541,6 @@
       formatCardPlayCost,
       getPublicScanChoicesForCard,
       attachCardHoverPreview,
-      updatePublicCardControls,
-      canBlindDraw,
       getPlanetName,
       getBoardPointFromPolarPoint,
       getReferencePlacementName,
@@ -513,11 +559,7 @@
       getPlayerReadoutLines,
       getPlanetStatsReadoutLines,
       getRocketCoordinateReadoutLines,
-      selectDefaultRocketForCurrentPlayer,
       syncInteractionFocusChrome,
-      refreshAfterPendingChange,
-      getAomomoCurrentX,
-      queueStateReadoutRender,
     } = context;
     function loadTokenWidth(asset, scale, fallbackNaturalWidth, onLoad) {
       const image = new ImageCtor();
@@ -1030,8 +1072,9 @@
     function renderPublicCards() {
       if (!els.publicCardRow) return;
 
-      const selectionActive = context.isCardSelectionActive();
-      const publicCardMultiSelect = context.isPublicCardMultiSelectActive();
+      const controls = cardState.publicControls || {};
+      const selectionActive = Boolean(controls.selectionActive);
+      const publicCardMultiSelect = Boolean(controls.multiSelectActive);
       const selectedPublicSlots = decisionState.cardSelectionAction?.selectedSlots || [];
       els.publicCardRow.replaceChildren(...cardState.publicCards.map((card, index) => {
         const slot = document.createElement("div");
@@ -1081,7 +1124,11 @@
         return slot;
       }));
 
-      updatePublicCardControls();
+      if (els.publicBlindDrawButton) {
+        els.publicBlindDrawButton.disabled = !controls.blindDrawEnabled;
+        els.publicBlindDrawButton.classList.toggle("is-selectable", Boolean(controls.blindDrawEnabled));
+        els.publicBlindDrawButton.title = controls.blindDrawReason || "";
+      }
     }
 
     function layoutCardFan(fan, cardCount) {
@@ -1399,8 +1446,7 @@
 
       const selection = readProjection().resident.initialSelection || {};
       if (selection.active) {
-        const setupPlayer = cloneProjectedPlayer(getCurrentPlayer());
-        if (!context.isAiAutoBattlePlayer(setupPlayer?.id)) {
+        if (selection.interactive) {
           els.initialSelectionArea.hidden = false;
           els.initialSelectionArea.replaceChildren(createInitialSelectionPicker(selection.offer || null));
           syncInteractionFocusChrome();
@@ -1656,7 +1702,15 @@
 
       els.playerStats.replaceChildren(...statRows);
       renderOpponentStats();
-      updatePlayerHandPanelTitle();
+      const handPanel = readProjection().resident.handPanel || {};
+      if (els.playerHandPanelHandCount) {
+        els.playerHandPanelHandCount.textContent = String(handPanel.count || 0);
+        els.playerHandPanelHandCount.classList.toggle("is-over-limit", Boolean(handPanel.overLimit));
+        els.playerHandPanelHandCount.setAttribute("aria-label", `当前手牌 ${handPanel.count || 0} 张`);
+      }
+      if (els.playerHandPanelTitleHint) {
+        els.playerHandPanelTitleHint.textContent = handPanel.hint || "";
+      }
       renderPlayerHand();
       renderReservedCards();
       renderPlayerDataBoard();
@@ -1824,6 +1878,8 @@
   }
 
   return {
+    RENDER_CONTEXT_CAPABILITY_INVENTORY,
+    cloneSelectorResult,
     createRenderRuntime,
     createCardHoverPreviewRuntime,
     createCoordinateRuntime,

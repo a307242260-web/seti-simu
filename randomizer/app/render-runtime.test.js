@@ -3,7 +3,31 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
-const { createRenderRuntime, createCoordinateRuntime } = require("./render-runtime");
+const {
+  RENDER_CONTEXT_CAPABILITY_INVENTORY,
+  cloneSelectorResult,
+  createRenderRuntime,
+  createCoordinateRuntime,
+} = require("./render-runtime");
+
+{
+  const source = { nested: { value: 1 } };
+  const result = cloneSelectorResult(source);
+  assert.notStrictEqual(result, source);
+  assert.notStrictEqual(result.nested, source.nested);
+  assert.deepEqual(result, source);
+  assert.equal(cloneSelectorResult("scalar"), "scalar");
+}
+
+{
+  const categorized = Object.entries(RENDER_CONTEXT_CAPABILITY_INVENTORY)
+    .filter(([category]) => category !== "forbidden")
+    .flatMap(([, keys]) => keys);
+  assert.equal(new Set(categorized).size, categorized.length, "每项 production capability 必须且只能归入一个类别");
+  for (const key of RENDER_CONTEXT_CAPABILITY_INVENTORY.forbidden) {
+    assert.equal(categorized.includes(key), false, `forbidden capability 不得进入 allowlist: ${key}`);
+  }
+}
 const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 const { attachDecisionState } = require("./test-decision-state");
 
@@ -188,7 +212,10 @@ function createContext(overrides = {}) {
     tokenLayer: createElement("div", document),
     planetsTokenLayer: createElement("div", document),
     publicCardRow: createElement("div", document),
+    publicBlindDrawButton: createElement("button", document),
     playerHandPanel: createElement("div", document),
+    playerHandPanelHandCount: createElement("span", document),
+    playerHandPanelTitleHint: createElement("span", document),
     playerHandFan: createElement("div", document),
     reservedCardFan: createElement("div", document),
     reservedCardPanel: createElement("section", document),
@@ -235,7 +262,6 @@ function createContext(overrides = {}) {
     techState: { ownedTiles: {} },
   };
   const context = {
-    decisionSessions,
     document,
     Image: createImageCtor(),
     els,
@@ -357,8 +383,15 @@ function createContext(overrides = {}) {
       cards: {
         publicCards: [],
         ui: { selectionActive: false, discardSelectionActive: false, playCardSelectionActive: false },
+        publicControls: {
+          selectionActive: false,
+          multiSelectActive: false,
+          blindDrawEnabled: false,
+          blindDrawReason: "请先进入精选",
+        },
       },
-      initialSelection: { active: false, offer: null, selectedCards: [] },
+      handPanel: { count: 1, overLimit: false, hint: "" },
+      initialSelection: { active: false, interactive: false, offer: null, selectedCards: [] },
       reservedCards: {
         title: "保留牌区 · 完成任务 0",
         initialSelectionActive: false,
@@ -402,12 +435,8 @@ function createContext(overrides = {}) {
     getPlayerRoundOrderNumber() { return 1; },
     getPlayerDisplayLabel(player) { return player.name; },
     isPlayerPassedThisRound() { return false; },
-    getPlayerLabelById() { return "白色"; },
-    getDisplayedTurnNumber() { return 1; },
-    isGameEnded() { return false; },
     createInitialSelectionPicker() { return createElement("div", document); },
     createCompanyCardSummary() { return createElement("div", document); },
-    getPlayerCompanyBaseIncome() { return {}; },
     createPlayerNameStat() { return createElement("span", document); },
     createStatSeparator() { return createElement("span", document); },
     createStatIcon() { return createElement("span", document); },
@@ -417,7 +446,6 @@ function createContext(overrides = {}) {
     buildPlayerIncomeStatNodes() { return [createElement("span", document)]; },
     buildPlayerRunezuStatNodes() { return []; },
     buildPlayerFangzhouStatNodes() { return []; },
-    updatePlayerHandPanelTitle() { context.updatePlayerHandPanelTitleCalls += 1; },
     layoutReservedCardRows() { context.layoutReservedCardRowsCalls += 1; },
     renderFinalScoreBoard(input) {
       context.renderFinalScoreBoardCalls += 1;
@@ -429,8 +457,6 @@ function createContext(overrides = {}) {
     queueBanrenmaOpportunitiesForPlayer() { context.queueBanrenmaCalls += 1; },
     maybeOpenQueuedBanrenmaOpportunity() { context.openBanrenmaCalls += 1; },
     buildPlutoMarkerContext() { return {}; },
-    getCardTypeCode() { return ""; },
-    buildProbeLocationIndex() { return { index: {}, details: [] }; },
     canUseCardCornerQuickAction() { return false; },
     isIndustryHandSelectionActive() { return false; },
     isIndustryFutureSpanHandSelectionActive() { return false; },
@@ -443,9 +469,6 @@ function createContext(overrides = {}) {
     formatCardPlayCost() { return "0"; },
     getPublicScanChoicesForCard() { return { ok: true, scanLabel: "扫描" }; },
     attachCardHoverPreview() { context.attachCardHoverPreviewCalls += 1; },
-    ensurePublicCardsFilledRespectingDelayedRefills() { context.ensurePublicCardsFilledCalls += 1; },
-    updatePublicCardControls() { context.updatePublicCardControlsCalls += 1; },
-    canBlindDraw() { return true; },
     getPlanetName(id) { return id; },
     getBoardPointFromPolarPoint() { return { x: 25, y: 35 }; },
     getReferencePlacementName() { return ""; },
@@ -463,16 +486,10 @@ function createContext(overrides = {}) {
     getInitialSelectionReadoutLines() { return ["开局"]; },
     getPlayerReadoutLines() { return ["玩家"]; },
     getPlanetStatsReadoutLines() { return ["星球"]; },
-    scheduleAiAutoStepIfNeeded() { context.scheduleAiCalls += 1; },
     getRocketCoordinateReadoutLines() { return ["火箭"]; },
-    selectDefaultRocketForCurrentPlayer() {},
     syncInteractionFocusChrome() { context.syncInteractionCalls += 1; },
     placeDataToBlueSlot() { context.placeDataCalls += 1; },
     getPublicCardHeight() { return 160; },
-    isCardSelectionActive() { return false; },
-    isPublicCardMultiSelectActive() { return false; },
-    isAiAutoBattlePlayer() { return false; },
-    updatePlayerHandPanelTitleCalls: 0,
     layoutReservedCardRowsCalls: 0,
     renderFinalScoreBoardCalls: 0,
     lastFinalScoreRenderInput: null,
@@ -480,11 +497,8 @@ function createContext(overrides = {}) {
     openJiuzheCalls: 0,
     queueBanrenmaCalls: 0,
     openBanrenmaCalls: 0,
-    ensurePublicCardsFilledCalls: 0,
-    updatePublicCardControlsCalls: 0,
     attachCardHoverPreviewCalls: 0,
     dataPlayerBoardCalls: 0,
-    scheduleAiCalls: 0,
     syncInteractionCalls: 0,
     placeDataCalls: 0,
   };
@@ -510,20 +524,15 @@ function createContext(overrides = {}) {
 
 {
   const context = createContext();
-  for (const key of [
-    "getCurrentPlayer", "getInterfacePlayer", "getActivePlayers", "getPlayerById", "getPlayerByColor",
-    "syncFinalScorePendingMarks", "computePlayerFinalScoreBreakdown",
-    "getPendingMovePayment", "getPendingCardCornerQuickAction", "getPendingHandCardPlayAction",
-    "getPendingPlayCardSelection", "isDiscardSelectionActive", "isPlayCardSelectionActive",
-    "isMovePaymentSelectionActive", "isHandScanSelectionActive", "getInitialSelectionOffer",
-    "renderReservedCardsFromTaskState",
-  ]) {
-    Object.defineProperty(context, key, {
+  const poison = {};
+  for (const key of RENDER_CONTEXT_CAPABILITY_INVENTORY.forbidden) {
+    Object.defineProperty(poison, key, {
       configurable: true,
-      enumerable: true,
+      enumerable: false,
       get() { throw new Error(`${key} poison getter touched`); },
     });
   }
+  Object.setPrototypeOf(context, poison);
   const runtime = createRenderRuntime(context);
   runtime.renderPlayerHand();
   runtime.renderOpponentStats();
@@ -539,17 +548,21 @@ function createContext(overrides = {}) {
     { cardName: "A", src: "a.png" },
     { cardName: "B", src: "b.png" },
   ];
+  context.testResident.cards.publicControls = {
+    selectionActive: true,
+    multiSelectActive: true,
+    blindDrawEnabled: true,
+    blindDrawReason: "盲抽一张牌加入手牌",
+  };
   context.pendingState.cardSelectionAction = { selectedSlots: [1] };
-  context.isCardSelectionActive = () => true;
-  context.isPublicCardMultiSelectActive = () => true;
   const runtime = createRenderRuntime(context);
 
   runtime.renderPublicCards();
 
-  assert.equal(context.ensurePublicCardsFilledCalls, 0);
   assert.equal(context.els.publicCardRow.children.length, 2);
   assert.equal(context.els.publicCardRow.children[1].children[0].classList.contains("is-selected"), true);
-  assert.equal(context.updatePublicCardControlsCalls, 1);
+  assert.equal(context.els.publicBlindDrawButton.disabled, false);
+  assert.equal(context.els.publicBlindDrawButton.title, "盲抽一张牌加入手牌");
 }
 
 {
@@ -589,7 +602,7 @@ function createContext(overrides = {}) {
 
   assert.equal(context.els.playerStats.children.length, 1);
   assert.equal(context.els.opponentStatGrid.children.length, 2);
-  assert.equal(context.updatePlayerHandPanelTitleCalls, 1);
+  assert.equal(context.els.playerHandPanelHandCount.textContent, "1");
   assert.equal(context.els.reservedCardFan.children.length, 2);
   assert.equal(context.layoutReservedCardRowsCalls, 1);
   assert.equal(context.dataPlayerBoardCalls, 1);
@@ -608,7 +621,14 @@ function createContext(overrides = {}) {
       get() { throw new Error(`${key} poison getter touched`); },
     });
   }
-  assert.throws(() => createRenderRuntime(context), /拒绝长期规则 slice/);
+  assert.throws(() => createRenderRuntime(context), /拒绝规则 root reader\/writer/);
+}
+
+{
+  const context = createContext();
+  context.enforceCapabilityInventory = true;
+  context.unknownRootReader = () => ({});
+  assert.throws(() => createRenderRuntime(context), /未分类 capability: .*unknownRootReader/);
 }
 
 {
@@ -626,7 +646,9 @@ function createContext(overrides = {}) {
     "getPendingMovePayment", "getPendingCardCornerQuickAction", "getPendingHandCardPlayAction",
     "getPendingPlayCardSelection", "isDiscardSelectionActive", "isPlayCardSelectionActive",
     "isMovePaymentSelectionActive", "isHandScanSelectionActive", "getInitialSelectionOffer",
-    "renderReservedCardsFromTaskState",
+    "renderReservedCardsFromTaskState", "updatePublicCardControls", "updatePlayerHandPanelTitle",
+    "canBlindDraw", "selectDefaultRocketForCurrentPlayer", "isCardSelectionActive",
+    "isPublicCardMultiSelectActive", "isAiAutoBattlePlayer",
   ]) {
     assert.doesNotMatch(wiring, new RegExp(`\\n\\s*${key}(?:,|:)`), `生产 renderer 不得注入 ${key}`);
   }
