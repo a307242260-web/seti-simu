@@ -26,6 +26,7 @@
     Object.freeze({ key: "runtimeModule", globalName: "SetiAppRuntime" }),
     Object.freeze({ key: "refreshModule", globalName: "SetiAppRefresh" }),
     Object.freeze({ key: "renderRuntimeModule", globalName: "SetiAppRenderRuntime" }),
+    Object.freeze({ key: "playerStatsUiModule", globalName: "SetiBrowserPlayerStatsUi" }),
     Object.freeze({ key: "finalUiRuntimeModule", globalName: "SetiAppFinalUiRuntime" }),
     Object.freeze({ key: "finalScoreAiRuntimeModule", globalName: "SetiAppFinalScoreAiRuntime" }),
     Object.freeze({ key: "startScreenModule", globalName: "SetiAppStartScreen" }),
