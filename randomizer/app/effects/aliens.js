@@ -13,7 +13,6 @@
       abilities,
       addPlayerScoreSource,
       addScoreSourceFromGain,
-      alienGameState,
       aomomo,
       applyIncomeFromCard,
       applyYichangdianRewardToPlayer,
@@ -24,7 +23,6 @@
       buildSectorScanChoicesForX,
       buildSectorScanChoicesForXs,
       cardEffects,
-      cardState,
       cards,
       chong,
       claimRunezuPlanetSymbolForTravelResult,
@@ -54,13 +52,11 @@
       insertActionEffectsAfterCurrent,
       markCurrentActionIrreversible,
       maybeCompleteActionEffectFromScan,
-      nebulaDataState,
       nebulaHasScannableData,
       openAlienTraceRewardEffect,
       openChongFossilChoiceDialog,
       openLandTargetPicker,
       openScanTargetPicker,
-      playerState,
       players,
       recordAbilityCommands,
       recordHistoryCommand,
@@ -75,14 +71,21 @@
       renderStateReadout,
       replaceNebulaDataForCurrentPlayer,
       rocketActions,
-      rocketState,
       solar,
-      solarState,
       syncPlanetOrbitLandMarkers,
       updateActionButtons,
       withEffectExecutionPlayer,
       yichangdian,
     } = context;
+    if (typeof context.getWorkingRoot !== "function") {
+      throw new TypeError("createEffectAlienExecutors requires getWorkingRoot()");
+    }
+    const ruleAlienGameState = () => context.getWorkingRoot().alienGameState;
+    const ruleCardState = () => context.getWorkingRoot().cardState;
+    const ruleNebulaDataState = () => context.getWorkingRoot().nebulaDataState;
+    const rulePlayerState = () => context.getWorkingRoot().playerState;
+    const ruleRocketState = () => context.getWorkingRoot().rocketState;
+    const ruleSolarState = () => context.getWorkingRoot().solarState;
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
@@ -98,10 +101,10 @@
     function countYichangdianAnomalySignals() {
       if (!yichangdian) return 0;
       let total = 0;
-      for (const anomaly of alienGameState.yichangdian?.anomalies || []) {
-        const nebula = solar.getNebulaAtCoordinate(anomaly.sectorX, 5, solarState.sectorBySlot);
+      for (const anomaly of ruleAlienGameState().yichangdian?.anomalies || []) {
+        const nebula = solar.getNebulaAtCoordinate(anomaly.sectorX, 5, ruleSolarState().sectorBySlot);
         if (!nebula) continue;
-        const tokens = nebulaDataState.nebulae?.[nebula.id]?.tokens || [];
+        const tokens = ruleNebulaDataState().nebulae?.[nebula.id]?.tokens || [];
         total += tokens.filter((token) => token.replacedByPlayerColor || token.playerColor).length;
       }
       return total;
@@ -134,17 +137,17 @@
       const { anomaly } = resolveYichangdianNextAnomalyFromCurrentEarth();
       const reward = anomaly ? yichangdian.getAnomalyReward(anomaly.markerId) : null;
       if (!currentPlayer || !anomaly || !reward) {
-        rocketState.statusNote = "没有可结算的即将触发异常奖励";
+        ruleRocketState().statusNote = "没有可结算的即将触发异常奖励";
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
 
       beginEffectHistoryStep(effect.label);
-      const beforePlayerState = structuredClone(playerState);
+      const beforePlayerState = structuredClone(rulePlayerState());
       const rewardResult = applyYichangdianRewardToPlayer(currentPlayer, reward, `异常点牌 ${anomaly.markerId}`);
       if (rewardResult.ok) addScoreSourceFromGain(currentPlayer, SCORE_SOURCE_KEYS.ALIEN_EFFECT, reward.gain);
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-        playerState,
+        rulePlayerState(),
         beforePlayerState,
         "恢复异常点牌奖励前玩家状态",
       ));
@@ -172,34 +175,34 @@
     }
 
     function resolveYichangdianNextAnomalyFromCurrentEarth() {
-      if (!yichangdian || !alienGameState.yichangdian?.revealInitialized) {
+      if (!yichangdian || !ruleAlienGameState().yichangdian?.revealInitialized) {
         return { nextSectorX: null, anomaly: null };
       }
       const earth = getEarthSectorCoordinate();
-      const nextSectorX = yichangdian.updateNextAnomaly(alienGameState, earth.x);
+      const nextSectorX = yichangdian.updateNextAnomaly(ruleAlienGameState(), earth.x);
       const anomaly = nextSectorX == null
         ? null
-        : yichangdian.getAnomalyBySectorX(alienGameState, nextSectorX);
+        : yichangdian.getAnomalyBySectorX(ruleAlienGameState(), nextSectorX);
       return { nextSectorX, anomaly };
     }
 
     function executeYichangdianPublicAllEffect(effect) {
       const currentPlayer = getCurrentPlayer();
       beginEffectHistoryStep(effect.label);
-      const beforePlayerState = structuredClone(playerState);
-      const beforeCardState = structuredClone(cardState);
+      const beforePlayerState = structuredClone(rulePlayerState());
+      const beforeCardState = structuredClone(ruleCardState());
       const picked = [];
       for (let slotIndex = 0; slotIndex < cards.PUBLIC_CARD_COUNT; slotIndex += 1) {
-        const result = cards.pickFromPublic(cardState, playerState, currentPlayer, slotIndex);
+        const result = cards.pickFromPublic(ruleCardState(), rulePlayerState(), currentPlayer, slotIndex);
         if (result.ok) picked.push(result.card);
       }
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-        playerState,
+        rulePlayerState(),
         beforePlayerState,
         "恢复异常点拿公共牌前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-        cardState,
+        ruleCardState(),
         beforeCardState,
         "恢复异常点拿公共牌前牌区状态",
       ));
@@ -223,15 +226,15 @@
     function executeYichangdianNextAnomalyScanEffect(effect) {
       const { nextSectorX } = resolveYichangdianNextAnomalyFromCurrentEarth();
       if (nextSectorX == null) {
-        rocketState.statusNote = "没有即将触发的异常扇区";
+        ruleRocketState().statusNote = "没有即将触发的异常扇区";
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
-      const nebula = solar.getNebulaAtCoordinate(nextSectorX, 5, solarState.sectorBySlot);
+      const nebula = solar.getNebulaAtCoordinate(nextSectorX, 5, ruleSolarState().sectorBySlot);
       if (!nebula) {
-        rocketState.statusNote = `异常扇区 ${nextSectorX} 没有星云`;
+        ruleRocketState().statusNote = `异常扇区 ${nextSectorX} 没有星云`;
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
       if (!nebulaHasScannableData(nebula.id)) {
         return finishAutomaticRewardEffect(effect, {
@@ -287,8 +290,8 @@
       const currentPlayer = getCurrentPlayer();
       if (effect?.options) effect.options.skippable = false;
       beginEffectHistoryStep(effect.label);
-      const beforePlayerState = structuredClone(playerState);
-      const beforeCardState = structuredClone(cardState);
+      const beforePlayerState = structuredClone(rulePlayerState());
+      const beforeCardState = structuredClone(ruleCardState());
       const drawn = [];
       for (let index = 0; index < 3; index += 1) {
         const drawResult = blindDrawCardForPlayer(currentPlayer);
@@ -357,11 +360,11 @@
         return button;
       }));
       els.scanTargetOverlay.hidden = false;
-      rocketState.statusNote = pending.phase === "discard" ? "异常点：请选择左上角奖励牌" : "异常点：请选择收入奖励牌";
+      ruleRocketState().statusNote = pending.phase === "discard" ? "异常点：请选择左上角奖励牌" : "异常点：请选择收入奖励牌";
       renderActionEffectBar();
       updateActionButtons();
       renderStateReadout();
-      return { ok: true, message: rocketState.statusNote };
+      return { ok: true, message: ruleRocketState().statusNote };
     }
 
     function handleYichangdianCornerChoice(cardId) {
@@ -373,7 +376,7 @@
       const handIndex = player.hand.findIndex((item) => item.id === card.id);
       const discardResult = cards.discardFromHandAtIndex(player, handIndex);
       if (!discardResult.ok) return discardResult;
-      cards.addToDiscardPile(cardState, discardResult.card);
+      cards.addToDiscardPile(ruleCardState(), discardResult.card);
 
       if (pending.phase === "discard") {
         pending.selectedDiscardCard = discardResult.card;
@@ -387,12 +390,12 @@
       const incomeResult = applyIncomeFromCard(player, discardResult.card);
       pending.messageParts.push(incomeResult.message);
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-        playerState,
+        rulePlayerState(),
         pending.beforePlayerState,
         "恢复异常点盲抽角标前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-        cardState,
+        ruleCardState(),
         pending.beforeCardState,
         "恢复异常点盲抽角标前牌区状态",
       ));
@@ -412,7 +415,7 @@
 
     function executeYichangdianLaunchAnomalyMoveEffect(effect) {
       const earth = getEarthSectorCoordinate();
-      const anomaly = yichangdian?.getAnomalyBySectorX?.(alienGameState, earth.x);
+      const anomaly = yichangdian?.getAnomalyBySectorX?.(ruleAlienGameState(), earth.x);
       if (!anomaly) {
         return finishAutomaticRewardEffect(effect, {
           ok: true,
@@ -438,12 +441,12 @@
     function findChongProbeFossilPlanet() {
       const currentPlayer = getCurrentPlayer();
       if (!currentPlayer) return null;
-      const planetLocations = solar.createSolarSnapshot(solarState).planetLocations;
-      const active = rocketActions.getActiveRocket(rocketState);
+      const planetLocations = solar.createSolarSnapshot(ruleSolarState()).planetLocations;
+      const active = rocketActions.getActiveRocket(ruleRocketState());
       const candidates = [
         ...(active ? [active] : []),
-        ...rocketActions.getRocketsForPlayer(rocketState, currentPlayer.id),
-        ...rocketActions.getMovableTokensForPlayer(rocketState, currentPlayer.id),
+        ...rocketActions.getRocketsForPlayer(ruleRocketState(), currentPlayer.id),
+        ...rocketActions.getMovableTokensForPlayer(ruleRocketState(), currentPlayer.id),
       ];
       const seen = new Set();
       for (const rocket of candidates) {
@@ -454,7 +457,7 @@
         const planet = planetLocations.find((item) => item.x === sector?.x && item.y === sector?.y);
         if (planet?.planetId === "jupiter" || planet?.planetId === "saturn") {
           const transported = (rocket.kind || rocketActions.ROCKET_KIND.STANDARD) === rocketActions.ROCKET_KIND.CHONG_FOSSIL
-            ? chong?.getTransportedFossilForRocket?.(alienGameState, rocket.id, currentPlayer)
+            ? chong?.getTransportedFossilForRocket?.(ruleAlienGameState(), rocket.id, currentPlayer)
             : null;
           return { rocket, planetId: planet.planetId, planet, transportedFossil: transported?.fossil || null };
         }
@@ -476,7 +479,7 @@
         });
       };
       addChoice(placement.transportedFossil, "transport");
-      for (const fossil of chong.getAvailablePlanetFossils(alienGameState, placement.planetId)) {
+      for (const fossil of chong.getAvailablePlanetFossils(ruleAlienGameState(), placement.planetId)) {
         addChoice(fossil, "planet");
       }
       return choices;
@@ -596,13 +599,13 @@
           () => executeChongTravelForPickupChoice(effect, { ...choice, kind: "land" }),
         ),
         onCancel: () => {
-          rocketState.statusNote = "已取消虫族登陆目标选择";
+          ruleRocketState().statusNote = "已取消虫族登陆目标选择";
           renderStateReadout();
         },
       });
-      rocketState.statusNote = `${effect.label}：请选择登陆目标（木星/土星可拾取化石）`;
+      ruleRocketState().statusNote = `${effect.label}：请选择登陆目标（木星/土星可拾取化石）`;
       renderStateReadout();
-      return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
+      return { ok: true, awaitingChoice: true, message: ruleRocketState().statusNote };
     }
 
     function openChongOrbitOrLandTargetPicker(effect) {
@@ -624,13 +627,13 @@
         getOptions: () => getChongOrbitOrLandOptions(effect),
         onConfirm: (choice) => withEffectExecutionPlayer(effect, () => executeChongTravelForPickupChoice(effect, choice)),
         onCancel: () => {
-          rocketState.statusNote = "已取消虫族环绕/登陆目标选择";
+          ruleRocketState().statusNote = "已取消虫族环绕/登陆目标选择";
           renderStateReadout();
         },
       });
-      rocketState.statusNote = `${effect.label}：请选择环绕或登陆目标（木星/土星可拾取化石）`;
+      ruleRocketState().statusNote = `${effect.label}：请选择环绕或登陆目标（木星/土星可拾取化石）`;
       renderStateReadout();
-      return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
+      return { ok: true, awaitingChoice: true, message: ruleRocketState().statusNote };
     }
 
     function executeChongTravelForPickupEffect(effect) {
@@ -671,11 +674,11 @@
 
       if (!result.ok) {
         endEffectHistoryStep();
-        rocketState.statusNote = options.rocketId == null
+        ruleRocketState().statusNote = options.rocketId == null
           ? result.message
           : `${result.message}（请求火箭 R${options.rocketId}）`;
         renderStateReadout();
-        return { ...result, message: rocketState.statusNote };
+        return { ...result, message: ruleRocketState().statusNote };
       }
 
       const travelActionType = result.abilityId === "orbitProbe"
@@ -721,7 +724,7 @@
           rewardCount: rewardEffects.length,
         },
       };
-      rocketState.statusNote = effect.result.message;
+      ruleRocketState().statusNote = effect.result.message;
       completeCurrentActionEffect();
       renderStateReadout();
       return effect.result;
@@ -732,7 +735,7 @@
       const currentPlayer = getCurrentPlayer();
       const card = decisionState.actionEffectFlow?.card || null;
       const task = card?.chongTask || chong.getCardTask(effect.options?.cardIndex);
-      const beforeAlienState = structuredClone(alienGameState);
+      const beforeAlienState = structuredClone(ruleAlienGameState());
       const planetId = decisionState.actionEffectFlow?.chongPickupContext?.planetId || null;
 
       if (!planetId) {
@@ -743,7 +746,7 @@
         return finishChongFossilEffect(`${effect.label}：不在木星/土星，不能拾取化石`, { planetId });
       }
 
-      const available = chong.getAvailablePlanetFossils(alienGameState, planetId);
+      const available = chong.getAvailablePlanetFossils(ruleAlienGameState(), planetId);
       if (!available.length) {
         return finishChongFossilEffect(`${effect.label}：${getChongPlanetLabel(planetId)}没有可拾取化石`, { planetId });
       }
@@ -759,8 +762,8 @@
         title: "拾取虫族化石",
         subtitle: `${getChongPlanetLabel(planetId)}化石已查看。选择 1 枚作为可移动棋子放到太阳系。`,
         beforeAlienState,
-        beforePlayerState: structuredClone(playerState),
-        beforeCardState: structuredClone(cardState),
+        beforePlayerState: structuredClone(rulePlayerState()),
+        beforeCardState: structuredClone(ruleCardState()),
       });
     }
 
@@ -791,15 +794,15 @@
         effectLabel: effect.label,
         title: "查看并结算化石",
         subtitle: `${getChongPlanetLabel(placement.planetId)}化石已查看。选择 1 枚只结算奖励，不移除化石。`,
-        beforeAlienState: structuredClone(alienGameState),
-        beforePlayerState: structuredClone(playerState),
-        beforeCardState: structuredClone(cardState),
+        beforeAlienState: structuredClone(ruleAlienGameState()),
+        beforePlayerState: structuredClone(rulePlayerState()),
+        beforeCardState: structuredClone(ruleCardState()),
       });
     }
 
     function executeChongChoosePlanetFossilRewardEffect(effect) {
       if (!chong) return null;
-      const fossils = chong.getAvailablePlanetFossils(alienGameState);
+      const fossils = chong.getAvailablePlanetFossils(ruleAlienGameState());
       if (!fossils.length) {
         return finishAutomaticRewardEffect(effect, {
           ok: true,
@@ -815,9 +818,9 @@
         effectLabel: effect.label,
         title: "选择星球化石奖励",
         subtitle: "选择木星或土星 1 枚化石，只结算奖励，不移除化石。",
-        beforeAlienState: structuredClone(alienGameState),
-        beforePlayerState: structuredClone(playerState),
-        beforeCardState: structuredClone(cardState),
+        beforeAlienState: structuredClone(ruleAlienGameState()),
+        beforePlayerState: structuredClone(rulePlayerState()),
+        beforeCardState: structuredClone(ruleCardState()),
       });
     }
 
@@ -849,8 +852,8 @@
       if (!chong) return null;
       const rocketId = Math.round(Number(effect.options?.rocketId));
       beginEffectHistoryStep(effect.label);
-      const beforeAlienState = structuredClone(alienGameState);
-      const beforeRocketState = structuredClone(rocketState);
+      const beforeAlienState = structuredClone(ruleAlienGameState());
+      const beforeRocketState = structuredClone(ruleRocketState());
       if (!Number.isInteger(rocketId)) {
         return finishAutomaticRewardEffect(effect, {
           ok: true,
@@ -860,7 +863,7 @@
         }, [renderAlienPanels, renderRockets, renderReservedCards]);
       }
 
-      const result = chong.completeTransportedFossil(alienGameState, rocketId, {
+      const result = chong.completeTransportedFossil(ruleAlienGameState(), rocketId, {
         cardId: effect.options?.cardId || null,
         destinationPlanetId: effect.options?.destinationPlanetId || null,
         task: effect.options?.task || null,
@@ -875,15 +878,15 @@
         }, [renderAlienPanels, renderRockets, renderReservedCards]);
       }
 
-      const removeResult = rocketActions.removeRocket(rocketState, rocketId);
+      const removeResult = rocketActions.removeRocket(ruleRocketState(), rocketId);
       if (removeResult.ok) removeRocketElement(rocketId);
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-        alienGameState,
+        ruleAlienGameState(),
         beforeAlienState,
         "恢复虫族任务清理前外星人状态",
       ));
       recordHistoryCommand(historyCommands.createRestoreRocketStateCommand(
-        rocketState,
+        ruleRocketState(),
         beforeRocketState,
         "恢复虫族任务清理前火箭状态",
       ));
@@ -910,10 +913,10 @@
         const cost = { aomomoFossils: fossilCost };
         if (!players.canAfford(currentPlayer, cost)) {
           Object.assign(currentPlayer, beforePlayer);
-          rocketState.statusNote = `化石不足：需要 ${fossilCost} 化石`;
+          ruleRocketState().statusNote = `化石不足：需要 ${fossilCost} 化石`;
           renderPlayerStats();
           renderStateReadout();
-          return { ok: false, message: rocketState.statusNote };
+          return { ok: false, message: ruleRocketState().statusNote };
         }
         const spend = players.spendResources(currentPlayer, cost);
         if (!spend.ok) return spend;
@@ -939,7 +942,7 @@
           "恢复奥陌陌扫描附加奖励前玩家状态",
         ));
         result.message = `${result.message}；${messages.join("；")}`;
-        rocketState.statusNote = result.message;
+        ruleRocketState().statusNote = result.message;
       }
       return result;
     }
@@ -947,14 +950,14 @@
     function openAomomoCurrentXScanEffect(effect) {
       const currentX = getAomomoCurrentX();
       if (currentX == null) {
-        rocketState.statusNote = "奥陌陌星球尚未启用，无法扫描奥陌陌所在扇区";
+        ruleRocketState().statusNote = "奥陌陌星球尚未启用，无法扫描奥陌陌所在扇区";
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
       const bonus = {};
       if (effect.type === aomomo.EFFECT_SCAN_AOMOMO_X_GAIN_FOSSIL) bonus.gainFossil = true;
       if (effect.type === aomomo.EFFECT_SCAN_AOMOMO_X_SCORE) bonus.score = effect.options?.score || 2;
-      rocketState.statusNote = `${effect.label}：请选择奥陌陌当前 x=${currentX} 的扫描目标`;
+      ruleRocketState().statusNote = `${effect.label}：请选择奥陌陌当前 x=${currentX} 的扫描目标`;
       renderStateReadout();
       return openScanTargetPicker({
         type: "sector_scan",
@@ -1010,9 +1013,9 @@
             message: `${effect.label}：没有足够化石，已跳过`,
           });
         }
-        rocketState.statusNote = `化石不足：需要 ${cost} 化石`;
+        ruleRocketState().statusNote = `化石不足：需要 ${cost} 化石`;
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
       const beforePlayer = structuredClone(currentPlayer);
       beginEffectHistoryStep(effect.label);
@@ -1047,11 +1050,11 @@
             message: `${effect.label}：没有足够化石，已跳过`,
           });
         }
-        rocketState.statusNote = `化石不足：需要 ${cost} 化石`;
+        ruleRocketState().statusNote = `化石不足：需要 ${cost} 化石`;
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
-      rocketState.statusNote = `${effect.label}：请选择 0-7 号扇区之一`;
+      ruleRocketState().statusNote = `${effect.label}：请选择 0-7 号扇区之一`;
       renderStateReadout();
       return openScanTargetPicker({
         type: "sector_scan",
@@ -1113,9 +1116,9 @@
             message: `${effect.label}：没有足够化石，已跳过`,
           });
         }
-        rocketState.statusNote = `化石不足：需要 ${cost} 化石`;
+        ruleRocketState().statusNote = `化石不足：需要 ${cost} 化石`;
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
       const beforePlayer = structuredClone(currentPlayer);
       beginEffectHistoryStep(effect.label);
@@ -1150,7 +1153,7 @@
         undoable: true,
         message: `${effect.label}：支付${cost}化石，追加2移动与登陆`,
       };
-      rocketState.statusNote = effect.result.message;
+      ruleRocketState().statusNote = effect.result.message;
       renderPlayerStats();
       completeCurrentActionEffect();
       renderStateReadout();
@@ -1162,9 +1165,9 @@
       const cost = Math.max(0, Math.round(Number(effect.options?.cost) || 0));
       const score = Math.max(0, Math.round(Number(effect.options?.score) || 0));
       if (!players.canAfford(currentPlayer, { aomomoFossils: cost })) {
-        rocketState.statusNote = `化石不足：需要 ${cost} 化石`;
+        ruleRocketState().statusNote = `化石不足：需要 ${cost} 化石`;
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
       const beforePlayer = structuredClone(currentPlayer);
       beginEffectHistoryStep(effect.label);

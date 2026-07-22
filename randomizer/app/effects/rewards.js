@@ -14,7 +14,6 @@
       activateNextActionEffect,
       addPlayerScoreSource,
       addScoreSourceFromGain,
-      alienGameState,
       applyIncomeGainWithImmediateRewards,
       assignEffectOwner,
       banrenma,
@@ -26,7 +25,6 @@
       buildSectorScanChoicesForX,
       buildSectorScanChoicesForXs,
       cardEffects,
-      cardState,
       cards,
       chong,
       closeScanTargetPicker,
@@ -70,15 +68,12 @@
       markCurrentActionIrreversible,
       markerBelongsToPlayer,
       maybeApplyIndustryLaunchScan,
-      nebulaDataState,
       nebulaHasScannableData,
       normalizeResourceCost,
       openAutoDataPlacementPrompt,
       openScanTargetPicker,
       planetReferenceLayout,
       planetStats,
-      planetStatsState,
-      playerState,
       players,
       recordAbilityCommands,
       recordHistoryCommand,
@@ -96,18 +91,26 @@
       resolvePlayerReference,
       restoreObjectSnapshot,
       rocketActions,
-      rocketState,
       runezu,
       scanEffects,
       solar,
       skipActionEffectWithMessage,
       syncHandScanSelectionChrome,
       syncTechSelectionChrome,
-      turnState,
       uiRuntimeState,
       updateActionButtons,
       withPendingOwnerPlayer,
     } = context;
+    if (typeof context.getWorkingRoot !== "function") {
+      throw new TypeError("createEffectRewardExecutors requires getWorkingRoot()");
+    }
+    const ruleAlienGameState = () => context.getWorkingRoot().alienGameState;
+    const ruleCardState = () => context.getWorkingRoot().cardState;
+    const ruleNebulaDataState = () => context.getWorkingRoot().nebulaDataState;
+    const rulePlanetStatsState = () => context.getWorkingRoot().planetStatsState;
+    const rulePlayerState = () => context.getWorkingRoot().playerState;
+    const ruleRocketState = () => context.getWorkingRoot().rocketState;
+    const ruleTurnState = () => context.getWorkingRoot().turnState;
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
@@ -128,11 +131,11 @@
     }
 
     function countPlayerSignalsInNebula(player, nebulaId) {
-      let count = data.listNebulaTokens(nebulaDataState, nebulaId)
+      let count = data.listNebulaTokens(ruleNebulaDataState(), nebulaId)
         .filter((token) => signalOwnerMatches(token, player))
         .length;
       if (typeof data.listSectorExtraMarks === "function") {
-        count += data.listSectorExtraMarks(nebulaDataState, nebulaId)
+        count += data.listSectorExtraMarks(ruleNebulaDataState(), nebulaId)
           .filter((mark) => signalOwnerMatches(mark, player))
           .length;
       }
@@ -244,7 +247,7 @@
       const credits = Number(player?.resources?.credits) || 0;
       const energy = Number(player?.resources?.energy) || 0;
       const handCount = Array.isArray(player?.hand) ? player.hand.length : 0;
-      const publicCount = Array.isArray(cardState.publicCards) ? cardState.publicCards.length : 0;
+      const publicCount = Array.isArray(ruleCardState().publicCards) ? ruleCardState().publicCards.length : 0;
       return [
         {
           id: "score_to_credits",
@@ -349,7 +352,7 @@
       const spend = spendFundamentalismExchangeCost(player, choice.cost);
       if (!spend.ok) {
         endEffectHistoryStep();
-        rocketState.statusNote = spend.message;
+        ruleRocketState().statusNote = spend.message;
         renderStateReadout();
         return spend;
       }
@@ -372,10 +375,10 @@
 
     function startFundamentalismPickExchange(effect, player, choice) {
       const beforePlayer = structuredClone(player);
-      const beforeCardState = structuredClone(cardState);
+      const beforeCardState = structuredClone(ruleCardState());
       const spend = spendFundamentalismExchangeCost(player, choice.cost);
       if (!spend.ok) {
-        rocketState.statusNote = spend.message;
+        ruleRocketState().statusNote = spend.message;
         renderStateReadout();
         return spend;
       }
@@ -392,12 +395,12 @@
       });
       if (!result.ok) {
         restoreObjectSnapshot(player, beforePlayer);
-        restoreObjectSnapshot(cardState, beforeCardState);
-        rocketState.statusNote = result.message;
+        restoreObjectSnapshot(ruleCardState(), beforeCardState);
+        ruleRocketState().statusNote = result.message;
         renderStateReadout();
         return result;
       }
-      rocketState.statusNote = `原教旨主义：${choice.label}，请选择公共牌`;
+      ruleRocketState().statusNote = `原教旨主义：${choice.label}，请选择公共牌`;
       renderPlayerStats();
       renderStateReadout();
       return result;
@@ -410,10 +413,10 @@
         fromEffectFlow: true,
         effectLabel: effect.label,
         beforePlayerState: structuredClone(player),
-        beforeCardState: structuredClone(cardState),
+        beforeCardState: structuredClone(ruleCardState()),
       });
       if (result.ok) {
-        rocketState.statusNote = "原教旨主义：请选择 1 张手牌弃掉换 3 分";
+        ruleRocketState().statusNote = "原教旨主义：请选择 1 张手牌弃掉换 3 分";
         renderStateReadout();
       }
       return result;
@@ -442,7 +445,7 @@
       const choices = [];
       const planetIds = planetReferenceLayout.PLANET_ORDER || planetStats.PLANET_IDS || [];
       for (const planetId of planetIds) {
-        for (const marker of planetStats.getPlanetOrbitMarkers(planetStatsState, planetId)) {
+        for (const marker of planetStats.getPlanetOrbitMarkers(rulePlanetStatsState(), planetId)) {
           if (!markerBelongsToPlayer(marker, currentPlayer)) continue;
           choices.push({
             id: `${planetId}:${marker.sequence}`,
@@ -473,7 +476,7 @@
     }
 
     function isChongTransportStartedForCard(card) {
-      return Boolean(card?.id && chong?.getActiveTransportForCard?.(alienGameState, card.id));
+      return Boolean(card?.id && chong?.getActiveTransportForCard?.(ruleAlienGameState(), card.id));
     }
 
     function isReservedTaskCardUnfinished(card, effect = null) {
@@ -528,9 +531,9 @@
         els.scanTargetActions.replaceChildren(...buttons);
       }
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = false;
-      rocketState.statusNote = `${effect.label}：请选择任务卡`;
+      ruleRocketState().statusNote = `${effect.label}：请选择任务卡`;
       renderStateReadout();
-      return { ok: true, pendingChoice: true, message: rocketState.statusNote };
+      return { ok: true, pendingChoice: true, message: ruleRocketState().statusNote };
     }
 
     function handleReturnUnfinishedTaskChoice(cardId) {
@@ -543,9 +546,9 @@
       const index = (currentPlayer?.reservedCards || []).findIndex((card) => card.id === cardId);
       if (index < 0) return { ok: false, message: "无效任务卡" };
       if (!isReservedTaskCardUnfinished(currentPlayer.reservedCards[index], effect)) {
-        rocketState.statusNote = "该牌不能作为未完成任务卡返回手牌";
+        ruleRocketState().statusNote = "该牌不能作为未完成任务卡返回手牌";
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
@@ -582,11 +585,11 @@
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
-        publicCards: cardState.publicCards.slice(),
-        discardPile: (cardState.discardPile || []).slice(),
+        publicCards: ruleCardState().publicCards.slice(),
+        discardPile: (ruleCardState().discardPile || []).slice(),
       };
       const drawResult = effect.options?.reward === "draw"
-        ? cards.drawCardsToHand(cardState, playerState, currentPlayer, count)
+        ? cards.drawCardsToHand(ruleCardState(), rulePlayerState(), currentPlayer, count)
         : { ok: true, cards: [] };
       const drawnCount = (drawResult.cards || []).length;
       const irreversible = drawnCount
@@ -599,7 +602,7 @@
         "恢复科技类型奖励前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
-        cardState,
+        ruleCardState(),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
       ));
@@ -644,7 +647,7 @@
     function executeCountRocketsRewardEffect(effect) {
       const currentPlayer = getCurrentPlayer();
       const count = cardEffects.countRocketsForReward(
-        rocketState.rockets,
+        ruleRocketState().rockets,
         currentPlayer,
         effect.options || {},
       );
@@ -674,14 +677,14 @@
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
-        publicCards: cardState.publicCards.slice(),
-        discardPile: (cardState.discardPile || []).slice(),
+        publicCards: ruleCardState().publicCards.slice(),
+        discardPile: (ruleCardState().discardPile || []).slice(),
       };
       const discarded = [];
       while ((currentPlayer.hand || []).length) {
         const result = cards.discardFromHandAtIndex(currentPlayer, currentPlayer.hand.length - 1);
         if (result.ok) {
-          cards.addToDiscardPile(cardState, result.card);
+          cards.addToDiscardPile(ruleCardState(), result.card);
           discarded.push(result.card);
         } else {
           break;
@@ -694,7 +697,7 @@
         "恢复弃掉全部手牌前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
-        cardState,
+        ruleCardState(),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
       ));
@@ -708,7 +711,7 @@
 
     function executeProbeStackRewardEffect(effect) {
       const currentPlayer = getCurrentPlayer();
-      const match = cardEffects.getProbeStackRewardMatch(rocketState.rockets || [], currentPlayer, {
+      const match = cardEffects.getProbeStackRewardMatch(ruleRocketState().rockets || [], currentPlayer, {
         getCoordinate: (rocket) => rocketActions.getRocketSectorCoordinate(rocket),
       });
       const met = Boolean(match.conditionMet);
@@ -825,7 +828,7 @@
                 skipped: true,
                 message: `${effect.label}：数据池已满，已跳过本次数据获得`,
               };
-              rocketState.statusNote = effect.result.message;
+              ruleRocketState().statusNote = effect.result.message;
               completeCurrentActionEffect("skipped");
               renderStateReadout();
               return effect.result;
@@ -839,7 +842,7 @@
           skipped: true,
           message: `${effect.label}：${placeCheck.message || "数据池已满且无法放置，未获得数据"}`,
         };
-        rocketState.statusNote = effect.result.message;
+        ruleRocketState().statusNote = effect.result.message;
         completeCurrentActionEffect("skipped");
         renderStateReadout();
         return effect.result;
@@ -867,7 +870,7 @@
             { reason: result.message || null, abilityId: result.abilityId || "launchProbe" },
           );
         }
-        rocketState.statusNote = result.message;
+        ruleRocketState().statusNote = result.message;
         renderStateReadout();
         return result;
       }
@@ -893,7 +896,7 @@
       });
       if (!result.ok) {
         endEffectHistoryStep();
-        rocketState.statusNote = result.message;
+        ruleRocketState().statusNote = result.message;
         renderStateReadout();
         return result;
       }
@@ -904,7 +907,7 @@
         undoable: true,
         message: `${effect.label}：${result.message}`,
       };
-      rocketState.statusNote = effect.result.message;
+      ruleRocketState().statusNote = effect.result.message;
       completeCurrentActionEffect();
       renderRockets();
       renderPlayerStats();
@@ -915,14 +918,14 @@
     function executeDrawCardsRewardEffect(effect) {
       const currentPlayer = getEffectTargetPlayer(effect);
       const count = Math.max(0, Math.round(effect.options?.count || 0));
-      const available = cards.getAvailablePool(cardState, playerState).length;
+      const available = cards.getAvailablePool(ruleCardState(), rulePlayerState()).length;
       if (available <= 0) {
-        rocketState.statusNote = "牌库已无可用卡牌";
+        ruleRocketState().statusNote = "牌库已无可用卡牌";
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
 
-      const drawResult = cards.drawCardsToHand(cardState, playerState, currentPlayer, count);
+      const drawResult = cards.drawCardsToHand(ruleCardState(), rulePlayerState(), currentPlayer, count);
       markCurrentActionIrreversible("盲抽翻出新牌", "hidden_card_reveal");
       const drawnCount = drawResult.cards?.length || 0;
       const message = drawResult.ok
@@ -939,7 +942,7 @@
 
     function executeRegisterEventBonusEffect(effect) {
       const owner = getEffectOwnerPlayer(effect);
-      const beforeTurnBonuses = structuredClone(turnState.cardTurnEventBonuses || []);
+      const beforeTurnBonuses = structuredClone(ruleTurnState().cardTurnEventBonuses || []);
       const flowBonuses = ensureCardFlowEventBonuses();
       const beforeFlowBonuses = structuredClone(flowBonuses);
       beginEffectHistoryStep(effect.label);
@@ -951,8 +954,8 @@
         usedKeys: [],
       };
       if (bonus.duration === "turn") {
-        if (!Array.isArray(turnState.cardTurnEventBonuses)) turnState.cardTurnEventBonuses = [];
-        turnState.cardTurnEventBonuses.push(bonus);
+        if (!Array.isArray(ruleTurnState().cardTurnEventBonuses)) ruleTurnState().cardTurnEventBonuses = [];
+        ruleTurnState().cardTurnEventBonuses.push(bonus);
       } else {
         flowBonuses.push(bonus);
       }
@@ -960,7 +963,7 @@
         label: "恢复卡牌事件触发登记",
         describe: "移除已登记的卡牌事件触发",
         undo() {
-          turnState.cardTurnEventBonuses = structuredClone(beforeTurnBonuses);
+          ruleTurnState().cardTurnEventBonuses = structuredClone(beforeTurnBonuses);
           if (decisionState.actionEffectFlow) {
             decisionState.actionEffectFlow.cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
           }
@@ -1038,7 +1041,7 @@
 
     function executeCountAliensResourceEffect(effect) {
       const currentPlayer = getCurrentPlayer();
-      const alienCount = Object.keys(alienGameState?.aliens || {}).length;
+      const alienCount = Object.keys(ruleAlienGameState()?.aliens || {}).length;
       const gainPerAlien = effect.options?.gainPerAlien || {};
       const gain = {};
       for (const [resource, amount] of Object.entries(gainPerAlien)) {
@@ -1067,21 +1070,21 @@
       const currentPlayer = getCurrentPlayer();
       const playedCard = decisionState.actionEffectFlow?.card;
       if (!currentPlayer || !playedCard) {
-        rocketState.statusNote = "没有可放入收入区的当前卡牌";
+        ruleRocketState().statusNote = "没有可放入收入区的当前卡牌";
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
       const gain = cards.getIncomeGainForCard(playedCard);
       if (!gain) {
-        rocketState.statusNote = `${cards.getCardLabel(playedCard)} 没有可识别收入`;
+        ruleRocketState().statusNote = `${cards.getCardLabel(playedCard)} 没有可识别收入`;
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
-      const discardIndex = (cardState.discardPile || []).findIndex((card) => card.id === playedCard.id);
+      const discardIndex = (ruleCardState().discardPile || []).findIndex((card) => card.id === playedCard.id);
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
-      const beforeCardState = structuredClone(cardState);
-      if (discardIndex >= 0) cardState.discardPile.splice(discardIndex, 1);
+      const beforeCardState = structuredClone(ruleCardState());
+      if (discardIndex >= 0) ruleCardState().discardPile.splice(discardIndex, 1);
       const incomeResult = applyIncomeGainWithImmediateRewards(currentPlayer, gain, "card_income");
       recordHistoryCommand(historyCommands.createRestorePlayerCommand(
         currentPlayer,
@@ -1089,7 +1092,7 @@
         "恢复本卡放入收入区前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-        cardState,
+        ruleCardState(),
         beforeCardState,
         "恢复本卡放入收入区前牌区",
       ));
@@ -1112,12 +1115,12 @@
         fromEffectFlow: true,
         beforePlayerState: structuredClone(currentPlayer),
         beforeCardState: {
-          publicCards: cardState.publicCards.slice(),
-          discardPile: (cardState.discardPile || []).slice(),
+          publicCards: ruleCardState().publicCards.slice(),
+          discardPile: (ruleCardState().discardPile || []).slice(),
         },
       });
       if (!result.ok) {
-        rocketState.statusNote = result.message;
+        ruleRocketState().statusNote = result.message;
         renderStateReadout();
       }
       return result;
@@ -1127,13 +1130,13 @@
       const currentPlayer = getCurrentPlayer();
       if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
       const count = Math.max(1, Math.round(Number(effect.options?.count || 1)));
-      const filledSlots = cardState.publicCards
+      const filledSlots = ruleCardState().publicCards
         .map((card, index) => card ? index : null)
         .filter((index) => index != null);
       if (filledSlots.length < count) {
-        rocketState.statusNote = `${effect.label}：公共牌不足 ${count} 张`;
+        ruleRocketState().statusNote = `${effect.label}：公共牌不足 ${count} 张`;
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
       const result = beginCardSelection({
         type: "card_public_corner_discard",
@@ -1148,12 +1151,12 @@
         fromEffectFlow: true,
         beforePlayerState: structuredClone(currentPlayer),
         beforeCardState: {
-          publicCards: cardState.publicCards.slice(),
-          discardPile: (cardState.discardPile || []).slice(),
+          publicCards: ruleCardState().publicCards.slice(),
+          discardPile: (ruleCardState().discardPile || []).slice(),
         },
       });
       if (!result.ok) {
-        rocketState.statusNote = result.message;
+        ruleRocketState().statusNote = result.message;
         renderStateReadout();
       }
       return result;
@@ -1235,7 +1238,7 @@
       const optional = Boolean(effect.options?.optional);
       if (!currentPlayer?.hand?.length) {
         effect.result = { ok: true, skipped: true, message: `${effect.label}：没有手牌，跳过` };
-        rocketState.statusNote = effect.result.message;
+        ruleRocketState().statusNote = effect.result.message;
         completeCurrentActionEffect("skipped");
         renderStateReadout();
         return effect.result;
@@ -1246,13 +1249,13 @@
         fromEffectFlow: true,
         optional,
       };
-      rocketState.statusNote = optional
+      ruleRocketState().statusNote = optional
         ? `${effect.label}：请选择一张手牌弃除并扫描，或点击跳过`
         : `${effect.label}：请选择一张手牌弃除并扫描`;
       syncHandScanSelectionChrome();
       updateActionButtons();
       renderStateReadout();
-      return { ok: true, pendingChoice: true, message: rocketState.statusNote };
+      return { ok: true, pendingChoice: true, message: ruleRocketState().statusNote };
     }
 
     function openOptionalHandScanPrompt(effect) {
@@ -1275,9 +1278,9 @@
       els.scanTargetActions.replaceChildren(start, skip);
       decisionState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "optional_hand_scan", effect };
       els.scanTargetOverlay.hidden = false;
-      rocketState.statusNote = `${effect.label}：选择手牌或跳过`;
+      ruleRocketState().statusNote = `${effect.label}：选择手牌或跳过`;
       renderStateReadout();
-      return { ok: true, pendingChoice: true, message: rocketState.statusNote };
+      return { ok: true, pendingChoice: true, message: ruleRocketState().statusNote };
     }
 
     function handleOptionalHandScanChoice(choice) {
@@ -1288,7 +1291,7 @@
       return withPendingOwnerPlayer(pending, () => {
       if (choice === "skip") {
         effect.result = { ok: true, skipped: true, message: `${effect.label}：已跳过` };
-        rocketState.statusNote = effect.result.message;
+        ruleRocketState().statusNote = effect.result.message;
         completeCurrentActionEffect("skipped");
         renderStateReadout();
         return effect.result;
@@ -1510,7 +1513,7 @@
     function openCardColorScanEffect(effect) {
       const color = effect.options?.color;
       const nebulaIds = cardEffects.NEBULA_IDS_BY_COLOR[color] || [];
-      rocketState.statusNote = `${effect.label}：请选择 1 个星云`;
+      ruleRocketState().statusNote = `${effect.label}：请选择 1 个星云`;
       renderStateReadout();
       return openScanTargetPicker({
         type: "sector_scan",
@@ -1525,7 +1528,7 @@
     function openCardAnySectorScanEffect(effect) {
       const choices = buildSectorScanChoicesForXs(Array.from({ length: 8 }, (_, x) => x));
       const repeat = Math.max(1, Math.round(Number(effect.options?.repeat) || 1));
-      rocketState.statusNote = `${effect.label}：请选择 0-7 号扇区之一`;
+      ruleRocketState().statusNote = `${effect.label}：请选择 0-7 号扇区之一`;
       renderStateReadout();
       return openScanTargetPicker({
         type: "sector_scan",
@@ -1544,7 +1547,7 @@
     function openCardPublicScanEffect(effect) {
       const currentPlayer = getCurrentPlayer();
       const repeat = Math.max(1, Math.round(Number(effect.options?.repeat || 1)));
-      const filledSlots = cardState.publicCards.filter((card) => (
+      const filledSlots = ruleCardState().publicCards.filter((card) => (
         card && (getPublicScanChoicesForCard(card)?.choices || []).length > 0
       )).length;
       if (filledSlots === 0) {
@@ -1561,7 +1564,7 @@
         scanRunId,
         deferPublicRefill: true,
       };
-      rocketState.statusNote = selectableCount > 1
+      ruleRocketState().statusNote = selectableCount > 1
         ? `${effect.label}：请选择 ${selectableCount} 张当前公共牌`
         : `${effect.label}：请选择一张亮明的公共牌`;
       renderStateReadout();
@@ -1586,9 +1589,9 @@
         includeFinalize: true,
         fullScanAction: true,
         scanRunId,
-        turnState,
-        roundNumber: turnState.roundNumber,
-        turnNumber: turnState.turnNumber,
+        turnState: ruleTurnState(),
+        roundNumber: ruleTurnState().roundNumber,
+        turnNumber: ruleTurnState().turnNumber,
       })
         .map((item, index) => ({
           ...item,
@@ -1603,7 +1606,7 @@
         payload: { inserted: followups.length, scanRunId },
         events: [{ type: "scanAction", source: "card", scanRunId }],
       };
-      rocketState.statusNote = "扫描行动已展开，请继续处理后续扫描效果";
+      ruleRocketState().statusNote = "扫描行动已展开，请继续处理后续扫描效果";
       completeCurrentActionEffect();
       renderStateReadout();
       return effect.result;
@@ -1631,11 +1634,11 @@
             payload: { reason: result.reason },
           });
         }
-        rocketState.statusNote = result.message;
+        ruleRocketState().statusNote = result.message;
         renderStateReadout();
         return result;
       }
-      rocketState.statusNote = result.message || "请选择要研究的科技片";
+      ruleRocketState().statusNote = result.message || "请选择要研究的科技片";
       syncTechSelectionChrome();
       renderTechBoard();
       updateActionButtons();
@@ -1645,9 +1648,9 @@
 
     function openCardDrawThenScanEffect(effect) {
       const currentPlayer = getCurrentPlayer();
-      const drawResult = cards.blindDraw(cardState, playerState, currentPlayer);
+      const drawResult = cards.blindDraw(ruleCardState(), rulePlayerState(), currentPlayer);
       if (!drawResult.ok) {
-        rocketState.statusNote = drawResult.message;
+        ruleRocketState().statusNote = drawResult.message;
         renderStateReadout();
         return drawResult;
       }
@@ -1657,7 +1660,7 @@
       const handIndex = currentPlayer.hand.findIndex((item) => item.id === drawnCard.id);
       const scanChoices = getPublicScanChoicesForCard(drawnCard);
       if (!scanChoices.ok) {
-        rocketState.statusNote = scanChoices.message;
+        ruleRocketState().statusNote = scanChoices.message;
         renderPlayerStats();
         renderPlayerHand();
         renderStateReadout();
@@ -1666,7 +1669,7 @@
 
       effect.icon = getPublicScanIconForScanCode(scanChoices.scanCode);
       renderActionEffectBar();
-      rocketState.statusNote = `${effect.label}：${cards.getCardLabel(drawnCard)}，请选择${scanChoices.scanLabel}目标`;
+      ruleRocketState().statusNote = `${effect.label}：${cards.getCardLabel(drawnCard)}，请选择${scanChoices.scanLabel}目标`;
       renderPlayerStats();
       renderPlayerHand();
       renderStateReadout();
@@ -1695,15 +1698,15 @@
 
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
-        publicCards: cardState.publicCards.slice(),
-        discardPile: (cardState.discardPile || []).slice(),
+        publicCards: ruleCardState().publicCards.slice(),
+        discardPile: (ruleCardState().discardPile || []).slice(),
       };
 
       beginEffectHistoryStep(effect.label);
-      const drawResult = cards.blindDraw(cardState, playerState, currentPlayer);
+      const drawResult = cards.blindDraw(ruleCardState(), rulePlayerState(), currentPlayer);
       if (!drawResult.ok) {
         endEffectHistoryStep();
-        rocketState.statusNote = drawResult.message;
+        ruleRocketState().statusNote = drawResult.message;
         renderStateReadout();
         return drawResult;
       }
@@ -1714,12 +1717,12 @@
       const discardResult = cards.discardFromHandAtIndex(currentPlayer, drawnIndex);
       if (!discardResult.ok) {
         endEffectHistoryStep();
-        rocketState.statusNote = discardResult.message;
+        ruleRocketState().statusNote = discardResult.message;
         renderPlayerHand();
         renderStateReadout();
         return discardResult;
       }
-      cards.addToDiscardPile(cardState, discardResult.card);
+      cards.addToDiscardPile(ruleCardState(), discardResult.card);
 
       const resourceReward = cards.getDiscardActionRewardForCard(discardResult.card);
       const moveReward = cards.getDiscardActionMoveRewardForCard?.(discardResult.card);
@@ -1760,7 +1763,7 @@
         "恢复盲抽角标结算前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
-        cardState,
+        ruleCardState(),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
       ));

@@ -13,7 +13,6 @@
       SCORE_SOURCE_KEYS,
       abilities,
       addPlutoMarker,
-      alienGameState,
       aomomo,
       attachScoreSourceToEffects,
       beginEffectHistoryStep,
@@ -24,7 +23,6 @@
       buildSectorScanChoicesForX,
       buildSectorScanChoicesForXs,
       cardEffects,
-      cardState,
       cards,
       claimRunezuPlanetSymbolForTravelResult,
       closeScanAction4Picker,
@@ -61,16 +59,13 @@
       isActionEffectFlowActive,
       launchRocketForScanAction4,
       maybeCompleteActionEffectFromScan,
-      nebulaDataState,
       normalizeResourceCost,
       openLandTargetPicker,
       openScanTargetPicker,
       planetReferenceLayout,
       planetRewards,
       planetStats,
-      planetStatsState,
       playerHasOwnPlutoLanding,
-      playerState,
       players,
       recordAbilityCommands,
       recordHistoryCommand,
@@ -87,7 +82,6 @@
       replaceNebulaDataForCurrentPlayer,
       restoreMutableObject,
       rocketActions,
-      rocketState,
       skipActionEffectWithMessage,
       solar,
       syncPlanetOrbitLandMarkers,
@@ -96,6 +90,15 @@
       withEffectExecutionPlayer,
       withPendingOwnerPlayer,
     } = context;
+    if (typeof context.getWorkingRoot !== "function") {
+      throw new TypeError("createEffectMovementScanExecutors requires getWorkingRoot()");
+    }
+    const ruleAlienGameState = () => context.getWorkingRoot().alienGameState;
+    const ruleCardState = () => context.getWorkingRoot().cardState;
+    const ruleNebulaDataState = () => context.getWorkingRoot().nebulaDataState;
+    const rulePlanetStatsState = () => context.getWorkingRoot().planetStatsState;
+    const rulePlayerState = () => context.getWorkingRoot().playerState;
+    const ruleRocketState = () => context.getWorkingRoot().rocketState;
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
@@ -119,9 +122,9 @@
 
       if (planetId === aomomo?.PLANET_ID) {
         if (getAomomoCurrentX() == null) {
-          rocketState.statusNote = "奥陌陌星球尚未启用，无法扫描奥陌陌";
+          ruleRocketState().statusNote = "奥陌陌星球尚未启用，无法扫描奥陌陌";
           renderStateReadout();
-          return { ok: false, message: rocketState.statusNote };
+          return { ok: false, message: ruleRocketState().statusNote };
         }
         const result = replaceNebulaDataForCurrentPlayer(aomomo.NEBULA_ID, {
           prefix: prefixLabel || "扫描奥陌陌",
@@ -156,12 +159,12 @@
             payload: { planetId, sectorX: sector.x, skipped: true },
           });
         }
-        rocketState.statusNote = message;
+        ruleRocketState().statusNote = message;
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
       if (choices.length > 1) {
-        rocketState.statusNote = `${prefixLabel || "扇区扫描"}：请选择要扫描的星云`;
+        ruleRocketState().statusNote = `${prefixLabel || "扇区扫描"}：请选择要扫描的星云`;
         renderStateReadout();
         return openScanTargetPicker({
           type: "sector_scan",
@@ -209,12 +212,12 @@
             payload: { sectorX, skipped: true },
           });
         }
-        rocketState.statusNote = `${effect.label || `扇区${sectorX}扫描`}：该扇区没有可扫描星云`;
+        ruleRocketState().statusNote = `${effect.label || `扇区${sectorX}扫描`}：该扇区没有可扫描星云`;
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
       if (choices.length > 1) {
-        rocketState.statusNote = `${effect.label || `扇区${sectorX}扫描`}：请选择要扫描的星云`;
+        ruleRocketState().statusNote = `${effect.label || `扇区${sectorX}扫描`}：请选择要扫描的星云`;
         renderStateReadout();
         return openScanTargetPicker({
           type: "sector_scan",
@@ -244,11 +247,11 @@
       let count = 0;
       for (const choice of choices) {
         const nebulaId = choice.nebulaId;
-        count += data.listNebulaTokens(nebulaDataState, nebulaId)
+        count += data.listNebulaTokens(ruleNebulaDataState(), nebulaId)
           .filter((token) => token.replacedByPlayerId || token.replacedByPlayerColor || token.playerId || token.playerColor)
           .length;
         if (typeof data.listSectorExtraMarks === "function") {
-          count += data.listSectorExtraMarks(nebulaDataState, nebulaId).length;
+          count += data.listSectorExtraMarks(ruleNebulaDataState(), nebulaId).length;
         }
       }
       return count;
@@ -265,10 +268,10 @@
       if (discardIndex < 0) return false;
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
-        publicCards: cardState.publicCards.slice(),
-        discardPile: cardState.discardPile.slice(),
+        publicCards: ruleCardState().publicCards.slice(),
+        discardPile: ruleCardState().discardPile.slice(),
       };
-      const [card] = cardState.discardPile.splice(discardIndex, 1);
+      const [card] = ruleCardState().discardPile.splice(discardIndex, 1);
       currentPlayer.hand.push(card);
       currentPlayer.resources.handSize = currentPlayer.hand.length;
       recordHistoryCommand(historyCommands.createRestorePlayerCommand(
@@ -277,11 +280,11 @@
         "恢复卡牌回手前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
-        cardState,
+        ruleCardState(),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
       ));
-      rocketState.statusNote = `${rocketState.statusNote}；${cards.getCardLabel(card)} 返回手牌`;
+      ruleRocketState().statusNote = `${ruleRocketState().statusNote}；${cards.getCardLabel(card)} 返回手牌`;
       renderPlayerHand();
       renderPlayerStats();
       return true;
@@ -290,7 +293,7 @@
     function getProbeSectorScanRockets(effect) {
       const currentPlayer = getCurrentPlayer();
       const owner = effect.options?.owner || "current";
-      return (rocketState.rockets || [])
+      return (ruleRocketState().rockets || [])
         .filter((rocket) => owner === "any" || rocket.playerId === currentPlayer?.id)
         .map((rocket) => ({ rocket, sector: rocketActions.getRocketSectorCoordinate(rocket) }))
         .filter((entry) => entry.sector)
@@ -330,9 +333,9 @@
         scanEffectsToInsert.push(...buildSectorScanEffectsForProbe(effect, rocket));
       }
       if (!scanEffectsToInsert.length) {
-        rocketState.statusNote = `${effect.label}：没有可扫描的探测器扇区`;
+        ruleRocketState().statusNote = `${effect.label}：没有可扫描的探测器扇区`;
         renderStateReadout();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: ruleRocketState().statusNote };
       }
       if (scanEffectsToInsert.length === 1) {
         return executeSectorXScanEffect(scanEffectsToInsert[0]);
@@ -344,7 +347,7 @@
         message: `${effect.label}：已追加 ${scanEffectsToInsert.length} 个扇区扫描`,
         payload: { count: scanEffectsToInsert.length },
       };
-      rocketState.statusNote = effect.result.message;
+      ruleRocketState().statusNote = effect.result.message;
       completeCurrentActionEffect();
       renderActionEffectBar();
       renderStateReadout();
@@ -432,11 +435,11 @@
 
     function playerHasOwnOrbitMarkerAtPlanet(player, planetId) {
       if (planetId === (aomomo?.PLANET_ID || "aomomo") && aomomo?.listOrbitMarkers) {
-        const hasAomomoPanelOrbit = aomomo.listOrbitMarkers(alienGameState)
+        const hasAomomoPanelOrbit = aomomo.listOrbitMarkers(ruleAlienGameState())
           .some((marker) => markerBelongsToPlayer(marker, player));
         if (hasAomomoPanelOrbit) return true;
       }
-      return planetStats.getPlanetOrbitMarkers(planetStatsState, planetId)
+      return planetStats.getPlanetOrbitMarkers(rulePlanetStatsState(), planetId)
         .some((marker) => markerBelongsToPlayer(marker, player));
     }
 
@@ -456,7 +459,7 @@
       for (const planetId of planetIds) {
         const planetName = getPlanetName(planetId);
         if (markerKinds.has("orbit")) {
-          for (const marker of planetStats.getPlanetOrbitMarkers(planetStatsState, planetId)) {
+          for (const marker of planetStats.getPlanetOrbitMarkers(rulePlanetStatsState(), planetId)) {
             if (!canUseMarker(marker)) continue;
             choices.push({
               id: `orbit:${planetId}:${marker.sequence}`,
@@ -469,7 +472,7 @@
           }
         }
         if (markerKinds.has("land")) {
-          for (const marker of planetStats.getPlanetLandingMarkers(planetStatsState, planetId)) {
+          for (const marker of planetStats.getPlanetLandingMarkers(rulePlanetStatsState(), planetId)) {
             if (!canUseMarker(marker)) continue;
             choices.push({
               id: `land:${planetId}:${marker.sequence}`,
@@ -482,7 +485,7 @@
           }
         }
         if (markerKinds.has("satelliteLand")) {
-          for (const marker of planetStats.getSatelliteLandingMarkers(planetStatsState, planetId)) {
+          for (const marker of planetStats.getSatelliteLandingMarkers(rulePlanetStatsState(), planetId)) {
             if (!canUseMarker(marker)) continue;
             choices.push({
               id: `satelliteLand:${planetId}:${marker.satelliteId}`,
@@ -505,19 +508,19 @@
         return removePlutoMarker(choice, player, owner);
       }
       if (choice.kind === "orbit") {
-        return planetStats.removePlanetOrbitMarker(planetStatsState, choice.planetId, {
+        return planetStats.removePlanetOrbitMarker(rulePlanetStatsState(), choice.planetId, {
           sequence: choice.sequence,
           ...markerRef,
         });
       }
       if (choice.kind === "land") {
-        return planetStats.removePlanetLandingMarker(planetStatsState, choice.planetId, {
+        return planetStats.removePlanetLandingMarker(rulePlanetStatsState(), choice.planetId, {
           sequence: choice.sequence,
           ...markerRef,
         });
       }
       if (choice.kind === "satelliteLand") {
-        return planetStats.removeSatelliteLandingMarker(planetStatsState, choice.planetId, choice.satelliteId, markerRef);
+        return planetStats.removeSatelliteLandingMarker(rulePlanetStatsState(), choice.planetId, choice.satelliteId, markerRef);
       }
       return { ok: false, message: "未知标记类型" };
     }
@@ -525,26 +528,26 @@
     function executeRemovePlanetMarkerChoice(effect, choice) {
       const currentPlayer = getCurrentPlayer();
       beginEffectHistoryStep(effect.label);
-      const beforePlanetStats = structuredClone(planetStatsState);
+      const beforePlanetStats = structuredClone(rulePlanetStatsState());
       const beforePlayerState = choice.kind === "plutoOrbit" || choice.kind === "plutoLand"
-        ? structuredClone(playerState)
+        ? structuredClone(rulePlayerState())
         : null;
       const result = removePlanetMarkerForChoice(choice, currentPlayer, effect.options?.owner || "current");
       if (!result.ok) {
         endEffectHistoryStep();
-        rocketState.statusNote = `${effect.label}：${result.message}`;
+        ruleRocketState().statusNote = `${effect.label}：${result.message}`;
         renderStateReadout();
         return result;
       }
       if (beforePlayerState) {
         recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-          playerState,
+          rulePlayerState(),
           beforePlayerState,
           "恢复移除冥王星标记前玩家状态",
         ));
       } else {
         recordHistoryCommand(historyCommands.createRestorePlanetStatsCommand(
-          planetStatsState,
+          rulePlanetStatsState(),
           beforePlanetStats,
           "恢复移除星球标记前状态",
         ));
@@ -598,9 +601,9 @@
         return button;
       }));
       els.scanTargetOverlay.hidden = false;
-      rocketState.statusNote = `${effect.label}：请选择要移除的标记`;
+      ruleRocketState().statusNote = `${effect.label}：请选择要移除的标记`;
       renderStateReadout();
-      return { ok: true, pendingChoice: true, message: rocketState.statusNote };
+      return { ok: true, pendingChoice: true, message: ruleRocketState().statusNote };
     }
 
     function handleRemovePlanetMarkerChoice(choiceId) {
@@ -625,7 +628,7 @@
       });
       if (!result.ok) {
         endEffectHistoryStep();
-        rocketState.statusNote = result.message;
+        ruleRocketState().statusNote = result.message;
         renderStateReadout();
         return result;
       }
@@ -671,7 +674,7 @@
           : result.message,
         payload: { ...(result.payload || {}), rewardCount: rewardEffects.length },
       };
-      rocketState.statusNote = effect.result.message;
+      ruleRocketState().statusNote = effect.result.message;
       renderPlayerStats();
       completeCurrentActionEffect();
       renderStateReadout();
@@ -738,7 +741,7 @@
       const earth = getEarthSectorCoordinate();
       const sectorXs = [(earth.x + 7) % 8, earth.x, (earth.x + 1) % 8];
       const choices = buildSectorScanChoicesForXs(sectorXs);
-      rocketState.statusNote = "扇区扫描：请选择地球及相邻扇区之一";
+      ruleRocketState().statusNote = "扇区扫描：请选择地球及相邻扇区之一";
       renderStateReadout();
       return openScanTargetPicker({
         type: "sector_scan",
@@ -754,7 +757,7 @@
 
       if (choiceId === "launch") {
         const result = launchRocketForScanAction4();
-        rocketState.statusNote = result.ok ? result.message : result.message;
+        ruleRocketState().statusNote = result.ok ? result.message : result.message;
         if (result.ok) {
           renderPlayerStats();
           completeCurrentActionEffect();
@@ -786,7 +789,7 @@
 
     function finishAutomaticRewardEffect(effect, result, renderers = []) {
       effect.result = result;
-      rocketState.statusNote = result.message;
+      ruleRocketState().statusNote = result.message;
       for (const render of renderers) render();
       renderPlayerStats();
       renderPublicCards();
@@ -800,10 +803,10 @@
     function playerHasOwnLandingOnPlanet(player, planetId) {
       if (planetId === "pluto") return playerHasOwnPlutoLanding(player);
       if (planetId === (aomomo?.PLANET_ID || "aomomo") && aomomo?.listLandingMarkers) {
-        return aomomo.listLandingMarkers(alienGameState)
+        return aomomo.listLandingMarkers(ruleAlienGameState())
           .some((marker) => markerBelongsToPlayer(marker, player));
       }
-      return planetStats.getPlanetLandingMarkers(planetStatsState, planetId)
+      return planetStats.getPlanetLandingMarkers(rulePlanetStatsState(), planetId)
         .some((marker) => markerBelongsToPlayer(marker, player));
     }
 
@@ -812,9 +815,9 @@
         return collectPlutoMarkers().some((marker) => marker.kind === "land");
       }
       if (planetId === (aomomo?.PLANET_ID || "aomomo") && aomomo?.listLandingMarkers) {
-        return aomomo.listLandingMarkers(alienGameState).length > 0;
+        return aomomo.listLandingMarkers(ruleAlienGameState()).length > 0;
       }
-      return planetStats.getPlanetLandingMarkers(planetStatsState, planetId).length > 0;
+      return planetStats.getPlanetLandingMarkers(rulePlanetStatsState(), planetId).length > 0;
     }
 
     function getPlutoEffectCost(actionType, card, effect) {
@@ -894,20 +897,20 @@
       const currentPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
-      const beforeRocketState = structuredClone(rocketState);
+      const beforeRocketState = structuredClone(ruleRocketState());
       const beforeCard = structuredClone(available.card);
       const spendResult = players.spendResources(currentPlayer, available.cost);
       if (!spendResult.ok) {
         endEffectHistoryStep();
-        rocketState.statusNote = spendResult.message;
+        ruleRocketState().statusNote = spendResult.message;
         renderStateReadout();
         return spendResult;
       }
-      const removeResult = rocketActions.removeRocket(rocketState, available.rocket.id);
+      const removeResult = rocketActions.removeRocket(ruleRocketState(), available.rocket.id);
       if (!removeResult.ok) {
         restoreMutableObject(currentPlayer, beforePlayer);
         endEffectHistoryStep();
-        rocketState.statusNote = removeResult.message;
+        ruleRocketState().statusNote = removeResult.message;
         renderStateReadout();
         return removeResult;
       }
@@ -917,14 +920,14 @@
       });
       if (!markerResult.ok) {
         restoreMutableObject(currentPlayer, beforePlayer);
-        restoreMutableObject(rocketState, beforeRocketState);
+        restoreMutableObject(ruleRocketState(), beforeRocketState);
         endEffectHistoryStep();
-        rocketState.statusNote = markerResult.message;
+        ruleRocketState().statusNote = markerResult.message;
         renderStateReadout();
         return markerResult;
       }
       if (actionType === "orbit") {
-        players.incrementPlayerOrbitCount(playerState, currentPlayer.id);
+        players.incrementPlayerOrbitCount(rulePlayerState(), currentPlayer.id);
       }
       recordHistoryCommand(historyCommands.createRestorePlayerCommand(
         currentPlayer,
@@ -932,7 +935,7 @@
         "恢复冥王星卡牌行动前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestoreRocketStateCommand(
-        rocketState,
+        ruleRocketState(),
         beforeRocketState,
         "恢复冥王星卡牌行动前探测器状态",
       ));
@@ -988,7 +991,7 @@
           : result.message,
         payload: { ...(result.payload || {}), rewardCount: rewardEffects.length },
       };
-      rocketState.statusNote = effect.result.message;
+      ruleRocketState().statusNote = effect.result.message;
       renderRockets();
       renderReservedCards();
       renderPlayerStats();
@@ -1007,7 +1010,7 @@
       });
       if (!result.ok) {
         endEffectHistoryStep();
-        rocketState.statusNote = result.message;
+        ruleRocketState().statusNote = result.message;
         renderStateReadout();
         return result;
       }
@@ -1028,7 +1031,7 @@
         message: rewardEffects.length ? `${result.message}；追加 ${rewardEffects.length} 个地点奖励` : result.message,
         payload: { ...(result.payload || {}), rewardCount: rewardEffects.length },
       };
-      rocketState.statusNote = effect.result.message;
+      ruleRocketState().statusNote = effect.result.message;
       renderRockets();
       renderPlayerStats();
       completeCurrentActionEffect();
@@ -1059,9 +1062,9 @@
           });
         },
       });
-      rocketState.statusNote = `请选择${getPlutoChoiceActionLabel(actionType)}目标`;
+      ruleRocketState().statusNote = `请选择${getPlutoChoiceActionLabel(actionType)}目标`;
       renderStateReadout();
-      return { ok: true, pendingChoice: true, message: rocketState.statusNote };
+      return { ok: true, pendingChoice: true, message: ruleRocketState().statusNote };
     }
 
     function executeCardOrbitEffect(effect) {
@@ -1120,11 +1123,11 @@
       }
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
-        publicCards: cardState.publicCards.slice(),
-        discardPile: (cardState.discardPile || []).slice(),
+        publicCards: ruleCardState().publicCards.slice(),
+        discardPile: (ruleCardState().discardPile || []).slice(),
       };
       beginEffectHistoryStep(effect.label);
-      const [card] = cardState.discardPile.splice(discardIndex, 1);
+      const [card] = ruleCardState().discardPile.splice(discardIndex, 1);
       cards.addCardToHand(currentPlayer, card);
       recordHistoryCommand(historyCommands.createRestorePlayerCommand(
         currentPlayer,
@@ -1132,7 +1135,7 @@
         "恢复卡牌回手前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
-        cardState,
+        ruleCardState(),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
       ));
@@ -1149,7 +1152,7 @@
       const playedCard = flow.card || null;
       const sourceInstanceId = playedCard?.id || flow.playCardEvent?.sourceCardInstanceId || null;
       const sourceCardId = playedCard?.cardId || flow.playCardEvent?.cardId || null;
-      const discardPile = cardState.discardPile || [];
+      const discardPile = ruleCardState().discardPile || [];
       let discardIndex = -1;
 
       if (sourceInstanceId) {
@@ -1179,7 +1182,7 @@
 
     function runtimeProbeAdjacentEarth(player) {
       const earth = getEarthSectorCoordinate();
-      return (rocketState.rockets || []).some((rocket) => {
+      return (ruleRocketState().rockets || []).some((rocket) => {
         if (rocket.playerId !== player?.id) return false;
         const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
         if (!earth || !coordinate) return false;
@@ -1194,7 +1197,7 @@
 
     function runtimeOtherProbeAtPlanet(player, planetId) {
       const coordinate = getPlanetSectorCoordinate(planetId);
-      return (rocketState.rockets || []).some((rocket) => {
+      return (ruleRocketState().rockets || []).some((rocket) => {
         if (rocket.playerId === player?.id) return false;
         const rocketCoordinate = rocketActions.getRocketSectorCoordinate(rocket);
         return rocketCoordinate
@@ -1295,9 +1298,9 @@
         return button;
       }));
       els.scanTargetOverlay.hidden = false;
-      rocketState.statusNote = `${effect.label}：请选择奖励类别`;
+      ruleRocketState().statusNote = `${effect.label}：请选择奖励类别`;
       renderStateReadout();
-      return { ok: true, pendingChoice: true, message: rocketState.statusNote };
+      return { ok: true, pendingChoice: true, message: ruleRocketState().statusNote };
     }
 
     function applyHandCornerChoice(effect, choice) {

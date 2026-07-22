@@ -417,6 +417,17 @@
       args,
     }).value;
   }
+
+  function callEffectExecutorCommand(operation, args = []) {
+    if (activeBrowserDomainWorkingRoot) {
+      return effectExecutors?.[operation]?.(...args);
+    }
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "effect_executor_command",
+      operation,
+      args,
+    }).value;
+  }
   let getBrowserCommittedContext = () => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
@@ -641,6 +652,17 @@
           }
           return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
         }
+        case "effect_executor_command": {
+          const operation = effectExecutors?.[command.operation];
+          if (typeof operation !== "function") {
+            return { ok: false, code: "EFFECT_EXECUTOR_COMMAND_UNKNOWN", message: `未知 Effect executor command: ${command.operation}` };
+          }
+          return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
+        }
+        case "effect_bar_click":
+          return { ok: true, value: cloneResidentPresentation(handleActionEffectButtonClick(command.effectIndex)) };
+        case "effect_skip_current":
+          return { ok: true, value: cloneResidentPresentation(skipCurrentActionEffect()) };
         case "card_execute_move_effect":
           return cloneResidentPresentation(executeCardMoveForEffectForRoot(workingRoot, ...(command.args || [])));
         case "headless_enumerate_turn_actions":
@@ -7028,6 +7050,9 @@
   }
 
   function skipCurrentActionEffect() {
+    if (!activeBrowserDomainWorkingRoot) {
+      return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_skip_current" }).value;
+    }
     if (!decisionState.actionEffectFlow) return;
 
     const current = getCurrentActionEffect();
@@ -7812,11 +7837,11 @@
   }
 
   function handleRemovePlanetMarkerChoice(...args) {
-    return effectExecutors.handleRemovePlanetMarkerChoice(...args);
+    return callEffectExecutorCommand("handleRemovePlanetMarkerChoice", args);
   }
 
   function handleScanAction4Choice(...args) {
-    return effectExecutors.handleScanAction4Choice(...args);
+    return callEffectExecutorCommand("handleScanAction4Choice", args);
   }
 
   function formatPlanetRewardGain(...args) {
@@ -7880,7 +7905,7 @@
   }
 
   function handleReturnUnfinishedTaskChoice(...args) {
-    return effectExecutors.handleReturnUnfinishedTaskChoice(...args);
+    return callEffectExecutorCommand("handleReturnUnfinishedTaskChoice", args);
   }
 
   function countOwnedTechByType(...args) {
@@ -7904,7 +7929,7 @@
   }
 
   function handleOptionalHandScanChoice(...args) {
-    return effectExecutors.handleOptionalHandScanChoice(...args);
+    return callEffectExecutorCommand("handleOptionalHandScanChoice", args);
   }
 
   function handleProbeLocationRewardChoice(...args) {
@@ -7916,7 +7941,7 @@
   }
 
   function handleYichangdianCornerChoice(...args) {
-    return effectExecutors.handleYichangdianCornerChoice(...args);
+    return callEffectExecutorCommand("handleYichangdianCornerChoice", args);
   }
 
   function applyAomomoScanCostAndBonus(...args) {
@@ -7928,6 +7953,7 @@
   }
 
   const effectExecutorContext = {
+    getWorkingRoot: () => requireActiveBrowserWorkingRoot("effect executor"),
     insertActionEffectsAfterCurrent: (...args) => effectExecutors.insertActionEffectsAfterCurrent(...args),
     openAlienTraceRewardEffect: (...args) => effectExecutors.openAlienTraceRewardEffect(...args),
     BANRENMA_PANEL_BONUS_EFFECT_TYPE,
@@ -7939,7 +7965,6 @@
     addPlayerScoreSource,
     addPlutoMarker,
     addScoreSourceFromGain,
-    alienGameState,
     alienTraceRewardFlow,
     aliens,
     amiba,
@@ -7965,7 +7990,6 @@
     buildSectorScanChoicesForX,
     buildSectorScanChoicesForXs,
     cardEffects,
-    cardState,
     cards,
     chong,
     claimRunezuPlanetSymbolForTravelResult,
@@ -8051,7 +8075,6 @@
     maybeApplyIndustryLaunchScan: (...args) => maybeApplyIndustryLaunchScan?.(...args),
     maybeCompleteActionEffectFromScan,
     maybeConsumeAlienLabPanelForMainAction: (...args) => maybeConsumeAlienLabPanelForMainAction?.(...args),
-    nebulaDataState,
     nebulaHasScannableData,
     normalizeResourceCost,
     onTechTileTaken: (...args) => onTechTileTaken?.(...args),
@@ -8068,9 +8091,7 @@
     planetReferenceLayout,
     planetRewards,
     planetStats,
-    planetStatsState,
     playerHasOwnPlutoLanding,
-    playerState,
     players,
     recordAbilityCommands,
     recordHistoryCommand,
@@ -8098,18 +8119,15 @@
     restoreMutableObject,
     restoreObjectSnapshot,
     rocketActions,
-    rocketState,
     runezu,
     scanEffects,
     shouldSkipCurrentResearchTechCost: (...args) => shouldSkipCurrentResearchTechCost?.(...args),
     skipActionEffectWithMessage,
     solar,
-    solarState,
     syncHandScanSelectionChrome,
     syncPlanetOrbitLandMarkers,
     syncTechSelectionChrome: (...args) => syncTechSelectionChrome?.(...args),
     tech,
-    turnState,
     uiRuntimeState,
     updateActionButtons,
     updatePublicCardControls,
@@ -8140,6 +8158,12 @@
   );
 
   function handleActionEffectButtonClick(effectIndex) {
+    if (!activeBrowserDomainWorkingRoot) {
+      return browserRuleComposition.inputPort.submitHostCommand({
+        kind: "effect_bar_click",
+        effectIndex,
+      }).value;
+    }
     return actionRuntimeController.handleActionEffectButtonClick(effectIndex);
   }
 

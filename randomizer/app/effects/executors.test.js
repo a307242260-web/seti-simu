@@ -6,10 +6,24 @@ const { createEffectRewardExecutors } = require("./rewards");
 const { createEffectAlienExecutors } = require("./aliens");
 const { createEffectDispatcher } = require("./dispatcher");
 
+function withWorkingRoot(context = {}) {
+  const workingRoot = {
+    alienGameState: context.alienGameState || {},
+    cardState: context.cardState || { publicCards: [], discardPile: [] },
+    nebulaDataState: context.nebulaDataState || {},
+    planetStatsState: context.planetStatsState || {},
+    playerState: context.playerState || { players: [] },
+    rocketState: context.rocketState || { rockets: [], statusNote: "" },
+    solarState: context.solarState || {},
+    turnState: context.turnState || {},
+  };
+  return { ...context, getWorkingRoot: () => workingRoot };
+}
+
 (() => {
-  assert.equal(typeof createEffectMovementScanExecutors({}).executeSectorScanAtPlanet, "function");
-  assert.equal(typeof createEffectRewardExecutors({}).executeGainResourcesRewardEffect, "function");
-  assert.equal(typeof createEffectAlienExecutors({}).executeAomomoGainFossilsEffect, "function");
+  assert.equal(typeof createEffectMovementScanExecutors(withWorkingRoot()).executeSectorScanAtPlanet, "function");
+  assert.equal(typeof createEffectRewardExecutors(withWorkingRoot()).executeGainResourcesRewardEffect, "function");
+  assert.equal(typeof createEffectAlienExecutors(withWorkingRoot()).executeAomomoGainFossilsEffect, "function");
 
   const outcomes = [
     { ok: true, undoable: true, message: "成功并可撤销" },
@@ -30,7 +44,7 @@ const { createEffectDispatcher } = require("./dispatcher");
     jiuzhe: null,
     executeCardFixedNebulaScanEffect: () => outcomes.shift(),
   };
-  const dispatcher = createEffectDispatcher(baseContext);
+  const dispatcher = createEffectDispatcher(withWorkingRoot(baseContext));
 
   for (const expected of [...outcomes]) {
     const actual = dispatcher.executeActionEffectForOwner({
@@ -53,7 +67,7 @@ const { createEffectDispatcher } = require("./dispatcher");
   const effectType = "public_card_scan";
   const effect = { type: effectType, label: "扫描行动公共牌扫描", status: "active" };
   let beganSelection = false;
-  const dispatcher = createEffectDispatcher({
+  const dispatcher = createEffectDispatcher(withWorkingRoot({
     cardEffects: { EFFECT_TYPES: {} },
     scanEffects: { EFFECT_TYPES: { PUBLIC_CARD_SCAN: effectType } },
     planetRewards: { EFFECT_TYPES: {} },
@@ -64,7 +78,7 @@ const { createEffectDispatcher } = require("./dispatcher");
     skipActionEffectWithMessage(_effect, message, payload) {
       return { ok: true, skipped: true, message, payload };
     },
-  });
+  }));
   const result = dispatcher.executeActionEffectForOwner(effect);
   assert.equal(result.ok, true);
   assert.equal(result.skipped, true);
@@ -76,7 +90,7 @@ const { createEffectDispatcher } = require("./dispatcher");
 
 (() => {
   const calls = [];
-  const executors = createEffectRewardExecutors({
+  const executors = createEffectRewardExecutors(withWorkingRoot({
     abilities: {
       executeAbility() {
         return {
@@ -95,7 +109,7 @@ const { createEffectDispatcher } = require("./dispatcher");
       calls.push({ effect, message, payload });
       return { ok: true, skipped: true, message };
     },
-  });
+  }));
   const effect = { label: "科技奖励发射", options: { skipCost: true }, status: "active" };
   const result = executors.executeLaunchRewardEffect(effect);
   assert.equal(result.ok, true);
@@ -109,7 +123,7 @@ const { createEffectDispatcher } = require("./dispatcher");
 
 (() => {
   const finished = [];
-  const executors = createEffectRewardExecutors({
+  const executors = createEffectRewardExecutors(withWorkingRoot({
     abilities: {
       executeAbility() {
         return {
@@ -127,7 +141,7 @@ const { createEffectDispatcher } = require("./dispatcher");
     },
     renderStateReadout: () => {},
     rocketState: {},
-  });
+  }));
   const effect = {
     label: "卡牌科技（仅蓝色）",
     options: { techTypes: ["blue"], skipCost: true },
@@ -145,7 +159,7 @@ const { createEffectDispatcher } = require("./dispatcher");
 
 (() => {
   const calls = [];
-  const executors = createEffectRewardExecutors({
+  const executors = createEffectRewardExecutors(withWorkingRoot({
     cardState: { publicCards: [] },
     getPublicScanChoicesForCard: () => ({ ok: false }),
     getCurrentPlayer: () => ({ id: "player-1" }),
@@ -153,7 +167,7 @@ const { createEffectDispatcher } = require("./dispatcher");
       calls.push({ effect, message, payload });
       return { ok: true, skipped: true, message, payload };
     },
-  });
+  }));
   const effect = { label: "卡牌公共牌扫描", options: { repeat: 1 }, status: "active" };
   const result = executors.openCardPublicScanEffect(effect);
   assert.equal(result.ok, true);
@@ -173,7 +187,7 @@ const { createEffectDispatcher } = require("./dispatcher");
       CHONG_ORBIT_OR_LAND_FOR_PICKUP: "chong_orbit_or_land_for_pickup",
     },
   };
-  const executors = createEffectAlienExecutors({
+  const executors = createEffectAlienExecutors(withWorkingRoot({
     abilities: {
       executeAbility(abilityId, context, options) {
         abilityCall = { abilityId, context, options };
@@ -187,7 +201,7 @@ const { createEffectDispatcher } = require("./dispatcher");
     pendingState: {},
     renderStateReadout: () => {},
     rocketState: {},
-  });
+  }));
   const effect = {
     type: chong.EFFECT_TYPES.CHONG_LAND_FOR_PICKUP,
     label: "虫族8：登陆",
@@ -213,7 +227,7 @@ const { createEffectDispatcher } = require("./dispatcher");
       CHONG_ORBIT_OR_LAND_FOR_PICKUP: "chong_orbit_or_land_for_pickup",
     },
   };
-  const executors = createEffectAlienExecutors({
+  const executors = createEffectAlienExecutors(withWorkingRoot({
     abilities: {
       planet: {
         getLandOptions: () => ({ ok: false, message: "当前没有可登陆的行星火箭" }),
@@ -222,7 +236,7 @@ const { createEffectDispatcher } = require("./dispatcher");
     chong,
     createActionContext: () => ({}),
     finishAutomaticRewardEffect: (effect, result) => result,
-  });
+  }));
   const result = executors.executeChongTravelForPickupEffect({
     type: chong.EFFECT_TYPES.CHONG_LAND_FOR_PICKUP,
     label: "虫族8：登陆",
