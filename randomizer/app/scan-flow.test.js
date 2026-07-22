@@ -224,6 +224,15 @@ function createBaseHarness() {
     openYichangdianCornerPicker: () => ({ ok: true }),
     rollbackPendingIndustryQuickAction: () => {},
     beginCardSelection: (pending) => ({ ok: true, pending }),
+    rocketActions: { canMoveRocket: () => ({ ok: false, message: "不可移动" }) },
+    getMovableTokensForWorkingRoot: () => [],
+    activateMoveMode: () => {},
+    deactivateMoveMode: () => {},
+    selectDefaultRocketForCurrentPlayer: () => {},
+    beginSupplementalMovePayment: () => ({ ok: true }),
+    getRequiredMovePointsForWorkingRoot: () => 1,
+    renderRocketElement: () => {},
+    maybeApplyIndustryLaunchScan: () => {},
   });
 
   return {
@@ -236,6 +245,14 @@ function createBaseHarness() {
     uiRuntimeState,
     workingRoot,
   };
+}
+
+{
+  const { helpers, workingRoot } = createBaseHarness();
+  const result = helpers.beginScanAction4FreeMove(workingRoot);
+  assert.equal(result.ok, false);
+  assert.equal(workingRoot.rocketState.statusNote, "没有可移动的飞船");
+  assert.equal(workingRoot.match.scanFreeMoveContinuation, undefined);
 }
 
 {

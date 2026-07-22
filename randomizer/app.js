@@ -1206,6 +1206,11 @@
   let executeStandardPlayCard;
   let executeStandardCardCornerAction;
   let executeMainScanAction;
+  let launchRocketForScanAction4;
+  let beginScanAction4FreeMove;
+  let beginScanAction4FreeMoveForRoot;
+  let executeFreeMoveForScanAction4;
+  let executeFreeMoveForScanAction4ForRoot;
   let getPendingHandCardPlayAction;
   let cancelHandCardPlayAction;
   let clearHandCardContextActions;
@@ -2509,6 +2514,7 @@
     els,
     cards,
     players,
+    rocketActions,
     data,
     solar,
     rocketActions,
@@ -2872,6 +2878,7 @@
     endEffectHistoryStep,
     recordHistoryCommand,
     recordAbilityCommands,
+    actionHistory,
     isTechTilePickingActive: (...args) => isTechTilePickingActive?.(...args),
     isCardSelectionActive,
     isDiscardSelectionActive,
@@ -2920,9 +2927,22 @@
     openYichangdianCornerPicker,
     rollbackPendingIndustryQuickAction: (...args) => rollbackPendingIndustryQuickAction?.(...args),
     beginCardSelection: (...args) => beginCardSelection(...args),
+    renderRocketElement,
+    maybeApplyIndustryLaunchScan: (...args) => maybeApplyIndustryLaunchScanForRoot?.(...args),
+    getMovableTokensForWorkingRoot: (workingRoot, playerId) => (
+      rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, playerId)
+    ),
+    activateMoveMode: (workingRoot, rocketId) => actionInteractionRuntime.activateMoveMode(workingRoot, rocketId),
+    deactivateMoveMode: (workingRoot) => actionInteractionRuntime.deactivateMoveMode(workingRoot),
+    selectDefaultRocketForCurrentPlayer: () => selectDefaultRocketForCurrentPlayer(),
+    beginSupplementalMovePayment: (workingRoot, ...args) => beginSupplementalMovePaymentForRoot(workingRoot, ...args),
+    getRequiredMovePointsForWorkingRoot: (workingRoot, ...args) => getRequiredMovePointsForUiForRoot(workingRoot, ...args),
   });
   ({
     executeMainScanAction,
+    launchRocketForScanAction4,
+    beginScanAction4FreeMove: beginScanAction4FreeMoveForRoot,
+    executeFreeMoveForScanAction4: executeFreeMoveForScanAction4ForRoot,
     getPublicScanBonusSelectableCount,
     getPublicScanMaxSelectable,
     getPublicScanMinSelectable,
@@ -2999,6 +3019,16 @@
     cancelHandScanSelection,
     handleHandScanCardClick,
   } = scanFlowHelpers);
+  beginScanAction4FreeMove = () => ruleComposition.inputPort.submitHostCommand({
+    kind: "effect_begin_scan_free_move",
+  }).value;
+  executeFreeMoveForScanAction4 = (deltaX, deltaY, rocketId) => {
+    const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
+    return submitActiveCardDecision(
+      "scan-free-move",
+      (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
+    );
+  };
   getPublicScanMaxSelectable = (...args) => callBrowserDomainCommand("scan_flow", "getPublicScanMaxSelectable", args);
   buildReadySectorFinishEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildReadySectorFinishEffects", args);
   buildScanFinalizeFollowupEffects = (...args) => callBrowserDomainCommand("scan_flow", "buildScanFinalizeFollowupEffects", args);
@@ -6679,136 +6709,6 @@
   });
   const closeScanAction4Picker = scanAction4Picker.close;
   const openScanAction4Picker = scanAction4Picker.open;
-
-  function launchRocketForScanAction4(workingRoot) {
-    if (!workingRoot?.playerState || !workingRoot?.rocketState) {
-      throw new TypeError("launchRocketForScanAction4 缺少 workingRoot");
-    }
-    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
-    const currentEffect = getCurrentActionEffect(workingRoot);
-    const skipCost = Boolean(currentEffect?.options?.skipCost);
-    if (!skipCost && !players.canAfford(currentPlayer, { energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY })) {
-      return { ok: false, message: "能量不足，发射需要 1 能量" };
-    }
-
-    beginEffectHistoryStep(workingRoot, "发射/移动");
-
-    const result = abilities.executeAbility("scanAction4", createActionContextForWorkingRoot(workingRoot), {
-      choice: "launch",
-      skipCost,
-      cost: skipCost ? {} : { energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY },
-    });
-    if (!result.ok) {
-      endEffectHistoryStep(workingRoot);
-      return result;
-    }
-
-    maybeApplyIndustryLaunchScan(result);
-    recordAbilityCommands(result, actionHistory, workingRoot);
-
-    renderRocketElement(result.rocket);
-    const current = getCurrentActionEffect(workingRoot);
-    if (current) current.result = result;
-    return result;
-  }
-
-  function beginScanAction4FreeMoveForRoot(workingRoot) {
-    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
-    const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
-    if (!rocketsForPlayer.length) {
-      workingRoot.rocketState.statusNote = "没有可移动的飞船";
-      renderStateReadout();
-      return { ok: false, message: workingRoot.rocketState.statusNote };
-    }
-
-    workingRoot.match.scanFreeMoveContinuation = {
-      effectId: getCurrentActionEffect(workingRoot)?.id || null,
-      playerId: currentPlayer?.id || null,
-    };
-    workingRoot.rocketState.statusNote = rocketsForPlayer.length > 1
-      ? "扫描效果：请点击要移动的飞船"
-      : "扫描效果：使用方向键移动飞船";
-    if (rocketsForPlayer.length === 1) {
-      activateMoveMode(rocketsForPlayer[0].id);
-    } else {
-      selectDefaultRocketForCurrentPlayer();
-    }
-    renderStateReadout();
-    return { ok: true, message: workingRoot.rocketState.statusNote };
-  }
-
-  function beginScanAction4FreeMove() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "effect_begin_scan_free_move" }).value;
-  }
-
-  function executeFreeMoveForScanAction4ForRoot(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
-    const { playerState: workingPlayerState, rocketState: workingRocketState } = workingRoot;
-    const moveCheck = rocketActions.canMoveRocket(workingRocketState, rocketId, deltaX, deltaY);
-    if (!moveCheck.ok) {
-      workingRocketState.statusNote = moveCheck.message;
-      renderStateReadout();
-      return moveCheck;
-    }
-
-    const currentPlayer = players.getCurrentPlayer(workingPlayerState);
-    const providedMovePoints = Math.max(0, Math.round(Number(payment.providedMovePoints ?? 1) || 0));
-    const terrainRequired = Number.isFinite(Number(payment.terrainRequired))
-      ? Math.max(1, Math.round(Number(payment.terrainRequired)))
-      : getRequiredMovePointsForUi(currentPlayer, rocketId, deltaX, deltaY);
-    if (!payment.fromMovePayment && providedMovePoints < terrainRequired) {
-      return beginSupplementalMovePayment({
-        deltaX,
-        deltaY,
-        rocketId,
-        terrainRequired,
-        providedMovePoints,
-        context: { type: "scan_action_4", terrainRequired },
-        message: `发射/移动：已有 ${providedMovePoints} 点移动力，还需 ${terrainRequired - providedMovePoints} 点（可弃移动牌或用能量）`,
-      });
-    }
-
-    const energyCost = Math.max(0, Math.round(Number(payment.energyCost) || 0));
-    beginEffectHistoryStep(workingRoot, "发射/移动");
-
-    const result = abilities.executeAbility("scanAction4", createActionContextForWorkingRoot(workingRoot), {
-      choice: "move",
-      cost: energyCost > 0 ? { energy: energyCost } : {},
-      movementPoints: Math.max(terrainRequired, providedMovePoints + energyCost),
-      rocketId,
-      deltaX,
-      deltaY,
-    });
-    if (result.rocket) renderRocketElement(result.rocket);
-    if (!result.ok) {
-      if (payment.discardCommand) payment.discardCommand.undo();
-      endEffectHistoryStep(workingRoot);
-      workingRocketState.statusNote = result.message;
-      renderStateReadout();
-      return result;
-    }
-
-    if (payment.discardCommand) recordHistoryCommand(workingRoot, payment.discardCommand);
-    recordAbilityCommands(result, actionHistory, workingRoot);
-
-    delete workingRoot.match.scanFreeMoveContinuation;
-    deactivateMoveMode();
-    const current = getCurrentActionEffect(workingRoot);
-    if (current) current.result = result;
-    workingRocketState.statusNote = `扫描效果：${result.message}`;
-    renderPlayerStats();
-    completeCurrentActionEffect(workingRoot);
-    renderStateReadout();
-    return result;
-  }
-
-  function executeFreeMoveForScanAction4(...args) {
-    const [deltaX, deltaY, rocketId] = args;
-    const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
-    return submitActiveCardDecision(
-      "scan-free-move",
-      (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
-    );
-  }
 
   function beginCardMoveEffectForRoot(workingRoot, effect) {
     const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);

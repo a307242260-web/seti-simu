@@ -2135,8 +2135,115 @@
         effects: structuredClone(getActionEffectFlow(workingRoot).effects || []),
       };
     }
+    function launchRocketForScanAction4(workingRoot) {
+      requireWorkingRoot(workingRoot);
+      const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
+      const currentEffect = context.getCurrentActionEffect(workingRoot);
+      const skipCost = Boolean(currentEffect?.options?.skipCost);
+      if (!skipCost && !players.canAfford(currentPlayer, { energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY })) {
+        return { ok: false, message: "能量不足，发射需要 1 能量" };
+      }
+      context.beginEffectHistoryStep(workingRoot, "发射/移动");
+      const result = abilities.executeAbility("scanAction4", context.createActionContext(workingRoot), {
+        choice: "launch",
+        skipCost,
+        cost: skipCost ? {} : { energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY },
+      });
+      if (!result.ok) {
+        context.endEffectHistoryStep(workingRoot);
+        return result;
+      }
+      context.maybeApplyIndustryLaunchScan(result);
+      context.recordAbilityCommands(result, context.actionHistory, workingRoot);
+      context.renderRocketElement(result.rocket);
+      const current = context.getCurrentActionEffect(workingRoot);
+      if (current) current.result = result;
+      return result;
+    }
+
+    function beginScanAction4FreeMove(workingRoot) {
+      requireWorkingRoot(workingRoot);
+      const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
+      const rockets = context.getMovableTokensForWorkingRoot(workingRoot, currentPlayer?.id);
+      if (!rockets.length) {
+        workingRoot.rocketState.statusNote = "没有可移动的飞船";
+        context.renderStateReadout();
+        return { ok: false, message: workingRoot.rocketState.statusNote };
+      }
+      workingRoot.match.scanFreeMoveContinuation = {
+        effectId: context.getCurrentActionEffect(workingRoot)?.id || null,
+        playerId: currentPlayer?.id || null,
+      };
+      workingRoot.rocketState.statusNote = rockets.length > 1
+        ? "扫描效果：请点击要移动的飞船"
+        : "扫描效果：使用方向键移动飞船";
+      if (rockets.length === 1) context.activateMoveMode(workingRoot, rockets[0].id);
+      else context.selectDefaultRocketForCurrentPlayer(workingRoot);
+      context.renderStateReadout();
+      return { ok: true, message: workingRoot.rocketState.statusNote };
+    }
+
+    function executeFreeMoveForScanAction4(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
+      requireWorkingRoot(workingRoot);
+      const { playerState, rocketState } = workingRoot;
+      const moveCheck = context.rocketActions.canMoveRocket(rocketState, rocketId, deltaX, deltaY);
+      if (!moveCheck.ok) {
+        rocketState.statusNote = moveCheck.message;
+        context.renderStateReadout();
+        return moveCheck;
+      }
+      const currentPlayer = players.getCurrentPlayer(playerState);
+      const providedMovePoints = Math.max(0, Math.round(Number(payment.providedMovePoints ?? 1) || 0));
+      const terrainRequired = Number.isFinite(Number(payment.terrainRequired))
+        ? Math.max(1, Math.round(Number(payment.terrainRequired)))
+        : context.getRequiredMovePointsForWorkingRoot(workingRoot, currentPlayer, rocketId, deltaX, deltaY);
+      if (!payment.fromMovePayment && providedMovePoints < terrainRequired) {
+        return context.beginSupplementalMovePayment(workingRoot, {
+          deltaX,
+          deltaY,
+          rocketId,
+          terrainRequired,
+          providedMovePoints,
+          context: { type: "scan_action_4", terrainRequired },
+          message: `发射/移动：已有 ${providedMovePoints} 点移动力，还需 ${terrainRequired - providedMovePoints} 点（可弃移动牌或用能量）`,
+        });
+      }
+      const energyCost = Math.max(0, Math.round(Number(payment.energyCost) || 0));
+      context.beginEffectHistoryStep(workingRoot, "发射/移动");
+      const result = abilities.executeAbility("scanAction4", context.createActionContext(workingRoot), {
+        choice: "move",
+        cost: energyCost > 0 ? { energy: energyCost } : {},
+        movementPoints: Math.max(terrainRequired, providedMovePoints + energyCost),
+        rocketId,
+        deltaX,
+        deltaY,
+      });
+      if (result.rocket) context.renderRocketElement(result.rocket);
+      if (!result.ok) {
+        if (payment.discardCommand) payment.discardCommand.undo();
+        context.endEffectHistoryStep(workingRoot);
+        rocketState.statusNote = result.message;
+        context.renderStateReadout();
+        return result;
+      }
+      if (payment.discardCommand) context.recordHistoryCommand(workingRoot, payment.discardCommand);
+      context.recordAbilityCommands(result, context.actionHistory, workingRoot);
+      delete workingRoot.match.scanFreeMoveContinuation;
+      context.deactivateMoveMode(workingRoot);
+      const current = context.getCurrentActionEffect(workingRoot);
+      if (current) current.result = result;
+      rocketState.statusNote = `扫描效果：${result.message}`;
+      context.renderPlayerStats();
+      context.completeCurrentActionEffect(workingRoot);
+      context.renderStateReadout();
+      return result;
+    }
+
     return {
       executeMainScanAction,
+      launchRocketForScanAction4,
+      beginScanAction4FreeMove,
+      executeFreeMoveForScanAction4,
       getPublicScanBonusSelectableCount,
       getPublicScanMaxSelectable,
       getPublicScanMinSelectable,
