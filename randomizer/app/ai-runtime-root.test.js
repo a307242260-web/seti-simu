@@ -15,6 +15,7 @@ const { createScanValue } = require("../game/ai/scan-value");
 const { createDemandCard } = require("../game/ai/demand-card");
 const { createAlienValuation } = require("../game/ai/alien-valuation");
 const { createTradeCandidates } = require("../game/ai/trade-candidates");
+const { createRoutePlanet } = require("../game/ai/route-planet");
 
 function contextWith(overrides = {}) {
   const fallback = () => null;
@@ -340,6 +341,21 @@ const players = {
   assert.equal(tradeCandidates.countAiQuickTradesThisTurn("a"), 1);
   readout = rootB;
   assert.equal(tradeCandidates.countAiQuickTradesThisTurn("a"), 0);
+}
+
+{
+  const rootA = createRoot("a", 1);
+  rootA.planetStatsState = { allowOrbit: true };
+  const rootB = createRoot("a", 1);
+  rootB.planetStatsState = { allowOrbit: false };
+  let readout = rootA;
+  const routePlanet = createRoutePlanet(contextWith({
+    getRuleReadout: () => readout,
+    planetStats: { canAddOrbitMarker: (planetStatsState) => planetStatsState.allowOrbit },
+  }));
+  assert.equal(routePlanet.canAiPlanetAcceptOrbit("mars"), true);
+  readout = rootB;
+  assert.equal(routePlanet.canAiPlanetAcceptOrbit("mars"), false);
 }
 
 {

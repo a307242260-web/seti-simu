@@ -33,21 +33,26 @@
       chong,
       aiRaceModel,
       ai,
-      solarState,
-      nebulaDataState,
-      alienGameState,
-      finalScoringState,
-      playerState,
-      turnState,
-      rocketState,
-      planetStatsState,
-      techGameState,
       DEFAULT_ACTIVE_PLAYER_COUNT,
       FINAL_ROUND_NUMBER,
       AI_MOVE_DIRECTIONS,
       AI_TRACE_TYPES,
       AI_PLANET_OPTIMAL_MOVE_RANGES,
     } = context;
+    const readRuleRoot = () => {
+      const workingRoot = context.getRuleReadout?.();
+      if (!workingRoot) throw new TypeError("AI route planet valuation requires a StateSource rule readout");
+      return workingRoot;
+    };
+    const ruleSolarState = () => readRuleRoot().solarState;
+    const ruleNebulaDataState = () => readRuleRoot().nebulaDataState;
+    const ruleAlienGameState = () => readRuleRoot().alienGameState;
+    const ruleFinalScoringState = () => readRuleRoot().finalScoringState;
+    const rulePlayerState = () => readRuleRoot().playerState;
+    const ruleTurnState = () => readRuleRoot().turnState;
+    const ruleRocketState = () => readRuleRoot().rocketState;
+    const rulePlanetStatsState = () => readRuleRoot().planetStatsState;
+    const ruleTechGameState = () => readRuleRoot().techGameState;
     const addLocationTargets = (...args) => context.addLocationTargets(...args);
     const aiMarkerBelongsToPlayer = (...args) => context.aiMarkerBelongsToPlayer(...args);
     const aiNumber = (...args) => context.aiNumber(...args);
@@ -175,16 +180,16 @@
 
     function canAiPlanetAcceptOrbit(planetId) {
       if (planetId === "earth") return false;
-      if (planetId === aomomo?.PLANET_ID) return Boolean(aomomo?.canAddOrbitMarker?.(alienGameState));
-      return planetStats.canAddOrbitMarker(planetStatsState, planetId);
+      if (planetId === aomomo?.PLANET_ID) return Boolean(aomomo?.canAddOrbitMarker?.(ruleAlienGameState()));
+      return planetStats.canAddOrbitMarker(rulePlanetStatsState(), planetId);
     }
 
     function canAiPlanetAcceptLanding(planetId, player = getCurrentPlayer()) {
       if (planetId === "earth") return false;
-      if (planetId === aomomo?.PLANET_ID) return Boolean(aomomo?.canAddLandingMarker?.(alienGameState));
-      if (planetStats.canAddLandingMarker(planetStatsState, planetId)) return true;
+      if (planetId === aomomo?.PLANET_ID) return Boolean(aomomo?.canAddLandingMarker?.(ruleAlienGameState()));
+      if (planetStats.canAddLandingMarker(rulePlanetStatsState(), planetId)) return true;
       return players.playerOwnsTech(player, "orange4", createActionContext())
-        && planetStats.getAvailableSatellitesForLanding(planetStatsState, planetId).length > 0;
+        && planetStats.getAvailableSatellitesForLanding(rulePlanetStatsState(), planetId).length > 0;
     }
 
     function scoreAiRewardEffects(effects = [], player = getCurrentPlayer()) {
@@ -203,7 +208,7 @@
 
     function scoreAiOrbitRewardValue(planetId, player = getCurrentPlayer()) {
       if (!planetId) return 0;
-      const sequence = Math.max(1, planetStats.getPlanetOrbitCount(planetStatsState, planetId) + 1);
+      const sequence = Math.max(1, planetStats.getPlanetOrbitCount(rulePlanetStatsState(), planetId) + 1);
       return scoreAiRewardEffects(planetRewards.buildOrbitRewardEffects?.(planetId, sequence) || [], player)
         + scoreAiRunezuSourceSymbolValue("planet", planetId, player);
     }
@@ -220,7 +225,7 @@
           { type: "alien_trace", options: { traceType: "yellow" } },
         ];
       }
-      const sequence = Math.max(1, planetStats.getPlanetLandingCount(planetStatsState, planetId) + 1);
+      const sequence = Math.max(1, planetStats.getPlanetLandingCount(rulePlanetStatsState(), planetId) + 1);
       return planetRewards.buildPlanetLandRewardEffects?.(planetId, sequence) || [];
     }
 
@@ -312,7 +317,7 @@
         const traceTypes = getAiRewardTraceTypes([effect]);
         const hasLostFirstTraceColor = traceTypes.some((traceType) => isAiHiddenFirstTraceColorLost(traceType, player));
         const hasRevealedTarget = traceTypes.some((traceType) => (
-          Object.entries(alienGameState?.aliens || {}).some(([alienSlotId, slot]) => (
+          Object.entries(ruleAlienGameState()?.aliens || {}).some(([alienSlotId, slot]) => (
             slot?.revealed
             && slot?.alienId
             && hasAiFeasibleRevealedAlienTraceTarget(Number(alienSlotId), [traceType], player)
@@ -329,7 +334,7 @@
         result[traceType] = { open: 0, own: 0, takenByOthers: 0, revealed: 0 };
         return result;
       }, {});
-      for (const slot of Object.values(alienGameState?.aliens || {})) {
+      for (const slot of Object.values(ruleAlienGameState()?.aliens || {})) {
         if (!slot) continue;
         for (const traceType of AI_TRACE_TYPES) {
           const entry = firstTrace[traceType];
@@ -351,9 +356,9 @@
     }
 
     function getAiPrecedingOpponentIds(player = getCurrentPlayer()) {
-      const activeIds = Array.isArray(turnState.activePlayerIds) && turnState.activePlayerIds.length
-        ? turnState.activePlayerIds
-        : (playerState.players || []).map((entry) => entry.id).filter(Boolean);
+      const activeIds = Array.isArray(ruleTurnState().activePlayerIds) && ruleTurnState().activePlayerIds.length
+        ? ruleTurnState().activePlayerIds
+        : (rulePlayerState().players || []).map((entry) => entry.id).filter(Boolean);
       const index = activeIds.findIndex((playerId) => String(playerId) === String(player?.id));
       if (index >= 0) return activeIds.slice(0, index).filter((playerId) => String(playerId) !== String(player?.id));
       return activeIds.filter((playerId) => String(playerId) !== String(player?.id));
@@ -362,12 +367,12 @@
     function getAiPostActionWindowOpponentIds(player = getCurrentPlayer()) {
       const raceModel = aiRaceModel || ai?.raceModel;
       if (!player?.id || !raceModel?.buildActionWindowOrder) return [];
-      const completedPlayerIds = [...(turnState.completedTurnPlayerIds || [])];
+      const completedPlayerIds = [...(ruleTurnState().completedTurnPlayerIds || [])];
       if (!completedPlayerIds.some((playerId) => String(playerId) === String(player.id))) {
         completedPlayerIds.push(player.id);
       }
       return raceModel.buildActionWindowOrder({
-        ...turnState,
+        ...ruleTurnState(),
         completedTurnPlayerIds: completedPlayerIds,
       }, player.id);
     }
@@ -437,8 +442,8 @@
     function getAiApproxLandEnergyCostForPlayer(player, planetId) {
       if (!planetId) return abilities.planet?.BASE_LAND_ENERGY_COST || 3;
       const hasOrbit = planetId === aomomo?.PLANET_ID
-        ? aiNumber(aomomo?.countOrbitMarkers?.(alienGameState)) > 0
-        : planetStats.getPlanetOrbitCount(planetStatsState, planetId) > 0;
+        ? aiNumber(aomomo?.countOrbitMarkers?.(ruleAlienGameState())) > 0
+        : planetStats.getPlanetOrbitCount(rulePlanetStatsState(), planetId) > 0;
       const orbitDiscount = hasOrbit ? 1 : 0;
       const techDiscount = players.playerOwnsTech(player, "orange3", createActionContext())
         ? (abilities.planet?.ORANGE3_LAND_DISCOUNT || 1)
@@ -452,13 +457,13 @@
       if (!players.canAfford(player, energyCost > 0 ? { energy: energyCost } : {})) return false;
       const planetTarget = { type: "planet" };
       if (
-        planetStats.canAddLandingMarker(planetStatsState, planet.planetId)
+        planetStats.canAddLandingMarker(rulePlanetStatsState(), planet.planetId)
         && getAiRewardTraceTypes(getAiLandRewardEffectsForTarget(planet.planetId, planetTarget)).includes(traceType)
       ) {
         return true;
       }
       if (!players.playerOwnsTech(player, "orange4", createActionContext())) return false;
-      return (planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planet.planetId) || [])
+      return (planetStats.getAvailableSatellitesForLanding?.(rulePlanetStatsState(), planet.planetId) || [])
         .some((satellite) => getAiRewardTraceTypes(getAiLandRewardEffectsForTarget(planet.planetId, {
           type: "satellite",
           satelliteId: satellite.satelliteId,
@@ -477,7 +482,7 @@
     function getAiTraceCompetitionState(player = getCurrentPlayer()) {
       const firstTrace = getAiFirstTraceCompetition(player);
       const yellowLandingPressure = getAiPrecedingOpponentIds(player).reduce((total, playerId) => {
-        const opponent = (playerState.players || []).find((entry) => String(entry.id) === String(playerId));
+        const opponent = (rulePlayerState().players || []).find((entry) => String(entry.id) === String(playerId));
         return total + (canAiOpponentLandForTraceNow(opponent, "yellow") ? 1 : 0);
       }, 0);
       return { firstTrace, yellowLandingPressure };
@@ -583,7 +588,7 @@
 
     function canAiOpponentContestSatelliteNow(opponent, planetId) {
       if (!opponent || !planetId || !players.playerOwnsTech(opponent, "orange4", createActionContext())) return false;
-      if (!(planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planetId) || []).length) return false;
+      if (!(planetStats.getAvailableSatellitesForLanding?.(rulePlanetStatsState(), planetId) || []).length) return false;
       const energyCost = getAiApproxLandEnergyCostForPlayer(opponent, planetId);
       if (!players.canAfford(opponent, energyCost > 0 ? { energy: energyCost } : {})) return false;
       return getMovableTokensForPlayer(opponent.id).some((rocket) => {
@@ -604,7 +609,7 @@
     }
 
     function getAiTechTileRemaining(tileId) {
-      const stack = tech.getStack?.(techGameState.board, tileId) || null;
+      const stack = tech.getStack?.(ruleTechGameState().board, tileId) || null;
       const remaining = Number(stack?.remaining);
       return Number.isFinite(remaining) ? remaining : null;
     }
@@ -621,7 +626,7 @@
       }
       createActionContext().ensurePlayerTechState?.(opponent);
       const check = tech?.resolver?.canTakeTile?.(
-        techGameState.board,
+        ruleTechGameState().board,
         opponent.techState,
         "orange4",
         { techTypes: ["orange"] },
@@ -650,7 +655,7 @@
     function getAiOuterSatelliteContestPressure(planetId, player = getCurrentPlayer()) {
       if (!planetId || !player) return 0;
       return getAiPrecedingOpponentIds(player).reduce((total, playerId) => {
-        const opponent = (playerState.players || []).find((entry) => String(entry.id) === String(playerId));
+        const opponent = (rulePlayerState().players || []).find((entry) => String(entry.id) === String(playerId));
         return total + (canAiOpponentContestSatelliteNow(opponent, planetId) ? 1 : 0);
       }, 0);
     }
@@ -679,7 +684,7 @@
           ...buildAiSatelliteRaceDiagnostics(player, 99, options),
         };
       }
-      const availableSatellites = planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planetId) || [];
+      const availableSatellites = planetStats.getAvailableSatellitesForLanding?.(rulePlanetStatsState(), planetId) || [];
       if (!availableSatellites.length) {
         return {
           pressure: 0,
@@ -718,9 +723,9 @@
         };
       }
 
-      const activeIds = Array.isArray(turnState.activePlayerIds) && turnState.activePlayerIds.length
-        ? turnState.activePlayerIds
-        : (playerState.players || []).map((entry) => entry.id).filter(Boolean);
+      const activeIds = Array.isArray(ruleTurnState().activePlayerIds) && ruleTurnState().activePlayerIds.length
+        ? ruleTurnState().activePlayerIds
+        : (rulePlayerState().players || []).map((entry) => entry.id).filter(Boolean);
       const activeIdSet = new Set(activeIds.map((playerId) => String(playerId)));
       const precedingIds = new Set(getAiPrecedingOpponentIds(player).map((playerId) => String(playerId)));
       let pressure = 0;
@@ -731,7 +736,7 @@
       const actionWindowOpponentIds = getAiPostActionWindowOpponentIds(player);
       const opponentEtas = [];
 
-      for (const opponent of playerState.players || []) {
+      for (const opponent of rulePlayerState().players || []) {
         if (!opponent || String(opponent.id) === String(player.id)) continue;
         if (activeIdSet.size && !activeIdSet.has(String(opponent.id))) continue;
         const orange4Access = getAiProspectiveOrange4ContestAccess(opponent, options);
@@ -1008,7 +1013,7 @@
 
     function getAiOrbitDirectScoreGain(planetId, player = getCurrentPlayer()) {
       if (!planetId) return 0;
-      const sequence = Math.max(1, planetStats.getPlanetOrbitCount(planetStatsState, planetId) + 1);
+      const sequence = Math.max(1, planetStats.getPlanetOrbitCount(rulePlanetStatsState(), planetId) + 1);
       return getAiRewardDirectScore(planetRewards.buildOrbitRewardEffects?.(planetId, sequence) || [], player);
     }
 
@@ -1021,7 +1026,7 @@
         );
       }
       if (planetId === "pluto") return 11;
-      const sequence = Math.max(1, planetStats.getPlanetLandingCount(planetStatsState, planetId) + 1);
+      const sequence = Math.max(1, planetStats.getPlanetLandingCount(rulePlanetStatsState(), planetId) + 1);
       return getAiRewardDirectScore(planetRewards.buildPlanetLandRewardEffects?.(planetId, sequence) || [], player);
     }
 
@@ -1043,7 +1048,7 @@
       const energyCost = abilities.planet.getLandEnergyCost(context, planetId);
       const availableEnergy = Math.max(0, Math.round(aiNumber(player?.resources?.energy)));
       const energyShortfall = Math.max(0, energyCost - availableEnergy);
-      return (planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planetId) || [])
+      return (planetStats.getAvailableSatellitesForLanding?.(rulePlanetStatsState(), planetId) || [])
         .map((satellite) => {
           const effects = planetRewards.buildSatelliteLandRewardEffects?.(satellite.satelliteId) || [];
           const rewardValue = scoreAiRewardEffects(effects, player);
@@ -1110,7 +1115,7 @@
       const planetId = planet.planetId;
       const energyCost = abilities.planet.getLandEnergyCost(createActionContext(), planetId);
       const choices = [];
-      if (planetStats.canAddLandingMarker(planetStatsState, planetId)) {
+      if (planetStats.canAddLandingMarker(rulePlanetStatsState(), planetId)) {
         choices.push({
           target: { type: "planet" },
           planetId,
@@ -1120,7 +1125,7 @@
         });
       }
       if (players.playerOwnsTech(player, "orange4", createActionContext())) {
-        for (const satellite of planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planetId) || []) {
+        for (const satellite of planetStats.getAvailableSatellitesForLanding?.(rulePlanetStatsState(), planetId) || []) {
           choices.push({
             target: { type: "satellite", satelliteId: satellite.satelliteId },
             planetId,
@@ -1135,7 +1140,7 @@
 
     function scoreAiBestSatelliteLandRewardValue(planetId, player = getCurrentPlayer()) {
       if (!planetId || !players.playerOwnsTech(player, "orange4", createActionContext())) return 0;
-      return (planetStats.getAvailableSatellitesForLanding?.(planetStatsState, planetId) || [])
+      return (planetStats.getAvailableSatellitesForLanding?.(rulePlanetStatsState(), planetId) || [])
         .reduce((best, satellite) => Math.max(
           best,
           scoreAiLandRewardValueForTarget(planetId, {
@@ -1169,7 +1174,7 @@
     }
 
     function countAiMainLandingMarkersOnPlanet(player, planetId) {
-      const record = planetStatsState?.planets?.[planetId];
+      const record = rulePlanetStatsState()?.planets?.[planetId];
       if (!record || !player) return 0;
       return (record.landingMarkers || [])
         .filter((marker) => aiMarkerBelongsToPlayer(marker, player))
@@ -1179,14 +1184,14 @@
     function scoreAiFinalTileOrbitLandMarginal(player = getCurrentPlayer()) {
       if (!player || !endGameScoring?.countOrbitOrLandMarkers || !endGameScoring?.countSectorWins) return 0;
       let value = 0;
-      finalScoring.ensureFinalScoringState(finalScoringState);
-      const currentOrbitLand = endGameScoring.countOrbitOrLandMarkers(player, planetStatsState, createActionContext());
-      const sectorWins = endGameScoring.countSectorWins(player, nebulaDataState);
+      finalScoring.ensureFinalScoringState(ruleFinalScoringState());
+      const currentOrbitLand = endGameScoring.countOrbitOrLandMarkers(player, rulePlanetStatsState(), createActionContext());
+      const sectorWins = endGameScoring.countSectorWins(player, ruleNebulaDataState());
       if (currentOrbitLand >= sectorWins) return 0;
-      for (const tile of Object.values(finalScoringState.tiles || {})) {
+      for (const tile of Object.values(ruleFinalScoringState().tiles || {})) {
         const mark = (tile.marks || []).find((entry) => entry.playerId === player.id);
         if (!mark) continue;
-        const variant = finalScoring.getTileVariant(finalScoringState, tile.id);
+        const variant = finalScoring.getTileVariant(ruleFinalScoringState(), tile.id);
         const formulaId = endGameScoring.getFormulaId(tile.id, variant);
         if (formulaId !== "b2") continue;
         value += endGameScoring.getSlotMultiplier(formulaId, mark.slotIndex) * 0.75;
@@ -1324,7 +1329,7 @@
       if (canAiPlanetAcceptOrbit(planet.planetId)) {
         const orbitRewardValue = scoreAiOrbitRewardValue(planet.planetId, player);
         const orbitDirectScore = getAiOrbitDirectScoreGain(planet.planetId, player);
-        const orbitSequence = Math.max(1, planetStats.getPlanetOrbitCount(planetStatsState, planet.planetId) + 1);
+        const orbitSequence = Math.max(1, planetStats.getPlanetOrbitCount(rulePlanetStatsState(), planet.planetId) + 1);
         const canAffordOrbit = players.canAfford(player, abilities.planet.DEFAULT_ORBIT_COST);
         bestRouteDirectScore = Math.max(bestRouteDirectScore, orbitDirectScore);
         if (canAffordOrbit) bestCashoutDirectScore = Math.max(bestCashoutDirectScore, orbitDirectScore);
@@ -1422,7 +1427,7 @@
       if (!coordinate) return null;
       const x = solar.mod8(coordinate.x);
       const y = aiNumber(coordinate.y);
-      return solar.createSolarSnapshot(solarState).planetLocations
+      return solar.createSolarSnapshot(ruleSolarState()).planetLocations
         .find((planet) => planet.x === x && planet.y === y && planet.planetId !== "earth") || null;
     }
 
@@ -1469,7 +1474,7 @@
 
     function getAiNearestActionablePlanetRoute(coordinate, player = getCurrentPlayer()) {
       if (!coordinate || !player) return null;
-      return solar.createSolarSnapshot(solarState).planetLocations
+      return solar.createSolarSnapshot(ruleSolarState()).planetLocations
         .filter((planet) => (
           planet?.planetId
           && planet.planetId !== "earth"
@@ -1551,7 +1556,7 @@
 
     function countAiPlayerRocketsOnAsteroids(player = getCurrentPlayer()) {
       if (!player) return 0;
-      return (rocketActions.getRocketsForPlayer?.(rocketState, player.id) || [])
+      return (rocketActions.getRocketsForPlayer?.(ruleRocketState(), player.id) || [])
         .reduce((total, rocket) => {
           const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
           return total + (isAiAsteroidCoordinate(coordinate) ? 1 : 0);
@@ -1561,7 +1566,7 @@
     function scoreAiOrange2MobilityNeed(player = getCurrentPlayer()) {
       if (!player || players.playerOwnsTech(player, "orange2", createActionContext())) return 0;
       const demand = getAiStrategyDemand(player);
-      const playerRockets = rocketActions.getRocketsForPlayer?.(rocketState, player.id) || [];
+      const playerRockets = rocketActions.getRocketsForPlayer?.(ruleRocketState(), player.id) || [];
       const activeRocketCount = playerRockets.length;
       const asteroidRocketCount = countAiPlayerRocketsOnAsteroids(player);
       const asteroidDemand = getAiMapDemand(demand.locationTypes, "asteroid")
@@ -1595,7 +1600,7 @@
       if (!industryLabel.includes("寰宇")) return 0;
       const round = getAiRoundNumber();
       if (round <= 1 || round > FINAL_ROUND_NUMBER) return 0;
-      const activeRocketCount = (rocketActions.getRocketsForPlayer?.(rocketState, player.id) || []).length;
+      const activeRocketCount = (rocketActions.getRocketsForPlayer?.(ruleRocketState(), player.id) || []).length;
       if (activeRocketCount <= 0 || scoreAiOrange2MobilityNeed(player) <= 0) return 0;
 
       // 每轮两个寰宇节点都只有 1 移动力；橙2会把离开小行星的门槛从 2 降为 1，
@@ -1670,11 +1675,11 @@
       };
     }
 
-    function getAiDisplayedTurnNumber(rawTurnNumber = turnState.turnNumber) {
+    function getAiDisplayedTurnNumber(rawTurnNumber = ruleTurnState().turnNumber) {
       const activePlayerCount = Math.max(
         1,
-        (turnState.activePlayerIds || []).length
-          || Math.round(Number(turnState.activePlayerCount) || 0)
+        (ruleTurnState().activePlayerIds || []).length
+          || Math.round(Number(ruleTurnState().activePlayerCount) || 0)
           || DEFAULT_ACTIVE_PLAYER_COUNT,
       );
       const raw = Math.max(1, Math.round(Number(rawTurnNumber) || 1));
@@ -1686,7 +1691,7 @@
       const fromContent = getSectorContentForMove(coordinate);
       if (!options.ignoreAsteroidRestriction
         && isAsteroidContent(fromContent)
-        && !players.playerOwnsTech(player, "orange2", turnState)) {
+        && !players.playerOwnsTech(player, "orange2", ruleTurnState())) {
         return 2;
       }
       return 1;
@@ -1696,7 +1701,7 @@
       const remaining = Math.max(0, Math.round(aiNumber(remainingMovePoints)));
       if (!rocket || !coordinate || remaining <= 0) return true;
 
-      const simulatedRocketState = structuredClone(rocketState);
+      const simulatedRocketState = structuredClone(ruleRocketState());
       const simulatedRocket = simulatedRocketState.rockets.find((item) => item.id === rocket.id);
       if (!simulatedRocket) return false;
       const sectorX = solar.mod8(coordinate.x);
@@ -1734,7 +1739,7 @@
     function getAiRouteTargets(player = getCurrentPlayer(), options = {}) {
       const demand = getAiStrategyDemand(player);
       const routeWeight = getAiStrategyWeight("route");
-      const targets = solar.createSolarSnapshot(solarState).planetLocations
+      const targets = solar.createSolarSnapshot(ruleSolarState()).planetLocations
         .filter((planet) => planet.planetId !== "earth")
         .map((planet) => {
           const satelliteOpportunity = getAiBestSatelliteLandingOpportunity(planet.planetId, player);
@@ -1754,7 +1759,7 @@
         .filter((target) => target.value > 0);
       const chongTransportTarget = getAiChongTransportDeliveryRouteTarget(options.rocket, player);
       if (chongTransportTarget?.value > 0) targets.push(chongTransportTarget);
-      const groups = solar.collectVisibleCoordinateGroups(solarState);
+      const groups = solar.collectVisibleCoordinateGroups(ruleSolarState());
       const addLocationTargets = (coordinates, locationType, baseValue) => {
         const locationDemand = getAiMapDemand(demand.locationTypes, locationType);
         const taskRouteCashout = getAiPendingLocationTaskRouteCashout(locationType, player);
@@ -1788,7 +1793,7 @@
       const distanceWeight = Math.max(0, aiNumber(distanceDemand.weight));
       const minDistance = Math.max(0, Math.round(aiNumber(distanceDemand.minDistance)));
       if (distanceWeight > 0 && minDistance > 0) {
-        for (const coordinate of solar.collectVisibleCoordinateReport(solarState)) {
+        for (const coordinate of solar.collectVisibleCoordinateReport(ruleSolarState())) {
           const distance = getAiCoordinateDistanceFromEarth(coordinate);
           if (distance == null || distance < minDistance) continue;
           targets.push({
