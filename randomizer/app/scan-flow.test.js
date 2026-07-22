@@ -1,7 +1,29 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createScanFlowHelpers } = require("./scan-flow");
+const { createScanFlowHelpers, createScanAction4Picker } = require("./scan-flow");
+
+{
+  const actions = { children: [], replaceChildren(...children) { this.children = children; } };
+  const overlay = { hidden: true };
+  const subtitle = { textContent: "" };
+  const picker = createScanAction4Picker({
+    document: { createElement: () => ({ dataset: {} }) },
+    els: { scanAction4Actions: actions, scanAction4Overlay: overlay, scanAction4Subtitle: subtitle },
+    players: { canAfford: () => false },
+    scanEffects: { SCAN_ACTION_4_LAUNCH_ENERGY: 1 },
+    getCurrentPlayer: () => ({ id: "p1" }),
+    getCurrentEffect: () => ({ options: {} }),
+    getMovableTokensForPlayer: () => [],
+  });
+  assert.equal(picker.open().ok, true);
+  assert.equal(actions.children.length, 2);
+  assert.equal(actions.children[0].disabled, true);
+  assert.match(subtitle.textContent, /没有飞船/);
+  picker.close();
+  assert.equal(overlay.hidden, true);
+  assert.equal(actions.children.length, 0);
+}
 
 function createBaseHarness() {
   const pendingState = {

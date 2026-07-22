@@ -18,6 +18,52 @@
     return fn;
   }
 
+  function createScanAction4Picker(context = {}) {
+    const { document, els = {}, players, scanEffects } = context;
+    function close() {
+      if (!els.scanAction4Overlay) return;
+      els.scanAction4Overlay.hidden = true;
+      els.scanAction4Actions?.replaceChildren();
+    }
+    function open() {
+      if (!els.scanAction4Overlay || !els.scanAction4Actions) {
+        return { ok: false, message: "无法打开发射/移动选择" };
+      }
+      const currentPlayer = context.getCurrentPlayer();
+      const skipCost = Boolean(context.getCurrentEffect()?.options?.skipCost);
+      const hasRocket = context.getMovableTokensForPlayer(currentPlayer?.id).length > 0;
+      const canLaunch = skipCost || players.canAfford(currentPlayer, {
+        energy: scanEffects.SCAN_ACTION_4_LAUNCH_ENERGY,
+      });
+      const choices = [{
+        id: "launch",
+        label: "发射",
+        description: canLaunch
+          ? (skipCost ? "免费在地球扇区发射火箭" : "消耗 1 能量，在地球扇区发射火箭")
+          : "能量不足，无法发射",
+        disabled: !canLaunch,
+      }];
+      if (hasRocket) choices.push({ id: "move", label: "移动", description: "选择飞船并移动，不消耗能量或手牌" });
+      choices.push({ id: "skip", label: "跳过", description: "不执行本次发射/移动效果" });
+      if (els.scanAction4Subtitle) {
+        els.scanAction4Subtitle.textContent = hasRocket
+          ? "选择发射、移动，或跳过此效果。" : "没有飞船时只能选择发射或跳过。";
+      }
+      els.scanAction4Actions.replaceChildren(...choices.map((choice) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "scan-target-option-button";
+        button.dataset.scanAction4Choice = choice.id;
+        button.disabled = Boolean(choice.disabled);
+        button.innerHTML = `${choice.label}<small>${choice.description || ""}</small>`;
+        return button;
+      }));
+      els.scanAction4Overlay.hidden = false;
+      return { ok: true };
+    }
+    return Object.freeze({ open, close });
+  }
+
   function createScanFlowHelpers(context = {}) {
     const cards = context.cards || {};
     const players = context.players || {};
@@ -2171,5 +2217,6 @@
 
   return {
     createScanFlowHelpers,
+    createScanAction4Picker,
   };
 });
