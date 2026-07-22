@@ -10,6 +10,7 @@ const { createSelectionPressure } = require("../game/ai/selection-pressure");
 const { createStateSummary } = require("../game/ai/state-summary");
 const { createActionValue } = require("../game/ai/action-value");
 const { createAlienChoiceValue } = require("../game/ai/alien-choice-value");
+const { createTechAction } = require("../game/ai/tech-action");
 
 function contextWith(overrides = {}) {
   const fallback = () => null;
@@ -221,6 +222,24 @@ const players = {
   assert.deepEqual(alienChoiceValue.getAiOtherJiuzheThreats(player), [1]);
   readout = rootB;
   assert.deepEqual(alienChoiceValue.getAiOtherJiuzheThreats(player), [2]);
+}
+
+{
+  const rootA = createRoot("a", 2);
+  rootA.rocketState.rockets = [{ id: 1, playerId: "a" }];
+  const rootB = createRoot("a", 2);
+  let readout = rootA;
+  const techAction = createTechAction(contextWith({
+    aiNumber: Number,
+    getAiRoundNumber: () => 2,
+    getAiLiveScorePaceDeficit: () => 30,
+    getRuleReadout: () => readout,
+    rocketActions: { getRocketsForPlayer: (rocketState) => rocketState.rockets },
+  }));
+  const player = rootA.playerState.players[0];
+  assert.ok(techAction.scoreAiExtraLaunchPacePenalty(player) > 0);
+  readout = rootB;
+  assert.equal(techAction.scoreAiExtraLaunchPacePenalty(player), 0);
 }
 
 {

@@ -25,15 +25,16 @@
       cardEffects,
       tech,
       data,
-      solarState,
-      turnState,
-      rocketState,
-      planetStatsState,
       FINAL_ROUND_NUMBER,
       AI_MOVE_DIRECTIONS,
       AI_TECH_TYPES,
       AI_DIFFICULTY_WEAK_START,
     } = context;
+    const readRuleRoot = () => {
+      const workingRoot = context.getRuleReadout?.();
+      if (!workingRoot) throw new TypeError("AI tech action requires a StateSource rule readout");
+      return workingRoot;
+    };
     const addPlan = (...args) => context.addPlan(...args);
     const aiNumber = (...args) => context.aiNumber(...args);
     const applyAiStrategyWeight = (...args) => context.applyAiStrategyWeight(...args);
@@ -446,6 +447,7 @@
     }
 
     function getAiOrange4SatellitePotentialProfile(player = getCurrentPlayer()) {
+      const { planetStatsState, solarState } = readRuleRoot();
       if (!player) {
         return {
           potential: 0,
@@ -730,6 +732,7 @@
     }
 
     function getAiResearchTechCandidateSafety(candidate, player = getCurrentPlayer()) {
+      const { rocketState } = readRuleRoot();
       const risks = getAiResearchTechLaunchRisks(candidate, player);
       if (!risks.launchCount) return { ok: true, message: null };
       const activeRocketCount = rocketActions.getRocketsForPlayer(rocketState, player?.id).length;
@@ -798,6 +801,7 @@
     }
 
     function scoreAiLateLaunchDeadEndPenalty(player = getCurrentPlayer(), postLaunchMovePlan = null) {
+      const { turnState } = readRuleRoot();
       const round = getAiRoundNumber();
       if (round < 3) return 0;
       const planScore = Math.max(0, aiNumber(postLaunchMovePlan?.score));
@@ -883,6 +887,7 @@
 
     function scoreAiExtraLaunchPacePenalty(player = getCurrentPlayer()) {
       if (!player) return 0;
+      const { rocketState } = readRuleRoot();
       const round = getAiRoundNumber();
       const resources = player.resources || {};
       if (round === 1) {
@@ -906,6 +911,7 @@
 
     function scoreAiFinalSecondMarkExtraLaunchPenalty(player = getCurrentPlayer(), postLaunchMovePlan = null) {
       if (!player || getAiRoundNumber() < FINAL_ROUND_NUMBER) return 0;
+      const { rocketState, turnState } = readRuleRoot();
       if (Math.max(1, Math.round(aiNumber(turnState.turnNumber) || 1)) < 3) return 0;
       const currentScore = Math.max(0, aiNumber(player.resources?.score));
       if (
@@ -925,6 +931,7 @@
 
     function scoreAiPostLaunchMovePlan(player = getCurrentPlayer()) {
       if (!player || state.pendingActionExecuted) return null;
+      const { rocketState } = readRuleRoot();
       if (!players.canAfford(player, getAiLaunchPaymentCost())) return null;
       const from = getEarthSectorCoordinate();
       const candidates = AI_MOVE_DIRECTIONS
@@ -1253,6 +1260,7 @@
 
     function scoreAiOrbitAction(candidate) {
       if (!candidate?.available) return 0;
+      const { planetStatsState } = readRuleRoot();
       const demand = getAiStrategyDemand(getCurrentPlayer());
       const currentPlayer = getCurrentPlayer();
       const round = getAiRoundNumber();
@@ -1415,6 +1423,7 @@
     }
 
     function buildAiAnalyzeActionValueBreakdown(player = getCurrentPlayer()) {
+      const { turnState } = readRuleRoot();
       const check = canAiAnalyzeData(player);
       if (!check?.ok) {
         return {
