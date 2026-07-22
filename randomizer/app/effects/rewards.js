@@ -871,7 +871,7 @@
         return result;
       }
       maybeApplyIndustryLaunchScan(result);
-      recordAbilityCommands(result);
+      recordAbilityCommands(result, undefined, workingRoot);
       if (result.rocket) renderRocketElement(result.rocket);
       const finished = finishAutomaticRewardEffect(workingRoot, effect, {
         ...result,
@@ -896,7 +896,7 @@
         renderStateReadout();
         return result;
       }
-      recordAbilityCommands(result);
+      recordAbilityCommands(result, undefined, workingRoot);
       if (result.rocket) renderRocketElement(result.rocket);
       effect.result = {
         ...result,
