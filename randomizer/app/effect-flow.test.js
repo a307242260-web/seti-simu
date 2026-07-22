@@ -1,7 +1,11 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createEffectFlowHelpers, createEffectFlowUndoRuntime } = require("./effect-flow");
+const {
+  createEffectFlowHelpers,
+  createEffectFlowUndoRuntime,
+  createEffectSubFlowCancellationRuntime,
+} = require("./effect-flow");
 
 function createHistoryHarness() {
   let nextStepId = 1;
@@ -339,6 +343,60 @@ function createHarness() {
   assert.equal(calls.cancel, 1);
   assert.equal(calls.restore, 1);
   assert.deepEqual(calls.active, [true]);
+}
+
+{
+  const workingRoot = {
+    match: {
+      actionEffectFlow: { id: "flow" },
+      cardSelectionContinuation: {
+        type: "fundamentalism_exchange_pick", playerId: "p1",
+        beforePlayerState: { resources: { credits: 3 } },
+        beforeCardState: { selectionActive: false },
+      },
+      passReserveContinuation: {}, scanFreeMoveContinuation: {}, cardMoveContinuation: {},
+      cardTriggerContinuation: {}, cardTaskCompletionContinuation: {}, cardTriggerFreeMoveContinuation: {},
+      type1TriggerEvents: [], cardCornerFreeMoveContinuation: {}, strategySlotContinuation: {},
+      piratesRaidContinuation: {},
+    },
+    playerState: { players: [{ id: "p1", resources: { credits: 0 } }] },
+    cardState: { selectionActive: true },
+  };
+  const uiRuntimeState = { passReserveSelectionDismissed: true, passReserveSelectedCardId: "card" };
+  const calls = { move: 0, alien: 0, tech: 0 };
+  const runtime = createEffectSubFlowCancellationRuntime({
+    uiRuntimeState,
+    getPublicScanQueueSession: () => null,
+    isCardSelectionActive: () => true,
+    getActionEffectFlow: (root) => root.match.actionEffectFlow,
+    isCardTriggerPickSelectionActive: () => false,
+    getPendingCardSelectionDecision: (root) => root.match.cardSelectionContinuation,
+    resolvePlayerReference: ({ playerId }) => workingRoot.playerState.players.find((p) => p.id === playerId),
+    restoreObjectSnapshot(target, snapshot) { Object.keys(target).forEach((key) => delete target[key]); Object.assign(target, structuredClone(snapshot)); },
+    setPendingCardSelectionDecision: (root, value) => { root.match.cardSelectionContinuation = value; },
+    setCardSelectionActive: (state, active) => { state.selectionActive = active; },
+    getPendingPassReserveSelection: (root) => root.match.passReserveContinuation,
+    getPendingScanFreeMoveDecision: (root) => root.match.scanFreeMoveContinuation,
+    getPendingCardMoveDecision: (root) => root.match.cardMoveContinuation,
+    deactivateMoveMode: () => { calls.move += 1; },
+    getPendingDataPlacementDecision: () => null,
+    clearAlienDecisionDrafts: () => { calls.alien += 1; },
+    getPendingPiratesRaidDecision: (root) => root.match.piratesRaidContinuation,
+    renderTechBoard: () => { calls.tech += 1; },
+  });
+  runtime.cancelActiveEffectSubFlowsForRoot(workingRoot);
+  assert.equal(workingRoot.playerState.players[0].resources.credits, 3);
+  assert.equal(workingRoot.cardState.selectionActive, false);
+  for (const key of [
+    "passReserveContinuation", "scanFreeMoveContinuation", "cardMoveContinuation",
+    "cardTriggerContinuation", "cardTaskCompletionContinuation", "cardTriggerFreeMoveContinuation",
+    "type1TriggerEvents", "cardCornerFreeMoveContinuation", "strategySlotContinuation", "piratesRaidContinuation",
+  ]) assert.equal(Object.hasOwn(workingRoot.match, key), false, key);
+  assert.equal(uiRuntimeState.passReserveSelectionDismissed, false);
+  assert.equal(uiRuntimeState.passReserveSelectedCardId, null);
+  assert.equal(calls.move, 2);
+  assert.equal(calls.alien, 1);
+  assert.equal(calls.tech, 1);
 }
 
 console.log("effect-flow tests passed");

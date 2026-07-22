@@ -940,9 +940,76 @@
     return Object.freeze({ revertEffectFlowAfterUndo });
   }
 
+  function createEffectSubFlowCancellationRuntime(context = {}) {
+    const uiRuntimeState = context.uiRuntimeState || {};
+
+    function cancelActiveEffectSubFlowsForRoot(workingRoot) {
+      if (!context.getPublicScanQueueSession?.(workingRoot)) {
+        context.closeScanTargetPicker?.({ forceYichangdianCornerClose: true });
+      }
+      if (context.isLandTargetPickerOpen?.()) context.cancelLandTargetPicker?.(workingRoot);
+      context.closeScanAction4Picker?.();
+      context.closeAlienTracePicker?.();
+      delete workingRoot.match.publicScanContinuation;
+
+      if (context.isHandScanSelectionActive?.(workingRoot)) {
+        delete workingRoot.match.handScanContinuation;
+        context.syncHandScanSelectionChrome?.(workingRoot);
+      }
+      if (context.isCardSelectionActive?.()
+        && (context.getActionEffectFlow?.(workingRoot) || context.isCardTriggerPickSelectionActive?.())) {
+        const pending = context.getPendingCardSelectionDecision?.(workingRoot);
+        if (pending?.type === "fundamentalism_exchange_pick") {
+          const pendingPlayer = context.resolvePlayerReference?.({
+            playerId: pending.playerId, playerColor: pending.playerColor,
+          });
+          if (pendingPlayer && pending.beforePlayerState) {
+            context.restoreObjectSnapshot?.(pendingPlayer, pending.beforePlayerState);
+          }
+          if (pending.beforeCardState) {
+            context.restoreObjectSnapshot?.(workingRoot.cardState, pending.beforeCardState);
+          }
+        }
+        context.setPendingCardSelectionDecision?.(workingRoot, null);
+        context.setCardSelectionActive?.(workingRoot.cardState, false);
+        context.syncCardSelectionChrome?.();
+      }
+      if (context.getPendingPassReserveSelection?.(workingRoot)) {
+        delete workingRoot.match.passReserveContinuation;
+        uiRuntimeState.passReserveSelectionDismissed = false;
+        uiRuntimeState.passReserveSelectedCardId = null;
+        context.syncPassReserveSelectionChrome?.();
+      }
+      if (context.getPendingScanFreeMoveDecision?.(workingRoot)) {
+        delete workingRoot.match.scanFreeMoveContinuation;
+        context.deactivateMoveMode?.();
+      }
+      if (context.getPendingCardMoveDecision?.(workingRoot)) {
+        delete workingRoot.match.cardMoveContinuation;
+        context.deactivateMoveMode?.();
+      }
+      if (context.getPendingDataPlacementDecision?.(workingRoot)) context.closeDataPlacePicker?.();
+      delete workingRoot.match.cardTriggerContinuation;
+      delete workingRoot.match.cardTaskCompletionContinuation;
+      delete workingRoot.match.cardTriggerFreeMoveContinuation;
+      delete workingRoot.match.type1TriggerEvents;
+      delete workingRoot.match.cardCornerFreeMoveContinuation;
+      context.clearYichangdianCornerAction?.();
+      context.clearAlienDecisionDrafts?.();
+      delete workingRoot.match.strategySlotContinuation;
+      if (context.getPendingPiratesRaidDecision?.(workingRoot)) {
+        delete workingRoot.match.piratesRaidContinuation;
+        context.renderTechBoard?.(workingRoot);
+      }
+    }
+
+    return Object.freeze({ cancelActiveEffectSubFlowsForRoot });
+  }
+
   return {
     createActionEffectOrchestrator,
     createEffectFlowHelpers,
     createEffectFlowUndoRuntime,
+    createEffectSubFlowCancellationRuntime,
   };
 });

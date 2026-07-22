@@ -5824,82 +5824,48 @@
     return flow;
   }
 
-  function cancelActiveEffectSubFlowsForRoot(workingRoot) {
-    if (!getPublicScanQueueSession(workingRoot)) {
-      closeScanTargetPicker({ forceYichangdianCornerClose: true });
-    }
-    if (els.landTargetOverlay && !els.landTargetOverlay.hidden) {
-      cancelLandTargetPicker(workingRoot);
-    }
-    closeScanAction4Picker();
-    closeAlienTracePicker();
-    delete workingRoot.match.publicScanContinuation;
-
-    if (isHandScanSelectionActive(workingRoot)) {
-      delete workingRoot.match.handScanContinuation;
-      syncHandScanSelectionChrome(workingRoot);
-    }
-
-    if (isCardSelectionActive() && (getActionEffectFlow(workingRoot) || isCardTriggerPickSelectionActive())) {
-      const cardSelectionPending = getPendingCardSelectionDecision(workingRoot);
-      if (cardSelectionPending?.type === "fundamentalism_exchange_pick") {
-        const pendingPlayer = resolvePlayerReference({
-          playerId: cardSelectionPending.playerId,
-          playerColor: cardSelectionPending.playerColor,
-        });
-        if (pendingPlayer && cardSelectionPending.beforePlayerState) {
-          restoreObjectSnapshot(pendingPlayer, cardSelectionPending.beforePlayerState);
-        }
-        if (cardSelectionPending.beforeCardState) {
-          restoreObjectSnapshot(workingRoot.cardState, cardSelectionPending.beforeCardState);
-        }
-      }
-      setPendingCardSelectionDecision(workingRoot, null);
-      cards.setSelectionActive(workingRoot.cardState, false);
-      syncCardSelectionChrome();
-    }
-
-    if (getPendingPassReserveSelection(workingRoot)) {
-      delete workingRoot.match.passReserveContinuation;
-      uiRuntimeState.passReserveSelectionDismissed = false;
-      uiRuntimeState.passReserveSelectedCardId = null;
-      syncPassReserveSelectionChrome();
-    }
-
-    if (getPendingScanFreeMoveDecision(workingRoot)) {
-      delete workingRoot.match.scanFreeMoveContinuation;
-      deactivateMoveMode();
-    }
-    if (getPendingCardMoveDecision(workingRoot)) {
-      delete workingRoot.match.cardMoveContinuation;
-      deactivateMoveMode();
-    }
-    if (getPendingDataPlacementDecision()) {
-      closeDataPlacePicker();
-    }
-    delete workingRoot.match.cardTriggerContinuation;
-    delete workingRoot.match.cardTaskCompletionContinuation;
-    delete workingRoot.match.cardTriggerFreeMoveContinuation;
-    if (workingRoot.match && typeof workingRoot.match === "object") {
-      delete workingRoot.match.type1TriggerEvents;
-    }
-    delete workingRoot.match.cardCornerFreeMoveContinuation;
-    effectExecutors?.clearYichangdianCornerAction?.();
-    alienSpeciesRuntime?.clearChongCardGainDecisionDraft?.();
-    alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
-    alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
-    alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
-    alienSpeciesRuntime?.clearAmibaTraceRemovalDecisionDraft?.();
-    alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.();
-    alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
-    alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
-    alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
-    delete workingRoot.match.strategySlotContinuation;
-    if (getPendingPiratesRaidDecision(workingRoot)) {
-      delete workingRoot.match.piratesRaidContinuation;
-      renderTechBoard(workingRoot);
-    }
-  }
+  const effectSubFlowCancellationRuntime = effectFlowModule.createEffectSubFlowCancellationRuntime({
+    uiRuntimeState,
+    getPublicScanQueueSession,
+    closeScanTargetPicker,
+    isLandTargetPickerOpen: () => Boolean(els.landTargetOverlay && !els.landTargetOverlay.hidden),
+    cancelLandTargetPicker,
+    closeScanAction4Picker,
+    closeAlienTracePicker,
+    isHandScanSelectionActive,
+    syncHandScanSelectionChrome,
+    isCardSelectionActive,
+    getActionEffectFlow,
+    isCardTriggerPickSelectionActive,
+    getPendingCardSelectionDecision,
+    resolvePlayerReference,
+    restoreObjectSnapshot,
+    setPendingCardSelectionDecision,
+    setCardSelectionActive: (cardState, active) => cards.setSelectionActive(cardState, active),
+    syncCardSelectionChrome,
+    getPendingPassReserveSelection,
+    syncPassReserveSelectionChrome,
+    getPendingScanFreeMoveDecision,
+    getPendingCardMoveDecision,
+    deactivateMoveMode,
+    getPendingDataPlacementDecision,
+    closeDataPlacePicker,
+    clearYichangdianCornerAction: () => effectExecutors?.clearYichangdianCornerAction?.(),
+    clearAlienDecisionDrafts: () => {
+      alienSpeciesRuntime?.clearChongCardGainDecisionDraft?.();
+      alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
+      alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
+      alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
+      alienSpeciesRuntime?.clearAmibaTraceRemovalDecisionDraft?.();
+      alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.();
+      alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
+      alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
+      alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
+    },
+    getPendingPiratesRaidDecision,
+    renderTechBoard,
+  });
+  const cancelActiveEffectSubFlowsForRoot = effectSubFlowCancellationRuntime.cancelActiveEffectSubFlowsForRoot;
 
   function cancelActiveEffectSubFlows() {
     return ruleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_subflows" });
