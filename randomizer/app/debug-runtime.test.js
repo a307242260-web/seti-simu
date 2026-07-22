@@ -181,6 +181,17 @@ function createBaseContext() {
     nebulaDataState: {},
     alienGameState: { aomomo: {} },
     cardState: {},
+    getWorkingRoot() {
+      return {
+        playerState: this.playerState,
+        turnState: this.turnState,
+        rocketState: this.rocketState,
+        techGameState: this.techGameState,
+        nebulaDataState: this.nebulaDataState,
+        alienGameState: this.alienGameState,
+        cardState: this.cardState,
+      };
+    },
     pendingState,
     uiRuntimeState: {
       passReserveSelectionDismissed: false,

@@ -428,6 +428,17 @@
       args,
     }).value;
   }
+
+  function callDebugCommand(operation, args = []) {
+    if (activeBrowserDomainWorkingRoot) {
+      return debugRuntimeController?.[operation]?.(...args);
+    }
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "debug_command",
+      operation,
+      args,
+    }).value;
+  }
   let getBrowserCommittedContext = () => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
@@ -656,6 +667,13 @@
           const operation = effectExecutors?.[command.operation];
           if (typeof operation !== "function") {
             return { ok: false, code: "EFFECT_EXECUTOR_COMMAND_UNKNOWN", message: `未知 Effect executor command: ${command.operation}` };
+          }
+          return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
+        }
+        case "debug_command": {
+          const operation = debugRuntimeController?.[command.operation];
+          if (typeof operation !== "function") {
+            return { ok: false, code: "DEBUG_COMMAND_UNKNOWN", message: `未知 Debug command: ${command.operation}` };
           }
           return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
         }
@@ -8414,7 +8432,7 @@
   }
 
   function setDebugOpen(open) {
-    return debugRuntimeController.setDebugOpen(open);
+    return callDebugCommand("setDebugOpen", [open]);
   }
 
   function focusJiuzheDebugCalibration(alienSlotId = 1) {
@@ -8435,31 +8453,31 @@
   }
 
   function setDebugPlayerMenuOpen(open) {
-    return debugRuntimeController.setDebugPlayerMenuOpen(open);
+    return callDebugCommand("setDebugPlayerMenuOpen", [open]);
   }
 
   function renderDebugPlayerSwitch() {
-    return debugRuntimeController.renderDebugPlayerSwitch();
+    return callDebugCommand("renderDebugPlayerSwitch");
   }
 
   function selectDefaultRocketForCurrentPlayer() {
-    return debugRuntimeController.selectDefaultRocketForCurrentPlayer();
+    return callDebugCommand("selectDefaultRocketForCurrentPlayer");
   }
 
   function switchCurrentPlayerColor(color) {
-    return debugRuntimeController.switchCurrentPlayerColor(color);
+    return callDebugCommand("switchCurrentPlayerColor", [color]);
   }
 
   function getFailsafePendingOwnerPlayer() {
-    return debugRuntimeController.getFailsafePendingOwnerPlayer();
+    return callDebugCommand("getFailsafePendingOwnerPlayer");
   }
 
   function handleAiTakeoverFailsafe() {
-    return debugRuntimeController.handleAiTakeoverFailsafe();
+    return callDebugCommand("handleAiTakeoverFailsafe");
   }
 
   function handleForceSkipTurnFailsafe() {
-    return debugRuntimeController.handleForceSkipTurnFailsafe();
+    return callDebugCommand("handleForceSkipTurnFailsafe");
   }
 
   function createStatText(label, value) {
@@ -11115,7 +11133,7 @@
   }
 
   function addDebugIncome() {
-    return debugRuntimeController.addDebugIncome();
+    return callDebugCommand("addDebugIncome");
   }
 
   function executeIncomeForCurrentPlayer() {
@@ -11133,58 +11151,58 @@
   }
 
   function addDebugData() {
-    return debugRuntimeController.addDebugData();
+    return callDebugCommand("addDebugData");
   }
 
   function addDebugScore() {
-    return debugRuntimeController.addDebugScore();
+    return callDebugCommand("addDebugScore");
   }
 
   function addDebugCardByInput(input) {
-    return debugRuntimeController.addDebugCardByInput(input);
+    return callDebugCommand("addDebugCardByInput", [input]);
   }
 
   function promptDebugGainCard() {
-    return debugRuntimeController.promptDebugGainCard();
+    return callDebugCommand("promptDebugGainCard");
   }
 
   function revealJiuzheForDebug() {
-    return debugRuntimeController.revealJiuzheForDebug();
+    return callDebugCommand("revealJiuzheForDebug");
   }
 
   function revealYichangdianForDebug() {
-    return debugRuntimeController.revealYichangdianForDebug();
+    return callDebugCommand("revealYichangdianForDebug");
   }
 
   function revealFangzhouForDebug() {
-    return debugRuntimeController.revealFangzhouForDebug();
+    return callDebugCommand("revealFangzhouForDebug");
   }
 
   function revealBanrenmaForDebug() {
-    return debugRuntimeController.revealBanrenmaForDebug();
+    return callDebugCommand("revealBanrenmaForDebug");
   }
 
   function revealChongForDebug() {
-    return debugRuntimeController.revealChongForDebug();
+    return callDebugCommand("revealChongForDebug");
   }
 
   function revealAmibaForDebug() {
-    return debugRuntimeController.revealAmibaForDebug();
+    return callDebugCommand("revealAmibaForDebug");
   }
 
   function logAomomoDebugCoordinates(alienSlotId = null) {
     const resolvedSlotId = alienSlotId
       ?? createStateSourceReadoutRoot().alienGameState.aomomo?.revealedSlotId
       ?? 1;
-    return debugRuntimeController.logAomomoDebugCoordinates(resolvedSlotId);
+    return callDebugCommand("logAomomoDebugCoordinates", [resolvedSlotId]);
   }
 
   function revealAomomoForDebug() {
-    return debugRuntimeController.revealAomomoForDebug();
+    return callDebugCommand("revealAomomoForDebug");
   }
 
   function revealRunezuForDebug() {
-    return debugRuntimeController.revealRunezuForDebug();
+    return callDebugCommand("revealRunezuForDebug");
   }
 
   function focusFangzhouDebugCalibration(alienSlotId = 1) {
@@ -11213,15 +11231,15 @@
 
 
   function fillNebulaDataBoard(options = {}) {
-    return debugRuntimeController.fillNebulaDataBoard(options);
+    return callDebugCommand("fillNebulaDataBoard", [options]);
   }
 
   function fillDebugNebulaData() {
-    return debugRuntimeController.fillDebugNebulaData();
+    return callDebugCommand("fillDebugNebulaData");
   }
 
   function toggleSectorWinDebug() {
-    return debugRuntimeController.toggleSectorWinDebug();
+    return callDebugCommand("toggleSectorWinDebug");
   }
 
   function moveRocket(deltaX, deltaY, rocketId, options = {}) {
@@ -11491,15 +11509,8 @@
     amiba,
     aomomo,
     runezu,
-    playerState,
-    turnState,
-    rocketState,
-    techGameState,
-    nebulaDataState,
-    alienGameState,
-    solarState,
+    getWorkingRoot: () => requireActiveBrowserWorkingRoot("debug runtime"),
     solar,
-    cardState,
     decisionSessions,
     uiRuntimeState,
     DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT,
