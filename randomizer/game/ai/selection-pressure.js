@@ -842,8 +842,8 @@
       const finalHighScoreDeadHandRefillBaseWindow = handSize >= 3
         && handSize <= 4
         && highScorePlayableHandScore < 8;
-      const publicPreview = buildAiPublicRefillTradePreview(player) || {};
-      const rankedPublicTradeCards = (cardState.publicCards || [])
+      const publicPreview = buildAiPublicRefillTradePreview(workingRoot, player) || {};
+      const rankedPublicTradeCards = (workingRoot.cardState.publicCards || [])
         .map((card, slotIndex) => ({
           card,
           slotIndex,
@@ -853,7 +853,7 @@
         .sort((left, right) => Number(right.score || 0) - Number(left.score || 0) || left.slotIndex - right.slotIndex);
       const bestPublicTradeCard = rankedPublicTradeCards[0] || null;
       const bestPublicTradeCardScore = aiNumber(bestPublicTradeCard?.score ?? publicPreview.bestPublicTradeCardScore);
-      const bestPublicTradeCardProfile = getAiPublicPickConcreteProfile(bestPublicTradeCard?.card, player);
+      const bestPublicTradeCardProfile = getAiPublicPickConcreteProfile(workingRoot, bestPublicTradeCard?.card, player);
       const publicRefillScoreThreshold = projectedScore >= 305 ? 8 : scoreTo300 <= 10 ? 0 : 5;
       const finalHighScorePublicRefillBase = finalHighScoreNeedsCardRefill
         && bestPublicTradeCardScore >= publicRefillScoreThreshold;

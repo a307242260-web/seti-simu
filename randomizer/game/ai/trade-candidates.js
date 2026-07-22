@@ -1499,6 +1499,16 @@
     }
 
     function listAiLateResourceRecoveryTradeCandidates(workingRoot, player = getCurrentPlayer(), candidates = []) {
+      if (!workingRoot?.playerState || !workingRoot?.turnState || !workingRoot?.cardState) {
+        throw new TypeError("AI late resource recovery requires explicit workingRoot");
+      }
+      const {
+        alienGameState: activeAlienGameState,
+        cardState: activeCardState,
+        finalScoringState: activeFinalScoringState,
+        playerState: activePlayerState,
+        turnState: activeTurnState,
+      } = workingRoot;
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -1529,7 +1539,7 @@
       const canPrepareFinalThresholdAction = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && Boolean(recoveryThreshold)
         && finalMarks < finalMarkTargetCount
-        && !(turnState.passedPlayerIds || []).includes(player.id);
+        && !(activeTurnState.passedPlayerIds || []).includes(player.id);
       const canSpendEnergyForRecovery = canSpendEnergyThisTurn || canPrepareFinalThresholdAction;
       const launchMoveRecoveryByTrade = {
         "credits-for-energy": scoreAiEnergyTradeLaunchMoveRecovery(workingRoot, player, "credits-for-energy"),
@@ -1594,10 +1604,10 @@
         && publicity >= 3
         && credits <= 1
         && energy <= 1
-        && !(turnState.passedPlayerIds || []).includes(player.id);
+        && !(activeTurnState.passedPlayerIds || []).includes(player.id);
       const finalLowStaleHandPlayableScore = finalLowStaleHandRefillBaseWindow
         ? (player.hand || []).reduce((best, card, handIndex) => {
-          const candidate = buildAiPlayCardCandidate(card, handIndex, player);
+          const candidate = buildAiPlayCardCandidate(workingRoot, card, handIndex, player);
           return Math.max(best, aiNumber(candidate?.score));
         }, 0)
         : 0;
@@ -1609,10 +1619,10 @@
         && highScorePushProfile.projectedScore >= 260
         && highScorePushProfile.projectedScore < 340
         && (credits >= 2 || energy >= 2 || publicity >= 3 || handSize >= 2)
-        && !(turnState.passedPlayerIds || []).includes(player.id);
+        && !(activeTurnState.passedPlayerIds || []).includes(player.id);
       const highScorePlayableHandScore = finalHighScoreRefillBaseWindow && handSize <= 4
         ? (player.hand || []).reduce((best, card, handIndex) => {
-          const candidate = buildAiPlayCardCandidate(card, handIndex, player);
+          const candidate = buildAiPlayCardCandidate(workingRoot, card, handIndex, player);
           return Math.max(best, aiNumber(candidate?.score));
         }, 0)
         : 0;
@@ -1637,14 +1647,14 @@
         && highScoreProjectedAfterImmediateMain < 330
         && bestImmediateMainCashoutDirectScore >= 8
         && bestImmediateMainCashoutScore >= 35
-        && !(turnState.passedPlayerIds || []).includes(player.id);
+        && !(activeTurnState.passedPlayerIds || []).includes(player.id);
       const finalLowScoreMainUnlockWindow = getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && mainActionOpen
         && (!recoveryThreshold || finalMarks >= 3)
         && currentScore >= 70
         && currentScore < finalLowScoreScanUnlockCeiling
         && credits < scanCreditCost
-        && !(turnState.passedPlayerIds || []).includes(player.id);
+        && !(activeTurnState.passedPlayerIds || []).includes(player.id);
       const scoreFinalLowScoreScanUnlockTrade = (tradeId) => {
         if (!finalLowScoreMainUnlockWindow) return 0;
         const trade = quickTrades.getTradeAction(tradeId);
@@ -1699,7 +1709,7 @@
         && mainActionOpen
         && b2SectorBottleneck.active
         && b2SectorScanRecoveryValue > 0
-        && !(turnState.passedPlayerIds || []).includes(player.id);
+        && !(activeTurnState.passedPlayerIds || []).includes(player.id);
       const scoreB2SectorScanUnlockTrade = (tradeId) => {
         if (!b2SectorScanUnlockWindow) return 0;
         const trade = quickTrades.getTradeAction(tradeId);
@@ -1744,7 +1754,7 @@
         && analyzeEnergyCost > 0
         && energy < analyzeEnergyCost
         && hasAiAnalyzeReadyDataSlot(player)
-        && !(turnState.passedPlayerIds || []).includes(player.id);
+        && !(activeTurnState.passedPlayerIds || []).includes(player.id);
       const scoreMidgameAnalyzeUnlockTrade = (tradeId) => {
         if (!midgameAnalyzeUnlockWindow) return 0;
         const trade = quickTrades.getTradeAction(tradeId);
@@ -1783,7 +1793,7 @@
         && currentScore < 130
         && handSize <= 0
         && (credits >= 6 || publicity >= 6)
-        && !(turnState.passedPlayerIds || []).includes(player.id);
+        && !(activeTurnState.passedPlayerIds || []).includes(player.id);
       if (
         !recoveryThreshold
         && !hasImmediateRouteRecovery
@@ -1908,7 +1918,7 @@
       const planetCashoutRecoveryValue = Math.min(12, bestPlanetCashoutRecoveryScore * 0.32);
       const baseValue = (8 + lowEngine + thresholdPressure + Math.max(0, 2 - finalMarks) * 2.5 + launchMoveRecoveryValue + planetCashoutRecoveryValue) * urgency;
       const rankedPublicTradeCards = (mainActionOpen || canPrepareFinalThresholdAction || weakStartPostMainPublicRefillBaseWindow)
-        ? (cardState.publicCards || [])
+        ? (activeCardState.publicCards || [])
           .map((card, slotIndex) => ({
             card,
             slotIndex,
@@ -1919,7 +1929,7 @@
         : [];
       const bestPublicTradeCard = rankedPublicTradeCards[0] || null;
       const bestPublicTradeCardScore = bestPublicTradeCard ? aiNumber(bestPublicTradeCard.score) : 0;
-      const bestPublicTradeCardProfile = getAiPublicPickConcreteProfile(bestPublicTradeCard?.card, player);
+      const bestPublicTradeCardProfile = getAiPublicPickConcreteProfile(workingRoot, bestPublicTradeCard?.card, player);
       const bestPublicTradeCardDirectScore = Math.max(0, aiNumber(bestPublicTradeCardProfile.directScoreGain));
       const usefulPublicTradeThreshold = recoveryThreshold && recoveryThreshold <= 50 && scoreToNextThreshold <= 3 ? 8 : 4;
       const hasUsefulPublicTradeCard = bestPublicTradeCardScore >= usefulPublicTradeThreshold;
@@ -1936,7 +1946,7 @@
         if (!trade) return false;
         const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
         if (!simulatedPlayer) return false;
-        const afterTradeBestPublicScore = (cardState.publicCards || []).reduce((best, card) => {
+        const afterTradeBestPublicScore = (activeCardState.publicCards || []).reduce((best, card) => {
           if (!card) return best;
           const score = scoreAiPublicPickCard(card, simulatedPlayer, "trade");
           return Number.isFinite(Number(score)) ? Math.max(best, aiNumber(score)) : best;
@@ -1984,12 +1994,12 @@
         : 0;
       const cardsForPickCardTrade = quickTrades.getTradeAction("cards-for-pick-card");
       const cardsForPickCardCheck = cardsForPickCardTrade
-        ? (quickTrades.canExecuteTrade?.("cards-for-pick-card", createActionContext()) || { ok: false })
+        ? (quickTrades.canExecuteTrade?.("cards-for-pick-card", createActionContext(workingRoot)) || { ok: false })
         : { ok: false };
       const cardsForPickCardDiscardPlan = finalHighScoreDeadHandRefillBaseWindow
         && cardsForPickCardTrade
         && cardsForPickCardCheck.ok
-        ? summarizeAiTradeDiscardPlan(player, cardsForPickCardTrade, null, {
+        ? summarizeAiTradeDiscardPlan(workingRoot, player, cardsForPickCardTrade, null, {
           includeExecutionPlan: true,
           tradeId: "cards-for-pick-card",
         })
@@ -2072,10 +2082,10 @@
         const graphCandidates = ai.actionGraph.buildActionGraph(
           [rawReadyScanCandidate],
           {
-            playerState,
-            turnState,
-            alienGameState,
-            finalScoringState,
+            playerState: activePlayerState,
+            turnState: activeTurnState,
+            alienGameState: activeAlienGameState,
+            finalScoringState: activeFinalScoringState,
             currentPlayer: player,
             aiMarkedFinalFormulas: markedFinalFormulas,
             aiTraceCompetition: traceCompetition,
@@ -2486,14 +2496,14 @@
             && String(spec.reason || "").startsWith("后期落后：");
           if (genericFinalResourceRecovery && !concreteRecoverySignal) return null;
           const trade = quickTrades.getTradeAction(spec.tradeId);
-          const check = quickTrades.canExecuteTrade?.(spec.tradeId, createActionContext()) || { ok: false };
+          const check = quickTrades.canExecuteTrade?.(spec.tradeId, createActionContext(workingRoot)) || { ok: false };
           if (!trade || !check.ok) return null;
           const analyzeTrade = spec.tradeId === "cards-for-energy" && String(spec.reason || "").includes("分析")
             ? evaluateAiCardsForEnergyAnalyzeProtection(player, trade, null, {
               saferEnergyTradeAvailable: Boolean(
                 !finalHighScoreAvoidCreditEnergyTrap
                 && quickTrades.getTradeAction("credits-for-energy")
-                && quickTrades.canExecuteTrade?.("credits-for-energy", createActionContext())?.ok,
+                && quickTrades.canExecuteTrade?.("credits-for-energy", createActionContext(workingRoot))?.ok,
               ),
             })
             : null;
@@ -2525,7 +2535,7 @@
               energy,
               handSize,
               bestPublicTradeCardScore: roundAiScore(bestPublicTradeCardScore),
-              bestPublicTradeCard: bestPublicTradeCard ? summarizeAiPublicPickCandidate(bestPublicTradeCard, player) : null,
+              bestPublicTradeCard: bestPublicTradeCard ? summarizeAiPublicPickCandidate(workingRoot, bestPublicTradeCard, player) : null,
               bestPublicTradeCardHasConcreteSignal: Boolean(bestPublicTradeCardProfile.hasConcreteSignal),
               finalHighScoreTerminalNoSignalPublicRefill,
               usefulPublicTradeThreshold,
