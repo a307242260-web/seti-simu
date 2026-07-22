@@ -93,6 +93,58 @@ assert.equal(importState.entries[0].id, 1);
 assert.equal(importState.nextEntryId, 2);
 assert.equal(importState.draft, null);
 
+{
+  const state = { entries: [], draft: null, nextEntryId: 1 };
+  const calls = [];
+  const player = {
+    id: "p1",
+    resources: { credits: 1 },
+    income: { credits: 0 },
+    completedTaskCount: 0,
+  };
+  const controller = actionLogRuntime.createActionLogController({
+    actionLogState: state,
+    actionHistory: { hasSession: () => false },
+    quickActionHistory: { hasSession: () => false },
+    historySourceMain: "main",
+    historySourceQuick: "quick",
+    resourceKeys: ["credits"],
+    incomeKeys: ["credits"],
+    incomeLabels: { credits: "信用点" },
+    deltaUnits: { credits: "信用点" },
+    defaultLabels: { scan: "扫描", quick: "快速行动" },
+    getCurrentPlayer: () => player,
+    createReadoutRoot: () => ({
+      playerState: { currentPlayerId: "p1" },
+      turnState: { roundNumber: 1, turnNumber: 2 },
+    }),
+    getPlayerLabelById: () => "白色玩家",
+    getActionCycleNumber: () => 1,
+    getCardLabel: (card) => card.label,
+    normalizeSectorX: (x) => x,
+    getNebulaLabel: (id) => id,
+    cancelHandCardContextActions: () => calls.push("cancel-hand"),
+    isActionPending: () => false,
+    resetActionBriefingState: () => calls.push("reset-briefing"),
+    renderActionLog: () => calls.push("render"),
+  });
+  controller.startActionLogDraft("scan", null, { source: "main" });
+  player.resources.credits = 3;
+  controller.appendActionLogStep("main", "扫描", null, {
+    logBefore: { playerId: "p1", resources: { credits: 1 }, income: { credits: 0 }, completedTaskCount: 0 },
+  });
+  assert.equal(state.draft.actionLabel, "扫描");
+  assert.equal(controller.composeActionLogDetailWithImpact(null, {
+    label: "扫描",
+    logBefore: { playerId: "p1", resources: { credits: 1 }, income: { credits: 0 }, completedTaskCount: 0 },
+  }), "资源：信用点+2");
+  assert.deepEqual(calls, ["cancel-hand", "render"]);
+  controller.removeActionLogStepsBySource("main");
+  assert.equal(state.draft, null);
+  controller.resetActionLog();
+  assert.deepEqual(calls.slice(-3), ["render", "reset-briefing", "render"]);
+}
+
 function createViewElement() {
   return {
     children: [],

@@ -2041,6 +2041,47 @@
     isDebugToolsEnabled,
     isStateLogEnabled,
   } = actionLogViewRuntime;
+  const actionLogController = actionLogRuntimeModule.createActionLogController({
+    actionLogState,
+    actionHistory,
+    quickActionHistory,
+    historySourceMain: HISTORY_SOURCE_MAIN,
+    historySourceQuick: HISTORY_SOURCE_QUICK,
+    resourceKeys: ACTION_LOG_RESOURCE_KEYS,
+    incomeKeys: ACTION_LOG_INCOME_KEYS,
+    incomeLabels: INCOME_GAIN_LABELS,
+    deltaUnits: ACTION_LOG_DELTA_UNITS,
+    defaultLabels: ACTION_LOG_DEFAULT_LABELS,
+    getCardLabel: cards.getCardLabel,
+    normalizeSectorX: solar.mod8,
+    getNebulaLabel: data.getNebulaLabel,
+    getCurrentPlayer: (...args) => getCurrentPlayer(...args),
+    createReadoutRoot: createStateSourceReadoutRoot,
+    getPlayerLabelById: (...args) => getPlayerLabelById(...args),
+    getActionCycleNumber: (...args) => getActionCycleNumber(...args),
+    cancelHandCardContextActions: (...args) => cancelHandCardContextActions(...args),
+    isActionPending: (...args) => isActionPending(...args),
+    resetActionBriefingState: (...args) => resetActionBriefingState(...args),
+    renderActionLog,
+  });
+  const {
+    getActionLogActionLabel,
+    normalizeActionLogText,
+    createActionLogPlayedCardSnapshot,
+    simplifyActionLogDetailForLabel,
+    normalizeActionLogStep,
+    actionLogOptionsFromHistoryStep,
+    createActionLogImpactSnapshot,
+    formatActionLogImpact,
+    composeActionLogDetailWithImpact,
+    ensureActionLogDraft,
+    startActionLogDraft,
+    appendActionLogStep,
+    removeLastActionLogStep,
+    removeActionLogStepsBySource,
+    pruneEmptyActionLogDraft,
+    resetActionLog,
+  } = actionLogController;
   const playerStatsUi = playerStatsUiModule.createPlayerStatsUi({
     document,
     players,
@@ -5311,148 +5352,6 @@
       && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
       && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
   );
-
-  function getActionLogActionLabel(actionType, label) {
-    return label || ACTION_LOG_DEFAULT_LABELS[actionType] || actionType || "本回合行动";
-  }
-
-  function normalizeActionLogText(text) {
-    return actionLogRuntimeModule.normalizeText(text);
-  }
-
-  function createActionLogPlayedCardSnapshot(card) {
-    return actionLogRuntimeModule.createPlayedCardSnapshot(card, {
-      getCardLabel: cards.getCardLabel,
-    });
-  }
-
-  function simplifyActionLogDetailForLabel(label, detail) {
-    return actionLogRuntimeModule.simplifyDetailForLabel(label, detail);
-  }
-
-  function normalizeActionLogStep(source, label, detail = null, options = {}) {
-    return actionLogRuntimeModule.normalizeStep(source, label, detail, {
-      ...options,
-      getCardLabel: cards.getCardLabel,
-      normalizeSectorX: solar.mod8,
-      getNebulaLabel: data.getNebulaLabel,
-    });
-  }
-
-  function actionLogOptionsFromHistoryStep(step = {}) {
-    return actionLogRuntimeModule.optionsFromHistoryStep(step);
-  }
-
-  function createActionLogImpactSnapshot(player = getCurrentPlayer()) {
-    return actionLogRuntimeModule.createImpactSnapshot(player, {
-      resourceKeys: ACTION_LOG_RESOURCE_KEYS,
-      incomeKeys: ACTION_LOG_INCOME_KEYS,
-    });
-  }
-
-  function formatActionLogImpact(before, after = createActionLogImpactSnapshot(), options = {}) {
-    return actionLogRuntimeModule.formatImpact(before, after, {
-      ...options,
-      resourceKeys: ACTION_LOG_RESOURCE_KEYS,
-      incomeKeys: ACTION_LOG_INCOME_KEYS,
-      labels: INCOME_GAIN_LABELS,
-      units: ACTION_LOG_DELTA_UNITS,
-    });
-  }
-
-  function composeActionLogDetailWithImpact(detail, step) {
-    const cleanDetail = simplifyActionLogDetailForLabel(step?.label, detail);
-    const impactContext = `${normalizeActionLogText(step?.label)}；${cleanDetail}`;
-    const impact = formatActionLogImpact(step?.logBefore, undefined, { detailText: impactContext });
-    if (!impact) return cleanDetail || null;
-    if (cleanDetail && cleanDetail.includes(impact)) return cleanDetail;
-    return cleanDetail ? `${cleanDetail}；${impact}` : impact;
-  }
-
-  function ensureActionLogDraft(options = {}) {
-    const readoutRoot = createStateSourceReadoutRoot();
-    return actionLogRuntimeModule.ensureDraft(actionLogState, {
-      getCurrentPlayer,
-      currentPlayerId: readoutRoot.playerState.currentPlayerId,
-      roundNumber: readoutRoot.turnState.roundNumber,
-      turnNumber: readoutRoot.turnState.turnNumber,
-      getPlayerLabelById,
-      getActionCycleNumber,
-      getActionLogActionLabel,
-      historySourceQuick: HISTORY_SOURCE_QUICK,
-      defaultQuickLabel: ACTION_LOG_DEFAULT_LABELS.quick,
-    }, options);
-  }
-
-  function startActionLogDraft(actionType, label, options = {}) {
-    if (options.source === HISTORY_SOURCE_MAIN) {
-      cancelHandCardContextActions({ silent: true });
-    }
-    return ensureActionLogDraft({
-      ...options,
-      actionType,
-      label: getActionLogActionLabel(actionType, label),
-    });
-  }
-
-  function appendActionLogStep(source, label, detail = null, options = {}) {
-    const draft = ensureActionLogDraft({
-      source,
-      actionType: options.actionType,
-      label: options.actionLabel,
-      player: options.player,
-    });
-    const step = normalizeActionLogStep(source, label, detail, options);
-    if (!step) return null;
-    draft.steps.push(step);
-    renderActionLog();
-    return step;
-  }
-
-  function removeLastActionLogStep(source, stepId = null) {
-    const draft = actionLogState.draft;
-    if (!draft?.steps?.length) return null;
-    for (let index = draft.steps.length - 1; index >= 0; index -= 1) {
-      const step = draft.steps[index];
-      const sourceMatches = !source || step.source === source;
-      const idMatches = !stepId || step.stepId === stepId;
-      if (sourceMatches && idMatches) {
-        const [removed] = draft.steps.splice(index, 1);
-        pruneEmptyActionLogDraft();
-        renderActionLog();
-        return removed;
-      }
-    }
-    return null;
-  }
-
-  function removeActionLogStepsBySource(source) {
-    const draft = actionLogState.draft;
-    if (!draft?.steps?.length) {
-      pruneEmptyActionLogDraft();
-      renderActionLog();
-      return;
-    }
-    draft.steps = draft.steps.filter((step) => step.source !== source);
-    pruneEmptyActionLogDraft();
-    renderActionLog();
-  }
-
-  function pruneEmptyActionLogDraft() {
-    actionLogRuntimeModule.pruneEmptyDraft(actionLogState, {
-      hasMainHistorySession: () => actionHistory.hasSession(),
-      hasQuickHistorySession: () => quickActionHistory.hasSession(),
-      actionExecuted: isActionPending(),
-    });
-  }
-
-  function resetActionLog() {
-    actionLogState.entries = [];
-    actionLogState.draft = null;
-    actionLogState.nextEntryId = 1;
-    resetActionBriefingState();
-    renderActionLog();
-  }
 
   function createGameRecoverySnapshot(meta = {}) {
     const readoutRoot = createStateSourceReadoutRoot();

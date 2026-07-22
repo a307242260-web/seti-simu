@@ -327,6 +327,151 @@
     };
   }
 
+  function createActionLogController(context = {}) {
+    const {
+      actionLogState,
+      actionHistory,
+      quickActionHistory,
+      historySourceMain,
+      historySourceQuick,
+      resourceKeys,
+      incomeKeys,
+      incomeLabels,
+      deltaUnits,
+    } = context;
+
+    function getActionLogActionLabel(actionType, label) {
+      return label || context.defaultLabels?.[actionType] || actionType || "本回合行动";
+    }
+
+    function normalizeActionLogStep(source, label, detail = null, options = {}) {
+      return normalizeStep(source, label, detail, {
+        ...options,
+        getCardLabel: context.getCardLabel,
+        normalizeSectorX: context.normalizeSectorX,
+        getNebulaLabel: context.getNebulaLabel,
+      });
+    }
+
+    function createActionLogImpactSnapshot(player = context.getCurrentPlayer()) {
+      return createImpactSnapshot(player, { resourceKeys, incomeKeys });
+    }
+
+    function formatActionLogImpact(before, after = createActionLogImpactSnapshot(), options = {}) {
+      return formatImpact(before, after, {
+        ...options,
+        resourceKeys,
+        incomeKeys,
+        labels: incomeLabels,
+        units: deltaUnits,
+      });
+    }
+
+    function composeActionLogDetailWithImpact(detail, step) {
+      const cleanDetail = simplifyDetailForLabel(step?.label, detail);
+      const impactContext = `${normalizeText(step?.label)}；${cleanDetail}`;
+      const impact = formatActionLogImpact(step?.logBefore, undefined, { detailText: impactContext });
+      if (!impact) return cleanDetail || null;
+      if (cleanDetail && cleanDetail.includes(impact)) return cleanDetail;
+      return cleanDetail ? `${cleanDetail}；${impact}` : impact;
+    }
+
+    function ensureActionLogDraft(options = {}) {
+      const readoutRoot = context.createReadoutRoot();
+      return ensureDraft(actionLogState, {
+        getCurrentPlayer: context.getCurrentPlayer,
+        currentPlayerId: readoutRoot.playerState.currentPlayerId,
+        roundNumber: readoutRoot.turnState.roundNumber,
+        turnNumber: readoutRoot.turnState.turnNumber,
+        getPlayerLabelById: context.getPlayerLabelById,
+        getActionCycleNumber: context.getActionCycleNumber,
+        getActionLogActionLabel,
+        historySourceQuick,
+        defaultQuickLabel: context.defaultLabels?.quick,
+      }, options);
+    }
+
+    function startActionLogDraft(actionType, label, options = {}) {
+      if (options.source === historySourceMain) context.cancelHandCardContextActions({ silent: true });
+      return ensureActionLogDraft({
+        ...options,
+        actionType,
+        label: getActionLogActionLabel(actionType, label),
+      });
+    }
+
+    function appendActionLogStep(source, label, detail = null, options = {}) {
+      const draft = ensureActionLogDraft({
+        source,
+        actionType: options.actionType,
+        label: options.actionLabel,
+        player: options.player,
+      });
+      const step = normalizeActionLogStep(source, label, detail, options);
+      if (!step) return null;
+      draft.steps.push(step);
+      context.renderActionLog();
+      return step;
+    }
+
+    function pruneEmptyActionLogDraft() {
+      pruneEmptyDraft(actionLogState, {
+        hasMainHistorySession: () => actionHistory.hasSession(),
+        hasQuickHistorySession: () => quickActionHistory.hasSession(),
+        actionExecuted: context.isActionPending(),
+      });
+    }
+
+    function removeLastActionLogStep(source, stepId = null) {
+      const draft = actionLogState.draft;
+      if (!draft?.steps?.length) return null;
+      for (let index = draft.steps.length - 1; index >= 0; index -= 1) {
+        const step = draft.steps[index];
+        if ((!source || step.source === source) && (!stepId || step.stepId === stepId)) {
+          const [removed] = draft.steps.splice(index, 1);
+          pruneEmptyActionLogDraft();
+          context.renderActionLog();
+          return removed;
+        }
+      }
+      return null;
+    }
+
+    function removeActionLogStepsBySource(source) {
+      const draft = actionLogState.draft;
+      if (draft?.steps?.length) draft.steps = draft.steps.filter((step) => step.source !== source);
+      pruneEmptyActionLogDraft();
+      context.renderActionLog();
+    }
+
+    function resetActionLog() {
+      actionLogState.entries = [];
+      actionLogState.draft = null;
+      actionLogState.nextEntryId = 1;
+      context.resetActionBriefingState();
+      context.renderActionLog();
+    }
+
+    return Object.freeze({
+      getActionLogActionLabel,
+      normalizeActionLogText: normalizeText,
+      createActionLogPlayedCardSnapshot: (card) => createPlayedCardSnapshot(card, { getCardLabel: context.getCardLabel }),
+      simplifyActionLogDetailForLabel: simplifyDetailForLabel,
+      normalizeActionLogStep,
+      actionLogOptionsFromHistoryStep: optionsFromHistoryStep,
+      createActionLogImpactSnapshot,
+      formatActionLogImpact,
+      composeActionLogDetailWithImpact,
+      ensureActionLogDraft,
+      startActionLogDraft,
+      appendActionLogStep,
+      removeLastActionLogStep,
+      removeActionLogStepsBySource,
+      pruneEmptyActionLogDraft,
+      resetActionLog,
+    });
+  }
+
   function createActionLogViewRuntime(context = {}) {
     const {
       document,
@@ -510,6 +655,7 @@
     importEntries,
     createEntryFromDraft,
     createConfirmedEntry,
+    createActionLogController,
     createActionLogViewRuntime,
   };
 });
