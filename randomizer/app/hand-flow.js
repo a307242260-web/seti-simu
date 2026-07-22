@@ -420,13 +420,18 @@
         return context.blockManualAiMovePayment?.();
       }
 
-      const currentPlayer = getMovePaymentPlayer();
-      if (!currentPlayer) {
-        ruleRocketState().statusNote = "没有可支付移动消耗的玩家";
-        renderStateReadout();
-        return { ok: false, message: ruleRocketState().statusNote };
-      }
       const activePayment = getMovePayment();
+      const paymentPlayerId = activePayment?.player?.id || activePayment?.playerId || null;
+      const paymentPlayerColor = activePayment?.player?.color || activePayment?.playerColor || null;
+      const currentPlayer = (workingRoot.playerState.players || []).find((player) => (
+        (paymentPlayerId && player.id === paymentPlayerId)
+        || (paymentPlayerColor && player.color === paymentPlayerColor)
+      )) || activePayment?.player || players.getCurrentPlayer(workingRoot.playerState);
+      if (!currentPlayer) {
+        workingRoot.rocketState.statusNote = "没有可支付移动消耗的玩家";
+        renderStateReadout();
+        return { ok: false, message: workingRoot.rocketState.statusNote };
+      }
       const { requiredMovePoints = MOVE_ENERGY_COST } = activePayment;
       const selectedHandIndices = [...(activePayment.selectedHandIndices || [])].sort((left, right) => left - right);
       let paymentNote = "";
@@ -439,14 +444,14 @@
 
       if (selectedMoveCards.length !== selectedHandIndices.length
         || selectedMoveCards.some((card) => !isMovePaymentCard(card))) {
-        ruleRocketState().statusNote = "请选择可弃置的移动牌";
+        workingRoot.rocketState.statusNote = "请选择可弃置的移动牌";
         renderStateReadout();
         return;
       }
 
       const energyCost = Math.max(0, requiredMovePoints - selectedMoveCards.length);
       if (!players.canAfford(currentPlayer, { energy: energyCost })) {
-        ruleRocketState().statusNote = selectedMoveCards.length
+        workingRoot.rocketState.statusNote = selectedMoveCards.length
           ? `能量不足，仍需 ${energyCost} 能量补齐移动力`
           : playerHasMovePaymentCard(currentPlayer)
             ? "能量不足，请选择移动牌弃置"
@@ -457,23 +462,23 @@
 
       if (selectedHandIndices.length) {
         handSnapshot = currentPlayer.hand.slice();
-        discardPileSnapshot = (ruleCardState().discardPile || []).slice();
+        discardPileSnapshot = (workingRoot.cardState.discardPile || []).slice();
         const discardedCards = [];
         for (const index of [...selectedHandIndices].sort((left, right) => right - left)) {
           const discardResult = cards.discardFromHandAtIndex(currentPlayer, index);
           if (!discardResult.ok) {
             currentPlayer.hand = handSnapshot.slice();
             currentPlayer.resources.handSize = currentPlayer.hand.length;
-            ruleCardState().discardPile = discardPileSnapshot.slice();
-            ruleRocketState().statusNote = discardResult.message;
+            workingRoot.cardState.discardPile = discardPileSnapshot.slice();
+            workingRoot.rocketState.statusNote = discardResult.message;
             renderStateReadout();
             return;
           }
-          cards.addToDiscardPile(ruleCardState(), discardResult.card);
+          cards.addToDiscardPile(workingRoot.cardState, discardResult.card);
           discardedCards.push(discardResult.card);
         }
         discardCommand = historyCommands.createDiscardHandCardCommand(
-          ruleCardState(),
+          workingRoot.cardState,
           currentPlayer,
           handSnapshot,
           discardPileSnapshot,
@@ -545,9 +550,9 @@
         });
       }
 
-      const moveCheck = rocketActions.canMoveRocket(ruleRocketState(), pending.rocketId, pending.deltaX, pending.deltaY);
+      const moveCheck = rocketActions.canMoveRocket(workingRoot.rocketState, pending.rocketId, pending.deltaX, pending.deltaY);
       if (!moveCheck.ok) {
-        ruleRocketState().statusNote = moveCheck.message;
+        workingRoot.rocketState.statusNote = moveCheck.message;
         renderPlayerStats();
         updateActionButtons();
         renderStateReadout();
@@ -564,23 +569,23 @@
         });
       if (!moveResult.ok && discardCommand) {
         if (pending.standardAction) {
-          const restoredPlayer = getCurrentPlayer();
+          const restoredPlayer = players.getCurrentPlayer(workingRoot.playerState);
           restoredPlayer.hand = handSnapshot.slice();
           restoredPlayer.resources.handSize = restoredPlayer.hand.length;
-          ruleCardState().discardPile = discardPileSnapshot.slice();
+          workingRoot.cardState.discardPile = discardPileSnapshot.slice();
         } else {
           discardCommand.undo();
         }
       }
       if (moveResult.rocket) renderRocketElement(moveResult.rocket);
       if (moveResult.ok) {
-        ruleRocketState().activeRocketId = null;
+        workingRoot.rocketState.activeRocketId = null;
         clearMoveRocketHighlight();
-        ruleRocketState().statusNote = `${paymentNote}，${moveResult.message}`;
+        workingRoot.rocketState.statusNote = `${paymentNote}，${moveResult.message}`;
         recordMoveActionHistory(workingRoot, moveResult, discardCommand);
         settleCardTasksAfterEffect({ events: moveResult.events, render: false });
       } else {
-        ruleRocketState().statusNote = moveResult.message;
+        workingRoot.rocketState.statusNote = moveResult.message;
       }
 
       renderPlayerStats();
