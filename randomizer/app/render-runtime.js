@@ -178,6 +178,7 @@
       rocketActions,
       planetReferenceLayout,
       planetStats,
+      players,
       referencePlacementKindLabels,
       planetsReferenceSize,
       rocketSurface,
@@ -330,6 +331,38 @@
       if (!earth) throw new Error("Earth position was not found in the current solar snapshot");
       return { x: earth.x, y: earth.y };
     }
+    function getRocketCoordinateReadoutLines(rocketState) {
+      const activeRocket = (rocketState?.rockets || []).find((rocket) => rocket.id === rocketState.activeRocketId);
+      const formatRocketLine = (rocket) => {
+        const marker = rocket.id === rocketState.activeRocketId ? "*" : " ";
+        const snapshot = createRocketSnapshot(rocket);
+        const color = players.getPlayerColorDefinition(rocket.color || players.DEFAULT_PLAYER_COLOR);
+        if (snapshot.surface === rocketSurface.PLANETS_REFERENCE) {
+          return `${marker}${formatRocketLabel(rocket)} ${color.label} ${formatPlanetsReferencePoint(snapshot.planetsReference)}`;
+        }
+        const slot = snapshot.slotSectorCoordinate
+          ? ` 扇区[${snapshot.slotSectorCoordinate.x},${snapshot.slotSectorCoordinate.y}]#${snapshot.slotIndex}`
+          : snapshot.sectorCoordinate
+            ? ` -> ${formatSectorCoordinate(snapshot)}`
+            : "";
+        return `${marker}${formatRocketLabel(rocket)} ${color.label} ${formatPolarPoint(snapshot.polar)} ${formatBoardPoint(snapshot.board)}${slot}`;
+      };
+      const occupancy = rocketActions.getSectorOccupancy(rocketState);
+      const occupancyLines = occupancy.size
+        ? [...occupancy.entries()]
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([key, slots]) => `扇区[${key}] 占用#${[...slots.keys()].sort((a, b) => a - b).join(",")}`)
+        : ["无"];
+      return [
+        "火箭坐标",
+        `火箭坐标系 polar board-${solar.GLOBAL_COORDINATE_SYSTEM.size}`,
+        activeRocket ? `当前 ${formatRocketLine(activeRocket).replace(/^[* ]/, "")}` : "当前 无",
+        rocketState?.statusNote ? `提示 ${rocketState.statusNote}` : "提示 无",
+        "",
+        "扇区占用",
+        ...occupancyLines,
+      ];
+    }
 
     return {
       getReferencePlacementKindLabel, getReferencePlacementName, buildPlanetOrbitLandReferenceData,
@@ -341,6 +374,7 @@
       createPlanetMarkerPlacement, createPlanetMarkerRocket, removePlanetMarkerRockets,
       syncPlanetOrbitLandMarkers, seedDefaultReferenceRockets, formatRocketLabel,
       getMovableTokensForPlayer, createRocketSnapshot, getEarthSectorCoordinate,
+      getRocketCoordinateReadoutLines,
     };
   }
 
@@ -554,10 +588,19 @@
       getTurnReadoutLines,
       getInitialSelectionReadoutLines,
       getPlayerReadoutLines,
-      getPlanetStatsReadoutLines,
       getRocketCoordinateReadoutLines,
       syncInteractionFocusChrome,
     } = context;
+    const getPlanetStatsReadoutLines = context.getPlanetStatsReadoutLines || (() => {
+      const lines = planetStats.formatPlanetStatsLines(planetStatsState);
+      if (aomomo && (solarState.aomomoActive || alienGameState.aomomo?.revealInitialized)) {
+        const aomomoLineIndex = lines.findIndex((line) => String(line).startsWith("奥陌陌 "));
+        if (aomomoLineIndex >= 0) {
+          lines[aomomoLineIndex] = `奥陌陌 环绕=${aomomo.countOrbitMarkers(alienGameState)} 登陆=${aomomo.countLandingMarkers(alienGameState)}`;
+        }
+      }
+      return ["星球统计", ...lines];
+    });
     function loadTokenWidth(asset, scale, fallbackNaturalWidth, onLoad) {
       const image = new ImageCtor();
       const resolveWidth = (naturalWidth) => {
@@ -1823,7 +1866,7 @@
         "可见坐标",
         formatVisibleCoordinateGroups(snapshot.visibleCoordinateGroups),
         "",
-        ...getRocketCoordinateReadoutLines(),
+        ...getRocketCoordinateReadoutLines(rocketState),
         "",
         ...context.tech.getReadoutLines(cloneResident("tech"), clonePlayersForReadout()),
         "",

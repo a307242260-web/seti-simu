@@ -280,6 +280,9 @@ function createContext(overrides = {}) {
       canAfford() {
         return true;
       },
+      normalizePlayerTechState(value) {
+        return value || { ownedTiles: {} };
+      },
     },
     solar: {
       layout: { CONTENT_KIND: { PLANET: "planet" } },
@@ -320,6 +323,7 @@ function createContext(overrides = {}) {
       getPlanetOrbitMarkers() { return []; },
       getPlanetLandingMarkers() { return []; },
       getSatelliteLandingMarkers() { return []; },
+      formatPlanetStatsLines() { return ["地球 环绕=0 登陆=0"]; },
     },
     planetReferenceLayout: {
       PLANETS_REFERENCE_SIZE: { width: 1000, height: 1000 },
@@ -540,6 +544,14 @@ function createContext(overrides = {}) {
 
 {
   const context = createContext();
+  delete context.getPlanetStatsReadoutLines;
+  const runtime = createRenderRuntime(context);
+  runtime.renderStateReadout();
+  assert.match(context.els.stateReadout.textContent, /星球统计\n地球 环绕=0 登陆=0/);
+}
+
+{
+  const context = createContext();
   context.testResident.cards.publicCards = [
     { cardName: "A", src: "a.png" },
     { cardName: "B", src: "b.png" },
@@ -678,6 +690,11 @@ function createContext(overrides = {}) {
       formatRocketLabel: (rocket) => `#${rocket.id}`,
       getRocketsForPlayer: (state, playerId) => state.rockets.filter((rocket) => rocket.playerId === playerId),
       createRocketSnapshot: (rocket) => ({ id: rocket.id }),
+      getSectorOccupancy: () => new Map(),
+    },
+    players: {
+      DEFAULT_PLAYER_COLOR: "red",
+      getPlayerColorDefinition: () => ({ label: "红色" }),
     },
     planetReferenceLayout: {
       PLANET_ORDER: [],
@@ -694,6 +711,10 @@ function createContext(overrides = {}) {
   assert.equal(runtime.getReferencePlacementName({ planetName: "地球", kind: "orbit", sequence: 2 }), "地球 环绕2");
   assert.deepEqual(runtime.getEarthSectorCoordinate(workingRoot), { x: 3, y: 4 });
   assert.equal(runtime.isClientPositionInsidePlanetsReference(50, 50), true);
+  rocketState.rockets.push({ id: 1, color: "red" });
+  rocketState.activeRocketId = 1;
+  assert.match(runtime.getRocketCoordinateReadoutLines(rocketState).join("\n"), /当前 #1 红色/);
+  rocketState.rockets.length = 0;
   runtime.seedDefaultReferenceRockets(workingRoot);
   assert.equal(renderCalls, 1);
   assert.equal(rocketState.statusNote, null);
