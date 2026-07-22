@@ -82,6 +82,7 @@
     let activeFamily = null;
     let lastActionResult = null;
     let activeHostWorkingState = null;
+    let transactionWorkingState = null;
     const listeners = new Set();
     let unsubscribeStore = null;
     let effectDomainByFamily = new Map();
@@ -95,9 +96,15 @@
     }
 
     function runWithWorkingStateContext(state, operation) {
-      return typeof options.runWithWorkingState === "function"
-        ? options.runWithWorkingState(state, operation)
-        : operation();
+      const previousWorkingState = transactionWorkingState;
+      transactionWorkingState = state;
+      try {
+        return typeof options.runWithWorkingState === "function"
+          ? options.runWithWorkingState(state, operation)
+          : operation();
+      } finally {
+        transactionWorkingState = previousWorkingState;
+      }
     }
 
     function executeRegisteredAction(state, action) {
@@ -435,12 +442,13 @@
       if (!command?.kind || typeof command.kind !== "string") {
         return fail("RULE_COMPOSITION_HOST_COMMAND_INVALID", "Browser host command 缺少 kind");
       }
-      if (activeHostWorkingState) {
+      const nestedWorkingState = activeHostWorkingState || transactionWorkingState;
+      if (nestedWorkingState) {
         try {
-          const nestedResult = executeHostCommand(activeHostWorkingState, command);
-          return nestedResult?.ok === false
-            ? deepFreeze(clone(nestedResult))
-            : deepFreeze(clone(nestedResult || { ok: true }));
+          const nestedResult = executeHostCommand(nestedWorkingState, command);
+          // 嵌套命令仍在同一个 Composition 事务内；结果可能携带仅供事务内消费的
+          // undo command 函数，不能提前跨端口 structuredClone/deepFreeze。
+          return nestedResult || { ok: true };
         } catch (error) {
           return fail("RULE_COMPOSITION_HOST_COMMAND_THROWN", error?.message || "Browser host command 执行异常");
         }
