@@ -8714,20 +8714,24 @@
   }
 
   function shouldShowAomomoFossils(player) {
+    const readoutRoot = createStateSourceReadoutRoot();
     return Boolean(
       aomomo
-      && (solarState.aomomoActive
-        || alienGameState.aomomo?.revealInitialized
+      && (readoutRoot.solarState.aomomoActive
+        || readoutRoot.alienGameState.aomomo?.revealInitialized
         || Number(player?.resources?.aomomoFossils) > 0),
     );
   }
 
   function shouldShowFangzhouUnlockStats() {
-    return Boolean(fangzhou && alienGameState.fangzhou?.revealInitialized);
+    return Boolean(fangzhou && createStateSourceReadoutRoot().alienGameState.fangzhou?.revealInitialized);
   }
 
   function getPlayerFangzhouUnlockCount(player) {
-    const count = Number(fangzhou?.getUnlockCount?.(alienGameState, player)) || 0;
+    const count = Number(fangzhou?.getUnlockCount?.(
+      createStateSourceReadoutRoot().alienGameState,
+      player,
+    )) || 0;
     return Math.min(3, Math.max(0, Math.round(count)));
   }
 
@@ -8843,7 +8847,7 @@
   }
 
   function buildPlayerRunezuStatNodes(player) {
-    if (!runezu || !alienGameState.runezu?.revealInitialized) return [];
+    if (!runezu || !createStateSourceReadoutRoot().alienGameState.runezu?.revealInitialized) return [];
     const counts = runezu.getPlayerSymbolCounts(player);
     const nodes = [];
     for (const symbolId of runezu.SYMBOL_IDS || []) {
@@ -9107,9 +9111,10 @@
   }
 
   function createJiuzheReservedButton(player) {
-    const cardsForPlayer = jiuzhe?.getPlayerJiuzheCards?.(alienGameState, player) || [];
+    const readoutAlienState = createStateSourceReadoutRoot().alienGameState;
+    const cardsForPlayer = jiuzhe?.getPlayerJiuzheCards?.(readoutAlienState, player) || [];
     if (!cardsForPlayer.length) return null;
-    const playedCount = jiuzhe.countPlayedCards(alienGameState, player);
+    const playedCount = jiuzhe.countPlayedCards(readoutAlienState, player);
     const button = document.createElement("button");
     button.type = "button";
     button.className = "reserved-card-button reserved-card-button-jiuzhe";
@@ -9138,7 +9143,10 @@
 
   function createBanrenmaReservedButton(card, originalIndex, rowIndex) {
     const currentPlayer = getCurrentPlayer();
-    const mark = banrenma?.getPlayerScoreMarks?.(alienGameState, currentPlayer)
+    const mark = banrenma?.getPlayerScoreMarks?.(
+      createStateSourceReadoutRoot().alienGameState,
+      currentPlayer,
+    )
       ?.find((item) => item.id === card.banrenmaScoreMarkId || item.cardInstanceId === card.id);
     const threshold = mark?.threshold ?? card.banrenmaThreshold ?? "-";
     const ready = Number(currentPlayer?.resources?.score || 0) >= Number(threshold);
