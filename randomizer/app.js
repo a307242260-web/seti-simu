@@ -4169,7 +4169,7 @@
       workingRoot.playerState.currentPlayerId = firstPlayer.id;
     }
 
-    els.appWrap?.classList.toggle("action-effect-flow-active", true);
+    interactionChrome.setActionEffectFlowActive(true);
     workingRoot.rocketState.statusNote = "初始收入增加：请依次点击收入效果";
     renderDebugPlayerSwitch();
     renderPlayerStats();
@@ -5784,30 +5784,8 @@
       workingTechGameState.ui.industryBorrowMode = false;
     }
     tech.setTechSelectionActive(workingTechGameState, false);
-    if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
-    if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = true;
-    if (els.alienTraceTitle) els.alienTraceTitle.textContent = "获取外星人标记";
-    if (els.alienTraceSubtitle) els.alienTraceSubtitle.classList.remove("alien-reveal-confirmation-text");
-    if (els.alienTraceCancel) els.alienTraceCancel.hidden = false;
-    if (els.landTargetOverlay) els.landTargetOverlay.hidden = true;
-    if (els.dataPlaceOverlay) els.dataPlaceOverlay.hidden = true;
-    if (els.actionEffectBar) els.actionEffectBar.hidden = true;
+    interactionChrome.resetAfterRecovery();
     closeFinalResultDialog({ silent: true });
-    els.appWrap?.classList.remove(
-      "action-effect-flow-active",
-      "move-mode-active",
-      "card-selection-active",
-      "play-card-selection-active",
-      "card-corner-action-active",
-      "discard-selection-active",
-      "pass-reserve-selection-active",
-      "hand-scan-selection-active",
-      "industry-hand-selection-active",
-    );
-    if (els.passReserveSelectionOverlay) {
-      els.passReserveSelectionOverlay.hidden = true;
-      els.passReserveSelectionOverlay.setAttribute("aria-hidden", "true");
-    }
   }
 
   function refreshAfterGameRecovery(message = "已从行动日志恢复局面", workingRoot = null) {
@@ -6843,7 +6821,7 @@
     getActionEffectFlow(workingRoot).consumesMainAction = true;
     getActionEffectFlow(workingRoot).autoExecuteAomomoRewards = isAomomoRewardFlow;
 
-    els.appWrap?.classList.toggle("action-effect-flow-active", true);
+    interactionChrome.setActionEffectFlowActive(true);
     workingRoot.rocketState.statusNote = `${actionLabel}：请依次点击奖励效果`;
     activateNextActionEffect(workingRoot);
     return true;
@@ -6927,7 +6905,7 @@
     assignEffectFlowOwner(getActionEffectFlow(workingRoot), getActionEffectFlow(workingRoot).playerId);
     getActionEffectFlow(workingRoot).consumesMainAction = true;
 
-    els.appWrap?.classList.toggle("action-effect-flow-active", true);
+    interactionChrome.setActionEffectFlowActive(true);
     workingRoot.rocketState.statusNote = "科技：请选择要研究的科技片";
     activateNextActionEffect(workingRoot);
     return true;
@@ -7154,7 +7132,7 @@
     if (getActionEffectFlow(workingRoot).actionType === "researchTech" && effect.type === "research_tech_select") {
       restoreResearchTechSelectionAfterUndo(effect);
     }
-    els.appWrap?.classList.toggle("action-effect-flow-active", true);
+    interactionChrome.setActionEffectFlowActive(true);
   }
 
   function hasActiveEffectSubFlow(workingRoot = null) {
@@ -7378,7 +7356,7 @@
     closeLandTargetPicker(workingRoot);
     closeScanAction4Picker();
     renderActionEffectBar();
-    els.appWrap?.classList.toggle("action-effect-flow-active", false);
+    interactionChrome.setActionEffectFlowActive(false);
     renderReservedCards();
   }
 
@@ -9843,7 +9821,7 @@
           : null;
         if (completedQuickEffectFlow) {
           setActionEffectFlow(workingRoot, completedQuickEffectFlow);
-          els.appWrap?.classList.toggle("action-effect-flow-active", true);
+    interactionChrome.setActionEffectFlowActive(true);
         }
         if ((undoingQuickEffectFlow || completedQuickEffectFlow) && getActionEffectFlow(workingRoot)) {
           const effectIndex = result.step?.effectIndex;
@@ -9901,7 +9879,7 @@
           : null;
         if (completedMainEffectFlow) {
           setActionEffectFlow(workingRoot, completedMainEffectFlow);
-          els.appWrap?.classList.toggle("action-effect-flow-active", true);
+    interactionChrome.setActionEffectFlowActive(true);
         }
         revertEffectFlowAfterUndo(workingRoot, result.step);
       }
@@ -9942,7 +9920,7 @@
         const completedMainEffectFlow = takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_MAIN);
         if (completedMainEffectFlow) {
           setActionEffectFlow(workingRoot, completedMainEffectFlow);
-          els.appWrap?.classList.toggle("action-effect-flow-active", true);
+    interactionChrome.setActionEffectFlowActive(true);
           revertEffectFlowAfterUndo(workingRoot, result.step);
         }
         if (!isActionEffectFlowActive()) {

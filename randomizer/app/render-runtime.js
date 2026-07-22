@@ -474,11 +474,35 @@
       context.renderInitialSelectionArea();
       syncInteractionFocusChrome();
     }
+    function setActionEffectFlowActive(active) {
+      els.appWrap?.classList.toggle("action-effect-flow-active", Boolean(active));
+    }
+    function resetAfterRecovery() {
+      if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+      if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = true;
+      if (els.alienTraceTitle) els.alienTraceTitle.textContent = "获取外星人标记";
+      els.alienTraceSubtitle?.classList.remove("alien-reveal-confirmation-text");
+      if (els.alienTraceCancel) els.alienTraceCancel.hidden = false;
+      if (els.landTargetOverlay) els.landTargetOverlay.hidden = true;
+      if (els.dataPlaceOverlay) els.dataPlaceOverlay.hidden = true;
+      if (els.actionEffectBar) els.actionEffectBar.hidden = true;
+      els.appWrap?.classList.remove(
+        "action-effect-flow-active", "move-mode-active", "card-selection-active",
+        "play-card-selection-active", "card-corner-action-active", "discard-selection-active",
+        "pass-reserve-selection-active", "hand-scan-selection-active", "industry-hand-selection-active",
+      );
+      if (els.passReserveSelectionOverlay) {
+        els.passReserveSelectionOverlay.hidden = true;
+        els.passReserveSelectionOverlay.setAttribute("aria-hidden", "true");
+      }
+    }
     return Object.freeze({
       syncPublicScanConfirmButton,
       syncCardSelectionChrome,
       syncInteractionFocusChrome,
       syncIndustryHandSelectionChrome,
+      setActionEffectFlowActive,
+      resetAfterRecovery,
     });
   }
 
