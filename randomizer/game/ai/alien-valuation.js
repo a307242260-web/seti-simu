@@ -27,7 +27,6 @@
       chong,
       amiba,
       runezu,
-      alienGameState,
       FINAL_ROUND_NUMBER,
       AI_RESOURCE_VALUES,
       AI_TRACE_TYPES,
@@ -210,6 +209,7 @@
 
     function scoreAiExpectedChongPlanetFossilRewardValue(planetId, player = getCurrentPlayer()) {
       if (!chong?.getAvailablePlanetFossils) return 0;
+      const { alienGameState } = readRuleRoot();
       const available = planetId
         ? chong.getAvailablePlanetFossils(alienGameState, planetId)
         : [];
@@ -233,6 +233,7 @@
 
     function scoreAiChongPanelUnlockValue(player = getCurrentPlayer()) {
       if (!player || !chong?.LOCKED_BLUE_POSITIONS?.length) return 0;
+      const { alienGameState } = readRuleRoot();
       const panelSlots = alienGameState?.chong?.panelFossilSlots || {};
       const remainingLockedBlue = chong.LOCKED_BLUE_POSITIONS.filter((position) => !panelSlots[position]).length;
       if (!remainingLockedBlue) return 0;
@@ -384,6 +385,7 @@
 
     function scoreAiChongPickupTaskValue(task = {}, player = getCurrentPlayer(), planetId = null, options = {}) {
       if (!task || task.kind !== "transport" || !player) return 0;
+      const { alienGameState } = readRuleRoot();
       if (planetId && !isAiChongPickupPlanetId(planetId)) return 0;
       if (planetId && !(chong?.getAvailablePlanetFossils?.(alienGameState, planetId) || []).length) return 0;
       if (!planetId) {
@@ -422,6 +424,7 @@
     }
 
     function scoreAiChongPickupRouteValue(planetId, player = getCurrentPlayer(), options = {}) {
+      const { alienGameState } = readRuleRoot();
       if (planetId && !isAiChongPickupPlanetId(planetId)) return 0;
       if (planetId && !(chong?.getAvailablePlanetFossils?.(alienGameState, planetId) || []).length) return 0;
       if (Object.prototype.hasOwnProperty.call(options, "task")) {
@@ -445,6 +448,7 @@
     }
 
     function isAiChongPickupTravelChoice(choice) {
+      const { alienGameState } = readRuleRoot();
       const planetId = getAiCardLandChoicePlanetId(choice);
       return isAiChongPickupPlanetId(planetId)
         && (chong?.getAvailablePlanetFossils?.(alienGameState, planetId) || []).length > 0;
@@ -494,6 +498,7 @@
 
     function getAiChongTransportTaskForRocket(rocket) {
       if (!rocket || !chong?.getTransportTaskForRocket) return null;
+      const { alienGameState } = readRuleRoot();
       const rawTask = chong.getTransportTaskForRocket(alienGameState, rocket.id);
       if (!rawTask) return null;
       const fossil = alienGameState?.chong?.fossilsById?.[rawTask.fossilId] || null;
@@ -617,6 +622,7 @@
 
     function scoreAiChongTraceTaskProgressValue(task = {}, player = getCurrentPlayer()) {
       if (!task || !player || !task.traceType) return 0;
+      const { alienGameState } = readRuleRoot();
       const required = Math.max(1, Math.round(aiNumber(task.count || 1)));
       const current = Math.max(0, Math.round(aiNumber(
         chong?.countTraceMarkers?.(alienGameState, player, task.traceType),
@@ -660,6 +666,7 @@
     }
 
     function scoreAiAmibaSingleSymbolChoiceValue(region, player = getCurrentPlayer()) {
+      const { alienGameState } = readRuleRoot();
       const symbols = amiba?.listSymbolsInRegion?.(alienGameState, region) || [];
       return symbols.reduce((best, entry) => (
         Math.max(best, scoreAiAmibaSymbolEntryValue(entry, player))
@@ -667,6 +674,7 @@
     }
 
     function scoreAiAmibaRegionRewardValue(region, player = getCurrentPlayer()) {
+      const { alienGameState } = readRuleRoot();
       const symbols = amiba?.listSymbolsInRegion?.(alienGameState, region) || [];
       return symbols.reduce((total, entry) => (
         total + Math.max(0, scoreAiAmibaSymbolEntryValue(entry, player))
@@ -674,6 +682,7 @@
     }
 
     function scoreAiAmibaTraceRemovalValue(player = getCurrentPlayer()) {
+      const { alienGameState } = readRuleRoot();
       if (!amiba?.listPlayerTraceOptions) return 0;
       const alienSlotId = alienGameState.amiba?.revealedSlotId;
       return (amiba.listPlayerTraceOptions(alienGameState, alienSlotId, player) || [])
@@ -713,6 +722,7 @@
     }
 
     function getAiRunezuFaceSymbolEntry(symbolId) {
+      const { alienGameState } = readRuleRoot();
       if (!symbolId || !runezu?.listFaceSymbolSlots) return null;
       return (runezu.listFaceSymbolSlots(alienGameState) || [])
         .find((entry) => entry?.symbolId === symbolId) || null;
@@ -759,6 +769,7 @@
     }
 
     function getAiRunezuTaskPendingSymbolIds(card, player = getCurrentPlayer()) {
+      const { alienGameState } = readRuleRoot();
       if (!runezu?.isRunezuCard?.(card)) return [];
       const task = card?.runezuTask || runezu?.getCardTask?.(card);
       if (!task || card?.runezuTaskCompleted) return [];
@@ -821,6 +832,7 @@
     }
 
     function scoreAiRunezuFaceDependencyUnlockValue(position, symbolId, player = getCurrentPlayer()) {
+      const { alienGameState } = readRuleRoot();
       if (!runezu?.FACE_SYMBOL_POSITIONS || !runezu?.canPlaceFaceSymbol || !runezu?.placePlayerSymbolOnFace || !player) {
         return 0;
       }
@@ -854,6 +866,7 @@
     }
 
     function scoreAiRunezuFaceSymbolPlacementChoice(position, symbolId, player = getCurrentPlayer()) {
+      const { alienGameState } = readRuleRoot();
       if (!runezu?.canPlaceFaceSymbol || !runezu?.SYMBOL_IDS?.includes(symbolId) || !player) return -Infinity;
       const check = runezu.canPlaceFaceSymbol(alienGameState, position, player);
       if (!check?.ok || !(check.choices || []).some((choice) => choice.symbolId === symbolId)) return -Infinity;
@@ -976,6 +989,7 @@
     }
 
     function scoreAiRunezuPanelSymbolRewardValue(reward = {}, player = getCurrentPlayer()) {
+      const { alienGameState } = readRuleRoot();
       if (!reward?.panelSymbol) return 0;
       const slotId = reward.panelSymbolSlotId;
       const entry = slotId ? alienGameState.runezu?.panelSymbolSlots?.[slotId] : null;
@@ -993,6 +1007,7 @@
     }
 
     function getAiRunezuSourceSymbol(sourceType, sourceId) {
+      const { alienGameState } = readRuleRoot();
       if (!runezu?.listSourceSymbols || !alienGameState.runezu?.revealInitialized) return null;
       return (runezu.listSourceSymbols(alienGameState) || [])
         .find((entry) => (
@@ -1029,6 +1044,7 @@
     }
 
     function getAiFangzhouUnlockCount(player = getCurrentPlayer()) {
+      const { alienGameState } = readRuleRoot();
       if (!player || !fangzhou?.getUnlockCount) return 0;
       return Math.max(0, Math.round(aiNumber(fangzhou.getUnlockCount(alienGameState, player))));
     }
@@ -1060,6 +1076,7 @@
     }
 
     function scoreAiFangzhouPlacementPotentialAtUnlockCount(player = getCurrentPlayer(), unlockCount = 0) {
+      const { alienGameState } = readRuleRoot();
       if (!player || !fangzhou?.isFangzhouRevealedSlot || !fangzhou?.getTraceGrid) return 0;
       const allowedUnlockCount = Math.max(0, Math.round(aiNumber(unlockCount)));
       const candidates = [];
@@ -1096,6 +1113,7 @@
     }
 
     function scoreAiFangzhouUnlockChoiceValue(player = getCurrentPlayer(), traceType = null) {
+      const { alienGameState } = readRuleRoot();
       if (!player || !fangzhou?.canUnlockCard2ForTrace) return 0;
       if (traceType && !fangzhou.canUnlockCard2ForTrace(alienGameState, player, traceType)) return -Infinity;
       const unlockCount = getAiFangzhouUnlockCount(player);
@@ -1119,6 +1137,7 @@
     }
 
     function getAiFangzhouCard1RewardIndexes() {
+      const { alienGameState } = readRuleRoot();
       if (!fangzhou?.getCard1Effect) return [];
       const fallbackIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8];
       const state = alienGameState?.fangzhou || {};
@@ -1276,6 +1295,7 @@
     }
 
     function getAiYichangdianAnomalyForTraceType(traceType) {
+      const { alienGameState } = readRuleRoot();
       if (!traceType || !yichangdian?.getAnomalyReward) return null;
       return (alienGameState?.yichangdian?.anomalies || []).find((anomaly) => {
         if (anomaly?.traceType === traceType) return true;
@@ -1299,6 +1319,7 @@
     }
 
     function scoreAiYichangdianNextAnomalyRewardValue(player = getCurrentPlayer()) {
+      const { alienGameState } = readRuleRoot();
       if (!yichangdian?.getNextAnomalySectorX || !yichangdian?.getAnomalyBySectorX) return 0;
       const earth = getEarthSectorCoordinate?.();
       if (!earth || !alienGameState?.yichangdian?.revealInitialized) return 0;
@@ -1309,7 +1330,7 @@
 
     function scoreAiYichangdianNextAnomalyScanValue(player = getCurrentPlayer()) {
       if (!yichangdian?.getNextAnomalySectorX) return 0;
-      const { solarState } = readRuleRoot();
+      const { alienGameState, solarState } = readRuleRoot();
       const earth = getEarthSectorCoordinate?.();
       if (!earth || !alienGameState?.yichangdian?.revealInitialized) return 0;
       const nextSectorX = yichangdian.getNextAnomalySectorX(alienGameState, earth.x);
@@ -1325,7 +1346,7 @@
 
     function countAiYichangdianAnomalySignals() {
       if (!yichangdian || !solar?.getNebulaAtCoordinate) return 0;
-      const { nebulaDataState, solarState } = readRuleRoot();
+      const { alienGameState, nebulaDataState, solarState } = readRuleRoot();
       return (alienGameState?.yichangdian?.anomalies || []).reduce((total, anomaly) => {
         const nebula = solar.getNebulaAtCoordinate(anomaly.sectorX, 5, solarState?.sectorBySlot);
         const tokens = nebulaDataState?.nebulae?.[nebula?.id]?.tokens || [];
@@ -1334,6 +1355,7 @@
     }
 
     function getAiYichangdianTopTraceEntry(alienSlotId, traceType) {
+      const { alienGameState } = readRuleRoot();
       if (!yichangdian?.getTopTraceEntry || alienSlotId == null || !traceType) return null;
       return yichangdian.getTopTraceEntry(alienGameState, alienSlotId, traceType);
     }

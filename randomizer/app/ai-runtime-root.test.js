@@ -301,6 +301,26 @@ const players = {
 }
 
 {
+  const rootA = createRoot("a", 1);
+  rootA.alienGameState.yichangdian = {
+    anomalies: [{ id: "anomaly-a", traceType: "blue" }],
+  };
+  const rootB = createRoot("a", 1);
+  rootB.alienGameState.yichangdian = {
+    anomalies: [{ id: "anomaly-b", traceType: "pink" }],
+  };
+  let readout = rootA;
+  const alienValuation = createAlienValuation(contextWith({
+    getRuleReadout: () => readout,
+    yichangdian: { getAnomalyReward: () => ({ score: 1 }) },
+  }));
+  assert.equal(alienValuation.getAiYichangdianAnomalyForTraceType("blue")?.id, "anomaly-a");
+  readout = rootB;
+  assert.equal(alienValuation.getAiYichangdianAnomalyForTraceType("blue"), null);
+  assert.equal(alienValuation.getAiYichangdianAnomalyForTraceType("pink")?.id, "anomaly-b");
+}
+
+{
   const techCandidates = createTechCandidates(contextWith({
     players,
     tech: {
