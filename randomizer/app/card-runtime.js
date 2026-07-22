@@ -161,6 +161,7 @@
       runezu,
       scrollToPlayerHandPanel,
       settleCardTasksAfterEffect,
+      skipActionEffectWithMessage,
       startActionLogDraft,
       startCardEffectFlow,
       structuredClone,
@@ -683,6 +684,52 @@
       updateActionButtons();
       renderStateReadout();
       return result;
+    }
+
+    function beginCardMoveEffect(workingRoot, effect) {
+      const { rocketState } = requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
+      const effectCost = getCardMoveEffectCost(effect);
+      if (Object.keys(effectCost).length && !players.canAfford(currentPlayer, effectCost)) {
+        rocketState.statusNote = `${effect.label}：需要 ${players.formatResourceCost(effectCost)}，可点击跳过`;
+        context.deactivateMoveModeForWorkingRoot(workingRoot);
+        renderActionEffectBar();
+        renderStateReadout();
+        return { ok: false, message: rocketState.statusNote };
+      }
+      const rockets = getMovableTokensForCardMoveEffect(workingRoot, effect, currentPlayer?.id);
+      if (!rockets.length) {
+        const message = isIndustryHuanyuMoveEffect(effect)
+          ? `${effect.label}：没有可移动的另一枚火箭，可点击跳过`
+          : `${effect.label || "移动"}：没有可移动的飞船，已跳过`;
+        context.deactivateMoveModeForWorkingRoot(workingRoot);
+        if (!isIndustryHuanyuMoveEffect(effect)) {
+          return skipActionEffectWithMessage(workingRoot, effect, message, {
+            reason: "没有可移动的飞船",
+            abilityId: "moveProbe",
+          });
+        }
+        rocketState.statusNote = message;
+        renderActionEffectBar();
+        renderStateReadout();
+        return { ok: false, message };
+      }
+      if (!getCardMoveContinuation(workingRoot) || getCardMoveContinuation(workingRoot).effectId !== effect.id) {
+        initCardMoveEffectState(workingRoot, effect);
+      } else {
+        effect.badge = String(getCardMoveContinuation(workingRoot).poolRemaining);
+      }
+      const poolRemaining = getCardMoveContinuation(workingRoot).poolRemaining;
+      rocketState.statusNote = poolRemaining > 1
+        ? `${effect.label}：剩余 ${poolRemaining} 点移动力，请点击要移动的飞船`
+        : rockets.length > 1
+          ? `${effect.label}：请点击要移动的飞船`
+          : `${effect.label}：使用方向键移动飞船`;
+      renderActionEffectBar();
+      if (rockets.length === 1) context.activateMoveModeForWorkingRoot(workingRoot, rockets[0].id);
+      else selectDefaultRocketFromCandidates(workingRoot, rockets);
+      renderStateReadout();
+      return { ok: true, message: rocketState.statusNote };
     }
 
     function recordPlayCardStart(player, card, beforePlayer, beforeCardState, beforeAlienState = null, execution = {}) {
@@ -2168,6 +2215,7 @@
       buildQueuedCardCornerMoveEffect,
       startCardCornerMoveEffectFlow,
       executeFreeMoveForCardCorner,
+      beginCardMoveEffect,
       recordPlayCardStart,
       releaseFutureSpanAfterPlayWithHistory,
       getCardPrice,

@@ -35,7 +35,7 @@ function createHarness() {
     passReserveSelection: null,
   };
   const uiRuntimeState = { passReserveSelectionDismissed: false, passReserveSelectedCardId: null };
-  const calls = { completed: 0, chrome: 0, roots: [], logs: [] };
+  const calls = { completed: 0, chrome: 0, roots: [], logs: [], activatedRocketId: null };
   const recordInactive = (workingRoot) => {
     calls.roots.push(workingRoot);
     return false;
@@ -70,6 +70,14 @@ function createHarness() {
     actionHistory: { hasSession: () => true },
     appendActionLogStep: (...args) => calls.logs.push(args),
     renderInitialSelectionArea: () => {},
+    renderActionEffectBar: () => {},
+    skipActionEffectWithMessage: (_root, _effect, message) => ({ ok: true, message }),
+    activateMoveModeForWorkingRoot: (root, rocketId) => {
+      assert.equal(root, workingRoot);
+      calls.activatedRocketId = rocketId;
+    },
+    deactivateMoveModeForWorkingRoot: () => {},
+    normalizeResourceCost: (cost) => cost || {},
     getCurrentActionEffect: () => effect,
     rocketActions: {
       getMovableTokensForPlayer: () => [{ id: "rocket-1" }],
@@ -159,6 +167,15 @@ function createHarness() {
   const blockedMove = runtime.executeFreeMoveForCardCorner(workingRoot, 1, 0, "rocket-1");
   assert.equal(blockedMove.ok, false);
   assert.equal(workingRoot.rocketState.statusNote, "目标不可达");
+}
+
+{
+  const { runtime, workingRoot, calls } = createHarness();
+  const effect = { id: "move-1", label: "卡牌移动", options: { movementPoints: 2 } };
+  const result = runtime.beginCardMoveEffect(workingRoot, effect);
+  assert.equal(result.ok, true);
+  assert.equal(workingRoot.match.cardMoveContinuation.poolRemaining, 2);
+  assert.equal(calls.activatedRocketId, "rocket-1");
 }
 
 {

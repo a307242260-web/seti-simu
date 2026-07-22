@@ -1332,6 +1332,8 @@
   let confirmPublicCornerDiscardSelectionForRoot;
   let executeFreeMoveForCardCorner;
   let executeFreeMoveForCardCornerForRoot;
+  let beginCardMoveEffect;
+  let beginCardMoveEffectForRoot;
   let recordPlayCardStart;
   let releaseFutureSpanAfterPlayWithHistory;
   let buildCardTaskContext;
@@ -4654,12 +4656,15 @@
     runezu,
     scrollToPlayerHandPanel,
     settleCardTasksAfterEffect: (workingRoot, ...args) => settleCardTasksAfterEffectForRoot(workingRoot, ...args),
+    skipActionEffectWithMessage: (...args) => skipActionEffectWithMessage(...args),
     startCardEffectFlow,
     startActionLogDraft,
     structuredClone,
     syncCardSelectionChrome,
     syncMovePaymentChrome,
     updateActionButtons,
+    activateMoveModeForWorkingRoot: (workingRoot, rocketId) => actionInteractionRuntime.activateMoveMode(workingRoot, rocketId),
+    deactivateMoveModeForWorkingRoot: (workingRoot) => actionInteractionRuntime.deactivateMoveMode(workingRoot),
   });
   ({
     getDiscardCornerRewardMultiplier,
@@ -4740,7 +4745,13 @@
     executeFreeMoveForCardCorner,
     recordPlayCardStart,
     releaseFutureSpanAfterPlayWithHistory,
+    beginCardMoveEffect,
   } = cardRuntime);
+  beginCardMoveEffectForRoot = beginCardMoveEffect;
+  beginCardMoveEffect = (effect) => ruleComposition.inputPort.submitHostCommand({
+    kind: "effect_begin_card_move",
+    effect,
+  }).value;
   executeFreeMoveForCardCornerForRoot = executeFreeMoveForCardCorner;
   executeFreeMoveForCardCorner = (deltaX, deltaY, rocketId) => submitActiveCardDecision(
     "card-corner-free-move",
@@ -6709,64 +6720,6 @@
   });
   const closeScanAction4Picker = scanAction4Picker.close;
   const openScanAction4Picker = scanAction4Picker.open;
-
-  function beginCardMoveEffectForRoot(workingRoot, effect) {
-    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
-    const effectCost = getCardMoveEffectCost(effect);
-    if (Object.keys(effectCost).length && !players.canAfford(currentPlayer, effectCost)) {
-      workingRoot.rocketState.statusNote = `${effect.label}：需要 ${players.formatResourceCost(effectCost)}，可点击跳过`;
-      deactivateMoveMode();
-      renderActionEffectBar();
-      renderStateReadout();
-      return { ok: false, message: workingRoot.rocketState.statusNote };
-    }
-    const rocketsForPlayer = getMovableTokensForCardMoveEffect(effect, currentPlayer?.id);
-    if (!rocketsForPlayer.length) {
-      const message = isIndustryHuanyuMoveEffect(effect)
-        ? `${effect.label}：没有可移动的另一枚火箭，可点击跳过`
-        : `${effect.label || "移动"}：没有可移动的飞船，已跳过`;
-      deactivateMoveMode();
-      if (!isIndustryHuanyuMoveEffect(effect)) {
-        return skipActionEffectWithMessage(effect, message, {
-          reason: "没有可移动的飞船",
-          abilityId: "moveProbe",
-        });
-      }
-      workingRoot.rocketState.statusNote = message;
-      renderActionEffectBar();
-      renderStateReadout();
-      return { ok: false, message };
-    }
-
-    if (!getPendingCardMoveDecision(workingRoot)
-      || getPendingCardMoveDecision(workingRoot).effectId !== effect.id) {
-      initCardMoveEffectState(workingRoot, effect);
-    } else {
-      effect.badge = String(getPendingCardMoveDecision(workingRoot).poolRemaining);
-    }
-
-    const poolRemaining = getPendingCardMoveDecision(workingRoot).poolRemaining;
-    workingRoot.rocketState.statusNote = poolRemaining > 1
-      ? `${effect.label}：剩余 ${poolRemaining} 点移动力，请点击要移动的飞船`
-      : rocketsForPlayer.length > 1
-        ? `${effect.label}：请点击要移动的飞船`
-        : `${effect.label}：使用方向键移动飞船`;
-    renderActionEffectBar();
-    if (rocketsForPlayer.length === 1) {
-      activateMoveMode(rocketsForPlayer[0].id);
-    } else {
-      selectDefaultRocketFromCandidates(rocketsForPlayer);
-    }
-    renderStateReadout();
-    return { ok: true, message: workingRoot.rocketState.statusNote };
-  }
-
-  function beginCardMoveEffect(effect) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "effect_begin_card_move",
-      effect,
-    }).value;
-  }
 
   function applyCardMoveRewardEffect(rewardEffect, messageParts) {
     const currentPlayer = getCurrentPlayer();
