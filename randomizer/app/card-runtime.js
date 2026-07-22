@@ -78,7 +78,6 @@
       abilities,
       actionHistory,
       activateMoveMode,
-      applyCardMoveAfterEventRewards,
       addScoreSourceFromGain,
       allowsBlindDrawInSelection,
       appendActionLogStep,
@@ -137,8 +136,6 @@
       isTechTilePickingActive,
       keepExistingMainActionPendingAfterChongTask,
       markCurrentActionIrreversible,
-      maybeApplyCardMoveDistinctEventReward,
-      maybeApplyCardMoveSameRingReward,
       maybeContinuePendingTurnEndRevealFlow,
       normalizeResourceCost,
       uiRuntimeState,
@@ -148,6 +145,7 @@
       recordAbilityCommands,
       recordHistoryCommand,
       recordQuickHistoryCommand,
+      recordScoreSourceForGainEffect,
       recordTechBonusScore,
       renderActionEffectBar,
       renderPlayerHand,
@@ -730,6 +728,92 @@
       else selectDefaultRocketFromCandidates(workingRoot, rockets);
       renderStateReadout();
       return { ok: true, message: rocketState.statusNote };
+    }
+
+    function applyCardMoveRewardEffect(workingRoot, rewardEffect, messageParts) {
+      const currentPlayer = getWorkingCurrentPlayer(requireWorkingRoot(workingRoot));
+      if (!currentPlayer || !rewardEffect) return null;
+      if (rewardEffect.type === "gain_resources") {
+        const gain = rewardEffect.options?.gain || {};
+        players.gainResources(currentPlayer, gain);
+        recordScoreSourceForGainEffect(currentPlayer, rewardEffect, gain);
+        messageParts.push(`${rewardEffect.label}：${formatPlanetRewardGain(gain)}`);
+        return { ok: true, effect: rewardEffect, gain };
+      }
+      if (rewardEffect.type === "gain_data") {
+        const count = Math.max(0, Math.round(rewardEffect.options?.count || 0));
+        const results = Array.from({ length: count }, () => data.gainData(currentPlayer, { source: "card_move" }));
+        const gained = results.filter((item) => item.ok).length;
+        const discarded = results.filter((item) => item.discarded).length;
+        messageParts.push(`${rewardEffect.label}：获得 ${gained}/${count} 数据${discarded ? `，弃置${discarded}` : ""}`);
+        return { ok: true, effect: rewardEffect, results };
+      }
+      messageParts.push(`暂不支持的移动后奖励：${rewardEffect.type}`);
+      return { ok: false, effect: rewardEffect };
+    }
+
+    function applyCardMoveAfterEventRewards(workingRoot, effect, moveResult, messageParts) {
+      const rewards = effect.options?.afterEventRewards || [];
+      if (!rewards.length || !moveResult?.events?.length) return [];
+      const flow = getActionEffectFlow(workingRoot);
+      if (!flow.cardEventRewardKeys) flow.cardEventRewardKeys = [];
+      const usedKeys = new Set(flow.cardEventRewardKeys);
+      const applied = [];
+      for (const reward of rewards) {
+        if (!moveResult.events.some((event) => {
+          if (event.type !== reward.eventType) return false;
+          if (reward.planetIds?.length && !reward.planetIds.includes(event.planetId)) return false;
+          if (reward.includePlanetIds?.length && !reward.includePlanetIds.includes(event.planetId)) return false;
+          return !(reward.excludePlanetIds?.length && reward.excludePlanetIds.includes(event.planetId));
+        })) continue;
+        if (reward.onceKey && usedKeys.has(reward.onceKey)) continue;
+        const appliedReward = applyCardMoveRewardEffect(workingRoot, reward.effect, messageParts);
+        if (!appliedReward?.ok) continue;
+        applied.push(appliedReward);
+        if (reward.onceKey) {
+          usedKeys.add(reward.onceKey);
+          flow.cardEventRewardKeys.push(reward.onceKey);
+        }
+      }
+      return applied;
+    }
+
+    function maybeApplyCardMoveSameRingReward(workingRoot, effect, moveResult, messageParts) {
+      const rewardEffect = effect.options?.sameRingReward;
+      const payload = moveResult?.payload || {};
+      const fromY = payload.from?.y ?? payload.geometry?.from?.y;
+      const toY = payload.to?.y ?? payload.geometry?.to?.y;
+      const deltaX = Math.abs(Number(payload.deltaX) || 0);
+      if (!rewardEffect || fromY == null || toY == null || Number(fromY) !== Number(toY) || deltaX <= 0) return null;
+      const flow = getActionEffectFlow(workingRoot);
+      if (!flow.cardEventRewardKeys) flow.cardEventRewardKeys = [];
+      const key = `${effect.id || "card-move"}:same-ring`;
+      if (flow.cardEventRewardKeys.includes(key)) return null;
+      const applied = applyCardMoveRewardEffect(workingRoot, rewardEffect, messageParts);
+      if (applied?.ok) flow.cardEventRewardKeys.push(key);
+      return applied;
+    }
+
+    function maybeApplyCardMoveDistinctEventReward(workingRoot, effect, moveResult, messageParts) {
+      const reward = effect.options?.distinctEventReward;
+      if (!reward || !moveResult?.events?.length) return null;
+      const flow = getActionEffectFlow(workingRoot);
+      if (!flow.cardMoveDistinctEvents) flow.cardMoveDistinctEvents = {};
+      if (!flow.cardEventRewardKeys) flow.cardEventRewardKeys = [];
+      const key = reward.onceKey || `${effect.id || "card-move"}:distinct:${reward.eventType}`;
+      if (flow.cardEventRewardKeys.includes(key)) return null;
+      if (!flow.cardMoveDistinctEvents[key]) flow.cardMoveDistinctEvents[key] = [];
+      const values = flow.cardMoveDistinctEvents[key];
+      const distinctBy = reward.distinctBy || "planetId";
+      for (const event of moveResult.events) {
+        if (event?.type !== reward.eventType) continue;
+        const value = event[distinctBy];
+        if (value != null && !values.includes(value)) values.push(value);
+      }
+      if (values.length < Math.max(1, Math.round(Number(reward.minCount) || 1))) return null;
+      const applied = applyCardMoveRewardEffect(workingRoot, reward.effect, messageParts);
+      if (applied?.ok) flow.cardEventRewardKeys.push(key);
+      return applied;
     }
 
     function recordPlayCardStart(player, card, beforePlayer, beforeCardState, beforeAlienState = null, execution = {}) {
@@ -2216,6 +2300,9 @@
       startCardCornerMoveEffectFlow,
       executeFreeMoveForCardCorner,
       beginCardMoveEffect,
+      applyCardMoveAfterEventRewards,
+      maybeApplyCardMoveSameRingReward,
+      maybeApplyCardMoveDistinctEventReward,
       recordPlayCardStart,
       releaseFutureSpanAfterPlayWithHistory,
       getCardPrice,

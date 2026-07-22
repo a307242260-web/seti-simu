@@ -62,6 +62,10 @@ function createHarness() {
     },
     players: {
       getCurrentPlayer: (state) => state.players.find((entry) => entry.id === state.currentPlayerId) || null,
+      gainResources: (target, gain) => {
+        target.resources ||= {};
+        for (const [key, value] of Object.entries(gain)) target.resources[key] = (target.resources[key] || 0) + value;
+      },
     },
     industry: {
       ensureFutureSpanState: (target) => target.futureSpan,
@@ -78,6 +82,8 @@ function createHarness() {
     },
     deactivateMoveModeForWorkingRoot: () => {},
     normalizeResourceCost: (cost) => cost || {},
+    recordScoreSourceForGainEffect: () => {},
+    formatPlanetRewardGain: (gain) => `${gain.energy || 0}能量`,
     getCurrentActionEffect: () => effect,
     rocketActions: {
       getMovableTokensForPlayer: () => [{ id: "rocket-1" }],
@@ -176,6 +182,24 @@ function createHarness() {
   assert.equal(result.ok, true);
   assert.equal(workingRoot.match.cardMoveContinuation.poolRemaining, 2);
   assert.equal(calls.activatedRocketId, "rocket-1");
+}
+
+{
+  const { runtime, workingRoot, player } = createHarness();
+  workingRoot.match.actionEffectFlow = {};
+  const messages = [];
+  const applied = runtime.applyCardMoveAfterEventRewards(workingRoot, {
+    options: {
+      afterEventRewards: [{
+        eventType: "visitPlanet",
+        onceKey: "visit-reward",
+        effect: { type: "gain_resources", label: "到访奖励", options: { gain: { energy: 2 } } },
+      }],
+    },
+  }, { events: [{ type: "visitPlanet", planetId: "mars" }] }, messages);
+  assert.equal(applied.length, 1);
+  assert.equal(player.resources.energy, 2);
+  assert.deepEqual(workingRoot.match.actionEffectFlow.cardEventRewardKeys, ["visit-reward"]);
 }
 
 {
