@@ -11,7 +11,6 @@ const state = runtime.createRuntime({
   alienTypeIds: ["九折", "虫"],
   industryCardFiles: ["层云核心.png", "图灵系统.png"],
 });
-state.decisions.setRootProvider(() => ({ match: state.match ||= {} }));
 
 assert.equal(state.startScreen.aiDifficulty, "weak_start");
 assert.equal(state.startScreen.activePlayerCount, 3);

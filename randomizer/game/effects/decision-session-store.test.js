@@ -4,8 +4,6 @@ const assert = require("node:assert/strict");
 const { createDecisionSessionStore } = require("./decision-session-store");
 
 const store = createDecisionSessionStore();
-const workingRoot = { match: {} };
-store.setRootProvider(() => workingRoot);
 const continuation = () => "resolved";
 const opened = store.open("data_placement", {
   playerId: "p1",

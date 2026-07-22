@@ -552,11 +552,9 @@
       },
     },
     runWithWorkingState(workingRoot, operation) {
-      return decisionSessions.runWithWorkingRoot(workingRoot, () =>
-        players.runWithScoreGainListener(
-          (player, payload) => handlePlayerScoreChanged(workingRoot, player, payload),
-          operation,
-        ),
+      return players.runWithScoreGainListener(
+        (player, payload) => handlePlayerScoreChanged(workingRoot, player, payload),
+        operation,
       );
     },
     executeHostCommand(workingRoot, command) {
@@ -1004,7 +1002,6 @@
     industryCardFiles: INDUSTRY_CARD_FILES,
   });
   const decisionSessions = runtime.decisions;
-  decisionSessions.setRootProvider(() => browserRuleComposition.runtimePort.getWorkingRoot());
   const decisionState = decisionSessions.createFacade({
     discardAction: "discard_action",
     cardSelectionAction: "card_selection_action",
@@ -1172,10 +1169,9 @@
     executeIndustryFreeMove: (workingRoot, ...args) => executeIndustryFreeMoveForRoot(workingRoot, ...args),
     settleCardTasksAfterEffect,
     finishIndustryAbilityFlow: (workingRoot, ...args) => finishIndustryAbilityFlowForRoot(workingRoot, ...args),
-    resolveMovePaymentDecision: (workingRoot, ...args) => resolveMovePaymentDecisionForRoot(workingRoot, ...args),
+    resolveMovePaymentDecision: (...args) => resolveMovePaymentDecision(...args),
     confirmStrategyPassiveSlotChoice,
     handleHandCardDiscard,
-    resolveDiscardSelectionDecision: (workingRoot, ...args) => resolveDiscardSelectionDecisionForRoot(workingRoot, ...args),
     handlePublicCardClick,
     confirmPublicCornerDiscardSelection,
     confirmPublicScanSelection,
@@ -1283,7 +1279,6 @@
   let cancelDiscardSelection;
   let completeDiscardSelection;
   let finalizePendingDiscardSelection;
-  let resolveDiscardSelectionDecision;
   let handleHandCardDiscard;
   let beginPlayCardSelection;
   let cancelPlayCardSelection;
@@ -2200,8 +2195,8 @@
     hasActiveCardTriggerResolution: (...args) => hasActiveCardTriggerResolution(...args),
     isCardTriggerRewardFlowBusy: (...args) => isCardTriggerRewardFlowBusy(...args),
     settleCardTasksAfterEffect: (...args) => settleCardTasksAfterEffect(...args),
-    finishActionEffectFlow: (workingRoot) => finishActionEffectFlowForRoot(workingRoot),
-    cancelActiveEffectSubFlows: (workingRoot) => cancelActiveEffectSubFlowsForRoot(workingRoot),
+    finishActionEffectFlow,
+    cancelActiveEffectSubFlows,
     maybeAutoExecuteAomomoRewardEffects,
     withEffectExecutionPlayer,
     executeActionEffectForOwner,
@@ -2544,7 +2539,6 @@
     cancelDiscardSelection,
     completeDiscardSelection,
     finalizePendingDiscardSelection,
-    resolveDiscardSelectionDecision,
     handleHandCardDiscard,
     beginPlayCardSelection,
     cancelPlayCardSelection,
@@ -2573,7 +2567,6 @@
   cancelMovePaymentSelection = (...args) => callHandFlowCommand("cancelMovePaymentSelection", args);
   beginMovePaymentSelection = (...args) => callHandFlowCommand("beginMovePaymentSelection", args);
   handleHandCardMovePayment = (...args) => callHandFlowCommand("handleHandCardMovePayment", args);
-  const resolveMovePaymentDecisionForRoot = resolveMovePaymentDecision;
   resolveMovePaymentDecision = (...args) => callHandFlowCommand("resolveMovePaymentDecision", args);
   confirmMovePayment = () => {
     const decision = browserRuleComposition.inspect().session?.decision || null;
@@ -2618,8 +2611,6 @@
   cancelDiscardSelection = (...args) => callHandFlowCommand("cancelDiscardSelection", args);
   completeDiscardSelection = (...args) => callHandFlowCommand("completeDiscardSelection", args);
   finalizePendingDiscardSelection = (...args) => callHandFlowCommand("finalizePendingDiscardSelection", args);
-  const resolveDiscardSelectionDecisionForRoot = resolveDiscardSelectionDecision;
-  resolveDiscardSelectionDecision = (...args) => callHandFlowCommand("resolveDiscardSelectionDecision", args);
   handleHandCardDiscard = (...args) => callHandFlowCommand("handleHandCardDiscard", args);
   beginPlayCardSelection = (...args) => callHandFlowCommand("beginPlayCardSelection", args);
   cancelPlayCardSelection = (...args) => callHandFlowCommand("cancelPlayCardSelection", args);
@@ -4674,7 +4665,6 @@
     options,
   });
   const cardRuntime = cardRuntimeModule.createCardRuntime({
-    getWorkingRoot: () => browserRuleComposition.runtimePort.getWorkingRoot(),
     decisionSessions,
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,

@@ -563,17 +563,13 @@
       return true;
     }
 
-    function completeCurrentActionEffect(workingRootOrStatus, requestedStatus = "completed") {
-      const workingRoot = workingRootOrStatus && typeof workingRootOrStatus === "object"
-        ? workingRootOrStatus
-        : null;
-      const status = workingRoot ? requestedStatus : (workingRootOrStatus || "completed");
+    function completeCurrentActionEffect(status = "completed") {
       if (!decisionState.actionEffectFlow) return;
 
       const current = getCurrentActionEffect();
       if (!current || current.status !== "active") return;
 
-      cancelActiveEffectSubFlows(workingRoot);
+      cancelActiveEffectSubFlows();
       const hadHistoryStep = uiRuntimeState.effectStepActive;
       const effectEvents = status !== "skipped" ? (current.result?.events || []) : [];
       const deferredType1Events = status !== "skipped" ? (current.result?.deferredType1Events || []) : [];
@@ -620,19 +616,19 @@
         if (deferredType1Events.length) {
           settleCardTasksAfterEffect({ events: deferredType1Events, type1Only: true, render: false });
         }
-        if (!hasActiveCardTriggerResolution(workingRoot)) {
+        if (!hasActiveCardTriggerResolution()) {
           activateNextActionEffectIfIdle();
         }
         if (
           (decisionState.actionEffectFlow && !decisionState.actionEffectFlow.completed)
-          || hasActiveCardTriggerResolution(workingRoot)
+          || hasActiveCardTriggerResolution()
         ) {
           renderActionEffectBar();
           updateActionButtons();
           renderStateReadout();
           return;
         }
-        finishActionEffectFlow(workingRoot);
+        finishActionEffectFlow();
         return;
       }
       settleCardTasksAfterEffect({ events: effectEvents, render: true });

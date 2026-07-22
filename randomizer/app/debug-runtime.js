@@ -159,7 +159,6 @@
     }
 
     function clearPlayerScopedSelectionsForSwitch(workingRoot) {
-      workingRoot.match ||= {};
       decisionState.discardAction = null;
       decisionState.cardSelectionAction = null;
       delete workingRoot.match.passReserveContinuation;
@@ -423,7 +422,6 @@
     }
 
     function openDebugQuickSectorScanPicker(workingRoot) {
-      workingRoot.match ||= {};
       if (
         isCardSelectionActive?.()
         || isDiscardSelectionActive?.()

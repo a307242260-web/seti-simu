@@ -128,7 +128,6 @@
       resolveMovePaymentDecision,
       confirmStrategyPassiveSlotChoice,
       handleHandCardDiscard,
-      resolveDiscardSelectionDecision,
       handlePublicCardClick,
       confirmPublicCornerDiscardSelection,
       confirmPublicScanSelection,
@@ -986,30 +985,23 @@
     const discardPending = decisionState.discardAction;
     if (discardPending) {
       const player = discardPending.player || getHeadlessConditionalPlayer(discardPending);
-      const requiredCount = Math.max(1, Math.round(Number(cards.getDiscardRemaining(workingRoot.cardState)) || 1));
-      let subsets = [[]];
-      for (let handIndex = 0; handIndex < (player?.hand || []).length; handIndex += 1) {
-        subsets = [...subsets, ...subsets.filter((selected) => selected.length < requiredCount)
-          .map((selected) => [...selected, handIndex])];
-      }
+      const selectedIndexes = new Set(discardPending.selectedIndexes || []);
       return {
         actorPlayer: player,
-        candidates: subsets.filter((selected) => selected.length === requiredCount).map((selectedHandIndices) => ({
+        candidates: (player?.hand || []).flatMap((card, handIndex) => (
+          selectedIndexes.has(handIndex) ? [] : [{
             id: "conditionalChoice",
             family: "choose_payment",
-            label: selectedHandIndices.map((index) => cards.getCardLabel(player.hand[index])).join("、"),
+            label: cards.getCardLabel(card),
             target: {
               kind: "discard-hand-card",
-              choiceId: selectedHandIndices.join(","),
-              cardId: selectedHandIndices.length === 1
-                ? (player.hand[selectedHandIndices[0]]?.cardId || player.hand[selectedHandIndices[0]]?.id || null)
-                : null,
-              handIndex: selectedHandIndices.length === 1 ? selectedHandIndices[0] : null,
+              choiceId: String(handIndex),
+              cardId: card.cardId || card.id || null,
+              handIndex,
             },
-            ...(selectedHandIndices.length === 1
-              ? { handIndex: selectedHandIndices[0] }
-              : { selectedHandIndices }),
-          })),
+            handIndex,
+          }]
+        )),
       };
     }
     const cardPending = decisionState.cardSelectionAction;
@@ -1369,17 +1361,15 @@
       }
       return { ok: true, progressed: true, skipped: true, message: "已跳过无法执行的免费移动" };
     },
-    "move-payment": (action, workingRoot) => {
-      return resolveMovePaymentDecision(workingRoot, {
+    "move-payment": (action) => {
+      return resolveMovePaymentDecision({
         automated: true,
         selectedHandIndices: [...(action.selectedHandIndices || [])],
       });
     },
     "strategy-passive-slot": (action) => confirmStrategyPassiveSlotChoice(action.target.slotId),
-    "discard-hand-card": (action, workingRoot) => resolveDiscardSelectionDecision(
-      workingRoot,
-      action.selectedHandIndices || [action.handIndex],
-    ),
+    "discard-hand-card": (action) => handleHandCardDiscard(Number(action.target.handIndex))
+      || { ok: true, progressed: true, message: "已选择弃牌" },
     "public-card": (action) => handlePublicCardClick(Number(action.target.slotId))
       || { ok: true, progressed: true, message: "已选择公共牌" },
     "confirm-public-corner-discard": () => confirmPublicCornerDiscardSelection(),

@@ -1139,7 +1139,7 @@
       }
       if (pending?.type === "card_income" && pending.fromEffectFlow && getCurrentActionEffect()) {
         getCurrentActionEffect().result = { ok: true, undoable: true, message: "已取消收入" };
-        completeCurrentActionEffect(workingRoot, "skipped");
+        completeCurrentActionEffect("skipped");
       }
       ruleRocketState(workingRoot).statusNote = isIncomeDiscardActionType(pending?.type) ? "已取消收入" : "已取消弃牌";
       syncDiscardSelectionChrome(workingRoot);
@@ -1188,7 +1188,7 @@
               message: incomeResult.message,
               payload: { gain: incomeResult.gain, card: discardedCards[0] },
             };
-            completeCurrentActionEffect(workingRoot);
+            completeCurrentActionEffect();
           }
         }
         ruleRocketState(workingRoot).statusNote = incomeResult.ok ? incomeResult.message : (incomeResult.message || "收入失败");
@@ -1229,7 +1229,7 @@
         renderPlayerHand();
         renderPlayerStats();
         renderPublicCards();
-        completeCurrentActionEffect(workingRoot);
+        completeCurrentActionEffect();
         updatePublicCardControls();
         updateActionButtons();
         renderStateReadout();
@@ -1268,21 +1268,6 @@
       if (pending) pending.selectedIndexes = [];
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), false, 0);
       return completeDiscardSelection(workingRoot, discarded);
-    }
-
-    function resolveDiscardSelectionDecision(workingRoot, selectedHandIndices) {
-      const pending = decisionState.discardAction;
-      const requiredCount = Math.max(0, cards.getDiscardRemaining(ruleCardState(workingRoot)));
-      const selected = [...new Set((selectedHandIndices || []).map(Number))]
-        .filter((index) => Number.isInteger(index) && index >= 0);
-      if (!pending || selected.length !== requiredCount) {
-        return { ok: false, message: "弃牌 choice 与当前规则要求不一致" };
-      }
-      pending.selectedIndexes = selected;
-      const result = finalizePendingDiscardSelection(workingRoot);
-      return result && typeof result === "object"
-        ? { ...result, progressed: result.ok !== false }
-        : { ok: true, progressed: true };
     }
 
     function handleHandCardDiscard(workingRoot, handIndex) {
@@ -1964,7 +1949,6 @@
       cancelDiscardSelection,
       completeDiscardSelection,
       finalizePendingDiscardSelection,
-      resolveDiscardSelectionDecision,
       handleHandCardDiscard,
       beginPlayCardSelection,
       cancelPlayCardSelection,
