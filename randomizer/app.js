@@ -6325,15 +6325,16 @@
     ];
   }
 
-  function getActionResultOwnerPlayer(result, fallbackPlayer = null) {
+  function getActionResultOwnerPlayer(workingRoot, result, fallbackPlayer = null) {
     const ownerEvent = (result?.events || []).find((event) => event?.playerId || event?.playerColor) || null;
-    return resolvePlayerReference({
-      playerId: result?.playerId || result?.payload?.playerId || ownerEvent?.playerId || null,
-      playerColor: result?.playerColor || result?.payload?.playerColor || ownerEvent?.playerColor || null,
-    }) || fallbackPlayer || getCurrentPlayer();
+    const playerId = result?.playerId || result?.payload?.playerId || ownerEvent?.playerId || null;
+    const playerColor = result?.playerColor || result?.payload?.playerColor || ownerEvent?.playerColor || null;
+    return (workingRoot.playerState.players || []).find((player) => (
+      (playerId && player.id === playerId) || (playerColor && player.color === playerColor)
+    )) || fallbackPlayer || players.getCurrentPlayer(workingRoot.playerState);
   }
 
-  function claimRunezuPlanetSymbolForTravelResult(actionType, result, fallbackPlayer = null) {
+  function claimRunezuPlanetSymbolForTravelResult(workingRoot, actionType, result, fallbackPlayer = null) {
     if (actionType !== "orbit" && actionType !== "land") return null;
     const planetId = result?.planetId || result?.payload?.planetId || null;
     if (!planetId) return null;
@@ -6341,7 +6342,7 @@
     const claim = claimRunezuSourceSymbolWithHistory(
       "planet",
       planetId,
-      getActionResultOwnerPlayer(result, fallbackPlayer),
+      getActionResultOwnerPlayer(workingRoot, result, fallbackPlayer),
       `${actionLabel}获得符文族symbol`,
     );
     if (claim?.ok) {
@@ -6362,7 +6363,7 @@
     if (!workingRoot?.playerState || !workingRoot?.rocketState) {
       throw new TypeError("startPlanetRewardEffectFlow 缺少 workingRoot");
     }
-    const actionOwner = getActionResultOwnerPlayer(result);
+    const actionOwner = getActionResultOwnerPlayer(workingRoot, result);
     const rewardEffects = buildPlanetRewardEffectsWithIndustry(actionType, result, { player: actionOwner });
     if (!rewardEffects.length) return false;
 
@@ -6378,7 +6379,7 @@
     });
     uiRuntimeState.effectStepActive = true;
     recordAbilityCommands(result, actionHistory, workingRoot);
-    const runezuClaim = claimRunezuPlanetSymbolForTravelResult(actionType, result, actionOwner);
+    const runezuClaim = claimRunezuPlanetSymbolForTravelResult(workingRoot, actionType, result, actionOwner);
     if (runezuClaim?.ok) renderRunezuBoardSymbols();
     endEffectHistoryStep();
 
