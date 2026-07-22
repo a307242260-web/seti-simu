@@ -524,6 +524,8 @@
           return cloneResidentPresentation(runAiSelectedTurnActionForRoot(workingRoot, command.selector, command.options));
         case "headless_enumerate_turn_actions":
           return { ok: true, value: enumerateHeadlessTurnActionsForRoot(workingRoot) };
+        case "headless_enumerate_conditional_actions":
+          return { ok: true, value: enumerateHeadlessConditionalActionsForRoot(workingRoot) };
         case "headless_execute_conditional_action":
           return cloneResidentPresentation(
             conditionalActionExecutor.execute(workingRoot, command.action?.standardAction || command.action),
@@ -10499,11 +10501,11 @@
   function createConditionalActionProvider(family) {
     return {
       label: family,
-      getOptions() {
-        return conditionalActionExecutor.getOptions(browserRuleState, family);
+      getOptions(context) {
+        return conditionalActionExecutor.getOptions(context, family);
       },
-      canExecute(_context, descriptor) {
-        return conditionalActionExecutor.validate(browserRuleState, descriptor);
+      canExecute(context, descriptor) {
+        return conditionalActionExecutor.validate(context, descriptor);
       },
       execute() {
         return {
@@ -10515,17 +10517,18 @@
     };
   }
 
-  function enumerateHeadlessConditionalActions() {
+  function enumerateHeadlessConditionalActionsForRoot(workingRoot) {
     syncFinalScorePendingMarks();
-    const decision = conditionalActionExecutor.inspect(browserRuleState);
+    const decision = conditionalActionExecutor.inspect(workingRoot);
     const actorPlayer = decision?.ownerId ? getPlayerById(decision.ownerId) : null;
     if (!actorPlayer?.id || !decision?.choices?.length) {
       return { actorPlayer, candidates: [] };
     }
-    const listing = dispatchBrowserRuleInput({
-      kind: "standard_enumerate",
-      payload: { actorId: actorPlayer.id },
-    });
+    const listing = actionRuntimeController.dispatchAction(
+      { kind: "standard_enumerate", payload: { actorId: actorPlayer.id } },
+      null,
+      createActionContextForWorkingRoot(workingRoot),
+    );
     const candidates = (listing.candidates || [])
       .filter((standardAction) => standardAction.phase === "conditional")
       .map((standardAction) => ({
@@ -10537,6 +10540,12 @@
         standardAction,
       }));
     return { actorPlayer, candidates };
+  }
+
+  function enumerateHeadlessConditionalActions() {
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "headless_enumerate_conditional_actions",
+    }).value || { actorPlayer: null, candidates: [] };
   }
 
   function executeHeadlessConditionalAction(action) {
