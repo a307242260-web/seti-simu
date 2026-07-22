@@ -1,7 +1,11 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createActionInteractionRuntime, createBoardPointerHandlers } = require("./action-interaction-runtime");
+const {
+  createActionInteractionRuntime,
+  createBoardPointerHandlers,
+  createLandTargetPicker,
+} = require("./action-interaction-runtime");
 
 const runtime = createActionInteractionRuntime({
   cardEffects: {
@@ -92,6 +96,59 @@ assert.throws(() => runtime.getPlutoCandidateRockets(), /explicit workingRoot/);
     preventDefault() {},
   });
   assert.deepEqual(calls, ["stop", "activate:7", "prevent", "deactivate", "render"]);
+}
+
+{
+  const submitted = [];
+  const hostCommands = [];
+  const select = {
+    value: "1",
+    children: [],
+    replaceChildren(...children) { this.children = children; },
+    focus() { this.focused = true; },
+  };
+  const overlay = { hidden: true, dataset: {} };
+  const picker = createLandTargetPicker({
+    document: {
+      createElement: () => ({ value: "", textContent: "" }),
+    },
+    els: {
+      landTargetOverlay: overlay,
+      landTargetSelect: select,
+      landTargetTitle: { textContent: "" },
+      landTargetLabel: { textContent: "" },
+      landTargetConfirm: { textContent: "" },
+    },
+    getPendingOwnerFields: () => ({ playerId: "p1" }),
+    dispatchHostCommand: (command) => {
+      hostCommands.push(command);
+      return { value: { ok: true } };
+    },
+    submitChoice: (choiceIndex) => {
+      submitted.push(choiceIndex);
+      return { ok: true };
+    },
+  });
+  const workingRoot = { match: {}, rocketState: { statusNote: "" } };
+  picker.open(workingRoot, {
+    planet: { planetId: "mars", name: "火星" },
+    choices: [{ label: "轨道" }, { label: "登陆" }],
+  });
+  assert.equal(workingRoot.match.landTargetContinuation.playerId, "p1");
+  assert.equal(select.children[1].textContent, "登陆");
+  assert.equal(overlay.hidden, false);
+  assert.equal(select.focused, true);
+  assert.deepEqual(picker.confirm(), { ok: true });
+  assert.deepEqual(submitted, [1]);
+  picker.close(workingRoot);
+  assert.equal(workingRoot.match.landTargetContinuation, undefined);
+  assert.equal(overlay.hidden, true);
+
+  const requestOptions = { choices: [{ label: "原始" }] };
+  picker.request(requestOptions);
+  requestOptions.choices[0].label = "已修改";
+  assert.equal(hostCommands[0].kind, "land_target_open");
+  assert.equal(hostCommands[0].options.choices[0].label, "原始");
 }
 
 const rootA = createRoot("a");

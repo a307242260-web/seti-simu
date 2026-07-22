@@ -60,6 +60,83 @@
     return Object.freeze({ handleRocketPointerDown, handleBoardPointerDown });
   }
 
+  function createLandTargetPicker(context = {}) {
+    const { document, els = {} } = context;
+    if (typeof context.dispatchHostCommand !== "function") {
+      throw new TypeError("land target picker requires dispatchHostCommand()");
+    }
+    if (typeof context.submitChoice !== "function") {
+      throw new TypeError("land target picker requires submitChoice()");
+    }
+
+    function close(workingRoot = null) {
+      if (workingRoot?.match) delete workingRoot.match.landTargetContinuation;
+      if (!els.landTargetOverlay) return;
+      els.landTargetOverlay.hidden = true;
+      delete els.landTargetOverlay.dataset.planetId;
+    }
+
+    function cancel(workingRoot = null) {
+      if (!workingRoot?.match) {
+        return context.dispatchHostCommand({ kind: "land_target_cancel" }).value;
+      }
+      const pending = workingRoot.match.landTargetContinuation || null;
+      close(workingRoot);
+      if (pending?.cancelKind === "chong-travel") {
+        workingRoot.rocketState.statusNote = "已取消虫族环绕/登陆目标选择";
+        context.renderStateReadout?.();
+      }
+      return { ok: true, canceled: true };
+    }
+
+    function open(workingRoot, options = {}) {
+      if (!workingRoot?.match) throw new TypeError("land target requires Composition workingRoot.match");
+      const effect = options.effect || null;
+      workingRoot.match.landTargetContinuation = {
+        ...(context.getPendingOwnerFields?.(effect, options.player || null) || {}),
+        type: "land_target",
+        resumeKind: options.resumeKind || "main-planet-action",
+        cancelKind: options.cancelKind || null,
+        actionType: options.actionType || null,
+        effectId: effect?.id || options.effectId || null,
+        choices: structuredClone(options.choices || []),
+        title: options.title || null,
+        selectLabel: options.selectLabel || null,
+        confirmText: options.confirmText || null,
+        planet: structuredClone(options.planet || null),
+      };
+      if (!els.landTargetOverlay || !els.landTargetSelect) {
+        return { ok: true, pending: true, message: "请选择登陆目标" };
+      }
+      els.landTargetTitle.textContent = options.title || `选择登陆目标：${options.planet.name}`;
+      if (els.landTargetLabel) els.landTargetLabel.textContent = options.selectLabel || "登陆到";
+      if (els.landTargetConfirm) els.landTargetConfirm.textContent = options.confirmText || "确认登陆";
+      els.landTargetSelect.replaceChildren(...(options.choices || []).map((choice, index) => {
+        const option = document.createElement("option");
+        option.value = String(index);
+        option.textContent = choice.label;
+        return option;
+      }));
+      els.landTargetOverlay.dataset.planetId = options.planet?.planetId || "";
+      els.landTargetOverlay.hidden = false;
+      els.landTargetSelect.focus();
+      return { ok: true, pending: true, message: "请选择登陆目标" };
+    }
+
+    function request(options) {
+      return context.dispatchHostCommand({
+        kind: "land_target_open",
+        options: structuredClone(options),
+      }).value;
+    }
+
+    function confirm() {
+      return context.submitChoice(Number(els.landTargetSelect?.value));
+    }
+
+    return Object.freeze({ close, cancel, open, request, confirm });
+  }
+
   function createActionInteractionRuntime(context) {
     const simulation = context.simulation === true;
     const {
@@ -1133,6 +1210,7 @@
 
   return {
     createBoardPointerHandlers,
+    createLandTargetPicker,
     createActionInteractionRuntime,
   };
 });

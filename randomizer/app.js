@@ -1022,6 +1022,19 @@
     workingRoot?.match?.dataPlacementContinuation || null
   );
   const getPendingLandTargetDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.landTargetContinuation || null;
+  const landTargetPicker = actionInteractionRuntimeModule.createLandTargetPicker({
+    document,
+    els,
+    dispatchHostCommand: (command) => ruleComposition.inputPort.submitHostCommand(command),
+    submitChoice: (choiceIndex) => confirmLandTargetChoice(choiceIndex),
+    getPendingOwnerFields: (...args) => getPendingOwnerFields(...args),
+    renderStateReadout: (...args) => renderStateReadout(...args),
+  });
+  const closeLandTargetPicker = landTargetPicker.close;
+  const cancelLandTargetPicker = landTargetPicker.cancel;
+  const openLandTargetPicker = landTargetPicker.open;
+  const requestLandTargetPicker = landTargetPicker.request;
+  const confirmLandTargetPicker = landTargetPicker.confirm;
   const getPendingAlienTraceDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.alienTraceContinuation || null;
   const getPendingPiratesRaidDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.piratesRaidContinuation || null;
   const getPendingStrategySlotDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.strategySlotContinuation || null;
@@ -10766,73 +10779,6 @@
       "扇区占用",
       ...occupancyLines,
     ];
-  }
-
-  function closeLandTargetPicker(workingRoot = null) {
-    if (workingRoot?.match) delete workingRoot.match.landTargetContinuation;
-    if (!els.landTargetOverlay) return;
-    els.landTargetOverlay.hidden = true;
-    delete els.landTargetOverlay.dataset.planetId;
-  }
-
-  function cancelLandTargetPicker(workingRoot = null) {
-    if (!workingRoot) {
-      return ruleComposition.inputPort.submitHostCommand({ kind: "land_target_cancel" }).value;
-    }
-    const pending = getPendingLandTargetDecision(workingRoot);
-    closeLandTargetPicker(workingRoot);
-    if (pending?.cancelKind === "chong-travel") {
-      workingRoot.rocketState.statusNote = "已取消虫族环绕/登陆目标选择";
-      renderStateReadout();
-    }
-  }
-
-  function openLandTargetPicker(workingRoot, options) {
-    if (!workingRoot?.match) throw new TypeError("land target requires Composition workingRoot.match");
-    const effect = options.effect || null;
-    workingRoot.match.landTargetContinuation = {
-      ...getPendingOwnerFields(effect, options.player || null),
-      type: "land_target",
-      resumeKind: options.resumeKind || "main-planet-action",
-      cancelKind: options.cancelKind || null,
-      actionType: options.actionType || null,
-      effectId: effect?.id || options.effectId || null,
-      choices: structuredClone(options.choices || []),
-      title: options.title || null,
-      selectLabel: options.selectLabel || null,
-      confirmText: options.confirmText || null,
-      planet: structuredClone(options.planet || null),
-    };
-    if (!els.landTargetOverlay || !els.landTargetSelect) {
-      return { ok: true, pending: true, message: "请选择登陆目标" };
-    }
-    els.landTargetTitle.textContent = options.title || `选择登陆目标：${options.planet.name}`;
-    if (els.landTargetLabel) {
-      els.landTargetLabel.textContent = options.selectLabel || "登陆到";
-    }
-    if (els.landTargetConfirm) {
-      els.landTargetConfirm.textContent = options.confirmText || "确认登陆";
-    }
-    els.landTargetSelect.replaceChildren(...options.choices.map((choice, index) => {
-      const option = document.createElement("option");
-      option.value = String(index);
-      option.textContent = choice.label;
-      return option;
-    }));
-    els.landTargetOverlay.dataset.planetId = options.planet?.planetId || "";
-    els.landTargetOverlay.hidden = false;
-    els.landTargetSelect.focus();
-  }
-
-  function requestLandTargetPicker(options) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "land_target_open",
-      options: structuredClone(options),
-    }).value;
-  }
-
-  function confirmLandTargetPicker() {
-    return confirmLandTargetChoice(Number(els.landTargetSelect?.value));
   }
 
   function resumeLandTargetContinuation(workingRoot, pending, choice) {

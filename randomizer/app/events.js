@@ -292,8 +292,8 @@
       researchTech: researchTechForCurrentPlayer,
     }));
     els.techSelectionCancel?.addEventListener("click", cancelTechSelection);
-    els.landTargetConfirm?.addEventListener("click", confirmLandTargetPicker);
-    els.landTargetCancel?.addEventListener("click", cancelLandTargetPicker);
+    els.landTargetConfirm?.addEventListener("click", () => confirmLandTargetPicker());
+    els.landTargetCancel?.addEventListener("click", () => cancelLandTargetPicker());
     els.landTargetOverlay?.addEventListener("click", (event) => {
       if (event.target === els.landTargetOverlay) cancelLandTargetPicker();
     });
