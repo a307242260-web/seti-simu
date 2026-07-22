@@ -36,13 +36,18 @@ function createElement(tagName) {
     income: Object.freeze({ credits: 3, energy: 2, handSize: 1 }),
     hand: Object.freeze([Object.freeze({ id: "c1" })]),
   });
+  const readoutRoot = Object.freeze({
+    ...resident,
+    playerState: Object.freeze({ currentPlayerId: "p1", players: Object.freeze([player]) }),
+  });
   const ui = createPlayerStatsUi({
     document: { createElement },
     players: {
       DEFAULT_RESOURCES: {},
-      RESOURCE_LIMITS: { publicity: 5 },
+      RESOURCE_LIMITS: { publicity: 5, availableData: 4 },
       normalizeIncome: (income) => income,
       getPlayerColorDefinition: () => ({ uiColor: "#00f" }),
+      getCurrentPlayer: (state) => state.players.find((entry) => entry.id === state.currentPlayerId),
     },
     data: {
       COMPUTER_DATA_SLOTS: { a: {}, b: {} },
@@ -57,8 +62,10 @@ function createElement(tagName) {
       getSymbolSrc: () => "star.png",
     },
     resourceIconSrc: new Proxy({}, { get: (_, key) => `${String(key)}.png` }),
-    getReadoutRoot: () => resident,
+    getReadoutRoot: () => readoutRoot,
     getPlayerCompanyBaseIncome: () => ({ credits: 1, energy: 1, handSize: 1 }),
+    getInterfacePlayer: () => player,
+    computeFinalScoreBreakdown: () => ({ totalScore: 9, tileScore: 2, cardScore: 3 }),
     isAiPlayer: () => true,
     isPlayerPassed: () => true,
   });
@@ -70,6 +77,7 @@ function createElement(tagName) {
   assert.equal(ui.buildPlayerFangzhouStatNodes(player)[1].children[1].textContent, "2/3");
   assert.equal(ui.buildPlayerRunezuStatNodes(player)[0].attributes["aria-label"], "星 1");
   assert.equal(ui.formatPlayerIncomeBreakdown(player, "credits"), "3(1+2)");
+  assert.match(ui.getPlayerReadoutLines().join("\n"), /终局总分=9（板块=2 卡牌=3/);
   assert.equal(Object.isFrozen(resident), true);
 
   console.log("player stats UI tests passed");

@@ -2042,6 +2042,8 @@
     resourceIconSrc: RESOURCE_ICON_SRC,
     getReadoutRoot: createStateSourceReadoutRoot,
     getPlayerCompanyBaseIncome: (...args) => getPlayerCompanyBaseIncome(...args),
+    getInterfacePlayer: (...args) => getInterfacePlayer(...args),
+    computeFinalScoreBreakdown: (...args) => computePlayerFinalScoreBreakdown(...args),
     isAiPlayer: (...args) => isAiAutoBattlePlayer?.(...args),
     isPlayerPassed: isPlayerPassedThisRound,
   });
@@ -2056,6 +2058,7 @@
     buildPlayerRunezuStatNodes,
     buildPlayerFangzhouStatNodes,
     formatPlayerIncomeBreakdown,
+    getPlayerReadoutLines,
   } = playerStatsUi;
   const renderRuntime = renderRuntimeModule.createRenderRuntime({
     document,
@@ -9683,43 +9686,6 @@
       kind: "data_place_blue_slot",
       blueSlot,
     }).value;
-  }
-
-  function getPlayerReadoutLines() {
-    const readoutRoot = createStateSourceReadoutRoot();
-    const interfacePlayer = getInterfacePlayer();
-    const currentPlayer = readoutRoot.playerState.players.find((player) => player.id === interfacePlayer?.id)
-      || players.getCurrentPlayer(readoutRoot.playerState);
-    const resources = currentPlayer.resources;
-    const income = players.normalizeIncome(currentPlayer.income || null);
-    const companyBaseIncome = getPlayerCompanyBaseIncome(currentPlayer);
-    const limits = players.RESOURCE_LIMITS;
-    const reservedCount = Array.isArray(currentPlayer.reservedCards) ? currentPlayer.reservedCards.length : 0;
-    const probeLocationData = buildProbeLocationIndex();
-    const finalScoreBreakdown = endGameScoring?.computePlayerFinalScore
-      ? endGameScoring.computePlayerFinalScore({
-        currentPlayer,
-        finalScoringState: readoutRoot.finalScoringState,
-        playerState: readoutRoot.playerState,
-        nebulaDataState: readoutRoot.nebulaDataState,
-        alienGameState: readoutRoot.alienGameState,
-        planetStatsState: readoutRoot.planetStatsState,
-        ...buildPlutoMarkerContext(),
-        probeLocations: probeLocationData.index,
-        probeLocationDetails: probeLocationData.details,
-        cardEffects,
-        getCardTypeCode,
-        getPlayerCompanyBaseIncome,
-      })
-      : { totalScore: resources.score, tileScore: 0, cardScore: 0 };
-
-    return [
-      "玩家状态",
-      `${currentPlayer.name}(${currentPlayer.color}) 信用点=${resources.credits} 能量=${resources.energy} 宣传=${resources.publicity}/${limits.publicity} 可用数据=${resources.availableData}/${limits.availableData} 奥陌陌化石=${resources.aomomoFossils || 0} 额外公共扫描=${resources.additionalPublicScan || 0} 手牌=${resources.handSize} 保留=${reservedCount} 完成任务=${currentPlayer.completedTaskCount || 0} 分数=${resources.score} 环绕=${currentPlayer.orbitCount}`,
-      `终局总分=${finalScoreBreakdown.totalScore}（板块=${finalScoreBreakdown.tileScore || 0} 卡牌=${finalScoreBreakdown.cardScore || 0} 九折=${finalScoreBreakdown.jiuzheCardScore || 0} 符文族=${finalScoreBreakdown.runezuSymbolScore || 0} 威胁=${finalScoreBreakdown.jiuzheThreat || 0}${finalScoreBreakdown.jiuzhePenaltyApplied ? " 已0.9修正" : ""}）`,
-      `符文族symbol ${runezu?.getPlayerSymbolSummary?.(currentPlayer) || "无"}`,
-      `收入 信用点=${formatPlayerIncomeBreakdown(currentPlayer, "credits", income, companyBaseIncome)} 能量=${formatPlayerIncomeBreakdown(currentPlayer, "energy", income, companyBaseIncome)} 手牌=${formatPlayerIncomeBreakdown(currentPlayer, "handSize", income, companyBaseIncome)} 宣传=${income.publicity || 0} 数据=${income.availableData || 0} 额外公共扫描=${income.additionalPublicScan || 0}`,
-    ];
   }
 
   function getInitialSelectionReadoutLines() {
