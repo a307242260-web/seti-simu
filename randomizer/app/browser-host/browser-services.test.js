@@ -202,10 +202,13 @@ function createHarness(options = {}) {
     domain: "scan_flow", operation: "forged", args: [],
   }).code, "BROWSER_DOMAIN_COMMAND_UNKNOWN");
   port.bindBrowserDomainCommand("scan_flow", "beginSectorScan")(4);
+  const scanCommands = port.bindDomainCommands("scan_flow", ["beginSectorScan"]);
+  scanCommands.beginSectorScan(5);
   port.callEffectChoiceCommand("confirm", [1]);
   port.setBrowserStatusNote("ready");
   assert.deepEqual(submitted, [
     { kind: "domain_command", domain: "scan_flow", operation: "beginSectorScan", args: [4] },
+    { kind: "domain_command", domain: "scan_flow", operation: "beginSectorScan", args: [5] },
     { kind: "effect_choice_command", operation: "confirm", args: [1] },
     { kind: "ui_set_status_note", message: "ready" },
   ]);

@@ -309,6 +309,7 @@
     executeBrowserDomainCommand,
     callBrowserDomainCommand,
     bindBrowserDomainCommand,
+    bindDomainCommands,
     callEffectChoiceCommand,
     callHandFlowCommand,
     callEffectExecutorCommand,
@@ -3119,33 +3120,51 @@
     hasAlienTracePanelPlacementTarget: hasAlienTracePanelPlacementTargetForRoot,
     isAlienTracePickerChoiceAllowed,
   } = alienUiHelpers;
-  const buildAlienRevealNoticeEntry = (...args) => callBrowserDomainCommand("alien_ui", "buildAlienRevealNoticeEntry", args);
-  const getAlienTracePickerPlayer = (...args) => callBrowserDomainCommand("alien_ui", "getAlienTracePickerPlayer", args);
-  const canPlaceJiuzheTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceJiuzheTrace", args);
-  const canPlaceYichangdianTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceYichangdianTrace", args);
-  const canPlaceFangzhouTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceFangzhouTrace", args);
-  const canPlaceBanrenmaTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceBanrenmaTrace", args);
-  const canPlaceChongTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceChongTrace", args);
-  const canPlaceAmibaTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceAmibaTrace", args);
-  const canPlaceAomomoTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceAomomoTrace", args);
-  const canPlaceRunezuTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceRunezuTrace", args);
-  const canPlaceRunezuFaceSymbol = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceRunezuFaceSymbol", args);
-  const canPlaceStateTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceStateTrace", args);
-  const canPlaceAnyStateExtraTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceAnyStateExtraTrace", args);
-  const openAlienTracePicker = (...args) => callBrowserDomainCommand("alien_ui", "openAlienTracePicker", args);
-  const closeAlienTracePicker = (...args) => callBrowserDomainCommand("alien_ui", "closeAlienTracePicker", args);
-  const beginAlienTraceBoardPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginAlienTraceBoardPlacement", args);
-  const beginJiuzheTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginJiuzheTraceGridPlacement", args);
-  const beginYichangdianTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginYichangdianTraceGridPlacement", args);
-  const beginFangzhouTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginFangzhouTraceGridPlacement", args);
-  const beginBanrenmaTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginBanrenmaTraceGridPlacement", args);
-  const beginAomomoTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginAomomoTraceGridPlacement", args);
-  const beginChongTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginChongTraceGridPlacement", args);
-  const beginAmibaTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginAmibaTraceGridPlacement", args);
-  const beginRunezuTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginRunezuTraceGridPlacement", args);
-  const renderAlienTracePickerColorStep = (...args) => callBrowserDomainCommand("alien_ui", "renderAlienTracePickerColorStep", args);
-  const openFangzhouTraceUseChoice = (...args) => callBrowserDomainCommand("alien_ui", "openFangzhouTraceUseChoice", args);
-  const openFangzhouTraceDestinationChoice = (...args) => callBrowserDomainCommand("alien_ui", "openFangzhouTraceDestinationChoice", args);
+  const {
+    buildAlienRevealNoticeEntry,
+    getAlienTracePickerPlayer,
+    canPlaceJiuzheTrace,
+    canPlaceYichangdianTrace,
+    canPlaceFangzhouTrace,
+    canPlaceBanrenmaTrace,
+    canPlaceChongTrace,
+    canPlaceAmibaTrace,
+    canPlaceAomomoTrace,
+    canPlaceRunezuTrace,
+    canPlaceRunezuFaceSymbol,
+    canPlaceStateTrace,
+    canPlaceAnyStateExtraTrace,
+    openAlienTracePicker,
+    closeAlienTracePicker,
+    beginAlienTraceBoardPlacement,
+    beginJiuzheTraceGridPlacement,
+    beginYichangdianTraceGridPlacement,
+    beginFangzhouTraceGridPlacement,
+    beginBanrenmaTraceGridPlacement,
+    beginAomomoTraceGridPlacement,
+    beginChongTraceGridPlacement,
+    beginAmibaTraceGridPlacement,
+    beginRunezuTraceGridPlacement,
+    renderAlienTracePickerColorStep,
+    openFangzhouTraceUseChoice,
+    openFangzhouTraceDestinationChoice,
+    routeFangzhouAlienTraceGain,
+    handleFangzhouTraceSlotPlacement,
+    getEligibleAlienSlotIdsForTraceEffect,
+    getFangzhouUnlockableTraceTypes,
+    hasAlienTracePanelPlacementTarget,
+  } = bindDomainCommands("alien_ui", [
+    "buildAlienRevealNoticeEntry", "getAlienTracePickerPlayer", "canPlaceJiuzheTrace",
+    "canPlaceYichangdianTrace", "canPlaceFangzhouTrace", "canPlaceBanrenmaTrace", "canPlaceChongTrace",
+    "canPlaceAmibaTrace", "canPlaceAomomoTrace", "canPlaceRunezuTrace", "canPlaceRunezuFaceSymbol",
+    "canPlaceStateTrace", "canPlaceAnyStateExtraTrace", "openAlienTracePicker", "closeAlienTracePicker",
+    "beginAlienTraceBoardPlacement", "beginJiuzheTraceGridPlacement", "beginYichangdianTraceGridPlacement",
+    "beginFangzhouTraceGridPlacement", "beginBanrenmaTraceGridPlacement", "beginAomomoTraceGridPlacement",
+    "beginChongTraceGridPlacement", "beginAmibaTraceGridPlacement", "beginRunezuTraceGridPlacement",
+    "renderAlienTracePickerColorStep", "openFangzhouTraceUseChoice", "openFangzhouTraceDestinationChoice",
+    "routeFangzhouAlienTraceGain", "handleFangzhouTraceSlotPlacement", "getEligibleAlienSlotIdsForTraceEffect",
+    "getFangzhouUnlockableTraceTypes", "hasAlienTracePanelPlacementTarget",
+  ]);
   function handleFangzhouTraceDestinationChoice(destination, traceType = null) {
     return submitActiveCardDecision("fangzhou-trace-destination", (target) => (
       target.choiceId === destination || target.choiceId === `${destination}:${traceType}`
@@ -3154,16 +3173,11 @@
   function handleFangzhouUnlockTraceChoice(traceType) {
     return submitActiveCardDecision("fangzhou-unlock-color", (target) => target.traceType === traceType);
   }
-  const routeFangzhouAlienTraceGain = (...args) => callBrowserDomainCommand("alien_ui", "routeFangzhouAlienTraceGain", args);
   function handleStateTraceSlotPlacement(alienSlotId, traceType) {
     return submitActiveCardDecision("alien-state-trace", (target) => (
       Number(target.slotId) === Number(alienSlotId) && target.traceType === traceType
     ));
   }
-  const handleFangzhouTraceSlotPlacement = (...args) => callBrowserDomainCommand("alien_ui", "handleFangzhouTraceSlotPlacement", args);
-  const getEligibleAlienSlotIdsForTraceEffect = (...args) => callBrowserDomainCommand("alien_ui", "getEligibleAlienSlotIdsForTraceEffect", args);
-  const getFangzhouUnlockableTraceTypes = (...args) => callBrowserDomainCommand("alien_ui", "getFangzhouUnlockableTraceTypes", args);
-  const hasAlienTracePanelPlacementTarget = (...args) => callBrowserDomainCommand("alien_ui", "hasAlienTracePanelPlacementTarget", args);
   const alienRuntimeHelpers = alienRuntimeModule.createAlienRuntimeHelpers({
     uiRuntimeState,
     structuredClone,
@@ -3281,26 +3295,36 @@
     settleTurnEndAlienRevealEntries: settleTurnEndAlienRevealEntriesForRoot,
     activateAomomoBoard: activateAomomoBoardForRoot,
   } = alienRuntimeHelpers;
-  const handleJiuzheRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleJiuzheRevealSideEffects");
-  const handleYichangdianRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleYichangdianRevealSideEffects");
-  const handleFangzhouRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleFangzhouRevealSideEffects");
-  const handleBanrenmaRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleBanrenmaRevealSideEffects");
-  const handleChongRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleChongRevealSideEffects");
-  const handleAmibaRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleAmibaRevealSideEffects");
-  const handleAomomoRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleAomomoRevealSideEffects");
-  const handleRunezuRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleRunezuRevealSideEffects");
-  const handleAlienRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleAlienRevealSideEffects");
-  const failMissingAlienTraceTargetPlayer = bindBrowserDomainCommand("alien_runtime", "failMissingAlienTraceTargetPlayer");
-  const getAlienTraceActionPlayer = bindBrowserDomainCommand("alien_runtime", "getAlienTraceActionPlayer");
-  const confirmYichangdianTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmYichangdianTracePlacement");
-  const confirmBanrenmaTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmBanrenmaTracePlacement");
-  const confirmAomomoTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmAomomoTracePlacement");
-  const confirmChongTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmChongTracePlacement");
-  const confirmAmibaTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmAmibaTracePlacement");
-  const confirmRunezuTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmRunezuTracePlacement");
-  const confirmJiuzheTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmJiuzheTracePlacement");
-  const settleTurnEndAlienRevealEntries = bindBrowserDomainCommand("alien_runtime", "settleTurnEndAlienRevealEntries");
-  const activateAomomoBoard = bindBrowserDomainCommand("alien_runtime", "activateAomomoBoard");
+  const {
+    handleJiuzheRevealSideEffects,
+    handleYichangdianRevealSideEffects,
+    handleFangzhouRevealSideEffects,
+    handleBanrenmaRevealSideEffects,
+    handleChongRevealSideEffects,
+    handleAmibaRevealSideEffects,
+    handleAomomoRevealSideEffects,
+    handleRunezuRevealSideEffects,
+    handleAlienRevealSideEffects,
+    failMissingAlienTraceTargetPlayer,
+    getAlienTraceActionPlayer,
+    confirmYichangdianTracePlacement,
+    confirmBanrenmaTracePlacement,
+    confirmAomomoTracePlacement,
+    confirmChongTracePlacement,
+    confirmAmibaTracePlacement,
+    confirmRunezuTracePlacement,
+    confirmJiuzheTracePlacement,
+    settleTurnEndAlienRevealEntries,
+    activateAomomoBoard,
+  } = bindDomainCommands("alien_runtime", [
+    "handleJiuzheRevealSideEffects", "handleYichangdianRevealSideEffects", "handleFangzhouRevealSideEffects",
+    "handleBanrenmaRevealSideEffects", "handleChongRevealSideEffects", "handleAmibaRevealSideEffects",
+    "handleAomomoRevealSideEffects", "handleRunezuRevealSideEffects", "handleAlienRevealSideEffects",
+    "failMissingAlienTraceTargetPlayer", "getAlienTraceActionPlayer", "confirmYichangdianTracePlacement",
+    "confirmBanrenmaTracePlacement", "confirmAomomoTracePlacement", "confirmChongTracePlacement",
+    "confirmAmibaTracePlacement", "confirmRunezuTracePlacement", "confirmJiuzheTracePlacement",
+    "settleTurnEndAlienRevealEntries", "activateAomomoBoard",
+  ]);
 
   function getPlayerHandPanelTitleHint() {
     if (isDiscardSelectionActive()) {
@@ -8511,24 +8535,44 @@
     handleStrategyPassiveSlotClick: handleStrategyPassiveSlotClickForRoot,
     handleCompanyActionMarkerClick: handleCompanyActionMarkerClickForRoot
   } = industryRuntime;
-  const createIndustryActionRestoreCommand = bindBrowserDomainCommand("industry_runtime", "createIndustryActionRestoreCommand");
-  const recordIndustryActionRestoreCommand = bindBrowserDomainCommand("industry_runtime", "recordIndustryActionRestoreCommand");
-  const clearIndustryRollbackUi = bindBrowserDomainCommand("industry_runtime", "clearIndustryRollbackUi");
-  const rollbackPendingIndustryQuickAction = bindBrowserDomainCommand("industry_runtime", "rollbackPendingIndustryQuickAction");
-  const cancelIndustryAbilityFlow = bindBrowserDomainCommand("industry_runtime", "cancelIndustryAbilityFlow");
-  const finishIndustryAbilityFlow = bindBrowserDomainCommand("industry_runtime", "finishIndustryAbilityFlow");
-  const startIndustryAbilityFlow = bindBrowserDomainCommand("industry_runtime", "startIndustryAbilityFlow");
-  const startIndustryStratusEffectFlow = bindBrowserDomainCommand("industry_runtime", "startIndustryStratusEffectFlow");
-  const startIndustryFundamentalismExchangeFlow = bindBrowserDomainCommand("industry_runtime", "startIndustryFundamentalismExchangeFlow");
-  const startIndustryPublicityPick = bindBrowserDomainCommand("industry_runtime", "startIndustryPublicityPick");
-  const beginIndustryTuringBorrow = bindBrowserDomainCommand("industry_runtime", "beginIndustryTuringBorrow");
-  const failIndustryTuringBorrow = bindBrowserDomainCommand("industry_runtime", "failIndustryTuringBorrow");
-  const checkIndustryTuringBorrowTile = bindBrowserDomainCommand("industry_runtime", "checkIndustryTuringBorrowTile");
-  const confirmIndustryTuringBorrow = bindBrowserDomainCommand("industry_runtime", "confirmIndustryTuringBorrow");
-  const openIndustryHeliosTechPicker = bindBrowserDomainCommand("industry_runtime", "openIndustryHeliosTechPicker");
-  const confirmIndustryHeliosRemoveTech = bindBrowserDomainCommand("industry_runtime", "confirmIndustryHeliosRemoveTech");
-  const startIndustryHuanyuMoveEffectFlow = bindBrowserDomainCommand("industry_runtime", "startIndustryHuanyuMoveEffectFlow");
-  const beginIndustryHuanyuFreeMoves = bindBrowserDomainCommand("industry_runtime", "beginIndustryHuanyuFreeMoves");
+  const industryCommands = bindDomainCommands("industry_runtime", [
+    "createIndustryActionRestoreCommand", "recordIndustryActionRestoreCommand", "clearIndustryRollbackUi",
+    "rollbackPendingIndustryQuickAction", "cancelIndustryAbilityFlow", "finishIndustryAbilityFlow",
+    "startIndustryAbilityFlow", "startIndustryStratusEffectFlow", "startIndustryFundamentalismExchangeFlow",
+    "startIndustryPublicityPick", "beginIndustryTuringBorrow", "failIndustryTuringBorrow",
+    "checkIndustryTuringBorrowTile", "confirmIndustryTuringBorrow", "openIndustryHeliosTechPicker",
+    "confirmIndustryHeliosRemoveTech", "startIndustryHuanyuMoveEffectFlow", "beginIndustryHuanyuFreeMoves",
+    "canBeginIndustryFutureSpanHandSelection", "beginIndustryFutureSpanHandSelection",
+    "handleIndustryFutureSpanHandClick", "handleIndustryDeepspaceHandClick", "finalizeIndustryDeepspaceSwap",
+    "handleAlienLabPanelClick", "maybeConsumeAlienLabPanelForMainAction", "maybeApplyIndustryLaunchScan",
+    "startLaunchSectorFinishEffectFlow", "appendIndustryPlayPassiveStatus", "buildIndustryPlayCardAppendEffects",
+    "buildPlayCardEffectFlowQueue", "applyIndustryPlayCardPassives", "completeIndustryAbilityQuickStep",
+    "commitIrreversibleIndustryQuickAction", "tryInjectSentinelPlayCornerEffectAfterArm",
+    "executeIndustryStratusCornerEffect", "executeIndustrySentinelCornerEffect", "createCompanyCardSummary",
+    "executeIndustryHeliosPassiveRewardEffect", "getStrategyPassiveSelectableSlotIds",
+    "cancelStrategyPassiveSlotChoice", "openStrategyPassiveSlotChoice", "confirmStrategyPassiveSlotChoice",
+    "finishIndustryStrategyPassiveRewardEffect", "executeIndustryStrategyPassiveRewardEffect",
+    "handleStrategyPassiveSlotClick", "handleCompanyActionMarkerClick",
+  ]);
+  const {
+    createIndustryActionRestoreCommand, recordIndustryActionRestoreCommand, clearIndustryRollbackUi,
+    rollbackPendingIndustryQuickAction, cancelIndustryAbilityFlow, finishIndustryAbilityFlow,
+    startIndustryAbilityFlow, startIndustryStratusEffectFlow, startIndustryFundamentalismExchangeFlow,
+    startIndustryPublicityPick, beginIndustryTuringBorrow, failIndustryTuringBorrow,
+    checkIndustryTuringBorrowTile, confirmIndustryTuringBorrow, openIndustryHeliosTechPicker,
+    confirmIndustryHeliosRemoveTech, startIndustryHuanyuMoveEffectFlow, beginIndustryHuanyuFreeMoves,
+    canBeginIndustryFutureSpanHandSelection, beginIndustryFutureSpanHandSelection,
+    handleIndustryFutureSpanHandClick, handleIndustryDeepspaceHandClick, finalizeIndustryDeepspaceSwap,
+    handleAlienLabPanelClick, maybeConsumeAlienLabPanelForMainAction, maybeApplyIndustryLaunchScan,
+    startLaunchSectorFinishEffectFlow, appendIndustryPlayPassiveStatus, buildIndustryPlayCardAppendEffects,
+    buildPlayCardEffectFlowQueue, applyIndustryPlayCardPassives, completeIndustryAbilityQuickStep,
+    commitIrreversibleIndustryQuickAction, tryInjectSentinelPlayCornerEffectAfterArm,
+    executeIndustryStratusCornerEffect, executeIndustrySentinelCornerEffect, createCompanyCardSummary,
+    executeIndustryHeliosPassiveRewardEffect, getStrategyPassiveSelectableSlotIds,
+    cancelStrategyPassiveSlotChoice, openStrategyPassiveSlotChoice, confirmStrategyPassiveSlotChoice,
+    finishIndustryStrategyPassiveRewardEffect, executeIndustryStrategyPassiveRewardEffect,
+    handleStrategyPassiveSlotClick, handleCompanyActionMarkerClick,
+  } = industryCommands;
   function executeIndustryFreeMove(deltaX, deltaY, rocketId) {
     const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
     return submitActiveCardDecision(
@@ -8536,34 +8580,6 @@
       (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
     );
   }
-  const canBeginIndustryFutureSpanHandSelection = bindBrowserDomainCommand("industry_runtime", "canBeginIndustryFutureSpanHandSelection");
-  const beginIndustryFutureSpanHandSelection = bindBrowserDomainCommand("industry_runtime", "beginIndustryFutureSpanHandSelection");
-  const handleIndustryFutureSpanHandClick = bindBrowserDomainCommand("industry_runtime", "handleIndustryFutureSpanHandClick");
-  const handleIndustryDeepspaceHandClick = bindBrowserDomainCommand("industry_runtime", "handleIndustryDeepspaceHandClick");
-  const finalizeIndustryDeepspaceSwap = bindBrowserDomainCommand("industry_runtime", "finalizeIndustryDeepspaceSwap");
-  const handleAlienLabPanelClick = bindBrowserDomainCommand("industry_runtime", "handleAlienLabPanelClick");
-  const maybeConsumeAlienLabPanelForMainAction = bindBrowserDomainCommand("industry_runtime", "maybeConsumeAlienLabPanelForMainAction");
-  const maybeApplyIndustryLaunchScan = bindBrowserDomainCommand("industry_runtime", "maybeApplyIndustryLaunchScan");
-  const startLaunchSectorFinishEffectFlow = bindBrowserDomainCommand("industry_runtime", "startLaunchSectorFinishEffectFlow");
-  const appendIndustryPlayPassiveStatus = bindBrowserDomainCommand("industry_runtime", "appendIndustryPlayPassiveStatus");
-  const buildIndustryPlayCardAppendEffects = bindBrowserDomainCommand("industry_runtime", "buildIndustryPlayCardAppendEffects");
-  const buildPlayCardEffectFlowQueue = bindBrowserDomainCommand("industry_runtime", "buildPlayCardEffectFlowQueue");
-  const applyIndustryPlayCardPassives = bindBrowserDomainCommand("industry_runtime", "applyIndustryPlayCardPassives");
-  const completeIndustryAbilityQuickStep = bindBrowserDomainCommand("industry_runtime", "completeIndustryAbilityQuickStep");
-  const commitIrreversibleIndustryQuickAction = bindBrowserDomainCommand("industry_runtime", "commitIrreversibleIndustryQuickAction");
-  const tryInjectSentinelPlayCornerEffectAfterArm = bindBrowserDomainCommand("industry_runtime", "tryInjectSentinelPlayCornerEffectAfterArm");
-  const executeIndustryStratusCornerEffect = bindBrowserDomainCommand("industry_runtime", "executeIndustryStratusCornerEffect");
-  const executeIndustrySentinelCornerEffect = bindBrowserDomainCommand("industry_runtime", "executeIndustrySentinelCornerEffect");
-  const createCompanyCardSummary = bindBrowserDomainCommand("industry_runtime", "createCompanyCardSummary");
-  const executeIndustryHeliosPassiveRewardEffect = bindBrowserDomainCommand("industry_runtime", "executeIndustryHeliosPassiveRewardEffect");
-  const getStrategyPassiveSelectableSlotIds = bindBrowserDomainCommand("industry_runtime", "getStrategyPassiveSelectableSlotIds");
-  const cancelStrategyPassiveSlotChoice = bindBrowserDomainCommand("industry_runtime", "cancelStrategyPassiveSlotChoice");
-  const openStrategyPassiveSlotChoice = bindBrowserDomainCommand("industry_runtime", "openStrategyPassiveSlotChoice");
-  const confirmStrategyPassiveSlotChoice = bindBrowserDomainCommand("industry_runtime", "confirmStrategyPassiveSlotChoice");
-  const finishIndustryStrategyPassiveRewardEffect = bindBrowserDomainCommand("industry_runtime", "finishIndustryStrategyPassiveRewardEffect");
-  const executeIndustryStrategyPassiveRewardEffect = bindBrowserDomainCommand("industry_runtime", "executeIndustryStrategyPassiveRewardEffect");
-  const handleStrategyPassiveSlotClick = bindBrowserDomainCommand("industry_runtime", "handleStrategyPassiveSlotClick");
-  const handleCompanyActionMarkerClick = bindBrowserDomainCommand("industry_runtime", "handleCompanyActionMarkerClick");
 
   const techRuntime = techRuntimeModule.createTechRuntime({
       Array: typeof Array === "undefined" ? undefined : Array,
@@ -8690,34 +8706,25 @@
   const getResearchTechSelectionPayload = () => getResearchTechSelectionPayloadForRoot(createStateSourceReadoutRoot());
   const getResearchTechSelectionOptions = () => getResearchTechSelectionOptionsForRoot(createStateSourceReadoutRoot());
   const shouldSkipCurrentResearchTechCost = () => shouldSkipCurrentResearchTechCostForRoot(createStateSourceReadoutRoot());
-  const isTechActionSelectionActive = bindBrowserDomainCommand("tech_runtime", "isTechActionSelectionActive");
-  const isTechTilePickingActive = bindBrowserDomainCommand("tech_runtime", "isTechTilePickingActive");
-  const syncTechSelectionChrome = bindBrowserDomainCommand("tech_runtime", "syncTechSelectionChrome");
-  const renderTechBoard = bindBrowserDomainCommand("tech_runtime", "renderTechBoard");
-  const closeTechBlueSlotPicker = bindBrowserDomainCommand("tech_runtime", "closeTechBlueSlotPicker");
-  const isTechTileOwnedByOtherPlayer = bindBrowserDomainCommand("tech_runtime", "isTechTileOwnedByOtherPlayer");
-  const appendResearchTechFollowupEffects = bindBrowserDomainCommand("tech_runtime", "appendResearchTechFollowupEffects");
-  const onTechTileSelected = bindBrowserDomainCommand("tech_runtime", "onTechTileSelected");
-  const onTechTileTaken = bindBrowserDomainCommand("tech_runtime", "onTechTileTaken");
-  const clearResearchTechSelectionState = bindBrowserDomainCommand("tech_runtime", "clearResearchTechSelectionState");
-  const restoreResearchTechSelectionAfterUndo = bindBrowserDomainCommand("tech_runtime", "restoreResearchTechSelectionAfterUndo");
-  const cancelPendingResearchTechTileChoice = bindBrowserDomainCommand("tech_runtime", "cancelPendingResearchTechTileChoice");
-  const cancelTechSelection = bindBrowserDomainCommand("tech_runtime", "cancelTechSelection");
-  const openTechBlueSlotPicker = bindBrowserDomainCommand("tech_runtime", "openTechBlueSlotPicker");
-  const finalizeTechTakeResult = bindBrowserDomainCommand("tech_runtime", "finalizeTechTakeResult");
-  const commitResearchTechSelectionResult = bindBrowserDomainCommand("tech_runtime", "commitResearchTechSelectionResult");
-  const selectResearchTechTileForCurrentFlow = bindBrowserDomainCommand("tech_runtime", "selectResearchTechTileForCurrentFlow");
-  const confirmTechBlueSlotChoice = bindBrowserDomainCommand("tech_runtime", "confirmTechBlueSlotChoice");
-  const handleSupplyTechTileClick = bindBrowserDomainCommand("tech_runtime", "handleSupplyTechTileClick");
-  const executeIndustryPiratesRaidMarkerEffect = bindBrowserDomainCommand("tech_runtime", "executeIndustryPiratesRaidMarkerEffect");
-  const handlePiratesRaidTechMarkerClick = bindBrowserDomainCommand("tech_runtime", "handlePiratesRaidTechMarkerClick");
-  const executeIndustryPiratesRaidPublicityEffect = bindBrowserDomainCommand("tech_runtime", "executeIndustryPiratesRaidPublicityEffect");
-  const startIndustryPiratesRaidLaunchFlow = bindBrowserDomainCommand("tech_runtime", "startIndustryPiratesRaidLaunchFlow");
-  const buildPiratesRaidLaunchChoices = bindBrowserDomainCommand("tech_runtime", "buildPiratesRaidLaunchChoices");
-  const executeIndustryPiratesRaidLaunchEffect = bindBrowserDomainCommand("tech_runtime", "executeIndustryPiratesRaidLaunchEffect");
-  const handlePiratesRaidLaunchChoice = bindBrowserDomainCommand("tech_runtime", "handlePiratesRaidLaunchChoice");
-  const setCheatModeOpen = bindBrowserDomainCommand("tech_runtime", "setCheatModeOpen");
-  const toggleCheatMode = bindBrowserDomainCommand("tech_runtime", "toggleCheatMode");
+  const {
+    isTechActionSelectionActive, isTechTilePickingActive, syncTechSelectionChrome, renderTechBoard,
+    closeTechBlueSlotPicker, isTechTileOwnedByOtherPlayer, appendResearchTechFollowupEffects,
+    onTechTileSelected, onTechTileTaken, clearResearchTechSelectionState, restoreResearchTechSelectionAfterUndo,
+    cancelPendingResearchTechTileChoice, cancelTechSelection, openTechBlueSlotPicker, finalizeTechTakeResult,
+    commitResearchTechSelectionResult, selectResearchTechTileForCurrentFlow, confirmTechBlueSlotChoice,
+    handleSupplyTechTileClick, executeIndustryPiratesRaidMarkerEffect, handlePiratesRaidTechMarkerClick,
+    executeIndustryPiratesRaidPublicityEffect, startIndustryPiratesRaidLaunchFlow, buildPiratesRaidLaunchChoices,
+    executeIndustryPiratesRaidLaunchEffect, handlePiratesRaidLaunchChoice, setCheatModeOpen, toggleCheatMode,
+  } = bindDomainCommands("tech_runtime", [
+    "isTechActionSelectionActive", "isTechTilePickingActive", "syncTechSelectionChrome", "renderTechBoard",
+    "closeTechBlueSlotPicker", "isTechTileOwnedByOtherPlayer", "appendResearchTechFollowupEffects",
+    "onTechTileSelected", "onTechTileTaken", "clearResearchTechSelectionState", "restoreResearchTechSelectionAfterUndo",
+    "cancelPendingResearchTechTileChoice", "cancelTechSelection", "openTechBlueSlotPicker", "finalizeTechTakeResult",
+    "commitResearchTechSelectionResult", "selectResearchTechTileForCurrentFlow", "confirmTechBlueSlotChoice",
+    "handleSupplyTechTileClick", "executeIndustryPiratesRaidMarkerEffect", "handlePiratesRaidTechMarkerClick",
+    "executeIndustryPiratesRaidPublicityEffect", "startIndustryPiratesRaidLaunchFlow", "buildPiratesRaidLaunchChoices",
+    "executeIndustryPiratesRaidLaunchEffect", "handlePiratesRaidLaunchChoice", "setCheatModeOpen", "toggleCheatMode",
+  ]);
 
   function placeDataToBlueSlotForRoot(workingRoot, blueSlot) {
     const blocked = blockIncompatiblePendingQuickActionForRoot(workingRoot, "place-data");

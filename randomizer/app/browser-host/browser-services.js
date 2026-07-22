@@ -278,6 +278,12 @@
       executeBrowserDomainCommand,
       callBrowserDomainCommand,
       bindBrowserDomainCommand: (domain, operation) => (...args) => callBrowserDomainCommand(domain, operation, args),
+      bindDomainCommands(domain, operations = []) {
+        return Object.freeze(Object.fromEntries(operations.map((operation) => [
+          operation,
+          (...args) => callBrowserDomainCommand(domain, operation, args),
+        ])));
+      },
       callEffectChoiceCommand: (operation, args = []) => callOperation("effect_choice_command", operation, args),
       callHandFlowCommand: (operation, args = []) => callOperation("hand_flow_command", operation, args),
       callEffectExecutorCommand: (operation, args = []) => callOperation("effect_executor_command", operation, args),
