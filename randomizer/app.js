@@ -700,6 +700,8 @@
           return { ok: true, value: cloneResidentPresentation(undoPendingActionForRoot(workingRoot)) };
         case "data_open_computer_picker":
           return { ok: true, value: cloneResidentPresentation(runPlaceDataToComputerForRoot(workingRoot)) };
+        case "debug_execute_income":
+          return { ok: true, value: cloneResidentPresentation(executeIncomeForCurrentPlayerForRoot(workingRoot)) };
         case "scan_settle_completed_sectors":
           return { ok: true, value: cloneResidentPresentation(resolveCompletedSectorSettlementsForRoot(
             workingRoot,
@@ -717,7 +719,7 @@
             conditionalActionExecutor.execute(workingRoot, command.action?.standardAction || command.action),
           );
         case "headless_advance_deterministic":
-          return advanceHeadlessDeterministicStateImpl() || { ok: true, progressed: false };
+          return advanceHeadlessDeterministicStateImpl(workingRoot) || { ok: true, progressed: false };
         case "headless_execute_current_effect":
           return executeHeadlessCurrentActionEffectImpl(workingRoot) || { ok: true, progressed: false };
         case "headless_skip_current_effect":
@@ -794,7 +796,7 @@
             };
           },
           executeDeterministic(workingRoot, boundary) {
-            const deterministic = advanceHeadlessDeterministicStateImpl();
+            const deterministic = advanceHeadlessDeterministicStateImpl(workingRoot);
             if (deterministic?.progressed) {
               return {
                 ...deterministic,
@@ -10971,10 +10973,10 @@
     return withPendingOwnerPlayer(pending, () => {
     const options = typeof pending?.getOptions === "function"
       ? pending.getOptions()
-      : abilities.planet.getLandOptions(createActionContext());
+      : abilities.planet.getLandOptions(createActionContextForWorkingRoot(createStateSourceReadoutRoot()));
     if (!options.ok || !options.choices?.length) {
       closeLandTargetPicker();
-      rocketState.statusNote = options.message || "登陆目标已失效";
+      setBrowserStatusNote(options.message || "登陆目标已失效");
       renderStateReadout();
       return;
     }
@@ -10996,10 +10998,11 @@
   }
 
   function getHeadlessDecisionOwnerState(enumeratedActor = null) {
-    const currentPlayer = getCurrentPlayer();
+    const readoutRoot = createStateSourceReadoutRoot();
+    const currentPlayer = players.getCurrentPlayer(readoutRoot.playerState);
     const finalScorePlayer = enumeratedActor || currentPlayer;
     const finalScorePending = finalScoring.getNextPendingMarkForPlayer(
-      finalScoringState,
+      readoutRoot.finalScoringState,
       finalScorePlayer?.id,
     );
     const activePending = [
@@ -11129,7 +11132,7 @@
     });
   }
 
-  function advanceHeadlessDeterministicStateImpl() {
+  function advanceHeadlessDeterministicStateImpl(workingRoot) {
     if (!headlessMode) return null;
     const industryPending = decisionSessions.peek("industry_ability");
     if (industryPending && !decisionState.cardSelectionAction) {
@@ -11152,7 +11155,7 @@
             player,
             allowBlindDraw: false,
           };
-          cards.setSelectionActive(cardState, true);
+          cards.setSelectionActive(workingRoot.cardState, true);
           return { ok: true, message: industryPending.message };
         },
       };
@@ -11167,7 +11170,7 @@
     const cardPending = decisionState.cardSelectionAction;
     if (
       cardPending?.type?.startsWith?.("industry_")
-      && !(cardState.publicCards || []).some(Boolean)
+      && !(workingRoot.cardState.publicCards || []).some(Boolean)
       && !(allowsBlindDrawInSelection() && canBlindDraw())
     ) {
       const label = decisionSessions.peek("industry_ability")?.label || "公司 1x";
@@ -11201,11 +11204,12 @@
 
   function orbitForCurrentPlayer() {
     if (!canStartMainAction()) {
-      rocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
+      const message = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
+      setBrowserStatusNote(message);
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message };
     }
-    const context = createActionContext();
+    const context = createActionContextForWorkingRoot(createStateSourceReadoutRoot());
     const normal = abilities.planet.getOrbitOptions(context);
     const placement = getCurrentPlanetActionPlacement(context);
     const preferredRocketId = normal?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
@@ -11217,7 +11221,7 @@
       return executePlutoAction("orbit", { preferredRocketId });
     }
     if (!normal.ok) {
-      rocketState.statusNote = normal.message;
+      setBrowserStatusNote(normal.message);
       renderPlayerStats();
       updateActionButtons();
       renderStateReadout();
@@ -11229,10 +11233,12 @@
         title: "选择环绕目标",
         selectLabel: "环绕到",
         confirmText: "确认环绕",
-        getOptions: () => abilities.planet.getOrbitOptions(createActionContext()),
+        getOptions: () => abilities.planet.getOrbitOptions(
+          createActionContextForWorkingRoot(createStateSourceReadoutRoot()),
+        ),
         onConfirm: (choice) => runAction("orbit", { rocketId: choice.rocketId }),
       });
-      rocketState.statusNote = "请选择环绕目标";
+      setBrowserStatusNote("请选择环绕目标");
       renderStateReadout();
       return { ok: true, pendingChoice: true };
     }
@@ -11241,11 +11247,12 @@
 
   function landForCurrentPlayer() {
     if (!canStartMainAction()) {
-      rocketState.statusNote = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
+      const message = getMainActionStartBlockReason() || "本回合已经开始或完成主要行动";
+      setBrowserStatusNote(message);
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message };
     }
-    const context = createActionContext();
+    const context = createActionContextForWorkingRoot(createStateSourceReadoutRoot());
     const check = abilities.planet.getLandOptions(context);
     const placement = getCurrentPlanetActionPlacement(context);
     const preferredRocketId = check?.defaultRocketId || (placement?.ok ? placement.rocket?.id : null);
@@ -11257,7 +11264,7 @@
       if (pluto.ok) {
         return executePlutoAction("land", { preferredRocketId });
       }
-      rocketState.statusNote = check.message;
+      setBrowserStatusNote(check.message);
       renderPlayerStats();
       updateActionButtons();
       renderStateReadout();
@@ -11266,7 +11273,7 @@
 
     const options = check;
     if (!options.ok) {
-      rocketState.statusNote = options.message;
+      setBrowserStatusNote(options.message);
       renderPlayerStats();
       updateActionButtons();
       renderStateReadout();
@@ -11276,7 +11283,9 @@
     if (options.needsChoice) {
       openLandTargetPicker({
         ...options,
-        getOptions: () => abilities.planet.getLandOptions(createActionContext()),
+        getOptions: () => abilities.planet.getLandOptions(
+          createActionContextForWorkingRoot(createStateSourceReadoutRoot()),
+        ),
         onConfirm: (choice) => runAction("land", { target: choice.target, rocketId: choice.rocketId }),
       });
       return { ok: true, pendingChoice: true, planetId: options.planet.planetId };
@@ -11289,18 +11298,22 @@
     return callDebugCommand("addDebugIncome");
   }
 
-  function executeIncomeForCurrentPlayer() {
-    const currentPlayer = getCurrentPlayer();
+  function executeIncomeForCurrentPlayerForRoot(workingRoot) {
+    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
     const result = applyIncomeResourcesForPlayer(currentPlayer, {
       label: "执行收入（调试，可能重复发放）",
     });
-    rocketState.statusNote = result.message;
+    workingRoot.rocketState.statusNote = result.message;
     renderPlayerStats();
     renderPublicCards();
     updatePublicCardControls();
     updateActionButtons();
     renderStateReadout();
     return result;
+  }
+
+  function executeIncomeForCurrentPlayer() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "debug_execute_income" }).value;
   }
 
   function addDebugData() {
