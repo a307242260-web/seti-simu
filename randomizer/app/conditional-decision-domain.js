@@ -16,6 +16,7 @@
       getHeadlessConditionalPlayer,
       decisionSessions,
       getPendingChongFossilChoice,
+      getPendingAmibaSymbolChoice,
       getPlayerById,
       decisionState,
       cards,
@@ -237,7 +238,7 @@
         })),
       };
     }
-    const amibaSymbolPending = decisionSessions.peek("amiba_symbol_choice");
+    const amibaSymbolPending = getPendingAmibaSymbolChoice();
     if (amibaSymbolPending) {
       const symbolSlotIds = amibaSymbolPending.symbolSlotIds || [];
       const candidates = symbolSlotIds.map((slotId) => ({
@@ -245,6 +246,7 @@
         family: "choose_reward",
         label: `阿米巴 symbol ${slotId}`,
         target: { kind: "amiba-symbol-choice", choiceId: String(slotId) },
+        pendingContext: structuredClone(amibaSymbolPending),
       }));
       if (!candidates.length) {
         candidates.push({
@@ -252,6 +254,7 @@
           family: "accept_optional_effect",
           label: "跳过空的阿米巴 symbol 奖励",
           target: { kind: "amiba-symbol-choice", choiceId: "cancel" },
+          pendingContext: structuredClone(amibaSymbolPending),
         });
       }
       return {
@@ -906,7 +909,10 @@
     },
     "runezu-symbol-branch": (action) => handleRunezuSymbolBranchChoice(action.target.choiceId),
     "runezu-face-symbol-choice": (action) => handleRunezuFaceSymbolChoice(action.target.choiceId),
-    "amiba-symbol-choice": (action) => handleAmibaSymbolChoice(action.target.choiceId),
+    "amiba-symbol-choice": (action) => handleAmibaSymbolChoice(
+      action.target.choiceId,
+      action.pendingContext || null,
+    ),
     "final-score-tile": (action, workingRoot) => handleFinalScoreTileClick(
       action.target.choiceId,
       workingRoot,

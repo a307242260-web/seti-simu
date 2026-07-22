@@ -45,6 +45,10 @@
       actionEffectFlow: "action_effect_flow",
     }) || {};
     const decisionSessions = context.decisionSessions;
+    const clearPendingAmibaSymbolChoice = requireFunction(
+      "clearPendingAmibaSymbolChoice",
+      context.clearPendingAmibaSymbolChoice,
+    );
     const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
     const getPublicScanQueue = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
     const els = context.els || {};
@@ -1363,7 +1367,7 @@
       decisionSessions.clear("card_task_completion");
       decisionSessions.clear("chong_task_completion");
       decisionSessions.clear("amiba_card_gain");
-      decisionSessions.clear("amiba_symbol_choice");
+      clearPendingAmibaSymbolChoice();
       decisionSessions.clear("amiba_trace_removal");
       decisionSessions.clear("aomomo_card_gain");
       decisionSessions.clear("runezu_card_gain");

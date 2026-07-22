@@ -58,6 +58,7 @@
       getChongPlanetLabel,
       getEarthSectorCoordinate,
       getPendingOwnerFields,
+      getPendingAmibaSymbolChoice,
       getPlanetSectorCoordinate,
       getRequiredMovePointsForUi,
       getSectorContentForMove,
@@ -344,7 +345,7 @@
         || getCardTriggerFreeMove()
         || decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION)
         || isCardTriggerPickSelectionActive()
-        || decisionSessions.peek("amiba_symbol_choice")?.triggerMatch
+        || getPendingAmibaSymbolChoice()?.triggerMatch
       );
     }
 

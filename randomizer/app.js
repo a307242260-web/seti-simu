@@ -786,6 +786,9 @@
               if (candidates[0]?.target?.kind === "chong-fossil-choice") {
                 alienSpeciesRuntime?.takeChongFossilDecisionDraft?.();
               }
+              if (candidates[0]?.target?.kind === "amiba-symbol-choice") {
+                alienSpeciesRuntime?.takeAmibaSymbolDecisionDraft?.();
+              }
               return {
                 ok: true,
                 boundary: "conditional_choice",
@@ -1002,6 +1005,7 @@
     getCurrentPlayer,
     getPendingProbeSectorScanDecision,
     getPendingChongFossilChoice,
+    getPendingAmibaSymbolChoice,
     getHeadlessConditionalPlayer,
     get decisionSessions() { return decisionSessions; },
     getPlayerById,
@@ -2516,6 +2520,7 @@
     aomomo,
     historyCommands,
     decisionSessions,
+    clearPendingAmibaSymbolChoice: () => alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.(),
     document,
     structuredClone,
     els,
@@ -4120,7 +4125,7 @@
     get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
     get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
     get pendingAmibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
-    get pendingAmibaSymbolChoice() { return decisionSessions.peek("amiba_symbol_choice"); },
+    get pendingAmibaSymbolChoice() { return getPendingAmibaSymbolChoice(); },
     get pendingAmibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
     get pendingAomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
     get pendingRunezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
@@ -4778,6 +4783,7 @@
     getChongPlanetLabel,
     getEarthSectorCoordinate,
     getPendingOwnerFields,
+    getPendingAmibaSymbolChoice,
     getPlanetSectorCoordinate,
     getRequiredMovePointsForUi,
     getSectorContentForMove,
@@ -5399,7 +5405,7 @@
     alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     decisionSessions.clear("amiba_card_gain");
-    decisionSessions.clear("amiba_symbol_choice");
+    alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
     decisionSessions.clear("amiba_trace_removal");
     decisionSessions.clear("aomomo_card_gain");
     decisionSessions.clear("runezu_card_gain");
@@ -6864,7 +6870,7 @@
       || decisionSessions.peek("chong_card_gain")
       || getPendingChongFossilChoice()
       || decisionSessions.peek("amiba_card_gain")
-      || decisionSessions.peek("amiba_symbol_choice")
+      || getPendingAmibaSymbolChoice()
       || decisionSessions.peek("amiba_trace_removal")
       || decisionSessions.peek("aomomo_card_gain")
       || decisionSessions.peek("runezu_card_gain")
@@ -7173,7 +7179,7 @@
     alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     decisionSessions.clear("amiba_card_gain");
-    decisionSessions.clear("amiba_symbol_choice");
+    alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
     decisionSessions.clear("amiba_trace_removal");
     decisionSessions.clear("aomomo_card_gain");
     decisionSessions.clear("runezu_card_gain");
@@ -8393,6 +8399,9 @@
   let alienSpeciesRuntime = null;
   function getPendingChongFossilChoice() {
     return alienSpeciesRuntime?.getChongFossilDecisionDraft?.() || null;
+  }
+  function getPendingAmibaSymbolChoice() {
+    return alienSpeciesRuntime?.getAmibaSymbolDecisionDraft?.() || null;
   }
   function getAlienTraceLayer(...args) { return alienSpeciesRuntime.getAlienTraceLayer(...args); }
   function getAlienJiuzheTraceLayer(...args) { return alienSpeciesRuntime.getAlienJiuzheTraceLayer(...args); }
@@ -11044,7 +11053,7 @@
       getPendingCardCornerFreeMove(),
       getPendingStrategySlotDecision(),
       getPendingChongFossilChoice(),
-      decisionSessions.peek("amiba_symbol_choice"),
+      getPendingAmibaSymbolChoice(),
       decisionState.discardAction,
       decisionState.cardSelectionAction,
       getPendingLandTargetDecision(),
@@ -11790,7 +11799,7 @@
     get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
     get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
     get pendingAmibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
-    get pendingAmibaSymbolChoice() { return decisionSessions.peek("amiba_symbol_choice"); },
+    get pendingAmibaSymbolChoice() { return getPendingAmibaSymbolChoice(); },
     get pendingAmibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
     get pendingAomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
     get pendingRunezuFaceSymbolPlacement() { return decisionSessions.peek("runezu_face_symbol_placement"); },

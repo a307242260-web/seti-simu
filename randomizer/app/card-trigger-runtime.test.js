@@ -51,6 +51,7 @@ function createHarness() {
     blockManualAiPendingInputIfNeeded: () => null,
     isActionEffectFlowActive: () => false,
     hasActivePendingSubFlow: () => false,
+    getPendingAmibaSymbolChoice: () => null,
     getPendingOwnerPlayer: () => player,
     structuredClone,
     runezu: {},

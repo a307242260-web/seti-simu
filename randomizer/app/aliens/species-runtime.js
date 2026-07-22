@@ -185,8 +185,6 @@
     const alienChoiceSessions = {
       get yichangdianCornerAction() { return decisionSessions.peek("yichangdian_corner_action"); },
       set yichangdianCornerAction(session) { replaceDecisionSession("yichangdian_corner_action", session); },
-      get amibaSymbolChoice() { return decisionSessions.peek("amiba_symbol_choice"); },
-      set amibaSymbolChoice(session) { replaceDecisionSession("amiba_symbol_choice", session); },
       get amibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
       set amibaTraceRemoval(session) { replaceDecisionSession("amiba_trace_removal", session); },
       get runezuSymbolBranch() { return decisionSessions.peek("runezu_symbol_branch"); },
@@ -195,6 +193,7 @@
       set runezuFaceSymbolPlacement(session) { replaceDecisionSession("runezu_face_symbol_placement", session); },
     };
     let chongFossilDecisionDraft = null;
+    let amibaSymbolDecisionDraft = null;
     function getChongFossilDecisionDraft() {
       return chongFossilDecisionDraft;
     }
@@ -205,6 +204,17 @@
     }
     function clearChongFossilDecisionDraft() {
       chongFossilDecisionDraft = null;
+    }
+    function getAmibaSymbolDecisionDraft() {
+      return amibaSymbolDecisionDraft;
+    }
+    function takeAmibaSymbolDecisionDraft() {
+      const draft = amibaSymbolDecisionDraft;
+      amibaSymbolDecisionDraft = null;
+      return draft;
+    }
+    function clearAmibaSymbolDecisionDraft() {
+      amibaSymbolDecisionDraft = null;
     }
     const getOpportunityContinuationQueue = (workingRoot, field) => {
       requireWorkingRoot(workingRoot);
@@ -1943,7 +1953,7 @@ function handleAomomoCardGainChoice(workingRoot, choice) {
   }
 
 function closeAmibaSymbolChoiceDialog() {
-    alienChoiceSessions.amibaSymbolChoice = null;
+    clearAmibaSymbolDecisionDraft();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -1956,7 +1966,7 @@ function openAmibaSymbolChoiceDialog(workingRoot, options = {}) {
     if (!player) return { ok: false, message: "没有当前玩家" };
     const region = options.region || options.effect?.options?.region || null;
     const symbols = amiba.listSymbolsInRegion(alienGameState, region);
-    alienChoiceSessions.amibaSymbolChoice = {
+    amibaSymbolDecisionDraft = {
       region,
       playerId: player.id,
       fromEffectFlow: Boolean(options.fromEffectFlow),
@@ -1967,47 +1977,14 @@ function openAmibaSymbolChoiceDialog(workingRoot, options = {}) {
       beforeCardState: options.beforeCardState || structuredClone(cardState),
       symbolSlotIds: symbols.map((symbol) => symbol.slotId),
     };
-    if (!els.scanTargetOverlay || !els.scanTargetActions || !document?.createElement) {
-      rocketState.statusNote = "阿米巴 symbol：请选择一个 symbol";
-      renderStateReadout();
-      return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
-    }
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "阿米巴 symbol";
-    if (els.scanTargetSubtitle) {
-      els.scanTargetSubtitle.textContent = `选择一个${amiba.formatRegionLabel(region)}区域内的 symbol 结算奖励。`;
-    }
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-
-    const nodes = symbols.map((symbol) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "scan-target-option-button amiba-symbol-choice-button";
-      button.dataset.amibaSymbolChoice = symbol.slotId;
-      button.innerHTML = `<img class="amiba-symbol-choice-image" src="${amiba.getSymbolSrc(symbol.symbolId)}" alt="" aria-hidden="true"><small>${symbol.symbolId}：${amiba.formatSymbolReward(symbol.symbolId)}；${amiba.formatSymbolSlotLabel?.(symbol.slotId) || symbol.slotId}</small>`;
-      return button;
-    });
-    if (!nodes.length) {
-      const empty = document.createElement("p");
-      empty.textContent = "该区域当前没有 symbol。";
-      nodes.push(empty);
-    }
-    const cancel = document.createElement("button");
-    cancel.type = "button";
-    cancel.className = "scan-target-option-button";
-    cancel.dataset.amibaSymbolChoice = "cancel";
-    cancel.innerHTML = "取消<small>不结算 symbol</small>";
-    nodes.push(cancel);
-
-    els.scanTargetActions.replaceChildren(...nodes);
-    els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = "阿米巴 symbol：请选择一个 symbol";
     renderStateReadout();
     return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
   }
 
-function finishAmibaSymbolChoice(workingRoot, message, payload = {}, options = {}) {
+function finishAmibaSymbolChoice(workingRoot, message, payload = {}, options = {}, pendingContext = null) {
     const { rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienChoiceSessions.amibaSymbolChoice;
+    const pending = pendingContext || getAmibaSymbolDecisionDraft();
     closeAmibaSymbolChoiceDialog();
     if (pending?.triggerMatch?.card && pending?.triggerMatch?.trigger && options.consumeTrigger !== false) {
       cardEffects.consumeTrigger(pending.triggerMatch.card, pending.triggerMatch.trigger.id);
@@ -2042,14 +2019,14 @@ function finishAmibaSymbolChoice(workingRoot, message, payload = {}, options = {
     return { ok: true, message, payload };
   }
 
-function handleAmibaSymbolChoice(workingRoot, choice) {
+function handleAmibaSymbolChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState, cardState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    if (!alienChoiceSessions.amibaSymbolChoice) return { ok: false, message: "没有阿米巴 symbol 选择流程" };
-    const pending = alienChoiceSessions.amibaSymbolChoice;
+    const pending = pendingContext || getAmibaSymbolDecisionDraft();
+    if (!pending) return { ok: false, message: "没有阿米巴 symbol 选择流程" };
     const player = resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot);
     if (!player) return { ok: false, message: "找不到阿米巴 symbol 玩家" };
     if (choice === "cancel") {
-      return finishAmibaSymbolChoice(workingRoot, "已取消阿米巴 symbol 奖励", { cancelled: true }, { consumeTrigger: false });
+      return finishAmibaSymbolChoice(workingRoot, "已取消阿米巴 symbol 奖励", { cancelled: true }, { consumeTrigger: false }, pending);
     }
     const beforeAlienState = pending.beforeAlienState;
     const beforePlayerState = pending.beforePlayerState;
@@ -2110,7 +2087,7 @@ function handleAmibaSymbolChoice(workingRoot, choice) {
     return finishAmibaSymbolChoice(workingRoot, message, { symbol: result }, {
       undoable: rewardResult.undoable !== false,
       consumeTrigger: pending.fromEffectFlow,
-    });
+    }, pending);
   }
 
 function closeAmibaTraceRemovalDialog() {
@@ -3427,7 +3404,7 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
       getChongFossilDecisionDraft() ? { pending: getChongFossilDecisionDraft(), label: "虫族化石" } : null,
       getChongTaskCompletion() ? { pending: getChongTaskCompletion(), label: "虫族任务" } : null,
       alienCardGainSessions.amibaCardGain ? { pending: alienCardGainSessions.amibaCardGain, label: "阿米巴外星人牌" } : null,
-      alienChoiceSessions.amibaSymbolChoice ? { pending: alienChoiceSessions.amibaSymbolChoice, label: "阿米巴 symbol" } : null,
+      getAmibaSymbolDecisionDraft() ? { pending: getAmibaSymbolDecisionDraft(), label: "阿米巴 symbol" } : null,
       alienChoiceSessions.amibaTraceRemoval ? { pending: alienChoiceSessions.amibaTraceRemoval, label: "阿米巴痕迹移除" } : null,
       alienCardGainSessions.aomomoCardGain ? { pending: alienCardGainSessions.aomomoCardGain, label: "奥陌陌外星人牌" } : null,
       alienCardGainSessions.runezuCardGain ? { pending: alienCardGainSessions.runezuCardGain, label: "符文族外星人牌" } : null,
@@ -4505,6 +4482,9 @@ function alignAlienPanelsToPlanets() {
       getChongFossilDecisionDraft,
       takeChongFossilDecisionDraft,
       clearChongFossilDecisionDraft,
+      getAmibaSymbolDecisionDraft,
+      takeAmibaSymbolDecisionDraft,
+      clearAmibaSymbolDecisionDraft,
       openChongTraceTaskCompletionPicker,
       enqueueJiuzheOpportunity,
       isJiuzheThresholdOpportunity,

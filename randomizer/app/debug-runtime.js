@@ -1001,7 +1001,6 @@
         decisionSessions?.peek?.("chong_card_gain"),
         decisionSessions?.peek?.("chong_task_completion"),
         decisionSessions?.peek?.("amiba_card_gain"),
-        decisionSessions?.peek?.("amiba_symbol_choice"),
         decisionSessions?.peek?.("amiba_trace_removal"),
         decisionSessions?.peek?.("aomomo_card_gain"),
         decisionSessions?.peek?.("runezu_card_gain"),
