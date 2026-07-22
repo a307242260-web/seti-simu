@@ -10855,7 +10855,20 @@
   }
 
   function runAction(actionId, actionOptions) {
-    return actionRuntimeController.runAction(actionId, actionOptions);
+    const options = actionOptions || {};
+    const selector = actionId === "land"
+      ? {
+        ...(options.rocketId == null ? {} : { rocketId: Number(options.rocketId) }),
+        ...(options.target?.type ? { type: options.target.type } : {}),
+        ...(options.target?.satelliteId ? { satelliteId: options.target.satelliteId } : {}),
+      }
+      : (options.rocketId == null ? {} : { rocketId: Number(options.rocketId) });
+    return dispatchBrowserRuleInput({
+      kind: "standard_intent",
+      family: actionId,
+      selector,
+      payload: options,
+    });
   }
 
   function getRocketCoordinateReadoutLines() {
@@ -11412,26 +11425,31 @@
     if (isAiAutomationInputLocked() && options.automated !== true) {
       return blockManualAiAutomationInput("电脑玩家自动移动中");
     }
-    const selectedRocketId = rocketId ?? uiRuntimeState.moveHighlightRocketId ?? rocketState.activeRocketId;
+    const readoutRoot = createStateSourceReadoutRoot();
+    const selectedRocketId = rocketId
+      ?? uiRuntimeState.moveHighlightRocketId
+      ?? readoutRoot.rocketState.activeRocketId;
     if (!selectedRocketId) {
-      rocketState.statusNote = "请先点击要移动的火箭";
+      setBrowserStatusNote("请先点击要移动的火箭");
       renderStateReadout();
-      return { ok: false, rocket: null, message: rocketState.statusNote };
+      return { ok: false, rocket: null, message: "请先点击要移动的火箭" };
     }
 
-    const standardAction = options.standardAction || actionRuntimeController?.dispatchAction({
-      kind: "standard_resolve",
+    const standardAction = options.standardAction || browserRuleComposition.inputPort.enumerateActions({
       family: "move",
-      selector: {
-        rocketId: selectedRocketId,
-        deltaX,
-        deltaY,
-      },
-    })?.action || null;
+    }).find((candidate) => (
+      Number(candidate.target?.rocketId) === Number(selectedRocketId)
+      && Number(candidate.target?.deltaX) === Number(deltaX)
+      && Number(candidate.target?.deltaY) === Number(deltaY)
+    )) || null;
     if (!standardAction) {
-      rocketState.statusNote = "移动 intent 已失效";
+      setBrowserStatusNote("移动 intent 已失效");
       renderStateReadout();
-      return { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: rocketState.statusNote };
+      return { ok: false, code: "STANDARD_ACTION_NOT_LEGAL", message: "移动 intent 已失效" };
+    }
+
+    if (!options.standardAction) {
+      return browserRuleComposition.inputPort.submitQuickAction(standardAction);
     }
 
     return beginMovePaymentSelection(deltaX, deltaY, selectedRocketId, {
@@ -11440,7 +11458,7 @@
   }
 
   function moveActiveRocket(deltaX, deltaY) {
-    return moveRocket(deltaX, deltaY, rocketState.activeRocketId);
+    return moveRocket(deltaX, deltaY, createStateSourceReadoutRoot().rocketState.activeRocketId);
   }
 
   function handleRocketPointerDown(event) {
@@ -11455,7 +11473,7 @@
     const rocketId = Number(event.currentTarget.dataset.rocketId);
     if (!Number.isInteger(rocketId)) return;
 
-    const rocket = rocketState.rockets.find((item) => item.id === rocketId);
+    const rocket = createStateSourceReadoutRoot().rocketState.rockets.find((item) => item.id === rocketId);
     if (!rocket || isPlanetMarkerRocket(rocket)) return;
 
     event.stopPropagation();
