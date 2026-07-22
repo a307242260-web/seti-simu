@@ -198,4 +198,36 @@ function createProjection() {
   assert.deepEqual(reserved.rows[0].items[0].progressIndexes, [0]);
 })();
 
+(function testResidentRenderInputBuilderOwnsProjectionAssembly() {
+  const canonical = createProjection();
+  const viewStateStore = viewStateApi.createViewStateStore();
+  const presentationBuilder = projectionApi.createResidentPresentationBuilder({
+    setupSelectionState: {}, cardTaskState: {},
+    cardEffects: { getConsumedTriggerIndexes: () => [], getCardModel: () => ({}) },
+    players: { CARD_BACK_SRC: "back.webp" }, cards: { getCardLabel: () => "" },
+  });
+  const builder = projectionApi.createResidentRenderInputBuilder({
+    presentationBuilder, viewStateStore,
+    projectionAdapter: { projectSource: () => canonical },
+    uiRuntimeState: { publicCardSelectedSlots: [1], alienRevealConfirmation: { active: true } },
+    getViewer: () => canonical.viewer,
+    createReadoutRoot: projectionApi.createLegacyReadoutRoot,
+    getPendingMovePayment: () => ({ required: 2 }),
+    computePlayerFinalScoreBreakdown: () => ({ total: 12 }),
+    isCardSelectionActive: () => true,
+    allowsBlindDrawInSelection: () => true,
+    canBlindDraw: () => true,
+    isPublicCardMultiSelectActive: () => false,
+    getPlayerHandPanelTitleHint: () => "手牌提示",
+  });
+  const input = builder.createRenderInput();
+  assert.equal(Object.isFrozen(input.projection), true);
+  assert.deepEqual(input.projection.resident.decisions.movePayment, { required: 2 });
+  assert.deepEqual(input.projection.resident.decisions.publicCardSelectedSlots, [1]);
+  assert.equal(input.projection.resident.cards.publicControls.blindDrawEnabled, true);
+  assert.equal(input.projection.resident.handPanel.hint, "手牌提示");
+  assert.equal(input.projection.resident.finalScoring.breakdownsByPlayerId.p1.total, 12);
+  assert.equal(input.viewState.schemaVersion, "seti-browser-host-v1");
+})();
+
 console.log("resident-renderer tests passed");

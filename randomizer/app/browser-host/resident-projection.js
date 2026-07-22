@@ -224,6 +224,107 @@
     return Object.freeze({ createInitialSelection, createReservedCards });
   }
 
+  function createResidentRenderInputBuilder(context = {}) {
+    const presentation = context.presentationBuilder;
+    function createRenderInput() {
+      if (!context.viewStateStore || !context.projectionAdapter) return null;
+      const viewer = context.getViewer();
+      const canonical = context.projectionAdapter.projectSource({ viewer });
+      const readoutRoot = context.createReadoutRoot(canonical.resident);
+      const decisions = {
+        movePayment: context.getPendingMovePayment?.(),
+        cardSelectionContinuation: context.getPendingCardSelectionDecision?.(readoutRoot),
+        alienTraceContinuation: context.getPendingAlienTraceDecision?.(readoutRoot),
+        alienTracePickerState: context.uiRuntimeState?.alienTracePickerState || null,
+        actionEffectFlow: context.getActionEffectFlow?.(readoutRoot),
+        publicCardSelectedSlots: [...(context.uiRuntimeState?.publicCardSelectedSlots || [])],
+        discardContinuation: context.getPendingDiscardDecision?.(readoutRoot),
+        discardSelectedHandIndexes: [...(context.uiRuntimeState?.discardSelectedHandIndexes || [])],
+        handScanContinuation: context.getPendingHandScanDecision?.(readoutRoot),
+        scanTargetContinuation: context.getPendingScanTargetDecision?.(readoutRoot),
+        playCardSelection: context.uiRuntimeState?.playCardSelection,
+        handCardPlayAction: context.uiRuntimeState?.handCardPlayAction,
+        cardCornerQuickAction: context.uiRuntimeState?.cardCornerQuickAction,
+      };
+      const projectedPlayers = canonical.resident?.players?.players || [];
+      const finalScoreBreakdownsByPlayerId = Object.fromEntries(projectedPlayers.map((player) => [
+        String(player.id),
+        clonePresentation(context.computePlayerFinalScoreBreakdown?.(player, readoutRoot)),
+      ]));
+      const interfacePlayer = projectedPlayers.find((player) => String(player?.id) === viewer.playerId)
+        || projectedPlayers.find((player) => (
+          String(player?.id) === String(canonical.resident.players.currentPlayerId)
+        ))
+        || null;
+      const handCount = Array.isArray(interfacePlayer?.hand)
+        ? interfacePlayer.hand.length
+        : Math.max(0, Math.round(Number(interfacePlayer?.resources?.handSize) || 0));
+      const selectionActive = Boolean(context.isCardSelectionActive?.());
+      const allowsBlindDraw = selectionActive && Boolean(context.allowsBlindDrawInSelection?.());
+      const blindDrawAvailable = Boolean(context.canBlindDraw?.());
+      const projection = createResidentProjection({
+        projection: {
+          ...canonical,
+          resident: {
+            ...canonical.resident,
+            turn: structuredClone(canonical.resident.turn),
+            players: {
+              currentPlayerId: canonical.resident.players.currentPlayerId,
+              players: structuredClone(projectedPlayers),
+            },
+            solar: structuredClone(canonical.resident.solar),
+            pieces: structuredClone(canonical.resident.pieces),
+            planets: structuredClone(canonical.resident.planets),
+            data: structuredClone(canonical.resident.data),
+            cards: {
+              ...canonical.resident.cards,
+              publicCards: structuredClone(canonical.resident.cards.publicCards || []),
+              publicMarket: structuredClone(canonical.resident.cards.publicCards || []),
+              ui: {
+                selectionActive: Boolean(canonical.resident.cards.ui?.selectionActive),
+                discardSelectionActive: Boolean(canonical.resident.cards.ui?.discardSelectionActive),
+                playCardSelectionActive: Boolean(canonical.resident.cards.ui?.playCardSelectionActive),
+              },
+              publicControls: {
+                selectionActive,
+                multiSelectActive: Boolean(context.isPublicCardMultiSelectActive?.()),
+                blindDrawEnabled: selectionActive && allowsBlindDraw && blindDrawAvailable,
+                blindDrawReason: !selectionActive
+                  ? "请先进入精选"
+                  : !allowsBlindDraw
+                    ? "本次精选不能盲抽"
+                    : blindDrawAvailable ? "盲抽一张牌加入手牌" : "牌库已空",
+              },
+            },
+            handPanel: {
+              count: handCount, overLimit: handCount > 4,
+              hint: context.getPlayerHandPanelTitleHint?.(),
+            },
+            initialSelection: presentation.createInitialSelection(viewer, canonical.resident),
+            reservedCards: presentation.createReservedCards(viewer, canonical.resident),
+            tech: {
+              board: structuredClone(canonical.resident.tech.board || {}),
+              ui: structuredClone(canonical.resident.tech.ui || {}),
+            },
+            aliens: structuredClone(canonical.resident.aliens),
+            finalScoring: {
+              ...structuredClone(canonical.resident.finalScoring),
+              breakdownsByPlayerId: finalScoreBreakdownsByPlayerId,
+            },
+            decisions: {
+              ...clonePresentation(decisions),
+              alienRevealConfirmation: clonePresentation(context.uiRuntimeState?.alienRevealConfirmation),
+            },
+          },
+        },
+      });
+      if (projection.ok === false) throw new TypeError(`${projection.code}: ${projection.message}`);
+      context.viewStateStore.reconcileProjection(projection);
+      return { projection, viewState: context.viewStateStore.getSnapshot() };
+    }
+    return Object.freeze({ createRenderInput });
+  }
+
   return Object.freeze({
     SCHEMA_VERSION,
     LEGACY_SLICE_KEYS,
@@ -232,5 +333,6 @@
     clonePresentation,
     createLegacyReadoutRoot,
     createResidentPresentationBuilder,
+    createResidentRenderInputBuilder,
   });
 });

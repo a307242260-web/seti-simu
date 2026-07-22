@@ -1610,104 +1610,28 @@
   const createInitialSelectionProjection = residentPresentationBuilder.createInitialSelection;
   const createReservedCardProjection = residentPresentationBuilder.createReservedCards;
 
-  function createResidentRenderInput() {
-    if (!residentDesktopRenderer || !residentViewStateStore || !residentProjectionAdapter) return null;
-    const viewer = getResidentViewer();
-    const decisions = {};
-    const canonical = residentProjectionAdapter.projectSource({ viewer });
-    const readoutRoot = createResidentReadoutRoot(canonical.resident);
-    decisions.movePayment = getPendingMovePayment();
-    decisions.cardSelectionContinuation = getPendingCardSelectionDecision(readoutRoot);
-    decisions.alienTraceContinuation = getPendingAlienTraceDecision(readoutRoot);
-    decisions.alienTracePickerState = uiRuntimeState.alienTracePickerState || null;
-    decisions.actionEffectFlow = getActionEffectFlow(readoutRoot);
-    decisions.publicCardSelectedSlots = [...(uiRuntimeState.publicCardSelectedSlots || [])];
-    decisions.discardContinuation = getPendingDiscardDecision(readoutRoot);
-    decisions.discardSelectedHandIndexes = [...(uiRuntimeState.discardSelectedHandIndexes || [])];
-    decisions.handScanContinuation = getPendingHandScanDecision(readoutRoot);
-    decisions.scanTargetContinuation = getPendingScanTargetDecision(readoutRoot);
-    decisions.playCardSelection = uiRuntimeState.playCardSelection;
-    decisions.handCardPlayAction = uiRuntimeState.handCardPlayAction;
-    decisions.cardCornerQuickAction = uiRuntimeState.cardCornerQuickAction;
-    const projectedPlayers = canonical.resident?.players?.players || [];
-    const finalScoreBreakdownsByPlayerId = Object.fromEntries(projectedPlayers.map((player) => [
-      String(player.id),
-      cloneResidentPresentation(computePlayerFinalScoreBreakdown(player, readoutRoot)),
-    ]));
-    const interfacePlayer = projectedPlayers.find((player) => String(player?.id) === viewer.playerId)
-      || projectedPlayers.find((player) => (
-        String(player?.id) === String(canonical.resident.players.currentPlayerId)
-      ))
-      || null;
-    const handCount = Array.isArray(interfacePlayer?.hand)
-      ? interfacePlayer.hand.length
-      : Math.max(0, Math.round(Number(interfacePlayer?.resources?.handSize) || 0));
-    const selectionActive = Boolean(isCardSelectionActive?.());
-    const allowsBlindDraw = selectionActive && Boolean(allowsBlindDrawInSelection?.());
-    const blindDrawAvailable = Boolean(canBlindDraw?.());
-    const projection = browserHostModule.residentProjection.createResidentProjection({
-      projection: {
-        ...canonical,
-        resident: {
-          ...canonical.resident,
-          turn: structuredClone(canonical.resident.turn),
-          players: {
-            currentPlayerId: canonical.resident.players.currentPlayerId,
-            players: structuredClone(projectedPlayers),
-          },
-          solar: structuredClone(canonical.resident.solar),
-          pieces: structuredClone(canonical.resident.pieces),
-          planets: structuredClone(canonical.resident.planets),
-          data: structuredClone(canonical.resident.data),
-          cards: {
-            ...canonical.resident.cards,
-            publicCards: structuredClone(canonical.resident.cards.publicCards || []),
-            publicMarket: structuredClone(canonical.resident.cards.publicCards || []),
-            ui: {
-              selectionActive: Boolean(canonical.resident.cards.ui?.selectionActive),
-              discardSelectionActive: Boolean(canonical.resident.cards.ui?.discardSelectionActive),
-              playCardSelectionActive: Boolean(canonical.resident.cards.ui?.playCardSelectionActive),
-            },
-            publicControls: {
-              selectionActive,
-              multiSelectActive: Boolean(isPublicCardMultiSelectActive?.()),
-              blindDrawEnabled: selectionActive && allowsBlindDraw && blindDrawAvailable,
-              blindDrawReason: !selectionActive
-                ? "请先进入精选"
-                : !allowsBlindDraw
-                  ? "本次精选不能盲抽"
-                  : blindDrawAvailable
-                    ? "盲抽一张牌加入手牌"
-                    : "牌库已空",
-            },
-          },
-          handPanel: {
-            count: handCount,
-            overLimit: handCount > 4,
-            hint: getPlayerHandPanelTitleHint(),
-          },
-          initialSelection: createInitialSelectionProjection(viewer, canonical.resident),
-          reservedCards: createReservedCardProjection(viewer, canonical.resident),
-          tech: {
-            board: structuredClone(canonical.resident.tech.board || {}),
-            ui: structuredClone(canonical.resident.tech.ui || {}),
-          },
-          aliens: structuredClone(canonical.resident.aliens),
-          finalScoring: {
-            ...structuredClone(canonical.resident.finalScoring),
-            breakdownsByPlayerId: finalScoreBreakdownsByPlayerId,
-          },
-          decisions: {
-            ...cloneResidentPresentation(decisions),
-            alienRevealConfirmation: cloneResidentPresentation(uiRuntimeState.alienRevealConfirmation),
-          },
-        },
-      },
-    });
-    if (projection.ok === false) throw new TypeError(`${projection.code}: ${projection.message}`);
-    residentViewStateStore.reconcileProjection(projection);
-    return { projection, viewState: residentViewStateStore.getSnapshot() };
-  }
+  const residentRenderInputBuilder = browserHostModule.residentProjection.createResidentRenderInputBuilder({
+    presentationBuilder: residentPresentationBuilder,
+    viewStateStore: residentViewStateStore,
+    projectionAdapter: residentProjectionAdapter,
+    uiRuntimeState,
+    getViewer: getResidentViewer,
+    createReadoutRoot: createResidentReadoutRoot,
+    getPendingMovePayment,
+    getPendingCardSelectionDecision,
+    getPendingAlienTraceDecision,
+    getActionEffectFlow,
+    getPendingDiscardDecision,
+    getPendingHandScanDecision,
+    getPendingScanTargetDecision,
+    computePlayerFinalScoreBreakdown,
+    isCardSelectionActive: () => isCardSelectionActive?.(),
+    allowsBlindDrawInSelection: () => allowsBlindDrawInSelection?.(),
+    canBlindDraw: () => canBlindDraw?.(),
+    isPublicCardMultiSelectActive: () => isPublicCardMultiSelectActive?.(),
+    getPlayerHandPanelTitleHint: () => getPlayerHandPanelTitleHint(),
+  });
+  const createResidentRenderInput = residentRenderInputBuilder.createRenderInput;
 
   function renderResidentDesktop() {
     const input = createResidentRenderInput();
