@@ -226,6 +226,101 @@
     });
   }
 
+  function createRecoveryHost(context = {}) {
+    const transientMatchFields = Object.freeze([
+      "discardContinuation", "passReserveContinuation", "scanTargetContinuation",
+      "probeSectorScanContinuation", "publicScanContinuation", "handScanContinuation",
+      "alienTraceContinuation", "landTargetContinuation", "probeLocationRewardContinuation",
+      "cardTriggerContinuation", "cardTriggerFreeMoveContinuation", "type1TriggerEvents",
+      "cardTaskCompletionContinuation", "jiuzheOpportunityQueue", "banrenmaOpportunityQueue",
+      "turnEndRevealContinuation", "movePaymentContinuation", "cardCornerFreeMoveContinuation",
+      "dataPlacementContinuation", "industryAbilityContinuation", "piratesRaidContinuation",
+      "strategySlotContinuation", "industryFreeMoveContinuation",
+    ]);
+
+    function clearTransientState(workingRoot = null) {
+      if (!workingRoot) return context.submitHostCommand({ kind: "recovery_clear_transient" });
+      const { cardState, techGameState } = workingRoot;
+      for (const field of transientMatchFields) delete workingRoot.match[field];
+      context.uiRuntimeState.discardSelectedHandIndexes = [];
+      context.setPendingCardSelectionDecision(workingRoot, null);
+      context.uiRuntimeState.passReserveSelectionDismissed = false;
+      context.uiRuntimeState.passReserveSelectedCardId = null;
+      context.uiRuntimeState.probeSectorSelectedRocketIds = [];
+      context.alienSpeciesRuntime?.clearJiuzheCardPlayDecisionDraft?.();
+      context.uiRuntimeState.jiuzheOpportunityOpen = false;
+      context.uiRuntimeState.jiuzheCardViewOpen = false;
+      context.alienSpeciesRuntime?.clearYichangdianCardGainDecisionDraft?.();
+      context.effectExecutors?.clearYichangdianCornerAction?.();
+      context.alienSpeciesRuntime?.clearBanrenmaCardGainDecisionDraft?.();
+      context.alienSpeciesRuntime?.clearBanrenmaOpportunityDecisionDraft?.();
+      context.alienSpeciesRuntime?.clearChongCardGainDecisionDraft?.();
+      context.alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
+      context.alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
+      context.alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
+      context.alienSpeciesRuntime?.clearAmibaTraceRemovalDecisionDraft?.();
+      context.alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.();
+      context.alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
+      context.alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
+      context.alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
+      context.uiRuntimeState.alienTracePickerState = null;
+      context.closeAlienRevealConfirmationOverlay();
+      context.uiRuntimeState.debugAlienTraceModeActive = false;
+      context.setActionEffectFlow(workingRoot, null);
+      context.clearCompletedEffectFlowForUndo();
+      context.uiRuntimeState.effectStepActive = false;
+      context.uiRuntimeState.moveHighlightRocketId = null;
+      context.uiRuntimeState.movePaymentSelectedHandIndices = [];
+      context.uiRuntimeState.playCardSelection = null;
+      context.uiRuntimeState.handCardPlayAction = null;
+      context.uiRuntimeState.cardCornerQuickAction = null;
+      context.historyStepOrder.length = 0;
+      context.actionHistory.commitSession();
+      context.quickActionHistory.commitSession();
+      context.cards.setSelectionActive(cardState, false);
+      context.cards.setPlayCardSelectionActive(cardState, false);
+      context.cards.setDiscardSelectionActive(cardState, false, 0);
+      if (techGameState?.ui) techGameState.ui.industryBorrowMode = false;
+      context.tech.setTechSelectionActive(techGameState, false);
+      context.interactionChrome.resetAfterRecovery();
+      context.closeFinalResultDialog({ silent: true });
+    }
+
+    function refreshAfterRecovery(message = "已从行动日志恢复局面", workingRoot = null) {
+      if (!workingRoot) return context.submitHostCommand({ kind: "recovery_refresh", message });
+      context.setTokenAssetSizes();
+      context.renderWheels();
+      context.renderSectors();
+      context.renderRotateStateToken();
+      context.syncPlanetOrbitLandMarkers();
+      context.refreshHelpers.refreshBoardState({ includeSectorNebula: false, includeFinalScore: true, includeTech: true });
+      context.renderPublicCards();
+      context.updatePublicCardControls();
+      context.renderReservedCards();
+      context.renderInitialSelectionArea();
+      context.renderPlayerHand();
+      context.refreshHelpers.refreshPlayerPanels();
+      context.renderRoundStatus();
+      context.renderDebugPlayerSwitch();
+      context.syncCardSelectionChrome();
+      context.syncDiscardSelectionChrome();
+      context.syncPassReserveSelectionChrome();
+      context.syncHandScanSelectionChrome();
+      context.syncPlayCardSelectionChrome();
+      context.syncTechSelectionChrome();
+      context.syncIndustryHandSelectionChrome();
+      context.syncInteractionFocusChrome();
+      workingRoot.rocketState.statusNote = message;
+      context.refreshHelpers.refreshActionState({ includeStateReadout: true });
+      context.renderActionLog();
+    }
+
+    return Object.freeze({
+      clearTransientStateForRecovery: clearTransientState,
+      refreshAfterGameRecovery: refreshAfterRecovery,
+    });
+  }
+
   function getRecoveryEntriesFromInput(logOrPackage) {
     if (Array.isArray(logOrPackage)) return logOrPackage;
     if (Array.isArray(logOrPackage?.entries)) return logOrPackage.entries;
@@ -312,6 +407,7 @@
     hasPersistentGameState,
     clearPersistentGameState,
     createPersistenceController,
+    createRecoveryHost,
     getRecoveryEntriesFromInput,
     getRecoverySnapshotFromLog,
     applyGameRecoverySnapshot,

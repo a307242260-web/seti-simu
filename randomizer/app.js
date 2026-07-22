@@ -3466,6 +3466,46 @@
     });
   }
 
+  const recoveryHost = gameRecoveryModule.createRecoveryHost({
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    uiRuntimeState,
+    setPendingCardSelectionDecision,
+    alienSpeciesRuntime,
+    effectExecutors,
+    closeAlienRevealConfirmationOverlay,
+    setActionEffectFlow,
+    clearCompletedEffectFlowForUndo,
+    historyStepOrder,
+    actionHistory,
+    quickActionHistory,
+    cards,
+    tech,
+    interactionChrome,
+    closeFinalResultDialog,
+    setTokenAssetSizes,
+    renderWheels,
+    renderSectors,
+    renderRotateStateToken,
+    syncPlanetOrbitLandMarkers,
+    refreshHelpers,
+    renderPublicCards,
+    updatePublicCardControls,
+    renderReservedCards,
+    renderInitialSelectionArea,
+    renderPlayerHand,
+    renderRoundStatus,
+    renderDebugPlayerSwitch,
+    syncCardSelectionChrome,
+    syncDiscardSelectionChrome,
+    syncPassReserveSelectionChrome,
+    syncHandScanSelectionChrome,
+    syncPlayCardSelectionChrome,
+    syncTechSelectionChrome,
+    syncIndustryHandSelectionChrome,
+    syncInteractionFocusChrome,
+    renderActionLog,
+  });
+  const { clearTransientStateForRecovery, refreshAfterGameRecovery } = recoveryHost;
   const persistenceController = gameRecoveryModule.createPersistenceController({
     window,
     storageKey: PERSISTENT_GAME_STORAGE_KEY,
@@ -5467,126 +5507,6 @@
 
   function getRecoverySnapshotFromLog(logOrPackage, options = {}) {
     return gameRecoveryModule.getRecoverySnapshotFromLog(logOrPackage, options);
-  }
-
-  function clearTransientStateForRecovery(workingRoot = null) {
-    if (!workingRoot) {
-      return ruleComposition.inputPort.submitHostCommand({ kind: "recovery_clear_transient" });
-    }
-    const { cardState: workingCardState, techGameState: workingTechGameState } = workingRoot;
-    delete workingRoot.match.discardContinuation;
-    uiRuntimeState.discardSelectedHandIndexes = [];
-    setPendingCardSelectionDecision(workingRoot, null);
-    delete workingRoot.match.passReserveContinuation;
-    uiRuntimeState.passReserveSelectionDismissed = false;
-    uiRuntimeState.passReserveSelectedCardId = null;
-    delete workingRoot.match.scanTargetContinuation;
-    delete workingRoot.match.probeSectorScanContinuation;
-    uiRuntimeState.probeSectorSelectedRocketIds = [];
-    delete workingRoot.match.publicScanContinuation;
-    delete workingRoot.match.handScanContinuation;
-    delete workingRoot.match.alienTraceContinuation;
-    delete workingRoot.match.landTargetContinuation;
-    delete workingRoot.match.probeLocationRewardContinuation;
-    delete workingRoot.match.cardTriggerContinuation;
-    delete workingRoot.match.cardTriggerFreeMoveContinuation;
-    if (workingRoot.match && typeof workingRoot.match === "object") {
-      delete workingRoot.match.type1TriggerEvents;
-    }
-    delete workingRoot.match.cardTaskCompletionContinuation;
-    alienSpeciesRuntime?.clearJiuzheCardPlayDecisionDraft?.();
-    uiRuntimeState.jiuzheOpportunityOpen = false;
-    uiRuntimeState.jiuzheCardViewOpen = false;
-    alienSpeciesRuntime?.clearYichangdianCardGainDecisionDraft?.();
-    effectExecutors?.clearYichangdianCornerAction?.();
-    alienSpeciesRuntime?.clearBanrenmaCardGainDecisionDraft?.();
-    alienSpeciesRuntime?.clearBanrenmaOpportunityDecisionDraft?.();
-    if (workingRoot.match && typeof workingRoot.match === "object") {
-      delete workingRoot.match.jiuzheOpportunityQueue;
-      delete workingRoot.match.banrenmaOpportunityQueue;
-    }
-    alienSpeciesRuntime?.clearChongCardGainDecisionDraft?.();
-    alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
-    alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
-    alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
-    alienSpeciesRuntime?.clearAmibaTraceRemovalDecisionDraft?.();
-    alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.();
-    alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
-    alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
-    alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
-    uiRuntimeState.alienTracePickerState = null;
-    closeAlienRevealConfirmationOverlay();
-    if (workingRoot.match && typeof workingRoot.match === "object") {
-      delete workingRoot.match.turnEndRevealContinuation;
-    }
-    uiRuntimeState.debugAlienTraceModeActive = false;
-    setActionEffectFlow(workingRoot, null);
-    clearCompletedEffectFlowForUndo();
-    uiRuntimeState.effectStepActive = false;
-    uiRuntimeState.moveHighlightRocketId = null;
-    if (workingRoot.match && typeof workingRoot.match === "object") {
-      delete workingRoot.match.movePaymentContinuation;
-    }
-    uiRuntimeState.movePaymentSelectedHandIndices = [];
-    uiRuntimeState.playCardSelection = null;
-    uiRuntimeState.handCardPlayAction = null;
-    uiRuntimeState.cardCornerQuickAction = null;
-    delete workingRoot.match.cardCornerFreeMoveContinuation;
-    delete workingRoot.match.dataPlacementContinuation;
-    delete workingRoot.match.industryAbilityContinuation;
-    delete workingRoot.match.piratesRaidContinuation;
-    delete workingRoot.match.strategySlotContinuation;
-    delete workingRoot.match.industryFreeMoveContinuation;
-    historyStepOrder.length = 0;
-    actionHistory.commitSession();
-    quickActionHistory.commitSession();
-    cards.setSelectionActive(workingCardState, false);
-    cards.setPlayCardSelectionActive(workingCardState, false);
-    cards.setDiscardSelectionActive(workingCardState, false, 0);
-    if (workingTechGameState?.ui) {
-      workingTechGameState.ui.industryBorrowMode = false;
-    }
-    tech.setTechSelectionActive(workingTechGameState, false);
-    interactionChrome.resetAfterRecovery();
-    closeFinalResultDialog({ silent: true });
-  }
-
-  function refreshAfterGameRecovery(message = "已从行动日志恢复局面", workingRoot = null) {
-    if (!workingRoot) {
-      return ruleComposition.inputPort.submitHostCommand({
-        kind: "recovery_refresh",
-        message,
-      });
-    }
-    setTokenAssetSizes();
-    renderWheels();
-    renderSectors();
-    renderRotateStateToken();
-    syncPlanetOrbitLandMarkers();
-    refreshHelpers.refreshBoardState({
-      includeSectorNebula: false,
-      includeFinalScore: true,
-      includeTech: true,
-    });
-    renderPublicCards();
-    updatePublicCardControls();
-    renderReservedCards();
-    renderInitialSelectionArea();
-    renderPlayerHand();
-    refreshHelpers.refreshPlayerPanels();
-    renderRoundStatus();
-    renderDebugPlayerSwitch();
-    syncCardSelectionChrome();
-    syncDiscardSelectionChrome();
-    syncPassReserveSelectionChrome();
-    syncHandScanSelectionChrome();
-    syncPlayCardSelectionChrome();
-    syncTechSelectionChrome();
-    syncIndustryHandSelectionChrome();
-    syncInteractionFocusChrome();
-    workingRoot.rocketState.statusNote = message;
-    refreshHelpers.refreshActionState({ includeStateReadout: true });
-    renderActionLog();
   }
 
   function applyGameRecoverySnapshot(snapshot, options = {}) {

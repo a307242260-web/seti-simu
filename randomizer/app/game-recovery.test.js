@@ -127,6 +127,67 @@ assert.equal(storage.removed, true);
   ]);
 })();
 
+(function testRecoveryHostClearsTransientStateAndRoutesUiRefresh() {
+  const calls = [];
+  const uiRuntimeState = {
+    discardSelectedHandIndexes: [1], passReserveSelectionDismissed: true,
+    passReserveSelectedCardId: "c1", probeSectorSelectedRocketIds: ["r1"],
+    jiuzheOpportunityOpen: true, jiuzheCardViewOpen: true, alienTracePickerState: {},
+    debugAlienTraceModeActive: true, effectStepActive: true, moveHighlightRocketId: "r1",
+    movePaymentSelectedHandIndices: [0], playCardSelection: {}, handCardPlayAction: {}, cardCornerQuickAction: {},
+  };
+  const refreshNames = [
+    "setTokenAssetSizes", "renderWheels", "renderSectors", "renderRotateStateToken",
+    "syncPlanetOrbitLandMarkers", "renderPublicCards", "updatePublicCardControls",
+    "renderReservedCards", "renderInitialSelectionArea", "renderPlayerHand", "renderRoundStatus",
+    "renderDebugPlayerSwitch", "syncCardSelectionChrome", "syncDiscardSelectionChrome",
+    "syncPassReserveSelectionChrome", "syncHandScanSelectionChrome", "syncPlayCardSelectionChrome",
+    "syncTechSelectionChrome", "syncIndustryHandSelectionChrome", "syncInteractionFocusChrome", "renderActionLog",
+  ];
+  const context = Object.fromEntries(refreshNames.map((name) => [name, () => calls.push(name)]));
+  Object.assign(context, {
+    uiRuntimeState,
+    submitHostCommand: (command) => calls.push(command),
+    setPendingCardSelectionDecision: (_root, pending) => calls.push(["card-decision", pending]),
+    closeAlienRevealConfirmationOverlay: () => calls.push("close-alien"),
+    setActionEffectFlow: (_root, flow) => calls.push(["effect-flow", flow]),
+    clearCompletedEffectFlowForUndo: () => calls.push("clear-completed-flow"),
+    historyStepOrder: [1, 2],
+    actionHistory: { commitSession: () => calls.push("commit-main") },
+    quickActionHistory: { commitSession: () => calls.push("commit-quick") },
+    cards: {
+      setSelectionActive: () => calls.push("card-select"),
+      setPlayCardSelectionActive: () => calls.push("card-play"),
+      setDiscardSelectionActive: () => calls.push("card-discard"),
+    },
+    tech: { setTechSelectionActive: () => calls.push("tech-select") },
+    interactionChrome: { resetAfterRecovery: () => calls.push("reset-chrome") },
+    closeFinalResultDialog: () => calls.push("close-final"),
+    refreshHelpers: {
+      refreshBoardState: () => calls.push("refresh-board"),
+      refreshPlayerPanels: () => calls.push("refresh-players"),
+      refreshActionState: () => calls.push("refresh-actions"),
+    },
+  });
+  const host = recovery.createRecoveryHost(context);
+  host.clearTransientStateForRecovery();
+  assert.deepEqual(calls.shift(), { kind: "recovery_clear_transient" });
+  const root = {
+    match: { discardContinuation: {}, industryAbilityContinuation: {}, turnEndRevealContinuation: {} },
+    cardState: {}, techGameState: { ui: { industryBorrowMode: true } }, rocketState: {},
+  };
+  host.clearTransientStateForRecovery(root);
+  assert.deepEqual(root.match, {});
+  assert.deepEqual(context.historyStepOrder, []);
+  assert.equal(root.techGameState.ui.industryBorrowMode, false);
+  assert.equal(uiRuntimeState.effectStepActive, false);
+  host.refreshAfterGameRecovery("恢复成功", root);
+  assert.equal(root.rocketState.statusNote, "恢复成功");
+  assert.ok(calls.includes("refresh-board"));
+  assert.ok(calls.includes("refresh-actions"));
+  assert.ok(calls.includes("renderActionLog"));
+})();
+
 (function testBrowserActionLogCheckpointRestoresOnlyThroughCompositionLifecycle() {
   const restored = [];
   harness.ruleEnvelope = { schemaVersion: RULE_SCHEMA, committedState: "round-1", session: null };
