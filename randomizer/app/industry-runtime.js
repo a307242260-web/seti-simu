@@ -788,7 +788,7 @@
         playerBeforeMove,
         "恢复公司免费移动前玩家状态",
       ));
-      recordAbilityCommands(result, quickActionHistory);
+      recordAbilityCommands(result, quickActionHistory, workingRoot);
 
       if (state.movesLeft <= 0) {
         finishIndustryAbilityFlow(workingRoot, `${state.label}：免费移动已完成`);
@@ -1091,7 +1091,7 @@
 
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       startPendingActionSession("launch", "发射行动");
-      recordAbilityCommands(result);
+      recordAbilityCommands(result, undefined, workingRoot);
       endEffectHistoryStep({
         result: {
           ok: true,
