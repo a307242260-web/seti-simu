@@ -2163,7 +2163,6 @@
     getRocketCoordinateReadoutLines,
     syncInteractionFocusChrome,
     placeDataToBlueSlot,
-    getPublicCardHeight,
   });
   const {
     setTokenAssetSizes,
@@ -3352,39 +3351,7 @@
     return "";
   }
 
-  function updatePlayerHandPanelTitle() {
-    if (!els.playerHandPanelTitle) return;
-
-    const player = getInterfacePlayer();
-    const count = Array.isArray(player?.hand)
-      ? player.hand.length
-      : Math.max(0, Math.round(Number(player?.resources?.handSize) || 0));
-
-    if (els.playerHandPanelHandCount) {
-      els.playerHandPanelHandCount.textContent = String(count);
-      els.playerHandPanelHandCount.classList.toggle("is-over-limit", count > 4);
-      els.playerHandPanelHandCount.setAttribute("aria-label", `当前手牌 ${count} 张`);
-    }
-    if (els.playerHandPanelTitleHint) {
-      els.playerHandPanelTitleHint.textContent = getPlayerHandPanelTitleHint();
-    }
-  }
-
-  function getPublicCardHeight() {
-    const row = els.publicCardRow;
-    if (!row) return null;
-
-    const fromVar = getComputedStyle(row).getPropertyValue("--public-card-height").trim();
-    if (fromVar) {
-      const parsed = Number.parseFloat(fromVar);
-      if (Number.isFinite(parsed) && parsed > 0) return parsed;
-    }
-
-    const reference = row.querySelector(".public-card");
-    if (!reference) return null;
-    const height = reference.getBoundingClientRect().height;
-    return height > 0 ? height : null;
-  }
+  function updatePlayerHandPanelTitle() { return renderPlayerHand(); }
 
   function initializeCardGame(workingRoot, handCount = DEFAULT_INITIAL_HAND_COUNT) {
     const { cardState: workingCardState, playerState: workingPlayerState, turnState: workingTurnState } = workingRoot;

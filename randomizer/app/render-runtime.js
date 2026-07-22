@@ -601,6 +601,18 @@
       }
       return ["星球统计", ...lines];
     });
+    const getPublicCardHeight = context.getPublicCardHeight || (() => {
+      const row = els.publicCardRow;
+      if (!row) return null;
+      const fromVar = root.getComputedStyle?.(row).getPropertyValue("--public-card-height").trim();
+      if (fromVar) {
+        const parsed = Number.parseFloat(fromVar);
+        if (Number.isFinite(parsed) && parsed > 0) return parsed;
+      }
+      const reference = row.querySelector(".public-card");
+      const height = reference?.getBoundingClientRect().height || 0;
+      return height > 0 ? height : null;
+    });
     function loadTokenWidth(asset, scale, fallbackNaturalWidth, onLoad) {
       const image = new ImageCtor();
       const resolveWidth = (naturalWidth) => {
@@ -1174,7 +1186,7 @@
     function layoutCardFan(fan, cardCount) {
       if (!fan) return;
 
-      const cardHeight = context.getPublicCardHeight() || 166;
+      const cardHeight = getPublicCardHeight() || 166;
       const cardWidth = cardHeight * (747 / 1040);
       const fanPadding = 14;
       const minStackStep = Math.round(cardWidth * 0.26);
