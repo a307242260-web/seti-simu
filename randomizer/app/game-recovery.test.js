@@ -188,6 +188,41 @@ assert.equal(storage.removed, true);
   assert.ok(calls.includes("renderActionLog"));
 })();
 
+(function testRecoveryLogControllerOwnsSnapshotsAndLogRestore() {
+  const calls = [];
+  const entries = [{ id: 9, actionLabel: "扫描" }];
+  const controller = recovery.createRecoveryLogController({
+    version: recovery.RECOVERY_SNAPSHOT_VERSION,
+    browserServices: harness.services,
+    createReadoutRoot: () => ({
+      turnState: { roundNumber: 4, turnNumber: 7 },
+      playerState: { currentPlayerId: "player-blue" },
+      rocketState: { statusNote: "恢复完成" },
+    }),
+    getActionCycleNumber: () => 3,
+    createAiControlSnapshot: () => ({ enabled: true }),
+    getStableSnapshot: () => snapshot,
+    getEntries: () => entries,
+    renderActionLog: () => calls.push("render"),
+    schedulePersistentGameStateSave: (options) => calls.push(["save", options.label]),
+    clearTransientStateForRecovery: () => calls.push("clear"),
+    restoreAiControlSnapshot: () => ({ message: "AI restored" }),
+    refreshAfterGameRecovery: (message) => calls.push(["refresh", message]),
+    importActionLogEntries: (saved, options) => calls.push(["import", saved.length, options.truncateToEntryId]),
+  });
+  const attached = controller.attachRecoverySnapshotToActionLogEntry(entries[0], "恢复点");
+  assert.notEqual(attached, snapshot);
+  assert.equal(attached.meta.entryId, 9);
+  assert.equal(attached.meta.label, "恢复点");
+  controller.refreshLatestActionLogRecoverySnapshot("最新状态");
+  assert.deepEqual(calls.slice(0, 2), ["render", ["save", "最新状态"]]);
+  assert.equal(controller.getRecoverableActionLog({ includeRecovery: false })[0].recoverySnapshot, undefined);
+  const restored = controller.recoverFromActionLog([{ id: 9, recoverySnapshot: snapshot }], { entryId: 9 });
+  assert.equal(restored.ok, true);
+  assert.ok(calls.includes("clear"));
+  assert.ok(calls.some((call) => Array.isArray(call) && call[0] === "import" && call[2] === 9));
+})();
+
 (function testBrowserActionLogCheckpointRestoresOnlyThroughCompositionLifecycle() {
   const restored = [];
   harness.ruleEnvelope = { schemaVersion: RULE_SCHEMA, committedState: "round-1", session: null };

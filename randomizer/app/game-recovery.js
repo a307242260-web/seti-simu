@@ -321,6 +321,109 @@
     });
   }
 
+  function createRecoveryLogController(options = {}) {
+    function createSnapshot(meta = {}) {
+      const readoutRoot = options.createReadoutRoot();
+      return createGameRecoverySnapshot({
+        browserServices: options.browserServices,
+        ruleLifecycleOptions: {
+          seed: meta.seed ?? "browser-host",
+          rngState: meta.rngState || { owner: "browser", state: null },
+        },
+        roundNumber: readoutRoot.turnState.roundNumber,
+        turnNumber: readoutRoot.turnState.turnNumber,
+        actionCycleNumber: options.getActionCycleNumber(),
+        currentPlayerId: readoutRoot.playerState.currentPlayerId,
+        entryId: meta.entryId ?? null,
+        label: meta.label || null,
+        runtime: { aiControl: options.createAiControlSnapshot() },
+      });
+    }
+
+    function attachSnapshot(entry, label = null) {
+      if (!entry) return null;
+      const recoveryLabel = label || entry.actionLabel || entry.title || null;
+      const stableSnapshot = options.getStableSnapshot();
+      if (stableSnapshot) {
+        entry.recoverySnapshot = clone(stableSnapshot);
+        entry.recoverySnapshot.meta.entryId = entry.id;
+        entry.recoverySnapshot.meta.label = recoveryLabel;
+      } else {
+        entry.recoverySnapshot = createSnapshot({ entryId: entry.id, label: recoveryLabel });
+      }
+      return entry.recoverySnapshot;
+    }
+
+    function refreshLatest(label = null) {
+      const entry = options.getEntries().at(-1) || null;
+      if (!entry) return null;
+      attachSnapshot(entry, label);
+      options.renderActionLog();
+      options.schedulePersistentGameStateSave({ label: label || "行动日志恢复点" });
+      return entry.recoverySnapshot;
+    }
+
+    function getRecoverable(optionsArg = {}) {
+      return getRecoverableActionLogEntries(options.getEntries(), optionsArg);
+    }
+
+    function createPackage(optionsArg = {}) {
+      return createActionLogRecoveryPackage({
+        version: options.version,
+        entries: options.getEntries(),
+        includeRecovery: optionsArg.includeRecovery !== false,
+        createSnapshot,
+      });
+    }
+
+    function applySnapshot(snapshot, applyOptions = {}) {
+      return applyGameRecoverySnapshot(snapshot, {
+        ...applyOptions,
+        browserServices: options.browserServices,
+        onAfterStateRestored: () => {
+          options.getActionCycleNumber();
+          options.clearTransientStateForRecovery();
+        },
+        restoreAiControlSnapshot: options.restoreAiControlSnapshot,
+        refreshAfterGameRecovery: applyOptions.skipRefresh ? null : options.refreshAfterGameRecovery,
+        getRecoveryMessage: () => options.createReadoutRoot().rocketState.statusNote,
+      });
+    }
+
+    function importEntries(entries, importOptions = {}) {
+      options.importActionLogEntries(entries, importOptions);
+    }
+
+    function recoverFromLog(logOrPackage, recoverOptions = {}) {
+      const entries = getRecoveryEntriesFromInput(logOrPackage);
+      const snapshot = getRecoverySnapshotFromLog(logOrPackage, recoverOptions);
+      if (!snapshot) return { ok: false, message: "行动日志中没有可恢复快照" };
+      const result = applySnapshot(snapshot, { message: recoverOptions.message || "已根据行动日志恢复局面" });
+      if (!result.ok) return result;
+      if (entries.length && recoverOptions.restoreLog !== false) {
+        importEntries(entries, {
+          truncateToEntryId: recoverOptions.entryId,
+          truncateToIndex: Number.isInteger(recoverOptions.index) ? recoverOptions.index : null,
+        });
+      }
+      return result;
+    }
+
+    return Object.freeze({
+      createGameRecoverySnapshot: createSnapshot,
+      attachRecoverySnapshotToActionLogEntry: attachSnapshot,
+      refreshLatestActionLogRecoverySnapshot: refreshLatest,
+      normalizeRecoverableActionLogEntry,
+      getRecoverableActionLog: getRecoverable,
+      createActionLogRecoveryPackage: createPackage,
+      getRecoveryEntriesFromInput,
+      getRecoverySnapshotFromLog,
+      applyGameRecoverySnapshot: applySnapshot,
+      importActionLogEntries: importEntries,
+      recoverFromActionLog: recoverFromLog,
+    });
+  }
+
   function getRecoveryEntriesFromInput(logOrPackage) {
     if (Array.isArray(logOrPackage)) return logOrPackage;
     if (Array.isArray(logOrPackage?.entries)) return logOrPackage.entries;
@@ -408,6 +511,7 @@
     clearPersistentGameState,
     createPersistenceController,
     createRecoveryHost,
+    createRecoveryLogController,
     getRecoveryEntriesFromInput,
     getRecoverySnapshotFromLog,
     applyGameRecoverySnapshot,

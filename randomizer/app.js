@@ -3506,6 +3506,34 @@
     renderActionLog,
   });
   const { clearTransientStateForRecovery, refreshAfterGameRecovery } = recoveryHost;
+  const recoveryLogController = gameRecoveryModule.createRecoveryLogController({
+    version: GAME_RECOVERY_VERSION,
+    browserServices: residentBrowserServices,
+    createReadoutRoot: createStateSourceReadoutRoot,
+    getActionCycleNumber: (...args) => getActionCycleNumber(...args),
+    createAiControlSnapshot: (...args) => createAiControlSnapshot(...args),
+    getStableSnapshot: () => browserActionStableRecoverySnapshot,
+    getEntries: () => actionLogState.entries,
+    renderActionLog,
+    schedulePersistentGameStateSave: (...args) => persistenceController.schedulePersistentGameStateSave(...args),
+    clearTransientStateForRecovery,
+    restoreAiControlSnapshot: (...args) => restoreAiControlSnapshot(...args),
+    refreshAfterGameRecovery,
+    importActionLogEntries: (...args) => actionLogRuntimeModule.importEntries(actionLogState, ...args),
+  });
+  const {
+    createGameRecoverySnapshot,
+    attachRecoverySnapshotToActionLogEntry,
+    refreshLatestActionLogRecoverySnapshot,
+    normalizeRecoverableActionLogEntry,
+    getRecoverableActionLog,
+    createActionLogRecoveryPackage,
+    getRecoveryEntriesFromInput,
+    getRecoverySnapshotFromLog,
+    applyGameRecoverySnapshot,
+    importActionLogEntries,
+    recoverFromActionLog,
+  } = recoveryLogController;
   const persistenceController = gameRecoveryModule.createPersistenceController({
     window,
     storageKey: PERSISTENT_GAME_STORAGE_KEY,
@@ -5438,113 +5466,6 @@
       && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
       && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
   );
-
-  function createGameRecoverySnapshot(meta = {}) {
-    const readoutRoot = createStateSourceReadoutRoot();
-    return gameRecoveryModule.createGameRecoverySnapshot({
-      browserServices: residentBrowserServices,
-      ruleLifecycleOptions: {
-        seed: meta.seed ?? "browser-host",
-        rngState: meta.rngState || { owner: "browser", state: null },
-      },
-      roundNumber: readoutRoot.turnState.roundNumber,
-      turnNumber: readoutRoot.turnState.turnNumber,
-      actionCycleNumber: getActionCycleNumber(),
-      currentPlayerId: readoutRoot.playerState.currentPlayerId,
-      entryId: meta.entryId ?? null,
-      label: meta.label || null,
-      runtime: {
-        aiControl: createAiControlSnapshot(),
-      },
-    });
-  }
-
-  function attachRecoverySnapshotToActionLogEntry(entry, label = null) {
-    if (!entry) return null;
-    const recoveryLabel = label || entry.actionLabel || entry.title || null;
-    if (browserActionStableRecoverySnapshot) {
-      entry.recoverySnapshot = structuredClone(browserActionStableRecoverySnapshot);
-      entry.recoverySnapshot.meta.entryId = entry.id;
-      entry.recoverySnapshot.meta.label = recoveryLabel;
-    } else {
-      entry.recoverySnapshot = createGameRecoverySnapshot({
-        entryId: entry.id,
-        label: recoveryLabel,
-      });
-    }
-    return entry.recoverySnapshot;
-  }
-
-  function refreshLatestActionLogRecoverySnapshot(label = null) {
-    const entry = actionLogState.entries[actionLogState.entries.length - 1] || null;
-    if (!entry) return null;
-    attachRecoverySnapshotToActionLogEntry(entry, label);
-    renderActionLog();
-    schedulePersistentGameStateSave({ label: label || "行动日志恢复点" });
-    return entry.recoverySnapshot;
-  }
-
-  function normalizeRecoverableActionLogEntry(entry, options = {}) {
-    return gameRecoveryModule.normalizeRecoverableActionLogEntry(entry, options);
-  }
-
-  function getRecoverableActionLog(options = {}) {
-    return gameRecoveryModule.getRecoverableActionLogEntries(actionLogState.entries, options);
-  }
-
-  function createActionLogRecoveryPackage(options = {}) {
-    return gameRecoveryModule.createActionLogRecoveryPackage({
-      version: GAME_RECOVERY_VERSION,
-      entries: actionLogState.entries,
-      includeRecovery: options.includeRecovery !== false,
-      createSnapshot: createGameRecoverySnapshot,
-    });
-  }
-
-  function getRecoveryEntriesFromInput(logOrPackage) {
-    return gameRecoveryModule.getRecoveryEntriesFromInput(logOrPackage);
-  }
-
-  function getRecoverySnapshotFromLog(logOrPackage, options = {}) {
-    return gameRecoveryModule.getRecoverySnapshotFromLog(logOrPackage, options);
-  }
-
-  function applyGameRecoverySnapshot(snapshot, options = {}) {
-    return gameRecoveryModule.applyGameRecoverySnapshot(snapshot, {
-      ...options,
-      browserServices: residentBrowserServices,
-      onAfterStateRestored: () => {
-        getActionCycleNumber();
-        clearTransientStateForRecovery();
-      },
-      restoreAiControlSnapshot,
-      refreshAfterGameRecovery: options.skipRefresh ? null : refreshAfterGameRecovery,
-      getRecoveryMessage: () => createStateSourceReadoutRoot().rocketState.statusNote,
-    });
-  }
-
-  function importActionLogEntries(entries, options = {}) {
-    actionLogRuntimeModule.importEntries(actionLogState, entries, options);
-  }
-
-  function recoverFromActionLog(logOrPackage, options = {}) {
-    const entries = getRecoveryEntriesFromInput(logOrPackage);
-    const snapshot = getRecoverySnapshotFromLog(logOrPackage, options);
-    if (!snapshot) {
-      return { ok: false, message: "行动日志中没有可恢复快照" };
-    }
-    const result = applyGameRecoverySnapshot(snapshot, {
-      message: options.message || "已根据行动日志恢复局面",
-    });
-    if (!result.ok) return result;
-    if (entries.length && options.restoreLog !== false) {
-      importActionLogEntries(entries, {
-        truncateToEntryId: options.entryId,
-        truncateToIndex: Number.isInteger(options.index) ? options.index : null,
-      });
-    }
-    return result;
-  }
 
   function commitActionLogDraft(options = {}) {
     const entry = actionLogRuntimeModule.createEntryFromDraft(actionLogState, {
