@@ -607,7 +607,10 @@
         case "ai_run_selected_turn_action":
           return cloneResidentPresentation(runAiSelectedTurnActionForRoot(workingRoot, command.selector, command.options));
         case "ai_recover_idle_action_effect":
-          return cloneResidentPresentation(recoverAiIdleActionEffectStepForRoot(workingRoot, ...(command.args || [])));
+          return cloneResidentPresentation(
+            recoverAiIdleActionEffectStepForRoot(workingRoot, ...(command.args || []))
+            || { ok: true, idle: true, message: "当前没有待恢复的行动效果" },
+          );
         case "ai_build_turn_candidates":
           return cloneResidentPresentation(buildAiTurnActionCandidatesForRoot(workingRoot, ...(command.args || [])));
         case "card_trigger_list_free_move_candidates":
