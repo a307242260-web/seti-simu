@@ -93,7 +93,6 @@
       openCardTaskCompletionPicker,
       openFangzhouTraceDestinationChoice,
       planetRewards,
-      planetStatsState,
       players,
       quickActionHistory,
       recordHistoryCommand,
@@ -3193,7 +3192,7 @@ function queueJiuzheOpportunitiesForPlayer(workingRoot, player) {
   }
 
 function buildJiuzheCardConditionContext(workingRoot) {
-    const { alienGameState, nebulaDataState } = requireWorkingRoot(workingRoot);
+    const { alienGameState, nebulaDataState, planetStatsState } = requireWorkingRoot(workingRoot);
     const probeLocationData = buildProbeLocationIndex();
     return {
       alienGameState,

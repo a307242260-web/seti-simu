@@ -318,7 +318,7 @@
     const els = context.els || {};
     const actionBriefingState = context.actionBriefingState || {};
     const startScreenState = context.startScreenState || {};
-    const turnState = context.turnState || {};
+    const getTurnState = requireFunction("getTurnState", context.getTurnState);
 
     const normalizeActionLogText = requireFunction("normalizeActionLogText", context.normalizeActionLogText);
     const createActionLogPlayedCardSnapshot = requireFunction(
@@ -419,7 +419,7 @@
 
     function getActionBriefingTurnKey(advanceResult = null) {
       return [
-        turnState.roundNumber,
+        getTurnState().roundNumber,
         getDisplayedTurnNumber(),
         advanceResult?.completedActionCycleRoundNumber || "",
         advanceResult?.completedActionCycleNumber || "",
