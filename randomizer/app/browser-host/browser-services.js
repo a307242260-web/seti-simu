@@ -274,6 +274,13 @@
       return options.submitHostCommand({ kind, operation, args }).value;
     }
 
+    function bindOperationCommands(kind, operations = []) {
+      return Object.freeze(Object.fromEntries(operations.map((operation) => [
+        operation,
+        (...args) => callOperation(kind, operation, args),
+      ])));
+    }
+
     return Object.freeze({
       executeBrowserDomainCommand,
       callBrowserDomainCommand,
@@ -284,6 +291,8 @@
           (...args) => callBrowserDomainCommand(domain, operation, args),
         ])));
       },
+      bindEffectChoiceCommands: (operations = []) => bindOperationCommands("effect_choice_command", operations),
+      bindEffectExecutorCommands: (operations = []) => bindOperationCommands("effect_executor_command", operations),
       callEffectChoiceCommand: (operation, args = []) => callOperation("effect_choice_command", operation, args),
       callHandFlowCommand: (operation, args = []) => callOperation("hand_flow_command", operation, args),
       callEffectExecutorCommand: (operation, args = []) => callOperation("effect_executor_command", operation, args),

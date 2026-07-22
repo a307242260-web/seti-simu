@@ -227,12 +227,86 @@
     callBrowserDomainCommand,
     bindBrowserDomainCommand,
     bindDomainCommands,
-    callEffectChoiceCommand,
     callHandFlowCommand,
-    callEffectExecutorCommand,
     callDebugCommand,
     setBrowserStatusNote,
   } = browserDomainCommandPort;
+  const {
+    handleConditionalSectorChoice,
+    handleDiscardIncomeCardChoice,
+    confirmDiscardAnyForIncome,
+    handlePayCreditChoice,
+    handleFundamentalismExchangeChoice,
+    handleDiscardCornerRepeatChoice,
+    handleRemoveOrbitToProbeChoice,
+  } = browserDomainCommandPort.bindEffectChoiceCommands([
+    "handleConditionalSectorChoice",
+    "handleDiscardIncomeCardChoice",
+    "confirmDiscardAnyForIncome",
+    "handlePayCreditChoice",
+    "handleFundamentalismExchangeChoice",
+    "handleDiscardCornerRepeatChoice",
+    "handleRemoveOrbitToProbeChoice",
+  ]);
+  const {
+    executeSectorXScanEffect,
+    maybeReturnPlayedCardToHandAfterSectorScan,
+    getPlanetName,
+    markerBelongsToPlayer,
+    playerHasOwnOrbitMarkerAtPlanet,
+    markerOwnerLabel,
+    buildPlanetMarkerRemovalChoices,
+    removePlanetMarkerForChoice,
+    handleRemovePlanetMarkerChoice,
+    handleScanAction4Choice,
+    formatPlanetRewardGain,
+    finishAutomaticRewardEffect,
+    buildPlutoRewardEffectsForAction,
+    buildPlutoChoiceRewardSummary,
+    handleHandCornerChoice,
+    getSectorXsMatchingCondition,
+    sectorXHasAvailableScanTarget,
+    isAlienFamilyCard,
+    handleReturnUnfinishedTaskChoice,
+    countOwnedTechByType,
+    enrichScanResultEvents,
+    getPlayerCompanyBaseIncome,
+    insertActionEffectsAfterCurrent,
+    insertActionEffectsBeforeCurrent,
+    handleOptionalHandScanChoice,
+    openYichangdianCornerPicker,
+    handleYichangdianCornerChoice,
+    applyAomomoScanCostAndBonus,
+  } = browserDomainCommandPort.bindEffectExecutorCommands([
+    "executeSectorXScanEffect",
+    "maybeReturnPlayedCardToHandAfterSectorScan",
+    "getPlanetName",
+    "markerBelongsToPlayer",
+    "playerHasOwnOrbitMarkerAtPlanet",
+    "markerOwnerLabel",
+    "buildPlanetMarkerRemovalChoices",
+    "removePlanetMarkerForChoice",
+    "handleRemovePlanetMarkerChoice",
+    "handleScanAction4Choice",
+    "formatPlanetRewardGain",
+    "finishAutomaticRewardEffect",
+    "buildPlutoRewardEffectsForAction",
+    "buildPlutoChoiceRewardSummary",
+    "handleHandCornerChoice",
+    "getSectorXsMatchingCondition",
+    "sectorXHasAvailableScanTarget",
+    "isAlienFamilyCard",
+    "handleReturnUnfinishedTaskChoice",
+    "countOwnedTechByType",
+    "enrichScanResultEvents",
+    "getPlayerCompanyBaseIncome",
+    "insertActionEffectsAfterCurrent",
+    "insertActionEffectsBeforeCurrent",
+    "handleOptionalHandScanChoice",
+    "openYichangdianCornerPicker",
+    "handleYichangdianCornerChoice",
+    "applyAomomoScanCostAndBonus",
+  ]);
   const turnEndPort = turnEndFlowModule.createTurnEndPort({
     getRuntime: () => turnEndFlow,
     dispatchCommand: (name, args) => callBrowserDomainCommand("turn_end", name, args),
@@ -5536,14 +5610,6 @@
     );
   }
 
-  function executeSectorXScanEffect(...args) {
-    return callEffectExecutorCommand("executeSectorXScanEffect", args);
-  }
-
-  function maybeReturnPlayedCardToHandAfterSectorScan(...args) {
-    return callEffectExecutorCommand("maybeReturnPlayedCardToHandAfterSectorScan", args);
-  }
-
   function handleProbeSectorScanChoice(rocketId) {
     const pending = getPendingProbeSectorScanDecision();
     const maxTargets = Math.max(1, Math.round(Number(pending?.effect?.options?.maxTargets) || 1));
@@ -5565,143 +5631,11 @@
     );
   }
 
-  function getPlanetName(...args) {
-    return callEffectExecutorCommand("getPlanetName", args);
-  }
-
-  function markerBelongsToPlayer(...args) {
-    return callEffectExecutorCommand("markerBelongsToPlayer", args);
-  }
-
-  function playerHasOwnOrbitMarkerAtPlanet(...args) {
-    return callEffectExecutorCommand("playerHasOwnOrbitMarkerAtPlanet", args);
-  }
-
-  function markerOwnerLabel(...args) {
-    return callEffectExecutorCommand("markerOwnerLabel", args);
-  }
-
-  function buildPlanetMarkerRemovalChoices(...args) {
-    return callEffectExecutorCommand("buildPlanetMarkerRemovalChoices", args);
-  }
-
-  function removePlanetMarkerForChoice(...args) {
-    return callEffectExecutorCommand("removePlanetMarkerForChoice", args);
-  }
-
-  function handleRemovePlanetMarkerChoice(...args) {
-    return callEffectExecutorCommand("handleRemovePlanetMarkerChoice", args);
-  }
-
-  function handleScanAction4Choice(...args) {
-    return callEffectExecutorCommand("handleScanAction4Choice", args);
-  }
-
-  function formatPlanetRewardGain(...args) {
-    return callEffectExecutorCommand("formatPlanetRewardGain", args);
-  }
-
-  function finishAutomaticRewardEffect(...args) {
-    return callEffectExecutorCommand("finishAutomaticRewardEffect", args);
-  }
-
-  function buildPlutoRewardEffectsForAction(...args) {
-    return callEffectExecutorCommand("buildPlutoRewardEffectsForAction", args);
-  }
-
-  function buildPlutoChoiceRewardSummary(...args) {
-    return callEffectExecutorCommand("buildPlutoChoiceRewardSummary", args);
-  }
-
-  function handleHandCornerChoice(...args) {
-    return callEffectExecutorCommand("handleHandCornerChoice", args);
-  }
-
-  function getSectorXsMatchingCondition(...args) {
-    return callEffectExecutorCommand("getSectorXsMatchingCondition", args);
-  }
-
-  function sectorXHasAvailableScanTarget(...args) {
-    return callEffectExecutorCommand("sectorXHasAvailableScanTarget", args);
-  }
-
-  function handleConditionalSectorChoice(...args) {
-    return callEffectChoiceCommand("handleConditionalSectorChoice", args);
-  }
-
-  function handleDiscardIncomeCardChoice(...args) {
-    return callEffectChoiceCommand("handleDiscardIncomeCardChoice", args);
-  }
-
-  function confirmDiscardAnyForIncome(...args) {
-    return callEffectChoiceCommand("confirmDiscardAnyForIncome", args);
-  }
-
-  function handlePayCreditChoice(...args) {
-    return callEffectChoiceCommand("handlePayCreditChoice", args);
-  }
-
-  function handleFundamentalismExchangeChoice(...args) {
-    return callEffectChoiceCommand("handleFundamentalismExchangeChoice", args);
-  }
-
-  function isAlienFamilyCard(...args) {
-    return callEffectExecutorCommand("isAlienFamilyCard", args);
-  }
-
-  function handleDiscardCornerRepeatChoice(...args) {
-    return callEffectChoiceCommand("handleDiscardCornerRepeatChoice", args);
-  }
-
-  function handleRemoveOrbitToProbeChoice(...args) {
-    return callEffectChoiceCommand("handleRemoveOrbitToProbeChoice", args);
-  }
-
-  function handleReturnUnfinishedTaskChoice(...args) {
-    return callEffectExecutorCommand("handleReturnUnfinishedTaskChoice", args);
-  }
-
-  function countOwnedTechByType(...args) {
-    return callEffectExecutorCommand("countOwnedTechByType", args);
-  }
-
-  function enrichScanResultEvents(...args) {
-    return callEffectExecutorCommand("enrichScanResultEvents", args);
-  }
-
-  function getPlayerCompanyBaseIncome(...args) {
-    return callEffectExecutorCommand("getPlayerCompanyBaseIncome", args);
-  }
-
-  function insertActionEffectsAfterCurrent(...args) {
-    return callEffectExecutorCommand("insertActionEffectsAfterCurrent", args);
-  }
-
-  function insertActionEffectsBeforeCurrent(...args) {
-    return callEffectExecutorCommand("insertActionEffectsBeforeCurrent", args);
-  }
-
-  function handleOptionalHandScanChoice(...args) {
-    return callEffectExecutorCommand("handleOptionalHandScanChoice", args);
-  }
-
   function handleProbeLocationRewardChoice(rocketId) {
     return submitActiveCardDecision(
       "probe-location-reward",
       (target) => String(target.rocketId ?? target.choiceId) === String(rocketId),
     );
-  }
-
-  function openYichangdianCornerPicker(...args) {
-    return callEffectExecutorCommand("openYichangdianCornerPicker", args);
-  }
-
-  function handleYichangdianCornerChoice(...args) {
-    return callEffectExecutorCommand("handleYichangdianCornerChoice", args);
-  }
-
-  function applyAomomoScanCostAndBonus(...args) {
-    return callEffectExecutorCommand("applyAomomoScanCostAndBonus", args);
   }
 
   function executeActionEffectForOwner(...args) {

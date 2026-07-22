@@ -204,12 +204,16 @@ function createHarness(options = {}) {
   port.bindBrowserDomainCommand("scan_flow", "beginSectorScan")(4);
   const scanCommands = port.bindDomainCommands("scan_flow", ["beginSectorScan"]);
   scanCommands.beginSectorScan(5);
-  port.callEffectChoiceCommand("confirm", [1]);
+  const effectChoiceCommands = port.bindEffectChoiceCommands(["confirm"]);
+  effectChoiceCommands.confirm(1);
+  const effectExecutorCommands = port.bindEffectExecutorCommands(["format"]);
+  effectExecutorCommands.format("earth");
   port.setBrowserStatusNote("ready");
   assert.deepEqual(submitted, [
     { kind: "domain_command", domain: "scan_flow", operation: "beginSectorScan", args: [4] },
     { kind: "domain_command", domain: "scan_flow", operation: "beginSectorScan", args: [5] },
     { kind: "effect_choice_command", operation: "confirm", args: [1] },
+    { kind: "effect_executor_command", operation: "format", args: ["earth"] },
     { kind: "ui_set_status_note", message: "ready" },
   ]);
 })();
