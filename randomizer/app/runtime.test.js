@@ -27,6 +27,7 @@ assert.equal(state.selection.currentPlayerId, "player-white");
 assert.equal(Object.hasOwn(state, "pending"), false);
 assert.equal(state.ui.passReserveSelectionDismissed, false);
 assert.equal(state.ui.passReserveSelectedCardId, null);
+assert.deepEqual(state.ui.probeSectorSelectedRocketIds, []);
 assert.equal(state.ui.alienRevealConfirmation, null);
 assert.equal(state.ui.jiuzheOpportunityOpen, false);
 assert.equal(state.browserHost.scanRunSequence, 0);

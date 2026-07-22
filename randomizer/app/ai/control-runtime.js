@@ -408,8 +408,6 @@
       if (state.pendingHandScanAction?.player?.id) return state.pendingHandScanAction.player.id;
       const sharedPendingEntries = [
         state.pendingScanTargetAction,
-        state.pendingProbeSectorScanAction,
-        state.pendingProbeLocationRewardAction,
         state.pendingLandTargetAction,
         state.pendingDataPlaceAction,
       ];

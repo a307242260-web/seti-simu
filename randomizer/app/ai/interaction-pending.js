@@ -220,7 +220,7 @@
             ? 0
             : getBestAiNebulaChoiceScore(buildSectorScanChoicesForX(sectorX), {
               player: getAiPendingDecisionPlayer(workingRoot, pending),
-              pendingType: "probe_sector_scan",
+              pendingType: "probeSectorScan",
               gainData: pending?.effect?.options?.gainData,
             });
           return {
@@ -355,54 +355,6 @@
       });
       const result = confirmLandTargetPicker();
       return result || { ok: true, progressed: true, message: "AI 已选择登陆目标" };
-    }
-
-    function runAiProbeSectorScanDecision(workingRoot) {
-      const pending = state.pendingProbeSectorScanAction || null;
-      if (!pending) return null;
-      const player = getAiPendingDecisionPlayer(workingRoot, pending);
-      if (!isAiAutoBattlePlayer(player?.id)) {
-        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择探测器扇区扫描` };
-      }
-      const selectedChoices = chooseAiProbeSectorScanChoices(workingRoot, pending);
-      if (!selectedChoices.length) {
-        return { ok: false, blocked: true, message: "AI 没有可选探测器扇区扫描目标" };
-      }
-      const maxTargets = Math.max(1, Math.round(aiNumber(pending.effect?.options?.maxTargets || 1)));
-      recordAiAutoBattleLog("probe-sector-scan", `${player.colorLabel}AI 选择探测器扇区扫描`, {
-        logPlayerId: player.id,
-        selectedRocketIds: selectedChoices.map((choice) => choice.rocket?.id),
-        maxTargets,
-      });
-      let result = null;
-      for (const choice of selectedChoices) {
-        result = handleProbeSectorScanChoice(choice.rocket.id);
-        if (maxTargets === 1) return result;
-        if (result?.ok === false) return result;
-      }
-      return confirmProbeSectorScanSelection();
-    }
-
-    function runAiProbeLocationRewardDecision(workingRoot) {
-      const pending = state.pendingProbeLocationRewardAction || null;
-      if (!pending) return null;
-      const player = getAiPendingDecisionPlayer(workingRoot, pending);
-      if (!isAiAutoBattlePlayer(player?.id)) {
-        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择探测器位置奖励` };
-      }
-      const button = chooseAiProbeLocationRewardButton();
-      const rocketId = button?.dataset?.probeLocationRewardRocketId
-        || pending.choices?.[0]?.rocket?.id
-        || null;
-      if (rocketId == null) {
-        return { ok: false, blocked: true, message: "AI 没有可选探测器位置奖励目标" };
-      }
-      recordAiAutoBattleLog("probe-location-reward", `${player.colorLabel}AI 选择探测器位置奖励`, {
-        logPlayerId: player.id,
-        rocketId,
-        label: button?.textContent || "",
-      });
-      return handleProbeLocationRewardChoice(rocketId);
     }
 
     function runAiRareScanTargetDecision(pending, player) {
@@ -2162,8 +2114,6 @@
       scoreAiStrategyPassiveSlotChoice,
       runAiStrategyPassiveSlotChoiceDecision,
       runAiLandTargetDecision,
-      runAiProbeSectorScanDecision,
-      runAiProbeLocationRewardDecision,
       runAiRareScanTargetDecision,
       runAiScanTargetDecision,
       buildAiEffectMoveCandidate,

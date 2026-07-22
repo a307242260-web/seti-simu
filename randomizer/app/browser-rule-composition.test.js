@@ -499,6 +499,15 @@ function createHarness(initialValue = 0) {
   assert.match(appSource, /function submitActiveCardDecision[\s\S]*?inputPort\.submitDecision\(/, "卡牌 trigger/task/free-move 人类输入必须提交 active Decision choice");
   assert.doesNotMatch([appSource, scanFlowSource, debugRuntimeSource].join("\n"), /["']public_scan_queue["']/, "公共扫描队列旧 store key 必须物理删除");
   assert.match(scanFlowSource, /workingRoot[\s\S]*?publicScanContinuation/, "公共扫描队列必须归 Composition continuation");
+  const effectChoiceSource = fs.readFileSync(path.join(__dirname, "effect-choice-flow.js"), "utf8");
+  assert.doesNotMatch(
+    [appSource, scanFlowSource, debugRuntimeSource, effectChoiceSource].join("\n"),
+    /["'](?:probe_sector_scan|probe_location_reward)["']/,
+    "探测器扫描/位置奖励旧 store key 必须物理删除",
+  );
+  assert.match(effectChoiceSource, /workingRoot[\s\S]*?probeSectorScanContinuation/, "探测器扫描规则上下文必须归 Composition continuation");
+  assert.match(effectChoiceSource, /uiRuntimeState\?\.probeSectorSelectedRocketIds/, "探测器多选高亮只能进入 uiRuntimeState");
+  assert.doesNotMatch(aiProductionSource, /runAiProbeSectorScanDecision|runAiProbeLocationRewardDecision|pendingProbeSectorScanAction|pendingProbeLocationRewardAction/, "探测器选择 AI 不得保留专用 pending resolver");
 }
 
 console.log("browser-rule-composition tests passed");

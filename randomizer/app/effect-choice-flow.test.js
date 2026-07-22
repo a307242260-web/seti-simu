@@ -53,6 +53,7 @@ function createHarness(overrides = {}) {
   };
   const cardState = { publicCards: [{ id: "pub-1" }], discardPile: [] };
   const workingRoot = {
+    match: {},
     rocketState,
     cardState,
     playerState: { players: [player], currentPlayerId: player.id },
@@ -86,6 +87,7 @@ function createHarness(overrides = {}) {
   const helper = createEffectChoiceFlowHelpers({
     document: { createElement: () => makeButton() },
     decisionSessions,
+    uiRuntimeState: { probeSectorSelectedRocketIds: [] },
     pendingState,
     els,
     cards: {
@@ -156,8 +158,8 @@ function createHarness(overrides = {}) {
     withPendingOwnerPlayer: (_workingRoot, _pending, run) => run(player),
     closeScanTargetPicker() {
       pendingState.scanTargetAction = null;
-      decisionSessions.clear("probe_sector_scan");
-      decisionSessions.clear("probe_location_reward");
+      delete workingRoot.match.probeSectorScanContinuation;
+      delete workingRoot.match.probeLocationRewardContinuation;
       els.scanTargetOverlay.hidden = true;
     },
     renderStateReadout() {
@@ -279,31 +281,28 @@ function createHarness(overrides = {}) {
 }
 
 {
-  const { helper, workingRoot, decisionSessions, calls, els } = createHarness();
+  const { helper, workingRoot, calls, els } = createHarness();
   const result = helper.executeProbeSectorScanEffect(workingRoot, {
     id: "probe-sector",
     label: "探测器扫描",
     options: { maxTargets: 2, repeat: 1 },
   });
   assert.equal(result.ok, true);
-  assert.equal(decisionSessions.peek("probe_sector_scan").choices.length, 2);
-  const pending = decisionSessions.clear("probe_sector_scan");
-  pending.selectedRocketIds = [1];
-  helper.confirmProbeSectorScanSelection(workingRoot, pending);
+  assert.equal(workingRoot.match.probeSectorScanContinuation.choices.length, 2);
+  helper.confirmProbeSectorScanSelection(workingRoot, [1]);
   assert.equal(calls.inserted.length, 1);
   assert.equal(els.scanTargetOverlay.hidden, true);
 }
 
 {
-  const { helper, workingRoot, decisionSessions, calls } = createHarness();
+  const { helper, workingRoot, calls } = createHarness();
   helper.executeProbeLocationRewardEffect(workingRoot, {
     id: "probe-location",
     label: "位置奖励",
     options: { asteroidData: 1, adjacentAsteroidData: 1 },
   });
-  assert.equal(decisionSessions.peek("probe_location_reward").choices.length, 2);
-  const pending = decisionSessions.clear("probe_location_reward");
-  const result = helper.handleProbeLocationRewardChoice(workingRoot, 1, pending);
+  assert.equal(workingRoot.match.probeLocationRewardContinuation.choices.length, 2);
+  const result = helper.handleProbeLocationRewardChoice(workingRoot, 1);
   assert.equal(result.ok, true);
   assert.equal(calls.history.length, 3);
 }

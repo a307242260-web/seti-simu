@@ -1406,7 +1406,7 @@
       beginEffectHistoryStep(effect.label);
       const results = [];
       for (let index = 0; index < reward.dataCount; index += 1) {
-        const gainResult = data.gainData(currentPlayer, { source: "probe_location_reward" });
+        const gainResult = data.gainData(currentPlayer, { source: "probeLocationReward" });
         results.push(gainResult);
         recordHistoryCommand(historyCommands.createGainDataCommand(currentPlayer, gainResult));
       }

@@ -30,10 +30,6 @@
       actionEffectFlow: "action_effect_flow",
     }) || {};
     const decisionSessions = context.decisionSessions;
-    const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
-    const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
-    const getProbeSectorScanSession = () => decisionSessions.peek(PROBE_SECTOR_SCAN_SESSION);
-    const getProbeLocationRewardSession = () => decisionSessions.peek(PROBE_LOCATION_REWARD_SESSION);
     const els = context.els || {};
     const requireWorkingRoot = (workingRoot) => {
       if (!workingRoot?.playerState || !workingRoot?.rocketState) {
@@ -46,6 +42,17 @@
     const rulePlayerState = (workingRoot) => requireWorkingRoot(workingRoot).playerState;
     const ruleNebulaDataState = (workingRoot) => requireWorkingRoot(workingRoot).nebulaDataState;
     const rulePlanetStatsState = (workingRoot) => requireWorkingRoot(workingRoot).planetStatsState;
+    const getProbeSectorScanSession = (workingRoot) => requireWorkingRoot(workingRoot).match?.probeSectorScanContinuation || null;
+    const getProbeLocationRewardSession = (workingRoot) => requireWorkingRoot(workingRoot).match?.probeLocationRewardContinuation || null;
+    function setProbeContinuation(workingRoot, field, continuation) {
+      const activeRoot = requireWorkingRoot(workingRoot);
+      if (!continuation) {
+        delete activeRoot.match[field];
+        return null;
+      }
+      activeRoot.match[field] = structuredClone(continuation);
+      return activeRoot.match[field];
+    }
     const cards = context.cards || {};
     const players = context.players || {};
     const data = context.data || {};
@@ -960,10 +967,10 @@
       return effect.result;
     }
 
-    function renderProbeSectorScanPicker() {
-      const pending = getProbeSectorScanSession();
+    function renderProbeSectorScanPicker(workingRoot) {
+      const pending = getProbeSectorScanSession(workingRoot);
       if (!pending || !els.scanTargetActions) return;
-      const selected = new Set(pending.selectedRocketIds || []);
+      const selected = new Set(context.uiRuntimeState?.probeSectorSelectedRocketIds || []);
       const maxTargets = Math.max(1, Math.round(Number(pending.effect.options?.maxTargets) || 1));
       const buttons = pending.choices.map(({ rocket, sector }) => {
         const button = createButton();
@@ -988,12 +995,12 @@
     }
 
     function openProbeSectorScanPicker(workingRoot, effect, choices) {
-      decisionSessions.open(PROBE_SECTOR_SCAN_SESSION, {
+      setProbeContinuation(workingRoot, "probeSectorScanContinuation", {
         ...getPendingOwnerFields(workingRoot, effect),
         effect,
         choices,
-        selectedRocketIds: [],
       });
+      context.uiRuntimeState.probeSectorSelectedRocketIds = [];
       return { ok: true, pendingChoice: true, message: effect.label };
     }
 
@@ -1016,7 +1023,7 @@
     }
 
     function handleProbeSectorScanChoice(workingRoot, rocketId) {
-      const pending = getProbeSectorScanSession();
+      const pending = getProbeSectorScanSession(workingRoot);
       if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };
       const id = Number(rocketId);
       const choice = pending.choices.find((item) => Number(item.rocket.id) === id);
@@ -1024,26 +1031,30 @@
       const maxTargets = Math.max(1, Math.round(Number(pending.effect.options?.maxTargets) || 1));
       if (maxTargets === 1) {
         const effect = pending.effect;
+        setProbeContinuation(workingRoot, "probeSectorScanContinuation", null);
+        context.uiRuntimeState.probeSectorSelectedRocketIds = [];
         closeScanTargetPicker();
         return withPendingOwnerPlayer(workingRoot, pending, () => queueProbeSectorScanEffects(workingRoot, effect, [choice.rocket]));
       }
-      const selected = pending.selectedRocketIds || [];
+      const selected = context.uiRuntimeState.probeSectorSelectedRocketIds || [];
       const existingIndex = selected.indexOf(choice.rocket.id);
       if (existingIndex >= 0) selected.splice(existingIndex, 1);
       else if (selected.length < maxTargets) selected.push(choice.rocket.id);
-      pending.selectedRocketIds = selected;
-      renderProbeSectorScanPicker();
+      context.uiRuntimeState.probeSectorSelectedRocketIds = selected;
+      renderProbeSectorScanPicker(workingRoot);
       return { ok: true, message: `已选择 ${selected.length}/${maxTargets}` };
     }
 
-    function confirmProbeSectorScanSelection(workingRoot, pendingContext = null) {
-      const pending = pendingContext || getProbeSectorScanSession();
+    function confirmProbeSectorScanSelection(workingRoot, rocketIds = null, pendingContext = null) {
+      const pending = pendingContext || getProbeSectorScanSession(workingRoot);
       if (!pending) return { ok: false, message: "没有待确认的探测器扫描" };
-      const selected = new Set(pending.selectedRocketIds || []);
+      const selected = new Set(rocketIds || []);
       const rockets = pending.choices
         .filter((choice) => selected.has(choice.rocket.id))
         .map((choice) => choice.rocket);
       const effect = pending.effect;
+      setProbeContinuation(workingRoot, "probeSectorScanContinuation", null);
+      context.uiRuntimeState.probeSectorSelectedRocketIds = [];
       closeScanTargetPicker();
       return withPendingOwnerPlayer(workingRoot, pending, () => queueProbeSectorScanEffects(workingRoot, effect, rockets));
     }
@@ -1068,7 +1079,7 @@
       beginEffectHistoryStep(effect.label);
       const results = [];
       for (let index = 0; index < reward.dataCount; index += 1) {
-        const gainResult = data.gainData(currentPlayer, { source: "probe_location_reward" });
+        const gainResult = data.gainData(currentPlayer, { source: "probeLocationReward" });
         results.push(gainResult);
         recordHistoryCommand(historyCommands.createGainDataCommand(currentPlayer, gainResult));
       }
@@ -1081,7 +1092,7 @@
     }
 
     function openProbeLocationRewardPicker(workingRoot, effect, choices) {
-      decisionSessions.open(PROBE_LOCATION_REWARD_SESSION, { ...getPendingOwnerFields(workingRoot, effect), effect, choices });
+      setProbeContinuation(workingRoot, "probeLocationRewardContinuation", { ...getPendingOwnerFields(workingRoot, effect), effect, choices });
       ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择探测器`;
       renderStateReadout();
       return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
@@ -1106,11 +1117,11 @@
     }
 
     function handleProbeLocationRewardChoice(workingRoot, rocketId, pendingContext = null) {
-      const pending = pendingContext || getProbeLocationRewardSession();
+      const pending = pendingContext || getProbeLocationRewardSession(workingRoot);
       if (!pending) return { ok: false, message: "没有待处理的探测器位置奖励" };
       const rocket = (pending.choices || []).find((choice) => Number(choice.rocket.id) === Number(rocketId))?.rocket;
       const effect = pending.effect;
-      decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
+      setProbeContinuation(workingRoot, "probeLocationRewardContinuation", null);
       closeScanTargetPicker();
       if (!rocket) return { ok: false, message: "无效探测器" };
       return withPendingOwnerPlayer(workingRoot, pending, () => finishProbeLocationReward(workingRoot, effect, rocket));

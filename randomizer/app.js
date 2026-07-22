@@ -815,10 +815,10 @@
                 alienSpeciesRuntime?.takeBanrenmaOpportunityDecisionDraft?.();
               }
               if (candidates[0]?.target?.kind === "probe-sector-selection") {
-                decisionSessions.clear(PROBE_SECTOR_SCAN_SESSION);
+                delete workingRoot.match.probeSectorScanContinuation;
               }
               if (candidates[0]?.target?.kind === "probe-location-reward") {
-                decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
+                delete workingRoot.match.probeLocationRewardContinuation;
               }
               if (candidates[0]?.target?.kind === "sector-scan-target") {
                 decisionState.scanTargetAction = null;
@@ -1003,8 +1003,6 @@
   const LAND_TARGET_DECISION = "land_target";
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
   const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
-  const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
-  const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
@@ -1012,8 +1010,12 @@
   const getPublicScanQueueSession = (workingRoot = createStateSourceReadoutRoot()) => (
     workingRoot?.match?.publicScanContinuation || null
   );
-  const getPendingProbeSectorScanDecision = () => decisionSessions.peek(PROBE_SECTOR_SCAN_SESSION);
-  const getPendingProbeLocationRewardDecision = () => decisionSessions.peek(PROBE_LOCATION_REWARD_SESSION);
+  const getPendingProbeSectorScanDecision = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.probeSectorScanContinuation || null
+  );
+  const getPendingProbeLocationRewardDecision = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.probeLocationRewardContinuation || null
+  );
   const hasTurnEndRevealContinuation = (workingRoot = createStateSourceReadoutRoot()) => (
     Boolean(workingRoot?.match?.turnEndRevealContinuation)
   );
@@ -2289,6 +2291,7 @@
   const effectChoiceFlowHelpers = effectChoiceFlowModule.createEffectChoiceFlowHelpers({
     document,
     decisionSessions,
+    uiRuntimeState,
     els,
     cards,
     players,
@@ -2600,6 +2603,7 @@
     aomomo,
     historyCommands,
     decisionSessions,
+    uiRuntimeState,
     clearPendingAmibaSymbolChoice: () => alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.(),
     clearPendingRunezuSymbolBranch: () => alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.(),
     clearPendingRunezuFaceSymbolPlacement: () => alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.(),
@@ -4196,8 +4200,6 @@
     get pendingDiscardAction() { return decisionState.discardAction; },
     get pendingCardSelectionAction() { return decisionState.cardSelectionAction; },
     get pendingScanTargetAction() { return decisionState.scanTargetAction; },
-    get pendingProbeSectorScanAction() { return getPendingProbeSectorScanDecision(); },
-    get pendingProbeLocationRewardAction() { return getPendingProbeLocationRewardDecision(); },
     get pendingPublicScanQueue() { return getPublicScanQueueSession(); },
     get pendingHandScanAction() { return decisionState.handScanAction; },
     get pendingAlienTraceAction() { return decisionState.alienTraceAction; },
@@ -5552,12 +5554,13 @@
     uiRuntimeState.passReserveSelectionDismissed = false;
     uiRuntimeState.passReserveSelectedCardId = null;
     decisionState.scanTargetAction = null;
-    decisionSessions.clear(PROBE_SECTOR_SCAN_SESSION);
+    delete workingRoot.match.probeSectorScanContinuation;
+    uiRuntimeState.probeSectorSelectedRocketIds = [];
     delete workingRoot.match.publicScanContinuation;
     decisionState.handScanAction = null;
     decisionState.alienTraceAction = null;
     decisionSessions.clear(LAND_TARGET_DECISION);
-    decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
+    delete workingRoot.match.probeLocationRewardContinuation;
     delete workingRoot.match.cardTriggerContinuation;
     delete workingRoot.match.cardTriggerFreeMoveContinuation;
     if (workingRoot.match && typeof workingRoot.match === "object") {
@@ -8171,12 +8174,25 @@
     return callEffectExecutorCommand("maybeReturnPlayedCardToHandAfterSectorScan", args);
   }
 
-  function handleProbeSectorScanChoice(...args) {
-    return callEffectChoiceCommand("handleProbeSectorScanChoice", args);
+  function handleProbeSectorScanChoice(rocketId) {
+    const pending = getPendingProbeSectorScanDecision();
+    const maxTargets = Math.max(1, Math.round(Number(pending?.effect?.options?.maxTargets) || 1));
+    if (maxTargets === 1) {
+      return submitActiveCardDecision(
+        "probe-sector-selection",
+        (target) => (target.rocketIds || []).length === 1
+          && String(target.rocketIds[0]) === String(rocketId),
+      );
+    }
+    return effectChoiceFlowHelpers.handleProbeSectorScanChoice(createStateSourceReadoutRoot(), rocketId);
   }
 
-  function confirmProbeSectorScanSelection(...args) {
-    return callEffectChoiceCommand("confirmProbeSectorScanSelection", args);
+  function confirmProbeSectorScanSelection() {
+    const selected = [...(uiRuntimeState.probeSectorSelectedRocketIds || [])].map(String).sort();
+    return submitActiveCardDecision(
+      "probe-sector-selection",
+      (target) => [...(target.rocketIds || [])].map(String).sort().join(",") === selected.join(","),
+    );
   }
 
   function getPlanetName(...args) {
@@ -8299,8 +8315,11 @@
     return callEffectExecutorCommand("handleOptionalHandScanChoice", args);
   }
 
-  function handleProbeLocationRewardChoice(...args) {
-    return callEffectChoiceCommand("handleProbeLocationRewardChoice", args);
+  function handleProbeLocationRewardChoice(rocketId) {
+    return submitActiveCardDecision(
+      "probe-location-reward",
+      (target) => String(target.rocketId ?? target.choiceId) === String(rocketId),
+    );
   }
 
   function openYichangdianCornerPicker(...args) {
@@ -12202,8 +12221,8 @@
     cancelCardTriggerChoice,
     confirmCardTaskCompletion,
     handleProbeSectorScanChoice,
-    confirmProbeSectorScanSelection,
-    handleProbeLocationRewardChoice,
+    confirmProbeSectorScanSelection: (workingRoot, ...args) => effectChoiceFlowHelpers.confirmProbeSectorScanSelection(workingRoot, ...args),
+    handleProbeLocationRewardChoice: (workingRoot, ...args) => effectChoiceFlowHelpers.handleProbeLocationRewardChoice(workingRoot, ...args),
     handleOptionalHandScanChoice,
     handleDrawnHandScanSkip,
     handleRemovePlanetMarkerChoice,

@@ -192,7 +192,7 @@
         )),
       };
     }
-    const probeSectorPending = getPendingProbeSectorScanDecision();
+    const probeSectorPending = getPendingProbeSectorScanDecision(workingRoot);
     if (probeSectorPending) {
       const choices = probeSectorPending.choices || [];
       const maxTargets = Math.max(1, Math.round(Number(probeSectorPending.effect?.options?.maxTargets) || 1));
@@ -221,7 +221,7 @@
         }),
       };
     }
-    const probeLocationPending = getPendingProbeLocationRewardDecision();
+    const probeLocationPending = getPendingProbeLocationRewardDecision(workingRoot);
     if (probeLocationPending) {
       return {
         actorPlayer: getHeadlessConditionalPlayer(probeLocationPending),
@@ -1131,13 +1131,17 @@
     "jiuzhe-card-skip": (action) => handleJiuzheOpportunitySkip({}, action.pendingContext || null),
     "banrenma-panel-bonus": (action) => handleBanrenmaBonusChoice(action.target.choiceId, action.pendingContext || null),
     "banrenma-card-condition": (action) => handleBanrenmaCardConditionChoice(action.target.choiceId, action.pendingContext || null),
-    "probe-sector-selection": (action) => {
-      const pending = action.pendingContext || getPendingProbeSectorScanDecision();
+    "probe-sector-selection": (action, workingRoot) => {
+      const pending = action.pendingContext || getPendingProbeSectorScanDecision(workingRoot);
       if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };
-      pending.selectedRocketIds = [...(action.target.rocketIds || [])];
-      return confirmProbeSectorScanSelection(pending);
+      return confirmProbeSectorScanSelection(
+        workingRoot,
+        [...(action.target.rocketIds || [])],
+        pending,
+      );
     },
-    "probe-location-reward": (action) => handleProbeLocationRewardChoice(
+    "probe-location-reward": (action, workingRoot) => handleProbeLocationRewardChoice(
+      workingRoot,
       action.target.rocketId ?? action.target.choiceId,
       action.pendingContext || null,
     ),

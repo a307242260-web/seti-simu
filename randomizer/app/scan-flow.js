@@ -45,6 +45,7 @@
       actionEffectFlow: "action_effect_flow",
     }) || {};
     const decisionSessions = context.decisionSessions;
+    const uiRuntimeState = context.uiRuntimeState || {};
     const clearPendingAmibaSymbolChoice = requireFunction(
       "clearPendingAmibaSymbolChoice",
       context.clearPendingAmibaSymbolChoice,
@@ -1366,8 +1367,9 @@
         if (getPublicScanQueue(workingRoot) && !options.forcePublicScanQueueClose) return;
         if (options.forcePublicScanQueueClose) setPublicScanQueue(workingRoot, null);
         decisionState.scanTargetAction = null;
-        decisionSessions.clear("probe_sector_scan");
-        decisionSessions.clear("probe_location_reward");
+        delete workingRoot.match.probeSectorScanContinuation;
+        uiRuntimeState.probeSectorSelectedRocketIds = [];
+        delete workingRoot.match.probeLocationRewardContinuation;
         decisionSessions.clear("strategy_passive_slot");
         return;
       }
@@ -1399,8 +1401,9 @@
       decisionSessions.clear("strategy_passive_slot");
       setScanTargetActionLayout();
       decisionState.scanTargetAction = null;
-      decisionSessions.clear("probe_sector_scan");
-      decisionSessions.clear("probe_location_reward");
+      delete workingRoot.match.probeSectorScanContinuation;
+      uiRuntimeState.probeSectorSelectedRocketIds = [];
+      delete workingRoot.match.probeLocationRewardContinuation;
       els.scanTargetOverlay.hidden = true;
       if (els.scanTargetCancel) {
         els.scanTargetCancel.hidden = false;

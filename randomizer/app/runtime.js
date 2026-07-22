@@ -66,6 +66,7 @@
     return {
       passReserveSelectionDismissed: false,
       passReserveSelectedCardId: null,
+      probeSectorSelectedRocketIds: [],
       debugAlienTraceModeActive: false,
       sectorWinDebugActive: false,
       completedEffectFlowsForUndo: {},
