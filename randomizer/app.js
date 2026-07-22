@@ -322,7 +322,10 @@
       "clearMoveRocketHighlight", "activateMoveMode", "deactivateMoveMode", "openDataPlacePicker",
       "openAutoDataPlacementPrompt", "cancelDataPlacePicker", "confirmDataPlacement",
     ]),
-    income_runtime: new Set(["maybeStartFundamentalismRoundStartIncomeFlow"]),
+    income_runtime: new Set([
+      "applyIndustryRoundStartBonuses",
+      "maybeStartFundamentalismRoundStartIncomeFlow",
+    ]),
   });
 
   let activeBrowserDomainWorkingRoot = null;
@@ -1143,7 +1146,7 @@
   let countStrategyPassiveSlotTokens;
   let applyGrandStrategyRoundStartForPlayer;
   let appendIndustryRoundStartLog;
-  let applyIndustryRoundStartBonuses;
+  let applyIndustryRoundStartBonusesForRoot;
   let getFundamentalismRoundStartIncomeRound;
   let hasFundamentalismRoundStartIncomePending;
   let buildFundamentalismRoundStartIncomeEffect;
@@ -2506,7 +2509,6 @@
     getCardTypeCode: (...args) => getCardTypeCode(...args),
     incrementCompletedTaskCount: (...args) => incrementCompletedTaskCount(...args),
     cards,
-    turnState,
     isWeakStartAiDifficulty,
     getPlayerById,
     appendConfirmedActionLogEntry,
@@ -2521,7 +2523,6 @@
     getCurrentPlayer,
     HISTORY_SOURCE_QUICK,
     startCardEffectFlow,
-    rocketState,
     renderActionEffectBar,
     updateActionButtons,
     beginDiscardSelection,
@@ -2543,13 +2544,16 @@
     countStrategyPassiveSlotTokens,
     applyGrandStrategyRoundStartForPlayer,
     appendIndustryRoundStartLog,
-    applyIndustryRoundStartBonuses,
+    applyIndustryRoundStartBonuses: applyIndustryRoundStartBonusesForRoot,
     getFundamentalismRoundStartIncomeRound,
     hasFundamentalismRoundStartIncomePending,
     buildFundamentalismRoundStartIncomeEffect,
     maybeStartFundamentalismRoundStartIncomeFlow: maybeStartFundamentalismRoundStartIncomeFlowForRoot,
     beginIncomeForCurrentPlayer,
   } = incomeRuntime);
+  function applyIndustryRoundStartBonuses(...args) {
+    return callBrowserDomainCommand("income_runtime", "applyIndustryRoundStartBonuses", args);
+  }
   function maybeStartFundamentalismRoundStartIncomeFlow(...args) {
     return callBrowserDomainCommand(
       "income_runtime",

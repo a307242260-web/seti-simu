@@ -17,7 +17,6 @@
       getCardTypeCode,
       incrementCompletedTaskCount,
       cards,
-      turnState,
       isWeakStartAiDifficulty,
       getPlayerById,
       appendConfirmedActionLogEntry,
@@ -32,7 +31,6 @@
       getCurrentPlayer,
       HISTORY_SOURCE_QUICK,
       startCardEffectFlow,
-      rocketState,
       renderActionEffectBar,
       updateActionButtons,
       beginDiscardSelection,
@@ -180,13 +178,13 @@
       };
     }
 
-    function hasHuanyuSuperdriveRoundStartPending(player, roundNumber = turnState.roundNumber) {
+    function hasHuanyuSuperdriveRoundStartPending(player, roundNumber) {
       if (!player || !industry?.hasHuanyuSuperdriveRoundStart?.(player)) return false;
       const round = Math.max(1, Math.round(Number(roundNumber) || 1));
       return player.industryHuanyuSuperdriveRoundStartRound !== round;
     }
 
-    function applyHuanyuSuperdriveRoundStartForPlayer(player, roundNumber = turnState.roundNumber) {
+    function applyHuanyuSuperdriveRoundStartForPlayer(player, roundNumber) {
       if (!hasHuanyuSuperdriveRoundStartPending(player, roundNumber)) return null;
       const round = Math.max(1, Math.round(Number(roundNumber) || 1));
       const resourceGain = { energy: 1, publicity: 1 };
@@ -214,13 +212,13 @@
       };
     }
 
-    function hasCheatLabRoundStartPending(player, roundNumber = turnState.roundNumber) {
+    function hasCheatLabRoundStartPending(player, roundNumber) {
       if (!player || !industry?.hasCheatLabRoundStart?.(player)) return false;
       const round = Math.max(1, Math.round(Number(roundNumber) || 1));
       return player.industryCheatLabRoundStartRound !== round;
     }
 
-    function applyCheatLabRoundStartForPlayer(player, roundNumber = turnState.roundNumber) {
+    function applyCheatLabRoundStartForPlayer(player, roundNumber) {
       if (!hasCheatLabRoundStartPending(player, roundNumber)) return null;
       const round = Math.max(1, Math.round(Number(roundNumber) || 1));
       players.gainResources(player, { energy: 1 });
@@ -247,7 +245,7 @@
       };
     }
 
-    function hasGrandStrategyRoundStartPending(player, roundNumber = turnState.roundNumber) {
+    function hasGrandStrategyRoundStartPending(player, roundNumber) {
       if (!player || !industry?.hasGrandStrategyRoundStart?.(player)) return false;
       const round = Math.max(1, Math.round(Number(roundNumber) || 1));
       return player.industryGrandStrategyRoundStartRound !== round;
@@ -259,7 +257,7 @@
         .length;
     }
 
-    function applyGrandStrategyRoundStartForPlayer(player, roundNumber = turnState.roundNumber) {
+    function applyGrandStrategyRoundStartForPlayer(player, roundNumber) {
       if (!hasGrandStrategyRoundStartPending(player, roundNumber)) return null;
       const round = Math.max(1, Math.round(Number(roundNumber) || 1));
       const clearedCount = countStrategyPassiveSlotTokens(player);
@@ -300,9 +298,10 @@
       };
     }
 
-    function appendIndustryRoundStartLog(result, roundNumber = turnState.roundNumber) {
+    function appendIndustryRoundStartLog(workingRoot, result, roundNumber) {
       if (!result) return null;
-      const player = getPlayerById(result.playerId);
+      const player = (workingRoot.playerState.players || [])
+        .find((entry) => entry.id === result.playerId) || null;
       const effectLabel = result.effect?.label || "公司";
       return appendConfirmedActionLogEntry({
         title: `第${roundNumber}轮开始`,
@@ -310,7 +309,7 @@
         actionType: "roundStart",
         actionLabel: "轮开始",
         roundNumber,
-        rawTurnNumber: turnState.turnNumber,
+        rawTurnNumber: workingRoot.turnState.turnNumber,
         steps: [{
           source: HISTORY_SOURCE_SETUP,
           text: `${effectLabel}：${result.message}`,
@@ -321,8 +320,13 @@
       });
     }
 
-    function applyIndustryRoundStartBonuses(roundNumber = turnState.roundNumber, options = {}) {
-      const results = getActivePlayers()
+    function applyIndustryRoundStartBonuses(workingRoot, roundNumber, options = {}) {
+      if (!workingRoot?.playerState || !workingRoot?.turnState) {
+        throw new TypeError("applyIndustryRoundStartBonuses 缺少 workingRoot");
+      }
+      const activeIds = new Set(workingRoot.turnState.activePlayerIds || []);
+      const results = (workingRoot.playerState.players || [])
+        .filter((player) => activeIds.has(player.id))
         .flatMap((player) => [
           applyHuanyuSuperdriveRoundStartForPlayer(player, roundNumber),
           applyCheatLabRoundStartForPlayer(player, roundNumber),
@@ -330,7 +334,7 @@
         ])
         .filter(Boolean);
       if (options.appendLog) {
-        for (const result of results) appendIndustryRoundStartLog(result, roundNumber);
+        for (const result of results) appendIndustryRoundStartLog(workingRoot, result, roundNumber);
       }
       if (results.length) {
         renderPlayerStats();
@@ -345,18 +349,18 @@
       };
     }
 
-    function getFundamentalismRoundStartIncomeRound(player, roundNumber = turnState.roundNumber) {
+    function getFundamentalismRoundStartIncomeRound(player, roundNumber) {
       if (!player || !industry?.hasFundamentalismRoundStartIncome?.(player)) return 0;
       const round = Math.max(1, Math.round(Number(roundNumber) || 1));
       return FUNDAMENTALISM_ROUND_START_ROUNDS.includes(round) ? round : 0;
     }
 
-    function hasFundamentalismRoundStartIncomePending(player, roundNumber = turnState.roundNumber) {
+    function hasFundamentalismRoundStartIncomePending(player, roundNumber) {
       const round = getFundamentalismRoundStartIncomeRound(player, roundNumber);
       return round > 0 && player?.industryFundamentalismRoundStartIncomeRound !== round;
     }
 
-    function buildFundamentalismRoundStartIncomeEffect(player, roundNumber = turnState.roundNumber) {
+    function buildFundamentalismRoundStartIncomeEffect(player, roundNumber) {
       const round = Math.max(1, Math.round(Number(roundNumber) || 1));
       return {
         id: `industry-fundamentalism-income-${player?.id || "player"}-${round}`,
