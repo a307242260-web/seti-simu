@@ -1539,57 +1539,14 @@
     };
   }
 
-  function cloneResidentPresentation(value, seen = new WeakMap()) {
-    if (value == null || typeof value !== "object") {
-      return typeof value === "function" || typeof value === "symbol" ? undefined : value;
-    }
-    if (seen.has(value)) return undefined;
-    if (value instanceof Set) return [...value].map((item) => cloneResidentPresentation(item));
-    if (value instanceof Map) {
-      return Object.fromEntries([...value.entries()].map(([key, item]) => [
-        String(key), cloneResidentPresentation(item),
-      ]));
-    }
-    const output = Array.isArray(value) ? [] : {};
-    seen.set(value, output);
-    for (const [key, item] of Object.entries(value)) {
-      const cloned = cloneResidentPresentation(item, seen);
-      if (cloned !== undefined) output[key] = cloned;
-    }
-    return output;
-  }
-
-  function createResidentReadoutRoot(resident) {
-    return {
-      turnState: structuredClone(resident.turn || {}),
-      playerState: structuredClone(resident.players || { currentPlayerId: null, players: [] }),
-      solarState: structuredClone(resident.solar || {}),
-      rocketState: structuredClone(resident.pieces || {}),
-      planetStatsState: structuredClone(resident.planets || {}),
-      nebulaDataState: structuredClone(resident.data || {}),
-      cardState: structuredClone(resident.cards || {}),
-      techGameState: structuredClone(resident.tech || {}),
-      alienGameState: structuredClone(resident.aliens || {}),
-      finalScoringState: structuredClone(resident.finalScoring || {}),
-    };
-  }
-
-  function createStateSourceReadoutRoot() {
-    const state = ruleComposition.stateSourcePort.read().state;
-    return {
-      turnState: structuredClone(state.turn || {}),
-      playerState: structuredClone(state.players || { currentPlayerId: null, players: [] }),
-      solarState: structuredClone(state.solarSystem || {}),
-      rocketState: structuredClone(state.pieces || {}),
-      planetStatsState: structuredClone(state.planets || {}),
-      nebulaDataState: structuredClone(state.data || {}),
-      cardState: structuredClone(state.cards || {}),
-      techGameState: structuredClone(state.tech || {}),
-      alienGameState: structuredClone(state.aliens || {}),
-      finalScoringState: structuredClone(state.finalScoring || {}),
-      match: structuredClone(state.match || {}),
-    };
-  }
+  const cloneResidentPresentation = browserHostModule.residentProjection.clonePresentation;
+  const createResidentReadoutRoot = (resident) => (
+    browserHostModule.residentProjection.createLegacyReadoutRoot(resident)
+  );
+  const createStateSourceReadoutRoot = () => browserHostModule.residentProjection.createLegacyReadoutRoot(
+    ruleComposition.stateSourcePort.read().state,
+    { solarKey: "solarSystem", includeMatch: true },
+  );
   const playerEffectOwnerRuntime = runtimeModule.createPlayerEffectOwnerRuntime({
     players,
     uiRuntimeState,

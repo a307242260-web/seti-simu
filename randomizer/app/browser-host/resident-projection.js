@@ -54,5 +54,49 @@
     return validation.ok ? deepFreeze(clone(projection)) : validation;
   }
 
-  return Object.freeze({ SCHEMA_VERSION, LEGACY_SLICE_KEYS, validateProjection, createResidentProjection });
+  function clonePresentation(value, seen = new WeakMap()) {
+    if (value == null || typeof value !== "object") {
+      return typeof value === "function" || typeof value === "symbol" ? undefined : value;
+    }
+    if (seen.has(value)) return undefined;
+    if (value instanceof Set) return [...value].map((item) => clonePresentation(item));
+    if (value instanceof Map) {
+      return Object.fromEntries([...value.entries()].map(([key, item]) => [
+        String(key), clonePresentation(item),
+      ]));
+    }
+    const output = Array.isArray(value) ? [] : {};
+    seen.set(value, output);
+    for (const [key, item] of Object.entries(value)) {
+      const cloned = clonePresentation(item, seen);
+      if (cloned !== undefined) output[key] = cloned;
+    }
+    return output;
+  }
+
+  function createLegacyReadoutRoot(resident, options = {}) {
+    const solarKey = options.solarKey || "solar";
+    return {
+      turnState: structuredClone(resident.turn || {}),
+      playerState: structuredClone(resident.players || { currentPlayerId: null, players: [] }),
+      solarState: structuredClone(resident[solarKey] || {}),
+      rocketState: structuredClone(resident.pieces || {}),
+      planetStatsState: structuredClone(resident.planets || {}),
+      nebulaDataState: structuredClone(resident.data || {}),
+      cardState: structuredClone(resident.cards || {}),
+      techGameState: structuredClone(resident.tech || {}),
+      alienGameState: structuredClone(resident.aliens || {}),
+      finalScoringState: structuredClone(resident.finalScoring || {}),
+      ...(options.includeMatch ? { match: structuredClone(resident.match || {}) } : {}),
+    };
+  }
+
+  return Object.freeze({
+    SCHEMA_VERSION,
+    LEGACY_SLICE_KEYS,
+    validateProjection,
+    createResidentProjection,
+    clonePresentation,
+    createLegacyReadoutRoot,
+  });
 });
