@@ -72,6 +72,31 @@
     return Object.freeze({ buildInitialIncomeEffectNodes: buildEffectNodes, startInitialIncomeEffectFlow: start });
   }
 
+  function createInitialSelectionEffectsResolver(context = {}) {
+    return function resolveInitialSelectionEffects(workingRoot) {
+      if (!context.initialCards?.resolveInitialSelections) return null;
+      const result = context.initialCards.resolveInitialSelections({
+        ...context.createActionContext(workingRoot),
+        alienGameState: workingRoot.alienGameState,
+      }, {
+        playerIds: context.getPlayerIds(workingRoot),
+      });
+      const hasSignalMarked = (result.events || []).some((event) => event?.type === "signalMarked");
+      const settlement = hasSignalMarked
+        ? context.resolveCompletedSectorSettlements("initialSelection", {
+          markMainActionIrreversible: false,
+        })
+        : null;
+      context.recordScoreSources(result);
+      if (!settlement?.ok) return result;
+      return {
+        ...result,
+        settlement,
+        message: `${result.message}；${settlement.message}；${settlement.participantAwardMessage || "参与结算玩家各获得1宣传"}`,
+      };
+    };
+  }
+
   function createActionRuntime(context = {}) {
     if (!context.setupSelectionState) {
       throw new Error("createActionRuntime requires setupSelectionState");
@@ -860,6 +885,7 @@
   return {
     createActionRuntime,
     createInitialIncomeFlow,
+    createInitialSelectionEffectsResolver,
     shuffleList,
     stripAssetExtension,
   };

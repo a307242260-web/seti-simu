@@ -133,6 +133,61 @@
     return canContinue;
   }
 
+  function createInitialSelectionHost(context = {}) {
+    const getRuntime = () => {
+      const runtime = context.getActionRuntime?.();
+      if (!runtime) throw new Error("initial selection action runtime is not ready");
+      return runtime;
+    };
+    const getReadout = (workingRoot = null) => workingRoot || context.getRuleReadout();
+
+    function getPlayerIds(workingRoot = null) {
+      return getRuntime().getInitialSelectionPlayerIds(getReadout(workingRoot));
+    }
+    function isActive() {
+      return getRuntime().isInitialSelectionActive();
+    }
+    function getOffer(playerId = null, workingRoot = null) {
+      const resolvedPlayerId = playerId ?? getReadout(workingRoot).playerState.currentPlayerId;
+      return getRuntime().getInitialSelectionOffer(resolvedPlayerId);
+    }
+    function isConfirmed(playerId = null, workingRoot = null) {
+      const resolvedPlayerId = playerId ?? getReadout(workingRoot).playerState.currentPlayerId;
+      return getRuntime().isInitialSelectionConfirmed(resolvedPlayerId);
+    }
+    function canConfirm(offer) {
+      return getRuntime().canConfirmInitialSelection(offer);
+    }
+    function getCardFromOffer(offer, kind, cardId) {
+      return getRuntime().getCardFromInitialOffer(offer, kind, cardId);
+    }
+    function start() {
+      return context.submitHostCommand({ kind: "setup_start_initial_selection" });
+    }
+    function selectCard(kind, cardId) {
+      return context.submitHostCommand({
+        kind: "setup_select_initial_card",
+        selectionKind: kind,
+        cardId,
+      });
+    }
+    function confirm() {
+      return context.submitHostCommand({ kind: "setup_confirm_initial_selection" });
+    }
+
+    return Object.freeze({
+      canConfirm,
+      confirm,
+      getCardFromOffer,
+      getOffer,
+      getPlayerIds,
+      isActive,
+      isConfirmed,
+      selectCard,
+      start,
+    });
+  }
+
   function createInitialSelectionUi(context = {}) {
     const document = context.document;
     const canConfirm = context.canConfirm;
@@ -474,6 +529,7 @@
     updateStartScreenContinueButton,
     createInitialSelectionUi,
     createInitialSelectionReadout,
+    createInitialSelectionHost,
     createStartScreenController,
   };
 });

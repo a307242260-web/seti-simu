@@ -826,6 +826,29 @@
     executeEndTurn: (workingRoot, descriptor) => endCurrentTurn({ workingRoot, standardAction: descriptor }),
   });
   let actionRuntimeController = null;
+  const initialSelectionHost = startScreenModule.createInitialSelectionHost({
+    getActionRuntime: () => actionRuntimeController,
+    getRuleReadout: () => createStateSourceReadoutRoot(),
+    submitHostCommand: (command) => ruleComposition.inputPort.submitHostCommand(command),
+  });
+  const {
+    canConfirm: canConfirmInitialSelection,
+    confirm: confirmInitialSelectionForCurrentPlayer,
+    getCardFromOffer: getCardFromInitialOffer,
+    getOffer: getInitialSelectionOffer,
+    getPlayerIds: getInitialSelectionPlayerIds,
+    isActive: isInitialSelectionActive,
+    isConfirmed: isInitialSelectionConfirmed,
+    selectCard: handleInitialSelectionCardClick,
+    start: startInitialSelection,
+  } = initialSelectionHost;
+  const resolveInitialSelectionEffects = actionRuntimeModule.createInitialSelectionEffectsResolver({
+    initialCards,
+    createActionContext: (...args) => createActionContextForWorkingRoot(...args),
+    getPlayerIds: (...args) => getInitialSelectionPlayerIds(...args),
+    resolveCompletedSectorSettlements: (...args) => resolveCompletedSectorSettlements(...args),
+    recordScoreSources: (...args) => recordInitialSelectionScoreSources(...args),
+  });
   let browserActionStableRecoverySnapshot = null;
   function dispatchBrowserRuleInput(request, fallbackOptions = null, explicitActionContext = null) {
     const action = typeof request === "string"
@@ -3923,81 +3946,6 @@
       weakStartValue: AI_DIFFICULTY_WEAK_START,
       defaultValue: AI_DIFFICULTY_LAUGHABLE,
     });
-  }
-
-  function getInitialSelectionPlayerIds() {
-    return actionRuntimeController.getInitialSelectionPlayerIds(createStateSourceReadoutRoot());
-  }
-
-  function isInitialSelectionActive() {
-    return actionRuntimeController.isInitialSelectionActive();
-  }
-
-  function getInitialSelectionOffer(playerId = null) {
-    const resolvedPlayerId = playerId ?? createStateSourceReadoutRoot().playerState.currentPlayerId;
-    return actionRuntimeController.getInitialSelectionOffer(resolvedPlayerId);
-  }
-
-  function isInitialSelectionConfirmed(playerId = null) {
-    const resolvedPlayerId = playerId ?? createStateSourceReadoutRoot().playerState.currentPlayerId;
-    return actionRuntimeController.isInitialSelectionConfirmed(resolvedPlayerId);
-  }
-
-  function canConfirmInitialSelection(offer) {
-    return actionRuntimeController.canConfirmInitialSelection(offer);
-  }
-
-  function startInitialSelection() {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "setup_start_initial_selection",
-    });
-  }
-
-  function getCardFromInitialOffer(offer, kind, cardId) {
-    return actionRuntimeController.getCardFromInitialOffer(offer, kind, cardId);
-  }
-
-  function handleInitialSelectionCardClick(kind, cardId) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "setup_select_initial_card",
-      selectionKind: kind,
-      cardId,
-    });
-  }
-
-  function confirmInitialSelectionForCurrentPlayer() {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "setup_confirm_initial_selection",
-    });
-  }
-
-  function resolveInitialSelectionEffects(workingRoot) {
-    if (!initialCards?.resolveInitialSelections) return null;
-
-    const context = {
-      ...createActionContextForWorkingRoot(workingRoot),
-      alienGameState: workingRoot.alienGameState,
-    };
-    const result = initialCards.resolveInitialSelections(context, {
-      playerIds: getInitialSelectionPlayerIds(),
-    });
-    const hasSignalMarked = (result.events || []).some((event) => event?.type === "signalMarked");
-    const settleResult = hasSignalMarked
-      ? resolveCompletedSectorSettlements("initialSelection", {
-        markMainActionIrreversible: false,
-      })
-      : null;
-
-    if (settleResult?.ok) {
-      recordInitialSelectionScoreSources(result);
-      return {
-        ...result,
-        settlement: settleResult,
-        message: `${result.message}；${settleResult.message}；${settleResult.participantAwardMessage || "参与结算玩家各获得1宣传"}`,
-      };
-    }
-    recordInitialSelectionScoreSources(result);
-    return result;
   }
 
   const aiControllerState = {

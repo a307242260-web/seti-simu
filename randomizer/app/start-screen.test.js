@@ -7,6 +7,7 @@ const {
   syncStartScreenIndustryOptions,
   createInitialSelectionUi,
   createInitialSelectionReadout,
+  createInitialSelectionHost,
   createStartScreenController,
 } = require("./start-screen");
 
@@ -14,6 +15,39 @@ assert.equal(normalizeAiDifficulty("weak_start"), "weak_start");
 assert.equal(normalizeAiDifficulty("other"), "laughable");
 assert.equal(normalizeStartPlayerCount("3", 4), 3);
 assert.equal(normalizeStartPlayerCount("2", 4), 4);
+
+{
+  const commands = [];
+  const runtime = {
+    getInitialSelectionPlayerIds: (root) => root.turnState.activePlayerIds,
+    isInitialSelectionActive: () => true,
+    getInitialSelectionOffer: (playerId) => ({ playerId }),
+    isInitialSelectionConfirmed: (playerId) => playerId === "p2",
+    canConfirmInitialSelection: (offer) => offer.playerId === "p1",
+    getCardFromInitialOffer: (_offer, kind, cardId) => ({ kind, cardId }),
+  };
+  const host = createInitialSelectionHost({
+    getActionRuntime: () => runtime,
+    getRuleReadout: () => ({
+      playerState: { currentPlayerId: "p1" },
+      turnState: { activePlayerIds: ["p1", "p2"] },
+    }),
+    submitHostCommand: (command) => commands.push(command),
+  });
+  assert.deepEqual(host.getPlayerIds(), ["p1", "p2"]);
+  assert.equal(host.getOffer().playerId, "p1");
+  assert.equal(host.isConfirmed("p2"), true);
+  assert.equal(host.canConfirm({ playerId: "p1" }), true);
+  assert.deepEqual(host.getCardFromOffer({}, "initial", "c1"), { kind: "initial", cardId: "c1" });
+  host.start();
+  host.selectCard("industry", "i1");
+  host.confirm();
+  assert.deepEqual(commands.map((command) => command.kind), [
+    "setup_start_initial_selection",
+    "setup_select_initial_card",
+    "setup_confirm_initial_selection",
+  ]);
+}
 
 function createCheckbox({ checked, label }) {
   return {

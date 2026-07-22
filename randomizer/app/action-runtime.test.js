@@ -10,6 +10,32 @@ assert.deepEqual(source, [1, 2, 3]);
 assert.deepEqual([...shuffled].sort(), source);
 
 {
+  const recorded = [];
+  const resolveInitialSelectionEffects = actionRuntime.createInitialSelectionEffectsResolver({
+    initialCards: {
+      resolveInitialSelections: (_context, options) => ({
+        ok: true,
+        events: [{ type: "signalMarked" }],
+        results: [],
+        message: `已结算 ${options.playerIds.join(",")}`,
+      }),
+    },
+    createActionContext: () => ({ marker: true }),
+    getPlayerIds: () => ["p1", "p2"],
+    resolveCompletedSectorSettlements: () => ({
+      ok: true,
+      message: "扇区已结算",
+      participantAwardMessage: "参与者获得宣传",
+    }),
+    recordScoreSources: (result) => recorded.push(result.message),
+  });
+  const result = resolveInitialSelectionEffects({ alienGameState: {} });
+  assert.equal(result.settlement.ok, true);
+  assert.match(result.message, /扇区已结算/);
+  assert.deepEqual(recorded, ["已结算 p1,p2"]);
+}
+
+{
   const calls = [];
   let flow = null;
   const initialIncome = actionRuntime.createInitialIncomeFlow({
