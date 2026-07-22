@@ -89,7 +89,7 @@ const players = {
   const runtime = createInitialCardPendingRuntime(contextWith({
     ai: { heuristicEvaluator: { selectScoredItem: () => null } },
     players,
-    state: { pendingCardSelectionAction: { type: "public_scan", player: rootB.playerState.players[0] } },
+    state: { pendingCardSelectionContinuation: { type: "public_scan", playerId: rootB.playerState.players[0].id } },
     isCardSelectionActive: () => true,
     isIndustryHandSelectionActive: () => false,
     isAiAutoBattlePlayer: () => true,

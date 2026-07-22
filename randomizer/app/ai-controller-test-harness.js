@@ -194,7 +194,8 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     get pendingProbeLocationRewardAction() { return options.probeLocationPending || null; },
     get pendingLandTargetAction() { return options.landTargetPending || null; },
     get pendingDataPlaceAction() { return options.dataPlacePending || null; },
-    get pendingCardSelectionAction() { return options.pendingCardSelectionAction || null; },
+    get pendingCardSelectionContinuation() { return options.pendingCardSelectionContinuation || null; },
+    get publicCardSelectedSlots() { return [...(options.publicCardSelectedSlots || [])]; },
     get pendingDiscardAction() { return pendingDiscardAction; },
     get pendingPassReserveSelection() { return pendingPassReserveSelection; },
     get pendingCardTriggerAction() { return options.pendingCardTriggerAction || null; },
@@ -764,7 +765,14 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   context.confirmPublicScanSelection = () => {
     noteHandled({
       type: "public-scan-confirm",
-      selectedSlots: [...(options.pendingCardSelectionAction?.selectedSlots || [])],
+      selectedSlots: [...(options.pendingCardSelectionContinuation?.selectedSlots || [])],
+    });
+    return { ok: true, progressed: true };
+  };
+  context.confirmPublicCornerDiscardSelection = () => {
+    noteHandled({
+      type: "public-corner-discard-confirm",
+      selectedSlots: [...(options.publicCardSelectedSlots || [])],
     });
     return { ok: true, progressed: true };
   };
@@ -858,7 +866,7 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
   }
   if (options.canBlindDraw) {
     context.canBlindDraw = () => true;
-    context.allowsBlindDrawInSelection = () => options.pendingCardSelectionAction?.allowBlindDraw !== false;
+    context.allowsBlindDrawInSelection = () => options.pendingCardSelectionContinuation?.allowBlindDraw !== false;
   }
   if (options.playCardSelectionActive) {
     context.isPlayCardSelectionActive = () => true;

@@ -1007,7 +1007,6 @@
   });
   const decisionSessions = runtime.decisions;
   const decisionState = decisionSessions.createFacade({
-    cardSelectionAction: "card_selection_action",
     alienTraceAction: "alien_trace_action",
     alienTracePickerState: "alien_trace_picker_state",
     actionEffectFlow: "action_effect_flow",
@@ -1069,6 +1068,29 @@
   const getPendingDiscardDecision = (workingRoot = createStateSourceReadoutRoot()) => (
     workingRoot?.match?.discardContinuation || null
   );
+  const getPendingCardSelectionDecision = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.cardSelectionContinuation || null
+  );
+  function setPendingCardSelectionDecision(workingRoot, pending) {
+    uiRuntimeState.publicCardSelectedSlots = [];
+    if (!pending) {
+      delete workingRoot.match.cardSelectionContinuation;
+      uiRuntimeState.cardSelectionType = null;
+      return null;
+    }
+    const player = pending.player || null;
+    workingRoot.match.cardSelectionContinuation = {
+      ...structuredClone(pending),
+      playerId: pending.playerId || player?.id || null,
+      playerColor: pending.playerColor || player?.color || null,
+      effectId: pending.effectId || pending.effect?.id || null,
+    };
+    delete workingRoot.match.cardSelectionContinuation.player;
+    delete workingRoot.match.cardSelectionContinuation.effect;
+    delete workingRoot.match.cardSelectionContinuation.selectedSlots;
+    uiRuntimeState.cardSelectionType = workingRoot.match.cardSelectionContinuation.type || null;
+    return workingRoot.match.cardSelectionContinuation;
+  }
   const conditionalDecisionDomain = conditionalDecisionDomainModule.createConditionalDecisionDomain(() => ({
     finalScoring,
     FINAL_SCORE_IDS,
@@ -1126,6 +1148,7 @@
     isFutureSpanEligibleHandCard,
     getPublicCardMultiSelectMinSelectable,
     getPublicScanMinSelectable,
+    getPublicCardSelectedSlots: () => uiRuntimeState.publicCardSelectedSlots || [],
     allowsBlindDrawInSelection,
     canBlindDraw,
     getPendingLandTargetDecision,
@@ -1178,12 +1201,12 @@
     confirmStrategyPassiveSlotChoice,
     finalizePendingDiscardSelection: (workingRoot, ...args) => handFlowHelpers.finalizePendingDiscardSelection(workingRoot, ...args),
     cancelDiscardSelection: (workingRoot) => handFlowHelpers.cancelDiscardSelection(workingRoot),
-    handlePublicCardClick,
-    confirmPublicCornerDiscardSelection,
-    confirmPublicScanSelection,
-    handleIndustryDeepspaceHandClick,
-    handleIndustryFutureSpanHandClick,
-    drawCardForCurrentPlayer,
+    handlePublicCardClick: (workingRoot, ...args) => handlePublicCardClickForRoot(workingRoot, ...args),
+    confirmPublicCornerDiscardSelection: (workingRoot) => confirmPublicCornerDiscardSelectionForRoot(workingRoot),
+    confirmPublicScanSelection: (workingRoot) => scanFlowHelpers.confirmPublicScanSelection(workingRoot),
+    handleIndustryDeepspaceHandClick: (workingRoot, ...args) => industryRuntime.handleIndustryDeepspaceHandClick(workingRoot, ...args),
+    handleIndustryFutureSpanHandClick: (workingRoot, ...args) => industryRuntime.handleIndustryFutureSpanHandClick(workingRoot, ...args),
+    drawCardForCurrentPlayer: (workingRoot, ...args) => drawCardForCurrentPlayerForRoot(workingRoot, ...args),
     confirmLandTargetChoice: (workingRoot, choiceIndex) => confirmLandTargetChoiceForRoot(workingRoot, choiceIndex),
     handleStateTraceSlotPlacement,
   }));
@@ -1781,7 +1804,6 @@
     if (!residentDesktopRenderer || !residentViewStateStore || !residentProjectionAdapter) return null;
     const viewer = getResidentViewer();
     const decisions = { ...decisionSessions.createFacade({
-      cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -1789,6 +1811,8 @@
     const canonical = residentProjectionAdapter.projectSource({ viewer });
     const readoutRoot = createResidentReadoutRoot(canonical.resident);
     decisions.movePayment = getPendingMovePayment();
+    decisions.cardSelectionContinuation = getPendingCardSelectionDecision(readoutRoot);
+    decisions.publicCardSelectedSlots = [...(uiRuntimeState.publicCardSelectedSlots || [])];
     decisions.discardContinuation = getPendingDiscardDecision(readoutRoot);
     decisions.discardSelectedHandIndexes = [...(uiRuntimeState.discardSelectedHandIndexes || [])];
     decisions.handScanContinuation = getPendingHandScanDecision(readoutRoot);
@@ -4268,7 +4292,8 @@
 
   const aiControllerState = {
     get pendingDiscardAction() { return getPendingDiscardDecision(); },
-    get pendingCardSelectionAction() { return decisionState.cardSelectionAction; },
+    get pendingCardSelectionContinuation() { return getPendingCardSelectionDecision(); },
+    get publicCardSelectedSlots() { return [...(uiRuntimeState.publicCardSelectedSlots || [])]; },
     get pendingPublicScanQueue() { return getPublicScanQueueSession(); },
     get pendingAlienTraceAction() { return decisionState.alienTraceAction; },
     get pendingLandTargetAction() { return getPendingLandTargetDecision(); },
@@ -5004,6 +5029,7 @@
     isAsteroidContent,
     isCardSelectionActive,
     isInitialSelectionActive,
+    uiRuntimeState,
     jiuzhe,
     layoutReservedCardRows,
     listCardTriggerFreeMoveCandidates: listCardTriggerFreeMoveCandidatesForRoot,
@@ -5616,7 +5642,7 @@
     const { cardState: workingCardState, techGameState: workingTechGameState } = workingRoot;
     delete workingRoot.match.discardContinuation;
     uiRuntimeState.discardSelectedHandIndexes = [];
-    decisionState.cardSelectionAction = null;
+    setPendingCardSelectionDecision(workingRoot, null);
     delete workingRoot.match.passReserveContinuation;
     uiRuntimeState.passReserveSelectionDismissed = false;
     uiRuntimeState.passReserveSelectedCardId = null;
@@ -5672,7 +5698,7 @@
     uiRuntimeState.handCardPlayAction = null;
     uiRuntimeState.cardCornerQuickAction = null;
     delete workingRoot.match.cardCornerFreeMoveContinuation;
-    decisionSessions.clear(DATA_PLACEMENT_DECISION);
+    delete workingRoot.match.dataPlacementContinuation;
     delete workingRoot.match.industryAbilityContinuation;
     delete workingRoot.match.piratesRaidContinuation;
     delete workingRoot.match.strategySlotContinuation;
@@ -5971,26 +5997,26 @@
   }
 
   function allowsBlindDrawInSelection() {
-    return decisionState.cardSelectionAction?.allowBlindDraw !== false;
+    return getPendingCardSelectionDecision()?.allowBlindDraw !== false;
   }
 
 
   function isPublicScanMultiSelectActive() {
     return isCardSelectionActive()
-      && decisionState.cardSelectionAction?.type === "public_scan"
-      && (decisionState.cardSelectionAction.maxSelectable ?? 1) > 1;
+      && getPendingCardSelectionDecision()?.type === "public_scan"
+      && (getPendingCardSelectionDecision().maxSelectable ?? 1) > 1;
   }
 
   function isPublicCornerDiscardSelectionActive() {
     return isCardSelectionActive()
-      && decisionState.cardSelectionAction?.type === "card_public_corner_discard";
+      && getPendingCardSelectionDecision()?.type === "card_public_corner_discard";
   }
 
   function isPublicCardMultiSelectActive() {
     return isPublicScanMultiSelectActive() || isPublicCornerDiscardSelectionActive();
   }
 
-  function getPublicCardMultiSelectMinSelectable(pending = decisionState.cardSelectionAction) {
+  function getPublicCardMultiSelectMinSelectable(pending = getPendingCardSelectionDecision()) {
     if (pending?.type === "public_scan") return getPublicScanMinSelectable(pending);
     const maxSelectable = Math.max(1, Math.round(Number(pending?.maxSelectable) || 1));
     const requested = Math.max(1, Math.round(Number(pending?.minSelectable) || maxSelectable));
@@ -6002,10 +6028,10 @@
     const multi = isPublicCardMultiSelectActive();
     els.publicScanConfirm.hidden = !multi;
     if (!multi) return;
-    const count = decisionState.cardSelectionAction?.selectedSlots?.length || 0;
+    const count = uiRuntimeState.publicCardSelectedSlots?.length || 0;
     const minSelectable = getPublicCardMultiSelectMinSelectable();
     els.publicScanConfirm.disabled = count < minSelectable;
-    const label = decisionState.cardSelectionAction?.type === "card_public_corner_discard"
+    const label = getPendingCardSelectionDecision()?.type === "card_public_corner_discard"
       ? "确认弃除"
       : "确认扫描";
     els.publicScanConfirm.textContent = count > 0
@@ -6408,9 +6434,9 @@
       return { ok: false, message: workingRocketState.statusNote };
     }
 
-    const pending = decisionState.cardSelectionAction;
+    const pending = getPendingCardSelectionDecision(workingRoot);
     const maxSelectable = pending?.maxSelectable ?? 1;
-    const selectedSlots = pending.selectedSlots || [];
+    const selectedSlots = uiRuntimeState.publicCardSelectedSlots || [];
     const existingIndex = selectedSlots.indexOf(index);
     if (existingIndex >= 0) {
       selectedSlots.splice(existingIndex, 1);
@@ -6422,7 +6448,7 @@
       selectedSlots.push(index);
     }
 
-    pending.selectedSlots = selectedSlots;
+    uiRuntimeState.publicCardSelectedSlots = selectedSlots;
     const count = selectedSlots.length;
     const minSelectable = getPublicCardMultiSelectMinSelectable(pending);
     workingRocketState.statusNote = count > 0
@@ -6443,11 +6469,11 @@
 
   function confirmPublicCornerDiscardSelectionForRoot(workingRoot) {
     const { cardState: workingCardState, playerState: workingPlayerState } = workingRoot;
-    const pending = decisionState.cardSelectionAction;
+    const pending = getPendingCardSelectionDecision(workingRoot);
     if (pending?.type !== "card_public_corner_discard") {
       return { ok: false, message: "当前不是公共牌角标弃除" };
     }
-    const selectedSlots = [...new Set(pending.selectedSlots || [])].sort((a, b) => a - b);
+    const selectedSlots = [...new Set(uiRuntimeState.publicCardSelectedSlots || [])].sort((a, b) => a - b);
     const minSelectable = getPublicCardMultiSelectMinSelectable(pending);
     if (selectedSlots.length < minSelectable) {
       return { ok: false, message: `请至少选择 ${minSelectable} 张公共牌` };
@@ -6457,8 +6483,11 @@
       return { ok: false, message: "所选公共牌已不可用" };
     }
 
-    const effect = pending.effect || getCurrentActionEffect();
-    const player = pending.player || getEffectOwnerPlayer(effect) || getCurrentPlayer();
+    const effect = getCurrentActionEffect();
+    const player = resolvePlayerReference({
+      playerId: pending.playerId,
+      playerColor: pending.playerColor,
+    }) || getEffectOwnerPlayer(effect) || getCurrentPlayer();
     beginEffectHistoryStep(effect?.label || pending.effectLabel || "公共牌角标弃除");
     const rewards = selectedCards.map((card, cardIndex) => {
       workingCardState.publicCards[selectedSlots[cardIndex]] = null;
@@ -6472,7 +6501,7 @@
     cards.ensurePublicCardsFilled(workingCardState, workingPlayerState);
     markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
     cards.setSelectionActive(workingCardState, false);
-    decisionState.cardSelectionAction = null;
+    setPendingCardSelectionDecision(workingRoot, null);
     syncCardSelectionChrome();
     return finishAutomaticRewardEffect(effect, {
       ok: true,
@@ -7387,15 +7416,20 @@
     }
 
     if (isCardSelectionActive() && (decisionState.actionEffectFlow || isCardTriggerPickSelectionActive())) {
-      if (decisionState.cardSelectionAction?.type === "fundamentalism_exchange_pick") {
-        if (decisionState.cardSelectionAction.player && decisionState.cardSelectionAction.beforePlayerState) {
-          restoreObjectSnapshot(decisionState.cardSelectionAction.player, decisionState.cardSelectionAction.beforePlayerState);
+      const cardSelectionPending = getPendingCardSelectionDecision(workingRoot);
+      if (cardSelectionPending?.type === "fundamentalism_exchange_pick") {
+        const pendingPlayer = resolvePlayerReference({
+          playerId: cardSelectionPending.playerId,
+          playerColor: cardSelectionPending.playerColor,
+        });
+        if (pendingPlayer && cardSelectionPending.beforePlayerState) {
+          restoreObjectSnapshot(pendingPlayer, cardSelectionPending.beforePlayerState);
         }
-        if (decisionState.cardSelectionAction.beforeCardState) {
-          restoreObjectSnapshot(workingRoot.cardState, decisionState.cardSelectionAction.beforeCardState);
+        if (cardSelectionPending.beforeCardState) {
+          restoreObjectSnapshot(workingRoot.cardState, cardSelectionPending.beforeCardState);
         }
       }
-      decisionState.cardSelectionAction = null;
+      setPendingCardSelectionDecision(workingRoot, null);
       cards.setSelectionActive(workingRoot.cardState, false);
       syncCardSelectionChrome();
     }
@@ -11189,13 +11223,14 @@
     }
 
     if (result.awaitingCardSelection) {
-      if (decisionState.cardSelectionAction) {
-        decisionState.cardSelectionAction.beforeTradeState = beforeState;
+      const cardSelectionContinuation = getPendingCardSelectionDecision(workingRoot);
+      if (cardSelectionContinuation) {
+        cardSelectionContinuation.beforeTradeState = beforeState;
         if (options.preferBlindDraw) {
-          decisionState.cardSelectionAction.aiPreferBlindDraw = true;
+          cardSelectionContinuation.aiPreferBlindDraw = true;
         }
         if (options.aiReason) {
-          decisionState.cardSelectionAction.aiReason = options.aiReason;
+          cardSelectionContinuation.aiReason = options.aiReason;
         }
       }
       actionRocketState.statusNote = result.message;
@@ -11421,7 +11456,7 @@
       getPendingChongFossilChoice(),
       getPendingAmibaSymbolChoice(),
       getPendingDiscardDecision(readoutRoot),
-      decisionState.cardSelectionAction,
+      getPendingCardSelectionDecision(readoutRoot),
       getPendingLandTargetDecision(),
       decisionState.alienTraceAction,
       decisionState.alienTracePickerState,
@@ -11535,7 +11570,7 @@
 
   function advanceHeadlessDeterministicStateImpl(workingRoot) {
     const industryPending = getPendingIndustryAbilityDecision(workingRoot);
-    if (industryPending && !decisionState.cardSelectionAction) {
+    if (industryPending && !getPendingCardSelectionDecision(workingRoot)) {
       const player = getCurrentPlayer();
       const retryByFlowType = {
         strategy_pick: () => beginCardSelection({
@@ -11550,11 +11585,11 @@
           advanceAmount: industryPending.advanceAmount,
         }),
         deepspace_swap: () => {
-          decisionState.cardSelectionAction = {
+          setPendingCardSelectionDecision(workingRoot, {
             type: "industry_deepspace_hand",
             player,
             allowBlindDraw: false,
-          };
+          });
           cards.setSelectionActive(workingRoot.cardState, true);
           return { ok: true, message: industryPending.message };
         },
@@ -11567,7 +11602,7 @@
         }
       }
     }
-    const cardPending = decisionState.cardSelectionAction;
+    const cardPending = getPendingCardSelectionDecision(workingRoot);
     if (
       cardPending?.type?.startsWith?.("industry_")
       && !(workingRoot.cardState.publicCards || []).some(Boolean)

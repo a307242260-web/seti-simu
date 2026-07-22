@@ -66,7 +66,7 @@
               }
               : null,
             pendingPublicScanQueue: Boolean(state.pendingPublicScanQueue),
-            pendingCardSelection: Boolean(state.pendingCardSelectionAction),
+            pendingCardSelection: Boolean(state.pendingCardSelectionContinuation),
             pendingStrategyPassiveSlotChoice: Boolean(state.pendingStrategyPassiveSlotChoice),
             pendingJiuzheCardPlay: Boolean(state.pendingJiuzheCardPlay),
             pendingYichangdianCardGain: Boolean(state.pendingYichangdianCardGain),

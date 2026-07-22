@@ -127,7 +127,6 @@
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
     const decisionState = context.decisionSessions?.createFacade?.({
-      cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -1188,8 +1187,8 @@
           tradePlayer,
         );
         ruleRocketState(workingRoot).statusNote = tradeResult.ok ? tradeResult.message : (tradeResult.message || "交易失败");
-        if (tradeResult.ok && tradeResult.awaitingCardSelection && beforeState && decisionState.cardSelectionAction) {
-          decisionState.cardSelectionAction.beforeTradeState = beforeState;
+        if (tradeResult.ok && tradeResult.awaitingCardSelection && beforeState && workingRoot.match?.cardSelectionContinuation) {
+          workingRoot.match.cardSelectionContinuation.beforeTradeState = beforeState;
         }
         if (tradeResult.ok && !tradeResult.awaitingCardSelection && beforeState) {
           context.recordQuickTradeCompletion?.(pending.tradeId, tradePlayer, beforeState);

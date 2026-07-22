@@ -10,7 +10,6 @@ function createHarness() {
   const effect = { id: "pass-effect", label: "PASS 精选", result: null };
   const cardState = { publicCards: [], discardPile: [] };
   const pendingState = {
-    cardSelectionAction: null,
     passReserveSelection: null,
   };
   const uiRuntimeState = { passReserveSelectionDismissed: false, passReserveSelectedCardId: null };
@@ -110,10 +109,12 @@ function createHarness() {
 }
 
 {
-  const { runtime, workingRoot, pendingState } = createHarness();
-  pendingState.cardSelectionAction = { type: "public_scan" };
+  const { runtime, workingRoot, pendingState, uiRuntimeState } = createHarness();
+  workingRoot.match.cardSelectionContinuation = { type: "public_scan" };
+  uiRuntimeState.cardSelectionType = "public_scan";
   runtime.cancelCardSelection(workingRoot);
-  assert.equal(pendingState.cardSelectionAction, null);
+  assert.equal(workingRoot.match.cardSelectionContinuation, undefined);
+  assert.equal(uiRuntimeState.cardSelectionType, null);
 }
 
 {

@@ -8,7 +8,6 @@ const { attachDecisionState } = require("./test-decision-state");
 function createBaseHarness() {
   const pendingState = {
     actionEffectFlow: { delayedPublicRefills: [] },
-    cardSelectionAction: null,
     handScanAction: null,
   };
   const cardState = {
@@ -43,6 +42,7 @@ function createBaseHarness() {
   };
   const decisionSessions = createDecisionSessionStore();
   attachDecisionState(pendingState, decisionSessions);
+  const uiRuntimeState = {};
   const workingRoot = {
     match: {},
     alienGameState: {},
@@ -56,6 +56,7 @@ function createBaseHarness() {
 
   const helpers = createScanFlowHelpers({
     decisionSessions,
+    uiRuntimeState,
     clearPendingAmibaSymbolChoice() {},
     clearPendingRunezuSymbolBranch() {},
     clearPendingRunezuFaceSymbolPlacement() {},
@@ -216,6 +217,7 @@ function createBaseHarness() {
     rocketState,
     player,
     decisionSessions,
+    uiRuntimeState,
     workingRoot,
   };
 }
@@ -243,28 +245,28 @@ function createBaseHarness() {
 }
 
 {
-  const { helpers, pendingState, cardState, rocketState, calls, workingRoot } = createBaseHarness();
-  pendingState.cardSelectionAction = { type: "public_scan", maxSelectable: 1 };
+  const { helpers, cardState, rocketState, calls, workingRoot } = createBaseHarness();
+  workingRoot.match.cardSelectionContinuation = { type: "public_scan", maxSelectable: 1 };
   cardState.publicCards = [{ id: "pub-1", cardName: "Public 1" }];
   const result = helpers.handlePublicScanCardClick(workingRoot, 0);
   assert.equal(result.ok, true);
-  assert.equal(pendingState.cardSelectionAction, null);
+  assert.equal(workingRoot.match.cardSelectionContinuation, undefined);
   assert.equal(calls.cardSync, 1);
   assert.equal(calls.picker.length, 1);
   assert.match(rocketState.statusNote, /Public 1/);
 }
 
 {
-  const { helpers, pendingState, cardState, player, rocketState, calls, workingRoot } = createBaseHarness();
-  pendingState.cardSelectionAction = {
+  const { helpers, cardState, player, rocketState, calls, workingRoot, uiRuntimeState } = createBaseHarness();
+  workingRoot.match.cardSelectionContinuation = {
     type: "public_scan",
-    selectedSlots: [0, 1],
     maxSelectable: 2,
     minSelectable: 1,
     player,
     scanRunId: "scan-1",
     deferPublicRefill: true,
   };
+  uiRuntimeState.publicCardSelectedSlots = [0, 1];
   cardState.publicCards = [
     { id: "pub-1", cardName: "Public 1" },
     { id: "pub-2", cardName: "Public 2" },

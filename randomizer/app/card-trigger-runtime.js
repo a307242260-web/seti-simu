@@ -69,6 +69,7 @@
       isAsteroidContent,
       isCardSelectionActive,
       isInitialSelectionActive,
+      uiRuntimeState,
       jiuzhe,
       layoutReservedCardRows,
       listCardTriggerFreeMoveCandidates,
@@ -135,7 +136,6 @@
         : rocketActions.getRocketsForPlayer(rocketState, playerId);
     }
     const decisionState = context.decisionSessions?.createFacade?.({
-      cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -330,7 +330,7 @@
     }
 
     function isCardTriggerPickSelectionActive() {
-      return isCardSelectionActive() && decisionState.cardSelectionAction?.type === "card_trigger_pick";
+      return isCardSelectionActive() && uiRuntimeState.cardSelectionType === "card_trigger_pick";
     }
 
     function hasActiveCardTriggerResolution(workingRoot) {

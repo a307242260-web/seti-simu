@@ -171,7 +171,6 @@
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleTurnState = (workingRoot) => workingRoot.turnState;
     const decisionState = context.decisionSessions?.createFacade?.({
-      cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -338,7 +337,9 @@
 
     function openPickCardRewardEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer(workingRoot);
-      decisionState.cardSelectionAction = null;
+      delete workingRoot.match.cardSelectionContinuation;
+      uiRuntimeState.publicCardSelectedSlots = [];
+      uiRuntimeState.cardSelectionType = null;
       const result = beginCardSelection({
         type: "planet_reward_pick_card",
         player: currentPlayer,

@@ -404,7 +404,7 @@
 
     function getPendingAutomationPlayerId() {
       if (state.pendingDiscardAction?.playerId) return state.pendingDiscardAction.playerId;
-      if (state.pendingCardSelectionAction?.player?.id) return state.pendingCardSelectionAction.player.id;
+      if (state.pendingCardSelectionContinuation?.playerId) return state.pendingCardSelectionContinuation.playerId;
       const sharedPendingEntries = [
         state.pendingLandTargetAction,
       ];

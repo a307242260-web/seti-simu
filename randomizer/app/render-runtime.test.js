@@ -206,7 +206,7 @@ function createImageCtor() {
 
 function createContext(overrides = {}) {
   const decisionSessions = createDecisionSessionStore();
-  const pendingState = attachDecisionState({ cardSelectionAction: null }, decisionSessions);
+  const pendingState = attachDecisionState({}, decisionSessions);
   const document = overrides.document || createDocument();
   const els = overrides.els || {
     tokenLayer: createElement("div", document),
@@ -554,7 +554,7 @@ function createContext(overrides = {}) {
     blindDrawEnabled: true,
     blindDrawReason: "盲抽一张牌加入手牌",
   };
-  context.pendingState.cardSelectionAction = { selectedSlots: [1] };
+  context.pendingState.publicCardSelectedSlots = [1];
   const runtime = createRenderRuntime(context);
 
   runtime.renderPublicCards();

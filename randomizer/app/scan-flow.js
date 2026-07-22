@@ -36,11 +36,16 @@
     const structuredClone = structuredCloneRef;
 
     const decisionState = context.decisionSessions?.createFacade?.({
-      cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
+    const getCardSelectionContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.cardSelectionContinuation || null;
+    function clearCardSelectionContinuation(workingRoot) {
+      delete requireWorkingRoot(workingRoot).match.cardSelectionContinuation;
+      uiRuntimeState.publicCardSelectedSlots = [];
+      uiRuntimeState.cardSelectionType = null;
+    }
     const decisionSessions = context.decisionSessions;
     const uiRuntimeState = context.uiRuntimeState || {};
     const getHandScanContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.handScanContinuation || null;
@@ -272,7 +277,7 @@
       return Math.min(1 + getPublicScanBonusSelectableCount(player), 3, filledSlots);
     }
 
-    function getPublicScanMinSelectable(pending = decisionState.cardSelectionAction) {
+    function getPublicScanMinSelectable(pending = null) {
       const maxSelectable = Math.max(1, Math.round(Number(pending?.maxSelectable) || 1));
       const requested = Math.max(1, Math.round(Number(pending?.minSelectable) || 1));
       return Math.min(maxSelectable, requested);
@@ -528,7 +533,7 @@
         return scanChoices;
       }
 
-      decisionState.cardSelectionAction = null;
+      clearCardSelectionContinuation(workingRoot);
       setSelectionActive(workingRoot, false);
       syncCardSelectionChrome();
       rocketState.statusNote = `公共牌区扫描：${getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
@@ -575,12 +580,12 @@
 
     function confirmPublicScanSelection(workingRoot) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = decisionState.cardSelectionAction;
+      const pending = getCardSelectionContinuation(workingRoot);
       if (pending?.type !== "public_scan") {
         return { ok: false, message: "当前不是公共牌区扫描" };
       }
 
-      const selectedSlots = [...(pending.selectedSlots || [])].sort((a, b) => a - b);
+      const selectedSlots = [...(uiRuntimeState.publicCardSelectedSlots || [])].sort((a, b) => a - b);
       const minSelectable = getPublicScanMinSelectable(pending);
       if (selectedSlots.length < minSelectable) {
         const message = minSelectable > 1
@@ -608,7 +613,7 @@
         items.push({ card, publicSlotIndex: slotIndex, scanChoices });
       }
 
-      const player = resolveWorkingPlayerReference(workingRoot, pending.player || {})
+      const player = resolveWorkingPlayerReference(workingRoot, pending)
         || getWorkingCurrentPlayer(workingRoot);
       const extraUsed = pending.freeAdditionalPublicScans ? 0 : selectedSlots.length - 1;
       if (extraUsed > 0 && !players.canAfford(player, { additionalPublicScan: extraUsed })) {
@@ -618,7 +623,7 @@
       }
 
       const fromEffectFlow = Boolean(pending.fromEffectFlow || decisionState.actionEffectFlow);
-      decisionState.cardSelectionAction = null;
+      clearCardSelectionContinuation(workingRoot);
       setSelectionActive(workingRoot, false);
       syncCardSelectionChrome();
 
@@ -674,7 +679,7 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      const pending = decisionState.cardSelectionAction;
+      const pending = getCardSelectionContinuation(workingRoot);
       const maxSelectable = pending?.maxSelectable ?? 1;
       const fromEffectFlow = Boolean(pending?.fromEffectFlow || decisionState.actionEffectFlow);
 
@@ -686,7 +691,7 @@
         });
       }
 
-      const selectedSlots = pending.selectedSlots || [];
+      const selectedSlots = uiRuntimeState.publicCardSelectedSlots || [];
       const existingIndex = selectedSlots.indexOf(index);
       if (existingIndex >= 0) {
         selectedSlots.splice(existingIndex, 1);
@@ -704,7 +709,7 @@
         selectedSlots.push(index);
       }
 
-      pending.selectedSlots = selectedSlots;
+      uiRuntimeState.publicCardSelectedSlots = selectedSlots;
       const count = selectedSlots.length;
       const minSelectable = getPublicScanMinSelectable(pending);
       rocketState.statusNote = count > 0
@@ -1405,7 +1410,7 @@
         delete workingRoot.match.probeSectorScanContinuation;
         uiRuntimeState.probeSectorSelectedRocketIds = [];
         delete workingRoot.match.probeLocationRewardContinuation;
-        decisionSessions.clear("strategy_passive_slot");
+        delete workingRoot.match.strategySlotContinuation;
         return;
       }
       if (getPublicScanQueue(workingRoot)) {
@@ -1433,7 +1438,7 @@
       clearPendingRunezuCardGain();
       clearPendingRunezuSymbolBranch();
       clearPendingRunezuFaceSymbolPlacement();
-      decisionSessions.clear("strategy_passive_slot");
+      delete workingRoot.match.strategySlotContinuation;
       setScanTargetActionLayout();
       setScanTargetContinuation(workingRoot, null);
       delete workingRoot.match.probeSectorScanContinuation;

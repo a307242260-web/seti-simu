@@ -11,11 +11,6 @@ function createHarness() {
   const calls = [];
   const decisionSessions = createDecisionSessionStore();
   const pendingState = {
-    cardSelectionAction: {
-      type: "industry_deepspace_hand",
-      player: { id: "p1" },
-      refundCost: { publicity: 1 },
-    },
     discardAction: { type: "industry_helios_income" },
   };
   attachDecisionState(pendingState, decisionSessions);
@@ -79,6 +74,12 @@ function createHarness() {
   };
   const workingRoot = {
     match: {
+      cardSelectionContinuation: {
+        type: "industry_deepspace_hand",
+        playerId: "p1",
+        refundCost: { publicity: 1 },
+      },
+      discardContinuation: { type: "industry_helios_income" },
       industryAbilityContinuation: { flowType: "deepspace_swap" },
       scanTargetContinuation: { type: "industry_remove_tech" },
       industryFreeMoveContinuation: { playerId: "p1", movesLeft: 1, movedRocketIds: [] },
@@ -99,8 +100,8 @@ function createHarness() {
 
   assert.equal(result.ok, true);
   assert.equal(harness.workingRoot.match.industryAbilityContinuation, null);
-  assert.equal(harness.pendingState.cardSelectionAction, null);
-  assert.equal(harness.pendingState.discardAction, null);
+  assert.equal(harness.workingRoot.match.cardSelectionContinuation, undefined);
+  assert.equal(harness.workingRoot.match.discardContinuation, undefined);
   assert.equal(harness.workingRoot.match.scanTargetContinuation, undefined);
   assert.equal(harness.techGameState.ui.industryBorrowMode, false);
   assert.equal(harness.workingRoot.match.industryFreeMoveContinuation, null);
@@ -117,7 +118,7 @@ function createHarness() {
 
   runtime.cancelIndustryAbilityFlow(harness.workingRoot);
 
-  assert.equal(harness.pendingState.cardSelectionAction, null);
+  assert.equal(harness.workingRoot.match.cardSelectionContinuation, undefined);
   assert.equal(harness.workingRoot.match.industryAbilityContinuation, null);
   assert.equal(harness.techGameState.ui.industryBorrowMode, false);
   assert.equal(harness.workingRoot.match.industryFreeMoveContinuation, null);

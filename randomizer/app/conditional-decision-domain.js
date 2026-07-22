@@ -64,6 +64,7 @@
       isFutureSpanEligibleHandCard,
       getPublicCardMultiSelectMinSelectable,
       getPublicScanMinSelectable,
+      getPublicCardSelectedSlots,
       allowsBlindDrawInSelection,
       canBlindDraw,
       getPendingLandTargetDecision,
@@ -1025,10 +1026,10 @@
         ],
       };
     }
-    const cardPending = decisionState.cardSelectionAction;
+    const cardPending = workingRoot.match?.cardSelectionContinuation;
     if (cardPending) {
       if (["industry_deepspace_hand", "industry_future_hand"].includes(cardPending.type)) {
-        const player = cardPending.player || getHeadlessConditionalPlayer(cardPending);
+        const player = getHeadlessConditionalPlayer(cardPending);
         return {
           actorPlayer: player,
           candidates: (player?.hand || []).flatMap((card, handIndex) => (
@@ -1050,7 +1051,7 @@
           )),
         };
       }
-      const selectedSlots = new Set(cardPending.selectedSlots || []);
+      const selectedSlots = new Set(getPublicCardSelectedSlots?.() || []);
       const maxSelectable = Math.max(1, Math.round(Number(cardPending.maxSelectable) || 1));
       const candidates = (workingRoot.cardState.publicCards || []).flatMap((card, slotIndex) => (
         card
@@ -1101,7 +1102,7 @@
         });
       }
       return {
-        actorPlayer: cardPending.player || getHeadlessConditionalPlayer(cardPending),
+        actorPlayer: getHeadlessConditionalPlayer(cardPending),
         candidates,
       };
     }
@@ -1392,14 +1393,14 @@
     ),
     "cancel-discard-selection": (_action, workingRoot) => cancelDiscardSelection(workingRoot)
       || { ok: true, progressed: true, skipped: true, message: "已取消弃牌" },
-    "public-card": (action) => handlePublicCardClick(Number(action.target.slotId))
+    "public-card": (action, workingRoot) => handlePublicCardClick(workingRoot, Number(action.target.slotId))
       || { ok: true, progressed: true, message: "已选择公共牌" },
-    "confirm-public-corner-discard": () => confirmPublicCornerDiscardSelection(),
-    "confirm-public-scan": () => confirmPublicScanSelection(),
-    "hand-card": (action) => decisionState.cardSelectionAction?.type === "industry_deepspace_hand"
-      ? handleIndustryDeepspaceHandClick(Number(action.target.handIndex))
-      : handleIndustryFutureSpanHandClick(Number(action.target.handIndex)),
-    "blind-draw": () => drawCardForCurrentPlayer({ fromSelection: true }),
+    "confirm-public-corner-discard": (_action, workingRoot) => confirmPublicCornerDiscardSelection(workingRoot),
+    "confirm-public-scan": (_action, workingRoot) => confirmPublicScanSelection(workingRoot),
+    "hand-card": (action, workingRoot) => workingRoot.match?.cardSelectionContinuation?.type === "industry_deepspace_hand"
+      ? handleIndustryDeepspaceHandClick(workingRoot, Number(action.target.handIndex))
+      : handleIndustryFutureSpanHandClick(workingRoot, Number(action.target.handIndex)),
+    "blind-draw": (_action, workingRoot) => drawCardForCurrentPlayer(workingRoot, { fromSelection: true }),
     "land-target": (action, workingRoot) => confirmLandTargetChoice(workingRoot, Number(action.target.choiceId)),
     "alien-state-trace": (action) => handleStateTraceSlotPlacement(
       Number(action.target.slotId), action.target.traceType,

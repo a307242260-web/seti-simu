@@ -85,7 +85,6 @@
       updatePublicCardControls
     } = context;
     const decisionState = context.decisionSessions?.createFacade?.({
-      cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -310,11 +309,12 @@
       "恢复 PASS 旋转前牌区",
     ));
 
+    const cardSelectionPending = workingRoot.match?.cardSelectionContinuation;
     const anomalyPickOpen = isCardSelectionActive()
-      && decisionState.cardSelectionAction?.type === "yichangdian_anomaly_pick";
+      && cardSelectionPending?.type === "yichangdian_anomaly_pick";
     if (anomalyPickOpen) {
-      decisionState.cardSelectionAction.fromEffectFlow = true;
-      decisionState.cardSelectionAction.effectResult = {
+      cardSelectionPending.fromEffectFlow = true;
+      cardSelectionPending.effectResult = {
         ok: result.ok,
         undoable: true,
         message: result.message,

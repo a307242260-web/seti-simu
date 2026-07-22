@@ -191,7 +191,6 @@
       return workingRoot;
     }
     const decisionState = context.decisionSessions?.createFacade?.({
-      cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -1080,7 +1079,7 @@
       const controls = cardState.publicControls || {};
       const selectionActive = Boolean(controls.selectionActive);
       const publicCardMultiSelect = Boolean(controls.multiSelectActive);
-      const selectedPublicSlots = decisionState.cardSelectionAction?.selectedSlots || [];
+      const selectedPublicSlots = decisionState.publicCardSelectedSlots || [];
       els.publicCardRow.replaceChildren(...cardState.publicCards.map((card, index) => {
         const slot = document.createElement("div");
         slot.className = "public-card-slot";

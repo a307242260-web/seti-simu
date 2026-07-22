@@ -88,7 +88,6 @@
       updateActionButtons,
     } = context;
     const decisionState = context.decisionSessions?.createFacade?.({
-      cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -983,7 +982,9 @@
       const groupId = `industry-pirates-raid-${turnState.roundNumber}-${turnState.turnNumber}`;
       const nodes = industry?.buildPiratesRaidLaunchEffectNodes?.(flow, { groupId }) || [];
       delete workingRoot.match.industryAbilityContinuation;
-      decisionState.cardSelectionAction = null;
+      delete workingRoot.match.cardSelectionContinuation;
+      uiRuntimeState.publicCardSelectedSlots = [];
+      uiRuntimeState.cardSelectionType = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
 

@@ -23,7 +23,7 @@
       AI_DEEPSPACE_SWAP_MIN_SCORE, AI_STYLE_SEAT_ORDER, INITIAL_SELECTION_REQUIRED, abilities, ai, aiAutoBattleState, aiNumber,
       aliens, allowsBlindDrawInSelection, amiba, applyAiDifficultyToPlayer, banrenma, canAiResolveAlienTraceEffect, canAiResolvePlayCardEffects,
       canBlindDraw, cancelCardTriggerChoice, cardEffects, cards, chooseAiIncomeDiscardIndexes, chooseAiTradeDiscardIndexes, confirmCardCornerQuickAction,
-      confirmCardTaskCompletion, confirmInitialSelectionForCurrentPlayer, confirmPassReserveSelection, confirmPublicScanSelection, createActionContext, drawCardForCurrentPlayer, executeFreeMoveForCardTrigger,
+      confirmCardTaskCompletion, confirmInitialSelectionForCurrentPlayer, confirmPassReserveSelection, confirmPublicCornerDiscardSelection, confirmPublicScanSelection, createActionContext, drawCardForCurrentPlayer, executeFreeMoveForCardTrigger,
       finalizePendingDiscardSelection, getActivePlayers, getAiAutoBattlePendingState, getAiAutoBattlePlayerIds, getAiBestDeepspaceSwap, getAiBestHandScanIndex, getAiBestPublicScanSlots, getAiCardDisplayLabel,
       getAiDifficultyLabel, getAiIncomeDiscardPreview, getAiIncomeFinalFormulaEntries, getAiLaunchPaymentCost, getAiLiveScorePaceDeficit, getAiLowEngineCatchupProfile, getAiMarkedFinalFormulaEntries, getAiPassReserveResourcePressure,
       getAiRoundNumber, getCardTypeCode, getInitialSelectionOffer, getPassReserveSelectionCards,
@@ -278,8 +278,9 @@
     function runAiCardSelectionDecision(workingRoot) {
       const { cardState, playerState } = requireWorkingRoot(workingRoot);
       if (!isCardSelectionActive() && !isIndustryHandSelectionActive()) return null;
-      const pending = state.pendingCardSelectionAction || {};
-      const player = pending.player || getWorkingCurrentPlayer(workingRoot);
+      const pending = state.pendingCardSelectionContinuation || {};
+      const player = resolveWorkingPlayerById(workingRoot, pending.playerId)
+        || getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工精选` };
       }
@@ -356,7 +357,7 @@
       if (pending.type === "card_public_corner_discard") {
         const maxSelectable = Math.max(1, Math.round(aiNumber(pending.maxSelectable ?? pending.count ?? 1)));
         const minSelectable = Math.max(1, Math.round(aiNumber(pending.minSelectable ?? maxSelectable)));
-        const selectedSlots = new Set(pending.selectedSlots || []);
+        const selectedSlots = new Set(state.publicCardSelectedSlots || []);
         const rankedPublic = (cardState.publicCards || [])
           .map((card, slotIndex) => ({
             card,
@@ -385,10 +386,10 @@
           if (!selectResult?.ok) return selectResult;
           selectedSlots.add(entry.slotIndex);
         }
-        if ((pending.selectedSlots || []).length < minSelectable) {
+        if (selectedSlots.size < minSelectable) {
           return { ok: false, blocked: true, message: `AI 公共牌角标弃除选择不足（需要 ${minSelectable} 张）` };
         }
-        return confirmPublicScanSelection();
+        return confirmPublicCornerDiscardSelection();
       }
 
       const rankedPublic = (cardState.publicCards || [])

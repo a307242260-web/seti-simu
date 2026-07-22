@@ -125,11 +125,38 @@
         : rocketActions.getRocketsForPlayer(rocketState, playerId);
     }
     const decisionState = context.decisionSessions?.createFacade?.({
-      cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
+    const getCardSelectionContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.cardSelectionContinuation || null;
+    function setCardSelectionContinuation(workingRoot, pending) {
+      const activeRoot = requireWorkingRoot(workingRoot);
+      uiRuntimeState.publicCardSelectedSlots = [];
+      if (!pending) {
+        delete activeRoot.match.cardSelectionContinuation;
+        uiRuntimeState.cardSelectionType = null;
+        return null;
+      }
+      const player = pending.player || null;
+      const normalized = {
+        ...structuredClone(pending),
+        playerId: pending.playerId || player?.id || null,
+        playerColor: pending.playerColor || player?.color || null,
+        effectId: pending.effectId || pending.effect?.id || null,
+      };
+      delete normalized.player;
+      delete normalized.effect;
+      delete normalized.selectedSlots;
+      activeRoot.match.cardSelectionContinuation = normalized;
+      uiRuntimeState.cardSelectionType = normalized.type || null;
+      return normalized;
+    }
+    function getCardSelectionPlayer(workingRoot, pending) {
+      return (workingRoot.playerState?.players || []).find((player) => (
+        player.id === pending?.playerId || player.color === pending?.playerColor
+      )) || getWorkingCurrentPlayer(workingRoot);
+    }
     const getMatchContinuation = (workingRoot, field) => requireWorkingRoot(workingRoot).match?.[field] || null;
     function setMatchContinuation(workingRoot, field, continuation) {
       const activeRoot = requireWorkingRoot(workingRoot);
@@ -654,7 +681,7 @@
         return { ok: false, message: "请先完成移动" };
       }
 
-      decisionState.cardSelectionAction = pendingAction;
+      setCardSelectionContinuation(workingRoot, pendingAction);
       cards.setSelectionActive(cardState, true);
       rocketState.statusNote = pendingAction?.type === "public_scan"
         ? (pendingAction.maxSelectable ?? 1) > 1
@@ -697,13 +724,14 @@
 
     function cancelCardSelection(workingRoot) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = decisionState.cardSelectionAction;
-      decisionState.cardSelectionAction = null;
+      const pending = getCardSelectionContinuation(workingRoot);
+      setCardSelectionContinuation(workingRoot, null);
       cards.setSelectionActive(cardState, false);
-      if (pending?.type === "trade" && pending.player && pending.refundCost) {
+      if (pending?.type === "trade" && pending.refundCost) {
+        const pendingPlayer = getCardSelectionPlayer(workingRoot, pending);
         if (pending.beforeTradeState) {
           historyCommands.createRestoreTradeStateCommand(
-            pending.player,
+            pendingPlayer,
             cardState,
             pending.beforeTradeState,
           ).undo();
@@ -712,7 +740,7 @@
           renderPublicCards();
           updatePublicCardControls(workingRoot);
         } else {
-          players.gainResources(pending.player, pending.refundCost);
+          players.gainResources(pendingPlayer, pending.refundCost);
           rocketState.statusNote = `已取消精选，已退回 ${players.formatResourceCost(pending.refundCost)}`;
         }
       } else if (pending?.type === "public_scan") {
@@ -799,8 +827,9 @@
           completeCurrentActionEffect("skipped");
         }
       } else if (pending?.type === "fundamentalism_exchange_pick") {
-        if (pending.player && pending.beforePlayerState) {
-          restoreObjectSnapshot(pending.player, pending.beforePlayerState);
+        const pendingPlayer = getCardSelectionPlayer(workingRoot, pending);
+        if (pendingPlayer && pending.beforePlayerState) {
+          restoreObjectSnapshot(pendingPlayer, pending.beforePlayerState);
         }
         if (pending.beforeCardState) {
           restoreObjectSnapshot(cardState, pending.beforeCardState);
@@ -830,8 +859,8 @@
       }
 
       cards.setSelectionActive(cardState, false);
-      const pending = decisionState.cardSelectionAction;
-      decisionState.cardSelectionAction = null;
+      const pending = getCardSelectionContinuation(workingRoot);
+      setCardSelectionContinuation(workingRoot, null);
       rocketState.statusNote = pending?.type === "trade"
         ? `快速交易精选：${cards.getCardLabel(result.card)}`
         : `获得卡牌：${cards.getCardLabel(result.card)}`;
@@ -868,7 +897,8 @@
           firstTake: Boolean(pending.firstTake),
           skipCardSelection: true,
         });
-        recordTechBonusScore(pending.player || getWorkingCurrentPlayer(workingRoot), bonusResult);
+        const pendingPlayer = getCardSelectionPlayer(workingRoot, pending);
+        recordTechBonusScore(pendingPlayer, bonusResult);
         if (getCurrentActionEffect()) {
           getCurrentActionEffect().result = {
             ok: true,
@@ -877,8 +907,8 @@
             message: `${rocketState.statusNote}${bonusResult?.message ? `；${bonusResult.message}` : ""}`,
             events: [{
               type: "researchTech",
-              playerId: pending.player?.id || getWorkingCurrentPlayer(workingRoot)?.id || null,
-              playerColor: pending.player?.color || getWorkingCurrentPlayer(workingRoot)?.color || null,
+              playerId: pendingPlayer?.id || null,
+              playerColor: pendingPlayer?.color || null,
               techType: pending.selection?.techType || null,
               tileId: pending.selection?.tileId || null,
               source: decisionState.actionEffectFlow?.actionType || "tech",
@@ -1007,7 +1037,7 @@
         beginQuickActionStep("card-trigger-pick", `卡牌触发：${match?.effect?.label || "精选"}`);
         if (match?.card && match?.trigger) {
           cardEffects.consumeTrigger(match.card, match.trigger.id);
-          discardReservedCardIfFinished(workingRoot, pending.player || getWorkingCurrentPlayer(workingRoot), match.card);
+          discardReservedCardIfFinished(workingRoot, getCardSelectionPlayer(workingRoot, pending), match.card);
         }
         rocketState.statusNote = `卡牌触发精选：${cards.getCardLabel(result.card)}`;
         for (const command of createCardTriggerProgressCommands(workingRoot, pending.triggerSnapshot, "卡牌触发精选")) {
@@ -1021,7 +1051,7 @@
         continueAfterCardTriggerResolution(workingRoot);
       }
       if (pending?.type === "card_pick_corner_reward") {
-        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
+        const player = getCardSelectionPlayer(workingRoot, pending);
         const beforePlayer = pending.beforePlayerState || structuredClone(player);
         const beforeCardState = pending.beforeCardState || {
           publicCards: cardState.publicCards.slice(),
@@ -1055,7 +1085,7 @@
         completeCurrentActionEffect();
       }
       if (pending?.type === "industry_mission_pick") {
-        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
+        const player = getCardSelectionPlayer(workingRoot, pending);
         const incomeResult = industry.applyIncomeResourcesFromCard(cards, players, data, player, result.card, {
           blindDraw: blindDrawCardForPlayer,
         });
@@ -1066,7 +1096,7 @@
         commitIrreversibleIndustryQuickAction("任务中继站：精选", rocketState.statusNote);
       }
       if (pending?.type === "industry_fenwick_pick") {
-        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
+        const player = getCardSelectionPlayer(workingRoot, pending);
         const reward = industry.getCornerReward(cards, result.card);
         const applied = reward
           ? industry.applyCornerReward(players, data, player, reward)
@@ -1107,7 +1137,7 @@
         }
       }
       if (pending?.type === "industry_strategy_pick") {
-        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
+        const player = getCardSelectionPlayer(workingRoot, pending);
         if (player) {
           const beforePlayer = structuredClone(player);
           industry?.clearStrategyPassiveSlots?.(player);
@@ -1122,7 +1152,7 @@
         commitIrreversibleIndustryQuickAction("宇宙战略集团：精选", rocketState.statusNote);
       }
       if (pending?.type === "industry_future_pick") {
-        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
+        const player = getCardSelectionPlayer(workingRoot, pending);
         const advanceAmount = Math.round(Number(pending.advanceAmount ?? industry?.FUTURE_SPAN_PICK_ADVANCE_AMOUNT) || 2);
         const advanceResult = industry.advanceFutureSpanTarget?.(player, advanceAmount);
         rocketState.statusNote = advanceResult?.ok
@@ -1132,7 +1162,7 @@
         commitIrreversibleIndustryQuickAction("未来跨度研究所：精选", rocketState.statusNote);
       }
       if (pending?.type === "fundamentalism_exchange_pick") {
-        const player = pending.player || getWorkingCurrentPlayer(workingRoot);
+        const player = getCardSelectionPlayer(workingRoot, pending);
         beginEffectHistoryStep(pending.effectLabel || "原教旨主义：精选兑换");
         recordHistoryCommand(historyCommands.createRestorePlayerCommand(
           player,
@@ -1270,15 +1300,15 @@
 
     function handlePublicCardClick(workingRoot, slotIndex) {
       if (!isCardSelectionActive()) return;
-      if (decisionState.cardSelectionAction?.type === "public_scan") {
+      if (getCardSelectionContinuation(workingRoot)?.type === "public_scan") {
         handlePublicScanCardClick(slotIndex);
         return;
       }
-      if (decisionState.cardSelectionAction?.type === "card_public_corner_discard") {
+      if (getCardSelectionContinuation(workingRoot)?.type === "card_public_corner_discard") {
         handlePublicCornerDiscardCardClick(slotIndex);
         return;
       }
-      if (decisionState.cardSelectionAction?.type === "industry_deepspace_public") {
+      if (getCardSelectionContinuation(workingRoot)?.type === "industry_deepspace_public") {
         finalizeIndustryDeepspaceSwap(slotIndex);
         return;
       }
