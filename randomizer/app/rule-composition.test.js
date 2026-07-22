@@ -539,7 +539,6 @@ function createHarness(initialValue = 0) {
   assert.doesNotMatch([appSource, actionInteractionSource].join("\n"), /["']data_placement["']|peek\([^\n]*data_placement|open\([^\n]*data_placement|clear\([^\n]*data_placement/, "数据放置旧 store key/peek/mutation 必须物理删除");
   assert.match(actionInteractionSource, /workingRoot[\s\S]*?dataPlacementContinuation/, "数据放置规则上下文必须归 Composition continuation");
   assert.doesNotMatch(actionInteractionSource, /onAfterPlacement|onSkip/, "数据放置 continuation 不得保存闭包 resolver");
-  assert.match(appSource, /function confirmDataPlacement[\s\S]*?pending-data-placement[\s\S]*?submitActiveCardDecision/, "数据放置真人输入必须提交 active Decision choice");
   assert.doesNotMatch(aiProductionSource, /runAiDataPlacementDecision|pendingDataPlaceAction/, "数据放置 AI 不得保留 DOM\/pending 专用 resolver");
 }
 

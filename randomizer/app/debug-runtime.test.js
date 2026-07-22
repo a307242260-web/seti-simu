@@ -1,7 +1,23 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createDebugRuntime } = require("./debug-runtime");
+const { createDebugPort, createDebugRuntime } = require("./debug-runtime");
+
+{
+  const calls = [];
+  const port = createDebugPort({
+    dispatchCommand: (name, args) => calls.push([name, args]),
+    getRuleReadout: () => ({ alienGameState: { aomomo: { revealedSlotId: 2 } } }),
+  });
+  port.handleDebugQuickSectorScanChoice({ dataset: { sectorId: "3" } });
+  port.logAomomoDebugCoordinates();
+  port.focusJiuzheDebugCalibration();
+  assert.deepEqual(calls, [
+    ["handleDebugQuickSectorScanChoice", [{ sectorId: "3" }]],
+    ["logAomomoDebugCoordinates", [2]],
+    ["focusDebugCalibration", [1]],
+  ]);
+}
 
 function createClassList() {
   const values = new Set();

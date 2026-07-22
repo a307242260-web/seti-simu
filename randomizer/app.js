@@ -242,6 +242,22 @@
     maybeContinueAlienRevealQueuedOpportunities, maybeContinuePendingTurnEndRevealFlow,
     maybeResumeTurnEndAfterReveal, passForCurrentPlayer,
   } = turnEndPort;
+  const debugPort = debugRuntimeModule.createDebugPort({
+    dispatchCommand: (name, args) => callDebugCommand(name, args),
+    getRuleReadout: () => createStateSourceReadoutRoot(),
+  });
+  const {
+    addDebugCardByInput, addDebugData, addDebugIncome, addDebugScore, fillDebugNebulaData,
+    fillNebulaDataBoard, focusAomomoDebugCalibration, focusAmibaDebugCalibration,
+    focusBanrenmaDebugCalibration, focusChongDebugCalibration, focusFangzhouDebugCalibration,
+    focusJiuzheDebugCalibration, focusYichangdianDebugCalibration, getFailsafePendingOwnerPlayer,
+    handleAiTakeoverFailsafe, handleDebugQuickSectorScanChoice, handleForceSkipTurnFailsafe,
+    logAomomoDebugCoordinates, openDebugQuickSectorScanPicker, promptDebugGainCard,
+    renderDebugPlayerSwitch, revealAmibaForDebug, revealAomomoForDebug, revealBanrenmaForDebug,
+    revealChongForDebug, revealFangzhouForDebug, revealJiuzheForDebug, revealRunezuForDebug,
+    revealYichangdianForDebug, runDebugQuickSectorScan, selectDefaultRocketForCurrentPlayer,
+    setDebugOpen, setDebugPlayerMenuOpen, switchCurrentPlayerColor, toggleSectorWinDebug,
+  } = debugPort;
   const actionInteractionPort = actionInteractionRuntimeModule.createActionInteractionPort({
     getRuntime: () => actionInteractionRuntime,
     dispatchCommand: (name, args) => callBrowserDomainCommand("action_interaction", name, args),
@@ -5125,19 +5141,6 @@
   });
 
 
-  function runDebugQuickSectorScan(playerId, sectorId, count) {
-    return callDebugCommand("runDebugQuickSectorScan", [playerId, sectorId, count]);
-  }
-
-  function handleDebugQuickSectorScanChoice(button) {
-    return callDebugCommand("handleDebugQuickSectorScanChoice", [{ ...(button?.dataset || {}) }]);
-  }
-
-  function openDebugQuickSectorScanPicker() {
-    return callDebugCommand("openDebugQuickSectorScanPicker");
-  }
-
-
   function isActionEffectFlowActive(workingRoot = null) {
     return getActionEffectFlow(workingRoot) != null;
   }
@@ -6139,14 +6142,6 @@
     };
   }
 
-  function setDebugOpen(open) {
-    return callDebugCommand("setDebugOpen", [open]);
-  }
-
-  function focusJiuzheDebugCalibration(alienSlotId = 1) {
-    return focusDebugCalibration(alienSlotId);
-  }
-
   function getCurrentPlayer(workingRoot = null) {
     if (uiRuntimeState.effectExecutionPlayerId) {
       const effectPlayer = isBrowserWorkingRoot(workingRoot)
@@ -6166,34 +6161,6 @@
     const normalizedColor = players.normalizePlayerColor(color);
     const source = workingRoot ? workingRoot.playerState : createStateSourceReadoutRoot().playerState;
     return source.players.find((player) => player.color === normalizedColor) || null;
-  }
-
-  function setDebugPlayerMenuOpen(open) {
-    return callDebugCommand("setDebugPlayerMenuOpen", [open]);
-  }
-
-  function renderDebugPlayerSwitch() {
-    return callDebugCommand("renderDebugPlayerSwitch");
-  }
-
-  function selectDefaultRocketForCurrentPlayer() {
-    return callDebugCommand("selectDefaultRocketForCurrentPlayer");
-  }
-
-  function switchCurrentPlayerColor(color) {
-    return callDebugCommand("switchCurrentPlayerColor", [color]);
-  }
-
-  function getFailsafePendingOwnerPlayer() {
-    return callDebugCommand("getFailsafePendingOwnerPlayer");
-  }
-
-  function handleAiTakeoverFailsafe() {
-    return callDebugCommand("handleAiTakeoverFailsafe");
-  }
-
-  function handleForceSkipTurnFailsafe() {
-    return callDebugCommand("handleForceSkipTurnFailsafe");
   }
 
   const FINAL_RESULT_PLAYER_COLOR_ORDER = Object.freeze(["white", "brown", "blue", "green"]);
@@ -7436,10 +7403,6 @@
     return runAction("land", { target: options.defaultTarget, rocketId: options.defaultRocketId });
   }
 
-  function addDebugIncome() {
-    return callDebugCommand("addDebugIncome");
-  }
-
   function executeIncomeForCurrentPlayerForRoot(workingRoot) {
     const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
     const result = applyIncomeResourcesForPlayer(currentPlayer, {
@@ -7456,98 +7419,6 @@
 
   function executeIncomeForCurrentPlayer() {
     return ruleComposition.inputPort.submitHostCommand({ kind: "debug_execute_income" }).value;
-  }
-
-  function addDebugData() {
-    return callDebugCommand("addDebugData");
-  }
-
-  function addDebugScore() {
-    return callDebugCommand("addDebugScore");
-  }
-
-  function addDebugCardByInput(input) {
-    return callDebugCommand("addDebugCardByInput", [input]);
-  }
-
-  function promptDebugGainCard() {
-    return callDebugCommand("promptDebugGainCard");
-  }
-
-  function revealJiuzheForDebug() {
-    return callDebugCommand("revealJiuzheForDebug");
-  }
-
-  function revealYichangdianForDebug() {
-    return callDebugCommand("revealYichangdianForDebug");
-  }
-
-  function revealFangzhouForDebug() {
-    return callDebugCommand("revealFangzhouForDebug");
-  }
-
-  function revealBanrenmaForDebug() {
-    return callDebugCommand("revealBanrenmaForDebug");
-  }
-
-  function revealChongForDebug() {
-    return callDebugCommand("revealChongForDebug");
-  }
-
-  function revealAmibaForDebug() {
-    return callDebugCommand("revealAmibaForDebug");
-  }
-
-  function logAomomoDebugCoordinates(alienSlotId = null) {
-    const resolvedSlotId = alienSlotId
-      ?? createStateSourceReadoutRoot().alienGameState.aomomo?.revealedSlotId
-      ?? 1;
-    return callDebugCommand("logAomomoDebugCoordinates", [resolvedSlotId]);
-  }
-
-  function revealAomomoForDebug() {
-    return callDebugCommand("revealAomomoForDebug");
-  }
-
-  function revealRunezuForDebug() {
-    return callDebugCommand("revealRunezuForDebug");
-  }
-
-  function focusFangzhouDebugCalibration(alienSlotId = 1) {
-    return focusDebugCalibration(alienSlotId);
-  }
-
-  function focusYichangdianDebugCalibration(alienSlotId = 1) {
-    return focusDebugCalibration(alienSlotId);
-  }
-
-  function focusBanrenmaDebugCalibration(alienSlotId = 1) {
-    return focusDebugCalibration(alienSlotId);
-  }
-
-  function focusChongDebugCalibration(alienSlotId = 1) {
-    return focusDebugCalibration(alienSlotId);
-  }
-
-  function focusAmibaDebugCalibration(alienSlotId = 1) {
-    return focusDebugCalibration(alienSlotId);
-  }
-
-  function focusAomomoDebugCalibration(alienSlotId = 1) {
-    return focusDebugCalibration(alienSlotId);
-  }
-
-
-  function fillNebulaDataBoard(options = {}) {
-    return callDebugCommand("fillNebulaDataBoard", [options]);
-  }
-
-  function fillDebugNebulaData() {
-    return callDebugCommand("fillDebugNebulaData");
-  }
-
-  function toggleSectorWinDebug() {
-    return callDebugCommand("toggleSectorWinDebug");
   }
 
   function moveRocket(deltaX, deltaY, rocketId, options = {}) {

@@ -1197,7 +1197,40 @@
     };
   }
 
+  function createDebugPort(context = {}) {
+    const commandMethods = [
+      "runDebugQuickSectorScan", "openDebugQuickSectorScanPicker", "setDebugOpen",
+      "setDebugPlayerMenuOpen", "renderDebugPlayerSwitch", "selectDefaultRocketForCurrentPlayer",
+      "switchCurrentPlayerColor", "getFailsafePendingOwnerPlayer", "handleAiTakeoverFailsafe",
+      "handleForceSkipTurnFailsafe", "addDebugIncome", "addDebugData", "addDebugScore",
+      "addDebugCardByInput", "promptDebugGainCard", "revealJiuzheForDebug", "revealYichangdianForDebug",
+      "revealFangzhouForDebug", "revealBanrenmaForDebug", "revealChongForDebug", "revealAmibaForDebug",
+      "revealAomomoForDebug", "revealRunezuForDebug", "fillNebulaDataBoard", "fillDebugNebulaData",
+      "toggleSectorWinDebug",
+    ];
+    const port = Object.fromEntries(commandMethods.map((name) => [
+      name,
+      (...args) => context.dispatchCommand(name, args),
+    ]));
+    port.handleDebugQuickSectorScanChoice = (button) => context.dispatchCommand(
+      "handleDebugQuickSectorScanChoice",
+      [{ ...(button?.dataset || {}) }],
+    );
+    port.logAomomoDebugCoordinates = (alienSlotId = null) => context.dispatchCommand(
+      "logAomomoDebugCoordinates",
+      [alienSlotId ?? context.getRuleReadout().alienGameState.aomomo?.revealedSlotId ?? 1],
+    );
+    for (const species of ["Jiuzhe", "Fangzhou", "Yichangdian", "Banrenma", "Chong", "Amiba", "Aomomo"]) {
+      port[`focus${species}DebugCalibration`] = (alienSlotId = 1) => context.dispatchCommand(
+        "focusDebugCalibration",
+        [alienSlotId],
+      );
+    }
+    return Object.freeze(port);
+  }
+
   return {
     createDebugRuntime,
+    createDebugPort,
   };
 });
