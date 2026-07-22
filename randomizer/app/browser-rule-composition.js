@@ -302,7 +302,11 @@
         const drained = runtime.drain(activeSession);
         if (!drained?.ok) return finishIfTerminal() || deepFreeze(clone(drained));
       }
-      return finishIfTerminal() || deepFreeze({ ok: true, projection: projection() });
+      return finishIfTerminal() || deepFreeze({
+        ok: true,
+        projection: projection(),
+        journal: clone(activeSession?.journal || null),
+      });
     }
 
     function submitAction(action, submitOptions = {}) {
@@ -495,7 +499,9 @@
 
     function save(saveOptions = {}) {
       let committed = store.getSnapshot();
-      let saveState = committed;
+      let saveState = activeSession && typeof stateAdapter?.createSavedState === "function"
+        ? stateAdapter.createSavedState(committed, workingState, clone(saveOptions))
+        : committed;
       if (!activeSession && stateAdapter) {
         const candidate = stateAdapter.createCommittedState(workingState, committed, clone(saveOptions));
         candidate.meta.stateVersion = committed.meta.stateVersion;

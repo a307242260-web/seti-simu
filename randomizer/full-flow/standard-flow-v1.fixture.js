@@ -91,6 +91,6 @@ module.exports = Object.freeze({
       revealed: [false, false, false, false, false, false, false, false],
     },
     authority: [34, "seti-headless-mulberry32-v1", 1542217152, 36],
-    session: [null, "player-green", null, "turn_action", 41, 40, 27],
+    session: [null, "player-green", null, "turn_action", 41, 40, 40],
   },
 });

@@ -475,6 +475,17 @@
           ),
         );
       },
+      createSavedState(committedState, workingState, contextOverrides = {}) {
+        const savedState = structuredClone(committedState);
+        savedState.meta = {
+          ...savedState.meta,
+          ...getBrowserCommittedContext(workingState),
+          ...structuredClone(contextOverrides),
+          schemaVersion: savedState.meta.schemaVersion,
+          stateVersion: savedState.meta.stateVersion,
+        };
+        return savedState;
+      },
       restoreWorkingState: restoreBrowserWorkingState,
       onCommitted(workingState, committedState) {
         workingState.meta = structuredClone(committedState.meta);
@@ -11746,15 +11757,6 @@
       tech,
       data,
       aliens,
-      solarState,
-      alienGameState,
-      finalScoringState,
-      playerState,
-      turnState,
-      rocketState,
-      planetStatsState,
-      techGameState,
-      cardState,
       actionHistory,
       setupSelectionState,
       buildFinalResultPlayerSummaries,
@@ -11877,7 +11879,6 @@
       getPlanetsReferenceDimensions,
       renderRocketElement,
       updateActionButtons,
-      getRoundOrderPlayerIds,
       getRecoverableActionLog,
       createActionLogRecoveryPackage,
       getActionLogMarkdown,
@@ -11885,11 +11886,9 @@
       createGameRecoverySnapshot,
       applyGameRecoverySnapshot,
       recoverFromActionLog,
-      getSetupState,
       toggleCheatMode,
       researchTechForCurrentPlayer,
-      finalizeTechTakeResult,
-      getBrowserProjection: headlessMode ? null : () => residentProjectionAdapter.projectSource({
+      getBrowserProjection: () => residentProjectionAdapter.projectSource({
         viewer: getResidentViewer(),
       }),
       browserServices: residentBrowserServices?.createPublicFacade?.() || null,

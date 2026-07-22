@@ -131,6 +131,7 @@ function createHarness(initialValue = 0) {
   const action = composition.inputPort.enumerateActions({ family: "scan" })[0];
   const opened = composition.inputPort.submitAction(action);
   assert.equal(opened.ok, true);
+  assert.equal(opened.journal.actions.length, 1, "活跃 Session 输入结果必须携带冻结 journal 快照");
   assert.equal(composition.inspect().phase, "awaiting_input");
   assert.equal(composition.projection().state.match.value, 12, "同一 working root 立即消费顺序 Effect");
   assert.equal(composition.projection().state.meta.stateVersion, 0, "Decision 期间 committed version 不变");
@@ -372,6 +373,52 @@ function createHarness(initialValue = 0) {
   assert.equal(result.ok, true);
   assert.equal(composition.stateSourcePort.read().state.match.value, 3);
   assert.equal(commitEvents, 1, "嵌套宿主命令只允许由最外层 composition 执行一次 CAS");
+}
+
+{
+  const composition = createBrowserRuleComposition({
+    stateStoreApi,
+    effectRuntimeApi,
+    createActionRegistry: createRegistry,
+    createInitialState: (_options, workingState) => structuredClone(workingState),
+    stateAdapter: {
+      createWorkingState: () => createState(0),
+      createCommittedState: (workingState, committedState) => ({
+        ...structuredClone(workingState),
+        meta: structuredClone(committedState.meta),
+      }),
+      createProjectionState: (workingState) => structuredClone(workingState),
+      createSavedState: (committedState, _workingState, saveOptions) => ({
+        ...structuredClone(committedState),
+        meta: { ...structuredClone(committedState.meta), rngState: structuredClone(saveOptions.rngState) },
+      }),
+      restoreWorkingState(target, source) {
+        for (const key of Reflect.ownKeys(target)) delete target[key];
+        Object.assign(target, structuredClone(source));
+      },
+    },
+    projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
+    createEffectGroup: () => ({
+      effects: [{
+        type: "choose",
+        kind: "decision",
+        ownerId: "player-1",
+        payload: { choices: [{ id: "left", amount: 1 }] },
+      }],
+    }),
+    effectExecutors: {
+      choose: {
+        getLegalChoices(_state, effect) { return effect.payload.choices; },
+        resolveDecision(state) { return { ok: true, nextState: state }; },
+      },
+    },
+  });
+  const action = composition.inputPort.enumerateActions({ family: "scan" })[0];
+  assert.equal(composition.inputPort.submitAction(action).ok, true);
+  assert.equal(composition.inspect().phase, "awaiting_input");
+  const saved = composition.lifecycle.save({ rngState: { algorithm: "test", state: 7 } });
+  assert.equal(JSON.parse(saved.envelope.committedState).meta.rngState.state, 7,
+    "活跃 Session 存档必须装饰 committed meta，且不得泄漏 working state");
 }
 
 {

@@ -134,8 +134,12 @@ function sanitizePublicPlayer(player, finalScoreSummary) {
     publicity: Number(resources.publicity) || 0,
     availableData: Number(resources.availableData) || 0,
     additionalPublicScan: Number(resources.additionalPublicScan) || 0,
-    handCount: (player?.hand || []).length,
-    reservedCount: (player?.reservedCards || []).length,
+    handCount: Array.isArray(player?.hand)
+      ? player.hand.length
+      : Math.max(0, Math.round(Number(player?.handCount) || 0)),
+    reservedCount: Array.isArray(player?.reservedCards)
+      ? player.reservedCards.length
+      : Math.max(0, Math.round(Number(player?.reservedCount) || 0)),
     completedTaskCount: Object.values(player?.taskState || {}).filter(Boolean).length,
     techState: clone(player?.techState || {}),
     passed: Boolean(player?.passed),

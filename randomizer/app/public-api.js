@@ -26,15 +26,6 @@
       tech,
       data,
       aliens,
-      solarState,
-      alienGameState,
-      finalScoringState,
-      playerState,
-      turnState,
-      rocketState,
-      planetStatsState,
-      techGameState,
-      cardState,
       actionHistory,
       setupSelectionState,
       buildFinalResultPlayerSummaries,
@@ -154,7 +145,6 @@
       getPlanetsReferenceDimensions,
       renderRocketElement,
       updateActionButtons,
-      getRoundOrderPlayerIds,
       getRecoverableActionLog,
       createActionLogRecoveryPackage,
       getActionLogMarkdown,
@@ -162,10 +152,8 @@
       createGameRecoverySnapshot,
       applyGameRecoverySnapshot,
       recoverFromActionLog,
-      getSetupState,
       toggleCheatMode,
       researchTechForCurrentPlayer,
-      finalizeTechTakeResult,
       dispatchRuntimeAction,
       getBrowserProjection,
       browserServices,
@@ -218,7 +206,7 @@
       getRunezuFaceSymbolLayoutOverrides: () => structuredClone(aliens.listRunezuFaceSymbolMarkerLayoutOverrides?.() || []),
       getBrowserProjection: () => readBrowserProjection(),
       browserServices: browserServices || null,
-      getAlienState: () => readBrowserProjection()?.aliens || structuredClone(alienGameState),
+      getAlienState: () => readBrowserProjection()?.resident?.aliens || {},
       revealJiuzheForDebug,
       revealYichangdianForDebug,
       revealFangzhouForDebug,
@@ -227,57 +215,9 @@
       revealAmibaForDebug,
       revealAomomoForDebug,
       revealRunezuForDebug,
-      getFinalScoringState: () => readBrowserProjection()?.board?.finalScoring || structuredClone(finalScoringState),
+      getFinalScoringState: () => readBrowserProjection()?.resident?.finalScoring || {},
       markFinalScoreTile: handleFinalScoreTileClick,
       openAlienTracePicker,
-      placeAlienFirstTrace: (alienSlotId, traceType, playerColor) => {
-        const result = aliens.placeFirstTrace(
-          alienGameState,
-          alienSlotId,
-          traceType,
-          playerColor || getCurrentPlayer().color,
-        );
-        const revealResult = maybeRevealAlienAfterTrace(alienSlotId, result);
-        const sideEffect = handleJiuzheRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
-          || handleYichangdianRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
-          || handleFangzhouRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
-          || handleBanrenmaRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
-          || handleChongRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
-          || handleAmibaRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
-          || handleAomomoRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer())
-          || handleRunezuRevealSideEffects(Number(alienSlotId), revealResult, getCurrentPlayer());
-        if (sideEffect?.message) {
-          rocketState.statusNote = sideEffect.message;
-        }
-        renderAlienPanels();
-        renderRockets();
-        renderPlayerStats();
-        renderStateReadout();
-        return revealResult || result;
-      },
-      placeAlienExtraTrace: (alienSlotId, traceType) => {
-        const result = aliens.addExtraTrace(alienGameState, alienSlotId, traceType);
-        renderAlienPanels();
-        renderStateReadout();
-        return result;
-      },
-      revealAlien: (alienSlotId, alienId) => {
-        const result = aliens.revealAlien(alienGameState, alienSlotId, alienId);
-        const sideEffect = handleJiuzheRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
-          || handleYichangdianRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
-          || handleFangzhouRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
-          || handleBanrenmaRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
-          || handleChongRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
-          || handleAmibaRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
-          || handleAomomoRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer())
-          || handleRunezuRevealSideEffects(Number(alienSlotId), result, getCurrentPlayer());
-        if (sideEffect?.message) result.message = sideEffect.message;
-        renderAlienPanels();
-        renderRockets();
-        renderPlayerStats();
-        renderStateReadout();
-        return result;
-      },
       randomizeAliens,
       startNewGame,
       startInitialSelection,
@@ -391,8 +331,7 @@
       pickPublicCardForCurrentPlayer,
       playHandCard: handleHandCardPlay,
       discardCardFromCurrentPlayer,
-      playerState,
-      cardState,
+      getCardState: () => readBrowserProjection()?.resident?.cards || {},
       actionHistory,
       undoPendingAction,
       endCurrentTurn,
@@ -404,7 +343,6 @@
       moveActiveRocket,
       getSectorLaunchSlots: (x, y) => solar.getSectorLaunchSlots(x, y),
       getSectorLaunchSlot: (x, y, slotIndex) => solar.getSectorLaunchSlot(x, y, slotIndex),
-      getSectorOccupancy: () => rocketActions.serializeSectorOccupancy(rocketState),
       screenToBoardPoint: (clientX, clientY) => getBoardPointFromClientPosition(clientX, clientY),
       screenToPolarPoint: (clientX, clientY) => getPolarPointFromClientPosition(clientX, clientY),
       solarGridToGlobalPoint: (x, y) => solar.solarGridToGlobalPoint(x, y),
@@ -417,66 +355,22 @@
       getSectorCoordinateBoundaries: () => solar.collectSectorCoordinateBoundaries(),
       resolveSectorCoordinateFromPolarPoint: (point) => solar.resolveSectorCoordinateFromPolarPoint(point),
       resolveSectorCoordinateFromGlobalPoint: (point) => solar.resolveSectorCoordinateFromGlobalPoint(point),
-      resolveVisibleContent: (x, y) => solar.resolveVisibleContent(x, y, solarState),
-      getSolarSnapshot: () => solar.createSolarSnapshot(solarState),
-      getWheelCoordinateReport: () => solar.collectWheelCoordinateReport(solarState),
-      getVisibleCoordinateReport: () => solar.collectVisibleCoordinateReport(solarState),
-      getVisibleCoordinateGroups: () => solar.collectVisibleCoordinateGroups(solarState),
-      getRocketCoordinates: () => structuredClone(rocketState.rockets.map(createRocketSnapshot)),
+      getSolarSnapshot: () => readBrowserProjection()?.resident?.solar || {},
+      getRocketCoordinates: () => structuredClone(
+        readBrowserProjection()?.resident?.pieces?.rockets || [],
+      ),
       getPlanetReferenceCenters: () => structuredClone(planetReferenceLayout.PLANET_REFERENCE_CENTERS),
       getPlanetOrbitLandReferenceData: () => structuredClone(buildPlanetOrbitLandReferenceData()),
       getGeneratedPlanetReferencePlacements: () => structuredClone(planetReferenceLayout.listAllOrbitLandSlots()),
-      getPlanetOrbitLandMarkers: () => structuredClone(
-        planetReferenceLayout.PLANET_ORDER.flatMap((planetId) => {
-          const orbitMarkers = planetStats.getPlanetOrbitMarkers(planetStatsState, planetId).map((marker) => ({
-            planetId,
-            kind: "orbit",
-            ...marker,
-          }));
-          const landingMarkers = planetStats.getPlanetLandingMarkers(planetStatsState, planetId).map((marker) => ({
-            planetId,
-            kind: "land",
-            ...marker,
-          }));
-          return [...orbitMarkers, ...landingMarkers];
-        }),
-      ),
       syncPlanetOrbitLandMarkers,
-      getSatelliteLandingMarkers: () => structuredClone(
-        planetReferenceLayout.PLANETS_WITH_SATELLITES.flatMap((planetId) => (
-          planetStats.getSatelliteLandingMarkers(planetStatsState, planetId).map((marker) => ({
-            planetId,
-            ...marker,
-          }))
-        )),
-      ),
       getLandOptions: () => structuredClone(abilities.planet.getLandOptions(createActionContext())),
       clientToPlanetsReferencePoint: (clientX, clientY) => getPlanetsReferencePointFromClientPosition(clientX, clientY),
-      placeRocketAtBoardPoint: (rocketId, x, y) => {
-        const result = rocketActions.placeRocketAtBoardPoint(rocketState, rocketId, { x, y });
-        if (result.rocket) renderRocketElement(result.rocket);
-        updateActionButtons();
-        renderStateReadout();
-        return result;
-      },
-      placeRocketAtPlanetsReferencePoint: (rocketId, x, y) => {
-        const dimensions = getPlanetsReferenceDimensions();
-        const result = rocketActions.placeRocketAtPlanetsReferencePoint(rocketState, rocketId, {
-          x,
-          y,
-          ...dimensions,
-        });
-        if (result.rocket) renderRocketElement(result.rocket);
-        updateActionButtons();
-        renderStateReadout();
-        return result;
-      },
       getPlayerState: () => {
         const projection = readBrowserProjection();
-        return projection ? {
+        return {
           players: Object.values(projection.players || {}),
           currentPlayerId: projection.match?.currentPlayerId ?? null,
-        } : structuredClone(playerState);
+        };
       },
       getFinalScoreSummaries: () => structuredClone(
         typeof buildFinalResultPlayerSummaries === "function"
@@ -488,11 +382,7 @@
           }))
           : [],
       ),
-      getTurnState: () => readBrowserProjection()?.match || structuredClone({
-          ...turnState,
-          roundOrderPlayerIds: getRoundOrderPlayerIds(),
-          currentPlayerId: playerState.currentPlayerId,
-        }),
+      getTurnState: () => readBrowserProjection()?.match || {},
       getActionLog: (options = {}) => getRecoverableActionLog(options),
       getActionLogRecoveryPackage: createActionLogRecoveryPackage,
       getActionLogMarkdown,
@@ -501,44 +391,22 @@
       restoreRecoverySnapshot: applyGameRecoverySnapshot,
       recoverFromActionLog,
       dispatchRuntimeAction,
-      getPlanetStatsState: () => readBrowserProjection()?.board?.planets || structuredClone(planetStatsState),
+      getPlanetStatsState: () => readBrowserProjection()?.resident?.planets || {},
       getCurrentPlayer: () => {
         const projection = readBrowserProjection();
-        return projection
-          ? structuredClone(projection.players?.[projection.viewer?.playerId] || null)
-          : structuredClone(getCurrentPlayer());
+        return structuredClone(
+          projection.players?.[projection.viewer?.playerId]
+          || Object.values(projection.players || {}).find(
+            (player) => String(player?.id) === String(projection.match?.currentPlayerId),
+          )
+          || null,
+        );
       },
-      getAiDebugState: () => readBrowserProjection() || structuredClone({
-        playerState,
-        turnState,
-        rocketState,
-        alienGameState,
-        finalScoringState,
-        cardState,
-        currentPlayerId: playerState.currentPlayerId,
-      }),
-      getState: () => readBrowserProjection() || structuredClone({
-        ...solarState,
-        players: playerState.players,
-        currentPlayerId: playerState.currentPlayerId,
-        turnState,
-        planetStats: planetStatsState,
-        rockets: rocketState.rockets.map(createRocketSnapshot),
-        setup: getSetupState(),
-        solarSystem: solar.createSolarSnapshot(solarState),
-      }),
-      getSetupState,
+      getAiDebugState: () => readBrowserProjection(),
+      getState: () => readBrowserProjection(),
       toggleCheatMode,
-      getTechSnapshot: () => readBrowserProjection()?.tech || tech.getSnapshot(techGameState),
+      getTechSnapshot: () => readBrowserProjection()?.tech || {},
       researchTech: researchTechForCurrentPlayer,
-      takeTechTile: (tileId, blueSlot) => {
-        const result = blueSlot == null
-          ? tech.requestTakeTech(createActionContext(), techGameState, tileId)
-          : tech.confirmBlueSlotChoice(createActionContext(), techGameState, tileId, blueSlot);
-        if (result.ok && !result.needsBlueSlotChoice) finalizeTechTakeResult(result);
-        else renderStateReadout();
-        return result;
-      },
     };
   }
 

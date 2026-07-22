@@ -87,6 +87,8 @@ for (const [actionId, maskIndex] of fixture.operations) {
 }
 
 assert.deepEqual(finalSnapshot(env), fixture.finalSnapshot, "最终权威盘面发生漂移");
+assert.equal(env.createCheckpoint().effectSessionJournals.length, fixture.operations.length,
+  "每次 composition 输入都必须留下对应 Effect Session journal");
 assert.equal(env.createCheckpoint().effectSessionCheckpoint ?? null, null, "最终 Effect Session 必须清空");
 env.dispose();
 
