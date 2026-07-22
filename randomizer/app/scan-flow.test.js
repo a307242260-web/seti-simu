@@ -1,7 +1,11 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createScanFlowHelpers, createScanAction4Picker } = require("./scan-flow");
+const {
+  createScanFlowHelpers,
+  createScanAction4Picker,
+  createSectorSettlementRuntime,
+} = require("./scan-flow");
 
 {
   const actions = { children: [], replaceChildren(...children) { this.children = children; } };
@@ -445,6 +449,48 @@ function createBaseHarness() {
   assert.equal(target.playerLabel, "隔离蓝色");
   assert.ok(rewards.every((effect) => effect.playerColor === "blue"), "参与/赢家奖励必须指向 working root 玩家");
   assert.match(rewards[0].label, /隔离蓝色/);
+}
+
+{
+  const players = [
+    { id: "p1", color: "white", resources: {} },
+    { id: "p2", color: "brown", resources: {} },
+  ];
+  const root = {
+    nebulaDataState: {}, playerState: { players }, alienGameState: {},
+  };
+  const history = {
+    steps: [], commands: [], hasSession: () => true,
+    beginStep(step) { this.steps.push(step); },
+    record(command) { this.commands.push(command); },
+    endStep() { return { id: "settle-1", label: "扇区结算" }; },
+  };
+  const calls = { log: null, remembered: null, renders: 0 };
+  const runtime = createSectorSettlementRuntime({
+    data: { settleCompletedSectors: () => ({
+      ok: true, message: "结算完成", settlements: [{
+        sectorId: "n1", participants: [{ playerId: "p1" }, { playerId: "p1" }],
+        winner: { playerId: "p2" },
+      }],
+    }) },
+    players: { gainResources(player, gain) { Object.assign(player.resources, gain); } },
+    runezu: { claimSectorSymbol: () => ({ ok: true, symbolId: "s1" }) },
+    historyCommands: { createRestoreObjectCommand: (_target, _snapshot, label) => ({ label }) },
+    getHistoryForSource: () => history,
+    rememberHistoryStep: (source, id) => { calls.remembered = { source, id }; },
+    appendActionLogStep: (...args) => { calls.log = args; },
+    actionLogOptionsFromHistoryStep: () => ({ stepId: "settle-1" }),
+    renderSectorNebulaDataBoard: () => { calls.renders += 1; },
+    renderPlayerStats: () => { calls.renders += 1; },
+    renderAlienPanels: () => { calls.renders += 1; },
+  });
+  const result = runtime.resolveCompletedSectorSettlementsForRoot(root, "scan");
+  assert.equal(players[0].resources.publicity, 1, "同扇区重复 participant 只奖励一次");
+  assert.equal(result.runezuSymbolClaims[0].symbolId, "s1");
+  assert.equal(history.commands.length, 3);
+  assert.deepEqual(calls.remembered, { source: "main", id: "settle-1" });
+  assert.match(calls.log[2], /符文族symbol 1个/);
+  assert.equal(calls.renders, 3);
 }
 
 console.log("scan-flow tests passed");

@@ -5805,101 +5805,23 @@
     });
   }
 
-  function resolveCompletedSectorSettlementsForRoot(workingRoot, actionType, options = {}) {
-    if (typeof data.settleCompletedSectors !== "function") return null;
-
-    const {
-      nebulaDataState: workingNebulaState,
-      playerState: workingPlayerState,
-      alienGameState: workingAlienState,
-    } = workingRoot;
-
-    const beforeNebulaState = structuredClone(workingNebulaState);
-    const beforePlayerState = structuredClone(workingPlayerState);
-    const beforeAlienState = structuredClone(workingAlienState);
-    const settlementResult = data.settleCompletedSectors(workingNebulaState, {
-      players: workingPlayerState.players,
-      getPlayerTokenSrc: getNormalTokenAssetForPlayer,
-      source: actionType || "mainAction",
-    });
-    if (!settlementResult.ok) return null;
-
-    const awarded = new Set();
-    const participantAwardLabels = new Set();
-    for (const settlement of settlementResult.settlements || []) {
-      const isAomomoSettlement = settlement.sectorId === aomomo?.NEBULA_ID;
-      for (const participant of settlement.participants || []) {
-        const player = workingPlayerState.players.find((item) => item.id === participant.playerId)
-          || workingPlayerState.players.find((item) => item.color === participant.playerColor);
-        if (!player) continue;
-        const awardKey = `${settlement.sectorId}:${player.id}`;
-        if (awarded.has(awardKey)) continue;
-        awarded.add(awardKey);
-        if (isAomomoSettlement) {
-          players.gainResources(player, { aomomoFossils: 1 });
-          participantAwardLabels.add("奥陌陌参与结算玩家各获得1化石");
-        } else {
-          players.gainResources(player, { publicity: 1 });
-          participantAwardLabels.add("参与结算玩家各获得1宣传");
-        }
-      }
-      const winner = workingPlayerState.players.find((item) => item.id === settlement.winner?.playerId)
-        || workingPlayerState.players.find((item) => item.color === settlement.winner?.playerColor);
-      const claim = winner
-        ? runezu?.claimSectorSymbol?.(workingAlienState, settlement.sectorId, winner)
-        : null;
-      if (claim?.ok) {
-        if (!Array.isArray(settlementResult.runezuSymbolClaims)) settlementResult.runezuSymbolClaims = [];
-        settlementResult.runezuSymbolClaims.push({
-          sectorId: settlement.sectorId,
-          playerId: winner.id,
-          playerColor: winner.color,
-          symbolId: claim.symbolId,
-        });
-      }
-    }
-    settlementResult.participantAwardMessage = [...participantAwardLabels].join("；") || "无参与奖励";
-
-    const source = options.historySource || HISTORY_SOURCE_MAIN;
-    const history = getHistoryForSource(source);
-    if (history.hasSession()) {
-      history.beginStep({
-        source,
-        type: "sector_settlement",
-        label: "扇区结算",
-      });
-      history.record(historyCommands.createRestoreObjectCommand(
-        workingNebulaState,
-        beforeNebulaState,
-        "恢复扇区结算前星云状态",
-      ));
-      history.record(historyCommands.createRestoreObjectCommand(
-        workingPlayerState,
-        beforePlayerState,
-        "恢复扇区结算前玩家状态",
-      ));
-      history.record(historyCommands.createRestoreObjectCommand(
-        workingAlienState,
-        beforeAlienState,
-        "恢复扇区结算前外星人状态",
-      ));
-      const step = history.endStep();
-      if (step) {
-        rememberHistoryStep(source, step.id);
-        appendActionLogStep(
-          source,
-          step.label,
-          `${settlementResult.message}；${settlementResult.participantAwardMessage}`
-            + `${settlementResult.runezuSymbolClaims?.length ? `；符文族symbol ${settlementResult.runezuSymbolClaims.length}个` : ""}`,
-          actionLogOptionsFromHistoryStep(step),
-        );
-      }
-    }
-    renderSectorNebulaDataBoard();
-    renderPlayerStats();
-    renderAlienPanels();
-    return settlementResult;
-  }
+  const sectorSettlementRuntime = scanFlowModule.createSectorSettlementRuntime({
+    HISTORY_SOURCE_MAIN,
+    data,
+    players,
+    aomomo,
+    runezu,
+    historyCommands,
+    getNormalTokenAssetForPlayer,
+    getHistoryForSource,
+    rememberHistoryStep,
+    appendActionLogStep,
+    actionLogOptionsFromHistoryStep,
+    renderSectorNebulaDataBoard,
+    renderPlayerStats,
+    renderAlienPanels,
+  });
+  const resolveCompletedSectorSettlementsForRoot = sectorSettlementRuntime.resolveCompletedSectorSettlementsForRoot;
 
   function resolveCompletedSectorSettlements(actionType, options = {}) {
     return ruleComposition.inputPort.submitHostCommand({
