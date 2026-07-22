@@ -529,6 +529,19 @@
         case "turn_randomize_all":
           turnFlowController.randomizeAll(workingRoot);
           return { ok: true };
+        case "setup_start_initial_selection":
+          actionRuntimeController.startInitialSelection(workingRoot);
+          return { ok: true };
+        case "setup_select_initial_card":
+          actionRuntimeController.handleInitialSelectionCardClick(
+            workingRoot,
+            command.selectionKind,
+            command.cardId,
+          );
+          return { ok: true };
+        case "setup_confirm_initial_selection":
+          actionRuntimeController.confirmInitialSelectionForCurrentPlayer(workingRoot);
+          return { ok: true };
         case "ai_choose_initial_selection":
           return chooseInitialSelectionForAiPlayerForRoot(workingRoot);
         case "ai_execute_turn_action":
@@ -3012,9 +3025,6 @@
   actionRuntimeController = actionRuntimeModule.createActionRuntime({
     decisionSessions,
     setupSelectionState,
-    playerState,
-    turnState,
-    rocketState,
     startScreenState,
     actionLogState,
     INITIAL_SELECTION_REQUIRED,
@@ -3046,7 +3056,9 @@
     renderStateReadout,
     schedulePersistentGameStateSave,
     resolveInitialSelectionEffects,
-    applyIndustryRoundStartBonuses: (...args) => applyIndustryRoundStartBonuses?.(...args),
+    applyIndustryRoundStartBonuses: (workingRoot, ...args) => (
+      applyIndustryRoundStartBonusesForRoot?.(workingRoot, ...args)
+    ),
     startInitialIncomeEffectFlow,
     applyIndustryStartupPassives,
     appendConfirmedActionLogEntry,
@@ -3451,7 +3463,7 @@
   }
 
   function getInitialSelectionPlayerIds() {
-    return actionRuntimeController.getInitialSelectionPlayerIds();
+    return actionRuntimeController.getInitialSelectionPlayerIds(createStateSourceReadoutRoot());
   }
 
   function isInitialSelectionActive() {
@@ -3473,7 +3485,9 @@
   }
 
   function startInitialSelection() {
-    return actionRuntimeController.startInitialSelection();
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "setup_start_initial_selection",
+    });
   }
 
   function normalizeStartIndustryLabels(industryLabels) {
@@ -3547,7 +3561,11 @@
   }
 
   function handleInitialSelectionCardClick(kind, cardId) {
-    return actionRuntimeController.handleInitialSelectionCardClick(kind, cardId);
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "setup_select_initial_card",
+      selectionKind: kind,
+      cardId,
+    });
   }
 
   function recordInitialSelectionActionLog(player, selectedIndustry, selectedInitialCards, initialResult = null) {
@@ -3581,15 +3599,17 @@
   }
 
   function confirmInitialSelectionForCurrentPlayer() {
-    return actionRuntimeController.confirmInitialSelectionForCurrentPlayer();
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "setup_confirm_initial_selection",
+    });
   }
 
-  function resolveInitialSelectionEffects() {
+  function resolveInitialSelectionEffects(workingRoot) {
     if (!initialCards?.resolveInitialSelections) return null;
 
     const context = {
-      ...createActionContext(),
-      alienGameState,
+      ...createActionContextForWorkingRoot(workingRoot),
+      alienGameState: workingRoot.alienGameState,
     };
     const result = initialCards.resolveInitialSelections(context, {
       playerIds: getInitialSelectionPlayerIds(),
@@ -3639,7 +3659,7 @@
     return effects;
   }
 
-  function startInitialIncomeEffectFlow(entries = []) {
+  function startInitialIncomeEffectFlow(workingRoot, entries = []) {
     const effects = buildInitialIncomeEffectNodes(entries);
     if (!effects.length) return false;
 
@@ -3652,13 +3672,14 @@
     decisionState.actionEffectFlow.playerId = effects[0]?.options?.playerId || null;
     assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
 
-    const firstPlayer = getPlayerById(decisionState.actionEffectFlow.playerId);
+    const firstPlayer = (workingRoot.playerState.players || [])
+      .find((player) => player.id === decisionState.actionEffectFlow.playerId) || null;
     if (firstPlayer) {
-      playerState.currentPlayerId = firstPlayer.id;
+      workingRoot.playerState.currentPlayerId = firstPlayer.id;
     }
 
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
-    rocketState.statusNote = "初始收入增加：请依次点击收入效果";
+    workingRoot.rocketState.statusNote = "初始收入增加：请依次点击收入效果";
     renderDebugPlayerSwitch();
     renderPlayerStats();
     renderPlayerHand();

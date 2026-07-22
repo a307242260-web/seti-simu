@@ -15,21 +15,8 @@
     if (!context.setupSelectionState) {
       throw new Error("createActionRuntime requires setupSelectionState");
     }
-    if (!context.playerState) {
-      throw new Error("createActionRuntime requires playerState");
-    }
-    if (!context.turnState) {
-      throw new Error("createActionRuntime requires turnState");
-    }
-    if (!context.rocketState) {
-      throw new Error("createActionRuntime requires rocketState");
-    }
-
     const {
       setupSelectionState,
-      playerState,
-      turnState,
-      rocketState,
       INITIAL_SELECTION_REQUIRED = { initial: 2 },
       INITIAL_CARD_COUNT = 12,
       INITIAL_SELECTION_CARD_SIZE = {
@@ -212,9 +199,12 @@
       return offersByPlayerId;
     }
 
-    function getInitialSelectionPlayerIds() {
+    function getInitialSelectionPlayerIds(workingRoot) {
+      const { playerState, turnState } = workingRoot;
       const activeIds = Array.isArray(turnState.activePlayerIds)
-        ? turnState.activePlayerIds.filter((playerId) => getPlayerById(playerId))
+        ? turnState.activePlayerIds.filter((playerId) => (
+          playerState.players.some((player) => player.id === playerId)
+        ))
         : [];
       if (activeIds.length) return activeIds;
       return playerState.currentPlayerId ? [playerState.currentPlayerId] : [];
@@ -224,11 +214,11 @@
       return setupSelectionState.phase === "selecting";
     }
 
-    function getInitialSelectionOffer(playerId = playerState.currentPlayerId) {
+    function getInitialSelectionOffer(playerId) {
       return setupSelectionState.offersByPlayerId[playerId] || null;
     }
 
-    function isInitialSelectionConfirmed(playerId = playerState.currentPlayerId) {
+    function isInitialSelectionConfirmed(playerId) {
       return setupSelectionState.confirmedPlayerIds.includes(playerId)
         || Boolean(getInitialSelectionOffer(playerId)?.confirmed);
     }
@@ -308,8 +298,9 @@
       });
     }
 
-    function startInitialSelection() {
-      const playerIds = getInitialSelectionPlayerIds();
+    function startInitialSelection(workingRoot) {
+      const { playerState, rocketState } = workingRoot;
+      const playerIds = getInitialSelectionPlayerIds(workingRoot);
       const industryOffersByPlayerId = createIndustrySelectionOffers(playerIds);
       const initialDeck = shuffleList(
         Array.from({ length: INITIAL_CARD_COUNT }, (_item, index) => createInitialSelectionCard(index + 1)),
@@ -321,7 +312,7 @@
       setupSelectionState.confirmedPlayerIds = [];
 
       playerIds.forEach((playerId, index) => {
-        const player = getPlayerById(playerId);
+        const player = playerState.players.find((entry) => entry.id === playerId) || null;
         if (player) player.initialSelection = null;
         setupSelectionState.offersByPlayerId[playerId] = {
           playerId,
@@ -348,10 +339,10 @@
       schedulePersistentGameStateSave?.({ label: "初始选择开始" });
     }
 
-    function handleInitialSelectionCardClick(kind, cardId) {
+    function handleInitialSelectionCardClick(workingRoot, kind, cardId) {
       if (!isInitialSelectionActive()) return;
 
-      const playerId = playerState.currentPlayerId;
+      const playerId = workingRoot.playerState.currentPlayerId;
       const offer = getInitialSelectionOffer(playerId);
       if (!offer || offer.confirmed) return;
 
@@ -372,10 +363,11 @@
       schedulePersistentGameStateSave?.({ label: "初始选择更新" });
     }
 
-    function confirmInitialSelectionForCurrentPlayer() {
+    function confirmInitialSelectionForCurrentPlayer(workingRoot) {
       if (!isInitialSelectionActive()) return;
 
-      const player = getCurrentPlayer();
+      const { playerState, rocketState, turnState } = workingRoot;
+      const player = playerState.players.find((entry) => entry.id === playerState.currentPlayerId) || null;
       const offer = getInitialSelectionOffer(player?.id);
       if (!player || !offer || offer.confirmed) return;
 
@@ -415,7 +407,7 @@
         industry.initializePiratesRaidMarkers(player);
       }
 
-      const remainingPlayerId = getInitialSelectionPlayerIds()
+      const remainingPlayerId = getInitialSelectionPlayerIds(workingRoot)
         .find((playerId) => !isInitialSelectionConfirmed(playerId));
       let initialSelectionCompleted = false;
       if (remainingPlayerId) {
@@ -428,8 +420,12 @@
         setupSelectionState.phase = "complete";
         setupSelectionState.currentPlayerId = null;
         playerState.currentPlayerId = turnState.startPlayerId || playerState.currentPlayerId;
-        const initialResult = resolveInitialSelectionEffects?.();
-        const roundStartResult = applyIndustryRoundStartBonuses?.(turnState.roundNumber, { appendLog: false }) || { results: [] };
+        const initialResult = resolveInitialSelectionEffects?.(workingRoot);
+        const roundStartResult = applyIndustryRoundStartBonuses?.(
+          workingRoot,
+          turnState.roundNumber,
+          { appendLog: false },
+        ) || { results: [] };
         const initialLogResult = roundStartResult.results.length
           ? {
             ...(initialResult || { ok: roundStartResult.ok, results: [], message: "" }),
@@ -442,7 +438,10 @@
           }
           : initialResult;
         recordInitialSelectionActionLog(player, selectedIndustry, selectedInitialCards, initialLogResult);
-        const incomeStarted = startInitialIncomeEffectFlow?.(initialResult?.pendingIncomeIncreases || []);
+        const incomeStarted = startInitialIncomeEffectFlow?.(
+          workingRoot,
+          initialResult?.pendingIncomeIncreases || [],
+        );
         applyIndustryStartupPassives?.();
         if (!incomeStarted) {
           rocketState.statusNote = initialResult?.message
@@ -500,7 +499,7 @@
         });
         if (!result?.ok) return result;
         if (descriptor.family === "research_tech" && result.tileId) {
-          rocketState.statusNote = result.message;
+          workingRoot.rocketState.statusNote = result.message;
           finalizeTechTakeResult?.(result);
         }
         if (descriptor.family === "analyze") {
@@ -558,10 +557,15 @@
     }
 
     function runAction(actionId, actionOptions) {
+      const requestedWorkingRoot = actionOptions?.workingRoot || null;
+      const requestedActionContext = requestedWorkingRoot
+        ? createActionContext(requestedWorkingRoot, actionOptions?.standardAction || null)
+        : createActionContext();
+      const actionWorkingRoot = requestedWorkingRoot || getExecutionWorkingRoot(requestedActionContext);
       if (!canStartMainAction?.()) {
-        rocketState.statusNote = getMainActionStartBlockReason?.() || "本回合已经开始或完成主要行动";
+        actionWorkingRoot.rocketState.statusNote = getMainActionStartBlockReason?.() || "本回合已经开始或完成主要行动";
         renderStateReadout?.();
-        return { ok: false, message: rocketState.statusNote };
+        return { ok: false, message: actionWorkingRoot.rocketState.statusNote };
       }
 
       const abilityByAction = {
@@ -573,7 +577,7 @@
         analyze: "analyzeData",
       };
       const abilityId = abilityByAction[actionId];
-      const workingRoot = actionOptions?.workingRoot || null;
+      const workingRoot = requestedWorkingRoot;
       const standardDescriptor = actionOptions?.standardAction || null;
       const cleanActionOptions = actionOptions && (workingRoot || standardDescriptor)
         ? Object.fromEntries(Object.entries(actionOptions)
@@ -588,9 +592,7 @@
           cleanActionOptions,
         )
         : cleanActionOptions;
-      const actionContext = workingRoot
-        ? createActionContext(workingRoot, standardDescriptor)
-        : createActionContext();
+      const actionContext = requestedActionContext;
       const actionLogBefore = createActionLogImpactSnapshot?.();
       const primaryExecution = PRIMARY_BOARD_FAMILIES.has(actionId) && actionId !== "move"
         ? resolvePrimaryBoardDescriptor(actionId, resolvedActionOptions)
@@ -618,17 +620,17 @@
         }
       } else if (actionId === "researchTech") {
         if (result.awaitingTileSelection) {
-          rocketState.statusNote = result.message;
+          actionWorkingRoot.rocketState.statusNote = result.message;
           startResearchTechEffectFlow?.(result, { logBefore: actionLogBefore });
           syncTechSelectionChrome?.();
           renderTechBoard?.();
           updateActionButtons?.();
         } else if (result.tileId) {
-          rocketState.statusNote = result.message;
+          actionWorkingRoot.rocketState.statusNote = result.message;
           finalizeTechTakeResult?.(result);
           return result;
         } else if (!result.ok) {
-          rocketState.statusNote = result.message;
+          actionWorkingRoot.rocketState.statusNote = result.message;
         }
       } else {
         if (result.rocket) renderRocketElement?.(result.rocket);
@@ -656,7 +658,7 @@
         if (actionId === "launch") {
           maybeApplyIndustryLaunchScan?.(result);
           maybeConsumeAlienLabPanelForMainAction?.("launch", result);
-          rocketState.statusNote = result.message;
+          actionWorkingRoot.rocketState.statusNote = result.message;
           startedRewardFlow = startLaunchSectorFinishEffectFlow?.(result) || false;
         }
         if (startedRewardFlow) {
