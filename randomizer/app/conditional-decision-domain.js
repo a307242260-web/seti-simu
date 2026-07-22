@@ -21,6 +21,12 @@
       getPendingAmibaSymbolChoice,
       getPendingRunezuSymbolBranch,
       getPendingRunezuFaceSymbolPlacement,
+      getPendingRunezuCardGain,
+      getPendingAmibaCardGain,
+      getPendingAomomoCardGain,
+      getPendingYichangdianCardGain,
+      getPendingBanrenmaCardGain,
+      getPendingChongCardGain,
       getPlayerById,
       decisionState,
       cards,
@@ -72,6 +78,12 @@
       handleRunezuFaceSymbolChoice,
       handleAmibaSymbolChoice,
       handleYichangdianCornerChoice,
+      handleRunezuCardGainChoice,
+      handleAmibaCardGainChoice,
+      handleAomomoCardGainChoice,
+      handleYichangdianCardGainChoice,
+      handleBanrenmaCardGainChoice,
+      handleChongCardGainChoice,
       handleFinalScoreTileClick,
       handleSupplyTechTileClick,
       confirmTechBlueSlotChoice,
@@ -214,6 +226,56 @@
           pendingContext: structuredClone(yichangdianCornerPending),
         })),
       };
+    }
+    const buildAlienCardGainDecision = (pending, kind, label) => ({
+      actorPlayer: getPlayerById(pending.playerId) || getCurrentPlayer(),
+      candidates: [
+        ...(pending.displayedAvailable ? [{
+          id: "conditionalChoice",
+          family: "choose_reward",
+          label: `${label}展示牌`,
+          target: { kind, choiceId: "displayed" },
+          pendingContext: structuredClone(pending),
+        }] : []),
+        {
+          id: "conditionalChoice",
+          family: "choose_reward",
+          label: `${label}盲抽`,
+          target: { kind, choiceId: "blind" },
+          pendingContext: structuredClone(pending),
+        },
+        {
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: `跳过${label}`,
+          target: { kind, choiceId: "cancel" },
+          pendingContext: structuredClone(pending),
+        },
+      ],
+    });
+    const yichangdianCardGainPending = getPendingYichangdianCardGain();
+    if (yichangdianCardGainPending) {
+      return buildAlienCardGainDecision(yichangdianCardGainPending, "yichangdian-card-gain", "异常点外星人牌");
+    }
+    const banrenmaCardGainPending = getPendingBanrenmaCardGain();
+    if (banrenmaCardGainPending) {
+      return buildAlienCardGainDecision(banrenmaCardGainPending, "banrenma-card-gain", "半人马外星人牌");
+    }
+    const chongCardGainPending = getPendingChongCardGain();
+    if (chongCardGainPending) {
+      return buildAlienCardGainDecision(chongCardGainPending, "chong-card-gain", "虫族外星人牌");
+    }
+    const amibaCardGainPending = getPendingAmibaCardGain();
+    if (amibaCardGainPending) {
+      return buildAlienCardGainDecision(amibaCardGainPending, "amiba-card-gain", "阿米巴外星人牌");
+    }
+    const aomomoCardGainPending = getPendingAomomoCardGain();
+    if (aomomoCardGainPending) {
+      return buildAlienCardGainDecision(aomomoCardGainPending, "aomomo-card-gain", "奥陌陌外星人牌");
+    }
+    const runezuCardGainPending = getPendingRunezuCardGain();
+    if (runezuCardGainPending) {
+      return buildAlienCardGainDecision(runezuCardGainPending, "runezu-card-gain", "符文族外星人牌");
     }
     if (chongFossilPending) {
       return {
@@ -925,6 +987,12 @@
       action.target.choiceId,
       action.pendingContext || null,
     ),
+    "runezu-card-gain": (action) => handleRunezuCardGainChoice(action.target.choiceId, action.pendingContext || null),
+    "amiba-card-gain": (action) => handleAmibaCardGainChoice(action.target.choiceId, action.pendingContext || null),
+    "aomomo-card-gain": (action) => handleAomomoCardGainChoice(action.target.choiceId, action.pendingContext || null),
+    "yichangdian-card-gain": (action) => handleYichangdianCardGainChoice(action.target.choiceId, action.pendingContext || null),
+    "banrenma-card-gain": (action) => handleBanrenmaCardGainChoice(action.target.choiceId, action.pendingContext || null),
+    "chong-card-gain": (action) => handleChongCardGainChoice(action.target.choiceId, action.pendingContext || null),
     "probe-sector-selection": (action) => {
       const pending = getPendingProbeSectorScanDecision();
       if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };

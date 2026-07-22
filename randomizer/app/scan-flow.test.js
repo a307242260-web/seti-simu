@@ -59,6 +59,9 @@ function createBaseHarness() {
     clearPendingRunezuSymbolBranch() {},
     clearPendingRunezuFaceSymbolPlacement() {},
     getPendingYichangdianCornerAction() { return null; },
+    clearPendingAmibaCardGain() {},
+    clearPendingAomomoCardGain() {},
+    clearPendingRunezuCardGain() {},
     cards: {
       getCardLabel: (card) => card.cardName || card.id,
       setSelectionActive: (_state, active) => {

@@ -798,6 +798,12 @@
               if (candidates[0]?.target?.kind === "runezu-face-symbol-choice") {
                 alienSpeciesRuntime?.takeRunezuFaceSymbolDecisionDraft?.();
               }
+              if (candidates[0]?.target?.kind === "runezu-card-gain") alienSpeciesRuntime?.takeRunezuCardGainDecisionDraft?.();
+              if (candidates[0]?.target?.kind === "amiba-card-gain") alienSpeciesRuntime?.takeAmibaCardGainDecisionDraft?.();
+              if (candidates[0]?.target?.kind === "aomomo-card-gain") alienSpeciesRuntime?.takeAomomoCardGainDecisionDraft?.();
+              if (candidates[0]?.target?.kind === "yichangdian-card-gain") alienSpeciesRuntime?.takeYichangdianCardGainDecisionDraft?.();
+              if (candidates[0]?.target?.kind === "banrenma-card-gain") alienSpeciesRuntime?.takeBanrenmaCardGainDecisionDraft?.();
+              if (candidates[0]?.target?.kind === "chong-card-gain") alienSpeciesRuntime?.takeChongCardGainDecisionDraft?.();
               return {
                 ok: true,
                 boundary: "conditional_choice",
@@ -1019,6 +1025,12 @@
     getPendingAmibaSymbolChoice,
     getPendingRunezuSymbolBranch,
     getPendingRunezuFaceSymbolPlacement,
+    getPendingRunezuCardGain,
+    getPendingAmibaCardGain,
+    getPendingAomomoCardGain,
+    getPendingYichangdianCardGain,
+    getPendingBanrenmaCardGain,
+    getPendingChongCardGain,
     getHeadlessConditionalPlayer,
     get decisionSessions() { return decisionSessions; },
     getPlayerById,
@@ -2537,6 +2549,9 @@
     clearPendingRunezuSymbolBranch: () => alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.(),
     clearPendingRunezuFaceSymbolPlacement: () => alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.(),
     getPendingYichangdianCornerAction,
+    clearPendingAmibaCardGain: () => alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.(),
+    clearPendingAomomoCardGain: () => alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.(),
+    clearPendingRunezuCardGain: () => alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.(),
     document,
     structuredClone,
     els,
@@ -4134,17 +4149,17 @@
     get pendingLandTargetAction() { return getPendingLandTargetDecision(); },
     get pendingDataPlaceAction() { return getPendingDataPlacementDecision(); },
     get pendingJiuzheCardPlay() { return decisionSessions.peek("jiuzhe_card_play"); },
-    get pendingYichangdianCardGain() { return decisionSessions.peek("yichangdian_card_gain"); },
+    get pendingYichangdianCardGain() { return getPendingYichangdianCardGain(); },
     get pendingYichangdianCornerAction() { return getPendingYichangdianCornerAction(); },
-    get pendingBanrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
+    get pendingBanrenmaCardGain() { return getPendingBanrenmaCardGain(); },
     get pendingBanrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
-    get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
+    get pendingChongCardGain() { return getPendingChongCardGain(); },
     get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
-    get pendingAmibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
+    get pendingAmibaCardGain() { return getPendingAmibaCardGain(); },
     get pendingAmibaSymbolChoice() { return getPendingAmibaSymbolChoice(); },
     get pendingAmibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
-    get pendingAomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
-    get pendingRunezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
+    get pendingAomomoCardGain() { return getPendingAomomoCardGain(); },
+    get pendingRunezuCardGain() { return getPendingRunezuCardGain(); },
     get pendingRunezuSymbolBranch() { return getPendingRunezuSymbolBranch(); },
     get pendingRunezuFaceSymbolPlacement() { return getPendingRunezuFaceSymbolPlacement(); },
     get pendingCardTriggerAction() { return getPendingCardTriggerAction(); },
@@ -5409,22 +5424,22 @@
     decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
     decisionSessions.clear("jiuzhe_card_play");
     uiRuntimeState.jiuzheOpportunityOpen = false;
-    decisionSessions.clear("yichangdian_card_gain");
+    alienSpeciesRuntime?.clearYichangdianCardGainDecisionDraft?.();
     effectExecutors?.clearYichangdianCornerAction?.();
-    decisionSessions.clear("banrenma_card_gain");
+    alienSpeciesRuntime?.clearBanrenmaCardGainDecisionDraft?.();
     decisionSessions.clear("banrenma_opportunity");
     if (workingRoot.match && typeof workingRoot.match === "object") {
       delete workingRoot.match.jiuzheOpportunityQueue;
       delete workingRoot.match.banrenmaOpportunityQueue;
     }
-    decisionSessions.clear("chong_card_gain");
+    alienSpeciesRuntime?.clearChongCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
-    decisionSessions.clear("amiba_card_gain");
+    alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
     decisionSessions.clear("amiba_trace_removal");
-    decisionSessions.clear("aomomo_card_gain");
-    decisionSessions.clear("runezu_card_gain");
+    alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.();
+    alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
     decisionState.alienTracePickerState = null;
@@ -6878,18 +6893,18 @@
       || getPendingCardTriggerAction()
       || getPendingCardTaskCompletion()
       || (decisionSessions.peek("jiuzhe_card_play") && decisionSessions.peek("jiuzhe_card_play").reason !== "view")
-      || decisionSessions.peek("yichangdian_card_gain")
+      || getPendingYichangdianCardGain()
       || getPendingYichangdianCornerAction()
-      || decisionSessions.peek("banrenma_card_gain")
+      || getPendingBanrenmaCardGain()
       || decisionSessions.peek("banrenma_opportunity")
       || getPendingChongTaskCompletion()
-      || decisionSessions.peek("chong_card_gain")
+      || getPendingChongCardGain()
       || getPendingChongFossilChoice()
-      || decisionSessions.peek("amiba_card_gain")
+      || getPendingAmibaCardGain()
       || getPendingAmibaSymbolChoice()
       || decisionSessions.peek("amiba_trace_removal")
-      || decisionSessions.peek("aomomo_card_gain")
-      || decisionSessions.peek("runezu_card_gain")
+      || getPendingAomomoCardGain()
+      || getPendingRunezuCardGain()
       || getPendingRunezuSymbolBranch()
       || getPendingRunezuFaceSymbolPlacement()
       || getPendingStrategySlotDecision()
@@ -7191,14 +7206,14 @@
     }
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
     effectExecutors?.clearYichangdianCornerAction?.();
-    decisionSessions.clear("chong_card_gain");
+    alienSpeciesRuntime?.clearChongCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
-    decisionSessions.clear("amiba_card_gain");
+    alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
     decisionSessions.clear("amiba_trace_removal");
-    decisionSessions.clear("aomomo_card_gain");
-    decisionSessions.clear("runezu_card_gain");
+    alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.();
+    alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
     decisionSessions.clear(STRATEGY_SLOT_DECISION);
@@ -8431,6 +8446,12 @@
   function getPendingRunezuFaceSymbolPlacement() {
     return alienSpeciesRuntime?.getRunezuFaceSymbolDecisionDraft?.() || null;
   }
+  function getPendingRunezuCardGain() { return alienSpeciesRuntime?.getRunezuCardGainDecisionDraft?.() || null; }
+  function getPendingAmibaCardGain() { return alienSpeciesRuntime?.getAmibaCardGainDecisionDraft?.() || null; }
+  function getPendingAomomoCardGain() { return alienSpeciesRuntime?.getAomomoCardGainDecisionDraft?.() || null; }
+  function getPendingYichangdianCardGain() { return alienSpeciesRuntime?.getYichangdianCardGainDecisionDraft?.() || null; }
+  function getPendingBanrenmaCardGain() { return alienSpeciesRuntime?.getBanrenmaCardGainDecisionDraft?.() || null; }
+  function getPendingChongCardGain() { return alienSpeciesRuntime?.getChongCardGainDecisionDraft?.() || null; }
   function getAlienTraceLayer(...args) { return alienSpeciesRuntime.getAlienTraceLayer(...args); }
   function getAlienJiuzheTraceLayer(...args) { return alienSpeciesRuntime.getAlienJiuzheTraceLayer(...args); }
   function getAlienYichangdianCardArea(...args) { return alienSpeciesRuntime.getAlienYichangdianCardArea(...args); }
@@ -10239,6 +10260,7 @@
     getMainActionStartBlockReason,
     hasActiveCardTriggerResolution,
     hasActivePendingSubFlow,
+    getPendingBanrenmaCardGain,
     historyCommands,
     industry,
     isActionEffectFlowActive,
@@ -11825,17 +11847,17 @@
   const appEventState = {
     get pendingChongTaskCompletion() { return getPendingChongTaskCompletion(); },
     get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
-    get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
+    get pendingChongCardGain() { return getPendingChongCardGain(); },
     get pendingAmibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
     get pendingAmibaSymbolChoice() { return getPendingAmibaSymbolChoice(); },
-    get pendingAmibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
-    get pendingAomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
+    get pendingAmibaCardGain() { return getPendingAmibaCardGain(); },
+    get pendingAomomoCardGain() { return getPendingAomomoCardGain(); },
     get pendingRunezuFaceSymbolPlacement() { return getPendingRunezuFaceSymbolPlacement(); },
     get pendingRunezuSymbolBranch() { return getPendingRunezuSymbolBranch(); },
-    get pendingRunezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
-    get pendingBanrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
+    get pendingRunezuCardGain() { return getPendingRunezuCardGain(); },
+    get pendingBanrenmaCardGain() { return getPendingBanrenmaCardGain(); },
     get pendingBanrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
-    get pendingYichangdianCardGain() { return decisionSessions.peek("yichangdian_card_gain"); },
+    get pendingYichangdianCardGain() { return getPendingYichangdianCardGain(); },
     get pendingJiuzheCardPlay() { return decisionSessions.peek("jiuzhe_card_play"); },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get alienTracePickerState() { return decisionState.alienTracePickerState; },

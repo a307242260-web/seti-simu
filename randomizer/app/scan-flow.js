@@ -61,6 +61,9 @@
       "getPendingYichangdianCornerAction",
       context.getPendingYichangdianCornerAction,
     );
+    const clearPendingAmibaCardGain = requireFunction("clearPendingAmibaCardGain", context.clearPendingAmibaCardGain);
+    const clearPendingAomomoCardGain = requireFunction("clearPendingAomomoCardGain", context.clearPendingAomomoCardGain);
+    const clearPendingRunezuCardGain = requireFunction("clearPendingRunezuCardGain", context.clearPendingRunezuCardGain);
     const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
     const getPublicScanQueue = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
     const els = context.els || {};
@@ -1378,11 +1381,11 @@
       decisionSessions.clear("card_trigger_action");
       decisionSessions.clear("card_task_completion");
       decisionSessions.clear("chong_task_completion");
-      decisionSessions.clear("amiba_card_gain");
+      clearPendingAmibaCardGain();
       clearPendingAmibaSymbolChoice();
       decisionSessions.clear("amiba_trace_removal");
-      decisionSessions.clear("aomomo_card_gain");
-      decisionSessions.clear("runezu_card_gain");
+      clearPendingAomomoCardGain();
+      clearPendingRunezuCardGain();
       clearPendingRunezuSymbolBranch();
       clearPendingRunezuFaceSymbolPlacement();
       decisionSessions.clear("strategy_passive_slot");

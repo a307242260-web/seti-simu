@@ -45,6 +45,7 @@
       getMainActionStartBlockReason,
       hasActiveCardTriggerResolution,
       hasActivePendingSubFlow,
+      getPendingBanrenmaCardGain,
       historyCommands,
       industry,
       isActionEffectFlowActive,
@@ -443,7 +444,7 @@
       uiRuntimeState.alienRevealConfirmation
       || decisionSessions?.peek?.("jiuzhe_card_play")
       || decisionSessions?.peek?.("banrenma_opportunity")
-      || decisionSessions.peek("banrenma_card_gain")
+      || getPendingBanrenmaCardGain()
       || decisionState.alienTraceAction
       || decisionState.alienTracePickerState
       || isActionEffectFlowActive()

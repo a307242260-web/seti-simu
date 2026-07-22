@@ -59,19 +59,9 @@
       handleDebugQuickSectorScanChoice,
       handleJiuzheCardChoice,
       handleJiuzheOpportunitySkip,
-      handleYichangdianCardGainChoice,
-      handleBanrenmaCardGainChoice,
-      handleChongCardGainChoice,
-      handleChongFossilChoice,
       handleChongTaskCompletionChoice,
-      handleAmibaCardGainChoice,
-      handleAomomoCardGainChoice,
       handleAomomoFossilMoveLandCountChoice,
-      handleAmibaSymbolChoice,
       handleAmibaTraceRemovalChoice,
-      handleRunezuCardGainChoice,
-      handleRunezuFaceSymbolChoice,
-      handleRunezuSymbolBranchChoice,
       handleBanrenmaBonusChoice,
       handleBanrenmaCardConditionChoice,
       handleYichangdianCornerChoice,
@@ -335,75 +325,15 @@
         return;
       }
 
-      const yichangdianGain = event.target.closest("[data-yichangdian-card-gain]");
-      if (yichangdianGain && !yichangdianGain.disabled) {
-        handleYichangdianCardGainChoice(yichangdianGain.dataset.yichangdianCardGain);
-        return;
-      }
-
-      const banrenmaGain = event.target.closest("[data-banrenma-card-gain]");
-      if (banrenmaGain && !banrenmaGain.disabled) {
-        handleBanrenmaCardGainChoice(banrenmaGain.dataset.banrenmaCardGain);
-        return;
-      }
-
-      const chongGain = event.target.closest("[data-chong-card-gain]");
-      if (chongGain && !chongGain.disabled) {
-        handleChongCardGainChoice(chongGain.dataset.chongCardGain);
-        return;
-      }
-
-      const chongFossil = event.target.closest("[data-chong-fossil-choice]");
-      if (chongFossil && !chongFossil.disabled) {
-        handleChongFossilChoice(chongFossil.dataset.chongFossilChoice);
-        return;
-      }
-
       const chongTask = event.target.closest("[data-chong-task-complete]");
       if (chongTask && !chongTask.disabled) {
         handleChongTaskCompletionChoice(chongTask.dataset.chongTaskComplete);
         return;
       }
 
-      const amibaGain = event.target.closest("[data-amiba-card-gain]");
-      if (amibaGain && !amibaGain.disabled) {
-        handleAmibaCardGainChoice(amibaGain.dataset.amibaCardGain);
-        return;
-      }
-
-      const aomomoGain = event.target.closest("[data-aomomo-card-gain]");
-      if (aomomoGain && !aomomoGain.disabled) {
-        handleAomomoCardGainChoice(aomomoGain.dataset.aomomoCardGain);
-        return;
-      }
-
-      const amibaSymbol = event.target.closest("[data-amiba-symbol-choice]");
-      if (amibaSymbol && !amibaSymbol.disabled) {
-        handleAmibaSymbolChoice(amibaSymbol.dataset.amibaSymbolChoice);
-        return;
-      }
-
       const amibaTraceRemove = event.target.closest("[data-amiba-trace-remove]");
       if (amibaTraceRemove && !amibaTraceRemove.disabled) {
         handleAmibaTraceRemovalChoice(amibaTraceRemove.dataset.amibaTraceRemove);
-        return;
-      }
-
-      const runezuGain = event.target.closest("[data-runezu-card-gain]");
-      if (runezuGain && !runezuGain.disabled) {
-        handleRunezuCardGainChoice(runezuGain.dataset.runezuCardGain);
-        return;
-      }
-
-      const runezuFaceSymbol = event.target.closest("[data-runezu-face-symbol-choice]");
-      if (runezuFaceSymbol && !runezuFaceSymbol.disabled) {
-        handleRunezuFaceSymbolChoice(runezuFaceSymbol.dataset.runezuFaceSymbolChoice);
-        return;
-      }
-
-      const runezuBranch = event.target.closest("[data-runezu-symbol-branch]");
-      if (runezuBranch && !runezuBranch.disabled) {
-        handleRunezuSymbolBranchChoice(runezuBranch.dataset.runezuSymbolBranch);
         return;
       }
 
@@ -550,52 +480,12 @@
         handleChongTaskCompletionChoice("cancel");
         return;
       }
-      if (state.pendingChongFossilChoice) {
-        handleChongFossilChoice("cancel");
-        return;
-      }
-      if (state.pendingChongCardGain) {
-        handleChongCardGainChoice("cancel");
-        return;
-      }
       if (state.pendingAmibaTraceRemoval) {
         handleAmibaTraceRemovalChoice("cancel");
         return;
       }
-      if (state.pendingAmibaSymbolChoice) {
-        handleAmibaSymbolChoice("cancel");
-        return;
-      }
-      if (state.pendingAmibaCardGain) {
-        handleAmibaCardGainChoice("cancel");
-        return;
-      }
-      if (state.pendingAomomoCardGain) {
-        handleAomomoCardGainChoice("cancel");
-        return;
-      }
-      if (state.pendingRunezuFaceSymbolPlacement) {
-        handleRunezuFaceSymbolChoice("cancel");
-        return;
-      }
-      if (state.pendingRunezuSymbolBranch) {
-        handleRunezuSymbolBranchChoice("cancel");
-        return;
-      }
-      if (state.pendingRunezuCardGain) {
-        handleRunezuCardGainChoice("cancel");
-        return;
-      }
-      if (state.pendingBanrenmaCardGain) {
-        handleBanrenmaCardGainChoice("cancel");
-        return;
-      }
       if (state.pendingBanrenmaOpportunity) {
         closeBanrenmaOpportunityDialog();
-        return;
-      }
-      if (state.pendingYichangdianCardGain) {
-        handleYichangdianCardGainChoice("cancel");
         return;
       }
       if (state.pendingJiuzheCardPlay?.reason === "view") {
@@ -628,52 +518,12 @@
           handleChongTaskCompletionChoice("cancel");
           return;
         }
-        if (state.pendingChongFossilChoice) {
-          handleChongFossilChoice("cancel");
-          return;
-        }
-        if (state.pendingChongCardGain) {
-          handleChongCardGainChoice("cancel");
-          return;
-        }
         if (state.pendingAmibaTraceRemoval) {
           handleAmibaTraceRemovalChoice("cancel");
           return;
         }
-        if (state.pendingAmibaSymbolChoice) {
-          handleAmibaSymbolChoice("cancel");
-          return;
-        }
-        if (state.pendingAmibaCardGain) {
-          handleAmibaCardGainChoice("cancel");
-          return;
-        }
-        if (state.pendingAomomoCardGain) {
-          handleAomomoCardGainChoice("cancel");
-          return;
-        }
-        if (state.pendingRunezuFaceSymbolPlacement) {
-          handleRunezuFaceSymbolChoice("cancel");
-          return;
-        }
-        if (state.pendingRunezuSymbolBranch) {
-          handleRunezuSymbolBranchChoice("cancel");
-          return;
-        }
-        if (state.pendingRunezuCardGain) {
-          handleRunezuCardGainChoice("cancel");
-          return;
-        }
-        if (state.pendingBanrenmaCardGain) {
-          handleBanrenmaCardGainChoice("cancel");
-          return;
-        }
         if (state.pendingBanrenmaOpportunity) {
           closeBanrenmaOpportunityDialog();
-          return;
-        }
-        if (state.pendingYichangdianCardGain) {
-          handleYichangdianCardGainChoice("cancel");
           return;
         }
         if (state.pendingJiuzheCardPlay?.reason === "view") {

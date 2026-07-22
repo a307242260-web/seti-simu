@@ -168,20 +168,6 @@
       if (session == null) return decisionSessions.clear(kind);
       return decisionSessions.open(kind, session);
     };
-    const alienCardGainSessions = {
-      get runezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
-      set runezuCardGain(session) { replaceDecisionSession("runezu_card_gain", session); },
-      get amibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
-      set amibaCardGain(session) { replaceDecisionSession("amiba_card_gain", session); },
-      get aomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
-      set aomomoCardGain(session) { replaceDecisionSession("aomomo_card_gain", session); },
-      get yichangdianCardGain() { return decisionSessions.peek("yichangdian_card_gain"); },
-      set yichangdianCardGain(session) { replaceDecisionSession("yichangdian_card_gain", session); },
-      get banrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
-      set banrenmaCardGain(session) { replaceDecisionSession("banrenma_card_gain", session); },
-      get chongCardGain() { return decisionSessions.peek("chong_card_gain"); },
-      set chongCardGain(session) { replaceDecisionSession("chong_card_gain", session); },
-    };
     const alienChoiceSessions = {
       get amibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
       set amibaTraceRemoval(session) { replaceDecisionSession("amiba_trace_removal", session); },
@@ -190,6 +176,12 @@
     let amibaSymbolDecisionDraft = null;
     let runezuSymbolBranchDecisionDraft = null;
     let runezuFaceSymbolDecisionDraft = null;
+    let runezuCardGainDecisionDraft = null;
+    let amibaCardGainDecisionDraft = null;
+    let aomomoCardGainDecisionDraft = null;
+    let yichangdianCardGainDecisionDraft = null;
+    let banrenmaCardGainDecisionDraft = null;
+    let chongCardGainDecisionDraft = null;
     function getChongFossilDecisionDraft() {
       return chongFossilDecisionDraft;
     }
@@ -234,6 +226,41 @@
     function clearRunezuFaceSymbolDecisionDraft() {
       runezuFaceSymbolDecisionDraft = null;
     }
+    function createDecisionDraftAccessors(read, write) {
+      return Object.freeze({
+        get: () => read(),
+        take: () => {
+          const draft = read();
+          write(null);
+          return draft;
+        },
+        clear: () => write(null),
+      });
+    }
+    const runezuCardGainDraft = createDecisionDraftAccessors(
+      () => runezuCardGainDecisionDraft,
+      (draft) => { runezuCardGainDecisionDraft = draft; },
+    );
+    const amibaCardGainDraft = createDecisionDraftAccessors(
+      () => amibaCardGainDecisionDraft,
+      (draft) => { amibaCardGainDecisionDraft = draft; },
+    );
+    const aomomoCardGainDraft = createDecisionDraftAccessors(
+      () => aomomoCardGainDecisionDraft,
+      (draft) => { aomomoCardGainDecisionDraft = draft; },
+    );
+    const yichangdianCardGainDraft = createDecisionDraftAccessors(
+      () => yichangdianCardGainDecisionDraft,
+      (draft) => { yichangdianCardGainDecisionDraft = draft; },
+    );
+    const banrenmaCardGainDraft = createDecisionDraftAccessors(
+      () => banrenmaCardGainDecisionDraft,
+      (draft) => { banrenmaCardGainDecisionDraft = draft; },
+    );
+    const chongCardGainDraft = createDecisionDraftAccessors(
+      () => chongCardGainDecisionDraft,
+      (draft) => { chongCardGainDecisionDraft = draft; },
+    );
     const getOpportunityContinuationQueue = (workingRoot, field) => {
       requireWorkingRoot(workingRoot);
       if (!workingRoot.match || typeof workingRoot.match !== "object") workingRoot.match = {};
@@ -1561,62 +1588,33 @@ function claimRunezuSourceSymbolWithHistory(workingRoot, sourceType, sourceId, p
   }
 
 function closeRunezuCardGainDialog() {
-    alienCardGainSessions.runezuCardGain = null;
+    runezuCardGainDraft.clear();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
 function openRunezuCardGainDialog(workingRoot, options = {}) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    if (!runezu || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!runezu) {
       return { ok: false, message: "无法打开符文族牌获取窗口" };
     }
     const state = runezu.ensureRunezuState(alienGameState);
     if (state.displayedCardIndex == null) runezu.drawDisplayedCardIndex?.(alienGameState);
-    alienCardGainSessions.runezuCardGain = {
+    runezuCardGainDecisionDraft = {
+      displayedAvailable: state.displayedCardIndex != null,
       playerId: options.player?.id || getWorkingCurrentPlayer(workingRoot)?.id || null,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "符文族外星人牌",
       beforeAlienState: options.beforeAlienState || structuredClone(alienGameState),
       beforePlayerState: options.beforePlayerState || structuredClone(playerState),
     };
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "获得符文族牌";
-    if (els.scanTargetSubtitle) {
-      els.scanTargetSubtitle.textContent = "选择当前展示牌、盲抽符文族牌，或取消。";
-    }
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-
-    const cardIndex = alienGameState.runezu?.displayedCardIndex;
-    const confirm = document.createElement("button");
-    confirm.type = "button";
-    confirm.className = "scan-target-option-button";
-    confirm.dataset.runezuCardGain = "displayed";
-    confirm.innerHTML = cardIndex == null
-      ? "确认<small>当前没有展示牌</small>"
-      : `<img class="jiuzhe-card-option-image" src="${runezu.getCardSrc(cardIndex)}" alt="" aria-hidden="true"><small>确认拿取展示牌 ${cardIndex}</small>`;
-    confirm.disabled = cardIndex == null;
-
-    const blind = document.createElement("button");
-    blind.type = "button";
-    blind.className = "scan-target-option-button";
-    blind.dataset.runezuCardGain = "blind";
-    blind.innerHTML = "盲抽<small>从符文族牌堆随机获得 1 张</small>";
-
-    const cancel = document.createElement("button");
-    cancel.type = "button";
-    cancel.className = "scan-target-option-button";
-    cancel.dataset.runezuCardGain = "cancel";
-    cancel.innerHTML = "取消<small>不获得符文族牌</small>";
-
-    els.scanTargetActions.replaceChildren(confirm, blind, cancel);
-    els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = "符文族牌：请选择获取方式";
     renderStateReadout();
     return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
   }
 
-function finishRunezuCardGain(workingRoot, message, result = null) {
+function finishRunezuCardGain(workingRoot, message, result = null, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienCardGainSessions.runezuCardGain;
+    const pending = pendingContext || runezuCardGainDraft.get();
     const irreversible = getAlienCardGainIrreversible(result);
     closeRunezuCardGainDialog();
     if (pending?.fromEffectFlow && getCurrentActionEffect()) {
@@ -1675,83 +1673,54 @@ function finishRunezuCardGain(workingRoot, message, result = null) {
     return { ok: true, message, result };
   }
 
-function handleRunezuCardGainChoice(workingRoot, choice) {
+function handleRunezuCardGainChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (!alienCardGainSessions.runezuCardGain) return { ok: false, message: "没有符文族牌获取流程" };
-    const pending = alienCardGainSessions.runezuCardGain;
+    const pending = pendingContext || runezuCardGainDraft.get();
+    if (!pending) return { ok: false, message: "没有符文族牌获取流程" };
     const player = resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot);
     if (!player) return { ok: false, message: "找不到符文族牌获取玩家" };
     if (choice === "cancel") {
-      return finishRunezuCardGain(workingRoot, "已取消符文族外星人牌");
+      return finishRunezuCardGain(workingRoot, "已取消符文族外星人牌", null, pending);
     }
     const result = choice === "blind"
       ? runezu.blindDrawCard(alienGameState)
       : runezu.takeDisplayedCard(alienGameState);
     if (!result.ok || !result.card) {
-      return finishRunezuCardGain(workingRoot, result.message || "符文族牌获取失败", result);
+      return finishRunezuCardGain(workingRoot, result.message || "符文族牌获取失败", result, pending);
     }
     player.hand.push(result.card);
     player.resources.handSize = player.hand.length;
-    return finishRunezuCardGain(workingRoot, result.message, result);
+    return finishRunezuCardGain(workingRoot, result.message, result, pending);
   }
 
 function closeAmibaCardGainDialog() {
-    alienCardGainSessions.amibaCardGain = null;
+    amibaCardGainDraft.clear();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
 function openAmibaCardGainDialog(workingRoot, options = {}) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    if (!amiba || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!amiba) {
       return { ok: false, message: "无法打开阿米巴牌获取窗口" };
     }
     const state = amiba.ensureAmibaState(alienGameState);
     if (state.displayedCardIndex == null) amiba.drawDisplayedCardIndex(alienGameState);
-    alienCardGainSessions.amibaCardGain = {
+    amibaCardGainDecisionDraft = {
+      displayedAvailable: state.displayedCardIndex != null,
       playerId: options.player?.id || getWorkingCurrentPlayer(workingRoot)?.id || null,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "阿米巴外星人牌",
       beforeAlienState: options.beforeAlienState || structuredClone(alienGameState),
       beforePlayerState: options.beforePlayerState || structuredClone(playerState),
     };
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "获得阿米巴牌";
-    if (els.scanTargetSubtitle) {
-      els.scanTargetSubtitle.textContent = "选择当前展示牌、盲抽阿米巴牌，或取消。";
-    }
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-
-    const cardIndex = alienGameState.amiba?.displayedCardIndex;
-    const confirm = document.createElement("button");
-    confirm.type = "button";
-    confirm.className = "scan-target-option-button";
-    confirm.dataset.amibaCardGain = "displayed";
-    confirm.innerHTML = cardIndex == null
-      ? "确认<small>当前没有展示牌</small>"
-      : `<img class="jiuzhe-card-option-image" src="${amiba.getCardSrc(cardIndex)}" alt="" aria-hidden="true"><small>确认拿取展示牌 ${cardIndex}</small>`;
-    confirm.disabled = cardIndex == null;
-
-    const blind = document.createElement("button");
-    blind.type = "button";
-    blind.className = "scan-target-option-button";
-    blind.dataset.amibaCardGain = "blind";
-    blind.innerHTML = "盲抽<small>从阿米巴牌堆随机获得 1 张</small>";
-
-    const cancel = document.createElement("button");
-    cancel.type = "button";
-    cancel.className = "scan-target-option-button";
-    cancel.dataset.amibaCardGain = "cancel";
-    cancel.innerHTML = "取消<small>不获得阿米巴牌</small>";
-
-    els.scanTargetActions.replaceChildren(confirm, blind, cancel);
-    els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = "阿米巴牌：请选择获取方式";
     renderStateReadout();
     return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
   }
 
-function finishAmibaCardGain(workingRoot, message, result = null) {
+function finishAmibaCardGain(workingRoot, message, result = null, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienCardGainSessions.amibaCardGain;
+    const pending = pendingContext || amibaCardGainDraft.get();
     const irreversible = getAlienCardGainIrreversible(result);
     closeAmibaCardGainDialog();
     if (pending?.fromEffectFlow && getCurrentActionEffect()) {
@@ -1810,39 +1779,40 @@ function finishAmibaCardGain(workingRoot, message, result = null) {
     return { ok: true, message, result };
   }
 
-function handleAmibaCardGainChoice(workingRoot, choice) {
+function handleAmibaCardGainChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (!alienCardGainSessions.amibaCardGain) return { ok: false, message: "没有阿米巴牌获取流程" };
-    const pending = alienCardGainSessions.amibaCardGain;
+    const pending = pendingContext || amibaCardGainDraft.get();
+    if (!pending) return { ok: false, message: "没有阿米巴牌获取流程" };
     const player = resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot);
     if (!player) return { ok: false, message: "找不到阿米巴牌获取玩家" };
     if (choice === "cancel") {
-      return finishAmibaCardGain(workingRoot, "已取消阿米巴外星人牌");
+      return finishAmibaCardGain(workingRoot, "已取消阿米巴外星人牌", null, pending);
     }
     const result = choice === "blind"
       ? amiba.blindDrawCard(alienGameState)
       : amiba.takeDisplayedCard(alienGameState);
     if (!result.ok || !result.card) {
-      return finishAmibaCardGain(workingRoot, result.message || "阿米巴牌获取失败", result);
+      return finishAmibaCardGain(workingRoot, result.message || "阿米巴牌获取失败", result, pending);
     }
     player.hand.push(result.card);
     player.resources.handSize = player.hand.length;
-    return finishAmibaCardGain(workingRoot, result.message, result);
+    return finishAmibaCardGain(workingRoot, result.message, result, pending);
   }
 
 function closeAomomoCardGainDialog() {
-    alienCardGainSessions.aomomoCardGain = null;
+    aomomoCardGainDraft.clear();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
 function openAomomoCardGainDialog(workingRoot, options = {}) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    if (!aomomo || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!aomomo) {
       return { ok: false, message: "无法打开奥陌陌牌获取窗口" };
     }
     const state = aomomo.ensureAomomoState(alienGameState);
     if (state.displayedCardIndex == null) aomomo.drawDisplayedCardIndex(alienGameState);
-    alienCardGainSessions.aomomoCardGain = {
+    aomomoCardGainDecisionDraft = {
+      displayedAvailable: state.displayedCardIndex != null,
       playerId: options.player?.id || getWorkingCurrentPlayer(workingRoot)?.id || null,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "奥陌陌外星人牌",
@@ -1850,44 +1820,14 @@ function openAomomoCardGainDialog(workingRoot, options = {}) {
       beforePlayerState: options.beforePlayerState || structuredClone(playerState),
       deferredEvents: Array.isArray(options.deferredEvents) ? options.deferredEvents : [],
     };
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "获得奥陌陌牌";
-    if (els.scanTargetSubtitle) {
-      els.scanTargetSubtitle.textContent = "选择当前展示牌、盲抽奥陌陌牌，或取消。";
-    }
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-
-    const cardIndex = alienGameState.aomomo?.displayedCardIndex;
-    const confirm = document.createElement("button");
-    confirm.type = "button";
-    confirm.className = "scan-target-option-button";
-    confirm.dataset.aomomoCardGain = "displayed";
-    confirm.innerHTML = cardIndex == null
-      ? "确认<small>当前没有展示牌</small>"
-      : `<img class="jiuzhe-card-option-image" src="${aomomo.getCardSrc(cardIndex)}" alt="" aria-hidden="true"><small>确认拿取展示牌 ${cardIndex}</small>`;
-    confirm.disabled = cardIndex == null;
-
-    const blind = document.createElement("button");
-    blind.type = "button";
-    blind.className = "scan-target-option-button";
-    blind.dataset.aomomoCardGain = "blind";
-    blind.innerHTML = "盲抽<small>从奥陌陌牌堆随机获得 1 张</small>";
-
-    const cancel = document.createElement("button");
-    cancel.type = "button";
-    cancel.className = "scan-target-option-button";
-    cancel.dataset.aomomoCardGain = "cancel";
-    cancel.innerHTML = "取消<small>不获得奥陌陌牌</small>";
-
-    els.scanTargetActions.replaceChildren(confirm, blind, cancel);
-    els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = "奥陌陌牌：请选择获取方式";
     renderStateReadout();
     return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
   }
 
-function finishAomomoCardGain(workingRoot, message, result = null) {
+function finishAomomoCardGain(workingRoot, message, result = null, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienCardGainSessions.aomomoCardGain;
+    const pending = pendingContext || aomomoCardGainDraft.get();
     const irreversible = getAlienCardGainIrreversible(result);
     closeAomomoCardGainDialog();
     if (pending?.fromEffectFlow && getCurrentActionEffect()) {
@@ -1950,24 +1890,24 @@ function finishAomomoCardGain(workingRoot, message, result = null) {
     return { ok: true, message, result };
   }
 
-function handleAomomoCardGainChoice(workingRoot, choice) {
+function handleAomomoCardGainChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (!alienCardGainSessions.aomomoCardGain) return { ok: false, message: "没有奥陌陌牌获取流程" };
-    const pending = alienCardGainSessions.aomomoCardGain;
+    const pending = pendingContext || aomomoCardGainDraft.get();
+    if (!pending) return { ok: false, message: "没有奥陌陌牌获取流程" };
     const player = resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot);
     if (!player) return { ok: false, message: "找不到奥陌陌牌获取玩家" };
     if (choice === "cancel") {
-      return finishAomomoCardGain(workingRoot, "已取消奥陌陌外星人牌");
+      return finishAomomoCardGain(workingRoot, "已取消奥陌陌外星人牌", null, pending);
     }
     const result = choice === "blind"
       ? aomomo.blindDrawCard(alienGameState)
       : aomomo.takeDisplayedCard(alienGameState);
     if (!result.ok || !result.card) {
-      return finishAomomoCardGain(workingRoot, result.message || "奥陌陌牌获取失败", result);
+      return finishAomomoCardGain(workingRoot, result.message || "奥陌陌牌获取失败", result, pending);
     }
     player.hand.push(result.card);
     player.resources.handSize = player.hand.length;
-    return finishAomomoCardGain(workingRoot, result.message, result);
+    return finishAomomoCardGain(workingRoot, result.message, result, pending);
   }
 
 function closeAmibaSymbolChoiceDialog() {
@@ -2231,18 +2171,19 @@ function applyChongFossilRewardToPlayer(player, fossilId, label = "虫族化石"
   }
 
 function closeYichangdianCardGainDialog() {
-    alienCardGainSessions.yichangdianCardGain = null;
+    yichangdianCardGainDraft.clear();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
 function openYichangdianCardGainDialog(workingRoot, options = {}) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (!yichangdian || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!yichangdian) {
       return { ok: false, message: "无法打开异常点牌窗口" };
     }
     const player = options.player || getWorkingCurrentPlayer(workingRoot);
     if (!player) return { ok: false, message: "没有当前玩家" };
-    alienCardGainSessions.yichangdianCardGain = {
+    yichangdianCardGainDecisionDraft = {
+      displayedAvailable: alienGameState.yichangdian?.displayedCardIndex != null,
       playerId: player.id,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "异常点外星人牌",
@@ -2250,46 +2191,12 @@ function openYichangdianCardGainDialog(workingRoot, options = {}) {
       beforeAlienState: options.beforeAlienState || null,
     };
 
-    const displayedIndex = alienGameState.yichangdian?.displayedCardIndex;
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "异常点外星人牌";
-    if (els.scanTargetSubtitle) {
-      els.scanTargetSubtitle.textContent = `${player.colorLabel}玩家可以拿取当前展示牌、盲抽一张异常点牌，或取消。`;
-    }
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
-
-    const nodes = [];
-    const displayed = document.createElement("button");
-    displayed.type = "button";
-    displayed.className = "scan-target-option-button jiuzhe-card-option yichangdian-card-option";
-    displayed.dataset.yichangdianCardGain = "displayed";
-    displayed.disabled = displayedIndex == null;
-    displayed.innerHTML = displayedIndex == null
-      ? "确认<small>当前没有展示牌</small>"
-      : `<img class="jiuzhe-card-option-image" src="${yichangdian.getCardSrc(displayedIndex)}" alt="" aria-hidden="true"><small>确认拿取展示牌</small>`;
-    nodes.push(displayed);
-
-    const blind = document.createElement("button");
-    blind.type = "button";
-    blind.className = "scan-target-option-button";
-    blind.dataset.yichangdianCardGain = "blind";
-    blind.innerHTML = "盲抽<small>从异常点牌堆随机获得 1 张</small>";
-    nodes.push(blind);
-
-    const cancel = document.createElement("button");
-    cancel.type = "button";
-    cancel.className = "scan-target-option-button";
-    cancel.dataset.yichangdianCardGain = "cancel";
-    cancel.innerHTML = "取消<small>不获得外星人牌</small>";
-    nodes.push(cancel);
-
-    els.scanTargetActions.replaceChildren(...nodes);
-    els.scanTargetOverlay.hidden = false;
-    return { ok: true, message: "异常点牌窗口已打开" };
+    return { ok: true, awaitingChoice: true, message: "异常点牌：请选择获取方式" };
   }
 
-function finishYichangdianCardGain(workingRoot, message, result = null) {
+function finishYichangdianCardGain(workingRoot, message, result = null, pendingContext = null) {
     const { rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienCardGainSessions.yichangdianCardGain;
+    const pending = pendingContext || yichangdianCardGainDraft.get();
     const irreversible = getAlienCardGainIrreversible(result);
     closeYichangdianCardGainDialog();
     rocketState.statusNote = message;
@@ -2313,15 +2220,15 @@ function finishYichangdianCardGain(workingRoot, message, result = null) {
     return result || { ok: true, message };
   }
 
-function handleYichangdianCardGainChoice(workingRoot, choice) {
+function handleYichangdianCardGainChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    if (!alienCardGainSessions.yichangdianCardGain) return { ok: false, message: "没有异常点牌获取流程" };
-    const pending = alienCardGainSessions.yichangdianCardGain;
+    const pending = pendingContext || yichangdianCardGainDraft.get();
+    if (!pending) return { ok: false, message: "没有异常点牌获取流程" };
     const player = resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot);
     if (!player) return { ok: false, message: "找不到异常点牌玩家" };
 
     if (choice === "cancel") {
-      return finishYichangdianCardGain(workingRoot, "已取消异常点外星人牌");
+      return finishYichangdianCardGain(workingRoot, "已取消异常点外星人牌", null, pending);
     }
 
     const beforePlayerState = pending.beforePlayerState || structuredClone(playerState);
@@ -2355,22 +2262,23 @@ function handleYichangdianCardGainChoice(workingRoot, choice) {
         irreversibleReason: irreversible.reason,
       } : {});
     }
-    return finishYichangdianCardGain(workingRoot, result.message, result);
+    return finishYichangdianCardGain(workingRoot, result.message, result, pending);
   }
 
 function closeBanrenmaCardGainDialog() {
-    alienCardGainSessions.banrenmaCardGain = null;
+    banrenmaCardGainDraft.clear();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
 function openBanrenmaCardGainDialog(workingRoot, options = {}) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (!banrenma || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!banrenma) {
       return { ok: false, message: "无法打开半人马牌窗口" };
     }
     const player = options.player || getWorkingCurrentPlayer(workingRoot);
     if (!player) return { ok: false, message: "没有当前玩家" };
-    alienCardGainSessions.banrenmaCardGain = {
+    banrenmaCardGainDecisionDraft = {
+      displayedAvailable: alienGameState.banrenma?.displayedCardIndex != null,
       playerId: player.id,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "半人马外星人牌",
@@ -2379,42 +2287,12 @@ function openBanrenmaCardGainDialog(workingRoot, options = {}) {
       baseResult: options.baseResult || null,
     };
 
-    const displayedIndex = alienGameState.banrenma?.displayedCardIndex;
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "半人马外星人牌";
-    if (els.scanTargetSubtitle) {
-      els.scanTargetSubtitle.textContent = `${player.colorLabel}玩家可以拿取当前展示牌，或盲抽一张半人马牌。`;
-    }
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
-
-    const displayed = document.createElement("button");
-    displayed.type = "button";
-    displayed.className = "scan-target-option-button jiuzhe-card-option banrenma-card-option";
-    displayed.dataset.banrenmaCardGain = "displayed";
-    displayed.disabled = displayedIndex == null;
-    displayed.innerHTML = displayedIndex == null
-      ? "确认<small>当前没有展示牌</small>"
-      : `<img class="jiuzhe-card-option-image" src="${banrenma.getCardSrc(displayedIndex)}" alt="" aria-hidden="true"><small>确认拿取展示牌</small>`;
-
-    const blind = document.createElement("button");
-    blind.type = "button";
-    blind.className = "scan-target-option-button";
-    blind.dataset.banrenmaCardGain = "blind";
-    blind.innerHTML = "盲抽<small>从半人马牌堆随机获得 1 张</small>";
-
-    const cancel = document.createElement("button");
-    cancel.type = "button";
-    cancel.className = "scan-target-option-button";
-    cancel.dataset.banrenmaCardGain = "cancel";
-    cancel.innerHTML = "取消<small>不获得外星人牌</small>";
-
-    els.scanTargetActions.replaceChildren(displayed, blind, cancel);
-    els.scanTargetOverlay.hidden = false;
-    return { ok: true, message: "半人马牌窗口已打开" };
+    return { ok: true, awaitingChoice: true, message: "半人马牌：请选择获取方式" };
   }
 
-function finishBanrenmaCardGain(workingRoot, message, result = null) {
+function finishBanrenmaCardGain(workingRoot, message, result = null, pendingContext = null) {
     const { rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienCardGainSessions.banrenmaCardGain;
+    const pending = pendingContext || banrenmaCardGainDraft.get();
     const irreversible = getAlienCardGainIrreversible(result);
     const baseResult = pending?.baseResult || null;
     const combinedMessage = [baseResult?.message, message].filter(Boolean).join("；") || message;
@@ -2441,15 +2319,15 @@ function finishBanrenmaCardGain(workingRoot, message, result = null) {
     return result || { ok: true, message };
   }
 
-function handleBanrenmaCardGainChoice(workingRoot, choice) {
+function handleBanrenmaCardGainChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    if (!alienCardGainSessions.banrenmaCardGain) return { ok: false, message: "没有半人马牌获取流程" };
-    const pending = alienCardGainSessions.banrenmaCardGain;
+    const pending = pendingContext || banrenmaCardGainDraft.get();
+    if (!pending) return { ok: false, message: "没有半人马牌获取流程" };
     const player = resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot);
     if (!player) return { ok: false, message: "找不到半人马牌玩家" };
 
     if (choice === "cancel") {
-      return finishBanrenmaCardGain(workingRoot, "已取消半人马外星人牌");
+      return finishBanrenmaCardGain(workingRoot, "已取消半人马外星人牌", null, pending);
     }
 
     const beforePlayerState = pending.beforePlayerState || structuredClone(playerState);
@@ -2483,66 +2361,37 @@ function handleBanrenmaCardGainChoice(workingRoot, choice) {
         irreversibleReason: irreversible.reason,
       } : {});
     }
-    return finishBanrenmaCardGain(workingRoot, result.message, result);
+    return finishBanrenmaCardGain(workingRoot, result.message, result, pending);
   }
 
 function closeChongCardGainDialog() {
-    alienCardGainSessions.chongCardGain = null;
+    chongCardGainDraft.clear();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
 function openChongCardGainDialog(workingRoot, options = {}) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    if (!chong || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!chong) {
       return { ok: false, message: "无法打开虫族牌获取窗口" };
     }
     const state = chong.ensureChongState(alienGameState);
     if (state.displayedCardIndex == null) chong.drawDisplayedCardIndex(alienGameState);
-    alienCardGainSessions.chongCardGain = {
+    chongCardGainDecisionDraft = {
+      displayedAvailable: state.displayedCardIndex != null,
       playerId: options.player?.id || getWorkingCurrentPlayer(workingRoot)?.id || null,
       fromEffectFlow: Boolean(options.fromEffectFlow),
       effectLabel: options.effectLabel || "虫族外星人牌",
       beforeAlienState: options.beforeAlienState || structuredClone(alienGameState),
       beforePlayerState: options.beforePlayerState || structuredClone(playerState),
     };
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "获得虫族牌";
-    if (els.scanTargetSubtitle) {
-      els.scanTargetSubtitle.textContent = "选择当前展示牌、盲抽虫族牌，或取消。";
-    }
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-
-    const cardIndex = alienGameState.chong?.displayedCardIndex;
-    const confirm = document.createElement("button");
-    confirm.type = "button";
-    confirm.className = "scan-target-option-button jiuzhe-card-option chong-card-option";
-    confirm.dataset.chongCardGain = "displayed";
-    confirm.innerHTML = cardIndex == null
-      ? "确认<small>当前没有展示牌</small>"
-      : `<img class="jiuzhe-card-option-image" src="${chong.getCardSrc(cardIndex)}" alt="" aria-hidden="true"><small>确认拿取展示牌 ${cardIndex}</small>`;
-    confirm.disabled = cardIndex == null;
-
-    const blind = document.createElement("button");
-    blind.type = "button";
-    blind.className = "scan-target-option-button";
-    blind.dataset.chongCardGain = "blind";
-    blind.innerHTML = "盲抽<small>从虫族牌堆随机获得 1 张</small>";
-
-    const cancel = document.createElement("button");
-    cancel.type = "button";
-    cancel.className = "scan-target-option-button";
-    cancel.dataset.chongCardGain = "cancel";
-    cancel.innerHTML = "取消<small>不获得虫族牌</small>";
-
-    els.scanTargetActions.replaceChildren(confirm, blind, cancel);
-    els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = "虫族牌：请选择获取方式";
     renderStateReadout();
     return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
   }
 
-function finishChongCardGain(workingRoot, message, result = null) {
+function finishChongCardGain(workingRoot, message, result = null, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienCardGainSessions.chongCardGain;
+    const pending = pendingContext || chongCardGainDraft.get();
     const irreversible = getAlienCardGainIrreversible(result);
     closeChongCardGainDialog();
     if (pending?.fromEffectFlow && getCurrentActionEffect()) {
@@ -2599,24 +2448,24 @@ function finishChongCardGain(workingRoot, message, result = null) {
     return { ok: true, message, result };
   }
 
-function handleChongCardGainChoice(workingRoot, choice) {
+function handleChongCardGainChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (!alienCardGainSessions.chongCardGain) return { ok: false, message: "没有虫族牌获取流程" };
-    const pending = alienCardGainSessions.chongCardGain;
+    const pending = pendingContext || chongCardGainDraft.get();
+    if (!pending) return { ok: false, message: "没有虫族牌获取流程" };
     const player = resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot);
     if (!player) return { ok: false, message: "找不到虫族牌获取玩家" };
     if (choice === "cancel") {
-      return finishChongCardGain(workingRoot, "已取消虫族外星人牌");
+      return finishChongCardGain(workingRoot, "已取消虫族外星人牌", null, pending);
     }
     const result = choice === "blind"
       ? chong.blindDrawCard(alienGameState)
       : chong.takeDisplayedCard(alienGameState);
     if (!result.ok || !result.card) {
-      return finishChongCardGain(workingRoot, result.message || "虫族牌获取失败", result);
+      return finishChongCardGain(workingRoot, result.message || "虫族牌获取失败", result, pending);
     }
     player.hand.push(result.card);
     player.resources.handSize = player.hand.length;
-    return finishChongCardGain(workingRoot, result.message, result);
+    return finishChongCardGain(workingRoot, result.message, result, pending);
   }
 
 function getChongPlanetLabel(planetId) {
@@ -3414,17 +3263,17 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
       alienOpportunitySessions.jiuzheCardPlay?.reason === "view"
         ? null
         : { pending: alienOpportunitySessions.jiuzheCardPlay, label: "九折牌" },
-      alienCardGainSessions.yichangdianCardGain ? { pending: alienCardGainSessions.yichangdianCardGain, label: "异常点外星人牌" } : null,
-      alienCardGainSessions.banrenmaCardGain ? { pending: alienCardGainSessions.banrenmaCardGain, label: "半人马外星人牌" } : null,
+      yichangdianCardGainDraft.get() ? { pending: yichangdianCardGainDraft.get(), label: "异常点外星人牌" } : null,
+      banrenmaCardGainDraft.get() ? { pending: banrenmaCardGainDraft.get(), label: "半人马外星人牌" } : null,
       alienOpportunitySessions.banrenmaOpportunity ? { pending: alienOpportunitySessions.banrenmaOpportunity, label: "半人马奖励" } : null,
-      alienCardGainSessions.chongCardGain ? { pending: alienCardGainSessions.chongCardGain, label: "虫族外星人牌" } : null,
+      chongCardGainDraft.get() ? { pending: chongCardGainDraft.get(), label: "虫族外星人牌" } : null,
       getChongFossilDecisionDraft() ? { pending: getChongFossilDecisionDraft(), label: "虫族化石" } : null,
       getChongTaskCompletion() ? { pending: getChongTaskCompletion(), label: "虫族任务" } : null,
-      alienCardGainSessions.amibaCardGain ? { pending: alienCardGainSessions.amibaCardGain, label: "阿米巴外星人牌" } : null,
+      amibaCardGainDraft.get() ? { pending: amibaCardGainDraft.get(), label: "阿米巴外星人牌" } : null,
       getAmibaSymbolDecisionDraft() ? { pending: getAmibaSymbolDecisionDraft(), label: "阿米巴 symbol" } : null,
       alienChoiceSessions.amibaTraceRemoval ? { pending: alienChoiceSessions.amibaTraceRemoval, label: "阿米巴痕迹移除" } : null,
-      alienCardGainSessions.aomomoCardGain ? { pending: alienCardGainSessions.aomomoCardGain, label: "奥陌陌外星人牌" } : null,
-      alienCardGainSessions.runezuCardGain ? { pending: alienCardGainSessions.runezuCardGain, label: "符文族外星人牌" } : null,
+      aomomoCardGainDraft.get() ? { pending: aomomoCardGainDraft.get(), label: "奥陌陌外星人牌" } : null,
+      runezuCardGainDraft.get() ? { pending: runezuCardGainDraft.get(), label: "符文族外星人牌" } : null,
       getRunezuFaceSymbolDecisionDraft() ? { pending: getRunezuFaceSymbolDecisionDraft(), label: "符文族黑圈" } : null,
       getRunezuSymbolBranchDecisionDraft() ? { pending: getRunezuSymbolBranchDecisionDraft(), label: "符文族符文奖励" } : null,
     ];
@@ -3666,7 +3515,7 @@ function openBanrenmaOpportunityDialog(workingRoot, player, opportunity) {
 
 function maybeOpenQueuedBanrenmaOpportunity(workingRoot) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (alienOpportunitySessions.banrenmaOpportunity || alienCardGainSessions.banrenmaCardGain) return null;
+    if (alienOpportunitySessions.banrenmaOpportunity || banrenmaCardGainDraft.get()) return null;
     if (isActionEffectFlowActive()) return null;
     if (hasActivePendingSubFlow()) return null;
     if (els.scanTargetOverlay && !els.scanTargetOverlay.hidden) return null;
@@ -3689,7 +3538,7 @@ function maybeOpenQueuedBanrenmaOpportunity(workingRoot) {
 function openBanrenmaReadyOpportunityForPlayer(workingRoot, player, options = {}) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
     if (!banrenma || !player) return null;
-    if (alienOpportunitySessions.banrenmaOpportunity || alienCardGainSessions.banrenmaCardGain) return null;
+    if (alienOpportunitySessions.banrenmaOpportunity || banrenmaCardGainDraft.get()) return null;
     if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return null;
     const panelMark = banrenma.getPendingPanelMark(alienGameState, player);
     if (panelMark && banrenma.getAvailableBonusPositions(alienGameState).length) {
@@ -4459,6 +4308,24 @@ function alignAlienPanelsToPlanets() {
       getRunezuFaceSymbolDecisionDraft,
       takeRunezuFaceSymbolDecisionDraft,
       clearRunezuFaceSymbolDecisionDraft,
+      getRunezuCardGainDecisionDraft: runezuCardGainDraft.get,
+      takeRunezuCardGainDecisionDraft: runezuCardGainDraft.take,
+      clearRunezuCardGainDecisionDraft: runezuCardGainDraft.clear,
+      getAmibaCardGainDecisionDraft: amibaCardGainDraft.get,
+      takeAmibaCardGainDecisionDraft: amibaCardGainDraft.take,
+      clearAmibaCardGainDecisionDraft: amibaCardGainDraft.clear,
+      getAomomoCardGainDecisionDraft: aomomoCardGainDraft.get,
+      takeAomomoCardGainDecisionDraft: aomomoCardGainDraft.take,
+      clearAomomoCardGainDecisionDraft: aomomoCardGainDraft.clear,
+      getYichangdianCardGainDecisionDraft: yichangdianCardGainDraft.get,
+      takeYichangdianCardGainDecisionDraft: yichangdianCardGainDraft.take,
+      clearYichangdianCardGainDecisionDraft: yichangdianCardGainDraft.clear,
+      getBanrenmaCardGainDecisionDraft: banrenmaCardGainDraft.get,
+      takeBanrenmaCardGainDecisionDraft: banrenmaCardGainDraft.take,
+      clearBanrenmaCardGainDecisionDraft: banrenmaCardGainDraft.clear,
+      getChongCardGainDecisionDraft: chongCardGainDraft.get,
+      takeChongCardGainDecisionDraft: chongCardGainDraft.take,
+      clearChongCardGainDecisionDraft: chongCardGainDraft.clear,
       openChongTraceTaskCompletionPicker,
       enqueueJiuzheOpportunity,
       isJiuzheThresholdOpportunity,
