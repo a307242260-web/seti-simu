@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createEffectFlowHelpers } = require("./effect-flow");
+const { createEffectFlowHelpers, createEffectFlowUndoRuntime } = require("./effect-flow");
 
 function createHistoryHarness() {
   let nextStepId = 1;
@@ -302,6 +302,43 @@ function createHarness() {
     helper.executeActionEffect(workingRoot, { id: "effect-9", status: "active" }),
     { ok: true, effectId: "effect-9" },
   );
+}
+
+{
+  const workingRoot = { match: { actionEffectFlow: {
+    chainId: "flow-undo", actionType: "researchTech", currentIndex: 1, completed: true,
+    effects: [
+      { id: "e0", type: "gain", status: "completed", preHistoryCommandsApplied: true },
+      { id: "e1", type: "research_tech_select", status: "completed", result: { ok: true }, preHistoryCommandsApplied: true },
+      { id: "inserted", type: "gain", status: "completed", preHistoryCommandsApplied: true },
+    ],
+  } } };
+  const calls = { removed: null, cancel: 0, restore: 0, active: [] };
+  const undoRuntime = createEffectFlowUndoRuntime({
+    abilities: { chain: { removeInsertedNodesBySource(_flow, source) { calls.removed = source; } } },
+    getActionEffectFlow: (root) => root.match.actionEffectFlow || null,
+    isMainActionOpeningStep: (step) => step.effectIndex === -1,
+    clearActionEffectFlow: (root) => { delete root.match.actionEffectFlow; },
+    pruneEndOfFlowSettlementEffectsAfterUndo() {},
+    cancelActiveEffectSubFlows() { calls.cancel += 1; },
+    restoreResearchTechSelectionAfterUndo() { calls.restore += 1; },
+    setActionEffectFlowActive(active) { calls.active.push(active); },
+  });
+  undoRuntime.revertEffectFlowAfterUndo(workingRoot, {
+    effectIndex: 1, effectId: "e1", effectType: "research_tech_select",
+  });
+  const flow = workingRoot.match.actionEffectFlow;
+  assert.equal(flow.completed, false);
+  assert.equal(flow.currentIndex, 1);
+  assert.equal(flow.effects[1].status, "active");
+  assert.equal(flow.effects[1].result, null);
+  assert.equal(flow.effects[2].status, "pending");
+  assert.deepEqual(calls.removed, {
+    chainId: "flow-undo", effectId: "e1", effectIndex: 1, effectType: "research_tech_select",
+  });
+  assert.equal(calls.cancel, 1);
+  assert.equal(calls.restore, 1);
+  assert.deepEqual(calls.active, [true]);
 }
 
 console.log("effect-flow tests passed");

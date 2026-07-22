@@ -887,8 +887,62 @@
     });
   }
 
+  function createEffectFlowUndoRuntime(context = {}) {
+    const getActionEffectFlow = requireFunction("getActionEffectFlow", context.getActionEffectFlow);
+    const isMainActionOpeningStep = requireFunction(
+      "isMainActionOpeningStep", context.isMainActionOpeningStep,
+    );
+    const clearActionEffectFlow = requireFunction("clearActionEffectFlow", context.clearActionEffectFlow);
+    const pruneEndOfFlowSettlementEffectsAfterUndo = requireFunction(
+      "pruneEndOfFlowSettlementEffectsAfterUndo",
+      context.pruneEndOfFlowSettlementEffectsAfterUndo,
+    );
+    const cancelActiveEffectSubFlows = requireFunction(
+      "cancelActiveEffectSubFlows", context.cancelActiveEffectSubFlows,
+    );
+
+    function revertEffectFlowAfterUndo(workingRoot, step) {
+      const flow = getActionEffectFlow(workingRoot);
+      if (!flow || !step) return;
+
+      if (isMainActionOpeningStep(step)) {
+        if (flow.actionType === "researchTech") context.clearResearchTechSelectionState?.();
+        clearActionEffectFlow(workingRoot);
+        return;
+      }
+      if (!Number.isInteger(step.effectIndex)) return;
+
+      const effect = flow.effects[step.effectIndex];
+      if (!effect) return;
+      pruneEndOfFlowSettlementEffectsAfterUndo(flow, step.effectIndex);
+      context.abilities?.chain?.removeInsertedNodesBySource?.(flow, {
+        chainId: flow.chainId || null,
+        effectId: step.effectId || effect.id || null,
+        effectIndex: step.effectIndex,
+        effectType: step.effectType || effect.type || null,
+      });
+      flow.completed = false;
+      effect.status = "active";
+      effect.result = null;
+      effect.preHistoryCommandsApplied = false;
+      flow.currentIndex = step.effectIndex;
+      for (let index = step.effectIndex + 1; index < flow.effects.length; index += 1) {
+        if (flow.effects[index].status !== "pending") flow.effects[index].status = "pending";
+        flow.effects[index].preHistoryCommandsApplied = false;
+      }
+      cancelActiveEffectSubFlows();
+      if (flow.actionType === "researchTech" && effect.type === "research_tech_select") {
+        context.restoreResearchTechSelectionAfterUndo?.(effect);
+      }
+      context.setActionEffectFlowActive?.(true);
+    }
+
+    return Object.freeze({ revertEffectFlowAfterUndo });
+  }
+
   return {
     createActionEffectOrchestrator,
     createEffectFlowHelpers,
+    createEffectFlowUndoRuntime,
   };
 });

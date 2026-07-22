@@ -5542,47 +5542,18 @@
     refreshHelpers.refreshActionState({ includeQuickPanel: false, includeStateReadout: true });
   }
 
-  function revertEffectFlowAfterUndo(workingRoot, step) {
-    if (!getActionEffectFlow(workingRoot) || !step) return;
-
-    if (isMainActionOpeningStep(step)) {
-      if (getActionEffectFlow(workingRoot).actionType === "researchTech") {
-        clearResearchTechSelectionState();
-      }
-      clearActionEffectFlow(workingRoot);
-      return;
-    }
-
-    if (!Number.isInteger(step.effectIndex)) return;
-
-    const { effects } = getActionEffectFlow(workingRoot);
-    const effect = effects[step.effectIndex];
-    if (!effect) return;
-
-    pruneEndOfFlowSettlementEffectsAfterUndo(getActionEffectFlow(workingRoot), step.effectIndex);
-    abilities.chain.removeInsertedNodesBySource?.(getActionEffectFlow(workingRoot), {
-      chainId: getActionEffectFlow(workingRoot).chainId || null,
-      effectId: step.effectId || effect.id || null,
-      effectIndex: step.effectIndex,
-      effectType: step.effectType || effect.type || null,
-    });
-    getActionEffectFlow(workingRoot).completed = false;
-    effect.status = "active";
-    effect.result = null;
-    effect.preHistoryCommandsApplied = false;
-    getActionEffectFlow(workingRoot).currentIndex = step.effectIndex;
-    for (let index = step.effectIndex + 1; index < effects.length; index += 1) {
-      if (effects[index].status !== "pending") {
-        effects[index].status = "pending";
-      }
-      effects[index].preHistoryCommandsApplied = false;
-    }
-    cancelActiveEffectSubFlows();
-    if (getActionEffectFlow(workingRoot).actionType === "researchTech" && effect.type === "research_tech_select") {
-      restoreResearchTechSelectionAfterUndo(effect);
-    }
-    interactionChrome.setActionEffectFlowActive(true);
-  }
+  const effectFlowUndoRuntime = effectFlowModule.createEffectFlowUndoRuntime({
+    abilities,
+    getActionEffectFlow,
+    isMainActionOpeningStep,
+    clearResearchTechSelectionState,
+    clearActionEffectFlow,
+    pruneEndOfFlowSettlementEffectsAfterUndo,
+    cancelActiveEffectSubFlows,
+    restoreResearchTechSelectionAfterUndo,
+    setActionEffectFlowActive: (active) => interactionChrome.setActionEffectFlowActive(active),
+  });
+  const revertEffectFlowAfterUndo = effectFlowUndoRuntime.revertEffectFlowAfterUndo;
 
   function hasActiveEffectSubFlow(workingRoot = null) {
     return Boolean(
