@@ -66,7 +66,7 @@
         if (boundary?.ok === false) return boundary.error || boundary;
         const choices = (boundary?.choices || boundary?.candidates || [])
           .filter((choice) => choice?.available !== false);
-        if (boundary?.decisionType === "conditional_choice" && choices.length > 1) {
+        if (boundary?.decisionType === "conditional_choice" && choices.length) {
           return {
             ok: true,
             nextState: structuredClone(workingRoot),
@@ -79,21 +79,6 @@
                 decisionKind: boundary.family || choices[0]?.family || "conditional_choice",
                 payload: { choices: clone(choices) },
               },
-            }],
-          };
-        }
-        if (boundary?.decisionType === "conditional_choice" && choices.length === 1) {
-          const descriptor = choices[0]?.standardAction || choices[0];
-          const result = executeRegisteredAction(workingRoot, descriptor);
-          if (!result?.ok) return result;
-          return {
-            ok: true,
-            nextState: result.nextState,
-            spawnedEffects: [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }],
-            events: [{
-              type: "standard_action_automatic_decision",
-              family: descriptor?.family || null,
-              actionId: descriptor?.actionId || null,
             }],
           };
         }
