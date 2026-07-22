@@ -36,6 +36,9 @@ function createFixture() {
     probePending: true,
     finalHandlerCalls: [],
     movePaymentCalls: [],
+    passReserveCalls: [],
+    cardTriggerCalls: [],
+    cardTaskCalls: [],
   };
   let contextReads = 0;
   const domain = createConditionalDecisionDomain(() => {
@@ -48,7 +51,9 @@ function createFixture() {
       },
       getCurrentPlayer: () => finalPlayer,
       getPendingProbeSectorScanDecision: () => (state.probePending ? probePending : null),
-      getHeadlessConditionalPlayer: (pending) => pending.player,
+      getHeadlessConditionalPlayer: (pending) => pending.player
+        || root.playerState.players.find((player) => player.id === pending.playerId)
+        || null,
       decisionSessions: { peek: () => null },
       decisionState: {},
       handleFinalScoreTileClick: (tileId) => {
@@ -56,6 +61,29 @@ function createFixture() {
         return { ok: true, progressed: true, tileId };
       },
       getPlayerById: (playerId) => root.playerState.players.find((player) => player.id === playerId) || null,
+      cards: { getCardLabel: (card) => card?.label || card?.id || "card" },
+      getPendingPassReserveSelection: (workingRoot) => workingRoot.match.passReserveContinuation || null,
+      getPassReserveSelectionCards: () => [{ id: "reserve-a", label: "预留 A" }, { id: "reserve-b", label: "预留 B" }],
+      confirmPassReserveSelection: (workingRoot, cardId) => {
+        state.passReserveCalls.push(cardId);
+        delete workingRoot.match.passReserveContinuation;
+        return { ok: true, progressed: true };
+      },
+      getPendingCardTriggerAction: (workingRoot) => workingRoot.match.cardTriggerContinuation || null,
+      getPendingCardTaskCompletion: (workingRoot) => workingRoot.match.cardTaskCompletionContinuation || null,
+      getPendingCardTriggerFreeMove: (workingRoot) => workingRoot.match.cardTriggerFreeMoveContinuation || null,
+      getPendingCardCornerFreeMove: (workingRoot) => workingRoot.match.cardCornerFreeMoveContinuation || null,
+      handleCardTriggerChoice: (workingRoot, choiceIndex) => {
+        state.cardTriggerCalls.push(choiceIndex);
+        delete workingRoot.match.cardTriggerContinuation;
+        return { ok: true, progressed: true };
+      },
+      cancelCardTriggerChoice: () => true,
+      confirmCardTaskCompletion: (workingRoot, choiceId) => {
+        state.cardTaskCalls.push(choiceId);
+        delete workingRoot.match.cardTaskCompletionContinuation;
+        return { ok: true, progressed: true };
+      },
       isMovePaymentCard: (card) => Number(card?.discardActionCode) === 2,
       players: {
         canAfford: (player, cost) => Number(player?.resources?.energy || 0) >= Number(cost?.energy || 0),
@@ -73,6 +101,52 @@ function createFixture() {
     });
   });
   return { root, finalPlayer, scanPlayer, state, domain, getContextReads: () => contextReads };
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  fixture.root.match.passReserveContinuation = { effectId: "pass", playerId: "move-owner", roundNumber: 2 };
+  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const decision = executor.inspect(fixture.root);
+  assert.deepEqual(decision.choices.map((choice) => choice.choiceId), ["reserve-a", "reserve-b"]);
+  assert.equal(fixture.root.match.passReserveContinuation.selectedCardId, undefined, "规则 continuation 不得保存 UI 选择");
+  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_card"));
+  assert.equal(result.ok, true);
+  assert.deepEqual(fixture.state.passReserveCalls, ["reserve-a"]);
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  fixture.root.match.cardTriggerContinuation = {
+    playerId: "move-owner",
+    matches: [{ card: { id: "card-a" }, effect: { label: "奖励 A" } }],
+  };
+  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const decision = executor.inspect(fixture.root);
+  assert.deepEqual(decision.choices.map((choice) => choice.target.kind), ["card-trigger", "card-trigger-cancel"]);
+  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_branch"));
+  assert.equal(result.ok, true);
+  assert.deepEqual(fixture.state.cardTriggerCalls, [0]);
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  fixture.root.match.cardTaskCompletionContinuation = {
+    playerId: "move-owner",
+    ready: { card: { id: "task-a" }, effects: [] },
+  };
+  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const decision = executor.inspect(fixture.root);
+  assert.deepEqual(decision.choices.map((choice) => choice.target.kind), ["card-task-completion"]);
+  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "accept_optional_effect"));
+  assert.equal(result.ok, true);
+  assert.deepEqual(fixture.state.cardTaskCalls, ["confirm"]);
 }
 
 {

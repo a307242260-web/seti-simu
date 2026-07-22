@@ -1006,11 +1006,6 @@
   const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
   const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
   const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
-  const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
-  const CARD_TRIGGER_FREE_MOVE_SESSION = "card_trigger_free_move";
-  const CARD_TRIGGER_ACTION_SESSION = "card_trigger_action";
-  const CARD_TASK_COMPLETION_SESSION = "card_task_completion";
-  const PASS_RESERVE_SELECTION_SESSION = "pass_reserve_selection";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
@@ -1021,11 +1016,21 @@
   const hasTurnEndRevealContinuation = (workingRoot = createStateSourceReadoutRoot()) => (
     Boolean(workingRoot?.match?.turnEndRevealContinuation)
   );
-  const getPendingCardCornerFreeMove = () => decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION);
-  const getPendingCardTriggerFreeMove = () => decisionSessions.peek(CARD_TRIGGER_FREE_MOVE_SESSION);
-  const getPendingCardTriggerAction = () => decisionSessions.peek(CARD_TRIGGER_ACTION_SESSION);
-  const getPendingCardTaskCompletion = () => decisionSessions.peek(CARD_TASK_COMPLETION_SESSION);
-  const getPendingPassReserveSelection = () => decisionSessions.peek(PASS_RESERVE_SELECTION_SESSION);
+  const getPendingCardCornerFreeMove = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.cardCornerFreeMoveContinuation || null
+  );
+  const getPendingCardTriggerFreeMove = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.cardTriggerFreeMoveContinuation || null
+  );
+  const getPendingCardTriggerAction = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.cardTriggerContinuation || null
+  );
+  const getPendingCardTaskCompletion = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.cardTaskCompletionContinuation || null
+  );
+  const getPendingPassReserveSelection = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.passReserveContinuation || null
+  );
   const getPendingMovePayment = (workingRoot = createStateSourceReadoutRoot()) => (
     workingRoot?.match?.movePaymentContinuation || null
   );
@@ -1058,7 +1063,9 @@
     players,
     getPublicScanChoicesForCard,
     getPendingPassReserveSelection,
-    getPassReserveSelectionCards,
+    getPendingCardTriggerAction,
+    getPendingCardTaskCompletion,
+    getPassReserveSelectionCards: (workingRoot, ...args) => getPassReserveSelectionCardsForRoot(workingRoot, ...args),
     isMovePaymentCard,
     isTechTilePickingActive,
     tech,
@@ -1115,19 +1122,19 @@
     confirmDiscardAnyForIncome,
     handlePayCreditChoice,
     confirmScanTarget: (workingRoot, ...args) => scanFlowHelpers.confirmScanTarget(workingRoot, ...args),
-    selectPassReserveCard,
-    confirmPassReserveSelection,
+    confirmPassReserveSelection: (workingRoot, ...args) => confirmPassReserveSelectionForRoot(workingRoot, ...args),
+    handleCardTriggerChoice: (workingRoot, ...args) => handleCardTriggerChoiceForRoot(workingRoot, ...args),
+    cancelCardTriggerChoice: (workingRoot, ...args) => cancelCardTriggerChoiceForRoot(workingRoot, ...args),
+    confirmCardTaskCompletion: (workingRoot, ...args) => confirmCardTaskCompletionForRoot(workingRoot, ...args),
     handleHandScanCardClick,
     executeCardMoveForEffect,
-    executeFreeMoveForCardTrigger,
+    executeFreeMoveForCardTrigger: (workingRoot, ...args) => executeFreeMoveForCardTriggerForRoot(workingRoot, ...args),
     restoreObjectSnapshot,
-    CARD_TRIGGER_FREE_MOVE_SESSION,
     clearMoveRocketHighlight,
     deactivateMoveMode,
-    continueAfterCardTriggerResolution,
+    continueAfterCardTriggerResolution: (workingRoot, ...args) => continueAfterCardTriggerResolutionForRoot(workingRoot, ...args),
     finishCurrentCardMoveEffectEarly,
-    executeFreeMoveForCardCorner,
-    CARD_CORNER_FREE_MOVE_SESSION,
+    executeFreeMoveForCardCorner: (workingRoot, ...args) => executeFreeMoveForCardCornerForRoot(workingRoot, ...args),
     settleCardTasksAfterEffect,
     finishIndustryAbilityFlow,
     resolveMovePaymentDecision: (...args) => resolveMovePaymentDecision(...args),
@@ -2402,8 +2409,8 @@
     openScanTargetPicker,
     getPublicScanChoicesForCard: (...args) => getPublicScanChoicesForCard(...args),
     executeFreeMoveForScanAction4,
-    executeFreeMoveForCardCorner,
-    executeFreeMoveForCardTrigger: (...args) => executeFreeMoveForCardTrigger?.(...args),
+    executeFreeMoveForCardCorner: (workingRoot, ...args) => executeFreeMoveForCardCornerForRoot(workingRoot, ...args),
+    executeFreeMoveForCardTrigger: (workingRoot, ...args) => executeFreeMoveForCardTriggerForRoot(workingRoot, ...args),
     executeIndustryFreeMove: (...args) => executeIndustryFreeMove?.(...args),
     executeCardEffectMove: (...args) => executeCardEffectMove?.(...args),
     createActionContext: createActionContextForWorkingRoot,
@@ -4187,7 +4194,6 @@
   const aiControllerState = {
     get pendingDiscardAction() { return decisionState.discardAction; },
     get pendingCardSelectionAction() { return decisionState.cardSelectionAction; },
-    get pendingPassReserveSelection() { return getPendingPassReserveSelection(); },
     get pendingScanTargetAction() { return decisionState.scanTargetAction; },
     get pendingProbeSectorScanAction() { return getPendingProbeSectorScanDecision(); },
     get pendingProbeLocationRewardAction() { return getPendingProbeLocationRewardDecision(); },
@@ -4210,16 +4216,12 @@
     get pendingRunezuCardGain() { return getPendingRunezuCardGain(); },
     get pendingRunezuSymbolBranch() { return getPendingRunezuSymbolBranch(); },
     get pendingRunezuFaceSymbolPlacement() { return getPendingRunezuFaceSymbolPlacement(); },
-    get pendingCardTriggerAction() { return getPendingCardTriggerAction(); },
-    get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
-    get pendingCardTaskCompletion() { return getPendingCardTaskCompletion(); },
     get pendingActionExecuted() { return isActionPending(); },
     get pendingActionEffectFlow() { return decisionState.actionEffectFlow; },
     get actionHistoryHasSession() { return actionHistory.hasSession(); },
     get actionHistorySessionInfo() { return actionHistory.getSessionInfo?.() || null; },
     get effectStepActive() { return uiRuntimeState.effectStepActive; },
     set effectStepActive(value) { uiRuntimeState.effectStepActive = value; },
-    get pendingCardCornerFreeMove() { return getPendingCardCornerFreeMove(); },
     get pendingIndustryAbility() { return decisionSessions.peek("industry_ability"); },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
@@ -4841,9 +4843,26 @@
   const dismissPassReserveSelectionOverlayForRoot = dismissPassReserveSelectionOverlay;
   dismissPassReserveSelectionOverlay = bindBrowserDomainCommand("card_runtime", "dismissPassReserveSelectionOverlay");
   const selectPassReserveCardForRoot = selectPassReserveCard;
-  selectPassReserveCard = bindBrowserDomainCommand("card_runtime", "selectPassReserveCard");
   const confirmPassReserveSelectionForRoot = confirmPassReserveSelection;
-  confirmPassReserveSelection = bindBrowserDomainCommand("card_runtime", "confirmPassReserveSelection");
+  selectPassReserveCard = (cardId) => selectPassReserveCardForRoot(createStateSourceReadoutRoot(), cardId);
+  confirmPassReserveSelection = () => {
+    const selectedCardId = uiRuntimeState.passReserveSelectedCardId || null;
+    if (!selectedCardId) return { ok: false, message: "请先选择 PASS 预留牌" };
+    const inspection = browserRuleComposition.inspect();
+    const decision = inspection.session?.decision || null;
+    const choice = (decision?.choices || []).find((candidate) => {
+      const target = candidate?.target || candidate?.standardAction?.target || null;
+      return target?.kind === "pass-reserve-card" && String(target.choiceId) === String(selectedCardId);
+    });
+    if (inspection.phase !== "awaiting_input" || !decision || !choice) {
+      return { ok: false, code: "PASS_RESERVE_DECISION_REQUIRED", message: "当前 PASS 选择不在 active Decision 合法项中" };
+    }
+    return browserRuleComposition.inputPort.submitDecision({
+      decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion,
+      choice,
+    });
+  };
   const selectDefaultRocketFromCandidatesForRoot = selectDefaultRocketFromCandidates;
   selectDefaultRocketFromCandidates = bindBrowserDomainCommand("card_runtime", "selectDefaultRocketFromCandidates");
   const executeCardEffectMoveForRoot = executeCardEffectMove;
@@ -5067,8 +5086,31 @@
   queueCardTriggerRewardEffects = bindBrowserDomainCommand("card_trigger", "queueCardTriggerRewardEffects");
   const openCardTaskCompletionPickerForRoot = openCardTaskCompletionPicker;
   openCardTaskCompletionPicker = bindBrowserDomainCommand("card_trigger", "openCardTaskCompletionPicker");
+  function submitActiveCardDecision(kind, matches) {
+    const inspection = browserRuleComposition.inspect();
+    const decision = inspection.session?.decision || null;
+    const choice = (decision?.choices || []).find((candidate) => {
+      const target = candidate?.target || candidate?.standardAction?.target || null;
+      return target?.kind === kind && matches(target, candidate);
+    });
+    if (inspection.phase !== "awaiting_input" || !decision || !choice) {
+      return { ok: false, code: "CARD_DECISION_REQUIRED", message: "当前输入不在 active Decision 合法项中" };
+    }
+    return browserRuleComposition.inputPort.submitDecision({
+      decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion,
+      choice,
+    });
+  }
+  cancelCardTriggerChoice = () => submitActiveCardDecision(
+    "card-trigger-cancel",
+    (target) => target.choiceId === "cancel",
+  );
   const confirmCardTaskCompletionForRoot = confirmCardTaskCompletion;
-  confirmCardTaskCompletion = bindBrowserDomainCommand("card_trigger", "confirmCardTaskCompletion");
+  confirmCardTaskCompletion = (choiceId = "confirm") => submitActiveCardDecision(
+    "card-task-completion",
+    (target) => String(target.choiceId) === String(choiceId),
+  );
   const openCardTriggerPickerForRoot = openCardTriggerPicker;
   openCardTriggerPicker = bindBrowserDomainCommand("card_trigger", "openCardTriggerPicker");
   const applyCardTriggerRewardForRoot = applyCardTriggerReward;
@@ -5078,9 +5120,17 @@
   const applyCardTriggerMatchForRoot = applyCardTriggerMatch;
   applyCardTriggerMatch = bindBrowserDomainCommand("card_trigger", "applyCardTriggerMatch");
   const handleCardTriggerChoiceForRoot = handleCardTriggerChoice;
-  handleCardTriggerChoice = bindBrowserDomainCommand("card_trigger", "handleCardTriggerChoice");
+  handleCardTriggerChoice = (choiceIndex) => submitActiveCardDecision(
+    "card-trigger",
+    (target) => Number(target.choiceIndex) === Number(choiceIndex),
+  );
   const executeFreeMoveForCardTriggerForRoot = executeFreeMoveForCardTrigger;
-  executeFreeMoveForCardTrigger = bindBrowserDomainCommand("card_trigger", "executeFreeMoveForCardTrigger");
+  executeFreeMoveForCardTrigger = (deltaX, deltaY, rocketId) => submitActiveCardDecision(
+    "card-trigger-free-move",
+    (target, choice) => String(target.rocketId) === String(rocketId)
+      && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
+      && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
+  );
 
   function getActionLogActionLabel(actionType, label) {
     return label || ACTION_LOG_DEFAULT_LABELS[actionType] || actionType || "本回合行动";
@@ -5497,8 +5547,9 @@
     const { cardState: workingCardState, techGameState: workingTechGameState } = workingRoot;
     decisionState.discardAction = null;
     decisionState.cardSelectionAction = null;
-    decisionSessions.clear(PASS_RESERVE_SELECTION_SESSION);
+    delete workingRoot.match.passReserveContinuation;
     uiRuntimeState.passReserveSelectionDismissed = false;
+    uiRuntimeState.passReserveSelectedCardId = null;
     decisionState.scanTargetAction = null;
     decisionSessions.clear(PROBE_SECTOR_SCAN_SESSION);
     decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
@@ -5506,12 +5557,12 @@
     decisionState.alienTraceAction = null;
     decisionSessions.clear(LAND_TARGET_DECISION);
     decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
-    decisionSessions.clear(CARD_TRIGGER_ACTION_SESSION);
-    decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
+    delete workingRoot.match.cardTriggerContinuation;
+    delete workingRoot.match.cardTriggerFreeMoveContinuation;
     if (workingRoot.match && typeof workingRoot.match === "object") {
       delete workingRoot.match.type1TriggerEvents;
     }
-    decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
+    delete workingRoot.match.cardTaskCompletionContinuation;
     alienSpeciesRuntime?.clearJiuzheCardPlayDecisionDraft?.();
     uiRuntimeState.jiuzheOpportunityOpen = false;
     uiRuntimeState.jiuzheCardViewOpen = false;
@@ -5549,7 +5600,7 @@
     uiRuntimeState.playCardSelection = null;
     uiRuntimeState.handCardPlayAction = null;
     uiRuntimeState.cardCornerQuickAction = null;
-    decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
+    delete workingRoot.match.cardCornerFreeMoveContinuation;
     decisionSessions.clear(DATA_PLACEMENT_DECISION);
     decisionSessions.clear("industry_ability");
     decisionSessions.clear(PIRATES_RAID_DECISION);
@@ -6489,7 +6540,7 @@
 
   function executeFreeMoveForCardCornerForRoot(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
     const { playerState: workingPlayerState, rocketState: workingRocketState } = workingRoot;
-    const pending = getPendingCardCornerFreeMove();
+    const pending = getPendingCardCornerFreeMove(workingRoot);
     if (!pending) return { ok: false, message: "没有待结算的弃牌移动" };
 
     const moveCheck = rocketActions.canMoveRocket(workingRocketState, rocketId, deltaX, deltaY);
@@ -6519,7 +6570,7 @@
         rocketId,
         terrainRequired,
         providedMovePoints,
-        context: { type: "card_corner_free_move", terrainRequired },
+        context: { type: "cardCornerFreeMove", terrainRequired },
         message: `${pending.action.label}：已有 ${providedMovePoints} 点移动力，还需 ${terrainRequired - providedMovePoints} 点（可弃移动牌或用能量）`,
       });
     }
@@ -6552,7 +6603,7 @@
       completeQuickActionStep();
     }
 
-    decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
+    delete workingRoot.match.cardCornerFreeMoveContinuation;
     workingRocketState.activeRocketId = null;
     clearMoveRocketHighlight();
     deactivateMoveMode();
@@ -6575,8 +6626,13 @@
     return result;
   }
 
-  function executeFreeMoveForCardCorner(...args) {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "card_execute_free_move_corner", args });
+  function executeFreeMoveForCardCorner(deltaX, deltaY, rocketId) {
+    return submitActiveCardDecision(
+      "card-corner-free-move",
+      (target, choice) => String(target.rocketId) === String(rocketId)
+        && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
+        && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
+    );
   }
 
   function buildPlanetRewardEffectsWithIndustry(actionType, result, options = {}) {
@@ -7030,9 +7086,9 @@
       cancelStrategyPassiveSlotChoice();
       return true;
     }
-    if (getPendingCardCornerFreeMove()?.finishIndustryFlowAfterMove) {
-      const pending = getPendingCardCornerFreeMove();
-      decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
+    if (getPendingCardCornerFreeMove(workingRoot)?.finishIndustryFlowAfterMove) {
+      const pending = getPendingCardCornerFreeMove(workingRoot);
+      delete workingRoot.match.cardCornerFreeMoveContinuation;
       workingRoot.rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
@@ -7273,9 +7329,10 @@
       syncCardSelectionChrome();
     }
 
-    if (getPendingPassReserveSelection()) {
-      decisionSessions.clear(PASS_RESERVE_SELECTION_SESSION);
+    if (getPendingPassReserveSelection(workingRoot)) {
+      delete workingRoot.match.passReserveContinuation;
       uiRuntimeState.passReserveSelectionDismissed = false;
+      uiRuntimeState.passReserveSelectedCardId = null;
       syncPassReserveSelectionChrome();
     }
 
@@ -7290,13 +7347,13 @@
     if (getPendingDataPlacementDecision()) {
       closeDataPlacePicker();
     }
-    decisionSessions.clear(CARD_TRIGGER_ACTION_SESSION);
-    decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
-    decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
+    delete workingRoot.match.cardTriggerContinuation;
+    delete workingRoot.match.cardTaskCompletionContinuation;
+    delete workingRoot.match.cardTriggerFreeMoveContinuation;
     if (workingRoot.match && typeof workingRoot.match === "object") {
       delete workingRoot.match.type1TriggerEvents;
     }
-    decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
+    delete workingRoot.match.cardCornerFreeMoveContinuation;
     effectExecutors?.clearYichangdianCornerAction?.();
     alienSpeciesRuntime?.clearChongCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
@@ -12100,6 +12157,7 @@
     runezu,
     techRenderContext,
     getRuleReadout: createStateSourceReadoutRoot,
+    getActiveDecisionChoices: () => browserRuleComposition.inspect().session?.decision?.choices || [],
     setStatusNote: setBrowserStatusNote,
     randomizeAll,
     startNewGameFromStartScreen,

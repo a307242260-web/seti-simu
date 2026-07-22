@@ -13,7 +13,7 @@ function createHarness() {
     cardSelectionAction: null,
     passReserveSelection: null,
   };
-  const uiRuntimeState = { passReserveSelectionDismissed: false };
+  const uiRuntimeState = { passReserveSelectionDismissed: false, passReserveSelectedCardId: null };
   const calls = { completed: 0, chrome: 0 };
   const decisionSessions = createDecisionSessionStore();
   attachDecisionState(pendingState, decisionSessions);
@@ -27,6 +27,7 @@ function createHarness() {
     cards: {
       setSelectionActive: () => {},
       getCardLabel: (card) => card.label || card.id,
+      getPassReservePile: () => [{ id: "reserve-1", label: "预留牌" }],
       pickPassReserveCard: (_state, target, _round, cardId) => {
         const card = { id: cardId, label: "预留牌" };
         target.hand.push(card);
@@ -67,6 +68,7 @@ function createHarness() {
     syncPassReserveSelectionChrome: () => { calls.chrome += 1; },
   });
   const workingRoot = {
+    match: {},
     cardState,
     playerState: { currentPlayerId: player.id, players: [player] },
     turnState: { roundNumber: 2 },
@@ -92,7 +94,7 @@ function createHarness() {
 }
 
 {
-  const { runtime, workingRoot, pendingState, decisionSessions } = createHarness();
+  const { runtime, workingRoot, pendingState } = createHarness();
   const result = runtime.beginCardCornerFreeMove(
     workingRoot,
     { label: "免费移动", movementPoints: 1 },
@@ -100,7 +102,7 @@ function createHarness() {
     [{ type: "card_discard" }],
   );
   assert.equal(result.ok, true);
-  const session = decisionSessions.peek("card_corner_free_move");
+  const session = workingRoot.match.cardCornerFreeMoveContinuation;
   assert.equal(session.action.label, "免费移动");
   assert.equal(session.discardedCardLabel, "测试牌");
   assert.deepEqual(session.deferredEvents, [{ type: "card_discard" }]);
@@ -115,23 +117,26 @@ function createHarness() {
 }
 
 {
-  const { runtime, workingRoot, player, effect, uiRuntimeState, decisionSessions, calls } = createHarness();
-  decisionSessions.open("pass_reserve_selection", {
+  const { runtime, workingRoot, player, effect, uiRuntimeState, calls } = createHarness();
+  workingRoot.match.passReserveContinuation = {
     effectId: effect.id,
     playerId: player.id,
     roundNumber: 2,
-    selectedCardId: "reserve-1",
-  });
+  };
+  runtime.selectPassReserveCard(workingRoot, "reserve-1");
   const dismissed = runtime.dismissPassReserveSelectionOverlay(workingRoot);
   assert.equal(dismissed.dismissed, true);
   assert.equal(uiRuntimeState.passReserveSelectionDismissed, true);
-  assert.ok(decisionSessions.peek("pass_reserve_selection"));
+  assert.ok(workingRoot.match.passReserveContinuation);
 
-  const result = runtime.confirmPassReserveSelection(workingRoot);
+  assert.equal(workingRoot.match.passReserveContinuation.selectedCardId, undefined);
+  assert.equal(uiRuntimeState.passReserveSelectedCardId, "reserve-1");
+  const result = runtime.confirmPassReserveSelection(workingRoot, "reserve-1");
   assert.equal(result.ok, true);
   assert.equal(player.hand[0].id, "reserve-1");
-  assert.equal(decisionSessions.peek("pass_reserve_selection"), null);
+  assert.equal(workingRoot.match.passReserveContinuation, undefined);
   assert.equal(uiRuntimeState.passReserveSelectionDismissed, false);
+  assert.equal(uiRuntimeState.passReserveSelectedCardId, null);
   assert.equal(calls.completed, 1);
 }
 

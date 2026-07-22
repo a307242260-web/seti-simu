@@ -34,6 +34,7 @@
       runezu,
       techRenderContext,
       getRuleReadout,
+      getActiveDecisionChoices,
       setStatusNote,
       randomizeAll,
       startNewGameFromStartScreen,
@@ -206,6 +207,9 @@
       logAomomoDebugCoordinates,
       resize,
     } = context;
+    const hasActiveDecisionKind = (kind) => (getActiveDecisionChoices?.() || []).some((choice) => (
+      (choice?.target || choice?.standardAction?.target)?.kind === kind
+    ));
 
     if (!state) {
       throw new Error("bindAppEvents requires mutable app state accessors");
@@ -421,7 +425,7 @@
         cancelStrategyPassiveSlotChoice();
         return;
       }
-      if (state.pendingCardTriggerAction) {
+      if (hasActiveDecisionKind("card-trigger") || hasActiveDecisionKind("card-trigger-cancel")) {
         cancelCardTriggerChoice();
         return;
       }
@@ -444,7 +448,7 @@
           cancelStrategyPassiveSlotChoice();
           return;
         }
-        if (state.pendingCardTriggerAction) {
+        if (hasActiveDecisionKind("card-trigger") || hasActiveDecisionKind("card-trigger-cancel")) {
           cancelCardTriggerChoice();
           return;
         }
@@ -711,7 +715,7 @@
         blockManualAiAutomationInput?.("电脑玩家自动移动中");
         return;
       }
-      if (state.pendingCardTriggerFreeMove) {
+      if (hasActiveDecisionKind("card-trigger-free-move")) {
         executeFreeMoveForCardTrigger(
           Number(button.dataset.moveX),
           Number(button.dataset.moveY),
@@ -727,7 +731,7 @@
         );
         return;
       }
-      if (state.pendingCardCornerFreeMove) {
+      if (hasActiveDecisionKind("card-corner-free-move")) {
         executeFreeMoveForCardCorner(
           Number(button.dataset.moveX),
           Number(button.dataset.moveY),

@@ -133,13 +133,19 @@
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
-    const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
-    const PASS_RESERVE_SELECTION_SESSION = "pass_reserve_selection";
-    const getPassReserveSelection = () => decisionSessions.peek(PASS_RESERVE_SELECTION_SESSION);
-    function setPassReserveSelection(session) {
-      if (!session) return decisionSessions.clear(PASS_RESERVE_SELECTION_SESSION);
-      return decisionSessions.open(PASS_RESERVE_SELECTION_SESSION, session);
+    const getMatchContinuation = (workingRoot, field) => requireWorkingRoot(workingRoot).match?.[field] || null;
+    function setMatchContinuation(workingRoot, field, continuation) {
+      const activeRoot = requireWorkingRoot(workingRoot);
+      if (!activeRoot.match || typeof activeRoot.match !== "object") activeRoot.match = {};
+      if (!continuation) {
+        delete activeRoot.match[field];
+        return null;
+      }
+      activeRoot.match[field] = structuredClone(continuation);
+      return activeRoot.match[field];
     }
+    const getPassReserveSelection = (workingRoot) => getMatchContinuation(workingRoot, "passReserveContinuation");
+    const setPassReserveSelection = (workingRoot, value) => setMatchContinuation(workingRoot, "passReserveContinuation", value);
     function setMovePayment(workingRoot, session) {
       if (!workingRoot?.match) throw new TypeError("move payment requires Composition workingRoot.match");
       uiRuntimeState.movePaymentSelectedHandIndices = [];
@@ -156,11 +162,8 @@
       delete workingRoot.match.movePaymentContinuation.selectedHandIndices;
       return workingRoot.match.movePaymentContinuation;
     }
-    const getCardCornerFreeMove = () => decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION);
-    function setCardCornerFreeMove(session) {
-      if (!session) return decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
-      return decisionSessions.open(CARD_CORNER_FREE_MOVE_SESSION, session);
-    }
+    const getCardCornerFreeMove = (workingRoot) => getMatchContinuation(workingRoot, "cardCornerFreeMoveContinuation");
+    const setCardCornerFreeMove = (workingRoot, value) => setMatchContinuation(workingRoot, "cardCornerFreeMoveContinuation", value);
 
     function getDiscardCornerRewardMultiplier(workingRoot, player = getWorkingCurrentPlayer(workingRoot)) {
       return industry?.shouldDoubleDiscardCornerRewards?.(player) ? 2 : 1;
@@ -245,7 +248,7 @@
         && Boolean(industry?.shouldDoubleDiscardCornerRewards?.(player));
     }
 
-    function canUseCardCornerQuickAction() {
+    function canUseCardCornerQuickAction(workingRoot) {
       return !getGameplayLockReason()
         && !isTechTilePickingActive()
         && !isCardSelectionActive()
@@ -255,7 +258,7 @@
         && !isMovePaymentSelectionActive()
         && !decisionSessions.peek("industry_ability")
         && !isIndustryHandSelectionActive()
-        && !getCardCornerFreeMove()
+        && !getCardCornerFreeMove(workingRoot)
         && !hasActivePendingSubFlow();
     }
 
@@ -427,7 +430,9 @@
         return check;
       }
 
-      setCardCornerFreeMove({
+      setCardCornerFreeMove(workingRoot, {
+        playerId: getWorkingCurrentPlayer(workingRoot)?.id || null,
+        playerColor: getWorkingCurrentPlayer(workingRoot)?.color || null,
         action,
         discardedCardLabel: cards.getCardLabel(discardedCard),
         deferredEvents,
@@ -1068,7 +1073,9 @@
         if (applied.ok && applied.pendingFreeMove) {
           const moveCheck = canStartCardCornerFreeMove(workingRoot);
           if (moveCheck.ok) {
-            setCardCornerFreeMove({
+            setCardCornerFreeMove(workingRoot, {
+              playerId: getWorkingCurrentPlayer(workingRoot)?.id || null,
+              playerColor: getWorkingCurrentPlayer(workingRoot)?.color || null,
               action: {
                 label: "芬威克研究中心：免费移动",
                 movementPoints: applied.pendingFreeMove.movementPoints || 1,
@@ -1284,13 +1291,13 @@
       drawCardForCurrentPlayer(workingRoot, { fromSelection: true });
     }
 
-    function isPassReserveSelectionActive() {
-      return Boolean(getPassReserveSelection());
+    function isPassReserveSelectionActive(workingRoot) {
+      return Boolean(getPassReserveSelection(workingRoot));
     }
 
     function getPassReserveSelectionCards(workingRoot) {
       const { cardState } = requireWorkingRoot(workingRoot);
-      const pending = getPassReserveSelection();
+      const pending = getPassReserveSelection(workingRoot);
       if (!pending) return [];
       return cards.getPassReservePile(cardState, pending.roundNumber);
     }
@@ -1298,7 +1305,7 @@
     function renderPassReserveSelection(workingRoot) {
       if (!els.passReserveSelectionGrid) return;
 
-      const pending = getPassReserveSelection();
+      const pending = getPassReserveSelection(workingRoot);
       if (!pending) {
         els.passReserveSelectionGrid.replaceChildren();
         if (els.passReserveSelectionStatus) els.passReserveSelectionStatus.textContent = "";
@@ -1307,7 +1314,7 @@
       }
 
       const pile = getPassReserveSelectionCards(workingRoot);
-      const selectedCardId = pending.selectedCardId || null;
+      const selectedCardId = uiRuntimeState.passReserveSelectedCardId || null;
       els.passReserveSelectionGrid.replaceChildren(...pile.map((card) => {
         const button = document.createElement("button");
         button.type = "button";
@@ -1342,7 +1349,7 @@
 
     function syncPassReserveSelectionChrome(workingRoot) {
       const { turnState } = requireWorkingRoot(workingRoot);
-      const active = isPassReserveSelectionActive();
+      const active = isPassReserveSelectionActive(workingRoot);
       const visible = active && !uiRuntimeState.passReserveSelectionDismissed;
       els.appWrap?.classList.toggle("pass-reserve-selection-active", visible);
       if (!visible) hideCardHoverPreview();
@@ -1354,7 +1361,7 @@
         els.passReserveSelectionTitle.textContent = "PASS 预留精选";
       }
       if (visible && els.passReserveSelectionSubtitle) {
-        const round = getPassReserveSelection()?.roundNumber || turnState.roundNumber;
+        const round = getPassReserveSelection(workingRoot)?.roundNumber || turnState.roundNumber;
         const count = getPassReserveSelectionCards(workingRoot).length;
         els.passReserveSelectionSubtitle.textContent = `第 ${round} 轮 PASS：从剩余 ${count} 张预留牌中选择 1 张。`;
       }
@@ -1373,13 +1380,13 @@
       }
 
       if (
-        getPassReserveSelection()
-        && getPassReserveSelection().effectId === (effect?.id || null)
-        && getPassReserveSelection().playerId === (currentPlayer?.id || null)
-        && getPassReserveSelection().roundNumber === roundNumber
+        getPassReserveSelection(workingRoot)
+        && getPassReserveSelection(workingRoot).effectId === (effect?.id || null)
+        && getPassReserveSelection(workingRoot).playerId === (currentPlayer?.id || null)
+        && getPassReserveSelection(workingRoot).roundNumber === roundNumber
       ) {
         uiRuntimeState.passReserveSelectionDismissed = false;
-        const selected = pile.find((card) => card.id === getPassReserveSelection().selectedCardId);
+        const selected = pile.find((card) => card.id === uiRuntimeState.passReserveSelectedCardId);
         rocketState.statusNote = selected
           ? `PASS 预留精选：已选择 ${cards.getCardLabel(selected)}`
           : `PASS 预留精选：请选择 1 张牌（剩余 ${pile.length} 张）`;
@@ -1389,12 +1396,12 @@
         return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
       }
 
-      setPassReserveSelection({
+      setPassReserveSelection(workingRoot, {
         effectId: effect?.id || null,
         playerId: currentPlayer?.id || null,
         roundNumber,
-        selectedCardId: null,
       });
+      uiRuntimeState.passReserveSelectedCardId = null;
       uiRuntimeState.passReserveSelectionDismissed = false;
       rocketState.statusNote = `PASS 预留精选：请选择 1 张牌（剩余 ${pile.length} 张）`;
       syncPassReserveSelectionChrome(workingRoot);
@@ -1405,7 +1412,7 @@
 
     function dismissPassReserveSelectionOverlay(workingRoot, options = {}) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      if (!getPassReserveSelection()) return { ok: false, message: "当前没有 PASS 预留精选" };
+      if (!getPassReserveSelection(workingRoot)) return { ok: false, message: "当前没有 PASS 预留精选" };
       uiRuntimeState.passReserveSelectionDismissed = true;
       syncPassReserveSelectionChrome(workingRoot);
       rocketState.statusNote = "PASS 预留精选已临时关闭；再次点击效果栏的 PASS 预留精选可继续选择";
@@ -1415,20 +1422,20 @@
 
     function selectPassReserveCard(workingRoot, cardId) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      if (!getPassReserveSelection()) return;
+      if (!getPassReserveSelection(workingRoot)) return;
       const pile = getPassReserveSelectionCards(workingRoot);
       const match = pile.find((card) => card.id === cardId);
       if (!match) return;
-      getPassReserveSelection().selectedCardId = match.id;
+      uiRuntimeState.passReserveSelectedCardId = match.id;
       renderPassReserveSelection(workingRoot);
       rocketState.statusNote = `PASS 预留精选：已选择 ${cards.getCardLabel(match)}`;
       renderStateReadout();
     }
 
-    function confirmPassReserveSelection(workingRoot) {
+    function confirmPassReserveSelection(workingRoot, selectedCardId) {
       const { cardState, rocketState, playerState } = requireWorkingRoot(workingRoot);
-      const pending = getPassReserveSelection();
-      if (!pending?.selectedCardId) return { ok: false, message: "请先选择 PASS 预留牌" };
+      const pending = getPassReserveSelection(workingRoot);
+      if (!pending || !selectedCardId) return { ok: false, message: "请先选择 PASS 预留牌" };
 
       const currentEffect = getCurrentActionEffect();
       if (!currentEffect || currentEffect.id !== pending.effectId) {
@@ -1442,7 +1449,7 @@
         cardState,
         player,
         pending.roundNumber,
-        pending.selectedCardId,
+        selectedCardId,
       );
       if (!result.ok) {
         rocketState.statusNote = result.message;
@@ -1467,7 +1474,8 @@
         message: result.message,
         payload: { card: result.card, roundNumber: pending.roundNumber },
       };
-      setPassReserveSelection(null);
+      setPassReserveSelection(workingRoot, null);
+      uiRuntimeState.passReserveSelectedCardId = null;
       uiRuntimeState.passReserveSelectionDismissed = false;
       syncPassReserveSelectionChrome(workingRoot);
       rocketState.statusNote = result.message;

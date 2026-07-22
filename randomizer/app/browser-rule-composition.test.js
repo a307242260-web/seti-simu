@@ -467,6 +467,36 @@ function createHarness(initialValue = 0) {
     fs.readFileSync(path.join(__dirname, "ai-controller.js"), "utf8"),
   ].join("\n");
   assert.doesNotMatch(aiProductionSource, /pendingMovePayment|pendingPlayCardSelection|runAiMovePaymentDecision|runAiPlayCardSelectionDecision/, "AI 不得保留 UI/payment pending 旁路");
+  const cardTriggerSource = fs.readFileSync(path.join(__dirname, "card-trigger-runtime.js"), "utf8");
+  const speciesRuntimeSource = fs.readFileSync(path.join(__dirname, "aliens/species-runtime.js"), "utf8");
+  const scanFlowSource = fs.readFileSync(path.join(__dirname, "scan-flow.js"), "utf8");
+  const migratedCardDecisionSources = [
+    appSource,
+    cardRuntimeSource,
+    cardTriggerSource,
+    conditionalSource,
+    debugRuntimeSource,
+    speciesRuntimeSource,
+    scanFlowSource,
+  ].join("\n");
+  assert.doesNotMatch(
+    migratedCardDecisionSources,
+    /["'](?:card_corner_free_move|card_trigger_free_move|card_trigger_action|card_task_completion|pass_reserve_selection)["']/,
+    "第二批卡牌旧 DecisionSession key 必须从生产调用物理删除",
+  );
+  assert.match(cardTriggerSource, /workingRoot[\s\S]*?cardTriggerContinuation/, "卡牌触发选择必须归 Composition continuation");
+  assert.match(cardTriggerSource, /workingRoot[\s\S]*?cardTaskCompletionContinuation/, "任务完成选择必须归 Composition continuation");
+  assert.match(cardRuntimeSource, /workingRoot[\s\S]*?cardCornerFreeMoveContinuation/, "卡牌角标移动必须归 Composition continuation");
+  assert.match(cardRuntimeSource, /workingRoot[\s\S]*?passReserveContinuation/, "PASS 预留决策必须归 Composition continuation");
+  assert.doesNotMatch(
+    aiProductionSource,
+    /pendingPassReserve|pendingCardTrigger|pendingCardTaskCompletion|pendingCardCornerFreeMove|runAiPassReserveDecision|runAiCardTrigger|runAiCardTaskCompletionDecision|runAiCardCornerFreeMoveDecision/,
+    "AI 必须只经 active Decision choice + submitDecision 处理卡牌决策",
+  );
+  assert.doesNotMatch(cardRuntimeSource, /passReserveContinuation[^\n]*selectedCardId|getPassReserveSelection\([^)]*\)\.selectedCardId/, "PASS continuation 不得持有 UI 选择");
+  assert.match(cardRuntimeSource, /uiRuntimeState\.passReserveSelectedCardId/, "PASS 未确认高亮只能进入 uiRuntimeState");
+  assert.match(appSource, /PASS_RESERVE_DECISION_REQUIRED[\s\S]*?inputPort\.submitDecision\(/, "PASS 人类确认必须映射 active Decision choice");
+  assert.match(appSource, /function submitActiveCardDecision[\s\S]*?inputPort\.submitDecision\(/, "卡牌 trigger/task/free-move 人类输入必须提交 active Decision choice");
 }
 
 console.log("browser-rule-composition tests passed");

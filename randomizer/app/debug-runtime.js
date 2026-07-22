@@ -163,8 +163,9 @@
     function clearPlayerScopedSelectionsForSwitch(workingRoot) {
       decisionState.discardAction = null;
       decisionState.cardSelectionAction = null;
-      decisionSessions?.clear?.("pass_reserve_selection");
+      delete workingRoot.match.passReserveContinuation;
       uiRuntimeState.passReserveSelectionDismissed = false;
+      uiRuntimeState.passReserveSelectedCardId = null;
       decisionState.handScanAction = null;
       uiRuntimeState.playCardSelection = null;
       uiRuntimeState.handCardPlayAction = null;
@@ -984,7 +985,7 @@
         workingRoot.match?.movePaymentContinuation,
         decisionState.discardAction,
         decisionState.cardSelectionAction,
-        decisionSessions?.peek?.("pass_reserve_selection"),
+        workingRoot.match?.passReserveContinuation,
         decisionState.scanTargetAction,
         decisionSessions?.peek?.("probe_sector_scan"),
         decisionSessions?.peek?.("probe_location_reward"),
@@ -993,9 +994,9 @@
         decisionState.alienTraceAction,
         decisionSessions?.peek?.("land_target"),
         decisionSessions?.peek?.("data_placement"),
-        decisionSessions?.peek?.("card_trigger_action"),
-        decisionSessions?.peek?.("card_trigger_free_move"),
-        decisionSessions?.peek?.("card_task_completion"),
+        workingRoot.match?.cardTriggerContinuation,
+        workingRoot.match?.cardTriggerFreeMoveContinuation,
+        workingRoot.match?.cardTaskCompletionContinuation,
         decisionSessions?.peek?.("strategy_passive_slot"),
         decisionSessions?.peek?.("pirates_raid_placement"),
         uiRuntimeState.industryFreeMoveState,

@@ -274,65 +274,6 @@
     }
 
 
-    function runAiPassReserveDecision(workingRoot) {
-      const { playerState } = requireWorkingRoot(workingRoot);
-      if (!state.pendingPassReserveSelection) return null;
-      const player = resolveWorkingPlayerById(workingRoot, state.pendingPassReserveSelection.playerId) || getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(player?.id)) {
-        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择 PASS 预留牌` };
-      }
-      const pile = getPassReserveSelectionCards(workingRoot);
-      const currentHandSize = Math.max(0, aiNumber(player?.resources?.handSize ?? (player?.hand || []).length));
-      const runezuLowEnginePassReserve = currentHandSize <= 1
-        && getAiLowEngineCatchupProfile(player).active
-        && hasAiRunezuPassReservePressure(player, pile);
-      const passReserveResourcePressure = getAiPassReserveResourcePressure(player, pile, currentHandSize);
-      const passReserveResourcePressurePreview = getAiPassReserveResourcePressure(player, pile, currentHandSize, {
-        ignoreRound: true,
-      });
-      const shouldRankPassReserve = getAiMarkedFinalFormulaEntries(player)
-        .some((entry) => entry.formulaId === "c2")
-        || (pile || []).some((card) => getCardTypeCode(card) === 3)
-        || currentHandSize <= 0
-        || runezuLowEnginePassReserve
-        || passReserveResourcePressure.active;
-      const ranked = shouldRankPassReserve
-        ? (pile || [])
-          .map((card) => ({ card, score: scoreAiPassReserveCard(workingRoot, card, player) }))
-          .filter((entry) => entry.card && Number.isFinite(entry.score))
-          .sort((left, right) => right.score - left.score)
-        : [];
-      const reservePolicy = decidePolicyChoice(workingRoot, "choose_card", player, "pass-reserve", (pile || []).map((candidate, index) => ({
-        choiceId: candidate.id,
-        value: ranked.find((entry) => entry.card === candidate)?.score ?? -index,
-        target: { cardId: candidate.id },
-        summary: cards.getCardLabel?.(candidate) || candidate.cardName || candidate.id,
-        card: candidate,
-      })));
-      if (!reservePolicy.ok) return { ok: false, blocked: true, code: reservePolicy.code, message: reservePolicy.message };
-      const card = reservePolicy.choice.card;
-      if (!card) return { ok: false, message: "PASS 预留牌堆为空" };
-      selectPassReserveCard(workingRoot, card.id);
-      recordAiAutoBattleLog("pass-reserve", `${player.colorLabel}AI 选择 PASS 预留牌`, {
-        card,
-        runezuLowEnginePassReserve,
-        passReserveResourcePressure,
-        passReserveResourcePressurePreview,
-        passReserveResourcePressureMiss: Boolean(
-          !passReserveResourcePressure.active
-          && passReserveResourcePressurePreview.active
-          && !isAiPassReservePreviewIncomeCandidate(card, passReserveResourcePressurePreview)
-        ),
-        selectedScore: ranked.find((entry) => entry.card === card)?.score ?? null,
-        candidates: ranked.slice(0, 5).map((entry) => ({
-          cardId: entry.card.cardId || entry.card.id || null,
-          cardLabel: cards.getCardLabel?.(entry.card) || entry.card.cardName || entry.card.label || null,
-          typeCode: getCardTypeCode(entry.card),
-          score: Math.round(entry.score * 1000) / 1000,
-        })),
-      });
-      return confirmPassReserveSelection(workingRoot);
-    }
     function runAiCardSelectionDecision(workingRoot) {
       const { cardState, playerState } = requireWorkingRoot(workingRoot);
       if (!isCardSelectionActive() && !isIndustryHandSelectionActive()) return null;
@@ -604,124 +545,6 @@
       return { ok: true };
     }
 
-    function canAiResolveCardTriggerMatch(workingRoot, match) {
-      const type = match?.effect?.type || null;
-      if (!type) return false;
-      if (type === amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) return false;
-      if (cardTriggerNeedsFreeMove(match)) {
-        return listCardTriggerFreeMoveCandidates(workingRoot, match).length > 0;
-      }
-      if (type === "pick_card") return true;
-      if (
-        type === runezu?.EFFECT_TYPES?.SYMBOL_REWARD
-        || type === runezu?.EFFECT_TYPES?.SYMBOL_BRANCH
-      ) {
-        return true;
-      }
-      if (String(type).startsWith("card_")) {
-        return canAiResolvePlayCardEffects(workingRoot, [match.effect]).ok;
-      }
-      if (type === "launch") {
-        return getAiLaunchTriggerResolution(workingRoot, match.effect).ok;
-      }
-      return [
-        "gain_resources",
-        "gain_data",
-        "draw_cards",
-        cardEffects.EFFECT_TYPES.CARD_CORNER_EVENT_REWARD,
-      ].includes(type);
-    }
-
-    function runAiCardTriggerDecision(workingRoot) {
-      const { playerState } = requireWorkingRoot(workingRoot);
-      if (!state.pendingCardTriggerAction) return null;
-      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择卡牌触发` };
-      }
-
-      const matches = state.pendingCardTriggerAction.matches || [];
-      const selectedIndex = matches.findIndex((match) => canAiResolveCardTriggerMatch(workingRoot, match));
-      if (selectedIndex < 0) {
-        const reasons = matches.map((match) => ({
-          cardLabel: cards.getCardLabel(match?.card),
-          effectType: match?.effect?.type || null,
-          effectLabel: match?.effect?.label || null,
-          reason: match?.effect?.type === "launch"
-            ? getAiLaunchTriggerResolution(workingRoot, match.effect, currentPlayer).message || null
-            : null,
-        }));
-        const message = "AI 取消本次不可发动的卡牌触发";
-        recordAiAutoBattleLog("card-trigger-skip", `${currentPlayer.colorLabel}${message}`, {
-          matches: reasons,
-        });
-        if (typeof cancelCardTriggerChoice === "function") {
-          cancelCardTriggerChoice(workingRoot);
-          return { ok: true, progressed: true, skipped: true, message, matches: reasons };
-        }
-        return {
-          ok: false,
-          blocked: true,
-          message: "AI 没有可处理的卡牌触发",
-          matches: reasons,
-        };
-      }
-
-      const selected = matches[selectedIndex];
-      recordAiAutoBattleLog("card-trigger", `${currentPlayer.colorLabel}AI 选择卡牌触发 ${selected.effect?.label || selected.effect?.type}`, {
-        selectedIndex,
-        cardLabel: cards.getCardLabel(selected.card),
-        effectType: selected.effect?.type || null,
-        optionCount: matches.length,
-      });
-      return handleCardTriggerChoice(workingRoot, selectedIndex);
-    }
-
-    function runAiCardTriggerFreeMoveDecision(workingRoot) {
-      const { playerState } = requireWorkingRoot(workingRoot);
-      if (!state.pendingCardTriggerFreeMove) return null;
-      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择卡牌触发移动` };
-      }
-
-      const candidates = listCardTriggerFreeMoveCandidates(workingRoot, state.pendingCardTriggerFreeMove.match);
-      const selected = selectScoredItem(candidates);
-      if (!selected) return { ok: false, blocked: true, message: "AI 没有可用卡牌触发移动路径" };
-      recordAiAutoBattleLog("move-path", `${currentPlayer.colorLabel}AI 选择卡牌触发移动 ${selected.rocketLabel} ${selected.directionLabel}`, {
-        selected,
-        candidates,
-        effectType: state.pendingCardTriggerFreeMove.match?.effect?.type || null,
-      });
-      return executeFreeMoveForCardTrigger(workingRoot, selected.deltaX, selected.deltaY, selected.rocketId);
-    }
-
-    function runAiCardTaskCompletionDecision(workingRoot) {
-      const { playerState } = requireWorkingRoot(workingRoot);
-      if (!state.pendingCardTaskCompletion) return null;
-      const pending = state.pendingCardTaskCompletion;
-      const currentPlayer = resolveWorkingPlayerById(workingRoot, pending.playerId || pending.ready?.playerId)
-        || (playerState.players || []).find((player) => (player.reservedCards || []).includes(pending.ready?.card))
-        || getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工确认任务完成` };
-      }
-      const ready = state.pendingCardTaskCompletion.ready || null;
-      const unsupportedEffect = (ready?.effects || []).find((effect) => !canAiResolveAlienTraceEffect(workingRoot, effect, currentPlayer));
-      if (unsupportedEffect) {
-        return {
-          ok: false,
-          blocked: true,
-          message: `${currentPlayer.colorLabel}AI 跳过无合法目标的任务奖励 ${cards.getCardLabel(ready?.card)}`,
-        };
-      }
-      recordAiAutoBattleLog("card-task", `${currentPlayer.colorLabel}AI 确认完成任务 ${cards.getCardLabel(ready?.card)}`, {
-        cardLabel: cards.getCardLabel(ready?.card),
-        effectTypes: (ready?.effects || []).map((effect) => effect?.type || null).filter(Boolean),
-      });
-      return confirmCardTaskCompletion(workingRoot, "confirm", { automated: true });
-    }
-
     function scoreAiReadyCardTask(workingRoot, ready, player = getWorkingCurrentPlayer(workingRoot)) {
       if (!ready) return -Infinity;
       if ((ready.effects || []).some((effect) => !canAiResolveAlienTraceEffect(workingRoot, effect, player))) return -Infinity;
@@ -747,7 +570,7 @@
 
     function runAiReadyCardTaskOpenDecision(workingRoot) {
       const { playerState } = requireWorkingRoot(workingRoot);
-      if (state.pendingCardTaskCompletion || isActionEffectFlowActive() || hasActivePendingSubFlow()) return null;
+      if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return null;
       if (typeof getReadyCardTasks !== "function" || typeof openCardTaskCompletionPicker !== "function") return null;
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(currentPlayer?.id)) return null;
@@ -1019,17 +842,12 @@
       inferAiStyleFromOpening,
       chooseInitialSelectionForAiPlayer,
       runAiDiscardDecision,
-      runAiPassReserveDecision,
       runAiCardSelectionDecision,
       runAiHandScanDecision,
       cardTriggerNeedsFreeMove,
       getCardTriggerFreeMoveEffect,
       listCardTriggerFreeMoveCandidates,
       getAiLaunchTriggerResolution,
-      canAiResolveCardTriggerMatch,
-      runAiCardTriggerDecision,
-      runAiCardTriggerFreeMoveDecision,
-      runAiCardTaskCompletionDecision,
       scoreAiReadyCardTask,
       runAiReadyCardTaskOpenDecision,
       getAiBanrenmaOpportunityPlayers,

@@ -71,6 +71,7 @@ function createHarness() {
     formatChongGain: (gain) => Object.entries(gain).map(([key, value]) => `${key}:${value}`).join(" + "),
   });
   const workingRoot = {
+    match: {},
     alienGameState: {},
     cardState,
     nebulaDataState: {},
@@ -98,27 +99,27 @@ function createHarness() {
 }
 
 {
-  const { runtime, workingRoot, pendingState, decisionSessions, calls } = createHarness();
+  const { runtime, workingRoot, pendingState, calls } = createHarness();
   runtime.enqueueType1TriggerEvents(workingRoot, [{ type: "scan", sectorX: 2 }]);
   assert.deepEqual(workingRoot.match.type1TriggerEvents, [{ type: "scan", sectorX: 2 }]);
 
-  decisionSessions.open("card_trigger_action", { matches: [{ id: "trigger" }] });
+  workingRoot.match.cardTriggerContinuation = { matches: [{ id: "trigger" }] };
   assert.equal(runtime.cancelCardTriggerChoice(workingRoot), true);
-  assert.equal(decisionSessions.peek("card_trigger_action"), null);
+  assert.equal(workingRoot.match.cardTriggerContinuation, undefined);
   assert.ok(calls.updated > 0);
 }
 
 {
-  const { runtime, workingRoot, player, cardState, decisionSessions, calls } = createHarness();
+  const { runtime, workingRoot, player, cardState, calls } = createHarness();
   const card = { id: "task-card", label: "任务牌" };
   player.reservedCards.push(card);
-  decisionSessions.open("card_task_completion", {
+  workingRoot.match.cardTaskCompletionContinuation = {
     ready: {
       card,
       task: { id: "task-1" },
       effects: [{ id: "reward", type: "gain_resources" }],
     },
-  });
+  };
   const result = runtime.confirmCardTaskCompletion(workingRoot);
   assert.equal(result, true);
   assert.equal(player.completedTaskCount, 1);

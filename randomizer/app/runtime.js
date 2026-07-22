@@ -65,6 +65,7 @@
   function createUiState() {
     return {
       passReserveSelectionDismissed: false,
+      passReserveSelectedCardId: null,
       debugAlienTraceModeActive: false,
       sectorWinDebugActive: false,
       completedEffectFlowsForUndo: {},

@@ -261,7 +261,7 @@
       const active = isMovePaymentSelectionActive(workingRoot);
       const lockedForAi = isMovePaymentLockedForAiAutomation(workingRoot);
       const manualActive = active && !lockedForAi;
-      const preservesCardCornerMove = getMovePayment(workingRoot)?.supplementalMoveContext?.type === "card_corner_free_move";
+      const preservesCardCornerMove = getMovePayment(workingRoot)?.supplementalMoveContext?.type === "cardCornerFreeMove";
       if (active && !preservesCardCornerMove) cancelHandCardContextActions(workingRoot, { silent: true });
       els.appWrap?.classList.toggle("move-payment-selection-active", manualActive);
       els.playerHandPanel?.classList.toggle("move-payment-selection-active", manualActive);
@@ -539,8 +539,8 @@
           fromMovePayment: true,
         });
       }
-      if (supplementalMoveContext?.type === "card_corner_free_move") {
-        return executeFreeMoveForCardCorner(pending.deltaX, pending.deltaY, pending.rocketId, {
+      if (supplementalMoveContext?.type === "cardCornerFreeMove") {
+        return executeFreeMoveForCardCorner(workingRoot, pending.deltaX, pending.deltaY, pending.rocketId, {
           terrainRequired: supplementalMoveContext.terrainRequired,
           providedMovePoints,
           energyCost,
@@ -548,8 +548,8 @@
           fromMovePayment: true,
         });
       }
-      if (supplementalMoveContext?.type === "card_trigger_free_move") {
-        return executeFreeMoveForCardTrigger(pending.deltaX, pending.deltaY, pending.rocketId, {
+      if (supplementalMoveContext?.type === "cardTriggerFreeMove") {
+        return executeFreeMoveForCardTrigger(workingRoot, pending.deltaX, pending.deltaY, pending.rocketId, {
           terrainRequired: supplementalMoveContext.terrainRequired,
           providedMovePoints,
           energyCost,

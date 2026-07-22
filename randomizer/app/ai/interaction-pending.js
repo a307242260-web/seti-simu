@@ -948,33 +948,6 @@
       };
     }
 
-    function runAiCardCornerFreeMoveDecision(workingRoot) {
-      const { playerState } = requireWorkingRoot(workingRoot);
-      if (!state.pendingCardCornerFreeMove) return null;
-      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工处理卡牌角标移动` };
-      }
-      const pending = state.pendingCardCornerFreeMove;
-      const movementPoints = pending.action?.moveReward?.movementPoints || pending.action?.movementPoints || 1;
-      const candidates = listAiEffectMoveCandidates(workingRoot, {
-        id: "cardCornerMove",
-        free: true,
-        poolRemaining: movementPoints,
-      });
-      const selected = selectScoredItem(candidates);
-      if (!selected) {
-        return { ok: false, blocked: true, message: "AI 没有可用卡牌角标移动路径" };
-      }
-      recordAiAutoBattleLog("move-path", `${currentPlayer.colorLabel}AI 选择卡牌角标移动 ${selected.rocketLabel} ${selected.directionLabel}`, {
-        selected,
-        candidates,
-      });
-      const result = executeFreeMoveForCardCorner(workingRoot, selected.deltaX, selected.deltaY, selected.rocketId);
-      if (result?.ok) incrementAiCardCornerMoveCountThisTurn(workingRoot, currentPlayer.id);
-      return result;
-    }
-
     function runAiIndustryFreeMoveDecision(workingRoot) {
       const { playerState } = requireWorkingRoot(workingRoot);
       if (!state.industryFreeMoveState) return null;
@@ -2199,7 +2172,6 @@
       getAiCompletedIndustryHuanyuMoveRocketIds,
       listAiEffectMoveCandidates,
       runAiActionEffectMoveDecision,
-      runAiCardCornerFreeMoveDecision,
       runAiIndustryFreeMoveDecision,
       listAiScanAction4Candidates,
       runAiScanAction4Decision,

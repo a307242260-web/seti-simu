@@ -405,12 +405,7 @@
     function getPendingAutomationPlayerId() {
       if (state.pendingDiscardAction?.player?.id) return state.pendingDiscardAction.player.id;
       if (state.pendingCardSelectionAction?.player?.id) return state.pendingCardSelectionAction.player.id;
-      if (state.pendingPassReserveSelection?.playerId) return state.pendingPassReserveSelection.playerId;
       if (state.pendingHandScanAction?.player?.id) return state.pendingHandScanAction.player.id;
-      if (state.pendingCardTaskCompletion) {
-        const playerId = getPendingPlayerId(state.pendingCardTaskCompletion);
-        if (playerId) return playerId;
-      }
       const sharedPendingEntries = [
         state.pendingScanTargetAction,
         state.pendingProbeSectorScanAction,

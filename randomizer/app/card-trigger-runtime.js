@@ -41,7 +41,6 @@
       createJiuzheReservedButton,
       createReservedCardButton,
       createReservedCardRow,
-      decisionSessions,
       data,
       deactivateMoveMode,
       document,
@@ -146,25 +145,23 @@
     }) || {};
 
     const TYPE1_TRIGGER_CONTINUATION_FIELD = "type1TriggerEvents";
-    const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";
-    const CARD_TRIGGER_FREE_MOVE_SESSION = "card_trigger_free_move";
-    const CARD_TRIGGER_ACTION_SESSION = "card_trigger_action";
-    const CARD_TASK_COMPLETION_SESSION = "card_task_completion";
-    const getCardTriggerAction = () => decisionSessions.peek(CARD_TRIGGER_ACTION_SESSION);
-    const getCardTaskCompletion = () => decisionSessions.peek(CARD_TASK_COMPLETION_SESSION);
-    function setCardTriggerAction(session) {
-      if (!session) return decisionSessions.clear(CARD_TRIGGER_ACTION_SESSION);
-      return decisionSessions.open(CARD_TRIGGER_ACTION_SESSION, session);
+    const getMatchContinuation = (workingRoot, field) => requireWorkingRoot(workingRoot).match?.[field] || null;
+    function setMatchContinuation(workingRoot, field, continuation) {
+      const activeRoot = requireWorkingRoot(workingRoot);
+      if (!activeRoot.match || typeof activeRoot.match !== "object") activeRoot.match = {};
+      if (!continuation) {
+        delete activeRoot.match[field];
+        return null;
+      }
+      activeRoot.match[field] = structuredClone(continuation);
+      return activeRoot.match[field];
     }
-    function setCardTaskCompletion(session) {
-      if (!session) return decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
-      return decisionSessions.open(CARD_TASK_COMPLETION_SESSION, session);
-    }
-    const getCardTriggerFreeMove = () => decisionSessions.peek(CARD_TRIGGER_FREE_MOVE_SESSION);
-    function setCardTriggerFreeMove(session) {
-      if (!session) return decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
-      return decisionSessions.open(CARD_TRIGGER_FREE_MOVE_SESSION, session);
-    }
+    const getCardTriggerAction = (workingRoot) => getMatchContinuation(workingRoot, "cardTriggerContinuation");
+    const getCardTaskCompletion = (workingRoot) => getMatchContinuation(workingRoot, "cardTaskCompletionContinuation");
+    const setCardTriggerAction = (workingRoot, value) => setMatchContinuation(workingRoot, "cardTriggerContinuation", value);
+    const setCardTaskCompletion = (workingRoot, value) => setMatchContinuation(workingRoot, "cardTaskCompletionContinuation", value);
+    const getCardTriggerFreeMove = (workingRoot) => getMatchContinuation(workingRoot, "cardTriggerFreeMoveContinuation");
+    const setCardTriggerFreeMove = (workingRoot, value) => setMatchContinuation(workingRoot, "cardTriggerFreeMoveContinuation", value);
     function getType1TriggerEvents(workingRoot) {
       requireWorkingRoot(workingRoot);
       return workingRoot.match?.[TYPE1_TRIGGER_CONTINUATION_FIELD] || [];
@@ -339,11 +336,11 @@
       return isCardSelectionActive() && decisionState.cardSelectionAction?.type === "card_trigger_pick";
     }
 
-    function hasActiveCardTriggerResolution() {
+    function hasActiveCardTriggerResolution(workingRoot) {
       return Boolean(
-        getCardTriggerAction()
-        || getCardTriggerFreeMove()
-        || decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION)
+        getCardTriggerAction(workingRoot)
+        || getCardTriggerFreeMove(workingRoot)
+        || workingRoot.match?.cardCornerFreeMoveContinuation
         || isCardTriggerPickSelectionActive()
         || getPendingAmibaSymbolChoice()?.triggerMatch
       );
@@ -368,7 +365,7 @@
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!currentPlayer) return null;
       enqueueType1TriggerEvents(workingRoot, events);
-      if (hasActiveCardTriggerResolution() || isCardTriggerRewardFlowBusy()) return null;
+      if (hasActiveCardTriggerResolution(workingRoot) || isCardTriggerRewardFlowBusy()) return null;
 
       const queuedEvents = getType1TriggerEvents(workingRoot);
       while (queuedEvents.length) {
@@ -383,7 +380,7 @@
 
     function continueAfterCardTriggerResolution(workingRoot) {
       const type1Result = applyType1TriggerMatches(workingRoot, []);
-      if (type1Result || hasActiveCardTriggerResolution() || isCardTriggerRewardFlowBusy()) {
+      if (type1Result || hasActiveCardTriggerResolution(workingRoot) || isCardTriggerRewardFlowBusy()) {
         updateActionButtons();
         renderStateReadout();
         return Boolean(type1Result);
@@ -405,8 +402,8 @@
 
     function cancelCardTriggerChoice(workingRoot) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      if (!getCardTriggerAction()) return false;
-      closeCardTriggerPicker();
+      if (!getCardTriggerAction(workingRoot)) return false;
+      closeCardTriggerPicker(workingRoot);
       rocketState.statusNote = "已取消卡牌触发";
       continueAfterCardTriggerResolution(workingRoot);
       return true;
@@ -683,7 +680,7 @@
       const runezuCompletions = [];
       refreshCardTaskState(workingRoot, { render });
       const type1Result = skipType1 ? null : applyType1TriggerMatches(workingRoot, normalizedEvents);
-      if (!hasActiveCardTriggerResolution()) {
+      if (!hasActiveCardTriggerResolution(workingRoot)) {
         activateNextActionEffectIfIdle();
       }
       return {
@@ -1011,7 +1008,7 @@
       const preparedEffects = prepareCardTriggerRewardEffects(workingRoot, match, effects, label);
       if (!preparedEffects.length) return { ok: false, message: "卡牌触发没有可执行奖励" };
 
-      closeCardTriggerPicker();
+      closeCardTriggerPicker(workingRoot);
       renderReservedCards();
 
       if (decisionState.actionEffectFlow) {
@@ -1064,7 +1061,7 @@
       if (!ready) return { ok: false, message: "这张任务卡尚未满足完成条件" };
       if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开任务确认窗口" };
 
-      setCardTaskCompletion({
+      setCardTaskCompletion(workingRoot, {
         ...getPendingOwnerFields(null, player),
         ready,
       });
@@ -1110,14 +1107,14 @@
       return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
     }
 
-    function closeCardTaskCompletionPicker() {
-      setCardTaskCompletion(null);
+    function closeCardTaskCompletionPicker(workingRoot) {
+      setCardTaskCompletion(workingRoot, null);
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
     }
 
     function confirmCardTaskCompletion(workingRoot, choice = "confirm", options = {}) {
       const { cardState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = getCardTaskCompletion();
+      const pending = getCardTaskCompletion(workingRoot);
       if (!pending?.ready) return { ok: false, message: "没有待完成的任务" };
       const blocked = blockManualAiPendingInputIfNeeded(pending, options, "任务完成");
       if (blocked) return blocked;
@@ -1147,7 +1144,7 @@
           effects: buildChongTaskCompletionEffects(ready.card, ready.task, selectedTransport),
         };
       }
-      closeCardTaskCompletionPicker();
+      closeCardTaskCompletionPicker(workingRoot);
 
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
@@ -1199,7 +1196,10 @@
       if (!matches?.length) return { ok: false, message: "没有可触发的卡牌" };
       if (!els.scanTargetOverlay || !els.scanTargetActions) return { ok: false, message: "无法打开卡牌触发选择" };
 
-      setCardTriggerAction({ matches });
+      setCardTriggerAction(workingRoot, {
+        ...getPendingOwnerFields(null, getWorkingCurrentPlayer(workingRoot)),
+        matches,
+      });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = "卡牌触发";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择 1 个满足条件的触发效果结算。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -1217,8 +1217,8 @@
       return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
     }
 
-    function closeCardTriggerPicker() {
-      setCardTriggerAction(null);
+    function closeCardTriggerPicker(workingRoot) {
+      setCardTriggerAction(workingRoot, null);
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
     }
 
@@ -1352,7 +1352,8 @@
       if (!rocketsForPlayer.length) {
         return { ok: false, message: "没有可移动的飞船" };
       }
-      setCardTriggerFreeMove({
+      setCardTriggerFreeMove(workingRoot, {
+        ...getPendingOwnerFields(null, currentPlayer),
         match,
         beforePlayer: structuredClone(currentPlayer),
         beforeCardState: {
@@ -1376,7 +1377,7 @@
     function applyCardTriggerMatch(workingRoot, match) {
       const { alienGameState, cardState, playerState } = requireWorkingRoot(workingRoot);
       if (match?.effect?.type === amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD) {
-        closeCardTriggerPicker();
+        closeCardTriggerPicker(workingRoot);
         return openAmibaSymbolChoiceDialog(workingRoot, {
           region: match.effect.options?.region,
           player: getWorkingCurrentPlayer(workingRoot),
@@ -1388,7 +1389,7 @@
         });
       }
       if (match?.effect?.type === "pick_card") {
-        closeCardTriggerPicker();
+        closeCardTriggerPicker(workingRoot);
         return beginCardSelection(workingRoot, {
           type: "card_trigger_pick",
           player: getWorkingCurrentPlayer(workingRoot),
@@ -1423,16 +1424,16 @@
     }
 
     function handleCardTriggerChoice(workingRoot, choiceIndex) {
-      const matches = getCardTriggerAction()?.matches || [];
+      const matches = getCardTriggerAction(workingRoot)?.matches || [];
       const match = matches[Number(choiceIndex)];
-      closeCardTriggerPicker();
+      closeCardTriggerPicker(workingRoot);
       if (!match) return { ok: false, message: "无效的卡牌触发选择" };
       return applyCardTriggerMatch(workingRoot, match);
     }
 
     function executeFreeMoveForCardTrigger(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
       const { cardState, rocketState, playerState } = requireWorkingRoot(workingRoot);
-      const pending = getCardTriggerFreeMove();
+      const pending = getCardTriggerFreeMove(workingRoot);
       if (!pending) return { ok: false, message: "没有待结算的卡牌免费移动" };
 
       const moveCheck = rocketActions.canMoveRocket(rocketState, rocketId, deltaX, deltaY);
@@ -1457,7 +1458,7 @@
           rocketId,
           terrainRequired,
           providedMovePoints,
-          context: { type: "card_trigger_free_move", terrainRequired },
+          context: { type: "cardTriggerFreeMove", terrainRequired },
           message: `${pending.match.effect.label}：已有 ${providedMovePoints} 点移动力，还需 ${terrainRequired - providedMovePoints} 点（可弃移动牌或用能量）`,
         });
       }
@@ -1507,7 +1508,7 @@
       discardReservedCardIfFinished(workingRoot, getWorkingCurrentPlayer(workingRoot), pending.match.card);
       completeQuickActionStep();
 
-      setCardTriggerFreeMove(null);
+      setCardTriggerFreeMove(workingRoot, null);
       rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();

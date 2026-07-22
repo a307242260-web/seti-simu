@@ -193,9 +193,8 @@ function getActionPhase(kind) {
 }
 
 const HEADLESS_PENDING_INVENTORY_KEYS = Object.freeze([
-  "pendingScanTargetType", "pendingPublicScanQueue", "pendingHandScan", "pendingPassReserve",
-  "pendingCardSelection", "pendingCardTrigger",
-  "pendingCardTriggerFreeMove", "pendingCardCornerFreeMove", "pendingCardTaskCompletion",
+  "pendingScanTargetType", "pendingPublicScanQueue", "pendingHandScan",
+  "pendingCardSelection",
   "pendingStrategyPassiveSlotChoice", "pendingJiuzheCardPlay", "pendingYichangdianCardGain",
   "pendingYichangdianCornerAction", "pendingBanrenmaCardGain", "pendingBanrenmaOpportunity",
   "pendingChongCardGain", "pendingChongFossilChoice",

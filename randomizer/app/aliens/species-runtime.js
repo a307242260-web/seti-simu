@@ -162,7 +162,7 @@
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
-    const getCardTaskCompletion = () => decisionSessions.peek("card_task_completion");
+    const getCardTaskCompletion = (workingRoot) => requireWorkingRoot(workingRoot).match?.cardTaskCompletionContinuation || null;
     let chongFossilDecisionDraft = null;
     let amibaSymbolDecisionDraft = null;
     let runezuSymbolBranchDecisionDraft = null;
@@ -3129,7 +3129,7 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
     const pendingEntries = [
       decisionState.alienTraceAction ? { pending: decisionState.alienTraceAction, label: "外星人痕迹" } : null,
       tracePickerPending ? { pending: tracePickerPending, label: "外星人痕迹" } : null,
-      getCardTaskCompletion() ? { pending: getCardTaskCompletion(), label: "任务完成" } : null,
+      getCardTaskCompletion(workingRoot) ? { pending: getCardTaskCompletion(workingRoot), label: "任务完成" } : null,
       jiuzheCardPlayDraft.get() ? { pending: jiuzheCardPlayDraft.get(), label: "九折牌" } : null,
       yichangdianCardGainDraft.get() ? { pending: yichangdianCardGainDraft.get(), label: "异常点外星人牌" } : null,
       banrenmaCardGainDraft.get() ? { pending: banrenmaCardGainDraft.get(), label: "半人马外星人牌" } : null,

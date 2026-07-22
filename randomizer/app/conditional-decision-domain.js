@@ -17,7 +17,6 @@
       getPendingYichangdianCornerAction,
       getPendingYichangdianCornerCards,
       getHeadlessConditionalPlayer,
-      decisionSessions,
       getPendingChongFossilChoice,
       getPendingAmibaSymbolChoice,
       getPendingRunezuSymbolBranch,
@@ -37,6 +36,8 @@
       players,
       getPublicScanChoicesForCard,
       getPendingPassReserveSelection,
+      getPendingCardTriggerAction,
+      getPendingCardTaskCompletion,
       getPassReserveSelectionCards,
       isMovePaymentCard,
       isTechTilePickingActive,
@@ -107,19 +108,19 @@
       confirmDiscardAnyForIncome,
       handlePayCreditChoice,
       confirmScanTarget,
-      selectPassReserveCard,
       confirmPassReserveSelection,
+      handleCardTriggerChoice,
+      cancelCardTriggerChoice,
+      confirmCardTaskCompletion,
       handleHandScanCardClick,
       executeCardMoveForEffect,
       executeFreeMoveForCardTrigger,
       restoreObjectSnapshot,
-      CARD_TRIGGER_FREE_MOVE_SESSION,
       clearMoveRocketHighlight,
       deactivateMoveMode,
       continueAfterCardTriggerResolution,
       finishCurrentCardMoveEffectEarly,
       executeFreeMoveForCardCorner,
-      CARD_CORNER_FREE_MOVE_SESSION,
       settleCardTasksAfterEffect,
       finishIndustryAbilityFlow,
       resolveMovePaymentDecision,
@@ -591,12 +592,12 @@
       }
       return { actorPlayer: player, candidates };
     }
-    const passReservePending = getPendingPassReserveSelection();
+    const passReservePending = getPendingPassReserveSelection(workingRoot);
     if (passReservePending) {
       const player = getPlayerById(passReservePending.playerId) || getCurrentPlayer();
       return {
         actorPlayer: player,
-        candidates: getPassReserveSelectionCards().map((card) => ({
+        candidates: getPassReserveSelectionCards(workingRoot).map((card) => ({
           id: "conditionalChoice",
           family: "choose_card",
           label: cards.getCardLabel(card),
@@ -614,7 +615,7 @@
       return enumerateHeadlessMovePaymentActions(workingRoot, movePaymentContinuation);
     }
     if (isTechTilePickingActive()) {
-      const player = getCurrentPlayer();
+      const player = getHeadlessConditionalPlayer(cardTriggerMovePending) || getCurrentPlayer();
       const pendingTileId = workingRoot.techGameState.ui.pendingTileId;
       if (pendingTileId) {
         return {
@@ -681,9 +682,50 @@
       });
       return { actorPlayer: player, candidates };
     }
-    const cardTriggerMovePending = getPendingCardTriggerFreeMove();
+    const cardTriggerPending = getPendingCardTriggerAction(workingRoot);
+    if (cardTriggerPending) {
+      return {
+        actorPlayer: getHeadlessConditionalPlayer(cardTriggerPending) || getCurrentPlayer(),
+        candidates: (cardTriggerPending.matches || []).map((match, choiceIndex) => ({
+          id: "conditionalChoice",
+          family: "choose_branch",
+          label: match?.effect?.label || cards.getCardLabel(match?.card),
+          target: { kind: "card-trigger", choiceId: String(choiceIndex), choiceIndex },
+        })).concat({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "取消本次卡牌触发",
+          target: { kind: "card-trigger-cancel", choiceId: "cancel" },
+        }),
+      };
+    }
+    const cardTaskPending = getPendingCardTaskCompletion(workingRoot);
+    if (cardTaskPending?.ready) {
+      const transports = cardTaskPending.ready.chongTask
+        && cardTaskPending.ready.task?.kind === "transport"
+        ? cardTaskPending.ready.deliveredTransports || []
+        : [];
+      const choices = transports.length > 1
+        ? transports.map((transport) => ({
+          id: "conditionalChoice",
+          family: "choose_target",
+          label: `选择搬运飞船 ${transport.rocketId}`,
+          target: { kind: "card-task-completion", choiceId: String(transport.rocketId) },
+        }))
+        : [{
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "确认完成任务",
+          target: { kind: "card-task-completion", choiceId: "confirm" },
+        }];
+      return {
+        actorPlayer: getHeadlessConditionalPlayer(cardTaskPending) || getCurrentPlayer(),
+        candidates: choices,
+      };
+    }
+    const cardTriggerMovePending = getPendingCardTriggerFreeMove(workingRoot);
     if (cardTriggerMovePending) {
-      const player = getCurrentPlayer();
+      const player = getHeadlessConditionalPlayer(cardTriggerMovePending) || getCurrentPlayer();
       const providedMovePoints = Math.max(0, Math.round(Number(
         cardTriggerMovePending.match?.effect?.options?.movementPoints ?? 1
       ) || 0));
@@ -788,9 +830,9 @@
       }
       return { actorPlayer: player, candidates };
     }
-    const cardCornerMovePending = getPendingCardCornerFreeMove();
+    const cardCornerMovePending = getPendingCardCornerFreeMove(workingRoot);
     if (cardCornerMovePending) {
-      const player = getCurrentPlayer();
+      const player = getHeadlessConditionalPlayer(cardCornerMovePending) || getCurrentPlayer();
       const providedMovePoints = Math.max(0, Math.round(Number(
         cardCornerMovePending.action?.moveReward?.movementPoints
           ?? cardCornerMovePending.action?.movementPoints
@@ -1148,27 +1190,43 @@
       action.target.nebulaId,
       action.target.sectorX,
     ),
-    "pass-reserve-card": (action) => {
-      selectPassReserveCard(action.target.choiceId);
-      return confirmPassReserveSelection();
+    "pass-reserve-card": (action, workingRoot) => {
+      return confirmPassReserveSelection(workingRoot, action.target.choiceId);
     },
+    "card-trigger": (action, workingRoot) => handleCardTriggerChoice(
+      workingRoot,
+      Number(action.target.choiceIndex),
+    ),
+    "card-trigger-cancel": (_action, workingRoot) => cancelCardTriggerChoice(workingRoot)
+      ? { ok: true, progressed: true, skipped: true, message: "已取消卡牌触发" }
+      : { ok: false, message: "当前没有可取消的卡牌触发" },
+    "card-task-completion": (action, workingRoot) => confirmCardTaskCompletion(
+      workingRoot,
+      action.target.choiceId,
+      { automated: true },
+    ),
     "hand-scan-card": (action) => handleHandScanCardClick(Number(action.target.handIndex)),
     "skip-hand-scan": () => {
       skipCurrentActionEffect();
       return { ok: true, progressed: true, skipped: true, message: "已跳过手牌扫描" };
     },
     "card-effect-move": (action) => executeCardMoveForEffect(action.deltaX, action.deltaY, action.target.rocketId),
-    "card-trigger-free-move": (action) => executeFreeMoveForCardTrigger(action.deltaX, action.deltaY, action.target.rocketId),
+    "card-trigger-free-move": (action, workingRoot) => executeFreeMoveForCardTrigger(
+      workingRoot,
+      action.deltaX,
+      action.deltaY,
+      action.target.rocketId,
+    ),
     "skip-card-trigger-free-move": (_action, workingRoot) => {
-      const pending = getPendingCardTriggerFreeMove();
+      const pending = getPendingCardTriggerFreeMove(workingRoot);
       const player = getCurrentPlayer();
       if (pending.beforePlayer) restoreObjectSnapshot(player, pending.beforePlayer);
       if (pending.beforeCardState) restoreObjectSnapshot(workingRoot.cardState, pending.beforeCardState);
-      decisionSessions.clear(CARD_TRIGGER_FREE_MOVE_SESSION);
+      delete workingRoot.match.cardTriggerFreeMoveContinuation;
       workingRoot.rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
-      continueAfterCardTriggerResolution();
+      continueAfterCardTriggerResolution(workingRoot);
       return { ok: true, progressed: true, skipped: true, message: "已取消无法执行的卡牌触发" };
     },
     "finish-card-effect-move": () => finishCurrentCardMoveEffectEarly()
@@ -1178,10 +1236,15 @@
       skipCurrentActionEffect();
       return { ok: true, progressed: true, skipped: true, message: "已跳过无可用路径的移动效果" };
     },
-    "card-corner-free-move": (action) => executeFreeMoveForCardCorner(action.deltaX, action.deltaY, action.target.rocketId),
+    "card-corner-free-move": (action, workingRoot) => executeFreeMoveForCardCorner(
+      workingRoot,
+      action.deltaX,
+      action.deltaY,
+      action.target.rocketId,
+    ),
     "skip-card-corner-free-move": (_action, workingRoot) => {
-      const pending = getPendingCardCornerFreeMove();
-      decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
+      const pending = getPendingCardCornerFreeMove(workingRoot);
+      delete workingRoot.match.cardCornerFreeMoveContinuation;
       workingRoot.rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
