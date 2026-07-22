@@ -2095,7 +2095,6 @@
     buildPlayerIncomeStatNodes,
     buildPlayerRunezuStatNodes,
     buildPlayerFangzhouStatNodes,
-    layoutReservedCardRows,
     renderFinalScoreBoard: (...args) => renderFinalScoreBoard?.(...args),
     buildPlutoMarkerContext: (...args) => renderRuntimeModule.cloneSelectorResult(buildPlutoMarkerContext(...args)),
     canUseCardCornerQuickAction: (...args) => canUseCardCornerQuickAction(...args),
@@ -2161,6 +2160,8 @@
     renderSectors,
     renderStateReadout,
     renderRotateStateToken,
+    layoutPlayerHandFan,
+    layoutReservedCardRows,
   } = renderRuntime;
   const finalUiRuntime = finalUiRuntimeModule.createFinalUiRuntime({
     document,
@@ -9235,50 +9236,6 @@
         getPlayerCompanyBaseIncome,
       })
       : { totalScore: player.resources?.score || 0 };
-  }
-
-  function layoutCardFan(fan, cardCount) {
-    if (!fan) return;
-
-    const cardHeight = getPublicCardHeight() || 166;
-    const cardWidth = cardHeight * (747 / 1040);
-    const fanPadding = 14;
-    const minStackStep = Math.round(cardWidth * 0.26);
-    const count = Number.isInteger(cardCount)
-      ? cardCount
-      : fan.querySelectorAll(".player-hand-card-button, .player-hand-card").length;
-
-    fan.style.setProperty("--card-height", `${cardHeight}px`);
-    fan.style.setProperty("--card-width", `${cardWidth}px`);
-    fan.style.minHeight = `${cardHeight + fanPadding}px`;
-    fan.classList.toggle("is-spread", count > 1);
-
-    if (!count) {
-      fan.style.setProperty("--card-step", `${cardWidth}px`);
-      return;
-    }
-
-    const padding = 24;
-    const available = Math.max(0, fan.clientWidth - padding);
-    const spreadStep = count > 1
-      ? (available - cardWidth) / (count - 1)
-      : cardWidth;
-    const step = count > 1
-      ? Math.max(minStackStep, spreadStep)
-      : cardWidth;
-
-    fan.style.setProperty("--card-step", `${step}px`);
-  }
-
-  function layoutPlayerHandFan(cardCount) {
-    layoutCardFan(els.playerHandFan, cardCount);
-  }
-
-  function layoutReservedCardRows() {
-    if (!els.reservedCardFan) return;
-    els.reservedCardFan.querySelectorAll(".reserved-card-row").forEach((row) => {
-      layoutCardFan(row);
-    });
   }
 
   function createReservedCardRow(rowType, label) {

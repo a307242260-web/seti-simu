@@ -22,7 +22,7 @@
       "createInitialSelectionPicker", "createCompanyCardSummary", "createPlayerNameStat", "createStatSeparator",
       "createStatIcon", "createInlineIconValue", "createPlayerStatsRow", "buildPlayerResourceStatNodes",
       "buildPlayerIncomeStatNodes", "buildPlayerRunezuStatNodes", "buildPlayerFangzhouStatNodes",
-      "layoutReservedCardRows", "renderFinalScoreBoard", "attachCardHoverPreview", "getPublicCardHeight",
+      "renderFinalScoreBoard", "attachCardHoverPreview", "getPublicCardHeight",
     ]),
     scalarOrFreshDtoSelectors: Object.freeze([
       "getPlayerRoundOrderNumber", "getPlayerDisplayLabel", "isPlayerPassedThisRound", "buildPlutoMarkerContext",
@@ -524,7 +524,6 @@
       buildPlayerIncomeStatNodes,
       buildPlayerRunezuStatNodes,
       buildPlayerFangzhouStatNodes,
-      layoutReservedCardRows,
       renderFinalScoreBoard,
       buildPlutoMarkerContext,
       canUseCardCornerQuickAction,
@@ -1164,6 +1163,11 @@
 
     function layoutPlayerHandFan(cardCount) {
       layoutCardFan(els.playerHandFan, cardCount);
+    }
+
+    function layoutReservedCardRows() {
+      if (!els.reservedCardFan) return;
+      els.reservedCardFan.querySelectorAll(".reserved-card-row").forEach((row) => layoutCardFan(row));
     }
 
     function renderPlayerHand() {
@@ -1872,6 +1876,8 @@
       renderSectors: withProjection(renderSectors),
       renderStateReadout: withProjection(renderStateReadout),
       renderRotateStateToken: withProjection(renderRotateStateToken),
+      layoutPlayerHandFan,
+      layoutReservedCardRows,
     });
   }
 

@@ -443,7 +443,6 @@ function createContext(overrides = {}) {
     buildPlayerIncomeStatNodes() { return [createElement("span", document)]; },
     buildPlayerRunezuStatNodes() { return []; },
     buildPlayerFangzhouStatNodes() { return []; },
-    layoutReservedCardRows() { context.layoutReservedCardRowsCalls += 1; },
     renderFinalScoreBoard(input) {
       context.renderFinalScoreBoardCalls += 1;
       context.lastFinalScoreRenderInput = input;
@@ -601,7 +600,7 @@ function createContext(overrides = {}) {
   assert.equal(context.els.opponentStatGrid.children.length, 2);
   assert.equal(context.els.playerHandPanelHandCount.textContent, "1");
   assert.equal(context.els.reservedCardFan.children.length, 2);
-  assert.equal(context.layoutReservedCardRowsCalls, 1);
+  runtime.layoutReservedCardRows();
   assert.equal(context.dataPlayerBoardCalls, 1);
   assert.equal(context.lastFinalScoreRenderInput.finalScoringState.legacyNormalizationProbe, true);
   assert.equal(context.testResident.finalScoring.legacyNormalizationProbe, undefined);
