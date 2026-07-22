@@ -1967,6 +1967,24 @@
     createRocketSnapshot,
     getEarthSectorCoordinate: getEarthSectorCoordinateForRoot,
   } = coordinateRuntime;
+  const boardPointerHandlers = actionInteractionRuntimeModule.createBoardPointerHandlers({
+    getRocketState: () => createStateSourceReadoutRoot().rocketState,
+    getHighlightedRocketId: () => uiRuntimeState.moveHighlightRocketId,
+    isAiInputLocked: isAiAutomationInputLocked,
+    blockManualInput: blockManualAiAutomationInput,
+    isPlanetMarkerRocket,
+    activateMoveMode,
+    hasBlockingMoveDecision: () => Boolean(
+      getPendingCardTriggerFreeMove()
+      || getPendingIndustryFreeMoveDecision()
+      || getPendingCardCornerFreeMove()
+      || getPendingScanFreeMoveDecision()
+      || getPendingCardMoveDecision()
+    ),
+    deactivateMoveMode,
+    renderStateReadout,
+  });
+  const { handleRocketPointerDown, handleBoardPointerDown } = boardPointerHandlers;
   function getCoordinateReadRoot() {
     return createStateSourceReadoutRoot();
   }
@@ -11423,51 +11441,6 @@
 
   function moveActiveRocket(deltaX, deltaY) {
     return moveRocket(deltaX, deltaY, createStateSourceReadoutRoot().rocketState.activeRocketId);
-  }
-
-  function handleRocketPointerDown(event) {
-    if (event.button !== 0) return;
-    if (isAiAutomationInputLocked()) {
-      event.preventDefault();
-      event.stopPropagation();
-      blockManualAiAutomationInput();
-      return;
-    }
-
-    const rocketId = Number(event.currentTarget.dataset.rocketId);
-    if (!Number.isInteger(rocketId)) return;
-
-    const rocket = createStateSourceReadoutRoot().rocketState.rockets.find((item) => item.id === rocketId);
-    if (!rocket || isPlanetMarkerRocket(rocket)) return;
-
-    event.stopPropagation();
-    if (uiRuntimeState.moveHighlightRocketId === rocketId) {
-      event.preventDefault();
-      return;
-    }
-    if (!activateMoveMode(rocketId)) return;
-
-    event.preventDefault();
-  }
-
-  function handleBoardPointerDown(event) {
-    if (event.button !== 0) return;
-    if (isAiAutomationInputLocked()) {
-      event.preventDefault();
-      blockManualAiAutomationInput();
-      return;
-    }
-    if (event.target.closest(".rocket-token") || event.target.closest(".move-arrow-button")) return;
-    if (uiRuntimeState.moveHighlightRocketId == null) return;
-    if (
-      getPendingCardTriggerFreeMove()
-      || getPendingIndustryFreeMoveDecision()
-      || getPendingCardCornerFreeMove()
-      || getPendingScanFreeMoveDecision()
-      || getPendingCardMoveDecision()
-    ) return;
-    deactivateMoveMode();
-    renderStateReadout();
   }
 
   /** 官网 randomizeWheels 的无动画版：直接累加步数并渲染 */

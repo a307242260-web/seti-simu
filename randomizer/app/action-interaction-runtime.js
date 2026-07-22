@@ -11,6 +11,55 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
+  function createBoardPointerHandlers(context = {}) {
+    const required = [
+      "getRocketState", "getHighlightedRocketId", "isAiInputLocked", "blockManualInput",
+      "isPlanetMarkerRocket", "activateMoveMode", "hasBlockingMoveDecision", "deactivateMoveMode",
+      "renderStateReadout",
+    ];
+    for (const name of required) {
+      if (typeof context[name] !== "function") {
+        throw new TypeError(`createBoardPointerHandlers requires function: ${name}`);
+      }
+    }
+
+    function handleRocketPointerDown(event) {
+      if (event.button !== 0) return;
+      if (context.isAiInputLocked()) {
+        event.preventDefault();
+        event.stopPropagation();
+        context.blockManualInput();
+        return;
+      }
+      const rocketId = Number(event.currentTarget.dataset.rocketId);
+      if (!Number.isInteger(rocketId)) return;
+      const rocket = (context.getRocketState().rockets || []).find((item) => item.id === rocketId);
+      if (!rocket || context.isPlanetMarkerRocket(rocket)) return;
+      event.stopPropagation();
+      if (context.getHighlightedRocketId() === rocketId) {
+        event.preventDefault();
+        return;
+      }
+      if (!context.activateMoveMode(rocketId)) return;
+      event.preventDefault();
+    }
+
+    function handleBoardPointerDown(event) {
+      if (event.button !== 0) return;
+      if (context.isAiInputLocked()) {
+        event.preventDefault();
+        context.blockManualInput();
+        return;
+      }
+      if (event.target.closest(".rocket-token") || event.target.closest(".move-arrow-button")) return;
+      if (context.getHighlightedRocketId() == null || context.hasBlockingMoveDecision()) return;
+      context.deactivateMoveMode();
+      context.renderStateReadout();
+    }
+
+    return Object.freeze({ handleRocketPointerDown, handleBoardPointerDown });
+  }
+
   function createActionInteractionRuntime(context) {
     const simulation = context.simulation === true;
     const {
@@ -1083,6 +1132,7 @@
   }
 
   return {
+    createBoardPointerHandlers,
     createActionInteractionRuntime,
   };
 });

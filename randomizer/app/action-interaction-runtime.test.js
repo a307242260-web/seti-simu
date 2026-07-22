@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createActionInteractionRuntime } = require("./action-interaction-runtime");
+const { createActionInteractionRuntime, createBoardPointerHandlers } = require("./action-interaction-runtime");
 
 const runtime = createActionInteractionRuntime({
   cardEffects: {
@@ -57,6 +57,42 @@ const createRoot = (suffix) => ({
 
 assert.throws(() => runtime.collectPlutoMarkers(), /explicit workingRoot/);
 assert.throws(() => runtime.getPlutoCandidateRockets(), /explicit workingRoot/);
+
+{
+  const calls = [];
+  let highlightedRocketId = null;
+  const handlers = createBoardPointerHandlers({
+    getRocketState: () => ({ rockets: [{ id: 7 }] }),
+    getHighlightedRocketId: () => highlightedRocketId,
+    isAiInputLocked: () => false,
+    blockManualInput: () => calls.push("blocked"),
+    isPlanetMarkerRocket: () => false,
+    activateMoveMode: (rocketId) => {
+      calls.push(`activate:${rocketId}`);
+      highlightedRocketId = rocketId;
+      return true;
+    },
+    hasBlockingMoveDecision: () => false,
+    deactivateMoveMode: () => {
+      calls.push("deactivate");
+      highlightedRocketId = null;
+    },
+    renderStateReadout: () => calls.push("render"),
+  });
+  const rocketEvent = {
+    button: 0,
+    currentTarget: { dataset: { rocketId: "7" } },
+    preventDefault: () => calls.push("prevent"),
+    stopPropagation: () => calls.push("stop"),
+  };
+  handlers.handleRocketPointerDown(rocketEvent);
+  handlers.handleBoardPointerDown({
+    button: 0,
+    target: { closest: () => null },
+    preventDefault() {},
+  });
+  assert.deepEqual(calls, ["stop", "activate:7", "prevent", "deactivate", "render"]);
+}
 
 const rootA = createRoot("a");
 const rootB = createRoot("b");
