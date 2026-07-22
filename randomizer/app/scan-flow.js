@@ -1570,9 +1570,9 @@
       return { ok: true, message: config.subtitle || "" };
     }
 
-    function confirmScanTarget(workingRoot, nebulaId, sectorX) {
+    function confirmScanTarget(workingRoot, nebulaId, sectorX, pendingContext = null) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const pending = decisionState.scanTargetAction;
+      const pending = pendingContext || decisionState.scanTargetAction;
       return withPendingOwnerPlayer(pending, () => {
       closeScanTargetPicker(workingRoot, { preserveIndustryAction: true });
 

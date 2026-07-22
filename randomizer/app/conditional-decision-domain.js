@@ -435,6 +435,23 @@
     }
     const scanTargetPending = decisionState.scanTargetAction;
     if (scanTargetPending) {
+      if (scanTargetPending.type === "sector_scan") {
+        return {
+          actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
+          candidates: (scanTargetPending.choices || []).filter((choice) => choice?.disabled !== true).map((choice) => ({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: choice.label || `扫描 ${choice.nebulaId}`,
+            target: {
+              kind: "sector-scan-target",
+              choiceId: String(choice.nebulaId),
+              nebulaId: choice.nebulaId,
+              sectorX: choice.sectorX,
+            },
+            pendingContext: structuredClone(scanTargetPending),
+          })),
+        };
+      }
       if (scanTargetPending.type === "conditional_sector_scan") {
         return {
           actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
@@ -1068,6 +1085,11 @@
 
   const CONDITIONAL_CHOICE_HANDLERS = Object.freeze({
     "conditional-sector": (action) => handleConditionalSectorChoice(action.target.sectorX ?? action.target.choiceId),
+    "sector-scan-target": (action) => confirmScanTarget(
+      action.target.nebulaId ?? action.target.choiceId,
+      action.target.sectorX,
+      action.pendingContext || null,
+    ),
     "chong-fossil-choice": (action) => handleChongFossilChoice(
       action.target.choiceId,
       action.pendingContext || null,

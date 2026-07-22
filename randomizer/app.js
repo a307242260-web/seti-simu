@@ -817,6 +817,10 @@
               if (candidates[0]?.target?.kind === "probe-location-reward") {
                 decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
               }
+              if (candidates[0]?.target?.kind === "sector-scan-target") {
+                decisionState.scanTargetAction = null;
+                if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+              }
               return {
                 ok: true,
                 boundary: "conditional_choice",
