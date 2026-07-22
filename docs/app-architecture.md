@@ -22,7 +22,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 4. `randomizer/app/dependencies.js` 收集并校验 app 层需要的全局模块。
 5. `randomizer/app/constants.js` 创建 app 层静态配置、图标路径、扫描/扇区奖励表和 UI 参数。
 6. `randomizer/app/dom.js` 集中查询页面上的固定 DOM 节点。
-7. `randomizer/app/view-adapter.js` 提供 Node composition 使用的 no-op view adapter；浏览器真实 DOM/render runtime 只通过 `BrowserProjection.resident` 的深冻结 selector 读取规则视图，生产装配不再注入长期规则 slice。
+7. Browser 生产入口直接装配真实 DOM/render runtime，并只通过 `BrowserProjection.resident` 的深冻结 selector 读取规则视图；Simulation 直接创建 rules-only Composition，不加载 `app.js`，生产入口不再保留 `simulationMode` 或 no-op DOM/view adapter 分支。
 8. `randomizer/app/events.js` 绑定页面事件、overlay 点击分发、拖拽回调和 resize 入口。
 8. `randomizer/app/start-screen.js` 处理开始界面选项同步、入口按钮和继续游戏恢复。
 9. `randomizer/app/rule-composition.js` 建立 Browser 唯一 StateStore、Standard Action registry、Effect runtime 与 active Session；`randomizer/app/turn-flow.js` 只通过其 lifecycle 重置新局并处理随机化和 round / turn 推进壳层；`turn-end-flow.js` 处理 PASS 队列、回合末外星人揭示与跨轮收尾。
@@ -38,7 +38,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 19. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
 20. `randomizer/app/aliens/species-runtime.js` 封装八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 和具体面板渲染，通过显式 context 接收跨域依赖。
 21. `randomizer/app/action-interaction-runtime.js` 承接冥王星行动、移动箭头 UI 与数据放置 picker。
-22. `randomizer/app.js` 保留 composition、跨域流程接线、渲染调度和各控制器装配；当前为 10,736 行。规则提交、Effect working state 与 Policy 请求分别由公共 owner 管理。
+22. `randomizer/app.js` 保留 composition、跨域流程接线、渲染调度和各控制器装配；规则提交、Effect working state 与 Policy 请求分别由公共 owner 管理。常驻玩家统计 DOM 已进入 `browser-host/player-stats-ui.js`，初始选择 DOM 已进入 `start-screen.js`。
 
 ## 文件职责
 
@@ -57,7 +57,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/alien-trace-reward-flow.js`：只决定痕迹奖励应进入方舟解锁、面板放置还是无目标落空；无目标时必须结束当前奖励节点，包括 `required` / 不可跳过节点。
 - `randomizer/app/constants.js`：只放静态常量和依赖派生常量。不要在这里读写游戏状态、DOM 或 pending 流程。
 - `randomizer/app/dom.js`：只收集固定 DOM 元素和 NodeList。新增 HTML id、overlay、按钮或常驻区域时先在这里登记。
-- `randomizer/app/view-adapter.js`：Browser UI 测试使用的空元素集合与 no-op render/log/hover 接口；不得承载规则分支。
+- `randomizer/app/view-adapter.js`：仅供隔离的 Node UI 测试创建 no-op adapter；Browser 生产入口不加载、不注入该模块。
 - `randomizer/app/events.js`：只做事件到 app 回调的路由。新增按钮、overlay、拖拽入口时优先改这里；不要在这里实现规则结算。
 - `randomizer/app/start-screen.js`：只处理开始界面选项、继续游戏入口和新局入口壳层；不要在这里新增规则结算或复制恢复逻辑。
 - `randomizer/app/turn-flow.js`：只通过 Browser Rule Composition lifecycle 重置新局，并处理随机化和回合推进壳层；不得再直接创建或恢复各领域长期 state。
@@ -72,7 +72,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/action-log-runtime.js`：处理行动日志草稿、步骤、entry、导入组装及日志列表/tab 的 DOM 展示；通过显式参数接收 turn/player/history 与 view 上下文，不直接抓 app 闭包。
 - `randomizer/app/action-log-export.js`：只做纯 Markdown 格式化和文件名生成，不读 DOM、不读取隐藏牌序，也不触发浏览器下载。
 - `randomizer/app/game-recovery.js`：只处理恢复快照、本地存档包和恢复流程适配；规则状态、活跃 Session、RNG 与确定性序列统一由 Browser Composition lifecycle 原子保存/恢复，模块不接受 StateStore-only snapshot，也不在 composition 外回灌序列。UI 刷新通过显式回调注入。
-- `randomizer/app/public-api.js`：只组装 `window.SetiRandomizer` 暴露面。新增调试 API 时优先改这里，保持 API 与运行态编排分离。
+- `randomizer/app/public-api.js`：只组装 `window.SetiRandomizer` 的 Browser/debug 窄 facade，不暴露 Simulation reset/step/checkpoint/Decision API，也不返回 mutable working root。
 - `randomizer/app/ai/control-runtime.js`：AI 控制层。唯一持有 `aiAutoBattleState`、scheduler 标志与策略权重；通过显式 `state` getter 和回调读取 pending、执行自动步骤，不复制 app pending 或 resolver 状态。
 - `randomizer/app/ai/battle-log.js`：AI 对战日志 compact、entry、bug 计数与玩家/比分快照。
 - `randomizer/app/ai/battle-report.js`：player result、pending state、report/progress/analysis schema；不执行对战步骤。

@@ -33,7 +33,7 @@
    - 展示/恢复：`render-runtime`、`final-ui-runtime`、`action-log-runtime`、`game-recovery`
    - AI/API：`final-score-ai-runtime`、`ai-controller`、`public-api`、`simulation-env`
 3. `app.js` 调用 `SetiAppDependencies.collectDependencies(window)`，创建状态并把显式 context 注入各 runtime。
-4. `bootstrap` 与 `public-api` 完成事件、`window.SetiRandomizer` 和 simulation 入口装配。
+4. `bootstrap` 与 `public-api` 完成事件和 `window.SetiRandomizer` Browser/debug facade 装配；Simulation 入口直接依赖 rules-only Composition，不经过 Browser app。
 
 `app/dependencies.js` 是必需全局模块的权威表；`dependencies.test.js` 与 `script-loading.test.js` 分别校验全局依赖契约和 HTML 脚本文件存在性。
 
@@ -108,9 +108,9 @@
 
 ## 5. Public API 与 simulation 边界
 
-- `public-api.js` 组装 `window.SetiRandomizer`，`app.js` 只提供显式 context。
+- `public-api.js` 组装 `window.SetiRandomizer` 的 Browser/debug 窄 facade，`app.js` 只提供显式 context；Simulation API 只属于 rules-only Composition/Simulation adapter。
 - `simulation-env.js` 提供 simulation observation/action/replay 适配；它直接依赖 rules-only Composition factory，不读取 `app.js` 或 Browser public API。
-- `view-adapter.js` 为 Node composition 提供 no-op render/log/hover 接口和空集合，不创建 fake DOM；浏览器 composition 仍使用 `dom.js`、真实 render runtime 与 events。
+- `view-adapter.js` 只供 Node UI 单测提供 no-op render/log/hover 接口和空集合，不创建 fake DOM；浏览器生产入口直接使用 `dom.js`、真实 render runtime 与 events，不再保留 `simulationMode` 分支。
 - `ai-controller.js` 只装配 `app/ai/**` runtime 与 `game/ai/**` 规则域，通过 state getter/setter 与动作回调访问 app 状态；它按各 runtime 的 `REQUIRED_CONTEXT_KEYS` 校验显式 context，迁移不得复制 pending 状态。
 - 新 runtime 均同时支持 `window.SetiApp*` 和 `module.exports`，便于传统浏览器加载与 Node 回归。
 
@@ -118,7 +118,7 @@
 
 - `app/aliens/species-runtime.js` 当前 4,455 行，超过约 3,000 行。当前边界是“八物种共用机会队列、dialog 与渲染 context 的单一物种运行域”。后续继续拆时，应按物种或 `rewards/dialogs/render` 子域拆分，并保持共用队列只有一个所有者。
 - `app/ai-controller.js` 当前 1,980 行；pending resolver、automation、action executor、控制状态、日志/报告/实验与纯规则域均已拆出。后续不得把策略或 resolver 正文重新堆回 controller。
-- `app.js` 当前 11,532 行，是大型 composition root。后续只允许按明确跨域边界继续减小，不以压缩格式或复制状态换取行数。
+- `app.js` 仍是待继续收窄的 composition root；常驻玩家统计 UI 已迁入 `browser-host/player-stats-ui.js`，初始选择 UI 已迁入 `start-screen.js`。后续只允许按明确跨域边界继续减小，不以压缩格式或复制状态换取行数。
 - 浏览器行为依赖传统脚本顺序；新增 runtime 必须同步更新 `index.html`、`dependencies.js` 和依赖测试。
 
 ## 7. 验证基线

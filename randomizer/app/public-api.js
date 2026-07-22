@@ -99,18 +99,6 @@
       runAiNonTurnAutomationStep,
       runAiSelectedTurnAction,
       buildAiTurnActionCandidates,
-      chooseInitialSelectionForAiPlayer,
-      enumerateSimulationTurnActions,
-      executeAiTurnAction,
-      submitSimulationTurnAction,
-      beginSimulationCompositionDrain,
-      inspectSimulationComposition,
-      enumerateSimulationConditionalActions,
-      executeSimulationConditionalAction,
-      getSimulationDecisionOwnerState,
-      advanceSimulationDeterministicState,
-      executeSimulationCurrentActionEffect,
-      skipSimulationCurrentActionEffect,
       resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,
@@ -273,47 +261,6 @@
             target: structuredClone(candidate.target || null),
             available: candidate.available !== false,
           })),
-        };
-      },
-      listSimulationTurnActionCandidates: () => ({
-        ok: true,
-        currentPlayer: structuredClone(getCurrentPlayer()),
-        candidates: structuredClone(enumerateSimulationTurnActions()),
-      }),
-      listSimulationConditionalActionCandidates: () => {
-        const result = enumerateSimulationConditionalActions();
-        const decisionOwner = getSimulationDecisionOwnerState?.(result.actorPlayer || null) || null;
-        return {
-          ok: true,
-          actorPlayer: structuredClone(decisionOwner?.actorPlayer || result.actorPlayer || null),
-          decisionOwner: structuredClone(decisionOwner),
-          candidates: structuredClone(result.candidates || []),
-        };
-      },
-      getSimulationDecisionOwnerState: (actorPlayer = null) => (
-        structuredClone(getSimulationDecisionOwnerState?.(actorPlayer) || null)
-      ),
-      chooseSimulationInitialSelection: () => chooseInitialSelectionForAiPlayer(),
-      beginSimulationCompositionDrain: () => beginSimulationCompositionDrain(),
-      inspectSimulationComposition: () => structuredClone(inspectSimulationComposition()),
-      executeSimulationConditionalAction: (action) => (
-        executeSimulationConditionalAction(structuredClone(action))
-      ),
-      advanceSimulationDeterministicState: () => advanceSimulationDeterministicState(),
-      executeSimulationCurrentActionEffect: () => executeSimulationCurrentActionEffect(),
-      skipSimulationActionEffect: () => skipSimulationCurrentActionEffect(),
-      executeSimulationTurnAction: (action, options = {}) => {
-        const actionResult = submitSimulationTurnAction(structuredClone(action));
-        if (actionResult?.ok === false || options.resolveToTurnBoundary === false) {
-          return { ...actionResult, action };
-        }
-        const resolution = resolveAiAutomationToTurnBoundary(options);
-        return {
-          ok: resolution.ok !== false,
-          progressed: true,
-          action,
-          actionResult,
-          resolution,
         };
       },
       getAiAutoBattleProgress,

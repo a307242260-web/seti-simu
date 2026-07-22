@@ -80,7 +80,6 @@
     Object.freeze({ key: "aiControlRuntimeModule", globalName: "SetiAppAiControlRuntime" }),
     Object.freeze({ key: "debugRuntimeModule", globalName: "SetiAppDebugRuntime" }),
     Object.freeze({ key: "effectSessionHostModule", globalName: "SetiAppEffectSessionHost" }),
-    Object.freeze({ key: "viewAdapterModule", globalName: "SetiAppViewAdapter" }),
   ]);
 
   function collectDependencies(source = root) {

@@ -54,7 +54,6 @@
     refreshModule,
     renderRuntimeModule,
     playerStatsUiModule,
-    viewAdapterModule,
     debugRuntimeModule,
     finalUiRuntimeModule,
     finalScoreAiRuntimeModule,
@@ -84,13 +83,11 @@
   if (!stateStoreModule || !hostStateSourceModule || !highCouplingStateModule || !ruleCompositionModule) {
     throw new Error("Missing SETI StateStore runtime dependencies");
   }
-  const simulationMode = false;
-  const viewAdapter = simulationMode ? viewAdapterModule.createNoopViewAdapter() : null;
-  const document = simulationMode ? null : window.document;
-  const Image = simulationMode ? null : window.Image;
+  const document = window.document;
+  const Image = window.Image;
   const Blob = window.Blob;
-  const requestAnimationFrame = viewAdapter?.scheduleFrame || window.requestAnimationFrame.bind(window);
-  const getComputedStyle = viewAdapter?.getComputedStyle || window.getComputedStyle.bind(window);
+  const requestAnimationFrame = window.requestAnimationFrame.bind(window);
+  const getComputedStyle = window.getComputedStyle.bind(window);
 
   const alienSpeciesRuntimeModule = window.SetiAppAlienSpeciesRuntime;
   const techRuntimeModule = window.SetiAppTechRuntime;
@@ -179,9 +176,6 @@
   let turnEndFlow = null;
   let actionInteractionRuntime = null;
   function runAiFinalScoreMarkDecision(...args) {
-    if (simulationMode) {
-      throw new Error("simulation 禁止调用 final-score AI resolver");
-    }
     return finalScoreAiRuntime?.runAiFinalScoreMarkDecision(...args) || null;
   }
   function createPassEvent(...args) { return turnEndFlow?.createPassEvent(...args); }
@@ -434,8 +428,7 @@
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
     seed: "browser-host",
-    simulationMode,
-    rngState: { owner: simulationMode ? "simulation" : "browser", state: null },
+    rngState: { owner: "browser", state: null },
     sequences: {},
   });
 
@@ -446,9 +439,9 @@
       finalScoreIds: initialOptions.finalScoreIds ?? FINAL_SCORE_IDS,
     });
     state.meta = {
-      seed: initialOptions.seed ?? (simulationMode ? "seti-simulation" : "browser-host"),
+      seed: initialOptions.seed ?? "browser-host",
       rngState: structuredClone(initialOptions.rngState
-        || { owner: simulationMode ? "simulation" : "browser", state: null }),
+        || { owner: "browser", state: null }),
     };
     return state;
   }
@@ -767,8 +760,6 @@
           return advanceSimulationDeterministicStateImpl(workingRoot) || { ok: true, progressed: false };
         case "simulation_execute_current_effect":
           return executeSimulationCurrentActionEffectImpl(workingRoot) || { ok: true, progressed: false };
-        case "simulation_skip_current_effect":
-          return skipSimulationCurrentActionEffectImpl(workingRoot);
         case "domain_command":
           return executeBrowserDomainCommand(workingRoot, command);
         default:
@@ -964,7 +955,6 @@
       ? { kind: request, payload: fallbackOptions || null }
       : { ...(request || {}) };
     const ensureStableRecoverySnapshot = () => {
-      if (simulationMode) return;
       if (ruleComposition.inspect().phase === "idle" && !browserActionStableRecoverySnapshot) {
         browserActionStableRecoverySnapshot = createGameRecoverySnapshot({
           label: "Standard Action 开始前稳定恢复点",
@@ -1250,9 +1240,8 @@
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
     seed: workingRoot.meta?.seed ?? "browser-host",
-    simulationMode,
     rngState: structuredClone(workingRoot.meta?.rngState
-      || { owner: simulationMode ? "simulation" : "browser", state: null }),
+      || { owner: "browser", state: null }),
     sequences: {
       card: cards.getNextCardInstanceSequence(),
       handCard: players.getNextHandCardSequence(),
@@ -1568,11 +1557,11 @@
     playerBoardTechLayer: null,
   };
 
-  const els = viewAdapter?.els || window.SetiAppDom.collectElements(document);
-  const residentViewStateStore = !simulationMode && browserHostModule?.viewStateStore
+  const els = window.SetiAppDom.collectElements(document);
+  const residentViewStateStore = browserHostModule?.viewStateStore
     ? browserHostModule.viewStateStore.createViewStateStore()
     : null;
-  const residentDesktopRenderer = !simulationMode && browserHostModule?.residentRenderer
+  const residentDesktopRenderer = browserHostModule?.residentRenderer
     ? browserHostModule.residentRenderer.createResidentRenderer({ document, els })
     : null;
   const residentStateSource = ruleComposition.stateSourcePort;
@@ -1581,7 +1570,7 @@
       stateSource: residentStateSource,
     })
     : null;
-  const residentInputAdapter = !simulationMode && browserHostModule?.inputAdapter && residentViewStateStore
+  const residentInputAdapter = browserHostModule?.inputAdapter && residentViewStateStore
     ? browserHostModule.inputAdapter.createBrowserInputAdapter({
       dispatchAction(action) {
         return action?.phase === "quick"
@@ -1612,7 +1601,7 @@
     ? browserHostModule.browserServices.createBrowserServices({
       ruleLifecycle: browserRuleLifecycle,
       viewStateStore: residentViewStateStore,
-      storage: simulationMode ? null : gameRecoveryModule.getPersistentGameStorage(window),
+      storage: gameRecoveryModule.getPersistentGameStorage(window),
       storageKey: `${PERSISTENT_GAME_STORAGE_KEY}:browser-services`,
     })
     : null;
@@ -1924,8 +1913,7 @@
     residentDesktopRenderer.renderAll(input);
     residentDecisionRenderer?.render(input);
   }
-  const cardHoverPreviewRuntime = viewAdapter?.hoverRuntime
-    || renderRuntimeModule.createCardHoverPreviewRuntime({ window, document });
+  const cardHoverPreviewRuntime = renderRuntimeModule.createCardHoverPreviewRuntime({ window, document });
   const attachCardHoverPreview = cardHoverPreviewRuntime.attach;
   const hideCardHoverPreview = cardHoverPreviewRuntime.hide;
   const initialSelectionUi = startScreenModule.createInitialSelectionUi({
@@ -1994,8 +1982,7 @@
   function seedDefaultReferenceRockets() {
     return ruleComposition.inputPort.submitHostCommand({ kind: "coordinate_seed_reference_rockets" });
   }
-  const actionLogViewRuntime = viewAdapter?.actionLogViewRuntime
-    || actionLogRuntimeModule.createActionLogViewRuntime({
+  const actionLogViewRuntime = actionLogRuntimeModule.createActionLogViewRuntime({
     document,
     els,
     players,
@@ -2037,7 +2024,7 @@
     buildPlayerFangzhouStatNodes,
     formatPlayerIncomeBreakdown,
   } = playerStatsUi;
-  const renderRuntime = viewAdapter?.renderRuntime || renderRuntimeModule.createRenderRuntime({
+  const renderRuntime = renderRuntimeModule.createRenderRuntime({
     document,
     Image,
     enforceCapabilityInventory: true,
@@ -2158,7 +2145,6 @@
     renderRotateStateToken,
   } = renderRuntime;
   const finalUiRuntime = finalUiRuntimeModule.createFinalUiRuntime({
-    simulation: simulationMode,
     document,
     els,
     players,
@@ -3028,7 +3014,6 @@
 
   const alienUiHelpers = alienUiModule.createAlienUiHelpers({
     uiRuntimeState,
-    simulation: simulationMode,
     document,
     structuredClone,
     alienTraceRewardFlow,
@@ -3533,8 +3518,8 @@
     quickTurnActionExecutor,
     conditionalActionExecutor,
     actions,
-    removeRocketElement: simulationMode ? () => {} : removeRocketElement,
-    syncPlanetOrbitLandMarkersAfterAction: simulationMode ? () => {} : syncPlanetOrbitLandMarkers,
+    removeRocketElement,
+    syncPlanetOrbitLandMarkersAfterAction: syncPlanetOrbitLandMarkers,
     startPlanetRewardEffectFlow,
     startLaunchSectorFinishEffectFlow: (...args) => startLaunchSectorFinishEffectFlow?.(...args),
     settleCardTasksAfterEffect: (...args) => settleCardTasksAfterEffect(...args),
@@ -4762,30 +4747,6 @@
     kind: "ai_build_turn_candidates",
     args,
   });
-  const chooseInitialSelectionForAiPlayer = () => ruleComposition.inputPort.submitHostCommand({
-    kind: "ai_choose_initial_selection",
-  });
-  const enumerateSimulationTurnActions = () => ruleComposition.inputPort.submitHostCommand(
-    { kind: "simulation_enumerate_turn_actions" },
-    { commit: false },
-  ).value || [];
-  const executeAiTurnAction = (action) => ruleComposition.inputPort.submitHostCommand({
-    kind: "ai_execute_turn_action",
-    action,
-  });
-  const submitSimulationTurnAction = (action) => {
-    const descriptor = action?.standardAction || action;
-    if (!descriptor?.actionId) {
-      return { ok: false, code: "STANDARD_ACTION_DESCRIPTOR_REQUIRED", message: "simulation 行动缺少 Standard Action descriptor" };
-    }
-    return ruleComposition.inputPort.submitAction(descriptor, {
-      metadata: { source: "simulation-env" },
-    });
-  };
-  const beginSimulationCompositionDrain = () => ruleComposition.inputPort.beginDrain({
-    metadata: { source: "simulation-env-reset" },
-  });
-  const inspectSimulationComposition = () => ruleComposition.inspect();
   const listCardTriggerFreeMoveCandidates = (...args) => (
     ruleComposition.inputPort.submitHostCommand({
       kind: "card_trigger_list_free_move_candidates",
@@ -5466,7 +5427,7 @@
       browserServices: residentBrowserServices,
       ruleLifecycleOptions: {
         seed: meta.seed ?? "browser-host",
-        rngState: meta.rngState || { owner: simulationMode ? "simulation" : "browser", state: null },
+        rngState: meta.rngState || { owner: "browser", state: null },
       },
       roundNumber: readoutRoot.turnState.roundNumber,
       turnNumber: readoutRoot.turnState.turnNumber,
@@ -5481,7 +5442,6 @@
   }
 
   function attachRecoverySnapshotToActionLogEntry(entry, label = null) {
-    if (simulationMode) return null;
     if (!entry) return null;
     const recoveryLabel = label || entry.actionLabel || entry.title || null;
     if (browserActionStableRecoverySnapshot) {
@@ -5498,7 +5458,6 @@
   }
 
   function refreshLatestActionLogRecoverySnapshot(label = null) {
-    if (simulationMode) return null;
     const entry = actionLogState.entries[actionLogState.entries.length - 1] || null;
     if (!entry) return null;
     attachRecoverySnapshotToActionLogEntry(entry, label);
@@ -5525,7 +5484,6 @@
   }
 
   function getPersistentGameStorage() {
-    if (simulationMode) return null;
     return gameRecoveryModule.getPersistentGameStorage(window);
   }
 
@@ -5589,7 +5547,6 @@
   }
 
   function schedulePersistentGameStateSave(options = {}) {
-    if (simulationMode) return;
     if (persistentGameSaveSuspended) return;
     if (persistentGameSaveTimer) {
       window.clearTimeout(persistentGameSaveTimer);
@@ -7614,26 +7571,6 @@
     return ruleComposition.inputPort.submitHostCommand({ kind: "effect_skip_current" }).value;
   }
 
-  function skipSimulationCurrentActionEffectImpl(workingRoot) {
-    const current = getCurrentActionEffect(workingRoot);
-    if (!simulationMode || !current || current.status !== "active") {
-      return { ok: false, message: "没有可跳过的活动效果" };
-    }
-    if (finishCurrentCardMoveEffectEarly()) {
-      return { ok: true, progressed: true, skipped: true, message: `已结束：${current.label}` };
-    }
-    skipCurrentActionEffectForRoot(workingRoot);
-    if (current.status === "active") {
-      cleanupSkippedActionEffect(current);
-      completeCurrentActionEffect(workingRoot, "skipped");
-    }
-    return { ok: true, progressed: true, skipped: true, message: `已跳过：${current.label}` };
-  }
-
-  function skipSimulationCurrentActionEffect() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "simulation_skip_current_effect" });
-  }
-
   function skipActionEffectWithMessage(workingRoot, effect, message, payload = {}) {
     const current = effect || getCurrentActionEffect(workingRoot);
     const result = {
@@ -7659,7 +7596,6 @@
   }
 
   function renderActionEffectBar() {
-    if (simulationMode) return;
     if (!els.actionEffectBar || !els.actionEffectList) return;
 
     if (!getActionEffectFlow()) {
@@ -8010,7 +7946,6 @@
 
   function openScanAction4Picker() {
     if (!els.scanAction4Overlay || !els.scanAction4Actions) {
-      if (simulationMode) return handleScanAction4Choice("skip");
       return { ok: false, message: "无法打开发射/移动选择" };
     }
 
@@ -8217,10 +8152,8 @@
         ? `${effect.label}：没有可移动的另一枚火箭，可点击跳过`
         : `${effect.label || "移动"}：没有可移动的飞船，已跳过`;
       deactivateMoveMode();
-      if (!isIndustryHuanyuMoveEffect(effect) || simulationMode) {
-        return skipActionEffectWithMessage(effect, simulationMode
-          ? `${effect.label || "移动"}：没有可移动的飞船，已跳过`
-          : message, {
+      if (!isIndustryHuanyuMoveEffect(effect)) {
+        return skipActionEffectWithMessage(effect, message, {
           reason: "没有可移动的飞船",
           abilityId: "moveProbe",
         });
@@ -8770,7 +8703,6 @@
   }
 
   function resize() {
-    if (simulationMode) return;
     const h = window.innerHeight;
     const boardWidth = els.boardShell.clientWidth || window.innerWidth;
     const boardHeight = h - 160;
@@ -9738,7 +9670,6 @@
   const handleCompanyActionMarkerClick = bindBrowserDomainCommand("industry_runtime", "handleCompanyActionMarkerClick");
 
   const techRuntime = techRuntimeModule.createTechRuntime({
-      simulation: simulationMode,
       Array: typeof Array === "undefined" ? undefined : Array,
       Boolean: typeof Boolean === "undefined" ? undefined : Boolean,
       HISTORY_SOURCE_MAIN: typeof HISTORY_SOURCE_MAIN === "undefined" ? undefined : HISTORY_SOURCE_MAIN,
@@ -10076,7 +10007,7 @@
   }
 
   function removeRocketElement(rocketId) {
-    if (simulationMode || !document) return;
+    if (!document) return;
     const element = document.getElementById(`rocket-${rocketId}`);
     if (element) element.remove();
     const chongOwnerToken = chongFossilOwnerTokenElements.get(String(rocketId));
@@ -10546,7 +10477,6 @@
   }
 
   function updateActionButtons() {
-    if (simulationMode) return;
     syncFinalResultButton();
     const readoutRoot = createStateSourceReadoutRoot();
     const context = createActionContextForWorkingRoot(readoutRoot);
@@ -10679,12 +10609,10 @@
   }
 
   function isQuickPanelOpen() {
-    if (simulationMode) return false;
     return !els.quickActionsPanel.hidden;
   }
 
   function setQuickPanelOpen(open) {
-    if (simulationMode) return;
     if (open && getGameplayLockReason()) return;
     if (open) cancelHandCardContextActions({ silent: true });
     els.quickActionsPanel.hidden = !open;
@@ -10737,7 +10665,6 @@
   }
 
   actionInteractionRuntime = actionInteractionRuntimeModule.createActionInteractionRuntime({
-    simulation: simulationMode,
     HISTORY_SOURCE_MAIN,
     SCORE_SOURCE_KEYS,
     abilities,
@@ -10794,7 +10721,6 @@
   });
 
   function updateQuickPanel() {
-    if (simulationMode) return;
     if (!isQuickPanelOpen()) return;
     updateQuickTradeButtons();
   }
@@ -11151,56 +11077,6 @@
     }) || getEffectOwnerPlayer(workingRoot, pending?.effect) || getCurrentPlayer(workingRoot);
   }
 
-  function getSimulationDecisionOwnerState(enumeratedActor = null) {
-    const readoutRoot = createStateSourceReadoutRoot();
-    const currentPlayer = players.getCurrentPlayer(readoutRoot.playerState);
-    const finalScorePlayer = enumeratedActor || currentPlayer;
-    const finalScorePending = finalScoring.getNextPendingMarkForPlayer(
-      readoutRoot.finalScoringState,
-      finalScorePlayer?.id,
-    );
-    const activePending = [
-      finalScorePending ? { ...finalScorePending, player: finalScorePlayer } : null,
-      getPendingScanTargetDecision(readoutRoot),
-      getPendingProbeSectorScanDecision(),
-      getPendingHandScanDecision(readoutRoot),
-      getPendingPassReserveSelection(),
-      getPendingMovePayment(),
-      getPendingDataPlacementDecision(),
-      getPendingCardTriggerFreeMove(),
-      getPendingCardMoveDecision(readoutRoot),
-      getPendingCardCornerFreeMove(),
-      getPendingStrategySlotDecision(),
-      getPendingChongFossilChoice(),
-      getPendingAmibaSymbolChoice(),
-      getPendingDiscardDecision(readoutRoot),
-      getPendingCardSelectionDecision(readoutRoot),
-      getPendingLandTargetDecision(),
-      getPendingAlienTraceDecision(readoutRoot),
-      uiRuntimeState.alienTracePickerState,
-    ].find(Boolean) || null;
-    const pendingOwner = activePending?.player || resolvePlayerReference({
-      playerId: activePending?.playerId || activePending?.targetPlayerId || null,
-      playerColor: activePending?.playerColor || activePending?.targetPlayerColor || null,
-    });
-    const effect = activePending?.effect || (
-      getActionEffectFlow(readoutRoot) ? getCurrentActionEffect(readoutRoot) : null
-    );
-    const effectOwner = effect ? getEffectOwnerPlayer(effect) : null;
-    const actorPlayer = pendingOwner || effectOwner || enumeratedActor || currentPlayer || null;
-    const source = pendingOwner
-      ? "pending_owner"
-      : effectOwner ? "effect_owner" : "current_player";
-    return {
-      actorPlayer,
-      actorPlayerId: actorPlayer?.id || null,
-      pendingOwnerPlayerId: pendingOwner?.id || null,
-      effectOwnerPlayerId: effectOwner?.id || null,
-      currentPlayerId: currentPlayer?.id || null,
-      source,
-    };
-  }
-
   function createConditionalActionProvider(family) {
     return {
       label: family,
@@ -11245,47 +11121,6 @@
         standardAction,
       }));
     return { actorPlayer, candidates };
-  }
-
-  function enumerateSimulationConditionalActions() {
-    const inspection = ruleComposition.inspect();
-    if (inspection.phase === "awaiting_input" && inspection.session?.decision) {
-      const decision = inspection.session.decision;
-      return {
-        actorPlayer: decision.ownerId ? getPlayerById(decision.ownerId) : null,
-        candidates: structuredClone(decision.choices || []),
-      };
-    }
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "simulation_enumerate_conditional_actions",
-    }).value || { actorPlayer: null, candidates: [] };
-  }
-
-  function executeSimulationConditionalAction(action) {
-    const standardAction = action?.standardAction || null;
-    if (!standardAction || standardAction.family !== action?.family) {
-      return {
-        ok: false,
-        code: "STANDARD_ACTION_SCHEMA_MISMATCH",
-        message: "条件动作缺少匹配的 Standard Action descriptor",
-      };
-    }
-    const inspection = ruleComposition.inspect();
-    const decision = inspection.session?.decision || null;
-    if (inspection.phase !== "awaiting_input" || !decision) {
-      return { ok: false, code: "RULE_COMPOSITION_SESSION_REQUIRED", message: "当前 Composition 没有等待输入的 Decision" };
-    }
-    const choice = (decision.choices || []).find((candidate) => (
-      (candidate?.standardAction || candidate)?.actionId === standardAction.actionId
-    ));
-    if (!choice) {
-      return { ok: false, code: "EFFECT_DECISION_NOT_LEGAL", message: "条件动作不在 Composition Decision choices 中" };
-    }
-    return ruleComposition.inputPort.submitDecision({
-      decisionId: decision.decisionId,
-      decisionVersion: decision.decisionVersion,
-      choice,
-    });
   }
 
   function advanceSimulationDeterministicStateImpl(workingRoot) {
@@ -11336,20 +11171,12 @@
     return null;
   }
 
-  function advanceSimulationDeterministicState() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "simulation_advance_deterministic" });
-  }
-
   function executeSimulationCurrentActionEffectImpl(workingRoot) {
     const effect = getCurrentActionEffect(workingRoot);
     if (!effect || effect.status !== "active") {
       return { ok: false, message: "没有可直接推进的活动效果" };
     }
     return executeActionEffect(workingRoot, effect);
-  }
-
-  function executeSimulationCurrentActionEffect() {
-    return ruleComposition.inputPort.submitHostCommand({ kind: "simulation_execute_current_effect" });
   }
 
   function launchRocketForCurrentPlayer() {
@@ -11936,7 +11763,6 @@
   };
 
   alienSpeciesRuntime = alienSpeciesRuntimeModule.createAlienSpeciesRuntime({
-    simulation: simulationMode,
     actionHistory,
     aliens,
     amiba,
@@ -12052,7 +11878,7 @@
     yichangdianAnomalyMarkerElements,
   });
 
-  if (!simulationMode) window.SetiAppEvents.bindAppEvents({
+  window.SetiAppEvents.bindAppEvents({
     window,
     document,
     state: appEventState,
@@ -12271,48 +12097,10 @@
     logAomomoDebugCoordinates,
     resize,
   });
-  const readRuleProjection = () => residentProjectionAdapter.projectSource({
-    viewer: getResidentViewer(),
-  });
-  const simulationPort = simulationMode ? Object.freeze({
-    composition: ruleComposition,
-    startNewGame,
-    getInitialSelectionState: () => structuredClone(setupSelectionState),
-    completeCurrentInitialSelection: () => chooseInitialSelectionForAiPlayer(),
-    readProjection: () => structuredClone(readRuleProjection()),
-    getCurrentPlayer: () => structuredClone(getCurrentPlayer()),
-    getFinalScoreSummaries: () => structuredClone(
-      buildFinalResultPlayerSummaries().map((summary) => ({
-        playerId: summary.player?.id || null,
-        baseScore: Number(summary.breakdown?.baseScore) || 0,
-        totalScore: Number(summary.breakdown?.totalScore) || 0,
-        breakdown: summary.breakdown || null,
-      })),
-    ),
-    getActionLog: (options = {}) => structuredClone(getRecoverableActionLog(options)),
-    getTurnState: () => structuredClone(ruleComposition.stateSourcePort.read().state.turn),
-    getPlayerState: () => structuredClone(ruleComposition.stateSourcePort.read().state.players),
-    getRocketCoordinates: () => structuredClone(ruleComposition.stateSourcePort.read().state.pieces?.rockets || []),
-    getPlanetStatsState: () => structuredClone(ruleComposition.stateSourcePort.read().state.planets),
-    getSolarSnapshot: () => structuredClone(ruleComposition.stateSourcePort.read().state.solarSystem),
-    getCardState: () => structuredClone(ruleComposition.stateSourcePort.read().state.cards),
-    getTechSnapshot: () => structuredClone(ruleComposition.stateSourcePort.read().state.tech),
-    getAlienState: () => structuredClone(ruleComposition.stateSourcePort.read().state.aliens),
-    getFinalScoringState: () => structuredClone(ruleComposition.stateSourcePort.read().state.finalScoring),
-    inspectSimulationComposition: () => ruleComposition.inspect(),
-    beginSimulationCompositionDrain: () => ruleComposition.inputPort.beginDrain({ metadata: { source: "simulation" } }),
-    listSimulationTurnActionCandidates: enumerateSimulationTurnActions,
-    executeSimulationTurnAction: submitSimulationTurnAction,
-    listSimulationConditionalActionCandidates: enumerateSimulationConditionalActions,
-    executeSimulationConditionalAction,
-    getSimulationDecisionOwnerState,
-    getAiAutoBattleProgress,
-  }) : null;
-
-  if (!simulationMode) window.SetiAppBootstrap.initializeAppBootstrap({
+  window.SetiAppBootstrap.initializeAppBootstrap({
     root: window,
     document,
-    initializeShell: simulationMode ? null : function initializeShell() {
+    initializeShell() {
       setTokenAssetSizes();
       syncStartScreenDebugOption();
       syncStartScreenActionLogOption();
@@ -12413,18 +12201,6 @@
       runAiNonTurnAutomationStep,
       runAiSelectedTurnAction,
       buildAiTurnActionCandidates,
-      chooseInitialSelectionForAiPlayer,
-      enumerateSimulationTurnActions,
-      executeAiTurnAction,
-      submitSimulationTurnAction,
-      beginSimulationCompositionDrain,
-      inspectSimulationComposition,
-      enumerateSimulationConditionalActions,
-      executeSimulationConditionalAction,
-      getSimulationDecisionOwnerState,
-    advanceSimulationDeterministicState,
-    executeSimulationCurrentActionEffect,
-    skipSimulationCurrentActionEffect,
       resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,
