@@ -1105,14 +1105,11 @@
         candidates,
       };
     }
-    const landPending = getPendingLandTargetDecision();
+    const landPending = getPendingLandTargetDecision(workingRoot);
     if (landPending) {
-      const options = typeof landPending.getOptions === "function"
-        ? landPending.getOptions()
-        : abilities.planet.getLandOptions(createActionContext());
       return {
         actorPlayer: getHeadlessConditionalPlayer(landPending),
-        candidates: (options?.ok ? options.choices || [] : []).map((choice, choiceIndex) => ({
+        candidates: (landPending.choices || []).map((choice, choiceIndex) => ({
           id: "conditionalChoice",
           family: "choose_target",
           choiceIndex,
@@ -1403,7 +1400,7 @@
       ? handleIndustryDeepspaceHandClick(Number(action.target.handIndex))
       : handleIndustryFutureSpanHandClick(Number(action.target.handIndex)),
     "blind-draw": () => drawCardForCurrentPlayer({ fromSelection: true }),
-    "land-target": (action) => confirmLandTargetChoice(Number(action.target.choiceId)),
+    "land-target": (action, workingRoot) => confirmLandTargetChoice(workingRoot, Number(action.target.choiceId)),
     "alien-state-trace": (action) => handleStateTraceSlotPlacement(
       Number(action.target.slotId), action.target.traceType,
     ),

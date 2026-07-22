@@ -645,6 +645,10 @@
         case "ui_set_status_note":
           workingRoot.rocketState.statusNote = command.message;
           return { ok: true, value: command.message };
+        case "land_target_open":
+          return { ok: true, value: cloneResidentPresentation(openLandTargetPicker(workingRoot, command.options)) };
+        case "land_target_cancel":
+          return { ok: true, value: cloneResidentPresentation(cancelLandTargetPicker(workingRoot)) };
         case "card_toggle_public_corner_discard":
           return { ok: true, value: cloneResidentPresentation(handlePublicCornerDiscardCardClickForRoot(
             workingRoot,
@@ -1008,7 +1012,6 @@
     alienTracePickerState: "alien_trace_picker_state",
     actionEffectFlow: "action_effect_flow",
   });
-  const LAND_TARGET_DECISION = "land_target";
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
   const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
   const getPendingDataPlacementDecision = (workingRoot = createStateSourceReadoutRoot()) => (
@@ -1181,7 +1184,7 @@
     handleIndustryDeepspaceHandClick,
     handleIndustryFutureSpanHandClick,
     drawCardForCurrentPlayer,
-    confirmLandTargetChoice,
+    confirmLandTargetChoice: (workingRoot, choiceIndex) => confirmLandTargetChoiceForRoot(workingRoot, choiceIndex),
     handleStateTraceSlotPlacement,
   }));
   const conditionalActionExecutor = conditionalActionExecutorModule.createConditionalActionExecutor({
@@ -7372,7 +7375,7 @@
       closeScanTargetPicker({ forceYichangdianCornerClose: true });
     }
     if (els.landTargetOverlay && !els.landTargetOverlay.hidden) {
-      cancelLandTargetPicker();
+      cancelLandTargetPicker(workingRoot);
     }
     closeScanAction4Picker();
     closeAlienTracePicker();
@@ -11266,54 +11269,43 @@
     ];
   }
 
-  function closeLandTargetPicker() {
-    decisionSessions.clear(LAND_TARGET_DECISION);
+  function closeLandTargetPicker(workingRoot = null) {
+    if (workingRoot?.match) delete workingRoot.match.landTargetContinuation;
     if (!els.landTargetOverlay) return;
     els.landTargetOverlay.hidden = true;
     delete els.landTargetOverlay.dataset.planetId;
   }
 
-  function cancelLandTargetPicker() {
-    const pending = getPendingLandTargetDecision();
-    closeLandTargetPicker();
-    if (typeof pending?.onCancel === "function") {
-      pending.onCancel();
+  function cancelLandTargetPicker(workingRoot = null) {
+    if (!workingRoot) {
+      return browserRuleComposition.inputPort.submitHostCommand({ kind: "land_target_cancel" }).value;
+    }
+    const pending = getPendingLandTargetDecision(workingRoot);
+    closeLandTargetPicker(workingRoot);
+    if (pending?.cancelKind === "chong-travel") {
+      workingRoot.rocketState.statusNote = "已取消虫族环绕/登陆目标选择";
+      renderStateReadout();
     }
   }
 
-  function openLandTargetPicker(options) {
+  function openLandTargetPicker(workingRoot, options) {
+    if (!workingRoot?.match) throw new TypeError("land target requires Composition workingRoot.match");
+    const effect = options.effect || null;
+    workingRoot.match.landTargetContinuation = {
+      ...getPendingOwnerFields(effect, options.player || null),
+      type: "land_target",
+      resumeKind: options.resumeKind || "main-planet-action",
+      cancelKind: options.cancelKind || null,
+      actionType: options.actionType || null,
+      effectId: effect?.id || options.effectId || null,
+      choices: structuredClone(options.choices || []),
+      title: options.title || null,
+      selectLabel: options.selectLabel || null,
+      confirmText: options.confirmText || null,
+      planet: structuredClone(options.planet || null),
+    };
     if (!els.landTargetOverlay || !els.landTargetSelect) {
-      if (headlessMode && typeof options.onConfirm === "function") {
-        decisionSessions.open(LAND_TARGET_DECISION, {
-          ...getPendingOwnerFields(options.effect || null, options.player || null),
-          effect: options.effect || null,
-          getOptions: options.getOptions,
-          onConfirm: options.onConfirm,
-          onCancel: options.onCancel,
-        });
-        return { ok: true, pending: true, message: "请选择登陆目标" };
-      }
-      const choice = options.choices?.[0] || { target: options.defaultTarget };
-      if (typeof options.onConfirm === "function") {
-        return withPendingOwnerPlayer({
-          ...getPendingOwnerFields(options.effect || null, options.player || null),
-          effect: options.effect || null,
-        }, () => options.onConfirm(choice, options));
-      }
-      runAction("land", { target: choice.target, rocketId: choice.rocketId });
-      return;
-    }
-
-    if (typeof options.onConfirm === "function") {
-      decisionSessions.open(LAND_TARGET_DECISION, {
-        ...getPendingOwnerFields(options.effect || null, options.player || null),
-        effect: options.effect || null,
-        getOptions: options.getOptions,
-        onConfirm: options.onConfirm,
-        onCancel: options.onCancel,
-      });
-    } else {
-      decisionSessions.clear(LAND_TARGET_DECISION);
+      return { ok: true, pending: true, message: "请选择登陆目标" };
     }
     els.landTargetTitle.textContent = options.title || `选择登陆目标：${options.planet.name}`;
     if (els.landTargetLabel) {
@@ -11333,30 +11325,70 @@
     els.landTargetSelect.focus();
   }
 
+  function requestLandTargetPicker(options) {
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "land_target_open",
+      options: structuredClone(options),
+    }).value;
+  }
+
   function confirmLandTargetPicker() {
     return confirmLandTargetChoice(Number(els.landTargetSelect?.value));
   }
 
-  function confirmLandTargetChoice(choiceIndex = 0) {
-    const pending = getPendingLandTargetDecision();
-    return withPendingOwnerPlayer(pending, () => {
-    const options = typeof pending?.getOptions === "function"
-      ? pending.getOptions()
-      : abilities.planet.getLandOptions(createActionContextForWorkingRoot(createStateSourceReadoutRoot()));
-    if (!options.ok || !options.choices?.length) {
-      closeLandTargetPicker();
-      setBrowserStatusNote(options.message || "登陆目标已失效");
-      renderStateReadout();
-      return;
+  function resumeLandTargetContinuation(workingRoot, pending, choice) {
+    const actionType = pending.actionType || choice.actionType || (choice.kind === "orbit" ? "orbit" : "land");
+    if (pending.resumeKind === "main-planet-action") {
+      if (choice.kind === "pluto") {
+        return actionInteractionRuntime.executePlutoAction(workingRoot, actionType, {
+          preferredRocketId: choice.preferredRocketId,
+        });
+      }
+      return runAction(actionType, actionType === "land"
+        ? { target: choice.target, rocketId: choice.rocketId }
+        : { rocketId: choice.rocketId });
     }
+    const effect = getCurrentActionEffect();
+    if (!effect || (pending.effectId && effect.id !== pending.effectId)) {
+      return { ok: false, code: "LAND_TARGET_EFFECT_STALE", message: "登陆目标所属效果已失效" };
+    }
+    if (pending.resumeKind === "card-pluto-action") {
+      if (choice.kind === "pluto") {
+        return effectExecutors.executePlutoCardActionEffect(workingRoot, effect, actionType, choice.available, {
+          preOwnLandingMarker: choice.preOwnLandingMarker,
+        });
+      }
+      if (actionType === "orbit") return effectExecutors.executeNormalCardOrbitEffect(workingRoot, effect, choice);
+      return effectExecutors.executeCardLandTarget(workingRoot, effect, choice.target, {
+        preOwnLandingMarker: choice.preOwnLandingMarker,
+      });
+    }
+    if (pending.resumeKind === "chong-travel") {
+      return effectExecutors.executeChongTravelForPickupChoice(workingRoot, effect, choice);
+    }
+    return { ok: false, code: "LAND_TARGET_RESUME_UNMIGRATED", message: `未知登陆目标续体：${pending.resumeKind}` };
+  }
 
-    const choice = options.choices[choiceIndex] || options.choices[0];
-    closeLandTargetPicker();
-    if (typeof pending?.onConfirm === "function") {
-      return pending.onConfirm(choice, options);
+  function confirmLandTargetChoiceForRoot(workingRoot, choiceIndex = 0) {
+    const pending = getPendingLandTargetDecision(workingRoot);
+    return withPendingOwnerPlayer(pending, () => {
+    if (!pending?.choices?.length) {
+      closeLandTargetPicker(workingRoot);
+      setBrowserStatusNote("登陆目标已失效");
+      renderStateReadout();
+      return { ok: false, message: "登陆目标已失效" };
     }
-    runAction("land", { target: choice.target, rocketId: choice.rocketId });
+    const choice = pending.choices[choiceIndex] || pending.choices[0];
+    closeLandTargetPicker(workingRoot);
+    return resumeLandTargetContinuation(workingRoot, pending, choice);
     });
+  }
+
+  function confirmLandTargetChoice(choiceIndex = 0) {
+    return submitActiveCardDecision(
+      "land-target",
+      (target) => Number(target.choiceId) === Number(choiceIndex),
+    );
   }
 
   function getHeadlessConditionalPlayer(pending) {
@@ -11595,15 +11627,13 @@
       return { ok: false, message: normal.message };
     }
     if (normal.needsChoice) {
-      openLandTargetPicker({
+      requestLandTargetPicker({
         ...normal,
+        resumeKind: "main-planet-action",
+        actionType: "orbit",
         title: "选择环绕目标",
         selectLabel: "环绕到",
         confirmText: "确认环绕",
-        getOptions: () => abilities.planet.getOrbitOptions(
-          createActionContextForWorkingRoot(createStateSourceReadoutRoot()),
-        ),
-        onConfirm: (choice) => runAction("orbit", { rocketId: choice.rocketId }),
       });
       setBrowserStatusNote("请选择环绕目标");
       renderStateReadout();
@@ -11648,12 +11678,10 @@
     }
 
     if (options.needsChoice) {
-      openLandTargetPicker({
+      requestLandTargetPicker({
         ...options,
-        getOptions: () => abilities.planet.getLandOptions(
-          createActionContextForWorkingRoot(createStateSourceReadoutRoot()),
-        ),
-        onConfirm: (choice) => runAction("land", { target: choice.target, rocketId: choice.rocketId }),
+        resumeKind: "main-planet-action",
+        actionType: "land",
       });
       return { ok: true, pendingChoice: true, planetId: options.planet.planetId };
     }

@@ -983,27 +983,15 @@
     }
 
     function openCardPlutoActionPicker(workingRoot, effect, actionType, choices, options = {}) {
-      openLandTargetPicker({
+      openLandTargetPicker(workingRoot, {
         effect,
+        resumeKind: "card-pluto-action",
+        actionType,
         title: `选择${getPlutoChoiceActionLabel(actionType)}目标`,
         selectLabel: `${getPlutoChoiceActionLabel(actionType)}到`,
         confirmText: `确认${getPlutoChoiceActionLabel(actionType)}`,
         planet: { planetId: `card-pluto-${actionType}`, name: `${getPlutoChoiceActionLabel(actionType)}目标` },
         choices,
-        getOptions: () => ({ ok: true, choices }),
-        onConfirm: (choice) => {
-          return withEffectExecutionPlayer(effect, () => {
-            if (choice.kind === "pluto") {
-              return executePlutoCardActionEffect(workingRoot, effect, actionType, choice.available, {
-                preOwnLandingMarker: choice.preOwnLandingMarker,
-              });
-            }
-            if (actionType === "orbit") return executeNormalCardOrbitEffect(workingRoot, effect, choice);
-            return executeCardLandTarget(workingRoot, effect, choice.target, {
-              preOwnLandingMarker: choice.preOwnLandingMarker,
-            });
-          });
-        },
       });
       ruleRocketState(workingRoot).statusNote = `请选择${getPlutoChoiceActionLabel(actionType)}目标`;
       renderStateReadout();

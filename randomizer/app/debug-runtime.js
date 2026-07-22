@@ -179,7 +179,7 @@
       closeDataPlacePicker?.();
       closeScanTargetPicker?.();
       closeScanAction4Picker?.();
-      closeLandTargetPicker?.();
+      closeLandTargetPicker?.(workingRoot);
       clearActionEffectFlow?.();
       clearActionPending?.();
     }
@@ -990,7 +990,7 @@
         workingRoot.match?.publicScanContinuation,
         workingRoot.match?.handScanContinuation,
         decisionState.alienTraceAction,
-        decisionSessions?.peek?.("land_target"),
+        workingRoot.match?.landTargetContinuation,
         workingRoot.match?.dataPlacementContinuation,
         workingRoot.match?.cardTriggerContinuation,
         workingRoot.match?.cardTriggerFreeMoveContinuation,

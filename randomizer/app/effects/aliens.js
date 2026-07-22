@@ -570,21 +570,15 @@
         return executeChongTravelForPickupChoice(workingRoot, effect, { ...options.choices[0], kind: "land" });
       }
 
-      openLandTargetPicker({
+      openLandTargetPicker(workingRoot, {
         effect,
+        resumeKind: "chong-travel",
+        cancelKind: "chong-travel",
         title: "选择虫族登陆目标",
         selectLabel: "登陆到",
         confirmText: "确认登陆",
         ...options,
-        getOptions: () => getChongLandOptions(workingRoot, effect),
-        onConfirm: (choice) => withEffectExecutionPlayer(
-          effect,
-          () => executeChongTravelForPickupChoice(workingRoot, effect, { ...choice, kind: "land" }),
-        ),
-        onCancel: () => {
-          ruleRocketState(workingRoot).statusNote = "已取消虫族登陆目标选择";
-          renderStateReadout();
-        },
+        choices: options.choices.map((choice) => ({ ...choice, kind: "land" })),
       });
       ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择登陆目标（木星/土星可拾取化石）`;
       renderStateReadout();
@@ -604,15 +598,11 @@
       if (options.choices.length <= 1) {
         return executeChongTravelForPickupChoice(workingRoot, effect, options.choices[0]);
       }
-      openLandTargetPicker({
+      openLandTargetPicker(workingRoot, {
         effect,
         ...options,
-        getOptions: () => getChongOrbitOrLandOptions(workingRoot, effect),
-        onConfirm: (choice) => withEffectExecutionPlayer(effect, () => executeChongTravelForPickupChoice(workingRoot, effect, choice)),
-        onCancel: () => {
-          ruleRocketState(workingRoot).statusNote = "已取消虫族环绕/登陆目标选择";
-          renderStateReadout();
-        },
+        resumeKind: "chong-travel",
+        cancelKind: "chong-travel",
       });
       ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择环绕或登陆目标（木星/土星可拾取化石）`;
       renderStateReadout();

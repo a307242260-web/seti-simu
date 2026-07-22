@@ -41,6 +41,7 @@ function createFixture() {
     cardTaskCalls: [],
     dataPlacementCalls: [],
     discardCalls: [],
+    landCalls: [],
     industryMoveCalls: [],
   };
   let contextReads = 0;
@@ -102,6 +103,12 @@ function createFixture() {
         delete workingRoot.match.discardContinuation;
         return { ok: true, progressed: true, skipped: true };
       },
+      getPendingLandTargetDecision: (workingRoot) => workingRoot.match.landTargetContinuation || null,
+      confirmLandTargetChoice: (workingRoot, choiceIndex) => {
+        state.landCalls.push(choiceIndex);
+        delete workingRoot.match.landTargetContinuation;
+        return { ok: true, progressed: true };
+      },
       handleCardTriggerChoice: (workingRoot, choiceIndex) => {
         state.cardTriggerCalls.push(choiceIndex);
         delete workingRoot.match.cardTriggerContinuation;
@@ -142,6 +149,34 @@ function createFixture() {
     });
   });
   return { root, finalPlayer, scanPlayer, state, domain, getContextReads: () => contextReads };
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  fixture.root.match.landTargetContinuation = {
+    playerId: "move-owner",
+    type: "land_target",
+    resumeKind: "main-planet-action",
+    actionType: "land",
+    choices: [
+      { label: "环绕", kind: "orbit", rocketId: 7 },
+      { label: "登陆", kind: "land", target: "mars", rocketId: 7 },
+    ],
+  };
+  assert.doesNotThrow(() => JSON.stringify(fixture.root.match.landTargetContinuation));
+  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const decision = executor.inspect(fixture.root);
+  assert.equal(decision.ownerId, "move-owner");
+  assert.deepEqual(decision.choices.map((choice) => choice.target), [
+    { kind: "land-target", choiceId: "0", planetId: null, rocketId: 7 },
+    { kind: "land-target", choiceId: "1", planetId: "mars", rocketId: 7 },
+  ]);
+  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_target"));
+  assert.equal(result.ok, true);
+  assert.deepEqual(fixture.state.landCalls, [0]);
+  assert.equal(fixture.root.match.landTargetContinuation, undefined);
 }
 
 {

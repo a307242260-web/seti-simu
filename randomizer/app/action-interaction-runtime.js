@@ -511,16 +511,10 @@
           ? { target: choice.target, rocketId: choice.rocketId }
           : { rocketId: choice.rocketId });
     }
-    openLandTargetPicker({
+    openLandTargetPicker(workingRoot, {
       ...options,
-      getOptions: () => buildPlutoActionChoiceOptions(workingRoot, actionType),
-      onConfirm: (choice) => (
-        choice.kind === "pluto"
-          ? executePlutoAction(workingRoot, actionType, { preferredRocketId: choice.preferredRocketId })
-          : runAction(actionType, actionType === "land"
-            ? { target: choice.target, rocketId: choice.rocketId }
-            : { rocketId: choice.rocketId })
-      ),
+      resumeKind: "main-planet-action",
+      actionType,
     });
     rocketState.statusNote = `请选择${getPlutoChoiceActionLabel(actionType)}目标`;
     renderStateReadout();
