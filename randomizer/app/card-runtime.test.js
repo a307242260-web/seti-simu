@@ -136,6 +136,22 @@ function createHarness() {
 }
 
 {
+  const { runtime, workingRoot, uiRuntimeState } = createHarness();
+  workingRoot.cardState.publicCards = [{ id: "public-1", label: "公共牌" }];
+  workingRoot.match.cardSelectionContinuation = {
+    type: "card_public_corner_discard",
+    minSelectable: 1,
+    maxSelectable: 1,
+  };
+  const selected = runtime.handlePublicCornerDiscardCardClick(workingRoot, 0);
+  assert.equal(selected.ok, true);
+  assert.deepEqual(uiRuntimeState.publicCardSelectedSlots, [0]);
+  assert.match(workingRoot.rocketState.statusNote, /点击确认弃除/);
+  runtime.handlePublicCornerDiscardCardClick(workingRoot, 0);
+  assert.deepEqual(uiRuntimeState.publicCardSelectedSlots, []);
+}
+
+{
   const { runtime, workingRoot, player, effect, uiRuntimeState, calls } = createHarness();
   workingRoot.match.passReserveContinuation = {
     effectId: effect.id,

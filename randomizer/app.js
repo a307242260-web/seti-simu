@@ -1320,6 +1320,10 @@
   let buildFundamentalismRoundStartIncomeEffect;
   let maybeStartFundamentalismRoundStartIncomeFlowForRoot;
   let beginIncomeForCurrentPlayer;
+  let handlePublicCornerDiscardCardClick;
+  let handlePublicCornerDiscardCardClickForRoot;
+  let confirmPublicCornerDiscardSelection;
+  let confirmPublicCornerDiscardSelectionForRoot;
   let buildCardTaskContext;
   let buildPlayerDataTotals;
   let addProbeLocation;
@@ -4551,6 +4555,7 @@
     els,
     fangzhou,
     finalizeIndustryDeepspaceSwap: (...args) => finalizeIndustryDeepspaceSwap?.(...args),
+    finishAutomaticRewardEffect,
     finishIndustryAbilityFlow: (...args) => finishIndustryAbilityFlow?.(...args),
     formatPlanetRewardGain,
     endEffectHistoryStep,
@@ -4560,7 +4565,6 @@
     getMainActionStartBlockReason,
     getRequiredMovePointsForUi,
     getPublicScanSelectionInstruction: (...args) => getPublicScanSelectionInstruction?.(...args) || "请选择公共牌",
-    handlePublicCornerDiscardCardClick,
     handlePublicScanCardClick,
     hasActivePendingSubFlow,
     hideCardHoverPreview,
@@ -4660,6 +4664,8 @@
     renderPublicCards,
     handlePublicCardClick,
     handlePublicBlindDrawClick,
+    handlePublicCornerDiscardCardClick,
+    confirmPublicCornerDiscardSelection,
     isPassReserveSelectionActive,
     getPassReserveSelectionCards,
     renderPassReserveSelection,
@@ -4710,6 +4716,8 @@
   const syncPassReserveSelectionChromeForRoot = syncPassReserveSelectionChrome;
   const beginPassReserveSelectionForRoot = beginPassReserveSelection;
   const dismissPassReserveSelectionOverlayForRoot = dismissPassReserveSelectionOverlay;
+  handlePublicCornerDiscardCardClickForRoot = handlePublicCornerDiscardCardClick;
+  confirmPublicCornerDiscardSelectionForRoot = confirmPublicCornerDiscardSelection;
   ({
     getDiscardCornerRewardMultiplier,
     getCardCornerQuickActionForCard,
@@ -4740,6 +4748,8 @@
     syncPassReserveSelectionChrome,
     beginPassReserveSelection,
     dismissPassReserveSelectionOverlay,
+    handlePublicCornerDiscardCardClick,
+    confirmPublicCornerDiscardSelection,
   } = bindDomainCommands("card_runtime", [
     "getDiscardCornerRewardMultiplier", "getCardCornerQuickActionForCard", "shouldQueueCardCornerMoveQuickAction",
     "canUseCardCornerQuickAction", "canStartCardCornerFreeMove", "beginCardCornerFreeMove",
@@ -4750,6 +4760,7 @@
     "updatePublicCardControls", "ensurePublicCardsFilledRespectingDelayedRefills", "handlePublicCardClick",
     "handlePublicBlindDrawClick", "getPassReserveSelectionCards", "renderPassReserveSelection",
     "syncPassReserveSelectionChrome", "beginPassReserveSelection", "dismissPassReserveSelectionOverlay",
+    "handlePublicCornerDiscardCardClick", "confirmPublicCornerDiscardSelection",
   ]));
   const selectPassReserveCardForRoot = selectPassReserveCard;
   const confirmPassReserveSelectionForRoot = confirmPassReserveSelection;
@@ -5518,104 +5529,6 @@
       .filter(Boolean)
       .join("、");
   }
-
-  function handlePublicCornerDiscardCardClickForRoot(workingRoot, slotIndex) {
-    const { cardState: workingCardState, rocketState: workingRocketState } = workingRoot;
-    const index = Number(slotIndex);
-    const card = workingCardState.publicCards[index];
-    if (!card) {
-      workingRocketState.statusNote = "该公共牌位没有卡牌";
-      renderStateReadout();
-      return { ok: false, message: workingRocketState.statusNote };
-    }
-
-    const pending = getPendingCardSelectionDecision(workingRoot);
-    const maxSelectable = pending?.maxSelectable ?? 1;
-    const selectedSlots = uiRuntimeState.publicCardSelectedSlots || [];
-    const existingIndex = selectedSlots.indexOf(index);
-    if (existingIndex >= 0) {
-      selectedSlots.splice(existingIndex, 1);
-    } else if (selectedSlots.length >= maxSelectable) {
-      workingRocketState.statusNote = `最多选择 ${maxSelectable} 张公共牌`;
-      renderStateReadout();
-      return { ok: false, message: workingRocketState.statusNote };
-    } else {
-      selectedSlots.push(index);
-    }
-
-    uiRuntimeState.publicCardSelectedSlots = selectedSlots;
-    const count = selectedSlots.length;
-    const minSelectable = getPublicCardMultiSelectMinSelectable(pending);
-    workingRocketState.statusNote = count > 0
-      ? `公共牌角标：已选 ${count}/${maxSelectable} 张${count < minSelectable ? `，至少需要 ${minSelectable} 张` : "，点击确认弃除"}`
-      : `公共牌角标：请选择 ${minSelectable} 张公共牌弃除`;
-    syncPublicScanConfirmButton();
-    renderPublicCards();
-    renderStateReadout();
-    return { ok: true, message: workingRocketState.statusNote };
-  }
-
-  function handlePublicCornerDiscardCardClick(slotIndex) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "card_toggle_public_corner_discard",
-      slotIndex,
-    }).value;
-  }
-
-  function confirmPublicCornerDiscardSelectionForRoot(workingRoot) {
-    const { cardState: workingCardState, playerState: workingPlayerState } = workingRoot;
-    const pending = getPendingCardSelectionDecision(workingRoot);
-    if (pending?.type !== "card_public_corner_discard") {
-      return { ok: false, message: "当前不是公共牌角标弃除" };
-    }
-    const selectedSlots = [...new Set(uiRuntimeState.publicCardSelectedSlots || [])].sort((a, b) => a - b);
-    const minSelectable = getPublicCardMultiSelectMinSelectable(pending);
-    if (selectedSlots.length < minSelectable) {
-      return { ok: false, message: `请至少选择 ${minSelectable} 张公共牌` };
-    }
-    const selectedCards = selectedSlots.map((slotIndex) => workingCardState.publicCards[slotIndex]);
-    if (selectedCards.some((card) => !card)) {
-      return { ok: false, message: "所选公共牌已不可用" };
-    }
-
-    const effect = getCurrentActionEffect(workingRoot);
-    const player = resolvePlayerReference({
-      playerId: pending.playerId,
-      playerColor: pending.playerColor,
-    }) || getEffectOwnerPlayer(effect) || getCurrentPlayer();
-    beginEffectHistoryStep(workingRoot, effect?.label || pending.effectLabel || "公共牌角标弃除");
-    const rewards = selectedCards.map((card, cardIndex) => {
-      workingCardState.publicCards[selectedSlots[cardIndex]] = null;
-      cards.addToDiscardPile(workingCardState, card);
-      return applyCardCornerRewardFromCard(player, card, {
-        source: "card_public_corner_discard",
-        insertMoveIntoCurrentFlow: true,
-        effectId: `${effect?.id || "public-corner-discard"}-${cardIndex + 1}`,
-      });
-    });
-    cards.ensurePublicCardsFilled(workingCardState, workingPlayerState);
-    markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
-    cards.setSelectionActive(workingCardState, false);
-    setPendingCardSelectionDecision(workingRoot, null);
-    syncCardSelectionChrome();
-    return finishAutomaticRewardEffect(effect, {
-      ok: true,
-      undoable: false,
-      irreversible: { code: "hidden_card_reveal", reason: "公共牌补牌翻出新牌" },
-      message: `${effect?.label || pending.effectLabel || "公共牌角标弃除"}：${selectedCards.map((card) => cards.getCardLabel(card)).join("、")}`,
-      payload: {
-        cardIds: selectedCards.map((card) => card.id),
-        rewards,
-      },
-    }, [renderPlayerStats, renderPublicCards]);
-  }
-
-  function confirmPublicCornerDiscardSelection() {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "card_confirm_public_corner_discard",
-    }).value;
-  }
-
 
   function isActionEffectFlowActive(workingRoot = null) {
     return getActionEffectFlow(workingRoot) != null;
