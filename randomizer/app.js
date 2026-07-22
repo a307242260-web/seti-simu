@@ -9759,189 +9759,9 @@
     updatePublicCardControls,
   });
 
+  let legacyUndoController = null;
   function undoPendingActionForRoot(workingRoot) {
-    if (isTechActionSelectionActive()) {
-      const isResearchTechFlow = getActionEffectFlow(workingRoot)?.actionType === "researchTech";
-      const shouldUseHistoryUndo = isResearchTechFlow
-        && (actionHistory.hasUndoableStep() || hasCurrentMainActionIrreversibleBarrier());
-      if (shouldUseHistoryUndo) {
-        if (workingRoot.techGameState.ui.pendingTileId) {
-          cancelPendingResearchTechTileChoice();
-          return;
-        }
-      } else {
-        cancelTechSelection();
-        return;
-      }
-    }
-    if (
-      !isActionPending()
-      && !isActionEffectFlowActive()
-      && !actionHistory.hasUndoableStep()
-      && !quickActionHistory.hasUndoableStep()
-    ) return;
-
-    if (hasActivePendingSubFlow()) {
-      cancelActivePendingSubFlowsForRoot(workingRoot);
-      refreshAfterHistoryChange();
-      return;
-    }
-
-    const latestUndoSource = getLatestUndoSource();
-
-    if (
-      !latestUndoSource
-      && getActionEffectFlow(workingRoot)?.historySource === HISTORY_SOURCE_QUICK
-      && !getActionEffectFlow(workingRoot).preHistoryCommandsApplied
-      && getActionEffectFlow(workingRoot).preHistoryCommands?.length
-    ) {
-      const flowLabel = getActionEffectFlow(workingRoot).label || "快速行动效果";
-      for (let index = getActionEffectFlow(workingRoot).preHistoryCommands.length - 1; index >= 0; index -= 1) {
-        getActionEffectFlow(workingRoot).preHistoryCommands[index]?.undo?.();
-      }
-      uiRuntimeState.effectStepActive = false;
-      if (quickActionHistory.hasSession() && !quickActionHistory.hasUndoableStep()) {
-        quickActionHistory.commitSession();
-        clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
-      }
-      clearActionEffectFlow(workingRoot);
-      refreshAfterHistoryChange(`已撤销：${flowLabel}`);
-      return;
-    }
-
-    if (latestUndoSource === HISTORY_SOURCE_QUICK) {
-      const undoingQuickEffectFlow = getActionEffectFlow(workingRoot)?.historySource === HISTORY_SOURCE_QUICK;
-      const result = quickActionHistory.undoLastStep();
-      if (result.ok) {
-        uiRuntimeState.effectStepActive = false;
-        forgetLastHistoryStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
-        removeLastActionLogStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
-        const completedQuickEffectFlow = !getActionEffectFlow(workingRoot)
-          ? takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_QUICK)
-          : null;
-        if (completedQuickEffectFlow) {
-          setActionEffectFlow(workingRoot, completedQuickEffectFlow);
-    interactionChrome.setActionEffectFlowActive(true);
-        }
-        if ((undoingQuickEffectFlow || completedQuickEffectFlow) && getActionEffectFlow(workingRoot)) {
-          const effectIndex = result.step?.effectIndex;
-          const hasRevertibleEffectStep = Number.isInteger(effectIndex)
-            && Boolean(getActionEffectFlow(workingRoot).effects?.[effectIndex]);
-          if (hasRevertibleEffectStep) {
-            revertEffectFlowAfterUndo(workingRoot, result.step);
-          } else {
-            clearActionEffectFlow(workingRoot);
-          }
-        }
-      }
-      if (result.ok && !quickActionHistory.hasUndoableStep() && !isActionEffectFlowActive()) {
-        quickActionHistory.commitSession();
-        clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
-      }
-      refreshAfterHistoryChange(result.ok ? result.message : "已撤销快速行动");
-      return;
-    }
-
-    const mainActionHasIrreversibleBarrier = hasCurrentMainActionIrreversibleBarrier();
-
-    if (!latestUndoSource && mainActionHasIrreversibleBarrier) {
-      const irreversibleReason = getCurrentActionIrreversibleReason();
-      workingRoot.rocketState.statusNote = irreversibleReason
-        ? `不可撤销：${irreversibleReason}`
-        : "当前行动已有不可撤销影响";
-      updateActionButtons();
-      renderStateReadout();
-      return;
-    }
-
-    if (mainActionHasIrreversibleBarrier && !actionHistory.hasUndoableStep()) {
-      const irreversibleReason = getCurrentActionIrreversibleReason();
-      workingRoot.rocketState.statusNote = irreversibleReason
-        ? `不可撤销：${irreversibleReason}`
-        : "当前行动已有不可撤销影响";
-      updateActionButtons();
-      renderStateReadout();
-      return;
-    }
-
-    if (
-      latestUndoSource === HISTORY_SOURCE_MAIN
-      && mainActionHasIrreversibleBarrier
-      && actionHistory.hasUndoableStep()
-    ) {
-      const result = actionHistory.undoLastStep();
-      if (result.ok) {
-        uiRuntimeState.effectStepActive = false;
-        forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-        removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-        const completedMainEffectFlow = !getActionEffectFlow(workingRoot)
-          ? takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_MAIN)
-          : null;
-        if (completedMainEffectFlow) {
-          setActionEffectFlow(workingRoot, completedMainEffectFlow);
-    interactionChrome.setActionEffectFlowActive(true);
-        }
-        revertEffectFlowAfterUndo(workingRoot, result.step);
-      }
-      refreshAfterHistoryChange(result.ok ? result.message : result.message || "当前行动不能撤销");
-      return;
-    }
-
-    if (isActionEffectFlowActive()) {
-
-      if (actionHistory.hasUndoableStep()) {
-        const result = actionHistory.undoLastStep();
-        if (result.ok) {
-          uiRuntimeState.effectStepActive = false;
-          forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-          removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-          revertEffectFlowAfterUndo(workingRoot, result.step);
-          if (!isActionEffectFlowActive()) {
-            clearFullyUndoneMainActionSession();
-          }
-          refreshAfterHistoryChange(result.message);
-          return;
-        }
-      }
-    }
-
-    const completedMainFlowUndoStep = actionHistory.peekLastUndoableStep?.() || null;
-    if (
-      latestUndoSource === HISTORY_SOURCE_MAIN
-      && !isActionEffectFlowActive()
-      && peekCompletedEffectFlowForUndo(completedMainFlowUndoStep, HISTORY_SOURCE_MAIN)
-      && actionHistory.hasUndoableStep()
-    ) {
-      const result = actionHistory.undoLastStep();
-      if (result.ok) {
-        uiRuntimeState.effectStepActive = false;
-        forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-        removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
-        const completedMainEffectFlow = takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_MAIN);
-        if (completedMainEffectFlow) {
-          setActionEffectFlow(workingRoot, completedMainEffectFlow);
-    interactionChrome.setActionEffectFlowActive(true);
-          revertEffectFlowAfterUndo(workingRoot, result.step);
-        }
-        if (!isActionEffectFlowActive()) {
-          clearFullyUndoneMainActionSession();
-        }
-      }
-      refreshAfterHistoryChange(result.ok ? result.message : result.message || "已撤销效果");
-      return;
-    }
-
-    if (isActionPending() || actionHistory.hasSession()) {
-      const result = actionHistory.rollbackSession();
-      if (result.ok) {
-        uiRuntimeState.effectStepActive = false;
-        clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
-        removeActionLogStepsBySource(HISTORY_SOURCE_MAIN);
-        clearActionEffectFlow(workingRoot);
-        clearActionPending();
-      }
-      refreshAfterHistoryChange(result.ok ? result.message : result.message || "当前行动不能撤销");
-    }
+    return legacyUndoController.undoPendingActionForRoot(workingRoot);
   }
 
   function undoPendingAction() {
@@ -10070,6 +9890,39 @@
     getStandardPlayCardActionBlockReason,
     hasPlayableFutureSpanCard,
     cancelHandCardContextActions,
+  });
+  legacyUndoController = browserHostModule.actionBar.createLegacyUndoController({
+    actionHistory,
+    quickActionHistory,
+    HISTORY_SOURCE_MAIN,
+    HISTORY_SOURCE_QUICK,
+    uiRuntimeState,
+    isTechActionSelectionActive,
+    getActionEffectFlow,
+    hasCurrentMainActionIrreversibleBarrier,
+    cancelPendingResearchTechTileChoice,
+    cancelTechSelection,
+    isActionPending,
+    isActionEffectFlowActive,
+    hasActivePendingSubFlow,
+    cancelActivePendingSubFlowsForRoot,
+    refreshAfterHistoryChange,
+    getLatestUndoSource,
+    clearHistoryStepOrderForSource,
+    clearActionEffectFlow,
+    forgetLastHistoryStep,
+    removeLastActionLogStep,
+    takeCompletedEffectFlowForUndo,
+    setActionEffectFlow,
+    setActionEffectFlowActive: (active) => interactionChrome.setActionEffectFlowActive(active),
+    revertEffectFlowAfterUndo,
+    getCurrentActionIrreversibleReason,
+    updateActionButtons,
+    renderStateReadout,
+    clearFullyUndoneMainActionSession,
+    peekCompletedEffectFlowForUndo,
+    removeActionLogStepsBySource,
+    clearActionPending,
   });
 
   function runPlaceDataToComputerForRoot(workingRoot) {

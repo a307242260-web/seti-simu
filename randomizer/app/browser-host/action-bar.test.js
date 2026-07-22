@@ -134,6 +134,90 @@ function projection(overrides = {}) {
   assert.equal(trade.title, "资源不足");
 })();
 
+(function testLegacyUndoControllerOwnsQuickPreCommandsAndMainRollback() {
+  const calls = [];
+  let flow = {
+    historySource: "quick",
+    label: "交换奖励",
+    preHistoryCommandsApplied: false,
+    preHistoryCommands: [
+      { undo() { calls.push("undo:first"); } },
+      { undo() { calls.push("undo:second"); } },
+    ],
+  };
+  let actionPending = false;
+  const actionHistory = {
+    hasUndoableStep: () => false,
+    hasSession: () => actionPending,
+    peekLastUndoableStep: () => null,
+    rollbackSession() { calls.push("rollback"); return { ok: true, message: "已撤销行动" }; },
+  };
+  const quickActionHistory = {
+    hasUndoableStep: () => false,
+    hasSession: () => true,
+    commitSession() { calls.push("commit:quick"); },
+  };
+  const controller = actionBar.createLegacyUndoController({
+    actionHistory,
+    quickActionHistory,
+    HISTORY_SOURCE_MAIN: "main",
+    HISTORY_SOURCE_QUICK: "quick",
+    uiRuntimeState: { effectStepActive: true },
+    isTechActionSelectionActive: () => false,
+    getActionEffectFlow: () => flow,
+    isActionPending: () => actionPending,
+    isActionEffectFlowActive: () => Boolean(flow),
+    hasActivePendingSubFlow: () => false,
+    getLatestUndoSource: () => null,
+    hasCurrentMainActionIrreversibleBarrier: () => false,
+    clearHistoryStepOrderForSource: (source) => calls.push(`clear-order:${source}`),
+    clearActionEffectFlow() { flow = null; calls.push("clear-flow"); },
+    refreshAfterHistoryChange: (message) => calls.push(`refresh:${message}`),
+    peekCompletedEffectFlowForUndo: () => null,
+    removeActionLogStepsBySource: (source) => calls.push(`remove-log:${source}`),
+    clearActionPending: () => calls.push("clear-pending"),
+  });
+  const workingRoot = { rocketState: {}, techGameState: { ui: {} } };
+  controller.undoPendingActionForRoot(workingRoot);
+  assert.deepEqual(calls, [
+    "undo:second", "undo:first", "commit:quick", "clear-order:quick",
+    "clear-flow", "refresh:已撤销：交换奖励",
+  ]);
+
+  calls.length = 0;
+  actionPending = true;
+  controller.undoPendingActionForRoot(workingRoot);
+  assert.deepEqual(calls, [
+    "rollback", "clear-order:main", "remove-log:main", "clear-flow",
+    "clear-pending", "refresh:已撤销行动",
+  ]);
+})();
+
+(function testLegacyUndoControllerReportsIrreversibleBarrier() {
+  const calls = [];
+  const controller = actionBar.createLegacyUndoController({
+    actionHistory: { hasUndoableStep: () => false, hasSession: () => true, peekLastUndoableStep: () => null },
+    quickActionHistory: { hasUndoableStep: () => false },
+    HISTORY_SOURCE_MAIN: "main",
+    HISTORY_SOURCE_QUICK: "quick",
+    uiRuntimeState: {},
+    isTechActionSelectionActive: () => false,
+    getActionEffectFlow: () => null,
+    isActionPending: () => true,
+    isActionEffectFlowActive: () => false,
+    hasActivePendingSubFlow: () => false,
+    getLatestUndoSource: () => null,
+    hasCurrentMainActionIrreversibleBarrier: () => true,
+    getCurrentActionIrreversibleReason: () => "已翻开隐藏牌",
+    updateActionButtons: () => calls.push("buttons"),
+    renderStateReadout: () => calls.push("readout"),
+  });
+  const workingRoot = { rocketState: {}, techGameState: { ui: {} } };
+  controller.undoPendingActionForRoot(workingRoot);
+  assert.equal(workingRoot.rocketState.statusNote, "不可撤销：已翻开隐藏牌");
+  assert.deepEqual(calls, ["buttons", "readout"]);
+})();
+
 (function testLegacyEffectBarRendersProjectionModel() {
   const createNode = () => ({
     children: [], dataset: {}, classList: { toggle() {} },

@@ -318,6 +318,182 @@
     });
   }
 
+  function createLegacyUndoController(context = {}) {
+    const {
+      actionHistory,
+      quickActionHistory,
+      HISTORY_SOURCE_MAIN,
+      HISTORY_SOURCE_QUICK,
+      uiRuntimeState,
+    } = context;
+
+    function restoreCompletedEffectFlow(workingRoot, result, source) {
+      const completedFlow = !context.getActionEffectFlow(workingRoot)
+        ? context.takeCompletedEffectFlowForUndo(result.step, source)
+        : null;
+      if (completedFlow) {
+        context.setActionEffectFlow(workingRoot, completedFlow);
+        context.setActionEffectFlowActive(true);
+      }
+      return completedFlow;
+    }
+
+    function undoPendingActionForRoot(workingRoot) {
+      if (context.isTechActionSelectionActive()) {
+        const isResearchTechFlow = context.getActionEffectFlow(workingRoot)?.actionType === "researchTech";
+        const shouldUseHistoryUndo = isResearchTechFlow
+          && (actionHistory.hasUndoableStep() || context.hasCurrentMainActionIrreversibleBarrier());
+        if (shouldUseHistoryUndo) {
+          if (workingRoot.techGameState.ui.pendingTileId) {
+            context.cancelPendingResearchTechTileChoice();
+            return;
+          }
+        } else {
+          context.cancelTechSelection();
+          return;
+        }
+      }
+      if (
+        !context.isActionPending()
+        && !context.isActionEffectFlowActive()
+        && !actionHistory.hasUndoableStep()
+        && !quickActionHistory.hasUndoableStep()
+      ) return;
+
+      if (context.hasActivePendingSubFlow()) {
+        context.cancelActivePendingSubFlowsForRoot(workingRoot);
+        context.refreshAfterHistoryChange();
+        return;
+      }
+
+      const latestUndoSource = context.getLatestUndoSource();
+      const quickFlow = context.getActionEffectFlow(workingRoot);
+      if (
+        !latestUndoSource
+        && quickFlow?.historySource === HISTORY_SOURCE_QUICK
+        && !quickFlow.preHistoryCommandsApplied
+        && quickFlow.preHistoryCommands?.length
+      ) {
+        const flowLabel = quickFlow.label || "快速行动效果";
+        for (let index = quickFlow.preHistoryCommands.length - 1; index >= 0; index -= 1) {
+          quickFlow.preHistoryCommands[index]?.undo?.();
+        }
+        uiRuntimeState.effectStepActive = false;
+        if (quickActionHistory.hasSession() && !quickActionHistory.hasUndoableStep()) {
+          quickActionHistory.commitSession();
+          context.clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
+        }
+        context.clearActionEffectFlow(workingRoot);
+        context.refreshAfterHistoryChange(`已撤销：${flowLabel}`);
+        return;
+      }
+
+      if (latestUndoSource === HISTORY_SOURCE_QUICK) {
+        const undoingQuickEffectFlow = context.getActionEffectFlow(workingRoot)?.historySource === HISTORY_SOURCE_QUICK;
+        const result = quickActionHistory.undoLastStep();
+        if (result.ok) {
+          uiRuntimeState.effectStepActive = false;
+          context.forgetLastHistoryStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
+          context.removeLastActionLogStep(HISTORY_SOURCE_QUICK, result.step?.id || null);
+          const completedQuickEffectFlow = restoreCompletedEffectFlow(workingRoot, result, HISTORY_SOURCE_QUICK);
+          if ((undoingQuickEffectFlow || completedQuickEffectFlow) && context.getActionEffectFlow(workingRoot)) {
+            const effectIndex = result.step?.effectIndex;
+            const hasRevertibleEffectStep = Number.isInteger(effectIndex)
+              && Boolean(context.getActionEffectFlow(workingRoot).effects?.[effectIndex]);
+            if (hasRevertibleEffectStep) context.revertEffectFlowAfterUndo(workingRoot, result.step);
+            else context.clearActionEffectFlow(workingRoot);
+          }
+        }
+        if (result.ok && !quickActionHistory.hasUndoableStep() && !context.isActionEffectFlowActive()) {
+          quickActionHistory.commitSession();
+          context.clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);
+        }
+        context.refreshAfterHistoryChange(result.ok ? result.message : "已撤销快速行动");
+        return;
+      }
+
+      const mainActionHasIrreversibleBarrier = context.hasCurrentMainActionIrreversibleBarrier();
+      if ((!latestUndoSource && mainActionHasIrreversibleBarrier)
+        || (mainActionHasIrreversibleBarrier && !actionHistory.hasUndoableStep())) {
+        const irreversibleReason = context.getCurrentActionIrreversibleReason();
+        workingRoot.rocketState.statusNote = irreversibleReason
+          ? `不可撤销：${irreversibleReason}`
+          : "当前行动已有不可撤销影响";
+        context.updateActionButtons();
+        context.renderStateReadout();
+        return;
+      }
+
+      if (
+        latestUndoSource === HISTORY_SOURCE_MAIN
+        && mainActionHasIrreversibleBarrier
+        && actionHistory.hasUndoableStep()
+      ) {
+        const result = actionHistory.undoLastStep();
+        if (result.ok) {
+          uiRuntimeState.effectStepActive = false;
+          context.forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
+          context.removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
+          restoreCompletedEffectFlow(workingRoot, result, HISTORY_SOURCE_MAIN);
+          context.revertEffectFlowAfterUndo(workingRoot, result.step);
+        }
+        context.refreshAfterHistoryChange(result.ok ? result.message : result.message || "当前行动不能撤销");
+        return;
+      }
+
+      if (context.isActionEffectFlowActive() && actionHistory.hasUndoableStep()) {
+        const result = actionHistory.undoLastStep();
+        if (result.ok) {
+          uiRuntimeState.effectStepActive = false;
+          context.forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
+          context.removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
+          context.revertEffectFlowAfterUndo(workingRoot, result.step);
+          if (!context.isActionEffectFlowActive()) context.clearFullyUndoneMainActionSession();
+          context.refreshAfterHistoryChange(result.message);
+          return;
+        }
+      }
+
+      const completedMainFlowUndoStep = actionHistory.peekLastUndoableStep?.() || null;
+      if (
+        latestUndoSource === HISTORY_SOURCE_MAIN
+        && !context.isActionEffectFlowActive()
+        && context.peekCompletedEffectFlowForUndo(completedMainFlowUndoStep, HISTORY_SOURCE_MAIN)
+        && actionHistory.hasUndoableStep()
+      ) {
+        const result = actionHistory.undoLastStep();
+        if (result.ok) {
+          uiRuntimeState.effectStepActive = false;
+          context.forgetLastHistoryStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
+          context.removeLastActionLogStep(HISTORY_SOURCE_MAIN, result.step?.id || null);
+          const completedMainEffectFlow = context.takeCompletedEffectFlowForUndo(result.step, HISTORY_SOURCE_MAIN);
+          if (completedMainEffectFlow) {
+            context.setActionEffectFlow(workingRoot, completedMainEffectFlow);
+            context.setActionEffectFlowActive(true);
+            context.revertEffectFlowAfterUndo(workingRoot, result.step);
+          }
+          if (!context.isActionEffectFlowActive()) context.clearFullyUndoneMainActionSession();
+        }
+        context.refreshAfterHistoryChange(result.ok ? result.message : result.message || "已撤销效果");
+        return;
+      }
+
+      if (context.isActionPending() || actionHistory.hasSession()) {
+        const result = actionHistory.rollbackSession();
+        if (result.ok) {
+          uiRuntimeState.effectStepActive = false;
+          context.clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
+          context.removeActionLogStepsBySource(HISTORY_SOURCE_MAIN);
+          context.clearActionEffectFlow(workingRoot);
+          context.clearActionPending();
+        }
+        context.refreshAfterHistoryChange(result.ok ? result.message : result.message || "当前行动不能撤销");
+      }
+    }
+
+    return Object.freeze({ undoPendingActionForRoot });
+  }
+
   function createLegacyEffectBarRenderer(options = {}) {
     const { document, els = {} } = options;
     function render(model = {}) {
@@ -390,6 +566,7 @@
     createActionBarController,
     createActionBarRenderer,
     createLegacyActionBarController,
+    createLegacyUndoController,
     createLegacyEffectBarRenderer,
   });
 });
