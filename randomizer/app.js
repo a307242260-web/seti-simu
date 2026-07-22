@@ -1003,7 +1003,6 @@
   });
   const decisionSessions = runtime.decisions;
   const decisionState = decisionSessions.createFacade({
-    discardAction: "discard_action",
     cardSelectionAction: "card_selection_action",
     alienTraceAction: "alien_trace_action",
     alienTracePickerState: "alien_trace_picker_state",
@@ -1063,6 +1062,9 @@
   );
   const getPendingMovePayment = (workingRoot = createStateSourceReadoutRoot()) => (
     workingRoot?.match?.movePaymentContinuation || null
+  );
+  const getPendingDiscardDecision = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.discardContinuation || null
   );
   const conditionalDecisionDomain = conditionalDecisionDomainModule.createConditionalDecisionDomain(() => ({
     finalScoring,
@@ -1171,7 +1173,8 @@
     finishIndustryAbilityFlow: (workingRoot, ...args) => finishIndustryAbilityFlowForRoot(workingRoot, ...args),
     resolveMovePaymentDecision: (...args) => resolveMovePaymentDecision(...args),
     confirmStrategyPassiveSlotChoice,
-    handleHandCardDiscard,
+    finalizePendingDiscardSelection: (workingRoot, ...args) => handFlowHelpers.finalizePendingDiscardSelection(workingRoot, ...args),
+    cancelDiscardSelection: (workingRoot) => handFlowHelpers.cancelDiscardSelection(workingRoot),
     handlePublicCardClick,
     confirmPublicCornerDiscardSelection,
     confirmPublicScanSelection,
@@ -1774,16 +1777,17 @@
   function createResidentRenderInput() {
     if (!residentDesktopRenderer || !residentViewStateStore || !residentProjectionAdapter) return null;
     const viewer = getResidentViewer();
-    const decisions = decisionSessions.createFacade({
-      discardAction: "discard_action",
+    const decisions = { ...decisionSessions.createFacade({
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
-    });
+    }) };
     const canonical = residentProjectionAdapter.projectSource({ viewer });
     const readoutRoot = createResidentReadoutRoot(canonical.resident);
     decisions.movePayment = getPendingMovePayment();
+    decisions.discardContinuation = getPendingDiscardDecision(readoutRoot);
+    decisions.discardSelectedHandIndexes = [...(uiRuntimeState.discardSelectedHandIndexes || [])];
     decisions.handScanContinuation = getPendingHandScanDecision(readoutRoot);
     decisions.scanTargetContinuation = getPendingScanTargetDecision(readoutRoot);
     decisions.playCardSelection = uiRuntimeState.playCardSelection;
@@ -2491,6 +2495,14 @@
     getCurrentActionEffect,
     completeCurrentActionEffect,
     isIncomeDiscardActionType,
+    submitDiscardDecision: (handIndexes) => submitActiveCardDecision(
+      "discard-hand-cards",
+      (target) => {
+        const expected = [...handIndexes].map(Number).sort((left, right) => left - right);
+        const actual = [...(target.handIndexes || [])].map(Number).sort((left, right) => left - right);
+        return actual.length === expected.length && actual.every((value, index) => value === expected[index]);
+      },
+    ),
     scrollToPlayerCommandPanel,
     getCardTypeCode: (...args) => getCardTypeCode(...args),
     dispatchStandardIntent: (family, selector = {}, payload = {}) => (
@@ -2608,9 +2620,18 @@
   handleHandCardCornerQuickAction = (...args) => callHandFlowCommand("handleHandCardCornerQuickAction", args);
   confirmCardCornerQuickAction = (...args) => callHandFlowCommand("confirmCardCornerQuickAction", args);
   beginDiscardSelection = (...args) => callHandFlowCommand("beginDiscardSelection", args);
-  cancelDiscardSelection = (...args) => callHandFlowCommand("cancelDiscardSelection", args);
+  cancelDiscardSelection = () => submitActiveCardDecision("cancel-discard-selection", () => true);
   completeDiscardSelection = (...args) => callHandFlowCommand("completeDiscardSelection", args);
-  finalizePendingDiscardSelection = (...args) => callHandFlowCommand("finalizePendingDiscardSelection", args);
+  finalizePendingDiscardSelection = (selectedHandIndexes = uiRuntimeState.discardSelectedHandIndexes || []) => (
+    submitActiveCardDecision(
+      "discard-hand-cards",
+      (target) => {
+        const expected = [...selectedHandIndexes].map(Number).sort((left, right) => left - right);
+        const actual = [...(target.handIndexes || [])].map(Number).sort((left, right) => left - right);
+        return actual.length === expected.length && actual.every((value, index) => value === expected[index]);
+      },
+    )
+  );
   handleHandCardDiscard = (...args) => callHandFlowCommand("handleHandCardDiscard", args);
   beginPlayCardSelection = (...args) => callHandFlowCommand("beginPlayCardSelection", args);
   cancelPlayCardSelection = (...args) => callHandFlowCommand("cancelPlayCardSelection", args);
@@ -3182,7 +3203,7 @@
 
   function getPlayerHandPanelTitleHint() {
     if (isDiscardSelectionActive()) {
-      const remaining = cards.getDiscardRemaining(createStateSourceReadoutRoot().cardState);
+      const remaining = getPendingDiscardDecision()?.count || 0;
       return `（请选择 ${remaining} 张弃牌）`;
     }
     if (isHandScanSelectionActive()) {
@@ -4243,7 +4264,7 @@
   }
 
   const aiControllerState = {
-    get pendingDiscardAction() { return decisionState.discardAction; },
+    get pendingDiscardAction() { return getPendingDiscardDecision(); },
     get pendingCardSelectionAction() { return decisionState.cardSelectionAction; },
     get pendingPublicScanQueue() { return getPublicScanQueueSession(); },
     get pendingAlienTraceAction() { return decisionState.alienTraceAction; },
@@ -5590,7 +5611,8 @@
       return browserRuleComposition.inputPort.submitHostCommand({ kind: "recovery_clear_transient" });
     }
     const { cardState: workingCardState, techGameState: workingTechGameState } = workingRoot;
-    decisionState.discardAction = null;
+    delete workingRoot.match.discardContinuation;
+    uiRuntimeState.discardSelectedHandIndexes = [];
     decisionState.cardSelectionAction = null;
     delete workingRoot.match.passReserveContinuation;
     uiRuntimeState.passReserveSelectionDismissed = false;
@@ -5938,7 +5960,7 @@
   }
 
   function isDiscardSelectionActive() {
-    return cards.isDiscardSelectionActive(createStateSourceReadoutRoot().cardState);
+    return Boolean(getPendingDiscardDecision());
   }
 
   function isPlayCardSelectionActive() {
@@ -11144,17 +11166,18 @@
     }
 
     if (result.awaitingDiscard) {
-      if (decisionState.discardAction) {
-        decisionState.discardAction.beforeTradeState = beforeState;
+      const discardContinuation = getPendingDiscardDecision(workingRoot);
+      if (discardContinuation) {
+        discardContinuation.beforeTradeState = beforeState;
         if (
           options.preserveHandIndex !== null
           && options.preserveHandIndex !== undefined
           && options.preserveHandIndex !== ""
         ) {
-          decisionState.discardAction.preserveHandIndex = Number(options.preserveHandIndex);
+          discardContinuation.preserveHandIndex = Number(options.preserveHandIndex);
         }
         if (options.aiReason) {
-          decisionState.discardAction.aiReason = options.aiReason;
+          discardContinuation.aiReason = options.aiReason;
         }
       }
       actionRocketState.statusNote = result.message;
@@ -11365,7 +11388,7 @@
       getPendingStrategySlotDecision(),
       getPendingChongFossilChoice(),
       getPendingAmibaSymbolChoice(),
-      decisionState.discardAction,
+      getPendingDiscardDecision(readoutRoot),
       decisionState.cardSelectionAction,
       getPendingLandTargetDecision(),
       decisionState.alienTraceAction,

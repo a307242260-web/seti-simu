@@ -127,7 +127,8 @@
       finishIndustryAbilityFlow,
       resolveMovePaymentDecision,
       confirmStrategyPassiveSlotChoice,
-      handleHandCardDiscard,
+      finalizePendingDiscardSelection,
+      cancelDiscardSelection,
       handlePublicCardClick,
       confirmPublicCornerDiscardSelection,
       confirmPublicScanSelection,
@@ -982,26 +983,46 @@
         })),
       };
     }
-    const discardPending = decisionState.discardAction;
+    const discardPending = workingRoot.match?.discardContinuation;
     if (discardPending) {
-      const player = discardPending.player || getHeadlessConditionalPlayer(discardPending);
-      const selectedIndexes = new Set(discardPending.selectedIndexes || []);
+      const player = getHeadlessConditionalPlayer(discardPending);
+      const count = Math.max(0, Math.round(Number(discardPending.count) || 0));
+      const hand = player?.hand || [];
+      const combinations = [];
+      function collectCombinations(startIndex, selected) {
+        if (selected.length === count) {
+          combinations.push([...selected]);
+          return;
+        }
+        for (let handIndex = startIndex; handIndex <= hand.length - (count - selected.length); handIndex += 1) {
+          selected.push(handIndex);
+          collectCombinations(handIndex + 1, selected);
+          selected.pop();
+        }
+      }
+      collectCombinations(0, []);
       return {
         actorPlayer: player,
-        candidates: (player?.hand || []).flatMap((card, handIndex) => (
-          selectedIndexes.has(handIndex) ? [] : [{
+        candidates: [
+          ...combinations.map((handIndexes) => ({
             id: "conditionalChoice",
             family: "choose_payment",
-            label: cards.getCardLabel(card),
+            label: handIndexes.map((handIndex) => cards.getCardLabel(hand[handIndex])).join("、"),
             target: {
-              kind: "discard-hand-card",
-              choiceId: String(handIndex),
-              cardId: card.cardId || card.id || null,
-              handIndex,
+              kind: "discard-hand-cards",
+              choiceId: handIndexes.join("+"),
+              handIndexes,
+              cardIds: handIndexes.map((handIndex) => hand[handIndex]?.cardId || hand[handIndex]?.id || null),
             },
-            handIndex,
-          }]
-        )),
+            handIndexes,
+          })),
+          ...(!discardPending.required ? [{
+            id: "conditionalChoice",
+            family: "accept_optional_effect",
+            label: "取消弃牌",
+            target: { kind: "cancel-discard-selection", choiceId: "cancel" },
+          }] : []),
+        ],
       };
     }
     const cardPending = decisionState.cardSelectionAction;
@@ -1368,8 +1389,12 @@
       });
     },
     "strategy-passive-slot": (action) => confirmStrategyPassiveSlotChoice(action.target.slotId),
-    "discard-hand-card": (action) => handleHandCardDiscard(Number(action.target.handIndex))
-      || { ok: true, progressed: true, message: "已选择弃牌" },
+    "discard-hand-cards": (action, workingRoot) => finalizePendingDiscardSelection(
+      workingRoot,
+      action.target.handIndexes,
+    ),
+    "cancel-discard-selection": (_action, workingRoot) => cancelDiscardSelection(workingRoot)
+      || { ok: true, progressed: true, skipped: true, message: "已取消弃牌" },
     "public-card": (action) => handlePublicCardClick(Number(action.target.slotId))
       || { ok: true, progressed: true, message: "已选择公共牌" },
     "confirm-public-corner-discard": () => confirmPublicCornerDiscardSelection(),

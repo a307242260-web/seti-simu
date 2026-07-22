@@ -191,7 +191,6 @@
       return workingRoot;
     }
     const decisionState = context.decisionSessions?.createFacade?.({
-      discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
@@ -1183,7 +1182,7 @@
       const movePayment = decisionState.movePayment;
       const playCardSelection = decisionState.playCardSelection;
       const discardActive = Boolean(cardState.ui?.discardSelectionActive)
-        && decisionState.discardAction?.player?.id === currentPlayer?.id;
+        && decisionState.discardContinuation?.playerId === currentPlayer?.id;
       const playActive = Boolean(cardState.ui?.playCardSelectionActive)
         && actualCurrentPlayer?.id === currentPlayer?.id;
       const movePaymentActive = Boolean(movePayment)
@@ -1221,7 +1220,7 @@
           button.dataset.handIndex = String(index);
           if (discardActive) {
             button.classList.add("is-selectable");
-            if (decisionState.discardAction?.selectedIndexes?.includes(index)) {
+            if (decisionState.discardSelectedHandIndexes?.includes(index)) {
               button.classList.add("is-selected");
             }
             button.setAttribute("aria-label", label);

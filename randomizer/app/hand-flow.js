@@ -119,6 +119,7 @@
       getCurrentActionEffect,
       completeCurrentActionEffect,
       isIncomeDiscardActionType,
+      submitDiscardDecision,
       scrollToPlayerCommandPanel,
       getCardTypeCode,
     } = context;
@@ -126,12 +127,37 @@
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
     const decisionState = context.decisionSessions?.createFacade?.({
-      discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
+    const getDiscardContinuation = (workingRoot) => workingRoot?.match?.discardContinuation || null;
+    function setDiscardContinuation(workingRoot, continuation) {
+      if (!workingRoot?.match) throw new TypeError("discard selection requires Composition workingRoot.match");
+      uiRuntimeState.discardSelectedHandIndexes = [];
+      if (!continuation) {
+        delete workingRoot.match.discardContinuation;
+        return null;
+      }
+      const player = continuation.player || null;
+      const normalized = {
+        ...structuredClone(continuation),
+        playerId: continuation.playerId || player?.id || null,
+        playerColor: continuation.playerColor || player?.color || null,
+        count: Math.max(0, Math.round(Number(continuation.count) || 0)),
+      };
+      delete normalized.player;
+      delete normalized.selectedIndexes;
+      delete normalized.discarded;
+      workingRoot.match.discardContinuation = normalized;
+      return normalized;
+    }
+    function getDiscardPlayer(workingRoot, pending = getDiscardContinuation(workingRoot)) {
+      return (workingRoot?.playerState?.players || []).find((player) => (
+        player.id === pending?.playerId || player.color === pending?.playerColor
+      )) || getCurrentPlayer(workingRoot);
+    }
     const getHandScanContinuation = (workingRoot) => workingRoot?.match?.handScanContinuation || null;
     function setHandScanContinuation(workingRoot, continuation) {
       if (!workingRoot?.match) throw new TypeError("hand scan requires Composition workingRoot.match");
@@ -209,7 +235,7 @@
         els.discardSelectionBackdrop.setAttribute("aria-hidden", String(!active));
       }
       if (els.discardSelectionCancel) {
-        els.discardSelectionCancel.hidden = !active || Boolean(decisionState.discardAction?.required);
+        els.discardSelectionCancel.hidden = !active || Boolean(getDiscardContinuation(workingRoot)?.required);
       }
       updatePlayerHandPanelTitle();
       if (active) setQuickPanelOpen(false);
@@ -1098,7 +1124,7 @@
         return { ok: false, message: `手牌不足，需要弃置 ${discardCount} 张牌` };
       }
 
-      decisionState.discardAction = { ...(pendingAction || {}), discarded: [], selectedIndexes: [] };
+      setDiscardContinuation(workingRoot, { ...(pendingAction || {}), count: discardCount });
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), true, discardCount);
       ruleRocketState(workingRoot).statusNote = pendingAction?.type === "pass_hand_limit"
         ? `PASS：请选择 ${discardCount} 张手牌弃掉，保留 4 张`
@@ -1113,7 +1139,7 @@
 
     function cancelDiscardSelection(workingRoot) {
       if (!isDiscardSelectionActive()) return;
-      const pending = decisionState.discardAction;
+      const pending = getDiscardContinuation(workingRoot);
       if (pending?.required) {
         ruleRocketState(workingRoot).statusNote = pending.type === "pass_hand_limit"
           ? "PASS 手牌上限弃牌必须完成"
@@ -1121,7 +1147,7 @@
         renderStateReadout();
         return;
       }
-      decisionState.discardAction = null;
+      setDiscardContinuation(workingRoot, null);
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), false, 0);
       if (pending?.type === "industry_helios_income") {
         return rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
@@ -1148,13 +1174,13 @@
     }
 
     function completeDiscardSelection(workingRoot, discardedCards) {
-      const pending = decisionState.discardAction;
-      decisionState.discardAction = null;
+      const pending = getDiscardContinuation(workingRoot);
+      setDiscardContinuation(workingRoot, null);
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), false, 0);
       syncDiscardSelectionChrome(workingRoot);
 
       if (pending?.type === "trade") {
-        const tradePlayer = pending.player || getCurrentPlayer(workingRoot);
+        const tradePlayer = getDiscardPlayer(workingRoot, pending);
         const beforeState = pending.beforeTradeState;
         const tradeResult = quickTrades.finalizeTradeAfterDiscard(
           pending.tradeId,
@@ -1177,7 +1203,7 @@
       }
 
       if (isIncomeDiscardActionType(pending?.type)) {
-        const incomeResult = applyIncomeFromCard(pending.player || getCurrentPlayer(workingRoot), discardedCards[0]);
+        const incomeResult = applyIncomeFromCard(getDiscardPlayer(workingRoot, pending), discardedCards[0]);
         if (pending.type === "initial_income" && incomeResult.ok && pending.fromEffectFlow) {
           const effect = getCurrentActionEffect();
           if (effect) {
@@ -1202,7 +1228,7 @@
       }
 
       if (pending?.type === "pass_hand_limit") {
-        const player = pending.player || getCurrentPlayer(workingRoot);
+        const player = getDiscardPlayer(workingRoot, pending);
         const message = discardedCards.length
           ? `PASS 手牌上限：弃掉 ${discardedCards.map((card) => cards.getCardLabel(card)).join("、")}`
           : "PASS 手牌上限：无需弃牌";
@@ -1247,11 +1273,18 @@
       return { ok: true, cards: discardedCards, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function finalizePendingDiscardSelection(workingRoot) {
-      const pending = decisionState.discardAction;
-      const discardPlayer = pending?.player || getCurrentPlayer(workingRoot);
-      const selected = [...(pending?.selectedIndexes || [])].sort((a, b) => b - a);
-      const discarded = [...(pending?.discarded || [])];
+    function finalizePendingDiscardSelection(workingRoot, selectedHandIndexes = uiRuntimeState.discardSelectedHandIndexes) {
+      const pending = getDiscardContinuation(workingRoot);
+      if (!pending) return { ok: false, message: "当前没有待完成的弃牌" };
+      const discardPlayer = getDiscardPlayer(workingRoot, pending);
+      const selectedAscending = [...new Set((selectedHandIndexes || []).map((index) => Math.round(Number(index))))]
+        .filter((index) => Number.isInteger(index) && index >= 0 && index < (discardPlayer?.hand?.length || 0))
+        .sort((a, b) => a - b);
+      if (selectedAscending.length !== pending.count) {
+        return { ok: false, message: `弃牌选择数量不符，需要 ${pending.count} 张` };
+      }
+      const selected = [...selectedAscending].sort((a, b) => b - a);
+      const discarded = [];
 
       for (const index of selected) {
         const discardResult = cards.discardFromHandAtIndex(discardPlayer, index);
@@ -1265,7 +1298,6 @@
         discarded.push(discardResult.card);
       }
 
-      if (pending) pending.selectedIndexes = [];
       cards.setDiscardSelectionActive(ruleCardState(workingRoot), false, 0);
       return completeDiscardSelection(workingRoot, discarded);
     }
@@ -1273,19 +1305,18 @@
     function handleHandCardDiscard(workingRoot, handIndex) {
       if (!isDiscardSelectionActive()) return;
       const index = Math.round(handIndex);
-      const needed = cards.getDiscardRemaining(ruleCardState(workingRoot));
-      if (!decisionState.discardAction) return;
-      if (!Array.isArray(decisionState.discardAction.selectedIndexes)) {
-        decisionState.discardAction.selectedIndexes = [];
-      }
-      const selected = decisionState.discardAction.selectedIndexes;
+      const pending = getDiscardContinuation(workingRoot);
+      if (!pending) return;
+      const needed = pending.count;
+      if (!Array.isArray(uiRuntimeState.discardSelectedHandIndexes)) uiRuntimeState.discardSelectedHandIndexes = [];
+      const selected = uiRuntimeState.discardSelectedHandIndexes;
       const existingIndex = selected.indexOf(index);
       if (existingIndex >= 0) {
         selected.splice(existingIndex, 1);
         renderPlayerHand();
         ruleRocketState(workingRoot).statusNote = selected.length > 0
           ? `弃牌：已选 ${selected.length}/${needed} 张`
-          : (isIncomeDiscardActionType(decisionState.discardAction.type)
+          : (isIncomeDiscardActionType(pending.type)
             ? "收入：请选择手牌弃掉"
             : `弃牌：请选择 ${needed} 张手牌`);
         renderStateReadout();
@@ -1303,7 +1334,9 @@
         renderStateReadout();
         return { ok: true };
       }
-      return finalizePendingDiscardSelection(workingRoot);
+      return typeof submitDiscardDecision === "function"
+        ? submitDiscardDecision([...selected])
+        : finalizePendingDiscardSelection(workingRoot, selected);
     }
 
     function beginPlayCardSelection(workingRoot) {

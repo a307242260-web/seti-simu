@@ -104,7 +104,6 @@
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
     const ruleCardState = (workingRoot) => workingRoot.cardState;
     const decisionState = context.decisionSessions?.createFacade?.({
-      discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
@@ -159,7 +158,8 @@
     }
 
     function clearPlayerScopedSelectionsForSwitch(workingRoot) {
-      decisionState.discardAction = null;
+      delete workingRoot.match.discardContinuation;
+      uiRuntimeState.discardSelectedHandIndexes = [];
       decisionState.cardSelectionAction = null;
       delete workingRoot.match.passReserveContinuation;
       uiRuntimeState.passReserveSelectionDismissed = false;
@@ -981,7 +981,7 @@
 
       const pendingEntries = [
         workingRoot.match?.movePaymentContinuation,
-        decisionState.discardAction,
+        workingRoot.match?.discardContinuation,
         decisionState.cardSelectionAction,
         workingRoot.match?.passReserveContinuation,
         workingRoot.match?.scanTargetContinuation,

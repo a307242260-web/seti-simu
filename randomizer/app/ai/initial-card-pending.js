@@ -207,12 +207,13 @@
     function runAiDiscardDecision(workingRoot) {
       const { cardState, playerState } = requireWorkingRoot(workingRoot);
       if (!isDiscardSelectionActive() || !state.pendingDiscardAction) return null;
-      const player = state.pendingDiscardAction.player || getWorkingCurrentPlayer(workingRoot);
+      const pendingDiscard = state.pendingDiscardAction;
+      const player = resolveWorkingPlayerById(workingRoot, pendingDiscard.playerId) || getWorkingCurrentPlayer(workingRoot);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工弃牌` };
       }
-      const count = cards.getDiscardRemaining(cardState);
-      const pendingType = state.pendingDiscardAction.type || null;
+      const count = Math.max(0, Math.round(Number(pendingDiscard.count) || 0));
+      const pendingType = pendingDiscard.type || null;
       const incomeGainByIndex = isAiIncomeDiscardType(pendingType)
         ? (player.hand || []).map((card) => cards.getIncomeGainForCard?.(card) || null)
         : null;
@@ -222,7 +223,7 @@
         ? chooseAiIncomeDiscardIndexes(workingRoot, player, count, incomeGainByIndex, incomePlanningEntries)
         : null;
       const tradeDiscardIndexes = !dynamicIncomeIndexes && pendingType === "trade"
-        ? chooseAiTradeDiscardIndexes(workingRoot, player, count, state.pendingDiscardAction)
+        ? chooseAiTradeDiscardIndexes(workingRoot, player, count, pendingDiscard)
         : null;
       const preferredIndexes = dynamicIncomeIndexes || tradeDiscardIndexes || ai?.selectionEvaluator?.evaluateDiscardIndexes?.(player.hand || [], count, {
         pendingType,
@@ -245,15 +246,15 @@
       })));
       if (!discardPolicy.ok) return { ok: false, blocked: true, code: discardPolicy.code, message: discardPolicy.message };
       const selectedIndexes = discardPolicy.choice.indexes;
-      state.pendingDiscardAction.selectedIndexes = selectedIndexes.slice(0, count);
+      const submittedIndexes = selectedIndexes.slice(0, count).sort((left, right) => left - right);
       const incomeDiscardPreview = incomeGainByIndex
         ? getAiIncomeDiscardPreview(player, count, pendingType, incomeGainByIndex, incomePlanningEntries, selectedIndexes)
         : null;
-      recordAiAutoBattleLog("discard", `${player.colorLabel}AI 弃牌 ${state.pendingDiscardAction.selectedIndexes.length} 张`, {
+      recordAiAutoBattleLog("discard", `${player.colorLabel}AI 弃牌 ${submittedIndexes.length} 张`, {
         logPlayerId: player.id || null,
         logPlayerColor: player.color || null,
-        selectedIndexes: state.pendingDiscardAction.selectedIndexes,
-        selectedCards: state.pendingDiscardAction.selectedIndexes
+        selectedIndexes: submittedIndexes,
+        selectedCards: submittedIndexes
           .map((handIndex) => {
             const card = player.hand?.[handIndex] || null;
             if (!card) return null;
@@ -268,9 +269,9 @@
         pendingType,
         incomeGainByIndex,
         incomeDiscardPreview,
-        tradeId: state.pendingDiscardAction.tradeId || null,
+        tradeId: pendingDiscard.tradeId || null,
       });
-      return finalizePendingDiscardSelection();
+      return finalizePendingDiscardSelection(submittedIndexes);
     }
 
 

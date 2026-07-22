@@ -459,6 +459,44 @@ function createBaseContext(player, overrides = {}) {
 }
 
 {
+  const player = {
+    id: "player-1",
+    color: "white",
+    resources: { credits: 0, energy: 0, handSize: 3 },
+    hand: [
+      { id: "discard-1", label: "弃牌 A" },
+      { id: "discard-2", label: "弃牌 B" },
+      { id: "keep-1", label: "保留" },
+    ],
+  };
+  const context = createBaseContext(player);
+  let submittedIndexes = null;
+  context.submitDiscardDecision = (handIndexes) => {
+    submittedIndexes = [...handIndexes];
+    return { ok: true, submitted: true };
+  };
+  const handFlow = createHandFlow(context);
+  assert.equal(handFlow.beginDiscardSelection(context.workingRoot, 2, {
+    type: "pass_hand_limit",
+    player,
+    required: true,
+    beforePlayerState: structuredClone(player),
+  }).ok, true);
+  assert.equal(context.workingRoot.match.discardContinuation.player, undefined);
+  assert.equal(context.workingRoot.match.discardContinuation.playerId, player.id);
+  assert.doesNotThrow(() => JSON.stringify(context.workingRoot.match.discardContinuation));
+  assert.equal(handFlow.handleHandCardDiscard(context.workingRoot, 1).ok, true);
+  assert.equal(player.hand.length, 3, "UI 草稿不得提前修改规则手牌");
+  assert.deepEqual(context.uiRuntimeState.discardSelectedHandIndexes, [1]);
+  assert.equal(handFlow.handleHandCardDiscard(context.workingRoot, 0).submitted, true);
+  assert.deepEqual(submittedIndexes, [1, 0]);
+  assert.equal(player.hand.length, 3, "active Decision 提交前不得落规则 mutation");
+  assert.equal(handFlow.finalizePendingDiscardSelection(context.workingRoot, submittedIndexes).ok, true);
+  assert.deepEqual(player.hand.map((card) => card.id), ["keep-1"]);
+  assert.equal(context.workingRoot.match.discardContinuation, undefined);
+}
+
+{
   const boundPlayer = {
     id: "bound-player",
     color: "white",

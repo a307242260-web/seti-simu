@@ -108,7 +108,6 @@
     const QUICK_TURN_ACTION_FAMILIES = new Set(quickTurnActionExecutor?.actionFamilies || []);
     const CONDITIONAL_ACTION_FAMILIES = new Set(conditionalActionExecutor?.actionFamilies || []);
     const decisionState = context.decisionSessions?.createFacade?.({
-      discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",

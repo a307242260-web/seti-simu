@@ -121,7 +121,6 @@
       updateActionButtons
     } = context;
     const decisionState = context.decisionSessions?.createFacade?.({
-      discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
@@ -210,8 +209,9 @@
         if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
         if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
       }
-      if (decisionState.discardAction?.type === "industry_helios_income") {
-        decisionState.discardAction = null;
+      if (workingRoot.match?.discardContinuation?.type === "industry_helios_income") {
+        delete workingRoot.match.discardContinuation;
+        uiRuntimeState.discardSelectedHandIndexes = [];
         cards.setDiscardSelectionActive(cardState, false, 0);
         syncDiscardSelectionChrome();
       }

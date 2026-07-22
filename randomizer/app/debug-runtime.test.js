@@ -339,6 +339,7 @@ function createBaseContext() {
     nebulaDataState: context.nebulaDataState,
     alienGameState: context.alienGameState,
     cardState: context.cardState,
+    match: {},
   };
   return context;
 }
@@ -360,7 +361,7 @@ function createBaseContext() {
   const runtime = createDebugRuntime(context);
   const openResult = runtime.openDebugQuickSectorScanPicker(context.workingRoot);
   assert.equal(openResult.ok, true);
-  assert.equal(context.pendingState.scanTargetAction.type, "debug_quick_sector_scan");
+  assert.equal(context.workingRoot.match.scanTargetContinuation.type, "debug_quick_sector_scan");
   runtime.handleDebugQuickSectorScanChoice(context.workingRoot, { debugSectorScanStep: "player", playerId: "p1" });
   assert.equal(context.els.scanTargetTitle.textContent, "快速扫描扇区");
   const runResult = runtime.runDebugQuickSectorScan(context.workingRoot, "p1", "S1", 2);
@@ -381,7 +382,7 @@ function createBaseContext() {
 
 {
   const context = createBaseContext();
-  context.pendingState.discardAction = { playerId: "p2" };
+  context.workingRoot.match.discardContinuation = { playerId: "p2", type: "income", count: 1 };
   const runtime = createDebugRuntime(context);
   const aiResult = runtime.handleAiTakeoverFailsafe(context.workingRoot);
   assert.equal(aiResult.ok, true);

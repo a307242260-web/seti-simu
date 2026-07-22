@@ -40,6 +40,7 @@ function createFixture() {
     cardTriggerCalls: [],
     cardTaskCalls: [],
     dataPlacementCalls: [],
+    discardCalls: [],
     industryMoveCalls: [],
   };
   let contextReads = 0;
@@ -92,6 +93,15 @@ function createFixture() {
         delete workingRoot.match.dataPlacementContinuation;
         return { ok: true, progressed: true, skipped: true };
       },
+      finalizePendingDiscardSelection: (workingRoot, handIndexes) => {
+        state.discardCalls.push([...handIndexes]);
+        delete workingRoot.match.discardContinuation;
+        return { ok: true, progressed: true };
+      },
+      cancelDiscardSelection: (workingRoot) => {
+        delete workingRoot.match.discardContinuation;
+        return { ok: true, progressed: true, skipped: true };
+      },
       handleCardTriggerChoice: (workingRoot, choiceIndex) => {
         state.cardTriggerCalls.push(choiceIndex);
         delete workingRoot.match.cardTriggerContinuation;
@@ -132,6 +142,31 @@ function createFixture() {
     });
   });
   return { root, finalPlayer, scanPlayer, state, domain, getContextReads: () => contextReads };
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  fixture.root.match.discardContinuation = {
+    playerId: "move-owner",
+    type: "pass_hand_limit",
+    count: 2,
+    required: true,
+  };
+  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const decision = executor.inspect(fixture.root);
+  assert.equal(decision.ownerId, "move-owner");
+  assert.deepEqual(decision.choices.map((choice) => choice.target), [{
+    kind: "discard-hand-cards",
+    choiceId: "0+1",
+    handIndexes: [0, 1],
+    cardIds: ["move-1", "move-2"],
+  }]);
+  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_payment"));
+  assert.equal(result.ok, true);
+  assert.deepEqual(fixture.state.discardCalls, [[0, 1]]);
+  assert.equal(fixture.root.match.discardContinuation, undefined);
 }
 
 {
