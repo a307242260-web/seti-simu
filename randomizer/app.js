@@ -2060,6 +2060,15 @@
     formatPlayerIncomeBreakdown,
     getPlayerReadoutLines,
   } = playerStatsUi;
+  const getInitialSelectionReadoutLines = startScreenModule.createInitialSelectionReadout({
+    state: setupSelectionState,
+    getPlayerIds: () => getInitialSelectionPlayerIds(),
+    getPlayerLabel: (playerId) => getPlayerLabelById(playerId),
+    getPlayer: (playerId) => getPlayerById(playerId),
+    getOffer: (playerId) => getInitialSelectionOffer(playerId),
+    getCardFromOffer: getCardFromInitialOffer,
+    isConfirmed: (playerId) => isInitialSelectionConfirmed(playerId),
+  });
   const renderRuntime = renderRuntimeModule.createRenderRuntime({
     document,
     Image,
@@ -9686,34 +9695,6 @@
       kind: "data_place_blue_slot",
       blueSlot,
     }).value;
-  }
-
-  function getInitialSelectionReadoutLines() {
-    const playerIds = getInitialSelectionPlayerIds();
-    const phaseLabel = setupSelectionState.phase === "selecting" ? "选择中" : "已完成";
-    const lines = [
-      "初始选择",
-      `状态=${phaseLabel} 当前=${setupSelectionState.currentPlayerId ? getPlayerLabelById(setupSelectionState.currentPlayerId) : "无"}`,
-    ];
-
-    for (const playerId of playerIds) {
-      const player = getPlayerById(playerId);
-      const offer = getInitialSelectionOffer(playerId);
-      const selectedIndustry = offer?.selectedIndustryId
-        ? getCardFromInitialOffer(offer, "industry", offer.selectedIndustryId)?.label
-        : player?.initialSelection?.industry?.label;
-      const selectedInitial = offer?.selectedInitialIds?.length
-        ? offer.selectedInitialIds
-          .map((cardId) => getCardFromInitialOffer(offer, "initial", cardId)?.label)
-          .filter(Boolean)
-        : (player?.initialSelection?.removedInitialCards || []).map((card) => card.label);
-
-      lines.push(
-        `${getPlayerLabelById(playerId)} 公司=${selectedIndustry || "未选"} 初始牌=${selectedInitial.join("、") || "未选"} 确认=${isInitialSelectionConfirmed(playerId) ? "是" : "否"}`,
-      );
-    }
-
-    return lines;
   }
 
   function queueStateReadoutRender() {

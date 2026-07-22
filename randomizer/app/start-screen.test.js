@@ -6,6 +6,7 @@ const {
   normalizeStartPlayerCount,
   syncStartScreenIndustryOptions,
   createInitialSelectionUi,
+  createInitialSelectionReadout,
   createStartScreenController,
 } = require("./start-screen");
 
@@ -80,6 +81,24 @@ initialRow.children[0].listeners.click();
 initialSelectionPicker.children[2].children[1].listeners.click();
 assert.deepEqual(initialSelectionCalls.slice(-2), ["initial:start-a", "confirm"]);
 assert.equal(initialSelectionUi.createCardImage({ src: "a.png", label: "A" }, "summary").className.includes("summary"), true);
+
+const getInitialSelectionReadoutLines = createInitialSelectionReadout({
+  state: { phase: "selecting", currentPlayerId: "p1" },
+  getPlayerIds: () => ["p1"],
+  getPlayerLabel: () => "蓝色玩家",
+  getPlayer: () => ({ initialSelection: null }),
+  getOffer: () => ({
+    selectedIndustryId: "company",
+    selectedInitialIds: ["start-a", "start-b"],
+  }),
+  getCardFromOffer: (_offer, kind, id) => ({ label: kind === "industry" ? "公司" : id.toUpperCase() }),
+  isConfirmed: () => false,
+});
+assert.deepEqual(getInitialSelectionReadoutLines(), [
+  "初始选择",
+  "状态=选择中 当前=蓝色玩家",
+  "蓝色玩家 公司=公司 初始牌=START-A、START-B 确认=否",
+]);
 
 const callLog = [];
 const controller = createStartScreenController({

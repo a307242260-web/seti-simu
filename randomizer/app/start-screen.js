@@ -240,6 +240,40 @@
     return Object.freeze({ createPicker, createCardImage });
   }
 
+  function createInitialSelectionReadout(context = {}) {
+    const required = [
+      "getPlayerIds", "getPlayerLabel", "getPlayer", "getOffer", "getCardFromOffer", "isConfirmed",
+    ];
+    for (const name of required) {
+      if (typeof context[name] !== "function") {
+        throw new TypeError(`createInitialSelectionReadout requires function: ${name}`);
+      }
+    }
+    return function getInitialSelectionReadoutLines() {
+      const state = context.state || {};
+      const lines = [
+        "初始选择",
+        `状态=${state.phase === "selecting" ? "选择中" : "已完成"} 当前=${state.currentPlayerId ? context.getPlayerLabel(state.currentPlayerId) : "无"}`,
+      ];
+      for (const playerId of context.getPlayerIds()) {
+        const player = context.getPlayer(playerId);
+        const offer = context.getOffer(playerId);
+        const selectedIndustry = offer?.selectedIndustryId
+          ? context.getCardFromOffer(offer, "industry", offer.selectedIndustryId)?.label
+          : player?.initialSelection?.industry?.label;
+        const selectedInitial = offer?.selectedInitialIds?.length
+          ? offer.selectedInitialIds
+            .map((cardId) => context.getCardFromOffer(offer, "initial", cardId)?.label)
+            .filter(Boolean)
+          : (player?.initialSelection?.removedInitialCards || []).map((card) => card.label);
+        lines.push(
+          `${context.getPlayerLabel(playerId)} 公司=${selectedIndustry || "未选"} 初始牌=${selectedInitial.join("、") || "未选"} 确认=${context.isConfirmed(playerId) ? "是" : "否"}`,
+        );
+      }
+      return lines;
+    };
+  }
+
   function createStartScreenController(context = {}) {
     if (!context.startScreenState) {
       throw new Error("createStartScreenController requires startScreenState");
@@ -439,6 +473,7 @@
     handleStartIndustryOptionChange,
     updateStartScreenContinueButton,
     createInitialSelectionUi,
+    createInitialSelectionReadout,
     createStartScreenController,
   };
 });
