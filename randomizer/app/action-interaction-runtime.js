@@ -148,6 +148,7 @@
       beginCardSelection,
       beginDiscardSelection,
       beginEffectHistoryStep,
+      beginQuickActionStep,
       blockIncompatiblePendingQuickAction,
       buildPlutoChoiceRewardSummary,
       buildPlutoRewardEffectsForAction,
@@ -161,7 +162,6 @@
       getMainActionStartBlockReason,
       getPendingOwnerFields,
       getPendingOwnerPlayer,
-      getPlaceDataSlotBonuses,
       hasActiveCardTriggerResolution,
       historyCommands,
       isActionEffectFlowActive,
@@ -170,9 +170,11 @@
       markerOwnerLabel,
       openLandTargetPicker,
       players,
+      quickActionHistory,
       recordAtomicActionHistory,
+      recordAbilityCommands,
       recordHistoryCommand,
-      recordPlaceDataActionHistory,
+      recordQuickHistoryCommand,
       removeRocketElement,
       renderInitialSelectionArea,
       renderPlayerStats,
@@ -192,7 +194,8 @@
       uiRuntimeState,
       updateActionButtons,
       validateIndustryHuanyuMoveRocket,
-      withPendingOwnerPlayer
+      withPendingOwnerPlayer,
+      completeQuickActionStep,
     } = context;
     const getActionEffectFlow = (workingRoot) => requireWorkingRoot(workingRoot).match?.actionEffectFlow || null;
     function requireWorkingRoot(workingRoot) {
@@ -1113,6 +1116,111 @@
     renderInitialSelectionArea();
     return continuePendingDataPlacementAfterBonus(workingRoot);
     });
+  }
+
+  function getPlaceDataSlotBonuses(placeResult) {
+    if (placeResult?.slotBonuses?.length) return placeResult.slotBonuses;
+    return placeResult?.slotBonus ? [placeResult.slotBonus] : [];
+  }
+
+  function applyAutomaticPlaceDataBonus(player, bonus) {
+    const beforePlayer = structuredClone(player);
+    const resourceKey = bonus.type === "publicity"
+      ? "publicity"
+      : bonus.type === "score"
+        ? "score"
+        : bonus.type === "credits"
+          ? "credits"
+          : bonus.type === "energy"
+            ? "energy"
+            : null;
+    if (!resourceKey) return { ok: true, message: null };
+
+    const amount = bonus[resourceKey];
+    players.gainResources(player, { [resourceKey]: amount });
+    if (resourceKey === "score") {
+      addPlayerScoreSource(player, SCORE_SOURCE_KEYS.BLUE_TECH, amount);
+    }
+    const labels = {
+      publicity: "宣传",
+      score: "分",
+      credits: "信用点",
+      energy: "能量",
+    };
+    recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
+      player,
+      beforePlayer,
+      `恢复放置数据${labels[resourceKey]}奖励`,
+    ));
+    return { ok: true, message: `获得 ${amount} ${labels[resourceKey]}` };
+  }
+
+  function applyPendingPlaceDataBonus(workingRoot, player, bonus) {
+    if (bonus.type === "income") {
+      const incomeStart = beginDiscardSelection(1, {
+        type: "place_data_income",
+        player,
+        beforePlayerState: structuredClone(player),
+        beforeCardState: structuredClone(workingRoot.cardState),
+        effectLabel: "放置数据：收入奖励",
+      });
+      if (!incomeStart.ok) {
+        completeQuickActionStep();
+        return { ok: false, pendingIncome: false, message: incomeStart.message };
+      }
+      return { ok: true, pendingIncome: true };
+    }
+
+    if (bonus.type === "choose_card") {
+      const selectionStart = beginCardSelection({
+        type: "place_data_choose_card",
+        player,
+        beforePlayerState: structuredClone(player),
+        beforeCardState: structuredClone(workingRoot.cardState),
+      });
+      if (!selectionStart.ok) {
+        completeQuickActionStep();
+        return { ok: false, pendingIncome: false, message: selectionStart.message };
+      }
+      return { ok: true, pendingIncome: false, pendingCardSelection: true };
+    }
+
+    return { ok: true, pendingIncome: false };
+  }
+
+  function applyPlaceDataSlotBonus(workingRoot, player, placeResult) {
+    const bonuses = getPlaceDataSlotBonuses(placeResult);
+    if (!bonuses.length) {
+      completeQuickActionStep();
+      return { ok: true, pendingIncome: false };
+    }
+
+    const autoMessages = [];
+    for (const bonus of bonuses) {
+      if (bonus.type === "income" || bonus.type === "choose_card") {
+        const pendingResult = applyPendingPlaceDataBonus(workingRoot, player, bonus);
+        if (pendingResult.message && !pendingResult.pendingIncome && !pendingResult.pendingCardSelection) {
+          return pendingResult;
+        }
+        if (pendingResult.pendingIncome || pendingResult.pendingCardSelection) return pendingResult;
+        continue;
+      }
+      const autoResult = applyAutomaticPlaceDataBonus(player, bonus);
+      if (autoResult.message) autoMessages.push(autoResult.message);
+    }
+
+    completeQuickActionStep();
+    return {
+      ok: true,
+      pendingIncome: false,
+      message: autoMessages.length ? autoMessages.join("；") : null,
+    };
+  }
+
+  function recordPlaceDataActionHistory(workingRoot, player, placeResult) {
+    beginQuickActionStep("place-data", "放置数据");
+    recordAbilityCommands(placeResult, quickActionHistory, workingRoot);
+    return applyPlaceDataSlotBonus(workingRoot, player, placeResult);
   }
 
   function skipPendingDataPlacement(workingRoot) {

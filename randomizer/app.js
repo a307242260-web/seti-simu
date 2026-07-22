@@ -5800,124 +5800,6 @@
       || type === "industry_fundamentalism_income";
   }
 
-  function getPlaceDataSlotBonuses(placeResult) {
-    if (placeResult?.slotBonuses?.length) return placeResult.slotBonuses;
-    return placeResult?.slotBonus ? [placeResult.slotBonus] : [];
-  }
-
-  function applyAutomaticPlaceDataBonus(player, bonus) {
-    const beforePlayer = structuredClone(player);
-    if (bonus.type === "publicity") {
-      players.gainResources(player, { publicity: bonus.publicity });
-      recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
-        player,
-        beforePlayer,
-        "恢复放置数据宣传奖励",
-      ));
-      return { ok: true, message: `获得 ${bonus.publicity} 宣传` };
-    }
-    if (bonus.type === "score") {
-      players.gainResources(player, { score: bonus.score });
-      addPlayerScoreSource(player, SCORE_SOURCE_KEYS.BLUE_TECH, bonus.score);
-      recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
-        player,
-        beforePlayer,
-        "恢复放置数据分数奖励",
-      ));
-      return { ok: true, message: `获得 ${bonus.score} 分` };
-    }
-    if (bonus.type === "credits") {
-      players.gainResources(player, { credits: bonus.credits });
-      recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
-        player,
-        beforePlayer,
-        "恢复放置数据信用点奖励",
-      ));
-      return { ok: true, message: `获得 ${bonus.credits} 信用点` };
-    }
-    if (bonus.type === "energy") {
-      players.gainResources(player, { energy: bonus.energy });
-      recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
-        player,
-        beforePlayer,
-        "恢复放置数据能量奖励",
-      ));
-      return { ok: true, message: `获得 ${bonus.energy} 能量` };
-    }
-    return { ok: true, message: null };
-  }
-
-  function applyPendingPlaceDataBonus(workingRoot, player, bonus) {
-    if (bonus.type === "income") {
-      const incomeStart = beginDiscardSelection(1, {
-        type: "place_data_income",
-        player,
-        beforePlayerState: structuredClone(player),
-        beforeCardState: structuredClone(workingRoot.cardState),
-        effectLabel: "放置数据：收入奖励",
-      });
-      if (!incomeStart.ok) {
-        completeQuickActionStep();
-        return { ok: false, pendingIncome: false, message: incomeStart.message };
-      }
-      return { ok: true, pendingIncome: true };
-    }
-
-    if (bonus.type === "choose_card") {
-      const selectionStart = beginCardSelection({
-        type: "place_data_choose_card",
-        player,
-        beforePlayerState: structuredClone(player),
-        beforeCardState: structuredClone(workingRoot.cardState),
-      });
-      if (!selectionStart.ok) {
-        completeQuickActionStep();
-        return { ok: false, pendingIncome: false, message: selectionStart.message };
-      }
-      return { ok: true, pendingIncome: false, pendingCardSelection: true };
-    }
-
-    return { ok: true, pendingIncome: false };
-  }
-
-  function applyPlaceDataSlotBonus(workingRoot, player, placeResult) {
-    const bonuses = getPlaceDataSlotBonuses(placeResult);
-    if (!bonuses.length) {
-      completeQuickActionStep();
-      return { ok: true, pendingIncome: false };
-    }
-
-    const autoMessages = [];
-    for (const bonus of bonuses) {
-      if (bonus.type === "income" || bonus.type === "choose_card") {
-        const pendingResult = applyPendingPlaceDataBonus(workingRoot, player, bonus);
-        if (pendingResult.message && !pendingResult.pendingIncome && !pendingResult.pendingCardSelection) {
-          return pendingResult;
-        }
-        if (pendingResult.pendingIncome || pendingResult.pendingCardSelection) {
-          return pendingResult;
-        }
-        continue;
-      }
-
-      const autoResult = applyAutomaticPlaceDataBonus(player, bonus);
-      if (autoResult.message) autoMessages.push(autoResult.message);
-    }
-
-    completeQuickActionStep();
-    return {
-      ok: true,
-      pendingIncome: false,
-      message: autoMessages.length ? autoMessages.join("；") : null,
-    };
-  }
-
-  function recordPlaceDataActionHistory(workingRoot, player, placeResult) {
-    beginQuickActionStep("place-data", "放置数据");
-    recordAbilityCommands(placeResult, quickActionHistory, workingRoot);
-    return applyPlaceDataSlotBonus(workingRoot, player, placeResult);
-  }
-
   function recordMoveActionHistory(workingRoot, moveResult, paymentCommand = null) {
     beginQuickActionStep("move", "移动");
     if (paymentCommand) {
@@ -8381,6 +8263,7 @@
     beginCardSelection,
     beginDiscardSelection,
     beginEffectHistoryStep,
+    beginQuickActionStep,
     blockIncompatiblePendingQuickAction,
     buildPlutoChoiceRewardSummary,
     buildPlutoRewardEffectsForAction,
@@ -8394,7 +8277,6 @@
     getMainActionStartBlockReason,
     getPendingOwnerFields,
     getPendingOwnerPlayer,
-    getPlaceDataSlotBonuses,
     hasActiveCardTriggerResolution,
     historyCommands,
     isActionEffectFlowActive,
@@ -8403,9 +8285,11 @@
     markerOwnerLabel,
     openLandTargetPicker,
     players,
+    quickActionHistory,
     recordAtomicActionHistory,
+    recordAbilityCommands,
     recordHistoryCommand,
-    recordPlaceDataActionHistory,
+    recordQuickHistoryCommand,
     removeRocketElement,
     renderInitialSelectionArea,
     renderPlayerStats,
@@ -8426,6 +8310,7 @@
     updateActionButtons,
     validateIndustryHuanyuMoveRocket,
     withPendingOwnerPlayer,
+    completeQuickActionStep,
   });
 
   legacyActionBarController = browserHostModule.actionBar.createLegacyActionBarController({
