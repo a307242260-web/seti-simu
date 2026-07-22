@@ -1150,6 +1150,25 @@
   const cardTaskState = cardTaskStateModule.createTaskState();
   const actionHistory = actionHistoryModule.createActionHistory();
   const quickActionHistory = actionHistoryModule.createActionHistory();
+  const actionSessionRuntime = browserHostModule.actionBar.createLegacyActionSessionRuntime({
+    actionHistory,
+    uiRuntimeState,
+    historySourceMain: HISTORY_SOURCE_MAIN,
+    clearCompletedEffectFlowForUndo: (...args) => clearCompletedEffectFlowForUndo(...args),
+    clearHistoryStepOrderForSource: (...args) => clearHistoryStepOrderForSource(...args),
+    pruneEmptyActionLogDraft: (...args) => pruneEmptyActionLogDraft(...args),
+    renderActionLog: (...args) => renderActionLog(...args),
+    isActionEffectFlowActive: (...args) => isActionEffectFlowActive(...args),
+    hasActivePendingSubFlow: (...args) => hasActivePendingSubFlow(...args),
+    getGameplayLockReason: (...args) => getGameplayLockReason(...args),
+  });
+  const {
+    markActionPending, isActionPending, getIrreversibleReason, markCurrentActionIrreversible,
+    getCurrentActionIrreversibleReason, markResultIrreversible, getAlienCardGainIrreversible,
+    clearActionPending, isMainActionOpeningStep, clearFullyUndoneMainActionSession,
+    clearStaleFullyUndoneMainActionSession, canUndoCurrentMainAction,
+    hasCurrentMainActionIrreversibleBarrier, getMainActionStartBlockReason, canStartMainAction,
+  } = actionSessionRuntime;
   const scoreSourceRuntime = scoreSourceRuntimeModule.createScoreSourceRuntime({
     actionHistory,
     quickActionHistory,
@@ -6505,59 +6524,6 @@
     isQuickPanelOpen, setQuickPanelOpen, toggleQuickPanel, updateQuickPanel,
   } = legacyActionBarPort;
 
-  function markActionPending() {
-    actionHistory.markActionComplete?.();
-  }
-
-  function isActionPending() {
-    return Boolean(actionHistory.isActionComplete?.());
-  }
-
-  function getIrreversibleReason(result, fallback = "该步骤产生不可撤销影响") {
-    if (result?.irreversible?.reason) return String(result.irreversible.reason);
-    if (result?.irreversibleReason) return String(result.irreversibleReason);
-    if (result?.undoable === false) return result.message || fallback;
-    return null;
-  }
-
-  function markCurrentActionIrreversible(reason, code = "irreversible") {
-    const barrierReason = reason || getCurrentActionIrreversibleReason() || "该步骤产生不可撤销影响";
-    actionHistory.markIrreversible?.({
-      source: HISTORY_SOURCE_MAIN,
-      code,
-      irreversibleReason: barrierReason,
-    });
-    return {
-      code,
-      reason: barrierReason,
-    };
-  }
-
-  function getCurrentActionIrreversibleReason() {
-    return actionHistory.getIrreversibleBarrier?.()?.irreversibleReason || null;
-  }
-
-  function markResultIrreversible(result, reason, code = "irreversible") {
-    if (!result) return result;
-    result.undoable = false;
-    result.irreversible = {
-      code,
-      reason: reason || result.irreversible?.reason || result.message || "该步骤产生不可撤销影响",
-    };
-    markCurrentActionIrreversible(result.irreversible.reason, result.irreversible.code);
-    return result;
-  }
-
-  function getAlienCardGainIrreversible(result) {
-    return result?.card
-      ? { code: "hidden_alien_card_reveal", reason: "外星人牌获取翻开新牌" }
-      : null;
-  }
-
-  function clearActionPending() {
-    clearCompletedEffectFlowForUndo(HISTORY_SOURCE_MAIN);
-  }
-
   function recoverPendingActionFromOpenHistoryForAiForRoot(workingRoot) {
     if (
       isActionPending()
@@ -6577,66 +6543,6 @@
 
   function recoverPendingActionFromOpenHistoryForAi() {
     return ruleComposition.inputPort.submitHostCommand({ kind: "action_recover_pending" }).value;
-  }
-
-  function isMainActionOpeningStep(step) {
-    return step?.source === HISTORY_SOURCE_MAIN
-      && (
-        step.type === "action_start"
-        || step.type === "action-cost"
-        || step.effectIndex === -1
-      );
-  }
-
-  function clearFullyUndoneMainActionSession() {
-    const info = actionHistory.getSessionInfo?.();
-    if (!info || info.stepCount !== 0 || actionHistory.hasUndoableStep()) {
-      return false;
-    }
-    uiRuntimeState.effectStepActive = false;
-    actionHistory.commitSession();
-    clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
-    clearActionPending();
-    pruneEmptyActionLogDraft();
-    renderActionLog();
-    return true;
-  }
-
-  function clearStaleFullyUndoneMainActionSession() {
-    if (!actionHistory.hasSession()
-      || isActionPending()
-      || isActionEffectFlowActive()
-      || actionHistory.hasUndoableStep()) {
-      return false;
-    }
-    const info = actionHistory.getSessionInfo?.();
-    if (!info || info.stepCount !== 0) return false;
-    clearFullyUndoneMainActionSession();
-    return true;
-  }
-
-  function canUndoCurrentMainAction() {
-    if (actionHistory.hasUndoableStep()) return true;
-    if (hasCurrentMainActionIrreversibleBarrier()) return false;
-    return Boolean(isActionPending() || isActionEffectFlowActive());
-  }
-
-  function hasCurrentMainActionIrreversibleBarrier() {
-    return Boolean(actionHistory.hasIrreversibleBarrier?.());
-  }
-
-  function getMainActionStartBlockReason(workingRoot = null) {
-    const gameplayLockReason = getGameplayLockReason(workingRoot);
-    if (gameplayLockReason) return gameplayLockReason;
-    if (isActionPending()) return "请先回合结束或撤销当前行动";
-    if (isActionEffectFlowActive(workingRoot)) return "请先完成当前行动的效果";
-    if (actionHistory.hasSession()) return "请先回合结束或撤销当前行动";
-    if (hasActivePendingSubFlow(workingRoot)) return "请先完成或取消当前流程";
-    return null;
-  }
-
-  function canStartMainAction(workingRoot = null) {
-    return !getMainActionStartBlockReason(workingRoot);
   }
 
   turnEndFlow = turnEndFlowModule.createTurnEndFlow({

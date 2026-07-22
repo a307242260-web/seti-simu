@@ -494,6 +494,130 @@
     return Object.freeze({ undoPendingActionForRoot });
   }
 
+  function createLegacyActionSessionRuntime(context = {}) {
+    const { actionHistory, uiRuntimeState, historySourceMain } = context;
+
+    function markActionPending() {
+      actionHistory.markActionComplete?.();
+    }
+
+    function isActionPending() {
+      return Boolean(actionHistory.isActionComplete?.());
+    }
+
+    function getIrreversibleReason(result, fallback = "该步骤产生不可撤销影响") {
+      if (result?.irreversible?.reason) return String(result.irreversible.reason);
+      if (result?.irreversibleReason) return String(result.irreversibleReason);
+      if (result?.undoable === false) return result.message || fallback;
+      return null;
+    }
+
+    function getCurrentActionIrreversibleReason() {
+      return actionHistory.getIrreversibleBarrier?.()?.irreversibleReason || null;
+    }
+
+    function markCurrentActionIrreversible(reason, code = "irreversible") {
+      const barrierReason = reason || getCurrentActionIrreversibleReason() || "该步骤产生不可撤销影响";
+      actionHistory.markIrreversible?.({
+        source: historySourceMain,
+        code,
+        irreversibleReason: barrierReason,
+      });
+      return { code, reason: barrierReason };
+    }
+
+    function markResultIrreversible(result, reason, code = "irreversible") {
+      if (!result) return result;
+      result.undoable = false;
+      result.irreversible = {
+        code,
+        reason: reason || result.irreversible?.reason || result.message || "该步骤产生不可撤销影响",
+      };
+      markCurrentActionIrreversible(result.irreversible.reason, result.irreversible.code);
+      return result;
+    }
+
+    function getAlienCardGainIrreversible(result) {
+      return result?.card
+        ? { code: "hidden_alien_card_reveal", reason: "外星人牌获取翻开新牌" }
+        : null;
+    }
+
+    function clearActionPending() {
+      context.clearCompletedEffectFlowForUndo(historySourceMain);
+    }
+
+    function isMainActionOpeningStep(step) {
+      return step?.source === historySourceMain
+        && (step.type === "action_start" || step.type === "action-cost" || step.effectIndex === -1);
+    }
+
+    function clearFullyUndoneMainActionSession() {
+      const info = actionHistory.getSessionInfo?.();
+      if (!info || info.stepCount !== 0 || actionHistory.hasUndoableStep()) return false;
+      uiRuntimeState.effectStepActive = false;
+      actionHistory.commitSession();
+      context.clearHistoryStepOrderForSource(historySourceMain);
+      clearActionPending();
+      context.pruneEmptyActionLogDraft();
+      context.renderActionLog();
+      return true;
+    }
+
+    function clearStaleFullyUndoneMainActionSession() {
+      if (!actionHistory.hasSession()
+        || isActionPending()
+        || context.isActionEffectFlowActive()
+        || actionHistory.hasUndoableStep()) return false;
+      const info = actionHistory.getSessionInfo?.();
+      if (!info || info.stepCount !== 0) return false;
+      clearFullyUndoneMainActionSession();
+      return true;
+    }
+
+    function hasCurrentMainActionIrreversibleBarrier() {
+      return Boolean(actionHistory.hasIrreversibleBarrier?.());
+    }
+
+    function canUndoCurrentMainAction() {
+      if (actionHistory.hasUndoableStep()) return true;
+      if (hasCurrentMainActionIrreversibleBarrier()) return false;
+      return Boolean(isActionPending() || context.isActionEffectFlowActive());
+    }
+
+    function getMainActionStartBlockReason(workingRoot = null) {
+      const gameplayLockReason = context.getGameplayLockReason(workingRoot);
+      if (gameplayLockReason) return gameplayLockReason;
+      if (isActionPending()) return "请先回合结束或撤销当前行动";
+      if (context.isActionEffectFlowActive(workingRoot)) return "请先完成当前行动的效果";
+      if (actionHistory.hasSession()) return "请先回合结束或撤销当前行动";
+      if (context.hasActivePendingSubFlow(workingRoot)) return "请先完成或取消当前流程";
+      return null;
+    }
+
+    function canStartMainAction(workingRoot = null) {
+      return !getMainActionStartBlockReason(workingRoot);
+    }
+
+    return Object.freeze({
+      markActionPending,
+      isActionPending,
+      getIrreversibleReason,
+      markCurrentActionIrreversible,
+      getCurrentActionIrreversibleReason,
+      markResultIrreversible,
+      getAlienCardGainIrreversible,
+      clearActionPending,
+      isMainActionOpeningStep,
+      clearFullyUndoneMainActionSession,
+      clearStaleFullyUndoneMainActionSession,
+      canUndoCurrentMainAction,
+      hasCurrentMainActionIrreversibleBarrier,
+      getMainActionStartBlockReason,
+      canStartMainAction,
+    });
+  }
+
   function createLegacyEffectBarRenderer(options = {}) {
     const { document, els = {} } = options;
     function render(model = {}) {
@@ -659,6 +783,7 @@
     createActionBarRenderer,
     createLegacyActionBarController,
     createLegacyUndoController,
+    createLegacyActionSessionRuntime,
     createLegacyEffectBarRenderer,
     createLegacyEffectBarPresentation,
     createLegacyActionBarPort,

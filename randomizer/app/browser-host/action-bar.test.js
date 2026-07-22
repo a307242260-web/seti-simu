@@ -46,6 +46,49 @@ function projection(overrides = {}) {
   };
 }
 
+(function testLegacyActionSessionRuntimeOwnsHistoryAndStartLocks() {
+  let complete = false;
+  let session = false;
+  let barrier = null;
+  const calls = [];
+  const history = {
+    markActionComplete() { complete = true; },
+    isActionComplete() { return complete; },
+    markIrreversible(value) { barrier = value; },
+    getIrreversibleBarrier() { return barrier; },
+    hasIrreversibleBarrier() { return Boolean(barrier); },
+    hasUndoableStep() { return false; },
+    hasSession() { return session; },
+    getSessionInfo() { return session ? { stepCount: 0 } : null; },
+    commitSession() { session = false; },
+  };
+  const runtime = actionBar.createLegacyActionSessionRuntime({
+    actionHistory: history,
+    uiRuntimeState: { effectStepActive: true },
+    historySourceMain: "main",
+    clearCompletedEffectFlowForUndo: (source) => calls.push(`clear:${source}`),
+    clearHistoryStepOrderForSource: (source) => calls.push(`order:${source}`),
+    pruneEmptyActionLogDraft: () => calls.push("prune"),
+    renderActionLog: () => calls.push("render"),
+    isActionEffectFlowActive: () => false,
+    hasActivePendingSubFlow: () => false,
+    getGameplayLockReason: () => null,
+  });
+  assert.equal(runtime.canStartMainAction(), true);
+  runtime.markActionPending();
+  assert.equal(runtime.isActionPending(), true);
+  assert.equal(runtime.getMainActionStartBlockReason(), "请先回合结束或撤销当前行动");
+  assert.deepEqual(runtime.markCurrentActionIrreversible("隐藏信息", "hidden"), { code: "hidden", reason: "隐藏信息" });
+  assert.equal(runtime.canUndoCurrentMainAction(), false);
+  assert.deepEqual(runtime.getAlienCardGainIrreversible({ card: {} }), {
+    code: "hidden_alien_card_reveal", reason: "外星人牌获取翻开新牌",
+  });
+  complete = false;
+  session = true;
+  assert.equal(runtime.clearStaleFullyUndoneMainActionSession(), true);
+  assert.deepEqual(calls, ["order:main", "clear:main", "prune", "render"]);
+})();
+
 (function testModelIsExactControlsProjectionWithoutLegalityInference() {
   const input = projection();
   const model = actionBar.createActionBarModel(input);
