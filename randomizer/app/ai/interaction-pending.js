@@ -613,11 +613,6 @@
 
     function runAiScanTargetDecision(workingRoot) {
       if (!state.pendingScanTargetAction && (!els.scanTargetOverlay || els.scanTargetOverlay.hidden)) return null;
-      const probeSectorResult = runAiProbeSectorScanDecision(workingRoot);
-      if (probeSectorResult) return probeSectorResult;
-      const probeLocationResult = runAiProbeLocationRewardDecision(workingRoot);
-      if (probeLocationResult) return probeLocationResult;
-
       const pending = state.pendingScanTargetAction || null;
       const pendingType = pending?.type || null;
       if (!pendingType) return null;
