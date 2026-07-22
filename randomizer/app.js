@@ -364,9 +364,19 @@
   }
 
   function callBrowserDomainCommand(domain, operation, args = []) {
-    if (headlessMode || activeBrowserDomainWorkingRoot) {
+    if (activeBrowserDomainWorkingRoot) {
       const target = resolveBrowserDomainTarget(domain);
-      return target?.[operation]?.(activeBrowserDomainWorkingRoot || browserRuleState, ...args);
+      return target?.[operation]?.(activeBrowserDomainWorkingRoot, ...args);
+    }
+    if (headlessMode) {
+      const target = resolveBrowserDomainTarget(domain);
+      const previousWorkingRoot = activeBrowserDomainWorkingRoot;
+      activeBrowserDomainWorkingRoot = browserRuleState;
+      try {
+        return target?.[operation]?.(browserRuleState, ...args);
+      } finally {
+        activeBrowserDomainWorkingRoot = previousWorkingRoot;
+      }
     }
     try {
       return browserRuleComposition.inputPort.submitHostCommand({
