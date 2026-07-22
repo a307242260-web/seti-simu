@@ -616,10 +616,8 @@
     const action = typeof request === "string"
       ? { kind: request, payload: fallbackOptions || null }
       : { ...(request || {}) };
-    if (headlessMode) {
-      return actionRuntimeController.dispatchAction(action, fallbackOptions, explicitActionContext);
-    }
     const ensureStableRecoverySnapshot = () => {
+      if (headlessMode) return;
       if (browserRuleComposition.inspect().phase === "idle" && !browserActionStableRecoverySnapshot) {
         browserActionStableRecoverySnapshot = createGameRecoverySnapshot({
           label: "Standard Action 开始前稳定恢复点",
@@ -632,6 +630,9 @@
         ok: true,
         candidates: browserRuleComposition.inputPort.enumerateActions(action.payload || {}),
       };
+    }
+    if (headlessMode) {
+      return actionRuntimeController.dispatchAction(action, fallbackOptions, explicitActionContext);
     }
     if (action.kind === "standard_resolve" || action.kind === "standard_validate") {
       return actionRuntimeController.dispatchAction(action, fallbackOptions, explicitActionContext);

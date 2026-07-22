@@ -380,6 +380,15 @@ function createHarness(initialValue = 0) {
   assert.doesNotMatch(indexSource, /browser-state-authority\.js/, "生产脚本不得加载旧 authority owner");
   assert.match(indexSource, /browser-rule-composition\.js/, "生产脚本必须加载 Rule Composition");
   assert.match(appSource, /dispatchBrowserRuleInput\(\{ standardAction \}\)/, "AI conditional caller 必须进入 composition inputPort");
+  const dispatchInputSource = appSource.slice(
+    appSource.indexOf("function dispatchBrowserRuleInput"),
+    appSource.indexOf("const runtime = runtimeModule.createRuntime"),
+  );
+  assert.ok(
+    dispatchInputSource.indexOf("browserRuleComposition.inputPort.enumerateActions")
+      < dispatchInputSource.indexOf("return actionRuntimeController.dispatchAction"),
+    "headless Standard Action 枚举必须先进入 composition inputPort",
+  );
   assert.doesNotMatch(appSource, /replaceMutableObject\?\.|if \(!browserRuleCompositionModule\.replaceMutableObject\)/, "working root restore 不得保留 optional helper 双协议");
   const tradeSource = fs.readFileSync(path.join(__dirname, "../game/ai/trade-candidates.js"), "utf8");
   assert.match(tradeSource, /canAiMoveThisTurn\(workingRoot, player\.id\)/, "AI trade candidates 必须显式传 workingRoot");
