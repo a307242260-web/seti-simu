@@ -4210,6 +4210,7 @@
         || decision.decisionKind
         || null;
       const actorId = decision.ownerId || null;
+      const stateSourceSnapshot = browserRuleComposition.stateSourcePort.read();
       const policyResult = ai?.heuristicPolicy?.decideChoice?.({
         seatId: actorId,
         family,
@@ -4217,7 +4218,12 @@
         decisionVersion: Math.max(0, Number(decision.decisionVersion) || 0),
         decisionId: decision.decisionId,
         requestId: `browser-session:${actorId}:${decision.decisionId}:${decision.decisionVersion || 0}`,
-        observation: browserRuleComposition.stateSourcePort.read(),
+        observation: {
+          publicState: {
+            roundNumber: Math.max(0, Number(stateSourceSnapshot?.state?.turn?.roundNumber) || 0),
+          },
+          selfState: { playerId: actorId },
+        },
         choices: decision.choices.map((choice, index) => ({
           choiceId: String(
             choice?.standardAction?.actionId
