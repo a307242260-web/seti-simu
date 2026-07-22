@@ -62,9 +62,6 @@
       handleCardTriggerChoice,
       cancelCardTriggerChoice,
       confirmCardTaskCompletion,
-      handleProbeSectorScanChoice,
-      confirmProbeSectorScanSelection,
-      handleProbeLocationRewardChoice,
       handleOptionalHandScanChoice,
       handleDrawnHandScanSkip,
       handleRemovePlanetMarkerChoice,
@@ -322,24 +319,6 @@
       const cardTaskButton = event.target.closest("[data-card-task-complete]");
       if (cardTaskButton && !cardTaskButton.disabled) {
         confirmCardTaskCompletion(cardTaskButton.dataset.cardTaskComplete);
-        return;
-      }
-
-      const probeScanButton = event.target.closest("[data-probe-scan-rocket-id]");
-      if (probeScanButton && !probeScanButton.disabled) {
-        handleProbeSectorScanChoice(probeScanButton.dataset.probeScanRocketId);
-        return;
-      }
-
-      const probeScanConfirm = event.target.closest("[data-probe-scan-confirm]");
-      if (probeScanConfirm && !probeScanConfirm.disabled) {
-        confirmProbeSectorScanSelection();
-        return;
-      }
-
-      const probeLocationReward = event.target.closest("[data-probe-location-reward-rocket-id]");
-      if (probeLocationReward && !probeLocationReward.disabled) {
-        handleProbeLocationRewardChoice(probeLocationReward.dataset.probeLocationRewardRocketId);
         return;
       }
 

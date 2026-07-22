@@ -994,18 +994,7 @@
         choices,
         selectedRocketIds: [],
       });
-      if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        return { ok: true, pendingChoice: true, message: effect.label };
-      }
-      setOverlayContent(
-        effect.label,
-        Math.max(1, Math.round(Number(effect.options?.maxTargets) || 1)) > 1
-          ? `最多选择 ${Math.max(1, Math.round(Number(effect.options?.maxTargets) || 1))} 个探测器。`
-          : "选择 1 个探测器扫描其所在扇区。",
-      );
-      renderProbeSectorScanPicker();
-      els.scanTargetOverlay.hidden = false;
-      return { ok: true, message: effect.label };
+      return { ok: true, pendingChoice: true, message: effect.label };
     }
 
     function executeProbeSectorScanEffect(workingRoot, effect) {
@@ -1047,8 +1036,8 @@
       return { ok: true, message: `已选择 ${selected.length}/${maxTargets}` };
     }
 
-    function confirmProbeSectorScanSelection(workingRoot) {
-      const pending = getProbeSectorScanSession();
+    function confirmProbeSectorScanSelection(workingRoot, pendingContext = null) {
+      const pending = pendingContext || getProbeSectorScanSession();
       if (!pending) return { ok: false, message: "没有待确认的探测器扫描" };
       const selected = new Set(pending.selectedRocketIds || []);
       const rockets = pending.choices
@@ -1092,20 +1081,7 @@
     }
 
     function openProbeLocationRewardPicker(workingRoot, effect, choices) {
-      if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        return finishProbeLocationReward(workingRoot, effect, choices[0]?.rocket);
-      }
       decisionSessions.open(PROBE_LOCATION_REWARD_SESSION, { ...getPendingOwnerFields(workingRoot, effect), effect, choices });
-      setOverlayContent(effect.label, "选择一个己方探测器结算小行星位置奖励。");
-      openOverlayWithButtons(choices.map(({ rocket }) => {
-        const reward = computeProbeLocationReward(effect, rocket);
-        const button = createButton();
-        button.type = "button";
-        button.className = "scan-target-option-button";
-        button.dataset.probeLocationRewardRocketId = String(rocket.id);
-        button.innerHTML = `R${rocket.id}<small>${reward.dataCount} 数据</small>`;
-        return button;
-      }));
       ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择探测器`;
       renderStateReadout();
       return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
@@ -1129,8 +1105,8 @@
       return openProbeLocationRewardPicker(workingRoot, effect, choices);
     }
 
-    function handleProbeLocationRewardChoice(workingRoot, rocketId) {
-      const pending = getProbeLocationRewardSession();
+    function handleProbeLocationRewardChoice(workingRoot, rocketId, pendingContext = null) {
+      const pending = pendingContext || getProbeLocationRewardSession();
       if (!pending) return { ok: false, message: "没有待处理的探测器位置奖励" };
       const rocket = (pending.choices || []).find((choice) => Number(choice.rocket.id) === Number(rocketId))?.rocket;
       const effect = pending.effect;

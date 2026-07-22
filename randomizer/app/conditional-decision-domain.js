@@ -13,6 +13,7 @@
       FINAL_SCORE_IDS,
       getCurrentPlayer,
       getPendingProbeSectorScanDecision,
+      getPendingProbeLocationRewardDecision,
       getPendingYichangdianCornerAction,
       getPendingYichangdianCornerCards,
       getHeadlessConditionalPlayer,
@@ -77,6 +78,7 @@
       handleConditionalSectorChoice,
       handleChongFossilChoice,
       confirmProbeSectorScanSelection,
+      handleProbeLocationRewardChoice,
       handleRunezuSymbolBranchChoice,
       handleRunezuFaceSymbolChoice,
       handleAmibaSymbolChoice,
@@ -217,8 +219,22 @@
             family: "choose_target",
             label: `选择探测器 ${rocketIds.join(",")}`,
             target: { kind: "probe-sector-selection", choiceId: rocketIds.join(","), rocketIds },
+            pendingContext: structuredClone(probeSectorPending),
           };
         }),
+      };
+    }
+    const probeLocationPending = getPendingProbeLocationRewardDecision();
+    if (probeLocationPending) {
+      return {
+        actorPlayer: getHeadlessConditionalPlayer(probeLocationPending),
+        candidates: (probeLocationPending.choices || []).map(({ rocket }) => ({
+          id: "conditionalChoice",
+          family: "choose_target",
+          label: `探测器位置奖励 R${rocket.id}`,
+          target: { kind: "probe-location-reward", choiceId: String(rocket.id), rocketId: rocket.id },
+          pendingContext: structuredClone(probeLocationPending),
+        })),
       };
     }
     const chongFossilPending = getPendingChongFossilChoice();
@@ -1076,11 +1092,15 @@
     "banrenma-panel-bonus": (action) => handleBanrenmaBonusChoice(action.target.choiceId, action.pendingContext || null),
     "banrenma-card-condition": (action) => handleBanrenmaCardConditionChoice(action.target.choiceId, action.pendingContext || null),
     "probe-sector-selection": (action) => {
-      const pending = getPendingProbeSectorScanDecision();
+      const pending = action.pendingContext || getPendingProbeSectorScanDecision();
       if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };
       pending.selectedRocketIds = [...(action.target.rocketIds || [])];
-      return confirmProbeSectorScanSelection();
+      return confirmProbeSectorScanSelection(pending);
     },
+    "probe-location-reward": (action) => handleProbeLocationRewardChoice(
+      action.target.rocketId ?? action.target.choiceId,
+      action.pendingContext || null,
+    ),
     "runezu-symbol-branch": (action) => handleRunezuSymbolBranchChoice(
       action.target.choiceId,
       action.pendingContext || null,

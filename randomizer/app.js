@@ -811,6 +811,12 @@
               if (candidates[0]?.target?.kind === "banrenma-panel-bonus" || candidates[0]?.target?.kind === "banrenma-card-condition") {
                 alienSpeciesRuntime?.takeBanrenmaOpportunityDecisionDraft?.();
               }
+              if (candidates[0]?.target?.kind === "probe-sector-selection") {
+                decisionSessions.clear(PROBE_SECTOR_SCAN_SESSION);
+              }
+              if (candidates[0]?.target?.kind === "probe-location-reward") {
+                decisionSessions.clear(PROBE_LOCATION_REWARD_SESSION);
+              }
               return {
                 ok: true,
                 boundary: "conditional_choice",
@@ -1024,6 +1030,7 @@
     FINAL_SCORE_IDS,
     getCurrentPlayer,
     getPendingProbeSectorScanDecision,
+    getPendingProbeLocationRewardDecision,
     getPendingYichangdianCornerAction,
     getPendingYichangdianCornerCards,
     getPendingChongFossilChoice,

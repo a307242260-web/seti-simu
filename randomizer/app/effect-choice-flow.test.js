@@ -287,8 +287,9 @@ function createHarness(overrides = {}) {
   });
   assert.equal(result.ok, true);
   assert.equal(decisionSessions.peek("probe_sector_scan").choices.length, 2);
-  helper.handleProbeSectorScanChoice(workingRoot, 1);
-  helper.confirmProbeSectorScanSelection(workingRoot);
+  const pending = decisionSessions.clear("probe_sector_scan");
+  pending.selectedRocketIds = [1];
+  helper.confirmProbeSectorScanSelection(workingRoot, pending);
   assert.equal(calls.inserted.length, 1);
   assert.equal(els.scanTargetOverlay.hidden, true);
 }
@@ -301,7 +302,8 @@ function createHarness(overrides = {}) {
     options: { asteroidData: 1, adjacentAsteroidData: 1 },
   });
   assert.equal(decisionSessions.peek("probe_location_reward").choices.length, 2);
-  const result = helper.handleProbeLocationRewardChoice(workingRoot, 1);
+  const pending = decisionSessions.clear("probe_location_reward");
+  const result = helper.handleProbeLocationRewardChoice(workingRoot, 1, pending);
   assert.equal(result.ok, true);
   assert.equal(calls.history.length, 3);
 }

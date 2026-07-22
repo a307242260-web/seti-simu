@@ -350,66 +350,8 @@
       return effect.result;
     }
 
-    function renderProbeSectorScanPicker(workingRoot) {
-      const pending = decisionSessions.peek("probe_sector_scan");
-      if (!pending || !els.scanTargetActions) return;
-      const selected = new Set(pending.selectedRocketIds || []);
-      const maxTargets = Math.max(1, Math.round(Number(pending.effect.options?.maxTargets) || 1));
-      const buttons = pending.choices.map(({ rocket, sector }) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "scan-target-option-button";
-        button.dataset.probeScanRocketId = String(rocket.id);
-        const active = selected.has(rocket.id);
-        button.classList.toggle("is-selected", active);
-        button.innerHTML = `${getSectorScanTargetLabel(sector.x)}<small>${active ? "已选择" : "点击选择该扇区"}</small>`;
-        return button;
-      });
-      if (maxTargets > 1) {
-        const confirm = document.createElement("button");
-        confirm.type = "button";
-        confirm.className = "scan-target-option-button";
-        confirm.dataset.probeScanConfirm = "true";
-        confirm.disabled = selected.size === 0;
-        confirm.innerHTML = `确认扫描<small>已选 ${selected.size}/${maxTargets}</small>`;
-        buttons.push(confirm);
-      }
-      els.scanTargetActions.replaceChildren(...buttons);
-    }
-
-    function openProbeSectorScanPicker(workingRoot, effect, choices) {
-      if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        return { ok: false, message: "无法打开探测器扫描选择" };
-      }
-      decisionSessions.open("probe_sector_scan", {
-        ...getPendingOwnerFields(workingRoot, effect),
-        effect,
-        choices,
-        selectedRocketIds: [],
-      });
-      if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
-      if (els.scanTargetSubtitle) {
-        const maxTargets = Math.max(1, Math.round(Number(effect.options?.maxTargets) || 1));
-        els.scanTargetSubtitle.textContent = maxTargets > 1
-          ? `最多选择 ${maxTargets} 个探测器。`
-          : "选择 1 个探测器扫描其所在扇区。";
-      }
-      if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-      renderProbeSectorScanPicker(workingRoot);
-      els.scanTargetOverlay.hidden = false;
-      return { ok: true, message: effect.label };
-    }
-
     function executeProbeSectorScanEffect(workingRoot, effect) {
       return effectChoiceFlowHelpers.executeProbeSectorScanEffect(workingRoot, effect);
-    }
-
-    function handleProbeSectorScanChoice(workingRoot, rocketId) {
-      return effectChoiceFlowHelpers.handleProbeSectorScanChoice(workingRoot, rocketId);
-    }
-
-    function confirmProbeSectorScanSelection(workingRoot) {
-      return effectChoiceFlowHelpers.confirmProbeSectorScanSelection(workingRoot);
     }
 
     function getPlanetName(workingRoot, planetId) {
@@ -1387,11 +1329,7 @@
       getProbeSectorScanRockets,
       buildSectorScanEffectsForProbe,
       queueProbeSectorScanEffects,
-      renderProbeSectorScanPicker,
-      openProbeSectorScanPicker,
       executeProbeSectorScanEffect,
-      handleProbeSectorScanChoice,
-      confirmProbeSectorScanSelection,
       getPlanetName,
       getPlayerOwnerKeys,
       markerBelongsToPlayer,
