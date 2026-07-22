@@ -21,7 +21,6 @@
     const actionFamilies = Object.freeze([...(options.actionFamilies || [])]);
     const continuation = options.continuation || null;
     const commitWorkingState = options.commitWorkingState;
-    const getWorkingState = options.getWorkingState;
     if (typeof runtime?.registerExecutor !== "function") {
       throw new TypeError("standard action domain 缺少 composition Effect runtime");
     }
@@ -51,13 +50,18 @@
     if (continuation) {
       if (typeof continuation.inspect !== "function"
         || typeof continuation.executeDeterministic !== "function"
-        || typeof getWorkingState !== "function"
         || typeof commitWorkingState !== "function") {
         throw new TypeError("standard action continuation 缺少 inspect/executeDeterministic/commitWorkingState");
       }
 
-      runtime.registerExecutor(CONTINUE_EFFECT_TYPE, (workingRoot) => {
-        const compositionWorkingRoot = getWorkingState() || workingRoot;
+      runtime.registerExecutor(CONTINUE_EFFECT_TYPE, (workingRoot, _effect, compositionWorkingRoot) => {
+        if (!compositionWorkingRoot) {
+          return {
+            ok: false,
+            code: "STANDARD_ACTION_WORKING_ROOT_MISSING",
+            message: "Standard Action continuation 缺少 Composition working root",
+          };
+        }
         const boundary = continuation.inspect(compositionWorkingRoot);
         if (boundary?.ok === false) return boundary.error || boundary;
         const choices = (boundary?.choices || boundary?.candidates || [])

@@ -169,7 +169,7 @@
           const workingContext = actionContext(state);
           return runWithWorkingStateContext(
             workingContext,
-            () => operation(state, ...args),
+            () => operation(state, ...args, workingContext),
           );
         };
         if (typeof executor === "function") return wrap(executor);
@@ -202,7 +202,6 @@
           ...(descriptor.options || {}),
           runtime: Object.freeze({ ...next, registerExecutor: registerContextualExecutor }),
           executeRegisteredAction,
-          getWorkingState: () => workingState,
           commitWorkingState(state, context = {}) {
             return stateAdapter
               ? stateAdapter.createCommittedState(workingState, state, clone(context))
