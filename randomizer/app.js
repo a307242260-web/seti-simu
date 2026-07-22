@@ -684,6 +684,12 @@
         case "effect_cancel_subflows":
           cancelActiveEffectSubFlowsForRoot(workingRoot);
           return { ok: true };
+        case "effect_finish_flow":
+          return { ok: true, value: cloneResidentPresentation(finishActionEffectFlowForRoot(workingRoot)) };
+        case "effect_begin_scan_free_move":
+          return { ok: true, value: cloneResidentPresentation(beginScanAction4FreeMoveForRoot(workingRoot)) };
+        case "effect_begin_card_move":
+          return { ok: true, value: cloneResidentPresentation(beginCardMoveEffectForRoot(workingRoot, command.effect)) };
         case "scan_settle_completed_sectors":
           return { ok: true, value: cloneResidentPresentation(resolveCompletedSectorSettlementsForRoot(
             workingRoot,
@@ -7419,7 +7425,7 @@
     return getFlowMarkedNebulaIds(flow).size > 0;
   }
 
-  function finishActionEffectFlow() {
+  function finishActionEffectFlowForRoot(workingRoot) {
     if (!decisionState.actionEffectFlow) return;
 
     const finishedFlow = decisionState.actionEffectFlow;
@@ -7444,9 +7450,9 @@
     rememberCompletedEffectFlowForUndo(finishedFlow);
     clearActionEffectFlow();
     if (actionType === "researchTech") {
-      tech.setTechSelectionActive(techGameState, false);
-      tech.cancelPendingTake(techGameState);
-      techGameState.ui.statusNote = "";
+      tech.setTechSelectionActive(workingRoot.techGameState, false);
+      tech.cancelPendingTake(workingRoot.techGameState);
+      workingRoot.techGameState.ui.statusNote = "";
       syncTechSelectionChrome();
       renderTechBoard();
     }
@@ -7458,8 +7464,9 @@
       removeActionLogStepsBySource(HISTORY_SOURCE_MAIN);
       clearActionPending();
       uiRuntimeState.effectStepActive = false;
-      playerState.currentPlayerId = turnState.startPlayerId || playerState.currentPlayerId;
-      rocketState.statusNote = "初始收入增加完成，游戏开始。";
+      workingRoot.playerState.currentPlayerId = workingRoot.turnState.startPlayerId
+        || workingRoot.playerState.currentPlayerId;
+      workingRoot.rocketState.statusNote = "初始收入增加完成，游戏开始。";
       renderDebugPlayerSwitch();
       renderPlayerStats();
       renderPlayerHand();
@@ -7490,7 +7497,7 @@
     }
     const queuedType1Result = applyType1TriggerMatches([]);
     if (queuedType1Result || hasActiveCardTriggerResolution() || isActionEffectFlowActive()) {
-      rocketState.statusNote = queuedType1Result?.message || "卡牌触发：请先完成触发效果";
+      workingRoot.rocketState.statusNote = queuedType1Result?.message || "卡牌触发：请先完成触发效果";
       if (finishedFlow.consumesMainAction !== false || finishedFlow.resumePendingActionExecuted) {
         markActionPending();
       }
@@ -7506,7 +7513,7 @@
         render: false,
       });
       if (hasActiveCardTriggerResolution() || isActionEffectFlowActive()) {
-        rocketState.statusNote = passSettlement?.type1Result?.message || "PASS 任务触发：请先完成触发效果";
+        workingRoot.rocketState.statusNote = passSettlement?.type1Result?.message || "PASS 任务触发：请先完成触发效果";
         markActionPending();
         renderPlayerStats();
         updateActionButtons();
@@ -7522,7 +7529,7 @@
     const settleMessage = settleResult?.ok
       ? `${settleResult.message}；${settleResult.participantAwardMessage || "参与结算玩家各获得1宣传"}`
       : null;
-    rocketState.statusNote = [baseMessage, settleMessage, delayedPublicRefillResult?.message]
+    workingRoot.rocketState.statusNote = [baseMessage, settleMessage, delayedPublicRefillResult?.message]
       .filter(Boolean)
       .join("；");
     if (finishedFlow.consumesMainAction !== false || finishedFlow.resumePendingActionExecuted) {
@@ -7533,6 +7540,10 @@
     updateActionButtons();
     renderStateReadout();
     maybeResumeTurnEndAfterReveal();
+  }
+
+  function finishActionEffectFlow() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_finish_flow" }).value;
   }
 
   function maybeCompleteActionEffectFromScan(result) {
@@ -7643,17 +7654,17 @@
     return result;
   }
 
-  function beginScanAction4FreeMove() {
-    const currentPlayer = getCurrentPlayer();
+  function beginScanAction4FreeMoveForRoot(workingRoot) {
+    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
     const rocketsForPlayer = getMovableTokensForPlayer(currentPlayer?.id);
     if (!rocketsForPlayer.length) {
-      rocketState.statusNote = "没有可移动的飞船";
+      workingRoot.rocketState.statusNote = "没有可移动的飞船";
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: workingRoot.rocketState.statusNote };
     }
 
     decisionState.actionEffectFlow.freeMoveMode = true;
-    rocketState.statusNote = rocketsForPlayer.length > 1
+    workingRoot.rocketState.statusNote = rocketsForPlayer.length > 1
       ? "扫描效果：请点击要移动的飞船"
       : "扫描效果：使用方向键移动飞船";
     if (rocketsForPlayer.length === 1) {
@@ -7662,7 +7673,11 @@
       selectDefaultRocketForCurrentPlayer();
     }
     renderStateReadout();
-    return { ok: true, message: rocketState.statusNote };
+    return { ok: true, message: workingRoot.rocketState.statusNote };
+  }
+
+  function beginScanAction4FreeMove() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_begin_scan_free_move" }).value;
   }
 
   function executeFreeMoveForScanAction4ForRoot(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
@@ -7729,15 +7744,15 @@
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "scan_execute_free_move", args });
   }
 
-  function beginCardMoveEffect(effect) {
-    const currentPlayer = getCurrentPlayer();
+  function beginCardMoveEffectForRoot(workingRoot, effect) {
+    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
     const effectCost = getCardMoveEffectCost(effect);
     if (Object.keys(effectCost).length && !players.canAfford(currentPlayer, effectCost)) {
-      rocketState.statusNote = `${effect.label}：需要 ${players.formatResourceCost(effectCost)}，可点击跳过`;
+      workingRoot.rocketState.statusNote = `${effect.label}：需要 ${players.formatResourceCost(effectCost)}，可点击跳过`;
       deactivateMoveMode();
       renderActionEffectBar();
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: workingRoot.rocketState.statusNote };
     }
     const rocketsForPlayer = getMovableTokensForCardMoveEffect(effect, currentPlayer?.id);
     if (!rocketsForPlayer.length) {
@@ -7753,7 +7768,7 @@
           abilityId: "moveProbe",
         });
       }
-      rocketState.statusNote = message;
+      workingRoot.rocketState.statusNote = message;
       renderActionEffectBar();
       renderStateReadout();
       return { ok: false, message };
@@ -7767,7 +7782,7 @@
     }
 
     const poolRemaining = decisionState.actionEffectFlow.cardMoveEffect.poolRemaining;
-    rocketState.statusNote = poolRemaining > 1
+    workingRoot.rocketState.statusNote = poolRemaining > 1
       ? `${effect.label}：剩余 ${poolRemaining} 点移动力，请点击要移动的飞船`
       : rocketsForPlayer.length > 1
         ? `${effect.label}：请点击要移动的飞船`
@@ -7779,7 +7794,14 @@
       selectDefaultRocketFromCandidates(rocketsForPlayer);
     }
     renderStateReadout();
-    return { ok: true, message: rocketState.statusNote };
+    return { ok: true, message: workingRoot.rocketState.statusNote };
+  }
+
+  function beginCardMoveEffect(effect) {
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "effect_begin_card_move",
+      effect,
+    }).value;
   }
 
   function applyCardMoveRewardEffect(rewardEffect, messageParts) {
