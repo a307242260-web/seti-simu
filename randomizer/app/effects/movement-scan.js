@@ -404,16 +404,16 @@
       return { ok: true, message: effect.label };
     }
 
-    function executeProbeSectorScanEffect(effect) {
-      return effectChoiceFlowHelpers.executeProbeSectorScanEffect(effect);
+    function executeProbeSectorScanEffect(workingRoot, effect) {
+      return effectChoiceFlowHelpers.executeProbeSectorScanEffect(workingRoot, effect);
     }
 
-    function handleProbeSectorScanChoice(rocketId) {
-      return effectChoiceFlowHelpers.handleProbeSectorScanChoice(rocketId);
+    function handleProbeSectorScanChoice(workingRoot, rocketId) {
+      return effectChoiceFlowHelpers.handleProbeSectorScanChoice(workingRoot, rocketId);
     }
 
-    function confirmProbeSectorScanSelection() {
-      return effectChoiceFlowHelpers.confirmProbeSectorScanSelection();
+    function confirmProbeSectorScanSelection(workingRoot) {
+      return effectChoiceFlowHelpers.confirmProbeSectorScanSelection(workingRoot);
     }
 
     function getPlanetName(planetId) {

@@ -507,7 +507,7 @@
             logBefore: actionLogBefore,
           });
           const startedRewardFlow = startAnalyzeDataRewardFlow?.(workingRoot);
-          if (startedRewardFlow) executeActionEffect?.(getCurrentActionEffect?.());
+          if (startedRewardFlow) executeActionEffect?.(actionWorkingRoot, getCurrentActionEffect?.());
           settleCardTasksAfterEffect?.({ events: result.events, render: false });
           renderPlayerStats?.();
           updateActionButtons?.();
@@ -646,7 +646,7 @@
           workingRoot || getExecutionWorkingRoot(actionContext),
         );
         if (startedRewardFlow) {
-          executeActionEffect?.(getCurrentActionEffect?.());
+          executeActionEffect?.(actionWorkingRoot, getCurrentActionEffect?.());
         }
         settleCardTasksAfterEffect?.({ events: result.events, render: false });
         renderPlayerStats?.();
@@ -683,14 +683,14 @@
       return result;
     }
 
-    function handleActionEffectButtonClick(effectIndex) {
+    function handleActionEffectButtonClick(workingRoot, effectIndex) {
       if (!decisionState.actionEffectFlow) return;
       if (Number(effectIndex) !== getCurrentActionEffectIndex?.()) return;
 
       const effect = getCurrentActionEffect?.();
       const blocked = blockManualAiPendingInputIfNeeded?.(null, {}, "效果结算", effect);
       if (blocked) return blocked;
-      return executeActionEffect?.(effect);
+      return executeActionEffect?.(workingRoot, effect);
     }
 
     function dispatchAction(request, fallbackOptions, explicitActionContext = null) {
@@ -779,7 +779,7 @@
         case "confirm_initial_selection":
           return confirmInitialSelectionForCurrentPlayer();
         case "effect_step":
-          return handleActionEffectButtonClick(action.effectIndex);
+          return handleActionEffectButtonClick(explicitActionContext, action.effectIndex);
         default:
           return { ok: false, message: `未知 action kind: ${kind}` };
       }

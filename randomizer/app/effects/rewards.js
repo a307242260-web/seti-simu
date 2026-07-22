@@ -161,12 +161,12 @@
         .some((choice) => choice.nebulaId && !choice.disabled);
     }
 
-    function executeConditionalSectorScanEffect(effect) {
-      return effectChoiceFlowHelpers.executeConditionalSectorScanEffect(effect);
+    function executeConditionalSectorScanEffect(workingRoot, effect) {
+      return effectChoiceFlowHelpers.executeConditionalSectorScanEffect(workingRoot, effect);
     }
 
-    function handleConditionalSectorChoice(sectorXValue) {
-      return effectChoiceFlowHelpers.handleConditionalSectorChoice(sectorXValue);
+    function handleConditionalSectorChoice(workingRoot, sectorXValue) {
+      return effectChoiceFlowHelpers.handleConditionalSectorChoice(workingRoot, sectorXValue);
     }
 
     function renderDiscardIncomePicker() {
@@ -193,16 +193,16 @@
       els.scanTargetActions.replaceChildren(...buttons);
     }
 
-    function executeDiscardAnyForIncomeEffect(effect) {
-      return effectChoiceFlowHelpers.executeDiscardAnyForIncomeEffect(effect);
+    function executeDiscardAnyForIncomeEffect(workingRoot, effect) {
+      return effectChoiceFlowHelpers.executeDiscardAnyForIncomeEffect(workingRoot, effect);
     }
 
-    function handleDiscardIncomeCardChoice(cardId) {
-      return effectChoiceFlowHelpers.handleDiscardIncomeCardChoice(cardId);
+    function handleDiscardIncomeCardChoice(workingRoot, cardId) {
+      return effectChoiceFlowHelpers.handleDiscardIncomeCardChoice(workingRoot, cardId);
     }
 
-    function confirmDiscardAnyForIncome() {
-      return effectChoiceFlowHelpers.confirmDiscardAnyForIncome();
+    function confirmDiscardAnyForIncome(workingRoot) {
+      return effectChoiceFlowHelpers.confirmDiscardAnyForIncome(workingRoot);
     }
 
     function expandPayCreditsForRewardEffect(effect) {
@@ -234,12 +234,12 @@
       });
     }
 
-    function executePayCreditsForRewardEffect(effect) {
-      return effectChoiceFlowHelpers.executePayCreditsForRewardEffect(effect);
+    function executePayCreditsForRewardEffect(workingRoot, effect) {
+      return effectChoiceFlowHelpers.executePayCreditsForRewardEffect(workingRoot, effect);
     }
 
-    function handlePayCreditChoice(choice) {
-      return effectChoiceFlowHelpers.handlePayCreditChoice(choice);
+    function handlePayCreditChoice(workingRoot, choice) {
+      return effectChoiceFlowHelpers.handlePayCreditChoice(workingRoot, choice);
     }
 
     function getFundamentalismExchangeChoiceSpecs(player = getCurrentPlayer()) {
@@ -304,8 +304,8 @@
       return getFundamentalismExchangeChoiceSpecs(player).find((choice) => choice.id === choiceId) || null;
     }
 
-    function executeIndustryFundamentalismExchangeEffect(effect) {
-      return effectChoiceFlowHelpers.executeIndustryFundamentalismExchangeEffect(effect);
+    function executeIndustryFundamentalismExchangeEffect(workingRoot, effect) {
+      return effectChoiceFlowHelpers.executeIndustryFundamentalismExchangeEffect(workingRoot, effect);
     }
 
     function formatFundamentalismExchangeCost(cost) {
@@ -422,8 +422,8 @@
       return result;
     }
 
-    function handleFundamentalismExchangeChoice(choiceId) {
-      return effectChoiceFlowHelpers.handleFundamentalismExchangeChoice(choiceId);
+    function handleFundamentalismExchangeChoice(workingRoot, choiceId) {
+      return effectChoiceFlowHelpers.handleFundamentalismExchangeChoice(workingRoot, choiceId);
     }
 
     function isAlienFamilyCard(card) {
@@ -432,12 +432,12 @@
       return setText.startsWith("alien:") || /^(aomomo|yichangdian|chong|amiba|jiuzhe|banrenma|fangzhou|runezu)_/.test(cardId);
     }
 
-    function executeDiscardCardCornerRepeatEffect(effect) {
-      return effectChoiceFlowHelpers.executeDiscardCardCornerRepeatEffect(effect);
+    function executeDiscardCardCornerRepeatEffect(workingRoot, effect) {
+      return effectChoiceFlowHelpers.executeDiscardCardCornerRepeatEffect(workingRoot, effect);
     }
 
-    function handleDiscardCornerRepeatChoice(cardId) {
-      return effectChoiceFlowHelpers.handleDiscardCornerRepeatChoice(cardId);
+    function handleDiscardCornerRepeatChoice(workingRoot, cardId) {
+      return effectChoiceFlowHelpers.handleDiscardCornerRepeatChoice(workingRoot, cardId);
     }
 
     function buildOwnOrbitChoices() {
@@ -467,12 +467,12 @@
       return choices;
     }
 
-    function executeRemoveOrbitToProbeEffect(effect) {
-      return effectChoiceFlowHelpers.executeRemoveOrbitToProbeEffect(effect);
+    function executeRemoveOrbitToProbeEffect(workingRoot, effect) {
+      return effectChoiceFlowHelpers.executeRemoveOrbitToProbeEffect(workingRoot, effect);
     }
 
-    function handleRemoveOrbitToProbeChoice(choiceId) {
-      return effectChoiceFlowHelpers.handleRemoveOrbitToProbeChoice(choiceId);
+    function handleRemoveOrbitToProbeChoice(workingRoot, choiceId) {
+      return effectChoiceFlowHelpers.handleRemoveOrbitToProbeChoice(workingRoot, choiceId);
     }
 
     function isChongTransportStartedForCard(card) {
@@ -1426,12 +1426,12 @@
       return effectChoiceFlowHelpers.openProbeLocationRewardPicker(effect, choices);
     }
 
-    function executeProbeLocationRewardEffect(effect) {
-      return effectChoiceFlowHelpers.executeProbeLocationRewardEffect(effect);
+    function executeProbeLocationRewardEffect(workingRoot, effect) {
+      return effectChoiceFlowHelpers.executeProbeLocationRewardEffect(workingRoot, effect);
     }
 
-    function handleProbeLocationRewardChoice(rocketId) {
-      return effectChoiceFlowHelpers.handleProbeLocationRewardChoice(rocketId);
+    function handleProbeLocationRewardChoice(workingRoot, rocketId) {
+      return effectChoiceFlowHelpers.handleProbeLocationRewardChoice(workingRoot, rocketId);
     }
 
     function executePlutoReserveEffect(effect) {

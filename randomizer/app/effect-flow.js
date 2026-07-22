@@ -643,9 +643,13 @@
       maybeAutoExecuteAomomoRewardEffects();
     }
 
-    function executeActionEffect(effect) {
+    function executeActionEffect(workingRoot, effect) {
       if (!effect || effect.status !== "active") return { ok: false, message: "当前效果不可执行" };
-      return withEffectExecutionPlayer(effect, () => executeActionEffectForOwner(effect));
+      return withEffectExecutionPlayer(
+        workingRoot,
+        effect,
+        () => executeActionEffectForOwner(workingRoot, effect),
+      );
     }
 
     return {

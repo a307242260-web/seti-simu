@@ -142,7 +142,7 @@
         effectId: effect.id || null,
         effectType: effect.type || null,
       });
-      const result = executeActionEffect(effect);
+      const result = executeActionEffect(workingRoot, effect);
       if (
         result?.ok === false
         && (

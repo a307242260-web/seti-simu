@@ -184,7 +184,7 @@
       actionEffectFlow: "action_effect_flow",
     }) || {};
 
-    function executeCardEffect(effect) {
+    function executeCardEffect(workingRoot, effect) {
       const types = cardEffects.EFFECT_TYPES;
       switch (effect.type) {
         case types.SCAN_NEBULA:
@@ -207,7 +207,7 @@
         case types.REMOVE_PLANET_MARKER:
           return openRemovePlanetMarkerPicker(effect);
         case types.PROBE_SECTOR_SCAN:
-          return executeProbeSectorScanEffect(effect);
+          return executeProbeSectorScanEffect(workingRoot, effect);
         case types.PLANET_SECTOR_SCAN:
           return executePlanetSectorScanEffect(effect);
         case types.SECTOR_X_SCAN:
@@ -250,15 +250,15 @@
         case types.LANDING_SECTOR_SCAN:
           return executeLandingSectorScanEffect(effect);
         case types.CONDITIONAL_SECTOR_SCAN:
-          return executeConditionalSectorScanEffect(effect);
+          return executeConditionalSectorScanEffect(workingRoot, effect);
         case types.DISCARD_ANY_FOR_INCOME:
-          return executeDiscardAnyForIncomeEffect(effect);
+          return executeDiscardAnyForIncomeEffect(workingRoot, effect);
         case types.PAY_CREDITS_FOR_REWARD:
-          return executePayCreditsForRewardEffect(effect);
+          return executePayCreditsForRewardEffect(workingRoot, effect);
         case types.DISCARD_CARD_CORNER_REPEAT:
-          return executeDiscardCardCornerRepeatEffect(effect);
+          return executeDiscardCardCornerRepeatEffect(workingRoot, effect);
         case types.REMOVE_ORBIT_TO_PROBE:
-          return executeRemoveOrbitToProbeEffect(effect);
+          return executeRemoveOrbitToProbeEffect(workingRoot, effect);
         case types.RETURN_UNFINISHED_TASK_TO_HAND:
           return executeReturnUnfinishedTaskToHandEffect(effect);
         case types.COUNT_TECH_TYPES_REWARD:
@@ -272,7 +272,7 @@
         case types.PROBE_STACK_REWARD:
           return executeProbeStackRewardEffect(effect);
         case types.PROBE_LOCATION_REWARD:
-          return executeProbeLocationRewardEffect(effect);
+          return executeProbeLocationRewardEffect(workingRoot, effect);
         case types.EARTH_SECTOR_CONTENT_MOVE:
           return executeEarthSectorContentMoveEffect(effect);
         case types.PLUTO_RESERVE:
@@ -723,13 +723,13 @@
       }
     }
 
-    function executeActionEffectForOwner(effect) {
+    function executeActionEffectForOwner(workingRoot, effect) {
       if (!effect || effect.status !== "active") return { ok: false, message: "当前效果不可执行" };
 
       const techResult = executeResearchTechEffect(effect);
       if (techResult) return techResult;
 
-      const cardResult = executeCardEffect(effect);
+      const cardResult = executeCardEffect(workingRoot, effect);
       if (cardResult) return cardResult;
 
       const rewardResult = planetRewards?.EFFECT_TYPES ? executePlanetRewardEffect(effect) : null;
@@ -765,7 +765,7 @@
         case "industry_strategy_passive_reward":
           return executeIndustryStrategyPassiveRewardEffect(effect);
         case "industry_fundamentalism_exchange":
-          return executeIndustryFundamentalismExchangeEffect(effect);
+          return executeIndustryFundamentalismExchangeEffect(workingRoot, effect);
         case "industry_pirates_raid_marker":
           return executeIndustryPiratesRaidMarkerEffect(effect);
         case "industry_pirates_raid_publicity":

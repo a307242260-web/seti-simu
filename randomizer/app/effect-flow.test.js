@@ -233,11 +233,11 @@ function createHarness() {
     },
     cancelActiveEffectSubFlows() {},
     maybeAutoExecuteAomomoRewardEffects() {},
-    withEffectExecutionPlayer(effect, run) {
+    withEffectExecutionPlayer(_workingRoot, effect, run) {
       calls.withOwner.push(effect.id);
       return run();
     },
-    executeActionEffectForOwner(effect) {
+    executeActionEffectForOwner(_workingRoot, effect) {
       calls.executeOwner.push(effect.id);
       return { ok: true, effectId: effect.id };
     },
@@ -300,10 +300,10 @@ function createHarness() {
 }
 
 {
-  const { helper } = createHarness();
-  assert.deepEqual(helper.executeActionEffect(null), { ok: false, message: "当前效果不可执行" });
+  const { helper, workingRoot } = createHarness();
+  assert.deepEqual(helper.executeActionEffect(workingRoot, null), { ok: false, message: "当前效果不可执行" });
   assert.deepEqual(
-    helper.executeActionEffect({ id: "effect-9", status: "active" }),
+    helper.executeActionEffect(workingRoot, { id: "effect-9", status: "active" }),
     { ok: true, effectId: "effect-9" },
   );
 }

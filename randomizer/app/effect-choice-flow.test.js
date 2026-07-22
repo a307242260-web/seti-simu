@@ -55,7 +55,8 @@ function createHarness(overrides = {}) {
   const workingRoot = {
     rocketState,
     cardState,
-    playerState: {},
+    playerState: { players: [player], currentPlayerId: player.id },
+    turnState: {},
     nebulaDataState: {},
     planetStatsState: {},
     alienGameState: {},
@@ -87,7 +88,6 @@ function createHarness(overrides = {}) {
     decisionSessions,
     pendingState,
     els,
-    getWorkingRoot: () => workingRoot,
     cards: {
       getCardLabel: (card) => card.cardName || card.id,
       getIncomeGainForCard: () => ({ credits: 1 }),
@@ -102,6 +102,7 @@ function createHarness(overrides = {}) {
       getDiscardActionMoveRewardForCard: () => null,
     },
     players: {
+      getCurrentPlayer: (state) => state.players.find((candidate) => candidate.id === state.currentPlayerId) || null,
       canAfford: (target, cost = {}) => Number(target.resources.credits || 0) >= Number(cost.credits || 0),
       spendResources(target, cost = {}) {
         if (Number(target.resources.credits || 0) < Number(cost.credits || 0)) {
@@ -152,7 +153,7 @@ function createHarness(overrides = {}) {
     getExplicitEffectOwnerPlayer: () => player,
     getPendingOwnerFields: () => ({ playerId: player.id, playerColor: player.color }),
     getPendingOwnerPlayer: () => player,
-    withPendingOwnerPlayer: (_pending, run) => run(player),
+    withPendingOwnerPlayer: (_workingRoot, _pending, run) => run(player),
     closeScanTargetPicker() {
       pendingState.scanTargetAction = null;
       decisionSessions.clear("probe_sector_scan");
@@ -214,17 +215,17 @@ function createHarness(overrides = {}) {
     ...overrides,
   });
 
-  return { helper, pendingState, decisionSessions, rocketState, calls, els, player };
+  return { helper, pendingState, decisionSessions, workingRoot, rocketState, calls, els, player };
 }
 
 {
-  const { helper, calls } = createHarness({
+  const { helper, workingRoot, calls } = createHarness({
     cardEffects: {
       EFFECT_TYPES: { SECTOR_X_SCAN: "sector_x_scan" },
       getMatchingConditionalSectorXs: () => [],
     },
   });
-  const result = helper.executeConditionalSectorScanEffect({
+  const result = helper.executeConditionalSectorScanEffect(workingRoot, {
     id: "cond-empty",
     label: "条件扫描",
     options: { condition: { type: "none" } },
@@ -236,8 +237,8 @@ function createHarness(overrides = {}) {
 }
 
 {
-  const { helper, pendingState, els } = createHarness();
-  const result = helper.executeConditionalSectorScanEffect({
+  const { helper, workingRoot, pendingState, els } = createHarness();
+  const result = helper.executeConditionalSectorScanEffect(workingRoot, {
     id: "cond-1",
     label: "条件扫描",
     options: { repeat: 2, condition: { type: "test" } },
@@ -249,7 +250,7 @@ function createHarness(overrides = {}) {
 }
 
 {
-  const { helper, pendingState, player, calls } = createHarness();
+  const { helper, workingRoot, pendingState, player, calls } = createHarness();
   pendingState.scanTargetAction = {
     type: "pay_credit_reward",
     effect: {
@@ -258,7 +259,7 @@ function createHarness(overrides = {}) {
       options: { single: true, groupId: "pay-credit", reward: { type: "gain_resources", label: "得分", options: { gain: { score: 2 } } } },
     },
   };
-  const result = helper.handlePayCreditChoice("pay");
+  const result = helper.handlePayCreditChoice(workingRoot, "pay");
   assert.equal(result.ok, true);
   assert.equal(player.resources.credits, 1);
   assert.equal(player.resources.score, 8);
@@ -266,41 +267,41 @@ function createHarness(overrides = {}) {
 }
 
 {
-  const { helper, pendingState } = createHarness();
+  const { helper, workingRoot, pendingState } = createHarness();
   pendingState.scanTargetAction = {
     type: "pay_credit_reward",
     effect: { id: "pay-credit", label: "支付信用", options: { single: true, groupId: "pay-credit" } },
   };
-  const result = helper.handlePayCreditChoice("skip");
+  const result = helper.handlePayCreditChoice(workingRoot, "skip");
   assert.equal(result.ok, true);
   assert.equal(pendingState.actionEffectFlow.effects.length, 2);
   assert.deepEqual(pendingState.actionEffectFlow.effects.map((effect) => effect.id), ["pay-1", "pay-3"]);
 }
 
 {
-  const { helper, decisionSessions, calls, els } = createHarness();
-  const result = helper.executeProbeSectorScanEffect({
+  const { helper, workingRoot, decisionSessions, calls, els } = createHarness();
+  const result = helper.executeProbeSectorScanEffect(workingRoot, {
     id: "probe-sector",
     label: "探测器扫描",
     options: { maxTargets: 2, repeat: 1 },
   });
   assert.equal(result.ok, true);
   assert.equal(decisionSessions.peek("probe_sector_scan").choices.length, 2);
-  helper.handleProbeSectorScanChoice(1);
-  helper.confirmProbeSectorScanSelection();
+  helper.handleProbeSectorScanChoice(workingRoot, 1);
+  helper.confirmProbeSectorScanSelection(workingRoot);
   assert.equal(calls.inserted.length, 1);
   assert.equal(els.scanTargetOverlay.hidden, true);
 }
 
 {
-  const { helper, decisionSessions, calls } = createHarness();
-  helper.executeProbeLocationRewardEffect({
+  const { helper, workingRoot, decisionSessions, calls } = createHarness();
+  helper.executeProbeLocationRewardEffect(workingRoot, {
     id: "probe-location",
     label: "位置奖励",
     options: { asteroidData: 1, adjacentAsteroidData: 1 },
   });
   assert.equal(decisionSessions.peek("probe_location_reward").choices.length, 2);
-  const result = helper.handleProbeLocationRewardChoice(1);
+  const result = helper.handleProbeLocationRewardChoice(workingRoot, 1);
   assert.equal(result.ok, true);
   assert.equal(calls.history.length, 3);
 }

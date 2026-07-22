@@ -638,7 +638,7 @@
           if (typeof operation !== "function") {
             return { ok: false, code: "EFFECT_CHOICE_COMMAND_UNKNOWN", message: `未知 Effect choice command: ${command.operation}` };
           }
-          return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
+          return { ok: true, value: cloneResidentPresentation(operation(workingRoot, ...(command.args || []))) };
         }
         case "hand_flow_command": {
           const operation = handFlowHelpers?.[command.operation];
@@ -674,7 +674,7 @@
           refreshAfterGameRecovery(command.message, workingRoot);
           return { ok: true };
         case "effect_bar_click":
-          return { ok: true, value: cloneResidentPresentation(handleActionEffectButtonClickForRoot(command.effectIndex)) };
+          return { ok: true, value: cloneResidentPresentation(handleActionEffectButtonClickForRoot(workingRoot, command.effectIndex)) };
         case "effect_skip_current":
           return { ok: true, value: cloneResidentPresentation(skipCurrentActionEffectForRoot()) };
         case "card_execute_move_effect":
@@ -690,7 +690,7 @@
         case "headless_advance_deterministic":
           return advanceHeadlessDeterministicStateImpl() || { ok: true, progressed: false };
         case "headless_execute_current_effect":
-          return executeHeadlessCurrentActionEffectImpl() || { ok: true, progressed: false };
+          return executeHeadlessCurrentActionEffectImpl(workingRoot) || { ok: true, progressed: false };
         case "headless_skip_current_effect":
           return skipHeadlessCurrentActionEffectImpl();
         case "domain_command":
@@ -767,7 +767,7 @@
               currentEffect: structuredClone(pending.currentEffect || null),
             };
           },
-          executeDeterministic(_workingRoot, boundary) {
+          executeDeterministic(workingRoot, boundary) {
             const deterministic = advanceHeadlessDeterministicStateImpl();
             if (deterministic?.progressed) {
               return {
@@ -777,7 +777,7 @@
               };
             }
             if (boundary?.actionEffectActive) {
-              const effectResult = executeHeadlessCurrentActionEffectImpl();
+              const effectResult = executeHeadlessCurrentActionEffectImpl(workingRoot);
               return {
                 ...(effectResult || {}),
                 ok: effectResult?.ok !== false,
@@ -2165,7 +2165,6 @@
     document,
     decisionSessions,
     els,
-    getWorkingRoot: () => requireActiveBrowserWorkingRoot("effect choice flow"),
     cards,
     players,
     data,
@@ -3829,7 +3828,16 @@
     return index >= 0 ? index + 1 : null;
   }
 
-  function getPlayerById(playerId) {
+  function isBrowserWorkingRoot(value) {
+    return Boolean(value?.playerState && value?.rocketState && value?.turnState);
+  }
+
+  function getPlayerById(workingRootOrPlayerId, explicitPlayerId = null) {
+    const workingRoot = isBrowserWorkingRoot(workingRootOrPlayerId) ? workingRootOrPlayerId : null;
+    const playerId = workingRoot ? explicitPlayerId : workingRootOrPlayerId;
+    if (workingRoot) {
+      return workingRoot.playerState.players.find((player) => player.id === playerId) || null;
+    }
     if (activeBrowserDomainWorkingRoot) {
       return activeBrowserDomainWorkingRoot.playerState.players.find((player) => player.id === playerId) || null;
     }
@@ -3837,14 +3845,18 @@
       .find((candidate) => candidate.id === playerId) || null;
   }
 
-  function resolvePlayerReference(reference = {}) {
+  function resolvePlayerReference(workingRootOrReference = {}, explicitReference = null) {
+    const workingRoot = isBrowserWorkingRoot(workingRootOrReference) ? workingRootOrReference : null;
+    const reference = workingRoot ? (explicitReference || {}) : workingRootOrReference;
     const playerId = reference.playerId || null;
     if (playerId) {
-      const player = getPlayerById(playerId);
+      const player = workingRoot ? getPlayerById(workingRoot, playerId) : getPlayerById(playerId);
       if (player) return player;
     }
     const playerColor = reference.playerColor || null;
-    return playerColor ? getPlayerByColor(playerColor) : null;
+    return playerColor
+      ? (workingRoot ? getPlayerByColor(workingRoot, playerColor) : getPlayerByColor(playerColor))
+      : null;
   }
 
   function effectHasExplicitPlayerTarget(effect) {
@@ -3874,43 +3886,64 @@
     }
   }
 
-  function getExplicitEffectOwnerPlayer(effect) {
-    return resolvePlayerReference({
+  function getExplicitEffectOwnerPlayer(workingRootOrEffect, explicitEffect = null) {
+    const workingRoot = isBrowserWorkingRoot(workingRootOrEffect) ? workingRootOrEffect : null;
+    const effect = workingRoot ? explicitEffect : workingRootOrEffect;
+    const reference = {
       playerId: effect?.options?.targetPlayerId || effect?.playerId || effect?.options?.playerId,
       playerColor: effect?.options?.targetPlayerColor || effect?.playerColor || effect?.options?.playerColor,
-    });
+    };
+    return workingRoot ? resolvePlayerReference(workingRoot, reference) : resolvePlayerReference(reference);
   }
 
-  function getEffectOwnerPlayer(effect) {
-    const playerState = activeBrowserDomainWorkingRoot?.playerState
+  function getEffectOwnerPlayer(workingRootOrEffect, explicitEffect = null) {
+    const workingRoot = isBrowserWorkingRoot(workingRootOrEffect) ? workingRootOrEffect : null;
+    const effect = workingRoot ? explicitEffect : workingRootOrEffect;
+    const playerState = workingRoot?.playerState || activeBrowserDomainWorkingRoot?.playerState
       || createStateSourceReadoutRoot().playerState;
-    return getExplicitEffectOwnerPlayer(effect)
-      || getPlayerById(decisionState.actionEffectFlow?.defaultPlayerId)
-      || getPlayerById(decisionState.actionEffectFlow?.playerId)
+    return (workingRoot ? getExplicitEffectOwnerPlayer(workingRoot, effect) : getExplicitEffectOwnerPlayer(effect))
+      || (workingRoot
+        ? getPlayerById(workingRoot, decisionState.actionEffectFlow?.defaultPlayerId)
+        : getPlayerById(decisionState.actionEffectFlow?.defaultPlayerId))
+      || (workingRoot
+        ? getPlayerById(workingRoot, decisionState.actionEffectFlow?.playerId)
+        : getPlayerById(decisionState.actionEffectFlow?.playerId))
       || players.getCurrentPlayer(playerState);
   }
 
-  function getPendingOwnerFields(effect = null, player = null) {
-    const owner = player || getExplicitEffectOwnerPlayer(effect) || getCurrentPlayer();
+  function getPendingOwnerFields(workingRootOrEffect = null, explicitEffect = null, explicitPlayer = null) {
+    const workingRoot = isBrowserWorkingRoot(workingRootOrEffect) ? workingRootOrEffect : null;
+    const effect = workingRoot ? explicitEffect : workingRootOrEffect;
+    const player = workingRoot ? explicitPlayer : explicitEffect;
+    const owner = player
+      || (workingRoot ? getExplicitEffectOwnerPlayer(workingRoot, effect) : getExplicitEffectOwnerPlayer(effect))
+      || (workingRoot ? getCurrentPlayer(workingRoot) : getCurrentPlayer());
     return {
       playerId: owner?.id || null,
       playerColor: owner?.color || null,
     };
   }
 
-  function getPendingOwnerPlayer(pending = null, fallbackEffect = null) {
+  function getPendingOwnerPlayer(workingRootOrPending = null, explicitPending = null, explicitFallbackEffect = null) {
+    const workingRoot = isBrowserWorkingRoot(workingRootOrPending) ? workingRootOrPending : null;
+    const pending = workingRoot ? explicitPending : workingRootOrPending;
+    const fallbackEffect = workingRoot ? explicitFallbackEffect : explicitPending;
     const effect = fallbackEffect || pending?.effect || null;
-    return resolvePlayerReference({
+    const reference = {
       playerId: pending?.playerId || pending?.targetPlayerId,
       playerColor: pending?.playerColor || pending?.targetPlayerColor,
-    })
-      || getExplicitEffectOwnerPlayer(effect)
-      || (effect ? getEffectOwnerPlayer(effect) : null)
-      || getCurrentPlayer();
+    };
+    return (workingRoot ? resolvePlayerReference(workingRoot, reference) : resolvePlayerReference(reference))
+      || (workingRoot ? getExplicitEffectOwnerPlayer(workingRoot, effect) : getExplicitEffectOwnerPlayer(effect))
+      || (effect ? (workingRoot ? getEffectOwnerPlayer(workingRoot, effect) : getEffectOwnerPlayer(effect)) : null)
+      || (workingRoot ? getCurrentPlayer(workingRoot) : getCurrentPlayer());
   }
 
-  function withPendingOwnerPlayer(pending, callback) {
-    const owner = getPendingOwnerPlayer(pending);
+  function withPendingOwnerPlayer(workingRootOrPending, explicitPending, explicitCallback = null) {
+    const workingRoot = isBrowserWorkingRoot(workingRootOrPending) ? workingRootOrPending : null;
+    const pending = workingRoot ? explicitPending : workingRootOrPending;
+    const callback = workingRoot ? explicitCallback : explicitPending;
+    const owner = workingRoot ? getPendingOwnerPlayer(workingRoot, pending) : getPendingOwnerPlayer(pending);
     const previousPlayerId = uiRuntimeState.effectExecutionPlayerId;
     uiRuntimeState.effectExecutionPlayerId = owner?.id || previousPlayerId;
     try {
@@ -3927,8 +3960,11 @@
     return owner;
   }
 
-  function withEffectExecutionPlayer(effect, callback) {
-    const owner = getEffectOwnerPlayer(effect);
+  function withEffectExecutionPlayer(workingRootOrEffect, explicitEffect, explicitCallback = null) {
+    const workingRoot = isBrowserWorkingRoot(workingRootOrEffect) ? workingRootOrEffect : null;
+    const effect = workingRoot ? explicitEffect : workingRootOrEffect;
+    const callback = workingRoot ? explicitCallback : explicitEffect;
+    const owner = workingRoot ? getEffectOwnerPlayer(workingRoot, effect) : getEffectOwnerPlayer(effect);
     const previousPlayerId = uiRuntimeState.effectExecutionPlayerId;
     uiRuntimeState.effectExecutionPlayerId = owner?.id || previousPlayerId;
     try {
@@ -8161,8 +8197,8 @@
     effectDispatcherModule.createEffectDispatcher({ ...effectExecutorContext, ...effectExecutors }),
   );
 
-  function handleActionEffectButtonClickForRoot(effectIndex) {
-    return actionRuntimeController.handleActionEffectButtonClick(effectIndex);
+  function handleActionEffectButtonClickForRoot(workingRoot, effectIndex) {
+    return actionRuntimeController.handleActionEffectButtonClick(workingRoot, effectIndex);
   }
 
   function handleActionEffectButtonClick(effectIndex) {
@@ -8426,17 +8462,22 @@
     return focusDebugCalibration(alienSlotId);
   }
 
-  function getCurrentPlayer() {
+  function getCurrentPlayer(workingRoot = null) {
     if (uiRuntimeState.effectExecutionPlayerId) {
-      const effectPlayer = getPlayerById(uiRuntimeState.effectExecutionPlayerId);
+      const effectPlayer = isBrowserWorkingRoot(workingRoot)
+        ? getPlayerById(workingRoot, uiRuntimeState.effectExecutionPlayerId)
+        : getPlayerById(uiRuntimeState.effectExecutionPlayerId);
       if (effectPlayer) return effectPlayer;
     }
-    return players.getCurrentPlayer(playerState);
+    return players.getCurrentPlayer(isBrowserWorkingRoot(workingRoot) ? workingRoot.playerState : playerState);
   }
 
-  function getPlayerByColor(color) {
+  function getPlayerByColor(workingRootOrColor, explicitColor = null) {
+    const workingRoot = isBrowserWorkingRoot(workingRootOrColor) ? workingRootOrColor : null;
+    const color = workingRoot ? explicitColor : workingRootOrColor;
     const normalizedColor = players.normalizePlayerColor(color);
-    return playerState.players.find((player) => player.color === normalizedColor) || null;
+    const source = workingRoot ? workingRoot.playerState : playerState;
+    return source.players.find((player) => player.color === normalizedColor) || null;
   }
 
   function setDebugPlayerMenuOpen(open) {
@@ -11018,13 +11059,13 @@
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "headless_advance_deterministic" });
   }
 
-  function executeHeadlessCurrentActionEffectImpl() {
+  function executeHeadlessCurrentActionEffectImpl(workingRoot) {
     if (!headlessMode) return { ok: false, message: "仅 headless 模式可直接推进效果" };
     const effect = getCurrentActionEffect();
     if (!effect || effect.status !== "active") {
       return { ok: false, message: "没有可直接推进的活动效果" };
     }
-    return executeActionEffect(effect);
+    return executeActionEffect(workingRoot, effect);
   }
 
   function executeHeadlessCurrentActionEffect() {

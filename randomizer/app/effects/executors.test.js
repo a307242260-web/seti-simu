@@ -44,10 +44,12 @@ function withWorkingRoot(context = {}) {
     jiuzhe: null,
     executeCardFixedNebulaScanEffect: () => outcomes.shift(),
   };
-  const dispatcher = createEffectDispatcher(withWorkingRoot(baseContext));
+  const dispatcherContext = withWorkingRoot(baseContext);
+  const dispatcher = createEffectDispatcher(dispatcherContext);
+  const workingRoot = dispatcherContext.getWorkingRoot();
 
   for (const expected of [...outcomes]) {
-    const actual = dispatcher.executeActionEffectForOwner({
+    const actual = dispatcher.executeActionEffectForOwner(workingRoot, {
       type: cardEffects.EFFECT_TYPES.SCAN_NEBULA,
       status: "active",
     });
@@ -55,10 +57,10 @@ function withWorkingRoot(context = {}) {
   }
 
   assert.deepEqual(
-    dispatcher.executeActionEffectForOwner({ type: "unknown", status: "active" }),
+    dispatcher.executeActionEffectForOwner(workingRoot, { type: "unknown", status: "active" }),
     { ok: false, message: "未知效果类型: unknown" },
   );
-  assert.equal(dispatcher.executeActionEffectForOwner(null).ok, false);
+  assert.equal(dispatcher.executeActionEffectForOwner(workingRoot, null).ok, false);
 
   console.log("effect executor tests passed");
 })();
@@ -67,7 +69,7 @@ function withWorkingRoot(context = {}) {
   const effectType = "public_card_scan";
   const effect = { type: effectType, label: "扫描行动公共牌扫描", status: "active" };
   let beganSelection = false;
-  const dispatcher = createEffectDispatcher(withWorkingRoot({
+  const dispatcherContext = withWorkingRoot({
     cardEffects: { EFFECT_TYPES: {} },
     scanEffects: { EFFECT_TYPES: { PUBLIC_CARD_SCAN: effectType } },
     planetRewards: { EFFECT_TYPES: {} },
@@ -78,8 +80,9 @@ function withWorkingRoot(context = {}) {
     skipActionEffectWithMessage(_effect, message, payload) {
       return { ok: true, skipped: true, message, payload };
     },
-  }));
-  const result = dispatcher.executeActionEffectForOwner(effect);
+  });
+  const dispatcher = createEffectDispatcher(dispatcherContext);
+  const result = dispatcher.executeActionEffectForOwner(dispatcherContext.getWorkingRoot(), effect);
   assert.equal(result.ok, true);
   assert.equal(result.skipped, true);
   assert.equal(result.payload.reason, "no_public_scan_candidate");
