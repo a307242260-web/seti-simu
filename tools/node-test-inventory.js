@@ -13,6 +13,7 @@ function modulesFor(relative) {
   if (/conditional-decision-domain\.test/.test(relative)) return ["uniqueAction"];
   if (/simulation-(?:decision-owner|effect-session-host|effect-session-worker-recovery|no-browser-globals|training-replay)\.test/.test(relative)) return ["uniqueSessionState"];
   if (/simulation-state-checkpoint\.test/.test(relative)) return ["unifiedAuthorityState"];
+  if (/training\/simulation-rule-composition\.test/.test(relative)) return ["unifiedAuthorityState"];
   if (/\/training\/|\/game\/ai\/|\/app\/ai\/|ai-runtime-root|simulation-worker-resilience/.test(relative)) return ["robot"];
   if (/\/game\/effects\/|effect-session-host/.test(relative)) return ["uniqueSessionState"];
   if (/\/app\/effects\/|effect-flow|effect-choice-flow/.test(relative)) return ["uniqueEffectQueue"];
@@ -66,6 +67,7 @@ randomizer/app/simulation-effect-session-worker-recovery.test.js
 randomizer/app/simulation-no-browser-globals.test.js
 randomizer/app/simulation-state-checkpoint.test.js
 randomizer/app/simulation-training-replay.test.js
+randomizer/training/simulation-rule-composition.test.js
 randomizer/app/income-runtime.test.js
 randomizer/app/industry-runtime.test.js
 randomizer/app/refresh.test.js
