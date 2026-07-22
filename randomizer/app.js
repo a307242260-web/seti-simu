@@ -1574,6 +1574,29 @@
       match: structuredClone(state.match || {}),
     };
   }
+  const playerEffectOwnerRuntime = runtimeModule.createPlayerEffectOwnerRuntime({
+    players,
+    uiRuntimeState,
+    createReadoutRoot: createStateSourceReadoutRoot,
+    getPlayerByColor: (...args) => getPlayerByColor(...args),
+    getCurrentPlayer: (workingRoot = null) => getCurrentPlayer(workingRoot || undefined),
+    getActionEffectFlow,
+  });
+  const {
+    isBrowserWorkingRoot,
+    getPlayerById,
+    resolvePlayerReference,
+    effectHasExplicitPlayerTarget,
+    assignEffectOwner,
+    assignEffectFlowOwner,
+    getExplicitEffectOwnerPlayer,
+    getEffectOwnerPlayer,
+    getPendingOwnerFields,
+    getPendingOwnerPlayer,
+    withPendingOwnerPlayer,
+    setActiveEffectFlowOwner,
+    withEffectExecutionPlayer,
+  } = playerEffectOwnerRuntime;
 
   function createInitialSelectionProjection(viewer, resident) {
     const active = setupSelectionState.phase === "selecting";
@@ -4084,148 +4107,6 @@
   function getPlayerRoundOrderNumber(playerId) {
     const index = getRoundOrderPlayerIds().indexOf(playerId);
     return index >= 0 ? index + 1 : null;
-  }
-
-  function isBrowserWorkingRoot(value) {
-    return Boolean(value?.playerState && value?.rocketState && value?.turnState);
-  }
-
-  function getPlayerById(workingRootOrPlayerId, explicitPlayerId = null) {
-    const workingRoot = isBrowserWorkingRoot(workingRootOrPlayerId) ? workingRootOrPlayerId : null;
-    const playerId = workingRoot ? explicitPlayerId : workingRootOrPlayerId;
-    if (workingRoot) {
-      return workingRoot.playerState.players.find((player) => player.id === playerId) || null;
-    }
-    return createStateSourceReadoutRoot().playerState.players
-      .find((candidate) => candidate.id === playerId) || null;
-  }
-
-  function resolvePlayerReference(workingRootOrReference = {}, explicitReference = null) {
-    const workingRoot = isBrowserWorkingRoot(workingRootOrReference) ? workingRootOrReference : null;
-    const reference = workingRoot ? (explicitReference || {}) : workingRootOrReference;
-    const playerId = reference.playerId || null;
-    if (playerId) {
-      const player = workingRoot ? getPlayerById(workingRoot, playerId) : getPlayerById(playerId);
-      if (player) return player;
-    }
-    const playerColor = reference.playerColor || null;
-    return playerColor
-      ? (workingRoot ? getPlayerByColor(workingRoot, playerColor) : getPlayerByColor(playerColor))
-      : null;
-  }
-
-  function effectHasExplicitPlayerTarget(effect) {
-    const options = effect?.options || {};
-    return Boolean(
-      effect?.playerId
-      || effect?.playerColor
-      || options.playerId
-      || options.playerColor
-      || options.targetPlayerId
-      || options.targetPlayerColor
-    );
-  }
-
-  function assignEffectOwner(effect, playerId) {
-    if (!effect || !playerId || effectHasExplicitPlayerTarget(effect)) return effect;
-    effect.playerId = playerId;
-    return effect;
-  }
-
-  function assignEffectFlowOwner(flow, playerId) {
-    if (!flow || !playerId) return;
-    flow.defaultPlayerId = playerId;
-    flow.playerId = playerId;
-    for (const effect of flow.effects || []) {
-      assignEffectOwner(effect, playerId);
-    }
-  }
-
-  function getExplicitEffectOwnerPlayer(workingRootOrEffect, explicitEffect = null) {
-    const workingRoot = isBrowserWorkingRoot(workingRootOrEffect) ? workingRootOrEffect : null;
-    const effect = workingRoot ? explicitEffect : workingRootOrEffect;
-    const reference = {
-      playerId: effect?.options?.targetPlayerId || effect?.playerId || effect?.options?.playerId,
-      playerColor: effect?.options?.targetPlayerColor || effect?.playerColor || effect?.options?.playerColor,
-    };
-    return workingRoot ? resolvePlayerReference(workingRoot, reference) : resolvePlayerReference(reference);
-  }
-
-  function getEffectOwnerPlayer(workingRootOrEffect, explicitEffect = null) {
-    const workingRoot = isBrowserWorkingRoot(workingRootOrEffect) ? workingRootOrEffect : null;
-    const effect = workingRoot ? explicitEffect : workingRootOrEffect;
-    const playerState = workingRoot?.playerState || createStateSourceReadoutRoot().playerState;
-    return (workingRoot ? getExplicitEffectOwnerPlayer(workingRoot, effect) : getExplicitEffectOwnerPlayer(effect))
-      || (workingRoot
-        ? getPlayerById(workingRoot, getActionEffectFlow(workingRoot)?.defaultPlayerId)
-        : getPlayerById(getActionEffectFlow(workingRoot)?.defaultPlayerId))
-      || (workingRoot
-        ? getPlayerById(workingRoot, getActionEffectFlow(workingRoot)?.playerId)
-        : getPlayerById(getActionEffectFlow(workingRoot)?.playerId))
-      || players.getCurrentPlayer(playerState);
-  }
-
-  function getPendingOwnerFields(workingRootOrEffect = null, explicitEffect = null, explicitPlayer = null) {
-    const workingRoot = isBrowserWorkingRoot(workingRootOrEffect) ? workingRootOrEffect : null;
-    const effect = workingRoot ? explicitEffect : workingRootOrEffect;
-    const player = workingRoot ? explicitPlayer : explicitEffect;
-    const owner = player
-      || (workingRoot ? getExplicitEffectOwnerPlayer(workingRoot, effect) : getExplicitEffectOwnerPlayer(effect))
-      || (workingRoot ? getCurrentPlayer(workingRoot) : getCurrentPlayer());
-    return {
-      playerId: owner?.id || null,
-      playerColor: owner?.color || null,
-    };
-  }
-
-  function getPendingOwnerPlayer(workingRootOrPending = null, explicitPending = null, explicitFallbackEffect = null) {
-    const workingRoot = isBrowserWorkingRoot(workingRootOrPending) ? workingRootOrPending : null;
-    const pending = workingRoot ? explicitPending : workingRootOrPending;
-    const fallbackEffect = workingRoot ? explicitFallbackEffect : explicitPending;
-    const effect = fallbackEffect || pending?.effect || null;
-    const reference = {
-      playerId: pending?.playerId || pending?.targetPlayerId,
-      playerColor: pending?.playerColor || pending?.targetPlayerColor,
-    };
-    return (workingRoot ? resolvePlayerReference(workingRoot, reference) : resolvePlayerReference(reference))
-      || (workingRoot ? getExplicitEffectOwnerPlayer(workingRoot, effect) : getExplicitEffectOwnerPlayer(effect))
-      || (effect ? (workingRoot ? getEffectOwnerPlayer(workingRoot, effect) : getEffectOwnerPlayer(effect)) : null)
-      || (workingRoot ? getCurrentPlayer(workingRoot) : getCurrentPlayer());
-  }
-
-  function withPendingOwnerPlayer(workingRootOrPending, explicitPending, explicitCallback = null) {
-    const workingRoot = isBrowserWorkingRoot(workingRootOrPending) ? workingRootOrPending : null;
-    const pending = workingRoot ? explicitPending : workingRootOrPending;
-    const callback = workingRoot ? explicitCallback : explicitPending;
-    const owner = workingRoot ? getPendingOwnerPlayer(workingRoot, pending) : getPendingOwnerPlayer(pending);
-    const previousPlayerId = uiRuntimeState.effectExecutionPlayerId;
-    uiRuntimeState.effectExecutionPlayerId = owner?.id || previousPlayerId;
-    try {
-      return callback(owner);
-    } finally {
-      uiRuntimeState.effectExecutionPlayerId = previousPlayerId;
-    }
-  }
-
-  function setActiveEffectFlowOwner(workingRoot, effect) {
-    if (!getActionEffectFlow(workingRoot) || !effect) return null;
-    const owner = getEffectOwnerPlayer(effect);
-    getActionEffectFlow(workingRoot).activePlayerId = owner?.id || null;
-    return owner;
-  }
-
-  function withEffectExecutionPlayer(workingRootOrEffect, explicitEffect, explicitCallback = null) {
-    const workingRoot = isBrowserWorkingRoot(workingRootOrEffect) ? workingRootOrEffect : null;
-    const effect = workingRoot ? explicitEffect : workingRootOrEffect;
-    const callback = workingRoot ? explicitCallback : explicitEffect;
-    const owner = workingRoot ? getEffectOwnerPlayer(workingRoot, effect) : getEffectOwnerPlayer(effect);
-    const previousPlayerId = uiRuntimeState.effectExecutionPlayerId;
-    uiRuntimeState.effectExecutionPlayerId = owner?.id || previousPlayerId;
-    try {
-      return callback();
-    } finally {
-      uiRuntimeState.effectExecutionPlayerId = previousPlayerId;
-    }
   }
 
   function getInterfacePlayer() {
