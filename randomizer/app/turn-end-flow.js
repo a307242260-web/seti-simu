@@ -47,6 +47,7 @@
       hasActivePendingSubFlow,
       getPendingBanrenmaCardGain,
       getPendingJiuzheCardPlay,
+      getPendingBanrenmaOpportunity,
       historyCommands,
       industry,
       isActionEffectFlowActive,
@@ -444,7 +445,7 @@
     return Boolean(
       uiRuntimeState.alienRevealConfirmation
       || getPendingJiuzheCardPlay()
-      || decisionSessions?.peek?.("banrenma_opportunity")
+      || getPendingBanrenmaOpportunity()
       || getPendingBanrenmaCardGain()
       || decisionState.alienTraceAction
       || decisionState.alienTracePickerState

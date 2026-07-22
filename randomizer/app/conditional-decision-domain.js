@@ -29,6 +29,7 @@
       getPendingChongCardGain,
       getPendingAmibaTraceRemoval,
       getPendingJiuzheCardPlay,
+      getPendingBanrenmaOpportunity,
       getPlayerById,
       decisionState,
       cards,
@@ -89,6 +90,8 @@
       handleAmibaTraceRemovalChoice,
       handleJiuzheCardChoice,
       handleJiuzheOpportunitySkip,
+      handleBanrenmaBonusChoice,
+      handleBanrenmaCardConditionChoice,
       handleFinalScoreTileClick,
       handleSupplyTechTileClick,
       confirmTechBlueSlotChoice,
@@ -265,6 +268,35 @@
             target: { kind: "jiuzhe-card-skip", choiceId: "skip" },
             pendingContext: structuredClone(jiuzheCardPlayPending),
           },
+        ],
+      };
+    }
+    const banrenmaOpportunityPending = getPendingBanrenmaOpportunity();
+    if (banrenmaOpportunityPending) {
+      const isPanel = banrenmaOpportunityPending.type === "panel";
+      const rawChoices = isPanel
+        ? (banrenmaOpportunityPending.positions || []).map(String)
+        : (banrenmaOpportunityPending.cardIds || []).map(String);
+      return {
+        actorPlayer: getPlayerById(banrenmaOpportunityPending.playerId) || getCurrentPlayer(),
+        candidates: [
+          ...rawChoices.map((choiceId) => ({
+            id: "conditionalChoice",
+            family: isPanel ? "choose_reward" : "choose_card",
+            label: isPanel ? `半人马顶部奖励 ${choiceId}` : `结算半人马牌 ${choiceId}`,
+            target: {
+              kind: isPanel ? "banrenma-panel-bonus" : "banrenma-card-condition",
+              choiceId,
+            },
+            pendingContext: structuredClone(banrenmaOpportunityPending),
+          })),
+          ...(!isPanel ? [{
+            id: "conditionalChoice",
+            family: "accept_optional_effect",
+            label: "跳过半人马牌条件",
+            target: { kind: "banrenma-card-condition", choiceId: "skip" },
+            pendingContext: structuredClone(banrenmaOpportunityPending),
+          }] : []),
         ],
       };
     }
@@ -1041,6 +1073,8 @@
       action.pendingContext || null,
     ),
     "jiuzhe-card-skip": (action) => handleJiuzheOpportunitySkip({}, action.pendingContext || null),
+    "banrenma-panel-bonus": (action) => handleBanrenmaBonusChoice(action.target.choiceId, action.pendingContext || null),
+    "banrenma-card-condition": (action) => handleBanrenmaCardConditionChoice(action.target.choiceId, action.pendingContext || null),
     "probe-sector-selection": (action) => {
       const pending = getPendingProbeSectorScanDecision();
       if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };

@@ -808,6 +808,9 @@
               if (candidates[0]?.target?.kind === "jiuzhe-card-play" || candidates[0]?.target?.kind === "jiuzhe-card-skip") {
                 alienSpeciesRuntime?.takeJiuzheCardPlayDecisionDraft?.();
               }
+              if (candidates[0]?.target?.kind === "banrenma-panel-bonus" || candidates[0]?.target?.kind === "banrenma-card-condition") {
+                alienSpeciesRuntime?.takeBanrenmaOpportunityDecisionDraft?.();
+              }
               return {
                 ok: true,
                 boundary: "conditional_choice",
@@ -1033,6 +1036,7 @@
     getPendingYichangdianCardGain,
     getPendingBanrenmaCardGain,
     getPendingJiuzheCardPlay,
+    getPendingBanrenmaOpportunity,
     getPendingChongCardGain,
     getPendingAmibaTraceRemoval,
     getHeadlessConditionalPlayer,
@@ -4157,7 +4161,7 @@
     get pendingYichangdianCardGain() { return getPendingYichangdianCardGain(); },
     get pendingYichangdianCornerAction() { return getPendingYichangdianCornerAction(); },
     get pendingBanrenmaCardGain() { return getPendingBanrenmaCardGain(); },
-    get pendingBanrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
+    get pendingBanrenmaOpportunity() { return getPendingBanrenmaOpportunity(); },
     get pendingChongCardGain() { return getPendingChongCardGain(); },
     get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
     get pendingAmibaCardGain() { return getPendingAmibaCardGain(); },
@@ -5431,7 +5435,7 @@
     alienSpeciesRuntime?.clearYichangdianCardGainDecisionDraft?.();
     effectExecutors?.clearYichangdianCornerAction?.();
     alienSpeciesRuntime?.clearBanrenmaCardGainDecisionDraft?.();
-    decisionSessions.clear("banrenma_opportunity");
+    alienSpeciesRuntime?.clearBanrenmaOpportunityDecisionDraft?.();
     if (workingRoot.match && typeof workingRoot.match === "object") {
       delete workingRoot.match.jiuzheOpportunityQueue;
       delete workingRoot.match.banrenmaOpportunityQueue;
@@ -6899,7 +6903,7 @@
       || getPendingYichangdianCardGain()
       || getPendingYichangdianCornerAction()
       || getPendingBanrenmaCardGain()
-      || decisionSessions.peek("banrenma_opportunity")
+      || getPendingBanrenmaOpportunity()
       || getPendingChongCardGain()
       || getPendingChongFossilChoice()
       || getPendingAmibaCardGain()
@@ -8455,6 +8459,7 @@
   function getPendingChongCardGain() { return alienSpeciesRuntime?.getChongCardGainDecisionDraft?.() || null; }
   function getPendingAmibaTraceRemoval() { return alienSpeciesRuntime?.getAmibaTraceRemovalDecisionDraft?.() || null; }
   function getPendingJiuzheCardPlay() { return alienSpeciesRuntime?.getJiuzheCardPlayDecisionDraft?.() || null; }
+  function getPendingBanrenmaOpportunity() { return alienSpeciesRuntime?.getBanrenmaOpportunityDecisionDraft?.() || null; }
   function getAlienTraceLayer(...args) { return alienSpeciesRuntime.getAlienTraceLayer(...args); }
   function getAlienJiuzheTraceLayer(...args) { return alienSpeciesRuntime.getAlienJiuzheTraceLayer(...args); }
   function getAlienYichangdianCardArea(...args) { return alienSpeciesRuntime.getAlienYichangdianCardArea(...args); }
@@ -10262,6 +10267,7 @@
     hasActivePendingSubFlow,
     getPendingBanrenmaCardGain,
     getPendingJiuzheCardPlay,
+    getPendingBanrenmaOpportunity,
     historyCommands,
     industry,
     isActionEffectFlowActive,
@@ -11856,7 +11862,7 @@
     get pendingRunezuSymbolBranch() { return getPendingRunezuSymbolBranch(); },
     get pendingRunezuCardGain() { return getPendingRunezuCardGain(); },
     get pendingBanrenmaCardGain() { return getPendingBanrenmaCardGain(); },
-    get pendingBanrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
+    get pendingBanrenmaOpportunity() { return getPendingBanrenmaOpportunity(); },
     get pendingYichangdianCardGain() { return getPendingYichangdianCardGain(); },
     get pendingJiuzheCardPlay() { return getPendingJiuzheCardPlay(); },
     get jiuzheCardViewOpen() { return Boolean(uiRuntimeState.jiuzheCardViewOpen); },

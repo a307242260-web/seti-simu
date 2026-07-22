@@ -58,8 +58,6 @@
       skipPendingDataPlacement,
       handleDebugQuickSectorScanChoice,
       handleAomomoFossilMoveLandCountChoice,
-      handleBanrenmaBonusChoice,
-      handleBanrenmaCardConditionChoice,
       handleYichangdianCornerChoice,
       handleCardTriggerChoice,
       cancelCardTriggerChoice,
@@ -309,18 +307,6 @@
         return;
       }
 
-      const banrenmaBonus = event.target.closest("[data-banrenma-bonus-choice]");
-      if (banrenmaBonus && !banrenmaBonus.disabled) {
-        handleBanrenmaBonusChoice(banrenmaBonus.dataset.banrenmaBonusChoice);
-        return;
-      }
-
-      const banrenmaCard = event.target.closest("[data-banrenma-card-choice]");
-      if (banrenmaCard && !banrenmaCard.disabled) {
-        handleBanrenmaCardConditionChoice(banrenmaCard.dataset.banrenmaCardChoice);
-        return;
-      }
-
       const yichangdianCorner = event.target.closest("[data-yichangdian-corner-card-id]");
       if (yichangdianCorner && !yichangdianCorner.disabled) {
         handleYichangdianCornerChoice(yichangdianCorner.dataset.yichangdianCornerCardId);
@@ -448,10 +434,6 @@
     els.scanTargetCancel?.addEventListener("click", () => {
       if (blockManualAiSharedOverlayInputIfNeeded?.()) return;
 
-      if (state.pendingBanrenmaOpportunity) {
-        closeBanrenmaOpportunityDialog();
-        return;
-      }
       if (state.jiuzheCardViewOpen) {
         closeJiuzheCardDialog();
         return;
@@ -475,10 +457,6 @@
       if (event.target === els.scanTargetOverlay) {
         if (blockManualAiSharedOverlayInputIfNeeded?.()) return;
 
-        if (state.pendingBanrenmaOpportunity) {
-          closeBanrenmaOpportunityDialog();
-          return;
-        }
         if (state.jiuzheCardViewOpen) {
           closeJiuzheCardDialog();
           return;

@@ -163,10 +163,6 @@
       actionEffectFlow: "action_effect_flow",
     }) || {};
     const getCardTaskCompletion = () => decisionSessions.peek("card_task_completion");
-    const replaceDecisionSession = (kind, session) => {
-      if (session == null) return decisionSessions.clear(kind);
-      return decisionSessions.open(kind, session);
-    };
     let chongFossilDecisionDraft = null;
     let amibaSymbolDecisionDraft = null;
     let runezuSymbolBranchDecisionDraft = null;
@@ -179,6 +175,7 @@
     let chongCardGainDecisionDraft = null;
     let amibaTraceRemovalDecisionDraft = null;
     let jiuzheCardPlayDecisionDraft = null;
+    let banrenmaOpportunityDecisionDraft = null;
     function getChongFossilDecisionDraft() {
       return chongFossilDecisionDraft;
     }
@@ -266,15 +263,15 @@
       () => jiuzheCardPlayDecisionDraft,
       (draft) => { jiuzheCardPlayDecisionDraft = draft; },
     );
+    const banrenmaOpportunityDraft = createDecisionDraftAccessors(
+      () => banrenmaOpportunityDecisionDraft,
+      (draft) => { banrenmaOpportunityDecisionDraft = draft; },
+    );
     const getOpportunityContinuationQueue = (workingRoot, field) => {
       requireWorkingRoot(workingRoot);
       if (!workingRoot.match || typeof workingRoot.match !== "object") workingRoot.match = {};
       if (!Array.isArray(workingRoot.match[field])) workingRoot.match[field] = [];
       return workingRoot.match[field];
-    };
-    const alienOpportunitySessions = {
-      get banrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
-      set banrenmaOpportunity(session) { replaceDecisionSession("banrenma_opportunity", session); },
     };
 
     function addFangzhouUnlockedCardToHand(player, handCard) {
@@ -3136,7 +3133,7 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
       jiuzheCardPlayDraft.get() ? { pending: jiuzheCardPlayDraft.get(), label: "九折牌" } : null,
       yichangdianCardGainDraft.get() ? { pending: yichangdianCardGainDraft.get(), label: "异常点外星人牌" } : null,
       banrenmaCardGainDraft.get() ? { pending: banrenmaCardGainDraft.get(), label: "半人马外星人牌" } : null,
-      alienOpportunitySessions.banrenmaOpportunity ? { pending: alienOpportunitySessions.banrenmaOpportunity, label: "半人马奖励" } : null,
+      banrenmaOpportunityDraft.get() ? { pending: banrenmaOpportunityDraft.get(), label: "半人马奖励" } : null,
       chongCardGainDraft.get() ? { pending: chongCardGainDraft.get(), label: "虫族外星人牌" } : null,
       getChongFossilDecisionDraft() ? { pending: getChongFossilDecisionDraft(), label: "虫族化石" } : null,
       amibaCardGainDraft.get() ? { pending: amibaCardGainDraft.get(), label: "阿米巴外星人牌" } : null,
@@ -3264,7 +3261,7 @@ function queueBanrenmaOpportunitiesForPlayer(workingRoot, player) {
   }
 
 function closeBanrenmaOpportunityDialog() {
-    alienOpportunitySessions.banrenmaOpportunity = null;
+    banrenmaOpportunityDraft.clear();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -3284,9 +3281,6 @@ function openBanrenmaCardConditionCompletionPicker(workingRoot, card, options = 
     if (!banrenma || !player || !card || !banrenma.isBanrenmaCard(card)) {
       return { ok: false, message: "没有可结算的半人马牌" };
     }
-    if (!els.scanTargetOverlay || !els.scanTargetActions) {
-      return { ok: false, message: "无法打开半人马条件确认窗口" };
-    }
     const ready = getReadyBanrenmaCardForOpportunity(workingRoot, player, { cardId: card.id });
     if (!ready) {
       rocketState.statusNote = "这张半人马牌尚未达到阈值";
@@ -3294,26 +3288,14 @@ function openBanrenmaCardConditionCompletionPicker(workingRoot, card, options = 
       return { ok: false, message: rocketState.statusNote };
     }
     const mark = ready.mark;
-    alienOpportunitySessions.banrenmaOpportunity = {
+    banrenmaOpportunityDecisionDraft = {
       playerId: player.id,
       playerColor: player.color,
       type: "card",
       cardId: card.id || null,
       markId: mark?.id || card.banrenmaScoreMarkId || null,
+      cardIds: [card.id],
     };
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "半人马条件效果";
-    if (els.scanTargetSubtitle) {
-      const threshold = mark?.threshold ?? card.banrenmaThreshold ?? "阈值";
-      els.scanTargetSubtitle.textContent = `${cards.getCardLabel(card)} 已达到 ${threshold} 分，确认后弃掉该牌并结算条件效果。`;
-    }
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-    const confirmButton = document.createElement("button");
-    confirmButton.type = "button";
-    confirmButton.className = "scan-target-option-button";
-    confirmButton.dataset.banrenmaCardChoice = card.id;
-    confirmButton.innerHTML = `确认结算条件<small>${getBanrenmaCardConditionLabel(card)}</small>`;
-    els.scanTargetActions.replaceChildren(confirmButton);
-    els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = "半人马条件已达成：点击确认结算";
     renderStateReadout();
     return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
@@ -3321,10 +3303,10 @@ function openBanrenmaCardConditionCompletionPicker(workingRoot, card, options = 
 
 function openBanrenmaOpportunityDialog(workingRoot, player, opportunity) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (!banrenma || !player || !opportunity || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!banrenma || !player || !opportunity) {
       return { ok: false, message: "无法打开半人马奖励窗口" };
     }
-    alienOpportunitySessions.banrenmaOpportunity = {
+    banrenmaOpportunityDecisionDraft = {
       playerId: player.id,
       playerColor: player.color,
       type: opportunity.type,
@@ -3334,58 +3316,21 @@ function openBanrenmaOpportunityDialog(workingRoot, player, opportunity) {
       effectLabel: opportunity.label || null,
     };
     if (opportunity.type === "panel") {
-      const mark = banrenma.getPlayerScoreMarks(alienGameState, player)
-        .find((item) => item.id === opportunity.markId);
-      if (els.scanTargetTitle) els.scanTargetTitle.textContent = "半人马顶部奖励";
-      if (els.scanTargetSubtitle) {
-        els.scanTargetSubtitle.textContent = `${player.colorLabel}玩家达到 ${mark?.threshold ?? "阈值"} 分，选择一个未使用的顶部奖励位。`;
-      }
-      if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
-      const nodes = banrenma.BONUS_POSITIONS.map((position) => {
-        const reward = banrenma.getBonusReward(position);
-        const used = Boolean(alienGameState.banrenma?.bonusSlots?.[position]);
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "scan-target-option-button";
-        button.dataset.banrenmaBonusChoice = String(position);
-        button.disabled = used;
-        button.innerHTML = `${position}号奖励<small>${reward?.label || ""}${used ? " · 已使用" : ""}</small>`;
-        return button;
-      });
-      els.scanTargetActions.replaceChildren(...nodes);
+      banrenmaOpportunityDecisionDraft.positions = banrenma.getAvailableBonusPositions(alienGameState);
     } else {
       const readyCards = getReadyBanrenmaCardsForOpportunity(workingRoot, player, opportunity);
       if (!readyCards.length) {
-        alienOpportunitySessions.banrenmaOpportunity = null;
+        banrenmaOpportunityDraft.clear();
         return { ok: false, stale: true, message: "没有可结算的半人马牌" };
       }
-      if (els.scanTargetTitle) els.scanTargetTitle.textContent = "半人马条件效果";
-      if (els.scanTargetSubtitle) {
-        els.scanTargetSubtitle.textContent = readyCards.length === 1
-          ? `${cards.getCardLabel(readyCards[0].card)} 已达到 ${readyCards[0].mark?.threshold ?? "阈值"} 分，确认后弃掉该牌并结算条件效果。`
-          : `${player.colorLabel}玩家可选择 1 张已打出的半人马牌结算条件效果，之后弃掉该牌并清除一个阈值标记。`;
-      }
-      if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
-      const nodes = readyCards.map(({ card }) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "scan-target-option-button jiuzhe-card-option banrenma-card-option";
-        button.dataset.banrenmaCardChoice = card.id;
-        button.innerHTML = `
-          <img class="jiuzhe-card-option-image" src="${card.src || banrenma.getCardSrc(card.alienCardId)}" alt="" aria-hidden="true">
-          <small>${cards.getCardLabel(card)} · ${getBanrenmaCardConditionLabel(card)}</small>
-        `;
-        return button;
-      });
-      els.scanTargetActions.replaceChildren(...nodes);
+      banrenmaOpportunityDecisionDraft.cardIds = readyCards.map(({ card }) => card.id);
     }
-    els.scanTargetOverlay.hidden = false;
-    return { ok: true, message: "半人马奖励窗口已打开" };
+    return { ok: true, awaitingChoice: true, message: "半人马奖励：请选择结算目标" };
   }
 
 function maybeOpenQueuedBanrenmaOpportunity(workingRoot) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (alienOpportunitySessions.banrenmaOpportunity || banrenmaCardGainDraft.get()) return null;
+    if (banrenmaOpportunityDraft.get() || banrenmaCardGainDraft.get()) return null;
     if (isActionEffectFlowActive()) return null;
     if (hasActivePendingSubFlow()) return null;
     if (els.scanTargetOverlay && !els.scanTargetOverlay.hidden) return null;
@@ -3408,7 +3353,7 @@ function maybeOpenQueuedBanrenmaOpportunity(workingRoot) {
 function openBanrenmaReadyOpportunityForPlayer(workingRoot, player, options = {}) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
     if (!banrenma || !player) return null;
-    if (alienOpportunitySessions.banrenmaOpportunity || banrenmaCardGainDraft.get()) return null;
+    if (banrenmaOpportunityDraft.get() || banrenmaCardGainDraft.get()) return null;
     if (isActionEffectFlowActive() || hasActivePendingSubFlow()) return null;
     const panelMark = banrenma.getPendingPanelMark(alienGameState, player);
     if (panelMark && banrenma.getAvailableBonusPositions(alienGameState).length) {
@@ -3491,9 +3436,9 @@ function completeBanrenmaOpportunityStep(workingRoot, player, beforePlayerState,
     completeQuickActionStep();
   }
 
-function handleBanrenmaBonusChoice(workingRoot, position) {
+function handleBanrenmaBonusChoice(workingRoot, position, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienOpportunitySessions.banrenmaOpportunity;
+    const pending = pendingContext || banrenmaOpportunityDraft.get();
     if (!pending || pending.type !== "panel") {
       return { ok: false, message: "没有半人马顶部奖励机会" };
     }
@@ -3622,17 +3567,18 @@ function handleBanrenmaBonusChoice(workingRoot, position) {
     return markResult;
   }
 
-function handleBanrenmaCardConditionChoice(workingRoot, cardId) {
+function handleBanrenmaCardConditionChoice(workingRoot, cardId, pendingContext = null) {
     const { alienGameState, cardState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    if (!alienOpportunitySessions.banrenmaOpportunity || alienOpportunitySessions.banrenmaOpportunity.type !== "card") {
+    const pending = pendingContext || banrenmaOpportunityDraft.get();
+    if (!pending || pending.type !== "card") {
       return { ok: false, message: "没有半人马条件效果机会" };
     }
-    const player = resolveWorkingPlayerReference(workingRoot, alienOpportunitySessions.banrenmaOpportunity);
+    const player = resolveWorkingPlayerReference(workingRoot, pending);
     if (!player) return { ok: false, message: "找不到半人马玩家" };
     if (cardId === "cancel" || cardId === "skip") {
       const beforeAlienState = structuredClone(alienGameState);
-      if (alienOpportunitySessions.banrenmaOpportunity.markId) {
-        banrenma.resolveScoreMark(alienGameState, player, alienOpportunitySessions.banrenmaOpportunity.markId);
+      if (pending.markId) {
+        banrenma.resolveScoreMark(alienGameState, player, pending.markId);
       }
       completeBanrenmaOpportunityStep(workingRoot,
         player,
@@ -3651,7 +3597,7 @@ function handleBanrenmaCardConditionChoice(workingRoot, cardId) {
       maybeContinueAlienRevealQueuedOpportunities();
       return { ok: true, skipped: true, message: rocketState.statusNote };
     }
-    if (alienOpportunitySessions.banrenmaOpportunity.cardId && alienOpportunitySessions.banrenmaOpportunity.cardId !== cardId) {
+    if (pending.cardId && pending.cardId !== cardId) {
       rocketState.statusNote = "这次半人马条件机会不对应所选卡牌";
       renderStateReadout();
       return { ok: false, message: rocketState.statusNote };
@@ -3673,7 +3619,7 @@ function handleBanrenmaCardConditionChoice(workingRoot, cardId) {
       alienGameState,
       player,
       card,
-      alienOpportunitySessions.banrenmaOpportunity.markId || null,
+      pending.markId || null,
     );
     if (!mark || Number(player.resources?.score || 0) < Number(mark.threshold || 0)) {
       rocketState.statusNote = "这张半人马牌尚未达到阈值";
@@ -4199,6 +4145,9 @@ function alignAlienPanelsToPlanets() {
       getJiuzheCardPlayDecisionDraft: jiuzheCardPlayDraft.get,
       takeJiuzheCardPlayDecisionDraft: jiuzheCardPlayDraft.take,
       clearJiuzheCardPlayDecisionDraft: jiuzheCardPlayDraft.clear,
+      getBanrenmaOpportunityDecisionDraft: banrenmaOpportunityDraft.get,
+      takeBanrenmaOpportunityDecisionDraft: banrenmaOpportunityDraft.take,
+      clearBanrenmaOpportunityDecisionDraft: banrenmaOpportunityDraft.clear,
       openChongTraceTaskCompletionPicker,
       enqueueJiuzheOpportunity,
       isJiuzheThresholdOpportunity,
