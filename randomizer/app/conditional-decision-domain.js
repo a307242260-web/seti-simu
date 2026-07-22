@@ -17,6 +17,8 @@
       decisionSessions,
       getPendingChongFossilChoice,
       getPendingAmibaSymbolChoice,
+      getPendingRunezuSymbolBranch,
+      getPendingRunezuFaceSymbolPlacement,
       getPlayerById,
       decisionState,
       cards,
@@ -210,7 +212,7 @@
         })),
       };
     }
-    const runezuFacePending = decisionSessions.peek("runezu_face_symbol_placement");
+    const runezuFacePending = getPendingRunezuFaceSymbolPlacement();
     if (runezuFacePending) {
       return {
         actorPlayer: getPlayerById(runezuFacePending.playerId) || getCurrentPlayer(),
@@ -223,10 +225,11 @@
             choiceId: choice.symbolId,
           },
           symbolId: choice.symbolId,
+          pendingContext: structuredClone(runezuFacePending),
         })),
       };
     }
-    const runezuBranchPending = decisionSessions.peek("runezu_symbol_branch");
+    const runezuBranchPending = getPendingRunezuSymbolBranch();
     if (runezuBranchPending) {
       return {
         actorPlayer: getHeadlessConditionalPlayer(runezuBranchPending),
@@ -235,6 +238,7 @@
           family: "choose_branch",
           label: branch.label || `符文分支 ${index + 1}`,
           target: { kind: "runezu-symbol-branch", choiceId: String(index) },
+          pendingContext: structuredClone(runezuBranchPending),
         })),
       };
     }
@@ -907,8 +911,14 @@
       pending.selectedRocketIds = [...(action.target.rocketIds || [])];
       return confirmProbeSectorScanSelection();
     },
-    "runezu-symbol-branch": (action) => handleRunezuSymbolBranchChoice(action.target.choiceId),
-    "runezu-face-symbol-choice": (action) => handleRunezuFaceSymbolChoice(action.target.choiceId),
+    "runezu-symbol-branch": (action) => handleRunezuSymbolBranchChoice(
+      action.target.choiceId,
+      action.pendingContext || null,
+    ),
+    "runezu-face-symbol-choice": (action) => handleRunezuFaceSymbolChoice(
+      action.target.choiceId,
+      action.pendingContext || null,
+    ),
     "amiba-symbol-choice": (action) => handleAmibaSymbolChoice(
       action.target.choiceId,
       action.pendingContext || null,

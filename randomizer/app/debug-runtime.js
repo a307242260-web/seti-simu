@@ -1004,8 +1004,6 @@
         decisionSessions?.peek?.("amiba_trace_removal"),
         decisionSessions?.peek?.("aomomo_card_gain"),
         decisionSessions?.peek?.("runezu_card_gain"),
-        decisionSessions?.peek?.("runezu_symbol_branch"),
-        decisionSessions?.peek?.("runezu_face_symbol_placement"),
         decisionSessions?.peek?.("strategy_passive_slot"),
         decisionSessions?.peek?.("pirates_raid_placement"),
         uiRuntimeState.industryFreeMoveState,

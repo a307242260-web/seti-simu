@@ -187,13 +187,11 @@
       set yichangdianCornerAction(session) { replaceDecisionSession("yichangdian_corner_action", session); },
       get amibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
       set amibaTraceRemoval(session) { replaceDecisionSession("amiba_trace_removal", session); },
-      get runezuSymbolBranch() { return decisionSessions.peek("runezu_symbol_branch"); },
-      set runezuSymbolBranch(session) { replaceDecisionSession("runezu_symbol_branch", session); },
-      get runezuFaceSymbolPlacement() { return decisionSessions.peek("runezu_face_symbol_placement"); },
-      set runezuFaceSymbolPlacement(session) { replaceDecisionSession("runezu_face_symbol_placement", session); },
     };
     let chongFossilDecisionDraft = null;
     let amibaSymbolDecisionDraft = null;
+    let runezuSymbolBranchDecisionDraft = null;
+    let runezuFaceSymbolDecisionDraft = null;
     function getChongFossilDecisionDraft() {
       return chongFossilDecisionDraft;
     }
@@ -215,6 +213,28 @@
     }
     function clearAmibaSymbolDecisionDraft() {
       amibaSymbolDecisionDraft = null;
+    }
+    function getRunezuSymbolBranchDecisionDraft() {
+      return runezuSymbolBranchDecisionDraft;
+    }
+    function takeRunezuSymbolBranchDecisionDraft() {
+      const draft = runezuSymbolBranchDecisionDraft;
+      runezuSymbolBranchDecisionDraft = null;
+      return draft;
+    }
+    function clearRunezuSymbolBranchDecisionDraft() {
+      runezuSymbolBranchDecisionDraft = null;
+    }
+    function getRunezuFaceSymbolDecisionDraft() {
+      return runezuFaceSymbolDecisionDraft;
+    }
+    function takeRunezuFaceSymbolDecisionDraft() {
+      const draft = runezuFaceSymbolDecisionDraft;
+      runezuFaceSymbolDecisionDraft = null;
+      return draft;
+    }
+    function clearRunezuFaceSymbolDecisionDraft() {
+      runezuFaceSymbolDecisionDraft = null;
     }
     const getOpportunityContinuationQueue = (workingRoot, field) => {
       requireWorkingRoot(workingRoot);
@@ -3408,8 +3428,8 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
       alienChoiceSessions.amibaTraceRemoval ? { pending: alienChoiceSessions.amibaTraceRemoval, label: "阿米巴痕迹移除" } : null,
       alienCardGainSessions.aomomoCardGain ? { pending: alienCardGainSessions.aomomoCardGain, label: "奥陌陌外星人牌" } : null,
       alienCardGainSessions.runezuCardGain ? { pending: alienCardGainSessions.runezuCardGain, label: "符文族外星人牌" } : null,
-      alienChoiceSessions.runezuFaceSymbolPlacement ? { pending: alienChoiceSessions.runezuFaceSymbolPlacement, label: "符文族黑圈" } : null,
-      alienChoiceSessions.runezuSymbolBranch ? { pending: alienChoiceSessions.runezuSymbolBranch, label: "符文族符文奖励" } : null,
+      getRunezuFaceSymbolDecisionDraft() ? { pending: getRunezuFaceSymbolDecisionDraft(), label: "符文族黑圈" } : null,
+      getRunezuSymbolBranchDecisionDraft() ? { pending: getRunezuSymbolBranchDecisionDraft(), label: "符文族符文奖励" } : null,
     ];
     return pendingEntries.find((entry) => entry?.pending && isPendingLockedForAiAutomation(entry.pending)) || null;
   }
@@ -4078,7 +4098,7 @@ function openRunezuRewardFollowUps(workingRoot, result, currentPlayer, pending, 
   }
 
 function closeRunezuFaceSymbolPlacement() {
-    alienChoiceSessions.runezuFaceSymbolPlacement = null;
+    clearRunezuFaceSymbolDecisionDraft();
     setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
 }
@@ -4140,7 +4160,7 @@ function openRunezuFaceSymbolPlacement(workingRoot, alienSlotId, position) {
       renderStateReadout();
       return check;
     }
-    alienChoiceSessions.runezuFaceSymbolPlacement = {
+    runezuFaceSymbolDecisionDraft = {
       alienSlotId: Number(alienSlotId),
       position: check.position,
       playerId: currentPlayer.id,
@@ -4148,35 +4168,14 @@ function openRunezuFaceSymbolPlacement(workingRoot, alienSlotId, position) {
       beforePlayerState: structuredClone(playerState),
       choices: structuredClone(check.choices || []),
     };
-    if (!els.scanTargetOverlay || !els.scanTargetActions) {
-      return { ok: true, awaitingChoice: true, message: "符文族黑圈：请选择要放置的 symbol" };
-    }
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "符文族黑圈";
-    if (els.scanTargetSubtitle) {
-      els.scanTargetSubtitle.textContent = `选择 1 个 symbol 放入${runezu.formatFaceSymbolSlotLabel(check.position)}并结算奖励。`;
-    }
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-    setScanTargetActionLayout("runezu-face-symbol-choice-grid");
-    const nodes = check.choices.map((choice) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "scan-target-option-button runezu-face-symbol-choice-button";
-      button.dataset.runezuFaceSymbolChoice = choice.symbolId;
-      button.title = `${choice.label} x${choice.count}`;
-      button.setAttribute("aria-label", `${choice.label} x${choice.count}`);
-      button.innerHTML = `<img class="runezu-face-symbol-choice-image" src="${runezu.getSymbolSrc(choice.symbolId)}" alt="" aria-hidden="true">`;
-      return button;
-    });
-    els.scanTargetActions.replaceChildren(...nodes);
-    els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = "符文族黑圈：请选择要放置的 symbol";
     renderStateReadout();
     return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
   }
 
-function handleRunezuFaceSymbolChoice(workingRoot, choice) {
+function handleRunezuFaceSymbolChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienChoiceSessions.runezuFaceSymbolPlacement;
+    const pending = pendingContext || getRunezuFaceSymbolDecisionDraft();
     if (!pending) return { ok: false, message: "没有符文族黑圈放置流程" };
     if (choice === "cancel") {
       closeRunezuFaceSymbolPlacement();
@@ -4252,7 +4251,7 @@ function executeRunezuSymbolRewardEffect(workingRoot, effect) {
   }
 
 function closeRunezuSymbolBranchDialog() {
-    alienChoiceSessions.runezuSymbolBranch = null;
+    clearRunezuSymbolBranchDecisionDraft();
     setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
@@ -4263,49 +4262,21 @@ function openRunezuSymbolBranchDialog(workingRoot, effect) {
       return { ok: false, message: "无法打开符文族分支选择" };
     }
     const branches = effect.options?.branches || [];
-    alienChoiceSessions.runezuSymbolBranch = {
+    runezuSymbolBranchDecisionDraft = {
       ...getPendingOwnerFields(effect, getWorkingEffectOwnerPlayer(workingRoot, effect)),
       effect,
       branches,
       beforeAlienState: structuredClone(alienGameState),
       beforePlayerState: structuredClone(playerState),
     };
-    if (!els.scanTargetOverlay || !els.scanTargetActions) {
-      return { ok: true, awaitingChoice: true, message: "符文族：请选择一组 symbol 奖励" };
-    }
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "符文族符文奖励";
-    if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一组 symbol，按黑圈映射依次结算奖励。";
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-    setScanTargetActionLayout("runezu-symbol-branch-choice-grid");
-    const nodes = branches.map((branch, index) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "scan-target-option-button runezu-symbol-branch-button";
-      button.dataset.runezuSymbolBranch = String(index);
-      button.title = branch.label || (branch.symbolIds || []).map(runezu.formatSymbolLabel).join("+");
-      button.setAttribute("aria-label", button.title);
-      const icons = (branch.symbolIds || []).map((symbolId) => (
-        `<img class="runezu-face-symbol-choice-image runezu-symbol-branch-image" src="${runezu.getSymbolSrc(symbolId)}" alt="" aria-hidden="true">`
-      )).join("");
-      button.innerHTML = icons;
-      return button;
-    });
-    const cancel = document.createElement("button");
-    cancel.type = "button";
-    cancel.className = "scan-target-option-button";
-    cancel.dataset.runezuSymbolBranch = "cancel";
-    cancel.innerHTML = "取消<small>不结算本次符文奖励</small>";
-    nodes.push(cancel);
-    els.scanTargetActions.replaceChildren(...nodes);
-    els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = "符文族：请选择一组 symbol 奖励";
     renderStateReadout();
     return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
   }
 
-function handleRunezuSymbolBranchChoice(workingRoot, choice) {
+function handleRunezuSymbolBranchChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienChoiceSessions.runezuSymbolBranch;
+    const pending = pendingContext || getRunezuSymbolBranchDecisionDraft();
     if (!pending) return { ok: false, message: "没有待选择的符文族分支" };
     const effect = pending.effect;
     if (choice === "cancel") {
@@ -4485,6 +4456,12 @@ function alignAlienPanelsToPlanets() {
       getAmibaSymbolDecisionDraft,
       takeAmibaSymbolDecisionDraft,
       clearAmibaSymbolDecisionDraft,
+      getRunezuSymbolBranchDecisionDraft,
+      takeRunezuSymbolBranchDecisionDraft,
+      clearRunezuSymbolBranchDecisionDraft,
+      getRunezuFaceSymbolDecisionDraft,
+      takeRunezuFaceSymbolDecisionDraft,
+      clearRunezuFaceSymbolDecisionDraft,
       openChongTraceTaskCompletionPicker,
       enqueueJiuzheOpportunity,
       isJiuzheThresholdOpportunity,

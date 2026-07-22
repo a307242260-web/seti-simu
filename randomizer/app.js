@@ -789,6 +789,12 @@
               if (candidates[0]?.target?.kind === "amiba-symbol-choice") {
                 alienSpeciesRuntime?.takeAmibaSymbolDecisionDraft?.();
               }
+              if (candidates[0]?.target?.kind === "runezu-symbol-branch") {
+                alienSpeciesRuntime?.takeRunezuSymbolBranchDecisionDraft?.();
+              }
+              if (candidates[0]?.target?.kind === "runezu-face-symbol-choice") {
+                alienSpeciesRuntime?.takeRunezuFaceSymbolDecisionDraft?.();
+              }
               return {
                 ok: true,
                 boundary: "conditional_choice",
@@ -1006,6 +1012,8 @@
     getPendingProbeSectorScanDecision,
     getPendingChongFossilChoice,
     getPendingAmibaSymbolChoice,
+    getPendingRunezuSymbolBranch,
+    getPendingRunezuFaceSymbolPlacement,
     getHeadlessConditionalPlayer,
     get decisionSessions() { return decisionSessions; },
     getPlayerById,
@@ -2521,6 +2529,8 @@
     historyCommands,
     decisionSessions,
     clearPendingAmibaSymbolChoice: () => alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.(),
+    clearPendingRunezuSymbolBranch: () => alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.(),
+    clearPendingRunezuFaceSymbolPlacement: () => alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.(),
     document,
     structuredClone,
     els,
@@ -4129,8 +4139,8 @@
     get pendingAmibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
     get pendingAomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
     get pendingRunezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
-    get pendingRunezuSymbolBranch() { return decisionSessions.peek("runezu_symbol_branch"); },
-    get pendingRunezuFaceSymbolPlacement() { return decisionSessions.peek("runezu_face_symbol_placement"); },
+    get pendingRunezuSymbolBranch() { return getPendingRunezuSymbolBranch(); },
+    get pendingRunezuFaceSymbolPlacement() { return getPendingRunezuFaceSymbolPlacement(); },
     get pendingCardTriggerAction() { return getPendingCardTriggerAction(); },
     get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
     get pendingCardTaskCompletion() { return getPendingCardTaskCompletion(); },
@@ -5409,8 +5419,8 @@
     decisionSessions.clear("amiba_trace_removal");
     decisionSessions.clear("aomomo_card_gain");
     decisionSessions.clear("runezu_card_gain");
-    decisionSessions.clear("runezu_symbol_branch");
-    decisionSessions.clear("runezu_face_symbol_placement");
+    alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
+    alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
     decisionState.alienTracePickerState = null;
     closeAlienRevealConfirmationOverlay();
     if (workingRoot.match && typeof workingRoot.match === "object") {
@@ -6874,8 +6884,8 @@
       || decisionSessions.peek("amiba_trace_removal")
       || decisionSessions.peek("aomomo_card_gain")
       || decisionSessions.peek("runezu_card_gain")
-      || decisionSessions.peek("runezu_symbol_branch")
-      || decisionSessions.peek("runezu_face_symbol_placement")
+      || getPendingRunezuSymbolBranch()
+      || getPendingRunezuFaceSymbolPlacement()
       || getPendingStrategySlotDecision()
       || getPendingPiratesRaidDecision()
       || getPendingCardTriggerFreeMove()
@@ -7183,8 +7193,8 @@
     decisionSessions.clear("amiba_trace_removal");
     decisionSessions.clear("aomomo_card_gain");
     decisionSessions.clear("runezu_card_gain");
-    decisionSessions.clear("runezu_symbol_branch");
-    decisionSessions.clear("runezu_face_symbol_placement");
+    alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
+    alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
     decisionSessions.clear(STRATEGY_SLOT_DECISION);
     if (getPendingPiratesRaidDecision()) {
       decisionSessions.clear(PIRATES_RAID_DECISION);
@@ -8402,6 +8412,12 @@
   }
   function getPendingAmibaSymbolChoice() {
     return alienSpeciesRuntime?.getAmibaSymbolDecisionDraft?.() || null;
+  }
+  function getPendingRunezuSymbolBranch() {
+    return alienSpeciesRuntime?.getRunezuSymbolBranchDecisionDraft?.() || null;
+  }
+  function getPendingRunezuFaceSymbolPlacement() {
+    return alienSpeciesRuntime?.getRunezuFaceSymbolDecisionDraft?.() || null;
   }
   function getAlienTraceLayer(...args) { return alienSpeciesRuntime.getAlienTraceLayer(...args); }
   function getAlienJiuzheTraceLayer(...args) { return alienSpeciesRuntime.getAlienJiuzheTraceLayer(...args); }
@@ -11802,8 +11818,8 @@
     get pendingAmibaSymbolChoice() { return getPendingAmibaSymbolChoice(); },
     get pendingAmibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
     get pendingAomomoCardGain() { return decisionSessions.peek("aomomo_card_gain"); },
-    get pendingRunezuFaceSymbolPlacement() { return decisionSessions.peek("runezu_face_symbol_placement"); },
-    get pendingRunezuSymbolBranch() { return decisionSessions.peek("runezu_symbol_branch"); },
+    get pendingRunezuFaceSymbolPlacement() { return getPendingRunezuFaceSymbolPlacement(); },
+    get pendingRunezuSymbolBranch() { return getPendingRunezuSymbolBranch(); },
     get pendingRunezuCardGain() { return decisionSessions.peek("runezu_card_gain"); },
     get pendingBanrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
     get pendingBanrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },

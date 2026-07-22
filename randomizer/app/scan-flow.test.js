@@ -56,6 +56,8 @@ function createBaseHarness() {
   const helpers = createScanFlowHelpers({
     decisionSessions,
     clearPendingAmibaSymbolChoice() {},
+    clearPendingRunezuSymbolBranch() {},
+    clearPendingRunezuFaceSymbolPlacement() {},
     cards: {
       getCardLabel: (card) => card.cardName || card.id,
       setSelectionActive: (_state, active) => {

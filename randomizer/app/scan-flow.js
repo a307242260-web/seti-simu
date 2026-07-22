@@ -49,6 +49,14 @@
       "clearPendingAmibaSymbolChoice",
       context.clearPendingAmibaSymbolChoice,
     );
+    const clearPendingRunezuSymbolBranch = requireFunction(
+      "clearPendingRunezuSymbolBranch",
+      context.clearPendingRunezuSymbolBranch,
+    );
+    const clearPendingRunezuFaceSymbolPlacement = requireFunction(
+      "clearPendingRunezuFaceSymbolPlacement",
+      context.clearPendingRunezuFaceSymbolPlacement,
+    );
     const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
     const getPublicScanQueue = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
     const els = context.els || {};
@@ -1371,8 +1379,8 @@
       decisionSessions.clear("amiba_trace_removal");
       decisionSessions.clear("aomomo_card_gain");
       decisionSessions.clear("runezu_card_gain");
-      decisionSessions.clear("runezu_symbol_branch");
-      decisionSessions.clear("runezu_face_symbol_placement");
+      clearPendingRunezuSymbolBranch();
+      clearPendingRunezuFaceSymbolPlacement();
       decisionSessions.clear("strategy_passive_slot");
       setScanTargetActionLayout();
       decisionState.scanTargetAction = null;
