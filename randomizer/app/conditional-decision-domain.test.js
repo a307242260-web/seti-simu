@@ -40,6 +40,7 @@ function createFixture() {
     cardTriggerCalls: [],
     cardTaskCalls: [],
     dataPlacementCalls: [],
+    industryMoveCalls: [],
   };
   let contextReads = 0;
   const domain = createConditionalDecisionDomain(() => {
@@ -111,6 +112,18 @@ function createFixture() {
         delete root.match.movePaymentContinuation;
         return { ok: true, progressed: true };
       },
+      rocketActions: {
+        getMovableTokensForPlayer: (rocketState, playerId) => rocketState.rockets.filter((rocket) => rocket.playerId === playerId),
+        canMoveRocket: () => ({ ok: true }),
+      },
+      getRequiredMovePointsForUi: () => 1,
+      canPayForMove: () => ({ ok: true }),
+      formatRocketLabel: (rocket) => `火箭 ${rocket.id}`,
+      executeIndustryFreeMove: (workingRoot, deltaX, deltaY, rocketId) => {
+        state.industryMoveCalls.push([deltaX, deltaY, rocketId]);
+        delete workingRoot.match.industryFreeMoveContinuation;
+        return { ok: true, progressed: true };
+      },
     };
     return new Proxy(resolved, {
       get(target, property) {
@@ -119,6 +132,31 @@ function createFixture() {
     });
   });
   return { root, finalPlayer, scanPlayer, state, domain, getContextReads: () => contextReads };
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  fixture.root.rocketState.rockets = [{ id: 7, playerId: "move-owner" }];
+  fixture.root.match.industryFreeMoveContinuation = {
+    playerId: "move-owner",
+    movesLeft: 1,
+    movedRocketIds: [],
+    label: "寰宇动力",
+  };
+  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const decision = executor.inspect(fixture.root);
+  assert.equal(decision.ownerId, "move-owner");
+  assert.deepEqual(decision.choices.map((choice) => choice.target.kind), [
+    "industry-free-move",
+    "industry-free-move",
+    "industry-free-move",
+    "industry-free-move",
+  ]);
+  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_target"));
+  assert.equal(result.ok, true);
+  assert.deepEqual(fixture.state.industryMoveCalls, [[0, 1, 7]]);
 }
 
 {

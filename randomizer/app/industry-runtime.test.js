@@ -18,12 +18,10 @@ function createHarness() {
       refundCost: { publicity: 1 },
     },
     discardAction: { type: "industry_helios_income" },
-    scanTargetAction: { type: "industry_remove_tech" },
   };
   attachDecisionState(pendingState, decisionSessions);
   const uiRuntimeState = {
     effectStepActive: true,
-    industryFreeMoveState: { movesLeft: 1 },
     moveHighlightRocketId: 4,
   };
   const techGameState = { ui: { industryBorrowMode: true } };
@@ -81,6 +79,10 @@ function createHarness() {
     updateActionButtons: noop,
   };
   const workingRoot = {
+    match: {
+      scanTargetContinuation: { type: "industry_remove_tech" },
+      industryFreeMoveContinuation: { playerId: "p1", movesLeft: 1, movedRocketIds: [] },
+    },
     cardState: context.cardState,
     playerState: { currentPlayerId: "p1", players: [{ id: "p1", resources: {} }] },
     rocketState: context.rocketState,
@@ -99,9 +101,9 @@ function createHarness() {
   assert.equal(harness.decisionSessions.peek("industry_ability"), null);
   assert.equal(harness.pendingState.cardSelectionAction, null);
   assert.equal(harness.pendingState.discardAction, null);
-  assert.equal(harness.pendingState.scanTargetAction, null);
+  assert.equal(harness.workingRoot.match.scanTargetContinuation, undefined);
   assert.equal(harness.techGameState.ui.industryBorrowMode, false);
-  assert.equal(harness.uiRuntimeState.industryFreeMoveState, null);
+  assert.equal(harness.workingRoot.match.industryFreeMoveContinuation, null);
   assert.equal(harness.uiRuntimeState.effectStepActive, false);
   assert.equal(harness.context.rocketState.statusNote, "已取消公司 1x 行动");
   assert.ok(harness.calls.includes("forget:quick:step-1"));
@@ -118,7 +120,7 @@ function createHarness() {
   assert.equal(harness.pendingState.cardSelectionAction, null);
   assert.equal(harness.decisionSessions.peek("industry_ability"), null);
   assert.equal(harness.techGameState.ui.industryBorrowMode, false);
-  assert.equal(harness.uiRuntimeState.industryFreeMoveState, null);
+  assert.equal(harness.workingRoot.match.industryFreeMoveContinuation, null);
   assert.ok(harness.calls.includes("refund:1"));
   assert.ok(harness.calls.includes("move-off"));
 }

@@ -23,8 +23,6 @@
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -42,6 +40,13 @@
     const rulePlayerState = (workingRoot) => requireWorkingRoot(workingRoot).playerState;
     const ruleNebulaDataState = (workingRoot) => requireWorkingRoot(workingRoot).nebulaDataState;
     const rulePlanetStatsState = (workingRoot) => requireWorkingRoot(workingRoot).planetStatsState;
+    const getScanTargetContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.scanTargetContinuation || null;
+    function setScanTargetContinuation(workingRoot, continuation) {
+      const activeRoot = requireWorkingRoot(workingRoot);
+      if (!continuation) delete activeRoot.match.scanTargetContinuation;
+      else activeRoot.match.scanTargetContinuation = structuredClone(continuation);
+      return activeRoot.match.scanTargetContinuation || null;
+    }
     const getProbeSectorScanSession = (workingRoot) => requireWorkingRoot(workingRoot).match?.probeSectorScanContinuation || null;
     const getProbeLocationRewardSession = (workingRoot) => requireWorkingRoot(workingRoot).match?.probeLocationRewardContinuation || null;
     function setProbeContinuation(workingRoot, field, continuation) {
@@ -233,7 +238,7 @@
           payload: { sectorX: xs[0] },
         });
       }
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect, player), type: "conditional_sector_scan", effect, sectorXs: xs };
+      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect, player), type: "conditional_sector_scan", effect, sectorXs: xs });
       setOverlayContent(effect.label, `选择一个符合条件的扇区，随后扫描 ${repeat} 次。`);
       const opened = openOverlayWithButtons(xs.map((sectorX) => {
         const button = createButton();
@@ -254,7 +259,7 @@
     }
 
     function handleConditionalSectorChoice(workingRoot, sectorXValue) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "conditional_sector_scan") return { ok: false, message: "没有待处理的条件扇区扫描" };
       const effect = pending.effect;
       const sectorX = solar.mod8(Number(sectorXValue) || 0);
@@ -263,7 +268,7 @@
         renderStateReadout();
         return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(workingRoot, pending, () => {
         const repeat = Math.max(1, Math.round(Number(effect.options?.repeat || 1)));
         const followups = [];
@@ -287,9 +292,9 @@
     }
 
     function renderDiscardIncomePicker(workingRoot) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "discard_any_income" || !els.scanTargetActions) return;
-      const selected = new Set(pending.selectedCardIds || []);
+      const selected = new Set(uiRuntimeState.discardIncomeSelectedCardIds || []);
       const currentPlayer = getPendingOwnerPlayer(workingRoot, pending, pending.effect);
       const buttons = (currentPlayer?.hand || []).map((card) => {
         const button = createButton();
@@ -319,7 +324,8 @@
           message: `${effect.label}：没有手牌可弃，已跳过`,
         });
       }
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect), type: "discard_any_income", effect, selectedCardIds: [] };
+      uiRuntimeState.discardIncomeSelectedCardIds = [];
+      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "discard_any_income", effect });
       setOverlayContent(effect.label, "选择任意数量手牌，确认后弃掉并逐张结算收入图标。");
       renderDiscardIncomePicker(workingRoot);
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = false;
@@ -329,23 +335,24 @@
     }
 
     function handleDiscardIncomeCardChoice(workingRoot, cardId) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "discard_any_income") return { ok: false, message: "没有待处理的收入弃牌" };
-      const selected = pending.selectedCardIds || [];
+      const selected = uiRuntimeState.discardIncomeSelectedCardIds || [];
       const existingIndex = selected.indexOf(cardId);
       if (existingIndex >= 0) selected.splice(existingIndex, 1);
       else selected.push(cardId);
-      pending.selectedCardIds = selected;
+      uiRuntimeState.discardIncomeSelectedCardIds = selected;
       renderDiscardIncomePicker(workingRoot);
       return { ok: true, message: `已选择 ${selected.length} 张` };
     }
 
     function confirmDiscardAnyForIncome(workingRoot) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "discard_any_income") return { ok: false, message: "没有待确认的收入弃牌" };
       const effect = pending.effect;
-      const selected = new Set(pending.selectedCardIds || []);
-      closeScanTargetPicker();
+      const selected = new Set(uiRuntimeState.discardIncomeSelectedCardIds || []);
+      uiRuntimeState.discardIncomeSelectedCardIds = [];
+      closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(workingRoot, pending, () => {
         const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
         beginEffectHistoryStep(effect.label);
@@ -424,7 +431,7 @@
           message: `${effect.label}：信用不足，已跳过`,
         });
       }
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect), type: "pay_credit_reward", effect };
+      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "pay_credit_reward", effect });
       setOverlayContent(effect.label, "可以支付 1 信用获得奖励，也可以跳过剩余支付节点。");
       const pay = createButton();
       pay.type = "button";
@@ -443,10 +450,10 @@
     }
 
     function handlePayCreditChoice(workingRoot, choice) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "pay_credit_reward") return { ok: false, message: "没有待处理的信用支付" };
       const effect = pending.effect;
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(workingRoot, pending, () => {
         if (choice === "skip") {
           if (decisionState.actionEffectFlow) {
@@ -513,7 +520,7 @@
     function executeIndustryFundamentalismExchangeEffect(workingRoot, effect) {
       const player = getEffectOwnerPlayer(workingRoot, effect);
       const choices = getFundamentalismExchangeChoiceSpecs(workingRoot, player);
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect, player), type: "industry_fundamentalism_exchange", effect };
+      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect, player), type: "industry_fundamentalism_exchange", effect });
       setOverlayContent(effect.label || "原教旨主义", "选择一次分数/资源兑换。资源不足的选项不可用。");
       const buttons = choices.map((choice) => {
         const button = createButton();
@@ -646,12 +653,12 @@
     }
 
     function handleFundamentalismExchangeChoice(workingRoot, choiceId) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "industry_fundamentalism_exchange") {
         return { ok: false, message: "没有待处理的原教旨主义兑换" };
       }
       const effect = pending.effect;
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(workingRoot, pending, (player) => {
         const choice = getFundamentalismExchangeChoice(workingRoot, choiceId, player);
         if (!choice) return { ok: false, message: "未知兑换方式" };
@@ -686,7 +693,7 @@
           payload: { cardIds: [] },
         });
       }
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect), type: "discard_corner_repeat", effect, choices };
+      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "discard_corner_repeat", effect, choices });
       setOverlayContent(effect.label, "选择一张非外星人手牌弃掉，并重复结算其左上角奖励。");
       openOverlayWithButtons(choices.map((card) => {
         const button = createButton();
@@ -702,10 +709,10 @@
     }
 
     function handleDiscardCornerRepeatChoice(workingRoot, cardId) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "discard_corner_repeat") return { ok: false, message: "没有待处理的角标重复弃牌" };
       const effect = pending.effect;
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(workingRoot, pending, () => {
         const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
         const handIndex = (currentPlayer?.hand || []).findIndex((card) => card.id === cardId);
@@ -815,7 +822,7 @@
           payload: { markerIds: [] },
         });
       }
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect), type: "remove_orbit_to_probe", effect, choices };
+      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "remove_orbit_to_probe", effect, choices });
       setOverlayContent(effect.label, "选择一个己方环绕标记，移除后在该星球当前扇区放置探测器。");
       openOverlayWithButtons(choices.map((choice) => {
         const button = createButton();
@@ -831,11 +838,11 @@
     }
 
     function handleRemoveOrbitToProbeChoice(workingRoot, choiceId) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "remove_orbit_to_probe") return { ok: false, message: "没有待处理的环绕移除" };
       const choice = pending.choices.find((item) => item.id === choiceId);
       const effect = pending.effect;
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       if (!choice) return { ok: false, message: "无效环绕标记" };
       return withPendingOwnerPlayer(workingRoot, pending, () => {
         const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
@@ -1036,7 +1043,7 @@
         const effect = pending.effect;
         setProbeContinuation(workingRoot, "probeSectorScanContinuation", null);
         context.uiRuntimeState.probeSectorSelectedRocketIds = [];
-        closeScanTargetPicker();
+        closeScanTargetPicker(workingRoot);
         return withPendingOwnerPlayer(workingRoot, pending, () => queueProbeSectorScanEffects(workingRoot, effect, [choice.rocket]));
       }
       const selected = context.uiRuntimeState.probeSectorSelectedRocketIds || [];
@@ -1058,7 +1065,7 @@
       const effect = pending.effect;
       setProbeContinuation(workingRoot, "probeSectorScanContinuation", null);
       context.uiRuntimeState.probeSectorSelectedRocketIds = [];
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(workingRoot, pending, () => queueProbeSectorScanEffects(workingRoot, effect, rockets));
     }
 
@@ -1135,7 +1142,7 @@
       const rocket = (pending.choices || []).find((choice) => Number(choice.rocket.id) === Number(rocketId))?.rocket;
       const effect = pending.effect;
       setProbeContinuation(workingRoot, "probeLocationRewardContinuation", null);
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       if (!rocket) return { ok: false, message: "无效探测器" };
       return withPendingOwnerPlayer(workingRoot, pending, () => finishProbeLocationReward(workingRoot, effect, rocket));
     }

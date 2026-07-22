@@ -249,13 +249,13 @@ function createHarness(overrides = {}) {
   });
   assert.equal(result.ok, true);
   assert.equal(result.pendingChoice, true);
-  assert.equal(pendingState.scanTargetAction.type, "conditional_sector_scan");
+  assert.equal(workingRoot.match.scanTargetContinuation.type, "conditional_sector_scan");
   assert.equal(els.scanTargetActions.children.length, 2);
 }
 
 {
   const { helper, workingRoot, pendingState, player, calls } = createHarness();
-  pendingState.scanTargetAction = {
+  workingRoot.match.scanTargetContinuation = {
     type: "pay_credit_reward",
     effect: {
       id: "pay-credit",
@@ -272,7 +272,7 @@ function createHarness(overrides = {}) {
 
 {
   const { helper, workingRoot, pendingState } = createHarness();
-  pendingState.scanTargetAction = {
+  workingRoot.match.scanTargetContinuation = {
     type: "pay_credit_reward",
     effect: { id: "pay-credit", label: "支付信用", options: { single: true, groupId: "pay-credit" } },
   };

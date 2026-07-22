@@ -173,8 +173,6 @@
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -513,7 +511,7 @@
       const nebulaIds = effect.options?.nebulaIds || [];
       ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择 1 个星云`;
       renderStateReadout();
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "sector_scan",
         fromEffectFlow: true,
         title: effect.label,
@@ -895,9 +893,14 @@
             renderStateReadout();
             return effect.result;
           }
-          decisionState.handScanAction = { type: "hand_scan", player: currentPlayer, fromEffectFlow: true };
+          workingRoot.match.handScanContinuation = {
+            type: "hand_scan",
+            playerId: currentPlayer.id,
+            playerColor: currentPlayer.color || null,
+            fromEffectFlow: true,
+          };
           ruleRocketState(workingRoot).statusNote = "手牌扫描：请选择一张手牌弃除并扫描";
-          syncHandScanSelectionChrome();
+          syncHandScanSelectionChrome(workingRoot);
           updateActionButtons();
           renderStateReadout();
           return { ok: true, message: ruleRocketState(workingRoot).statusNote };

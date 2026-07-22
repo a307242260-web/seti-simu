@@ -193,8 +193,6 @@
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -1190,14 +1188,14 @@
         && actualCurrentPlayer?.id === currentPlayer?.id;
       const movePaymentActive = Boolean(movePayment)
         && (movePayment.playerId || movePayment.player?.id) === currentPlayer?.id;
-      const handScanActive = Boolean(decisionState.handScanAction)
-        && decisionState.handScanAction?.player?.id === currentPlayer?.id;
+      const handScanActive = Boolean(decisionState.handScanContinuation)
+        && decisionState.handScanContinuation?.playerId === currentPlayer?.id;
       const cardCornerAction = decisionState.cardCornerQuickAction;
       const handCardPlayAction = decisionState.handCardPlayAction;
       const cardCornerActionEnabled = actualCurrentPlayer?.id === currentPlayer?.id && canUseCardCornerQuickAction();
-      const handScanPickIndex = decisionState.scanTargetAction?.type === "hand_scan"
-        && Number.isInteger(Number(decisionState.scanTargetAction.handIndex))
-        ? Number(decisionState.scanTargetAction.handIndex)
+      const handScanPickIndex = decisionState.scanTargetContinuation?.type === "hand_scan"
+        && Number.isInteger(Number(decisionState.scanTargetContinuation.handIndex))
+        ? Number(decisionState.scanTargetContinuation.handIndex)
         : null;
       const handPickActive = discardActive
         || playActive

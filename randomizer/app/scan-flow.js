@@ -38,14 +38,22 @@
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
     const decisionSessions = context.decisionSessions;
     const uiRuntimeState = context.uiRuntimeState || {};
+    const getHandScanContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.handScanContinuation || null;
+    function setHandScanContinuation(workingRoot, continuation) {
+      const activeRoot = requireWorkingRoot(workingRoot);
+      if (!continuation) {
+        delete activeRoot.match.handScanContinuation;
+        return null;
+      }
+      activeRoot.match.handScanContinuation = structuredClone(continuation);
+      return activeRoot.match.handScanContinuation;
+    }
     const clearPendingAmibaSymbolChoice = requireFunction(
       "clearPendingAmibaSymbolChoice",
       context.clearPendingAmibaSymbolChoice,
@@ -67,6 +75,34 @@
     const clearPendingRunezuCardGain = requireFunction("clearPendingRunezuCardGain", context.clearPendingRunezuCardGain);
     const clearPendingAmibaTraceRemoval = requireFunction("clearPendingAmibaTraceRemoval", context.clearPendingAmibaTraceRemoval);
     const getPublicScanQueue = (workingRoot) => requireWorkingRoot(workingRoot).match?.publicScanContinuation || null;
+    const getScanTargetContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.scanTargetContinuation || null;
+    function setScanTargetContinuation(workingRoot, continuation) {
+      const activeRoot = requireWorkingRoot(workingRoot);
+      if (!continuation) {
+        delete activeRoot.match.scanTargetContinuation;
+        return null;
+      }
+      const normalized = structuredClone(continuation);
+      normalized.playerId ||= continuation.player?.id || null;
+      normalized.playerColor ||= continuation.player?.color || null;
+      normalized.cardId ||= continuation.card?.id || continuation.card?.cardId || null;
+      delete normalized.player;
+      delete normalized.card;
+      activeRoot.match.scanTargetContinuation = normalized;
+      return normalized;
+    }
+    function hydrateScanTargetContinuation(workingRoot, continuation) {
+      if (!continuation) return null;
+      const player = resolveWorkingPlayerReference(workingRoot, continuation)
+        || getWorkingCurrentPlayer(workingRoot);
+      const cardPool = continuation.type === "hand_scan"
+        ? (player?.hand || [])
+        : (workingRoot.cardState?.publicCards || []);
+      const card = continuation.cardId
+        ? cardPool.find((candidate) => String(candidate?.id || candidate?.cardId) === String(continuation.cardId)) || null
+        : null;
+      return { ...continuation, player, card };
+    }
     function setPublicScanQueue(workingRoot, continuation) {
       const activeRoot = requireWorkingRoot(workingRoot);
       if (!continuation) {
@@ -498,7 +534,7 @@
       syncCardSelectionChrome();
       rocketState.statusNote = `公共牌区扫描：${getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
       renderStateReadout();
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "public_scan",
         card,
         publicSlotIndex: index,
@@ -521,7 +557,7 @@
       const { card, scanChoices, publicSlotIndex } = item;
       const total = queue.items.length;
       const current = queue.currentIndex + 1;
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "public_scan",
         card,
         publicSlotIndex,
@@ -716,9 +752,9 @@
         return { ok: false, message: rocketState.statusNote };
       }
 
-      decisionState.handScanAction = { type: "hand_scan", player: currentPlayer };
+      setHandScanContinuation(workingRoot, { type: "hand_scan", playerId: currentPlayer.id });
       rocketState.statusNote = "手牌扫描：请选择一张手牌弃除并扫描";
-      syncHandScanSelectionChrome();
+      syncHandScanSelectionChrome(workingRoot);
       updateActionButtons();
       renderStateReadout();
       return { ok: true, message: rocketState.statusNote };
@@ -726,19 +762,19 @@
 
     function cancelHandScanSelection(workingRoot) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      if (!isHandScanSelectionActive()) return;
-      decisionState.handScanAction = null;
+      if (!isHandScanSelectionActive(workingRoot)) return;
+      setHandScanContinuation(workingRoot, null);
       rocketState.statusNote = "已取消手牌扫描";
-      syncHandScanSelectionChrome();
+      syncHandScanSelectionChrome(workingRoot);
       updateActionButtons();
       renderStateReadout();
     }
 
     function handleHandScanCardClick(workingRoot, handIndex) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      if (!isHandScanSelectionActive()) return;
+      if (!isHandScanSelectionActive(workingRoot)) return;
 
-      const fromEffectFlow = Boolean(decisionState.handScanAction?.fromEffectFlow || decisionState.actionEffectFlow);
+      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || decisionState.actionEffectFlow);
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];
@@ -755,11 +791,11 @@
         return scanChoices;
       }
 
-      decisionState.handScanAction = null;
-      syncHandScanSelectionChrome();
+      setHandScanContinuation(workingRoot, null);
+      syncHandScanSelectionChrome(workingRoot);
       rocketState.statusNote = `手牌扫描：${getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
       renderStateReadout();
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "hand_scan",
         card,
         handIndex: index,
@@ -1366,7 +1402,7 @@
       if (!els.scanTargetOverlay) {
         if (getPublicScanQueue(workingRoot) && !options.forcePublicScanQueueClose) return;
         if (options.forcePublicScanQueueClose) setPublicScanQueue(workingRoot, null);
-        decisionState.scanTargetAction = null;
+        setScanTargetContinuation(workingRoot, null);
         delete workingRoot.match.probeSectorScanContinuation;
         uiRuntimeState.probeSectorSelectedRocketIds = [];
         delete workingRoot.match.probeLocationRewardContinuation;
@@ -1385,7 +1421,7 @@
       if (!options.forceYichangdianCornerClose && restoreYichangdianCornerPickerIfPending(workingRoot)) {
         return;
       }
-      if (!options.preserveIndustryAction && decisionState.scanTargetAction?.type === "industry_remove_tech") {
+      if (!options.preserveIndustryAction && getScanTargetContinuation(workingRoot)?.type === "industry_remove_tech") {
         rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
         return;
       }
@@ -1400,7 +1436,7 @@
       clearPendingRunezuFaceSymbolPlacement();
       decisionSessions.clear("strategy_passive_slot");
       setScanTargetActionLayout();
-      decisionState.scanTargetAction = null;
+      setScanTargetContinuation(workingRoot, null);
       delete workingRoot.match.probeSectorScanContinuation;
       uiRuntimeState.probeSectorSelectedRocketIds = [];
       delete workingRoot.match.probeLocationRewardContinuation;
@@ -1531,18 +1567,18 @@
       return next;
     }
 
-    function openScanTargetPicker(config) {
-      if (openScanTargetPickerOverride) return openScanTargetPickerOverride(config);
+    function openScanTargetPicker(workingRoot, config) {
+      if (openScanTargetPickerOverride) return openScanTargetPickerOverride(workingRoot, config);
       config = config || {};
-      decisionState.scanTargetAction = {
-        ...getPendingOwnerFields(config.effect || null),
+      setScanTargetContinuation(workingRoot, {
+        ...getPendingOwnerFields(workingRoot, config.effect || null, config.player || null),
         ...config,
-      };
+      });
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         if (globalThis.SetiHeadlessRuntimeConfig?.enabled) {
           return { ok: true, pendingChoice: true, message: config.subtitle || "请选择扫描目标" };
         }
-        decisionState.scanTargetAction = null;
+        setScanTargetContinuation(workingRoot, null);
         return { ok: false, message: "无法打开扫描目标选择" };
       }
       if (els.scanTargetTitle) {
@@ -1583,8 +1619,8 @@
 
     function confirmScanTarget(workingRoot, nebulaId, sectorX, pendingContext = null) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const pending = pendingContext || decisionState.scanTargetAction;
-      return withPendingOwnerPlayer(pending, () => {
+      const pending = hydrateScanTargetContinuation(workingRoot, pendingContext || getScanTargetContinuation(workingRoot));
+      return withPendingOwnerPlayer(workingRoot, pending, () => {
       closeScanTargetPicker(workingRoot, { preserveIndustryAction: true });
 
       if (pending?.type === "industry_remove_tech") {
@@ -1797,7 +1833,7 @@
 
     function handleDrawnHandScanSkip(workingRoot) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = decisionState.scanTargetAction;
+      const pending = hydrateScanTargetContinuation(workingRoot, getScanTargetContinuation(workingRoot));
       if (pending?.type !== "hand_scan" || !pending.discardDrawnOnSkip) {
         return { ok: false, message: "没有可跳过的盲抽弃牌扫描" };
       }
@@ -1860,7 +1896,7 @@
 
       rocketState.statusNote = "扇区扫描：请选择 0-7 号扇区";
       renderStateReadout();
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "sector_scan",
         title: "扇区扫描",
         subtitle: "选择当前 0-7 号扇区中的一个星云；无可替换数据时追加扫描计数且不获得数据。",
@@ -1982,7 +2018,7 @@
         [isDiscardSelectionActive(), "请先完成弃牌"],
         [isPlayCardSelectionActive(), "请先完成打牌"],
         [isMovePaymentSelectionActive(), "请先完成移动"],
-        [isHandScanSelectionActive(), "请先完成手牌扫描"],
+        [isHandScanSelectionActive(workingRoot), "请先完成手牌扫描"],
       ].find(([active]) => active)?.[1];
       if (pendingReason) return reject(pendingReason);
 

@@ -459,11 +459,10 @@
         cancelCardTriggerChoice();
         return;
       }
-      if (state.pendingScanTargetAction?.type === "hand_scan" && state.pendingScanTargetAction.discardDrawnOnSkip) {
+      if (hasActiveDecisionKind("skip-drawn-hand-scan")) {
         handleDrawnHandScanSkip();
         return;
       }
-      if (state.pendingScanTargetAction?.type === "aomomo_fossil_move_land_count") return;
       closeScanTargetPicker();
     });
     els.scanTargetOverlay?.addEventListener("click", (event) => {
@@ -482,11 +481,10 @@
           cancelCardTriggerChoice();
           return;
         }
-        if (state.pendingScanTargetAction?.type === "hand_scan" && state.pendingScanTargetAction.discardDrawnOnSkip) {
+        if (hasActiveDecisionKind("skip-drawn-hand-scan")) {
           handleDrawnHandScanSkip();
           return;
         }
-        if (state.pendingScanTargetAction?.type === "aomomo_fossil_move_land_count") return;
         closeScanTargetPicker();
       }
     });
@@ -753,7 +751,7 @@
         );
         return;
       }
-      if (state.industryFreeMoveState) {
+      if (hasActiveDecisionKind("industry-free-move")) {
         executeIndustryFreeMove(
           Number(button.dataset.moveX),
           Number(button.dataset.moveY),
@@ -769,7 +767,7 @@
         );
         return;
       }
-      if (state.pendingActionEffectFlow?.freeMoveMode) {
+      if (hasActiveDecisionKind("scan-free-move")) {
         executeFreeMoveForScanAction4(
           Number(button.dataset.moveX),
           Number(button.dataset.moveY),
@@ -777,7 +775,7 @@
         );
         return;
       }
-      if (state.pendingActionEffectFlow?.cardMoveEffect) {
+      if (hasActiveDecisionKind("card-effect-move")) {
         executeCardMoveForEffect(
           Number(button.dataset.moveX),
           Number(button.dataset.moveY),

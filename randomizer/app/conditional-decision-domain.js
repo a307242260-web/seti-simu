@@ -108,6 +108,7 @@
       confirmDiscardAnyForIncome,
       handlePayCreditChoice,
       confirmScanTarget,
+      handleDrawnHandScanSkip,
       confirmPassReserveSelection,
       handleCardTriggerChoice,
       cancelCardTriggerChoice,
@@ -121,6 +122,7 @@
       continueAfterCardTriggerResolution,
       finishCurrentCardMoveEffectEarly,
       executeFreeMoveForCardCorner,
+      executeIndustryFreeMove,
       settleCardTasksAfterEffect,
       finishIndustryAbilityFlow,
       resolveMovePaymentDecision,
@@ -430,7 +432,7 @@
         candidates,
       };
     }
-    const scanTargetPending = decisionState.scanTargetAction;
+    const scanTargetPending = workingRoot.match?.scanTargetContinuation;
     if (scanTargetPending) {
       if (scanTargetPending.type === "sector_scan") {
         return {
@@ -548,7 +550,8 @@
       }
       return {
         actorPlayer: getHeadlessConditionalPlayer(scanTargetPending),
-        candidates: (scanTargetPending.choices || []).flatMap((choice, choiceIndex) => (
+        candidates: [
+          ...(scanTargetPending.choices || []).flatMap((choice, choiceIndex) => (
           choice?.disabled ? [] : [{
             id: "conditionalChoice",
             family: "choose_target",
@@ -562,12 +565,19 @@
             nebulaId: choice.nebulaId,
             sectorX: choice.sectorX,
           }]
-        )),
+          )),
+          ...(scanTargetPending.type === "hand_scan" && scanTargetPending.discardDrawnOnSkip ? [{
+            id: "conditionalChoice",
+            family: "accept_optional_effect",
+            label: "跳过盲抽手牌扫描",
+            target: { kind: "skip-drawn-hand-scan", choiceId: "skip" },
+          }] : []),
+        ],
       };
     }
-    const handScanPending = decisionState.handScanAction;
+    const handScanPending = workingRoot.match?.handScanContinuation;
     if (handScanPending) {
-      const player = handScanPending.player || getHeadlessConditionalPlayer(handScanPending);
+      const player = getHeadlessConditionalPlayer(handScanPending);
       const candidates = (player?.hand || []).flatMap((card, handIndex) => (
         getPublicScanChoicesForCard(card)?.ok ? [{
           id: "conditionalChoice",
@@ -774,9 +784,82 @@
       }
       return { actorPlayer: player, candidates };
     }
-    const cardMovePending = decisionState.actionEffectFlow?.cardMoveEffect;
+    const scanFreeMovePending = workingRoot.match?.scanFreeMoveContinuation;
+    if (scanFreeMovePending) {
+      const player = getHeadlessConditionalPlayer(scanFreeMovePending);
+      const candidates = [];
+      for (const rocket of rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, player?.id) || []) {
+        for (const direction of [
+          { id: "out", deltaX: 0, deltaY: 1 },
+          { id: "cw", deltaX: 1, deltaY: 0 },
+          { id: "ccw", deltaX: -1, deltaY: 0 },
+          { id: "in", deltaX: 0, deltaY: -1 },
+        ]) {
+          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `${formatRocketLabel(rocket)} ${direction.id}`,
+            target: {
+              kind: "scan-free-move",
+              choiceId: `${rocket.id}:${direction.id}`,
+              rocketId: rocket.id,
+              direction: direction.id,
+            },
+            rocketId: rocket.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          });
+        }
+      }
+      return { actorPlayer: player, candidates };
+    }
+    const industryFreeMovePending = workingRoot.match?.industryFreeMoveContinuation;
+    if (industryFreeMovePending) {
+      const player = getHeadlessConditionalPlayer(industryFreeMovePending);
+      const movedRocketIds = new Set((industryFreeMovePending.movedRocketIds || []).map(String));
+      const candidates = [];
+      for (const rocket of rocketActions.getMovableTokensForPlayer(workingRoot.rocketState, player?.id) || []) {
+        if (movedRocketIds.has(String(rocket.id))) continue;
+        for (const direction of [
+          { id: "out", deltaX: 0, deltaY: 1 },
+          { id: "cw", deltaX: 1, deltaY: 0 },
+          { id: "ccw", deltaX: -1, deltaY: 0 },
+          { id: "in", deltaX: 0, deltaY: -1 },
+        ]) {
+          if (!rocketActions.canMoveRocket(workingRoot.rocketState, rocket.id, direction.deltaX, direction.deltaY)?.ok) continue;
+          const terrainRequired = getRequiredMovePointsForUi(player, rocket.id, direction.deltaX, direction.deltaY);
+          const supplemental = Math.max(0, terrainRequired - 1);
+          if (supplemental && !canPayForMove(player, supplemental)?.ok) continue;
+          candidates.push({
+            id: "conditionalChoice",
+            family: "choose_target",
+            label: `${formatRocketLabel(rocket)} ${direction.id}`,
+            target: {
+              kind: "industry-free-move",
+              choiceId: `${rocket.id}:${direction.id}`,
+              rocketId: rocket.id,
+              direction: direction.id,
+            },
+            rocketId: rocket.id,
+            deltaX: direction.deltaX,
+            deltaY: direction.deltaY,
+          });
+        }
+      }
+      if (!candidates.length) {
+        candidates.push({
+          id: "conditionalChoice",
+          family: "accept_optional_effect",
+          label: "结束公司免费移动",
+          target: { kind: "finish-industry-free-move", choiceId: "finish" },
+        });
+      }
+      return { actorPlayer: player, candidates };
+    }
+    const cardMovePending = workingRoot.match?.cardMoveContinuation;
     if (cardMovePending) {
-      const effect = cardMovePending.effect || getCurrentActionEffect();
+      const effect = getCurrentActionEffect(workingRoot);
       const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
       const candidates = [];
       for (const rocket of getMovableTokensForCardMoveEffect(effect, player?.id) || []) {
@@ -1195,6 +1278,7 @@
       action.target.nebulaId,
       action.target.sectorX,
     ),
+    "skip-drawn-hand-scan": (_action, workingRoot) => handleDrawnHandScanSkip(workingRoot),
     "pass-reserve-card": (action, workingRoot) => {
       return confirmPassReserveSelection(workingRoot, action.target.choiceId);
     },
@@ -1210,12 +1294,19 @@
       action.target.choiceId,
       { automated: true },
     ),
-    "hand-scan-card": (action) => handleHandScanCardClick(Number(action.target.handIndex)),
-    "skip-hand-scan": () => {
-      skipCurrentActionEffect();
+    "hand-scan-card": (action, workingRoot) => handleHandScanCardClick(workingRoot, Number(action.target.handIndex)),
+    "skip-hand-scan": (_action, workingRoot) => {
+      delete workingRoot.match.handScanContinuation;
+      skipCurrentActionEffect(workingRoot);
       return { ok: true, progressed: true, skipped: true, message: "已跳过手牌扫描" };
     },
-    "card-effect-move": (action) => executeCardMoveForEffect(action.deltaX, action.deltaY, action.target.rocketId),
+    "card-effect-move": (action, workingRoot) => executeCardMoveForEffect(workingRoot, action.deltaX, action.deltaY, action.target.rocketId),
+    "scan-free-move": (action, workingRoot) => executeFreeMoveForScanAction4(
+      workingRoot,
+      action.deltaX,
+      action.deltaY,
+      action.target.rocketId,
+    ),
     "card-trigger-free-move": (action, workingRoot) => executeFreeMoveForCardTrigger(
       workingRoot,
       action.deltaX,
@@ -1247,6 +1338,17 @@
       action.deltaY,
       action.target.rocketId,
     ),
+    "industry-free-move": (action, workingRoot) => executeIndustryFreeMove(
+      workingRoot,
+      action.deltaX,
+      action.deltaY,
+      action.target.rocketId,
+    ),
+    "finish-industry-free-move": (_action, workingRoot) => {
+      const pending = workingRoot.match?.industryFreeMoveContinuation;
+      finishIndustryAbilityFlow(workingRoot, `${pending?.label || "公司免费移动"}：已结束`);
+      return { ok: true, progressed: true, skipped: true, message: "已结束公司免费移动" };
+    },
     "skip-card-corner-free-move": (_action, workingRoot) => {
       const pending = getPendingCardCornerFreeMove(workingRoot);
       delete workingRoot.match.cardCornerFreeMoveContinuation;

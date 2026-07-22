@@ -108,11 +108,14 @@
     const rulePlayerState = (workingRoot) => workingRoot.playerState;
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleTurnState = (workingRoot) => workingRoot.turnState;
+    const getScanTargetContinuation = (workingRoot) => workingRoot.match?.scanTargetContinuation || null;
+    function setScanTargetContinuation(workingRoot, continuation) {
+      if (!continuation) delete workingRoot.match.scanTargetContinuation;
+      else workingRoot.match.scanTargetContinuation = structuredClone(continuation);
+    }
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -166,7 +169,7 @@
     }
 
     function renderDiscardIncomePicker(workingRoot) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "discard_any_income" || !els.scanTargetActions) return;
       const selected = new Set(pending.selectedCardIds || []);
       const currentPlayer = getPendingOwnerPlayer(workingRoot, pending, pending.effect);
@@ -511,7 +514,7 @@
           payload: { cardIds: [] },
         });
       }
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect), type: "return_unfinished_task", effect, choices };
+      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "return_unfinished_task", effect, choices });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一张未完成的 1/2 型保留任务卡返回手牌。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -533,10 +536,10 @@
     }
 
     function handleReturnUnfinishedTaskChoice(workingRoot, cardId) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "return_unfinished_task") return { ok: false, message: "没有待处理的任务卡回手" };
       const effect = pending.effect;
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(pending, () => {
       const currentPlayer = getCurrentPlayer(workingRoot);
       const index = (currentPlayer?.reservedCards || []).findIndex((card) => card.id === cardId);
@@ -1220,16 +1223,17 @@
         renderStateReadout();
         return effect.result;
       }
-      decisionState.handScanAction = {
+      workingRoot.match.handScanContinuation = {
         type: "hand_scan",
-        player: currentPlayer,
+        playerId: currentPlayer.id,
+        playerColor: currentPlayer.color || null,
         fromEffectFlow: true,
         optional,
       };
       ruleRocketState(workingRoot).statusNote = optional
         ? `${effect.label}：请选择一张手牌弃除并扫描，或点击跳过`
         : `${effect.label}：请选择一张手牌弃除并扫描`;
-      syncHandScanSelectionChrome();
+      syncHandScanSelectionChrome(workingRoot);
       updateActionButtons();
       renderStateReadout();
       return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
@@ -1253,7 +1257,7 @@
       skip.dataset.optionalHandScan = "skip";
       skip.innerHTML = "跳过<small>不执行这次弃牌扫描</small>";
       els.scanTargetActions.replaceChildren(start, skip);
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect), type: "optional_hand_scan", effect };
+      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "optional_hand_scan", effect });
       els.scanTargetOverlay.hidden = false;
       ruleRocketState(workingRoot).statusNote = `${effect.label}：选择手牌或跳过`;
       renderStateReadout();
@@ -1261,10 +1265,10 @@
     }
 
     function handleOptionalHandScanChoice(workingRoot, choice) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "optional_hand_scan") return { ok: false, message: "没有待处理的可选手牌扫描" };
       const effect = pending.effect;
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(pending, () => {
       if (choice === "skip") {
         effect.result = { ok: true, skipped: true, message: `${effect.label}：已跳过` };
@@ -1492,7 +1496,7 @@
       const nebulaIds = cardEffects.NEBULA_IDS_BY_COLOR[color] || [];
       ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择 1 个星云`;
       renderStateReadout();
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "sector_scan",
         fromEffectFlow: true,
         title: effect.label,
@@ -1507,7 +1511,7 @@
       const repeat = Math.max(1, Math.round(Number(effect.options?.repeat) || 1));
       ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择 0-7 号扇区之一`;
       renderStateReadout();
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "sector_scan",
         fromEffectFlow: true,
         effect,
@@ -1650,7 +1654,7 @@
       renderPlayerStats();
       renderPlayerHand();
       renderStateReadout();
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "hand_scan",
         card: drawnCard,
         handIndex,

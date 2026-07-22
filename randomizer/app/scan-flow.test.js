@@ -141,7 +141,7 @@ function createBaseHarness() {
     syncPublicScanConfirmButton: () => { calls.confirmSync += 1; },
     syncCardSelectionChrome: () => { calls.cardSync += 1; },
     syncHandScanSelectionChrome: () => { calls.handSync += 1; },
-    openScanTargetPicker: (config) => {
+    openScanTargetPicker: (_workingRoot, config) => {
       calls.picker.push(config);
       return { ok: true, config };
     },
@@ -154,7 +154,7 @@ function createBaseHarness() {
     isDiscardSelectionActive: () => false,
     isPlayCardSelectionActive: () => false,
     isMovePaymentSelectionActive: () => false,
-    isHandScanSelectionActive: () => pendingState.handScanAction != null,
+    isHandScanSelectionActive: (root) => root?.match?.handScanContinuation != null,
     discardPublicScanCard: (payload) => {
       calls.discardPublic.push(payload);
       return { ok: true };
@@ -283,12 +283,13 @@ function createBaseHarness() {
   player.hand = [{ id: "hand-1", cardName: "Hand 1" }];
   const begin = helpers.beginHandScan(workingRoot);
   assert.equal(begin.ok, true);
-  assert.equal(pendingState.handScanAction.type, "hand_scan");
+  assert.equal(workingRoot.match.handScanContinuation.type, "hand_scan");
+  assert.equal(workingRoot.match.handScanContinuation.playerId, player.id);
   assert.equal(calls.handSync, 1);
   assert.match(rocketState.statusNote, /请选择一张手牌/);
 
   helpers.cancelHandScanSelection(workingRoot);
-  assert.equal(pendingState.handScanAction, null);
+  assert.equal(workingRoot.match.handScanContinuation, undefined);
   assert.equal(calls.handSync, 2);
   assert.match(rocketState.statusNote, /已取消手牌扫描/);
 }
@@ -296,10 +297,10 @@ function createBaseHarness() {
 {
   const { helpers, pendingState, player, rocketState, calls, workingRoot } = createBaseHarness();
   player.hand = [{ id: "hand-1", cardName: "Hand 1" }];
-  pendingState.handScanAction = { type: "hand_scan", player };
+  workingRoot.match.handScanContinuation = { type: "hand_scan", playerId: player.id };
   const result = helpers.handleHandScanCardClick(workingRoot, 0);
   assert.equal(result.ok, true);
-  assert.equal(pendingState.handScanAction, null);
+  assert.equal(workingRoot.match.handScanContinuation, undefined);
   assert.equal(calls.picker.length, 1);
   assert.match(rocketState.statusNote, /Hand 1/);
 }
@@ -369,7 +370,7 @@ function createBaseHarness() {
   const result = helpers.beginHandScan(isolatedRoot);
 
   assert.equal(result.ok, true);
-  assert.equal(pendingState.handScanAction.player, isolatedPlayer, "手牌扫描 pending 必须绑定 working root 玩家");
+  assert.equal(isolatedRoot.match.handScanContinuation.playerId, isolatedPlayer.id, "手牌扫描 continuation 必须绑定 working root 玩家 ID");
   assert.deepEqual(boundPlayer, beforeBoundPlayer, "手牌扫描不得读取或改写闭包基线玩家");
 }
 

@@ -511,7 +511,7 @@
         poolRemaining: 1,
         industryHuanyuMove: true,
       })
-        .filter((candidate) => !(state.industryFreeMoveState?.movedRocketIds || []).includes(candidate.rocketId));
+        .filter((candidate) => !(workingRoot.match?.industryFreeMoveContinuation?.movedRocketIds || []).includes(candidate.rocketId));
     }
 
     function scoreAiIndustryHuanyuMoves(workingRoot) {

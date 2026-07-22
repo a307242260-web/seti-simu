@@ -128,12 +128,20 @@
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
+    const getHandScanContinuation = (workingRoot) => workingRoot?.match?.handScanContinuation || null;
+    function setHandScanContinuation(workingRoot, continuation) {
+      if (!workingRoot?.match) throw new TypeError("hand scan requires Composition workingRoot.match");
+      if (!continuation) {
+        delete workingRoot.match.handScanContinuation;
+        return null;
+      }
+      workingRoot.match.handScanContinuation = structuredClone(continuation);
+      return workingRoot.match.handScanContinuation;
+    }
     const getMovePayment = (workingRoot) => workingRoot?.match?.movePaymentContinuation || null;
     function setMovePayment(workingRoot, session) {
       if (!workingRoot?.match) throw new TypeError("move payment requires Composition workingRoot.match");
@@ -211,7 +219,7 @@
     }
 
     function isHandScanSelectionActive(workingRoot) {
-      return decisionState.handScanAction != null;
+      return getHandScanContinuation(workingRoot) != null;
     }
 
     function syncHandScanSelectionChrome(workingRoot) {
@@ -232,7 +240,7 @@
 
     function cancelHandScanSelection(workingRoot) {
       if (!isHandScanSelectionActive(workingRoot)) return;
-      decisionState.handScanAction = null;
+      setHandScanContinuation(workingRoot, null);
       ruleRocketState(workingRoot).statusNote = "已取消手牌扫描";
       syncHandScanSelectionChrome(workingRoot);
       updateActionButtons();
@@ -1873,7 +1881,7 @@
     function handleHandScanCardClick(workingRoot, handIndex) {
       if (!isHandScanSelectionActive(workingRoot)) return;
 
-      const fromEffectFlow = Boolean(decisionState.handScanAction?.fromEffectFlow || decisionState.actionEffectFlow);
+      const fromEffectFlow = Boolean(getHandScanContinuation(workingRoot)?.fromEffectFlow || decisionState.actionEffectFlow);
       const currentPlayer = getCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];
@@ -1890,11 +1898,11 @@
         return scanChoices;
       }
 
-      decisionState.handScanAction = null;
+      setHandScanContinuation(workingRoot, null);
       syncHandScanSelectionChrome(workingRoot);
       ruleRocketState(workingRoot).statusNote = `手牌扫描：${cards.getCardLabel(card)}，请选择${scanChoices.scanLabel}目标`;
       renderStateReadout();
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "hand_scan",
         card,
         handIndex: index,

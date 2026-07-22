@@ -123,12 +123,11 @@
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
+    const getScanTargetContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.scanTargetContinuation || null;
     const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
     const getStrategySlotDecision = () => decisionSessions.peek(STRATEGY_SLOT_DECISION);
     const industryAbilitySession = {
@@ -181,8 +180,9 @@
       return decisionState.cardSelectionAction?.type === "industry_future_hand";
     }
 
-    function isIndustryFreeMoveActive() {
-      return Boolean(uiRuntimeState.industryFreeMoveState);
+    function isIndustryFreeMoveActive(workingRoot) {
+      requireWorkingRoot(workingRoot);
+      return Boolean(workingRoot.match.industryFreeMoveContinuation);
     }
 
     function createIndustryActionRestoreCommand(workingRoot, player, beforePlayer, companyLabel, options = {}) {
@@ -209,8 +209,8 @@
 
     function clearIndustryRollbackUi(workingRoot) {
       const { cardState, techGameState } = requireWorkingRoot(workingRoot);
-      if (decisionState.scanTargetAction?.type === "industry_remove_tech") {
-        decisionState.scanTargetAction = null;
+      if (getScanTargetContinuation(workingRoot)?.type === "industry_remove_tech") {
+        delete workingRoot.match.scanTargetContinuation;
         if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
         if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
       }
@@ -229,11 +229,11 @@
         tech.setTechSelectionActive(techGameState, false);
         syncTechSelectionChrome(workingRoot);
       }
-      if (uiRuntimeState.moveHighlightRocketId != null || uiRuntimeState.industryFreeMoveState) {
+      if (uiRuntimeState.moveHighlightRocketId != null || workingRoot.match.industryFreeMoveContinuation) {
         deactivateMoveMode();
       }
       industryAbilitySession.value = null;
-      uiRuntimeState.industryFreeMoveState = null;
+      workingRoot.match.industryFreeMoveContinuation = null;
       syncIndustryHandSelectionChrome();
       syncInteractionFocusChrome();
     }
@@ -280,7 +280,7 @@
         syncCardSelectionChrome();
       }
       industryAbilitySession.value = null;
-      uiRuntimeState.industryFreeMoveState = null;
+      workingRoot.match.industryFreeMoveContinuation = null;
       if (uiRuntimeState.moveHighlightRocketId != null) {
         deactivateMoveMode();
       }
@@ -298,7 +298,7 @@
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
       const flowType = industryAbilitySession.value?.flowType;
       industryAbilitySession.value = null;
-      uiRuntimeState.industryFreeMoveState = null;
+      workingRoot.match.industryFreeMoveContinuation = null;
       cards.setSelectionActive(cardState, false);
       decisionState.cardSelectionAction = null;
       syncCardSelectionChrome();
@@ -565,7 +565,7 @@
         finishIndustryAbilityFlow(workingRoot, "赫利昂联合体：没有可无效的非蓝色科技");
         return false;
       }
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "industry_remove_tech",
         title: flow.label || "赫利昂联合体",
         subtitle: "选择要无效的科技（不可选蓝色），随后增加 1 次收入",
@@ -633,7 +633,7 @@
       }) || [];
       industryAbilitySession.value = null;
       decisionState.cardSelectionAction = null;
-      uiRuntimeState.industryFreeMoveState = null;
+      workingRoot.match.industryFreeMoveContinuation = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
 
@@ -673,17 +673,17 @@
     function beginIndustryHuanyuFreeMoves(workingRoot, flow) {
       const { rocketState, turnState } = requireWorkingRoot(workingRoot);
       const player = getWorkingCurrentPlayer(workingRoot);
-      uiRuntimeState.industryFreeMoveState = {
+      workingRoot.match.industryFreeMoveContinuation = {
+        playerId: player.id,
         movesLeft: flow.movesLeft ?? 2,
         movedRocketIds: [],
-        beforePlayer: structuredClone(player),
         label: flow.label || "寰宇动力",
       };
-      player.industryHuanyuFreeMovesLeft = uiRuntimeState.industryFreeMoveState.movesLeft;
+      player.industryHuanyuFreeMovesLeft = workingRoot.match.industryFreeMoveContinuation.movesLeft;
       player.industryHuanyuFreeMoveTurn = turnState.turnNumber;
       const rocketsForPlayer = getMovableTokensForPlayer(player.id);
       rocketState.statusNote = rocketsForPlayer.length
-        ? `${flow.message}（剩余 ${uiRuntimeState.industryFreeMoveState.movesLeft} 次）`
+        ? `${flow.message}（剩余 ${workingRoot.match.industryFreeMoveContinuation.movesLeft} 次）`
         : `${flow.message}：当前没有可移动火箭`;
       syncInteractionFocusChrome();
       renderRockets();
@@ -701,7 +701,7 @@
 
     function executeIndustryFreeMove(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const state = uiRuntimeState.industryFreeMoveState;
+      const state = workingRoot.match.industryFreeMoveContinuation;
       if (!state) return { ok: false, message: "没有待结算的公司免费移动" };
       if (state.movedRocketIds.includes(rocketId)) {
         rocketState.statusNote = "该火箭本轮已免费移动过";
@@ -716,7 +716,8 @@
         return moveCheck;
       }
 
-      const currentPlayer = getWorkingEffectOwnerPlayer(workingRoot, effect);
+      const currentPlayer = resolveWorkingPlayerReference(workingRoot, { playerId: state.playerId })
+        || getWorkingCurrentPlayer(workingRoot);
       const providedMovePoints = Math.max(0, Math.round(Number(payment.providedMovePoints ?? 1) || 0));
       const terrainRequired = Number.isFinite(Number(payment.terrainRequired))
         ? Math.max(1, Math.round(Number(payment.terrainRequired)))
@@ -765,8 +766,9 @@
       recordQuickHistoryCommand({
         label: "恢复寰宇免费移动次数",
         undo() {
-          if (!uiRuntimeState.industryFreeMoveState) {
-            uiRuntimeState.industryFreeMoveState = {
+          if (!workingRoot.match.industryFreeMoveContinuation) {
+            workingRoot.match.industryFreeMoveContinuation = {
+              playerId: player.id,
               movesLeft: freeMoveStateBefore.movesLeft,
               movedRocketIds: [...freeMoveStateBefore.movedRocketIds],
               label: freeMoveStateBefore.label,
@@ -776,9 +778,9 @@
               label: freeMoveStateBefore.label,
             };
           } else {
-            uiRuntimeState.industryFreeMoveState.movesLeft = freeMoveStateBefore.movesLeft;
-            uiRuntimeState.industryFreeMoveState.movedRocketIds = [...freeMoveStateBefore.movedRocketIds];
-            uiRuntimeState.industryFreeMoveState.label = freeMoveStateBefore.label;
+            workingRoot.match.industryFreeMoveContinuation.movesLeft = freeMoveStateBefore.movesLeft;
+            workingRoot.match.industryFreeMoveContinuation.movedRocketIds = [...freeMoveStateBefore.movedRocketIds];
+            workingRoot.match.industryFreeMoveContinuation.label = freeMoveStateBefore.label;
           }
         },
       });
@@ -817,7 +819,7 @@
         || isHandScanSelectionActive()
         || isMovePaymentSelectionActive()
         || industryAbilitySession.value
-        || uiRuntimeState.industryFreeMoveState
+        || workingRoot.match.industryFreeMoveContinuation
         || isIndustryHandSelectionActive()) {
         return { ok: false, message: "请先完成或取消当前流程" };
       }

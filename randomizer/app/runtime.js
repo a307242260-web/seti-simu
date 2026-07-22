@@ -81,7 +81,6 @@
       playCardSelection: null,
       handCardPlayAction: null,
       cardCornerQuickAction: null,
-      industryFreeMoveState: null,
       stateReadoutRenderFrame: 0,
       codexAiBatchSuppressReadoutRender: false,
     };

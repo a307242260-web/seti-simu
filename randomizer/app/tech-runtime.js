@@ -90,8 +90,6 @@
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -104,6 +102,12 @@
         throw new TypeError("tech-runtime operation requires an explicit workingRoot");
       }
       return workingRoot;
+    }
+    const getScanTargetContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.scanTargetContinuation || null;
+    function setScanTargetContinuation(workingRoot, continuation) {
+      const activeRoot = requireWorkingRoot(workingRoot);
+      if (!continuation) delete activeRoot.match.scanTargetContinuation;
+      else activeRoot.match.scanTargetContinuation = structuredClone(continuation);
     }
 
     function getWorkingCurrentPlayer(workingRoot) {
@@ -1045,7 +1049,7 @@
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      decisionState.scanTargetAction = { ...getWorkingPendingOwnerFields(workingRoot, effect, player), type: "industry_pirates_raid_launch", effect, choices };
+      setScanTargetContinuation(workingRoot, { ...getWorkingPendingOwnerFields(workingRoot, effect, player), type: "industry_pirates_raid_launch", effect, choices });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label || "星际海盗";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一个已有掠夺标记主星上的己方环绕或登陆标记，移除后消耗 1 信用点并在该星球当前扇区免费发射。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -1073,13 +1077,13 @@
 
     function handlePiratesRaidLaunchChoice(workingRoot, choiceId) {
       const { planetStatsState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "industry_pirates_raid_launch") {
         return { ok: false, message: "没有待处理的星际海盗发射" };
       }
       const choice = pending.choices.find((item) => item.id === choiceId);
       const effect = pending.effect;
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       if (!choice) return { ok: false, message: "无效标记" };
 
       const player = resolveWorkingPlayerReference(workingRoot, pending)

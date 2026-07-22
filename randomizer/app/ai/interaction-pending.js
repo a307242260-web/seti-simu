@@ -25,7 +25,7 @@
       buildAiPlayCardCandidate, buildSectorScanChoicesForX, canAiContinueCardMoveAfterStep, canAiPlanetAcceptLanding, canAiPlanetAcceptOrbit, canPayForMove, cancelTechSelection, cardEffects,
       cards, chong, chooseAiLandChoice, closeScanTargetPicker, confirmDiscardAnyForIncome, confirmLandTargetPicker,
       confirmProbeSectorScanSelection, confirmScanTarget, confirmStrategyPassiveSlotChoice, confirmTechBlueSlotChoice, createActionContext, data, els,
-      enrichAiAlienUseOptions, executeCardMoveForEffect, executeFreeMoveForCardCorner, executeFreeMoveForScanAction4, executeIndustryFreeMove, fangzhou, finishIndustryAbilityFlow, formatRocketLabel,
+      enrichAiAlienUseOptions, executeCardMoveForEffect, executeFreeMoveForCardCorner, executeFreeMoveForScanAction4, fangzhou, formatRocketLabel,
       getAiAlienCardConversionMultiplier, getAiAlienTraceRewardForValuation, getAiAlienTraceTargetDemandForSlot, getAiAvailableDataRoom, getAiDiscardedCardOpportunityCost, getAiMapDemand, getAiNextActionEffect, getAiNextMissingFinalScoreThreshold,
       getAiPlanetAtCoordinate, getAiResearchTechCandidateExecutionCheck, getAiResearchTechSelectionOptionsForEffect, getAiResourceValuesForRound, getAiRoundNumber, getAiStrategyDemand, getAlienTraceActionPlayer, getBestAiNebulaChoiceScore,
       getCardPrice, getCurrentActionEffect,
@@ -34,7 +34,7 @@
       handleJiuzheCardChoice, handleJiuzheOpportunitySkip, handleOptionalHandScanChoice, handlePayCreditChoice, handleProbeLocationRewardChoice, handleProbeSectorScanChoice, handleRemoveOrbitToProbeChoice, handleRemovePlanetMarkerChoice,
       handleReturnUnfinishedTaskChoice, handleRunezuCardGainChoice, handleRunezuFaceSymbolChoice, handleRunezuSymbolBranchChoice, handleScanAction4Choice, handleSupplyTechTileClick, handleYichangdianCardGainChoice, handleYichangdianCornerChoice,
       industry, isActionEffectFlowActive, isAiAutoBattlePlayer, isAiChongFossilToken, isAiChongPickupPlanetId, isAiChongTravelEffect, isAiHiddenFirstTraceColorLost, isAiHiddenFirstTraceTakenByOpponent,
-      isAiLandingEffect, isAiOpenHiddenFirstTraceTarget, isTechTilePickingActive, jiuzhe, listAiBorrowTechCandidates, listAiIndustryHuanyuMoveCandidates,
+      isAiLandingEffect, isAiOpenHiddenFirstTraceTarget, isTechTilePickingActive, jiuzhe, listAiBorrowTechCandidates,
       listAiResearchTechCandidates, moveRocket, players, rankAiScanTargetButtons, rankAiScanTargetChoices, recordAiAutoBattleLog, rocketActions,
       roundAiScore, runezu, scanEffects, scoreAiAlienTraceValue, scoreAiAomomoTraceTimingValue, scoreAiB1TraceMarginalValue, scoreAiBanrenmaTraceTimingValue,
       scoreAiCardCornerOpportunity, scoreAiFangzhouUnlockChoiceValue, scoreAiFinalSecondMarkNoDirectSetupPenalty, scoreAiHighCostPointConversionPenalty, scoreAiLandingAfterMove, scoreAiLateAlienCardConversionPenalty, scoreAiLaunchAction, scoreAiMoveArrivalRewardValue,
@@ -330,236 +330,7 @@
       return result || { ok: true, progressed: true, message: "AI 已选择登陆目标" };
     }
 
-    function runAiRareScanTargetDecision(pending, player) {
-      const pendingType = pending?.type || null;
-      if (pendingType === "remove_planet_marker") {
-        const button = chooseFirstAiButton("[data-planet-marker-choice]");
-        const choiceId = button?.dataset?.planetMarkerChoice || pending.choices?.[0]?.id || null;
-        if (!choiceId) return { ok: false, blocked: true, message: "AI 没有可移除的星球标记" };
-        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 移除星球标记`, {
-          logPlayerId: player.id,
-          choiceId,
-          label: button?.textContent || "",
-        });
-        return handleRemovePlanetMarkerChoice(choiceId);
-      }
-
-      if (pendingType === "hand_corner_reward") {
-        const selected = chooseAiHandCornerChoice(pending);
-        const choice = selected?.choice || null;
-        if (!choice) return { ok: false, blocked: true, message: "AI 没有可选手牌角标奖励" };
-        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 选择手牌角标奖励`, {
-          logPlayerId: player.id,
-          choice,
-          score: selected.score,
-        });
-        return handleHandCornerChoice(choice);
-      }
-
-      if (pendingType === "discard_any_income") {
-        const selectedCards = chooseAiDiscardAnyIncomeCards(pending, player);
-        for (const card of selectedCards) {
-          const result = handleDiscardIncomeCardChoice(card.id);
-          if (result?.ok === false) return result;
-        }
-        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 确认收入弃牌`, {
-          logPlayerId: player.id,
-          selectedCardIds: selectedCards.map((card) => card.id),
-        });
-        return confirmDiscardAnyForIncome();
-      }
-
-      if (pendingType === "pay_credit_reward") {
-        const rewardValue = scoreAiPayCreditReward(pending.effect, player);
-        const canPay = typeof players.canAfford === "function"
-          ? players.canAfford(player, { credits: 1 })
-          : aiNumber(player?.resources?.credits) > 0;
-        const choice = canPay && rewardValue >= AI_RESOURCE_VALUES.credits * 0.85 ? "pay" : "skip";
-        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI ${choice === "pay" ? "支付信用" : "跳过信用支付"}`, {
-          logPlayerId: player.id,
-          rewardValue,
-          creditValue: AI_RESOURCE_VALUES.credits,
-          choice,
-        });
-        return handlePayCreditChoice(choice);
-      }
-
-      if (pendingType === "discard_corner_repeat") {
-        const selectedCard = chooseAiDiscardCornerRepeatCard(pending, player);
-        const cardId = selectedCard?.id || chooseFirstAiButton("[data-discard-corner-card-id]")?.dataset?.discardCornerCardId || null;
-        if (!cardId) return { ok: false, blocked: true, message: "AI 没有可重复角标的弃牌" };
-        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 选择重复角标弃牌`, {
-          logPlayerId: player.id,
-          cardId,
-        });
-        return handleDiscardCornerRepeatChoice(cardId);
-      }
-
-      if (pendingType === "remove_orbit_to_probe") {
-        const button = chooseFirstAiButton("[data-remove-orbit-to-probe]");
-        const choiceId = button?.dataset?.removeOrbitToProbe || pending.choices?.[0]?.id || null;
-        if (!choiceId) return { ok: false, blocked: true, message: "AI 没有可移除的环绕标记" };
-        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 移除环绕放置探测器`, {
-          logPlayerId: player.id,
-          choiceId,
-          label: button?.textContent || "",
-        });
-        return handleRemoveOrbitToProbeChoice(choiceId);
-      }
-
-      if (pendingType === "return_unfinished_task") {
-        const selected = (pending.choices || [])
-          .map((card, index) => ({ card, index, price: getCardPrice(card) }))
-          .sort((left, right) => aiNumber(left.price) - aiNumber(right.price) || left.index - right.index)[0]?.card || null;
-        const cardId = selected?.id || chooseFirstAiButton("[data-return-task-card-id]")?.dataset?.returnTaskCardId || null;
-        if (!cardId) return { ok: false, blocked: true, message: "AI 没有可返回手牌的任务卡" };
-        recordAiAutoBattleLog("rare-scan-target", `${player.colorLabel}AI 返回未完成任务卡`, {
-          logPlayerId: player.id,
-          cardId,
-        });
-        return handleReturnUnfinishedTaskChoice(cardId);
-      }
-
-      return null;
-    }
-
-    function runAiScanTargetDecision(workingRoot) {
-      if (!state.pendingScanTargetAction && (!els.scanTargetOverlay || els.scanTargetOverlay.hidden)) return null;
-      const pending = state.pendingScanTargetAction || null;
-      const pendingType = pending?.type || null;
-      if (!pendingType) return null;
-      const player = getAiPendingDecisionPlayer(workingRoot, pending);
-      if (!isAiAutoBattlePlayer(player?.id)) {
-        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择扫描目标` };
-      }
-
-      if (pendingType === "optional_hand_scan") {
-        const hasScannableHandCard = (player?.hand || [])
-          .some((card) => card && getPublicScanChoicesForCard(card).ok);
-        const choice = hasScannableHandCard ? "start" : "skip";
-        recordAiAutoBattleLog("hand-scan", `${player.colorLabel}AI ${choice === "start" ? "开始" : "跳过"}可选手牌扫描`, {
-          logPlayerId: player.id,
-          choice,
-          effectId: pending.effect?.id || null,
-        });
-        return handleOptionalHandScanChoice(choice);
-      }
-
-      if (pendingType === "conditional_sector_scan") {
-        const scanTargetOptions = {
-          player,
-          pendingType,
-          gainData: pending.effect?.options?.gainData,
-        };
-        const rankedButtons = rankAiScanTargetButtons(
-          queryAiButtons("[data-conditional-sector-x]"),
-          scanTargetOptions,
-        );
-        const button = rankedButtons[0]?.button || null;
-        if (!button) {
-          return { ok: false, blocked: true, message: "AI 没有可选条件扇区" };
-        }
-        recordAiAutoBattleLog("scan-target", `${player.colorLabel}AI 选择条件扇区扫描`, {
-          logPlayerId: player.id,
-          pendingType,
-          sectorX: button.dataset.conditionalSectorX || null,
-          label: button.textContent || "",
-          selectedScore: roundAiScore(rankedButtons[0]?.score),
-          topChoices: rankedButtons
-            .slice(0, 6)
-            .map((entry) => summarizeAiScanTargetChoiceEntry(entry, player)),
-        });
-        return handleConditionalSectorChoice(button.dataset.conditionalSectorX);
-      }
-
-      if (pendingType === "industry_remove_tech") {
-        const choice = (pending.choices || []).find((entry) => entry?.nebulaId) || null;
-        const tileId = choice?.nebulaId || chooseFirstAiButton("[data-nebula-id]")?.dataset?.nebulaId || null;
-        if (!tileId) return { ok: false, blocked: true, message: "AI 没有可无效的非蓝色科技" };
-        recordAiAutoBattleLog("industry", `${player.colorLabel}AI 选择赫利昂无效科技`, {
-          logPlayerId: player.id,
-          tileId,
-        });
-        return confirmScanTarget(tileId);
-      }
-
-      const rareResult = runAiRareScanTargetDecision(pending, player);
-      if (rareResult) return rareResult;
-
-      if (!["sector_scan", "public_scan", "hand_scan"].includes(pendingType)) {
-        return null;
-      }
-      const scanTargetOptions = {
-        player,
-        pendingType,
-        gainData: pending.gainData,
-      };
-      const rankedButtons = rankAiScanTargetButtons(
-        queryAiButtons(".scan-target-option-button")
-          .filter((item) => item.dataset.nebulaId != null),
-        scanTargetOptions,
-      );
-      const button = rankedButtons[0]?.button || null;
-      if (!button) {
-        let fallbackChoices = pending.choices || [];
-        if (!fallbackChoices.length && (pendingType === "public_scan" || pendingType === "hand_scan") && pending.card) {
-          const scanChoices = getPublicScanChoicesForCard(pending.card);
-          fallbackChoices = scanChoices?.ok ? (scanChoices.choices || []) : [];
-        }
-        const rankedChoices = rankAiScanTargetChoices(fallbackChoices, {
-          player,
-          pendingType,
-          gainData: pending.gainData,
-        });
-        const choiceEntry = rankedChoices[0] || null;
-        const choice = choiceEntry?.choice || null;
-        if (choice) {
-          recordAiAutoBattleLog("scan-target", `${player.colorLabel}AI 选择扫描目标`, {
-            logPlayerId: player.id,
-            pendingType,
-            nebulaId: choice.nebulaId || null,
-            sectorX: choice.sectorX ?? null,
-            label: choice.label || "",
-            source: "pending-choice-fallback",
-            selectedScore: roundAiScore(choiceEntry?.score),
-            topChoices: rankedChoices
-              .slice(0, 6)
-              .map((entry) => summarizeAiScanTargetChoiceEntry(entry, player)),
-          });
-          return confirmScanTarget(choice.nebulaId, choice.sectorX);
-        }
-        if (isActionEffectFlowActive()) {
-          const effect = getCurrentActionEffect?.() || null;
-          recordAiAutoBattleLog("scan-target", `${player.colorLabel}AI 跳过无目标扫描`, {
-            logPlayerId: player.id,
-            pendingType,
-            effectId: effect?.id || null,
-            effectType: effect?.type || null,
-          });
-          closeScanTargetPicker?.({
-            forcePublicScanQueueClose: true,
-            forceYichangdianCornerClose: true,
-          });
-          skipCurrentActionEffect?.();
-          return { ok: true, progressed: true, skipped: true, message: "AI 已跳过无可选目标扫描" };
-        }
-        return { ok: false, blocked: true, message: "AI 没有可选扫描目标" };
-      }
-      recordAiAutoBattleLog("scan-target", `${player.colorLabel}AI 选择扫描目标`, {
-        logPlayerId: player.id,
-        pendingType,
-        nebulaId: button.dataset.nebulaId || null,
-        sectorX: button.dataset.sectorX || null,
-        label: button.textContent || "",
-        selectedScore: roundAiScore(rankedButtons[0]?.score),
-        topChoices: rankedButtons
-          .slice(0, 6)
-          .map((entry) => summarizeAiScanTargetChoiceEntry(entry, player)),
-      });
-      return confirmScanTarget(button.dataset.nebulaId, button.dataset.sectorX);
-    }
-
-    function buildAiEffectMoveCandidate(workingRoot, rocket, direction, index = 0, options = {}) {
+        function buildAiEffectMoveCandidate(workingRoot, rocket, direction, index = 0, options = {}) {
       const { alienGameState, rocketState, playerState } = requireWorkingRoot(workingRoot);
       const currentPlayer = options.player || getWorkingCurrentPlayer(workingRoot);
       const moveCheck = rocketActions.canMoveRocket(
@@ -800,105 +571,6 @@
             effect,
           }))
           .filter(Boolean));
-    }
-
-    function runAiActionEffectMoveDecision(workingRoot) {
-      const { playerState } = requireWorkingRoot(workingRoot);
-      if (!state.pendingActionEffectFlow?.cardMoveEffect && !state.pendingActionEffectFlow?.freeMoveMode) return null;
-      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工选择移动路径` };
-      }
-
-      if (state.pendingActionEffectFlow.freeMoveMode) {
-        const candidates = listAiEffectMoveCandidates(workingRoot, { id: "freeMove", free: true });
-        const selected = selectScoredItem(candidates);
-        if (!selected || aiNumber(selected.score) < 0) {
-          const message = "AI 没有可用免费移动路径，跳过移动效果";
-          recordAiAutoBattleLog("move-path-skip", `${currentPlayer.colorLabel}${message}`, {
-            reason: selected ? "negative-free-move-score" : "no-free-move-candidates",
-            selected,
-          });
-          skipCurrentActionEffect?.();
-          return { ok: true, progressed: true, skipped: true, message };
-        }
-        recordAiAutoBattleLog("move-path", `${currentPlayer.colorLabel}AI 选择免费移动 ${selected.rocketLabel} ${selected.directionLabel}`, {
-          selected,
-          candidates,
-        });
-        const result = executeFreeMoveForScanAction4(workingRoot, selected.deltaX, selected.deltaY, selected.rocketId);
-        if (result?.ok !== false) return result;
-        skipCurrentActionEffect?.();
-        return {
-          ok: true,
-          progressed: true,
-          skipped: true,
-          message: `免费移动执行失败，已跳过：${result.message || "未知原因"}`,
-        };
-      }
-
-      const ctx = state.pendingActionEffectFlow.cardMoveEffect;
-      const effect = ctx?.effect || getCurrentActionEffect();
-      const nextEffect = getAiNextActionEffect();
-      const candidates = listAiEffectMoveCandidates(workingRoot, {
-        id: "cardMove",
-        effect,
-        poolRemaining: ctx?.poolRemaining ?? effect?.options?.movementPoints ?? 1,
-        nextEffect,
-      });
-      const selected = selectScoredItem(candidates);
-      if (!selected || aiNumber(selected.score) < 0) {
-        const message = "AI 没有可用卡牌移动路径，跳过移动效果";
-        recordAiAutoBattleLog("move-path-skip", `${currentPlayer.colorLabel}${message}`, {
-          effectId: effect?.id || null,
-          reason: selected ? "negative-card-move-score" : "no-card-move-candidates",
-          selected,
-        });
-        skipCurrentActionEffect?.();
-        return { ok: true, progressed: true, skipped: true, message };
-      }
-      recordAiAutoBattleLog("move-path", `${currentPlayer.colorLabel}AI 选择卡牌移动 ${selected.rocketLabel} ${selected.directionLabel}`, {
-        effectId: effect?.id || null,
-        selected,
-        candidates,
-      });
-      const result = executeCardMoveForEffect(workingRoot, selected.deltaX, selected.deltaY, selected.rocketId);
-      if (result?.ok !== false) return result;
-      skipCurrentActionEffect?.();
-      return {
-        ok: true,
-        progressed: true,
-        skipped: true,
-        message: `卡牌移动执行失败，已跳过：${result.message || "未知原因"}`,
-      };
-    }
-
-    function runAiIndustryFreeMoveDecision(workingRoot) {
-      const { playerState } = requireWorkingRoot(workingRoot);
-      if (!state.industryFreeMoveState) return null;
-      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(currentPlayer?.id)) {
-        return { ok: false, blocked: true, message: `${currentPlayer?.colorLabel || "当前玩家"}需要人工处理公司免费移动` };
-      }
-      const candidates = listAiIndustryHuanyuMoveCandidates(workingRoot);
-      const selected = selectScoredItem(candidates);
-      if (!selected || aiNumber(selected.score) < 0) {
-        const message = `${state.industryFreeMoveState?.label || "公司免费移动"}：无正收益移动，结束剩余免费移动`;
-        recordAiAutoBattleLog("industry", `${currentPlayer.colorLabel}AI 跳过公司剩余免费移动`, {
-          candidates,
-          message,
-        });
-        if (typeof finishIndustryAbilityFlow === "function") {
-          finishIndustryAbilityFlow(message);
-          return { ok: true, progressed: true, message };
-        }
-        return { ok: false, blocked: true, message: "AI 没有可用公司免费移动路径" };
-      }
-      recordAiAutoBattleLog("move-path", `${currentPlayer.colorLabel}AI 选择公司免费移动 ${selected.rocketLabel} ${selected.directionLabel}`, {
-        selected,
-        candidates,
-      });
-      return executeIndustryFreeMove(workingRoot, selected.deltaX, selected.deltaY, selected.rocketId);
     }
 
     function listAiScanAction4Candidates(workingRoot, currentPlayer = getWorkingCurrentPlayer(workingRoot)) {
@@ -2086,15 +1758,11 @@
       scoreAiStrategyPassiveSlotChoice,
       runAiStrategyPassiveSlotChoiceDecision,
       runAiLandTargetDecision,
-      runAiRareScanTargetDecision,
-      runAiScanTargetDecision,
       buildAiEffectMoveCandidate,
       isAiIndustryHuanyuMoveEffect,
       isAiIndustryHuanyuMoveContext,
       getAiCompletedIndustryHuanyuMoveRocketIds,
       listAiEffectMoveCandidates,
-      runAiActionEffectMoveDecision,
-      runAiIndustryFreeMoveDecision,
       listAiScanAction4Candidates,
       runAiScanAction4Decision,
       getAiAlienTraceButtons,
@@ -2146,7 +1814,7 @@
     "buildAiPlayCardCandidate", "buildSectorScanChoicesForX", "canAiContinueCardMoveAfterStep", "canAiPlanetAcceptLanding", "canAiPlanetAcceptOrbit", "canPayForMove", "cancelTechSelection", "cardEffects",
     "cards", "chong", "chooseAiLandChoice", "closeScanTargetPicker", "confirmDiscardAnyForIncome", "confirmLandTargetPicker",
     "confirmProbeSectorScanSelection", "confirmScanTarget", "confirmStrategyPassiveSlotChoice", "confirmTechBlueSlotChoice", "createActionContext", "data", "els",
-    "enrichAiAlienUseOptions", "executeCardMoveForEffect", "executeFreeMoveForCardCorner", "executeFreeMoveForScanAction4", "executeIndustryFreeMove", "fangzhou", "finishIndustryAbilityFlow", "formatRocketLabel",
+    "enrichAiAlienUseOptions", "executeCardMoveForEffect", "executeFreeMoveForCardCorner", "executeFreeMoveForScanAction4", "fangzhou", "formatRocketLabel",
     "getAiAlienCardConversionMultiplier", "getAiAlienTraceRewardForValuation", "getAiAlienTraceTargetDemandForSlot", "getAiAvailableDataRoom", "getAiDiscardedCardOpportunityCost", "getAiMapDemand", "getAiNextActionEffect", "getAiNextMissingFinalScoreThreshold",
     "getAiPlanetAtCoordinate", "getAiResearchTechCandidateExecutionCheck", "getAiResearchTechSelectionOptionsForEffect", "getAiResourceValuesForRound", "getAiRoundNumber", "getAiStrategyDemand", "getAlienTraceActionPlayer", "getBestAiNebulaChoiceScore",
     "getCardPrice", "getCurrentActionEffect",
@@ -2155,7 +1823,7 @@
     "handleJiuzheCardChoice", "handleJiuzheOpportunitySkip", "handleOptionalHandScanChoice", "handlePayCreditChoice", "handleProbeLocationRewardChoice", "handleProbeSectorScanChoice", "handleRemoveOrbitToProbeChoice", "handleRemovePlanetMarkerChoice",
     "handleReturnUnfinishedTaskChoice", "handleRunezuCardGainChoice", "handleRunezuFaceSymbolChoice", "handleRunezuSymbolBranchChoice", "handleScanAction4Choice", "handleSupplyTechTileClick", "handleYichangdianCardGainChoice", "handleYichangdianCornerChoice",
     "industry", "isActionEffectFlowActive", "isAiAutoBattlePlayer", "isAiChongFossilToken", "isAiChongPickupPlanetId", "isAiChongTravelEffect", "isAiHiddenFirstTraceColorLost", "isAiHiddenFirstTraceTakenByOpponent",
-    "isAiLandingEffect", "isAiOpenHiddenFirstTraceTarget", "isTechTilePickingActive", "jiuzhe", "listAiBorrowTechCandidates", "listAiIndustryHuanyuMoveCandidates",
+    "isAiLandingEffect", "isAiOpenHiddenFirstTraceTarget", "isTechTilePickingActive", "jiuzhe", "listAiBorrowTechCandidates",
     "listAiResearchTechCandidates", "moveRocket", "players", "rankAiScanTargetButtons", "rankAiScanTargetChoices", "recordAiAutoBattleLog", "rocketActions",
     "roundAiScore", "runezu", "scanEffects", "scoreAiAlienTraceValue", "scoreAiAomomoTraceTimingValue", "scoreAiB1TraceMarginalValue", "scoreAiBanrenmaTraceTimingValue",
     "scoreAiCardCornerOpportunity", "scoreAiFangzhouUnlockChoiceValue", "scoreAiFinalSecondMarkNoDirectSetupPenalty", "scoreAiHighCostPointConversionPenalty", "scoreAiLandingAfterMove", "scoreAiLateAlienCardConversionPenalty", "scoreAiLaunchAction", "scoreAiMoveArrivalRewardValue",

@@ -96,11 +96,14 @@
     const rulePlanetStatsState = (workingRoot) => workingRoot.planetStatsState;
     const rulePlayerState = (workingRoot) => workingRoot.playerState;
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
+    const getScanTargetContinuation = (workingRoot) => workingRoot.match?.scanTargetContinuation || null;
+    function setScanTargetContinuation(workingRoot, continuation) {
+      if (!continuation) delete workingRoot.match.scanTargetContinuation;
+      else workingRoot.match.scanTargetContinuation = structuredClone(continuation);
+    }
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -162,7 +165,7 @@
       if (choices.length > 1) {
         ruleRocketState(workingRoot).statusNote = `${prefixLabel || "扇区扫描"}：请选择要扫描的星云`;
         renderStateReadout();
-        return openScanTargetPicker({
+        return openScanTargetPicker(workingRoot, {
           type: "sector_scan",
           fromEffectFlow: isActionEffectFlowActive(),
           effect,
@@ -215,7 +218,7 @@
       if (choices.length > 1) {
         ruleRocketState(workingRoot).statusNote = `${effect.label || `扇区${sectorX}扫描`}：请选择要扫描的星云`;
         renderStateReadout();
-        return openScanTargetPicker({
+        return openScanTargetPicker(workingRoot, {
           type: "sector_scan",
           fromEffectFlow: true,
           title: effect.label || `扇区${sectorX}扫描`,
@@ -513,20 +516,20 @@
         return executeRemovePlanetMarkerChoice(workingRoot, effect, choices[0]);
       }
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        decisionState.scanTargetAction = {
+        setScanTargetContinuation(workingRoot, {
           ...getPendingOwnerFields(workingRoot, effect),
           type: "remove_planet_marker",
           effect,
           choices,
-        };
+        });
         return { ok: true, pendingChoice: true, message: effect.label };
       }
-      decisionState.scanTargetAction = {
+      setScanTargetContinuation(workingRoot, {
         ...getPendingOwnerFields(workingRoot, effect),
         type: "remove_planet_marker",
         effect,
         choices,
-      };
+      });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label || "移除环绕或登陆标记";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择要移除的己方环绕或登陆标记。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -545,13 +548,13 @@
     }
 
     function handleRemovePlanetMarkerChoice(workingRoot, choiceId) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "remove_planet_marker") {
         return { ok: false, message: "没有待移除的星球标记" };
       }
       const choice = (pending.choices || []).find((item) => item.id === choiceId);
       const effect = pending.effect;
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       if (!choice || !effect) return { ok: false, message: "无效标记选择" };
       return withPendingOwnerPlayer(pending, () => executeRemovePlanetMarkerChoice(workingRoot, effect, choice));
     }
@@ -681,7 +684,7 @@
       const choices = buildSectorScanChoicesForXs(sectorXs);
       ruleRocketState(workingRoot).statusNote = "扇区扫描：请选择地球及相邻扇区之一";
       renderStateReadout();
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "sector_scan",
         fromEffectFlow: true,
         title: "扇区扫描",
@@ -1220,7 +1223,7 @@
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         return applyHandCornerChoice(workingRoot, effect, "publicity");
       }
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect), type: "hand_corner_reward", effect, counts };
+      setScanTargetContinuation(workingRoot, { ...getPendingOwnerFields(workingRoot, effect), type: "hand_corner_reward", effect, counts });
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一种左上角快速行动类别，按当前手牌数量获得对应奖励。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -1285,10 +1288,10 @@
     }
 
     function handleHandCornerChoice(workingRoot, choice) {
-      const pending = decisionState.scanTargetAction;
+      const pending = getScanTargetContinuation(workingRoot);
       if (pending?.type !== "hand_corner_reward") return { ok: false, message: "没有待处理的手牌角标奖励" };
       const effect = pending.effect;
-      closeScanTargetPicker();
+      closeScanTargetPicker(workingRoot);
       return withPendingOwnerPlayer(pending, () => applyHandCornerChoice(workingRoot, effect, choice));
     }
 

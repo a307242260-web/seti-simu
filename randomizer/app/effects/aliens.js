@@ -86,8 +86,6 @@
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -945,7 +943,7 @@
       if (effect.type === aomomo.EFFECT_SCAN_AOMOMO_X_SCORE) bonus.score = effect.options?.score || 2;
       ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择奥陌陌当前 x=${currentX} 的扫描目标`;
       renderStateReadout();
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "sector_scan",
         fromEffectFlow: true,
         title: effect.label,
@@ -1042,7 +1040,7 @@
       }
       ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择 0-7 号扇区之一`;
       renderStateReadout();
-      return openScanTargetPicker({
+      return openScanTargetPicker(workingRoot, {
         type: "sector_scan",
         fromEffectFlow: true,
         title: effect.label,

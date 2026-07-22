@@ -65,9 +65,7 @@
                 status: currentEffect.status || null,
               }
               : null,
-            pendingScanTargetType: state.pendingScanTargetAction?.type || null,
             pendingPublicScanQueue: Boolean(state.pendingPublicScanQueue),
-            pendingHandScan: Boolean(state.pendingHandScanAction),
             pendingCardSelection: Boolean(state.pendingCardSelectionAction),
             pendingStrategyPassiveSlotChoice: Boolean(state.pendingStrategyPassiveSlotChoice),
             pendingJiuzheCardPlay: Boolean(state.pendingJiuzheCardPlay),
@@ -91,7 +89,6 @@
             pendingActionEffectCardMove: Boolean(state.pendingActionEffectFlow?.cardMoveEffect),
             pendingActionEffectFreeMove: Boolean(state.pendingActionEffectFlow?.freeMoveMode),
             pendingIndustryAbility: Boolean(state.pendingIndustryAbility),
-            pendingIndustryFreeMove: Boolean(state.industryFreeMoveState),
             pendingIndustryHandSelection: isIndustryHandSelectionActive(),
           };
         }

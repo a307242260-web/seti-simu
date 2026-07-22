@@ -106,8 +106,6 @@
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -166,7 +164,7 @@
       delete workingRoot.match.passReserveContinuation;
       uiRuntimeState.passReserveSelectionDismissed = false;
       uiRuntimeState.passReserveSelectedCardId = null;
-      decisionState.handScanAction = null;
+      delete workingRoot.match.handScanContinuation;
       uiRuntimeState.playCardSelection = null;
       uiRuntimeState.handCardPlayAction = null;
       uiRuntimeState.cardCornerQuickAction = null;
@@ -434,7 +432,7 @@
         renderStateReadout?.();
         return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
-      decisionState.scanTargetAction = { type: "debug_quick_sector_scan" };
+      workingRoot.match.scanTargetContinuation = { type: "debug_quick_sector_scan" };
       renderDebugQuickSectorScanPlayerStep(workingRoot);
       ruleRocketState(workingRoot).statusNote = "快速扫描扇区：请选择玩家颜色";
       renderStateReadout?.();
@@ -986,11 +984,11 @@
         decisionState.discardAction,
         decisionState.cardSelectionAction,
         workingRoot.match?.passReserveContinuation,
-        decisionState.scanTargetAction,
+        workingRoot.match?.scanTargetContinuation,
         workingRoot.match?.probeSectorScanContinuation,
         workingRoot.match?.probeLocationRewardContinuation,
         workingRoot.match?.publicScanContinuation,
-        decisionState.handScanAction,
+        workingRoot.match?.handScanContinuation,
         decisionState.alienTraceAction,
         decisionSessions?.peek?.("land_target"),
         workingRoot.match?.dataPlacementContinuation,
@@ -999,7 +997,7 @@
         workingRoot.match?.cardTaskCompletionContinuation,
         decisionSessions?.peek?.("strategy_passive_slot"),
         decisionSessions?.peek?.("pirates_raid_placement"),
-        uiRuntimeState.industryFreeMoveState,
+        workingRoot.match?.industryFreeMoveContinuation,
       ];
       for (const pending of pendingEntries) {
         const owner = getExplicitPendingOwnerPlayerForFailsafe(workingRoot, pending);

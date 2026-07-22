@@ -437,59 +437,6 @@
       return { ok: false, blocked: true, message: "AI 没有可精选的公共牌" };
     }
 
-    function runAiHandScanDecision(workingRoot) {
-      const { playerState } = requireWorkingRoot(workingRoot);
-      if (!isHandScanSelectionActive()) return null;
-      const pending = state.pendingHandScanAction || {};
-      const player = pending.player || getWorkingCurrentPlayer(workingRoot);
-      if (!isAiAutoBattlePlayer(player?.id)) {
-        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择手牌扫描` };
-      }
-      const selected = getAiBestHandScanIndex(player);
-      if (!selected && pending.optional) {
-        recordAiAutoBattleLog("hand-scan", `${player.colorLabel}AI 跳过可选手牌扫描`, {
-          pendingType: pending.type || null,
-        });
-        skipCurrentActionEffect();
-        return { ok: true, progressed: true, message: "AI 跳过可选手牌扫描" };
-      }
-      if (!selected) {
-        recordAiAutoBattleLog("hand-scan", `${player.colorLabel}AI 跳过无可用目标的手牌扫描`, {
-          pendingType: pending.type || null,
-        });
-        skipCurrentActionEffect();
-        return { ok: true, progressed: true, message: "AI 跳过无可用目标的手牌扫描" };
-      }
-      recordAiAutoBattleLog("hand-scan", `${player.colorLabel}AI 选择手牌扫描`, {
-        handIndex: selected.handIndex,
-        score: selected.score,
-        card: selected.card,
-      });
-      const result = handleHandScanCardClick(selected.handIndex);
-      if (
-        (pending.fromEffectFlow || isActionEffectFlowActive())
-        && (
-          !result
-          || result.ok === false
-          || state.pendingHandScanAction
-          || !state.pendingScanTargetAction
-        )
-      ) {
-        recordAiAutoBattleLog("hand-scan-recovery", `${player.colorLabel}AI 跳过无法展开目标的手牌扫描`, {
-          handIndex: selected.handIndex,
-          card: selected.card,
-          result: result ? {
-            ok: result.ok ?? null,
-            message: result.message || null,
-          } : null,
-          pendingState: getAiAutoBattlePendingState(),
-        });
-        skipCurrentActionEffect();
-        return { ok: true, progressed: true, skipped: true, message: "AI 跳过无法展开目标的手牌扫描" };
-      }
-      return result;
-    }
-
     function cardTriggerNeedsFreeMove(match) {
       return match?.effect?.type === cardEffects.EFFECT_TYPES.FREE_MOVE
         || (
@@ -843,7 +790,6 @@
       chooseInitialSelectionForAiPlayer,
       runAiDiscardDecision,
       runAiCardSelectionDecision,
-      runAiHandScanDecision,
       cardTriggerNeedsFreeMove,
       getCardTriggerFreeMoveEffect,
       listCardTriggerFreeMoveCandidates,

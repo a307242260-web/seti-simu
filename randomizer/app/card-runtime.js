@@ -127,8 +127,6 @@
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -145,6 +143,14 @@
       return activeRoot.match[field];
     }
     const getPassReserveSelection = (workingRoot) => getMatchContinuation(workingRoot, "passReserveContinuation");
+    const getCardMoveContinuation = (workingRoot) => getMatchContinuation(workingRoot, "cardMoveContinuation");
+    function setCardMoveContinuation(workingRoot, continuation) {
+      if (!continuation) return setMatchContinuation(workingRoot, "cardMoveContinuation", null);
+      const normalized = structuredClone(continuation);
+      normalized.effectId ||= continuation.effect?.id || null;
+      delete normalized.effect;
+      return setMatchContinuation(workingRoot, "cardMoveContinuation", normalized);
+    }
     const setPassReserveSelection = (workingRoot, value) => setMatchContinuation(workingRoot, "passReserveContinuation", value);
     function setMovePayment(workingRoot, session) {
       if (!workingRoot?.match) throw new TypeError("move payment requires Composition workingRoot.match");
@@ -1488,14 +1494,14 @@
     }
 
 
-    function initCardMoveEffectState(effect) {
+    function initCardMoveEffectState(workingRoot, effect) {
       const movementPoints = Math.max(1, Math.round(Number(effect.options?.movementPoints || 1)));
-      decisionState.actionEffectFlow.cardMoveEffect = {
-        effect,
+      setCardMoveContinuation(workingRoot, {
+        effectId: effect.id || null,
         poolRemaining: movementPoints,
         deferredType1Events: [],
         moved: false,
-      };
+      });
       effect.badge = String(movementPoints);
     }
 
@@ -1580,8 +1586,8 @@
 
     function executeCardEffectMove(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
       const { rocketState, playerState } = requireWorkingRoot(workingRoot);
-      const ctx = decisionState.actionEffectFlow?.cardMoveEffect;
-      const effect = ctx?.effect || getCurrentActionEffect();
+      const ctx = getCardMoveContinuation(workingRoot);
+      const effect = getCurrentActionEffect();
       if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
 
       const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(effect, rocketId);
@@ -1675,7 +1681,7 @@
       clearMoveRocketHighlight();
 
       if (ctx && ctx.poolRemaining > 0) {
-        decisionState.actionEffectFlow.cardMoveEffect = ctx;
+        setCardMoveContinuation(workingRoot, ctx);
         const currentPlayer = getWorkingCurrentPlayer(workingRoot);
         const rocketsForPlayer = getWorkingMovableTokens(workingRoot, currentPlayer?.id);
         rocketState.statusNote = `${effect.label}：剩余 ${ctx.poolRemaining} 点移动力`;
@@ -1702,7 +1708,7 @@
         return effect.result;
       }
 
-      decisionState.actionEffectFlow.cardMoveEffect = null;
+      setCardMoveContinuation(workingRoot, null);
       deactivateMoveMode();
       effect.result = {
         ...result,
@@ -1724,9 +1730,9 @@
 
     function finishCurrentCardMoveEffectEarly(workingRoot) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const ctx = decisionState.actionEffectFlow?.cardMoveEffect;
+      const ctx = getCardMoveContinuation(workingRoot);
       const current = getCurrentActionEffect();
-      if (!ctx || !current || current.status !== "active" || ctx.effect?.id !== current.id) return false;
+      if (!ctx || !current || current.status !== "active" || ctx.effectId !== current.id) return false;
       if (!ctx.moved && !current.result) return false;
 
       const poolRemaining = Math.max(0, Math.round(Number(ctx.poolRemaining) || 0));
@@ -1738,7 +1744,7 @@
         ? `结束剩余 ${poolRemaining} 点移动力`
         : "移动已完成";
 
-      decisionState.actionEffectFlow.cardMoveEffect = null;
+      setCardMoveContinuation(workingRoot, null);
       current.badge = "";
       current.result = {
         ...(current.result || {}),
@@ -1765,8 +1771,8 @@
 
     function requestCardEffectMove(workingRoot, deltaX, deltaY, rocketId) {
       const { rocketState, playerState } = requireWorkingRoot(workingRoot);
-      const ctx = decisionState.actionEffectFlow?.cardMoveEffect;
-      const effect = ctx?.effect || getCurrentActionEffect();
+      const ctx = getCardMoveContinuation(workingRoot);
+      const effect = getCurrentActionEffect();
       if (!effect) return { ok: false, message: "没有待结算的卡牌移动" };
 
       const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(effect, rocketId);

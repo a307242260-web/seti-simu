@@ -833,7 +833,7 @@
                 delete workingRoot.match.probeLocationRewardContinuation;
               }
               if (candidates[0]?.target?.kind === "sector-scan-target") {
-                decisionState.scanTargetAction = null;
+                delete workingRoot.match.scanTargetContinuation;
                 if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
               }
               return {
@@ -1005,8 +1005,6 @@
   const decisionState = decisionSessions.createFacade({
     discardAction: "discard_action",
     cardSelectionAction: "card_selection_action",
-    scanTargetAction: "scan_target_action",
-    handScanAction: "hand_scan_action",
     alienTraceAction: "alien_trace_action",
     alienTracePickerState: "alien_trace_picker_state",
     actionEffectFlow: "action_effect_flow",
@@ -1028,6 +1026,21 @@
   );
   const getPendingProbeLocationRewardDecision = (workingRoot = createStateSourceReadoutRoot()) => (
     workingRoot?.match?.probeLocationRewardContinuation || null
+  );
+  const getPendingHandScanDecision = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.handScanContinuation || null
+  );
+  const getPendingScanTargetDecision = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.scanTargetContinuation || null
+  );
+  const getPendingCardMoveDecision = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.cardMoveContinuation || null
+  );
+  const getPendingScanFreeMoveDecision = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.scanFreeMoveContinuation || null
+  );
+  const getPendingIndustryFreeMoveDecision = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.industryFreeMoveContinuation || null
   );
   const hasTurnEndRevealContinuation = (workingRoot = createStateSourceReadoutRoot()) => (
     Boolean(workingRoot?.match?.turnEndRevealContinuation)
@@ -1089,7 +1102,7 @@
     getResearchTechSelectionOptions,
     isTechTileOwnedByOtherPlayer,
     isActionEffectFlowActive,
-    skipCurrentActionEffect,
+    skipCurrentActionEffect: (workingRoot) => skipCurrentActionEffectForRoot(workingRoot),
     getPendingDataPlacementDecision,
     data,
     getPendingCardTriggerFreeMove,
@@ -1138,12 +1151,13 @@
     confirmDiscardAnyForIncome,
     handlePayCreditChoice,
     confirmScanTarget: (workingRoot, ...args) => scanFlowHelpers.confirmScanTarget(workingRoot, ...args),
+    handleDrawnHandScanSkip: (workingRoot) => scanFlowHelpers.handleDrawnHandScanSkip(workingRoot),
     confirmPassReserveSelection: (workingRoot, ...args) => confirmPassReserveSelectionForRoot(workingRoot, ...args),
     handleCardTriggerChoice: (workingRoot, ...args) => handleCardTriggerChoiceForRoot(workingRoot, ...args),
     cancelCardTriggerChoice: (workingRoot, ...args) => cancelCardTriggerChoiceForRoot(workingRoot, ...args),
     confirmCardTaskCompletion: (workingRoot, ...args) => confirmCardTaskCompletionForRoot(workingRoot, ...args),
-    handleHandScanCardClick,
-    executeCardMoveForEffect,
+    handleHandScanCardClick: (workingRoot, ...args) => scanFlowHelpers.handleHandScanCardClick(workingRoot, ...args),
+    executeCardMoveForEffect: (workingRoot, ...args) => executeCardMoveForEffectForRoot(workingRoot, ...args),
     executeFreeMoveForCardTrigger: (workingRoot, ...args) => executeFreeMoveForCardTriggerForRoot(workingRoot, ...args),
     restoreObjectSnapshot,
     clearMoveRocketHighlight,
@@ -1151,8 +1165,9 @@
     continueAfterCardTriggerResolution: (workingRoot, ...args) => continueAfterCardTriggerResolutionForRoot(workingRoot, ...args),
     finishCurrentCardMoveEffectEarly,
     executeFreeMoveForCardCorner: (workingRoot, ...args) => executeFreeMoveForCardCornerForRoot(workingRoot, ...args),
+    executeIndustryFreeMove: (workingRoot, ...args) => executeIndustryFreeMoveForRoot(workingRoot, ...args),
     settleCardTasksAfterEffect,
-    finishIndustryAbilityFlow,
+    finishIndustryAbilityFlow: (workingRoot, ...args) => finishIndustryAbilityFlowForRoot(workingRoot, ...args),
     resolveMovePaymentDecision: (...args) => resolveMovePaymentDecision(...args),
     confirmStrategyPassiveSlotChoice,
     handleHandCardDiscard,
@@ -1761,8 +1776,6 @@
     const decisions = decisionSessions.createFacade({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
-      scanTargetAction: "scan_target_action",
-      handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
@@ -1770,6 +1783,8 @@
     const canonical = residentProjectionAdapter.projectSource({ viewer });
     const readoutRoot = createResidentReadoutRoot(canonical.resident);
     decisions.movePayment = getPendingMovePayment();
+    decisions.handScanContinuation = getPendingHandScanDecision(readoutRoot);
+    decisions.scanTargetContinuation = getPendingScanTargetDecision(readoutRoot);
     decisions.playCardSelection = uiRuntimeState.playCardSelection;
     decisions.handCardPlayAction = uiRuntimeState.handCardPlayAction;
     decisions.cardCornerQuickAction = uiRuntimeState.cardCornerQuickAction;
@@ -2803,8 +2818,22 @@
   hasAomomoScanAtX = (...args) => callBrowserDomainCommand("scan_flow", "hasAomomoScanAtX", args);
   buildSectorScanChoicesForX = (...args) => callBrowserDomainCommand("scan_flow", "buildSectorScanChoicesForX", args);
   expandScanChoicesWithAomomoTargets = (...args) => callBrowserDomainCommand("scan_flow", "expandScanChoicesWithAomomoTargets", args);
-  confirmScanTarget = (...args) => callBrowserDomainCommand("scan_flow", "confirmScanTarget", args);
-  handleDrawnHandScanSkip = (...args) => callBrowserDomainCommand("scan_flow", "handleDrawnHandScanSkip", args);
+  confirmScanTarget = (nebulaId, sectorX) => {
+    const choiceTarget = (browserRuleComposition.inspect().session?.decision?.choices || [])
+      .map((choice) => choice?.target || choice?.standardAction?.target || null)
+      .find((target) => (
+        ["scan-target", "sector-scan-target"].includes(target?.kind)
+        && String(target.nebulaId) === String(nebulaId)
+        && (sectorX == null || String(target.sectorX) === String(sectorX))
+      ));
+    if (!choiceTarget) return { ok: false, code: "SCAN_DECISION_REQUIRED", message: "当前扫描目标不在 active Decision 合法项中" };
+    return submitActiveCardDecision(
+      choiceTarget.kind,
+      (target) => String(target.nebulaId) === String(nebulaId)
+        && (sectorX == null || String(target.sectorX) === String(sectorX)),
+    );
+  };
+  handleDrawnHandScanSkip = () => submitActiveCardDecision("skip-drawn-hand-scan", () => true);
   beginSectorScan = (...args) => callBrowserDomainCommand("scan_flow", "beginSectorScan", args);
   getSectorOpenDataCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorOpenDataCount", args);
   getSectorReplacedCount = (...args) => callBrowserDomainCommand("scan_flow", "getSectorReplacedCount", args);
@@ -2818,7 +2847,10 @@
   handlePublicScanCardClick = (...args) => callBrowserDomainCommand("scan_flow", "handlePublicScanCardClick", args);
   beginHandScan = (...args) => callBrowserDomainCommand("scan_flow", "beginHandScan", args);
   cancelHandScanSelection = (...args) => callBrowserDomainCommand("scan_flow", "cancelHandScanSelection", args);
-  handleHandScanCardClick = (...args) => callBrowserDomainCommand("scan_flow", "handleHandScanCardClick", args);
+  handleHandScanCardClick = (handIndex) => submitActiveCardDecision(
+    "hand-scan-card",
+    (target) => Number(target.handIndex) === Number(handIndex),
+  );
   const incomeRuntime = incomeRuntimeModule.createIncomeRuntime({
     INCOME_GAIN_LABELS,
     players,
@@ -4212,9 +4244,7 @@
   const aiControllerState = {
     get pendingDiscardAction() { return decisionState.discardAction; },
     get pendingCardSelectionAction() { return decisionState.cardSelectionAction; },
-    get pendingScanTargetAction() { return decisionState.scanTargetAction; },
     get pendingPublicScanQueue() { return getPublicScanQueueSession(); },
-    get pendingHandScanAction() { return decisionState.handScanAction; },
     get pendingAlienTraceAction() { return decisionState.alienTraceAction; },
     get pendingLandTargetAction() { return getPendingLandTargetDecision(); },
     get pendingJiuzheCardPlay() { return getPendingJiuzheCardPlay(); },
@@ -4239,7 +4269,6 @@
     set effectStepActive(value) { uiRuntimeState.effectStepActive = value; },
     get pendingIndustryAbility() { return decisionSessions.peek("industry_ability"); },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
-    get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
     get alienTracePickerState() { return decisionState.alienTracePickerState; },
     get pendingAlienRevealConfirmation() { return uiRuntimeState.alienRevealConfirmation; },
   };
@@ -5565,11 +5594,11 @@
     delete workingRoot.match.passReserveContinuation;
     uiRuntimeState.passReserveSelectionDismissed = false;
     uiRuntimeState.passReserveSelectedCardId = null;
-    decisionState.scanTargetAction = null;
+    delete workingRoot.match.scanTargetContinuation;
     delete workingRoot.match.probeSectorScanContinuation;
     uiRuntimeState.probeSectorSelectedRocketIds = [];
     delete workingRoot.match.publicScanContinuation;
-    decisionState.handScanAction = null;
+    delete workingRoot.match.handScanContinuation;
     decisionState.alienTraceAction = null;
     decisionSessions.clear(LAND_TARGET_DECISION);
     delete workingRoot.match.probeLocationRewardContinuation;
@@ -5621,7 +5650,7 @@
     decisionSessions.clear("industry_ability");
     decisionSessions.clear(PIRATES_RAID_DECISION);
     decisionSessions.clear(STRATEGY_SLOT_DECISION);
-    uiRuntimeState.industryFreeMoveState = null;
+    delete workingRoot.match.industryFreeMoveContinuation;
     historyStepOrder.length = 0;
     actionHistory.commitSession();
     quickActionHistory.commitSession();
@@ -5989,11 +6018,11 @@
 
   function isBoardRocketInteractionActive() {
     return uiRuntimeState.moveHighlightRocketId != null
-      || isIndustryFreeMoveActive()
+      || Boolean(getPendingIndustryFreeMoveDecision())
       || Boolean(getPendingCardTriggerFreeMove())
       || Boolean(getPendingCardCornerFreeMove())
-      || Boolean(decisionState.actionEffectFlow?.freeMoveMode)
-      || Boolean(decisionState.actionEffectFlow?.cardMoveEffect);
+      || Boolean(getPendingScanFreeMoveDecision())
+      || Boolean(getPendingCardMoveDecision());
   }
 
   function getInteractionFocusMode() {
@@ -6045,7 +6074,7 @@
     if (rocket.playerId !== player?.id) return false;
     if (!(rocketActions.isMovablePlayerToken?.(rocket) || rocketActions.isControllablePlayerRocket(rocket))) return false;
     if (isRocketOnPlanetsReference(rocket)) return false;
-    if (uiRuntimeState.industryFreeMoveState?.movedRocketIds?.includes(rocket.id)) return false;
+    if (getPendingIndustryFreeMoveDecision()?.movedRocketIds?.includes(rocket.id)) return false;
     return true;
   }
 
@@ -6477,7 +6506,7 @@
       cancelHandCardPlayAction({ silent: true });
     }
     if (hasActivePendingSubFlow()) {
-      workingRoot.rocketState.statusNote = decisionSessions.peek("industry_ability") || uiRuntimeState.industryFreeMoveState || isIndustryHandSelectionActive()
+      workingRoot.rocketState.statusNote = decisionSessions.peek("industry_ability") || getPendingIndustryFreeMoveDecision() || isIndustryHandSelectionActive()
         ? "请先完成或取消公司 1x 行动"
         : "请先完成或取消当前流程";
       renderStateReadout();
@@ -7048,11 +7077,11 @@
 
   function hasActiveEffectSubFlow() {
     return Boolean(
-      decisionState.scanTargetAction
+      getPendingScanTargetDecision()
       || getPendingProbeSectorScanDecision()
       || getPendingProbeLocationRewardDecision()
       || getPublicScanQueueSession()
-      || decisionState.handScanAction
+      || getPendingHandScanDecision()
       || getPendingPassReserveSelection()
       || (isCardSelectionActive() && (decisionState.actionEffectFlow || isCardTriggerPickSelectionActive()))
       || getPendingCardTriggerAction()
@@ -7078,8 +7107,8 @@
       || (els.scanAction4Overlay && !els.scanAction4Overlay.hidden)
       || (els.landTargetOverlay && !els.landTargetOverlay.hidden)
       || (els.alienTraceOverlay && !els.alienTraceOverlay.hidden && decisionState.alienTracePickerState?.mode !== "reveal-confirm")
-      || decisionState.actionEffectFlow?.cardMoveEffect
-      || decisionState.actionEffectFlow?.freeMoveMode
+      || getPendingCardMoveDecision()
+      || getPendingScanFreeMoveDecision()
       || Boolean(getPendingDataPlacementDecision()),
     );
   }
@@ -7089,12 +7118,12 @@
       || isMovePaymentSelectionActive()
       || (els.dataPlaceOverlay && !els.dataPlaceOverlay.hidden)
       || Boolean(decisionSessions.peek("industry_ability"))
-      || Boolean(uiRuntimeState.industryFreeMoveState)
+      || Boolean(getPendingIndustryFreeMoveDecision())
       || isIndustryHandSelectionActive();
   }
 
   function cancelActivePendingSubFlowsForRoot(workingRoot) {
-    if (decisionState.scanTargetAction?.type === "industry_remove_tech") {
+    if (getPendingScanTargetDecision(workingRoot)?.type === "industry_remove_tech") {
       rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
       return true;
     }
@@ -7143,7 +7172,7 @@
       workingRoot.rocketState.statusNote = "已取消放置数据";
       return true;
     }
-    if (decisionSessions.peek("industry_ability") || uiRuntimeState.industryFreeMoveState || isIndustryHandSelectionActive()) {
+    if (decisionSessions.peek("industry_ability") || getPendingIndustryFreeMoveDecision() || isIndustryHandSelectionActive()) {
       rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
       return true;
     }
@@ -7326,9 +7355,9 @@
     closeAlienTracePicker();
     delete workingRoot.match.publicScanContinuation;
 
-    if (isHandScanSelectionActive()) {
-      decisionState.handScanAction = null;
-      syncHandScanSelectionChrome();
+    if (isHandScanSelectionActive(workingRoot)) {
+      delete workingRoot.match.handScanContinuation;
+      syncHandScanSelectionChrome(workingRoot);
     }
 
     if (isCardSelectionActive() && (decisionState.actionEffectFlow || isCardTriggerPickSelectionActive())) {
@@ -7352,12 +7381,12 @@
       syncPassReserveSelectionChrome();
     }
 
-    if (decisionState.actionEffectFlow?.freeMoveMode) {
-      decisionState.actionEffectFlow.freeMoveMode = false;
+    if (getPendingScanFreeMoveDecision(workingRoot)) {
+      delete workingRoot.match.scanFreeMoveContinuation;
       deactivateMoveMode();
     }
-    if (decisionState.actionEffectFlow?.cardMoveEffect) {
-      decisionState.actionEffectFlow.cardMoveEffect = null;
+    if (getPendingCardMoveDecision(workingRoot)) {
+      delete workingRoot.match.cardMoveContinuation;
       deactivateMoveMode();
     }
     if (getPendingDataPlacementDecision()) {
@@ -7417,8 +7446,8 @@
       renderStateReadout();
       return;
     }
-    if (decisionState.scanTargetAction?.type === "hand_scan" && decisionState.scanTargetAction.discardDrawnOnSkip) {
-      handleDrawnHandScanSkip();
+    if (getPendingScanTargetDecision(workingRoot)?.type === "hand_scan" && getPendingScanTargetDecision(workingRoot).discardDrawnOnSkip) {
+      scanFlowHelpers.handleDrawnHandScanSkip(workingRoot);
       return;
     }
 
@@ -7496,9 +7525,9 @@
     if (els.actionEffectSkipButton) {
       const finishingCardMove = Boolean(
         canSkip
-        && decisionState.actionEffectFlow?.cardMoveEffect
-        && decisionState.actionEffectFlow.cardMoveEffect.effect?.id === current?.id
-        && (decisionState.actionEffectFlow.cardMoveEffect.moved || current?.result)
+        && getPendingCardMoveDecision()
+        && getPendingCardMoveDecision().effectId === current?.id
+        && (getPendingCardMoveDecision().moved || current?.result)
       );
       els.actionEffectSkipButton.textContent = finishingCardMove ? "结束移动" : "跳过";
       els.actionEffectSkipButton.setAttribute(
@@ -7547,12 +7576,12 @@
         badge.textContent = effect.badge;
         button.append(badge);
       } else if (
-        decisionState.actionEffectFlow?.cardMoveEffect?.effect?.id === effect.id
+        getPendingCardMoveDecision()?.effectId === effect.id
         && effect.status === "active"
       ) {
         const badge = document.createElement("span");
         badge.className = "action-effect-badge";
-        badge.textContent = String(decisionState.actionEffectFlow.cardMoveEffect.poolRemaining);
+        badge.textContent = String(getPendingCardMoveDecision().poolRemaining);
         button.append(badge);
       }
       return button;
@@ -7929,7 +7958,10 @@
       return { ok: false, message: workingRoot.rocketState.statusNote };
     }
 
-    decisionState.actionEffectFlow.freeMoveMode = true;
+    workingRoot.match.scanFreeMoveContinuation = {
+      effectId: getCurrentActionEffect()?.id || null,
+      playerId: currentPlayer?.id || null,
+    };
     workingRoot.rocketState.statusNote = rocketsForPlayer.length > 1
       ? "扫描效果：请点击要移动的飞船"
       : "扫描效果：使用方向键移动飞船";
@@ -7995,7 +8027,7 @@
     if (payment.discardCommand) recordHistoryCommand(payment.discardCommand);
     recordAbilityCommands(result, actionHistory, workingRoot);
 
-    decisionState.actionEffectFlow.freeMoveMode = false;
+    delete workingRoot.match.scanFreeMoveContinuation;
     deactivateMoveMode();
     const current = getCurrentActionEffect();
     if (current) current.result = result;
@@ -8007,7 +8039,12 @@
   }
 
   function executeFreeMoveForScanAction4(...args) {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "scan_execute_free_move", args });
+    const [deltaX, deltaY, rocketId] = args;
+    const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
+    return submitActiveCardDecision(
+      "scan-free-move",
+      (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
+    );
   }
 
   function beginCardMoveEffectForRoot(workingRoot, effect) {
@@ -8040,14 +8077,14 @@
       return { ok: false, message };
     }
 
-    if (!decisionState.actionEffectFlow.cardMoveEffect
-      || decisionState.actionEffectFlow.cardMoveEffect.effect?.id !== effect.id) {
-      initCardMoveEffectState(effect);
+    if (!getPendingCardMoveDecision(workingRoot)
+      || getPendingCardMoveDecision(workingRoot).effectId !== effect.id) {
+      initCardMoveEffectState(workingRoot, effect);
     } else {
-      effect.badge = String(decisionState.actionEffectFlow.cardMoveEffect.poolRemaining);
+      effect.badge = String(getPendingCardMoveDecision(workingRoot).poolRemaining);
     }
 
-    const poolRemaining = decisionState.actionEffectFlow.cardMoveEffect.poolRemaining;
+    const poolRemaining = getPendingCardMoveDecision(workingRoot).poolRemaining;
     workingRoot.rocketState.statusNote = poolRemaining > 1
       ? `${effect.label}：剩余 ${poolRemaining} 点移动力，请点击要移动的飞船`
       : rocketsForPlayer.length > 1
@@ -8175,7 +8212,12 @@
   }
 
   function executeCardMoveForEffect(...args) {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "card_execute_move_effect", args });
+    const [deltaX, deltaY, rocketId] = args;
+    const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
+    return submitActiveCardDecision(
+      "card-effect-move",
+      (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
+    );
   }
 
   function executeSectorXScanEffect(...args) {
@@ -9781,7 +9823,13 @@
   const confirmIndustryHeliosRemoveTech = bindBrowserDomainCommand("industry_runtime", "confirmIndustryHeliosRemoveTech");
   const startIndustryHuanyuMoveEffectFlow = bindBrowserDomainCommand("industry_runtime", "startIndustryHuanyuMoveEffectFlow");
   const beginIndustryHuanyuFreeMoves = bindBrowserDomainCommand("industry_runtime", "beginIndustryHuanyuFreeMoves");
-  const executeIndustryFreeMove = bindBrowserDomainCommand("industry_runtime", "executeIndustryFreeMove");
+  function executeIndustryFreeMove(deltaX, deltaY, rocketId) {
+    const direction = deltaX === 1 ? "cw" : deltaX === -1 ? "ccw" : deltaY === 1 ? "out" : "in";
+    return submitActiveCardDecision(
+      "industry-free-move",
+      (target) => Number(target.rocketId) === Number(rocketId) && target.direction === direction,
+    );
+  }
   const canBeginIndustryFutureSpanHandSelection = bindBrowserDomainCommand("industry_runtime", "canBeginIndustryFutureSpanHandSelection");
   const beginIndustryFutureSpanHandSelection = bindBrowserDomainCommand("industry_runtime", "beginIndustryFutureSpanHandSelection");
   const handleIndustryFutureSpanHandClick = bindBrowserDomainCommand("industry_runtime", "handleIndustryFutureSpanHandClick");
@@ -11304,14 +11352,14 @@
     );
     const activePending = [
       finalScorePending ? { ...finalScorePending, player: finalScorePlayer } : null,
-      decisionState.scanTargetAction,
+      getPendingScanTargetDecision(readoutRoot),
       getPendingProbeSectorScanDecision(),
-      decisionState.handScanAction,
+      getPendingHandScanDecision(readoutRoot),
       getPendingPassReserveSelection(),
       getPendingMovePayment(),
       getPendingDataPlacementDecision(),
       getPendingCardTriggerFreeMove(),
-      decisionState.actionEffectFlow?.cardMoveEffect,
+      getPendingCardMoveDecision(readoutRoot),
       getPendingCardCornerFreeMove(),
       getPendingStrategySlotDecision(),
       getPendingChongFossilChoice(),
@@ -11779,10 +11827,10 @@
     if (uiRuntimeState.moveHighlightRocketId == null) return;
     if (
       getPendingCardTriggerFreeMove()
-      || uiRuntimeState.industryFreeMoveState
+      || getPendingIndustryFreeMoveDecision()
       || getPendingCardCornerFreeMove()
-      || decisionState.actionEffectFlow?.freeMoveMode
-      || decisionState.actionEffectFlow?.cardMoveEffect
+      || getPendingScanFreeMoveDecision()
+      || getPendingCardMoveDecision()
     ) return;
     deactivateMoveMode();
     renderStateReadout();
@@ -12077,10 +12125,8 @@
     get pendingAlienRevealConfirmation() { return uiRuntimeState.alienRevealConfirmation; },
     get moveHighlightRocketId() { return uiRuntimeState.moveHighlightRocketId; },
     get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
-    get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
     get pendingCardCornerFreeMove() { return getPendingCardCornerFreeMove(); },
     get pendingActionEffectFlow() { return decisionState.actionEffectFlow; },
-    get pendingScanTargetAction() { return decisionState.scanTargetAction; },
   };
 
   alienSpeciesRuntime = alienSpeciesRuntimeModule.createAlienSpeciesRuntime({
