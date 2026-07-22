@@ -5,6 +5,7 @@ const {
   createEffectFlowHelpers,
   createEffectFlowUndoRuntime,
   createEffectSubFlowCancellationRuntime,
+  createEffectFlowCompletionRuntime,
 } = require("./effect-flow");
 
 function createHistoryHarness() {
@@ -397,6 +398,75 @@ function createHarness() {
   assert.equal(calls.move, 2);
   assert.equal(calls.alien, 1);
   assert.equal(calls.tech, 1);
+}
+
+{
+  const flow = {
+    actionType: "scan", historySource: "main", consumesMainAction: true,
+    cardTemporaryTasks: [], sectorSettlementResult: {
+      ok: true, message: "扇区完成", participantAwardMessage: "参与奖励",
+    },
+  };
+  const workingRoot = {
+    match: { actionEffectFlow: flow },
+    playerState: { currentPlayerId: "p1" }, turnState: {}, rocketState: {},
+  };
+  const calls = { remembered: null, cleared: 0, pending: 0, render: 0, resume: 0 };
+  const runtime = createEffectFlowCompletionRuntime({
+    getActionEffectFlow: (root) => root.match.actionEffectFlow || null,
+    appendEndOfFlowSectorFinishEffects: () => false,
+    appendDeferredEndOfFlowEffects: () => false,
+    collectTemporaryTaskRewards: () => [],
+    cloneDelayedPublicRefills: () => [],
+    settleDelayedPublicRefillsAfterScanFlow: () => ({ message: "公共牌补齐" }),
+    rememberCompletedEffectFlowForUndo: (value) => { calls.remembered = value; },
+    clearActionEffectFlow: (root) => { delete root.match.actionEffectFlow; calls.cleared += 1; },
+    startTemporaryCardTaskRewardFlow: () => false,
+    applyType1TriggerMatchesForRoot: () => null,
+    hasActiveCardTriggerResolution: () => false,
+    isActionEffectFlowActive: () => false,
+    markActionPending: () => { calls.pending += 1; },
+    renderPlayerStats: () => { calls.render += 1; },
+    renderAlienPanels: () => { calls.render += 1; },
+    updateActionButtons: () => { calls.render += 1; },
+    renderStateReadout: () => { calls.render += 1; },
+    maybeResumeTurnEndAfterReveal: () => { calls.resume += 1; },
+  });
+  runtime.finishActionEffectFlowForRoot(workingRoot);
+  assert.equal(calls.remembered, flow);
+  assert.equal(calls.cleared, 1);
+  assert.equal(calls.pending, 1);
+  assert.equal(calls.render, 4);
+  assert.equal(calls.resume, 1);
+  assert.equal(
+    workingRoot.rocketState.statusNote,
+    "扫描效果已全部处理，可继续执行次要行动或回合结束；扇区完成；参与奖励；公共牌补齐",
+  );
+}
+
+{
+  const actionHistory = createHistoryHarness();
+  actionHistory.beginSession("initialIncome", "初始收入");
+  const workingRoot = {
+    match: { actionEffectFlow: { actionType: "initialIncome", cardTemporaryTasks: [] } },
+    playerState: { currentPlayerId: "p2" }, turnState: { startPlayerId: "p1" }, rocketState: {},
+  };
+  const uiRuntimeState = { effectStepActive: true };
+  let finishedUi = 0;
+  createEffectFlowCompletionRuntime({
+    uiRuntimeState, actionHistory,
+    getActionEffectFlow: (root) => root.match.actionEffectFlow,
+    appendEndOfFlowSectorFinishEffects: () => false,
+    appendDeferredEndOfFlowEffects: () => false,
+    collectTemporaryTaskRewards: () => [], cloneDelayedPublicRefills: () => [],
+    rememberCompletedEffectFlowForUndo() {}, clearActionEffectFlow() {},
+    finishInitialIncomeUi: () => { finishedUi += 1; },
+  }).finishActionEffectFlowForRoot(workingRoot);
+  assert.equal(actionHistory.hasSession(), false);
+  assert.equal(uiRuntimeState.effectStepActive, false);
+  assert.equal(workingRoot.playerState.currentPlayerId, "p1");
+  assert.equal(workingRoot.rocketState.statusNote, "初始收入增加完成，游戏开始。");
+  assert.equal(finishedUi, 1);
 }
 
 console.log("effect-flow tests passed");

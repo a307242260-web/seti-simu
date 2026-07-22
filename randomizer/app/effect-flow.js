@@ -1006,10 +1006,133 @@
     return Object.freeze({ cancelActiveEffectSubFlowsForRoot });
   }
 
+  function createEffectFlowCompletionRuntime(context = {}) {
+    const uiRuntimeState = context.uiRuntimeState || {};
+    const HISTORY_SOURCE_MAIN = context.HISTORY_SOURCE_MAIN || "main";
+
+    function refreshPendingUi(workingRoot, message) {
+      workingRoot.rocketState.statusNote = message;
+      context.markActionPending?.();
+      context.renderPlayerStats?.();
+      context.updateActionButtons?.();
+      context.renderStateReadout?.();
+    }
+
+    function finishActionEffectFlowForRoot(workingRoot) {
+      const finishedFlow = context.getActionEffectFlow?.(workingRoot);
+      if (!finishedFlow) return;
+      if (context.appendEndOfFlowSectorFinishEffects?.(finishedFlow)) return;
+      if (context.appendDeferredEndOfFlowEffects?.(finishedFlow)) return;
+
+      const actionType = finishedFlow.actionType;
+      const settleResult = finishedFlow.sectorSettlementResult || null;
+      const temporaryTaskRewardEffects = context.collectTemporaryTaskRewards?.(
+        finishedFlow.cardTemporaryTasks, settleResult,
+      ) || [];
+      const delayedPublicRefills = context.cloneDelayedPublicRefills?.(finishedFlow) || [];
+      const transferDelayedPublicRefills = temporaryTaskRewardEffects.length > 0
+        && delayedPublicRefills.length > 0;
+      const delayedPublicRefillResult = transferDelayedPublicRefills
+        ? null
+        : context.settleDelayedPublicRefillsAfterScanFlow?.(finishedFlow);
+      context.rememberCompletedEffectFlowForUndo?.(finishedFlow);
+      context.clearActionEffectFlow?.(workingRoot);
+
+      if (actionType === "researchTech") {
+        context.finishResearchTechSelection?.(workingRoot);
+      }
+      if (actionType === "initialIncome") {
+        if (context.actionHistory?.hasSession?.()) context.actionHistory.commitSession();
+        context.clearHistoryStepOrderForSource?.(HISTORY_SOURCE_MAIN);
+        context.removeActionLogStepsBySource?.(HISTORY_SOURCE_MAIN);
+        context.clearActionPending?.();
+        uiRuntimeState.effectStepActive = false;
+        workingRoot.playerState.currentPlayerId = workingRoot.turnState.startPlayerId
+          || workingRoot.playerState.currentPlayerId;
+        workingRoot.rocketState.statusNote = "初始收入增加完成，游戏开始。";
+        context.finishInitialIncomeUi?.();
+        return;
+      }
+      if (context.startTemporaryCardTaskRewardFlow?.(
+        finishedFlow.cardTemporaryTasks,
+        settleResult,
+        {
+          effects: temporaryTaskRewardEffects,
+          futureSpanPlayedCard: finishedFlow.futureSpanPlayedCard,
+          historySource: finishedFlow.historySource || HISTORY_SOURCE_MAIN,
+          scanRunId: finishedFlow.scanRunId || null,
+          delayedPublicRefills: transferDelayedPublicRefills ? delayedPublicRefills : [],
+        },
+      )) return;
+      if (finishedFlow.futureSpanPlayedCard) context.releaseFutureSpanAfterPlayWithHistoryForRoot?.(workingRoot);
+      if (finishedFlow.playCardEvent) {
+        context.settleCardTasksAfterEffectForRoot?.(workingRoot, {
+          events: [finishedFlow.playCardEvent], render: false,
+        });
+      }
+      if (finishedFlow.scanActionEvent) {
+        context.settleCardTasksAfterEffectForRoot?.(workingRoot, {
+          events: [finishedFlow.scanActionEvent], render: false,
+        });
+      }
+      const queuedType1Result = context.applyType1TriggerMatchesForRoot?.(workingRoot, []);
+      if (queuedType1Result
+        || context.hasActiveCardTriggerResolution?.(workingRoot)
+        || context.isActionEffectFlowActive?.(workingRoot)) {
+        const message = queuedType1Result?.message || "卡牌触发：请先完成触发效果";
+        if (finishedFlow.consumesMainAction !== false || finishedFlow.resumePendingActionExecuted) {
+          refreshPendingUi(workingRoot, message);
+        } else {
+          workingRoot.rocketState.statusNote = message;
+          context.renderPlayerStats?.();
+          context.updateActionButtons?.();
+          context.renderStateReadout?.();
+        }
+        return;
+      }
+      if (actionType === "pass") {
+        const passPlayer = context.getPlayerById?.(workingRoot, finishedFlow.playerId)
+          || context.getCurrentPlayerForRoot?.(workingRoot);
+        const passSettlement = context.settleCardTasksAfterEffectForRoot?.(workingRoot, {
+          events: [finishedFlow.passEvent || context.createPassEvent?.(passPlayer)], render: false,
+        });
+        if (context.hasActiveCardTriggerResolution?.(workingRoot)
+          || context.isActionEffectFlowActive?.(workingRoot)) {
+          refreshPendingUi(
+            workingRoot,
+            passSettlement?.type1Result?.message || "PASS 任务触发：请先完成触发效果",
+          );
+          return;
+        }
+      }
+      const baseMessage = actionType === "scan"
+        ? "扫描效果已全部处理，可继续执行次要行动或回合结束"
+        : actionType === "pass"
+          ? "PASS 效果已全部处理，可继续执行次要行动或回合结束"
+          : "效果已全部处理，可继续执行次要行动或回合结束";
+      const settleMessage = settleResult?.ok
+        ? `${settleResult.message}；${settleResult.participantAwardMessage || "参与结算玩家各获得1宣传"}`
+        : null;
+      workingRoot.rocketState.statusNote = [baseMessage, settleMessage, delayedPublicRefillResult?.message]
+        .filter(Boolean).join("；");
+      if (finishedFlow.consumesMainAction !== false || finishedFlow.resumePendingActionExecuted) {
+        context.markActionPending?.();
+      }
+      context.renderPlayerStats?.();
+      context.renderAlienPanels?.();
+      context.updateActionButtons?.();
+      context.renderStateReadout?.();
+      context.maybeResumeTurnEndAfterReveal?.(workingRoot);
+    }
+
+    return Object.freeze({ finishActionEffectFlowForRoot });
+  }
+
   return {
     createActionEffectOrchestrator,
     createEffectFlowHelpers,
     createEffectFlowUndoRuntime,
     createEffectSubFlowCancellationRuntime,
+    createEffectFlowCompletionRuntime,
   };
 });

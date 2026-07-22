@@ -6083,48 +6083,29 @@
     return getFlowMarkedNebulaIds(flow).size > 0;
   }
 
-  function finishActionEffectFlowForRoot(workingRoot) {
-    if (!getActionEffectFlow(workingRoot)) return;
-
-    const finishedFlow = getActionEffectFlow(workingRoot);
-    if (appendEndOfFlowSectorFinishEffects(finishedFlow)) {
-      return;
-    }
-    if (appendDeferredEndOfFlowEffects(finishedFlow)) {
-      return;
-    }
-    const actionType = finishedFlow.actionType;
-    const settleResult = finishedFlow.sectorSettlementResult || null;
-    const temporaryTaskRewardEffects = cardEffects.collectTemporaryTaskRewards(
-      finishedFlow.cardTemporaryTasks,
-      settleResult,
-    );
-    const delayedPublicRefills = cloneDelayedPublicRefills(finishedFlow);
-    const transferDelayedPublicRefills = temporaryTaskRewardEffects.length > 0
-      && delayedPublicRefills.length > 0;
-    const delayedPublicRefillResult = transferDelayedPublicRefills
-      ? null
-      : settleDelayedPublicRefillsAfterScanFlow(finishedFlow);
-    rememberCompletedEffectFlowForUndo(finishedFlow);
-    clearActionEffectFlow(workingRoot);
-    if (actionType === "researchTech") {
+  const effectFlowCompletionRuntime = effectFlowModule.createEffectFlowCompletionRuntime({
+    HISTORY_SOURCE_MAIN,
+    uiRuntimeState,
+    actionHistory,
+    getActionEffectFlow,
+    appendEndOfFlowSectorFinishEffects,
+    appendDeferredEndOfFlowEffects,
+    collectTemporaryTaskRewards: (...args) => cardEffects.collectTemporaryTaskRewards(...args),
+    cloneDelayedPublicRefills,
+    settleDelayedPublicRefillsAfterScanFlow,
+    rememberCompletedEffectFlowForUndo,
+    clearActionEffectFlow,
+    finishResearchTechSelection: (workingRoot) => {
       tech.setTechSelectionActive(workingRoot.techGameState, false);
       tech.cancelPendingTake(workingRoot.techGameState);
       workingRoot.techGameState.ui.statusNote = "";
       syncTechSelectionChrome();
       renderTechBoard();
-    }
-    if (actionType === "initialIncome") {
-      if (actionHistory.hasSession()) {
-        actionHistory.commitSession();
-      }
-      clearHistoryStepOrderForSource(HISTORY_SOURCE_MAIN);
-      removeActionLogStepsBySource(HISTORY_SOURCE_MAIN);
-      clearActionPending();
-      uiRuntimeState.effectStepActive = false;
-      workingRoot.playerState.currentPlayerId = workingRoot.turnState.startPlayerId
-        || workingRoot.playerState.currentPlayerId;
-      workingRoot.rocketState.statusNote = "初始收入增加完成，游戏开始。";
+    },
+    clearHistoryStepOrderForSource,
+    removeActionLogStepsBySource,
+    clearActionPending,
+    finishInitialIncomeUi: () => {
       renderDebugPlayerSwitch();
       renderPlayerStats();
       renderPlayerHand();
@@ -6133,75 +6114,24 @@
       renderStateReadout();
       refreshLatestActionLogRecoverySnapshot("初始收入完成后状态");
       scrollToPlayerCommandPanel();
-      return;
-    }
-    if (startTemporaryCardTaskRewardFlow(finishedFlow.cardTemporaryTasks, settleResult, {
-      effects: temporaryTaskRewardEffects,
-      futureSpanPlayedCard: finishedFlow.futureSpanPlayedCard,
-      historySource: finishedFlow.historySource || HISTORY_SOURCE_MAIN,
-      scanRunId: finishedFlow.scanRunId || null,
-      delayedPublicRefills: transferDelayedPublicRefills ? delayedPublicRefills : [],
-    })) {
-      return;
-    }
-    if (finishedFlow.futureSpanPlayedCard) {
-      releaseFutureSpanAfterPlayWithHistoryForRoot(workingRoot);
-    }
-    if (finishedFlow.playCardEvent) {
-      settleCardTasksAfterEffectForRoot(workingRoot, { events: [finishedFlow.playCardEvent], render: false });
-    }
-    if (finishedFlow.scanActionEvent) {
-      settleCardTasksAfterEffectForRoot(workingRoot, { events: [finishedFlow.scanActionEvent], render: false });
-    }
-    const queuedType1Result = applyType1TriggerMatchesForRoot(workingRoot, []);
-    if (queuedType1Result
-      || hasActiveCardTriggerResolution(workingRoot)
-      || isActionEffectFlowActive(workingRoot)) {
-      workingRoot.rocketState.statusNote = queuedType1Result?.message || "卡牌触发：请先完成触发效果";
-      if (finishedFlow.consumesMainAction !== false || finishedFlow.resumePendingActionExecuted) {
-        markActionPending();
-      }
-      renderPlayerStats();
-      updateActionButtons();
-      renderStateReadout();
-      return;
-    }
-    if (actionType === "pass") {
-      const passPlayer = getPlayerById(workingRoot, finishedFlow.playerId)
-        || players.getCurrentPlayer(workingRoot.playerState);
-      const passSettlement = settleCardTasksAfterEffectForRoot(workingRoot, {
-        events: [finishedFlow.passEvent || createPassEvent(passPlayer)],
-        render: false,
-      });
-      if (hasActiveCardTriggerResolution(workingRoot) || isActionEffectFlowActive(workingRoot)) {
-        workingRoot.rocketState.statusNote = passSettlement?.type1Result?.message || "PASS 任务触发：请先完成触发效果";
-        markActionPending();
-        renderPlayerStats();
-        updateActionButtons();
-        renderStateReadout();
-        return;
-      }
-    }
-    const baseMessage = actionType === "scan"
-      ? "扫描效果已全部处理，可继续执行次要行动或回合结束"
-      : actionType === "pass"
-        ? "PASS 效果已全部处理，可继续执行次要行动或回合结束"
-      : "效果已全部处理，可继续执行次要行动或回合结束";
-    const settleMessage = settleResult?.ok
-      ? `${settleResult.message}；${settleResult.participantAwardMessage || "参与结算玩家各获得1宣传"}`
-      : null;
-    workingRoot.rocketState.statusNote = [baseMessage, settleMessage, delayedPublicRefillResult?.message]
-      .filter(Boolean)
-      .join("；");
-    if (finishedFlow.consumesMainAction !== false || finishedFlow.resumePendingActionExecuted) {
-      markActionPending();
-    }
-    renderPlayerStats();
-    renderAlienPanels();
-    updateActionButtons();
-    renderStateReadout();
-    maybeResumeTurnEndAfterReveal(workingRoot);
-  }
+    },
+    startTemporaryCardTaskRewardFlow,
+    releaseFutureSpanAfterPlayWithHistoryForRoot,
+    settleCardTasksAfterEffectForRoot,
+    applyType1TriggerMatchesForRoot,
+    hasActiveCardTriggerResolution,
+    isActionEffectFlowActive,
+    markActionPending,
+    renderPlayerStats,
+    updateActionButtons,
+    renderStateReadout,
+    getPlayerById,
+    getCurrentPlayerForRoot: (workingRoot) => players.getCurrentPlayer(workingRoot.playerState),
+    createPassEvent,
+    renderAlienPanels,
+    maybeResumeTurnEndAfterReveal,
+  });
+  const finishActionEffectFlowForRoot = effectFlowCompletionRuntime.finishActionEffectFlowForRoot;
 
   function finishActionEffectFlow() {
     return ruleComposition.inputPort.submitHostCommand({ kind: "effect_finish_flow" }).value;
