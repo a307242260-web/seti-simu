@@ -363,7 +363,7 @@ function createBaseContext() {
   const openResult = runtime.openDebugQuickSectorScanPicker();
   assert.equal(openResult.ok, true);
   assert.equal(context.pendingState.scanTargetAction.type, "debug_quick_sector_scan");
-  runtime.handleDebugQuickSectorScanChoice({ dataset: { debugSectorScanStep: "player", playerId: "p1" } });
+  runtime.handleDebugQuickSectorScanChoice({ debugSectorScanStep: "player", playerId: "p1" });
   assert.equal(context.els.scanTargetTitle.textContent, "快速扫描扇区");
   const runResult = runtime.runDebugQuickSectorScan("p1", "S1", 2);
   assert.equal(runResult.ok, true);

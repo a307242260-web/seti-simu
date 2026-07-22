@@ -5976,15 +5976,15 @@
 
 
   function runDebugQuickSectorScan(playerId, sectorId, count) {
-    return debugRuntimeController.runDebugQuickSectorScan(playerId, sectorId, count);
+    return callDebugCommand("runDebugQuickSectorScan", [playerId, sectorId, count]);
   }
 
   function handleDebugQuickSectorScanChoice(button) {
-    return debugRuntimeController.handleDebugQuickSectorScanChoice(button);
+    return callDebugCommand("handleDebugQuickSectorScanChoice", [{ ...(button?.dataset || {}) }]);
   }
 
   function openDebugQuickSectorScanPicker() {
-    return debugRuntimeController.openDebugQuickSectorScanPicker();
+    return callDebugCommand("openDebugQuickSectorScanPicker");
   }
 
 
@@ -11461,6 +11461,7 @@
       createFocusDebugCalibrationHandler() {
         return noopFocus;
       },
+      focusDebugCalibration: noop,
     };
   }
 
@@ -11555,7 +11556,7 @@
     resize,
   })
     : createFallbackDebugRuntimeController();
-  const focusDebugCalibration = debugRuntimeController.createFocusDebugCalibrationHandler();
+  const focusDebugCalibration = (...args) => callDebugCommand("focusDebugCalibration", args);
 
   const appEventState = {
     get pendingChongTaskCompletion() { return getPendingChongTaskCompletion(); },

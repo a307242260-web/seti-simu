@@ -406,20 +406,20 @@
       };
     }
 
-    function handleDebugQuickSectorScanChoice(button) {
-      const step = button.dataset.debugSectorScanStep;
-      const playerId = button.dataset.playerId;
+    function handleDebugQuickSectorScanChoice(dataset) {
+      const step = dataset.debugSectorScanStep;
+      const playerId = dataset.playerId;
       if (step === "player") {
         renderDebugQuickSectorScanSectorStep(playerId);
         return;
       }
       if (step === "sector") {
-        renderDebugQuickSectorScanCountStep(playerId, button.dataset.sectorId);
+        renderDebugQuickSectorScanCountStep(playerId, dataset.sectorId);
         return;
       }
       if (step === "count") {
         closeScanTargetPicker?.();
-        runDebugQuickSectorScan(playerId, button.dataset.sectorId, Number(button.dataset.count));
+        runDebugQuickSectorScan(playerId, dataset.sectorId, Number(dataset.count));
       }
     }
 
@@ -1175,6 +1175,10 @@
       return { ok: true, player: targetPlayer, message };
     }
 
+    function focusDebugCalibration(alienSlotId) {
+      return createFocusDebugCalibrationHandler()(alienSlotId);
+    }
+
     return {
       setDebugOpen,
       setDebugPlayerMenuOpen,
@@ -1209,6 +1213,7 @@
       renderAfterFailsafeControl,
       getFailsafePendingOwnerPlayer,
       createFocusDebugCalibrationHandler,
+      focusDebugCalibration,
     };
   }
 
