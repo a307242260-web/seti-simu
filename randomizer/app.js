@@ -324,6 +324,8 @@
     ]),
   });
 
+  let activeBrowserDomainWorkingRoot = null;
+
   function executeBrowserDomainCommand(workingRoot, command) {
     const target = resolveBrowserDomainTarget(command.domain);
     const allowed = BROWSER_DOMAIN_COMMANDS[command.domain];
@@ -334,8 +336,14 @@
     if (typeof method !== "function") {
       return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNAVAILABLE", message: `Browser domain command 未装配: ${command.domain}.${command.operation}` };
     }
-    const value = method(workingRoot, ...(command.args || []));
-    return { ok: value?.ok !== false, value: cloneResidentPresentation(value) };
+    const previousWorkingRoot = activeBrowserDomainWorkingRoot;
+    activeBrowserDomainWorkingRoot = workingRoot;
+    try {
+      const value = method(workingRoot, ...(command.args || []));
+      return { ok: value?.ok !== false, value: cloneResidentPresentation(value) };
+    } finally {
+      activeBrowserDomainWorkingRoot = previousWorkingRoot;
+    }
   }
 
   function resolveBrowserDomainTarget(domain) {
@@ -347,6 +355,7 @@
       case "alien_runtime": return alienRuntimeHelpers;
       case "alien_species": return alienSpeciesRuntime;
       case "card_runtime": return cardRuntime;
+      case "ai_controller": return aiController;
       case "card_trigger": return cardTriggerRuntime;
       case "industry_runtime": return industryRuntime;
       case "tech_runtime": return techRuntime;
@@ -355,9 +364,9 @@
   }
 
   function callBrowserDomainCommand(domain, operation, args = []) {
-    if (headlessMode) {
+    if (headlessMode || activeBrowserDomainWorkingRoot) {
       const target = resolveBrowserDomainTarget(domain);
-      return target?.[operation]?.(browserRuleState, ...args);
+      return target?.[operation]?.(activeBrowserDomainWorkingRoot || browserRuleState, ...args);
     }
     try {
       return browserRuleComposition.inputPort.submitHostCommand({
@@ -4139,75 +4148,75 @@
     requestCardEffectMove,
   } = cardRuntime);
   const getDiscardCornerRewardMultiplierForRoot = getDiscardCornerRewardMultiplier;
-  getDiscardCornerRewardMultiplier = (...args) => getDiscardCornerRewardMultiplierForRoot(browserRuleState, ...args);
+  getDiscardCornerRewardMultiplier = bindBrowserDomainCommand("card_runtime", "getDiscardCornerRewardMultiplier");
   const getCardCornerQuickActionForCardForRoot = getCardCornerQuickActionForCard;
-  getCardCornerQuickActionForCard = (...args) => getCardCornerQuickActionForCardForRoot(browserRuleState, ...args);
+  getCardCornerQuickActionForCard = bindBrowserDomainCommand("card_runtime", "getCardCornerQuickActionForCard");
   const shouldQueueCardCornerMoveQuickActionForRoot = shouldQueueCardCornerMoveQuickAction;
-  shouldQueueCardCornerMoveQuickAction = (...args) => shouldQueueCardCornerMoveQuickActionForRoot(browserRuleState, ...args);
+  shouldQueueCardCornerMoveQuickAction = bindBrowserDomainCommand("card_runtime", "shouldQueueCardCornerMoveQuickAction");
   const canStartCardCornerFreeMoveForRoot = canStartCardCornerFreeMove;
-  canStartCardCornerFreeMove = (...args) => canStartCardCornerFreeMoveForRoot(browserRuleState, ...args);
+  canStartCardCornerFreeMove = bindBrowserDomainCommand("card_runtime", "canStartCardCornerFreeMove");
   const beginCardCornerFreeMoveForRoot = beginCardCornerFreeMove;
-  beginCardCornerFreeMove = (...args) => beginCardCornerFreeMoveForRoot(browserRuleState, ...args);
+  beginCardCornerFreeMove = bindBrowserDomainCommand("card_runtime", "beginCardCornerFreeMove");
   const startCardCornerMoveEffectFlowForRoot = startCardCornerMoveEffectFlow;
-  startCardCornerMoveEffectFlow = (...args) => startCardCornerMoveEffectFlowForRoot(browserRuleState, ...args);
+  startCardCornerMoveEffectFlow = bindBrowserDomainCommand("card_runtime", "startCardCornerMoveEffectFlow");
   const hasFutureSpanEligibleHandCardForRoot = hasFutureSpanEligibleHandCard;
-  hasFutureSpanEligibleHandCard = (...args) => hasFutureSpanEligibleHandCardForRoot(browserRuleState, ...args);
+  hasFutureSpanEligibleHandCard = bindBrowserDomainCommand("card_runtime", "hasFutureSpanEligibleHandCard");
   const hasPlayableFutureSpanCardForRoot = hasPlayableFutureSpanCard;
-  hasPlayableFutureSpanCard = (...args) => hasPlayableFutureSpanCardForRoot(browserRuleState, ...args);
+  hasPlayableFutureSpanCard = bindBrowserDomainCommand("card_runtime", "hasPlayableFutureSpanCard");
   const getStandardPlayCardActionBlockReasonForRoot = getStandardPlayCardActionBlockReason;
-  getStandardPlayCardActionBlockReason = (...args) => getStandardPlayCardActionBlockReasonForRoot(browserRuleState, ...args);
+  getStandardPlayCardActionBlockReason = bindBrowserDomainCommand("card_runtime", "getStandardPlayCardActionBlockReason");
   const getPlayCardSelectionBlockReasonForRoot = getPlayCardSelectionBlockReason;
-  getPlayCardSelectionBlockReason = (...args) => getPlayCardSelectionBlockReasonForRoot(browserRuleState, ...args);
+  getPlayCardSelectionBlockReason = bindBrowserDomainCommand("card_runtime", "getPlayCardSelectionBlockReason");
   const getHandCardPlayActionForCardForRoot = getHandCardPlayActionForCard;
-  getHandCardPlayActionForCard = (...args) => getHandCardPlayActionForCardForRoot(browserRuleState, ...args);
+  getHandCardPlayActionForCard = bindBrowserDomainCommand("card_runtime", "getHandCardPlayActionForCard");
   const beginCardSelectionForRoot = beginCardSelection;
-  beginCardSelection = (...args) => beginCardSelectionForRoot(browserRuleState, ...args);
+  beginCardSelection = bindBrowserDomainCommand("card_runtime", "beginCardSelection");
   const cancelCardSelectionForRoot = cancelCardSelection;
-  cancelCardSelection = (...args) => cancelCardSelectionForRoot(browserRuleState, ...args);
+  cancelCardSelection = bindBrowserDomainCommand("card_runtime", "cancelCardSelection");
   const finalizeCardSelectionResultForRoot = finalizeCardSelectionResult;
-  finalizeCardSelectionResult = (...args) => finalizeCardSelectionResultForRoot(browserRuleState, ...args);
+  finalizeCardSelectionResult = bindBrowserDomainCommand("card_runtime", "finalizeCardSelectionResult");
   const drawBasicCardToPlayerForRoot = drawBasicCardToPlayer;
-  drawBasicCardToPlayer = (...args) => drawBasicCardToPlayerForRoot(browserRuleState, ...args);
+  drawBasicCardToPlayer = bindBrowserDomainCommand("card_runtime", "drawBasicCardToPlayer");
   const blindDrawCardForPlayerForRoot = blindDrawCardForPlayer;
-  blindDrawCardForPlayer = (...args) => blindDrawCardForPlayerForRoot(browserRuleState, ...args);
+  blindDrawCardForPlayer = bindBrowserDomainCommand("card_runtime", "blindDrawCardForPlayer");
   const drawCardForCurrentPlayerForRoot = drawCardForCurrentPlayer;
-  drawCardForCurrentPlayer = (...args) => drawCardForCurrentPlayerForRoot(browserRuleState, ...args);
+  drawCardForCurrentPlayer = bindBrowserDomainCommand("card_runtime", "drawCardForCurrentPlayer");
   const pickPublicCardForCurrentPlayerForRoot = pickPublicCardForCurrentPlayer;
-  pickPublicCardForCurrentPlayer = (...args) => pickPublicCardForCurrentPlayerForRoot(browserRuleState, ...args);
+  pickPublicCardForCurrentPlayer = bindBrowserDomainCommand("card_runtime", "pickPublicCardForCurrentPlayer");
   const canBlindDrawForRoot = canBlindDraw;
-  canBlindDraw = (...args) => canBlindDrawForRoot(browserRuleState, ...args);
+  canBlindDraw = bindBrowserDomainCommand("card_runtime", "canBlindDraw");
   const updatePublicCardControlsForRoot = updatePublicCardControls;
-  updatePublicCardControls = (...args) => updatePublicCardControlsForRoot(browserRuleState, ...args);
+  updatePublicCardControls = bindBrowserDomainCommand("card_runtime", "updatePublicCardControls");
   const ensurePublicCardsFilledRespectingDelayedRefillsForRoot = ensurePublicCardsFilledRespectingDelayedRefills;
-  ensurePublicCardsFilledRespectingDelayedRefills = (...args) => ensurePublicCardsFilledRespectingDelayedRefillsForRoot(browserRuleState, ...args);
+  ensurePublicCardsFilledRespectingDelayedRefills = bindBrowserDomainCommand("card_runtime", "ensurePublicCardsFilledRespectingDelayedRefills");
   const handlePublicCardClickForRoot = handlePublicCardClick;
-  handlePublicCardClick = (...args) => handlePublicCardClickForRoot(browserRuleState, ...args);
+  handlePublicCardClick = bindBrowserDomainCommand("card_runtime", "handlePublicCardClick");
   const handlePublicBlindDrawClickForRoot = handlePublicBlindDrawClick;
-  handlePublicBlindDrawClick = (...args) => handlePublicBlindDrawClickForRoot(browserRuleState, ...args);
+  handlePublicBlindDrawClick = bindBrowserDomainCommand("card_runtime", "handlePublicBlindDrawClick");
   const getPassReserveSelectionCardsForRoot = getPassReserveSelectionCards;
-  getPassReserveSelectionCards = (...args) => getPassReserveSelectionCardsForRoot(browserRuleState, ...args);
+  getPassReserveSelectionCards = bindBrowserDomainCommand("card_runtime", "getPassReserveSelectionCards");
   const renderPassReserveSelectionForRoot = renderPassReserveSelection;
-  renderPassReserveSelection = (...args) => renderPassReserveSelectionForRoot(browserRuleState, ...args);
+  renderPassReserveSelection = bindBrowserDomainCommand("card_runtime", "renderPassReserveSelection");
   const syncPassReserveSelectionChromeForRoot = syncPassReserveSelectionChrome;
-  syncPassReserveSelectionChrome = (...args) => syncPassReserveSelectionChromeForRoot(browserRuleState, ...args);
+  syncPassReserveSelectionChrome = bindBrowserDomainCommand("card_runtime", "syncPassReserveSelectionChrome");
   const beginPassReserveSelectionForRoot = beginPassReserveSelection;
-  beginPassReserveSelection = (...args) => beginPassReserveSelectionForRoot(browserRuleState, ...args);
+  beginPassReserveSelection = bindBrowserDomainCommand("card_runtime", "beginPassReserveSelection");
   const dismissPassReserveSelectionOverlayForRoot = dismissPassReserveSelectionOverlay;
-  dismissPassReserveSelectionOverlay = (...args) => dismissPassReserveSelectionOverlayForRoot(browserRuleState, ...args);
+  dismissPassReserveSelectionOverlay = bindBrowserDomainCommand("card_runtime", "dismissPassReserveSelectionOverlay");
   const selectPassReserveCardForRoot = selectPassReserveCard;
-  selectPassReserveCard = (...args) => selectPassReserveCardForRoot(browserRuleState, ...args);
+  selectPassReserveCard = bindBrowserDomainCommand("card_runtime", "selectPassReserveCard");
   const confirmPassReserveSelectionForRoot = confirmPassReserveSelection;
-  confirmPassReserveSelection = (...args) => confirmPassReserveSelectionForRoot(browserRuleState, ...args);
+  confirmPassReserveSelection = bindBrowserDomainCommand("card_runtime", "confirmPassReserveSelection");
   const selectDefaultRocketFromCandidatesForRoot = selectDefaultRocketFromCandidates;
-  selectDefaultRocketFromCandidates = (...args) => selectDefaultRocketFromCandidatesForRoot(browserRuleState, ...args);
+  selectDefaultRocketFromCandidates = bindBrowserDomainCommand("card_runtime", "selectDefaultRocketFromCandidates");
   const executeCardEffectMoveForRoot = executeCardEffectMove;
-  executeCardEffectMove = (...args) => executeCardEffectMoveForRoot(browserRuleState, ...args);
+  executeCardEffectMove = bindBrowserDomainCommand("card_runtime", "executeCardEffectMove");
   const finishCurrentCardMoveEffectEarlyForRoot = finishCurrentCardMoveEffectEarly;
-  finishCurrentCardMoveEffectEarly = (...args) => finishCurrentCardMoveEffectEarlyForRoot(browserRuleState, ...args);
+  finishCurrentCardMoveEffectEarly = bindBrowserDomainCommand("card_runtime", "finishCurrentCardMoveEffectEarly");
   const requestCardEffectMoveForRoot = requestCardEffectMove;
-  requestCardEffectMove = (...args) => requestCardEffectMoveForRoot(browserRuleState, ...args);
+  requestCardEffectMove = bindBrowserDomainCommand("card_runtime", "requestCardEffectMove");
   const getMovableTokensForCardMoveEffectForRoot = getMovableTokensForCardMoveEffect;
-  getMovableTokensForCardMoveEffect = (...args) => getMovableTokensForCardMoveEffectForRoot(browserRuleState, ...args);
+  getMovableTokensForCardMoveEffect = bindBrowserDomainCommand("card_runtime", "getMovableTokensForCardMoveEffect");
   const cardTriggerRuntime = cardTriggerRuntimeModule.createCardTriggerRuntime({
     decisionSessions,
     HISTORY_SOURCE_MAIN,
@@ -4364,77 +4373,77 @@
     executeFreeMoveForCardTrigger,
   } = cardTriggerRuntime);
   const buildCardTaskContextForRoot = buildCardTaskContext;
-  buildCardTaskContext = (...args) => buildCardTaskContextForRoot(browserRuleState, ...args);
+  buildCardTaskContext = bindBrowserDomainCommand("card_trigger", "buildCardTaskContext");
   const buildPlayerDataTotalsForRoot = buildPlayerDataTotals;
-  buildPlayerDataTotals = (...args) => buildPlayerDataTotalsForRoot(browserRuleState, ...args);
+  buildPlayerDataTotals = bindBrowserDomainCommand("card_trigger", "buildPlayerDataTotals");
   const buildProbeLocationIndexForRoot = buildProbeLocationIndex;
-  buildProbeLocationIndex = (...args) => buildProbeLocationIndexForRoot(browserRuleState, ...args);
+  buildProbeLocationIndex = bindBrowserDomainCommand("card_trigger", "buildProbeLocationIndex");
   const getReadyCardTasksForRoot = getReadyCardTasks;
-  getReadyCardTasks = (...args) => getReadyCardTasksForRoot(browserRuleState, ...args);
+  getReadyCardTasks = bindBrowserDomainCommand("card_trigger", "getReadyCardTasks");
   const refreshCardTaskStateForRoot = refreshCardTaskState;
-  refreshCardTaskState = (...args) => refreshCardTaskStateForRoot(browserRuleState, ...args);
+  refreshCardTaskState = bindBrowserDomainCommand("card_trigger", "refreshCardTaskState");
   const applyType1TriggerMatchesForRoot = applyType1TriggerMatches;
-  applyType1TriggerMatches = (...args) => applyType1TriggerMatchesForRoot(browserRuleState, ...args);
+  applyType1TriggerMatches = bindBrowserDomainCommand("card_trigger", "applyType1TriggerMatches");
   const continueAfterCardTriggerResolutionForRoot = continueAfterCardTriggerResolution;
-  continueAfterCardTriggerResolution = (...args) => continueAfterCardTriggerResolutionForRoot(browserRuleState, ...args);
+  continueAfterCardTriggerResolution = bindBrowserDomainCommand("card_trigger", "continueAfterCardTriggerResolution");
   const cancelCardTriggerChoiceForRoot = cancelCardTriggerChoice;
-  cancelCardTriggerChoice = (...args) => cancelCardTriggerChoiceForRoot(browserRuleState, ...args);
+  cancelCardTriggerChoice = bindBrowserDomainCommand("card_trigger", "cancelCardTriggerChoice");
   const buildAlienTraceEventForRoot = buildAlienTraceEvent;
-  buildAlienTraceEvent = (...args) => buildAlienTraceEventForRoot(browserRuleState, ...args);
+  buildAlienTraceEvent = bindBrowserDomainCommand("card_trigger", "buildAlienTraceEvent");
   const getActiveCardEventBonusesForRoot = getActiveCardEventBonuses;
-  getActiveCardEventBonuses = (...args) => getActiveCardEventBonusesForRoot(browserRuleState, ...args);
+  getActiveCardEventBonuses = bindBrowserDomainCommand("card_trigger", "getActiveCardEventBonuses");
   const applyCardEventBonusRewardForRoot = applyCardEventBonusReward;
-  applyCardEventBonusReward = (...args) => applyCardEventBonusRewardForRoot(browserRuleState, ...args);
+  applyCardEventBonusReward = bindBrowserDomainCommand("card_trigger", "applyCardEventBonusReward");
   const applyPublicityMoveFollowupBonusForRoot = applyPublicityMoveFollowupBonus;
-  applyPublicityMoveFollowupBonus = (...args) => applyPublicityMoveFollowupBonusForRoot(browserRuleState, ...args);
+  applyPublicityMoveFollowupBonus = bindBrowserDomainCommand("card_trigger", "applyPublicityMoveFollowupBonus");
   const processCardEventBonusesForRoot = processCardEventBonuses;
-  processCardEventBonuses = (...args) => processCardEventBonusesForRoot(browserRuleState, ...args);
+  processCardEventBonuses = bindBrowserDomainCommand("card_trigger", "processCardEventBonuses");
   const processChongTransportArrivalEventsForRoot = processChongTransportArrivalEvents;
-  processChongTransportArrivalEvents = (...args) => processChongTransportArrivalEventsForRoot(browserRuleState, ...args);
+  processChongTransportArrivalEvents = bindBrowserDomainCommand("card_trigger", "processChongTransportArrivalEvents");
   const buildChongPositionArrivalEventsForRoot = buildChongPositionArrivalEvents;
-  buildChongPositionArrivalEvents = (...args) => buildChongPositionArrivalEventsForRoot(browserRuleState, ...args);
+  buildChongPositionArrivalEvents = bindBrowserDomainCommand("card_trigger", "buildChongPositionArrivalEvents");
   const settleCardTasksAfterEffectForRoot = settleCardTasksAfterEffect;
-  settleCardTasksAfterEffect = (...args) => settleCardTasksAfterEffectForRoot(browserRuleState, ...args);
+  settleCardTasksAfterEffect = bindBrowserDomainCommand("card_trigger", "settleCardTasksAfterEffect");
   const getReadyTaskForReservedCardForRoot = getReadyTaskForReservedCard;
-  getReadyTaskForReservedCard = (...args) => getReadyTaskForReservedCardForRoot(browserRuleState, ...args);
+  getReadyTaskForReservedCard = bindBrowserDomainCommand("card_trigger", "getReadyTaskForReservedCard");
   const getReadyChongTaskForReservedCardForRoot = getReadyChongTaskForReservedCard;
-  getReadyChongTaskForReservedCard = (...args) => getReadyChongTaskForReservedCardForRoot(browserRuleState, ...args);
+  getReadyChongTaskForReservedCard = bindBrowserDomainCommand("card_trigger", "getReadyChongTaskForReservedCard");
   const getReadyAmibaTaskForReservedCardForRoot = getReadyAmibaTaskForReservedCard;
-  getReadyAmibaTaskForReservedCard = (...args) => getReadyAmibaTaskForReservedCardForRoot(browserRuleState, ...args);
+  getReadyAmibaTaskForReservedCard = bindBrowserDomainCommand("card_trigger", "getReadyAmibaTaskForReservedCard");
   const getReadyRunezuTaskForReservedCardForRoot = getReadyRunezuTaskForReservedCard;
-  getReadyRunezuTaskForReservedCard = (...args) => getReadyRunezuTaskForReservedCardForRoot(browserRuleState, ...args);
+  getReadyRunezuTaskForReservedCard = bindBrowserDomainCommand("card_trigger", "getReadyRunezuTaskForReservedCard");
   const removeReservedCardToDiscardForRoot = removeReservedCardToDiscard;
-  removeReservedCardToDiscard = (...args) => removeReservedCardToDiscardForRoot(browserRuleState, ...args);
+  removeReservedCardToDiscard = bindBrowserDomainCommand("card_trigger", "removeReservedCardToDiscard");
   const discardReservedCardIfFinishedForRoot = discardReservedCardIfFinished;
-  discardReservedCardIfFinished = (...args) => discardReservedCardIfFinishedForRoot(browserRuleState, ...args);
+  discardReservedCardIfFinished = bindBrowserDomainCommand("card_trigger", "discardReservedCardIfFinished");
   const createCardTriggerProgressSnapshotForRoot = createCardTriggerProgressSnapshot;
-  createCardTriggerProgressSnapshot = (...args) => createCardTriggerProgressSnapshotForRoot(browserRuleState, ...args);
+  createCardTriggerProgressSnapshot = bindBrowserDomainCommand("card_trigger", "createCardTriggerProgressSnapshot");
   const createCardTriggerProgressCommandsForRoot = createCardTriggerProgressCommands;
-  createCardTriggerProgressCommands = (...args) => createCardTriggerProgressCommandsForRoot(browserRuleState, ...args);
+  createCardTriggerProgressCommands = bindBrowserDomainCommand("card_trigger", "createCardTriggerProgressCommands");
   const consumeCardTriggerWithSnapshotForRoot = consumeCardTriggerWithSnapshot;
-  consumeCardTriggerWithSnapshot = (...args) => consumeCardTriggerWithSnapshotForRoot(browserRuleState, ...args);
+  consumeCardTriggerWithSnapshot = bindBrowserDomainCommand("card_trigger", "consumeCardTriggerWithSnapshot");
   const confirmCardTriggerProgressForRoot = confirmCardTriggerProgress;
-  confirmCardTriggerProgress = (...args) => confirmCardTriggerProgressForRoot(browserRuleState, ...args);
+  confirmCardTriggerProgress = bindBrowserDomainCommand("card_trigger", "confirmCardTriggerProgress");
   const prepareCardTriggerRewardEffectsForRoot = prepareCardTriggerRewardEffects;
-  prepareCardTriggerRewardEffects = (...args) => prepareCardTriggerRewardEffectsForRoot(browserRuleState, ...args);
+  prepareCardTriggerRewardEffects = bindBrowserDomainCommand("card_trigger", "prepareCardTriggerRewardEffects");
   const queueCardTriggerRewardEffectsForRoot = queueCardTriggerRewardEffects;
-  queueCardTriggerRewardEffects = (...args) => queueCardTriggerRewardEffectsForRoot(browserRuleState, ...args);
+  queueCardTriggerRewardEffects = bindBrowserDomainCommand("card_trigger", "queueCardTriggerRewardEffects");
   const openCardTaskCompletionPickerForRoot = openCardTaskCompletionPicker;
-  openCardTaskCompletionPicker = (...args) => openCardTaskCompletionPickerForRoot(browserRuleState, ...args);
+  openCardTaskCompletionPicker = bindBrowserDomainCommand("card_trigger", "openCardTaskCompletionPicker");
   const confirmCardTaskCompletionForRoot = confirmCardTaskCompletion;
-  confirmCardTaskCompletion = (...args) => confirmCardTaskCompletionForRoot(browserRuleState, ...args);
+  confirmCardTaskCompletion = bindBrowserDomainCommand("card_trigger", "confirmCardTaskCompletion");
   const openCardTriggerPickerForRoot = openCardTriggerPicker;
-  openCardTriggerPicker = (...args) => openCardTriggerPickerForRoot(browserRuleState, ...args);
+  openCardTriggerPicker = bindBrowserDomainCommand("card_trigger", "openCardTriggerPicker");
   const applyCardTriggerRewardForRoot = applyCardTriggerReward;
-  applyCardTriggerReward = (...args) => applyCardTriggerRewardForRoot(browserRuleState, ...args);
+  applyCardTriggerReward = bindBrowserDomainCommand("card_trigger", "applyCardTriggerReward");
   const beginCardTriggerFreeMoveForRoot = beginCardTriggerFreeMove;
-  beginCardTriggerFreeMove = (...args) => beginCardTriggerFreeMoveForRoot(browserRuleState, ...args);
+  beginCardTriggerFreeMove = bindBrowserDomainCommand("card_trigger", "beginCardTriggerFreeMove");
   const applyCardTriggerMatchForRoot = applyCardTriggerMatch;
-  applyCardTriggerMatch = (...args) => applyCardTriggerMatchForRoot(browserRuleState, ...args);
+  applyCardTriggerMatch = bindBrowserDomainCommand("card_trigger", "applyCardTriggerMatch");
   const handleCardTriggerChoiceForRoot = handleCardTriggerChoice;
-  handleCardTriggerChoice = (...args) => handleCardTriggerChoiceForRoot(browserRuleState, ...args);
+  handleCardTriggerChoice = bindBrowserDomainCommand("card_trigger", "handleCardTriggerChoice");
   const executeFreeMoveForCardTriggerForRoot = executeFreeMoveForCardTrigger;
-  executeFreeMoveForCardTrigger = (...args) => executeFreeMoveForCardTriggerForRoot(browserRuleState, ...args);
+  executeFreeMoveForCardTrigger = bindBrowserDomainCommand("card_trigger", "executeFreeMoveForCardTrigger");
 
   function getActionLogActionLabel(actionType, label) {
     return label || ACTION_LOG_DEFAULT_LABELS[actionType] || actionType || "本回合行动";
