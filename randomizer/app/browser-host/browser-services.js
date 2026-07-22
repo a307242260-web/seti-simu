@@ -174,6 +174,29 @@
     return Object.freeze({ capture, validateEnvelope, restore, save, load, clear, download, dispatchDeveloperCommand, createPublicFacade });
   }
 
+  function createBrowserDownloadPort(options = {}) {
+    const { window, document, Blob } = options;
+    return Object.freeze({
+      save(request = {}) {
+        const urlApi = window?.URL || window?.webkitURL;
+        if (typeof Blob !== "function" || !urlApi?.createObjectURL || !document?.body) {
+          return fail("BROWSER_DOWNLOAD_UNAVAILABLE", "当前浏览器不支持下载");
+        }
+        const blob = new Blob([request.content], { type: request.mimeType });
+        const url = urlApi.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = request.filename;
+        link.hidden = true;
+        document.body.append(link);
+        link.click();
+        link.remove();
+        window.setTimeout(() => urlApi.revokeObjectURL(url), 0);
+        return { ok: true };
+      },
+    });
+  }
+
   function subscribeRefresh(options = {}) {
     const refresh = requireFunction(options, "refresh", "Browser refresh subscription");
     const unsubscribers = [];
@@ -185,5 +208,11 @@
     return Object.freeze({ dispose() { for (const unsubscribe of unsubscribers.splice(0)) unsubscribe(); } });
   }
 
-  return Object.freeze({ SCHEMA_VERSION, VIEW_SCHEMA_VERSION, createBrowserServices, subscribeRefresh });
+  return Object.freeze({
+    SCHEMA_VERSION,
+    VIEW_SCHEMA_VERSION,
+    createBrowserServices,
+    createBrowserDownloadPort,
+    subscribeRefresh,
+  });
 });

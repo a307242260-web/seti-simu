@@ -1616,6 +1616,11 @@
       viewStateStore: residentViewStateStore,
       storage: gameRecoveryModule.getPersistentGameStorage(window),
       storageKey: `${PERSISTENT_GAME_STORAGE_KEY}:browser-services`,
+      downloadPort: browserHostModule.browserServices.createBrowserDownloadPort({
+        window,
+        document,
+        Blob,
+      }),
     })
     : null;
 
@@ -5632,21 +5637,11 @@
   }
 
   function createActionLogMarkdownDownload(markdown, filename) {
-    const urlApi = window.URL || window.webkitURL;
-    if (typeof Blob !== "function" || !urlApi?.createObjectURL || !document.body) {
-      return { ok: false, message: "当前浏览器不支持下载行动日志" };
-    }
-    const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
-    const url = urlApi.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    link.hidden = true;
-    document.body.append(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => urlApi.revokeObjectURL(url), 0);
-    return { ok: true };
+    return residentBrowserServices.download({
+      content: markdown,
+      filename,
+      mimeType: "text/markdown;charset=utf-8",
+    });
   }
 
   function downloadActionLogMarkdown(options = {}) {

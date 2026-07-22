@@ -157,4 +157,25 @@ function createHarness(options = {}) {
   subscription.dispose();
 })();
 
+(function testBrowserDownloadPortOwnsDomLifecycle() {
+  const calls = [];
+  const link = {
+    click: () => calls.push("click"),
+    remove: () => calls.push("remove"),
+  };
+  const port = servicesApi.createBrowserDownloadPort({
+    window: {
+      URL: {
+        createObjectURL: () => "blob:test",
+        revokeObjectURL: (url) => calls.push(`revoke:${url}`),
+      },
+      setTimeout: (callback) => callback(),
+    },
+    document: { body: { append: () => calls.push("append") }, createElement: () => link },
+    Blob: class TestBlob {},
+  });
+  assert.equal(port.save({ filename: "log.md", content: "log", mimeType: "text/markdown" }).ok, true);
+  assert.deepEqual(calls, ["append", "click", "remove", "revoke:blob:test"]);
+})();
+
 console.log("Browser services composition lifecycle tests passed");
