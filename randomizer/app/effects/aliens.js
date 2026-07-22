@@ -216,8 +216,8 @@
       }, [renderPublicCards, renderPlayerHand, renderPlayerStats]);
     }
 
-    function executeYichangdianAlienTraceEffect(effect) {
-      return openAlienTraceRewardEffect({
+    function executeYichangdianAlienTraceEffect(workingRoot, effect) {
+      return openAlienTraceRewardEffect(workingRoot, {
         ...effect,
         options: { ...(effect.options || {}) },
       });
