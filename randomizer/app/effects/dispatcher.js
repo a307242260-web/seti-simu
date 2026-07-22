@@ -636,7 +636,7 @@
           return { ok: true, message: ruleRocketState(workingRoot).statusNote };
         case "research_tech_take": {
           beginEffectHistoryStep(effect.label, { effectType: "research_tech_take" });
-          const result = abilities.executeAbility("researchTechTake", createActionContext(), effect.options || {});
+          const result = abilities.executeAbility("researchTechTake", createActionContext(workingRoot), effect.options || {});
           if (!result.ok) {
             endEffectHistoryStep();
             ruleRocketState(workingRoot).statusNote = result.message;
@@ -665,7 +665,7 @@
           return result;
         }
         case "research_tech_rotate": {
-          const result = abilities.executeAbility("researchTechRotate", createActionContext());
+          const result = abilities.executeAbility("researchTechRotate", createActionContext(workingRoot));
           if (!result.ok) {
             ruleRocketState(workingRoot).statusNote = result.message;
             renderStateReadout();
@@ -690,7 +690,7 @@
           if (bonusEffect?.cardSelection) {
             return openTechBonusPickCardEffect(workingRoot, effect);
           }
-          const result = abilities.executeAbility("researchTechBonus", createActionContext(), {
+          const result = abilities.executeAbility("researchTechBonus", createActionContext(workingRoot), {
             bonusId,
             firstTake: Boolean(effect.options?.firstTake ?? selection?.firstTake),
           });
@@ -771,7 +771,7 @@
           return executeIndustryPiratesRaidLaunchEffect(effect);
         case "fangzhou_launch": {
           beginEffectHistoryStep(effect.label);
-          const result = abilities.executeAbility("launchProbe", createActionContext(), {
+          const result = abilities.executeAbility("launchProbe", createActionContext(workingRoot), {
             skipCost: true,
             source: "fangzhou",
             ignoreRocketLimit: true,
@@ -830,7 +830,7 @@
           return openFundamentalismRoundStartIncomeEffect(workingRoot, effect);
         case scanEffects.EFFECT_TYPES.PAY_SCAN_COST: {
           beginEffectHistoryStep(effect.label);
-          const result = abilities.executeAbility("payScanCost", createActionContext(), {
+          const result = abilities.executeAbility("payScanCost", createActionContext(workingRoot), {
             cost: effect.options?.cost || scanEffects.SCAN_COST,
           });
           if (!result.ok) {

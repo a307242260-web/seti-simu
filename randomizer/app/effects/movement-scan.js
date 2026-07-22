@@ -617,7 +617,7 @@
 
     function executeCardLandTarget(workingRoot, effect, target, contextInfo = {}) {
       beginEffectHistoryStep(effect.label);
-      const result = abilities.executeAbility("landProbe", createActionContext(), {
+      const result = abilities.executeAbility("landProbe", createActionContext(workingRoot), {
         ...(effect.options || {}),
         target,
         source: "card",
@@ -679,7 +679,7 @@
     }
 
     function executeCardLandEffect(workingRoot, effect) {
-      const context = createActionContext();
+      const context = createActionContext(workingRoot);
       const landOptions = abilities.planet.getLandOptions(context, effect.options || {});
       const placement = getCurrentPlanetActionPlacement(context);
       const preferredRocketId = placement?.ok ? placement.rocket?.id : null;
@@ -1002,7 +1002,7 @@
 
     function executeNormalCardOrbitEffect(workingRoot, effect, choice = null) {
       beginEffectHistoryStep(effect.label);
-      const result = abilities.executeAbility("orbitProbe", createActionContext(), {
+      const result = abilities.executeAbility("orbitProbe", createActionContext(workingRoot), {
         ...(effect.options || {}),
         rocketId: choice?.rocketId,
         source: "card",
@@ -1068,7 +1068,7 @@
     }
 
     function executeCardOrbitEffect(workingRoot, effect) {
-      const context = createActionContext();
+      const context = createActionContext(workingRoot);
       const normal = canExecuteNormalCardOrbit(workingRoot, effect, context);
       const preferredRocketId = normal?.defaultRocketId || null;
       const pluto = getAvailablePlutoEffectAction(workingRoot, "orbit", effect, { preferredRocketId });

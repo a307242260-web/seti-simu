@@ -528,7 +528,7 @@
     }
 
     function getChongLandOptions(workingRoot, effect) {
-      const baseOptions = abilities.planet.getLandOptions(createActionContext(), {
+      const baseOptions = abilities.planet.getLandOptions(createActionContext(workingRoot), {
         skipCost: true,
         allowSatelliteWithoutTech: Boolean(effect.options?.allowSatellite),
       });
@@ -538,7 +538,7 @@
     }
 
     function getChongOrbitOrLandOptions(workingRoot, effect) {
-      const context = createActionContext();
+      const context = createActionContext(workingRoot);
       const orbitOptions = abilities.planet.getOrbitOptions(context, { skipCost: true });
       const landOptions = abilities.planet.getLandOptions(context, {
         skipCost: true,
@@ -657,14 +657,14 @@
       beginEffectHistoryStep(effect.label);
       let result = null;
       if (effect.type === chong.EFFECT_TYPES.CHONG_ORBIT_OR_LAND_FOR_PICKUP && options.actionKind === "orbit") {
-        result = abilities.executeAbility("orbitProbe", createActionContext(), {
+        result = abilities.executeAbility("orbitProbe", createActionContext(workingRoot), {
           skipCost: true,
           rocketId: options.rocketId,
           source: "card",
           historyLabel: effect.label,
         });
       } else {
-        result = abilities.executeAbility("landProbe", createActionContext(), {
+        result = abilities.executeAbility("landProbe", createActionContext(workingRoot), {
           ...getChongLandProbeOptions(workingRoot, effect, landTarget, options.rocketId),
         });
       }
@@ -1066,7 +1066,7 @@
 
     function executeAomomoLandEffect(workingRoot, effect, options = {}) {
       if (effect.type === "aomomo_land_only") {
-        const landOptions = abilities.planet?.getLandOptions?.(createActionContext(), { skipCost: true });
+        const landOptions = abilities.planet?.getLandOptions?.(createActionContext(workingRoot), { skipCost: true });
         if (!landOptions?.ok) {
           return finishAutomaticRewardEffect(workingRoot, effect, {
             ok: true,

@@ -851,7 +851,7 @@
     function executeLaunchRewardEffect(workingRoot, effect) {
       const options = effect.options || {};
       beginEffectHistoryStep(effect.label);
-      const result = abilities.executeAbility("launchProbe", createActionContext(), {
+      const result = abilities.executeAbility("launchProbe", createActionContext(workingRoot), {
         skipCost: Boolean(options.skipCost),
         cost: options.cost,
         source: options.source || "reward",
@@ -885,7 +885,7 @@
     function executeHuanyuSuperdrivePassLaunchEffect(workingRoot, effect) {
       const options = effect.options || {};
       beginEffectHistoryStep(effect.label);
-      const result = abilities.executeAbility("launchProbe", createActionContext(), {
+      const result = abilities.executeAbility("launchProbe", createActionContext(workingRoot), {
         skipCost: options.skipCost !== false,
         ignoreRocketLimit: options.ignoreRocketLimit !== false,
         source: "industry_huanyu_superdrive",
@@ -1617,7 +1617,7 @@
           message: `${effect.label}：条件未满足，已跳过`,
         });
       }
-      const result = abilities.executeAbility("researchTechPrepare", createActionContext(), {
+      const result = abilities.executeAbility("researchTechPrepare", createActionContext(workingRoot), {
         techTypes: effect.options?.techTypes || effect.options?.techType,
         skipCost: Boolean(effect.options?.skipCost),
         source: "card",
