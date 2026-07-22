@@ -197,13 +197,11 @@
       get runezuFaceSymbolPlacement() { return decisionSessions.peek("runezu_face_symbol_placement"); },
       set runezuFaceSymbolPlacement(session) { replaceDecisionSession("runezu_face_symbol_placement", session); },
     };
-    const getOpportunityQueue = (kind) => {
-      let session = decisionSessions.peek(kind);
-      if (!session) {
-        decisionSessions.open(kind, { items: [] });
-        session = decisionSessions.peek(kind);
-      }
-      return session.items;
+    const getOpportunityContinuationQueue = (workingRoot, field) => {
+      requireWorkingRoot(workingRoot);
+      if (!workingRoot.match || typeof workingRoot.match !== "object") workingRoot.match = {};
+      if (!Array.isArray(workingRoot.match[field])) workingRoot.match[field] = [];
+      return workingRoot.match[field];
     };
     const alienOpportunitySessions = {
       get jiuzheCardPlay() { return decisionSessions.peek("jiuzhe_card_play"); },
@@ -212,16 +210,8 @@
       set jiuzheOpportunityOpen(open) {
         replaceDecisionSession("jiuzhe_opportunity_open", open ? { open: true } : null);
       },
-      get jiuzheOpportunityQueue() { return getOpportunityQueue("jiuzhe_opportunity_queue"); },
-      set jiuzheOpportunityQueue(items) {
-        replaceDecisionSession("jiuzhe_opportunity_queue", items?.length ? { items } : null);
-      },
       get banrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
       set banrenmaOpportunity(session) { replaceDecisionSession("banrenma_opportunity", session); },
-      get banrenmaOpportunityQueue() { return getOpportunityQueue("banrenma_opportunity_queue"); },
-      set banrenmaOpportunityQueue(items) {
-        replaceDecisionSession("banrenma_opportunity_queue", items?.length ? { items } : null);
-      },
     };
 
     function addFangzhouUnlockedCardToHand(player, handCard) {
@@ -3113,15 +3103,16 @@ function openChongTraceTaskCompletionPicker(card) {
     return openCardTaskCompletionPicker(card);
   }
 
-function enqueueJiuzheOpportunity(player, opportunity) {
+function enqueueJiuzheOpportunity(workingRoot, player, opportunity) {
     if (!player || !opportunity) return;
-    const exists = alienOpportunitySessions.jiuzheOpportunityQueue.some((item) => (
+    const queue = getOpportunityContinuationQueue(workingRoot, "jiuzheOpportunityQueue");
+    const exists = queue.some((item) => (
       item.playerId === player.id
       && item.playerColor === player.color
       && item.reason === opportunity.reason
     ));
     if (exists) return;
-    alienOpportunitySessions.jiuzheOpportunityQueue.push({
+    queue.push({
       playerId: player.id,
       playerColor: player.color,
       reason: opportunity.reason,
@@ -3189,7 +3180,7 @@ function queueJiuzheOpportunitiesForPlayer(workingRoot, player) {
       queueJiuzheThresholdEffectForPlayer(player, opportunity);
       return;
     }
-    enqueueJiuzheOpportunity(player, opportunity);
+    enqueueJiuzheOpportunity(workingRoot, player, opportunity);
   }
 
 function buildJiuzheCardConditionContext(workingRoot) {
@@ -3435,8 +3426,9 @@ function maybeOpenQueuedJiuzheOpportunity(workingRoot) {
     if (isActionEffectFlowActive()) return null;
     if (hasActivePendingSubFlow()) return null;
     if (els.scanTargetOverlay && !els.scanTargetOverlay.hidden) return null;
-    while (alienOpportunitySessions.jiuzheOpportunityQueue.length) {
-      const next = alienOpportunitySessions.jiuzheOpportunityQueue.shift();
+    const queue = getOpportunityContinuationQueue(workingRoot, "jiuzheOpportunityQueue");
+    while (queue.length) {
+      const next = queue.shift();
       const player = resolveWorkingPlayerReference(workingRoot, next);
       if (!player) continue;
       const latest = jiuzhe.getPendingOpportunity(alienGameState, player);
@@ -3444,6 +3436,7 @@ function maybeOpenQueuedJiuzheOpportunity(workingRoot) {
       const openResult = openJiuzheCardDialog(workingRoot, player, latest);
       if (openResult?.ok) return openResult;
     }
+    delete workingRoot.match.jiuzheOpportunityQueue;
     return null;
   }
 
@@ -3560,16 +3553,17 @@ function queueBanrenmaPanelBonusEffectForPlayer(workingRoot, player) {
     return true;
   }
 
-function enqueueBanrenmaOpportunity(player, opportunity) {
+function enqueueBanrenmaOpportunity(workingRoot, player, opportunity) {
     if (!player || !opportunity) return;
     const key = `${opportunity.type}:${opportunity.markId || "any"}:${opportunity.cardId || "any"}`;
-    const exists = alienOpportunitySessions.banrenmaOpportunityQueue.some((item) => (
+    const queue = getOpportunityContinuationQueue(workingRoot, "banrenmaOpportunityQueue");
+    const exists = queue.some((item) => (
       item.playerId === player.id
       && item.playerColor === player.color
       && `${item.type}:${item.markId || "any"}:${item.cardId || "any"}` === key
     ));
     if (exists) return;
-    alienOpportunitySessions.banrenmaOpportunityQueue.push({
+    queue.push({
       playerId: player.id,
       playerColor: player.color,
       type: opportunity.type,
@@ -3588,7 +3582,7 @@ function queueBanrenmaOpportunitiesForPlayer(workingRoot, player) {
     }
     const panelMark = banrenma.getPendingPanelMark(alienGameState, player);
     if (panelMark && banrenma.getAvailableBonusPositions(alienGameState).length) {
-      enqueueBanrenmaOpportunity(player, {
+      enqueueBanrenmaOpportunity(workingRoot, player, {
         type: "panel",
         markId: panelMark.id,
         label: "半人马顶部奖励",
@@ -3722,8 +3716,9 @@ function maybeOpenQueuedBanrenmaOpportunity(workingRoot) {
     if (isActionEffectFlowActive()) return null;
     if (hasActivePendingSubFlow()) return null;
     if (els.scanTargetOverlay && !els.scanTargetOverlay.hidden) return null;
-    while (alienOpportunitySessions.banrenmaOpportunityQueue.length) {
-      const next = alienOpportunitySessions.banrenmaOpportunityQueue.shift();
+    const queue = getOpportunityContinuationQueue(workingRoot, "banrenmaOpportunityQueue");
+    while (queue.length) {
+      const next = queue.shift();
       const player = resolveWorkingPlayerReference(workingRoot, next);
       if (!player) continue;
       if (next.type === "panel") {
@@ -3733,6 +3728,7 @@ function maybeOpenQueuedBanrenmaOpportunity(workingRoot) {
         if (openResult?.ok) return openResult;
       }
     }
+    delete workingRoot.match.banrenmaOpportunityQueue;
     return null;
   }
 

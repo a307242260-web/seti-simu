@@ -434,7 +434,12 @@
   }
 
   function validateBrowserSessionBoundary(state) {
-    const forbiddenContinuation = ["turnEndRevealContinuation", "type1TriggerEvents"]
+    const forbiddenContinuation = [
+      "turnEndRevealContinuation",
+      "type1TriggerEvents",
+      "jiuzheOpportunityQueue",
+      "banrenmaOpportunityQueue",
+    ]
       .find((field) => Object.hasOwn(state?.match || {}, field));
     if (forbiddenContinuation) {
       return {
@@ -5373,12 +5378,14 @@
     decisionSessions.clear(CARD_TASK_COMPLETION_SESSION);
     decisionSessions.clear("jiuzhe_card_play");
     decisionSessions.clear("jiuzhe_opportunity_open");
-    decisionSessions.clear("jiuzhe_opportunity_queue");
     decisionSessions.clear("yichangdian_card_gain");
     decisionSessions.clear("yichangdian_corner_action");
     decisionSessions.clear("banrenma_card_gain");
     decisionSessions.clear("banrenma_opportunity");
-    decisionSessions.clear("banrenma_opportunity_queue");
+    if (workingRoot.match && typeof workingRoot.match === "object") {
+      delete workingRoot.match.jiuzheOpportunityQueue;
+      delete workingRoot.match.banrenmaOpportunityQueue;
+    }
     decisionSessions.clear("chong_card_gain");
     decisionSessions.clear("chong_fossil_choice");
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
