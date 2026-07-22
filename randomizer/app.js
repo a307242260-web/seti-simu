@@ -6360,7 +6360,10 @@
     return claim;
   }
 
-  function startPlanetRewardEffectFlow(actionType, result) {
+  function startPlanetRewardEffectFlow(workingRoot, actionType, result) {
+    if (!workingRoot?.playerState || !workingRoot?.rocketState) {
+      throw new TypeError("startPlanetRewardEffectFlow 缺少 workingRoot");
+    }
     const actionOwner = getActionResultOwnerPlayer(result);
     const rewardEffects = buildPlanetRewardEffectsWithIndustry(actionType, result, { player: actionOwner });
     if (!rewardEffects.length) return false;
@@ -6376,7 +6379,7 @@
       effectIndex: -1,
     });
     uiRuntimeState.effectStepActive = true;
-    recordAbilityCommands(result);
+    recordAbilityCommands(result, actionHistory, workingRoot);
     const runezuClaim = claimRunezuPlanetSymbolForTravelResult(actionType, result, actionOwner);
     if (runezuClaim?.ok) renderRunezuBoardSymbols();
     endEffectHistoryStep();
@@ -6393,7 +6396,7 @@
     decisionState.actionEffectFlow.autoExecuteAomomoRewards = isAomomoRewardFlow;
 
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
-    rocketState.statusNote = `${actionLabel}：请依次点击奖励效果`;
+    workingRoot.rocketState.statusNote = `${actionLabel}：请依次点击奖励效果`;
     activateNextActionEffect();
     return true;
   }

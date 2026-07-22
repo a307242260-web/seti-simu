@@ -612,7 +612,7 @@
         syncPlanetOrbitLandMarkersAfterAction?.();
         renderAlienPanels?.();
         if (actionId === "orbit" || actionId === "land") {
-          startedRewardFlow = startPlanetRewardEffectFlow?.(actionId, result);
+          startedRewardFlow = startPlanetRewardEffectFlow?.(actionWorkingRoot, actionId, result);
           if (startedRewardFlow) {
             settleCardTasksAfterEffect?.({ events: result.events, render: false });
             maybeAutoExecuteAomomoRewardEffects?.();
