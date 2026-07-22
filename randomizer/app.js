@@ -3568,6 +3568,20 @@
     setLogOpen,
     startNewGame,
   });
+  const {
+    applyOptions: applyStartScreenOptions,
+    closeStartScreen,
+    continueGameFromStartScreen,
+    handleAlienOptionChange: handleStartAlienOptionChange,
+    handleIndustryOptionChange: handleStartIndustryOptionChange,
+    setDebugToolsEnabled,
+    startNewGameFromStartScreen,
+    syncActionLogOption: syncStartScreenActionLogOption,
+    syncAlienOptions: syncStartScreenAlienOptions,
+    syncDebugOption: syncStartScreenDebugOption,
+    syncIndustryOptions: syncStartScreenIndustryOptions,
+    updateContinueButton: updateStartScreenContinueButton,
+  } = startScreenController;
   const initialIncomeFlow = actionRuntimeModule.createInitialIncomeFlow({
     abilities,
     setActionEffectFlow,
@@ -3877,54 +3891,6 @@
 
   function getRoundOrderPlayerIds() {
     return turnFlowModule.getRoundOrderPlayerIds(createStateSourceReadoutRoot().turnState);
-  }
-
-  function syncStartScreenDebugOption() {
-    return startScreenController.syncDebugOption();
-  }
-
-  function syncStartScreenActionLogOption() {
-    return startScreenController.syncActionLogOption();
-  }
-
-  function syncStartScreenAlienOptions() {
-    return startScreenController.syncAlienOptions();
-  }
-
-  function handleStartAlienOptionChange(event) {
-    return startScreenController.handleAlienOptionChange(event);
-  }
-
-  function syncStartScreenIndustryOptions() {
-    return startScreenController.syncIndustryOptions();
-  }
-
-  function handleStartIndustryOptionChange(event) {
-    return startScreenController.handleIndustryOptionChange(event);
-  }
-
-  function updateStartScreenContinueButton() {
-    return startScreenController.updateContinueButton();
-  }
-
-  function setDebugToolsEnabled(enabled) {
-    return startScreenController.setDebugToolsEnabled(enabled);
-  }
-
-  function applyStartScreenOptions() {
-    return startScreenController.applyOptions();
-  }
-
-  function closeStartScreen() {
-    return startScreenController.closeStartScreen();
-  }
-
-  function startNewGameFromStartScreen() {
-    return startScreenController.startNewGameFromStartScreen();
-  }
-
-  function continueGameFromStartScreen() {
-    return startScreenController.continueGameFromStartScreen();
   }
 
   function setTurnStatePlayerOrder(playerIds, options = {}) {
