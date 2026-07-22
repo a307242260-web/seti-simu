@@ -181,7 +181,6 @@
         "pendingYichangdianCornerAction",
         "pendingBanrenmaCardGain",
         "pendingBanrenmaOpportunity",
-        "pendingChongTaskCompletion",
         "pendingChongCardGain",
         "pendingChongFossilChoice",
         "pendingAmibaCardGain",

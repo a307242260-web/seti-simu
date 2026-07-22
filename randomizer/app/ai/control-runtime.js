@@ -387,7 +387,6 @@
         state.pendingBanrenmaOpportunity,
         state.pendingChongCardGain,
         state.pendingChongFossilChoice,
-        state.pendingChongTaskCompletion,
         state.pendingAmibaCardGain,
         state.pendingAmibaSymbolChoice,
         state.pendingAmibaTraceRemoval,

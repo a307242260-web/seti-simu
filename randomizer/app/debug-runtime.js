@@ -995,7 +995,6 @@
         decisionSessions?.peek?.("card_task_completion"),
         decisionSessions?.peek?.("jiuzhe_card_play"),
         decisionSessions?.peek?.("banrenma_opportunity"),
-        decisionSessions?.peek?.("chong_task_completion"),
         decisionSessions?.peek?.("strategy_passive_slot"),
         decisionSessions?.peek?.("pirates_raid_placement"),
         uiRuntimeState.industryFreeMoveState,

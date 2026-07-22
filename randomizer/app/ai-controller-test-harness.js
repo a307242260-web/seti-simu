@@ -649,7 +649,6 @@ function createAiControllerHarness(pendingPlayerColor, options = {}) {
     "handleCardTriggerChoice",
     "handleChongCardGainChoice",
     "handleChongFossilChoice",
-    "handleChongTaskCompletionChoice",
     "handleConditionalSectorChoice",
     "handleCompanyActionMarkerClick",
     "handleHandCardCornerQuickAction",

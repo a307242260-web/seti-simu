@@ -163,7 +163,6 @@
       actionEffectFlow: "action_effect_flow",
     }) || {};
     const getCardTaskCompletion = () => decisionSessions.peek("card_task_completion");
-    const getChongTaskCompletion = () => decisionSessions.peek("chong_task_completion");
     const replaceDecisionSession = (kind, session) => {
       if (session == null) return decisionSessions.clear(kind);
       return decisionSessions.open(kind, session);
@@ -2503,10 +2502,6 @@ function closeChongFossilChoiceDialog() {
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
-function closeChongTaskCompletionDialog() {
-    decisionSessions.clear("chong_task_completion");
-    if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
-  }
 
 function openChongFossilChoiceDialog(workingRoot, options = {}) {
     const { alienGameState, cardState, playerState, rocketState } = requireWorkingRoot(workingRoot);
@@ -2682,120 +2677,6 @@ function completeChongTraceTaskWithFossil(workingRoot, pending, fossilId, player
     updateActionButtons();
     renderStateReadout();
     return { ok: true, message: finalMessage };
-  }
-
-function completeChongTransportTask(workingRoot, pending, player) {
-    const { alienGameState, cardState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const card = pending.card;
-    const ready = getReadyChongTaskForReservedCard(card, player) || pending.ready;
-    const delivered = ready?.deliveredTransport;
-    const rocketId = delivered?.rocketId;
-    if (!ready || !Number.isInteger(rocketId)) {
-      closeChongTaskCompletionDialog();
-      return failChongTaskCompletion(workingRoot, "没有已送达的虫族化石任务");
-    }
-
-    const beforePlayerState = pending.beforePlayerState || structuredClone(playerState);
-    const beforeAlienState = pending.beforeAlienState || structuredClone(alienGameState);
-    const beforeRocketState = pending.beforeRocketState || structuredClone(rocketState);
-    const beforeCardState = pending.beforeCardState || structuredClone(cardState);
-    const result = chong.completeTransportedFossil(alienGameState, rocketId, {
-      cardId: card?.id || null,
-      destinationPlanetId: ready?.task?.destinationPlanetId || null,
-      task: ready?.task || null,
-    });
-    if (!result.ok) {
-      closeChongTaskCompletionDialog();
-      return failChongTaskCompletion(workingRoot, result.message);
-    }
-
-    rocketActions.removeRocket(rocketState, rocketId);
-    removeRocketElement(rocketId);
-    card.chongTaskCompleted = true;
-    removeReservedCardToDiscard(player, card);
-    incrementCompletedTaskCount(player);
-
-    beginQuickActionStep("chong-transport-task", `完成虫族任务：${cards.getCardLabel(card)}`);
-    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
-      playerState,
-      beforePlayerState,
-      "恢复虫族任务前玩家状态",
-    ));
-    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
-      alienGameState,
-      beforeAlienState,
-      "恢复虫族任务前外星人状态",
-    ));
-    recordQuickHistoryCommand(historyCommands.createRestoreRocketStateCommand(
-      rocketState,
-      beforeRocketState,
-      "恢复虫族任务前棋子状态",
-    ));
-    recordQuickHistoryCommand(historyCommands.createRestoreObjectCommand(
-      cardState,
-      beforeCardState,
-      "恢复虫族任务前牌区状态",
-    ));
-
-    const messages = [result.message, `完成任务：${cards.getCardLabel(card)}`];
-    let shouldOpenPickCard = Boolean(result.task?.pickCard);
-    let irreversible = null;
-    if (result.task?.fossilRewardRepeat) {
-      const fossilReward = applyChongFossilRewardToPlayer(
-        player,
-        result.fossil.fossilId,
-        `完成 ${cards.getCardLabel(card)}：${result.fossil.fossilId}`,
-        result.task.fossilRewardRepeat,
-      );
-      if (fossilReward.message) messages.push(fossilReward.message);
-      if (fossilReward.reward?.pickCard) shouldOpenPickCard = true;
-      if (fossilReward.irreversible) irreversible = fossilReward.irreversible;
-    }
-    const taskReward = applyChongRewardToPlayer(player, result.task || {}, "虫族搬运任务");
-    if (taskReward.message && !/无奖励$/.test(taskReward.message)) messages.push(taskReward.message);
-    if (taskReward.irreversible) irreversible = taskReward.irreversible;
-    const message = messages.join("；");
-    completeQuickActionStep(message, irreversible ? {
-      irreversibleCode: irreversible.code,
-      irreversibleReason: irreversible.reason,
-    } : {});
-    keepExistingMainActionPendingAfterChongTask();
-    closeChongTaskCompletionDialog();
-
-    let finalMessage = message;
-    if (shouldOpenPickCard) {
-      const pickResult = openChongPickCardFollowUp(workingRoot, player, false, `完成 ${cards.getCardLabel(card)}`);
-      finalMessage = pickResult.ok
-        ? `${message}；请选择公共牌或盲抽`
-        : `${message}；${pickResult.message || "无法打开虫族奖励精选"}`;
-    }
-    rocketState.statusNote = finalMessage;
-    renderAlienPanels(workingRoot);
-    renderRockets();
-    renderPlayerStats();
-    renderPlayerHand();
-    renderReservedCards();
-    updateActionButtons();
-    renderStateReadout();
-    return { ok: true, message: finalMessage };
-  }
-
-function handleChongTaskCompletionChoice(workingRoot, choice) {
-    const { rocketState } = requireWorkingRoot(workingRoot);
-    const pending = getChongTaskCompletion();
-    if (!pending) return failChongTaskCompletion(workingRoot, "没有虫族任务完成流程");
-    const player = resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot);
-    if (!player) {
-      closeChongTaskCompletionDialog();
-      return failChongTaskCompletion(workingRoot, "找不到虫族任务玩家");
-    }
-    if (choice === "cancel") {
-      closeChongTaskCompletionDialog();
-      rocketState.statusNote = "已取消虫族任务完成";
-      renderStateReadout();
-      return { ok: true, message: rocketState.statusNote };
-    }
-    return completeChongTransportTask(workingRoot, pending, player);
   }
 
 function handleChongFossilChoice(workingRoot, choice, pendingContext = null) {
@@ -3254,7 +3135,6 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
       alienOpportunitySessions.banrenmaOpportunity ? { pending: alienOpportunitySessions.banrenmaOpportunity, label: "半人马奖励" } : null,
       chongCardGainDraft.get() ? { pending: chongCardGainDraft.get(), label: "虫族外星人牌" } : null,
       getChongFossilDecisionDraft() ? { pending: getChongFossilDecisionDraft(), label: "虫族化石" } : null,
-      getChongTaskCompletion() ? { pending: getChongTaskCompletion(), label: "虫族任务" } : null,
       amibaCardGainDraft.get() ? { pending: amibaCardGainDraft.get(), label: "阿米巴外星人牌" } : null,
       getAmibaSymbolDecisionDraft() ? { pending: getAmibaSymbolDecisionDraft(), label: "阿米巴 symbol" } : null,
       amibaTraceRemovalDraft.get() ? { pending: amibaTraceRemovalDraft.get(), label: "阿米巴痕迹移除" } : null,
@@ -4271,7 +4151,6 @@ function alignAlienPanelsToPlanets() {
       formatChongFossilRewardSummary,
       restoreMutableObject,
       closeChongFossilChoiceDialog,
-      closeChongTaskCompletionDialog,
       openChongFossilChoiceDialog,
       createChongTransportTokenForFossil,
       openChongPickCardFollowUp,
@@ -4279,8 +4158,6 @@ function alignAlienPanelsToPlanets() {
       failChongTaskCompletion,
       finishChongFossilEffect,
       completeChongTraceTaskWithFossil,
-      completeChongTransportTask,
-      handleChongTaskCompletionChoice,
       handleChongFossilChoice,
       getChongFossilDecisionDraft,
       takeChongFossilDecisionDraft,

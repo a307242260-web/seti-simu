@@ -143,7 +143,6 @@
       cancelCardTriggerChoice,
       handleChongCardGainChoice,
       handleChongFossilChoice,
-      handleChongTaskCompletionChoice,
       handleConditionalSectorChoice,
       handleCompanyActionMarkerClick,
       handleDiscardCornerRepeatChoice,

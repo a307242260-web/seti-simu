@@ -198,7 +198,7 @@ const HEADLESS_PENDING_INVENTORY_KEYS = Object.freeze([
   "pendingCardTriggerFreeMove", "pendingCardCornerFreeMove", "pendingCardTaskCompletion",
   "pendingStrategyPassiveSlotChoice", "pendingJiuzheCardPlay", "pendingYichangdianCardGain",
   "pendingYichangdianCornerAction", "pendingBanrenmaCardGain", "pendingBanrenmaOpportunity",
-  "pendingChongTaskCompletion", "pendingChongCardGain", "pendingChongFossilChoice",
+  "pendingChongCardGain", "pendingChongFossilChoice",
   "pendingAmibaCardGain", "pendingAmibaSymbolChoice", "pendingAmibaTraceRemoval",
   "pendingAomomoCardGain", "pendingRunezuCardGain", "pendingRunezuSymbolBranch",
   "pendingRunezuFaceSymbolPlacement", "pendingAlienTrace", "pendingLandTarget",

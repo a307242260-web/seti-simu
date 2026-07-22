@@ -993,7 +993,6 @@
   const CARD_TRIGGER_FREE_MOVE_SESSION = "card_trigger_free_move";
   const CARD_TRIGGER_ACTION_SESSION = "card_trigger_action";
   const CARD_TASK_COMPLETION_SESSION = "card_task_completion";
-  const CHONG_TASK_COMPLETION_SESSION = "chong_task_completion";
   const PASS_RESERVE_SELECTION_SESSION = "pass_reserve_selection";
   const PLAY_CARD_SELECTION_SESSION = "play_card_selection";
   const MOVE_PAYMENT_SESSION = "move_payment";
@@ -1011,7 +1010,6 @@
   const getPendingCardTriggerFreeMove = () => decisionSessions.peek(CARD_TRIGGER_FREE_MOVE_SESSION);
   const getPendingCardTriggerAction = () => decisionSessions.peek(CARD_TRIGGER_ACTION_SESSION);
   const getPendingCardTaskCompletion = () => decisionSessions.peek(CARD_TASK_COMPLETION_SESSION);
-  const getPendingChongTaskCompletion = () => decisionSessions.peek(CHONG_TASK_COMPLETION_SESSION);
   const getPendingPassReserveSelection = () => decisionSessions.peek(PASS_RESERVE_SELECTION_SESSION);
   const getPendingPlayCardSelectionSession = () => decisionSessions.peek(PLAY_CARD_SELECTION_SESSION);
   const getPendingMovePayment = () => decisionSessions.peek(MOVE_PAYMENT_SESSION);
@@ -4168,7 +4166,6 @@
     get pendingCardTriggerAction() { return getPendingCardTriggerAction(); },
     get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
     get pendingCardTaskCompletion() { return getPendingCardTaskCompletion(); },
-    get pendingChongTaskCompletion() { return getPendingChongTaskCompletion(); },
     get pendingActionExecuted() { return isActionPending(); },
     get pendingActionEffectFlow() { return decisionState.actionEffectFlow; },
     get actionHistoryHasSession() { return actionHistory.hasSession(); },
@@ -4365,7 +4362,6 @@
     cancelCardTriggerChoice: (...args) => cancelCardTriggerChoice?.(...args),
     handleChongCardGainChoice,
     handleChongFossilChoice,
-    handleChongTaskCompletionChoice,
     handleCompanyActionMarkerClick: (...args) => handleCompanyActionMarkerClick?.(...args),
     handleConditionalSectorChoice,
     handleDiscardCornerRepeatChoice,
@@ -5437,7 +5433,6 @@
     }
     alienSpeciesRuntime?.clearChongCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
-    decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
     alienSpeciesRuntime?.clearAmibaTraceRemovalDecisionDraft?.();
@@ -6900,7 +6895,6 @@
       || getPendingYichangdianCornerAction()
       || getPendingBanrenmaCardGain()
       || decisionSessions.peek("banrenma_opportunity")
-      || getPendingChongTaskCompletion()
       || getPendingChongCardGain()
       || getPendingChongFossilChoice()
       || getPendingAmibaCardGain()
@@ -7211,7 +7205,6 @@
     effectExecutors?.clearYichangdianCornerAction?.();
     alienSpeciesRuntime?.clearChongCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
-    decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
     alienSpeciesRuntime?.clearAmibaTraceRemovalDecisionDraft?.();
@@ -8548,7 +8541,6 @@
   function formatChongFossilRewardSummary(...args) { return alienSpeciesRuntime.formatChongFossilRewardSummary(...args); }
   function restoreMutableObject(...args) { return alienSpeciesRuntime.restoreMutableObject(...args); }
   function closeChongFossilChoiceDialog(...args) { return alienSpeciesRuntime.closeChongFossilChoiceDialog(...args); }
-  function closeChongTaskCompletionDialog(...args) { return alienSpeciesRuntime.closeChongTaskCompletionDialog(...args); }
   function openChongFossilChoiceDialog(...args) { return callBrowserDomainCommand("alien_species", "openChongFossilChoiceDialog", args); }
   function createChongTransportTokenForFossil(...args) { return callBrowserDomainCommand("alien_species", "createChongTransportTokenForFossil", args); }
   function openChongPickCardFollowUp(...args) { return callBrowserDomainCommand("alien_species", "openChongPickCardFollowUp", args); }
@@ -8556,8 +8548,6 @@
   function failChongTaskCompletion(...args) { return callBrowserDomainCommand("alien_species", "failChongTaskCompletion", args); }
   function finishChongFossilEffect(...args) { return callBrowserDomainCommand("alien_species", "finishChongFossilEffect", args); }
   function completeChongTraceTaskWithFossil(...args) { return callBrowserDomainCommand("alien_species", "completeChongTraceTaskWithFossil", args); }
-  function completeChongTransportTask(...args) { return callBrowserDomainCommand("alien_species", "completeChongTransportTask", args); }
-  function handleChongTaskCompletionChoice(...args) { return callBrowserDomainCommand("alien_species", "handleChongTaskCompletionChoice", args); }
   function handleChongFossilChoice(...args) { return callBrowserDomainCommand("alien_species", "handleChongFossilChoice", args); }
   function openChongTraceTaskCompletionPicker(...args) { return alienSpeciesRuntime.openChongTraceTaskCompletionPicker(...args); }
   function enqueueJiuzheOpportunity(...args) { return alienSpeciesRuntime.enqueueJiuzheOpportunity(...args); }
@@ -11849,7 +11839,6 @@
   const focusDebugCalibration = (...args) => callDebugCommand("focusDebugCalibration", args);
 
   const appEventState = {
-    get pendingChongTaskCompletion() { return getPendingChongTaskCompletion(); },
     get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
     get pendingChongCardGain() { return getPendingChongCardGain(); },
     get pendingAmibaTraceRemoval() { return getPendingAmibaTraceRemoval(); },
@@ -12040,7 +12029,6 @@
     handleBanrenmaCardGainChoice,
     handleChongCardGainChoice,
     handleChongFossilChoice,
-    handleChongTaskCompletionChoice,
     handleAmibaCardGainChoice,
     handleAomomoCardGainChoice,
     handleAmibaSymbolChoice,

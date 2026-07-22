@@ -82,7 +82,6 @@
             pendingYichangdianCornerAction: Boolean(state.pendingYichangdianCornerAction),
             pendingBanrenmaCardGain: Boolean(state.pendingBanrenmaCardGain),
             pendingBanrenmaOpportunity: Boolean(state.pendingBanrenmaOpportunity),
-            pendingChongTaskCompletion: Boolean(state.pendingChongTaskCompletion),
             pendingChongCardGain: Boolean(state.pendingChongCardGain),
             pendingChongFossilChoice: Boolean(state.pendingChongFossilChoice),
             pendingAmibaCardGain: Boolean(state.pendingAmibaCardGain),

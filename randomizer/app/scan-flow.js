@@ -1381,7 +1381,6 @@
       }
       decisionSessions.clear("card_trigger_action");
       decisionSessions.clear("card_task_completion");
-      decisionSessions.clear("chong_task_completion");
       clearPendingAmibaCardGain();
       clearPendingAmibaSymbolChoice();
       clearPendingAmibaTraceRemoval();

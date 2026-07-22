@@ -59,7 +59,6 @@
       handleDebugQuickSectorScanChoice,
       handleJiuzheCardChoice,
       handleJiuzheOpportunitySkip,
-      handleChongTaskCompletionChoice,
       handleAomomoFossilMoveLandCountChoice,
       handleBanrenmaBonusChoice,
       handleBanrenmaCardConditionChoice,
@@ -324,12 +323,6 @@
         return;
       }
 
-      const chongTask = event.target.closest("[data-chong-task-complete]");
-      if (chongTask && !chongTask.disabled) {
-        handleChongTaskCompletionChoice(chongTask.dataset.chongTaskComplete);
-        return;
-      }
-
       const banrenmaBonus = event.target.closest("[data-banrenma-bonus-choice]");
       if (banrenmaBonus && !banrenmaBonus.disabled) {
         handleBanrenmaBonusChoice(banrenmaBonus.dataset.banrenmaBonusChoice);
@@ -469,10 +462,6 @@
     els.scanTargetCancel?.addEventListener("click", () => {
       if (blockManualAiSharedOverlayInputIfNeeded?.()) return;
 
-      if (state.pendingChongTaskCompletion) {
-        handleChongTaskCompletionChoice("cancel");
-        return;
-      }
       if (state.pendingBanrenmaOpportunity) {
         closeBanrenmaOpportunityDialog();
         return;
@@ -503,10 +492,6 @@
       if (event.target === els.scanTargetOverlay) {
         if (blockManualAiSharedOverlayInputIfNeeded?.()) return;
 
-        if (state.pendingChongTaskCompletion) {
-          handleChongTaskCompletionChoice("cancel");
-          return;
-        }
         if (state.pendingBanrenmaOpportunity) {
           closeBanrenmaOpportunityDialog();
           return;
