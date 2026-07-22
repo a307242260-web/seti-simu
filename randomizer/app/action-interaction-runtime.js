@@ -137,6 +137,148 @@
     return Object.freeze({ close, cancel, open, request, confirm });
   }
 
+  function createMoveUiRuntime(context = {}) {
+    const {
+      cards,
+      els = {},
+      moveDiscardActionCode,
+      moveEnergyCost = 1,
+      players,
+      requestAnimationFrame = (callback) => callback(),
+      rocketActions,
+      solar,
+      uiRuntimeState,
+    } = context;
+    const INTERACTION_FOCUS = Object.freeze({
+      PUBLIC_CARDS: "public-cards",
+      HAND_CARDS: "hand-cards",
+      TECH_PANEL: "tech-panel",
+      BOARD_ROCKETS: "board-rockets",
+      PLAYER_BOARD: "player-board",
+    });
+
+    function isBoardRocketInteractionActive() {
+      return uiRuntimeState.moveHighlightRocketId != null
+        || Boolean(context.getPendingIndustryFreeMoveDecision())
+        || Boolean(context.getPendingCardTriggerFreeMove())
+        || Boolean(context.getPendingCardCornerFreeMove())
+        || Boolean(context.getPendingScanFreeMoveDecision())
+        || Boolean(context.getPendingCardMoveDecision());
+    }
+
+    function getInteractionFocusMode() {
+      if (context.isIndustryHandSelectionActive()) return INTERACTION_FOCUS.HAND_CARDS;
+      if (context.isDiscardSelectionActive()
+        || context.isPlayCardSelectionActive()
+        || context.isMovePaymentSelectionActive()
+        || context.isHandScanSelectionActive()) {
+        return INTERACTION_FOCUS.HAND_CARDS;
+      }
+      if (context.isCardSelectionActive()) return INTERACTION_FOCUS.PUBLIC_CARDS;
+      if (context.isTechTilePickingActive() || context.getRuleReadout().techGameState?.ui?.industryBorrowMode) {
+        return INTERACTION_FOCUS.TECH_PANEL;
+      }
+      if (context.getPendingPiratesRaidDecision()) return INTERACTION_FOCUS.PLAYER_BOARD;
+      if (isBoardRocketInteractionActive()) return INTERACTION_FOCUS.BOARD_ROCKETS;
+      if ((context.canUseCardCornerQuickAction() && context.getPendingCardCornerQuickAction())
+        || context.getPendingHandCardPlayAction()) {
+        return INTERACTION_FOCUS.HAND_CARDS;
+      }
+      return null;
+    }
+
+    function canSelectRocketForMoveInteraction(rocket) {
+      const player = context.getCurrentPlayer();
+      if (rocket.playerId !== player?.id) return false;
+      if (!(rocketActions.isMovablePlayerToken?.(rocket) || rocketActions.isControllablePlayerRocket(rocket))) return false;
+      if (context.isRocketOnPlanetsReference(rocket)) return false;
+      if (context.getPendingIndustryFreeMoveDecision()?.movedRocketIds?.includes(rocket.id)) return false;
+      return true;
+    }
+
+    function isRocketMoveCandidate(rocket) {
+      if (!isBoardRocketInteractionActive()) return false;
+      if (uiRuntimeState.moveHighlightRocketId != null) return rocket.id === uiRuntimeState.moveHighlightRocketId;
+      return canSelectRocketForMoveInteraction(rocket);
+    }
+
+    function isRocketMoveMuted(rocket) {
+      return isBoardRocketInteractionActive()
+        && !isRocketMoveCandidate(rocket)
+        && !context.isRocketOnPlanetsReference(rocket);
+    }
+
+    function isMovePaymentCard(card) {
+      return Number(card?.discardActionCode) === moveDiscardActionCode
+        || Boolean(cards.getDiscardActionMoveRewardForCard?.(card));
+    }
+
+    function playerHasMovePaymentCard(player) {
+      return (player?.hand || []).some(isMovePaymentCard);
+    }
+
+    function getMovePaymentCardCount(player) {
+      return (player?.hand || []).filter(isMovePaymentCard).length;
+    }
+
+    function getSectorContentForMove(coordinate, workingRoot = null) {
+      if (!coordinate) return null;
+      const root = workingRoot || context.getRuleReadout();
+      return solar.resolveVisibleContent(coordinate.x, coordinate.y, root.solarState)?.content || null;
+    }
+
+    function isAsteroidContent(content) {
+      return content?.kind === solar.layout.CONTENT_KIND.ASTEROID;
+    }
+
+    function getRequiredMovePointsForUi(workingRoot, player, rocketId, _deltaX, _deltaY, options = {}) {
+      const rocket = workingRoot.rocketState.rockets.find((item) => item.id === rocketId);
+      const from = rocketActions.getRocketSectorCoordinate(rocket);
+      if (!from) return 1;
+      const fromContent = getSectorContentForMove(from, workingRoot);
+      if (!options.ignoreAsteroidRestriction
+        && isAsteroidContent(fromContent)
+        && !players.playerOwnsTech(player, "orange2", workingRoot.turnState)) {
+        return 2;
+      }
+      return 1;
+    }
+
+    function canPayForMove(player, requiredMovePoints = moveEnergyCost) {
+      const energy = Number(player?.resources?.energy) || 0;
+      const movementCards = getMovePaymentCardCount(player);
+      return energy + movementCards >= requiredMovePoints
+        ? { ok: true }
+        : { ok: false, message: `移动力不足，需要 ${requiredMovePoints} 点移动力` };
+    }
+
+    function scrollToPlayerCommandPanel() {
+      const panel = els.playerCommand || els.actionEffectBar || els.actionLaunchButton;
+      if (!panel) return;
+      requestAnimationFrame(() => panel.scrollIntoView({
+        behavior: "auto",
+        block: "start",
+        inline: "nearest",
+      }));
+    }
+
+    return Object.freeze({
+      canPayForMove,
+      canSelectRocketForMoveInteraction,
+      getInteractionFocusMode,
+      getMovePaymentCardCount,
+      getRequiredMovePointsForUi,
+      getSectorContentForMove,
+      isAsteroidContent,
+      isBoardRocketInteractionActive,
+      isMovePaymentCard,
+      isRocketMoveCandidate,
+      isRocketMoveMuted,
+      playerHasMovePaymentCard,
+      scrollToPlayerCommandPanel,
+    });
+  }
+
   function createActionInteractionRuntime(context) {
     const simulation = context.simulation === true;
     const {
@@ -1341,6 +1483,7 @@
   return {
     createBoardPointerHandlers,
     createLandTargetPicker,
+    createMoveUiRuntime,
     createActionInteractionRuntime,
   };
 });

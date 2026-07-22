@@ -1952,6 +1952,51 @@
     layoutPlayerHandFan,
     layoutReservedCardRows,
   } = renderRuntime;
+  const moveUiRuntime = actionInteractionRuntimeModule.createMoveUiRuntime({
+    cards,
+    els,
+    moveDiscardActionCode: MOVE_DISCARD_ACTION_CODE,
+    moveEnergyCost: MOVE_ENERGY_COST,
+    players,
+    requestAnimationFrame,
+    rocketActions,
+    solar,
+    uiRuntimeState,
+    getRuleReadout: createStateSourceReadoutRoot,
+    getCurrentPlayer,
+    getPendingIndustryFreeMoveDecision,
+    getPendingCardTriggerFreeMove,
+    getPendingCardCornerFreeMove,
+    getPendingScanFreeMoveDecision,
+    getPendingCardMoveDecision,
+    isIndustryHandSelectionActive,
+    isDiscardSelectionActive,
+    isPlayCardSelectionActive,
+    isMovePaymentSelectionActive,
+    isHandScanSelectionActive,
+    isCardSelectionActive,
+    isTechTilePickingActive,
+    getPendingPiratesRaidDecision,
+    canUseCardCornerQuickAction,
+    getPendingCardCornerQuickAction,
+    getPendingHandCardPlayAction,
+    isRocketOnPlanetsReference,
+  });
+  const {
+    canPayForMove,
+    canSelectRocketForMoveInteraction,
+    getInteractionFocusMode,
+    getMovePaymentCardCount,
+    getRequiredMovePointsForUi: getRequiredMovePointsForUiForRoot,
+    getSectorContentForMove,
+    isAsteroidContent,
+    isBoardRocketInteractionActive,
+    isMovePaymentCard,
+    isRocketMoveCandidate,
+    isRocketMoveMuted,
+    playerHasMovePaymentCard,
+    scrollToPlayerCommandPanel,
+  } = moveUiRuntime;
   const interactionChrome = renderRuntimeModule.createInteractionChrome({
     els,
     isPublicCardMultiSelectActive: (...args) => isPublicCardMultiSelectActive(...args),
@@ -5048,44 +5093,6 @@
     return interactionChrome.syncCardSelectionChrome();
   }
 
-  const INTERACTION_FOCUS = Object.freeze({
-    PUBLIC_CARDS: "public-cards",
-    HAND_CARDS: "hand-cards",
-    TECH_PANEL: "tech-panel",
-    BOARD_ROCKETS: "board-rockets",
-    COMPANY_MARKER: "company-marker",
-    PLAYER_BOARD: "player-board",
-  });
-
-  function isBoardRocketInteractionActive() {
-    return uiRuntimeState.moveHighlightRocketId != null
-      || Boolean(getPendingIndustryFreeMoveDecision())
-      || Boolean(getPendingCardTriggerFreeMove())
-      || Boolean(getPendingCardCornerFreeMove())
-      || Boolean(getPendingScanFreeMoveDecision())
-      || Boolean(getPendingCardMoveDecision());
-  }
-
-  function getInteractionFocusMode() {
-    if (isIndustryHandSelectionActive()) return INTERACTION_FOCUS.HAND_CARDS;
-    if (isDiscardSelectionActive()
-      || isPlayCardSelectionActive()
-      || isMovePaymentSelectionActive()
-      || isHandScanSelectionActive()) {
-      return INTERACTION_FOCUS.HAND_CARDS;
-    }
-    if (isCardSelectionActive()) return INTERACTION_FOCUS.PUBLIC_CARDS;
-    if (isTechTilePickingActive() || createStateSourceReadoutRoot().techGameState?.ui?.industryBorrowMode) {
-      return INTERACTION_FOCUS.TECH_PANEL;
-    }
-    if (getPendingPiratesRaidDecision()) return INTERACTION_FOCUS.PLAYER_BOARD;
-    if (isBoardRocketInteractionActive()) return INTERACTION_FOCUS.BOARD_ROCKETS;
-    if ((canUseCardCornerQuickAction() && getPendingCardCornerQuickAction()) || getPendingHandCardPlayAction()) {
-      return INTERACTION_FOCUS.HAND_CARDS;
-    }
-    return null;
-  }
-
   function syncInteractionFocusChrome() {
     return interactionChrome.syncInteractionFocusChrome();
   }
@@ -5093,29 +5100,6 @@
   function syncIndustryHandSelectionChrome() {
     return interactionChrome.syncIndustryHandSelectionChrome();
   }
-
-  function canSelectRocketForMoveInteraction(rocket) {
-    const player = getCurrentPlayer();
-    if (rocket.playerId !== player?.id) return false;
-    if (!(rocketActions.isMovablePlayerToken?.(rocket) || rocketActions.isControllablePlayerRocket(rocket))) return false;
-    if (isRocketOnPlanetsReference(rocket)) return false;
-    if (getPendingIndustryFreeMoveDecision()?.movedRocketIds?.includes(rocket.id)) return false;
-    return true;
-  }
-
-  function isRocketMoveCandidate(rocket) {
-    if (!isBoardRocketInteractionActive()) return false;
-    if (uiRuntimeState.moveHighlightRocketId != null) return rocket.id === uiRuntimeState.moveHighlightRocketId;
-    return canSelectRocketForMoveInteraction(rocket);
-  }
-
-  function isRocketMoveMuted(rocket) {
-    if (!isBoardRocketInteractionActive()) return false;
-    if (isRocketMoveCandidate(rocket)) return false;
-    if (isRocketOnPlanetsReference(rocket)) return false;
-    return true;
-  }
-
 
   function isAiAutomationInputLocked(player = getCurrentPlayer()) {
     return Boolean(player?.id && isAiAutoBattlePlayer(player.id) && !isAiAutomationPaused());
@@ -5155,70 +5139,9 @@
     );
   }
 
-  function isMovePaymentCard(card) {
-    return Number(card?.discardActionCode) === MOVE_DISCARD_ACTION_CODE
-      || Boolean(cards.getDiscardActionMoveRewardForCard?.(card));
-  }
-
-  function playerHasMovePaymentCard(player) {
-    return (player?.hand || []).some((card) => isMovePaymentCard(card));
-  }
-
-  function getMovePaymentCardCount(player) {
-    return (player?.hand || []).filter((card) => isMovePaymentCard(card)).length;
-  }
-
-  function getSectorContentForMove(coordinate) {
-    if (!coordinate) return null;
-    return solar.resolveVisibleContent(
-      coordinate.x,
-      coordinate.y,
-      createStateSourceReadoutRoot().solarState,
-    )?.content || null;
-  }
-
-  function isAsteroidContent(content) {
-    return content?.kind === solar.layout.CONTENT_KIND.ASTEROID;
-  }
-
-  function getRequiredMovePointsForUiForRoot(workingRoot, player, rocketId, deltaX, deltaY, options = {}) {
-    const rocket = workingRoot.rocketState.rockets.find((item) => item.id === rocketId);
-    const from = rocketActions.getRocketSectorCoordinate(rocket);
-    if (!from) return 1;
-    const fromContent = solar.resolveVisibleContent(from.x, from.y, workingRoot.solarState)?.content || null;
-    if (!options.ignoreAsteroidRestriction
-      && isAsteroidContent(fromContent)
-      && !players.playerOwnsTech(player, "orange2", workingRoot.turnState)) {
-      return 2;
-    }
-    return 1;
-  }
-
   function getRequiredMovePointsForUi(...args) {
     return ruleComposition.inputPort.submitHostCommand({ kind: "ui_get_required_move_points", args }, { commit: false }).value;
   }
-
-  function canPayForMove(player, requiredMovePoints = MOVE_ENERGY_COST) {
-    const energy = Number(player?.resources?.energy) || 0;
-    const movementCards = getMovePaymentCardCount(player);
-    if (energy + movementCards >= requiredMovePoints) return { ok: true };
-    return { ok: false, message: `移动力不足，需要 ${requiredMovePoints} 点移动力` };
-  }
-
-
-  function scrollToPlayerCommandPanel() {
-    const panel = els.playerCommand || els.actionEffectBar || els.actionLaunchButton;
-    if (!panel) return;
-
-    requestAnimationFrame(() => {
-      panel.scrollIntoView({
-        behavior: "auto",
-        block: "start",
-        inline: "nearest",
-      });
-    });
-  }
-
 
   function getNormalTokenAssetForPlayer(player) {
     return players.getPlayerColorDefinition(player?.color)?.normalTokenAsset

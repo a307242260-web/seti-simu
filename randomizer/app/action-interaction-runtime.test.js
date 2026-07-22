@@ -5,6 +5,7 @@ const {
   createActionInteractionRuntime,
   createBoardPointerHandlers,
   createLandTargetPicker,
+  createMoveUiRuntime,
 } = require("./action-interaction-runtime");
 
 const runtime = createActionInteractionRuntime({
@@ -166,6 +167,57 @@ const removal = runtime.removePlutoMarker(rootB, {
 assert.equal(removal.ok, true);
 assert.equal(runtime.collectPlutoMarkers(rootB).length, 0);
 assert.deepEqual(rootA, rootABefore, "隔离 workingRoot 操作不得污染另一份 root");
+
+{
+  const readout = {
+    solarState: {},
+    techGameState: { ui: {} },
+  };
+  const moveUi = createMoveUiRuntime({
+    cards: { getDiscardActionMoveRewardForCard: (card) => card?.move === true },
+    moveDiscardActionCode: 3,
+    moveEnergyCost: 1,
+    players: { playerOwnsTech: () => false },
+    rocketActions: {
+      getRocketSectorCoordinate: (rocket) => rocket?.coordinate || null,
+      isControllablePlayerRocket: () => true,
+    },
+    solar: {
+      layout: { CONTENT_KIND: { ASTEROID: "asteroid" } },
+      resolveVisibleContent: () => ({ content: { kind: "asteroid" } }),
+    },
+    uiRuntimeState: { moveHighlightRocketId: null },
+    getRuleReadout: () => readout,
+    getCurrentPlayer: () => ({ id: "p1" }),
+    getPendingIndustryFreeMoveDecision: () => null,
+    getPendingCardTriggerFreeMove: () => null,
+    getPendingCardCornerFreeMove: () => null,
+    getPendingScanFreeMoveDecision: () => null,
+    getPendingCardMoveDecision: () => null,
+    isIndustryHandSelectionActive: () => false,
+    isDiscardSelectionActive: () => false,
+    isPlayCardSelectionActive: () => false,
+    isMovePaymentSelectionActive: () => false,
+    isHandScanSelectionActive: () => false,
+    isCardSelectionActive: () => false,
+    isTechTilePickingActive: () => false,
+    getPendingPiratesRaidDecision: () => null,
+    canUseCardCornerQuickAction: () => false,
+    getPendingCardCornerQuickAction: () => null,
+    getPendingHandCardPlayAction: () => null,
+    isRocketOnPlanetsReference: () => false,
+  });
+  const root = {
+    solarState: {},
+    turnState: {},
+    rocketState: { rockets: [{ id: 7, coordinate: { x: 1, y: 2 } }] },
+  };
+  assert.equal(moveUi.getRequiredMovePointsForUi(root, {}, 7, 1, 0), 2);
+  assert.equal(moveUi.canPayForMove({ resources: { energy: 0 }, hand: [{ move: true }] }, 1).ok, true);
+  assert.equal(moveUi.canPayForMove({ resources: { energy: 0 }, hand: [] }, 1).ok, false);
+  assert.equal(moveUi.canSelectRocketForMoveInteraction({ id: 7, playerId: "p1" }), true);
+  assert.equal(moveUi.getInteractionFocusMode(), null);
+}
 
 {
   const resumed = [];
