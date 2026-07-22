@@ -318,7 +318,7 @@ function createBaseContext(player, overrides = {}) {
     createActionContext() {
       return {};
     },
-    recordMoveActionHistory() {},
+    recordAbilityCommands() {},
     renderRocketElement() {},
     clearMoveRocketHighlight() {},
     beginQuickActionStep() {},

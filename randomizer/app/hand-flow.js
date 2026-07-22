@@ -81,7 +81,7 @@
       executeIndustryFreeMove,
       executeCardEffectMove,
       createActionContext,
-      recordMoveActionHistory,
+      recordAbilityCommands,
       executePrimaryBoardAction,
       renderRocketElement,
       clearMoveRocketHighlight,
@@ -627,7 +627,10 @@
         workingRoot.rocketState.activeRocketId = null;
         clearMoveRocketHighlight();
         workingRoot.rocketState.statusNote = `${paymentNote}，${moveResult.message}`;
-        recordMoveActionHistory(workingRoot, moveResult, discardCommand);
+        beginQuickActionStep("move", "移动");
+        if (discardCommand) context.recordQuickHistoryCommand?.(discardCommand);
+        recordAbilityCommands(moveResult, quickActionHistory, workingRoot);
+        completeQuickActionStep();
         settleCardTasksAfterEffect({ events: moveResult.events, render: false });
       } else {
         workingRoot.rocketState.statusNote = moveResult.message;

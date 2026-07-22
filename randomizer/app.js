@@ -621,7 +621,7 @@
         case "effect_cancel_pending_subflows":
           return { ok: true, value: cancelActivePendingSubFlowsForRoot(workingRoot) };
         case "data_place_blue_slot":
-          return { ok: true, value: cloneResidentPresentation(placeDataToBlueSlotForRoot(workingRoot, command.blueSlot)) };
+          return { ok: true, value: cloneResidentPresentation(actionInteractionRuntime.placeDataToBlueSlot(workingRoot, command.blueSlot)) };
         case "action_recover_pending":
           return { ok: true, value: cloneResidentPresentation(recoverPendingActionFromOpenHistoryForAiForRoot(workingRoot)) };
         case "history_undo_pending":
@@ -2681,7 +2681,8 @@
     executeIndustryFreeMove: (...args) => executeIndustryFreeMove?.(...args),
     executeCardEffectMove: (...args) => executeCardEffectMove?.(...args),
     createActionContext: createActionContextForWorkingRoot,
-    recordMoveActionHistory,
+    recordAbilityCommands,
+    recordQuickHistoryCommand,
     executePrimaryBoardAction: (workingRoot, descriptor, executionOptions, options) => (
       actionRuntimeController?.executePrimaryBoardAction(
         createActionContextForWorkingRoot(workingRoot, descriptor),
@@ -5665,15 +5666,6 @@
       || type === "industry_fundamentalism_income";
   }
 
-  function recordMoveActionHistory(workingRoot, moveResult, paymentCommand = null) {
-    beginQuickActionStep("move", "移动");
-    if (paymentCommand) {
-      recordQuickHistoryCommand(paymentCommand);
-    }
-    recordAbilityCommands(moveResult, quickActionHistory, workingRoot);
-    completeQuickActionStep();
-  }
-
   function recordMainActionIrreversibleBarrier(label, reason, code = "irreversible_effect") {
     const history = actionHistory;
     if (!history.hasSession()) {
@@ -7760,27 +7752,6 @@
     "executeIndustryPiratesRaidLaunchEffect", "handlePiratesRaidLaunchChoice", "setCheatModeOpen", "toggleCheatMode",
   ]);
 
-  function placeDataToBlueSlotForRoot(workingRoot, blueSlot) {
-    const blocked = blockIncompatiblePendingQuickActionForRoot(workingRoot, "place-data");
-    if (blocked) return blocked;
-
-    const player = players.getCurrentPlayer(workingRoot.playerState);
-    if (!data.listPoolTokens(player).length) {
-      workingRoot.rocketState.statusNote = "数据池没有可放置的数据";
-      renderStateReadout();
-      return { ok: false, message: workingRoot.rocketState.statusNote };
-    }
-
-    const check = data.canPlaceDataToBlueBonus(player, blueSlot);
-    if (!check.ok) {
-      workingRoot.rocketState.statusNote = check.message;
-      renderStateReadout();
-      return check;
-    }
-
-    return confirmDataPlacement(data.PLACEMENT_KIND_BLUE_BONUS, blueSlot, { workingRoot });
-  }
-
   function placeDataToBlueSlot(blueSlot) {
     return ruleComposition.inputPort.submitHostCommand({
       kind: "data_place_blue_slot",
@@ -8130,6 +8101,7 @@
     beginEffectHistoryStep,
     beginQuickActionStep,
     blockIncompatiblePendingQuickAction,
+    blockIncompatiblePendingQuickActionForRoot,
     buildPlutoChoiceRewardSummary,
     buildPlutoRewardEffectsForAction,
     canStartMainAction,

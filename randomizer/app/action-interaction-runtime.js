@@ -150,6 +150,7 @@
       beginEffectHistoryStep,
       beginQuickActionStep,
       blockIncompatiblePendingQuickAction,
+      blockIncompatiblePendingQuickActionForRoot,
       buildPlutoChoiceRewardSummary,
       buildPlutoRewardEffectsForAction,
       canStartMainAction,
@@ -1282,6 +1283,26 @@
     return result;
   }
 
+  function placeDataToBlueSlot(workingRoot, blueSlot) {
+    requireWorkingRoot(workingRoot);
+    const blocked = blockIncompatiblePendingQuickActionForRoot(workingRoot, "place-data");
+    if (blocked) return blocked;
+
+    const player = players.getCurrentPlayer(workingRoot.playerState);
+    if (!data.listPoolTokens(player).length) {
+      workingRoot.rocketState.statusNote = "数据池没有可放置的数据";
+      renderStateReadout();
+      return { ok: false, message: workingRoot.rocketState.statusNote };
+    }
+    const check = data.canPlaceDataToBlueBonus(player, blueSlot);
+    if (!check.ok) {
+      workingRoot.rocketState.statusNote = check.message;
+      renderStateReadout();
+      return check;
+    }
+    return confirmDataPlacement(workingRoot, data.PLACEMENT_KIND_BLUE_BONUS, blueSlot);
+  }
+
     return {
       activateMoveMode,
       addPlutoMarker,
@@ -1309,6 +1330,7 @@
       openAutoDataPlacementPrompt,
       openDataPlacePicker,
       openPlutoActionChoicePicker,
+      placeDataToBlueSlot,
       playerHasOwnPlutoLanding,
       removePlutoMarker,
       scheduleRenderMoveArrows,
