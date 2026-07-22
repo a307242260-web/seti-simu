@@ -2199,6 +2199,22 @@
     renderPlayerHand: (...args) => renderPlayerHand(...args),
     renderInitialSelectionArea: (...args) => renderInitialSelectionArea(...args),
   });
+  const playerHandTitlePresenter = renderRuntimeModule.createPlayerHandTitlePresenter({
+    isDiscardSelectionActive: (...args) => isDiscardSelectionActive(...args),
+    getPendingDiscardDecision: (...args) => getPendingDiscardDecision(...args),
+    isHandScanSelectionActive: (...args) => isHandScanSelectionActive(...args),
+    isMovePaymentSelectionActive: (...args) => isMovePaymentSelectionActive(...args),
+    isMovePaymentLockedForAiAutomation: (...args) => isMovePaymentLockedForAiAutomation(...args),
+    getPendingMovePayment: (...args) => getPendingMovePayment(...args),
+    moveEnergyCost: MOVE_ENERGY_COST,
+    isPlayCardSelectionActive: (...args) => isPlayCardSelectionActive(...args),
+    getPendingPlayCardSelection: (...args) => getPendingPlayCardSelection(...args),
+    getPendingCardCornerQuickAction: (...args) => getPendingCardCornerQuickAction(...args),
+    getPendingHandCardPlayAction: (...args) => getPendingHandCardPlayAction(...args),
+    getCardLabel: (...args) => cards.getCardLabel(...args),
+    renderPlayerHand: (...args) => renderPlayerHand(...args),
+  });
+  const { getPlayerHandPanelTitleHint, updatePlayerHandPanelTitle } = playerHandTitlePresenter;
   const finalUiRuntime = finalUiRuntimeModule.createFinalUiRuntime({
     document,
     els,
@@ -3371,68 +3387,14 @@
     "settleTurnEndAlienRevealEntries", "activateAomomoBoard",
   ]);
 
-  function getPlayerHandPanelTitleHint() {
-    if (isDiscardSelectionActive()) {
-      const remaining = getPendingDiscardDecision()?.count || 0;
-      return `（请选择 ${remaining} 张弃牌）`;
-    }
-    if (isHandScanSelectionActive()) {
-      return "（请选择一张牌进行扫描）";
-    }
-    if (isMovePaymentSelectionActive() && !isMovePaymentLockedForAiAutomation()) {
-      const required = getPendingMovePayment()?.requiredMovePoints || MOVE_ENERGY_COST;
-      return required > 1
-        ? `（需 ${required} 点移动力：可选移动牌，剩余用能量补齐）`
-        : "（可选移动牌弃置，或直接确认消耗 1 能量）";
-    }
-    if (isPlayCardSelectionActive()) {
-      const pending = getPendingPlayCardSelection();
-      return pending
-        ? `（已选择 ${cards.getCardLabel(pending.card)}）`
-        : "（请选择要打出的牌）";
-    }
-    const cornerAction = getPendingCardCornerQuickAction();
-    const handPlayAction = getPendingHandCardPlayAction();
-    const selectedHandAction = cornerAction || handPlayAction;
-    if (selectedHandAction) {
-      return `（已选择 ${cards.getCardLabel(selectedHandAction.card)}）`;
-    }
-    return "";
-  }
-
-  function updatePlayerHandPanelTitle() { return renderPlayerHand(); }
-
-  function initializeCardGame(workingRoot, handCount = DEFAULT_INITIAL_HAND_COUNT) {
-    const { cardState: workingCardState, playerState: workingPlayerState, turnState: workingTurnState } = workingRoot;
-    if (!Array.isArray(workingPlayerState.players) || !workingPlayerState.players.length) return;
-
-    for (const player of workingPlayerState.players) {
-      player.hand = [];
-      player.reservedCards = [];
-      player.completedTaskCount = 0;
-      player.resources.handSize = 0;
-    }
-    workingCardState.publicCards = Array.from({ length: cards.PUBLIC_CARD_COUNT }, () => null);
-    workingCardState.discardPile = [];
-    workingCardState.drawPileCardIds = [];
-    cards.setSelectionActive(workingCardState, false);
-    cards.setPlayCardSelectionActive(workingCardState, false);
-    cards.setDiscardSelectionActive(workingCardState, false, 0);
-    const activeIds = new Set(workingTurnState.activePlayerIds || []);
-    for (const player of workingPlayerState.players.filter((candidate) => activeIds.has(candidate.id))) {
-      cards.drawCardsToHand(workingCardState, workingPlayerState, player, handCount);
-    }
-    ensurePublicCardsFilledRespectingDelayedRefillsForRoot(workingRoot);
-    preparePassReservePilesForCurrentGame(workingRoot);
-  }
-
-  function preparePassReservePilesForCurrentGame(workingRoot, options = {}) {
-    return cards.preparePassReservePiles(workingRoot.cardState, workingRoot.playerState, {
-      rounds: PASS_RESERVE_ROUNDS,
-      activePlayerCount: workingRoot.turnState.activePlayerCount || DEFAULT_ACTIVE_PLAYER_COUNT,
-      random: options.random || Math.random,
-    });
-  }
+  const cardSetupController = cardRuntimeModule.createCardSetupController({
+    cards,
+    passReserveRounds: PASS_RESERVE_ROUNDS,
+    defaultActivePlayerCount: DEFAULT_ACTIVE_PLAYER_COUNT,
+    defaultInitialHandCount: DEFAULT_INITIAL_HAND_COUNT,
+    ensurePublicCardsFilled: (...args) => ensurePublicCardsFilledRespectingDelayedRefillsForRoot(...args),
+  });
+  const { initializeCardGame, preparePassReservePilesForCurrentGame } = cardSetupController;
 
   const recoveryHost = gameRecoveryModule.createRecoveryHost({
     submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),

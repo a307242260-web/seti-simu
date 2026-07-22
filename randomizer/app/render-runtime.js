@@ -506,6 +506,32 @@
     });
   }
 
+  function createPlayerHandTitlePresenter(context = {}) {
+    function getPlayerHandPanelTitleHint() {
+      if (context.isDiscardSelectionActive()) {
+        return `（请选择 ${context.getPendingDiscardDecision()?.count || 0} 张弃牌）`;
+      }
+      if (context.isHandScanSelectionActive()) return "（请选择一张牌进行扫描）";
+      if (context.isMovePaymentSelectionActive() && !context.isMovePaymentLockedForAiAutomation()) {
+        const required = context.getPendingMovePayment()?.requiredMovePoints || context.moveEnergyCost;
+        return required > 1
+          ? `（需 ${required} 点移动力：可选移动牌，剩余用能量补齐）`
+          : "（可选移动牌弃置，或直接确认消耗 1 能量）";
+      }
+      if (context.isPlayCardSelectionActive()) {
+        const pending = context.getPendingPlayCardSelection();
+        return pending ? `（已选择 ${context.getCardLabel(pending.card)}）` : "（请选择要打出的牌）";
+      }
+      const selectedHandAction = context.getPendingCardCornerQuickAction() || context.getPendingHandCardPlayAction();
+      return selectedHandAction ? `（已选择 ${context.getCardLabel(selectedHandAction.card)}）` : "";
+    }
+
+    return Object.freeze({
+      getPlayerHandPanelTitleHint,
+      updatePlayerHandPanelTitle: () => context.renderPlayerHand(),
+    });
+  }
+
   function createRenderRuntime(context = {}) {
     const document = context.document || root.document;
     const ImageCtor = context.Image || root.Image;
@@ -2072,5 +2098,6 @@
     createCoordinateRuntime,
     createBrowserLayoutRuntime,
     createInteractionChrome,
+    createPlayerHandTitlePresenter,
   };
 });

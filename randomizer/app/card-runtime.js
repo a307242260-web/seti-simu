@@ -7,6 +7,41 @@
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
+  function createCardSetupController(context = {}) {
+    function preparePassReservePilesForCurrentGame(workingRoot, options = {}) {
+      return context.cards.preparePassReservePiles(workingRoot.cardState, workingRoot.playerState, {
+        rounds: context.passReserveRounds,
+        activePlayerCount: workingRoot.turnState.activePlayerCount || context.defaultActivePlayerCount,
+        random: options.random || Math.random,
+      });
+    }
+
+    function initializeCardGame(workingRoot, handCount = context.defaultInitialHandCount) {
+      const { cardState, playerState, turnState } = workingRoot;
+      if (!Array.isArray(playerState.players) || !playerState.players.length) return;
+      for (const player of playerState.players) {
+        player.hand = [];
+        player.reservedCards = [];
+        player.completedTaskCount = 0;
+        player.resources.handSize = 0;
+      }
+      cardState.publicCards = Array.from({ length: context.cards.PUBLIC_CARD_COUNT }, () => null);
+      cardState.discardPile = [];
+      cardState.drawPileCardIds = [];
+      context.cards.setSelectionActive(cardState, false);
+      context.cards.setPlayCardSelectionActive(cardState, false);
+      context.cards.setDiscardSelectionActive(cardState, false, 0);
+      const activeIds = new Set(turnState.activePlayerIds || []);
+      for (const player of playerState.players.filter((candidate) => activeIds.has(candidate.id))) {
+        context.cards.drawCardsToHand(cardState, playerState, player, handCount);
+      }
+      context.ensurePublicCardsFilled(workingRoot);
+      preparePassReservePilesForCurrentGame(workingRoot);
+    }
+
+    return Object.freeze({ initializeCardGame, preparePassReservePilesForCurrentGame });
+  }
+
   function createCardRuntime(context = {}) {
     const {
       HISTORY_SOURCE_MAIN,
@@ -1938,5 +1973,5 @@
     };
   }
 
-  return { createCardRuntime };
+  return { createCardRuntime, createCardSetupController };
 });

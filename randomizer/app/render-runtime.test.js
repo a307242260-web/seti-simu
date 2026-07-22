@@ -10,6 +10,7 @@ const {
   createCoordinateRuntime,
   createBrowserLayoutRuntime,
   createInteractionChrome,
+  createPlayerHandTitlePresenter,
 } = require("./render-runtime");
 
 {
@@ -779,6 +780,35 @@ function createContext(overrides = {}) {
   runtime.seedDefaultReferenceRockets(workingRoot);
   assert.equal(renderCalls, 1);
   assert.equal(rocketState.statusNote, null);
+}
+
+{
+  let mode = "discard";
+  let rendered = 0;
+  const presenter = createPlayerHandTitlePresenter({
+    isDiscardSelectionActive: () => mode === "discard",
+    getPendingDiscardDecision: () => ({ count: 2 }),
+    isHandScanSelectionActive: () => mode === "scan",
+    isMovePaymentSelectionActive: () => mode === "move",
+    isMovePaymentLockedForAiAutomation: () => false,
+    getPendingMovePayment: () => ({ requiredMovePoints: 3 }),
+    moveEnergyCost: 1,
+    isPlayCardSelectionActive: () => mode === "play",
+    getPendingPlayCardSelection: () => ({ card: { label: "研究" } }),
+    getPendingCardCornerQuickAction: () => mode === "corner" ? { card: { label: "移动" } } : null,
+    getPendingHandCardPlayAction: () => null,
+    getCardLabel: (card) => card.label,
+    renderPlayerHand: () => { rendered += 1; },
+  });
+  assert.equal(presenter.getPlayerHandPanelTitleHint(), "（请选择 2 张弃牌）");
+  mode = "move";
+  assert.match(presenter.getPlayerHandPanelTitleHint(), /需 3 点移动力/);
+  mode = "play";
+  assert.equal(presenter.getPlayerHandPanelTitleHint(), "（已选择 研究）");
+  mode = "corner";
+  assert.equal(presenter.getPlayerHandPanelTitleHint(), "（已选择 移动）");
+  presenter.updatePlayerHandPanelTitle();
+  assert.equal(rendered, 1);
 }
 
 console.log("render-runtime tests passed");
