@@ -13,21 +13,20 @@ function createHarness(overrides = {}) {
     actionLogs: [],
     irreversible: [],
   };
-  const pendingState = {
-    alienTraceAction: {
+  const pendingState = {};
+  const alienTraceContinuation = {
       type: "planet_reward_alien_trace",
       effectLabel: "外星人痕迹奖励",
       targetPlayerId: "p1",
       targetPlayerColor: "white",
       afterTraceReward: { kind: "traceCountScore", scorePer: 2 },
-    },
-    alienTracePickerState: {
+    };
+  const uiRuntimeState = { alienTracePickerState: {
       targetPlayerId: "p1",
       targetPlayerColor: "white",
       allowedAlienSlotIds: [1],
       allowedTraceTypes: ["yellow"],
-    },
-  };
+    } };
   const decisionSessions = createDecisionSessionStore();
   attachDecisionState(pendingState, decisionSessions);
   const player = { id: "p1", color: "white", resources: {}, hand: [] };
@@ -41,6 +40,7 @@ function createHarness(overrides = {}) {
   const actionEffect = { result: null };
   const context = {
     decisionSessions,
+    uiRuntimeState,
     structuredClone: global.structuredClone,
     aliens: {
       ALIEN_SLOT_IDS: [1],
@@ -201,6 +201,7 @@ function createHarness(overrides = {}) {
     rocketState,
     actionEffect,
     workingRoot: {
+      match: { alienTraceContinuation: structuredClone(alienTraceContinuation) },
       alienGameState,
       playerState,
       rocketState,
@@ -222,6 +223,7 @@ function createHarness(overrides = {}) {
 
 {
   const { helpers, actionEffect, rocketState, player, calls, workingRoot } = createHarness();
+  assert.doesNotThrow(() => JSON.stringify(workingRoot.match.alienTraceContinuation));
   const result = helpers.confirmAlienTracePlacement(workingRoot, 1, "yellow");
   assert.equal(result.ok, true);
   assert.equal(actionEffect.result.ok, true);

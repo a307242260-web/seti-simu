@@ -68,11 +68,14 @@
       allowsBlindDrawInSelection,
       canBlindDraw,
       getPendingLandTargetDecision,
+      getAlienTraceContinuation,
+      getAlienTracePickerState,
       abilities,
       createActionContext,
       getFangzhouUnlockableTraceTypes,
       hasAlienTracePanelPlacementTarget,
       getAlienTraceChoiceSlotIds,
+      canPlaceStateTrace,
       aliens,
       handleConditionalSectorChoice,
       handleChongFossilChoice,
@@ -1125,18 +1128,19 @@
       };
     }
 
-    const tracePending = decisionState.alienTraceAction;
-    const picker = decisionState.alienTracePickerState;
+    const tracePending = getAlienTraceContinuation(workingRoot);
+    const picker = getAlienTracePickerState();
     if (tracePending && picker?.mode === "fangzhou-destination") {
       const player = getHeadlessConditionalPlayer(picker);
       const alienSlotId = Number(picker.selectedAlienSlotId || 0);
       const traceTypes = getFangzhouUnlockableTraceTypes(
+        workingRoot,
         alienSlotId,
         picker.allowedTraceTypes || aliens.TRACE_TYPES,
         player,
       );
       const candidates = [];
-      if (hasAlienTracePanelPlacementTarget(picker.allowedAlienSlotIds || null, picker.allowedTraceTypes || aliens.TRACE_TYPES, player)) {
+      if (hasAlienTracePanelPlacementTarget(workingRoot, picker.allowedAlienSlotIds || null, picker.allowedTraceTypes || aliens.TRACE_TYPES, player)) {
         candidates.push({
           id: "conditionalChoice",
           family: "choose_branch",
@@ -1160,6 +1164,7 @@
     if (tracePending && picker?.mode === "fangzhou-unlock-color") {
       const player = getHeadlessConditionalPlayer(picker);
       const traceTypes = getFangzhouUnlockableTraceTypes(
+        workingRoot,
         Number(picker.selectedAlienSlotId || 0),
         picker.allowedTraceTypes || aliens.TRACE_TYPES,
         player,
@@ -1176,13 +1181,13 @@
       };
     }
     if (picker?.mode === "trace-board") {
-      const slotIds = getAlienTraceChoiceSlotIds(picker.allowedAlienSlotIds);
+      const slotIds = getAlienTraceChoiceSlotIds(workingRoot, picker.allowedAlienSlotIds);
       const traceTypes = picker.allowedTraceTypes?.length ? picker.allowedTraceTypes : aliens.TRACE_TYPES;
       const candidates = [];
       for (const alienSlotId of slotIds) {
         for (const traceType of traceTypes) {
-          if (!canPlaceStateTrace(alienSlotId, traceType, "first")
-            && !canPlaceStateTrace(alienSlotId, traceType, "extra")) continue;
+          if (!canPlaceStateTrace(workingRoot, alienSlotId, traceType, "first")
+            && !canPlaceStateTrace(workingRoot, alienSlotId, traceType, "extra")) continue;
           candidates.push({
             id: "conditionalChoice",
             family: "choose_target",
@@ -1278,10 +1283,10 @@
       if (isActionEffectFlowActive()) skipCurrentActionEffect();
       return { ok: true, progressed: true, skipped: true, message: "已跳过无可用科技的效果" };
     },
-    "fangzhou-trace-destination": (action) => handleFangzhouTraceDestinationChoice(
-      action.destination, action.traceType || null,
+    "fangzhou-trace-destination": (action, workingRoot) => handleFangzhouTraceDestinationChoice(
+      workingRoot, action.destination, action.traceType || null,
     ),
-    "fangzhou-unlock-color": (action) => handleFangzhouUnlockTraceChoice(action.target.traceType),
+    "fangzhou-unlock-color": (action, workingRoot) => handleFangzhouUnlockTraceChoice(workingRoot, action.target.traceType),
     "discard-corner-repeat": (action) => handleDiscardCornerRepeatChoice(action.target.cardId),
     "return-unfinished-task": (action) => handleReturnUnfinishedTaskChoice(action.target.cardId),
     "remove-orbit-to-probe": (action) => handleRemoveOrbitToProbeChoice(action.target.choiceId),
@@ -1402,8 +1407,8 @@
       : handleIndustryFutureSpanHandClick(workingRoot, Number(action.target.handIndex)),
     "blind-draw": (_action, workingRoot) => drawCardForCurrentPlayer(workingRoot, { fromSelection: true }),
     "land-target": (action, workingRoot) => confirmLandTargetChoice(workingRoot, Number(action.target.choiceId)),
-    "alien-state-trace": (action) => handleStateTraceSlotPlacement(
-      Number(action.target.slotId), action.target.traceType,
+    "alien-state-trace": (action, workingRoot) => handleStateTraceSlotPlacement(
+      workingRoot, Number(action.target.slotId), action.target.traceType,
     ),
   });
 

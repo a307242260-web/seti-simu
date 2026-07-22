@@ -661,7 +661,7 @@
 
     function listAiAlienStateTraceTargets(options = {}) {
       const pickerMode = String(state.alienTracePickerState?.mode || "");
-      const allowPendingFallback = Boolean(options.allowPendingFallback && state.pendingAlienTraceAction);
+      const allowPendingFallback = Boolean(options.allowPendingFallback && state.pendingAlienTraceContinuation);
       if (
         pickerMode !== "debug-direct"
         && pickerMode !== "trace-board"
@@ -1122,7 +1122,7 @@
         && isAiOpenHiddenFirstTraceTarget(alienSlot, traceType)
         && isAiHiddenFirstTraceColorLost(traceType, player);
       const forcedPendingStateExtraTrace = Boolean(
-        state.pendingAlienTraceAction
+        state.pendingAlienTraceContinuation
         && target.kind === "state-slot"
         && target.button.dataset.stateTraceKind === "extra"
       );
@@ -1272,9 +1272,9 @@
           ...listAiAlienGridTraceTargets(),
           ...listAiAlienStateTraceTargets(),
         ];
-      } else if (pickerMode || state.pendingAlienTraceAction) {
+      } else if (pickerMode || state.pendingAlienTraceContinuation) {
         targets = listAiAlienPickerTargets();
-        if (!targets.length && state.pendingAlienTraceAction) {
+        if (!targets.length && state.pendingAlienTraceContinuation) {
           targets = listAiAlienStateTraceTargets({ allowPendingFallback: true });
         }
       }
@@ -1285,8 +1285,8 @@
     }
 
     function runAiAlienTraceDecision(workingRoot) {
-      if (!state.pendingAlienTraceAction && (!state.alienTracePickerState || !state.alienTracePickerState.mode)) return null;
-      const player = getAlienTraceActionPlayer(state.pendingAlienTraceAction || state.alienTracePickerState);
+      if (!state.pendingAlienTraceContinuation && (!state.alienTracePickerState || !state.alienTracePickerState.mode)) return null;
+      const player = getAlienTraceActionPlayer(state.pendingAlienTraceContinuation || state.alienTracePickerState);
       if (!isAiAutoBattlePlayer(player?.id)) {
         return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择外星人痕迹` };
       }

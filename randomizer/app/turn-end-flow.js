@@ -85,8 +85,6 @@
       updatePublicCardControls
     } = context;
     const decisionState = context.decisionSessions?.createFacade?.({
-      alienTraceAction: "alien_trace_action",
-      alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
 
@@ -438,14 +436,14 @@
     };
   }
 
-  function hasTurnEndRevealBlockingSubFlow() {
+  function hasTurnEndRevealBlockingSubFlow(workingRoot) {
     return Boolean(
       uiRuntimeState.alienRevealConfirmation
       || getPendingJiuzheCardPlay()
       || getPendingBanrenmaOpportunity()
       || getPendingBanrenmaCardGain()
-      || decisionState.alienTraceAction
-      || decisionState.alienTracePickerState
+      || workingRoot.match?.alienTraceContinuation
+      || uiRuntimeState.alienTracePickerState
       || isActionEffectFlowActive()
       || hasActivePendingSubFlow()
     );
@@ -462,7 +460,7 @@
   function maybeResumeTurnEndAfterReveal(workingRoot) {
     requireWorkingRoot(workingRoot);
     const continuation = getTurnEndRevealContinuation(workingRoot);
-    if (!continuation || hasTurnEndRevealBlockingSubFlow()) return null;
+    if (!continuation || hasTurnEndRevealBlockingSubFlow(workingRoot)) return null;
     return finishCurrentTurnAfterAlienReveal(workingRoot, continuation);
   }
 
@@ -498,7 +496,7 @@
     const actionRocketState = workingRoot.rocketState;
     const resolvedEndingPlayer = endingPlayer || (actionPlayerState.players || [])
       .find((player) => player.id === endingPlayerId) || null;
-    if (turnEndReveal?.count && hasTurnEndRevealBlockingSubFlow()) {
+    if (turnEndReveal?.count && hasTurnEndRevealBlockingSubFlow(workingRoot)) {
       return queueTurnEndAfterRevealContinuation(workingRoot, {
         endingPlayerId,
         didPass,

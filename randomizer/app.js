@@ -313,6 +313,7 @@
       "canPlaceYichangdianTrace", "canPlaceFangzhouTrace", "canPlaceBanrenmaTrace", "canPlaceChongTrace",
       "canPlaceAmibaTrace", "canPlaceAomomoTrace", "canPlaceRunezuTrace", "canPlaceRunezuFaceSymbol",
       "canPlaceStateTrace", "canPlaceAnyStateExtraTrace", "openAlienTracePicker", "beginAlienTraceBoardPlacement",
+      "closeAlienTracePicker",
       "beginJiuzheTraceGridPlacement", "beginYichangdianTraceGridPlacement", "beginFangzhouTraceGridPlacement",
       "beginBanrenmaTraceGridPlacement", "beginAomomoTraceGridPlacement", "beginChongTraceGridPlacement",
       "beginAmibaTraceGridPlacement", "beginRunezuTraceGridPlacement", "renderAlienTracePickerColorStep",
@@ -1007,8 +1008,6 @@
   });
   const decisionSessions = runtime.decisions;
   const decisionState = decisionSessions.createFacade({
-    alienTraceAction: "alien_trace_action",
-    alienTracePickerState: "alien_trace_picker_state",
     actionEffectFlow: "action_effect_flow",
   });
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
@@ -1017,6 +1016,7 @@
     workingRoot?.match?.dataPlacementContinuation || null
   );
   const getPendingLandTargetDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.landTargetContinuation || null;
+  const getPendingAlienTraceDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.alienTraceContinuation || null;
   const getPendingPiratesRaidDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.piratesRaidContinuation || null;
   const getPendingStrategySlotDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.strategySlotContinuation || null;
   const getPendingIndustryAbilityDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.industryAbilityContinuation || null;
@@ -1152,11 +1152,14 @@
     allowsBlindDrawInSelection,
     canBlindDraw,
     getPendingLandTargetDecision,
+    getAlienTraceContinuation: (workingRoot) => workingRoot.match?.alienTraceContinuation || null,
+    getAlienTracePickerState: () => uiRuntimeState.alienTracePickerState || null,
     abilities,
     createActionContext: createReadoutActionContext,
-    getFangzhouUnlockableTraceTypes,
-    hasAlienTracePanelPlacementTarget,
-    getAlienTraceChoiceSlotIds,
+    getFangzhouUnlockableTraceTypes: (workingRoot, ...args) => getFangzhouUnlockableTraceTypesForRoot(workingRoot, ...args),
+    hasAlienTracePanelPlacementTarget: (workingRoot, ...args) => hasAlienTracePanelPlacementTargetForRoot(workingRoot, ...args),
+    getAlienTraceChoiceSlotIds: (_workingRoot, ...args) => getAlienTraceChoiceSlotIds(...args),
+    canPlaceStateTrace: (workingRoot, ...args) => canPlaceStateTraceForRoot(workingRoot, ...args),
     aliens,
     handleConditionalSectorChoice,
     handleChongFossilChoice,
@@ -1168,8 +1171,8 @@
     handleSupplyTechTileClick,
     confirmTechBlueSlotChoice,
     cancelTechSelection,
-    handleFangzhouTraceDestinationChoice,
-    handleFangzhouUnlockTraceChoice,
+    handleFangzhouTraceDestinationChoice: (workingRoot, ...args) => handleFangzhouTraceDestinationChoiceForRoot(workingRoot, ...args),
+    handleFangzhouUnlockTraceChoice: (workingRoot, ...args) => handleFangzhouUnlockTraceChoiceForRoot(workingRoot, ...args),
     handleDiscardCornerRepeatChoice,
     handleReturnUnfinishedTaskChoice,
     handleRemoveOrbitToProbeChoice,
@@ -1208,7 +1211,7 @@
     handleIndustryFutureSpanHandClick: (workingRoot, ...args) => industryRuntime.handleIndustryFutureSpanHandClick(workingRoot, ...args),
     drawCardForCurrentPlayer: (workingRoot, ...args) => drawCardForCurrentPlayerForRoot(workingRoot, ...args),
     confirmLandTargetChoice: (workingRoot, choiceIndex) => confirmLandTargetChoiceForRoot(workingRoot, choiceIndex),
-    handleStateTraceSlotPlacement,
+    handleStateTraceSlotPlacement: (workingRoot, ...args) => handleStateTraceSlotPlacementForRoot(workingRoot, ...args),
   }));
   const conditionalActionExecutor = conditionalActionExecutorModule.createConditionalActionExecutor({
     domain: conditionalDecisionDomain,
@@ -1804,14 +1807,14 @@
     if (!residentDesktopRenderer || !residentViewStateStore || !residentProjectionAdapter) return null;
     const viewer = getResidentViewer();
     const decisions = { ...decisionSessions.createFacade({
-      alienTraceAction: "alien_trace_action",
-      alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) };
     const canonical = residentProjectionAdapter.projectSource({ viewer });
     const readoutRoot = createResidentReadoutRoot(canonical.resident);
     decisions.movePayment = getPendingMovePayment();
     decisions.cardSelectionContinuation = getPendingCardSelectionDecision(readoutRoot);
+    decisions.alienTraceContinuation = getPendingAlienTraceDecision(readoutRoot);
+    decisions.alienTracePickerState = uiRuntimeState.alienTracePickerState || null;
     decisions.publicCardSelectedSlots = [...(uiRuntimeState.publicCardSelectedSlots || [])];
     decisions.discardContinuation = getPendingDiscardDecision(readoutRoot);
     decisions.discardSelectedHandIndexes = [...(uiRuntimeState.discardSelectedHandIndexes || [])];
@@ -3031,7 +3034,7 @@
     canPlaceRunezuFaceSymbol: canPlaceRunezuFaceSymbolForRoot,
     canPlaceStateTrace: canPlaceStateTraceForRoot,
     canPlaceAnyStateExtraTrace: canPlaceAnyStateExtraTraceForRoot,
-    closeAlienTracePicker,
+    closeAlienTracePicker: closeAlienTracePickerForRoot,
     openAlienTracePicker: openAlienTracePickerForRoot,
     beginAlienTraceBoardPlacement: beginAlienTraceBoardPlacementForRoot,
     beginJiuzheTraceGridPlacement: beginJiuzheTraceGridPlacementForRoot,
@@ -3070,6 +3073,7 @@
   const canPlaceStateTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceStateTrace", args);
   const canPlaceAnyStateExtraTrace = (...args) => callBrowserDomainCommand("alien_ui", "canPlaceAnyStateExtraTrace", args);
   const openAlienTracePicker = (...args) => callBrowserDomainCommand("alien_ui", "openAlienTracePicker", args);
+  const closeAlienTracePicker = (...args) => callBrowserDomainCommand("alien_ui", "closeAlienTracePicker", args);
   const beginAlienTraceBoardPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginAlienTraceBoardPlacement", args);
   const beginJiuzheTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginJiuzheTraceGridPlacement", args);
   const beginYichangdianTraceGridPlacement = (...args) => callBrowserDomainCommand("alien_ui", "beginYichangdianTraceGridPlacement", args);
@@ -3082,16 +3086,27 @@
   const renderAlienTracePickerColorStep = (...args) => callBrowserDomainCommand("alien_ui", "renderAlienTracePickerColorStep", args);
   const openFangzhouTraceUseChoice = (...args) => callBrowserDomainCommand("alien_ui", "openFangzhouTraceUseChoice", args);
   const openFangzhouTraceDestinationChoice = (...args) => callBrowserDomainCommand("alien_ui", "openFangzhouTraceDestinationChoice", args);
-  const handleFangzhouTraceDestinationChoice = (...args) => callBrowserDomainCommand("alien_ui", "handleFangzhouTraceDestinationChoice", args);
-  const handleFangzhouUnlockTraceChoice = (...args) => callBrowserDomainCommand("alien_ui", "handleFangzhouUnlockTraceChoice", args);
+  function handleFangzhouTraceDestinationChoice(destination, traceType = null) {
+    return submitActiveCardDecision("fangzhou-trace-destination", (target) => (
+      target.choiceId === destination || target.choiceId === `${destination}:${traceType}`
+    ));
+  }
+  function handleFangzhouUnlockTraceChoice(traceType) {
+    return submitActiveCardDecision("fangzhou-unlock-color", (target) => target.traceType === traceType);
+  }
   const routeFangzhouAlienTraceGain = (...args) => callBrowserDomainCommand("alien_ui", "routeFangzhouAlienTraceGain", args);
-  const handleStateTraceSlotPlacement = (...args) => callBrowserDomainCommand("alien_ui", "handleStateTraceSlotPlacement", args);
+  function handleStateTraceSlotPlacement(alienSlotId, traceType) {
+    return submitActiveCardDecision("alien-state-trace", (target) => (
+      Number(target.slotId) === Number(alienSlotId) && target.traceType === traceType
+    ));
+  }
   const handleFangzhouTraceSlotPlacement = (...args) => callBrowserDomainCommand("alien_ui", "handleFangzhouTraceSlotPlacement", args);
   const getEligibleAlienSlotIdsForTraceEffect = (...args) => callBrowserDomainCommand("alien_ui", "getEligibleAlienSlotIdsForTraceEffect", args);
   const getFangzhouUnlockableTraceTypes = (...args) => callBrowserDomainCommand("alien_ui", "getFangzhouUnlockableTraceTypes", args);
   const hasAlienTracePanelPlacementTarget = (...args) => callBrowserDomainCommand("alien_ui", "hasAlienTracePanelPlacementTarget", args);
   const alienRuntimeHelpers = alienRuntimeModule.createAlienRuntimeHelpers({
     decisionSessions,
+    uiRuntimeState,
     structuredClone,
     aliens,
     players,
@@ -3127,7 +3142,7 @@
     renderSectorNebulaDataBoard,
     renderFangzhouCardDisplays,
     updateActionButtons,
-    closeAlienTracePicker,
+    closeAlienTracePicker: (workingRoot) => closeAlienTracePickerForRoot(workingRoot),
     clearAlienTracePlacementMode,
     maybeRevealAlienAfterTrace,
     createActionLogImpactSnapshot,
@@ -4295,7 +4310,7 @@
     get pendingCardSelectionContinuation() { return getPendingCardSelectionDecision(); },
     get publicCardSelectedSlots() { return [...(uiRuntimeState.publicCardSelectedSlots || [])]; },
     get pendingPublicScanQueue() { return getPublicScanQueueSession(); },
-    get pendingAlienTraceAction() { return decisionState.alienTraceAction; },
+    get pendingAlienTraceContinuation() { return getPendingAlienTraceDecision(); },
     get pendingLandTargetAction() { return getPendingLandTargetDecision(); },
     get pendingJiuzheCardPlay() { return getPendingJiuzheCardPlay(); },
     get pendingYichangdianCardGain() { return getPendingYichangdianCardGain(); },
@@ -4319,7 +4334,7 @@
     set effectStepActive(value) { uiRuntimeState.effectStepActive = value; },
     get pendingIndustryAbility() { return getPendingIndustryAbilityDecision(); },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
-    get alienTracePickerState() { return decisionState.alienTracePickerState; },
+    get alienTracePickerState() { return uiRuntimeState.alienTracePickerState; },
     get pendingAlienRevealConfirmation() { return uiRuntimeState.alienRevealConfirmation; },
   };
 
@@ -5651,7 +5666,7 @@
     uiRuntimeState.probeSectorSelectedRocketIds = [];
     delete workingRoot.match.publicScanContinuation;
     delete workingRoot.match.handScanContinuation;
-    decisionState.alienTraceAction = null;
+    delete workingRoot.match.alienTraceContinuation;
     delete workingRoot.match.landTargetContinuation;
     delete workingRoot.match.probeLocationRewardContinuation;
     delete workingRoot.match.cardTriggerContinuation;
@@ -5680,7 +5695,7 @@
     alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
-    decisionState.alienTracePickerState = null;
+    uiRuntimeState.alienTracePickerState = null;
     closeAlienRevealConfirmationOverlay();
     if (workingRoot.match && typeof workingRoot.match === "object") {
       delete workingRoot.match.turnEndRevealContinuation;
@@ -7161,7 +7176,7 @@
       || getPendingCardCornerFreeMove()
       || (els.scanAction4Overlay && !els.scanAction4Overlay.hidden)
       || (els.landTargetOverlay && !els.landTargetOverlay.hidden)
-      || (els.alienTraceOverlay && !els.alienTraceOverlay.hidden && decisionState.alienTracePickerState?.mode !== "reveal-confirm")
+      || (els.alienTraceOverlay && !els.alienTraceOverlay.hidden && uiRuntimeState.alienTracePickerState?.mode !== "reveal-confirm")
       || getPendingCardMoveDecision()
       || getPendingScanFreeMoveDecision()
       || Boolean(getPendingDataPlacementDecision()),
@@ -8474,7 +8489,7 @@
     assignEffectOwner,
     attachScoreSourceToEffects,
     banrenma,
-    beginAlienTraceBoardPlacement,
+    beginAlienTraceBoardPlacement: (workingRoot, ...args) => beginAlienTraceBoardPlacementForRoot(workingRoot, ...args),
     beginCardMoveEffect,
     beginCardSelection,
     beginDiscardSelection,
@@ -8493,7 +8508,7 @@
     chong,
     claimRunezuPlanetSymbolForTravelResult,
     claimRunezuSourceSymbolWithHistory,
-    closeAlienTracePicker,
+    closeAlienTracePicker: (workingRoot) => closeAlienTracePickerForRoot(workingRoot),
     closeScanAction4Picker,
     closeScanTargetPicker,
     collectPlutoMarkers,
@@ -8506,6 +8521,7 @@
     document,
     effectChoiceFlowHelpers,
     els,
+    uiRuntimeState,
     endEffectHistoryStep,
     endGameScoring,
     ensureCardFlowEventBonuses,
@@ -8560,7 +8576,7 @@
     getResearchTechSelectionPayload: (...args) => getResearchTechSelectionPayload?.(...args),
     getSectorContentForMove,
     getSectorScanTargetLabel,
-    hasAlienTracePanelPlacementTarget,
+    hasAlienTracePanelPlacementTarget: (workingRoot, ...args) => hasAlienTracePanelPlacementTargetForRoot(workingRoot, ...args),
     hasHandScanTargetCard,
     hasPlayerVisitedPlanetThisTurn,
     historyCommands,
@@ -8582,7 +8598,7 @@
     openAomomoCardGainDialog,
     openAutoDataPlacementPrompt,
     openChongFossilChoiceDialog,
-    openFangzhouTraceDestinationChoice,
+    openFangzhouTraceDestinationChoice: (workingRoot, ...args) => openFangzhouTraceDestinationChoiceForRoot(workingRoot, ...args),
     openLandTargetPicker,
     openRunezuSymbolBranchDialog,
     openScanAction4Picker,
@@ -11458,8 +11474,8 @@
       getPendingDiscardDecision(readoutRoot),
       getPendingCardSelectionDecision(readoutRoot),
       getPendingLandTargetDecision(),
-      decisionState.alienTraceAction,
-      decisionState.alienTracePickerState,
+      getPendingAlienTraceDecision(readoutRoot),
+      uiRuntimeState.alienTracePickerState,
     ].find(Boolean) || null;
     const pendingOwner = activePending?.player || resolvePlayerReference({
       playerId: activePending?.playerId || activePending?.targetPlayerId || null,
@@ -12153,7 +12169,7 @@
     closeScanTargetPicker,
     closeScanAction4Picker,
     closeLandTargetPicker,
-    closeAlienTracePicker,
+    closeAlienTracePicker: (workingRoot) => closeAlienTracePickerForRoot(workingRoot),
     clearActionEffectFlow,
     clearActionPending,
     syncPassReserveSelectionChrome,
@@ -12207,8 +12223,8 @@
     get pendingJiuzheCardPlay() { return getPendingJiuzheCardPlay(); },
     get jiuzheCardViewOpen() { return Boolean(uiRuntimeState.jiuzheCardViewOpen); },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
-    get alienTracePickerState() { return decisionState.alienTracePickerState; },
-    set alienTracePickerState(value) { decisionState.alienTracePickerState = value; },
+    get alienTracePickerState() { return uiRuntimeState.alienTracePickerState; },
+    set alienTracePickerState(value) { uiRuntimeState.alienTracePickerState = value; },
     get pendingAlienRevealConfirmation() { return uiRuntimeState.alienRevealConfirmation; },
     get moveHighlightRocketId() { return uiRuntimeState.moveHighlightRocketId; },
     get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
@@ -12252,7 +12268,7 @@
     cardEffects,
     cards,
     chong,
-    closeAlienTracePicker,
+    closeAlienTracePicker: (workingRoot) => closeAlienTracePickerForRoot(workingRoot),
     completeCurrentActionEffect,
     completeQuickActionStep,
     continueAfterCardTriggerResolution,
@@ -12281,7 +12297,7 @@
     getReadyChongTaskForReservedCard,
     getTargetPlayerOptions,
     hasActivePendingSubFlow,
-    hasAlienTracePanelPlacementTarget,
+    hasAlienTracePanelPlacementTarget: (workingRoot, ...args) => hasAlienTracePanelPlacementTargetForRoot(workingRoot, ...args),
     HISTORY_SOURCE_QUICK,
     historyCommands,
     incrementCompletedTaskCount,

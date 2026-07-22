@@ -64,11 +64,8 @@ function createHarness() {
     },
   };
 
-  const pendingState = {
-    alienTracePickerState: null,
-    alienTraceAction: { targetPlayerId: "p1", targetPlayerColor: "white" },
-  };
-  const uiRuntimeState = { alienRevealConfirmation: null };
+  const pendingState = {};
+  const uiRuntimeState = { alienRevealConfirmation: null, alienTracePickerState: null };
   const decisionSessions = createDecisionSessionStore();
   attachDecisionState(pendingState, decisionSessions);
   const rocketState = { statusNote: "" };
@@ -146,6 +143,7 @@ function createHarness() {
     els,
     calls,
     workingRoot: {
+      match: { alienTraceContinuation: { targetPlayerId: "p1", targetPlayerColor: "white" } },
       alienGameState,
       playerState: { currentPlayerId: "p1", players: [player] },
       rocketState,
@@ -154,11 +152,11 @@ function createHarness() {
 }
 
 {
-  const { helpers, pendingState, els, workingRoot } = createHarness();
+  const { helpers, uiRuntimeState, els, workingRoot } = createHarness();
   const result = helpers.openAlienTracePicker(workingRoot, { allowedTraceTypes: ["yellow"] });
   assert.equal(result.ok, true);
   assert.equal(els.alienTraceOverlay.hidden, false);
-  assert.deepEqual(pendingState.alienTracePickerState.allowedTraceTypes, ["yellow"]);
+  assert.deepEqual(uiRuntimeState.alienTracePickerState.allowedTraceTypes, ["yellow"]);
   assert.equal(els.alienTraceActions.children.length, 2);
   assert.equal(els.alienTraceActions.children[0].dataset.alienPickerStep, "alien");
 }
@@ -176,8 +174,8 @@ function createHarness() {
 }
 
 {
-  const { helpers, pendingState, els, workingRoot } = createHarness();
-  pendingState.alienTracePickerState = {
+  const { helpers, uiRuntimeState, els, workingRoot } = createHarness();
+  uiRuntimeState.alienTracePickerState = {
     allowedTraceTypes: ["yellow"],
     allowedAlienSlotIds: [2],
     targetPlayerId: "p1",
@@ -185,20 +183,19 @@ function createHarness() {
   };
   const result = helpers.openFangzhouTraceDestinationChoice(workingRoot, { alienSlotId: 2, allowedTraceTypes: ["yellow"] });
   assert.equal(result.ok, true);
-  assert.equal(pendingState.alienTracePickerState.mode, "fangzhou-destination");
+  assert.equal(uiRuntimeState.alienTracePickerState.mode, "fangzhou-destination");
   assert.equal(els.alienTraceActions.children.length, 2);
   assert.equal(els.alienTraceActions.children[0].dataset.fangzhouDestination, "panel");
   assert.equal(els.alienTraceActions.children[1].dataset.fangzhouDestination, "unlock");
 }
 
 {
-  const { helpers, pendingState, els } = createHarness();
-  pendingState.alienTracePickerState = { mode: "trace-board" };
-  pendingState.alienTraceAction = { targetPlayerId: "p1" };
+  const { helpers, uiRuntimeState, els, workingRoot } = createHarness();
+  uiRuntimeState.alienTracePickerState = { mode: "trace-board" };
   els.alienTraceOverlay = null;
-  helpers.closeAlienTracePicker();
-  assert.equal(pendingState.alienTracePickerState, null);
-  assert.equal(pendingState.alienTraceAction, null);
+  helpers.closeAlienTracePicker(workingRoot);
+  assert.equal(uiRuntimeState.alienTracePickerState, null);
+  assert.equal(workingRoot.match.alienTraceContinuation, undefined);
 }
 
 console.log("alien-ui tests passed");

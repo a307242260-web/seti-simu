@@ -104,8 +104,6 @@
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
     const ruleCardState = (workingRoot) => workingRoot.cardState;
     const decisionState = context.decisionSessions?.createFacade?.({
-      alienTraceAction: "alien_trace_action",
-      alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
 
@@ -443,16 +441,16 @@
     function setDebugAlienTraceModeActive(workingRoot, active, message = null) {
       uiRuntimeState.debugAlienTraceModeActive = Boolean(active);
       if (uiRuntimeState.debugAlienTraceModeActive) {
-        context.closeAlienTracePicker?.();
-        decisionState.alienTracePickerState = {
+        context.closeAlienTracePicker?.(workingRoot);
+        uiRuntimeState.alienTracePickerState = {
           mode: "debug-direct",
           allowedTraceTypes: aliens.TRACE_TYPES,
         };
         ruleRocketState(workingRoot).statusNote = message
           || "调试：未揭示外星人请点击 state 面板痕迹位；已揭示请点击正面痕迹位或方舟保留牌解锁";
       } else {
-        if (decisionState.alienTracePickerState?.mode === "debug-direct") {
-          decisionState.alienTracePickerState = null;
+        if (uiRuntimeState.alienTracePickerState?.mode === "debug-direct") {
+          uiRuntimeState.alienTracePickerState = null;
         }
         ruleRocketState(workingRoot).statusNote = message || "已退出调试获取外星人痕迹模式";
       }
@@ -990,7 +988,7 @@
         workingRoot.match?.probeLocationRewardContinuation,
         workingRoot.match?.publicScanContinuation,
         workingRoot.match?.handScanContinuation,
-        decisionState.alienTraceAction,
+        workingRoot.match?.alienTraceContinuation,
         workingRoot.match?.landTargetContinuation,
         workingRoot.match?.dataPlacementContinuation,
         workingRoot.match?.cardTriggerContinuation,

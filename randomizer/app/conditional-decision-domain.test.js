@@ -42,6 +42,8 @@ function createFixture() {
     dataPlacementCalls: [],
     discardCalls: [],
     landCalls: [],
+    traceCalls: [],
+    alienPicker: null,
     industryMoveCalls: [],
   };
   let contextReads = 0;
@@ -104,6 +106,20 @@ function createFixture() {
         return { ok: true, progressed: true, skipped: true };
       },
       getPendingLandTargetDecision: (workingRoot) => workingRoot.match.landTargetContinuation || null,
+      getAlienTraceContinuation: (workingRoot) => workingRoot.match.alienTraceContinuation || null,
+      getAlienTracePickerState: () => state.alienPicker,
+      getAlienTraceChoiceSlotIds: (_workingRoot, allowed) => allowed || [1],
+      canPlaceStateTrace: () => true,
+      aliens: {
+        TRACE_TYPES: ["yellow"],
+        getAlienSlotLabel: (slotId) => `外星人 ${slotId}`,
+        getTraceTypeLabel: (traceType) => traceType,
+      },
+      handleStateTraceSlotPlacement: (workingRoot, slotId, traceType) => {
+        state.traceCalls.push([slotId, traceType]);
+        delete workingRoot.match.alienTraceContinuation;
+        return { ok: true, progressed: true };
+      },
       confirmLandTargetChoice: (workingRoot, choiceIndex) => {
         state.landCalls.push(choiceIndex);
         delete workingRoot.match.landTargetContinuation;
@@ -322,6 +338,26 @@ function createFixture() {
   const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_target"));
   assert.equal(result.ok, true);
   assert.deepEqual(fixture.state.dataPlacementCalls, [["computer", null]]);
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  fixture.root.match.alienTraceContinuation = { playerId: "move-owner", targetPlayerId: "move-owner" };
+  fixture.state.alienPicker = {
+    mode: "trace-board",
+    playerId: "move-owner",
+    targetPlayerId: "move-owner",
+    allowedAlienSlotIds: [1],
+    allowedTraceTypes: ["yellow"],
+  };
+  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const decision = executor.inspect(fixture.root);
+  assert.deepEqual(decision.choices.map((choice) => choice.target.kind), ["alien-state-trace"]);
+  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_target"));
+  assert.equal(result.ok, true);
+  assert.deepEqual(fixture.state.traceCalls, [[1, "yellow"]]);
 }
 
 function toDescriptor(executor, root, family) {

@@ -2,8 +2,6 @@
 
 const DEFINITIONS = Object.freeze({
   discardAction: "discard_action",
-  alienTraceAction: "alien_trace_action",
-  alienTracePickerState: "alien_trace_picker_state",
   actionEffectFlow: "action_effect_flow",
 });
 

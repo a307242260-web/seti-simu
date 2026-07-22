@@ -102,8 +102,6 @@
       else workingRoot.match.scanTargetContinuation = structuredClone(continuation);
     }
     const decisionState = context.decisionSessions?.createFacade?.({
-      alienTraceAction: "alien_trace_action",
-      alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
 

@@ -163,6 +163,7 @@
       skipActionEffectWithMessage,
       syncHandScanSelectionChrome,
       tech,
+      uiRuntimeState,
       updateActionButtons,
     } = context;
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
@@ -171,8 +172,6 @@
     const ruleRocketState = (workingRoot) => workingRoot.rocketState;
     const ruleTurnState = (workingRoot) => workingRoot.turnState;
     const decisionState = context.decisionSessions?.createFacade?.({
-      alienTraceAction: "alien_trace_action",
-      alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
 
@@ -530,7 +529,7 @@
         playerColor: effect.options?.targetPlayerColor,
       }) || getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
       const allowedAlienSlotIds = getEligibleAlienSlotIdsForTraceEffect(effect, targetPlayer, allowedTraceTypes);
-      decisionState.alienTraceAction = {
+      workingRoot.match.alienTraceContinuation = {
         type: "planet_reward_alien_trace",
         beforeAlienState: structuredClone(ruleAlienGameState(workingRoot)),
         beforePlayerState: structuredClone(rulePlayerState(workingRoot)),
@@ -544,7 +543,7 @@
         allowedTraceTypes,
         allowedAlienSlotIds,
         targetPlayer,
-        openFangzhouChoice: () => openFangzhouTraceDestinationChoice({
+        openFangzhouChoice: () => openFangzhouTraceDestinationChoice(workingRoot, {
           allowedTraceTypes,
           allowedAlienSlotIds,
           targetPlayerId: targetPlayer?.id || null,
@@ -552,11 +551,12 @@
           label: effect.label,
         }),
         hasPanelPlacementTarget: () => hasAlienTracePanelPlacementTarget(
+          workingRoot,
           allowedAlienSlotIds,
           allowedTraceTypes,
           targetPlayer,
         ),
-        beginPanelPlacement: () => beginAlienTraceBoardPlacement({
+        beginPanelPlacement: () => beginAlienTraceBoardPlacement(workingRoot, {
           allowedTraceTypes,
           allowedAlienSlotIds,
           targetPlayerId: targetPlayer?.id || null,
@@ -565,9 +565,9 @@
         }),
         finishNoTarget: () => {
           const message = `${effect.label}：没有合法外星人痕迹位置，奖励落空`;
-          decisionState.alienTraceAction = null;
-          decisionState.alienTracePickerState = null;
-          closeAlienTracePicker();
+          delete workingRoot.match.alienTraceContinuation;
+          uiRuntimeState.alienTracePickerState = null;
+          closeAlienTracePicker(workingRoot);
           return finishAutomaticRewardEffect(workingRoot, effect, {
             ok: true,
             skipped: true,

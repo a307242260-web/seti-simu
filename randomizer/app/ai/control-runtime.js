@@ -376,7 +376,7 @@
 
     function getPendingAlienAutomationPlayerId() {
       const pendingEntries = [
-        state.pendingAlienTraceAction,
+        state.pendingAlienTraceContinuation,
         shouldUseAlienTracePickerOwnerForAutomation(state.alienTracePickerState)
           ? state.alienTracePickerState
           : null,
