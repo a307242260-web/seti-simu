@@ -668,9 +668,9 @@
           refreshAfterGameRecovery(command.message, workingRoot);
           return { ok: true };
         case "effect_bar_click":
-          return { ok: true, value: cloneResidentPresentation(handleActionEffectButtonClick(command.effectIndex)) };
+          return { ok: true, value: cloneResidentPresentation(handleActionEffectButtonClickForRoot(command.effectIndex)) };
         case "effect_skip_current":
-          return { ok: true, value: cloneResidentPresentation(skipCurrentActionEffect()) };
+          return { ok: true, value: cloneResidentPresentation(skipCurrentActionEffectForRoot()) };
         case "card_execute_move_effect":
           return cloneResidentPresentation(executeCardMoveForEffectForRoot(workingRoot, ...(command.args || [])));
         case "headless_enumerate_turn_actions":
@@ -726,8 +726,7 @@
       options: {
         actionFamilies: standardActionModule.ALL_FAMILIES,
         continuation: headlessMode ? {
-          inspect() {
-            const workingRoot = activeBrowserDomainWorkingRoot;
+          inspect(workingRoot) {
             const conditional = enumerateHeadlessConditionalActionsForRoot(workingRoot);
             const candidates = (conditional.candidates || [])
               .filter((candidate) => candidate?.available !== false);
@@ -2282,19 +2281,12 @@
     ),
     recordMoveActionHistory,
     executePrimaryBoardAction: (descriptor, executionOptions, options) => (
-      activeBrowserDomainWorkingRoot
-        ? actionRuntimeController?.executePrimaryBoardAction(
-          createActionContextForWorkingRoot(activeBrowserDomainWorkingRoot, descriptor),
-          descriptor,
-          executionOptions,
-          options,
-        )
-        : browserRuleComposition.inputPort.submitHostCommand({
-          kind: "ui_execute_primary_board_action",
-          descriptor,
-          executionOptions,
-          options,
-        })
+      browserRuleComposition.inputPort.submitHostCommand({
+        kind: "ui_execute_primary_board_action",
+        descriptor,
+        executionOptions,
+        options,
+      })
     ),
     renderRocketElement,
     clearMoveRocketHighlight,
@@ -7041,10 +7033,7 @@
     }
   }
 
-  function skipCurrentActionEffect() {
-    if (!activeBrowserDomainWorkingRoot) {
-      return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_skip_current" }).value;
-    }
+  function skipCurrentActionEffectForRoot() {
     if (!decisionState.actionEffectFlow) return;
 
     const current = getCurrentActionEffect();
@@ -7075,6 +7064,10 @@
     completeCurrentActionEffect("skipped");
   }
 
+  function skipCurrentActionEffect() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_skip_current" }).value;
+  }
+
   function skipHeadlessCurrentActionEffectImpl() {
     const current = getCurrentActionEffect();
     if (!headlessMode || !current || current.status !== "active") {
@@ -7083,7 +7076,7 @@
     if (finishCurrentCardMoveEffectEarly()) {
       return { ok: true, progressed: true, skipped: true, message: `已结束：${current.label}` };
     }
-    skipCurrentActionEffect();
+    skipCurrentActionEffectForRoot();
     if (current.status === "active") {
       cleanupSkippedActionEffect(current);
       completeCurrentActionEffect("skipped");
@@ -8147,14 +8140,15 @@
     effectDispatcherModule.createEffectDispatcher({ ...effectExecutorContext, ...effectExecutors }),
   );
 
-  function handleActionEffectButtonClick(effectIndex) {
-    if (!activeBrowserDomainWorkingRoot) {
-      return browserRuleComposition.inputPort.submitHostCommand({
-        kind: "effect_bar_click",
-        effectIndex,
-      }).value;
-    }
+  function handleActionEffectButtonClickForRoot(effectIndex) {
     return actionRuntimeController.handleActionEffectButtonClick(effectIndex);
+  }
+
+  function handleActionEffectButtonClick(effectIndex) {
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "effect_bar_click",
+      effectIndex,
+    }).value;
   }
 
   function beginScanAction() {
