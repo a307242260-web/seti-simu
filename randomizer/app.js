@@ -726,8 +726,7 @@
       options: {
         actionFamilies: standardActionModule.ALL_FAMILIES,
         continuation: headlessMode ? {
-          inspect() {
-            const workingRoot = activeBrowserDomainWorkingRoot;
+          inspect(workingRoot) {
             const conditional = enumerateHeadlessConditionalActionsForRoot(workingRoot);
             const candidates = (conditional.candidates || [])
               .filter((candidate) => candidate?.available !== false);

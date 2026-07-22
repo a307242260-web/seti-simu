@@ -202,6 +202,7 @@
           ...(descriptor.options || {}),
           runtime: Object.freeze({ ...next, registerExecutor: registerContextualExecutor }),
           executeRegisteredAction,
+          getWorkingState: () => workingState,
           commitWorkingState(state, context = {}) {
             return stateAdapter
               ? stateAdapter.createCommittedState(workingState, state, clone(context))
