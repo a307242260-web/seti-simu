@@ -109,7 +109,7 @@
 
     function executeSectorScanAtPlanet(workingRoot, planetId, prefixLabel, effect = null) {
       const cost = effect?.options?.skipCost ? {} : (normalizeResourceCost(effect?.options?.cost) || {});
-      if (Object.keys(cost).length && !players.canAfford(getCurrentPlayer(), cost)) {
+      if (Object.keys(cost).length && !players.canAfford(getCurrentPlayer(workingRoot), cost)) {
         const message = `${prefixLabel || "扇区扫描"}：资源不足，需要 ${players.formatResourceCost(cost)}，已跳过`;
         return skipActionEffectWithMessage(effect || getCurrentActionEffect(), message, {
           planetId,
@@ -288,7 +288,7 @@
     }
 
     function getProbeSectorScanRockets(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const owner = effect.options?.owner || "current";
       return (ruleRocketState(workingRoot).rockets || [])
         .filter((rocket) => owner === "any" || rocket.playerId === currentPlayer?.id)
@@ -383,7 +383,7 @@
         return { ok: false, message: "无法打开探测器扫描选择" };
       }
       decisionSessions.open("probe_sector_scan", {
-        ...getPendingOwnerFields(effect),
+        ...getPendingOwnerFields(workingRoot, effect),
         effect,
         choices,
         selectedRocketIds: [],
@@ -446,7 +446,7 @@
     }
 
     function buildPlanetMarkerRemovalChoices(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const owner = effect.options?.owner || "current";
       const markerKinds = new Set(effect.options?.markerKinds || ["orbit", "land", "satelliteLand"]);
       const choices = [];
@@ -523,7 +523,7 @@
     }
 
     function executeRemovePlanetMarkerChoice(workingRoot, effect, choice) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       beginEffectHistoryStep(effect.label);
       const beforePlanetStats = structuredClone(rulePlanetStatsState(workingRoot));
       const beforePlayerState = choice.kind === "plutoOrbit" || choice.kind === "plutoLand"
@@ -573,7 +573,7 @@
       }
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         decisionState.scanTargetAction = {
-          ...getPendingOwnerFields(effect),
+          ...getPendingOwnerFields(workingRoot, effect),
           type: "remove_planet_marker",
           effect,
           choices,
@@ -581,7 +581,7 @@
         return { ok: true, pendingChoice: true, message: effect.label };
       }
       decisionState.scanTargetAction = {
-        ...getPendingOwnerFields(effect),
+        ...getPendingOwnerFields(workingRoot, effect),
         type: "remove_planet_marker",
         effect,
         choices,
@@ -630,7 +630,7 @@
         return result;
       }
       recordAbilityCommands(result);
-      const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(effect));
+      const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(workingRoot, effect));
       claimRunezuPlanetSymbolForTravelResult("land", result, actionOwner);
       if (decisionState.actionEffectFlow) {
         const sector = getPlanetSectorCoordinate(result.planetId);
@@ -691,7 +691,7 @@
           { reason: landOptions.message || null, abilityId: "land" },
         );
       }
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const choices = [];
       if (landOptions.ok) {
         choices.push(...landOptions.choices.map((choice) => ({
@@ -827,7 +827,7 @@
 
     function getAvailablePlutoEffectAction(workingRoot, actionType, effect, options = {}) {
       const allowDuplicate = actionType === "land" && Boolean(effect.options?.allowDuplicateLanding);
-      const currentPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+      const currentPlayer = getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
       const card = getPlutoReservedCards(currentPlayer).find((item) => {
         const state = getPlutoActionState(item);
         if (actionType === "orbit") return !state.orbitDone;
@@ -894,7 +894,7 @@
     }
 
     function executePlutoCardActionEffect(workingRoot, effect, actionType, available, contextInfo = {}) {
-      const currentPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+      const currentPlayer = getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const beforeRocketState = structuredClone(ruleRocketState(workingRoot));
@@ -1015,7 +1015,7 @@
         return result;
       }
       recordAbilityCommands(result);
-      const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(effect));
+      const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(workingRoot, effect));
       claimRunezuPlanetSymbolForTravelResult("orbit", result, actionOwner);
       if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);
       syncPlanetOrbitLandMarkers();
@@ -1172,7 +1172,7 @@
       const resolvedPlayedCard = playedCard || (discardIndex >= 0 ? discardPile[discardIndex] : null);
 
       return {
-        player: getEffectOwnerPlayer(effect),
+        player: getEffectOwnerPlayer(workingRoot, effect),
         playedCard: resolvedPlayedCard,
         discardIndex,
         sourceInstanceId,
@@ -1208,7 +1208,7 @@
 
     function isRuntimeCardConditionMet(workingRoot, condition) {
       if (!condition) return false;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       if (condition.type === "resourceThreshold") {
         return (Number(currentPlayer?.resources?.[condition.resource]) || 0) >= Number(condition.count || 1);
       }
@@ -1274,12 +1274,12 @@
     }
 
     function executeChooseHandCornerRewardEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const counts = countHandCornerKinds(workingRoot, currentPlayer);
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         return applyHandCornerChoice(workingRoot, effect, "publicity");
       }
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "hand_corner_reward", effect, counts };
+      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect), type: "hand_corner_reward", effect, counts };
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一种左上角快速行动类别，按当前手牌数量获得对应奖励。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -1304,7 +1304,7 @@
     }
 
     function applyHandCornerChoice(workingRoot, effect, choice) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const counts = countHandCornerKinds(workingRoot, currentPlayer);
       const count = Math.max(0, counts[choice] || 0);
       beginEffectHistoryStep(effect.label);

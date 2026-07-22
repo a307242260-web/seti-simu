@@ -303,7 +303,7 @@
           return openAmibaSymbolChoiceDialog({
             effect,
             region: effect.options?.region,
-            player: getCurrentPlayer(),
+            player: getCurrentPlayer(workingRoot),
             fromEffectFlow: true,
             beforeAlienState: structuredClone(ruleAlienGameState(workingRoot)),
             beforePlayerState: structuredClone(rulePlayerState(workingRoot)),
@@ -341,7 +341,7 @@
     }
 
     function openPickCardRewardEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       decisionState.cardSelectionAction = null;
       const result = beginCardSelection({
         type: "planet_reward_pick_card",
@@ -358,7 +358,7 @@
 
     function openTechBonusPickCardEffect(workingRoot, effect) {
       const selection = getResearchTechSelectionPayload();
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const result = beginCardSelection({
         type: "tech_bonus_pick_card",
         player: currentPlayer,
@@ -377,7 +377,7 @@
 
     function openInitialIncomeEffect(workingRoot, effect) {
       const playerId = effect?.options?.playerId;
-      const incomePlayer = getPlayerById(playerId) || getCurrentPlayer();
+      const incomePlayer = getPlayerById(workingRoot, playerId) || getCurrentPlayer(workingRoot);
 
       if (incomePlayer?.id) {
         rulePlayerState(workingRoot).currentPlayerId = incomePlayer.id;
@@ -402,7 +402,7 @@
     }
 
     function openCardIncomeEffect(workingRoot, effect) {
-      const incomePlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+      const incomePlayer = getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
       const result = beginDiscardSelection(1, {
         type: "card_income",
         player: incomePlayer,
@@ -424,7 +424,7 @@
     }
 
     function openFundamentalismRoundStartIncomeEffect(workingRoot, effect) {
-      const incomePlayer = getEffectOwnerPlayer(effect);
+      const incomePlayer = getEffectOwnerPlayer(workingRoot, effect);
       const round = Math.max(1, Math.round(Number(effect?.options?.roundNumber || ruleTurnState(workingRoot).roundNumber) || 1));
       if (!incomePlayer?.hand?.length) {
         if (incomePlayer) incomePlayer.industryFundamentalismRoundStartIncomeRound = round;
@@ -528,10 +528,10 @@
       const allowedTraceTypes = traceType
         ? [traceType]
         : (effect.options?.allowedTraceTypes?.length ? effect.options.allowedTraceTypes : aliens.TRACE_TYPES);
-      const targetPlayer = resolvePlayerReference({
+      const targetPlayer = resolvePlayerReference(workingRoot, {
         playerId: effect.options?.targetPlayerId,
         playerColor: effect.options?.targetPlayerColor,
-      }) || getEffectOwnerPlayer(effect) || getCurrentPlayer();
+      }) || getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
       const allowedAlienSlotIds = getEligibleAlienSlotIdsForTraceEffect(effect, targetPlayer, allowedTraceTypes);
       decisionState.alienTraceAction = {
         type: "planet_reward_alien_trace",
@@ -651,7 +651,7 @@
             const claim = claimRunezuSourceSymbolWithHistory(
               "tech",
               result.tileId,
-              getCurrentPlayer(),
+              getCurrentPlayer(workingRoot),
               "研究科技获得符文族symbol",
             );
             if (claim?.ok) result.message = `${result.message}；${claim.message}`;
@@ -694,14 +694,14 @@
             bonusId,
             firstTake: Boolean(effect.options?.firstTake ?? selection?.firstTake),
           });
-          recordTechBonusScore(getCurrentPlayer(), result);
+          recordTechBonusScore(getCurrentPlayer(workingRoot), result);
           if (result.ok) {
             result.events = [
               ...(result.events || []),
               {
                 type: "researchTech",
-                playerId: getCurrentPlayer()?.id || null,
-                playerColor: getCurrentPlayer()?.color || null,
+                playerId: getCurrentPlayer(workingRoot)?.id || null,
+                playerColor: getCurrentPlayer(workingRoot)?.color || null,
                 techType: selection?.techType || null,
                 tileId: selection?.tileId || null,
                 source: decisionState.actionEffectFlow?.actionType || "tech",

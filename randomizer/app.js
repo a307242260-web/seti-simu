@@ -328,15 +328,6 @@
     ]),
   });
 
-  let activeBrowserDomainWorkingRoot = null;
-
-  function requireActiveBrowserWorkingRoot(operation) {
-    if (!activeBrowserDomainWorkingRoot) {
-      throw new Error(`${operation} 必须通过 Browser Composition command 执行`);
-    }
-    return activeBrowserDomainWorkingRoot;
-  }
-
   function executeBrowserDomainCommand(workingRoot, command) {
     const target = resolveBrowserDomainTarget(command.domain);
     const allowed = BROWSER_DOMAIN_COMMANDS[command.domain];
@@ -347,14 +338,8 @@
     if (typeof method !== "function") {
       return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNAVAILABLE", message: `Browser domain command 未装配: ${command.domain}.${command.operation}` };
     }
-    const previousWorkingRoot = activeBrowserDomainWorkingRoot;
-    activeBrowserDomainWorkingRoot = workingRoot;
-    try {
-      const value = method(workingRoot, ...(command.args || []));
-      return { ok: value?.ok !== false, value: cloneResidentPresentation(value) };
-    } finally {
-      activeBrowserDomainWorkingRoot = previousWorkingRoot;
-    }
+    const value = method(workingRoot, ...(command.args || []));
+    return { ok: value?.ok !== false, value: cloneResidentPresentation(value) };
   }
 
   function resolveBrowserDomainTarget(domain) {
@@ -531,20 +516,8 @@
         workingState.meta = structuredClone(committedState.meta);
       },
     },
-    runWithWorkingState(workingRoot, operation) {
-      const previousWorkingRoot = activeBrowserDomainWorkingRoot;
-      activeBrowserDomainWorkingRoot = workingRoot;
-      try {
-        return operation();
-      } finally {
-        activeBrowserDomainWorkingRoot = previousWorkingRoot;
-      }
-    },
     executeHostCommand(workingRoot, command) {
-      const previousWorkingRoot = activeBrowserDomainWorkingRoot;
-      activeBrowserDomainWorkingRoot = workingRoot;
-      try {
-        switch (command.kind) {
+      switch (command.kind) {
         case "turn_set_player_order":
           turnFlowController.setTurnStatePlayerOrder(workingRoot, command.playerIds, command.options);
           return { ok: true };
@@ -698,11 +671,8 @@
           return skipHeadlessCurrentActionEffectImpl();
         case "domain_command":
           return executeBrowserDomainCommand(workingRoot, command);
-          default:
-            return { ok: false, code: "BROWSER_HOST_COMMAND_UNKNOWN", message: `未知 Browser host command: ${command.kind}` };
-        }
-      } finally {
-        activeBrowserDomainWorkingRoot = previousWorkingRoot;
+        default:
+          return { ok: false, code: "BROWSER_HOST_COMMAND_UNKNOWN", message: `未知 Browser host command: ${command.kind}` };
       }
     },
     createActionRegistry() {
@@ -3840,9 +3810,6 @@
     if (workingRoot) {
       return workingRoot.playerState.players.find((player) => player.id === playerId) || null;
     }
-    if (activeBrowserDomainWorkingRoot) {
-      return activeBrowserDomainWorkingRoot.playerState.players.find((player) => player.id === playerId) || null;
-    }
     return createStateSourceReadoutRoot().playerState.players
       .find((candidate) => candidate.id === playerId) || null;
   }
@@ -3901,8 +3868,7 @@
   function getEffectOwnerPlayer(workingRootOrEffect, explicitEffect = null) {
     const workingRoot = isBrowserWorkingRoot(workingRootOrEffect) ? workingRootOrEffect : null;
     const effect = workingRoot ? explicitEffect : workingRootOrEffect;
-    const playerState = workingRoot?.playerState || activeBrowserDomainWorkingRoot?.playerState
-      || createStateSourceReadoutRoot().playerState;
+    const playerState = workingRoot?.playerState || createStateSourceReadoutRoot().playerState;
     return (workingRoot ? getExplicitEffectOwnerPlayer(workingRoot, effect) : getExplicitEffectOwnerPlayer(effect))
       || (workingRoot
         ? getPlayerById(workingRoot, decisionState.actionEffectFlow?.defaultPlayerId)

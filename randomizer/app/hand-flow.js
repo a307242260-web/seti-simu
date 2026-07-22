@@ -227,10 +227,10 @@
       const pending = getMovePayment();
       if (!pending) return null;
       const playerId = pending.player?.id || pending.playerId || null;
-      if (playerId) return getPlayerById(playerId) || pending.player || null;
+      if (playerId) return getPlayerById(workingRoot, playerId) || pending.player || null;
       const playerColor = pending.player?.color || pending.playerColor || null;
-      if (playerColor) return getPlayerByColor(playerColor) || pending.player || null;
-      return pending.player || getCurrentPlayer();
+      if (playerColor) return getPlayerByColor(workingRoot, playerColor) || pending.player || null;
+      return pending.player || getCurrentPlayer(workingRoot);
     }
 
     function isMovePaymentLockedForAiAutomation(workingRoot) {
@@ -272,7 +272,7 @@
     }
 
     function beginSupplementalMovePayment(workingRoot, options = {}) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const deltaX = Number(options.deltaX || 0);
       const deltaY = Number(options.deltaY || 0);
       const rocketId = Number(options.rocketId);
@@ -352,7 +352,7 @@
       if (isDiscardSelectionActive()) return { ok: false, message: "请先完成弃牌" };
       if (isPlayCardSelectionActive()) return { ok: false, message: "请先完成打牌" };
 
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const requiredMovePoints = getRequiredMovePointsForUi(currentPlayer, rocketId, deltaX, deltaY);
       const payCheck = canPayForMove(currentPlayer, requiredMovePoints);
       if (!payCheck.ok) {
@@ -630,7 +630,7 @@
     function getPendingPlayCardSelection(workingRoot) {
       const pending = peekPlayCardSelection();
       if (!pending || !isPlayCardSelectionActive()) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       if (pending.source === "future_span") {
         const card = industry?.getFutureSpanCard?.(currentPlayer);
         if (!card || card.id !== pending.cardId || !hasPlayableFutureSpanCard(currentPlayer)) {
@@ -656,7 +656,7 @@
 
     function handlePlayCardSelect(workingRoot, handIndex) {
       if (!isPlayCardSelectionActive()) return;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];
       if (!card) {
@@ -709,7 +709,7 @@
     function getPendingHandCardPlayAction(workingRoot) {
       const pending = peekHandCardPlayAction();
       if (!pending) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const hand = Array.isArray(currentPlayer?.hand) ? currentPlayer.hand : [];
       let handIndex = Number(pending.handIndex);
       let card = Number.isInteger(handIndex) ? hand[handIndex] : null;
@@ -758,7 +758,7 @@
       const cardId = action.card?.id || action.cardId;
       const startResult = beginPlayCardSelection(workingRoot);
       if (!startResult?.ok) return startResult;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const handIndex = (currentPlayer?.hand || []).findIndex((card) => card.id === cardId);
       if (handIndex < 0) {
         cancelPlayCardSelection(workingRoot);
@@ -777,7 +777,7 @@
     function getPendingCardCornerQuickAction(workingRoot) {
       const pending = peekCardCornerQuickAction();
       if (!pending) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const hand = Array.isArray(currentPlayer?.hand) ? currentPlayer.hand : [];
       let handIndex = Number(pending.handIndex);
       let card = Number.isInteger(handIndex) ? hand[handIndex] : null;
@@ -831,7 +831,7 @@
 
     function handleHandCardCornerQuickAction(workingRoot, handIndex) {
       if (!canUseCardCornerQuickAction()) return { ok: false, message: "当前无法使用手牌快捷操作" };
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];
       const cornerAction = getCardCornerQuickActionForCard(card);
@@ -891,7 +891,7 @@
       const action = execution.action || getPendingCardCornerQuickAction(workingRoot);
       const currentPlayer = workingRoot
         ? players.getCurrentPlayer(actionPlayerState)
-        : getCurrentPlayer();
+        : getCurrentPlayer(workingRoot);
       if (!action || !currentPlayer) {
         actionRocketState.statusNote = "没有待确认的卡牌快速行动";
         renderStateReadout();
@@ -1065,7 +1065,7 @@
         return { ok: true, message: null };
       }
 
-      const discardPlayer = pendingAction?.player || getCurrentPlayer();
+      const discardPlayer = pendingAction?.player || getCurrentPlayer(workingRoot);
       if (!discardPlayer?.hand?.length || discardPlayer.hand.length < discardCount) {
         return { ok: false, message: `手牌不足，需要弃置 ${discardCount} 张牌` };
       }
@@ -1126,7 +1126,7 @@
       syncDiscardSelectionChrome(workingRoot);
 
       if (pending?.type === "trade") {
-        const tradePlayer = pending.player || getCurrentPlayer();
+        const tradePlayer = pending.player || getCurrentPlayer(workingRoot);
         const beforeState = pending.beforeTradeState;
         const tradeResult = quickTrades.finalizeTradeAfterDiscard(
           pending.tradeId,
@@ -1149,7 +1149,7 @@
       }
 
       if (isIncomeDiscardActionType(pending?.type)) {
-        const incomeResult = applyIncomeFromCard(pending.player || getCurrentPlayer(), discardedCards[0]);
+        const incomeResult = applyIncomeFromCard(pending.player || getCurrentPlayer(workingRoot), discardedCards[0]);
         if (pending.type === "initial_income" && incomeResult.ok && pending.fromEffectFlow) {
           const effect = getCurrentActionEffect();
           if (effect) {
@@ -1174,7 +1174,7 @@
       }
 
       if (pending?.type === "pass_hand_limit") {
-        const player = pending.player || getCurrentPlayer();
+        const player = pending.player || getCurrentPlayer(workingRoot);
         const message = discardedCards.length
           ? `PASS 手牌上限：弃掉 ${discardedCards.map((card) => cards.getCardLabel(card)).join("、")}`
           : "PASS 手牌上限：无需弃牌";
@@ -1221,7 +1221,7 @@
 
     function finalizePendingDiscardSelection(workingRoot) {
       const pending = decisionState.discardAction;
-      const discardPlayer = pending?.player || getCurrentPlayer();
+      const discardPlayer = pending?.player || getCurrentPlayer(workingRoot);
       const selected = [...(pending?.selectedIndexes || [])].sort((a, b) => b - a);
       const discarded = [...(pending?.discarded || [])];
 
@@ -1279,7 +1279,7 @@
     }
 
     function beginPlayCardSelection(workingRoot) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const blockReason = context.getPlayCardSelectionBlockReason?.(currentPlayer) || getStandardPlayCardActionBlockReason(currentPlayer);
       if (blockReason) {
         ruleRocketState(workingRoot).statusNote = blockReason;
@@ -1325,7 +1325,7 @@
 
     function handleFutureSpanCardPlay(workingRoot) {
       if (!isPlayCardSelectionActive()) return;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const card = industry?.getFutureSpanCard?.(currentPlayer);
       if (!card || !hasPlayableFutureSpanCard(currentPlayer)) {
         ruleRocketState(workingRoot).statusNote = "未来跨度目标牌尚未达成";
@@ -1380,7 +1380,7 @@
       const actionRocketState = workingRoot?.rocketState || ruleRocketState(workingRoot);
       const currentPlayer = workingRoot
         ? players.getCurrentPlayer(workingRoot.playerState)
-        : getCurrentPlayer();
+        : getCurrentPlayer(workingRoot);
       const removeIndex = Math.round(handIndex);
       const card = currentPlayer?.hand?.[removeIndex];
       if (!card) {
@@ -1513,7 +1513,7 @@
       } = config;
       const currentPlayer = workingRoot
         ? players.getCurrentPlayer(workingRoot.playerState)
-        : getCurrentPlayer();
+        : getCurrentPlayer(workingRoot);
       const removeIndex = Math.round(handIndex);
       const card = currentPlayer?.hand?.[removeIndex];
       if (!card) {
@@ -1695,7 +1695,7 @@
       const actionRocketState = workingRoot?.rocketState || ruleRocketState(workingRoot);
       const currentPlayer = workingRoot
         ? players.getCurrentPlayer(workingRoot.playerState)
-        : getCurrentPlayer();
+        : getCurrentPlayer(workingRoot);
       const removeIndex = Math.round(handIndex);
       const card = currentPlayer?.hand?.[removeIndex];
       if (!card) {
@@ -1823,7 +1823,7 @@
     }
 
     function handleFutureSpanPlayCardSelect(workingRoot) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const card = industry?.getFutureSpanCard?.(currentPlayer);
       if (!card || !hasPlayableFutureSpanCard(currentPlayer)) {
         ruleRocketState(workingRoot).statusNote = "未来跨度目标牌尚未达成";
@@ -1854,7 +1854,7 @@
       if (!isHandScanSelectionActive(workingRoot)) return;
 
       const fromEffectFlow = Boolean(decisionState.handScanAction?.fromEffectFlow || decisionState.actionEffectFlow);
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const index = Math.round(handIndex);
       const card = currentPlayer?.hand?.[index];
       if (!card) {

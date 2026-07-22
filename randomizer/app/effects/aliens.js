@@ -108,7 +108,7 @@
     }
 
     function executeYichangdianAnomalySignalScoreEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const score = countYichangdianAnomalySignals(workingRoot);
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
@@ -130,7 +130,7 @@
     }
 
     function executeYichangdianNextAnomalyRewardEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const { anomaly } = resolveYichangdianNextAnomalyFromCurrentEarth(workingRoot);
       const reward = anomaly ? yichangdian.getAnomalyReward(anomaly.markerId) : null;
       if (!currentPlayer || !anomaly || !reward) {
@@ -184,7 +184,7 @@
     }
 
     function executeYichangdianPublicAllEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       beginEffectHistoryStep(effect.label);
       const beforePlayerState = structuredClone(rulePlayerState(workingRoot));
       const beforeCardState = structuredClone(ruleCardState(workingRoot));
@@ -252,7 +252,7 @@
     }
 
     function applyYichangdianDiscardActionReward(workingRoot, card, messageParts) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const reward = cards.getDiscardActionRewardForCard(card);
       const moveReward = cards.getDiscardActionMoveRewardForCard(card);
       if (reward?.gain && Object.keys(reward.gain).length) {
@@ -284,7 +284,7 @@
         return openYichangdianCornerPicker(workingRoot);
       }
 
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       if (effect?.options) effect.options.skippable = false;
       beginEffectHistoryStep(effect.label);
       const beforePlayerState = structuredClone(rulePlayerState(workingRoot));
@@ -312,7 +312,7 @@
 
     function getPendingYichangdianCornerCards(workingRoot) {
       const pending = getYichangdianCornerAction();
-      const player = pending ? getPlayerById(pending.playerId) : null;
+      const player = pending ? getPlayerById(workingRoot, pending.playerId) : null;
       if (!pending || !player) return [];
       const usedIds = new Set([pending.selectedDiscardCard?.id].filter(Boolean));
       return pending.drawnCardIds
@@ -366,7 +366,7 @@
 
     function handleYichangdianCornerChoice(workingRoot, cardId) {
       const pending = getYichangdianCornerAction();
-      const player = pending ? getPlayerById(pending.playerId) : null;
+      const player = pending ? getPlayerById(workingRoot, pending.playerId) : null;
       if (!pending || !player) return { ok: false, message: "没有异常点角标选择流程" };
       const card = player.hand.find((item) => item.id === cardId);
       if (!card) return { ok: false, message: "选择的卡牌不在手牌中" };
@@ -436,7 +436,7 @@
     }
 
     function findChongProbeFossilPlanet(workingRoot) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       if (!currentPlayer) return null;
       const planetLocations = solar.createSolarSnapshot(ruleSolarState(workingRoot)).planetLocations;
       const active = rocketActions.getActiveRocket(ruleRocketState(workingRoot));
@@ -683,7 +683,7 @@
         : result.abilityId === "landProbe"
           ? "land"
           : null;
-      const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(effect));
+      const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(workingRoot, effect));
 
       recordAbilityCommands(result);
       if (travelActionType) {
@@ -729,7 +729,7 @@
 
     function executeChongPickupFossilEffect(workingRoot, effect) {
       if (!chong) return null;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const card = decisionState.actionEffectFlow?.card || null;
       const task = card?.chongTask || chong.getCardTask(effect.options?.cardIndex);
       const beforeAlienState = structuredClone(ruleAlienGameState(workingRoot));
@@ -784,7 +784,7 @@
       }
       return openChongFossilChoiceDialog({
         mode: "reward",
-        player: getCurrentPlayer(),
+        player: getCurrentPlayer(workingRoot),
         planetId: placement.planetId,
         fossils,
         fromEffectFlow: true,
@@ -809,7 +809,7 @@
       }
       return openChongFossilChoiceDialog({
         mode: "reward",
-        player: getCurrentPlayer(),
+        player: getCurrentPlayer(workingRoot),
         planetIds: ["jupiter", "saturn"],
         fromEffectFlow: true,
         effectLabel: effect.label,
@@ -902,7 +902,7 @@
 
     function applyAomomoScanCostAndBonus(workingRoot, pending, result) {
       if (!pending || !result?.ok) return result;
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const beforePlayer = structuredClone(currentPlayer);
       const messages = [];
       const fossilCost = Math.max(0, Math.round(Number(pending.aomomoFossilCost) || 0));
@@ -976,7 +976,7 @@
     }
 
     function executeAomomoVisitThisTurnFossilEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const count = Math.max(0, Math.round(Number(effect.options?.count) || 1));
       const visited = hasPlayerVisitedPlanetThisTurn(workingRoot, currentPlayer, aomomo?.PLANET_ID);
       beginEffectHistoryStep(effect.label);
@@ -1000,7 +1000,7 @@
     }
 
     function executeAomomoFossilForDataEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const cost = Math.max(1, Math.round(Number(effect.options?.cost) || 1));
       if (!players.canAfford(currentPlayer, { aomomoFossils: cost })) {
         if (effect.options?.optional) {
@@ -1037,7 +1037,7 @@
     }
 
     function openAomomoFossilAnyScanEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const cost = Math.max(1, Math.round(Number(effect.options?.cost) || 1));
       if (!players.canAfford(currentPlayer, { aomomoFossils: cost })) {
         if (effect.options?.optional) {
@@ -1103,7 +1103,7 @@
     }
 
     function executeAomomoFossilMoveAndLandEffect(workingRoot, effect) {
-      const currentPlayer = getEffectOwnerPlayer(effect) || getCurrentPlayer();
+      const currentPlayer = getEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
       const cost = Math.max(1, Math.round(Number(effect.options?.cost) || 1));
       if (!players.canAfford(currentPlayer, { aomomoFossils: cost })) {
         if (effect.options?.optional !== false) {
@@ -1158,7 +1158,7 @@
     }
 
     function executeAomomoSpendFossilsScoreEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const cost = Math.max(0, Math.round(Number(effect.options?.cost) || 0));
       const score = Math.max(0, Math.round(Number(effect.options?.score) || 0));
       if (!players.canAfford(currentPlayer, { aomomoFossils: cost })) {

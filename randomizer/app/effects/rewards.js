@@ -145,7 +145,7 @@
         .reduce((total, choice) => total + countPlayerSignalsInNebula(workingRoot, player, choice.nebulaId), 0);
     }
 
-    function getSectorXsMatchingCondition(workingRoot, condition, player = getCurrentPlayer()) {
+    function getSectorXsMatchingCondition(workingRoot, condition, player = getCurrentPlayer(workingRoot)) {
       return cardEffects.getMatchingConditionalSectorXs(
         condition,
         Array.from({ length: 8 }, (_item, x) => x),
@@ -170,7 +170,7 @@
       const pending = decisionState.scanTargetAction;
       if (pending?.type !== "discard_any_income" || !els.scanTargetActions) return;
       const selected = new Set(pending.selectedCardIds || []);
-      const currentPlayer = getPendingOwnerPlayer(pending, pending.effect);
+      const currentPlayer = getPendingOwnerPlayer(workingRoot, pending, pending.effect);
       const buttons = (currentPlayer?.hand || []).map((card) => {
         const button = document.createElement("button");
         button.type = "button";
@@ -203,7 +203,7 @@
     }
 
     function expandPayCreditsForRewardEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const count = Math.max(0, Math.round(Number(currentPlayer?.resources?.credits) || 0));
       if (count <= 0) {
         return finishAutomaticRewardEffect(workingRoot, effect, {
@@ -239,7 +239,7 @@
       return effectChoiceFlowHelpers.handlePayCreditChoice(workingRoot, choice);
     }
 
-    function getFundamentalismExchangeChoiceSpecs(workingRoot, player = getCurrentPlayer()) {
+    function getFundamentalismExchangeChoiceSpecs(workingRoot, player = getCurrentPlayer(workingRoot)) {
       const score = Number(player?.resources?.score) || 0;
       const credits = Number(player?.resources?.credits) || 0;
       const energy = Number(player?.resources?.energy) || 0;
@@ -297,7 +297,7 @@
       ];
     }
 
-    function getFundamentalismExchangeChoice(workingRoot, choiceId, player = getCurrentPlayer()) {
+    function getFundamentalismExchangeChoice(workingRoot, choiceId, player = getCurrentPlayer(workingRoot)) {
       return getFundamentalismExchangeChoiceSpecs(workingRoot, player).find((choice) => choice.id === choiceId) || null;
     }
 
@@ -438,7 +438,7 @@
     }
 
     function buildOwnOrbitChoices(workingRoot) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const choices = [];
       const planetIds = planetReferenceLayout.PLANET_ORDER || planetStats.PLANET_IDS || [];
       for (const planetId of planetIds) {
@@ -501,7 +501,7 @@
     }
 
     function executeReturnUnfinishedTaskToHandEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const choices = (currentPlayer?.reservedCards || []).filter((card) => isReservedTaskCardUnfinished(workingRoot, card, effect));
       if (!choices.length) {
         return finishAutomaticRewardEffect(workingRoot, effect, {
@@ -512,7 +512,7 @@
           payload: { cardIds: [] },
         });
       }
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "return_unfinished_task", effect, choices };
+      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect), type: "return_unfinished_task", effect, choices };
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label;
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一张未完成的 1/2 型保留任务卡返回手牌。";
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
@@ -539,7 +539,7 @@
       const effect = pending.effect;
       closeScanTargetPicker();
       return withPendingOwnerPlayer(pending, () => {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const index = (currentPlayer?.reservedCards || []).findIndex((card) => card.id === cardId);
       if (index < 0) return { ok: false, message: "无效任务卡" };
       if (!isReservedTaskCardUnfinished(workingRoot, currentPlayer.reservedCards[index], effect)) {
@@ -573,7 +573,7 @@
     }
 
     function executeCountTechTypesRewardEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const count = Math.max(
         countOwnedTechByType(workingRoot, currentPlayer, "orange"),
         countOwnedTechByType(workingRoot, currentPlayer, "purple"),
@@ -613,7 +613,7 @@
     }
 
     function executeCountOwnedTechRewardEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const count = countOwnedTechByType(workingRoot, currentPlayer, effect.options?.techType);
       const total = Math.max(0, Math.round(count * Number(effect.options?.per || 1)));
       beginEffectHistoryStep(effect.label);
@@ -642,7 +642,7 @@
     }
 
     function executeCountRocketsRewardEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const count = cardEffects.countRocketsForReward(
         ruleRocketState(workingRoot).rockets,
         currentPlayer,
@@ -670,7 +670,7 @@
     }
 
     function executeDiscardAllHandEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
@@ -707,7 +707,7 @@
     }
 
     function executeProbeStackRewardEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const match = cardEffects.getProbeStackRewardMatch(ruleRocketState(workingRoot).rockets || [], currentPlayer, {
         getCoordinate: (rocket) => rocketActions.getRocketSectorCoordinate(rocket),
       });
@@ -747,10 +747,10 @@
     }
 
     function getEffectTargetPlayer(workingRoot, effect) {
-      return resolvePlayerReference({
+      return resolvePlayerReference(workingRoot, {
         playerId: effect?.options?.targetPlayerId || effect?.playerId || effect?.options?.playerId,
         playerColor: effect?.options?.targetPlayerColor || effect?.playerColor || effect?.options?.playerColor,
-      }) || getCurrentPlayer();
+      }) || getCurrentPlayer(workingRoot);
     }
 
     function executeGainResourcesRewardEffect(workingRoot, effect) {
@@ -938,7 +938,7 @@
     }
 
     function executeRegisterEventBonusEffect(workingRoot, effect) {
-      const owner = getEffectOwnerPlayer(effect);
+      const owner = getEffectOwnerPlayer(workingRoot, effect);
       const beforeTurnBonuses = structuredClone(ruleTurnState(workingRoot).cardTurnEventBonuses || []);
       const flowBonuses = ensureCardFlowEventBonuses();
       const beforeFlowBonuses = structuredClone(flowBonuses);
@@ -975,7 +975,7 @@
     }
 
     function executeCountHandIncomeResourceEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const incomeCode = Number(effect.options?.incomeCode);
       const resource = effect.options?.resource || "energy";
       const per = Math.max(0, Number(effect.options?.per) || 1);
@@ -1008,7 +1008,7 @@
     }
 
     function executeCountCurrentIncomeResourceEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const incomeKey = effect.options?.incomeKey || "credits";
       const resource = effect.options?.resource || "score";
       const per = Math.max(0, Number(effect.options?.per) || 1);
@@ -1037,7 +1037,7 @@
     }
 
     function executeCountAliensResourceEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const alienCount = Object.keys(ruleAlienGameState(workingRoot)?.aliens || {}).length;
       const gainPerAlien = effect.options?.gainPerAlien || {};
       const gain = {};
@@ -1064,7 +1064,7 @@
     }
 
     function executeTuckPlayedCardToIncomeEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const playedCard = decisionState.actionEffectFlow?.card;
       if (!currentPlayer || !playedCard) {
         ruleRocketState(workingRoot).statusNote = "没有可放入收入区的当前卡牌";
@@ -1103,7 +1103,7 @@
     }
 
     function executePickCardCornerRewardEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const result = beginCardSelection({
         type: "card_pick_corner_reward",
         player: currentPlayer,
@@ -1124,7 +1124,7 @@
     }
 
     function executeDiscardPublicCornerRewardsEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
       const count = Math.max(1, Math.round(Number(effect.options?.count || 1)));
       const filledSlots = ruleCardState(workingRoot).publicCards
@@ -1176,7 +1176,7 @@
       const insertIndex = Math.max(0, decisionState.actionEffectFlow.currentIndex + 1);
       const insertionSource = abilities.chain.createInsertionSource?.(decisionState.actionEffectFlow) || null;
       const currentOwner = getCurrentActionEffect()
-        ? getEffectOwnerPlayer(getCurrentActionEffect())
+        ? getEffectOwnerPlayer(workingRoot, getCurrentActionEffect())
         : null;
       const ownerId = currentOwner?.id
         || decisionState.actionEffectFlow.activePlayerId
@@ -1202,11 +1202,11 @@
       if (current?.status === "active") {
         current.status = "pending";
       }
-      const ownerId = getEffectOwnerPlayer(current)?.id
+      const ownerId = getEffectOwnerPlayer(workingRoot, current)?.id
         || flow.activePlayerId
         || flow.defaultPlayerId
         || flow.playerId
-        || getCurrentPlayer()?.id
+        || getCurrentPlayer(workingRoot)?.id
         || null;
       flow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => (
         normalizeInsertedActionEffect(workingRoot, effect, ownerId, `inserted-card-trigger-effect-${insertIndex}-${index}`)
@@ -1231,7 +1231,7 @@
     }
 
     function startHandScanFromCardEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const optional = Boolean(effect.options?.optional);
       if (!currentPlayer?.hand?.length) {
         effect.result = { ok: true, skipped: true, message: `${effect.label}：没有手牌，跳过` };
@@ -1273,7 +1273,7 @@
       skip.dataset.optionalHandScan = "skip";
       skip.innerHTML = "跳过<small>不执行这次弃牌扫描</small>";
       els.scanTargetActions.replaceChildren(start, skip);
-      decisionState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "optional_hand_scan", effect };
+      decisionState.scanTargetAction = { ...getPendingOwnerFields(workingRoot, effect), type: "optional_hand_scan", effect };
       els.scanTargetOverlay.hidden = false;
       ruleRocketState(workingRoot).statusNote = `${effect.label}：选择手牌或跳过`;
       renderStateReadout();
@@ -1324,7 +1324,7 @@
     }
 
     function executeCountHandCornerMoveEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const count = (currentPlayer?.hand || [])
         .filter((card) => cards.getDiscardActionMoveRewardForCard?.(card))
         .length;
@@ -1402,7 +1402,7 @@
     }
 
     function finishProbeLocationReward(workingRoot, effect, rocket) {
-      const currentPlayer = getExplicitEffectOwnerPlayer(effect) || getCurrentPlayer();
+      const currentPlayer = getExplicitEffectOwnerPlayer(workingRoot, effect) || getCurrentPlayer(workingRoot);
       const reward = computeProbeLocationReward(workingRoot, effect, rocket);
       beginEffectHistoryStep(effect.label);
       const results = [];
@@ -1542,7 +1542,7 @@
     }
 
     function openCardPublicScanEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const repeat = Math.max(1, Math.round(Number(effect.options?.repeat || 1)));
       const filledSlots = ruleCardState(workingRoot).publicCards.filter((card) => (
         card && (getPublicScanChoicesForCard(card)?.choices || []).length > 0
@@ -1580,7 +1580,7 @@
     }
 
     function expandCardScanActionEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const scanRunId = createScanRunId(effect.id || "card-scan-action");
       const followups = scanEffects.buildScanEffectQueue(currentPlayer, {
         includeFinalize: true,
@@ -1644,7 +1644,7 @@
     }
 
     function openCardDrawThenScanEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       const drawResult = cards.blindDraw(ruleCardState(workingRoot), rulePlayerState(workingRoot), currentPlayer);
       if (!drawResult.ok) {
         ruleRocketState(workingRoot).statusNote = drawResult.message;
@@ -1690,7 +1690,7 @@
     }
 
     function executeCardDrawThenDiscardActionEffect(workingRoot, effect) {
-      const currentPlayer = getCurrentPlayer();
+      const currentPlayer = getCurrentPlayer(workingRoot);
       if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
 
       const beforePlayer = structuredClone(currentPlayer);
