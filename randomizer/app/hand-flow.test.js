@@ -70,6 +70,8 @@ function createBaseContext(player, overrides = {}) {
     actionEffectFlow: null,
   };
   const rocketState = overrides.rocketState || { statusNote: "", activeRocketId: null };
+  const alienGameState = {};
+  const workingRoot = overrides.workingRoot || { cardState, rocketState, alienGameState };
   const cards = overrides.cards || createCards();
   const abilities = overrides.abilities || {
     executeAbility(_id, _ctx, options) {
@@ -84,7 +86,8 @@ function createBaseContext(player, overrides = {}) {
     pendingState,
     cardState,
     rocketState,
-    alienGameState: {},
+    alienGameState,
+    getWorkingRoot: () => workingRoot,
     turnState: {},
     solarState: {},
     els: makeEls(),

@@ -406,6 +406,17 @@
       args,
     }).value;
   }
+
+  function callHandFlowCommand(operation, args = []) {
+    if (activeBrowserDomainWorkingRoot) {
+      return handFlowHelpers?.[operation]?.(...args);
+    }
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "hand_flow_command",
+      operation,
+      args,
+    }).value;
+  }
   let getBrowserCommittedContext = () => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
@@ -620,6 +631,13 @@
           const operation = effectChoiceFlowHelpers?.[command.operation];
           if (typeof operation !== "function") {
             return { ok: false, code: "EFFECT_CHOICE_COMMAND_UNKNOWN", message: `未知 Effect choice command: ${command.operation}` };
+          }
+          return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
+        }
+        case "hand_flow_command": {
+          const operation = handFlowHelpers?.[command.operation];
+          if (typeof operation !== "function") {
+            return { ok: false, code: "HAND_FLOW_COMMAND_UNKNOWN", message: `未知 Hand flow command: ${command.operation}` };
           }
           return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
         }
@@ -2169,11 +2187,7 @@
   });
   const handFlowHelpers = handFlowModule.createHandFlow({
     decisionSessions,
-    cardState,
-    rocketState,
-    alienGameState,
-    turnState,
-    solarState,
+    getWorkingRoot: () => requireActiveBrowserWorkingRoot("hand flow"),
     els,
     players,
     cards,
@@ -2351,6 +2365,47 @@
     handleFutureSpanPlayCardSelect,
     handleHandScanCardClick,
   } = handFlowHelpers);
+  syncDiscardSelectionChrome = (...args) => callHandFlowCommand("syncDiscardSelectionChrome", args);
+  isHandScanSelectionActive = (...args) => callHandFlowCommand("isHandScanSelectionActive", args);
+  syncHandScanSelectionChrome = (...args) => callHandFlowCommand("syncHandScanSelectionChrome", args);
+  cancelHandScanSelection = (...args) => callHandFlowCommand("cancelHandScanSelection", args);
+  isMovePaymentSelectionActive = (...args) => callHandFlowCommand("isMovePaymentSelectionActive", args);
+  getMovePaymentPlayer = (...args) => callHandFlowCommand("getMovePaymentPlayer", args);
+  isMovePaymentLockedForAiAutomation = (...args) => callHandFlowCommand("isMovePaymentLockedForAiAutomation", args);
+  beginSupplementalMovePayment = (...args) => callHandFlowCommand("beginSupplementalMovePayment", args);
+  syncMovePaymentChrome = (...args) => callHandFlowCommand("syncMovePaymentChrome", args);
+  scrollToPlayerHandPanel = (...args) => callHandFlowCommand("scrollToPlayerHandPanel", args);
+  cancelMovePaymentSelection = (...args) => callHandFlowCommand("cancelMovePaymentSelection", args);
+  beginMovePaymentSelection = (...args) => callHandFlowCommand("beginMovePaymentSelection", args);
+  handleHandCardMovePayment = (...args) => callHandFlowCommand("handleHandCardMovePayment", args);
+  confirmMovePayment = (...args) => callHandFlowCommand("confirmMovePayment", args);
+  syncPlayCardSelectionChrome = (...args) => callHandFlowCommand("syncPlayCardSelectionChrome", args);
+  getPendingPlayCardSelection = (...args) => callHandFlowCommand("getPendingPlayCardSelection", args);
+  handlePlayCardSelect = (...args) => callHandFlowCommand("handlePlayCardSelect", args);
+  confirmPlayCardSelection = (...args) => callHandFlowCommand("confirmPlayCardSelection", args);
+  executeStandardCardCornerAction = (...args) => callHandFlowCommand("executeStandardCardCornerAction", args);
+  getPendingHandCardPlayAction = (...args) => callHandFlowCommand("getPendingHandCardPlayAction", args);
+  cancelHandCardPlayAction = (...args) => callHandFlowCommand("cancelHandCardPlayAction", args);
+  clearHandCardContextActions = (...args) => callHandFlowCommand("clearHandCardContextActions", args);
+  cancelHandCardContextActions = (...args) => callHandFlowCommand("cancelHandCardContextActions", args);
+  confirmHandCardPlayAction = (...args) => callHandFlowCommand("confirmHandCardPlayAction", args);
+  getPendingCardCornerQuickAction = (...args) => callHandFlowCommand("getPendingCardCornerQuickAction", args);
+  syncCardCornerQuickActionChrome = (...args) => callHandFlowCommand("syncCardCornerQuickActionChrome", args);
+  cancelCardCornerQuickAction = (...args) => callHandFlowCommand("cancelCardCornerQuickAction", args);
+  handleHandCardCornerQuickAction = (...args) => callHandFlowCommand("handleHandCardCornerQuickAction", args);
+  confirmCardCornerQuickAction = (...args) => callHandFlowCommand("confirmCardCornerQuickAction", args);
+  beginDiscardSelection = (...args) => callHandFlowCommand("beginDiscardSelection", args);
+  cancelDiscardSelection = (...args) => callHandFlowCommand("cancelDiscardSelection", args);
+  completeDiscardSelection = (...args) => callHandFlowCommand("completeDiscardSelection", args);
+  finalizePendingDiscardSelection = (...args) => callHandFlowCommand("finalizePendingDiscardSelection", args);
+  handleHandCardDiscard = (...args) => callHandFlowCommand("handleHandCardDiscard", args);
+  beginPlayCardSelection = (...args) => callHandFlowCommand("beginPlayCardSelection", args);
+  cancelPlayCardSelection = (...args) => callHandFlowCommand("cancelPlayCardSelection", args);
+  executeStandardPlayCard = (...args) => callHandFlowCommand("executeStandardPlayCard", args);
+  handleFutureSpanCardPlay = (...args) => callHandFlowCommand("handleFutureSpanCardPlay", args);
+  handleHandCardPlay = (...args) => callHandFlowCommand("handleHandCardPlay", args);
+  handleFutureSpanPlayCardSelect = (...args) => callHandFlowCommand("handleFutureSpanPlayCardSelect", args);
+  handleHandScanCardClick = (...args) => callHandFlowCommand("handleHandScanCardClick", args);
   const scanFlowHelpers = scanFlowModule.createScanFlowHelpers({
     cards,
     players,
