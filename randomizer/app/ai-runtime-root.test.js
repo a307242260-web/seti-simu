@@ -359,6 +359,8 @@ const players = {
 }
 
 {
+  const scoreRoots = [];
+  const satelliteRoots = [];
   const techCandidates = createTechCandidates(contextWith({
     players,
     tech: {
@@ -368,13 +370,27 @@ const players = {
     },
     getAiResearchTechCandidateSafety: () => ({ ok: true, message: null }),
     getAiResearchTechFinalFormulaDeltas: () => ({}),
+    getAiOrange4SatellitePotentialProfile: (workingRoot) => {
+      satelliteRoots.push(workingRoot);
+      return { potential: workingRoot.turnState.roundNumber };
+    },
+    scoreAiResearchTechValue: (workingRoot) => {
+      scoreRoots.push(workingRoot);
+      return workingRoot.turnState.roundNumber;
+    },
   }));
   const rootA = createRoot("a", 1);
   const rootB = createRoot("b", 2);
   rootA.techGameState.board.orange1 = { bonusId: "bonus-a", remaining: 1 };
   rootB.techGameState.board.orange1 = { bonusId: "bonus-b", remaining: 2 };
+  rootA.techGameState.board.orange4 = { bonusId: "bonus-orange-a", remaining: 1 };
+  rootB.techGameState.board.orange4 = { bonusId: "bonus-orange-b", remaining: 2 };
   assert.equal(techCandidates.buildAiResearchTechCandidate(rootA, "orange1").bonusId, "bonus-a");
   assert.equal(techCandidates.buildAiResearchTechCandidate(rootB, "orange1").bonusId, "bonus-b");
+  assert.equal(techCandidates.buildAiResearchTechCandidate(rootA, "orange4").score, 1);
+  assert.equal(techCandidates.buildAiResearchTechCandidate(rootB, "orange4").score, 2);
+  assert.deepEqual(scoreRoots, [rootA, rootB, rootA, rootB]);
+  assert.deepEqual(satelliteRoots, [rootA, rootB]);
   assert.throws(
     () => techCandidates.buildAiResearchTechCandidate(null, "orange1"),
     /explicit workingRoot/,

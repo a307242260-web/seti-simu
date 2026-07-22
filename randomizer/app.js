@@ -4361,7 +4361,15 @@
   };
 
   function runAiStepThroughComposition(commandKind, args = []) {
-    const inspection = browserRuleComposition.inspect();
+    let inspection = browserRuleComposition.inspect();
+    if (inspection.phase === "idle") {
+      const readoutRoot = createStateSourceReadoutRoot();
+      if (isActionEffectFlowActive(readoutRoot)) {
+        const drained = browserRuleComposition.inputPort.beginDrain();
+        if (!drained?.ok) return drained;
+        inspection = browserRuleComposition.inspect();
+      }
+    }
     const decision = inspection.session?.decision || null;
     if (inspection.phase === "awaiting_input" && decision?.choices?.length) {
       const family = decision.choices[0]?.family

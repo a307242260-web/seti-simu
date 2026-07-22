@@ -846,9 +846,9 @@
       return roundAiScore(Math.min(18, Math.max(0, penalty)));
     }
 
-    function getAiBestPlayableLaunchCardRoute(player = getCurrentPlayer()) {
+    function getAiBestPlayableLaunchCardRoute(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
       if (!player || !Array.isArray(player.hand) || !player.hand.length) return null;
-      const isCurrentPlayer = String(player.id || "") === String(getCurrentPlayer()?.id || "");
+      const isCurrentPlayer = String(player.id || "") === String(players.getCurrentPlayer(workingRoot.playerState)?.id || "");
       let best = null;
       for (let handIndex = 0; handIndex < player.hand.length; handIndex += 1) {
         const card = player.hand[handIndex];
@@ -860,7 +860,7 @@
         if ((playEffects || []).some((effect) => isAiResearchTechEffectType(effect?.type))) continue;
         if (getAiRunezuPrematureSymbolCardReason(card, playEffects, player)) continue;
         if (isCurrentPlayer) {
-          const effectCheck = canAiResolvePlayCardEffects(playEffects, player);
+          const effectCheck = canAiResolvePlayCardEffects(workingRoot, playEffects, player);
           if (!effectCheck.ok) continue;
         }
         const model = cardEffects.getCardModel?.(card) || null;

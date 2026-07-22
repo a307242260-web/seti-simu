@@ -446,8 +446,8 @@
       return roundAiScore(Math.min(hasMarkedTechFinal ? 13 : 10, Math.max(0, value)));
     }
 
-    function getAiOrange4SatellitePotentialProfile(player = getCurrentPlayer()) {
-      const { planetStatsState, solarState } = readRuleRoot();
+    function getAiOrange4SatellitePotentialProfile(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
+      const { planetStatsState, solarState } = workingRoot;
       if (!player) {
         return {
           potential: 0,
@@ -462,7 +462,7 @@
           satelliteId: null,
         };
       }
-      const playableLaunchRoute = getAiBestPlayableLaunchCardRoute(player);
+      const playableLaunchRoute = getAiBestPlayableLaunchCardRoute(workingRoot, player);
       let best = {
         potential: 0,
         rawPotential: 0,
@@ -558,7 +558,7 @@
       };
     }
 
-    function scoreAiResearchTechValue(candidate, player = getCurrentPlayer()) {
+    function scoreAiResearchTechValue(workingRoot, candidate, player = players.getCurrentPlayer(workingRoot.playerState)) {
       const techType = candidate?.techType || "";
       const stackIndex = Math.max(1, Math.round(aiNumber(candidate?.stackIndex) || 1));
       const resources = player?.resources || {};
@@ -573,7 +573,7 @@
       value += scoreAiHuanyuOrange2FutureMoveValue(candidate, player);
       if (candidate?.tileId === "orange3") value += 4.8 + getAiMapDemand(demand.actions, "land") * 0.05;
       if (candidate?.tileId === "orange4") {
-        const satelliteProfile = getAiOrange4SatellitePotentialProfile(player);
+        const satelliteProfile = getAiOrange4SatellitePotentialProfile(workingRoot, player);
         const routeDistance = Math.max(0, Math.round(aiNumber(satelliteProfile.routeDistance)));
         const energyCapacity = Math.max(
           aiNumber(resources.energy),

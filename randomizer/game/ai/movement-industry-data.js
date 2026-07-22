@@ -649,8 +649,8 @@
       return Math.min(24, 13 + Math.max(0, 7 - remainingPlacements) * 1.2 + Math.min(4, slot * 0.25));
     }
 
-    function getAiFinalHighScoreDataCreditPreserveProfile(choice, player = getCurrentPlayer()) {
-      const turnState = context.getRuleReadout?.().turnState;
+    function getAiFinalHighScoreDataCreditPreserveProfile(workingRoot, choice, player = players.getCurrentPlayer(workingRoot.playerState)) {
+      const turnState = workingRoot.turnState;
       if (!turnState) throw new TypeError("AI data preserve profile requires a StateSource turn readout");
       if (
         !player
@@ -682,7 +682,7 @@
       ) {
         return null;
       }
-      const currentPlayable = listAiPlayCardCandidates(player);
+      const currentPlayable = listAiPlayCardCandidates(workingRoot, player);
       const currentPlayableByIndex = new Map((currentPlayable || []).map((candidate) => [candidate.handIndex, candidate]));
       const currentBestScore = (currentPlayable || []).reduce((best, candidate) => (
         Math.max(best, aiNumber(candidate?.score))
@@ -690,7 +690,7 @@
       const simulatedPlayer = createAiPlayerAfterResourceGain(player, { credits: creditGain });
       if (!simulatedPlayer) return null;
       const postGainCandidates = hand
-        .map((card, handIndex) => buildAiPlayCardCandidate(card, handIndex, simulatedPlayer))
+        .map((card, handIndex) => buildAiPlayCardCandidate(workingRoot, card, handIndex, simulatedPlayer))
         .filter(Boolean)
         .map((candidate) => {
           const finalDeltaValue = Math.max(
@@ -761,11 +761,11 @@
       };
     }
 
-    function scoreAiFinalHighScoreDataCreditPreserveValue(choice, player = getCurrentPlayer()) {
-      return Math.max(0, aiNumber(getAiFinalHighScoreDataCreditPreserveProfile(choice, player)?.value));
+    function scoreAiFinalHighScoreDataCreditPreserveValue(workingRoot, choice, player = players.getCurrentPlayer(workingRoot.playerState)) {
+      return Math.max(0, aiNumber(getAiFinalHighScoreDataCreditPreserveProfile(workingRoot, choice, player)?.value));
     }
 
-    function scoreAiDataPlacementChoice(choice, player = getCurrentPlayer()) {
+    function scoreAiDataPlacementChoice(workingRoot, choice, player = players.getCurrentPlayer(workingRoot.playerState)) {
       if (!choice) return -Infinity;
       const target = choice.target || null;
       const placementSlot = Math.max(0, Math.round(aiNumber(choice.placementSlot)));
@@ -790,7 +790,7 @@
       }
       if (target === data.PLACEMENT_KIND_BLUE_BONUS) {
         const bonusValue = scoreAiDataPlacementBonusValue(choice, player);
-        const finalHighScoreCreditPreserveValue = scoreAiFinalHighScoreDataCreditPreserveValue(choice, player);
+        const finalHighScoreCreditPreserveValue = scoreAiFinalHighScoreDataCreditPreserveValue(workingRoot, choice, player);
         return applyAiStrategyWeight(
           5 + Math.max(0, aiNumber(choice.blueSlot)) * 0.05 + bonusValue * 0.8,
           "tech",
@@ -800,12 +800,12 @@
       return 0;
     }
 
-    function listAiDataPlacementCandidates(player = getCurrentPlayer()) {
+    function listAiDataPlacementCandidates(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
       const check = data.canPlaceAnyData?.(player);
       if (!check?.ok) return [];
       return (check.choices || data.listPlaceDataChoices?.(player) || [])
         .map((choice, index) => {
-          const creditPreserveProfile = getAiFinalHighScoreDataCreditPreserveProfile(choice, player);
+          const creditPreserveProfile = getAiFinalHighScoreDataCreditPreserveProfile(workingRoot, choice, player);
           return {
             id: "placeData",
             kind: "quick",
@@ -816,7 +816,7 @@
             label: choice.label || null,
             description: choice.description || null,
             directScoreGain: getAiDataPlacementDirectScoreGain(choice, player),
-            score: scoreAiDataPlacementChoice(choice, player) - index * 0.05,
+            score: scoreAiDataPlacementChoice(workingRoot, choice, player) - index * 0.05,
             valueBreakdown: creditPreserveProfile ? {
               finalHighScoreDataCreditPreserve: creditPreserveProfile,
             } : null,
@@ -825,31 +825,6 @@
         .filter((candidate) => Number.isFinite(Number(candidate.score)));
     }
 
-    function chooseAiDataPlacementOptionFromButtons(buttons = [], player = getCurrentPlayer()) {
-      return [...(buttons || [])]
-        .map((button, index) => {
-          const target = button.dataset.placeTarget || null;
-          const blueSlot = button.dataset.blueSlot != null ? Number(button.dataset.blueSlot) : null;
-          const placementSlotMatch = String(button.textContent || "").match(/放置位\s*(\d+)/);
-          const choice = {
-            target,
-            blueSlot,
-            placementSlot: placementSlotMatch ? Number(placementSlotMatch[1]) : null,
-          };
-          return {
-            button,
-            index,
-            target,
-            blueSlot,
-            placementSlot: choice.placementSlot,
-            label: button.textContent || "",
-            disabled: Boolean(button.disabled),
-            score: button.disabled ? -Infinity : scoreAiDataPlacementChoice(choice, player) - index * 0.05,
-          };
-        })
-        .filter((entry) => Number.isFinite(entry.score))
-        .sort((left, right) => right.score - left.score || left.index - right.index)[0] || null;
-    }
     return Object.freeze({
       buildAiMoveCandidate,
       listAiMoveCandidates,
@@ -872,7 +847,6 @@
       scoreAiFinalHighScoreDataCreditPreserveValue,
       scoreAiDataPlacementChoice,
       listAiDataPlacementCandidates,
-      chooseAiDataPlacementOptionFromButtons,
     });
   }
 

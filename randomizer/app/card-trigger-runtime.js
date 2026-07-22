@@ -423,7 +423,7 @@
       return null;
     }
 
-    function ensureCardFlowEventBonuses(flow = getActionEffectFlow(workingRoot)) {
+    function ensureCardFlowEventBonuses(workingRoot, flow = getActionEffectFlow(workingRoot)) {
       if (!flow) return [];
       if (!Array.isArray(flow.cardFlowEventBonuses)) flow.cardFlowEventBonuses = [];
       return flow.cardFlowEventBonuses;
@@ -433,7 +433,7 @@
       const { turnState, playerState } = requireWorkingRoot(workingRoot);
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       return [
-        ...ensureCardFlowEventBonuses(getActionEffectFlow(workingRoot)),
+        ...ensureCardFlowEventBonuses(workingRoot),
         ...((turnState.cardTurnEventBonuses || []).filter((bonus) => bonus.playerId === currentPlayer?.id)),
       ];
     }

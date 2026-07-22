@@ -395,7 +395,7 @@
         : null;
       const bestHandPlayScoreAfterEnergyCredit = playerAfterEnergyCredit
         ? (player.hand || []).reduce((best, card, handIndex) => (
-          Math.max(best, aiNumber(buildAiPlayCardCandidate(card, handIndex, playerAfterEnergyCredit)?.score))
+          Math.max(best, aiNumber(buildAiPlayCardCandidate(workingRoot, card, handIndex, playerAfterEnergyCredit)?.score))
         ), 0)
         : 0;
       const canEnergyCreditRecoveryForThirdMark = mainActionOpen
@@ -661,7 +661,7 @@
             if (entry) return summarizeAiTradeDiscardCardEntry(entry);
             const card = player.hand?.[handIndex] || null;
             if (!card) return null;
-            const playCandidate = buildAiPlayCardCandidate(card, handIndex, player);
+            const playCandidate = buildAiPlayCardCandidate(workingRoot, card, handIndex, player);
             return summarizeAiTradeDiscardCardEntry({
               card,
               handIndex,
@@ -1221,7 +1221,7 @@
       const currentPlayScore = aiNumber(playCardCandidate.score);
       const postTradePlayCandidates = handAfterTrade > 0
         ? (player.hand || [])
-          .map((card, handIndex) => buildAiPlayCardCandidate(card, handIndex, simulatedPlayer))
+          .map((card, handIndex) => buildAiPlayCardCandidate(workingRoot, card, handIndex, simulatedPlayer))
           .filter(Boolean)
           .map((candidate) => {
             const breakdown = candidate.valueBreakdown || {};

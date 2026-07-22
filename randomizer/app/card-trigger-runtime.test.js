@@ -80,6 +80,14 @@ function createHarness() {
 }
 
 {
+  const { runtime, workingRoot } = createHarness();
+  workingRoot.match.actionEffectFlow = {};
+  const bonuses = runtime.ensureCardFlowEventBonuses(workingRoot);
+  bonuses.push({ id: "turn-bonus" });
+  assert.deepEqual(workingRoot.match.actionEffectFlow.cardFlowEventBonuses, [{ id: "turn-bonus" }]);
+}
+
+{
   const { runtime, workingRoot, player } = createHarness();
   const isolatedPlayer = {
     id: "p2",

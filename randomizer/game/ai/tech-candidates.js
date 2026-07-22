@@ -75,7 +75,7 @@
       candidate.available = safety.ok;
       candidate.reason = safety.message || null;
       candidate.plan = scoreAiResearchTechRoutePlan(candidate, currentPlayer);
-      candidate.score = scoreAiResearchTechValue(candidate);
+      candidate.score = scoreAiResearchTechValue(workingRoot, candidate, currentPlayer);
       candidate.finalFormulaDeltas = getAiResearchTechFinalFormulaDeltas(candidate, currentPlayer);
       candidate.directScoreGain = getAiResearchTechDirectScoreGain(candidate);
       candidate.valueBreakdown = {
@@ -84,7 +84,7 @@
         huanyuOrange2FutureMoveValue: scoreAiHuanyuOrange2FutureMoveValue(candidate, currentPlayer),
       };
       if (candidate.tileId === "orange4") {
-        candidate.valueBreakdown.orange4SatelliteProfile = getAiOrange4SatellitePotentialProfile(currentPlayer);
+        candidate.valueBreakdown.orange4SatelliteProfile = getAiOrange4SatellitePotentialProfile(workingRoot, currentPlayer);
       }
       if (!safety.ok) candidate.score -= 1000;
       return candidate;

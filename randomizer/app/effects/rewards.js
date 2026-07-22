@@ -923,7 +923,7 @@
     function executeRegisterEventBonusEffect(workingRoot, effect) {
       const owner = getEffectOwnerPlayer(workingRoot, effect);
       const beforeTurnBonuses = structuredClone(ruleTurnState(workingRoot).cardTurnEventBonuses || []);
-      const flowBonuses = ensureCardFlowEventBonuses();
+      const flowBonuses = ensureCardFlowEventBonuses(workingRoot);
       const beforeFlowBonuses = structuredClone(flowBonuses);
       beginEffectHistoryStep(workingRoot, effect.label);
       const bonus = {

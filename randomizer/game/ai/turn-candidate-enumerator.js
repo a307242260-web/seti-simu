@@ -48,7 +48,7 @@
         if (industryCandidate) candidates.push(industryCandidate);
         candidates.push(...listAiLateResourceRecoveryTradeCandidates(workingRoot, currentPlayer));
         candidates.push(...listAiMoveCandidates(workingRoot));
-        candidates.push(...listAiDataPlacementCandidates(currentPlayer));
+        candidates.push(...listAiDataPlacementCandidates(workingRoot, currentPlayer));
         candidates.push(...listAiRunezuFaceSymbolQuickCandidates(workingRoot, currentPlayer));
         candidates.push(...listAiCardCornerQuickCandidates(workingRoot, currentPlayer));
         candidates.push({
@@ -448,7 +448,7 @@
       candidates.push(...listAiFinalReadyTaskCreditChainTradeCandidates(workingRoot, currentPlayer));
       candidates.push(...listAiResourceLockMainUnlockTradeCandidates(workingRoot, currentPlayer, candidates));
       candidates.push(...listAiLateResourceRecoveryTradeCandidates(workingRoot, currentPlayer, candidates));
-      candidates.push(...listAiDataPlacementCandidates(currentPlayer));
+      candidates.push(...listAiDataPlacementCandidates(workingRoot, currentPlayer));
       candidates.push(...listAiRunezuFaceSymbolQuickCandidates(workingRoot, currentPlayer));
       candidates.push(...listAiCardCornerQuickCandidates(workingRoot, currentPlayer, playCardCandidates));
       candidates.push({
