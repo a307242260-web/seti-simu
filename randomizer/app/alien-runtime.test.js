@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createAlienRuntimeHelpers } = require("./alien-runtime");
+const { createAlienRuntimeHelpers, createNeutralScoreTraceRuntime } = require("./alien-runtime");
 
 function createHarness(overrides = {}) {
   const calls = {
@@ -258,6 +258,42 @@ function createHarness(overrides = {}) {
   assert.match(rocketState.statusNote, /回合结束揭示外星人/);
   assert.equal(calls.actionLogs.length, 1);
   assert.equal(calls.irreversible.length, 1);
+}
+
+{
+  const player = { id: "p1", color: "white", resources: { score: 21 } };
+  const workingRoot = {
+    turnState: { activePlayerIds: ["p1"] },
+    playerState: { currentPlayerId: "p1", players: [player] },
+    alienGameState: {},
+  };
+  const calls = { restore: 0, render: 0, scanArgs: null };
+  const runtime = createNeutralScoreTraceRuntime({
+    aliens: {
+      NEUTRAL_SCORE_TRACE_THRESHOLDS: [20, 30],
+      getNeutralScoreTraceMark: () => null,
+      placeNeutralScoreTraceForThreshold: (_state, threshold, target, color) => ({
+        ok: true, threshold, playerId: target.id, color,
+      }),
+    },
+    players: { PLAYER_COLOR_IDS: ["white", "brown"] },
+    getActivePlayers: () => [player],
+    getScanScorePlayer: (root, result) => {
+      calls.scanArgs = { root, result };
+      return player;
+    },
+    historyCommands: { createRestoreObjectCommand: () => ({ type: "restore" }) },
+    recordHistoryCommand: () => { calls.restore += 1; },
+    renderAlienPanels: () => { calls.render += 1; },
+  });
+  const scanResult = { scoreAwarded: 2 };
+  const placed = runtime.recordNeutralScoreTracesFromScanResult(workingRoot, scanResult);
+  assert.equal(placed.length, 1);
+  assert.equal(placed[0].threshold, 20);
+  assert.equal(placed[0].color, "brown");
+  assert.deepEqual(calls.scanArgs, { root: workingRoot, result: scanResult });
+  assert.equal(calls.restore, 1);
+  assert.equal(calls.render, 1);
 }
 
 console.log("alien-runtime tests passed");

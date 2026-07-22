@@ -1625,7 +1625,101 @@
     };
   }
 
+  function createNeutralScoreTraceRuntime(context = {}) {
+    const aliens = context.aliens || {};
+    const players = context.players || {};
+
+    function getNeutralScoreTraceColor() {
+      const activeColors = new Set((context.getActivePlayers?.() || [])
+        .map((player) => player.color).filter(Boolean));
+      return (players.PLAYER_COLOR_IDS || []).find((colorId) => !activeColors.has(colorId)) || null;
+    }
+
+    function getCrossedNeutralScoreTraceThresholds(workingRoot, beforeScore, afterScore) {
+      const before = Number(beforeScore) || 0;
+      const after = Number(afterScore) || 0;
+      if (after <= before) return [];
+      return (aliens.NEUTRAL_SCORE_TRACE_THRESHOLDS || [20, 30]).filter((threshold) => (
+        before < Number(threshold)
+        && after >= Number(threshold)
+        && !aliens.getNeutralScoreTraceMark?.(workingRoot.alienGameState, threshold)
+      ));
+    }
+
+    function recordNeutralScoreTraceRestore(workingRoot, beforeAlienState, history = null) {
+      const command = context.historyCommands?.createRestoreObjectCommand?.(
+        workingRoot.alienGameState,
+        beforeAlienState,
+        "恢复分数阈值中立首痕迹",
+      );
+      if (history === context.quickActionHistory) context.recordQuickHistoryCommand?.(command);
+      else context.recordHistoryCommand?.(workingRoot, command);
+    }
+
+    function placeNeutralScoreTraceForThreshold(workingRoot, player, threshold, options = {}) {
+      const activeIds = new Set(workingRoot.turnState.activePlayerIds || []);
+      const activePlayerIds = new Set((workingRoot.playerState.players || [])
+        .filter((item) => activeIds.has(item.id)).map((item) => item.id));
+      if (!player?.id || !activePlayerIds.has(player.id)) return null;
+      const neutralColor = getNeutralScoreTraceColor();
+      if (!neutralColor) return null;
+      const beforeAlienState = structuredClone(workingRoot.alienGameState);
+      const result = aliens.placeNeutralScoreTraceForThreshold?.(
+        workingRoot.alienGameState, threshold, player, neutralColor,
+      );
+      if (!result?.ok) return result || null;
+      recordNeutralScoreTraceRestore(workingRoot, beforeAlienState, options.history || null);
+      context.renderAlienPanels?.();
+      return result;
+    }
+
+    function handlePlayerScoreChanged(workingRoot, player, payload = {}, options = {}) {
+      const thresholds = getCrossedNeutralScoreTraceThresholds(
+        workingRoot, payload.beforeScore, payload.afterScore,
+      );
+      return thresholds.map((threshold) => (
+        placeNeutralScoreTraceForThreshold(workingRoot, player, threshold, options)
+      )).filter((result) => result?.ok);
+    }
+
+    function recordNeutralScoreTracesFromScanResult(workingRoot, scanResult, history = null) {
+      const scoreAwarded = Number(
+        scanResult?.scoreAwarded
+        ?? scanResult?.replaced?.scoreAwarded
+        ?? scanResult?.payload?.replaced?.scoreAwarded
+        ?? 0,
+      );
+      if (scoreAwarded <= 0) return [];
+      const player = context.getScanScorePlayer?.(workingRoot, scanResult);
+      if (!player) return [];
+      const afterScore = Number(player.resources?.score) || 0;
+      return handlePlayerScoreChanged(workingRoot, player, {
+        gain: { score: scoreAwarded },
+        beforeScore: afterScore - scoreAwarded,
+        afterScore,
+        scoreDelta: scoreAwarded,
+      }, { history });
+    }
+
+    function recordNeutralScoreTracesFromAbilityResult(workingRoot, result, history = null) {
+      return [result, result?.payload?.industryLaunchScan]
+        .filter(Boolean)
+        .flatMap((scanResult) => recordNeutralScoreTracesFromScanResult(workingRoot, scanResult, history));
+    }
+
+    return Object.freeze({
+      getNeutralScoreTraceColor,
+      getCrossedNeutralScoreTraceThresholds,
+      recordNeutralScoreTraceRestore,
+      placeNeutralScoreTraceForThreshold,
+      handlePlayerScoreChanged,
+      recordNeutralScoreTracesFromScanResult,
+      recordNeutralScoreTracesFromAbilityResult,
+    });
+  }
+
   return {
     createAlienRuntimeHelpers,
+    createNeutralScoreTraceRuntime,
   };
 });
