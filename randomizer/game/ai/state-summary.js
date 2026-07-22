@@ -17,13 +17,14 @@
       endGameScoring,
       cardEffects,
       aomomo,
-      nebulaDataState,
-      alienGameState,
-      rocketState,
-      planetStatsState,
       AI_TECH_TYPES,
       AI_INCOME_DISCARD_TYPES,
     } = context;
+    const readRuleRoot = () => {
+      const workingRoot = context.getRuleReadout?.();
+      if (!workingRoot) throw new TypeError("AI state summary requires a StateSource rule readout");
+      return workingRoot;
+    };
     const aiNumber = (...args) => context.aiNumber(...args);
     const countAiLandingMarkers = (...args) => context.countAiLandingMarkers(...args);
     const countAiTraceMarkersForPlayer = (...args) => context.countAiTraceMarkersForPlayer(...args);
@@ -56,6 +57,7 @@
 
     function getAiProbePlanetIds(player = getCurrentPlayer(), excludePlanetIds = []) {
       if (!player) return [];
+      const { rocketState } = readRuleRoot();
       const excluded = new Set((excludePlanetIds || []).map(String));
       const planetIds = new Set();
       for (const rocket of rocketActions.getRocketsForPlayer?.(rocketState, player.id) || []) {
@@ -69,6 +71,7 @@
 
     function getAiTaskConditionCurrentCount(condition = {}, player = null) {
       if (!condition || !player) return null;
+      const { alienGameState, nebulaDataState, planetStatsState } = readRuleRoot();
       const type = condition.type || null;
       const nebulaIdsByColor = cardEffects?.NEBULA_IDS_BY_COLOR || endGameScoring?.NEBULA_IDS_BY_COLOR || {};
       if (type === "resourceThreshold" || type === "resourceEquals") {

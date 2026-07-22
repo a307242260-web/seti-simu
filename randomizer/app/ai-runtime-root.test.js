@@ -7,6 +7,8 @@ const { createAutomationRuntime } = require("./ai/automation-runtime");
 const { createTechCandidates } = require("../game/ai/tech-candidates");
 const { createFinalPace } = require("../game/ai/final-pace");
 const { createSelectionPressure } = require("../game/ai/selection-pressure");
+const { createStateSummary } = require("../game/ai/state-summary");
+const { createActionValue } = require("../game/ai/action-value");
 
 function contextWith(overrides = {}) {
   const fallback = () => null;
@@ -165,6 +167,41 @@ const players = {
   assert.equal(selectionPressure.countAiRepeatedNegativeResourceCardCornersThisTurn("a"), 1);
   readout = rootB;
   assert.equal(selectionPressure.countAiRepeatedNegativeResourceCardCornersThisTurn("a"), 0);
+}
+
+{
+  const rootA = createRoot("a", 1);
+  rootA.nebulaDataState = { sectorSettlements: { winsByPlayerId: { a: [{ sectorId: "sector-a" }] } } };
+  const rootB = createRoot("a", 1);
+  rootB.nebulaDataState = { sectorSettlements: { winsByPlayerId: {} } };
+  let readout = rootA;
+  const stateSummary = createStateSummary(contextWith({
+    aiNumber: Number,
+    cardEffects: { NEBULA_IDS_BY_COLOR: { blue: ["sector-a"] } },
+    getAiNebulaSignalCounts: () => ({ ownCount: 0 }),
+    getRuleReadout: () => readout,
+  }));
+  const player = { id: "a", resources: {} };
+  assert.equal(stateSummary.getAiTaskConditionCurrentCount({ type: "signalsOrWinsInAllSectors" }, player), 1);
+  readout = rootB;
+  assert.equal(stateSummary.getAiTaskConditionCurrentCount({ type: "signalsOrWinsInAllSectors" }, player), 0);
+}
+
+{
+  const rootA = createRoot("a", 1);
+  rootA.rocketState.rockets = [{ id: 1, playerId: "a" }];
+  const rootB = createRoot("a", 1);
+  let readout = rootA;
+  const actionValue = createActionValue(contextWith({
+    aiNumber: Number,
+    AI_TRACE_TYPES: [],
+    cardEffects: { countRocketsForReward: (rockets) => rockets.length },
+    getRuleReadout: () => readout,
+  }));
+  const player = { id: "a", resources: {} };
+  assert.equal(actionValue.countAiRocketsForReward(player), 1);
+  readout = rootB;
+  assert.equal(actionValue.countAiRocketsForReward(player), 0);
 }
 
 {

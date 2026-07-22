@@ -35,9 +35,6 @@
       amiba,
       runezu,
       ai,
-      alienGameState,
-      rocketState,
-      planetStatsState,
       FINAL_ROUND_NUMBER,
       AI_RESOURCE_VALUES,
       AI_TRACE_TYPES,
@@ -46,6 +43,11 @@
       AI_DIFFICULTY_WEAK_START,
       aiAutoBattleState,
     } = context;
+    const readRuleRoot = () => {
+      const workingRoot = context.getRuleReadout?.();
+      if (!workingRoot) throw new TypeError("AI action value requires a StateSource rule readout");
+      return workingRoot;
+    };
     const addAiAllTraceDemand = (...args) => context.addAiAllTraceDemand(...args);
     const aiMarkerBelongsToPlayer = (...args) => context.aiMarkerBelongsToPlayer(...args);
     const aiNumber = (...args) => context.aiNumber(...args);
@@ -852,12 +854,14 @@
 
     function countAiTraceMarkersForPlayer(player = getCurrentPlayer()) {
       if (!endGameScoring?.countTraceMarkers || !player) return 0;
+      const { alienGameState } = readRuleRoot();
       return AI_TRACE_TYPES.reduce((total, traceType) => (
         total + Math.max(0, Math.round(aiNumber(endGameScoring.countTraceMarkers(player, alienGameState, traceType))))
       ), 0);
     }
 
     function getAiB1TraceCounts(player = getCurrentPlayer()) {
+      const { alienGameState } = readRuleRoot();
       const counts = {};
       for (const traceType of AI_TRACE_TYPES) {
         counts[traceType] = endGameScoring?.countTraceMarkers && player
@@ -924,6 +928,7 @@
 
     function isAiFirstTraceTakenByOpponent(alienSlotId, traceType, player = getCurrentPlayer()) {
       if (!traceType || alienSlotId == null) return false;
+      const { alienGameState } = readRuleRoot();
       const slot = aliens?.getAlienSlot?.(alienGameState, alienSlotId);
       const traceSlot = slot?.traces?.[traceType];
       return Boolean(
@@ -934,12 +939,14 @@
     }
 
     function isAiHiddenFirstTraceTakenByOpponent(alienSlotId, traceType, player = getCurrentPlayer()) {
+      const { alienGameState } = readRuleRoot();
       const slot = aliens?.getAlienSlot?.(alienGameState, alienSlotId);
       return Boolean(slot && !slot.revealed && isAiFirstTraceTakenByOpponent(alienSlotId, traceType, player));
     }
 
     function isAiOpenHiddenFirstTraceTarget(alienSlotId, traceType) {
       if (!traceType || alienSlotId == null) return false;
+      const { alienGameState } = readRuleRoot();
       const slot = aliens?.getAlienSlot?.(alienGameState, alienSlotId);
       const traceSlot = slot?.traces?.[traceType];
       return Boolean(slot && !slot.revealed && traceSlot && !traceSlot.firstPlaced);
@@ -948,6 +955,7 @@
     function getAiHiddenFirstTraceColorStatus(traceType, player = getCurrentPlayer()) {
       const status = { open: 0, own: 0, opponent: 0 };
       if (!traceType) return status;
+      const { alienGameState } = readRuleRoot();
       for (const slot of Object.values(alienGameState?.aliens || {})) {
         const traceSlot = slot?.traces?.[traceType];
         if (!slot || slot.revealed || !traceSlot) continue;
@@ -969,6 +977,7 @@
 
     function getAiAlienSlot(alienSlotId) {
       if (alienSlotId == null) return null;
+      const { alienGameState } = readRuleRoot();
       return aliens?.getAlienSlot?.(alienGameState, alienSlotId)
         || alienGameState?.aliens?.[String(alienSlotId)]
         || alienGameState?.aliens?.[Number(alienSlotId)]
@@ -1029,6 +1038,7 @@
       const alienSlotId = options.alienSlotId ?? picker.selectedAlienSlotId;
       const player = options.player || getCurrentPlayer();
       const mode = String(options.mode || picker.mode || "");
+      const { alienGameState } = readRuleRoot();
       const value = ai?.valuation?.estimateAlienTraceValue
         ? ai.valuation.estimateAlienTraceValue({
           alienGameState,
@@ -1097,6 +1107,7 @@
 
     function scoreAiCardCornerOpportunity(card) {
       let value = 0;
+      const { alienGameState } = readRuleRoot();
       const runezuRevealed = runezu?.isRunezuRevealedSlot
         && (aliens?.ALIEN_SLOT_IDS || []).some((alienSlotId) => (
           runezu.isRunezuRevealedSlot(alienGameState, alienSlotId)
@@ -1169,6 +1180,7 @@
 
     function getAiConditionRewardMultiplier(condition, player = getCurrentPlayer(), options = {}) {
       if (!condition) return { met: true, multiplier: 1 };
+      const { planetStatsState } = readRuleRoot();
       const type = condition.type;
       const missingMultiplier = (value) => (options.immediate ? 0 : value);
       if (type === "resourceThreshold") {
@@ -1263,6 +1275,7 @@
 
     function countAiRocketsForReward(player = getCurrentPlayer(), rewardOptions = {}) {
       if (!player) return 0;
+      const { rocketState } = readRuleRoot();
       if (Array.isArray(rocketState.rockets) && typeof cardEffects.countRocketsForReward === "function") {
         return cardEffects.countRocketsForReward(rocketState.rockets, player, rewardOptions);
       }
@@ -1278,6 +1291,7 @@
 
     function scoreAiEffectValue(effect, options = {}) {
       if (!effect) return 0;
+      const { alienGameState } = readRuleRoot();
       const type = effect.type;
       const effectOptions = effect.options || {};
       const player = options.player || getCurrentPlayer();
