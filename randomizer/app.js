@@ -2286,7 +2286,7 @@
     renderPlayerStats,
     isGameEnded,
     isPlayerPassedThisRound,
-    countPlayerOwnedTech: (...args) => countPlayerOwnedTechForActionLogExport?.(...args),
+    countPlayerOwnedTech: actionLogExport.countOwnedTech,
   });
   const {
     syncFinalScorePendingMarks: syncFinalScorePendingMarksForRoot,
@@ -2300,6 +2300,21 @@
     maybeAutoOpenFinalResultDialog,
     buildActionLogExportPlayerResults,
   } = finalUiRuntime;
+  const actionLogExportController = actionLogExport.createActionLogExportController({
+    createReadoutRoot: createStateSourceReadoutRoot,
+    getDisplayedTurnNumber: (...args) => getDisplayedTurnNumber(...args),
+    isGameEnded: (...args) => isGameEnded(...args),
+    getEntries: (...args) => getRecoverableActionLog(...args),
+    getPlayerResults: (...args) => buildActionLogExportPlayerResults(...args),
+    download: (...args) => residentBrowserServices.download(...args),
+    setStatus: (...args) => setBrowserStatusNote(...args),
+    renderStateReadout: (...args) => renderStateReadout(...args),
+  });
+  const {
+    buildActionLogMarkdownContext,
+    getActionLogMarkdown,
+    downloadActionLogMarkdown,
+  } = actionLogExportController;
   function syncFinalScorePendingMarks(workingRoot = null) {
     if (workingRoot) return syncFinalScorePendingMarksForRoot(workingRoot);
     return ruleComposition.inputPort.submitHostCommand({
@@ -5444,80 +5459,6 @@
       includeRecovery: options.includeRecovery !== false,
       createSnapshot: createGameRecoverySnapshot,
     });
-  }
-
-  function countPlayerOwnedTechForActionLogExport(player) {
-    const ownedTiles = player?.techState?.ownedTiles || {};
-    return Object.values(ownedTiles).reduce((total, value) => {
-      if (Array.isArray(value)) return total + value.length;
-      return total + (value ? 1 : 0);
-    }, 0);
-  }
-
-  function buildActionLogMarkdownContext(options = {}) {
-    const generatedAt = options.generatedAt || new Date();
-    const readoutRoot = createStateSourceReadoutRoot();
-    return {
-      generatedAt,
-      isGameEnded: isGameEnded(),
-      gameEndReason: readoutRoot.turnState.gameEndReason || null,
-      roundNumber: readoutRoot.turnState.roundNumber,
-      turnNumber: getDisplayedTurnNumber(),
-      turnState: {
-        ...structuredClone(readoutRoot.turnState),
-        displayedTurnNumber: getDisplayedTurnNumber(),
-        currentPlayerId: readoutRoot.playerState.currentPlayerId,
-      },
-      entries: getRecoverableActionLog({ includeRecovery: false }),
-      playerResults: buildActionLogExportPlayerResults(),
-    };
-  }
-
-  function getActionLogMarkdown(options = {}) {
-    return actionLogExport.buildActionLogMarkdown(
-      buildActionLogMarkdownContext(options),
-      options,
-    );
-  }
-
-  function createActionLogMarkdownDownload(markdown, filename) {
-    return residentBrowserServices.download({
-      content: markdown,
-      filename,
-      mimeType: "text/markdown;charset=utf-8",
-    });
-  }
-
-  function downloadActionLogMarkdown(options = {}) {
-    const generatedAt = options.generatedAt || new Date();
-    const context = buildActionLogMarkdownContext({ ...options, generatedAt });
-    const filename = actionLogExport.createActionLogMarkdownFilename(generatedAt);
-    const entryCount = context.entries.length;
-    if (!context.isGameEnded && options.allowIncomplete !== true) {
-      const result = {
-        ok: false,
-        filename,
-        entryCount,
-        message: "游戏尚未结束，终局行动日志需要在游戏结束后下载",
-      };
-      setBrowserStatusNote(result.message);
-      renderStateReadout();
-      return result;
-    }
-
-    const markdown = actionLogExport.buildActionLogMarkdown(context, { ...options, generatedAt });
-    const downloadResult = createActionLogMarkdownDownload(markdown, filename);
-    const result = {
-      ok: Boolean(downloadResult.ok),
-      filename,
-      entryCount,
-      message: downloadResult.ok
-        ? `已生成行动日志：${filename}`
-        : downloadResult.message || "行动日志下载失败",
-    };
-    setBrowserStatusNote(result.message);
-    renderStateReadout();
-    return result;
   }
 
   function getRecoveryEntriesFromInput(logOrPackage) {

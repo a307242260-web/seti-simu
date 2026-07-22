@@ -148,4 +148,35 @@ assert.doesNotMatch(
   /[\\/:*?"<>|]/,
 );
 
+{
+  const calls = [];
+  let ended = false;
+  const controller = exportLog.createActionLogExportController({
+    createReadoutRoot: () => ({
+      turnState: { roundNumber: 2, turnNumber: 3, gameEndReason: null, passedPlayerIds: [] },
+      playerState: { currentPlayerId: "p1" },
+    }),
+    getDisplayedTurnNumber: () => 4,
+    isGameEnded: () => ended,
+    getEntries: () => [{ id: 1, playerId: "p1", actionLabel: "扫描", steps: [] }],
+    getPlayerResults: () => [],
+    download: (request) => { calls.push(["download", request]); return { ok: true }; },
+    setStatus: (message) => calls.push(["status", message]),
+    renderStateReadout: () => calls.push(["render"]),
+  });
+  const generatedAt = new Date(2026, 5, 24, 3, 4, 5);
+  const rejected = controller.downloadActionLogMarkdown({ generatedAt });
+  assert.equal(rejected.ok, false);
+  assert.equal(calls[0][0], "status");
+  ended = true;
+  calls.length = 0;
+  const saved = controller.downloadActionLogMarkdown({ generatedAt });
+  assert.equal(saved.ok, true);
+  assert.equal(saved.filename, "seti-action-log-20260624-030405.md");
+  assert.equal(calls[0][0], "download");
+  assert.equal(calls[0][1].mimeType, "text/markdown;charset=utf-8");
+  assert.ok(controller.getActionLogMarkdown({ generatedAt }).includes("第 2 轮 / 第 4 回合"));
+  assert.equal(exportLog.countOwnedTech({ techState: { ownedTiles: { a: [1, 2], b: 3 } } }), 3);
+}
+
 console.log("action-log-export tests passed");

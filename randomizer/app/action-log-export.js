@@ -327,10 +327,73 @@
     return `seti-action-log-${stamp}.md`;
   }
 
+  function createActionLogExportController(options = {}) {
+    function buildContext(contextOptions = {}) {
+      const generatedAt = contextOptions.generatedAt || new Date();
+      const readoutRoot = options.createReadoutRoot();
+      const displayedTurnNumber = options.getDisplayedTurnNumber();
+      return {
+        generatedAt,
+        isGameEnded: options.isGameEnded(),
+        gameEndReason: readoutRoot.turnState.gameEndReason || null,
+        roundNumber: readoutRoot.turnState.roundNumber,
+        turnNumber: displayedTurnNumber,
+        turnState: {
+          ...structuredClone(readoutRoot.turnState),
+          displayedTurnNumber,
+          currentPlayerId: readoutRoot.playerState.currentPlayerId,
+        },
+        entries: options.getEntries({ includeRecovery: false }),
+        playerResults: options.getPlayerResults(),
+      };
+    }
+
+    function getMarkdown(markdownOptions = {}) {
+      return buildActionLogMarkdown(buildContext(markdownOptions), markdownOptions);
+    }
+
+    function download(downloadOptions = {}) {
+      const generatedAt = downloadOptions.generatedAt || new Date();
+      const context = buildContext({ ...downloadOptions, generatedAt });
+      const filename = createActionLogMarkdownFilename(generatedAt);
+      const entryCount = context.entries.length;
+      if (!context.isGameEnded && downloadOptions.allowIncomplete !== true) {
+        const result = {
+          ok: false,
+          filename,
+          entryCount,
+          message: "游戏尚未结束，终局行动日志需要在游戏结束后下载",
+        };
+        options.setStatus(result.message);
+        options.renderStateReadout();
+        return result;
+      }
+      const markdown = buildActionLogMarkdown(context, { ...downloadOptions, generatedAt });
+      const saved = options.download({
+        content: markdown,
+        filename,
+        mimeType: "text/markdown;charset=utf-8",
+      });
+      const result = {
+        ok: Boolean(saved.ok),
+        filename,
+        entryCount,
+        message: saved.ok ? `已生成行动日志：${filename}` : saved.message || "行动日志下载失败",
+      };
+      options.setStatus(result.message);
+      options.renderStateReadout();
+      return result;
+    }
+
+    return Object.freeze({ buildActionLogMarkdownContext: buildContext, getActionLogMarkdown: getMarkdown, downloadActionLogMarkdown: download });
+  }
+
   return {
     buildActionLogMarkdown,
     buildRouteSummaries,
+    countOwnedTech,
     createActionLogMarkdownFilename,
+    createActionLogExportController,
     markdownTableCell,
   };
 });
