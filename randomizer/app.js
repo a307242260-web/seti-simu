@@ -1760,7 +1760,7 @@
     getEarthSectorCoordinate: getEarthSectorCoordinateForRoot,
   } = coordinateRuntime;
   function getCoordinateReadRoot() {
-    return activeBrowserDomainWorkingRoot || createStateSourceReadoutRoot();
+    return createStateSourceReadoutRoot();
   }
   function getMovableTokensForPlayer(playerId) {
     return getMovableTokensForPlayerForRoot(getCoordinateReadRoot(), playerId);
@@ -3932,7 +3932,7 @@
   }
 
   function getInterfacePlayer() {
-    const { playerState, turnState } = activeBrowserDomainWorkingRoot || createStateSourceReadoutRoot();
+    const { playerState, turnState } = createStateSourceReadoutRoot();
     const currentPlayer = players.getCurrentPlayer(playerState);
     if (!currentPlayer || !isAiAutoBattlePlayer(currentPlayer.id) || isAiAutomationPaused()) return currentPlayer;
     const activeIds = new Set(turnState.activePlayerIds || []);
@@ -3952,7 +3952,7 @@
   }
 
   function getActivePlayers() {
-    const { playerState, turnState } = activeBrowserDomainWorkingRoot || createStateSourceReadoutRoot();
+    const { playerState, turnState } = createStateSourceReadoutRoot();
     const activeIds = new Set(turnState.activePlayerIds || []);
     return playerState.players.filter((player) => activeIds.has(player.id));
   }
@@ -4338,9 +4338,10 @@
     stopAiAutoBattle,
     sumAiDemandMap,
   } = aiController;
-  const buildAiTurnActionCandidates = (...args) => activeBrowserDomainWorkingRoot
-    ? buildAiTurnActionCandidatesForRoot(activeBrowserDomainWorkingRoot, ...args)
-    : browserRuleComposition.inputPort.submitHostCommand({ kind: "ai_build_turn_candidates", args });
+  const buildAiTurnActionCandidates = (...args) => browserRuleComposition.inputPort.submitHostCommand({
+    kind: "ai_build_turn_candidates",
+    args,
+  });
   const chooseInitialSelectionForAiPlayer = () => browserRuleComposition.inputPort.submitHostCommand({
     kind: "ai_choose_initial_selection",
   });
@@ -4365,12 +4366,12 @@
     metadata: { source: "headless-env-reset" },
   });
   const inspectHeadlessComposition = () => browserRuleComposition.inspect();
-  const listCardTriggerFreeMoveCandidates = (...args) => activeBrowserDomainWorkingRoot
-    ? listCardTriggerFreeMoveCandidatesForRoot(activeBrowserDomainWorkingRoot, ...args)
-    : (browserRuleComposition.inputPort.submitHostCommand({
+  const listCardTriggerFreeMoveCandidates = (...args) => (
+    browserRuleComposition.inputPort.submitHostCommand({
       kind: "card_trigger_list_free_move_candidates",
       args,
-    }, { commit: false }).value || []);
+    }, { commit: false }).value || []
+  );
   const resolveAiAutomationToTurnBoundary = (options = {}) => browserRuleComposition.inputPort.submitHostCommand({
     kind: "ai_resolve_to_turn_boundary",
     options,
