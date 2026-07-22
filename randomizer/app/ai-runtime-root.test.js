@@ -4,6 +4,7 @@ const { createInitialCardPendingRuntime } = require("./ai/initial-card-pending")
 const { createInteractionPendingRuntime } = require("./ai/interaction-pending");
 const { createActionExecutor } = require("./ai/action-executor");
 const { createAutomationRuntime } = require("./ai/automation-runtime");
+const { createTechCandidates } = require("../game/ai/tech-candidates");
 
 function contextWith(overrides = {}) {
   const fallback = () => null;
@@ -121,6 +122,29 @@ const players = {
   }));
   assert.equal(runtime.runAiAutomationStep(rootB).rootId, "b");
   assert.throws(() => runtime.runAiAutomationStep(), /explicit workingRoot/);
+}
+
+{
+  const techCandidates = createTechCandidates(contextWith({
+    players,
+    tech: {
+      getStack: (board, tileId) => board[tileId] || null,
+      getTechType: () => "orange",
+      getStackIndex: () => 1,
+    },
+    getAiResearchTechCandidateSafety: () => ({ ok: true, message: null }),
+    getAiResearchTechFinalFormulaDeltas: () => ({}),
+  }));
+  const rootA = createRoot("a", 1);
+  const rootB = createRoot("b", 2);
+  rootA.techGameState.board.orange1 = { bonusId: "bonus-a", remaining: 1 };
+  rootB.techGameState.board.orange1 = { bonusId: "bonus-b", remaining: 2 };
+  assert.equal(techCandidates.buildAiResearchTechCandidate(rootA, "orange1").bonusId, "bonus-a");
+  assert.equal(techCandidates.buildAiResearchTechCandidate(rootB, "orange1").bonusId, "bonus-b");
+  assert.throws(
+    () => techCandidates.buildAiResearchTechCandidate(null, "orange1"),
+    /explicit workingRoot/,
+  );
 }
 
 console.log("AI runtime working-root tests passed");

@@ -568,7 +568,7 @@
       };
     }
 
-    function buildAiTradeDiscardCostEntries(player = getCurrentPlayer(), preserveHandIndex = null) {
+    function buildAiTradeDiscardCostEntries(workingRoot, player = getCurrentPlayer(), preserveHandIndex = null) {
       const explicitPreserveHandIndex = preserveHandIndex === null || preserveHandIndex === undefined || preserveHandIndex === ""
         ? null
         : Number(preserveHandIndex);
@@ -576,7 +576,7 @@
       return (player?.hand || [])
         .map((card, handIndex) => {
           if (preservedIndex !== null && Number(handIndex) === preservedIndex) return null;
-          const playCandidate = buildAiPlayCardCandidate(card, handIndex, player);
+          const playCandidate = buildAiPlayCardCandidate(workingRoot, card, handIndex, player);
           const opportunityCost = getAiDiscardedCardOpportunityCost(card, playCandidate);
           if (!Number.isFinite(Number(opportunityCost))) return null;
           return {
@@ -597,7 +597,7 @@
         ));
     }
 
-    function summarizeAiTradeDiscardPlan(player = getCurrentPlayer(), trade = null, preserveHandIndex = null, options = {}) {
+    function summarizeAiTradeDiscardPlan(workingRoot, player = getCurrentPlayer(), trade = null, preserveHandIndex = null, options = {}) {
       if (!player || !trade) {
         return {
           ok: false,
@@ -618,17 +618,17 @@
         : Number(preserveHandIndex);
       const preservedIndex = Number.isInteger(explicitPreserveHandIndex) ? explicitPreserveHandIndex : null;
       const tradeId = options.tradeId || trade.id || null;
-      const costEntries = buildAiTradeDiscardCostEntries(player, null);
+      const costEntries = buildAiTradeDiscardCostEntries(workingRoot, player, null);
       const costEntryByIndex = new Map(costEntries.map((entry) => [Number(entry.handIndex), entry]));
       const executionIndexes = tradeId && handCost > 0
-        ? chooseAiTradeDiscardIndexes(player, handCost, { tradeId, preserveHandIndex: preservedIndex }) || []
+        ? chooseAiTradeDiscardIndexes(workingRoot, player, handCost, { tradeId, preserveHandIndex: preservedIndex }) || []
         : [];
       const selectedEntries = tradeId
         ? executionIndexes
           .slice(0, handCost)
           .map((index) => costEntryByIndex.get(Number(index)))
           .filter(Boolean)
-        : buildAiTradeDiscardCostEntries(player, preservedIndex).slice(0, handCost);
+        : buildAiTradeDiscardCostEntries(workingRoot, player, preservedIndex).slice(0, handCost);
       const hasEnoughCards = selectedEntries.length >= handCost;
       const totalCost = hasEnoughCards
         ? resourceCostValue + selectedEntries.reduce((total, entry) => total + Math.max(0, aiNumber(entry.opportunityCost)), 0)

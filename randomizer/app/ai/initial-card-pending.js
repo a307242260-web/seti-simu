@@ -219,10 +219,10 @@
       const incomePlanningEntries = incomeGainByIndex ? getAiIncomeFinalFormulaEntries(player) : [];
       const useHeadlessRuleKernel = globalThis.SetiHeadlessRuntimeConfig?.ruleKernel === true;
       const dynamicIncomeIndexes = incomeGainByIndex && !useHeadlessRuleKernel
-        ? chooseAiIncomeDiscardIndexes(player, count, incomeGainByIndex, incomePlanningEntries)
+        ? chooseAiIncomeDiscardIndexes(workingRoot, player, count, incomeGainByIndex, incomePlanningEntries)
         : null;
       const tradeDiscardIndexes = !dynamicIncomeIndexes && pendingType === "trade"
-        ? chooseAiTradeDiscardIndexes(player, count, state.pendingDiscardAction)
+        ? chooseAiTradeDiscardIndexes(workingRoot, player, count, state.pendingDiscardAction)
         : null;
       const preferredIndexes = dynamicIncomeIndexes || tradeDiscardIndexes || ai?.selectionEvaluator?.evaluateDiscardIndexes?.(player.hand || [], count, {
         pendingType,
@@ -298,7 +298,7 @@
         || passReserveResourcePressure.active;
       const ranked = shouldRankPassReserve
         ? (pile || [])
-          .map((card) => ({ card, score: scoreAiPassReserveCard(card, player) }))
+          .map((card) => ({ card, score: scoreAiPassReserveCard(workingRoot, card, player) }))
           .filter((entry) => entry.card && Number.isFinite(entry.score))
           .sort((left, right) => right.score - left.score)
         : [];
@@ -376,7 +376,7 @@
       }
 
       if (pending.type === "industry_deepspace_hand") {
-        const selected = getAiBestDeepspaceSwap(player);
+        const selected = getAiBestDeepspaceSwap(workingRoot, player);
         if (!selected || selected.score <= AI_DEEPSPACE_SWAP_MIN_SCORE) {
           return { ok: false, blocked: true, message: "AI 没有正收益的深空探测换牌目标" };
         }
@@ -394,7 +394,7 @@
       }
 
       if (pending.type === "industry_deepspace_public") {
-        const selected = getAiBestDeepspaceSwap(player, pending.handIndex);
+        const selected = getAiBestDeepspaceSwap(workingRoot, player, pending.handIndex);
         if (!selected || selected.score <= AI_DEEPSPACE_SWAP_MIN_SCORE) {
           return { ok: false, blocked: true, message: "AI 没有正收益的深空探测公共牌目标" };
         }
@@ -465,11 +465,11 @@
           aiPreferBlindDraw: true,
           aiReason: pending.aiReason || null,
           skippedPublicCard: selectedPublic
-            ? summarizeAiPublicPickCandidate(selectedPublic, player)
+            ? summarizeAiPublicPickCandidate(workingRoot, selectedPublic, player)
             : null,
           topPublicCandidates: rankedPublic
             .slice(0, 5)
-            .map((entry) => summarizeAiPublicPickCandidate(entry, player))
+            .map((entry) => summarizeAiPublicPickCandidate(workingRoot, entry, player))
             .filter(Boolean),
         });
         return drawCardForCurrentPlayer(workingRoot, { fromSelection: true });
@@ -482,7 +482,7 @@
           card: selectedPublic.card,
           topPublicCandidates: rankedPublic
             .slice(0, 5)
-            .map((entry) => summarizeAiPublicPickCandidate(entry, player))
+            .map((entry) => summarizeAiPublicPickCandidate(workingRoot, entry, player))
             .filter(Boolean),
         });
         return pickPublicCardForCurrentPlayer(workingRoot, selectedPublic.slotIndex);
@@ -619,7 +619,7 @@
         return true;
       }
       if (String(type).startsWith("card_")) {
-        return canAiResolvePlayCardEffects([match.effect]).ok;
+        return canAiResolvePlayCardEffects(workingRoot, [match.effect]).ok;
       }
       if (type === "launch") {
         return getAiLaunchTriggerResolution(workingRoot, match.effect).ok;
@@ -1030,7 +1030,7 @@
         });
         return confirmPlayCardSelection();
       }
-      const candidates = listAiPlayCardCandidates(currentPlayer);
+      const candidates = listAiPlayCardCandidates(workingRoot, currentPlayer);
       const selected = selectScoredItem(candidates, { mode: "card" });
       if (!selected) {
         return { ok: false, blocked: true, message: "AI 没有可打出的普通手牌" };

@@ -985,7 +985,7 @@
         return check.ok ? getAiBestLandDirectScoreGain(check.planet?.planetId, check.choices || [], player) : 0;
       }
       if (type === "research_tech_select" || type === cardEffects.EFFECT_TYPES.RESEARCH_TECH) {
-        return getAiResearchTechEffectDirectScore(effect, player);
+        return getAiResearchTechEffectDirectScore(effect, player, options.workingRoot);
       }
       return 0;
     }
@@ -996,9 +996,10 @@
       ), 0);
     }
 
-    function getAiResearchTechEffectDirectScore(effect, player = getCurrentPlayer()) {
+    function getAiResearchTechEffectDirectScore(effect, player = getCurrentPlayer(), workingRoot = null) {
       const options = effect?.options || {};
-      const candidates = listAiResearchTechCandidates(options);
+      if (!workingRoot) throw new TypeError("AI tech reward valuation requires explicit workingRoot");
+      const candidates = listAiResearchTechCandidates(workingRoot, options);
       if (!candidates.length) return 0;
       return candidates.reduce((best, candidate) => (
         Math.max(best, getAiResearchTechDirectScoreGain(candidate, options, player))

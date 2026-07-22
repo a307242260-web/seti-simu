@@ -130,7 +130,7 @@
       const researchTechCheck = actions.canExecute("researchTech", context);
       const takeableTech = researchTechCheck.ok
         ? (researchTechCheck.takeable || [])
-          .map((tileId) => buildAiResearchTechCandidate(tileId))
+          .map((tileId) => buildAiResearchTechCandidate(workingRoot, tileId))
           .filter((candidate) => candidate.available !== false)
         : [];
       const bestTechCandidate = [...takeableTech]
@@ -316,7 +316,7 @@
         scoreCapReason: analyzeBreakdown?.scoreCapReason || null,
         valueBreakdown: analyzeBreakdown,
       });
-      const playCardCandidates = listAiPlayCardCandidates(currentPlayer);
+      const playCardCandidates = listAiPlayCardCandidates(workingRoot, currentPlayer);
       const bestPlayCardCandidate = [...playCardCandidates]
         .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null;
       const bestPlayCardScore = Number(bestPlayCardCandidate?.score || 0);

@@ -387,8 +387,8 @@
       return {
         pendingType,
         bestScore: best ? aiNumber(best.score) : -Infinity,
-        bestCard: best ? summarizeAiPublicPickCandidate(best, player) : null,
-        topCards: ranked.slice(0, 3).map((entry) => summarizeAiPublicPickCandidate(entry, player)).filter(Boolean),
+        bestCard: best ? summarizeAiPublicPickCandidate(workingRoot, best, player) : null,
+        topCards: ranked.slice(0, 3).map((entry) => summarizeAiPublicPickCandidate(workingRoot, entry, player)).filter(Boolean),
       };
     }
 
@@ -542,15 +542,15 @@
         - asteroidStrandingPenalty;
     }
 
-    function scoreAiIndustrySentinelArm(player = getCurrentPlayer()) {
+    function scoreAiIndustrySentinelArm(workingRoot, player = getCurrentPlayer()) {
       if (!player || state.pendingActionExecuted || !canStartMainAction()) return -Infinity;
-      const bestCard = listAiPlayCardCandidates(player)
+      const bestCard = listAiPlayCardCandidates(workingRoot, player)
         .reduce((best, candidate) => Math.max(best, scoreAiCardCornerOpportunity(candidate.card)), 0);
       return bestCard > 0 ? 4 + bestCard * 0.65 : -Infinity;
     }
 
-    function scoreAiIndustryDeepspaceSwap(player = getCurrentPlayer()) {
-      const bestSwap = getAiBestDeepspaceSwap(player);
+    function scoreAiIndustryDeepspaceSwap(workingRoot, player = getCurrentPlayer()) {
+      const bestSwap = getAiBestDeepspaceSwap(workingRoot, player);
       if (!bestSwap || bestSwap.score <= AI_DEEPSPACE_SWAP_MIN_SCORE) return -Infinity;
       return 2 + bestSwap.score;
     }
@@ -575,7 +575,7 @@
       } else if (abilityId === "turing_borrow_tech") {
         score = scoreAiIndustryTuringBorrow(workingRoot, player);
       } else if (abilityId === "sentinel_arm_play_corner") {
-        score = scoreAiIndustrySentinelArm(player);
+        score = scoreAiIndustrySentinelArm(workingRoot, player);
       } else if (abilityId === "huanyu_free_moves") {
         score = scoreAiIndustryHuanyuMoves(workingRoot);
       } else if (abilityId === "mission_publicity_pick_income") {
@@ -589,7 +589,7 @@
           ? publicPickProfile.bestScore - 3
           : -Infinity;
       } else if (abilityId === "deepspace_swap_cards") {
-        score = scoreAiIndustryDeepspaceSwap(player);
+        score = scoreAiIndustryDeepspaceSwap(workingRoot, player);
       } else if (abilityId === "strategy_pick_card") {
         publicPickProfile = getAiIndustryPublicPickProfile(workingRoot, player, "industry_strategy_pick");
         strategyPassiveSlots = summarizeAiStrategyPassiveSlots(workingRoot, player);

@@ -115,8 +115,9 @@
       if (isAiResearchTechEffectType(effect.type) && !isTechTilePickingActive()) {
         const effectPlayer = getWorkingEffectOwnerPlayer(workingRoot, effect);
         const selectionOptions = getAiResearchTechSelectionOptionsForEffect(effect);
-        const candidates = listAiResearchTechCandidates(selectionOptions);
+        const candidates = listAiResearchTechCandidates(workingRoot, selectionOptions);
         const executable = selectExecutableAiResearchTechCandidate(
+          workingRoot,
           candidates,
           candidates[0] || null,
           effectPlayer,

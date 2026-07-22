@@ -29,10 +29,6 @@
       amiba,
       runezu,
       ai,
-      alienGameState,
-      rocketState,
-      techGameState,
-      cardState,
       FINAL_ROUND_NUMBER,
       confirmCardCornerQuickAction,
       handleHandCardCornerQuickAction,
@@ -139,8 +135,19 @@
       return (options?.choices || []).filter(Boolean);
     }
 
-    function getAiChongLandOptions(effect) {
-      const baseOptions = abilities.planet?.getLandOptions?.(createActionContext(), {
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot?.playerState || !workingRoot?.cardState || !workingRoot?.techGameState) {
+        throw new TypeError("AI card candidate requires explicit workingRoot");
+      }
+      return workingRoot;
+    }
+
+    function getWorkingCurrentPlayer(workingRoot) {
+      return players.getCurrentPlayer(requireWorkingRoot(workingRoot).playerState);
+    }
+
+    function getAiChongLandOptions(workingRoot, effect) {
+      const baseOptions = abilities.planet?.getLandOptions?.(createActionContext(workingRoot), {
         skipCost: true,
         allowSatelliteWithoutTech: Boolean(effect?.options?.allowSatellite),
       });
@@ -151,8 +158,8 @@
         : { ok: false, message: "当前没有可登陆目标" };
     }
 
-    function getAiChongOrbitOrLandOptions(effect) {
-      const context = createActionContext();
+    function getAiChongOrbitOrLandOptions(workingRoot, effect) {
+      const context = createActionContext(workingRoot);
       const choices = [];
       const orbitOptions = abilities.planet?.getOrbitOptions?.(context, { skipCost: true });
       if (orbitOptions?.ok) {
@@ -176,7 +183,7 @@
         : { ok: false, message: "当前没有可环绕或登陆目标" };
     }
 
-    function canAiResolveChongTravelEffect(effect, previousEffect) {
+    function canAiResolveChongTravelEffect(workingRoot, effect, previousEffect) {
       if (!isAiChongTravelEffect(effect)) return { ok: true };
       if (
         previousEffect?.type === cardEffects.EFFECT_TYPES.CARD_MOVE
@@ -185,8 +192,8 @@
         return { ok: true };
       }
       const options = effect.type === chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP
-        ? getAiChongOrbitOrLandOptions(effect)
-        : getAiChongLandOptions(effect);
+        ? getAiChongOrbitOrLandOptions(workingRoot, effect)
+        : getAiChongLandOptions(workingRoot, effect);
       if (!options?.ok) {
         return { ok: false, message: options?.message || "当前不能执行虫族取化石行动" };
       }
@@ -195,9 +202,10 @@
         : { ok: false, message: "当前没有可拾取化石的木星/土星登陆或环绕目标" };
     }
 
-    function canAiResolvePlayCardEffects(playEffects = [], player = getCurrentPlayer()) {
-      const context = createActionContext();
-      const effectPlayer = player || getCurrentPlayer();
+    function canAiResolvePlayCardEffects(workingRoot, playEffects = [], player = getWorkingCurrentPlayer(workingRoot)) {
+      requireWorkingRoot(workingRoot);
+      const context = createActionContext(workingRoot);
+      const effectPlayer = player || getWorkingCurrentPlayer(workingRoot);
       const unsupportedTypes = new Set([
         "alien_trace",
         cardEffects.EFFECT_TYPES.REMOVE_PLANET_MARKER,
@@ -234,12 +242,12 @@
           }
         }
         if (isAiChongTravelEffect(effect)) {
-          const chongCheck = canAiResolveChongTravelEffect(effect, previousEffect);
+          const chongCheck = canAiResolveChongTravelEffect(workingRoot, effect, previousEffect);
           if (!chongCheck.ok) return chongCheck;
         }
         if (effect?.type === "launch" && !effect.options?.ignoreRocketLimit) {
           const rocketLimit = abilities.rocket.getRocketLimitForPlayer(effectPlayer, context);
-          const activeRocketCount = rocketActions.getRocketsForPlayer(rocketState, effectPlayer.id).length;
+          const activeRocketCount = rocketActions.getRocketsForPlayer(workingRoot.rocketState, effectPlayer.id).length;
           if (activeRocketCount >= rocketLimit) {
             return { ok: false, message: `火箭数量已达上限（${activeRocketCount}/${rocketLimit}）` };
           }
@@ -254,7 +262,7 @@
         }
         if (effect?.type === cardEffects.EFFECT_TYPES.DISCARD_PUBLIC_CORNER_REWARDS) {
           const count = Math.max(1, Math.round(aiNumber(effect.options?.count || 1)));
-          const filledPublicCount = (cardState.publicCards || []).filter(Boolean).length;
+          const filledPublicCount = (workingRoot.cardState.publicCards || []).filter(Boolean).length;
           if (filledPublicCount < count) {
             return {
               ok: false,
@@ -274,16 +282,16 @@
           if (!options.ok) return { ok: false, message: options.message || "当前不能执行奥陌陌登陆" };
         }
         if (effect?.type === amiba?.EFFECT_TYPES?.REMOVE_TRACE_FOR_REGION_REWARD) {
-          const currentPlayer = getCurrentPlayer();
-          const alienSlotId = alienGameState.amiba?.revealedSlotId;
-          const options = amiba?.listPlayerTraceOptions?.(alienGameState, alienSlotId, currentPlayer) || [];
+          const currentPlayer = getWorkingCurrentPlayer(workingRoot);
+          const alienSlotId = workingRoot.alienGameState.amiba?.revealedSlotId;
+          const options = amiba?.listPlayerTraceOptions?.(workingRoot.alienGameState, alienSlotId, currentPlayer) || [];
           if (!options.length) return { ok: false, message: "没有可移除的阿米巴痕迹" };
         }
         if (effect?.type === aomomo?.EFFECT_FOSSIL_FOR_MOVE_AND_LAND) {
-          const currentPlayer = getCurrentPlayer();
+          const currentPlayer = getWorkingCurrentPlayer(workingRoot);
           const fossilCost = Math.max(1, Math.round(aiNumber(effect.options?.cost) || 1));
           if (!players.canAfford(currentPlayer, { aomomoFossils: fossilCost })) continue;
-          const moveCandidates = listAiEffectMoveCandidates({
+          const moveCandidates = listAiEffectMoveCandidates(workingRoot, {
             id: "cardMove",
             player: effectPlayer,
             effect: {
@@ -300,12 +308,12 @@
           effect?.type === "research_tech_select"
           || effect?.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH
         ) {
-          if (!listAiResearchTechCandidates(effect.options || null).length) {
+          if (!listAiResearchTechCandidates(workingRoot, effect.options || null).length) {
             return { ok: false, message: `${effect.label || "科技"}：没有安全的可研究科技` };
           }
         }
         if (effect?.type === cardEffects.EFFECT_TYPES.CARD_MOVE) {
-          const moveCandidates = listAiEffectMoveCandidates({
+          const moveCandidates = listAiEffectMoveCandidates(workingRoot, {
             id: "cardMove",
             player: effectPlayer,
             effect,
@@ -323,7 +331,8 @@
       return { ok: true };
     }
 
-    function buildAiPlayCardCandidate(card, handIndex, currentPlayer = getCurrentPlayer()) {
+    function buildAiPlayCardCandidate(workingRoot, card, handIndex, currentPlayer = getWorkingCurrentPlayer(workingRoot)) {
+      requireWorkingRoot(workingRoot);
       if (!isAiSupportedHandPlayCard(card)) return null;
       const cost = getCardPlayCost(card);
       if (!players.canAfford(currentPlayer, cost)) return null;
@@ -331,7 +340,7 @@
       const typeCode = getCardTypeCode(card);
       const model = cardEffects.getCardModel?.(card) || null;
       const playEffects = getAiPlayEffectsForCard(card);
-      const effectCheck = canAiResolvePlayCardEffects(playEffects, currentPlayer);
+      const effectCheck = canAiResolvePlayCardEffects(workingRoot, playEffects, currentPlayer);
       if (!effectCheck.ok) return null;
       if (getAiRunezuPrematureSymbolCardReason(card, playEffects, currentPlayer)) return null;
       const reservesAfterPlay = doesAiCardReserveAfterPlay(card, typeCode, model);
@@ -344,9 +353,10 @@
       const readyTaskCashout = getAiReadyHandTaskCashout(card, model, currentPlayer);
       const endGameExpectedScore = scoreAiCardEndGameExpectedValue(card, model, currentPlayer);
       const plan = scoreAiPlayCardRoutePlan(card, model, playEffects, currentPlayer);
-      const directScoreGain = getAiRewardDirectScore(playEffects, currentPlayer, { immediate: true });
+      const directScoreGain = getAiRewardDirectScore(playEffects, currentPlayer, { immediate: true, workingRoot });
       const standardActionPremium = scoreAiCardStandardActionPremium(playEffects, currentPlayer);
       const readyTaskTechReplacementValue = scoreAiReadyTaskTechReplacementValue(
+        workingRoot,
         playEffects,
         readyTaskCashout,
         currentPlayer,
@@ -423,7 +433,7 @@
       const c2Type3ProgressValue = typeCode === 3 ? scoreAiC2Type3ProgressValue(currentPlayer) : 0;
       const chongTaskChainValue = scoreAiChongCardTaskChainValue(card, currentPlayer);
       const banrenmaThresholdSetupValue = scoreAiBanrenmaCardThresholdSetupValue(card, currentPlayer);
-      const score = scoreAiPlayCardValue(card, {
+      const score = scoreAiPlayCardValue(workingRoot, card, {
         player: currentPlayer,
         model,
         playEffects,
@@ -539,9 +549,10 @@
       };
     }
 
-    function listAiPlayCardCandidates(currentPlayer = getCurrentPlayer()) {
+    function listAiPlayCardCandidates(workingRoot, currentPlayer = getWorkingCurrentPlayer(workingRoot)) {
+      requireWorkingRoot(workingRoot);
       return (currentPlayer?.hand || [])
-        .map((card, handIndex) => buildAiPlayCardCandidate(card, handIndex, currentPlayer))
+        .map((card, handIndex) => buildAiPlayCardCandidate(workingRoot, card, handIndex, currentPlayer))
         .filter(Boolean);
     }
 
@@ -626,7 +637,7 @@
       return gain;
     }
 
-    function scoreAiCardCornerFollowupMainUnlock(reward, player = getCurrentPlayer()) {
+    function scoreAiCardCornerFollowupMainUnlock(workingRoot, reward, player = getWorkingCurrentPlayer(workingRoot)) {
       if (!player || !canStartMainAction()) return null;
       const gain = getAiCardCornerResourceGain(reward);
       const publicityGain = Math.max(0, aiNumber(gain.publicity));
@@ -644,10 +655,10 @@
         .filter((entry) => entry.formulaId === "d1" || entry.formulaId === "d2");
       if (round < FINAL_ROUND_NUMBER && (!markedTechFinalEntries.length || currentScore < 50)) return null;
       if (round >= FINAL_ROUND_NUMBER && currentScore < 70 && !markedTechFinalEntries.length) return null;
-      createActionContext().ensurePlayerTechState?.(player);
+      createActionContext(workingRoot).ensurePlayerTechState?.(player);
       if (!player.techState) return null;
-      const takeableTech = tech.listTakeableTiles(techGameState.board, player.techState)
-        .map((tileId) => buildAiResearchTechCandidate(tileId))
+      const takeableTech = tech.listTakeableTiles(workingRoot.techGameState.board, player.techState)
+        .map((tileId) => buildAiResearchTechCandidate(workingRoot, tileId))
         .filter((candidate) => candidate.available !== false);
       const bestTechCandidate = takeableTech
         .sort((left, right) => Number(right.score || 0) - Number(left.score || 0))[0] || null;
@@ -824,7 +835,7 @@
       const scorePaceBonus = directScoreGain > 0
         ? scoreAiThresholdPressureForScoreGain(directScoreGain, currentPlayer) * 0.8
         : 0;
-      const followupMainAction = scoreAiCardCornerFollowupMainUnlock(reward, currentPlayer);
+      const followupMainAction = scoreAiCardCornerFollowupMainUnlock(workingRoot, reward, currentPlayer);
       const followupMainActionScore = Math.max(0, aiNumber(followupMainAction?.score));
       const stagedTechSetupScore = followupMainActionScore > 0
         ? 0
@@ -920,7 +931,7 @@
     function listAiCardCornerQuickCandidates(workingRoot, currentPlayer = players.getCurrentPlayer(workingRoot.playerState), playCardCandidates = null) {
       if (!currentPlayer || !handleHandCardCornerQuickAction || !confirmCardCornerQuickAction) return [];
       const hand = currentPlayer.hand || [];
-      const playableCards = playCardCandidates || listAiPlayCardCandidates(currentPlayer);
+      const playableCards = playCardCandidates || listAiPlayCardCandidates(workingRoot, currentPlayer);
       const playCandidateByIndex = new Map(playableCards.map((candidate) => [candidate.handIndex, candidate]));
       const unplayableCount = hand.reduce((count, _card, index) => (
         count + (playCandidateByIndex.has(index) ? 0 : 1)

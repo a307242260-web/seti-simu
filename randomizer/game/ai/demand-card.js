@@ -1328,7 +1328,7 @@
       };
     }
 
-    function scoreAiReadyTaskTechReplacementValue(playEffects = [], readyTaskCashout = null, player = getCurrentPlayer()) {
+    function scoreAiReadyTaskTechReplacementValue(workingRoot, playEffects = [], readyTaskCashout = null, player = getCurrentPlayer()) {
       if (!player || !readyTaskCashout || aiNumber(readyTaskCashout.directScore) < 9) return 0;
       if (getAiRoundNumber() < 3) return 0;
       const techEffects = (playEffects || []).filter((effect) => (
@@ -1337,7 +1337,7 @@
       ));
       if (!techEffects.length) return 0;
       const bestTechScore = techEffects.reduce((best, effect) => {
-        const candidates = listAiResearchTechCandidates(effect.options || null);
+        const candidates = listAiResearchTechCandidates(workingRoot, effect.options || null);
         return Math.max(best, ...candidates.map((candidate) => Math.max(0, aiNumber(candidate.score))));
       }, 0);
       if (bestTechScore <= 0) return 0;
@@ -1364,7 +1364,7 @@
       ), 0);
     }
 
-    function scoreAiPlayCardValue(card, details = {}) {
+    function scoreAiPlayCardValue(workingRoot, card, details = {}) {
       const player = details.player || getCurrentPlayer();
       const model = details.model || cardEffects.getCardModel?.(card) || null;
       const playEffects = details.playEffects || cardEffects.buildPlayEffects?.(card) || [];
@@ -1419,7 +1419,8 @@
         endGameExpectedScore,
         c2Type3ProgressValue,
       );
-      const directScoreGain = details.directScoreGain ?? getAiRewardDirectScore(playEffects, player, { immediate: true });
+      const directScoreGain = details.directScoreGain
+        ?? getAiRewardDirectScore(playEffects, player, { immediate: true, workingRoot });
       const highScoreConcretePlayValue = Math.max(
         0,
         directScoreGain,

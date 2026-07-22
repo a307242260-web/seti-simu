@@ -335,7 +335,7 @@
       const fallbackMoveCardCost = Math.max(0, aiNumber(getAiResourceValuesForRound().handSize));
       const moveCardEntries = moveCardIndexes.map((handIndex) => {
         const card = currentPlayer.hand?.[handIndex] || null;
-        const playCandidate = card ? buildAiPlayCardCandidate(card, handIndex, currentPlayer) : null;
+        const playCandidate = card ? buildAiPlayCardCandidate(workingRoot, card, handIndex, currentPlayer) : null;
         return {
           card,
           handIndex,
@@ -2227,7 +2227,7 @@
 
       const candidates = techGameState.ui.industryBorrowMode
         ? listAiBorrowTechCandidates(workingRoot, currentPlayer)
-        : listAiResearchTechCandidates(selectionOptions);
+        : listAiResearchTechCandidates(workingRoot, selectionOptions);
       const techPolicy = decidePolicyChoice(workingRoot, "choose_target", currentPlayer, `research-tech:${effect?.id || "generic"}`, candidates
         .filter((candidate) => candidate?.available !== false)
         .map((candidate) => ({
@@ -2242,10 +2242,10 @@
         return { ok: false, blocked: true, code: techPolicy.code, message: techPolicy.message };
       }
       const policyCheck = policySelected
-        ? getAiResearchTechCandidateExecutionCheck(policySelected, currentPlayer, selectionOptions)
+        ? getAiResearchTechCandidateExecutionCheck(workingRoot, policySelected, currentPlayer, selectionOptions)
         : null;
       let selected = policySelected || candidates[0] || null;
-      const executable = selectExecutableAiResearchTechCandidate(candidates, selected, currentPlayer, selectionOptions);
+      const executable = selectExecutableAiResearchTechCandidate(workingRoot, candidates, selected, currentPlayer, selectionOptions);
       if (!executable.candidate && selected?.tileId) {
         recordAiAutoBattleLog("tech-placement-reject", `${currentPlayer.colorLabel}AI 科技候选失效：${selected.tileId}`, {
           selected,

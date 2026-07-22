@@ -17,7 +17,6 @@
       players,
       scanEffects,
       tech,
-      techGameState,
       FINAL_ROUND_NUMBER,
     } = context;
     const aiNumber = (...args) => context.aiNumber(...args);
@@ -31,9 +30,7 @@
     const getAiResearchTechSelectionOptionsForEffect = (...args) => context.getAiResearchTechSelectionOptionsForEffect(...args);
     const getAiRoundNumber = (...args) => context.getAiRoundNumber(...args);
     const getAiStrategyDemand = (...args) => context.getAiStrategyDemand(...args);
-    const getCurrentPlayer = (...args) => context.getCurrentPlayer(...args);
     const getResearchTechSelectionOptionsForEffect = (...args) => context.getResearchTechSelectionOptionsForEffect(...args);
-    const isTechTileOwnedByOtherPlayer = (...args) => context.isTechTileOwnedByOtherPlayer(...args);
     const listAiMoveCandidates = (...args) => context.listAiMoveCandidates(...args);
     const roundAiScore = (...args) => context.roundAiScore(...args);
     const scoreAiHuanyuOrange2FutureMoveValue = (...args) => context.scoreAiHuanyuOrange2FutureMoveValue(...args);
@@ -43,8 +40,29 @@
     const scoreAiResearchTechValue = (...args) => context.scoreAiResearchTechValue(...args);
     const sumAiDemandMap = (...args) => context.sumAiDemandMap(...args);
 
-    function buildAiResearchTechCandidate(tileId) {
-      const stack = tech.getStack?.(techGameState.board, tileId) || null;
+    function requireWorkingRoot(workingRoot) {
+      if (!workingRoot?.techGameState || !workingRoot?.playerState) {
+        throw new TypeError("AI tech candidate requires explicit workingRoot");
+      }
+      return workingRoot;
+    }
+
+    function getWorkingCurrentPlayer(workingRoot) {
+      return players.getCurrentPlayer(requireWorkingRoot(workingRoot).playerState);
+    }
+
+    function isTileOwnedByOtherPlayer(workingRoot, tileId, currentPlayer) {
+      return (workingRoot.playerState.players || []).some((player) => (
+        player?.id !== currentPlayer?.id
+        && player?.techState?.ownedTiles?.[tileId]
+        && !player?.techState?.disabledTiles?.[tileId]
+      ));
+    }
+
+    function buildAiResearchTechCandidate(workingRoot, tileId) {
+      requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
+      const stack = tech.getStack?.(workingRoot.techGameState.board, tileId) || null;
       const candidate = {
         tileId,
         techType: stack?.techType || tech.getTechType?.(tileId) || null,
@@ -53,20 +71,20 @@
         firstTake: stack?.firstTakeClaimedBy == null,
         remaining: stack?.remaining ?? null,
       };
-      const safety = getAiResearchTechCandidateSafety(candidate, getCurrentPlayer());
+      const safety = getAiResearchTechCandidateSafety(candidate, currentPlayer);
       candidate.available = safety.ok;
       candidate.reason = safety.message || null;
-      candidate.plan = scoreAiResearchTechRoutePlan(candidate, getCurrentPlayer());
+      candidate.plan = scoreAiResearchTechRoutePlan(candidate, currentPlayer);
       candidate.score = scoreAiResearchTechValue(candidate);
-      candidate.finalFormulaDeltas = getAiResearchTechFinalFormulaDeltas(candidate, getCurrentPlayer());
+      candidate.finalFormulaDeltas = getAiResearchTechFinalFormulaDeltas(candidate, currentPlayer);
       candidate.directScoreGain = getAiResearchTechDirectScoreGain(candidate);
       candidate.valueBreakdown = {
-        lateTechCatchupValue: scoreAiLateTechEngineCatchupValue(candidate, getCurrentPlayer()),
-        lowTechCatchupValue: scoreAiLowTechBoardCatchupValue(candidate, getCurrentPlayer()),
-        huanyuOrange2FutureMoveValue: scoreAiHuanyuOrange2FutureMoveValue(candidate, getCurrentPlayer()),
+        lateTechCatchupValue: scoreAiLateTechEngineCatchupValue(candidate, currentPlayer),
+        lowTechCatchupValue: scoreAiLowTechBoardCatchupValue(candidate, currentPlayer),
+        huanyuOrange2FutureMoveValue: scoreAiHuanyuOrange2FutureMoveValue(candidate, currentPlayer),
       };
       if (candidate.tileId === "orange4") {
-        candidate.valueBreakdown.orange4SatelliteProfile = getAiOrange4SatellitePotentialProfile(getCurrentPlayer());
+        candidate.valueBreakdown.orange4SatelliteProfile = getAiOrange4SatellitePotentialProfile(currentPlayer);
       }
       if (!safety.ok) candidate.score -= 1000;
       return candidate;
@@ -156,41 +174,43 @@
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
     }
 
-    function listAiResearchTechCandidates(options = null) {
-      const currentPlayer = getCurrentPlayer();
+    function listAiResearchTechCandidates(workingRoot, options = null) {
+      requireWorkingRoot(workingRoot);
+      const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       if (!currentPlayer) return [];
-      createActionContext().ensurePlayerTechState(currentPlayer);
+      createActionContext(workingRoot).ensurePlayerTechState(currentPlayer);
       if (!currentPlayer.techState) return [];
 
       const selectionOptions = options || getResearchTechSelectionOptionsForEffect();
       const allowedTechTypes = (options ? tech.resolver.normalizeTechTypeFilter(options) : null)
         || tech.resolver.normalizeTechTypeFilter(selectionOptions)
-        || tech.resolver.normalizeTechTypeFilter({ techTypes: techGameState.ui.allowedTechTypes })
+        || tech.resolver.normalizeTechTypeFilter({ techTypes: workingRoot.techGameState.ui.allowedTechTypes })
         || null;
       const candidates = tech.listTakeableTiles(
-        techGameState.board,
+        workingRoot.techGameState.board,
         currentPlayer.techState,
         allowedTechTypes ? { techTypes: allowedTechTypes } : {},
       );
       return candidates
         .filter((tileId) => (
           !selectionOptions.researchedByOthersOnly
-          || isTechTileOwnedByOtherPlayer(tileId)
+          || isTileOwnedByOtherPlayer(workingRoot, tileId, currentPlayer)
         ))
-        .map((tileId) => buildAiResearchTechCandidate(tileId))
+        .map((tileId) => buildAiResearchTechCandidate(workingRoot, tileId))
         .filter((candidate) => candidate.available !== false);
     }
 
-    function getAiResearchTechCandidateExecutionCheck(candidate, player = getCurrentPlayer(), selectionOptionsOverride = null) {
+    function getAiResearchTechCandidateExecutionCheck(workingRoot, candidate, player = getWorkingCurrentPlayer(workingRoot), selectionOptionsOverride = null) {
+      requireWorkingRoot(workingRoot);
       const tileId = candidate?.tileId || null;
       if (!tileId) return { ok: false, message: "科技候选缺少 tileId" };
       if (!player) return { ok: false, message: "没有当前玩家" };
-      createActionContext().ensurePlayerTechState(player);
+      createActionContext(workingRoot).ensurePlayerTechState(player);
       if (!player.techState) return { ok: false, message: "玩家科技状态未初始化" };
 
-      if (techGameState.ui.industryBorrowMode) {
+      if (workingRoot.techGameState.ui.industryBorrowMode) {
         return tech.resolver.canTakeTile(
-          techGameState.board,
+          workingRoot.techGameState.board,
           player.techState,
           tileId,
           { techTypes: ["orange", "purple"] },
@@ -198,14 +218,14 @@
       }
 
       const selectionOptions = selectionOptionsOverride || getAiResearchTechSelectionOptionsForEffect();
-      if (selectionOptions.researchedByOthersOnly && !isTechTileOwnedByOtherPlayer(tileId)) {
+      if (selectionOptions.researchedByOthersOnly && !isTileOwnedByOtherPlayer(workingRoot, tileId, player)) {
         return { ok: false, message: "这张牌只能选择其他玩家已研究过的科技" };
       }
       const allowedTechTypes = tech.resolver.normalizeTechTypeFilter(selectionOptions)
-        || tech.resolver.normalizeTechTypeFilter({ techTypes: techGameState.ui.allowedTechTypes })
+        || tech.resolver.normalizeTechTypeFilter({ techTypes: workingRoot.techGameState.ui.allowedTechTypes })
         || null;
       return tech.resolver.canTakeTile(
-        techGameState.board,
+        workingRoot.techGameState.board,
         player.techState,
         tileId,
         allowedTechTypes ? { techTypes: allowedTechTypes } : {},
@@ -213,9 +233,10 @@
     }
 
     function selectExecutableAiResearchTechCandidate(
+      workingRoot,
       candidates = [],
       selected = null,
-      player = getCurrentPlayer(),
+      player = getWorkingCurrentPlayer(workingRoot),
       selectionOptions = null,
     ) {
       const ordered = [];
@@ -228,7 +249,7 @@
 
       let firstFailure = null;
       for (const candidate of ordered) {
-        const check = getAiResearchTechCandidateExecutionCheck(candidate, player, selectionOptions);
+        const check = getAiResearchTechCandidateExecutionCheck(workingRoot, candidate, player, selectionOptions);
         if (check.ok) return { candidate, check };
         if (!firstFailure) firstFailure = { candidate, check };
       }

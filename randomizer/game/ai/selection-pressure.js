@@ -383,7 +383,7 @@
       });
     }
 
-    function buildAiResourceLockTradePreviews(player = getCurrentPlayer(), candidates = []) {
+    function buildAiResourceLockTradePreviews(workingRoot, player = getCurrentPlayer(), candidates = []) {
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -400,7 +400,7 @@
       const tradeIds = ["cards-for-credit", "cards-for-energy", "energy-for-credit", "credits-for-energy"];
       return tradeIds.map((tradeId) => {
         const trade = quickTrades.getTradeAction(tradeId);
-        const check = quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false };
+        const check = quickTrades.canExecuteTrade?.(tradeId, createActionContext(workingRoot)) || { ok: false };
         if (!trade || !check.ok) return null;
         const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
         if (!simulatedPlayer) return null;
@@ -413,7 +413,7 @@
 
         const playableCards = handAfterTrade > 0
           ? (player.hand || [])
-            .map((card, handIndex) => buildAiPlayCardCandidate(card, handIndex, simulatedPlayer))
+            .map((card, handIndex) => buildAiPlayCardCandidate(workingRoot, card, handIndex, simulatedPlayer))
             .filter(Boolean)
             .sort((left, right) => aiNumber(right.score) - aiNumber(left.score))
           : [];
@@ -481,7 +481,7 @@
         const bestActionHandIndex = Number.isInteger(Number(bestAction?.handIndex))
           ? Number(bestAction.handIndex)
           : null;
-        const discardPlan = summarizeAiTradeDiscardPlan(player, trade, bestActionHandIndex, {
+        const discardPlan = summarizeAiTradeDiscardPlan(workingRoot, player, trade, bestActionHandIndex, {
           includeExecutionPlan: true,
           tradeId,
         });
@@ -519,20 +519,20 @@
       }).filter(Boolean);
     }
 
-    function buildAiPublicRefillTradePreview(player = getCurrentPlayer()) {
+    function buildAiPublicRefillTradePreview(workingRoot, player = getCurrentPlayer()) {
       if (!player) return null;
       const resources = player.resources || {};
       const handSize = Math.max(0, Math.round(aiNumber(resources.handSize ?? (player.hand || []).length)));
-      const publicTradeCards = (cardState.publicCards || [])
+      const publicTradeCards = (workingRoot.cardState.publicCards || [])
         .map((card, slotIndex) => {
-          const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+          const playCandidate = buildAiPlayCardCandidate(workingRoot, card, -1, player);
           return {
             slotIndex,
             cardId: card?.cardId || card?.id || null,
             cardLabel: cards.getCardLabel?.(card) || card?.cardName || card?.label || null,
             price: getCardPrice(card),
             typeCode: getCardTypeCode(card),
-            tradeScore: roundAiScore(scoreAiPublicPickCard(card, player, "trade")),
+            tradeScore: roundAiScore(scoreAiPublicPickCard(card, player, "trade", workingRoot)),
             playScore: playCandidate ? roundAiScore(playCandidate.score) : null,
             directScoreGain: playCandidate ? roundAiScore(playCandidate.directScoreGain) : 0,
           };
@@ -542,11 +542,11 @@
       const bestPublicTradeCardScore = publicTradeCards[0]?.tradeScore ?? 0;
       const cardsForPickCardTrade = quickTrades?.getTradeAction?.("cards-for-pick-card");
       const cardsForPickCardCheck = cardsForPickCardTrade
-        ? (quickTrades.canExecuteTrade?.("cards-for-pick-card", createActionContext()) || { ok: false })
+        ? (quickTrades.canExecuteTrade?.("cards-for-pick-card", createActionContext(workingRoot)) || { ok: false })
         : { ok: false };
       const cardsForPickCardHandCost = Math.max(0, Math.round(aiNumber(cardsForPickCardTrade?.cost?.handSize)));
       const cardsForPickCardDiscardPlan = cardsForPickCardTrade && cardsForPickCardCheck.ok
-        ? summarizeAiTradeDiscardPlan(player, cardsForPickCardTrade, null, {
+        ? summarizeAiTradeDiscardPlan(workingRoot, player, cardsForPickCardTrade, null, {
           includeExecutionPlan: true,
           tradeId: "cards-for-pick-card",
         })
@@ -626,7 +626,7 @@
       return {
         roundNumber: getAiRoundNumber(),
         availableMainCount,
-        ...buildAiPublicRefillTradePreview(player),
+        ...buildAiPublicRefillTradePreview(workingRoot, player),
       };
     }
 
@@ -646,7 +646,7 @@
 
       const publicTradeCards = (cardState.publicCards || [])
         .map((card, slotIndex) => {
-          const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+          const playCandidate = buildAiPlayCardCandidate(workingRoot, card, -1, player);
           return {
             slotIndex,
             cardId: card.cardId || card.id || null,
@@ -683,7 +683,7 @@
         : { ok: false };
       const cardsForPickCardHandCost = Math.max(0, Math.round(aiNumber(cardsForPickCardTrade?.cost?.handSize)));
       const cardsForPickCardDiscardPlan = cardsForPickCardTrade && cardsForPickCardCheck.ok
-        ? summarizeAiTradeDiscardPlan(player, cardsForPickCardTrade, null, {
+        ? summarizeAiTradeDiscardPlan(workingRoot, player, cardsForPickCardTrade, null, {
           includeExecutionPlan: true,
           tradeId: "cards-for-pick-card",
         })
@@ -815,7 +815,7 @@
 
       const playableHandCards = (player.hand || [])
         .map((card, handIndex) => {
-          const candidate = buildAiPlayCardCandidate(card, handIndex, player);
+          const candidate = buildAiPlayCardCandidate(workingRoot, card, handIndex, player);
           return {
             handIndex,
             cardId: card?.cardId || card?.id || null,

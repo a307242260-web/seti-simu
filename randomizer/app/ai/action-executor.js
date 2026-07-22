@@ -215,7 +215,7 @@
           };
         }
         const resourceLockTradePreviews = action.id === "pass"
-          ? buildAiResourceLockTradePreviews(currentPlayer, selectableCandidates)
+          ? buildAiResourceLockTradePreviews(workingRoot, currentPlayer, selectableCandidates)
           : [];
         const earlyNoMainPublicRefillDiagnostic = action.id === "pass"
           ? buildAiEarlyNoMainPublicRefillDiagnostic(workingRoot, currentPlayer, selectableCandidates)

@@ -185,7 +185,7 @@
       return roundAiScore(Math.max(-18, best.net));
     }
 
-    function chooseAiTradeDiscardIndexes(player, count, pending = {}) {
+    function chooseAiTradeDiscardIndexes(workingRoot, player, count, pending = {}) {
       const target = Math.max(0, Math.round(aiNumber(count)));
       const hand = player?.hand || [];
       if (!player || !target || !hand.length) return null;
@@ -193,7 +193,7 @@
       const simulatedPlayer = trade ? createAiPlayerAfterQuickTrade(player, trade) : null;
       const postTradeCandidates = new Map(
         (simulatedPlayer ? hand : [])
-          .map((card, index) => buildAiPlayCardCandidate(card, index, simulatedPlayer))
+          .map((card, index) => buildAiPlayCardCandidate(workingRoot, card, index, simulatedPlayer))
           .filter(Boolean)
           .map((candidate) => [candidate.handIndex, candidate]),
       );
@@ -224,7 +224,7 @@
       const ranked = hand
         .map((card, index) => {
           const postTradePlay = postTradeCandidates.get(index) || null;
-          const currentPlay = buildAiPlayCardCandidate(card, index, player);
+          const currentPlay = buildAiPlayCardCandidate(workingRoot, card, index, player);
           const playCandidate = postTradePlay || currentPlay;
           const finalDeltaValue = Math.max(
             0,
@@ -291,7 +291,7 @@
       return ownsSatelliteTech || hasNearPlanetRocket || getAiLiveScorePaceDeficit(player) > 25;
     }
 
-    function chooseAiIncomeDiscardIndexes(player, count, incomeGainByIndex = [], incomeFormulaEntries = null) {
+    function chooseAiIncomeDiscardIndexes(workingRoot, player, count, incomeGainByIndex = [], incomeFormulaEntries = null) {
       const target = Math.max(0, Math.round(aiNumber(count)));
       const hand = player?.hand || [];
       if (!target || !hand.length) return null;
@@ -314,7 +314,7 @@
           const sequenceFit = target > 1
             ? scoreAiMultiIncomeSequenceFit(simulatedPlayer, gain, target - selected.length)
             : 0;
-          const playValue = Math.max(0, scoreAiPlayCardValue(card, { player: simulatedPlayer }));
+          const playValue = Math.max(0, scoreAiPlayCardValue(workingRoot, card, { player: simulatedPlayer }));
           const discardOpportunityCost = scoreAiIncomeDiscardSelectionOpportunityCost(simulatedPlayer, card, { playValue });
           return {
             index,
@@ -574,7 +574,7 @@
       );
     }
 
-    function scoreAiPassReserveCard(card, player = getCurrentPlayer()) {
+    function scoreAiPassReserveCard(workingRoot, card, player = getCurrentPlayer()) {
       if (!card) return -Infinity;
       const model = cardEffects.getCardModel?.(card) || null;
       const playEffects = getAiPlayEffectsForCard(card);
@@ -584,7 +584,7 @@
         ? scoreAiCFinalTaskProgressValue(player, model.tasks.length)
         : 0;
       let value = 0;
-      const directScoreGain = getAiRewardDirectScore(playEffects, player);
+      const directScoreGain = getAiRewardDirectScore(playEffects, player, { workingRoot });
       if (directScoreGain > 0) {
         value += Math.min(10, directScoreGain * 0.8)
           + scoreAiPaceValueForDirectScore(directScoreGain, player, {
@@ -688,7 +688,7 @@
       const model = cardEffects.getCardModel?.(card) || null;
       const playEffects = getAiPlayEffectsForCard(card);
       const typeCode = getCardTypeCode(card);
-      const playableValue = Math.max(0, scoreAiPlayCardValue(card, {
+      const playableValue = Math.max(0, scoreAiPlayCardValue(workingRoot, card, {
         player,
         model,
         playEffects,
@@ -700,7 +700,7 @@
         && getAiRoundNumber() >= FINAL_ROUND_NUMBER
         && countAiFinalMarksForPlayer(player) >= 3;
       const deferredPlayCandidate = finalRoundDeferredPick
-        ? buildAiPlayCardCandidate(card, -1, player)
+        ? buildAiPlayCardCandidate(workingRoot, card, -1, player)
         : null;
       const closeThirdFinalMarkPick = pendingType === "trade"
         && nextThreshold === 70
@@ -715,7 +715,7 @@
         && currentScore < nextThreshold
         && countAiFinalMarksForPlayer(player) < 3;
       if (finalRoundGrandStrategyRecoveryPick) {
-        const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+        const playCandidate = buildAiPlayCardCandidate(workingRoot, card, -1, player);
         const immediatePlayValue = Math.max(0, aiNumber(playCandidate?.score));
         const directScoreGain = Math.max(0, aiNumber(playCandidate?.directScoreGain));
         const thresholdCashout = playCandidate
@@ -737,7 +737,7 @@
           - unreachablePenalty;
       }
       if (finalRoundTradePick) {
-        const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+        const playCandidate = buildAiPlayCardCandidate(workingRoot, card, -1, player);
         const immediatePlayValue = Math.max(0, aiNumber(playCandidate?.score));
         const directScoreGain = Math.max(0, aiNumber(playCandidate?.directScoreGain));
         const price = Math.max(0, aiNumber(getCardPrice(card)));
@@ -760,7 +760,7 @@
           - affordabilityPenalty;
       }
       if (closeThirdFinalMarkPick) {
-        const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+        const playCandidate = buildAiPlayCardCandidate(workingRoot, card, -1, player);
         const immediatePlayValue = Math.max(0, aiNumber(playCandidate?.score));
         const directScoreGain = Math.max(0, aiNumber(playCandidate?.directScoreGain));
         const finalCashoutValue = playCandidate && nextThreshold && currentScore < nextThreshold
@@ -789,10 +789,10 @@
       });
     }
 
-    function summarizeAiPublicPickCandidate(entry, player = getCurrentPlayer()) {
+    function summarizeAiPublicPickCandidate(workingRoot, entry, player = getCurrentPlayer()) {
       const card = entry?.card || null;
       if (!card) return null;
-      const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+      const playCandidate = buildAiPlayCardCandidate(workingRoot, card, -1, player);
       const breakdown = playCandidate?.valueBreakdown || null;
       return {
         slotIndex: Number.isInteger(Number(entry.slotIndex)) ? Number(entry.slotIndex) : null,
@@ -824,7 +824,7 @@
       };
     }
 
-    function getAiPublicPickConcreteProfile(card, player = getCurrentPlayer()) {
+    function getAiPublicPickConcreteProfile(workingRoot, card, player = getCurrentPlayer()) {
       if (!card || !player) {
         return {
           hasConcreteSignal: false,
@@ -834,7 +834,7 @@
           signals: null,
         };
       }
-      const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+      const playCandidate = buildAiPlayCardCandidate(workingRoot, card, -1, player);
       const breakdown = playCandidate?.valueBreakdown || null;
       const effectTypes = Array.isArray(playCandidate?.effectTypes)
         ? playCandidate.effectTypes.filter(Boolean)
@@ -871,9 +871,9 @@
 
     const AI_DEEPSPACE_SWAP_MIN_SCORE = 10;
 
-    function scoreAiDeepspaceHandSwapCost(card, player = getCurrentPlayer()) {
+    function scoreAiDeepspaceHandSwapCost(workingRoot, card, player = getCurrentPlayer()) {
       if (!card || !player) return Infinity;
-      const playCandidate = buildAiPlayCardCandidate(card, -1, player);
+      const playCandidate = buildAiPlayCardCandidate(workingRoot, card, -1, player);
       const playValue = Math.max(0, aiNumber(playCandidate?.score));
       const cornerValue = Math.max(0, scoreAiCardCornerOpportunity(card));
       const incomeGain = cards.getIncomeGainForCard?.(card) || null;
@@ -883,17 +883,17 @@
       return playValue * 0.65 + cornerValue * 0.35 + incomeValue * 0.18 + reserveBias;
     }
 
-    function scoreAiDeepspaceSwapPair(handCard, publicCard, player = getCurrentPlayer()) {
+    function scoreAiDeepspaceSwapPair(workingRoot, handCard, publicCard, player = getCurrentPlayer()) {
       if (!handCard || !publicCard || !player) return -Infinity;
-      const publicValue = scoreAiPublicPickCard(publicCard, player, "industry_deepspace_public");
+      const publicValue = scoreAiPublicPickCard(publicCard, player, "industry_deepspace_public", workingRoot);
       if (!Number.isFinite(Number(publicValue))) return -Infinity;
-      const handCost = scoreAiDeepspaceHandSwapCost(handCard, player);
+      const handCost = scoreAiDeepspaceHandSwapCost(workingRoot, handCard, player);
       if (!Number.isFinite(Number(handCost))) return -Infinity;
       const handPressure = Math.max(0, (player.hand || []).length - 4) * 0.75;
       return publicValue - handCost + handPressure;
     }
 
-    function listAiDeepspaceSwapPairs(player = getCurrentPlayer(), fixedHandIndex = null) {
+    function listAiDeepspaceSwapPairs(workingRoot, player = getCurrentPlayer(), fixedHandIndex = null) {
       if (!player || !(player.hand || []).length) return [];
       const handIndexes = Number.isInteger(Number(fixedHandIndex))
         ? [Number(fixedHandIndex)]
@@ -901,14 +901,14 @@
       return handIndexes.flatMap((handIndex) => {
         const handCard = player.hand?.[handIndex] || null;
         if (!handCard) return [];
-        return (cardState.publicCards || []).map((publicCard, slotIndex) => ({
+        return (workingRoot.cardState.publicCards || []).map((publicCard, slotIndex) => ({
           handIndex,
           handCard,
           slotIndex,
           publicCard,
-          score: scoreAiDeepspaceSwapPair(handCard, publicCard, player),
-          handCost: scoreAiDeepspaceHandSwapCost(handCard, player),
-          publicValue: scoreAiPublicPickCard(publicCard, player, "industry_deepspace_public"),
+          score: scoreAiDeepspaceSwapPair(workingRoot, handCard, publicCard, player),
+          handCost: scoreAiDeepspaceHandSwapCost(workingRoot, handCard, player),
+          publicValue: scoreAiPublicPickCard(publicCard, player, "industry_deepspace_public", workingRoot),
         }));
       })
         .filter((entry) => entry.handCard && entry.publicCard && Number.isFinite(Number(entry.score)))
@@ -921,8 +921,8 @@
         ));
     }
 
-    function getAiBestDeepspaceSwap(player = getCurrentPlayer(), fixedHandIndex = null) {
-      return listAiDeepspaceSwapPairs(player, fixedHandIndex)[0] || null;
+    function getAiBestDeepspaceSwap(workingRoot, player = getCurrentPlayer(), fixedHandIndex = null) {
+      return listAiDeepspaceSwapPairs(workingRoot, player, fixedHandIndex)[0] || null;
     }
     return Object.freeze({
       getAiIncomeDiscardPreview,
