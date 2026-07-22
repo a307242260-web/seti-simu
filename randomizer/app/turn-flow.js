@@ -58,6 +58,92 @@
     return rotatePlayerIds(activeOrderedIds, startPlayerId);
   }
 
+  function isPlayerPassed(turnState, playerId) {
+    return (turnState?.passedPlayerIds || []).includes(playerId);
+  }
+
+  function hasPlayerCompletedTurn(turnState, playerId) {
+    return (turnState?.completedTurnPlayerIds || []).includes(playerId);
+  }
+
+  function getFirstEligiblePlayerId(turnState) {
+    return getRoundOrderPlayerIds(turnState).find((playerId) => !isPlayerPassed(turnState, playerId)) || null;
+  }
+
+  function getNextEligiblePlayerId(turnState, afterPlayerId) {
+    const order = getRoundOrderPlayerIds(turnState);
+    if (!order.length) return null;
+    const startIndex = order.includes(afterPlayerId) ? order.indexOf(afterPlayerId) : -1;
+    for (let offset = 1; offset <= order.length; offset += 1) {
+      const playerId = order[(startIndex + offset + order.length) % order.length];
+      if (!isPlayerPassed(turnState, playerId) && !hasPlayerCompletedTurn(turnState, playerId)) return playerId;
+    }
+    return null;
+  }
+
+  function haveAllActivePlayersPassed(turnState) {
+    return (turnState?.activePlayerIds || []).length > 0
+      && turnState.activePlayerIds.every((playerId) => isPlayerPassed(turnState, playerId));
+  }
+
+  function isFinalRound(turnState, finalRoundNumber) {
+    return Number(turnState?.roundNumber) >= Number(finalRoundNumber);
+  }
+
+  function isGameEnded(workingRoot) {
+    return Boolean(workingRoot?.turnState?.gameEnded);
+  }
+
+  function buildFinalScoreSummaryLines(workingRoot, computeBreakdown) {
+    if (typeof computeBreakdown !== "function") throw new TypeError("buildFinalScoreSummaryLines 缺少计分函数");
+    return (workingRoot?.playerState?.players || [])
+      .filter((player) => (workingRoot?.turnState?.activePlayerIds || []).includes(player.id))
+      .map((player) => {
+        const breakdown = computeBreakdown(workingRoot, player);
+        return `${player.colorLabel || player.name || player.id}：${breakdown.totalScore} 分`;
+      });
+  }
+
+  function ensureVisitedPlanetsByPlayerId(turnState) {
+    if (!turnState.visitedPlanetsByPlayerId || typeof turnState.visitedPlanetsByPlayerId !== "object") {
+      turnState.visitedPlanetsByPlayerId = {};
+    }
+    return turnState.visitedPlanetsByPlayerId;
+  }
+
+  function hasPlayerVisitedPlanetThisTurn(workingRoot, player, planetId) {
+    const playerId = player?.id || player?.playerId || null;
+    if (!playerId || !planetId) return false;
+    return (ensureVisitedPlanetsByPlayerId(workingRoot.turnState)[playerId] || []).includes(planetId);
+  }
+
+  function recordTurnVisitPlanetEvents(workingRoot, events = []) {
+    const turnState = workingRoot?.turnState;
+    if (!turnState) throw new TypeError("recordTurnVisitPlanetEvents 缺少 workingRoot.turnState");
+    const visitEvents = events.filter((event) => event?.type === "visitPlanet" && event.planetId);
+    if (!visitEvents.length) return null;
+    const beforeVisits = structuredClone(turnState.visitedPlanetsByPlayerId || {});
+    const visitsByPlayerId = ensureVisitedPlanetsByPlayerId(turnState);
+    const fallbackPlayerId = workingRoot?.playerState?.currentPlayerId || null;
+    let changed = false;
+    for (const event of visitEvents) {
+      const playerId = event.playerId || fallbackPlayerId;
+      if (!playerId) continue;
+      if (!Array.isArray(visitsByPlayerId[playerId])) visitsByPlayerId[playerId] = [];
+      if (visitsByPlayerId[playerId].includes(event.planetId)) continue;
+      visitsByPlayerId[playerId].push(event.planetId);
+      changed = true;
+    }
+    if (!changed) return null;
+    return {
+      label: "恢复本回合访问记录",
+      describe: "恢复本回合已访问星球记录",
+      undo() {
+        turnState.visitedPlanetsByPlayerId = structuredClone(beforeVisits);
+      },
+    };
+  }
+
   function shufflePlayerIds(playerIds) {
     const result = [...playerIds];
     for (let index = result.length - 1; index > 0; index -= 1) {
@@ -495,6 +581,16 @@
     createTurnState,
     getActiveOrderedPlayerIds,
     getRoundOrderPlayerIds,
+    isPlayerPassed,
+    hasPlayerCompletedTurn,
+    getFirstEligiblePlayerId,
+    getNextEligiblePlayerId,
+    haveAllActivePlayersPassed,
+    isFinalRound,
+    isGameEnded,
+    buildFinalScoreSummaryLines,
+    hasPlayerVisitedPlanetThisTurn,
+    recordTurnVisitPlanetEvents,
     createTurnFlowController,
   };
 });

@@ -4,6 +4,14 @@ const assert = require("node:assert/strict");
 const {
   createTurnState,
   getRoundOrderPlayerIds,
+  getFirstEligiblePlayerId,
+  getNextEligiblePlayerId,
+  haveAllActivePlayersPassed,
+  isFinalRound,
+  isGameEnded,
+  buildFinalScoreSummaryLines,
+  hasPlayerVisitedPlanetThisTurn,
+  recordTurnVisitPlanetEvents,
   createTurnFlowController,
 } = require("./turn-flow");
 
@@ -20,6 +28,14 @@ assert.deepEqual(getRoundOrderPlayerIds({
   ...initialTurnState,
   startPlayerId: "p2",
 }), ["p2", "p3", "p1"]);
+assert.equal(getFirstEligiblePlayerId({ ...initialTurnState, passedPlayerIds: ["p1"] }), "p2");
+assert.equal(getNextEligiblePlayerId({
+  ...initialTurnState,
+  passedPlayerIds: ["p2"],
+  completedTurnPlayerIds: ["p1"],
+}, "p1"), "p3");
+assert.equal(haveAllActivePlayersPassed({ ...initialTurnState, passedPlayerIds: ["p1", "p2", "p3"] }), true);
+assert.equal(isFinalRound({ roundNumber: 5 }, 5), true);
 
 const turnState = createTurnState(basePlayers, { activePlayerCount: 3, currentPlayerId: "p1" });
 const playerState = { players: structuredClone(basePlayers), currentPlayerId: "p1" };
@@ -34,6 +50,15 @@ const workingRoot = {
   planetStatsState: {},
   techGameState: {},
 };
+assert.equal(isGameEnded(workingRoot), false);
+assert.deepEqual(buildFinalScoreSummaryLines(workingRoot, (_root, player) => ({
+  totalScore: player.id === "p1" ? 10 : 8,
+})), ["白：10 分", "黄：8 分", "蓝：8 分"]);
+assert.equal(hasPlayerVisitedPlanetThisTurn(workingRoot, basePlayers[0], "earth"), false);
+const visitCommand = recordTurnVisitPlanetEvents(workingRoot, [{ type: "visitPlanet", planetId: "earth" }]);
+assert.equal(hasPlayerVisitedPlanetThisTurn(workingRoot, basePlayers[0], "earth"), true);
+visitCommand.undo();
+assert.equal(hasPlayerVisitedPlanetThisTurn(workingRoot, basePlayers[0], "earth"), false);
 let newGameCalls = 0;
 
 const controller = createTurnFlowController({

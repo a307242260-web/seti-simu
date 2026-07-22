@@ -5047,54 +5047,38 @@
   }
 
   function isPlayerPassedThisRound(playerId) {
-    return createStateSourceReadoutRoot().turnState.passedPlayerIds.includes(playerId);
+    return turnFlowModule.isPlayerPassed(createStateSourceReadoutRoot().turnState, playerId);
   }
 
   function hasPlayerCompletedThisTurn(playerId) {
-    return createStateSourceReadoutRoot().turnState.completedTurnPlayerIds.includes(playerId);
+    return turnFlowModule.hasPlayerCompletedTurn(createStateSourceReadoutRoot().turnState, playerId);
   }
 
   function getFirstEligiblePlayerId() {
-    return getRoundOrderPlayerIds().find((playerId) => !isPlayerPassedThisRound(playerId)) || null;
+    return turnFlowModule.getFirstEligiblePlayerId(createStateSourceReadoutRoot().turnState);
   }
 
   function getNextEligiblePlayerId(afterPlayerId) {
-    const order = getRoundOrderPlayerIds();
-    if (!order.length) return null;
-    const startIndex = order.includes(afterPlayerId) ? order.indexOf(afterPlayerId) : -1;
-
-    for (let offset = 1; offset <= order.length; offset += 1) {
-      const playerId = order[(startIndex + offset + order.length) % order.length];
-      if (!isPlayerPassedThisRound(playerId) && !hasPlayerCompletedThisTurn(playerId)) {
-        return playerId;
-      }
-    }
-
-    return null;
+    return turnFlowModule.getNextEligiblePlayerId(createStateSourceReadoutRoot().turnState, afterPlayerId);
   }
 
   function haveAllActivePlayersPassed() {
-    const readoutTurnState = createStateSourceReadoutRoot().turnState;
-    return readoutTurnState.activePlayerIds.length > 0
-      && readoutTurnState.activePlayerIds.every((playerId) => readoutTurnState.passedPlayerIds.includes(playerId));
+    return turnFlowModule.haveAllActivePlayersPassed(createStateSourceReadoutRoot().turnState);
   }
 
   function isFinalRound(candidateTurnState = null) {
-    const resolvedTurnState = candidateTurnState || createStateSourceReadoutRoot().turnState;
-    return Number(resolvedTurnState.roundNumber) >= FINAL_ROUND_NUMBER;
+    return turnFlowModule.isFinalRound(candidateTurnState || createStateSourceReadoutRoot().turnState, FINAL_ROUND_NUMBER);
   }
 
   function isGameEnded(workingRoot = null) {
-    return Boolean((workingRoot || createStateSourceReadoutRoot()).turnState.gameEnded);
+    return turnFlowModule.isGameEnded(workingRoot || createStateSourceReadoutRoot());
   }
 
   function buildFinalScoreSummaryLinesForRoot(workingRoot) {
-    return (workingRoot.playerState.players || [])
-      .filter((player) => workingRoot.turnState.activePlayerIds.includes(player.id))
-      .map((player) => {
-        const breakdown = computePlayerFinalScoreBreakdown(player, workingRoot);
-        return `${player.colorLabel || player.name || player.id}：${breakdown.totalScore} 分`;
-      });
+    return turnFlowModule.buildFinalScoreSummaryLines(
+      workingRoot,
+      (root, player) => computePlayerFinalScoreBreakdown(player, root),
+    );
   }
 
   function buildFinalScoreSummaryLines() {
@@ -5103,43 +5087,12 @@
     }, { commit: false }).value || [];
   }
 
-  function ensureTurnVisitedPlanetsByPlayerId(workingRoot) {
-    const { turnState } = workingRoot;
-    if (!turnState.visitedPlanetsByPlayerId || typeof turnState.visitedPlanetsByPlayerId !== "object") {
-      turnState.visitedPlanetsByPlayerId = {};
-    }
-    return turnState.visitedPlanetsByPlayerId;
-  }
-
   function hasPlayerVisitedPlanetThisTurn(workingRoot, player, planetId) {
-    const playerId = player?.id || player?.playerId || null;
-    if (!playerId || !planetId) return false;
-    return (ensureTurnVisitedPlanetsByPlayerId(workingRoot)[playerId] || []).includes(planetId);
+    return turnFlowModule.hasPlayerVisitedPlanetThisTurn(workingRoot, player, planetId);
   }
 
   function recordTurnVisitPlanetEvents(workingRoot, events = []) {
-    const { turnState } = workingRoot;
-    const visitEvents = (events || []).filter((event) => event?.type === "visitPlanet" && event.planetId);
-    if (!visitEvents.length) return null;
-    const beforeVisits = structuredClone(turnState.visitedPlanetsByPlayerId || {});
-    const visitsByPlayerId = ensureTurnVisitedPlanetsByPlayerId(workingRoot);
-    let changed = false;
-    for (const event of visitEvents) {
-      const playerId = event.playerId || getCurrentPlayer()?.id || null;
-      if (!playerId) continue;
-      if (!Array.isArray(visitsByPlayerId[playerId])) visitsByPlayerId[playerId] = [];
-      if (visitsByPlayerId[playerId].includes(event.planetId)) continue;
-      visitsByPlayerId[playerId].push(event.planetId);
-      changed = true;
-    }
-    if (!changed) return null;
-    return {
-      label: "恢复本回合访问记录",
-      describe: "恢复本回合已访问星球记录",
-      undo() {
-        turnState.visitedPlanetsByPlayerId = structuredClone(beforeVisits);
-      },
-    };
+    return turnFlowModule.recordTurnVisitPlanetEvents(workingRoot, events);
   }
 
   function renderRoundStatus() {
