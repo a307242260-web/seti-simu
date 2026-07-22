@@ -1101,7 +1101,7 @@
         const button = createButton();
         button.type = "button";
         button.className = "scan-target-option-button";
-        button.dataset.probeLocationRocketId = String(rocket.id);
+        button.dataset.probeLocationRewardRocketId = String(rocket.id);
         button.innerHTML = `探测器 R${rocket.id}<small>结算当前位置奖励</small>`;
         return button;
       });

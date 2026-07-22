@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { createEffectChoiceFlowHelpers } = require("./effect-choice-flow");
+const { routeProbeDecisionClick } = require("./events");
 const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
 const { attachDecisionState } = require("./test-decision-state");
 
@@ -313,9 +314,55 @@ function createHarness(overrides = {}) {
   });
   assert.equal(workingRoot.match.probeLocationRewardContinuation.choices.length, 2);
   assert.equal(els.scanTargetActions.children.length, 2);
-  assert.equal(els.scanTargetActions.children[0].dataset.probeLocationRocketId, "1");
-  const result = helper.handleProbeLocationRewardChoice(workingRoot, 1);
-  assert.equal(result.ok, true);
+  const renderedButton = els.scanTargetActions.children[0];
+  assert.equal(renderedButton.dataset.probeLocationRewardRocketId, "1");
+
+  const activeDecision = {
+    decisionId: "probe-location-decision",
+    decisionVersion: 4,
+    choices: [
+      { target: { kind: "probe-location-reward", rocketId: 1 } },
+      { target: { kind: "probe-location-reward", rocketId: 2 } },
+    ],
+  };
+  const submissions = [];
+  const inputPort = {
+    submitDecision(submission) {
+      submissions.push(submission);
+      return helper.handleProbeLocationRewardChoice(
+        workingRoot,
+        submission.choice.target.rocketId,
+      );
+    },
+  };
+  const event = {
+    target: {
+      closest(selector) {
+        return selector === "[data-probe-location-reward-rocket-id]" ? renderedButton : null;
+      },
+    },
+  };
+  const handled = routeProbeDecisionClick(event, {
+    handleProbeSectorScanChoice() {},
+    confirmProbeSectorScanSelection() {},
+    handleProbeLocationRewardChoice(rocketId) {
+      const choice = activeDecision.choices.find((candidate) => (
+        String(candidate.target.rocketId) === String(rocketId)
+      ));
+      return inputPort.submitDecision({
+        decisionId: activeDecision.decisionId,
+        decisionVersion: activeDecision.decisionVersion,
+        choice,
+      });
+    },
+  });
+
+  assert.equal(handled, true);
+  assert.deepEqual(submissions, [{
+    decisionId: "probe-location-decision",
+    decisionVersion: 4,
+    choice: activeDecision.choices[0],
+  }]);
   assert.equal(calls.history.length, 3);
 }
 

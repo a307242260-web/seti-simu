@@ -30,7 +30,7 @@ assert.deepEqual(route({ probeScanConfirm: "true" }), {
   handled: true,
   calls: [["confirm"]],
 });
-assert.deepEqual(route({ probeLocationRocketId: "rocket-2" }), {
+assert.deepEqual(route({ probeLocationRewardRocketId: "rocket-2" }), {
   handled: true,
   calls: [["location", "rocket-2"]],
 });

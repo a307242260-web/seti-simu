@@ -53,6 +53,7 @@ randomizer/app/effect-choice-flow.test.js
 randomizer/app/effect-flow.test.js
 randomizer/app/effect-session-host.test.js
 randomizer/app/effects/executors.test.js
+randomizer/app/events.test.js
 randomizer/app/final-ui-runtime.test.js
 randomizer/app/game-recovery.test.js
 randomizer/app/hand-flow.test.js

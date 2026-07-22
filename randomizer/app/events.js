@@ -24,9 +24,9 @@
       return true;
     }
 
-    const probeLocationReward = event.target.closest("[data-probe-location-rocket-id]");
+    const probeLocationReward = event.target.closest("[data-probe-location-reward-rocket-id]");
     if (probeLocationReward && !probeLocationReward.disabled) {
-      handlers.handleProbeLocationRewardChoice(probeLocationReward.dataset.probeLocationRocketId);
+      handlers.handleProbeLocationRewardChoice(probeLocationReward.dataset.probeLocationRewardRocketId);
       return true;
     }
 
