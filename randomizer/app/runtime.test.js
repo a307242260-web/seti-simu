@@ -17,6 +17,34 @@ assert.equal(state.startScreen.activePlayerCount, 3);
 assert.deepEqual(state.startScreen.selectedAlienIds, ["九折", "虫"]);
 assert.deepEqual(state.startScreen.selectedIndustryLabels, ["层云核心", "图灵系统"]);
 
+{
+  const restoredSequences = [];
+  const adapter = runtime.createBrowserWorkingStateAdapter({
+    initialGameState: {
+      createSessionState: (_modules, options) => ({ playerState: {}, turnState: {}, match: {}, options }),
+      restoreSessionState(target, source, replace) {
+        replace(target.playerState, source.playerState);
+        replace(target.turnState, source.turnState);
+      },
+    },
+    ruleModules: {},
+    defaultInitialPlayerColor: "blue",
+    defaultActivePlayerCount: 4,
+    finalScoreIds: ["a"],
+    restoreSequences: (sequences) => restoredSequences.push(sequences),
+  });
+  const created = adapter.createWorkingState({ seed: "seed-1" });
+  assert.equal(created.options.activePlayerCount, 4);
+  assert.equal(created.meta.seed, "seed-1");
+  assert.equal(adapter.validateSessionBoundary({ match: { jiuzheOpportunityQueue: [] } }).ok, false);
+  const target = { playerState: { old: true }, turnState: { old: true } };
+  adapter.restoreWorkingState(target, {
+    playerState: { currentPlayerId: "p1" }, turnState: { roundNumber: 2 }, meta: { sequences: { card: 3 } },
+  }, { reason: "restore" });
+  assert.equal(target.playerState.currentPlayerId, "p1");
+  assert.deepEqual(restoredSequences, []);
+}
+
 state.actionLog.entries.push({ id: 1 });
 state.selection.currentPlayerId = "player-white";
 

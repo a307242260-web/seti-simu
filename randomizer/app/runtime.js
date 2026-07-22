@@ -294,6 +294,62 @@
     });
   }
 
+  function createBrowserWorkingStateAdapter(context = {}) {
+    function replaceMutableObject(target, source) {
+      if (!target || typeof target !== "object") throw new TypeError("Browser working state restore target 必须是对象");
+      const replacement = structuredClone(source || {});
+      for (const key of Reflect.ownKeys(target)) delete target[key];
+      Object.assign(target, replacement);
+      return target;
+    }
+
+    function createWorkingState(initialOptions = {}) {
+      const state = context.initialGameState.createSessionState(context.ruleModules, {
+        defaultInitialPlayerColor: initialOptions.defaultInitialPlayerColor ?? context.defaultInitialPlayerColor,
+        activePlayerCount: initialOptions.activePlayerCount ?? context.defaultActivePlayerCount,
+        finalScoreIds: initialOptions.finalScoreIds ?? context.finalScoreIds,
+      });
+      state.meta = {
+        seed: initialOptions.seed ?? "browser-host",
+        rngState: structuredClone(initialOptions.rngState || { owner: "browser", state: null }),
+      };
+      return state;
+    }
+
+    function validateSessionBoundary(state) {
+      const forbiddenContinuation = [
+        "turnEndRevealContinuation", "type1TriggerEvents", "jiuzheOpportunityQueue", "banrenmaOpportunityQueue",
+      ].find((field) => Object.hasOwn(state?.match || {}, field));
+      return forbiddenContinuation
+        ? {
+          ok: false,
+          path: `$.match.${forbiddenContinuation}`,
+          code: "STATE_EFFECT_CONTINUATION_COMMITTED",
+          message: `${forbiddenContinuation} 必须在 Composition Session 完成前清空`,
+        }
+        : { ok: true };
+    }
+
+    function restoreWorkingState(target, source, metadata = {}) {
+      if (source?.playerState && source?.turnState) {
+        for (const key of Object.keys(source)) {
+          if (key === "meta") target.meta = structuredClone(metadata.committedState?.meta || source.meta || {});
+          else replaceMutableObject(target[key], source[key]);
+        }
+        return target;
+      }
+      context.initialGameState.restoreSessionState(target, source, (resident, value) => {
+        for (const key of Reflect.ownKeys(resident || {})) delete resident[key];
+        Object.assign(resident, structuredClone(value || {}));
+        return resident;
+      });
+      if (metadata.reason === "restore") context.restoreSequences(source.meta?.sequences || {});
+      return target;
+    }
+
+    return Object.freeze({ createWorkingState, restoreWorkingState, validateSessionBoundary });
+  }
+
   return {
     createRuntime,
     createActionLogState,
@@ -304,5 +360,6 @@
     createBrowserHostState,
     createPlayerEffectOwnerRuntime,
     createBrowserContextRuntime,
+    createBrowserWorkingStateAdapter,
   };
 });
