@@ -570,7 +570,7 @@
         renderStateReadout();
         return result;
       }
-      recordAbilityCommands(result);
+      recordAbilityCommands(result, undefined, workingRoot);
       const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(workingRoot, effect));
       claimRunezuPlanetSymbolForTravelResult("land", result, actionOwner);
       if (decisionState.actionEffectFlow) {
@@ -955,7 +955,7 @@
         renderStateReadout();
         return result;
       }
-      recordAbilityCommands(result);
+      recordAbilityCommands(result, undefined, workingRoot);
       const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(workingRoot, effect));
       claimRunezuPlanetSymbolForTravelResult("orbit", result, actionOwner);
       if (result.removedRocketId != null) removeRocketElement(result.removedRocketId);

@@ -674,7 +674,7 @@
           : null;
       const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(workingRoot, effect));
 
-      recordAbilityCommands(result);
+      recordAbilityCommands(result, undefined, workingRoot);
       if (travelActionType) {
         claimRunezuPlanetSymbolForTravelResult(travelActionType, result, actionOwner);
       }

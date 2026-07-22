@@ -645,7 +645,7 @@
           if (!shouldSkipCurrentResearchTechCost()) {
             maybeConsumeAlienLabPanelForMainAction("researchTech", result);
           }
-          recordAbilityCommands(result);
+          recordAbilityCommands(result, undefined, workingRoot);
           if (result.firstTake) {
             const claim = claimRunezuSourceSymbolWithHistory(
               "tech",
@@ -784,7 +784,7 @@
             );
           }
           maybeApplyIndustryLaunchScan(result);
-          recordAbilityCommands(result);
+          recordAbilityCommands(result, undefined, workingRoot);
           effect.result = result;
           ruleRocketState(workingRoot).statusNote = result.message;
           renderRockets();
@@ -841,7 +841,7 @@
           if (effect.options?.standardAction !== false) {
             maybeConsumeAlienLabPanelForMainAction("scan", result);
           }
-          recordAbilityCommands(result);
+          recordAbilityCommands(result, undefined, workingRoot);
           effect.result = result;
           ruleRocketState(workingRoot).statusNote = result.message;
           renderPlayerStats();

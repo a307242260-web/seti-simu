@@ -1277,7 +1277,7 @@
         if (launchResult.rocket) renderRocketElement(launchResult.rocket);
         if (launchResult.ok) {
           maybeApplyIndustryLaunchScan(workingRoot, launchResult);
-          recordAbilityCommands(launchResult);
+          recordAbilityCommands(launchResult, undefined, workingRoot);
           settleCardTasksAfterEffect(workingRoot, { events: launchResult.events, render: false });
         }
         result = launchResult;
@@ -1502,7 +1502,7 @@
         pending.beforeCardState.discardPile,
       ));
       if (payment.discardCommand) recordQuickHistoryCommand(payment.discardCommand);
-      recordAbilityCommands(result, quickActionHistory);
+      recordAbilityCommands(result, quickActionHistory, workingRoot);
       cardEffects.consumeTrigger(pending.match.card, pending.match.trigger.id);
       discardReservedCardIfFinished(workingRoot, getWorkingCurrentPlayer(workingRoot), pending.match.card);
       completeQuickActionStep();

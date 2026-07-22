@@ -728,7 +728,7 @@
       if (!result?.ok || result.needsBlueSlotChoice) return result;
       rocketState.statusNote = result.message;
       beginEffectHistoryStep(result.message || "选择科技片", { effectType: "research_tech_select" });
-      recordAbilityCommands(result);
+      recordAbilityCommands(result, undefined, workingRoot);
       rocketState.statusNote = result.message;
       const current = getCurrentActionEffect();
       if (current) current.result = result;
@@ -1175,7 +1175,7 @@
           payload: { rocketId: place.rocket?.id || null },
         };
         maybeApplyIndustryLaunchScan(workingRoot, launchResult);
-        recordAbilityCommands(launchResult);
+        recordAbilityCommands(launchResult, undefined, workingRoot);
         renderRockets();
         syncPlanetOrbitLandMarkers();
         return finishAutomaticRewardEffect(effect, {
