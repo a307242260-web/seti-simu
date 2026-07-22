@@ -118,7 +118,7 @@
 
 - `app/aliens/species-runtime.js` 当前 4,455 行，超过约 3,000 行。当前边界是“八物种共用机会队列、dialog 与渲染 context 的单一物种运行域”。后续继续拆时，应按物种或 `rewards/dialogs/render` 子域拆分，并保持共用队列只有一个所有者。
 - `app/ai-controller.js` 当前 1,980 行；pending resolver、automation、action executor、控制状态、日志/报告/实验与纯规则域均已拆出。后续不得把策略或 resolver 正文重新堆回 controller。
-- `app.js` 仍是待继续收窄的 composition root；常驻玩家统计 UI 已迁入 `browser-host/player-stats-ui.js`，初始选择 UI 已迁入 `start-screen.js`。后续只允许按明确跨域边界继续减小，不以压缩格式或复制状态换取行数。
+- `app.js` 仍是待继续收窄的 composition root；常驻玩家统计/readout、Action Bar/quick panel/effect bar、Browser 下载端口、布局/交互 chrome、初始选择 UI/readout、登陆与扫描 picker 均已迁入所属 Browser Host/领域 UI。后续重点是撤销/history 编排和领域 command 转发，继续按明确跨域边界减小，不以压缩格式或复制状态换取行数。
 - 浏览器行为依赖传统脚本顺序；新增 runtime 必须同步更新 `index.html`、`dependencies.js` 和依赖测试。
 
 ## 7. 验证基线

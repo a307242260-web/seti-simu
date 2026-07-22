@@ -38,7 +38,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 19. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
 20. `randomizer/app/aliens/species-runtime.js` 封装八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 和具体面板渲染，通过显式 context 接收跨域依赖。
 21. `randomizer/app/action-interaction-runtime.js` 承接冥王星行动、移动箭头 UI 与数据放置 picker。
-22. `randomizer/app.js` 保留 composition、跨域流程接线、渲染调度和各控制器装配；规则提交、Effect working state 与 Policy 请求分别由公共 owner 管理。常驻玩家统计 DOM 已进入 `browser-host/player-stats-ui.js`，初始选择 DOM 已进入 `start-screen.js`。
+22. `randomizer/app.js` 保留 composition、跨域流程接线、渲染调度和各控制器装配；规则提交、Effect working state 与 Policy 请求分别由公共 owner 管理。常驻玩家统计与 readout 已进入 `browser-host/player-stats-ui.js`，Action Bar/quick panel/effect bar 进入 `browser-host/action-bar.js`，下载进入 `browser-host/browser-services.js`，布局、交互焦点和恢复 chrome 进入 `render-runtime.js`，初始选择 UI/readout 进入 `start-screen.js`，登陆 picker 与扫描行动 picker 分别进入 `action-interaction-runtime.js`、`scan-flow.js`。
 
 ## 文件职责
 
@@ -52,6 +52,8 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/conditional-action-executor.js`：七类 conditional family 的 descriptor validation 与 working-root 原子边界。Browser、Policy 与 replay 提交同一个 Standard Action/Decision identity；stale、未知 followup、规则失败或异常均 fail-closed 并恢复完整 working root。宿主恢复产生的 composition stateVersion 不覆盖 Effect Session 内已确认的 domain decision identity。
 - `randomizer/app/dependencies.js`：唯一的 app 入口依赖表。新增或删除 `window.Seti*` 依赖时先改这里，让脚本顺序错误能尽早报错。
 - `randomizer/app/browser-host/decision-ui.js`：统一 Decision shell、renderer registry、科技 presentation 与 focus/confirm/cancel intent；只消费 `BrowserProjection + ViewState`，不得枚举领域合法项或续跑 Effect queue。
+- `randomizer/app/browser-host/action-bar.js`：统一 Standard Action/undo controls，并承接传统 Action Bar、quick panel 与 Effect Bar 的 DOM presentation；只通过注入的窄 selector/port 读取状态和提交输入，不持有 working root。
+- `randomizer/app/browser-host/browser-services.js`：承接恢复 envelope、local persistence、下载和 debug/public facade 窄端口；Browser 下载端口独占 Blob/URL/临时节点生命周期。
 - `randomizer/app/browser-host/industry-alien-decision-ui.js`：公司与八物种的领域 presentation registry；只把标准 Decision choices 映射为公司、痕迹、机会、牌、任务和分支视图，不读取旧 pending 或领域 continuation。
 - `randomizer/game/effects/industry-alien-session.js`：公司/外星人 Decision schema 与 Effect Session adapter；机会队列、痕迹奖励、followup、history/rollback 由 session journal/priority/barrier 统一负责。
 - `randomizer/app/alien-trace-reward-flow.js`：只决定痕迹奖励应进入方舟解锁、面板放置还是无目标落空；无目标时必须结束当前奖励节点，包括 `required` / 不可跳过节点。
