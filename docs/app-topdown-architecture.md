@@ -84,6 +84,7 @@
 - `debug-runtime.js`：debug、calibration、quick sector scan、failsafe 与 reveal 调试入口。
 - `action-interaction-runtime.js`：移动箭头、冥王星交互、数据放置 picker。
 - `final-score-ai-runtime.js`：终局板块 AI 估值、可行性惩罚与竞速调整。
+- `score-source-runtime.js`：初始、扫描、科技、外星人和行动效果的分数来源账本。
 
 `app.js` 只保留统一刷新调度、顶层事件路由所需转发和 controller 装配。
 

@@ -74,6 +74,7 @@
     cardRuntimeModule,
     cardTriggerRuntimeModule,
     alienRuntimeModule,
+    scoreSourceRuntimeModule,
     alienUiModule,
     browserHostModule,
   } = dependencies;
@@ -246,23 +247,7 @@
     }
     return callBrowserDomainCommand("action_interaction", "confirmDataPlacement", [args[0], args[1], execution]);
   }
-  const SCORE_SOURCE_KEYS = Object.freeze({
-    INITIAL: "initialScore",
-    SCAN: "scanScore",
-    TECH_BONUS: "techBonusScore",
-    BLUE_TECH: "blueTechScore",
-    CARD_QUICK: "cardQuickScore",
-    CARD_EFFECT: "cardEffectScore",
-    TASK_CARD: "taskCardScore",
-    ORBIT: "orbitScore",
-    LAND: "landScore",
-    ALIEN_TRACE_PINK: "alienTracePinkScore",
-    ALIEN_TRACE_YELLOW: "alienTraceYellowScore",
-    ALIEN_TRACE_BLUE: "alienTraceBlueScore",
-    ALIEN_CARD_QUICK: "alienCardQuickScore",
-    ALIEN_EFFECT: "alienEffectScore",
-    INDUSTRY_EFFECT: "industryEffectScore",
-  });
+  const { SCORE_SOURCE_KEYS } = scoreSourceRuntimeModule;
   const tokenWidths = {
     rocket: null,
     orbit: null,
@@ -1141,6 +1126,30 @@
   const cardTaskState = cardTaskStateModule.createTaskState();
   const actionHistory = actionHistoryModule.createActionHistory();
   const quickActionHistory = actionHistoryModule.createActionHistory();
+  const scoreSourceRuntime = scoreSourceRuntimeModule.createScoreSourceRuntime({
+    actionHistory,
+    quickActionHistory,
+    players,
+    getPlayerById: (...args) => getPlayerById(...args),
+    getPlayerByColor: (...args) => getPlayerByColor(...args),
+    getActionEffectFlow: (...args) => getActionEffectFlow(...args),
+    isAlienFamilyCard: (...args) => isAlienFamilyCard(...args),
+    recordHistoryCommand: (...args) => recordHistoryCommand(...args),
+    recordQuickHistoryCommand: (...args) => recordQuickHistoryCommand(...args),
+  });
+  const {
+    SCORE_SOURCE_KEY_SET,
+    addPlayerScoreSource,
+    addScoreSourceFromGain,
+    attachScoreSourceToEffects,
+    getPlayerScoreSource,
+    getScanScorePlayer,
+    recordAlienTraceScore,
+    recordInitialSelectionScoreSources,
+    recordScanScoreSourcesFromAbilityResult,
+    recordScoreSourceForGainEffect,
+    recordTechBonusScore,
+  } = scoreSourceRuntime;
   getBrowserCommittedContext = (workingRoot) => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
@@ -6525,184 +6534,7 @@
     return callDebugCommand("handleForceSkipTurnFailsafe");
   }
 
-  const SCORE_SOURCE_KEY_SET = new Set(Object.values(SCORE_SOURCE_KEYS));
   const FINAL_RESULT_PLAYER_COLOR_ORDER = Object.freeze(["white", "brown", "blue", "green"]);
-
-  function normalizeScoreSourceAmount(value) {
-    const number = Number(value) || 0;
-    return Number.isInteger(number) ? number : Math.round(number * 100) / 100;
-  }
-
-  function ensurePlayerScoreSources(player) {
-    if (!player) return {};
-    if (!player.scoreSources || typeof player.scoreSources !== "object") {
-      player.scoreSources = {};
-    }
-    return player.scoreSources;
-  }
-
-  function addPlayerScoreSource(player, key, amount) {
-    const value = normalizeScoreSourceAmount(amount);
-    if (!player || !SCORE_SOURCE_KEY_SET.has(key) || value === 0) return 0;
-    const sources = ensurePlayerScoreSources(player);
-    sources[key] = normalizeScoreSourceAmount((Number(sources[key]) || 0) + value);
-    return value;
-  }
-
-  function addScoreSourceFromGain(player, key, gain) {
-    return addPlayerScoreSource(player, key, gain?.score || 0);
-  }
-
-  function getScoreAwardedFromScanResult(result) {
-    return normalizeScoreSourceAmount(
-      result?.scoreAwarded
-        ?? result?.replaced?.scoreAwarded
-        ?? result?.payload?.replaced?.scoreAwarded
-        ?? 0,
-    );
-  }
-
-  function createRestoreScoreSourcesCommand(player, beforeSources, label) {
-    const snapshot = structuredClone(beforeSources || {});
-    return {
-      label: label || "分数来源账本",
-      describe: label || "恢复分数来源账本",
-      undo() {
-        if (!player) return;
-        player.scoreSources = structuredClone(snapshot);
-      },
-    };
-  }
-
-  function recordScoreSourceHistoryCommand(player, beforeSources, label, history = actionHistory) {
-    const command = createRestoreScoreSourcesCommand(player, beforeSources, label);
-    if (history === quickActionHistory) {
-      recordQuickHistoryCommand(command);
-    } else {
-      recordHistoryCommand(workingRoot, command);
-    }
-  }
-
-  function recordScanScoreSource(player, result, history = null) {
-    const amount = getScoreAwardedFromScanResult(result);
-    if (!amount) return 0;
-    const beforeSources = structuredClone(player?.scoreSources || {});
-    const added = addPlayerScoreSource(player, SCORE_SOURCE_KEYS.SCAN, amount);
-    if (added && history) {
-      recordScoreSourceHistoryCommand(player, beforeSources, "恢复扫描分数来源", history);
-    }
-    return added;
-  }
-
-  function getScanScorePlayer(workingRoot, result) {
-    const event = (result?.events || []).find((item) => item?.type === "signalMarked" && (item.playerId || item.playerColor));
-    const playerId = result?.playerId || event?.playerId || null;
-    const playerColor = result?.playerColor || event?.playerColor || null;
-    return (workingRoot.playerState.players || []).find((player) => (
-      (playerId && player.id === playerId) || (playerColor && player.color === playerColor)
-    )) || players.getCurrentPlayer(workingRoot.playerState);
-  }
-
-  function recordScanScoreSourcesFromAbilityResult(workingRoot, result, history = actionHistory) {
-    const scanResults = [
-      result,
-      result?.payload?.industryLaunchScan,
-    ].filter(Boolean);
-    for (const scanResult of scanResults) {
-      if (!getScoreAwardedFromScanResult(scanResult)) continue;
-      recordScanScoreSource(getScanScorePlayer(workingRoot, scanResult), scanResult, history);
-    }
-  }
-
-  function recordInitialSelectionScoreSources(result) {
-    for (const entry of result?.results || []) {
-      const player = getPlayerById(entry?.playerId) || getPlayerByColor(entry?.playerColor);
-      if (!player) continue;
-      for (const item of entry?.results || []) {
-        if (item?.type === "resources") {
-          addScoreSourceFromGain(player, SCORE_SOURCE_KEYS.INITIAL, item.gain);
-        } else if (item?.type === "alienTraceReward") {
-          recordAlienTraceScore(player, item.trace?.traceType, item.gain);
-        } else if (item?.type === "scan") {
-          recordScanScoreSource(player, item);
-        }
-      }
-    }
-  }
-
-  function recordTechBonusScore(player, result) {
-    if (!result?.ok) return 0;
-    const rewards = result.rewards || result.payload?.rewards || {};
-    const bonusScore = Number(rewards.bonus?.score) || 0;
-    const firstTakeScore = Number(rewards.firstTakeScore) || 0;
-    return addPlayerScoreSource(player, SCORE_SOURCE_KEYS.TECH_BONUS, bonusScore + firstTakeScore);
-  }
-
-  function getAlienTraceScoreSourceKey(traceType) {
-    switch (traceType) {
-      case "pink":
-        return SCORE_SOURCE_KEYS.ALIEN_TRACE_PINK;
-      case "yellow":
-        return SCORE_SOURCE_KEYS.ALIEN_TRACE_YELLOW;
-      case "blue":
-        return SCORE_SOURCE_KEYS.ALIEN_TRACE_BLUE;
-      default:
-        return null;
-    }
-  }
-
-  function recordAlienTraceScore(player, traceType, gain) {
-    const key = getAlienTraceScoreSourceKey(traceType);
-    return key ? addScoreSourceFromGain(player, key, gain) : 0;
-  }
-
-  function getScoreSourceKeyForGainEffect(effect) {
-    const explicit = effect?.options?.scoreSourceKey;
-    if (SCORE_SOURCE_KEY_SET.has(explicit)) return explicit;
-    const actionType = getActionEffectFlow()?.actionType;
-    switch (actionType) {
-      case "orbit":
-        return SCORE_SOURCE_KEYS.ORBIT;
-      case "land":
-        return SCORE_SOURCE_KEYS.LAND;
-      case "cardTask":
-      case "cardTrigger":
-        return SCORE_SOURCE_KEYS.TASK_CARD;
-      case "playCard":
-        return isAlienFamilyCard(getActionEffectFlow()?.card)
-          ? SCORE_SOURCE_KEYS.ALIEN_EFFECT
-          : SCORE_SOURCE_KEYS.CARD_EFFECT;
-      case "banrenmaCondition":
-      case "fangzhouBasic":
-      case "fangzhouAdvanced":
-        return SCORE_SOURCE_KEYS.ALIEN_EFFECT;
-      default:
-        if (String(actionType || "").startsWith("industry")) {
-          return SCORE_SOURCE_KEYS.INDUSTRY_EFFECT;
-        }
-        return null;
-    }
-  }
-
-  function recordScoreSourceForGainEffect(player, effect, gain) {
-    const key = getScoreSourceKeyForGainEffect(effect);
-    return key ? addScoreSourceFromGain(player, key, gain) : 0;
-  }
-
-  function attachScoreSourceToEffects(effects, scoreSourceKey) {
-    if (!SCORE_SOURCE_KEY_SET.has(scoreSourceKey)) return effects || [];
-    return (effects || []).map((effect) => ({
-      ...effect,
-      options: {
-        ...(effect.options || {}),
-        scoreSourceKey: effect.options?.scoreSourceKey || scoreSourceKey,
-      },
-    }));
-  }
-
-  function getPlayerScoreSource(player, key) {
-    return normalizeScoreSourceAmount(player?.scoreSources?.[key] || 0);
-  }
 
   function computePlayerFinalScoreBreakdown(player, workingRoot) {
     if (!workingRoot) throw new TypeError("终局计分 readout 需要显式只读 root");

@@ -46,6 +46,7 @@
     Object.freeze({ key: "cardRuntimeModule", globalName: "SetiAppCardRuntime" }),
     Object.freeze({ key: "cardTriggerRuntimeModule", globalName: "SetiAppCardTriggerRuntime" }),
     Object.freeze({ key: "alienRuntimeModule", globalName: "SetiAppAlienRuntime" }),
+    Object.freeze({ key: "scoreSourceRuntimeModule", globalName: "SetiAppScoreSourceRuntime" }),
     Object.freeze({ key: "alienUiModule", globalName: "SetiAppAlienUi" }),
     Object.freeze({ key: "solar", globalName: "SetiSolarSystem" }),
     Object.freeze({ key: "players", globalName: "SetiPlayers" }),

@@ -38,7 +38,8 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 19. `randomizer/app/alien-ui.js` 封装外星人揭示提示、痕迹 picker、方舟用途分流与各物种面板放置模式 UI。
 20. `randomizer/app/aliens/species-runtime.js` 封装八种外星人的奖励、牌获取/任务 dialog、机会队列、followup 和具体面板渲染，通过显式 context 接收跨域依赖。
 21. `randomizer/app/action-interaction-runtime.js` 承接冥王星行动、移动箭头 UI 与数据放置 picker。
-22. `randomizer/app.js` 保留 composition、跨域流程接线、渲染调度和各控制器装配；规则提交、Effect working state 与 Policy 请求分别由公共 owner 管理。常驻玩家统计与 readout 已进入 `browser-host/player-stats-ui.js`，Action Bar/quick panel/effect bar 进入 `browser-host/action-bar.js`，下载进入 `browser-host/browser-services.js`，布局、交互焦点和恢复 chrome 进入 `render-runtime.js`，初始选择 UI/readout 进入 `start-screen.js`，登陆 picker 与扫描行动 picker 分别进入 `action-interaction-runtime.js`、`scan-flow.js`。
+22. `randomizer/app/score-source-runtime.js` 承接初始、扫描、科技、外星人和行动效果的分数来源账本及撤销命令。
+23. `randomizer/app.js` 保留 composition、跨域流程接线、渲染调度和各控制器装配；规则提交、Effect working state 与 Policy 请求分别由公共 owner 管理。常驻玩家统计与 readout 已进入 `browser-host/player-stats-ui.js`，Action Bar/quick panel/effect bar 进入 `browser-host/action-bar.js`，下载进入 `browser-host/browser-services.js`，布局、交互焦点和恢复 chrome 进入 `render-runtime.js`，初始选择 UI/readout 进入 `start-screen.js`，登陆 picker 与扫描行动 picker 分别进入 `action-interaction-runtime.js`、`scan-flow.js`。
 
 ## 文件职责
 
@@ -65,6 +66,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/turn-flow.js`：只通过 Browser Rule Composition lifecycle 重置新局，并处理随机化和回合推进壳层；不得再直接创建或恢复各领域长期 state。
 - `randomizer/app/turn-end-flow.js`：处理 PASS 必做效果队列、回合末外星人揭示 continuation、收入与跨轮刷新；通过显式 context 调用所属规则/runtime。
 - `randomizer/app/action-interaction-runtime.js`：处理冥王星交互、移动箭头和数据放置 picker；不拥有规则状态，所有状态和 continuation 均由 composition root 注入。
+- `randomizer/app/score-source-runtime.js`：处理分数来源账本、扫描/初始选择记账和 history 撤销命令；只写调用方显式 player/root，不读取 DOM。
 - `randomizer/app/final-score-ai-runtime.js`：处理终局板块候选估值、可行性惩罚和竞速调整；不维护 AI 自动机状态。
 - `randomizer/app/action-briefing.js`：只处理 AI 行动简报的数据归纳、摘要文案和 overlay 开关；不要在这里执行规则结算或直接修改行动日志源数据。
 - `randomizer/app/alien-ui.js`：只处理外星人揭示弹层、痕迹选择器、方舟分流和“进入某物种放置模式”的 UI 壳层；不实现物种奖励、dialog 或具体面板渲染。

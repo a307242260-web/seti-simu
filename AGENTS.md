@@ -31,6 +31,7 @@
 - `randomizer/app/turn-flow.js`：新局初始化、随机化装配与 round / turn 推进壳层。
 - `randomizer/app/turn-end-flow.js`：PASS 必做效果、回合末外星人揭示、收入与跨轮收尾。
 - `randomizer/app/action-interaction-runtime.js`：冥王星行动、移动箭头 UI 与数据放置 picker。
+- `randomizer/app/score-source-runtime.js`：初始、扫描、科技、外星人和行动效果的分数来源账本与撤销命令。
 - `randomizer/app/final-score-ai-runtime.js`：终局板块 AI 估值、可行性惩罚与竞速调整。
 - `randomizer/app/card-runtime.js`：手牌出牌、弃牌角标、公共牌选择、PASS 预留与卡牌移动运行时。
 - `randomizer/app/card-trigger-runtime.js`：卡牌任务、触发匹配、奖励队列和确认/取消/续跑运行时。

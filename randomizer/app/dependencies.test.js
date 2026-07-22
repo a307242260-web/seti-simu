@@ -39,6 +39,7 @@ const { collectDependencies } = require("./dependencies");
     SetiAppCardRuntime: {},
     SetiAppCardTriggerRuntime: {},
     SetiAppAlienRuntime: {},
+    SetiAppScoreSourceRuntime: {},
     SetiAppAlienUi: {},
     SetiSolarSystem: {},
     SetiPlayers: {},
