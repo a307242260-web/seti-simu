@@ -55,6 +55,7 @@
       renderRocketElement,
       renderRockets,
       renderStateReadout,
+      resumeDataPlacementContinuation,
       restoreMutableObject,
       rocketActions,
       runAction,
@@ -77,8 +78,6 @@
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
-    const DATA_PLACEMENT_DECISION = "data_placement";
-
     function requireWorkingRoot(workingRoot) {
       if (!workingRoot || typeof workingRoot !== "object") {
         throw new TypeError("action interaction operation requires an explicit workingRoot");
@@ -91,8 +90,14 @@
       return players.getCurrentPlayer(workingRoot.playerState);
     }
 
-    function getPendingDataPlacement() {
-      return decisionSessions.peek(DATA_PLACEMENT_DECISION);
+    function getPendingDataPlacement(workingRoot) {
+      return requireWorkingRoot(workingRoot).match?.dataPlacementContinuation || null;
+    }
+
+    function setPendingDataPlacement(workingRoot, pending) {
+      const activeRoot = requireWorkingRoot(workingRoot);
+      if (pending) activeRoot.match.dataPlacementContinuation = pending;
+      else delete activeRoot.match.dataPlacementContinuation;
     }
     let moveArrowRenderFrame = 0;
 
@@ -751,10 +756,9 @@
     renderRockets();
   }
 
-  function closeDataPlacePicker(options = {}) {
-    if (!els.dataPlaceOverlay) return;
-    els.dataPlaceOverlay.hidden = true;
-    if (!options.keepPending) decisionSessions.clear(DATA_PLACEMENT_DECISION);
+  function closeDataPlacePicker(workingRoot, options = {}) {
+    if (els.dataPlaceOverlay) els.dataPlaceOverlay.hidden = true;
+    if (!options.keepPending) setPendingDataPlacement(workingRoot, null);
   }
 
   function shouldPromptDataPlaceChoice(choices) {
@@ -798,12 +802,12 @@
     const choices = choiceResult.choices;
     const forcePrompt = Boolean(options.forcePrompt);
     if (options.pendingAction) {
-      decisionSessions.open(DATA_PLACEMENT_DECISION, {
+      setPendingDataPlacement(workingRoot, {
         ...getPendingOwnerFields(options.pendingAction.effect || null, player),
         ...options.pendingAction,
       });
     } else {
-      decisionSessions.clear(DATA_PLACEMENT_DECISION);
+      setPendingDataPlacement(workingRoot, null);
     }
     if (!els.dataPlaceOverlay || !els.dataPlaceActions) {
       return { ok: true, pendingChoice: true, choices };
@@ -859,8 +863,7 @@
       beforeCardState,
       messages: [],
       restoreRecorded: false,
-      onAfterPlacement: options.onAfterPlacement,
-      onSkip: options.onSkip,
+      resumeKind: options.resumeKind,
     };
     openDataPlacePicker(workingRoot, {
       player,
@@ -877,8 +880,8 @@
     return { ok: true, awaitingDataPlacement: true, message: workingRoot.rocketState.statusNote };
   }
 
-  function getPendingDataPlacementPlayer(pending = getPendingDataPlacement()) {
-    return getPendingOwnerPlayer(pending, pending?.effect || null);
+  function getPendingDataPlacementPlayer(workingRoot, pending) {
+    return getPendingOwnerPlayer(workingRoot, pending, pending?.effect || null);
   }
 
   function ensurePendingDataPlacementEffectStep(pending, player) {
@@ -951,27 +954,25 @@
     return { ok: true, pendingIncome: false, pendingCardSelection: false, messages };
   }
 
-  function continuePendingDataPlacementAfterBonus(message = null) {
-    const pending = getPendingDataPlacement();
+  function continuePendingDataPlacementAfterBonus(workingRoot, message = null) {
+    const pending = getPendingDataPlacement(workingRoot);
     if (!pending) return null;
     if (message) pending.messages.push(message);
-    decisionSessions.clear(DATA_PLACEMENT_DECISION);
-    if (typeof pending.onAfterPlacement === "function") {
-      return pending.onAfterPlacement({
-        messages: pending.messages.filter(Boolean),
-        restoreRecorded: pending.restoreRecorded,
-        beforePlayerState: pending.beforePlayerState,
-      });
-    }
-    return null;
+    setPendingDataPlacement(workingRoot, null);
+    return resumeDataPlacementContinuation(workingRoot, pending, {
+      skipped: false,
+      messages: pending.messages.filter(Boolean),
+      restoreRecorded: pending.restoreRecorded,
+      beforePlayerState: pending.beforePlayerState,
+    });
   }
 
   function confirmPendingDataPlacement(workingRoot, target, blueSlot) {
     requireWorkingRoot(workingRoot);
-    const pending = getPendingDataPlacement();
-    const player = getPendingDataPlacementPlayer(pending);
-    closeDataPlacePicker({ keepPending: true });
-    return withPendingOwnerPlayer(pending, () => {
+    const pending = getPendingDataPlacement(workingRoot);
+    const player = getPendingDataPlacementPlayer(workingRoot, pending);
+    closeDataPlacePicker(workingRoot, { keepPending: true });
+    return withPendingOwnerPlayer(workingRoot, pending, () => {
     ensurePendingDataPlacementEffectStep(pending, player);
 
     const result = abilities.executeAbility("placeData", createActionContext(workingRoot), {
@@ -997,30 +998,30 @@
     pending.messages.push(...(bonusResult.messages || []));
     renderPlayerStats();
     renderInitialSelectionArea();
-    return continuePendingDataPlacementAfterBonus();
+    return continuePendingDataPlacementAfterBonus(workingRoot);
     });
   }
 
-  function skipPendingDataPlacement() {
-    const pending = getPendingDataPlacement();
+  function skipPendingDataPlacement(workingRoot) {
+    const pending = getPendingDataPlacement(workingRoot);
     if (!pending) {
-      closeDataPlacePicker();
+      closeDataPlacePicker(workingRoot);
       return null;
     }
-    closeDataPlacePicker({ keepPending: true });
-    decisionSessions.clear(DATA_PLACEMENT_DECISION);
-    if (typeof pending.onSkip === "function") {
-      return pending.onSkip({
-        beforePlayerState: pending.beforePlayerState,
-      });
-    }
-    return null;
+    closeDataPlacePicker(workingRoot, { keepPending: true });
+    setPendingDataPlacement(workingRoot, null);
+    return resumeDataPlacementContinuation(workingRoot, pending, {
+      skipped: true,
+      messages: [],
+      restoreRecorded: false,
+      beforePlayerState: pending.beforePlayerState,
+    });
   }
 
   function cancelDataPlacePicker(workingRoot) {
     requireWorkingRoot(workingRoot);
-    if (getPendingDataPlacement()) return skipPendingDataPlacement();
-    closeDataPlacePicker();
+    if (getPendingDataPlacement(workingRoot)) return skipPendingDataPlacement(workingRoot);
+    closeDataPlacePicker(workingRoot);
     workingRoot.rocketState.statusNote = "已取消放置数据";
     renderStateReadout();
     return { ok: true, canceled: true };
@@ -1028,10 +1029,10 @@
 
   function confirmDataPlacement(workingRoot, target, blueSlot, execution = {}) {
     requireWorkingRoot(workingRoot);
-    if (getPendingDataPlacement()) {
+    if (getPendingDataPlacement(workingRoot)) {
       return confirmPendingDataPlacement(workingRoot, target, blueSlot);
     }
-    closeDataPlacePicker();
+    closeDataPlacePicker(workingRoot);
     const blocked = blockIncompatiblePendingQuickAction("place-data");
     if (blocked) return blocked;
     const actionRocketState = workingRoot.rocketState;

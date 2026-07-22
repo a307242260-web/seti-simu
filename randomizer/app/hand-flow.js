@@ -1121,7 +1121,7 @@
       if (pending?.type === "place_data_income") {
         if (pending.fromEffectFlow && pending.autoDataPlacement) {
           ruleRocketState(workingRoot).statusNote = "已取消放置数据收入奖励";
-          const continued = continuePendingDataPlacementAfterBonus(ruleRocketState(workingRoot).statusNote);
+          const continued = continuePendingDataPlacementAfterBonus(workingRoot, ruleRocketState(workingRoot).statusNote);
           syncDiscardSelectionChrome(workingRoot);
           updateActionButtons();
           renderStateReadout();

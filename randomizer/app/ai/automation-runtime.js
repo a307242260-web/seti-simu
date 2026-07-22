@@ -20,7 +20,7 @@
       getAiAutoBattlePendingState, getAiNextActionEffect, getAiResearchTechSelectionOptionsForEffect, getCurrentActionEffect, getPlayerLabelById,
       hasActivePendingSubFlow, isActionEffectFlowActive, isAiAutoBattlePlayer, isAiLandingEffect, isAiResearchTechEffectType, isGameEnded, isTechTilePickingActive, listAiEffectMoveCandidates,
       listAiResearchTechCandidates, players, recordAiAutoBattleBug, recordAiAutoBattleLog, rocketActions, runAiActionEffectMoveDecision, runAiAlienTraceDecision,
-      runAiCardSelectionDecision, runAiDataPlacementDecision, runAiDiscardDecision, runAiFinalScoreMarkDecision, runAiHandScanDecision,
+      runAiCardSelectionDecision, runAiDiscardDecision, runAiFinalScoreMarkDecision, runAiHandScanDecision,
       runAiIndustryFreeMoveDecision, runAiLandTargetDecision, runAiReadyBanrenmaOpportunityOpenDecision, runAiReadyCardTaskOpenDecision, runAiResearchTechSelectionDecision,
       runAiScanAction4Decision, runAiScanTargetDecision, runAiStrategyPassiveSlotChoiceDecision, runAiTurnActionDecision, selectExecutableAiResearchTechCandidate, skipCurrentActionEffect, state,
     } = context;
@@ -186,7 +186,6 @@
         "pendingAlienTrace",
         "pendingLandTarget",
         "pendingScanAction4",
-        "pendingDataPlacement",
         "pendingActionEffectCardMove",
         "pendingActionEffectFreeMove",
         "pendingIndustryAbility",
@@ -255,9 +254,6 @@
 
       const landTargetResult = runAiLandTargetDecision(workingRoot);
       if (landTargetResult) return landTargetResult;
-
-      const dataPlacementResult = runAiDataPlacementDecision(workingRoot);
-      if (dataPlacementResult) return dataPlacementResult;
 
       const scanTargetResult = runAiScanTargetDecision(workingRoot);
       if (scanTargetResult) return scanTargetResult;
@@ -395,7 +391,7 @@
     "getAiAutoBattlePendingState", "getAiNextActionEffect", "getAiResearchTechSelectionOptionsForEffect", "getCurrentActionEffect", "getPlayerLabelById",
     "hasActivePendingSubFlow", "isActionEffectFlowActive", "isAiAutoBattlePlayer", "isAiLandingEffect", "isAiResearchTechEffectType", "isGameEnded", "isTechTilePickingActive", "listAiEffectMoveCandidates",
     "listAiResearchTechCandidates", "players", "recordAiAutoBattleBug", "recordAiAutoBattleLog", "rocketActions", "runAiActionEffectMoveDecision", "runAiAlienTraceDecision",
-    "runAiCardSelectionDecision", "runAiDataPlacementDecision", "runAiDiscardDecision", "runAiFinalScoreMarkDecision", "runAiHandScanDecision",
+    "runAiCardSelectionDecision", "runAiDiscardDecision", "runAiFinalScoreMarkDecision", "runAiHandScanDecision",
     "runAiIndustryFreeMoveDecision", "runAiLandTargetDecision", "runAiReadyBanrenmaOpportunityOpenDecision", "runAiReadyCardTaskOpenDecision", "runAiResearchTechSelectionDecision",
     "runAiScanAction4Decision", "runAiScanTargetDecision", "runAiStrategyPassiveSlotChoiceDecision", "runAiTurnActionDecision", "selectExecutableAiResearchTechCandidate", "skipCurrentActionEffect", "state",
   ]);

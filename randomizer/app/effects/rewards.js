@@ -809,26 +809,7 @@
         const placeCheck = getAutoDataPlacementCheck(currentPlayer);
         if (placeCheck.ok) {
           return openAutoDataPlacementPrompt(effect, currentPlayer, {
-            onAfterPlacement: ({ messages, restoreRecorded }) => finishGainDataRewardEffect(workingRoot,
-              effect,
-              currentPlayer,
-              count,
-              source,
-              { placementMessages: messages, restoreRecorded },
-            ),
-            onSkip: () => {
-              beginEffectHistoryStep(effect.label);
-              effect.result = {
-                ok: true,
-                undoable: true,
-                skipped: true,
-                message: `${effect.label}：数据池已满，已跳过本次数据获得`,
-              };
-              ruleRocketState(workingRoot).statusNote = effect.result.message;
-              completeCurrentActionEffect("skipped");
-              renderStateReadout();
-              return effect.result;
-            },
+            resumeKind: "gain-data-reward",
           });
         }
         beginEffectHistoryStep(effect.label);

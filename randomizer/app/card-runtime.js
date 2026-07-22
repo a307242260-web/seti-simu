@@ -715,7 +715,7 @@
       } else if (pending?.type === "place_data_choose_card") {
         if (pending.fromEffectFlow && pending.autoDataPlacement) {
           rocketState.statusNote = "已取消放置数据精选";
-          const continued = continuePendingDataPlacementAfterBonus(rocketState.statusNote);
+          const continued = continuePendingDataPlacementAfterBonus(workingRoot, rocketState.statusNote);
           syncCardSelectionChrome();
           renderPlayerStats();
           updateActionButtons();
@@ -895,7 +895,7 @@
             pending.beforeCardState,
             "恢复放置数据精选前牌区",
           ));
-          continuePendingDataPlacementAfterBonus(rocketState.statusNote);
+          continuePendingDataPlacementAfterBonus(workingRoot, rocketState.statusNote);
         } else {
           appendActionLogStep(HISTORY_SOURCE_QUICK, "放置数据", rocketState.statusNote);
           clearHistoryStepOrderForSource(HISTORY_SOURCE_QUICK);

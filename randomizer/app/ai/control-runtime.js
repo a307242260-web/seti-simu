@@ -409,7 +409,6 @@
       const sharedPendingEntries = [
         state.pendingScanTargetAction,
         state.pendingLandTargetAction,
-        state.pendingDataPlaceAction,
       ];
       for (const pending of sharedPendingEntries) {
         const playerId = getPendingPlayerId(pending);

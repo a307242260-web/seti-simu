@@ -1903,16 +1903,7 @@
           return openAutoDataPlacementPrompt(effect, player, {
             statusNote: "宇宙战略集团：数据池已满，请先放置数据或跳过这次数据获得",
             skipDescription: "仍放置宇宙战略集团 token，但不获得这 1 个数据",
-            onAfterPlacement: ({ messages, restoreRecorded, beforePlayerState }) => finishIndustryStrategyPassiveRewardEffect(
-              workingRoot,
-              effect,
-              { placementMessages: messages, restoreRecorded, beforePlayerState },
-            ),
-            onSkip: ({ beforePlayerState }) => finishIndustryStrategyPassiveRewardEffect(
-              workingRoot,
-              effect,
-              { skipDataGain: true, beforePlayerState },
-            ),
+            resumeKind: "industry-strategy-passive",
           });
         }
         return finishIndustryStrategyPassiveRewardEffect(workingRoot, effect, { skipDataGain: true });

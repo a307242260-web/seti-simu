@@ -74,4 +74,49 @@ assert.equal(removal.ok, true);
 assert.equal(runtime.collectPlutoMarkers(rootB).length, 0);
 assert.deepEqual(rootA, rootABefore, "隔离 workingRoot 操作不得污染另一份 root");
 
+{
+  const resumed = [];
+  const dataRuntime = createActionInteractionRuntime({
+    abilities: {
+      data: {
+        listPlacementChoices: () => ({ ok: true, choices: [{ target: "computer", label: "电脑", description: "放置" }] }),
+        needsPlacementChoice: () => true,
+      },
+    },
+    data: {
+      ensurePlayerDataState: (player) => player.dataState,
+      canPlaceAnyData: () => ({ ok: true, choices: [{ target: "computer" }] }),
+      listPlaceDataChoices: () => [{ target: "computer" }],
+    },
+    players: {
+      RESOURCE_LIMITS: { availableData: 1 },
+      getCurrentPlayer: (playerState) => playerState.players[0],
+    },
+    getPendingOwnerFields: (_effect, player) => ({ playerId: player.id }),
+    els: {},
+    renderStateReadout() {},
+    resumeDataPlacementContinuation: (...args) => {
+      resumed.push(args);
+      return { ok: true, resumed: true };
+    },
+  });
+  const workingRoot = {
+    match: {},
+    playerState: { players: [{ id: "p1", dataState: { poolTokens: [{}] } }], currentPlayerId: "p1" },
+    rocketState: { statusNote: "" },
+    cardState: {},
+  };
+  const effect = { id: "gain-data", label: "获得数据", options: { count: 1 } };
+  const opened = dataRuntime.openAutoDataPlacementPrompt(workingRoot, effect, workingRoot.playerState.players[0], {
+    resumeKind: "gain-data-reward",
+  });
+  assert.equal(opened.awaitingDataPlacement, true);
+  assert.equal(workingRoot.match.dataPlacementContinuation.resumeKind, "gain-data-reward");
+  assert.doesNotMatch(JSON.stringify(workingRoot.match.dataPlacementContinuation), /onAfterPlacement|onSkip/);
+  const skipped = dataRuntime.skipPendingDataPlacement(workingRoot);
+  assert.equal(skipped.resumed, true);
+  assert.equal(workingRoot.match.dataPlacementContinuation, undefined);
+  assert.equal(resumed[0][2].skipped, true);
+}
+
 console.log("action-interaction-runtime tests passed");

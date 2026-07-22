@@ -993,7 +993,7 @@
         decisionState.handScanAction,
         decisionState.alienTraceAction,
         decisionSessions?.peek?.("land_target"),
-        decisionSessions?.peek?.("data_placement"),
+        workingRoot.match?.dataPlacementContinuation,
         workingRoot.match?.cardTriggerContinuation,
         workingRoot.match?.cardTriggerFreeMoveContinuation,
         workingRoot.match?.cardTaskCompletionContinuation,

@@ -659,7 +659,7 @@
       }
       return { actorPlayer: player, candidates };
     }
-    const dataPlacePending = getPendingDataPlacementDecision();
+    const dataPlacePending = getPendingDataPlacementDecision(workingRoot);
     if (dataPlacePending) {
       const player = getHeadlessConditionalPlayer(dataPlacePending);
       const candidates = (data.listPlaceDataChoices?.(player) || []).map((choice, choiceIndex) => ({
@@ -670,6 +670,7 @@
           kind: "pending-data-placement",
           choiceId: `${choice.target}:${choice.blueSlot ?? ""}`,
           slotId: choice.target,
+          blueSlot: choice.blueSlot ?? null,
         },
         placementTarget: choice.target,
         blueSlot: choice.blueSlot ?? null,
@@ -1183,8 +1184,8 @@
     "return-unfinished-task": (action) => handleReturnUnfinishedTaskChoice(action.target.cardId),
     "remove-orbit-to-probe": (action) => handleRemoveOrbitToProbeChoice(action.target.choiceId),
     "remove-planet-marker": (action) => handleRemovePlanetMarkerChoice(action.target.choiceId),
-    "pending-data-placement": (action) => confirmDataPlacement(action.placementTarget, action.blueSlot),
-    "skip-pending-data-placement": () => skipPendingDataPlacement()
+    "pending-data-placement": (action, workingRoot) => confirmDataPlacement(workingRoot, action.placementTarget, action.blueSlot),
+    "skip-pending-data-placement": (_action, workingRoot) => skipPendingDataPlacement(workingRoot)
       || { ok: true, progressed: true, skipped: true, message: "已跳过本次数据获得" },
     "discard-income-card": (action) => handleDiscardIncomeCardChoice(action.target.cardId),
     "confirm-discard-income": () => confirmDiscardAnyForIncome(),

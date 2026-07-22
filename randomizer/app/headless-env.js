@@ -201,7 +201,7 @@ const HEADLESS_PENDING_INVENTORY_KEYS = Object.freeze([
   "pendingAmibaCardGain", "pendingAmibaSymbolChoice", "pendingAmibaTraceRemoval",
   "pendingAomomoCardGain", "pendingRunezuCardGain", "pendingRunezuSymbolBranch",
   "pendingRunezuFaceSymbolPlacement", "pendingAlienTrace", "pendingLandTarget",
-  "pendingScanAction4", "pendingDataPlacement", "pendingDataPlacementAction",
+  "pendingScanAction4",
   "pendingActionEffectCardMove", "pendingActionEffectFreeMove", "pendingIndustryAbility",
   "pendingIndustryFreeMove", "pendingIndustryHandSelection",
 ]);

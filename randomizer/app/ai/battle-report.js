@@ -88,7 +88,6 @@
             pendingLandTarget: Boolean(els.landTargetOverlay && !els.landTargetOverlay.hidden),
             pendingScanAction4: Boolean(els.scanAction4Overlay && !els.scanAction4Overlay.hidden),
             pendingDataPlacement: Boolean(els.dataPlaceOverlay && !els.dataPlaceOverlay.hidden),
-            pendingDataPlacementAction: Boolean(state.pendingDataPlaceAction),
             pendingActionEffectCardMove: Boolean(state.pendingActionEffectFlow?.cardMoveEffect),
             pendingActionEffectFreeMove: Boolean(state.pendingActionEffectFlow?.freeMoveMode),
             pendingIndustryAbility: Boolean(state.pendingIndustryAbility),

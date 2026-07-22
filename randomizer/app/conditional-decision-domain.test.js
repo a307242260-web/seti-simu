@@ -39,6 +39,7 @@ function createFixture() {
     passReserveCalls: [],
     cardTriggerCalls: [],
     cardTaskCalls: [],
+    dataPlacementCalls: [],
   };
   let contextReads = 0;
   const domain = createConditionalDecisionDomain(() => {
@@ -73,6 +74,23 @@ function createFixture() {
       getPendingCardTaskCompletion: (workingRoot) => workingRoot.match.cardTaskCompletionContinuation || null,
       getPendingCardTriggerFreeMove: (workingRoot) => workingRoot.match.cardTriggerFreeMoveContinuation || null,
       getPendingCardCornerFreeMove: (workingRoot) => workingRoot.match.cardCornerFreeMoveContinuation || null,
+      getPendingDataPlacementDecision: (workingRoot) => workingRoot.match.dataPlacementContinuation || null,
+      data: {
+        listPlaceDataChoices: () => [
+          { target: "computer", blueSlot: null, label: "电脑" },
+          { target: "blue-tech", blueSlot: 2, label: "蓝色科技" },
+        ],
+      },
+      confirmDataPlacement: (workingRoot, target, blueSlot) => {
+        state.dataPlacementCalls.push([target, blueSlot]);
+        delete workingRoot.match.dataPlacementContinuation;
+        return { ok: true, progressed: true };
+      },
+      skipPendingDataPlacement: (workingRoot) => {
+        state.dataPlacementCalls.push(["skip"]);
+        delete workingRoot.match.dataPlacementContinuation;
+        return { ok: true, progressed: true, skipped: true };
+      },
       handleCardTriggerChoice: (workingRoot, choiceIndex) => {
         state.cardTriggerCalls.push(choiceIndex);
         delete workingRoot.match.cardTriggerContinuation;
@@ -173,6 +191,29 @@ function createFixture() {
   assert.equal(result.ok, true);
   assert.deepEqual(fixture.state.movePaymentCalls, [{ automated: true, selectedHandIndices: [0] }]);
   assert.equal(fixture.root.match.movePaymentContinuation, undefined);
+}
+
+{
+  const fixture = createFixture();
+  fixture.state.finalPending = false;
+  fixture.state.probePending = false;
+  fixture.root.match.dataPlacementContinuation = { playerId: "move-owner", resumeKind: "gain-data-reward" };
+  const executor = createConditionalActionExecutor({ domain: fixture.domain });
+  const decision = executor.inspect(fixture.root);
+  assert.deepEqual(decision.choices.map((choice) => choice.target.kind), [
+    "pending-data-placement",
+    "pending-data-placement",
+    "skip-pending-data-placement",
+  ]);
+  assert.deepEqual(decision.choices[1].target, {
+    kind: "pending-data-placement",
+    choiceId: "blue-tech:2",
+    slotId: "blue-tech",
+    blueSlot: 2,
+  });
+  const result = executor.execute(fixture.root, toDescriptor(executor, fixture.root, "choose_target"));
+  assert.equal(result.ok, true);
+  assert.deepEqual(fixture.state.dataPlacementCalls, [["computer", null]]);
 }
 
 function toDescriptor(executor, root, family) {

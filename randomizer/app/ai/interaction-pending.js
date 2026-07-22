@@ -23,7 +23,7 @@
       AI_MAX_CARD_CORNER_MOVES_PER_TURN, AI_MOVE_DIRECTIONS, AI_RESOURCE_VALUES, FINAL_ROUND_NUMBER, MOVE_ENERGY_COST, abilities, ai, aiAutoBattleState,
       aiNumber, aliens, amiba, aomomo, applyAiStrategyWeight, banrenma, buildAiChongTransportMoveCandidate,
       buildAiPlayCardCandidate, buildSectorScanChoicesForX, canAiContinueCardMoveAfterStep, canAiPlanetAcceptLanding, canAiPlanetAcceptOrbit, canPayForMove, cancelTechSelection, cardEffects,
-      cards, chong, chooseAiDataPlacementOptionFromButtons, chooseAiLandChoice, closeScanTargetPicker, confirmDataPlacement, confirmDiscardAnyForIncome, confirmLandTargetPicker,
+      cards, chong, chooseAiLandChoice, closeScanTargetPicker, confirmDiscardAnyForIncome, confirmLandTargetPicker,
       confirmProbeSectorScanSelection, confirmScanTarget, confirmStrategyPassiveSlotChoice, confirmTechBlueSlotChoice, createActionContext, data, els,
       enrichAiAlienUseOptions, executeCardMoveForEffect, executeFreeMoveForCardCorner, executeFreeMoveForScanAction4, executeIndustryFreeMove, fangzhou, finishIndustryAbilityFlow, formatRocketLabel,
       getAiAlienCardConversionMultiplier, getAiAlienTraceRewardForValuation, getAiAlienTraceTargetDemandForSlot, getAiAvailableDataRoom, getAiDiscardedCardOpportunityCost, getAiMapDemand, getAiNextActionEffect, getAiNextMissingFinalScoreThreshold,
@@ -246,33 +246,6 @@
           };
         })
         .sort((left, right) => right.score - left.score || left.index - right.index)[0]?.button || null;
-    }
-
-    function runAiDataPlacementDecision(workingRoot) {
-      if (!els.dataPlaceOverlay || els.dataPlaceOverlay.hidden) return null;
-      const pending = state.pendingDataPlaceAction || null;
-      const player = getAiPendingDecisionPlayer(workingRoot, pending);
-      if (!isAiAutoBattlePlayer(player?.id)) {
-        return { ok: false, blocked: true, message: `${player?.colorLabel || "当前玩家"}需要人工选择数据放置` };
-      }
-      const selected = chooseAiDataPlacementOptionFromButtons(
-        els.dataPlaceActions?.querySelectorAll("[data-place-target]") || [],
-        player,
-      );
-      if (!selected) {
-        return { ok: false, blocked: true, message: "AI 没有可用数据放置目标" };
-      }
-      recordAiAutoBattleLog("data-placement", `${player.colorLabel}AI 放置数据`, {
-        logPlayerId: player.id,
-        selected: {
-          target: selected.target,
-          blueSlot: selected.blueSlot,
-          placementSlot: selected.placementSlot,
-          label: selected.label,
-          score: selected.score,
-        },
-      });
-      return confirmDataPlacement(selected.target, selected.blueSlot);
     }
 
     function scoreAiStrategyPassiveSlotChoice(workingRoot, slotId, player = getWorkingCurrentPlayer(workingRoot)) {
@@ -2110,7 +2083,6 @@
       chooseAiDiscardCornerRepeatCard,
       chooseAiProbeSectorScanChoices,
       chooseAiProbeLocationRewardButton,
-      runAiDataPlacementDecision,
       scoreAiStrategyPassiveSlotChoice,
       runAiStrategyPassiveSlotChoiceDecision,
       runAiLandTargetDecision,
@@ -2172,7 +2144,7 @@
     "AI_MAX_CARD_CORNER_MOVES_PER_TURN", "AI_MOVE_DIRECTIONS", "AI_RESOURCE_VALUES", "FINAL_ROUND_NUMBER", "MOVE_ENERGY_COST", "abilities", "ai", "aiAutoBattleState",
     "aiNumber", "aliens", "amiba", "aomomo", "applyAiStrategyWeight", "banrenma", "buildAiChongTransportMoveCandidate",
     "buildAiPlayCardCandidate", "buildSectorScanChoicesForX", "canAiContinueCardMoveAfterStep", "canAiPlanetAcceptLanding", "canAiPlanetAcceptOrbit", "canPayForMove", "cancelTechSelection", "cardEffects",
-    "cards", "chong", "chooseAiDataPlacementOptionFromButtons", "chooseAiLandChoice", "closeScanTargetPicker", "confirmDataPlacement", "confirmDiscardAnyForIncome", "confirmLandTargetPicker",
+    "cards", "chong", "chooseAiLandChoice", "closeScanTargetPicker", "confirmDiscardAnyForIncome", "confirmLandTargetPicker",
     "confirmProbeSectorScanSelection", "confirmScanTarget", "confirmStrategyPassiveSlotChoice", "confirmTechBlueSlotChoice", "createActionContext", "data", "els",
     "enrichAiAlienUseOptions", "executeCardMoveForEffect", "executeFreeMoveForCardCorner", "executeFreeMoveForScanAction4", "executeIndustryFreeMove", "fangzhou", "finishIndustryAbilityFlow", "formatRocketLabel",
     "getAiAlienCardConversionMultiplier", "getAiAlienTraceRewardForValuation", "getAiAlienTraceTargetDemandForSlot", "getAiAvailableDataRoom", "getAiDiscardedCardOpportunityCost", "getAiMapDemand", "getAiNextActionEffect", "getAiNextMissingFinalScoreThreshold",

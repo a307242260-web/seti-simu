@@ -222,7 +222,7 @@
   function clearMoveRocketHighlight(...args) { return callBrowserDomainCommand("action_interaction", "clearMoveRocketHighlight", args); }
   function activateMoveMode(...args) { return callBrowserDomainCommand("action_interaction", "activateMoveMode", args) || false; }
   function deactivateMoveMode(...args) { return callBrowserDomainCommand("action_interaction", "deactivateMoveMode", args); }
-  function closeDataPlacePicker(...args) { return actionInteractionRuntime?.closeDataPlacePicker(...args); }
+  function closeDataPlacePicker(...args) { return callBrowserDomainCommand("action_interaction", "closeDataPlacePicker", args); }
   function isDataPoolFull(...args) { return Boolean(actionInteractionRuntime?.isDataPoolFull(...args)); }
   function getAutoDataPlacementCheck(...args) { return actionInteractionRuntime?.getAutoDataPlacementCheck(...args) || { ok: false }; }
   function openDataPlacePicker(...args) { return callBrowserDomainCommand("action_interaction", "openDataPlacePicker", args); }
@@ -230,12 +230,24 @@
   function continuePendingDataPlacementAfterBonus(...args) {
     return actionInteractionRuntime?.continuePendingDataPlacementAfterBonus(...args);
   }
-  function skipPendingDataPlacement(...args) { return actionInteractionRuntime?.skipPendingDataPlacement(...args); }
+  function skipPendingDataPlacement() {
+    if (getPendingDataPlacementDecision()) {
+      return submitActiveCardDecision("skip-pending-data-placement", () => true);
+    }
+    return callBrowserDomainCommand("action_interaction", "skipPendingDataPlacement", []);
+  }
   function cancelDataPlacePicker(...args) { return callBrowserDomainCommand("action_interaction", "cancelDataPlacePicker", args); }
   function confirmDataPlacement(...args) {
     const execution = args[2] || {};
     if (execution.workingRoot) {
       return actionInteractionRuntime?.confirmDataPlacement(execution.workingRoot, args[0], args[1], execution);
+    }
+    if (getPendingDataPlacementDecision()) {
+      return submitActiveCardDecision(
+        "pending-data-placement",
+        (target) => target.slotId === args[0]
+          && String(target.blueSlot ?? "") === String(args[1] ?? ""),
+      );
     }
     return callBrowserDomainCommand("action_interaction", "confirmDataPlacement", [args[0], args[1], execution]);
   }
@@ -999,11 +1011,12 @@
     alienTracePickerState: "alien_trace_picker_state",
     actionEffectFlow: "action_effect_flow",
   });
-  const DATA_PLACEMENT_DECISION = "data_placement";
   const LAND_TARGET_DECISION = "land_target";
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
   const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
-  const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
+  const getPendingDataPlacementDecision = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.dataPlacementContinuation || null
+  );
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
   const getPendingStrategySlotDecision = () => decisionSessions.peek(STRATEGY_SLOT_DECISION);
@@ -1119,8 +1132,8 @@
     handleReturnUnfinishedTaskChoice,
     handleRemoveOrbitToProbeChoice,
     handleRemovePlanetMarkerChoice,
-    confirmDataPlacement,
-    skipPendingDataPlacement,
+    confirmDataPlacement: (workingRoot, ...args) => actionInteractionRuntime.confirmDataPlacement(workingRoot, ...args),
+    skipPendingDataPlacement: (workingRoot) => actionInteractionRuntime.skipPendingDataPlacement(workingRoot),
     handleDiscardIncomeCardChoice,
     confirmDiscardAnyForIncome,
     handlePayCreditChoice,
@@ -4204,7 +4217,6 @@
     get pendingHandScanAction() { return decisionState.handScanAction; },
     get pendingAlienTraceAction() { return decisionState.alienTraceAction; },
     get pendingLandTargetAction() { return getPendingLandTargetDecision(); },
-    get pendingDataPlaceAction() { return getPendingDataPlacementDecision(); },
     get pendingJiuzheCardPlay() { return getPendingJiuzheCardPlay(); },
     get pendingYichangdianCardGain() { return getPendingYichangdianCardGain(); },
     get pendingYichangdianCornerAction() { return getPendingYichangdianCornerAction(); },
@@ -10868,6 +10880,35 @@
     });
   }
 
+  function resumeDataPlacementContinuation(workingRoot, pending, outcome) {
+    const effect = pending?.effect;
+    if (!effect) return { ok: false, message: "放置数据续体缺少效果上下文" };
+    if (pending.resumeKind === "gain-data-reward") {
+      const player = effectExecutors.getEffectTargetPlayer(workingRoot, effect);
+      return effectExecutors.finishGainDataRewardEffect(
+        workingRoot,
+        effect,
+        player,
+        Math.max(0, Math.round(effect.options?.count || 0)),
+        effect.options?.source || "planet_reward",
+        {
+          placementMessages: outcome.messages,
+          restoreRecorded: outcome.restoreRecorded,
+          skipGain: outcome.skipped,
+        },
+      );
+    }
+    if (pending.resumeKind === "industry-strategy-passive") {
+      return industryRuntime.finishIndustryStrategyPassiveRewardEffect(workingRoot, effect, {
+        placementMessages: outcome.messages,
+        restoreRecorded: outcome.restoreRecorded,
+        beforePlayerState: outcome.beforePlayerState,
+        skipDataGain: outcome.skipped,
+      });
+    }
+    return { ok: false, message: `未知放置数据续体：${pending.resumeKind || "missing"}` };
+  }
+
   actionInteractionRuntime = actionInteractionRuntimeModule.createActionInteractionRuntime({
     headless: headlessMode,
     HISTORY_SOURCE_MAIN,
@@ -10911,6 +10952,7 @@
     renderRocketElement,
     renderRockets,
     renderStateReadout,
+    resumeDataPlacementContinuation,
     restoreMutableObject,
     rocketActions,
     runAction,
