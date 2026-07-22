@@ -441,12 +441,12 @@
       candidates.push(...moveCandidates);
       const industryCandidate = buildAiIndustryCandidate(workingRoot, currentPlayer);
       if (industryCandidate) candidates.push(industryCandidate);
-      candidates.push(...listAiEmergencyAnalyzeEnergyTradeCandidates(currentPlayer));
-      candidates.push(...listAiFinalAnalyzeEnergyTradeCandidates(currentPlayer));
+      candidates.push(...listAiEmergencyAnalyzeEnergyTradeCandidates(workingRoot, currentPlayer));
+      candidates.push(...listAiFinalAnalyzeEnergyTradeCandidates(workingRoot, currentPlayer));
       candidates.push(...listAiThirdFinalMarkResourceTradeCandidates(workingRoot, currentPlayer));
-      candidates.push(...listAiMainUnlockTradeCandidates(currentPlayer, playCardCandidates, candidates));
-      candidates.push(...listAiFinalReadyTaskCreditChainTradeCandidates(currentPlayer));
-      candidates.push(...listAiResourceLockMainUnlockTradeCandidates(currentPlayer, candidates));
+      candidates.push(...listAiMainUnlockTradeCandidates(workingRoot, currentPlayer, playCardCandidates, candidates));
+      candidates.push(...listAiFinalReadyTaskCreditChainTradeCandidates(workingRoot, currentPlayer));
+      candidates.push(...listAiResourceLockMainUnlockTradeCandidates(workingRoot, currentPlayer, candidates));
       candidates.push(...listAiLateResourceRecoveryTradeCandidates(workingRoot, currentPlayer, candidates));
       candidates.push(...listAiDataPlacementCandidates(currentPlayer));
       candidates.push(...listAiRunezuFaceSymbolQuickCandidates(workingRoot, currentPlayer));

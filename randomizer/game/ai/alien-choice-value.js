@@ -143,8 +143,8 @@
       };
     }
 
-    function evaluateAiCardsForEnergyAnalyzeProtection(player, trade, preserveHandIndex = null, options = {}) {
-      const discardPlan = summarizeAiTradeDiscardPlan(player, trade, preserveHandIndex, {
+    function evaluateAiCardsForEnergyAnalyzeProtection(workingRoot, player, trade, preserveHandIndex = null, options = {}) {
+      const discardPlan = summarizeAiTradeDiscardPlan(workingRoot, player, trade, preserveHandIndex, {
         includeExecutionPlan: true,
         tradeId: trade?.id || "cards-for-energy",
       });

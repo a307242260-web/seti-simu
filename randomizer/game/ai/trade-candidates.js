@@ -94,7 +94,7 @@
     const shouldPreserveReadyScanOverRefill = (...args) => context.shouldPreserveReadyScanOverRefill(...args);
     const summarizeAiPublicPickCandidate = (...args) => context.summarizeAiPublicPickCandidate(...args);
 
-    function listAiEmergencyAnalyzeEnergyTradeCandidates(player = getCurrentPlayer()) {
+    function listAiEmergencyAnalyzeEnergyTradeCandidates(workingRoot, player = getCurrentPlayer()) {
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -156,7 +156,7 @@
           const check = quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false };
           if (!trade || !check.ok) return null;
           const analyzeTrade = tradeId === "cards-for-energy"
-            ? evaluateAiCardsForEnergyAnalyzeProtection(player, trade, null, {
+            ? evaluateAiCardsForEnergyAnalyzeProtection(workingRoot, player, trade, null, {
               saferEnergyTradeAvailable,
             })
             : null;
@@ -193,7 +193,7 @@
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
     }
 
-    function listAiFinalAnalyzeEnergyTradeCandidates(player = getCurrentPlayer()) {
+    function listAiFinalAnalyzeEnergyTradeCandidates(workingRoot, player = getCurrentPlayer()) {
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -223,12 +223,12 @@
           const check = quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false };
           if (!trade || !check.ok || aiNumber(trade.gain?.energy) <= 0) return null;
           const competingCreditUnlock = tradeId === "cards-for-energy"
-            ? buildAiMainUnlockTradeCandidate(player, "cards-for-credit")
+            ? buildAiMainUnlockTradeCandidate(workingRoot, player, "cards-for-credit")
             : null;
           const preserveHandIndex = Number.isInteger(Number(competingCreditUnlock?.valueBreakdown?.bestPlayCard?.handIndex))
             ? Number(competingCreditUnlock.valueBreakdown.bestPlayCard.handIndex)
             : null;
-          const analyzeTrade = evaluateAiCardsForEnergyAnalyzeProtection(player, trade, preserveHandIndex, {
+          const analyzeTrade = evaluateAiCardsForEnergyAnalyzeProtection(workingRoot, player, trade, preserveHandIndex, {
             saferEnergyTradeAvailable: tradeId === "cards-for-energy" && saferEnergyTradeAvailable,
           });
           const { discardPlan, simulatedPlayer, analyzeScore, protection: directScoreProtection } = analyzeTrade;
@@ -673,12 +673,12 @@
       return plan;
     }
 
-    function estimateAiTradeDiscardOpportunityCost(player = getCurrentPlayer(), trade = null, preserveHandIndex = null) {
-      const plan = summarizeAiTradeDiscardPlan(player, trade, preserveHandIndex);
+    function estimateAiTradeDiscardOpportunityCost(workingRoot, player = getCurrentPlayer(), trade = null, preserveHandIndex = null) {
+      const plan = summarizeAiTradeDiscardPlan(workingRoot, player, trade, preserveHandIndex);
       return plan.ok && Number.isFinite(Number(plan.totalCost)) ? Number(plan.totalCost) : Infinity;
     }
 
-    function summarizeAiRepeatedCardsForCreditDiscardPlan(player = getCurrentPlayer(), preserveHandIndex = null, tradeCount = 1) {
+    function summarizeAiRepeatedCardsForCreditDiscardPlan(workingRoot, player = getCurrentPlayer(), preserveHandIndex = null, tradeCount = 1) {
       const count = Math.max(0, Math.round(aiNumber(tradeCount)));
       const trade = quickTrades?.getTradeAction?.("cards-for-credit") || null;
       if (!player || !trade || count <= 0) {
@@ -697,7 +697,7 @@
 
       const handCost = Math.max(0, Math.round(aiNumber(trade.cost?.handSize)));
       const totalHandCost = handCost * count;
-      const costEntries = buildAiTradeDiscardCostEntries(player, preserveHandIndex);
+      const costEntries = buildAiTradeDiscardCostEntries(workingRoot, player, preserveHandIndex);
       const selectedEntries = costEntries.slice(0, totalHandCost);
       const hasEnoughCards = totalHandCost > 0 && selectedEntries.length >= totalHandCost;
       const totalCost = hasEnoughCards
@@ -728,7 +728,7 @@
       return simulatedPlayer;
     }
 
-    function getAiFinalReadyTaskCreditChainProfile(player = getCurrentPlayer(), options = {}) {
+    function getAiFinalReadyTaskCreditChainProfile(workingRoot, player = getCurrentPlayer(), options = {}) {
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -764,7 +764,7 @@
       if (!trade || handCost < 2 || creditGain <= 0) return null;
 
       const currentBestPlayScore = hand.reduce((best, card, handIndex) => {
-        const candidate = buildAiPlayCardCandidate(card, handIndex, player);
+        const candidate = buildAiPlayCardCandidate(workingRoot, card, handIndex, player);
         return Math.max(best, aiNumber(candidate?.score));
       }, 0);
 
@@ -787,11 +787,11 @@
             return null;
           }
 
-          const discardPlan = summarizeAiRepeatedCardsForCreditDiscardPlan(player, handIndex, tradesNeeded);
+          const discardPlan = summarizeAiRepeatedCardsForCreditDiscardPlan(workingRoot, player, handIndex, tradesNeeded);
           if (!discardPlan.ok) return null;
           const simulatedPlayer = createAiPlayerAfterRepeatedQuickTrade(player, trade, tradesNeeded);
           if (!simulatedPlayer || !players.canAfford(simulatedPlayer, getCardPlayCost(card))) return null;
-          const playCandidate = buildAiPlayCardCandidate(card, handIndex, simulatedPlayer);
+          const playCandidate = buildAiPlayCardCandidate(workingRoot, card, handIndex, simulatedPlayer);
           if (!playCandidate) return null;
           const breakdown = playCandidate.valueBreakdown || {};
           const finalDeltaValue = Math.max(
@@ -858,7 +858,7 @@
       };
     }
 
-    function listAiFinalReadyTaskCreditChainTradeCandidates(player = getCurrentPlayer()) {
+    function listAiFinalReadyTaskCreditChainTradeCandidates(workingRoot, player = getCurrentPlayer()) {
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -867,10 +867,10 @@
       ) {
         return [];
       }
-      const profile = getAiFinalReadyTaskCreditChainProfile(player);
+      const profile = getAiFinalReadyTaskCreditChainProfile(workingRoot, player);
       if (!profile) return [];
       const trade = quickTrades.getTradeAction(profile.tradeId);
-      const check = quickTrades.canExecuteTrade?.(profile.tradeId, createActionContext()) || { ok: false };
+      const check = quickTrades.canExecuteTrade?.(profile.tradeId, createActionContext(workingRoot)) || { ok: false };
       if (!trade || !check.ok) return [];
       const target = profile.target || {};
       const tradeUnlockEligible = (
@@ -946,10 +946,10 @@
         .reduce((best, candidate) => Math.max(best, aiNumber(candidate.score)), 0);
     }
 
-    function buildAiMainUnlockTradeCandidate(player = getCurrentPlayer(), tradeId = null, playCardCandidates = null, candidates = []) {
+    function buildAiMainUnlockTradeCandidate(workingRoot, player = getCurrentPlayer(), tradeId = null, playCardCandidates = null, candidates = []) {
       if (!player || !tradeId || !quickTrades?.getTradeAction) return null;
       const trade = quickTrades.getTradeAction(tradeId);
-      const check = quickTrades.canExecuteTrade?.(tradeId, createActionContext()) || { ok: false };
+      const check = quickTrades.canExecuteTrade?.(tradeId, createActionContext(workingRoot)) || { ok: false };
       if (!trade || !check.ok || aiNumber(trade.gain?.credits) <= 0) return null;
       const hand = player.hand || [];
       const handCost = Math.max(0, Math.round(aiNumber(trade.cost?.handSize)));
@@ -957,7 +957,7 @@
       if (cardsRemaining <= 0) return null;
       const currentCredits = Math.max(0, aiNumber(player.resources?.credits));
       const currentScore = Math.max(0, aiNumber(player.resources?.score));
-      const currentPlayable = playCardCandidates || listAiPlayCardCandidates(player);
+      const currentPlayable = playCardCandidates || listAiPlayCardCandidates(workingRoot, player);
       const currentPlayableByIndex = new Map((currentPlayable || []).map((candidate) => [candidate.handIndex, candidate]));
       const currentBestScore = (currentPlayable || []).reduce((best, candidate) => (
         Math.max(best, aiNumber(candidate?.score))
@@ -998,7 +998,7 @@
       const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
       if (!simulatedPlayer) return null;
       const postTradeCandidates = hand
-        .map((card, handIndex) => buildAiPlayCardCandidate(card, handIndex, simulatedPlayer))
+        .map((card, handIndex) => buildAiPlayCardCandidate(workingRoot, card, handIndex, simulatedPlayer))
         .filter(Boolean)
         .map((candidate) => {
           const finalDeltaValue = Math.max(
@@ -1063,7 +1063,7 @@
         && getAiBestOpenedMainActionScore(candidates) >= 12
       );
       if (weakRepeatedTradeOverOpenedMain) return null;
-      const discardCost = estimateAiTradeDiscardOpportunityCost(player, trade, bestPlay.handIndex);
+      const discardCost = estimateAiTradeDiscardOpportunityCost(workingRoot, player, trade, bestPlay.handIndex);
       if (!Number.isFinite(discardCost)) return null;
       const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
       const thresholdBonus = nextThreshold && currentScore < nextThreshold && currentScore + directScoreGain >= nextThreshold
@@ -1112,7 +1112,7 @@
       };
     }
 
-    function listAiMainUnlockTradeCandidates(player = getCurrentPlayer(), playCardCandidates = null, candidates = []) {
+    function listAiMainUnlockTradeCandidates(workingRoot, player = getCurrentPlayer(), playCardCandidates = null, candidates = []) {
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -1125,12 +1125,12 @@
         return [];
       }
       return ["cards-for-credit", "energy-for-credit"]
-        .map((tradeId) => buildAiMainUnlockTradeCandidate(player, tradeId, playCardCandidates, candidates))
+        .map((tradeId) => buildAiMainUnlockTradeCandidate(workingRoot, player, tradeId, playCardCandidates, candidates))
         .filter(Boolean)
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
     }
 
-    function buildAiResourceLockMainUnlockTradeCandidate(player = getCurrentPlayer(), tradeId = null, candidates = []) {
+    function buildAiResourceLockMainUnlockTradeCandidate(workingRoot, player = getCurrentPlayer(), tradeId = null, candidates = []) {
       if (
         !player
         || !tradeId
@@ -1246,7 +1246,7 @@
         : [];
       const bestPlay = postTradePlayCandidates[0] || null;
       const bestPlayDiscardCost = bestPlay
-        ? estimateAiTradeDiscardOpportunityCost(player, trade, bestPlay.handIndex)
+        ? estimateAiTradeDiscardOpportunityCost(workingRoot, player, trade, bestPlay.handIndex)
         : Infinity;
       const weakStartAlienPlayConcreteValue = bestPlay
         ? Math.max(
@@ -1402,7 +1402,7 @@
 
       const discardCost = bestAction.actionId === "playCard" && Number.isFinite(bestAction.discardCost)
         ? bestAction.discardCost
-        : estimateAiTradeDiscardOpportunityCost(player, trade);
+        : estimateAiTradeDiscardOpportunityCost(workingRoot, player, trade);
       if (!Number.isFinite(discardCost)) return null;
       if (weakStartFinalAnalyzeRecoveryUnlock && discardCost > 6.5) return null;
       const nextThreshold = getAiNextMissingFinalScoreThreshold(player);
@@ -1491,9 +1491,9 @@
       };
     }
 
-    function listAiResourceLockMainUnlockTradeCandidates(player = getCurrentPlayer(), candidates = []) {
+    function listAiResourceLockMainUnlockTradeCandidates(workingRoot, player = getCurrentPlayer(), candidates = []) {
       return ["credits-for-energy", "cards-for-energy", "cards-for-credit", "energy-for-credit"]
-        .map((tradeId) => buildAiResourceLockMainUnlockTradeCandidate(player, tradeId, candidates))
+        .map((tradeId) => buildAiResourceLockMainUnlockTradeCandidate(workingRoot, player, tradeId, candidates))
         .filter(Boolean)
         .sort((left, right) => aiNumber(right.score) - aiNumber(left.score));
     }
@@ -1665,7 +1665,7 @@
         const simulatedEnergy = Math.max(0, aiNumber(simulatedPlayer.resources?.energy));
         if (simulatedCredits < scanCreditCost || simulatedEnergy < scanEnergyCost) return 0;
         const canScanAfterTrade = scanEffects?.canExecuteScan?.(simulatedPlayer, { standardAction: true })?.ok;
-        const tradeCost = estimateAiTradeDiscardOpportunityCost(player, trade);
+        const tradeCost = estimateAiTradeDiscardOpportunityCost(workingRoot, player, trade);
         if (!Number.isFinite(tradeCost)) return 0;
         const effectiveTradeCost = finalLowScoreMainUnlockWindow && handSize >= 5
           ? Math.min(tradeCost, 18)
@@ -1720,7 +1720,7 @@
         const simulatedEnergy = Math.max(0, aiNumber(simulatedPlayer.resources?.energy));
         if (simulatedCredits < scanCreditCost || simulatedEnergy < scanEnergyCost) return 0;
         if (!scanEffects?.canExecuteScan?.(simulatedPlayer, { standardAction: true })?.ok) return 0;
-        const tradeCost = estimateAiTradeDiscardOpportunityCost(player, trade);
+        const tradeCost = estimateAiTradeDiscardOpportunityCost(workingRoot, player, trade);
         if (!Number.isFinite(tradeCost)) return 0;
         const scanScore = Math.max(0, aiNumber(scoreAiScanAction(simulatedPlayer)));
         const sectorDeficit = Math.max(1, aiNumber(b2SectorBottleneck.deficit));
@@ -1761,7 +1761,7 @@
         if (!trade || aiNumber(trade.gain?.energy) <= 0) return 0;
         const simulatedPlayer = createAiPlayerAfterQuickTrade(player, trade);
         if (!simulatedPlayer || !canAiAnalyzeData(simulatedPlayer).ok) return 0;
-        const tradeCost = estimateAiTradeDiscardOpportunityCost(player, trade);
+        const tradeCost = estimateAiTradeDiscardOpportunityCost(workingRoot, player, trade);
         if (!Number.isFinite(tradeCost)) return 0;
         const analyzeScore = Math.max(0, aiNumber(scoreAiAnalyzeAction(simulatedPlayer)));
         if (analyzeScore < 14) return 0;
@@ -2217,7 +2217,7 @@
         const handCost = Math.max(0, Math.round(aiNumber(cardsForEnergyTrade.cost?.handSize)));
         if (handCost <= 0 || handSize < handCost) return 0;
         const handAfterTrade = Math.max(0, handSize - handCost);
-        const discardCost = estimateAiTradeDiscardOpportunityCost(player, cardsForEnergyTrade);
+        const discardCost = estimateAiTradeDiscardOpportunityCost(workingRoot, player, cardsForEnergyTrade);
         const genericCost = scoreAiResourceBundle(cardsForEnergyTrade.cost || {});
         let penalty = Number.isFinite(discardCost)
           ? Math.max(0, discardCost - genericCost) * 0.18
@@ -2499,7 +2499,7 @@
           const check = quickTrades.canExecuteTrade?.(spec.tradeId, createActionContext(workingRoot)) || { ok: false };
           if (!trade || !check.ok) return null;
           const analyzeTrade = spec.tradeId === "cards-for-energy" && String(spec.reason || "").includes("分析")
-            ? evaluateAiCardsForEnergyAnalyzeProtection(player, trade, null, {
+            ? evaluateAiCardsForEnergyAnalyzeProtection(workingRoot, player, trade, null, {
               saferEnergyTradeAvailable: Boolean(
                 !finalHighScoreAvoidCreditEnergyTrap
                 && quickTrades.getTradeAction("credits-for-energy")
