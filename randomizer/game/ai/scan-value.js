@@ -23,15 +23,15 @@
       cardEffects,
       data,
       aomomo,
-      solarState,
-      nebulaDataState,
-      turnState,
-      planetStatsState,
-      cardState,
       FINAL_ROUND_NUMBER,
       AI_RESOURCE_VALUES,
       AI_DIFFICULTY_WEAK_START,
     } = context;
+    const readRuleRoot = () => {
+      const workingRoot = context.getRuleReadout?.();
+      if (!workingRoot) throw new TypeError("AI scan value requires a StateSource rule readout");
+      return workingRoot;
+    };
     const aiNumber = (...args) => context.aiNumber(...args);
     const applyAiStrategyWeight = (...args) => context.applyAiStrategyWeight(...args);
     const buildSectorScanChoicesForX = (...args) => context.buildSectorScanChoicesForX(...args);
@@ -95,6 +95,7 @@
     }
 
     function getAiNebulaSignalCounts(nebulaId, player = getCurrentPlayer()) {
+      const { nebulaDataState } = readRuleRoot();
       const tokens = data.listNebulaTokens(nebulaDataState, nebulaId);
       const extraMarks = typeof data.listSectorExtraMarks === "function"
         ? data.listSectorExtraMarks(nebulaDataState, nebulaId)
@@ -133,6 +134,7 @@
         return { active: false, sectorWins: 0, orbitLandCount: 0, deficit: 0, multiplier: 0, marked: false };
       }
       const context = createActionContext();
+      const { nebulaDataState, planetStatsState } = readRuleRoot();
       const sectorWins = Math.max(0, Math.round(aiNumber(endGameScoring.countSectorWins(player, nebulaDataState))));
       const orbitLandCount = Math.max(0, Math.round(aiNumber(
         endGameScoring.countOrbitOrLandMarkers(player, planetStatsState, context),
@@ -316,6 +318,7 @@
       if (!b2Entries.length) return 0;
       const b2Bottleneck = getAiB2SectorBottleneck(player);
       const context = createActionContext();
+      const { nebulaDataState, planetStatsState } = readRuleRoot();
       const sectorWins = Math.max(0, Math.round(aiNumber(endGameScoring.countSectorWins(player, nebulaDataState))));
       const orbitLandCount = Math.max(0, Math.round(aiNumber(
         endGameScoring.countOrbitOrLandMarkers(player, planetStatsState, context),
@@ -366,6 +369,7 @@
     }
 
     function scoreAiFullSectorExtraMark(nebulaId, counts, player = getCurrentPlayer(), options = {}) {
+      const { nebulaDataState } = readRuleRoot();
       const pendingPenalty = options.pendingType === "hand_scan" ? 0.5 : 0;
       if (nebulaId === aomomo?.NEBULA_ID) {
         if (counts.ownCount > 0) return -3;
@@ -401,6 +405,7 @@
       const player = options.player || getCurrentPlayer();
       const nebulaId = choice?.nebulaId || null;
       if (!nebulaId || choice?.disabled) return -Infinity;
+      const { nebulaDataState } = readRuleRoot();
       const nextToken = data.getNextReplaceableNebulaToken?.(nebulaDataState, nebulaId);
       const tokens = data.listNebulaTokens?.(nebulaDataState, nebulaId) || [];
       const extraMarkOnly = !nextToken;
@@ -467,6 +472,7 @@
     function getAiNebulaScanChoiceDirectScore(choice) {
       const nebulaId = choice?.nebulaId || null;
       if (!nebulaId || choice?.disabled) return 0;
+      const { nebulaDataState } = readRuleRoot();
       const nextToken = data.getNextReplaceableNebulaToken?.(nebulaDataState, nebulaId);
       if (!nextToken) return 0;
       return Math.max(0, aiNumber(data.getNebulaSlotScoreReward?.(nebulaId, nextToken.slotIndex)));
@@ -528,7 +534,7 @@
 
     function getAiBestPublicScanSlots(player = getCurrentPlayer(), options = {}) {
       const maxSelectable = Math.max(1, Math.round(aiNumber(options.maxSelectable || 1)));
-      const activeCardState = options.workingRoot?.cardState || cardState;
+      const activeCardState = options.workingRoot?.cardState || readRuleRoot().cardState;
       return (activeCardState.publicCards || [])
         .map((card, slotIndex) => ({
           slotIndex,

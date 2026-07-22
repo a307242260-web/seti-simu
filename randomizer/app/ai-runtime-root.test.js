@@ -11,6 +11,7 @@ const { createStateSummary } = require("../game/ai/state-summary");
 const { createActionValue } = require("../game/ai/action-value");
 const { createAlienChoiceValue } = require("../game/ai/alien-choice-value");
 const { createTechAction } = require("../game/ai/tech-action");
+const { createScanValue } = require("../game/ai/scan-value");
 
 function contextWith(overrides = {}) {
   const fallback = () => null;
@@ -240,6 +241,27 @@ const players = {
   assert.ok(techAction.scoreAiExtraLaunchPacePenalty(player) > 0);
   readout = rootB;
   assert.equal(techAction.scoreAiExtraLaunchPacePenalty(player), 0);
+}
+
+{
+  const rootA = createRoot("a", 1);
+  rootA.nebulaDataState = { tokens: [{ playerId: "a" }] };
+  const rootB = createRoot("a", 1);
+  rootB.nebulaDataState = { tokens: [] };
+  let readout = rootA;
+  const scanValue = createScanValue(contextWith({
+    aiNumber: Number,
+    data: {
+      listNebulaTokens: (nebulaState) => nebulaState.tokens,
+      listSectorExtraMarks: () => [],
+      getSectorTokenStats: () => ({}),
+    },
+    getRuleReadout: () => readout,
+  }));
+  const player = { id: "a", resources: {} };
+  assert.equal(scanValue.getAiNebulaSignalCounts("sector-a", player).ownCount, 1);
+  readout = rootB;
+  assert.equal(scanValue.getAiNebulaSignalCounts("sector-a", player).ownCount, 0);
 }
 
 {
