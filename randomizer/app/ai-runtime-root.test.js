@@ -6,6 +6,7 @@ const { createActionExecutor } = require("./ai/action-executor");
 const { createAutomationRuntime } = require("./ai/automation-runtime");
 const { createTechCandidates } = require("../game/ai/tech-candidates");
 const { createFinalPace } = require("../game/ai/final-pace");
+const { createSelectionPressure } = require("../game/ai/selection-pressure");
 
 function contextWith(overrides = {}) {
   const fallback = () => null;
@@ -142,6 +143,28 @@ const players = {
   readout = rootB;
   assert.equal(finalPace.getAiRoundNumber(), 3);
   assert.equal(finalPace.getAiActiveOpponentCount(rootB.playerState.players[0]), 0);
+}
+
+{
+  const rootA = createRoot("a", 1);
+  const rootB = createRoot("a", 2);
+  let readout = rootA;
+  const selectionPressure = createSelectionPressure(contextWith({
+    aiNumber: Number,
+    aiAutoBattleState: {
+      logs: [{
+        type: "turn-action",
+        roundNumber: 1,
+        rawTurnNumber: 1,
+        playerId: "a",
+        details: { action: { id: "cardCorner", actionKind: "resource", score: -1 } },
+      }],
+    },
+    getRuleReadout: () => readout,
+  }));
+  assert.equal(selectionPressure.countAiRepeatedNegativeResourceCardCornersThisTurn("a"), 1);
+  readout = rootB;
+  assert.equal(selectionPressure.countAiRepeatedNegativeResourceCardCornersThisTurn("a"), 0);
 }
 
 {

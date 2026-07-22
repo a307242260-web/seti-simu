@@ -23,9 +23,6 @@
       cards,
       tech,
       data,
-      turnState,
-      rocketState,
-      cardState,
       FINAL_ROUND_NUMBER,
       handleCompanyActionMarkerClick,
       AI_MOVE_DIRECTIONS,
@@ -653,6 +650,8 @@
     }
 
     function getAiFinalHighScoreDataCreditPreserveProfile(choice, player = getCurrentPlayer()) {
+      const turnState = context.getRuleReadout?.().turnState;
+      if (!turnState) throw new TypeError("AI data preserve profile requires a StateSource turn readout");
       if (
         !player
         || normalizeAiDifficulty(player?.aiDifficulty || aiAutoBattleState.aiDifficulty) !== AI_DIFFICULTY_WEAK_START

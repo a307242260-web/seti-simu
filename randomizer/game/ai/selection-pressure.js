@@ -20,14 +20,16 @@
       scanEffects,
       quickTrades,
       cards,
-      turnState,
-      rocketState,
-      cardState,
       FINAL_ROUND_NUMBER,
       runQuickTrade,
       AI_DIFFICULTY_WEAK_START,
       aiAutoBattleState,
     } = context;
+    const readTurnState = () => {
+      const turnState = context.getRuleReadout?.().turnState;
+      if (!turnState) throw new TypeError("AI selection pressure requires a StateSource turn readout");
+      return turnState;
+    };
     const aiNumber = (...args) => context.aiNumber(...args);
     const buildAiPlayCardCandidate = (...args) => context.buildAiPlayCardCandidate(...args);
     const canAiAnalyzeData = (...args) => context.canAiAnalyzeData(...args);
@@ -64,6 +66,7 @@
 
     function countAiRepeatedNegativeResourceCardCornersThisTurn(playerId = getCurrentPlayer()?.id) {
       if (!playerId) return 0;
+      const turnState = readTurnState();
       return (aiAutoBattleState.logs || []).filter((entry) => (
         entry?.type === "turn-action"
         && entry.roundNumber === turnState.roundNumber
@@ -89,6 +92,7 @@
 
     function hasAiPassActionThisTurn(playerId = getCurrentPlayer()?.id) {
       if (!playerId) return false;
+      const turnState = readTurnState();
       return (aiAutoBattleState.logs || []).some((entry) => (
         entry?.type === "turn-action"
         && entry.roundNumber === turnState.roundNumber
@@ -100,6 +104,7 @@
 
     function shouldCapPostPassNoCashoutCardCorner(candidate = {}, player = getCurrentPlayer()) {
       if (!player || candidate?.id !== "cardCorner") return false;
+      const turnState = readTurnState();
       const alreadyPassed = (turnState.passedPlayerIds || []).includes(player.id)
         || hasAiPassActionThisTurn(player.id);
       if (!alreadyPassed) return false;
@@ -389,7 +394,7 @@
         || !quickTrades?.getTradeAction
         || state.pendingActionExecuted
         || !canStartMainAction()
-        || (turnState.passedPlayerIds || []).includes(player.id)
+        || (workingRoot.turnState.passedPlayerIds || []).includes(player.id)
       ) {
         return [];
       }
@@ -429,7 +434,7 @@
           && Math.max(0, aiNumber(planetCashoutPlan.afterTradeGap)) <= 0;
 
         const activeRocketCount = rocketActions.getRocketsForPlayer
-          ? rocketActions.getRocketsForPlayer(rocketState, player.id).length
+          ? rocketActions.getRocketsForPlayer(workingRoot.rocketState, player.id).length
           : 0;
         const rocketLimit = abilities.rocket?.getRocketLimitForPlayer
           ? abilities.rocket.getRocketLimitForPlayer(player, createActionContext())
@@ -640,6 +645,7 @@
         return null;
       }
       const resources = player.resources || {};
+      const { cardState, turnState } = workingRoot;
       const currentScore = Math.max(0, aiNumber(resources.score));
       const handSize = Math.max(0, Math.round(aiNumber(resources.handSize ?? (player.hand || []).length)));
       if (currentScore >= 170 || handSize > 4) return null;
@@ -795,6 +801,7 @@
         return null;
       }
       const resources = player.resources || {};
+      const { turnState } = workingRoot;
       const highScorePushProfile = getAiHighScorePushProfile(player);
       const projectedScore = Math.max(0, aiNumber(highScorePushProfile.projectedScore || getAiProjectedFinalScore(player)));
       const scoreTo300 = Math.max(0, 300 - projectedScore);
