@@ -1169,6 +1169,33 @@
     clearStaleFullyUndoneMainActionSession, canUndoCurrentMainAction,
     hasCurrentMainActionIrreversibleBarrier, getMainActionStartBlockReason, canStartMainAction,
   } = actionSessionRuntime;
+  const cardSelectionState = browserHostModule.cardDecisionUi.createLegacyCardSelectionState({
+    getRuleReadout: () => createStateSourceReadoutRoot(),
+    cards,
+    getPendingDiscardDecision: (...args) => getPendingDiscardDecision(...args),
+    getPendingCardSelectionDecision: (...args) => getPendingCardSelectionDecision(...args),
+    getPublicScanMinSelectable: (...args) => getPublicScanMinSelectable(...args),
+  });
+  const {
+    isCardSelectionActive, isDiscardSelectionActive, isPlayCardSelectionActive,
+    allowsBlindDrawInSelection, isPublicScanMultiSelectActive,
+    isPublicCornerDiscardSelectionActive, isPublicCardMultiSelectActive,
+    getPublicCardMultiSelectMinSelectable,
+  } = cardSelectionState;
+  const manualAiInputGuard = aiControlRuntimeModule.createManualAiInputGuard({
+    getCurrentPlayer: (...args) => getCurrentPlayer(...args),
+    getPendingOwnerPlayer: (...args) => getPendingOwnerPlayer(...args),
+    isAiPlayer: (...args) => isAiAutoBattlePlayer(...args),
+    isAiAutomationPaused: (...args) => isAiAutomationPaused(...args),
+    setStatusNote: (...args) => setBrowserStatusNote(...args),
+    scheduleAiAutoStepIfNeeded: (...args) => scheduleAiAutoStepIfNeeded(...args),
+    renderStateReadout: (...args) => renderStateReadout(...args),
+  });
+  const {
+    isAiAutomationInputLocked, isPendingLockedForAiAutomation,
+    blockManualAiAutomationInput, blockManualAiPendingInput,
+    blockManualAiPendingInputIfNeeded,
+  } = manualAiInputGuard;
   const scoreSourceRuntime = scoreSourceRuntimeModule.createScoreSourceRuntime({
     actionHistory,
     quickActionHistory,
@@ -4986,45 +5013,6 @@
       && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
   );
 
-  function isCardSelectionActive(workingRoot = null) {
-    return cards.isSelectionActive((workingRoot || createStateSourceReadoutRoot()).cardState);
-  }
-
-  function isDiscardSelectionActive(workingRoot = null) {
-    return Boolean(getPendingDiscardDecision(workingRoot));
-  }
-
-  function isPlayCardSelectionActive(workingRoot = null) {
-    return cards.isPlayCardSelectionActive((workingRoot || createStateSourceReadoutRoot()).cardState);
-  }
-
-  function allowsBlindDrawInSelection() {
-    return getPendingCardSelectionDecision()?.allowBlindDraw !== false;
-  }
-
-
-  function isPublicScanMultiSelectActive() {
-    return isCardSelectionActive()
-      && getPendingCardSelectionDecision()?.type === "public_scan"
-      && (getPendingCardSelectionDecision().maxSelectable ?? 1) > 1;
-  }
-
-  function isPublicCornerDiscardSelectionActive() {
-    return isCardSelectionActive()
-      && getPendingCardSelectionDecision()?.type === "card_public_corner_discard";
-  }
-
-  function isPublicCardMultiSelectActive() {
-    return isPublicScanMultiSelectActive() || isPublicCornerDiscardSelectionActive();
-  }
-
-  function getPublicCardMultiSelectMinSelectable(pending = getPendingCardSelectionDecision()) {
-    if (pending?.type === "public_scan") return getPublicScanMinSelectable(pending);
-    const maxSelectable = Math.max(1, Math.round(Number(pending?.maxSelectable) || 1));
-    const requested = Math.max(1, Math.round(Number(pending?.minSelectable) || maxSelectable));
-    return Math.min(maxSelectable, requested);
-  }
-
   function syncPublicScanConfirmButton() {
     return interactionChrome.syncPublicScanConfirmButton();
   }
@@ -5039,36 +5027,6 @@
 
   function syncIndustryHandSelectionChrome() {
     return interactionChrome.syncIndustryHandSelectionChrome();
-  }
-
-  function isAiAutomationInputLocked(player = getCurrentPlayer()) {
-    return Boolean(player?.id && isAiAutoBattlePlayer(player.id) && !isAiAutomationPaused());
-  }
-
-  function isPendingLockedForAiAutomation(pending = null, fallbackEffect = null) {
-    const player = getPendingOwnerPlayer(pending, fallbackEffect);
-    return Boolean(player?.id && isAiAutoBattlePlayer(player.id) && !isAiAutomationPaused());
-  }
-
-  function blockManualAiAutomationInput(message = null, player = getCurrentPlayer()) {
-    const statusNote = message || `${player?.colorLabel || "电脑玩家"}AI 正在自动行动`;
-    setBrowserStatusNote(statusNote);
-    scheduleAiAutoStepIfNeeded();
-    renderStateReadout();
-    return { ok: false, blocked: true, message: statusNote };
-  }
-
-  function blockManualAiPendingInput(pending = null, label = "待处理操作", fallbackEffect = null) {
-    const player = getPendingOwnerPlayer(pending, fallbackEffect);
-    return blockManualAiAutomationInput(
-      `${player?.colorLabel || "电脑玩家"}AI 正在处理${label}`,
-      player,
-    );
-  }
-
-  function blockManualAiPendingInputIfNeeded(pending = null, options = {}, label = "待处理操作", fallbackEffect = null) {
-    if (options.automated === true || !isPendingLockedForAiAutomation(pending, fallbackEffect)) return null;
-    return blockManualAiPendingInput(pending, label, fallbackEffect);
   }
 
   function blockManualAiMovePayment(message = null) {

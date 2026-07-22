@@ -11,6 +11,30 @@ const decisionUiApi = require("./decision-ui");
 const cardDecisionUiApi = require("./card-decision-ui");
 const standardAction = require("../../game/actions/standard-action");
 
+(function testLegacyCardSelectionStateReadsProjectionOnly() {
+  const root = { cardState: { selecting: true, playing: false } };
+  let pending = { type: "public_scan", minSelectable: 1, maxSelectable: 2, allowBlindDraw: false };
+  const state = cardDecisionUiApi.createLegacyCardSelectionState({
+    getRuleReadout: () => root,
+    cards: {
+      isSelectionActive: (cardState) => cardState.selecting,
+      isPlayCardSelectionActive: (cardState) => cardState.playing,
+    },
+    getPendingDiscardDecision: () => null,
+    getPendingCardSelectionDecision: () => pending,
+    getPublicScanMinSelectable: (value) => value.minSelectable,
+  });
+  assert.equal(state.isCardSelectionActive(), true);
+  assert.equal(state.isDiscardSelectionActive(), false);
+  assert.equal(state.isPlayCardSelectionActive(), false);
+  assert.equal(state.allowsBlindDrawInSelection(), false);
+  assert.equal(state.isPublicCardMultiSelectActive(), true);
+  assert.equal(state.getPublicCardMultiSelectMinSelectable(), 1);
+  pending = { type: "card_public_corner_discard", minSelectable: 3, maxSelectable: 2 };
+  assert.equal(state.isPublicCornerDiscardSelectionActive(), true);
+  assert.equal(state.getPublicCardMultiSelectMinSelectable(), 2);
+})();
+
 function actionChoice(family, actorId, id, presentation = {}, extra = {}) {
   return {
     schemaVersion: standardAction.SCHEMA_VERSION,

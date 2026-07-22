@@ -4,6 +4,7 @@ const { createInitialCardPendingRuntime } = require("./ai/initial-card-pending")
 const { createInteractionPendingRuntime } = require("./ai/interaction-pending");
 const { createActionExecutor } = require("./ai/action-executor");
 const { createAutomationRuntime } = require("./ai/automation-runtime");
+const { createManualAiInputGuard } = require("./ai/control-runtime");
 const { createTechCandidates } = require("../game/ai/tech-candidates");
 const { createFinalPace } = require("../game/ai/final-pace");
 const { createSelectionPressure } = require("../game/ai/selection-pressure");
@@ -46,6 +47,23 @@ const players = {
     playerState.players.find((player) => player.id === playerState.currentPlayerId) || null
   ),
 };
+
+{
+  const calls = [];
+  const guard = createManualAiInputGuard({
+    getCurrentPlayer: () => ({ id: "ai", colorLabel: "蓝色玩家" }),
+    getPendingOwnerPlayer: () => ({ id: "ai", colorLabel: "蓝色玩家" }),
+    isAiPlayer: (playerId) => playerId === "ai",
+    isAiAutomationPaused: () => false,
+    setStatusNote: (message) => calls.push(message),
+    scheduleAiAutoStepIfNeeded: () => calls.push("schedule"),
+    renderStateReadout: () => calls.push("render"),
+  });
+  assert.equal(guard.isAiAutomationInputLocked(), true);
+  assert.equal(guard.blockManualAiPendingInputIfNeeded(null, { automated: true }), null);
+  assert.equal(guard.blockManualAiPendingInput().blocked, true);
+  assert.deepEqual(calls, ["蓝色玩家AI 正在处理待处理操作", "schedule", "render"]);
+}
 
 {
   const runtime = createInitialCardPendingRuntime(contextWith({

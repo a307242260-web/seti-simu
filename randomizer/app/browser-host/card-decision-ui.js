@@ -108,10 +108,53 @@
     });
   }
 
+  function createLegacyCardSelectionState(context = {}) {
+    const readRoot = (workingRoot = null) => workingRoot || context.getRuleReadout();
+    function isCardSelectionActive(workingRoot = null) {
+      return context.cards.isSelectionActive(readRoot(workingRoot).cardState);
+    }
+    function isDiscardSelectionActive(workingRoot = null) {
+      return Boolean(context.getPendingDiscardDecision(workingRoot));
+    }
+    function isPlayCardSelectionActive(workingRoot = null) {
+      return context.cards.isPlayCardSelectionActive(readRoot(workingRoot).cardState);
+    }
+    function allowsBlindDrawInSelection() {
+      return context.getPendingCardSelectionDecision()?.allowBlindDraw !== false;
+    }
+    function isPublicScanMultiSelectActive() {
+      const pending = context.getPendingCardSelectionDecision();
+      return isCardSelectionActive() && pending?.type === "public_scan" && (pending.maxSelectable ?? 1) > 1;
+    }
+    function isPublicCornerDiscardSelectionActive() {
+      return isCardSelectionActive() && context.getPendingCardSelectionDecision()?.type === "card_public_corner_discard";
+    }
+    function isPublicCardMultiSelectActive() {
+      return isPublicScanMultiSelectActive() || isPublicCornerDiscardSelectionActive();
+    }
+    function getPublicCardMultiSelectMinSelectable(pending = context.getPendingCardSelectionDecision()) {
+      if (pending?.type === "public_scan") return context.getPublicScanMinSelectable(pending);
+      const maxSelectable = Math.max(1, Math.round(Number(pending?.maxSelectable) || 1));
+      const requested = Math.max(1, Math.round(Number(pending?.minSelectable) || maxSelectable));
+      return Math.min(maxSelectable, requested);
+    }
+    return Object.freeze({
+      isCardSelectionActive,
+      isDiscardSelectionActive,
+      isPlayCardSelectionActive,
+      allowsBlindDrawInSelection,
+      isPublicScanMultiSelectActive,
+      isPublicCornerDiscardSelectionActive,
+      isPublicCardMultiSelectActive,
+      getPublicCardMultiSelectMinSelectable,
+    });
+  }
+
   return Object.freeze({
     CARD_DECISION_KINDS: Object.freeze([...CARD_DECISION_KINDS]),
     createCardDecisionPresenter,
     createCardDecisionRegistry,
     createCardDecisionUiController,
+    createLegacyCardSelectionState,
   });
 });

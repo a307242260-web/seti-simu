@@ -109,6 +109,38 @@
     return `${baseSeed}:${index + 1}`;
   }
 
+  function createManualAiInputGuard(context = {}) {
+    function isAiAutomationInputLocked(player = context.getCurrentPlayer()) {
+      return Boolean(player?.id && context.isAiPlayer(player.id) && !context.isAiAutomationPaused());
+    }
+    function isPendingLockedForAiAutomation(pending = null, fallbackEffect = null) {
+      const player = context.getPendingOwnerPlayer(pending, fallbackEffect);
+      return Boolean(player?.id && context.isAiPlayer(player.id) && !context.isAiAutomationPaused());
+    }
+    function blockManualAiAutomationInput(message = null, player = context.getCurrentPlayer()) {
+      const statusNote = message || `${player?.colorLabel || "电脑玩家"}AI 正在自动行动`;
+      context.setStatusNote(statusNote);
+      context.scheduleAiAutoStepIfNeeded();
+      context.renderStateReadout();
+      return { ok: false, blocked: true, message: statusNote };
+    }
+    function blockManualAiPendingInput(pending = null, label = "待处理操作", fallbackEffect = null) {
+      const player = context.getPendingOwnerPlayer(pending, fallbackEffect);
+      return blockManualAiAutomationInput(`${player?.colorLabel || "电脑玩家"}AI 正在处理${label}`, player);
+    }
+    function blockManualAiPendingInputIfNeeded(pending = null, options = {}, label = "待处理操作", fallbackEffect = null) {
+      if (options.automated === true || !isPendingLockedForAiAutomation(pending, fallbackEffect)) return null;
+      return blockManualAiPendingInput(pending, label, fallbackEffect);
+    }
+    return Object.freeze({
+      isAiAutomationInputLocked,
+      isPendingLockedForAiAutomation,
+      blockManualAiAutomationInput,
+      blockManualAiPendingInput,
+      blockManualAiPendingInputIfNeeded,
+    });
+  }
+
   function createAiControlRuntime(context) {
     if (!context || !context.state) {
       throw new Error("createAiControlRuntime requires app state accessors");
@@ -649,6 +681,7 @@
     AI_STRATEGY_WEIGHT_DEFAULTS,
     AI_WEAK_START_STRATEGY_WEIGHT_DEFAULTS,
     createAiControlRuntime,
+    createManualAiInputGuard,
     createAiSeededRandom,
     getAiBatchSeed,
     getAiStrategyWeightDefaultsForDifficulty,
