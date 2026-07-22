@@ -835,7 +835,7 @@
         };
       }
       enrichScanResultEvents(result, nebulaId, { sectorX: options.sectorX });
-      recordAbilityCommands(result);
+      recordAbilityCommands(result, undefined, workingRoot);
       rocketState.statusNote = result.message;
 
       renderSectors();
@@ -1715,7 +1715,7 @@
           return result;
         }
         enrichScanResultEvents(result, nebulaId, { sectorX });
-        recordAbilityCommands(result);
+        recordAbilityCommands(result, undefined, workingRoot);
         if (pending.irreversibleDraw) {
           result.undoable = false;
           result.irreversible = { code: "hidden_card_reveal", reason: "盲抽翻出新牌" };
@@ -1749,7 +1749,7 @@
           return result;
         }
         enrichScanResultEvents(result, nebulaId, { sectorX });
-        recordAbilityCommands(result);
+        recordAbilityCommands(result, undefined, workingRoot);
         if (pending.irreversibleDraw) {
           result.undoable = false;
           result.irreversible = { code: "hidden_card_reveal", reason: "盲抽翻出新牌" };
@@ -2001,7 +2001,7 @@
         return reject(costResult.message, costResult);
       }
       costResult = context.maybeConsumeAlienLabPanelForMainAction("scan", costResult, currentPlayer);
-      recordAbilityCommands(costResult);
+      recordAbilityCommands(costResult, undefined, workingRoot);
       const costStep = context.actionHistory.endStep();
       if (costStep) {
         context.rememberHistoryStep(context.HISTORY_SOURCE_MAIN, costStep.id);
