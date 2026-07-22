@@ -376,10 +376,6 @@
   }
 
   function callBrowserDomainCommand(domain, operation, args = []) {
-    if (activeBrowserDomainWorkingRoot) {
-      const target = resolveBrowserDomainTarget(domain);
-      return target?.[operation]?.(activeBrowserDomainWorkingRoot, ...args);
-    }
     try {
       return browserRuleComposition.inputPort.submitHostCommand({
         kind: "domain_command",
@@ -397,9 +393,6 @@
   }
 
   function callEffectChoiceCommand(operation, args = []) {
-    if (activeBrowserDomainWorkingRoot) {
-      return effectChoiceFlowHelpers?.[operation]?.(...args);
-    }
     return browserRuleComposition.inputPort.submitHostCommand({
       kind: "effect_choice_command",
       operation,
@@ -408,9 +401,6 @@
   }
 
   function callHandFlowCommand(operation, args = []) {
-    if (activeBrowserDomainWorkingRoot) {
-      return handFlowHelpers?.[operation]?.(...args);
-    }
     return browserRuleComposition.inputPort.submitHostCommand({
       kind: "hand_flow_command",
       operation,
@@ -419,9 +409,6 @@
   }
 
   function callEffectExecutorCommand(operation, args = []) {
-    if (activeBrowserDomainWorkingRoot) {
-      return effectExecutors?.[operation]?.(...args);
-    }
     return browserRuleComposition.inputPort.submitHostCommand({
       kind: "effect_executor_command",
       operation,
@@ -430,9 +417,6 @@
   }
 
   function callDebugCommand(operation, args = []) {
-    if (activeBrowserDomainWorkingRoot) {
-      return debugRuntimeController?.[operation]?.(...args);
-    }
     return browserRuleComposition.inputPort.submitHostCommand({
       kind: "debug_command",
       operation,
@@ -1785,11 +1769,9 @@
     return getEarthSectorCoordinateForRoot(getCoordinateReadRoot());
   }
   function syncPlanetOrbitLandMarkers() {
-    if (activeBrowserDomainWorkingRoot) return syncPlanetOrbitLandMarkersForRoot(activeBrowserDomainWorkingRoot);
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "coordinate_sync_planet_markers" });
   }
   function seedDefaultReferenceRockets() {
-    if (activeBrowserDomainWorkingRoot) return seedDefaultReferenceRocketsForRoot(activeBrowserDomainWorkingRoot);
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "coordinate_seed_reference_rockets" });
   }
   const actionLogViewRuntime = viewAdapter?.actionLogViewRuntime
@@ -1978,19 +1960,13 @@
     buildActionLogExportPlayerResults,
   } = finalUiRuntime;
   function syncFinalScorePendingMarks(workingRoot = null) {
-    const commandRoot = workingRoot || activeBrowserDomainWorkingRoot;
-    if (commandRoot) {
-      return syncFinalScorePendingMarksForRoot(commandRoot);
-    }
+    if (workingRoot) return syncFinalScorePendingMarksForRoot(workingRoot);
     return browserRuleComposition.inputPort.submitHostCommand({
       kind: "score_sync_pending_marks",
     });
   }
   function handleFinalScoreTileClick(tileId, workingRoot = null) {
-    const commandRoot = workingRoot || activeBrowserDomainWorkingRoot;
-    if (commandRoot) {
-      return handleFinalScoreTileClickForRoot(commandRoot, tileId);
-    }
+    if (workingRoot) return handleFinalScoreTileClickForRoot(workingRoot, tileId);
     return browserRuleComposition.inputPort.submitHostCommand({
       kind: "score_mark_tile",
       tileId,
@@ -5544,7 +5520,6 @@
   }
 
   function buildFinalScoreSummaryLines() {
-    if (activeBrowserDomainWorkingRoot) return buildFinalScoreSummaryLinesForRoot(activeBrowserDomainWorkingRoot);
     return browserRuleComposition.inputPort.submitHostCommand({
       kind: "score_build_final_summary",
     }, { commit: false }).value || [];
@@ -5867,7 +5842,6 @@
   }
 
   function getRequiredMovePointsForUi(...args) {
-    if (activeBrowserDomainWorkingRoot) return getRequiredMovePointsForUiForRoot(activeBrowserDomainWorkingRoot, ...args);
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "ui_get_required_move_points", args }, { commit: false }).value;
   }
 
@@ -6341,7 +6315,6 @@
   }
 
   function executeFreeMoveForCardCorner(...args) {
-    if (activeBrowserDomainWorkingRoot) return executeFreeMoveForCardCornerForRoot(activeBrowserDomainWorkingRoot, ...args);
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "card_execute_free_move_corner", args });
   }
 
@@ -6919,7 +6892,6 @@
   }
 
   function getRocketCurrentPlanetId(rocketId) {
-    if (activeBrowserDomainWorkingRoot) return getRocketCurrentPlanetIdForRoot(activeBrowserDomainWorkingRoot, rocketId);
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "rocket_current_planet", rocketId }, { commit: false }).value;
   }
 
@@ -6942,9 +6914,6 @@
   }
 
   function listReadyChongTransportCandidates(player, task) {
-    if (activeBrowserDomainWorkingRoot) {
-      return listReadyChongTransportCandidatesForRoot(activeBrowserDomainWorkingRoot, player, task);
-    }
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "chong_ready_transports", player, task }, { commit: false }).value || [];
   }
 
@@ -7664,7 +7633,6 @@
   }
 
   function executeFreeMoveForScanAction4(...args) {
-    if (activeBrowserDomainWorkingRoot) return executeFreeMoveForScanAction4ForRoot(activeBrowserDomainWorkingRoot, ...args);
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "scan_execute_free_move", args });
   }
 
@@ -7826,7 +7794,6 @@
   }
 
   function executeCardMoveForEffect(...args) {
-    if (activeBrowserDomainWorkingRoot) return executeCardMoveForEffectForRoot(activeBrowserDomainWorkingRoot, ...args);
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "card_execute_move_effect", args });
   }
 
