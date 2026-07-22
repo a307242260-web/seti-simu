@@ -96,16 +96,13 @@
       applyIndustryRoundStartBonuses,
       activateAomomoBoard,
     } = context;
-    if (typeof context.getWorkingRoot !== "function") {
-      throw new TypeError("createDebugRuntime requires getWorkingRoot()");
-    }
-    const rulePlayerState = () => context.getWorkingRoot().playerState;
-    const ruleTurnState = () => context.getWorkingRoot().turnState;
-    const ruleRocketState = () => context.getWorkingRoot().rocketState;
-    const ruleTechGameState = () => context.getWorkingRoot().techGameState;
-    const ruleNebulaDataState = () => context.getWorkingRoot().nebulaDataState;
-    const ruleAlienGameState = () => context.getWorkingRoot().alienGameState;
-    const ruleCardState = () => context.getWorkingRoot().cardState;
+    const rulePlayerState = (workingRoot) => workingRoot.playerState;
+    const ruleTurnState = (workingRoot) => workingRoot.turnState;
+    const ruleRocketState = (workingRoot) => workingRoot.rocketState;
+    const ruleTechGameState = (workingRoot) => workingRoot.techGameState;
+    const ruleNebulaDataState = (workingRoot) => workingRoot.nebulaDataState;
+    const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
+    const ruleCardState = (workingRoot) => workingRoot.cardState;
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
@@ -117,16 +114,16 @@
       actionEffectFlow: "action_effect_flow",
     }) || {};
 
-    function setDebugOpen(open) {
+    function setDebugOpen(workingRoot, open) {
       const nextOpen = Boolean(open) && !els?.appWrap?.classList.contains("debug-tools-disabled");
       els?.appWrap?.classList.toggle("debug-collapsed", !nextOpen);
       els?.debugToggle?.setAttribute("aria-expanded", String(nextOpen));
       context.resize?.();
     }
 
-    function createFocusDebugCalibrationHandler() {
-      return function focusDebugCalibration(alienSlotId = 1) {
-        setDebugOpen(false);
+    function createFocusDebugCalibrationHandler(workingRoot) {
+      return function focusDebugCalibration(workingRoot, alienSlotId = 1) {
+        setDebugOpen(workingRoot, false);
         windowRef.requestAnimationFrame(() => {
           const target = els?.alienPanels?.[alienSlotId - 1] || getAlienJiuzheTraceLayer?.(alienSlotId);
           target?.scrollIntoView?.({ behavior: "smooth", block: "center", inline: "nearest" });
@@ -134,13 +131,13 @@
       };
     }
 
-    function setDebugPlayerMenuOpen(open) {
+    function setDebugPlayerMenuOpen(workingRoot, open) {
       if (!els?.debugPlayerMenu || !els?.debugPlayerSwitchButton) return;
       els.debugPlayerMenu.hidden = !open;
       els.debugPlayerSwitchButton.setAttribute("aria-expanded", String(open));
     }
 
-    function renderDebugPlayerSwitch() {
+    function renderDebugPlayerSwitch(workingRoot) {
       const currentPlayer = getInterfacePlayer?.();
       if (els?.debugPlayerSwitchButton && currentPlayer) {
         els.debugPlayerSwitchButton.textContent = `玩家：${currentPlayer.colorLabel}（${getPlayerAgentLabel?.(currentPlayer.id)}）`;
@@ -164,19 +161,19 @@
       }));
     }
 
-    function clearPlayerScopedSelectionsForSwitch() {
+    function clearPlayerScopedSelectionsForSwitch(workingRoot) {
       decisionState.discardAction = null;
       decisionState.cardSelectionAction = null;
       decisionSessions?.clear?.("pass_reserve_selection");
       uiRuntimeState.passReserveSelectionDismissed = false;
       decisionState.handScanAction = null;
       decisionSessions?.clear?.("play_card_selection");
-      cards.setSelectionActive(ruleCardState(), false);
-      cards.setDiscardSelectionActive(ruleCardState(), false, 0);
-      cards.setPlayCardSelectionActive(ruleCardState(), false);
+      cards.setSelectionActive(ruleCardState(workingRoot), false);
+      cards.setDiscardSelectionActive(ruleCardState(workingRoot), false, 0);
+      cards.setPlayCardSelectionActive(ruleCardState(workingRoot), false);
       syncPassReserveSelectionChrome?.();
-      tech.setTechSelectionActive(ruleTechGameState(), false);
-      tech.cancelPendingTake(ruleTechGameState());
+      tech.setTechSelectionActive(ruleTechGameState(workingRoot), false);
+      tech.cancelPendingTake(ruleTechGameState(workingRoot));
       closeTechBlueSlotPicker?.();
       closeDataPlacePicker?.();
       closeScanTargetPicker?.();
@@ -186,9 +183,9 @@
       clearActionPending?.();
     }
 
-    function selectDefaultRocketForCurrentPlayer() {
+    function selectDefaultRocketForCurrentPlayer(workingRoot) {
       const currentPlayer = getCurrentPlayer?.();
-      const currentRocket = context.rocketActions?.getActiveRocket(ruleRocketState());
+      const currentRocket = context.rocketActions?.getActiveRocket(ruleRocketState(workingRoot));
       if (
         currentRocket?.playerId === currentPlayer?.id
         && context.rocketActions?.isControllablePlayerRocket(currentRocket)
@@ -198,28 +195,28 @@
 
       const rocketsForPlayer = getMovableTokensForPlayer?.(currentPlayer?.id) || [];
       const fallbackRocket = rocketsForPlayer[rocketsForPlayer.length - 1] || null;
-      ruleRocketState().activeRocketId = fallbackRocket ? fallbackRocket.id : null;
+      ruleRocketState(workingRoot).activeRocketId = fallbackRocket ? fallbackRocket.id : null;
       clearMoveRocketHighlight?.();
       return fallbackRocket;
     }
 
-    function switchCurrentPlayerColor(color) {
+    function switchCurrentPlayerColor(workingRoot, color) {
       const targetPlayer = getPlayerByColor?.(color);
       if (!targetPlayer) {
         return { ok: false, message: "没有这名玩家" };
       }
 
-      if (targetPlayer.id === rulePlayerState().currentPlayerId) {
-        setDebugPlayerMenuOpen(false);
+      if (targetPlayer.id === rulePlayerState(workingRoot).currentPlayerId) {
+        setDebugPlayerMenuOpen(workingRoot, false);
         return { ok: true, player: targetPlayer, message: `当前已是${targetPlayer.name}` };
       }
 
-      clearPlayerScopedSelectionsForSwitch();
-      rulePlayerState().currentPlayerId = targetPlayer.id;
-      selectDefaultRocketForCurrentPlayer();
-      ruleRocketState().statusNote = `已切换到${targetPlayer.name}`;
-      setDebugPlayerMenuOpen(false);
-      renderDebugPlayerSwitch();
+      clearPlayerScopedSelectionsForSwitch(workingRoot);
+      rulePlayerState(workingRoot).currentPlayerId = targetPlayer.id;
+      selectDefaultRocketForCurrentPlayer(workingRoot);
+      ruleRocketState(workingRoot).statusNote = `已切换到${targetPlayer.name}`;
+      setDebugPlayerMenuOpen(workingRoot, false);
+      renderDebugPlayerSwitch(workingRoot);
       syncCardSelectionChrome?.();
       syncDiscardSelectionChrome?.();
       syncPlayCardSelectionChrome?.();
@@ -233,37 +230,37 @@
       updatePublicCardControls?.();
       updateActionButtons?.();
       renderStateReadout?.();
-      return { ok: true, player: targetPlayer, message: ruleRocketState().statusNote };
+      return { ok: true, player: targetPlayer, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function getSectorOpenDataCount(sectorId) {
-      return data.listNebulaTokens(ruleNebulaDataState(), sectorId)
+    function getSectorOpenDataCount(workingRoot, sectorId) {
+      return data.listNebulaTokens(ruleNebulaDataState(workingRoot), sectorId)
         .filter((token) => !token.replacedByPlayerColor && !token.playerColor)
         .length;
     }
 
-    function getSectorCapacity(sectorId) {
+    function getSectorCapacity(workingRoot, sectorId) {
       return data.getNebulaCapacity(sectorId);
     }
 
-    function getSectorExtraMarkCount(sectorId) {
+    function getSectorExtraMarkCount(workingRoot, sectorId) {
       return typeof data.listSectorExtraMarks === "function"
-        ? data.listSectorExtraMarks(ruleNebulaDataState(), sectorId).length
+        ? data.listSectorExtraMarks(ruleNebulaDataState(workingRoot), sectorId).length
         : 0;
     }
 
-    function getSectorNebulaLabelText(sectorId) {
+    function getSectorNebulaLabelText(workingRoot, sectorId) {
       return data.getNebulaLabel(sectorId);
     }
 
-    function setScanTargetPickerChrome(title, subtitle) {
+    function setScanTargetPickerChrome(workingRoot, title, subtitle) {
       if (els?.scanTargetTitle) els.scanTargetTitle.textContent = title || "选择扫描目标";
       if (els?.scanTargetSubtitle) els.scanTargetSubtitle.textContent = subtitle || "";
       if (els?.scanTargetCancel) els.scanTargetCancel.hidden = false;
       if (els?.scanTargetOverlay) els.scanTargetOverlay.hidden = false;
     }
 
-    function makeDebugQuickSectorScanButton(step, label, description, dataset = {}, disabled = false) {
+    function makeDebugQuickSectorScanButton(workingRoot, step, label, description, dataset = {}, disabled = false) {
       const button = documentRef.createElement("button");
       button.type = "button";
       button.className = "scan-target-option-button";
@@ -276,11 +273,11 @@
       return button;
     }
 
-    function renderDebugQuickSectorScanPlayerStep() {
-      setScanTargetPickerChrome("快速扫描扇区", "选择要放置标记的玩家颜色。");
-      els.scanTargetActions.replaceChildren(...rulePlayerState().players.map((player) => {
+    function renderDebugQuickSectorScanPlayerStep(workingRoot) {
+      setScanTargetPickerChrome(workingRoot, "快速扫描扇区", "选择要放置标记的玩家颜色。");
+      els.scanTargetActions.replaceChildren(...rulePlayerState(workingRoot).players.map((player) => {
         const definition = players.getPlayerColorDefinition(player.color);
-        return makeDebugQuickSectorScanButton(
+        return makeDebugQuickSectorScanButton(workingRoot, 
           "player",
           `${definition?.label || player.color}玩家`,
           `后续替换的数据会使用${definition?.label || player.color}普通 token`,
@@ -289,24 +286,24 @@
       }));
     }
 
-    function renderDebugQuickSectorScanSectorStep(playerId) {
-      const player = rulePlayerState().players.find((item) => item.id === playerId) || null;
+    function renderDebugQuickSectorScanSectorStep(workingRoot, playerId) {
+      const player = rulePlayerState(workingRoot).players.find((item) => item.id === playerId) || null;
       if (!player) {
-        renderDebugQuickSectorScanPlayerStep();
+        renderDebugQuickSectorScanPlayerStep(workingRoot);
         return;
       }
 
-      setScanTargetPickerChrome(
+      setScanTargetPickerChrome(workingRoot, 
         "快速扫描扇区",
         `当前玩家：${player.colorLabel}。选择要批量扫描的具名扇区。`,
       );
       els.scanTargetActions.replaceChildren(...data.NEBULA_IDS.map((sectorId) => {
-        const openCount = getSectorOpenDataCount(sectorId);
-        const capacity = getSectorCapacity(sectorId);
-        const extraCount = getSectorExtraMarkCount(sectorId);
-        return makeDebugQuickSectorScanButton(
+        const openCount = getSectorOpenDataCount(workingRoot, sectorId);
+        const capacity = getSectorCapacity(workingRoot, sectorId);
+        const extraCount = getSectorExtraMarkCount(workingRoot, sectorId);
+        return makeDebugQuickSectorScanButton(workingRoot, 
           "sector",
-          getSectorNebulaLabelText(sectorId),
+          getSectorNebulaLabelText(workingRoot, sectorId),
           `${sectorId}，标记 ${capacity - openCount + extraCount}/${capacity}`
             + (extraCount ? `（额外${extraCount}）` : ""),
           { playerId, sectorId },
@@ -314,17 +311,17 @@
       }));
     }
 
-    function renderDebugQuickSectorScanCountStep(playerId, sectorId) {
-      const player = rulePlayerState().players.find((item) => item.id === playerId) || null;
-      const openCount = getSectorOpenDataCount(sectorId);
+    function renderDebugQuickSectorScanCountStep(workingRoot, playerId, sectorId) {
+      const player = rulePlayerState(workingRoot).players.find((item) => item.id === playerId) || null;
+      const openCount = getSectorOpenDataCount(workingRoot, sectorId);
       if (!player) {
-        renderDebugQuickSectorScanSectorStep(playerId);
+        renderDebugQuickSectorScanSectorStep(workingRoot, playerId);
         return;
       }
 
-      setScanTargetPickerChrome(
+      setScanTargetPickerChrome(workingRoot, 
         "快速扫描扇区",
-        `${player.colorLabel}玩家 -> ${getSectorNebulaLabelText(sectorId)}。未替换数据 ${openCount} 个；超过后追加额外标记且不获得数据。`,
+        `${player.colorLabel}玩家 -> ${getSectorNebulaLabelText(workingRoot, sectorId)}。未替换数据 ${openCount} 个；超过后追加额外标记且不获得数据。`,
       );
       const maxCount = Math.max(openCount, 0) + DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT;
       const countButtons = Array.from({ length: maxCount }, (_item, index) => {
@@ -333,7 +330,7 @@
         const description = extraCount
           ? `替换 ${Math.max(openCount, 0)} 个数据，并追加 ${extraCount} 个额外标记`
           : `替换 ${count} 个未替换数据`;
-        return makeDebugQuickSectorScanButton(
+        return makeDebugQuickSectorScanButton(workingRoot, 
           "count",
           count === openCount
             ? `${count}（填满）`
@@ -347,10 +344,10 @@
       els.scanTargetActions.replaceChildren(...countButtons);
     }
 
-    function replaceNextSectorDataForDebugPlayer(sectorId, player) {
-      const nextToken = data.getNextReplaceableNebulaToken(ruleNebulaDataState(), sectorId);
+    function replaceNextSectorDataForDebugPlayer(workingRoot, sectorId, player) {
+      const nextToken = data.getNextReplaceableNebulaToken(ruleNebulaDataState(workingRoot), sectorId);
       if (nextToken) {
-        return data.replaceNextNebulaDataToken(ruleNebulaDataState(), sectorId, player, {
+        return data.replaceNextNebulaDataToken(ruleNebulaDataState(workingRoot), sectorId, player, {
           playerColor: player.color,
           playerLabel: player.colorLabel,
           playerTokenSrc: getNormalTokenAssetForPlayer?.(player),
@@ -358,7 +355,7 @@
         });
       }
       if (typeof data.addSectorExtraMark === "function") {
-        return data.addSectorExtraMark(ruleNebulaDataState(), sectorId, player, {
+        return data.addSectorExtraMark(ruleNebulaDataState(workingRoot), sectorId, player, {
           playerColor: player.color,
           playerLabel: player.colorLabel,
           playerTokenSrc: getNormalTokenAssetForPlayer?.(player),
@@ -368,18 +365,18 @@
       return { ok: false, message: `扇区${sectorId}没有可替换的数据` };
     }
 
-    function runDebugQuickSectorScan(playerId, sectorId, count) {
-      const player = rulePlayerState().players.find((item) => item.id === playerId) || null;
+    function runDebugQuickSectorScan(workingRoot, playerId, sectorId, count) {
+      const player = rulePlayerState(workingRoot).players.find((item) => item.id === playerId) || null;
       const replaceCount = Math.max(0, Math.round(Number(count) || 0));
       if (!player || !data.getNebulaCapacity(sectorId) || replaceCount <= 0) {
-        ruleRocketState().statusNote = "快速扫描扇区：参数无效";
+        ruleRocketState(workingRoot).statusNote = "快速扫描扇区：参数无效";
         renderStateReadout?.();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
 
       const results = [];
       for (let index = 0; index < replaceCount; index += 1) {
-        const result = replaceNextSectorDataForDebugPlayer(sectorId, player);
+        const result = replaceNextSectorDataForDebugPlayer(workingRoot, sectorId, player);
         if (!result.ok) break;
         results.push(result);
       }
@@ -389,9 +386,9 @@
       });
       const extraCount = results.filter((result) => result.extra).length;
       const dataCount = results.length - extraCount;
-      const replacedText = `快速扫描扇区：${player.colorLabel}玩家在${getSectorNebulaLabelText(sectorId)}`
+      const replacedText = `快速扫描扇区：${player.colorLabel}玩家在${getSectorNebulaLabelText(workingRoot, sectorId)}`
         + `标记 ${results.length}/${replaceCount} 次（数据${dataCount}，额外${extraCount}）`;
-      ruleRocketState().statusNote = settleResult?.ok
+      ruleRocketState(workingRoot).statusNote = settleResult?.ok
         ? `${replacedText}；${settleResult.message}；${settleResult.participantAwardMessage || "参与结算玩家各获得1宣传"}`
         : replacedText;
       renderSectorNebulaDataBoard?.();
@@ -402,46 +399,46 @@
         ok: results.length > 0,
         results,
         settlement: settleResult,
-        message: ruleRocketState().statusNote,
+        message: ruleRocketState(workingRoot).statusNote,
       };
     }
 
-    function handleDebugQuickSectorScanChoice(dataset) {
+    function handleDebugQuickSectorScanChoice(workingRoot, dataset) {
       const step = dataset.debugSectorScanStep;
       const playerId = dataset.playerId;
       if (step === "player") {
-        renderDebugQuickSectorScanSectorStep(playerId);
+        renderDebugQuickSectorScanSectorStep(workingRoot, playerId);
         return;
       }
       if (step === "sector") {
-        renderDebugQuickSectorScanCountStep(playerId, dataset.sectorId);
+        renderDebugQuickSectorScanCountStep(workingRoot, playerId, dataset.sectorId);
         return;
       }
       if (step === "count") {
         closeScanTargetPicker?.();
-        runDebugQuickSectorScan(playerId, dataset.sectorId, Number(dataset.count));
+        runDebugQuickSectorScan(workingRoot, playerId, dataset.sectorId, Number(dataset.count));
       }
     }
 
-    function openDebugQuickSectorScanPicker() {
+    function openDebugQuickSectorScanPicker(workingRoot) {
       if (
         isCardSelectionActive?.()
         || isDiscardSelectionActive?.()
         || isPlayCardSelectionActive?.()
         || isTechTilePickingActive?.()
       ) {
-        ruleRocketState().statusNote = "请先完成当前选择";
+        ruleRocketState(workingRoot).statusNote = "请先完成当前选择";
         renderStateReadout?.();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
       decisionState.scanTargetAction = { type: "debug_quick_sector_scan" };
-      renderDebugQuickSectorScanPlayerStep();
-      ruleRocketState().statusNote = "快速扫描扇区：请选择玩家颜色";
+      renderDebugQuickSectorScanPlayerStep(workingRoot);
+      ruleRocketState(workingRoot).statusNote = "快速扫描扇区：请选择玩家颜色";
       renderStateReadout?.();
-      return { ok: true, message: ruleRocketState().statusNote };
+      return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function setDebugAlienTraceModeActive(active, message = null) {
+    function setDebugAlienTraceModeActive(workingRoot, active, message = null) {
       uiRuntimeState.debugAlienTraceModeActive = Boolean(active);
       if (uiRuntimeState.debugAlienTraceModeActive) {
         context.closeAlienTracePicker?.();
@@ -449,13 +446,13 @@
           mode: "debug-direct",
           allowedTraceTypes: aliens.TRACE_TYPES,
         };
-        ruleRocketState().statusNote = message
+        ruleRocketState(workingRoot).statusNote = message
           || "调试：未揭示外星人请点击 state 面板痕迹位；已揭示请点击正面痕迹位或方舟保留牌解锁";
       } else {
         if (decisionState.alienTracePickerState?.mode === "debug-direct") {
           decisionState.alienTracePickerState = null;
         }
-        ruleRocketState().statusNote = message || "已退出调试获取外星人痕迹模式";
+        ruleRocketState(workingRoot).statusNote = message || "已退出调试获取外星人痕迹模式";
       }
       els?.debugAlienTraceButton?.classList.toggle("is-active", uiRuntimeState.debugAlienTraceModeActive);
       if (els?.debugAlienTraceButton) {
@@ -465,18 +462,18 @@
       renderReservedCards?.();
       updateActionButtons?.();
       renderStateReadout?.();
-      return { ok: true, active: uiRuntimeState.debugAlienTraceModeActive, message: ruleRocketState().statusNote };
+      return { ok: true, active: uiRuntimeState.debugAlienTraceModeActive, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function toggleDebugAlienTraceMode() {
-      return setDebugAlienTraceModeActive(!uiRuntimeState.debugAlienTraceModeActive);
+    function toggleDebugAlienTraceMode(workingRoot) {
+      return setDebugAlienTraceModeActive(workingRoot, !uiRuntimeState.debugAlienTraceModeActive);
     }
 
-    function enableDebugAlienTraceModeForReveal(message) {
-      return setDebugAlienTraceModeActive(true, message);
+    function enableDebugAlienTraceModeForReveal(workingRoot, message) {
+      return setDebugAlienTraceModeActive(workingRoot, true, message);
     }
 
-    function addDebugIncome() {
+    function addDebugIncome(workingRoot) {
       const currentPlayer = getCurrentPlayer?.();
       players.gainResources(currentPlayer, {
         credits: 100,
@@ -487,68 +484,68 @@
       for (let index = 0; index < players.RESOURCE_LIMITS.availableData; index += 1) {
         data.gainData(currentPlayer, { source: "debug" });
       }
-      ruleRocketState().statusNote = "调试收入 +100信用点 +100能量 +10宣传 +2额外公共扫描 +6数据";
+      ruleRocketState(workingRoot).statusNote = "调试收入 +100信用点 +100能量 +10宣传 +2额外公共扫描 +6数据";
       renderPlayerStats?.();
       updateActionButtons?.();
       renderStateReadout?.();
-      return { ok: true, player: currentPlayer, message: ruleRocketState().statusNote };
+      return { ok: true, player: currentPlayer, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function addDebugData() {
+    function addDebugData(workingRoot) {
       const currentPlayer = getCurrentPlayer?.();
       const result = data.gainData(currentPlayer, { source: "debug" });
-      ruleRocketState().statusNote = result.message;
+      ruleRocketState(workingRoot).statusNote = result.message;
       renderPlayerStats?.();
       updateActionButtons?.();
       renderStateReadout?.();
       return result;
     }
 
-    function addDebugScore() {
+    function addDebugScore(workingRoot) {
       const currentPlayer = getCurrentPlayer?.();
       players.gainResources(currentPlayer, { score: 20 });
-      ruleRocketState().statusNote = `${currentPlayer.colorLabel}玩家调试分数 +20`;
+      ruleRocketState(workingRoot).statusNote = `${currentPlayer.colorLabel}玩家调试分数 +20`;
       renderPlayerStats?.();
       updateActionButtons?.();
       renderStateReadout?.();
-      return { ok: true, player: currentPlayer, message: ruleRocketState().statusNote };
+      return { ok: true, player: currentPlayer, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function addDebugCardByInput(input) {
+    function addDebugCardByInput(workingRoot, input) {
       const currentPlayer = getCurrentPlayer?.();
       if (!currentPlayer) {
-        ruleRocketState().statusNote = "没有当前玩家，无法获取卡牌";
+        ruleRocketState(workingRoot).statusNote = "没有当前玩家，无法获取卡牌";
         renderStateReadout?.();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
       const entries = typeof cards.getCatalogEntriesByInputRange === "function"
         ? cards.getCatalogEntriesByInputRange(input, 5)
         : [cards.getCatalogEntryByInput?.(input) || cards.getBasicCatalogEntryByInput?.(input)].filter(Boolean);
       if (!entries.length) {
-        ruleRocketState().statusNote = "请输入起始卡牌编号：普通牌 b_1 到 b_140（也可直接输入数字），或 DLC 牌 dlc_1 到 dlc_42";
+        ruleRocketState(workingRoot).statusNote = "请输入起始卡牌编号：普通牌 b_1 到 b_140（也可直接输入数字），或 DLC 牌 dlc_1 到 dlc_42";
         renderStateReadout?.();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
 
       const gainedCards = entries.map((entry, index) => cards.createCardInstance(entry, `debug-${index + 1}`));
       for (const card of gainedCards) {
         cards.addCardToHand(currentPlayer, card);
       }
-      ruleRocketState().statusNote = `调试获取卡牌：${gainedCards.map((card) => cards.getCardLabel(card)).join("、")} 已加入${currentPlayer.colorLabel}玩家手牌`;
+      ruleRocketState(workingRoot).statusNote = `调试获取卡牌：${gainedCards.map((card) => cards.getCardLabel(card)).join("、")} 已加入${currentPlayer.colorLabel}玩家手牌`;
       renderPlayerStats?.();
       renderPlayerHand?.();
       updateActionButtons?.();
       renderStateReadout?.();
-      return { ok: true, player: currentPlayer, cards: gainedCards, message: ruleRocketState().statusNote };
+      return { ok: true, player: currentPlayer, cards: gainedCards, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function promptDebugGainCard() {
+    function promptDebugGainCard(workingRoot) {
       const input = windowRef.prompt("输入起始卡牌编号，将获取连续最多 5 张。例如 25、b_25、b_25.webp、dlc_1 或 dlc_1.png");
       if (input == null) return { ok: false, cancelled: true };
-      return addDebugCardByInput(input);
+      return addDebugCardByInput(workingRoot, input);
     }
 
-    function ensureDebugPlayerCardZones(player) {
+    function ensureDebugPlayerCardZones(workingRoot, player) {
       if (!player) return;
       if (!player.resources || typeof player.resources !== "object") player.resources = {};
       if (!Array.isArray(player.hand)) player.hand = [];
@@ -556,7 +553,7 @@
       player.resources.handSize = player.hand.length;
     }
 
-    function getDebugAlienCardKey(card) {
+    function getDebugAlienCardKey(workingRoot, card) {
       if (!card) return null;
       if (card.set && card.cardId) return `${card.set}:${card.cardId}`;
       if (card.cardId) return String(card.cardId);
@@ -564,18 +561,18 @@
       return card.id ? String(card.id) : null;
     }
 
-    function playerHasDebugAlienCard(player, card) {
-      const key = getDebugAlienCardKey(card);
+    function playerHasDebugAlienCard(workingRoot, player, card) {
+      const key = getDebugAlienCardKey(workingRoot, card);
       if (!key) return false;
       return [...(player?.hand || []), ...(player?.reservedCards || [])]
-        .some((existing) => getDebugAlienCardKey(existing) === key);
+        .some((existing) => getDebugAlienCardKey(workingRoot, existing) === key);
     }
 
-    function createDebugAlienCardGrantSummary() {
+    function createDebugAlienCardGrantSummary(workingRoot) {
       return { hand: 0, reserved: 0, specialReserved: 0, skipped: 0 };
     }
 
-    function recordDebugAlienCardGrant(summary, result) {
+    function recordDebugAlienCardGrant(workingRoot, summary, result) {
       if (!summary || !result) return summary;
       if (result.duplicate) summary.skipped += 1;
       else if (result.location === "hand") summary.hand += 1;
@@ -584,40 +581,40 @@
       return summary;
     }
 
-    function addDebugAlienCardToPlayer(player, card) {
-      ensureDebugPlayerCardZones(player);
+    function addDebugAlienCardToPlayer(workingRoot, player, card) {
+      ensureDebugPlayerCardZones(workingRoot, player);
       if (!player || !card) return { added: false };
-      if (playerHasDebugAlienCard(player, card)) {
+      if (playerHasDebugAlienCard(workingRoot, player, card)) {
         return { added: false, duplicate: true };
       }
       cards.addCardToHand(player, card);
       return { added: true, location: "hand" };
     }
 
-    function getNextDebugAlienCardSequence(alienState, fallback) {
+    function getNextDebugAlienCardSequence(workingRoot, alienState, fallback) {
       if (!alienState || typeof alienState !== "object") return fallback;
       const sequence = Math.max(0, Math.round(Number(alienState.nextCardSequence) || 0));
       alienState.nextCardSequence = sequence + 1;
       return sequence;
     }
 
-    function grantAllModuleAlienCardsForDebug(player, alienModule, alienState) {
-      const summary = createDebugAlienCardGrantSummary();
+    function grantAllModuleAlienCardsForDebug(workingRoot, player, alienModule, alienState) {
+      const summary = createDebugAlienCardGrantSummary(workingRoot);
       if (!alienModule?.CARD_DEFINITIONS?.length || !alienModule.createAlienCard) return summary;
 
       let fallbackSequence = 0;
       for (const definition of alienModule.CARD_DEFINITIONS) {
         const sequence = alienState
-          ? getNextDebugAlienCardSequence(alienState, fallbackSequence)
+          ? getNextDebugAlienCardSequence(workingRoot, alienState, fallbackSequence)
           : fallbackSequence;
         fallbackSequence = sequence + 1;
         const card = alienModule.createAlienCard(definition.index, sequence);
-        recordDebugAlienCardGrant(summary, addDebugAlienCardToPlayer(player, card));
+        recordDebugAlienCardGrant(workingRoot, summary, addDebugAlienCardToPlayer(workingRoot, player, card));
       }
       return summary;
     }
 
-    function createJiuzheDebugCard(definition) {
+    function createJiuzheDebugCard(workingRoot, definition) {
       return {
         index: definition.index,
         id: `jiuzhe-card-${definition.index}`,
@@ -630,12 +627,12 @@
       };
     }
 
-    function grantAllJiuzheCardsForDebug(player) {
-      const summary = createDebugAlienCardGrantSummary();
+    function grantAllJiuzheCardsForDebug(workingRoot, player) {
+      const summary = createDebugAlienCardGrantSummary(workingRoot);
       if (!jiuzhe?.CARD_DEFINITIONS?.length || !player) return summary;
 
-      const jiuzheState = jiuzhe.ensureJiuzheState(ruleAlienGameState());
-      const playerJiuzheState = jiuzhe.getPlayerJiuzheState(ruleAlienGameState(), player, true);
+      const jiuzheState = jiuzhe.ensureJiuzheState(ruleAlienGameState(workingRoot));
+      const playerJiuzheState = jiuzhe.getPlayerJiuzheState(ruleAlienGameState(workingRoot), player, true);
       if (!playerJiuzheState) return summary;
 
       if (!Array.isArray(playerJiuzheState.cards)) playerJiuzheState.cards = [];
@@ -645,7 +642,7 @@
           summary.skipped += 1;
           continue;
         }
-        playerJiuzheState.cards.push(createJiuzheDebugCard(definition));
+        playerJiuzheState.cards.push(createJiuzheDebugCard(workingRoot, definition));
         existing.add(Number(definition.index));
         summary.specialReserved += 1;
       }
@@ -654,8 +651,8 @@
       return summary;
     }
 
-    function grantAllFangzhouCardsForDebug(player) {
-      const summary = createDebugAlienCardGrantSummary();
+    function grantAllFangzhouCardsForDebug(workingRoot, player) {
+      const summary = createDebugAlienCardGrantSummary(workingRoot);
       if (!fangzhou?.createCard2Definition || !player) return summary;
 
       const playerKey = player.id || player.color || "player";
@@ -669,13 +666,13 @@
             fangzhouCard2: true,
             fangzhouTraceType: traceType,
           };
-          recordDebugAlienCardGrant(summary, addDebugAlienCardToPlayer(player, card));
+          recordDebugAlienCardGrant(workingRoot, summary, addDebugAlienCardToPlayer(workingRoot, player, card));
         }
       }
       return summary;
     }
 
-    function formatDebugAlienCardGrantSummary(summary) {
+    function formatDebugAlienCardGrantSummary(workingRoot, summary) {
       if (!summary) return "";
       const parts = [];
       if (summary.hand) parts.push(`手牌+${summary.hand}`);
@@ -685,158 +682,158 @@
       return parts.length ? `；调试发牌：${parts.join("，")}` : "；调试发牌：该外星人牌已齐";
     }
 
-    function revealJiuzheForDebug() {
+    function revealJiuzheForDebug(workingRoot) {
       if (!jiuzhe) return { ok: false, message: "九折模块未加载" };
       const currentPlayer = getCurrentPlayer?.();
       const alienSlotId = 1;
-      const slot = aliens.getAlienSlot(ruleAlienGameState(), alienSlotId);
+      const slot = aliens.getAlienSlot(ruleAlienGameState(workingRoot), alienSlotId);
       if (!slot) return { ok: false, message: "找不到外星人 1" };
 
       slot.assignedAlienId = jiuzhe.ALIEN_ID;
       slot.alienId = jiuzhe.ALIEN_ID;
       slot.revealed = true;
-      jiuzhe.ensureJiuzheState(ruleAlienGameState());
-      ruleAlienGameState().jiuzhe.revealedSlotId = alienSlotId;
-      ruleAlienGameState().jiuzhe.revealedByPlayerId = currentPlayer.id;
-      ruleAlienGameState().jiuzhe.revealedByPlayerColor = currentPlayer.color;
-      ruleAlienGameState().jiuzhe.freeScoreThreshold = (Number(currentPlayer.resources?.score) || 0) + 20;
-      ruleAlienGameState().jiuzhe.paidScoreThreshold = (Number(currentPlayer.resources?.score) || 0) + 40;
-      ruleAlienGameState().jiuzhe.revealInitialized = true;
-      delete ruleAlienGameState().jiuzhe.traceSlotsByAlienSlotId[String(alienSlotId)];
-      const grantSummary = grantAllJiuzheCardsForDebug(currentPlayer);
+      jiuzhe.ensureJiuzheState(ruleAlienGameState(workingRoot));
+      ruleAlienGameState(workingRoot).jiuzhe.revealedSlotId = alienSlotId;
+      ruleAlienGameState(workingRoot).jiuzhe.revealedByPlayerId = currentPlayer.id;
+      ruleAlienGameState(workingRoot).jiuzhe.revealedByPlayerColor = currentPlayer.color;
+      ruleAlienGameState(workingRoot).jiuzhe.freeScoreThreshold = (Number(currentPlayer.resources?.score) || 0) + 20;
+      ruleAlienGameState(workingRoot).jiuzhe.paidScoreThreshold = (Number(currentPlayer.resources?.score) || 0) + 40;
+      ruleAlienGameState(workingRoot).jiuzhe.revealInitialized = true;
+      delete ruleAlienGameState(workingRoot).jiuzhe.traceSlotsByAlienSlotId[String(alienSlotId)];
+      const grantSummary = grantAllJiuzheCardsForDebug(workingRoot, currentPlayer);
 
-      enableDebugAlienTraceModeForReveal(`九折调试：已在外星人 1 揭示九折（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(grantSummary)}`);
+      enableDebugAlienTraceModeForReveal(workingRoot, `九折调试：已在外星人 1 揭示九折（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(workingRoot, grantSummary)}`);
       renderAlienPanels?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
       renderReservedCards?.();
       renderStateReadout?.();
-      return { ok: true, message: ruleRocketState().statusNote };
+      return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function revealYichangdianForDebug() {
+    function revealYichangdianForDebug(workingRoot) {
       if (!yichangdian) return { ok: false, message: "异常点模块未加载" };
       const currentPlayer = getCurrentPlayer?.();
       const alienSlotId = 1;
-      const slot = aliens.getAlienSlot(ruleAlienGameState(), alienSlotId);
+      const slot = aliens.getAlienSlot(ruleAlienGameState(workingRoot), alienSlotId);
       if (!slot) return { ok: false, message: "找不到外星人 1" };
 
       slot.assignedAlienId = yichangdian.ALIEN_ID;
       slot.alienId = yichangdian.ALIEN_ID;
       slot.revealed = true;
-      ruleAlienGameState().yichangdian = yichangdian.createYichangdianState();
+      ruleAlienGameState(workingRoot).yichangdian = yichangdian.createYichangdianState();
       const earth = getEarthSectorCoordinate?.();
-      yichangdian.initializeYichangdianReveal(ruleAlienGameState(), alienSlotId, currentPlayer, earth?.x);
-      const grantSummary = grantAllModuleAlienCardsForDebug(currentPlayer, yichangdian, ruleAlienGameState().yichangdian);
+      yichangdian.initializeYichangdianReveal(ruleAlienGameState(workingRoot), alienSlotId, currentPlayer, earth?.x);
+      const grantSummary = grantAllModuleAlienCardsForDebug(workingRoot, currentPlayer, yichangdian, ruleAlienGameState(workingRoot).yichangdian);
 
-      enableDebugAlienTraceModeForReveal(`异常点调试：已在外星人 1 揭示异常点并生成异常标记（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(grantSummary)}`);
+      enableDebugAlienTraceModeForReveal(workingRoot, `异常点调试：已在外星人 1 揭示异常点并生成异常标记（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(workingRoot, grantSummary)}`);
       renderAlienPanels?.();
       renderRockets?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
       renderReservedCards?.();
       renderStateReadout?.();
-      return { ok: true, message: ruleRocketState().statusNote };
+      return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function revealFangzhouForDebug() {
+    function revealFangzhouForDebug(workingRoot) {
       if (!fangzhou) return { ok: false, message: "方舟模块未加载" };
       const currentPlayer = getCurrentPlayer?.();
       const alienSlotId = 1;
-      const slot = aliens.getAlienSlot(ruleAlienGameState(), alienSlotId);
+      const slot = aliens.getAlienSlot(ruleAlienGameState(workingRoot), alienSlotId);
       if (!slot) return { ok: false, message: "找不到外星人 1" };
 
       slot.assignedAlienId = fangzhou.ALIEN_ID;
       slot.alienId = fangzhou.ALIEN_ID;
       slot.revealed = true;
-      ruleAlienGameState().fangzhou = fangzhou.createFangzhouState();
-      fangzhou.initializeFangzhouReveal(ruleAlienGameState(), alienSlotId, currentPlayer, getActivePlayers?.());
-      const grantSummary = grantAllFangzhouCardsForDebug(currentPlayer);
+      ruleAlienGameState(workingRoot).fangzhou = fangzhou.createFangzhouState();
+      fangzhou.initializeFangzhouReveal(ruleAlienGameState(workingRoot), alienSlotId, currentPlayer, getActivePlayers?.());
+      const grantSummary = grantAllFangzhouCardsForDebug(workingRoot, currentPlayer);
 
-      enableDebugAlienTraceModeForReveal(`方舟调试：已在外星人 1 揭示方舟（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位或解锁牌会按正式规则结算奖励${formatDebugAlienCardGrantSummary(grantSummary)}`);
+      enableDebugAlienTraceModeForReveal(workingRoot, `方舟调试：已在外星人 1 揭示方舟（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位或解锁牌会按正式规则结算奖励${formatDebugAlienCardGrantSummary(workingRoot, grantSummary)}`);
       renderAlienPanels?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
       renderReservedCards?.();
       renderStateReadout?.();
-      return { ok: true, message: ruleRocketState().statusNote };
+      return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function revealBanrenmaForDebug() {
+    function revealBanrenmaForDebug(workingRoot) {
       if (!banrenma) return { ok: false, message: "半人马模块未加载" };
       const currentPlayer = getCurrentPlayer?.();
       const alienSlotId = 1;
-      const slot = aliens.getAlienSlot(ruleAlienGameState(), alienSlotId);
+      const slot = aliens.getAlienSlot(ruleAlienGameState(workingRoot), alienSlotId);
       if (!slot) return { ok: false, message: "找不到外星人 1" };
 
       slot.assignedAlienId = banrenma.ALIEN_ID;
       slot.alienId = banrenma.ALIEN_ID;
       slot.revealed = true;
-      ruleAlienGameState().banrenma = banrenma.createBanrenmaState();
-      banrenma.initializeBanrenmaReveal(ruleAlienGameState(), alienSlotId, currentPlayer, getActivePlayers?.());
-      const grantSummary = grantAllModuleAlienCardsForDebug(currentPlayer, banrenma, ruleAlienGameState().banrenma);
+      ruleAlienGameState(workingRoot).banrenma = banrenma.createBanrenmaState();
+      banrenma.initializeBanrenmaReveal(ruleAlienGameState(workingRoot), alienSlotId, currentPlayer, getActivePlayers?.());
+      const grantSummary = grantAllModuleAlienCardsForDebug(workingRoot, currentPlayer, banrenma, ruleAlienGameState(workingRoot).banrenma);
 
-      enableDebugAlienTraceModeForReveal(`半人马调试：已在外星人 1 揭示半人马（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(grantSummary)}`);
+      enableDebugAlienTraceModeForReveal(workingRoot, `半人马调试：已在外星人 1 揭示半人马（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(workingRoot, grantSummary)}`);
       renderAlienPanels?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
       renderReservedCards?.();
       renderStateReadout?.();
-      return { ok: true, message: ruleRocketState().statusNote };
+      return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function revealChongForDebug() {
+    function revealChongForDebug(workingRoot) {
       if (!chong) return { ok: false, message: "虫族模块未加载" };
       const currentPlayer = getCurrentPlayer?.();
       const alienSlotId = 1;
-      const slot = aliens.getAlienSlot(ruleAlienGameState(), alienSlotId);
+      const slot = aliens.getAlienSlot(ruleAlienGameState(workingRoot), alienSlotId);
       if (!slot) return { ok: false, message: "找不到外星人 1" };
 
       slot.assignedAlienId = chong.ALIEN_ID;
       slot.alienId = chong.ALIEN_ID;
       slot.revealed = true;
-      ruleAlienGameState().chong = chong.createChongState();
-      chong.initializeChongReveal(ruleAlienGameState(), alienSlotId, currentPlayer);
-      const grantSummary = grantAllModuleAlienCardsForDebug(currentPlayer, chong, ruleAlienGameState().chong);
+      ruleAlienGameState(workingRoot).chong = chong.createChongState();
+      chong.initializeChongReveal(ruleAlienGameState(workingRoot), alienSlotId, currentPlayer);
+      const grantSummary = grantAllModuleAlienCardsForDebug(workingRoot, currentPlayer, chong, ruleAlienGameState(workingRoot).chong);
 
-      enableDebugAlienTraceModeForReveal(`虫族调试：已在外星人 1 揭示虫族，按揭示阶段放置化石（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(grantSummary)}`);
+      enableDebugAlienTraceModeForReveal(workingRoot, `虫族调试：已在外星人 1 揭示虫族，按揭示阶段放置化石（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(workingRoot, grantSummary)}`);
       renderAlienPanels?.();
       renderRockets?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
       renderReservedCards?.();
       renderStateReadout?.();
-      return { ok: true, message: ruleRocketState().statusNote };
+      return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function revealAmibaForDebug() {
+    function revealAmibaForDebug(workingRoot) {
       if (!amiba) return { ok: false, message: "阿米巴模块未加载" };
       const currentPlayer = getCurrentPlayer?.();
       const alienSlotId = 1;
-      const slot = aliens.getAlienSlot(ruleAlienGameState(), alienSlotId);
+      const slot = aliens.getAlienSlot(ruleAlienGameState(workingRoot), alienSlotId);
       if (!slot) return { ok: false, message: "找不到外星人 1" };
 
       slot.assignedAlienId = amiba.ALIEN_ID;
       slot.alienId = amiba.ALIEN_ID;
       slot.revealed = true;
-      ruleAlienGameState().amiba = amiba.createAmibaState();
-      amiba.initializeAmibaReveal(ruleAlienGameState(), alienSlotId, currentPlayer);
-      const grantSummary = grantAllModuleAlienCardsForDebug(currentPlayer, amiba, ruleAlienGameState().amiba);
+      ruleAlienGameState(workingRoot).amiba = amiba.createAmibaState();
+      amiba.initializeAmibaReveal(ruleAlienGameState(workingRoot), alienSlotId, currentPlayer);
+      const grantSummary = grantAllModuleAlienCardsForDebug(workingRoot, currentPlayer, amiba, ruleAlienGameState(workingRoot).amiba);
 
-      const symbolCount = Object.keys(ruleAlienGameState().amiba?.symbolsById || {}).length;
-      enableDebugAlienTraceModeForReveal(`阿米巴调试：已在外星人 1 揭示阿米巴并默认放置 ${symbolCount} 个 symbol（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(grantSummary)}`);
+      const symbolCount = Object.keys(ruleAlienGameState(workingRoot).amiba?.symbolsById || {}).length;
+      enableDebugAlienTraceModeForReveal(workingRoot, `阿米巴调试：已在外星人 1 揭示阿米巴并默认放置 ${symbolCount} 个 symbol（未放置 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(workingRoot, grantSummary)}`);
       renderAlienPanels?.();
       renderPlayerHand?.();
       renderPlayerStats?.();
       renderReservedCards?.();
       renderStateReadout?.();
-      return { ok: true, message: ruleRocketState().statusNote };
+      return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function logAomomoDebugCoordinates(alienSlotId = ruleAlienGameState().aomomo?.revealedSlotId || 1) {
+    function logAomomoDebugCoordinates(workingRoot, alienSlotId = ruleAlienGameState(workingRoot).aomomo?.revealedSlotId || 1) {
       if (!aomomo) return;
       const lines = [];
-      for (const token of data.listNebulaTokens(ruleNebulaDataState(), aomomo.NEBULA_ID)) {
+      for (const token of data.listNebulaTokens(ruleNebulaDataState(workingRoot), aomomo.NEBULA_ID)) {
         const layout = data.getEffectiveAomomoBoardSlotLayout?.(token.slotIndex, token, context.solarState, context.solar);
         if (!layout) continue;
         const boardX = layout.boardPercentX ?? layout.percentX;
@@ -850,23 +847,23 @@
       }
     }
 
-    function revealAomomoForDebug() {
+    function revealAomomoForDebug(workingRoot) {
       if (!aomomo) return { ok: false, message: "奥陌陌模块未加载" };
       const currentPlayer = getCurrentPlayer?.();
       const alienSlotId = 1;
-      const slot = aliens.getAlienSlot(ruleAlienGameState(), alienSlotId);
+      const slot = aliens.getAlienSlot(ruleAlienGameState(workingRoot), alienSlotId);
       if (!slot) return { ok: false, message: "找不到外星人 1" };
 
       slot.assignedAlienId = aomomo.ALIEN_ID;
       slot.alienId = aomomo.ALIEN_ID;
       slot.revealed = true;
-      ruleAlienGameState().aomomo = aomomo.createAomomoState();
-      aomomo.initializeAomomoReveal(ruleAlienGameState(), alienSlotId, currentPlayer);
+      ruleAlienGameState(workingRoot).aomomo = aomomo.createAomomoState();
+      aomomo.initializeAomomoReveal(ruleAlienGameState(workingRoot), alienSlotId, currentPlayer);
       activateAomomoBoard?.({ source: "aomomo_debug", replaceData: true });
-      const grantSummary = grantAllModuleAlienCardsForDebug(currentPlayer, aomomo, ruleAlienGameState().aomomo);
+      const grantSummary = grantAllModuleAlienCardsForDebug(workingRoot, currentPlayer, aomomo, ruleAlienGameState(workingRoot).aomomo);
 
-      enableDebugAlienTraceModeForReveal(
-        `奥陌陌调试：已揭示奥陌陌、替换第3轮盘并启用奥陌陌星球；星球弧形槽位放入3个数据token，随wheel3旋转；外星人面板不预放痕迹/环绕/登陆token${formatDebugAlienCardGrantSummary(grantSummary)}`,
+      enableDebugAlienTraceModeForReveal(workingRoot, 
+        `奥陌陌调试：已揭示奥陌陌、替换第3轮盘并启用奥陌陌星球；星球弧形槽位放入3个数据token，随wheel3旋转；外星人面板不预放痕迹/环绕/登陆token${formatDebugAlienCardGrantSummary(workingRoot, grantSummary)}`,
       );
       renderWheels?.();
       renderSectorNebulaDataBoard?.();
@@ -876,29 +873,29 @@
       renderPlayerStats?.();
       renderReservedCards?.();
       renderStateReadout?.();
-      logAomomoDebugCoordinates(alienSlotId);
-      return { ok: true, message: ruleRocketState().statusNote };
+      logAomomoDebugCoordinates(workingRoot, alienSlotId);
+      return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function revealRunezuForDebug() {
+    function revealRunezuForDebug(workingRoot) {
       if (!runezu) return { ok: false, message: "符文族模块未加载" };
       const currentPlayer = getCurrentPlayer?.();
       const alienSlotId = 1;
-      const slot = aliens.getAlienSlot(ruleAlienGameState(), alienSlotId);
+      const slot = aliens.getAlienSlot(ruleAlienGameState(workingRoot), alienSlotId);
       if (!slot) return { ok: false, message: "找不到外星人 1" };
 
       slot.assignedAlienId = runezu.ALIEN_ID;
       slot.alienId = runezu.ALIEN_ID;
       slot.revealed = true;
-      ruleAlienGameState().runezu = runezu.createRunezuState();
-      runezu.initializeRunezuReveal(ruleAlienGameState(), alienSlotId, currentPlayer, {
-        techBoardState: ruleTechGameState().board,
+      ruleAlienGameState(workingRoot).runezu = runezu.createRunezuState();
+      runezu.initializeRunezuReveal(ruleAlienGameState(workingRoot), alienSlotId, currentPlayer, {
+        techBoardState: ruleTechGameState(workingRoot).board,
       });
-      const panelSymbols = runezu.listPanelSymbols(ruleAlienGameState());
-      const grantSummary = grantAllModuleAlienCardsForDebug(currentPlayer, runezu, ruleAlienGameState().runezu);
+      const panelSymbols = runezu.listPanelSymbols(ruleAlienGameState(workingRoot));
+      const grantSummary = grantAllModuleAlienCardsForDebug(workingRoot, currentPlayer, runezu, ruleAlienGameState(workingRoot).runezu);
 
-      enableDebugAlienTraceModeForReveal(
-        `符文族调试：已揭示符文族并按机制默认放置 ${panelSymbols.length} 个白框 symbol（未放置痕迹 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(grantSummary)}`,
+      enableDebugAlienTraceModeForReveal(workingRoot, 
+        `符文族调试：已揭示符文族并按机制默认放置 ${panelSymbols.length} 个白框 symbol（未放置痕迹 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(workingRoot, grantSummary)}`,
       );
       renderAlienPanels?.();
       renderRockets?.();
@@ -907,17 +904,17 @@
       renderPlayerStats?.();
       renderReservedCards?.();
       renderStateReadout?.();
-      return { ok: true, message: ruleRocketState().statusNote };
+      return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function fillNebulaDataBoard(options = {}) {
+    function fillNebulaDataBoard(workingRoot, options = {}) {
       const { replace = false, source = "debug", log = false } = options;
       if (replace) {
-        data.clearNebulaData(ruleNebulaDataState());
+        data.clearNebulaData(ruleNebulaDataState(workingRoot));
       }
 
-      const result = data.fillAllNebulaData(ruleNebulaDataState(), { source });
-      ruleRocketState().statusNote = result.message;
+      const result = data.fillAllNebulaData(ruleNebulaDataState(workingRoot), { source });
+      ruleRocketState(workingRoot).statusNote = result.message;
       renderSectorNebulaDataBoard?.();
       renderStateReadout?.();
 
@@ -941,23 +938,23 @@
       return result;
     }
 
-    function fillDebugNebulaData() {
-      return fillNebulaDataBoard({ source: "debug", log: true });
+    function fillDebugNebulaData(workingRoot) {
+      return fillNebulaDataBoard(workingRoot, { source: "debug", log: true });
     }
 
-    function toggleSectorWinDebug() {
+    function toggleSectorWinDebug(workingRoot) {
       uiRuntimeState.sectorWinDebugActive = !uiRuntimeState.sectorWinDebugActive;
       els?.appWrap?.classList.toggle("sector-win-debug-active", uiRuntimeState.sectorWinDebugActive);
       els?.debugSectorWinButton?.setAttribute("aria-pressed", String(uiRuntimeState.sectorWinDebugActive));
-      ruleRocketState().statusNote = uiRuntimeState.sectorWinDebugActive
+      ruleRocketState(workingRoot).statusNote = uiRuntimeState.sectorWinDebugActive
         ? "赢得扇区调试：已显示校准占位 token，可拖动记录坐标"
         : "赢得扇区调试：已关闭";
       renderSectorNebulaDataBoard?.();
       renderStateReadout?.();
-      return { ok: true, active: uiRuntimeState.sectorWinDebugActive, message: ruleRocketState().statusNote };
+      return { ok: true, active: uiRuntimeState.sectorWinDebugActive, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function getExplicitPendingOwnerPlayerForFailsafe(pending) {
+    function getExplicitPendingOwnerPlayerForFailsafe(workingRoot, pending) {
       if (!pending) return null;
       const directOwner = resolvePlayerReference?.({
         playerId: pending.player?.id || pending.playerId || pending.targetPlayerId,
@@ -967,7 +964,7 @@
       return getExplicitEffectOwnerPlayer?.(pending.effect) || null;
     }
 
-    function getActionEffectOwnerPlayerForFailsafe() {
+    function getActionEffectOwnerPlayerForFailsafe(workingRoot) {
       if (!decisionState.actionEffectFlow) return null;
       const effect = getCurrentActionEffect?.();
       return getExplicitEffectOwnerPlayer?.(effect)
@@ -977,8 +974,8 @@
         || null;
     }
 
-    function getFailsafePendingOwnerPlayer() {
-      const effectOwner = getActionEffectOwnerPlayerForFailsafe();
+    function getFailsafePendingOwnerPlayer(workingRoot) {
+      const effectOwner = getActionEffectOwnerPlayerForFailsafe(workingRoot);
       if (effectOwner) return effectOwner;
 
       const pendingEntries = [
@@ -1017,15 +1014,15 @@
         uiRuntimeState.industryFreeMoveState,
       ];
       for (const pending of pendingEntries) {
-        const owner = getExplicitPendingOwnerPlayerForFailsafe(pending);
+        const owner = getExplicitPendingOwnerPlayerForFailsafe(workingRoot, pending);
         if (owner) return owner;
       }
       return null;
     }
 
-    function getRecoverableTurnPlayerForFailsafe() {
-      const activeIds = new Set(ruleTurnState().activePlayerIds || []);
-      const currentPlayer = players.getCurrentPlayer(rulePlayerState());
+    function getRecoverableTurnPlayerForFailsafe(workingRoot) {
+      const activeIds = new Set(ruleTurnState(workingRoot).activePlayerIds || []);
+      const currentPlayer = players.getCurrentPlayer(rulePlayerState(workingRoot));
       if (
         currentPlayer?.id
         && activeIds.has(currentPlayer.id)
@@ -1047,14 +1044,14 @@
       return firstEligiblePlayerId ? getPlayerById?.(firstEligiblePlayerId) : currentPlayer;
     }
 
-    function getAiTakeoverTargetPlayer() {
-      const pendingOwner = getFailsafePendingOwnerPlayer();
+    function getAiTakeoverTargetPlayer(workingRoot) {
+      const pendingOwner = getFailsafePendingOwnerPlayer(workingRoot);
       if (pendingOwner?.id && isAiAutoBattlePlayer?.(pendingOwner.id)) return pendingOwner;
 
-      const currentPlayer = players.getCurrentPlayer(rulePlayerState());
+      const currentPlayer = players.getCurrentPlayer(rulePlayerState(workingRoot));
       if (currentPlayer?.id && isAiAutoBattlePlayer?.(currentPlayer.id)) return currentPlayer;
 
-      const recoverableTurnPlayer = getRecoverableTurnPlayerForFailsafe();
+      const recoverableTurnPlayer = getRecoverableTurnPlayerForFailsafe(workingRoot);
       if (recoverableTurnPlayer?.id && isAiAutoBattlePlayer?.(recoverableTurnPlayer.id)) {
         return recoverableTurnPlayer;
       }
@@ -1069,10 +1066,10 @@
         )) || null;
     }
 
-    function renderAfterFailsafeControl(message, options = {}) {
-      if (message) ruleRocketState().statusNote = message;
-      selectDefaultRocketForCurrentPlayer();
-      renderDebugPlayerSwitch();
+    function renderAfterFailsafeControl(workingRoot, message, options = {}) {
+      if (message) ruleRocketState(workingRoot).statusNote = message;
+      selectDefaultRocketForCurrentPlayer(workingRoot);
+      renderDebugPlayerSwitch(workingRoot);
       renderRoundStatus?.();
       syncCardSelectionChrome?.();
       syncDiscardSelectionChrome?.();
@@ -1091,7 +1088,7 @@
       schedulePersistentGameStateSave?.({ label: options.saveLabel || message || "兜底控制后状态" });
     }
 
-    function resumeAiAutomationForFailsafe(targetPlayer) {
+    function resumeAiAutomationForFailsafe(workingRoot, targetPlayer) {
       const snapshot = createAiControlSnapshot?.();
       if (!snapshot?.enabled || !snapshot.playerIds?.length) {
         return { ok: false, message: "当前没有电脑玩家配置" };
@@ -1104,68 +1101,68 @@
       return restoreResult;
     }
 
-    function handleAiTakeoverFailsafe() {
+    function handleAiTakeoverFailsafe(workingRoot) {
       if (isGameEnded?.()) {
-        ruleRocketState().statusNote = "游戏已结束，无法 AI 接管";
+        ruleRocketState(workingRoot).statusNote = "游戏已结束，无法 AI 接管";
         renderStateReadout?.();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
 
-      const targetPlayer = getAiTakeoverTargetPlayer();
+      const targetPlayer = getAiTakeoverTargetPlayer(workingRoot);
       if (!targetPlayer) {
-        ruleRocketState().statusNote = "当前没有可接管的电脑玩家";
+        ruleRocketState(workingRoot).statusNote = "当前没有可接管的电脑玩家";
         renderStateReadout?.();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
 
-      rulePlayerState().currentPlayerId = targetPlayer.id;
-      const resumeResult = resumeAiAutomationForFailsafe(targetPlayer);
+      rulePlayerState(workingRoot).currentPlayerId = targetPlayer.id;
+      const resumeResult = resumeAiAutomationForFailsafe(workingRoot, targetPlayer);
       if (!resumeResult?.ok) {
-        ruleRocketState().statusNote = resumeResult?.message || "AI 接管失败";
+        ruleRocketState(workingRoot).statusNote = resumeResult?.message || "AI 接管失败";
         renderStateReadout?.();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
 
       const message = `${targetPlayer.colorLabel || "电脑"}玩家已交回 AI 接管`;
-      renderAfterFailsafeControl(message, { saveLabel: "AI 接管后状态" });
+      renderAfterFailsafeControl(workingRoot, message, { saveLabel: "AI 接管后状态" });
       return { ok: true, player: targetPlayer, message };
     }
 
-    function handleForceSkipTurnFailsafe() {
+    function handleForceSkipTurnFailsafe(workingRoot) {
       if (isGameEnded?.()) {
-        ruleRocketState().statusNote = "游戏已结束，无法强制跳过";
+        ruleRocketState(workingRoot).statusNote = "游戏已结束，无法强制跳过";
         renderStateReadout?.();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
 
-      const targetPlayer = getFailsafePendingOwnerPlayer()
-        || getRecoverableTurnPlayerForFailsafe()
+      const targetPlayer = getFailsafePendingOwnerPlayer(workingRoot)
+        || getRecoverableTurnPlayerForFailsafe(workingRoot)
         || getCurrentPlayer?.();
       if (!targetPlayer) {
-        ruleRocketState().statusNote = "没有可跳过的玩家";
+        ruleRocketState(workingRoot).statusNote = "没有可跳过的玩家";
         renderStateReadout?.();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
 
       clearTransientStateForRecovery?.();
-      rulePlayerState().currentPlayerId = targetPlayer.id;
+      rulePlayerState(workingRoot).currentPlayerId = targetPlayer.id;
       const advanceResult = advanceTurnAfterPlayerAction?.(targetPlayer.id, { passed: false }) || {};
       const roundStartResult = advanceResult.roundAdvanced
-        ? applyIndustryRoundStartBonuses?.(ruleTurnState().roundNumber, { appendLog: true })
+        ? applyIndustryRoundStartBonuses?.(ruleTurnState(workingRoot).roundNumber, { appendLog: true })
         : null;
       const nextPlayer = getCurrentPlayer?.();
       const displayedTurnNumber = getDisplayedTurnNumber?.();
       const advanceMessage = advanceResult.gameEnded
         ? `游戏结束${advanceResult.finalScoreLines?.length ? `：${advanceResult.finalScoreLines.join("；")}` : ""}`
-        : `进入第 ${ruleTurnState().roundNumber} 轮第 ${displayedTurnNumber} 回合，当前玩家：${nextPlayer?.colorLabel || ""}玩家`;
+        : `进入第 ${ruleTurnState(workingRoot).roundNumber} 轮第 ${displayedTurnNumber} 回合，当前玩家：${nextPlayer?.colorLabel || ""}玩家`;
       const message = [
         `${targetPlayer.colorLabel || "当前"}玩家已强制跳过本回合（未 PASS）`,
         advanceMessage,
         roundStartResult?.message || null,
       ].filter(Boolean).join("；");
-      renderAfterFailsafeControl(message, { saveLabel: "强制跳过后状态" });
+      renderAfterFailsafeControl(workingRoot, message, { saveLabel: "强制跳过后状态" });
       if (!advanceResult.gameEnded) {
-        maybeStartFundamentalismRoundStartIncomeFlow?.(nextPlayer, ruleTurnState().roundNumber);
+        maybeStartFundamentalismRoundStartIncomeFlow?.(nextPlayer, ruleTurnState(workingRoot).roundNumber);
         if (!maybeOpenActionBriefingForCompletedCycle?.(advanceResult)) {
           scheduleAiAutoStepIfNeeded?.();
         }
@@ -1175,8 +1172,8 @@
       return { ok: true, player: targetPlayer, message };
     }
 
-    function focusDebugCalibration(alienSlotId) {
-      return createFocusDebugCalibrationHandler()(alienSlotId);
+    function focusDebugCalibration(workingRoot, alienSlotId) {
+      return createFocusDebugCalibrationHandler(workingRoot)(alienSlotId);
     }
 
     return {

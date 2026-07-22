@@ -181,17 +181,6 @@ function createBaseContext() {
     nebulaDataState: {},
     alienGameState: { aomomo: {} },
     cardState: {},
-    getWorkingRoot() {
-      return {
-        playerState: this.playerState,
-        turnState: this.turnState,
-        rocketState: this.rocketState,
-        techGameState: this.techGameState,
-        nebulaDataState: this.nebulaDataState,
-        alienGameState: this.alienGameState,
-        cardState: this.cardState,
-      };
-    },
     pendingState,
     uiRuntimeState: {
       passReserveSelectionDismissed: false,
@@ -342,17 +331,26 @@ function createBaseContext() {
     },
     callLog,
   };
+  context.workingRoot = {
+    playerState: context.playerState,
+    turnState: context.turnState,
+    rocketState: context.rocketState,
+    techGameState: context.techGameState,
+    nebulaDataState: context.nebulaDataState,
+    alienGameState: context.alienGameState,
+    cardState: context.cardState,
+  };
   return context;
 }
 
 {
   const context = createBaseContext();
   const runtime = createDebugRuntime(context);
-  runtime.setDebugOpen(true);
+  runtime.setDebugOpen(context.workingRoot, true);
   assert.equal(context.els.debugToggle.attributes["aria-expanded"], "true");
-  runtime.renderDebugPlayerSwitch();
+  runtime.renderDebugPlayerSwitch(context.workingRoot);
   assert.equal(context.els.debugPlayerMenu.children.length, 2);
-  const switchResult = runtime.switchCurrentPlayerColor("yellow");
+  const switchResult = runtime.switchCurrentPlayerColor(context.workingRoot, "yellow");
   assert.equal(switchResult.ok, true);
   assert.equal(context.playerState.currentPlayerId, "p2");
 }
@@ -360,12 +358,12 @@ function createBaseContext() {
 {
   const context = createBaseContext();
   const runtime = createDebugRuntime(context);
-  const openResult = runtime.openDebugQuickSectorScanPicker();
+  const openResult = runtime.openDebugQuickSectorScanPicker(context.workingRoot);
   assert.equal(openResult.ok, true);
   assert.equal(context.pendingState.scanTargetAction.type, "debug_quick_sector_scan");
-  runtime.handleDebugQuickSectorScanChoice({ debugSectorScanStep: "player", playerId: "p1" });
+  runtime.handleDebugQuickSectorScanChoice(context.workingRoot, { debugSectorScanStep: "player", playerId: "p1" });
   assert.equal(context.els.scanTargetTitle.textContent, "快速扫描扇区");
-  const runResult = runtime.runDebugQuickSectorScan("p1", "S1", 2);
+  const runResult = runtime.runDebugQuickSectorScan(context.workingRoot, "p1", "S1", 2);
   assert.equal(runResult.ok, true);
   assert.equal(context.rocketState.statusNote.includes("快速扫描扇区"), true);
 }
@@ -373,10 +371,10 @@ function createBaseContext() {
 {
   const context = createBaseContext();
   const runtime = createDebugRuntime(context);
-  const toggleResult = runtime.toggleSectorWinDebug();
+  const toggleResult = runtime.toggleSectorWinDebug(context.workingRoot);
   assert.equal(toggleResult.active, true);
   assert.equal(context.els.debugSectorWinButton.attributes["aria-pressed"], "true");
-  const incomeResult = runtime.addDebugIncome();
+  const incomeResult = runtime.addDebugIncome(context.workingRoot);
   assert.equal(incomeResult.ok, true);
   assert.equal(context.callLog.includes("renderStateReadout"), true);
 }
@@ -385,9 +383,9 @@ function createBaseContext() {
   const context = createBaseContext();
   context.pendingState.discardAction = { playerId: "p2" };
   const runtime = createDebugRuntime(context);
-  const aiResult = runtime.handleAiTakeoverFailsafe();
+  const aiResult = runtime.handleAiTakeoverFailsafe(context.workingRoot);
   assert.equal(aiResult.ok, true);
-  const skipResult = runtime.handleForceSkipTurnFailsafe();
+  const skipResult = runtime.handleForceSkipTurnFailsafe(context.workingRoot);
   assert.equal(skipResult.ok, true);
   assert.equal(context.callLog.some((entry) => Array.isArray(entry) && entry[0] === "save"), true);
 }

@@ -665,7 +665,10 @@
           if (typeof operation !== "function") {
             return { ok: false, code: "DEBUG_COMMAND_UNKNOWN", message: `未知 Debug command: ${command.operation}` };
           }
-          return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
+          return {
+            ok: true,
+            value: cloneResidentPresentation(operation(workingRoot, ...(command.args || []))),
+          };
         }
         case "recovery_clear_transient":
           clearTransientStateForRecovery(workingRoot);
@@ -11538,7 +11541,6 @@
     amiba,
     aomomo,
     runezu,
-    getWorkingRoot: () => requireActiveBrowserWorkingRoot("debug runtime"),
     solar,
     decisionSessions,
     uiRuntimeState,
@@ -11682,7 +11684,11 @@
     continueAfterCardTriggerResolution,
     createActionLogImpactSnapshot,
     data,
-    debugRuntimeController,
+    debugRuntimeController: {
+      setDebugAlienTraceModeActive: (...args) => callDebugCommand("setDebugAlienTraceModeActive", args),
+      toggleDebugAlienTraceMode: (...args) => callDebugCommand("toggleDebugAlienTraceMode", args),
+      enableDebugAlienTraceModeForReveal: (...args) => callDebugCommand("enableDebugAlienTraceModeForReveal", args),
+    },
     discardReservedCardIfFinished,
     document,
     els,
