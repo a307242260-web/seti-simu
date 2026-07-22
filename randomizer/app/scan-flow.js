@@ -64,6 +64,7 @@
     const clearPendingAmibaCardGain = requireFunction("clearPendingAmibaCardGain", context.clearPendingAmibaCardGain);
     const clearPendingAomomoCardGain = requireFunction("clearPendingAomomoCardGain", context.clearPendingAomomoCardGain);
     const clearPendingRunezuCardGain = requireFunction("clearPendingRunezuCardGain", context.clearPendingRunezuCardGain);
+    const clearPendingAmibaTraceRemoval = requireFunction("clearPendingAmibaTraceRemoval", context.clearPendingAmibaTraceRemoval);
     const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
     const getPublicScanQueue = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
     const els = context.els || {};
@@ -1383,7 +1384,7 @@
       decisionSessions.clear("chong_task_completion");
       clearPendingAmibaCardGain();
       clearPendingAmibaSymbolChoice();
-      decisionSessions.clear("amiba_trace_removal");
+      clearPendingAmibaTraceRemoval();
       clearPendingAomomoCardGain();
       clearPendingRunezuCardGain();
       clearPendingRunezuSymbolBranch();

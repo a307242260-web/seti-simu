@@ -61,7 +61,6 @@
       handleJiuzheOpportunitySkip,
       handleChongTaskCompletionChoice,
       handleAomomoFossilMoveLandCountChoice,
-      handleAmibaTraceRemovalChoice,
       handleBanrenmaBonusChoice,
       handleBanrenmaCardConditionChoice,
       handleYichangdianCornerChoice,
@@ -331,12 +330,6 @@
         return;
       }
 
-      const amibaTraceRemove = event.target.closest("[data-amiba-trace-remove]");
-      if (amibaTraceRemove && !amibaTraceRemove.disabled) {
-        handleAmibaTraceRemovalChoice(amibaTraceRemove.dataset.amibaTraceRemove);
-        return;
-      }
-
       const banrenmaBonus = event.target.closest("[data-banrenma-bonus-choice]");
       if (banrenmaBonus && !banrenmaBonus.disabled) {
         handleBanrenmaBonusChoice(banrenmaBonus.dataset.banrenmaBonusChoice);
@@ -480,10 +473,6 @@
         handleChongTaskCompletionChoice("cancel");
         return;
       }
-      if (state.pendingAmibaTraceRemoval) {
-        handleAmibaTraceRemovalChoice("cancel");
-        return;
-      }
       if (state.pendingBanrenmaOpportunity) {
         closeBanrenmaOpportunityDialog();
         return;
@@ -516,10 +505,6 @@
 
         if (state.pendingChongTaskCompletion) {
           handleChongTaskCompletionChoice("cancel");
-          return;
-        }
-        if (state.pendingAmibaTraceRemoval) {
-          handleAmibaTraceRemovalChoice("cancel");
           return;
         }
         if (state.pendingBanrenmaOpportunity) {

@@ -169,8 +169,6 @@
       return decisionSessions.open(kind, session);
     };
     const alienChoiceSessions = {
-      get amibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
-      set amibaTraceRemoval(session) { replaceDecisionSession("amiba_trace_removal", session); },
     };
     let chongFossilDecisionDraft = null;
     let amibaSymbolDecisionDraft = null;
@@ -182,6 +180,7 @@
     let yichangdianCardGainDecisionDraft = null;
     let banrenmaCardGainDecisionDraft = null;
     let chongCardGainDecisionDraft = null;
+    let amibaTraceRemovalDecisionDraft = null;
     function getChongFossilDecisionDraft() {
       return chongFossilDecisionDraft;
     }
@@ -260,6 +259,10 @@
     const chongCardGainDraft = createDecisionDraftAccessors(
       () => chongCardGainDecisionDraft,
       (draft) => { chongCardGainDecisionDraft = draft; },
+    );
+    const amibaTraceRemovalDraft = createDecisionDraftAccessors(
+      () => amibaTraceRemovalDecisionDraft,
+      (draft) => { amibaTraceRemovalDecisionDraft = draft; },
     );
     const getOpportunityContinuationQueue = (workingRoot, field) => {
       requireWorkingRoot(workingRoot);
@@ -2049,52 +2052,35 @@ function handleAmibaSymbolChoice(workingRoot, choice, pendingContext = null) {
   }
 
 function closeAmibaTraceRemovalDialog() {
-    alienChoiceSessions.amibaTraceRemoval = null;
+    amibaTraceRemovalDraft.clear();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
 function openAmibaTraceRemovalDialog(workingRoot, effect) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    if (!amiba || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!amiba) {
       return { ok: false, message: "无法打开阿米巴痕迹移除窗口" };
     }
     const player = getWorkingCurrentPlayer(workingRoot);
     const alienSlotId = alienGameState.amiba?.revealedSlotId;
     const options = amiba.listPlayerTraceOptions(alienGameState, alienSlotId, player);
-    alienChoiceSessions.amibaTraceRemoval = {
+    amibaTraceRemovalDecisionDraft = {
       playerId: player.id,
       alienSlotId,
       effectLabel: effect.label,
       beforeAlienState: structuredClone(alienGameState),
       beforePlayerState: structuredClone(playerState),
+      choices: options.map((option) => `${option.traceType}:${option.position}`),
     };
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = "移除阿米巴痕迹";
-    if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "选择一个自己的阿米巴痕迹，按被移除的颜色结算对应区域奖励。";
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-    const nodes = options.map((option) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "scan-target-option-button";
-      button.dataset.amibaTraceRemove = `${option.traceType}:${option.position}`;
-      button.innerHTML = `${option.label}<small>${amiba.formatRegionLabel(option.region)}区域奖励</small>`;
-      return button;
-    });
-    if (!nodes.length) {
-      const empty = document.createElement("p");
-      empty.textContent = "你没有可移除的阿米巴痕迹。";
-      nodes.push(empty);
-    }
-    els.scanTargetActions.replaceChildren(...nodes);
-    els.scanTargetOverlay.hidden = false;
     rocketState.statusNote = "阿米巴：请选择要移除的痕迹";
     renderStateReadout();
     return { ok: true, awaitingChoice: true, message: rocketState.statusNote };
   }
 
-function handleAmibaTraceRemovalChoice(workingRoot, choice) {
+function handleAmibaTraceRemovalChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    if (!alienChoiceSessions.amibaTraceRemoval) return { ok: false, message: "没有阿米巴痕迹移除流程" };
-    const pending = alienChoiceSessions.amibaTraceRemoval;
+    const pending = pendingContext || amibaTraceRemovalDraft.get();
+    if (!pending) return { ok: false, message: "没有阿米巴痕迹移除流程" };
     const player = resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot);
     if (!player) return { ok: false, message: "找不到阿米巴痕迹玩家" };
     if (choice === "cancel") {
@@ -3271,7 +3257,7 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
       getChongTaskCompletion() ? { pending: getChongTaskCompletion(), label: "虫族任务" } : null,
       amibaCardGainDraft.get() ? { pending: amibaCardGainDraft.get(), label: "阿米巴外星人牌" } : null,
       getAmibaSymbolDecisionDraft() ? { pending: getAmibaSymbolDecisionDraft(), label: "阿米巴 symbol" } : null,
-      alienChoiceSessions.amibaTraceRemoval ? { pending: alienChoiceSessions.amibaTraceRemoval, label: "阿米巴痕迹移除" } : null,
+      amibaTraceRemovalDraft.get() ? { pending: amibaTraceRemovalDraft.get(), label: "阿米巴痕迹移除" } : null,
       aomomoCardGainDraft.get() ? { pending: aomomoCardGainDraft.get(), label: "奥陌陌外星人牌" } : null,
       runezuCardGainDraft.get() ? { pending: runezuCardGainDraft.get(), label: "符文族外星人牌" } : null,
       getRunezuFaceSymbolDecisionDraft() ? { pending: getRunezuFaceSymbolDecisionDraft(), label: "符文族黑圈" } : null,
@@ -4326,6 +4312,9 @@ function alignAlienPanelsToPlanets() {
       getChongCardGainDecisionDraft: chongCardGainDraft.get,
       takeChongCardGainDecisionDraft: chongCardGainDraft.take,
       clearChongCardGainDecisionDraft: chongCardGainDraft.clear,
+      getAmibaTraceRemovalDecisionDraft: amibaTraceRemovalDraft.get,
+      takeAmibaTraceRemovalDecisionDraft: amibaTraceRemovalDraft.take,
+      clearAmibaTraceRemovalDecisionDraft: amibaTraceRemovalDraft.clear,
       openChongTraceTaskCompletionPicker,
       enqueueJiuzheOpportunity,
       isJiuzheThresholdOpportunity,

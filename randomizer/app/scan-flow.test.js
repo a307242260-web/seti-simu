@@ -62,6 +62,7 @@ function createBaseHarness() {
     clearPendingAmibaCardGain() {},
     clearPendingAomomoCardGain() {},
     clearPendingRunezuCardGain() {},
+    clearPendingAmibaTraceRemoval() {},
     cards: {
       getCardLabel: (card) => card.cardName || card.id,
       setSelectionActive: (_state, active) => {

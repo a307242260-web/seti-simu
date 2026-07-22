@@ -27,6 +27,7 @@
       getPendingYichangdianCardGain,
       getPendingBanrenmaCardGain,
       getPendingChongCardGain,
+      getPendingAmibaTraceRemoval,
       getPlayerById,
       decisionState,
       cards,
@@ -84,6 +85,7 @@
       handleYichangdianCardGainChoice,
       handleBanrenmaCardGainChoice,
       handleChongCardGainChoice,
+      handleAmibaTraceRemovalChoice,
       handleFinalScoreTileClick,
       handleSupplyTechTileClick,
       confirmTechBlueSlotChoice,
@@ -224,6 +226,20 @@
           label: `异常点角标 ${card.id}`,
           target: { kind: "yichangdian-corner-choice", choiceId: card.id },
           pendingContext: structuredClone(yichangdianCornerPending),
+        })),
+      };
+    }
+    const amibaTraceRemovalPending = getPendingAmibaTraceRemoval();
+    if (amibaTraceRemovalPending) {
+      const traceChoices = amibaTraceRemovalPending.choices || [];
+      return {
+        actorPlayer: getPlayerById(amibaTraceRemovalPending.playerId) || getCurrentPlayer(),
+        candidates: (traceChoices.length ? traceChoices : ["cancel"]).map((choiceId) => ({
+          id: "conditionalChoice",
+          family: choiceId === "cancel" ? "accept_optional_effect" : "choose_target",
+          label: choiceId === "cancel" ? "跳过阿米巴痕迹移除" : `移除阿米巴痕迹 ${choiceId}`,
+          target: { kind: "amiba-trace-removal", choiceId },
+          pendingContext: structuredClone(amibaTraceRemovalPending),
         })),
       };
     }
@@ -993,6 +1009,7 @@
     "yichangdian-card-gain": (action) => handleYichangdianCardGainChoice(action.target.choiceId, action.pendingContext || null),
     "banrenma-card-gain": (action) => handleBanrenmaCardGainChoice(action.target.choiceId, action.pendingContext || null),
     "chong-card-gain": (action) => handleChongCardGainChoice(action.target.choiceId, action.pendingContext || null),
+    "amiba-trace-removal": (action) => handleAmibaTraceRemovalChoice(action.target.choiceId, action.pendingContext || null),
     "probe-sector-selection": (action) => {
       const pending = getPendingProbeSectorScanDecision();
       if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };

@@ -804,6 +804,7 @@
               if (candidates[0]?.target?.kind === "yichangdian-card-gain") alienSpeciesRuntime?.takeYichangdianCardGainDecisionDraft?.();
               if (candidates[0]?.target?.kind === "banrenma-card-gain") alienSpeciesRuntime?.takeBanrenmaCardGainDecisionDraft?.();
               if (candidates[0]?.target?.kind === "chong-card-gain") alienSpeciesRuntime?.takeChongCardGainDecisionDraft?.();
+              if (candidates[0]?.target?.kind === "amiba-trace-removal") alienSpeciesRuntime?.takeAmibaTraceRemovalDecisionDraft?.();
               return {
                 ok: true,
                 boundary: "conditional_choice",
@@ -1031,6 +1032,7 @@
     getPendingYichangdianCardGain,
     getPendingBanrenmaCardGain,
     getPendingChongCardGain,
+    getPendingAmibaTraceRemoval,
     getHeadlessConditionalPlayer,
     get decisionSessions() { return decisionSessions; },
     getPlayerById,
@@ -2552,6 +2554,7 @@
     clearPendingAmibaCardGain: () => alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.(),
     clearPendingAomomoCardGain: () => alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.(),
     clearPendingRunezuCardGain: () => alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.(),
+    clearPendingAmibaTraceRemoval: () => alienSpeciesRuntime?.clearAmibaTraceRemovalDecisionDraft?.(),
     document,
     structuredClone,
     els,
@@ -4157,7 +4160,7 @@
     get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
     get pendingAmibaCardGain() { return getPendingAmibaCardGain(); },
     get pendingAmibaSymbolChoice() { return getPendingAmibaSymbolChoice(); },
-    get pendingAmibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
+    get pendingAmibaTraceRemoval() { return getPendingAmibaTraceRemoval(); },
     get pendingAomomoCardGain() { return getPendingAomomoCardGain(); },
     get pendingRunezuCardGain() { return getPendingRunezuCardGain(); },
     get pendingRunezuSymbolBranch() { return getPendingRunezuSymbolBranch(); },
@@ -5437,7 +5440,7 @@
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
-    decisionSessions.clear("amiba_trace_removal");
+    alienSpeciesRuntime?.clearAmibaTraceRemovalDecisionDraft?.();
     alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
@@ -6902,7 +6905,7 @@
       || getPendingChongFossilChoice()
       || getPendingAmibaCardGain()
       || getPendingAmibaSymbolChoice()
-      || decisionSessions.peek("amiba_trace_removal")
+      || getPendingAmibaTraceRemoval()
       || getPendingAomomoCardGain()
       || getPendingRunezuCardGain()
       || getPendingRunezuSymbolBranch()
@@ -7211,7 +7214,7 @@
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     alienSpeciesRuntime?.clearAmibaCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.();
-    decisionSessions.clear("amiba_trace_removal");
+    alienSpeciesRuntime?.clearAmibaTraceRemovalDecisionDraft?.();
     alienSpeciesRuntime?.clearAomomoCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
@@ -8452,6 +8455,7 @@
   function getPendingYichangdianCardGain() { return alienSpeciesRuntime?.getYichangdianCardGainDecisionDraft?.() || null; }
   function getPendingBanrenmaCardGain() { return alienSpeciesRuntime?.getBanrenmaCardGainDecisionDraft?.() || null; }
   function getPendingChongCardGain() { return alienSpeciesRuntime?.getChongCardGainDecisionDraft?.() || null; }
+  function getPendingAmibaTraceRemoval() { return alienSpeciesRuntime?.getAmibaTraceRemovalDecisionDraft?.() || null; }
   function getAlienTraceLayer(...args) { return alienSpeciesRuntime.getAlienTraceLayer(...args); }
   function getAlienJiuzheTraceLayer(...args) { return alienSpeciesRuntime.getAlienJiuzheTraceLayer(...args); }
   function getAlienYichangdianCardArea(...args) { return alienSpeciesRuntime.getAlienYichangdianCardArea(...args); }
@@ -11848,7 +11852,7 @@
     get pendingChongTaskCompletion() { return getPendingChongTaskCompletion(); },
     get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
     get pendingChongCardGain() { return getPendingChongCardGain(); },
-    get pendingAmibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
+    get pendingAmibaTraceRemoval() { return getPendingAmibaTraceRemoval(); },
     get pendingAmibaSymbolChoice() { return getPendingAmibaSymbolChoice(); },
     get pendingAmibaCardGain() { return getPendingAmibaCardGain(); },
     get pendingAomomoCardGain() { return getPendingAomomoCardGain(); },
