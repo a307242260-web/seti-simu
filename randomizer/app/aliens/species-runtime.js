@@ -4195,7 +4195,86 @@ function alignAlienPanelsToPlanets() {
     };
   }
 
+  function createAlienSpeciesPort(context = {}) {
+    const directMethods = [
+      "getAlienTraceLayer", "getAlienJiuzheTraceLayer", "getAlienYichangdianCardArea", "getAlienBanrenmaCardArea",
+      "getAlienChongCardArea", "getAlienAmibaCardArea", "getAlienAomomoCardArea", "getAlienRunezuCardArea",
+      "getAlienJiuzheThresholdElement", "getAlienBanrenmaScoremarkElement", "getAlienBackImage", "createJiuzheThresholdNode",
+      "isDebugAlienTraceMode", "setDebugAlienTraceModeActive", "toggleDebugAlienTraceMode", "enableDebugAlienTraceModeForReveal",
+      "applyFangzhouUnlockStateTraceReward", "getAlienFangzhouCardArea", "buildFangzhouCard1EffectQueue",
+      "getFangzhouCard1RewardTargetOptions", "enqueueFangzhouCard1RewardEffects", "applyJiuzheRewardToPlayer",
+      "applyYichangdianRewardToPlayer", "getAvailableDataTokenCount", "spendAvailableDataTokens",
+      "applyBanrenmaRewardToPlayer", "applyAomomoRewardToPlayer", "applyChongRewardToPlayer",
+      "closeRunezuCardGainDialog", "closeAmibaCardGainDialog", "closeAomomoCardGainDialog",
+      "closeAmibaSymbolChoiceDialog", "closeAmibaTraceRemovalDialog", "applyChongFossilRewardToPlayer",
+      "closeYichangdianCardGainDialog", "closeBanrenmaCardGainDialog", "closeChongCardGainDialog",
+      "getChongPlanetLabel", "formatChongGain", "formatChongFossilRewardSummary", "restoreMutableObject",
+      "closeChongFossilChoiceDialog", "keepExistingMainActionPendingAfterChongTask", "openChongTraceTaskCompletionPicker",
+      "enqueueJiuzheOpportunity", "isJiuzheThresholdOpportunity", "createJiuzheThresholdCardEffect",
+      "hasJiuzheThresholdEffectQueued", "queueJiuzheThresholdEffectForPlayer", "closeJiuzheCardDialog",
+      "buildJiuzheOpportunitySubtitle", "getActiveAlienSharedOverlayPendingForManualGuard",
+      "blockManualAiSharedOverlayInputIfNeeded", "createBanrenmaPanelBonusEffect",
+      "hasBanrenmaPanelBonusEffectQueued", "enqueueBanrenmaOpportunity", "closeBanrenmaOpportunityDialog",
+      "getBanrenmaCardConditionLabel", "appendRevealCardGrantMessage", "getRevealIrreversible",
+      "closeRunezuFaceSymbolPlacement", "closeRunezuSymbolBranchDialog", "alignAlienPanelsToPlanets",
+    ];
+    const commandMethods = [
+      "renderJiuzheThresholds", "maybeRevealAlienAfterTrace", "renderYichangdianCardDisplays", "renderBanrenmaScoremarks",
+      "renderBanrenmaCardDisplays", "renderChongCardDisplays", "renderAmibaCardDisplays", "renderAomomoCardDisplays",
+      "renderRunezuCardDisplays", "renderBanrenmaBonusMarkers", "renderAlienPanels", "randomizeAliens",
+      "confirmFangzhouCard2Unlock", "createFangzhouReservedButtons", "flipFangzhouCard1Rewards",
+      "applyFangzhouCard1Rewards", "applyFangzhouCard1Reward", "queueFangzhouBasicRewards",
+      "applyFangzhouTraceRewardToPlayer", "renderFangzhouCardDisplays", "openFangzhouCard1Dialog",
+      "findPlayerForJiuzheEntry", "findPlayerForYichangdianEntry", "applyAmibaRewardToPlayer",
+      "applyRunezuRewardToPlayer", "applyRunezuSymbolReward", "claimRunezuSourceSymbolWithHistory",
+      "openRunezuCardGainDialog", "finishRunezuCardGain", "handleRunezuCardGainChoice",
+      "openAmibaCardGainDialog", "finishAmibaCardGain", "handleAmibaCardGainChoice",
+      "openAomomoCardGainDialog", "finishAomomoCardGain", "handleAomomoCardGainChoice",
+      "openAmibaSymbolChoiceDialog", "finishAmibaSymbolChoice", "handleAmibaSymbolChoice",
+      "openAmibaTraceRemovalDialog", "handleAmibaTraceRemovalChoice", "openYichangdianCardGainDialog",
+      "finishYichangdianCardGain", "handleYichangdianCardGainChoice", "openBanrenmaCardGainDialog",
+      "finishBanrenmaCardGain", "handleBanrenmaCardGainChoice", "openChongCardGainDialog",
+      "finishChongCardGain", "handleChongCardGainChoice", "openChongFossilChoiceDialog",
+      "createChongTransportTokenForFossil", "openChongPickCardFollowUp", "failChongTaskCompletion",
+      "finishChongFossilEffect", "completeChongTraceTaskWithFossil", "handleChongFossilChoice",
+      "queueJiuzheOpportunitiesForPlayer", "buildJiuzheCardConditionContext", "getJiuzheCardConditionLabel",
+      "openJiuzheCardDialog", "handleJiuzheCardChoice", "handleJiuzheOpportunitySkip",
+      "maybeOpenQueuedJiuzheOpportunity", "getReadyBanrenmaCards", "getReadyBanrenmaCardsForOpportunity",
+      "getReadyBanrenmaCardForOpportunity", "queueBanrenmaPanelBonusEffectForPlayer",
+      "queueBanrenmaOpportunitiesForPlayer", "openBanrenmaCardConditionCompletionPicker",
+      "openBanrenmaOpportunityDialog", "maybeOpenQueuedBanrenmaOpportunity", "openBanrenmaReadyOpportunityForPlayer",
+      "executeJiuzheThresholdCardEffect", "executeBanrenmaPanelBonusEffect", "completeBanrenmaOpportunityStep",
+      "handleBanrenmaBonusChoice", "handleBanrenmaCardConditionChoice", "openChongRewardFollowUps",
+      "openAmibaRewardFollowUps", "openRunezuRewardFollowUps", "executeStandardRunezuFaceSymbol",
+      "openRunezuFaceSymbolPlacement", "handleRunezuFaceSymbolChoice", "executeRunezuSymbolRewardEffect",
+      "openRunezuSymbolBranchDialog", "handleRunezuSymbolBranchChoice",
+    ];
+    const draftMethods = {
+      getPendingChongFossilChoice: "getChongFossilDecisionDraft",
+      getPendingAmibaSymbolChoice: "getAmibaSymbolDecisionDraft",
+      getPendingRunezuSymbolBranch: "getRunezuSymbolBranchDecisionDraft",
+      getPendingRunezuFaceSymbolPlacement: "getRunezuFaceSymbolDecisionDraft",
+      getPendingRunezuCardGain: "getRunezuCardGainDecisionDraft",
+      getPendingAmibaCardGain: "getAmibaCardGainDecisionDraft",
+      getPendingAomomoCardGain: "getAomomoCardGainDecisionDraft",
+      getPendingYichangdianCardGain: "getYichangdianCardGainDecisionDraft",
+      getPendingBanrenmaCardGain: "getBanrenmaCardGainDecisionDraft",
+      getPendingChongCardGain: "getChongCardGainDecisionDraft",
+      getPendingAmibaTraceRemoval: "getAmibaTraceRemovalDecisionDraft",
+      getPendingJiuzheCardPlay: "getJiuzheCardPlayDecisionDraft",
+      getPendingBanrenmaOpportunity: "getBanrenmaOpportunityDecisionDraft",
+    };
+    const port = {};
+    for (const name of directMethods) port[name] = (...args) => context.getRuntime()[name](...args);
+    for (const name of commandMethods) port[name] = (...args) => context.dispatchCommand(name, args);
+    for (const [name, runtimeName] of Object.entries(draftMethods)) {
+      port[name] = () => context.getRuntime()?.[runtimeName]?.() || null;
+    }
+    return Object.freeze(port);
+  }
+
   return Object.freeze({
+    createAlienSpeciesPort,
     createAlienSpeciesRuntime,
   });
 });

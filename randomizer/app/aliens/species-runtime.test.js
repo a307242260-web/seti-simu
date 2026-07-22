@@ -1,7 +1,23 @@
 "use strict";
 
 const assert = require("assert");
-const { createAlienSpeciesRuntime } = require("./species-runtime.js");
+const { createAlienSpeciesPort, createAlienSpeciesRuntime } = require("./species-runtime.js");
+
+{
+  const calls = [];
+  const runtime = {
+    getAlienTraceLayer: (slotId) => `trace:${slotId}`,
+    getChongFossilDecisionDraft: () => ({ kind: "fossil" }),
+  };
+  const port = createAlienSpeciesPort({
+    getRuntime: () => runtime,
+    dispatchCommand: (name, args) => calls.push([name, args]),
+  });
+  assert.equal(port.getAlienTraceLayer(2), "trace:2");
+  assert.deepEqual(port.getPendingChongFossilChoice(), { kind: "fossil" });
+  port.renderAlienPanels("refresh");
+  assert.deepEqual(calls, [["renderAlienPanels", ["refresh"]]]);
+}
 
 function createRuntime() {
   const draws = [];
