@@ -76,7 +76,6 @@
       markCurrentActionIrreversibleForSource,
       maybeApplyIndustryLaunchScan,
       openAmibaSymbolChoiceDialog,
-      planetStatsState,
       playerHasOwnOrbitMarkerAtPlanet,
       players,
       quickActionHistory,
@@ -171,7 +170,7 @@
     }
 
     function buildCardTaskContext(workingRoot) {
-      const { alienGameState, nebulaDataState } = requireWorkingRoot(workingRoot);
+      const { alienGameState, nebulaDataState, planetStatsState } = requireWorkingRoot(workingRoot);
       const probeLocationData = buildProbeLocationIndex(workingRoot);
       return {
         nebulaDataState,

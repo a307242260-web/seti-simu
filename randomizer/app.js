@@ -4560,7 +4560,6 @@
     markCurrentActionIrreversibleForSource,
     maybeApplyIndustryLaunchScan: (workingRoot, ...args) => maybeApplyIndustryLaunchScanForRoot?.(workingRoot, ...args),
     openAmibaSymbolChoiceDialog: (workingRoot, ...args) => alienSpeciesRuntime.openAmibaSymbolChoiceDialog(workingRoot, ...args),
-    planetStatsState,
     playerHasOwnOrbitMarkerAtPlanet,
     players,
     quickActionHistory,
