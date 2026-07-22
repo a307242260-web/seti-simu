@@ -277,7 +277,7 @@
       setScanTargetPickerChrome(workingRoot, "快速扫描扇区", "选择要放置标记的玩家颜色。");
       els.scanTargetActions.replaceChildren(...rulePlayerState(workingRoot).players.map((player) => {
         const definition = players.getPlayerColorDefinition(player.color);
-        return makeDebugQuickSectorScanButton(workingRoot, 
+        return makeDebugQuickSectorScanButton(workingRoot,
           "player",
           `${definition?.label || player.color}玩家`,
           `后续替换的数据会使用${definition?.label || player.color}普通 token`,
@@ -293,7 +293,7 @@
         return;
       }
 
-      setScanTargetPickerChrome(workingRoot, 
+      setScanTargetPickerChrome(workingRoot,
         "快速扫描扇区",
         `当前玩家：${player.colorLabel}。选择要批量扫描的具名扇区。`,
       );
@@ -301,7 +301,7 @@
         const openCount = getSectorOpenDataCount(workingRoot, sectorId);
         const capacity = getSectorCapacity(workingRoot, sectorId);
         const extraCount = getSectorExtraMarkCount(workingRoot, sectorId);
-        return makeDebugQuickSectorScanButton(workingRoot, 
+        return makeDebugQuickSectorScanButton(workingRoot,
           "sector",
           getSectorNebulaLabelText(workingRoot, sectorId),
           `${sectorId}，标记 ${capacity - openCount + extraCount}/${capacity}`
@@ -319,7 +319,7 @@
         return;
       }
 
-      setScanTargetPickerChrome(workingRoot, 
+      setScanTargetPickerChrome(workingRoot,
         "快速扫描扇区",
         `${player.colorLabel}玩家 -> ${getSectorNebulaLabelText(workingRoot, sectorId)}。未替换数据 ${openCount} 个；超过后追加额外标记且不获得数据。`,
       );
@@ -330,7 +330,7 @@
         const description = extraCount
           ? `替换 ${Math.max(openCount, 0)} 个数据，并追加 ${extraCount} 个额外标记`
           : `替换 ${count} 个未替换数据`;
-        return makeDebugQuickSectorScanButton(workingRoot, 
+        return makeDebugQuickSectorScanButton(workingRoot,
           "count",
           count === openCount
             ? `${count}（填满）`
@@ -862,7 +862,7 @@
       activateAomomoBoard?.({ source: "aomomo_debug", replaceData: true });
       const grantSummary = grantAllModuleAlienCardsForDebug(workingRoot, currentPlayer, aomomo, ruleAlienGameState(workingRoot).aomomo);
 
-      enableDebugAlienTraceModeForReveal(workingRoot, 
+      enableDebugAlienTraceModeForReveal(workingRoot,
         `奥陌陌调试：已揭示奥陌陌、替换第3轮盘并启用奥陌陌星球；星球弧形槽位放入3个数据token，随wheel3旋转；外星人面板不预放痕迹/环绕/登陆token${formatDebugAlienCardGrantSummary(workingRoot, grantSummary)}`,
       );
       renderWheels?.();
@@ -894,7 +894,7 @@
       const panelSymbols = runezu.listPanelSymbols(ruleAlienGameState(workingRoot));
       const grantSummary = grantAllModuleAlienCardsForDebug(workingRoot, currentPlayer, runezu, ruleAlienGameState(workingRoot).runezu);
 
-      enableDebugAlienTraceModeForReveal(workingRoot, 
+      enableDebugAlienTraceModeForReveal(workingRoot,
         `符文族调试：已揭示符文族并按机制默认放置 ${panelSymbols.length} 个白框 symbol（未放置痕迹 token）；已开启获取外星人标记模式，点击正面痕迹位会按正式规则结算奖励${formatDebugAlienCardGrantSummary(workingRoot, grantSummary)}`,
       );
       renderAlienPanels?.();
