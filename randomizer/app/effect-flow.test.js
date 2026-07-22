@@ -7,7 +7,42 @@ const {
   createEffectSubFlowCancellationRuntime,
   createEffectFlowCompletionRuntime,
   createEffectFlowStateRuntime,
+  createEffectSkipRuntime,
 } = require("./effect-flow");
+
+{
+  const calls = [];
+  const current = { id: "e1", label: "可选奖励", status: "active", options: {} };
+  const runtime = createEffectSkipRuntime({
+    getActionEffectFlow: () => ({ effects: [current] }),
+    getCurrentActionEffect: () => current,
+    getPendingYichangdianCornerAction: () => null,
+    yichangdianCornerEffectType: "corner",
+    openYichangdianCornerPicker: () => calls.push("corner"),
+    finishCurrentCardMoveEffectEarly: () => false,
+    getPendingScanTargetDecision: () => null,
+    handleDrawnHandScanSkip: () => calls.push("scan-skip"),
+    cancelActiveEffectSubFlowsForRoot: () => calls.push("cancel"),
+    getEffectOwnerPlayer: () => null,
+    getCurrentPlayer: () => null,
+    renderInitialSelectionArea: () => calls.push("initial"),
+    beginEffectHistoryStep: (_root, label) => calls.push(label),
+    endEffectHistoryStep: () => calls.push("history-end"),
+    completeCurrentActionEffect: (_root, status) => calls.push(`complete:${status}`),
+    renderStateReadout: () => calls.push("render"),
+    setStatusNote: (message) => calls.push(`status:${message}`),
+  });
+  const root = { rocketState: { statusNote: "" } };
+  runtime.skipCurrentForRoot(root);
+  assert.equal(root.rocketState.statusNote, "已跳过：可选奖励");
+  assert.deepEqual(calls, ["cancel", "跳过：可选奖励", "history-end", "complete:skipped"]);
+  current.status = "active";
+  calls.length = 0;
+  const result = runtime.skipWithMessage(root, current, "无可用目标", { reason: "empty" });
+  assert.equal(result.payload.skipped, true);
+  assert.equal(current.result.message, "无可用目标");
+  assert.deepEqual(calls, ["跳过：可选奖励", "status:无可用目标", "complete:skipped", "render"]);
+}
 
 function createHistoryHarness() {
   let nextStepId = 1;

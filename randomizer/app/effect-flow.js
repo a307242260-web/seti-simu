@@ -1186,6 +1186,68 @@
     });
   }
 
+  function createEffectSkipRuntime(context = {}) {
+    function cleanupSkippedEffect(effect) {
+      if (effect?.type !== "industry_strategy_passive_reward") return;
+      const player = context.getEffectOwnerPlayer(effect) || context.getCurrentPlayer();
+      context.industry?.clearStrategyPlayInteraction?.(player);
+      context.renderInitialSelectionArea();
+    }
+
+    function skipCurrentForRoot(workingRoot) {
+      if (!context.getActionEffectFlow(workingRoot)) return;
+      const current = context.getCurrentActionEffect(workingRoot);
+      if (!current || current.status !== "active") return;
+      if (context.getPendingYichangdianCornerAction()
+        && current.type === context.yichangdianCornerEffectType) {
+        context.openYichangdianCornerPicker();
+        return;
+      }
+      if (context.finishCurrentCardMoveEffectEarly()) return;
+      if (current.options?.skippable === false || current.required) {
+        workingRoot.rocketState.statusNote = `${current.label} 必须完成，不能跳过`;
+        context.renderStateReadout();
+        return;
+      }
+      const scanTarget = context.getPendingScanTargetDecision(workingRoot);
+      if (scanTarget?.type === "hand_scan" && scanTarget.discardDrawnOnSkip) {
+        context.handleDrawnHandScanSkip(workingRoot);
+        return;
+      }
+      context.cancelActiveEffectSubFlowsForRoot(workingRoot);
+      cleanupSkippedEffect(current);
+      context.beginEffectHistoryStep(workingRoot, `跳过：${current.label}`);
+      context.endEffectHistoryStep(workingRoot);
+      workingRoot.rocketState.statusNote = `已跳过：${current.label}`;
+      context.completeCurrentActionEffect(workingRoot, "skipped");
+    }
+
+    function skipWithMessage(workingRoot, effect, message, payload = {}) {
+      const current = effect || context.getCurrentActionEffect(workingRoot);
+      const result = {
+        ok: true,
+        undoable: true,
+        skipped: true,
+        message,
+        payload: { ...payload, skipped: true },
+      };
+      if (!current || current.status !== "active") {
+        context.setStatusNote(message);
+        context.renderStateReadout();
+        return result;
+      }
+      current.result = result;
+      cleanupSkippedEffect(current);
+      context.beginEffectHistoryStep(workingRoot, `跳过：${current.label}`);
+      context.setStatusNote(result.message);
+      context.completeCurrentActionEffect(workingRoot, "skipped");
+      context.renderStateReadout();
+      return result;
+    }
+
+    return Object.freeze({ skipCurrentForRoot, skipWithMessage });
+  }
+
   return {
     createActionEffectOrchestrator,
     createEffectFlowHelpers,
@@ -1193,5 +1255,6 @@
     createEffectSubFlowCancellationRuntime,
     createEffectFlowCompletionRuntime,
     createEffectFlowStateRuntime,
+    createEffectSkipRuntime,
   };
 });

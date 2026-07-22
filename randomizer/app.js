@@ -2731,6 +2731,30 @@
   handleHandCardPlay = (...args) => callHandFlowCommand("handleHandCardPlay", args);
   handleFutureSpanPlayCardSelect = (...args) => callHandFlowCommand("handleFutureSpanPlayCardSelect", args);
   handleHandScanCardClick = (...args) => callHandFlowCommand("handleHandScanCardClick", args);
+  const effectSkipRuntime = effectFlowModule.createEffectSkipRuntime({
+    industry,
+    yichangdianCornerEffectType: cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS,
+    getActionEffectFlow: (...args) => getActionEffectFlow(...args),
+    getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
+    getPendingYichangdianCornerAction: (...args) => getPendingYichangdianCornerAction(...args),
+    openYichangdianCornerPicker: (...args) => openYichangdianCornerPicker(...args),
+    finishCurrentCardMoveEffectEarly: (...args) => finishCurrentCardMoveEffectEarly(...args),
+    getPendingScanTargetDecision: (...args) => getPendingScanTargetDecision(...args),
+    handleDrawnHandScanSkip: (...args) => scanFlowHelpers.handleDrawnHandScanSkip(...args),
+    cancelActiveEffectSubFlowsForRoot: (...args) => cancelActiveEffectSubFlowsForRoot(...args),
+    getEffectOwnerPlayer: (...args) => getEffectOwnerPlayer(...args),
+    getCurrentPlayer: (...args) => getCurrentPlayer(...args),
+    renderInitialSelectionArea: (...args) => renderInitialSelectionArea(...args),
+    beginEffectHistoryStep: (...args) => beginEffectHistoryStep(...args),
+    endEffectHistoryStep: (...args) => endEffectHistoryStep(...args),
+    completeCurrentActionEffect: (...args) => completeCurrentActionEffect(...args),
+    renderStateReadout: (...args) => renderStateReadout(...args),
+    setStatusNote: (...args) => setBrowserStatusNote(...args),
+  });
+  const {
+    skipCurrentForRoot: skipCurrentActionEffectForRoot,
+    skipWithMessage: skipActionEffectWithMessage,
+  } = effectSkipRuntime;
   const scanFlowHelpers = scanFlowModule.createScanFlowHelpers({
     cards,
     players,
@@ -5540,71 +5564,8 @@
     return ruleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_subflows" });
   }
 
-  function cleanupSkippedActionEffect(effect) {
-    if (effect?.type === "industry_strategy_passive_reward") {
-      const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
-      industry?.clearStrategyPlayInteraction?.(player);
-      renderInitialSelectionArea();
-    }
-  }
-
-  function skipCurrentActionEffectForRoot(workingRoot) {
-    if (!getActionEffectFlow(workingRoot)) return;
-
-    const current = getCurrentActionEffect(workingRoot);
-    if (!current || current.status !== "active") return;
-    if (
-      getPendingYichangdianCornerAction()
-      && current.type === cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS
-    ) {
-      openYichangdianCornerPicker();
-      return;
-    }
-    if (finishCurrentCardMoveEffectEarly()) return;
-    if (current.options?.skippable === false || current.required) {
-      workingRoot.rocketState.statusNote = `${current.label} 必须完成，不能跳过`;
-      renderStateReadout();
-      return;
-    }
-    if (getPendingScanTargetDecision(workingRoot)?.type === "hand_scan" && getPendingScanTargetDecision(workingRoot).discardDrawnOnSkip) {
-      scanFlowHelpers.handleDrawnHandScanSkip(workingRoot);
-      return;
-    }
-
-    cancelActiveEffectSubFlowsForRoot(workingRoot);
-    cleanupSkippedActionEffect(current);
-    beginEffectHistoryStep(workingRoot, `跳过：${current.label}`);
-    endEffectHistoryStep(workingRoot);
-    workingRoot.rocketState.statusNote = `已跳过：${current.label}`;
-    completeCurrentActionEffect(workingRoot, "skipped");
-  }
-
   function skipCurrentActionEffect() {
     return ruleComposition.inputPort.submitHostCommand({ kind: "effect_skip_current" }).value;
-  }
-
-  function skipActionEffectWithMessage(workingRoot, effect, message, payload = {}) {
-    const current = effect || getCurrentActionEffect(workingRoot);
-    const result = {
-      ok: true,
-      undoable: true,
-      skipped: true,
-      message,
-      payload: { ...payload, skipped: true },
-    };
-    if (!current || current.status !== "active") {
-      setBrowserStatusNote(message);
-      renderStateReadout();
-      return result;
-    }
-
-    current.result = result;
-    cleanupSkippedActionEffect(current);
-    beginEffectHistoryStep(workingRoot, `跳过：${current.label}`);
-    setBrowserStatusNote(result.message);
-    completeCurrentActionEffect(workingRoot, "skipped");
-    renderStateReadout();
-    return result;
   }
 
   const sectorSettlementRuntime = scanFlowModule.createSectorSettlementRuntime({
