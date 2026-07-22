@@ -11598,56 +11598,7 @@
     }
   }
 
-  function createFallbackDebugRuntimeController() {
-    const noopResult = { ok: false, message: "调试模块未加载" };
-    const noop = () => noopResult;
-    const noopFocus = () => {};
-    return {
-      setDebugOpen() {},
-      setDebugPlayerMenuOpen() {},
-      renderDebugPlayerSwitch() {},
-      switchCurrentPlayerColor: noop,
-      selectDefaultRocketForCurrentPlayer() {
-        return null;
-      },
-      handleDebugQuickSectorScanChoice: noop,
-      openDebugQuickSectorScanPicker: noop,
-      runDebugQuickSectorScan: noop,
-      setDebugAlienTraceModeActive: noop,
-      toggleDebugAlienTraceMode: noop,
-      enableDebugAlienTraceModeForReveal: noop,
-      addDebugIncome: noop,
-      addDebugData: noop,
-      addDebugScore: noop,
-      addDebugCardByInput: noop,
-      promptDebugGainCard: noop,
-      revealJiuzheForDebug: noop,
-      revealYichangdianForDebug: noop,
-      revealFangzhouForDebug: noop,
-      revealBanrenmaForDebug: noop,
-      revealChongForDebug: noop,
-      revealAmibaForDebug: noop,
-      revealAomomoForDebug: noop,
-      revealRunezuForDebug: noop,
-      logAomomoDebugCoordinates() {},
-      fillNebulaDataBoard: noop,
-      fillDebugNebulaData: noop,
-      toggleSectorWinDebug: noop,
-      handleAiTakeoverFailsafe: noop,
-      handleForceSkipTurnFailsafe: noop,
-      renderAfterFailsafeControl() {},
-      getFailsafePendingOwnerPlayer() {
-        return null;
-      },
-      createFocusDebugCalibrationHandler() {
-        return noopFocus;
-      },
-      focusDebugCalibration: noop,
-    };
-  }
-
-  const debugRuntimeController = typeof debugRuntimeModule?.createDebugRuntime === "function"
-    ? debugRuntimeModule.createDebugRuntime({
+  const debugRuntimeController = debugRuntimeModule.createDebugRuntime({
     window,
     document,
     els,
@@ -11733,8 +11684,7 @@
     applyIndustryRoundStartBonuses,
     activateAomomoBoard,
     resize,
-  })
-    : createFallbackDebugRuntimeController();
+  });
   const focusDebugCalibration = (...args) => callDebugCommand("focusDebugCalibration", args);
 
   const appEventState = {

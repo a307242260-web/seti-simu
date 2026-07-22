@@ -20,6 +20,7 @@ const { collectDependencies } = require("./dependencies");
     SetiAppRefresh: {},
     SetiAppRenderRuntime: {},
     SetiBrowserPlayerStatsUi: {},
+    SetiAppDebugRuntime: {},
     SetiAppFinalUiRuntime: {},
     SetiAppFinalScoreAiRuntime: {},
     SetiAppStartScreen: {},
@@ -79,7 +80,7 @@ const { collectDependencies } = require("./dependencies");
   };
 
   const dependencies = collectDependencies(source);
-  assert.equal(dependencies.debugRuntimeModule, null);
+  assert.deepEqual(dependencies.debugRuntimeModule, {});
   assert.deepEqual(dependencies.jiuzhe, {});
 
   console.log("dependencies tests passed");

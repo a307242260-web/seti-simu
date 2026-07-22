@@ -27,6 +27,7 @@
     Object.freeze({ key: "refreshModule", globalName: "SetiAppRefresh" }),
     Object.freeze({ key: "renderRuntimeModule", globalName: "SetiAppRenderRuntime" }),
     Object.freeze({ key: "playerStatsUiModule", globalName: "SetiBrowserPlayerStatsUi" }),
+    Object.freeze({ key: "debugRuntimeModule", globalName: "SetiAppDebugRuntime" }),
     Object.freeze({ key: "finalUiRuntimeModule", globalName: "SetiAppFinalUiRuntime" }),
     Object.freeze({ key: "finalScoreAiRuntimeModule", globalName: "SetiAppFinalScoreAiRuntime" }),
     Object.freeze({ key: "startScreenModule", globalName: "SetiAppStartScreen" }),
@@ -78,7 +79,6 @@
   const OPTIONAL_GLOBALS = Object.freeze([
     Object.freeze({ key: "browserHostModule", globalName: "SetiBrowserHost" }),
     Object.freeze({ key: "aiControlRuntimeModule", globalName: "SetiAppAiControlRuntime" }),
-    Object.freeze({ key: "debugRuntimeModule", globalName: "SetiAppDebugRuntime" }),
     Object.freeze({ key: "effectSessionHostModule", globalName: "SetiAppEffectSessionHost" }),
   ]);
 
