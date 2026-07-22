@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const {
   ACTION_FAMILIES,
   createQuickTurnActionExecutor,
+  createQuickTradeFlow,
 } = require("./quick-turn-action-executor");
 
 function createRoot() {
@@ -90,6 +91,30 @@ function createExecutor(trace = [], failFamily = null) {
   });
 }
 
+function createQuickTradeFlowContext(overrides = {}) {
+  const trace = [];
+  const player = { id: "p1" };
+  const context = {
+    dispatchRuleInput(input) { trace.push(["dispatch", input]); return { ok: true, routed: true }; },
+    blockIncompatiblePendingQuickAction() { return null; },
+    getGameplayLockReason() { return ""; },
+    players: { getCurrentPlayer() { return player; } },
+    historyCommands: { captureTradeState() { return { credits: 3 }; } },
+    quickTrades: { executeTrade() { return { ok: true, message: "交易完成" }; } },
+    createActionContext(root, action) { return { root, action }; },
+    getPendingDiscardDecision() { return null; },
+    getPendingCardSelectionDecision() { return null; },
+    recordQuickTradeCompletion(...args) { trace.push(["record", ...args]); },
+    renderPlayerStats() { trace.push(["renderPlayerStats"]); },
+    renderPublicCards() { trace.push(["renderPublicCards"]); },
+    updatePublicCardControls() { trace.push(["updatePublicCardControls"]); },
+    updateActionButtons() { trace.push(["updateActionButtons"]); },
+    renderStateReadout() { trace.push(["renderStateReadout"]); },
+    ...overrides,
+  };
+  return { context, trace, player };
+}
+
 {
   const trace = [];
   const executor = createExecutor(trace);
@@ -136,6 +161,50 @@ function createExecutor(trace = [], failFamily = null) {
     assert.equal(executor.execute(aiRoot, structuredClone(descriptor(family))).ok, true);
     assert.deepEqual(aiRoot, browserRoot, `${family} Browser/AI parity`);
   }
+}
+
+{
+  const { context, trace } = createQuickTradeFlowContext();
+  const result = createQuickTradeFlow(context).runQuickTrade("energy-for-credit");
+  assert.equal(result.routed, true);
+  assert.deepEqual(trace, [["dispatch", {
+    kind: "standard_intent",
+    family: "quick_trade",
+    selector: { tradeId: "energy-for-credit" },
+  }]]);
+}
+
+{
+  const { context, trace, player } = createQuickTradeFlowContext();
+  const workingRoot = createRoot();
+  const result = createQuickTradeFlow(context).runQuickTrade("energy-for-credit", { workingRoot });
+  assert.equal(result.ok, true);
+  assert.equal(workingRoot.rocketState.statusNote, "交易完成");
+  assert.deepEqual(trace[0], ["record", "energy-for-credit", player, { credits: 3 }, { workingRoot }]);
+  assert.deepEqual(trace.slice(1).map(([name]) => name), [
+    "renderPlayerStats", "renderPublicCards", "updatePublicCardControls", "updateActionButtons", "renderStateReadout",
+  ]);
+}
+
+{
+  const continuation = {};
+  const { context, trace } = createQuickTradeFlowContext({
+    quickTrades: { executeTrade() { return { ok: true, awaitingDiscard: true, message: "请弃牌" }; } },
+    getPendingDiscardDecision() { return continuation; },
+  });
+  const workingRoot = createRoot();
+  const result = createQuickTradeFlow(context).runQuickTrade("energy-for-credit", {
+    workingRoot,
+    preserveHandIndex: "2",
+    aiReason: "test-ai",
+  });
+  assert.equal(result.awaitingDiscard, true);
+  assert.deepEqual(continuation, {
+    beforeTradeState: { credits: 3 },
+    preserveHandIndex: 2,
+    aiReason: "test-ai",
+  });
+  assert.deepEqual(trace, [["renderStateReadout"]]);
 }
 
 console.log("quick/turn action executor tests passed");

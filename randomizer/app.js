@@ -2466,6 +2466,24 @@
       workingRoot: options.workingRoot,
     });
   }
+  const quickTradeFlow = quickTurnActionExecutorModule.createQuickTradeFlow({
+    dispatchRuleInput: (...args) => dispatchBrowserRuleInput(...args),
+    blockIncompatiblePendingQuickAction: (...args) => blockIncompatiblePendingQuickAction(...args),
+    getGameplayLockReason: (...args) => getGameplayLockReason(...args),
+    players,
+    historyCommands,
+    quickTrades,
+    createActionContext: createActionContextForWorkingRoot,
+    getPendingDiscardDecision,
+    getPendingCardSelectionDecision,
+    recordQuickTradeCompletion: (...args) => recordQuickTradeCompletion(...args),
+    renderPlayerStats,
+    renderPublicCards: (...args) => renderPublicCards(...args),
+    updatePublicCardControls: (...args) => updatePublicCardControls(...args),
+    updateActionButtons: (...args) => updateActionButtons(...args),
+    renderStateReadout,
+  });
+  const { runQuickTrade } = quickTradeFlow;
   ({
     resetActionBriefingState,
     rememberActionBriefingEntry,
@@ -9093,88 +9111,6 @@
       rewardEffects,
       { workingRoot, actionType: "analyze", historySource: HISTORY_SOURCE_MAIN, consumesMainAction: true },
     );
-  }
-
-  function runQuickTrade(tradeId, options = {}) {
-    if (!options.workingRoot) {
-      return dispatchBrowserRuleInput({
-        kind: "standard_intent",
-        family: "quick_trade",
-        selector: { tradeId },
-      });
-    }
-    const workingRoot = options.workingRoot;
-    const actionPlayerState = workingRoot.playerState;
-    const actionCardState = workingRoot.cardState;
-    const actionRocketState = workingRoot.rocketState;
-    const blocked = blockIncompatiblePendingQuickAction("quick-trade");
-    if (blocked) return blocked;
-
-    const gameplayLockReason = getGameplayLockReason();
-    if (gameplayLockReason) {
-      actionRocketState.statusNote = gameplayLockReason;
-      renderStateReadout();
-      return { ok: false, message: gameplayLockReason };
-    }
-
-    const player = players.getCurrentPlayer(actionPlayerState);
-    const beforeState = historyCommands.captureTradeState(player, actionCardState);
-    const result = quickTrades.executeTrade(
-      tradeId,
-      createActionContextForWorkingRoot(workingRoot, options.standardAction),
-    );
-    if (!result.ok) {
-      actionRocketState.statusNote = result.message;
-      renderPlayerStats();
-      updateActionButtons();
-      renderStateReadout();
-      return result;
-    }
-
-    if (result.awaitingDiscard) {
-      const discardContinuation = getPendingDiscardDecision(workingRoot);
-      if (discardContinuation) {
-        discardContinuation.beforeTradeState = beforeState;
-        if (
-          options.preserveHandIndex !== null
-          && options.preserveHandIndex !== undefined
-          && options.preserveHandIndex !== ""
-        ) {
-          discardContinuation.preserveHandIndex = Number(options.preserveHandIndex);
-        }
-        if (options.aiReason) {
-          discardContinuation.aiReason = options.aiReason;
-        }
-      }
-      actionRocketState.statusNote = result.message;
-      renderStateReadout();
-      return result;
-    }
-
-    if (result.awaitingCardSelection) {
-      const cardSelectionContinuation = getPendingCardSelectionDecision(workingRoot);
-      if (cardSelectionContinuation) {
-        cardSelectionContinuation.beforeTradeState = beforeState;
-        if (options.preferBlindDraw) {
-          cardSelectionContinuation.aiPreferBlindDraw = true;
-        }
-        if (options.aiReason) {
-          cardSelectionContinuation.aiReason = options.aiReason;
-        }
-      }
-      actionRocketState.statusNote = result.message;
-      renderStateReadout();
-      return result;
-    }
-
-    recordQuickTradeCompletion(tradeId, player, beforeState, { workingRoot });
-    actionRocketState.statusNote = result.message;
-    renderPlayerStats();
-    renderPublicCards();
-    updatePublicCardControls();
-    updateActionButtons();
-    renderStateReadout();
-    return result;
   }
 
   function runAction(actionId, actionOptions) {

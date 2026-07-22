@@ -105,5 +105,74 @@
     return Object.freeze({ actionFamilies: ACTION_FAMILIES, execute });
   }
 
-  return Object.freeze({ ACTION_FAMILIES, createQuickTurnActionExecutor });
+  function createQuickTradeFlow(context = {}) {
+    function runQuickTrade(tradeId, options = {}) {
+      if (!options.workingRoot) {
+        return context.dispatchRuleInput({
+          kind: "standard_intent",
+          family: "quick_trade",
+          selector: { tradeId },
+        });
+      }
+      const workingRoot = options.workingRoot;
+      const { playerState, cardState, rocketState } = workingRoot;
+      const blocked = context.blockIncompatiblePendingQuickAction("quick-trade");
+      if (blocked) return blocked;
+      const gameplayLockReason = context.getGameplayLockReason();
+      if (gameplayLockReason) {
+        rocketState.statusNote = gameplayLockReason;
+        context.renderStateReadout();
+        return { ok: false, message: gameplayLockReason };
+      }
+      const player = context.players.getCurrentPlayer(playerState);
+      const beforeState = context.historyCommands.captureTradeState(player, cardState);
+      const result = context.quickTrades.executeTrade(
+        tradeId,
+        context.createActionContext(workingRoot, options.standardAction),
+      );
+      if (!result.ok) {
+        rocketState.statusNote = result.message;
+        context.renderPlayerStats();
+        context.updateActionButtons();
+        context.renderStateReadout();
+        return result;
+      }
+      if (result.awaitingDiscard) {
+        const continuation = context.getPendingDiscardDecision(workingRoot);
+        if (continuation) {
+          continuation.beforeTradeState = beforeState;
+          if (options.preserveHandIndex !== null && options.preserveHandIndex !== undefined && options.preserveHandIndex !== "") {
+            continuation.preserveHandIndex = Number(options.preserveHandIndex);
+          }
+          if (options.aiReason) continuation.aiReason = options.aiReason;
+        }
+        rocketState.statusNote = result.message;
+        context.renderStateReadout();
+        return result;
+      }
+      if (result.awaitingCardSelection) {
+        const continuation = context.getPendingCardSelectionDecision(workingRoot);
+        if (continuation) {
+          continuation.beforeTradeState = beforeState;
+          if (options.preferBlindDraw) continuation.aiPreferBlindDraw = true;
+          if (options.aiReason) continuation.aiReason = options.aiReason;
+        }
+        rocketState.statusNote = result.message;
+        context.renderStateReadout();
+        return result;
+      }
+      context.recordQuickTradeCompletion(tradeId, player, beforeState, { workingRoot });
+      rocketState.statusNote = result.message;
+      context.renderPlayerStats();
+      context.renderPublicCards();
+      context.updatePublicCardControls();
+      context.updateActionButtons();
+      context.renderStateReadout();
+      return result;
+    }
+
+    return Object.freeze({ runQuickTrade });
+  }
+
+  return Object.freeze({ ACTION_FAMILIES, createQuickTurnActionExecutor, createQuickTradeFlow });
 });
