@@ -2796,7 +2796,7 @@
 
   function getPlayerHandPanelTitleHint() {
     if (isDiscardSelectionActive()) {
-      const remaining = cards.getDiscardRemaining(cardState);
+      const remaining = cards.getDiscardRemaining(createStateSourceReadoutRoot().cardState);
       return `（请选择 ${remaining} 张弃牌）`;
     }
     if (isHandScanSelectionActive()) {
@@ -3261,11 +3261,11 @@
   });
 
   function getActiveOrderedPlayerIds() {
-    return turnFlowModule.getActiveOrderedPlayerIds(turnState);
+    return turnFlowModule.getActiveOrderedPlayerIds(createStateSourceReadoutRoot().turnState);
   }
 
   function getRoundOrderPlayerIds() {
-    return turnFlowModule.getRoundOrderPlayerIds(turnState);
+    return turnFlowModule.getRoundOrderPlayerIds(createStateSourceReadoutRoot().turnState);
   }
 
   function syncStartScreenDebugOption() {
@@ -3427,12 +3427,14 @@
     return actionRuntimeController.isInitialSelectionActive();
   }
 
-  function getInitialSelectionOffer(playerId = playerState.currentPlayerId) {
-    return actionRuntimeController.getInitialSelectionOffer(playerId);
+  function getInitialSelectionOffer(playerId = null) {
+    const resolvedPlayerId = playerId ?? createStateSourceReadoutRoot().playerState.currentPlayerId;
+    return actionRuntimeController.getInitialSelectionOffer(resolvedPlayerId);
   }
 
-  function isInitialSelectionConfirmed(playerId = playerState.currentPlayerId) {
-    return actionRuntimeController.isInitialSelectionConfirmed(playerId);
+  function isInitialSelectionConfirmed(playerId = null) {
+    const resolvedPlayerId = playerId ?? createStateSourceReadoutRoot().playerState.currentPlayerId;
+    return actionRuntimeController.isInitialSelectionConfirmed(resolvedPlayerId);
   }
 
   function canConfirmInitialSelection(offer) {
@@ -4724,11 +4726,12 @@
   }
 
   function ensureActionLogDraft(options = {}) {
+    const readoutRoot = createStateSourceReadoutRoot();
     return actionLogRuntimeModule.ensureDraft(actionLogState, {
       getCurrentPlayer,
-      currentPlayerId: playerState.currentPlayerId,
-      roundNumber: turnState.roundNumber,
-      turnNumber: turnState.turnNumber,
+      currentPlayerId: readoutRoot.playerState.currentPlayerId,
+      roundNumber: readoutRoot.turnState.roundNumber,
+      turnNumber: readoutRoot.turnState.turnNumber,
       getPlayerLabelById,
       getActionCycleNumber,
       getActionLogActionLabel,
@@ -4808,16 +4811,17 @@
   }
 
   function createGameRecoverySnapshot(meta = {}) {
+    const readoutRoot = createStateSourceReadoutRoot();
     return gameRecoveryModule.createGameRecoverySnapshot({
       browserServices: residentBrowserServices,
       ruleLifecycleOptions: {
         seed: meta.seed ?? "browser-host",
         rngState: meta.rngState || { owner: headlessMode ? "headless" : "browser", state: null },
       },
-      roundNumber: turnState.roundNumber,
-      turnNumber: turnState.turnNumber,
+      roundNumber: readoutRoot.turnState.roundNumber,
+      turnNumber: readoutRoot.turnState.turnNumber,
       actionCycleNumber: getActionCycleNumber(),
-      currentPlayerId: playerState.currentPlayerId,
+      currentPlayerId: readoutRoot.playerState.currentPlayerId,
       entryId: meta.entryId ?? null,
       label: meta.label || null,
       runtime: {
@@ -4990,16 +4994,17 @@
 
   function buildActionLogMarkdownContext(options = {}) {
     const generatedAt = options.generatedAt || new Date();
+    const readoutRoot = createStateSourceReadoutRoot();
     return {
       generatedAt,
       isGameEnded: isGameEnded(),
-      gameEndReason: turnState.gameEndReason || null,
-      roundNumber: turnState.roundNumber,
+      gameEndReason: readoutRoot.turnState.gameEndReason || null,
+      roundNumber: readoutRoot.turnState.roundNumber,
       turnNumber: getDisplayedTurnNumber(),
       turnState: {
-        ...structuredClone(turnState),
+        ...structuredClone(readoutRoot.turnState),
         displayedTurnNumber: getDisplayedTurnNumber(),
-        currentPlayerId: playerState.currentPlayerId,
+        currentPlayerId: readoutRoot.playerState.currentPlayerId,
       },
       entries: getRecoverableActionLog({ includeRecovery: false }),
       playerResults: buildActionLogExportPlayerResults(),
@@ -5249,10 +5254,11 @@
   }
 
   function appendConfirmedActionLogEntry(entryInput) {
+    const readoutRoot = createStateSourceReadoutRoot();
     const entry = actionLogRuntimeModule.createConfirmedEntry(actionLogState, entryInput, {
       getCurrentPlayer,
-      roundNumber: turnState.roundNumber,
-      turnNumber: turnState.turnNumber,
+      roundNumber: readoutRoot.turnState.roundNumber,
+      turnNumber: readoutRoot.turnState.turnNumber,
       getDisplayedTurnNumber,
       getActionCycleNumber,
       getPlayerLabelById,
@@ -5274,11 +5280,11 @@
   }
 
   function isPlayerPassedThisRound(playerId) {
-    return turnState.passedPlayerIds.includes(playerId);
+    return createStateSourceReadoutRoot().turnState.passedPlayerIds.includes(playerId);
   }
 
   function hasPlayerCompletedThisTurn(playerId) {
-    return turnState.completedTurnPlayerIds.includes(playerId);
+    return createStateSourceReadoutRoot().turnState.completedTurnPlayerIds.includes(playerId);
   }
 
   function getFirstEligiblePlayerId() {
@@ -5301,16 +5307,18 @@
   }
 
   function haveAllActivePlayersPassed() {
-    return turnState.activePlayerIds.length > 0
-      && turnState.activePlayerIds.every((playerId) => isPlayerPassedThisRound(playerId));
+    const readoutTurnState = createStateSourceReadoutRoot().turnState;
+    return readoutTurnState.activePlayerIds.length > 0
+      && readoutTurnState.activePlayerIds.every((playerId) => readoutTurnState.passedPlayerIds.includes(playerId));
   }
 
-  function isFinalRound(candidateTurnState = turnState) {
-    return Number(candidateTurnState.roundNumber) >= FINAL_ROUND_NUMBER;
+  function isFinalRound(candidateTurnState = null) {
+    const resolvedTurnState = candidateTurnState || createStateSourceReadoutRoot().turnState;
+    return Number(resolvedTurnState.roundNumber) >= FINAL_ROUND_NUMBER;
   }
 
   function isGameEnded() {
-    return Boolean(turnState.gameEnded);
+    return Boolean(createStateSourceReadoutRoot().turnState.gameEnded);
   }
 
   function buildFinalScoreSummaryLinesForRoot(workingRoot) {
@@ -5384,19 +5392,20 @@
   }
 
   function getTurnReadoutLines() {
-    const orderLabels = turnState.turnOrderPlayerIds.map(getPlayerLabelById).join(" > ");
+    const readoutTurnState = createStateSourceReadoutRoot().turnState;
+    const orderLabels = readoutTurnState.turnOrderPlayerIds.map(getPlayerLabelById).join(" > ");
     const roundOrderLabels = getRoundOrderPlayerIds().map(getPlayerLabelById).join(" > ");
-    const passedLabels = turnState.passedPlayerIds.map(getPlayerLabelById).join("、") || "无";
-    const completedLabels = turnState.completedTurnPlayerIds.map(getPlayerLabelById).join("、") || "无";
-    const agentLabels = (turnState.activePlayerIds || [])
+    const passedLabels = readoutTurnState.passedPlayerIds.map(getPlayerLabelById).join("、") || "无";
+    const completedLabels = readoutTurnState.completedTurnPlayerIds.map(getPlayerLabelById).join("、") || "无";
+    const agentLabels = (readoutTurnState.activePlayerIds || [])
       .map((playerId) => `${getPlayerLabelById(playerId)}=${getPlayerAgentLabel(playerId)}`)
       .join("、") || "无";
 
     return [
       "轮次状态",
       isGameEnded()
-        ? `游戏结束：第${turnState.roundNumber}轮全员 PASS，进行终局计分`
-        : `第${turnState.roundNumber}轮 第${getDisplayedTurnNumber()}回合`,
+        ? `游戏结束：第${readoutTurnState.roundNumber}轮全员 PASS，进行终局计分`
+        : `第${readoutTurnState.roundNumber}轮 第${getDisplayedTurnNumber()}回合`,
       `基础顺位 ${orderLabels || "无"}`,
       `本轮顺位 ${roundOrderLabels || "无"}`,
       `玩家代理 ${agentLabels}`,
@@ -5406,15 +5415,15 @@
   }
 
   function isCardSelectionActive() {
-    return cards.isSelectionActive(cardState);
+    return cards.isSelectionActive(createStateSourceReadoutRoot().cardState);
   }
 
   function isDiscardSelectionActive() {
-    return cards.isDiscardSelectionActive(cardState);
+    return cards.isDiscardSelectionActive(createStateSourceReadoutRoot().cardState);
   }
 
   function isPlayCardSelectionActive() {
-    return cards.isPlayCardSelectionActive(cardState);
+    return cards.isPlayCardSelectionActive(createStateSourceReadoutRoot().cardState);
   }
 
   function allowsBlindDrawInSelection() {
@@ -5617,7 +5626,11 @@
 
   function getSectorContentForMove(coordinate) {
     if (!coordinate) return null;
-    return solar.resolveVisibleContent(coordinate.x, coordinate.y, solarState)?.content || null;
+    return solar.resolveVisibleContent(
+      coordinate.x,
+      coordinate.y,
+      createStateSourceReadoutRoot().solarState,
+    )?.content || null;
   }
 
   function isAsteroidContent(content) {
