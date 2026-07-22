@@ -165,4 +165,37 @@ function createProjection() {
   assert.throws(() => renderer.renderAll({ projection: createProjection() }), /ViewState/);
 })();
 
+(function testResidentPresentationBuilderKeepsDomainProjectionOutOfBootstrap() {
+  const builder = projectionApi.createResidentPresentationBuilder({
+    setupSelectionState: {
+      phase: "selecting", currentPlayerId: "p1",
+      offersByPlayerId: { p1: { industryCards: [{ id: "industry-1" }] } },
+    },
+    cardTaskState: { readyType2ByCardId: { task1: true } },
+    cardEffects: {
+      getConsumedTriggerIndexes: () => [0],
+      getCardModel: () => ({}),
+    },
+    players: { CARD_BACK_SRC: "back.webp" },
+    cards: { getCardLabel: (card) => card.cardName },
+    getCardTypeCode: () => 2,
+    isAiPlayer: () => false,
+  });
+  const resident = { players: { players: [{
+    id: "p1", colorLabel: "白色", completedTaskCount: 1,
+    initialSelection: { industry: { id: "industry-1" } },
+    reservedCards: [{ id: "task1", cardName: "任务一", src: "task.webp" }],
+  }] }, aliens: {} };
+  const viewer = { playerId: "p1" };
+  assert.deepEqual(builder.createInitialSelection(viewer, resident), {
+    active: true, interactive: true, currentPlayerId: "p1",
+    offer: { industryCards: [{ id: "industry-1" }] },
+    selectedCards: [{ id: "industry-1" }],
+  });
+  const reserved = builder.createReservedCards(viewer, resident);
+  assert.equal(reserved.title, "初始选择 · 白色玩家");
+  assert.equal(reserved.rows[0].items[0].ready, true);
+  assert.deepEqual(reserved.rows[0].items[0].progressIndexes, [0]);
+})();
+
 console.log("resident-renderer tests passed");
