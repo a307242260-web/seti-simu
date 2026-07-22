@@ -117,9 +117,7 @@
     const {
       window: windowRef = root,
       state,
-      playerState,
-      turnState,
-      rocketState,
+      getRuleProjection,
       DEFAULT_ACTIVE_PLAYER_COUNT,
       DEFAULT_INITIAL_PLAYER_COLOR,
       getCurrentActionEffect,
@@ -141,6 +139,9 @@
       startInitialSelection,
       updateActionButtons,
     } = context;
+    if (typeof getRuleProjection !== "function") {
+      throw new TypeError("createAiControlRuntime requires getRuleProjection() StateSource reader");
+    }
 
     const aiAutoBattleState = {
       enabled: false,
@@ -252,8 +253,9 @@
       return aiAutoBattleState.playerIds.filter((playerId) => getPlayerById(playerId));
     }
 
-    function isAiAutoBattlePlayer(playerId = playerState.currentPlayerId) {
-      return aiAutoBattleState.enabled && getAiAutoBattlePlayerIds().includes(playerId);
+    function isAiAutoBattlePlayer(playerId = null) {
+      const resolvedPlayerId = playerId ?? getRuleProjection().players.currentPlayerId;
+      return aiAutoBattleState.enabled && getAiAutoBattlePlayerIds().includes(resolvedPlayerId);
     }
 
     function isAiAutomationPaused() {
@@ -261,18 +263,20 @@
     }
 
     function getDefaultHumanPlayerId() {
+      const projection = getRuleProjection();
       return getPlayerByColor(DEFAULT_INITIAL_PLAYER_COLOR)?.id
-        || turnState.startPlayerId
-        || playerState.currentPlayerId
+        || projection.turn.startPlayerId
+        || projection.players.currentPlayerId
         || null;
     }
 
     function getDefaultAiOpponentPlayerIds() {
+      const projection = getRuleProjection();
       const humanPlayerId = getDefaultHumanPlayerId();
-      const activeIds = (turnState.activePlayerIds || []).filter((playerId) => getPlayerById(playerId));
+      const activeIds = (projection.turn.activePlayerIds || []).filter((playerId) => getPlayerById(playerId));
       const opponents = activeIds.filter((playerId) => playerId !== humanPlayerId);
       if (opponents.length) return opponents;
-      return playerState.players
+      return projection.players.players
         .filter((player) => player.id !== humanPlayerId)
         .slice(0, Math.max(0, DEFAULT_ACTIVE_PLAYER_COUNT - 1))
         .map((player) => player.id);
@@ -300,6 +304,7 @@
     }
 
     function resolveAiAutoBattlePlayerIds(options = {}) {
+      const projection = getRuleProjection();
       const requested = Array.isArray(options.playerIds)
         ? options.playerIds
         : Array.isArray(options.colors)
@@ -312,9 +317,9 @@
       if (resolved.length) return [...new Set(resolved)];
       const requestedCount = Math.max(
         1,
-        Math.round(Number(options.activePlayerCount) || turnState.activePlayerCount || DEFAULT_ACTIVE_PLAYER_COUNT),
+        Math.round(Number(options.activePlayerCount) || projection.turn.activePlayerCount || DEFAULT_ACTIVE_PLAYER_COUNT),
       );
-      return (turnState.activePlayerIds || [])
+      return (projection.turn.activePlayerIds || [])
         .filter((playerId) => getPlayerById(playerId))
         .slice(0, requestedCount);
     }
@@ -417,7 +422,7 @@
       if (alienPendingPlayerId) return alienPendingPlayerId;
       const currentEffect = getCurrentActionEffect();
       const effectOwner = currentEffect ? getEffectOwnerPlayer(currentEffect) : null;
-      return effectOwner?.id || playerState.currentPlayerId;
+      return effectOwner?.id || getRuleProjection().players.currentPlayerId;
     }
 
     function shouldAutoRunCurrentAiPlayer() {
@@ -455,7 +460,6 @@
           result,
           mode: "default-human-vs-ai",
         });
-        rocketState.statusNote = `电脑玩家阻塞：${bug.message}`;
         renderStateReadout();
         return;
       }
@@ -587,7 +591,7 @@
           if (!resetResult.ok) return resetResult;
         }
         if (options.activePlayerCount && !options.reset) {
-          const playerIds = playerState.players.map((player) => player.id);
+          const playerIds = getRuleProjection().players.players.map((player) => player.id);
           setTurnStatePlayerOrder(playerIds, { activePlayerCount: options.activePlayerCount });
           startInitialSelection();
         }

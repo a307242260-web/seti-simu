@@ -288,9 +288,7 @@
     const aiControlRuntime = resolvedAiControlRuntimeModule.createAiControlRuntime({
       window: windowRef,
       state,
-      playerState,
-      turnState,
-      rocketState,
+      getRuleProjection: context.getRuleProjection,
       DEFAULT_ACTIVE_PLAYER_COUNT,
       DEFAULT_INITIAL_PLAYER_COLOR,
       getCurrentActionEffect,

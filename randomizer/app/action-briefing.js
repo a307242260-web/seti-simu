@@ -84,7 +84,9 @@
   function getActionBriefingNebulaLocations(options = {}) {
     const solar = options.solar || {};
     const data = options.data || {};
-    const solarState = options.solarState || {};
+    const solarState = typeof options.getSolarState === "function"
+      ? options.getSolarState()
+      : {};
     const aomomo = options.aomomo || null;
     const getAomomoCurrentX = options.getAomomoCurrentX || null;
     const locations = solar.getNebulaLocations?.(solarState.sectorBySlot) || [];
@@ -373,7 +375,7 @@
       normalizeActionLogText,
       historySourceMain: context.HISTORY_SOURCE_MAIN || "main",
       solar: context.solar || {},
-      solarState: context.solarState || {},
+      getSolarState: context.getSolarState,
       data: context.data || {},
       aomomo: context.aomomo || null,
       getAomomoCurrentX: context.getAomomoCurrentX || null,

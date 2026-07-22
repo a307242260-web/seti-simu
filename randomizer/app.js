@@ -1921,7 +1921,7 @@
     turnState,
     HISTORY_SOURCE_MAIN,
     solar,
-    solarState,
+    getSolarState: () => browserRuleComposition.stateSourcePort.read().state.solarSystem,
     data,
     aomomo,
     getAomomoCurrentX,
@@ -3893,6 +3893,13 @@
       kind: "ai_recover_idle_action_effect",
       args,
     }),
+    getRuleProjection: () => {
+      const state = browserRuleComposition.stateSourcePort.read().state;
+      return {
+        players: structuredClone(state.players),
+        turn: structuredClone(state.turn),
+      };
+    },
     solarState,
     nebulaDataState,
     alienGameState,
