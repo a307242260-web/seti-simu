@@ -5796,13 +5796,11 @@
     aiRaceModel,
     aiValuation,
     aliens,
-    alienGameState,
     applyAiStrategyWeight,
     cardEffects,
     createActionContext,
     endGameScoring,
     finalScoring,
-    finalScoringState,
     getAiMapDemand,
     getAiRemainingRoundWeight,
     getAiStrategyDemand,
@@ -5811,11 +5809,10 @@
     getPlayerById,
     handleFinalScoreTileClick,
     isAiAutoBattlePlayer,
-    playerState,
     recordAiAutoBattleLog,
     sumAiDemandMap,
     syncFinalScorePendingMarks,
-    turnState,
+    getRuleReadout: createStateSourceReadoutRoot,
   });
 
 
