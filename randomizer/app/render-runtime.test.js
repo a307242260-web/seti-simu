@@ -28,7 +28,7 @@ const {
     assert.equal(categorized.includes(key), false, `forbidden capability 不得进入 allowlist: ${key}`);
   }
 }
-const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
+const { createCompositionDecisionAccess } = require("../game/effects/composition-decision-access");
 const { attachDecisionState } = require("./test-decision-state");
 
 function createClassList(element) {
@@ -205,8 +205,8 @@ function createImageCtor() {
 }
 
 function createContext(overrides = {}) {
-  const decisionSessions = createDecisionSessionStore();
-  const pendingState = attachDecisionState({ cardSelectionAction: null }, decisionSessions);
+  const compositionDecisions = createCompositionDecisionAccess();
+  const pendingState = attachDecisionState({ cardSelectionAction: null }, compositionDecisions);
   const document = overrides.document || createDocument();
   const els = overrides.els || {
     tokenLayer: createElement("div", document),
@@ -639,7 +639,7 @@ function createContext(overrides = {}) {
   const wiring = appSource.slice(start, end);
   assert.match(wiring, /getProjection:/);
   for (const key of [
-    "decisionSessions", "solarState", "playerState", "rocketState", "nebulaDataState",
+    "compositionDecisions", "solarState", "playerState", "rocketState", "nebulaDataState",
     "planetStatsState", "alienGameState", "finalScoringState", "turnState", "cardState", "techGameState",
     "getCurrentPlayer", "getInterfacePlayer", "getActivePlayers", "getPlayerById", "getPlayerByColor",
     "syncFinalScorePendingMarks", "computePlayerFinalScoreBreakdown",

@@ -31,7 +31,7 @@
       completeCurrentActionEffect,
       createActionContext,
       data,
-      decisionSessions,
+      compositionDecisions,
       document,
       effectChoiceFlowHelpers,
       els,
@@ -101,7 +101,7 @@
       if (!continuation) delete workingRoot.match.scanTargetContinuation;
       else workingRoot.match.scanTargetContinuation = structuredClone(continuation);
     }
-    const decisionState = context.decisionSessions?.createFacade?.({
+    const compositionState = context.compositionDecisions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -576,9 +576,9 @@
       recordAbilityCommands(result, undefined, workingRoot);
       const actionOwner = getActionResultOwnerPlayer(result, getEffectOwnerPlayer(workingRoot, effect));
       claimRunezuPlanetSymbolForTravelResult("land", result, actionOwner);
-      if (decisionState.actionEffectFlow) {
+      if (compositionState.actionEffectFlow) {
         const sector = getPlanetSectorCoordinate(result.planetId);
-        decisionState.actionEffectFlow.lastLanding = {
+        compositionState.actionEffectFlow.lastLanding = {
           planetId: result.planetId,
           sectorX: sector.x,
           hadOwnLandingMarker: Boolean(contextInfo.preOwnLandingMarker),
@@ -888,8 +888,8 @@
         beforeCard,
         "恢复冥王星卡牌行动前卡牌状态",
       ));
-      if (decisionState.actionEffectFlow && actionType === "land") {
-        decisionState.actionEffectFlow.lastLanding = {
+      if (compositionState.actionEffectFlow && actionType === "land") {
+        compositionState.actionEffectFlow.lastLanding = {
           planetId: "pluto",
           sectorX: markerResult.marker.sectorX,
           hadOwnLandingMarker: Boolean(contextInfo.preOwnLandingMarker),
@@ -1092,7 +1092,7 @@
     }
 
     function resolvePlayedCardReturnTarget(workingRoot, effect) {
-      const flow = decisionState.actionEffectFlow || {};
+      const flow = compositionState.actionEffectFlow || {};
       const playedCard = flow.card || null;
       const sourceInstanceId = playedCard?.id || flow.playCardEvent?.sourceCardInstanceId || null;
       const sourceCardId = playedCard?.cardId || flow.playCardEvent?.cardId || null;
@@ -1163,13 +1163,13 @@
         return (currentPlayer?.hand || []).length === 0;
       }
       if (condition.type === "lastLandingHadOwnMarker") {
-        return Boolean(decisionState.actionEffectFlow?.lastLanding?.hadOwnLandingMarker);
+        return Boolean(compositionState.actionEffectFlow?.lastLanding?.hadOwnLandingMarker);
       }
       if (condition.type === "lastLandingHadAnyMarker") {
-        return Boolean(decisionState.actionEffectFlow?.lastLanding?.hadAnyLandingMarker);
+        return Boolean(compositionState.actionEffectFlow?.lastLanding?.hadAnyLandingMarker);
       }
       if (condition.type === "flowMarkedNebula") {
-        const markedNebulaIds = getFlowMarkedNebulaIds(decisionState.actionEffectFlow);
+        const markedNebulaIds = getFlowMarkedNebulaIds(compositionState.actionEffectFlow);
         const requiredNebulaIds = condition.nebulaIds || condition.includeNebulaIds || [condition.nebulaId];
         return requiredNebulaIds.filter(Boolean).some((nebulaId) => markedNebulaIds.has(String(nebulaId)));
       }
@@ -1296,7 +1296,7 @@
     }
 
     function executeLandingSectorScanEffect(workingRoot, effect) {
-      const sectorX = decisionState.actionEffectFlow?.lastLanding?.sectorX;
+      const sectorX = compositionState.actionEffectFlow?.lastLanding?.sectorX;
       if (sectorX == null) {
         return finishAutomaticRewardEffect(workingRoot, effect, {
           ok: true,

@@ -8,8 +8,8 @@ const DEFINITIONS = Object.freeze({
   actionEffectFlow: "action_effect_flow",
 });
 
-function attachDecisionState(pendingState, decisionSessions) {
-  const facade = decisionSessions.createFacade(DEFINITIONS);
+function attachDecisionState(pendingState, compositionDecisions) {
+  const facade = compositionDecisions.createFacade(DEFINITIONS);
   for (const field of Object.keys(DEFINITIONS)) {
     if (Object.hasOwn(pendingState, field) && pendingState[field] != null) {
       facade[field] = pendingState[field];

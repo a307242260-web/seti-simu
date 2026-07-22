@@ -268,7 +268,7 @@ function withWorkingRoot(context = {}) {
   const executorContext = withWorkingRoot({
     playerState: { players: [player] },
     cardState: { publicCards: [], discardPile: [] },
-    decisionSessions: { createFacade: () => ({}) },
+    compositionDecisions: { createFacade: () => ({}) },
     getCurrentPlayer: () => player,
     getPlayerById: (_workingRoot, playerId) => (playerId === player.id ? player : null),
     blindDrawCardForPlayer(target) {

@@ -29,7 +29,7 @@
       amiba,
       aomomo,
       runezu,
-      decisionSessions,
+      compositionDecisions,
       uiRuntimeState,
       DEBUG_QUICK_SECTOR_SCAN_EXTRA_LIMIT = 10,
       getCurrentPlayer,
@@ -103,7 +103,7 @@
     const ruleNebulaDataState = (workingRoot) => workingRoot.nebulaDataState;
     const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
     const ruleCardState = (workingRoot) => workingRoot.cardState;
-    const decisionState = context.decisionSessions?.createFacade?.({
+    const compositionState = context.compositionDecisions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -160,8 +160,8 @@
 
     function clearPlayerScopedSelectionsForSwitch(workingRoot) {
       workingRoot.match ||= {};
-      decisionState.discardAction = null;
-      decisionState.cardSelectionAction = null;
+      compositionState.discardAction = null;
+      compositionState.cardSelectionAction = null;
       delete workingRoot.match.passReserveContinuation;
       uiRuntimeState.passReserveSelectionDismissed = false;
       uiRuntimeState.passReserveSelectedCardId = null;
@@ -445,15 +445,15 @@
       uiRuntimeState.debugAlienTraceModeActive = Boolean(active);
       if (uiRuntimeState.debugAlienTraceModeActive) {
         context.closeAlienTracePicker?.();
-        decisionState.alienTracePickerState = {
+        compositionState.alienTracePickerState = {
           mode: "debug-direct",
           allowedTraceTypes: aliens.TRACE_TYPES,
         };
         ruleRocketState(workingRoot).statusNote = message
           || "调试：未揭示外星人请点击 state 面板痕迹位；已揭示请点击正面痕迹位或方舟保留牌解锁";
       } else {
-        if (decisionState.alienTracePickerState?.mode === "debug-direct") {
-          decisionState.alienTracePickerState = null;
+        if (compositionState.alienTracePickerState?.mode === "debug-direct") {
+          compositionState.alienTracePickerState = null;
         }
         ruleRocketState(workingRoot).statusNote = message || "已退出调试获取外星人痕迹模式";
       }
@@ -968,12 +968,12 @@
     }
 
     function getActionEffectOwnerPlayerForFailsafe(workingRoot) {
-      if (!decisionState.actionEffectFlow) return null;
+      if (!compositionState.actionEffectFlow) return null;
       const effect = getCurrentActionEffect?.();
       return getExplicitEffectOwnerPlayer?.(effect)
-        || getPlayerById?.(decisionState.actionEffectFlow.activePlayerId)
-        || getPlayerById?.(decisionState.actionEffectFlow.playerId)
-        || getPlayerById?.(decisionState.actionEffectFlow.defaultPlayerId)
+        || getPlayerById?.(compositionState.actionEffectFlow.activePlayerId)
+        || getPlayerById?.(compositionState.actionEffectFlow.playerId)
+        || getPlayerById?.(compositionState.actionEffectFlow.defaultPlayerId)
         || null;
     }
 
@@ -983,22 +983,22 @@
 
       const pendingEntries = [
         workingRoot.match?.movePaymentContinuation,
-        decisionState.discardAction,
-        decisionState.cardSelectionAction,
+        compositionState.discardAction,
+        compositionState.cardSelectionAction,
         workingRoot.match?.passReserveContinuation,
         workingRoot.match?.scanTargetContinuation,
         workingRoot.match?.probeSectorScanContinuation,
         workingRoot.match?.probeLocationRewardContinuation,
         workingRoot.match?.publicScanContinuation,
         workingRoot.match?.handScanContinuation,
-        decisionState.alienTraceAction,
-        decisionSessions?.peek?.("land_target"),
+        compositionState.alienTraceAction,
+        compositionDecisions?.peek?.("land_target"),
         workingRoot.match?.dataPlacementContinuation,
         workingRoot.match?.cardTriggerContinuation,
         workingRoot.match?.cardTriggerFreeMoveContinuation,
         workingRoot.match?.cardTaskCompletionContinuation,
-        decisionSessions?.peek?.("strategy_passive_slot"),
-        decisionSessions?.peek?.("pirates_raid_placement"),
+        compositionDecisions?.peek?.("strategy_passive_slot"),
+        compositionDecisions?.peek?.("pirates_raid_placement"),
         workingRoot.match?.industryFreeMoveContinuation,
       ];
       for (const pending of pendingEntries) {

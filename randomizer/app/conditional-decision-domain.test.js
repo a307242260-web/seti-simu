@@ -56,8 +56,8 @@ function createFixture() {
       getHeadlessConditionalPlayer: (pending) => pending.player
         || root.playerState.players.find((player) => player.id === pending.playerId)
         || null,
-      decisionSessions: { peek: () => null },
-      decisionState: {},
+      compositionDecisions: { peek: () => null },
+      compositionState: {},
       handleFinalScoreTileClick: (tileId) => {
         state.finalHandlerCalls.push(tileId);
         return { ok: true, progressed: true, tileId };

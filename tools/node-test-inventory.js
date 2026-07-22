@@ -15,7 +15,7 @@ function modulesFor(relative) {
   if (/headless-(?:conditional-drain|decision-owner|effect-session-host|effect-session-worker-recovery|fail-closed|no-browser-globals|training-replay)\.test/.test(relative)) return ["uniqueSessionState"];
   if (/headless-state-checkpoint\.test/.test(relative)) return ["unifiedAuthorityState"];
   if (/\/training\/|\/game\/ai\/|\/app\/ai\/|ai-runtime-root|headless-worker-resilience/.test(relative)) return ["robot"];
-  if (/\/game\/effects\/|effect-session-host|decision-session-store/.test(relative)) return ["uniqueSessionState"];
+  if (/\/game\/effects\/|effect-session-host|composition-decision-access/.test(relative)) return ["uniqueSessionState"];
   if (/\/app\/effects\/|effect-flow|effect-choice-flow/.test(relative)) return ["uniqueEffectQueue"];
   if (/\/game\/(?:actions|abilities|industry|aliens)\/|\/game\/(?:basic-cards|initial-cards)\.test|action-runtime|action-briefing/.test(relative)) return ["uniqueAction"];
   if (/\/game\/(?:state|cards|data|tech|history)\/|\/game\/(?:players|rockets|rockets\.move|planet-stats|final-scoring|end-game-scoring)\.test|\/solar-system\//.test(relative)) return ["unifiedAuthorityState"];
@@ -97,7 +97,7 @@ randomizer/game/cards/effects.test.js
 randomizer/game/cards/task-state.test.js
 randomizer/game/data/data.test.js
 randomizer/game/data/nebula.test.js
-randomizer/game/effects/decision-session-store.test.js
+randomizer/game/effects/composition-decision-access.test.js
 randomizer/game/effects/industry-alien-session.test.js
 randomizer/game/effects/quick-action-session.test.js
 randomizer/game/effects/research-tech-session.test.js

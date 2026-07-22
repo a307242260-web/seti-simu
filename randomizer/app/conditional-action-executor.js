@@ -156,7 +156,7 @@
         decision: {
           decisionId: decision.decisionId,
           decisionOwnerId: decision.ownerId,
-          decisionStateVersion: decision.stateVersion,
+          compositionStateVersion: decision.stateVersion,
           domainDecisionVersion: decision.decisionVersion,
           followup: clone(choice.followup),
         },

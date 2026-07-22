@@ -113,7 +113,7 @@
       if (!continuation) delete workingRoot.match.scanTargetContinuation;
       else workingRoot.match.scanTargetContinuation = structuredClone(continuation);
     }
-    const decisionState = context.decisionSessions?.createFacade?.({
+    const compositionState = context.compositionDecisions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -944,8 +944,8 @@
         describe: "移除已登记的卡牌事件触发",
         undo() {
           ruleTurnState(workingRoot).cardTurnEventBonuses = structuredClone(beforeTurnBonuses);
-          if (decisionState.actionEffectFlow) {
-            decisionState.actionEffectFlow.cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
+          if (compositionState.actionEffectFlow) {
+            compositionState.actionEffectFlow.cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
           }
         },
       });
@@ -1048,7 +1048,7 @@
 
     function executeTuckPlayedCardToIncomeEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer(workingRoot);
-      const playedCard = decisionState.actionEffectFlow?.card;
+      const playedCard = compositionState.actionEffectFlow?.card;
       if (!currentPlayer || !playedCard) {
         ruleRocketState(workingRoot).statusNote = "没有可放入收入区的当前卡牌";
         renderStateReadout();
@@ -1154,30 +1154,30 @@
     }
 
     function insertActionEffectsAfterCurrent(workingRoot, effects) {
-      if (!decisionState.actionEffectFlow || !effects?.length) return;
+      if (!compositionState.actionEffectFlow || !effects?.length) return;
       const insertedEffects = effects.filter(Boolean);
-      const insertIndex = Math.max(0, decisionState.actionEffectFlow.currentIndex + 1);
-      const insertionSource = abilities.chain.createInsertionSource?.(decisionState.actionEffectFlow) || null;
+      const insertIndex = Math.max(0, compositionState.actionEffectFlow.currentIndex + 1);
+      const insertionSource = abilities.chain.createInsertionSource?.(compositionState.actionEffectFlow) || null;
       const currentOwner = getCurrentActionEffect()
         ? getEffectOwnerPlayer(workingRoot, getCurrentActionEffect())
         : null;
       const ownerId = currentOwner?.id
-        || decisionState.actionEffectFlow.activePlayerId
-        || decisionState.actionEffectFlow.defaultPlayerId
-        || decisionState.actionEffectFlow.playerId
+        || compositionState.actionEffectFlow.activePlayerId
+        || compositionState.actionEffectFlow.defaultPlayerId
+        || compositionState.actionEffectFlow.playerId
         || null;
-      decisionState.actionEffectFlow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => {
+      compositionState.actionEffectFlow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => {
         const normalized = normalizeInsertedActionEffect(workingRoot, effect, ownerId, `inserted-card-effect-${insertIndex}-${index}`);
         return abilities.chain.markInsertedNode?.(normalized, insertionSource) || normalized;
       }));
-      decisionState.actionEffectFlow.completed = false;
+      compositionState.actionEffectFlow.completed = false;
     }
 
     function insertActionEffectsBeforeCurrent(workingRoot, effects) {
-      if (!decisionState.actionEffectFlow || !effects?.length) return false;
+      if (!compositionState.actionEffectFlow || !effects?.length) return false;
       const insertedEffects = effects.filter(Boolean);
       if (!insertedEffects.length) return false;
-      const flow = decisionState.actionEffectFlow;
+      const flow = compositionState.actionEffectFlow;
       const current = getCurrentActionEffect();
       const insertIndex = flow.completed
         ? Math.min(flow.effects.length, Math.max(0, flow.currentIndex + 1))
@@ -1416,7 +1416,7 @@
     }
 
     function executePlutoReserveEffect(workingRoot, effect) {
-      const card = decisionState.actionEffectFlow?.card;
+      const card = compositionState.actionEffectFlow?.card;
       if (card) {
         ensurePlutoCardEffectState(card).pluto = {
           ...(card.cardEffectState?.pluto || {}),

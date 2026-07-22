@@ -30,7 +30,7 @@
       cardEffects,
       createActionContext,
       data,
-      decisionSessions,
+      compositionDecisions,
       els,
       getBoardPointFromPolarPoint,
       getMainActionStartBlockReason,
@@ -69,7 +69,7 @@
       validateIndustryHuanyuMoveRocket,
       withPendingOwnerPlayer
     } = context;
-    const decisionState = context.decisionSessions?.createFacade?.({
+    const compositionState = context.compositionDecisions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -732,7 +732,7 @@
     if (!rocketsForPlayer.some((rocket) => rocket.id === rocketId)) return false;
 
     const cardMoveContinuation = workingRoot.match?.cardMoveContinuation || null;
-    const cardMoveEffect = (decisionState.actionEffectFlow?.effects || [])
+    const cardMoveEffect = (compositionState.actionEffectFlow?.effects || [])
       .find((effect) => effect.id === cardMoveContinuation?.effectId) || null;
     const huanyuRocketCheck = validateIndustryHuanyuMoveRocket(cardMoveEffect, rocketId);
     if (!huanyuRocketCheck.ok) {

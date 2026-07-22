@@ -39,7 +39,7 @@
       confirmIndustryTuringBorrow,
       countOwnedTechByType,
       createActionContext,
-      decisionSessions,
+      compositionDecisions,
       document,
       els,
       endEffectHistoryStep,
@@ -87,7 +87,7 @@
       uiRuntimeState,
       updateActionButtons,
     } = context;
-    const decisionState = context.decisionSessions?.createFacade?.({
+    const compositionState = context.compositionDecisions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -135,7 +135,7 @@
       });
       return explicit
         || resolveWorkingPlayerReference(workingRoot, {
-          playerId: decisionState.actionEffectFlow?.defaultPlayerId || decisionState.actionEffectFlow?.playerId,
+          playerId: compositionState.actionEffectFlow?.defaultPlayerId || compositionState.actionEffectFlow?.playerId,
         })
         || getWorkingCurrentPlayer(workingRoot);
     }
@@ -257,8 +257,8 @@
     }
 
     function getResearchTechSelectionEffect() {
-      if (!decisionState.actionEffectFlow) return null;
-      return decisionState.actionEffectFlow.effects.find((effect) => (
+      if (!compositionState.actionEffectFlow) return null;
+      return compositionState.actionEffectFlow.effects.find((effect) => (
         effect.type === "research_tech_select"
         || effect.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH
       )) || null;
@@ -308,7 +308,7 @@
 
     function appendResearchTechFollowupEffects(workingRoot, selectResult) {
       requireWorkingRoot(workingRoot);
-      if (!decisionState.actionEffectFlow) return;
+      if (!compositionState.actionEffectFlow) return;
       const selectionOptions = getResearchTechSelectionOptions();
       const owner = resolveWorkingPlayerReference(workingRoot, getCurrentActionEffect() || {})
         || getWorkingCurrentPlayer(workingRoot);
@@ -317,17 +317,17 @@
         playerColor: owner?.color || null,
       };
 
-      const selectIndex = decisionState.actionEffectFlow.effects.findIndex((effect) => (
+      const selectIndex = compositionState.actionEffectFlow.effects.findIndex((effect) => (
         effect.type === "research_tech_select"
         || effect.type === cardEffects.EFFECT_TYPES.RESEARCH_TECH
       ));
       const trailingEffects = selectIndex >= 0
-        ? decisionState.actionEffectFlow.effects
+        ? compositionState.actionEffectFlow.effects
           .slice(selectIndex + 1)
           .filter((effect) => !isGeneratedResearchTechFollowupEffect(effect))
         : [];
       if (selectIndex >= 0) {
-        decisionState.actionEffectFlow.effects.splice(selectIndex + 1);
+        compositionState.actionEffectFlow.effects.splice(selectIndex + 1);
       }
 
       const bonusId = selectResult.bonusId ?? selectResult.payload?.bonusId;
@@ -480,7 +480,7 @@
         followups.push(heliosEffect);
       }
 
-      decisionState.actionEffectFlow.effects.push(
+      compositionState.actionEffectFlow.effects.push(
         ...followups.map((effect) => ({
           ...effect,
           options: {
@@ -558,12 +558,12 @@
 
     function restoreResearchTechSelectionAfterUndo(workingRoot, effect) {
       const { rocketState, techGameState } = requireWorkingRoot(workingRoot);
-      const selectIndex = decisionState.actionEffectFlow?.effects?.indexOf(effect) ?? -1;
+      const selectIndex = compositionState.actionEffectFlow?.effects?.indexOf(effect) ?? -1;
       if (selectIndex >= 0) {
-        const trailingEffects = decisionState.actionEffectFlow.effects
+        const trailingEffects = compositionState.actionEffectFlow.effects
           .slice(selectIndex + 1)
           .filter((item) => !isGeneratedResearchTechFollowupEffect(item));
-        decisionState.actionEffectFlow.effects.splice(selectIndex + 1, decisionState.actionEffectFlow.effects.length, ...trailingEffects);
+        compositionState.actionEffectFlow.effects.splice(selectIndex + 1, compositionState.actionEffectFlow.effects.length, ...trailingEffects);
       }
       tech.setTechSelectionActive(techGameState, true);
       techGameState.ui.pendingTileId = null;
@@ -605,7 +605,7 @@
         renderStateReadout();
         return;
       }
-      if (decisionState.actionEffectFlow?.actionType === "researchTech" && hasCurrentMainActionIrreversibleBarrier()) {
+      if (compositionState.actionEffectFlow?.actionType === "researchTech" && hasCurrentMainActionIrreversibleBarrier()) {
         const irreversibleReason = getCurrentActionIrreversibleReason?.();
         rocketState.statusNote = irreversibleReason
           ? `不可撤销：${irreversibleReason}`
@@ -624,7 +624,7 @@
       closeTechBlueSlotPicker(workingRoot);
       techGameState.ui.statusNote = "";
       rocketState.statusNote = "";
-      if (decisionState.actionEffectFlow?.actionType === "researchTech") {
+      if (compositionState.actionEffectFlow?.actionType === "researchTech") {
         const rollbackResult = actionHistory.rollbackSession();
         if (!rollbackResult.ok) {
           rocketState.statusNote = rollbackResult.message || "当前科技行动不能取消";
@@ -984,7 +984,7 @@
       const groupId = `industry-pirates-raid-${turnState.roundNumber}-${turnState.turnNumber}`;
       const nodes = industry?.buildPiratesRaidLaunchEffectNodes?.(flow, { groupId }) || [];
       delete workingRoot.match.industryAbilityContinuation;
-      decisionState.cardSelectionAction = null;
+      compositionState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
 

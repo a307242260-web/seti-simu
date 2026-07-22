@@ -45,7 +45,7 @@
     forbidden: Object.freeze([
       "browserRuleState", "workingState", "solarState", "playerState", "rocketState", "nebulaDataState",
       "planetStatsState", "alienGameState", "finalScoringState", "turnState", "cardState", "techGameState",
-      "decisionSessions", "getCurrentPlayer", "getInterfacePlayer", "getActivePlayers", "getPlayerById",
+      "compositionDecisions", "getCurrentPlayer", "getInterfacePlayer", "getActivePlayers", "getPlayerById",
       "getPlayerByColor", "syncFinalScorePendingMarks", "computePlayerFinalScoreBreakdown", "getPendingMovePayment",
       "getPendingCardCornerQuickAction", "getPendingHandCardPlayAction", "getPendingPlayCardSelection",
       "isDiscardSelectionActive", "isPlayCardSelectionActive", "isMovePaymentSelectionActive",
@@ -190,7 +190,7 @@
       }
       return workingRoot;
     }
-    const decisionState = context.decisionSessions?.createFacade?.({
+    const compositionState = context.compositionDecisions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
       alienTraceAction: "alien_trace_action",
@@ -485,7 +485,7 @@
     const alienGameState = createReadonlySelector("aliens");
     const turnState = createReadonlySelector("turn");
     const cardState = createReadonlySelector("cards", { publicCards: [] });
-    const decisionState = createReadonlySelector("decisions");
+    const compositionState = createReadonlySelector("decisions");
     const uiRuntimeState = context.viewState || {};
     const {
       solar,
@@ -1081,7 +1081,7 @@
       const controls = cardState.publicControls || {};
       const selectionActive = Boolean(controls.selectionActive);
       const publicCardMultiSelect = Boolean(controls.multiSelectActive);
-      const selectedPublicSlots = decisionState.cardSelectionAction?.selectedSlots || [];
+      const selectedPublicSlots = compositionState.cardSelectionAction?.selectedSlots || [];
       els.publicCardRow.replaceChildren(...cardState.publicCards.map((card, index) => {
         const slot = document.createElement("div");
         slot.className = "public-card-slot";
@@ -1180,22 +1180,22 @@
       const currentPlayer = cloneProjectedPlayer(getInterfacePlayer());
       const hand = Array.isArray(currentPlayer.hand) ? currentPlayer.hand : [];
       const actualCurrentPlayer = cloneProjectedPlayer(getCurrentPlayer());
-      const movePayment = decisionState.movePayment;
-      const playCardSelection = decisionState.playCardSelection;
+      const movePayment = compositionState.movePayment;
+      const playCardSelection = compositionState.playCardSelection;
       const discardActive = Boolean(cardState.ui?.discardSelectionActive)
-        && decisionState.discardAction?.player?.id === currentPlayer?.id;
+        && compositionState.discardAction?.player?.id === currentPlayer?.id;
       const playActive = Boolean(cardState.ui?.playCardSelectionActive)
         && actualCurrentPlayer?.id === currentPlayer?.id;
       const movePaymentActive = Boolean(movePayment)
         && (movePayment.playerId || movePayment.player?.id) === currentPlayer?.id;
-      const handScanActive = Boolean(decisionState.handScanContinuation)
-        && decisionState.handScanContinuation?.playerId === currentPlayer?.id;
-      const cardCornerAction = decisionState.cardCornerQuickAction;
-      const handCardPlayAction = decisionState.handCardPlayAction;
+      const handScanActive = Boolean(compositionState.handScanContinuation)
+        && compositionState.handScanContinuation?.playerId === currentPlayer?.id;
+      const cardCornerAction = compositionState.cardCornerQuickAction;
+      const handCardPlayAction = compositionState.handCardPlayAction;
       const cardCornerActionEnabled = actualCurrentPlayer?.id === currentPlayer?.id && canUseCardCornerQuickAction();
-      const handScanPickIndex = decisionState.scanTargetContinuation?.type === "hand_scan"
-        && Number.isInteger(Number(decisionState.scanTargetContinuation.handIndex))
-        ? Number(decisionState.scanTargetContinuation.handIndex)
+      const handScanPickIndex = compositionState.scanTargetContinuation?.type === "hand_scan"
+        && Number.isInteger(Number(compositionState.scanTargetContinuation.handIndex))
+        ? Number(compositionState.scanTargetContinuation.handIndex)
         : null;
       const handPickActive = discardActive
         || playActive
@@ -1221,7 +1221,7 @@
           button.dataset.handIndex = String(index);
           if (discardActive) {
             button.classList.add("is-selectable");
-            if (decisionState.discardAction?.selectedIndexes?.includes(index)) {
+            if (compositionState.discardAction?.selectedIndexes?.includes(index)) {
               button.classList.add("is-selected");
             }
             button.setAttribute("aria-label", label);

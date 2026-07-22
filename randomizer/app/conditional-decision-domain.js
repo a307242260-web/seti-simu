@@ -31,7 +31,7 @@
       getPendingJiuzheCardPlay,
       getPendingBanrenmaOpportunity,
       getPlayerById,
-      decisionState,
+      compositionState,
       cards,
       players,
       getPublicScanChoicesForCard,
@@ -983,7 +983,7 @@
         })),
       };
     }
-    const discardPending = decisionState.discardAction;
+    const discardPending = compositionState.discardAction;
     if (discardPending) {
       const player = discardPending.player || getHeadlessConditionalPlayer(discardPending);
       const requiredCount = Math.max(1, Math.round(Number(cards.getDiscardRemaining(workingRoot.cardState)) || 1));
@@ -1012,7 +1012,7 @@
           })),
       };
     }
-    const cardPending = decisionState.cardSelectionAction;
+    const cardPending = compositionState.cardSelectionAction;
     if (cardPending) {
       if (["industry_deepspace_hand", "industry_future_hand"].includes(cardPending.type)) {
         const player = cardPending.player || getHeadlessConditionalPlayer(cardPending);
@@ -1114,8 +1114,8 @@
       };
     }
 
-    const tracePending = decisionState.alienTraceAction;
-    const picker = decisionState.alienTracePickerState;
+    const tracePending = compositionState.alienTraceAction;
+    const picker = compositionState.alienTracePickerState;
     if (tracePending && picker?.mode === "fangzhou-destination") {
       const player = getHeadlessConditionalPlayer(picker);
       const alienSlotId = Number(picker.selectedAlienSlotId || 0);
@@ -1384,7 +1384,7 @@
       || { ok: true, progressed: true, message: "已选择公共牌" },
     "confirm-public-corner-discard": () => confirmPublicCornerDiscardSelection(),
     "confirm-public-scan": () => confirmPublicScanSelection(),
-    "hand-card": (action) => decisionState.cardSelectionAction?.type === "industry_deepspace_hand"
+    "hand-card": (action) => compositionState.cardSelectionAction?.type === "industry_deepspace_hand"
       ? handleIndustryDeepspaceHandClick(Number(action.target.handIndex))
       : handleIndustryFutureSpanHandClick(Number(action.target.handIndex)),
     "blind-draw": () => drawCardForCurrentPlayer({ fromSelection: true }),

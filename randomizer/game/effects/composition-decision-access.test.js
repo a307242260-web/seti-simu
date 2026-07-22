@@ -1,9 +1,9 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createDecisionSessionStore } = require("./decision-session-store");
+const { createCompositionDecisionAccess } = require("./composition-decision-access");
 
-const store = createDecisionSessionStore();
+const store = createCompositionDecisionAccess();
 const workingRoot = { match: {} };
 store.setRootProvider(() => workingRoot);
 const continuation = () => "resolved";

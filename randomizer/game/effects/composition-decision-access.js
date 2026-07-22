@@ -3,7 +3,7 @@
 
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiDecisionSessionStore = api;
+  root.SetiCompositionDecisionAccess = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
@@ -21,7 +21,7 @@
     data_placement: "dataPlacementContinuation",
   });
 
-  function createDecisionSessionStore() {
+  function createCompositionDecisionAccess() {
     const isolatedTestRoot = { match: {} };
     let activeRoot = null;
     let rootProvider = null;
@@ -133,5 +133,5 @@
     });
   }
 
-  return Object.freeze({ SCHEMA_VERSION, createDecisionSessionStore });
+  return Object.freeze({ SCHEMA_VERSION, createCompositionDecisionAccess });
 });
