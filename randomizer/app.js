@@ -4682,63 +4682,75 @@
     requestCardEffectMove,
   } = cardRuntime);
   const getDiscardCornerRewardMultiplierForRoot = getDiscardCornerRewardMultiplier;
-  getDiscardCornerRewardMultiplier = bindBrowserDomainCommand("card_runtime", "getDiscardCornerRewardMultiplier");
   const getCardCornerQuickActionForCardForRoot = getCardCornerQuickActionForCard;
-  getCardCornerQuickActionForCard = bindBrowserDomainCommand("card_runtime", "getCardCornerQuickActionForCard");
   const shouldQueueCardCornerMoveQuickActionForRoot = shouldQueueCardCornerMoveQuickAction;
-  shouldQueueCardCornerMoveQuickAction = bindBrowserDomainCommand("card_runtime", "shouldQueueCardCornerMoveQuickAction");
   const canUseCardCornerQuickActionForRoot = canUseCardCornerQuickAction;
-  canUseCardCornerQuickAction = bindBrowserDomainCommand("card_runtime", "canUseCardCornerQuickAction");
   const canStartCardCornerFreeMoveForRoot = canStartCardCornerFreeMove;
-  canStartCardCornerFreeMove = bindBrowserDomainCommand("card_runtime", "canStartCardCornerFreeMove");
   const beginCardCornerFreeMoveForRoot = beginCardCornerFreeMove;
-  beginCardCornerFreeMove = bindBrowserDomainCommand("card_runtime", "beginCardCornerFreeMove");
   const startCardCornerMoveEffectFlowForRoot = startCardCornerMoveEffectFlow;
-  startCardCornerMoveEffectFlow = bindBrowserDomainCommand("card_runtime", "startCardCornerMoveEffectFlow");
   const hasFutureSpanEligibleHandCardForRoot = hasFutureSpanEligibleHandCard;
-  hasFutureSpanEligibleHandCard = bindBrowserDomainCommand("card_runtime", "hasFutureSpanEligibleHandCard");
   const hasPlayableFutureSpanCardForRoot = hasPlayableFutureSpanCard;
-  hasPlayableFutureSpanCard = bindBrowserDomainCommand("card_runtime", "hasPlayableFutureSpanCard");
   const getStandardPlayCardActionBlockReasonForRoot = getStandardPlayCardActionBlockReason;
-  getStandardPlayCardActionBlockReason = bindBrowserDomainCommand("card_runtime", "getStandardPlayCardActionBlockReason");
   const getPlayCardSelectionBlockReasonForRoot = getPlayCardSelectionBlockReason;
-  getPlayCardSelectionBlockReason = bindBrowserDomainCommand("card_runtime", "getPlayCardSelectionBlockReason");
   const getHandCardPlayActionForCardForRoot = getHandCardPlayActionForCard;
-  getHandCardPlayActionForCard = bindBrowserDomainCommand("card_runtime", "getHandCardPlayActionForCard");
   const beginCardSelectionForRoot = beginCardSelection;
-  beginCardSelection = bindBrowserDomainCommand("card_runtime", "beginCardSelection");
   const cancelCardSelectionForRoot = cancelCardSelection;
-  cancelCardSelection = bindBrowserDomainCommand("card_runtime", "cancelCardSelection");
   const finalizeCardSelectionResultForRoot = finalizeCardSelectionResult;
-  finalizeCardSelectionResult = bindBrowserDomainCommand("card_runtime", "finalizeCardSelectionResult");
   const drawBasicCardToPlayerForRoot = drawBasicCardToPlayer;
-  drawBasicCardToPlayer = bindBrowserDomainCommand("card_runtime", "drawBasicCardToPlayer");
   const blindDrawCardForPlayerForRoot = blindDrawCardForPlayer;
-  blindDrawCardForPlayer = bindBrowserDomainCommand("card_runtime", "blindDrawCardForPlayer");
   const drawCardForCurrentPlayerForRoot = drawCardForCurrentPlayer;
-  drawCardForCurrentPlayer = bindBrowserDomainCommand("card_runtime", "drawCardForCurrentPlayer");
   const pickPublicCardForCurrentPlayerForRoot = pickPublicCardForCurrentPlayer;
-  pickPublicCardForCurrentPlayer = bindBrowserDomainCommand("card_runtime", "pickPublicCardForCurrentPlayer");
   const canBlindDrawForRoot = canBlindDraw;
-  canBlindDraw = bindBrowserDomainCommand("card_runtime", "canBlindDraw");
   const updatePublicCardControlsForRoot = updatePublicCardControls;
-  updatePublicCardControls = bindBrowserDomainCommand("card_runtime", "updatePublicCardControls");
   const ensurePublicCardsFilledRespectingDelayedRefillsForRoot = ensurePublicCardsFilledRespectingDelayedRefills;
-  ensurePublicCardsFilledRespectingDelayedRefills = bindBrowserDomainCommand("card_runtime", "ensurePublicCardsFilledRespectingDelayedRefills");
   const handlePublicCardClickForRoot = handlePublicCardClick;
-  handlePublicCardClick = bindBrowserDomainCommand("card_runtime", "handlePublicCardClick");
   const handlePublicBlindDrawClickForRoot = handlePublicBlindDrawClick;
-  handlePublicBlindDrawClick = bindBrowserDomainCommand("card_runtime", "handlePublicBlindDrawClick");
   const getPassReserveSelectionCardsForRoot = getPassReserveSelectionCards;
-  getPassReserveSelectionCards = bindBrowserDomainCommand("card_runtime", "getPassReserveSelectionCards");
   const renderPassReserveSelectionForRoot = renderPassReserveSelection;
-  renderPassReserveSelection = bindBrowserDomainCommand("card_runtime", "renderPassReserveSelection");
   const syncPassReserveSelectionChromeForRoot = syncPassReserveSelectionChrome;
-  syncPassReserveSelectionChrome = bindBrowserDomainCommand("card_runtime", "syncPassReserveSelectionChrome");
   const beginPassReserveSelectionForRoot = beginPassReserveSelection;
-  beginPassReserveSelection = bindBrowserDomainCommand("card_runtime", "beginPassReserveSelection");
   const dismissPassReserveSelectionOverlayForRoot = dismissPassReserveSelectionOverlay;
-  dismissPassReserveSelectionOverlay = bindBrowserDomainCommand("card_runtime", "dismissPassReserveSelectionOverlay");
+  ({
+    getDiscardCornerRewardMultiplier,
+    getCardCornerQuickActionForCard,
+    shouldQueueCardCornerMoveQuickAction,
+    canUseCardCornerQuickAction,
+    canStartCardCornerFreeMove,
+    beginCardCornerFreeMove,
+    startCardCornerMoveEffectFlow,
+    hasFutureSpanEligibleHandCard,
+    hasPlayableFutureSpanCard,
+    getStandardPlayCardActionBlockReason,
+    getPlayCardSelectionBlockReason,
+    getHandCardPlayActionForCard,
+    beginCardSelection,
+    cancelCardSelection,
+    finalizeCardSelectionResult,
+    drawBasicCardToPlayer,
+    blindDrawCardForPlayer,
+    drawCardForCurrentPlayer,
+    pickPublicCardForCurrentPlayer,
+    canBlindDraw,
+    updatePublicCardControls,
+    ensurePublicCardsFilledRespectingDelayedRefills,
+    handlePublicCardClick,
+    handlePublicBlindDrawClick,
+    getPassReserveSelectionCards,
+    renderPassReserveSelection,
+    syncPassReserveSelectionChrome,
+    beginPassReserveSelection,
+    dismissPassReserveSelectionOverlay,
+  } = bindDomainCommands("card_runtime", [
+    "getDiscardCornerRewardMultiplier", "getCardCornerQuickActionForCard", "shouldQueueCardCornerMoveQuickAction",
+    "canUseCardCornerQuickAction", "canStartCardCornerFreeMove", "beginCardCornerFreeMove",
+    "startCardCornerMoveEffectFlow", "hasFutureSpanEligibleHandCard", "hasPlayableFutureSpanCard",
+    "getStandardPlayCardActionBlockReason", "getPlayCardSelectionBlockReason", "getHandCardPlayActionForCard",
+    "beginCardSelection", "cancelCardSelection", "finalizeCardSelectionResult", "drawBasicCardToPlayer",
+    "blindDrawCardForPlayer", "drawCardForCurrentPlayer", "pickPublicCardForCurrentPlayer", "canBlindDraw",
+    "updatePublicCardControls", "ensurePublicCardsFilledRespectingDelayedRefills", "handlePublicCardClick",
+    "handlePublicBlindDrawClick", "getPassReserveSelectionCards", "renderPassReserveSelection",
+    "syncPassReserveSelectionChrome", "beginPassReserveSelection", "dismissPassReserveSelectionOverlay",
+  ]));
   const selectPassReserveCardForRoot = selectPassReserveCard;
   const confirmPassReserveSelectionForRoot = confirmPassReserveSelection;
   selectPassReserveCard = (cardId) => selectPassReserveCardForRoot(createStateSourceReadoutRoot(), cardId);
@@ -4761,15 +4773,20 @@
     });
   };
   const selectDefaultRocketFromCandidatesForRoot = selectDefaultRocketFromCandidates;
-  selectDefaultRocketFromCandidates = bindBrowserDomainCommand("card_runtime", "selectDefaultRocketFromCandidates");
   const executeCardEffectMoveForRoot = executeCardEffectMove;
-  executeCardEffectMove = bindBrowserDomainCommand("card_runtime", "executeCardEffectMove");
   const finishCurrentCardMoveEffectEarlyForRoot = finishCurrentCardMoveEffectEarly;
-  finishCurrentCardMoveEffectEarly = bindBrowserDomainCommand("card_runtime", "finishCurrentCardMoveEffectEarly");
   const requestCardEffectMoveForRoot = requestCardEffectMove;
-  requestCardEffectMove = bindBrowserDomainCommand("card_runtime", "requestCardEffectMove");
   const getMovableTokensForCardMoveEffectForRoot = getMovableTokensForCardMoveEffect;
-  getMovableTokensForCardMoveEffect = bindBrowserDomainCommand("card_runtime", "getMovableTokensForCardMoveEffect");
+  ({
+    selectDefaultRocketFromCandidates,
+    executeCardEffectMove,
+    finishCurrentCardMoveEffectEarly,
+    requestCardEffectMove,
+    getMovableTokensForCardMoveEffect,
+  } = bindDomainCommands("card_runtime", [
+    "selectDefaultRocketFromCandidates", "executeCardEffectMove", "finishCurrentCardMoveEffectEarly",
+    "requestCardEffectMove", "getMovableTokensForCardMoveEffect",
+  ]));
   const cardTriggerRuntime = cardTriggerRuntimeModule.createCardTriggerRuntime({
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,
