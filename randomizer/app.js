@@ -1327,6 +1327,8 @@
   let confirmPublicCornerDiscardSelectionForRoot;
   let executeFreeMoveForCardCorner;
   let executeFreeMoveForCardCornerForRoot;
+  let recordPlayCardStart;
+  let releaseFutureSpanAfterPlayWithHistory;
   let buildCardTaskContext;
   let buildPlayerDataTotals;
   let addProbeLocation;
@@ -2613,7 +2615,7 @@
     getCardPlayCost: (...args) => getCardPlayCost(...args),
     formatCardPlayCost: (...args) => formatCardPlayCost(...args),
     restoreObjectSnapshot: (...args) => restoreObjectSnapshot(...args),
-    releaseFutureSpanAfterPlayWithHistory,
+    releaseFutureSpanAfterPlayWithHistory: (...args) => releaseFutureSpanAfterPlayWithHistory?.(...args),
     markActionPending,
     renderPlayerHand,
     renderPlayerStats,
@@ -2665,7 +2667,7 @@
     buildPlayCardEffectFlowQueue: (workingRoot, ...args) => buildPlayCardEffectFlowQueueForRoot?.(workingRoot, ...args),
     createImmediatePlayCardEvent: (...args) => createImmediatePlayCardEvent(...args),
     createPlayCardEvent: (...args) => createPlayCardEvent(...args),
-    recordPlayCardStart,
+    recordPlayCardStart: (...args) => recordPlayCardStart(...args),
     startPlayCardEffectFlow,
     appendIndustryPlayPassiveStatus: (workingRoot, ...args) => appendIndustryPlayPassiveStatusForRoot?.(workingRoot, ...args),
     recordMainActionIrreversibleBarrier,
@@ -4535,6 +4537,7 @@
     SCORE_SOURCE_KEYS,
     SCORE_SOURCE_KEY_SET: new Set(Object.values(SCORE_SOURCE_KEYS)),
     abilities,
+    actionHistory,
     activateMoveMode,
     applyCardMoveAfterEventRewards,
     addScoreSourceFromGain,
@@ -4558,6 +4561,8 @@
     continueAfterCardTriggerResolution: (workingRoot, ...args) => continueAfterCardTriggerResolutionForRoot(workingRoot, ...args),
     continuePendingDataPlacementAfterBonus,
     createActionContext: (workingRoot, descriptor) => createActionContextForWorkingRoot(workingRoot, descriptor),
+    createActionLogImpactSnapshot,
+    createActionLogPlayedCardSnapshot,
     createCardTriggerProgressCommands: (workingRoot, ...args) => createCardTriggerProgressCommandsForRoot(workingRoot, ...args),
     data,
     deactivateMoveMode,
@@ -4611,6 +4616,7 @@
     renderPlayerStats,
     renderRocketElement,
     renderRockets,
+    renderInitialSelectionArea,
     renderRuntime,
     renderStateReadout,
     rocketActions,
@@ -4619,6 +4625,7 @@
     scrollToPlayerHandPanel,
     settleCardTasksAfterEffect: (workingRoot, ...args) => settleCardTasksAfterEffectForRoot(workingRoot, ...args),
     startCardEffectFlow,
+    startActionLogDraft,
     structuredClone,
     syncCardSelectionChrome,
     syncMovePaymentChrome,
@@ -4701,6 +4708,8 @@
     finishCurrentCardMoveEffectEarly,
     requestCardEffectMove,
     executeFreeMoveForCardCorner,
+    recordPlayCardStart,
+    releaseFutureSpanAfterPlayWithHistory,
   } = cardRuntime);
   executeFreeMoveForCardCornerForRoot = executeFreeMoveForCardCorner;
   executeFreeMoveForCardCorner = (deltaX, deltaY, rocketId) => submitActiveCardDecision(
@@ -4708,6 +4717,11 @@
     (target, choice) => String(target.rocketId) === String(rocketId)
       && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
       && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
+  );
+  const releaseFutureSpanAfterPlayWithHistoryForRoot = releaseFutureSpanAfterPlayWithHistory;
+  releaseFutureSpanAfterPlayWithHistory = bindBrowserDomainCommand(
+    "card_runtime",
+    "releaseFutureSpanAfterPlayWithHistory",
   );
   const getDiscardCornerRewardMultiplierForRoot = getDiscardCornerRewardMultiplier;
   const getCardCornerQuickActionForCardForRoot = getCardCornerQuickActionForCard;
@@ -5565,67 +5579,6 @@
       actionType,
     }).value;
   }
-
-  function recordPlayCardStart(
-    player,
-    card,
-    beforePlayer,
-    beforeCardState,
-    beforeAlienState = null,
-    execution = {},
-  ) {
-    const workingRoot = execution.workingRoot;
-    if (!workingRoot?.cardState || !workingRoot?.alienGameState) {
-      throw new TypeError("recordPlayCardStart 缺少 workingRoot");
-    }
-    const actionCardState = workingRoot.cardState;
-    const actionAlienGameState = workingRoot.alienGameState;
-    startActionLogDraft("playCard", "打牌行动", { source: HISTORY_SOURCE_MAIN, player });
-    actionHistory.beginSession("playCard", "打牌行动");
-    actionHistory.beginStep({
-      source: HISTORY_SOURCE_MAIN,
-      type: "action_start",
-      label: `打出：${cards.getCardLabel(card)}`,
-      effectIndex: -1,
-      playedCard: createActionLogPlayedCardSnapshot(card),
-      logBefore: createActionLogImpactSnapshot(beforePlayer),
-    });
-    uiRuntimeState.effectStepActive = true;
-    recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
-      player,
-      beforePlayer,
-      "恢复打牌前玩家状态",
-    ));
-    recordHistoryCommand(workingRoot, historyCommands.createRestorePublicCardsCommand(
-      actionCardState,
-      beforeCardState.publicCards,
-      beforeCardState.discardPile,
-    ));
-    if (beforeAlienState) {
-      recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
-        actionAlienGameState,
-        beforeAlienState,
-        "恢复打牌前外星人状态",
-      ));
-    }
-    endEffectHistoryStep(workingRoot);
-  }
-
-  function releaseFutureSpanAfterPlayWithHistory(label = "未来跨度研究所：收回专属标记") {
-    const player = getCurrentPlayer();
-    const futureState = industry?.ensureFutureSpanState?.(player);
-    if (!player || !futureState?.playing) return false;
-
-    industry.clearFutureSpanState?.(player);
-    if (actionHistory.hasSession()) {
-      appendActionLogStep(HISTORY_SOURCE_MAIN, label, "目标牌结算完毕，专属标记回到公司牌", {
-        undoable: false,
-      });
-    }
-    renderInitialSelectionArea();
-    return true;
-  }
-
 
   function buildPlanetRewardEffectsWithIndustry(actionType, result, options = {}) {
     const planetEffects = planetRewards?.buildRewardEffectsForAction?.(actionType, result) || [];
@@ -6646,7 +6599,7 @@
       return;
     }
     if (finishedFlow.futureSpanPlayedCard) {
-      releaseFutureSpanAfterPlayWithHistory();
+      releaseFutureSpanAfterPlayWithHistoryForRoot(workingRoot);
     }
     if (finishedFlow.playCardEvent) {
       settleCardTasksAfterEffectForRoot(workingRoot, { events: [finishedFlow.playCardEvent], render: false });

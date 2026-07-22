@@ -76,6 +76,7 @@
       SCORE_SOURCE_KEYS,
       SCORE_SOURCE_KEY_SET,
       abilities,
+      actionHistory,
       activateMoveMode,
       applyCardMoveAfterEventRewards,
       addScoreSourceFromGain,
@@ -99,6 +100,8 @@
       continueAfterCardTriggerResolution,
       continuePendingDataPlacementAfterBonus,
       createActionContext,
+      createActionLogImpactSnapshot,
+      createActionLogPlayedCardSnapshot,
       createCardTriggerProgressCommands,
       data,
       deactivateMoveMode,
@@ -158,6 +161,7 @@
       runezu,
       scrollToPlayerHandPanel,
       settleCardTasksAfterEffect,
+      startActionLogDraft,
       startCardEffectFlow,
       structuredClone,
       syncCardSelectionChrome,
@@ -679,6 +683,54 @@
       updateActionButtons();
       renderStateReadout();
       return result;
+    }
+
+    function recordPlayCardStart(player, card, beforePlayer, beforeCardState, beforeAlienState = null, execution = {}) {
+      const workingRoot = requireWorkingRoot(execution.workingRoot);
+      const { cardState, alienGameState } = workingRoot;
+      startActionLogDraft("playCard", "打牌行动", { source: HISTORY_SOURCE_MAIN, player });
+      actionHistory.beginSession("playCard", "打牌行动");
+      actionHistory.beginStep({
+        source: HISTORY_SOURCE_MAIN,
+        type: "action_start",
+        label: `打出：${cards.getCardLabel(card)}`,
+        effectIndex: -1,
+        playedCard: createActionLogPlayedCardSnapshot(card),
+        logBefore: createActionLogImpactSnapshot(beforePlayer),
+      });
+      uiRuntimeState.effectStepActive = true;
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePlayerCommand(
+        player,
+        beforePlayer,
+        "恢复打牌前玩家状态",
+      ));
+      recordHistoryCommand(workingRoot, historyCommands.createRestorePublicCardsCommand(
+        cardState,
+        beforeCardState.publicCards,
+        beforeCardState.discardPile,
+      ));
+      if (beforeAlienState) {
+        recordHistoryCommand(workingRoot, historyCommands.createRestoreObjectCommand(
+          alienGameState,
+          beforeAlienState,
+          "恢复打牌前外星人状态",
+        ));
+      }
+      endEffectHistoryStep(workingRoot);
+    }
+
+    function releaseFutureSpanAfterPlayWithHistory(workingRoot, label = "未来跨度研究所：收回专属标记") {
+      const player = getWorkingCurrentPlayer(requireWorkingRoot(workingRoot));
+      const futureState = industry?.ensureFutureSpanState?.(player);
+      if (!player || !futureState?.playing) return false;
+      industry.clearFutureSpanState?.(player);
+      if (actionHistory.hasSession()) {
+        appendActionLogStep(HISTORY_SOURCE_MAIN, label, "目标牌结算完毕，专属标记回到公司牌", {
+          undoable: false,
+        });
+      }
+      context.renderInitialSelectionArea?.();
+      return true;
     }
 
     function getCardPrice(card) {
@@ -2116,6 +2168,8 @@
       buildQueuedCardCornerMoveEffect,
       startCardCornerMoveEffectFlow,
       executeFreeMoveForCardCorner,
+      recordPlayCardStart,
+      releaseFutureSpanAfterPlayWithHistory,
       getCardPrice,
       getCardPlayCost,
       getCardPlayCreditCost,

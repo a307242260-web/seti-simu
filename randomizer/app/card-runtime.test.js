@@ -35,7 +35,7 @@ function createHarness() {
     passReserveSelection: null,
   };
   const uiRuntimeState = { passReserveSelectionDismissed: false, passReserveSelectedCardId: null };
-  const calls = { completed: 0, chrome: 0, roots: [] };
+  const calls = { completed: 0, chrome: 0, roots: [], logs: [] };
   const recordInactive = (workingRoot) => {
     calls.roots.push(workingRoot);
     return false;
@@ -63,6 +63,13 @@ function createHarness() {
     players: {
       getCurrentPlayer: (state) => state.players.find((entry) => entry.id === state.currentPlayerId) || null,
     },
+    industry: {
+      ensureFutureSpanState: (target) => target.futureSpan,
+      clearFutureSpanState: (target) => { target.futureSpan.playing = false; },
+    },
+    actionHistory: { hasSession: () => true },
+    appendActionLogStep: (...args) => calls.logs.push(args),
+    renderInitialSelectionArea: () => {},
     getCurrentActionEffect: () => effect,
     rocketActions: {
       getMovableTokensForPlayer: () => [{ id: "rocket-1" }],
@@ -201,6 +208,14 @@ function createHarness() {
   assert.equal(uiRuntimeState.passReserveSelectionDismissed, false);
   assert.equal(uiRuntimeState.passReserveSelectedCardId, null);
   assert.equal(calls.completed, 1);
+}
+
+{
+  const { runtime, workingRoot, player, calls } = createHarness();
+  player.futureSpan = { playing: true };
+  assert.equal(runtime.releaseFutureSpanAfterPlayWithHistory(workingRoot), true);
+  assert.equal(player.futureSpan.playing, false);
+  assert.equal(calls.logs.length, 1);
 }
 
 {
