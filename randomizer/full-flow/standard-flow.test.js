@@ -78,8 +78,23 @@ const env = createHeadlessEnv();
 env.reset(fixture.config);
 assert.deepEqual(initialSnapshot(env), fixture.initialSnapshot, "版本化初始状态发生漂移");
 
-for (const [actionId, maskIndex] of fixture.operations) {
-  const action = env.legalActions().find((candidate) => candidate.actionId === actionId && candidate.maskIndex === maskIndex);
+for (const [stepIndex, [actionId, maskIndex]] of fixture.operations.entries()) {
+  const legalActions = env.legalActions();
+  const semanticChoice = fixture.openingSemanticChoices?.[stepIndex] || null;
+  const semanticMatches = semanticChoice ? legalActions.filter((candidate) => (
+    candidate.family === semanticChoice.family
+    && candidate.actorPlayerId === semanticChoice.actorPlayerId
+    && candidate.target?.cardId === semanticChoice.cardId
+  )) : [];
+  if (semanticChoice) {
+    assert.equal(semanticMatches.length, 1,
+      `opening 语义选择必须唯一：${semanticChoice.actorPlayerId}/${semanticChoice.cardId}`);
+    assert.equal(semanticMatches[0].actionId, actionId, "opening 语义选择解析出的 actionId 漂移");
+    assert.equal(semanticMatches[0].maskIndex, maskIndex, "opening 语义选择解析出的 maskIndex 漂移");
+  }
+  const action = semanticChoice
+    ? semanticMatches[0]
+    : legalActions.find((candidate) => candidate.actionId === actionId && candidate.maskIndex === maskIndex);
   assert.ok(action, `固定脚本动作不可用：${actionId}#${maskIndex}`);
   const result = env.step(action);
   assert.equal(result.ok, true, result.error || `固定脚本动作失败：${actionId}`);

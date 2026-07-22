@@ -10,6 +10,18 @@ module.exports = Object.freeze({
     policyVersion: "seti-heuristic-policy-v2",
     opponentIdentity: "seti-heuristic-policy-v2",
   },
+  openingSemanticChoices: [
+    { family: "choose_payment", actorPlayerId: "player-white", cardId: "dlc_31.png" },
+    { family: "choose_payment", actorPlayerId: "player-white", cardId: "dlc_41.png" },
+    { family: "choose_payment", actorPlayerId: "player-blue", cardId: "dlc_36.png" },
+    { family: "choose_payment", actorPlayerId: "player-blue", cardId: "b_17.webp" },
+    { family: "choose_payment", actorPlayerId: "player-blue", cardId: "dlc_2.png" },
+    { family: "choose_payment", actorPlayerId: "player-green", cardId: "b_46.webp" },
+    { family: "choose_payment", actorPlayerId: "player-green", cardId: "b_81.webp" },
+    { family: "choose_payment", actorPlayerId: "player-brown", cardId: "b_80.webp" },
+    { family: "choose_payment", actorPlayerId: "player-brown", cardId: "b_84.webp" },
+    { family: "choose_payment", actorPlayerId: "player-brown", cardId: "dlc_21.png" },
+  ],
   operations: [
     ["choose_payment:5596d226", 2], ["choose_payment:408fda87", 1],
     ["choose_payment:a3571d0e", 4], ["choose_payment:670a1923", 2],
