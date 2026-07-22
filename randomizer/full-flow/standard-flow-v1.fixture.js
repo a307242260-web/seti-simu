@@ -90,7 +90,7 @@ module.exports = Object.freeze({
       slots: [["1", null, false, [false, false, false]], ["2", null, false, [false, false, false]]],
       revealed: [false, false, false, false, false, false, false, false],
     },
-    authority: [58, "seti-headless-mulberry32-v1", 1542217152, 36],
+    authority: [91, "seti-headless-mulberry32-v1", 1542217152, 36],
     session: [null, "player-green", null, "turn_action", 41, 40, 27],
   },
 });

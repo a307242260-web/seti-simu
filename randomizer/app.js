@@ -368,16 +368,6 @@
       const target = resolveBrowserDomainTarget(domain);
       return target?.[operation]?.(activeBrowserDomainWorkingRoot, ...args);
     }
-    if (headlessMode) {
-      const target = resolveBrowserDomainTarget(domain);
-      const previousWorkingRoot = activeBrowserDomainWorkingRoot;
-      activeBrowserDomainWorkingRoot = browserRuleState;
-      try {
-        return target?.[operation]?.(browserRuleState, ...args);
-      } finally {
-        activeBrowserDomainWorkingRoot = previousWorkingRoot;
-      }
-    }
     try {
       return browserRuleComposition.inputPort.submitHostCommand({
         kind: "domain_command",
@@ -485,8 +475,20 @@
         workingState.meta = structuredClone(committedState.meta);
       },
     },
+    runWithWorkingState(workingRoot, operation) {
+      const previousWorkingRoot = activeBrowserDomainWorkingRoot;
+      activeBrowserDomainWorkingRoot = workingRoot;
+      try {
+        return operation();
+      } finally {
+        activeBrowserDomainWorkingRoot = previousWorkingRoot;
+      }
+    },
     executeHostCommand(workingRoot, command) {
-      switch (command.kind) {
+      const previousWorkingRoot = activeBrowserDomainWorkingRoot;
+      activeBrowserDomainWorkingRoot = workingRoot;
+      try {
+        switch (command.kind) {
         case "turn_set_player_order":
           turnFlowController.setTurnStatePlayerOrder(workingRoot, command.playerIds, command.options);
           return { ok: true };
@@ -506,10 +508,21 @@
         case "turn_randomize_all":
           turnFlowController.randomizeAll(workingRoot);
           return { ok: true };
+        case "ai_choose_initial_selection":
+          return chooseInitialSelectionForAiPlayerForRoot(workingRoot);
+        case "headless_advance_deterministic":
+          return advanceHeadlessDeterministicStateImpl() || { ok: true, progressed: false };
+        case "headless_execute_current_effect":
+          return executeHeadlessCurrentActionEffectImpl() || { ok: true, progressed: false };
+        case "headless_skip_current_effect":
+          return skipHeadlessCurrentActionEffectImpl();
         case "domain_command":
           return executeBrowserDomainCommand(workingRoot, command);
-        default:
-          return { ok: false, code: "BROWSER_HOST_COMMAND_UNKNOWN", message: `未知 Browser host command: ${command.kind}` };
+          default:
+            return { ok: false, code: "BROWSER_HOST_COMMAND_UNKNOWN", message: `未知 Browser host command: ${command.kind}` };
+        }
+      } finally {
+        activeBrowserDomainWorkingRoot = previousWorkingRoot;
       }
     },
     createActionRegistry() {
@@ -2708,26 +2721,28 @@
     return height > 0 ? height : null;
   }
 
-  function initializeCardGame(handCount = DEFAULT_INITIAL_HAND_COUNT) {
-    if (!Array.isArray(playerState.players) || !playerState.players.length) return;
+  function initializeCardGame(workingRoot, handCount = DEFAULT_INITIAL_HAND_COUNT) {
+    const { cardState: workingCardState, playerState: workingPlayerState, turnState: workingTurnState } = workingRoot;
+    if (!Array.isArray(workingPlayerState.players) || !workingPlayerState.players.length) return;
 
-    for (const player of playerState.players) {
+    for (const player of workingPlayerState.players) {
       player.hand = [];
       player.reservedCards = [];
       player.completedTaskCount = 0;
       player.resources.handSize = 0;
     }
-    cardState.publicCards = Array.from({ length: cards.PUBLIC_CARD_COUNT }, () => null);
-    cardState.discardPile = [];
-    cardState.drawPileCardIds = [];
-    cards.setSelectionActive(cardState, false);
-    cards.setPlayCardSelectionActive(cardState, false);
-    cards.setDiscardSelectionActive(cardState, false, 0);
-    for (const player of getActivePlayers()) {
-      cards.drawCardsToHand(cardState, playerState, player, handCount);
+    workingCardState.publicCards = Array.from({ length: cards.PUBLIC_CARD_COUNT }, () => null);
+    workingCardState.discardPile = [];
+    workingCardState.drawPileCardIds = [];
+    cards.setSelectionActive(workingCardState, false);
+    cards.setPlayCardSelectionActive(workingCardState, false);
+    cards.setDiscardSelectionActive(workingCardState, false, 0);
+    const activeIds = new Set(workingTurnState.activePlayerIds || []);
+    for (const player of workingPlayerState.players.filter((candidate) => activeIds.has(candidate.id))) {
+      cards.drawCardsToHand(workingCardState, workingPlayerState, player, handCount);
     }
-    ensurePublicCardsFilledRespectingDelayedRefills();
-    preparePassReservePilesForCurrentGame(browserRuleState);
+    ensurePublicCardsFilledRespectingDelayedRefillsForRoot(workingRoot);
+    preparePassReservePilesForCurrentGame(workingRoot);
   }
 
   function preparePassReservePilesForCurrentGame(workingRoot, options = {}) {
@@ -3166,7 +3181,6 @@
   }
 
   function setTurnStatePlayerOrder(playerIds, options = {}) {
-    if (headlessMode) return turnFlowController.setTurnStatePlayerOrder(browserRuleState, playerIds, options);
     return browserRuleComposition.inputPort.submitHostCommand({
       kind: "turn_set_player_order",
       playerIds,
@@ -3175,12 +3189,10 @@
   }
 
   function randomizePlayerTurnOrder() {
-    if (headlessMode) return turnFlowController.randomizePlayerTurnOrder(browserRuleState);
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "turn_randomize_player_order" });
   }
 
   function beginNextRound() {
-    if (headlessMode) return turnFlowController.beginNextRound(browserRuleState);
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "turn_begin_next_round" });
   }
 
@@ -3209,12 +3221,23 @@
   }
 
   function startNewGame(options = {}) {
-    if (headlessMode) return turnFlowController.startNewGame(browserRuleState, options);
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "turn_start_new_game", options });
+    const activePlayerCount = Math.min(
+      Math.max(1, Math.round(Number(options.activePlayerCount) || DEFAULT_ACTIVE_PLAYER_COUNT)),
+      players.PLAYER_COLOR_IDS.length,
+    );
+    const resetResult = browserRuleLifecycle.newGame({
+      activePlayerCount,
+      defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
+      finalScoreIds: FINAL_SCORE_IDS,
+    });
+    if (!resetResult.ok) return resetResult;
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "turn_start_new_game",
+      options: { ...options, activePlayerCount, compositionStatePrepared: true },
+    });
   }
 
   function randomizeAll() {
-    if (headlessMode) return turnFlowController.randomizeAll(browserRuleState);
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "turn_randomize_all" });
   }
 
@@ -3933,6 +3956,7 @@
     setTurnStatePlayerOrder,
     skipCurrentActionEffect,
     startInitialSelection,
+    startNewGame,
     updateActionButtons,
   });
   const {
@@ -3981,7 +4005,9 @@
     sumAiDemandMap,
   } = aiController;
   const buildAiTurnActionCandidates = (...args) => buildAiTurnActionCandidatesForRoot(browserRuleState, ...args);
-  const chooseInitialSelectionForAiPlayer = (...args) => chooseInitialSelectionForAiPlayerForRoot(browserRuleState, ...args);
+  const chooseInitialSelectionForAiPlayer = () => browserRuleComposition.inputPort.submitHostCommand({
+    kind: "ai_choose_initial_selection",
+  });
   const enumerateHeadlessTurnActions = (...args) => enumerateHeadlessTurnActionsForRoot(browserRuleState, ...args);
   const executeAiTurnAction = (...args) => executeAiTurnActionForRoot(browserRuleState, ...args);
   const listCardTriggerFreeMoveCandidates = (...args) => listCardTriggerFreeMoveCandidatesForRoot(browserRuleState, ...args);
@@ -6662,7 +6688,7 @@
     completeCurrentActionEffect("skipped");
   }
 
-  function skipHeadlessCurrentActionEffect() {
+  function skipHeadlessCurrentActionEffectImpl() {
     const current = getCurrentActionEffect();
     if (!headlessMode || !current || current.status !== "active") {
       return { ok: false, message: "没有可跳过的活动效果" };
@@ -6676,6 +6702,10 @@
       completeCurrentActionEffect("skipped");
     }
     return { ok: true, progressed: true, skipped: true, message: `已跳过：${current.label}` };
+  }
+
+  function skipHeadlessCurrentActionEffect() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "headless_skip_current_effect" });
   }
 
   function skipActionEffectWithMessage(effect, message, payload = {}) {
@@ -10490,7 +10520,7 @@
     return dispatchBrowserRuleInput({ standardAction });
   }
 
-  function advanceHeadlessDeterministicState() {
+  function advanceHeadlessDeterministicStateImpl() {
     if (!headlessMode) return null;
     const industryPending = decisionSessions.peek("industry_ability");
     if (industryPending && !decisionState.cardSelectionAction) {
@@ -10539,13 +10569,21 @@
     return null;
   }
 
-  function executeHeadlessCurrentActionEffect() {
+  function advanceHeadlessDeterministicState() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "headless_advance_deterministic" });
+  }
+
+  function executeHeadlessCurrentActionEffectImpl() {
     if (!headlessMode) return { ok: false, message: "仅 headless 模式可直接推进效果" };
     const effect = getCurrentActionEffect();
     if (!effect || effect.status !== "active") {
       return { ok: false, message: "没有可直接推进的活动效果" };
     }
     return executeActionEffect(effect);
+  }
+
+  function executeHeadlessCurrentActionEffect() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "headless_execute_current_effect" });
   }
 
   function launchRocketForCurrentPlayer() {

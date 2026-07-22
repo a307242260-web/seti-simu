@@ -346,13 +346,15 @@
       );
 
       clearTransientStateForRecovery();
-      const resetResult = ruleLifecycle.newGame({
-        activePlayerCount,
-        defaultInitialPlayerColor,
-        finalScoreIds,
-      });
-      if (!resetResult.ok) {
-        throw new Error(`StateStore 新局重置失败：${resetResult.code || "unknown"}`);
+      if (options.compositionStatePrepared !== true) {
+        const resetResult = ruleLifecycle.newGame({
+          activePlayerCount,
+          defaultInitialPlayerColor,
+          finalScoreIds,
+        });
+        if (!resetResult.ok) {
+          throw new Error(`StateStore 新局重置失败：${resetResult.code || "unknown"}`);
+        }
       }
       restoreMutableObject(cardTaskState, cardTaskStateModule.createTaskState());
       restoreMutableObject(setupSelectionState, {
@@ -427,7 +429,7 @@
         resetGameStateForNewGame(workingRoot, options);
         seedDefaultReferenceRockets?.();
         randomizeAll(workingRoot);
-        initializeCardGame?.(defaultInitialHandCount);
+        initializeCardGame?.(workingRoot, defaultInitialHandCount);
         configureDefaultAiOpponent?.({ aiDifficulty });
         startInitialSelection?.();
         rocketState.statusNote = options.message || "新游戏已开始，请完成初始选择。";

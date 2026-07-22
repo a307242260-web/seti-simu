@@ -323,6 +323,55 @@ function createHarness(initialValue = 0) {
 }
 
 {
+  let commitEvents = 0;
+  let composition = null;
+  let outerArgument = null;
+  let nestedArgument = null;
+  const replace = (target, source) => {
+    for (const key of Reflect.ownKeys(target)) delete target[key];
+    Object.assign(target, structuredClone(source));
+  };
+  composition = createBrowserRuleComposition({
+    stateStoreApi,
+    effectRuntimeApi,
+    createActionRegistry: createRegistry,
+    createInitialState: (_options, workingState) => structuredClone(workingState),
+    stateAdapter: {
+      createWorkingState: () => createState(0),
+      createCommittedState: (workingState, committedState) => ({
+        ...structuredClone(workingState),
+        meta: structuredClone(committedState.meta),
+      }),
+      createProjectionState: (workingState) => structuredClone(workingState),
+      restoreWorkingState: replace,
+    },
+    executeHostCommand(workingState, command) {
+      if (command.kind === "outer") {
+        outerArgument = { owner: workingState.match };
+        const nested = composition.inputPort.submitHostCommand({ kind: "nested", argument: outerArgument });
+        return nested.ok ? { ok: true } : nested;
+      }
+      if (command.kind === "nested") {
+        nestedArgument = command.argument;
+        assert.equal(nestedArgument, outerArgument, "嵌套命令不得克隆同一事务内的 capability 参数");
+        assert.equal(nestedArgument.owner, workingState.match, "嵌套命令必须复用同一 working candidate identity");
+        workingState.match.value += 3;
+        return { ok: true };
+      }
+      return { ok: false, code: "UNKNOWN" };
+    },
+    projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
+    createEffectGroup: () => ({ effects: [{ type: "noop" }] }),
+    effectExecutors: { noop: (state) => ({ ok: true, nextState: state }) },
+  });
+  composition.stateSourcePort.subscribe(() => { commitEvents += 1; });
+  const result = composition.inputPort.submitHostCommand({ kind: "outer" });
+  assert.equal(result.ok, true);
+  assert.equal(composition.stateSourcePort.read().state.match.value, 3);
+  assert.equal(commitEvents, 1, "嵌套宿主命令只允许由最外层 composition 执行一次 CAS");
+}
+
+{
   const appSource = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8");
   const indexSource = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
   assert.equal(fs.existsSync(path.join(__dirname, "browser-state-authority.js")), false, "旧 authority 文件必须物理删除");

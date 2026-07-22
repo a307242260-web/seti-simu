@@ -184,6 +184,7 @@
       handleYichangdianCornerChoice,
       hasActivePendingSubFlow,
       initializeCardGame,
+      startNewGame,
       isActionEffectFlowActive,
       isAsteroidContent,
       isCardSelectionActive,
@@ -1852,21 +1853,12 @@
       }
       aiAutoBattleState.turnMoveCounts = {};
       aiAutoBattleState.turnCardCornerMoveCounts = {};
-      clearTransientStateForRecovery();
-      const resetResult = ruleLifecycle.newGame({
+      const resetResult = startNewGame({
         activePlayerCount,
-        defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
-        finalScoreIds: FINAL_SCORE_IDS,
+        clearStorage: false,
+        message: "AI 自动对战新局已重置",
       });
-      if (!resetResult.ok) throw new Error(`StateStore AI 新局重置失败：${resetResult.code || "unknown"}`);
-      restoreMutableObject(cardTaskState, cardTaskStateModule.createTaskState());
-      historyStepOrder.length = 0;
-      state.effectStepActive = false;
-      if (typeof resetScanRunSequence === "function") resetScanRunSequence();
-      resetActionLog();
-      initializeCardGame(DEFAULT_INITIAL_HAND_COUNT);
-      randomizeAll();
-      startInitialSelection();
+      if (!resetResult.ok) throw new Error(`Composition AI 新局重置失败：${resetResult.code || "unknown"}`);
       return {
         ok: true,
         activePlayerCount,

@@ -1148,7 +1148,9 @@
 
     function drawBasicCardToPlayer(workingRoot, player, execution = {}) {
       const { cardState, playerState } = requireWorkingRoot(workingRoot);
-      const target = player || getWorkingCurrentPlayer(workingRoot);
+      const target = (player?.id
+        ? playerState.players?.find((candidate) => candidate.id === player.id)
+        : null) || player || getWorkingCurrentPlayer(workingRoot);
       if (!target) {
         return { ok: false, message: "没有当前玩家", card: null };
       }

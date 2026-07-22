@@ -80,6 +80,7 @@
     let activeSession = null;
     let activeFamily = null;
     let lastActionResult = null;
+    let activeHostWorkingState = null;
     const listeners = new Set();
     let unsubscribeStore = null;
     let effectDomainByFamily = new Map();
@@ -91,13 +92,23 @@
         : state;
     }
 
+    function runWithWorkingStateContext(state, operation) {
+      return typeof options.runWithWorkingState === "function"
+        ? options.runWithWorkingState(state, operation)
+        : operation();
+    }
+
     function executeRegisteredAction(state, action) {
       if (typeof actionRegistry.execute !== "function") {
         return fail("RULE_COMPOSITION_ACTION_EXECUTOR_MISSING", "Standard Action registry 缺少 execute()");
       }
       const nextState = clone(state);
       const beforeWorkingState = stateAdapter ? clone(workingState) : null;
-      const result = actionRegistry.execute(actionContext(nextState), clone(action));
+      const workingContext = actionContext(nextState);
+      const result = runWithWorkingStateContext(
+        workingContext,
+        () => actionRegistry.execute(workingContext, clone(action)),
+      );
       if (!result || result.ok !== true) {
         if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "action_rejected" });
         return result?.ok === false
@@ -144,9 +155,27 @@
           options.projectState(clone(state), clone(viewer), clone(inspection))
         ),
       });
+      const contextualizeExecutor = (executor) => {
+        const wrap = (operation) => (state, ...args) => {
+          const workingContext = actionContext(state);
+          return runWithWorkingStateContext(
+            workingContext,
+            () => operation(state, ...args),
+          );
+        };
+        if (typeof executor === "function") return wrap(executor);
+        if (!executor || typeof executor !== "object") return executor;
+        return Object.fromEntries(Object.entries(executor).map(([key, value]) => [
+          key,
+          typeof value === "function" ? wrap(value) : value,
+        ]));
+      };
+      const registerContextualExecutor = (type, executor) => (
+        next.registerExecutor(type, contextualizeExecutor(executor))
+      );
       if (typeof options.installEffectExecutors === "function") {
         options.installEffectExecutors(Object.freeze({
-          register: next.registerExecutor,
+          register: registerContextualExecutor,
           executeRegisteredAction,
         }));
       } else {
@@ -161,7 +190,7 @@
         }
         const domain = descriptor.create({
           ...(descriptor.options || {}),
-          runtime: next,
+          runtime: Object.freeze({ ...next, registerExecutor: registerContextualExecutor }),
           executeRegisteredAction,
         });
         if (typeof domain?.createEffectGroup !== "function") {
@@ -270,8 +299,20 @@
       const dispatched = runtime.dispatchStandardAction(
         clone(action),
         {
-          enumerate: (state, request) => actionRegistry.enumerate(actionContext(clone(state)), request),
-          validate: (state, candidate) => actionRegistry.validate(actionContext(clone(state)), candidate),
+          enumerate: (state, request) => {
+            const workingContext = actionContext(clone(state));
+            return runWithWorkingStateContext(
+              workingContext,
+              () => actionRegistry.enumerate(workingContext, request),
+            );
+          },
+          validate: (state, candidate) => {
+            const workingContext = actionContext(clone(state));
+            return runWithWorkingStateContext(
+              workingContext,
+              () => actionRegistry.validate(workingContext, candidate),
+            );
+          },
         },
         createProductionEffectGroup,
         { source: "browser-input", ...clone(submitOptions.metadata || {}) },
@@ -293,7 +334,11 @@
     function submitActionById(actionId, submitOptions = {}) {
       if (activeSession) return fail("RULE_COMPOSITION_SESSION_ACTIVE", "已有规则 Session 正在执行");
       const committed = store.getSnapshot();
-      const action = (actionRegistry.enumerate(actionContext(clone(committed)), clone(submitOptions.request || {})) || [])
+      const workingContext = actionContext(clone(committed));
+      const action = (runWithWorkingStateContext(
+        workingContext,
+        () => actionRegistry.enumerate(workingContext, clone(submitOptions.request || {})),
+      ) || [])
         .find((candidate) => candidate.actionId === actionId);
       return action
         ? submitAction(action, submitOptions)
@@ -302,7 +347,11 @@
 
     function submitQuickAction(action, submitOptions = {}) {
       if (!activeSession) return submitAction(action, submitOptions);
-      const validation = actionRegistry.validate(actionContext(clone(activeSession.workingState)), clone(action));
+      const workingContext = actionContext(clone(activeSession.workingState));
+      const validation = runWithWorkingStateContext(
+        workingContext,
+        () => actionRegistry.validate(workingContext, clone(action)),
+      );
       if (!validation?.ok) return deepFreeze(clone(validation));
       const result = runtime.dispatchQuickAction(
         activeSession,
@@ -323,7 +372,11 @@
 
     function enumerateActions(request = {}) {
       const state = activeSession ? activeSession.workingState : store.getSnapshot();
-      return deepFreeze(clone(actionRegistry.enumerate(actionContext(clone(state)), clone(request)) || []));
+      const workingContext = actionContext(clone(state));
+      return deepFreeze(clone(runWithWorkingStateContext(
+        workingContext,
+        () => actionRegistry.enumerate(workingContext, clone(request)),
+      ) || []));
     }
 
     function advance() {
@@ -343,14 +396,27 @@
       if (!command?.kind || typeof command.kind !== "string") {
         return fail("RULE_COMPOSITION_HOST_COMMAND_INVALID", "Browser host command 缺少 kind");
       }
+      if (activeHostWorkingState) {
+        try {
+          const nestedResult = executeHostCommand(activeHostWorkingState, command);
+          return nestedResult?.ok === false
+            ? deepFreeze(clone(nestedResult))
+            : deepFreeze(clone(nestedResult || { ok: true }));
+        } catch (error) {
+          return fail("RULE_COMPOSITION_HOST_COMMAND_THROWN", error?.message || "Browser host command 执行异常");
+        }
+      }
       const beforeWorkingState = stateAdapter ? clone(workingState) : null;
       const committedBefore = store.getSnapshot();
       let result;
       try {
-        result = executeHostCommand(actionContext(clone(committedBefore)), clone(command));
+        activeHostWorkingState = actionContext(clone(committedBefore));
+        result = executeHostCommand(activeHostWorkingState, clone(command));
       } catch (error) {
         if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_thrown" });
         return fail("RULE_COMPOSITION_HOST_COMMAND_THROWN", error?.message || "Browser host command 执行异常");
+      } finally {
+        activeHostWorkingState = null;
       }
       if (!result || result.ok === false) {
         if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_rejected" });
