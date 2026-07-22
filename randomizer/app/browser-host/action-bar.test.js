@@ -99,4 +99,39 @@ function projection(overrides = {}) {
   assert.equal(calls.undo.length, 1);
 })();
 
+(function testLegacyActionBarOwnsDomStateAndQuickPanel() {
+  const createButton = () => ({
+    disabled: false,
+    title: "",
+    dataset: {},
+    attributes: {},
+    classList: { toggle() {}, add() {} },
+    setAttribute(name, value) { this.attributes[name] = String(value); },
+  });
+  const trade = createButton();
+  trade.dataset.quickTrade = "energy";
+  const els = {
+    actionLaunchButton: createButton(), actionOrbitButton: createButton(), actionLandButton: createButton(),
+    actionScanButton: createButton(), actionAnalyzeButton: createButton(), actionPlayCardButton: createButton(),
+    actionResearchTechButton: createButton(), actionPassButton: createButton(), actionConfirmButton: createButton(),
+    actionUndoButton: createButton(), actionQuickButton: createButton(),
+    quickActionsPanel: { hidden: true },
+    quickActionsTrades: { querySelectorAll: () => [trade] },
+  };
+  const controller = actionBar.createLegacyActionBarController({
+    els,
+    quickTrades: { canExecuteTrade: () => ({ ok: false, message: "资源不足" }) },
+    createReadoutActionContext: () => ({}),
+    getGameplayLockReason: () => null,
+    cancelHandCardContextActions() {},
+  });
+  controller.setActionButtonState(els.actionLaunchButton, false, "锁定");
+  assert.equal(els.actionLaunchButton.disabled, true);
+  assert.equal(els.actionLaunchButton.title, "锁定");
+  controller.setQuickPanelOpen(true);
+  assert.equal(els.quickActionsPanel.hidden, false);
+  assert.equal(trade.disabled, true);
+  assert.equal(trade.title, "资源不足");
+})();
+
 console.log("browser action bar projection/input tests passed");

@@ -9783,20 +9783,15 @@
     }
   }
 
-  function setActionButtonState(button, enabled, reason) {
-    if (!button) return;
-    button.disabled = !enabled;
-    button.classList.toggle("action-button-ready", enabled);
-    button.title = enabled ? "" : (reason || "当前无法执行此行动");
-    button.setAttribute("aria-disabled", String(!enabled));
-  }
-
-  function setTurnActionButtonState(button, enabled, highlighted = false) {
-    if (!button) return;
-    button.disabled = !enabled;
-    button.classList.toggle("action-button-pending", Boolean(enabled && highlighted));
-    button.setAttribute("aria-disabled", String(!enabled));
-  }
+  let legacyActionBarController = null;
+  function setActionButtonState(...args) { return legacyActionBarController?.setActionButtonState(...args); }
+  function setTurnActionButtonState(...args) { return legacyActionBarController?.setTurnActionButtonState(...args); }
+  function setQuickActionButtonEnabled(...args) { return legacyActionBarController?.setQuickActionButtonEnabled(...args); }
+  function updateActionButtons(...args) { return legacyActionBarController?.updateActionButtons(...args); }
+  function isQuickPanelOpen(...args) { return legacyActionBarController?.isQuickPanelOpen(...args); }
+  function setQuickPanelOpen(...args) { return legacyActionBarController?.setQuickPanelOpen(...args); }
+  function toggleQuickPanel(...args) { return legacyActionBarController?.toggleQuickPanel(...args); }
+  function updateQuickPanel(...args) { return legacyActionBarController?.updateQuickPanel(...args); }
 
 
   function markActionPending() {
@@ -10195,212 +10190,6 @@
   }
 
 
-  function setQuickActionButtonEnabled(enabled, reason) {
-    els.actionQuickButton.disabled = !enabled;
-    els.actionQuickButton.title = enabled ? "" : (reason || "当前无法执行此行动");
-    els.actionQuickButton.setAttribute("aria-disabled", String(!enabled));
-    els.actionQuickButton.classList.add("action-button-ready");
-  }
-
-  function updateTurnActionButtons() {
-    const pendingBlockedReason = "请先回合结束或撤销当前行动";
-    const effectBlockedReason = "请先完成当前行动的效果";
-
-    if (isTechTilePickingActive()) {
-      setTurnActionButtonState(els.actionPassButton, false);
-      setTurnActionButtonState(els.actionConfirmButton, false);
-      setTurnActionButtonState(els.actionUndoButton, true, false);
-      return "请先选择科技或点击取消";
-    }
-
-    if (isActionEffectFlowActive()) {
-      setTurnActionButtonState(els.actionPassButton, false);
-      setTurnActionButtonState(els.actionConfirmButton, false);
-      setTurnActionButtonState(
-        els.actionUndoButton,
-        quickActionHistory.hasUndoableStep() || canUndoCurrentMainAction(),
-        false,
-      );
-      return effectBlockedReason;
-    }
-
-    if (isActionPending()) {
-      const mainActionHasIrreversibleBarrier = hasCurrentMainActionIrreversibleBarrier();
-      setTurnActionButtonState(els.actionPassButton, false);
-      setTurnActionButtonState(els.actionConfirmButton, true, true);
-      setTurnActionButtonState(
-        els.actionUndoButton,
-        quickActionHistory.hasUndoableStep() || canUndoCurrentMainAction(),
-        !mainActionHasIrreversibleBarrier,
-      );
-      return pendingBlockedReason;
-    }
-
-    setTurnActionButtonState(els.actionPassButton, canStartMainAction());
-    setTurnActionButtonState(els.actionConfirmButton, false);
-    setTurnActionButtonState(els.actionUndoButton, quickActionHistory.hasUndoableStep());
-    return null;
-  }
-
-  function updateActionButtons() {
-    syncFinalResultButton();
-    const readoutRoot = createStateSourceReadoutRoot();
-    const context = createActionContextForWorkingRoot(readoutRoot);
-    const gameplayLockReason = getGameplayLockReason();
-    if (gameplayLockReason) {
-      lockAllActionButtons(gameplayLockReason);
-      return;
-    }
-    if (isAiAutoBattlePlayer(readoutRoot.playerState.currentPlayerId) && !isAiAutomationPaused()) {
-      lockAllActionButtons("电脑玩家自动行动中");
-      return;
-    }
-
-    const techSelectionLocked = isTechTilePickingActive();
-    const cardSelectionLocked = isCardSelectionActive();
-    const discardSelectionLocked = isDiscardSelectionActive();
-    const playCardSelectionLocked = isPlayCardSelectionActive();
-    const movePaymentLocked = isMovePaymentSelectionActive();
-    const handScanLocked = isHandScanSelectionActive();
-    const effectFlowLocked = isActionEffectFlowActive();
-    const actionHistoryLocked = actionHistory.hasSession();
-    const pendingSubFlowLocked = hasActivePendingSubFlow();
-    const selectionBlockReason = techSelectionLocked
-      ? "请先选择科技或点击取消"
-      : handScanLocked
-        ? "请先完成手牌扫描或点击取消"
-        : movePaymentLocked
-          ? "请先确认或取消移动"
-          : playCardSelectionLocked
-            ? "请先打出或点击取消"
-            : discardSelectionLocked
-              ? "请先完成弃牌或点击取消"
-              : "请先完成精选或点击取消";
-
-    const pendingBlockedReason = updateTurnActionButtons();
-    const effectBlockedReason = effectFlowLocked ? "请先完成当前行动的效果" : pendingBlockedReason;
-
-    if (techSelectionLocked || discardSelectionLocked || playCardSelectionLocked || movePaymentLocked) {
-      setActionButtonState(els.actionLaunchButton, false, selectionBlockReason);
-      setActionButtonState(els.actionOrbitButton, false, selectionBlockReason);
-      setActionButtonState(els.actionLandButton, false, selectionBlockReason);
-      setActionButtonState(els.actionScanButton, false, selectionBlockReason);
-      setActionButtonState(els.actionAnalyzeButton, false, selectionBlockReason);
-      setActionButtonState(els.actionPlayCardButton, false, selectionBlockReason);
-      setActionButtonState(els.actionResearchTechButton, false, selectionBlockReason);
-      setQuickActionButtonEnabled(false, selectionBlockReason);
-      updateQuickPanel();
-      renderActionEffectBar();
-      return;
-    }
-
-    if (cardSelectionLocked || handScanLocked) {
-      setActionButtonState(els.actionLaunchButton, false, effectBlockedReason || selectionBlockReason);
-      setActionButtonState(els.actionOrbitButton, false, effectBlockedReason || selectionBlockReason);
-      setActionButtonState(els.actionLandButton, false, effectBlockedReason || selectionBlockReason);
-      setActionButtonState(els.actionScanButton, false, effectBlockedReason || selectionBlockReason);
-      setActionButtonState(els.actionAnalyzeButton, false, effectBlockedReason || selectionBlockReason);
-      setActionButtonState(els.actionPlayCardButton, false, effectBlockedReason || selectionBlockReason);
-      setActionButtonState(els.actionResearchTechButton, false, effectBlockedReason || selectionBlockReason);
-      setQuickActionButtonEnabled(false, effectBlockedReason || selectionBlockReason);
-      updateQuickPanel();
-      renderActionEffectBar();
-      return;
-    }
-
-    if (pendingSubFlowLocked) {
-      const subFlowReason = "请先完成或取消当前流程";
-      setActionButtonState(els.actionLaunchButton, false, subFlowReason);
-      setActionButtonState(els.actionOrbitButton, false, subFlowReason);
-      setActionButtonState(els.actionLandButton, false, subFlowReason);
-      setActionButtonState(els.actionScanButton, false, subFlowReason);
-      setActionButtonState(els.actionAnalyzeButton, false, subFlowReason);
-      setActionButtonState(els.actionPlayCardButton, false, subFlowReason);
-      setActionButtonState(els.actionResearchTechButton, false, subFlowReason);
-      setQuickActionButtonEnabled(false, subFlowReason);
-      updateQuickPanel();
-      renderActionEffectBar();
-      return;
-    }
-
-    if (effectFlowLocked || isActionPending() || actionHistoryLocked) {
-      setActionButtonState(els.actionLaunchButton, false, pendingBlockedReason);
-      setActionButtonState(els.actionOrbitButton, false, pendingBlockedReason);
-      setActionButtonState(els.actionLandButton, false, pendingBlockedReason);
-      setActionButtonState(els.actionScanButton, false, pendingBlockedReason);
-      setActionButtonState(els.actionAnalyzeButton, false, pendingBlockedReason);
-      setActionButtonState(els.actionPlayCardButton, false, pendingBlockedReason);
-      setActionButtonState(els.actionResearchTechButton, false, pendingBlockedReason);
-      setQuickActionButtonEnabled(!isInitialIncomeFlowActive(), pendingBlockedReason);
-      updateQuickPanel();
-      renderActionEffectBar();
-      return;
-    }
-
-    const launchCheck = actions.canExecute("launch", context);
-    const orbitCheck = abilities.planet.getOrbitOptions(context);
-    const landCheck = abilities.planet.getLandOptions(context);
-    const plutoOrbitCheck = getAvailablePlutoAction("orbit");
-    const plutoLandCheck = getAvailablePlutoAction("land");
-    const researchTechCheck = actions.canExecute("researchTech", context);
-    const analyzeCheck = canAnalyzeDataForPlayer(getCurrentPlayer());
-    const scanCheck = scanEffects.canExecuteScan(getCurrentPlayer(), { standardAction: true });
-    const currentPlayer = getCurrentPlayer();
-    const playCardBlockReason = getStandardPlayCardActionBlockReason(currentPlayer);
-    const canPlayCard = !playCardBlockReason
-      && (Boolean(currentPlayer?.hand?.length) || hasPlayableFutureSpanCard(currentPlayer));
-
-    setActionButtonState(els.actionLaunchButton, launchCheck.ok, launchCheck.message);
-    setActionButtonState(
-      els.actionOrbitButton,
-      orbitCheck.ok || plutoOrbitCheck.ok,
-      orbitCheck.ok ? orbitCheck.message : (orbitCheck.message || plutoOrbitCheck.message),
-    );
-    setActionButtonState(
-      els.actionLandButton,
-      landCheck.ok || plutoLandCheck.ok,
-      landCheck.ok ? landCheck.message : (landCheck.message || plutoLandCheck.message),
-    );
-    setActionButtonState(els.actionScanButton, scanCheck.ok, scanCheck.message);
-    setActionButtonState(els.actionAnalyzeButton, analyzeCheck.ok, analyzeCheck.message);
-    setActionButtonState(
-      els.actionPlayCardButton,
-      canPlayCard,
-      canPlayCard ? "" : (playCardBlockReason || "没有手牌可打出"),
-    );
-    setActionButtonState(els.actionResearchTechButton, researchTechCheck.ok, researchTechCheck.message);
-    setQuickActionButtonEnabled(true);
-    updateQuickPanel();
-    renderActionEffectBar();
-  }
-
-  function isQuickPanelOpen() {
-    return !els.quickActionsPanel.hidden;
-  }
-
-  function setQuickPanelOpen(open) {
-    if (open && getGameplayLockReason()) return;
-    if (open) cancelHandCardContextActions({ silent: true });
-    els.quickActionsPanel.hidden = !open;
-    els.actionQuickButton.setAttribute("aria-expanded", String(open));
-    els.actionQuickButton.classList.add("action-button-ready");
-    if (open) updateQuickPanel();
-  }
-
-  function toggleQuickPanel() {
-    setQuickPanelOpen(!isQuickPanelOpen());
-  }
-
-  function updateQuickTradeButtons() {
-    const context = createReadoutActionContext();
-    els.quickActionsTrades.querySelectorAll("[data-quick-trade]").forEach((button) => {
-      const tradeId = button.dataset.quickTrade;
-      const check = quickTrades.canExecuteTrade(tradeId, context);
-      button.disabled = !check.ok;
-      button.title = check.ok ? "" : (check.message || "当前无法兑换");
-    });
-  }
-
   function resumeDataPlacementContinuation(workingRoot, pending, outcome) {
     const effect = pending?.effect;
     if (!effect) return { ok: false, message: "放置数据续体缺少效果上下文" };
@@ -10486,10 +10275,43 @@
     withPendingOwnerPlayer,
   });
 
-  function updateQuickPanel() {
-    if (!isQuickPanelOpen()) return;
-    updateQuickTradeButtons();
-  }
+  legacyActionBarController = browserHostModule.actionBar.createLegacyActionBarController({
+    els,
+    actions,
+    abilities,
+    scanEffects,
+    quickTrades,
+    actionHistory,
+    quickActionHistory,
+    syncFinalResultButton,
+    createReadoutRoot: createStateSourceReadoutRoot,
+    createActionContext: createActionContextForWorkingRoot,
+    createReadoutActionContext,
+    getGameplayLockReason,
+    isAiPlayer: isAiAutoBattlePlayer,
+    isAiAutomationPaused,
+    lockAllActionButtons,
+    isTechTilePickingActive,
+    isCardSelectionActive,
+    isDiscardSelectionActive,
+    isPlayCardSelectionActive,
+    isMovePaymentSelectionActive,
+    isHandScanSelectionActive,
+    isActionEffectFlowActive,
+    isActionPending,
+    canUndoCurrentMainAction,
+    hasCurrentMainActionIrreversibleBarrier,
+    canStartMainAction,
+    hasActivePendingSubFlow,
+    isInitialIncomeFlowActive,
+    renderActionEffectBar,
+    getAvailablePlutoAction,
+    canAnalyzeDataForPlayer,
+    getCurrentPlayer,
+    getStandardPlayCardActionBlockReason,
+    hasPlayableFutureSpanCard,
+    cancelHandCardContextActions,
+  });
 
   function runPlaceDataToComputerForRoot(workingRoot) {
     const blocked = blockIncompatiblePendingQuickActionForRoot(workingRoot, "place-data");
