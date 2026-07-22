@@ -79,6 +79,54 @@ storage.value = "{bad json";
 assert.equal(recovery.readPersistentGamePackage(storage, "seti"), null);
 assert.equal(storage.removed, true);
 
+(function testPersistenceControllerOwnsTimerSuspensionAndRestoreAdapter() {
+  const memory = new Map();
+  const calls = [];
+  const entries = [{ id: 4, actionLabel: "扫描" }];
+  let timer = null;
+  let stable = true;
+  const controller = recovery.createPersistenceController({
+    window: {
+      localStorage: {
+        getItem: (key) => memory.get(key) || null,
+        setItem: (key, value) => memory.set(key, value),
+        removeItem: (key) => memory.delete(key),
+      },
+      setTimeout(callback) { timer = callback; return 7; },
+      clearTimeout() { timer = null; },
+    },
+    storageKey: "seti-test",
+    saveDelayMs: 10,
+    version: recovery.RECOVERY_SNAPSHOT_VERSION,
+    getEntries: () => entries,
+    getActiveReportTab: () => "action",
+    createSnapshot: ({ label }) => ({ version: recovery.RECOVERY_SNAPSHOT_VERSION, label }),
+    isStable: () => stable,
+    applySnapshot(snapshot, options) {
+      calls.push(["restore", snapshot.label, options.message]);
+      return { ok: true, message: options.message };
+    },
+    importEntries(savedEntries) {
+      calls.push(["import", savedEntries.length]);
+    },
+    setReportTab(tab) { calls.push(["tab", tab]); },
+  });
+  controller.schedulePersistentGameStateSave({ label: "延迟保存" });
+  assert.equal(typeof timer, "function");
+  timer();
+  assert.equal(controller.hasPersistentGameState(), true);
+  controller.setPersistentGameSaveSuspended(true);
+  stable = true;
+  assert.equal(controller.savePersistentGameStateNow().skipped, true);
+  controller.setPersistentGameSaveSuspended(false);
+  assert.equal(controller.restorePersistentGameState().ok, true);
+  assert.deepEqual(calls, [
+    ["restore", "延迟保存", "已恢复上次保存的局面"],
+    ["import", 1],
+    ["tab", "action"],
+  ]);
+})();
+
 (function testBrowserActionLogCheckpointRestoresOnlyThroughCompositionLifecycle() {
   const restored = [];
   harness.ruleEnvelope = { schemaVersion: RULE_SCHEMA, committedState: "round-1", session: null };

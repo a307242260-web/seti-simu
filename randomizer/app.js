@@ -1288,8 +1288,6 @@
   const historyStepOrder = [];
   const PERSISTENT_GAME_STORAGE_KEY = "seti-randomizer-current-game-v1";
   const PERSISTENT_GAME_SAVE_DELAY_MS = 120;
-  let persistentGameSaveTimer = 0;
-  let persistentGameSaveSuspended = false;
   const MOVE_DISCARD_ACTION_CODE = 2;
   const MOVE_ENERGY_COST = 1;
   let syncDiscardSelectionChrome;
@@ -3453,6 +3451,41 @@
     });
   }
 
+  const persistenceController = gameRecoveryModule.createPersistenceController({
+    window,
+    storageKey: PERSISTENT_GAME_STORAGE_KEY,
+    saveDelayMs: PERSISTENT_GAME_SAVE_DELAY_MS,
+    version: GAME_RECOVERY_VERSION,
+    getEntries: () => actionLogState.entries,
+    getActiveReportTab: () => actionLogState.activeReportTab,
+    createSnapshot: (...args) => createGameRecoverySnapshot(...args),
+    applySnapshot: (...args) => applyGameRecoverySnapshot(...args),
+    importEntries: (...args) => importActionLogEntries(...args),
+    setReportTab,
+    isStable: () => !isActionPending()
+      && !uiRuntimeState.effectStepActive
+      && !getActionEffectFlow()
+      && !uiRuntimeState.alienRevealConfirmation
+      && !hasTurnEndRevealContinuation()
+      && !actionLogState.draft
+      && !actionHistory.hasSession()
+      && !quickActionHistory.hasSession()
+      && !isActionEffectFlowActive()
+      && !hasActivePendingSubFlow(),
+    warn: (...args) => console.warn(...args),
+  });
+  const {
+    readPersistentGamePackage,
+    hasPersistentGameState,
+    clearPersistentGameState,
+    setPersistentGameSaveSuspended,
+    isPersistentGameStateStable,
+    createPersistentGamePackage,
+    savePersistentGameStateNow,
+    schedulePersistentGameStateSave,
+    restorePersistentGameState,
+  } = persistenceController;
+
   const turnFlowController = turnFlowModule.createTurnFlowController({
     players,
     uiRuntimeState,
@@ -3513,9 +3546,7 @@
     historyStepOrder,
     cardTaskState,
     els,
-    setPersistentGameSaveSuspended(value) {
-      persistentGameSaveSuspended = Boolean(value);
-    },
+    setPersistentGameSaveSuspended,
   });
   const startScreenController = startScreenModule.createStartScreenController({
     startScreenState,
@@ -5413,114 +5444,6 @@
       includeRecovery: options.includeRecovery !== false,
       createSnapshot: createGameRecoverySnapshot,
     });
-  }
-
-  function getPersistentGameStorage() {
-    return gameRecoveryModule.getPersistentGameStorage(window);
-  }
-
-  function readPersistentGamePackage() {
-    return gameRecoveryModule.readPersistentGamePackage(
-      getPersistentGameStorage(),
-      PERSISTENT_GAME_STORAGE_KEY,
-    );
-  }
-
-  function hasPersistentGameState() {
-    return gameRecoveryModule.hasPersistentGameState(readPersistentGamePackage());
-  }
-
-  function clearPersistentGameState() {
-    return gameRecoveryModule.clearPersistentGameState(
-      getPersistentGameStorage(),
-      PERSISTENT_GAME_STORAGE_KEY,
-    );
-  }
-
-  function isPersistentGameStateStable() {
-    if (persistentGameSaveSuspended) return false;
-    return !isActionPending()
-      && !uiRuntimeState.effectStepActive
-      && !getActionEffectFlow()
-      && !uiRuntimeState.alienRevealConfirmation
-      && !hasTurnEndRevealContinuation()
-      && !actionLogState.draft
-      && !actionHistory.hasSession()
-      && !quickActionHistory.hasSession()
-      && !isActionEffectFlowActive()
-      && !hasActivePendingSubFlow();
-  }
-
-  function createPersistentGamePackage(label = "本地自动保存") {
-    return gameRecoveryModule.createPersistentGamePackage({
-      version: GAME_RECOVERY_VERSION,
-      label,
-      entries: actionLogState.entries,
-      activeReportTab: actionLogState.activeReportTab,
-      createSnapshot: createGameRecoverySnapshot,
-    });
-  }
-
-  function savePersistentGameStateNow(options = {}) {
-    if (!options.force && !isPersistentGameStateStable()) {
-      return { ok: false, skipped: true, message: "当前流程未稳定，保留上一个本地存档" };
-    }
-    const storage = getPersistentGameStorage();
-    if (!storage) return { ok: false, message: "当前浏览器不支持本地保存" };
-    try {
-      storage.setItem(
-        PERSISTENT_GAME_STORAGE_KEY,
-        JSON.stringify(createPersistentGamePackage(options.label)),
-      );
-      return { ok: true };
-    } catch (error) {
-      return { ok: false, message: String(error?.message || error) };
-    }
-  }
-
-  function schedulePersistentGameStateSave(options = {}) {
-    if (persistentGameSaveSuspended) return;
-    if (persistentGameSaveTimer) {
-      window.clearTimeout(persistentGameSaveTimer);
-    }
-    persistentGameSaveTimer = window.setTimeout(() => {
-      persistentGameSaveTimer = 0;
-      savePersistentGameStateNow(options);
-    }, PERSISTENT_GAME_SAVE_DELAY_MS);
-  }
-
-  function restorePersistentGameState() {
-    const saved = readPersistentGamePackage();
-    const snapshot = saved?.latestSnapshot || null;
-    if (!snapshot) return { ok: false, message: "没有可恢复的本地存档" };
-
-    persistentGameSaveSuspended = true;
-    try {
-      const result = applyGameRecoverySnapshot(snapshot, {
-        message: "已恢复上次保存的局面",
-      });
-      if (!result.ok) {
-        clearPersistentGameState();
-        return result;
-      }
-      if (Array.isArray(saved.entries)) {
-        importActionLogEntries(saved.entries);
-      }
-      const latestEntry = actionLogState.entries[actionLogState.entries.length - 1] || null;
-      if (latestEntry && !latestEntry.recoverySnapshot) {
-        latestEntry.recoverySnapshot = structuredClone(snapshot);
-      }
-      if (saved.activeReportTab) {
-        setReportTab(saved.activeReportTab);
-      }
-      return result;
-    } catch (error) {
-      console.warn("[SETI] 恢复本地存档失败，已清除坏存档", error);
-      clearPersistentGameState();
-      return { ok: false, message: "恢复本地存档失败" };
-    } finally {
-      persistentGameSaveSuspended = false;
-    }
   }
 
   function countPlayerOwnedTechForActionLogExport(player) {

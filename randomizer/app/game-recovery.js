@@ -130,6 +130,102 @@
     }
   }
 
+  function createPersistenceController(options = {}) {
+    const storage = getPersistentGameStorage(options.window);
+    const storageKey = options.storageKey;
+    let saveTimer = 0;
+    let saveSuspended = false;
+
+    function read() {
+      return readPersistentGamePackage(storage, storageKey);
+    }
+
+    function has() {
+      return hasPersistentGameState(read());
+    }
+
+    function clear() {
+      return clearPersistentGameState(storage, storageKey);
+    }
+
+    function setSuspended(value) {
+      saveSuspended = Boolean(value);
+    }
+
+    function isStable() {
+      return !saveSuspended && options.isStable();
+    }
+
+    function createPackage(label = "本地自动保存") {
+      return createPersistentGamePackage({
+        version: options.version,
+        label,
+        entries: options.getEntries(),
+        activeReportTab: options.getActiveReportTab(),
+        createSnapshot: options.createSnapshot,
+      });
+    }
+
+    function saveNow(saveOptions = {}) {
+      if (!saveOptions.force && !isStable()) {
+        return { ok: false, skipped: true, message: "当前流程未稳定，保留上一个本地存档" };
+      }
+      if (!storage) return { ok: false, message: "当前浏览器不支持本地保存" };
+      try {
+        storage.setItem(storageKey, JSON.stringify(createPackage(saveOptions.label)));
+        return { ok: true };
+      } catch (error) {
+        return { ok: false, message: String(error?.message || error) };
+      }
+    }
+
+    function schedule(saveOptions = {}) {
+      if (saveSuspended) return;
+      if (saveTimer) options.window.clearTimeout(saveTimer);
+      saveTimer = options.window.setTimeout(() => {
+        saveTimer = 0;
+        saveNow(saveOptions);
+      }, options.saveDelayMs);
+    }
+
+    function restore() {
+      const saved = read();
+      const snapshot = saved?.latestSnapshot || null;
+      if (!snapshot) return { ok: false, message: "没有可恢复的本地存档" };
+      saveSuspended = true;
+      try {
+        const result = options.applySnapshot(snapshot, { message: "已恢复上次保存的局面" });
+        if (!result.ok) {
+          clear();
+          return result;
+        }
+        if (Array.isArray(saved.entries)) options.importEntries(saved.entries);
+        const latestEntry = options.getEntries().at(-1) || null;
+        if (latestEntry && !latestEntry.recoverySnapshot) latestEntry.recoverySnapshot = clone(snapshot);
+        if (saved.activeReportTab) options.setReportTab(saved.activeReportTab);
+        return result;
+      } catch (error) {
+        options.warn?.("[SETI] 恢复本地存档失败，已清除坏存档", error);
+        clear();
+        return { ok: false, message: "恢复本地存档失败" };
+      } finally {
+        saveSuspended = false;
+      }
+    }
+
+    return Object.freeze({
+      readPersistentGamePackage: read,
+      hasPersistentGameState: has,
+      clearPersistentGameState: clear,
+      setPersistentGameSaveSuspended: setSuspended,
+      isPersistentGameStateStable: isStable,
+      createPersistentGamePackage: createPackage,
+      savePersistentGameStateNow: saveNow,
+      schedulePersistentGameStateSave: schedule,
+      restorePersistentGameState: restore,
+    });
+  }
+
   function getRecoveryEntriesFromInput(logOrPackage) {
     if (Array.isArray(logOrPackage)) return logOrPackage;
     if (Array.isArray(logOrPackage?.entries)) return logOrPackage.entries;
@@ -215,6 +311,7 @@
     readPersistentGamePackage,
     hasPersistentGameState,
     clearPersistentGameState,
+    createPersistenceController,
     getRecoveryEntriesFromInput,
     getRecoverySnapshotFromLog,
     applyGameRecoverySnapshot,
