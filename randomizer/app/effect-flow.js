@@ -200,7 +200,7 @@
           }
         }
       }
-      recordScanScoreSourcesFromAbilityResult(result, history);
+      recordScanScoreSourcesFromAbilityResult(workingRoot, result, history);
     }
 
     function startPendingActionSession(actionType, label, options = {}) {

@@ -8807,21 +8807,23 @@
     return added;
   }
 
-  function getScanScorePlayer(result) {
+  function getScanScorePlayer(workingRoot, result) {
     const event = (result?.events || []).find((item) => item?.type === "signalMarked" && (item.playerId || item.playerColor));
-    return getPlayerById(result?.playerId || event?.playerId)
-      || getPlayerByColor(result?.playerColor || event?.playerColor)
-      || getCurrentPlayer();
+    const playerId = result?.playerId || event?.playerId || null;
+    const playerColor = result?.playerColor || event?.playerColor || null;
+    return (workingRoot.playerState.players || []).find((player) => (
+      (playerId && player.id === playerId) || (playerColor && player.color === playerColor)
+    )) || players.getCurrentPlayer(workingRoot.playerState);
   }
 
-  function recordScanScoreSourcesFromAbilityResult(result, history = actionHistory) {
+  function recordScanScoreSourcesFromAbilityResult(workingRoot, result, history = actionHistory) {
     const scanResults = [
       result,
       result?.payload?.industryLaunchScan,
     ].filter(Boolean);
     for (const scanResult of scanResults) {
       if (!getScoreAwardedFromScanResult(scanResult)) continue;
-      recordScanScoreSource(getScanScorePlayer(scanResult), scanResult, history);
+      recordScanScoreSource(getScanScorePlayer(workingRoot, scanResult), scanResult, history);
     }
   }
 
