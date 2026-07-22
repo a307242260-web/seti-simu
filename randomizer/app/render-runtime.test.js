@@ -9,6 +9,7 @@ const {
   createRenderRuntime,
   createCoordinateRuntime,
   createBrowserLayoutRuntime,
+  createInteractionChrome,
 } = require("./render-runtime");
 
 {
@@ -661,6 +662,35 @@ function createContext(overrides = {}) {
   ]) {
     assert.doesNotMatch(wiring, new RegExp(`\\n\\s*${key}(?:,|:)`), `生产 renderer 不得注入 ${key}`);
   }
+}
+
+{
+  const toggles = [];
+  const node = () => ({
+    hidden: false, dataset: {},
+    classList: { toggle: (name, value) => toggles.push([name, value]) },
+    setAttribute() {},
+  });
+  const els = {
+    appWrap: node(), publicCardPanel: node(), boardShell: node(), cardSelectionBackdrop: node(),
+    cardSelectionCancel: node(), publicScanConfirm: node(), playerHandPanel: node(),
+  };
+  const chrome = createInteractionChrome({
+    els,
+    isPublicCardMultiSelectActive: () => true,
+    getPublicCardSelectedCount: () => 1,
+    getPublicCardMultiSelectMinSelectable: () => 2,
+    getCardSelectionType: () => "public_scan",
+    isCardSelectionActive: () => true,
+    cancelHandCardContextActions() {}, setQuickPanelOpen() {}, renderPublicCards() {},
+    updatePublicCardControls() {}, getInteractionFocusMode: () => "public-cards",
+    hasPlayableFutureSpanCard: () => false, isIndustryHandSelectionActive: () => false,
+    scrollToPlayerHandPanel() {}, renderPlayerHand() {}, renderInitialSelectionArea() {},
+  });
+  chrome.syncCardSelectionChrome();
+  assert.equal(els.publicScanConfirm.disabled, true);
+  assert.equal(els.publicScanConfirm.textContent, "确认扫描（1/2张）");
+  assert.equal(els.appWrap.dataset.interactionFocus, "public-cards");
 }
 
 {

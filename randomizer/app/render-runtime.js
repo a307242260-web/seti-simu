@@ -413,6 +413,65 @@
     return Object.freeze({ resize, syncTechRenderContext });
   }
 
+  function createInteractionChrome(context = {}) {
+    const { els = {} } = context;
+    function syncPublicScanConfirmButton() {
+      if (!els.publicScanConfirm) return;
+      const multi = context.isPublicCardMultiSelectActive();
+      els.publicScanConfirm.hidden = !multi;
+      if (!multi) return;
+      const count = context.getPublicCardSelectedCount();
+      const minSelectable = context.getPublicCardMultiSelectMinSelectable();
+      els.publicScanConfirm.disabled = count < minSelectable;
+      const label = context.getCardSelectionType() === "card_public_corner_discard" ? "确认弃除" : "确认扫描";
+      els.publicScanConfirm.textContent = count > 0 ? `${label}（${count}/${minSelectable}张）` : label;
+    }
+    function syncCardSelectionChrome() {
+      const active = context.isCardSelectionActive();
+      if (active) context.cancelHandCardContextActions({ silent: true });
+      els.appWrap?.classList.toggle("card-selection-active", active);
+      els.publicCardPanel?.classList.toggle("card-selection-active", active);
+      els.publicCardPanel?.classList.toggle("public-card-panel-focused", active);
+      if (els.cardSelectionBackdrop) {
+        els.cardSelectionBackdrop.hidden = !active;
+        els.cardSelectionBackdrop.setAttribute("aria-hidden", String(!active));
+      }
+      if (els.cardSelectionCancel) els.cardSelectionCancel.hidden = !active;
+      syncPublicScanConfirmButton();
+      if (active) context.setQuickPanelOpen(false);
+      context.renderPublicCards();
+      context.updatePublicCardControls();
+      syncInteractionFocusChrome();
+    }
+    function syncInteractionFocusChrome() {
+      if (!els.appWrap) return;
+      const mode = context.getInteractionFocusMode();
+      els.appWrap.dataset.interactionFocus = mode || "";
+      els.appWrap.classList.toggle("has-future-span-ready-card", context.hasPlayableFutureSpanCard());
+      els.boardShell?.classList.toggle("board-shell-focused", mode === "board-rockets");
+    }
+    function syncIndustryHandSelectionChrome() {
+      const active = context.isIndustryHandSelectionActive();
+      if (active) context.cancelHandCardContextActions({ silent: true });
+      els.appWrap?.classList.toggle("industry-hand-selection-active", active);
+      els.playerHandPanel?.classList.toggle("industry-hand-selection-active", active);
+      els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
+      if (active) {
+        context.setQuickPanelOpen(false);
+        context.scrollToPlayerHandPanel();
+      }
+      context.renderPlayerHand();
+      context.renderInitialSelectionArea();
+      syncInteractionFocusChrome();
+    }
+    return Object.freeze({
+      syncPublicScanConfirmButton,
+      syncCardSelectionChrome,
+      syncInteractionFocusChrome,
+      syncIndustryHandSelectionChrome,
+    });
+  }
+
   function createRenderRuntime(context = {}) {
     const document = context.document || root.document;
     const ImageCtor = context.Image || root.Image;
@@ -1978,5 +2037,6 @@
     createCardHoverPreviewRuntime,
     createCoordinateRuntime,
     createBrowserLayoutRuntime,
+    createInteractionChrome,
   };
 });

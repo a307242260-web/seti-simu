@@ -2193,6 +2193,24 @@
     layoutPlayerHandFan,
     layoutReservedCardRows,
   } = renderRuntime;
+  const interactionChrome = renderRuntimeModule.createInteractionChrome({
+    els,
+    isPublicCardMultiSelectActive: (...args) => isPublicCardMultiSelectActive(...args),
+    getPublicCardSelectedCount: () => uiRuntimeState.publicCardSelectedSlots?.length || 0,
+    getPublicCardMultiSelectMinSelectable: (...args) => getPublicCardMultiSelectMinSelectable(...args),
+    getCardSelectionType: () => getPendingCardSelectionDecision()?.type || null,
+    isCardSelectionActive: (...args) => isCardSelectionActive(...args),
+    cancelHandCardContextActions: (...args) => cancelHandCardContextActions(...args),
+    setQuickPanelOpen: (...args) => setQuickPanelOpen(...args),
+    renderPublicCards: (...args) => renderPublicCards(...args),
+    updatePublicCardControls: (...args) => updatePublicCardControls(...args),
+    getInteractionFocusMode: (...args) => getInteractionFocusMode(...args),
+    hasPlayableFutureSpanCard: () => hasPlayableFutureSpanCard(getCurrentPlayer()),
+    isIndustryHandSelectionActive: (...args) => isIndustryHandSelectionActive(...args),
+    scrollToPlayerHandPanel: (...args) => scrollToPlayerHandPanel(...args),
+    renderPlayerHand: (...args) => renderPlayerHand(...args),
+    renderInitialSelectionArea: (...args) => renderInitialSelectionArea(...args),
+  });
   const finalUiRuntime = finalUiRuntimeModule.createFinalUiRuntime({
     document,
     els,
@@ -6073,39 +6091,11 @@
   }
 
   function syncPublicScanConfirmButton() {
-    if (!els.publicScanConfirm) return;
-    const multi = isPublicCardMultiSelectActive();
-    els.publicScanConfirm.hidden = !multi;
-    if (!multi) return;
-    const count = uiRuntimeState.publicCardSelectedSlots?.length || 0;
-    const minSelectable = getPublicCardMultiSelectMinSelectable();
-    els.publicScanConfirm.disabled = count < minSelectable;
-    const label = getPendingCardSelectionDecision()?.type === "card_public_corner_discard"
-      ? "确认弃除"
-      : "确认扫描";
-    els.publicScanConfirm.textContent = count > 0
-      ? `${label}（${count}/${minSelectable}张）`
-      : label;
+    return interactionChrome.syncPublicScanConfirmButton();
   }
 
   function syncCardSelectionChrome() {
-    const active = isCardSelectionActive();
-    if (active) cancelHandCardContextActions({ silent: true });
-    els.appWrap?.classList.toggle("card-selection-active", active);
-    els.publicCardPanel?.classList.toggle("card-selection-active", active);
-    els.publicCardPanel?.classList.toggle("public-card-panel-focused", active);
-    if (els.cardSelectionBackdrop) {
-      els.cardSelectionBackdrop.hidden = !active;
-      els.cardSelectionBackdrop.setAttribute("aria-hidden", String(!active));
-    }
-    if (els.cardSelectionCancel) {
-      els.cardSelectionCancel.hidden = !active;
-    }
-    syncPublicScanConfirmButton();
-    if (active) setQuickPanelOpen(false);
-    renderPublicCards();
-    updatePublicCardControls();
-    syncInteractionFocusChrome();
+    return interactionChrome.syncCardSelectionChrome();
   }
 
   const INTERACTION_FOCUS = Object.freeze({
@@ -6147,27 +6137,11 @@
   }
 
   function syncInteractionFocusChrome() {
-    if (!els.appWrap) return;
-    const mode = getInteractionFocusMode();
-    els.appWrap.dataset.interactionFocus = mode || "";
-    els.appWrap.classList.toggle("has-future-span-ready-card", hasPlayableFutureSpanCard(getCurrentPlayer()));
-    els.boardShell?.classList.toggle("board-shell-focused", mode === INTERACTION_FOCUS.BOARD_ROCKETS);
+    return interactionChrome.syncInteractionFocusChrome();
   }
 
   function syncIndustryHandSelectionChrome() {
-    const active = isIndustryHandSelectionActive();
-    if (active) cancelHandCardContextActions({ silent: true });
-    els.appWrap?.classList.toggle("industry-hand-selection-active", active);
-    els.playerHandPanel?.classList.toggle("industry-hand-selection-active", active);
-    els.playerHandPanel?.classList.toggle("player-hand-panel-focused", active);
-    if (active) {
-      setQuickPanelOpen(false);
-      scrollToPlayerHandPanel();
-    }
-    updatePlayerHandPanelTitle();
-    renderPlayerHand();
-    renderInitialSelectionArea();
-    syncInteractionFocusChrome();
+    return interactionChrome.syncIndustryHandSelectionChrome();
   }
 
   function canSelectRocketForMoveInteraction(rocket) {
