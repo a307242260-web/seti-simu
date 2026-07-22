@@ -981,7 +981,7 @@
     function executeAomomoVisitThisTurnFossilEffect(effect) {
       const currentPlayer = getCurrentPlayer();
       const count = Math.max(0, Math.round(Number(effect.options?.count) || 1));
-      const visited = hasPlayerVisitedPlanetThisTurn(currentPlayer, aomomo?.PLANET_ID);
+      const visited = hasPlayerVisitedPlanetThisTurn(context.getWorkingRoot(), currentPlayer, aomomo?.PLANET_ID);
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       if (visited && count > 0) {

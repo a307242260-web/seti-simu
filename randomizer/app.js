@@ -2009,6 +2009,7 @@
     HISTORY_SOURCE_QUICK,
     ACTION_LOG_DEFAULT_LABELS,
     getCurrentPlayer,
+    getWorkingRoot: () => requireActiveBrowserWorkingRoot("effect flow"),
     getCurrentPlayerForRoot: (workingRoot) => players.getCurrentPlayer(workingRoot.playerState),
     markCurrentActionIrreversible,
     getIrreversibleReason,
@@ -5526,39 +5527,26 @@
     }, { commit: false }).value || [];
   }
 
-  function finishGameAfterFinalPass() {
-    const { playerState, turnState } = requireActiveBrowserWorkingRoot("finishGameAfterFinalPass");
-    turnState.gameEnded = true;
-    turnState.gameEndReason = "final_round_all_passed";
-    return {
-      roundAdvanced: false,
-      turnAdvanced: false,
-      gameEnded: true,
-      nextPlayerId: playerState.currentPlayerId,
-      finalScoreLines: buildFinalScoreSummaryLines(),
-    };
-  }
-
-  function ensureTurnVisitedPlanetsByPlayerId() {
-    const { turnState } = requireActiveBrowserWorkingRoot("ensureTurnVisitedPlanetsByPlayerId");
+  function ensureTurnVisitedPlanetsByPlayerId(workingRoot) {
+    const { turnState } = workingRoot;
     if (!turnState.visitedPlanetsByPlayerId || typeof turnState.visitedPlanetsByPlayerId !== "object") {
       turnState.visitedPlanetsByPlayerId = {};
     }
     return turnState.visitedPlanetsByPlayerId;
   }
 
-  function hasPlayerVisitedPlanetThisTurn(player, planetId) {
+  function hasPlayerVisitedPlanetThisTurn(workingRoot, player, planetId) {
     const playerId = player?.id || player?.playerId || null;
     if (!playerId || !planetId) return false;
-    return (ensureTurnVisitedPlanetsByPlayerId()[playerId] || []).includes(planetId);
+    return (ensureTurnVisitedPlanetsByPlayerId(workingRoot)[playerId] || []).includes(planetId);
   }
 
-  function recordTurnVisitPlanetEvents(events = []) {
-    const { turnState } = requireActiveBrowserWorkingRoot("recordTurnVisitPlanetEvents");
+  function recordTurnVisitPlanetEvents(workingRoot, events = []) {
+    const { turnState } = workingRoot;
     const visitEvents = (events || []).filter((event) => event?.type === "visitPlanet" && event.planetId);
     if (!visitEvents.length) return null;
     const beforeVisits = structuredClone(turnState.visitedPlanetsByPlayerId || {});
-    const visitsByPlayerId = ensureTurnVisitedPlanetsByPlayerId();
+    const visitsByPlayerId = ensureTurnVisitedPlanetsByPlayerId(workingRoot);
     let changed = false;
     for (const event of visitEvents) {
       const playerId = event.playerId || getCurrentPlayer()?.id || null;

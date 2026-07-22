@@ -43,6 +43,7 @@
     const ACTION_LOG_DEFAULT_LABELS = context.ACTION_LOG_DEFAULT_LABELS || { quick: "快速行动" };
 
     const getCurrentPlayer = requireFunction("getCurrentPlayer", context.getCurrentPlayer);
+    const getWorkingRoot = requireFunction("getWorkingRoot", context.getWorkingRoot);
     const getCurrentPlayerForRoot = requireFunction(
       "getCurrentPlayerForRoot",
       context.getCurrentPlayerForRoot,
@@ -184,7 +185,7 @@
     function recordAbilityCommands(result, history = actionHistory) {
       if (!result) return;
       const commands = [];
-      const turnVisitCommand = recordTurnVisitPlanetEvents(result.events);
+      const turnVisitCommand = recordTurnVisitPlanetEvents(getWorkingRoot(), result.events);
       if (turnVisitCommand) commands.push(turnVisitCommand);
       recordNeutralScoreTracesFromAbilityResult(result, history);
       commands.push(...(result.commands || []));

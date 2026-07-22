@@ -165,6 +165,9 @@ function createHarness() {
     getCurrentPlayer() {
       return { id: "p1" };
     },
+    getWorkingRoot() {
+      return rootState;
+    },
     getCurrentPlayerForRoot(rootState) {
       return rootState.playerState.players.find((player) => player.id === rootState.playerState.currentPlayerId);
     },
