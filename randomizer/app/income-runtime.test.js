@@ -21,6 +21,9 @@ const { createIncomeRuntime } = require("./income-runtime");
       gainResources(target, gain) {
         Object.assign(target.resources, gain);
       },
+      getCurrentPlayer(playerState) {
+        return playerState.players[playerState.currentPlayerIndex];
+      },
     },
     data: { gainData: () => ({ ok: true }) },
     blindDrawCardForPlayer: () => ({ ok: true, card: { id: "drawn" } }),
@@ -42,7 +45,7 @@ const { createIncomeRuntime } = require("./income-runtime");
   assert.equal(player.resources.credits, 1);
   assert.match(result.message, /收入牌/);
 
-  const started = runtime.beginIncomeForCurrentPlayer({ source: "round" });
+  const started = runtime.beginIncomeForCurrentPlayer({ playerState: { players: [player], currentPlayerIndex: 0 } }, { source: "round" });
   assert.equal(started.count, 1);
   assert.equal(started.pending.type, "income");
   assert.equal(started.pending.source, "round");

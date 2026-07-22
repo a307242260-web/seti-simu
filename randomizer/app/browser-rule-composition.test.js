@@ -276,7 +276,6 @@ function createHarness(initialValue = 0) {
 
 {
   let commitEvents = 0;
-  let residentWorkingState = null;
   const replace = (target, source) => {
     for (const key of Reflect.ownKeys(target)) delete target[key];
     Object.assign(target, structuredClone(source));
@@ -287,7 +286,6 @@ function createHarness(initialValue = 0) {
     createActionRegistry: createRegistry,
     createInitialState: (_options, workingState) => structuredClone(workingState),
     stateAdapter: {
-      bindWorkingState: (workingState) => { residentWorkingState = workingState; },
       createWorkingState: () => createState(0),
       createCommittedState: (workingState, committedState) => ({
         ...structuredClone(workingState),
@@ -306,11 +304,9 @@ function createHarness(initialValue = 0) {
     effectExecutors: { noop: (state) => ({ ok: true, nextState: state }) },
   });
   composition.stateSourcePort.subscribe(() => { commitEvents += 1; });
-  residentWorkingState.match.value = 9;
   const source = composition.stateSourcePort.read({ viewerId: "test", role: "spectator" });
-  assert.equal(source.state.match.value, 9, "只读 StateSource 必须投影 resident working state");
+  assert.equal(source.state.match.value, 0, "只读 StateSource 必须投影 Composition working state");
   assert.equal(Object.isFrozen(source), true, "StateSource envelope 必须冻结");
-  assert.notEqual(source.state, residentWorkingState, "StateSource 不得泄露 mutable working root identity");
   assert.equal(Object.hasOwn(composition, "getWorkingState"), false, "Composition 不得公开 mutable working root accessor");
   const before = composition.projection();
   composition.inputPort.enumerateActions({ family: "launch" });
@@ -319,11 +315,11 @@ function createHarness(initialValue = 0) {
   const commandResult = composition.inputPort.submitHostCommand({ kind: "increment", amount: 4 });
   assert.equal(commandResult.ok, true);
   assert.equal(commandResult.stateVersion, 1);
-  assert.equal(composition.stateSourcePort.read().state.match.value, 13);
+  assert.equal(composition.stateSourcePort.read().state.match.value, 4);
   assert.equal(commitEvents, 1, "宿主命令必须由 composition 统一执行一次 CAS");
   const rejected = composition.inputPort.submitHostCommand({ kind: "unknown", amount: 99 });
   assert.equal(rejected.ok, false);
-  assert.equal(composition.stateSourcePort.read().state.match.value, 13, "失败宿主命令必须零污染");
+  assert.equal(composition.stateSourcePort.read().state.match.value, 4, "失败宿主命令必须零污染");
 }
 
 {

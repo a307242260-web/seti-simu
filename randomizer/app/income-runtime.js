@@ -440,8 +440,9 @@
       };
     }
 
-    function beginIncomeForCurrentPlayer(options = {}) {
-      const currentPlayer = getCurrentPlayer();
+    function beginIncomeForCurrentPlayer(workingRoot, options = {}) {
+      if (!workingRoot?.playerState) throw new TypeError("beginIncomeForCurrentPlayer 缺少 workingRoot");
+      const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
       return beginDiscardSelection(1, {
         type: "income",
         player: currentPlayer,

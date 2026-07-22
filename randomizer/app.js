@@ -325,6 +325,7 @@
     income_runtime: new Set([
       "applyIndustryRoundStartBonuses",
       "maybeStartFundamentalismRoundStartIncomeFlow",
+      "beginIncomeForCurrentPlayer",
     ]),
   });
 
@@ -465,7 +466,6 @@
     return target;
   }
 
-  let residentRuleRoot = null;
   const browserRuleComposition = browserRuleCompositionModule.createBrowserRuleComposition({
     stateStoreApi: {
       createStateStore(initialState, options) {
@@ -484,10 +484,6 @@
       );
     },
     stateAdapter: {
-      bindWorkingState(workingState) {
-        if (residentRuleRoot) throw new Error("Browser resident working state 只能绑定一次");
-        residentRuleRoot = workingState;
-      },
       createWorkingState: createBrowserWorkingState,
       createProjectionState(workingState, committedState) {
         return initialGameStateModule.createCommittedCandidate(
@@ -837,17 +833,6 @@
     },
   });
   const browserRuleLifecycle = browserRuleComposition.lifecycle;
-  if (!residentRuleRoot) throw new Error("Browser Composition 未绑定 resident working state");
-  const solarState = residentRuleRoot.solarState;
-  const nebulaDataState = residentRuleRoot.nebulaDataState;
-  const alienGameState = residentRuleRoot.alienGameState;
-  const finalScoringState = residentRuleRoot.finalScoringState;
-  const playerState = residentRuleRoot.playerState;
-  const turnState = residentRuleRoot.turnState;
-  const rocketState = residentRuleRoot.rocketState;
-  const planetStatsState = residentRuleRoot.planetStatsState;
-  const techGameState = residentRuleRoot.techGameState;
-  const cardState = residentRuleRoot.cardState;
   const primaryBoardActionExecutor = primaryBoardActionExecutorModule.createPrimaryBoardActionExecutor({
     actions,
     abilities,
@@ -1032,7 +1017,7 @@
     canBlindDraw,
     getPendingLandTargetDecision,
     abilities,
-    createActionContext,
+    createActionContext: createReadoutActionContext,
     getFangzhouUnlockableTraceTypes,
     hasAlienTracePanelPlacementTarget,
     getAlienTraceChoiceSlotIds,
@@ -2318,9 +2303,7 @@
     executeFreeMoveForCardTrigger: (...args) => executeFreeMoveForCardTrigger?.(...args),
     executeIndustryFreeMove: (...args) => executeIndustryFreeMove?.(...args),
     executeCardEffectMove: (...args) => executeCardEffectMove?.(...args),
-    createActionContext: (workingRoot, descriptor) => (
-      workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
-    ),
+    createActionContext: createActionContextForWorkingRoot,
     recordMoveActionHistory,
     executePrimaryBoardAction: (workingRoot, descriptor, executionOptions, options) => (
       actionRuntimeController?.executePrimaryBoardAction(
@@ -2506,9 +2489,7 @@
     isHandScanSelectionActive,
     getFlowMarkedNebulaIds,
     normalizeResourceCost,
-      createActionContext: (workingRoot, descriptor) => (
-        workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
-      ),
+      createActionContext: createActionContextForWorkingRoot,
     canStartMainAction,
     getMainActionStartBlockReason,
     HISTORY_SOURCE_MAIN,
@@ -2723,6 +2704,8 @@
     maybeStartFundamentalismRoundStartIncomeFlow: maybeStartFundamentalismRoundStartIncomeFlowForRoot,
     beginIncomeForCurrentPlayer,
   } = incomeRuntime);
+  const beginIncomeForCurrentPlayerForRoot = beginIncomeForCurrentPlayer;
+  beginIncomeForCurrentPlayer = bindBrowserDomainCommand("income_runtime", "beginIncomeForCurrentPlayer");
   function applyIndustryRoundStartBonuses(...args) {
     return callBrowserDomainCommand("income_runtime", "applyIndustryRoundStartBonuses", args);
   }
@@ -3232,9 +3215,7 @@
     getAnalyzeActionOptionsForPlayer,
     createActionLogImpactSnapshot,
     abilities,
-    createActionContext: (workingRoot, descriptor) => (
-      workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
-    ),
+    createActionContext: createActionContextForWorkingRoot,
     primaryBoardActionExecutor,
     engineActionExecutor,
     quickTurnActionExecutor,
@@ -4209,7 +4190,7 @@
     confirmScanTarget,
     confirmStrategyPassiveSlotChoice: (...args) => confirmStrategyPassiveSlotChoice?.(...args),
     confirmTechBlueSlotChoice: (...args) => confirmTechBlueSlotChoice?.(...args),
-    createActionContext,
+    createActionContext: createReadoutActionContext,
     aiRuntimePorts: {
       createActionContext: (workingRoot, descriptor) => createActionContextForWorkingRoot(workingRoot, descriptor),
       dispatchRuntimeAction: (workingRoot, request) => dispatchBrowserRuleInput(
@@ -6029,7 +6010,7 @@
     aliens,
     applyAiStrategyWeight,
     cardEffects,
-    createActionContext,
+    createActionContext: createReadoutActionContext,
     endGameScoring,
     finalScoring,
     getAiMapDemand,
@@ -8132,7 +8113,7 @@
     closeScanTargetPicker,
     collectPlutoMarkers,
     completeCurrentActionEffect,
-    createActionContext,
+    createActionContext: createActionContextForWorkingRoot,
     createPublicScanPendingAction,
     createScanRunId,
     data,
@@ -9335,9 +9316,7 @@
       clearHistoryStepOrderForSource: typeof clearHistoryStepOrderForSource === "undefined" ? undefined : clearHistoryStepOrderForSource,
       completeCurrentActionEffect: typeof completeCurrentActionEffect === "undefined" ? undefined : completeCurrentActionEffect,
       completeQuickActionStep: typeof completeQuickActionStep === "undefined" ? undefined : completeQuickActionStep,
-      createActionContext: (workingRoot, descriptor) => (
-        workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
-      ),
+      createActionContext: createActionContextForWorkingRoot,
       dispatchStandardIntent: (family, selector = {}, payload = {}) => (
         dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
       ),
@@ -9552,9 +9531,7 @@
       completeCurrentActionEffect: typeof completeCurrentActionEffect === "undefined" ? undefined : completeCurrentActionEffect,
       confirmIndustryTuringBorrow: (...args) => confirmIndustryTuringBorrow(...args),
       countOwnedTechByType: (...args) => countOwnedTechByType(...args),
-      createActionContext: (workingRoot, descriptor) => (
-        workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
-      ),
+      createActionContext: createActionContextForWorkingRoot,
       decisionSessions,
       dispatchStandardIntent: (family, selector = {}, payload = {}) => (
         dispatchBrowserRuleInput({ kind: "standard_intent", family, selector, payload })
@@ -9896,79 +9873,13 @@
     });
   }
 
-  function getActionContextPlayerState() {
-    const currentPlayer = getCurrentPlayer();
-    if (!currentPlayer?.id || currentPlayer.id === playerState.currentPlayerId) {
-      return playerState;
-    }
-    return {
-      ...playerState,
-      currentPlayerId: currentPlayer.id,
-      players: playerState.players,
-    };
-  }
-
-  function createActionContext() {
-    const contextPlayerState = getActionContextPlayerState();
-    const decisionOwner = getHeadlessDecisionOwnerState?.() || null;
-    const canonical = browserRuleComposition.stateSourcePort.read().state;
-    return {
-      solarState,
-      playerState: contextPlayerState,
-      cardState,
-      rocketState,
-      nebulaDataState,
-      planetStatsState,
-      alienGameState,
-      finalScoringState,
-      techBoardState: techGameState.board,
-      techUiState: techGameState.ui,
-      techGameState,
-      turnState,
-      metaState: canonical.meta,
-      matchState: canonical.match,
-      stateVersion: canonical.meta?.stateVersion ?? 0,
-      decisionVersion: canonical.match?.decisionVersion ?? 0,
-      standardActionAuthority: {
-        actorId: decisionOwner?.actorPlayerId || contextPlayerState.currentPlayerId || null,
-        stateVersion: canonical.meta?.stateVersion ?? 0,
-        decisionVersion: canonical.match?.decisionVersion ?? 0,
-      },
-      ...buildPlutoMarkerContext(),
-      roundNumber: turnState.roundNumber,
-      turnNumber: turnState.turnNumber,
-      getPlayerTokenSrc: (player) => getNormalTokenAssetForPlayer(player),
-      getEarthSectorCoordinate,
-      getPlanetLocations: () => solar.createSolarSnapshot(solarState).planetLocations,
-      rotateSolarOrbit: (count) => rotateSolarOrbit(count),
-      drawBasicCardToPlayer: (player) => drawBasicCardToPlayer(player),
-      drawBasicCard: () => drawCardForCurrentPlayer(),
-      blindDrawCard: (player) => blindDrawCardForPlayer(player),
-      launchRocketAtEarth: (player) => rocketActions.launchRocketAtSector(rocketState, getEarthSectorCoordinate(), {
-        playerId: player.id,
-        color: player.color,
-      }),
-      replenishPublicSlot: (slotIndex) => cards.replenishPublicSlot(cardState, playerState, slotIndex),
-      beginCardSelection: (pendingAction) => beginCardSelection(pendingAction),
-      beginDiscardSelection: (count, pendingAction) => beginDiscardSelection(count, pendingAction),
-      beginIncome: (options) => beginIncomeForCurrentPlayer(options),
-      getPlayerCompanyBaseIncome,
-      ensurePlayerTechState: (player) => {
-        if (!player.techState) {
-          player.techState = players.normalizePlayerTechState(null);
-        }
-      },
-    };
-  }
-
   function createActionContextForWorkingRoot(workingRoot, descriptor = null) {
-    const context = createActionContext();
+    if (!isBrowserWorkingRoot(workingRoot)) throw new TypeError("Action context 缺少 Composition workingRoot");
     const actorId = descriptor?.actorId || workingRoot.playerState.currentPlayerId;
     const actionPlayerState = actorId === workingRoot.playerState.currentPlayerId
       ? workingRoot.playerState
       : { ...workingRoot.playerState, currentPlayerId: actorId, players: workingRoot.playerState.players };
     return {
-      ...context,
       solarState: workingRoot.solarState,
       playerState: actionPlayerState,
       cardState: workingRoot.cardState,
@@ -9990,10 +9901,42 @@
         stateVersion: workingRoot.meta?.stateVersion ?? 0,
         decisionVersion: workingRoot.match?.decisionVersion ?? 0,
       },
+      ...(actionInteractionRuntime?.buildPlutoMarkerContext(workingRoot) || { plutoMarkers: [] }),
       roundNumber: workingRoot.turnState.roundNumber,
       turnNumber: workingRoot.turnState.turnNumber,
+      getPlayerTokenSrc: (player) => getNormalTokenAssetForPlayer(player),
+      getEarthSectorCoordinate,
       getPlanetLocations: () => solar.createSolarSnapshot(workingRoot.solarState).planetLocations,
+      rotateSolarOrbit: (count) => rotateSolarOrbitForRoot(workingRoot, count),
+      drawBasicCardToPlayer: (player) => drawBasicCardToPlayerForRoot(workingRoot, player),
+      drawBasicCard: () => drawCardForCurrentPlayerForRoot(workingRoot),
+      blindDrawCard: (player) => blindDrawCardForPlayerForRoot(workingRoot, player),
+      launchRocketAtEarth: (player) => rocketActions.launchRocketAtSector(
+        workingRoot.rocketState,
+        getEarthSectorCoordinate(),
+        { playerId: player.id, color: player.color },
+      ),
+      replenishPublicSlot: (slotIndex) => cards.replenishPublicSlot(
+        workingRoot.cardState,
+        workingRoot.playerState,
+        slotIndex,
+      ),
+      beginCardSelection: (pendingAction) => beginCardSelectionForRoot(workingRoot, pendingAction),
+      beginDiscardSelection: (count, pendingAction) => handFlowHelpers.beginDiscardSelection(
+        workingRoot,
+        count,
+        pendingAction,
+      ),
+      beginIncome: (options) => beginIncomeForCurrentPlayerForRoot(workingRoot, options),
+      getPlayerCompanyBaseIncome,
+      ensurePlayerTechState: (player) => {
+        if (!player.techState) player.techState = players.normalizePlayerTechState(null);
+      },
     };
+  }
+
+  function createReadoutActionContext() {
+    return createActionContextForWorkingRoot(createStateSourceReadoutRoot());
   }
 
   function removeRocketElement(rocketId) {
@@ -10618,7 +10561,7 @@
   }
 
   function updateQuickTradeButtons() {
-    const context = createActionContext();
+    const context = createReadoutActionContext();
     els.quickActionsTrades.querySelectorAll("[data-quick-trade]").forEach((button) => {
       const tradeId = button.dataset.quickTrade;
       const check = quickTrades.canExecuteTrade(tradeId, context);
@@ -10643,9 +10586,7 @@
     canStartMainAction,
     cancelMovePaymentSelection,
     cardEffects,
-    createActionContext: (workingRoot, descriptor) => (
-      workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
-    ),
+    createActionContext: createActionContextForWorkingRoot,
     data,
     els,
     getBoardPointFromPolarPoint,
@@ -11938,10 +11879,9 @@
     chong,
     amiba,
     runezu,
-    rocketState,
-    techGameState,
     techRenderContext,
-    alienGameState,
+    getRuleReadout: createStateSourceReadoutRoot,
+    setStatusNote: setBrowserStatusNote,
     randomizeAll,
     startNewGameFromStartScreen,
     continueGameFromStartScreen,
@@ -12288,7 +12228,7 @@
       createRocketSnapshot,
       buildPlanetOrbitLandReferenceData,
       syncPlanetOrbitLandMarkers,
-      createActionContext,
+      createActionContext: createReadoutActionContext,
       getPlanetsReferencePointFromClientPosition,
       getPlanetsReferenceDimensions,
       renderRocketElement,

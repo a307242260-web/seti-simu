@@ -226,7 +226,8 @@
       element.draggable = false;
       element.addEventListener("click", () => {
         const tileId = element.dataset.techId;
-        if (!tileId || !isSupplySelectionActive(gameState.ui)) return;
+        const currentGameState = handlers.getGameState?.() || gameState;
+        if (!tileId || !isSupplySelectionActive(currentGameState?.ui)) return;
         if (handlers.onTileClick) handlers.onTileClick(tileId);
       });
     }

@@ -71,7 +71,6 @@
     let workingState = stateAdapter
       ? stateAdapter.createWorkingState(clone(options.initialOptions || {}))
       : null;
-    stateAdapter?.bindWorkingState?.(workingState);
     let store = stateStoreApi.createStateStore(
       clone(createInitialState(clone(options.initialOptions || {}), workingState)),
       storeOptions,

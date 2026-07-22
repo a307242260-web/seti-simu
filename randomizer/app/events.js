@@ -32,10 +32,9 @@
       chong,
       amiba,
       runezu,
-      rocketState,
-      techGameState,
       techRenderContext,
-      alienGameState,
+      getRuleReadout,
+      setStatusNote,
       randomizeAll,
       startNewGameFromStartScreen,
       continueGameFromStartScreen,
@@ -714,6 +713,7 @@
       const alienSlotId = Number(button.dataset.alienSlot);
       const pickerStep = button.dataset.alienPickerStep;
       const allowedTraceTypes = state.alienTracePickerState?.allowedTraceTypes || aliens.TRACE_TYPES;
+      const { alienGameState } = getRuleReadout();
       const alienSlot = aliens.getAlienSlot(alienGameState, alienSlotId);
       const useJiuzheGrid = jiuzhe?.isJiuzheRevealedSlot?.(alienGameState, alienSlotId)
         || (alienSlot?.revealed && alienSlot.alienId === aliens.JIUZHE_ALIEN_ID);
@@ -1026,6 +1026,7 @@
       const unlockButton = event.target.closest("[data-fangzhou-unlock]");
       if (!unlockButton || unlockButton.disabled || !isDebugAlienTraceMode()) return;
       const traceType = unlockButton.dataset.fangzhouUnlock;
+      const { alienGameState } = getRuleReadout();
       const alienSlotId = alienGameState.fangzhou?.revealedSlotId || 2;
       confirmFangzhouCard2Unlock(alienSlotId, traceType);
     });
@@ -1177,7 +1178,8 @@
       }
     });
     syncTechRenderContext();
-    tech.bindSupplyTileClicks(techGameState, techRenderContext, els.techTiles, {
+    tech.bindSupplyTileClicks(null, techRenderContext, els.techTiles, {
+      getGameState: () => getRuleReadout().techGameState,
       onTileClick: handleSupplyTechTileClick,
     });
     els.logToggle.addEventListener("click", () => {
@@ -1197,7 +1199,7 @@
     });
     aliens.bindAlienTraceDragging?.({
       onPositionChange: (payload) => {
-        rocketState.statusNote = payload?.message || "外星人坐标已更新";
+        setStatusNote(payload?.message || "外星人坐标已更新");
         if (payload?.message) console.info("[外星人坐标拖动]", payload.message, payload);
         renderAlienPanels();
         renderStateReadout();
@@ -1205,7 +1207,7 @@
     });
     data.bindNebulaDataDragging?.({
       onPositionChange: (payload) => {
-        rocketState.statusNote = payload?.message || "星云数据坐标已更新";
+        setStatusNote(payload?.message || "星云数据坐标已更新");
         if (payload?.message) console.info("[星云数据坐标拖动]", payload.message, payload);
         if (payload?.nebulaId === aomomo?.NEBULA_ID) {
           console.info(
@@ -1219,7 +1221,7 @@
         renderStateReadout();
       },
       onSectorWinPositionChange: (payload) => {
-        rocketState.statusNote = payload?.message || "扇区胜利坐标已更新";
+        setStatusNote(payload?.message || "扇区胜利坐标已更新");
         if (payload?.message) console.info("[扇区胜利坐标]", payload.message, payload);
         renderSectorNebulaDataBoard();
         renderStateReadout();
