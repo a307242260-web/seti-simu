@@ -395,6 +395,17 @@
   function bindBrowserDomainCommand(domain, operation) {
     return (...args) => callBrowserDomainCommand(domain, operation, args);
   }
+
+  function callEffectChoiceCommand(operation, args = []) {
+    if (activeBrowserDomainWorkingRoot) {
+      return effectChoiceFlowHelpers?.[operation]?.(...args);
+    }
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "effect_choice_command",
+      operation,
+      args,
+    }).value;
+  }
   let getBrowserCommittedContext = () => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
@@ -605,6 +616,13 @@
           return { ok: true, value: cloneResidentPresentation(listReadyChongTransportCandidatesForRoot(workingRoot, command.player, command.task)) };
         case "scan_execute_free_move":
           return cloneResidentPresentation(executeFreeMoveForScanAction4ForRoot(workingRoot, ...(command.args || [])));
+        case "effect_choice_command": {
+          const operation = effectChoiceFlowHelpers?.[command.operation];
+          if (typeof operation !== "function") {
+            return { ok: false, code: "EFFECT_CHOICE_COMMAND_UNKNOWN", message: `未知 Effect choice command: ${command.operation}` };
+          }
+          return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
+        }
         case "card_execute_move_effect":
           return cloneResidentPresentation(executeCardMoveForEffectForRoot(workingRoot, ...(command.args || [])));
         case "headless_enumerate_turn_actions":
@@ -2093,12 +2111,7 @@
     document,
     decisionSessions,
     els,
-    rocketState,
-    cardState,
-    playerState,
-    nebulaDataState,
-    planetStatsState,
-    alienGameState,
+    getWorkingRoot: () => requireActiveBrowserWorkingRoot("effect choice flow"),
     cards,
     players,
     data,
@@ -7712,11 +7725,11 @@
   }
 
   function handleProbeSectorScanChoice(...args) {
-    return effectExecutors.handleProbeSectorScanChoice(...args);
+    return callEffectChoiceCommand("handleProbeSectorScanChoice", args);
   }
 
   function confirmProbeSectorScanSelection(...args) {
-    return effectExecutors.confirmProbeSectorScanSelection(...args);
+    return callEffectChoiceCommand("confirmProbeSectorScanSelection", args);
   }
 
   function getPlanetName(...args) {
@@ -7780,23 +7793,23 @@
   }
 
   function handleConditionalSectorChoice(...args) {
-    return effectExecutors.handleConditionalSectorChoice(...args);
+    return callEffectChoiceCommand("handleConditionalSectorChoice", args);
   }
 
   function handleDiscardIncomeCardChoice(...args) {
-    return effectExecutors.handleDiscardIncomeCardChoice(...args);
+    return callEffectChoiceCommand("handleDiscardIncomeCardChoice", args);
   }
 
   function confirmDiscardAnyForIncome(...args) {
-    return effectExecutors.confirmDiscardAnyForIncome(...args);
+    return callEffectChoiceCommand("confirmDiscardAnyForIncome", args);
   }
 
   function handlePayCreditChoice(...args) {
-    return effectExecutors.handlePayCreditChoice(...args);
+    return callEffectChoiceCommand("handlePayCreditChoice", args);
   }
 
   function handleFundamentalismExchangeChoice(...args) {
-    return effectExecutors.handleFundamentalismExchangeChoice(...args);
+    return callEffectChoiceCommand("handleFundamentalismExchangeChoice", args);
   }
 
   function isAlienFamilyCard(...args) {
@@ -7804,11 +7817,11 @@
   }
 
   function handleDiscardCornerRepeatChoice(...args) {
-    return effectExecutors.handleDiscardCornerRepeatChoice(...args);
+    return callEffectChoiceCommand("handleDiscardCornerRepeatChoice", args);
   }
 
   function handleRemoveOrbitToProbeChoice(...args) {
-    return effectExecutors.handleRemoveOrbitToProbeChoice(...args);
+    return callEffectChoiceCommand("handleRemoveOrbitToProbeChoice", args);
   }
 
   function handleReturnUnfinishedTaskChoice(...args) {
@@ -7840,7 +7853,7 @@
   }
 
   function handleProbeLocationRewardChoice(...args) {
-    return effectExecutors.handleProbeLocationRewardChoice(...args);
+    return callEffectChoiceCommand("handleProbeLocationRewardChoice", args);
   }
 
   function openYichangdianCornerPicker(...args) {

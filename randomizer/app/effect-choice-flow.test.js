@@ -52,6 +52,14 @@ function createHarness(overrides = {}) {
     ],
   };
   const cardState = { publicCards: [{ id: "pub-1" }], discardPile: [] };
+  const workingRoot = {
+    rocketState,
+    cardState,
+    playerState: {},
+    nebulaDataState: {},
+    planetStatsState: {},
+    alienGameState: {},
+  };
   const calls = {
     inserted: [],
     finished: [],
@@ -79,12 +87,7 @@ function createHarness(overrides = {}) {
     decisionSessions,
     pendingState,
     els,
-    rocketState,
-    cardState,
-    playerState: {},
-    nebulaDataState: {},
-    planetStatsState: {},
-    alienGameState: {},
+    getWorkingRoot: () => workingRoot,
     cards: {
       getCardLabel: (card) => card.cardName || card.id,
       getIncomeGainForCard: () => ({ credits: 1 }),
