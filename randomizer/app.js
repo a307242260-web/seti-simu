@@ -696,6 +696,8 @@
           return { ok: true, value: cloneResidentPresentation(placeDataToBlueSlotForRoot(workingRoot, command.blueSlot)) };
         case "action_recover_pending":
           return { ok: true, value: cloneResidentPresentation(recoverPendingActionFromOpenHistoryForAiForRoot(workingRoot)) };
+        case "history_undo_pending":
+          return { ok: true, value: cloneResidentPresentation(undoPendingActionForRoot(workingRoot)) };
         case "scan_settle_completed_sectors":
           return { ok: true, value: cloneResidentPresentation(resolveCompletedSectorSettlementsForRoot(
             workingRoot,
@@ -10219,13 +10221,13 @@
     updatePublicCardControls,
   });
 
-  function undoPendingAction() {
+  function undoPendingActionForRoot(workingRoot) {
     if (isTechActionSelectionActive()) {
       const isResearchTechFlow = decisionState.actionEffectFlow?.actionType === "researchTech";
       const shouldUseHistoryUndo = isResearchTechFlow
         && (actionHistory.hasUndoableStep() || hasCurrentMainActionIrreversibleBarrier());
       if (shouldUseHistoryUndo) {
-        if (techGameState.ui.pendingTileId) {
+        if (workingRoot.techGameState.ui.pendingTileId) {
           cancelPendingResearchTechTileChoice();
           return;
         }
@@ -10242,7 +10244,7 @@
     ) return;
 
     if (hasActivePendingSubFlow()) {
-      cancelActivePendingSubFlows();
+      cancelActivePendingSubFlowsForRoot(workingRoot);
       refreshAfterHistoryChange();
       return;
     }
@@ -10306,7 +10308,7 @@
 
     if (!latestUndoSource && mainActionHasIrreversibleBarrier) {
       const irreversibleReason = getCurrentActionIrreversibleReason();
-      rocketState.statusNote = irreversibleReason
+      workingRoot.rocketState.statusNote = irreversibleReason
         ? `不可撤销：${irreversibleReason}`
         : "当前行动已有不可撤销影响";
       updateActionButtons();
@@ -10316,7 +10318,7 @@
 
     if (mainActionHasIrreversibleBarrier && !actionHistory.hasUndoableStep()) {
       const irreversibleReason = getCurrentActionIrreversibleReason();
-      rocketState.statusNote = irreversibleReason
+      workingRoot.rocketState.statusNote = irreversibleReason
         ? `不可撤销：${irreversibleReason}`
         : "当前行动已有不可撤销影响";
       updateActionButtons();
@@ -10402,6 +10404,10 @@
       }
       refreshAfterHistoryChange(result.ok ? result.message : result.message || "当前行动不能撤销");
     }
+  }
+
+  function undoPendingAction() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "history_undo_pending" }).value;
   }
 
 
