@@ -12,6 +12,7 @@ const { createActionValue } = require("../game/ai/action-value");
 const { createAlienChoiceValue } = require("../game/ai/alien-choice-value");
 const { createTechAction } = require("../game/ai/tech-action");
 const { createScanValue } = require("../game/ai/scan-value");
+const { createDemandCard } = require("../game/ai/demand-card");
 
 function contextWith(overrides = {}) {
   const fallback = () => null;
@@ -262,6 +263,24 @@ const players = {
   assert.equal(scanValue.getAiNebulaSignalCounts("sector-a", player).ownCount, 1);
   readout = rootB;
   assert.equal(scanValue.getAiNebulaSignalCounts("sector-a", player).ownCount, 0);
+}
+
+{
+  const rootA = createRoot("a", 1);
+  rootA.alienGameState.slot = { revealed: true, alienId: "x" };
+  const rootB = createRoot("a", 1);
+  rootB.alienGameState.slot = { revealed: true, alienId: "y" };
+  let readout = rootA;
+  const demandCard = createDemandCard(contextWith({
+    aiNumber: (value) => Number(value) || 0,
+    aliens: { getAlienSlot: (alienState) => alienState.slot },
+    getAiMapDemand: (map, key) => Number(map?.[key]) || 0,
+    getRuleReadout: () => readout,
+  }));
+  const demand = { alienTraceTargets: { x: { blue: 3 } } };
+  assert.equal(demandCard.getAiAlienTraceTargetDemandForSlot(demand, 1, "blue"), 3);
+  readout = rootB;
+  assert.equal(demandCard.getAiAlienTraceTargetDemandForSlot(demand, 1, "blue"), 0);
 }
 
 {

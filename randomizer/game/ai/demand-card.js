@@ -26,11 +26,6 @@
       aomomo,
       chong,
       amiba,
-      nebulaDataState,
-      alienGameState,
-      finalScoringState,
-      turnState,
-      planetStatsState,
       FINAL_ROUND_NUMBER,
       createActionContext,
       AI_SCAN_COLORS,
@@ -39,6 +34,11 @@
       AI_DIFFICULTY_WEAK_START,
       aiAutoBattleState,
     } = context;
+    const readRuleRoot = () => {
+      const workingRoot = context.getRuleReadout?.();
+      if (!workingRoot) throw new TypeError("AI demand card requires a StateSource rule readout");
+      return workingRoot;
+    };
     const addAiB1TraceDemand = (...args) => context.addAiB1TraceDemand(...args);
     const addPlan = (...args) => context.addPlan(...args);
     const aiNumber = (...args) => context.aiNumber(...args);
@@ -145,6 +145,7 @@
 
     function getAiAlienTraceTargetDemandForSlot(demand, alienSlotId, traceType) {
       if (!Number.isFinite(Number(alienSlotId))) return 0;
+      const { alienGameState } = readRuleRoot();
       const slot = aliens.getAlienSlot?.(alienGameState, Number(alienSlotId));
       if (!slot?.revealed) return 0;
       return getAiAlienTraceTargetDemand(
@@ -186,6 +187,7 @@
 
     function countAiLandingMarkers(player) {
       if (!player) return 0;
+      const { planetStatsState } = readRuleRoot();
       return Object.values(planetStatsState?.planets || {}).reduce((total, record) => (
         total
         + (record?.landingMarkers || []).filter((marker) => aiMarkerBelongsToPlayer(marker, player)).length
@@ -257,6 +259,7 @@
 
     function getAiPendingPlanetTaskRouteCashout(planetId, player = getCurrentPlayer()) {
       if (!planetId || planetId === "earth") return { value: 0, directScore: 0, count: 0 };
+      const { planetStatsState } = readRuleRoot();
       return getAiPendingTaskRouteCashout(player, (condition) => {
         if (condition.type === "planetOrbitOrLand") return condition.planetId === planetId;
         if (condition.type === "planetOrbitOrLandAll") {
@@ -269,6 +272,7 @@
 
     function getAiPendingNearCompletePlanetTaskRouteCashout(planetId, player = getCurrentPlayer()) {
       if (!planetId || planetId === "earth") return { value: 0, directScore: 0, count: 0 };
+      const { planetStatsState } = readRuleRoot();
       return getAiPendingTaskRouteCashout(player, (condition) => {
         if (condition.type !== "planetOrbitOrLand" && condition.type !== "planetOrbitOrLandAll") return false;
         if (condition.type === "planetOrbitOrLand" && condition.planetId !== planetId) return false;
@@ -322,6 +326,7 @@
     function addAiTaskConditionDemand(demand, task, weight, player, context) {
       const condition = task?.condition;
       if (!condition) return;
+      const { nebulaDataState, planetStatsState } = readRuleRoot();
       const committedTask = Math.max(0, aiNumber(weight)) >= 0.8;
       const rewardValue = getAiTaskRewardValue(task, player);
       const directScoreReward = committedTask ? getAiTaskDirectScoreReward(task, player) : 0;
@@ -624,6 +629,7 @@
     }
 
     function addAiFinalTileDemand(demand, player, context) {
+      const { finalScoringState } = readRuleRoot();
       finalScoring.ensureFinalScoringState(finalScoringState);
       for (const tile of Object.values(finalScoringState.tiles || {})) {
         const mark = (tile.marks || []).find((entry) => entry.playerId === player?.id);
@@ -684,6 +690,7 @@
 
     function getAiStrategyDemandCacheKey(player = getCurrentPlayer()) {
       if (!player) return "none";
+      const { finalScoringState, turnState } = readRuleRoot();
       const resources = player.resources || {};
       const finalMarkCount = Object.values(finalScoringState?.tiles || {})
         .reduce((total, tile) => total + (tile?.marks?.length || 0), 0);
@@ -714,12 +721,13 @@
         aiStrategyDemandCache = { key: cacheKey, value: demand };
         return demand;
       }
+      const ruleRoot = readRuleRoot();
       const context = {
         ...createActionContext(),
-        finalScoringState,
-        alienGameState,
-        nebulaDataState,
-        planetStatsState,
+        finalScoringState: ruleRoot.finalScoringState,
+        alienGameState: ruleRoot.alienGameState,
+        nebulaDataState: ruleRoot.nebulaDataState,
+        planetStatsState: ruleRoot.planetStatsState,
         cardEffects,
         getCardTypeCode,
       };
@@ -795,10 +803,11 @@
           card,
         ],
       };
+      const ruleRoot = readRuleRoot();
       const context = {
         ...createActionContext(),
-        finalScoringState,
-        alienGameState,
+        finalScoringState: ruleRoot.finalScoringState,
+        alienGameState: ruleRoot.alienGameState,
         cardEffects,
         getCardTypeCode,
       };
