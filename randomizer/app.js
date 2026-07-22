@@ -2047,6 +2047,31 @@
     renderPlayerHand: (...args) => renderPlayerHand(...args),
     renderInitialSelectionArea: (...args) => renderInitialSelectionArea(...args),
   });
+  const effectBarPresentation = browserHostModule.actionBar.createLegacyEffectBarPresentation({
+    document,
+    els,
+    players,
+    runezu,
+    jiuzhe,
+    banrenma,
+    scanEffectIcons: scanEffects.EFFECT_ICONS,
+    planetRewardEffectIcons: planetRewards?.EFFECT_ICONS,
+    techEffectIcons: TECH_EFFECT_ICONS,
+    cardEffectIcons: CARD_EFFECT_ICONS,
+    resourceIconSrc: RESOURCE_ICON_SRC,
+    jiuzheThresholdCardEffectType: JIUZHE_THRESHOLD_CARD_EFFECT_TYPE,
+    banrenmaPanelBonusEffectType: BANRENMA_PANEL_BONUS_EFFECT_TYPE,
+    resolvePlayerReference: (...args) => resolvePlayerReference(...args),
+    getEffectOwnerPlayer: (...args) => getEffectOwnerPlayer(...args),
+    getActionEffectFlow: (...args) => getActionEffectFlow(...args),
+    getCurrentActionEffect: (...args) => getCurrentActionEffect(...args),
+    getPendingCardMoveDecision: (...args) => getPendingCardMoveDecision(...args),
+    isAiPlayer: (...args) => isAiAutoBattlePlayer(...args),
+  });
+  const {
+    normalizeResourceCost,
+    render: renderActionEffectBar,
+  } = effectBarPresentation;
   const playerHandTitlePresenter = renderRuntimeModule.createPlayerHandTitlePresenter({
     isDiscardSelectionActive: (...args) => isDiscardSelectionActive(...args),
     getPendingDiscardDecision: (...args) => getPendingDiscardDecision(...args),
@@ -5397,64 +5422,6 @@
     return ruleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_pending_subflows" }).value;
   }
 
-  function getActionEffectIconSrc(iconId) {
-    if (runezu?.SYMBOL_IDS?.includes(iconId)) {
-      return runezu.getSymbolSrc(iconId);
-    }
-    return scanEffects.EFFECT_ICONS[iconId]
-      || planetRewards?.EFFECT_ICONS?.[iconId]
-      || TECH_EFFECT_ICONS[iconId]
-      || CARD_EFFECT_ICONS[iconId]
-      || RESOURCE_ICON_SRC[iconId]
-      || "";
-  }
-
-  function normalizeResourceCost(cost) {
-    if (!cost || typeof cost !== "object" || Array.isArray(cost)) return null;
-    const normalized = Object.fromEntries(
-      Object.entries(cost)
-        .filter(([, value]) => Number.isFinite(Number(value)) && Number(value) > 0)
-        .map(([key, value]) => [key, Math.round(Number(value))]),
-    );
-    return Object.keys(normalized).length ? normalized : null;
-  }
-
-  function getActionEffectCost(effect) {
-    return normalizeResourceCost(effect?.options?.cost);
-  }
-
-  function getActionEffectCostText(effect) {
-    const cost = getActionEffectCost(effect);
-    return cost ? players.formatResourceCost(cost) : "";
-  }
-
-  function getActionEffectTooltip(effect) {
-    const parts = [effect?.label || "效果"];
-    const costText = getActionEffectCostText(effect);
-    if (costText) parts.push(`消耗：${costText}`);
-    if (effect?.status === "completed" && effect.undoable !== false) parts.push("可撤销");
-    return parts.join("；");
-  }
-
-  function getActionEffectDisplayIconSrc(effect) {
-    if (effect?.type === JIUZHE_THRESHOLD_CARD_EFFECT_TYPE) {
-      return jiuzhe?.CARD_BACK_SRC || "";
-    }
-    if (effect?.type === BANRENMA_PANEL_BONUS_EFFECT_TYPE) {
-      const player = resolvePlayerReference(effect.options || effect) || getEffectOwnerPlayer(effect);
-      return banrenma?.getPlayerMarkSrc?.(player?.color || effect.options?.playerColor)
-        || RESOURCE_ICON_SRC.banrenmaToken;
-    }
-    const iconId = getActionEffectCostText(effect) ? "cost" : effect?.icon;
-    return getActionEffectIconSrc(iconId);
-  }
-
-  function shouldRenderActionEffect(effect) {
-    if (getActionEffectFlow()?.actionType !== "initialIncome") return true;
-    const owner = getEffectOwnerPlayer(effect);
-    return !owner?.id || !isAiAutoBattlePlayer(owner.id);
-  }
-
   function getPlanetSectorCoordinate(planetId) {
     const snapshot = solar.createSolarSnapshot(createStateSourceReadoutRoot().solarState);
     const planet = snapshot.planetLocations.find((item) => item.planetId === planetId);
@@ -5638,19 +5605,6 @@
     completeCurrentActionEffect(workingRoot, "skipped");
     renderStateReadout();
     return result;
-  }
-
-  const legacyEffectBarRenderer = browserHostModule.actionBar.createLegacyEffectBarRenderer({ document, els });
-  function renderActionEffectBar() {
-    const flow = getActionEffectFlow();
-    return legacyEffectBarRenderer.render({
-      flow,
-      current: getCurrentActionEffect(),
-      cardMove: getPendingCardMoveDecision(),
-      shouldRender: shouldRenderActionEffect,
-      getTooltip: getActionEffectTooltip,
-      getIcon: getActionEffectDisplayIconSrc,
-    });
   }
 
   const sectorSettlementRuntime = scanFlowModule.createSectorSettlementRuntime({

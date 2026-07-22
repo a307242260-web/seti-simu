@@ -246,4 +246,31 @@ function projection(overrides = {}) {
   assert.equal(skip.hidden, false);
 })();
 
+(function testLegacyEffectBarPresentationOwnsCostAndIconFormatting() {
+  const createNode = () => ({
+    children: [], dataset: {}, classList: { toggle() {} },
+    append(...children) { this.children.push(...children); },
+    replaceChildren(...children) { this.children = children; },
+    setAttribute() {},
+  });
+  const list = createNode();
+  const presentation = actionBar.createLegacyEffectBarPresentation({
+    document: { createElement: createNode },
+    els: { actionEffectBar: { hidden: true }, actionEffectList: list, actionEffectSkipButton: createNode() },
+    players: { formatResourceCost: (cost) => `${cost.energy}能量` },
+    resourceIconSrc: { cost: "cost.png", score: "score.png" },
+    getActionEffectFlow: () => ({ effects: [{ id: "e1", label: "奖励", icon: "score", status: "active", options: { cost: { energy: 1 } } }] }),
+    getCurrentActionEffect: () => ({ id: "e1", label: "奖励", icon: "score", status: "active", options: { cost: { energy: 1 } } }),
+    getPendingCardMoveDecision: () => null,
+    getEffectOwnerPlayer: () => null,
+    resolvePlayerReference: () => null,
+    isAiPlayer: () => false,
+  });
+  assert.deepEqual(presentation.normalizeResourceCost({ energy: "1", credit: 0 }), { energy: 1 });
+  assert.equal(presentation.getTooltip({ label: "奖励", options: { cost: { energy: 1 } } }), "奖励；消耗：1能量");
+  assert.equal(presentation.getDisplayIconSrc({ icon: "score", options: { cost: { energy: 1 } } }), "cost.png");
+  presentation.render();
+  assert.equal(list.children.length, 1);
+})();
+
 console.log("browser action bar projection/input tests passed");

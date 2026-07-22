@@ -561,6 +561,87 @@
     return Object.freeze({ render });
   }
 
+  function createLegacyEffectBarPresentation(context = {}) {
+    const renderer = createLegacyEffectBarRenderer({ document: context.document, els: context.els });
+
+    function normalizeResourceCost(cost) {
+      if (!cost || typeof cost !== "object" || Array.isArray(cost)) return null;
+      const normalized = Object.fromEntries(
+        Object.entries(cost)
+          .filter(([, value]) => Number.isFinite(Number(value)) && Number(value) > 0)
+          .map(([key, value]) => [key, Math.round(Number(value))]),
+      );
+      return Object.keys(normalized).length ? normalized : null;
+    }
+
+    function getCost(effect) {
+      return normalizeResourceCost(effect?.options?.cost);
+    }
+
+    function getCostText(effect) {
+      const cost = getCost(effect);
+      return cost ? context.players.formatResourceCost(cost) : "";
+    }
+
+    function getTooltip(effect) {
+      const parts = [effect?.label || "效果"];
+      const costText = getCostText(effect);
+      if (costText) parts.push(`消耗：${costText}`);
+      if (effect?.status === "completed" && effect.undoable !== false) parts.push("可撤销");
+      return parts.join("；");
+    }
+
+    function getIconSrc(iconId) {
+      if (context.runezu?.SYMBOL_IDS?.includes(iconId)) return context.runezu.getSymbolSrc(iconId);
+      return context.scanEffectIcons?.[iconId]
+        || context.planetRewardEffectIcons?.[iconId]
+        || context.techEffectIcons?.[iconId]
+        || context.cardEffectIcons?.[iconId]
+        || context.resourceIconSrc?.[iconId]
+        || "";
+    }
+
+    function getDisplayIconSrc(effect) {
+      if (context.jiuzheThresholdCardEffectType
+        && effect?.type === context.jiuzheThresholdCardEffectType) return context.jiuzhe?.CARD_BACK_SRC || "";
+      if (context.banrenmaPanelBonusEffectType
+        && effect?.type === context.banrenmaPanelBonusEffectType) {
+        const player = context.resolvePlayerReference(effect.options || effect) || context.getEffectOwnerPlayer(effect);
+        return context.banrenma?.getPlayerMarkSrc?.(player?.color || effect.options?.playerColor)
+          || context.resourceIconSrc?.banrenmaToken
+          || "";
+      }
+      return getIconSrc(getCostText(effect) ? "cost" : effect?.icon);
+    }
+
+    function shouldRender(effect) {
+      if (context.getActionEffectFlow()?.actionType !== "initialIncome") return true;
+      const owner = context.getEffectOwnerPlayer(effect);
+      return !owner?.id || !context.isAiPlayer(owner.id);
+    }
+
+    function render() {
+      renderer.render({
+        flow: context.getActionEffectFlow(),
+        current: context.getCurrentActionEffect(),
+        cardMove: context.getPendingCardMoveDecision(),
+        shouldRender,
+        getTooltip,
+        getIcon: getDisplayIconSrc,
+      });
+    }
+
+    return Object.freeze({
+      getCost,
+      getCostText,
+      getDisplayIconSrc,
+      getTooltip,
+      normalizeResourceCost,
+      render,
+      shouldRender,
+    });
+  }
+
   return Object.freeze({
     createActionBarModel,
     createActionBarController,
@@ -568,5 +649,6 @@
     createLegacyActionBarController,
     createLegacyUndoController,
     createLegacyEffectBarRenderer,
+    createLegacyEffectBarPresentation,
   });
 });
