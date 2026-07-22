@@ -62,6 +62,16 @@ function createRegistry() {
   };
 }
 
+function createTestEffectDomain(families, createEffectGroup, executors = {}) {
+  return {
+    families,
+    create({ runtime }) {
+      for (const [type, executor] of Object.entries(executors)) runtime.registerExecutor(type, executor);
+      return { createEffectGroup };
+    },
+  };
+}
+
 function createHarness(initialValue = 0) {
   let commitEvents = 0;
   const composition = createBrowserRuleComposition({
@@ -73,7 +83,7 @@ function createHarness(initialValue = 0) {
       match: structuredClone(state.match),
       meta: { stateVersion: state.meta.stateVersion },
     }),
-    createEffectGroup(_state, action) {
+    effectDomains: [createTestEffectDomain(["launch", "scan", "quick_trade"], (_state, action) => {
       if (action.family === "scan") {
         return {
           effects: [
@@ -90,8 +100,7 @@ function createHarness(initialValue = 0) {
       }
       if (action.family === "quick_trade") return { effects: [{ type: "add", payload: { amount: 7 } }] };
       return { effects: [{ type: "add", payload: { amount: 1 } }] };
-    },
-    effectExecutors: {
+    }, {
       add(state, effect) {
         state.match.value += effect.payload.amount;
         return { ok: true, nextState: state };
@@ -104,7 +113,7 @@ function createHarness(initialValue = 0) {
         },
       },
       fail() { throw new Error("boom"); },
-    },
+    })],
   });
   composition.subscribe((event) => {
     if (event.source === "committed") commitEvents += 1;
@@ -259,14 +268,14 @@ function createHarness(initialValue = 0) {
     createActionRegistry: createRegistry,
     createInitialState: () => createState(0),
     projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
-    createEffectGroup: () => ({ effects: [{ type: "checkpoint_probe" }] }),
-    effectExecutors: {
+    effectDomains: [createTestEffectDomain(["launch", "scan", "quick_trade"],
+      () => ({ effects: [{ type: "checkpoint_probe" }] }), {
       checkpoint_probe(state) {
         unsafeCheckpoint = composition.lifecycle.save();
         state.match.value += 1;
         return { ok: true, nextState: state };
       },
-    },
+      })],
   });
   const action = composition.inputPort.enumerateActions({ family: "launch" })[0];
   assert.equal(composition.inputPort.submitAction(action).ok, true);
@@ -300,8 +309,9 @@ function createHarness(initialValue = 0) {
       return { ok: true, amount: command.amount };
     },
     projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
-    createEffectGroup: () => ({ effects: [{ type: "noop" }] }),
-    effectExecutors: { noop: (state) => ({ ok: true, nextState: state }) },
+    effectDomains: [createTestEffectDomain(["launch", "scan", "quick_trade"],
+      () => ({ effects: [{ type: "noop" }] }),
+      { noop: (state) => ({ ok: true, nextState: state }) })],
   });
   composition.stateSourcePort.subscribe(() => { commitEvents += 1; });
   const source = composition.stateSourcePort.read({ viewerId: "test", role: "spectator" });
@@ -361,8 +371,9 @@ function createHarness(initialValue = 0) {
       return { ok: false, code: "UNKNOWN" };
     },
     projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
-    createEffectGroup: () => ({ effects: [{ type: "noop" }] }),
-    effectExecutors: { noop: (state) => ({ ok: true, nextState: state }) },
+    effectDomains: [createTestEffectDomain(["launch", "scan", "quick_trade"],
+      () => ({ effects: [{ type: "noop" }] }),
+      { noop: (state) => ({ ok: true, nextState: state }) })],
   });
   composition.stateSourcePort.subscribe(() => { commitEvents += 1; });
   const result = composition.inputPort.submitHostCommand({ kind: "outer" });
@@ -394,20 +405,19 @@ function createHarness(initialValue = 0) {
       },
     },
     projectState: (state) => ({ match: state.match, meta: { stateVersion: state.meta.stateVersion } }),
-    createEffectGroup: () => ({
+    effectDomains: [createTestEffectDomain(["launch", "scan", "quick_trade"], () => ({
       effects: [{
         type: "choose",
         kind: "decision",
         ownerId: "player-1",
         payload: { choices: [{ id: "left", amount: 1 }] },
       }],
-    }),
-    effectExecutors: {
+    }), {
       choose: {
         getLegalChoices(_state, effect) { return effect.payload.choices; },
         resolveDecision(state) { return { ok: true, nextState: state }; },
       },
-    },
+    })],
   });
   const action = composition.inputPort.enumerateActions({ family: "scan" })[0];
   assert.equal(composition.inputPort.submitAction(action).ok, true);
@@ -420,6 +430,7 @@ function createHarness(initialValue = 0) {
 {
   const appSource = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8");
   const indexSource = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
+  const compositionSource = fs.readFileSync(path.join(__dirname, "browser-rule-composition.js"), "utf8");
   assert.equal(fs.existsSync(path.join(__dirname, "browser-state-authority.js")), false, "旧 authority 文件必须物理删除");
   assert.equal(fs.existsSync(path.join(__dirname, "../game/state/runtime-authority.js")), false, "无 caller RuntimeAuthority 必须物理删除");
   assert.match(appSource, /createBrowserRuleComposition\(/, "生产 app 必须实例化唯一 Rule Composition");
@@ -433,6 +444,11 @@ function createHarness(initialValue = 0) {
   const lowCouplingSource = fs.readFileSync(path.join(__dirname, "../game/state/low-coupling-slices.js"), "utf8");
   assert.doesNotMatch(lowCouplingSource, /createLowCouplingStateStore/, "低耦合层不得暴露第二个 StateStore 构造入口");
   assert.match(indexSource, /browser-rule-composition\.js/, "生产脚本必须加载 Rule Composition");
+  assert.doesNotMatch(
+    compositionSource,
+    /options\.(?:createEffectGroup|effectExecutors|installEffectExecutors)|fallbackEffectGroup/,
+    "Rule Composition 不得保留测试 Effect factory/executor 的 production fallback wiring",
+  );
   assert.match(appSource, /browserRuleComposition\.inputPort\.submitDecision\(/, "AI conditional caller 必须提交 Composition Decision");
   const dispatchInputSource = appSource.slice(
     appSource.indexOf("function dispatchBrowserRuleInput"),

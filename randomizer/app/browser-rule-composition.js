@@ -36,7 +36,6 @@
     const createInitialState = options.createInitialState;
     const executeHostCommand = options.executeHostCommand;
     const stateAdapter = options.stateAdapter || null;
-    const fallbackEffectGroup = options.createEffectGroup;
     if (typeof stateStoreApi?.createStateStore !== "function") {
       throw new TypeError("Rule Composition 缺少 StateStore factory");
     }
@@ -49,8 +48,8 @@
     if (typeof createInitialState !== "function") {
       throw new TypeError("Rule Composition 缺少 createInitialState()");
     }
-    if (typeof fallbackEffectGroup !== "function" && !(options.effectDomains || []).length) {
-      throw new TypeError("Rule Composition 缺少 production Effect domain 或 createEffectGroup()");
+    if (!(options.effectDomains || []).length) {
+      throw new TypeError("Rule Composition 缺少 production Effect domain");
     }
 
     if (typeof options.projectState !== "function") {
@@ -181,16 +180,6 @@
       const registerContextualExecutor = (type, executor) => (
         next.registerExecutor(type, contextualizeExecutor(executor))
       );
-      if (typeof options.installEffectExecutors === "function") {
-        options.installEffectExecutors(Object.freeze({
-          register: registerContextualExecutor,
-          executeRegisteredAction,
-        }));
-      } else {
-        for (const [type, executor] of Object.entries(options.effectExecutors || {})) {
-          next.registerExecutor(type, executor);
-        }
-      }
       const nextDomains = new Map();
       let nextDrainEffectGroupFactory = null;
       for (const descriptor of options.effectDomains || []) {
@@ -228,9 +217,7 @@
     function createProductionEffectGroup(workingState, action) {
       const domain = effectDomainByFamily.get(action?.family);
       if (domain) return domain.createEffectGroup(clone(workingState), clone(action));
-      return typeof fallbackEffectGroup === "function"
-        ? fallbackEffectGroup(clone(workingState), clone(action))
-        : fail("RULE_COMPOSITION_EFFECT_DOMAIN_MISSING", `没有 production Effect domain: ${action?.family || "<missing>"}`);
+      return fail("RULE_COMPOSITION_EFFECT_DOMAIN_MISSING", `没有 production Effect domain: ${action?.family || "<missing>"}`);
     }
 
     function installStore(initialState) {
