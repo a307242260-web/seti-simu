@@ -621,7 +621,7 @@
       } else if (actionId === "researchTech") {
         if (result.awaitingTileSelection) {
           actionWorkingRoot.rocketState.statusNote = result.message;
-          startResearchTechEffectFlow?.(result, { logBefore: actionLogBefore });
+          startResearchTechEffectFlow?.(actionWorkingRoot, result, { logBefore: actionLogBefore });
           syncTechSelectionChrome?.();
           renderTechBoard?.();
           updateActionButtons?.();

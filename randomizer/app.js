@@ -6512,7 +6512,8 @@
     });
   }
 
-  function startResearchTechEffectFlow(result, options = {}) {
+  function startResearchTechEffectFlow(workingRoot, result, options = {}) {
+    if (!workingRoot?.rocketState) throw new TypeError("startResearchTechEffectFlow 缺少 workingRoot");
     if (!result?.ok || !result.awaitingTileSelection) return false;
 
     beginResearchTechActionSession(result, options);
@@ -6540,7 +6541,7 @@
     decisionState.actionEffectFlow.consumesMainAction = true;
 
     els.appWrap?.classList.toggle("action-effect-flow-active", true);
-    rocketState.statusNote = "科技：请选择要研究的科技片";
+    workingRoot.rocketState.statusNote = "科技：请选择要研究的科技片";
     activateNextActionEffect();
     return true;
   }
@@ -6602,13 +6603,13 @@
     return { ok: true, message: null };
   }
 
-  function applyPendingPlaceDataBonus(player, bonus) {
+  function applyPendingPlaceDataBonus(workingRoot, player, bonus) {
     if (bonus.type === "income") {
       const incomeStart = beginDiscardSelection(1, {
         type: "place_data_income",
         player,
         beforePlayerState: structuredClone(player),
-        beforeCardState: structuredClone(cardState),
+        beforeCardState: structuredClone(workingRoot.cardState),
         effectLabel: "放置数据：收入奖励",
       });
       if (!incomeStart.ok) {
@@ -6623,7 +6624,7 @@
         type: "place_data_choose_card",
         player,
         beforePlayerState: structuredClone(player),
-        beforeCardState: structuredClone(cardState),
+        beforeCardState: structuredClone(workingRoot.cardState),
       });
       if (!selectionStart.ok) {
         completeQuickActionStep();
@@ -6635,7 +6636,7 @@
     return { ok: true, pendingIncome: false };
   }
 
-  function applyPlaceDataSlotBonus(player, placeResult) {
+  function applyPlaceDataSlotBonus(workingRoot, player, placeResult) {
     const bonuses = getPlaceDataSlotBonuses(placeResult);
     if (!bonuses.length) {
       completeQuickActionStep();
@@ -6645,7 +6646,7 @@
     const autoMessages = [];
     for (const bonus of bonuses) {
       if (bonus.type === "income" || bonus.type === "choose_card") {
-        const pendingResult = applyPendingPlaceDataBonus(player, bonus);
+        const pendingResult = applyPendingPlaceDataBonus(workingRoot, player, bonus);
         if (pendingResult.message && !pendingResult.pendingIncome && !pendingResult.pendingCardSelection) {
           return pendingResult;
         }
@@ -6670,7 +6671,7 @@
   function recordPlaceDataActionHistory(workingRoot, player, placeResult) {
     beginQuickActionStep("place-data", "放置数据");
     recordAbilityCommands(placeResult, quickActionHistory, workingRoot);
-    return applyPlaceDataSlotBonus(player, placeResult);
+    return applyPlaceDataSlotBonus(workingRoot, player, placeResult);
   }
 
   function recordMoveActionHistory(workingRoot, moveResult, paymentCommand = null) {
@@ -6723,7 +6724,7 @@
     renderInitialSelectionArea();
     clearStaleFullyUndoneMainActionSession();
     syncInteractionFocusChrome();
-    if (message) rocketState.statusNote = message;
+    if (message) setBrowserStatusNote(message);
     refreshHelpers.refreshActionState({ includeQuickPanel: false, includeStateReadout: true });
   }
 
