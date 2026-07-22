@@ -9,6 +9,7 @@ const { createFinalPace } = require("../game/ai/final-pace");
 const { createSelectionPressure } = require("../game/ai/selection-pressure");
 const { createStateSummary } = require("../game/ai/state-summary");
 const { createActionValue } = require("../game/ai/action-value");
+const { createAlienChoiceValue } = require("../game/ai/alien-choice-value");
 
 function contextWith(overrides = {}) {
   const fallback = () => null;
@@ -202,6 +203,24 @@ const players = {
   assert.equal(actionValue.countAiRocketsForReward(player), 1);
   readout = rootB;
   assert.equal(actionValue.countAiRocketsForReward(player), 0);
+}
+
+{
+  const rootA = createRoot("a", 1);
+  rootA.playerState.players[0].color = "blue";
+  rootA.playerState.players.push({ id: "b", color: "pink", resources: {} });
+  const rootB = structuredClone(rootA);
+  rootB.alienGameState.id = "alien-b";
+  let readout = rootA;
+  const alienChoiceValue = createAlienChoiceValue(contextWith({
+    aiNumber: Number,
+    jiuzhe: { getThreat: (alienState) => alienState.id === "alien-a" ? 1 : 2 },
+    getRuleReadout: () => readout,
+  }));
+  const player = rootA.playerState.players[0];
+  assert.deepEqual(alienChoiceValue.getAiOtherJiuzheThreats(player), [1]);
+  readout = rootB;
+  assert.deepEqual(alienChoiceValue.getAiOtherJiuzheThreats(player), [2]);
 }
 
 {

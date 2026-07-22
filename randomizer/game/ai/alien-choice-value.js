@@ -25,14 +25,14 @@
       amiba,
       runezu,
       ai,
-      nebulaDataState,
-      alienGameState,
-      finalScoringState,
-      playerState,
-      planetStatsState,
       FINAL_ROUND_NUMBER,
       getCardTypeCode,
     } = context;
+    const readRuleRoot = () => {
+      const workingRoot = context.getRuleReadout?.();
+      if (!workingRoot) throw new TypeError("AI alien choice value requires a StateSource rule readout");
+      return workingRoot;
+    };
     const aiNumber = (...args) => context.aiNumber(...args);
     const canAiAnalyzeData = (...args) => context.canAiAnalyzeData(...args);
     const cloneAiValue = (...args) => context.cloneAiValue(...args);
@@ -69,6 +69,13 @@
     }
 
     function getAiJiuzheScoringContext(player) {
+      const {
+        alienGameState,
+        finalScoringState,
+        nebulaDataState,
+        planetStatsState,
+        playerState,
+      } = readRuleRoot();
       return {
         ...(createActionContext?.() || {}),
         currentPlayer: player,
@@ -85,6 +92,7 @@
 
     function getAiOtherJiuzheThreats(player) {
       if (!jiuzhe?.getThreat || !player) return [];
+      const { alienGameState, playerState } = readRuleRoot();
       return (playerState.players || []).reduce((threats, candidate) => {
         if (!candidate || candidate === player || candidate.id === player.id || candidate.color === player.color) {
           return threats;
@@ -96,6 +104,7 @@
 
     function getAiJiuzheThreatValuationContext(player) {
       if (!player || !jiuzhe?.getThreat) return null;
+      const { alienGameState } = readRuleRoot();
       const breakdown = computePlayerFinalScoreBreakdown?.(player) || {};
       return {
         currentThreat: Math.max(0, aiNumber(jiuzhe.getThreat(alienGameState, player))),
@@ -253,6 +262,7 @@
     }
 
     function scoreAiBanrenmaDisplayedCardGainValue(player, effectiveGain = {}) {
+      const { alienGameState } = readRuleRoot();
       const rawDisplayedCardIndex = alienGameState?.banrenma?.displayedCardIndex;
       if (
         !player
@@ -330,12 +340,14 @@
 
     function scoreAiAmibaSymbolUseOption(option, player) {
       if (option.choice === "cancel") return -100;
+      const { alienGameState } = readRuleRoot();
       const entry = amiba?.getSymbolEntry?.(alienGameState, option.choice);
       return scoreAiAmibaSymbolEntryValue(entry, player);
     }
 
     function scoreAiAmibaTraceRemovalUseOption(option, flow, player) {
       if (option.choice === "cancel") return -100;
+      const { alienGameState } = readRuleRoot();
       const [traceType, positionText] = String(option.choice || "").split(":");
       const position = Number(positionText);
       const match = (amiba?.listPlayerTraceOptions?.(alienGameState, flow.pending?.alienSlotId, player) || [])
