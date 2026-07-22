@@ -71,7 +71,13 @@ function createBaseContext(player, overrides = {}) {
   };
   const rocketState = overrides.rocketState || { statusNote: "", activeRocketId: null };
   const alienGameState = {};
-  const workingRoot = overrides.workingRoot || { cardState, rocketState, alienGameState };
+  const workingRoot = overrides.workingRoot || {
+    cardState,
+    rocketState,
+    alienGameState,
+    playerState: { currentPlayerId: player.id, players: [player] },
+    turnState: {},
+  };
   const cards = overrides.cards || createCards();
   const abilities = overrides.abilities || {
     executeAbility(_id, _ctx, options) {
@@ -528,7 +534,7 @@ function createBaseContext(player, overrides = {}) {
   const handFlow = createHandFlow(context);
   assert.equal(handFlow.beginMovePaymentSelection(1, 0, 7).ok, true);
   handFlow.handleHandCardMovePayment(0);
-  const result = handFlow.confirmMovePayment();
+  const result = handFlow.confirmMovePayment(context.getWorkingRoot());
   assert.equal(result.ok, true);
   assert.equal(player.hand.length, 1);
   assert.equal(player.resources.energy, 0);
@@ -554,7 +560,7 @@ function createBaseContext(player, overrides = {}) {
   });
   const context = createBaseContext(player, { events, decisionSessions });
   const handFlow = createHandFlow(context);
-  const result = handFlow.confirmMovePayment({ automated: true });
+  const result = handFlow.confirmMovePayment(context.getWorkingRoot(), { automated: true });
   assert.equal(result.ok, true);
   assert.equal(events.cardEffectMovePayment.terrainRequired, 2);
   assert.equal(events.cardEffectMovePayment.poolUsed, 1);

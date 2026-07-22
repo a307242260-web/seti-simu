@@ -645,7 +645,10 @@
           if (typeof operation !== "function") {
             return { ok: false, code: "HAND_FLOW_COMMAND_UNKNOWN", message: `未知 Hand flow command: ${command.operation}` };
           }
-          return { ok: true, value: cloneResidentPresentation(operation(...(command.args || []))) };
+          const args = command.operation === "confirmMovePayment"
+            ? [workingRoot, ...(command.args || [])]
+            : (command.args || []);
+          return { ok: true, value: cloneResidentPresentation(operation(...args)) };
         }
         case "effect_executor_command": {
           const operation = effectExecutors?.[command.operation];
@@ -2293,20 +2296,13 @@
       workingRoot ? createActionContextForWorkingRoot(workingRoot, descriptor) : createActionContext()
     ),
     recordMoveActionHistory,
-    executePrimaryBoardAction: (descriptor, executionOptions, options) => (
-      activeBrowserDomainWorkingRoot
-        ? actionRuntimeController?.executePrimaryBoardAction(
-          createActionContextForWorkingRoot(activeBrowserDomainWorkingRoot, descriptor),
-          descriptor,
-          executionOptions,
-          options,
-        )
-        : browserRuleComposition.inputPort.submitHostCommand({
-          kind: "ui_execute_primary_board_action",
-          descriptor,
-          executionOptions,
-          options,
-        })
+    executePrimaryBoardAction: (workingRoot, descriptor, executionOptions, options) => (
+      actionRuntimeController?.executePrimaryBoardAction(
+        createActionContextForWorkingRoot(workingRoot, descriptor),
+        descriptor,
+        executionOptions,
+        options,
+      )
     ),
     renderRocketElement,
     clearMoveRocketHighlight,
@@ -6613,12 +6609,12 @@
     return applyPlaceDataSlotBonus(player, placeResult);
   }
 
-  function recordMoveActionHistory(moveResult, paymentCommand = null) {
+  function recordMoveActionHistory(workingRoot, moveResult, paymentCommand = null) {
     beginQuickActionStep("move", "移动");
     if (paymentCommand) {
       recordQuickHistoryCommand(paymentCommand);
     }
-    recordAbilityCommands(moveResult, quickActionHistory);
+    recordAbilityCommands(moveResult, quickActionHistory, workingRoot);
     completeQuickActionStep();
   }
 

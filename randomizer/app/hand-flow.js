@@ -411,7 +411,10 @@
       renderPlayerHand();
     }
 
-    function confirmMovePayment(options = {}) {
+    function confirmMovePayment(workingRoot, options = {}) {
+      if (!workingRoot?.playerState || !workingRoot?.rocketState) {
+        throw new TypeError("confirmMovePayment 缺少 workingRoot");
+      }
       if (!isMovePaymentSelectionActive()) return;
       if (isMovePaymentLockedForAiAutomation() && options.automated !== true) {
         return context.blockManualAiMovePayment?.();
@@ -552,8 +555,8 @@
       }
 
       const moveResult = pending.standardAction && typeof executePrimaryBoardAction === "function"
-        ? executePrimaryBoardAction(pending.standardAction, moveOptions, { skipValidation: true })
-        : abilities.executeAbility("moveProbe", createActionContext(), {
+        ? executePrimaryBoardAction(workingRoot, pending.standardAction, moveOptions, { skipValidation: true })
+        : abilities.executeAbility("moveProbe", createActionContext(workingRoot), {
           ...moveOptions,
           rocketId: pending.rocketId,
           deltaX: pending.deltaX,
@@ -574,7 +577,7 @@
         ruleRocketState().activeRocketId = null;
         clearMoveRocketHighlight();
         ruleRocketState().statusNote = `${paymentNote}，${moveResult.message}`;
-        recordMoveActionHistory(moveResult, discardCommand);
+        recordMoveActionHistory(workingRoot, moveResult, discardCommand);
         settleCardTasksAfterEffect({ events: moveResult.events, render: false });
       } else {
         ruleRocketState().statusNote = moveResult.message;
