@@ -1928,6 +1928,16 @@
     || renderRuntimeModule.createCardHoverPreviewRuntime({ window, document });
   const attachCardHoverPreview = cardHoverPreviewRuntime.attach;
   const hideCardHoverPreview = cardHoverPreviewRuntime.hide;
+  const initialSelectionUi = startScreenModule.createInitialSelectionUi({
+    document,
+    requiredInitialCards: INITIAL_SELECTION_REQUIRED.initial,
+    canConfirm: canConfirmInitialSelection,
+    confirmSelection: confirmInitialSelectionForCurrentPlayer,
+    selectCard: handleInitialSelectionCardClick,
+    attachCardHoverPreview,
+  });
+  const createInitialSelectionPicker = initialSelectionUi.createPicker;
+  const createInitialSelectionImage = initialSelectionUi.createCardImage;
   const coordinateRuntime = renderRuntimeModule.createCoordinateRuntime({
     els,
     solar,
@@ -9881,107 +9891,6 @@
   const handlePiratesRaidLaunchChoice = bindBrowserDomainCommand("tech_runtime", "handlePiratesRaidLaunchChoice");
   const setCheatModeOpen = bindBrowserDomainCommand("tech_runtime", "setCheatModeOpen");
   const toggleCheatMode = bindBrowserDomainCommand("tech_runtime", "toggleCheatMode");
-
-  function createInitialSelectionPicker(offer) {
-    const wrap = document.createElement("div");
-    wrap.className = "initial-selection-picker";
-
-    if (!offer) {
-      const empty = document.createElement("div");
-      empty.className = "initial-selection-empty";
-      empty.textContent = "没有可用的初始选择。";
-      wrap.append(empty);
-      return wrap;
-    }
-
-    const confirmed = Boolean(offer.confirmed);
-    const industrySection = createInitialSelectionSection({
-      title: "公司 2 选 1",
-      kind: "industry",
-      cards: offer.industryOptions,
-      selectedIds: offer.selectedIndustryId ? [offer.selectedIndustryId] : [],
-      disabled: confirmed,
-    });
-    const initialSection = createInitialSelectionSection({
-      title: "初始牌 3 选 2",
-      kind: "initial",
-      cards: offer.initialOptions,
-      selectedIds: offer.selectedInitialIds,
-      disabled: confirmed,
-    });
-
-    const footer = document.createElement("div");
-    footer.className = "initial-selection-footer";
-    const status = document.createElement("span");
-    status.className = "initial-selection-status";
-    status.textContent = confirmed
-      ? "已确认"
-      : `已选公司 ${offer.selectedIndustryId ? 1 : 0}/1，初始牌 ${offer.selectedInitialIds.length}/2`;
-
-    const confirm = document.createElement("button");
-    confirm.type = "button";
-    confirm.className = "initial-selection-confirm";
-    confirm.textContent = confirmed ? "已确认" : "确认选择";
-    confirm.disabled = confirmed || !canConfirmInitialSelection(offer);
-    confirm.addEventListener("click", confirmInitialSelectionForCurrentPlayer);
-    footer.append(status, confirm);
-
-    wrap.append(industrySection, initialSection, footer);
-    return wrap;
-  }
-
-  function createInitialSelectionSection(options) {
-    const section = document.createElement("section");
-    section.className = `initial-selection-section initial-selection-section-${options.kind}`;
-    const title = document.createElement("div");
-    title.className = "initial-selection-section-title";
-    title.textContent = options.title;
-    const row = document.createElement("div");
-    row.className = "initial-selection-card-row";
-    row.replaceChildren(...options.cards.map((card) => (
-      createInitialSelectionButton(card, {
-        kind: options.kind,
-        selected: options.selectedIds.includes(card.id),
-        disabled: options.disabled
-          || (
-            options.kind === "initial"
-            && options.selectedIds.length >= INITIAL_SELECTION_REQUIRED.initial
-            && !options.selectedIds.includes(card.id)
-          ),
-      })
-    )));
-    section.append(title, row);
-    return section;
-  }
-
-  function createInitialSelectionButton(card, options) {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "initial-selection-card-button";
-    button.classList.toggle("is-selected", Boolean(options.selected));
-    button.dataset.initialKind = options.kind;
-    button.dataset.initialCardId = card.id;
-    button.disabled = Boolean(options.disabled);
-    button.setAttribute("aria-pressed", String(Boolean(options.selected)));
-    button.setAttribute("aria-label", card.label);
-    button.addEventListener("click", () => {
-      handleInitialSelectionCardClick(options.kind, card.id);
-    });
-    button.append(createInitialSelectionImage(card));
-    attachCardHoverPreview(button, card.src, card.label);
-    return button;
-  }
-
-  function createInitialSelectionImage(card, mode = "picker") {
-    const image = document.createElement("img");
-    image.className = `initial-selection-card initial-selection-card-${card.kind || "card"} initial-selection-card-${mode}`;
-    image.src = card.src;
-    image.alt = card.label || "";
-    image.width = card.width || 747;
-    image.height = card.height || 1040;
-    image.decoding = "async";
-    return image;
-  }
 
   function placeDataToBlueSlotForRoot(workingRoot, blueSlot) {
     const blocked = blockIncompatiblePendingQuickActionForRoot(workingRoot, "place-data");

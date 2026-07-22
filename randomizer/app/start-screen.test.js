@@ -5,6 +5,7 @@ const {
   normalizeAiDifficulty,
   normalizeStartPlayerCount,
   syncStartScreenIndustryOptions,
+  createInitialSelectionUi,
   createStartScreenController,
 } = require("./start-screen");
 
@@ -36,6 +37,49 @@ const selectedIndustryLabels = syncStartScreenIndustryOptions({
 });
 assert.deepEqual(selectedIndustryLabels, ["层云核心", "图灵系统", "深空探测"]);
 assert.deepEqual(startScreenState.selectedIndustryLabels, ["层云核心", "图灵系统", "深空探测"]);
+
+function createElement(tagName) {
+  return {
+    tagName,
+    className: "",
+    textContent: "",
+    dataset: {},
+    children: [],
+    listeners: {},
+    classList: { toggle() {} },
+    append(...children) { this.children.push(...children); },
+    replaceChildren(...children) { this.children = children; },
+    setAttribute() {},
+    addEventListener(name, handler) { this.listeners[name] = handler; },
+  };
+}
+
+const initialSelectionCalls = [];
+const initialSelectionUi = createInitialSelectionUi({
+  document: { createElement },
+  requiredInitialCards: 2,
+  canConfirm: () => true,
+  confirmSelection: () => initialSelectionCalls.push("confirm"),
+  selectCard: (kind, id) => initialSelectionCalls.push(`${kind}:${id}`),
+  attachCardHoverPreview: () => initialSelectionCalls.push("hover"),
+});
+const initialSelectionPicker = initialSelectionUi.createPicker({
+  confirmed: false,
+  industryOptions: [{ id: "company", label: "公司", src: "company.png", kind: "industry" }],
+  initialOptions: [
+    { id: "start-a", label: "A", src: "a.png", kind: "initial" },
+    { id: "start-b", label: "B", src: "b.png", kind: "initial" },
+    { id: "start-c", label: "C", src: "c.png", kind: "initial" },
+  ],
+  selectedIndustryId: "company",
+  selectedInitialIds: ["start-a", "start-b"],
+});
+const initialRow = initialSelectionPicker.children[1].children[1];
+assert.equal(initialRow.children[2].disabled, true);
+initialRow.children[0].listeners.click();
+initialSelectionPicker.children[2].children[1].listeners.click();
+assert.deepEqual(initialSelectionCalls.slice(-2), ["initial:start-a", "confirm"]);
+assert.equal(initialSelectionUi.createCardImage({ src: "a.png", label: "A" }, "summary").className.includes("summary"), true);
 
 const callLog = [];
 const controller = createStartScreenController({

@@ -133,6 +133,113 @@
     return canContinue;
   }
 
+  function createInitialSelectionUi(context = {}) {
+    const document = context.document;
+    const canConfirm = context.canConfirm;
+    const confirmSelection = context.confirmSelection;
+    const selectCard = context.selectCard;
+    const attachCardHoverPreview = context.attachCardHoverPreview;
+    const requiredInitialCards = Math.max(1, Math.round(Number(context.requiredInitialCards) || 2));
+    if (!document?.createElement
+      || typeof canConfirm !== "function"
+      || typeof confirmSelection !== "function"
+      || typeof selectCard !== "function"
+      || typeof attachCardHoverPreview !== "function") {
+      throw new TypeError("createInitialSelectionUi requires DOM and input callbacks");
+    }
+
+    function createCardImage(card, mode = "picker") {
+      const image = document.createElement("img");
+      image.className = `initial-selection-card initial-selection-card-${card.kind || "card"} initial-selection-card-${mode}`;
+      image.src = card.src;
+      image.alt = card.label || "";
+      image.width = card.width || 747;
+      image.height = card.height || 1040;
+      image.decoding = "async";
+      return image;
+    }
+
+    function createCardButton(card, options) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "initial-selection-card-button";
+      button.classList.toggle("is-selected", Boolean(options.selected));
+      button.dataset.initialKind = options.kind;
+      button.dataset.initialCardId = card.id;
+      button.disabled = Boolean(options.disabled);
+      button.setAttribute("aria-pressed", String(Boolean(options.selected)));
+      button.setAttribute("aria-label", card.label);
+      button.addEventListener("click", () => selectCard(options.kind, card.id));
+      button.append(createCardImage(card));
+      attachCardHoverPreview(button, card.src, card.label);
+      return button;
+    }
+
+    function createSection(options) {
+      const section = document.createElement("section");
+      section.className = `initial-selection-section initial-selection-section-${options.kind}`;
+      const title = document.createElement("div");
+      title.className = "initial-selection-section-title";
+      title.textContent = options.title;
+      const row = document.createElement("div");
+      row.className = "initial-selection-card-row";
+      row.replaceChildren(...options.cards.map((card) => createCardButton(card, {
+        kind: options.kind,
+        selected: options.selectedIds.includes(card.id),
+        disabled: options.disabled || (options.kind === "initial"
+          && options.selectedIds.length >= requiredInitialCards
+          && !options.selectedIds.includes(card.id)),
+      })));
+      section.append(title, row);
+      return section;
+    }
+
+    function createPicker(offer) {
+      const wrap = document.createElement("div");
+      wrap.className = "initial-selection-picker";
+      if (!offer) {
+        const empty = document.createElement("div");
+        empty.className = "initial-selection-empty";
+        empty.textContent = "没有可用的初始选择。";
+        wrap.append(empty);
+        return wrap;
+      }
+      const confirmed = Boolean(offer.confirmed);
+      const industrySection = createSection({
+        title: "公司 2 选 1",
+        kind: "industry",
+        cards: offer.industryOptions,
+        selectedIds: offer.selectedIndustryId ? [offer.selectedIndustryId] : [],
+        disabled: confirmed,
+      });
+      const initialSection = createSection({
+        title: "初始牌 3 选 2",
+        kind: "initial",
+        cards: offer.initialOptions,
+        selectedIds: offer.selectedInitialIds,
+        disabled: confirmed,
+      });
+      const footer = document.createElement("div");
+      footer.className = "initial-selection-footer";
+      const status = document.createElement("span");
+      status.className = "initial-selection-status";
+      status.textContent = confirmed
+        ? "已确认"
+        : `已选公司 ${offer.selectedIndustryId ? 1 : 0}/1，初始牌 ${offer.selectedInitialIds.length}/${requiredInitialCards}`;
+      const confirm = document.createElement("button");
+      confirm.type = "button";
+      confirm.className = "initial-selection-confirm";
+      confirm.textContent = confirmed ? "已确认" : "确认选择";
+      confirm.disabled = confirmed || !canConfirm(offer);
+      confirm.addEventListener("click", confirmSelection);
+      footer.append(status, confirm);
+      wrap.append(industrySection, initialSection, footer);
+      return wrap;
+    }
+
+    return Object.freeze({ createPicker, createCardImage });
+  }
+
   function createStartScreenController(context = {}) {
     if (!context.startScreenState) {
       throw new Error("createStartScreenController requires startScreenState");
@@ -331,6 +438,7 @@
     syncStartScreenIndustryOptions,
     handleStartIndustryOptionChange,
     updateStartScreenContinueButton,
+    createInitialSelectionUi,
     createStartScreenController,
   };
 });
