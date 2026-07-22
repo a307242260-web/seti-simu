@@ -14,9 +14,7 @@
   function createIncomeCard(context = {}) {
     const {
       state,
-      solar,
       players,
-      rocketActions,
       planetRewards,
       endGameScoring,
       industry,
@@ -25,15 +23,12 @@
       cardEffects,
       runezu,
       ai,
-      solarState,
-      cardState,
       FINAL_ROUND_NUMBER,
       AI_RESOURCE_VALUES,
     } = context;
     const addAiIncomeGain = (...args) => context.addAiIncomeGain(...args);
     const aiNumber = (...args) => context.aiNumber(...args);
     const buildAiPlayCardCandidate = (...args) => context.buildAiPlayCardCandidate(...args);
-    const canAiPlanetAcceptLanding = (...args) => context.canAiPlanetAcceptLanding(...args);
     const confirmPassReserveSelection = (...args) => context.confirmPassReserveSelection(...args);
     const countAiFinalMarksForPlayer = (...args) => context.countAiFinalMarksForPlayer(...args);
     const createActionContext = (...args) => context.createActionContext(...args);
@@ -47,18 +42,15 @@
     const getAiLowEngineCatchupProfile = (...args) => context.getAiLowEngineCatchupProfile(...args);
     const getAiMarkedFinalFormulaEntries = (...args) => context.getAiMarkedFinalFormulaEntries(...args);
     const getAiNextMissingFinalScoreThreshold = (...args) => context.getAiNextMissingFinalScoreThreshold(...args);
-    const getAiPlanetAtCoordinate = (...args) => context.getAiPlanetAtCoordinate(...args);
     const getAiPlanningFinalFormulaEntries = (...args) => context.getAiPlanningFinalFormulaEntries(...args);
     const getAiPlayEffectsForCard = (...args) => context.getAiPlayEffectsForCard(...args);
     const getAiProjectedFinalScore = (...args) => context.getAiProjectedFinalScore(...args);
     const getAiRewardDirectScore = (...args) => context.getAiRewardDirectScore(...args);
     const getAiRoundNumber = (...args) => context.getAiRoundNumber(...args);
-    const getAiSectorDistance = (...args) => context.getAiSectorDistance(...args);
     const getCardPlayCost = (...args) => context.getCardPlayCost(...args);
     const getCardPrice = (...args) => context.getCardPrice(...args);
     const getCardTypeCode = (...args) => context.getCardTypeCode(...args);
     const getCurrentPlayer = (...args) => context.getCurrentPlayer(...args);
-    const getMovableTokensForPlayer = (...args) => context.getMovableTokensForPlayer(...args);
     const getPassReserveSelectionCards = (...args) => context.getPassReserveSelectionCards(...args);
     const getPlayerById = (...args) => context.getPlayerById(...args);
     const isAiAlienMainPlayCard = (...args) => context.isAiAlienMainPlayCard(...args);
@@ -269,26 +261,6 @@
         }
       }
       return selected.slice(0, target);
-    }
-
-    function shouldAiUseRouteAwareIncomeDiscard(player, incomeGainByIndex = []) {
-      if (!player || !Array.isArray(incomeGainByIndex)) return false;
-      const resources = player.resources || {};
-      if (getAiRoundNumber() < 3) return false;
-      if (Math.max(0, aiNumber(resources.score)) >= 25) return false;
-      const hasEnergyIncome = incomeGainByIndex.some((gain) => aiNumber(gain?.energy) > 0);
-      if (!hasEnergyIncome || aiNumber(resources.energy) > 0) return false;
-      const ownsSatelliteTech = players.playerOwnsTech(player, "orange4", createActionContext());
-      const hasNearPlanetRocket = getMovableTokensForPlayer(player.id)
-        .some((rocket) => {
-          const coordinate = rocketActions.getRocketSectorCoordinate(rocket);
-          if (!coordinate) return false;
-          const planet = getAiPlanetAtCoordinate(coordinate);
-          if (planet && canAiPlanetAcceptLanding(planet.planetId, player)) return true;
-          return solar.createSolarSnapshot(solarState).planetLocations
-            .some((target) => target?.planetId !== "earth" && getAiSectorDistance(coordinate, target) <= 1);
-        });
-      return ownsSatelliteTech || hasNearPlanetRocket || getAiLiveScorePaceDeficit(player) > 25;
     }
 
     function chooseAiIncomeDiscardIndexes(workingRoot, player, count, incomeGainByIndex = [], incomeFormulaEntries = null) {
@@ -931,7 +903,6 @@
       scoreAiIncomeDiscardSelectionOpportunityCost,
       scoreAiIncomePlacementRewardValue,
       chooseAiTradeDiscardIndexes,
-      shouldAiUseRouteAwareIncomeDiscard,
       chooseAiIncomeDiscardIndexes,
       scoreAiMultiIncomeSequenceFit,
       scoreAiIncomeDiscardRouteEnergyFit,
