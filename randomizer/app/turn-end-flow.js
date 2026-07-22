@@ -88,7 +88,6 @@
       handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
-      alienRevealConfirmation: "alien_reveal_confirmation",
       actionEffectFlow: "action_effect_flow",
     }) || {};
 
@@ -441,7 +440,7 @@
 
   function hasTurnEndRevealBlockingSubFlow() {
     return Boolean(
-      decisionState.alienRevealConfirmation
+      uiRuntimeState.alienRevealConfirmation
       || decisionSessions?.peek?.("jiuzhe_card_play")
       || decisionSessions?.peek?.("banrenma_opportunity")
       || decisionSessions.peek("banrenma_card_gain")

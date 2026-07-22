@@ -32,6 +32,7 @@
     const amiba = context.amiba || null;
     const aomomo = context.aomomo || null;
     const runezu = context.runezu || null;
+    const uiRuntimeState = context.uiRuntimeState || {};
 
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
@@ -40,7 +41,6 @@
       handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
-      alienRevealConfirmation: "alien_reveal_confirmation",
       actionEffectFlow: "action_effect_flow",
     }) || {};
     const els = context.els || {};
@@ -406,12 +406,12 @@
     }
 
     function closeAlienRevealConfirmationOverlay() {
-      const pending = decisionState.alienRevealConfirmation;
+      const pending = uiRuntimeState.alienRevealConfirmation;
       if (pending?.element?.parentNode) {
         pending.element.remove();
       }
       documentRef?.querySelectorAll(".alien-reveal-notice-overlay").forEach((node) => node.remove());
-      decisionState.alienRevealConfirmation = null;
+      uiRuntimeState.alienRevealConfirmation = null;
 
       if (decisionState.alienTracePickerState?.mode === "reveal-confirm") {
         if (els.alienTraceOverlay) els.alienTraceOverlay.hidden = true;
@@ -426,7 +426,7 @@
     }
 
     function confirmAlienRevealNotice() {
-      const pending = decisionState.alienRevealConfirmation;
+      const pending = uiRuntimeState.alienRevealConfirmation;
       if (!pending) return { ok: false, message: "没有待确认的外星人揭示" };
       closeAlienRevealConfirmationOverlay();
       return { ok: true, entries: pending.entries || [], message: "外星人揭示提示已确认" };
@@ -441,7 +441,7 @@
       closeAlienRevealConfirmationOverlay();
 
       if (headless) {
-        decisionState.alienRevealConfirmation = { entries, element: null };
+        uiRuntimeState.alienRevealConfirmation = { entries, element: null };
         return {
           ok: true,
           awaitingConfirmation: false,
@@ -483,7 +483,7 @@
       dialog.append(title, body, actions);
       overlay.append(dialog);
       documentRef.body.append(overlay);
-      decisionState.alienRevealConfirmation = { entries, element: overlay };
+      uiRuntimeState.alienRevealConfirmation = { entries, element: overlay };
       return {
         ok: true,
         awaitingConfirmation: false,

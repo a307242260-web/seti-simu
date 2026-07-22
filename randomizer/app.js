@@ -953,7 +953,6 @@
     handScanAction: "hand_scan_action",
     alienTraceAction: "alien_trace_action",
     alienTracePickerState: "alien_trace_picker_state",
-    alienRevealConfirmation: "alien_reveal_confirmation",
     actionEffectFlow: "action_effect_flow",
   });
   const DATA_PLACEMENT_DECISION = "data_placement";
@@ -1691,7 +1690,6 @@
       handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
-      alienRevealConfirmation: "alien_reveal_confirmation",
       actionEffectFlow: "action_effect_flow",
       movePayment: MOVE_PAYMENT_SESSION,
       playCardSelection: PLAY_CARD_SELECTION_SESSION,
@@ -1768,7 +1766,10 @@
             ...structuredClone(canonical.resident.finalScoring),
             breakdownsByPlayerId: finalScoreBreakdownsByPlayerId,
           },
-          decisions: cloneResidentPresentation(decisions),
+          decisions: {
+            ...cloneResidentPresentation(decisions),
+            alienRevealConfirmation: cloneResidentPresentation(uiRuntimeState.alienRevealConfirmation),
+          },
         },
       },
     });
@@ -2775,6 +2776,7 @@
 
   const alienUiHelpers = alienUiModule.createAlienUiHelpers({
     decisionSessions,
+    uiRuntimeState,
     headless: headlessMode,
     document,
     structuredClone,
@@ -4134,7 +4136,7 @@
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },
     get alienTracePickerState() { return decisionState.alienTracePickerState; },
-    get pendingAlienRevealConfirmation() { return decisionState.alienRevealConfirmation; },
+    get pendingAlienRevealConfirmation() { return uiRuntimeState.alienRevealConfirmation; },
   };
 
   const aiController = window.SetiAppAiController.createAiController({
@@ -5180,7 +5182,7 @@
     return !isActionPending()
       && !uiRuntimeState.effectStepActive
       && !decisionState.actionEffectFlow
-      && !decisionState.alienRevealConfirmation
+      && !uiRuntimeState.alienRevealConfirmation
       && !hasTurnEndRevealContinuation()
       && !actionLogState.draft
       && !actionHistory.hasSession()
@@ -11791,7 +11793,7 @@
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get alienTracePickerState() { return decisionState.alienTracePickerState; },
     set alienTracePickerState(value) { decisionState.alienTracePickerState = value; },
-    get pendingAlienRevealConfirmation() { return decisionState.alienRevealConfirmation; },
+    get pendingAlienRevealConfirmation() { return uiRuntimeState.alienRevealConfirmation; },
     get moveHighlightRocketId() { return uiRuntimeState.moveHighlightRocketId; },
     get pendingCardTriggerFreeMove() { return getPendingCardTriggerFreeMove(); },
     get industryFreeMoveState() { return uiRuntimeState.industryFreeMoveState; },

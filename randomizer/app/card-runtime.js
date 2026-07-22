@@ -131,7 +131,6 @@
       handScanAction: "hand_scan_action",
       alienTraceAction: "alien_trace_action",
       alienTracePickerState: "alien_trace_picker_state",
-      alienRevealConfirmation: "alien_reveal_confirmation",
       actionEffectFlow: "action_effect_flow",
     }) || {};
     const CARD_CORNER_FREE_MOVE_SESSION = "card_corner_free_move";

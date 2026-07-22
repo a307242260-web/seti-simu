@@ -67,8 +67,8 @@ function createHarness() {
   const pendingState = {
     alienTracePickerState: null,
     alienTraceAction: { targetPlayerId: "p1", targetPlayerColor: "white" },
-    alienRevealConfirmation: null,
   };
+  const uiRuntimeState = { alienRevealConfirmation: null };
   const decisionSessions = createDecisionSessionStore();
   attachDecisionState(pendingState, decisionSessions);
   const rocketState = { statusNote: "" };
@@ -92,6 +92,7 @@ function createHarness() {
 
   const helpers = createAlienUiHelpers({
     decisionSessions,
+    uiRuntimeState,
     document,
     structuredClone: global.structuredClone,
     alienTraceRewardFlow: {
@@ -140,6 +141,7 @@ function createHarness() {
   return {
     helpers,
     pendingState,
+    uiRuntimeState,
     rocketState,
     els,
     calls,
@@ -162,15 +164,15 @@ function createHarness() {
 }
 
 {
-  const { helpers, pendingState, workingRoot } = createHarness();
+  const { helpers, uiRuntimeState, workingRoot } = createHarness();
   const notice = helpers.buildAlienRevealNoticeEntry(workingRoot, 2, { alienId: "fangzhou" });
   const result = helpers.openAlienRevealConfirmation([notice]);
   assert.equal(result.ok, true);
   assert.equal(result.noticeVisible, true);
-  assert.equal(pendingState.alienRevealConfirmation.entries.length, 1);
+  assert.equal(uiRuntimeState.alienRevealConfirmation.entries.length, 1);
   const confirm = helpers.confirmAlienRevealNotice();
   assert.equal(confirm.ok, true);
-  assert.equal(pendingState.alienRevealConfirmation, null);
+  assert.equal(uiRuntimeState.alienRevealConfirmation, null);
 }
 
 {

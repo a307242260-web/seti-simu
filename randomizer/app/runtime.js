@@ -71,6 +71,7 @@
       finalResultAutoOpened: false,
       effectExecutionPlayerId: null,
       autoExecutingActionEffects: false,
+      alienRevealConfirmation: null,
       effectStepActive: false,
       jiuzheOpportunityOpen: false,
       moveHighlightRocketId: null,
