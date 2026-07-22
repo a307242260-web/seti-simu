@@ -71,6 +71,7 @@
     let workingState = stateAdapter
       ? stateAdapter.createWorkingState(clone(options.initialOptions || {}))
       : null;
+    stateAdapter?.bindWorkingState?.(workingState);
     let store = stateStoreApi.createStateStore(
       clone(createInitialState(clone(options.initialOptions || {}), workingState)),
       storeOptions,
@@ -609,10 +610,6 @@
       lifecycle,
       projection,
       inspect,
-      getWorkingState() {
-        if (!stateAdapter) throw new Error("Rule Composition 未配置 resident working state");
-        return workingState;
-      },
       stateSourcePort: Object.freeze({
         getSnapshot: () => store.getSnapshot(),
         read: readStateSource,
