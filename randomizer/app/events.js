@@ -57,8 +57,6 @@
       cancelDataPlacePicker,
       skipPendingDataPlacement,
       handleDebugQuickSectorScanChoice,
-      handleJiuzheCardChoice,
-      handleJiuzheOpportunitySkip,
       handleAomomoFossilMoveLandCountChoice,
       handleBanrenmaBonusChoice,
       handleBanrenmaCardConditionChoice,
@@ -311,18 +309,6 @@
         return;
       }
 
-      const jiuzheChoice = event.target.closest("[data-jiuzhe-card-choice]");
-      if (jiuzheChoice && !jiuzheChoice.disabled) {
-        handleJiuzheCardChoice(jiuzheChoice.dataset.jiuzheCardChoice);
-        return;
-      }
-
-      const jiuzheSkip = event.target.closest("[data-jiuzhe-opportunity-skip]");
-      if (jiuzheSkip && !jiuzheSkip.disabled) {
-        handleJiuzheOpportunitySkip();
-        return;
-      }
-
       const banrenmaBonus = event.target.closest("[data-banrenma-bonus-choice]");
       if (banrenmaBonus && !banrenmaBonus.disabled) {
         handleBanrenmaBonusChoice(banrenmaBonus.dataset.banrenmaBonusChoice);
@@ -466,11 +452,8 @@
         closeBanrenmaOpportunityDialog();
         return;
       }
-      if (state.pendingJiuzheCardPlay?.reason === "view") {
+      if (state.jiuzheCardViewOpen) {
         closeJiuzheCardDialog();
-        return;
-      }
-      if (state.pendingJiuzheCardPlay) {
         return;
       }
       if (state.pendingStrategyPassiveSlotChoice) {
@@ -496,11 +479,8 @@
           closeBanrenmaOpportunityDialog();
           return;
         }
-        if (state.pendingJiuzheCardPlay?.reason === "view") {
+        if (state.jiuzheCardViewOpen) {
           closeJiuzheCardDialog();
-          return;
-        }
-        if (state.pendingJiuzheCardPlay) {
           return;
         }
         if (state.pendingStrategyPassiveSlotChoice) {

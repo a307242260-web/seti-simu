@@ -28,6 +28,7 @@
       getPendingBanrenmaCardGain,
       getPendingChongCardGain,
       getPendingAmibaTraceRemoval,
+      getPendingJiuzheCardPlay,
       getPlayerById,
       decisionState,
       cards,
@@ -86,6 +87,8 @@
       handleBanrenmaCardGainChoice,
       handleChongCardGainChoice,
       handleAmibaTraceRemovalChoice,
+      handleJiuzheCardChoice,
+      handleJiuzheOpportunitySkip,
       handleFinalScoreTileClick,
       handleSupplyTechTileClick,
       confirmTechBlueSlotChoice,
@@ -241,6 +244,28 @@
           target: { kind: "amiba-trace-removal", choiceId },
           pendingContext: structuredClone(amibaTraceRemovalPending),
         })),
+      };
+    }
+    const jiuzheCardPlayPending = getPendingJiuzheCardPlay();
+    if (jiuzheCardPlayPending) {
+      return {
+        actorPlayer: getPlayerById(jiuzheCardPlayPending.playerId) || getCurrentPlayer(),
+        candidates: [
+          ...(jiuzheCardPlayPending.cardIndexes || []).map((cardIndex) => ({
+            id: "conditionalChoice",
+            family: "choose_card",
+            label: `打出九折牌 ${cardIndex}`,
+            target: { kind: "jiuzhe-card-play", choiceId: String(cardIndex), cardIndex },
+            pendingContext: structuredClone(jiuzheCardPlayPending),
+          })),
+          {
+            id: "conditionalChoice",
+            family: "accept_optional_effect",
+            label: "放弃本次九折机会",
+            target: { kind: "jiuzhe-card-skip", choiceId: "skip" },
+            pendingContext: structuredClone(jiuzheCardPlayPending),
+          },
+        ],
       };
     }
     const buildAlienCardGainDecision = (pending, kind, label) => ({
@@ -1010,6 +1035,12 @@
     "banrenma-card-gain": (action) => handleBanrenmaCardGainChoice(action.target.choiceId, action.pendingContext || null),
     "chong-card-gain": (action) => handleChongCardGainChoice(action.target.choiceId, action.pendingContext || null),
     "amiba-trace-removal": (action) => handleAmibaTraceRemovalChoice(action.target.choiceId, action.pendingContext || null),
+    "jiuzhe-card-play": (action) => handleJiuzheCardChoice(
+      action.target.cardIndex ?? action.target.choiceId,
+      {},
+      action.pendingContext || null,
+    ),
+    "jiuzhe-card-skip": (action) => handleJiuzheOpportunitySkip({}, action.pendingContext || null),
     "probe-sector-selection": (action) => {
       const pending = getPendingProbeSectorScanDecision();
       if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };

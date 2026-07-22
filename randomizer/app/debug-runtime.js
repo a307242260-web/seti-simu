@@ -993,7 +993,6 @@
         decisionSessions?.peek?.("card_trigger_action"),
         decisionSessions?.peek?.("card_trigger_free_move"),
         decisionSessions?.peek?.("card_task_completion"),
-        decisionSessions?.peek?.("jiuzhe_card_play"),
         decisionSessions?.peek?.("banrenma_opportunity"),
         decisionSessions?.peek?.("strategy_passive_slot"),
         decisionSessions?.peek?.("pirates_raid_placement"),

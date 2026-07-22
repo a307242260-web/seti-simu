@@ -167,8 +167,6 @@
       if (session == null) return decisionSessions.clear(kind);
       return decisionSessions.open(kind, session);
     };
-    const alienChoiceSessions = {
-    };
     let chongFossilDecisionDraft = null;
     let amibaSymbolDecisionDraft = null;
     let runezuSymbolBranchDecisionDraft = null;
@@ -180,6 +178,7 @@
     let banrenmaCardGainDecisionDraft = null;
     let chongCardGainDecisionDraft = null;
     let amibaTraceRemovalDecisionDraft = null;
+    let jiuzheCardPlayDecisionDraft = null;
     function getChongFossilDecisionDraft() {
       return chongFossilDecisionDraft;
     }
@@ -263,6 +262,10 @@
       () => amibaTraceRemovalDecisionDraft,
       (draft) => { amibaTraceRemovalDecisionDraft = draft; },
     );
+    const jiuzheCardPlayDraft = createDecisionDraftAccessors(
+      () => jiuzheCardPlayDecisionDraft,
+      (draft) => { jiuzheCardPlayDecisionDraft = draft; },
+    );
     const getOpportunityContinuationQueue = (workingRoot, field) => {
       requireWorkingRoot(workingRoot);
       if (!workingRoot.match || typeof workingRoot.match !== "object") workingRoot.match = {};
@@ -270,8 +273,6 @@
       return workingRoot.match[field];
     };
     const alienOpportunitySessions = {
-      get jiuzheCardPlay() { return decisionSessions.peek("jiuzhe_card_play"); },
-      set jiuzheCardPlay(session) { replaceDecisionSession("jiuzhe_card_play", session); },
       get banrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
       set banrenmaOpportunity(session) { replaceDecisionSession("banrenma_opportunity", session); },
     };
@@ -2877,8 +2878,9 @@ function getJiuzheCardConditionLabel(workingRoot, card, player) {
   }
 
 function closeJiuzheCardDialog() {
-    alienOpportunitySessions.jiuzheCardPlay = null;
+    jiuzheCardPlayDraft.clear();
     uiRuntimeState.jiuzheOpportunityOpen = false;
+    uiRuntimeState.jiuzheCardViewOpen = false;
     setScanTargetActionLayout();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
@@ -2893,16 +2895,29 @@ function buildJiuzheOpportunitySubtitle(player, opportunity) {
 
 function openJiuzheCardDialog(workingRoot, player, opportunity = null) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (!jiuzhe || !player || !els.scanTargetOverlay || !els.scanTargetActions) {
+    if (!jiuzhe || !player) {
       return { ok: false, message: "无法打开九折牌窗口" };
     }
     const cardsForPlayer = jiuzhe.getPlayerJiuzheCards(alienGameState, player);
     if (!cardsForPlayer.length) return { ok: false, message: "该玩家没有九折牌" };
 
-    alienOpportunitySessions.jiuzheCardPlay = opportunity
-      ? { playerId: player.id, playerColor: player.color, ...opportunity }
-      : { playerId: player.id, playerColor: player.color, reason: "view", cost: {}, label: "查看九折牌" };
+    if (opportunity) {
+      jiuzheCardPlayDecisionDraft = {
+        playerId: player.id,
+        playerColor: player.color,
+        ...opportunity,
+        cardIndexes: cardsForPlayer.filter((card) => !card.played).map((card) => card.index),
+      };
+    }
     uiRuntimeState.jiuzheOpportunityOpen = Boolean(opportunity);
+    uiRuntimeState.jiuzheCardViewOpen = !opportunity;
+
+    if (opportunity) {
+      return { ok: true, awaitingChoice: true, message: "九折牌：请选择打出的牌或跳过" };
+    }
+    if (!els.scanTargetOverlay || !els.scanTargetActions) {
+      return { ok: false, message: "无法打开九折牌查看窗口" };
+    }
 
     if (els.scanTargetTitle) els.scanTargetTitle.textContent = opportunity ? opportunity.label : "九折牌";
     if (els.scanTargetSubtitle) {
@@ -2931,23 +2946,14 @@ function openJiuzheCardDialog(workingRoot, player, opportunity = null) {
       return button;
     });
 
-    if (opportunity) {
-      const skip = document.createElement("button");
-      skip.type = "button";
-      skip.className = "scan-target-option-button";
-      skip.dataset.jiuzheOpportunitySkip = "true";
-      skip.innerHTML = "放弃本次机会<small>不会打出九折牌</small>";
-      nodes.push(skip);
-    }
-
     els.scanTargetActions.replaceChildren(...nodes);
     els.scanTargetOverlay.hidden = false;
     return { ok: true, message: "九折牌窗口已打开" };
   }
 
-function handleJiuzheCardChoice(workingRoot, cardIndex, options = {}) {
+function handleJiuzheCardChoice(workingRoot, cardIndex, options = {}, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienOpportunitySessions.jiuzheCardPlay;
+    const pending = pendingContext || jiuzheCardPlayDraft.get();
     if (!jiuzhe || !pending) return { ok: false, message: "没有九折打出机会" };
     const blocked = blockManualAiPendingInputIfNeeded(pending, options, "九折牌");
     if (blocked) return blocked;
@@ -3033,9 +3039,9 @@ function handleJiuzheCardChoice(workingRoot, cardIndex, options = {}) {
     return { ...result, message: effectResult.message };
   }
 
-function handleJiuzheOpportunitySkip(workingRoot, options = {}) {
+function handleJiuzheOpportunitySkip(workingRoot, options = {}, pendingContext = null) {
     const { alienGameState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienOpportunitySessions.jiuzheCardPlay;
+    const pending = pendingContext || jiuzheCardPlayDraft.get();
     if (!jiuzhe || !pending) return { ok: false, message: "没有九折打出机会" };
     const blocked = blockManualAiPendingInputIfNeeded(pending, options, "九折牌");
     if (blocked) return blocked;
@@ -3093,7 +3099,7 @@ function handleJiuzheOpportunitySkip(workingRoot, options = {}) {
 
 function maybeOpenQueuedJiuzheOpportunity(workingRoot) {
     const { alienGameState } = requireWorkingRoot(workingRoot);
-    if (uiRuntimeState.jiuzheOpportunityOpen || alienOpportunitySessions.jiuzheCardPlay) return null;
+    if (uiRuntimeState.jiuzheOpportunityOpen || jiuzheCardPlayDraft.get()) return null;
     if (isActionEffectFlowActive()) return null;
     if (hasActivePendingSubFlow()) return null;
     if (els.scanTargetOverlay && !els.scanTargetOverlay.hidden) return null;
@@ -3127,9 +3133,7 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
       decisionState.alienTraceAction ? { pending: decisionState.alienTraceAction, label: "外星人痕迹" } : null,
       tracePickerPending ? { pending: tracePickerPending, label: "外星人痕迹" } : null,
       getCardTaskCompletion() ? { pending: getCardTaskCompletion(), label: "任务完成" } : null,
-      alienOpportunitySessions.jiuzheCardPlay?.reason === "view"
-        ? null
-        : { pending: alienOpportunitySessions.jiuzheCardPlay, label: "九折牌" },
+      jiuzheCardPlayDraft.get() ? { pending: jiuzheCardPlayDraft.get(), label: "九折牌" } : null,
       yichangdianCardGainDraft.get() ? { pending: yichangdianCardGainDraft.get(), label: "异常点外星人牌" } : null,
       banrenmaCardGainDraft.get() ? { pending: banrenmaCardGainDraft.get(), label: "半人马外星人牌" } : null,
       alienOpportunitySessions.banrenmaOpportunity ? { pending: alienOpportunitySessions.banrenmaOpportunity, label: "半人马奖励" } : null,
@@ -4192,6 +4196,9 @@ function alignAlienPanelsToPlanets() {
       getAmibaTraceRemovalDecisionDraft: amibaTraceRemovalDraft.get,
       takeAmibaTraceRemovalDecisionDraft: amibaTraceRemovalDraft.take,
       clearAmibaTraceRemovalDecisionDraft: amibaTraceRemovalDraft.clear,
+      getJiuzheCardPlayDecisionDraft: jiuzheCardPlayDraft.get,
+      takeJiuzheCardPlayDecisionDraft: jiuzheCardPlayDraft.take,
+      clearJiuzheCardPlayDecisionDraft: jiuzheCardPlayDraft.clear,
       openChongTraceTaskCompletionPicker,
       enqueueJiuzheOpportunity,
       isJiuzheThresholdOpportunity,

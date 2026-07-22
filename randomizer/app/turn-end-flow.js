@@ -46,6 +46,7 @@
       hasActiveCardTriggerResolution,
       hasActivePendingSubFlow,
       getPendingBanrenmaCardGain,
+      getPendingJiuzheCardPlay,
       historyCommands,
       industry,
       isActionEffectFlowActive,
@@ -442,7 +443,7 @@
   function hasTurnEndRevealBlockingSubFlow() {
     return Boolean(
       uiRuntimeState.alienRevealConfirmation
-      || decisionSessions?.peek?.("jiuzhe_card_play")
+      || getPendingJiuzheCardPlay()
       || decisionSessions?.peek?.("banrenma_opportunity")
       || getPendingBanrenmaCardGain()
       || decisionState.alienTraceAction
