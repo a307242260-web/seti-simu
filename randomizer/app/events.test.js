@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { routeProbeDecisionClick } = require("./events");
+const { routeProbeDecisionClick, routeMainActionButtonClick } = require("./events");
 
 function route(dataset, disabled = false) {
   const calls = [];
@@ -42,5 +42,23 @@ assert.deepEqual(route({ unrelated: "true" }), {
   handled: false,
   calls: [],
 });
+
+{
+  const calls = [];
+  const button = {
+    id: "action-scan-button",
+    disabled: false,
+    getAttribute: () => "false",
+  };
+  const handled = routeMainActionButtonClick({
+    target: { closest: () => button },
+  }, {
+    actionBarMain: { contains: (candidate) => candidate === button },
+    quickButton: null,
+    dispatchStandardIntent: (family) => calls.push(family),
+  });
+  assert.equal(handled, true);
+  assert.deepEqual(calls, ["scan"]);
+}
 
 console.log("events tests passed");

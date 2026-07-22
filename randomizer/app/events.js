@@ -33,6 +33,26 @@
     return false;
   }
 
+  function routeMainActionButtonClick(event, context) {
+    const button = event.target.closest("button");
+    if (!button || !context.actionBarMain?.contains(button)) return false;
+    if (button === context.quickButton) return false;
+    if (button.disabled || button.getAttribute("aria-disabled") === "true") return false;
+    const handlers = {
+      "action-launch-button": context.launch,
+      "action-orbit-button": context.orbit,
+      "action-land-button": context.land,
+      "action-scan-button": () => context.dispatchStandardIntent("scan"),
+      "action-analyze-button": () => context.dispatchStandardIntent("analyze"),
+      "action-play-card-button": context.beginPlayCard,
+      "action-research-tech-button": context.researchTech,
+    };
+    const handler = handlers[button.id];
+    if (typeof handler !== "function") return false;
+    handler();
+    return true;
+  }
+
   function bindAppEvents(context) {
     if (!context || !context.els) {
       throw new Error("bindAppEvents requires app context");
@@ -65,7 +85,12 @@
       syncStartScreenActionLogOption,
       handleStartAlienOptionChange,
       handleStartIndustryOptionChange,
-      handleMainActionButtonClick,
+      launchRocketForCurrentPlayer,
+      orbitForCurrentPlayer,
+      landForCurrentPlayer,
+      dispatchStandardIntent,
+      beginPlayCardSelection,
+      researchTechForCurrentPlayer,
       cancelTechSelection,
       confirmLandTargetPicker,
       cancelLandTargetPicker,
@@ -256,7 +281,16 @@
     els.spinButton?.addEventListener("click", randomizeAll);
     els.failsafeAiButton?.addEventListener("click", handleAiTakeoverFailsafe);
     els.failsafeSkipButton?.addEventListener("click", handleForceSkipTurnFailsafe);
-    els.actionBarMain?.addEventListener("click", handleMainActionButtonClick);
+    els.actionBarMain?.addEventListener("click", (event) => routeMainActionButtonClick(event, {
+      actionBarMain: els.actionBarMain,
+      quickButton: els.actionQuickButton,
+      launch: launchRocketForCurrentPlayer,
+      orbit: orbitForCurrentPlayer,
+      land: landForCurrentPlayer,
+      dispatchStandardIntent,
+      beginPlayCard: beginPlayCardSelection,
+      researchTech: researchTechForCurrentPlayer,
+    }));
     els.techSelectionCancel?.addEventListener("click", cancelTechSelection);
     els.landTargetConfirm?.addEventListener("click", confirmLandTargetPicker);
     els.landTargetCancel?.addEventListener("click", cancelLandTargetPicker);
@@ -1027,5 +1061,5 @@
     windowRef.addEventListener("resize", resize);
   }
 
-  return { bindAppEvents, routeProbeDecisionClick };
+  return { bindAppEvents, routeProbeDecisionClick, routeMainActionButtonClick };
 });

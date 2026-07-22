@@ -11538,39 +11538,6 @@
     return ruleComposition.inputPort.submitHostCommand({ kind: "solar_rotate", count }).value;
   }
 
-  function handleMainActionButtonClick(event) {
-    const button = event.target.closest("button");
-    if (!button || !els.actionBarMain?.contains(button)) return;
-    if (button === els.actionQuickButton) return;
-    if (button.disabled || button.getAttribute("aria-disabled") === "true") return;
-
-    switch (button.id) {
-      case "action-launch-button":
-        launchRocketForCurrentPlayer();
-        break;
-      case "action-orbit-button":
-        orbitForCurrentPlayer();
-        break;
-      case "action-land-button":
-        landForCurrentPlayer();
-        break;
-      case "action-scan-button":
-        dispatchBrowserRuleInput({ kind: "standard_intent", family: "scan" });
-        break;
-      case "action-analyze-button":
-        dispatchBrowserRuleInput({ kind: "standard_intent", family: "analyze" });
-        break;
-      case "action-play-card-button":
-        beginPlayCardSelection();
-        break;
-      case "action-research-tech-button":
-        researchTechForCurrentPlayer();
-        break;
-      default:
-        break;
-    }
-  }
-
   const debugRuntimeController = debugRuntimeModule.createDebugRuntime({
     window,
     document,
@@ -11828,7 +11795,12 @@
     syncStartScreenActionLogOption,
     handleStartAlienOptionChange,
     handleStartIndustryOptionChange,
-    handleMainActionButtonClick,
+    launchRocketForCurrentPlayer,
+    orbitForCurrentPlayer,
+    landForCurrentPlayer,
+    dispatchStandardIntent: (family) => dispatchBrowserRuleInput({ kind: "standard_intent", family }),
+    beginPlayCardSelection,
+    researchTechForCurrentPlayer,
     cancelTechSelection,
     confirmLandTargetPicker,
     cancelLandTargetPicker,
