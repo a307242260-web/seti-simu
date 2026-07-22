@@ -1190,6 +1190,7 @@
   let getMovePaymentPlayer;
   let isMovePaymentLockedForAiAutomation;
   let beginSupplementalMovePayment;
+  let beginSupplementalMovePaymentForRoot;
   let syncMovePaymentChrome;
   let scrollToPlayerHandPanel;
   let cancelMovePaymentSelection;
@@ -1324,6 +1325,8 @@
   let handlePublicCornerDiscardCardClickForRoot;
   let confirmPublicCornerDiscardSelection;
   let confirmPublicCornerDiscardSelectionForRoot;
+  let executeFreeMoveForCardCorner;
+  let executeFreeMoveForCardCornerForRoot;
   let buildCardTaskContext;
   let buildPlayerDataTotals;
   let addProbeLocation;
@@ -2741,6 +2744,7 @@
     handleFutureSpanPlayCardSelect,
     handleHandScanCardClick,
   } = handFlowHelpers);
+  beginSupplementalMovePaymentForRoot = beginSupplementalMovePayment;
   syncDiscardSelectionChrome = (...args) => callHandFlowCommand("syncDiscardSelectionChrome", args);
   isHandScanSelectionActive = (...args) => callHandFlowCommand("isHandScanSelectionActive", args);
   syncHandScanSelectionChrome = (...args) => callHandFlowCommand("syncHandScanSelectionChrome", args);
@@ -4541,6 +4545,7 @@
     beginDiscardSelection,
     beginEffectHistoryStep,
     beginQuickActionStep,
+    beginSupplementalMovePayment: (workingRoot, ...args) => beginSupplementalMovePaymentForRoot(workingRoot, ...args),
     canPayForMove,
     canStartMainAction,
     cardEffects,
@@ -4569,7 +4574,9 @@
     getDelayedPublicRefillSlots,
     getGameplayLockReason,
     getMainActionStartBlockReason,
+    getPendingIndustryAbilityDecision,
     getRequiredMovePointsForUi,
+    getRequiredMovePointsForWorkingRoot: (workingRoot, ...args) => getRequiredMovePointsForUiForRoot(workingRoot, ...args),
     getPublicScanSelectionInstruction: (...args) => getPublicScanSelectionInstruction?.(...args) || "请选择公共牌",
     handlePublicScanCardClick,
     hasActivePendingSubFlow,
@@ -4603,6 +4610,7 @@
     renderPlayerHand,
     renderPlayerStats,
     renderRocketElement,
+    renderRockets,
     renderRuntime,
     renderStateReadout,
     rocketActions,
@@ -4692,7 +4700,15 @@
     executeCardEffectMove,
     finishCurrentCardMoveEffectEarly,
     requestCardEffectMove,
+    executeFreeMoveForCardCorner,
   } = cardRuntime);
+  executeFreeMoveForCardCornerForRoot = executeFreeMoveForCardCorner;
+  executeFreeMoveForCardCorner = (deltaX, deltaY, rocketId) => submitActiveCardDecision(
+    "card-corner-free-move",
+    (target, choice) => String(target.rocketId) === String(rocketId)
+      && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
+      && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
+  );
   const getDiscardCornerRewardMultiplierForRoot = getDiscardCornerRewardMultiplier;
   const getCardCornerQuickActionForCardForRoot = getCardCornerQuickActionForCard;
   const shouldQueueCardCornerMoveQuickActionForRoot = shouldQueueCardCornerMoveQuickAction;
@@ -5610,103 +5626,6 @@
     return true;
   }
 
-
-  function executeFreeMoveForCardCornerForRoot(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
-    const { playerState: workingPlayerState, rocketState: workingRocketState } = workingRoot;
-    const pending = getPendingCardCornerFreeMove(workingRoot);
-    if (!pending) return { ok: false, message: "没有待结算的弃牌移动" };
-
-    const moveCheck = rocketActions.canMoveRocket(workingRocketState, rocketId, deltaX, deltaY);
-    if (!moveCheck.ok) {
-      workingRocketState.statusNote = moveCheck.message;
-      renderStateReadout();
-      return moveCheck;
-    }
-
-    const currentPlayer = players.getCurrentPlayer(workingPlayerState);
-    const providedMovePoints = Math.max(
-      0,
-      Math.round(Number(
-        payment.providedMovePoints
-          ?? pending.action.moveReward?.movementPoints
-          ?? pending.action.movementPoints
-          ?? 1,
-      ) || 0),
-    );
-    const terrainRequired = Number.isFinite(Number(payment.terrainRequired))
-      ? Math.max(1, Math.round(Number(payment.terrainRequired)))
-      : getRequiredMovePointsForUi(currentPlayer, rocketId, deltaX, deltaY);
-    if (!payment.fromMovePayment && providedMovePoints < terrainRequired) {
-      return beginSupplementalMovePayment({
-        deltaX,
-        deltaY,
-        rocketId,
-        terrainRequired,
-        providedMovePoints,
-        context: { type: "cardCornerFreeMove", terrainRequired },
-        message: `${pending.action.label}：已有 ${providedMovePoints} 点移动力，还需 ${terrainRequired - providedMovePoints} 点（可弃移动牌或用能量）`,
-      });
-    }
-
-    const energyCost = Math.max(0, Math.round(Number(payment.energyCost) || 0));
-    const result = abilities.executeAbility("moveProbe", createActionContextForWorkingRoot(workingRoot), {
-      cost: energyCost > 0 ? { energy: energyCost } : {},
-      movementPoints: Math.max(terrainRequired, providedMovePoints + energyCost),
-      rocketId,
-      deltaX,
-      deltaY,
-      source: "card_corner",
-      historyLabel: `卡牌快速行动：${pending.action.label}`,
-    });
-    if (result.rocket) renderRocketElement(result.rocket);
-    if (!result.ok) {
-      if (payment.discardCommand) payment.discardCommand.undo();
-      workingRocketState.statusNote = result.message;
-      renderStateReadout();
-      return result;
-    }
-
-    const recordInCurrentIndustryStep = Boolean(pending.industryQuickStepActive && getPendingIndustryAbilityDecision(workingRoot));
-    if (!recordInCurrentIndustryStep) {
-      beginQuickActionStep("card-corner-move", `卡牌快速行动：${pending.action.label}`);
-    }
-    if (payment.discardCommand) recordQuickHistoryCommand(payment.discardCommand);
-    recordAbilityCommands(result, quickActionHistory, workingRoot);
-    if (!recordInCurrentIndustryStep) {
-      completeQuickActionStep();
-    }
-
-    delete workingRoot.match.cardCornerFreeMoveContinuation;
-    workingRocketState.activeRocketId = null;
-    clearMoveRocketHighlight();
-    deactivateMoveMode();
-    workingRocketState.statusNote = `卡牌快速行动：${pending.discardedCardLabel} ${pending.action.label}，${result.message}`;
-    const finishIndustryAfterMove = Boolean(pending.finishIndustryFlowAfterMove);
-    const industryFinishMessage = pending.afterMoveStatus || workingRocketState.statusNote;
-    settleCardTasksAfterEffectForRoot(workingRoot, { events: [...(result.events || []), ...(pending.deferredEvents || [])], render: false });
-    if (finishIndustryAfterMove) {
-      finishIndustryAbilityFlow(industryFinishMessage);
-      if (pending.irreversibleIndustryFlow) {
-        commitIrreversibleIndustryQuickAction(pending.industryLogLabel || pending.action.label, industryFinishMessage);
-      }
-      return result;
-    }
-    renderPlayerStats();
-    renderRockets();
-    renderPlayerHand();
-    updateActionButtons();
-    renderStateReadout();
-    return result;
-  }
-
-  function executeFreeMoveForCardCorner(deltaX, deltaY, rocketId) {
-    return submitActiveCardDecision(
-      "card-corner-free-move",
-      (target, choice) => String(target.rocketId) === String(rocketId)
-        && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
-        && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
-    );
-  }
 
   function buildPlanetRewardEffectsWithIndustry(actionType, result, options = {}) {
     const planetEffects = planetRewards?.buildRewardEffectsForAction?.(actionType, result) || [];

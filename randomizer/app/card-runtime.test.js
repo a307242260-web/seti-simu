@@ -67,6 +67,7 @@ function createHarness() {
     rocketActions: {
       getMovableTokensForPlayer: () => [{ id: "rocket-1" }],
       getActiveRocket: () => null,
+      canMoveRocket: (state) => ({ ok: false, message: state === cardState ? "错误状态" : "目标不可达" }),
     },
     structuredClone,
     beginEffectHistoryStep: () => {},
@@ -148,6 +149,9 @@ function createHarness() {
   assert.equal(session.discardedCardLabel, "测试牌");
   assert.deepEqual(session.deferredEvents, [{ type: "card_discard" }]);
   assert.equal(Object.hasOwn(pendingState, "cardCornerFreeMove"), false);
+  const blockedMove = runtime.executeFreeMoveForCardCorner(workingRoot, 1, 0, "rocket-1");
+  assert.equal(blockedMove.ok, false);
+  assert.equal(workingRoot.rocketState.statusNote, "目标不可达");
 }
 
 {
