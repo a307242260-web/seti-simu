@@ -433,6 +433,18 @@
     });
   }
 
+  function validateBrowserSessionBoundary(state) {
+    if (Object.hasOwn(state?.match || {}, "turnEndRevealContinuation")) {
+      return {
+        ok: false,
+        path: "$.match.turnEndRevealContinuation",
+        code: "STATE_TURN_END_CONTINUATION_COMMITTED",
+        message: "回合末揭示 continuation 必须在 Composition Session 完成前清空",
+      };
+    }
+    return { ok: true };
+  }
+
   function restoreBrowserWorkingState(target, source, metadata = {}) {
     if (source?.playerState && source?.turnState) {
       for (const key of Object.keys(source)) {
@@ -467,6 +479,7 @@
   }
 
   const browserRuleComposition = browserRuleCompositionModule.createBrowserRuleComposition({
+    invariantValidators: [validateBrowserSessionBoundary],
     stateStoreApi: {
       createStateStore(initialState, options) {
         return highCouplingStateModule.createHighCouplingStateStore(initialState, options);
@@ -943,7 +956,6 @@
   const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
   const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
   const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
-  const TURN_END_REVEAL_SESSION = "turn_end_after_reveal";
   const TYPE1_TRIGGER_QUEUE_SESSION = "type1_trigger_queue";
   const HAND_CARD_PLAY_SESSION = "hand_card_play_action";
   const CARD_CORNER_QUICK_SESSION = "card_corner_quick_action";
@@ -962,7 +974,9 @@
   const getPublicScanQueueSession = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
   const getPendingProbeSectorScanDecision = () => decisionSessions.peek(PROBE_SECTOR_SCAN_SESSION);
   const getPendingProbeLocationRewardDecision = () => decisionSessions.peek(PROBE_LOCATION_REWARD_SESSION);
-  const getTurnEndAfterRevealSession = () => decisionSessions.peek(TURN_END_REVEAL_SESSION);
+  const hasTurnEndRevealContinuation = (workingRoot = createStateSourceReadoutRoot()) => (
+    Boolean(workingRoot?.match?.turnEndRevealContinuation)
+  );
   const getPendingCardCornerFreeMove = () => decisionSessions.peek(CARD_CORNER_FREE_MOVE_SESSION);
   const getPendingCardTriggerFreeMove = () => decisionSessions.peek(CARD_TRIGGER_FREE_MOVE_SESSION);
   const getPendingCardTriggerAction = () => decisionSessions.peek(CARD_TRIGGER_ACTION_SESSION);
@@ -5161,7 +5175,7 @@
       && !uiRuntimeState.effectStepActive
       && !decisionState.actionEffectFlow
       && !decisionState.alienRevealConfirmation
-      && !getTurnEndAfterRevealSession()
+      && !hasTurnEndRevealContinuation()
       && !actionLogState.draft
       && !actionHistory.hasSession()
       && !quickActionHistory.hasSession()
@@ -5374,7 +5388,9 @@
     decisionSessions.clear("runezu_face_symbol_placement");
     decisionState.alienTracePickerState = null;
     closeAlienRevealConfirmationOverlay();
-    decisionSessions.clear(TURN_END_REVEAL_SESSION);
+    if (workingRoot.match && typeof workingRoot.match === "object") {
+      delete workingRoot.match.turnEndRevealContinuation;
+    }
     uiRuntimeState.debugAlienTraceModeActive = false;
     decisionState.actionEffectFlow = null;
     clearCompletedEffectFlowForUndo();

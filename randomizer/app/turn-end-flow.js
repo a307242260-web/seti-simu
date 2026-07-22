@@ -92,13 +92,33 @@
       actionEffectFlow: "action_effect_flow",
     }) || {};
 
-    const TURN_END_REVEAL_SESSION = "turn_end_after_reveal";
-    const getTurnEndAfterRevealSession = () => decisionSessions.peek(TURN_END_REVEAL_SESSION);
+    const TURN_END_REVEAL_CONTINUATION_FIELD = "turnEndRevealContinuation";
 
   function requireWorkingRoot(workingRoot) {
     if (!workingRoot || typeof workingRoot !== "object") {
       throw new TypeError("turn-end operation requires an explicit workingRoot");
     }
+  }
+
+  function getTurnEndRevealContinuation(workingRoot) {
+    requireWorkingRoot(workingRoot);
+    return workingRoot.match?.[TURN_END_REVEAL_CONTINUATION_FIELD] || null;
+  }
+
+  function setTurnEndRevealContinuation(workingRoot, continuation) {
+    requireWorkingRoot(workingRoot);
+    if (!workingRoot.match || typeof workingRoot.match !== "object") workingRoot.match = {};
+    if (continuation == null) {
+      delete workingRoot.match[TURN_END_REVEAL_CONTINUATION_FIELD];
+      return null;
+    }
+    const normalized = {
+      endingPlayerId: continuation.endingPlayerId || continuation.endingPlayer?.id || null,
+      didPass: Boolean(continuation.didPass),
+      turnEndReveal: structuredClone(continuation.turnEndReveal || null),
+    };
+    workingRoot.match[TURN_END_REVEAL_CONTINUATION_FIELD] = normalized;
+    return normalized;
   }
 
   function createPassEvent(player) {
@@ -433,7 +453,7 @@
   }
 
   function queueTurnEndAfterRevealContinuation(workingRoot, continuation) {
-    decisionSessions.open(TURN_END_REVEAL_SESSION, continuation);
+    setTurnEndRevealContinuation(workingRoot, continuation);
     workingRoot.rocketState.statusNote = continuation?.turnEndReveal?.message || "请先完成外星人揭示流程";
     updateActionButtons();
     renderStateReadout();
@@ -442,14 +462,14 @@
 
   function maybeResumeTurnEndAfterReveal(workingRoot) {
     requireWorkingRoot(workingRoot);
-    const continuation = getTurnEndAfterRevealSession();
+    const continuation = getTurnEndRevealContinuation(workingRoot);
     if (!continuation || hasTurnEndRevealBlockingSubFlow()) return null;
     return finishCurrentTurnAfterAlienReveal(workingRoot, continuation);
   }
 
   function maybeContinuePendingTurnEndRevealFlow(workingRoot) {
     requireWorkingRoot(workingRoot);
-    if (!getTurnEndAfterRevealSession()) return null;
+    if (!getTurnEndRevealContinuation(workingRoot)) return null;
     return maybeContinueAlienRevealQueuedOpportunities(workingRoot);
   }
 
@@ -486,7 +506,7 @@
         turnEndReveal,
       });
     }
-    decisionSessions.clear(TURN_END_REVEAL_SESSION);
+    setTurnEndRevealContinuation(workingRoot, null);
     const passIncomeResult = didPass ? applyPassTurnEndIncome(workingRoot, resolvedEndingPlayer) : null;
     commitActionLogDraft({
       passed: didPass,

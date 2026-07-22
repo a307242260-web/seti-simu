@@ -70,6 +70,7 @@
       ["planetStatsState", "planets"],
     ];
     for (const [target, source] of mappings) replaceMutableObject(sessionState[target], read(source));
+    replaceMutableObject(sessionState.match, read("match"));
     replaceMutableObject(sessionState.playerState, {
       ...read("players"),
       currentPlayerId: read("turn").currentPlayerId ?? null,
