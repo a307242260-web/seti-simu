@@ -757,7 +757,7 @@
       families: standardActionModule.ALL_FAMILIES,
       options: {
         actionFamilies: standardActionModule.ALL_FAMILIES,
-        continuation: headlessMode ? {
+        continuation: {
           inspect(workingRoot) {
             const conditional = enumerateHeadlessConditionalActionsForRoot(workingRoot);
             const candidates = (conditional.candidates || [])
@@ -821,7 +821,7 @@
               message: "存在未迁移的 headless pending，Composition 拒绝 resolver/recover/skip fallback",
             };
           },
-        } : null,
+        },
       },
     }],
     projectState(state) {
@@ -1424,6 +1424,33 @@
       stateSource: residentStateSource,
     })
     : null;
+  const residentInputAdapter = !headlessMode && browserHostModule?.inputAdapter && residentViewStateStore
+    ? browserHostModule.inputAdapter.createBrowserInputAdapter({
+      dispatchAction(action) {
+        return action?.phase === "quick"
+          ? browserRuleComposition.inputPort.submitQuickAction(action)
+          : browserRuleComposition.inputPort.submitAction(action);
+      },
+      submitDecision: (submission) => browserRuleComposition.inputPort.submitDecision(submission),
+      viewStateStore: residentViewStateStore,
+      refreshProjection: () => residentProjectionAdapter?.projectSource({ viewer: getResidentViewer() }) || null,
+    })
+    : null;
+  const residentDecisionController = residentInputAdapter && browserHostModule?.decisionUi
+    ? browserHostModule.decisionUi.createDecisionUiController({
+      dispatchIntent(intent) {
+        const result = residentInputAdapter.dispatchIntent(intent);
+        queueMicrotask(renderResidentDesktop);
+        return result;
+      },
+    })
+    : null;
+  const residentDecisionRenderer = residentDecisionController && document
+    ? browserHostModule.decisionUi.createDecisionDomRenderer({
+      root: document.getElementById("compositionDecisionRoot"),
+      controller: residentDecisionController,
+    })
+    : null;
   const residentBrowserServices = browserHostModule?.browserServices
     ? browserHostModule.browserServices.createBrowserServices({
       ruleLifecycle: browserRuleLifecycle,
@@ -1732,7 +1759,9 @@
 
   function renderResidentDesktop() {
     const input = createResidentRenderInput();
-    if (input) residentDesktopRenderer.renderAll(input);
+    if (!input) return;
+    residentDesktopRenderer.renderAll(input);
+    residentDecisionRenderer?.render(input);
   }
   const cardHoverPreviewRuntime = viewAdapter?.hoverRuntime
     || renderRuntimeModule.createCardHoverPreviewRuntime({ window, document });
@@ -11090,7 +11119,6 @@
   }
 
   function advanceHeadlessDeterministicStateImpl(workingRoot) {
-    if (!headlessMode) return null;
     const industryPending = decisionSessions.peek("industry_ability");
     if (industryPending && !decisionState.cardSelectionAction) {
       const player = getCurrentPlayer();
@@ -11143,7 +11171,6 @@
   }
 
   function executeHeadlessCurrentActionEffectImpl(workingRoot) {
-    if (!headlessMode) return { ok: false, message: "仅 headless 模式可直接推进效果" };
     const effect = getCurrentActionEffect();
     if (!effect || effect.status !== "active") {
       return { ok: false, message: "没有可直接推进的活动效果" };
