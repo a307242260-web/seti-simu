@@ -1,21 +1,21 @@
-# SETI RL Headless Env / Harness v2 契约
+# SETI RL Simulation Env / Harness v2 契约
 
-本文定义 SETI 第一阶段强化学习 headless 环境的统一契约。目标不是直接实现 simulator，而是给后续 `simulator / training harness / evaluation harness` 提供唯一上游接口，避免继续围绕浏览器 UI、overlay 按钮或临时 pending 结构各自发明协议。
+本文定义 SETI 第一阶段强化学习 simulation 环境的统一契约。目标不是直接实现 simulator，而是给后续 `simulator / training harness / evaluation harness` 提供唯一上游接口，避免继续围绕浏览器 UI、overlay 按钮或临时 pending 结构各自发明协议。
 
 ## 当前实现
 
-- Node 入口：`randomizer/app/headless-env.js`，通过 `createHeadlessEnv()` 创建单局环境。
+- Node 入口：`randomizer/app/simulation-env.js`，通过 `createSimulationEnv()` 创建单局环境。
 - 已实现 `reset / observe(viewer) / legalActions(viewer) / step / isTerminal / getReplay / loadReplay / createCheckpoint / loadCheckpoint / dispose`。
-- `randomizer/app/headless-contract.js` 固化 15 个顶层动作族、7 个 conditional family、稳定 action feature 与 observation 公私域 sanitizer；只接受共享 registry 产生的 Standard Action descriptor，不从旧 id/candidate 生成 family、payload 或 action identity。
-- 传统 app 的 pending inventory 与创建入口已删除；headless Effect Session host 只消费标准 Action/Decision/Effect Session，不加载浏览器宿主 UI 状态。
+- `randomizer/app/simulation-contract.js` 固化 15 个顶层动作族、7 个 conditional family、稳定 action feature 与 observation 公私域 sanitizer；只接受共享 registry 产生的 Standard Action descriptor，不从旧 id/candidate 生成 family、payload 或 action identity。
+- 传统 app 的 pending inventory 与创建入口已删除；simulation Effect Session host 只消费标准 Action/Decision/Effect Session，不加载浏览器宿主 UI 状态。
 - `legalActions()` 输出 `seti-rl-action-v2`，候选来自 app 与浏览器共享的 Standard Action adapter，不构建 actionGraph、valuation、selection pressure、planner 或第二套 legality。RL envelope 补充 mask/feature 与环境版本，但沿用 registry `actionId`；`step()` 校验 actor、版本与当前 legal action id 后，把保存的完整 Standard Action descriptor 交回同一 `registry.execute`。
-- pending/conditional 边界在枚举顶层行动或执行 deterministic drain 之前先经过正式状态审计；未知 state/type/family 分别以稳定 `HEADLESS_UNSUPPORTED_PENDING`、`HEADLESS_UNSUPPORTED_PENDING_TYPE`、`HEADLESS_UNSUPPORTED_CONDITIONAL_FAMILY` 拒绝。诊断固定包含 `state/family/type/owner`，拒绝分支不枚举顶层行动，也不调用 resolver、DOM callback、recover 或 skip。
+- pending/conditional 边界在枚举顶层行动或执行 deterministic drain 之前先经过正式状态审计；未知 state/type/family 分别以稳定 `SIMULATION_UNSUPPORTED_PENDING`、`SIMULATION_UNSUPPORTED_PENDING_TYPE`、`SIMULATION_UNSUPPORTED_CONDITIONAL_FAMILY` 拒绝。诊断固定包含 `state/family/type/owner`，拒绝分支不枚举顶层行动，也不调用 resolver、DOM callback、recover 或 skip。
 - observation 已按 `publicState / selfState / decision` 分域；公开玩家仅保留资源、计数与公开科技，自己的手牌/预留牌才进入 `selfState`，牌库顺序、未来科技 bonus、未揭示外星人身份不进入观测。
 - replay 分开记录 policy `steps` 与自动结算 `environmentEvents`；checkpoint 将 RNG 与稳定编号统一保存到 `coreState.meta`，可在 fresh env 中恢复且不触发浏览器渲染。
-- 终局 25/50/70 分 pending 由 `choose_final_scoring` 独立枚举与执行：多项由 pending owner 决策并写一条 policy replay，唯一合法板块由环境自动推进；headless 路径显式禁止调用旧 final-score AI resolver，标记时间使用稳定 replay 值。
-- 顶层与 conditional 行动都保留已验证的 Standard Action descriptor；`step()` 不调用 AI candidate builder 二次构建候选，而只向 `headless-effect-session-host` 提交 Standard Action/Decision。唯一选择、deterministic pending 和当前 Effect 由同一 Effect Session drain；每个 policy replay step 附带已确认的 session action/decision/effect/event journal，失败输入不进入 confirmed replay。
+- 终局 25/50/70 分 pending 由 `choose_final_scoring` 独立枚举与执行：多项由 pending owner 决策并写一条 policy replay，唯一合法板块由环境自动推进；simulation 路径显式禁止调用旧 final-score AI resolver，标记时间使用稳定 replay 值。
+- 顶层与 conditional 行动都保留已验证的 Standard Action descriptor；`step()` 不调用 AI candidate builder 二次构建候选，而只向 `Rule Composition` 提交 Standard Action/Decision。唯一选择、deterministic pending 和当前 Effect 由同一 Effect Session drain；每个 policy replay step 附带已确认的 session action/decision/effect/event journal，失败输入不进入 confirmed replay。
 - Node composition 通过 `randomizer/app/view-adapter.js` 注入 no-op view adapter；运行时不创建或安装 `document`、DOM 元素、overlay、`localStorage`、`Image`。
-- headless 的动作族覆盖矩阵与 taxonomy characterization 不再作为单元测试保留；默认 Node 回归只验证已设计的业务 unit 与唯一 full-flow。
+- simulation 的动作族覆盖矩阵与 taxonomy characterization 不再作为单元测试保留；默认 Node 回归只验证已设计的业务 unit 与唯一 full-flow。
 - 最小训练入口为 `tools/run_self_play_training.js`：串行运行多局 self-play，以 action kind 的 Monte Carlo value table 作为第一版弱 baseline，输出逐步 JSONL，并在局间边界原子保存训练 checkpoint。
 - 固定评测入口为 `tools/run_rl_evaluation.js`：加载任意 self-play checkpoint，在冻结的 20 局四人 seed pool 上输出均分、P25/P50/P75、完局率、非法动作率、阻塞率，以及可机器判定的“稳定 200 分”结论。
 
@@ -48,7 +48,7 @@ node tools/run_self_play_training.js \
   --log checkpoint/self-play/baseline-v1-eval.jsonl
 ```
 
-训练 checkpoint 固定在 episode 边界，包含配置、下一局游标、trainer 独立随机状态、agent 参数与累计统计；因此跨进程恢复不会依赖 headless env 的进程内随机闭包。逐步日志记录 `seed / action / reward / legalMask / terminal / actorPlayerId`，局摘要记录终局分数、阻塞原因、非法动作次数与 action 尝试数。
+训练 checkpoint 固定在 episode 边界，包含配置、下一局游标、trainer 独立随机状态、agent 参数与累计统计；因此跨进程恢复不会依赖 simulation env 的进程内随机闭包。逐步日志记录 `seed / action / reward / legalMask / terminal / actorPlayerId`，局摘要记录终局分数、阻塞原因、非法动作次数与 action 尝试数。
 
 每局训练或评测完成后还会生成独立 HTML 可视化总结。默认写到日志或 checkpoint 同级的 `reports/`；两者都未指定时写到 `checkpoint/self-play/reports/`，可用 `--report-dir` 覆盖。报告按玩家展示最终总分、终局板块/卡牌与蓝科/着陆/环绕/任务等分类得分、逐步累计的正向资源获取量及各行动族次数；它只消费 episode 终局数据，不参与 agent 更新与训练推进。
 
@@ -88,7 +88,7 @@ node tools/run_rl_evaluation.js \
 
 ### Python / PyTorch 常驻采样层
 
-并行采样使用 `worker_threads`，每个 worker 拥有独立 Node isolate、seed、环境、replay 和进程级随机状态。不能把多个 `createHeadlessEnv()` 放在同一 isolate 并发：传统 runtime 仍以 `globalThis` 注册模块，并在局内临时接管 `Math.random`。worker 常驻且复用同一个 `createHeadlessEnv()` 实例连续 reset 多局，不会按 episode 或 decision 重启 Node。每次 reset 会在同一 isolate 内重建浏览器模块/runtime 注册表并重新安装 seed RNG，确保同实例 A/A、A/B/A 与 fresh A 的 observation、legalActions、replay cursor 和 RNG 一致，同时清空上一局的 action log、pending、缓存与稳定 id 状态。
+并行采样使用 `worker_threads`，每个 worker 拥有独立 Node isolate、seed、环境、replay 和进程级随机状态。不能把多个 `createSimulationEnv()` 放在同一 isolate 并发：传统 runtime 仍以 `globalThis` 注册模块，并在局内临时接管 `Math.random`。worker 常驻且复用同一个 `createSimulationEnv()` 实例连续 reset 多局，不会按 episode 或 decision 重启 Node。每次 reset 会在同一 isolate 内重建浏览器模块/runtime 注册表并重新安装 seed RNG，确保同实例 A/A、A/B/A 与 fresh A 的 observation、legalActions、replay cursor 和 RNG 一致，同时清空上一局的 action log、pending、缓存与稳定 id 状态。
 
 Python 通过版本化 JSONL 长连接访问：
 
@@ -136,23 +136,23 @@ aggregate 目标为 `>= 50 decision/s`。未达标时命令退出码为 `2`，JS
 
 2026-07-18 当前机器（Node `v22.22.0`）实测：单 worker 为 `32 decisions / 43.252s = 0.740 decision/s`，双 worker 为 `64 decisions / 51.840s = 1.235 decision/s`，未达到 50 decision/s 闸门。单 worker 分项中 boot `1.263s`、legal action enumeration `20.802s`、action execution `20.781s`、observation `0.344s`、replay `0.0003s`；JSON 序列化与 inference 空载均为百万级 decision/s。已通过复用同一决策点的稳定 legal action/selector，把单 worker 从优化前的 `0.490` 提升到 `0.740 decision/s`，但剩余瓶颈明确在规则域 candidate enumeration 和 action execution。下一步优化应对 `listAiTurnActionCandidates` 做规则域 profiling、按未变化状态切片增量派生或 memoization，并拆解 `runAiSelectedTurnAction` 内自动结算；没有证据支持继续压缩 JSONL 或扩大 batch 等待窗口。
 
-2026-07-19 切换到 headless rule enumeration、轻量收入弃牌规则与预验证 action 直执行后，同机常驻 10 局实测：单 worker `320 decisions / 3.725s = 85.897 decision/s`（step-only `101.166/s`），四 worker `1280 decisions / 6.200s = 206.464 decision/s`（step-only `245.234/s`）。单 worker 末局分项为 setup selection `8.676ms`、reset drain `12.778ms`、legality `5.900ms`、transition `26.054ms`、effect drain `96.087ms`、observation `165.092ms`；100 局四 worker smoke 为 100/100 terminal、非法动作 0、阻塞/worker crash 0。训练闸门按常驻多局窗口通过，单次冷启动仍包含浏览器模块装配成本。
+2026-07-19 切换到 simulation rule enumeration、轻量收入弃牌规则与预验证 action 直执行后，同机常驻 10 局实测：单 worker `320 decisions / 3.725s = 85.897 decision/s`（step-only `101.166/s`），四 worker `1280 decisions / 6.200s = 206.464 decision/s`（step-only `245.234/s`）。单 worker 末局分项为 setup selection `8.676ms`、reset drain `12.778ms`、legality `5.900ms`、transition `26.054ms`、effect drain `96.087ms`、observation `165.092ms`；100 局四 worker smoke 为 100/100 terminal、非法动作 0、阻塞/worker crash 0。训练闸门按常驻多局窗口通过，单次冷启动仍包含浏览器模块装配成本。
 
 2026-07-19 Standard Action 全链路集成后的同机复测（Node `v22.22.0`）：单 worker `91 decisions / 0.598s = 152.194 decision/s`（step-only `195.657/s`），四 worker `399 decisions / 1.257s = 317.522 decision/s`（step-only `361.876/s`），均通过 `>=50 decision/s` 闸门。该基线使用 registry descriptor 直接枚举/执行并沿用 actionId；单 worker分项为 legality `36.962ms`、transition `180.202ms`、effect drain `51.946ms`、observation `90.065ms`，用于性能回归对比。
 
-传统脚本仍以 `globalThis` 作为模块注册表，Node 启动时把 `window` 名称指向同一注册表以加载 `window.Seti*` UMD 模块；这里没有浏览器对象或 DOM 能力。`app.js` 根据 `SetiHeadlessRuntimeConfig` 选择 no-op view adapter，跳过固定 DOM 收集、事件绑定、渲染、浏览器持久化和首屏 shell 初始化。
+Simulation 直接在 Node 中装配 `game/rule-composition.js` 与规则模块，不加载 `index.html`、`app.js`、浏览器全局或恢复 API；Browser 继续以 `app.js` 作为独立入口。
 
 ### 单进程 decision/s 基线
 
 使用固定的 PASS/end-turn 快速终局策略测量环境协议开销；命令会输出局数、policy decision 数、耗时和 decision/s：
 
 ```bash
-node tools/benchmark_headless_env.js --games 3 --max-steps 200
+node tools/benchmark_simulation_env.js --games 3 --max-steps 200
 ```
 
 基准只用于同机同进程版本间复测，不代表训练策略质量；吞吐优化不得删减 observation、owner 校验、replay 或自动结算语义。
 
-2026-07-18 在当前工作区（Node `v22.22.0`）的单局 smoke 基线：`32 decisions / 104.735s = 0.306 decision/s`，复测命令为 `node tools/benchmark_headless_env.js --games 1`。该数值明确表明当前 composition boot 与逐步全量派生观测仍是下游吞吐优化的首要目标。
+2026-07-18 在当前工作区（Node `v22.22.0`）的单局 smoke 基线：`32 decisions / 104.735s = 0.306 decision/s`，复测命令为 `node tools/benchmark_simulation_env.js --games 1`。该数值明确表明当前 composition boot 与逐步全量派生观测仍是下游吞吐优化的首要目标。
 
 ## 1. 设计目标
 
@@ -165,7 +165,7 @@ node tools/benchmark_headless_env.js --games 3 --max-steps 200
 ## 2. 顶层接口
 
 ```js
-interface SetiHeadlessEnv {
+interface SetiSimulationEnv {
   reset(config?: ResetConfig): EnvState;
   observe(viewerPlayerId?: string): Observation;
   legalActions(viewerPlayerId?: string): LegalAction[];
@@ -468,7 +468,7 @@ interface SetiHeadlessEnv {
 2. 否则取 `effect owner`
 3. 再否则取 `current player`
 
-对应 headless 契约：
+对应 simulation 契约：
 
 ```js
 {
@@ -593,7 +593,7 @@ interface SetiHeadlessEnv {
 - 特殊快速：`cardCorner / runezuFaceSymbol`
 - 恢复控制：`recoverPendingActionFromOpenHistoryForAi()`
 
-这些可以直接映射成 headless `phase=main|quick|turn_control`。
+这些可以直接映射成 simulation `phase=main|quick|turn_control`。
 
 ### 11.3 pending 子决策
 
@@ -630,7 +630,7 @@ interface SetiHeadlessEnv {
 - `withPendingOwnerPlayer()`
 - `setActiveEffectFlowOwner()`
 
-这一组函数就是 headless env 的 owner 真值来源。
+这一组函数就是 simulation env 的 owner 真值来源。
 
 ### 11.5 replay / record
 

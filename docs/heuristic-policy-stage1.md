@@ -28,7 +28,7 @@ Policy 身份固定为 `heuristic / seti-heuristic-policy-v1`。`getProvenance()
 | terminal | 空集 | shared runtime | `HEURISTIC_POLICY_EMPTY_LEGAL_SET` | PASS / recover 伪装终局动作 |
 | unknown | 未知 family 或错误 family/phase | shared runtime | `HEURISTIC_POLICY_UNSUPPORTED_FAMILY` / `DESCRIPTOR_INVALID` | legacy selector / 首项 |
 
-浏览器 Host 与 headless Host 仍拥有请求 session、公共 validator、提交、deterministic drain 和 journal；Policy 实例没有这些方法。
+浏览器 Host 与 simulation Host 仍拥有请求 session、公共 validator、提交、deterministic drain 和 journal；Policy 实例没有这些方法。
 
 ## 固定策略行为基线
 

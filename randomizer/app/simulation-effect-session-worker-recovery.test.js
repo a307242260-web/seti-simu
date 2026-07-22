@@ -1,8 +1,8 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createHeadlessEnv } = require("./headless-env");
-const { HeadlessWorkerPool } = require("../training/worker-pool");
+const { createSimulationEnv } = require("./simulation-env");
+const { SimulationWorkerPool } = require("../training/worker-pool");
 
 async function main() {
   const config = {
@@ -10,8 +10,8 @@ async function main() {
     activePlayerCount: 4,
     episodeId: "effect-session-worker-crash-recovery",
   };
-  const pool = new HeadlessWorkerPool({ size: 1, timeoutMs: 180000 });
-  const direct = createHeadlessEnv();
+  const pool = new SimulationWorkerPool({ size: 1, timeoutMs: 180000 });
+  const direct = createSimulationEnv();
   try {
     await pool.request(0, "reset", { config });
     direct.reset(config);
@@ -34,7 +34,7 @@ async function main() {
     direct.dispose();
     await pool.close();
   }
-  console.log("headless Effect Session worker crash recovery tests passed");
+  console.log("simulation Effect Session worker crash recovery tests passed");
 }
 
 main().catch((error) => {

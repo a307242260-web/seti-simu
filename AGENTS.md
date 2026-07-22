@@ -55,7 +55,7 @@
 - `randomizer/app/ai/battle-log.js`、`battle-report.js`：AI 对战日志、bug、结果/pending 汇总及报告 schema。
 - `randomizer/app/ai/tuning-history.js`、`experiment-runner.js`：调参历史持久化/推荐与单局、batch、A/B、tuning cycle runner。
 - `randomizer/training/self-play.js`：Node self-play 训练、action-kind baseline、逐步 JSONL 与 episode checkpoint。
-- `randomizer/training/worker-protocol.js`、`headless-worker.js`、`worker-pool.js`：Python/PyTorch 常驻采样协议、隔离 worker、超时/背压/崩溃恢复与批量请求。
+- `randomizer/training/worker-protocol.js`、`simulation-worker.js`、`worker-pool.js`：Python/PyTorch 常驻采样协议、隔离 worker、超时/背压/崩溃恢复与批量请求。
 - `tools/run_self_play_training.js`：训练、恢复和评测命令行入口。
 - `tools/run_rl_worker_server.js`、`tools/rl_worker_client.py`：Node JSONL worker 服务与 Python 标准库客户端；`tools/benchmark_rl_workers.js` 为分项吞吐闸门。
 - `randomizer/app.js`：composition root、顶层状态、跨 flow continuation、统一刷新与控制器接线；不再承载已迁移域的成片具体实现。
@@ -102,7 +102,7 @@
 - `docs/card-modeling-dsl-spec.md`：卡牌描述转换为可执行 DSL 的规范。
 - `docs/alien-design.md`：外星人通用设计总结与新增外星人检查清单。
 - `docs/ai-design.md`：电脑玩家 AI 的当前唯一设计文档（控制器接口、价值模型、目标系统、回合规划、自博弈验证），后续开发以此为准。
-- `docs/rl-headless-env.md`：RL headless env 契约、observation/action/replay schema 与当前浏览器实现映射。
+- `docs/rl-headless-env.md`：RL simulation env 契约、observation/action/replay schema 与当前浏览器实现映射。
 - `docs/implementation-proof-obligations.md`：跨模块状态机/迁移任务的验收条款正向推导、proof obligation、检查问题与分层证据模板。
 - `assets/final/final_detail.md`：终局计分 a/b/c/d 板块的规则公式。
 - `assets/industry/industry-abilities.md`：公司牌主动/被动能力设计与建模说明。

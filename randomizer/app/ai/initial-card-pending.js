@@ -218,8 +218,8 @@
         ? (player.hand || []).map((card) => cards.getIncomeGainForCard?.(card) || null)
         : null;
       const incomePlanningEntries = incomeGainByIndex ? getAiIncomeFinalFormulaEntries(player) : [];
-      const useHeadlessRuleKernel = globalThis.SetiHeadlessRuntimeConfig?.ruleKernel === true;
-      const dynamicIncomeIndexes = incomeGainByIndex && !useHeadlessRuleKernel
+      const useSimulationRuleKernel = globalThis.SetiSimulationRuntimeConfig?.ruleKernel === true;
+      const dynamicIncomeIndexes = incomeGainByIndex && !useSimulationRuleKernel
         ? chooseAiIncomeDiscardIndexes(workingRoot, player, count, incomeGainByIndex, incomePlanningEntries)
         : null;
       const tradeDiscardIndexes = !dynamicIncomeIndexes && pendingType === "trade"

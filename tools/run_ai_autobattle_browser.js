@@ -41,7 +41,7 @@ function parseArgs(argv) {
     sequenceWindowTurns: 6,
     yieldEverySteps: 20,
     stopOnBlocked: true,
-    headless: true,
+    simulation: true,
     single: false,
     out: null,
     chrome: process.env.CHROME_PATH || DEFAULT_CHROME,
@@ -126,7 +126,7 @@ function parseArgs(argv) {
         if (inlineValue == null && value != null && !String(value).startsWith("--")) index -= 1;
         break;
       case "headed":
-        options.headless = false;
+        options.simulation = false;
         if (inlineValue == null && value != null && !String(value).startsWith("--")) index -= 1;
         break;
       case "single":
@@ -282,7 +282,7 @@ class CdpClient {
   }
 }
 
-async function launchChrome(chromePath, remoteDebuggingPort, userDataDir, headless) {
+async function launchChrome(chromePath, remoteDebuggingPort, userDataDir, simulation) {
   if (!fs.existsSync(chromePath)) {
     throw new Error(`Chrome not found: ${chromePath}`);
   }
@@ -308,7 +308,7 @@ async function launchChrome(chromePath, remoteDebuggingPort, userDataDir, headle
     "--no-sandbox",
     "about:blank",
   ];
-  if (headless) args.unshift("--headless=new");
+  if (simulation) args.unshift("--simulation=new");
   const child = spawn(chromePath, args, {
     stdio: ["ignore", "pipe", "pipe"],
     windowsHide: true,
@@ -559,7 +559,7 @@ async function main() {
   fs.mkdirSync(tmpRoot, { recursive: true });
   const userDataDir = fs.mkdtempSync(path.join(tmpRoot, "seti-ai-chrome-"));
   const { server, port: httpPort } = await startStaticServer(repoRoot);
-  const chrome = await launchChrome(options.chrome, debugPort, userDataDir, options.headless);
+  const chrome = await launchChrome(options.chrome, debugPort, userDataDir, options.simulation);
   let cdp = null;
   const pageUrl = `http://127.0.0.1:${httpPort}/randomizer/index.html?aiRun=${Date.now()}`;
   const consoleMessages = [];

@@ -22,7 +22,7 @@
     Object.freeze({ key: "actionInteractionRuntimeModule", globalName: "SetiAppActionInteractionRuntime" }),
     Object.freeze({ key: "actionLogRuntimeModule", globalName: "SetiAppActionLogRuntime" }),
     Object.freeze({ key: "gameRecoveryModule", globalName: "SetiAppGameRecovery" }),
-    Object.freeze({ key: "browserRuleCompositionModule", globalName: "SetiBrowserRuleComposition" }),
+    Object.freeze({ key: "ruleCompositionModule", globalName: "SetiRuleComposition" }),
     Object.freeze({ key: "runtimeModule", globalName: "SetiAppRuntime" }),
     Object.freeze({ key: "refreshModule", globalName: "SetiAppRefresh" }),
     Object.freeze({ key: "renderRuntimeModule", globalName: "SetiAppRenderRuntime" }),

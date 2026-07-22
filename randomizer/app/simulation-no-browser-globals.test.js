@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createHeadlessEnv } = require("./headless-env");
+const { createSimulationEnv } = require("./simulation-env");
 
 const poisonedGlobals = [
   "document",
@@ -24,10 +24,10 @@ function installPoisonGetters() {
       configurable: true,
       get() {
         accessCounts[key] += 1;
-        throw new Error(`headless 禁止读取浏览器全局：${key}`);
+        throw new Error(`simulation 禁止读取浏览器全局：${key}`);
       },
       set() {
-        throw new Error(`headless 禁止写入浏览器全局：${key}`);
+        throw new Error(`simulation 禁止写入浏览器全局：${key}`);
       },
     });
   }
@@ -44,7 +44,7 @@ function restoreGlobals() {
 const environments = [];
 installPoisonGetters();
 try {
-  const source = createHeadlessEnv();
+  const source = createSimulationEnv();
   environments.push(source);
   source.reset({ seed: "seti48-poison", activePlayerCount: 4 });
   const action = source.legalActions()[0];
@@ -54,11 +54,11 @@ try {
   const replay = source.getReplay();
   const checkpoint = source.createCheckpoint();
 
-  const replayTarget = createHeadlessEnv();
+  const replayTarget = createSimulationEnv();
   environments.push(replayTarget);
   replayTarget.loadReplay(replay);
 
-  const checkpointTarget = createHeadlessEnv();
+  const checkpointTarget = createSimulationEnv();
   environments.push(checkpointTarget);
   checkpointTarget.loadCheckpoint(checkpoint);
 
@@ -80,4 +80,4 @@ try {
   restoreGlobals();
 }
 
-console.log("headless no-browser-globals tests passed");
+console.log("simulation no-browser-globals tests passed");

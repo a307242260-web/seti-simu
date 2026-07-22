@@ -100,17 +100,17 @@
       runAiSelectedTurnAction,
       buildAiTurnActionCandidates,
       chooseInitialSelectionForAiPlayer,
-      enumerateHeadlessTurnActions,
+      enumerateSimulationTurnActions,
       executeAiTurnAction,
-      submitHeadlessTurnAction,
-      beginHeadlessCompositionDrain,
-      inspectHeadlessComposition,
-      enumerateHeadlessConditionalActions,
-      executeHeadlessConditionalAction,
-      getHeadlessDecisionOwnerState,
-      advanceHeadlessDeterministicState,
-      executeHeadlessCurrentActionEffect,
-      skipHeadlessCurrentActionEffect,
+      submitSimulationTurnAction,
+      beginSimulationCompositionDrain,
+      inspectSimulationComposition,
+      enumerateSimulationConditionalActions,
+      executeSimulationConditionalAction,
+      getSimulationDecisionOwnerState,
+      advanceSimulationDeterministicState,
+      executeSimulationCurrentActionEffect,
+      skipSimulationCurrentActionEffect,
       resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,
@@ -275,14 +275,14 @@
           })),
         };
       },
-      listHeadlessTurnActionCandidates: () => ({
+      listSimulationTurnActionCandidates: () => ({
         ok: true,
         currentPlayer: structuredClone(getCurrentPlayer()),
-        candidates: structuredClone(enumerateHeadlessTurnActions()),
+        candidates: structuredClone(enumerateSimulationTurnActions()),
       }),
-      listHeadlessConditionalActionCandidates: () => {
-        const result = enumerateHeadlessConditionalActions();
-        const decisionOwner = getHeadlessDecisionOwnerState?.(result.actorPlayer || null) || null;
+      listSimulationConditionalActionCandidates: () => {
+        const result = enumerateSimulationConditionalActions();
+        const decisionOwner = getSimulationDecisionOwnerState?.(result.actorPlayer || null) || null;
         return {
           ok: true,
           actorPlayer: structuredClone(decisionOwner?.actorPlayer || result.actorPlayer || null),
@@ -290,20 +290,20 @@
           candidates: structuredClone(result.candidates || []),
         };
       },
-      getHeadlessDecisionOwnerState: (actorPlayer = null) => (
-        structuredClone(getHeadlessDecisionOwnerState?.(actorPlayer) || null)
+      getSimulationDecisionOwnerState: (actorPlayer = null) => (
+        structuredClone(getSimulationDecisionOwnerState?.(actorPlayer) || null)
       ),
-      chooseHeadlessInitialSelection: () => chooseInitialSelectionForAiPlayer(),
-      beginHeadlessCompositionDrain: () => beginHeadlessCompositionDrain(),
-      inspectHeadlessComposition: () => structuredClone(inspectHeadlessComposition()),
-      executeHeadlessConditionalAction: (action) => (
-        executeHeadlessConditionalAction(structuredClone(action))
+      chooseSimulationInitialSelection: () => chooseInitialSelectionForAiPlayer(),
+      beginSimulationCompositionDrain: () => beginSimulationCompositionDrain(),
+      inspectSimulationComposition: () => structuredClone(inspectSimulationComposition()),
+      executeSimulationConditionalAction: (action) => (
+        executeSimulationConditionalAction(structuredClone(action))
       ),
-      advanceHeadlessDeterministicState: () => advanceHeadlessDeterministicState(),
-      executeHeadlessCurrentActionEffect: () => executeHeadlessCurrentActionEffect(),
-      skipHeadlessActionEffect: () => skipHeadlessCurrentActionEffect(),
-      executeHeadlessTurnAction: (action, options = {}) => {
-        const actionResult = submitHeadlessTurnAction(structuredClone(action));
+      advanceSimulationDeterministicState: () => advanceSimulationDeterministicState(),
+      executeSimulationCurrentActionEffect: () => executeSimulationCurrentActionEffect(),
+      skipSimulationActionEffect: () => skipSimulationCurrentActionEffect(),
+      executeSimulationTurnAction: (action, options = {}) => {
+        const actionResult = submitSimulationTurnAction(structuredClone(action));
         if (actionResult?.ok === false || options.resolveToTurnBoundary === false) {
           return { ...actionResult, action };
         }

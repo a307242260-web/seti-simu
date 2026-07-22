@@ -9,12 +9,11 @@ function modulesFor(relative) {
     return ["uniqueAction", "uniqueEffectQueue", "uniqueSessionState", "unifiedAuthorityState"];
   }
   if (/browser-host\/(?:heuristic-policy\.integration|policy-input-adapter)\.test|public-api-ai-contract/.test(relative)) return ["webUi"];
-  if (/headless-(?:contract|final-scoring|legality)\.test/.test(relative)) return ["uniqueAction"];
-  if (/headless-effect-failure\.test/.test(relative)) return ["uniqueEffectQueue"];
+  if (/simulation-(?:contract|final-scoring|legality)\.test/.test(relative)) return ["uniqueAction"];
   if (/conditional-decision-domain\.test/.test(relative)) return ["uniqueAction"];
-  if (/headless-(?:conditional-drain|decision-owner|effect-session-host|effect-session-worker-recovery|fail-closed|no-browser-globals|training-replay)\.test/.test(relative)) return ["uniqueSessionState"];
-  if (/headless-state-checkpoint\.test/.test(relative)) return ["unifiedAuthorityState"];
-  if (/\/training\/|\/game\/ai\/|\/app\/ai\/|ai-runtime-root|headless-worker-resilience/.test(relative)) return ["robot"];
+  if (/simulation-(?:decision-owner|effect-session-host|effect-session-worker-recovery|no-browser-globals|training-replay)\.test/.test(relative)) return ["uniqueSessionState"];
+  if (/simulation-state-checkpoint\.test/.test(relative)) return ["unifiedAuthorityState"];
+  if (/\/training\/|\/game\/ai\/|\/app\/ai\/|ai-runtime-root|simulation-worker-resilience/.test(relative)) return ["robot"];
   if (/\/game\/effects\/|effect-session-host/.test(relative)) return ["uniqueSessionState"];
   if (/\/app\/effects\/|effect-flow|effect-choice-flow/.test(relative)) return ["uniqueEffectQueue"];
   if (/\/game\/(?:actions|abilities|industry|aliens)\/|\/game\/(?:basic-cards|initial-cards)\.test|action-runtime|action-briefing/.test(relative)) return ["uniqueAction"];
@@ -43,7 +42,7 @@ randomizer/app/browser-host/decision-ui.test.js
 randomizer/app/browser-host/industry-alien-decision-ui.test.js
 randomizer/app/browser-host/resident-renderer.test.js
 randomizer/app/browser-host/scan-data-land-session.test.js
-randomizer/app/browser-rule-composition.test.js
+randomizer/app/rule-composition.test.js
 randomizer/app/card-runtime.test.js
 randomizer/app/card-trigger-runtime.test.js
 randomizer/app/constants.test.js
@@ -62,14 +61,11 @@ randomizer/app/engine-action-executor.test.js
 randomizer/app/quick-turn-action-executor.test.js
 randomizer/app/conditional-action-executor.test.js
 randomizer/app/conditional-decision-domain.test.js
-randomizer/app/headless-conditional-drain.test.js
-randomizer/app/headless-decision-owner.test.js
-randomizer/app/headless-effect-failure.test.js
-randomizer/app/headless-effect-session-worker-recovery.test.js
-randomizer/app/headless-fail-closed.test.js
-randomizer/app/headless-no-browser-globals.test.js
-randomizer/app/headless-state-checkpoint.test.js
-randomizer/app/headless-training-replay.test.js
+randomizer/app/simulation-decision-owner.test.js
+randomizer/app/simulation-effect-session-worker-recovery.test.js
+randomizer/app/simulation-no-browser-globals.test.js
+randomizer/app/simulation-state-checkpoint.test.js
+randomizer/app/simulation-training-replay.test.js
 randomizer/app/income-runtime.test.js
 randomizer/app/industry-runtime.test.js
 randomizer/app/refresh.test.js

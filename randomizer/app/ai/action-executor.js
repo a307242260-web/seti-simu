@@ -47,7 +47,7 @@
       return workingRoot;
     }
 
-    function enumerateHeadlessTurnActions(workingRoot) {
+    function enumerateSimulationTurnActions(workingRoot) {
       const { playerState } = requireWorkingRoot(workingRoot);
       const currentPlayer = players.getCurrentPlayer(playerState);
       if (!currentPlayer || !isAiAutoBattlePlayer(currentPlayer.id)) return [];
@@ -264,7 +264,7 @@
 
     return {
       enumerateAiTurnActions,
-      enumerateHeadlessTurnActions,
+      enumerateSimulationTurnActions,
       executeAiTurnAction,
       shouldRetryAiTurnAction,
       rejectAiTurnActionCandidate,

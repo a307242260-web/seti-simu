@@ -5,7 +5,7 @@ const recovery = require("./game-recovery");
 const servicesApi = require("./browser-host/browser-services");
 const viewApi = require("./browser-host/view-state-store");
 
-const RULE_SCHEMA = "seti-browser-rule-composition-save-v1";
+const RULE_SCHEMA = "seti-rule-composition-save-v1";
 
 function createRecoveryHarness() {
   const view = viewApi.createViewStateStore();

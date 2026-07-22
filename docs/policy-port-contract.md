@@ -5,7 +5,7 @@
 本端口冻结启发式与 Learned Policy 共用的纯决策边界。Policy 只选择共享 runtime 已枚举的一个合法 Standard Action descriptor；它不决定请求时机，不执行规则，也不拥有恢复、超时或权威状态。
 
 ```text
-Browser / Headless Host
+Browser / Simulation Host
   │  从当前 viewer 生成 observation，向 registry 枚举 legal descriptors
   ▼
 DecisionContext (只读、可序列化、版本化)
@@ -113,7 +113,7 @@ schema 为 `seti-policy-decision-v1`：
 
 ## 当前生产边界
 
-Browser Host 与 headless/training Host 都直接构造 `DecisionContext` 并提交 `PolicyDecision`。setup、弃牌、移动支付、科技槽和外星人分支也先把当前合法选项转成 Standard Decision descriptor，再由同一公共 Heuristic Policy 返回 `PolicyDecision`；纯估值集中在 `selection-evaluator.js`，不拥有选择或提交权。旧 `game/ai/policy.js` 已删除。Host 失败策略必须显式创建新的 request generation，不能单步调用 resolver 或取首项。
+Browser Host 与 simulation/training Host 都直接构造 `DecisionContext` 并提交 `PolicyDecision`。setup、弃牌、移动支付、科技槽和外星人分支也先把当前合法选项转成 Standard Decision descriptor，再由同一公共 Heuristic Policy 返回 `PolicyDecision`；纯估值集中在 `selection-evaluator.js`，不拥有选择或提交权。旧 `game/ai/policy.js` 已删除。Host 失败策略必须显式创建新的 request generation，不能单步调用 resolver 或取首项。
 
 ## Proof obligations 与证据
 

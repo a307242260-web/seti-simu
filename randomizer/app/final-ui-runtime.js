@@ -12,8 +12,8 @@
   "use strict";
 
   function createFinalUiRuntime(context = {}) {
-    const headless = Boolean(context.headless);
-    const document = headless ? null : (context.document || root.document);
+    const simulation = Boolean(context.simulation);
+    const document = simulation ? null : (context.document || root.document);
     const {
       els,
       players,
@@ -105,7 +105,7 @@
     }
 
     function renderFinalScoreBoard(projected = null) {
-      if (headless) return;
+      if (simulation) return;
       const readoutRoot = getRuleReadout();
       const projectedFinalScoringState = projected?.finalScoringState || readoutRoot.finalScoringState;
       const currentPlayer = projected?.currentPlayer || players.getCurrentPlayer(readoutRoot.playerState);
@@ -174,8 +174,8 @@
 
       const result = finalScoring.markTile(workingRoot.finalScoringState, tileId, currentPlayer, {
         tokenSrc: getNormalTokenAssetForPlayer(currentPlayer),
-        placedAt: headless
-          ? `headless:${currentPlayer?.id || "unknown"}:${pending?.threshold || "unknown"}:${tileId}`
+        placedAt: simulation
+          ? `simulation:${currentPlayer?.id || "unknown"}:${pending?.threshold || "unknown"}:${tileId}`
           : undefined,
       });
 
@@ -186,7 +186,7 @@
         workingRoot.finalScoringState,
         beforeFinalScoringState,
       );
-      if (!headless) {
+      if (!simulation) {
         renderFinalScoreBoard();
         renderPlayerStats();
         updateActionButtons();
@@ -363,7 +363,7 @@
     }
 
     function renderFinalResultDialog() {
-      if (headless) return;
+      if (simulation) return;
       if (!els.finalResultHead || !els.finalResultBody) return;
       const summaries = buildFinalResultPlayerSummaries();
       const items = getFinalResultScoreItems(summaries);

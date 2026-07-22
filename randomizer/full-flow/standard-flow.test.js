@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createHeadlessEnv } = require("../app/headless-env");
+const { createSimulationEnv } = require("../app/simulation-env");
 const fixture = require("./standard-flow-v1.fixture");
 
 function initialSnapshot(env) {
@@ -74,7 +74,7 @@ function finalSnapshot(env) {
   };
 }
 
-const env = createHeadlessEnv();
+const env = createSimulationEnv();
 env.reset(fixture.config);
 assert.deepEqual(initialSnapshot(env), fixture.initialSnapshot, "版本化初始状态发生漂移");
 

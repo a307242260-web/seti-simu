@@ -168,7 +168,7 @@ def export_demonstrations(args: argparse.Namespace) -> dict[str, Any]:
             episodes.append({"episodeId": episode_id, "seed": seed, "seat": seat,
                              "teacherPolicyVersion": teacher_version, "steps": len(episode_records),
                              "terminalScores": scores, "replayParity": True,
-                             "headlessAdapterCounts": adapter_counts,
+                             "simulationAdapterCounts": adapter_counts,
                              "legalSetDivergences": legal_set_divergences})
             progress_path.write_text(json.dumps({
                 "schemaVersion": DATASET_SCHEMA,

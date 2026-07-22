@@ -4,7 +4,7 @@ const assert = require("node:assert/strict");
 const stateStoreApi = require("../state/state-store");
 const effectRuntimeApi = require("./session-runtime");
 const standardActionDomain = require("./standard-action-session");
-const { createBrowserRuleComposition } = require("../../app/browser-rule-composition");
+const { createRuleComposition } = require("../rule-composition");
 
 function state() {
   return stateStoreApi.createCommittedGameState({
@@ -19,7 +19,7 @@ function state() {
   });
 }
 
-const composition = createBrowserRuleComposition({
+const composition = createRuleComposition({
   stateStoreApi,
   effectRuntimeApi,
   createInitialState: state,
@@ -71,7 +71,7 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
 
 {
   let sessionOwnedResolveCalls = 0;
-  const decisionComposition = createBrowserRuleComposition({
+  const decisionComposition = createRuleComposition({
     stateStoreApi,
     effectRuntimeApi,
     createInitialState() {
@@ -160,7 +160,7 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
 
 {
   let resolveCalls = 0;
-  const singleChoiceComposition = createBrowserRuleComposition({
+  const singleChoiceComposition = createRuleComposition({
     stateStoreApi,
     effectRuntimeApi,
     createInitialState() {

@@ -20,7 +20,7 @@
 
   function createAlienUiHelpers(context = {}) {
     const documentRef = context.document !== undefined ? context.document : root.document;
-    const headless = Boolean(context.headless);
+    const simulation = Boolean(context.simulation);
     const structuredClone = context.structuredClone || root.structuredClone;
     const alienTraceRewardFlow = context.alienTraceRewardFlow || {};
     const aliens = context.aliens || {};
@@ -433,7 +433,7 @@
 
       closeAlienRevealConfirmationOverlay();
 
-      if (headless) {
+      if (simulation) {
         uiRuntimeState.alienRevealConfirmation = { entries, element: null };
         return {
           ok: true,

@@ -1,14 +1,14 @@
 "use strict";
 
 const { parentPort } = require("node:worker_threads");
-const { createHeadlessEnv } = require("../app/headless-env");
+const { createSimulationEnv } = require("../app/simulation-env");
 const {
   IPC_ERROR_CODES,
   IpcError,
   serializeError,
 } = require("./worker-protocol");
 
-if (!parentPort) throw new Error("headless-worker 必须由 worker_threads 启动");
+if (!parentPort) throw new Error("simulation-worker 必须由 worker_threads 启动");
 
 let env = null;
 
@@ -31,7 +31,7 @@ async function execute(operation, payload = {}) {
     case "ping":
       return { pid: process.pid };
     case "reset": {
-      env ||= createHeadlessEnv();
+      env ||= createSimulationEnv();
       const observation = env.reset(payload.config || {});
       return { observation, legalActions: env.legalActions(), terminal: env.isTerminal() };
     }
@@ -41,13 +41,13 @@ async function execute(operation, payload = {}) {
       const result = requireEnv().step(payload.action);
       if (!result.ok) {
         throw new IpcError(
-          result.code === "HEADLESS_TERMINAL" ? IPC_ERROR_CODES.TERMINAL : IPC_ERROR_CODES.ILLEGAL_ACTION,
+          result.code === "SIMULATION_TERMINAL" ? IPC_ERROR_CODES.TERMINAL : IPC_ERROR_CODES.ILLEGAL_ACTION,
           result.error || "动作执行失败",
           {
           actionId: payload.action?.actionId || null,
           actorPlayerId: result.actorPlayerId || null,
           legalActionIds: (result.legalActions || []).map((action) => action.actionId),
-          headlessCode: result.code || null,
+          simulationCode: result.code || null,
           },
         );
       }

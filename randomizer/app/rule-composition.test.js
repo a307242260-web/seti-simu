@@ -6,7 +6,7 @@ const path = require("node:path");
 const stateStoreApi = require("../game/state/state-store");
 const effectRuntimeApi = require("../game/effects/session-runtime");
 const researchTechSession = require("../game/effects/research-tech-session");
-const { createBrowserRuleComposition, SAVE_SCHEMA_VERSION } = require("./browser-rule-composition");
+const { createRuleComposition, SAVE_SCHEMA_VERSION } = require("../game/rule-composition");
 
 function createState(value = 0) {
   return {
@@ -74,7 +74,7 @@ function createTestEffectDomain(families, createEffectGroup, executors = {}) {
 
 function createHarness(initialValue = 0) {
   let commitEvents = 0;
-  const composition = createBrowserRuleComposition({
+  const composition = createRuleComposition({
     stateStoreApi,
     effectRuntimeApi,
     createActionRegistry: createRegistry,
@@ -196,7 +196,7 @@ function createHarness(initialValue = 0) {
       return effectRuntimeApi.createRuntime(options);
     },
   };
-  const composition = createBrowserRuleComposition({
+  const composition = createRuleComposition({
     stateStoreApi,
     effectRuntimeApi: sharedRuntimeApi,
     createInitialState: () => createState(0),
@@ -262,7 +262,7 @@ function createHarness(initialValue = 0) {
 {
   let composition = null;
   let unsafeCheckpoint = null;
-  composition = createBrowserRuleComposition({
+  composition = createRuleComposition({
     stateStoreApi,
     effectRuntimeApi,
     createActionRegistry: createRegistry,
@@ -289,7 +289,7 @@ function createHarness(initialValue = 0) {
     for (const key of Reflect.ownKeys(target)) delete target[key];
     Object.assign(target, structuredClone(source));
   };
-  const composition = createBrowserRuleComposition({
+  const composition = createRuleComposition({
     stateStoreApi,
     effectRuntimeApi,
     createActionRegistry: createRegistry,
@@ -341,7 +341,7 @@ function createHarness(initialValue = 0) {
     for (const key of Reflect.ownKeys(target)) delete target[key];
     Object.assign(target, structuredClone(source));
   };
-  composition = createBrowserRuleComposition({
+  composition = createRuleComposition({
     stateStoreApi,
     effectRuntimeApi,
     createActionRegistry: createRegistry,
@@ -383,7 +383,7 @@ function createHarness(initialValue = 0) {
 }
 
 {
-  const composition = createBrowserRuleComposition({
+  const composition = createRuleComposition({
     stateStoreApi,
     effectRuntimeApi,
     createActionRegistry: createRegistry,
@@ -430,10 +430,10 @@ function createHarness(initialValue = 0) {
 {
   const appSource = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8");
   const indexSource = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
-  const compositionSource = fs.readFileSync(path.join(__dirname, "browser-rule-composition.js"), "utf8");
+  const compositionSource = fs.readFileSync(path.join(__dirname, "../game/rule-composition.js"), "utf8");
   assert.equal(fs.existsSync(path.join(__dirname, "browser-state-authority.js")), false, "旧 authority 文件必须物理删除");
   assert.equal(fs.existsSync(path.join(__dirname, "../game/state/runtime-authority.js")), false, "无 caller RuntimeAuthority 必须物理删除");
-  assert.match(appSource, /createBrowserRuleComposition\(/, "生产 app 必须实例化唯一 Rule Composition");
+  assert.match(appSource, /createRuleComposition\(/, "生产 app 必须实例化唯一 Rule Composition");
   assert.doesNotMatch(appSource, /createBrowserStateAuthority\(/, "生产 app 不得实例化旧 BrowserStateAuthority");
   assert.doesNotMatch(indexSource, /browser-state-authority\.js/, "生产脚本不得加载旧 authority owner");
   for (const file of ["low-coupling-slices.js", "high-coupling-slices.js"]) {
@@ -443,23 +443,23 @@ function createHarness(initialValue = 0) {
   }
   const lowCouplingSource = fs.readFileSync(path.join(__dirname, "../game/state/low-coupling-slices.js"), "utf8");
   assert.doesNotMatch(lowCouplingSource, /createLowCouplingStateStore/, "低耦合层不得暴露第二个 StateStore 构造入口");
-  assert.match(indexSource, /browser-rule-composition\.js/, "生产脚本必须加载 Rule Composition");
+  assert.match(indexSource, /rule-composition\.js/, "生产脚本必须加载 Rule Composition");
   assert.doesNotMatch(
     compositionSource,
     /options\.(?:createEffectGroup|effectExecutors|installEffectExecutors)|fallbackEffectGroup/,
     "Rule Composition 不得保留测试 Effect factory/executor 的 production fallback wiring",
   );
-  assert.match(appSource, /browserRuleComposition\.inputPort\.submitDecision\(/, "AI conditional caller 必须提交 Composition Decision");
+  assert.match(appSource, /ruleComposition\.inputPort\.submitDecision\(/, "AI conditional caller 必须提交 Composition Decision");
   const dispatchInputSource = appSource.slice(
     appSource.indexOf("function dispatchBrowserRuleInput"),
     appSource.indexOf("const runtime = runtimeModule.createRuntime"),
   );
   assert.ok(
-    dispatchInputSource.indexOf("browserRuleComposition.inputPort.enumerateActions")
+    dispatchInputSource.indexOf("ruleComposition.inputPort.enumerateActions")
       < dispatchInputSource.indexOf("return actionRuntimeController.dispatchAction"),
-    "headless Standard Action 枚举必须先进入 composition inputPort",
+    "simulation Standard Action 枚举必须先进入 composition inputPort",
   );
-  assert.doesNotMatch(appSource, /replaceMutableObject\?\.|if \(!browserRuleCompositionModule\.replaceMutableObject\)/, "working root restore 不得保留 optional helper 双协议");
+  assert.doesNotMatch(appSource, /replaceMutableObject\?\.|if \(!ruleCompositionModule\.replaceMutableObject\)/, "working root restore 不得保留 optional helper 双协议");
   const tradeSource = fs.readFileSync(path.join(__dirname, "../game/ai/trade-candidates.js"), "utf8");
   assert.match(tradeSource, /canAiMoveThisTurn\(workingRoot, player\.id\)/, "AI trade candidates 必须显式传 workingRoot");
   const standardActionSource = fs.readFileSync(path.join(__dirname, "../game/actions/standard-action.js"), "utf8");
@@ -543,4 +543,4 @@ function createHarness(initialValue = 0) {
   assert.doesNotMatch(aiProductionSource, /runAiDataPlacementDecision|pendingDataPlaceAction/, "数据放置 AI 不得保留 DOM\/pending 专用 resolver");
 }
 
-console.log("browser-rule-composition tests passed");
+console.log("rule-composition tests passed");

@@ -3,11 +3,11 @@
 
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
-  root.SetiBrowserRuleComposition = api;
+  root.SetiRuleComposition = api;
 })(typeof globalThis !== "undefined" ? globalThis : window, function () {
   "use strict";
 
-  const SAVE_SCHEMA_VERSION = "seti-browser-rule-composition-save-v1";
+  const SAVE_SCHEMA_VERSION = "seti-rule-composition-save-v1";
   const TERMINAL_PHASES = new Set(["completed", "aborted", "irreversible_locked"]);
 
   function clone(value) {
@@ -29,7 +29,7 @@
     return owner[key].bind(owner);
   }
 
-  function createBrowserRuleComposition(options = {}) {
+  function createRuleComposition(options = {}) {
     const stateStoreApi = options.stateStoreApi;
     const effectRuntimeApi = options.effectRuntimeApi;
     const createActionRegistry = options.createActionRegistry;
@@ -87,7 +87,11 @@
     let drainEffectGroupFactory = null;
 
     function actionContext(state) {
-      if (stateAdapter) return workingState;
+      if (stateAdapter) {
+        return typeof options.createActionContext === "function"
+          ? options.createActionContext(workingState)
+          : workingState;
+      }
       return typeof options.createActionContext === "function"
         ? options.createActionContext(state)
         : state;
@@ -642,5 +646,5 @@
     });
   }
 
-  return Object.freeze({ SAVE_SCHEMA_VERSION, createBrowserRuleComposition });
+  return Object.freeze({ SAVE_SCHEMA_VERSION, createRuleComposition });
 });

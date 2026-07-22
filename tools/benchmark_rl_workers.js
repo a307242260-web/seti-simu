@@ -2,7 +2,7 @@
 "use strict";
 
 const { performance } = require("node:perf_hooks");
-const { HeadlessWorkerPool } = require("../randomizer/training/worker-pool");
+const { SimulationWorkerPool } = require("../randomizer/training/worker-pool");
 
 function parseArgs(argv) {
   const options = { workers: 1, gamesPerWorker: 1, maxSteps: 200, timeoutMs: 180000 };
@@ -70,7 +70,7 @@ async function measureInferenceIdle(workers) {
 }
 
 async function measureEnvironment(options) {
-  const pool = new HeadlessWorkerPool({
+  const pool = new SimulationWorkerPool({
     size: options.workers,
     timeoutMs: options.timeoutMs,
     maxPendingPerWorker: 1,

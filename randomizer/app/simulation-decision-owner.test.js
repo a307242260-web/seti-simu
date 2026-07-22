@@ -1,13 +1,13 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { buildDecision, createHeadlessEnv } = require("./headless-env");
+const { buildDecision, createSimulationEnv } = require("./simulation-env");
 const standardFlowFixture = require("../full-flow/standard-flow-v1.fixture");
 
 function createApi(ownerState, currentPlayerId = "player-blue") {
   return {
     getTurnState: () => ({ gameEnded: false, currentPlayerId }),
-    getHeadlessDecisionOwnerState: () => structuredClone(ownerState),
+    getSimulationDecisionOwnerState: () => structuredClone(ownerState),
   };
 }
 
@@ -75,7 +75,7 @@ const ended = buildDecision({
 }, []);
 assert.equal(ended, null);
 
-const replaySource = createHeadlessEnv();
+const replaySource = createSimulationEnv();
 const replayConfig = { seed: "decision-owner-replay-parity", activePlayerCount: 4 };
 const preObservation = replaySource.reset(replayConfig);
 const chosenAction = replaySource.legalActions()[0];
@@ -84,7 +84,7 @@ assert.equal(stepResult.ok, true);
 const replay = replaySource.getReplay();
 replaySource.dispose();
 
-const replayTarget = createHeadlessEnv();
+const replayTarget = createSimulationEnv();
 const replayPreObservation = replayTarget.reset(replayConfig);
 assert.deepEqual(
   replayPreObservation.decision,
@@ -99,7 +99,7 @@ assert.deepEqual(
 );
 replayTarget.dispose();
 
-const openingRegression = createHeadlessEnv();
+const openingRegression = createSimulationEnv();
 openingRegression.reset(standardFlowFixture.config);
 const openingPlayerId = "player-white";
 const openingHand = openingRegression.observe(openingPlayerId).selfState.hand;
@@ -142,4 +142,4 @@ for (const choice of explicitDiscardChoices) {
 }
 openingRegression.dispose();
 
-console.log("headless decision owner tests passed");
+console.log("simulation decision owner tests passed");

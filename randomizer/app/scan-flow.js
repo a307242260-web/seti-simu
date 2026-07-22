@@ -1574,7 +1574,7 @@
         ...config,
       });
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        if (globalThis.SetiHeadlessRuntimeConfig?.enabled) {
+        if (globalThis.SetiSimulationRuntimeConfig?.enabled) {
           return { ok: true, pendingChoice: true, message: config.subtitle || "请选择扫描目标" };
         }
         setScanTargetContinuation(workingRoot, null);

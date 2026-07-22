@@ -7,7 +7,7 @@ SETI 的规则状态、流程状态和宿主状态已经分属明确 owner：
 - StateStore：唯一 committed 事实、schema、RNG、稳定 sequence 与 CAS 提交。
 - Effect Session：唯一 working copy、queue、Decision、journal、undo/barrier 与 checkpoint。
 - Standard Action：唯一 Action/Decision descriptor、合法性与 family handler 入口。
-- Browser/Headless Host：只投影状态并提交标准输入。
+- Browser/Simulation Host：只投影状态并提交标准输入。
 - Machine Player Host/Policy：只管理请求与选择 legal `actionId`，不执行规则。
 
 `app.js` 是 composition root，不是并列状态源。`window.Seti*` 是无构建脚本的模块注册方式，不得保存跨局权威事实。
@@ -24,7 +24,7 @@ EffectSession.beginWorkingCopy
 StateStore.compareAndCommit
              │
              ├─ BrowserProjection / ViewState
-             ├─ Headless observation / replay
+             ├─ Simulation observation / replay
              └─ next DecisionContext
 ```
 
@@ -32,7 +32,7 @@ StateStore.compareAndCommit
 
 1. Action registry 可读隔离 snapshot、构建 Effect Group，不直接替换 committed root。
 2. Effect Session 只能从 StateStore `beginWorkingCopy()` 建立 working state；queue 清空、无等待输入且 invariant 通过时只提交一次。
-3. Browser renderer、DOM handler、headless adapter 与 Policy 不调用领域 continuation，不持有 pending 真相。
+3. Browser renderer、DOM handler、simulation adapter 与 Policy 不调用领域 continuation，不持有 pending 真相。
 4. 失败、stale、越权、timeout、未知 family 或未通过 validator 的输入不修改 state、journal 或 confirmed replay cursor。
 5. 同一 committed/session 来源投影 BrowserProjection 与 observation；宿主不得各自维护规则切片。
 
@@ -92,7 +92,7 @@ StateStore.compareAndCommit
 | `StateStore.meta.rngState` / `sequences` | StateStore | committed 边界后的下一位置和稳定 id |
 | session `journal.rng/events/decisions` | Effect Session | 当前 working 流程已消费的确定性事实 |
 | undo frame / barrier | Effect Session | session 内撤销与隐藏信息边界 |
-| confirmed replay | runtime/headless facade | 每个外部 Action/Decision 至多一条 |
+| confirmed replay | runtime/simulation facade | 每个外部 Action/Decision 至多一条 |
 | action log | formatter/projection | 人类可读摘要，不参与恢复 |
 | ViewState | Browser Host | 可清空重建，不影响合法性和流程 |
 
@@ -102,4 +102,4 @@ StateStore.compareAndCommit
 - 禁用状态 adapter、旧切片 projection、旧 candidate/selector 和 migration 元数据的生产引用为 0。
 - 新存档 round-trip、非零 checkpoint fork、replay/RNG/cursor parity 通过。
 - 旧/未知 schema、stale decision、非法 Policy 输出和未知 family 全部 fail-closed。
-- 固定 seed Browser/Headless parity、完整 headless、多席 Chrome 与 Browser Services recovery 通过。
+- 固定 seed Browser/Simulation parity、完整 simulation、多席 Chrome 与 Browser Services recovery 通过。

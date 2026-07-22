@@ -19,14 +19,14 @@
         return serialized.ok ? {
           ok: true,
           envelope: {
-            schemaVersion: "seti-browser-rule-composition-save-v1",
+            schemaVersion: "seti-rule-composition-save-v1",
             committedState: serialized.serialized,
             session: null,
           },
         } : serialized;
       },
       validateRestore(envelope) {
-        if (envelope?.schemaVersion !== "seti-browser-rule-composition-save-v1") {
+        if (envelope?.schemaVersion !== "seti-rule-composition-save-v1") {
           return { ok: false, code: "RULE_COMPOSITION_SAVE_SCHEMA_UNSUPPORTED" };
         }
         return store.deserialize(envelope.committedState);

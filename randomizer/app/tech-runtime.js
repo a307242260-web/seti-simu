@@ -12,7 +12,7 @@
   "use strict";
 
   function createTechRuntime(context = {}) {
-    const headless = context.headless === true;
+    const simulation = context.simulation === true;
     const {
       Array,
       Boolean,
@@ -641,7 +641,7 @@
 
     function renderTechBoard(workingRoot) {
       const { techGameState } = requireWorkingRoot(workingRoot);
-      if (headless) return;
+      if (simulation) return;
       syncTechRenderContext();
       const currentPlayer = getWorkingCurrentPlayer(workingRoot);
       tech.renderAll(techGameState, techRenderContext, els.techTiles, {

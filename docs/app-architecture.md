@@ -6,13 +6,13 @@
 
 浏览器的 View、Input Adapter、ViewState、可见性边界和 proof obligations 见 [docs/browser-host-ui.md](./browser-host-ui.md)。本文件与该契约都描述当前生产装配。
 
-Standard Action 的 app 装配边界由 `app/action-runtime.js` 统一承载：浏览器 DOM 的 `standard_intent` 只解析唯一 descriptor，浏览器 AI 与训练宿主直接取得完整 descriptor，并交回同一 `registry.execute`。`app/ai/action-executor.js` 不维护规则 switch；`app/headless-contract.js` 只补 RL feature、mask 与版本字段并沿用 registry `actionId`。UI picker、AI valuation 和训练 policy 都不得在 adapter 外预扣资源或执行规则。
+Standard Action 的 app 装配边界由 `app/action-runtime.js` 统一承载：浏览器 DOM 的 `standard_intent` 只解析唯一 descriptor，浏览器 AI 与训练宿主直接取得完整 descriptor，并交回同一 `registry.execute`。`app/ai/action-executor.js` 不维护规则 switch；`app/simulation-contract.js` 只补 RL feature、mask 与版本字段并沿用 registry `actionId`。UI picker、AI valuation 和训练 policy 都不得在 adapter 外预扣资源或执行规则。
 
 Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-action-executor.js` 统一接收 Browser authority 的显式 working root 与 Standard Action descriptor。Browser 按钮和 AI descriptor 都经 `action-runtime` 进入该 executor；移动支付仍由宿主收集，但最终规则写入也回到同一 executor。该边界不读取 DOM、旧 Decision store 或 `app.js` 全局规则 slice，stale 与失败不得污染传入 root。
 
 通用 pending 容器和字段豁免表不属于生产架构。规则选择与流程状态只进入 Browser Composition working root / Effect Session；PASS overlay 的临时关闭状态位于 `runtime.ui`，扫描关联序号位于 `runtime.browserHost`。
 
-机器玩家公共选择边界位于 `game/ai/policy-port.js`：Browser/Headless Host 负责构造当前 viewer 的只读 `DecisionContext`、控制 deadline/AbortSignal/恢复失效，并在 `PolicyDecision` 返回后调用公共 validator；Policy 不依赖 app、DOM、Effect Session 或 StateStore。Host 只有在 validator 与 registry 复核通过后才能显式提交 descriptor。详见 `docs/policy-port-contract.md`。
+机器玩家公共选择边界位于 `game/ai/policy-port.js`：Browser/Simulation Host 负责构造当前 viewer 的只读 `DecisionContext`、控制 deadline/AbortSignal/恢复失效，并在 `PolicyDecision` 返回后调用公共 validator；Policy 不依赖 app、DOM、Effect Session 或 StateStore。Host 只有在 validator 与 registry 复核通过后才能显式提交 descriptor。详见 `docs/policy-port-contract.md`。
 
 ## 当前加载层次
 
@@ -25,7 +25,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 7. `randomizer/app/view-adapter.js` 提供 Node composition 使用的 no-op view adapter；浏览器真实 DOM/render runtime 只通过 `BrowserProjection.resident` 的深冻结 selector 读取规则视图，生产装配不再注入长期规则 slice。
 8. `randomizer/app/events.js` 绑定页面事件、overlay 点击分发、拖拽回调和 resize 入口。
 8. `randomizer/app/start-screen.js` 处理开始界面选项同步、入口按钮和继续游戏恢复。
-9. `randomizer/app/browser-rule-composition.js` 建立 Browser 唯一 StateStore、Standard Action registry、Effect runtime 与 active Session；`randomizer/app/turn-flow.js` 只通过其 lifecycle 重置新局并处理随机化和 round / turn 推进壳层；`turn-end-flow.js` 处理 PASS 队列、回合末外星人揭示与跨轮收尾。
+9. `randomizer/app/rule-composition.js` 建立 Browser 唯一 StateStore、Standard Action registry、Effect runtime 与 active Session；`randomizer/app/turn-flow.js` 只通过其 lifecycle 重置新局并处理随机化和 round / turn 推进壳层；`turn-end-flow.js` 处理 PASS 队列、回合末外星人揭示与跨轮收尾。
 10. `randomizer/app/card-runtime.js`、`card-trigger-runtime.js`、`income-runtime.js` 与 `scan-flow.js` 承接卡牌交互、任务触发、收入和扫描运行域。
 11. `randomizer/app/tech-runtime.js` 与 `industry-runtime.js` 承接科技选择、公司能力、被动奖励及其 pending/history 回滚运行域。
 12. `randomizer/app/action-briefing.js` 封装 AI 行动简报的条目归纳、scan 目标摘要和 overlay 渲染控制器。
@@ -44,7 +44,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 
 - `randomizer/app/runtime.js`：创建 Decision Session、纯 UI 状态与 Browser Host 内部状态；不得恢复通用 `pending` 容器或把规则事实塞入 UI/host state。
 - `randomizer/app/render-runtime.js`：传统 DOM renderer 的兼容外壳；生产 context 只接收 `getProjection()`、纯 ViewState 与显式 capability inventory 中的纯模块、DOM-only helper、标量/新 DTO selector、输入 callback，不接收 `browserRuleState/workingState/playerState/turnState/cardState/...` 或复合 root reader/writer。未分类能力在生产 bootstrap 时 fail-fast；对象型窄 selector 必须在 composition 边界返回新 identity。旧领域 readout 若会 normalize 输入，只能处理 projection 的一次性克隆；补牌、机会排队、AI 调度等规则推进不得由 renderer 触发。
-- `randomizer/app/browser-rule-composition.js`：Browser 唯一规则 composition；内部独占 StateStore、Standard Action registry、Effect runtime 与 active Session，向生产 caller 只暴露 `inputPort`、只读 projection/state source 和 `lifecycle.newGame/save/validateRestore/restore`。稳定 working root 由 composition 内部 state adapter 原位水合，宿主不得执行 slices 回灌；Browser Services 与 GameRecovery 只接受 composition save envelope，旧 StateStore-only schema fail-closed。
+- `randomizer/app/rule-composition.js`：Browser 唯一规则 composition；内部独占 StateStore、Standard Action registry、Effect runtime 与 active Session，向生产 caller 只暴露 `inputPort`、只读 projection/state source 和 `lifecycle.newGame/save/validateRestore/restore`。稳定 working root 由 composition 内部 state adapter 原位水合，宿主不得执行 slices 回灌；Browser Services 与 GameRecovery 只接受 composition save envelope，旧 StateStore-only schema fail-closed。
 - `randomizer/app/primary-board-action-executor.js`：四类盘面行动的 working-root 生产 executor；只接受显式 root、descriptor 与规则模块能力，原子保护失败路径，不拥有 UI、Decision 或 composition lifecycle。
 - `randomizer/app/engine-action-executor.js`：科技、扫描、分析、打牌四类引擎行动的 working-root 生产边界；科技/分析在边界内直连规则 action/ability，扫描与打牌分别下沉到 `scan-flow.js` / `hand-flow.js` 的显式 root 入口，`app.js` 只负责装配。Browser 与 AI 的 Standard Action descriptor 共用该原子入口，支付、目标校验及返回的 Effect/history/result 均绑定 caller 传入的 root，UI 只保留选择与渲染续接。
 - `randomizer/app/quick-turn-action-executor.js`：快速交易、公司 1x、弃牌角标、放置数据、符文族面部 symbol、PASS 与结束回合的 working-root 生产边界。Browser/AI 的 descriptor 共用同一原子入口；Quick family 只写 caller root 与 quick history，不推进 turn，PASS 只完成主行动，只有 `end_turn` 推进 turn/current player；stale 与失败会恢复完整 working root。
@@ -57,7 +57,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/alien-trace-reward-flow.js`：只决定痕迹奖励应进入方舟解锁、面板放置还是无目标落空；无目标时必须结束当前奖励节点，包括 `required` / 不可跳过节点。
 - `randomizer/app/constants.js`：只放静态常量和依赖派生常量。不要在这里读写游戏状态、DOM 或 pending 流程。
 - `randomizer/app/dom.js`：只收集固定 DOM 元素和 NodeList。新增 HTML id、overlay、按钮或常驻区域时先在这里登记。
-- `randomizer/app/view-adapter.js`：定义 headless 的空元素集合与 no-op render/log/hover 接口；不得模拟 DOM 节点或把规则分支塞进 adapter。
+- `randomizer/app/view-adapter.js`：定义 simulation 的空元素集合与 no-op render/log/hover 接口；不得模拟 DOM 节点或把规则分支塞进 adapter。
 - `randomizer/app/events.js`：只做事件到 app 回调的路由。新增按钮、overlay、拖拽入口时优先改这里；不要在这里实现规则结算。
 - `randomizer/app/start-screen.js`：只处理开始界面选项、继续游戏入口和新局入口壳层；不要在这里新增规则结算或复制恢复逻辑。
 - `randomizer/app/turn-flow.js`：只通过 Browser Rule Composition lifecycle 重置新局，并处理随机化和回合推进壳层；不得再直接创建或恢复各领域长期 state。
@@ -80,7 +80,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/ai/experiment-runner.js`：单局自动对战、batch、同 seed A/B、tuning cycle 与样本诊断压缩。
 - `randomizer/app/ai/initial-card-pending.js`：初始选择、收入弃牌、PASS 预留、公共牌/手牌选择、卡牌触发/任务与打牌 pending resolver。
 - `randomizer/app/ai/interaction-pending.js`：数据、移动支付、登陆、扫描、科技、公司免费移动与外星人 pending resolver；只通过筛选后的显式 context 调用 app flow，不持有 pending 状态。
-- `randomizer/app/ai/action-executor.js`：浏览器 AI 的估值候选汇总、重试诊断与行动执行器；headless 枚举/执行只转发 Standard Action descriptor，不拥有第二套 legality、回合或 pending 状态。
+- `randomizer/app/ai/action-executor.js`：浏览器 AI 的估值候选汇总、重试诊断与行动执行器；simulation 枚举/执行只转发 Standard Action descriptor，不拥有第二套 legality、回合或 pending 状态。
 - `randomizer/app/ai/automation-runtime.js`：非回合 pending 优先级、效果恢复、选定行动执行和 `runAiAutomationStep` 编排。
 - `randomizer/app/ai-controller.js`：AI 装配 adapter。注入 `app/ai/**` runtime 与 `game/ai/**` 规则域并转发稳定 API，不再包含 resolver、行动 executor、控制状态、日志/报告、实验 runner 或成片纯估值/候选函数体。
 - `randomizer/app/effects/movement-scan.js`：移动、行星落点、轨道/登陆、扇区扫描和相关选择执行器。
@@ -92,7 +92,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 - `randomizer/app/income-runtime.js`：弃牌收入、收入资源发放、轮开始公司收益和原教旨主义轮开始收入队列。
 - `randomizer/app/scan-flow.js`：公共牌/手牌扫描、扫描目标、扇区结算、延迟补牌及扫描收尾；扫描 pending 的确认、取消和续跑在该 flow 内完成。
 - `randomizer/app.js`：composition root 与跨 flow 顶层总控。可以维护状态所有权、组合规则模块、调度 continuation 和注入 context，但不应再新增卡牌/收入/扫描/任务触发、外星人/公司/debug、具体渲染、公开 API 或 AI 策略正文。
-- `randomizer/app.js` 在 `SetiHeadlessRuntimeConfig.enabled` 下必须跳过 DOM 收集、事件绑定、浏览器持久化与 shell 初始化；规则 runtime 只能通过注入的 no-op view 接口感知无界面模式。
+- `randomizer/app.js` 在 `SetiSimulationRuntimeConfig.enabled` 下必须跳过 DOM 收集、事件绑定、浏览器持久化与 shell 初始化；规则 runtime 只能通过注入的 no-op view 接口感知无界面模式。
 - `randomizer/app/render-runtime.js`：承接卡牌 hover、玩家/对手面板、手牌/保留牌、数据板、状态读出、火箭/marker、棋盘坐标转换与引用贴图适配；`app.js` 只保留渲染调度和跨 flow 刷新组合。
 
 ## 仍需拆分的高耦合区
@@ -143,7 +143,7 @@ Primary Board 的 `launch`、`move`、`orbit`、`land` 由 `app/primary-board-ac
 
 - composition：controller 按 runtime 的 `REQUIRED_CONTEXT_KEYS` 严格校验并注入 context，缺失依赖不再被静默过滤；深空换牌阈值按既有口径 `10` 补入显式 binding。
 - 测试：10,295 行集成测试拆为 pending、alien、action、strategy 四份 2,500 行以内的领域回归，共享 harness/fixture 独立维护；automation 与 action executor 增加直接模块契约测试。
-- Stage 5 收口边界：controller 22,960 → 1,968 行；后续接线后当前为 1,980 行。稳定 API、headless/public API 调用方式、固定 seed 摘要与 pending 顺序保持不变；历史证据见 `docs/ai-controller-migration-stage5.md`。
+- Stage 5 收口边界：controller 22,960 → 1,968 行；后续接线后当前为 1,980 行。稳定 API、simulation/public API 调用方式、固定 seed 摘要与 pending 顺序保持不变；历史证据见 `docs/ai-controller-migration-stage5.md`。
 
 ## 验证要求
 

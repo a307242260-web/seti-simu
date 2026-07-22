@@ -1772,7 +1772,7 @@
     function openStrategyPassiveSlotChoice(workingRoot, effect, player, slotIds) {
       const { rocketState } = requireWorkingRoot(workingRoot);
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        if (globalThis.SetiHeadlessRuntimeConfig?.enabled) {
+        if (globalThis.SetiSimulationRuntimeConfig?.enabled) {
           workingRoot.match.strategySlotContinuation = {
             effectId: effect.id,
             slotIds: [...slotIds],

@@ -1,9 +1,9 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createHeadlessEnv } = require("./headless-env");
+const { createSimulationEnv } = require("./simulation-env");
 
-const source = createHeadlessEnv();
+const source = createSimulationEnv();
 source.reset({ seed: "seti82-non-zero-checkpoint", activePlayerCount: 4 });
 const action = source.legalActions()[0];
 assert.ok(action, "非零 checkpoint 夹具必须存在 policy action");
@@ -18,7 +18,7 @@ assert.equal(typeof checkpoint.coreState.committedState, "string");
 assert.equal(Object.hasOwn(checkpoint.coreState, "state"), false, "checkpoint 不得长期双写旧 12 切片");
 const committedState = JSON.parse(checkpoint.coreState.committedState);
 const randomState = committedState.meta.rngState;
-assert.equal(randomState.algorithm, "seti-headless-mulberry32-v1");
+assert.equal(randomState.algorithm, "seti-simulation-mulberry32-v1");
 assert.equal(Number.isSafeInteger(randomState.state), true);
 assert.equal(Object.hasOwn(checkpoint, "runtimeState"), false, "RNG 必须由 committed meta 唯一持有");
 assert.deepEqual(Object.keys(committedState.meta.sequences).sort(), [
@@ -27,7 +27,7 @@ assert.deepEqual(Object.keys(committedState.meta.sequences).sort(), [
 ]);
 source.dispose();
 
-const fork = createHeadlessEnv();
+const fork = createSimulationEnv();
 assert.deepEqual(fork.loadCheckpoint(structuredClone(checkpoint)), observation);
 assert.deepEqual(fork.legalActions(), legalActions);
 const restored = fork.createCheckpoint();
@@ -40,7 +40,7 @@ assert.equal(forkNextResult.ok, true, forkNextResult.error);
 const forkContinuationCheckpoint = fork.createCheckpoint();
 fork.dispose();
 
-const sourceContinuation = createHeadlessEnv();
+const sourceContinuation = createSimulationEnv();
 sourceContinuation.loadCheckpoint(structuredClone(checkpoint));
 const sourceNextAction = sourceContinuation.legalActions()[0];
 assert.deepEqual(sourceNextAction, forkNextAction);
@@ -56,7 +56,7 @@ const unknownSequenceCheckpoint = structuredClone(checkpoint);
 const unknownCommittedState = JSON.parse(unknownSequenceCheckpoint.coreState.committedState);
 unknownCommittedState.meta.sequences.unknownClosure = 1;
 unknownSequenceCheckpoint.coreState.committedState = JSON.stringify(unknownCommittedState);
-const unknownSequenceFork = createHeadlessEnv();
+const unknownSequenceFork = createSimulationEnv();
 assert.throws(
   () => unknownSequenceFork.loadCheckpoint(unknownSequenceCheckpoint),
   /唯一序列与 committed meta 不一致/,
@@ -67,11 +67,11 @@ unknownSequenceFork.dispose();
 const invalidCheckpoint = structuredClone(checkpoint);
 delete invalidCheckpoint.replaySteps;
 invalidCheckpoint.coreState = { version: 999, committedState: "{}" };
-const invalidFork = createHeadlessEnv();
+const invalidFork = createSimulationEnv();
 assert.throws(
   () => invalidFork.loadCheckpoint(invalidCheckpoint),
   /checkpoint coreState 反序列化失败：RECOVERY_SNAPSHOT_VERSION_UNSUPPORTED/,
 );
 invalidFork.dispose();
 
-console.log("headless committed-state checkpoint tests passed");
+console.log("simulation committed-state checkpoint tests passed");

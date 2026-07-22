@@ -104,7 +104,7 @@ module.exports = Object.freeze({
       slots: [["1", null, false, [false, false, false]], ["2", null, false, [false, false, false]]],
       revealed: [false, false, false, false, false, false, false, false],
     },
-    authority: [35, "seti-headless-mulberry32-v1", 1542217152, 37],
-    session: [null, "player-green", null, "turn_action", 41, 44, 44],
+    authority: [29, "seti-simulation-mulberry32-v1", 1542217152, 1],
+    session: [null, "player-green", null, "turn_action", 27, 44, 44],
   },
 });

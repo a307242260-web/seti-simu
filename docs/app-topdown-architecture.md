@@ -31,9 +31,9 @@
    - 卡牌/科技/公司：`card-runtime`、`card-trigger-runtime`、`income-runtime`、`tech-runtime`、`industry-runtime`
    - 外星人：`alien-runtime`、`alien-ui`、`aliens/species-runtime`
    - 展示/恢复：`render-runtime`、`final-ui-runtime`、`action-log-runtime`、`game-recovery`
-   - AI/API：`final-score-ai-runtime`、`ai-controller`、`public-api`、`headless-env`
+   - AI/API：`final-score-ai-runtime`、`ai-controller`、`public-api`、`simulation-env`
 3. `app.js` 调用 `SetiAppDependencies.collectDependencies(window)`，创建状态并把显式 context 注入各 runtime。
-4. `bootstrap` 与 `public-api` 完成事件、`window.SetiRandomizer` 和 headless 入口装配。
+4. `bootstrap` 与 `public-api` 完成事件、`window.SetiRandomizer` 和 simulation 入口装配。
 
 `app/dependencies.js` 是必需全局模块的权威表；`dependencies.test.js` 与 `script-loading.test.js` 分别校验全局依赖契约和 HTML 脚本文件存在性。
 
@@ -103,13 +103,13 @@
 - 卡牌/收入/扫描/任务触发分支正文；
 - 外星人物种、科技、公司或 debug 的成片实现；
 - 玩家/卡牌/外星人面板的节点构建；
-- AI 策略公式、公开 API 列表或 headless schema 实现；
+- AI 策略公式、公开 API 列表或 simulation schema 实现；
 - 大段静态常量、固定 DOM 查询或事件绑定。
 
-## 5. Public API 与 headless 边界
+## 5. Public API 与 simulation 边界
 
 - `public-api.js` 组装 `window.SetiRandomizer`，`app.js` 只提供显式 context。
-- `headless-env.js` 提供 headless observation/action/replay 适配；它通过公开 API 和注入回调工作，不读取 `app.js` 局部实现。
+- `simulation-env.js` 提供 simulation observation/action/replay 适配；它通过公开 API 和注入回调工作，不读取 `app.js` 局部实现。
 - `view-adapter.js` 为 Node composition 提供 no-op render/log/hover 接口和空集合，不创建 fake DOM；浏览器 composition 仍使用 `dom.js`、真实 render runtime 与 events。
 - `ai-controller.js` 只装配 `app/ai/**` runtime 与 `game/ai/**` 规则域，通过 state getter/setter 与动作回调访问 app 状态；它按各 runtime 的 `REQUIRED_CONTEXT_KEYS` 校验显式 context，迁移不得复制 pending 状态。
 - 新 runtime 均同时支持 `window.SetiApp*` 和 `module.exports`，便于传统浏览器加载与 Node 回归。

@@ -7,7 +7,7 @@ const {
   IpcError,
 } = require("./worker-protocol");
 
-const WORKER_PATH = path.resolve(__dirname, "headless-worker.js");
+const WORKER_PATH = path.resolve(__dirname, "simulation-worker.js");
 
 class WorkerSlot {
   constructor(id, options = {}) {
@@ -142,7 +142,7 @@ class WorkerSlot {
         actions: [],
         generation: this.generation,
         metadata: {
-          episodeId: config.episodeId || `${this.id}:${config.seed ?? "seti-headless"}`,
+          episodeId: config.episodeId || `${this.id}:${config.seed ?? "seti-simulation"}`,
           policyVersion: config.policyVersion || null,
           opponentIdentity: config.opponentIdentity || null,
           seat: config.seat ?? null,
@@ -160,7 +160,7 @@ class WorkerSlot {
         actions: (checkpoint.replaySteps || []).map((step) => structuredClone(step.action)),
         generation: this.generation,
         metadata: {
-          episodeId: metadata.episodeId || config.episodeId || `${this.id}:${config.seed ?? "seti-headless"}`,
+          episodeId: metadata.episodeId || config.episodeId || `${this.id}:${config.seed ?? "seti-simulation"}`,
           policyVersion: metadata.policyVersion || config.policyVersion || null,
           opponentIdentity: metadata.opponentIdentity || config.opponentIdentity || null,
           seat: metadata.seat ?? config.seat ?? null,
@@ -188,7 +188,7 @@ class WorkerSlot {
   }
 }
 
-class HeadlessWorkerPool {
+class SimulationWorkerPool {
   constructor(options = {}) {
     const size = Math.max(1, Number(options.size || 1));
     this.slots = Array.from({ length: size }, (_, index) => new WorkerSlot(index, options));
@@ -248,6 +248,6 @@ class HeadlessWorkerPool {
 }
 
 module.exports = {
-  HeadlessWorkerPool,
+  SimulationWorkerPool,
   WorkerSlot,
 };

@@ -5,7 +5,7 @@
 - `randomizer/app/ai-controller.js`：原始 22,960 行，Stage 5 收口后 1,968 行，减少 20,992 行；只保留规则/runtime 装配、状态重置、context 注入与稳定 controller API。
 - `runAiNonTurnAutomationStep()`、`runAiAutomationStep()` 位于 `app/ai/automation-runtime.js`；顶层候选选择、执行与失败重试位于 `app/ai/action-executor.js`，控制器中没有同名函数体。
 - Stage 1～4 新增的生产模块均低于 3,000 行；既有 `game/ai/battle-analytics.js` 不属于本轮新增模块，不计入该迁移边界。
-- `public-api.js` 与 `headless-env.js` 继续只调用 controller 的稳定 API，没有依赖 pending runtime 或规则域内部实现。
+- `public-api.js` 与 `simulation-env.js` 继续只调用 controller 的稳定 API，没有依赖 pending runtime 或规则域内部实现。
 
 ## Controller composition
 

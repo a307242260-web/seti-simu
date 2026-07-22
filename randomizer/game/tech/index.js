@@ -49,9 +49,9 @@
     };
   }
 
-  function createState() {
+  function createState(random = Math.random) {
     const board = boardState.createBoardState();
-    boardState.setupBoardBonuses(board);
+    boardState.setupBoardBonuses(board, random);
     return {
       board,
       ui: createUiState(),

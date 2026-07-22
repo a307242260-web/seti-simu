@@ -31,29 +31,29 @@ function createHeuristicPolicyAdapter(options = {}) {
 
   function createHost() {
     return machinePlayerHost.createMachinePlayerHost({
-      requestPrefix: "headless-policy",
+      requestPrefix: "simulation-policy",
       defaultDeadlineMs: options.defaultDeadlineMs,
       adapter: {
         readDecisionInput(seatId) {
           if (!currentInput || currentInput.seatId !== seatId) {
-            return { ok: false, code: "HEADLESS_POLICY_INPUT_MISSING", message: "headless Policy 决策输入缺失" };
+            return { ok: false, code: "SIMULATION_POLICY_INPUT_MISSING", message: "simulation Policy 决策输入缺失" };
           }
           return currentInput;
         },
         validateFresh(input, action) {
           if (currentInput !== input) {
-            return { ok: false, code: "HEADLESS_POLICY_INPUT_STALE", message: "headless Policy 输入已失效" };
+            return { ok: false, code: "SIMULATION_POLICY_INPUT_STALE", message: "simulation Policy 输入已失效" };
           }
           const freshAction = input.legalActions.find((candidate) => candidate.actionId === action.actionId);
           if (!freshAction) {
-            return { ok: false, code: "HEADLESS_POLICY_ACTION_NOT_LEGAL", message: "Policy actionId 已不在当前 legal set" };
+            return { ok: false, code: "SIMULATION_POLICY_ACTION_NOT_LEGAL", message: "Policy actionId 已不在当前 legal set" };
           }
           return { ok: true, action: freshAction };
         },
         submit(action, input, context) {
           const originalAction = input.originalActions.find((candidate) => candidate.actionId === action.actionId);
           if (!originalAction) {
-            return { ok: false, code: "HEADLESS_POLICY_ACTION_MAPPING_FAILED", message: "PolicyDecision 无法映射回 Host legal action" };
+            return { ok: false, code: "SIMULATION_POLICY_ACTION_MAPPING_FAILED", message: "PolicyDecision 无法映射回 Host legal action" };
           }
           if (typeof input.submitAction !== "function") {
             return { ok: true, selectedAction: originalAction };
@@ -135,7 +135,7 @@ function createHeuristicPolicyAdapter(options = {}) {
       legalActions: descriptors,
       deterministicContext: {
         ...deterministicContext,
-        inputSchemaVersion: "seti-headless-policy-input-v1",
+        inputSchemaVersion: "seti-simulation-policy-input-v1",
       },
       originalActions: legalActions,
       submitAction,

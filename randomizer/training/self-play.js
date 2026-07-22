@@ -2,7 +2,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { createHeadlessEnv } = require("../app/headless-env");
+const { createSimulationEnv } = require("../app/simulation-env");
 const { buildEpisodeReport, writeEpisodeReport } = require("./episode-report");
 
 const CHECKPOINT_SCHEMA = "seti-self-play-checkpoint-v1";
@@ -292,7 +292,7 @@ function runSelfPlay(options = {}) {
     illegalActionAttempts: Number(checkpoint?.stats?.illegalActionAttempts || 0),
     totalActionAttempts: Number(checkpoint?.stats?.totalActionAttempts || 0),
   };
-  const envFactory = options.envFactory || createHeadlessEnv;
+  const envFactory = options.envFactory || createSimulationEnv;
   let nextEpisodeIndex = startEpisodeIndex;
   const reportPaths = [];
 

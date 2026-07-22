@@ -6,7 +6,7 @@ const {
   fingerprintFixedBoard,
   projectFixedBoard,
 } = require("./heuristic-policy.fixed-board");
-const { createHeadlessEnv } = require("../app/headless-env");
+const { createSimulationEnv } = require("../app/simulation-env");
 const expectedScoreEvaluator = require("../game/ai/expected-score-evaluator");
 
 const FAMILY_VERBS = Object.freeze({
@@ -112,7 +112,7 @@ function actionText(action) {
 }
 
 function runFixedBoardTurnReport(options = {}) {
-  const env = createHeadlessEnv();
+  const env = createSimulationEnv();
   const maxDecisions = options.maxDecisions || 2000;
   try {
     const initialObservation = env.reset({ ...FIXED_BOARD_CONFIG, ...(options.config || {}) });

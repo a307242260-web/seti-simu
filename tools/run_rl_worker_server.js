@@ -2,7 +2,7 @@
 "use strict";
 
 const readline = require("node:readline");
-const { HeadlessWorkerPool } = require("../randomizer/training/worker-pool");
+const { SimulationWorkerPool } = require("../randomizer/training/worker-pool");
 const {
   IPC_ERROR_CODES,
   IPC_SCHEMA_VERSION,
@@ -31,7 +31,7 @@ function parseArgs(argv) {
 
 async function main() {
   const options = parseArgs(process.argv.slice(2));
-  const pool = new HeadlessWorkerPool({
+  const pool = new SimulationWorkerPool({
     size: options.workers,
     timeoutMs: options.timeoutMs,
     maxPendingPerWorker: 1,

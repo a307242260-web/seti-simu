@@ -2,7 +2,7 @@
 "use strict";
 
 const { performance } = require("node:perf_hooks");
-const { createHeadlessEnv } = require("../randomizer/app/headless-env");
+const { createSimulationEnv } = require("../randomizer/app/simulation-env");
 
 function parseArgs(argv) {
   const options = { games: 3, maxSteps: 200 };
@@ -29,8 +29,8 @@ function main() {
   let decisions = 0;
   const startedAt = performance.now();
   for (let gameIndex = 0; gameIndex < options.games; gameIndex += 1) {
-    const env = createHeadlessEnv();
-    const seed = `headless-benchmark-v2:${gameIndex}`;
+    const env = createSimulationEnv();
+    const seed = `simulation-benchmark-v2:${gameIndex}`;
     let lastAction = null;
     try {
       env.reset({ seed, activePlayerCount: 4 });
@@ -39,14 +39,14 @@ function main() {
         if (!action) throw new Error(`第 ${gameIndex + 1} 局第 ${step} 步没有合法动作`);
         lastAction = action;
         const result = env.step(action);
-        if (!result.ok) throw new Error(result.error || "headless step 失败");
+        if (!result.ok) throw new Error(result.error || "simulation step 失败");
         decisions += 1;
       }
       if (!env.isTerminal()) {
         const cursor = env.createCheckpoint()?.replayCursor?.stepIndex ?? null;
         throw new Error(
           `episode 未在 ${options.maxSteps} 步内终局：${JSON.stringify({
-            episode: `headless-benchmark-${gameIndex}`,
+            episode: `simulation-benchmark-${gameIndex}`,
             seed,
             cursor,
             lastAction,
@@ -59,13 +59,13 @@ function main() {
   }
   const elapsedSeconds = (performance.now() - startedAt) / 1000;
   process.stdout.write(`${JSON.stringify({
-    schemaVersion: "seti-rl-headless-benchmark-v1",
+    schemaVersion: "seti-rl-simulation-benchmark-v1",
     games: options.games,
     maxSteps: options.maxSteps,
     decisions,
     elapsedSeconds: Math.round(elapsedSeconds * 1000) / 1000,
     decisionsPerSecond: Math.round((decisions / elapsedSeconds) * 1000) / 1000,
-    command: `node tools/benchmark_headless_env.js --games ${options.games} --max-steps ${options.maxSteps}`,
+    command: `node tools/benchmark_simulation_env.js --games ${options.games} --max-steps ${options.maxSteps}`,
   }, null, 2)}\n`);
 }
 

@@ -5,7 +5,7 @@ const stateApi = require("../../game/state/state-store");
 const viewApi = require("./view-state-store");
 const servicesApi = require("./browser-services");
 
-const RULE_SCHEMA = "seti-browser-rule-composition-save-v1";
+const RULE_SCHEMA = "seti-rule-composition-save-v1";
 
 function createState(version = 0, gameId = "services") {
   return stateApi.createCommittedGameState({

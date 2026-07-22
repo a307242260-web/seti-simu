@@ -29,7 +29,7 @@
       planetStatsState: modules.planetStats.createPlanetStatsState(),
       nebulaDataState: modules.data.createDefaultNebulaDataState(),
       cardState: modules.cards.createCardState(),
-      techGameState: modules.tech.createState(),
+      techGameState: modules.tech.createState(options.random),
       alienGameState: modules.aliens.createDefaultAlienState(),
       finalScoringState: modules.finalScoring.createFinalScoringState(options.finalScoreIds || []),
     };
@@ -43,7 +43,7 @@
         gameId: context.gameId || "seti-browser-runtime",
         rulesetVersion: context.rulesetVersion || "seti-runtime-v1",
         seed: context.seed ?? "browser-host",
-        rngState: clone(context.rngState || { owner: context.headlessMode ? "headless" : "browser", state: null }),
+        rngState: clone(context.rngState || { owner: context.simulationMode ? "simulation" : "browser", state: null }),
         sequences: clone(context.sequences || {}),
       },
       match: clone(sessionState.match),

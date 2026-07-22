@@ -4,7 +4,7 @@
 
 - **控制器接口**：浏览器内由 `randomizer/app/ai/control-runtime.js` 持有电脑玩家配置、控制快照与自动调度，`randomizer/app/ai/automation-runtime.js` 推进 pending，`randomizer/app/ai/action-executor.js` 选择并执行顶层行动；`randomizer/app/ai-controller.js` 只装配这些 runtime、规则域并转发稳定控制/批跑 API。规则估值层集中在 `randomizer/game/ai/**`。
 - **规则域装配**：资源/交易、卡牌/任务、路线/星球、扫描/数据、科技/行动、终局节奏、选择压力和外星人估值按领域拆在 `randomizer/game/ai/**`，通过显式 context 注入；完整函数清单见 `docs/ai-domain-migration-stage3.md`，这些模块不读取 DOM。
-- **Effect Session 边界**：训练 Policy 只提交 Standard Action/Decision，`headless-effect-session-host` 统一 deterministic drain、working observation 与 confirmed journal；Browser/Headless host 禁止回流旧 pending resolver/recover/skip。旧 pending inventory 与创建入口已删除，不得恢复第二套 resolver 或通用 pending 容器。
+- **Effect Session 边界**：训练 Policy 只提交 Standard Action/Decision，`Rule Composition` 统一 deterministic drain、working observation 与 confirmed journal；Browser/Simulation host 禁止回流旧 pending resolver/recover/skip。旧 pending inventory 与创建入口已删除，不得恢复第二套 resolver 或通用 pending 容器。
 - **公共 Heuristic Policy**：`game/ai/heuristic-policy.js` 是浏览器席位、offline demonstration teacher 与冻结评测对手共用的版本化策略实现；新顶层路径由 `expected-score-evaluator.js` 直接从公共 observation 与 legal descriptors 计算预期终局分，`heuristic-evaluator.js` 只保留合法集排序和旧浏览器兼容入口。浏览器通过 `browser-host/policy-input-adapter.js` 提交同一 Standard Action/Decision，训练与评测通过 `training/heuristic-policy-adapter.js` 使用同一实例与 provenance，不维护训练专用策略分叉。
 - **大脑层**：价值模型、目标系统、回合规划器，以及它们如何把“当前可行动内容的实时成本/收益”和“长线达成目标的动态收益”统一成一条决策链路。
 - **核心规则**：
@@ -75,7 +75,7 @@ GameState 快照
 - 批跑 / A/B / 调参入口走 `configureAiAutoBattle()`、`runAiAutomationStep()`、`runAiAutoBattleBatch()`、`runAiStrategyABTest()`、`runAiStrategyTuningCycle()`；未显式传 `activePlayerCount` 时按 4 人局重置。
 - `runAiStrategyABTest()` 必须透传当前 `aiDifficulty`，`weak_start` 基线使用真实低难度默认权重；A/B 验收同时比较全席均分、每局最低分均值、P25、270+ 席位数、270+ 赢家局数、最高分、完成率、未完成局、阻塞和 bug。赢家均分单独上升、但全席或低尾下降时不得判定为改进；A/B 结束后必须恢复进入测试前的“难度默认权重 / 显式自定义权重”模式。
 - `runAiAutomationStep()` 是唯一推进器，先收口外星人使用、外星人痕迹和半人马就绪机会，再按“初始选择 / 弃牌 / PASS 预留 / 终局标记 / 公共牌选择 / 科技放置 / 扫描 / 打牌 / 移动支付 / 登陆 / 数据放置 / 共用扫描弹窗 / 效果链 / 顶层行动”的顺序推进其余 pending 状态。
-- AI 估值可以继续产生分数、reason、actionGraph 和 planner shadow，但这些字段只用于选择，不进入 Standard Action identity、合法性或执行输入。浏览器 AI 与训练 Policy 都从 `action-runtime` 的 Standard Action adapter 取得完整 descriptor，选中后交回同一 `registry.execute`；旧 action switch、headless 专用 legality 与 runtime bypass 已删除。
+- AI 估值可以继续产生分数、reason、actionGraph 和 planner shadow，但这些字段只用于选择，不进入 Standard Action identity、合法性或执行输入。浏览器 AI 与训练 Policy 都从 `action-runtime` 的 Standard Action adapter 取得完整 descriptor，选中后交回同一 `registry.execute`；旧 action switch、simulation 专用 legality 与 runtime bypass 已删除。
 - 启发式与 Learned Policy 的新公共边界统一为 `game/ai/policy-port.js` 的 `DecisionContext -> PolicyDecision`。context 只含当前席位可见 observation、registry legal descriptors 和版本/确定性上下文；decision 只含一个 `actionId`、policy type/version/model checksum 与有限诊断。Host 独占请求时机、deadline/AbortSignal、恢复失效和最终提交，完整 failure taxonomy 与禁区矩阵见 `docs/policy-port-contract.md`。
 - 公共端口的独立启发式实现位于 `game/ai/heuristic-policy.js`，当前版本为 `seti-heuristic-policy-v2`。实例冻结难度、family 权重和 `seti-theta0-v1` 估值参数及配置 checksum，只从传入 legal descriptors 选择；空集、未知 family 与全禁用配置均 fail-closed，同一 conditional request 则允许共享 runtime 枚举的多个 family 共同参与选择。浏览器席位、teacher demonstration 与冻结 opponent 必须复用该实现和 provenance，不得包装旧 executor/resolver 或建立训练专用 selector；阶段 1 proof matrix 见 `docs/heuristic-policy-stage1.md`。
 - 机器人不再注入或强制使用 AI 专用公司；它与人类从同一开始界面公司池获得 2 张候选并按真实开局估值选择。初始牌组合、`openingPlan` 摘要、目标和 `aiStyle` 都按实际被确认的普通公司重算，避免使用未选择公司牌的资源结构污染后续策略。

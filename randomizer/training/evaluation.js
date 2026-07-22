@@ -2,7 +2,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
-const { createHeadlessEnv } = require("../app/headless-env");
+const { createSimulationEnv } = require("../app/simulation-env");
 const {
   createRandomState,
   readCheckpoint,
@@ -121,7 +121,7 @@ function compareReports(candidate, baseline) {
 function runEvaluation(options = {}) {
   const seedPool = options.seedPool || loadSeedPool(options.seedPoolPath);
   const checkpoint = options.checkpoint || readCheckpoint(options.checkpointPath);
-  const envFactory = options.envFactory || createHeadlessEnv;
+  const envFactory = options.envFactory || createSimulationEnv;
   const maxSteps = Math.max(1, Number(options.maxSteps ?? seedPool.maxSteps ?? checkpoint.config?.maxSteps ?? 100));
   const games = [];
   seedPool.seeds.forEach((seed, index) => {

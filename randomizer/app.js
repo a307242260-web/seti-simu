@@ -49,7 +49,7 @@
     actionInteractionRuntimeModule,
     actionLogRuntimeModule,
     gameRecoveryModule,
-    browserRuleCompositionModule,
+    ruleCompositionModule,
     runtimeModule,
     refreshModule,
     renderRuntimeModule,
@@ -80,13 +80,13 @@
   const stateStoreModule = window.SetiStateStore;
   const hostStateSourceModule = window.SetiHostStateSource;
   const highCouplingStateModule = window.SetiHighCouplingState;
-  if (!stateStoreModule || !hostStateSourceModule || !highCouplingStateModule || !browserRuleCompositionModule) {
+  if (!stateStoreModule || !hostStateSourceModule || !highCouplingStateModule || !ruleCompositionModule) {
     throw new Error("Missing SETI StateStore runtime dependencies");
   }
-  const headlessMode = Boolean(window.SetiHeadlessRuntimeConfig?.enabled);
-  const viewAdapter = headlessMode ? viewAdapterModule.createNoopViewAdapter() : null;
-  const document = headlessMode ? null : window.document;
-  const Image = headlessMode ? null : window.Image;
+  const simulationMode = false;
+  const viewAdapter = simulationMode ? viewAdapterModule.createNoopViewAdapter() : null;
+  const document = simulationMode ? null : window.document;
+  const Image = simulationMode ? null : window.Image;
   const Blob = window.Blob;
   const requestAnimationFrame = viewAdapter?.scheduleFrame || window.requestAnimationFrame.bind(window);
   const getComputedStyle = viewAdapter?.getComputedStyle || window.getComputedStyle.bind(window);
@@ -178,8 +178,8 @@
   let turnEndFlow = null;
   let actionInteractionRuntime = null;
   function runAiFinalScoreMarkDecision(...args) {
-    if (headlessMode) {
-      throw new Error("headless 禁止调用 final-score AI resolver");
+    if (simulationMode) {
+      throw new Error("simulation 禁止调用 final-score AI resolver");
     }
     return finalScoreAiRuntime?.runAiFinalScoreMarkDecision(...args) || null;
   }
@@ -376,7 +376,7 @@
 
   function callBrowserDomainCommand(domain, operation, args = []) {
     try {
-      return browserRuleComposition.inputPort.submitHostCommand({
+      return ruleComposition.inputPort.submitHostCommand({
         kind: "domain_command",
         domain,
         operation,
@@ -392,7 +392,7 @@
   }
 
   function callEffectChoiceCommand(operation, args = []) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "effect_choice_command",
       operation,
       args,
@@ -400,7 +400,7 @@
   }
 
   function callHandFlowCommand(operation, args = []) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "hand_flow_command",
       operation,
       args,
@@ -408,7 +408,7 @@
   }
 
   function callEffectExecutorCommand(operation, args = []) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "effect_executor_command",
       operation,
       args,
@@ -416,7 +416,7 @@
   }
 
   function callDebugCommand(operation, args = []) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "debug_command",
       operation,
       args,
@@ -424,7 +424,7 @@
   }
 
   function setBrowserStatusNote(message) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "ui_set_status_note",
       message: String(message || ""),
     }).value;
@@ -433,17 +433,23 @@
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
     seed: "browser-host",
-    headlessMode,
-    rngState: { owner: headlessMode ? "headless" : "browser", state: null },
+    simulationMode,
+    rngState: { owner: simulationMode ? "simulation" : "browser", state: null },
     sequences: {},
   });
 
   function createBrowserWorkingState(initialOptions = {}) {
-    return initialGameStateModule.createSessionState(browserRuleModules, {
+    const state = initialGameStateModule.createSessionState(browserRuleModules, {
       defaultInitialPlayerColor: initialOptions.defaultInitialPlayerColor ?? players.DEFAULT_PLAYER_COLOR,
       activePlayerCount: initialOptions.activePlayerCount ?? DEFAULT_ACTIVE_PLAYER_COUNT,
       finalScoreIds: initialOptions.finalScoreIds ?? FINAL_SCORE_IDS,
     });
+    state.meta = {
+      seed: initialOptions.seed ?? (simulationMode ? "seti-simulation" : "browser-host"),
+      rngState: structuredClone(initialOptions.rngState
+        || { owner: simulationMode ? "simulation" : "browser", state: null }),
+    };
+    return state;
   }
 
   function validateBrowserSessionBoundary(state) {
@@ -498,7 +504,7 @@
     return target;
   }
 
-  const browserRuleComposition = browserRuleCompositionModule.createBrowserRuleComposition({
+  const ruleComposition = ruleCompositionModule.createRuleComposition({
     invariantValidators: [validateBrowserSessionBoundary],
     stateStoreApi: {
       createStateStore(initialState, options) {
@@ -748,20 +754,20 @@
           )) };
         case "card_execute_move_effect":
           return cloneResidentPresentation(executeCardMoveForEffectForRoot(workingRoot, ...(command.args || [])));
-        case "headless_enumerate_turn_actions":
-          return { ok: true, value: enumerateHeadlessTurnActionsForRoot(workingRoot) };
-        case "headless_enumerate_conditional_actions":
-          return { ok: true, value: enumerateHeadlessConditionalActionsForRoot(workingRoot) };
-        case "headless_execute_conditional_action":
+        case "simulation_enumerate_turn_actions":
+          return { ok: true, value: enumerateSimulationTurnActionsForRoot(workingRoot) };
+        case "simulation_enumerate_conditional_actions":
+          return { ok: true, value: enumerateSimulationConditionalActionsForRoot(workingRoot) };
+        case "simulation_execute_conditional_action":
           return cloneResidentPresentation(
             conditionalActionExecutor.execute(workingRoot, command.action?.standardAction || command.action),
           );
-        case "headless_advance_deterministic":
-          return advanceHeadlessDeterministicStateImpl(workingRoot) || { ok: true, progressed: false };
-        case "headless_execute_current_effect":
-          return executeHeadlessCurrentActionEffectImpl(workingRoot) || { ok: true, progressed: false };
-        case "headless_skip_current_effect":
-          return skipHeadlessCurrentActionEffectImpl(workingRoot);
+        case "simulation_advance_deterministic":
+          return advanceSimulationDeterministicStateImpl(workingRoot) || { ok: true, progressed: false };
+        case "simulation_execute_current_effect":
+          return executeSimulationCurrentActionEffectImpl(workingRoot) || { ok: true, progressed: false };
+        case "simulation_skip_current_effect":
+          return skipSimulationCurrentActionEffectImpl(workingRoot);
         case "domain_command":
           return executeBrowserDomainCommand(workingRoot, command);
         default:
@@ -799,7 +805,7 @@
         actionFamilies: standardActionModule.ALL_FAMILIES,
         continuation: {
           inspect(workingRoot) {
-            const conditional = enumerateHeadlessConditionalActionsForRoot(workingRoot);
+            const conditional = enumerateSimulationConditionalActionsForRoot(workingRoot);
             const candidates = (conditional.candidates || [])
               .filter((candidate) => candidate?.available !== false);
             if (candidates.length) {
@@ -851,7 +857,7 @@
                 candidates,
               };
             }
-            const turnCandidates = enumerateHeadlessTurnActionsForRoot(workingRoot);
+            const turnCandidates = enumerateSimulationTurnActionsForRoot(workingRoot);
             if (turnCandidates.length || workingRoot.turnState.gameEnded) {
               return {
                 ok: true,
@@ -872,7 +878,7 @@
             };
           },
           executeDeterministic(workingRoot, boundary) {
-            const deterministic = advanceHeadlessDeterministicStateImpl(workingRoot);
+            const deterministic = advanceSimulationDeterministicStateImpl(workingRoot);
             if (deterministic?.progressed) {
               return {
                 ...deterministic,
@@ -881,7 +887,7 @@
               };
             }
             if (boundary?.actionEffectActive) {
-              const effectResult = executeHeadlessCurrentActionEffectImpl(workingRoot);
+              const effectResult = executeSimulationCurrentActionEffectImpl(workingRoot);
               return {
                 ...(effectResult || {}),
                 ok: effectResult?.ok !== false,
@@ -895,8 +901,8 @@
             }
             return {
               ok: false,
-              code: "HEADLESS_UNSUPPORTED_PENDING",
-              message: "存在未迁移的 headless pending，Composition 拒绝 resolver/recover/skip fallback",
+              code: "SIMULATION_UNSUPPORTED_PENDING",
+              message: "存在未迁移的 simulation pending，Composition 拒绝 resolver/recover/skip fallback",
             };
           },
           resolveDecision(workingRoot, choice) {
@@ -913,7 +919,7 @@
       };
     },
   });
-  const browserRuleLifecycle = browserRuleComposition.lifecycle;
+  const browserRuleLifecycle = ruleComposition.lifecycle;
   const primaryBoardActionExecutor = primaryBoardActionExecutorModule.createPrimaryBoardActionExecutor({
     actions,
     abilities,
@@ -957,8 +963,8 @@
       ? { kind: request, payload: fallbackOptions || null }
       : { ...(request || {}) };
     const ensureStableRecoverySnapshot = () => {
-      if (headlessMode) return;
-      if (browserRuleComposition.inspect().phase === "idle" && !browserActionStableRecoverySnapshot) {
+      if (simulationMode) return;
+      if (ruleComposition.inspect().phase === "idle" && !browserActionStableRecoverySnapshot) {
         browserActionStableRecoverySnapshot = createGameRecoverySnapshot({
           label: "Standard Action 开始前稳定恢复点",
         });
@@ -968,7 +974,7 @@
       ensureStableRecoverySnapshot();
       return {
         ok: true,
-        candidates: browserRuleComposition.inputPort.enumerateActions(action.payload || {}),
+        candidates: ruleComposition.inputPort.enumerateActions(action.payload || {}),
       };
     }
     if (action.kind === "standard_resolve" || action.kind === "standard_validate") {
@@ -988,12 +994,12 @@
       descriptor = resolved.action;
     }
     if (descriptor) {
-      const opensSession = browserRuleComposition.inspect().phase === "idle";
+      const opensSession = ruleComposition.inspect().phase === "idle";
       if (opensSession) ensureStableRecoverySnapshot();
       const result = descriptor.phase === "quick"
-        ? browserRuleComposition.inputPort.submitQuickAction(descriptor)
-        : browserRuleComposition.inputPort.submitAction(descriptor);
-      if (browserRuleComposition.inspect().phase === "idle") {
+        ? ruleComposition.inputPort.submitQuickAction(descriptor)
+        : ruleComposition.inputPort.submitAction(descriptor);
+      if (ruleComposition.inspect().phase === "idle") {
         browserActionStableRecoverySnapshot = null;
       }
       return result;
@@ -1121,7 +1127,7 @@
     getPendingBanrenmaOpportunity,
     getPendingChongCardGain,
     getPendingAmibaTraceRemoval,
-    getHeadlessConditionalPlayer,
+    getSimulationConditionalPlayer,
     getPlayerById,
     cards,
     players,
@@ -1243,9 +1249,9 @@
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
     seed: workingRoot.meta?.seed ?? "browser-host",
-    headlessMode,
+    simulationMode,
     rngState: structuredClone(workingRoot.meta?.rngState
-      || { owner: headlessMode ? "headless" : "browser", state: null }),
+      || { owner: simulationMode ? "simulation" : "browser", state: null }),
     sequences: {
       card: cards.getNextCardInstanceSequence(),
       handCard: players.getNextHandCardSequence(),
@@ -1562,26 +1568,26 @@
   };
 
   const els = viewAdapter?.els || window.SetiAppDom.collectElements(document);
-  const residentViewStateStore = !headlessMode && browserHostModule?.viewStateStore
+  const residentViewStateStore = !simulationMode && browserHostModule?.viewStateStore
     ? browserHostModule.viewStateStore.createViewStateStore()
     : null;
-  const residentDesktopRenderer = !headlessMode && browserHostModule?.residentRenderer
+  const residentDesktopRenderer = !simulationMode && browserHostModule?.residentRenderer
     ? browserHostModule.residentRenderer.createResidentRenderer({ document, els })
     : null;
-  const residentStateSource = browserRuleComposition.stateSourcePort;
+  const residentStateSource = ruleComposition.stateSourcePort;
   const residentProjectionAdapter = browserHostModule?.projectionAdapter
     ? browserHostModule.projectionAdapter.createBrowserProjectionAdapter({
       stateSource: residentStateSource,
     })
     : null;
-  const residentInputAdapter = !headlessMode && browserHostModule?.inputAdapter && residentViewStateStore
+  const residentInputAdapter = !simulationMode && browserHostModule?.inputAdapter && residentViewStateStore
     ? browserHostModule.inputAdapter.createBrowserInputAdapter({
       dispatchAction(action) {
         return action?.phase === "quick"
-          ? browserRuleComposition.inputPort.submitQuickAction(action)
-          : browserRuleComposition.inputPort.submitAction(action);
+          ? ruleComposition.inputPort.submitQuickAction(action)
+          : ruleComposition.inputPort.submitAction(action);
       },
-      submitDecision: (submission) => browserRuleComposition.inputPort.submitDecision(submission),
+      submitDecision: (submission) => ruleComposition.inputPort.submitDecision(submission),
       viewStateStore: residentViewStateStore,
       refreshProjection: () => residentProjectionAdapter?.projectSource({ viewer: getResidentViewer() }) || null,
     })
@@ -1605,7 +1611,7 @@
     ? browserHostModule.browserServices.createBrowserServices({
       ruleLifecycle: browserRuleLifecycle,
       viewStateStore: residentViewStateStore,
-      storage: headlessMode ? null : gameRecoveryModule.getPersistentGameStorage(window),
+      storage: simulationMode ? null : gameRecoveryModule.getPersistentGameStorage(window),
       storageKey: `${PERSISTENT_GAME_STORAGE_KEY}:browser-services`,
     })
     : null;
@@ -1655,7 +1661,7 @@
   }
 
   function createStateSourceReadoutRoot() {
-    const state = browserRuleComposition.stateSourcePort.read().state;
+    const state = ruleComposition.stateSourcePort.read().state;
     return {
       turnState: structuredClone(state.turn || {}),
       playerState: structuredClone(state.players || { currentPlayerId: null, players: [] }),
@@ -1972,10 +1978,10 @@
     return getEarthSectorCoordinateForRoot(getCoordinateReadRoot());
   }
   function syncPlanetOrbitLandMarkers() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "coordinate_sync_planet_markers" });
+    return ruleComposition.inputPort.submitHostCommand({ kind: "coordinate_sync_planet_markers" });
   }
   function seedDefaultReferenceRockets() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "coordinate_seed_reference_rockets" });
+    return ruleComposition.inputPort.submitHostCommand({ kind: "coordinate_seed_reference_rockets" });
   }
   const actionLogViewRuntime = viewAdapter?.actionLogViewRuntime
     || actionLogRuntimeModule.createActionLogViewRuntime({
@@ -2116,7 +2122,7 @@
     renderRotateStateToken,
   } = renderRuntime;
   const finalUiRuntime = finalUiRuntimeModule.createFinalUiRuntime({
-    headless: headlessMode,
+    simulation: simulationMode,
     document,
     els,
     players,
@@ -2164,13 +2170,13 @@
   } = finalUiRuntime;
   function syncFinalScorePendingMarks(workingRoot = null) {
     if (workingRoot) return syncFinalScorePendingMarksForRoot(workingRoot);
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "score_sync_pending_marks",
     });
   }
   function handleFinalScoreTileClick(tileId, workingRoot = null) {
     if (workingRoot) return handleFinalScoreTileClickForRoot(workingRoot, tileId);
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "score_mark_tile",
       tileId,
     });
@@ -2251,7 +2257,7 @@
     getTurnState: () => createStateSourceReadoutRoot().turnState,
     HISTORY_SOURCE_MAIN,
     solar,
-    getSolarState: () => browserRuleComposition.stateSourcePort.read().state.solarSystem,
+    getSolarState: () => ruleComposition.stateSourcePort.read().state.solarSystem,
     data,
     aomomo,
     getAomomoCurrentX,
@@ -2622,8 +2628,8 @@
   handleHandCardMovePayment = (...args) => callHandFlowCommand("handleHandCardMovePayment", args);
   resolveMovePaymentDecision = (...args) => callHandFlowCommand("resolveMovePaymentDecision", args);
   confirmMovePayment = () => {
-    const decision = browserRuleComposition.inspect().session?.decision || null;
-    if (!decision || browserRuleComposition.inspect().phase !== "awaiting_input") {
+    const decision = ruleComposition.inspect().session?.decision || null;
+    if (!decision || ruleComposition.inspect().phase !== "awaiting_input") {
       return { ok: false, code: "MOVE_PAYMENT_DECISION_REQUIRED", message: "当前没有等待支付的 DecisionEffect" };
     }
     const selected = [...(uiRuntimeState.movePaymentSelectedHandIndices || [])]
@@ -2639,7 +2645,7 @@
     if (!choice) {
       return { ok: false, code: "MOVE_PAYMENT_CHOICE_NOT_LEGAL", message: "当前手牌支付组合不在 DecisionEffect 合法选项中" };
     }
-    return browserRuleComposition.inputPort.submitDecision({
+    return ruleComposition.inputPort.submitDecision({
       decisionId: decision.decisionId,
       decisionVersion: decision.decisionVersion,
       choice,
@@ -2881,7 +2887,7 @@
   buildSectorScanChoicesForX = (...args) => callBrowserDomainCommand("scan_flow", "buildSectorScanChoicesForX", args);
   expandScanChoicesWithAomomoTargets = (...args) => callBrowserDomainCommand("scan_flow", "expandScanChoicesWithAomomoTargets", args);
   confirmScanTarget = (nebulaId, sectorX) => {
-    const choiceTarget = (browserRuleComposition.inspect().session?.decision?.choices || [])
+    const choiceTarget = (ruleComposition.inspect().session?.decision?.choices || [])
       .map((choice) => choice?.target || choice?.standardAction?.target || null)
       .find((target) => (
         ["scan-target", "sector-scan-target"].includes(target?.kind)
@@ -2986,7 +2992,7 @@
 
   const alienUiHelpers = alienUiModule.createAlienUiHelpers({
     uiRuntimeState,
-    headless: headlessMode,
+    simulation: simulationMode,
     document,
     structuredClone,
     alienTraceRewardFlow,
@@ -3491,8 +3497,8 @@
     quickTurnActionExecutor,
     conditionalActionExecutor,
     actions,
-    removeRocketElement: headlessMode ? () => {} : removeRocketElement,
-    syncPlanetOrbitLandMarkersAfterAction: headlessMode ? () => {} : syncPlanetOrbitLandMarkers,
+    removeRocketElement: simulationMode ? () => {} : removeRocketElement,
+    syncPlanetOrbitLandMarkersAfterAction: simulationMode ? () => {} : syncPlanetOrbitLandMarkers,
     startPlanetRewardEffectFlow,
     startLaunchSectorFinishEffectFlow: (...args) => startLaunchSectorFinishEffectFlow?.(...args),
     settleCardTasksAfterEffect: (...args) => settleCardTasksAfterEffect(...args),
@@ -3785,7 +3791,7 @@
   }
 
   function setTurnStatePlayerOrder(playerIds, options = {}) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "turn_set_player_order",
       playerIds,
       options,
@@ -3793,11 +3799,11 @@
   }
 
   function randomizePlayerTurnOrder() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "turn_randomize_player_order" });
+    return ruleComposition.inputPort.submitHostCommand({ kind: "turn_randomize_player_order" });
   }
 
   function beginNextRound() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "turn_begin_next_round" });
+    return ruleComposition.inputPort.submitHostCommand({ kind: "turn_begin_next_round" });
   }
 
   function getDisplayedTurnNumber(rawTurnNumber = null) {
@@ -3817,7 +3823,7 @@
       return turnFlowController.advanceTurnAfterPlayerAction(workingRoot, playerId, operationOptions);
     }
     const operationOptions = { ...options };
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "turn_advance_after_action",
       playerId,
       options: operationOptions,
@@ -3833,16 +3839,18 @@
       activePlayerCount,
       defaultInitialPlayerColor: DEFAULT_INITIAL_PLAYER_COLOR,
       finalScoreIds: FINAL_SCORE_IDS,
+      seed: options.seed,
+      rngState: options.rngState,
     });
     if (!resetResult.ok) return resetResult;
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "turn_start_new_game",
       options: { ...options, activePlayerCount, compositionStatePrepared: true },
     });
   }
 
   function randomizeAll() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "turn_randomize_all" });
+    return ruleComposition.inputPort.submitHostCommand({ kind: "turn_randomize_all" });
   }
 
   function normalizeAiDifficulty(value) {
@@ -3910,7 +3918,7 @@
   }
 
   function startInitialSelection() {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "setup_start_initial_selection",
     });
   }
@@ -3986,7 +3994,7 @@
   }
 
   function handleInitialSelectionCardClick(kind, cardId) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "setup_select_initial_card",
       selectionKind: kind,
       cardId,
@@ -4024,7 +4032,7 @@
   }
 
   function confirmInitialSelectionForCurrentPlayer() {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "setup_confirm_initial_selection",
     });
   }
@@ -4361,13 +4369,13 @@
   };
 
   function runAiStepThroughComposition(commandKind, args = []) {
-    let inspection = browserRuleComposition.inspect();
+    let inspection = ruleComposition.inspect();
     if (inspection.phase === "idle") {
       const readoutRoot = createStateSourceReadoutRoot();
       if (isActionEffectFlowActive(readoutRoot)) {
-        const drained = browserRuleComposition.inputPort.beginDrain();
+        const drained = ruleComposition.inputPort.beginDrain();
         if (!drained?.ok) return drained;
-        inspection = browserRuleComposition.inspect();
+        inspection = ruleComposition.inspect();
       }
     }
     const decision = inspection.session?.decision || null;
@@ -4377,7 +4385,7 @@
         || decision.decisionKind
         || null;
       const actorId = decision.ownerId || null;
-      const stateSourceSnapshot = browserRuleComposition.stateSourcePort.read();
+      const stateSourceSnapshot = ruleComposition.stateSourcePort.read();
       const policyResult = ai?.heuristicPolicy?.decideChoice?.({
         seatId: actorId,
         family,
@@ -4411,13 +4419,13 @@
       if (!choice) {
         return { ok: false, code: "AI_SESSION_CHOICE_MISSING", message: "Policy 选择未映射到 activeSession choice" };
       }
-      return browserRuleComposition.inputPort.submitDecision({
+      return ruleComposition.inputPort.submitDecision({
         decisionId: decision.decisionId,
         decisionVersion: decision.decisionVersion,
         choice,
       });
     }
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: commandKind, args });
+    return ruleComposition.inputPort.submitHostCommand({ kind: commandKind, args });
   }
 
   const aiController = window.SetiAppAiController.createAiController({
@@ -4453,7 +4461,7 @@
     aiRaceModel,
     ai,
     aiControlRuntimeModule,
-    setPlayerAiDifficulty: (playerId, difficulty, label) => browserRuleComposition.inputPort.submitHostCommand({
+    setPlayerAiDifficulty: (playerId, difficulty, label) => ruleComposition.inputPort.submitHostCommand({
       kind: "ai_set_player_difficulty",
       playerId,
       difficulty,
@@ -4462,7 +4470,7 @@
     runAiAutomationStepThroughComposition: (...args) => runAiStepThroughComposition("ai_run_automation_step", args),
     recoverAiIdleActionEffectThroughComposition: (...args) => runAiStepThroughComposition("ai_recover_idle_action_effect", args),
     getRuleProjection: () => {
-      const state = browserRuleComposition.stateSourcePort.read().state;
+      const state = ruleComposition.stateSourcePort.read().state;
       return {
         players: structuredClone(state.players),
         turn: structuredClone(state.turn),
@@ -4684,7 +4692,7 @@
     getAiAutoBattleReport,
     buildAiTurnActionCandidates: buildAiTurnActionCandidatesForRoot,
     chooseInitialSelectionForAiPlayer: chooseInitialSelectionForAiPlayerForRoot,
-    enumerateHeadlessTurnActions: enumerateHeadlessTurnActionsForRoot,
+    enumerateSimulationTurnActions: enumerateSimulationTurnActionsForRoot,
     executeAiTurnAction: executeAiTurnActionForRoot,
     getAiMapDemand,
     getAiRemainingRoundWeight,
@@ -4714,48 +4722,48 @@
     stopAiAutoBattle,
     sumAiDemandMap,
   } = aiController;
-  const buildAiTurnActionCandidates = (...args) => browserRuleComposition.inputPort.submitHostCommand({
+  const buildAiTurnActionCandidates = (...args) => ruleComposition.inputPort.submitHostCommand({
     kind: "ai_build_turn_candidates",
     args,
   });
-  const chooseInitialSelectionForAiPlayer = () => browserRuleComposition.inputPort.submitHostCommand({
+  const chooseInitialSelectionForAiPlayer = () => ruleComposition.inputPort.submitHostCommand({
     kind: "ai_choose_initial_selection",
   });
-  const enumerateHeadlessTurnActions = () => browserRuleComposition.inputPort.submitHostCommand(
-    { kind: "headless_enumerate_turn_actions" },
+  const enumerateSimulationTurnActions = () => ruleComposition.inputPort.submitHostCommand(
+    { kind: "simulation_enumerate_turn_actions" },
     { commit: false },
   ).value || [];
-  const executeAiTurnAction = (action) => browserRuleComposition.inputPort.submitHostCommand({
+  const executeAiTurnAction = (action) => ruleComposition.inputPort.submitHostCommand({
     kind: "ai_execute_turn_action",
     action,
   });
-  const submitHeadlessTurnAction = (action) => {
+  const submitSimulationTurnAction = (action) => {
     const descriptor = action?.standardAction || action;
     if (!descriptor?.actionId) {
-      return { ok: false, code: "STANDARD_ACTION_DESCRIPTOR_REQUIRED", message: "headless 行动缺少 Standard Action descriptor" };
+      return { ok: false, code: "STANDARD_ACTION_DESCRIPTOR_REQUIRED", message: "simulation 行动缺少 Standard Action descriptor" };
     }
-    return browserRuleComposition.inputPort.submitAction(descriptor, {
-      metadata: { source: "headless-env" },
+    return ruleComposition.inputPort.submitAction(descriptor, {
+      metadata: { source: "simulation-env" },
     });
   };
-  const beginHeadlessCompositionDrain = () => browserRuleComposition.inputPort.beginDrain({
-    metadata: { source: "headless-env-reset" },
+  const beginSimulationCompositionDrain = () => ruleComposition.inputPort.beginDrain({
+    metadata: { source: "simulation-env-reset" },
   });
-  const inspectHeadlessComposition = () => browserRuleComposition.inspect();
+  const inspectSimulationComposition = () => ruleComposition.inspect();
   const listCardTriggerFreeMoveCandidates = (...args) => (
-    browserRuleComposition.inputPort.submitHostCommand({
+    ruleComposition.inputPort.submitHostCommand({
       kind: "card_trigger_list_free_move_candidates",
       args,
     }, { commit: false }).value || []
   );
-  const resolveAiAutomationToTurnBoundary = (options = {}) => browserRuleComposition.inputPort.submitHostCommand({
+  const resolveAiAutomationToTurnBoundary = (options = {}) => ruleComposition.inputPort.submitHostCommand({
     kind: "ai_resolve_to_turn_boundary",
     options,
   });
-  const runAiAutomationStep = () => browserRuleComposition.inputPort.submitHostCommand({ kind: "ai_run_automation_step" });
-  const runAiActionEffectStep = () => browserRuleComposition.inputPort.submitHostCommand({ kind: "ai_run_action_effect_step" });
-  const runAiNonTurnAutomationStep = () => browserRuleComposition.inputPort.submitHostCommand({ kind: "ai_run_non_turn_step" });
-  const runAiSelectedTurnAction = (selector = {}, options = {}) => browserRuleComposition.inputPort.submitHostCommand({
+  const runAiAutomationStep = () => ruleComposition.inputPort.submitHostCommand({ kind: "ai_run_automation_step" });
+  const runAiActionEffectStep = () => ruleComposition.inputPort.submitHostCommand({ kind: "ai_run_action_effect_step" });
+  const runAiNonTurnAutomationStep = () => ruleComposition.inputPort.submitHostCommand({ kind: "ai_run_non_turn_step" });
+  const runAiSelectedTurnAction = (selector = {}, options = {}) => ruleComposition.inputPort.submitHostCommand({
     kind: "ai_run_selected_turn_action",
     selector,
     options,
@@ -4990,7 +4998,7 @@
   confirmPassReserveSelection = () => {
     const selectedCardId = uiRuntimeState.passReserveSelectedCardId || null;
     if (!selectedCardId) return { ok: false, message: "请先选择 PASS 预留牌" };
-    const inspection = browserRuleComposition.inspect();
+    const inspection = ruleComposition.inspect();
     const decision = inspection.session?.decision || null;
     const choice = (decision?.choices || []).find((candidate) => {
       const target = candidate?.target || candidate?.standardAction?.target || null;
@@ -4999,7 +5007,7 @@
     if (inspection.phase !== "awaiting_input" || !decision || !choice) {
       return { ok: false, code: "PASS_RESERVE_DECISION_REQUIRED", message: "当前 PASS 选择不在 active Decision 合法项中" };
     }
-    return browserRuleComposition.inputPort.submitDecision({
+    return ruleComposition.inputPort.submitDecision({
       decisionId: decision.decisionId,
       decisionVersion: decision.decisionVersion,
       choice,
@@ -5229,7 +5237,7 @@
   const openCardTaskCompletionPickerForRoot = openCardTaskCompletionPicker;
   openCardTaskCompletionPicker = bindBrowserDomainCommand("card_trigger", "openCardTaskCompletionPicker");
   function submitActiveCardDecision(kind, matches) {
-    const inspection = browserRuleComposition.inspect();
+    const inspection = ruleComposition.inspect();
     const decision = inspection.session?.decision || null;
     const choice = (decision?.choices || []).find((candidate) => {
       const target = candidate?.target || candidate?.standardAction?.target || null;
@@ -5238,7 +5246,7 @@
     if (inspection.phase !== "awaiting_input" || !decision || !choice) {
       return { ok: false, code: "CARD_DECISION_REQUIRED", message: "当前输入不在 active Decision 合法项中" };
     }
-    return browserRuleComposition.inputPort.submitDecision({
+    return ruleComposition.inputPort.submitDecision({
       decisionId: decision.decisionId,
       decisionVersion: decision.decisionVersion,
       choice,
@@ -5422,7 +5430,7 @@
       browserServices: residentBrowserServices,
       ruleLifecycleOptions: {
         seed: meta.seed ?? "browser-host",
-        rngState: meta.rngState || { owner: headlessMode ? "headless" : "browser", state: null },
+        rngState: meta.rngState || { owner: simulationMode ? "simulation" : "browser", state: null },
       },
       roundNumber: readoutRoot.turnState.roundNumber,
       turnNumber: readoutRoot.turnState.turnNumber,
@@ -5437,7 +5445,7 @@
   }
 
   function attachRecoverySnapshotToActionLogEntry(entry, label = null) {
-    if (headlessMode) return null;
+    if (simulationMode) return null;
     if (!entry) return null;
     const recoveryLabel = label || entry.actionLabel || entry.title || null;
     if (browserActionStableRecoverySnapshot) {
@@ -5454,7 +5462,7 @@
   }
 
   function refreshLatestActionLogRecoverySnapshot(label = null) {
-    if (headlessMode) return null;
+    if (simulationMode) return null;
     const entry = actionLogState.entries[actionLogState.entries.length - 1] || null;
     if (!entry) return null;
     attachRecoverySnapshotToActionLogEntry(entry, label);
@@ -5481,7 +5489,7 @@
   }
 
   function getPersistentGameStorage() {
-    if (headlessMode) return null;
+    if (simulationMode) return null;
     return gameRecoveryModule.getPersistentGameStorage(window);
   }
 
@@ -5545,7 +5553,7 @@
   }
 
   function schedulePersistentGameStateSave(options = {}) {
-    if (headlessMode) return;
+    if (simulationMode) return;
     if (persistentGameSaveSuspended) return;
     if (persistentGameSaveTimer) {
       window.clearTimeout(persistentGameSaveTimer);
@@ -5684,7 +5692,7 @@
 
   function clearTransientStateForRecovery(workingRoot = null) {
     if (!workingRoot) {
-      return browserRuleComposition.inputPort.submitHostCommand({ kind: "recovery_clear_transient" });
+      return ruleComposition.inputPort.submitHostCommand({ kind: "recovery_clear_transient" });
     }
     const { cardState: workingCardState, techGameState: workingTechGameState } = workingRoot;
     delete workingRoot.match.discardContinuation;
@@ -5788,7 +5796,7 @@
 
   function refreshAfterGameRecovery(message = "已从行动日志恢复局面", workingRoot = null) {
     if (!workingRoot) {
-      return browserRuleComposition.inputPort.submitHostCommand({
+      return ruleComposition.inputPort.submitHostCommand({
         kind: "recovery_refresh",
         message,
       });
@@ -5959,7 +5967,7 @@
   }
 
   function buildFinalScoreSummaryLines() {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "score_build_final_summary",
     }, { commit: false }).value || [];
   }
@@ -6269,7 +6277,7 @@
   }
 
   function getRequiredMovePointsForUi(...args) {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "ui_get_required_move_points", args }, { commit: false }).value;
+    return ruleComposition.inputPort.submitHostCommand({ kind: "ui_get_required_move_points", args }, { commit: false }).value;
   }
 
   function canPayForMove(player, requiredMovePoints = MOVE_ENERGY_COST) {
@@ -6508,7 +6516,7 @@
   }
 
   function handlePublicCornerDiscardCardClick(slotIndex) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "card_toggle_public_corner_discard",
       slotIndex,
     }).value;
@@ -6563,7 +6571,7 @@
   }
 
   function confirmPublicCornerDiscardSelection() {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "card_confirm_public_corner_discard",
     }).value;
   }
@@ -6618,7 +6626,7 @@
   }
 
   function blockIncompatiblePendingQuickAction(actionType) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "quick_action_check_pending",
       actionType,
     }).value;
@@ -7282,7 +7290,7 @@
   }
 
   function cancelActivePendingSubFlows() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_pending_subflows" }).value;
+    return ruleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_pending_subflows" }).value;
   }
 
   function getActionEffectIconSrc(iconId) {
@@ -7364,7 +7372,7 @@
   }
 
   function getRocketCurrentPlanetId(rocketId) {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "rocket_current_planet", rocketId }, { commit: false }).value;
+    return ruleComposition.inputPort.submitHostCommand({ kind: "rocket_current_planet", rocketId }, { commit: false }).value;
   }
 
   function listReadyChongTransportCandidatesForRoot(workingRoot, player, task) {
@@ -7386,7 +7394,7 @@
   }
 
   function listReadyChongTransportCandidates(player, task) {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "chong_ready_transports", player, task }, { commit: false }).value || [];
+    return ruleComposition.inputPort.submitHostCommand({ kind: "chong_ready_transports", player, task }, { commit: false }).value || [];
   }
 
   function buildSectorScanChoicesForXs(sectorXs) {
@@ -7524,7 +7532,7 @@
   }
 
   function cancelActiveEffectSubFlows() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_subflows" });
+    return ruleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_subflows" });
   }
 
   function cleanupSkippedActionEffect(effect) {
@@ -7567,12 +7575,12 @@
   }
 
   function skipCurrentActionEffect() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_skip_current" }).value;
+    return ruleComposition.inputPort.submitHostCommand({ kind: "effect_skip_current" }).value;
   }
 
-  function skipHeadlessCurrentActionEffectImpl(workingRoot) {
+  function skipSimulationCurrentActionEffectImpl(workingRoot) {
     const current = getCurrentActionEffect(workingRoot);
-    if (!headlessMode || !current || current.status !== "active") {
+    if (!simulationMode || !current || current.status !== "active") {
       return { ok: false, message: "没有可跳过的活动效果" };
     }
     if (finishCurrentCardMoveEffectEarly()) {
@@ -7586,8 +7594,8 @@
     return { ok: true, progressed: true, skipped: true, message: `已跳过：${current.label}` };
   }
 
-  function skipHeadlessCurrentActionEffect() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "headless_skip_current_effect" });
+  function skipSimulationCurrentActionEffect() {
+    return ruleComposition.inputPort.submitHostCommand({ kind: "simulation_skip_current_effect" });
   }
 
   function skipActionEffectWithMessage(workingRoot, effect, message, payload = {}) {
@@ -7615,7 +7623,7 @@
   }
 
   function renderActionEffectBar() {
-    if (headlessMode) return;
+    if (simulationMode) return;
     if (!els.actionEffectBar || !els.actionEffectList) return;
 
     if (!getActionEffectFlow()) {
@@ -7792,7 +7800,7 @@
   }
 
   function resolveCompletedSectorSettlements(actionType, options = {}) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "scan_settle_completed_sectors",
       actionType,
       options,
@@ -7948,7 +7956,7 @@
   }
 
   function finishActionEffectFlow() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_finish_flow" }).value;
+    return ruleComposition.inputPort.submitHostCommand({ kind: "effect_finish_flow" }).value;
   }
 
   function maybeCompleteActionEffectFromScan(workingRoot, result) {
@@ -7966,7 +7974,7 @@
 
   function openScanAction4Picker() {
     if (!els.scanAction4Overlay || !els.scanAction4Actions) {
-      if (headlessMode) return handleScanAction4Choice("skip");
+      if (simulationMode) return handleScanAction4Choice("skip");
       return { ok: false, message: "无法打开发射/移动选择" };
     }
 
@@ -8085,7 +8093,7 @@
   }
 
   function beginScanAction4FreeMove() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_begin_scan_free_move" }).value;
+    return ruleComposition.inputPort.submitHostCommand({ kind: "effect_begin_scan_free_move" }).value;
   }
 
   function executeFreeMoveForScanAction4ForRoot(workingRoot, deltaX, deltaY, rocketId, payment = {}) {
@@ -8173,8 +8181,8 @@
         ? `${effect.label}：没有可移动的另一枚火箭，可点击跳过`
         : `${effect.label || "移动"}：没有可移动的飞船，已跳过`;
       deactivateMoveMode();
-      if (!isIndustryHuanyuMoveEffect(effect) || headlessMode) {
-        return skipActionEffectWithMessage(effect, headlessMode
+      if (!isIndustryHuanyuMoveEffect(effect) || simulationMode) {
+        return skipActionEffectWithMessage(effect, simulationMode
           ? `${effect.label || "移动"}：没有可移动的飞船，已跳过`
           : message, {
           reason: "没有可移动的飞船",
@@ -8211,7 +8219,7 @@
   }
 
   function beginCardMoveEffect(effect) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "effect_begin_card_move",
       effect,
     }).value;
@@ -8711,7 +8719,7 @@
   }
 
   function handleActionEffectButtonClick(effectIndex) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "effect_bar_click",
       effectIndex,
     }).value;
@@ -8726,7 +8734,7 @@
   }
 
   function resize() {
-    if (headlessMode) return;
+    if (simulationMode) return;
     const h = window.innerHeight;
     const boardWidth = els.boardShell.clientWidth || window.innerWidth;
     const boardHeight = h - 160;
@@ -9969,7 +9977,7 @@
   const handleCompanyActionMarkerClick = bindBrowserDomainCommand("industry_runtime", "handleCompanyActionMarkerClick");
 
   const techRuntime = techRuntimeModule.createTechRuntime({
-      headless: headlessMode,
+      simulation: simulationMode,
       Array: typeof Array === "undefined" ? undefined : Array,
       Boolean: typeof Boolean === "undefined" ? undefined : Boolean,
       HISTORY_SOURCE_MAIN: typeof HISTORY_SOURCE_MAIN === "undefined" ? undefined : HISTORY_SOURCE_MAIN,
@@ -10246,7 +10254,7 @@
   }
 
   function placeDataToBlueSlot(blueSlot) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "data_place_blue_slot",
       blueSlot,
     }).value;
@@ -10408,7 +10416,7 @@
   }
 
   function removeRocketElement(rocketId) {
-    if (headlessMode || !document) return;
+    if (simulationMode || !document) return;
     const element = document.getElementById(`rocket-${rocketId}`);
     if (element) element.remove();
     const chongOwnerToken = chongFossilOwnerTokenElements.get(String(rocketId));
@@ -10505,7 +10513,7 @@
   }
 
   function recoverPendingActionFromOpenHistoryForAi() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "action_recover_pending" }).value;
+    return ruleComposition.inputPort.submitHostCommand({ kind: "action_recover_pending" }).value;
   }
 
   function isMainActionOpeningStep(step) {
@@ -10826,7 +10834,7 @@
   }
 
   function undoPendingAction() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "history_undo_pending" }).value;
+    return ruleComposition.inputPort.submitHostCommand({ kind: "history_undo_pending" }).value;
   }
 
 
@@ -10878,7 +10886,7 @@
   }
 
   function updateActionButtons() {
-    if (headlessMode) return;
+    if (simulationMode) return;
     syncFinalResultButton();
     const readoutRoot = createStateSourceReadoutRoot();
     const context = createActionContextForWorkingRoot(readoutRoot);
@@ -11011,12 +11019,12 @@
   }
 
   function isQuickPanelOpen() {
-    if (headlessMode) return false;
+    if (simulationMode) return false;
     return !els.quickActionsPanel.hidden;
   }
 
   function setQuickPanelOpen(open) {
-    if (headlessMode) return;
+    if (simulationMode) return;
     if (open && getGameplayLockReason()) return;
     if (open) cancelHandCardContextActions({ silent: true });
     els.quickActionsPanel.hidden = !open;
@@ -11069,7 +11077,7 @@
   }
 
   actionInteractionRuntime = actionInteractionRuntimeModule.createActionInteractionRuntime({
-    headless: headlessMode,
+    simulation: simulationMode,
     HISTORY_SOURCE_MAIN,
     SCORE_SOURCE_KEYS,
     abilities,
@@ -11126,7 +11134,7 @@
   });
 
   function updateQuickPanel() {
-    if (headlessMode) return;
+    if (simulationMode) return;
     if (!isQuickPanelOpen()) return;
     updateQuickTradeButtons();
   }
@@ -11173,7 +11181,7 @@
   }
 
   function runPlaceDataToComputer() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "data_open_computer_picker" }).value;
+    return ruleComposition.inputPort.submitHostCommand({ kind: "data_open_computer_picker" }).value;
   }
 
   function analyzeDataForCurrentPlayer() {
@@ -11363,7 +11371,7 @@
 
   function cancelLandTargetPicker(workingRoot = null) {
     if (!workingRoot) {
-      return browserRuleComposition.inputPort.submitHostCommand({ kind: "land_target_cancel" }).value;
+      return ruleComposition.inputPort.submitHostCommand({ kind: "land_target_cancel" }).value;
     }
     const pending = getPendingLandTargetDecision(workingRoot);
     closeLandTargetPicker(workingRoot);
@@ -11411,7 +11419,7 @@
   }
 
   function requestLandTargetPicker(options) {
-    return browserRuleComposition.inputPort.submitHostCommand({
+    return ruleComposition.inputPort.submitHostCommand({
       kind: "land_target_open",
       options: structuredClone(options),
     }).value;
@@ -11476,14 +11484,14 @@
     );
   }
 
-  function getHeadlessConditionalPlayer(workingRoot, pending) {
+  function getSimulationConditionalPlayer(workingRoot, pending) {
     return resolvePlayerReference(workingRoot, {
       playerId: pending?.playerId || pending?.targetPlayerId || null,
       playerColor: pending?.playerColor || pending?.targetPlayerColor || null,
     }) || getEffectOwnerPlayer(workingRoot, pending?.effect) || getCurrentPlayer(workingRoot);
   }
 
-  function getHeadlessDecisionOwnerState(enumeratedActor = null) {
+  function getSimulationDecisionOwnerState(enumeratedActor = null) {
     const readoutRoot = createStateSourceReadoutRoot();
     const currentPlayer = players.getCurrentPlayer(readoutRoot.playerState);
     const finalScorePlayer = enumeratedActor || currentPlayer;
@@ -11552,7 +11560,7 @@
     };
   }
 
-  function enumerateHeadlessConditionalActionsForRoot(workingRoot) {
+  function enumerateSimulationConditionalActionsForRoot(workingRoot) {
     syncFinalScorePendingMarks(workingRoot);
     const decision = conditionalActionExecutor.inspect(workingRoot);
     const actorPlayer = decision?.ownerId
@@ -11579,8 +11587,8 @@
     return { actorPlayer, candidates };
   }
 
-  function enumerateHeadlessConditionalActions() {
-    const inspection = browserRuleComposition.inspect();
+  function enumerateSimulationConditionalActions() {
+    const inspection = ruleComposition.inspect();
     if (inspection.phase === "awaiting_input" && inspection.session?.decision) {
       const decision = inspection.session.decision;
       return {
@@ -11588,12 +11596,12 @@
         candidates: structuredClone(decision.choices || []),
       };
     }
-    return browserRuleComposition.inputPort.submitHostCommand({
-      kind: "headless_enumerate_conditional_actions",
+    return ruleComposition.inputPort.submitHostCommand({
+      kind: "simulation_enumerate_conditional_actions",
     }).value || { actorPlayer: null, candidates: [] };
   }
 
-  function executeHeadlessConditionalAction(action) {
+  function executeSimulationConditionalAction(action) {
     const standardAction = action?.standardAction || null;
     if (!standardAction || standardAction.family !== action?.family) {
       return {
@@ -11602,7 +11610,7 @@
         message: "条件动作缺少匹配的 Standard Action descriptor",
       };
     }
-    const inspection = browserRuleComposition.inspect();
+    const inspection = ruleComposition.inspect();
     const decision = inspection.session?.decision || null;
     if (inspection.phase !== "awaiting_input" || !decision) {
       return { ok: false, code: "RULE_COMPOSITION_SESSION_REQUIRED", message: "当前 Composition 没有等待输入的 Decision" };
@@ -11613,14 +11621,14 @@
     if (!choice) {
       return { ok: false, code: "EFFECT_DECISION_NOT_LEGAL", message: "条件动作不在 Composition Decision choices 中" };
     }
-    return browserRuleComposition.inputPort.submitDecision({
+    return ruleComposition.inputPort.submitDecision({
       decisionId: decision.decisionId,
       decisionVersion: decision.decisionVersion,
       choice,
     });
   }
 
-  function advanceHeadlessDeterministicStateImpl(workingRoot) {
+  function advanceSimulationDeterministicStateImpl(workingRoot) {
     const industryPending = getPendingIndustryAbilityDecision(workingRoot);
     if (industryPending && !getPendingCardSelectionDecision(workingRoot)) {
       const player = getCurrentPlayer();
@@ -11668,11 +11676,11 @@
     return null;
   }
 
-  function advanceHeadlessDeterministicState() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "headless_advance_deterministic" });
+  function advanceSimulationDeterministicState() {
+    return ruleComposition.inputPort.submitHostCommand({ kind: "simulation_advance_deterministic" });
   }
 
-  function executeHeadlessCurrentActionEffectImpl(workingRoot) {
+  function executeSimulationCurrentActionEffectImpl(workingRoot) {
     const effect = getCurrentActionEffect(workingRoot);
     if (!effect || effect.status !== "active") {
       return { ok: false, message: "没有可直接推进的活动效果" };
@@ -11680,8 +11688,8 @@
     return executeActionEffect(workingRoot, effect);
   }
 
-  function executeHeadlessCurrentActionEffect() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "headless_execute_current_effect" });
+  function executeSimulationCurrentActionEffect() {
+    return ruleComposition.inputPort.submitHostCommand({ kind: "simulation_execute_current_effect" });
   }
 
   function launchRocketForCurrentPlayer() {
@@ -11795,7 +11803,7 @@
   }
 
   function executeIncomeForCurrentPlayer() {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "debug_execute_income" }).value;
+    return ruleComposition.inputPort.submitHostCommand({ kind: "debug_execute_income" }).value;
   }
 
   function addDebugData() {
@@ -11904,7 +11912,7 @@
       return { ok: false, rocket: null, message: "请先点击要移动的火箭" };
     }
 
-    const standardAction = options.standardAction || browserRuleComposition.inputPort.enumerateActions({
+    const standardAction = options.standardAction || ruleComposition.inputPort.enumerateActions({
       family: "move",
     }).find((candidate) => (
       Number(candidate.target?.rocketId) === Number(selectedRocketId)
@@ -11918,7 +11926,7 @@
     }
 
     if (!options.standardAction) {
-      return browserRuleComposition.inputPort.submitQuickAction(standardAction);
+      return ruleComposition.inputPort.submitQuickAction(standardAction);
     }
 
     return beginMovePaymentSelection(deltaX, deltaY, selectedRocketId, {
@@ -12067,7 +12075,7 @@
   }
 
   function rotateSolarOrbit(count) {
-    return browserRuleComposition.inputPort.submitHostCommand({ kind: "solar_rotate", count }).value;
+    return ruleComposition.inputPort.submitHostCommand({ kind: "solar_rotate", count }).value;
   }
 
   function handleMainActionButtonClick(event) {
@@ -12268,7 +12276,7 @@
   };
 
   alienSpeciesRuntime = alienSpeciesRuntimeModule.createAlienSpeciesRuntime({
-    headless: headlessMode,
+    simulation: simulationMode,
     actionHistory,
     aliens,
     amiba,
@@ -12384,7 +12392,7 @@
     yichangdianAnomalyMarkerElements,
   });
 
-  if (!headlessMode) window.SetiAppEvents.bindAppEvents({
+  if (!simulationMode) window.SetiAppEvents.bindAppEvents({
     window,
     document,
     state: appEventState,
@@ -12402,7 +12410,7 @@
     runezu,
     techRenderContext,
     getRuleReadout: createStateSourceReadoutRoot,
-    getActiveDecisionChoices: () => browserRuleComposition.inspect().session?.decision?.choices || [],
+    getActiveDecisionChoices: () => ruleComposition.inspect().session?.decision?.choices || [],
     setStatusNote: setBrowserStatusNote,
     randomizeAll,
     startNewGameFromStartScreen,
@@ -12603,10 +12611,48 @@
     logAomomoDebugCoordinates,
     resize,
   });
-  window.SetiAppBootstrap.initializeAppBootstrap({
+  const readRuleProjection = () => residentProjectionAdapter.projectSource({
+    viewer: getResidentViewer(),
+  });
+  const simulationPort = simulationMode ? Object.freeze({
+    composition: ruleComposition,
+    startNewGame,
+    getInitialSelectionState: () => structuredClone(setupSelectionState),
+    completeCurrentInitialSelection: () => chooseInitialSelectionForAiPlayer(),
+    readProjection: () => structuredClone(readRuleProjection()),
+    getCurrentPlayer: () => structuredClone(getCurrentPlayer()),
+    getFinalScoreSummaries: () => structuredClone(
+      buildFinalResultPlayerSummaries().map((summary) => ({
+        playerId: summary.player?.id || null,
+        baseScore: Number(summary.breakdown?.baseScore) || 0,
+        totalScore: Number(summary.breakdown?.totalScore) || 0,
+        breakdown: summary.breakdown || null,
+      })),
+    ),
+    getActionLog: (options = {}) => structuredClone(getRecoverableActionLog(options)),
+    getTurnState: () => structuredClone(ruleComposition.stateSourcePort.read().state.turn),
+    getPlayerState: () => structuredClone(ruleComposition.stateSourcePort.read().state.players),
+    getRocketCoordinates: () => structuredClone(ruleComposition.stateSourcePort.read().state.pieces?.rockets || []),
+    getPlanetStatsState: () => structuredClone(ruleComposition.stateSourcePort.read().state.planets),
+    getSolarSnapshot: () => structuredClone(ruleComposition.stateSourcePort.read().state.solarSystem),
+    getCardState: () => structuredClone(ruleComposition.stateSourcePort.read().state.cards),
+    getTechSnapshot: () => structuredClone(ruleComposition.stateSourcePort.read().state.tech),
+    getAlienState: () => structuredClone(ruleComposition.stateSourcePort.read().state.aliens),
+    getFinalScoringState: () => structuredClone(ruleComposition.stateSourcePort.read().state.finalScoring),
+    inspectSimulationComposition: () => ruleComposition.inspect(),
+    beginSimulationCompositionDrain: () => ruleComposition.inputPort.beginDrain({ metadata: { source: "simulation" } }),
+    listSimulationTurnActionCandidates: enumerateSimulationTurnActions,
+    executeSimulationTurnAction: submitSimulationTurnAction,
+    listSimulationConditionalActionCandidates: enumerateSimulationConditionalActions,
+    executeSimulationConditionalAction,
+    getSimulationDecisionOwnerState,
+    getAiAutoBattleProgress,
+  }) : null;
+
+  if (!simulationMode) window.SetiAppBootstrap.initializeAppBootstrap({
     root: window,
     document,
-    initializeShell: headlessMode ? null : function initializeShell() {
+    initializeShell: simulationMode ? null : function initializeShell() {
       setTokenAssetSizes();
       syncStartScreenDebugOption();
       syncStartScreenActionLogOption();
@@ -12708,17 +12754,17 @@
       runAiSelectedTurnAction,
       buildAiTurnActionCandidates,
       chooseInitialSelectionForAiPlayer,
-      enumerateHeadlessTurnActions,
+      enumerateSimulationTurnActions,
       executeAiTurnAction,
-      submitHeadlessTurnAction,
-      beginHeadlessCompositionDrain,
-      inspectHeadlessComposition,
-      enumerateHeadlessConditionalActions,
-      executeHeadlessConditionalAction,
-      getHeadlessDecisionOwnerState,
-    advanceHeadlessDeterministicState,
-    executeHeadlessCurrentActionEffect,
-    skipHeadlessCurrentActionEffect,
+      submitSimulationTurnAction,
+      beginSimulationCompositionDrain,
+      inspectSimulationComposition,
+      enumerateSimulationConditionalActions,
+      executeSimulationConditionalAction,
+      getSimulationDecisionOwnerState,
+    advanceSimulationDeterministicState,
+    executeSimulationCurrentActionEffect,
+    skipSimulationCurrentActionEffect,
       resolveAiAutomationToTurnBoundary,
       getAiAutoBattleProgress,
       getAiAutoBattleReport,
@@ -12769,4 +12815,5 @@
       browserServices: residentBrowserServices?.createPublicFacade?.() || null,
     },
   });
+
 })();

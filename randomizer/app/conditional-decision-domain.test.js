@@ -59,7 +59,7 @@ function createFixture() {
       },
       getCurrentPlayer: () => finalPlayer,
       getPendingProbeSectorScanDecision: () => (state.probePending ? probePending : null),
-      getHeadlessConditionalPlayer: (_workingRoot, pending) => pending.player
+      getSimulationConditionalPlayer: (_workingRoot, pending) => pending.player
         || root.playerState.players.find((player) => player.id === pending.playerId)
         || null,
       handleFinalScoreTileClick: (tileId) => {

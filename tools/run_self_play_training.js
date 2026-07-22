@@ -23,7 +23,7 @@ function printHelp() {
   --epsilon NUMBER          训练探索率（默认 0.1）
   --learning-rate NUMBER    action-kind Monte Carlo 学习率（默认 0.15）
   --active-player-count N   活跃玩家数（默认 4）
-  --ai-difficulty TEXT      headless AI 难度（默认 laughable）
+  --ai-difficulty TEXT      simulation AI 难度（默认 laughable）
   --help                    显示帮助
 `);
 }

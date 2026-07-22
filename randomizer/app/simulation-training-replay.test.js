@@ -1,13 +1,13 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createHeadlessEnv } = require("./headless-env");
+const { createSimulationEnv } = require("./simulation-env");
 
-const env = createHeadlessEnv();
+const env = createSimulationEnv();
 
 try {
   env.reset({
-    seed: "headless-training-replay",
+    seed: "simulation-training-replay",
     activePlayerCount: 4,
     aiDifficulty: "laughable",
     offlineTeacher: true,
@@ -26,7 +26,7 @@ try {
   assert.equal(step.effectSessionJournal.replay.length, 1);
   assert.equal(step.effectSessionJournal.replay[0].confirmed, true);
   assert.equal(step.effectSessionJournal.replayCursor >= 1, true);
-  console.log("headless-training-replay tests passed");
+  console.log("simulation-training-replay tests passed");
 } finally {
   env.dispose();
 }
