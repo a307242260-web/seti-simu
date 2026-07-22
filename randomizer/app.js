@@ -330,6 +330,13 @@
 
   let activeBrowserDomainWorkingRoot = null;
 
+  function requireActiveBrowserWorkingRoot(operation) {
+    if (!activeBrowserDomainWorkingRoot) {
+      throw new Error(`${operation} 必须通过 Browser Composition command 执行`);
+    }
+    return activeBrowserDomainWorkingRoot;
+  }
+
   function executeBrowserDomainCommand(workingRoot, command) {
     const target = resolveBrowserDomainTarget(command.domain);
     const allowed = BROWSER_DOMAIN_COMMANDS[command.domain];
@@ -550,6 +557,13 @@
           return { ok: true };
         case "ai_choose_initial_selection":
           return chooseInitialSelectionForAiPlayerForRoot(workingRoot);
+        case "ai_set_player_difficulty": {
+          const player = workingRoot.playerState.players.find((candidate) => candidate.id === command.playerId);
+          if (!player) return { ok: false, code: "AI_PLAYER_NOT_FOUND", message: "找不到 AI 玩家" };
+          player.aiDifficulty = command.difficulty;
+          player.aiDifficultyLabel = command.label;
+          return { ok: true };
+        }
         case "ai_execute_turn_action":
           return cloneResidentPresentation(executeAiTurnActionForRoot(workingRoot, command.action));
         case "ai_resolve_to_turn_boundary":
@@ -3719,7 +3733,11 @@
   }
 
   function getPlayerById(playerId) {
-    return playerState.players.find((player) => player.id === playerId) || null;
+    if (activeBrowserDomainWorkingRoot) {
+      return activeBrowserDomainWorkingRoot.playerState.players.find((player) => player.id === playerId) || null;
+    }
+    return createStateSourceReadoutRoot().playerState.players
+      .find((candidate) => candidate.id === playerId) || null;
   }
 
   function resolvePlayerReference(reference = {}) {
@@ -3767,6 +3785,8 @@
   }
 
   function getEffectOwnerPlayer(effect) {
+    const playerState = activeBrowserDomainWorkingRoot?.playerState
+      || createStateSourceReadoutRoot().playerState;
     return getExplicitEffectOwnerPlayer(effect)
       || getPlayerById(decisionState.actionEffectFlow?.defaultPlayerId)
       || getPlayerById(decisionState.actionEffectFlow?.playerId)
@@ -3822,9 +3842,11 @@
   }
 
   function getInterfacePlayer() {
+    const { playerState, turnState } = activeBrowserDomainWorkingRoot || createStateSourceReadoutRoot();
     const currentPlayer = players.getCurrentPlayer(playerState);
     if (!currentPlayer || !isAiAutoBattlePlayer(currentPlayer.id) || isAiAutomationPaused()) return currentPlayer;
-    const humanPlayer = getActivePlayers().find((player) => !isAiAutoBattlePlayer(player.id))
+    const activeIds = new Set(turnState.activePlayerIds || []);
+    const humanPlayer = playerState.players.find((player) => activeIds.has(player.id) && !isAiAutoBattlePlayer(player.id))
       || playerState.players.find((player) => !isAiAutoBattlePlayer(player.id))
       || null;
     return humanPlayer || currentPlayer;
@@ -3840,6 +3862,7 @@
   }
 
   function getActivePlayers() {
+    const { playerState, turnState } = activeBrowserDomainWorkingRoot || createStateSourceReadoutRoot();
     const activeIds = new Set(turnState.activePlayerIds || []);
     return playerState.players.filter((player) => activeIds.has(player.id));
   }
@@ -3959,6 +3982,12 @@
     aiRaceModel,
     ai,
     aiControlRuntimeModule,
+    setPlayerAiDifficulty: (playerId, difficulty, label) => browserRuleComposition.inputPort.submitHostCommand({
+      kind: "ai_set_player_difficulty",
+      playerId,
+      difficulty,
+      label,
+    }),
     runAiAutomationStepThroughComposition: (...args) => browserRuleComposition.inputPort.submitHostCommand({
       kind: "ai_run_automation_step",
       args,
@@ -5409,6 +5438,7 @@
   }
 
   function finishGameAfterFinalPass() {
+    const { playerState, turnState } = requireActiveBrowserWorkingRoot("finishGameAfterFinalPass");
     turnState.gameEnded = true;
     turnState.gameEndReason = "final_round_all_passed";
     return {
@@ -5421,6 +5451,7 @@
   }
 
   function ensureTurnVisitedPlanetsByPlayerId() {
+    const { turnState } = requireActiveBrowserWorkingRoot("ensureTurnVisitedPlanetsByPlayerId");
     if (!turnState.visitedPlanetsByPlayerId || typeof turnState.visitedPlanetsByPlayerId !== "object") {
       turnState.visitedPlanetsByPlayerId = {};
     }
@@ -5434,6 +5465,7 @@
   }
 
   function recordTurnVisitPlanetEvents(events = []) {
+    const { turnState } = requireActiveBrowserWorkingRoot("recordTurnVisitPlanetEvents");
     const visitEvents = (events || []).filter((event) => event?.type === "visitPlanet" && event.planetId);
     if (!visitEvents.length) return null;
     const beforeVisits = structuredClone(turnState.visitedPlanetsByPlayerId || {});

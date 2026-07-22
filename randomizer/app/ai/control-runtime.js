@@ -135,6 +135,7 @@
       runAiAutomationStep,
       resetGameForAiAutoBattle,
       resetAiStrategyDemandCache = () => {},
+      setPlayerAiDifficulty = null,
       setTurnStatePlayerOrder,
       startInitialSelection,
       updateActionButtons,
@@ -180,8 +181,13 @@
     function applyAiDifficultyToPlayer(player, difficulty = aiAutoBattleState.aiDifficulty) {
       if (!player) return;
       const normalized = normalizeAiDifficulty(difficulty);
-      player.aiDifficulty = normalized;
-      player.aiDifficultyLabel = getAiDifficultyLabel(normalized);
+      const label = getAiDifficultyLabel(normalized);
+      if (typeof setPlayerAiDifficulty === "function") {
+        setPlayerAiDifficulty(player.id, normalized, label);
+      } else {
+        player.aiDifficulty = normalized;
+        player.aiDifficultyLabel = label;
+      }
     }
 
     function applyAiDifficultyToPlayerIds(playerIds = [], difficulty = aiAutoBattleState.aiDifficulty) {

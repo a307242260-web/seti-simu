@@ -297,6 +297,7 @@
       runAiAutomationStep: (...args) => context.runAiAutomationStepThroughComposition(...args),
       resetGameForAiAutoBattle: (...args) => resetGameForAiAutoBattle(...args),
       resetAiStrategyDemandCache: (...args) => resetAiStrategyDemandCache(...args),
+      setPlayerAiDifficulty: context.setPlayerAiDifficulty,
       setTurnStatePlayerOrder,
       startInitialSelection,
       updateActionButtons,
