@@ -2030,10 +2030,12 @@
     sourceLabels: ACTION_LOG_SOURCE_LABELS,
     attachCardHoverPreview,
     getCardLabel: cards.getCardLabel,
+    resize: (...args) => resize(...args),
     });
   const {
     renderActionLog,
     setReportTab,
+    setLogOpen,
     isDebugToolsEnabled,
     isStateLogEnabled,
   } = actionLogViewRuntime;
@@ -8789,15 +8791,6 @@
       }],
       message: rewardResult.message,
     };
-  }
-
-  function setLogOpen(open) {
-    if (open && !isStateLogEnabled()) {
-      setReportTab("action");
-    }
-    els.appWrap.classList.toggle("log-collapsed", !open);
-    els.logToggle?.setAttribute("aria-expanded", String(open));
-    resize();
   }
 
   function setDebugOpen(open) {

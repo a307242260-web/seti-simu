@@ -484,7 +484,14 @@
       if (!stateActive) renderActionLog();
     }
 
-    return { renderActionLog, setReportTab, isDebugToolsEnabled, isStateLogEnabled };
+    function setLogOpen(open) {
+      if (open && !isStateLogEnabled()) setReportTab("action");
+      els.appWrap.classList.toggle("log-collapsed", !open);
+      els.logToggle?.setAttribute("aria-expanded", String(open));
+      context.resize?.();
+    }
+
+    return { renderActionLog, setReportTab, setLogOpen, isDebugToolsEnabled, isStateLogEnabled };
   }
 
   return {
