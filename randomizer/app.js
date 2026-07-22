@@ -1015,9 +1015,10 @@
   const getPendingDataPlacementDecision = (workingRoot = createStateSourceReadoutRoot()) => (
     workingRoot?.match?.dataPlacementContinuation || null
   );
-  const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
-  const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
-  const getPendingStrategySlotDecision = () => decisionSessions.peek(STRATEGY_SLOT_DECISION);
+  const getPendingLandTargetDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.landTargetContinuation || null;
+  const getPendingPiratesRaidDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.piratesRaidContinuation || null;
+  const getPendingStrategySlotDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.strategySlotContinuation || null;
+  const getPendingIndustryAbilityDecision = (workingRoot = createStateSourceReadoutRoot()) => workingRoot?.match?.industryAbilityContinuation || null;
   const getPublicScanQueueSession = (workingRoot = createStateSourceReadoutRoot()) => (
     workingRoot?.match?.publicScanContinuation || null
   );
@@ -4267,7 +4268,7 @@
     get actionHistorySessionInfo() { return actionHistory.getSessionInfo?.() || null; },
     get effectStepActive() { return uiRuntimeState.effectStepActive; },
     set effectStepActive(value) { uiRuntimeState.effectStepActive = value; },
-    get pendingIndustryAbility() { return decisionSessions.peek("industry_ability"); },
+    get pendingIndustryAbility() { return getPendingIndustryAbilityDecision(); },
     get pendingStrategyPassiveSlotChoice() { return getPendingStrategySlotDecision(); },
     get alienTracePickerState() { return decisionState.alienTracePickerState; },
     get pendingAlienRevealConfirmation() { return uiRuntimeState.alienRevealConfirmation; },
@@ -5600,7 +5601,7 @@
     delete workingRoot.match.publicScanContinuation;
     delete workingRoot.match.handScanContinuation;
     decisionState.alienTraceAction = null;
-    decisionSessions.clear(LAND_TARGET_DECISION);
+    delete workingRoot.match.landTargetContinuation;
     delete workingRoot.match.probeLocationRewardContinuation;
     delete workingRoot.match.cardTriggerContinuation;
     delete workingRoot.match.cardTriggerFreeMoveContinuation;
@@ -5647,9 +5648,9 @@
     uiRuntimeState.cardCornerQuickAction = null;
     delete workingRoot.match.cardCornerFreeMoveContinuation;
     decisionSessions.clear(DATA_PLACEMENT_DECISION);
-    decisionSessions.clear("industry_ability");
-    decisionSessions.clear(PIRATES_RAID_DECISION);
-    decisionSessions.clear(STRATEGY_SLOT_DECISION);
+    delete workingRoot.match.industryAbilityContinuation;
+    delete workingRoot.match.piratesRaidContinuation;
+    delete workingRoot.match.strategySlotContinuation;
     delete workingRoot.match.industryFreeMoveContinuation;
     historyStepOrder.length = 0;
     actionHistory.commitSession();
@@ -6506,7 +6507,7 @@
       cancelHandCardPlayAction({ silent: true });
     }
     if (hasActivePendingSubFlow()) {
-      workingRoot.rocketState.statusNote = decisionSessions.peek("industry_ability") || getPendingIndustryFreeMoveDecision() || isIndustryHandSelectionActive()
+      workingRoot.rocketState.statusNote = getPendingIndustryAbilityDecision(workingRoot) || getPendingIndustryFreeMoveDecision(workingRoot) || isIndustryHandSelectionActive()
         ? "请先完成或取消公司 1x 行动"
         : "请先完成或取消当前流程";
       renderStateReadout();
@@ -6638,7 +6639,7 @@
       return result;
     }
 
-    const recordInCurrentIndustryStep = Boolean(pending.industryQuickStepActive && decisionSessions.peek("industry_ability"));
+    const recordInCurrentIndustryStep = Boolean(pending.industryQuickStepActive && getPendingIndustryAbilityDecision(workingRoot));
     if (!recordInCurrentIndustryStep) {
       beginQuickActionStep("card-corner-move", `卡牌快速行动：${pending.action.label}`);
     }
@@ -7117,7 +7118,7 @@
     return hasActiveEffectSubFlow()
       || isMovePaymentSelectionActive()
       || (els.dataPlaceOverlay && !els.dataPlaceOverlay.hidden)
-      || Boolean(decisionSessions.peek("industry_ability"))
+      || Boolean(getPendingIndustryAbilityDecision())
       || Boolean(getPendingIndustryFreeMoveDecision())
       || isIndustryHandSelectionActive();
   }
@@ -7127,8 +7128,8 @@
       rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
       return true;
     }
-    if (getPendingStrategySlotDecision()) {
-      cancelStrategyPassiveSlotChoice();
+    if (getPendingStrategySlotDecision(workingRoot)) {
+      cancelStrategyPassiveSlotChoiceForRoot(workingRoot);
       return true;
     }
     if (getPendingCardCornerFreeMove(workingRoot)?.finishIndustryFlowAfterMove) {
@@ -7138,8 +7139,8 @@
       clearMoveRocketHighlight();
       deactivateMoveMode();
       const message = `${pending.afterMoveStatus || "公司 1x 行动"}；已取消免费移动`;
-      if (decisionSessions.peek("industry_ability")) {
-        finishIndustryAbilityFlow(message);
+      if (getPendingIndustryAbilityDecision(workingRoot)) {
+        finishIndustryAbilityFlowForRoot(workingRoot, message);
       }
       if (pending.irreversibleIndustryFlow) {
         commitIrreversibleIndustryQuickAction(
@@ -7172,7 +7173,7 @@
       workingRoot.rocketState.statusNote = "已取消放置数据";
       return true;
     }
-    if (decisionSessions.peek("industry_ability") || getPendingIndustryFreeMoveDecision() || isIndustryHandSelectionActive()) {
+    if (getPendingIndustryAbilityDecision(workingRoot) || getPendingIndustryFreeMoveDecision(workingRoot) || isIndustryHandSelectionActive()) {
       rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
       return true;
     }
@@ -7409,10 +7410,10 @@
     alienSpeciesRuntime?.clearRunezuCardGainDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.();
     alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.();
-    decisionSessions.clear(STRATEGY_SLOT_DECISION);
-    if (getPendingPiratesRaidDecision()) {
-      decisionSessions.clear(PIRATES_RAID_DECISION);
-      renderTechBoard();
+    delete workingRoot.match.strategySlotContinuation;
+    if (getPendingPiratesRaidDecision(workingRoot)) {
+      delete workingRoot.match.piratesRaidContinuation;
+      renderTechBoard(workingRoot);
     }
   }
 
@@ -11478,7 +11479,7 @@
   }
 
   function advanceHeadlessDeterministicStateImpl(workingRoot) {
-    const industryPending = decisionSessions.peek("industry_ability");
+    const industryPending = getPendingIndustryAbilityDecision(workingRoot);
     if (industryPending && !decisionState.cardSelectionAction) {
       const player = getCurrentPlayer();
       const retryByFlowType = {
@@ -11517,7 +11518,7 @@
       && !(workingRoot.cardState.publicCards || []).some(Boolean)
       && !(allowsBlindDrawInSelection() && canBlindDraw())
     ) {
-      const label = decisionSessions.peek("industry_ability")?.label || "公司 1x";
+      const label = getPendingIndustryAbilityDecision(workingRoot)?.label || "公司 1x";
       const message = `${label}：公共牌区与牌库均无牌，精选效果落空`;
       finishIndustryAbilityFlow(message);
       return { ok: true, progressed: true, skipped: true, message };

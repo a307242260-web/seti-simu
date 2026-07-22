@@ -94,8 +94,7 @@
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
-    const PIRATES_RAID_DECISION = "pirates_raid_placement";
-    const getPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
+    const getPiratesRaidDecision = (workingRoot) => requireWorkingRoot(workingRoot).match?.piratesRaidContinuation || null;
 
     function requireWorkingRoot(workingRoot) {
       if (!workingRoot || typeof workingRoot !== "object") {
@@ -669,7 +668,7 @@
         },
       });
       syncTechSelectionChrome(workingRoot);
-      renderPiratesRaidTechMarkers(currentPlayer);
+      renderPiratesRaidTechMarkers(workingRoot, currentPlayer);
       renderRunezuBoardSymbols();
     }
 
@@ -835,22 +834,22 @@
       return selectResearchTechTileForCurrentFlow(workingRoot, tileId);
     }
 
-    function isPiratesRaidPlacementActiveForPlayer(player) {
+    function isPiratesRaidPlacementActiveForPlayer(workingRoot, player) {
       return Boolean(
-        getPiratesRaidDecision()
+        getPiratesRaidDecision(workingRoot)
         && player
-        && getPiratesRaidDecision().playerId === player.id,
+        && getPiratesRaidDecision(workingRoot).playerId === player.id,
       );
     }
 
-    function renderPiratesRaidTechMarkers(player) {
+    function renderPiratesRaidTechMarkers(workingRoot, player) {
       const layer = els.playerBoardTechLayer;
       if (!layer) return;
       layer.querySelectorAll(".pirates-raid-tech-marker-button").forEach((element) => element.remove());
       if (!industry?.shouldShowPiratesRaidMarkers?.(player)) return;
 
-      const active = isPiratesRaidPlacementActiveForPlayer(player);
-      const targetPlanetId = getPiratesRaidDecision()?.planetId || null;
+      const active = isPiratesRaidPlacementActiveForPlayer(workingRoot, player);
+      const targetPlanetId = getPiratesRaidDecision(workingRoot)?.planetId || null;
       const markerSrc = industry.PIRATES_RAID_MARKER_SRC || "../assets/industry/掠夺标记.png";
       for (const tileId of industry.listPiratesRaidBlockedTechTiles?.(player) || []) {
         const layout = tech.getPlacementLayout?.(tileId);
@@ -881,10 +880,10 @@
       }
     }
 
-    function getCurrentPiratesRaidMarkerEffect() {
+    function getCurrentPiratesRaidMarkerEffect(workingRoot) {
       const effect = getCurrentActionEffect();
       if (!effect || effect.type !== "industry_pirates_raid_marker" || effect.status !== "active") return null;
-      if (getPiratesRaidDecision() && getPiratesRaidDecision().effectId !== effect.id) return null;
+      if (getPiratesRaidDecision(workingRoot) && getPiratesRaidDecision(workingRoot).effectId !== effect.id) return null;
       return effect;
     }
 
@@ -903,12 +902,12 @@
           reason: "no_pirates_raid_marker",
         });
       }
-      decisionSessions.open(PIRATES_RAID_DECISION, {
+      workingRoot.match.piratesRaidContinuation = {
         effectId: effect.id,
         playerId: player.id,
         playerColor: player.color,
         planetId,
-      });
+      };
       rocketState.statusNote = `${effect.label}：请选择玩家面板上的掠夺标记放置到 ${getPlanetName(planetId)}`;
       renderTechBoard(workingRoot);
       syncInteractionFocusChrome();
@@ -918,8 +917,8 @@
 
     function handlePiratesRaidTechMarkerClick(workingRoot, tileId) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const effect = getCurrentPiratesRaidMarkerEffect();
-      const pending = getPiratesRaidDecision();
+      const effect = getCurrentPiratesRaidMarkerEffect(workingRoot);
+      const pending = getPiratesRaidDecision(workingRoot);
       if (!effect || !pending) {
         return { ok: false, message: "没有待放置的掠夺标记" };
       }
@@ -946,7 +945,7 @@
         beforePlayer,
         "恢复星际海盗掠夺标记放置前玩家状态",
       ));
-      decisionSessions.clear(PIRATES_RAID_DECISION);
+      delete workingRoot.match.piratesRaidContinuation;
       return finishAutomaticRewardEffect(effect, {
         ok: true,
         undoable: true,
@@ -984,7 +983,7 @@
       const { cardState, rocketState, turnState } = requireWorkingRoot(workingRoot);
       const groupId = `industry-pirates-raid-${turnState.roundNumber}-${turnState.turnNumber}`;
       const nodes = industry?.buildPiratesRaidLaunchEffectNodes?.(flow, { groupId }) || [];
-      decisionSessions.clear("industry_ability");
+      delete workingRoot.match.industryAbilityContinuation;
       decisionState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();

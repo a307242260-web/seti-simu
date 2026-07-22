@@ -128,14 +128,10 @@
       actionEffectFlow: "action_effect_flow",
     }) || {};
     const getScanTargetContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.scanTargetContinuation || null;
-    const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
-    const getStrategySlotDecision = () => decisionSessions.peek(STRATEGY_SLOT_DECISION);
-    const industryAbilitySession = {
-      get value() { return decisionSessions.peek("industry_ability"); },
-      set value(session) {
-        if (session == null) decisionSessions.clear("industry_ability");
-        else decisionSessions.open("industry_ability", session);
-      },
+    const getStrategySlotDecision = (workingRoot) => requireWorkingRoot(workingRoot).match?.strategySlotContinuation || null;
+    const getIndustryAbilityContinuation = (workingRoot) => requireWorkingRoot(workingRoot).match?.industryAbilityContinuation || null;
+    const setIndustryAbilityContinuation = (workingRoot, value) => {
+      requireWorkingRoot(workingRoot).match.industryAbilityContinuation = value == null ? null : value;
     };
 
     function requireWorkingRoot(workingRoot) {
@@ -232,7 +228,7 @@
       if (uiRuntimeState.moveHighlightRocketId != null || workingRoot.match.industryFreeMoveContinuation) {
         deactivateMoveMode();
       }
-      industryAbilitySession.value = null;
+      setIndustryAbilityContinuation(workingRoot, null);
       workingRoot.match.industryFreeMoveContinuation = null;
       syncIndustryHandSelectionChrome();
       syncInteractionFocusChrome();
@@ -279,7 +275,7 @@
         cards.setSelectionActive(cardState, false);
         syncCardSelectionChrome();
       }
-      industryAbilitySession.value = null;
+      setIndustryAbilityContinuation(workingRoot, null);
       workingRoot.match.industryFreeMoveContinuation = null;
       if (uiRuntimeState.moveHighlightRocketId != null) {
         deactivateMoveMode();
@@ -296,8 +292,8 @@
 
     function finishIndustryAbilityFlow(workingRoot, message) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
-      const flowType = industryAbilitySession.value?.flowType;
-      industryAbilitySession.value = null;
+      const flowType = getIndustryAbilityContinuation(workingRoot)?.flowType;
+      setIndustryAbilityContinuation(workingRoot, null);
       workingRoot.match.industryFreeMoveContinuation = null;
       cards.setSelectionActive(cardState, false);
       decisionState.cardSelectionAction = null;
@@ -324,7 +320,7 @@
         return false;
       }
 
-      industryAbilitySession.value = { ...flow };
+      setIndustryAbilityContinuation(workingRoot, { ...flow });
       switch (flow.flowType) {
         case "stratus_public_corners":
           return startIndustryStratusEffectFlow(workingRoot, flow, options);
@@ -389,7 +385,7 @@
     function startIndustryStratusEffectFlow(workingRoot, flow, options = {}) {
       const { cardState, rocketState } = requireWorkingRoot(workingRoot);
       const nodes = industry?.buildStratusPublicCornerEffectNodes?.(cards, cardState.publicCards) || [];
-      industryAbilitySession.value = null;
+      setIndustryAbilityContinuation(workingRoot, null);
       decisionState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
@@ -432,7 +428,7 @@
         count: flow.exchangeCount ?? industry?.FUNDAMENTALISM_EXCHANGE_COUNT ?? 3,
         groupId,
       }) || [];
-      industryAbilitySession.value = null;
+      setIndustryAbilityContinuation(workingRoot, null);
       decisionState.cardSelectionAction = null;
       cards.setSelectionActive(cardState, false);
       syncCardSelectionChrome();
@@ -594,7 +590,7 @@
       industry?.clearHeliosPassiveSlots?.(player);
       renderTechBoard(workingRoot);
       renderInitialSelectionArea();
-      industryAbilitySession.value = { flowType: "helios_remove_tech", removedTileId: tileId };
+      setIndustryAbilityContinuation(workingRoot, { flowType: "helios_remove_tech", removedTileId: tileId });
       recordQuickHistoryCommand(historyCommands.createRestorePlayerCommand(
         player,
         beforePlayer,
@@ -611,7 +607,7 @@
         restoreObjectSnapshot(player, beforePlayer);
         renderTechBoard(workingRoot);
         renderInitialSelectionArea();
-        industryAbilitySession.value = null;
+        setIndustryAbilityContinuation(workingRoot, null);
         rollbackPendingIndustryQuickAction(workingRoot, incomeStart.message || "赫利昂联合体：收入无法结算，已撤回 1x 行动");
         return { ok: false, message: incomeStart.message || "赫利昂联合体：收入无法结算" };
       }
@@ -631,7 +627,7 @@
         count: flow.movesLeft ?? industry?.HUANYU_FREE_MOVE_COUNT ?? 2,
         groupId,
       }) || [];
-      industryAbilitySession.value = null;
+      setIndustryAbilityContinuation(workingRoot, null);
       decisionState.cardSelectionAction = null;
       workingRoot.match.industryFreeMoveContinuation = null;
       cards.setSelectionActive(cardState, false);
@@ -773,10 +769,10 @@
               movedRocketIds: [...freeMoveStateBefore.movedRocketIds],
               label: freeMoveStateBefore.label,
             };
-            industryAbilitySession.value = {
+            setIndustryAbilityContinuation(workingRoot, {
               flowType: "huanyu_free_moves",
               label: freeMoveStateBefore.label,
-            };
+            });
           } else {
             workingRoot.match.industryFreeMoveContinuation.movesLeft = freeMoveStateBefore.movesLeft;
             workingRoot.match.industryFreeMoveContinuation.movedRocketIds = [...freeMoveStateBefore.movedRocketIds];
@@ -818,7 +814,7 @@
         || isTechTilePickingActive(workingRoot)
         || isHandScanSelectionActive()
         || isMovePaymentSelectionActive()
-        || industryAbilitySession.value
+        || getIndustryAbilityContinuation(workingRoot)
         || workingRoot.match.industryFreeMoveContinuation
         || isIndustryHandSelectionActive()) {
         return { ok: false, message: "请先完成或取消当前流程" };
@@ -1727,8 +1723,8 @@
       ));
     }
 
-    function closeStrategyPassiveSlotChoicePicker() {
-      decisionSessions.clear(STRATEGY_SLOT_DECISION);
+    function closeStrategyPassiveSlotChoicePicker(workingRoot) {
+      delete requireWorkingRoot(workingRoot).match.strategySlotContinuation;
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
       renderActionEffectBar();
@@ -1738,8 +1734,8 @@
 
     function cancelStrategyPassiveSlotChoice(workingRoot) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      if (!getStrategySlotDecision()) return;
-      decisionSessions.clear(STRATEGY_SLOT_DECISION);
+      if (!getStrategySlotDecision(workingRoot)) return;
+      delete workingRoot.match.strategySlotContinuation;
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
       if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
       rocketState.statusNote = "宇宙战略集团：已取消奖励槽选择，可重新点击效果或跳过";
@@ -1752,22 +1748,23 @@
       const { rocketState } = requireWorkingRoot(workingRoot);
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
         if (globalThis.SetiHeadlessRuntimeConfig?.enabled) {
-          decisionSessions.open(STRATEGY_SLOT_DECISION, {
+          workingRoot.match.strategySlotContinuation = {
             effectId: effect.id,
             slotIds: [...slotIds],
             playerId: player?.id || null,
             playerColor: player?.color || null,
-          });
+          };
           return { ok: true, pendingChoice: true, undoable: true, message: "宇宙战略集团：请选择奖励槽" };
         }
         rocketState.statusNote = "宇宙战略集团：无法打开奖励槽选择";
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      decisionSessions.open(STRATEGY_SLOT_DECISION, {
+      workingRoot.match.strategySlotContinuation = {
         effectId: effect.id,
         slotIds: [...slotIds],
-      });
+        playerId: player?.id || null,
+      };
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = "宇宙战略集团";
       if (els.scanTargetSubtitle) {
         els.scanTargetSubtitle.textContent = "黑色扫描角标可选择一个空奖励槽触发。";
@@ -1793,7 +1790,7 @@
 
     function confirmStrategyPassiveSlotChoice(workingRoot, slotId) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      const pending = getStrategySlotDecision();
+      const pending = getStrategySlotDecision(workingRoot);
       const effect = getCurrentActionEffect();
       if (!pending || !effect || effect.id !== pending.effectId || effect.type !== "industry_strategy_passive_reward") {
         cancelStrategyPassiveSlotChoice(workingRoot);
@@ -1804,7 +1801,7 @@
         renderStateReadout();
         return { ok: false, message: rocketState.statusNote };
       }
-      closeStrategyPassiveSlotChoicePicker();
+      closeStrategyPassiveSlotChoicePicker(workingRoot);
       setStrategyPassiveRewardSlot(effect, slotId);
       return executeIndustryStrategyPassiveRewardEffect(workingRoot, effect);
     }

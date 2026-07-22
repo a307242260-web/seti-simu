@@ -262,7 +262,7 @@
         && !isPlayCardSelectionActive()
         && !isHandScanSelectionActive()
         && !isMovePaymentSelectionActive()
-        && !decisionSessions.peek("industry_ability")
+        && !workingRoot.match?.industryAbilityContinuation
         && !isIndustryHandSelectionActive()
         && !getCardCornerFreeMove(workingRoot)
         && !hasActivePendingSubFlow();

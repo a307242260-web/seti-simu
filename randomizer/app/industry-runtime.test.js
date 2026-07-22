@@ -10,7 +10,6 @@ function noop() {}
 function createHarness() {
   const calls = [];
   const decisionSessions = createDecisionSessionStore();
-  decisionSessions.open("industry_ability", { flowType: "deepspace_swap" });
   const pendingState = {
     cardSelectionAction: {
       type: "industry_deepspace_hand",
@@ -80,6 +79,7 @@ function createHarness() {
   };
   const workingRoot = {
     match: {
+      industryAbilityContinuation: { flowType: "deepspace_swap" },
       scanTargetContinuation: { type: "industry_remove_tech" },
       industryFreeMoveContinuation: { playerId: "p1", movesLeft: 1, movedRocketIds: [] },
     },
@@ -98,7 +98,7 @@ function createHarness() {
   const result = runtime.rollbackPendingIndustryQuickAction(harness.workingRoot);
 
   assert.equal(result.ok, true);
-  assert.equal(harness.decisionSessions.peek("industry_ability"), null);
+  assert.equal(harness.workingRoot.match.industryAbilityContinuation, null);
   assert.equal(harness.pendingState.cardSelectionAction, null);
   assert.equal(harness.pendingState.discardAction, null);
   assert.equal(harness.workingRoot.match.scanTargetContinuation, undefined);
@@ -118,7 +118,7 @@ function createHarness() {
   runtime.cancelIndustryAbilityFlow(harness.workingRoot);
 
   assert.equal(harness.pendingState.cardSelectionAction, null);
-  assert.equal(harness.decisionSessions.peek("industry_ability"), null);
+  assert.equal(harness.workingRoot.match.industryAbilityContinuation, null);
   assert.equal(harness.techGameState.ui.industryBorrowMode, false);
   assert.equal(harness.workingRoot.match.industryFreeMoveContinuation, null);
   assert.ok(harness.calls.includes("refund:1"));
