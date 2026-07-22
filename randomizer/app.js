@@ -4201,6 +4201,52 @@
     get pendingAlienRevealConfirmation() { return uiRuntimeState.alienRevealConfirmation; },
   };
 
+  function runAiStepThroughComposition(commandKind, args = []) {
+    const inspection = browserRuleComposition.inspect();
+    const decision = inspection.session?.decision || null;
+    if (inspection.phase === "awaiting_input" && decision?.choices?.length) {
+      const family = decision.choices[0]?.family
+        || decision.choices[0]?.standardAction?.family
+        || decision.decisionKind
+        || null;
+      const actorId = decision.ownerId || null;
+      const policyResult = ai?.heuristicPolicy?.decideChoice?.({
+        seatId: actorId,
+        family,
+        stateVersion: Math.max(0, Number(decision.stateVersion) || 0),
+        decisionVersion: Math.max(0, Number(decision.decisionVersion) || 0),
+        decisionId: decision.decisionId,
+        requestId: `browser-session:${actorId}:${decision.decisionId}:${decision.decisionVersion || 0}`,
+        observation: browserRuleComposition.stateSourcePort.read(),
+        choices: decision.choices.map((choice, index) => ({
+          choiceId: String(
+            choice?.standardAction?.actionId
+            || choice?.actionId
+            || choice?.target?.choiceId
+            || choice?.choiceId
+            || index,
+          ),
+          value: Number(choice?.value ?? choice?.payload?.value ?? choice?.payload?.score ?? 0),
+          target: structuredClone(choice?.target || choice?.standardAction?.target || null),
+          summary: choice?.label || choice?.summary || choice?.standardAction?.summary || `选择 ${index + 1}`,
+          sourceIndex: index,
+        })),
+      }) || { ok: false, code: "HEURISTIC_POLICY_NOT_CONFIGURED", message: "公共 Heuristic Policy 未装配" };
+      if (!policyResult.ok) return policyResult;
+      const sourceIndex = Number(policyResult.choice?.sourceIndex);
+      const choice = decision.choices[Number.isSafeInteger(sourceIndex) ? sourceIndex : 0] || null;
+      if (!choice) {
+        return { ok: false, code: "AI_SESSION_CHOICE_MISSING", message: "Policy 选择未映射到 activeSession choice" };
+      }
+      return browserRuleComposition.inputPort.submitDecision({
+        decisionId: decision.decisionId,
+        decisionVersion: decision.decisionVersion,
+        choice,
+      });
+    }
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: commandKind, args });
+  }
+
   const aiController = window.SetiAppAiController.createAiController({
     window,
     state: aiControllerState,
@@ -4240,14 +4286,8 @@
       difficulty,
       label,
     }),
-    runAiAutomationStepThroughComposition: (...args) => browserRuleComposition.inputPort.submitHostCommand({
-      kind: "ai_run_automation_step",
-      args,
-    }),
-    recoverAiIdleActionEffectThroughComposition: (...args) => browserRuleComposition.inputPort.submitHostCommand({
-      kind: "ai_recover_idle_action_effect",
-      args,
-    }),
+    runAiAutomationStepThroughComposition: (...args) => runAiStepThroughComposition("ai_run_automation_step", args),
+    recoverAiIdleActionEffectThroughComposition: (...args) => runAiStepThroughComposition("ai_recover_idle_action_effect", args),
     getRuleProjection: () => {
       const state = browserRuleComposition.stateSourcePort.read().state;
       return {
