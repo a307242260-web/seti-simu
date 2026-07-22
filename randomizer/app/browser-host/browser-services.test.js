@@ -178,4 +178,37 @@ function createHarness(options = {}) {
   assert.deepEqual(calls, ["append", "click", "remove", "revoke:blob:test"]);
 })();
 
+(function testLegacyDomainCommandPortOwnsWhitelistAndInputRouting() {
+  const submitted = [];
+  const target = {
+    beginSectorScan(root, count) {
+      root.count += count;
+      return { ok: true, nested: { count: root.count } };
+    },
+  };
+  const port = servicesApi.createLegacyDomainCommandPort({
+    getTarget: (domain) => (domain === "scan_flow" ? target : null),
+    clonePresentation: (value) => structuredClone(value),
+    submitHostCommand(command) { submitted.push(command); return { value: { command } }; },
+  });
+  const root = { count: 1 };
+  const executed = port.executeBrowserDomainCommand(root, {
+    domain: "scan_flow", operation: "beginSectorScan", args: [2],
+  });
+  assert.equal(executed.ok, true);
+  assert.equal(executed.value.nested.count, 3);
+  assert.notEqual(executed.value.nested, target.nested);
+  assert.equal(port.executeBrowserDomainCommand(root, {
+    domain: "scan_flow", operation: "forged", args: [],
+  }).code, "BROWSER_DOMAIN_COMMAND_UNKNOWN");
+  port.bindBrowserDomainCommand("scan_flow", "beginSectorScan")(4);
+  port.callEffectChoiceCommand("confirm", [1]);
+  port.setBrowserStatusNote("ready");
+  assert.deepEqual(submitted, [
+    { kind: "domain_command", domain: "scan_flow", operation: "beginSectorScan", args: [4] },
+    { kind: "effect_choice_command", operation: "confirm", args: [1] },
+    { kind: "ui_set_status_note", message: "ready" },
+  ]);
+})();
+
 console.log("Browser services composition lifecycle tests passed");

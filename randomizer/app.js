@@ -286,144 +286,35 @@
     finalScoring,
     createTurnState,
   };
-  const BROWSER_DOMAIN_COMMANDS = Object.freeze({
-    scan_flow: new Set([
-      "getPublicScanMaxSelectable", "buildReadySectorFinishEffects", "buildScanFinalizeFollowupEffects",
-      "replaceNebulaDataForCurrentPlayer", "getSectorFinishWinnerTarget", "executeScanActionFinalizeEffect",
-      "executeSectorFinishScanEffect", "replenishDelayedPublicRefillSlots", "executeScanPublicRefillEffect",
-      "settleDelayedPublicRefillsAfterScanFlow", "buildEndOfFlowFollowupEffects",
-      "shouldAppendQueuedSectorFinishEffects", "appendEndOfFlowSectorFinishEffects", "discardPublicScanCard",
-      "discardHandScanCard", "finalizeScanSourceCard", "restoreYichangdianCornerPickerIfPending",
-      "closeScanTargetPicker", "nebulaHasScannableData", "buildNebulaScanChoice", "isAomomoActive",
-      "getAomomoPlanetLocation", "getAomomoCurrentX", "getNebulaCurrentX", "getSectorScanTargetLabel",
-      "buildAomomoScanChoiceForX", "hasAomomoScanAtX", "buildSectorScanChoicesForX",
-      "expandScanChoicesWithAomomoTargets", "confirmScanTarget", "handleDrawnHandScanSkip", "beginSectorScan",
-      "getSectorOpenDataCount", "getSectorReplacedCount", "getSectorExtraMarkCount", "getPublicScanChoicesForCard",
-      "hasHandScanTargetCard", "createPublicScanPendingAction", "beginPublicDeckScan", "beginPublicScanForSingleCard",
-      "confirmPublicScanSelection", "handlePublicScanCardClick", "beginHandScan", "cancelHandScanSelection",
-      "handleHandScanCardClick",
-    ]),
-    alien_ui: new Set([
-      "buildAlienRevealNoticeEntry", "getAlienTracePickerPlayer", "canPlaceJiuzheTrace",
-      "canPlaceYichangdianTrace", "canPlaceFangzhouTrace", "canPlaceBanrenmaTrace", "canPlaceChongTrace",
-      "canPlaceAmibaTrace", "canPlaceAomomoTrace", "canPlaceRunezuTrace", "canPlaceRunezuFaceSymbol",
-      "canPlaceStateTrace", "canPlaceAnyStateExtraTrace", "openAlienTracePicker", "beginAlienTraceBoardPlacement",
-      "closeAlienTracePicker",
-      "beginJiuzheTraceGridPlacement", "beginYichangdianTraceGridPlacement", "beginFangzhouTraceGridPlacement",
-      "beginBanrenmaTraceGridPlacement", "beginAomomoTraceGridPlacement", "beginChongTraceGridPlacement",
-      "beginAmibaTraceGridPlacement", "beginRunezuTraceGridPlacement", "renderAlienTracePickerColorStep",
-      "openFangzhouTraceUseChoice", "openFangzhouTraceDestinationChoice", "handleFangzhouTraceDestinationChoice",
-      "handleFangzhouUnlockTraceChoice", "routeFangzhouAlienTraceGain", "handleStateTraceSlotPlacement",
-      "handleFangzhouTraceSlotPlacement", "getEligibleAlienSlotIdsForTraceEffect",
-      "getFangzhouUnlockableTraceTypes", "hasAlienTracePanelPlacementTarget",
-    ]),
-    turn_end: new Set([
-      "executePassFirstRotateEffect", "executePassHandLimitEffect", "passForCurrentPlayer",
-      "maybeResumeTurnEndAfterReveal", "maybeContinuePendingTurnEndRevealFlow",
-      "maybeContinueAlienRevealQueuedOpportunities", "endCurrentTurn",
-    ]),
-    action_interaction: new Set([
-      "getPlutoReservedCards", "removePlutoMarker", "collectPlutoMarkers", "buildPlutoMarkerContext",
-      "playerHasOwnPlutoLanding", "buildPlutoMarkerRemovalChoices", "getPlutoCandidateRockets",
-      "getPlutoActionCost", "getAvailablePlutoAction", "executePlutoAction",
-      "getCurrentPlanetActionPlacement", "openPlutoActionChoicePicker", "scheduleRenderMoveArrows",
-      "clearMoveRocketHighlight", "activateMoveMode", "deactivateMoveMode", "openDataPlacePicker",
-      "openAutoDataPlacementPrompt", "cancelDataPlacePicker", "confirmDataPlacement",
-    ]),
-    income_runtime: new Set([
-      "applyIndustryRoundStartBonuses",
-      "maybeStartFundamentalismRoundStartIncomeFlow",
-      "beginIncomeForCurrentPlayer",
-    ]),
+  const browserDomainTargets = () => ({
+    scan_flow: scanFlowHelpers,
+    alien_ui: alienUiHelpers,
+    turn_end: turnEndFlow,
+    action_interaction: actionInteractionRuntime,
+    alien_runtime: alienRuntimeHelpers,
+    alien_species: alienSpeciesRuntime,
+    card_runtime: cardRuntime,
+    ai_controller: aiController,
+    card_trigger: cardTriggerRuntime,
+    industry_runtime: industryRuntime,
+    tech_runtime: techRuntime,
+    income_runtime: incomeRuntime,
   });
-
-  function executeBrowserDomainCommand(workingRoot, command) {
-    const target = resolveBrowserDomainTarget(command.domain);
-    const allowed = BROWSER_DOMAIN_COMMANDS[command.domain];
-    if ((allowed && !allowed.has(command.operation)) || (!allowed && !Object.hasOwn(target || {}, command.operation))) {
-      return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNKNOWN", message: `未知 Browser domain command: ${command.domain}.${command.operation}` };
-    }
-    const method = target?.[command.operation];
-    if (typeof method !== "function") {
-      return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNAVAILABLE", message: `Browser domain command 未装配: ${command.domain}.${command.operation}` };
-    }
-    const value = method(workingRoot, ...(command.args || []));
-    return { ok: value?.ok !== false, value: cloneResidentPresentation(value) };
-  }
-
-  function resolveBrowserDomainTarget(domain) {
-    switch (domain) {
-      case "scan_flow": return scanFlowHelpers;
-      case "alien_ui": return alienUiHelpers;
-      case "turn_end": return turnEndFlow;
-      case "action_interaction": return actionInteractionRuntime;
-      case "alien_runtime": return alienRuntimeHelpers;
-      case "alien_species": return alienSpeciesRuntime;
-      case "card_runtime": return cardRuntime;
-      case "ai_controller": return aiController;
-      case "card_trigger": return cardTriggerRuntime;
-      case "industry_runtime": return industryRuntime;
-      case "tech_runtime": return techRuntime;
-      case "income_runtime": return incomeRuntime;
-      default: return null;
-    }
-  }
-
-  function callBrowserDomainCommand(domain, operation, args = []) {
-    try {
-      return ruleComposition.inputPort.submitHostCommand({
-        kind: "domain_command",
-        domain,
-        operation,
-        args,
-      }).value;
-    } catch (error) {
-      throw new Error(`${domain}.${operation}: ${error?.message || error}`, { cause: error });
-    }
-  }
-
-  function bindBrowserDomainCommand(domain, operation) {
-    return (...args) => callBrowserDomainCommand(domain, operation, args);
-  }
-
-  function callEffectChoiceCommand(operation, args = []) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "effect_choice_command",
-      operation,
-      args,
-    }).value;
-  }
-
-  function callHandFlowCommand(operation, args = []) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "hand_flow_command",
-      operation,
-      args,
-    }).value;
-  }
-
-  function callEffectExecutorCommand(operation, args = []) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "effect_executor_command",
-      operation,
-      args,
-    }).value;
-  }
-
-  function callDebugCommand(operation, args = []) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "debug_command",
-      operation,
-      args,
-    }).value;
-  }
-
-  function setBrowserStatusNote(message) {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "ui_set_status_note",
-      message: String(message || ""),
-    }).value;
-  }
+  const browserDomainCommandPort = browserHostModule.browserServices.createLegacyDomainCommandPort({
+    getTarget: (domain) => browserDomainTargets()[domain] || null,
+    clonePresentation: cloneResidentPresentation,
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+  });
+  const {
+    executeBrowserDomainCommand,
+    callBrowserDomainCommand,
+    bindBrowserDomainCommand,
+    callEffectChoiceCommand,
+    callHandFlowCommand,
+    callEffectExecutorCommand,
+    callDebugCommand,
+    setBrowserStatusNote,
+  } = browserDomainCommandPort;
   let getBrowserCommittedContext = () => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",

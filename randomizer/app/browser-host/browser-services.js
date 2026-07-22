@@ -9,6 +9,53 @@
 
   const SCHEMA_VERSION = "seti-browser-services-v1";
   const VIEW_SCHEMA_VERSION = "seti-browser-host-v1";
+  const LEGACY_DOMAIN_COMMANDS = Object.freeze({
+    scan_flow: Object.freeze([
+      "getPublicScanMaxSelectable", "buildReadySectorFinishEffects", "buildScanFinalizeFollowupEffects",
+      "replaceNebulaDataForCurrentPlayer", "getSectorFinishWinnerTarget", "executeScanActionFinalizeEffect",
+      "executeSectorFinishScanEffect", "replenishDelayedPublicRefillSlots", "executeScanPublicRefillEffect",
+      "settleDelayedPublicRefillsAfterScanFlow", "buildEndOfFlowFollowupEffects",
+      "shouldAppendQueuedSectorFinishEffects", "appendEndOfFlowSectorFinishEffects", "discardPublicScanCard",
+      "discardHandScanCard", "finalizeScanSourceCard", "restoreYichangdianCornerPickerIfPending",
+      "closeScanTargetPicker", "nebulaHasScannableData", "buildNebulaScanChoice", "isAomomoActive",
+      "getAomomoPlanetLocation", "getAomomoCurrentX", "getNebulaCurrentX", "getSectorScanTargetLabel",
+      "buildAomomoScanChoiceForX", "hasAomomoScanAtX", "buildSectorScanChoicesForX",
+      "expandScanChoicesWithAomomoTargets", "confirmScanTarget", "handleDrawnHandScanSkip", "beginSectorScan",
+      "getSectorOpenDataCount", "getSectorReplacedCount", "getSectorExtraMarkCount", "getPublicScanChoicesForCard",
+      "hasHandScanTargetCard", "createPublicScanPendingAction", "beginPublicDeckScan", "beginPublicScanForSingleCard",
+      "confirmPublicScanSelection", "handlePublicScanCardClick", "beginHandScan", "cancelHandScanSelection",
+      "handleHandScanCardClick",
+    ]),
+    alien_ui: Object.freeze([
+      "buildAlienRevealNoticeEntry", "getAlienTracePickerPlayer", "canPlaceJiuzheTrace",
+      "canPlaceYichangdianTrace", "canPlaceFangzhouTrace", "canPlaceBanrenmaTrace", "canPlaceChongTrace",
+      "canPlaceAmibaTrace", "canPlaceAomomoTrace", "canPlaceRunezuTrace", "canPlaceRunezuFaceSymbol",
+      "canPlaceStateTrace", "canPlaceAnyStateExtraTrace", "openAlienTracePicker", "beginAlienTraceBoardPlacement",
+      "closeAlienTracePicker", "beginJiuzheTraceGridPlacement", "beginYichangdianTraceGridPlacement",
+      "beginFangzhouTraceGridPlacement", "beginBanrenmaTraceGridPlacement", "beginAomomoTraceGridPlacement",
+      "beginChongTraceGridPlacement", "beginAmibaTraceGridPlacement", "beginRunezuTraceGridPlacement",
+      "renderAlienTracePickerColorStep", "openFangzhouTraceUseChoice", "openFangzhouTraceDestinationChoice",
+      "handleFangzhouTraceDestinationChoice", "handleFangzhouUnlockTraceChoice", "routeFangzhouAlienTraceGain",
+      "handleStateTraceSlotPlacement", "handleFangzhouTraceSlotPlacement", "getEligibleAlienSlotIdsForTraceEffect",
+      "getFangzhouUnlockableTraceTypes", "hasAlienTracePanelPlacementTarget",
+    ]),
+    turn_end: Object.freeze([
+      "executePassFirstRotateEffect", "executePassHandLimitEffect", "passForCurrentPlayer",
+      "maybeResumeTurnEndAfterReveal", "maybeContinuePendingTurnEndRevealFlow",
+      "maybeContinueAlienRevealQueuedOpportunities", "endCurrentTurn",
+    ]),
+    action_interaction: Object.freeze([
+      "getPlutoReservedCards", "removePlutoMarker", "collectPlutoMarkers", "buildPlutoMarkerContext",
+      "playerHasOwnPlutoLanding", "buildPlutoMarkerRemovalChoices", "getPlutoCandidateRockets",
+      "getPlutoActionCost", "getAvailablePlutoAction", "executePlutoAction", "getCurrentPlanetActionPlacement",
+      "openPlutoActionChoicePicker", "scheduleRenderMoveArrows", "clearMoveRocketHighlight", "activateMoveMode",
+      "deactivateMoveMode", "openDataPlacePicker", "openAutoDataPlacementPrompt", "cancelDataPlacePicker",
+      "confirmDataPlacement",
+    ]),
+    income_runtime: Object.freeze([
+      "applyIndustryRoundStartBonuses", "maybeStartFundamentalismRoundStartIncomeFlow", "beginIncomeForCurrentPlayer",
+    ]),
+  });
 
   function clone(value) {
     return value == null ? value : structuredClone(value);
@@ -197,6 +244,50 @@
     });
   }
 
+  function createLegacyDomainCommandPort(options = {}) {
+    const allowedCommands = Object.fromEntries(Object.entries(options.allowedCommands || LEGACY_DOMAIN_COMMANDS)
+      .map(([domain, operations]) => [domain, new Set(operations)]));
+
+    function executeBrowserDomainCommand(workingRoot, command = {}) {
+      const target = options.getTarget(command.domain);
+      const allowed = allowedCommands[command.domain];
+      if ((allowed && !allowed.has(command.operation)) || (!allowed && !Object.hasOwn(target || {}, command.operation))) {
+        return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNKNOWN", message: `未知 Browser domain command: ${command.domain}.${command.operation}` };
+      }
+      const method = target?.[command.operation];
+      if (typeof method !== "function") {
+        return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNAVAILABLE", message: `Browser domain command 未装配: ${command.domain}.${command.operation}` };
+      }
+      const value = method(workingRoot, ...(command.args || []));
+      return { ok: value?.ok !== false, value: options.clonePresentation(value) };
+    }
+
+    function callBrowserDomainCommand(domain, operation, args = []) {
+      try {
+        return options.submitHostCommand({ kind: "domain_command", domain, operation, args }).value;
+      } catch (error) {
+        throw new Error(`${domain}.${operation}: ${error?.message || error}`, { cause: error });
+      }
+    }
+
+    function callOperation(kind, operation, args = []) {
+      return options.submitHostCommand({ kind, operation, args }).value;
+    }
+
+    return Object.freeze({
+      executeBrowserDomainCommand,
+      callBrowserDomainCommand,
+      bindBrowserDomainCommand: (domain, operation) => (...args) => callBrowserDomainCommand(domain, operation, args),
+      callEffectChoiceCommand: (operation, args = []) => callOperation("effect_choice_command", operation, args),
+      callHandFlowCommand: (operation, args = []) => callOperation("hand_flow_command", operation, args),
+      callEffectExecutorCommand: (operation, args = []) => callOperation("effect_executor_command", operation, args),
+      callDebugCommand: (operation, args = []) => callOperation("debug_command", operation, args),
+      setBrowserStatusNote(message) {
+        return options.submitHostCommand({ kind: "ui_set_status_note", message: String(message || "") }).value;
+      },
+    });
+  }
+
   function subscribeRefresh(options = {}) {
     const refresh = requireFunction(options, "refresh", "Browser refresh subscription");
     const unsubscribers = [];
@@ -213,6 +304,8 @@
     VIEW_SCHEMA_VERSION,
     createBrowserServices,
     createBrowserDownloadPort,
+    createLegacyDomainCommandPort,
+    LEGACY_DOMAIN_COMMANDS,
     subscribeRefresh,
   });
 });
