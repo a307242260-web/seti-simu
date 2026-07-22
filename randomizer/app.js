@@ -408,6 +408,13 @@
       args,
     }).value;
   }
+
+  function setBrowserStatusNote(message) {
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "ui_set_status_note",
+      message: String(message || ""),
+    }).value;
+  }
   let getBrowserCommittedContext = () => ({
     gameId: "seti-browser-runtime",
     rulesetVersion: "seti-runtime-v1",
@@ -598,6 +605,9 @@
           return cloneResidentPresentation(handleFinalScoreTileClickForRoot(workingRoot, command.tileId));
         case "ui_get_required_move_points":
           return { ok: true, value: getRequiredMovePointsForUiForRoot(workingRoot, ...(command.args || [])) };
+        case "ui_set_status_note":
+          workingRoot.rocketState.statusNote = command.message;
+          return { ok: true, value: command.message };
         case "card_execute_free_move_corner":
           return cloneResidentPresentation(executeFreeMoveForCardCornerForRoot(workingRoot, ...(command.args || [])));
         case "rocket_current_planet":
@@ -5239,7 +5249,7 @@
         entryCount,
         message: "游戏尚未结束，终局行动日志需要在游戏结束后下载",
       };
-      rocketState.statusNote = result.message;
+      setBrowserStatusNote(result.message);
       renderStateReadout();
       return result;
     }
@@ -5254,7 +5264,7 @@
         ? `已生成行动日志：${filename}`
         : downloadResult.message || "行动日志下载失败",
     };
-    rocketState.statusNote = result.message;
+    setBrowserStatusNote(result.message);
     renderStateReadout();
     return result;
   }
@@ -5706,7 +5716,7 @@
       return INTERACTION_FOCUS.HAND_CARDS;
     }
     if (isCardSelectionActive()) return INTERACTION_FOCUS.PUBLIC_CARDS;
-    if (isTechTilePickingActive() || techGameState?.ui?.industryBorrowMode) {
+    if (isTechTilePickingActive() || createStateSourceReadoutRoot().techGameState?.ui?.industryBorrowMode) {
       return INTERACTION_FOCUS.TECH_PANEL;
     }
     if (getPendingPiratesRaidDecision()) return INTERACTION_FOCUS.PLAYER_BOARD;
@@ -5774,10 +5784,11 @@
   }
 
   function blockManualAiAutomationInput(message = null, player = getCurrentPlayer()) {
-    rocketState.statusNote = message || `${player?.colorLabel || "电脑玩家"}AI 正在自动行动`;
+    const statusNote = message || `${player?.colorLabel || "电脑玩家"}AI 正在自动行动`;
+    setBrowserStatusNote(statusNote);
     scheduleAiAutoStepIfNeeded();
     renderStateReadout();
-    return { ok: false, blocked: true, message: rocketState.statusNote };
+    return { ok: false, blocked: true, message: statusNote };
   }
 
   function blockManualAiPendingInput(pending = null, label = "待处理操作", fallbackEffect = null) {
