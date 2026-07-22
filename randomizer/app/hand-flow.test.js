@@ -93,7 +93,7 @@ function createBaseContext(player, overrides = {}) {
     cardState,
     rocketState,
     alienGameState,
-    getWorkingRoot: () => workingRoot,
+    workingRoot,
     turnState: {},
     solarState: {},
     els: makeEls(),
@@ -424,13 +424,14 @@ function createBaseContext(player, overrides = {}) {
     resources: { credits: 3, energy: 2, handSize: 2, publicity: 0 },
     hand: [{ id: "card-1", label: "卡 1", price: 2 }, { id: "card-2", label: "卡 2", price: 1 }],
   };
-  const handFlow = createHandFlow(createBaseContext(player));
-  const start = handFlow.beginPlayCardSelection();
+  const context = createBaseContext(player);
+  const handFlow = createHandFlow(context);
+  const start = handFlow.beginPlayCardSelection(context.workingRoot);
   assert.equal(start.ok, true);
-  assert.equal(handFlow.handlePlayCardSelect(0).ok, true);
-  assert.deepEqual(handFlow.getPendingPlayCardSelection().handIndex, 0);
-  handFlow.cancelPlayCardSelection();
-  assert.equal(handFlow.getPendingPlayCardSelection(), null);
+  assert.equal(handFlow.handlePlayCardSelect(context.workingRoot, 0).ok, true);
+  assert.deepEqual(handFlow.getPendingPlayCardSelection(context.workingRoot).handIndex, 0);
+  handFlow.cancelPlayCardSelection(context.workingRoot);
+  assert.equal(handFlow.getPendingPlayCardSelection(context.workingRoot), null);
 }
 
 {
@@ -442,8 +443,8 @@ function createBaseContext(player, overrides = {}) {
   };
   const context = createBaseContext(player);
   const handFlow = createHandFlow(context);
-  assert.equal(handFlow.beginDiscardSelection(1).ok, true);
-  const result = handFlow.handleHandCardDiscard(0);
+  assert.equal(handFlow.beginDiscardSelection(context.workingRoot, 1).ok, true);
+  const result = handFlow.handleHandCardDiscard(context.workingRoot, 0);
   assert.equal(result.ok, true);
   assert.equal(player.hand.length, 1);
   assert.equal(context.cardState.discardPile.length, 1);
@@ -532,9 +533,9 @@ function createBaseContext(player, overrides = {}) {
   };
   const context = createBaseContext(player);
   const handFlow = createHandFlow(context);
-  assert.equal(handFlow.beginMovePaymentSelection(1, 0, 7).ok, true);
-  handFlow.handleHandCardMovePayment(0);
-  const result = handFlow.confirmMovePayment(context.getWorkingRoot());
+  assert.equal(handFlow.beginMovePaymentSelection(context.workingRoot, 1, 0, 7).ok, true);
+  handFlow.handleHandCardMovePayment(context.workingRoot, 0);
+  const result = handFlow.confirmMovePayment(context.workingRoot);
   assert.equal(result.ok, true);
   assert.equal(player.hand.length, 1);
   assert.equal(player.resources.energy, 0);
@@ -560,7 +561,7 @@ function createBaseContext(player, overrides = {}) {
   });
   const context = createBaseContext(player, { events, decisionSessions });
   const handFlow = createHandFlow(context);
-  const result = handFlow.confirmMovePayment(context.getWorkingRoot(), { automated: true });
+  const result = handFlow.confirmMovePayment(context.workingRoot, { automated: true });
   assert.equal(result.ok, true);
   assert.equal(events.cardEffectMovePayment.terrainRequired, 2);
   assert.equal(events.cardEffectMovePayment.poolUsed, 1);
@@ -583,9 +584,10 @@ function createBaseContext(player, overrides = {}) {
       },
     }],
   };
-  const handFlow = createHandFlow(createBaseContext(player));
-  assert.equal(handFlow.handleHandCardCornerQuickAction(0).ok, true);
-  const result = handFlow.confirmCardCornerQuickAction();
+  const context = createBaseContext(player);
+  const handFlow = createHandFlow(context);
+  assert.equal(handFlow.handleHandCardCornerQuickAction(context.workingRoot, 0).ok, true);
+  const result = handFlow.confirmCardCornerQuickAction(context.workingRoot);
   assert.equal(result.ok, true);
   assert.equal(player.hand.length, 0);
   assert.equal(player.resources.publicity, 2);
@@ -600,9 +602,9 @@ function createBaseContext(player, overrides = {}) {
   };
   const context = createBaseContext(player);
   const handFlow = createHandFlow(context);
-  assert.equal(handFlow.beginPlayCardSelection().ok, true);
-  assert.equal(handFlow.handlePlayCardSelect(0).ok, true);
-  const result = handFlow.confirmPlayCardSelection();
+  assert.equal(handFlow.beginPlayCardSelection(context.workingRoot).ok, true);
+  assert.equal(handFlow.handlePlayCardSelect(context.workingRoot, 0).ok, true);
+  const result = handFlow.confirmPlayCardSelection(context.workingRoot);
   assert.equal(result.ok, true);
   assert.equal(player.resources.credits, 1);
   assert.equal(player.hand.length, 0);
@@ -631,9 +633,9 @@ function createBaseContext(player, overrides = {}) {
     },
   });
   const handFlow = createHandFlow(context);
-  assert.equal(handFlow.beginPlayCardSelection().ok, true);
-  assert.equal(handFlow.handlePlayCardSelect(0).ok, true);
-  const result = handFlow.confirmPlayCardSelection();
+  assert.equal(handFlow.beginPlayCardSelection(context.workingRoot).ok, true);
+  assert.equal(handFlow.handlePlayCardSelect(context.workingRoot, 0).ok, true);
+  const result = handFlow.confirmPlayCardSelection(context.workingRoot);
   assert.equal(result.ok, true);
   assert.equal(player.hand.length, 0);
   assert.equal(player.reservedCards.length, 1);
@@ -660,9 +662,9 @@ function createBaseContext(player, overrides = {}) {
     },
   });
   const handFlow = createHandFlow(context);
-  assert.equal(handFlow.beginPlayCardSelection().ok, true);
-  assert.equal(handFlow.handlePlayCardSelect(0).ok, true);
-  const result = handFlow.confirmPlayCardSelection();
+  assert.equal(handFlow.beginPlayCardSelection(context.workingRoot).ok, true);
+  assert.equal(handFlow.handlePlayCardSelect(context.workingRoot, 0).ok, true);
+  const result = handFlow.confirmPlayCardSelection(context.workingRoot);
   assert.equal(result.ok, true);
   assert.equal(player.resources.credits, 2);
   assert.equal(context.cardState.discardPile.length, 1);
@@ -679,8 +681,8 @@ function createBaseContext(player, overrides = {}) {
   };
   const context = createBaseContext(player);
   const handFlow = createHandFlow(context);
-  assert.equal(handFlow.beginDiscardSelection(1, { type: "income", player }).ok, true);
-  const result = handFlow.handleHandCardDiscard(0);
+  assert.equal(handFlow.beginDiscardSelection(context.workingRoot, 1, { type: "income", player }).ok, true);
+  const result = handFlow.handleHandCardDiscard(context.workingRoot, 0);
   assert.equal(result.ok, true);
   assert.equal(context.events.incomeApplied, 1);
 }
@@ -706,12 +708,12 @@ function createBaseContext(player, overrides = {}) {
     message: "初始收入完成",
   });
   const handFlow = createHandFlow(context);
-  assert.equal(handFlow.beginDiscardSelection(1, {
+  assert.equal(handFlow.beginDiscardSelection(context.workingRoot, 1, {
     type: "initial_income",
     player,
     fromEffectFlow: true,
   }).ok, true);
-  const result = handFlow.handleHandCardDiscard(0);
+  const result = handFlow.handleHandCardDiscard(context.workingRoot, 0);
   assert.equal(result.ok, true);
   assert.equal(context.events.completedInitialIncome, 1);
   assert.equal(effect.status, "completed");

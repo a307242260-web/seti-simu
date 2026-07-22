@@ -645,10 +645,10 @@
           if (typeof operation !== "function") {
             return { ok: false, code: "HAND_FLOW_COMMAND_UNKNOWN", message: `未知 Hand flow command: ${command.operation}` };
           }
-          const args = command.operation === "confirmMovePayment"
-            ? [workingRoot, ...(command.args || [])]
-            : (command.args || []);
-          return { ok: true, value: cloneResidentPresentation(operation(...args)) };
+          return {
+            ok: true,
+            value: cloneResidentPresentation(operation(workingRoot, ...(command.args || []))),
+          };
         }
         case "effect_executor_command": {
           const operation = effectExecutors?.[command.operation];
@@ -830,7 +830,7 @@
     createActionContext: createActionContextForWorkingRoot,
     getAnalyzeActionOptions: getAnalyzeActionOptionsForPlayer,
     executeScan: (workingRoot, descriptor) => executeMainScanAction(workingRoot, descriptor),
-    executePlayCard: (workingRoot, descriptor) => executeStandardPlayCard(workingRoot, descriptor),
+    executePlayCard: (_workingRoot, descriptor) => executeStandardPlayCard(descriptor),
   });
   const quickTurnActionExecutor = quickTurnActionExecutorModule.createQuickTurnActionExecutor({
     executeQuickTrade: (workingRoot, descriptor) => runQuickTrade(descriptor.target?.tradeId, {
@@ -844,7 +844,7 @@
         player?.initialSelection?.industry,
       ) || { ok: true, progressed: true };
     },
-    executeCardCorner: (workingRoot, descriptor) => executeStandardCardCornerAction(workingRoot, descriptor),
+    executeCardCorner: (_workingRoot, descriptor) => executeStandardCardCornerAction(descriptor),
     executePlaceData: (workingRoot, descriptor) => confirmDataPlacement(
       descriptor.target?.target,
       descriptor.target?.blueSlot,
@@ -2222,7 +2222,6 @@
   });
   const handFlowHelpers = handFlowModule.createHandFlow({
     decisionSessions,
-    getWorkingRoot: () => requireActiveBrowserWorkingRoot("hand flow"),
     els,
     players,
     cards,
