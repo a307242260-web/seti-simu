@@ -507,7 +507,7 @@
           recordAtomicActionHistory?.("analyze", ACTION_LOG_DEFAULT_LABELS.analyze, result, {
             logBefore: actionLogBefore,
           });
-          const startedRewardFlow = startAnalyzeDataRewardFlow?.();
+          const startedRewardFlow = startAnalyzeDataRewardFlow?.(workingRoot);
           if (startedRewardFlow) executeActionEffect?.(getCurrentActionEffect?.());
           settleCardTasksAfterEffect?.({ events: result.events, render: false });
           renderPlayerStats?.();
@@ -639,7 +639,9 @@
         recordAtomicActionHistory?.(actionId, ACTION_LOG_DEFAULT_LABELS.analyze, result, {
           logBefore: actionLogBefore,
         });
-        startedRewardFlow = startAnalyzeDataRewardFlow?.();
+        startedRewardFlow = startAnalyzeDataRewardFlow?.(
+          workingRoot || getExecutionWorkingRoot(actionContext),
+        );
         if (startedRewardFlow) {
           executeActionEffect?.(getCurrentActionEffect?.());
         }

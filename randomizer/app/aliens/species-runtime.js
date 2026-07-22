@@ -993,6 +993,7 @@ function enqueueFangzhouCard1RewardEffects(flips, flowLabel, options = {}) {
     }
 
     const flowOptions = {
+      workingRoot,
       actionType: options.actionType || "fangzhouBasic",
       ...options,
     };
@@ -4036,6 +4037,7 @@ function handleBanrenmaCardConditionChoice(workingRoot, cardId) {
     renderStateReadout();
     if (effects.length) {
       startCardEffectFlow("banrenma-condition-effects", `半人马条件：${cards.getCardLabel(removedCard)}`, effects, {
+        workingRoot,
         actionType: "banrenmaCondition",
         card: removedCard,
         historySource: HISTORY_SOURCE_QUICK,

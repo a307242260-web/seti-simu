@@ -34,7 +34,6 @@
     const quickActionHistory = context.quickActionHistory || {};
     const historyStepOrder = context.historyStepOrder || [];
     const els = context.els || {};
-    const rocketState = context.rocketState || {};
     const abilities = context.abilities || {};
     const historyCommands = context.historyCommands || {};
     const cardEffects = context.cardEffects || {};
@@ -44,6 +43,10 @@
     const ACTION_LOG_DEFAULT_LABELS = context.ACTION_LOG_DEFAULT_LABELS || { quick: "快速行动" };
 
     const getCurrentPlayer = requireFunction("getCurrentPlayer", context.getCurrentPlayer);
+    const getCurrentPlayerForRoot = requireFunction(
+      "getCurrentPlayerForRoot",
+      context.getCurrentPlayerForRoot,
+    );
     const markCurrentActionIrreversible = requireFunction(
       "markCurrentActionIrreversible",
       context.markCurrentActionIrreversible,
@@ -317,10 +320,13 @@
     function recordQuickTradeCompletion(tradeId, player, beforeState, options = {}) {
       const trade = context.quickTrades?.getTradeAction?.(tradeId);
       if (!trade || !beforeState) return;
+      if (!options.workingRoot?.cardState) {
+        throw new TypeError("recordQuickTradeCompletion 缺少 workingRoot");
+      }
       beginQuickActionStep("quick-trade", `快速交易：${trade.label}`);
       recordQuickHistoryCommand(historyCommands.createRestoreTradeStateCommand(
         player,
-        options.workingRoot?.cardState || context.cardState,
+        options.workingRoot.cardState,
         beforeState,
       ));
       completeQuickActionStep();
@@ -333,6 +339,10 @@
     }
 
     function startCardEffectFlow(chainId, label, effects, options = {}) {
+      const workingRoot = options.workingRoot;
+      if (!workingRoot?.playerState || !workingRoot?.rocketState) {
+        throw new TypeError("startCardEffectFlow 缺少 workingRoot");
+      }
       clearCompletedEffectFlowForUndo(options.historySource || HISTORY_SOURCE_MAIN);
       const deferredEndEffects = Array.isArray(options.deferredEndEffects)
         ? options.deferredEndEffects.filter(Boolean)
@@ -344,7 +354,7 @@
       const normalizedEffects = cardEffects.consolidateCardMoveEffects?.(initialEffects) || initialEffects;
       decisionState.actionEffectFlow = abilities.chain.startAbilityChain(chainId, label, normalizedEffects);
       decisionState.actionEffectFlow.actionType = options.actionType || "playCard";
-      decisionState.actionEffectFlow.playerId = getCurrentPlayer()?.id || null;
+      decisionState.actionEffectFlow.playerId = getCurrentPlayerForRoot(workingRoot)?.id || null;
       assignEffectFlowOwner(decisionState.actionEffectFlow, decisionState.actionEffectFlow.playerId);
       decisionState.actionEffectFlow.scanRunId = options.scanRunId || null;
       decisionState.actionEffectFlow.card = options.card || null;
@@ -382,7 +392,7 @@
 
       els.appWrap?.classList.toggle("action-effect-flow-active", true);
       renderReservedCards();
-      rocketState.statusNote = `${label}：请依次点击效果`;
+      workingRoot.rocketState.statusNote = `${label}：请依次点击效果`;
       if (options.activate !== false) {
         activateNextActionEffect();
       }

@@ -74,6 +74,11 @@ function createHarness() {
     withOwner: [],
     executeOwner: [],
   };
+  const workingRoot = {
+    playerState: { currentPlayerId: "p1", players: [{ id: "p1" }] },
+    rocketState: { statusNote: "" },
+    cardState: {},
+  };
   const abilities = {
     chain: {
       startAbilityChain(chainId, label, effects) {
@@ -138,7 +143,6 @@ function createHarness() {
     quickActionHistory,
     historyStepOrder,
     els: { appWrap: { classList: { toggle() {} } } },
-    rocketState: { statusNote: "" },
     abilities,
     historyCommands: {
       createRestoreTradeStateCommand: (player, cardState, beforeState) => ({
@@ -154,13 +158,15 @@ function createHarness() {
     quickTrades: {
       getTradeAction: (tradeId) => ({ label: `Trade ${tradeId}` }),
     },
-    cardState: {},
     actionLogState: { draft: null },
     ACTION_LOG_DEFAULT_LABELS: { quick: "快速行动" },
     HISTORY_SOURCE_MAIN: "main",
     HISTORY_SOURCE_QUICK: "quick",
     getCurrentPlayer() {
       return { id: "p1" };
+    },
+    getCurrentPlayerForRoot(rootState) {
+      return rootState.playerState.players.find((player) => player.id === rootState.playerState.currentPlayerId);
     },
     markCurrentActionIrreversible(reason, code) {
       calls.currentIrreversible.push({ reason, code });
@@ -241,15 +247,17 @@ function createHarness() {
     quickActionHistory,
     historyStepOrder,
     calls,
+    workingRoot,
   };
 }
 
 {
-  const { helper, pendingState } = createHarness();
+  const { helper, pendingState, workingRoot } = createHarness();
   const started = helper.startCardEffectFlow("flow-1", "测试效果", [
     { id: "effect-1", status: "pending", label: "效果1", type: "gain" },
     { id: "effect-2", status: "pending", label: "效果2", type: "scan" },
   ], {
+    workingRoot,
     historySource: "quick",
   });
   assert.equal(started, true);
@@ -258,10 +266,11 @@ function createHarness() {
 }
 
 {
-  const { helper, quickActionHistory, historyStepOrder } = createHarness();
+  const { helper, quickActionHistory, historyStepOrder, workingRoot } = createHarness();
   helper.startCardEffectFlow("flow-2", "快速效果", [
     { id: "effect-q1", status: "pending", label: "奖励一", type: "gain" },
   ], {
+    workingRoot,
     historySource: "quick",
   });
   helper.beginEffectHistoryStep("奖励一");

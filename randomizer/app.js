@@ -322,6 +322,7 @@
       "clearMoveRocketHighlight", "activateMoveMode", "deactivateMoveMode", "openDataPlacePicker",
       "openAutoDataPlacementPrompt", "cancelDataPlacePicker", "confirmDataPlacement",
     ]),
+    income_runtime: new Set(["maybeStartFundamentalismRoundStartIncomeFlow"]),
   });
 
   let activeBrowserDomainWorkingRoot = null;
@@ -359,6 +360,7 @@
       case "card_trigger": return cardTriggerRuntime;
       case "industry_runtime": return industryRuntime;
       case "tech_runtime": return techRuntime;
+      case "income_runtime": return incomeRuntime;
       default: return null;
     }
   }
@@ -1145,7 +1147,7 @@
   let getFundamentalismRoundStartIncomeRound;
   let hasFundamentalismRoundStartIncomePending;
   let buildFundamentalismRoundStartIncomeEffect;
-  let maybeStartFundamentalismRoundStartIncomeFlow;
+  let maybeStartFundamentalismRoundStartIncomeFlowForRoot;
   let beginIncomeForCurrentPlayer;
   let buildCardTaskContext;
   let buildPlayerDataTotals;
@@ -1890,17 +1892,16 @@
     quickActionHistory,
     historyStepOrder,
     els,
-    rocketState,
     abilities,
     historyCommands,
     cardEffects,
     quickTrades,
-    cardState,
     actionLogState,
     HISTORY_SOURCE_MAIN,
     HISTORY_SOURCE_QUICK,
     ACTION_LOG_DEFAULT_LABELS,
     getCurrentPlayer,
+    getCurrentPlayerForRoot: (workingRoot) => players.getCurrentPlayer(workingRoot.playerState),
     markCurrentActionIrreversible,
     getIrreversibleReason,
     recordTurnVisitPlanetEvents,
@@ -2546,9 +2547,16 @@
     getFundamentalismRoundStartIncomeRound,
     hasFundamentalismRoundStartIncomePending,
     buildFundamentalismRoundStartIncomeEffect,
-    maybeStartFundamentalismRoundStartIncomeFlow,
+    maybeStartFundamentalismRoundStartIncomeFlow: maybeStartFundamentalismRoundStartIncomeFlowForRoot,
     beginIncomeForCurrentPlayer,
   } = incomeRuntime);
+  function maybeStartFundamentalismRoundStartIncomeFlow(...args) {
+    return callBrowserDomainCommand(
+      "income_runtime",
+      "maybeStartFundamentalismRoundStartIncomeFlow",
+      args,
+    );
+  }
   function confirmAlienTracePlacement(...args) {
     return callBrowserDomainCommand("alien_runtime", "confirmAlienTracePlacement", args);
   }
@@ -10410,8 +10418,8 @@
     return options;
   }
 
-  function startAnalyzeDataRewardFlow() {
-    const currentPlayer = getCurrentPlayer();
+  function startAnalyzeDataRewardFlow(workingRoot) {
+    const currentPlayer = players.getCurrentPlayer(workingRoot.playerState);
     const rewardEffects = [{
       id: "analyze-blue-alien-trace",
       type: planetRewards.EFFECT_TYPES.ALIEN_TRACE,
@@ -10428,7 +10436,7 @@
       "analyze-rewards",
       "分析奖励",
       rewardEffects,
-      { actionType: "analyze", historySource: HISTORY_SOURCE_MAIN, consumesMainAction: true },
+      { workingRoot, actionType: "analyze", historySource: HISTORY_SOURCE_MAIN, consumesMainAction: true },
     );
   }
 

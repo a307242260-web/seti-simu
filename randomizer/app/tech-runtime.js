@@ -999,6 +999,7 @@
         flow.label || "星际海盗",
         nodes,
         {
+          workingRoot,
           actionType: "industryPiratesRaid",
           historySource: HISTORY_SOURCE_QUICK,
           consumesMainAction: false,

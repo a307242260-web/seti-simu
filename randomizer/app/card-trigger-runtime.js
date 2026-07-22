@@ -267,6 +267,7 @@
         "卡牌临时任务奖励",
         effects,
         {
+          workingRoot: options.workingRoot,
           actionType: "cardTask",
           futureSpanPlayedCard: Boolean(options.futureSpanPlayedCard),
           historySource: options.historySource || HISTORY_SOURCE_MAIN,
@@ -504,6 +505,7 @@
         insertActionEffectsAfterCurrent([moveEffect]);
       } else {
         startCardEffectFlow("card-event-bonus-move", bonus.label || "卡牌事件奖励", [moveEffect], {
+          workingRoot,
           actionType: "cardEventBonus",
           historySource: HISTORY_SOURCE_QUICK,
           consumesMainAction: false,
@@ -1026,6 +1028,7 @@
         label,
         preparedEffects,
         {
+          workingRoot,
           actionType: "cardTrigger",
           historySource: HISTORY_SOURCE_QUICK,
           consumesMainAction: false,
@@ -1183,6 +1186,7 @@
         ready.chongTask ? "虫族任务奖励" : "卡牌任务奖励",
         ready.effects,
         {
+          workingRoot,
           actionType: "cardTask",
           historySource: HISTORY_SOURCE_QUICK,
           consumesMainAction: false,

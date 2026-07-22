@@ -1459,6 +1459,7 @@
       recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, null, { workingRoot });
       if (playFlowQueue.effects.length) {
         startPlayCardEffectFlow("play-card-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
+          workingRoot,
           actionType: "playCard",
           card: playedCard,
           temporaryTasks,
@@ -1575,6 +1576,7 @@
       recordPlayCardStart(currentPlayer, playedCard, beforePlayer, beforeCardState, beforeAlienState, { workingRoot });
       if (playFlowQueue.effects.length) {
         startPlayCardEffectFlow(flowId, `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
+          workingRoot,
           actionType: "playCard",
           card: playedCard,
           temporaryTasks: [],
@@ -1781,6 +1783,7 @@
       );
       if (playFlowQueue.effects.length) {
         startPlayCardEffectFlow("fangzhou-card2-play-effects", `打出 ${cards.getCardLabel(playedCard)}`, playFlowQueue.effects, {
+          workingRoot,
           actionType: "playCard",
           card: playedCard,
           temporaryTasks: [],

@@ -472,6 +472,7 @@
         `卡牌快速行动：${action.label}`,
         [moveEffect],
         {
+          workingRoot,
           actionType: "cardCornerMove",
           historySource: HISTORY_SOURCE_QUICK,
           consumesMainAction: false,

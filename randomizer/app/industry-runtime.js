@@ -408,6 +408,7 @@
         flow.label || "层云核心",
         nodes,
         {
+          workingRoot,
           actionType: "industryStratus",
           historySource: HISTORY_SOURCE_QUICK,
           consumesMainAction: false,
@@ -450,6 +451,7 @@
         flow.label || "原教旨主义",
         nodes,
         {
+          workingRoot,
           actionType: "industryFundamentalism",
           historySource: HISTORY_SOURCE_QUICK,
           consumesMainAction: false,
@@ -649,6 +651,7 @@
         flow.label || "寰宇动力",
         nodes,
         {
+          workingRoot,
           actionType: "industryHuanyu",
           historySource: HISTORY_SOURCE_QUICK,
           consumesMainAction: false,
@@ -1325,7 +1328,7 @@
         "industry-sentinel-corner",
         "哨兵探测网络",
         nodes,
-        { actionType: "playCard", industryPlayedCard: playedCard },
+        { workingRoot, actionType: "playCard", industryPlayedCard: playedCard },
       );
     }
 

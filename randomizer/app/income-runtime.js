@@ -374,7 +374,14 @@
       };
     }
 
-    function maybeStartFundamentalismRoundStartIncomeFlow(player = getCurrentPlayer(), roundNumber = turnState.roundNumber) {
+    function maybeStartFundamentalismRoundStartIncomeFlow(
+      workingRoot,
+      player = players.getCurrentPlayer(workingRoot?.playerState),
+      roundNumber = workingRoot?.turnState?.roundNumber,
+    ) {
+      if (!workingRoot?.playerState || !workingRoot?.turnState || !workingRoot?.rocketState) {
+        throw new TypeError("maybeStartFundamentalismRoundStartIncomeFlow 缺少 workingRoot");
+      }
       if (!hasFundamentalismRoundStartIncomePending(player, roundNumber)) return null;
       const round = getFundamentalismRoundStartIncomeRound(player, roundNumber);
       if (!player?.hand?.length) {
@@ -391,7 +398,7 @@
           actionType: "roundStart",
           actionLabel: "轮开始",
           roundNumber: round,
-          rawTurnNumber: turnState.turnNumber,
+          rawTurnNumber: workingRoot.turnState.turnNumber,
           steps: [{
             source: HISTORY_SOURCE_QUICK,
             text: result.message,
@@ -406,20 +413,27 @@
         "原教旨主义：轮开始收入",
         [buildFundamentalismRoundStartIncomeEffect(player, round)],
         {
+          workingRoot,
           actionType: "industryFundamentalismRoundStartIncome",
           historySource: HISTORY_SOURCE_QUICK,
           consumesMainAction: false,
         },
       );
       if (started) {
-        rocketState.statusNote = `原教旨主义：第${round}轮开始，请选择 1 张牌增加收入`;
+        workingRoot.rocketState.statusNote = `原教旨主义：第${round}轮开始，请选择 1 张牌增加收入`;
         renderPlayerStats();
         renderPlayerHand();
         renderActionEffectBar();
         updateActionButtons();
         renderStateReadout();
       }
-      return { ok: started, started, playerId: player.id, roundNumber: round, message: rocketState.statusNote };
+      return {
+        ok: started,
+        started,
+        playerId: player.id,
+        roundNumber: round,
+        message: workingRoot.rocketState.statusNote,
+      };
     }
 
     function beginIncomeForCurrentPlayer(options = {}) {

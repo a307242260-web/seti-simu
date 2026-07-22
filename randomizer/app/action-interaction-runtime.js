@@ -405,7 +405,7 @@
       `pluto-${actionType}-rewards`,
       actionLabel,
       rewardEffects,
-      { actionType, historySource: HISTORY_SOURCE_MAIN, consumesMainAction: true },
+      { workingRoot, actionType, historySource: HISTORY_SOURCE_MAIN, consumesMainAction: true },
     );
     const settlement = settleCardTasksAfterEffect({ events: result.events, render: false });
     renderPlayerStats();
