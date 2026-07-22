@@ -445,7 +445,10 @@
       const nestedWorkingState = activeHostWorkingState || transactionWorkingState;
       if (nestedWorkingState) {
         try {
-          const nestedResult = executeHostCommand(nestedWorkingState, command);
+          const nestedResult = runWithWorkingStateContext(
+            nestedWorkingState,
+            () => executeHostCommand(nestedWorkingState, command),
+          );
           // 嵌套命令仍在同一个 Composition 事务内；结果可能携带仅供事务内消费的
           // undo command 函数，不能提前跨端口 structuredClone/deepFreeze。
           return nestedResult || { ok: true };
@@ -458,7 +461,10 @@
       let result;
       try {
         activeHostWorkingState = actionContext(clone(committedBefore));
-        result = executeHostCommand(activeHostWorkingState, clone(command));
+        result = runWithWorkingStateContext(
+          activeHostWorkingState,
+          () => executeHostCommand(activeHostWorkingState, clone(command)),
+        );
       } catch (error) {
         if (stateAdapter) stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "host_command_thrown" });
         return fail("RULE_COMPOSITION_HOST_COMMAND_THROWN", error?.message || "Browser host command 执行异常");

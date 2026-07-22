@@ -189,7 +189,7 @@
       const commands = [];
       const turnVisitCommand = recordTurnVisitPlanetEvents(workingRoot, result.events);
       if (turnVisitCommand) commands.push(turnVisitCommand);
-      recordNeutralScoreTracesFromAbilityResult(result, history);
+      recordNeutralScoreTracesFromAbilityResult(workingRoot, result, history);
       commands.push(...(result.commands || []));
       if (commands.length) {
         for (const command of commands) {

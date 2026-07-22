@@ -523,6 +523,12 @@
         workingState.meta = structuredClone(committedState.meta);
       },
     },
+    runWithWorkingState(workingRoot, operation) {
+      return players.runWithScoreGainListener(
+        (player, payload) => handlePlayerScoreChanged(workingRoot, player, payload),
+        operation,
+      );
+    },
     executeHostCommand(workingRoot, command) {
       switch (command.kind) {
         case "turn_set_player_order":
@@ -5887,20 +5893,20 @@
     return players.PLAYER_COLOR_IDS.find((colorId) => !activeColors.has(colorId)) || null;
   }
 
-  function getCrossedNeutralScoreTraceThresholds(beforeScore, afterScore) {
+  function getCrossedNeutralScoreTraceThresholds(workingRoot, beforeScore, afterScore) {
     const before = Number(beforeScore) || 0;
     const after = Number(afterScore) || 0;
     if (after <= before) return [];
     return (aliens.NEUTRAL_SCORE_TRACE_THRESHOLDS || [20, 30]).filter((threshold) => (
       before < Number(threshold)
       && after >= Number(threshold)
-      && !aliens.getNeutralScoreTraceMark?.(alienGameState, threshold)
+      && !aliens.getNeutralScoreTraceMark?.(workingRoot.alienGameState, threshold)
     ));
   }
 
-  function recordNeutralScoreTraceRestore(beforeAlienState, history = null) {
+  function recordNeutralScoreTraceRestore(workingRoot, beforeAlienState, history = null) {
     const command = historyCommands.createRestoreObjectCommand(
-      alienGameState,
+      workingRoot.alienGameState,
       beforeAlienState,
       "恢复分数阈值中立首痕迹",
     );
@@ -5911,37 +5917,40 @@
     }
   }
 
-  function placeNeutralScoreTraceForThreshold(player, threshold, options = {}) {
-    const activePlayerIds = new Set(getActivePlayers().map((item) => item.id));
+  function placeNeutralScoreTraceForThreshold(workingRoot, player, threshold, options = {}) {
+    const activeIds = new Set(workingRoot.turnState.activePlayerIds || []);
+    const activePlayerIds = new Set((workingRoot.playerState.players || [])
+      .filter((item) => activeIds.has(item.id))
+      .map((item) => item.id));
     if (!player?.id || !activePlayerIds.has(player.id)) return null;
     const neutralColor = getNeutralScoreTraceColor();
     if (!neutralColor) return null;
 
-    const beforeAlienState = structuredClone(alienGameState);
+    const beforeAlienState = structuredClone(workingRoot.alienGameState);
     const result = aliens.placeNeutralScoreTraceForThreshold?.(
-      alienGameState,
+      workingRoot.alienGameState,
       threshold,
       player,
       neutralColor,
     );
     if (!result?.ok) return result || null;
 
-    recordNeutralScoreTraceRestore(beforeAlienState, options.history || null);
+    recordNeutralScoreTraceRestore(workingRoot, beforeAlienState, options.history || null);
     renderAlienPanels();
     return result;
   }
 
-  function handlePlayerScoreChanged(player, payload = {}, options = {}) {
-    const thresholds = getCrossedNeutralScoreTraceThresholds(payload.beforeScore, payload.afterScore);
+  function handlePlayerScoreChanged(workingRoot, player, payload = {}, options = {}) {
+    const thresholds = getCrossedNeutralScoreTraceThresholds(workingRoot, payload.beforeScore, payload.afterScore);
     const placed = [];
     for (const threshold of thresholds) {
-      const result = placeNeutralScoreTraceForThreshold(player, threshold, options);
+      const result = placeNeutralScoreTraceForThreshold(workingRoot, player, threshold, options);
       if (result?.ok) placed.push(result);
     }
     return placed;
   }
 
-  function recordNeutralScoreTracesFromScanResult(scanResult, history = null) {
+  function recordNeutralScoreTracesFromScanResult(workingRoot, scanResult, history = null) {
     const scoreAwarded = Number(
       scanResult?.scoreAwarded
       ?? scanResult?.replaced?.scoreAwarded
@@ -5952,7 +5961,7 @@
     const player = getScanScorePlayer(scanResult);
     if (!player) return [];
     const afterScore = Number(player.resources?.score) || 0;
-    return handlePlayerScoreChanged(player, {
+    return handlePlayerScoreChanged(workingRoot, player, {
       gain: { score: scoreAwarded },
       beforeScore: afterScore - scoreAwarded,
       afterScore,
@@ -5960,13 +5969,13 @@
     }, { history });
   }
 
-  function recordNeutralScoreTracesFromAbilityResult(result, history = null) {
+  function recordNeutralScoreTracesFromAbilityResult(workingRoot, result, history = null) {
     const scanResults = [
       result,
       result?.payload?.industryLaunchScan,
     ].filter(Boolean);
     return scanResults.flatMap((scanResult) => (
-      recordNeutralScoreTracesFromScanResult(scanResult, history)
+      recordNeutralScoreTracesFromScanResult(workingRoot, scanResult, history)
     ));
   }
 
@@ -11956,9 +11965,6 @@
     renderSectorNebulaDataBoard,
     logAomomoDebugCoordinates,
     resize,
-  });
-  players.setScoreGainListener?.((player, payload) => {
-    handlePlayerScoreChanged(player, payload);
   });
   window.SetiAppBootstrap.initializeAppBootstrap({
     root: window,

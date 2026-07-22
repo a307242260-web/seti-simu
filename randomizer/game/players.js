@@ -381,8 +381,15 @@
     return player;
   }
 
-  function setScoreGainListener(listener) {
+  function runWithScoreGainListener(listener, operation) {
+    if (typeof operation !== "function") throw new TypeError("score gain operation 必须是函数");
+    const previousListener = scoreGainListener;
     scoreGainListener = typeof listener === "function" ? listener : null;
+    try {
+      return operation();
+    } finally {
+      scoreGainListener = previousListener;
+    }
   }
 
   const IMMEDIATE_INCOME_RESOURCE_KEYS = Object.freeze([
@@ -542,7 +549,7 @@
     canAfford,
     spendResources,
     gainResources,
-    setScoreGainListener,
+    runWithScoreGainListener,
     gainIncome,
     incrementPlayerOrbitCount,
     isBorrowedTechActive,

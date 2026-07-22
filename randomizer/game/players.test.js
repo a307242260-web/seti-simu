@@ -90,15 +90,15 @@ const receiver = players.createPlayer({
   resources: { credits: 1, energy: 2, publicity: 3, availableData: 4 },
 });
 let scoreListenerPayload = null;
-players.setScoreGainListener((player, payload) => {
+players.runWithScoreGainListener((player, payload) => {
   scoreListenerPayload = { playerId: player.id, ...payload };
+}, () => {
+  players.gainResources(receiver, { score: 5 });
 });
-players.gainResources(receiver, { score: 5 });
 assert.equal(scoreListenerPayload.playerId, receiver.id);
 assert.equal(scoreListenerPayload.beforeScore, 0);
 assert.equal(scoreListenerPayload.afterScore, 5);
 assert.equal(scoreListenerPayload.scoreDelta, 5);
-players.setScoreGainListener(null);
 players.gainResources(receiver, {
   credits: 100,
   energy: 100,
