@@ -8,6 +8,7 @@ const {
   cloneSelectorResult,
   createRenderRuntime,
   createCoordinateRuntime,
+  createBrowserLayoutRuntime,
 } = require("./render-runtime");
 
 {
@@ -660,6 +661,36 @@ function createContext(overrides = {}) {
   ]) {
     assert.doesNotMatch(wiring, new RegExp(`\\n\\s*${key}(?:,|:)`), `生产 renderer 不得注入 ${key}`);
   }
+}
+
+{
+  const style = { width: "", height: "" };
+  const slots = [{ dataset: { techSlot: "blue-1" } }];
+  const techRenderContext = {};
+  const calls = [];
+  const layout = createBrowserLayoutRuntime({
+    window: { innerHeight: 900, innerWidth: 1200 },
+    document: { querySelectorAll: () => slots },
+    els: {
+      boardShell: { clientWidth: 800 },
+      playerCommand: { style: { ...style } }, wheelWrap: { style: { ...style } },
+      planetsReference: { style: { ...style } }, buttonWrap: { style: { ...style } },
+      techStage: {}, playerBoardTechLayer: {},
+    },
+    techRenderContext,
+    boardVisualScale: 1,
+    layoutPlayerHandFan: () => calls.push("hand"),
+    layoutReservedCardRows: () => calls.push("reserved"),
+    alignAlienPanelsToPlanets: () => calls.push("align"),
+    renderAlienPanels: () => calls.push("aliens"),
+    renderTechBoard: () => calls.push("tech"),
+    getMoveHighlightRocketId: () => null,
+    scheduleRenderMoveArrows: () => calls.push("arrows"),
+  });
+  layout.resize();
+  layout.syncTechRenderContext();
+  assert.deepEqual(calls, ["hand", "reserved", "align", "aliens", "tech"]);
+  assert.equal(techRenderContext.supplySlots["blue-1"], slots[0]);
 }
 
 {

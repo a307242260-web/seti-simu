@@ -378,6 +378,41 @@
     };
   }
 
+  function createBrowserLayoutRuntime(context = {}) {
+    const { window, document, els, techRenderContext } = context;
+    function resize() {
+      const height = window.innerHeight;
+      const boardWidth = els.boardShell.clientWidth || window.innerWidth;
+      const boardHeight = height - 160;
+      const baseBoardSize = Math.max(220, Math.min(boardWidth, boardHeight));
+      const compactWidthCap = window.innerWidth <= 760 ? Math.max(220, window.innerWidth - 16) : Infinity;
+      const boardSize = Math.floor(Math.min(
+        baseBoardSize * context.boardVisualScale,
+        boardWidth,
+        compactWidthCap,
+      ));
+      els.playerCommand.style.width = `${boardSize}px`;
+      els.wheelWrap.style.width = `${boardSize}px`;
+      els.wheelWrap.style.height = `${boardSize}px`;
+      els.planetsReference.style.width = `${boardSize}px`;
+      if (els.buttonWrap) els.buttonWrap.style.width = `${boardSize}px`;
+      context.layoutPlayerHandFan();
+      context.layoutReservedCardRows();
+      context.alignAlienPanelsToPlanets();
+      context.renderAlienPanels();
+      context.renderTechBoard();
+      if (context.getMoveHighlightRocketId() != null) context.scheduleRenderMoveArrows();
+    }
+    function syncTechRenderContext() {
+      techRenderContext.supplyStage = els.techStage;
+      techRenderContext.playerBoardTechLayer = els.playerBoardTechLayer;
+      techRenderContext.supplySlots = Object.fromEntries(
+        [...document.querySelectorAll(".tech-slot[data-tech-slot]")].map((slot) => [slot.dataset.techSlot, slot]),
+      );
+    }
+    return Object.freeze({ resize, syncTechRenderContext });
+  }
+
   function createRenderRuntime(context = {}) {
     const document = context.document || root.document;
     const ImageCtor = context.Image || root.Image;
@@ -1942,5 +1977,6 @@
     createRenderRuntime,
     createCardHoverPreviewRuntime,
     createCoordinateRuntime,
+    createBrowserLayoutRuntime,
   };
 });

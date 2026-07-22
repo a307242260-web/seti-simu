@@ -8641,38 +8641,22 @@
     }) || { ok: false, code: "ACTION_RUNTIME_UNAVAILABLE", message: "Standard Action runtime 尚未装配" };
   }
 
-  function resize() {
-    const h = window.innerHeight;
-    const boardWidth = els.boardShell.clientWidth || window.innerWidth;
-    const boardHeight = h - 160;
-    const baseBoardSize = Math.max(220, Math.min(boardWidth, boardHeight));
-    const compactWidthCap = window.innerWidth <= 760 ? Math.max(220, window.innerWidth - 16) : Infinity;
-    const boardSize = Math.floor(Math.min(baseBoardSize * BOARD_VISUAL_SCALE, boardWidth, compactWidthCap));
-    els.playerCommand.style.width = `${boardSize}px`;
-    els.wheelWrap.style.width = `${boardSize}px`;
-    els.wheelWrap.style.height = `${boardSize}px`;
-    els.planetsReference.style.width = `${boardSize}px`;
-    if (els.buttonWrap) {
-      els.buttonWrap.style.width = `${boardSize}px`;
-    }
-    layoutPlayerHandFan();
-    layoutReservedCardRows();
-    alignAlienPanelsToPlanets();
-    renderAlienPanels();
-    renderTechBoard();
-    if (uiRuntimeState.moveHighlightRocketId != null) scheduleRenderMoveArrows();
-  }
-
-  function syncTechRenderContext() {
-    techRenderContext.supplyStage = els.techStage;
-    techRenderContext.playerBoardTechLayer = els.playerBoardTechLayer;
-    techRenderContext.supplySlots = Object.fromEntries(
-      [...document.querySelectorAll(".tech-slot[data-tech-slot]")].map((slot) => [
-        slot.dataset.techSlot,
-        slot,
-      ]),
-    );
-  }
+  const browserLayoutRuntime = renderRuntimeModule.createBrowserLayoutRuntime({
+    window,
+    document,
+    els,
+    techRenderContext,
+    boardVisualScale: BOARD_VISUAL_SCALE,
+    layoutPlayerHandFan: (...args) => layoutPlayerHandFan(...args),
+    layoutReservedCardRows: (...args) => layoutReservedCardRows(...args),
+    alignAlienPanelsToPlanets: (...args) => alignAlienPanelsToPlanets(...args),
+    renderAlienPanels: (...args) => renderAlienPanels(...args),
+    renderTechBoard: (...args) => renderTechBoard(...args),
+    getMoveHighlightRocketId: () => uiRuntimeState.moveHighlightRocketId,
+    scheduleRenderMoveArrows: (...args) => scheduleRenderMoveArrows(...args),
+  });
+  function resize(...args) { return browserLayoutRuntime.resize(...args); }
+  function syncTechRenderContext(...args) { return browserLayoutRuntime.syncTechRenderContext(...args); }
 
   let alienSpeciesRuntime = null;
   function getPendingChongFossilChoice() {
