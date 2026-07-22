@@ -442,7 +442,7 @@
           workingRoot,
           initialResult?.pendingIncomeIncreases || [],
         );
-        applyIndustryStartupPassives?.();
+        applyIndustryStartupPassives?.(workingRoot);
         if (!incomeStarted) {
           rocketState.statusNote = initialResult?.message
             ? `所有玩家已完成初始选择，${initialResult.message}，游戏开始。`

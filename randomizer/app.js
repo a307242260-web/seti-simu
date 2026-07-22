@@ -690,6 +690,8 @@
           return { ok: true, value: cloneResidentPresentation(beginScanAction4FreeMoveForRoot(workingRoot)) };
         case "effect_begin_card_move":
           return { ok: true, value: cloneResidentPresentation(beginCardMoveEffectForRoot(workingRoot, command.effect)) };
+        case "effect_cancel_pending_subflows":
+          return { ok: true, value: cancelActivePendingSubFlowsForRoot(workingRoot) };
         case "scan_settle_completed_sectors":
           return { ok: true, value: cloneResidentPresentation(resolveCompletedSectorSettlementsForRoot(
             workingRoot,
@@ -6833,7 +6835,7 @@
       || isIndustryHandSelectionActive();
   }
 
-  function cancelActivePendingSubFlows() {
+  function cancelActivePendingSubFlowsForRoot(workingRoot) {
     if (decisionState.scanTargetAction?.type === "industry_remove_tech") {
       rollbackPendingIndustryQuickAction("已取消公司 1x 行动");
       return true;
@@ -6845,7 +6847,7 @@
     if (getPendingCardCornerFreeMove()?.finishIndustryFlowAfterMove) {
       const pending = getPendingCardCornerFreeMove();
       decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
-      rocketState.activeRocketId = null;
+      workingRoot.rocketState.activeRocketId = null;
       clearMoveRocketHighlight();
       deactivateMoveMode();
       const message = `${pending.afterMoveStatus || "公司 1x 行动"}；已取消免费移动`;
@@ -6858,7 +6860,7 @@
           message,
         );
       }
-      rocketState.statusNote = message;
+      workingRoot.rocketState.statusNote = message;
       renderPlayerStats();
       renderPublicCards();
       renderPlayerHand();
@@ -6867,7 +6869,7 @@
       return true;
     }
     if (hasActiveEffectSubFlow()) {
-      cancelActiveEffectSubFlows();
+      cancelActiveEffectSubFlowsForRoot(workingRoot);
       return true;
     }
     if (isMovePaymentSelectionActive()) {
@@ -6880,7 +6882,7 @@
         return true;
       }
       closeDataPlacePicker();
-      rocketState.statusNote = "已取消放置数据";
+      workingRoot.rocketState.statusNote = "已取消放置数据";
       return true;
     }
     if (decisionSessions.peek("industry_ability") || uiRuntimeState.industryFreeMoveState || isIndustryHandSelectionActive()) {
@@ -6888,6 +6890,10 @@
       return true;
     }
     return false;
+  }
+
+  function cancelActivePendingSubFlows() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_pending_subflows" }).value;
   }
 
   function getActionEffectIconSrc(iconId) {
@@ -6949,7 +6955,7 @@
   }
 
   function getPlanetSectorCoordinate(planetId) {
-    const snapshot = solar.createSolarSnapshot(solarState);
+    const snapshot = solar.createSolarSnapshot(createStateSourceReadoutRoot().solarState);
     const planet = snapshot.planetLocations.find((item) => item.planetId === planetId);
     if (!planet) {
       throw new Error(`${planetId} position was not found in the current solar snapshot`);
@@ -8544,14 +8550,17 @@
         : getPlayerById(uiRuntimeState.effectExecutionPlayerId);
       if (effectPlayer) return effectPlayer;
     }
-    return players.getCurrentPlayer(isBrowserWorkingRoot(workingRoot) ? workingRoot.playerState : playerState);
+    const source = isBrowserWorkingRoot(workingRoot)
+      ? workingRoot.playerState
+      : createStateSourceReadoutRoot().playerState;
+    return players.getCurrentPlayer(source);
   }
 
   function getPlayerByColor(workingRootOrColor, explicitColor = null) {
     const workingRoot = isBrowserWorkingRoot(workingRootOrColor) ? workingRootOrColor : null;
     const color = workingRoot ? explicitColor : workingRootOrColor;
     const normalizedColor = players.normalizePlayerColor(color);
-    const source = workingRoot ? workingRoot.playerState : playerState;
+    const source = workingRoot ? workingRoot.playerState : createStateSourceReadoutRoot().playerState;
     return source.players.find((player) => player.color === normalizedColor) || null;
   }
 
@@ -9251,8 +9260,11 @@
     return button;
   }
 
-  function applyIndustryStartupPassives() {
-    for (const player of playerState.players) {
+  function applyIndustryStartupPassives(workingRoot) {
+    if (!workingRoot?.playerState || !workingRoot?.finalScoringState) {
+      throw new TypeError("applyIndustryStartupPassives 缺少 workingRoot");
+    }
+    for (const player of workingRoot.playerState.players) {
       if (industry?.shouldInitializeStrategyPassiveMarkers?.(player)) {
         industry.initializeStrategyPassiveMarkers(player);
       }
@@ -9266,12 +9278,12 @@
         industry.initializeFutureSpanState(player);
       }
       if (!industry?.shouldPlaceMissionStartupFinalMark?.(player)) continue;
-      const markResult = finalScoring.placeDirectMarkAtSlot(finalScoringState, "c", player, 3, {
+      const markResult = finalScoring.placeDirectMarkAtSlot(workingRoot.finalScoringState, "c", player, 3, {
         tokenSrc: getNormalTokenAssetForPlayer(player),
         source: "mission_relay_startup",
       });
       if (!markResult.ok) {
-        rocketState.statusNote = markResult.message;
+        workingRoot.rocketState.statusNote = markResult.message;
       }
     }
     renderFinalScoreBoard();
