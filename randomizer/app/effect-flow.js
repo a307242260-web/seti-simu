@@ -683,7 +683,212 @@
     };
   }
 
+  function createActionEffectOrchestrator(context = {}) {
+    const {
+      HISTORY_SOURCE_MAIN,
+      abilities,
+      actionHistory,
+      aomomo,
+      industry,
+      interactionChrome,
+      planetRewards,
+      players,
+      uiRuntimeState,
+    } = context;
+    const required = [
+      "activateNextActionEffect", "addScoreSourceToEffects", "assignEffectFlowOwner",
+      "claimRunezuSourceSymbolWithHistory", "endEffectHistoryStep", "executeActionEffect",
+      "getActionEffectFlow", "getCurrentActionEffect", "getCurrentPlayer",
+      "hasActiveEffectSubFlow", "recordAbilityCommands", "renderRunezuBoardSymbols",
+      "setActionEffectFlow", "startActionLogDraft",
+    ];
+    for (const name of required) requireFunction(name, context[name]);
+
+    function getActionResultOwnerPlayer(workingRoot, result, fallbackPlayer = null) {
+      const ownerEvent = (result?.events || []).find((event) => event?.playerId || event?.playerColor) || null;
+      const playerId = result?.playerId || result?.payload?.playerId || ownerEvent?.playerId || null;
+      const playerColor = result?.playerColor || result?.payload?.playerColor || ownerEvent?.playerColor || null;
+      return (workingRoot.playerState.players || []).find((player) => (
+        (playerId && player.id === playerId) || (playerColor && player.color === playerColor)
+      )) || fallbackPlayer || players.getCurrentPlayer(workingRoot.playerState);
+    }
+
+    function buildPlanetRewardEffectsWithIndustry(actionType, result, options = {}) {
+      const planetEffects = planetRewards?.buildRewardEffectsForAction?.(actionType, result) || [];
+      const scoredPlanetEffects = options.scoreSourceKey
+        ? context.addScoreSourceToEffects(planetEffects, options.scoreSourceKey)
+        : planetEffects;
+      const player = options.player || context.getCurrentPlayer();
+      return [
+        ...scoredPlanetEffects,
+        ...(industry?.buildPiratesRaidMarkerEffectNodes?.(player, result?.planetId, actionType, result) || []),
+      ];
+    }
+
+    function claimRunezuPlanetSymbolForTravelResult(workingRoot, actionType, result, fallbackPlayer = null) {
+      if (actionType !== "orbit" && actionType !== "land") return null;
+      const planetId = result?.planetId || result?.payload?.planetId || null;
+      if (!planetId) return null;
+      const actionLabel = actionType === "orbit" ? "环绕" : "登陆";
+      const claim = context.claimRunezuSourceSymbolWithHistory(
+        "planet",
+        planetId,
+        getActionResultOwnerPlayer(workingRoot, result, fallbackPlayer),
+        `${actionLabel}获得符文族symbol`,
+      );
+      if (claim?.ok) {
+        result.message = `${result.message || actionLabel}；${claim.message}`;
+        result.runezuSymbolClaim = claim;
+        if (result.payload && typeof result.payload === "object") {
+          result.payload.runezuSymbolClaim = {
+            sourceType: claim.sourceType,
+            sourceId: claim.sourceId,
+            symbolId: claim.symbolId,
+          };
+        }
+      }
+      return claim;
+    }
+
+    function startPlanetRewardEffectFlow(workingRoot, actionType, result) {
+      if (!workingRoot?.playerState || !workingRoot?.rocketState) {
+        throw new TypeError("startPlanetRewardEffectFlow 缺少 workingRoot");
+      }
+      const actionOwner = getActionResultOwnerPlayer(workingRoot, result);
+      const rewardEffects = buildPlanetRewardEffectsWithIndustry(actionType, result, { player: actionOwner });
+      if (!rewardEffects.length) return false;
+
+      const actionLabel = actionType === "orbit" ? "环绕" : "登陆";
+      const isAomomoRewardFlow = result?.planetId === (aomomo?.PLANET_ID || "aomomo");
+      context.startActionLogDraft(actionType, `${actionLabel}行动`, { source: HISTORY_SOURCE_MAIN });
+      actionHistory.beginSession(actionType, `${actionLabel}行动`);
+      actionHistory.beginStep({
+        source: HISTORY_SOURCE_MAIN,
+        type: "action_start",
+        label: result.message || `${actionLabel}标记`,
+        effectIndex: -1,
+      });
+      uiRuntimeState.effectStepActive = true;
+      context.recordAbilityCommands(result, actionHistory, workingRoot);
+      const runezuClaim = claimRunezuPlanetSymbolForTravelResult(workingRoot, actionType, result, actionOwner);
+      if (runezuClaim?.ok) context.renderRunezuBoardSymbols();
+      context.endEffectHistoryStep(workingRoot);
+
+      context.setActionEffectFlow(workingRoot, abilities.chain.startAbilityChain(
+        `${actionType}-rewards`,
+        `${actionLabel}奖励`,
+        rewardEffects,
+      ));
+      const flow = context.getActionEffectFlow(workingRoot);
+      flow.actionType = actionType;
+      flow.playerId = actionOwner?.id || null;
+      context.assignEffectFlowOwner(flow, flow.playerId);
+      flow.consumesMainAction = true;
+      flow.autoExecuteAomomoRewards = isAomomoRewardFlow;
+
+      interactionChrome.setActionEffectFlowActive(true);
+      workingRoot.rocketState.statusNote = `${actionLabel}：请依次点击奖励效果`;
+      context.activateNextActionEffect(workingRoot);
+      return true;
+    }
+
+    function shouldAutoExecuteAomomoRewardEffect(workingRoot, effect) {
+      return Boolean(
+        context.getActionEffectFlow(workingRoot)?.autoExecuteAomomoRewards
+        && effect?.status === "active"
+        && context.autoRewardEffectTypes.has(effect.type)
+        && !context.hasActiveEffectSubFlow()
+      );
+    }
+
+    function maybeAutoExecuteAomomoRewardEffects(workingRoot) {
+      if (uiRuntimeState.autoExecutingActionEffects || !context.getActionEffectFlow(workingRoot)?.autoExecuteAomomoRewards) return false;
+      uiRuntimeState.autoExecutingActionEffects = true;
+      let executed = false;
+      try {
+        for (let guard = 0; guard < 20; guard += 1) {
+          const effect = context.getCurrentActionEffect(workingRoot);
+          if (!shouldAutoExecuteAomomoRewardEffect(workingRoot, effect)) return executed;
+          const result = context.executeActionEffect(workingRoot, effect);
+          executed = true;
+          if (result?.awaitingChoice || result?.pendingChoice || result?.ok === false) return executed;
+          if (!context.getActionEffectFlow(workingRoot) || context.getActionEffectFlow(workingRoot).completed || context.hasActiveEffectSubFlow()) return executed;
+          const current = context.getCurrentActionEffect(workingRoot);
+          if (current === effect && current?.status === "active") return executed;
+        }
+        return executed;
+      } finally {
+        uiRuntimeState.autoExecutingActionEffects = false;
+      }
+    }
+
+    function beginResearchTechActionSession(workingRoot, result, options = {}) {
+      context.startActionLogDraft("researchTech", "科技行动", { source: HISTORY_SOURCE_MAIN });
+      actionHistory.beginSession("researchTech", "科技行动");
+      actionHistory.beginStep({
+        source: HISTORY_SOURCE_MAIN,
+        type: "action_start",
+        label: "科技行动",
+        effectIndex: -1,
+        logBefore: options.logBefore || context.createActionLogImpactSnapshot(),
+      });
+      uiRuntimeState.effectStepActive = true;
+      context.endEffectHistoryStep(workingRoot, {
+        result: {
+          ok: true,
+          undoable: true,
+          message: result?.message || "请选择要研究的科技板块",
+        },
+      });
+    }
+
+    function startResearchTechEffectFlow(workingRoot, result, options = {}) {
+      if (!workingRoot?.rocketState) throw new TypeError("startResearchTechEffectFlow 缺少 workingRoot");
+      if (!result?.ok || !result.awaitingTileSelection) return false;
+
+      beginResearchTechActionSession(workingRoot, result, options);
+      context.setActionEffectFlow(workingRoot, abilities.chain.startAbilityChain(
+        "researchTech",
+        "科技行动",
+        [{
+          id: "research-tech-select",
+          type: "research_tech_select",
+          abilityId: "researchTechSelect",
+          icon: "research_tech",
+          label: "选择科技片",
+          options: {
+            cost: result.cost || {},
+            allowedTechTypes: result.allowedTechTypes || result.payload?.allowedTechTypes || null,
+          },
+          status: "pending",
+          undoable: true,
+        }],
+      ));
+      const flow = context.getActionEffectFlow(workingRoot);
+      flow.actionType = "researchTech";
+      flow.playerId = context.getCurrentPlayer()?.id || null;
+      flow.historySource = HISTORY_SOURCE_MAIN;
+      context.assignEffectFlowOwner(flow, flow.playerId);
+      flow.consumesMainAction = true;
+
+      interactionChrome.setActionEffectFlowActive(true);
+      workingRoot.rocketState.statusNote = "科技：请选择要研究的科技片";
+      context.activateNextActionEffect(workingRoot);
+      return true;
+    }
+
+    return Object.freeze({
+      buildPlanetRewardEffectsWithIndustry,
+      getActionResultOwnerPlayer,
+      claimRunezuPlanetSymbolForTravelResult,
+      startPlanetRewardEffectFlow,
+      maybeAutoExecuteAomomoRewardEffects,
+      startResearchTechEffectFlow,
+    });
+  }
+
   return {
+    createActionEffectOrchestrator,
     createEffectFlowHelpers,
   };
 });
