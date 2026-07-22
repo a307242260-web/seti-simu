@@ -420,7 +420,7 @@
         const bestPlay = playableCards[0] || null;
 
         const scanCheck = scanEffects?.canExecuteScan?.(simulatedPlayer, { standardAction: true }) || { ok: false };
-        const scanScore = scanCheck.ok ? scoreAiScanAction(simulatedPlayer) : 0;
+        const scanScore = scanCheck.ok ? scoreAiScanAction(workingRoot, simulatedPlayer) : 0;
         const analyzeCheck = canAiAnalyzeData(simulatedPlayer);
         const analyzeScore = analyzeCheck.ok ? scoreAiAnalyzeAction(simulatedPlayer) : 0;
         const planetCashoutRecovery = scoreAiEnergyTradePlanetCashoutRecovery(player, tradeId);
@@ -454,7 +454,7 @@
           scanCheck.ok ? {
             actionId: "scan",
             score: aiNumber(scanScore),
-            directScoreGain: Math.max(0, aiNumber(getAiScanDirectScoreGain(simulatedPlayer))),
+            directScoreGain: Math.max(0, aiNumber(getAiScanDirectScoreGain(workingRoot, simulatedPlayer))),
           } : null,
           analyzeCheck.ok ? {
             actionId: "analyze",

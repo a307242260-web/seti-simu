@@ -328,7 +328,7 @@
         && energy >= scanEnergyCost
         && Boolean(scanEffects?.canExecuteScan?.(player, { standardAction: true })?.ok);
       const scanDirectScoreGain = canScanNowForThirdMark
-        ? Math.max(0, aiNumber(getAiScanDirectScoreGain(player)))
+        ? Math.max(0, aiNumber(getAiScanDirectScoreGain(workingRoot, player)))
         : 0;
       const canScanCashOutThirdMarkNow = canScanNowForThirdMark
         && currentScore + scanDirectScoreGain >= 70;
@@ -417,7 +417,7 @@
         && distance <= 4
         && scanCreditShortfall <= 0
         && scanEnergyShortfall === 1
-        && currentScore + Math.max(0, aiNumber(getAiScanDirectScoreGain(player))) >= 70;
+        && currentScore + Math.max(0, aiNumber(getAiScanDirectScoreGain(workingRoot, player))) >= 70;
       const canUseExtraEnergy = needsAnalyzeEnergy
         || needsLaunchMoveEnergy
         || needsPlanetCashoutEnergy
@@ -1194,9 +1194,9 @@
       const launchScore = aiNumber(launchValue?.score);
       const currentScanCheck = scanEffects?.canExecuteScan?.(player, { standardAction: true }) || { ok: false };
       const scanCheck = scanEffects?.canExecuteScan?.(simulatedPlayer, { standardAction: true }) || { ok: false };
-      const currentScanScore = currentScanCheck.ok ? scoreAiScanAction(player) : 0;
-      const scanScore = scanCheck.ok ? scoreAiScanAction(simulatedPlayer) : 0;
-      const scanDirectScoreGain = scanCheck.ok ? Math.max(0, aiNumber(getAiScanDirectScoreGain(simulatedPlayer))) : 0;
+      const currentScanScore = currentScanCheck.ok ? scoreAiScanAction(workingRoot, player) : 0;
+      const scanScore = scanCheck.ok ? scoreAiScanAction(workingRoot, simulatedPlayer) : 0;
+      const scanDirectScoreGain = scanCheck.ok ? Math.max(0, aiNumber(getAiScanDirectScoreGain(workingRoot, simulatedPlayer))) : 0;
       const weakNoDiscardDirectScanUnlock = !allowExtendedResourceLock
         && handCost <= 0
         && scanDirectScoreGain > 0
@@ -1670,8 +1670,8 @@
         const effectiveTradeCost = finalLowScoreMainUnlockWindow && handSize >= 5
           ? Math.min(tradeCost, 18)
           : tradeCost;
-        const scanScore = canScanAfterTrade ? Math.max(0, aiNumber(scoreAiScanAction(simulatedPlayer))) : 0;
-        const directScoreGain = canScanAfterTrade ? Math.max(0, aiNumber(getAiScanDirectScoreGain(simulatedPlayer))) : 0;
+        const scanScore = canScanAfterTrade ? Math.max(0, aiNumber(scoreAiScanAction(workingRoot, simulatedPlayer))) : 0;
+        const directScoreGain = canScanAfterTrade ? Math.max(0, aiNumber(getAiScanDirectScoreGain(workingRoot, simulatedPlayer))) : 0;
         const lowScorePressure = Math.max(0, finalLowScoreScanUnlockCeiling - currentScore) * 0.045;
         const handBuffer = Math.max(0, handSize - Math.max(0, aiNumber(trade.cost?.handSize))) >= 3 ? 1.5 : 0;
         const scanUnlockBaseValue = canScanAfterTrade
@@ -1722,7 +1722,7 @@
         if (!scanEffects?.canExecuteScan?.(simulatedPlayer, { standardAction: true })?.ok) return 0;
         const tradeCost = estimateAiTradeDiscardOpportunityCost(workingRoot, player, trade);
         if (!Number.isFinite(tradeCost)) return 0;
-        const scanScore = Math.max(0, aiNumber(scoreAiScanAction(simulatedPlayer)));
+        const scanScore = Math.max(0, aiNumber(scoreAiScanAction(workingRoot, simulatedPlayer)));
         const sectorDeficit = Math.max(1, aiNumber(b2SectorBottleneck.deficit));
         return Math.max(
           0,
@@ -1828,7 +1828,7 @@
       ) return [];
       const closeScanCashoutWindow = recoveryThreshold <= 50 ? 10 : 8;
       const closeScanDirectScoreGain = getAiRoundNumber() >= FINAL_ROUND_NUMBER
-        ? Math.max(0, aiNumber(getAiScanDirectScoreGain(player)))
+        ? Math.max(0, aiNumber(getAiScanDirectScoreGain(workingRoot, player)))
         : 0;
       const closeScanCashout = Boolean(recoveryThreshold)
         && getAiRoundNumber() >= FINAL_ROUND_NUMBER

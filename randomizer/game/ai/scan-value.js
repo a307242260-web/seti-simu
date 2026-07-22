@@ -558,12 +558,14 @@
       return entries[0] || null;
     }
 
-    function getAiScanDirectScoreGain(player = getCurrentPlayer()) {
+    function getAiScanDirectScoreGain(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
+      if (!workingRoot?.turnState) throw new TypeError("AI scan valuation requires an explicit workingRoot");
+      const activeTurnState = workingRoot.turnState;
       const effects = scanEffects.buildScanEffectQueue(player, {
         fullScanAction: true,
-        turnState,
-        roundNumber: turnState.roundNumber,
-        turnNumber: turnState.turnNumber,
+        turnState: activeTurnState,
+        roundNumber: activeTurnState.roundNumber,
+        turnNumber: activeTurnState.turnNumber,
       });
       const directScoreGain = effects.reduce((total, effect) => {
         if (
@@ -573,7 +575,7 @@
         ) {
           const entry = getBestAiNebulaChoiceEntry(
             getAiSectorScanChoicesForEffect(effect.type, player),
-            { player, pendingType: "sector_scan" },
+            { workingRoot, player, pendingType: "sector_scan" },
           );
           return total + Math.max(0, aiNumber(entry?.directScoreGain));
         }
@@ -661,12 +663,14 @@
         ));
     }
 
-    function buildAiScanActionTargetPreview(player = getCurrentPlayer()) {
+    function buildAiScanActionTargetPreview(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
+      if (!workingRoot?.turnState) throw new TypeError("AI scan preview requires an explicit workingRoot");
+      const activeTurnState = workingRoot.turnState;
       const effects = scanEffects.buildScanEffectQueue(player, {
         fullScanAction: true,
-        turnState,
-        roundNumber: turnState.roundNumber,
-        turnNumber: turnState.turnNumber,
+        turnState: activeTurnState,
+        roundNumber: activeTurnState.roundNumber,
+        turnNumber: activeTurnState.turnNumber,
       });
       const previewEffects = [];
       const topChoices = [];
@@ -675,7 +679,7 @@
         if (!sectorChoices.length) continue;
         const rankedChoices = rankAiScanTargetChoices(
           sectorChoices,
-          { player, pendingType: "sector_scan" },
+          { workingRoot, player, pendingType: "sector_scan" },
         );
         if (!rankedChoices.length) continue;
         const summarizedChoices = rankedChoices.slice(0, 6).map((entry) => ({
@@ -828,12 +832,14 @@
       return penalty;
     }
 
-    function scoreAiScanAction(player = getCurrentPlayer()) {
+    function scoreAiScanAction(workingRoot, player = players.getCurrentPlayer(workingRoot.playerState)) {
+      if (!workingRoot?.turnState) throw new TypeError("AI scan valuation requires an explicit workingRoot");
+      const activeTurnState = workingRoot.turnState;
       const effects = scanEffects.buildScanEffectQueue(player, {
         fullScanAction: true,
-        turnState,
-        roundNumber: turnState.roundNumber,
-        turnNumber: turnState.turnNumber,
+        turnState: activeTurnState,
+        roundNumber: activeTurnState.roundNumber,
+        turnNumber: activeTurnState.turnNumber,
       });
       const costValue = scoreAiResourceBundle(scanEffects.getStandardScanCost(player));
       let value = 0;
@@ -845,18 +851,18 @@
         ) {
           const best = getBestAiNebulaChoiceScore(
             getAiSectorScanChoicesForEffect(effect.type, player),
-            { player, pendingType: "sector_scan" },
+            { workingRoot, player, pendingType: "sector_scan" },
           );
           if (Number.isFinite(best)) value += best;
         } else if (effect.type === scanEffects.EFFECT_TYPES.PUBLIC_CARD_SCAN) {
-          const bestPublicScan = getAiBestPublicScanSlots(player, { maxSelectable: 1 })[0];
+          const bestPublicScan = getAiBestPublicScanSlots(player, { workingRoot, maxSelectable: 1 })[0];
           if (bestPublicScan) value += bestPublicScan.score + 1;
         } else if (effect.type === scanEffects.EFFECT_TYPES.HAND_SCAN) {
-          const bestHandScan = getAiBestHandScanIndex(player);
+          const bestHandScan = getAiBestHandScanIndex(player, { workingRoot });
           if (bestHandScan) value += bestHandScan.score;
         } else if (effect.type === scanEffects.EFFECT_TYPES.SCAN_ACTION_4) {
           value += Math.max(0, scoreAiLaunchAction(player) * 0.45);
-          const bestMove = listAiMoveCandidates()[0];
+          const bestMove = listAiMoveCandidates(workingRoot)[0];
           if (bestMove) value += Math.max(0, aiNumber(bestMove.score) * 0.35);
         }
       }
@@ -876,7 +882,7 @@
       const lateResourceDrainPenalty = scoreAiLateScanResourceDrainPenalty(player);
       const scanCountThisRound = countAiStandardScansThisRound(player);
       const placedComputerCount = Math.max(0, (data.listComputerPlacedTokens?.(player) || []).length);
-      const directScoreGain = getAiScanDirectScoreGain(player);
+      const directScoreGain = getAiScanDirectScoreGain(workingRoot, player);
       const traceCount = countAiTraceMarkersForPlayer(player);
       const availableData = Math.max(0, aiNumber(player?.resources?.availableData));
       const dataRoom = getAiAvailableDataRoom(player);

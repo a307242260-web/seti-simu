@@ -170,8 +170,8 @@
         orbitCandidate.available ? Number(orbitCandidate.score || 0) : 0,
         landCandidate.available ? Number(landCandidate.score || 0) : 0,
       );
-      let scanScore = scanCheck.ok ? scoreAiScanAction(currentPlayer) : 0;
-      const scanDirectScoreGain = scanCheck.ok ? getAiScanDirectScoreGain(currentPlayer) : 0;
+      let scanScore = scanCheck.ok ? scoreAiScanAction(workingRoot, currentPlayer) : 0;
+      const scanDirectScoreGain = scanCheck.ok ? getAiScanDirectScoreGain(workingRoot, currentPlayer) : 0;
       const scanPriorityFloor = scanCheck.ok ? scoreAiScanPriorityFloor(currentPlayer) : 0;
       const scanCurrentScore = Math.max(0, aiNumber(currentPlayer?.resources?.score));
       const scanNextThreshold = getAiNextMissingFinalScoreThreshold(currentPlayer);
@@ -299,7 +299,7 @@
         score: scanScore,
         directScoreGain: scanDirectScoreGain,
         scoreCapReason: scanScoreCapReason,
-        targetPreview: scanCheck.ok ? buildAiScanActionTargetPreview(currentPlayer) : null,
+        targetPreview: scanCheck.ok ? buildAiScanActionTargetPreview(workingRoot, currentPlayer) : null,
         valueBreakdown: {
           directScoreGain: scanDirectScoreGain,
           scanEnergyReservationPenalty,
