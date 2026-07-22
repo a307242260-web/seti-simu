@@ -65,8 +65,16 @@
     const clearPendingAomomoCardGain = requireFunction("clearPendingAomomoCardGain", context.clearPendingAomomoCardGain);
     const clearPendingRunezuCardGain = requireFunction("clearPendingRunezuCardGain", context.clearPendingRunezuCardGain);
     const clearPendingAmibaTraceRemoval = requireFunction("clearPendingAmibaTraceRemoval", context.clearPendingAmibaTraceRemoval);
-    const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
-    const getPublicScanQueue = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
+    const getPublicScanQueue = (workingRoot) => requireWorkingRoot(workingRoot).match?.publicScanContinuation || null;
+    function setPublicScanQueue(workingRoot, continuation) {
+      const activeRoot = requireWorkingRoot(workingRoot);
+      if (!continuation) {
+        delete activeRoot.match.publicScanContinuation;
+        return null;
+      }
+      activeRoot.match.publicScanContinuation = structuredClone(continuation);
+      return activeRoot.match.publicScanContinuation;
+    }
     const els = context.els || {};
 
     const PUBLIC_SCAN_MAX_BONUS_CARDS = Number(context.PUBLIC_SCAN_MAX_BONUS_CARDS || 0);
@@ -503,8 +511,8 @@
       });
     }
 
-    function openPublicScanNebulaPickerForCurrentQueueItem() {
-      const queue = getPublicScanQueue();
+    function openPublicScanNebulaPickerForCurrentQueueItem(workingRoot) {
+      const queue = getPublicScanQueue(workingRoot);
       if (!queue) return { ok: false, message: "没有待扫描的公共牌" };
       const item = queue.items[queue.currentIndex];
       if (!item) return { ok: false, message: "没有待扫描的公共牌" };
@@ -604,7 +612,7 @@
         });
       }
 
-      decisionSessions.open(PUBLIC_SCAN_QUEUE_SESSION, {
+      setPublicScanQueue(workingRoot, {
         items,
         currentIndex: 0,
         fromEffectFlow,
@@ -617,7 +625,7 @@
       updatePublicCardControls();
       updateActionButtons();
       renderStateReadout();
-      return openPublicScanNebulaPickerForCurrentQueueItem();
+      return openPublicScanNebulaPickerForCurrentQueueItem(workingRoot);
     }
 
     function handlePublicScanCardClick(workingRoot, slotIndex) {
@@ -1355,17 +1363,17 @@
     function closeScanTargetPicker(workingRoot, options = {}) {
       const { rocketState } = requireWorkingRoot(workingRoot);
       if (!els.scanTargetOverlay) {
-        if (getPublicScanQueue() && !options.forcePublicScanQueueClose) return;
-        if (options.forcePublicScanQueueClose) decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
+        if (getPublicScanQueue(workingRoot) && !options.forcePublicScanQueueClose) return;
+        if (options.forcePublicScanQueueClose) setPublicScanQueue(workingRoot, null);
         decisionState.scanTargetAction = null;
         decisionSessions.clear("probe_sector_scan");
         decisionSessions.clear("probe_location_reward");
         decisionSessions.clear("strategy_passive_slot");
         return;
       }
-      if (getPublicScanQueue()) {
+      if (getPublicScanQueue(workingRoot)) {
         if (options.forcePublicScanQueueClose) {
-          decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
+          setPublicScanQueue(workingRoot, null);
         } else {
         rocketState.statusNote = "公共牌区扫描：请完成全部星云选择";
         renderStateReadout();
@@ -1639,7 +1647,7 @@
       }
 
       if (pending?.type === "public_scan") {
-        if (pending.queueMode && getPublicScanQueue()) {
+        if (pending.queueMode && getPublicScanQueue(workingRoot)) {
           const scanResult = replaceNebulaDataForCurrentPlayer(workingRoot, nebulaId, {
             prefix: `公共牌区扫描 ${cards.getCardLabel(pending.card)}`,
             source: scanSource,
@@ -1651,7 +1659,7 @@
             renderStateReadout();
             return scanResult;
           }
-          const queue = getPublicScanQueue();
+          const queue = getPublicScanQueue(workingRoot);
           if (!Array.isArray(queue.events)) queue.events = [];
           queue.events.push(...(scanResult.events || []));
           queue.currentIndex += 1;
@@ -1661,10 +1669,10 @@
             renderPlayerStats();
             updateActionButtons();
             renderStateReadout();
-            openPublicScanNebulaPickerForCurrentQueueItem();
+            openPublicScanNebulaPickerForCurrentQueueItem(workingRoot);
             return scanResult;
           }
-          decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
+          setPublicScanQueue(workingRoot, null);
           closeScanTargetPicker(workingRoot);
           scanResult.events = queue.events.slice();
           rocketState.statusNote = scanResult.message;

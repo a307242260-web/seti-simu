@@ -497,6 +497,8 @@ function createHarness(initialValue = 0) {
   assert.match(cardRuntimeSource, /uiRuntimeState\.passReserveSelectedCardId/, "PASS 未确认高亮只能进入 uiRuntimeState");
   assert.match(appSource, /PASS_RESERVE_DECISION_REQUIRED[\s\S]*?inputPort\.submitDecision\(/, "PASS 人类确认必须映射 active Decision choice");
   assert.match(appSource, /function submitActiveCardDecision[\s\S]*?inputPort\.submitDecision\(/, "卡牌 trigger/task/free-move 人类输入必须提交 active Decision choice");
+  assert.doesNotMatch([appSource, scanFlowSource, debugRuntimeSource].join("\n"), /["']public_scan_queue["']/, "公共扫描队列旧 store key 必须物理删除");
+  assert.match(scanFlowSource, /workingRoot[\s\S]*?publicScanContinuation/, "公共扫描队列必须归 Composition continuation");
 }
 
 console.log("browser-rule-composition tests passed");

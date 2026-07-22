@@ -44,6 +44,7 @@ function createBaseHarness() {
   const decisionSessions = createDecisionSessionStore();
   attachDecisionState(pendingState, decisionSessions);
   const workingRoot = {
+    match: {},
     alienGameState: {},
     cardState,
     nebulaDataState: {},
@@ -254,7 +255,7 @@ function createBaseHarness() {
 }
 
 {
-  const { helpers, pendingState, cardState, player, rocketState, calls, decisionSessions, workingRoot } = createBaseHarness();
+  const { helpers, pendingState, cardState, player, rocketState, calls, workingRoot } = createBaseHarness();
   pendingState.cardSelectionAction = {
     type: "public_scan",
     selectedSlots: [0, 1],
@@ -271,8 +272,8 @@ function createBaseHarness() {
   const result = helpers.confirmPublicScanSelection(workingRoot);
   assert.equal(result.ok, true);
   assert.equal(calls.discardPublic.length, 2);
-  assert.equal(decisionSessions.peek("public_scan_queue").items.length, 2);
-  assert.equal(decisionSessions.peek("public_scan_queue").deferPublicRefill, true);
+  assert.equal(workingRoot.match.publicScanContinuation.items.length, 2);
+  assert.equal(workingRoot.match.publicScanContinuation.deferPublicRefill, true);
   assert.match(rocketState.statusNote, /已弃除 2 张牌/);
   assert.equal(calls.picker.length, 1);
 }

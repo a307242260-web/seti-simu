@@ -989,7 +989,7 @@
         decisionState.scanTargetAction,
         decisionSessions?.peek?.("probe_sector_scan"),
         decisionSessions?.peek?.("probe_location_reward"),
-        decisionSessions?.peek?.("public_scan_queue"),
+        workingRoot.match?.publicScanContinuation,
         decisionState.handScanAction,
         decisionState.alienTraceAction,
         decisionSessions?.peek?.("land_target"),

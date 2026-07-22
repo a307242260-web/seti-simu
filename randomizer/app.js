@@ -1003,14 +1003,15 @@
   const LAND_TARGET_DECISION = "land_target";
   const PIRATES_RAID_DECISION = "pirates_raid_placement";
   const STRATEGY_SLOT_DECISION = "strategy_passive_slot";
-  const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
   const PROBE_SECTOR_SCAN_SESSION = "probe_sector_scan";
   const PROBE_LOCATION_REWARD_SESSION = "probe_location_reward";
   const getPendingDataPlacementDecision = () => decisionSessions.peek(DATA_PLACEMENT_DECISION);
   const getPendingLandTargetDecision = () => decisionSessions.peek(LAND_TARGET_DECISION);
   const getPendingPiratesRaidDecision = () => decisionSessions.peek(PIRATES_RAID_DECISION);
   const getPendingStrategySlotDecision = () => decisionSessions.peek(STRATEGY_SLOT_DECISION);
-  const getPublicScanQueueSession = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
+  const getPublicScanQueueSession = (workingRoot = createStateSourceReadoutRoot()) => (
+    workingRoot?.match?.publicScanContinuation || null
+  );
   const getPendingProbeSectorScanDecision = () => decisionSessions.peek(PROBE_SECTOR_SCAN_SESSION);
   const getPendingProbeLocationRewardDecision = () => decisionSessions.peek(PROBE_LOCATION_REWARD_SESSION);
   const hasTurnEndRevealContinuation = (workingRoot = createStateSourceReadoutRoot()) => (
@@ -5552,7 +5553,7 @@
     uiRuntimeState.passReserveSelectedCardId = null;
     decisionState.scanTargetAction = null;
     decisionSessions.clear(PROBE_SECTOR_SCAN_SESSION);
-    decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
+    delete workingRoot.match.publicScanContinuation;
     decisionState.handScanAction = null;
     decisionState.alienTraceAction = null;
     decisionSessions.clear(LAND_TARGET_DECISION);
@@ -7300,7 +7301,7 @@
   }
 
   function cancelActiveEffectSubFlowsForRoot(workingRoot) {
-    if (!getPublicScanQueueSession()) {
+    if (!getPublicScanQueueSession(workingRoot)) {
       closeScanTargetPicker({ forceYichangdianCornerClose: true });
     }
     if (els.landTargetOverlay && !els.landTargetOverlay.hidden) {
@@ -7308,7 +7309,7 @@
     }
     closeScanAction4Picker();
     closeAlienTracePicker();
-    decisionSessions.clear(PUBLIC_SCAN_QUEUE_SESSION);
+    delete workingRoot.match.publicScanContinuation;
 
     if (isHandScanSelectionActive()) {
       decisionState.handScanAction = null;
