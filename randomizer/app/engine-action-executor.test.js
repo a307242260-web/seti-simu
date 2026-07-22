@@ -143,7 +143,8 @@ function createExecutor(trace = [], options = {}) {
   const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
   assert.equal(/executors:\s*\{/.test(appSource), false, "app.js 不得保留四 family executor 函数体");
   assert.match(appSource, /executeScan: \(workingRoot, descriptor\) => executeMainScanAction\(workingRoot, descriptor\)/);
-  assert.match(appSource, /executePlayCard: \(workingRoot, descriptor\) => executeStandardPlayCard\(workingRoot, descriptor\)/);
+  assert.match(appSource, /executePlayCard: \(_workingRoot, descriptor\) => executeStandardPlayCard\(descriptor\)/);
+  assert.match(appSource, /operation\(workingRoot, \.\.\.\(command\.args \|\| \[\]\)\)/);
   assert.equal(
     /execute\(\) \{ return beginScanAction\(\); \}/.test(appSource),
     false,

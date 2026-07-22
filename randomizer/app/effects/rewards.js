@@ -101,16 +101,13 @@
       updateActionButtons,
       withPendingOwnerPlayer,
     } = context;
-    if (typeof context.getWorkingRoot !== "function") {
-      throw new TypeError("createEffectRewardExecutors requires getWorkingRoot()");
-    }
-    const ruleAlienGameState = () => context.getWorkingRoot().alienGameState;
-    const ruleCardState = () => context.getWorkingRoot().cardState;
-    const ruleNebulaDataState = () => context.getWorkingRoot().nebulaDataState;
-    const rulePlanetStatsState = () => context.getWorkingRoot().planetStatsState;
-    const rulePlayerState = () => context.getWorkingRoot().playerState;
-    const ruleRocketState = () => context.getWorkingRoot().rocketState;
-    const ruleTurnState = () => context.getWorkingRoot().turnState;
+    const ruleAlienGameState = (workingRoot) => workingRoot.alienGameState;
+    const ruleCardState = (workingRoot) => workingRoot.cardState;
+    const ruleNebulaDataState = (workingRoot) => workingRoot.nebulaDataState;
+    const rulePlanetStatsState = (workingRoot) => workingRoot.planetStatsState;
+    const rulePlayerState = (workingRoot) => workingRoot.playerState;
+    const ruleRocketState = (workingRoot) => workingRoot.rocketState;
+    const ruleTurnState = (workingRoot) => workingRoot.turnState;
     const decisionState = context.decisionSessions?.createFacade?.({
       discardAction: "discard_action",
       cardSelectionAction: "card_selection_action",
@@ -122,41 +119,41 @@
       actionEffectFlow: "action_effect_flow",
     }) || {};
 
-    function signalOwnerMatches(item, player) {
-      const keys = getPlayerOwnerKeys(player);
+    function signalOwnerMatches(workingRoot, item, player) {
+      const keys = getPlayerOwnerKeys(workingRoot, player);
       return keys.has(item?.replacedByPlayerId)
         || keys.has(item?.playerId)
         || keys.has(item?.replacedByPlayerColor)
         || keys.has(item?.playerColor);
     }
 
-    function countPlayerSignalsInNebula(player, nebulaId) {
-      let count = data.listNebulaTokens(ruleNebulaDataState(), nebulaId)
-        .filter((token) => signalOwnerMatches(token, player))
+    function countPlayerSignalsInNebula(workingRoot, player, nebulaId) {
+      let count = data.listNebulaTokens(ruleNebulaDataState(workingRoot), nebulaId)
+        .filter((token) => signalOwnerMatches(workingRoot, token, player))
         .length;
       if (typeof data.listSectorExtraMarks === "function") {
-        count += data.listSectorExtraMarks(ruleNebulaDataState(), nebulaId)
-          .filter((mark) => signalOwnerMatches(mark, player))
+        count += data.listSectorExtraMarks(ruleNebulaDataState(workingRoot), nebulaId)
+          .filter((mark) => signalOwnerMatches(workingRoot, mark, player))
           .length;
       }
       return count;
     }
 
-    function countPlayerSignalsInSectorX(player, sectorX) {
+    function countPlayerSignalsInSectorX(workingRoot, player, sectorX) {
       return buildSectorScanChoicesForX(sectorX)
         .filter((choice) => choice.nebulaId)
-        .reduce((total, choice) => total + countPlayerSignalsInNebula(player, choice.nebulaId), 0);
+        .reduce((total, choice) => total + countPlayerSignalsInNebula(workingRoot, player, choice.nebulaId), 0);
     }
 
-    function getSectorXsMatchingCondition(condition, player = getCurrentPlayer()) {
+    function getSectorXsMatchingCondition(workingRoot, condition, player = getCurrentPlayer()) {
       return cardEffects.getMatchingConditionalSectorXs(
         condition,
         Array.from({ length: 8 }, (_item, x) => x),
-        (sectorX) => countPlayerSignalsInSectorX(player, sectorX),
+        (sectorX) => countPlayerSignalsInSectorX(workingRoot, player, sectorX),
       );
     }
 
-    function sectorXHasAvailableScanTarget(sectorX) {
+    function sectorXHasAvailableScanTarget(workingRoot, sectorX) {
       return buildSectorScanChoicesForX(solar.mod8(Number(sectorX) || 0))
         .some((choice) => choice.nebulaId && !choice.disabled);
     }
@@ -169,7 +166,7 @@
       return effectChoiceFlowHelpers.handleConditionalSectorChoice(workingRoot, sectorXValue);
     }
 
-    function renderDiscardIncomePicker() {
+    function renderDiscardIncomePicker(workingRoot) {
       const pending = decisionState.scanTargetAction;
       if (pending?.type !== "discard_any_income" || !els.scanTargetActions) return;
       const selected = new Set(pending.selectedCardIds || []);
@@ -205,11 +202,11 @@
       return effectChoiceFlowHelpers.confirmDiscardAnyForIncome(workingRoot);
     }
 
-    function expandPayCreditsForRewardEffect(effect) {
+    function expandPayCreditsForRewardEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       const count = Math.max(0, Math.round(Number(currentPlayer?.resources?.credits) || 0));
       if (count <= 0) {
-        return finishAutomaticRewardEffect(effect, {
+        return finishAutomaticRewardEffect(workingRoot, effect, {
           ok: true,
           skipped: true,
           message: `${effect.label}：没有信用可支付，已跳过`,
@@ -225,8 +222,8 @@
           options: { ...(effect.options || {}), single: true, groupId: effect.id || "pay-credit" },
         });
       }
-      insertActionEffectsAfterCurrent(followups);
-      return finishAutomaticRewardEffect(effect, {
+      insertActionEffectsAfterCurrent(workingRoot, followups);
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: `${effect.label}：已追加 ${count} 个可选支付节点`,
@@ -242,12 +239,12 @@
       return effectChoiceFlowHelpers.handlePayCreditChoice(workingRoot, choice);
     }
 
-    function getFundamentalismExchangeChoiceSpecs(player = getCurrentPlayer()) {
+    function getFundamentalismExchangeChoiceSpecs(workingRoot, player = getCurrentPlayer()) {
       const score = Number(player?.resources?.score) || 0;
       const credits = Number(player?.resources?.credits) || 0;
       const energy = Number(player?.resources?.energy) || 0;
       const handCount = Array.isArray(player?.hand) ? player.hand.length : 0;
-      const publicCount = Array.isArray(ruleCardState().publicCards) ? ruleCardState().publicCards.length : 0;
+      const publicCount = Array.isArray(ruleCardState(workingRoot).publicCards) ? ruleCardState(workingRoot).publicCards.length : 0;
       return [
         {
           id: "score_to_credits",
@@ -300,15 +297,15 @@
       ];
     }
 
-    function getFundamentalismExchangeChoice(choiceId, player = getCurrentPlayer()) {
-      return getFundamentalismExchangeChoiceSpecs(player).find((choice) => choice.id === choiceId) || null;
+    function getFundamentalismExchangeChoice(workingRoot, choiceId, player = getCurrentPlayer()) {
+      return getFundamentalismExchangeChoiceSpecs(workingRoot, player).find((choice) => choice.id === choiceId) || null;
     }
 
     function executeIndustryFundamentalismExchangeEffect(workingRoot, effect) {
       return effectChoiceFlowHelpers.executeIndustryFundamentalismExchangeEffect(workingRoot, effect);
     }
 
-    function formatFundamentalismExchangeCost(cost) {
+    function formatFundamentalismExchangeCost(workingRoot, cost) {
       const normalizedCost = normalizeResourceCost(cost) || {};
       const scoreCost = Math.max(0, Math.round(Number(normalizedCost.score) || 0));
       const resourceCost = { ...normalizedCost };
@@ -320,7 +317,7 @@
       return parts.join(" + ");
     }
 
-    function canAffordFundamentalismExchangeCost(player, cost) {
+    function canAffordFundamentalismExchangeCost(workingRoot, player, cost) {
       const normalizedCost = normalizeResourceCost(cost) || {};
       const scoreCost = Math.max(0, Math.round(Number(normalizedCost.score) || 0));
       if (scoreCost > 0 && (Number(player?.resources?.score) || 0) < scoreCost) return false;
@@ -329,11 +326,11 @@
       return players.canAfford(player, resourceCost);
     }
 
-    function spendFundamentalismExchangeCost(player, cost) {
+    function spendFundamentalismExchangeCost(workingRoot, player, cost) {
       const normalizedCost = normalizeResourceCost(cost) || {};
       if (!Object.keys(normalizedCost).length) return { ok: true };
-      if (!canAffordFundamentalismExchangeCost(player, normalizedCost)) {
-        return { ok: false, message: `资源不足，需要 ${formatFundamentalismExchangeCost(normalizedCost)}` };
+      if (!canAffordFundamentalismExchangeCost(workingRoot, player, normalizedCost)) {
+        return { ok: false, message: `资源不足，需要 ${formatFundamentalismExchangeCost(workingRoot, normalizedCost)}` };
       }
       const scoreCost = Math.max(0, Math.round(Number(normalizedCost.score) || 0));
       const resourceCost = { ...normalizedCost };
@@ -346,13 +343,13 @@
       return players.spendResources(player, resourceCost);
     }
 
-    function completeFundamentalismImmediateExchange(effect, player, choice) {
+    function completeFundamentalismImmediateExchange(workingRoot, effect, player, choice) {
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(player);
-      const spend = spendFundamentalismExchangeCost(player, choice.cost);
+      const spend = spendFundamentalismExchangeCost(workingRoot, player, choice.cost);
       if (!spend.ok) {
         endEffectHistoryStep();
-        ruleRocketState().statusNote = spend.message;
+        ruleRocketState(workingRoot).statusNote = spend.message;
         renderStateReadout();
         return spend;
       }
@@ -365,7 +362,7 @@
         beforePlayer,
         "恢复原教旨主义兑换前玩家状态",
       ));
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: `原教旨主义：${choice.label}`,
@@ -373,12 +370,12 @@
       }, [renderPlayerHand]);
     }
 
-    function startFundamentalismPickExchange(effect, player, choice) {
+    function startFundamentalismPickExchange(workingRoot, effect, player, choice) {
       const beforePlayer = structuredClone(player);
-      const beforeCardState = structuredClone(ruleCardState());
-      const spend = spendFundamentalismExchangeCost(player, choice.cost);
+      const beforeCardState = structuredClone(ruleCardState(workingRoot));
+      const spend = spendFundamentalismExchangeCost(workingRoot, player, choice.cost);
       if (!spend.ok) {
-        ruleRocketState().statusNote = spend.message;
+        ruleRocketState(workingRoot).statusNote = spend.message;
         renderStateReadout();
         return spend;
       }
@@ -395,28 +392,28 @@
       });
       if (!result.ok) {
         restoreObjectSnapshot(player, beforePlayer);
-        restoreObjectSnapshot(ruleCardState(), beforeCardState);
-        ruleRocketState().statusNote = result.message;
+        restoreObjectSnapshot(ruleCardState(workingRoot), beforeCardState);
+        ruleRocketState(workingRoot).statusNote = result.message;
         renderStateReadout();
         return result;
       }
-      ruleRocketState().statusNote = `原教旨主义：${choice.label}，请选择公共牌`;
+      ruleRocketState(workingRoot).statusNote = `原教旨主义：${choice.label}，请选择公共牌`;
       renderPlayerStats();
       renderStateReadout();
       return result;
     }
 
-    function startFundamentalismDiscardExchange(effect, player) {
+    function startFundamentalismDiscardExchange(workingRoot, effect, player) {
       const result = beginDiscardSelection(1, {
         type: "industry_fundamentalism_score_discard",
         player,
         fromEffectFlow: true,
         effectLabel: effect.label,
         beforePlayerState: structuredClone(player),
-        beforeCardState: structuredClone(ruleCardState()),
+        beforeCardState: structuredClone(ruleCardState(workingRoot)),
       });
       if (result.ok) {
-        ruleRocketState().statusNote = "原教旨主义：请选择 1 张手牌弃掉换 3 分";
+        ruleRocketState(workingRoot).statusNote = "原教旨主义：请选择 1 张手牌弃掉换 3 分";
         renderStateReadout();
       }
       return result;
@@ -426,7 +423,7 @@
       return effectChoiceFlowHelpers.handleFundamentalismExchangeChoice(workingRoot, choiceId);
     }
 
-    function isAlienFamilyCard(card) {
+    function isAlienFamilyCard(workingRoot, card) {
       const setText = String(card?.set || "");
       const cardId = String(card?.cardId || "");
       return setText.startsWith("alien:") || /^(aomomo|yichangdian|chong|amiba|jiuzhe|banrenma|fangzhou|runezu)_/.test(cardId);
@@ -440,18 +437,18 @@
       return effectChoiceFlowHelpers.handleDiscardCornerRepeatChoice(workingRoot, cardId);
     }
 
-    function buildOwnOrbitChoices() {
+    function buildOwnOrbitChoices(workingRoot) {
       const currentPlayer = getCurrentPlayer();
       const choices = [];
       const planetIds = planetReferenceLayout.PLANET_ORDER || planetStats.PLANET_IDS || [];
       for (const planetId of planetIds) {
-        for (const marker of planetStats.getPlanetOrbitMarkers(rulePlanetStatsState(), planetId)) {
-          if (!markerBelongsToPlayer(marker, currentPlayer)) continue;
+        for (const marker of planetStats.getPlanetOrbitMarkers(rulePlanetStatsState(workingRoot), planetId)) {
+          if (!markerBelongsToPlayer(workingRoot, marker, currentPlayer)) continue;
           choices.push({
             id: `${planetId}:${marker.sequence}`,
             planetId,
             sequence: marker.sequence,
-            label: `${getPlanetName(planetId)} 环绕 ${marker.sequence}`,
+            label: `${getPlanetName(workingRoot, planetId)} 环绕 ${marker.sequence}`,
           });
         }
       }
@@ -475,11 +472,11 @@
       return effectChoiceFlowHelpers.handleRemoveOrbitToProbeChoice(workingRoot, choiceId);
     }
 
-    function isChongTransportStartedForCard(card) {
-      return Boolean(card?.id && chong?.getActiveTransportForCard?.(ruleAlienGameState(), card.id));
+    function isChongTransportStartedForCard(workingRoot, card) {
+      return Boolean(card?.id && chong?.getActiveTransportForCard?.(ruleAlienGameState(workingRoot), card.id));
     }
 
-    function isReservedTaskCardUnfinished(card, effect = null) {
+    function isReservedTaskCardUnfinished(workingRoot, card, effect = null) {
       if (runezu?.isRunezuCard?.(card)) {
         if (cardEffects.getCardModel?.(card)?.triggers?.length) {
           return cardEffects.isReturnUnfinishedTaskTarget(card, {
@@ -503,11 +500,11 @@
       });
     }
 
-    function executeReturnUnfinishedTaskToHandEffect(effect) {
+    function executeReturnUnfinishedTaskToHandEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
-      const choices = (currentPlayer?.reservedCards || []).filter((card) => isReservedTaskCardUnfinished(card, effect));
+      const choices = (currentPlayer?.reservedCards || []).filter((card) => isReservedTaskCardUnfinished(workingRoot, card, effect));
       if (!choices.length) {
-        return finishAutomaticRewardEffect(effect, {
+        return finishAutomaticRewardEffect(workingRoot, effect, {
           ok: true,
           skipped: true,
           undoable: true,
@@ -531,12 +528,12 @@
         els.scanTargetActions.replaceChildren(...buttons);
       }
       if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = false;
-      ruleRocketState().statusNote = `${effect.label}：请选择任务卡`;
+      ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择任务卡`;
       renderStateReadout();
-      return { ok: true, pendingChoice: true, message: ruleRocketState().statusNote };
+      return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function handleReturnUnfinishedTaskChoice(cardId) {
+    function handleReturnUnfinishedTaskChoice(workingRoot, cardId) {
       const pending = decisionState.scanTargetAction;
       if (pending?.type !== "return_unfinished_task") return { ok: false, message: "没有待处理的任务卡回手" };
       const effect = pending.effect;
@@ -545,10 +542,10 @@
       const currentPlayer = getCurrentPlayer();
       const index = (currentPlayer?.reservedCards || []).findIndex((card) => card.id === cardId);
       if (index < 0) return { ok: false, message: "无效任务卡" };
-      if (!isReservedTaskCardUnfinished(currentPlayer.reservedCards[index], effect)) {
-        ruleRocketState().statusNote = "该牌不能作为未完成任务卡返回手牌";
+      if (!isReservedTaskCardUnfinished(workingRoot, currentPlayer.reservedCards[index], effect)) {
+        ruleRocketState(workingRoot).statusNote = "该牌不能作为未完成任务卡返回手牌";
         renderStateReadout();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
@@ -559,7 +556,7 @@
         beforePlayer,
         "恢复任务卡回手前玩家状态",
       ));
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: `${effect.label}：${cards.getCardLabel(card)} 返回手牌`,
@@ -568,28 +565,28 @@
       });
     }
 
-    function countOwnedTechByType(player, techType) {
+    function countOwnedTechByType(workingRoot, player, techType) {
       return Object.keys(player?.techState?.ownedTiles || {})
         .filter((tileId) => player.techState.ownedTiles[tileId]
           && (!techType || String(tileId).startsWith(techType)))
         .length;
     }
 
-    function executeCountTechTypesRewardEffect(effect) {
+    function executeCountTechTypesRewardEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       const count = Math.max(
-        countOwnedTechByType(currentPlayer, "orange"),
-        countOwnedTechByType(currentPlayer, "purple"),
-        countOwnedTechByType(currentPlayer, "blue"),
+        countOwnedTechByType(workingRoot, currentPlayer, "orange"),
+        countOwnedTechByType(workingRoot, currentPlayer, "purple"),
+        countOwnedTechByType(workingRoot, currentPlayer, "blue"),
       );
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
-        publicCards: ruleCardState().publicCards.slice(),
-        discardPile: (ruleCardState().discardPile || []).slice(),
+        publicCards: ruleCardState(workingRoot).publicCards.slice(),
+        discardPile: (ruleCardState(workingRoot).discardPile || []).slice(),
       };
       const drawResult = effect.options?.reward === "draw"
-        ? cards.drawCardsToHand(ruleCardState(), rulePlayerState(), currentPlayer, count)
+        ? cards.drawCardsToHand(ruleCardState(workingRoot), rulePlayerState(workingRoot), currentPlayer, count)
         : { ok: true, cards: [] };
       const drawnCount = (drawResult.cards || []).length;
       const irreversible = drawnCount
@@ -602,11 +599,11 @@
         "恢复科技类型奖励前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
-        ruleCardState(),
+        ruleCardState(workingRoot),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
       ));
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: drawResult.ok,
         undoable: !irreversible,
         irreversible,
@@ -615,9 +612,9 @@
       }, [renderPlayerHand]);
     }
 
-    function executeCountOwnedTechRewardEffect(effect) {
+    function executeCountOwnedTechRewardEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
-      const count = countOwnedTechByType(currentPlayer, effect.options?.techType);
+      const count = countOwnedTechByType(workingRoot, currentPlayer, effect.options?.techType);
       const total = Math.max(0, Math.round(count * Number(effect.options?.per || 1)));
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
@@ -634,7 +631,7 @@
         beforePlayer,
         "恢复科技数量奖励前玩家状态",
       ));
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: effect.options?.resource === "data"
@@ -644,10 +641,10 @@
       });
     }
 
-    function executeCountRocketsRewardEffect(effect) {
+    function executeCountRocketsRewardEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       const count = cardEffects.countRocketsForReward(
-        ruleRocketState().rockets,
+        ruleRocketState(workingRoot).rockets,
         currentPlayer,
         effect.options || {},
       );
@@ -664,7 +661,7 @@
         beforePlayer,
         "恢复探测器数量奖励前玩家状态",
       ));
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: `${effect.label}：${count} 个探测器，获得 ${total}`,
@@ -672,36 +669,36 @@
       });
     }
 
-    function executeDiscardAllHandEffect(effect) {
+    function executeDiscardAllHandEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
-        publicCards: ruleCardState().publicCards.slice(),
-        discardPile: (ruleCardState().discardPile || []).slice(),
+        publicCards: ruleCardState(workingRoot).publicCards.slice(),
+        discardPile: (ruleCardState(workingRoot).discardPile || []).slice(),
       };
       const discarded = [];
       while ((currentPlayer.hand || []).length) {
         const result = cards.discardFromHandAtIndex(currentPlayer, currentPlayer.hand.length - 1);
         if (result.ok) {
-          cards.addToDiscardPile(ruleCardState(), result.card);
+          cards.addToDiscardPile(ruleCardState(workingRoot), result.card);
           discarded.push(result.card);
         } else {
           break;
         }
       }
-      insertActionEffectsAfterCurrent(effect.options?.rewards || []);
+      insertActionEffectsAfterCurrent(workingRoot, effect.options?.rewards || []);
       recordHistoryCommand(historyCommands.createRestorePlayerCommand(
         currentPlayer,
         beforePlayer,
         "恢复弃掉全部手牌前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
-        ruleCardState(),
+        ruleCardState(workingRoot),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
       ));
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: `${effect.label}：弃掉 ${discarded.length} 张手牌，已追加奖励`,
@@ -709,14 +706,14 @@
       }, [renderPlayerHand]);
     }
 
-    function executeProbeStackRewardEffect(effect) {
+    function executeProbeStackRewardEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
-      const match = cardEffects.getProbeStackRewardMatch(ruleRocketState().rockets || [], currentPlayer, {
+      const match = cardEffects.getProbeStackRewardMatch(ruleRocketState(workingRoot).rockets || [], currentPlayer, {
         getCoordinate: (rocket) => rocketActions.getRocketSectorCoordinate(rocket),
       });
       const met = Boolean(match.conditionMet);
-      if (met) insertActionEffectsAfterCurrent(effect.options?.rewards || []);
-      return finishAutomaticRewardEffect(effect, {
+      if (met) insertActionEffectsAfterCurrent(workingRoot, effect.options?.rewards || []);
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: met
@@ -726,7 +723,7 @@
       });
     }
 
-    function enrichScanResultEvents(result, nebulaId, options = {}) {
+    function enrichScanResultEvents(workingRoot, result, nebulaId, options = {}) {
       if (!result?.ok) return result;
       const sectorX = options.sectorX != null
         ? solar.mod8(Number(options.sectorX))
@@ -749,15 +746,15 @@
       return result;
     }
 
-    function getEffectTargetPlayer(effect) {
+    function getEffectTargetPlayer(workingRoot, effect) {
       return resolvePlayerReference({
         playerId: effect?.options?.targetPlayerId || effect?.playerId || effect?.options?.playerId,
         playerColor: effect?.options?.targetPlayerColor || effect?.playerColor || effect?.options?.playerColor,
       }) || getCurrentPlayer();
     }
 
-    function executeGainResourcesRewardEffect(effect) {
-      const currentPlayer = getEffectTargetPlayer(effect);
+    function executeGainResourcesRewardEffect(workingRoot, effect) {
+      const currentPlayer = getEffectTargetPlayer(workingRoot, effect);
       const gain = effect.options?.gain || {};
       const beforePlayer = structuredClone(currentPlayer);
       beginEffectHistoryStep(effect.label);
@@ -768,15 +765,15 @@
         beforePlayer,
         "恢复奖励前玩家状态",
       ));
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
-        message: `${effect.label}：${currentPlayer?.colorLabel || currentPlayer?.name || "玩家"} ${formatPlanetRewardGain(gain)}`,
+        message: `${effect.label}：${currentPlayer?.colorLabel || currentPlayer?.name || "玩家"} ${formatPlanetRewardGain(workingRoot, gain)}`,
         payload: { gain },
       });
     }
 
-    function finishGainDataRewardEffect(effect, currentPlayer, count, source, options = {}) {
+    function finishGainDataRewardEffect(workingRoot, effect, currentPlayer, count, source, options = {}) {
       if (!uiRuntimeState.effectStepActive) beginEffectHistoryStep(effect.label);
       const results = [];
       if (!options.skipGain) {
@@ -796,7 +793,7 @@
       const message = options.skipGain
         ? `${effect.label}：数据池已满，已跳过本次数据获得`
         : `${effect.label}：${currentPlayer?.colorLabel || currentPlayer?.name || "玩家"}获得 ${gained}/${count} 个数据${discarded ? `，弃置 ${discarded} 个溢出数据` : ""}${placementText}`;
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         skipped: Boolean(options.skipGain),
@@ -805,15 +802,15 @@
       });
     }
 
-    function executeGainDataRewardEffect(effect) {
-      const currentPlayer = getEffectTargetPlayer(effect);
+    function executeGainDataRewardEffect(workingRoot, effect) {
+      const currentPlayer = getEffectTargetPlayer(workingRoot, effect);
       const count = Math.max(0, Math.round(effect.options?.count || 0));
       const source = effect.options?.source || "planet_reward";
       if (count > 0 && isDataPoolFull(currentPlayer)) {
         const placeCheck = getAutoDataPlacementCheck(currentPlayer);
         if (placeCheck.ok) {
           return openAutoDataPlacementPrompt(effect, currentPlayer, {
-            onAfterPlacement: ({ messages, restoreRecorded }) => finishGainDataRewardEffect(
+            onAfterPlacement: ({ messages, restoreRecorded }) => finishGainDataRewardEffect(workingRoot,
               effect,
               currentPlayer,
               count,
@@ -828,7 +825,7 @@
                 skipped: true,
                 message: `${effect.label}：数据池已满，已跳过本次数据获得`,
               };
-              ruleRocketState().statusNote = effect.result.message;
+              ruleRocketState(workingRoot).statusNote = effect.result.message;
               completeCurrentActionEffect("skipped");
               renderStateReadout();
               return effect.result;
@@ -842,16 +839,16 @@
           skipped: true,
           message: `${effect.label}：${placeCheck.message || "数据池已满且无法放置，未获得数据"}`,
         };
-        ruleRocketState().statusNote = effect.result.message;
+        ruleRocketState(workingRoot).statusNote = effect.result.message;
         completeCurrentActionEffect("skipped");
         renderStateReadout();
         return effect.result;
       }
       beginEffectHistoryStep(effect.label);
-      return finishGainDataRewardEffect(effect, currentPlayer, count, source);
+      return finishGainDataRewardEffect(workingRoot, effect, currentPlayer, count, source);
     }
 
-    function executeLaunchRewardEffect(effect) {
+    function executeLaunchRewardEffect(workingRoot, effect) {
       const options = effect.options || {};
       beginEffectHistoryStep(effect.label);
       const result = abilities.executeAbility("launchProbe", createActionContext(), {
@@ -870,14 +867,14 @@
             { reason: result.message || null, abilityId: result.abilityId || "launchProbe" },
           );
         }
-        ruleRocketState().statusNote = result.message;
+        ruleRocketState(workingRoot).statusNote = result.message;
         renderStateReadout();
         return result;
       }
       maybeApplyIndustryLaunchScan(result);
       recordAbilityCommands(result);
       if (result.rocket) renderRocketElement(result.rocket);
-      const finished = finishAutomaticRewardEffect(effect, {
+      const finished = finishAutomaticRewardEffect(workingRoot, effect, {
         ...result,
         undoable: true,
         message: `${effect.label}：${result.message}`,
@@ -885,7 +882,7 @@
       return finished;
     }
 
-    function executeHuanyuSuperdrivePassLaunchEffect(effect) {
+    function executeHuanyuSuperdrivePassLaunchEffect(workingRoot, effect) {
       const options = effect.options || {};
       beginEffectHistoryStep(effect.label);
       const result = abilities.executeAbility("launchProbe", createActionContext(), {
@@ -896,7 +893,7 @@
       });
       if (!result.ok) {
         endEffectHistoryStep();
-        ruleRocketState().statusNote = result.message;
+        ruleRocketState(workingRoot).statusNote = result.message;
         renderStateReadout();
         return result;
       }
@@ -907,7 +904,7 @@
         undoable: true,
         message: `${effect.label}：${result.message}`,
       };
-      ruleRocketState().statusNote = effect.result.message;
+      ruleRocketState(workingRoot).statusNote = effect.result.message;
       completeCurrentActionEffect();
       renderRockets();
       renderPlayerStats();
@@ -915,23 +912,23 @@
       return effect.result;
     }
 
-    function executeDrawCardsRewardEffect(effect) {
-      const currentPlayer = getEffectTargetPlayer(effect);
+    function executeDrawCardsRewardEffect(workingRoot, effect) {
+      const currentPlayer = getEffectTargetPlayer(workingRoot, effect);
       const count = Math.max(0, Math.round(effect.options?.count || 0));
-      const available = cards.getAvailablePool(ruleCardState(), rulePlayerState()).length;
+      const available = cards.getAvailablePool(ruleCardState(workingRoot), rulePlayerState(workingRoot)).length;
       if (available <= 0) {
-        ruleRocketState().statusNote = "牌库已无可用卡牌";
+        ruleRocketState(workingRoot).statusNote = "牌库已无可用卡牌";
         renderStateReadout();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
 
-      const drawResult = cards.drawCardsToHand(ruleCardState(), rulePlayerState(), currentPlayer, count);
+      const drawResult = cards.drawCardsToHand(ruleCardState(workingRoot), rulePlayerState(workingRoot), currentPlayer, count);
       markCurrentActionIrreversible("盲抽翻出新牌", "hidden_card_reveal");
       const drawnCount = drawResult.cards?.length || 0;
       const message = drawResult.ok
         ? `${effect.label}：已抽 ${drawnCount} 张`
         : `${effect.label}：已抽 ${drawnCount}/${count} 张，${drawResult.message}`;
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: false,
         irreversible: { code: "hidden_card_reveal", reason: "盲抽翻出新牌" },
@@ -940,9 +937,9 @@
       });
     }
 
-    function executeRegisterEventBonusEffect(effect) {
+    function executeRegisterEventBonusEffect(workingRoot, effect) {
       const owner = getEffectOwnerPlayer(effect);
-      const beforeTurnBonuses = structuredClone(ruleTurnState().cardTurnEventBonuses || []);
+      const beforeTurnBonuses = structuredClone(ruleTurnState(workingRoot).cardTurnEventBonuses || []);
       const flowBonuses = ensureCardFlowEventBonuses();
       const beforeFlowBonuses = structuredClone(flowBonuses);
       beginEffectHistoryStep(effect.label);
@@ -954,8 +951,8 @@
         usedKeys: [],
       };
       if (bonus.duration === "turn") {
-        if (!Array.isArray(ruleTurnState().cardTurnEventBonuses)) ruleTurnState().cardTurnEventBonuses = [];
-        ruleTurnState().cardTurnEventBonuses.push(bonus);
+        if (!Array.isArray(ruleTurnState(workingRoot).cardTurnEventBonuses)) ruleTurnState(workingRoot).cardTurnEventBonuses = [];
+        ruleTurnState(workingRoot).cardTurnEventBonuses.push(bonus);
       } else {
         flowBonuses.push(bonus);
       }
@@ -963,13 +960,13 @@
         label: "恢复卡牌事件触发登记",
         describe: "移除已登记的卡牌事件触发",
         undo() {
-          ruleTurnState().cardTurnEventBonuses = structuredClone(beforeTurnBonuses);
+          ruleTurnState(workingRoot).cardTurnEventBonuses = structuredClone(beforeTurnBonuses);
           if (decisionState.actionEffectFlow) {
             decisionState.actionEffectFlow.cardFlowEventBonuses = structuredClone(beforeFlowBonuses);
           }
         },
       });
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: `${effect.label}：已登记`,
@@ -977,7 +974,7 @@
       });
     }
 
-    function executeCountHandIncomeResourceEffect(effect) {
+    function executeCountHandIncomeResourceEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       const incomeCode = Number(effect.options?.incomeCode);
       const resource = effect.options?.resource || "energy";
@@ -997,26 +994,26 @@
         beforePlayer,
         "恢复手牌收入统计奖励前玩家状态",
       ));
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
-        message: `${effect.label}：${count} 张，${formatPlanetRewardGain(gain) || "无奖励"}`,
+        message: `${effect.label}：${count} 张，${formatPlanetRewardGain(workingRoot, gain) || "无奖励"}`,
         payload: { count, gain },
       }, [renderPlayerHand]);
     }
 
-    function getPlayerCompanyBaseIncome(player) {
+    function getPlayerCompanyBaseIncome(workingRoot, player) {
       const industryEffect = initialCards?.getIndustryEffect?.(player?.initialSelection?.industry);
       return players.normalizeIncome(industryEffect?.baseIncome || null);
     }
 
-    function executeCountCurrentIncomeResourceEffect(effect) {
+    function executeCountCurrentIncomeResourceEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       const incomeKey = effect.options?.incomeKey || "credits";
       const resource = effect.options?.resource || "score";
       const per = Math.max(0, Number(effect.options?.per) || 1);
       const currentIncomeCount = Math.max(0, Math.round(Number(currentPlayer?.income?.[incomeKey]) || 0));
-      const companyBaseIncome = getPlayerCompanyBaseIncome(currentPlayer);
+      const companyBaseIncome = getPlayerCompanyBaseIncome(workingRoot, currentPlayer);
       const baseIncomeCount = Math.max(0, Math.round(Number(companyBaseIncome?.[incomeKey]) || 0));
       const count = Math.max(0, currentIncomeCount - baseIncomeCount);
       const gain = { [resource]: Math.round(count * per) };
@@ -1031,17 +1028,17 @@
         beforePlayer,
         "恢复收入统计奖励前玩家状态",
       ));
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
-        message: `${effect.label}：高于公司默认 ${count} 个，${formatPlanetRewardGain(gain) || "无奖励"}`,
+        message: `${effect.label}：高于公司默认 ${count} 个，${formatPlanetRewardGain(workingRoot, gain) || "无奖励"}`,
         payload: { count, currentIncomeCount, baseIncomeCount, gain },
       });
     }
 
-    function executeCountAliensResourceEffect(effect) {
+    function executeCountAliensResourceEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
-      const alienCount = Object.keys(ruleAlienGameState()?.aliens || {}).length;
+      const alienCount = Object.keys(ruleAlienGameState(workingRoot)?.aliens || {}).length;
       const gainPerAlien = effect.options?.gainPerAlien || {};
       const gain = {};
       for (const [resource, amount] of Object.entries(gainPerAlien)) {
@@ -1058,33 +1055,33 @@
         beforePlayer,
         "恢复外星人数量奖励前玩家状态",
       ));
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
-        message: `${effect.label}：${alienCount} 个外星人，${formatPlanetRewardGain(gain) || "无奖励"}`,
+        message: `${effect.label}：${alienCount} 个外星人，${formatPlanetRewardGain(workingRoot, gain) || "无奖励"}`,
         payload: { alienCount, gain },
       });
     }
 
-    function executeTuckPlayedCardToIncomeEffect(effect) {
+    function executeTuckPlayedCardToIncomeEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       const playedCard = decisionState.actionEffectFlow?.card;
       if (!currentPlayer || !playedCard) {
-        ruleRocketState().statusNote = "没有可放入收入区的当前卡牌";
+        ruleRocketState(workingRoot).statusNote = "没有可放入收入区的当前卡牌";
         renderStateReadout();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
       const gain = cards.getIncomeGainForCard(playedCard);
       if (!gain) {
-        ruleRocketState().statusNote = `${cards.getCardLabel(playedCard)} 没有可识别收入`;
+        ruleRocketState(workingRoot).statusNote = `${cards.getCardLabel(playedCard)} 没有可识别收入`;
         renderStateReadout();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
-      const discardIndex = (ruleCardState().discardPile || []).findIndex((card) => card.id === playedCard.id);
+      const discardIndex = (ruleCardState(workingRoot).discardPile || []).findIndex((card) => card.id === playedCard.id);
       beginEffectHistoryStep(effect.label);
       const beforePlayer = structuredClone(currentPlayer);
-      const beforeCardState = structuredClone(ruleCardState());
-      if (discardIndex >= 0) ruleCardState().discardPile.splice(discardIndex, 1);
+      const beforeCardState = structuredClone(ruleCardState(workingRoot));
+      if (discardIndex >= 0) ruleCardState(workingRoot).discardPile.splice(discardIndex, 1);
       const incomeResult = applyIncomeGainWithImmediateRewards(currentPlayer, gain, "card_income");
       recordHistoryCommand(historyCommands.createRestorePlayerCommand(
         currentPlayer,
@@ -1092,11 +1089,11 @@
         "恢复本卡放入收入区前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestoreObjectCommand(
-        ruleCardState(),
+        ruleCardState(workingRoot),
         beforeCardState,
         "恢复本卡放入收入区前牌区",
       ));
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: incomeResult.undoable,
         irreversible: incomeResult.irreversible,
@@ -1105,7 +1102,7 @@
       }, [renderPlayerHand, renderPublicCards]);
     }
 
-    function executePickCardCornerRewardEffect(effect) {
+    function executePickCardCornerRewardEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       const result = beginCardSelection({
         type: "card_pick_corner_reward",
@@ -1115,28 +1112,28 @@
         fromEffectFlow: true,
         beforePlayerState: structuredClone(currentPlayer),
         beforeCardState: {
-          publicCards: ruleCardState().publicCards.slice(),
-          discardPile: (ruleCardState().discardPile || []).slice(),
+          publicCards: ruleCardState(workingRoot).publicCards.slice(),
+          discardPile: (ruleCardState(workingRoot).discardPile || []).slice(),
         },
       });
       if (!result.ok) {
-        ruleRocketState().statusNote = result.message;
+        ruleRocketState(workingRoot).statusNote = result.message;
         renderStateReadout();
       }
       return result;
     }
 
-    function executeDiscardPublicCornerRewardsEffect(effect) {
+    function executeDiscardPublicCornerRewardsEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
       const count = Math.max(1, Math.round(Number(effect.options?.count || 1)));
-      const filledSlots = ruleCardState().publicCards
+      const filledSlots = ruleCardState(workingRoot).publicCards
         .map((card, index) => card ? index : null)
         .filter((index) => index != null);
       if (filledSlots.length < count) {
-        ruleRocketState().statusNote = `${effect.label}：公共牌不足 ${count} 张`;
+        ruleRocketState(workingRoot).statusNote = `${effect.label}：公共牌不足 ${count} 张`;
         renderStateReadout();
-        return { ok: false, message: ruleRocketState().statusNote };
+        return { ok: false, message: ruleRocketState(workingRoot).statusNote };
       }
       const result = beginCardSelection({
         type: "card_public_corner_discard",
@@ -1151,18 +1148,18 @@
         fromEffectFlow: true,
         beforePlayerState: structuredClone(currentPlayer),
         beforeCardState: {
-          publicCards: ruleCardState().publicCards.slice(),
-          discardPile: (ruleCardState().discardPile || []).slice(),
+          publicCards: ruleCardState(workingRoot).publicCards.slice(),
+          discardPile: (ruleCardState(workingRoot).discardPile || []).slice(),
         },
       });
       if (!result.ok) {
-        ruleRocketState().statusNote = result.message;
+        ruleRocketState(workingRoot).statusNote = result.message;
         renderStateReadout();
       }
       return result;
     }
 
-    function normalizeInsertedActionEffect(effect, ownerId, fallbackId) {
+    function normalizeInsertedActionEffect(workingRoot, effect, ownerId, fallbackId) {
       return {
         ...assignEffectOwner({ ...effect }, ownerId),
         id: effect.id || fallbackId,
@@ -1173,7 +1170,7 @@
       };
     }
 
-    function insertActionEffectsAfterCurrent(effects) {
+    function insertActionEffectsAfterCurrent(workingRoot, effects) {
       if (!decisionState.actionEffectFlow || !effects?.length) return;
       const insertedEffects = effects.filter(Boolean);
       const insertIndex = Math.max(0, decisionState.actionEffectFlow.currentIndex + 1);
@@ -1187,13 +1184,13 @@
         || decisionState.actionEffectFlow.playerId
         || null;
       decisionState.actionEffectFlow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => {
-        const normalized = normalizeInsertedActionEffect(effect, ownerId, `inserted-card-effect-${insertIndex}-${index}`);
+        const normalized = normalizeInsertedActionEffect(workingRoot, effect, ownerId, `inserted-card-effect-${insertIndex}-${index}`);
         return abilities.chain.markInsertedNode?.(normalized, insertionSource) || normalized;
       }));
       decisionState.actionEffectFlow.completed = false;
     }
 
-    function insertActionEffectsBeforeCurrent(effects) {
+    function insertActionEffectsBeforeCurrent(workingRoot, effects) {
       if (!decisionState.actionEffectFlow || !effects?.length) return false;
       const insertedEffects = effects.filter(Boolean);
       if (!insertedEffects.length) return false;
@@ -1212,7 +1209,7 @@
         || getCurrentPlayer()?.id
         || null;
       flow.effects.splice(insertIndex, 0, ...insertedEffects.map((effect, index) => (
-        normalizeInsertedActionEffect(effect, ownerId, `inserted-card-trigger-effect-${insertIndex}-${index}`)
+        normalizeInsertedActionEffect(workingRoot, effect, ownerId, `inserted-card-trigger-effect-${insertIndex}-${index}`)
       )));
       flow.currentIndex = insertIndex;
       flow.completed = false;
@@ -1220,12 +1217,12 @@
       return true;
     }
 
-    function executeConditionalRewardEffect(effect) {
-      const met = isRuntimeCardConditionMet(effect.options?.condition);
+    function executeConditionalRewardEffect(workingRoot, effect) {
+      const met = isRuntimeCardConditionMet(workingRoot, effect.options?.condition);
       if (met) {
-        insertActionEffectsAfterCurrent(effect.options?.rewards || []);
+        insertActionEffectsAfterCurrent(workingRoot, effect.options?.rewards || []);
       }
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: met ? `${effect.label}：条件满足，已追加奖励` : `${effect.label}：条件未满足`,
@@ -1233,12 +1230,12 @@
       });
     }
 
-    function startHandScanFromCardEffect(effect) {
+    function startHandScanFromCardEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       const optional = Boolean(effect.options?.optional);
       if (!currentPlayer?.hand?.length) {
         effect.result = { ok: true, skipped: true, message: `${effect.label}：没有手牌，跳过` };
-        ruleRocketState().statusNote = effect.result.message;
+        ruleRocketState(workingRoot).statusNote = effect.result.message;
         completeCurrentActionEffect("skipped");
         renderStateReadout();
         return effect.result;
@@ -1249,18 +1246,18 @@
         fromEffectFlow: true,
         optional,
       };
-      ruleRocketState().statusNote = optional
+      ruleRocketState(workingRoot).statusNote = optional
         ? `${effect.label}：请选择一张手牌弃除并扫描，或点击跳过`
         : `${effect.label}：请选择一张手牌弃除并扫描`;
       syncHandScanSelectionChrome();
       updateActionButtons();
       renderStateReadout();
-      return { ok: true, pendingChoice: true, message: ruleRocketState().statusNote };
+      return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function openOptionalHandScanPrompt(effect) {
+    function openOptionalHandScanPrompt(workingRoot, effect) {
       if (!els.scanTargetOverlay || !els.scanTargetActions) {
-        return startHandScanFromCardEffect({ ...effect, options: { ...(effect.options || {}), optional: true } });
+        return startHandScanFromCardEffect(workingRoot, { ...effect, options: { ...(effect.options || {}), optional: true } });
       }
       if (els.scanTargetTitle) els.scanTargetTitle.textContent = effect.label || "可选手牌扫描";
       if (els.scanTargetSubtitle) els.scanTargetSubtitle.textContent = "可以执行一次手牌扫描，也可以跳过本次。";
@@ -1278,12 +1275,12 @@
       els.scanTargetActions.replaceChildren(start, skip);
       decisionState.scanTargetAction = { ...getPendingOwnerFields(effect), type: "optional_hand_scan", effect };
       els.scanTargetOverlay.hidden = false;
-      ruleRocketState().statusNote = `${effect.label}：选择手牌或跳过`;
+      ruleRocketState(workingRoot).statusNote = `${effect.label}：选择手牌或跳过`;
       renderStateReadout();
-      return { ok: true, pendingChoice: true, message: ruleRocketState().statusNote };
+      return { ok: true, pendingChoice: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function handleOptionalHandScanChoice(choice) {
+    function handleOptionalHandScanChoice(workingRoot, choice) {
       const pending = decisionState.scanTargetAction;
       if (pending?.type !== "optional_hand_scan") return { ok: false, message: "没有待处理的可选手牌扫描" };
       const effect = pending.effect;
@@ -1291,16 +1288,16 @@
       return withPendingOwnerPlayer(pending, () => {
       if (choice === "skip") {
         effect.result = { ok: true, skipped: true, message: `${effect.label}：已跳过` };
-        ruleRocketState().statusNote = effect.result.message;
+        ruleRocketState(workingRoot).statusNote = effect.result.message;
         completeCurrentActionEffect("skipped");
         renderStateReadout();
         return effect.result;
       }
-      return startHandScanFromCardEffect({ ...effect, options: { ...(effect.options || {}), optional: true } });
+      return startHandScanFromCardEffect(workingRoot, { ...effect, options: { ...(effect.options || {}), optional: true } });
       });
     }
 
-    function executeOptionalDiscardScanEffect(effect) {
+    function executeOptionalDiscardScanEffect(workingRoot, effect) {
       const count = Math.max(1, Math.round(Number(effect.options?.count || 1)));
       const followups = [];
       for (let index = 0; index < count; index += 1) {
@@ -1312,8 +1309,8 @@
           options: { optional: true },
         });
       }
-      insertActionEffectsAfterCurrent(followups);
-      return finishAutomaticRewardEffect(effect, {
+      insertActionEffectsAfterCurrent(workingRoot, followups);
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: `${effect.label}：已追加 ${count} 次可选手牌扫描`,
@@ -1321,18 +1318,18 @@
       });
     }
 
-    function executeHandScanEffect(effect) {
-      if (effect.options?.optional) return openOptionalHandScanPrompt(effect);
-      return startHandScanFromCardEffect(effect);
+    function executeHandScanEffect(workingRoot, effect) {
+      if (effect.options?.optional) return openOptionalHandScanPrompt(workingRoot, effect);
+      return startHandScanFromCardEffect(workingRoot, effect);
     }
 
-    function executeCountHandCornerMoveEffect(effect) {
+    function executeCountHandCornerMoveEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       const count = (currentPlayer?.hand || [])
         .filter((card) => cards.getDiscardActionMoveRewardForCard?.(card))
         .length;
       if (count > 0) {
-        insertActionEffectsAfterCurrent([{
+        insertActionEffectsAfterCurrent(workingRoot, [{
           id: `${effect.id || "hand-corner"}-move`,
           type: cardEffects.EFFECT_TYPES.CARD_MOVE,
           label: `手牌移动角标：${count}移动`,
@@ -1340,7 +1337,7 @@
           options: { movementPoints: count, historyLabel: effect.label },
         }]);
       }
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: `${effect.label}：${count} 张`,
@@ -1348,33 +1345,33 @@
       }, [renderPlayerHand]);
     }
 
-    function getEarthSectorMoveContentKinds(effect) {
+    function getEarthSectorMoveContentKinds(workingRoot, effect) {
       const kinds = effect?.options?.contentKinds;
       if (Array.isArray(kinds) && kinds.length) return new Set(kinds);
       return new Set([solar.layout.CONTENT_KIND.PLANET, solar.layout.CONTENT_KIND.COMET]);
     }
 
-    function isEarthSectorMoveContent(content, contentKinds) {
+    function isEarthSectorMoveContent(workingRoot, content, contentKinds) {
       if (!content?.kind || !contentKinds?.has(content.kind)) return false;
       return content.kind !== solar.layout.CONTENT_KIND.PLANET || content.planetId !== "earth";
     }
 
-    function countEarthSectorMoveContents(effect) {
+    function countEarthSectorMoveContents(workingRoot, effect) {
       const earth = getEarthSectorCoordinate();
       if (earth?.x == null) return 0;
-      const contentKinds = getEarthSectorMoveContentKinds(effect);
+      const contentKinds = getEarthSectorMoveContentKinds(workingRoot, effect);
       let count = 0;
       for (let y = rocketActions.SECTOR_RING_MIN; y <= rocketActions.SECTOR_RING_MAX; y += 1) {
         const content = getSectorContentForMove({ x: earth.x, y });
-        if (isEarthSectorMoveContent(content, contentKinds)) count += 1;
+        if (isEarthSectorMoveContent(workingRoot, content, contentKinds)) count += 1;
       }
       return count;
     }
 
-    function executeEarthSectorContentMoveEffect(effect) {
-      const count = countEarthSectorMoveContents(effect);
+    function executeEarthSectorContentMoveEffect(workingRoot, effect) {
+      const count = countEarthSectorMoveContents(workingRoot, effect);
       if (count > 0) {
-        insertActionEffectsAfterCurrent([{
+        insertActionEffectsAfterCurrent(workingRoot, [{
           id: `${effect.id || "earth-sector"}-move`,
           type: cardEffects.EFFECT_TYPES.CARD_MOVE,
           label: `地球扇区行星/彗星：${count}移动`,
@@ -1382,7 +1379,7 @@
           options: { movementPoints: count, historyLabel: effect.label },
         }]);
       }
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: `${effect.label}：${count}移动`,
@@ -1390,7 +1387,7 @@
       });
     }
 
-    function computeProbeLocationReward(effect, rocket) {
+    function computeProbeLocationReward(workingRoot, effect, rocket) {
       const sector = rocketActions.getRocketSectorCoordinate(rocket);
       if (!sector) return { dataCount: 0, asteroid: false, adjacentAsteroids: 0 };
       const content = getSectorContentForMove(sector);
@@ -1404,9 +1401,9 @@
       return { dataCount, asteroid, adjacentAsteroids };
     }
 
-    function finishProbeLocationReward(effect, rocket) {
+    function finishProbeLocationReward(workingRoot, effect, rocket) {
       const currentPlayer = getExplicitEffectOwnerPlayer(effect) || getCurrentPlayer();
-      const reward = computeProbeLocationReward(effect, rocket);
+      const reward = computeProbeLocationReward(workingRoot, effect, rocket);
       beginEffectHistoryStep(effect.label);
       const results = [];
       for (let index = 0; index < reward.dataCount; index += 1) {
@@ -1414,7 +1411,7 @@
         results.push(gainResult);
         recordHistoryCommand(historyCommands.createGainDataCommand(currentPlayer, gainResult));
       }
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: `${effect.label}：获得 ${results.filter((item) => item.ok).length}/${reward.dataCount} 数据`,
@@ -1422,8 +1419,8 @@
       });
     }
 
-    function openProbeLocationRewardPicker(effect, choices) {
-      return effectChoiceFlowHelpers.openProbeLocationRewardPicker(effect, choices);
+    function openProbeLocationRewardPicker(workingRoot, effect, choices) {
+      return effectChoiceFlowHelpers.openProbeLocationRewardPicker(workingRoot, effect, choices);
     }
 
     function executeProbeLocationRewardEffect(workingRoot, effect) {
@@ -1434,7 +1431,7 @@
       return effectChoiceFlowHelpers.handleProbeLocationRewardChoice(workingRoot, rocketId);
     }
 
-    function executePlutoReserveEffect(effect) {
+    function executePlutoReserveEffect(workingRoot, effect) {
       const card = decisionState.actionEffectFlow?.card;
       if (card) {
         ensurePlutoCardEffectState(card).pluto = {
@@ -1443,7 +1440,7 @@
           landDone: Boolean(card.cardEffectState?.pluto?.landDone),
         };
       }
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: true,
         message: `${effect.label}：已保留`,
@@ -1451,7 +1448,7 @@
       }, [renderReservedCards]);
     }
 
-    function executeCardFixedNebulaScanEffect(effect) {
+    function executeCardFixedNebulaScanEffect(workingRoot, effect) {
       const repeat = Math.max(1, Math.round(Number(effect.options?.repeat || 1)));
       if (repeat > 1 && !effect.options?._repeatExpanded) {
         const followups = [];
@@ -1464,13 +1461,13 @@
             options: { ...(effect.options || {}), repeat: 1, _repeatExpanded: true },
           });
         }
-        insertActionEffectsAfterCurrent(followups);
+        insertActionEffectsAfterCurrent(workingRoot, followups);
         effect.label = `${effect.label} 1/${repeat}`;
         effect.options = { ...(effect.options || {}), repeat: 1, _repeatExpanded: true };
       }
       if (!nebulaHasScannableData(effect.options?.nebulaId)) {
         const nebulaLabel = data.getNebulaLabel?.(effect.options?.nebulaId) || "目标星云";
-        return finishAutomaticRewardEffect(effect, {
+        return finishAutomaticRewardEffect(workingRoot, effect, {
           ok: true,
           undoable: true,
           skipped: true,
@@ -1490,7 +1487,7 @@
       return result;
     }
 
-    function executePlanetSectorScanEffect(effect) {
+    function executePlanetSectorScanEffect(workingRoot, effect) {
       const repeat = Math.max(1, Math.round(Number(effect.options?.repeat || 1)));
       if (repeat > 1 && !effect.options?._repeatExpanded) {
         const followups = [];
@@ -1503,17 +1500,17 @@
             options: { ...(effect.options || {}), repeat: 1, _repeatExpanded: true },
           });
         }
-        insertActionEffectsAfterCurrent(followups);
+        insertActionEffectsAfterCurrent(workingRoot, followups);
         effect.label = `${effect.label} 1/${repeat}`;
         effect.options = { ...(effect.options || {}), repeat: 1, _repeatExpanded: true };
       }
-      return executeSectorScanAtPlanet(effect.options?.planetId, effect.label, effect);
+      return executeSectorScanAtPlanet(workingRoot, effect.options?.planetId, effect.label, effect);
     }
 
-    function openCardColorScanEffect(effect) {
+    function openCardColorScanEffect(workingRoot, effect) {
       const color = effect.options?.color;
       const nebulaIds = cardEffects.NEBULA_IDS_BY_COLOR[color] || [];
-      ruleRocketState().statusNote = `${effect.label}：请选择 1 个星云`;
+      ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择 1 个星云`;
       renderStateReadout();
       return openScanTargetPicker({
         type: "sector_scan",
@@ -1525,10 +1522,10 @@
       });
     }
 
-    function openCardAnySectorScanEffect(effect) {
+    function openCardAnySectorScanEffect(workingRoot, effect) {
       const choices = buildSectorScanChoicesForXs(Array.from({ length: 8 }, (_, x) => x));
       const repeat = Math.max(1, Math.round(Number(effect.options?.repeat) || 1));
-      ruleRocketState().statusNote = `${effect.label}：请选择 0-7 号扇区之一`;
+      ruleRocketState(workingRoot).statusNote = `${effect.label}：请选择 0-7 号扇区之一`;
       renderStateReadout();
       return openScanTargetPicker({
         type: "sector_scan",
@@ -1544,10 +1541,10 @@
       });
     }
 
-    function openCardPublicScanEffect(effect) {
+    function openCardPublicScanEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       const repeat = Math.max(1, Math.round(Number(effect.options?.repeat || 1)));
-      const filledSlots = ruleCardState().publicCards.filter((card) => (
+      const filledSlots = ruleCardState(workingRoot).publicCards.filter((card) => (
         card && (getPublicScanChoicesForCard(card)?.choices || []).length > 0
       )).length;
       if (filledSlots === 0) {
@@ -1564,7 +1561,7 @@
         scanRunId,
         deferPublicRefill: true,
       };
-      ruleRocketState().statusNote = selectableCount > 1
+      ruleRocketState(workingRoot).statusNote = selectableCount > 1
         ? `${effect.label}：请选择 ${selectableCount} 张当前公共牌`
         : `${effect.label}：请选择一张亮明的公共牌`;
       renderStateReadout();
@@ -1582,23 +1579,23 @@
       });
     }
 
-    function expandCardScanActionEffect(effect) {
+    function expandCardScanActionEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       const scanRunId = createScanRunId(effect.id || "card-scan-action");
       const followups = scanEffects.buildScanEffectQueue(currentPlayer, {
         includeFinalize: true,
         fullScanAction: true,
         scanRunId,
-        turnState: ruleTurnState(),
-        roundNumber: ruleTurnState().roundNumber,
-        turnNumber: ruleTurnState().turnNumber,
+        turnState: ruleTurnState(workingRoot),
+        roundNumber: ruleTurnState(workingRoot).roundNumber,
+        turnNumber: ruleTurnState(workingRoot).turnNumber,
       })
         .map((item, index) => ({
           ...item,
           id: `${effect.id || "card-scan-action"}-${index}`,
           status: "pending",
         }));
-      insertActionEffectsAfterCurrent(followups);
+      insertActionEffectsAfterCurrent(workingRoot, followups);
       effect.result = {
         ok: true,
         undoable: true,
@@ -1606,15 +1603,15 @@
         payload: { inserted: followups.length, scanRunId },
         events: [{ type: "scanAction", source: "card", scanRunId }],
       };
-      ruleRocketState().statusNote = "扫描行动已展开，请继续处理后续扫描效果";
+      ruleRocketState(workingRoot).statusNote = "扫描行动已展开，请继续处理后续扫描效果";
       completeCurrentActionEffect();
       renderStateReadout();
       return effect.result;
     }
 
-    function executeCardResearchTechEffect(effect) {
-      if (effect.options?.requireCondition && !isRuntimeCardConditionMet(effect.options.requireCondition)) {
-        return finishAutomaticRewardEffect(effect, {
+    function executeCardResearchTechEffect(workingRoot, effect) {
+      if (effect.options?.requireCondition && !isRuntimeCardConditionMet(workingRoot, effect.options.requireCondition)) {
+        return finishAutomaticRewardEffect(workingRoot, effect, {
           ok: true,
           skipped: true,
           message: `${effect.label}：条件未满足，已跳过`,
@@ -1627,18 +1624,18 @@
       });
       if (!result.ok) {
         if (result.reason === "no_takeable_tech") {
-          return finishAutomaticRewardEffect(effect, {
+          return finishAutomaticRewardEffect(workingRoot, effect, {
             ok: true,
             skipped: true,
             message: `${effect.label}：${result.message}，已跳过`,
             payload: { reason: result.reason },
           });
         }
-        ruleRocketState().statusNote = result.message;
+        ruleRocketState(workingRoot).statusNote = result.message;
         renderStateReadout();
         return result;
       }
-      ruleRocketState().statusNote = result.message || "请选择要研究的科技片";
+      ruleRocketState(workingRoot).statusNote = result.message || "请选择要研究的科技片";
       syncTechSelectionChrome();
       renderTechBoard();
       updateActionButtons();
@@ -1646,11 +1643,11 @@
       return result;
     }
 
-    function openCardDrawThenScanEffect(effect) {
+    function openCardDrawThenScanEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
-      const drawResult = cards.blindDraw(ruleCardState(), rulePlayerState(), currentPlayer);
+      const drawResult = cards.blindDraw(ruleCardState(workingRoot), rulePlayerState(workingRoot), currentPlayer);
       if (!drawResult.ok) {
-        ruleRocketState().statusNote = drawResult.message;
+        ruleRocketState(workingRoot).statusNote = drawResult.message;
         renderStateReadout();
         return drawResult;
       }
@@ -1660,7 +1657,7 @@
       const handIndex = currentPlayer.hand.findIndex((item) => item.id === drawnCard.id);
       const scanChoices = getPublicScanChoicesForCard(drawnCard);
       if (!scanChoices.ok) {
-        ruleRocketState().statusNote = scanChoices.message;
+        ruleRocketState(workingRoot).statusNote = scanChoices.message;
         renderPlayerStats();
         renderPlayerHand();
         renderStateReadout();
@@ -1669,7 +1666,7 @@
 
       effect.icon = getPublicScanIconForScanCode(scanChoices.scanCode);
       renderActionEffectBar();
-      ruleRocketState().statusNote = `${effect.label}：${cards.getCardLabel(drawnCard)}，请选择${scanChoices.scanLabel}目标`;
+      ruleRocketState(workingRoot).statusNote = `${effect.label}：${cards.getCardLabel(drawnCard)}，请选择${scanChoices.scanLabel}目标`;
       renderPlayerStats();
       renderPlayerHand();
       renderStateReadout();
@@ -1692,21 +1689,21 @@
       });
     }
 
-    function executeCardDrawThenDiscardActionEffect(effect) {
+    function executeCardDrawThenDiscardActionEffect(workingRoot, effect) {
       const currentPlayer = getCurrentPlayer();
       if (!currentPlayer) return { ok: false, message: "没有当前玩家" };
 
       const beforePlayer = structuredClone(currentPlayer);
       const beforeCardState = {
-        publicCards: ruleCardState().publicCards.slice(),
-        discardPile: (ruleCardState().discardPile || []).slice(),
+        publicCards: ruleCardState(workingRoot).publicCards.slice(),
+        discardPile: (ruleCardState(workingRoot).discardPile || []).slice(),
       };
 
       beginEffectHistoryStep(effect.label);
-      const drawResult = cards.blindDraw(ruleCardState(), rulePlayerState(), currentPlayer);
+      const drawResult = cards.blindDraw(ruleCardState(workingRoot), rulePlayerState(workingRoot), currentPlayer);
       if (!drawResult.ok) {
         endEffectHistoryStep();
-        ruleRocketState().statusNote = drawResult.message;
+        ruleRocketState(workingRoot).statusNote = drawResult.message;
         renderStateReadout();
         return drawResult;
       }
@@ -1717,12 +1714,12 @@
       const discardResult = cards.discardFromHandAtIndex(currentPlayer, drawnIndex);
       if (!discardResult.ok) {
         endEffectHistoryStep();
-        ruleRocketState().statusNote = discardResult.message;
+        ruleRocketState(workingRoot).statusNote = discardResult.message;
         renderPlayerHand();
         renderStateReadout();
         return discardResult;
       }
-      cards.addToDiscardPile(ruleCardState(), discardResult.card);
+      cards.addToDiscardPile(ruleCardState(workingRoot), discardResult.card);
 
       const resourceReward = cards.getDiscardActionRewardForCard(discardResult.card);
       const moveReward = cards.getDiscardActionMoveRewardForCard?.(discardResult.card);
@@ -1745,7 +1742,7 @@
       }
 
       if (moveReward) {
-        insertActionEffectsAfterCurrent([{
+        insertActionEffectsAfterCurrent(workingRoot, [{
           id: `${effect.id || "card-corner"}-move-${discardResult.card.id}`,
           type: cardEffects.EFFECT_TYPES.CARD_MOVE,
           label: `${cards.getCardLabel(discardResult.card)}：${moveReward.label}`,
@@ -1763,7 +1760,7 @@
         "恢复盲抽角标结算前玩家状态",
       ));
       recordHistoryCommand(historyCommands.createRestorePublicCardsCommand(
-        ruleCardState(),
+        ruleCardState(workingRoot),
         beforeCardState.publicCards,
         beforeCardState.discardPile,
       ));
@@ -1771,9 +1768,9 @@
       const rewardText = resourceReward
         ? formatCardCornerRewardMessage(resourceReward, dataResults)
         : moveReward
-          ? `${formatPlanetRewardGain(moveReward.gain || {})}${moveReward.gain?.score ? "，" : ""}${moveReward.label}`
+          ? `${formatPlanetRewardGain(workingRoot, moveReward.gain || {})}${moveReward.gain?.score ? "，" : ""}${moveReward.label}`
           : "无可结算角标";
-      return finishAutomaticRewardEffect(effect, {
+      return finishAutomaticRewardEffect(workingRoot, effect, {
         ok: true,
         undoable: false,
         irreversible: { code: "hidden_card_reveal", reason: "盲抽翻出新牌" },

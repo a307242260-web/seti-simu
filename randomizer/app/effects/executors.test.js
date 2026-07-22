@@ -17,7 +17,7 @@ function withWorkingRoot(context = {}) {
     solarState: context.solarState || {},
     turnState: context.turnState || {},
   };
-  return { ...context, getWorkingRoot: () => workingRoot };
+  return { ...context, workingRoot };
 }
 
 (() => {
@@ -46,7 +46,7 @@ function withWorkingRoot(context = {}) {
   };
   const dispatcherContext = withWorkingRoot(baseContext);
   const dispatcher = createEffectDispatcher(dispatcherContext);
-  const workingRoot = dispatcherContext.getWorkingRoot();
+  const workingRoot = dispatcherContext.workingRoot;
 
   for (const expected of [...outcomes]) {
     const actual = dispatcher.executeActionEffectForOwner(workingRoot, {
@@ -82,7 +82,7 @@ function withWorkingRoot(context = {}) {
     },
   });
   const dispatcher = createEffectDispatcher(dispatcherContext);
-  const result = dispatcher.executeActionEffectForOwner(dispatcherContext.getWorkingRoot(), effect);
+  const result = dispatcher.executeActionEffectForOwner(dispatcherContext.workingRoot, effect);
   assert.equal(result.ok, true);
   assert.equal(result.skipped, true);
   assert.equal(result.payload.reason, "no_public_scan_candidate");
@@ -93,7 +93,7 @@ function withWorkingRoot(context = {}) {
 
 (() => {
   const calls = [];
-  const executors = createEffectRewardExecutors(withWorkingRoot({
+  const executorContext = withWorkingRoot({
     abilities: {
       executeAbility() {
         return {
@@ -112,9 +112,10 @@ function withWorkingRoot(context = {}) {
       calls.push({ effect, message, payload });
       return { ok: true, skipped: true, message };
     },
-  }));
+  });
+  const executors = createEffectRewardExecutors(executorContext);
   const effect = { label: "科技奖励发射", options: { skipCost: true }, status: "active" };
-  const result = executors.executeLaunchRewardEffect(effect);
+  const result = executors.executeLaunchRewardEffect(executorContext.workingRoot, effect);
   assert.equal(result.ok, true);
   assert.equal(result.skipped, true);
   assert.match(result.message, /火箭数量已达上限.*已跳过/);
@@ -126,7 +127,7 @@ function withWorkingRoot(context = {}) {
 
 (() => {
   const finished = [];
-  const executors = createEffectRewardExecutors(withWorkingRoot({
+  const executorContext = withWorkingRoot({
     abilities: {
       executeAbility() {
         return {
@@ -138,19 +139,20 @@ function withWorkingRoot(context = {}) {
       },
     },
     createActionContext: () => ({}),
-    finishAutomaticRewardEffect(effect, result) {
+    finishAutomaticRewardEffect(_workingRoot, effect, result) {
       finished.push({ effect, result });
       return result;
     },
     renderStateReadout: () => {},
     rocketState: {},
-  }));
+  });
+  const executors = createEffectRewardExecutors(executorContext);
   const effect = {
     label: "卡牌科技（仅蓝色）",
     options: { techTypes: ["blue"], skipCost: true },
     status: "active",
   };
-  const result = executors.executeCardResearchTechEffect(effect);
+  const result = executors.executeCardResearchTechEffect(executorContext.workingRoot, effect);
   assert.equal(result.ok, true);
   assert.equal(result.skipped, true);
   assert.equal(result.payload.reason, "no_takeable_tech");
@@ -162,7 +164,7 @@ function withWorkingRoot(context = {}) {
 
 (() => {
   const calls = [];
-  const executors = createEffectRewardExecutors(withWorkingRoot({
+  const executorContext = withWorkingRoot({
     cardState: { publicCards: [] },
     getPublicScanChoicesForCard: () => ({ ok: false }),
     getCurrentPlayer: () => ({ id: "player-1" }),
@@ -170,9 +172,10 @@ function withWorkingRoot(context = {}) {
       calls.push({ effect, message, payload });
       return { ok: true, skipped: true, message, payload };
     },
-  }));
+  });
+  const executors = createEffectRewardExecutors(executorContext);
   const effect = { label: "卡牌公共牌扫描", options: { repeat: 1 }, status: "active" };
-  const result = executors.openCardPublicScanEffect(effect);
+  const result = executors.openCardPublicScanEffect(executorContext.workingRoot, effect);
   assert.equal(result.ok, true);
   assert.equal(result.skipped, true);
   assert.equal(result.payload.reason, "no_public_scan_candidate");
@@ -190,7 +193,7 @@ function withWorkingRoot(context = {}) {
       CHONG_ORBIT_OR_LAND_FOR_PICKUP: "chong_orbit_or_land_for_pickup",
     },
   };
-  const executors = createEffectAlienExecutors(withWorkingRoot({
+  const executorContext = withWorkingRoot({
     abilities: {
       executeAbility(abilityId, context, options) {
         abilityCall = { abilityId, context, options };
@@ -204,7 +207,8 @@ function withWorkingRoot(context = {}) {
     pendingState: {},
     renderStateReadout: () => {},
     rocketState: {},
-  }));
+  });
+  const executors = createEffectAlienExecutors(executorContext);
   const effect = {
     type: chong.EFFECT_TYPES.CHONG_LAND_FOR_PICKUP,
     label: "虫族8：登陆",
@@ -215,7 +219,7 @@ function withWorkingRoot(context = {}) {
     rocketId: 42,
     target: { type: "planet", planetId: "jupiter", rocketId: 42 },
   };
-  executors.executeChongTravelForPickupChoice(effect, choice);
+  executors.executeChongTravelForPickupChoice(executorContext.workingRoot, effect, choice);
   assert.equal(abilityCall.abilityId, "landProbe");
   assert.equal(abilityCall.options.rocketId, 42);
   assert.deepEqual(abilityCall.options.target, choice.target);
@@ -230,7 +234,7 @@ function withWorkingRoot(context = {}) {
       CHONG_ORBIT_OR_LAND_FOR_PICKUP: "chong_orbit_or_land_for_pickup",
     },
   };
-  const executors = createEffectAlienExecutors(withWorkingRoot({
+  const executorContext = withWorkingRoot({
     abilities: {
       planet: {
         getLandOptions: () => ({ ok: false, message: "当前没有可登陆的行星火箭" }),
@@ -238,9 +242,10 @@ function withWorkingRoot(context = {}) {
     },
     chong,
     createActionContext: () => ({}),
-    finishAutomaticRewardEffect: (effect, result) => result,
-  }));
-  const result = executors.executeChongTravelForPickupEffect({
+    finishAutomaticRewardEffect: (_workingRoot, _effect, result) => result,
+  });
+  const executors = createEffectAlienExecutors(executorContext);
+  const result = executors.executeChongTravelForPickupEffect(executorContext.workingRoot, {
     type: chong.EFFECT_TYPES.CHONG_LAND_FOR_PICKUP,
     label: "虫族8：登陆",
     options: { allowSatellite: true },

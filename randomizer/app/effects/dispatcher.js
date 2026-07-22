@@ -185,67 +185,67 @@
       const types = cardEffects.EFFECT_TYPES;
       switch (effect.type) {
         case types.SCAN_NEBULA:
-          return executeCardFixedNebulaScanEffect(effect);
+          return executeCardFixedNebulaScanEffect(workingRoot, effect);
         case types.SCAN_COLOR_CHOICE:
         case "card_color_scan":
-          return openCardColorScanEffect(effect);
+          return openCardColorScanEffect(workingRoot, effect);
         case types.PUBLIC_SCAN:
-          return openCardPublicScanEffect(effect);
+          return openCardPublicScanEffect(workingRoot, effect);
         case types.ANY_SECTOR_SCAN:
-          return openCardAnySectorScanEffect(effect);
+          return openCardAnySectorScanEffect(workingRoot, effect);
         case types.SCAN_ACTION:
-          return expandCardScanActionEffect(effect);
+          return expandCardScanActionEffect(workingRoot, effect);
         case types.RESEARCH_TECH:
-          return executeCardResearchTechEffect(effect);
+          return executeCardResearchTechEffect(workingRoot, effect);
         case types.CARD_ORBIT:
-          return executeCardOrbitEffect(effect);
+          return executeCardOrbitEffect(workingRoot, effect);
         case types.CARD_LAND:
-          return executeCardLandEffect(effect);
+          return executeCardLandEffect(workingRoot, effect);
         case types.REMOVE_PLANET_MARKER:
-          return openRemovePlanetMarkerPicker(effect);
+          return openRemovePlanetMarkerPicker(workingRoot, effect);
         case types.PROBE_SECTOR_SCAN:
           return executeProbeSectorScanEffect(workingRoot, effect);
         case types.PLANET_SECTOR_SCAN:
-          return executePlanetSectorScanEffect(effect);
+          return executePlanetSectorScanEffect(workingRoot, effect);
         case types.SECTOR_X_SCAN:
-          return executeSectorXScanEffect(effect);
+          return executeSectorXScanEffect(workingRoot, effect);
         case types.INCOME:
           return openCardIncomeEffect(workingRoot, effect);
         case types.REGISTER_EVENT_BONUS:
-          return executeRegisterEventBonusEffect(effect);
+          return executeRegisterEventBonusEffect(workingRoot, effect);
         case types.COUNT_HAND_INCOME_RESOURCE:
-          return executeCountHandIncomeResourceEffect(effect);
+          return executeCountHandIncomeResourceEffect(workingRoot, effect);
         case types.COUNT_CURRENT_INCOME_RESOURCE:
-          return executeCountCurrentIncomeResourceEffect(effect);
+          return executeCountCurrentIncomeResourceEffect(workingRoot, effect);
         case types.COUNT_ALIENS_RESOURCE:
-          return executeCountAliensResourceEffect(effect);
+          return executeCountAliensResourceEffect(workingRoot, effect);
         case types.TUCK_PLAYED_CARD_TO_INCOME:
-          return executeTuckPlayedCardToIncomeEffect(effect);
+          return executeTuckPlayedCardToIncomeEffect(workingRoot, effect);
         case types.PICK_CARD_CORNER_REWARD:
-          return executePickCardCornerRewardEffect(effect);
+          return executePickCardCornerRewardEffect(workingRoot, effect);
         case types.FREE_MOVE:
         case types.CARD_MOVE:
           return beginCardMoveEffect(effect);
         case types.DRAW_THEN_SCAN:
-          return openCardDrawThenScanEffect(effect);
+          return openCardDrawThenScanEffect(workingRoot, effect);
         case types.DRAW_THEN_DISCARD_ACTION:
-          return executeCardDrawThenDiscardActionEffect(effect);
+          return executeCardDrawThenDiscardActionEffect(workingRoot, effect);
         case types.CONDITIONAL_REWARD:
-          return executeConditionalRewardEffect(effect);
+          return executeConditionalRewardEffect(workingRoot, effect);
         case types.OPTIONAL_DISCARD_SCAN:
-          return executeOptionalDiscardScanEffect(effect);
+          return executeOptionalDiscardScanEffect(workingRoot, effect);
         case types.HAND_SCAN:
-          return executeHandScanEffect(effect);
+          return executeHandScanEffect(workingRoot, effect);
         case types.COUNT_HAND_CORNER_MOVE:
-          return executeCountHandCornerMoveEffect(effect);
+          return executeCountHandCornerMoveEffect(workingRoot, effect);
         case types.CHOOSE_HAND_CORNER_REWARD:
-          return executeChooseHandCornerRewardEffect(effect);
+          return executeChooseHandCornerRewardEffect(workingRoot, effect);
         case types.DISCARD_PUBLIC_CORNER_REWARDS:
-          return executeDiscardPublicCornerRewardsEffect(effect);
+          return executeDiscardPublicCornerRewardsEffect(workingRoot, effect);
         case types.RETURN_PLAYED_CARD_TO_HAND_IF:
-          return executeReturnPlayedCardToHandIfEffect(effect);
+          return executeReturnPlayedCardToHandIfEffect(workingRoot, effect);
         case types.LANDING_SECTOR_SCAN:
-          return executeLandingSectorScanEffect(effect);
+          return executeLandingSectorScanEffect(workingRoot, effect);
         case types.CONDITIONAL_SECTOR_SCAN:
           return executeConditionalSectorScanEffect(workingRoot, effect);
         case types.DISCARD_ANY_FOR_INCOME:
@@ -257,48 +257,48 @@
         case types.REMOVE_ORBIT_TO_PROBE:
           return executeRemoveOrbitToProbeEffect(workingRoot, effect);
         case types.RETURN_UNFINISHED_TASK_TO_HAND:
-          return executeReturnUnfinishedTaskToHandEffect(effect);
+          return executeReturnUnfinishedTaskToHandEffect(workingRoot, effect);
         case types.COUNT_TECH_TYPES_REWARD:
-          return executeCountTechTypesRewardEffect(effect);
+          return executeCountTechTypesRewardEffect(workingRoot, effect);
         case types.COUNT_OWNED_TECH_REWARD:
-          return executeCountOwnedTechRewardEffect(effect);
+          return executeCountOwnedTechRewardEffect(workingRoot, effect);
         case types.COUNT_ROCKETS_REWARD:
-          return executeCountRocketsRewardEffect(effect);
+          return executeCountRocketsRewardEffect(workingRoot, effect);
         case types.DISCARD_ALL_HAND:
-          return executeDiscardAllHandEffect(effect);
+          return executeDiscardAllHandEffect(workingRoot, effect);
         case types.PROBE_STACK_REWARD:
-          return executeProbeStackRewardEffect(effect);
+          return executeProbeStackRewardEffect(workingRoot, effect);
         case types.PROBE_LOCATION_REWARD:
           return executeProbeLocationRewardEffect(workingRoot, effect);
         case types.EARTH_SECTOR_CONTENT_MOVE:
-          return executeEarthSectorContentMoveEffect(effect);
+          return executeEarthSectorContentMoveEffect(workingRoot, effect);
         case types.PLUTO_RESERVE:
-          return executePlutoReserveEffect(effect);
+          return executePlutoReserveEffect(workingRoot, effect);
         case types.YICHANGDIAN_NEXT_ANOMALY_REWARD:
-          return executeYichangdianNextAnomalyRewardEffect(effect);
+          return executeYichangdianNextAnomalyRewardEffect(workingRoot, effect);
         case types.YICHANGDIAN_ANOMALY_SIGNAL_SCORE:
-          return executeYichangdianAnomalySignalScoreEffect(effect);
+          return executeYichangdianAnomalySignalScoreEffect(workingRoot, effect);
         case types.YICHANGDIAN_ALIEN_TRACE:
           return executeYichangdianAlienTraceEffect(workingRoot, effect);
         case types.YICHANGDIAN_PUBLIC_ALL:
-          return executeYichangdianPublicAllEffect(effect);
+          return executeYichangdianPublicAllEffect(workingRoot, effect);
         case types.YICHANGDIAN_DRAW_THEN_TWO_CORNERS:
-          return executeYichangdianDrawThenTwoCornersEffect(effect);
+          return executeYichangdianDrawThenTwoCornersEffect(workingRoot, effect);
         case types.YICHANGDIAN_NEXT_ANOMALY_SCAN:
-          return executeYichangdianNextAnomalyScanEffect(effect);
+          return executeYichangdianNextAnomalyScanEffect(workingRoot, effect);
         case types.YICHANGDIAN_LAUNCH_ANOMALY_MOVE:
-          return executeYichangdianLaunchAnomalyMoveEffect(effect);
+          return executeYichangdianLaunchAnomalyMoveEffect(workingRoot, effect);
         case chong?.EFFECT_TYPES?.CHONG_LAND_FOR_PICKUP:
         case chong?.EFFECT_TYPES?.CHONG_ORBIT_OR_LAND_FOR_PICKUP:
-          return executeChongTravelForPickupEffect(effect);
+          return executeChongTravelForPickupEffect(workingRoot, effect);
         case chong?.EFFECT_TYPES?.CHONG_PICKUP_FOSSIL:
-          return executeChongPickupFossilEffect(effect);
+          return executeChongPickupFossilEffect(workingRoot, effect);
         case chong?.EFFECT_TYPES?.CHONG_PROBE_PLANET_FOSSIL_REWARD:
-          return executeChongProbePlanetFossilRewardEffect(effect);
+          return executeChongProbePlanetFossilRewardEffect(workingRoot, effect);
         case chong?.EFFECT_TYPES?.CHONG_CHOOSE_PLANET_FOSSIL_REWARD:
-          return executeChongChoosePlanetFossilRewardEffect(effect);
+          return executeChongChoosePlanetFossilRewardEffect(workingRoot, effect);
         case chong?.EFFECT_TYPES?.CHONG_TASK_CLEANUP:
-          return executeChongTaskCleanupEffect(effect);
+          return executeChongTaskCleanupEffect(workingRoot, effect);
         case amiba?.EFFECT_TYPES?.CHOOSE_SYMBOL_REWARD:
           return openAmibaSymbolChoiceDialog({
             effect,
@@ -316,25 +316,25 @@
         case runezu?.EFFECT_TYPES?.SYMBOL_BRANCH:
           return openRunezuSymbolBranchDialog(effect);
         case aomomo?.EFFECT_GAIN_FOSSILS:
-          return executeAomomoGainFossilsEffect(effect);
+          return executeAomomoGainFossilsEffect(workingRoot, effect);
         case aomomo?.EFFECT_VISIT_AOMOMO_THIS_TURN_FOSSIL:
-          return executeAomomoVisitThisTurnFossilEffect(effect);
+          return executeAomomoVisitThisTurnFossilEffect(workingRoot, effect);
         case aomomo?.EFFECT_SCAN_AOMOMO_X:
         case aomomo?.EFFECT_SCAN_AOMOMO_X_GAIN_FOSSIL:
         case aomomo?.EFFECT_SCAN_AOMOMO_X_SCORE:
-          return openAomomoCurrentXScanEffect(effect);
+          return openAomomoCurrentXScanEffect(workingRoot, effect);
         case aomomo?.EFFECT_LAND_SCORE_IF_AOMOMO:
-          return executeAomomoLandEffect(effect);
+          return executeAomomoLandEffect(workingRoot, effect);
         case aomomo?.EFFECT_FOSSIL_FOR_DATA:
-          return executeAomomoFossilForDataEffect(effect);
+          return executeAomomoFossilForDataEffect(workingRoot, effect);
         case aomomo?.EFFECT_FOSSIL_FOR_MOVE_AND_LAND:
-          return executeAomomoFossilMoveAndLandEffect(effect);
+          return executeAomomoFossilMoveAndLandEffect(workingRoot, effect);
         case aomomo?.EFFECT_FOSSIL_FOR_ANY_SCAN:
-          return openAomomoFossilAnyScanEffect(effect);
+          return openAomomoFossilAnyScanEffect(workingRoot, effect);
         case aomomo?.EFFECT_SPEND_FOSSILS_GAIN_SCORE:
-          return executeAomomoSpendFossilsScoreEffect(effect);
+          return executeAomomoSpendFossilsScoreEffect(workingRoot, effect);
         case "aomomo_land_only":
-          return executeAomomoLandEffect(effect);
+          return executeAomomoLandEffect(workingRoot, effect);
         default:
           return null;
       }
@@ -412,7 +412,7 @@
         beforeCardState: structuredClone(ruleCardState(workingRoot)),
       });
       if (!result.ok) {
-        return finishAutomaticRewardEffect(effect, {
+        return finishAutomaticRewardEffect(workingRoot, effect, {
           ok: true,
           skipped: true,
           undoable: true,
@@ -428,7 +428,7 @@
       const round = Math.max(1, Math.round(Number(effect?.options?.roundNumber || ruleTurnState(workingRoot).roundNumber) || 1));
       if (!incomePlayer?.hand?.length) {
         if (incomePlayer) incomePlayer.industryFundamentalismRoundStartIncomeRound = round;
-        return finishAutomaticRewardEffect(effect, {
+        return finishAutomaticRewardEffect(workingRoot, effect, {
           ok: true,
           undoable: true,
           skipped: true,
@@ -457,7 +457,7 @@
     }
 
     function openIncomeRewardEffect(workingRoot, effect) {
-      const currentPlayer = getEffectTargetPlayer(effect);
+      const currentPlayer = getEffectTargetPlayer(workingRoot, effect);
       if (!currentPlayer?.hand?.length) {
         effect.result = {
           ok: true,
@@ -487,7 +487,7 @@
     }
 
     function executeBanrenmaGainIncomeEffect(workingRoot, effect) {
-      const currentPlayer = getEffectTargetPlayer(effect);
+      const currentPlayer = getEffectTargetPlayer(workingRoot, effect);
       const gain = effect.options?.gain || {};
       const beforePlayer = structuredClone(currentPlayer);
       beginEffectHistoryStep(effect.label);
@@ -571,7 +571,7 @@
           decisionState.alienTraceAction = null;
           decisionState.alienTracePickerState = null;
           closeAlienTracePicker();
-          return finishAutomaticRewardEffect(effect, {
+          return finishAutomaticRewardEffect(workingRoot, effect, {
             ok: true,
             skipped: true,
             undoable: true,
@@ -590,7 +590,7 @@
 
     function openAomomoCardRewardEffect(workingRoot, effect) {
       return openAomomoCardGainDialog({
-        player: getEffectTargetPlayer(effect),
+        player: getEffectTargetPlayer(workingRoot, effect),
         fromEffectFlow: true,
         effectLabel: effect.label || "奥陌陌外星人牌",
         beforeAlienState: structuredClone(ruleAlienGameState(workingRoot)),
@@ -601,19 +601,19 @@
     function executePlanetRewardEffect(workingRoot, effect) {
       switch (effect.type) {
         case planetRewards.EFFECT_TYPES.GAIN_RESOURCES:
-          return executeGainResourcesRewardEffect(effect);
+          return executeGainResourcesRewardEffect(workingRoot, effect);
         case planetRewards.EFFECT_TYPES.GAIN_DATA:
-          return executeGainDataRewardEffect(effect);
+          return executeGainDataRewardEffect(workingRoot, effect);
         case planetRewards.EFFECT_TYPES.LAUNCH:
-          return executeLaunchRewardEffect(effect);
+          return executeLaunchRewardEffect(workingRoot, effect);
         case planetRewards.EFFECT_TYPES.DRAW_CARDS:
-          return executeDrawCardsRewardEffect(effect);
+          return executeDrawCardsRewardEffect(workingRoot, effect);
         case planetRewards.EFFECT_TYPES.PICK_CARD:
           return openPickCardRewardEffect(workingRoot, effect);
         case planetRewards.EFFECT_TYPES.INCOME:
           return openIncomeRewardEffect(workingRoot, effect);
         case planetRewards.EFFECT_TYPES.SCAN_PLANET_SECTOR:
-          return executeSectorScanAtPlanet(effect.options?.planetId, effect.label, effect);
+          return executeSectorScanAtPlanet(workingRoot, effect.options?.planetId, effect.label, effect);
         case planetRewards.EFFECT_TYPES.CHOOSE_NEBULA_SCAN:
         case planetRewards.EFFECT_TYPES.CHOOSE_COLORED_NEBULA_SCAN:
           return openNebulaChoiceRewardEffect(workingRoot, effect);
@@ -752,7 +752,7 @@
         case "pass_reserve_pick":
           return beginPassReserveSelection(effect);
         case "industry_huanyu_superdrive_launch":
-          return executeHuanyuSuperdrivePassLaunchEffect(effect);
+          return executeHuanyuSuperdrivePassLaunchEffect(workingRoot, effect);
         case "industry_stratus_corner":
           return executeIndustryStratusCornerEffect(effect);
         case "industry_sentinel_corner":
@@ -851,11 +851,11 @@
           return result;
         }
         case scanEffects.EFFECT_TYPES.EARTH_SECTOR_SCAN:
-          return executeSectorScanAtPlanet("earth", effect.label, effect);
+          return executeSectorScanAtPlanet(workingRoot, "earth", effect.label, effect);
         case scanEffects.EFFECT_TYPES.IMPROVED_SECTOR_SCAN:
-          return executeImprovedEarthSectorScanEffect();
+          return executeImprovedEarthSectorScanEffect(workingRoot);
         case scanEffects.EFFECT_TYPES.MERCURY_SECTOR_SCAN:
-          return executeSectorScanAtPlanet("mercury", effect.label, effect);
+          return executeSectorScanAtPlanet(workingRoot, "mercury", effect.label, effect);
         case scanEffects.EFFECT_TYPES.PUBLIC_CARD_SCAN: {
           const scanPlayer = getCurrentPlayer(workingRoot);
           const hasCandidate = (ruleCardState(workingRoot).publicCards || []).some((card) => (

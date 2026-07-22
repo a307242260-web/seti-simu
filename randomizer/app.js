@@ -655,10 +655,10 @@
           if (typeof operation !== "function") {
             return { ok: false, code: "EFFECT_EXECUTOR_COMMAND_UNKNOWN", message: `未知 Effect executor command: ${command.operation}` };
           }
-          const args = command.operation === "handleScanAction4Choice"
-            ? [workingRoot, ...(command.args || [])]
-            : (command.args || []);
-          return { ok: true, value: cloneResidentPresentation(operation(...args)) };
+          return {
+            ok: true,
+            value: cloneResidentPresentation(operation(workingRoot, ...(command.args || []))),
+          };
         }
         case "debug_command": {
           const operation = debugRuntimeController?.[command.operation];
@@ -7836,11 +7836,11 @@
   }
 
   function executeSectorXScanEffect(...args) {
-    return effectExecutors.executeSectorXScanEffect(...args);
+    return callEffectExecutorCommand("executeSectorXScanEffect", args);
   }
 
   function maybeReturnPlayedCardToHandAfterSectorScan(...args) {
-    return effectExecutors.maybeReturnPlayedCardToHandAfterSectorScan(...args);
+    return callEffectExecutorCommand("maybeReturnPlayedCardToHandAfterSectorScan", args);
   }
 
   function handleProbeSectorScanChoice(...args) {
@@ -7852,27 +7852,27 @@
   }
 
   function getPlanetName(...args) {
-    return effectExecutors.getPlanetName(...args);
+    return callEffectExecutorCommand("getPlanetName", args);
   }
 
   function markerBelongsToPlayer(...args) {
-    return effectExecutors.markerBelongsToPlayer(...args);
+    return callEffectExecutorCommand("markerBelongsToPlayer", args);
   }
 
   function playerHasOwnOrbitMarkerAtPlanet(...args) {
-    return effectExecutors.playerHasOwnOrbitMarkerAtPlanet(...args);
+    return callEffectExecutorCommand("playerHasOwnOrbitMarkerAtPlanet", args);
   }
 
   function markerOwnerLabel(...args) {
-    return effectExecutors.markerOwnerLabel(...args);
+    return callEffectExecutorCommand("markerOwnerLabel", args);
   }
 
   function buildPlanetMarkerRemovalChoices(...args) {
-    return effectExecutors.buildPlanetMarkerRemovalChoices(...args);
+    return callEffectExecutorCommand("buildPlanetMarkerRemovalChoices", args);
   }
 
   function removePlanetMarkerForChoice(...args) {
-    return effectExecutors.removePlanetMarkerForChoice(...args);
+    return callEffectExecutorCommand("removePlanetMarkerForChoice", args);
   }
 
   function handleRemovePlanetMarkerChoice(...args) {
@@ -7884,31 +7884,31 @@
   }
 
   function formatPlanetRewardGain(...args) {
-    return effectExecutors.formatPlanetRewardGain(...args);
+    return callEffectExecutorCommand("formatPlanetRewardGain", args);
   }
 
   function finishAutomaticRewardEffect(...args) {
-    return effectExecutors.finishAutomaticRewardEffect(...args);
+    return callEffectExecutorCommand("finishAutomaticRewardEffect", args);
   }
 
   function buildPlutoRewardEffectsForAction(...args) {
-    return effectExecutors.buildPlutoRewardEffectsForAction(...args);
+    return callEffectExecutorCommand("buildPlutoRewardEffectsForAction", args);
   }
 
   function buildPlutoChoiceRewardSummary(...args) {
-    return effectExecutors.buildPlutoChoiceRewardSummary(...args);
+    return callEffectExecutorCommand("buildPlutoChoiceRewardSummary", args);
   }
 
   function handleHandCornerChoice(...args) {
-    return effectExecutors.handleHandCornerChoice(...args);
+    return callEffectExecutorCommand("handleHandCornerChoice", args);
   }
 
   function getSectorXsMatchingCondition(...args) {
-    return effectExecutors.getSectorXsMatchingCondition(...args);
+    return callEffectExecutorCommand("getSectorXsMatchingCondition", args);
   }
 
   function sectorXHasAvailableScanTarget(...args) {
-    return effectExecutors.sectorXHasAvailableScanTarget(...args);
+    return callEffectExecutorCommand("sectorXHasAvailableScanTarget", args);
   }
 
   function handleConditionalSectorChoice(...args) {
@@ -7932,7 +7932,7 @@
   }
 
   function isAlienFamilyCard(...args) {
-    return effectExecutors.isAlienFamilyCard(...args);
+    return callEffectExecutorCommand("isAlienFamilyCard", args);
   }
 
   function handleDiscardCornerRepeatChoice(...args) {
@@ -7948,23 +7948,23 @@
   }
 
   function countOwnedTechByType(...args) {
-    return effectExecutors.countOwnedTechByType(...args);
+    return callEffectExecutorCommand("countOwnedTechByType", args);
   }
 
   function enrichScanResultEvents(...args) {
-    return effectExecutors.enrichScanResultEvents(...args);
+    return callEffectExecutorCommand("enrichScanResultEvents", args);
   }
 
   function getPlayerCompanyBaseIncome(...args) {
-    return effectExecutors.getPlayerCompanyBaseIncome(...args);
+    return callEffectExecutorCommand("getPlayerCompanyBaseIncome", args);
   }
 
   function insertActionEffectsAfterCurrent(...args) {
-    return effectExecutors.insertActionEffectsAfterCurrent(...args);
+    return callEffectExecutorCommand("insertActionEffectsAfterCurrent", args);
   }
 
   function insertActionEffectsBeforeCurrent(...args) {
-    return effectExecutors.insertActionEffectsBeforeCurrent(...args);
+    return callEffectExecutorCommand("insertActionEffectsBeforeCurrent", args);
   }
 
   function handleOptionalHandScanChoice(...args) {
@@ -7976,7 +7976,7 @@
   }
 
   function openYichangdianCornerPicker(...args) {
-    return effectExecutors.openYichangdianCornerPicker(...args);
+    return callEffectExecutorCommand("openYichangdianCornerPicker", args);
   }
 
   function handleYichangdianCornerChoice(...args) {
@@ -7984,7 +7984,7 @@
   }
 
   function applyAomomoScanCostAndBonus(...args) {
-    return effectExecutors.applyAomomoScanCostAndBonus(...args);
+    return callEffectExecutorCommand("applyAomomoScanCostAndBonus", args);
   }
 
   function executeActionEffectForOwner(...args) {
@@ -7992,7 +7992,6 @@
   }
 
   const effectExecutorContext = {
-    getWorkingRoot: () => requireActiveBrowserWorkingRoot("effect executor"),
     insertActionEffectsAfterCurrent: (...args) => effectExecutors.insertActionEffectsAfterCurrent(...args),
     openAlienTraceRewardEffect: (...args) => effectExecutors.openAlienTraceRewardEffect(...args),
     BANRENMA_PANEL_BONUS_EFFECT_TYPE,
