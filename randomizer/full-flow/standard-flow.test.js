@@ -63,7 +63,7 @@ function finalSnapshot(env) {
     },
     authority: [state.meta.stateVersion, state.meta.rngState.algorithm, state.meta.rngState.state, state.meta.sequences.historyStep],
     session: [
-      checkpoint.effectSessionCheckpoint,
+      checkpoint.effectSessionCheckpoint ?? null,
       observation.publicState.pending.actorPlayerId,
       observation.publicState.pending.pendingOwnerPlayerId,
       observation.publicState.pending.decisionType,
@@ -87,7 +87,7 @@ for (const [actionId, maskIndex] of fixture.operations) {
 }
 
 assert.deepEqual(finalSnapshot(env), fixture.finalSnapshot, "最终权威盘面发生漂移");
-assert.equal(env.createCheckpoint().effectSessionCheckpoint, null, "最终 Effect Session 必须清空");
+assert.equal(env.createCheckpoint().effectSessionCheckpoint ?? null, null, "最终 Effect Session 必须清空");
 env.dispose();
 
 console.log("standard full-flow v1 passed");

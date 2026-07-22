@@ -4,9 +4,6 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { performance } = require("node:perf_hooks");
 const { createHeuristicPolicyAdapter } = require("../training/heuristic-policy-adapter");
-const { createHeadlessEffectSessionHost } = require("./headless-effect-session-host");
-const highCouplingState = require("../game/state/high-coupling-slices");
-const runtimeAuthority = require("../game/state/runtime-authority");
 const { RECOVERY_SNAPSHOT_VERSION } = require("./game-recovery");
 const {
   OBSERVATION_SCHEMA_VERSION,
@@ -442,7 +439,6 @@ function createHeadlessEnv() {
   let diagnostics = null;
   let heuristicPolicyAdapter = null;
   let effectSessionHost = null;
-  let stateStore = null;
 
   function recordDuration(key, startedAt) {
     diagnostics[key] += performance.now() - startedAt;
@@ -509,69 +505,35 @@ function createHeadlessEnv() {
       }
     }
     recordDuration("setupSelectionMilliseconds", setupSelectionStartedAt);
-    const initialRecovery = api.createRecoverySnapshot({ label: "headless StateStore bootstrap" });
-    try {
-      stateStore = runtimeAuthority.create(highCouplingState, JSON.parse(getCompositionCommittedState(initialRecovery)));
-    } catch (error) {
-      throw new Error(error?.message || "headless committed bootstrap 失败");
-    }
-    effectSessionHost = createHeadlessEffectSessionHost({
-      stateStore,
-      synchronizeWorkingState: false,
-      captureState() {
-        const recovery = api.createRecoverySnapshot({ label: "headless Effect Session working" });
-        const captured = stateStore.deserialize(getCompositionCommittedState(recovery));
-        if (!captured.ok) {
-          throw new Error(captured.message || `headless working candidate 失败: ${captured.code}`);
-        }
-        const candidate = structuredClone(captured.state);
-        candidate.meta.rngState = {
-          algorithm: "seti-headless-mulberry32-v1",
-          state: seededRandom?.getState?.() ?? null,
-        };
-        return candidate;
-      },
-      restoreState(committedState) {
-        const current = api.createRecoverySnapshot({ label: "headless Effect Session restore" });
-        const restored = api.restoreRecoverySnapshot(
-          withCompositionCommittedState(current, committedState),
-          { skipRefresh: true },
-        );
-        if (restored?.ok !== false && Number.isSafeInteger(committedState?.meta?.rngState?.state)) {
-          seededRandom?.setState(committedState.meta.rngState.state);
-        }
-        return restored;
-      },
-      inspectBoundary() {
-        const legal = getHeadlessLegalBoundary(api);
-        if (!legal?.ok) return legal;
-        const candidates = (legal.candidates || []).filter((candidate) => candidate?.available !== false);
-        if (candidates.length) {
-          return {
-            ...legal,
-            boundary: legal.decisionType === "conditional_choice" ? "conditional_choice" : "turn_action",
-          };
-        }
-        if (api.getTurnState().gameEnded) return { ...legal, boundary: "terminal" };
-        const pending = api.getAiAutoBattleProgress?.().pendingState || {};
+    effectSessionHost = Object.freeze({
+      submit(action) {
+        const before = api.inspectHeadlessComposition();
+        const result = before.phase === "awaiting_input"
+          ? api.executeHeadlessConditionalAction(action)
+          : api.executeHeadlessTurnAction(action, { resolveToTurnBoundary: false });
+        const after = api.inspectHeadlessComposition();
+        const journal = result?.journal || after.session?.journal || null;
         return {
-          ...legal,
-          boundary: "draining",
-          actionEffectActive: Boolean(pending.actionEffectFlowActive),
-          currentEffect: structuredClone(pending.currentEffect || null),
+          ...(result || {}),
+          phase: after.phase,
+          events: structuredClone(result?.events || journal?.events || []),
+          journal: structuredClone(journal),
         };
       },
-      executeAction: (action) => api.executeHeadlessTurnAction(action, { resolveToTurnBoundary: false }),
-      executeDecision: (action) => api.executeHeadlessConditionalAction(action),
-      advanceDeterministic: () => api.advanceHeadlessDeterministicState?.() || { progressed: false },
-      executeCurrentEffect: () => api.executeHeadlessCurrentActionEffect?.(),
-      projectObservation(_workingState, viewerPlayerId, sessionInspection = null) {
-        const boundary = sessionInspection?.decision
-          ? {
-            currentPlayer: { id: sessionInspection.decision.ownerId },
-            candidates: sessionInspection.decision.choices || [],
-          }
-          : getHeadlessLegalBoundary(api);
+      beginDrain() {
+        const result = api.beginHeadlessCompositionDrain();
+        const after = api.inspectHeadlessComposition();
+        const journal = result?.journal || after.session?.journal || null;
+        return {
+          ...(result || {}),
+          phase: after.phase,
+          events: structuredClone(result?.events || journal?.events || []),
+          journal: structuredClone(journal),
+        };
+      },
+      getBoundary: () => getHeadlessLegalBoundary(api),
+      observe(viewerPlayerId) {
+        const boundary = getHeadlessLegalBoundary(api);
         const actorPlayerId = boundary?.currentPlayer?.id || api.getTurnState().currentPlayerId || null;
         const projectedActions = (boundary?.candidates || []).map((candidate) => (
           candidate.standardAction?.phase === "conditional"
@@ -615,7 +577,6 @@ function createHeadlessEnv() {
       restoreRandom?.();
       restoreHost?.();
       effectSessionHost = null;
-      stateStore = null;
       seed = resetConfig.seed ?? "seti-headless";
       config = {
         seed,
@@ -964,7 +925,9 @@ function createHeadlessEnv() {
           policyProvenance: heuristicPolicyAdapter?.getProvenance?.() || null,
         },
         config: structuredClone(config || {}),
-        effectSessions: effectSessionHost?.getCompletedJournals?.() || [],
+        effectSessions: replaySteps
+          .map((step) => step.effectSessionJournal)
+          .filter(Boolean),
         steps: structuredClone(replaySteps),
         environmentEvents: structuredClone(environmentEvents),
         finalStateSummary: this.observe(),
@@ -1018,15 +981,6 @@ function createHeadlessEnv() {
         legalActionSelectors = new Map();
         lastLegalActions = null;
         lastObservation = null;
-        if (checkpoint.effectSessionCheckpoint) {
-          const restoredSession = effectSessionHost.restoreCheckpoint(
-            checkpoint.effectSessionCheckpoint,
-            { restoreWorkingState: false },
-          );
-          if (!restoredSession?.ok) {
-            throw new Error(restoredSession?.message || "checkpoint Effect Session 恢复失败");
-          }
-        }
         if (checkpoint.machinePlayerHostSnapshot) {
           heuristicPolicyAdapter.restoreHostSnapshot(checkpoint.machinePlayerHostSnapshot);
         }
@@ -1103,8 +1057,9 @@ function createHeadlessEnv() {
           seed,
           stepIndex: replaySteps.length,
         },
-        effectSessionCheckpoint: effectSessionHost?.createCheckpoint?.() || null,
-        effectSessionJournals: effectSessionHost?.getCompletedJournals?.() || [],
+        effectSessionJournals: replaySteps
+          .map((step) => step.effectSessionJournal)
+          .filter(Boolean),
         machinePlayerHostSnapshot: heuristicPolicyAdapter?.createHostSnapshot?.() || null,
         episodeMetadata: {
           episodeId: config?.episodeId || null,

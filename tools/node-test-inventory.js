@@ -64,7 +64,6 @@ randomizer/app/conditional-decision-domain.test.js
 randomizer/app/headless-conditional-drain.test.js
 randomizer/app/headless-decision-owner.test.js
 randomizer/app/headless-effect-failure.test.js
-randomizer/app/headless-effect-session-host.test.js
 randomizer/app/headless-effect-session-worker-recovery.test.js
 randomizer/app/headless-fail-closed.test.js
 randomizer/app/headless-no-browser-globals.test.js

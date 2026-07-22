@@ -111,6 +111,9 @@
       chooseInitialSelectionForAiPlayer,
       enumerateHeadlessTurnActions,
       executeAiTurnAction,
+      submitHeadlessTurnAction,
+      beginHeadlessCompositionDrain,
+      inspectHeadlessComposition,
       enumerateHeadlessConditionalActions,
       executeHeadlessConditionalAction,
       getHeadlessDecisionOwnerState,
@@ -351,6 +354,8 @@
         structuredClone(getHeadlessDecisionOwnerState?.(actorPlayer) || null)
       ),
       chooseHeadlessInitialSelection: () => chooseInitialSelectionForAiPlayer(),
+      beginHeadlessCompositionDrain: () => beginHeadlessCompositionDrain(),
+      inspectHeadlessComposition: () => structuredClone(inspectHeadlessComposition()),
       executeHeadlessConditionalAction: (action) => (
         executeHeadlessConditionalAction(structuredClone(action))
       ),
@@ -358,7 +363,7 @@
       executeHeadlessCurrentActionEffect: () => executeHeadlessCurrentActionEffect(),
       skipHeadlessActionEffect: () => skipHeadlessCurrentActionEffect(),
       executeHeadlessTurnAction: (action, options = {}) => {
-        const actionResult = executeAiTurnAction(structuredClone(action));
+        const actionResult = submitHeadlessTurnAction(structuredClone(action));
         if (actionResult?.ok === false || options.resolveToTurnBoundary === false) {
           return { ...actionResult, action };
         }

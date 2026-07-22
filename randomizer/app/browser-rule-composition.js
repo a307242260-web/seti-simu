@@ -84,6 +84,7 @@
     const listeners = new Set();
     let unsubscribeStore = null;
     let effectDomainByFamily = new Map();
+    let drainEffectGroupFactory = null;
 
     function actionContext(state) {
       if (stateAdapter) return workingState;
@@ -184,6 +185,7 @@
         }
       }
       const nextDomains = new Map();
+      let nextDrainEffectGroupFactory = null;
       for (const descriptor of options.effectDomains || []) {
         if (typeof descriptor?.create !== "function") {
           throw new TypeError("Effect domain 缺少 create() factory");
@@ -192,9 +194,18 @@
           ...(descriptor.options || {}),
           runtime: Object.freeze({ ...next, registerExecutor: registerContextualExecutor }),
           executeRegisteredAction,
+          commitWorkingState(state, context = {}) {
+            return stateAdapter
+              ? stateAdapter.createCommittedState(workingState, state, clone(context))
+              : clone(state);
+          },
         });
         if (typeof domain?.createEffectGroup !== "function") {
           throw new TypeError("Effect domain 缺少 createEffectGroup()");
+        }
+        if (typeof domain.createDrainEffectGroup === "function") {
+          if (nextDrainEffectGroupFactory) throw new Error("多个 Effect domain 声明 deterministic drain owner");
+          nextDrainEffectGroupFactory = domain.createDrainEffectGroup.bind(domain);
         }
         const families = descriptor.families || domain.actionFamilies || [];
         for (const family of families) {
@@ -203,6 +214,7 @@
         }
       }
       effectDomainByFamily = nextDomains;
+      drainEffectGroupFactory = nextDrainEffectGroupFactory;
       return next;
     }
 
@@ -329,6 +341,28 @@
         stateAdapter.restoreWorkingState(workingState, beforeWorkingState, { reason: "action_session_aborted" });
       }
       return result;
+    }
+
+    function beginDrain(submitOptions = {}) {
+      if (activeSession) return fail("RULE_COMPOSITION_SESSION_ACTIVE", "已有规则 Session 正在执行");
+      if (!drainEffectGroupFactory) {
+        return fail("RULE_COMPOSITION_DRAIN_UNAVAILABLE", "没有 Effect domain 声明 deterministic drain owner");
+      }
+      lastActionResult = null;
+      const internalAction = { family: "environment_drain", phase: "internal", actorId: null };
+      const dispatched = runtime.dispatchAction(
+        store.getSnapshot(),
+        internalAction,
+        drainEffectGroupFactory,
+        { source: "composition-drain", ...clone(submitOptions.metadata || {}) },
+      );
+      if (!dispatched?.ok) return deepFreeze(clone(dispatched));
+      activeSession = dispatched.session;
+      activeFamily = internalAction.family;
+      activeSession.journal.actions = [];
+      activeSession.journal.replay = [];
+      publish({ source: "session", event: { type: "opened", family: activeFamily } });
+      return advanceSession(dispatched, submitOptions.autoDrain !== false);
     }
 
     function submitActionById(actionId, submitOptions = {}) {
@@ -562,6 +596,7 @@
       submitActionById,
       submitQuickAction,
       submitDecision,
+      beginDrain,
       submitHostCommand,
       advance,
       abort,

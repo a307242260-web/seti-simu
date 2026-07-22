@@ -572,7 +572,75 @@
     effectDomains: [{
       create: standardActionSessionModule.createStandardActionDomain,
       families: standardActionModule.ALL_FAMILIES,
-      options: { actionFamilies: standardActionModule.ALL_FAMILIES },
+      options: {
+        actionFamilies: standardActionModule.ALL_FAMILIES,
+        continuation: headlessMode ? {
+          inspect() {
+            const workingRoot = activeBrowserDomainWorkingRoot;
+            const conditional = enumerateHeadlessConditionalActionsForRoot(workingRoot);
+            const candidates = (conditional.candidates || [])
+              .filter((candidate) => candidate?.available !== false);
+            if (candidates.length) {
+              return {
+                ok: true,
+                boundary: "conditional_choice",
+                decisionType: "conditional_choice",
+                actorPlayer: conditional.actorPlayer || null,
+                ownerId: conditional.actorPlayer?.id || null,
+                family: candidates[0]?.family || null,
+                candidates,
+              };
+            }
+            const turnCandidates = enumerateHeadlessTurnActionsForRoot(workingRoot);
+            if (turnCandidates.length || workingRoot.turnState.gameEnded) {
+              return {
+                ok: true,
+                boundary: workingRoot.turnState.gameEnded ? "terminal" : "turn_action",
+                decisionType: "turn_action",
+                actorPlayer: players.getCurrentPlayer(workingRoot.playerState),
+                candidates: turnCandidates,
+              };
+            }
+            const pending = getAiAutoBattleProgress?.().pendingState || {};
+            return {
+              ok: true,
+              boundary: "draining",
+              decisionType: null,
+              candidates: [],
+              actionEffectActive: Boolean(pending.actionEffectFlowActive),
+              currentEffect: structuredClone(pending.currentEffect || null),
+            };
+          },
+          executeDeterministic(_workingRoot, boundary) {
+            const deterministic = advanceHeadlessDeterministicStateImpl();
+            if (deterministic?.progressed) {
+              return {
+                ...deterministic,
+                ok: deterministic.ok !== false,
+                events: [{ type: "standard_action_deterministic_advance" }],
+              };
+            }
+            if (boundary?.actionEffectActive) {
+              const effectResult = executeHeadlessCurrentActionEffectImpl();
+              return {
+                ...(effectResult || {}),
+                ok: effectResult?.ok !== false,
+                progressed: effectResult?.ok !== false,
+                events: [{
+                  type: "standard_action_deterministic_effect",
+                  effectType: boundary.currentEffect?.type || effectResult?.type || null,
+                  effectId: boundary.currentEffect?.id || effectResult?.effectId || null,
+                }],
+              };
+            }
+            return {
+              ok: false,
+              code: "HEADLESS_UNSUPPORTED_PENDING",
+              message: "存在未迁移的 headless pending，Composition 拒绝 resolver/recover/skip fallback",
+            };
+          },
+        } : null,
+      },
     }],
     projectState(state) {
       return {
@@ -650,9 +718,6 @@
         ok: true,
         candidates: browserRuleComposition.inputPort.enumerateActions(action.payload || {}),
       };
-    }
-    if (headlessMode) {
-      return actionRuntimeController.dispatchAction(action, fallbackOptions, explicitActionContext);
     }
     if (action.kind === "standard_resolve" || action.kind === "standard_validate") {
       return actionRuntimeController.dispatchAction(action, fallbackOptions, explicitActionContext);
@@ -4037,6 +4102,19 @@
     kind: "ai_execute_turn_action",
     action,
   });
+  const submitHeadlessTurnAction = (action) => {
+    const descriptor = action?.standardAction || action;
+    if (!descriptor?.actionId) {
+      return { ok: false, code: "STANDARD_ACTION_DESCRIPTOR_REQUIRED", message: "headless 行动缺少 Standard Action descriptor" };
+    }
+    return browserRuleComposition.inputPort.submitAction(descriptor, {
+      metadata: { source: "headless-env" },
+    });
+  };
+  const beginHeadlessCompositionDrain = () => browserRuleComposition.inputPort.beginDrain({
+    metadata: { source: "headless-env-reset" },
+  });
+  const inspectHeadlessComposition = () => browserRuleComposition.inspect();
   const listCardTriggerFreeMoveCandidates = (...args) => listCardTriggerFreeMoveCandidatesForRoot(browserRuleState, ...args);
   const resolveAiAutomationToTurnBoundary = (options = {}) => browserRuleComposition.inputPort.submitHostCommand({
     kind: "ai_resolve_to_turn_boundary",
@@ -4676,6 +4754,7 @@
   }
 
   function attachRecoverySnapshotToActionLogEntry(entry, label = null) {
+    if (headlessMode) return null;
     if (!entry) return null;
     const recoveryLabel = label || entry.actionLabel || entry.title || null;
     if (browserActionStableRecoverySnapshot) {
@@ -4692,6 +4771,7 @@
   }
 
   function refreshLatestActionLogRecoverySnapshot(label = null) {
+    if (headlessMode) return null;
     const entry = actionLogState.entries[actionLogState.entries.length - 1] || null;
     if (!entry) return null;
     attachRecoverySnapshotToActionLogEntry(entry, label);
@@ -10543,6 +10623,14 @@
   }
 
   function enumerateHeadlessConditionalActions() {
+    const inspection = browserRuleComposition.inspect();
+    if (inspection.phase === "awaiting_input" && inspection.session?.decision) {
+      const decision = inspection.session.decision;
+      return {
+        actorPlayer: decision.ownerId ? getPlayerById(decision.ownerId) : null,
+        candidates: structuredClone(decision.choices || []),
+      };
+    }
     return browserRuleComposition.inputPort.submitHostCommand({
       kind: "headless_enumerate_conditional_actions",
     }).value || { actorPlayer: null, candidates: [] };
@@ -10557,9 +10645,21 @@
         message: "条件动作缺少匹配的 Standard Action descriptor",
       };
     }
-    return browserRuleComposition.inputPort.submitHostCommand({
-      kind: "headless_execute_conditional_action",
-      action: standardAction,
+    const inspection = browserRuleComposition.inspect();
+    const decision = inspection.session?.decision || null;
+    if (inspection.phase !== "awaiting_input" || !decision) {
+      return { ok: false, code: "RULE_COMPOSITION_SESSION_REQUIRED", message: "当前 Composition 没有等待输入的 Decision" };
+    }
+    const choice = (decision.choices || []).find((candidate) => (
+      (candidate?.standardAction || candidate)?.actionId === standardAction.actionId
+    ));
+    if (!choice) {
+      return { ok: false, code: "EFFECT_DECISION_NOT_LEGAL", message: "条件动作不在 Composition Decision choices 中" };
+    }
+    return browserRuleComposition.inputPort.submitDecision({
+      decisionId: decision.decisionId,
+      decisionVersion: decision.decisionVersion,
+      choice,
     });
   }
 
@@ -11656,6 +11756,9 @@
       chooseInitialSelectionForAiPlayer,
       enumerateHeadlessTurnActions,
       executeAiTurnAction,
+      submitHeadlessTurnAction,
+      beginHeadlessCompositionDrain,
+      inspectHeadlessComposition,
       enumerateHeadlessConditionalActions,
       executeHeadlessConditionalAction,
       getHeadlessDecisionOwnerState,
