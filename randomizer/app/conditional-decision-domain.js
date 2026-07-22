@@ -204,6 +204,7 @@
           label: `虫族化石 ${fossilId}`,
           target: { kind: "chong-fossil-choice", choiceId: fossilId },
           fossilId,
+          pendingContext: structuredClone(chongFossilPending),
         })),
       };
     }
@@ -892,7 +893,10 @@
 
   const CONDITIONAL_CHOICE_HANDLERS = Object.freeze({
     "conditional-sector": (action) => handleConditionalSectorChoice(action.target.sectorX ?? action.target.choiceId),
-    "chong-fossil-choice": (action) => handleChongFossilChoice(action.target.choiceId),
+    "chong-fossil-choice": (action) => handleChongFossilChoice(
+      action.target.choiceId,
+      action.pendingContext || null,
+    ),
     "probe-sector-selection": (action) => {
       const pending = getPendingProbeSectorScanDecision();
       if (!pending) return { ok: false, message: "没有待处理的探测器扫描" };

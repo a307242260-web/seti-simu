@@ -120,4 +120,21 @@ for (const failure of [{ fail: true, code: "RULE_FAILED" }, { throwError: true, 
   assert.deepEqual(replayResult.events, browserResult.events);
 }
 
+{
+  const root = createRoot();
+  const executor = createExecutor();
+  const action = descriptor(root, executor, "choose_reward");
+  const effectChoice = {
+    ...structuredClone(action.payload),
+    family: action.family,
+    label: "Effect Session 奖励选择",
+    target: structuredClone(action.target),
+    standardAction: structuredClone(action),
+  };
+  root.pending = null;
+  const result = executor.executeEffectChoice(root, effectChoice);
+  assert.equal(result.ok, true, "active DecisionEffect 已验证的 choice 不得回读旧 pending owner");
+  assert.equal(root.playerState.players[0].resources.score, 4);
+}
+
 console.log(`conditional action executor tests passed (${ACTION_FAMILIES.length} families)`);

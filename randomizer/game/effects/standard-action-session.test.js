@@ -70,6 +70,7 @@ assert.equal(composition.projection().stateVersion, 1);
 assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("undo"), false);
 
 {
+  let sessionOwnedResolveCalls = 0;
   const decisionComposition = createBrowserRuleComposition({
     stateStoreApi,
     effectRuntimeApi,
@@ -120,6 +121,12 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
             };
           },
           executeDeterministic: () => ({ ok: false, code: "UNEXPECTED_DETERMINISTIC_STEP" }),
+          resolveDecision(root, choice) {
+            sessionOwnedResolveCalls += 1;
+            root.match.actions.push(choice.standardAction.actionId);
+            root.match.phase = "turn";
+            return { ok: true };
+          },
         },
       },
     }],
@@ -147,6 +154,7 @@ assert.equal(JSON.stringify(composition.lifecycle.save().envelope).includes("und
   });
   assert.equal(resolved.ok, true);
   assert.equal(resolved.phase, "completed");
+  assert.equal(sessionOwnedResolveCalls, 1);
   assert.deepEqual(decisionComposition.projection().state.actions, ["launch:decision", "choose_target:right"]);
 }
 

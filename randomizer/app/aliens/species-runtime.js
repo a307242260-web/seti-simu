@@ -3003,9 +3003,9 @@ function handleChongTaskCompletionChoice(workingRoot, choice) {
     return completeChongTransportTask(workingRoot, pending, player);
   }
 
-function handleChongFossilChoice(workingRoot, choice) {
+function handleChongFossilChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = alienChoiceSessions.chongFossilChoice;
+    const pending = pendingContext || alienChoiceSessions.chongFossilChoice;
     if (!pending) return failChongTaskCompletion(workingRoot, "没有虫族化石选择流程");
     const player = resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot);
     if (!player) {

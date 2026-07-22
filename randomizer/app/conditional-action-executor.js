@@ -232,7 +232,47 @@
       }
     }
 
-    return Object.freeze({ actionFamilies: ACTION_FAMILIES, inspect, getOptions, validate, execute });
+    function executeEffectChoice(workingRoot, rawChoice) {
+      if (!workingRoot || typeof workingRoot !== "object") {
+        return fail("CONDITIONAL_WORKING_ROOT_REQUIRED", "Effect Session choice 缺少 working root");
+      }
+      const descriptor = rawChoice?.standardAction || rawChoice;
+      const family = String(rawChoice?.family || descriptor?.family || "");
+      if (!ACTION_FAMILIES.includes(family)) {
+        return fail("CONDITIONAL_FAMILY_INVALID", `Effect Session 不接受 conditional family: ${family || "<missing>"}`);
+      }
+      const target = clone(rawChoice?.target || descriptor?.target || null);
+      const handlerId = String(
+        descriptor?.decision?.followup?.handlerId
+        || rawChoice?.followup?.handlerId
+        || target?.kind
+        || "",
+      );
+      if (!handlerId) return fail("CONDITIONAL_FOLLOWUP_UNMIGRATED", "Effect Session choice 缺少 followup handlerId");
+      const payload = Object.fromEntries(Object.entries(rawChoice || {}).filter(([key]) => (
+        !["id", "family", "label", "target", "standardAction", "followup"].includes(key)
+      )));
+      const choice = {
+        choiceId: String(target?.choiceId ?? rawChoice?.choiceId ?? "0"),
+        family,
+        label: rawChoice?.label || descriptor?.summary || family,
+        target,
+        payload: clone(payload),
+        followup: { kind: "choice_handler", handlerId },
+      };
+      const decision = {
+        decisionId: descriptor?.decision?.decisionId || "effect-session-owned",
+        ownerId: descriptor?.actorId || null,
+        choices: [choice],
+      };
+      try {
+        return domain.executeChoice(workingRoot, clone(choice), clone(decision));
+      } catch (error) {
+        return fail("CONDITIONAL_CHOICE_EXECUTOR_THROWN", error?.message || "Effect Session choice 执行异常");
+      }
+    }
+
+    return Object.freeze({ actionFamilies: ACTION_FAMILIES, inspect, getOptions, validate, execute, executeEffectChoice });
   }
 
   return Object.freeze({

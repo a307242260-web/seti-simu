@@ -120,7 +120,32 @@
         getLegalChoices(_workingRoot, effect) {
           return clone(effect.payload?.choices || []);
         },
-        resolveDecision(workingRoot, _effect, choice) {
+        resolveDecision(workingRoot, _effect, choice, compositionWorkingRoot) {
+          if (typeof continuation.resolveDecision === "function") {
+            if (!compositionWorkingRoot) {
+              return {
+                ok: false,
+                code: "STANDARD_ACTION_WORKING_ROOT_MISSING",
+                message: "Standard Action Decision resolve 缺少 Composition working root",
+              };
+            }
+            const resolved = continuation.resolveDecision(compositionWorkingRoot, clone(choice));
+            if (!resolved?.ok) return resolved || {
+              ok: false,
+              code: "STANDARD_ACTION_DECISION_RESOLVE_FAILED",
+              message: "Standard Action Decision resolve 未返回成功结果",
+            };
+            return {
+              ok: true,
+              nextState: commitWorkingState(workingRoot, resolved),
+              spawnedEffects: [{ priority: "direct", effect: { type: CONTINUE_EFFECT_TYPE } }],
+              events: clone(resolved.events || [{
+                type: "standard_action_decision_executed",
+                family: choice?.family || choice?.standardAction?.family || null,
+                actionId: choice?.standardAction?.actionId || choice?.actionId || null,
+              }]),
+            };
+          }
           const descriptor = choice?.standardAction || choice;
           const result = executeRegisteredAction(workingRoot, descriptor);
           if (!result?.ok) return result;

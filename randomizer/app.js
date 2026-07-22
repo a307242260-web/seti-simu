@@ -783,6 +783,9 @@
             const candidates = (conditional.candidates || [])
               .filter((candidate) => candidate?.available !== false);
             if (candidates.length) {
+              if (candidates[0]?.target?.kind === "chong-fossil-choice") {
+                decisionSessions.clear("chong_fossil_choice");
+              }
               return {
                 ok: true,
                 boundary: "conditional_choice",
@@ -840,6 +843,9 @@
               code: "HEADLESS_UNSUPPORTED_PENDING",
               message: "存在未迁移的 headless pending，Composition 拒绝 resolver/recover/skip fallback",
             };
+          },
+          resolveDecision(workingRoot, choice) {
+            return conditionalActionExecutor.executeEffectChoice(workingRoot, choice);
           },
         },
       },
