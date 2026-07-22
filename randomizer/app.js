@@ -614,6 +614,18 @@
         case "ui_set_status_note":
           workingRoot.rocketState.statusNote = command.message;
           return { ok: true, value: command.message };
+        case "card_toggle_public_corner_discard":
+          return { ok: true, value: cloneResidentPresentation(handlePublicCornerDiscardCardClickForRoot(
+            workingRoot,
+            command.slotIndex,
+          )) };
+        case "card_confirm_public_corner_discard":
+          return { ok: true, value: cloneResidentPresentation(confirmPublicCornerDiscardSelectionForRoot(workingRoot)) };
+        case "quick_action_check_pending":
+          return { ok: true, value: cloneResidentPresentation(blockIncompatiblePendingQuickActionForRoot(
+            workingRoot,
+            command.actionType,
+          )) };
         case "card_execute_free_move_corner":
           return cloneResidentPresentation(executeFreeMoveForCardCornerForRoot(workingRoot, ...(command.args || [])));
         case "rocket_current_planet":
@@ -6060,13 +6072,14 @@
       .join("、");
   }
 
-  function handlePublicCornerDiscardCardClick(slotIndex) {
+  function handlePublicCornerDiscardCardClickForRoot(workingRoot, slotIndex) {
+    const { cardState: workingCardState, rocketState: workingRocketState } = workingRoot;
     const index = Number(slotIndex);
-    const card = cardState.publicCards[index];
+    const card = workingCardState.publicCards[index];
     if (!card) {
-      rocketState.statusNote = "该公共牌位没有卡牌";
+      workingRocketState.statusNote = "该公共牌位没有卡牌";
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: workingRocketState.statusNote };
     }
 
     const pending = decisionState.cardSelectionAction;
@@ -6076,9 +6089,9 @@
     if (existingIndex >= 0) {
       selectedSlots.splice(existingIndex, 1);
     } else if (selectedSlots.length >= maxSelectable) {
-      rocketState.statusNote = `最多选择 ${maxSelectable} 张公共牌`;
+      workingRocketState.statusNote = `最多选择 ${maxSelectable} 张公共牌`;
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: workingRocketState.statusNote };
     } else {
       selectedSlots.push(index);
     }
@@ -6086,16 +6099,24 @@
     pending.selectedSlots = selectedSlots;
     const count = selectedSlots.length;
     const minSelectable = getPublicCardMultiSelectMinSelectable(pending);
-    rocketState.statusNote = count > 0
+    workingRocketState.statusNote = count > 0
       ? `公共牌角标：已选 ${count}/${maxSelectable} 张${count < minSelectable ? `，至少需要 ${minSelectable} 张` : "，点击确认弃除"}`
       : `公共牌角标：请选择 ${minSelectable} 张公共牌弃除`;
     syncPublicScanConfirmButton();
     renderPublicCards();
     renderStateReadout();
-    return { ok: true, message: rocketState.statusNote };
+    return { ok: true, message: workingRocketState.statusNote };
   }
 
-  function confirmPublicCornerDiscardSelection() {
+  function handlePublicCornerDiscardCardClick(slotIndex) {
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "card_toggle_public_corner_discard",
+      slotIndex,
+    }).value;
+  }
+
+  function confirmPublicCornerDiscardSelectionForRoot(workingRoot) {
+    const { cardState: workingCardState, playerState: workingPlayerState } = workingRoot;
     const pending = decisionState.cardSelectionAction;
     if (pending?.type !== "card_public_corner_discard") {
       return { ok: false, message: "当前不是公共牌角标弃除" };
@@ -6105,7 +6126,7 @@
     if (selectedSlots.length < minSelectable) {
       return { ok: false, message: `请至少选择 ${minSelectable} 张公共牌` };
     }
-    const selectedCards = selectedSlots.map((slotIndex) => cardState.publicCards[slotIndex]);
+    const selectedCards = selectedSlots.map((slotIndex) => workingCardState.publicCards[slotIndex]);
     if (selectedCards.some((card) => !card)) {
       return { ok: false, message: "所选公共牌已不可用" };
     }
@@ -6114,17 +6135,17 @@
     const player = pending.player || getEffectOwnerPlayer(effect) || getCurrentPlayer();
     beginEffectHistoryStep(effect?.label || pending.effectLabel || "公共牌角标弃除");
     const rewards = selectedCards.map((card, cardIndex) => {
-      cardState.publicCards[selectedSlots[cardIndex]] = null;
-      cards.addToDiscardPile(cardState, card);
+      workingCardState.publicCards[selectedSlots[cardIndex]] = null;
+      cards.addToDiscardPile(workingCardState, card);
       return applyCardCornerRewardFromCard(player, card, {
         source: "card_public_corner_discard",
         insertMoveIntoCurrentFlow: true,
         effectId: `${effect?.id || "public-corner-discard"}-${cardIndex + 1}`,
       });
     });
-    cards.ensurePublicCardsFilled(cardState, playerState);
+    cards.ensurePublicCardsFilled(workingCardState, workingPlayerState);
     markCurrentActionIrreversible("公共牌补牌翻出新牌", "hidden_card_reveal");
-    cards.setSelectionActive(cardState, false);
+    cards.setSelectionActive(workingCardState, false);
     decisionState.cardSelectionAction = null;
     syncCardSelectionChrome();
     return finishAutomaticRewardEffect(effect, {
@@ -6137,6 +6158,12 @@
         rewards,
       },
     }, [renderPlayerStats, renderPublicCards]);
+  }
+
+  function confirmPublicCornerDiscardSelection() {
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "card_confirm_public_corner_discard",
+    }).value;
   }
 
 
@@ -6171,7 +6198,7 @@
     renderActionEffectBar();
   }
 
-  function blockIncompatiblePendingQuickAction(actionType) {
+  function blockIncompatiblePendingQuickActionForRoot(workingRoot, actionType) {
     if (actionType !== "card-corner" && getPendingCardCornerQuickAction()) {
       cancelCardCornerQuickAction({ silent: true });
     }
@@ -6179,13 +6206,20 @@
       cancelHandCardPlayAction({ silent: true });
     }
     if (hasActivePendingSubFlow()) {
-      rocketState.statusNote = decisionSessions.peek("industry_ability") || uiRuntimeState.industryFreeMoveState || isIndustryHandSelectionActive()
+      workingRoot.rocketState.statusNote = decisionSessions.peek("industry_ability") || uiRuntimeState.industryFreeMoveState || isIndustryHandSelectionActive()
         ? "请先完成或取消公司 1x 行动"
         : "请先完成或取消当前流程";
       renderStateReadout();
-      return { ok: false, message: rocketState.statusNote };
+      return { ok: false, message: workingRoot.rocketState.statusNote };
     }
     return null;
+  }
+
+  function blockIncompatiblePendingQuickAction(actionType) {
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "quick_action_check_pending",
+      actionType,
+    }).value;
   }
 
   function recordPlayCardStart(
@@ -6196,8 +6230,12 @@
     beforeAlienState = null,
     execution = {},
   ) {
-    const actionCardState = execution.workingRoot?.cardState || cardState;
-    const actionAlienGameState = execution.workingRoot?.alienGameState || alienGameState;
+    const workingRoot = execution.workingRoot;
+    if (!workingRoot?.cardState || !workingRoot?.alienGameState) {
+      throw new TypeError("recordPlayCardStart 缺少 workingRoot");
+    }
+    const actionCardState = workingRoot.cardState;
+    const actionAlienGameState = workingRoot.alienGameState;
     startActionLogDraft("playCard", "打牌行动", { source: HISTORY_SOURCE_MAIN, player });
     actionHistory.beginSession("playCard", "打牌行动");
     actionHistory.beginStep({
