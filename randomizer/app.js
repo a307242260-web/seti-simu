@@ -9493,7 +9493,10 @@
   }
 
   function getPlayerReadoutLines() {
-    const currentPlayer = getInterfacePlayer();
+    const readoutRoot = createStateSourceReadoutRoot();
+    const interfacePlayer = getInterfacePlayer();
+    const currentPlayer = readoutRoot.playerState.players.find((player) => player.id === interfacePlayer?.id)
+      || players.getCurrentPlayer(readoutRoot.playerState);
     const resources = currentPlayer.resources;
     const income = players.normalizeIncome(currentPlayer.income || null);
     const companyBaseIncome = getPlayerCompanyBaseIncome(currentPlayer);
@@ -9503,11 +9506,11 @@
     const finalScoreBreakdown = endGameScoring?.computePlayerFinalScore
       ? endGameScoring.computePlayerFinalScore({
         currentPlayer,
-        finalScoringState,
-        playerState,
-        nebulaDataState,
-        alienGameState,
-        planetStatsState,
+        finalScoringState: readoutRoot.finalScoringState,
+        playerState: readoutRoot.playerState,
+        nebulaDataState: readoutRoot.nebulaDataState,
+        alienGameState: readoutRoot.alienGameState,
+        planetStatsState: readoutRoot.planetStatsState,
         ...buildPlutoMarkerContext(),
         probeLocations: probeLocationData.index,
         probeLocationDetails: probeLocationData.details,
@@ -9555,11 +9558,12 @@
   }
 
   function getPlanetStatsReadoutLines() {
-    const lines = planetStats.formatPlanetStatsLines(planetStatsState);
-    if (aomomo && (solarState.aomomoActive || alienGameState.aomomo?.revealInitialized)) {
+    const readoutRoot = createStateSourceReadoutRoot();
+    const lines = planetStats.formatPlanetStatsLines(readoutRoot.planetStatsState);
+    if (aomomo && (readoutRoot.solarState.aomomoActive || readoutRoot.alienGameState.aomomo?.revealInitialized)) {
       const aomomoLineIndex = lines.findIndex((line) => String(line).startsWith("奥陌陌 "));
       if (aomomoLineIndex >= 0) {
-        lines[aomomoLineIndex] = `奥陌陌 环绕=${aomomo.countOrbitMarkers(alienGameState)} 登陆=${aomomo.countLandingMarkers(alienGameState)}`;
+        lines[aomomoLineIndex] = `奥陌陌 环绕=${aomomo.countOrbitMarkers(readoutRoot.alienGameState)} 登陆=${aomomo.countLandingMarkers(readoutRoot.alienGameState)}`;
       }
     }
     return [
@@ -10529,9 +10533,10 @@
   }
 
   function getRocketCoordinateReadoutLines() {
-    const activeRocket = rocketState.rockets.find((rocket) => rocket.id === rocketState.activeRocketId);
+    const readoutRocketState = createStateSourceReadoutRoot().rocketState;
+    const activeRocket = readoutRocketState.rockets.find((rocket) => rocket.id === readoutRocketState.activeRocketId);
     const formatRocketLine = (rocket) => {
-      const marker = rocket.id === rocketState.activeRocketId ? "*" : " ";
+      const marker = rocket.id === readoutRocketState.activeRocketId ? "*" : " ";
       const snapshot = createRocketSnapshot(rocket);
       const color = players.getPlayerColorDefinition(rocket.color || players.DEFAULT_PLAYER_COLOR);
       if (snapshot.surface === ROCKET_SURFACE.PLANETS_REFERENCE) {
@@ -10545,7 +10550,7 @@
         : "";
       return `${marker}${formatRocketLabel(rocket)} ${color.label} ${formatPolarPoint(snapshot.polar)} ${formatBoardPoint(snapshot.board)}${slot}`;
     };
-    const occupancy = rocketActions.getSectorOccupancy(rocketState);
+    const occupancy = rocketActions.getSectorOccupancy(readoutRocketState);
     const occupancyLines = occupancy.size
       ? [...occupancy.entries()]
         .sort(([a], [b]) => a.localeCompare(b))
@@ -10559,7 +10564,7 @@
       "火箭坐标",
       `火箭坐标系 polar board-${solar.GLOBAL_COORDINATE_SYSTEM.size}`,
       activeRocket ? `当前 ${formatRocketLine(activeRocket).replace(/^[* ]/, "")}` : "当前 无",
-      rocketState.statusNote ? `提示 ${rocketState.statusNote}` : "提示 无",
+      readoutRocketState.statusNote ? `提示 ${readoutRocketState.statusNote}` : "提示 无",
       "",
       "扇区占用",
       ...occupancyLines,
@@ -11014,8 +11019,11 @@
     return debugRuntimeController.revealAmibaForDebug();
   }
 
-  function logAomomoDebugCoordinates(alienSlotId = alienGameState.aomomo?.revealedSlotId || 1) {
-    return debugRuntimeController.logAomomoDebugCoordinates(alienSlotId);
+  function logAomomoDebugCoordinates(alienSlotId = null) {
+    const resolvedSlotId = alienSlotId
+      ?? createStateSourceReadoutRoot().alienGameState.aomomo?.revealedSlotId
+      ?? 1;
+    return debugRuntimeController.logAomomoDebugCoordinates(resolvedSlotId);
   }
 
   function revealAomomoForDebug() {
