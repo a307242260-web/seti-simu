@@ -2142,18 +2142,13 @@
     completeCurrentActionEffect,
     executeActionEffect,
   } = effectFlowHelpers);
-  function recordAbilityCommands(result, history = actionHistory, workingRoot = null) {
-    return recordAbilityCommandsForRoot(
-      workingRoot || requireActiveBrowserWorkingRoot("record ability commands"),
-      result,
-      history,
-    );
+  function recordAbilityCommands(result, history = actionHistory, workingRoot) {
+    return recordAbilityCommandsForRoot(workingRoot, result, history);
   }
   function recordAtomicActionHistory(actionType, label, result, options = {}) {
     return recordAtomicActionHistoryForRoot(actionType, label, result, {
       ...options,
-      workingRoot: options.workingRoot
-        || requireActiveBrowserWorkingRoot("record atomic action history"),
+      workingRoot: options.workingRoot,
     });
   }
   ({

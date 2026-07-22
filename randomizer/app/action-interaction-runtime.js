@@ -394,7 +394,7 @@
       markerSequence: markerResult.marker.sequence,
     };
     removeRocketElement(available.rocket.id);
-    recordAtomicActionHistory(actionType, actionLabel, result);
+    recordAtomicActionHistory(actionType, actionLabel, result, { workingRoot });
     const rewardEffects = buildPlutoRewardEffectsForAction(actionType);
     rocketState.statusNote = result.message;
     renderPlayerStats();

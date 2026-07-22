@@ -640,6 +640,7 @@
       if (result.ok && actionId === "analyze") {
         recordAtomicActionHistory?.(actionId, ACTION_LOG_DEFAULT_LABELS.analyze, result, {
           logBefore: actionLogBefore,
+          workingRoot: actionWorkingRoot,
         });
         startedRewardFlow = startAnalyzeDataRewardFlow?.(
           workingRoot || getExecutionWorkingRoot(actionContext),
@@ -667,6 +668,7 @@
           if ((abilityId || result.commands?.length) && result.undoable !== false) {
             recordAtomicActionHistory?.(actionId, result.message || actionId, result, {
               logBefore: actionLogBefore,
+              workingRoot: actionWorkingRoot,
             });
           } else {
             markActionPending?.();
