@@ -145,6 +145,45 @@ assert.equal(importState.draft, null);
   assert.deepEqual(calls.slice(-3), ["render", "reset-briefing", "render"]);
 }
 
+{
+  const state = { entries: [], draft: null, nextEntryId: 1 };
+  const calls = [];
+  const controller = actionLogRuntime.createActionLogController({
+    actionLogState: state,
+    actionHistory: { hasSession: () => false },
+    quickActionHistory: { hasSession: () => false },
+    historySourceMain: "main",
+    historySourceQuick: "quick",
+    resourceKeys: [], incomeKeys: [], defaultLabels: { launch: "发射" },
+    getCurrentPlayer: () => ({ id: "p1" }),
+    createReadoutRoot: () => ({
+      playerState: { currentPlayerId: "p1" },
+      turnState: { roundNumber: 1, turnNumber: 2 },
+    }),
+    getPlayerLabelById: () => "白色玩家",
+    getActionCycleNumber: () => 1,
+    getDisplayedTurnNumber: (turn) => turn + 1,
+    cancelHandCardContextActions() {},
+    isActionPending: () => false,
+    renderActionLog: () => calls.push("render"),
+    attachRecoverySnapshot(entry, label) { entry.recoverySnapshot = { label }; calls.push("attach"); },
+    rememberActionBriefingEntry: () => calls.push("briefing"),
+    schedulePersistentGameStateSave: () => calls.push("save"),
+  });
+  controller.startActionLogDraft("launch", null, { source: "main" });
+  controller.appendActionLogStep("main", "发射火箭");
+  const committed = controller.commitActionLogDraft();
+  assert.equal(committed.turnNumber, 3);
+  assert.equal(state.entries.length, 1);
+  assert.equal(state.nextEntryId, 2);
+  const confirmed = controller.appendConfirmedActionLogEntry({
+    title: "初始选择", actionType: "initialSelection", steps: [{ label: "选择公司" }],
+  });
+  assert.equal(confirmed.id, 2);
+  assert.equal(state.entries.length, 2);
+  assert.deepEqual(calls.filter((call) => call !== "render"), ["attach", "briefing", "save", "attach", "briefing", "save"]);
+}
+
 function createViewElement() {
   return {
     children: [],

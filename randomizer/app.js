@@ -2057,9 +2057,13 @@
     createReadoutRoot: createStateSourceReadoutRoot,
     getPlayerLabelById: (...args) => getPlayerLabelById(...args),
     getActionCycleNumber: (...args) => getActionCycleNumber(...args),
+    getDisplayedTurnNumber: (...args) => getDisplayedTurnNumber(...args),
     cancelHandCardContextActions: (...args) => cancelHandCardContextActions(...args),
     isActionPending: (...args) => isActionPending(...args),
     resetActionBriefingState: (...args) => resetActionBriefingState(...args),
+    attachRecoverySnapshot: (...args) => attachRecoverySnapshotToActionLogEntry(...args),
+    rememberActionBriefingEntry: (...args) => rememberActionBriefingEntry(...args),
+    schedulePersistentGameStateSave: (...args) => schedulePersistentGameStateSave(...args),
     renderActionLog,
   });
   const {
@@ -2079,6 +2083,8 @@
     removeActionLogStepsBySource,
     pruneEmptyActionLogDraft,
     resetActionLog,
+    commitActionLogDraft,
+    appendConfirmedActionLogEntry,
   } = actionLogController;
   const playerStatsUi = playerStatsUiModule.createPlayerStatsUi({
     document,
@@ -5466,48 +5472,6 @@
       && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
       && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
   );
-
-  function commitActionLogDraft(options = {}) {
-    const entry = actionLogRuntimeModule.createEntryFromDraft(actionLogState, {
-      getDisplayedTurnNumber,
-      getActionCycleNumber,
-      getActionLogActionLabel,
-    }, options);
-    if (!entry && !actionLogState.draft) {
-      renderActionLog();
-      return null;
-    }
-    attachRecoverySnapshotToActionLogEntry(entry, "行动提交后状态");
-    actionLogState.nextEntryId += 1;
-    actionLogState.entries.push(entry);
-    rememberActionBriefingEntry(entry);
-    actionLogState.draft = null;
-    renderActionLog();
-    schedulePersistentGameStateSave({ label: "行动提交后状态" });
-    return entry;
-  }
-
-  function appendConfirmedActionLogEntry(entryInput) {
-    const readoutRoot = createStateSourceReadoutRoot();
-    const entry = actionLogRuntimeModule.createConfirmedEntry(actionLogState, entryInput, {
-      getCurrentPlayer,
-      roundNumber: readoutRoot.turnState.roundNumber,
-      turnNumber: readoutRoot.turnState.turnNumber,
-      getDisplayedTurnNumber,
-      getActionCycleNumber,
-      getPlayerLabelById,
-      getActionLogActionLabel,
-      historySourceMain: HISTORY_SOURCE_MAIN,
-      getCardLabel: cards.getCardLabel,
-    });
-    attachRecoverySnapshotToActionLogEntry(entry, entry.title || "已确认日志后状态");
-    actionLogState.nextEntryId += 1;
-    actionLogState.entries.push(entry);
-    rememberActionBriefingEntry(entry);
-    renderActionLog();
-    schedulePersistentGameStateSave({ label: entry.title || "已确认日志后状态" });
-    return entry;
-  }
 
   function isWeakStartAiDifficulty(player) {
     return player?.aiDifficulty === AI_DIFFICULTY_WEAK_START;

@@ -452,6 +452,48 @@
       context.renderActionLog();
     }
 
+    function commitActionLogDraft(options = {}) {
+      const entry = createEntryFromDraft(actionLogState, {
+        getDisplayedTurnNumber: context.getDisplayedTurnNumber,
+        getActionCycleNumber: context.getActionCycleNumber,
+        getActionLogActionLabel,
+      }, options);
+      if (!entry && !actionLogState.draft) {
+        context.renderActionLog();
+        return null;
+      }
+      context.attachRecoverySnapshot(entry, "行动提交后状态");
+      actionLogState.nextEntryId += 1;
+      actionLogState.entries.push(entry);
+      context.rememberActionBriefingEntry(entry);
+      actionLogState.draft = null;
+      context.renderActionLog();
+      context.schedulePersistentGameStateSave({ label: "行动提交后状态" });
+      return entry;
+    }
+
+    function appendConfirmedActionLogEntry(entryInput) {
+      const readoutRoot = context.createReadoutRoot();
+      const entry = createConfirmedEntry(actionLogState, entryInput, {
+        getCurrentPlayer: context.getCurrentPlayer,
+        roundNumber: readoutRoot.turnState.roundNumber,
+        turnNumber: readoutRoot.turnState.turnNumber,
+        getDisplayedTurnNumber: context.getDisplayedTurnNumber,
+        getActionCycleNumber: context.getActionCycleNumber,
+        getPlayerLabelById: context.getPlayerLabelById,
+        getActionLogActionLabel,
+        historySourceMain,
+        getCardLabel: context.getCardLabel,
+      });
+      context.attachRecoverySnapshot(entry, entry.title || "已确认日志后状态");
+      actionLogState.nextEntryId += 1;
+      actionLogState.entries.push(entry);
+      context.rememberActionBriefingEntry(entry);
+      context.renderActionLog();
+      context.schedulePersistentGameStateSave({ label: entry.title || "已确认日志后状态" });
+      return entry;
+    }
+
     return Object.freeze({
       getActionLogActionLabel,
       normalizeActionLogText: normalizeText,
@@ -469,6 +511,8 @@
       removeActionLogStepsBySource,
       pruneEmptyActionLogDraft,
       resetActionLog,
+      commitActionLogDraft,
+      appendConfirmedActionLogEntry,
     });
   }
 
