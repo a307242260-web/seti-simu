@@ -1591,6 +1591,35 @@
     getPlayerHandPanelTitleHint: () => getPlayerHandPanelTitleHint(),
   });
   const createResidentRenderInput = residentRenderInputBuilder.createRenderInput;
+  const turnReadoutRuntime = turnFlowModule.createTurnReadoutRuntime({
+    weakStartAiDifficulty: AI_DIFFICULTY_WEAK_START,
+    finalRoundNumber: FINAL_ROUND_NUMBER,
+    getRuleReadout: createStateSourceReadoutRoot,
+    computePlayerFinalScoreBreakdown: (...args) => computePlayerFinalScoreBreakdown(...args),
+    submitHostCommand: (...args) => ruleComposition.inputPort.submitHostCommand(...args),
+    createResidentRenderInput,
+    renderResidentRoundStatus: (...args) => residentDesktopRenderer.renderRoundStatus(...args),
+    getDisplayedTurnNumber: (...args) => getDisplayedTurnNumber(...args),
+    getRoundOrderPlayerIds: (...args) => getRoundOrderPlayerIds(...args),
+    getPlayerLabelById: (...args) => getPlayerLabelById(...args),
+    getPlayerAgentLabel: (...args) => getPlayerAgentLabel(...args),
+  });
+  const {
+    buildFinalScoreSummaryLines,
+    buildFinalScoreSummaryLinesForRoot,
+    getFirstEligiblePlayerId,
+    getNextEligiblePlayerId,
+    getTurnReadoutLines,
+    hasPlayerCompletedThisTurn,
+    hasPlayerVisitedPlanetThisTurn,
+    haveAllActivePlayersPassed,
+    isFinalRound,
+    isGameEnded,
+    isPlayerPassedThisRound,
+    isWeakStartAiDifficulty,
+    recordTurnVisitPlanetEvents,
+    renderRoundStatus,
+  } = turnReadoutRuntime;
 
   function renderResidentDesktop() {
     const input = createResidentRenderInput();
@@ -4863,87 +4892,6 @@
       && Number(choice.deltaX ?? choice.payload?.deltaX) === Number(deltaX)
       && Number(choice.deltaY ?? choice.payload?.deltaY) === Number(deltaY),
   );
-
-  function isWeakStartAiDifficulty(player) {
-    return player?.aiDifficulty === AI_DIFFICULTY_WEAK_START;
-  }
-
-  function isPlayerPassedThisRound(playerId) {
-    return turnFlowModule.isPlayerPassed(createStateSourceReadoutRoot().turnState, playerId);
-  }
-
-  function hasPlayerCompletedThisTurn(playerId) {
-    return turnFlowModule.hasPlayerCompletedTurn(createStateSourceReadoutRoot().turnState, playerId);
-  }
-
-  function getFirstEligiblePlayerId() {
-    return turnFlowModule.getFirstEligiblePlayerId(createStateSourceReadoutRoot().turnState);
-  }
-
-  function getNextEligiblePlayerId(afterPlayerId) {
-    return turnFlowModule.getNextEligiblePlayerId(createStateSourceReadoutRoot().turnState, afterPlayerId);
-  }
-
-  function haveAllActivePlayersPassed() {
-    return turnFlowModule.haveAllActivePlayersPassed(createStateSourceReadoutRoot().turnState);
-  }
-
-  function isFinalRound(candidateTurnState = null) {
-    return turnFlowModule.isFinalRound(candidateTurnState || createStateSourceReadoutRoot().turnState, FINAL_ROUND_NUMBER);
-  }
-
-  function isGameEnded(workingRoot = null) {
-    return turnFlowModule.isGameEnded(workingRoot || createStateSourceReadoutRoot());
-  }
-
-  function buildFinalScoreSummaryLinesForRoot(workingRoot) {
-    return turnFlowModule.buildFinalScoreSummaryLines(
-      workingRoot,
-      (root, player) => computePlayerFinalScoreBreakdown(player, root),
-    );
-  }
-
-  function buildFinalScoreSummaryLines() {
-    return ruleComposition.inputPort.submitHostCommand({
-      kind: "score_build_final_summary",
-    }, { commit: false }).value || [];
-  }
-
-  function hasPlayerVisitedPlanetThisTurn(workingRoot, player, planetId) {
-    return turnFlowModule.hasPlayerVisitedPlanetThisTurn(workingRoot, player, planetId);
-  }
-
-  function recordTurnVisitPlanetEvents(workingRoot, events = []) {
-    return turnFlowModule.recordTurnVisitPlanetEvents(workingRoot, events);
-  }
-
-  function renderRoundStatus() {
-    const input = createResidentRenderInput();
-    if (input) residentDesktopRenderer.renderRoundStatus(input);
-  }
-
-  function getTurnReadoutLines() {
-    const readoutTurnState = createStateSourceReadoutRoot().turnState;
-    const orderLabels = readoutTurnState.turnOrderPlayerIds.map(getPlayerLabelById).join(" > ");
-    const roundOrderLabels = getRoundOrderPlayerIds().map(getPlayerLabelById).join(" > ");
-    const passedLabels = readoutTurnState.passedPlayerIds.map(getPlayerLabelById).join("、") || "无";
-    const completedLabels = readoutTurnState.completedTurnPlayerIds.map(getPlayerLabelById).join("、") || "无";
-    const agentLabels = (readoutTurnState.activePlayerIds || [])
-      .map((playerId) => `${getPlayerLabelById(playerId)}=${getPlayerAgentLabel(playerId)}`)
-      .join("、") || "无";
-
-    return [
-      "轮次状态",
-      isGameEnded()
-        ? `游戏结束：第${readoutTurnState.roundNumber}轮全员 PASS，进行终局计分`
-        : `第${readoutTurnState.roundNumber}轮 第${getDisplayedTurnNumber()}回合`,
-      `基础顺位 ${orderLabels || "无"}`,
-      `本轮顺位 ${roundOrderLabels || "无"}`,
-      `玩家代理 ${agentLabels}`,
-      `本轮已 PASS ${passedLabels}`,
-      `当前行动圈已行动 ${completedLabels}`,
-    ];
-  }
 
   function isCardSelectionActive(workingRoot = null) {
     return cards.isSelectionActive((workingRoot || createStateSourceReadoutRoot()).cardState);

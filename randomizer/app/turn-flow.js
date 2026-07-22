@@ -144,6 +144,83 @@
     };
   }
 
+  function createTurnReadoutRuntime(context = {}) {
+    const readRoot = (workingRoot = null) => workingRoot || context.getRuleReadout();
+    function isWeakStartAiDifficulty(player) {
+      return player?.aiDifficulty === context.weakStartAiDifficulty;
+    }
+    function isPlayerPassedThisRound(playerId) {
+      return isPlayerPassed(readRoot().turnState, playerId);
+    }
+    function hasPlayerCompletedThisTurn(playerId) {
+      return hasPlayerCompletedTurn(readRoot().turnState, playerId);
+    }
+    function getFirstEligiblePlayerIdFromReadout() {
+      return getFirstEligiblePlayerId(readRoot().turnState);
+    }
+    function getNextEligiblePlayerIdFromReadout(afterPlayerId) {
+      return getNextEligiblePlayerId(readRoot().turnState, afterPlayerId);
+    }
+    function haveAllActivePlayersPassedFromReadout() {
+      return haveAllActivePlayersPassed(readRoot().turnState);
+    }
+    function isFinalRoundFromReadout(candidateTurnState = null) {
+      return isFinalRound(candidateTurnState || readRoot().turnState, context.finalRoundNumber);
+    }
+    function isGameEndedFromReadout(workingRoot = null) {
+      return isGameEnded(readRoot(workingRoot));
+    }
+    function buildFinalScoreSummaryLinesForRoot(workingRoot) {
+      return buildFinalScoreSummaryLines(
+        workingRoot,
+        (root, player) => context.computePlayerFinalScoreBreakdown(player, root),
+      );
+    }
+    function buildFinalScoreSummaryLinesFromHost() {
+      return context.submitHostCommand({ kind: "score_build_final_summary" }, { commit: false }).value || [];
+    }
+    function renderRoundStatus() {
+      const input = context.createResidentRenderInput();
+      if (input) context.renderResidentRoundStatus(input);
+    }
+    function getTurnReadoutLines() {
+      const turnState = readRoot().turnState;
+      const labels = (ids, separator, fallback = "无") => (
+        (ids || []).map(context.getPlayerLabelById).join(separator) || fallback
+      );
+      const agentLabels = (turnState.activePlayerIds || [])
+        .map((playerId) => `${context.getPlayerLabelById(playerId)}=${context.getPlayerAgentLabel(playerId)}`)
+        .join("、") || "无";
+      return [
+        "轮次状态",
+        isGameEndedFromReadout()
+          ? `游戏结束：第${turnState.roundNumber}轮全员 PASS，进行终局计分`
+          : `第${turnState.roundNumber}轮 第${context.getDisplayedTurnNumber()}回合`,
+        `基础顺位 ${labels(turnState.turnOrderPlayerIds, " > ")}`,
+        `本轮顺位 ${labels(context.getRoundOrderPlayerIds(), " > ")}`,
+        `玩家代理 ${agentLabels}`,
+        `本轮已 PASS ${labels(turnState.passedPlayerIds, "、")}`,
+        `当前行动圈已行动 ${labels(turnState.completedTurnPlayerIds, "、")}`,
+      ];
+    }
+    return Object.freeze({
+      buildFinalScoreSummaryLines: buildFinalScoreSummaryLinesFromHost,
+      buildFinalScoreSummaryLinesForRoot,
+      getFirstEligiblePlayerId: getFirstEligiblePlayerIdFromReadout,
+      getNextEligiblePlayerId: getNextEligiblePlayerIdFromReadout,
+      getTurnReadoutLines,
+      hasPlayerCompletedThisTurn,
+      hasPlayerVisitedPlanetThisTurn,
+      haveAllActivePlayersPassed: haveAllActivePlayersPassedFromReadout,
+      isFinalRound: isFinalRoundFromReadout,
+      isGameEnded: isGameEndedFromReadout,
+      isPlayerPassedThisRound,
+      isWeakStartAiDifficulty,
+      recordTurnVisitPlanetEvents,
+      renderRoundStatus,
+    });
+  }
+
   function shufflePlayerIds(playerIds) {
     const result = [...playerIds];
     for (let index = result.length - 1; index > 0; index -= 1) {
@@ -291,8 +368,8 @@
       const orderedIds = defaultPlayerId ? [defaultPlayerId, ...shuffledIds] : shufflePlayerIds(playerIds);
       setTurnStatePlayerOrder(workingRoot, orderedIds, {
         activePlayerCount: turnState.activePlayerCount || defaultActivePlayerCount,
-      });
-    }
+    });
+  }
 
     function beginNextRound(workingRoot) {
       requireWorkingRoot(workingRoot);
@@ -592,5 +669,6 @@
     hasPlayerVisitedPlanetThisTurn,
     recordTurnVisitPlanetEvents,
     createTurnFlowController,
+    createTurnReadoutRuntime,
   };
 });

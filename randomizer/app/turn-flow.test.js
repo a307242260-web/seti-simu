@@ -13,6 +13,7 @@ const {
   hasPlayerVisitedPlanetThisTurn,
   recordTurnVisitPlanetEvents,
   createTurnFlowController,
+  createTurnReadoutRuntime,
 } = require("./turn-flow");
 const { createTurnEndPort } = require("./turn-end-flow");
 
@@ -76,6 +77,36 @@ const visitCommand = recordTurnVisitPlanetEvents(workingRoot, [{ type: "visitPla
 assert.equal(hasPlayerVisitedPlanetThisTurn(workingRoot, basePlayers[0], "earth"), true);
 visitCommand.undo();
 assert.equal(hasPlayerVisitedPlanetThisTurn(workingRoot, basePlayers[0], "earth"), false);
+
+{
+  const renderedInputs = [];
+  const readoutRuntime = createTurnReadoutRuntime({
+    weakStartAiDifficulty: "weak_start",
+    finalRoundNumber: 5,
+    getRuleReadout: () => workingRoot,
+    computePlayerFinalScoreBreakdown: (player) => ({ totalScore: player.id === "p1" ? 10 : 8 }),
+    submitHostCommand: () => ({ value: ["终局摘要"] }),
+    createResidentRenderInput: () => ({ projection: { turn: true } }),
+    renderResidentRoundStatus: (input) => renderedInputs.push(input),
+    getDisplayedTurnNumber: () => 3,
+    getRoundOrderPlayerIds: () => ["p1", "p2", "p3"],
+    getPlayerLabelById: (playerId) => ({ p1: "白", p2: "黄", p3: "蓝" })[playerId],
+    getPlayerAgentLabel: () => "真人",
+  });
+  assert.equal(readoutRuntime.isWeakStartAiDifficulty({ aiDifficulty: "weak_start" }), true);
+  assert.equal(readoutRuntime.isPlayerPassedThisRound("p1"), false);
+  assert.equal(readoutRuntime.hasPlayerCompletedThisTurn("p1"), false);
+  assert.equal(readoutRuntime.getFirstEligiblePlayerId(), "p1");
+  assert.equal(readoutRuntime.getNextEligiblePlayerId("p1"), "p2");
+  assert.equal(readoutRuntime.haveAllActivePlayersPassed(), false);
+  assert.equal(readoutRuntime.isFinalRound(), false);
+  assert.equal(readoutRuntime.isGameEnded(), false);
+  assert.deepEqual(readoutRuntime.buildFinalScoreSummaryLinesForRoot(workingRoot), ["白：10 分", "黄：8 分", "蓝：8 分"]);
+  assert.deepEqual(readoutRuntime.buildFinalScoreSummaryLines(), ["终局摘要"]);
+  assert.match(readoutRuntime.getTurnReadoutLines()[1], /第1轮 第3回合/);
+  readoutRuntime.renderRoundStatus();
+  assert.deepEqual(renderedInputs, [{ projection: { turn: true } }]);
+}
 let newGameCalls = 0;
 
 const controller = createTurnFlowController({
