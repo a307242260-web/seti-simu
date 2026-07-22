@@ -6,6 +6,7 @@ const {
   createEffectFlowUndoRuntime,
   createEffectSubFlowCancellationRuntime,
   createEffectFlowCompletionRuntime,
+  createEffectFlowStateRuntime,
 } = require("./effect-flow");
 
 function createHistoryHarness() {
@@ -467,6 +468,34 @@ function createHarness() {
   assert.equal(workingRoot.playerState.currentPlayerId, "p1");
   assert.equal(workingRoot.rocketState.statusNote, "初始收入增加完成，游戏开始。");
   assert.equal(finishedUi, 1);
+}
+
+{
+  const uiRuntimeState = { completedEffectFlowsForUndo: {} };
+  const root = { match: { actionEffectFlow: { id: "active" } } };
+  const calls = [];
+  const runtime = createEffectFlowStateRuntime({
+    uiRuntimeState,
+    actionHistory: { hasUndoableStep: () => true },
+    setActionEffectFlow: (workingRoot, flow) => { workingRoot.match.actionEffectFlow = flow; },
+    closeLandTargetPicker: () => calls.push("land"),
+    closeScanAction4Picker: () => calls.push("scan"),
+    renderActionEffectBar: () => calls.push("bar"),
+    setActionEffectFlowActive: (active) => calls.push(`active:${active}`),
+    renderReservedCards: () => calls.push("reserved"),
+  });
+  const completed = {
+    historySource: "main",
+    effects: [{ id: "e1", type: "gain", status: "completed" }],
+  };
+  runtime.rememberCompletedEffectFlowForUndo(completed);
+  assert.equal(runtime.peekCompletedEffectFlowForUndo({ effectIndex: 0, effectType: "gain" }, "main"), completed);
+  assert.equal(runtime.takeCompletedEffectFlowForUndo({ effectIndex: 0, effectType: "scan" }, "main"), null);
+  assert.equal(runtime.takeCompletedEffectFlowForUndo({ effectIndex: 0, effectType: "gain" }, "main"), completed);
+  assert.equal(uiRuntimeState.completedEffectFlowsForUndo.main, null);
+  runtime.clearActionEffectFlow(root);
+  assert.equal(root.match.actionEffectFlow, null);
+  assert.deepEqual(calls, ["land", "scan", "bar", "active:false", "reserved"]);
 }
 
 console.log("effect-flow tests passed");

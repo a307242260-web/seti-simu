@@ -1128,11 +1128,70 @@
     return Object.freeze({ finishActionEffectFlowForRoot });
   }
 
+  function createEffectFlowStateRuntime(context = {}) {
+    const uiRuntimeState = context.uiRuntimeState || {};
+    const HISTORY_SOURCE_MAIN = context.HISTORY_SOURCE_MAIN || "main";
+    const HISTORY_SOURCE_QUICK = context.HISTORY_SOURCE_QUICK || "quick";
+
+    function clearActionEffectFlow(workingRoot) {
+      context.setActionEffectFlow(workingRoot, null);
+      context.closeLandTargetPicker?.(workingRoot);
+      context.closeScanAction4Picker?.();
+      context.renderActionEffectBar?.();
+      context.setActionEffectFlowActive?.(false);
+      context.renderReservedCards?.();
+    }
+
+    function shouldRememberCompletedEffectFlowForUndo(flow) {
+      if (!flow?.historySource) return false;
+      if (flow.historySource === HISTORY_SOURCE_QUICK) return true;
+      return flow.historySource === HISTORY_SOURCE_MAIN
+        && Boolean(context.actionHistory?.hasUndoableStep?.());
+    }
+
+    function clearCompletedEffectFlowForUndo(source = null) {
+      if (!source) uiRuntimeState.completedEffectFlowsForUndo = {};
+      else uiRuntimeState.completedEffectFlowsForUndo[source] = null;
+    }
+
+    function rememberCompletedEffectFlowForUndo(flow) {
+      const source = flow?.historySource || null;
+      if (!source) return;
+      uiRuntimeState.completedEffectFlowsForUndo[source] = shouldRememberCompletedEffectFlowForUndo(flow)
+        ? flow
+        : null;
+    }
+
+    function getCompletedFlowForStep(step, source) {
+      const flow = uiRuntimeState.completedEffectFlowsForUndo[source];
+      const effect = Number.isInteger(step?.effectIndex) ? flow?.effects?.[step.effectIndex] : null;
+      if (!flow || flow.historySource !== source || !effect) return null;
+      return step.effectType && effect.type !== step.effectType ? null : flow;
+    }
+
+    function takeCompletedEffectFlowForUndo(step, source) {
+      const flow = getCompletedFlowForStep(step, source);
+      if (!flow) return null;
+      clearCompletedEffectFlowForUndo(source);
+      return flow;
+    }
+
+    return Object.freeze({
+      clearActionEffectFlow,
+      shouldRememberCompletedEffectFlowForUndo,
+      clearCompletedEffectFlowForUndo,
+      rememberCompletedEffectFlowForUndo,
+      takeCompletedEffectFlowForUndo,
+      peekCompletedEffectFlowForUndo: getCompletedFlowForStep,
+    });
+  }
+
   return {
     createActionEffectOrchestrator,
     createEffectFlowHelpers,
     createEffectFlowUndoRuntime,
     createEffectSubFlowCancellationRuntime,
     createEffectFlowCompletionRuntime,
+    createEffectFlowStateRuntime,
   };
 });

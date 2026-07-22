@@ -2112,7 +2112,7 @@
     composeActionLogDetailWithImpact,
     createActionBriefingStepMetadata,
     markActionPending,
-    clearCompletedEffectFlowForUndo,
+    clearCompletedEffectFlowForUndo: (...args) => clearCompletedEffectFlowForUndo(...args),
     assignEffectFlowOwner,
     setActiveEffectFlowOwner,
     renderReservedCards: (...args) => renderReservedCards(...args),
@@ -3262,7 +3262,7 @@
     effectExecutors,
     closeAlienRevealConfirmationOverlay,
     setActionEffectFlow,
-    clearCompletedEffectFlowForUndo,
+    clearCompletedEffectFlowForUndo: (...args) => clearCompletedEffectFlowForUndo(...args),
     historyStepOrder,
     actionHistory,
     quickActionHistory,
@@ -5401,7 +5401,7 @@
     getActionEffectFlow,
     isMainActionOpeningStep,
     clearResearchTechSelectionState,
-    clearActionEffectFlow,
+    clearActionEffectFlow: (...args) => clearActionEffectFlow(...args),
     pruneEndOfFlowSettlementEffectsAfterUndo,
     cancelActiveEffectSubFlows,
     restoreResearchTechSelectionAfterUndo,
@@ -5625,58 +5625,26 @@
     return (sectorXs || []).flatMap((x) => buildSectorScanChoicesForX(x));
   }
 
-  function clearActionEffectFlow(workingRoot) {
-    setActionEffectFlow(workingRoot, null);
-    closeLandTargetPicker(workingRoot);
-    closeScanAction4Picker();
-    renderActionEffectBar();
-    interactionChrome.setActionEffectFlowActive(false);
-    renderReservedCards();
-  }
-
-  function shouldRememberCompletedEffectFlowForUndo(flow) {
-    if (!flow?.historySource) return false;
-    if (flow.historySource === HISTORY_SOURCE_QUICK) return true;
-    if (flow.historySource === HISTORY_SOURCE_MAIN) {
-      return Boolean(actionHistory.hasUndoableStep());
-    }
-    return false;
-  }
-
-  function clearCompletedEffectFlowForUndo(source = null) {
-    if (!source) {
-      uiRuntimeState.completedEffectFlowsForUndo = {};
-      return;
-    }
-    uiRuntimeState.completedEffectFlowsForUndo[source] = null;
-  }
-
-  function rememberCompletedEffectFlowForUndo(flow) {
-    const source = flow?.historySource || null;
-    if (!source) return;
-    uiRuntimeState.completedEffectFlowsForUndo[source] = shouldRememberCompletedEffectFlowForUndo(flow)
-      ? flow
-      : null;
-  }
-
-  function takeCompletedEffectFlowForUndo(step, source) {
-    const flow = uiRuntimeState.completedEffectFlowsForUndo[source];
-    const effectIndex = step?.effectIndex;
-    const effect = Number.isInteger(effectIndex) ? flow?.effects?.[effectIndex] : null;
-    if (!flow || flow.historySource !== source || !effect) return null;
-    if (step.effectType && effect.type !== step.effectType) return null;
-    clearCompletedEffectFlowForUndo(source);
-    return flow;
-  }
-
-  function peekCompletedEffectFlowForUndo(step, source) {
-    const flow = uiRuntimeState.completedEffectFlowsForUndo[source];
-    const effectIndex = step?.effectIndex;
-    const effect = Number.isInteger(effectIndex) ? flow?.effects?.[effectIndex] : null;
-    if (!flow || flow.historySource !== source || !effect) return null;
-    if (step.effectType && effect.type !== step.effectType) return null;
-    return flow;
-  }
+  const effectFlowStateRuntime = effectFlowModule.createEffectFlowStateRuntime({
+    HISTORY_SOURCE_MAIN,
+    HISTORY_SOURCE_QUICK,
+    uiRuntimeState,
+    actionHistory,
+    setActionEffectFlow,
+    closeLandTargetPicker,
+    closeScanAction4Picker,
+    renderActionEffectBar,
+    setActionEffectFlowActive: (active) => interactionChrome.setActionEffectFlowActive(active),
+    renderReservedCards,
+  });
+  const {
+    clearActionEffectFlow,
+    shouldRememberCompletedEffectFlowForUndo,
+    clearCompletedEffectFlowForUndo,
+    rememberCompletedEffectFlowForUndo,
+    takeCompletedEffectFlowForUndo,
+    peekCompletedEffectFlowForUndo,
+  } = effectFlowStateRuntime;
 
   const effectSubFlowCancellationRuntime = effectFlowModule.createEffectSubFlowCancellationRuntime({
     uiRuntimeState,
