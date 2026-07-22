@@ -375,41 +375,6 @@
     });
   }
 
-  function mutateHighCouplingSlices(store, mutator) {
-    if (!store || typeof store.beginWorkingCopy !== "function") throw new TypeError("必须传入 StateStore");
-    if (typeof mutator !== "function") throw new TypeError("mutator 必须是函数");
-    const snapshot = store.getSnapshot();
-    const working = store.beginWorkingCopy(snapshot.meta.stateVersion);
-    if (!working.ok) return working;
-    let result;
-    try {
-      const slices = Object.fromEntries(COORDINATED_SLICES.map((key) => [key, working.state[key]]));
-      slices.pieces = clone(working.state.pieces);
-      slices.pieces.playerRocketSequences = Object.fromEntries(Object.entries(
-        slices.pieces.playerRocketSequences || {},
-      ).map(([playerId, sequences]) => [playerId, new Set(sequences)]));
-      result = mutator(slices, working.state);
-      working.state.players = slices.players;
-      working.state.pieces = slices.pieces;
-      working.state.planets = slices.planets;
-      working.state.cards = slices.cards;
-      working.state.tech = slices.tech;
-    } catch (cause) {
-      return { ok: false, code: "STATE_MUTATOR_FAILED", message: cause?.message || "高耦合状态变更失败" };
-    }
-    const protectedSlices = stateStore.REQUIRED_ROOT_SLICES.filter((key) => (
-      key !== "meta" && !COORDINATED_SLICES.includes(key)
-    ));
-    for (const key of protectedSlices) {
-      if (JSON.stringify(working.state[key]) !== JSON.stringify(snapshot[key])) {
-        return { ok: false, code: "STATE_SLICE_OWNERSHIP_VIOLATION", slice: key };
-      }
-    }
-    const purified = purifyHighCouplingSlices(working.state);
-    const committed = store.compareAndCommit(working.baseVersion, purified);
-    return committed.ok ? { ...committed, result } : committed;
-  }
-
   function rebuildCardTaskIndex(candidateState, playerId, context, cardEffects) {
     const players = getPlayers(candidateState);
     const player = players.find((entry) => entry.id === playerId) || null;
@@ -423,7 +388,6 @@
     purifyHighCouplingSlices,
     validateHighCouplingInvariants,
     createHighCouplingStateStore,
-    mutateHighCouplingSlices,
     rebuildCardTaskIndex,
   });
 });

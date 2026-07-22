@@ -127,43 +127,39 @@ function bytes(store) {
   assert.equal(JSON.stringify(purified).includes("setupSelectionState"), false);
 })();
 
-(function testResearchCardMovementAndPiecePlanetConversionCommitAtomically() {
+(function testResearchCardMovementAndPiecePlanetConversionProduceValidCandidate() {
   const store = highCoupling.createHighCouplingStateStore(createState());
-  const before = store.getSnapshot();
-  const result = highCoupling.mutateHighCouplingSlices(store, (slices) => {
-    const player = slices.players.players[0];
-    const supply = techBoard.consumeFromSupplySlot(slices.tech, TECH_TILE_ID, player.id);
-    assert.equal(supply.ok, true);
-    assert.equal(playerTech.recordPlayerTake(player.techState, TECH_TILE_ID).ok, true);
+  const candidate = structuredClone(store.getSnapshot());
+  candidate.pieces.playerRocketSequences = Object.fromEntries(Object.entries(
+    candidate.pieces.playerRocketSequences,
+  ).map(([playerId, sequences]) => [playerId, new Set(sequences)]));
+  const player = candidate.players.players[0];
+  assert.equal(techBoard.consumeFromSupplySlot(candidate.tech, TECH_TILE_ID, player.id).ok, true);
+  assert.equal(playerTech.recordPlayerTake(player.techState, TECH_TILE_ID).ok, true);
+  const discarded = cards.discardFromHandAtIndex(player, 0);
+  assert.equal(discarded.ok, true);
+  cards.addToDiscardPile(candidate.cards, discarded.card);
+  assert.equal(rockets.removeRocket(candidate.pieces, 1).ok, true);
+  const orbit = planetStats.addPlanetOrbitMarker(
+    { planets: { mars: { orbits: 0, landings: 0, ...candidate.planets.planets.mars } } },
+    "mars",
+    player,
+  );
+  assert.equal(orbit.ok, true);
+  orbit.marker.sourcePieceId = 1;
 
-    const discarded = cards.discardFromHandAtIndex(player, 0);
-    assert.equal(discarded.ok, true);
-    cards.addToDiscardPile(slices.cards, discarded.card);
-
-    const removed = rockets.removeRocket(slices.pieces, 1);
-    assert.equal(removed.ok, true);
-    const orbit = planetStats.addPlanetOrbitMarker(
-      { planets: { mars: { orbits: 0, landings: 0, ...slices.planets.planets.mars } } },
-      "mars",
-      player,
-    );
-    assert.equal(orbit.ok, true);
-    orbit.marker.sourcePieceId = 1;
-    return { researched: TECH_TILE_ID, discarded: discarded.card.id, convertedPiece: 1 };
-  });
-  assert.equal(result.ok, true, JSON.stringify(result));
-  assert.equal(result.stateVersion, 1);
-  assert.equal(before.tech.stacks[TECH_TILE_ID].remaining, 4);
-  assert.equal(before.players.players[0].hand.length, 1);
-  assert.equal(before.pieces.rockets.length, 1);
-  assert.equal(result.snapshot.tech.stacks[TECH_TILE_ID].remaining, 3);
-  assert.equal(result.snapshot.players.players[0].techState.ownedTiles[TECH_TILE_ID], true);
-  assert.equal(result.snapshot.players.players[0].hand.length, 0);
-  assert.equal(result.snapshot.players.players[0].resources.handSize, 0);
-  assert.equal(result.snapshot.cards.discardPile[0].id, "card-1-hand");
-  assert.equal(result.snapshot.pieces.rockets.length, 0);
-  assert.equal(result.snapshot.pieces.activeRocketId, null);
-  assert.equal(result.snapshot.planets.planets.mars.orbitMarkers[0].sourcePieceId, 1);
+  const purified = highCoupling.purifyHighCouplingSlices(candidate);
+  const validation = store.validate(purified);
+  assert.equal(validation.ok, true, JSON.stringify(validation));
+  assert.equal(store.getSnapshot().tech.stacks[TECH_TILE_ID].remaining, 4);
+  assert.equal(purified.tech.stacks[TECH_TILE_ID].remaining, 3);
+  assert.equal(purified.players.players[0].techState.ownedTiles[TECH_TILE_ID], true);
+  assert.equal(purified.players.players[0].hand.length, 0);
+  assert.equal(purified.players.players[0].resources.handSize, 0);
+  assert.equal(purified.cards.discardPile[0].id, "card-1-hand");
+  assert.equal(purified.pieces.rockets.length, 0);
+  assert.equal(purified.pieces.activeRocketId, null);
+  assert.equal(purified.planets.planets.mars.orbitMarkers[0].sourcePieceId, 1);
 })();
 
 (function testInvariantFailuresAreZeroPollutionAcrossAllCoupledSlices() {
@@ -202,9 +198,9 @@ function bytes(store) {
   for (const testCase of cases) {
     const store = highCoupling.createHighCouplingStateStore(createState());
     const before = bytes(store);
-    const working = store.beginWorkingCopy(0);
-    testCase.mutate(Object.fromEntries(highCoupling.COORDINATED_SLICES.map((key) => [key, working.state[key]])));
-    const result = store.compareAndCommit(working.baseVersion, working.state);
+    const candidate = structuredClone(store.getSnapshot());
+    testCase.mutate(Object.fromEntries(highCoupling.COORDINATED_SLICES.map((key) => [key, candidate[key]])));
+    const result = store.validate(candidate);
     assert.equal(result.ok, false, testCase.code);
     assert.equal(result.code, testCase.code, JSON.stringify(result));
     if (testCase.code === "STATE_CARD_INSTANCE_ID_INVALID") {
@@ -230,9 +226,9 @@ function bytes(store) {
   const committedIndex = highCoupling.rebuildCardTaskIndex(store.getSnapshot(), "p1", {}, cardEffects);
   assert.equal(committedIndex.readyType2Tasks.length, 1);
   assert.equal(committedIndex.type1ReservedCards.length, 1);
-  const working = store.beginWorkingCopy(0);
-  working.state.players.players[0].reservedCards = [];
-  const workingIndex = highCoupling.rebuildCardTaskIndex(working.state, "p1", {}, cardEffects);
+  const candidate = structuredClone(store.getSnapshot());
+  candidate.players.players[0].reservedCards = [];
+  const workingIndex = highCoupling.rebuildCardTaskIndex(candidate, "p1", {}, cardEffects);
   assert.equal(workingIndex.readyType2Tasks.length, 0);
   assert.equal(store.getSnapshot().players.players[0].reservedCards.length, 1);
   assert.equal(bytes(store).includes("readyType2Tasks"), false);
@@ -269,14 +265,8 @@ function bytes(store) {
   assert.equal(result.code, "STATE_CARD_LOCATION_CONFLICT");
 })();
 
-(function testRecoveryAndStaleWriterParity() {
+(function testRecoveryParity() {
   const store = highCoupling.createHighCouplingStateStore(createState());
-  const stale = store.beginWorkingCopy(0);
-  assert.equal(highCoupling.mutateHighCouplingSlices(store, (slices) => {
-    slices.players.players[0].resources.credits -= 1;
-  }).ok, true);
-  stale.state.players.players[0].resources.credits = 99;
-  assert.equal(store.compareAndCommit(stale.baseVersion, stale.state).code, "STATE_VERSION_CONFLICT");
   const serialized = store.serialize();
   assert.equal(serialized.ok, true);
   const recovered = store.deserialize(serialized.serialized);

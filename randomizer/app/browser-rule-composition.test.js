@@ -421,9 +421,17 @@ function createHarness(initialValue = 0) {
   const appSource = fs.readFileSync(path.join(__dirname, "../app.js"), "utf8");
   const indexSource = fs.readFileSync(path.join(__dirname, "../index.html"), "utf8");
   assert.equal(fs.existsSync(path.join(__dirname, "browser-state-authority.js")), false, "旧 authority 文件必须物理删除");
+  assert.equal(fs.existsSync(path.join(__dirname, "../game/state/runtime-authority.js")), false, "无 caller RuntimeAuthority 必须物理删除");
   assert.match(appSource, /createBrowserRuleComposition\(/, "生产 app 必须实例化唯一 Rule Composition");
   assert.doesNotMatch(appSource, /createBrowserStateAuthority\(/, "生产 app 不得实例化旧 BrowserStateAuthority");
   assert.doesNotMatch(indexSource, /browser-state-authority\.js/, "生产脚本不得加载旧 authority owner");
+  for (const file of ["low-coupling-slices.js", "high-coupling-slices.js"]) {
+    const sliceSource = fs.readFileSync(path.join(__dirname, "../game/state", file), "utf8");
+    assert.doesNotMatch(sliceSource, /beginWorkingCopy\(|compareAndCommit\(/, `${file} 不得保留 Composition 外部 CAS 入口`);
+    assert.doesNotMatch(sliceSource, /mutate(?:Owned)?(?:Low|High)CouplingSlices/, `${file} 不得重建外部切片 mutator`);
+  }
+  const lowCouplingSource = fs.readFileSync(path.join(__dirname, "../game/state/low-coupling-slices.js"), "utf8");
+  assert.doesNotMatch(lowCouplingSource, /createLowCouplingStateStore/, "低耦合层不得暴露第二个 StateStore 构造入口");
   assert.match(indexSource, /browser-rule-composition\.js/, "生产脚本必须加载 Rule Composition");
   assert.match(appSource, /browserRuleComposition\.inputPort\.submitDecision\(/, "AI conditional caller 必须提交 Composition Decision");
   const dispatchInputSource = appSource.slice(

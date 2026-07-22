@@ -109,6 +109,12 @@ function bytes(store) {
   return serialized.serialized;
 }
 
+function createStore(initialState = createState()) {
+  return stateStore.createStateStore(lowCoupling.purifyLowCouplingSlices(initialState), {
+    invariantValidators: [lowCoupling.validateLowCouplingInvariants],
+  });
+}
+
 (function testOwnershipMatrixCoversEveryLowCouplingLegacyGroup() {
   assert.deepEqual(lowCoupling.LOW_COUPLING_SLICES, [
     "match", "turn", "solarSystem", "planets", "data", "aliens", "finalScoring",
@@ -134,33 +140,7 @@ function bytes(store) {
   });
 })();
 
-(function testLowCouplingMutationUsesWorkingCopyAndSingleAtomicCommit() {
-  const store = lowCoupling.createLowCouplingStateStore(createState());
-  const before = store.getSnapshot();
-  const result = lowCoupling.mutateLowCouplingSlices(store, (slices) => {
-    slices.solarSystem.rotation.rotationCount += 1;
-    slices.turn.turnNumber += 1;
-    slices.turn.currentPlayerId = "p2";
-    slices.planets.planets.mars.landingMarkers.push({ playerId: "p2", color: "green" });
-    slices.data.sectorExtraMarks["sector-1"] = [{ playerId: "p1", color: "blue" }];
-    slices.aliens.aliens[1].revealed = true;
-    slices.finalScoring.tiles.a.marks.push({
-      id: "mark-2", tileId: "a", playerId: "p2", playerColor: "green",
-      threshold: 50, slotIndex: 2, slot3Order: null,
-    });
-    return "board-turn-alien-final";
-  });
-  assert.equal(result.ok, true, JSON.stringify(result));
-  assert.equal(result.stateVersion, 1);
-  assert.equal(result.result, "board-turn-alien-final");
-  assert.equal(before.meta.stateVersion, 0);
-  assert.equal(before.turn.turnNumber, 3);
-  assert.equal(result.snapshot.turn.currentPlayerId, "p2");
-  assert.equal(result.snapshot.planets.planets.mars.landingMarkers.length, 1);
-  assert.equal(result.snapshot.finalScoring.tiles.a.marks.length, 2);
-})();
-
-(function testAllInvariantAndOwnershipFailuresLeaveCommittedBytesUnchanged() {
+(function testAllInvariantFailuresRejectCandidateAndLeaveCommittedBytesUnchanged() {
   const cases = [
     {
       code: "STATE_PLAYER_REFERENCE_INVALID",
@@ -192,38 +172,20 @@ function bytes(store) {
     },
   ];
   for (const testCase of cases) {
-    const store = lowCoupling.createLowCouplingStateStore(createState());
+    const store = createStore();
     const before = bytes(store);
-    const result = lowCoupling.mutateLowCouplingSlices(store, testCase.mutate);
+    const candidate = structuredClone(store.getSnapshot());
+    const slices = Object.fromEntries(lowCoupling.LOW_COUPLING_SLICES.map((key) => [key, candidate[key]]));
+    testCase.mutate(slices);
+    const result = store.validate(candidate);
     assert.equal(result.ok, false, testCase.code);
     assert.equal(result.code, testCase.code, JSON.stringify(result));
     assert.equal(bytes(store), before, testCase.code);
     assert.equal(store.getSnapshot().meta.stateVersion, 0);
   }
-
-  const protectedStore = lowCoupling.createLowCouplingStateStore(createState());
-  const protectedBefore = bytes(protectedStore);
-  const protectedResult = lowCoupling.mutateLowCouplingSlices(protectedStore, (_slices, root) => {
-    root.cards.injected = true;
-  });
-  assert.equal(protectedResult.code, "STATE_SLICE_OWNERSHIP_VIOLATION");
-  assert.equal(bytes(protectedStore), protectedBefore);
 })();
 
-(function testStaleWritersOnlyIncrementVersionOnTheWinner() {
-  const store = lowCoupling.createLowCouplingStateStore(createState());
-  const stale = store.beginWorkingCopy(0);
-  assert.equal(lowCoupling.mutateLowCouplingSlices(store, (slices) => {
-    slices.turn.turnNumber = 4;
-  }).ok, true);
-  stale.state.turn.turnNumber = 99;
-  const conflict = store.compareAndCommit(stale.baseVersion, stale.state);
-  assert.equal(conflict.code, "STATE_VERSION_CONFLICT");
-  assert.equal(store.getSnapshot().meta.stateVersion, 1);
-  assert.equal(store.getSnapshot().turn.turnNumber, 4);
-})();
-
-(function testDomainBehaviorsRunAgainstOneWorkingCopyAndRecoverWithParity() {
+(function testDomainBehaviorsProduceOneValidPurifiedCandidateAndRecoveryParity() {
   const initial = createState();
   initial.planets = {
     planets: Object.fromEntries(planetStats.PLANET_IDS.map((planetId) => [planetId, {
@@ -237,49 +199,46 @@ function bytes(store) {
     tiles: { a: { id: "a", marks: [] } },
     tileVariants: { a: 1 },
   };
-  const store = lowCoupling.createLowCouplingStateStore(initial);
-  const result = lowCoupling.mutateOwnedLowCouplingSlices(store, (working) => {
-    const wheelIds = solar.getNextOrbitWheelIds(working.solarSystem.rotation.rotationCount);
-    const rotation = solar.applySolarOrbitRotation(working.solarSystem);
-    working.solarSystem.rotation = rotation;
-    working.turn.turnNumber += 1;
-    working.turn.currentPlayerId = "p2";
-    assert.equal(planetStats.addPlanetOrbitMarker(
-      working.planets, "mars", { id: "p1", color: "blue" },
-    ).ok, true);
-    for (const traceType of ["yellow", "pink", "blue"]) {
-      assert.equal(alienState.placeFirstTrace(working.aliens, 1, traceType, "blue").ok, true);
-    }
-    assert.equal(alienState.revealAlien(working.aliens, 1, "alien-a").ok, true);
-    assert.equal(finalScoring.placeDirectMarkAtSlot(
-      working.finalScoring,
-      "a",
-      { id: "p1", color: "blue", colorLabel: "蓝色" },
-      1,
-      { threshold: 25, tokenSrc: "host-token.png", placedAt: "2026-07-19T00:00:00.000Z" },
-    ).ok, true);
-    return { wheelIds };
-  });
-  assert.equal(result.ok, true, JSON.stringify(result));
-  assert.equal(result.stateVersion, 1);
-  assert.ok(result.result.wheelIds.length > 0);
-  const committed = store.getSnapshot();
-  assert.equal(committed.turn.turnNumber, 4);
-  assert.equal(committed.turn.currentPlayerId, "p2");
-  assert.equal(committed.planets.planets.mars.orbitMarkers.length, 1);
-  assert.equal(committed.aliens.aliens[1].revealed, true);
-  assert.equal(committed.finalScoring.tiles.a.marks.length, 1);
-  assert.equal(Object.hasOwn(committed.finalScoring.tiles.a.marks[0], "tokenSrc"), false);
-  assert.equal(Object.hasOwn(committed.finalScoring.tiles.a.marks[0], "placedAt"), false);
+  const store = createStore(initial);
+  const working = structuredClone(store.getSnapshot());
+  const wheelIds = solar.getNextOrbitWheelIds(working.solarSystem.rotation.rotationCount);
+  working.solarSystem.rotation = solar.applySolarOrbitRotation(working.solarSystem);
+  working.turn.turnNumber += 1;
+  working.turn.currentPlayerId = "p2";
+  assert.equal(planetStats.addPlanetOrbitMarker(
+    working.planets, "mars", { id: "p1", color: "blue" },
+  ).ok, true);
+  for (const traceType of ["yellow", "pink", "blue"]) {
+    assert.equal(alienState.placeFirstTrace(working.aliens, 1, traceType, "blue").ok, true);
+  }
+  assert.equal(alienState.revealAlien(working.aliens, 1, "alien-a").ok, true);
+  assert.equal(finalScoring.placeDirectMarkAtSlot(
+    working.finalScoring,
+    "a",
+    { id: "p1", color: "blue", colorLabel: "蓝色" },
+    1,
+    { threshold: 25, tokenSrc: "host-token.png", placedAt: "2026-07-19T00:00:00.000Z" },
+  ).ok, true);
+  const candidate = lowCoupling.purifyLowCouplingSlices(working);
+  const validation = store.validate(candidate);
+  assert.equal(validation.ok, true, JSON.stringify(validation));
+  assert.ok(wheelIds.length > 0);
+  assert.equal(candidate.turn.turnNumber, 4);
+  assert.equal(candidate.turn.currentPlayerId, "p2");
+  assert.equal(candidate.planets.planets.mars.orbitMarkers.length, 1);
+  assert.equal(candidate.aliens.aliens[1].revealed, true);
+  assert.equal(candidate.finalScoring.tiles.a.marks.length, 1);
+  assert.equal(Object.hasOwn(candidate.finalScoring.tiles.a.marks[0], "tokenSrc"), false);
+  assert.equal(Object.hasOwn(candidate.finalScoring.tiles.a.marks[0], "placedAt"), false);
 
-  const serialized = store.serialize();
+  const serialized = store.serialize(candidate);
   const recovered = store.deserialize(serialized.serialized);
   assert.equal(recovered.ok, true);
-  assert.deepEqual(recovered.state, committed);
+  assert.deepEqual(recovered.state, candidate);
   assert.equal(recovered.state.planets.planets.mars.orbitMarkers.length, 1);
   assert.deepEqual(
     solar.rotationToWheelSteps(recovered.state.solarSystem.rotation),
-    solar.rotationToWheelSteps(committed.solarSystem.rotation),
+    solar.rotationToWheelSteps(candidate.solarSystem.rotation),
   );
   assert.equal(recovered.state.aliens.aliens[1].revealed, true);
   assert.equal(recovered.state.finalScoring.tiles.a.marks[0].playerId, "p1");

@@ -43,7 +43,7 @@ Browser and training hosts own projections, observations and policy/UI state.
 
 ## 低耦合切片 ownership
 
-`low-coupling-slices.js` 是以下字段分类的可执行版本。领域函数只在 StateStore working copy 的显式切片上运行，净化后 compare-and-commit；没有第二份 committed authority。
+`low-coupling-slices.js` 是以下字段分类的可执行版本。它只提供净化与不变量；规则事务统一由 Rule Composition 的 Effect Session 执行并提交，没有第二份 StateStore 构造、committed authority 或切片级 CAS 入口。
 
 | 旧字段 | v1 ownership | 净化 / 投影规则 |
 |---|---|---|
@@ -67,7 +67,7 @@ Stage 3 不净化 `players/pieces/cards/tech` 的内部字段；它们由 Stage 
 
 ## 高耦合切片 ownership
 
-`high-coupling-slices.js` 管理 `players/pieces/cards/tech`，并允许 `planets` 作为棋子转环绕/登陆标记时的协调切片。`mutateHighCouplingSlices()` 只生成一个 working copy；cards、rocket、planet、tech 领域函数在该副本上完成一次行为，净化后通过一次 compare-and-commit 替换根状态。该 mutator 不拥有 Effect Session queue、Standard Action 语义或 app continuation。
+`high-coupling-slices.js` 管理 `players/pieces/cards/tech`，并校验 `planets` 中棋子转环绕/登陆标记的跨切片引用。它只提供净化、不变量、StateStore 构造与派生任务索引；cards、rocket、planet、tech 领域变更必须在 Rule Composition 的同一 Effect Session working state 中完成，模块不再暴露外部 CAS mutator。
 
 | 旧字段 / 行为 | v1 ownership | 净化 / 不变量 |
 |---|---|---|

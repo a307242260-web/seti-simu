@@ -286,58 +286,11 @@
     return errors.length ? { ok: false, errors } : { ok: true };
   }
 
-  function createLowCouplingStateStore(initialState, options = {}) {
-    const validators = [validateLowCouplingInvariants, ...(options.invariantValidators || [])];
-    return stateStore.createStateStore(purifyLowCouplingSlices(initialState), {
-      ...options,
-      invariantValidators: validators,
-    });
-  }
-
-  function mutateLowCouplingSlices(store, mutator) {
-    if (!store || typeof store.beginWorkingCopy !== "function") throw new TypeError("必须传入 StateStore");
-    if (typeof mutator !== "function") throw new TypeError("mutator 必须是函数");
-    const snapshot = store.getSnapshot();
-    const working = store.beginWorkingCopy(snapshot.meta.stateVersion);
-    if (!working.ok) return working;
-    const protectedSlices = stateStore.REQUIRED_ROOT_SLICES.filter((key) => (
-      key !== "meta" && !LOW_COUPLING_SLICES.includes(key)
-    ));
-    let result;
-    try {
-      result = mutator(Object.fromEntries(LOW_COUPLING_SLICES.map((key) => [key, working.state[key]])), working.state);
-    } catch (cause) {
-      return { ok: false, code: "STATE_MUTATOR_FAILED", message: cause?.message || "低耦合状态变更失败" };
-    }
-    for (const key of protectedSlices) {
-      if (JSON.stringify(working.state[key]) !== JSON.stringify(snapshot[key])) {
-        return { ok: false, code: "STATE_SLICE_OWNERSHIP_VIOLATION", slice: key };
-      }
-    }
-    const committed = store.compareAndCommit(working.baseVersion, working.state);
-    return committed.ok ? { ...committed, result } : committed;
-  }
-
-  function mutateOwnedLowCouplingSlices(store, mutator) {
-    return mutateLowCouplingSlices(store, (slices, workingState) => {
-      const result = mutator(slices, workingState);
-      const purified = purifyLowCouplingSlices(workingState);
-      for (const key of LOW_COUPLING_SLICES) {
-        workingState[key] = purified[key];
-        slices[key] = purified[key];
-      }
-      return result;
-    });
-  }
-
   return Object.freeze({
     LOW_COUPLING_SLICES,
     FIELD_OWNERSHIP,
     PRESENTATION_KEYS,
     purifyLowCouplingSlices,
     validateLowCouplingInvariants,
-    createLowCouplingStateStore,
-    mutateLowCouplingSlices,
-    mutateOwnedLowCouplingSlices,
   });
 });
