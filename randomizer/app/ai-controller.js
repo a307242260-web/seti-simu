@@ -1902,6 +1902,7 @@
       runAiAutoBattle,
       runAiAutoBattleBatch,
       runAiActionEffectStep,
+      recoverAiIdleActionEffectStep,
       runAiAutomationStep,
       runAiNonTurnAutomationStep,
       runAiSelectedTurnAction,
