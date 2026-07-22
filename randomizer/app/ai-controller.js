@@ -54,7 +54,6 @@
       aiBattleReportModule,
       aiExperimentRunnerModule,
       getRuleReadout,
-      cardTaskState,
       ruleLifecycle,
       historyStepOrder,
       els,
