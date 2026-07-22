@@ -510,6 +510,24 @@
           return { ok: true };
         case "ai_choose_initial_selection":
           return chooseInitialSelectionForAiPlayerForRoot(workingRoot);
+        case "ai_execute_turn_action":
+          return cloneResidentPresentation(executeAiTurnActionForRoot(workingRoot, command.action));
+        case "ai_resolve_to_turn_boundary":
+          return cloneResidentPresentation(resolveAiAutomationToTurnBoundaryForRoot(workingRoot, command.options));
+        case "ai_run_automation_step":
+          return cloneResidentPresentation(runAiAutomationStepForRoot(workingRoot));
+        case "ai_run_action_effect_step":
+          return cloneResidentPresentation(runAiActionEffectStepForRoot(workingRoot));
+        case "ai_run_non_turn_step":
+          return cloneResidentPresentation(runAiNonTurnAutomationStepForRoot(workingRoot));
+        case "ai_run_selected_turn_action":
+          return cloneResidentPresentation(runAiSelectedTurnActionForRoot(workingRoot, command.selector, command.options));
+        case "headless_enumerate_turn_actions":
+          return { ok: true, value: enumerateHeadlessTurnActionsForRoot(workingRoot) };
+        case "headless_execute_conditional_action":
+          return cloneResidentPresentation(
+            conditionalActionExecutor.execute(workingRoot, command.action?.standardAction || command.action),
+          );
         case "headless_advance_deterministic":
           return advanceHeadlessDeterministicStateImpl() || { ok: true, progressed: false };
         case "headless_execute_current_effect":
@@ -4009,14 +4027,27 @@
   const chooseInitialSelectionForAiPlayer = () => browserRuleComposition.inputPort.submitHostCommand({
     kind: "ai_choose_initial_selection",
   });
-  const enumerateHeadlessTurnActions = (...args) => enumerateHeadlessTurnActionsForRoot(browserRuleState, ...args);
-  const executeAiTurnAction = (...args) => executeAiTurnActionForRoot(browserRuleState, ...args);
+  const enumerateHeadlessTurnActions = () => browserRuleComposition.inputPort.submitHostCommand(
+    { kind: "headless_enumerate_turn_actions" },
+    { commit: false },
+  ).value || [];
+  const executeAiTurnAction = (action) => browserRuleComposition.inputPort.submitHostCommand({
+    kind: "ai_execute_turn_action",
+    action,
+  });
   const listCardTriggerFreeMoveCandidates = (...args) => listCardTriggerFreeMoveCandidatesForRoot(browserRuleState, ...args);
-  const resolveAiAutomationToTurnBoundary = (...args) => resolveAiAutomationToTurnBoundaryForRoot(browserRuleState, ...args);
-  const runAiAutomationStep = (...args) => runAiAutomationStepForRoot(browserRuleState, ...args);
-  const runAiActionEffectStep = (...args) => runAiActionEffectStepForRoot(browserRuleState, ...args);
-  const runAiNonTurnAutomationStep = (...args) => runAiNonTurnAutomationStepForRoot(browserRuleState, ...args);
-  const runAiSelectedTurnAction = (...args) => runAiSelectedTurnActionForRoot(browserRuleState, ...args);
+  const resolveAiAutomationToTurnBoundary = (options = {}) => browserRuleComposition.inputPort.submitHostCommand({
+    kind: "ai_resolve_to_turn_boundary",
+    options,
+  });
+  const runAiAutomationStep = () => browserRuleComposition.inputPort.submitHostCommand({ kind: "ai_run_automation_step" });
+  const runAiActionEffectStep = () => browserRuleComposition.inputPort.submitHostCommand({ kind: "ai_run_action_effect_step" });
+  const runAiNonTurnAutomationStep = () => browserRuleComposition.inputPort.submitHostCommand({ kind: "ai_run_non_turn_step" });
+  const runAiSelectedTurnAction = (selector = {}, options = {}) => browserRuleComposition.inputPort.submitHostCommand({
+    kind: "ai_run_selected_turn_action",
+    selector,
+    options,
+  });
   const cardRuntime = cardRuntimeModule.createCardRuntime({
     decisionSessions,
     HISTORY_SOURCE_MAIN,
@@ -10517,8 +10548,10 @@
         message: "条件动作缺少匹配的 Standard Action descriptor",
       };
     }
-    const actorPlayer = getHeadlessDecisionOwnerState()?.actorPlayer || null;
-    return dispatchBrowserRuleInput({ standardAction });
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "headless_execute_conditional_action",
+      action: standardAction,
+    });
   }
 
   function advanceHeadlessDeterministicStateImpl() {

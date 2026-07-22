@@ -379,7 +379,7 @@ function createHarness(initialValue = 0) {
   assert.doesNotMatch(appSource, /createBrowserStateAuthority\(/, "生产 app 不得实例化旧 BrowserStateAuthority");
   assert.doesNotMatch(indexSource, /browser-state-authority\.js/, "生产脚本不得加载旧 authority owner");
   assert.match(indexSource, /browser-rule-composition\.js/, "生产脚本必须加载 Rule Composition");
-  assert.match(appSource, /dispatchBrowserRuleInput\(\{ standardAction \}\)/, "AI conditional caller 必须进入 composition inputPort");
+  assert.match(appSource, /kind: "headless_execute_conditional_action"/, "AI conditional caller 必须进入 composition inputPort");
   const dispatchInputSource = appSource.slice(
     appSource.indexOf("function dispatchBrowserRuleInput"),
     appSource.indexOf("const runtime = runtimeModule.createRuntime"),
