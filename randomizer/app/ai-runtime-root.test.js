@@ -5,6 +5,7 @@ const { createInteractionPendingRuntime } = require("./ai/interaction-pending");
 const { createActionExecutor } = require("./ai/action-executor");
 const { createAutomationRuntime } = require("./ai/automation-runtime");
 const { createTechCandidates } = require("../game/ai/tech-candidates");
+const { createFinalPace } = require("../game/ai/final-pace");
 
 function contextWith(overrides = {}) {
   const fallback = () => null;
@@ -122,6 +123,25 @@ const players = {
   }));
   assert.equal(runtime.runAiAutomationStep(rootB).rootId, "b");
   assert.throws(() => runtime.runAiAutomationStep(), /explicit workingRoot/);
+}
+
+{
+  const rootA = createRoot("a", 1);
+  rootA.playerState.players.push({ id: "b", resources: {} });
+  rootA.turnState.activePlayerIds = ["a", "b"];
+  const rootB = createRoot("b", 3);
+  let readout = rootA;
+  const finalPace = createFinalPace(contextWith({
+    aiNumber: Number,
+    DEFAULT_ACTIVE_PLAYER_COUNT: 4,
+    FINAL_ROUND_NUMBER: 4,
+    getRuleReadout: () => readout,
+  }));
+  assert.equal(finalPace.getAiRoundNumber(), 1);
+  assert.equal(finalPace.getAiActiveOpponentCount(rootA.playerState.players[0]), 1);
+  readout = rootB;
+  assert.equal(finalPace.getAiRoundNumber(), 3);
+  assert.equal(finalPace.getAiActiveOpponentCount(rootB.playerState.players[0]), 0);
 }
 
 {

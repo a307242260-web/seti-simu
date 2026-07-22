@@ -23,16 +23,15 @@
       aliens,
       fangzhou,
       ai,
-      nebulaDataState,
-      alienGameState,
-      finalScoringState,
-      playerState,
-      turnState,
-      planetStatsState,
       DEFAULT_ACTIVE_PLAYER_COUNT,
       FINAL_ROUND_NUMBER,
       MOVE_ENERGY_COST,
     } = context;
+    const readRuleRoot = () => {
+      const workingRoot = context.getRuleReadout?.();
+      if (!workingRoot) throw new TypeError("AI final pace requires a StateSource rule readout");
+      return workingRoot;
+    };
     const aiNumber = (...args) => context.aiNumber(...args);
     const computePlayerFinalScoreBreakdown = (...args) => context.computePlayerFinalScoreBreakdown(...args);
     const countAiPlayerTech = (...args) => context.countAiPlayerTech(...args);
@@ -167,6 +166,7 @@
 
     function countAiFinalMarksForPlayer(player = getCurrentPlayer()) {
       if (!player) return 0;
+      const { finalScoringState } = readRuleRoot();
       finalScoring.ensureFinalScoringState(finalScoringState);
       return Object.values(finalScoringState.tiles || {})
         .reduce((total, tile) => (
@@ -178,6 +178,7 @@
 
     function getAiActiveOpponentCount(player = getCurrentPlayer()) {
       if (!player) return 0;
+      const { playerState, turnState } = readRuleRoot();
       const activeIds = Array.isArray(turnState.activePlayerIds) && turnState.activePlayerIds.length
         ? turnState.activePlayerIds
         : (playerState.players || []).slice(0, Math.max(1, Math.round(aiNumber(turnState.activePlayerCount) || DEFAULT_ACTIVE_PLAYER_COUNT))).map((item) => item.id);
@@ -188,6 +189,7 @@
 
     function getAiMarkedFinalFormulaEntries(player = getCurrentPlayer()) {
       if (!player || !endGameScoring?.getFormulaId || !finalScoring?.getTileVariant) return [];
+      const { finalScoringState } = readRuleRoot();
       finalScoring.ensureFinalScoringState(finalScoringState);
       return Object.values(finalScoringState.tiles || {}).flatMap((tile) => {
         const variant = finalScoring.getTileVariant(finalScoringState, tile.id);
@@ -215,6 +217,7 @@
         return { entries: [], b2: null };
       }
       const context = createActionContext();
+      const { nebulaDataState, planetStatsState } = readRuleRoot();
       const progressEntries = markedEntries.map((entry) => {
         const baseValue = Math.max(0, aiNumber(endGameScoring.getFormulaBaseValue(
           entry.formulaId,
@@ -275,6 +278,7 @@
       if (!player || !endGameScoring?.getFormulaId || !finalScoring?.getTileVariant) return [];
       if (countAiFinalMarksForPlayer(player) >= 3) return [];
       const wanted = new Set((formulaIds || []).filter(Boolean));
+      const { finalScoringState } = readRuleRoot();
       finalScoring.ensureFinalScoringState(finalScoringState);
       const round = getAiRoundNumber();
       const currentScore = Math.max(0, aiNumber(player.resources?.score));
@@ -531,11 +535,13 @@
     }
 
     function getAiRemainingRoundWeight() {
+      const { turnState } = readRuleRoot();
       const round = Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1));
       return Math.max(1, FINAL_ROUND_NUMBER - round + 1);
     }
 
     function getAiRoundNumber() {
+      const { turnState } = readRuleRoot();
       return Math.max(1, Math.round(aiNumber(turnState.roundNumber) || 1));
     }
 
@@ -855,6 +861,7 @@
 
     function canAiFangzhouTracePlacementScoreAtLeast(player, traceType, minScore) {
       if (!player || !fangzhou?.isFangzhouRevealedSlot) return false;
+      const { alienGameState } = readRuleRoot();
       const neededScore = Math.max(1, aiNumber(minScore));
       return (aliens.ALIEN_SLOT_IDS || []).some((alienSlotId) => {
         if (!fangzhou.isFangzhouRevealedSlot(alienGameState, alienSlotId)) return false;
