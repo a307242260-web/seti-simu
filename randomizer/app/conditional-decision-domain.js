@@ -15,6 +15,7 @@
       getPendingProbeSectorScanDecision,
       getHeadlessConditionalPlayer,
       decisionSessions,
+      getPendingChongFossilChoice,
       getPlayerById,
       decisionState,
       cards,
@@ -194,7 +195,7 @@
         }),
       };
     }
-    const chongFossilPending = decisionSessions.peek("chong_fossil_choice");
+    const chongFossilPending = getPendingChongFossilChoice();
     if (chongFossilPending) {
       return {
         actorPlayer: getHeadlessConditionalPlayer(chongFossilPending),

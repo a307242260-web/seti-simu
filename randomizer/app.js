@@ -784,7 +784,7 @@
               .filter((candidate) => candidate?.available !== false);
             if (candidates.length) {
               if (candidates[0]?.target?.kind === "chong-fossil-choice") {
-                decisionSessions.clear("chong_fossil_choice");
+                alienSpeciesRuntime?.takeChongFossilDecisionDraft?.();
               }
               return {
                 ok: true,
@@ -1001,6 +1001,7 @@
     FINAL_SCORE_IDS,
     getCurrentPlayer,
     getPendingProbeSectorScanDecision,
+    getPendingChongFossilChoice,
     getHeadlessConditionalPlayer,
     get decisionSessions() { return decisionSessions; },
     getPlayerById,
@@ -4117,7 +4118,7 @@
     get pendingBanrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
     get pendingBanrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
     get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
-    get pendingChongFossilChoice() { return decisionSessions.peek("chong_fossil_choice"); },
+    get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
     get pendingAmibaCardGain() { return decisionSessions.peek("amiba_card_gain"); },
     get pendingAmibaSymbolChoice() { return decisionSessions.peek("amiba_symbol_choice"); },
     get pendingAmibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
@@ -5395,7 +5396,7 @@
       delete workingRoot.match.banrenmaOpportunityQueue;
     }
     decisionSessions.clear("chong_card_gain");
-    decisionSessions.clear("chong_fossil_choice");
+    alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     decisionSessions.clear("amiba_card_gain");
     decisionSessions.clear("amiba_symbol_choice");
@@ -6861,7 +6862,7 @@
       || decisionSessions.peek("banrenma_opportunity")
       || getPendingChongTaskCompletion()
       || decisionSessions.peek("chong_card_gain")
-      || decisionSessions.peek("chong_fossil_choice")
+      || getPendingChongFossilChoice()
       || decisionSessions.peek("amiba_card_gain")
       || decisionSessions.peek("amiba_symbol_choice")
       || decisionSessions.peek("amiba_trace_removal")
@@ -7169,7 +7170,7 @@
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
     decisionSessions.clear("yichangdian_corner_action");
     decisionSessions.clear("chong_card_gain");
-    decisionSessions.clear("chong_fossil_choice");
+    alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
     decisionSessions.clear("amiba_card_gain");
     decisionSessions.clear("amiba_symbol_choice");
@@ -8390,6 +8391,9 @@
   }
 
   let alienSpeciesRuntime = null;
+  function getPendingChongFossilChoice() {
+    return alienSpeciesRuntime?.getChongFossilDecisionDraft?.() || null;
+  }
   function getAlienTraceLayer(...args) { return alienSpeciesRuntime.getAlienTraceLayer(...args); }
   function getAlienJiuzheTraceLayer(...args) { return alienSpeciesRuntime.getAlienJiuzheTraceLayer(...args); }
   function getAlienYichangdianCardArea(...args) { return alienSpeciesRuntime.getAlienYichangdianCardArea(...args); }
@@ -11039,7 +11043,7 @@
       decisionState.actionEffectFlow?.cardMoveEffect,
       getPendingCardCornerFreeMove(),
       getPendingStrategySlotDecision(),
-      decisionSessions.peek("chong_fossil_choice"),
+      getPendingChongFossilChoice(),
       decisionSessions.peek("amiba_symbol_choice"),
       decisionState.discardAction,
       decisionState.cardSelectionAction,
@@ -11783,7 +11787,7 @@
 
   const appEventState = {
     get pendingChongTaskCompletion() { return getPendingChongTaskCompletion(); },
-    get pendingChongFossilChoice() { return decisionSessions.peek("chong_fossil_choice"); },
+    get pendingChongFossilChoice() { return getPendingChongFossilChoice(); },
     get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
     get pendingAmibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
     get pendingAmibaSymbolChoice() { return decisionSessions.peek("amiba_symbol_choice"); },

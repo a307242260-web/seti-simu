@@ -999,7 +999,6 @@
         decisionSessions?.peek?.("banrenma_card_gain"),
         decisionSessions?.peek?.("banrenma_opportunity"),
         decisionSessions?.peek?.("chong_card_gain"),
-        decisionSessions?.peek?.("chong_fossil_choice"),
         decisionSessions?.peek?.("chong_task_completion"),
         decisionSessions?.peek?.("amiba_card_gain"),
         decisionSessions?.peek?.("amiba_symbol_choice"),

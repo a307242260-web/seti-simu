@@ -185,8 +185,6 @@
     const alienChoiceSessions = {
       get yichangdianCornerAction() { return decisionSessions.peek("yichangdian_corner_action"); },
       set yichangdianCornerAction(session) { replaceDecisionSession("yichangdian_corner_action", session); },
-      get chongFossilChoice() { return decisionSessions.peek("chong_fossil_choice"); },
-      set chongFossilChoice(session) { replaceDecisionSession("chong_fossil_choice", session); },
       get amibaSymbolChoice() { return decisionSessions.peek("amiba_symbol_choice"); },
       set amibaSymbolChoice(session) { replaceDecisionSession("amiba_symbol_choice", session); },
       get amibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
@@ -196,6 +194,18 @@
       get runezuFaceSymbolPlacement() { return decisionSessions.peek("runezu_face_symbol_placement"); },
       set runezuFaceSymbolPlacement(session) { replaceDecisionSession("runezu_face_symbol_placement", session); },
     };
+    let chongFossilDecisionDraft = null;
+    function getChongFossilDecisionDraft() {
+      return chongFossilDecisionDraft;
+    }
+    function takeChongFossilDecisionDraft() {
+      const draft = chongFossilDecisionDraft;
+      chongFossilDecisionDraft = null;
+      return draft;
+    }
+    function clearChongFossilDecisionDraft() {
+      chongFossilDecisionDraft = null;
+    }
     const getOpportunityContinuationQueue = (workingRoot, field) => {
       requireWorkingRoot(workingRoot);
       if (!workingRoot.match || typeof workingRoot.match !== "object") workingRoot.match = {};
@@ -2659,7 +2669,7 @@ function restoreMutableObject(target, snapshot) {
   }
 
 function closeChongFossilChoiceDialog() {
-    alienChoiceSessions.chongFossilChoice = null;
+    clearChongFossilDecisionDraft();
     if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
   }
 
@@ -2685,7 +2695,7 @@ function openChongFossilChoiceDialog(workingRoot, options = {}) {
     const fossils = Array.isArray(options.fossils)
       ? options.fossils.filter(Boolean)
       : planetIds.flatMap((planetId) => chong.getAvailablePlanetFossils(alienGameState, planetId));
-    alienChoiceSessions.chongFossilChoice = {
+    chongFossilDecisionDraft = {
       mode: options.mode || "reward",
       playerId: player.id,
       planetIds,
@@ -2701,51 +2711,6 @@ function openChongFossilChoiceDialog(workingRoot, options = {}) {
     };
 
     rocketState.statusNote = "虫族化石：请选择 1 枚化石";
-    if (!els.scanTargetOverlay || !els.scanTargetActions || typeof document === "undefined") {
-      return { ok: true, awaitingChoice: true, fossils, message: rocketState.statusNote };
-    }
-
-    if (els.scanTargetTitle) els.scanTargetTitle.textContent = options.title || "选择虫族化石";
-    if (els.scanTargetSubtitle) {
-      const planetText = planetIds.map(getChongPlanetLabel).join(" / ");
-      els.scanTargetSubtitle.textContent = options.subtitle || `${planetText} 的化石已查看。选择 1 枚继续。`;
-    }
-    if (els.scanTargetCancel) els.scanTargetCancel.hidden = false;
-
-    const nodes = fossils.map((fossil) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "scan-target-option-button chong-fossil-choice-button";
-      button.dataset.chongFossilChoice = fossil.fossilId;
-      const fossilPlanetId = fossil.currentPlanetId || fossil.planetId || options.planetId || planetIds[0] || null;
-      const planetLabel = getChongPlanetLabel(fossilPlanetId);
-      const sourceLabel = fossil.rewardChoiceSource === "transport" || fossil.status === "transported"
-        ? `${planetLabel} 搬运化石`
-        : planetLabel;
-      const summary = formatChongFossilRewardSummary(fossil.fossilId);
-      button.setAttribute("aria-label", `${sourceLabel} ${fossil.fossilId}：${summary}`);
-      button.title = `${sourceLabel} ${fossil.fossilId}：${summary}`;
-
-      const image = document.createElement("img");
-      image.className = "chong-fossil-choice-image";
-      image.src = chong.getFossilSrc(fossil.fossilId);
-      image.alt = `${sourceLabel} ${fossil.fossilId}`;
-      image.width = 128;
-      image.height = 128;
-      image.decoding = "async";
-
-      const meta = document.createElement("small");
-      meta.textContent = summary;
-      button.append(image, meta);
-      return button;
-    });
-    if (!nodes.length) {
-      const empty = document.createElement("p");
-      empty.textContent = "没有可用化石。";
-      nodes.push(empty);
-    }
-    els.scanTargetActions.replaceChildren(...nodes);
-    els.scanTargetOverlay.hidden = false;
     renderAlienPanels(workingRoot);
     renderStateReadout();
     return { ok: true, awaitingChoice: true, fossils, message: rocketState.statusNote };
@@ -3005,7 +2970,7 @@ function handleChongTaskCompletionChoice(workingRoot, choice) {
 
 function handleChongFossilChoice(workingRoot, choice, pendingContext = null) {
     const { alienGameState, playerState, rocketState } = requireWorkingRoot(workingRoot);
-    const pending = pendingContext || alienChoiceSessions.chongFossilChoice;
+    const pending = pendingContext || getChongFossilDecisionDraft();
     if (!pending) return failChongTaskCompletion(workingRoot, "没有虫族化石选择流程");
     const player = resolveWorkingPlayerReference(workingRoot, { playerId: pending.playerId }) || getWorkingCurrentPlayer(workingRoot);
     if (!player) {
@@ -3459,7 +3424,7 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
       alienCardGainSessions.banrenmaCardGain ? { pending: alienCardGainSessions.banrenmaCardGain, label: "半人马外星人牌" } : null,
       alienOpportunitySessions.banrenmaOpportunity ? { pending: alienOpportunitySessions.banrenmaOpportunity, label: "半人马奖励" } : null,
       alienCardGainSessions.chongCardGain ? { pending: alienCardGainSessions.chongCardGain, label: "虫族外星人牌" } : null,
-      alienChoiceSessions.chongFossilChoice ? { pending: alienChoiceSessions.chongFossilChoice, label: "虫族化石" } : null,
+      getChongFossilDecisionDraft() ? { pending: getChongFossilDecisionDraft(), label: "虫族化石" } : null,
       getChongTaskCompletion() ? { pending: getChongTaskCompletion(), label: "虫族任务" } : null,
       alienCardGainSessions.amibaCardGain ? { pending: alienCardGainSessions.amibaCardGain, label: "阿米巴外星人牌" } : null,
       alienChoiceSessions.amibaSymbolChoice ? { pending: alienChoiceSessions.amibaSymbolChoice, label: "阿米巴 symbol" } : null,
@@ -4537,6 +4502,9 @@ function alignAlienPanelsToPlanets() {
       completeChongTransportTask,
       handleChongTaskCompletionChoice,
       handleChongFossilChoice,
+      getChongFossilDecisionDraft,
+      takeChongFossilDecisionDraft,
+      clearChongFossilDecisionDraft,
       openChongTraceTaskCompletionPicker,
       enqueueJiuzheOpportunity,
       isJiuzheThresholdOpportunity,
