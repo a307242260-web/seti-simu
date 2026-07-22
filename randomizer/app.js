@@ -726,7 +726,8 @@
       options: {
         actionFamilies: standardActionModule.ALL_FAMILIES,
         continuation: headlessMode ? {
-          inspect(workingRoot) {
+          inspect() {
+            const workingRoot = activeBrowserDomainWorkingRoot;
             const conditional = enumerateHeadlessConditionalActionsForRoot(workingRoot);
             const candidates = (conditional.candidates || [])
               .filter((candidate) => candidate?.available !== false);
@@ -2281,12 +2282,19 @@
     ),
     recordMoveActionHistory,
     executePrimaryBoardAction: (descriptor, executionOptions, options) => (
-      browserRuleComposition.inputPort.submitHostCommand({
-        kind: "ui_execute_primary_board_action",
-        descriptor,
-        executionOptions,
-        options,
-      })
+      activeBrowserDomainWorkingRoot
+        ? actionRuntimeController?.executePrimaryBoardAction(
+          createActionContextForWorkingRoot(activeBrowserDomainWorkingRoot, descriptor),
+          descriptor,
+          executionOptions,
+          options,
+        )
+        : browserRuleComposition.inputPort.submitHostCommand({
+          kind: "ui_execute_primary_board_action",
+          descriptor,
+          executionOptions,
+          options,
+        })
     ),
     renderRocketElement,
     clearMoveRocketHighlight,
