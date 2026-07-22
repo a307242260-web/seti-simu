@@ -2008,7 +2008,6 @@
     HISTORY_SOURCE_QUICK,
     ACTION_LOG_DEFAULT_LABELS,
     getCurrentPlayer,
-    getWorkingRoot: () => requireActiveBrowserWorkingRoot("effect flow"),
     getCurrentPlayerForRoot: (workingRoot) => players.getCurrentPlayer(workingRoot.playerState),
     markCurrentActionIrreversible,
     getIrreversibleReason,
@@ -2077,7 +2076,7 @@
   let ensureEffectHistorySession;
   let recordHistoryCommand;
   let recordQuickHistoryCommand;
-  let recordAbilityCommands;
+  let recordAbilityCommandsForRoot;
   let startPendingActionSession;
   let beginQuickActionStep;
   let completePendingActionStep;
@@ -2087,7 +2086,7 @@
   let clearHistoryStepOrderForSource;
   let getLatestUndoSource;
   let recordQuickTradeCompletion;
-  let recordAtomicActionHistory;
+  let recordAtomicActionHistoryForRoot;
   let startCardEffectFlow;
   let startPlayCardEffectFlow;
   let beginEffectHistoryStep;
@@ -2115,7 +2114,7 @@
     ensureEffectHistorySession,
     recordHistoryCommand,
     recordQuickHistoryCommand,
-    recordAbilityCommands,
+    recordAbilityCommands: recordAbilityCommandsForRoot,
     startPendingActionSession,
     beginQuickActionStep,
     completePendingActionStep,
@@ -2125,7 +2124,7 @@
     clearHistoryStepOrderForSource,
     getLatestUndoSource,
     recordQuickTradeCompletion,
-    recordAtomicActionHistory,
+    recordAtomicActionHistory: recordAtomicActionHistoryForRoot,
     startCardEffectFlow,
     startPlayCardEffectFlow,
     beginEffectHistoryStep,
@@ -2137,6 +2136,20 @@
     completeCurrentActionEffect,
     executeActionEffect,
   } = effectFlowHelpers);
+  function recordAbilityCommands(result, history = actionHistory, workingRoot = null) {
+    return recordAbilityCommandsForRoot(
+      workingRoot || requireActiveBrowserWorkingRoot("record ability commands"),
+      result,
+      history,
+    );
+  }
+  function recordAtomicActionHistory(actionType, label, result, options = {}) {
+    return recordAtomicActionHistoryForRoot(actionType, label, result, {
+      ...options,
+      workingRoot: options.workingRoot
+        || requireActiveBrowserWorkingRoot("record atomic action history"),
+    });
+  }
   ({
     resetActionBriefingState,
     rememberActionBriefingEntry,

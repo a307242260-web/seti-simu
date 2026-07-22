@@ -43,7 +43,6 @@
     const ACTION_LOG_DEFAULT_LABELS = context.ACTION_LOG_DEFAULT_LABELS || { quick: "快速行动" };
 
     const getCurrentPlayer = requireFunction("getCurrentPlayer", context.getCurrentPlayer);
-    const getWorkingRoot = requireFunction("getWorkingRoot", context.getWorkingRoot);
     const getCurrentPlayerForRoot = requireFunction(
       "getCurrentPlayerForRoot",
       context.getCurrentPlayerForRoot,
@@ -182,10 +181,13 @@
       quickActionHistory.record(command);
     }
 
-    function recordAbilityCommands(result, history = actionHistory) {
+    function recordAbilityCommands(workingRoot, result, history = actionHistory) {
+      if (!workingRoot?.turnState) {
+        throw new TypeError("recordAbilityCommands 缺少 workingRoot");
+      }
       if (!result) return;
       const commands = [];
-      const turnVisitCommand = recordTurnVisitPlanetEvents(getWorkingRoot(), result.events);
+      const turnVisitCommand = recordTurnVisitPlanetEvents(workingRoot, result.events);
       if (turnVisitCommand) commands.push(turnVisitCommand);
       recordNeutralScoreTracesFromAbilityResult(result, history);
       commands.push(...(result.commands || []));
@@ -335,7 +337,7 @@
 
     function recordAtomicActionHistory(actionType, label, result, options = {}) {
       startPendingActionSession(actionType, label, options);
-      recordAbilityCommands(result);
+      recordAbilityCommands(options.workingRoot, result);
       completePendingActionStep();
     }
 
