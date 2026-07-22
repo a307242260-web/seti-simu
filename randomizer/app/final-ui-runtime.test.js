@@ -168,6 +168,14 @@ const playerB = {
   techState: { ownedTiles: { orange: ["o1"] } },
   scoreSources: { initialScore: 4, scanScore: 1 },
 };
+const finalScoringState = {
+  tiles: { a: { marks: [] }, b: { marks: [] }, c: { marks: [] }, d: { marks: [] } },
+  pendingByPlayerId: { p1: { threshold: 70 } },
+};
+const alienGameState = { jiuzhe: { revealInitialized: false }, runezu: { revealInitialized: false } };
+const playerState = { currentPlayerId: "p1", players: [playerA, playerB] };
+const turnState = { activePlayerIds: ["p1", "p2"], roundNumber: 4 };
+const workingRoot = { finalScoringState, alienGameState, playerState, turnState, rocketState };
 const context = {
   document,
   structuredClone: global.structuredClone,
@@ -180,6 +188,9 @@ const context = {
     finalResultSubtitle,
   },
   players: {
+    getCurrentPlayer(state) {
+      return state.players.find((player) => player.id === state.currentPlayerId) || null;
+    },
     getPlayerColorDefinition(color) {
       return color === "white"
         ? { uiColor: "#fff", label: "白色" }
@@ -202,16 +213,11 @@ const context = {
       return { ok: true, message: `已标记 ${tileId}` };
     },
   },
-  finalScoringState: {
-    tiles: { a: { marks: [] }, b: { marks: [] }, c: { marks: [] }, d: { marks: [] } },
-    pendingByPlayerId: { p1: { threshold: 70 } },
-  },
   endGameScoring: {},
-  alienGameState: { jiuzhe: { revealInitialized: false }, runezu: { revealInitialized: false } },
-  playerState: { players: [playerA, playerB] },
-  turnState: { activePlayerIds: ["p1", "p2"], roundNumber: 4 },
   uiRuntimeState,
-  rocketState,
+  getRuleReadout() {
+    return structuredClone(workingRoot);
+  },
   FINAL_SCORE_SLOT_POINTS: {
     1: { x: 10, y: 20 },
     2: { x: 30, y: 40 },
@@ -330,9 +336,9 @@ assert.equal(finalScoreTileWraps[0].disabled, false);
 assert.equal(finalScoreTileWraps[0].title, "白色玩家标记 70 分门槛");
 assert.equal(finalScoreTileWraps[1].disabled, true);
 
-const markResult = runtime.handleFinalScoreTileClick("a");
+const markResult = runtime.handleFinalScoreTileClick(workingRoot, "a");
 assert.equal(markResult.ok, true);
-assert.equal(context.rocketState.statusNote, "已标记 a");
+assert.equal(rocketState.statusNote, "已标记 a");
 assert.equal(context.renderPlayerStatsCalled, 1);
 assert.equal(context.updateActionButtonsCalled, 1);
 

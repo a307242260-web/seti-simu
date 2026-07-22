@@ -553,6 +553,10 @@
           ));
         case "score_build_final_summary":
           return { ok: true, value: buildFinalScoreSummaryLinesForRoot(workingRoot) };
+        case "score_sync_pending_marks":
+          return cloneResidentPresentation(syncFinalScorePendingMarksForRoot(workingRoot));
+        case "score_mark_tile":
+          return cloneResidentPresentation(handleFinalScoreTileClickForRoot(workingRoot, command.tileId));
         case "ui_get_required_move_points":
           return { ok: true, value: getRequiredMovePointsForUiForRoot(workingRoot, ...(command.args || [])) };
         case "card_execute_free_move_corner":
@@ -1798,13 +1802,9 @@
     els,
     players,
     finalScoring,
-    finalScoringState,
     endGameScoring,
-    alienGameState,
-    playerState,
-    turnState,
     uiRuntimeState,
-    rocketState,
+    getRuleReadout: createStateSourceReadoutRoot,
     FINAL_SCORE_SLOT_POINTS,
     FINAL_ROUND_NUMBER,
     SCORE_SOURCE_KEYS,
@@ -1832,9 +1832,9 @@
     countPlayerOwnedTech: (...args) => countPlayerOwnedTechForActionLogExport?.(...args),
   });
   const {
-    syncFinalScorePendingMarks,
+    syncFinalScorePendingMarks: syncFinalScorePendingMarksForRoot,
     renderFinalScoreBoard,
-    handleFinalScoreTileClick,
+    handleFinalScoreTileClick: handleFinalScoreTileClickForRoot,
     buildFinalResultPlayerSummaries,
     syncFinalResultButton,
     openFinalResultDialog,
@@ -1843,6 +1843,25 @@
     maybeAutoOpenFinalResultDialog,
     buildActionLogExportPlayerResults,
   } = finalUiRuntime;
+  function syncFinalScorePendingMarks(workingRoot = null) {
+    const commandRoot = workingRoot || activeBrowserDomainWorkingRoot;
+    if (commandRoot) {
+      return syncFinalScorePendingMarksForRoot(commandRoot);
+    }
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "score_sync_pending_marks",
+    });
+  }
+  function handleFinalScoreTileClick(tileId, workingRoot = null) {
+    const commandRoot = workingRoot || activeBrowserDomainWorkingRoot;
+    if (commandRoot) {
+      return handleFinalScoreTileClickForRoot(commandRoot, tileId);
+    }
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "score_mark_tile",
+      tileId,
+    });
+  }
   const refreshHelpers = refreshModule.createRefreshHelpers({
     renderPlayerStats,
     renderAlienPanels,
@@ -10707,7 +10726,7 @@
   }
 
   function enumerateHeadlessConditionalActionsForRoot(workingRoot) {
-    syncFinalScorePendingMarks();
+    syncFinalScorePendingMarks(workingRoot);
     const decision = conditionalActionExecutor.inspect(workingRoot);
     const actorPlayer = decision?.ownerId ? getPlayerById(decision.ownerId) : null;
     if (!actorPlayer?.id || !decision?.choices?.length) {

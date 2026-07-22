@@ -902,7 +902,10 @@
     "runezu-symbol-branch": (action) => handleRunezuSymbolBranchChoice(action.target.choiceId),
     "runezu-face-symbol-choice": (action) => handleRunezuFaceSymbolChoice(action.target.choiceId),
     "amiba-symbol-choice": (action) => handleAmibaSymbolChoice(action.target.choiceId),
-    "final-score-tile": (action) => handleFinalScoreTileClick(action.target.choiceId),
+    "final-score-tile": (action, workingRoot) => handleFinalScoreTileClick(
+      action.target.choiceId,
+      workingRoot,
+    ),
     "research-tech-tile": (action, workingRoot) => {
       const result = handleSupplyTechTileClick(action.target.tileId || action.target.choiceId);
       if (result?.ok !== false && workingRoot.techGameState.ui.pendingTileId) {
