@@ -2,8 +2,6 @@
 
 const assert = require("node:assert/strict");
 const { createDebugRuntime } = require("./debug-runtime");
-const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
-const { attachDecisionState } = require("./test-decision-state");
 
 function createClassList() {
   const values = new Set();
@@ -79,10 +77,8 @@ function createBaseContext() {
     currentPlayerId: "p1",
   };
   const callLog = [];
-  const decisionSessions = createDecisionSessionStore();
-  const pendingState = attachDecisionState({}, decisionSessions);
+  const pendingState = {};
   const context = {
-    decisionSessions,
     window: {
       requestAnimationFrame(fn) {
         fn();

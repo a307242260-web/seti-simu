@@ -1,8 +1,6 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
-const { attachDecisionState } = require("./test-decision-state");
 const { createAlienUiHelpers } = require("./alien-ui");
 
 function createClassList() {
@@ -66,8 +64,6 @@ function createHarness() {
 
   const pendingState = {};
   const uiRuntimeState = { alienRevealConfirmation: null, alienTracePickerState: null };
-  const decisionSessions = createDecisionSessionStore();
-  attachDecisionState(pendingState, decisionSessions);
   const rocketState = { statusNote: "" };
   const alienGameState = {
     fangzhou: { revealedSlotId: 2 },
@@ -88,7 +84,6 @@ function createHarness() {
   const calls = { renderPanels: 0, readout: 0, unlock: [] };
 
   const helpers = createAlienUiHelpers({
-    decisionSessions,
     uiRuntimeState,
     document,
     structuredClone: global.structuredClone,

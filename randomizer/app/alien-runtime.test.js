@@ -2,8 +2,6 @@
 
 const assert = require("node:assert/strict");
 const { createAlienRuntimeHelpers } = require("./alien-runtime");
-const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
-const { attachDecisionState } = require("./test-decision-state");
 
 function createHarness(overrides = {}) {
   const calls = {
@@ -27,8 +25,6 @@ function createHarness(overrides = {}) {
       allowedAlienSlotIds: [1],
       allowedTraceTypes: ["yellow"],
     } };
-  const decisionSessions = createDecisionSessionStore();
-  attachDecisionState(pendingState, decisionSessions);
   const player = { id: "p1", color: "white", resources: {}, hand: [] };
   const playerState = { currentPlayerId: "p1", activePlayerIds: ["p1"], players: [player] };
   const alienGameState = {
@@ -39,7 +35,6 @@ function createHarness(overrides = {}) {
   const rocketState = { statusNote: "" };
   const actionEffect = { result: null };
   const context = {
-    decisionSessions,
     uiRuntimeState,
     structuredClone: global.structuredClone,
     aliens: {

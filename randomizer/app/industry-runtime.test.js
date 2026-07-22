@@ -2,18 +2,14 @@
 
 const assert = require("node:assert/strict");
 const { createIndustryRuntime } = require("./industry-runtime.js");
-const { createDecisionSessionStore } = require("../game/effects/decision-session-store.js");
-const { attachDecisionState } = require("./test-decision-state");
 
 function noop() {}
 
 function createHarness() {
   const calls = [];
-  const decisionSessions = createDecisionSessionStore();
   const pendingState = {
     discardAction: { type: "industry_helios_income" },
   };
-  attachDecisionState(pendingState, decisionSessions);
   const uiRuntimeState = {
     effectStepActive: true,
     moveHighlightRocketId: 4,
@@ -40,7 +36,6 @@ function createHarness() {
     },
     clearHistoryStepOrderForSource: (source) => calls.push(`clear:${source}`),
     deactivateMoveMode: () => calls.push("move-off"),
-    decisionSessions,
     els: {
       scanTargetOverlay: { hidden: false },
       scanTargetCancel: { hidden: true },
@@ -90,7 +85,7 @@ function createHarness() {
     techGameState,
     turnState: { roundNumber: 1, turnNumber: 1 },
   };
-  return { calls, context, decisionSessions, pendingState, techGameState, uiRuntimeState, workingRoot };
+  return { calls, context, pendingState, techGameState, uiRuntimeState, workingRoot };
 }
 
 {

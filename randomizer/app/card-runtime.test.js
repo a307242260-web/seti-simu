@@ -2,8 +2,6 @@
 
 const assert = require("node:assert/strict");
 const { createCardRuntime } = require("./card-runtime");
-const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
-const { attachDecisionState } = require("./test-decision-state");
 
 function createHarness() {
   const player = { id: "p1", hand: [] };
@@ -18,10 +16,7 @@ function createHarness() {
     calls.roots.push(workingRoot);
     return false;
   };
-  const decisionSessions = createDecisionSessionStore();
-  attachDecisionState(pendingState, decisionSessions);
   const runtime = createCardRuntime({
-    decisionSessions,
     pendingState,
     uiRuntimeState,
     els: {},
@@ -89,7 +84,7 @@ function createHarness() {
     turnState: { roundNumber: 2 },
     rocketState: { statusNote: "" },
   };
-  return { runtime, workingRoot, player, effect, pendingState, uiRuntimeState, calls, decisionSessions };
+  return { runtime, workingRoot, player, effect, pendingState, uiRuntimeState, calls };
 }
 
 {

@@ -2,8 +2,6 @@
 
 const assert = require("node:assert/strict");
 const { createScanFlowHelpers } = require("./scan-flow");
-const { createDecisionSessionStore } = require("../game/effects/decision-session-store");
-const { attachDecisionState } = require("./test-decision-state");
 
 function createBaseHarness() {
   const pendingState = {
@@ -40,8 +38,6 @@ function createBaseHarness() {
     discardPublic: [],
     abilityPlayers: [],
   };
-  const decisionSessions = createDecisionSessionStore();
-  attachDecisionState(pendingState, decisionSessions);
   const uiRuntimeState = {};
   const workingRoot = {
     match: { actionEffectFlow: { delayedPublicRefills: [] } },
@@ -55,7 +51,6 @@ function createBaseHarness() {
   };
 
   const helpers = createScanFlowHelpers({
-    decisionSessions,
     uiRuntimeState,
     clearPendingAmibaSymbolChoice() {},
     clearPendingRunezuSymbolBranch() {},
@@ -216,7 +211,6 @@ function createBaseHarness() {
     cardState,
     rocketState,
     player,
-    decisionSessions,
     uiRuntimeState,
     workingRoot,
   };
