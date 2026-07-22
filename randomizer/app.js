@@ -325,15 +325,11 @@
   });
 
   function executeBrowserDomainCommand(workingRoot, command) {
+    const target = resolveBrowserDomainTarget(command.domain);
     const allowed = BROWSER_DOMAIN_COMMANDS[command.domain];
-    if (!allowed?.has(command.operation)) {
+    if ((allowed && !allowed.has(command.operation)) || (!allowed && !Object.hasOwn(target || {}, command.operation))) {
       return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNKNOWN", message: `未知 Browser domain command: ${command.domain}.${command.operation}` };
     }
-    const target = command.domain === "scan_flow"
-      ? scanFlowHelpers
-      : command.domain === "alien_ui" ? alienUiHelpers
-        : command.domain === "turn_end" ? turnEndFlow
-          : command.domain === "action_interaction" ? actionInteractionRuntime : null;
     const method = target?.[command.operation];
     if (typeof method !== "function") {
       return { ok: false, code: "BROWSER_DOMAIN_COMMAND_UNAVAILABLE", message: `Browser domain command 未装配: ${command.domain}.${command.operation}` };
@@ -342,13 +338,25 @@
     return { ok: value?.ok !== false, value: cloneResidentPresentation(value) };
   }
 
+  function resolveBrowserDomainTarget(domain) {
+    switch (domain) {
+      case "scan_flow": return scanFlowHelpers;
+      case "alien_ui": return alienUiHelpers;
+      case "turn_end": return turnEndFlow;
+      case "action_interaction": return actionInteractionRuntime;
+      case "alien_runtime": return alienRuntimeHelpers;
+      case "alien_species": return alienSpeciesRuntime;
+      case "card_runtime": return cardRuntime;
+      case "card_trigger": return cardTriggerRuntime;
+      case "industry_runtime": return industryRuntime;
+      case "tech_runtime": return techRuntime;
+      default: return null;
+    }
+  }
+
   function callBrowserDomainCommand(domain, operation, args = []) {
     if (headlessMode) {
-      const target = domain === "scan_flow"
-        ? scanFlowHelpers
-        : domain === "alien_ui" ? alienUiHelpers
-          : domain === "turn_end" ? turnEndFlow
-            : domain === "action_interaction" ? actionInteractionRuntime : null;
+      const target = resolveBrowserDomainTarget(domain);
       return target?.[operation]?.(browserRuleState, ...args);
     }
     try {
@@ -361,6 +369,10 @@
     } catch (error) {
       throw new Error(`${domain}.${operation}: ${error?.message || error}`, { cause: error });
     }
+  }
+
+  function bindBrowserDomainCommand(domain, operation) {
+    return (...args) => callBrowserDomainCommand(domain, operation, args);
   }
   let getBrowserCommittedContext = () => ({
     gameId: "seti-browser-runtime",
@@ -2351,11 +2363,11 @@
     beginIncomeForCurrentPlayer,
   } = incomeRuntime);
   function confirmAlienTracePlacement(...args) {
-    return alienRuntimeHelpers.confirmAlienTracePlacement(browserRuleState, ...args);
+    return callBrowserDomainCommand("alien_runtime", "confirmAlienTracePlacement", args);
   }
 
   function confirmFangzhouTracePlacement(...args) {
-    return alienRuntimeHelpers.confirmFangzhouTracePlacement(browserRuleState, ...args);
+    return callBrowserDomainCommand("alien_runtime", "confirmFangzhouTracePlacement", args);
   }
 
   const alienUiHelpers = alienUiModule.createAlienUiHelpers({
@@ -2593,26 +2605,26 @@
     settleTurnEndAlienRevealEntries: settleTurnEndAlienRevealEntriesForRoot,
     activateAomomoBoard: activateAomomoBoardForRoot,
   } = alienRuntimeHelpers;
-  const handleJiuzheRevealSideEffects = (...args) => handleJiuzheRevealSideEffectsForRoot(browserRuleState, ...args);
-  const handleYichangdianRevealSideEffects = (...args) => handleYichangdianRevealSideEffectsForRoot(browserRuleState, ...args);
-  const handleFangzhouRevealSideEffects = (...args) => handleFangzhouRevealSideEffectsForRoot(browserRuleState, ...args);
-  const handleBanrenmaRevealSideEffects = (...args) => handleBanrenmaRevealSideEffectsForRoot(browserRuleState, ...args);
-  const handleChongRevealSideEffects = (...args) => handleChongRevealSideEffectsForRoot(browserRuleState, ...args);
-  const handleAmibaRevealSideEffects = (...args) => handleAmibaRevealSideEffectsForRoot(browserRuleState, ...args);
-  const handleAomomoRevealSideEffects = (...args) => handleAomomoRevealSideEffectsForRoot(browserRuleState, ...args);
-  const handleRunezuRevealSideEffects = (...args) => handleRunezuRevealSideEffectsForRoot(browserRuleState, ...args);
-  const handleAlienRevealSideEffects = (...args) => handleAlienRevealSideEffectsForRoot(browserRuleState, ...args);
-  const failMissingAlienTraceTargetPlayer = (...args) => failMissingAlienTraceTargetPlayerForRoot(browserRuleState, ...args);
-  const getAlienTraceActionPlayer = (...args) => getAlienTraceActionPlayerForRoot(browserRuleState, ...args);
-  const confirmYichangdianTracePlacement = (...args) => confirmYichangdianTracePlacementForRoot(browserRuleState, ...args);
-  const confirmBanrenmaTracePlacement = (...args) => confirmBanrenmaTracePlacementForRoot(browserRuleState, ...args);
-  const confirmAomomoTracePlacement = (...args) => confirmAomomoTracePlacementForRoot(browserRuleState, ...args);
-  const confirmChongTracePlacement = (...args) => confirmChongTracePlacementForRoot(browserRuleState, ...args);
-  const confirmAmibaTracePlacement = (...args) => confirmAmibaTracePlacementForRoot(browserRuleState, ...args);
-  const confirmRunezuTracePlacement = (...args) => confirmRunezuTracePlacementForRoot(browserRuleState, ...args);
-  const confirmJiuzheTracePlacement = (...args) => confirmJiuzheTracePlacementForRoot(browserRuleState, ...args);
-  const settleTurnEndAlienRevealEntries = (...args) => settleTurnEndAlienRevealEntriesForRoot(browserRuleState, ...args);
-  const activateAomomoBoard = (...args) => activateAomomoBoardForRoot(browserRuleState, ...args);
+  const handleJiuzheRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleJiuzheRevealSideEffects");
+  const handleYichangdianRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleYichangdianRevealSideEffects");
+  const handleFangzhouRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleFangzhouRevealSideEffects");
+  const handleBanrenmaRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleBanrenmaRevealSideEffects");
+  const handleChongRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleChongRevealSideEffects");
+  const handleAmibaRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleAmibaRevealSideEffects");
+  const handleAomomoRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleAomomoRevealSideEffects");
+  const handleRunezuRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleRunezuRevealSideEffects");
+  const handleAlienRevealSideEffects = bindBrowserDomainCommand("alien_runtime", "handleAlienRevealSideEffects");
+  const failMissingAlienTraceTargetPlayer = bindBrowserDomainCommand("alien_runtime", "failMissingAlienTraceTargetPlayer");
+  const getAlienTraceActionPlayer = bindBrowserDomainCommand("alien_runtime", "getAlienTraceActionPlayer");
+  const confirmYichangdianTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmYichangdianTracePlacement");
+  const confirmBanrenmaTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmBanrenmaTracePlacement");
+  const confirmAomomoTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmAomomoTracePlacement");
+  const confirmChongTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmChongTracePlacement");
+  const confirmAmibaTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmAmibaTracePlacement");
+  const confirmRunezuTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmRunezuTracePlacement");
+  const confirmJiuzheTracePlacement = bindBrowserDomainCommand("alien_runtime", "confirmJiuzheTracePlacement");
+  const settleTurnEndAlienRevealEntries = bindBrowserDomainCommand("alien_runtime", "settleTurnEndAlienRevealEntries");
+  const activateAomomoBoard = bindBrowserDomainCommand("alien_runtime", "activateAomomoBoard");
 
   function getPlayerHandPanelTitleHint() {
     if (isDiscardSelectionActive()) {
@@ -7765,146 +7777,146 @@
   function getAlienBanrenmaScoremarkElement(...args) { return alienSpeciesRuntime.getAlienBanrenmaScoremarkElement(...args); }
   function getAlienBackImage(...args) { return alienSpeciesRuntime.getAlienBackImage(...args); }
   function createJiuzheThresholdNode(...args) { return alienSpeciesRuntime.createJiuzheThresholdNode(...args); }
-  function renderJiuzheThresholds(...args) { return alienSpeciesRuntime.renderJiuzheThresholds(browserRuleState, ...args); }
-  function maybeRevealAlienAfterTrace(...args) { return alienSpeciesRuntime.maybeRevealAlienAfterTrace(browserRuleState, ...args); }
+  function renderJiuzheThresholds(...args) { return callBrowserDomainCommand("alien_species", "renderJiuzheThresholds", args); }
+  function maybeRevealAlienAfterTrace(...args) { return callBrowserDomainCommand("alien_species", "maybeRevealAlienAfterTrace", args); }
   function isDebugAlienTraceMode(...args) { return alienSpeciesRuntime.isDebugAlienTraceMode(...args); }
   function setDebugAlienTraceModeActive(...args) { return alienSpeciesRuntime.setDebugAlienTraceModeActive(...args); }
   function toggleDebugAlienTraceMode(...args) { return alienSpeciesRuntime.toggleDebugAlienTraceMode(...args); }
   function enableDebugAlienTraceModeForReveal(...args) { return alienSpeciesRuntime.enableDebugAlienTraceModeForReveal(...args); }
-  function renderYichangdianCardDisplays(...args) { return alienSpeciesRuntime.renderYichangdianCardDisplays(browserRuleState, ...args); }
-  function renderBanrenmaScoremarks(...args) { return alienSpeciesRuntime.renderBanrenmaScoremarks(browserRuleState, ...args); }
-  function renderBanrenmaCardDisplays(...args) { return alienSpeciesRuntime.renderBanrenmaCardDisplays(browserRuleState, ...args); }
-  function renderChongCardDisplays(...args) { return alienSpeciesRuntime.renderChongCardDisplays(browserRuleState, ...args); }
-  function renderAmibaCardDisplays(...args) { return alienSpeciesRuntime.renderAmibaCardDisplays(browserRuleState, ...args); }
-  function renderAomomoCardDisplays(...args) { return alienSpeciesRuntime.renderAomomoCardDisplays(browserRuleState, ...args); }
-  function renderRunezuCardDisplays(...args) { return alienSpeciesRuntime.renderRunezuCardDisplays(browserRuleState, ...args); }
-  function renderBanrenmaBonusMarkers(...args) { return alienSpeciesRuntime.renderBanrenmaBonusMarkers(browserRuleState, ...args); }
-  function renderAlienPanels(...args) { return alienSpeciesRuntime.renderAlienPanels(browserRuleState, ...args); }
-  function randomizeAliens(...args) { return alienSpeciesRuntime.randomizeAliens(browserRuleState, ...args); }
+  function renderYichangdianCardDisplays(...args) { return callBrowserDomainCommand("alien_species", "renderYichangdianCardDisplays", args); }
+  function renderBanrenmaScoremarks(...args) { return callBrowserDomainCommand("alien_species", "renderBanrenmaScoremarks", args); }
+  function renderBanrenmaCardDisplays(...args) { return callBrowserDomainCommand("alien_species", "renderBanrenmaCardDisplays", args); }
+  function renderChongCardDisplays(...args) { return callBrowserDomainCommand("alien_species", "renderChongCardDisplays", args); }
+  function renderAmibaCardDisplays(...args) { return callBrowserDomainCommand("alien_species", "renderAmibaCardDisplays", args); }
+  function renderAomomoCardDisplays(...args) { return callBrowserDomainCommand("alien_species", "renderAomomoCardDisplays", args); }
+  function renderRunezuCardDisplays(...args) { return callBrowserDomainCommand("alien_species", "renderRunezuCardDisplays", args); }
+  function renderBanrenmaBonusMarkers(...args) { return callBrowserDomainCommand("alien_species", "renderBanrenmaBonusMarkers", args); }
+  function renderAlienPanels(...args) { return callBrowserDomainCommand("alien_species", "renderAlienPanels", args); }
+  function randomizeAliens(...args) { return callBrowserDomainCommand("alien_species", "randomizeAliens", args); }
   function applyFangzhouUnlockStateTraceReward(...args) { return alienSpeciesRuntime.applyFangzhouUnlockStateTraceReward(...args); }
-  function confirmFangzhouCard2Unlock(...args) { return alienSpeciesRuntime.confirmFangzhouCard2Unlock(browserRuleState, ...args); }
+  function confirmFangzhouCard2Unlock(...args) { return callBrowserDomainCommand("alien_species", "confirmFangzhouCard2Unlock", args); }
   function getAlienFangzhouCardArea(...args) { return alienSpeciesRuntime.getAlienFangzhouCardArea(...args); }
-  function createFangzhouReservedButtons(...args) { return alienSpeciesRuntime.createFangzhouReservedButtons(browserRuleState, ...args); }
+  function createFangzhouReservedButtons(...args) { return callBrowserDomainCommand("alien_species", "createFangzhouReservedButtons", args); }
   function buildFangzhouCard1EffectQueue(...args) { return alienSpeciesRuntime.buildFangzhouCard1EffectQueue(...args); }
   function getFangzhouCard1RewardTargetOptions(...args) { return alienSpeciesRuntime.getFangzhouCard1RewardTargetOptions(...args); }
   function enqueueFangzhouCard1RewardEffects(...args) { return alienSpeciesRuntime.enqueueFangzhouCard1RewardEffects(...args); }
-  function flipFangzhouCard1Rewards(...args) { return alienSpeciesRuntime.flipFangzhouCard1Rewards(browserRuleState, ...args); }
-  function applyFangzhouCard1Rewards(...args) { return alienSpeciesRuntime.applyFangzhouCard1Rewards(browserRuleState, ...args); }
-  function applyFangzhouCard1Reward(...args) { return alienSpeciesRuntime.applyFangzhouCard1Reward(browserRuleState, ...args); }
-  function queueFangzhouBasicRewards(...args) { return alienSpeciesRuntime.queueFangzhouBasicRewards(browserRuleState, ...args); }
-  function applyFangzhouTraceRewardToPlayer(...args) { return alienSpeciesRuntime.applyFangzhouTraceRewardToPlayer(browserRuleState, ...args); }
-  function renderFangzhouCardDisplays(...args) { return alienSpeciesRuntime.renderFangzhouCardDisplays(browserRuleState, ...args); }
-  function openFangzhouCard1Dialog(...args) { return alienSpeciesRuntime.openFangzhouCard1Dialog(browserRuleState, ...args); }
-  function findPlayerForJiuzheEntry(...args) { return alienSpeciesRuntime.findPlayerForJiuzheEntry(browserRuleState, ...args); }
+  function flipFangzhouCard1Rewards(...args) { return callBrowserDomainCommand("alien_species", "flipFangzhouCard1Rewards", args); }
+  function applyFangzhouCard1Rewards(...args) { return callBrowserDomainCommand("alien_species", "applyFangzhouCard1Rewards", args); }
+  function applyFangzhouCard1Reward(...args) { return callBrowserDomainCommand("alien_species", "applyFangzhouCard1Reward", args); }
+  function queueFangzhouBasicRewards(...args) { return callBrowserDomainCommand("alien_species", "queueFangzhouBasicRewards", args); }
+  function applyFangzhouTraceRewardToPlayer(...args) { return callBrowserDomainCommand("alien_species", "applyFangzhouTraceRewardToPlayer", args); }
+  function renderFangzhouCardDisplays(...args) { return callBrowserDomainCommand("alien_species", "renderFangzhouCardDisplays", args); }
+  function openFangzhouCard1Dialog(...args) { return callBrowserDomainCommand("alien_species", "openFangzhouCard1Dialog", args); }
+  function findPlayerForJiuzheEntry(...args) { return callBrowserDomainCommand("alien_species", "findPlayerForJiuzheEntry", args); }
   function applyJiuzheRewardToPlayer(...args) { return alienSpeciesRuntime.applyJiuzheRewardToPlayer(...args); }
-  function findPlayerForYichangdianEntry(...args) { return alienSpeciesRuntime.findPlayerForYichangdianEntry(browserRuleState, ...args); }
+  function findPlayerForYichangdianEntry(...args) { return callBrowserDomainCommand("alien_species", "findPlayerForYichangdianEntry", args); }
   function applyYichangdianRewardToPlayer(...args) { return alienSpeciesRuntime.applyYichangdianRewardToPlayer(...args); }
   function getAvailableDataTokenCount(...args) { return alienSpeciesRuntime.getAvailableDataTokenCount(...args); }
   function spendAvailableDataTokens(...args) { return alienSpeciesRuntime.spendAvailableDataTokens(...args); }
   function applyBanrenmaRewardToPlayer(...args) { return alienSpeciesRuntime.applyBanrenmaRewardToPlayer(...args); }
   function applyAomomoRewardToPlayer(...args) { return alienSpeciesRuntime.applyAomomoRewardToPlayer(...args); }
   function applyChongRewardToPlayer(...args) { return alienSpeciesRuntime.applyChongRewardToPlayer(...args); }
-  function applyAmibaRewardToPlayer(...args) { return alienSpeciesRuntime.applyAmibaRewardToPlayer(browserRuleState, ...args); }
-  function applyRunezuRewardToPlayer(...args) { return alienSpeciesRuntime.applyRunezuRewardToPlayer(browserRuleState, ...args); }
-  function applyRunezuSymbolReward(...args) { return alienSpeciesRuntime.applyRunezuSymbolReward(browserRuleState, ...args); }
-  function claimRunezuSourceSymbolWithHistory(...args) { return alienSpeciesRuntime.claimRunezuSourceSymbolWithHistory(browserRuleState, ...args); }
+  function applyAmibaRewardToPlayer(...args) { return callBrowserDomainCommand("alien_species", "applyAmibaRewardToPlayer", args); }
+  function applyRunezuRewardToPlayer(...args) { return callBrowserDomainCommand("alien_species", "applyRunezuRewardToPlayer", args); }
+  function applyRunezuSymbolReward(...args) { return callBrowserDomainCommand("alien_species", "applyRunezuSymbolReward", args); }
+  function claimRunezuSourceSymbolWithHistory(...args) { return callBrowserDomainCommand("alien_species", "claimRunezuSourceSymbolWithHistory", args); }
   function closeRunezuCardGainDialog(...args) { return alienSpeciesRuntime.closeRunezuCardGainDialog(...args); }
-  function openRunezuCardGainDialog(...args) { return alienSpeciesRuntime.openRunezuCardGainDialog(browserRuleState, ...args); }
-  function finishRunezuCardGain(...args) { return alienSpeciesRuntime.finishRunezuCardGain(browserRuleState, ...args); }
-  function handleRunezuCardGainChoice(...args) { return alienSpeciesRuntime.handleRunezuCardGainChoice(browserRuleState, ...args); }
+  function openRunezuCardGainDialog(...args) { return callBrowserDomainCommand("alien_species", "openRunezuCardGainDialog", args); }
+  function finishRunezuCardGain(...args) { return callBrowserDomainCommand("alien_species", "finishRunezuCardGain", args); }
+  function handleRunezuCardGainChoice(...args) { return callBrowserDomainCommand("alien_species", "handleRunezuCardGainChoice", args); }
   function closeAmibaCardGainDialog(...args) { return alienSpeciesRuntime.closeAmibaCardGainDialog(...args); }
-  function openAmibaCardGainDialog(...args) { return alienSpeciesRuntime.openAmibaCardGainDialog(browserRuleState, ...args); }
-  function finishAmibaCardGain(...args) { return alienSpeciesRuntime.finishAmibaCardGain(browserRuleState, ...args); }
-  function handleAmibaCardGainChoice(...args) { return alienSpeciesRuntime.handleAmibaCardGainChoice(browserRuleState, ...args); }
+  function openAmibaCardGainDialog(...args) { return callBrowserDomainCommand("alien_species", "openAmibaCardGainDialog", args); }
+  function finishAmibaCardGain(...args) { return callBrowserDomainCommand("alien_species", "finishAmibaCardGain", args); }
+  function handleAmibaCardGainChoice(...args) { return callBrowserDomainCommand("alien_species", "handleAmibaCardGainChoice", args); }
   function closeAomomoCardGainDialog(...args) { return alienSpeciesRuntime.closeAomomoCardGainDialog(...args); }
-  function openAomomoCardGainDialog(...args) { return alienSpeciesRuntime.openAomomoCardGainDialog(browserRuleState, ...args); }
-  function finishAomomoCardGain(...args) { return alienSpeciesRuntime.finishAomomoCardGain(browserRuleState, ...args); }
-  function handleAomomoCardGainChoice(...args) { return alienSpeciesRuntime.handleAomomoCardGainChoice(browserRuleState, ...args); }
+  function openAomomoCardGainDialog(...args) { return callBrowserDomainCommand("alien_species", "openAomomoCardGainDialog", args); }
+  function finishAomomoCardGain(...args) { return callBrowserDomainCommand("alien_species", "finishAomomoCardGain", args); }
+  function handleAomomoCardGainChoice(...args) { return callBrowserDomainCommand("alien_species", "handleAomomoCardGainChoice", args); }
   function closeAmibaSymbolChoiceDialog(...args) { return alienSpeciesRuntime.closeAmibaSymbolChoiceDialog(...args); }
-  function openAmibaSymbolChoiceDialog(...args) { return alienSpeciesRuntime.openAmibaSymbolChoiceDialog(browserRuleState, ...args); }
-  function finishAmibaSymbolChoice(...args) { return alienSpeciesRuntime.finishAmibaSymbolChoice(browserRuleState, ...args); }
-  function handleAmibaSymbolChoice(...args) { return alienSpeciesRuntime.handleAmibaSymbolChoice(browserRuleState, ...args); }
+  function openAmibaSymbolChoiceDialog(...args) { return callBrowserDomainCommand("alien_species", "openAmibaSymbolChoiceDialog", args); }
+  function finishAmibaSymbolChoice(...args) { return callBrowserDomainCommand("alien_species", "finishAmibaSymbolChoice", args); }
+  function handleAmibaSymbolChoice(...args) { return callBrowserDomainCommand("alien_species", "handleAmibaSymbolChoice", args); }
   function closeAmibaTraceRemovalDialog(...args) { return alienSpeciesRuntime.closeAmibaTraceRemovalDialog(...args); }
-  function openAmibaTraceRemovalDialog(...args) { return alienSpeciesRuntime.openAmibaTraceRemovalDialog(browserRuleState, ...args); }
-  function handleAmibaTraceRemovalChoice(...args) { return alienSpeciesRuntime.handleAmibaTraceRemovalChoice(browserRuleState, ...args); }
+  function openAmibaTraceRemovalDialog(...args) { return callBrowserDomainCommand("alien_species", "openAmibaTraceRemovalDialog", args); }
+  function handleAmibaTraceRemovalChoice(...args) { return callBrowserDomainCommand("alien_species", "handleAmibaTraceRemovalChoice", args); }
   function applyChongFossilRewardToPlayer(...args) { return alienSpeciesRuntime.applyChongFossilRewardToPlayer(...args); }
   function closeYichangdianCardGainDialog(...args) { return alienSpeciesRuntime.closeYichangdianCardGainDialog(...args); }
-  function openYichangdianCardGainDialog(...args) { return alienSpeciesRuntime.openYichangdianCardGainDialog(browserRuleState, ...args); }
-  function finishYichangdianCardGain(...args) { return alienSpeciesRuntime.finishYichangdianCardGain(browserRuleState, ...args); }
-  function handleYichangdianCardGainChoice(...args) { return alienSpeciesRuntime.handleYichangdianCardGainChoice(browserRuleState, ...args); }
+  function openYichangdianCardGainDialog(...args) { return callBrowserDomainCommand("alien_species", "openYichangdianCardGainDialog", args); }
+  function finishYichangdianCardGain(...args) { return callBrowserDomainCommand("alien_species", "finishYichangdianCardGain", args); }
+  function handleYichangdianCardGainChoice(...args) { return callBrowserDomainCommand("alien_species", "handleYichangdianCardGainChoice", args); }
   function closeBanrenmaCardGainDialog(...args) { return alienSpeciesRuntime.closeBanrenmaCardGainDialog(...args); }
-  function openBanrenmaCardGainDialog(...args) { return alienSpeciesRuntime.openBanrenmaCardGainDialog(browserRuleState, ...args); }
-  function finishBanrenmaCardGain(...args) { return alienSpeciesRuntime.finishBanrenmaCardGain(browserRuleState, ...args); }
-  function handleBanrenmaCardGainChoice(...args) { return alienSpeciesRuntime.handleBanrenmaCardGainChoice(browserRuleState, ...args); }
+  function openBanrenmaCardGainDialog(...args) { return callBrowserDomainCommand("alien_species", "openBanrenmaCardGainDialog", args); }
+  function finishBanrenmaCardGain(...args) { return callBrowserDomainCommand("alien_species", "finishBanrenmaCardGain", args); }
+  function handleBanrenmaCardGainChoice(...args) { return callBrowserDomainCommand("alien_species", "handleBanrenmaCardGainChoice", args); }
   function closeChongCardGainDialog(...args) { return alienSpeciesRuntime.closeChongCardGainDialog(...args); }
-  function openChongCardGainDialog(...args) { return alienSpeciesRuntime.openChongCardGainDialog(browserRuleState, ...args); }
-  function finishChongCardGain(...args) { return alienSpeciesRuntime.finishChongCardGain(browserRuleState, ...args); }
-  function handleChongCardGainChoice(...args) { return alienSpeciesRuntime.handleChongCardGainChoice(browserRuleState, ...args); }
+  function openChongCardGainDialog(...args) { return callBrowserDomainCommand("alien_species", "openChongCardGainDialog", args); }
+  function finishChongCardGain(...args) { return callBrowserDomainCommand("alien_species", "finishChongCardGain", args); }
+  function handleChongCardGainChoice(...args) { return callBrowserDomainCommand("alien_species", "handleChongCardGainChoice", args); }
   function getChongPlanetLabel(...args) { return alienSpeciesRuntime.getChongPlanetLabel(...args); }
   function formatChongGain(...args) { return alienSpeciesRuntime.formatChongGain(...args); }
   function formatChongFossilRewardSummary(...args) { return alienSpeciesRuntime.formatChongFossilRewardSummary(...args); }
   function restoreMutableObject(...args) { return alienSpeciesRuntime.restoreMutableObject(...args); }
   function closeChongFossilChoiceDialog(...args) { return alienSpeciesRuntime.closeChongFossilChoiceDialog(...args); }
   function closeChongTaskCompletionDialog(...args) { return alienSpeciesRuntime.closeChongTaskCompletionDialog(...args); }
-  function openChongFossilChoiceDialog(...args) { return alienSpeciesRuntime.openChongFossilChoiceDialog(browserRuleState, ...args); }
-  function createChongTransportTokenForFossil(...args) { return alienSpeciesRuntime.createChongTransportTokenForFossil(browserRuleState, ...args); }
-  function openChongPickCardFollowUp(...args) { return alienSpeciesRuntime.openChongPickCardFollowUp(browserRuleState, ...args); }
+  function openChongFossilChoiceDialog(...args) { return callBrowserDomainCommand("alien_species", "openChongFossilChoiceDialog", args); }
+  function createChongTransportTokenForFossil(...args) { return callBrowserDomainCommand("alien_species", "createChongTransportTokenForFossil", args); }
+  function openChongPickCardFollowUp(...args) { return callBrowserDomainCommand("alien_species", "openChongPickCardFollowUp", args); }
   function keepExistingMainActionPendingAfterChongTask(...args) { return alienSpeciesRuntime.keepExistingMainActionPendingAfterChongTask(...args); }
-  function failChongTaskCompletion(...args) { return alienSpeciesRuntime.failChongTaskCompletion(browserRuleState, ...args); }
-  function finishChongFossilEffect(...args) { return alienSpeciesRuntime.finishChongFossilEffect(browserRuleState, ...args); }
-  function completeChongTraceTaskWithFossil(...args) { return alienSpeciesRuntime.completeChongTraceTaskWithFossil(browserRuleState, ...args); }
-  function completeChongTransportTask(...args) { return alienSpeciesRuntime.completeChongTransportTask(browserRuleState, ...args); }
-  function handleChongTaskCompletionChoice(...args) { return alienSpeciesRuntime.handleChongTaskCompletionChoice(browserRuleState, ...args); }
-  function handleChongFossilChoice(...args) { return alienSpeciesRuntime.handleChongFossilChoice(browserRuleState, ...args); }
+  function failChongTaskCompletion(...args) { return callBrowserDomainCommand("alien_species", "failChongTaskCompletion", args); }
+  function finishChongFossilEffect(...args) { return callBrowserDomainCommand("alien_species", "finishChongFossilEffect", args); }
+  function completeChongTraceTaskWithFossil(...args) { return callBrowserDomainCommand("alien_species", "completeChongTraceTaskWithFossil", args); }
+  function completeChongTransportTask(...args) { return callBrowserDomainCommand("alien_species", "completeChongTransportTask", args); }
+  function handleChongTaskCompletionChoice(...args) { return callBrowserDomainCommand("alien_species", "handleChongTaskCompletionChoice", args); }
+  function handleChongFossilChoice(...args) { return callBrowserDomainCommand("alien_species", "handleChongFossilChoice", args); }
   function openChongTraceTaskCompletionPicker(...args) { return alienSpeciesRuntime.openChongTraceTaskCompletionPicker(...args); }
   function enqueueJiuzheOpportunity(...args) { return alienSpeciesRuntime.enqueueJiuzheOpportunity(...args); }
   function isJiuzheThresholdOpportunity(...args) { return alienSpeciesRuntime.isJiuzheThresholdOpportunity(...args); }
   function createJiuzheThresholdCardEffect(...args) { return alienSpeciesRuntime.createJiuzheThresholdCardEffect(...args); }
   function hasJiuzheThresholdEffectQueued(...args) { return alienSpeciesRuntime.hasJiuzheThresholdEffectQueued(...args); }
   function queueJiuzheThresholdEffectForPlayer(...args) { return alienSpeciesRuntime.queueJiuzheThresholdEffectForPlayer(...args); }
-  function queueJiuzheOpportunitiesForPlayer(...args) { return alienSpeciesRuntime.queueJiuzheOpportunitiesForPlayer(browserRuleState, ...args); }
-  function buildJiuzheCardConditionContext(...args) { return alienSpeciesRuntime.buildJiuzheCardConditionContext(browserRuleState, ...args); }
-  function getJiuzheCardConditionLabel(...args) { return alienSpeciesRuntime.getJiuzheCardConditionLabel(browserRuleState, ...args); }
+  function queueJiuzheOpportunitiesForPlayer(...args) { return callBrowserDomainCommand("alien_species", "queueJiuzheOpportunitiesForPlayer", args); }
+  function buildJiuzheCardConditionContext(...args) { return callBrowserDomainCommand("alien_species", "buildJiuzheCardConditionContext", args); }
+  function getJiuzheCardConditionLabel(...args) { return callBrowserDomainCommand("alien_species", "getJiuzheCardConditionLabel", args); }
   function closeJiuzheCardDialog(...args) { return alienSpeciesRuntime.closeJiuzheCardDialog(...args); }
   function buildJiuzheOpportunitySubtitle(...args) { return alienSpeciesRuntime.buildJiuzheOpportunitySubtitle(...args); }
-  function openJiuzheCardDialog(...args) { return alienSpeciesRuntime.openJiuzheCardDialog(browserRuleState, ...args); }
-  function handleJiuzheCardChoice(...args) { return alienSpeciesRuntime.handleJiuzheCardChoice(browserRuleState, ...args); }
-  function handleJiuzheOpportunitySkip(...args) { return alienSpeciesRuntime.handleJiuzheOpportunitySkip(browserRuleState, ...args); }
-  function maybeOpenQueuedJiuzheOpportunity(...args) { return alienSpeciesRuntime.maybeOpenQueuedJiuzheOpportunity(browserRuleState, ...args); }
+  function openJiuzheCardDialog(...args) { return callBrowserDomainCommand("alien_species", "openJiuzheCardDialog", args); }
+  function handleJiuzheCardChoice(...args) { return callBrowserDomainCommand("alien_species", "handleJiuzheCardChoice", args); }
+  function handleJiuzheOpportunitySkip(...args) { return callBrowserDomainCommand("alien_species", "handleJiuzheOpportunitySkip", args); }
+  function maybeOpenQueuedJiuzheOpportunity(...args) { return callBrowserDomainCommand("alien_species", "maybeOpenQueuedJiuzheOpportunity", args); }
   function getActiveAlienSharedOverlayPendingForManualGuard(...args) { return alienSpeciesRuntime.getActiveAlienSharedOverlayPendingForManualGuard(...args); }
   function blockManualAiSharedOverlayInputIfNeeded(...args) { return alienSpeciesRuntime.blockManualAiSharedOverlayInputIfNeeded(...args); }
-  function getReadyBanrenmaCards(...args) { return alienSpeciesRuntime.getReadyBanrenmaCards(browserRuleState, ...args); }
-  function getReadyBanrenmaCardsForOpportunity(...args) { return alienSpeciesRuntime.getReadyBanrenmaCardsForOpportunity(browserRuleState, ...args); }
-  function getReadyBanrenmaCardForOpportunity(...args) { return alienSpeciesRuntime.getReadyBanrenmaCardForOpportunity(browserRuleState, ...args); }
+  function getReadyBanrenmaCards(...args) { return callBrowserDomainCommand("alien_species", "getReadyBanrenmaCards", args); }
+  function getReadyBanrenmaCardsForOpportunity(...args) { return callBrowserDomainCommand("alien_species", "getReadyBanrenmaCardsForOpportunity", args); }
+  function getReadyBanrenmaCardForOpportunity(...args) { return callBrowserDomainCommand("alien_species", "getReadyBanrenmaCardForOpportunity", args); }
   function createBanrenmaPanelBonusEffect(...args) { return alienSpeciesRuntime.createBanrenmaPanelBonusEffect(...args); }
   function hasBanrenmaPanelBonusEffectQueued(...args) { return alienSpeciesRuntime.hasBanrenmaPanelBonusEffectQueued(...args); }
-  function queueBanrenmaPanelBonusEffectForPlayer(...args) { return alienSpeciesRuntime.queueBanrenmaPanelBonusEffectForPlayer(browserRuleState, ...args); }
+  function queueBanrenmaPanelBonusEffectForPlayer(...args) { return callBrowserDomainCommand("alien_species", "queueBanrenmaPanelBonusEffectForPlayer", args); }
   function enqueueBanrenmaOpportunity(...args) { return alienSpeciesRuntime.enqueueBanrenmaOpportunity(...args); }
-  function queueBanrenmaOpportunitiesForPlayer(...args) { return alienSpeciesRuntime.queueBanrenmaOpportunitiesForPlayer(browserRuleState, ...args); }
+  function queueBanrenmaOpportunitiesForPlayer(...args) { return callBrowserDomainCommand("alien_species", "queueBanrenmaOpportunitiesForPlayer", args); }
   function closeBanrenmaOpportunityDialog(...args) { return alienSpeciesRuntime.closeBanrenmaOpportunityDialog(...args); }
   function getBanrenmaCardConditionLabel(...args) { return alienSpeciesRuntime.getBanrenmaCardConditionLabel(...args); }
-  function openBanrenmaCardConditionCompletionPicker(...args) { return alienSpeciesRuntime.openBanrenmaCardConditionCompletionPicker(browserRuleState, ...args); }
-  function openBanrenmaOpportunityDialog(...args) { return alienSpeciesRuntime.openBanrenmaOpportunityDialog(browserRuleState, ...args); }
-  function maybeOpenQueuedBanrenmaOpportunity(...args) { return alienSpeciesRuntime.maybeOpenQueuedBanrenmaOpportunity(browserRuleState, ...args); }
-  function openBanrenmaReadyOpportunityForPlayer(...args) { return alienSpeciesRuntime.openBanrenmaReadyOpportunityForPlayer(browserRuleState, ...args); }
-  function executeJiuzheThresholdCardEffect(...args) { return alienSpeciesRuntime.executeJiuzheThresholdCardEffect(browserRuleState, ...args); }
-  function executeBanrenmaPanelBonusEffect(...args) { return alienSpeciesRuntime.executeBanrenmaPanelBonusEffect(browserRuleState, ...args); }
-  function completeBanrenmaOpportunityStep(...args) { return alienSpeciesRuntime.completeBanrenmaOpportunityStep(browserRuleState, ...args); }
-  function handleBanrenmaBonusChoice(...args) { return alienSpeciesRuntime.handleBanrenmaBonusChoice(browserRuleState, ...args); }
-  function handleBanrenmaCardConditionChoice(...args) { return alienSpeciesRuntime.handleBanrenmaCardConditionChoice(browserRuleState, ...args); }
+  function openBanrenmaCardConditionCompletionPicker(...args) { return callBrowserDomainCommand("alien_species", "openBanrenmaCardConditionCompletionPicker", args); }
+  function openBanrenmaOpportunityDialog(...args) { return callBrowserDomainCommand("alien_species", "openBanrenmaOpportunityDialog", args); }
+  function maybeOpenQueuedBanrenmaOpportunity(...args) { return callBrowserDomainCommand("alien_species", "maybeOpenQueuedBanrenmaOpportunity", args); }
+  function openBanrenmaReadyOpportunityForPlayer(...args) { return callBrowserDomainCommand("alien_species", "openBanrenmaReadyOpportunityForPlayer", args); }
+  function executeJiuzheThresholdCardEffect(...args) { return callBrowserDomainCommand("alien_species", "executeJiuzheThresholdCardEffect", args); }
+  function executeBanrenmaPanelBonusEffect(...args) { return callBrowserDomainCommand("alien_species", "executeBanrenmaPanelBonusEffect", args); }
+  function completeBanrenmaOpportunityStep(...args) { return callBrowserDomainCommand("alien_species", "completeBanrenmaOpportunityStep", args); }
+  function handleBanrenmaBonusChoice(...args) { return callBrowserDomainCommand("alien_species", "handleBanrenmaBonusChoice", args); }
+  function handleBanrenmaCardConditionChoice(...args) { return callBrowserDomainCommand("alien_species", "handleBanrenmaCardConditionChoice", args); }
   function appendRevealCardGrantMessage(...args) { return alienSpeciesRuntime.appendRevealCardGrantMessage(...args); }
   function getRevealIrreversible(...args) { return alienSpeciesRuntime.getRevealIrreversible(...args); }
-  function openChongRewardFollowUps(...args) { return alienSpeciesRuntime.openChongRewardFollowUps(browserRuleState, ...args); }
-  function openAmibaRewardFollowUps(...args) { return alienSpeciesRuntime.openAmibaRewardFollowUps(browserRuleState, ...args); }
-  function openRunezuRewardFollowUps(...args) { return alienSpeciesRuntime.openRunezuRewardFollowUps(browserRuleState, ...args); }
+  function openChongRewardFollowUps(...args) { return callBrowserDomainCommand("alien_species", "openChongRewardFollowUps", args); }
+  function openAmibaRewardFollowUps(...args) { return callBrowserDomainCommand("alien_species", "openAmibaRewardFollowUps", args); }
+  function openRunezuRewardFollowUps(...args) { return callBrowserDomainCommand("alien_species", "openRunezuRewardFollowUps", args); }
   function closeRunezuFaceSymbolPlacement(...args) { return alienSpeciesRuntime.closeRunezuFaceSymbolPlacement(...args); }
-  function executeStandardRunezuFaceSymbol(...args) { return alienSpeciesRuntime.executeStandardRunezuFaceSymbol(browserRuleState, ...args); }
-  function openRunezuFaceSymbolPlacement(...args) { return alienSpeciesRuntime.openRunezuFaceSymbolPlacement(browserRuleState, ...args); }
-  function handleRunezuFaceSymbolChoice(...args) { return alienSpeciesRuntime.handleRunezuFaceSymbolChoice(browserRuleState, ...args); }
-  function executeRunezuSymbolRewardEffect(...args) { return alienSpeciesRuntime.executeRunezuSymbolRewardEffect(browserRuleState, ...args); }
+  function executeStandardRunezuFaceSymbol(...args) { return callBrowserDomainCommand("alien_species", "executeStandardRunezuFaceSymbol", args); }
+  function openRunezuFaceSymbolPlacement(...args) { return callBrowserDomainCommand("alien_species", "openRunezuFaceSymbolPlacement", args); }
+  function handleRunezuFaceSymbolChoice(...args) { return callBrowserDomainCommand("alien_species", "handleRunezuFaceSymbolChoice", args); }
+  function executeRunezuSymbolRewardEffect(...args) { return callBrowserDomainCommand("alien_species", "executeRunezuSymbolRewardEffect", args); }
   function closeRunezuSymbolBranchDialog(...args) { return alienSpeciesRuntime.closeRunezuSymbolBranchDialog(...args); }
-  function openRunezuSymbolBranchDialog(...args) { return alienSpeciesRuntime.openRunezuSymbolBranchDialog(browserRuleState, ...args); }
-  function handleRunezuSymbolBranchChoice(...args) { return alienSpeciesRuntime.handleRunezuSymbolBranchChoice(browserRuleState, ...args); }
+  function openRunezuSymbolBranchDialog(...args) { return callBrowserDomainCommand("alien_species", "openRunezuSymbolBranchDialog", args); }
+  function handleRunezuSymbolBranchChoice(...args) { return callBrowserDomainCommand("alien_species", "handleRunezuSymbolBranchChoice", args); }
   function alignAlienPanelsToPlanets(...args) { return alienSpeciesRuntime.alignAlienPanelsToPlanets(...args); }
   function triggerYichangdianAnomalyForEarthX(earthX) {
     const anomaly = yichangdian?.getAnomalyBySectorX?.(alienGameState, earthX);
