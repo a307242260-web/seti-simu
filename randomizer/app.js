@@ -680,7 +680,16 @@
         case "effect_bar_click":
           return { ok: true, value: cloneResidentPresentation(handleActionEffectButtonClickForRoot(workingRoot, command.effectIndex)) };
         case "effect_skip_current":
-          return { ok: true, value: cloneResidentPresentation(skipCurrentActionEffectForRoot()) };
+          return { ok: true, value: cloneResidentPresentation(skipCurrentActionEffectForRoot(workingRoot)) };
+        case "effect_cancel_subflows":
+          cancelActiveEffectSubFlowsForRoot(workingRoot);
+          return { ok: true };
+        case "scan_settle_completed_sectors":
+          return { ok: true, value: cloneResidentPresentation(resolveCompletedSectorSettlementsForRoot(
+            workingRoot,
+            command.actionType,
+            command.options,
+          )) };
         case "card_execute_move_effect":
           return cloneResidentPresentation(executeCardMoveForEffectForRoot(workingRoot, ...(command.args || [])));
         case "headless_enumerate_turn_actions":
@@ -696,7 +705,7 @@
         case "headless_execute_current_effect":
           return executeHeadlessCurrentActionEffectImpl(workingRoot) || { ok: true, progressed: false };
         case "headless_skip_current_effect":
-          return skipHeadlessCurrentActionEffectImpl();
+          return skipHeadlessCurrentActionEffectImpl(workingRoot);
         case "domain_command":
           return executeBrowserDomainCommand(workingRoot, command);
         default:
@@ -7036,7 +7045,7 @@
     return flow;
   }
 
-  function cancelActiveEffectSubFlows() {
+  function cancelActiveEffectSubFlowsForRoot(workingRoot) {
     if (!getPublicScanQueueSession()) {
       closeScanTargetPicker({ forceYichangdianCornerClose: true });
     }
@@ -7058,11 +7067,11 @@
           restoreObjectSnapshot(decisionState.cardSelectionAction.player, decisionState.cardSelectionAction.beforePlayerState);
         }
         if (decisionState.cardSelectionAction.beforeCardState) {
-          restoreObjectSnapshot(cardState, decisionState.cardSelectionAction.beforeCardState);
+          restoreObjectSnapshot(workingRoot.cardState, decisionState.cardSelectionAction.beforeCardState);
         }
       }
       decisionState.cardSelectionAction = null;
-      cards.setSelectionActive(cardState, false);
+      cards.setSelectionActive(workingRoot.cardState, false);
       syncCardSelectionChrome();
     }
 
@@ -7106,6 +7115,10 @@
     }
   }
 
+  function cancelActiveEffectSubFlows() {
+    return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_cancel_subflows" });
+  }
+
   function cleanupSkippedActionEffect(effect) {
     if (effect?.type === "industry_strategy_passive_reward") {
       const player = getEffectOwnerPlayer(effect) || getCurrentPlayer();
@@ -7114,7 +7127,7 @@
     }
   }
 
-  function skipCurrentActionEffectForRoot() {
+  function skipCurrentActionEffectForRoot(workingRoot) {
     if (!decisionState.actionEffectFlow) return;
 
     const current = getCurrentActionEffect();
@@ -7128,7 +7141,7 @@
     }
     if (finishCurrentCardMoveEffectEarly()) return;
     if (current.options?.skippable === false || current.required) {
-      rocketState.statusNote = `${current.label} 必须完成，不能跳过`;
+      workingRoot.rocketState.statusNote = `${current.label} 必须完成，不能跳过`;
       renderStateReadout();
       return;
     }
@@ -7137,11 +7150,11 @@
       return;
     }
 
-    cancelActiveEffectSubFlows();
+    cancelActiveEffectSubFlowsForRoot(workingRoot);
     cleanupSkippedActionEffect(current);
     beginEffectHistoryStep(`跳过：${current.label}`);
     endEffectHistoryStep();
-    rocketState.statusNote = `已跳过：${current.label}`;
+    workingRoot.rocketState.statusNote = `已跳过：${current.label}`;
     completeCurrentActionEffect("skipped");
   }
 
@@ -7149,7 +7162,7 @@
     return browserRuleComposition.inputPort.submitHostCommand({ kind: "effect_skip_current" }).value;
   }
 
-  function skipHeadlessCurrentActionEffectImpl() {
+  function skipHeadlessCurrentActionEffectImpl(workingRoot) {
     const current = getCurrentActionEffect();
     if (!headlessMode || !current || current.status !== "active") {
       return { ok: false, message: "没有可跳过的活动效果" };
@@ -7157,7 +7170,7 @@
     if (finishCurrentCardMoveEffectEarly()) {
       return { ok: true, progressed: true, skipped: true, message: `已结束：${current.label}` };
     }
-    skipCurrentActionEffectForRoot();
+    skipCurrentActionEffectForRoot(workingRoot);
     if (current.status === "active") {
       cleanupSkippedActionEffect(current);
       completeCurrentActionEffect("skipped");
@@ -7179,7 +7192,7 @@
       payload: { ...payload, skipped: true },
     };
     if (!current || current.status !== "active") {
-      rocketState.statusNote = message;
+      setBrowserStatusNote(message);
       renderStateReadout();
       return result;
     }
@@ -7187,7 +7200,7 @@
     current.result = result;
     cleanupSkippedActionEffect(current);
     beginEffectHistoryStep(`跳过：${current.label}`);
-    rocketState.statusNote = result.message;
+    setBrowserStatusNote(result.message);
     completeCurrentActionEffect("skipped");
     renderStateReadout();
     return result;
@@ -7274,14 +7287,20 @@
     }));
   }
 
-  function resolveCompletedSectorSettlements(actionType, options = {}) {
+  function resolveCompletedSectorSettlementsForRoot(workingRoot, actionType, options = {}) {
     if (typeof data.settleCompletedSectors !== "function") return null;
 
-    const beforeNebulaState = structuredClone(nebulaDataState);
-    const beforePlayerState = structuredClone(playerState);
-    const beforeAlienState = structuredClone(alienGameState);
-    const settlementResult = data.settleCompletedSectors(nebulaDataState, {
-      players: playerState.players,
+    const {
+      nebulaDataState: workingNebulaState,
+      playerState: workingPlayerState,
+      alienGameState: workingAlienState,
+    } = workingRoot;
+
+    const beforeNebulaState = structuredClone(workingNebulaState);
+    const beforePlayerState = structuredClone(workingPlayerState);
+    const beforeAlienState = structuredClone(workingAlienState);
+    const settlementResult = data.settleCompletedSectors(workingNebulaState, {
+      players: workingPlayerState.players,
       getPlayerTokenSrc: getNormalTokenAssetForPlayer,
       source: actionType || "mainAction",
     });
@@ -7292,8 +7311,8 @@
     for (const settlement of settlementResult.settlements || []) {
       const isAomomoSettlement = settlement.sectorId === aomomo?.NEBULA_ID;
       for (const participant of settlement.participants || []) {
-        const player = playerState.players.find((item) => item.id === participant.playerId)
-          || playerState.players.find((item) => item.color === participant.playerColor);
+        const player = workingPlayerState.players.find((item) => item.id === participant.playerId)
+          || workingPlayerState.players.find((item) => item.color === participant.playerColor);
         if (!player) continue;
         const awardKey = `${settlement.sectorId}:${player.id}`;
         if (awarded.has(awardKey)) continue;
@@ -7306,10 +7325,10 @@
           participantAwardLabels.add("参与结算玩家各获得1宣传");
         }
       }
-      const winner = playerState.players.find((item) => item.id === settlement.winner?.playerId)
-        || playerState.players.find((item) => item.color === settlement.winner?.playerColor);
+      const winner = workingPlayerState.players.find((item) => item.id === settlement.winner?.playerId)
+        || workingPlayerState.players.find((item) => item.color === settlement.winner?.playerColor);
       const claim = winner
-        ? runezu?.claimSectorSymbol?.(alienGameState, settlement.sectorId, winner)
+        ? runezu?.claimSectorSymbol?.(workingAlienState, settlement.sectorId, winner)
         : null;
       if (claim?.ok) {
         if (!Array.isArray(settlementResult.runezuSymbolClaims)) settlementResult.runezuSymbolClaims = [];
@@ -7332,17 +7351,17 @@
         label: "扇区结算",
       });
       history.record(historyCommands.createRestoreObjectCommand(
-        nebulaDataState,
+        workingNebulaState,
         beforeNebulaState,
         "恢复扇区结算前星云状态",
       ));
       history.record(historyCommands.createRestoreObjectCommand(
-        playerState,
+        workingPlayerState,
         beforePlayerState,
         "恢复扇区结算前玩家状态",
       ));
       history.record(historyCommands.createRestoreObjectCommand(
-        alienGameState,
+        workingAlienState,
         beforeAlienState,
         "恢复扇区结算前外星人状态",
       ));
@@ -7362,6 +7381,14 @@
     renderPlayerStats();
     renderAlienPanels();
     return settlementResult;
+  }
+
+  function resolveCompletedSectorSettlements(actionType, options = {}) {
+    return browserRuleComposition.inputPort.submitHostCommand({
+      kind: "scan_settle_completed_sectors",
+      actionType,
+      options,
+    }).value;
   }
 
   function getMarkedNebulaIdsFromEvents(events = []) {
