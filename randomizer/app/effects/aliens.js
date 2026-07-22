@@ -92,7 +92,16 @@
       alienTracePickerState: "alien_trace_picker_state",
       actionEffectFlow: "action_effect_flow",
     }) || {};
-    const getYichangdianCornerAction = () => decisionSessions.peek("yichangdian_corner_action");
+    let yichangdianCornerDecisionDraft = null;
+    const getYichangdianCornerAction = () => yichangdianCornerDecisionDraft;
+    const takeYichangdianCornerAction = () => {
+      const draft = yichangdianCornerDecisionDraft;
+      yichangdianCornerDecisionDraft = null;
+      return draft;
+    };
+    const clearYichangdianCornerAction = () => {
+      yichangdianCornerDecisionDraft = null;
+    };
 
     function countYichangdianAnomalySignals(workingRoot) {
       if (!yichangdian) return 0;
@@ -294,7 +303,7 @@
         if (drawResult.ok) drawn.push(drawResult.card);
       }
       markCurrentActionIrreversible("盲抽翻出新牌", "hidden_card_reveal");
-      decisionSessions.open("yichangdian_corner_action", {
+      yichangdianCornerDecisionDraft = {
         effect,
         playerId: currentPlayer.id,
         phase: "discard",
@@ -303,14 +312,14 @@
         beforePlayerState,
         beforeCardState,
         messageParts: [`盲抽 ${drawn.length} 张`],
-      });
+      };
       renderPlayerHand();
       renderPlayerStats();
       return openYichangdianCornerPicker(workingRoot);
     }
 
-    function getPendingYichangdianCornerCards(workingRoot) {
-      const pending = getYichangdianCornerAction();
+    function getPendingYichangdianCornerCards(workingRoot, pendingContext = null) {
+      const pending = pendingContext || getYichangdianCornerAction();
       const player = pending ? getPlayerById(workingRoot, pending.playerId) : null;
       if (!pending || !player) return [];
       const usedIds = new Set([pending.selectedDiscardCard?.id].filter(Boolean));
@@ -333,29 +342,9 @@
 
     function openYichangdianCornerPicker(workingRoot) {
       const pending = getYichangdianCornerAction();
-      if (!pending || !els.scanTargetOverlay || !els.scanTargetActions) {
+      if (!pending) {
         return { ok: false, message: "无法打开异常点角标选择" };
       }
-      const choices = getPendingYichangdianCornerCards(workingRoot);
-      if (els.scanTargetTitle) els.scanTargetTitle.textContent = "异常点 8 号牌";
-      if (els.scanTargetSubtitle) {
-        els.scanTargetSubtitle.textContent = pending.phase === "discard"
-          ? "请选择 1 张抽到的牌弃掉并结算左上角弃牌奖励。"
-          : "请选择 1 张剩余抽到的牌弃掉并结算右下角收入奖励。";
-      }
-      if (els.scanTargetCancel) els.scanTargetCancel.hidden = true;
-      els.scanTargetActions.replaceChildren(...choices.map((card) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className = "scan-target-option-button";
-        button.dataset.yichangdianCornerCardId = card.id;
-        button.append(document.createTextNode(cards.getCardLabel(card)));
-        const detail = document.createElement("small");
-        detail.textContent = formatYichangdianCornerChoiceReward(workingRoot, card, pending.phase);
-        button.appendChild(detail);
-        return button;
-      }));
-      els.scanTargetOverlay.hidden = false;
       ruleRocketState(workingRoot).statusNote = pending.phase === "discard" ? "异常点：请选择左上角奖励牌" : "异常点：请选择收入奖励牌";
       renderActionEffectBar();
       updateActionButtons();
@@ -363,8 +352,8 @@
       return { ok: true, message: ruleRocketState(workingRoot).statusNote };
     }
 
-    function handleYichangdianCornerChoice(workingRoot, cardId) {
-      const pending = getYichangdianCornerAction();
+    function handleYichangdianCornerChoice(workingRoot, cardId, pendingContext = null) {
+      const pending = pendingContext || getYichangdianCornerAction();
       const player = pending ? getPlayerById(workingRoot, pending.playerId) : null;
       if (!pending || !player) return { ok: false, message: "没有异常点角标选择流程" };
       const card = player.hand.find((item) => item.id === cardId);
@@ -378,6 +367,7 @@
         pending.selectedDiscardCard = discardResult.card;
         applyYichangdianDiscardActionReward(workingRoot, discardResult.card, pending.messageParts);
         pending.phase = "income";
+        yichangdianCornerDecisionDraft = pending;
         renderPlayerHand();
         renderPlayerStats();
         return openYichangdianCornerPicker(workingRoot);
@@ -395,8 +385,8 @@
         pending.beforeCardState,
         "恢复异常点盲抽角标前牌区状态",
       ));
-      decisionSessions.clear("yichangdian_corner_action");
-      if (els.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
+      clearYichangdianCornerAction();
+      if (els?.scanTargetOverlay) els.scanTargetOverlay.hidden = true;
       return finishAutomaticRewardEffect(workingRoot, pending.effect, {
         ok: true,
         undoable: false,
@@ -1194,6 +1184,9 @@
       executeYichangdianNextAnomalyScanEffect,
       applyYichangdianDiscardActionReward,
       executeYichangdianDrawThenTwoCornersEffect,
+      getYichangdianCornerAction,
+      takeYichangdianCornerAction,
+      clearYichangdianCornerAction,
       getPendingYichangdianCornerCards,
       formatYichangdianCornerChoiceReward,
       openYichangdianCornerPicker,

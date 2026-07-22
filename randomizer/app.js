@@ -789,6 +789,9 @@
               if (candidates[0]?.target?.kind === "amiba-symbol-choice") {
                 alienSpeciesRuntime?.takeAmibaSymbolDecisionDraft?.();
               }
+              if (candidates[0]?.target?.kind === "yichangdian-corner-choice") {
+                effectExecutors?.takeYichangdianCornerAction?.();
+              }
               if (candidates[0]?.target?.kind === "runezu-symbol-branch") {
                 alienSpeciesRuntime?.takeRunezuSymbolBranchDecisionDraft?.();
               }
@@ -1010,6 +1013,8 @@
     FINAL_SCORE_IDS,
     getCurrentPlayer,
     getPendingProbeSectorScanDecision,
+    getPendingYichangdianCornerAction,
+    getPendingYichangdianCornerCards,
     getPendingChongFossilChoice,
     getPendingAmibaSymbolChoice,
     getPendingRunezuSymbolBranch,
@@ -2531,6 +2536,7 @@
     clearPendingAmibaSymbolChoice: () => alienSpeciesRuntime?.clearAmibaSymbolDecisionDraft?.(),
     clearPendingRunezuSymbolBranch: () => alienSpeciesRuntime?.clearRunezuSymbolBranchDecisionDraft?.(),
     clearPendingRunezuFaceSymbolPlacement: () => alienSpeciesRuntime?.clearRunezuFaceSymbolDecisionDraft?.(),
+    getPendingYichangdianCornerAction,
     document,
     structuredClone,
     els,
@@ -4129,7 +4135,7 @@
     get pendingDataPlaceAction() { return getPendingDataPlacementDecision(); },
     get pendingJiuzheCardPlay() { return decisionSessions.peek("jiuzhe_card_play"); },
     get pendingYichangdianCardGain() { return decisionSessions.peek("yichangdian_card_gain"); },
-    get pendingYichangdianCornerAction() { return decisionSessions.peek("yichangdian_corner_action"); },
+    get pendingYichangdianCornerAction() { return getPendingYichangdianCornerAction(); },
     get pendingBanrenmaCardGain() { return decisionSessions.peek("banrenma_card_gain"); },
     get pendingBanrenmaOpportunity() { return decisionSessions.peek("banrenma_opportunity"); },
     get pendingChongCardGain() { return decisionSessions.peek("chong_card_gain"); },
@@ -5404,7 +5410,7 @@
     decisionSessions.clear("jiuzhe_card_play");
     uiRuntimeState.jiuzheOpportunityOpen = false;
     decisionSessions.clear("yichangdian_card_gain");
-    decisionSessions.clear("yichangdian_corner_action");
+    effectExecutors?.clearYichangdianCornerAction?.();
     decisionSessions.clear("banrenma_card_gain");
     decisionSessions.clear("banrenma_opportunity");
     if (workingRoot.match && typeof workingRoot.match === "object") {
@@ -6873,7 +6879,7 @@
       || getPendingCardTaskCompletion()
       || (decisionSessions.peek("jiuzhe_card_play") && decisionSessions.peek("jiuzhe_card_play").reason !== "view")
       || decisionSessions.peek("yichangdian_card_gain")
-      || decisionSessions.peek("yichangdian_corner_action")
+      || getPendingYichangdianCornerAction()
       || decisionSessions.peek("banrenma_card_gain")
       || decisionSessions.peek("banrenma_opportunity")
       || getPendingChongTaskCompletion()
@@ -7184,7 +7190,7 @@
       delete workingRoot.match.type1TriggerEvents;
     }
     decisionSessions.clear(CARD_CORNER_FREE_MOVE_SESSION);
-    decisionSessions.clear("yichangdian_corner_action");
+    effectExecutors?.clearYichangdianCornerAction?.();
     decisionSessions.clear("chong_card_gain");
     alienSpeciesRuntime?.clearChongFossilDecisionDraft?.();
     decisionSessions.clear(CHONG_TASK_COMPLETION_SESSION);
@@ -7220,7 +7226,7 @@
     const current = getCurrentActionEffect();
     if (!current || current.status !== "active") return;
     if (
-      decisionSessions.peek("yichangdian_corner_action")
+      getPendingYichangdianCornerAction()
       && current.type === cardEffects.EFFECT_TYPES.YICHANGDIAN_DRAW_THEN_TWO_CORNERS
     ) {
       openYichangdianCornerPicker();
@@ -8412,6 +8418,12 @@
   }
   function getPendingAmibaSymbolChoice() {
     return alienSpeciesRuntime?.getAmibaSymbolDecisionDraft?.() || null;
+  }
+  function getPendingYichangdianCornerAction() {
+    return effectExecutors?.getYichangdianCornerAction?.() || null;
+  }
+  function getPendingYichangdianCornerCards(workingRoot, pendingContext = null) {
+    return effectExecutors?.getPendingYichangdianCornerCards?.(workingRoot, pendingContext) || [];
   }
   function getPendingRunezuSymbolBranch() {
     return alienSpeciesRuntime?.getRunezuSymbolBranchDecisionDraft?.() || null;

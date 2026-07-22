@@ -257,3 +257,68 @@ function withWorkingRoot(context = {}) {
 
   console.log("Chong empty landing target tests passed");
 })();
+
+(() => {
+  const player = { id: "player-1", hand: [] };
+  const drawnCards = [
+    { id: "card-a" },
+    { id: "card-b" },
+    { id: "card-c" },
+  ];
+  const executorContext = withWorkingRoot({
+    playerState: { players: [player] },
+    cardState: { publicCards: [], discardPile: [] },
+    decisionSessions: { createFacade: () => ({}) },
+    getCurrentPlayer: () => player,
+    getPlayerById: (_workingRoot, playerId) => (playerId === player.id ? player : null),
+    blindDrawCardForPlayer(target) {
+      const card = drawnCards.shift();
+      target.hand.push(card);
+      return { ok: true, card };
+    },
+    cards: {
+      discardFromHandAtIndex(target, index) {
+        return { ok: true, card: target.hand.splice(index, 1)[0] };
+      },
+      addToDiscardPile(cardState, card) { cardState.discardPile.push(card); },
+      getDiscardActionRewardForCard: () => null,
+      getDiscardActionMoveRewardForCard: () => null,
+    },
+    applyIncomeFromCard: () => ({ ok: true, message: "收入已结算" }),
+    beginEffectHistoryStep: () => {},
+    markCurrentActionIrreversible: () => {},
+    recordHistoryCommand: () => {},
+    historyCommands: { createRestoreObjectCommand: () => ({}) },
+    renderPlayerHand: () => {},
+    renderPlayerStats: () => {},
+    renderActionEffectBar: () => {},
+    updateActionButtons: () => {},
+    renderStateReadout: () => {},
+    finishAutomaticRewardEffect: (_workingRoot, _effect, result) => result,
+  });
+  const executors = createEffectAlienExecutors(executorContext);
+  const effect = { label: "异常点两次角标", options: {}, status: "active" };
+  assert.equal(executors.executeYichangdianDrawThenTwoCornersEffect(executorContext.workingRoot, effect).ok, true);
+
+  const firstPending = executors.takeYichangdianCornerAction();
+  assert.equal(executors.getYichangdianCornerAction(), null, "DecisionEffect 接管后旧草稿必须被取走");
+  const first = executors.handleYichangdianCornerChoice(
+    executorContext.workingRoot,
+    "card-a",
+    firstPending,
+  );
+  assert.equal(first.ok, true);
+  assert.equal(executors.getYichangdianCornerAction()?.phase, "income", "第二步必须重新暴露为新的决策草稿");
+
+  const secondPending = executors.takeYichangdianCornerAction();
+  const second = executors.handleYichangdianCornerChoice(
+    executorContext.workingRoot,
+    "card-b",
+    secondPending,
+  );
+  assert.equal(second.ok, true);
+  assert.equal(executors.getYichangdianCornerAction(), null);
+  assert.deepEqual(executorContext.workingRoot.cardState.discardPile.map((card) => card.id), ["card-a", "card-b"]);
+
+  console.log("Yichangdian two-step DecisionEffect draft tests passed");
+})();

@@ -57,6 +57,10 @@
       "clearPendingRunezuFaceSymbolPlacement",
       context.clearPendingRunezuFaceSymbolPlacement,
     );
+    const getPendingYichangdianCornerAction = requireFunction(
+      "getPendingYichangdianCornerAction",
+      context.getPendingYichangdianCornerAction,
+    );
     const PUBLIC_SCAN_QUEUE_SESSION = "public_scan_queue";
     const getPublicScanQueue = () => decisionSessions.peek(PUBLIC_SCAN_QUEUE_SESSION);
     const els = context.els || {};
@@ -1329,7 +1333,7 @@
 
     function restoreYichangdianCornerPickerIfPending(workingRoot) {
       const { rocketState } = requireWorkingRoot(workingRoot);
-      if (!decisionSessions.peek("yichangdian_corner_action")) return false;
+      if (!getPendingYichangdianCornerAction()) return false;
       const result = openYichangdianCornerPicker();
       if (!result?.ok) {
         rocketState.statusNote = result?.message || "异常点：请完成角标选择";

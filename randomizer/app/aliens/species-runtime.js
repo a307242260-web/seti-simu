@@ -183,8 +183,6 @@
       set chongCardGain(session) { replaceDecisionSession("chong_card_gain", session); },
     };
     const alienChoiceSessions = {
-      get yichangdianCornerAction() { return decisionSessions.peek("yichangdian_corner_action"); },
-      set yichangdianCornerAction(session) { replaceDecisionSession("yichangdian_corner_action", session); },
       get amibaTraceRemoval() { return decisionSessions.peek("amiba_trace_removal"); },
       set amibaTraceRemoval(session) { replaceDecisionSession("amiba_trace_removal", session); },
     };
@@ -3417,7 +3415,6 @@ function getActiveAlienSharedOverlayPendingForManualGuard() {
         ? null
         : { pending: alienOpportunitySessions.jiuzheCardPlay, label: "九折牌" },
       alienCardGainSessions.yichangdianCardGain ? { pending: alienCardGainSessions.yichangdianCardGain, label: "异常点外星人牌" } : null,
-      alienChoiceSessions.yichangdianCornerAction ? { pending: alienChoiceSessions.yichangdianCornerAction, label: "异常点角标" } : null,
       alienCardGainSessions.banrenmaCardGain ? { pending: alienCardGainSessions.banrenmaCardGain, label: "半人马外星人牌" } : null,
       alienOpportunitySessions.banrenmaOpportunity ? { pending: alienOpportunitySessions.banrenmaOpportunity, label: "半人马奖励" } : null,
       alienCardGainSessions.chongCardGain ? { pending: alienCardGainSessions.chongCardGain, label: "虫族外星人牌" } : null,

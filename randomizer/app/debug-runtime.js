@@ -995,7 +995,6 @@
         decisionSessions?.peek?.("card_task_completion"),
         decisionSessions?.peek?.("jiuzhe_card_play"),
         decisionSessions?.peek?.("yichangdian_card_gain"),
-        decisionSessions?.peek?.("yichangdian_corner_action"),
         decisionSessions?.peek?.("banrenma_card_gain"),
         decisionSessions?.peek?.("banrenma_opportunity"),
         decisionSessions?.peek?.("chong_card_gain"),

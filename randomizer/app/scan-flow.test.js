@@ -58,6 +58,7 @@ function createBaseHarness() {
     clearPendingAmibaSymbolChoice() {},
     clearPendingRunezuSymbolBranch() {},
     clearPendingRunezuFaceSymbolPlacement() {},
+    getPendingYichangdianCornerAction() { return null; },
     cards: {
       getCardLabel: (card) => card.cardName || card.id,
       setSelectionActive: (_state, active) => {

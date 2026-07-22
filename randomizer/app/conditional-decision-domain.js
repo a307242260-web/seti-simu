@@ -13,6 +13,8 @@
       FINAL_SCORE_IDS,
       getCurrentPlayer,
       getPendingProbeSectorScanDecision,
+      getPendingYichangdianCornerAction,
+      getPendingYichangdianCornerCards,
       getHeadlessConditionalPlayer,
       decisionSessions,
       getPendingChongFossilChoice,
@@ -69,6 +71,7 @@
       handleRunezuSymbolBranchChoice,
       handleRunezuFaceSymbolChoice,
       handleAmibaSymbolChoice,
+      handleYichangdianCornerChoice,
       handleFinalScoreTileClick,
       handleSupplyTechTileClick,
       confirmTechBlueSlotChoice,
@@ -199,6 +202,19 @@
       };
     }
     const chongFossilPending = getPendingChongFossilChoice();
+    const yichangdianCornerPending = getPendingYichangdianCornerAction();
+    if (yichangdianCornerPending) {
+      return {
+        actorPlayer: getPlayerById(yichangdianCornerPending.playerId) || getCurrentPlayer(),
+        candidates: getPendingYichangdianCornerCards(workingRoot, yichangdianCornerPending).map((card) => ({
+          id: "conditionalChoice",
+          family: "choose_reward",
+          label: `异常点角标 ${card.id}`,
+          target: { kind: "yichangdian-corner-choice", choiceId: card.id },
+          pendingContext: structuredClone(yichangdianCornerPending),
+        })),
+      };
+    }
     if (chongFossilPending) {
       return {
         actorPlayer: getHeadlessConditionalPlayer(chongFossilPending),
@@ -902,6 +918,10 @@
   const CONDITIONAL_CHOICE_HANDLERS = Object.freeze({
     "conditional-sector": (action) => handleConditionalSectorChoice(action.target.sectorX ?? action.target.choiceId),
     "chong-fossil-choice": (action) => handleChongFossilChoice(
+      action.target.choiceId,
+      action.pendingContext || null,
+    ),
+    "yichangdian-corner-choice": (action) => handleYichangdianCornerChoice(
       action.target.choiceId,
       action.pendingContext || null,
     ),
