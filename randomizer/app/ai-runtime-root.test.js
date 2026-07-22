@@ -14,6 +14,7 @@ const { createTechAction } = require("../game/ai/tech-action");
 const { createScanValue } = require("../game/ai/scan-value");
 const { createDemandCard } = require("../game/ai/demand-card");
 const { createAlienValuation } = require("../game/ai/alien-valuation");
+const { createTradeCandidates } = require("../game/ai/trade-candidates");
 
 function contextWith(overrides = {}) {
   const fallback = () => null;
@@ -318,6 +319,27 @@ const players = {
   readout = rootB;
   assert.equal(alienValuation.getAiYichangdianAnomalyForTraceType("blue"), null);
   assert.equal(alienValuation.getAiYichangdianAnomalyForTraceType("pink")?.id, "anomaly-b");
+}
+
+{
+  const rootA = createRoot("a", 1);
+  const rootB = createRoot("a", 2);
+  let readout = rootA;
+  const tradeCandidates = createTradeCandidates(contextWith({
+    aiAutoBattleState: {
+      logs: [{
+        type: "turn-action",
+        roundNumber: 1,
+        rawTurnNumber: 1,
+        playerId: "a",
+        details: { action: { id: "quickTrade" } },
+      }],
+    },
+    getRuleReadout: () => readout,
+  }));
+  assert.equal(tradeCandidates.countAiQuickTradesThisTurn("a"), 1);
+  readout = rootB;
+  assert.equal(tradeCandidates.countAiQuickTradesThisTurn("a"), 0);
 }
 
 {

@@ -23,12 +23,6 @@
       cardEffects,
       data,
       ai,
-      alienGameState,
-      finalScoringState,
-      playerState,
-      turnState,
-      rocketState,
-      cardState,
       FINAL_ROUND_NUMBER,
       runQuickTrade,
       AI_HUANYU_SUPERDRIVE_INDUSTRY_LABEL,
@@ -36,6 +30,15 @@
       AI_DIFFICULTY_WEAK_START,
       aiAutoBattleState,
     } = context;
+    const readRuleRoot = () => {
+      const workingRoot = context.getRuleReadout?.();
+      if (!workingRoot) throw new TypeError("AI trade candidates require a StateSource rule readout");
+      return workingRoot;
+    };
+    const requireWorkingRoot = (workingRoot) => {
+      if (!workingRoot) throw new TypeError("AI trade candidates require explicit workingRoot");
+      return workingRoot;
+    };
     const adjustAiActionGraphCandidate = (...args) => context.adjustAiActionGraphCandidate(...args);
     const adjustAiActionGraphCandidateForStyle = (...args) => context.adjustAiActionGraphCandidateForStyle(...args);
     const aiNumber = (...args) => context.aiNumber(...args);
@@ -95,6 +98,7 @@
     const summarizeAiPublicPickCandidate = (...args) => context.summarizeAiPublicPickCandidate(...args);
 
     function listAiEmergencyAnalyzeEnergyTradeCandidates(workingRoot, player = getCurrentPlayer()) {
+      const { turnState } = requireWorkingRoot(workingRoot);
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -290,6 +294,7 @@
     }
 
     function listAiThirdFinalMarkResourceTradeCandidates(workingRoot, player = getCurrentPlayer()) {
+      const { cardState } = requireWorkingRoot(workingRoot);
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -729,6 +734,7 @@
     }
 
     function getAiFinalReadyTaskCreditChainProfile(workingRoot, player = getCurrentPlayer(), options = {}) {
+      const { turnState } = requireWorkingRoot(workingRoot);
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -926,6 +932,7 @@
 
     function countAiQuickTradesThisTurn(playerId = getCurrentPlayer()?.id) {
       if (!playerId) return 0;
+      const { turnState } = readRuleRoot();
       return (aiAutoBattleState.logs || []).filter((entry) => (
         entry?.type === "turn-action"
         && entry.roundNumber === turnState.roundNumber
@@ -1113,6 +1120,7 @@
     }
 
     function listAiMainUnlockTradeCandidates(workingRoot, player = getCurrentPlayer(), playCardCandidates = null, candidates = []) {
+      const { turnState } = requireWorkingRoot(workingRoot);
       if (
         !player
         || !quickTrades?.getTradeAction
@@ -1131,6 +1139,7 @@
     }
 
     function buildAiResourceLockMainUnlockTradeCandidate(workingRoot, player = getCurrentPlayer(), tradeId = null, candidates = []) {
+      const { rocketState, turnState } = requireWorkingRoot(workingRoot);
       if (
         !player
         || !tradeId
